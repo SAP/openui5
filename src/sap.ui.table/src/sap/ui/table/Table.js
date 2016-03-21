@@ -791,9 +791,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			sRowHeight = iRowHeight + "px";
 		}
 
-		var aRowItems = this.getDomRef().querySelectorAll(".sapUiTableCtrlFixed > tbody > tr, .sapUiTableCtrlScroll > tbody > tr");
-		for (var i = 0; i < aRowItems.length; i++) {
-			aRowItems[i].style.height = sRowHeight;
+		var oDomRef = this.getDomRef();
+		if (oDomRef) {
+			var aRowItems = oDomRef.querySelectorAll(".sapUiTableCtrlFixed > tbody > tr, .sapUiTableCtrlScroll > tbody > tr");
+			for (var i = 0; i < aRowItems.length; i++) {
+				aRowItems[i].style.height = sRowHeight;
+			}
 		}
 	};
 
@@ -1858,7 +1861,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		//}
 
 		// update the bindings only once the table is rendered
-		if (this.bOutput) {
+		if (!this.bIsDestroyed) {
 			// update the bindings by using a delayed mechanism to avoid to many update
 			// requests: by using the mechanism below it will trigger an update each 50ms
 			// except if the reason is coming from the binding with reason "change" then
@@ -6221,7 +6224,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			}
 
 			if (this.getVisibleRowCountMode() == sap.ui.table.VisibleRowCountMode.Auto) {
-				this.getDomRef().style.height = "0px";
+				var oDomRef = this.getDomRef();
+				if (oDomRef) {
+					oDomRef.style.height = "0px";
+				}
 			}
 
 			var oRM = new sap.ui.getCore().createRenderManager(),
