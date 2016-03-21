@@ -25,40 +25,51 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		 * @alias sap.m.ComboBoxBase
 		 * @ui5-metamodel This control will also be described in the UI5 (legacy) design time meta model.
 		 */
-		var ComboBoxBase = ComboBoxTextField.extend("sap.m.ComboBoxBase", /** @lends sap.m.ComboBoxBase.prototype */ { metadata: {
-			library: "sap.m",
-			defaultAggregation: "items",
-			aggregations: {
+		var ComboBoxBase = ComboBoxTextField.extend("sap.m.ComboBoxBase", /** @lends sap.m.ComboBoxBase.prototype */ {
+			metadata: {
+				library: "sap.m",
+				defaultAggregation: "items",
+				aggregations: {
 
-				/**
-				 * Defines the items contained within this control.
-				 */
-				items: { type: "sap.ui.core.Item", multiple: true, singularName: "item", bindable: "bindable" },
+					/**
+					 * Defines the items contained within this control.
+					 */
+					items: {
+						type: "sap.ui.core.Item",
+						multiple: true,
+						singularName: "item",
+						bindable: "bindable"
+					},
 
-				/**
-				 * Internal aggregation to hold the inner picker popup.
-				 */
-				picker: { type: "sap.ui.core.PopupInterface", multiple: false, visibility: "hidden" }
-			},
-			events: {
+					/**
+					 * Internal aggregation to hold the inner picker popup.
+					 */
+					picker: {
+						type: "sap.ui.core.PopupInterface",
+						multiple: false,
+						visibility: "hidden"
+					}
+				},
+				events: {
 
-				/**
-				 * This event is fired when the end user moves the cursor to the text field, performs
-				 * an action that requires items to be loaded, and items are not already loaded. For example,
-				 * pressing F4 to open the dropdown list or typing something in the text field fires the event.
-				 *
-				 * <b>Note:</b> We strongly recommend to only use this feature in performance critical scenarios.
-				 * Loading the items lazily (on demand) to defer initialization has several implications for the end user
-				 * experience. For example, the busy indicator has to be shown while the items are being loaded and
-				 * assistive technology software also has to announce the state changes (which may be confusing
-				 * for some screen reader users).
-				 *
-				 * <b>Note</b>: Currently the <code>sap.m.MultiComboBox</code> does not support this event.
-				 * @since 1.38
-				 */
-				loadItems: {}
+					/**
+					 * This event is fired when the end user moves the cursor to the text field, performs
+					 * an action that requires items to be loaded, and items are not already loaded. For example,
+					 * pressing F4 to open the dropdown list or typing something in the text field fires the event.
+					 *
+					 * <b>Note:</b> We strongly recommend to only use this feature in performance critical scenarios.
+					 * Loading the items lazily (on demand) to defer initialization has several implications for the end user
+					 * experience. For example, the busy indicator has to be shown while the items are being loaded and
+					 * assistive technology software also has to announce the state changes (which may be confusing
+					 * for some screen reader users).
+					 *
+					 * <b>Note</b>: Currently the <code>sap.m.MultiComboBox</code> does not support this event.
+					 * @since 1.38
+					 */
+					loadItems: {}
+				}
 			}
-		}});
+		});
 
 		/* =========================================================== */
 		/* Private methods and properties                              */
