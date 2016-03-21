@@ -1949,13 +1949,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 * @private
 	 */
 	Table.prototype._attachEvents = function() {
-
 		var $this = this.$();
 
 		// listen to the scroll events of the containers (for keyboard navigation)
 		$this.find(".sapUiTableColHdrScr").scroll(jQuery.proxy(this._oncolscroll, this));
 		$this.find(".sapUiTableCtrlScr").scroll(jQuery.proxy(this._oncntscroll, this));
 		$this.find(".sapUiTableCtrlScrFixed").scroll(jQuery.proxy(this._oncntscroll, this));
+
+		$this.find(".sapUiTableCtrlScrFixed, .sapUiTableColHdrFixed").on("scroll.sapUiTablePreventFixedAreaScroll", function(oEvent) {oEvent.target.scrollLeft = 0;});
 
 		// sync row header > content (hover effect)
 		$this.find(".sapUiTableRowHdr").hover(function() {
@@ -2033,6 +2034,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	};
 
 	/**
+	 * detaches the required native event handlers
+	 * @private
+	 */
+	Table.prototype._detachEvents = function() {
+		var $this = this.$();
+
+		$this.find(".sapUiTableRowHdrScr").unbind();
+		$this.find(".sapUiTableCtrl > tbody > tr").unbind();
+		$this.find(".sapUiTableRowHdr").unbind();
+		$this.find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed, .sapUiTableColHdrScr, .sapUiTableColHdrFixed").unbind();
+		$this.find(".sapUiTableColRsz").unbind();
+
+		var $vsb = jQuery(this.getDomRef("vsb"));
+		$vsb.unbind("scroll.sapUiTableVScroll");
+		$vsb.unbind("mousedown.sapUiTableVScroll");
+
+		var $hsb = jQuery(this.getDomRef("hsb"));
+		$hsb.unbind("scroll.sapUiTableHScroll");
+		$hsb.unbind("mousedown.sapUiTableHScroll");
+
+		$this.find(".sapUiTableCtrlScrFixed, .sapUiTableColHdrFixed").unbind("scroll.sapUiTablePreventFixedAreaScroll");
+
+		var $scrollTargets = this._getScrollTargets();
+		$scrollTargets.unbind("MozMousePixelScroll.sapUiTableMouseWheel");
+		$scrollTargets.unbind("wheel.sapUiTableMouseWheel");
+
+		var $body = jQuery(document.body);
+		$body.unbind('webkitTransitionEnd transitionend');
+
+		if (this._sResizeHandlerId) {
+			ResizeHandler.deregister(this._sResizeHandlerId);
+			this._sResizeHandlerId = undefined;
+		}
+	};
+
+	/**
 	 * Update the resizer position, according to mouse/touch position.
 	 * @param {Event} oEvent the handled move event
 	 * @private
@@ -2074,40 +2111,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		if (oColumn && oColumn.getResizable()) {
 			this.$().find(".sapUiTableColRsz").css("left", iResizerPositionX + "px");
 			this._iLastHoveredColumnIndex = iLastHoveredColumn;
-		}
-	};
-
-	/**
-	 * detaches the required native event handlers
-	 * @private
-	 */
-	Table.prototype._detachEvents = function() {
-		var $this = this.$();
-
-		$this.find(".sapUiTableRowHdrScr").unbind();
-		$this.find(".sapUiTableCtrl > tbody > tr").unbind();
-		$this.find(".sapUiTableRowHdr").unbind();
-		$this.find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed, .sapUiTableColHdrScr, .sapUiTableColHdrFixed").unbind();
-		$this.find(".sapUiTableColRsz").unbind();
-
-		var $vsb = jQuery(this.getDomRef("vsb"));
-		$vsb.unbind("scroll.sapUiTableVScroll");
-		$vsb.unbind("mousedown.sapUiTableVScroll");
-
-		var $hsb = jQuery(this.getDomRef("hsb"));
-		$hsb.unbind("scroll.sapUiTableHScroll");
-		$hsb.unbind("mousedown.sapUiTableHScroll");
-
-		var $scrollTargets = this._getScrollTargets();
-		$scrollTargets.unbind("MozMousePixelScroll.sapUiTableMouseWheel");
-		$scrollTargets.unbind("wheel.sapUiTableMouseWheel");
-
-		var $body = jQuery(document.body);
-		$body.unbind('webkitTransitionEnd transitionend');
-
-		if (this._sResizeHandlerId) {
-			ResizeHandler.deregister(this._sResizeHandlerId);
-			this._sResizeHandlerId = undefined;
 		}
 	};
 
