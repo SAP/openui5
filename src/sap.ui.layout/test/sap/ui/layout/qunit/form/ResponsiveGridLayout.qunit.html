@@ -138,6 +138,14 @@
 									fields: [new sap.ui.commons.TextField("F3C5E1_T1",{value: "Text"})]
 								})
 							]
+					}),
+				new sap.ui.layout.form.FormContainer("F3C6",{
+					formElements: [
+						new sap.ui.layout.form.FormElement("F3C6E1",{
+								label: "Label",
+								fields: [new sap.ui.commons.TextField("F3C6E1_T1",{value: "Text"})]
+							})
+						]
 					})
 				]
 			}).placeAt("uiArea3");
@@ -426,12 +434,13 @@
 		});
 
 		test("Aria", function() {
-			equal(jQuery("#F1C1--Grid").attr("role"), "form", "Container-F1C1: role \"form\" set on grid level");
+			ok(!jQuery("#F1C1--Grid").attr("role"), "Container-F1C1: role \"form\" not set on grid level");
 			ok(!jQuery("#F1C1--Grid").attr("aria-labelledby"), "Container-F1C1: aria-labelledby not set on grid level");
 			equal(jQuery("#F2C1---Panel").attr("role"), "form", "Container-F2C1: role \"form\" set on panel level");
 			ok(!jQuery("#F2C1--Grid").attr("role"), "Container-F2C1: role \"form\" not set on grid level");
 			equal(jQuery("#F2C1---Panel").attr("aria-labelledby"), "F2C1--title", "Container-F2C1: aria-labelledby set");
 			equal(jQuery("#F3C1---Panel").attr("aria-labelledby"), "F3C1T", "Container-F3C1: aria-labelledby set");
+			equal(jQuery("#F3C6--Grid").attr("role"), "form", "Container-F3C6: role \"form\" set on grid level");
 
 			equal(jQuery("#F6").attr("aria-labelledby"), "F6-Title", "Form6: aria-labelledby set");
 			equal(jQuery("#F6C1---Panel").attr("aria-labelledby"), "F6C1-Title", "Container-F6C1: aria-labelledby set");
