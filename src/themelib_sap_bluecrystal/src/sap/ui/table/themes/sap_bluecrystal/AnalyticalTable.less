@@ -25,6 +25,29 @@
 	padding-right: 10px;
 }
 
+.sapUiAnalyticalTable .sapUiTableGroupIcon {
+	padding-right: 40px;
+	background: @sapUiListTableGroupHeaderBackground;
+	background-clip: content-box;
+}
+
+.sapUiAnalyticalTable .sapUiTableRowHvr .sapUiTableGroupIcon {
+	background-color: @sapUiListHoverBackground;
+}
+
+.sapUiAnalyticalTable .sapUiTableGroupIcon:after {
+	position: absolute;
+	content: "";
+	width: 40px;
+	top: 1px;
+	bottom: 1px;
+	box-shadow: inset 40px 0px 20px -20px @sapUiListTableGroupHeaderBackground;
+}
+
+.sapUiAnalyticalTable .sapUiTableRowHvr .sapUiTableGroupIcon:after {
+	box-shadow: inset 40px 0px 20px -20px @sapUiListHoverBackground;
+}
+
 // No checkboxes should be shown in group header of Analytical Table
 .sapUiAnalyticalTable .sapUiTableRowHdrScr .sapUiTableRowHdr.sapUiTableGroupHeader::after {
 	display: none;
@@ -280,7 +303,6 @@
 	width: 68px;
 	border-left: 1px solid @sapUiListVerticalBorderColor;
 }
-
 
 .sapUiAnalyticalTable [data-sap-ui-level="3"].sapUiTableTr .sapUiTableTdFirst .sapUiTableCell {
 	padding-left: 32px;
