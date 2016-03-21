@@ -2078,6 +2078,33 @@
 		oSegmentedButton.destroy();
 	});
 
+    test("Can work with special characters in the ID", function() {
+
+        // Arrange
+        var oSegmentedButton = new sap.m.SegmentedButton({
+            items: [
+                new sap.m.SegmentedButtonItem({
+                    id: "contains::colon",
+                    text: "Button 1"
+                }),
+                new sap.m.SegmentedButtonItem({
+                    text: "Button 2"
+                }),
+                new sap.m.SegmentedButtonItem({
+                    text: "Button 3"
+                })
+            ]
+        });
+
+        // System under Test
+        oSegmentedButton.placeAt("qunit-fixture");
+        sap.ui.getCore().applyChanges();
+
+        ok(oSegmentedButton.getDomRef(), "SegmentedButton should be rendered");
+
+        oSegmentedButton.destroy();
+    });
+
 </script>
 </head>
 <body>
