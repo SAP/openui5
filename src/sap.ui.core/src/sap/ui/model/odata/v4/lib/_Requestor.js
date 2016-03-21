@@ -14,10 +14,10 @@ sap.ui.define([
 			"Content-Type" : "application/json;charset=UTF-8"
 		},
 		mPredefinedPartHeaders = { // predefined request headers in $batch parts
-			"Accept" : "application/json;odata.metadata=minimal"
+			"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true"
 		},
 		mPredefinedRequestHeaders = { // predefined request headers for all requests
-			"Accept" : "application/json;odata.metadata=minimal",
+			"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
 			"OData-MaxVersion" : "4.0",
 			"OData-Version" : "4.0",
 			"X-CSRF-Token" : "Fetch"

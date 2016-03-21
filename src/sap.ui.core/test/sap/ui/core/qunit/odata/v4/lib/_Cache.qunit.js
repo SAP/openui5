@@ -623,7 +623,7 @@ sap.ui.require([
 					MEMBER_COUNT : 2,
 					MANAGER_ID : "3",
 					BudgetCurrency : "USD",
-					Budget : 555.55
+					Budget : "555.55"
 				},
 				oRequestor = _Requestor.create(TestUtils.proxy(
 					"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/")),
