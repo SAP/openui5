@@ -1,6 +1,5 @@
 <core:View controllerName="sap.m.sample.GenericTile1x1.Page"
 	xmlns="sap.m" xmlns:core="sap.ui.core">
-
 	<GenericTile header="Global Margin" size="S" frameType="OneByOne"
 		press="press">
 		<tileContent>
@@ -44,6 +43,22 @@
 				<content>
 					<NumericContent size="M" value="9" icon="sap-icon://locked" />
 				</content>
+			</TileContent>
+		</tileContent>
+	</GenericTile>
+
+	<GenericTile header="Global Margin Global Margin Global Margin Global Margin Global Margin" size="S" frameType="OneByOne" mode="HeaderMode" subheader="SAP Jam Group"
+		press="press">
+		<tileContent>
+			<TileContent unit="EUR" size="S">
+			</TileContent>
+		</tileContent>
+	</GenericTile>
+
+	<GenericTile header="Global Margin Global Margin Global Margin Global Margin Global Margin" size="S" frameType="OneByOne" mode="HeaderMode"
+		press="press">
+		<tileContent>
+			<TileContent footer="Hours since last Activity" size="S">
 			</TileContent>
 		</tileContent>
 	</GenericTile>

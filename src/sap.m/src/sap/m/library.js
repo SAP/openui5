@@ -45,6 +45,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.FlexJustifyContent",
 			"sap.m.FlexRendertype",
 			"sap.m.FrameType",
+			"sap.m.GenericTileMode",
 			"sap.m.HeaderLevel",
 			"sap.m.IBarHTMLTag",
 			"sap.m.IconTabFilterDesign",
@@ -905,6 +906,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 	};
 
+	/**
+	 * Defines the mode of GenericTile.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.38.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.GenericTileMode = {
+
+		/**
+		 * Default mode (Two lines for the header and one line for the subtitle).
+		 * @public
+		 */
+		ContentMode : "ContentMode",
+
+		/**
+		 * Header mode (Four lines for the header and one line for the subtitle).
+		 * @public
+		 */
+		HeaderMode : "HeaderMode"
+	};
 
 	/**
 	 * Different levels for headers
