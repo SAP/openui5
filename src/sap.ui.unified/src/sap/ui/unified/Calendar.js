@@ -620,6 +620,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		if (this.getDomRef()) {
 			this._updateHeader(this._getFocusedDate());
+			this.$().toggleClass("sapUiCalSecType", !!this._getSecondaryCalendarType());
 		}
 
 		return this;
