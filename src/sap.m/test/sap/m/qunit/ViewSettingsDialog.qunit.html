@@ -1496,7 +1496,7 @@
 					vsdGroupDirectionDesc._oSingleSelectControl.fireSelect({selected : true});
 
 					ok(spyGroupItem.calledWithExactly('selected', true, true), "Set group item as selected should be called with suppress Invalidation flag=true");
-					ok(spyGroupItem.calledOnce, "setSelected should be called only once");
+					ok(spyGroupItem.calledTwice, "setSelected should be called twice");
 
 					ok(spyVsd.calledWithExactly('groupDescending', true, true), "Set group item as as selected should be called with suppress Invalidation flag=true");
 
