@@ -36,22 +36,17 @@ sap.ui.define([
 	/**
 	 * Constructor for a new ODataModel.
 	 *
-	 * @param {string} [sServiceUrl]
-	 *   Root URL of the service to request data from; it is required, but may also be given via
-	 *   <code>mParameters.serviceUrl</code>. Must end with a forward slash according to OData V4
-	 *   specification ABNF, rule "serviceRoot" unless you append OData custom query options
-	 *   to the service root URL separated with a "?", e.g. "/MyService/?custom=foo". See parameter
-	 *   <code>mParameters.serviceUrlParams</code> for details on custom query options.
-	 * @param {object} [mParameters]
+	 * @param {object} mParameters
 	 *   The parameters
 	 * @param {string} [mParameters.defaultGroup="$auto"]
 	 *   Controls the model's use of batch requests: '$auto' bundles requests from the model in a
 	 *   batch request which is sent automatically before rendering; '$direct' sends requests
 	 *   directly without batch
-	 * @param {string} [mParameters.serviceUrl]
-	 *   Root URL of the service to request data from as specified for the parameter
-	 *   <code>sServiceUrl</code>; only used if the parameter <code>sServiceUrl</code> has not been
-	 *   given
+	 * @param {string} mParameters.serviceUrl
+	 *   Root URL of the service to request data from. Must end with a forward slash according to
+	 *   OData V4 specification ABNF, rule "serviceRoot" unless you append OData custom query
+	 *   options to the service root URL separated with a "?", e.g. "/MyService/?custom=foo". See
+	 *   parameter <code>mParameters.serviceUrlParams</code> for details on custom query options.
 	 * @param {object} [mParameters.serviceUrlParams]
 	 *   Map of OData custom query options to be used in each data service request for this model,
 	 *   see specification "OData Version 4.0 Part 2: URL Conventions", "5.2 Custom Query Options".
@@ -59,9 +54,13 @@ sap.ui.define([
 	 *   and OData parameter aliases lead to an error.
 	 *   Query options from this map overwrite query options with the same name specified via the
 	 *   <code>sServiceUrl</code> parameter.
-	 * @throws {Error} If the given service root URL does not end with a forward slash, if
-	 *   OData system query options or parameter aliases are specified as parameters or if a
-	 *   default group different from '$direct' is given
+	 * @param {string} mParameters.synchronizationMode
+	 *   Controls synchronization between different bindings which refer to the same data for the
+	 *   case data changes in one binding. Must be set to 'None' which means bindings are not
+	 *   synchronized at all; all other values are not supported and lead to an error.
+	 * @throws {Error} If an unsupported synchronization mode is given, if the given service root
+	 *   URL does not end with a forward slash, if OData system query options or parameter aliases
+	 *   are specified as parameters or if a default group different from '$direct' is given
 	 *
 	 * @alias sap.ui.model.odata.v4.ODataModel
 	 * @author SAP SE
@@ -77,19 +76,20 @@ sap.ui.define([
 	var ODataModel = Model.extend(sClassName,
 			/** @lends sap.ui.model.odata.v4.ODataModel.prototype */
 			{
-				constructor : function (sServiceUrl, mParameters) {
+				constructor : function (mParameters) {
 					var mHeaders = {
 							"Accept-Language" : sap.ui.getCore().getConfiguration().getLanguageTag()
 						},
+						sServiceUrl,
 						oUri;
 
 					// do not pass any parameters to Model
 					Model.apply(this);
 
-					if (typeof sServiceUrl === "object") {
-						mParameters = sServiceUrl;
-						sServiceUrl = mParameters.serviceUrl;
+					if (!mParameters || mParameters.synchronizationMode !== "None") {
+						throw new Error("Synchronization mode must be 'None'");
 					}
+					sServiceUrl = mParameters.serviceUrl;
 					if (!sServiceUrl) {
 						throw new Error("Missing service root URL");
 					}
@@ -99,9 +99,9 @@ sap.ui.define([
 					}
 					this._sQuery = oUri.search(); //return query part with leading "?"
 					this.mUriParameters = _ODataHelper.buildQueryOptions(jQuery.extend({},
-						oUri.query(true), mParameters && mParameters.serviceUrlParams));
+						oUri.query(true), mParameters.serviceUrlParams));
 					this.sServiceUrl = oUri.query("").toString();
-					this.sGroupId = mParameters && mParameters.defaultGroup;
+					this.sGroupId = mParameters.defaultGroup;
 					if (this.sGroupId === undefined) {
 						this.sGroupId = "$auto";
 					}
