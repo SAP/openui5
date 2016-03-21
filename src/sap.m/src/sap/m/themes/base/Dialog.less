@@ -36,6 +36,12 @@
 	}
 }
 
+html[data-sap-ui-browser^="ie9"] .sapMDialog {
+  	&:not(.sapMDialogHighPixelDensity) {
+		filter: none;
+	}
+}
+
 //the rtl will change the transform-translate from (-50% -50%) to (50% -50%)
 [dir="rtl"] .sapMDialog {
 	left: 50%; //this will be changed 'right: 50%' from the rtl mode
@@ -249,9 +255,9 @@
 
 .sapMDialogOpen {
 	opacity: 1;
-	transform: translate3d(-50%, -50%, 0) scale(1);
-	-ms-transform: translate3d(-50%, -50%, 0) scale(1);
-	-webkit-transform: translate3d(-50%, -50%, 0) scale(1);
+	transform: translate(-50%, -50%) scale(1);
+	-ms-transform: translate(-50%, -50%) scale(1);
+	-webkit-transform: translate(-50%, -50%) scale(1);
 }
 
 .sapMDialogBlockLayerAnimation {

@@ -663,21 +663,19 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 * @private
 		 */
 		Dialog.prototype._onResize = function () {
-			var $dialog,
-				$dialogContent,
+			var $dialog = this.$(),
+				$dialogContent = this.$('cont'),
 				iDialogWidth,
 				iDialogHeight,
 				sTranslateX = '',
 				sTranslateY = '';
 
-			//if there is a manually set height or height by manually resizing return;
-			if (this.getContentHeight() || this._oManuallySetSize) {
+			//if height is set by manually resizing return;
+			if (this._oManuallySetSize) {
 				return;
 			}
 
 			if (!this.getContentHeight()) {
-				$dialog = this.$();
-				$dialogContent = this.$('cont');
 
 				//reset the height so the dialog can grow
 				$dialogContent.css({
