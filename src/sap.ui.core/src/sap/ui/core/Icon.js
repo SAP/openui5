@@ -136,9 +136,6 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 	 * @private
 	 */
 	Icon.prototype.onmousedown = function(oEvent) {
-
-		this._bPressFired = false;
-
 		if (this.hasListeners("press") || this.hasListeners("tap")) {
 
 			// mark the event for components that needs to know if the event was handled
@@ -169,14 +166,6 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 	};
 
 	/**
-	 * Handle the touchstart event on the Icon.
-	 *
-	 * @param {jQuery.Event} oEvent The event object.
-	 * @private
-	 */
-	Icon.prototype.ontouchstart = Icon.prototype.onmousedown;
-
-	/**
 	 * Handle the mouseup event on the Icon.
 	 *
 	 * @param {jQuery.Event} oEvent The event object.
@@ -191,22 +180,6 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 			this._restoreColors();
 		}
 	};
-
-	/**
-	 * Handle the touchend event on the Icon.
-	 *
-	 * @param {jQuery.Event} oEvent The event object.
-	 * @private
-	 */
-	Icon.prototype.ontouchend = Icon.prototype.onmouseup;
-
-	/**
-	 * Handle the touchcancel event on the Icon.
-	 *
-	 * @param {jQuery.Event} oEvent The event object.
-	 * @private
-	 */
-	Icon.prototype.ontouchcancel = Icon.prototype.onmouseup;
 
 	/**
 	 * Handle the mouseover event on the Icon.
@@ -247,10 +220,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 		}
 
 		this.firePress({/* no parameters */});
-		this._bPressFired = true;
 	};
-
-	Icon.prototype.ontap = Icon.prototype.onclick;
 
 	/* ----------------------------------------------------------- */
 	/* Keyboard handling                                           */
