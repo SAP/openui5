@@ -9,8 +9,7 @@
 	"description": "{{appDescription}}",
 	"applicationVersion": {
 	  "version": "1.0.0"
-	},
-	"ach": "CA-UI5-DOC"
+	}
   },
   "sap.ui": {
 	"_version": "1.1.0",

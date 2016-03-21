@@ -10,7 +10,6 @@
 	"applicationVersion": {
 	  "version": "1.0.0"
 	},
-	"ach": "CA-UI5-DOC",
 	"dataSources": {
 	  "invoiceRemote": {
 		"uri": "/destinations/northwind/V2/Northwind/Northwind.svc/",
