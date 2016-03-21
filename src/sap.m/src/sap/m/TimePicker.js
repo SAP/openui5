@@ -453,6 +453,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 			var oDate,
 				sOutputValue;
 
+			sValue = this.validateProperty('value', sValue);
 			MaskInput.prototype.setValue.call(this, sValue, true);
 			this._bValid = true;
 
