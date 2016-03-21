@@ -25,52 +25,72 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 		 * @alias sap.m.ComboBox
 		 * @ui5-metamodel This control will also be described in the UI5 (legacy) design time meta model.
 		 */
-		var ComboBox = ComboBoxBase.extend("sap.m.ComboBox", /** @lends sap.m.ComboBox.prototype */ { metadata: {
+		var ComboBox = ComboBoxBase.extend("sap.m.ComboBox", /** @lends sap.m.ComboBox.prototype */ {
+			metadata: {
+				library: "sap.m",
+				properties: {
 
-			library: "sap.m",
-			properties: {
+					/**
+					 * Key of the selected item.
+					 *
+					 * <b>Note:</b> If duplicate keys exist, the first item matching the key is used.
+					 */
+					selectedKey: {
+						type: "string",
+						group: "Data",
+						defaultValue: ""
+					},
 
-				/**
-				 * Key of the selected item.
-				 *
-				 * <b>Note:</b> If duplicate keys exist, the first item matching the key is used.
-				 */
-				selectedKey: { type: "string", group: "Data", defaultValue: "" },
+					/**
+					 * ID of the selected item.
+					 */
+					selectedItemId: {
+						type: "string",
+						group: "Misc",
+						defaultValue: ""
+					},
 
-				/**
-				 * ID of the selected item.
-				 */
-				selectedItemId: { type: "string", group: "Misc", defaultValue: "" },
+					/**
+					 * Indicates whether the text values of the <code>additionalText</code> property of a
+					 * {@link sap.ui.core.ListItem} are shown.
+					 * @since 1.32.3
+					 */
+					showSecondaryValues: {
+						type: "boolean",
+						group: "Misc",
+						defaultValue: false
+					}
+				},
+				associations: {
 
-				/**
-				 * Indicates whether the text values of the <code>additionalText</code> property of a {@link sap.ui.core.ListItem} are shown.
-				 * @since 1.32.3
-				 */
-				showSecondaryValues: { type: "boolean", group: "Misc", defaultValue: false }
-			},
-			associations: {
+					/**
+					 * Sets or retrieves the selected item from the aggregation named items.
+					 */
+					selectedItem: {
+						type: "sap.ui.core.Item",
+						multiple: false
+					}
+				},
+				events: {
 
-				/**
-				 * Sets or retrieves the selected item from the aggregation named items.
-				 */
-				selectedItem: { type: "sap.ui.core.Item", multiple: false }
-			},
-			events: {
+					/**
+					 * This event is fired when the user types something that matches with an item in the list;
+					 * it is also fired when the user presses on a list item, or when navigating via keyboard.
+					 */
+					selectionChange: {
+						parameters: {
 
-				/**
-				 * This event is fired when the user types something that matches with an item in the list; it is also fired when the user presses on a list item, or when navigating via keyboard.
-				 */
-				selectionChange: {
-					parameters: {
-
-						/**
-						 * The selected item.
-						 */
-						selectedItem: { type: "sap.ui.core.Item" }
+							/**
+							 * The selected item.
+							 */
+							selectedItem: {
+								type: "sap.ui.core.Item"
+							}
+						}
 					}
 				}
 			}
-		}});
+		});
 
 		/* =========================================================== */
 		/* Private methods and properties                              */
