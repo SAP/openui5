@@ -1453,17 +1453,10 @@ function(jQuery, library, Control, IconPool) {
 				mode : sap.m.ListMode.SingleSelectLeft,
 				includeItemInSelection : true,
 				selectionChange: function (oEvent) {
-					var oSelectedGroupItem = sap.ui.getCore().byId(that.getSelectedGroupItem()),
-						item = oEvent.getParameter("listItem").data("item");
-
-					if (!!item) {
-						if (!!oSelectedGroupItem) {
-							oSelectedGroupItem.setSelected(!oEvent.getParameter("listItem").getSelected());
-						}
-						item.setProperty('selected', oEvent.getParameter("listItem").getSelected(), true);
-					}
-					that.setAssociation("selectedGroupItem", item, true);
-				}
+					var item = oEvent.getParameter("listItem").data("item");
+					that.setSelectedGroupItem(item);
+				},
+				ariaLabelledBy: this._ariaGroupListInvisibleText
 			});
 
 		this._groupContent = [ this._groupOrderList, this._groupList ];
