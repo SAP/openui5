@@ -4787,5 +4787,45 @@
         "references": []
       }
     ]
+  },
+  "1.28.31": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "fe110a0e8139ff7144703dfba13d8cc5bc71993f",
+        "author": "Diana Mihaylova \u003cdiana.mihaylova@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectNumber: ValueStateSupport used to enrich the tooltip\"",
+        "references": []
+      },
+      {
+        "id": "4a077acfddbbdd576d9696339eb4161b1868fba4",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Fixed nav arrows on combi devices",
+        "references": []
+      },
+      {
+        "id": "3243ac23f655306a820437a4d6bc5b38c9448a13",
+        "author": "Pia Kinkel \u003cpia.kinkel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedListItem: Short text always updated before displaying",
+        "references": []
+      },
+      {
+        "id": "9a4dd68bec511818f8903a9f8ce449350a6b4e2b",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessageToast: autoClose not called on mouseLeave",
+        "references": []
+      },
+      {
+        "id": "231a02266d096774bba0f0c19130fef25e7be274",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.QuickView: Content width is set correctly now",
+        "references": []
+      }
+    ]
   }
 }
