@@ -10,5 +10,17 @@
         "references": []
       }
     ]
+  },
+  "1.36.5": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "4aa146730c7326bbee55fe95d3c8203ec8cd8bfb",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.tnt.SideNavigation: Blinking effect on collapse is not visible anymore",
+        "references": []
+      }
+    ]
   }
 }
