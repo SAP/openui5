@@ -33,6 +33,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				"footer" : {type : "string", group : "Appearance", defaultValue : null},
 				/**
 				 * Updates the size of the tile. If it is not set, then the default size is applied based on the device tile.
+				 * @deprecated Since version 1.38.0. The TileContent control has now a fixed size, depending on the used media (desktop, tablet or phone).
 				 */
 				"size" : {type : "sap.m.Size", group : "Misc", defaultValue : "Auto"},
 				/**
