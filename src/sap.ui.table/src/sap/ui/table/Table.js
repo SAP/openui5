@@ -6326,7 +6326,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		}
 
 		var iRowContentHeight = Math.max(iHeight, iMinHeight);
-		this._iTableRowContentHeight = Math.floor(iRowContentHeight / iDefaultRowHeight) * iDefaultRowHeight;
+		if ((sVisibleRowCountMode == sap.ui.table.VisibleRowCountMode.Fixed && this.getRows().length == 0) || sVisibleRowCountMode != sap.ui.table.VisibleRowCountMode.Fixed) {
+			// when visibleRowCountMode is fixed, the content height is only required to be set if there are no rows. If rows are already created, the height
+			// is implicitly controlled by the total of row heights
+			this._iTableRowContentHeight = Math.floor(iRowContentHeight / iDefaultRowHeight) * iDefaultRowHeight;
+		} else {
+			this._iTableRowContentHeight = undefined;
+		}
 
 		if ((sVisibleRowCountMode == sap.ui.table.VisibleRowCountMode.Fixed || sVisibleRowCountMode == sap.ui.table.VisibleRowCountMode.Interactive) && this.getRows().length > 0) {
 			jQuery(this.getDomRef("tableCtrlCnt")).css("height", "auto");
