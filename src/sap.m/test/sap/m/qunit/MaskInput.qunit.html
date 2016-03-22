@@ -896,8 +896,8 @@
 
 		function setCursorPosition(iPosition, oControl) {
 			var _$oControl = jQuery(oControl.getFocusDomRef());
-			if (sap.ui.Device.browser.chrome) {
-				return setCursorPositionChrome(oControl, iPosition);
+			if (sap.ui.Device.browser.webkit) {
+				return setCursorPositionWebkit(oControl, iPosition);
 			}
 
 			return _$oControl.cursorPos(iPosition);
@@ -911,7 +911,7 @@
 					"The value [" + oControl.getValue() + "] should be empty ");
 		}
 
-		function setCursorPositionChrome(oControl, iPosition) {
+		function setCursorPositionWebkit(oControl, iPosition) {
 			var sValue = oControl.getValue(),
 				$oControl = jQuery(oControl.getFocusDomRef()),
 				iLength = sValue.length,
@@ -929,7 +929,7 @@
 					bModified = true;
 				}
 				if (bModified) {
-					jQuery.sap.log.warning("Chrome bug for selection API. Modifying cursor position");
+					jQuery.sap.log.warning("Webkit bug for selection API. Modifying cursor position");
 				}
 			}
 			return $oControl.cursorPos(iPosition);
@@ -944,8 +944,8 @@
 			var $oControl = jQuery(oControl.getFocusDomRef())[0],
 				oSelection;
 
-			if (sap.ui.Device.browser.chrome) {
-				oSelection = getCursorSelectionChrome(oControl);
+			if (sap.ui.Device.browser.webkit) {
+				oSelection = getCursorSelectionWebkit(oControl);
 			} else {
 				oSelection = {iFrom: $oControl.selectionStart, iTo: $oControl.selectionEnd};
 			}
@@ -963,7 +963,7 @@
 			deepEqual(oSelection, {iFrom: iExpectedStartPosition, iTo: iExpectedEndPosition}, sMessagePrefix +": selection start check");
 		}
 
-		function getCursorSelectionChrome(oControl) {
+		function getCursorSelectionWebkit(oControl) {
 			var sValue = oControl.getValue(),
 				$oControl = jQuery(oControl.getFocusDomRef())[0],
 				iLength = sValue.length,
@@ -985,7 +985,7 @@
 				bModified = true;
 			}
 			if (bModified) {
-				jQuery.sap.log.warning("Chrome bug for selection API. Modifying selectionStart & selectionEnd returned values");
+				jQuery.sap.log.warning("Webkit bug for selection API. Modifying selectionStart & selectionEnd returned values");
 			}
 			return oSelection;
 		}
