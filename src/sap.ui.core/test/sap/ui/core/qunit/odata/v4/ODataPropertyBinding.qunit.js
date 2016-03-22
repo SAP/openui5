@@ -790,7 +790,30 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("setValue (absolute binding) via control or API", function (assert) {
+	QUnit.test("setValue (absolute binding): forbidden", function (assert) {
+		var oModel = new ODataModel("/"),
+			oControl = new TestControl({
+				models : oModel,
+				text : "{path : '/ProductList(\\'HT-1000\\')/Name'"
+					+ ", type : 'sap.ui.model.odata.type.String'}"
+			});
+
+		this.oSandbox.mock(oModel).expects("addedRequestToGroup").never();
+		this.oSandbox.mock(oControl.getBinding("text").oCache).expects("update").never();
+		// Note: if setValue throws, ManagedObject#updateModelProperty does not roll back!
+		this.oLogMock.expects("error").withExactArgs(
+			"Cannot set value on absolute binding", "/ProductList('HT-1000')/Name",
+			"sap.ui.model.odata.v4.ODataPropertyBinding");
+
+		// code under test
+		oControl.setText("foo");
+
+		assert.strictEqual(oControl.getText(), undefined, "control change is rolled back");
+	});
+
+	//*********************************************************************************************
+	//TODO enable this test again and restore the productive code from #1539070/1
+	QUnit.skip("setValue (absolute binding) via control or API", function (assert) {
 		var oControl,
 			oModel = new ODataModel("/"),
 			oPropertyBinding,
@@ -857,7 +880,8 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("setValue (absolute binding): error handling", function (assert) {
+	//TODO enable this test again and restore the productive code from #1539070/1
+	QUnit.skip("setValue (absolute binding): error handling", function (assert) {
 		var sMessage = "This call intentionally failed",
 			oError = new Error(sMessage),
 			oModel = new ODataModel("/", {defaultGroup : "$direct"}),
