@@ -544,7 +544,6 @@
 			module("Last Opened Page", {
         /* The use of sinon clock requires isolated environment, otherwise it will interfere the async tests */
 				beforeEach: function () {
-					this.clock = sinon.useFakeTimers();
 					this.oVSD = new sap.m.ViewSettingsDialog();
 					oVsdConfig.addFilterItems(this.oVSD);
 					this.oVSD.placeAt("qunit-fixture");
@@ -552,7 +551,6 @@
 				},
 
 				afterEach: function () {
-					this.clock.restore();
 					this.oVSD.destroy();
 					this.oVSD = null;
 				}
@@ -569,23 +567,27 @@
 				}
 
 				openAndNavigateToFilterDetailsPage(this.oVSD);
-				this.clock.tick(1000);
+				sap.ui.getCore().applyChanges();
 
 				this.oVSD._filterDetailList.getItems()[0].data("item").setSelected(true);
 				this.oVSD._dialog.getBeginButton().firePress();
-				this.clock.tick(1000);
+				sap.ui.getCore().applyChanges();
 
 				openAndNavigateToFilterDetailsPage(this.oVSD);
-				this.clock.tick(1000);
+				sap.ui.getCore().applyChanges();
 
 				this.oVSD._filterDetailList.getItems()[1].data("item").setSelected(true);
 				this.oVSD._dialog.getEndButton().firePress();
-				this.clock.tick(1000);
+				sap.ui.getCore().applyChanges();
 
 				this.oVSD.open("filter");
-				this.clock.tick(1000);
+				sap.ui.getCore().applyChanges();
 
-				equal(this.oVSD._navContainer.getCurrentPage().getId(), this.oVSD._getPage1().getId(), "NavContainer should be on the first page");
+				var done = assert.async();
+				setTimeout(function () {
+					equal(this.oVSD._navContainer.getCurrentPage().getId(), this.oVSD._getPage1().getId(), "NavContainer should be on the first page");
+					done();
+				}.bind(this), 1000);
 			});
 			module ("Events", {
 				setup : function () {
