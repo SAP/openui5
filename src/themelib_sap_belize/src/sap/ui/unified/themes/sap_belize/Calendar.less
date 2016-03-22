@@ -334,6 +334,15 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalYearPicker .sapUiCalItemSel
 	color: @sapUiContentContrastTextColor;
 }
 
+.sapUiCalItemTextAmPm{
+	line-height: 2.8rem;
+	font-size: 0.625rem;
+}
+
+.sapUiCalItemNow > .sapUiCalItemText > .sapUiCalItemTextAmPm{
+	line-height: 2.5rem;
+}
+
 /* 2 calendar types */
 .sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem  > .sapUiCalItemText{
 	line-height: 2.125rem;
@@ -519,6 +528,14 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalYearPicker .sapUiCalItemSel
 	box-sizing: border-box;
 }
 
+.sapUiSizeCompact .sapUiCalItemTextAmPm{
+	line-height: 1.8rem;
+}
+
+.sapUiSizeCompact .sapUiCalItemNow > .sapUiCalItemText > .sapUiCalItemTextAmPm{
+	line-height: 1.5rem;
+}
+
 /* 2 calendar types */
 .sapUiSizeCompact .sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem  > .sapUiCalItemText{
 	line-height: 1.5rem;
@@ -592,12 +609,20 @@ and (min-height: 380px) {
 		box-sizing: border-box;
 	}
 
+	.sap-phone .sapUiCal[data-sap-ui-popup].sapUiCalSecType > .sapUiCalHead{
+		height: 2.875rem;
+	}
+
 	.sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCalContent{
 		position: absolute;
 		top: 2.875rem;
 		left: 0.5rem;
 		right: 0.5rem;
 		bottom: 1rem;
+	}
+
+	.sap-phone .sapUiCal[data-sap-ui-popup].sapUiCalSecType > .sapUiCalContent{
+		top: 3.875rem;
 	}
 
 	.sap-phone .sapUiCal[data-sap-ui-popup] .sapUiCalWH{
@@ -619,9 +644,9 @@ and (min-height: 380px) {
 		right: 5.5rem;
 	}
 
-	.sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCalItems{
+	.sap-phone .sapUiCal[data-sap-ui-popup] .sapUiCalContent > .sapUiCalMonthView > .sapUiCalItems{
 		position: absolute;
-		top: 3.125rem;
+		top: 0.25rem;
 		left: 0;
 		right: 0;
 		bottom: 0;
@@ -636,9 +661,13 @@ and (min-height: 380px) {
 		min-height: 11.25rem;
 	}
 
-	.sap-phone .sapUiCal[data-sap-ui-popup] .sapUiCalItem{
+	.sap-phone .sapUiCal[data-sap-ui-popup] .sapUiCalItems > div{
 		height: 16.66%;
 		min-height: 1.875rem;
+	}
+
+	.sap-phone .sapUiCal[data-sap-ui-popup] .sapUiCalItem{
+		height: 100%;
 	}
 
 	.sap-phone .sapUiCal[data-sap-ui-popup] .sapUiCalItem,
@@ -663,6 +692,11 @@ and (min-height: 380px) {
 		padding-top: 0.25rem;
 		padding-bottom: 0.5rem;
 		box-sizing: border-box;
+	}
+
+	.sap-phone .sapUiCal[data-sap-ui-popup].sapUiCalSecType  > .sapUiCalCancel{
+		top: 1.5rem;
+		padding-top: 0.5rem;
 	}
 }
 
