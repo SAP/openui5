@@ -102,7 +102,7 @@ sap.ui.define([
 	 * @param {number} iEnd
 	 *   The position of the last element to request ($skip + $top)
 	 * @param {string} sGroupId
-	 *   The batch group ID
+	 *   The group ID
 	 */
 	function requestElements(oCache, iStart, iEnd, sGroupId) {
 		var aElements = oCache.aElements,
@@ -168,8 +168,7 @@ sap.ui.define([
 	 * @param {number} iLength
 	 *   The length of the range
 	 * @param {string} [sGroupId]
-	 *   ID of the batch group to associate the requests with; if <code>undefined</code>
-	 *   the requests are sent immediately
+	 *   ID of the group to associate the requests with
 	 * @param {string} [sPath]
 	 *   Relative path to drill-down into; <code>undefined</code> does not change the returned
 	 *   OData response object, but <code>""</code> already drills down into the element at
@@ -178,7 +177,7 @@ sap.ui.define([
 	 *   The function is called directly after all back end requests have been triggered.
 	 *   If no back end request is needed, the function is not called.
 	 * @returns {Promise}
-	 *   A Promise to be resolved with the requested range given as an OData response object (with
+	 *   A promise to be resolved with the requested range given as an OData response object (with
 	 *   "@odata.context" and the rows as an array in the property <code>value</code>) or a single
 	 *   value (in case of drill-down). If an HTTP request fails, the error from the _Requestor is
 	 *   returned and the requested range is reset to undefined.
@@ -279,7 +278,7 @@ sap.ui.define([
 	 * @param {string} [sPath]
 	 *   Relative path to drill-down into
 	 * @returns {Promise}
-	 *   A Promise for the PATCH request
+	 *   A promise for the PATCH request
 	 */
 	CollectionCache.prototype.update = function (sGroupId, sPropertyName, vValue, sEditUrl, sPath) {
 		var oBody = {},
@@ -311,6 +310,7 @@ sap.ui.define([
 	 *   unwrapping of <code>{value : "..."}</code> happens then
 	 */
 	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bSingleProperty) {
+		this.bPosted = false;
 		this.oRequestor = oRequestor;
 		this.sResourcePath = sResourcePath + Cache.buildQueryString(mQueryOptions);
 		this.bSingleProperty = bSingleProperty;
@@ -318,39 +318,69 @@ sap.ui.define([
 	}
 
 	/**
+	 * Returns a promise resolved with an OData object for a POST request with the given data.
+	 *
+	 * @param {string} [sGroupId]
+	 *   ID of the group to associate the request with;
+	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
+	 * @param {object} [oData]
+	 *   The data to be sent with the POST request
+	 * @returns {Promise}
+	 *   A promise to be resolved with the result of the request.
+	 *   A subsequent post cancels processing a pending promise by throwing an error that has a
+	 *   property <code>canceled</code> which is set to <code>true</code>.
+	 */
+	SingleCache.prototype.post = function (sGroupId, oData) {
+		var oPromise,
+			that = this;
+
+		oPromise = this.oRequestor.request("POST", this.sResourcePath, sGroupId, undefined,
+			oData).then(function (oResult) {
+				var oError;
+
+				if (that.oPromise !== oPromise) {
+					oError = new Error("Refresh canceled processing of pending request: " + that);
+					oError.canceled = true;
+					throw oError;
+				}
+				return oResult;
+			});
+		this.oPromise = oPromise;
+		this.bPosted = true;
+		return oPromise;
+	};
+
+	/**
 	 * Returns a promise resolved with an OData object for the requested data.
 	 *
 	 * @param {string} [sGroupId]
-	 *   ID of the batch group to associate the requests with; if <code>undefined</code>
-	 *   the requests are sent immediately
+	 *   ID of the group to associate the request with;
+	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
 	 * @param {string} [sPath]
 	 *   Relative path to drill-down into
 	 * @param {function()} [fnDataRequested]
 	 *   The function is called directly after the back end request has been triggered.
 	 *   If no back end request is needed, the function is not called.
 	 * @returns {Promise}
-	 *   A Promise to be resolved with the element.
+	 *   A promise to be resolved with the element.
 	 *   A refresh cancels processing a pending promise by throwing an error that has a
 	 *   property <code>canceled</code> which is set to <code>true</code>.
 	 */
 	SingleCache.prototype.read = function (sGroupId, sPath, fnDataRequested) {
 		var that = this,
-			oError,
 			oPromise,
 			sResourcePath = this.sResourcePath;
 
 		if (!this.oPromise) {
 			oPromise = this.oRequestor.request("GET", sResourcePath, sGroupId)
 				.then(function (oResult) {
+					var oError;
+
 					if (that.oPromise !== oPromise) {
 						oError = new Error("Refresh canceled processing of pending request: "
 							+ that);
 						oError.canceled = true;
 						throw oError;
-					}
-					if (that.bSingleProperty) {
-						// 204 No Content: map undefined to null
-						oResult = oResult ? oResult.value : null;
 					}
 					return oResult;
 				});
@@ -359,22 +389,32 @@ sap.ui.define([
 			}
 			this.oPromise = oPromise;
 		}
-		if (sPath) {
-			return this.oPromise.then(function (oResult) {
+		return this.oPromise.then(function (oResult) {
+			if (that.bSingleProperty) {
+				// 204 No Content: map undefined to null
+				oResult = oResult ? oResult.value : null;
+			}
+			if (sPath) {
 				return drillDown(oResult, sPath, function (sSegment) {
 					jQuery.sap.log.warning("Failed to drill-down into " + sResourcePath + "/"
-						+ sPath + ", invalid segment: " + sSegment,
-						null, "sap.ui.model.odata.v4.lib._Cache");
+							+ sPath + ", invalid segment: " + sSegment,
+							null, "sap.ui.model.odata.v4.lib._Cache");
 				});
-			});
-		}
-		return this.oPromise;
+			}
+			return oResult;
+		});
 	};
 
 	/**
 	 * Clears cache and cancels processing of a pending read request.
+	 *
+	 * @throws {Error}
+	 *   If the cache was filled with a {@link #post}
 	 */
 	SingleCache.prototype.refresh = function () {
+		if (this.bPosted) {
+			throw new Error("Refresh not allowed after POST");
+		}
 		this.oPromise = undefined;
 	};
 
@@ -402,7 +442,7 @@ sap.ui.define([
 	 * @param {string} [sPath]
 	 *   Relative path to drill-down into
 	 * @returns {Promise}
-	 *   A Promise for the PATCH request
+	 *   A promise for the PATCH request
 	 */
 	SingleCache.prototype.update = function (sGroupId, sPropertyName, vValue, sEditUrl, sPath) {
 		var oBody = {},

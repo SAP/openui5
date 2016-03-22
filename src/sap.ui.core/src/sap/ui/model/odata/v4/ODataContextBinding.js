@@ -79,11 +79,15 @@ sap.ui.define([
 				}
 				this.oCache = undefined;
 				this.sGroupId = undefined;
-				this.mOperationParameters = undefined;
+				this.oOperation = undefined;
 				this.mQueryOptions = undefined;
 
 				if (bDeferred) {
-					this.mOperationParameters = {};
+					this.oOperation = {
+						bAction : undefined,
+						oMetadataPromise : undefined,
+						mParameters : {}
+					};
 					if (iPos !== sPath.length - 5) {
 						throw new Error("Composable functions are not supported: " + sPath);
 					}
@@ -190,6 +194,9 @@ sap.ui.define([
 	 * control to the empty path, for example <code>&lt;Text text="{}"/&gt;<code>. The OData
 	 * function is only called when a property binding relative to the operation binding exists.
 	 *
+	 * @returns {Promise}
+	 *   A promise that is resolved without data when the operation call succeeded, or rejected
+	 *   with an instance of <code>Error</code> in case of failure.
 	 * @throws {Error} If the binding is not a deferred operation binding (see
 	 *   {@link sap.ui.model.odata.v4.ODataContextBinding}).
 	 *
@@ -200,21 +207,24 @@ sap.ui.define([
 		var oMetaModel = this.oModel.getMetaModel(),
 			that = this;
 
-		if (!this.mOperationParameters) {
+		if (!this.oOperation) {
 			throw new Error("The binding must be deferred: " + this.sPath);
 		}
-		if (!this.oMetadataPromise) {
+		if (!this.oOperation.oMetadataPromise) {
 			// Note: undefined is more efficient than "" here
-			this.oMetadataPromise = oMetaModel.requestObject(undefined,
+			this.oOperation.oMetadataPromise = oMetaModel.requestObject(undefined,
 					oMetaModel.getMetaContext(this.sPath))
 				.then(function (oMetaData) {
 					if (!oMetaData) {
 						throw new Error("Unknown operation");
 					}
-					if (oMetaData.$kind !== "FunctionImport") {
-						throw new Error("Not a FunctionImport");
+					if (oMetaData.$kind === "ActionImport") {
+						return oMetaModel.requestObject("/" + oMetaData.$Action);
 					}
-					return oMetaModel.requestObject("/" + oMetaData.$Function);
+					if (oMetaData.$kind === "FunctionImport") {
+						return oMetaModel.requestObject("/" + oMetaData.$Function);
+					}
+					throw new Error("Not an ActionImport or FunctionImport");
 				}).then(function (aOperationMetaData) {
 					var oOperationMetaData = aOperationMetaData[0];
 
@@ -224,32 +234,55 @@ sap.ui.define([
 					if (oOperationMetaData.$IsBound) {
 						throw new Error("Unsupported: bound operation");
 					}
+					that.oOperation.bAction = oOperationMetaData.$kind === "Action";
+					if (that.oOperation.bAction) {
+						// the action may reuse the cache because the resource path never changes
+						that.oCache = _Cache.createSingle(that.oModel.oRequestor,
+							that.sPath.replace("(...)", "").slice(1),
+							that.mQueryOptions);
+					}
 					return oOperationMetaData;
 				});
 		}
-		this.oMetadataPromise.then(function (oOperationMetaData) {
-			var aOperationParameters = oOperationMetaData.$Parameter,
+		return this.oOperation.oMetadataPromise.then(function (oOperationMetaData) {
+			var sGroupId = that.getGroupId(),
+				aOperationParameters,
+				aParameters,
+				oPromise;
+
+			if (that.oOperation.bAction) {
+				oPromise = that.oCache.post(sGroupId, that.oOperation.mParameters);
+			} else {
+				// the function must always recreate the cache because the parameters influence the
+				// resource path
+				aOperationParameters = oOperationMetaData.$Parameter;
 				aParameters = [];
+				if (aOperationParameters) {
+					aOperationParameters.forEach(function (oParameter) {
+						var sName = oParameter.$Name;
 
-			if (aOperationParameters) {
-				aOperationParameters.forEach(function (oParameter) {
-					var sName = oParameter.$Name;
-
-					if (sName in that.mOperationParameters) {
-						if (oParameter.$IsCollection) {
-							throw new Error("Unsupported: collection parameter");
+						if (sName in that.oOperation.mParameters) {
+							if (oParameter.$IsCollection) {
+								throw new Error("Unsupported: collection parameter");
+							}
+							aParameters.push(sName + "=" + _Helper.formatLiteral(
+									that.oOperation.mParameters[sName], oParameter.$Type));
 						}
-						aParameters.push(sName + "=" + _Helper.formatLiteral(
-							that.mOperationParameters[sName], oParameter.$Type));
-					}
-				});
+					});
+				}
+				that.oCache = _Cache.createSingle(that.oModel.oRequestor,
+					that.sPath.replace("...", aParameters.join(',')).slice(1),
+					that.mQueryOptions);
+				oPromise = that.oCache.read(sGroupId);
 			}
-			that.oCache = _Cache.createSingle(that.oModel.oRequestor,
-				that.sPath.slice(1).replace("...", aParameters.join(',')),
-				that.mQueryOptions);
-			that.refresh(true);
+			that.oModel.addedRequestToGroup(sGroupId);
+			return oPromise;
+		}).then(function (oResult) {
+			that._fireChange({reason : ChangeReason.Change});
+			// do not return anything
 		}).catch(function (oError) {
 			jQuery.sap.log.error(oError.message, that.sPath, sClassName);
+			throw oError;
 		});
 	};
 
@@ -326,9 +359,11 @@ sap.ui.define([
 				+ "sGroupId parameter must not be set");
 		}
 		if (this.oCache) {
-			this.oCache.refresh();
-			this._fireChange({reason : ChangeReason.Refresh});
-		} else if (!this.mOperationParameters) {
+			if (!this.oOperation || !this.oOperation.bAction) {
+				this.oCache.refresh();
+				this._fireChange({reason : ChangeReason.Refresh});
+			}
+		} else if (!this.oOperation) {
 			throw new Error("Refresh on this binding is not supported");
 		}
 	};
@@ -438,10 +473,10 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataContextBinding.prototype.setParameter = function (sParameterName, vValue) {
-		if (!this.mOperationParameters) {
+		if (!this.oOperation) {
 			throw new Error("The binding must be deferred: " + this.sPath);
 		}
-		this.mOperationParameters[sParameterName] = vValue;
+		this.oOperation.mParameters[sParameterName] = vValue;
 		return this;
 	};
 

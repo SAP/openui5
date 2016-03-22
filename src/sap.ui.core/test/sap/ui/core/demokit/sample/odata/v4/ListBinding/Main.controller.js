@@ -46,10 +46,42 @@ sap.ui.define([
 			oView.byId("TeamSelect").getBinding("items").attachEventOnce("change", setTeamContext);
 		},
 
+		onCancelChangeBudget : function (oEvent) {
+			this.getView().byId("changeBudgetDialog").close();
+		},
+
 		onCancelEmployee : function (oEvent) {
 			var oCreateEmployeeDialog = this.getView().byId("createEmployeeDialog");
 
 			oCreateEmployeeDialog.close();
+		},
+
+		onChangeBudget : function (oEvent) {
+			var oView = this.getView(),
+				oForm = oView.byId("ChangeTeamBudgetByID"),
+				oUiModel = oView.getModel("ui");
+
+			oForm.getObjectBinding()
+				.setParameter("TeamID", oUiModel.getProperty("/TeamID"))
+				.setParameter("Budget", oUiModel.getProperty("/Budget"))
+				.execute()
+				.then(function () {
+					oView.byId("TeamDetails").setBindingContext(oForm.getBindingContext());
+					MessageBox.alert("Budget changed", {
+						icon : sap.m.MessageBox.Icon.SUCCESS,
+						title : "Success"});
+				});
+			oView.byId("changeBudgetDialog").close();
+		},
+
+		onChangeBudgetDialog : function (oEvent) {
+			var oView = this.getView(),
+				oUiModel = oView.getModel("ui");
+
+			// TODO There must be a simpler way to copy values from the model to our parameters
+			oUiModel.setProperty("/TeamID", oView.byId("Team_Id").getBinding("text").getValue());
+			oUiModel.setProperty("/Budget", oView.byId("Budget").getBinding("text").getValue());
+			oView.byId("changeBudgetDialog").open();
 		},
 
 		onCreateEmployee : function (oEvent) {
@@ -80,8 +112,13 @@ sap.ui.define([
 			var oOperation = this.getView().byId("GetEmployeeByID").getObjectBinding();
 
 			oOperation.setParameter("EmployeeID",
-				this.getView().getModel("search").getProperty("/EmployeeID"));
-			oOperation.execute();
+					this.getView().getModel("search").getProperty("/EmployeeID"))
+				.execute()
+				.then(function () {}, function (oError) {
+					MessageBox.alert(oError.message, {
+						icon : sap.m.MessageBox.Icon.ERROR,
+						title : "Error"});
+				});
 		},
 
 		onGetEmployeeMaxAge : function (oEvent) {

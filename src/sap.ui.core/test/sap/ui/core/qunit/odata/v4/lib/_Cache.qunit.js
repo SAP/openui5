@@ -614,6 +614,61 @@ sap.ui.require([
 	// TODO fnLog of drillDown in CollectionCache#update
 
 	//*********************************************************************************************
+	QUnit.test("SingleCache: post", function (assert) {
+		var fnDataRequested = sinon.spy(),
+			sGroupId = "group",
+			oPostData = {},
+			oPromise,
+			oRequestor = _Requestor.create("/~/"),
+			sResourcePath = "LeaveRequest('1')/Submit",
+			oCache = _Cache.createSingle(oRequestor, sResourcePath),
+			oResult = {};
+
+		this.oSandbox.mock(oRequestor).expects("request")
+			.withExactArgs("POST", sResourcePath, sGroupId, undefined, oPostData)
+			.returns(Promise.resolve(oResult));
+
+		// code under test
+		oPromise = oCache.post(sGroupId, oPostData).then(function (oPostResult) {
+			assert.strictEqual(oPostResult, oResult);
+			return oCache.read("foo", "", fnDataRequested).then(function (oReadResult) {
+				assert.strictEqual(oReadResult, oResult);
+				assert.strictEqual(fnDataRequested.callCount, 0);
+			});
+		});
+		assert.throws(function () {
+			oCache.refresh();
+		}, /Refresh not allowed after POST/);
+		return oPromise;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("SingleCache: post canceled by a subsequent post", function (assert) {
+		var sGroupId = "group",
+			oPostData = {},
+			oRequestor = _Requestor.create("/~/"),
+			sResourcePath = "LeaveRequest('1')/Submit",
+			oCache = _Cache.createSingle(oRequestor, sResourcePath),
+			oResult = {};
+
+		this.oSandbox.mock(oRequestor).expects("request").twice()
+			.withExactArgs("POST", sResourcePath, sGroupId, undefined, oPostData)
+			.returns(Promise.resolve(oResult));
+
+		// code under test
+		return Promise.all([
+			oCache.post(sGroupId, oPostData).then(function (oPostResult) {
+				assert.ok(false);
+			}, function (oError) {
+				assert.strictEqual(oError.canceled, true, "Canceled error thrown");
+				assert.strictEqual(oError.message,
+					"Refresh canceled processing of pending request: /~/" + sResourcePath);
+			}),
+			oCache.post(sGroupId, oPostData)
+		]);
+	});
+
+	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
 		QUnit.test("read single employee (real OData)", function (assert) {
 			var oExpectedResult = {
@@ -651,8 +706,6 @@ sap.ui.require([
 		oPromise = oCache.read();
 
 		return oPromise.then(function () {
-			assert.strictEqual(oCache.oPromise, oPromise, "Promise is cached");
-
 			oCache.refresh();
 			assert.strictEqual(oCache.oPromise, undefined, "Cached promise is cleared");
 		});
@@ -755,7 +808,6 @@ sap.ui.require([
 
 		oCache = _Cache.createSingle(oRequestor, sResourcePathSingle);
 		assert.strictEqual(oCache.toString(), "/~/" + sResourcePathSingle);
-
 	});
 
 	//*********************************************************************************************
@@ -837,4 +889,3 @@ sap.ui.require([
 	});
 	// TODO fnLog of drillDown in SingleCache#update
 });
-//TODO: dataRequested handling for SingleCache
