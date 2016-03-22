@@ -632,14 +632,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 				if (!that._bInvalid) {
 					// subsequent DOM updates are only required if there is no rendering to be expected
-					that._getAccExtension().updateAccForCurrentCell(false);
-					that._updateSelection();
-					that._updateGroupHeader();
 
 					// for TreeTable and AnalyticalTable
 					if (that._updateTableContent) {
 						that._updateTableContent();
 					}
+
+					that._getAccExtension().updateAccForCurrentCell(false);
+					that._updateSelection();
+					that._updateGroupHeader();
 
 					var oTableSizes = that._collectTableSizes();
 					that._updateRowHeader(oTableSizes.tableRowHeights);

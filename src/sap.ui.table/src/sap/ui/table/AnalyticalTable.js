@@ -347,6 +347,67 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		return aColumns;
 	};
 
+
+	AnalyticalTable.prototype._updateTableRowContent = function(oRow, bChildren, bExpanded, bHidden, bSum, iLevel, sGroupHeaderText) {
+		//TBD: Cleanup and move ARIA realated coding into Extension
+		var sTitle = null,
+			aLabels = [oRow.getId() + "-groupHeader"],
+			$Row = oRow.$(),
+			$FixedRow = oRow.$("fixed"),
+			$RowHdr = this.$().find("div[data-sap-ui-rowindex=" + $Row.attr("data-sap-ui-rowindex") + "]"),
+			aRefs = [$Row, $FixedRow, $RowHdr];
+
+		if (!bChildren) {
+			var iIndex = $RowHdr.attr("data-sap-ui-rowindex");
+			var mAttributes = this._getAccExtension()._getAriaAttributesFor(this, "ROWHEADER", {rowSelected: !oRow._bHidden && this.isIndexSelected(iIndex)});
+			sTitle = mAttributes["title"] || null;
+			aLabels = bSum ? [] : (mAttributes["aria-labelledby"] || []);
+		}
+
+		$RowHdr.attr({
+			"aria-haspopup" : bChildren ? "true" : null,
+			"title" : sTitle
+		});
+
+		for (var i = 0; i < aRefs.length; i++) {
+			aRefs[i].attr({
+				"aria-expanded" : bExpanded && bChildren ? bExpanded + "" : null,
+				"data-sap-ui-level" : iLevel,
+				"aria-level": iLevel + 1
+			});
+
+			aRefs[i].data("sap-ui-level", iLevel);
+
+			aRefs[i].toggleClass("sapUiAnalyticalTableSum", !bChildren && bSum)
+				.toggleClass("sapUiAnalyticalTableDummy", false)
+				.toggleClass("sapUiTableGroupHeader", bChildren)
+				.toggleClass("sapUiTableRowHidden", bChildren && bHidden);
+		}
+
+		jQuery.sap.byId(oRow.getId() + "-groupHeader")
+			.toggleClass("sapUiTableGroupIconOpen", bChildren && bExpanded)
+			.toggleClass("sapUiTableGroupIconClosed", bChildren && !bExpanded)
+			.attr("title", bChildren ? sGroupHeaderText : null)
+			.text(bChildren ? sGroupHeaderText : "");
+
+		if ('ontouchstart' in document) {
+			var iScrollBarOffset = 0;
+			if (this.$().hasClass("sapUiTableVScr")) {
+				iScrollBarOffset += this.$().find('.sapUiTableVSb').width();
+			}
+			var $GroupHeaderMenuButton = $RowHdr.find(".sapUiTableGroupMenuButton");
+
+			if (this._bRtlMode) {
+				$GroupHeaderMenuButton.css("right", (this.$().width() - $GroupHeaderMenuButton.width() + $RowHdr.position().left - iScrollBarOffset) + "px");
+			} else {
+				$GroupHeaderMenuButton.css("left", (this.$().width() - $GroupHeaderMenuButton.width() - $RowHdr.position().left - iScrollBarOffset) + "px");
+			}
+		}
+
+		return aLabels;
+	};
+
+
 	AnalyticalTable.prototype._updateTableContent = function() {
 		var oBinding = this.getBinding("rows"),
 			iFirstRow = this.getFirstVisibleRow(),
@@ -362,7 +423,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			$row.row.removeAttr('aria-level');
 			$row.row.removeAttr('aria-expanded');
 			$row.row.removeClass("sapUiTableGroupHeader sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
-			$row.rowSelector.html("");
 		};
 
 		var aRows = this.getRows();
@@ -380,7 +440,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 				iRowIndex = bIsFixedRow ? (oBinding.getLength() - 1 - (iCount - 1 - iRow)) : iFirstRow + iRow,
 				oRow = aRows[iRow],
 				$row = oRow.$(),
-				$fixedRow = oRow.$("fixed"),
 				$rowHdr = this.$().find("div[data-sap-ui-rowindex=" + $row.attr("data-sap-ui-rowindex") + "]");
 
 			var oContextInfo;
@@ -397,110 +456,30 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 				if (oContextInfo && !oContextInfo.context) {
 					$row.addClass("sapUiAnalyticalTableDummy");
 					$rowHdr.addClass("sapUiAnalyticalTableDummy");
-					$rowHdr.html('<div class="sapUiAnalyticalTableLoading">' + this._oResBundle.getText("TBL_CELL_LOADING") + '</div>');
+					//TBD: $rowHdr.html('<div class="sapUiAnalyticalTableLoading">' + this._oResBundle.getText("TBL_CELL_LOADING") + '</div>');
 				}
 				continue;
 			}
 
-			var aAriaLabelledByParts = [this.getId() + "-rownumberofrows"];
-			var sAriaTextForSum = "";
+			var aAriaLabelledByParts = [],
+				sAriaTextForSum = "";
 
 			if (oBinding.nodeHasChildren && oBinding.nodeHasChildren(oContextInfo)) {
-				// modify the rows
-				$row.addClass("sapUiTableGroupHeader");
-				$fixedRow.addClass("sapUiTableGroupHeader");
+				var sHeaderText = oBinding.getGroupName(oContextInfo.context, oContextInfo.level);
 
-				$rowHdr.attr("aria-haspopup", true);
+				aAriaLabelledByParts = this._updateTableRowContent(oRow, true, oContextInfo.nodeState.expanded,
+					oContextInfo.nodeState.expanded && !this.getSumOnTop(), false, iLevel, sHeaderText);
 
-				var sGroupHeaderText = oBinding.getGroupName(oContextInfo.context, oContextInfo.level);
-
-				var sClass = oContextInfo.nodeState.expanded ? "sapUiTableGroupIconOpen" : "sapUiTableGroupIconClosed";
-
-				if (oContextInfo.nodeState.expanded && !this.getSumOnTop()) {
-					$row.addClass("sapUiTableRowHidden");
-					$fixedRow.addClass("sapUiTableRowHidden");
-					$rowHdr.addClass("sapUiTableRowHidden");
-				}
-
-				var sGroupHeaderMenuButton = "";
-				if ('ontouchstart' in document) {
-					sGroupHeaderMenuButton = "<div class='sapUiTableGroupMenuButton'></div>";
-				}
-				$rowHdr.html("<div id=\"" + oRow.getId() + "-groupHeader\" class=\"sapUiTableGroupIcon " + sClass + "\" tabindex=\"-1\" title=\"" + sGroupHeaderText + "\">" + sGroupHeaderText + "</div>" + sGroupHeaderMenuButton);
-				aAriaLabelledByParts.push(oRow.getId() + "-groupHeader");
-
-				$row.removeClass("sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
-				$fixedRow.removeClass("sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
-				$rowHdr.removeClass("sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
-				$rowHdr.addClass("sapUiTableGroupHeader").removeAttr("title").removeAttr("aria-label");
-
-				$row.attr('aria-expanded', oContextInfo.nodeState.expanded);
-				$fixedRow.attr('aria-expanded', oContextInfo.nodeState.expanded);
-				$rowHdr.attr('aria-expanded', oContextInfo.nodeState.expanded);
-
-				if (oContextInfo.level > 0) {
-					sAriaTextForSum = oBinding.getGroupName(oContextInfo.context, oContextInfo.level);
-				} else {
-					sAriaTextForSum = this._oResBundle.getText("TBL_GRAND_TOTAL_ROW");
-				}
+				sAriaTextForSum = oContextInfo.level > 0 ? sHeaderText : this._oResBundle.getText("TBL_GRAND_TOTAL_ROW");
 			} else {
-				$row.removeAttr('aria-expanded');
-				$rowHdr.removeAttr('aria-expanded');
-				$fixedRow.removeAttr('aria-expanded');
-				$rowHdr.attr("aria-haspopup", false);
+				aAriaLabelledByParts = this._updateTableRowContent(oRow, false, false, false, oContextInfo.nodeState.sum, iLevel, null);
 
-				$rowHdr.removeAttr('aria-describedby');
-
-				$row.removeClass("sapUiTableGroupHeader sapUiTableRowHidden sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
-
-				$fixedRow.removeClass("sapUiTableGroupHeader sapUiTableRowHidden sapUiAnalyticalTableSum");
-
-				$rowHdr.html("");
-				$rowHdr.removeClass("sapUiTableGroupHeader sapUiAnalyticalTableDummy sapUiAnalyticalTableSum");
-
-				// update aria description for row selection
-				if (!oContextInfo.nodeState.sum) {
-					aAriaLabelledByParts.push(this.getId() + "-rows-row" + $rowHdr.attr("data-sap-ui-rowindex") + "-rowselecttext");
-				}
-
-				if (oContextInfo.nodeState.sum && oContextInfo.context && oContextInfo.context.getObject()) {
-					$row.addClass("sapUiAnalyticalTableSum");
-					$fixedRow.addClass("sapUiAnalyticalTableSum");
-					$rowHdr.addClass("sapUiAnalyticalTableSum");
-
-					sAriaTextForSum;
+				if (oContextInfo.nodeState.sum) {
 					if (oContextInfo.level > 0) {
 						sAriaTextForSum = this._oResBundle.getText("TBL_GROUP_TOTAL_ROW") + " " + oBinding.getGroupName(oContextInfo.context, oContextInfo.level);
 					} else {
 						sAriaTextForSum = this._oResBundle.getText("TBL_GRAND_TOTAL_ROW");
 					}
-				}
-			}
-
-			//set the level of the node on the DOM
-			$row.attr("data-sap-ui-level", iLevel);
-			$fixedRow.attr("data-sap-ui-level", iLevel);
-			$rowHdr.attr("data-sap-ui-level", iLevel);
-			$rowHdr.attr('aria-level', iLevel + 1);
-			$row.attr('aria-level', iLevel + 1);
-			$fixedRow.attr('aria-level', iLevel + 1);
-
-			//set the level of the node as a data-* attribute
-			$row.data("sap-ui-level", iLevel);
-			$fixedRow.data("sap-ui-level", iLevel);
-			$rowHdr.data("sap-ui-level", iLevel);
-
-			if ('ontouchstart' in document) {
-				var iScrollBarOffset = 0;
-				if (this.$().hasClass("sapUiTableVScr")) {
-					iScrollBarOffset += this.$().find('.sapUiTableVSb').width();
-				}
-				var $GroupHeaderMenuButton = $rowHdr.find(".sapUiTableGroupMenuButton");
-
-				if (this._bRtlMode) {
-					$GroupHeaderMenuButton.css("right", (this.$().width() - $GroupHeaderMenuButton.width() + $rowHdr.position().left - iScrollBarOffset) + "px");
-				} else {
-					$GroupHeaderMenuButton.css("left", (this.$().width() - $GroupHeaderMenuButton.width() - $rowHdr.position().left - iScrollBarOffset) + "px");
 				}
 			}
 
