@@ -57,8 +57,27 @@
 	right: 0.5rem;
 }
 
-.sap-desktop .sapUiCalHeadB:focus{
-	border: 0.0625rem dotted @sapUiContentFocusColor;
+.sap-desktop .sapUiCalHead > .sapUiCalHeadB:focus{
+	outline: 0.0625rem dotted @sapUiContentFocusColor;
+	outline-offset:   -3px;
+}
+
+html[data-sap-ui-browser^=ie].sap-desktop .sapUiCalHead > .sapUiCalHeadB{
+	position: relative;
+}
+
+html[data-sap-ui-browser^=ie].sap-desktop .sapUiCalHead > .sapUiCalHeadB:focus{
+	outline: none;
+}
+
+html[data-sap-ui-browser^=ie].sap-desktop .sapUiCalHead > .sapUiCalHeadB:focus:after{
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	right: 2px;
+	bottom: 2px;
+	border: 1px dotted @sapUiContentFocusColor;
+	content: "";
 }
 
 .sapUiCalHead > .sapUiCalHeadB,
