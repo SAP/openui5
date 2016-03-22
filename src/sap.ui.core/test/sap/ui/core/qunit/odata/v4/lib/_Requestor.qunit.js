@@ -111,10 +111,10 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{ // predefined headers can be overridden, but are not modified for later
-		defaultHeaders : {"Accept" : "application/json;odata.metadata=full"},
+		defaultHeaders : {"Accept" : "application/json;odata.metadata=full;IEEE754Compatible=true"},
 		requestHeaders : {"OData-MaxVersion" : "5.0", "OData-Version" : "4.1"},
 		result : {
-			"Accept" : "application/json;odata.metadata=full",
+			"Accept" : "application/json;odata.metadata=full;IEEE754Compatible=true",
 			"OData-MaxVersion" : "5.0",
 			"OData-Version" : "4.1"
 		}
@@ -143,7 +143,7 @@ sap.ui.require([
 				oResult = {},
 				// add predefined request headers for OData V4
 				mResultHeaders = jQuery.extend({}, {
-					"Accept" : "application/json;odata.metadata=minimal",
+					"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
 					"Content-Type" : "application/json;charset=UTF-8",
 					"OData-MaxVersion" : "4.0",
 					"OData-Version" : "4.0",
@@ -401,7 +401,7 @@ sap.ui.require([
 				method: "POST",
 				url: "Customers",
 				headers: {
-					"Accept" : "application/json;odata.metadata=minimal",
+					"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
 					"Accept-Language" : "ab-CD",
 					"Content-Type" : "application/json;charset=UTF-8",
 					"Foo" : "baz"
@@ -635,7 +635,7 @@ sap.ui.require([
 					MEMBER_COUNT: 2,
 					MANAGER_ID: "3",
 					BudgetCurrency: "USD",
-					Budget: 555.55
+					Budget: "555.55"
 				});
 			}
 
@@ -661,7 +661,7 @@ sap.ui.require([
 					MEMBER_COUNT: 2,
 					MANAGER_ID: "3",
 					BudgetCurrency: "USD",
-					Budget: 555.55
+					Budget: "555.55"
 				});
 			}, function (oError) {
 				assert.ok(false, oError);
