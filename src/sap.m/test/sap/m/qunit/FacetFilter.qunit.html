@@ -1806,8 +1806,9 @@
 				var oPopover = oFF._getPopover();
 				// click another button after the first popover is opened
 				oPopover.attachEventOnce("afterOpen", function(oEvent) {
-
-					openPopover(oFF, 1);
+					setTimeout(function() {
+						openPopover(oFF, 1);
+					}, 300);
 					oFF._closePopover();
 				});
 
