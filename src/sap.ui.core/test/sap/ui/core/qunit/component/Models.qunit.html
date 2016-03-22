@@ -977,12 +977,6 @@
 
 				this.spyModels();
 
-				// Stub URI parameters as early model instantiation is only enabled with
-				// this parameter flag
-				this.stubGetUriParameters({
-					"preload-component-models": true
-				});
-
 				jQuery.sap.registerModulePath("samples.components", "../../samples/components/");
 
 				//setup fake server
@@ -992,19 +986,38 @@
 					},
 					"sap.ui5": {
 						"models": {
-							"odata": {
+							"odata1": {
 								"type": "sap.ui.model.odata.v2.ODataModel",
-								"uri": "/path/to/odata/service"
+								"uri": "/path/to/odata/service1",
+								"preload": true
 							},
-							"json": {
+							"odata2": {
+								"type": "sap.ui.model.odata.v2.ODataModel",
+								"uri": "/path/to/odata/service2"
+							},
+							"json1": {
 								"type": "sap.ui.model.json.JSONModel",
 								"settings": {
 									"data": {
 										"foo": "bar"
 									}
+								},
+								"preload": true
+							},
+							"json2": {
+								"type": "sap.ui.model.json.JSONModel",
+								"settings": {
+									"data": {
+										"bar": "foo"
+									}
 								}
 							},
-							"i18n": {
+							"i18n1": {
+								"type": "sap.ui.model.resource.ResourceModel",
+								"uri": "./i18n.properties",
+								"preload": true
+							},
+							"i18n2": {
 								"type": "sap.ui.model.resource.ResourceModel",
 								"uri": "./i18n.properties"
 							}
@@ -1031,7 +1044,6 @@
 			},
 			afterEach: function() {
 				this.restoreModels();
-				this.restoreGetUriParameters();
 				this.oServer.restore();
 			}
 		});
@@ -1051,7 +1063,7 @@
 							sinon.assert.callCount(this.modelSpy.odataV2, 1);
 							// model: "odata"
 							sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
-								serviceUrl: "/path/to/odata/service"
+								serviceUrl: "/path/to/odata/service1"
 							});
 
 							// sap.ui.model.json.JSONModel
@@ -1064,7 +1076,7 @@
 							});
 
 							// sap.ui.model.resource.ResourceModel
-							sinon.assert.callCount(this.modelSpy.resource, 0);
+							sinon.assert.callCount(this.modelSpy.resource, 1);
 
 							resolve();
 
@@ -1074,22 +1086,29 @@
 			}).then(function(oComponent) {
 				this.oComponent = oComponent;
 
-				// Still only called once
+				// Should be called twice now (2nd model created)
 				// sap.ui.model.odata.v2.ODataModel
-				sinon.assert.callCount(this.modelSpy.odataV2, 1);
+				sinon.assert.callCount(this.modelSpy.odataV2, 2);
+
+				// Should be called twice now (2nd model created)
+				// sap.ui.model.json.JSONModel
+				sinon.assert.callCount(this.modelSpy.json, 2);
 
 				// Resource Model should be now created
 				// sap.ui.model.resource.ResourceModel
-				sinon.assert.callCount(this.modelSpy.resource, 1);
+				sinon.assert.callCount(this.modelSpy.resource, 2);
 
 				assert.ok(this.oComponent.getMetadata() instanceof sap.ui.core.UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
 				assert.ok(this.oComponent.getManifest(), "Manifest is available");
 				assert.deepEqual(this.oComponent.getManifest(), this.oManifest, "Manifest matches the manifest behind manifestUrl");
 
 				this.assertModelInstances({
-					"odata": sap.ui.model.odata.v2.ODataModel,
-					"json": sap.ui.model.json.JSONModel,
-					"i18n": sap.ui.model.resource.ResourceModel
+					"odata1": sap.ui.model.odata.v2.ODataModel,
+					"odata2": sap.ui.model.odata.v2.ODataModel,
+					"json1": sap.ui.model.json.JSONModel,
+					"json2": sap.ui.model.json.JSONModel,
+					"i18n1": sap.ui.model.resource.ResourceModel,
+					"i18n2": sap.ui.model.resource.ResourceModel
 				});
 
 				// destroy the component
@@ -1116,7 +1135,7 @@
 							sinon.assert.callCount(this.modelSpy.odataV2, 1);
 							// model: "odata"
 							sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
-								serviceUrl: "/path/to/odata/service;o=XXX"
+								serviceUrl: "/path/to/odata/service1;o=XXX"
 							});
 
 							// sap.ui.model.json.JSONModel
@@ -1129,7 +1148,7 @@
 							});
 
 							// sap.ui.model.resource.ResourceModel
-							sinon.assert.callCount(this.modelSpy.resource, 0);
+							sinon.assert.callCount(this.modelSpy.resource, 1);
 
 							resolve();
 
@@ -1146,14 +1165,15 @@
 
 				// Still only called once
 				// sap.ui.model.odata.v2.ODataModel
-				sinon.assert.callCount(this.modelSpy.odataV2, 1);
+				sinon.assert.callCount(this.modelSpy.odataV2, 2);
 
 				assert.ok(this.oComponent.getMetadata() instanceof sap.ui.core.UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
 				assert.ok(this.oComponent.getManifest(), "Manifest is available");
 				assert.deepEqual(this.oComponent.getManifest(), this.oManifest, "Manifest matches the manifest behind manifestUrl");
 
 				this.assertModelInstances({
-					"odata": sap.ui.model.odata.v2.ODataModel
+					"odata1": sap.ui.model.odata.v2.ODataModel,
+					"odata2": sap.ui.model.odata.v2.ODataModel
 				});
 
 				// destroy the component

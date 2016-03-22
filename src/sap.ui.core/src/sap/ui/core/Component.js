@@ -1582,7 +1582,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 					return preload(sComponentName, true);
 				}));
 
-				if (bCreateModels && jQuery.sap.getUriParameters().get("sap-ui-xx-preload-component-models") === "true") {
+				if (bCreateModels) {
 					collect(oManifest.then(function(oManifest) {
 
 						// deep clone is needed as the mainfest only returns a read-only copy (freezed object)
@@ -1601,10 +1601,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 							for (var sModelName in mAllModelConfigurations) {
 								var mModelConfig = mAllModelConfigurations[sModelName];
 
-								// Only created models in case the class is already loaded.
-								// Exclude "ResourceModel" as it might cause sync requests and the properties files might be included in the Component-preload.js
-								// which is not loaded at this point in time.
-								if (mModelConfig.type && mModelConfig.type !== "sap.ui.model.resource.ResourceModel" && jQuery.sap.isDeclared(mModelConfig.type, true)) {
+								// Only create models:
+								//   - which are flagged for preload (mModelConfig.preload)
+								//   - in case the model class is already loaded
+								//   - which content is not part of the Component-preload to avoid those separate requests
+								if (mModelConfig.preload && jQuery.sap.isDeclared(mModelConfig.type, true)) {
 									mModelConfigurations[sModelName] = mModelConfig;
 								}
 
