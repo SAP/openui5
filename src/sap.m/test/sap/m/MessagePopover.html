@@ -89,6 +89,19 @@
 			jQuery.sap.require("sap.m.MessagePopover");
 
 			sap.m.MessagePopover.setDefaultHandlers({
+
+                // to have all links in the longtextdescription validated by default
+                // use this commented out version of asyncURLHandler instead
+
+                /*
+                asyncURLHandler: function(config) {
+                    config.promise.resolve({
+                        allowed: true,
+                        id: config.id
+                    });
+                }
+                */
+
 				asyncURLHandler: function(config) {
 					// put async validation here
 					setTimeout(function() {
