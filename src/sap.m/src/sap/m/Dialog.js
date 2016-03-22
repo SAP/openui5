@@ -1426,7 +1426,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 					//set the new position of the dialog on mouse down when the transform is disabled by the class
 					that._$dialog.css({
 						left: that._oManuallySetPosition.x,
-						top: that._oManuallySetPosition.y
+						top: that._oManuallySetPosition.y,
+						transform: "initial"
 					});
 				}
 
@@ -1443,7 +1444,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 							//move the dialog
 							that._$dialog.css({
 								left: that._oManuallySetPosition.x,
-								top: that._oManuallySetPosition.y
+								top: that._oManuallySetPosition.y,
+								transform: "initial"
 							});
 						});
 					});
@@ -1466,6 +1468,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 							if (that._bRTL) {
 								styles.left = Math.min(Math.max(e.pageX, 0), maxLeftOffset);
+								styles.transform = "initial";
 								that._oManuallySetSize.width = initial.width + initial.x - Math.max(e.pageX, 0);
 							}
 
