@@ -533,6 +533,13 @@ html[dir=rtl][data-sap-ui-browser^=ed].sap-desktop .sapMOHRStatesOneOrThree > .s
 	box-sizing: border-box;
 }
 
+// Android fix
+html[data-sap-ui-os^="Android"] {
+	.sapMOHR .sapMObjectNumberUnit {
+		padding-top: 0.25rem;
+	}
+}
+
 .sap-desktop.sapUiMedia-Std-Tablet .sapMOHR .sapMObjectNumber,
 .sap-tablet .sapMOHR .sapMObjectNumber {
 	width: 35%;
