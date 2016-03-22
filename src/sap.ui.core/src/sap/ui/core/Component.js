@@ -1140,6 +1140,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	};
 
 	/**
+	 * Callback handler which will be executed once the manifest is loaded. The
+	 * manifest object and the asyncHints objects will be passed into the registered
+	 * function but must not be modified. Also a return value is not expected from
+	 * the callback handler. It will only be called for asynchronous manifest first
+	 * scenarios.
+	 * <p>
+	 * Example usage:
+	 * <pre>
+	 * sap.ui.core.Component._fnManifestLoadCallback = function(oManifest, mAsyncHints) {
+	 *   // do some logic with the Manifest and the AsyncHints
+	 * }
+	 * </pre>
+	 * <p>
+	 * <b>ATTENTION:</b> This hook must only be used by UI flexibility (library:
+	 * sap.ui.fl) and will be replaced with a more generic solution!
+	 *
+	 * @sap-restricted sap.ui.fl
+	 * @private
+	 * @since 1.37.0
+	 */
+	Component._fnManifestLoadCallback = null;
+
+	/**
 	 * Creates a new instance of a <code>Component</code> or returns the instance
 	 * of an existing <code>Component</code>.
 	 *
@@ -1576,6 +1599,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 					// the name is the package in which the component is located (dot separated)
 					if (sUrl) {
 						jQuery.sap.registerModulePath(sComponentName, sUrl);
+					}
+
+					// notify the manifest load callback handler
+					if (typeof Component._fnManifestLoadCallback === "function") {
+						Component._fnManifestLoadCallback(oManifest, oConfig.asyncHints);
 					}
 
 					// preload the component
