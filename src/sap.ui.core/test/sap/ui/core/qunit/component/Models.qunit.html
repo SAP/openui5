@@ -166,6 +166,7 @@
 			// model: "default-with-annotations"
 			sinon.assert.calledWithExactly(this.modelSpy.odataV4, {
 				serviceUrl: '/path/to/odata/service/?sap-client=foo&sap-server=bar',
+				synchronizationMode : "None"
 			});
 
 

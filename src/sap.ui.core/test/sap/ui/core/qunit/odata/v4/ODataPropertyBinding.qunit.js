@@ -33,9 +33,16 @@ sap.ui.require([
 	QUnit.module("sap.ui.model.odata.v4.ODataPropertyBinding", {
 		beforeEach : function () {
 			this.oSandbox = sinon.sandbox.create();
+
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
+
+			// create ODataModel
+			this.oModel = new ODataModel({
+				serviceUrl : "/service/?sap-client=111",
+				synchronizationMode : "None"
+			});
 		},
 
 		afterEach : function () {
@@ -75,8 +82,7 @@ sap.ui.require([
 		 *   has been initialized
 		 */
 		createTextBinding : function (assert, iNoOfRequests, oError) {
-			var oModel = new ODataModel("/service/"),
-				oControl = new TestControl({models : oModel}),
+			var oControl = new TestControl({models : this.oModel}),
 				that = this;
 
 			return new Promise(function (fnResolve, fnReject) {
@@ -119,21 +125,21 @@ sap.ui.require([
 			var bAbsolute = sPath[0] === "/",
 				oBinding,
 				oCache = {},
-				oModel = new ODataModel("/service/"),
-				oContext = _Context.create(oModel, null, "/EMPLOYEES(ID='42')");
+				oContext = _Context.create(this.oModel, null, "/EMPLOYEES(ID='42')");
 
 			if (bAbsolute) {
 				this.mock(_Cache).expects("createSingle")
-					.withExactArgs(sinon.match.same(oModel.oRequestor), sPath.slice(1), {}, true)
+					.withExactArgs(sinon.match.same(this.oModel.oRequestor), sPath.slice(1),
+						{"sap-client" : "111"}, true)
 					.returns(oCache);
 			} else {
 				this.mock(_Cache).expects("createSingle").never();
 			}
 
-			oBinding = oModel.bindProperty(sPath, oContext);
+			oBinding = this.oModel.bindProperty(sPath, oContext);
 
 			assert.ok(oBinding instanceof ODataPropertyBinding);
-			assert.strictEqual(oBinding.getModel(), oModel);
+			assert.strictEqual(oBinding.getModel(), this.oModel);
 			assert.strictEqual(oBinding.getContext(), oContext);
 			assert.strictEqual(oBinding.getPath(), sPath);
 			assert.strictEqual(oBinding.hasOwnProperty("oCache"), true, "oCache is initialized");
@@ -148,19 +154,18 @@ sap.ui.require([
 		var oBinding,
 			oError = new Error("Unsupported ..."),
 			oHelperMock,
-			oModel = new ODataModel("/service/?sap-client=111"),
 			mParameters = {"custom" : "foo"},
 			mQueryOptions = {};
 
 		oHelperMock = this.mock(_ODataHelper);
 		oHelperMock.expects("buildQueryOptions")
-			.withExactArgs(oModel.mUriParameters, mParameters)
+			.withExactArgs(this.oModel.mUriParameters, mParameters)
 			.returns(mQueryOptions);
 		this.mock(_Cache).expects("createSingle")
-			.withExactArgs(sinon.match.same(oModel.oRequestor), "EMPLOYEES(ID='1')/Name",
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES(ID='1')/Name",
 				sinon.match.same(mQueryOptions), true);
 
-		oBinding = oModel.bindProperty("/EMPLOYEES(ID='1')/Name", null, mParameters);
+		oBinding = this.oModel.bindProperty("/EMPLOYEES(ID='1')/Name", null, mParameters);
 
 		assert.strictEqual(oBinding.mParameters, undefined,
 			"do not propagate unchecked query options");
@@ -169,22 +174,20 @@ sap.ui.require([
 		oHelperMock.expects("buildQueryOptions").throws(oError);
 
 		assert.throws(function () {
-			oModel.bindProperty("/EMPLOYEES(ID='1')/Name", null, mParameters);
+			this.oModel.bindProperty("/EMPLOYEES(ID='1')/Name", null, mParameters);
 		}, oError);
 
 		//error for relative paths
 		assert.throws(function () {
-			oModel.bindProperty("Name", null, mParameters);
+			this.oModel.bindProperty("Name", null, mParameters);
 		}, new Error("Bindings with a relative path do not support parameters"));
 	});
 
 	//*********************************************************************************************
 	["", "/", "foo/"].forEach(function (sPath) {
 		QUnit.test("bindProperty: invalid path: " + sPath, function (assert) {
-			var oModel = new ODataModel("/service/");
-
 			assert.throws(function () {
-				oModel.bindProperty(sPath);
+				this.oModel.bindProperty(sPath);
 			}, new Error("Invalid path: " + sPath));
 		});
 	});
@@ -266,8 +269,7 @@ sap.ui.require([
 	QUnit.test("ManagedObject.bindProperty w/ relative path, then bindObject", function (assert) {
 		var oCacheMock = this.oSandbox.mock(_Cache),
 			done = assert.async(),
-			oModel = new ODataModel("/service/"),
-			oControl = new TestControl({models : oModel});
+			oControl = new TestControl({models : this.oModel});
 
 		oCacheMock.expects("createSingle").never();
 
@@ -283,7 +285,7 @@ sap.ui.require([
 			done();
 		});
 		oCacheMock.expects("createSingle")
-			.withExactArgs(sinon.match.object, "EntitySet('foo')", {})
+			.withExactArgs(sinon.match.object, "EntitySet('foo')", {"sap-client" : "111"})
 			.returns({
 				read : function (sGroupId, sPath) {
 					assert.strictEqual(sPath, "property");
@@ -300,9 +302,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("setContext on binding with absolute path", function (assert) {
-		var oModel = new ODataModel("/service/"),
-			oContext = _Context.create(oModel, null, "/EntitySet('bar')"),
-			oBinding = oModel.bindProperty("/EntitySet('foo')/property");
+		var oContext = _Context.create(this.oModel, null, "/EntitySet('bar')"),
+			oBinding = this.oModel.bindProperty("/EntitySet('foo')/property");
 
 		this.oSandbox.mock(oContext).expects("requestValue").never(); // due to absolute path
 
@@ -333,23 +334,23 @@ sap.ui.require([
 				iDataReceivedCount = 0,
 				iDataRequestedCount = 0,
 				done = assert.async(),
-				oModel = new ODataModel("/service/"),
-				oControl = new TestControl({models : oModel}),
+				oControl = new TestControl({models : this.oModel}),
 				sResolvedPath,
 				oType = new TypeString();
 
 			oCacheMock.expects("createSingle")
-				.withExactArgs(sinon.match.same(oModel.oRequestor), sContextPath.slice(1), {});
+				.withExactArgs(sinon.match.same(this.oModel.oRequestor), sContextPath.slice(1),
+					{"sap-client" : "111"});
 			oControl.bindObject(sContextPath);
 			oContextBindingMock = this.oSandbox.mock(oControl.getObjectBinding());
 			if (bAbsolute) { // absolute path: use cache on binding
 				sResolvedPath = sPath;
 				oContextBindingMock.expects("requestValue").never();
 				oCacheMock.expects("createSingle")
-					.withExactArgs(sinon.match.same(oModel.oRequestor), sResolvedPath.slice(1), {},
-						true)
+					.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResolvedPath.slice(1),
+						{"sap-client" : "111"}, true)
 					.returns(oCache);
-				this.oSandbox.stub(oModel.oRequestor, "submitBatch", function () {
+				this.oSandbox.stub(this.oModel.oRequestor, "submitBatch", function () {
 					// submitBatch resolves the promise of the read
 					fnResolveRead(oValue);
 				});
@@ -359,7 +360,7 @@ sap.ui.require([
 					.withExactArgs(sPath, /*iIndex*/undefined)
 					.returns(Promise.resolve(oValue));
 			}
-			this.oSandbox.mock(oModel.getMetaModel()).expects("requestUI5Type")
+			this.oSandbox.mock(this.oModel.getMetaModel()).expects("requestUI5Type")
 				.withExactArgs(sResolvedPath)
 				.returns(Promise.resolve(oType));
 			this.oSandbox.mock(oType).expects("formatValue").withExactArgs(oValue, "string");
@@ -416,14 +417,13 @@ sap.ui.require([
 				},
 				oCacheMock = this.oSandbox.mock(_Cache),
 				done = assert.async(),
-				oModel = new ODataModel("/service/"),
-				oControl = new TestControl({models : oModel}),
+				oControl = new TestControl({models : this.oModel}),
 				sPath = "/path",
 				oSpy = this.spy(ODataPropertyBinding.prototype, "checkUpdate"),
 				oTypeError = new Error("Unsupported EDM type...");
 
 			oCacheMock.expects("createSingle").returns(oCache);
-			this.oSandbox.mock(oModel.getMetaModel()).expects("requestUI5Type")
+			this.oSandbox.mock(this.oModel.getMetaModel()).expects("requestUI5Type")
 				.withExactArgs(sPath)
 				.returns(Promise.reject(oTypeError));
 			this.oLogMock.expects("warning").withExactArgs(oTypeError.message, sPath,
@@ -460,8 +460,7 @@ sap.ui.require([
 				}
 			},
 			done = assert.async(),
-			oModel = new ODataModel("/service/"),
-			oControl = new TestControl({models : oModel});
+			oControl = new TestControl({models : this.oModel});
 
 		this.oSandbox.mock(_Cache).expects("createSingle").returns(oCache);
 		this.oLogMock.expects("error").withExactArgs("Failed to read path /path", oError,
@@ -484,7 +483,6 @@ sap.ui.require([
 			oCacheMock = this.getCacheMock(),
 			bChangeReceived = false,
 			done = assert.async(),
-			oModel = new ODataModel("/service/?sap-client=111"),
 			sPath = "/EMPLOYEES(ID='1')/Name";
 
 		// initial read and after refresh
@@ -496,7 +494,7 @@ sap.ui.require([
 			"sap.ui.model.odata.v4.ODataPropertyBinding");
 
 
-		oBinding = oModel.bindProperty(sPath);
+		oBinding = this.oModel.bindProperty(sPath);
 		oBinding.setType(new TypeString());
 
 		oBinding.checkUpdate(false).then(function () {
@@ -514,13 +512,12 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("automaticTypes: type already set by app", function (assert) {
-		var oModel = new ODataModel("/service/"),
-			oControl = new TestControl({models : oModel}),
+		var oControl = new TestControl({models : this.oModel}),
 			sPath = "/EMPLOYEES(ID='42')/Name",
 			done = assert.async();
 
 		this.getCacheMock().expects("read").returns(Promise.resolve("foo"));
-		this.oSandbox.mock(oModel.getMetaModel()).expects("requestUI5Type").never();
+		this.oSandbox.mock(this.oModel.getMetaModel()).expects("requestUI5Type").never();
 
 		//code under test
 		oControl.bindProperty("text", {
@@ -537,14 +534,13 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("automaticTypes: formatter set by app", function (assert) {
-		var oModel = new ODataModel("/service/"),
-			oControl = new TestControl({models : oModel}),
+		var oControl = new TestControl({models : this.oModel}),
 			sPath = "/EMPLOYEES(ID='42')/Name",
 			oType = new TypeString(),
 			done = assert.async();
 
 		this.getCacheMock().expects("read").returns(Promise.resolve("foo"));
-		this.oSandbox.mock(oModel.getMetaModel()).expects("requestUI5Type")
+		this.oSandbox.mock(this.oModel.getMetaModel()).expects("requestUI5Type")
 			.withExactArgs(sPath)
 			.returns(Promise.resolve(oType));
 		this.oSandbox.mock(oType).expects("formatValue")
@@ -572,15 +568,14 @@ sap.ui.require([
 				var oBinding,
 					oError = new Error("failed type"),
 					done = assert.async(),
-					oModel = new ODataModel("/service/"),
 					oCacheMock = this.getCacheMock(),
-					oControl = new TestControl({models : oModel}),
+					oControl = new TestControl({models : this.oModel}),
 					sPath = "/EMPLOYEES(ID='42')/Name";
 
 				oCacheMock.expects("read").returns(Promise.resolve("foo"));
 				oCacheMock.expects("read")
 					.returns(Promise.resolve("update")); // 2nd read gets an update
-				this.oSandbox.mock(oModel.getMetaModel()).expects("requestUI5Type")
+				this.oSandbox.mock(this.oModel.getMetaModel()).expects("requestUI5Type")
 					.withExactArgs(sPath) // always requested only once
 					.returns(Promise.reject(oError)); // UI5 type not found
 				this.oLogMock.expects("warning")
@@ -608,18 +603,17 @@ sap.ui.require([
 	QUnit.test("refresh absolute path", function (assert) {
 		var oCacheMock = this.getCacheMock(),
 			done = assert.async(),
-			oModel = new ODataModel("/service/?sap-client=111"),
 			oBinding,
 			sPath = "/EMPLOYEES(ID='1')/Name";
 
 		// initial read and after refresh
 		oCacheMock.expects("read").returns(Promise.resolve("foo"));
 		oCacheMock.expects("refresh");
-		this.oSandbox.mock(oModel.getMetaModel()).expects("requestUI5Type")
+		this.oSandbox.mock(this.oModel.getMetaModel()).expects("requestUI5Type")
 			.withExactArgs(sPath)
 			.returns(Promise.resolve(new TypeString()));
 
-		oBinding = oModel.bindProperty(sPath);
+		oBinding = this.oModel.bindProperty(sPath);
 
 		// refresh triggers change
 		oBinding.attachChange(function (oEvent) {
@@ -637,7 +631,6 @@ sap.ui.require([
 			iDataReceivedCount = 0,
 			done = assert.async(),
 			oError = new Error(),
-			oModel = new ODataModel("/service/?sap-client=111"),
 			oBinding,
 			sPath = "/EMPLOYEES(ID='1')/Name";
 
@@ -646,11 +639,11 @@ sap.ui.require([
 		oCacheMock.expects("read").callsArg(2).returns(Promise.reject(oError));
 		oCacheMock.expects("read").callsArg(2).returns(Promise.resolve("foo"));
 		oCacheMock.expects("refresh");
-		this.oSandbox.mock(oModel.getMetaModel()).expects("requestUI5Type").twice()
+		this.oSandbox.mock(this.oModel.getMetaModel()).expects("requestUI5Type").twice()
 			.withExactArgs(sPath)
 			.returns(Promise.resolve(new TypeString()));
 
-		oBinding = oModel.bindProperty(sPath);
+		oBinding = this.oModel.bindProperty(sPath);
 
 		// dataReceived is expected twice w/o error, even for the cancelled request
 		oBinding.attachDataReceived(function (oEvent) {
@@ -673,8 +666,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("refresh on relative binding is not supported", function (assert) {
-		var oModel = new ODataModel("/service/?sap-client=111"),
-			oBinding = oModel.bindProperty("Name");
+		var oBinding = this.oModel.bindProperty("Name");
 
 		// no cache for relative bindings
 		this.oSandbox.mock(_Cache).expects("createSingle").never();
@@ -686,8 +678,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("forbidden", function (assert) {
-		var oModel = new ODataModel("/service/"),
-			oPropertyBinding = oModel.bindProperty("Name");
+		var oPropertyBinding = this.oModel.bindProperty("Name");
 
 		assert.throws(function () { //TODO implement
 			oPropertyBinding.isInitial();
@@ -719,7 +710,6 @@ sap.ui.require([
 	QUnit.test("events", function (assert) {
 		var mParams = {},
 			oMock = this.oSandbox.mock(PropertyBinding.prototype),
-			oModel = new ODataModel("/service/"),
 			oPropertyBinding,
 			oReturn = {};
 
@@ -732,7 +722,7 @@ sap.ui.require([
 		oMock.expects("attachEvent").withExactArgs("dataRequested", mParams)
 			.returns(oReturn);
 
-		oPropertyBinding = oModel.bindProperty("Name");
+		oPropertyBinding = this.oModel.bindProperty("Name");
 
 		assert.strictEqual(oPropertyBinding.attachEvent("AggregatedDataStateChange", mParams),
 			oReturn);
@@ -751,35 +741,33 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("$$groupId", function (assert) {
 		var oBinding,
-			oModel = new ODataModel("/service/"),
 			mParameters = {};
 
 		this.oSandbox.mock(_ODataHelper).expects("buildBindingParameters")
 			.withExactArgs(mParameters)
 			.returns({$$groupId : "foo"});
 
-		oBinding = oModel.bindProperty("/absolute", undefined, mParameters);
+		oBinding = this.oModel.bindProperty("/absolute", undefined, mParameters);
 		assert.strictEqual(oBinding.getGroupId(), "foo");
 
 		// buildBindingParameters not called for relative binding
-		oBinding = oModel.bindProperty("relative");
+		oBinding = this.oModel.bindProperty("relative");
 	});
 
 	//*********************************************************************************************
 	[undefined, "$direct"].forEach(function (sGroupId) {
 		QUnit.test("getGroupId, binding group ID " + sGroupId , function (assert) {
-			var oModel = new ODataModel("/service/"),
-				oBinding = oModel.bindProperty("/absolute", undefined, {$$groupId : sGroupId}),
+			var oBinding = this.oModel.bindProperty("/absolute", undefined, {$$groupId : sGroupId}),
 				oReadPromise = Promise.resolve(),
 				oTypePromise = Promise.resolve(new TypeString());
 
-			this.oSandbox.mock(oModel.getMetaModel()).expects("requestUI5Type")
+			this.oSandbox.mock(this.oModel.getMetaModel()).expects("requestUI5Type")
 				.returns(oTypePromise);
 			this.oSandbox.mock(oBinding.oCache).expects("read")
 				.withExactArgs(sGroupId || "$auto", undefined, sinon.match.func)
 				.callsArg(2)
 				.returns(oReadPromise);
-			this.oSandbox.mock(oBinding.oModel).expects("addedRequestToGroup")
+			this.oSandbox.mock(this.oModel).expects("addedRequestToGroup")
 				.withExactArgs(sGroupId || "$auto", sinon.match.func)
 				.callsArg(1);
 
@@ -792,20 +780,20 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("setValue (absolute binding) via control or API", function (assert) {
 		var oControl,
-			oModel = new ODataModel("/"),
 			oPropertyBinding,
 			oPropertyBindingCacheMock;
 
 		this.getCacheMock().expects("read").returns(Promise.resolve("HT-1000's Name"));
 		oControl = new TestControl({
-			models : oModel,
+			models : this.oModel,
 			text : "{parameters : {'$$groupId' : '$direct'}"
 				+ ", path : '/ProductList(\\'HT-1000\\')/Name'"
 				+ ", type : 'sap.ui.model.odata.type.String'}"
 		});
 		oPropertyBinding = oControl.getBinding("text");
 		oPropertyBindingCacheMock = this.oSandbox.mock(oPropertyBinding.oCache);
-		this.oSandbox.mock(oModel).expects("addedRequestToGroup").twice().withExactArgs("$direct");
+		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup").twice()
+			.withExactArgs("$direct");
 		oPropertyBindingCacheMock.expects("update")
 			.withExactArgs("$direct", "Name", "foo", "ProductList('HT-1000')")
 			.returns(Promise.resolve());
@@ -842,8 +830,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("setValue: Not a primitive value", function (assert) {
-		var oModel = new ODataModel("/"),
-			oPropertyBinding = oModel.bindProperty("/absolute");
+		var oPropertyBinding = this.oModel.bindProperty("/absolute");
 
 		// code under test
 		assert.throws(function () {
@@ -860,7 +847,11 @@ sap.ui.require([
 	QUnit.test("setValue (absolute binding): error handling", function (assert) {
 		var sMessage = "This call intentionally failed",
 			oError = new Error(sMessage),
-			oModel = new ODataModel("/", {defaultGroup : "$direct"}),
+			oModel = new ODataModel({
+				defaultGroup : "$direct",
+				serviceUrl : "/service/?sap-client=111",
+				synchronizationMode : "None"
+			}),
 			oPromise = Promise.reject(oError),
 			oPropertyBinding = oModel.bindProperty("/ProductList('0')/Name");
 
@@ -882,7 +873,11 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("setValue (relative binding) via control", function (assert) {
 		var oCacheMock = this.getCacheMock(),
-			oModel = new ODataModel("/", {defaultGroup : "$direct"}),
+			oModel = new ODataModel({
+				defaultGroup : "$direct",
+				serviceUrl : "/service/?sap-client=111",
+				synchronizationMode : "None"
+			}),
 			oControl = new TestControl({
 				models : oModel,
 				objectBindings : "/SalesOrderList('0500000000')"
@@ -910,9 +905,8 @@ sap.ui.require([
 			},
 			sMessage = "This call intentionally failed",
 			oError = new Error(sMessage),
-			oModel = new ODataModel("/"),
 			oPromise = Promise.reject(oError),
-			oPropertyBinding = oModel.bindProperty("Name", oContext);
+			oPropertyBinding = this.oModel.bindProperty("Name", oContext);
 
 		this.oSandbox.mock(oContext).expects("updateValue").withExactArgs("Name", "foo")
 			.returns(oPromise);
@@ -929,9 +923,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("setValue (relative binding w/o context) via control", function (assert) {
-		var oModel = new ODataModel("/"),
-			oControl = new TestControl({
-				models : oModel,
+		var oControl = new TestControl({
+				models : this.oModel,
 				text : "{path : 'Note', type : 'sap.ui.model.odata.type.String'}"
 			});
 
@@ -951,7 +944,10 @@ sap.ui.require([
 		//*****************************************************************************************
 		QUnit.test("PATCH an entity", function (assert) {
 			var done = assert.async(),
-				oModel = new ODataModel(TestUtils.proxy(sServiceUrl)),
+				oModel = new ODataModel({
+					serviceUrl : TestUtils.proxy(sServiceUrl),
+					synchronizationMode : "None"
+				}),
 				oControl = new TestControl({
 					models : oModel,
 					objectBindings : "/BusinessPartnerList('0100000000')",

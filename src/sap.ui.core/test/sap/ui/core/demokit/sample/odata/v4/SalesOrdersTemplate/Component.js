@@ -36,7 +36,10 @@ sap.ui.define([
 
 			if (oModel.sServiceUrl !== sServiceUrl) {
 				//replace model from manifest in case of proxy
-				oModel = new ODataModel(sServiceUrl);
+				oModel = new ODataModel({
+					serviceUrl : sServiceUrl,
+					synchronizationMode : "None"
+				});
 				this.setModel(oModel);
 			}
 			oMetaModel = oModel.getMetaModel();

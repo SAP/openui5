@@ -68,7 +68,10 @@ sap.ui.require([
 			this.oLogMock.expects("warning").never();
 
 			// create ODataModel
-			this.oModel = new ODataModel("/service/?sap-client=111");
+			this.oModel = new ODataModel({
+				serviceUrl : "/service/?sap-client=111",
+				synchronizationMode : "None"
+			});
 			this.oModel.setSizeLimit(3);
 		},
 		afterEach : function () {

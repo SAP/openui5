@@ -29,7 +29,10 @@ sap.ui.require([
 			this.oLogMock.expects("error").never();
 
 			// create ODataModel
-			this.oModel = new ODataModel("/service/?sap-client=111");
+			this.oModel = new ODataModel({
+				serviceUrl : "/service/?sap-client=111",
+				synchronizationMode : "None"
+			});
 		},
 
 		afterEach : function () {
@@ -80,10 +83,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	["/", "foo/"].forEach(function (sPath) {
 		QUnit.test("bindContext: invalid path: " + sPath, function (assert) {
-			var oModel = new ODataModel("/service/");
-
 			assert.throws(function () {
-				oModel.bindContext(sPath);
+				this.oModel.bindContext(sPath);
 			}, new Error("Invalid path: " + sPath));
 		});
 	});
@@ -92,9 +93,8 @@ sap.ui.require([
 	QUnit.test("setContext, relative path", function (assert) {
 		var oContext = {},
 			oBoundContext = {},
-			oModel = this.oModel,
-			oBinding = oModel.bindContext("relative"),
-			oModelMock = this.mock(oModel);
+			oBinding = this.oModel.bindContext("relative"),
+			oModelMock = this.mock(this.oModel);
 
 		oModelMock.expects("resolve").withExactArgs("relative", sinon.match.same(oContext))
 			.returns("/absolute");
@@ -130,12 +130,11 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("setContext on resolved binding", function (assert) {
-		var oModel = new ODataModel("/service/"),
-			oBinding = oModel.bindContext("/EntitySet('foo')/child");
+		var oBinding = this.oModel.bindContext("/EntitySet('foo')/child");
 
 		this.mock(oBinding).expects("_fireChange").never();
 
-		oBinding.setContext(_Context.create(oModel, null, "/EntitySet('bar')"));
+		oBinding.setContext(_Context.create(this.oModel, null, "/EntitySet('bar')"));
 
 		assert.strictEqual(oBinding.getContext().getPath(), "/EntitySet('bar')",
 			"stored nevertheless");
@@ -145,24 +144,23 @@ sap.ui.require([
 	["/EMPLOYEES(ID='1')", "TEAM_2_EMPLOYEES(ID='1')", ""].forEach(function (sPath) {
 		QUnit.test("bindContext, sPath = '" + sPath + "'", function (assert) {
 			var bAbsolute = jQuery.sap.startsWith(sPath, "/"),
-				oModel = new ODataModel("/service/?sap-client=111"),
 				oCache = {},
-				oContext = _Context.create(oModel, null, "/TEAMS('TEAM_01')"),
+				oContext = _Context.create(this.oModel, null, "/TEAMS('TEAM_01')"),
 				oBinding;
 
 			if (bAbsolute) {
 				this.oSandbox.mock(_Cache).expects("createSingle")
-				.withExactArgs(sinon.match.same(oModel.oRequestor), sPath.slice(1), {
+				.withExactArgs(sinon.match.same(this.oModel.oRequestor), sPath.slice(1), {
 					"sap-client" : "111"
 				}).returns(oCache);
 			} else {
 				this.oSandbox.mock(_Cache).expects("createSingle").never();
 			}
 
-			oBinding = oModel.bindContext(sPath, oContext);
+			oBinding = this.oModel.bindContext(sPath, oContext);
 
 			assert.ok(oBinding instanceof ODataContextBinding);
-			assert.strictEqual(oBinding.getModel(), oModel);
+			assert.strictEqual(oBinding.getModel(), this.oModel);
 			assert.strictEqual(oBinding.getContext(), oContext);
 			assert.strictEqual(oBinding.getPath(), sPath);
 			assert.strictEqual(oBinding.hasOwnProperty("oCache"), true, "oCache is initialized");
@@ -180,19 +178,18 @@ sap.ui.require([
 		var oBinding,
 			oError = new Error("Unsupported ..."),
 			oHelperMock,
-			oModel = new ODataModel("/service/?sap-client=111"),
 			mParameters = {"$expand" : "foo", "$select" : "bar", "custom" : "baz"},
 			mQueryOptions = {};
 
 		oHelperMock = this.mock(_ODataHelper);
 		oHelperMock.expects("buildQueryOptions")
-			.withExactArgs(oModel.mUriParameters, mParameters, ["$expand", "$select"])
+			.withExactArgs(this.oModel.mUriParameters, mParameters, ["$expand", "$select"])
 			.returns(mQueryOptions);
 		this.mock(_Cache).expects("createSingle")
-			.withExactArgs(sinon.match.same(oModel.oRequestor), "EMPLOYEES(ID='1')",
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES(ID='1')",
 				sinon.match.same(mQueryOptions));
 
-		oBinding = oModel.bindContext("/EMPLOYEES(ID='1')", null, mParameters);
+		oBinding = this.oModel.bindContext("/EMPLOYEES(ID='1')", null, mParameters);
 
 		assert.strictEqual(oBinding.mParameters, undefined,
 			"do not propagate unchecked query options");
@@ -201,12 +198,12 @@ sap.ui.require([
 		oHelperMock.expects("buildQueryOptions").throws(oError);
 
 		assert.throws(function () {
-			oModel.bindContext("/EMPLOYEES(ID='1')", null, mParameters);
+			this.oModel.bindContext("/EMPLOYEES(ID='1')", null, mParameters);
 		}, oError);
 
 		//error for relative paths
 		assert.throws(function () {
-			oModel.bindContext("EMPLOYEE_2_TEAM(Team_Id='4711')", null, mParameters);
+			this.oModel.bindContext("EMPLOYEE_2_TEAM(Team_Id='4711')", null, mParameters);
 		}, new Error("Bindings with a relative path do not support parameters"));
 	});
 
@@ -215,13 +212,12 @@ sap.ui.require([
 		var oCache = {
 				refresh : function () {}
 			},
-			oModel = new ODataModel("/service/?sap-client=111"),
-			oContext = _Context.create(oModel, null, "/TEAMS('TEAM_01')"),
+			oContext = _Context.create(this.oModel, null, "/TEAMS('TEAM_01')"),
 			oBinding;
 
 		this.oSandbox.mock(_Cache).expects("createSingle").returns(oCache);
 
-		oBinding = oModel.bindContext("/EMPLOYEES(ID='1')", oContext);
+		oBinding = this.oModel.bindContext("/EMPLOYEES(ID='1')", oContext);
 		this.oSandbox.mock(oCache).expects("refresh");
 		this.oSandbox.mock(oBinding).expects("_fireChange")
 			.withExactArgs({reason : ChangeReason.Refresh});
@@ -231,13 +227,12 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("refresh on relative binding is not supported", function (assert) {
-		var oModel = new ODataModel("/service/?sap-client=111"),
-			oContext = _Context.create(oModel, null, "/TEAMS('TEAM_01')"),
+		var oContext = _Context.create(this.oModel, null, "/TEAMS('TEAM_01')"),
 			oBinding;
 
 		this.oSandbox.mock(_Cache).expects("createSingle").never();
 
-		oBinding = oModel.bindContext("TEAM_2_EMPLOYEES(ID='1')", oContext);
+		oBinding = this.oModel.bindContext("TEAM_2_EMPLOYEES(ID='1')", oContext);
 		this.oSandbox.mock(oBinding).expects("_fireChange").never();
 
 		assert.throws(function () {
@@ -249,13 +244,12 @@ sap.ui.require([
 	QUnit.test("refresh cancels pending read", function (assert) {
 		var oBinding,
 			oBindingMock,
-			oModel = new ODataModel("/service/?sap-client=111"),
-			oContext = _Context.create(oModel, null, "/TEAMS('TEAM_01')"),
+			oContext = _Context.create(this.oModel, null, "/TEAMS('TEAM_01')"),
 			oPromise;
 
-		this.oSandbox.mock(oModel.oRequestor).expects("request")
+		this.oSandbox.mock(this.oModel.oRequestor).expects("request")
 			.returns(Promise.resolve({"ID" : "1"}));
-		oBinding = oModel.bindContext("/EMPLOYEES(ID='1')", oContext);
+		oBinding = this.oModel.bindContext("/EMPLOYEES(ID='1')", oContext);
 
 		oBindingMock = this.oSandbox.mock(oBinding);
 		oBindingMock.expects("_fireChange");
@@ -402,8 +396,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("forbidden", function (assert) {
-		var oModel = new ODataModel("/service/"),
-			oContextBinding = oModel.bindContext("SO_2_BP");
+		var oContextBinding = this.oModel.bindContext("SO_2_BP");
 
 		assert.throws(function () { //TODO implement
 			oContextBinding.isInitial();
@@ -436,10 +429,9 @@ sap.ui.require([
 		var oContextBinding,
 			oContextBindingMock = this.oSandbox.mock(ContextBinding.prototype),
 			mEventParameters = {},
-			oModel = new ODataModel("/service/"),
 			oReturn = {};
 
-		oContextBinding = oModel.bindContext("SO_2_BP");
+		oContextBinding = this.oModel.bindContext("SO_2_BP");
 
 		["change", "dataRequested", "dataReceived"].forEach(function (sEvent) {
 			oContextBindingMock.expects("attachEvent")

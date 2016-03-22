@@ -28,7 +28,8 @@ sap.ui.define([
 					: TestUtils.proxy,
 				bRealOData = TestUtils.isRealOData(),
 				oModel = new ODataModel({
-					serviceUrl : fnProxy("/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/")
+					serviceUrl : fnProxy("/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/"),
+					synchronizationMode : "None"
 				});
 
 			if (!bHasOwnProxy) {

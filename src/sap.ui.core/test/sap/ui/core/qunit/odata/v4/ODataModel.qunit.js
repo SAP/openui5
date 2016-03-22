@@ -32,6 +32,7 @@ sap.ui.require([
 			"TEAMS('TEAM_01')/Name" : {source : "Name.json"},
 			"TEAMS('UNKNOWN')" : {code : 404, source : "TEAMS('UNKNOWN').json"}
 		},
+		sServiceUrl = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
 		TestControl = sap.ui.core.Element.extend("test.sap.ui.model.odata.v4.ODataModel", {
 			metadata : {
 				properties : {
@@ -44,10 +45,15 @@ sap.ui.require([
 	 * Creates a V4 OData service for <code>TEA_BUSI</code>.
 	 *
 	 * @param {string} [sQuery] URI query parameters starting with '?'
+	 * @param {object} [mParameters] additional model parameters
 	 * @returns {sap.ui.model.odata.v4.oDataModel} the model
 	 */
-	function createModel(sQuery) {
-		return new ODataModel(getServiceUrl() + (sQuery || ""));
+	function createModel(sQuery, mParameters) {
+		mParameters = jQuery.extend({}, mParameters, {
+			serviceUrl : getServiceUrl() + (sQuery || ""),
+			synchronizationMode : "None"
+		});
+		return new ODataModel(mParameters);
 	}
 
 	/**
@@ -60,18 +66,14 @@ sap.ui.require([
 	 *   a URL within the service
 	 */
 	function getServiceUrl(sPath) {
-		var sAbsolutePath = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/"
-				+ (sPath && sPath.slice(1) || "");
-
-		return TestUtils.proxy(sAbsolutePath);
+		return TestUtils.proxy(sServiceUrl + (sPath && sPath.slice(1) || ""));
 	}
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataModel", {
 		beforeEach : function () {
 			this.oSandbox = sinon.sandbox.create();
-			TestUtils.setupODataV4Server(this.oSandbox, mFixture, undefined,
-				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/");
+			TestUtils.setupODataV4Server(this.oSandbox, mFixture, undefined, sServiceUrl);
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
@@ -87,43 +89,37 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("basics", function (assert) {
-		var mHeaders = {
-				"Accept-Language" : "ab-CD"
-			},
-			oHelperMock = this.mock(_ODataHelper),
-			oMetadataRequestor = {},
-			oMetadataRequestorMock = this.mock(_MetadataRequestor),
+		assert.throws(function () {
+			return new ODataModel();
+		}, new Error("Synchronization mode must be 'None'"));
+		assert.throws(function () {
+			return new ODataModel({synchronizationMode : "None"});
+		}, new Error("Missing service root URL"));
+		assert.throws(function () {
+			return new ODataModel({serviceUrl : "/foo", synchronizationMode : "None"});
+		}, new Error("Service root URL must end with '/'"));
+
+		assert.strictEqual(createModel().sServiceUrl, getServiceUrl());
+	});
+
+	//*********************************************************************************************
+	QUnit.test("with serviceUrlParams", function (assert) {
+		var oMetadataRequestor = {},
 			oMetaModel,
 			oModel,
 			mModelOptions = {};
 
-		assert.throws(function () {
-			return new ODataModel();
-		}, new Error("Missing service root URL"));
-		assert.throws(function () {
-			return new ODataModel("/foo");
-		}, new Error("Service root URL must end with '/'"));
-
-		assert.strictEqual(new ODataModel("/foo/").sServiceUrl, "/foo/");
-		assert.strictEqual(new ODataModel({"serviceUrl" : "/foo/"}).sServiceUrl, "/foo/",
-			"serviceUrl in mParameters");
-		assert.strictEqual(new ODataModel("/foo/", {"serviceUrl" : "/bar/"}).sServiceUrl, "/foo/",
-			"explicit service URL parameter wins over serviceUrl in mParameters");
-
-		oHelperMock.expects("buildQueryOptions").returns(mModelOptions);
-		oMetadataRequestorMock.expects("create").withExactArgs(mHeaders, mModelOptions)
-			.returns(oMetadataRequestor);
-		//code under test
-		oModel = new ODataModel("/foo/");
-		assert.strictEqual(oModel.mUriParameters, mModelOptions);
-
-		oHelperMock.expects("buildQueryOptions").withExactArgs({"sap-client" : "111"})
+		this.mock(_ODataHelper).expects("buildQueryOptions")
+			.withExactArgs({"sap-client" : "111"})
 			.returns(mModelOptions);
-		oMetadataRequestorMock.expects("create").withExactArgs(mHeaders, mModelOptions)
+		this.mock(_MetadataRequestor).expects("create")
+			.withExactArgs({"Accept-Language" : "ab-CD"}, sinon.match.same(mModelOptions))
 			.returns(oMetadataRequestor);
-		//code under test
-		oModel = new ODataModel("/foo/?sap-client=111");
-		assert.strictEqual(oModel.sServiceUrl, "/foo/");
+
+		// code under test
+		oModel = createModel("?sap-client=111");
+
+		assert.strictEqual(oModel.sServiceUrl, getServiceUrl());
 		assert.strictEqual(oModel.mUriParameters, mModelOptions);
 		assert.strictEqual(oModel.getDefaultBindingMode(), BindingMode.TwoWay);
 		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.OneTime), true);
@@ -132,32 +128,52 @@ sap.ui.require([
 		oMetaModel = oModel.getMetaModel();
 		assert.ok(oMetaModel instanceof ODataMetaModel);
 		assert.strictEqual(oMetaModel.oRequestor, oMetadataRequestor);
-		assert.strictEqual(oMetaModel.sUrl, "/foo/$metadata");
+		assert.strictEqual(oMetaModel.sUrl, getServiceUrl() + "$metadata");
+	});
 
-		oHelperMock.expects("buildQueryOptions").withExactArgs({"sap-client" : "111"})
+	//*********************************************************************************************
+	QUnit.test("w/o serviceUrlParams", function (assert) {
+		this.mock(_ODataHelper).expects("buildQueryOptions").withExactArgs({});
+
+		// code under test
+		createModel();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("serviceUrlParams overwrite URL parameters from sServiceUrl", function (assert) {
+		var oMetadataRequestor = {},
+			mModelOptions = {};
+
+		this.mock(_ODataHelper).expects("buildQueryOptions")
+			.withExactArgs({"sap-client" : "111"})
 			.returns(mModelOptions);
-		oMetadataRequestorMock.expects("create").withExactArgs(mHeaders, mModelOptions)
+		this.mock(_MetadataRequestor).expects("create")
+			.withExactArgs({"Accept-Language" : "ab-CD"}, sinon.match.same(mModelOptions))
 			.returns(oMetadataRequestor);
-		//code under test, serviceUrlParams overwrite URL parameters from this.sServiceUrl
-		oModel = new ODataModel("/foo/?sap-client=222",
-			{serviceUrlParams : {"sap-client" : "111"}});
+
+		// code under test
+		new ODataModel({
+			serviceUrl : "/?sap-client=222",
+			serviceUrlParams : {"sap-client" : "111"},
+			synchronizationMode : "None"
+		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("Model construction with default group", function (assert) {
 		var oModel;
 
-		oModel = new ODataModel("/");
+		oModel = createModel();
 		assert.strictEqual(oModel.getGroupId(), "$auto");
 
-		oModel = new ODataModel("/foo/", {defaultGroup : "$direct"});
+		oModel = createModel("", {defaultGroup : "$direct"});
 		assert.strictEqual(oModel.getGroupId(), "$direct");
 
-		oModel = new ODataModel("/foo/", {defaultGroup : "$auto"});
+		oModel = createModel("", {defaultGroup : "$auto"});
 		assert.strictEqual(oModel.getGroupId(), "$auto");
 
 		assert.throws(function () {
-			oModel = new ODataModel("/foo/", {defaultGroup : "foo"});
+			oModel = createModel("", {defaultGroup : "foo"});
 		}, new Error("Default group must be '$auto' or '$direct'"));
 	});
 
@@ -166,13 +182,11 @@ sap.ui.require([
 		var oModel,
 			oRequestor = {};
 
-		this.mock(_Requestor).expects("create").withExactArgs("/foo/", {
-			"Accept-Language" : "ab-CD"
-		}, {
-			"sap-client" : "123"
-		}).returns(oRequestor);
+		this.mock(_Requestor).expects("create")
+			.withExactArgs(getServiceUrl(), {"Accept-Language" : "ab-CD"}, {"sap-client" : "123"})
+			.returns(oRequestor);
 
-		oModel = new ODataModel("/foo/?sap-client=123");
+		oModel = createModel("?sap-client=123");
 
 		assert.ok(oModel instanceof Model);
 		assert.strictEqual(oModel.oRequestor, oRequestor);

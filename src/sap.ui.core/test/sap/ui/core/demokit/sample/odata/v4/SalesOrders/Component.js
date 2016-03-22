@@ -26,7 +26,6 @@ sap.ui.define([
 		createContent : function () {
 			var bHasOwnProxy = this.proxy !== sap.ui.core.sample.common.Component.prototype.proxy,
 				oModel = this.getModel(),
-				mModelParameters,
 				fnProxy = bHasOwnProxy
 					? this.proxy
 					: TestUtils.proxy,
@@ -38,10 +37,13 @@ sap.ui.define([
 				//replace model from manifest in case of proxy
 				sQuery = URI.buildQuery(oModel.mUriParameters);
 				sQuery = sQuery ? "?" + sQuery : "";
-				if (jQuery.sap.getUriParameters().get("$direct")) { // switch off batch
-					mModelParameters = {defaultGroup : "$direct"};
-				}
-				oModel = new ODataModel(sServiceUrl + sQuery, mModelParameters);
+				oModel = new ODataModel({
+					defaultGroup : jQuery.sap.getUriParameters().get("$direct")
+						? "$direct" // switch off batch
+						: undefined,
+					serviceUrl : sServiceUrl + sQuery,
+					synchronizationMode : "None"
+				});
 				this.setModel(oModel);
 			}
 
