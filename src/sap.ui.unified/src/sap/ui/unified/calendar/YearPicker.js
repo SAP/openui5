@@ -473,7 +473,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			oFirstDate.setUTCFullYear(oFirstDate.getUTCFullYear() - this.getYears());
 		}
 
-		_updateYears.call(this, oFirstDate, iSelectedIndex);
+		if (!(oFirstDate.getTime() <= this._oMinDate.getTime() || oFirstDate.getTime() >= this._oMaxDate.getTime())) {
+			_updateYears.call(this, oFirstDate, iSelectedIndex);
+		}
 
 	}
 
