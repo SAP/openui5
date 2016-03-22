@@ -366,15 +366,13 @@ sap.ui.define([
 	 * @param {any} vValue
 	 *   The new value which must be primitive
 	 * @throws {Error}
-	 *   When the new value is not primitive
+	 *   When the new value is not primitive or the binding is not relative
 	 *
 	 * @public
 	 * @see sap.ui.model.PropertyBinding#setValue
 	 * @since 1.37.0
 	 */
 	ODataPropertyBinding.prototype.setValue = function (vValue) {
-		var sGroupId, iLastSlash;
-
 		if (typeof vValue === "function" || typeof vValue === "object") {
 			throw new Error("Not a primitive value");
 		}
@@ -392,14 +390,9 @@ sap.ui.define([
 					return; // do not update this.vValue!
 				}
 			} else {
-				sGroupId = this.getGroupId();
-				iLastSlash = this.sPath.lastIndexOf("/");
-				this.oCache.update(sGroupId, /*sPropertyName*/this.sPath.slice(iLastSlash + 1),
-						vValue, /*sEditUrl*/this.sPath.slice(1, iLastSlash))
-					.catch(function (oError) {
-						jQuery.sap.log.error(oError.message, oError.stack, sClassName);
-					});
-				this.oModel.addedRequestToGroup(sGroupId);
+				jQuery.sap.log.error("Cannot set value on absolute binding", this.sPath,
+					sClassName);
+				return; // do not update this.vValue!
 			}
 
 			this.vValue = vValue;
