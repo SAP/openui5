@@ -348,7 +348,7 @@ sap.ui.define([
 						"operation": oCondition.operation,
 						"keyField": oCondition.keyField,
 						"value1": oCondition.value1,
-						"value2": oCondition.value2,
+						"value2": oCondition.operation === sap.m.P13nConditionOperation.BT ? oCondition.value2 : null,
 						"showIfGrouped": oCondition.showIfGrouped
 					});
 
@@ -1622,13 +1622,9 @@ sap.ui.define([
 										"operation": oOperation.getSelectedKey(),
 										"keyField": oKeyField.key,
 										"value1": aSeparatedText[i],
-										"value2": null //oOperation.getSelectedKey() === "BT" ? aSeparatedText[i + 1] : null
+										"value2": null
 									};
 									that._addCondition2Map(oCondition);
-
-//									if (oOperation.getSelectedKey() === "BT") {
-//										i++;
-//									}
 
 									that.fireDataChange({
 										key: oCondition.key,
@@ -2221,7 +2217,7 @@ sap.ui.define([
 			"operation": sOperation,
 			"keyField": sKeyField,
 			"value1": oValue1,
-			"value2": oValue2,
+			"value2": sOperation === sap.m.P13nConditionOperation.BT ? oValue2 : null,
 			"showIfGrouped": bShowIfGrouped
 		};
 		sKey = this._getKeyFromConditionGrid(oConditionGrid);
