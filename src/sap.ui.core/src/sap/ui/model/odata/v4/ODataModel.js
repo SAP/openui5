@@ -253,11 +253,11 @@ sap.ui.define([
 	ODataModel.prototype.bindList = function (sPath, oContext, aSorters, aFilters, mParameters) {
 		if (aFilters) {
 			throw new Error("Unsupported operation: v4.ODataModel#bindList, "
-					+ "aSorters parameter must not be set");
+					+ "aFilters parameter must not be set");
 		}
 		if (aSorters) {
 			throw new Error("Unsupported operation: v4.ODataModel#bindList, "
-				+ "aFilters parameter must not be set");
+				+ "aSorters parameter must not be set");
 		}
 		return new ODataListBinding(this, sPath, oContext, mParameters);
 	};
