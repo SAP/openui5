@@ -181,7 +181,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			}
 
 			if (this._bProcessChange) {
-				setTimeout(this._checkSelectionChange.bind(this), 0);
+				this._checkSelectionChange();
 				this._bProcessChange = false;
 			} else {
 				this._bProcessChange = true;
@@ -535,7 +535,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				ontouchstart: function(oEvent) {
 					var oPickerDomRef = this.getDomRef("cont");
 
-					if (oEvent.target === oPickerDomRef) {
+					if ((oEvent.target === oPickerDomRef) || (oEvent.srcControl instanceof sap.ui.core.Item)) {
 						that._bProcessChange = false;
 					}
 				}
@@ -1278,6 +1278,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				}
 			}, this)
 			.attachSelectionChange(this.onSelectionChange, this);
+
+			if (!sap.ui.Device.system.phone) {
+				this._oList.enableKeyboardNavigation = false;
+			}
 
 			return this._oList;
 		};
