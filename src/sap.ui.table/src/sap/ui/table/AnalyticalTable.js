@@ -351,7 +351,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	AnalyticalTable.prototype._updateTableRowContent = function(oRow, bChildren, bExpanded, bHidden, bSum, iLevel, sGroupHeaderText) {
 		//TBD: Cleanup and move ARIA realated coding into Extension
 		var sTitle = null,
-			aLabels = [oRow.getId() + "-groupHeader"],
 			$Row = oRow.$(),
 			$FixedRow = oRow.$("fixed"),
 			$RowHdr = this.$().find("div[data-sap-ui-rowindex=" + $Row.attr("data-sap-ui-rowindex") + "]"),
@@ -361,7 +360,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			var iIndex = $RowHdr.attr("data-sap-ui-rowindex");
 			var mAttributes = this._getAccExtension()._getAriaAttributesFor(this, "ROWHEADER", {rowSelected: !oRow._bHidden && this.isIndexSelected(iIndex)});
 			sTitle = mAttributes["title"] || null;
-			aLabels = bSum ? [] : (mAttributes["aria-labelledby"] || []);
 		}
 
 		$RowHdr.attr({
@@ -387,8 +385,8 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		jQuery.sap.byId(oRow.getId() + "-groupHeader")
 			.toggleClass("sapUiTableGroupIconOpen", bChildren && bExpanded)
 			.toggleClass("sapUiTableGroupIconClosed", bChildren && !bExpanded)
-			.attr("title", bChildren ? sGroupHeaderText : null)
-			.text(bChildren ? sGroupHeaderText : "");
+			.attr("title", sGroupHeaderText || null)
+			.text(sGroupHeaderText || "");
 
 		if ('ontouchstart' in document) {
 			var iScrollBarOffset = 0;
@@ -403,8 +401,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 				$GroupHeaderMenuButton.css("left", (this.$().width() - $GroupHeaderMenuButton.width() - $RowHdr.position().left - iScrollBarOffset) + "px");
 			}
 		}
-
-		return aLabels;
 	};
 
 
@@ -461,26 +457,13 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 				continue;
 			}
 
-			var aAriaLabelledByParts = [],
-				sAriaTextForSum = "";
-
 			if (oBinding.nodeHasChildren && oBinding.nodeHasChildren(oContextInfo)) {
-				var sHeaderText = oBinding.getGroupName(oContextInfo.context, oContextInfo.level);
-
-				aAriaLabelledByParts = this._updateTableRowContent(oRow, true, oContextInfo.nodeState.expanded,
-					oContextInfo.nodeState.expanded && !this.getSumOnTop(), false, iLevel, sHeaderText);
-
-				sAriaTextForSum = oContextInfo.level > 0 ? sHeaderText : this._oResBundle.getText("TBL_GRAND_TOTAL_ROW");
+				this._updateTableRowContent(oRow, true, oContextInfo.nodeState.expanded,
+					oContextInfo.nodeState.expanded && !this.getSumOnTop(), false, iLevel,
+					oBinding.getGroupName(oContextInfo.context, oContextInfo.level));
 			} else {
-				aAriaLabelledByParts = this._updateTableRowContent(oRow, false, false, false, oContextInfo.nodeState.sum, iLevel, null);
-
-				if (oContextInfo.nodeState.sum) {
-					if (oContextInfo.level > 0) {
-						sAriaTextForSum = this._oResBundle.getText("TBL_GROUP_TOTAL_ROW") + " " + oBinding.getGroupName(oContextInfo.context, oContextInfo.level);
-					} else {
-						sAriaTextForSum = this._oResBundle.getText("TBL_GRAND_TOTAL_ROW");
-					}
-				}
+				this._updateTableRowContent(oRow, false, false, false, oContextInfo.nodeState.sum, iLevel,
+					oContextInfo.nodeState.sum && oContextInfo.level > 0 ? oBinding.getGroupName(oContextInfo.context, oContextInfo.level) : null);
 			}
 
 			// show or hide the totals if not enabled - needs to be done by Table
@@ -488,7 +471,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			// be cleared in the model - and the binding has no control over the
 			// value mapping - this happens directly via the context!
 			var aCells = oRow.getCells();
-			var aMeasures = [];
 			for (var i = 0, lc = aCells.length; i < lc; i++) {
 				var iCol = aCells[i].data("sap-ui-colindex");
 				var oCol = aCols[iCol];
@@ -497,37 +479,13 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 					$td.addClass("sapUiTableMeasureCell");
 					if (!oContextInfo.nodeState.sum || oCol.getSummed()) {
 						$td.removeClass("sapUiTableCellHidden");
-						aMeasures.push(oCol.getId());
-						aMeasures.push($td[0].id);
 					} else {
 						$td.addClass("sapUiTableCellHidden");
-					}
-
-					var sAriaTextForSumId = $td[0].id + "-ariaTextForSum";
-					var $AriaTextForSum = jQuery.sap.byId(sAriaTextForSumId);
-					if ($AriaTextForSum.length === 0) {
-						$td.append("<span id=\"" + sAriaTextForSumId + "\" class=\"sapUiHidden\"></span>");
-						$AriaTextForSum = jQuery.sap.byId(sAriaTextForSumId);
-					}
-
-					if (oContextInfo.nodeState.sum || $row.hasClass("sapUiTableGroupHeader")) {
-						$AriaTextForSum.text(sAriaTextForSum);
-						$td.attr("aria-labelledby", sAriaTextForSumId + " " + $td.attr("aria-labelledby"));
-					} else {
-						$AriaTextForSum.text("");
-						$td.removeAriaLabelledBy(sAriaTextForSumId);
 					}
 				} else {
 					$td.removeClass("sapUiTableMeasureCell");
 				}
 			}
-
-			// connect measures with the group header
-			for (var k = 0; k < aMeasures.length; k++) {
-				aAriaLabelledByParts.push(aMeasures[k]);
-			}
-			// update aria description for row selection
-			$rowHdr.attr("aria-labelledby", aAriaLabelledByParts.join(" "));
 		}
 	};
 
