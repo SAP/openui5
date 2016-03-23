@@ -456,11 +456,11 @@ sap.ui.require([
 		assert.throws(function () { //TODO implement
 			oModel.bindList(undefined, undefined,  undefined, aFilters);
 		}, new Error("Unsupported operation: v4.ODataModel#bindList, "
-				+ "aSorters parameter must not be set"));
+				+ "aFilters parameter must not be set"));
 		assert.throws(function () { //TODO implement
 			oModel.bindList(undefined, undefined,  aSorters);
 		}, new Error("Unsupported operation: v4.ODataModel#bindList, "
-				+ "aFilters parameter must not be set"));
+				+ "aSorters parameter must not be set"));
 
 		assert.throws(function () { //TODO implement
 			oModel.bindTree();
