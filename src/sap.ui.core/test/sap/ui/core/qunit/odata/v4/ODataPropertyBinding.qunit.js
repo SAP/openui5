@@ -43,6 +43,7 @@ sap.ui.require([
 				serviceUrl : "/service/?sap-client=111",
 				synchronizationMode : "None"
 			});
+			this.oSandbox.mock(this.oModel.oRequestor).expects("request").never();
 		},
 
 		afterEach : function () {
@@ -779,14 +780,15 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("setValue (absolute binding): forbidden", function (assert) {
-		var oModel = new ODataModel("/"),
-			oControl = new TestControl({
-				models : oModel,
-				text : "{path : '/ProductList(\\'HT-1000\\')/Name'"
-					+ ", type : 'sap.ui.model.odata.type.String'}"
-			});
+		var oControl;
 
-		this.oSandbox.mock(oModel).expects("addedRequestToGroup").never();
+		this.getCacheMock().expects("read").returns(Promise.resolve("HT-1000's Name"));
+		oControl = new TestControl({
+			models : this.oModel,
+			text : "{path : '/ProductList(\\'HT-1000\\')/Name'"
+				+ ", type : 'sap.ui.model.odata.type.String'}"
+		});
+		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup").never();
 		this.oSandbox.mock(oControl.getBinding("text").oCache).expects("update").never();
 		// Note: if setValue throws, ManagedObject#updateModelProperty does not roll back!
 		this.oLogMock.expects("error").withExactArgs(
