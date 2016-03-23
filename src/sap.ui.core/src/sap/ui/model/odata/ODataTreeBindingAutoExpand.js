@@ -68,6 +68,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		this._bIsAdapted = true;
 	};
 
+	/**
+	 * Sets the number of expanded levels.
+	 */
 	ODataTreeBindingAutoExpand.prototype.setNumberOfExpandedLevels = function(iLevels) {
 		this.resetData();
 		ODataTreeBinding.prototype.setNumberOfExpandedLevels.apply(this, arguments);
@@ -1158,6 +1161,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		});
 
 		return aResultIndices;
+	};
+
+	/**
+	 * Returns the number of selected nodes.
+	 * @private
+	 * @returns {int} number of selected nodes.
+	 */
+	ODataTreeBindingAutoExpand.prototype.getSelectedNodesCount = function () {
+		return Object.keys(this._mSelected).length;
 	};
 
 	/**
