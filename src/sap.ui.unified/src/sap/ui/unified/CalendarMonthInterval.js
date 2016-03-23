@@ -528,7 +528,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		this.setProperty("minDate", oDate, false); // re-render MonthsRow because visualization can change
 
 		var oYearPicker = this.getAggregation("yearPicker");
-		oYearPicker._oMinDate = new UniversalDate(this._oMinDate.getTime());
+		oYearPicker._oMinDate.setUTCFullYear(this._oMinDate.getUTCFullYear());
 
 		return this;
 
@@ -593,7 +593,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		this.setProperty("maxDate", oDate, false); // re-render MonthsRow because visualization can change
 
 		var oYearPicker = this.getAggregation("yearPicker");
-		oYearPicker._oMaxDate = new UniversalDate(this._oMaxDate.getTime());
+		oYearPicker._oMaxDate.setUTCFullYear(this._oMaxDate.getUTCFullYear());
 
 		return this;
 
