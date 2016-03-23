@@ -93,7 +93,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 				this._oScrollDelegate = null;
 			}
 
-			this._updateTrigger(false);
+			this._updateTriggerDelayed(false);
 		},
 
 		setTriggerText : function(sText) {
@@ -127,7 +127,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 		requestNewPage : function(oEvent) {
 			// if max item count not reached
 			if (this._oControl && !this._bLoading && this._iItemCount < this._oControl.getMaxItemsCount()) {
-				this._updateTrigger(true);
+				this._updateTriggerDelayed(true);
 				this._iItemCount += this._oControl.getGrowingThreshold();
 				this.updateItems("Growing");
 			}
@@ -142,7 +142,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 		// called after new page loaded
 		_onAfterPageLoaded : function(sChangeReason) {
 			this._bLoading = false;
-			this._updateTrigger(false);
+			this._updateTriggerDelayed(false);
 			this._oControl.onAfterPageLoaded(this.getInfo(), sChangeReason);
 		},
 
@@ -262,8 +262,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 		 * @returns {Boolean}
 		 */
 		_getHasScrollbars : function() {
+			if (!this._oScrollDelegate) {
+				return false;
+			}
+
+			if (this._iRenderedDataItems >= 40) {
+				return true;
+			}
+
 			//the containter height is needed because it gets hidden if there are scrollbars and this might lead to the list not having scrollbars again
-			return this._oScrollDelegate && this._oScrollDelegate.getMaxScrollTop() > this._oControl.$("triggerList").height();
+			return this._oScrollDelegate.getMaxScrollTop() > this._oControl.$("triggerList").height();
 		},
 
 		/**
@@ -577,6 +585,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 			if (!this._bDataRequested) {
 				this._onAfterPageLoaded(sChangeReason);
 			}
+		},
+
+		_updateTriggerDelayed: function(bLoading) {
+			this._iTriggerTimer && jQuery.sap.clearDelayedCall(this._iTriggerTimer);
+			this._iTriggerTimer = jQuery.sap.delayedCall(0, this, "_updateTrigger", [bLoading]);
 		},
 
 		/**
