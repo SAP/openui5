@@ -62,25 +62,48 @@
 	outline-offset:   -3px;
 }
 
-html[data-sap-ui-browser^=ie].sap-desktop .sapUiCalHead > .sapUiCalHeadB{
-	position: relative;
+.sap-desktop .sapUiCalHead > .sapUiCalHeadB:focus:active{
+	outline-color: @sapUiInvertedFocus;
 }
 
-html[data-sap-ui-browser^=ie].sap-desktop .sapUiCalHead > .sapUiCalHeadB:focus{
-	outline: none;
+.sap-desktop[data-sap-ui-browser^="ie"],
+.sap-desktop[data-sap-ui-browser^="ed"]{
+	.sapUiCalHead > .sapUiCalHeadB{
+		position: relative;
+		outline: none;
+	}
+
+	/* to prevent some strange issues on focus -> position texts absolute */
+	.sapUiCalHeadBText{
+		float: none;
+		position: absolute;
+		top: 6px;
+		width: 100%;
+	}
+
+	.sapUiCalHeadBAddText{
+		float: none;
+		position: absolute;
+		left: 0;
+		bottom: 7px;
+	}
+
+	.sapUiCalHead > .sapUiCalHeadB:focus:after{
+		position: absolute;
+		top: 2px;
+		left: 2px;
+		right: 2px;
+		bottom: 2px;
+		border: 1px dotted @sapUiFocus;
+		content: "";
+	}
+
+	.sapUiCalHead > .sapUiCalHeadB:focus:active:after{
+		border-color: @sapUiInvertedFocus;
+	}
 }
 
-html[data-sap-ui-browser^=ie].sap-desktop .sapUiCalHead > .sapUiCalHeadB:focus:after{
-	position: absolute;
-	top: 2px;
-	left: 2px;
-	right: 2px;
-	bottom: 2px;
-	border: 1px dotted @sapUiFocus;
-	content: "";
-}
-
-.sap-desktop .sapUiCalHead > .sapUiCalHeadB:focus:not(:hover){
+.sap-desktop .sapUiCalHead > .sapUiCalHeadB:focus:not(:hover):not(:active){
 	background-color: transparent;
 }
 
@@ -194,21 +217,57 @@ html[data-sap-ui-browser^=ie].sap-desktop .sapUiCalHead > .sapUiCalHeadB:focus:a
 	background-color: darken(@sapUiContentForegroundColor,5);
 }
 
-.sap-desktop .sapUiCalItem:focus > .sapUiCalItemText{
+.sap-desktop .sapUiCalItem:focus > .sapUiCalItemText,
+.sap-desktop .sapUiCalMonthPicker .sapUiCalItem:focus,
+.sap-desktop .sapUiCalYearPicker .sapUiCalItem:focus{
 	outline: 0.0625rem dotted @sapUiFocus;
+	outline-offset: -3px;
 }
 
 .sap-desktop .sapUiCalMonthPicker .sapUiCalItem:focus,
 .sap-desktop .sapUiCalYearPicker .sapUiCalItem:focus{
-	outline: 0.0625rem dotted @sapUiFocus;
-	outline-offset: -0.0625rem;
+	outline-offset: -4px;
 }
 
-html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalMonthPicker .sapUiCalItem:focus,
-html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalYearPicker .sapUiCalItem:focus{
-	/* as IE don't support outline-offset */
-	outline: none;
-	border: 0.0625rem dotted @sapUiFocus;
+.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetween):focus > .sapUiCalItemText,
+.sap-desktop .sapUiCalMonthPicker .sapUiCalItemSel:focus,
+.sap-desktop .sapUiCalYearPicker .sapUiCalItemSel:focus{
+	outline-color: @sapUiInvertedFocus;
+}
+
+.sap-desktop[data-sap-ui-browser^="ie"],
+.sap-desktop[data-sap-ui-browser^="ed"]{
+	.sapUiCalItem:focus > .sapUiCalItemText,
+	.sapUiCalMonthPicker .sapUiCalItem:focus,
+	.sapUiCalYearPicker .sapUiCalItem:focus{
+		position: relative;
+		outline: none;
+	}
+
+	.sapUiCalItem:focus > .sapUiCalItemText:after,
+	.sapUiCalMonthPicker .sapUiCalItem:focus:after,
+	.sapUiCalYearPicker .sapUiCalItem:focus:after{
+		position: absolute;
+		top: 2px;
+		left: 2px;
+		right: 2px;
+		bottom: 2px;
+		border: 1px dotted @sapUiFocus;
+		content: "";
+	}
+
+	.sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetween):focus > .sapUiCalItemText:after,
+	.sapUiCalMonthPicker .sapUiCalItemSel:focus:after,
+	.sapUiCalYearPicker .sapUiCalItemSel:focus:after{
+		border-color: @sapUiInvertedFocus;
+	}
+
+	.sapUiCalItem.sapUiCalItemNow:focus > .sapUiCalItemText:after{
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+	}
 }
 
 .sap-desktop .sapUiCalItemWeekEnd:hover,
@@ -742,12 +801,12 @@ and (orientation: landscape) {
 		box-shadow: inset 0 -0.125rem 0 @color;
 	}
 
-	.@{class}.sapUiCalItemSel > .sapUiCalItemText{
+	.@{class}.sapUiCalItemSel:not(:focus) > .sapUiCalItemText{
 		box-shadow: inset 0 -0.125rem 0 @color, inset 0 -0.1875rem lighten(@sapUiListBorderColor,10);
 	}
 
 	.@{class}.sapUiCalItemNow > .sapUiCalItemText{
-		box-shadow: inset 0.0625rem 0.0625rem 0 0 lighten(@sapUiListBorderColor,10), inset -0.0625rem -0.0625rem 0 0 lighten(@sapUiListBorderColor,10), inset 0 -0.1875rem 0 @color, inset 0 -0.25rem lighten(@sapUiListBorderColor,10);
+		box-shadow: inset 0.0625rem 0.0625rem 0 0 lighten(@sapUiListBorderColor,10), inset -0.0625rem -0.0625rem 0 0 lighten(@sapUiListBorderColor,10), inset 0 -0.1875rem 0 @color;
 	}
 
 	.@{class}.sapUiCalItemSel.sapUiCalItemNow > .sapUiCalItemText{
