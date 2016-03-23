@@ -404,9 +404,11 @@ sap.ui.core.mvc.Controller</title>
 
 	QUnit.test("registration", function(assert) {
 		this.XMLView.registerPreprocessor(this.XMLView.PreprocessorType.XML, jQuery.noop, false);
+		this.XMLView.registerPreprocessor(this.XMLView.PreprocessorType.VIEWXML, jQuery.noop, false);
 		this.XMLView.registerPreprocessor(this.XMLView.PreprocessorType.CONTROLS, jQuery.noop, false);
 
 		assert.strictEqual(this.View._mPreprocessors["XML"]["xml"][1].preprocessor, jQuery.noop, "Registration for xml successful");
+		assert.strictEqual(this.View._mPreprocessors["XML"]["viewxml"][0].preprocessor, jQuery.noop, "Registration for viewxml successful");
 		assert.strictEqual(this.View._mPreprocessors["XML"]["controls"][0].preprocessor, jQuery.noop, "Registration for content successful");
 		assert.throws(this.XMLView.registerPreprocessor("unknown", jQuery.noop, false, {type: "unknown"}), "Error thrown when registering invalid type");
 		assert.throws(this.XMLView.registerPreprocessor(this.XMLView.PreprocessorType.XML, jQuery.noop, false, true), "Error thrown when registering more than one ondemand pp");
@@ -439,11 +441,16 @@ sap.ui.core.mvc.Controller</title>
 				return bSync ? vSource : Promise.resolve(vSource);
 			}),
 			fnAssert = function() {
-				sinon.assert.calledTwice(this.runPreprocessorSpy);
+				if (sType === "viewxml") {
+					sinon.assert.calledThrice(this.runPreprocessorSpy);
+				} else {
+					sinon.assert.calledTwice(this.runPreprocessorSpy);
+				}
+				sinon.assert.calledWith(this.runPreprocessorSpy, sType);
 				sinon.assert.callCount(preprocessorSpy, iCount);
 			}.bind(this);
 
-		assert.expect(2);
+		assert.expect(3);
 
 		if (!iCount) {
 			// compatible / legacy version with single preprocessor declaration

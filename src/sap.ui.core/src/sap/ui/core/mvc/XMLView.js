@@ -93,6 +93,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		 */
 		XMLView.asyncSupport = true;
 
+		function validatexContent(xContent) {
+			if (xContent.parseError.errorCode !== 0) {
+				var oParseError = xContent.parseError;
+				throw new Error(
+					"The following problem occurred: XML parse Error for " + oParseError.url +
+					" code: " + oParseError.errorCode +
+					" reason: " + oParseError.reason +
+					" src: " + oParseError.srcText +
+					" line: " +  oParseError.line +
+					" linepos: " + oParseError.linepos +
+					" filepos: " + oParseError.filepos
+				);
+			}
+		}
+
+		function validateViewSettings(mSettings) {
+			if (!mSettings) {
+				throw new Error("mSettings must be given");
+			} else if (mSettings.viewName && mSettings.viewContent) {
+				throw new Error("View name and view content are given. There is no point in doing this, so please decide.");
+			} else if ((mSettings.viewName || mSettings.viewContent) && mSettings.xmlNode) {
+				throw new Error("View name/content AND an XML node are given. There is no point in doing this, so please decide.");
+			} else if (!(mSettings.viewName || mSettings.viewContent) && !mSettings.xmlNode) {
+				throw new Error("Neither view name/content nor an XML node is given. One of them is required.");
+			}
+		}
+
+		function getxContent(oView, mSettings) {
+			// keep the content as a pseudo property to make cloning work but without supporting mutation
+			// TODO model this as a property as soon as write-once-during-init properties become available
+			oView.mProperties["viewContent"] = mSettings.viewContent;
+			var xContent = jQuery.sap.parseXML(mSettings.viewContent);
+			validatexContent(xContent);
+			return xContent.documentElement;
+		}
+
 		/**
  		* This function initialized the view settings.
  		*
@@ -102,10 +138,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		XMLView.prototype.initViewSettings = function(mSettings) {
 			var that = this;
 
-			this._oContainingView = mSettings.containingView || this;
-
-			var fnProcessView = function() {
-
+			function processView() {
 				// extract the properties of the view from the XML element
 				if ( !that.isSubView() ) {
 					// for a real XMLView, we need to parse the attributes of the root node
@@ -116,8 +149,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 				}
 
 				if ((that._resourceBundleName || that._resourceBundleUrl) && (!mSettings.models || !mSettings.models[that._resourceBundleAlias])) {
-					var model = new ResourceModel({bundleName:that._resourceBundleName, bundleUrl:that._resourceBundleUrl, bundleLocale:that._resourceBundleLocale});
-					that.setModel(model,that._resourceBundleAlias);
+					var model = new ResourceModel({
+						bundleName: that._resourceBundleName,
+						bundleUrl: that._resourceBundleUrl,
+						bundleLocale: that._resourceBundleLocale
+					});
+					that.setModel(model, that._resourceBundleAlias);
 				}
 
 				// Delegate for after rendering notification before onAfterRendering of child controls
@@ -127,88 +164,57 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 						that.onAfterRenderingBeforeChildren();
 					}
 				});
-			};
-
-			var fnFlexProcessor = function(xContent) {
-				if (XMLView._flexProcessor) {
-					// for the flexProcessor fully qualified Ids are necessary and get hence enriched on the xml source
-					this._xContent = XMLTemplateProcessor.enrichTemplateIds(this._xContent, this);
-					return XMLView._flexProcessor(this._xContent, {
-						viewId: this.getId(),
-						componentId: this._sOwnerId
-					}).then(function(xContent) {
-						this._xContent = xContent;
-						fnProcessView();
-						// Cache.set("this.getId()", xContent)
-					}.bind(this));
-				} else {
-					fnProcessView();
-				}
-			}.bind(this);
-
-			if (!mSettings) {
-				throw new Error("mSettings must be given");
 			}
+
+			function runViewxmlPreprocessor(bAsync) {
+				if (that.hasPreprocessor("viewxml")) {
+					// for the viewxml preprocessor fully qualified ids are provided on the xml source
+					XMLTemplateProcessor.enrichTemplateIds(that._xContent, that);
+					return that.runPreprocessor("viewxml", that._xContent, !bAsync);
+				}
+			}
+
+			function runPreprocessorsAsync() {
+				return that.runPreprocessor("xml", that._xContent).then(runViewxmlPreprocessor.bind(that, true));
+			}
+
+			function loadResourceAsync(sResourceName) {
+				return jQuery.sap.loadResource(sResourceName, {async: true}).then(function(oData) {
+					that._xContent = oData.documentElement; // result is the document node
+					return that._xContent;
+				});
+			}
+
+			this._oContainingView = mSettings.containingView || this;
 
 			if (this._oAsyncState) {
 				// suppress rendering of preserve content
 				this._oAsyncState.suppressPreserve = true;
 			}
 
-			// View template handling - either template name or XML node is given
-			if (mSettings.viewName && mSettings.viewContent) {
-				throw new Error("View name and view content are given. There is no point in doing this, so please decide.");
-			} else if ((mSettings.viewName || mSettings.viewContent) && mSettings.xmlNode) {
-				throw new Error("View name/content AND an XML node are given. There is no point in doing this, so please decide.");
-			} else if (!(mSettings.viewName || mSettings.viewContent) && !mSettings.xmlNode) {
-				throw new Error("Neither view name/content nor an XML node is given. One of them is required.");
-			}
+			validateViewSettings(mSettings);
 
+			// either template name or XML node is given
 			if (mSettings.viewName) {
 				var sResourceName = jQuery.sap.getResourceName(mSettings.viewName, ".view.xml");
 				if (mSettings.async) {
-					var xmlFromCache = /*Cache.get(sResourcename) !=*/ false;
-					if (xmlFromCache) {
-						that._xContent = xmlFromCache;
-						fnProcessView();
-					} else {
-						return jQuery.sap.loadResource(sResourceName, {async: true})
-						.then(function(oData) {
-							that._xContent = oData.documentElement; // result is the document node
-							return that.runPreprocessor("xml", that._xContent);
-						})
-						.then(function(xContent) {
-							return fnFlexProcessor(xContent);
-						});
-					} // end of loadResource
+					// return here, as the left processing is taking place inside the promise chain
+					return loadResourceAsync(sResourceName).then(runPreprocessorsAsync).then(processView);
 				} else {
 					this._xContent = jQuery.sap.loadResource(sResourceName).documentElement;
 				}
 			} else if (mSettings.viewContent) {
-				// keep the content as a pseudo property to make cloning work but without supporting mutation
-				// TODO model this as a property as soon as write-once-during-init properties become available
-				this.mProperties["viewContent"] = mSettings.viewContent;
-				this._xContent = jQuery.sap.parseXML(mSettings.viewContent);
-				if (this._xContent.parseError.errorCode !== 0) {
-					var oParseError = this._xContent.parseError;
-					throw new Error("The following problem occurred: XML parse Error for " + oParseError.url + " code: " + oParseError.errorCode + " reason: " +
-							oParseError.reason +  " src: " + oParseError.srcText + " line: " +  oParseError.line +  " linepos: " + oParseError.linepos +  " filepos: " + oParseError.filepos);
-				} else {
-					this._xContent = this._xContent.documentElement;
-				}
+				this._xContent = getxContent(this, mSettings);
 			} else if (mSettings.xmlNode) {
 				this._xContent = mSettings.xmlNode;
-			} // else does not happen, already checked
+			}
 
 			if (mSettings.async) {
-				return this.runPreprocessor("xml", this._xContent)
-					.then(function(xContent) {
-						that._xContent = xContent;
-						return fnFlexProcessor(xContent);
-					});
+				return runPreprocessorsAsync(this._xContent).then(processView);
 			} else {
-				this._xContent = this.runPreprocessor("xml", this._xContent, true);
-				fnProcessView();
+				this.runPreprocessor("xml", this._xContent, true);
+				runViewxmlPreprocessor();
+				processView();
 			}
 		};
 
@@ -321,21 +327,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		};
 
 		/**
-		 * A preprocessor hook for flexibility in async views
-		 *
-		 * The preprocessor function receives an XML document with full qualified Ids and should return a promise returning
-		 * with the processed XML document, which is ready for XML template processing. In case the result has been cached
-		 * and the cache is still valid, this hook is skipped as the cached XML will be used for further processing.
-		 *
-		 * @name sap.ui.core.mvc.XMLView._flexProcessor
-		 * @function
-		 * @param {xml} xmlDoc the xml document to be processed
-		 * @param {string} [sOwnerComonentId] owner component id if available
-		 * @return {Promise} a promise resolving with the processed xml doc
-		 * @private
-		 */
-
-		/**
 		 * Specifies the available preprocessor types for XMLViews
 		 *
 		 * @see sap.ui.core.mvc.XMLView
@@ -346,10 +337,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		XMLView.PreprocessorType = {
 
 			/**
-			 * This preprocessor receives the plain xml source of the view
+			 * This preprocessor receives the plain xml source of the view and should also return a valid
+			 * xml ready for view creation
 			 * @public
 			 */
 			XML : "xml",
+
+			/**
+			 * This preprocessor receives a valid view xml with control declarations enriched with their full via which they
+			 * are also queryable during runtime
+			 * @public
+			 */
+			VIEWXML : "viewxml",
 
 			/**
 			 * This preprocessor receives the control tree produced through the view source
