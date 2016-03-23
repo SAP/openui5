@@ -6,6 +6,7 @@
 @SapDialogMarginHeight: 7%;
 @SapBarHeight: 3rem;
 @SapBarCompactHeight: 2.5rem;
+@SapDialogPadding: 1rem;
 
 .sapMDialog,
 .sapMMessageDialog .sapMDialogScrollCont,
@@ -177,7 +178,7 @@ html[data-sap-ui-browser^="ie9"] .sapMDialog {
 
 .sapMDialogScroll {
 	display: inline-block; /*this is for horizontal scrolling enablement */
-	min-height: 100%;
+	height: 100%;
 	width: 100%;
 	vertical-align: middle;
 }
@@ -221,7 +222,8 @@ html[data-sap-ui-browser^="ie9"] .sapMDialog {
 }
 
 .sapUiPopupWithPadding .sapMDialogScrollCont {
-	padding: 1rem;
+	padding: @SapDialogPadding;
+	height: calc(~"100% - 2 * " @SapDialogPadding);
 }
 
 /* messagedialog always has content padding */
