@@ -105,6 +105,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		this.setEnableColumnFreeze(true);
 		this.setEnableCellFilter(true);
 		this._aGroupedColumns = [];
+		this._bSuspendUpdateAnalyticalInfo = false;
 	};
 
 	AnalyticalTable.prototype.setFixedRowCount = function() {
@@ -124,9 +125,10 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		return this;
 	};
 
-	AnalyticalTable.prototype.getModel = function(oModel, sName) {
+	AnalyticalTable.prototype.getModel = function(sName) {
 		var oModel = Table.prototype.getModel.apply(this, arguments);
-		if (oModel) {
+		var oRowBindingInfo = this.getBindingInfo("rows");
+		if (oModel && oRowBindingInfo && oRowBindingInfo.model == sName) {
 			sap.ui.model.analytics.ODataModelAdapter.apply(oModel);
 		}
 		return oModel;
@@ -690,8 +692,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 							that.insertColumn(oColumn, iLastGroupedIndex);
 						});
 					}
-					that._updateTableColumnDetails();
-					that.updateAnalyticalInfo();
+					that._updateColumns();
 					that._getRowContexts();
 				}
 			}));
@@ -710,8 +711,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 						aColumns[i]._bSkipUpdateAI = false;
 					}
 					that._bSupressRefresh = true;
-					that._updateTableColumnDetails();
-					that.updateAnalyticalInfo();
+					that._updateColumns();
 					that._getRowContexts();
 					that._bSupressRefresh = false;
 					that.fireGroup({column: undefined, groupedColumns: [], type: sap.ui.table.GroupEventType.ungroupAll});
@@ -882,6 +882,26 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		this.updateAnalyticalInfo(true, true);
 	};
 
+	/**
+	 * This function is used by some composite controls to avoid updating the AnalyticalInfo when several column are added to the table.
+	 * In order to finally update the AnalyticalInfo and request data, resumeUpdateAnalyticalInfo must be called.
+	 * @protected
+	 */
+	AnalyticalTable.prototype.suspendUpdateAnalyticalInfo = function() {
+		this._bSuspendUpdateAnalyticalInfo = true;
+	};
+
+	/**
+	 * This function is used by some composite controls to force updating the AnalyticalInfo
+	 * @param {boolean} bSuppressRefresh binding shall not refresh data
+	 * @param {boolean} bForceChange forces the binding to fire a change event
+	 * @protected
+	 */
+	AnalyticalTable.prototype.resumeUpdateAnalyticalInfo = function(bSupressRefresh, bForceChange) {
+		this._bSuspendUpdateAnalyticalInfo = false;
+		this._updateColumns(bSupressRefresh, bForceChange);
+	};
+
 	AnalyticalTable.prototype.addColumn = function(vColumn, bSuppressInvalidate) {
 		//@TODO: Implement addColumn(Column[] || oColumn)
 		var oColumn = this._getColumn(vColumn);
@@ -889,8 +909,8 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			this._addGroupedColumn(oColumn.getId());
 		}
 		Table.prototype.addColumn.call(this, oColumn, bSuppressInvalidate);
-		this._updateTableColumnDetails();
-		this.updateAnalyticalInfo(bSuppressInvalidate);
+
+		this._updateColumns(bSuppressInvalidate);
 		return this;
 	};
 
@@ -900,8 +920,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			this._addGroupedColumn(oColumn.getId());
 		}
 		Table.prototype.insertColumn.call(this, oColumn, iIndex, bSuppressInvalidate);
-		this._updateTableColumnDetails();
-		this.updateAnalyticalInfo(bSuppressInvalidate);
+		this._updateColumns(bSuppressInvalidate);
 		return this;
 	};
 
@@ -930,8 +949,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		this._aGroupedColumns = [];
 		var aResult = Table.prototype.removeAllColumns.apply(this, arguments);
 
-		this._updateTableColumnDetails();
-		this.updateAnalyticalInfo(bSuppressInvalidate);
+		this._updateColumns(bSuppressInvalidate);
 
 		return aResult;
 	};
@@ -951,12 +969,18 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		}
 	};
 
-	AnalyticalTable.prototype._updateColumns = function() {
-		this._updateTableColumnDetails();
-		this.updateAnalyticalInfo();
+	AnalyticalTable.prototype._updateColumns = function(bSupressRefresh, bForceChange) {
+		if (!this._bSuspendUpdateAnalyticalInfo) {
+			this._updateTableColumnDetails();
+			this.updateAnalyticalInfo(bSupressRefresh, bForceChange);
+		}
 	};
 
 	AnalyticalTable.prototype.updateAnalyticalInfo = function(bSupressRefresh, bForceChange) {
+		if (this._bSuspendUpdateAnalyticalInfo) {
+			return;
+		}
+
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
 			var aColumnInfo = this._getColumnInformation();
@@ -987,6 +1011,10 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	};
 
 	AnalyticalTable.prototype._updateTableColumnDetails = function() {
+		if (this._bSuspendUpdateAnalyticalInfo) {
+			return;
+		}
+
 		var oBinding = this.getBinding("rows"),
 			oResult = oBinding && oBinding.getAnalyticalQueryResult();
 
@@ -1122,8 +1150,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 				this._addGroupedColumn(aColumns[i].getId());
 			}
 		}
-		this._updateTableColumnDetails();
-		this.updateAnalyticalInfo();
+		this._updateColumns();
 	};
 
 	AnalyticalTable.prototype._addGroupedColumn = function(sColumn) {
