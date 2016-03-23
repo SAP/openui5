@@ -75,6 +75,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		}
 	}});
 
+	/* eslint-disable no-lonely-if */
+
 	YearPicker.prototype.init = function(){
 
 		// set default calendar type from configuration
@@ -466,16 +468,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 
 		var aDomRefs = this._oItemNavigation.getItemDomRefs();
 		var oFirstDate =  this._newUniversalDate(this._oFormatYyyymmdd.parse(jQuery(aDomRefs[0]).attr("data-sap-year-start"), true));
+		var iYears = this.getYears();
 
 		if (bForward) {
-			oFirstDate.setUTCFullYear(oFirstDate.getUTCFullYear() + this.getYears());
+			var oMaxDate = this._newUniversalDate(this._oMaxDate);
+			oMaxDate.setUTCFullYear(oMaxDate.getUTCFullYear() - iYears + 1);
+			if (oFirstDate.getTime() < oMaxDate.getTime()){
+				oFirstDate.setUTCFullYear(oFirstDate.getUTCFullYear() + iYears);
+				if (oFirstDate.getTime() > oMaxDate.getTime()){
+					iSelectedIndex = iSelectedIndex + (oFirstDate.getUTCFullYear() - oMaxDate.getUTCFullYear());
+					if (iSelectedIndex > iYears - 1) {
+						iSelectedIndex = iYears - 1;
+					}
+					oFirstDate = this._oMaxDate;
+					oFirstDate.setUTCMonth(0, 1);
+				}
+			} else {
+				return;
+			}
 		} else {
-			oFirstDate.setUTCFullYear(oFirstDate.getUTCFullYear() - this.getYears());
+			if (oFirstDate.getTime() > this._oMinDate.getTime()) {
+				oFirstDate.setUTCFullYear(oFirstDate.getUTCFullYear() - iYears);
+				if (oFirstDate.getTime() < this._oMinDate.getTime()) {
+					iSelectedIndex = iSelectedIndex - (this._oMinDate.getUTCFullYear() - oFirstDate.getUTCFullYear());
+					if (iSelectedIndex < 0) {
+						iSelectedIndex = 0;
+					}
+					oFirstDate = this._newUniversalDate(this._oMinDate);
+				}
+			} else {
+				return;
+			}
 		}
 
-		if (!(oFirstDate.getTime() <= this._oMinDate.getTime() || oFirstDate.getTime() >= this._oMaxDate.getTime())) {
-			_updateYears.call(this, oFirstDate, iSelectedIndex);
-		}
+		_updateYears.call(this, oFirstDate, iSelectedIndex);
 
 	}
 
