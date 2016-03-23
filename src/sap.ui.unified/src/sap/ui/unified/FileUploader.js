@@ -875,7 +875,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		var oXhr = aXhr[iIndex];
 		var sFilename = oXhr.file.name ? oXhr.file.name : "MultipartFile";
 
-		if (sap.ui.Device.browser.internet_explorer && oXhr.file.type && oXhr.xhr.readyState !== 0) {
+		if (sap.ui.Device.browser.internet_explorer && oXhr.file.type && oXhr.xhr.readyState == 1) {
 			var sContentType = oXhr.file.type;
 			oXhr.xhr.setRequestHeader("Content-Type", sContentType);
 			oXhr.requestHeaders.push({name: "Content-Type", value: sContentType});
