@@ -1098,5 +1098,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.31": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "1b977160484350466f512f3d413e769eea051341",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Closing tab is now fixed",
+        "references": []
+      }
+    ]
   }
 }
