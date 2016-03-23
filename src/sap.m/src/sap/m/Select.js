@@ -181,7 +181,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			}
 
 			if (this._bProcessChange) {
-				this._checkSelectionChange();
+				setTimeout(this._checkSelectionChange.bind(this), 0);
 				this._bProcessChange = false;
 			} else {
 				this._bProcessChange = true;
