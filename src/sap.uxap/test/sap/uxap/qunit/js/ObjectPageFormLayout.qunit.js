@@ -65,6 +65,9 @@
 
 		var aGridCells = oFormBlock.$().find(".sapUiForm .sapUiFormResGridMain>div");
 
+		var oTestInput = sap.ui.getCore().byId("__input0"),
+			iTestInputTop = parseInt(oTestInput.$().offset().top, 10);
+
 		assert.strictEqual(aGridCells.length, 4, "form grid has 4 cells");
 
 		//act
@@ -94,6 +97,13 @@
 
 		aGridCells = oFormBlock.$().find(".sapUiForm .sapUiFormResGridMain > div.sapUiRespGridSpanL12.sapUiRespGridSpanM12.sapUiRespGridSpanS12");
 		assert.strictEqual(aGridCells.length, 4, "when 1-column span, all cells have L12 M12 S12");
+
+		//scroll to focused control test
+		oTestInput.focus();
+
+		this.clock.tick(iRenderingDelay);
+
+		assert.strictEqual(parseInt(oTestInput.$().offset().top, 10) < (iTestInputTop - oTestInput.$().height()), true, "Input field should be visible");
 
 		oObjectPageFormView.destroy();
 	});

@@ -1818,6 +1818,29 @@ sap.ui.define([
 	ObjectPageLayout.HEADER_CALC_DELAY = 350;   //ms. The higher the safer and the uglier...
 	ObjectPageLayout.DOM_CALC_DELAY = 200;      //ms.
 
+	ObjectPageLayout.prototype.onkeyup = function (oEvent) {
+		var oFocusedControlId,
+			oFocusedControl,
+			oFocusedControlPosition,
+			iHeaderHeight;
+
+		if (oEvent.which === jQuery.sap.KeyCodes.TAB) {
+			oFocusedControlId = sap.ui.getCore().getCurrentFocusedControlId();
+			oFocusedControl = oFocusedControlId && sap.ui.getCore().byId(oFocusedControlId);
+
+			if (oFocusedControl && oFocusedControl.$().length) {
+				oFocusedControlPosition = oFocusedControl.$().position().top;
+				iHeaderHeight = this.iHeaderTitleHeight + this.iHeaderContentHeight + this.iAnchorBarHeight;
+
+				if (this._isFirstSection(oFocusedControl)) {
+					this._scrollTo(0, 0);
+				} else if (oFocusedControlPosition > iHeaderHeight) {
+					this._scrollTo(oFocusedControlPosition - this.iHeaderTitleHeight - this.iAnchorBarHeight, 0);
+				}
+			}
+		}
+	};
+
 	return ObjectPageLayout;
 
 });
