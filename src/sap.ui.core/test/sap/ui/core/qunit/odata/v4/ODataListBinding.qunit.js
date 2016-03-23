@@ -73,6 +73,7 @@ sap.ui.require([
 				synchronizationMode : "None"
 			});
 			this.oModel.setSizeLimit(3);
+			this.oSandbox.mock(this.oModel.oRequestor).expects("request").never();
 		},
 		afterEach : function () {
 			// I would consider this an API, see https://github.com/cjohansen/Sinon.JS/issues/614

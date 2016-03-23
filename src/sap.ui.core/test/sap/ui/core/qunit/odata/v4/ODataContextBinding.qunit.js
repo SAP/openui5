@@ -33,6 +33,8 @@ sap.ui.require([
 				serviceUrl : "/service/?sap-client=111",
 				synchronizationMode : "None"
 			});
+			this.oRequestorMock = this.oSandbox.mock(this.oModel.oRequestor);
+			this.oRequestorMock.expects("request").never();
 		},
 
 		afterEach : function () {
@@ -67,17 +69,6 @@ sap.ui.require([
 		this.mock(oBinding).expects("_fireChange").never();
 
 		oBinding.initialize();
-	});
-
-	//*********************************************************************************************
-	//TODO support nested context bindings
-	QUnit.skip("setContext, change event", function (assert) {
-		var oContext = {},
-			oBinding = this.oModel.bindContext("foo");
-
-		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Context});
-
-		oBinding.setContext(oContext);
 	});
 
 	//*********************************************************************************************
@@ -247,8 +238,7 @@ sap.ui.require([
 			oContext = _Context.create(this.oModel, null, "/TEAMS('TEAM_01')"),
 			oPromise;
 
-		this.oSandbox.mock(this.oModel.oRequestor).expects("request")
-			.returns(Promise.resolve({"ID" : "1"}));
+		this.oRequestorMock.expects("request").returns(Promise.resolve({"ID" : "1"}));
 		oBinding = this.oModel.bindContext("/EMPLOYEES(ID='1')", oContext);
 
 		oBindingMock = this.oSandbox.mock(oBinding);
