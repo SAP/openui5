@@ -1351,7 +1351,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 
 		var mParams = {
 			rowIndices: [],
-			oldIndex: -1
+			oldIndex: -1,
+			selectAll: true
 		};
 
 		// recursion variables
