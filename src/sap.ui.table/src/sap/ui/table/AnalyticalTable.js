@@ -1309,8 +1309,12 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			// if there is no binding the selection can't be handled, therefore the row is not selectable
 			return false;
 		}
-
 	};
+
+	/**
+	 * Inherit _getSelectedIndicesCount from TreeTable.
+	 */
+	AnalyticalTable.prototype._getSelectedIndicesCount = sap.ui.table.TreeTable.prototype._getSelectedIndicesCount;
 
 	return AnalyticalTable;
 

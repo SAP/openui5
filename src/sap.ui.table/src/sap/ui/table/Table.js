@@ -3591,7 +3591,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 						if (bCtrl) {
 							this.removeSelectionInterval(iRowIndex, iRowIndex);
 						} else {
-							if (this.getSelectedIndices().length === 1) {
+							if (this._getSelectedIndicesCount() === 1) {
 								this.clearSelection();
 							} else {
 								this.setSelectedIndex(iRowIndex);
@@ -6779,6 +6779,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 */
 	Table.prototype._setLargeDataScrolling = function(bLargeDataScrolling) {
 		this._bLargeDataScrolling = !!bLargeDataScrolling;
+	};
+
+	/**
+	 * Retrieves the number of selected entries.
+	 * @private
+	 */
+	Table.prototype._getSelectedIndicesCount = function () {
+		return this.getSelectedIndices().length;
 	};
 
 	return Table;

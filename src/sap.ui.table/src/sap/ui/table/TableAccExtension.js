@@ -432,6 +432,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 				rowDeselect: ""
 			}};
 
+		var iSelectedIndicesCount = oTable._getSelectedIndicesCount();
+
 		if (sSelectionMode === sap.ui.table.SelectionMode.Single) {
 			mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT");
 			mTooltipTexts.mouse.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT");
@@ -444,14 +446,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 			mTooltipTexts.keyboard.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_MULTI_KEY");
 
 			if (bConsiderSelectionState === true) {
-				if (oTable.getSelectedIndices().length === 1) {
+				if (iSelectedIndicesCount === 1) {
 					// in multi selection case, if there is only one row selected it's not required
 					// to press CTRL in order to only deselect this single row hence use the description text
 					// of the single de-selection.
 					// for selection it's different since the description for SHIFT/CTRL handling is required
 					mTooltipTexts.mouse.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT");
 					mTooltipTexts.keyboard.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_KEY");
-				} else if (oTable.getSelectedIndices().length === 0) {
+				} else if (iSelectedIndicesCount === 0) {
 					// if there are no rows selected in multi selection mode, it's not required to press CTRL or SHIFT
 					// in order to enhance the selection.
 					mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT");
@@ -467,7 +469,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 			// text for de-select is the same like for single selection
 			mTooltipTexts.keyboard.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_KEY");
 
-			if (bConsiderSelectionState === true && oTable.getSelectedIndices().length === 0) {
+			if (bConsiderSelectionState === true && iSelectedIndicesCount === 0) {
 				// if there is no row selected yet, the selection is like in single selection case
 				mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT");
 				mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_KEY");
