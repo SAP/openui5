@@ -62,12 +62,12 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 					 * Determines the locale, used to interpret the string, supplied by the
 					 * <code>value</code> property.
 					 * Example: AM in the string "09:04 AM" is locale (language) dependent.
-					 * The format comes from the browser language settings.
+					 * The format comes from the browser language settings if not set explicitly.
 					 * Used in combination with 12 hour <code>valueFormat</code> containing 'a', which
 					 * stands for day period string.
-					 * Default value is en-US.
+					 * Default value is taken from browser's locale setting.
 					 */
-					localeId: {type : "string", group: "Data", defaultValue : "en-US"},
+					localeId: {type : "string", group: "Data"},
 
 					/**
 					 *  Holds a reference to a JavaScript Date Object. The <code>value</code> (string)
@@ -478,6 +478,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 			var oDate,
 				sOutputValue;
 
+			sValue = this.validateProperty('value', sValue);
 			MaskInput.prototype.setValue.call(this, sValue, true);
 			this._bValid = true;
 
@@ -1122,9 +1123,13 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 			var sDisplayFormat = oTimePicker.getDisplayFormat(),
 				sMask = sDisplayFormat,
 				sAllowedHourChars,
-				oLocale  = new sap.ui.core.Locale(oTimePicker.getLocaleId()),
+				//Respect browser locale if no locale is explicitly set (BCP: 1670060658)
+				sLocaleId = oTimePicker.getLocaleId() || sap.ui.getCore().getConfiguration().getFormatLocale(),
+				oLocale  = new sap.ui.core.Locale(sLocaleId),
 				i;
 
+			// Set the localeId and prevent infinite loop by suppressing rendering
+			oTimePicker.setProperty("localeId", sLocaleId, true);
 			this._oTimePicker = oTimePicker;
 			this.aOriginalAmPmValues = sap.ui.core.LocaleData.getInstance(oLocale).getDayPeriods("abbreviated");
 			this.aAmPmValues = this.aOriginalAmPmValues.slice(0);
