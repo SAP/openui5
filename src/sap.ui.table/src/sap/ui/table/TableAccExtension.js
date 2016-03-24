@@ -14,6 +14,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 		COLUMNROWHEADER : "COLUMNROWHEADER" // select all row selector (top left cell)
 	};
 
+	var ACCInfoHelper = {
+		getAccInfoOfControl: function(oControl) {
+			if (oControl && typeof oControl.getAccessibilityInfo === "function") {
+				return ACCInfoHelper.normalize(oControl.getAccessibilityInfo());
+			}
+			return null;
+		},
+
+		normalize : function(oInfo) {
+			if (!oInfo) {
+				return null;
+			}
+
+			oInfo.role = oInfo.role || "";
+			oInfo.type = oInfo.type || "";
+			oInfo.description = oInfo.description || "";
+			oInfo.focusable = !!oInfo.focusable;
+			oInfo.enabled = (oInfo.enabled === true || oInfo.enabled === false) ? oInfo.enabled : null;
+			oInfo.editable = (oInfo.editable === true || oInfo.editable === false) ? oInfo.editable : null;
+			oInfo.children = oInfo.children || [];
+
+			return oInfo;
+		},
+
+		getFullDescription : function(oInfo, oBundle) {
+			var sDesc = oInfo.type + " " + oInfo.description;
+			if (oInfo.enabled != null && !oInfo.enabled) {
+				sDesc = sDesc + " " + oBundle.getText("TBL_CTRL_STATE_DISABLED");
+			} else if (oInfo.editable != null && !oInfo.editable) {
+				sDesc = sDesc + " " + oBundle.getText("TBL_CTRL_STATE_READONLY");
+			}
+			return sDesc.trim();
+		}
+	};
+
 	var _getInfoOfFocusedCell = function(oExtension) {
 		var oTable = oExtension.getTable();
 		var oIN = oTable._oItemNavigation;
@@ -59,6 +94,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 				bEnabled = bEnabled && oControl.getEditable();
 			}
 			return bEnabled ? "" : " " + oBundle.getText("TBL_CTRL_STATE_DISABLED");
+		}
+
+		var oInfo = ACCInfoHelper.getAccInfoOfControl(oControl);
+		if (oInfo) {
+			return { //TBD: Cleanup this indirection
+				editable: oInfo.getFocusable(),
+				text: ACCInfoHelper.getFullDescription(oInfo, oBundle)
+			};
 		}
 
 		switch (oControl.getMetadata().getName()) {

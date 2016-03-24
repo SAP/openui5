@@ -1028,6 +1028,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	InputBase.prototype.getAccessibilityInfo = function() {
+		var oRenderer = this.getRenderer();
+		return {
+			role: oRenderer.getAriaRole(this),
+			type: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_INPUT"),
+			description: [this.getValue() || "", oRenderer.getLabelledByAnnouncement(this), oRenderer.getDescribedByAnnouncement(this)].join(" ").trim(),
+			focusable: this.getEnabled(),
+			enabled: this.getEnabled(),
+			editable: this.getEnabled() && this.getEditable()
+		};
+	};
+
 	// do not cache jQuery object and define _$input for compatibility reasons
 	Object.defineProperty(InputBase.prototype, "_$input", {
 		get: function() {

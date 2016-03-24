@@ -1773,6 +1773,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	};
 
 	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	Input.prototype.getAccessibilityInfo = function() {
+		var oInfo = InputBase.prototype.getAccessibilityInfo.apply(this, arguments);
+		oInfo.description = ((oInfo.description || "") + " " + this.getDescription()).trim();
+		return oInfo;
+	};
+
+	/**
 	 * Getter for property <code>valueStateText</code>.
 	 * The text which is shown in the value state message popup. If not specfied a default text is shown. This property is already available for sap.m.Input since 1.16.0.
 	 *

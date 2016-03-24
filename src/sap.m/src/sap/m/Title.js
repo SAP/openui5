@@ -140,6 +140,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', './l
 		return this;
 	};
 
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	Title.prototype.getAccessibilityInfo = function() {
+		var oTitle = this._getTitle() || this;
+		return {
+			role: "heading",
+			description: oTitle.getText(),
+			focusable: false
+		};
+	};
 
 	return Title;
 

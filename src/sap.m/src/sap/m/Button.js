@@ -528,6 +528,28 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	};
 
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	Button.prototype.getAccessibilityInfo = function() {
+		var sDesc = this.getText() || this.getTooltip_AsString();
+		if (!sDesc && this.getIcon()) {
+			var oIconInfo = sap.ui.core.IconPool.getIconInfo(this.getIcon());
+			if (oIconInfo) {
+				sDesc = oIconInfo.text || oIconInfo.name;
+			}
+		}
+
+		return {
+			role: "button",
+			type: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"),
+			description: sDesc,
+			focusable: this.getEnabled(),
+			enabled: this.getEnabled()
+		};
+	};
+
 	return Button;
 
 }, /* bExport= */ true);
