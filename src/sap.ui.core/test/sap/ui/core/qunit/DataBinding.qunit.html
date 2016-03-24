@@ -324,8 +324,7 @@
 
 		// check for expected modifications
 		ok(child.getParent() == null, "parent should be null");
-		ok(child.getModel() == null, "child shouldn't have a default model");
-		ok(child.getBinding("value") == null, "child shouldn't have a binding for the default model");
+		equal(child.getModel(), null, "child shouldn't have a default model");
 		ok(child.oPropagatedProperties !== ctrl.oPropagatedProperties, "child should no longer inherit propagatedProperties 1:1 from ctrl");
 	});
 

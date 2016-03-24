@@ -392,7 +392,7 @@ sap.ui.define([
 			this.aDelegates = [];
 			this.aBeforeDelegates = [];
 			this.iSuppressInvalidate = 0;
-			this.oPropagatedProperties = ManagedObject._oEmptyPropagatedProperties;
+			this.oPropagatedProperties = {oModels:{}, oBindingContexts:{}};
 			this.mSkipPropagation = {};
 
 			// data binding
@@ -2092,14 +2092,7 @@ sap.ui.define([
 		if ( !oParent ) {
 			this.oParent = null;
 			this.sParentAggregationName = null;
-			this.oPropagatedProperties = ManagedObject._oEmptyPropagatedProperties;
-
-			// if object is being destroyed no propagation needed
-			if (this._bIsBeingDestroyed) {
-				this.updateBindings(true, null);
-				this.updateBindingContext(false, undefined, true);
-				this.propagateProperties(true);
-			}
+			this.oPropagatedProperties = {oModels:{}, oBindingContexts:{}};
 
 			jQuery.sap.act.refresh();
 
@@ -2132,8 +2125,8 @@ sap.ui.define([
 
 		// update bindings
 		if (this.hasModel()) {
-			this.updateBindings(true, null); // TODO could be restricted to models that changed
-			this.updateBindingContext(false, undefined, true);
+			this.updateBindingContext(false, true, undefined, true);
+			this.updateBindings(true,null); // TODO could be restricted to models that changed
 			this.propagateProperties(true);
 		}
 
@@ -2175,9 +2168,6 @@ sap.ui.define([
 	 */
 	ManagedObject.prototype.destroy = function(bSuppressInvalidate) {
 		var that = this;
-
-		// avoid binding update/propagation
-		this._bIsBeingDestroyed = true;
 
 		// set suppress invalidate flag
 		if (bSuppressInvalidate) {
@@ -2370,7 +2360,6 @@ sap.ui.define([
 			sModelName = oBindingInfo.model;
 			boundObject.events = oBindingInfo.events;
 		}
-
 		// if a model separator is found in the path, extract model name and path
 		iSeparatorPos = sPath.indexOf(">");
 		boundObject.sBindingPath = sPath;
@@ -2478,8 +2467,7 @@ sap.ui.define([
 			delete this.mBoundObjects[sModelName];
 			delete this.mElementBindingContexts[sModelName];
 			if ( !_bSkipUpdateBindingContext ) {
-				this.updateBindingContext(false, sModelName);
-				this.propagateProperties(sModelName);
+				this.updateBindingContext(false, false, sModelName);
 			}
 		}
 		return this;
@@ -3367,7 +3355,7 @@ sap.ui.define([
 
 		if (oOldContext !== oContext) {
 			this.oBindingContexts[sModelName] = oContext;
-			this.updateBindingContext(false, sModelName);
+			this.updateBindingContext(false, true, sModelName);
 			this.propagateProperties(sModelName);
 		}
 		return this;
@@ -3382,7 +3370,7 @@ sap.ui.define([
 
 		if (oOldContext !== oContext) {
 			this.mElementBindingContexts[sModelName] = oContext;
-			this.updateBindingContext(true, sModelName);
+			this.updateBindingContext(true, true, sModelName);
 			this.propagateProperties(sModelName);
 		}
 		return this;
@@ -3392,7 +3380,7 @@ sap.ui.define([
 	 * Update the binding context in this object and all aggregated children
 	 * @private
 	 */
-	ManagedObject.prototype.updateBindingContext = function(bSkipLocal, sFixedModelName, bUpdateAll){
+	ManagedObject.prototype.updateBindingContext = function(bSkipLocal, bSkipChildren, sFixedModelName, bUpdateAll){
 
 		var oModel,
 			oModelNames = {},
@@ -3464,6 +3452,21 @@ sap.ui.define([
 						// simple property binding: update required when the model has the same name
 						if ( aParts[0].model == sModelName) {
 							oBinding.setContext(oContext);
+						}
+					}
+				}
+				if (!bSkipChildren) {
+					// also update context in all child elements
+					for ( sName in this.mAggregations ) {
+						var oAggregation = this.mAggregations[sName];
+						if (oAggregation instanceof ManagedObject) {
+							oAggregation.oPropagatedProperties.oBindingContexts[sModelName] = oContext;
+							oAggregation.updateBindingContext(false,false,sModelName);
+						} else if (oAggregation instanceof Array) {
+							for (i = 0; i < oAggregation.length; i++) {
+								oAggregation[i].oPropagatedProperties.oBindingContexts[sModelName] = oContext;
+								oAggregation[i].updateBindingContext(false,false,sModelName);
+							}
 						}
 					}
 				}
@@ -3557,14 +3560,12 @@ sap.ui.define([
 			// model changes are propagated until (including) the first descendant that has its own model with the same name
 			this.propagateProperties(sName);
 			// update binding context, for primary model only
-			this.updateBindingContext(false, sName);
+			this.updateBindingContext(false, true, sName);
 			// if the model instance for a name changes, all bindings for that model name have to be updated
 			this.updateBindings(false, sName);
 		} // else nothing to do
 		return this;
 	};
-
-	ManagedObject._oEmptyPropagatedProperties = {oModels:{}, oBindingContexts:{}};
 
 	/**
 	 * Propagate Properties (models and bindingContext) to aggregated objects.
@@ -3602,12 +3603,10 @@ sap.ui.define([
 			bUpdateAll = vName === true;
 			sName = bUpdateAll ? undefined : vName;
 		}
-		if (oObject.oPropagatedProperties !== oProperties) {
-			oObject.oPropagatedProperties = oProperties;
-			oObject.updateBindings(bUpdateAll,sName);
-			oObject.updateBindingContext(false, sName, bUpdateAll);
-			oObject.propagateProperties(vName);
-		}
+		oObject.oPropagatedProperties = oProperties;
+		oObject.updateBindings(bUpdateAll,sName);
+		oObject.updateBindingContext(false, true, sName, bUpdateAll);
+		oObject.propagateProperties(vName);
 	};
 
 	/**
