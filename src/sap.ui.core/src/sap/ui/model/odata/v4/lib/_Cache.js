@@ -264,8 +264,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Updates the property of the given name with the given new value, using the given group ID
-	 * for batch control and the given edit URL to send a PATCH request.
+	 * Updates the property of the given name with the given new value (and later with the server's
+	 * response), using the given group ID for batch control and the given edit URL to send a PATCH
+	 * request.
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID
@@ -288,10 +289,12 @@ sap.ui.define([
 
 		oBody[sPropertyName] = vValue;
 		mHeaders = {"If-Match" : oResult["@odata.etag"]};
+		oResult[sPropertyName] = vValue;
 
 		return that.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders, oBody)
 			.then(function (oPatchResult) {
 				oResult["@odata.etag"] = oPatchResult["@odata.etag"];
+				oResult[sPropertyName] = oPatchResult[sPropertyName];
 				return oPatchResult;
 			});
 	};
@@ -428,8 +431,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Updates the property of the given name with the given new value, using the given group ID
-	 * for batch control and the given edit URL to send a PATCH request.
+	 * Updates the property of the given name with the given new value (and later with the server's
+	 * response), using the given group ID for batch control and the given edit URL to send a PATCH
+	 * request.
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID
@@ -449,17 +453,23 @@ sap.ui.define([
 			that = this;
 
 		oBody[sPropertyName] = vValue;
+		if (this.bSingleProperty) {
+			sPropertyName = "value";
+		}
+
 		return this.oPromise.then(function (oResult) {
 			var mHeaders;
 
 			oResult = drillDown(oResult, sPath);
 			mHeaders = {"If-Match" : oResult["@odata.etag"]};
+			oResult[sPropertyName] = vValue;
 
 			return that.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders, oBody)
 				.then(function (oPatchResult) {
 					if (!that.bSingleProperty) {
 						oResult["@odata.etag"] = oPatchResult["@odata.etag"];
 					}
+					oResult[sPropertyName] = oPatchResult[sPropertyName];
 					return oPatchResult;
 				});
 		});
