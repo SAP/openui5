@@ -1217,7 +1217,7 @@ sap.ui.define([
 	 * @param {boolean} [bForceUpdate=false] Force update of controls
 	 * @param {boolean} [bRemoveData=false] If set to true then the model data will be removed/cleared.
 	 * 					Please note that the data might not be there when calling e.g. getProperty too early before the refresh call returned.
-	 * @param {string} [sGroupId] The GroupId
+	 * @param {string} [sGroupId] The groupId. Requests belonging to the same groupId will be bundled in one batch request.
 	 *
 	 * @public
 	 */
@@ -1237,7 +1237,7 @@ sap.ui.define([
 
 	/**
 	 * @param {boolean} [bForceUpdate=false] Force update of controls
-	 * @param {string} [sGroupId] The GroupId
+	 * @param {string} [sGroupId] The groupId. Requests belonging to the same groupId will be bundled in one batch request.
 	 * @param {map} mChangedEntities map of changed entities
 	 * @param {map} mEntityTypes map of changed entityTypes
 	 * @private
@@ -2340,7 +2340,7 @@ sap.ui.define([
 	 * push request to internal request queue
 	 *
 	 * @param {map} mRequests Request queue
-	 * @param {string} sGroupId The group Id
+	 * @param {string} sGroupId The group Id. Requests belonging to the same groupId will be bundled in one batch request.
 	 * @param {string} [sChangeSetId] The changeSet Id
 	 * @param {oRequest} oRequest The request
 	 * @param {function} fnSuccess The success callback function
@@ -2461,7 +2461,7 @@ sap.ui.define([
 	 * Request queue processing
 	 *
 	 * @param {map} mRequests Request queue
-	 * @param {string} sGroupId The GroupId
+	 * @param {string} sGroupId The groupId. Requests belonging to the same groupId will be bundled in one batch request.
 	 * @param {function} fnSuccess Success callback function
 	 * @param {function} fnError Erro callback function
 	 * @returns {object|array} oRequestHandle The request handle: array if multiple request will be sent
@@ -3185,8 +3185,8 @@ sap.ui.define([
 	 * 		the request was completed before continuing to work with the data.
 	 * @param {map} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
 	 * @param {map} [mParameters.headers] A map of headers for this request
-	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead: batchGroupId for this request
-	 * @param {string} [mParameters.groupId] groupId for this request
+	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead
+	 * @param {string} [mParameters.groupId] groupId for this request. Requests belonging to the same groupId will be bundled in one batch request.
 	 * @param {string} [mParameters.changeSetId] changeSetId for this request
 	 *
 	 * @return {object} an object which has an <code>abort</code> function to abort the current request.
@@ -3251,8 +3251,8 @@ sap.ui.define([
 	 *		The handler can have the parameter <code>oError</code> which contains additional error information.
 	 * @param {map} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
 	 * @param {map} [mParameters.headers] A map of headers for this request
-	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead: batchGroupId for this request
-	 * @param {string} [mParameters.groupId] groupId for this request
+	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead
+	 * @param {string} [mParameters.groupId] groupId for this request. Requests belonging to the same groupId will be bundled in one batch request.
 	 * @param {string} [mParameters.changeSetId] changeSetId for this request
 	 * @return {object} an object which has an <code>abort</code> function to abort the current request.
 	 *
@@ -3314,8 +3314,8 @@ sap.ui.define([
 	 *		The handler can have the parameter: <code>oError</code> which contains additional error information.
 	 * @param {string} [mParameters.eTag] If specified, the If-Match-Header will be set to this Etag.
 	 * @param {map} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
-	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead: batchGroupId for this request
-	 * @param {string} [mParameters.groupId] groupId for this request
+	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead
+	 * @param {string} [mParameters.groupId] groupId for this request. Requests belonging to the same groupId will be bundled in one batch request.
 	 * @param {string} [mParameters.changeSetId] changeSetId for this request
 	 *
 	 * @return {object} an object which has an <code>abort</code> function to abort the current request.
@@ -3389,8 +3389,8 @@ sap.ui.define([
 	 *        the following parameters: <code>oData<code> and <code>response</code>.
 	 * @param {function} [mParameters.error] a callback function which is called when the request failed.
 	 *		The handler can have the parameter: <code>oError</code> which contains additional error information.
-	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead: batchGroupId for this request
-	 * @param {string} [mParameters.groupId] groupId for this request
+	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead
+	 * @param {string} [mParameters.groupId] groupId for this request. Requests belonging to the same groupId will be bundled in one batch request.
 	 * @param {string} [mParameters.eTag] If the functionImport changes an entity, the eTag for this entity could be passed with this parameter
 	 * @param {string} [mParameters.changeSetId] changeSetId for this request
 	 *
@@ -3556,8 +3556,8 @@ sap.ui.define([
 	 *		following parameters: oData and response.
 	 * @param {function} [mParameters.error] a callback function which is called when the request
 	 * 		failed. The handler can have the parameter: oError which contains additional error information.
-	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead: batchGroupId for this request
-	 * @param {string} [mParameters.groupId] groupId for this request
+	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead
+	 * @param {string} [mParameters.groupId] groupId for this request. Requests belonging to the same groupId will be bundled in one batch request.
 	 *
 	 * @return {object} an object which has an <code>abort</code> function to abort the current request.
 	 *
@@ -3794,8 +3794,8 @@ sap.ui.define([
 	 * Important: The success/error handler will only be called if batch support is enabled. If multiple batchGroups are submitted the handlers will be called for every batchGroup.
 	 *
 	 * @param {object} [mParameters] a map which contains the following parameter properties:
-	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead: defines the batchGroup that should be submitted. If not specified all deferred groups will be submitted
-	 * @param {string} [mParameters.groupId] defines the group that should be submitted. If not specified all deferred groups will be submitted
+	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead
+	 * @param {string} [mParameters.groupId] defines the group that should be submitted. If not specified all deferred groups will be submitted. Requests belonging to the same groupId will be bundled in one batch request.
 	 * @param {function} [mParameters.success] a callback function which is called when the data has been successfully updated. The handler can have the following parameters: oData
 	 * @param {function} [mParameters.error] a callback function which is called when the request failed. The handler can have the parameter: oError which contains additional error information
 	 * @param {string} [mParameters.eTag] an ETag which can be used for concurrency control. If it is specified, it will be used in an If-Match-Header in the request to the server for this entry
@@ -4281,8 +4281,8 @@ sap.ui.define([
 	 * @param {String} sPath Name of the path to the EntitySet
 	 * @param {map} mParameters A map of the following parameters:
 	 * @param {array|object} [mParameters.properties] An array that specifies a set of properties or the entry
-	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead: The batchGroupId
-	 * @param {string} [mParameters.groupId] The GroupId
+	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead
+	 * @param {string} [mParameters.groupId] The groupId. Requests belonging to the same groupId will be bundled in one batch request.
 	 * @param {string} [mParameters.changeSetId] The changeSetId
 	 * @param {sap.ui.model.Context} [mParameters.context] The binding context
 	 * @param {function} [mParameters.success] The success callback function
@@ -4600,7 +4600,7 @@ sap.ui.define([
 	 * via a submitChanges call.
 	 *
 	 * @param {array} aGroupIds Array of batchGroupIds that should be set as deferred
-	 * @deprecated Since 1.32 use
+	 * @deprecated Since 1.32 use setDeferredGroups instead
 	 * @public
 	 */
 	ODataModel.prototype.setDeferredBatchGroups = function(aGroupIds) {
@@ -4626,7 +4626,7 @@ sap.ui.define([
 	 * Returns the array of batchGroupIds that are set as deferred
 	 *
 	 * @returns {array} aGroupIds The array of deferred batchGroupIds
-	 * @deprecated Since 1.32 use
+	 * @deprecated Since 1.32 use getDeferredGroups instead
 	 * @public
 	 */
 	ODataModel.prototype.getDeferredBatchGroups = function() {
@@ -4663,7 +4663,7 @@ sap.ui.define([
 	 * bacthGroupId: Defines the bacthGroup for changes of the defined EntityTypeName
 	 * changeSetId: Defines a changeSetId wich bundles the changes for the EntityType.
 	 * single: Defines if every change will get an own changeSet (true)
-	 * @deprecated Since 1.32 use
+	 * @deprecated Since 1.32 use setChangesGroups instead
 	 * @public
 	 */
 	ODataModel.prototype.setChangeBatchGroups = function(mGroups) {
@@ -4674,7 +4674,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Definition of batchGroups per EntityType for "TwoWay" changes
+	 * Definition of groups per EntityType for "TwoWay" changes
 	 *
 	 * @param {map} mGroups A map containing the definition of bacthGroups for TwoWay changes. The Map has the
 	 * following format:
@@ -4697,6 +4697,7 @@ sap.ui.define([
 	/**
 	 * Returns the definition of batchGroups per EntityType for TwoWay changes
 	 * @returns {map} mChangeBatchGroups Definition of bactchGRoups for "TwoWay" changes
+	 * @deprecated Since 1.36 use getChangeGroups instead
 	 * @public
 	 */
 	ODataModel.prototype.getChangeBatchGroups = function() {
