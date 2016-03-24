@@ -65,7 +65,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 					 * The format comes from the browser language settings if not set explicitly.
 					 * Used in combination with 12 hour <code>valueFormat</code> containing 'a', which
 					 * stands for day period string.
-					 * Default value is taken from browser locale setting
+					 * Default value is taken from browser's locale setting.
 					 */
 					localeId: {type : "string", group: "Data"},
 
