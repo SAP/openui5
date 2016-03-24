@@ -245,6 +245,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			// track coordinates of the touch point
 			this._fStartX = 0;
 			this._fStartY = 0;
+
+			this.enableKeyboardNavigation = true;
 		};
 
 		/**
@@ -260,7 +262,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 *
 		 */
 		SelectList.prototype.onAfterRendering = function() {
-			this.createItemNavigation();
+			if (this.enableKeyboardNavigation) {
+				this.createItemNavigation();
+			}
 		};
 
 		/**
