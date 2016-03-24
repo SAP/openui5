@@ -98,7 +98,10 @@ sap.ui.define([
 		},
 
 		onRefreshAll : function () {
-			this.getView().getModel().refresh(true);
+			var oModel = this.getView().getModel();
+
+			oModel.refresh(true, "RefreshAll");
+			oModel.submitBatch("RefreshAll");
 		},
 
 		onRefreshFavoriteProduct : function (oEvent) {

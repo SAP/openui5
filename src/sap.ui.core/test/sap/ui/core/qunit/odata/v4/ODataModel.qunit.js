@@ -363,20 +363,31 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("refresh", function (assert) {
-		var oModel = createModel(),
+		var oError = new Error(),
+			oHelperMock = this.oSandbox.mock(_ODataHelper),
+			oModel = createModel(),
 			oListBinding = oModel.bindList("/TEAMS"),
 			oListBinding2 = oModel.bindList("/TEAMS"),
 			oPropertyBinding = oModel.bindProperty("Name");
 
 		oListBinding.attachChange(function () {});
 		oPropertyBinding.attachChange(function () {});
-		this.oSandbox.mock(oListBinding).expects("refresh").withExactArgs(true);
+		this.oSandbox.mock(oListBinding).expects("refresh").withExactArgs(true, "myGroup");
 		//check: only bindings with change event handler are refreshed
 		this.oSandbox.mock(oListBinding2).expects("refresh").never();
 		//check: no refresh on binding with relative path
 		this.oSandbox.mock(oPropertyBinding).expects("refresh").never();
+		oHelperMock.expects("checkGroupId").withExactArgs("myGroup");
 
-		oModel.refresh(true);
+		// code under test
+		oModel.refresh(true, "myGroup");
+
+		oHelperMock.expects("checkGroupId").withExactArgs("$Invalid").throws(oError);
+
+		// code under test
+		assert.throws(function () {
+			oModel.refresh(true, "$Invalid");
+		}, oError);
 	});
 
 	//*********************************************************************************************
@@ -480,8 +491,7 @@ sap.ui.require([
 
 		this.oSandbox.mock(oModel.oRequestor).expects("submitBatch").withExactArgs("groupId")
 			.returns(oSubmitPromise);
-		this.oSandbox.mock(_ODataHelper).expects("checkGroupId").withExactArgs("groupId", true)
-			.returns(true);
+		this.oSandbox.mock(_ODataHelper).expects("checkGroupId").withExactArgs("groupId", true);
 		oModel.mCallbacksByGroupId["groupId"] = [fnCallback, fnCallback2];
 
 		// code under test
@@ -495,15 +505,16 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("submitBatch, invalid group ID", function (assert) {
-		var oModel = createModel();
+		var oError = new Error(),
+			oModel = createModel();
 
 		this.oSandbox.mock(oModel).expects("_submitBatch").never();
 		this.oSandbox.mock(_ODataHelper).expects("checkGroupId").withExactArgs("$auto", true)
-			.returns(false);
+			.throws(oError);
 
 		assert.throws(function () {
 			oModel.submitBatch("$auto");
-		}, new Error("Unsupported group ID: $auto"));
+		}, oError);
 	});
 
 	//*********************************************************************************************
@@ -557,10 +568,6 @@ sap.ui.require([
 			oModel.refresh("foo"/*truthy*/);
 		}, new Error("Unsupported operation: v4.ODataModel#refresh, "
 			+ "bForceUpdate must be true"));
-		assert.throws(function () { //TODO implement
-			oModel.refresh(true, "");
-		}, new Error("Unsupported operation: v4.ODataModel#refresh, "
-				+ "sGroupId parameter must not be set"));
 
 		assert.throws(function () {
 			oModel.setLegacySyntax();

@@ -91,6 +91,7 @@ sap.ui.define([
 				this.sGroupId = undefined;
 				this.oOperation = undefined;
 				this.mQueryOptions = undefined;
+				this.sRefreshGroupId = undefined;
 				this.sUpdateGroupId = undefined;
 
 				if (bDeferred) {
@@ -357,17 +358,29 @@ sap.ui.define([
 	};
 
 	/**
-	 * Refreshes the binding. Prompts the model to retrieve data from the server and notifies the
-	 * control that new data is available. <code>bForceUpdate</code> has to be <code>true</code>.
-	 * If <code>bForceUpdate</code> is not given or <code>false</code>, an error is thrown.
+	 * Refreshes the binding. Prompts the model to retrieve data from the server using the given
+	 * group ID and notifies the control that new data is available.
+	 * <code>bForceUpdate</code> has to be set to <code>true</code>. If <code>bForceUpdate</code> is
+	 * not specified or <code>false</code>, an error is thrown.
 	 * Refresh is supported for absolute bindings.
 	 *
+	 * Note: When calling refresh multiple times, the result of the request triggered by the last
+	 * call determines the binding's data; it is <b>independent</b>
+	 * of the order of calls to {@link sap.ui.model.odata.v4.ODataModel#submitBatch} with the given
+	 * group ID.
+	 *
 	 * @param {boolean} bForceUpdate
-	 *   The parameter <code>bForceUpdate</code> has to be <code>true</code>.
+	 *   The parameter <code>bForceUpdate</code> has to be set to <code>true</code>.
 	 * @param {string} [sGroupId]
-	 *   The parameter <code>sGroupId</code> is not supported.
-	 * @throws {Error} When <code>bForceUpdate</code> is not <code>true</code> or
-	 *   <code>sGroupId</code> is set or refresh on this binding is not supported.
+	 *   The group ID to be used for refresh; if not specified, the group ID for this binding is
+	 *   used, see {@link sap.ui.model.odata.v4.ODataContextBinding#constructor}, and if that group
+	 *   ID is also not specified the model's default group ID is used, see
+	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor}.
+	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
+	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
+	 * @throws {Error}
+	 *   When <code>bForceUpdate</code> is not set to <code>true</code> or the given group ID is
+	 *   invalid or refresh on this binding is not supported.
 	 *
 	 * @public
 	 * @see sap.ui.model.Binding#refresh
@@ -379,12 +392,10 @@ sap.ui.define([
 			throw new Error("Unsupported operation: v4.ODataContextBinding#refresh, "
 				+ "bForceUpdate must be true");
 		}
-		if (sGroupId !== undefined) {
-			throw new Error("Unsupported operation: v4.ODataContextBinding#refresh, "
-				+ "sGroupId parameter must not be set");
-		}
 		if (this.oCache) {
 			if (!this.oOperation || !this.oOperation.bAction) {
+				_ODataHelper.checkGroupId(sGroupId);
+				this.sRefreshGroupId = sGroupId;
 				this.oCache.refresh();
 				this._fireChange({reason : ChangeReason.Refresh});
 			}
@@ -410,7 +421,8 @@ sap.ui.define([
 			that = this;
 
 		if (this.oCache) {
-			sGroupId = this.getGroupId();
+			sGroupId = this.sRefreshGroupId || this.getGroupId();
+			this.sRefreshGroupId = undefined;
 			return this.oCache.read(sGroupId, sPath, function () {
 				bDataRequested = true;
 				that.oModel.addedRequestToGroup(sGroupId, that.fireDataRequested.bind(that));

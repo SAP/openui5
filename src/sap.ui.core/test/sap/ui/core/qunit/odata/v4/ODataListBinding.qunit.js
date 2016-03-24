@@ -731,6 +731,30 @@ sap.ui.require([
 			assert.strictEqual(oListBinding.isLengthFinal(), false);
 		});
 	});
+	//*********************************************************************************************
+	QUnit.test("refresh absolute path, with application group", function (assert) {
+		var oCacheMock = this.getCacheMock(),
+			oError = new Error(),
+			oHelperMock = this.oSandbox.mock(_ODataHelper),
+			oListBinding = this.oModel.bindList("/EMPLOYEES");
+
+		oCacheMock.expects("refresh");
+		this.oSandbox.mock(oListBinding).expects("_fireRefresh")
+			.withExactArgs({reason : ChangeReason.Refresh});
+		oHelperMock.expects("checkGroupId").withExactArgs("myGroup");
+
+		// code under test
+		oListBinding.refresh(true, "myGroup");
+
+		assert.strictEqual(oListBinding.sRefreshGroupId, "myGroup");
+
+		oHelperMock.expects("checkGroupId").withExactArgs("$Invalid").throws(oError);
+
+		// code under test
+		assert.throws(function () {
+			oListBinding.refresh(true, "$Invalid");
+		}, oError);
+	});
 
 	//*********************************************************************************************
 	QUnit.test("refresh on relative binding is not supported", function (assert) {
@@ -986,10 +1010,6 @@ sap.ui.require([
 			oListBinding.refresh("foo"/*truthy*/);
 		}, new Error("Unsupported operation: v4.ODataListBinding#refresh, "
 			+ "bForceUpdate must be true"));
-		assert.throws(function () { //TODO implement
-			oListBinding.refresh(true, "");
-		}, new Error("Unsupported operation: v4.ODataListBinding#refresh, "
-				+ "sGroupId parameter must not be set"));
 
 		assert.throws(function () { //TODO implement
 			oListBinding.resume();
@@ -1061,7 +1081,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getGroupId", function (assert) {
+	QUnit.test("getContexts uses group ID from binding parameter", function (assert) {
 		var oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined,
 				{$$groupId : "myGroup"}),
 			oReadPromise = createResult(0);
@@ -1075,6 +1095,27 @@ sap.ui.require([
 			.callsArg(1);
 
 		oBinding.getContexts(0, 10);
+
+		return oReadPromise;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getContexts uses refresh group ID", function (assert) {
+		var oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined,
+				{$$groupId : "$direct"}),
+			oReadPromise = createResult(0);
+
+		this.oSandbox.mock(oBinding.oCache).expects("read")
+			.withExactArgs(0, 10, "myGroup", undefined, sinon.match.func)
+			.callsArg(4)
+			.returns(oReadPromise);
+		this.oSandbox.mock(oBinding.oModel).expects("addedRequestToGroup")
+			.withExactArgs("myGroup", sinon.match.func)
+			.callsArg(1);
+		oBinding.sRefreshGroupId = "myGroup";
+
+		oBinding.getContexts(0, 10);
+
 		return oReadPromise;
 	});
 });

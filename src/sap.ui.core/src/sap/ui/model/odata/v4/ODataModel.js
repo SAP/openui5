@@ -489,16 +489,22 @@ sap.ui.define([
 
 	/**
 	 * Refreshes the model by calling refresh on all bindings which have a change event handler
-	 * attached. <code>bForceUpdate</code> has to be <code>true</code>.
-	 * If <code>bForceUpdate</code> is not <code>true</code> or <code>sGroupId</code> is set, an
-	 * error is thrown.
+	 * attached. <code>bForceUpdate</code> has to be set to <code>true</code>.
+	 * If <code>bForceUpdate</code> is not set to <code>true</code>, an error is thrown.
+	 *
+	 * Note: When calling refresh multiple times, the result of the request triggered by the last
+	 * call determines the model's data; it is <b>independent</b>
+	 * of the order of calls to {@link #submitBatch} with the given group ID.
 	 *
 	 * @param {boolean} bForceUpdate
-	 *   The parameter <code>bForceUpdate</code> has to be <code>true</code>.
+	 *   The parameter <code>bForceUpdate</code> has to be set to <code>true</code>.
 	 * @param {string} [sGroupId]
-	 *   The parameter <code>sGroupId</code> is not supported.
-	 * @throws {Error} When <code>bForceUpdate</code> is not <code>true</code> or
-	 *   <code>sGroupId</code> is set or refresh on this binding is not supported.
+	 *   The group ID to be used for refresh; valid values are <code>undefined</code>,
+	 *   <code>'$auto'</code>, <code>'$direct'</code> or application group IDs as specified in
+	 *   {@link #submitBatch}
+	 * @throws {Error}
+	 *   When <code>bForceUpdate</code> is not set to <code>true</code> or the given group ID is
+	 *   invalid
 	 *
 	 * @public
 	 * @see sap.ui.model.Model#refresh
@@ -513,13 +519,12 @@ sap.ui.define([
 			throw new Error("Unsupported operation: v4.ODataModel#refresh, "
 					+ "bForceUpdate must be true");
 		}
-		if (sGroupId !== undefined) {
-			throw new Error("Unsupported operation: v4.ODataModel#refresh, "
-				+ "sGroupId parameter must not be set");
-		}
+
+		_ODataHelper.checkGroupId(sGroupId);
+
 		this.aBindings.slice().forEach(function (oBinding) {
 			if (oBinding.oCache) { // relative bindings have no cache and cannot be refreshed
-				oBinding.refresh(bForceUpdate);
+				oBinding.refresh(bForceUpdate, sGroupId);
 			}
 		});
 	};
@@ -618,9 +623,7 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataModel.prototype.submitBatch = function (sGroupId) {
-		if (!_ODataHelper.checkGroupId(sGroupId, true)) {
-			throw new Error("Unsupported group ID: " + sGroupId);
-		}
+		_ODataHelper.checkGroupId(sGroupId, true);
 
 		return this._submitBatch(sGroupId);
 	};
