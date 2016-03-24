@@ -13,6 +13,7 @@
 
 	<items>
 		<rdf:Seq>
+			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/141605949215" />
 			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/137623135285" />
 			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/134911941785" />
 			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/126093935815" />
@@ -27,6 +28,12 @@
 	</items>
 </channel>
 
+<item rdf:about="http://openui5picks.tumblr.com/post/141605949215">
+	<title>Demos: OpenUI5 Custom Controls for charting</title>
+	<link>http://openui5picks.tumblr.com/post/141605949215</link>
+	<content:encoded>&lt;img src=&quot;http://41.media.tumblr.com/1a48790feea1c791065747cd6db1bcd4/tumblr_inline_o4ju70rYNi1sb8vfp_540.jpg&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;This sample OpenUI5 web app demonstrated custom UI controls that act as wrapper for charting libraries. It shows you how to integrate simple charts into OpenUI5 apps. </content:encoded>
+	<dc:date>2016-03-24T15:11:39+00:00</dc:date>
+</item>
 <item rdf:about="http://openui5picks.tumblr.com/post/137623135285">
 	<title>Demos: Instantly Prototype Responsive MVC-based Web Apps</title>
 	<link>http://openui5picks.tumblr.com/post/137623135285</link>
