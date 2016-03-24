@@ -4227,6 +4227,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			aParam.splice(0, 0, "$format=" + encodeURIComponent(sFormat));
 		}
 
+		// add the custom url parameters
+		if (this.sCustomParams) {
+			aParam.push(this.sCustomParams);
+		}
+
 		// create the request URL
 		if (sPath) {
 			return this.oModel._createRequestUrl(sPath, null, aParam);
