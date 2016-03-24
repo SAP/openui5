@@ -57,7 +57,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			introActive : {type : "boolean", group : "Misc", defaultValue : null},
 
 			/**
-			 * Indicates that the title is clickable
+			 * Indicates that the title is clickable and is set only if a title is provided
 			 */
 			titleActive : {type : "boolean", group : "Misc", defaultValue : null},
 
