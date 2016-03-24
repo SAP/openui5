@@ -3,6 +3,18 @@
 /* CSS for control sap.m/FlexBox.control         */
 /* ============================================= */
 
+.sapMFlexBoxBGSolid {
+	background-color: @sapUiGroupContentBackground;
+}
+
+.sapMFlexBoxBGTranslucent {
+	background-color: fade(@sapUiGroupContentBackground, 80%);
+}
+
+.sapMFlexBoxBGTransparent {
+	background-color: transparent;
+}
+
 .sapMFlexBox {
 	display: -webkit-box;	/* old syntax old support, up to android native 4.3, iOS Safari 6.1, Chrome Beta for Android */
 	display: -webkit-flex;	/* prefixed for Safari 8 */

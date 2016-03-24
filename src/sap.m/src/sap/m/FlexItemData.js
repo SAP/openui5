@@ -8,7 +8,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 	"use strict";
 
 	/**
-	 * Constructor for a new FlexItemData.
+	 * Constructor for a new <code>sap.m.FlexItemData</code>.
 	 *
 	 * @param {string} [sId] id for the new element, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new element
@@ -55,7 +55,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 			 * @see http://www.w3.org/TR/css-flexbox-1/#flex-shrink-property
 			 *
 			 * <b>Note:</b> This property is not supported in Internet Explorer 9, Android Native Browser/Webview <4.4, and Safari <7.
-			 * @since 1.24
+			 * @since 1.24.0
 			 */
 			shrinkFactor : {type : "float", group : "Misc", defaultValue : 1},
 
@@ -64,38 +64,45 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 			 *
 			 * @see http://www.w3.org/TR/css-flexbox-1/#flex-basis-property
 			 *
-			 * @since 1.32
+			 * @since 1.32.0
 			 */
 			baseSize : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : "auto"},
 
 			/**
 			 * The minimum height of the flex item.
-			 * @since 1.36
+			 * @since 1.36.0
 			 */
 			minHeight : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : 'auto'},
 
 			/**
 			 * The maximum height of the flex item.
-			 * @since 1.36
+			 * @since 1.36.0
 			 */
 			maxHeight : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : ''},
 
 			/**
 			 * The minimum height of the flex item.
-			 * @since 1.36
+			 * @since 1.36.0
 			 */
 			minWidth : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : 'auto'},
 
 			/**
 			 * The maximum height of the flex item.
-			 * @since 1.36
+			 * @since 1.36.0
 			 */
 			maxWidth : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : ''},
 
 			/**
 			 * The style class will be applied to the flex item and can be used for CSS selectors
 			 */
-			styleClass : {type : "string", group : "Misc", defaultValue : ''}
+			styleClass : {type : "string", group : "Misc", defaultValue : ''},
+
+			/**
+			 * Defines the background style of the flex item.
+			 *
+			 * @since 1.38.5
+			 */
+			backgroundDesign: {type: "sap.m.BackgroundDesign", group: "Appearance", defaultValue: sap.m.BackgroundDesign.Transparent}
 		}
 	}});
 
@@ -159,6 +166,14 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 	FlexItemData.prototype.setMaxWidth = function(sValue) {
 		this.setProperty("maxWidth", sValue, true);
 		this.$().css("max-width", this.getMaxWidth());
+
+		return this;
+	};
+
+	FlexItemData.prototype.setBackgroundDesign = function(sValue) {
+		var sOldValue = this.getBackgroundDesign();
+		this.setProperty("backgroundDesign", sValue, true);
+		this.$().removeClass("sapMFlexBoxBG" + sOldValue).addClass("sapMFlexBoxBG" + this.getBackgroundDesign());
 
 		return this;
 	};

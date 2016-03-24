@@ -10,13 +10,13 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 
 
 	/**
-	 * Constructor for a new FlexBox.
+	 * Constructor for a new <code>sap.m.FlexBox</code>.
 	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * The FlexBox control builds the container for a flexible box layout.
+	 * The <code>sap.m.FlexBox</code> control builds the container for a flexible box layout.
 	 *
 	 * Browser support:
 	 * This control is not supported in Internet Explorer 9!
@@ -36,19 +36,19 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 		properties : {
 
 			/**
-			 * The height of the FlexBox. Note that when a percentage is given, for the height to work as expected, the height of the surrounding container must be defined.
+			 * The height of the <code>sap.m.FlexBox</code>. Note that when a percentage is given, for the height to work as expected, the height of the surrounding container must be defined.
 			 * @since 1.9.1
 			 */
 			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : ''},
 
 			/**
-			 * The width of the FlexBox. Note that when a percentage is given, for the width to work as expected, the width of the surrounding container must be defined.
+			 * The width of the <code>sap.m.FlexBox</code>. Note that when a percentage is given, for the width to work as expected, the width of the surrounding container must be defined.
 			 * @since 1.9.1
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : ''},
 
 			/**
-			 * Determines whether the flexbox is in block or inline mode.
+			 * Determines whether the <code>sap.m.FlexBox</code> is in block or inline mode.
 			 *
 			 * @see http://www.w3.org/TR/css-flexbox-1/#flex-containers
 			 */
@@ -62,7 +62,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 			direction : {type : "sap.m.FlexDirection", group : "Appearance", defaultValue : sap.m.FlexDirection.Row},
 
 			/**
-			 * Determines whether the flexbox will be sized to completely fill its container. If the FlexBox is inserted into a Page, the property 'enableScrolling' of the Page needs to be set to 'false' for the FlexBox to fit the entire viewport.
+			 * Determines whether the <code>sap.m.FlexBox</code> will be sized to completely fill its container. If the <code>sap.m.FlexBox</code> is inserted into a Page, the property 'enableScrolling' of the Page needs to be set to 'false' for the FlexBox to fit the entire viewport.
 			 */
 			fitContainer : {type : "boolean", group : "Appearance", defaultValue : false},
 
@@ -90,7 +90,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 			 *
 			 * @see http://www.w3.org/TR/css-flexbox-1/#flex-wrap-property
 			 *
-			 * @since 1.36
+			 * @since 1.36.0
 			 */
 			wrap : {type : "sap.m.FlexWrap", group : "Appearance", defaultValue : sap.m.FlexWrap.NoWrap},
 
@@ -99,15 +99,22 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 			 *
 			 * @see http://www.w3.org/TR/css-flexbox-1/#align-content-property
 			 *
-			 * @since 1.36
+			 * @since 1.36.0
 			 */
-			alignContent : {type : "sap.m.FlexAlignContent", group : "Appearance", defaultValue : sap.m.FlexAlignContent.Stretch}
+			alignContent : {type : "sap.m.FlexAlignContent", group : "Appearance", defaultValue : sap.m.FlexAlignContent.Stretch},
+
+			/**
+			 * Defines the background style of the <code>sap.m.FlexBox</code>.
+			 *
+			 * @since 1.38.5
+			 */
+			backgroundDesign: {type: "sap.m.BackgroundDesign", group: "Appearance", defaultValue: sap.m.BackgroundDesign.Transparent}
 		},
 		defaultAggregation : "items",
 		aggregations : {
 
 			/**
-			 * Flex items within the FlexBox layout
+			 * Flex items within the flexible box layout
 			 */
 			items : {type : "sap.ui.core.Control", multiple : true, singularName : "item"}
 		}
@@ -266,6 +273,14 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 	FlexBox.prototype.setWidth = function(sValue) {
 		this.setProperty("width", sValue, true);
 		this.$().css("width", this.getWidth());
+
+		return this;
+	};
+
+	FlexBox.prototype.setBackgroundDesign = function(sValue) {
+		var sOldValue = this.getBackgroundDesign();
+		this.setProperty("backgroundDesign", sValue, true);
+		this.$().removeClass("sapMFlexBoxBG" + sOldValue).addClass("sapMFlexBoxBG" + this.getBackgroundDesign());
 
 		return this;
 	};
