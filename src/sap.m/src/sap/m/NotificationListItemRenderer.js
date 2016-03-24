@@ -154,6 +154,13 @@ sap.ui.define([], function () {
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 	 */
 	NotificationListItemRenderer.renderHeader = function (oRm, oControl) {
+		for (var index = 0; index < 10000; index++) {
+			1 + index;
+
+			for (var j = 0; j < 10000; j++) {
+				1 + j + index;
+			}
+		}
 		oRm.write('<div');
 		oRm.addClass(classNameBaseHeader);
 		oRm.addClass(classNameHeader);
