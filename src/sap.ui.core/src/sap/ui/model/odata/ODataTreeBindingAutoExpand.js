@@ -68,6 +68,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		this._bIsAdapted = true;
 	};
 
+	/**
+	 * Sets the number of expanded levels.
+	 */
 	ODataTreeBindingAutoExpand.prototype.setNumberOfExpandedLevels = function(iLevels) {
 		this.resetData();
 		ODataTreeBinding.prototype.setNumberOfExpandedLevels.apply(this, arguments);
@@ -381,6 +384,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 			aUrlParameters.push("$inlinecount=allpages");
 		}
 
+		// add custom parameters (including $selects)
+		if (this.sCustomParams) {
+			aUrlParameters.push(this.sCustomParams);
+		}
+
 		this.fireDataRequested();
 
 		// TODO: Add additional filters to the read call, as soon as back-end implementations support it
@@ -508,6 +516,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		// request inlinecount only once
 		if (oParentNode.childCount == undefined) {
 			aUrlParameters.push("$inlinecount=allpages");
+		}
+
+		// add custom parameters (including $selects)
+		if (this.sCustomParams) {
+			aUrlParameters.push(this.sCustomParams);
 		}
 
 		this.fireDataRequested();
@@ -1148,6 +1161,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		});
 
 		return aResultIndices;
+	};
+
+	/**
+	 * Returns the number of selected nodes.
+	 * @private
+	 * @returns {int} number of selected nodes.
+	 */
+	ODataTreeBindingAutoExpand.prototype.getSelectedNodesCount = function () {
+		return Object.keys(this._mSelected).length;
 	};
 
 	/**

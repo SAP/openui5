@@ -15,11 +15,11 @@
 	var classNameUnread = '.sapMNLI-Unread';
 	var classNameHeader = '.sapMNLI-Header';
 	var classNameDetails = '.sapMNLI-Details';
-	var classNameAuthorPicture = '.sapMNLI-AuthorPicture';
+	var classNameAuthorPicture = '.sapMNLB-AuthorPicture';
 	var classNameText = '.sapMNLI-Text';
 	var classNameDatetime = '.sapMNLI-Datetime';
 	var classNameFooter = '.sapMNLI-Footer';
-	var classNameCloseButton = '.sapMNLI-CloseButton';
+	var classNameCloseButton = '.sapMNLB-CloseButton';
 	var RENDER_LOCATION = 'qunit-fixture';
 
 	//================================================================================
@@ -462,6 +462,9 @@
 
 	QUnit.test('Check if text is truncated', function(assert) {
 		// arrange
+		var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
+		var expandText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_SHOW_MORE');
+
 		this.NotificationListItem.setTitle('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi id lorem at ' +
 			'magna laoreet lobortis quis id tortor. Cras in tellus a nibh cursus porttitor et vel purus. Nulla neque ' +
 			'lacus, eleifend sed quam eget, facilisis luctus nulla. Vestibulum ut mollis sem, ac sollicitudin massa. ' +
@@ -480,8 +483,8 @@
 
 		// assert
 		assert.strictEqual(this.NotificationListItem.getDomRef('expandCollapseButton').hidden, false, 'The "Show More" button should appear');
-		assert.strictEqual(this.NotificationListItem.getDomRef('expandCollapseButton').textContent, 'Show More',
-			'The button text should state "Show More" when truncated.');
+		assert.strictEqual(this.NotificationListItem.getDomRef('expandCollapseButton').textContent, expandText,
+			'The button text should state "' + expandText + '" when truncated.');
 		assert.strictEqual(this.NotificationListItem.getTruncate(), true, 'Notification should be truncated.');
 
 		// act
@@ -499,6 +502,10 @@
 
 	QUnit.test('Collapsing and expanding a notification', function(assert) {
 		// arrange
+		var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
+		var expandText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_SHOW_MORE');
+		var collapseText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_SHOW_LESS');
+
 		this.NotificationListItem.setTitle('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi id lorem at ' +
 			'magna laoreet lobortis quis id tortor. Cras in tellus a nibh cursus porttitor et vel purus. Nulla neque ' +
 			'lacus, eleifend sed quam eget, facilisis luctus nulla. Vestibulum ut mollis sem, ac sollicitudin massa. ' +
@@ -521,8 +528,8 @@
 
 		// assert
 		assert.strictEqual(this.NotificationListItem.getDomRef('expandCollapseButton').hidden, false, 'The "Show More" button should appear');
-		assert.strictEqual(this.NotificationListItem.getDomRef('expandCollapseButton').textContent, 'Show More',
-			'The button text should state "Show More" when truncated.');
+		assert.strictEqual(this.NotificationListItem.getDomRef('expandCollapseButton').textContent, expandText,
+			'The button text should state "' + expandText + '" when truncated.');
 		assert.strictEqual(this.NotificationListItem.getTruncate(), true, 'Notification should be truncated.');
 
 		// act
@@ -533,8 +540,8 @@
 		// assert
 		assert.strictEqual(this.NotificationListItem.getTruncate(), false, 'Notification shouldn\'t be truncated after pressing "Show More" button.');
 		assert.strictEqual(fnEventSpy.callCount, 1, 'Pressing the "Show More" button should call the _deregisterResize() method.');
-		assert.strictEqual(this.NotificationListItem.getDomRef('expandCollapseButton').textContent, 'Show Less',
-			'The "Show More" button text should be changed.');
+		assert.strictEqual(this.NotificationListItem.getDomRef('expandCollapseButton').textContent, collapseText,
+			'The "'+ expandText +'" button text should be changed to "' + collapseText + '".');
 	});
 
 	QUnit.test('When resizing _registerResize() should be called', function(assert) {
@@ -564,12 +571,53 @@
 
 		var headerClassList = this.NotificationListItem.getDomRef().querySelector('.sapMNLI-Header').classList;
 		var textClassList = this.NotificationListItem.getDomRef().querySelector('.sapMNLI-TextWrapper').classList;
-		//debugger;
 
 		// assert
 		assert.strictEqual(fnEventSpy.callCount, 1, 'The _registerResize() method should be called.');
 		assert.strictEqual(headerClassList.contains('sapMNLI-TitleWrapper--is-expanded'), false, 'The title should be truncated.');
 		assert.strictEqual(textClassList.contains('sapMNLI-TextWrapper--is-expanded'), false, 'The text should be truncated.');
+	});
+
+	QUnit.test('If the hideShowMoreButton is set to true no button the "Show More" button should be hidden', function(assert) {
+		// arrange
+		this.NotificationListItem.setTitle('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi id lorem at ' +
+			'magna laoreet lobortis quis id tortor. Cras in tellus a nibh cursus porttitor et vel purus. Nulla neque ' +
+			'lacus, eleifend sed quam eget, facilisis luctus nulla. Vestibulum ut mollis sem, ac sollicitudin massa. ' +
+			'Mauris vehicula posuere tortor ac vulputate.');
+
+		this.NotificationListItem.setDescription('Donec felis sem, tincidunt vitae gravida eget, egestas sit amet dolor. ' +
+			'Duis mauris erat, eleifend sit amet dapibus vel, cursus quis ante. Pellentesque erat dui, aliquet id ' +
+			'fringilla eget, aliquam at odio. Interdum et malesuada fames ac ante ipsum primis in faucibus. ' +
+			'Donec tincidunt semper mattis. Nunc id convallis ex. Sed bibendum volutpat urna, vitae eleifend nisi ' +
+			'maximus id. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. ' +
+			'Nunc suscipit nulla ligula, ut faucibus ex pellentesque vel. Suspendisse id aliquet mauris. ');
+
+		this.NotificationListItem.setAuthorPicture('sap-icon://group');
+
+		sap.ui.getCore().applyChanges();
+
+		var fnEventSpy = sinon.spy(this.NotificationListItem, '_showHideTruncateButton');
+		this.NotificationListItem._deregisterResize();
+
+		// arrange
+		this.list.setWidth('50%');
+		sap.ui.getCore().applyChanges();
+		/** @type {DOMTokenList[]}
+         */
+		var buttonClassList = this.NotificationListItem.getDomRef('expandCollapseButton').classList;
+
+		// assert
+		assert.strictEqual(fnEventSpy.callCount, 1, 'The _showHideTruncateButton() method should be called.');
+		assert.strictEqual(buttonClassList.contains('sapMNLI-CollapseButtonHide'), false, 'The "Show More" button should be shown by default.');
+
+		// arrange
+		this.NotificationListItem.setHideShowMoreButton(true);
+		sap.ui.getCore().applyChanges();
+		buttonClassList = this.NotificationListItem.getDomRef('expandCollapseButton').classList;
+
+		// assert
+		assert.strictEqual(fnEventSpy.callCount, 2, 'The _showHideTruncateButton() method should be called again.');
+		assert.strictEqual(buttonClassList.contains('sapMNLI-CollapseButtonHide'), true, 'The "Show More" button should be hidden.');
 	});
 
 	//================================================================================

@@ -243,6 +243,10 @@
 						oToSpy = this.spy(NavContainer.prototype, "to"),
 						oNavigateSpy = this.spy(TargetHandler.prototype, "navigate");
 
+					this.stub(oNavContainer, "getDomRef", function() {
+						return true;
+					});
+
 					//System under Test
 					var oRouteMatchedHandler = new RouteMatchedHandler(this.oRouter);
 

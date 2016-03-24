@@ -110,7 +110,7 @@
 		var m;
 		if (typeof vMajor === "string") {
 			m = rVersion.exec(vMajor);
-		} else if (jQuery.isArray(vMajor)) {
+		} else if (Array.isArray(vMajor)) {
 			m = vMajor;
 		} else {
 			m = arguments;
@@ -226,8 +226,8 @@
 	// -----------------------------------------------------------------------
 
 	var oJQVersion = Version(jQuery.fn.jquery);
-	if ( !oJQVersion.inRange("1.7.0", "2.2.2") ) {
-		_earlyLog("error", "SAPUI5 requires a jQuery version of 1.7 or higher, but lower than 2.2.2; current version is " + jQuery.fn.jquery);
+	if ( !oJQVersion.inRange("1.7.0", "2.2.3") ) {
+		_earlyLog("error", "SAPUI5 requires a jQuery version of 1.7 or higher, but lower than 2.2.3; current version is " + jQuery.fn.jquery);
 	}
 
 	// TODO move to a separate module? Only adds 385 bytes (compressed), but...
@@ -2262,6 +2262,11 @@
 			FAILED = 5,
 
 		/**
+		 * Special content value used internally until the content of a module has been determined
+		 */
+			NOT_YET_DETERMINED = {},
+
+		/**
 		 * Set of modules that have been loaded (required) so far.
 		 *
 		 * Each module is an object that can have the following members
@@ -2274,13 +2279,7 @@
 		 * </ul>
 		 * @private
 		 */
-			mModules = {
-				// predefine already loaded modules to avoid redundant loading
-				// "sap/ui/thirdparty/jquery/jquery-1.7.1.js" : { state : READY, url : _sBootstrapUrl, content : jQuery },
-				"sap/ui/thirdparty/URI.js" : { state : READY, url : _sBootstrapUrl, content : URI },
-				"sap/ui/Device.js" : { state : READY, url : _sBootstrapUrl, content : Device },
-				"jquery.sap.global.js" : { state : READY, url : _sBootstrapUrl, content : jQuery }
-			},
+			mModules = {},
 
 			mPreloadModules = {},
 
@@ -2314,22 +2313,13 @@
 		*/
 
 		/**
-		 * Information about third party modules that are delivered with the sap.ui.core library.
+		 * Information about third party modules, keyed by the module's resource name (including extension '.js').
 		 *
-		 * The information maps the name of the module (including extension '.js') to an info object with the
-		 * following properties:
+		 * Note that the stored dependencies also include a '.js' for easier evaluation, but the
+		 * <code>registerModuleShims</code> method expects all names without the extension for better
+		 * compatibility with the requireJS configuration.
 		 *
-		 * <ul>
-		 * <li>amd:boolean : whether the module uses an AMD loader if present. UI5 will disable the AMD loader while loading
-		 *              such modules to force the modules to expose their content via global names.</li>
-		 * <li>exports:string[]|string : global name (or names) that are exported by the module. If one ore multiple names are defined,
-		 *              the first one will be read from the global object and will be used as value of the module.</li>
-		 * <li>deps:string[] : list of modules that the module depends on. The modules will be loaded first before loading the module itself.</li>
-		 * </ul>
-		 * to be able to work with jQuery.sap.require no matter whether an AMD loader is present or not.
-		 *
-		 * Note: this is a map for future extension
-		 * Note: should be maintained together with raw-module info in .library files
+		 * @see jQuery.sap.registerModuleShims
 		 * @private
 		 */
 			mAMDShim = {
@@ -2344,7 +2334,7 @@
 				'sap/ui/thirdparty/crossroads.js': {
 					amd: true,
 					exports: 'crossroads',
-					deps: ['sap/ui/thirdparty/signals.js']
+					deps: ['sap/ui/thirdparty/signals']
 				},
 				'sap/ui/thirdparty/d3.js': {
 					amd: true,
@@ -2354,7 +2344,7 @@
 					amd: true,
 					exports: 'OData' // 'datajs'
 				},
-				'sap/ui/thirdparty/es6-promise.js' : {
+				'sap/ui/thirdparty/es6-promise.js': {
 					amd: true,
 					exports: 'ES6Promise'
 				},
@@ -2368,7 +2358,7 @@
 				'sap/ui/thirdparty/hasher.js': {
 					amd: true,
 					exports: 'hasher',
-					deps: ['sap/ui/thirdparty/signals.js']
+					deps: ['sap/ui/thirdparty/signals']
 				},
 				'sap/ui/thirdparty/IPv6.js': {
 					amd: true,
@@ -2447,24 +2437,24 @@
 				},
 				'sap/ui/thirdparty/unormdata.js': {
 					exports: 'UNorm', // really 'UNorm'! module extends UNorm
-					deps: ['sap/ui/thirdparty/unorm.js']
+					deps: ['sap/ui/thirdparty/unorm']
 				},
-				'sap/ui/thirdparty/URI.js' : {
+				'sap/ui/thirdparty/URI.js': {
 					amd: true,
 					exports: 'URI'
 				},
-				'sap/ui/thirdparty/URITemplate.js' : {
+				'sap/ui/thirdparty/URITemplate.js': {
 					amd: true,
 					exports: 'URITemplate',
-					deps: ['sap/ui/thirdparty/URI.js']
+					deps: ['sap/ui/thirdparty/URI']
 				},
-				'sap/ui/thirdparty/vkbeautify.js' : {
+				'sap/ui/thirdparty/vkbeautify.js': {
 					exports: 'vkbeautify'
 				},
-				'sap/ui/thirdparty/zyngascroll.js' : {
+				'sap/ui/thirdparty/zyngascroll.js': {
 					exports: 'Scroller' // 'requestAnimationFrame', 'cancelRequestAnimationFrame', 'core'
 				},
-				'sap/ui/demokit/js/esprima.js' : {
+				'sap/ui/demokit/js/esprima.js': {
 					amd: true,
 					exports: 'esprima'
 				}
@@ -2517,6 +2507,83 @@
 			rTypes = new RegExp(s);
 			rSubTypes = new RegExp(sSub);
 		}());
+
+		/**
+		 * A module/resource as managed by the module system.
+		 *
+		 * Each module is an object with the following properties
+		 * <ul>
+		 * <li>{int} state one of the module states defined in this function
+		 * <li>{string} url URL where the module has been loaded from
+		 * <li>{any} data temp. raw content of the module (between loaded and ready or when preloaded)
+		 * <li>{string} group the bundle with which a resource was loaded or null
+		 * <li>{string} error an error description for state <code>FAILED</code>
+		 * <li>{any} content the content of the module as exported via define()
+		 * </ul>
+		 */
+		function Module(name) {
+			this.name = name;
+			this.state = INITIAL;
+			this.url =
+			this.data =
+			this.group = null;
+			this.content = NOT_YET_DETERMINED;
+		}
+
+		Module.prototype.ready = function(url, content) {
+			if ( this.state === INITIAL ) {
+				this.state = READY;
+				this.url = url;
+				this.content = content;
+			}
+			return this;
+		};
+
+		Module.prototype.preload = function(url, data, bundle) {
+			if ( this.state === INITIAL ) {
+				this.state = PRELOADED;
+				this.url = url;
+				this.data = data;
+				this.group = bundle;
+			}
+			return this;
+		};
+
+		Module.get = function(sModuleName) {
+			return mModules[sModuleName] || (mModules[sModuleName] = new Module(sModuleName));
+		};
+
+		/**
+		 * Determines the value of this module.
+		 *
+		 * If the module hasn't been loaded or executed yet, <code>undefined</code> will be returned.
+		 *
+		 * @private
+		 */
+		Module.prototype.value = function() {
+
+			if ( this.state === READY ) {
+				if ( this.content === NOT_YET_DETERMINED ) {
+					// Determine the module value lazily.
+					// For AMD modules this has already been done on execution of the factory function.
+					// For other modules that are required individually, it has been done after execution.
+					// For the few remaining scenarios (like old-fashioned 'library-all' bundles), it is done here
+					var oShim = mAMDShim[this.name],
+						sExport = oShim && (Array.isArray(oShim.exports) ? oShim.exports[0] : oShim.exports);
+					// best guess for thirdparty modules or legacy modules that don't use sap.ui.define
+					this.content = jQuery.sap.getObject( sExport || urnToUI5(this.name) );
+				}
+				return this.content;
+			}
+
+			return; // undefined
+		};
+
+		// predefine already loaded modules to avoid redundant loading
+		// Module.get("sap/ui/thirdparty/jquery/jquery.js").ready(_sBootstrapUrl, jQuery);
+		Module.get("sap/ui/thirdparty/URI.js").ready(_sBootstrapUrl, URI);
+		Module.get("sap/ui/Device.js").ready(_sBootstrapUrl, Device);
+		Module.get("jquery.sap.global.js").ready(_sBootstrapUrl, jQuery);
 
 		/**
 		 * Name conversion function that converts a name in UI5 module name syntax to a name in requireJS module name syntax.
@@ -2722,7 +2789,7 @@
 			// sModuleName must be a unified resource name of type .js
 			jQuery.sap.assert(/\.js$/.test(sModuleName), "must be a Javascript module");
 
-			oModule = mModules[sModuleName] || (mModules[sModuleName] = { state : INITIAL });
+			oModule = Module.get(sModuleName);
 
 			if ( oModule.state > INITIAL ) {
 				return oModule;
@@ -2751,7 +2818,8 @@
 			// TODO enable when preload has been adapted:
 			// sModuleName = mAMDAliases[sModuleName] || sModuleName;
 
-			var m = rJSSubtypes.exec(sModuleName),
+			var bLoggable = log.isLoggable(),
+				m = rJSSubtypes.exec(sModuleName),
 				oShim = mAMDShim[sModuleName],
 				sBaseName, sType, oModule, aExtensions, i;
 
@@ -2762,24 +2830,24 @@
 			}
 
 			if ( oShim && oShim.deps ) {
-				if ( log.isLoggable() ) {
+				if ( bLoggable ) {
 					log.debug("require dependencies of raw module " + sModuleName);
 				}
 				for (i = 0; i < oShim.deps.length; i++) {
-					if ( log.isLoggable() ) {
+					if ( bLoggable ) {
 						log.debug("  require " + oShim.deps[i]);
 					}
-					requireModule(oShim.deps[i]);
+					requireModule(oShim.deps[i] + '.js');
 				}
 			}
 
 			// in case of having a type specified ignore the type for the module path creation and add it as file extension
 			sBaseName = sModuleName.slice(0, m.index);
-			sType = m[0]; // must be a normalized resource name of type .js sType can be empty or one of view|controller|fragment
+			sType = m[0]; // must be a normalized resource name of type .js sType can be one of .js|.view.js|.controller.js|.fragment.js|.designtime.js
 
-			oModule = mModules[sModuleName] || (mModules[sModuleName] = { state : INITIAL });
+			oModule = Module.get(sModuleName);
 
-			if ( log.isLoggable() ) {
+			if ( bLoggable ) {
 				log.debug(sLogPrefix + "require '" + sModuleName + "' of type '" + sType + "'");
 			}
 
@@ -2787,23 +2855,27 @@
 			if ( oModule.state !== INITIAL ) {
 				if ( oModule.state === PRELOADED ) {
 					oModule.state = LOADED;
+					jQuery.sap.measure.start(sModuleName, "Require module " + sModuleName + " (preloaded)", ["require"]);
 					execModule(sModuleName);
+					jQuery.sap.measure.end(sModuleName);
 				}
 
 				if ( oModule.state === READY ) {
-					if ( log.isLoggable() ) {
+					if ( bLoggable ) {
 						log.debug(sLogPrefix + "module '" + sModuleName + "' has already been loaded (skipped).");
 					}
-					return this;
+					return oModule.value();
 				} else if ( oModule.state === FAILED ) {
 					var oError = new Error("found in negative cache: '" + sModuleName +  "' from " + oModule.url + ": " + oModule.errorMessage);
 					enhanceStacktrace(oError, oModule.errorStack);
 					throw oError;
 				} else {
 					// currently loading
-					return this;
+					return;
 				}
 			}
+
+			jQuery.sap.measure.start(sModuleName, "Require module " + sModuleName, ["require"]);
 
 			// set marker for loading modules (to break cycles)
 			oModule.state = LOADING;
@@ -2812,7 +2884,7 @@
 			for (i = 0; i < aExtensions.length && oModule.state !== LOADED; i++) {
 				// create module URL for the current extension
 				oModule.url = getResourcePath(sBaseName, aExtensions[i] + sType);
-				if ( log.isLoggable() ) {
+				if ( bLoggable ) {
 					log.debug(sLogPrefix + "loading " + (aExtensions[i] ? aExtensions[i] + " version of " : "") + "'" + sModuleName + "' from '" + oModule.url + "'");
 				}
 				/*eslint-disable no-loop-func */
@@ -2838,12 +2910,15 @@
 				execModule(sModuleName);
 			}
 
+			jQuery.sap.measure.end(sModuleName);
+
 			if ( oModule.state !== READY ) {
 				var oError = new Error("failed to load '" + sModuleName +  "' from " + oModule.url + ": " + oModule.errorMessage);
 				enhanceStacktrace(oError, oModule.errorStack);
 				throw oError;
 			}
 
+			return oModule.value();
 		}
 
 		/**
@@ -2875,6 +2950,7 @@
 
 			var oModule = mModules[sModuleName],
 				oShim = mAMDShim[sModuleName],
+				bLoggable = log.isLoggable(),
 				sOldPrefix, sScript, vAMD;
 
 			if ( oModule && oModule.state === LOADED && typeof oModule.data !== "undefined" ) {
@@ -2889,7 +2965,7 @@
 						delete window.define.amd;
 					}
 
-					if ( log.isLoggable() ) {
+					if ( bLoggable ) {
 						log.debug(sLogPrefix + "executing '" + sModuleName + "'");
 						sOldPrefix = sLogPrefix;
 						sLogPrefix = sLogPrefix + ": ";
@@ -2900,7 +2976,7 @@
 					_execStack.push(sModuleName);
 					if ( typeof oModule.data === "function" ) {
 						callPreloadWrapperFn(oModule.data);
-					} else if ( jQuery.isArray(oModule.data) ) {
+					} else if ( Array.isArray(oModule.data) ) {
 						sap.ui.define.apply(sap.ui, oModule.data);
 					} else {
 
@@ -2940,10 +3016,9 @@
 					_execStack.pop();
 					oModule.state = READY;
 					oModule.data = undefined;
-					// best guess for raw and legacy modules that don't use sap.ui.define
-					oModule.content = oModule.content || jQuery.sap.getObject((oShim && oShim.exports) || urnToUI5(sModuleName));
+					oModule.value(); // enforce determination of module value for non-AMD modules
 
-					if ( log.isLoggable() ) {
+					if ( bLoggable ) {
 						sLogPrefix = sOldPrefix;
 						log.debug(sLogPrefix + "finished executing '" + sModuleName + "'");
 					}
@@ -2972,16 +3047,18 @@
 		function requireAll(sBaseName, aDependencies, fnCallback) {
 
 			var aModules = [],
+				bLoggable = log.isLoggable(),
 				i, sDepModName;
 
 			for (i = 0; i < aDependencies.length; i++) {
 				sDepModName = resolveModuleName(sBaseName, aDependencies[i]);
-				log.debug(sLogPrefix + "require '" + sDepModName + "'");
-				requireModule(sDepModName + ".js");
-				// best guess for legacy modules that don't use sap.ui.define
-				// TODO implement fallback for raw modules
-				aModules[i] = mModules[sDepModName + ".js"].content || jQuery.sap.getObject(urnToUI5(sDepModName + ".js"));
-				log.debug(sLogPrefix + "require '" + sDepModName + "': done.");
+				if ( bLoggable ) {
+					log.debug(sLogPrefix + "require '" + sDepModName + "'");
+				}
+				aModules[i] = requireModule(sDepModName + ".js");
+				if ( bLoggable ) {
+					log.debug(sLogPrefix + "require '" + sDepModName + "': done.");
+				}
 			}
 
 			fnCallback(aModules);
@@ -3174,6 +3251,38 @@
 		};
 
 		/**
+		 * Register information about third party modules that are not UI5 modules.
+		 *
+		 * The information maps the name of the module (without extension '.js') to an info object.
+		 * Instead of a complete info object, only the value of the <code>deps</code> property can be given as an array.
+		 *
+		 * @param {object} mShims Map of shim configuration objects keyed by module names (withou extension '.js')
+		 * @param {boolean} [mShims.any-module-name.amd=false]
+		 *              Whether the module uses an AMD loader if present. If set to <code>true</code>, UI5 will disable
+		 *              the AMD loader while loading such modules to force the modules to expose their content via global names.
+		 * @param {string[]|string} [mShims.any-module-name.exports=undefined]
+		 *              Global name (or names) that are exported by the module. If one ore multiple names are defined,
+		 *              the first one will be read from the global object and will be used as value of the module.
+		 *              Each name can be a dot separated hierarchial name (will be resolved with <code>jQuery.sap.getObject</code>)
+		 * @param {string[]} [mShims.any-module-name.deps=undefined]
+		 *              List of modules that the module depends on (requireJS syntax, no '.js').
+		 *              The modules will be loaded first before loading the module itself.
+		 *
+		 * @private
+		 */
+		jQuery.sap.registerModuleShims = function(mShims) {
+			jQuery.sap.assert( typeof mShims === 'object', "mShims must be an object");
+
+			for ( var sName in mShims ) {
+				var oShim = mShims[sName];
+				if ( Array.isArray(oShim) ) {
+					oShim = { deps : oShim };
+				}
+				mAMDShim[sName + ".js"] = oShim;
+			}
+		};
+
+		/**
 		 * Check whether a given module has been loaded / declared already.
 		 *
 		 * Returns true as soon as a module has been required the first time, even when
@@ -3315,29 +3424,14 @@
 			// in case of this the object contains the module name and the type
 			// which could be {modName: "sap.ui.core.Dev", type: "view"}
 			if (typeof (vModuleName) === "object") {
-				jQuery.sap.assert(!vModuleName.type || jQuery.inArray(vModuleName.type, mKnownSubtypes.js) >= 0, "type must be empty or one of " + mKnownSubtypes.js.join(", "));
+				jQuery.sap.assert(!vModuleName.type || mKnownSubtypes.js.indexOf(vModuleName.type) >= 0, "type must be empty or one of " + mKnownSubtypes.js.join(", "));
 				vModuleName = ui5ToRJS(vModuleName.modName) + (vModuleName.type ? "." + vModuleName.type : "") + ".js";
 			} else {
 				vModuleName = ui5ToRJS(vModuleName) + ".js";
 			}
 
-			jQuery.sap.measure.start(vModuleName,"Require module " + vModuleName, ["require"]);
 			requireModule(vModuleName);
-			jQuery.sap.measure.end(vModuleName);
 
-		};
-
-		/**
-		 * UI5 internal method that loads the given module, specified in requireJS notation (URL like, without extension).
-		 *
-		 * Applications MUST NOT USE THIS METHOD as it will be removed in one of the future versions.
-		 * It is only intended for sap.ui.component.
-		 *
-		 * @param {string} sModuleName Module name in requireJS syntax
-		 * @private
-		 */
-		jQuery.sap._requirePath = function(sModuleName) {
-			requireModule(sModuleName + ".js");
 		};
 
 		window.sap = window.sap || {};
@@ -3568,7 +3662,8 @@
 		 *        is not used and if the asynchronous contract is respected, even Non-SAP code might use it.
 		 */
 		sap.ui.define = function(sModuleName, aDependencies, vFactory, bExport) {
-			var sResourceName, sBaseName;
+			var bLoggable = log.isLoggable(),
+				sResourceName, sBaseName;
 
 			// optional id
 			if ( typeof sModuleName === 'string' ) {
@@ -3588,24 +3683,26 @@
 			sBaseName = sResourceName.slice(0, sResourceName.lastIndexOf('/') + 1);
 
 			// optional array of dependencies
-			if ( !jQuery.isArray(aDependencies) ) {
+			if ( !Array.isArray(aDependencies) ) {
 				// shift parameters
 				bExport = vFactory;
 				vFactory = aDependencies;
 				aDependencies = [];
 			}
 
-			if ( log.isLoggable() ) {
+			if ( bLoggable ) {
 				log.debug("define(" + sResourceName + ", " + "['" + aDependencies.join("','") + "']" + ")");
 			}
 
 			var oModule = declareModule(sResourceName);
+			// avoid early evaluation of the module value
+			oModule.content = undefined;
 
 			// Note: dependencies will be resolved and converted from RJS to URN inside requireAll
 			requireAll(sBaseName, aDependencies, function(aModules) {
 
 				// factory
-				if ( log.isLoggable() ) {
+				if ( bLoggable ) {
 					log.debug("define(" + sResourceName + "): calling factory " + typeof vFactory);
 				}
 
@@ -3628,7 +3725,7 @@
 					if ( oModule.content == null ) {
 						log.error("module '" + sResourceName + "' returned no content, but should be exported");
 					} else {
-						if ( log.isLoggable() ) {
+						if ( bLoggable ) {
 							log.debug("exporting content of '" + sResourceName + "': as global object");
 						}
 						jQuery.sap.setObject(sModuleName, oModule.content);
@@ -3649,10 +3746,7 @@
 			}
 
 			var sResourceName = sModuleName + '.js';
-			var oModule = mModules[sResourceName];
-			if ( !oModule ) {
-				mModules[sResourceName] = { state : PRELOADED, url : "<unknown>/" + sModuleName, data : [sModuleName, aDependencies, vFactory, bExport], group: null };
-			}
+			Module.get(sResourceName).preload("<unknown>/" + sModuleName, [sModuleName, aDependencies, vFactory, bExport], null);
 
 			// when a library file is preloaded, also mark its preload file as loaded
 			// for normal library preload, this is redundant, but for non-default merged entities
@@ -3714,15 +3808,12 @@
 		 * of the asynchronous use case might change (currently it is undefined).
 		 */
 		sap.ui.require = function(vDependencies, fnCallback) {
-			jQuery.sap.assert(typeof vDependencies === 'string' || jQuery.isArray(vDependencies), "dependency param either must be a single string or an array of strings");
+			jQuery.sap.assert(typeof vDependencies === 'string' || Array.isArray(vDependencies), "dependency param either must be a single string or an array of strings");
 			jQuery.sap.assert(fnCallback == null || typeof fnCallback === 'function', "callback must be a function or null/undefined");
 
 			if ( typeof vDependencies === 'string' ) {
 
-				var sModuleName = vDependencies + '.js',
-					oModule = mModules[sModuleName];
-
-				return oModule ? (oModule.content || jQuery.sap.getObject(urnToUI5(sModuleName))) : undefined;
+				return Module.get(vDependencies + '.js').value();
 
 			}
 
@@ -3738,6 +3829,33 @@
 			});
 
 			// return undefined;
+		};
+
+		/**
+		 * Load a single module synchronously and return its module value.
+		 *
+		 * Basically, this method is a combination of {@link jQuery.sap.require} and {@link sap.ui.require}.
+		 * Its main purpose is to simplify the migration of modules to AMD style in those cases where some dependencies
+		 * have to be loaded late (lazy) and synchronously.
+		 *
+		 * The method accepts a single module name in the same syntax that {@link sap.ui.define} and {@link sap.ui.require}
+		 * already use (a simplified variation of the {@link jQuery.sap.getResourcePath unified resource name}:
+		 * slash separated names without the implicit extension '.js'). As for <code>sap.ui.require</code>,
+		 * relative names (using <code>./</code> or <code>../</code>) are not supported.
+		 * If not loaded yet, the named module will be loaded synchronously and the value of the module will be returned.
+		 * While a module is executing, a value of <code>undefined</code> will be returned in case it is required again during
+		 * that period of time.
+		 *
+		 * <b>Note</b>: Applications are strongly encouraged to use this method only when synchronous loading is unavoidable.
+		 * Any code that uses this method won't benefit from future performance improvements that require asynchronous
+		 * module loading. And such code never can comply with stronger content security policies (CSPs) that forbid 'eval'.
+		 *
+		 * @param {string} sModuleName Module name in requireJS syntax
+		 * @returns {any} value of the loaded module or undefined
+		 * @private
+		 */
+		sap.ui.requireSync = function(sModuleName) {
+			return requireModule(sModuleName + ".js");
 		};
 
 		jQuery.sap.preloadModules = function(sPreloadModule, bAsync, oSyncPoint) {
@@ -3789,9 +3907,8 @@
 
 			jQuery.each(oData.modules, function(sName,sContent) {
 				sName = bOldSyntax ? ui5ToRJS(sName) + ".js" : sName;
-				if ( !mModules[sName] ) {
-					mModules[sName] = { state : PRELOADED, url : oData.url + "/" + sName, data : sContent, group: oData.name };
-				}
+				Module.get(sName).preload(oData.url + "/" + sName, sContent, oData.name);
+
 				// when a library file is preloaded, also mark its preload file as loaded
 				// for normal library preload, this is redundant, but for non-default merged entities
 				// like sap/fiori/core.js it avoids redundant loading of library preload files
@@ -4046,7 +4163,7 @@
 
 			return new Promise(function(resolve,reject) {
 
-				var oModule = mModules[sResource] || (mModules[sResource] = { state : INITIAL });
+				var oModule = Module.get(sResource);
 				var sUrl = oModule.url = getResourcePath(sResource);
 				oModule.state = LOADING;
 

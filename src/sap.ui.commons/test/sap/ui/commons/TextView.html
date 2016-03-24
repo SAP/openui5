@@ -25,7 +25,9 @@
 				oTextView18.setText(oTextField1.getValue());
 			}
 
-			var oTextView1 = new sap.ui.commons.TextView("textView1",{text: "Hello SAPUI5", tooltip: "My Tooltip", visible: true, textDirection: sap.ui.core.TextDirection.RTL});
+			var oTextView1 = new sap.ui.commons.TextView("textView1",{text: "Hello SAPUI5", tooltip: "My Tooltip", visible: true});
+			var oTextView1a = new sap.ui.commons.TextView("textView1a",{text: "שלום SAPUI5", tooltip: "Tooltip - Text in Hebrew", visible: true, textDirection: sap.ui.core.TextDirection.RTL});
+			var oTextView1b = new sap.ui.commons.TextView("textView1b",{text: "مرحبا SAPUI5", tooltip: "Tooltip - Text in Arabic", visible: true, textDirection: sap.ui.core.TextDirection.RTL});
 			var oTextView2 = new sap.ui.commons.TextView("textView2",{text: "Deactivated textview", tooltip: "Toooooooooltip", enabled: false});
 			var oTextView3 = new sap.ui.commons.TextView("textView3",{text: "Error state", tooltip: "Toooooooooltip", semanticColor: sap.ui.commons.TextViewColor.Negative});
 			var oTextView4 = new sap.ui.commons.TextView("textView4",{text: "Warning state", tooltip: "Toooooooooltip", semanticColor: sap.ui.commons.TextViewColor.Critical});
@@ -82,6 +84,8 @@
 			oMatLay.createRow( oTextView25, oTextView26 );
 
 		    oTextView1.placeAt("target1");
+			oTextView1a.placeAt("target1a");
+			oTextView1b.placeAt("target1b");
 			oTextView2.placeAt("target2");
 			oTextView3.placeAt("target3");
 			oTextView4.placeAt("target4");
@@ -119,6 +123,8 @@
 		<h1>Test Page for sap.ui.commons.TextView</h1>
 
 		<div id="target1"></div>
+		<div id="target1a"></div>
+		<div id="target1b"></div>
 		<div id="target2"></div>
 		<div id="target3"></div>
 		<div id="target4"></div>

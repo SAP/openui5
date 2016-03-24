@@ -41,6 +41,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		 * @public
 		 * @alias sap.ui.table.DataTable
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+		 * @deprecated Since version 1.5.1. The DataTable has been replaced via the Table/TreeTable control.
 		 */
 		var DataTable = Control.extend("sap.ui.table.DataTable", /** @lends sap.ui.table.DataTable.prototype */{ metadata : {
 
@@ -741,6 +742,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			// cleanup
 			this._cleanUpTimers();
 			this._detachEvents();
+		};
+
+
+		DataTable.prototype._getAccExtension = function(){
+			//Only to ensure that code in Column and Row does not break!
+			return {
+				updateAriaStateOfColumn: function(oColumn) {
+					var sSort = null;
+					if (oColumn.getSorted()) {
+						sSort = oColumn.getSortOrder() === sap.ui.table.SortOrder.Ascending ? "ascending" : "descending";
+					}
+					oColumn.$().attr({"aria-sort" : sSort});
+				},
+				updateAriaStateOfRow: function(oRow, $Ref, bIsSelected) {
+					var $DomRefs = oRow.getDomRefs(true);
+					if ($DomRefs.row) {
+						$DomRefs.row.children("td").add($DomRefs.row).attr("aria-selected", bIsSelected.toString());
+					}
+				}
+			};
 		};
 
 

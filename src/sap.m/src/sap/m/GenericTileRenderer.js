@@ -119,10 +119,20 @@ sap.ui.define([], function() {
 		oRm.writeClasses();
 		oRm.writeAttribute("id", oControl.getId() + "-content");
 		oRm.write(">");
-		var iLength = oControl.getTileContent().length;
+		var aTileContent = oControl.getTileContent();
+		var iLength = aTileContent.length;
 		for (var i = 0; i < iLength; i++) {
-			oRm.renderControl(oControl.getTileContent()[i]);
+			if (oControl.getMode() === sap.m.GenericTileMode.HeaderMode) {
+				aTileContent[i].removeAllAggregation("content", true);
+			}
+			oRm.renderControl(aTileContent[i]);
 		}
+		oRm.write("</div>");
+		oRm.write("<div");
+		oRm.addClass("sapMGTFocusDiv");
+		oRm.writeClasses();
+		oRm.writeAttribute("id", oControl.getId() + "-focus");
+		oRm.write(">");
 		oRm.write("</div>");
 		oRm.write("</div>");
 	};

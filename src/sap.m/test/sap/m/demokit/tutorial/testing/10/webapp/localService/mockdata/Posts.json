@@ -1,7 +1,7 @@
 [
   {
 	"PostID": "PostID_1",
-	"Title": "29'er Mountain Bike (Red)",
+	"Title": "29'er Mountain Bike (red)",
 	"Timestamp": "/Date(1428223780000)/",
 	"Description": "A great mountainbike, barely used and good as new. Pedals and saddle included",
 	"Category": "Bicycles",
@@ -12,7 +12,7 @@
   },
   {
 	"PostID": "PostID_2",
-	"Title": "Football (Rare with signatures)",
+	"Title": "Football (rare with signatures)",
 	"Timestamp": "/Date(1428504382000)/",
 	"Description": "A trophy for collectors, 2014 football with original signatures from the german national soccer team and the spirit of the world cup.",
 	"Category": "Sports",
@@ -34,7 +34,7 @@
   },
   {
 	"PostID": "PostID_4",
-	"Title": "Fluffy teddy bear",
+	"Title": "Fluffy Teddy Bear",
 	"Timestamp": "/Date(1429892877000)/",
 	"Description": "This little companion is looking for a new friend, it is brown and has black eyes. One ear is missing.",
 	"Category": "Toys",
@@ -45,7 +45,7 @@
   },
   {
 	"PostID": "PostID_5",
-	"Title": "Car tires, 22 inch",
+	"Title": "Car Tires, 22 Inch",
 	"Timestamp": "/Date(1423579562000)/",
 	"Description": "Spare winter tires for a compact-size car, 4 tires with good profile.",
 	"Category": "Car parts",
@@ -56,7 +56,7 @@
   },
   {
 	"PostID": "PostID_6",
-	"Title": "Garage door with blue stripes, 4m x 2,2m",
+	"Title": "Garage Door with Blue Stripes, 4m x 2,2m",
 	"Timestamp": "/Date(1431603971000)/",
 	"Description": "Good as new, a garage door for a standard double garage, keeps cars dry and carjackers away.",
 	"Category": "Car parts",
@@ -67,7 +67,7 @@
   },
   {
 	"PostID": "PostID_7",
-	"Title": "Kids Toys, a whole box of stuff",
+	"Title": "Kids Toys, a Whole Box of Stuff",
 	"Timestamp": "/Date(1435603415000)/",
 	"Description": "Best suited for kids aged from 4-10, a whole box of toys including model cars, marble balls, toy figures, and much more.",
 	"Category": "Toys",

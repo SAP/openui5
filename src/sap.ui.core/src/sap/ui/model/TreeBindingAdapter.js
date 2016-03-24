@@ -1038,6 +1038,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		};
 
 		/**
+		 * Returns the number of selected nodes.
+		 * @private
+		 */
+		TreeBindingAdapter.prototype.getSelectedNodesCount = function () {
+			return Object.keys(this._mTreeState.selected).length;
+		};
+
+		/**
 		 * Returns an array containing all selected contexts, ordered by their appearance in the tree.
 		 * @return {sap.ui.model.Context[]} an array containing the binding contexts for all selected nodes
 		 */
@@ -1213,7 +1221,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 
 			var mParams = {
 				rowIndices: [],
-				oldIndex: -1
+				oldIndex: -1,
+				selectAll: true
 			};
 
 			// recursion variables

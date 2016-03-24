@@ -45,6 +45,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.FlexJustifyContent",
 			"sap.m.FlexRendertype",
 			"sap.m.FrameType",
+			"sap.m.GenericTileMode",
 			"sap.m.HeaderLevel",
 			"sap.m.IBarHTMLTag",
 			"sap.m.IconTabFilterDesign",
@@ -905,6 +906,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 	};
 
+	/**
+	 * Defines the mode of GenericTile.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.38.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.GenericTileMode = {
+
+		/**
+		 * Default mode (Two lines for the header and one line for the subtitle).
+		 * @public
+		 */
+		ContentMode : "ContentMode",
+
+		/**
+		 * Header mode (Four lines for the header and one line for the subtitle).
+		 * @public
+		 */
+		HeaderMode : "HeaderMode"
+	};
 
 	/**
 	 * Different levels for headers
@@ -1735,6 +1758,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 * @since 1.36
 		 */
 		HorizontalPreferredLeft : "HorizontalPreferredLeft",
+
+		/**
+		 * Popover will be placed to the left of the reference control. If the available space is less than the Popover's width,
+		 * it will appear to the right of the same reference control left border.
+		 * @public
+		 * @since 1.38
+		 */
+		PreferredLeftOrFlip : "PreferredLeftOrFlip",
+
+		/**
+		 * Popover will be placed to the right of the reference control. If the available space is less than the Popover's width,
+		 * it will appear to the left of the same reference control right border.
+		 * @public
+		 * @since 1.38
+		 */
+		PreferredRightOrFlip : "PreferredRightOrFlip",
+
+		/**
+		 * Popover will be placed to the top of the reference control. If the available space is less than the Popover's height,
+		 * it will appear to the bottom of the same reference control top border.
+		 * @public
+		 * @since 1.38
+		 */
+		PreferredTopOrFlip : "PreferredTopOrFlip",
+
+		/**
+		 * Popover will be placed to the bottom of the reference control. If the available space is less than the Popover's height,
+		 * it will appear to the top of the same reference control bottom border.
+		 * @public
+		 * @since 1.38
+		 */
+		PreferredBottomOrFlip : "PreferredBottomOrFlip",
 
 		/**
 		 * Popover will be placed automatically at the reference control.

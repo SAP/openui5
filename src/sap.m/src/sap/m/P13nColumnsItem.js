@@ -68,7 +68,16 @@ sap.ui.define([
 				width: {
 					type: "string",
 					group: "Misc"
-				} // don't set a default value
+				}, // don't set a default value
+
+				/**
+				 * This property contains the total flag of a table column.
+				 *
+				 * @since 1.26.0
+				 */
+				total: {
+					type: "boolean"
+				}
 			}
 		}
 	});

@@ -120,10 +120,12 @@ function setupQUnitTests(mOptions) {
 						"'sap.ui.core' library.css URL should contain version parameters."
 					);
 				});
-				// TODO: Disabled "library-parameters.json" test temporarily due to theme generator changes in SAPUI5 layer
-				/*
 				QUnit.test("library-parameters.json", function(assert) {
 					this.initFakeServer();
+
+					// prevent inline data-uri parameter usage and force a json request to test the request params
+					var oLink = $.sap.byId("sap-ui-theme-sap.ui.core");
+					oLink.attr("style", "background-image: none !important;")
 
 					// trigger loading library-parameters.json files
 					Parameters.get();
@@ -146,7 +148,6 @@ function setupQUnitTests(mOptions) {
 					}
 
 				});
-				*/
 				QUnit.test("Theme Change", function(assert) {
 					var done = assert.async();
 

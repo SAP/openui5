@@ -386,6 +386,22 @@
 					});
 		});
 
+		test("Value is validated when setValue is called with null or undefined", function () {
+			var oTP = new sap.m.TimePicker({
+					displayFormat: "HH:mm"
+				});
+
+			oTP.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
+
+			oTP.setValue(null);
+			strictEqual(oTP.getValue(), "", "'getValue' is updated and returns correct VALIDATED value");
+			oTP.setValue(undefined);
+			strictEqual(oTP.getValue(), "", "'getValue' is updated and returns correct VALIDATED value");
+
+			oTP.destroy();
+		});
+
 		module("Keyboard handling of picker");
 
 		test("initial focus", function() {

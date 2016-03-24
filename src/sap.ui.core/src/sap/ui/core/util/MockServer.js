@@ -757,61 +757,102 @@ sap.ui
 				var aProperties = sODataQueryValue.split(',');
 				var aSelectedDataSet = [];
 				var oPushedObject;
-				var fnCreatePushedEntry = function(aProperties, oData, oPushedObject, sParentName) {
-					if (oData["__metadata"]) {
-						oPushedObject["__metadata"] = oData["__metadata"];
-					}
-					jQuery.each(aProperties, function(i, sPropertyName) {
-						var iComplexType = sPropertyName.indexOf("/");
-						// this is a complex type property
-						if (iComplexType !== -1) {
-							sPropName = sPropertyName.substring(iComplexType + 1);
-							sComplexType = sPropertyName.substring(0, iComplexType);
-							if (!oPushedObject[sComplexType]) {
-								oPushedObject[sComplexType] = {};
-							}
-							oPushedObject[sComplexType] = fnCreatePushedEntry([sPropName], oData[sComplexType], oPushedObject[sComplexType], sComplexType);
-							// this is a simple property
-						} else {
-							if (oData && !oData.hasOwnProperty(sPropertyName)) {
-								var bExist = false;
-								var aTypeProperties = [];
-								if (sParentName) {
-									var sTargetEntitySet = that._mEntitySets[sEntitySetName].navprops[sParentName].to.entitySet;
-									aTypeProperties = that._mEntityTypes[that._mEntitySets[sTargetEntitySet].type].properties;
-									for (var i = 0; i < aTypeProperties.length; i++) {
-										if (aTypeProperties[i].name === sPropertyName) {
-											bExist = true;
-											break;
+				var oDataEntry = aDataSet[0][aProperties[0].split('/')[0]];
+				if (!(oDataEntry != null && oDataEntry.results && oDataEntry.results.length > 0)) {
+					var fnCreatePushedEntry = function(aProperties, oData, oPushedObject, sParentName) {
+						if (oData["__metadata"]) {
+							oPushedObject["__metadata"] = oData["__metadata"];
+						}
+						jQuery.each(aProperties, function(i, sPropertyName) {
+							var iComplexType = sPropertyName.indexOf("/");
+							// this is a complex type property
+							if (iComplexType !== -1) {
+								sPropName = sPropertyName.substring(iComplexType + 1);
+								sComplexType = sPropertyName.substring(0, iComplexType);
+								if (!oPushedObject[sComplexType]) {
+									oPushedObject[sComplexType] = {};
+								}
+								oPushedObject[sComplexType] = fnCreatePushedEntry([sPropName], oData[sComplexType], oPushedObject[sComplexType], sComplexType);
+								// this is a simple property
+							} else {
+								if (oData && !oData.hasOwnProperty(sPropertyName)) {
+									var bExist = false;
+									var aTypeProperties = [];
+									if (sParentName) {
+										var sTargetEntitySet = that._mEntitySets[sEntitySetName].navprops[sParentName].to.entitySet;
+										aTypeProperties = that._mEntityTypes[that._mEntitySets[sTargetEntitySet].type].properties;
+										for (var i = 0; i < aTypeProperties.length; i++) {
+											if (aTypeProperties[i].name === sPropertyName) {
+												bExist = true;
+												break;
+											}
 										}
 									}
+									if (!bExist) {
+										that._logAndThrowMockServerCustomError(404, that._oErrorMessages.RESOURCE_NOT_FOUND_FOR_SEGMENT, sPropertyName);
+									}
 								}
-								if (!bExist) {
-									that._logAndThrowMockServerCustomError(404, that._oErrorMessages.RESOURCE_NOT_FOUND_FOR_SEGMENT, sPropertyName);
-								}
+								oPushedObject[sPropertyName] = oData[sPropertyName];
 							}
-							oPushedObject[sPropertyName] = oData[sPropertyName];
-						}
+						});
+						return oPushedObject;
+					};
+
+					// in case of $select=* return the data as is
+					if (jQuery.inArray("*", aProperties) !== -1) {
+						return aDataSet;
+					}
+
+					// trim all properties
+					jQuery.each(aProperties, function(i, sPropertyName) {
+						aProperties[i] = that._trim(sPropertyName);
 					});
-					return oPushedObject;
-				};
 
-				// in case of $select=* return the data as is
-				if (jQuery.inArray("*", aProperties) !== -1) {
-					return aDataSet;
+					// for each entry in the dataset create a new object that contains only the properties in $select clause
+					jQuery.each(aDataSet, function(iIndex, oData) {
+						oPushedObject = {};
+						aSelectedDataSet.push(fnCreatePushedEntry(aProperties, oData, oPushedObject));
+					});
+				} else {
+					//Add Support for multiple select return 1...n
+					var fnMultiSelect = function(data, select, currentPath) {
+						var result = {};
+						// traversed path to get to data:
+						currentPath = currentPath || '';
+						if (typeof data !== 'object') {
+							return data;
+						}
+						if (typeof data.slice === 'function') {
+							return data.map(function(el, index) {
+								return fnMultiSelect(el, select, currentPath); // on same path
+							});
+						}
+						// If Object:
+						// Handle "__metadata" property
+						if (data.__metadata !== undefined && currentPath.length === 0) {
+							result.__metadata = data.__metadata;
+						}
+						// Take the relevant paths only.
+						select.filter(function(path) {
+							return (path + '/').indexOf(currentPath) === 0;
+						}).forEach(function(path, _, innerSelect) {
+							// then get the next property in given path
+							var propertyKey = path.substr(currentPath.length).split('/')[0];
+							// Check if we have that propertyKey on the current object
+							if (data[propertyKey] !== undefined) {
+								// in this case recurse again while adding this to the current path
+								result[propertyKey] = fnMultiSelect(data[propertyKey], innerSelect, currentPath + propertyKey + '/');
+							}
+						});
+						// Add specific results case handling
+						if (data.results !== undefined) { // recurse with same path
+							result.results = fnMultiSelect(data.results, select, currentPath);
+						}
+						return result;
+					};
+					//invoke recursive function
+					aSelectedDataSet = fnMultiSelect(aDataSet, aProperties);
 				}
-
-				// trim all properties
-				jQuery.each(aProperties, function(i, sPropertyName) {
-					aProperties[i] = that._trim(sPropertyName);
-				});
-
-				// for each entry in the dataset create a new object that contains only the properties in $select clause
-				jQuery.each(aDataSet, function(iIndex, oData) {
-					oPushedObject = {};
-					aSelectedDataSet.push(fnCreatePushedEntry(aProperties, oData, oPushedObject));
-				});
-
 				return aSelectedDataSet;
 			};
 
@@ -1214,10 +1255,10 @@ sap.ui
 					}
 				} else {
 					var oEntitySets = {};
-					if (that._aEntitySetsNames && that._aEntitySetsNames.length > 0){
+					if (that._aEntitySetsNames && that._aEntitySetsNames.length > 0) {
 						var sEntitySet;
 						// In case _aEntitySetsNames is specified - get data only for the specified entity sets
-						for (var i = 0; i < that._aEntitySetsNames.length ; i++) {
+						for (var i = 0; i < that._aEntitySetsNames.length; i++) {
 							sEntitySet = that._aEntitySetsNames[i];
 							if (mEntitySets[sEntitySet]) {
 								oEntitySets[sEntitySet] = mEntitySets[sEntitySet];
@@ -1300,7 +1341,7 @@ sap.ui
 						oEntry.__metadata = oEntry.__metadata || {};
 						// add the metadata for the entry
 						oEntry.__metadata.id = sRootUri + sEntitySetName + "(" + that._createKeysString(oEntitySet, oEntry) + ")";
-						oEntry.__metadata.type =  oEntitySet.schema + "." + oEntitySet.type;
+						oEntry.__metadata.type = oEntitySet.schema + "." + oEntitySet.type;
 						oEntry.__metadata.uri = sRootUri + sEntitySetName + "(" + that._createKeysString(oEntitySet, oEntry) + ")";
 						// add the navigation properties
 						jQuery.each(oEntitySet.navprops, function(sKey, oNavProp) {

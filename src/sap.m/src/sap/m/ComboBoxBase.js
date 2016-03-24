@@ -25,40 +25,51 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		 * @alias sap.m.ComboBoxBase
 		 * @ui5-metamodel This control will also be described in the UI5 (legacy) design time meta model.
 		 */
-		var ComboBoxBase = ComboBoxTextField.extend("sap.m.ComboBoxBase", /** @lends sap.m.ComboBoxBase.prototype */ { metadata: {
-			library: "sap.m",
-			defaultAggregation: "items",
-			aggregations: {
+		var ComboBoxBase = ComboBoxTextField.extend("sap.m.ComboBoxBase", /** @lends sap.m.ComboBoxBase.prototype */ {
+			metadata: {
+				library: "sap.m",
+				defaultAggregation: "items",
+				aggregations: {
 
-				/**
-				 * Defines the items contained within this control.
-				 */
-				items: { type: "sap.ui.core.Item", multiple: true, singularName: "item", bindable: "bindable" },
+					/**
+					 * Defines the items contained within this control.
+					 */
+					items: {
+						type: "sap.ui.core.Item",
+						multiple: true,
+						singularName: "item",
+						bindable: "bindable"
+					},
 
-				/**
-				 * Internal aggregation to hold the inner picker popup.
-				 */
-				picker: { type: "sap.ui.core.PopupInterface", multiple: false, visibility: "hidden" }
-			},
-			events: {
+					/**
+					 * Internal aggregation to hold the inner picker popup.
+					 */
+					picker: {
+						type: "sap.ui.core.PopupInterface",
+						multiple: false,
+						visibility: "hidden"
+					}
+				},
+				events: {
 
-				/**
-				 * This event is fired when the end user moves the cursor to the text field, performs
-				 * an action that requires items to be loaded, and items are not already loaded. For example,
-				 * pressing F4 to open the dropdown list or typing something in the text field fires the event.
-				 *
-				 * <b>Note:</b> We strongly recommend to only use this feature in performance critical scenarios.
-				 * Loading the items lazily (on demand) to defer initialization has several implications for the end user
-				 * experience. For example, the busy indicator has to be shown while the items are being loaded and
-				 * assistive technology software also has to announce the state changes (which may be confusing
-				 * for some screen reader users).
-				 *
-				 * <b>Note</b>: Currently the <code>sap.m.MultiComboBox</code> does not support this event.
-				 * @since 1.38
-				 */
-				loadItems: {}
+					/**
+					 * This event is fired when the end user moves the cursor to the text field, performs
+					 * an action that requires items to be loaded, and items are not already loaded. For example,
+					 * pressing F4 to open the dropdown list or typing something in the text field fires the event.
+					 *
+					 * <b>Note:</b> We strongly recommend to only use this feature in performance critical scenarios.
+					 * Loading the items lazily (on demand) to defer initialization has several implications for the end user
+					 * experience. For example, the busy indicator has to be shown while the items are being loaded and
+					 * assistive technology software also has to announce the state changes (which may be confusing
+					 * for some screen reader users).
+					 *
+					 * <b>Note</b>: Currently the <code>sap.m.MultiComboBox</code> does not support this event.
+					 * @since 1.38
+					 */
+					loadItems: {}
+				}
 			}
-		}});
+		});
 
 		/* =========================================================== */
 		/* Private methods and properties                              */
@@ -112,7 +123,20 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 			return this._oList;
 		};
 
-		ComboBoxBase.prototype.loadItems = function(fnCallBack) {
+		/**
+		 * Fires the {@link #loadItems} event if the items are not already loaded and enqueue the
+		 * <code>fnCallBack</code> callback into the event queue for further processing.
+		 *
+		 * @param {function} [fnCallBack] A callback function to execute after the items are loaded.
+		 * @param {object} [mOptions] Additional options.
+		 * @param {string} [mOptions.id] Identifier of the message.
+		 * @param {boolean} [mOptions.busyIndicator=true] Indicate whether the loading indicator is shown in the
+		 * text field after some delay.
+		 * @param {int} [mOptions.busyIndicatorDelay=300] Indicates the delay in milliseconds after which the busy
+		 * indicator is shown.
+		 * @since 1.32.4
+		 */
+		ComboBoxBase.prototype.loadItems = function(fnCallBack, mOptions) {
 			var bCallBackIsAFunction = typeof fnCallBack === "function";
 
 			// items are not loaded
@@ -120,7 +144,14 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 				this._bOnItemsLoadedScheduled = false;
 
 				if (bCallBackIsAFunction) {
-					this.aEventQueue.push(fnCallBack);
+
+					mOptions = jQuery.extend({
+						action: fnCallBack,
+						busyIndicator: true,
+						busyIndicatorDelay: 300
+					}, mOptions);
+
+					this.aEventQueue.push(mOptions);
 
 					// sets up a timeout to know if the items are not loaded after a 300ms delay,
 					// to show the busy indicator in the text field, notice that if the items
@@ -128,12 +159,12 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 					if ((this.iLoadItemsEventInitialProcessingTimeoutID === -1) &&
 
 						// the busy indicator in the input field should not be shown while the user is typing
-						(fnCallBack.name !== "input")) {
+						(mOptions.busyIndicator)) {
 
 						this.iLoadItemsEventInitialProcessingTimeoutID = setTimeout(function onItemsNotLoadedAfterDelay() {
 							this.setInternalBusyIndicatorDelay(0);
 							this.setInternalBusyIndicator(true);
-						}.bind(this), ComboBoxBase.LOAD_ITEMS_BUSY_INDICATOR_DELAY);
+						}.bind(this), mOptions.busyIndicatorDelay);
 					}
 				}
 
@@ -155,7 +186,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		};
 
 		ComboBoxBase.prototype.onItemsLoaded = function() {
-			var sInputEventHandleName = "input";
 			this.bProcessingLoadItemsEvent = false;
 			clearTimeout(this.iLoadItemsEventInitialProcessingTimeoutID);
 
@@ -172,22 +202,22 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 			}
 
 			// process the event queue
-			for (var i = 0, fnCurrentEvent, fnNextEvent, bIsCurrentEventTheLast; i < this.aEventQueue.length; i++) {
-				fnCurrentEvent = this.aEventQueue.shift(); // get and delete the first event from the queue
+			for (var i = 0, mCurrentMessage, mNextMessage, bIsCurrentMessageTheLast; i < this.aEventQueue.length; i++) {
+				mCurrentMessage = this.aEventQueue.shift(); // get and delete the first event from the queue
 				i--;
-				bIsCurrentEventTheLast = (i + 1) === this.aEventQueue.length;
-				fnNextEvent = bIsCurrentEventTheLast ? null : this.aEventQueue[i + 1];
+				bIsCurrentMessageTheLast = (i + 1) === this.aEventQueue.length;
+				mNextMessage = bIsCurrentMessageTheLast ? null : this.aEventQueue[i + 1];
 
-				if (typeof fnCurrentEvent === "function") {
-					if ((fnCurrentEvent.name === sInputEventHandleName) &&
-						!bIsCurrentEventTheLast &&
-						(fnNextEvent.name === sInputEventHandleName)) {
+				if (typeof mCurrentMessage.action === "function") {
+					if ((mCurrentMessage.id === "input") &&
+						!bIsCurrentMessageTheLast &&
+						(mNextMessage.id === "input")) {
 
 						// no need to process this input event because the next is pending
 						continue;
 					}
 
-					fnCurrentEvent.call(this);
+					mCurrentMessage.action.call(this);
 				}
 			}
 		};
@@ -427,13 +457,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		/* =========================================================== */
 		/* API methods                                                 */
 		/* =========================================================== */
-
-		/**
-		 * Indicates the delay in milliseconds after which the busy indicator is shown when the end user moves
-		 * the cursor in the text field and performs an action that requires items to be loaded,
-		 * items are not already loaded, and there is an {@link #loadItems} event listener attached.
-		 */
-		ComboBoxBase.LOAD_ITEMS_BUSY_INDICATOR_DELAY = 300;
 
 		/**
 		 * Indicates whether the custom placeholder is used.

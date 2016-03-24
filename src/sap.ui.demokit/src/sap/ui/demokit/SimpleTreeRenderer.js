@@ -144,7 +144,13 @@ sap.ui.define([],
 					rm.write(">");
 					rm.write("</span>");
 				}
+				rm.write("<span");
+				rm.addClass("sapDkSimpleTreeNodeLabel");
+				rm.writeClasses();
+				rm.write(">");
 				rm.writeEscaped(oNode.getText());
+				rm.write("</span>");
+
 				rm.write("</div>");
 			}
 

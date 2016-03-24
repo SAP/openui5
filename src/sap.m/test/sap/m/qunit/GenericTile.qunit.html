@@ -137,10 +137,10 @@
 				done();
 				return;
 			}
-			assert.equal($tile.css("border-bottom-style"), "dotted", "Generic Tile focus bottom border was rendered successfully");
-			assert.equal($tile.css("border-top-style"), "dotted", "Generic Tile focus top border was rendered successfully");
-			assert.equal($tile.css("border-right-style"), "dotted", "Generic Tile focus right border was rendered successfully");
-			assert.equal($tile.css("border-left-style"), "dotted", "Generic Tile focus left border was rendered successfully");
+			assert.equal(jQuery.sap.byId("generic-tile-focus").css('border-bottom-style'), "dotted", "Generic Tile focus bottom border was rendered successfully");
+			assert.equal(jQuery.sap.byId("generic-tile-focus").css("border-top-style"), "dotted", "Generic Tile focus top border was rendered successfully");
+			assert.equal(jQuery.sap.byId("generic-tile-focus").css("border-right-style"), "dotted", "Generic Tile focus right border was rendered successfully");
+			assert.equal(jQuery.sap.byId("generic-tile-focus").css("border-left-style"), "dotted", "Generic Tile focus left border was rendered successfully");
 			done();
 		}.bind(this));
 	});
@@ -306,6 +306,67 @@
 		assert.ok(jQuery.sap.domById("numeric-cnt-failed-icon-image"), "Icon was rendered successfully");
 	});
 
+	QUnit.module("GenericTileMode tests", {
+		beforeEach : function() {
+			this.oGenericTile = new sap.m.GenericTile("generic-tile", {
+				subheader : "Expenses By Region",
+				frameType : sap.m.FrameType.OneByOne,
+				size : "Auto",
+				header : "Comparative Annual Totals",
+				tileContent : new sap.m.TileContent("tile-cont", {
+					unit : "EUR",
+					size : "Auto",
+					footer : "Current Quarter",
+					content : new sap.m.NumericContent({
+						state : sap.m.LoadState.Loading,
+						scale : "M",
+						indicator : sap.m.DeviationIndicator.Up,
+						truncateValueTo : 4,
+						value : 20,
+						nullifyValue : true,
+						formatterValue : false,
+						valueColor : sap.m.ValueColor.Good,
+						icon : "sap-icon://customer-financial-fact-sheet"
+					})
+				})
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		}
+	});
+
+	QUnit.test("GenericTile in ContentMode (Default mode)", function(assert) {
+		// In ContentMode, when the subheader available, the number of header lines should be 2
+		assert.equal(sap.ui.getCore().byId("generic-tile-title").getMaxLines(), 2, "The header has 2 lines and subheader has 1 line");
+
+		// In ContentMode, when the subheader not available, the number of header lines should be 3
+		this.oGenericTile.setSubheader("");
+		sap.ui.getCore().applyChanges();
+		assert.equal(sap.ui.getCore().byId("generic-tile-title").getMaxLines(), 3, "The header has 3 lines when subheader unavailable");
+
+		// Check if the content in TileContent is still kept.
+		assert.ok(this.oGenericTile.getTileContent()[0].getContent() !== null, "The content aggregation in TileContent is kept.");
+	});
+
+	QUnit.test("GenericTile in HeaderMode", function(assert) {
+		this.oGenericTile.setMode("HeaderMode");
+		sap.ui.getCore().applyChanges();
+
+		// In HeaderMode, when the subheader available, the number of header lines should be 4
+		assert.equal(sap.ui.getCore().byId("generic-tile-title").getMaxLines(), 4, "The header has 4 lines and subheader has 1 line");
+
+		// In HeaderMode, when the subheader unavailable, the number of header lines should be 5
+		this.oGenericTile.setSubheader("");
+		sap.ui.getCore().applyChanges();
+		assert.equal(sap.ui.getCore().byId("generic-tile-title").getMaxLines(), 5, "The header has 5 lines when subheader unavailable");
+
+		// Check if the cotent in TileContent is removed.
+		assert.ok(this.oGenericTile.getTileContent()[0].getContent() === null, "The content aggregation in TileContent is removed.");
+	});
+
 	/* --------------------------------------- */
 	/* Test internal methods                   */
 	/* --------------------------------------- */
@@ -390,6 +451,24 @@
 		sAriaAndTooltipText = this.oGenericTile._getAriaAndTooltipText();
 		//Assert
 		assert.equal(sAriaAndTooltipText, "someTooltipText", "Expected text for ARIA-label and tooltip generated if an explicite tooltip is set");
+
+		//Arrange - stubs GenericTile's functions, no store & restore needed on the instance level
+		this.oGenericTile.getTooltip_AsString = function () {
+			return "";
+		};
+		this.oGenericTile._isTooltipSuppressed = function () {
+			return false;
+		};
+		this.oGenericTile._getHeaderAriaAndTooltipText = function () {
+			return "";
+		};
+		this.oGenericTile._getContentAriaAndTooltipText = function () {
+			return " ";
+		};
+		//Act
+		sAriaAndTooltipText = this.oGenericTile._getAriaAndTooltipText();
+		//Assert
+		assert.equal(sAriaAndTooltipText, "", "Expected empty string for ARIA-label and tooltip generated");
 	});
 
 	QUnit.test("Internal method _getAriaText", function(assert) {

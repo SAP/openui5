@@ -4,13 +4,21 @@ describe("sap.uxap.ObjectPageAnchorBar", function() {
 	});
 
 	it("Should open anchor menu", function() {
-		element(by.css(".sapUxAPAnchorBarButton:nth-child(2)")).click();
+		if (browser.testrunner.runtime.platformName == "android" || browser.testrunner.runtime.platformName == "ios") {
+			element(by.css(".sapMSltArrow")).click();
+		} else {
+			element(by.css(".sapUxAPAnchorBarButton:nth-child(2)")).click();
+		}
 
 		expect(takeScreenshot()).toLookAs("anchormenu");
 	});
 
 	it("Should collapse header", function() {
-		element(by.css(".sapUxAPAnchorBarButton:nth-child(2)")).click();
+		if (browser.testrunner.runtime.platformName == "android" || browser.testrunner.runtime.platformName == "ios") {
+			element(by.css(".sapUxAPHierarchicalSelectFirstLevel:nth-child(2)")).click();
+		} else {
+			element(by.css(".sapUxAPAnchorBarButton:nth-child(2)")).click();
+		}
 
 		expect(takeScreenshot()).toLookAs("snapheader");
 	});

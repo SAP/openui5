@@ -119,7 +119,7 @@ sap.ui.define(['jquery.sap.global'],
 				aggregations : {},
 				associations : {},
 				events : {},
-				fields : {},
+				values : {},
 				methods : {}
 			},
 			generatedMethods = {},
@@ -237,7 +237,7 @@ sap.ui.define(['jquery.sap.global'],
 
 		if ( json.properties ) {
 			json.properties.forEach(function (oField) {
-				oEntityDoc.fields[oField.name] = {
+				oEntityDoc.values[oField.name] = {
 					kind : 9,
 					type : oField.type,
 					module : oField.module,

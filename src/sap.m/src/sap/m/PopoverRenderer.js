@@ -47,6 +47,11 @@ sap.ui.define(['jquery.sap.global'],
 			}
 
 			rm.write(">");
+
+			if (oControl.getResizable()) {
+				rm.write('<div class="sapMPopoverResizeHandle"></div>');
+			}
+
 			this.renderContent(rm, oControl);
 			rm.write("</div>");	// container
 		};

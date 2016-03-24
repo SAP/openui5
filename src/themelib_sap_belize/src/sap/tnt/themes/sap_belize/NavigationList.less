@@ -1,0 +1,110 @@
+/* ======================================= */
+/* CSS for control sap.tnt/NavigationList  */
+/* Belize theme                            */
+/* ======================================= */
+
+.sapTntNavLIGroup {
+	background-color: @sapUiListBackground;
+	border-bottom: 1px solid @sapUiListBorderColor;
+	color: @sapUiListTextColor;
+
+	& > .sapUiIcon {
+		color: @sapUiContentIconColor;
+	}
+}
+
+.sapTntNavLIGroup:not(.sapTntNavLIItemDisabled):hover {
+	background-color: @sapUiListHoverBackground;
+	border-bottom: 1px solid @sapUiListBorderColor;
+	color: @sapUiListTextColor;
+
+	& > .sapUiIcon {
+		color: @sapUiContentIconColor;
+	}
+}
+
+.sapTntNavLIGroup:not(.sapTntNavLIItemDisabled):active {
+	background-color: @sapUiListHighlightColor;
+	border-bottom: 1px solid @sapUiListBorderColor;
+	color: @sapUiContentContrastTextColor;
+
+	& > .sapUiIcon {
+		color: @sapUiContentContrastIconColor;
+	}
+}
+
+.sapTntNavLIItemSelected .sapTntNavLIGroup {
+	background-color: @sapUiListSelectionBackgroundColor;
+	border-bottom: 1px solid @sapUiListBorderColor;
+	color: @sapUiListTextColor;
+
+	& > .sapUiIcon {
+		color: @sapUiContentIconColor;
+	}
+}
+
+.sapTntNavLIItemSelected .sapTntNavLIGroup:hover {
+	background-color: @sapUiListSelectionHoverBackground;
+	border-bottom: 1px solid @sapUiListBorderColor;
+	color: @sapUiListTextColor;
+
+	& > .sapUiIcon {
+		color: @sapUiContentIconColor;
+	}
+}
+
+.sapTntNavLIGroupItem {
+	background-color: darken(@sapUiListBackground, 2);
+	border-bottom: 1px solid @sapUiListBorderColor;
+	color: @sapUiListTextColor;
+}
+
+.sapTntNavLIGroupItem:not(.sapTntNavLIItemDisabled):hover {
+	background-color: @sapUiListHoverBackground;
+	border-bottom: 1px solid @sapUiListBorderColor;
+	color: @sapUiListTextColor;
+}
+
+.sapTntNavLIGroupItem:not(.sapTntNavLIItemDisabled):active {
+	background-color: @sapUiListHighlightColor;
+	border-bottom: 1px solid @sapUiListBorderColor;
+	color: @sapUiContentContrastTextColor;
+}
+
+.sapTntNavLIItemSelected.sapTntNavLIGroupItem {
+	background-color: @sapUiListSelectionBackgroundColor;
+	border-bottom: 1px solid @sapUiListBorderColor;
+	color: @sapUiListTextColor;
+
+	& > .sapUiIcon {
+		color: @sapUiContentIconColor;
+	}
+}
+
+.sapTntNavLIItemSelected.sapTntNavLIGroupItem:hover {
+	background-color: @sapUiListSelectionHoverBackground;
+	border-bottom: 1px solid @sapUiListBorderColor;
+	color: @sapUiListTextColor;
+
+	& > .sapUiIcon {
+		color: @sapUiContentIconColor;
+	}
+}
+
+.sapTntNavLI li:focus,
+.sapTntNavLIItem:focus {
+	outline: none;
+}
+
+.sapTntNavLI li:focus::before,
+.sapTntNavLIItem:focus::before {
+	border: 1px dotted @sapUiContentFocusColor;
+	position: absolute;
+	content: " ";
+	top: 1px;
+	right: 1px;
+	bottom: 1px;
+	left: 1px;
+	z-index: 2;
+	pointer-events: none;
+}

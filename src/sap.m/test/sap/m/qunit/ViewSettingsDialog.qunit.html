@@ -410,6 +410,40 @@
 				jQuery.sap.log.error.restore();
 			});
 
+			test("setFilter count doe not throw an error when filter item type is sap.m.ViewSettingsCustomItem", function () {
+				var done = assert.async(),
+						oVSD = new sap.m.ViewSettingsDialog({
+							filterItems: [
+								new sap.m.ViewSettingsCustomItem({
+									text: "Material",
+									key: "MaterialID",
+									customControl: new sap.m.Input({width: "100%", placeholder: "{i18n>ENTER_FILTER}"})
+								}),
+								new sap.m.ViewSettingsCustomItem({
+									text: "Material Description",
+									key: "MaterialDescription",
+									customControl: new sap.m.Input({width: "100%", placeholder: "{i18n>ENTER_FILTER}"})
+								})
+							],
+							confirm: function () {
+								var oItem0 = oVSD.getFilterItems()[0];
+								oItem0.setFilterCount(1);
+								oItem0.setSelected(true);
+
+								strictEqual(oItem0.getFilterCount(), 1, "To have set filter count properly");
+								strictEqual(oItem0.getSelected(), true, "To set property selected to TRUE");
+
+								oVSD.destroy();
+								oVSD = null;
+								done();
+							}
+						});
+
+				oVSD.open();
+				oVSD._filterList.getItems()[0].firePress();
+				oVSD._dialog.getBeginButton().firePress();
+			});
+
 			module("Performance", {
 				setup : function () {
 					this.oVSD = new sap.m.ViewSettingsDialog();
@@ -510,7 +544,6 @@
 			module("Last Opened Page", {
         /* The use of sinon clock requires isolated environment, otherwise it will interfere the async tests */
 				beforeEach: function () {
-					this.clock = sinon.useFakeTimers();
 					this.oVSD = new sap.m.ViewSettingsDialog();
 					oVsdConfig.addFilterItems(this.oVSD);
 					this.oVSD.placeAt("qunit-fixture");
@@ -518,7 +551,6 @@
 				},
 
 				afterEach: function () {
-					this.clock.restore();
 					this.oVSD.destroy();
 					this.oVSD = null;
 				}
@@ -535,23 +567,27 @@
 				}
 
 				openAndNavigateToFilterDetailsPage(this.oVSD);
-				this.clock.tick(1000);
+				sap.ui.getCore().applyChanges();
 
 				this.oVSD._filterDetailList.getItems()[0].data("item").setSelected(true);
 				this.oVSD._dialog.getBeginButton().firePress();
-				this.clock.tick(1000);
+				sap.ui.getCore().applyChanges();
 
 				openAndNavigateToFilterDetailsPage(this.oVSD);
-				this.clock.tick(1000);
+				sap.ui.getCore().applyChanges();
 
 				this.oVSD._filterDetailList.getItems()[1].data("item").setSelected(true);
 				this.oVSD._dialog.getEndButton().firePress();
-				this.clock.tick(1000);
+				sap.ui.getCore().applyChanges();
 
 				this.oVSD.open("filter");
-				this.clock.tick(1000);
+				sap.ui.getCore().applyChanges();
 
-				equal(this.oVSD._navContainer.getCurrentPage().getId(), this.oVSD._getPage1().getId(), "NavContainer should be on the first page");
+				var done = assert.async();
+				setTimeout(function () {
+					equal(this.oVSD._navContainer.getCurrentPage().getId(), this.oVSD._getPage1().getId(), "NavContainer should be on the first page");
+					done();
+				}.bind(this), 1000);
 			});
 			module ("Events", {
 				setup : function () {
@@ -1462,7 +1498,7 @@
 					vsdGroupDirectionDesc._oSingleSelectControl.fireSelect({selected : true});
 
 					ok(spyGroupItem.calledWithExactly('selected', true, true), "Set group item as selected should be called with suppress Invalidation flag=true");
-					ok(spyGroupItem.calledOnce, "setSelected should be called only once");
+					ok(spyGroupItem.calledTwice, "setSelected should be called twice");
 
 					ok(spyVsd.calledWithExactly('groupDescending', true, true), "Set group item as as selected should be called with suppress Invalidation flag=true");
 

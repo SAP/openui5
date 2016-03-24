@@ -576,6 +576,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
+	/*
+	 * Checks if a Month is enabled
+	 * the min. and max. date of the CalendarMonthInterval are used
+	 * @return {boolean} Flag if enabled
+	 * @private
+	 */
+	MonthsRow.prototype._checkMonthEnabled = function(oDate){
+
+		if (!(oDate instanceof UniversalDate)) {
+			throw new Error("Date must be a UniversalDate object " + this);
+		}
+
+		var oTimeStamp = oDate.getTime();
+		var oParent = this.getParent();
+
+		if (oParent && oParent._oMinDate && oParent._oMaxDate) {
+			if (oTimeStamp < oParent._oMinDate.getTime() || oTimeStamp > oParent._oMaxDate.getTime()) {
+				return false;
+			}
+		}
+
+		return true;
+
+	};
+
 	MonthsRow.prototype._handleMouseMove = function(oEvent){
 
 		if (!this.$().is(":visible")) {
@@ -1019,6 +1044,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	}
 
 	function _selectMonth(oDate, bMove){
+
+		if (!this._checkMonthEnabled(oDate)) {
+			// date is disabled -> do not select it
+			return false;
+		}
 
 		var aSelectedDates = this.getSelectedDates();
 		var oDateRange;

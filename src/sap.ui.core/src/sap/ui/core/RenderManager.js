@@ -511,13 +511,9 @@ sap.ui.define([
 				if (oControl && oTargetDomNode) {
 
 					var oldDomNode = oControl.getDomRef();
-					if ( RenderManager.isPreservedContent(oldDomNode) ) {
-						// use placeholder instead
-						oldDomNode = jQuery.sap.byId(sap.ui.core.RenderPrefixes.Dummy + oControl.getId())[0] || oldDomNode;
-					}
-					if (!oldDomNode) {
-						// In case no old DOM node was found, search for the invisible placeholder
-						oldDomNode = jQuery.sap.domById(sap.ui.core.RenderPrefixes.Invisible + oControl.getId());
+					if ( !oldDomNode || RenderManager.isPreservedContent(oldDomNode) ) {
+						// In case no old DOM node was found or only preserved DOM, search for a placeholder (invisible or preserved DOM placeholder)
+						oldDomNode = jQuery.sap.domById(sap.ui.core.RenderPrefixes.Invisible + oControl.getId()) || jQuery.sap.domById(sap.ui.core.RenderPrefixes.Dummy + oControl.getId());
 					}
 
 					var bNewTarget = oldDomNode && oldDomNode.parentNode != oTargetDomNode;

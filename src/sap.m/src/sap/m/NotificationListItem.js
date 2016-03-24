@@ -38,7 +38,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 					/**
 					 * Determines if the text in the title and the description of the notification are truncated to the first two lines.
 					 */
-					truncate: {type: 'boolean', group: 'Appearance', defaultValue: true}
+					truncate: {type: 'boolean', group: 'Appearance', defaultValue: true},
+
+					/**
+					 * Determines it the "Show More" button should be hidden.
+					 */
+					hideShowMoreButton: {type: 'boolean', group: 'Appearance', defaultValue: false}
 				},
 				aggregations: {
 					/**
@@ -255,7 +260,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 		NotificationListItem.prototype._showHideTruncateButton = function() {
 			var notificationDomRef = this.getDomRef();
 
-			if (this._canTruncate()) { // if the Notification has long text
+			if (this._canTruncate() && (!this.getHideShowMoreButton())) { // if the Notification has long text
 				// show the truncate button
 				this.getDomRef('expandCollapseButton').classList.remove('sapMNLI-CollapseButtonHide');
 

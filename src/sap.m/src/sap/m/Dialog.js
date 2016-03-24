@@ -663,21 +663,19 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 * @private
 		 */
 		Dialog.prototype._onResize = function () {
-			var $dialog,
-				$dialogContent,
+			var $dialog = this.$(),
+				$dialogContent = this.$('cont'),
 				iDialogWidth,
 				iDialogHeight,
 				sTranslateX = '',
 				sTranslateY = '';
 
-			//if there is a manually set height or height by manually resizing return;
-			if (this.getContentHeight() || this._oManuallySetSize) {
+			//if height is set by manually resizing return;
+			if (this._oManuallySetSize) {
 				return;
 			}
 
 			if (!this.getContentHeight()) {
-				$dialog = this.$();
-				$dialogContent = this.$('cont');
 
 				//reset the height so the dialog can grow
 				$dialogContent.css({
@@ -1449,7 +1447,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 					//set the new position of the dialog on mouse down when the transform is disabled by the class
 					that._$dialog.css({
 						left: Math.min(Math.max(0, that._oManuallySetPosition.x), windowWidth - DIALOG_MIN_VISIBLE_SIZE),
-						top: Math.min(Math.max(0, that._oManuallySetPosition.y), windowHeight - DIALOG_MIN_VISIBLE_SIZE)
+						top: Math.min(Math.max(0, that._oManuallySetPosition.y), windowHeight - DIALOG_MIN_VISIBLE_SIZE),
+						transform: "initial"
 					});
 				}
 
@@ -1466,7 +1465,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 							//move the dialog
 							that._$dialog.css({
 								left: Math.min(Math.max(0, that._oManuallySetPosition.x), windowWidth - DIALOG_MIN_VISIBLE_SIZE),
-								top: Math.min(Math.max(0, that._oManuallySetPosition.y), windowHeight - DIALOG_MIN_VISIBLE_SIZE)
+								top: Math.min(Math.max(0, that._oManuallySetPosition.y), windowHeight - DIALOG_MIN_VISIBLE_SIZE),
+								transform: "initial"
 							});
 						});
 					});
@@ -1489,6 +1489,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 							if (that._bRTL) {
 								styles.left = Math.min(Math.max(e.pageX, 0), maxLeftOffset);
+								styles.transform = "initial";
 								that._oManuallySetSize.width = initial.width + initial.x - Math.max(e.pageX, 0);
 							}
 
@@ -1503,10 +1504,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				}
 
 				$w.on("mouseup.sapMDialog", function () {
+					var $dialog = that.$(),
+						$dialogContent = that.$('cont');
+
 					$w.off("mouseup.sapMDialog, mousemove.sapMDialog");
 
 					if (bResize) {
 						that._$dialog.removeClass('sapMDialogResizing');
+						$dialogContent.height(parseInt($dialog.height(), 10) + parseInt($dialog.css("border-top-width"), 10) + parseInt($dialog.css("border-bottom-width"), 10));
 					}
 				});
 

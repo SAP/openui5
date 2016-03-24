@@ -37,16 +37,14 @@
 /* Custom focus outline:                                                */
 /* ---------------------------------------------------------------------*/
 
-html.sap-desktop .sapMBtn:focus > .sapMFocusable {
+.sap-desktop .sapMBtn:focus > .sapMFocusable {
 	outline:          1px dotted @sapUiFocus;
-	outline-offset:   -2px;
+	outline-offset:   -3px; /* see the global focus specification */
 }
 
-.sapMFooter-CTX .sapMBtn:focus > .sapMBtnInner.sapMFocusable {
-	outline-color:    @sapUiInvertedFocus;
-}
-
-.sapMBtn.sapMBtnInverted:focus > .sapMBtnInner.sapMFocusable {
+.sap-desktop .sapMFooter-CTX .sapMBtn:focus > .sapMFocusable,
+.sap-desktop .sapMBtnInverted.sapMBtn:focus > .sapMFocusable,
+.sap-desktop .sapMBtn:focus > .sapMBtnActive.sapMFocusable {
 	outline-color:    @sapUiInvertedFocus;
 }
 
@@ -70,14 +68,12 @@ html.sap-desktop .sapMBtn:focus > .sapMFocusable {
 }
 
 .sapMBtn:focus .sapMBtnFocusDiv {
-	border:           1px dashed @sapUiFocus;
+	border:           1px dotted @sapUiFocus;
 }
 
-.sapMFooter-CTX .sapMBtn:focus .sapMBtnFocusDiv {
-	border-color:    @sapUiInvertedFocus;
-}
-
-.sapMBtn.sapMBtnInverted:focus .sapMBtnFocusDiv {
+.sapMFooter-CTX .sapMBtn:focus .sapMBtnFocusDiv,
+.sapMBtn.sapMBtnInverted:focus .sapMBtnFocusDiv,
+.sapMBtn:focus > .sapMBtnActive > .sapMBtnFocusDiv {
 	border-color:    @sapUiInvertedFocus;
 }
 
@@ -375,10 +371,6 @@ div.sapMBtnInner.sapMBtnEmphasized > .sapMBtnIcon {
 		border-color:     transparent;
 	}
 	.sapMBtnFocusDiv {
-		left:             0;
-		top:              0;
-		right:            0;
-		bottom:           0;
 		border-radius:    0;
 	}
 }

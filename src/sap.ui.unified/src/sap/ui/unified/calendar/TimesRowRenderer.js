@@ -177,6 +177,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		var sYyyyMMddHHmm = oTimesRow._oFormatYyyyMMddHHmm.format(oDate.getJSDate(), true);
 		var iSelected = oTimesRow._checkDateSelected(oDate);
 		var oType = oTimesRow._getDateType(oDate);
+		var bEnabled = oTimesRow._checkTimeEnabled(oDate);
 
 		oRm.write("<div");
 		oRm.writeAttribute("id", oHelper.sId + "-" + sYyyyMMddHHmm);
@@ -217,6 +218,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 			if (oType.tooltip) {
 				oRm.writeAttributeEscaped('title', oType.tooltip);
 			}
+		}
+
+		if (!bEnabled) {
+			oRm.addClass("sapUiCalItemDsbl"); // time disabled
+			mAccProps["disabled"] = true;
 		}
 
 		oRm.writeAttribute("tabindex", "-1");

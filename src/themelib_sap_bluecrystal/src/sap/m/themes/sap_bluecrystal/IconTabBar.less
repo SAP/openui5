@@ -14,7 +14,7 @@
 	white-space: nowrap;
 }
 
-.sap-phone .sapMITBHead {
+html.sap-phone .sapMITB .sapMITBHead {
 	display: inline-block;
 	margin: 1rem 0 0;
 	vertical-align: top;
@@ -311,6 +311,10 @@ html[dir=rtl] .sapMITBTextOnly .sapMITBTab {
 	top: 0.4375rem;
 }
 
+html[dir='rtl'] .sapMITBHorizontal.sapMITBFilter > .sapMITBHorizontalWrapper > .sapMITBCount {
+  text-align: right;
+}
+
 .sapMITBHorizontal.sapMITBFilter > .sapMITBTab {
 	display: inline-block;
 	height: 3rem;
@@ -591,12 +595,20 @@ html[data-sap-ui-os=win8] .sapMITBArrowScroll {
 
 .sapMITBArrowScrollLeftTextOnly {
 	left: 0.25rem;
-	padding: 1rem 0.4rem;
+	padding: 1.1rem 0.4rem;
 }
 
 .sapMITBArrowScrollRightTextOnly {
-	padding: 1rem 0.4rem;
+	padding: 1.1rem 0.4rem;
 	right: 0.25rem;
+}
+
+
+.sapMITBStretch {
+	.sapMITBArrowScrollLeftTextOnly,
+	.sapMITBArrowScrollRightTextOnly {
+		padding: 2.1rem 0.4rem
+	}
 }
 
 .sap-phone .sapMITBArrowScrollLeft {
@@ -611,12 +623,27 @@ html[data-sap-ui-os=win8] .sapMITBArrowScroll {
 
 .sap-phone .sapMITBArrowScrollLeftTextOnly {
 	left: 0.25rem;
-	padding: 1.25rem 0 0.75rem;
+	padding: 1.1rem 0 0.75rem;
 }
 
 .sap-phone .sapMITBArrowScrollRightTextOnly {
-	padding: 1.25rem 0 0.75rem;
+	padding: 1.1rem 0 0.75rem;
 	right: 0.25rem;
+}
+
+.sap-phone .sapMITB.sapMITBStretch {
+	.sapMITBArrowScrollLeftTextOnly,
+	.sapMITBArrowScrollRightTextOnly {
+		padding: 1.1rem 0 0.75rem
+	}
+}
+
+.sap-tablet,
+html[data-sap-ui-os=win8] {
+	.sapMITBArrowScrollLeftTextOnly,
+	.sapMITBArrowScrollRightTextOnly {
+		padding: 1.25rem 0.4rem
+	}
 }
 
 .sapMITBNotScrollable > .sapMITBArrowScroll {
@@ -668,12 +695,26 @@ html[data-sap-ui-os=win8] .sapMITBArrowScroll {
 
 		.sapMITBArrowScrollLeftTextOnly {
 			left: 0.25rem;
-			padding: 1.25rem 0 0.75rem;
+			padding: 1.1rem 0 0.75rem;
 		}
 
 		.sapMITBArrowScrollRightTextOnly {
-			padding: 1.25rem 0 0.75rem;
+			padding: 1.1rem 0 0.75rem;
 			right: 0.25rem;
+		}
+	}
+	.sap-tablet .sapMITB.sapMITBStretch,
+	html[data-sap-ui-os=win8] .sapMITB.sapMITBStretch {
+		.sapMITBArrowScrollLeftTextOnly,
+		.sapMITBArrowScrollRightTextOnly {
+			padding: 1.25rem 0 0.75rem
+		}
+  }
+
+	.sapMITB.sapMITBStretch {
+		.sapMITBArrowScrollLeftTextOnly,
+		.sapMITBArrowScrollRightTextOnly {
+			padding: 2.1rem 0 0.75rem;
 		}
 	}
 

@@ -55,7 +55,7 @@ sap.ui.define(['jquery.sap.global'],
 		var sSizeType   = bHorizontal ? "width" : "height";
 		var sGripIcon = "sap-icon://" + (bHorizontal ? "horizontal" : "vertical") + "-grip";
 
-		var aContents = oControl.getContentAreas();
+		var aContents = oControl._getContentAreas();
 		var iLen = aContents.length;
 		var aCalculatedSizes = oControl.getCalculatedSizes();
 		for (var i = 0; i < iLen; ++i) {
@@ -126,7 +126,6 @@ sap.ui.define(['jquery.sap.global'],
 			"</div>" +
 			"</div>"
 		);
-
 	};
 
 

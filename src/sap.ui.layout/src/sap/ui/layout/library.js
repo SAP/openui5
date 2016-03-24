@@ -42,6 +42,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 			"sap.ui.layout.Grid",
 			"sap.ui.layout.HorizontalLayout",
 			"sap.ui.layout.ResponsiveFlowLayout",
+			"sap.ui.layout.ResponsiveSplitter",
+			"sap.ui.layout.ResponsiveSplitterPage",
 			"sap.ui.layout.Splitter",
 			"sap.ui.layout.VerticalLayout",
 			"sap.ui.layout.BlockLayoutCell",
@@ -61,6 +63,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 			"sap.ui.layout.form.FormContainer",
 			"sap.ui.layout.form.FormElement",
 			"sap.ui.layout.form.GridContainerData",
+			"sap.ui.layout.PaneContainer",
+			"sap.ui.layout.SplitPane",
 			"sap.ui.layout.form.GridElementData"
 		]
 	});

@@ -157,6 +157,8 @@
 	max-width: 100%;
 	overflow: hidden;
 	white-space: nowrap;
+	border-top: 1px solid @sapUiListHeaderBorderColor;
+	border-bottom: 1px solid @sapUiListHeaderBorderColor;
 }
 
 .sapUiTableRSel .sapUiTableColHdrCnt > .sapUiTableColRowHdr {
@@ -314,6 +316,11 @@
 
 .sapUiTableCtrlScrFixed {
 	float: left;
+}
+
+.sapUiTableCtrlScrFixed, .sapUiTableColHdrFixed {
+	max-width:100%;
+	overflow:hidden;
 }
 
 .sapUiTableCell {
@@ -830,4 +837,9 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 	background-color: @sapUiHighlight;
 	color: @sapUiTextInverted;
 	z-index:10000;
+}
+
+// Hide table during transition, because shrinked width causes growing rows
+.sapMNavItemFlipping .sapUiTable {
+	opacity: 0;
 }

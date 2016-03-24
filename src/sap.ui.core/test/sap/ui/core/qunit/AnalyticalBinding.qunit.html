@@ -327,6 +327,25 @@
 		});
 	});
 
+	asyncTest("getDownloadURL: Check if custom URL parameters are attached", function() {
+		var that = this;
+
+		setupAnalyticalBinding(2, {
+				custom: {
+					"search": "ABTestString"
+				}
+			}, function () {
+
+			var sURL = oBinding.getDownloadUrl();
+			
+			equal(sURL.indexOf("search=ABTestString"), 191, "URL Parameters are attached");
+
+			//just start() the test after the URL has been checked
+			start();
+
+		});
+	});
+	
 </script>
 
 </head>

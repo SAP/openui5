@@ -135,7 +135,8 @@
 					sap.ui.dt.ElementUtil.loadDesignTimeMetadata(this.oPage).then(function(oDesignTimeMetadata) {
 						that.oPageOverlay = new sap.ui.dt.ElementOverlay({
 							element : that.oPage,
-							designTimeMetadata : { data : oDesignTimeMetadata }
+							designTimeMetadata : { data : oDesignTimeMetadata },
+							lazyRendering : false
 						});
 						sap.ui.getCore().applyChanges();
 						that.oDragDrop = new sap.ui.dt.plugin.DragDrop();

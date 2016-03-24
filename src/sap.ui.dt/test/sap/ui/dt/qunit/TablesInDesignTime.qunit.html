@@ -78,6 +78,8 @@
 						rootElements : [this.oTable]
 					});
 
+					sap.ui.getCore().applyChanges();
+
 					this.oDesignTime.attachEventOnce("synced", function() {
 						sap.ui.getCore().applyChanges();
 
@@ -146,6 +148,8 @@
 					}));
 
 					this.oTable.placeAt("content");
+
+					sap.ui.getCore().applyChanges();
 
 					this.oDesignTime = new sap.ui.dt.DesignTime({
 						rootElements : [this.oTable]

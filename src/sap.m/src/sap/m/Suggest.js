@@ -141,6 +141,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './SuggestionsList', '.
 				offsetY: 0,
 				initialFocus: parent,
 				bounce: false,
+				afterOpen: function () {
+					oInput.$("I").attr("aria-autocomplete","list").attr("aria-haspopup","true");
+				},
+				beforeClose: function() {
+					oInput.$("I").attr("aria-haspopup","false").removeAttr("aria-activedecendant");
+				},
 				content: getList()
 			})
 				.addStyleClass("sapMSltPicker")

@@ -392,8 +392,11 @@ sap.ui.define([
 			this.aDelegates = [];
 			this.aBeforeDelegates = [];
 			this.iSuppressInvalidate = 0;
-			this.oPropagatedProperties = {oModels:{}, oBindingContexts:{}};
+			this.oPropagatedProperties = ManagedObject._oEmptyPropagatedProperties;
 			this.mSkipPropagation = {};
+
+			//modify aggregation event handling disabled initially unless _attachModifyAggregation is used
+			this._fireModifyAggregation = null;
 
 			// data binding
 			this.oModels = {};
@@ -416,7 +419,6 @@ sap.ui.define([
 					if (that.register) {
 						that.register();
 					}
-
 					// TODO: generic concept for init hooks?
 					if ( that._initCompositeSupport ) {
 						that._initCompositeSupport(mSettings);
@@ -1963,12 +1965,19 @@ sap.ui.define([
 		if (aChildren instanceof ManagedObject) {
 			// FIXME DESTROY: this._removeChild(aChildren, sAggregationName, bSuppressInvalidate); // (optional, done by destroy())
 			aChildren.destroy(bSuppressInvalidate);
+
+			//fire aggregation lifecycle event on current parent as the control is removed, but not inserted to a a new parent
+			// FIXME DESTROY: no more need to fire event here when destroy ever should be fixed
+			this._fireModifyAggregation && this._fireModifyAggregation("remove", sAggregationName, aChildren);
 		} else if (jQuery.isArray(aChildren)) {
 			for (i = aChildren.length - 1; i >= 0; i--) {
 				aChild = aChildren[i];
 				if (aChild) {
 					// FIXME DESTROY: this._removeChild(aChild, sAggregationName, bSuppressInvalidate); // (optional, done by destroy())
 					aChild.destroy(bSuppressInvalidate);
+
+					//fire aggregation lifecycle event on current parent as the control is removed, but not inserted to a a new parent
+					this._fireModifyAggregation && this._fireModifyAggregation("remove", sAggregationName, aChild);
 				}
 			}
 		}
@@ -2090,9 +2099,18 @@ sap.ui.define([
 	 */
 	ManagedObject.prototype.setParent = function(oParent, sAggregationName, bSuppressInvalidate) {
 		if ( !oParent ) {
+
+			//fire aggregation lifecycle event on current parent as the control is removed, but not inserted to a a new parent
+			if (this.oParent) {
+				this.oParent._fireModifyAggregation && this.oParent._fireModifyAggregation("remove", this.sParentAggregationName, this);
+			}
+
 			this.oParent = null;
 			this.sParentAggregationName = null;
-			this.oPropagatedProperties = {oModels:{}, oBindingContexts:{}};
+			this.oPropagatedProperties = ManagedObject._oEmptyPropagatedProperties;
+			this.updateBindings(true, null);
+			this.updateBindingContext(false, undefined, true);
+			this.propagateProperties(true);
 
 			jQuery.sap.act.refresh();
 
@@ -2125,8 +2143,8 @@ sap.ui.define([
 
 		// update bindings
 		if (this.hasModel()) {
-			this.updateBindingContext(false, true, undefined, true);
-			this.updateBindings(true,null); // TODO could be restricted to models that changed
+			this.updateBindings(true, null); // TODO could be restricted to models that changed
+			this.updateBindingContext(false, undefined, true);
 			this.propagateProperties(true);
 		}
 
@@ -2139,6 +2157,9 @@ sap.ui.define([
 		if (bSuppressInvalidate) {
 			this.iSuppressInvalidate--;
 		}
+
+		//fire aggregation lifecycle event on the new parent
+		oParent._fireModifyAggregation && oParent._fireModifyAggregation("insert", sAggregationName, this);
 
 		return this;
 	};
@@ -2342,7 +2363,7 @@ sap.ui.define([
 	 * @param {object} [vPath.parameters] map of additional parameters for this binding
 	 * @param {string} [vPath.model] name of the model
 	 * @param {object} [vPath.events] map of event listeners for the binding events
-	 * @param {object} [mParameters] map of additional parameters for this binding (only taken into account when vPath is a string).
+	 * @param {object} [mParameters] map of additional parameters for this binding (only taken into account when vPath is a string in that case the properties described for vPath above are valid here).
 	 * The supported parameters are listed in the corresponding model-specific implementation of <code>sap.ui.model.ContextBinding</code>.
 	 *
 	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
@@ -2467,7 +2488,8 @@ sap.ui.define([
 			delete this.mBoundObjects[sModelName];
 			delete this.mElementBindingContexts[sModelName];
 			if ( !_bSkipUpdateBindingContext ) {
-				this.updateBindingContext(false, false, sModelName);
+				this.updateBindingContext(false, sModelName);
+				this.propagateProperties(sModelName);
 			}
 		}
 		return this;
@@ -3270,7 +3292,11 @@ sap.ui.define([
 				}
 				oBindingInfo.binding.detachEvents(oBindingInfo.events);
 				oBindingInfo.binding.destroy();
+				// remove all binding related data from the binding info
 				delete oBindingInfo.binding;
+				delete oBindingInfo.modelChangeHandler;
+				delete oBindingInfo.dataStateChangeHandler;
+				delete oBindingInfo.modelRefreshHandler;
 			}
 
 			// if there is no binding and if all required information is available, create a binding object
@@ -3363,7 +3389,7 @@ sap.ui.define([
 
 		if (oOldContext !== oContext) {
 			this.oBindingContexts[sModelName] = oContext;
-			this.updateBindingContext(false, true, sModelName);
+			this.updateBindingContext(false, sModelName);
 			this.propagateProperties(sModelName);
 		}
 		return this;
@@ -3378,7 +3404,7 @@ sap.ui.define([
 
 		if (oOldContext !== oContext) {
 			this.mElementBindingContexts[sModelName] = oContext;
-			this.updateBindingContext(true, true, sModelName);
+			this.updateBindingContext(true, sModelName);
 			this.propagateProperties(sModelName);
 		}
 		return this;
@@ -3388,7 +3414,7 @@ sap.ui.define([
 	 * Update the binding context in this object and all aggregated children
 	 * @private
 	 */
-	ManagedObject.prototype.updateBindingContext = function(bSkipLocal, bSkipChildren, sFixedModelName, bUpdateAll){
+	ManagedObject.prototype.updateBindingContext = function(bSkipLocal, sFixedModelName, bUpdateAll){
 
 		var oModel,
 			oModelNames = {},
@@ -3460,21 +3486,6 @@ sap.ui.define([
 						// simple property binding: update required when the model has the same name
 						if ( aParts[0].model == sModelName) {
 							oBinding.setContext(oContext);
-						}
-					}
-				}
-				if (!bSkipChildren) {
-					// also update context in all child elements
-					for ( sName in this.mAggregations ) {
-						var oAggregation = this.mAggregations[sName];
-						if (oAggregation instanceof ManagedObject) {
-							oAggregation.oPropagatedProperties.oBindingContexts[sModelName] = oContext;
-							oAggregation.updateBindingContext(false,false,sModelName);
-						} else if (oAggregation instanceof Array) {
-							for (i = 0; i < oAggregation.length; i++) {
-								oAggregation[i].oPropagatedProperties.oBindingContexts[sModelName] = oContext;
-								oAggregation[i].updateBindingContext(false,false,sModelName);
-							}
 						}
 					}
 				}
@@ -3568,12 +3579,14 @@ sap.ui.define([
 			// model changes are propagated until (including) the first descendant that has its own model with the same name
 			this.propagateProperties(sName);
 			// update binding context, for primary model only
-			this.updateBindingContext(false, true, sName);
+			this.updateBindingContext(false, sName);
 			// if the model instance for a name changes, all bindings for that model name have to be updated
 			this.updateBindings(false, sName);
 		} // else nothing to do
 		return this;
 	};
+
+	ManagedObject._oEmptyPropagatedProperties = {oModels:{}, oBindingContexts:{}};
 
 	/**
 	 * Propagate Properties (models and bindingContext) to aggregated objects.
@@ -3611,10 +3624,12 @@ sap.ui.define([
 			bUpdateAll = vName === true;
 			sName = bUpdateAll ? undefined : vName;
 		}
-		oObject.oPropagatedProperties = oProperties;
-		oObject.updateBindings(bUpdateAll,sName);
-		oObject.updateBindingContext(false, true, sName, bUpdateAll);
-		oObject.propagateProperties(vName);
+		if (oObject.oPropagatedProperties !== oProperties) {
+			oObject.oPropagatedProperties = oProperties;
+			oObject.updateBindings(bUpdateAll,sName);
+			oObject.updateBindingContext(false, sName, bUpdateAll);
+			oObject.propagateProperties(vName);
+		}
 	};
 
 	/**
@@ -3856,7 +3871,12 @@ sap.ui.define([
 					jQuery.sap.log.error("A shared template must be marked with templateShareable:true in the binding info");
 				}
 
-				delete oCloneBindingInfo.binding; // remove the runtime binding info (otherwise the property will not be connected again!)
+				 // remove the runtime binding data (otherwise the property will not be connected again!)
+				delete oCloneBindingInfo.binding;
+				delete oCloneBindingInfo.modelChangeHandler;
+				delete oCloneBindingInfo.dataStateChangeHandler;
+				delete oCloneBindingInfo.modelRefreshHandler;
+
 				if (oBindingInfo.factory || oBindingInfo.template) {
 					oClone.bindAggregation(sName, oCloneBindingInfo);
 				} else {
@@ -3865,6 +3885,103 @@ sap.ui.define([
 			}
 		}
 		return oClone;
+	};
+
+	/**
+	 * Attaches to the internal _modifyAggregation event for a given aggregation.
+	 * The event monitors set, added, removed, destroyed operations methods for the aggregation.
+	 *
+	 * If no aggregation name is provided the event is fired for modifications on all aggregations of the object.
+	 *
+	 * @param {string}
+	 *            sAggregationName the name of the aggregation to monitor or null to monitor all aggregations
+	 * @param {object}
+	 *            [oData] An object that will be passed to the handler along with the event object when the event is fired
+	 * @param {function}
+	 *            fnFunction The handler function to call when the event occurs. This function will be called in the context of the
+	 *                       <code>oListener</code> instance (if present) or on the event provider instance. The event
+	 *                       object ({@link sap.ui.base.Event}) is provided as first argument of the handler. Handlers must not change
+	 *                       the content of the event. The second argument is the specified <code>oData</code> instance (if present).
+	 * @param {object}
+	 *            [oListener] The object that wants to be notified when the event occurs (<code>this</code> context within the
+	 *                        handler function). If it is not specified, the handler function is called in the context of the event provider.
+	 * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+	 * @private
+	 */
+	ManagedObject.prototype._attachModifyAggregation = function(sAggregationName, oData, fnFunction, oListener) {
+		var bValid = sAggregationName == null;
+		if (bValid) {
+			this.attachEvent("_modifyAggregation", oData, fnFunction, oListener);
+		} else if (this.getMetadata().getAggregation(sAggregationName)) {
+			this.attachEvent("_modifyAggregation_" + sAggregationName, oData, fnFunction, oListener);
+			bValid = true;
+		}
+
+		if (!this._fireModifyAggregation && bValid) {
+			//activate implementation of _fireModifyAggregation for this instance
+			this._fireModifyAggregation = this.getMetadata().getClass().prototype._fireModifyAggregation;
+		}
+		return this;
+	};
+
+	/**
+	 * Removes a previously attached event handler from the internal _modifyAggregation event for a given aggregation.
+	 *
+	 * The passed parameters must match those used for registration with {@link #_attachModifyAggregation} beforehand.
+	 *
+	 * @param {string}
+	 *            sAggregationName the name of the aggregation to detach from or null
+	 * @param {function}
+	 *            fnFunction The handler function to detach from the event
+	 * @param {object}
+	 *            [oListener] The object that wanted to be notified when the event occurred
+	 * @return {sap.ui.base.EventProvider} Returns <code>this</code> to allow method chaining
+	 * @private
+	 */
+	ManagedObject.prototype._detachModifyAggregation = function(sAggregationName, fnFunction, oListener) {
+		if (sAggregationName == null) {
+			this.detachEvent("_modifyAggregation", fnFunction, oListener);
+		} else if (this.getMetadata().getAggregation(sAggregationName)){
+			this.detachEvent("_modifyAggregation_" + sAggregationName, fnFunction, oListener);
+		}
+		return this;
+	};
+
+	/**
+	 * Fires the internal _modifyAggregation event for registered aggregations.
+	 * The event is fired whenever a object is set, added, inserted to an aggregation
+	 * or removed, destroyed from an aggregation.
+	 * The objects parent might not be set or reset if the event is fired.
+	 *
+	 * This method is only available after _attachModifyAggregation was called.
+	 *
+	 * @see #_attachModifyAggregation
+	 * @see #_detachModifyAggregation
+	 *
+	 * @param {string}
+	 *            sType the type of modification, either "insert" or "remove".
+	 *                  The value of <code>sType</code> might be changed in future releases.
+	 * @param {string}
+	 *            sAggregationName the name of the aggregation to which the object oObject was inserted or removed
+	 * @param (sap.ui.base.ManagedObject}
+	 *            oObject the object inserted or removed
+	 * @private
+	 */
+	ManagedObject.prototype._fireModifyAggregation = function(sType, sAggregationName, oObject) {
+		if (sAggregationName && this.hasListeners("_modifyAggregation_" + sAggregationName)) {
+			EventProvider.prototype.fireEvent.call(this, "_modifyAggregation_" + sAggregationName, {
+				"type": sType,
+				"name": sAggregationName,
+				"object" : oObject
+			});
+		}
+		if (this.hasListeners("_modifyAggregation")) {
+			EventProvider.prototype.fireEvent.call(this, "_modifyAggregation", {
+				"type": sType,
+				"name": sAggregationName,
+				"object" : oObject
+			});
+		}
 	};
 
 	/**

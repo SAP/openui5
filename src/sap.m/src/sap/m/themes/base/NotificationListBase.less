@@ -1,25 +1,30 @@
-@leftIconsSpace: 2rem;
+@containerPaddingLeft: 1.5rem;
 @containerPadding: 1rem;
 @closeButtonSize: 2.5rem;
 @closeButtonCompactSize: 1.625rem;
-@bottomMargin: 0.5rem;
-@readIconSize: 0.5rem;
+@closeButtonCozyPosition: 0.25rem;
+@closeButtonCompactPosition: 0.5rem;
 
 /* ==========================================================================
    Notification List Base
   ========================================================================== */
 
+.sapMLIB.sapMNLB {
+  border-radius: 0.1875rem;
+  display: block;
+  padding: @containerPadding 0;
+}
 
 /* ==========================================================================
    Priority styles
   ========================================================================== */
 
 .sapMNLB-Priority {
-  width: 0.3125rem;
-  height: 100%;
-  position: absolute;
-  left: 0;
   bottom: 0;
+  height: 100%;
+  left: 0;
+  position: absolute;
+  width: 0.3125rem;
   z-index: 1;
 }
 
@@ -27,3 +32,125 @@
    Header styles
   ========================================================================== */
 
+.sapMNLB-Header {
+  padding-left: @containerPaddingLeft;
+  padding-right: @containerPadding;
+  position: relative;
+}
+
+/* Close button styles
+  ========================================================================== */
+
+.sapMNLB-CloseButton {
+  background: none;
+  box-sizing: border-box;
+  cursor: pointer;
+  height: @closeButtonSize;
+  margin-top: -@containerPadding;
+  padding: 0;
+  position: absolute;
+  right: @closeButtonCozyPosition;
+  top: @closeButtonCozyPosition;
+  transition: opacity;
+  width: @closeButtonSize;
+
+  .sapMBtnInner {
+    min-width: @closeButtonSize;
+
+    .sapMBTNIcon {
+      max-height: @closeButtonSize;
+    }
+  }
+}
+
+.sapMNLB-CloseButton .sapMBtnIcon {
+  cursor: pointer;
+  font-size: 1rem;
+  height: @closeButtonSize;
+  line-height: @closeButtonSize;
+  width: @closeButtonSize;
+}
+
+/* ==========================================================================
+   Body styles
+  ========================================================================== */
+
+/* Author picture styles
+  ========================================================================== */
+
+.sapMNLB-AuthorPicture {
+  display: block;
+  height: 2rem;
+  margin-right: 0.75rem;
+  text-align: center;
+  width: 2rem;
+}
+
+.sapMNLB-AuthorPicture .sapMImg {
+  border-radius: 50%;
+  max-height: 2rem;
+  max-width: 2rem;
+}
+
+.sapMNLB-AuthorPicture .sapUiIcon {
+  color: @sapUiLightText;
+  font-size: 1.5rem;
+}
+
+/* ==========================================================================
+   Footer styles
+  ========================================================================== */
+
+.sapMNLB-Footer {
+  line-height: 3rem;
+  padding: 0 @containerPadding 0 0.75rem;
+
+  .sapMTB {
+    border: none;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: end;
+    -webkit-justify-content: flex-end;
+    -ms-flex-pack: end;
+    justify-content: flex-end;
+  }
+}
+
+/* Bullet styles
+  ========================================================================== */
+
+.sapMNLB-Bullet {
+  color: @sapUiLightText;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+/* ==========================================================================
+   Compact mode styles
+  ========================================================================== */
+
+.sapUiSizeCompact .sapMNLB-CloseButton {
+  height: @closeButtonCompactSize;
+  padding: 0;
+  right: @closeButtonCompactPosition;
+  top: @closeButtonCompactPosition;
+  width: @closeButtonCompactSize;
+
+  .sapMBtnInner {
+    min-width: 1.625rem;
+
+    .sapMBtnIcon {
+      max-height: 1.625rem;
+    }
+  }
+}
+
+.sapUiSizeCompact .sapMNLB-CloseButton .sapMBtnIcon {
+  font-size: 0.75rem;
+  height: @closeButtonCompactSize;
+  line-height: @closeButtonCompactSize;
+  margin: 0;
+  width: @closeButtonCompactSize;
+}

@@ -978,6 +978,10 @@
       this['ES6Promise'] = lib$es6$promise$umd$$ES6Promise;
     }
 
-    lib$es6$promise$polyfill$$default();
-}).call(this);
 
+    // ##### BEGIN: MODIFIED BY SAP
+    // Original line:
+    //     lib$es6$promise$polyfill$$default();
+    // Do not automatically call the polyfill method as this will be called by UI5 only when needed.
+    // ##### END: MODIFIED BY SAP
+}).call(this);

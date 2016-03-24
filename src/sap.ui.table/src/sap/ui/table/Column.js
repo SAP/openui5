@@ -725,23 +725,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 					oImage.setSrc(sap.ui.resource("sap.ui.table", "themes/" + sCurrentTheme + "/img/ico12_sort_desc.gif"));
 				}
 
-				// apply the image and aria property to the column
+				// apply the image to the column
 				var htmlImage = getHTML(oImage);
 				this.$().find(".sapUiTableColIconsOrder").remove();
 				jQuery(htmlImage).prependTo(this.getDomRef("icons"));
-				this.$().attr("aria-sort", this.getSortOrder() === sap.ui.table.SortOrder.Ascending ? "ascending" : "descending");
-
 				this.$().find(".sapUiTableColCell").addClass("sapUiTableColSorted");
 
 			} else {
 
 				// remove the sort indicators
 				this.$().find(".sapUiTableColIconsOrder").remove();
-				this.$().removeAttr("aria-sort");
-
 				this.$().find(".sapUiTableColCell").removeClass("sapUiTableColSorted");
 
 			}
+			oTable._getAccExtension().updateAriaStateOfColumn(this);
 		}
 
 	};
@@ -922,6 +919,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 			} else {
 				this.$().find(".sapUiTableColCell").removeClass("sapUiTableColFiltered");
 			}
+			oTable._getAccExtension().updateAriaStateOfColumn(this);
 		}
 	};
 

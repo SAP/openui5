@@ -52,9 +52,20 @@ sap.ui.define(["sap/m/Button", "./library"], function (Button, library) {
 					group: "Behavior",
 					defaultValue: library.Importance.High
 				}
+
 			}
 		}
 	});
+
+	ObjectPageHeaderActionButton.prototype.init = function () {
+		this._bInternalVisible = this.getVisible();
+	};
+
+	ObjectPageHeaderActionButton.prototype.onAfterRendering = function () {
+		if (!this._getInternalVisible()) {
+			this.$().hide();
+		}
+	};
 
 	ObjectPageHeaderActionButton.prototype.applySettings = function (mSettings, oScope) {
 
@@ -79,6 +90,20 @@ sap.ui.define(["sap/m/Button", "./library"], function (Button, library) {
 		this.toggleStyleClass("sapUxAPObjectPageHeaderActionButtonHideIcon", bValue);
 
 		return this.setProperty("hideIcon", bValue, bInvalidate);
+	};
+
+	ObjectPageHeaderActionButton.prototype._setInternalVisible = function (bValue, bInvalidate) {
+		this.$().toggle(bValue);
+		if (bValue != this._bInternalVisible) {
+			this._bInternalVisible = bValue;
+			if (bInvalidate) {
+				this.invalidate();
+			}
+		}
+	};
+
+	ObjectPageHeaderActionButton.prototype._getInternalVisible = function () {
+		return this._bInternalVisible;
 	};
 
 	return ObjectPageHeaderActionButton;

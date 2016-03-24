@@ -1,0 +1,20 @@
+<core:FragmentDefinition
+        xmlns="sap.m"
+        xmlns:f="sap.ui.layout.form"
+        xmlns:core="sap.ui.core">
+
+        <f:SimpleForm editable="true"
+                      layout="ResponsiveGridLayout">
+            <f:content>
+                <Label text="Name"/>
+                <Input value="{/Name}" type="Text" />
+                <Label text="Supplier"/>
+                <Input value="{/SupplierName}" type="Text" />
+                <Label text="Price"/>
+                <Input value="{/Price}" type="Number" />
+                <Label text="Description"/>
+                <TextArea value="{/Description}"/>
+            </f:content>
+        </f:SimpleForm>
+
+</core:FragmentDefinition>

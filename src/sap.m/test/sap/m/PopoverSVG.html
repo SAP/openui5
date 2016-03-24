@@ -1,0 +1,156 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+	<title>Popover in SVG - sap.m</title>
+
+	<script src="../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+	</script>
+
+    <style>
+        svg {
+            background: #dedede;
+        }
+
+        #divElement {
+            position: absolute;
+            top: 200px;
+            left: 500px;
+            width: 100px;
+            height: 30px;
+            background: coral;
+        }
+        #container {
+            display: flex;
+        }
+    </style>
+
+	<script type="text/javascript">
+		var oPopover = new sap.m.Popover("pop1", {
+			placement: sap.m.PlacementType.PreferredBottomOrFlip,
+			title: "Currect Selection",
+			showHeader: true,
+//			beginButton: oBeginButton,
+//			endButton: oEndButton,
+			beforeOpen: function (oEvent) {
+				jQuery.sap.log.info("before popover opens!!!");
+			},
+			afterOpen: function (oEvent) {
+				jQuery.sap.log.info("popover is opened finally!!!");
+			},
+			beforeClose: function (oEvent) {
+				jQuery.sap.log.info("before popover closes!!!");
+			},
+			afterClose: function (oEvent) {
+				jQuery.sap.log.info("popover is closed properly!!!");
+			},
+            contentWidth: "300px",
+//			footer: footer,
+			content: [
+                new sap.m.Text({ text: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliquaasdsaddasdsadasdasdasdasdasdasdasdas." }),
+                new sap.m.Button({ text: "Action 1" }),
+				new sap.m.Button({ text: "Action 2" }),
+
+			]
+		});
+
+        function openPopover(target) {
+            oPopover.openBy(target);
+        }
+
+	</script>
+</head>
+<body id="body" class="sapUiBody" role="application">
+<!--     <div id="divElement">
+        div
+    </div> -->
+
+    <svg width="600" height="300">
+        <rect id="rect1" width="100" height="30" x="440" y="65" stroke="black" stroke-width="1" style="fill:rgb(0,0,255)" />
+    </svg>
+
+    <div id="container">  
+        <ul>
+            <li><a id="flipTop" href="#">PreferredTopOrFlip</a></li>
+            <li><a id="flipBottom" href="#">PreferredBottomOrFlip</a></li>
+            <li><a id="flipRight" href="#">PreferredRightOrFlip</a></li>
+            <li><a id="flipLeft" href="#">PreferredLeftOrFlip</a></li>
+        </ul>
+
+        <ul>
+            <li><a id="prefTop" href="#">VerticalPreferredTop</a></li>
+            <li><a id="prefBottom" href="#">VerticalPreferredBottom</a></li>
+            <li><a id="prefRight" href="#">HorizontalPreferredRight</a></li>
+            <li><a id="prefLeft" href="#">HorizontalPreferredLeft</a></li>
+        </ul>
+    </div>
+
+    <button id="moveButton">
+        Move Rect to bottom corner
+    </button>
+
+    <script>
+        var rect1 = document.getElementById("rect1");
+        rect1.addEventListener('click', function (evt) {
+            openPopover(rect1);
+        });
+        var flipTop = document.getElementById("flipTop");
+        flipTop.addEventListener('click', function (evt) {
+            oPopover.setPlacement('PreferredTopOrFlip');
+            openPopover(rect1);
+        });
+        var flipRight = document.getElementById("flipRight");
+        flipRight.addEventListener('click', function (evt) {
+            oPopover.setPlacement('PreferredRightOrFlip');
+            openPopover(rect1);
+        });
+        var flipBottom = document.getElementById("flipBottom");
+        flipBottom.addEventListener('click', function (evt) {
+            oPopover.setPlacement('PreferredBottomOrFlip');
+            openPopover(rect1);
+        });
+        var flipLeft = document.getElementById("flipLeft");
+        flipLeft.addEventListener('click', function (evt) {
+            oPopover.setPlacement('PreferredLeftOrFlip');
+            openPopover(rect1);
+        });
+        var prefTop = document.getElementById("prefTop");
+        prefTop.addEventListener('click', function (evt) {
+            oPopover.setPlacement('VerticalPreferredTop');
+            openPopover(rect1);
+        });
+        var prefRight = document.getElementById("prefRight");
+        prefRight.addEventListener('click', function (evt) {
+            oPopover.setPlacement('HorizontalPreferredRight');
+            openPopover(rect1);
+        });
+        var prefBottom = document.getElementById("prefBottom");
+        prefBottom.addEventListener('click', function (evt) {
+            oPopover.setPlacement('VerticalPreferredBottom');
+            openPopover(rect1);
+        });
+        var prefLeft = document.getElementById("prefLeft");
+        prefLeft.addEventListener('click', function (evt) {
+            oPopover.setPlacement('HorizontalPreferredLeft');
+            openPopover(rect1);
+        });
+
+
+        var divElement = document.getElementById("divElement");
+        var moveButton = document.getElementById("moveButton");
+        // divElement.addEventListener('click', function (evt) {
+        //     openPopover(divElement);
+        // });
+
+        moveButton.addEventListener("click", function(evt) {
+            rect1.setAttribute("x", "20");
+            rect1.setAttribute("y", "240");
+        });
+    </script>
+</body>
+</html>

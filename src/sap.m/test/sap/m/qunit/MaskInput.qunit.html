@@ -98,16 +98,31 @@
 		});
 
 		test("setValue", function () {
-			var oControl = this.oMaskInput.setPlaceholderSymbol('_').setMask('aa-aa');
+			var oControl = this.oMaskInput.setPlaceholderSymbol('_').setMask('aa-aa'),
+				oApplyRulesSpy = sinon.spy(this.oMaskInput, "_applyRules");
 
+			oControl.setValue(null);
+			strictEqual(oApplyRulesSpy.callCount, 0, "'_applyRules' method is not called when passing 'falsy' value");
+			strictEqual(oControl.getValue(), "", "'getValue' is updated and returns correct VALIDATED value");
+			ok(!oControl._oTempValue.differsFromOriginal(), "When setting 'null' buffer is not modified");
+			oControl.setValue(undefined);
+			strictEqual(oApplyRulesSpy.callCount, 0, "'_applyRules' method is not called when passing 'falsy' value");
+			strictEqual(oControl.getValue(), "", "'getValue' is updated and returns correct VALIDATED value");
+			ok(!oControl._oTempValue.differsFromOriginal(), "When setting 'undefined' buffer is not modified");
 			oControl.setValue("");
-			strictEqual(oControl.getValue(), "", "When setValue is called the string is not modified.");
+			strictEqual(oApplyRulesSpy.callCount, 0, "'_applyRules' method is not called when passing 'falsy' value");
+			strictEqual(oControl.getValue(), "", "'getValue' is updated and returns correct VALIDATED value");
+			ok(!oControl._oTempValue.differsFromOriginal(), "When setting empty string buffer is not modified");
 
 			oControl.setValue("bc-d9");
 			strictEqual(oControl.getValue(), "bc-d9", "When setValue is called with mask incompatible string, the value it is not modified.");
+			strictEqual(getMaskInputDomValue(oControl), "bc-d9", "The value was updated successfully (EVEN NOT VALID)");
+			ok(oControl._oTempValue.differsFromOriginal() && oControl._oTempValue._aContent.join('') == "bc-d_", "Buffer is successfully modified with the correct ALREADY VALIDATED value");
 
 			oControl.setValue("bc-de");
 			strictEqual(oControl.getValue(), "bc-de", "When setValue is called with mask compatible string, the value is not modified.");
+			strictEqual(getMaskInputDomValue(oControl), "bc-de", "The value was updated successfully");
+			ok(oControl._oTempValue.differsFromOriginal() && oControl._oTempValue._aContent.join('') == "bc-de", "Buffer is successfully modified");
 		});
 
 		test("Placeholder symbol default value", function () {
@@ -178,6 +193,76 @@
 			}));
 			equal(oControl.getRules()[2].getMaskFormatSymbol(), "~", "There must be a rule with mask format symbol '~'");
 			equal(oControl.getRules()[2].getRegex(), "[{}]", "The rule with mask format symbol '~' regex must be the last one set");
+		});
+
+		test("Single escaped character", function () {
+			var oControl = this.oMaskInput.setMask("999^9");
+
+			jQuery(oControl).focus();
+			strictEqual(getMaskInputDomValue(oControl), "___9", "Result value should have 1 escaped rule character as " +
+					"immutable on their predefined place");
+		});
+
+		test("Multiple escape characters in value", function () {
+			var oControl = this.oMaskInput.setMask("^99aaa^aaa^a");
+
+			jQuery(oControl).focus();
+			strictEqual(getMaskInputDomValue(oControl), "9____a__a", "Result value should have 3 escaped rule characters as " +
+					"immutable on their predefined place");
+		});
+
+		test("Escape the escape character", function () {
+			var oControl = this.oMaskInput.setMask("99^^99");
+
+			jQuery(oControl).focus();
+			strictEqual(getMaskInputDomValue(oControl), "__^__", "Result value should have 1 immutable character which is the" +
+					"escape character");
+		});
+
+		module("Helper functionality", {
+			beforeEach: function () {
+				this.oMaskInput = new sap.m.MaskInput();
+			},
+			afterEach: function () {
+				this.oMaskInput.destroy();
+			}
+		});
+
+		test("_getSkipIndexes", function () {
+			var that = this;
+
+			// Returns result of _getSkipIndexes as string - helper method to make the asserts more readable
+			var getSkipIndexes = function (sValue) {
+				return that.oMaskInput._getSkipIndexes(sValue).toString();
+			};
+
+			strictEqual(this.oMaskInput._getSkipIndexes().length, 0, "Calling the method with no arguments should return " +
+					"empty array");
+			strictEqual(getSkipIndexes("99^9"), "2", "One escape character should be at position 2");
+			strictEqual(getSkipIndexes("^99^9^"), "0,2,3", "Multiple escape characters. Consider here we are taking " +
+					"care for fixing the position of every consecutive escape character after the first one");
+			strictEqual(getSkipIndexes("^99^^9^"), "0,2,4", "Escape the escape character");
+			strictEqual(getSkipIndexes("^^^^^^"), "0,1,2", "Six escape character should produce " +
+					"3 skipped indexes (escape characters) and 3 escape characters as immutable as they are escaped");
+
+		});
+
+		test("_getMaskArray", function () {
+			var that = this;
+
+			// Returns result of _getMaskArray as string - helper method to make the asserts more readable
+			var getMaskArray = function (sMask, aSkipIndexes) {
+				return that.oMaskInput._getMaskArray(sMask, aSkipIndexes).toString();
+			};
+
+			strictEqual(this.oMaskInput._getMaskArray().length, 0, "Calling the method with no arguments should return " +
+					"empty array");
+			strictEqual(getMaskArray("99^9", [2]), "9,9,9", "One skip index");
+			strictEqual(getMaskArray("^99^9^", [0, 2, 3]), "9,9,9", "Multiple skip indexes");
+			strictEqual(getMaskArray("^99^^9^", [0, 2, 4]), "9,9,^,9", "Escape the escape character");
+			strictEqual(getMaskArray("^^^^^^", [0, 1, 2]), "^,^,^", "Multiple escape the escape character. Should return " +
+					"array of three escaped characters as immutable ones");
+
 		});
 
 		module("Deletion", {
@@ -319,6 +404,28 @@
 			oOtherControl.destroy();
 		});
 
+		test("Focusout after partially filled value is set through the API validates it against MaskInput rules", function () {
+			var oControl = this.oMaskInput.setPlaceholderSymbol('#').setMask('99-99'),
+				oOtherControl = new sap.m.Input({value: "some other value"});
+
+			oOtherControl.placeAt('content');
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(1000);
+
+			oControl.setValue('#1-23');
+			jQuery(oControl).focus();
+			strictEqual(getMaskInputDomValue(oControl), "#1-23", "The value was not validated on focusin");
+			ok(oControl._oTempValue.differsFromOriginal() && oControl._oTempValue._aContent.join('') == "12-3#", "Buffer is successfully modified with the correct ALREADY VALIDATED value");
+
+
+			jQuery(oOtherControl).focus();
+			this.clock.tick(1000);
+
+			strictEqual(getMaskInputDomValue(oControl), '12-3#', "DOM value is validated against MaskInput rules on focusout");
+			strictEqual(oControl._oTempValue._aContent.join(''), '12-3#', "The buffer value is identical with the DOM value");
+
+			oOtherControl.destroy();
+		});
 
 		test("Focus after invalid value is set through the API", function () {
 			var oControl = this.oMaskInput.setPlaceholderSymbol('#'),
@@ -344,7 +451,7 @@
 			jQuery(oControl).focus();
 			this.clock.tick(1000);
 
-			strictEqual(getMaskInputDomValue(oControl), 'ab-c#');
+			strictEqual(getMaskInputDomValue(oControl), '#a-bc');
 		});
 
 		module("Events", {
@@ -871,8 +978,8 @@
 
 		function setCursorPosition(iPosition, oControl) {
 			var _$oControl = jQuery(oControl.getFocusDomRef());
-			if (sap.ui.Device.browser.chrome) {
-				return setCursorPositionChrome(oControl, iPosition);
+			if (sap.ui.Device.browser.webkit) {
+				return setCursorPositionWebkit(oControl, iPosition);
 			}
 
 			return _$oControl.cursorPos(iPosition);
@@ -886,7 +993,7 @@
 					"The value [" + oControl.getValue() + "] should be empty ");
 		}
 
-		function setCursorPositionChrome(oControl, iPosition) {
+		function setCursorPositionWebkit(oControl, iPosition) {
 			var sValue = oControl.getValue(),
 				$oControl = jQuery(oControl.getFocusDomRef()),
 				iLength = sValue.length,
@@ -904,7 +1011,7 @@
 					bModified = true;
 				}
 				if (bModified) {
-					jQuery.sap.log.warning("Chrome bug for selection API. Modifying cursor position");
+					jQuery.sap.log.warning("Webkit bug for selection API. Modifying cursor position");
 				}
 			}
 			return $oControl.cursorPos(iPosition);
@@ -919,8 +1026,8 @@
 			var $oControl = jQuery(oControl.getFocusDomRef())[0],
 				oSelection;
 
-			if (sap.ui.Device.browser.chrome) {
-				oSelection = getCursorSelectionChrome(oControl);
+			if (sap.ui.Device.browser.webkit) {
+				oSelection = getCursorSelectionWebkit(oControl);
 			} else {
 				oSelection = {iFrom: $oControl.selectionStart, iTo: $oControl.selectionEnd};
 			}
@@ -938,7 +1045,7 @@
 			deepEqual(oSelection, {iFrom: iExpectedStartPosition, iTo: iExpectedEndPosition}, sMessagePrefix +": selection start check");
 		}
 
-		function getCursorSelectionChrome(oControl) {
+		function getCursorSelectionWebkit(oControl) {
 			var sValue = oControl.getValue(),
 				$oControl = jQuery(oControl.getFocusDomRef())[0],
 				iLength = sValue.length,
@@ -960,7 +1067,7 @@
 				bModified = true;
 			}
 			if (bModified) {
-				jQuery.sap.log.warning("Chrome bug for selection API. Modifying selectionStart & selectionEnd returned values");
+				jQuery.sap.log.warning("Webkit bug for selection API. Modifying selectionStart & selectionEnd returned values");
 			}
 			return oSelection;
 		}

@@ -304,7 +304,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 					/**
 					 * array of row indices which selection has been changed (either selected or deselected)
 					 */
-					rowIndices : {type : "int[]"}
+					rowIndices : {type : "int[]"},
+
+					/**
+					 * indicator if "select all" function is used to select rows
+					 */
+					selectAll : {type : "boolean"}
 				}
 			},
 
@@ -610,8 +615,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		// create an information object which contains always required infos
 		this._oResBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.table");
 		this._bRtlMode = sap.ui.getCore().getConfiguration().getRTL();
-		this._oAccExtension = new TableAccExtension(this);
-		this._bAccMode = this._oAccExtension.getAccMode();
+
+		TableAccExtension.enrich(this);
 
 		this._bBindingLengthChanged = false;
 		this._mTimeouts = {};
@@ -632,14 +637,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 				if (!that._bInvalid) {
 					// subsequent DOM updates are only required if there is no rendering to be expected
-					that._getAccExtension().updateAccForCurrentCell(false);
-					that._updateSelection();
-					that._updateGroupHeader();
 
 					// for TreeTable and AnalyticalTable
 					if (that._updateTableContent) {
 						that._updateTableContent();
 					}
+
+					that._getAccExtension().updateAccForCurrentCell(false);
+					that._updateSelection();
+					that._updateGroupHeader();
 
 					var oTableSizes = that._collectTableSizes();
 					that._updateRowHeader(oTableSizes.tableRowHeights);
@@ -724,7 +730,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			this._oPaginator.destroy();
 		}
 
-		this._oAccExtension.destroy();
+		this._getAccExtension().destroy();
 
 		this._resetRowTemplate();
 
@@ -733,14 +739,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		// cleanup
 		this._cleanUpTimers();
 		this._detachEvents();
-	};
-
-	Table.prototype._getAccExtension = function(){
-		return this._oAccExtension;
-	};
-
-	Table.prototype._getAccRenderExtension = function(){
-		return this._getAccExtension().getAccRenderExtension();
 	};
 
 	/**
@@ -780,6 +778,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		}
 
 		return aRowItemHeights;
+	};
+
+	/**
+	 * Resets the height style property of all TR elements of the table
+	 * @private
+	 */
+	Table.prototype._resetRowHeights = function() {
+		var iRowHeight = this.getRowHeight();
+
+		var sRowHeight = "";
+		if (iRowHeight) {
+			sRowHeight = iRowHeight + "px";
+		}
+
+		var oDomRef = this.getDomRef();
+		if (oDomRef) {
+			var aRowItems = oDomRef.querySelectorAll(".sapUiTableCtrlFixed > tbody > tr, .sapUiTableCtrlScroll > tbody > tr");
+			for (var i = 0; i < aRowItems.length; i++) {
+				aRowItems[i].style.height = sRowHeight;
+			}
+		}
 	};
 
 	/**
@@ -1034,6 +1053,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			return;
 		}
 
+		this._resetRowHeights();
 		var aRowHeights = this._collectRowHeights();
 		this._getDefaultRowHeight(aRowHeights);
 
@@ -1498,6 +1518,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			return this;
 		}
 
+		var sVisibleRowCountMode = this.getVisibleRowCountMode();
+		if (sVisibleRowCountMode == sap.ui.table.VisibleRowCountMode.Auto) {
+			jQuery.sap.log.error("VisibleRowCount will be ignored since VisibleRowCountMode is set to Auto", this);
+			return this;
+		}
+
 		var iFixedRowsCount = this.getFixedRowCount() + this.getFixedBottomRowCount();
 		if (iVisibleRowCount <= iFixedRowsCount && iFixedRowsCount > 0) {
 			jQuery.sap.log.error("Table: " + this.getId() + " visibleRowCount('" + iVisibleRowCount + "') must be bigger than number of fixed rows('" + (this.getFixedRowCount() + this.getFixedBottomRowCount()) + "')", this);
@@ -1509,6 +1535,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			this.setProperty("firstVisibleRow", 0);
 		}
 		this.setProperty("visibleRowCount", iVisibleRowCount);
+		this._setRowContentHeight(iVisibleRowCount * this._getDefaultRowHeight());
 		return this;
 	};
 
@@ -1835,7 +1862,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		//}
 
 		// update the bindings only once the table is rendered
-		if (this.bOutput) {
+		if (!this.bIsDestroyed) {
 			// update the bindings by using a delayed mechanism to avoid to many update
 			// requests: by using the mechanism below it will trigger an update each 50ms
 			// except if the reason is coming from the binding with reason "change" then
@@ -1923,13 +1950,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 * @private
 	 */
 	Table.prototype._attachEvents = function() {
-
 		var $this = this.$();
 
 		// listen to the scroll events of the containers (for keyboard navigation)
 		$this.find(".sapUiTableColHdrScr").scroll(jQuery.proxy(this._oncolscroll, this));
 		$this.find(".sapUiTableCtrlScr").scroll(jQuery.proxy(this._oncntscroll, this));
 		$this.find(".sapUiTableCtrlScrFixed").scroll(jQuery.proxy(this._oncntscroll, this));
+
+		$this.find(".sapUiTableCtrlScrFixed, .sapUiTableColHdrFixed").on("scroll.sapUiTablePreventFixedAreaScroll", function(oEvent) {oEvent.target.scrollLeft = 0;});
 
 		// sync row header > content (hover effect)
 		$this.find(".sapUiTableRowHdr").hover(function() {
@@ -1995,16 +2023,51 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			this._getScrollTargets().bind("wheel.sapUiTableMouseWheel", this._onMouseWheel.bind(this));
 		}
 
-		if (this._bLargeDataScrolling) {
-			//this._attachLargeDataScrollEventHandler();
-		}
-
-		jQuery("body").bind('webkitTransitionEnd transitionend',
-			jQuery.proxy(function(oEvent) {
-				if (jQuery(oEvent.target).has($this).length > 0) {
-					this._updateTableSizes();
-				}
+		if (sap.ui.getCore().getConfiguration().getAnimation()) {
+			jQuery("body").bind('webkitTransitionEnd transitionend',
+				jQuery.proxy(function(oEvent) {
+					if (jQuery(oEvent.target).has($this).length > 0) {
+						this._iDefaultRowHeight = undefined;
+						this._updateTableSizes();
+					}
 			}, this));
+		}
+	};
+
+	/**
+	 * detaches the required native event handlers
+	 * @private
+	 */
+	Table.prototype._detachEvents = function() {
+		var $this = this.$();
+
+		$this.find(".sapUiTableRowHdrScr").unbind();
+		$this.find(".sapUiTableCtrl > tbody > tr").unbind();
+		$this.find(".sapUiTableRowHdr").unbind();
+		$this.find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed, .sapUiTableColHdrScr, .sapUiTableColHdrFixed").unbind();
+		$this.find(".sapUiTableColRsz").unbind();
+
+		var $vsb = jQuery(this.getDomRef("vsb"));
+		$vsb.unbind("scroll.sapUiTableVScroll");
+		$vsb.unbind("mousedown.sapUiTableVScroll");
+
+		var $hsb = jQuery(this.getDomRef("hsb"));
+		$hsb.unbind("scroll.sapUiTableHScroll");
+		$hsb.unbind("mousedown.sapUiTableHScroll");
+
+		$this.find(".sapUiTableCtrlScrFixed, .sapUiTableColHdrFixed").unbind("scroll.sapUiTablePreventFixedAreaScroll");
+
+		var $scrollTargets = this._getScrollTargets();
+		$scrollTargets.unbind("MozMousePixelScroll.sapUiTableMouseWheel");
+		$scrollTargets.unbind("wheel.sapUiTableMouseWheel");
+
+		var $body = jQuery(document.body);
+		$body.unbind('webkitTransitionEnd transitionend');
+
+		if (this._sResizeHandlerId) {
+			ResizeHandler.deregister(this._sResizeHandlerId);
+			this._sResizeHandlerId = undefined;
+		}
 	};
 
 	/**
@@ -2049,40 +2112,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		if (oColumn && oColumn.getResizable()) {
 			this.$().find(".sapUiTableColRsz").css("left", iResizerPositionX + "px");
 			this._iLastHoveredColumnIndex = iLastHoveredColumn;
-		}
-	};
-
-	/**
-	 * detaches the required native event handlers
-	 * @private
-	 */
-	Table.prototype._detachEvents = function() {
-		var $this = this.$();
-
-		$this.find(".sapUiTableRowHdrScr").unbind();
-		$this.find(".sapUiTableCtrl > tbody > tr").unbind();
-		$this.find(".sapUiTableRowHdr").unbind();
-		$this.find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed, .sapUiTableColHdrScr, .sapUiTableColHdrFixed").unbind();
-		$this.find(".sapUiTableColRsz").unbind();
-
-		var $vsb = jQuery(this.getDomRef("vsb"));
-		$vsb.unbind("scroll.sapUiTableVScroll");
-		$vsb.unbind("mousedown.sapUiTableVScroll");
-
-		var $hsb = jQuery(this.getDomRef("hsb"));
-		$hsb.unbind("scroll.sapUiTableHScroll");
-		$hsb.unbind("mousedown.sapUiTableHScroll");
-
-		var $scrollTargets = this._getScrollTargets();
-		$scrollTargets.unbind("MozMousePixelScroll.sapUiTableMouseWheel");
-		$scrollTargets.unbind("wheel.sapUiTableMouseWheel");
-
-		var $body = jQuery(document.body);
-		$body.unbind('webkitTransitionEnd transitionend');
-
-		if (this._sResizeHandlerId) {
-			ResizeHandler.deregister(this._sResizeHandlerId);
-			this._sResizeHandlerId = undefined;
 		}
 	};
 
@@ -2278,6 +2307,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		if (!bSuppressUpdate) {
 			var iFirstVisibleRow = this.getFirstVisibleRow();
 			var bExecuteCallback = typeof this._updateTableCell === "function";
+			// row heights must be reset to make sure that rows can shrink if they may have smaller content. The content
+			// shall control the row height.
+			this._resetRowHeights();
 			for (var iIndex = aRows.length - 1; iIndex >= 0; iIndex--) {
 				var oContext = aContexts ? aContexts[iIndex] : undefined;
 				var oRow = aRows[iIndex];
@@ -2643,8 +2675,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 	/**
 	 * Triggered by the ResizeHandler if width/height changed.
-	 * Calls updateTableSizes at the next animation frame,
-	 * and quits unexecuted updating task.
 	 * @private
 	 */
 	Table.prototype._onTableResize = function() {
@@ -3561,7 +3591,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 						if (bCtrl) {
 							this.removeSelectionInterval(iRowIndex, iRowIndex);
 						} else {
-							if (this.getSelectedIndices().length === 1) {
+							if (this._getSelectedIndicesCount() === 1) {
 								this.clearSelection();
 							} else {
 								this.setSelectedIndex(iRowIndex);
@@ -4284,7 +4314,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		// set the width of the column (when not cancelled)
 		if (bExecuteDefault) {
 			oColumn.setProperty("width", sWidth, true);
-			this.$().find('th[aria-owns="' + oColumn.getId() + '"]').css('width', sWidth);
+			this.$().find('th[data-sap-ui-colid="' + oColumn.getId() + '"]').css('width', sWidth);
 		}
 
 		return bExecuteDefault;
@@ -4411,74 +4441,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	};
 
 	/**
-	 * Retrieve Aria descriptions from resource bundle for a certain selection mode
-	 * @param {Boolean} [bConsiderSelectionState] set to true if the current selection state of the table shall be considered
-	 * @param {String} [sSelectionMode] optional parameter. If no selection mode is set, the current selection mode of the table is used
-	 * @returns {{mouse: {rowSelect: string, rowDeselect: string}, keyboard: {rowSelect: string, rowDeselect: string}}}
-	 * @private
-	 */
-	Table.prototype._getAriaTextsForSelectionMode = function (bConsiderSelectionState, sSelectionMode) {
-		if (!sSelectionMode) {
-			sSelectionMode = this.getSelectionMode();
-		}
-
-		var oResBundle = this._oResBundle;
-		var mTooltipTexts = {
-			mouse: {
-				rowSelect: "",
-				rowDeselect: ""
-			},
-			keyboard: {
-				rowSelect: "",
-				rowDeselect: ""
-			}};
-
-		if (sSelectionMode === sap.ui.table.SelectionMode.Single) {
-			mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT");
-			mTooltipTexts.mouse.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT");
-			mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_KEY");
-			mTooltipTexts.keyboard.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_KEY");
-		} else if (sSelectionMode === sap.ui.table.SelectionMode.Multi) {
-			mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT_MULTI");
-			mTooltipTexts.mouse.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_MULTI");
-			mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_MULTI_KEY");
-			mTooltipTexts.keyboard.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_MULTI_KEY");
-
-			if (bConsiderSelectionState === true) {
-				if (this.getSelectedIndices().length === 1) {
-					// in multi selection case, if there is only one row selected it's not required
-					// to press CTRL in order to only deselect this single row hence use the description text
-					// of the single de-selection.
-					// for selection it's different since the description for SHIFT/CTRL handling is required
-					mTooltipTexts.mouse.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT");
-					mTooltipTexts.keyboard.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_KEY");
-				} else if (this.getSelectedIndices().length === 0) {
-					// if there are no rows selected in multi selection mode, it's not required to press CTRL or SHIFT
-					// in order to enhance the selection.
-					mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT");
-					mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_KEY");
-				}
-			}
-
-		} else if (sSelectionMode === sap.ui.table.SelectionMode.MultiToggle) {
-			mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT_MULTI_TOGGLE");
-			// text for de-select is the same like for single selection
-			mTooltipTexts.mouse.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT");
-			mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_MULTI_TOGGLE_KEY");
-			// text for de-select is the same like for single selection
-			mTooltipTexts.keyboard.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_KEY");
-
-			if (bConsiderSelectionState === true && this.getSelectedIndices().length === 0) {
-				// if there is no row selected yet, the selection is like in single selection case
-				mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT");
-				mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_KEY");
-			}
-		}
-
-		return mTooltipTexts;
-	};
-
-	/**
 	 * updates the visual selection in the HTML markup
 	 * @private
 	 */
@@ -4490,7 +4452,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		}
 
 		// retrieve tooltip and aria texts only once and pass them to the rows _updateSelection function
-		var mTooltipTexts = this._getAriaTextsForSelectionMode(true);
+		var mTooltipTexts = this._getAccExtension().getAriaTextsForSelectionMode(true);
 
 		// check whether the row can be clicked to change the selection
 		var bSelectOnCellsAllowed = this._getSelectOnCellsAllowed();
@@ -4512,6 +4474,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 */
 	Table.prototype._onSelectionChanged = function(oEvent) {
 		var aRowIndices = oEvent.getParameter("rowIndices");
+		var bSelectAll = oEvent.getParameter("selectAll");
 		var iRowIndex = this._iSourceRowIndex !== undefined ? this._iSourceRowIndex : this.getSelectedIndex();
 		this._updateSelection();
 		var oSelMode = this.getSelectionMode();
@@ -4521,7 +4484,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		this.fireRowSelectionChange({
 			rowIndex: iRowIndex,
 			rowContext: this.getContextByIndex(iRowIndex),
-			rowIndices: aRowIndices
+			rowIndices: aRowIndices,
+			selectAll: bSelectAll
 		});
 	};
 
@@ -4610,11 +4574,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		}
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
-			// first give the higher number. The toIndex will be used as leadIndex. It more likely that
-			// in oData case the index 0 is already loaded than that the last index is loaded. The leadIndex will
-			// be used to determine the leadContext in the selectionChange event. If not yet loaded it would need to
-			// be request. To avoid unnecessary roundtrips the lead index is set to 0.
-			this._oSelection.setSelectionInterval((oBinding.getLength() || 0) - 1, 0);
+			this._oSelection.selectAll((oBinding.getLength() || 0) - 1);
 			this.$("selall").attr('title',this._oResBundle.getText("TBL_DESELECT_ALL")).removeClass("sapUiTableSelAll");
 		}
 		return this;
@@ -6268,7 +6228,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			}
 
 			if (this.getVisibleRowCountMode() == sap.ui.table.VisibleRowCountMode.Auto) {
-				this.getDomRef().style.height = "0px";
+				var oDomRef = this.getDomRef();
+				if (oDomRef) {
+					oDomRef.style.height = "0px";
+				}
 			}
 
 			var oRM = new sap.ui.getCore().createRenderManager(),
@@ -6349,12 +6312,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 		var iDefaultRowHeight = this._getDefaultRowHeight();
 		if (sVisibleRowCountMode == sap.ui.table.VisibleRowCountMode.Interactive || sVisibleRowCountMode == sap.ui.table.VisibleRowCountMode.Fixed) {
-			if (this._iTableRowContentHeight) {
+			if (this._iTableRowContentHeight && sVisibleRowCountMode == sap.ui.table.VisibleRowCountMode.Interactive) {
 				iMinHeight = iMinVisibleRowCount * iDefaultRowHeight;
 				if (!iHeight) {
 					iHeight = this._iTableRowContentHeight;
 				}
 			} else {
+				// Fixed or Interactive without RowContentHeight (Height was not yet adjusted by user)
 				iMinHeight = iVisibleRowCount * iDefaultRowHeight;
 				iHeight = iMinHeight;
 			}
@@ -6817,8 +6781,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		this._bLargeDataScrolling = !!bLargeDataScrolling;
 	};
 
-	Table.prototype._getFirstColumnAttributes = function(oRow) {
-		return {};
+	/**
+	 * Retrieves the number of selected entries.
+	 * @private
+	 */
+	Table.prototype._getSelectedIndicesCount = function () {
+		return this.getSelectedIndices().length;
 	};
 
 	return Table;

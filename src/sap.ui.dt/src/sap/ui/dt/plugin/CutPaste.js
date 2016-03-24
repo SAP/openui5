@@ -142,20 +142,20 @@ sap.ui.define([
 			var oTargetZoneAggregation = this._getTargetZoneAggregation(oTargetOverlay);
 			if (oTargetZoneAggregation) {
 				this.getElementMover().insertInto(oCutOverlay, oTargetZoneAggregation);
-			} else {
-				if (OverlayUtil.isInTargetZoneAggregation(oTargetOverlay)) {
+			} else if (OverlayUtil.isInTargetZoneAggregation(oTargetOverlay)) {
 					this.getElementMover().repositionOn(oCutOverlay, oTargetOverlay);
-				} else {
-					return;
-				}
+			} else {
+				return;
 			}
 
-			var oMoveEvent = this.getElementMover().buildMoveEvent();
-			this.fireElementMoved({
-				data: oMoveEvent
-			});
+			this.getElementMover().buildMoveEvent();
 		}
-		oCutOverlay.focus();
+
+		// focus get invalidated, see https://support.wdf.sap.corp/sap/support/message/1580061207
+		setTimeout(function(){
+			oCutOverlay.focus();
+		},0);
+
 		this.stopCutAndPaste();
 	};
 

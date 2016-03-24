@@ -32,7 +32,10 @@ sap.ui.define(['./library'],
 					oRm.addClass("sapMSuL");
 					oRm.addClass("sapMSelectList");
 					oRm.writeClasses();
-					oRm.writeAccessibilityState({ role: "listbox" });
+					oRm.writeAccessibilityState({
+						role: "listbox",
+						"multiselectable": "false"
+					});
 					oRm.addStyle("width", oList.getWidth());
 					oRm.addStyle("max-width", oList.getMaxWidth());
 					oRm.writeStyles();
@@ -99,6 +102,10 @@ sap.ui.define(['./library'],
 
 			var items = this.getItems();
 			var index;
+			var item;
+			var itemId;
+			var parentInput = sap.ui.getCore().byId(this.getParentInput());
+			var descendantAttr = "aria-activedecendant";
 
 			// selectByIndex(null || undefined || -1) -> remove selection
 			if (isNaN(parseInt(iIndex, 10))) {
@@ -130,6 +137,18 @@ sap.ui.define(['./library'],
 					.eq(index)
 					.addClass("sapMSelectListItemBaseSelected")
 					.attr("aria-selected", "true");
+			}
+			// set aria-activedescendant attribute in the input itself:
+			if (parentInput) {
+				if (index >= 0) {
+					item = parentInput.getSuggestionItems()[index];
+					itemId = item && item.getId();
+				}
+				if (itemId) {
+					parentInput.$("I").attr(descendantAttr, itemId);
+				} else {
+					parentInput.$("I").removeAttr(descendantAttr);
+				}
 			}
 
 			return this._iSelectedItem;

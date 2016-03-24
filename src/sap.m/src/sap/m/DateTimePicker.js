@@ -165,6 +165,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 		},
 
 		_switchVisibility: function(sKey) {
+
 			var oCalendar = this.getCalendar();
 			var oSliders = this.getTimeSliders();
 
@@ -182,6 +183,16 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 				oSliders.updateSlidersValues();
 				oSliders._onOrientationChanged();
 				oSliders._initFocus();
+			}
+
+		},
+
+		switchToTime: function() {
+
+			var oSwitcher = this.getAggregation("_switcher");
+			if (oSwitcher && oSwitcher.getVisible()) {
+				oSwitcher.setSelectedKey("Sli");
+				this._switchVisibility("Sli");
 			}
 
 		}
@@ -338,8 +349,14 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 	DateTimePicker.prototype._createPopupContent = function(){
 
+		var bNoCalendar = !this._oCalendar;
+
 		DatePicker.prototype._createPopupContent.apply(this, arguments);
-		this._oPopupContent.setCalendar(this._oCalendar);
+
+		if (bNoCalendar) {
+			this._oPopupContent.setCalendar(this._oCalendar);
+			this._oCalendar.attachSelect(_selectDate, this);
+		}
 
 		if (!this._oSliders) {
 			jQuery.sap.require("sap.m.TimePickerSliders");
@@ -450,6 +467,12 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 		}
 
 		return sTimePattern;
+
+	}
+
+	function _selectDate(oEvent) {
+
+		this._oPopupContent.switchToTime();
 
 	}
 
