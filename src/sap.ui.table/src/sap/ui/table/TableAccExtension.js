@@ -365,6 +365,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 		}
 	};
 
+	TableAccExtension.prototype.updateAriaForAnalyticalRow = function(oRow, $Row, $RowHdr, $FixedRow, bGroup, bExpanded, iLevel) {
+		if (!this._accMode) {
+			return;
+		}
+
+		var sTitle = null,
+			oTable = this.getTable(),
+			aRefs = [$Row, $RowHdr, $FixedRow];
+
+		if (!bGroup && $RowHdr) {
+			var iIndex = $RowHdr.attr("data-sap-ui-rowindex");
+			var mAttributes = this._getAriaAttributesFor(oTable, "ROWHEADER", {rowSelected: !oRow._bHidden && oTable.isIndexSelected(iIndex)});
+			sTitle = mAttributes["title"] || null;
+		}
+
+		if ($RowHdr) {
+			$RowHdr.attr({
+				"aria-haspopup" : bGroup ? "true" : null,
+				"title" : sTitle
+			});
+		}
+
+		for (var i = 0; i < aRefs.length; i++) {
+			if (aRefs[i]) {
+				aRefs[i].attr({
+					"aria-expanded" : bGroup ? bExpanded + "" : null,
+					"aria-level": iLevel < 0 ? null : (iLevel + 1)
+				});
+			}
+		}
+	};
+
 	TableAccExtension.prototype.updateAriaExpandState = function(oRow, $Row, $Icon) {
 		if (!this._hasTreeColumn || !this._accMode) {
 			return;
@@ -378,7 +410,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 		var oBindingInfo = this.getTable().mBindingInfos["rows"];
 		if (oRow.getBindingContext(oBindingInfo && oBindingInfo.model)) { //see _getAriaAttributesFor(DATACELL)
 			oAttr["aria-level"] = oRow._iLevel + 1;
-			oAttr["aria-expanded"] = "" + oRow._bIsExpanded;
+			if (!$Icon.hasClass("sapUiTableTreeIconLeaf")) {
+				oAttr["aria-expanded"] = "" + oRow._bIsExpanded;
+			}
 		}
 		$FirstTd.attr(oAttr);
 		$Icon.attr(this._getAriaAttributesFor(this.getTable(), "TREEICON", {row: oRow}));

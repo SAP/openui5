@@ -349,29 +349,16 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 
 
 	AnalyticalTable.prototype._updateTableRowContent = function(oRow, bChildren, bExpanded, bHidden, bSum, iLevel, sGroupHeaderText) {
-		//TBD: Cleanup and move ARIA realated coding into Extension
-		var sTitle = null,
-			$Row = oRow.$(),
+		var $Row = oRow.$(),
 			$FixedRow = oRow.$("fixed"),
 			$RowHdr = this.$().find("div[data-sap-ui-rowindex=" + $Row.attr("data-sap-ui-rowindex") + "]"),
 			aRefs = [$Row, $FixedRow, $RowHdr];
 
-		if (!bChildren) {
-			var iIndex = $RowHdr.attr("data-sap-ui-rowindex");
-			var mAttributes = this._getAccExtension()._getAriaAttributesFor(this, "ROWHEADER", {rowSelected: !oRow._bHidden && this.isIndexSelected(iIndex)});
-			sTitle = mAttributes["title"] || null;
-		}
-
-		$RowHdr.attr({
-			"aria-haspopup" : bChildren ? "true" : null,
-			"title" : sTitle
-		});
+		this._getAccExtension().updateAriaForAnalyticalRow(oRow, $Row, $RowHdr, $FixedRow, bChildren, bExpanded, iLevel);
 
 		for (var i = 0; i < aRefs.length; i++) {
 			aRefs[i].attr({
-				"aria-expanded" : bExpanded && bChildren ? bExpanded + "" : null,
-				"data-sap-ui-level" : iLevel,
-				"aria-level": iLevel + 1
+				"data-sap-ui-level" : iLevel
 			});
 
 			aRefs[i].data("sap-ui-level", iLevel);
@@ -409,16 +396,17 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			iFirstRow = this.getFirstVisibleRow(),
 			iFixedBottomRowCount = this.getFixedBottomRowCount(),
 			iCount = this.getVisibleRowCount(),
-			aCols = this.getColumns();
+			aCols = this.getColumns(),
+			that = this;
 
 		var fnRemoveClasses = function (oRow) {
 			var $row = oRow.getDomRefs(true);
 
 			$row.row.removeAttr("data-sap-ui-level");
 			$row.row.removeData("sap-ui-level");
-			$row.row.removeAttr('aria-level');
-			$row.row.removeAttr('aria-expanded');
 			$row.row.removeClass("sapUiTableGroupHeader sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
+
+			that._getAccExtension().updateAriaForAnalyticalRow(oRow, $row.rowScrollPart, $row.rowSelector, $row.rowFixedPart, false, false, -1);
 		};
 
 		var aRows = this.getRows();
@@ -477,11 +465,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 				var $td = jQuery(aCells[i].$().closest("td"));
 				if (oBinding.isMeasure(oCol.getLeadingProperty())) {
 					$td.addClass("sapUiTableMeasureCell");
-					if (!oContextInfo.nodeState.sum || oCol.getSummed()) {
-						$td.removeClass("sapUiTableCellHidden");
-					} else {
-						$td.addClass("sapUiTableCellHidden");
-					}
+					$td.toggleClass("sapUiTableCellHidden", oContextInfo.nodeState.sum && !oCol.getSummed());
 				} else {
 					$td.removeClass("sapUiTableMeasureCell");
 				}
