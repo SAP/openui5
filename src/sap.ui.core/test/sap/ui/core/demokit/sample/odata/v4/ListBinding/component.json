@@ -4,8 +4,7 @@
 			"files": [
 				"Component.js",
 				"Main.controller.js",
-				"Main.view.xml",
-				"../../../common/Component.js"
+				"Main.view.xml"
 			]
 		}
 	},
