@@ -5,7 +5,7 @@
         xmlns:m="sap.m"
         height="100%"
         class="side-navigation-demo">
-    <m:Button text="Toggle Collapse/Exapand"
+    <m:Button text="Toggle Collapse/Expand"
               icon="sap-icon://menu2"
               press="onCollapseExapandPress" />
     <SideNavigation id="sideNavigation">
