@@ -15,14 +15,14 @@
 					'TEAM_2_MANAGER': true}}}" >
 			<core:Item key="{Team_Id}" text="{Name}"/>
 		</Select>
-		<Button enabled="{ui>/bRealOData}" icon="sap-icon://edit" press="onChangeBudgetDialog"
-				text="Change Budget">
+		<Button enabled="{ui>/bRealOData}" icon="sap-icon://edit" press="openChangeTeamBudgetDialog"
+				text="Budget">
 			<dependents>
-				<Dialog id="changeBudgetDialog" title="Change Team Budget">
+				<Dialog id="ChangeTeamBudgetDialog" title="Change Team Budget">
 					<buttons>
-						<Button icon="sap-icon://sys-cancel-2" press="onCancelChangeBudget"
+						<Button icon="sap-icon://sys-cancel-2" press="cancelChangeTeamBudget"
 							text="Cancel" type="Reject"/>
-						<Button icon="sap-icon://save" press="onChangeBudget"
+						<Button icon="sap-icon://save" press="changeTeamBudget"
 							text="Change" type="Accept"/>
 					</buttons>
 					<content>
@@ -41,6 +41,8 @@
 				</Dialog>
 			</dependents>
 		</Button>
+		<Button enabled="{ui>/bRealOData}" icon="sap-icon://edit"
+				press="openChangeManagerOfTeamDialog" text="Manager"/>
 	</Toolbar>
 	<form:SimpleForm id="TeamDetails" layout="ResponsiveGridLayout">
 		<form:content>
@@ -51,12 +53,34 @@
 			<Label text="Member Count" />
 			<Text text="{MEMBER_COUNT}" />
 			<Label text="Manager ID" />
-			<Text text="{TEAM_2_MANAGER/ID}" />
+			<Text id="ManagerID" text="{TEAM_2_MANAGER/ID}" />
 			<Label text="Budget" />
 			<Text id="Budget" text="{Budget}" />
 			<Label text="Currency" />
 			<Text text="{BudgetCurrency}" />
 		</form:content>
+		<form:dependents>
+			<Dialog id="ChangeManagerOfTeamDialog" title="Change Team Manager">
+				<buttons>
+					<Button icon="sap-icon://sys-cancel-2" press="cancelChangeManagerOfTeam"
+						text="Cancel" type="Reject"/>
+					<Button icon="sap-icon://save" press="changeManagerOfTeam"
+						text="Change" type="Accept"/>
+				</buttons>
+				<content>
+					<form:SimpleForm
+							binding="{com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeManagerOfTeam(...)}"
+							editable="true" id="ChangeTeamManagerByID"
+							layout="ResponsiveGridLayout">
+						<form:content>
+							<Label text="Manager ID" />
+							<!-- <Input value="{$Parameter('ManagerID'}" /> -->
+							<Input value="{ui>/ManagerID}" />
+						</form:content>
+					</form:SimpleForm>
+				</content>
+			</Dialog>
+		</form:dependents>
 	</form:SimpleForm>
 	<Table id="Employees" growing="true" growingThreshold="1" headerText="Team Members"
 		items="{TEAM_2_EMPLOYEES}" mode="SingleSelectMaster" selectionChange="onEmployeeSelect">
@@ -66,7 +90,7 @@
 					<Button icon="sap-icon://add" text="Create" press="onCreateEmployee"/>
 				</content>
 				<dependents>
-					<Dialog id="createEmployeeDialog" title="Create New Employee">
+					<Dialog id="CreateEmployeeDialog" title="Create New Employee">
 						<buttons>
 							<Button icon="sap-icon://sys-cancel-2" text="Cancel"
 								press="onCancelEmployee" type="Reject"/>
@@ -193,7 +217,7 @@
 			<Title text="Max. Employee Age" titleStyle="H4" />
 			<ToolbarSpacer width="1em"/>
 			<Text text="{value}"/>
-			<Button press="onGetEmployeeMaxAge" text="Execute"/>
+			<Button press="getEmployeeMaxAge" text="Execute"/>
 		</Toolbar>
 	</VBox>
 	<VBox>
@@ -210,7 +234,7 @@
 				</layoutData>
 			</Label>
 			<Input id="EmployeeId" value="{search>/EmployeeID}" width="4em" />
-			<Button text="Search" enabled="{ui>/bRealOData}" press="onGetEmployeeByID"/>
+			<Button text="Search" enabled="{ui>/bRealOData}" press="getEmployeeByID"/>
 		</Toolbar>
 		<form:SimpleForm id="GetEmployeeByID" binding="{/GetEmployeeByID(...)}"
 				layout="ResponsiveGridLayout">

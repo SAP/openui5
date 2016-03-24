@@ -19,6 +19,70 @@ sap.ui.define([
 	}
 
 	var MainController = Controller.extend("sap.ui.core.sample.odata.v4.ListBinding.Main", {
+		cancelChangeTeamBudget : function (oEvent) {
+			this.getView().byId("ChangeTeamBudgetDialog").close();
+		},
+
+		cancelChangeManagerOfTeam : function (oEvent) {
+			this.getView().byId("ChangeManagerOfTeamDialog").close();
+		},
+
+		changeTeamBudget : function (oEvent) {
+			var oView = this.getView(),
+				oForm = oView.byId("ChangeTeamBudgetByID"),
+				oUiModel = oView.getModel("ui");
+
+			oForm.getObjectBinding()
+				.setParameter("TeamID", oUiModel.getProperty("/TeamID"))
+				.setParameter("Budget", oUiModel.getProperty("/Budget"))
+				.execute()
+				.then(function () {
+					var oTeamDetails = oView.byId("TeamDetails");
+
+					oTeamDetails.setBindingContext(null);
+					oTeamDetails.setBindingContext(oForm.getBindingContext());
+					MessageBox.alert("Budget changed", {
+						icon : MessageBox.Icon.SUCCESS,
+						title : "Success"});
+				});
+			oView.byId("ChangeTeamBudgetDialog").close();
+		},
+
+		changeManagerOfTeam : function (oEvent) {
+			var oView = this.getView(),
+				oForm = oView.byId("ChangeTeamManagerByID"),
+				oUiModel = oView.getModel("ui");
+
+			oForm.getObjectBinding()
+				.setParameter("ManagerID", oUiModel.getProperty("/ManagerID"))
+				.execute()
+				.then(function () {
+					// TODO update parent (this would require a read, but the read delivers the
+					// old value)
+					MessageBox.alert("Manager changed", {
+						icon : MessageBox.Icon.SUCCESS,
+						title : "Success"});
+				});
+			oView.byId("ChangeManagerOfTeamDialog").close();
+		},
+
+		getEmployeeByID : function (oEvent) {
+			var oOperation = this.getView().byId("GetEmployeeByID").getObjectBinding();
+
+			oOperation.setParameter("EmployeeID",
+					this.getView().getModel("search").getProperty("/EmployeeID"))
+				.execute()
+				.catch(function (oError) {
+					MessageBox.alert(oError.message, {
+						icon : MessageBox.Icon.ERROR,
+						title : "Error"});
+				});
+		},
+
+		getEmployeeMaxAge : function (oEvent) {
+			this.getView().byId("GetEmployeeMaxAge").getObjectBinding().execute();
+		},
+
 		onBeforeRendering : function () {
 			var oView = this.getView();
 
@@ -46,46 +110,14 @@ sap.ui.define([
 			oView.byId("TeamSelect").getBinding("items").attachEventOnce("change", setTeamContext);
 		},
 
-		onCancelChangeBudget : function (oEvent) {
-			this.getView().byId("changeBudgetDialog").close();
-		},
-
 		onCancelEmployee : function (oEvent) {
-			var oCreateEmployeeDialog = this.getView().byId("createEmployeeDialog");
+			var oCreateEmployeeDialog = this.getView().byId("CreateEmployeeDialog");
 
 			oCreateEmployeeDialog.close();
 		},
 
-		onChangeBudget : function (oEvent) {
-			var oView = this.getView(),
-				oForm = oView.byId("ChangeTeamBudgetByID"),
-				oUiModel = oView.getModel("ui");
-
-			oForm.getObjectBinding()
-				.setParameter("TeamID", oUiModel.getProperty("/TeamID"))
-				.setParameter("Budget", oUiModel.getProperty("/Budget"))
-				.execute()
-				.then(function () {
-					oView.byId("TeamDetails").setBindingContext(oForm.getBindingContext());
-					MessageBox.alert("Budget changed", {
-						icon : MessageBox.Icon.SUCCESS,
-						title : "Success"});
-				});
-			oView.byId("changeBudgetDialog").close();
-		},
-
-		onChangeBudgetDialog : function (oEvent) {
-			var oView = this.getView(),
-				oUiModel = oView.getModel("ui");
-
-			// TODO There must be a simpler way to copy values from the model to our parameters
-			oUiModel.setProperty("/TeamID", oView.byId("Team_Id").getBinding("text").getValue());
-			oUiModel.setProperty("/Budget", oView.byId("Budget").getBinding("text").getValue());
-			oView.byId("changeBudgetDialog").open();
-		},
-
 		onCreateEmployee : function (oEvent) {
-			var oCreateEmployeeDialog = this.getView().byId("createEmployeeDialog");
+			var oCreateEmployeeDialog = this.getView().byId("CreateEmployeeDialog");
 
 			oCreateEmployeeDialog.setModel(new JSONModel({
 				"ENTRYDATE" : "2015-10-01"
@@ -108,23 +140,6 @@ sap.ui.define([
 			this.getView().byId("EmployeeEquipments").setBindingContext(oContext);
 		},
 
-		onGetEmployeeByID : function (oEvent) {
-			var oOperation = this.getView().byId("GetEmployeeByID").getObjectBinding();
-
-			oOperation.setParameter("EmployeeID",
-					this.getView().getModel("search").getProperty("/EmployeeID"))
-				.execute("$direct")
-				.then(function () {}, function (oError) {
-					MessageBox.alert(oError.message, {
-						icon : MessageBox.Icon.ERROR,
-						title : "Error"});
-				});
-		},
-
-		onGetEmployeeMaxAge : function (oEvent) {
-			this.getView().byId("GetEmployeeMaxAge").getObjectBinding().execute();
-		},
-
 		onInit : function () {
 			this.getView().setModel(new JSONModel({
 				EmployeeID: undefined
@@ -132,7 +147,7 @@ sap.ui.define([
 		},
 
 		onSaveEmployee : function (oEvent) {
-			var oCreateEmployeeDialog = this.getView().byId("createEmployeeDialog"),
+			var oCreateEmployeeDialog = this.getView().byId("CreateEmployeeDialog"),
 				oEmployeeData = oCreateEmployeeDialog.getModel("new").getObject("/"),
 				that = this;
 
@@ -177,6 +192,26 @@ sap.ui.define([
 						oItem.getCells()[5].getBinding("text").checkUpdate();
 					});
 				});
+		},
+
+		openChangeTeamBudgetDialog : function (oEvent) {
+			var oView = this.getView(),
+				oUiModel = oView.getModel("ui");
+
+			// TODO There must be a simpler way to copy values from the model to our parameters
+			oUiModel.setProperty("/TeamID", oView.byId("Team_Id").getBinding("text").getValue());
+			oUiModel.setProperty("/Budget", oView.byId("Budget").getBinding("text").getValue());
+			oView.byId("ChangeTeamBudgetDialog").open();
+		},
+
+		openChangeManagerOfTeamDialog : function (oEvent) {
+			var oView = this.getView(),
+				oUiModel = oView.getModel("ui");
+
+			// TODO There must be a simpler way to copy values from the model to our parameters
+			oUiModel.setProperty("/ManagerID",
+				oView.byId("ManagerID").getBinding("text").getValue());
+			oView.byId("ChangeManagerOfTeamDialog").open();
 		}
 	});
 

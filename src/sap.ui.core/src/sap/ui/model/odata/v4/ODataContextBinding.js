@@ -65,13 +65,35 @@ sap.ui.define([
 	 *   'dataReceived', and 'dataRequested'.
 	 *   For other events, an error is thrown.
 	 *
-	 *   A context binding can also be used as an <i>operation binding</i> to support function
-	 *   imports with an absolute binding path. If you want to control the execution time of a
-	 *   function import named "GetNumberOfAvailableItems", create a context binding for the path
-	 *   "/GetNumberOfAvailableItems(...)" (as specified here, including the three dots). Such an
-	 *   operation binding is <i>deferred</i>; meaning that it does not request automatically, but
-	 *   only when you call {@link #execute}. {@link #refresh} is ignored if the OData function has
-	 *   not been called yet. Refreshing the binding later results in another call of the function.
+	 *   A context binding can also be used as an <i>operation binding</i> to support bound actions,
+	 *   action imports and function imports. If you want to control the execution time of an
+	 *   operation, for example a function import named "GetNumberOfAvailableItems", create a
+	 *   context binding for the path "/GetNumberOfAvailableItems(...)" (as specified here,
+	 *   including the three dots). Such an operation binding is <i>deferred</i>; meaning that it
+	 *   does not request automatically, but only when you call {@link #execute}. {@link #refresh}
+	 *   is always ignored for actions and action imports. For function imports it is ignored if
+	 *   {@link #execute} has not been called yet. Afterwards it results in another call of the
+	 *   function with the parameter values of the last execute.
+	 *
+	 *   The binding parameter for bound actions may be given in the binding path, for example
+	 *   <code>/TEAMS(Team_Id='TEAM_01')/tea_busi.AcChangeManagerOfTeam(...)</code>. This can be
+	 *   used if the exact instance is known in advance. If you use a relative binding instead, the
+	 *   operation path is a concatenation of the parent context's canonical path and the deferred
+	 *   binding's path.
+	 *
+	 *   <b>Example</b>: You have a table with a list binding to <code>/TEAMS</code>. In each row
+	 *   you have a button to change the team's manager, with the relative binding
+	 *   <code>tea_busi.AcChangeManagerOfTeam(...)</code>. Then the parent context for such a button
+	 *   refers to an instance of TEAMS, its canonical path is
+	 *   <code>/TEAMS(ID='<i>TeamID</i>')</code> and the resulting path for the action is
+	 *   <code>/TEAMS(ID='<i>TeamID</i>')/tea_busi.AcChangeManagerOfTeam</code>.
+	 *
+	 *   This also works if the relative path of the deferred operation binding starts with a
+	 *   navigation property. Then this navigation property will be part of the operation's
+	 *   resource path, which is still valid.
+	 *
+	 *   A deferred operation binding may not have another deferred operation binding as parent.
+	 *
 	 * @extends sap.ui.model.ContextBinding
 	 * @public
 	 * @version ${version}
@@ -94,28 +116,23 @@ sap.ui.define([
 				this.sRefreshGroupId = undefined;
 				this.sUpdateGroupId = undefined;
 
-				if (bDeferred) {
-					this.oOperation = {
-						bAction : undefined,
-						oMetadataPromise : undefined,
-						mParameters : {}
-					};
-					if (iPos !== sPath.length - 5) {
-						throw new Error("Composable functions are not supported: " + sPath);
-					}
-					if (this.bRelative) {
-						throw new Error("Deferred bindings with a relative path are not supported: "
-							+ sPath);
-					}
-				}
-
-				if (!this.bRelative) {
+				if (!this.bRelative || bDeferred) {
 					this.mQueryOptions = _ODataHelper.buildQueryOptions(oModel.mUriParameters,
 						mParameters, ["$expand", "$select"]);
 					oBindingParameters = _ODataHelper.buildBindingParameters(mParameters);
 					this.sGroupId = oBindingParameters.$$groupId;
 					this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
-					if (!bDeferred) {
+					if (bDeferred) {
+						this.oOperation = {
+							bAction : undefined,
+							oMetadataPromise : undefined,
+							mParameters : {}
+						};
+						if (iPos !== sPath.length - 5) {
+							throw new Error(
+								"The path must not continue after a deferred operation: " + sPath);
+						}
+					} else {
 						this.oCache = _Cache.createSingle(oModel.oRequestor, sPath.slice(1),
 							this.mQueryOptions);
 					}
@@ -132,40 +149,44 @@ sap.ui.define([
 	 * Requests the metadata for this operation binding. Caches the result.
 	 *
 	 * @returns {Promise}
-	 *   A promise that is resolved with the operation metadata
-	 * @throws {Error}
-	 *   If the binding is not a deferred operation binding
+	 *   A promise that is resolved with the operation metadata.
 	 *
 	 * @private
 	 */
 	ODataContextBinding.prototype._requestOperationMetadata = function () {
-		var oMetaModel = this.oModel.getMetaModel();
+		var oMetaModel = this.oModel.getMetaModel(),
+			sOperationName,
+			iPos;
 
-		if (!this.oOperation) {
-			throw new Error("The binding must be deferred: " + this.sPath);
-		}
 		if (!this.oOperation.oMetadataPromise) {
-			// Note: undefined is more efficient than "" here
-			this.oOperation.oMetadataPromise = oMetaModel.requestObject(undefined,
-					oMetaModel.getMetaContext(this.sPath))
-				.then(function (oMetadata) {
-					if (!oMetadata) {
-						throw new Error("Unknown operation");
+			// take the last segment and remove "(...)" at the end
+			// We do not need special code if there is no '/', because iPos + 1 === 0 then.
+			iPos = this.sPath.lastIndexOf("/");
+			sOperationName = this.sPath.slice(iPos + 1, -5);
+			this.oOperation.oMetadataPromise = oMetaModel.requestObject("/" + sOperationName)
+				.then(function (vMetadata) {
+					if (!vMetadata) {
+						throw new Error("Unknown operation: " + sOperationName);
 					}
-					if (oMetadata.$kind === "ActionImport") {
-						return oMetaModel.requestObject("/" + oMetadata.$Action);
+					if (Array.isArray(vMetadata) && vMetadata[0].$kind === "Action") {
+						return vMetadata;
 					}
-					if (oMetadata.$kind === "FunctionImport") {
-						return oMetaModel.requestObject("/" + oMetadata.$Function);
+					if (Array.isArray(vMetadata) && vMetadata[0].$kind === "Function") {
+						throw new Error("Functions without import not supported: "
+							+ sOperationName);
 					}
-					throw new Error("Not an ActionImport or FunctionImport");
+					if (vMetadata.$kind === "ActionImport") {
+						return oMetaModel.requestObject("/" + vMetadata.$Action);
+					}
+					if (vMetadata.$kind === "FunctionImport") {
+						return oMetaModel.requestObject("/" + vMetadata.$Function);
+					}
+					throw new Error("Not an operation: " + sOperationName);
 				}).then(function (aOperationMetadata) {
-					var oOperationMetadata = aOperationMetadata[0];
-
 					if (aOperationMetadata.length !== 1) {
-						throw new Error("Unsupported: operation overloading");
+						throw new Error("Unsupported operation overloading: " + sOperationName);
 					}
-					return oOperationMetadata;
+					return aOperationMetadata[0];
 				});
 		}
 		return this.oOperation.oMetadataPromise;
@@ -243,13 +264,14 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Calls the OData function that corresponds to this operation binding.
+	 * Calls the OData operation that corresponds to this operation binding.
 	 *
 	 * Parameters for the operation must be set via {@link #setParameter} beforehand.
 	 *
-	 * The value of this binding is the result of the operation. To access the result, bind a
-	 * control to the empty path, for example <code>&lt;Text text="{}"/&gt;<code>. The OData
-	 * function is only called when a property binding relative to the operation binding exists.
+	 * The value of this binding is the result of the operation. To access a result of primitive
+	 * type, bind a control to the path "value", for example
+	 * <code>&lt;Text text="{value}"/&gt;</code>. If the result has a complex or entity type, you
+	 * can bind properties as usual, for example <code>&lt;Text text="{street}"/&gt;</code>.
 	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for the request; if not specified, the group ID for this binding is
@@ -260,7 +282,8 @@ sap.ui.define([
 	 *   A promise that is resolved without data when the operation call succeeded, or rejected
 	 *   with an instance of <code>Error</code> in case of failure.
 	 * @throws {Error} If the binding is not a deferred operation binding (see
-	 *   {@link sap.ui.model.odata.v4.ODataContextBinding}), or if the given group ID is invalid.
+	 *   {@link sap.ui.model.odata.v4.ODataContextBinding}), if the binding is not resolved, or if
+	 *   the given group ID is invalid.
 	 *
 	 * @public
 	 * @since 1.37.0
@@ -268,10 +291,18 @@ sap.ui.define([
 	ODataContextBinding.prototype.execute = function (sGroupId) {
 		var that = this;
 
-		_ODataHelper.checkGroupId(sGroupId);
-		return this._requestOperationMetadata().then(function (oOperationMetadata) {
+		/**
+		 * Creates the cache (if necessary) and sends the GET/POST request.
+		 *
+		 * @param {object} oOperationMetadata The operation's metadata
+		 * @param {string} sPathPrefix
+		 *   The prefix for the path that results from the binding parameter
+		 * @returns {Promise} The request promise
+		 */
+		function createCacheAndRequest(oOperationMetadata, sPathPrefix) {
 			var aOperationParameters,
 				aParameters,
+				sPath = (sPathPrefix + that.sPath).slice(1),
 				oPromise;
 
 			sGroupId = sGroupId || that.getGroupId();
@@ -279,8 +310,7 @@ sap.ui.define([
 			if (that.oOperation.bAction) {
 				// the action may reuse the cache because the resource path never changes
 				if (!that.oCache) {
-					that.oCache = _Cache.createSingle(that.oModel.oRequestor,
-						that.sPath.replace("(...)", "").slice(1),
+					that.oCache = _Cache.createSingle(that.oModel.oRequestor, sPath.slice(0, -5),
 						that.mQueryOptions, false, true);
 				}
 				oPromise = that.oCache.post(sGroupId, that.oOperation.mParameters);
@@ -303,12 +333,33 @@ sap.ui.define([
 					});
 				}
 				that.oCache = _Cache.createSingle(that.oModel.oRequestor,
-					that.sPath.replace("...", aParameters.join(',')).slice(1),
-					that.mQueryOptions);
+					sPath.replace("...", aParameters.join(',')), that.mQueryOptions);
 				oPromise = that.oCache.read(sGroupId);
 			}
 			that.oModel.addedRequestToGroup(sGroupId);
 			return oPromise;
+		}
+
+		_ODataHelper.checkGroupId(sGroupId);
+		if (!this.oOperation) {
+			throw new Error("The binding must be deferred: " + this.sPath);
+		}
+		if (this.bRelative) {
+			if (!this.oContext) {
+				throw new Error("Unresolved binding: " + this.sPath);
+			}
+			if (this.oContext.getPath().indexOf("(...)") >= 0) {
+				throw new Error("Nested deferred operation bindings not supported: "
+					+ this.oModel.resolve(this.sPath, this.oContext));
+			}
+		}
+		return this._requestOperationMetadata().then(function (oOperationMetaData) {
+			if (that.bRelative) {
+				return that.oModel.requestCanonicalPath(that.getContext()).then(function (sPath) {
+					return createCacheAndRequest(oOperationMetaData, sPath + "/");
+				});
+			}
+			return createCacheAndRequest(oOperationMetaData, "");
 		}).then(function (oResult) {
 			that._fireChange({reason : ChangeReason.Change});
 			// do not return anything
@@ -504,6 +555,8 @@ sap.ui.define([
 					? _Context.create(this.oModel, this, sResolvedPath)
 					: null;
 				if (this.oElementContext !== oElementContext) {
+					// the binding parameter for a deferred might have changed
+					this.oCache = undefined;
 					this._fireChange({reason : ChangeReason.Context});
 				}
 			}

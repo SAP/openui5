@@ -11,9 +11,10 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/ODataContextBinding",
-	"sap/ui/model/odata/v4/ODataModel"
+	"sap/ui/model/odata/v4/ODataModel",
+	"sap/ui/test/TestUtils"
 ], function (jQuery, ManagedObject, ChangeReason, ContextBinding, _Context, _ODataHelper, _Cache,
-		_Helper, ODataContextBinding, ODataModel) {
+		_Helper, ODataContextBinding, ODataModel, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -554,53 +555,72 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_requestOperationMetadata: not deferred", function (assert) {
-		var oContextBinding = this.oModel.bindContext("/Foo");
-
-		assert.throws(function () {
-			oContextBinding._requestOperationMetadata();
-		}, /The binding must be deferred: \/Foo/);
-	});
-
-	//*********************************************************************************************
 	[{
 		path : "/Unknown(...)",
+		request1 : "/Unknown",
 		metadata1 : undefined,
-		error : "Unknown operation"
+		error : "Unknown operation: Unknown"
 	}, {
 		path : "/EntitySet(...)",
+		request1 : "/EntitySet",
 		metadata1 : {$kind : "EntitySet"},
-		error : "Not an ActionImport or FunctionImport"
+		error : "Not an operation: EntitySet"
 	}, {
 		path : "/ActionImport(...)",
+		request1 : "/ActionImport",
 		metadata1 : {$kind : "ActionImport", $Action : "schema.Action"},
 		request2 : "/schema.Action",
 		metadata2 : [{$kind : "Action"}]
 	}, {
 		path : "/FunctionImport(...)",
+		request1 : "/FunctionImport",
 		metadata1 : {$kind : "FunctionImport", $Function : "schema.Function"},
 		request2 : "/schema.Function",
 		metadata2 : [{$kind : "Function"}]
 	}, {
 		path : "/OverloadedActionImport(...)",
+		request1 : "/OverloadedActionImport",
 		metadata1 : {$kind : "ActionImport", $Action : "schema.Action"},
 		request2 : "/schema.Action",
 		metadata2 : [{$kind : "Action"}, {$kind : "Action"}],
-		error : "Unsupported: operation overloading"
+		error : "Unsupported operation overloading: OverloadedActionImport"
+	}, {
+		path : "schema.Action(...)",
+		context : "/EntitySet",
+		request1 : "/schema.Action",
+		metadata1 : [{$kind : "Action"}]
+	}, {
+		path : "/EntitySet/schema.Function(...)",
+		request1 : "/schema.Function",
+		metadata1 : [{$kind : "Function"}],
+		error : "Functions without import not supported: schema.Function"
+	}, {
+		path : "/EntitySet/schema.OverloadedAction(...)",
+		request1 : "/schema.OverloadedAction",
+		metadata1 : [{$kind : "Action"}, {}],
+		error : "Unsupported operation overloading: schema.OverloadedAction"
 	}].forEach(function (oFixture) {
 		QUnit.test("_requestOperationMetadata: " + oFixture.path, function (assert) {
 			var oContextBinding = this.oModel.bindContext(oFixture.path),
 				oMetaModel = this.oModel.getMetaModel(),
 				oMetaModelMock = this.oSandbox.mock(oMetaModel),
-				oPromise;
+				oParentBinding,
+				oPromise,
+				oResult = oFixture.metadata1;
 
+			if (oFixture.context) {
+				oParentBinding = this.oModel.bindContext(oFixture.context);
+				oParentBinding.initialize();
+				oContextBinding.setContext(oParentBinding.getBoundContext());
+			}
 			oMetaModelMock.expects("requestObject")
-				.withExactArgs(undefined, oMetaModel.getMetaContext(oFixture.path))
+				.withExactArgs(oFixture.request1)
 				.returns(Promise.resolve(oFixture.metadata1));
 			if (oFixture.request2) {
 				oMetaModelMock.expects("requestObject")
 					.withExactArgs(oFixture.request2)
 					.returns(Promise.resolve(oFixture.metadata2));
+				oResult = oFixture.metadata2;
 			}
 
 			// code under test
@@ -612,7 +632,7 @@ sap.ui.require([
 				if (oFixture.error) {
 					assert.ok(false);
 				} else {
-					assert.strictEqual(oMetadata, oFixture.metadata2[0]);
+					assert.strictEqual(oMetadata, oResult[0]);
 				}
 			}, function (oError) {
 				assert.strictEqual(oError.message, oFixture.error);
@@ -760,6 +780,111 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("execute bound action, absolute binding", function (assert) {
+		var oCacheMock = this.oSandbox.mock(_Cache),
+			oContextBinding = this.oModel.bindContext("/EntitySet(ID='1')/schema.Action(...)"),
+			oContextBindingMock = this.oSandbox.mock(oContextBinding),
+			oPostResult = {},
+			oSingleCache = {
+				post : function () {},
+				read : function () {},
+				refresh : function () {}
+			},
+			oSingleCacheMock = this.oSandbox.mock(oSingleCache);
+
+		oSingleCacheMock.expects("refresh").never();
+		oContextBindingMock.expects("_requestOperationMetadata")
+			.returns(Promise.resolve({$kind : "Action"}));
+		oCacheMock.expects("createSingle")
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor),
+				"EntitySet(ID='1')/schema.Action", {"sap-client" : "111"}, false, true)
+			.returns(oSingleCache);
+		oContextBindingMock.expects("getGroupId").returns("groupId");
+		oSingleCacheMock.expects("post")
+			.withExactArgs("groupId", {"foo" : 42, "bar" : "baz"})
+			.returns(Promise.resolve(oPostResult));
+		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup").withExactArgs("groupId");
+		oContextBindingMock.expects("_fireChange")
+			.withExactArgs({reason : ChangeReason.Change});
+
+		// code under test
+		return oContextBinding
+			.setParameter("foo", 42)
+			.setParameter("bar", "baz")
+			.execute();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("execute bound action, relative binding", function (assert) {
+		var oCacheMock = this.oSandbox.mock(_Cache),
+			oContextBinding,
+			oContextBindingMock,
+			oModelMock = this.oSandbox.mock(this.oModel),
+			oParentBinding1 = this.oModel.bindContext("/EntitySet(ID='1')/navigation1"),
+			oParentBinding2 = this.oModel.bindContext("/EntitySet(ID='2')/navigation1"),
+			oPostResult = {},
+			oSingleCache = {
+				post : function () {},
+				read : function () {},
+				refresh : function () {}
+			},
+			oSingleCacheMock = this.oSandbox.mock(oSingleCache),
+			that = this;
+
+		oParentBinding1.initialize();
+		oParentBinding2.initialize();
+		oContextBinding = this.oModel.bindContext("navigation2/schema.Action(...)",
+			oParentBinding1.getBoundContext());
+		oContextBindingMock = this.oSandbox.mock(oContextBinding);
+
+		oSingleCacheMock.expects("refresh").never();
+		oContextBindingMock.expects("_requestOperationMetadata").twice()
+			.returns(Promise.resolve({$kind : "Action"}));
+		oModelMock.expects("requestCanonicalPath")
+			.withExactArgs(sinon.match.same(oParentBinding1.getBoundContext()))
+			.returns(Promise.resolve("/EntitySet(ID='1')/navigation1"));
+		oCacheMock.expects("createSingle")
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor),
+				"EntitySet(ID='1')/navigation1/navigation2/schema.Action", {"sap-client" : "111"},
+				false, true)
+			.returns(oSingleCache);
+		oContextBindingMock.expects("getGroupId").twice().returns("groupId");
+		oSingleCacheMock.expects("post")
+			.withExactArgs("groupId", {})
+			.returns(Promise.resolve(oPostResult));
+		oModelMock.expects("addedRequestToGroup").withExactArgs("groupId");
+		oContextBindingMock.expects("_fireChange")
+			.withExactArgs({reason : ChangeReason.Change});
+
+		// code under test
+		return oContextBinding.execute().then(function () {
+			oContextBindingMock.expects("_fireChange")
+				.withExactArgs({reason : ChangeReason.Context});
+
+			// code under test: setContext clears the cache
+			oContextBinding.setContext(oParentBinding2.getBoundContext());
+
+			oModelMock.expects("requestCanonicalPath")
+				.withExactArgs(sinon.match.same(oParentBinding2.getBoundContext()))
+				.returns(Promise.resolve("/EntitySet(ID='2')/navigation1"));
+			oCacheMock.expects("createSingle")
+				.withExactArgs(sinon.match.same(that.oModel.oRequestor),
+					"EntitySet(ID='2')/navigation1/navigation2/schema.Action",
+					{"sap-client" : "111"}, false, true)
+				.returns(oSingleCache);
+			oSingleCacheMock.expects("post")
+				.withExactArgs("groupId", {"foo" : "bar"})
+				.returns(Promise.resolve(oPostResult));
+			oModelMock.expects("addedRequestToGroup").withExactArgs("groupId");
+			oContextBindingMock.expects("_fireChange")
+				.withExactArgs({reason : ChangeReason.Change});
+
+			// code under test: execute creates a new cache with the new path
+			return oContextBinding.setParameter("foo", "bar").execute();
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("execute action, failure", function (assert) {
 		var oCacheMock = this.oSandbox.mock(_Cache),
 			sPath = "/ActionImport(...)",
@@ -774,11 +899,11 @@ sap.ui.require([
 		oCacheMock.expects("createSingle")
 			.withArgs(sinon.match.same(this.oModel.oRequestor), "ActionImport")
 			.returns(oSingleCache);
-		this.oSandbox.mock(oContextBinding).expects("getGroupId").returns("foo");
+		this.oSandbox.mock(oContextBinding).expects("getGroupId").returns("groupId");
 		this.oSandbox.mock(oSingleCache).expects("post")
-			.withExactArgs("foo", sinon.match.same(oContextBinding.oOperation.mParameters))
+			.withExactArgs("groupId", sinon.match.same(oContextBinding.oOperation.mParameters))
 			.returns(Promise.reject(new Error(sMessage)));
-		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup").withExactArgs("foo");
+		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup").withExactArgs("groupId");
 		this.oSandbox.mock(oContextBinding).expects("_fireChange").never();
 		this.oLogMock.expects("error").withExactArgs(sMessage, sPath, sClassName);
 
@@ -835,6 +960,30 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("execute, unresolved relative binding", function (assert) {
+		var oContextBinding = this.oModel.bindContext("schema.Action(...)");
+
+		assert.throws(function () {
+			oContextBinding.execute();
+		}, new Error("Unresolved binding: schema.Action(...)"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("execute, relative binding with deferred parent", function (assert) {
+		var oContextBinding,
+			oParentBinding = this.oModel.bindContext("/FunctionImport(...)");
+
+		oParentBinding.initialize();
+		oContextBinding = this.oModel.bindContext("schema.Action(...)",
+			oParentBinding.getBoundContext());
+
+		assert.throws(function () {
+			oContextBinding.execute();
+		}, new Error("Nested deferred operation bindings not supported: "
+			+ "/FunctionImport(...)/schema.Action(...)"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("execute: collection parameter", function (assert) {
 		var sPath = "/FunctionImport(...)",
 			oContextBinding = this.oModel.bindContext(sPath),
@@ -859,23 +1008,36 @@ sap.ui.require([
 
 		assert.throws(function () {
 			return oContextBinding.setParameter();
-		}, /The binding must be deferred/);
+		}, new Error("The binding must be deferred: /Function()"));
 		assert.throws(function () {
 			return oContextBinding.execute();
-		}, /The binding must be deferred/);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("function on relative binding", function (assert) {
-		assert.throws(function () {
-			return this.oModel.bindContext("Function(...)");
-		}, /Deferred bindings with a relative path are not supported: Function\(\.\.\.\)/);
+		}, new Error("The binding must be deferred: /Function()"));
 	});
 
 	//*********************************************************************************************
 	QUnit.test("composable function", function (assert) {
 		assert.throws(function () {
 			return this.oModel.bindContext("/Function(...)/Property");
-		}, /Composable functions are not supported: \/Function\(\.\.\.\)\/Property/);
+		}, new Error("The path must not continue after a deferred operation: "
+			+ "/Function(...)/Property"));
 	});
+
+	//*********************************************************************************************
+	if (TestUtils.isRealOData()) {
+		//*****************************************************************************************
+		QUnit.test("Action import on navigation property", function (assert) {
+			var oModel = new ODataModel({
+					serviceUrl :
+						TestUtils.proxy("/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/"),
+					synchronizationMode : "None"
+				}),
+				oContextBinding = oModel.bindContext("EMPLOYEE_2_TEAM/" +
+					"com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeManagerOfTeam(...)"),
+				oParentBinding = oModel.bindContext("/EMPLOYEES('1')");
+
+			oParentBinding.initialize();
+			oContextBinding.setContext(oParentBinding.getBoundContext());
+			return oContextBinding.setParameter("ManagerID", "3").execute();
+		});
+	}
 });
