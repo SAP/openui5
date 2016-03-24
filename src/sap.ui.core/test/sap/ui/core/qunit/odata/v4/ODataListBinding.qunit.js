@@ -106,11 +106,11 @@ sap.ui.require([
 			mParameters = {"$expand" : "foo", "$select" : "bar", "custom" : "baz"},
 			mQueryOptions = {};
 
-		oHelperMock = this.mock(_ODataHelper);
+		oHelperMock = this.oSandbox.mock(_ODataHelper);
 		oHelperMock.expects("buildQueryOptions")
 			.withExactArgs(this.oModel.mUriParameters, mParameters, ["$expand", "$select"])
 			.returns(mQueryOptions);
-		this.mock(_Cache).expects("create")
+		this.oSandbox.mock(_Cache).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
 				sinon.match.same(mQueryOptions));
 
@@ -308,9 +308,10 @@ sap.ui.require([
 		var oContext = {},
 			oListBinding = this.oModel.bindList("foo", oContext);
 
-		this.mock(this.oModel).expects("resolve").withExactArgs("foo", sinon.match.same(oContext))
+		this.oSandbox.mock(this.oModel).expects("resolve")
+			.withExactArgs("foo", sinon.match.same(oContext))
 			.returns("/absolute");
-		this.mock(oListBinding).expects("_fireChange")
+		this.oSandbox.mock(oListBinding).expects("_fireChange")
 			.withExactArgs({reason : ChangeReason.Change});
 
 		assert.strictEqual(oListBinding.initialize(), undefined, "no chaining");
@@ -320,9 +321,9 @@ sap.ui.require([
 	QUnit.test("initialize, unresolved path", function () {
 		var oListBinding = this.oModel.bindList("Suppliers");
 
-		this.mock(this.oModel).expects("resolve")
+		this.oSandbox.mock(this.oModel).expects("resolve")
 			.returns(undefined /*relative path, no context*/);
-		this.mock(oListBinding).expects("_fireChange").never();
+		this.oSandbox.mock(oListBinding).expects("_fireChange").never();
 
 		oListBinding.initialize();
 	});
@@ -332,7 +333,7 @@ sap.ui.require([
 		var oContext = {},
 			oListBinding = this.oModel.bindList("Suppliers");
 
-		this.mock(oListBinding).expects("_fireChange")
+		this.oSandbox.mock(oListBinding).expects("_fireChange")
 			.withExactArgs({reason : ChangeReason.Context});
 
 		oListBinding.setContext(oContext);
@@ -892,15 +893,16 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("updateValue: absolute binding", function (assert) {
 		var oListBinding = this.oModel.bindList("/SalesOrderList", null, null, null,
-				{$$groupId : "$direct"}),
+				{$$groupId : "myGroup", $$updateGroupId : "myUpdateGroup"}),
 			sPath = "0/SO_2_SOITEM/42",
 			oResult = {};
 
 		this.oSandbox.mock(oListBinding).expects("fireEvent").never();
 		this.oSandbox.mock(oListBinding.oCache).expects("update")
-			.withExactArgs("$direct", "bar", Math.PI, "edit('URL')", sPath)
+			.withExactArgs("myUpdateGroup", "bar", Math.PI, "edit('URL')", sPath)
 			.returns(Promise.resolve(oResult));
-		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup").withExactArgs("$direct");
+		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup")
+			.withExactArgs("myUpdateGroup");
 
 		// code under test
 		return oListBinding.updateValue("bar", Math.PI, "edit('URL')", sPath)
@@ -1026,15 +1028,33 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("$$groupId", function (assert) {
+	QUnit.test("$$groupId, $$updateGroupId", function (assert) {
 		var oBinding,
+			oHelperMock = this.oSandbox.mock(_ODataHelper),
 			mParameters = {};
 
-		this.mock(_ODataHelper).expects("buildBindingParameters").withExactArgs(mParameters)
-			.returns({$$groupId : "foo"});
+		this.oSandbox.mock(this.oModel).expects("getGroupId").twice()
+			.withExactArgs().returns("baz");
 
+		oHelperMock.expects("buildBindingParameters").withExactArgs(mParameters)
+			.returns({$$groupId : "foo", $$updateGroupId : "bar"});
+		// code under test
 		oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined, mParameters);
 		assert.strictEqual(oBinding.getGroupId(), "foo");
+		assert.strictEqual(oBinding.getUpdateGroupId(), "bar");
+
+		oHelperMock.expects("buildBindingParameters").withExactArgs(mParameters)
+			.returns({$$groupId : "foo"});
+		// code under test
+		oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined, mParameters);
+		assert.strictEqual(oBinding.getGroupId(), "foo");
+		assert.strictEqual(oBinding.getUpdateGroupId(), "foo");
+
+		oHelperMock.expects("buildBindingParameters").withExactArgs(mParameters).returns({});
+		// code under test
+		oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined, mParameters);
+		assert.strictEqual(oBinding.getGroupId(), "baz");
+		assert.strictEqual(oBinding.getUpdateGroupId(), "baz");
 
 		// buildBindingParameters not called for relative binding
 		oBinding = this.oModel.bindList("EMPLOYEE_2_EQUIPMENTS");
@@ -1043,15 +1063,15 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("getGroupId", function (assert) {
 		var oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined,
-				{$$groupId : "$direct"}),
+				{$$groupId : "myGroup"}),
 			oReadPromise = createResult(0);
 
 		this.oSandbox.mock(oBinding.oCache).expects("read")
-			.withExactArgs(0, 10, "$direct", undefined, sinon.match.func)
+			.withExactArgs(0, 10, "myGroup", undefined, sinon.match.func)
 			.callsArg(4)
 			.returns(oReadPromise);
 		this.oSandbox.mock(oBinding.oModel).expects("addedRequestToGroup")
-			.withExactArgs("$direct", sinon.match.func)
+			.withExactArgs("myGroup", sinon.match.func)
 			.callsArg(1);
 
 		oBinding.getContexts(0, 10);

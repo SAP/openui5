@@ -34,7 +34,8 @@ sap.ui.define([
 	 *   The parent context which is required as base for a relative path
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters which can be OData query options as specified in
-	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameter "$$groupId".
+	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameters "$$groupId"
+	 *   and "$$updateGroupId".
 	 *   Note: Binding parameters may only be provided for absolute binding paths as only those
 	 *   lead to a data service request.
 	 *   The following OData query options are allowed:
@@ -45,9 +46,17 @@ sap.ui.define([
 	 *   All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
 	 * @param {string} [mParameters.$$groupId]
-	 *   The batch group ID to be used for requests triggered by this binding; if not specified,
-	 *   the model's default group is used, see
+	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
+	 *   specified, the model's default group is used, see
 	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor}.
+	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
+	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
+	 * @param {string} [mParameters.$$updateGroupId]
+	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
+	 *   if not specified, the binding's parameter "$$groupId" is used and if "$$groupId" is not
+	 *   specified, the model's default group is used,
+	 *   see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
+	 *   For valid values, see parameter "$$groupId".
 	 * @throws {Error} When disallowed binding parameters are provided
 	 *
 	 * @alias sap.ui.model.odata.v4.ODataListBinding
@@ -62,6 +71,8 @@ sap.ui.define([
 	 */
 	var ODataListBinding = ListBinding.extend("sap.ui.model.odata.v4.ODataListBinding", {
 			constructor : function (oModel, sPath, oContext, mParameters) {
+				var oBindingParameters;
+
 				ListBinding.call(this, oModel, sPath, oContext);
 
 				if (!sPath || sPath.slice(-1) === "/") {
@@ -70,11 +81,15 @@ sap.ui.define([
 
 				this.oCache = undefined;
 				this.sGroupId = undefined;
+				this.sUpdateGroupId = undefined;
+
 				if (!this.bRelative) {
 					this.oCache = _Cache.create(oModel.oRequestor, sPath.slice(1),
 						_ODataHelper.buildQueryOptions(oModel.mUriParameters, mParameters,
 							["$expand", "$select"]));
-					this.sGroupId = _ODataHelper.buildBindingParameters(mParameters).$$groupId;
+					oBindingParameters = _ODataHelper.buildBindingParameters(mParameters);
+					this.sGroupId = oBindingParameters.$$groupId;
+					this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
 				} else if (mParameters) {
 					throw new Error("Bindings with a relative path do not support parameters");
 				}
@@ -347,7 +362,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the batch group ID of the binding that has to be used for read requests.
+	 * Returns the group ID of the binding that has to be used for read requests.
 	 *
 	 * @returns {string}
 	 *   The group ID
@@ -372,6 +387,18 @@ sap.ui.define([
 	 // @override
 	ODataListBinding.prototype.getLength = function() {
 		return this.bLengthFinal ? this.aContexts.length : this.aContexts.length + 10;
+	};
+
+	/**
+	 * Returns the group ID of the binding that has to be used for update requests.
+	 *
+	 * @returns {string}
+	 *   The group ID
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.getUpdateGroupId = function() {
+		return this.sUpdateGroupId || this.getGroupId();
 	};
 
 	/**
@@ -556,7 +583,7 @@ sap.ui.define([
 		var sGroupId, oPromise;
 
 		if (this.oCache) {
-			sGroupId = this.getGroupId();
+			sGroupId = this.getUpdateGroupId();
 			oPromise = this.oCache.update(sGroupId, sPropertyName, vValue, sEditUrl, sPath);
 			this.oModel.addedRequestToGroup(sGroupId);
 			return oPromise;

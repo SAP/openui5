@@ -150,7 +150,8 @@ sap.ui.define([
 							}
 						},
 						"$select" : ["ChangedAt", "CreatedAt" , "LifecycleStatusDesc", "Note",
-							"SalesOrderID"]
+							"SalesOrderID"],
+						"$$updateGroupId" : "SalesOrderUpdateGroup"
 					}
 				});
 				oView.byId("SupplierDetailsForm").unbindObject();
@@ -177,6 +178,14 @@ sap.ui.define([
 					oSupplierDetailsForm.bindObject(
 						"/BusinessPartnerList('" + sBusinessPartnerID + "')");
 				});
+		},
+
+		onSaveSalesOrder : function () {
+			this.getView().getModel().submitBatch("SalesOrderUpdateGroup");
+		},
+
+		onSaveSalesOrderList : function () {
+			this.getView().getModel().submitBatch("SalesOrderListUpdateGroup");
 		},
 
 		/**

@@ -8,7 +8,8 @@ sap.ui.define([
 ], function (_Helper, _Parser) {
 	"use strict";
 
-	var ODataHelper;
+	var ODataHelper,
+		rApplicationGroupID = /^\w+$/;
 
 	ODataHelper = {
 		/**
@@ -17,7 +18,8 @@ sap.ui.define([
 		 * binding parameters are not contained in the map. The following parameters and parameter
 		 * values are supported:
 		 * <ul>
-		 * <li> '$$groupId' with values undefined, '$auto' and '$direct'
+		 * <li> '$$groupId' with allowed values as specified in {@link #checkGroupId}
+		 * <li> '$$updateGroupId' with allowed values as specified in {@link #checkGroupId}
 		 * </ul>
 		 *
 		 * @param {object} mParameters
@@ -32,20 +34,21 @@ sap.ui.define([
 
 			if (mParameters) {
 				Object.keys(mParameters).forEach(function (sKey) {
+					var sValue = mParameters[sKey];
+
 					if (sKey.indexOf("$$") !== 0) {
 						return;
 					}
 
-					if (sKey !== "$$groupId") {
+					if (sKey !== "$$groupId" && sKey !== "$$updateGroupId") {
 						throw new Error("Unsupported binding parameter: " + sKey);
 					}
 
-					if (mParameters[sKey] !== undefined && mParameters[sKey] !== "$direct"
-						&& mParameters[sKey] !== "$auto") {
-							throw new Error("Unsupported value '" + mParameters[sKey]
-								+ "' for binding parameter '" + sKey + "'");
+					if (!ODataHelper.checkGroupId(sValue)) {
+						throw new Error("Unsupported value '" + sValue
+							+ "' for binding parameter '" + sKey + "'");
 					}
-					mResult[sKey] = mParameters[sKey];
+					mResult[sKey] = sValue;
 				});
 			}
 			return mResult;
@@ -136,6 +139,30 @@ sap.ui.define([
 				});
 			}
 			return mResult;
+		},
+
+		/**
+		 * Returns whether the given group ID is valid, which means it is either undefined, '$auto',
+		 * '$direct' or an application group ID, which is a non-empty string consisting of
+		 * alphanumeric characters from the basic Latin alphabet, including the underscore.
+		 *
+		 * @param {string} sGroupId
+		 *   The group ID
+		 * @param {boolean} [bApplicationGroup]
+		 *   Whether only an application group ID is considered valid
+		 * @returns {boolean}
+		 *   Whether the group ID is valid
+		 */
+		checkGroupId : function checkGroupId(sGroupId, bApplicationGroup) {
+			if (typeof sGroupId === "string" && rApplicationGroupID.test(sGroupId)) {
+				return true;
+			}
+
+			if (!bApplicationGroup) {
+				return sGroupId === undefined || sGroupId === "$auto" || sGroupId === "$direct";
+			}
+
+			return false;
 		},
 
 		/**

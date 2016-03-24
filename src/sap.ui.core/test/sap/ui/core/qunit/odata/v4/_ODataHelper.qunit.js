@@ -180,7 +180,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("buildBindingParameters", function (assert) {
+	QUnit.test("buildBindingParameters, $$groupId", function (assert) {
 		assert.deepEqual(_ODataHelper.buildBindingParameters(undefined), {});
 		assert.deepEqual(_ODataHelper.buildBindingParameters({}), {});
 		assert.deepEqual(_ODataHelper.buildBindingParameters({$$groupId : "$auto"}),
@@ -193,7 +193,43 @@ sap.ui.require([
 		}, new Error("Unsupported binding parameter: $$unsupported"));
 
 		assert.throws(function () {
-			_ODataHelper.buildBindingParameters({$$groupId : "invalid"});
-		}, new Error("Unsupported value 'invalid' for binding parameter '$$groupId'"));
+			_ODataHelper.buildBindingParameters({$$groupId : ""});
+		}, new Error("Unsupported value '' for binding parameter '$$groupId'"));
+		assert.throws(function () {
+			_ODataHelper.buildBindingParameters({$$groupId : "~invalid"});
+		}, new Error("Unsupported value '~invalid' for binding parameter '$$groupId'"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildBindingParameters, $$updateGroupId", function (assert) {
+		assert.deepEqual(_ODataHelper.buildBindingParameters({$$updateGroupId : "myGroup"}),
+				{$$updateGroupId : "myGroup"});
+		assert.deepEqual(_ODataHelper.buildBindingParameters(
+				{$$updateGroupId : "$direct", custom : "foo"}), {$$updateGroupId : "$direct"});
+
+		assert.throws(function () {
+			_ODataHelper.buildBindingParameters({$$unsupported : "foo"});
+		}, new Error("Unsupported binding parameter: $$unsupported"));
+
+		assert.throws(function () {
+			_ODataHelper.buildBindingParameters({$$updateGroupId : "~invalid"});
+		}, new Error("Unsupported value '~invalid' for binding parameter '$$updateGroupId'"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkGroupId", function (assert) {
+		assert.strictEqual(_ODataHelper.checkGroupId("myGroup"), true);
+		assert.strictEqual(_ODataHelper.checkGroupId("$auto"), true);
+		assert.strictEqual(_ODataHelper.checkGroupId("$direct"), true);
+		assert.strictEqual(_ODataHelper.checkGroupId(undefined), true);
+		assert.strictEqual(_ODataHelper.checkGroupId(""), false);
+		assert.strictEqual(_ODataHelper.checkGroupId("$invalid"), false);
+		assert.strictEqual(_ODataHelper.checkGroupId(42, false), false);
+
+		assert.strictEqual(_ODataHelper.checkGroupId("myGroup", true), true);
+		assert.strictEqual(_ODataHelper.checkGroupId("$auto", true), false);
+		assert.strictEqual(_ODataHelper.checkGroupId("$direct", true), false);
+		assert.strictEqual(_ODataHelper.checkGroupId(undefined, true), false);
+		assert.strictEqual(_ODataHelper.checkGroupId("", true), false);
 	});
 });

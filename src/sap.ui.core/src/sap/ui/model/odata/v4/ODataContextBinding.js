@@ -33,7 +33,8 @@ sap.ui.define([
 	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters which can be OData query options as specified in
-	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameter "$$groupId".
+	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameters "$$groupId"
+	 *   and "$$updateGroupId".
 	 *   Note: Binding parameters may only be provided for absolute binding paths as only those
 	 *   lead to a data service request.
 	 *   The following OData query options are allowed:
@@ -44,9 +45,17 @@ sap.ui.define([
 	 *   All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
 	 * @param {string} [mParameters.$$groupId]
-	 *   The batch group ID to be used for requests triggered by this binding; if not specified,
-	 *   the model's default group is used, see
+	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
+	 *   specified, the model's default group is used, see
 	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor}.
+	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
+	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
+	 * @param {string} [mParameters.$$updateGroupId]
+	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
+	 *   if not specified, the binding's parameter "$$groupId" is used and if "$$groupId" is not
+	 *   specified, the model's default group is used,
+	 *   see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
+	 *   For valid values, see parameter "$$groupId".
 	 * @throws {Error} When disallowed binding parameters are provided
 	 *
 	 * @alias sap.ui.model.odata.v4.ODataContextBinding
@@ -69,7 +78,8 @@ sap.ui.define([
 	 */
 	var ODataContextBinding = ContextBinding.extend("sap.ui.model.odata.v4.ODataContextBinding", {
 			constructor : function (oModel, sPath, oContext, mParameters) {
-				var iPos = sPath.indexOf("(...)"),
+				var oBindingParameters,
+					iPos = sPath.indexOf("(...)"),
 					bDeferred = iPos >= 0;
 
 				ContextBinding.call(this, oModel, sPath, oContext);
@@ -81,6 +91,7 @@ sap.ui.define([
 				this.sGroupId = undefined;
 				this.oOperation = undefined;
 				this.mQueryOptions = undefined;
+				this.sUpdateGroupId = undefined;
 
 				if (bDeferred) {
 					this.oOperation = {
@@ -100,7 +111,9 @@ sap.ui.define([
 				if (!this.bRelative) {
 					this.mQueryOptions = _ODataHelper.buildQueryOptions(oModel.mUriParameters,
 						mParameters, ["$expand", "$select"]);
-					this.sGroupId = _ODataHelper.buildBindingParameters(mParameters).$$groupId;
+					oBindingParameters = _ODataHelper.buildBindingParameters(mParameters);
+					this.sGroupId = oBindingParameters.$$groupId;
+					this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
 					if (!bDeferred) {
 						this.oCache = _Cache.createSingle(oModel.oRequestor, sPath.slice(1),
 							this.mQueryOptions);
@@ -287,7 +300,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the batch group ID of the binding that has to be used for read requests.
+	 * Returns the group ID of the binding that has to be used for read requests.
 	 *
 	 * @returns {string}
 	 *   The group ID
@@ -296,6 +309,18 @@ sap.ui.define([
 	 */
 	ODataContextBinding.prototype.getGroupId = function() {
 		return this.sGroupId || this.oModel.getGroupId();
+	};
+
+	/**
+	 * Returns the group ID of the binding that has to be used for update requests.
+	 *
+	 * @returns {string}
+	 *   The group ID
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype.getUpdateGroupId = function() {
+		return this.sUpdateGroupId || this.getGroupId();
 	};
 
 	/**
@@ -516,7 +541,7 @@ sap.ui.define([
 		var sGroupId, oPromise;
 
 		if (this.oCache) {
-			sGroupId = this.getGroupId();
+			sGroupId = this.getUpdateGroupId();
 			oPromise = this.oCache.update(sGroupId, sPropertyName, vValue, sEditUrl, sPath);
 			this.oModel.addedRequestToGroup(sGroupId);
 			return oPromise;

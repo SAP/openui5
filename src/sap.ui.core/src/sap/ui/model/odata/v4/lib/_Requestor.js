@@ -120,7 +120,7 @@ sap.ui.define([
 	 *   A resource path relative to the service URL for which this requestor has been created;
 	 *   use "$batch" to send a batch request
 	 * @param {string} [sGroupId="$direct"]
-	 *   Identifier of the batch group to associate the request with; if '$direct', the request is
+	 *   Identifier of the group to associate the request with; if '$direct', the request is
 	 *   sent immediately; for all other group ID values, the request is added to the given group
 	 *   and you can use {@link #submitBatch} to send all requests in that group.
 	 * @param {object} [mHeaders]
@@ -202,10 +202,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sends an OData batch request containing all requests referenced by batch group id.
+	 * Sends an OData batch request containing all requests referenced by the given group ID.
 	 *
 	 * @param {string} sGroupId
-	 *   ID of the batch group which should be sent as an OData batch request
+	 *   ID of the group which should be sent as an OData batch request
 	 * @returns {Promise}
 	 *   A promise on the outcome of the HTTP request resolving with <code>undefined</code>; it is
 	 *   rejected with an error if the batch request itself fails

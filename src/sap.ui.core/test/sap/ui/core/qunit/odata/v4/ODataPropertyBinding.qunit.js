@@ -129,12 +129,12 @@ sap.ui.require([
 				oContext = _Context.create(this.oModel, null, "/EMPLOYEES(ID='42')");
 
 			if (bAbsolute) {
-				this.mock(_Cache).expects("createSingle")
+				this.oSandbox.mock(_Cache).expects("createSingle")
 					.withExactArgs(sinon.match.same(this.oModel.oRequestor), sPath.slice(1),
 						{"sap-client" : "111"}, true)
 					.returns(oCache);
 			} else {
-				this.mock(_Cache).expects("createSingle").never();
+				this.oSandbox.mock(_Cache).expects("createSingle").never();
 			}
 
 			oBinding = this.oModel.bindProperty(sPath, oContext);
@@ -158,11 +158,11 @@ sap.ui.require([
 			mParameters = {"custom" : "foo"},
 			mQueryOptions = {};
 
-		oHelperMock = this.mock(_ODataHelper);
+		oHelperMock = this.oSandbox.mock(_ODataHelper);
 		oHelperMock.expects("buildQueryOptions")
 			.withExactArgs(this.oModel.mUriParameters, mParameters)
 			.returns(mQueryOptions);
-		this.mock(_Cache).expects("createSingle")
+		this.oSandbox.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES(ID='1')/Name",
 				sinon.match.same(mQueryOptions), true);
 
@@ -740,16 +740,36 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("$$groupId", function (assert) {
+	QUnit.test("$$groupId, $$updateGroupId", function (assert) {
 		var oBinding,
+			oHelperMock = this.oSandbox.mock(_ODataHelper),
+			oModel = new ODataModel({
+				serviceUrl : "/service/",
+				synchronizationMode : "None"
+			}),
 			mParameters = {};
 
-		this.oSandbox.mock(_ODataHelper).expects("buildBindingParameters")
-			.withExactArgs(mParameters)
-			.returns({$$groupId : "foo"});
+		this.oSandbox.mock(oModel).expects("getGroupId").twice().withExactArgs().returns("baz");
 
-		oBinding = this.oModel.bindProperty("/absolute", undefined, mParameters);
+		oHelperMock.expects("buildBindingParameters").withExactArgs(mParameters)
+			.returns({$$groupId : "foo", $$updateGroupId : "bar"});
+		// code under test
+		oBinding = oModel.bindProperty("/absolute", undefined, mParameters);
 		assert.strictEqual(oBinding.getGroupId(), "foo");
+		assert.strictEqual(oBinding.getUpdateGroupId(), "bar");
+
+		oHelperMock.expects("buildBindingParameters").withExactArgs(mParameters)
+			.returns({$$groupId : "foo"});
+		// code under test
+		oBinding = oModel.bindProperty("/absolute", undefined, mParameters);
+		assert.strictEqual(oBinding.getGroupId(), "foo");
+		assert.strictEqual(oBinding.getUpdateGroupId(), "foo");
+
+		oHelperMock.expects("buildBindingParameters").withExactArgs(mParameters).returns({});
+		// code under test
+		oBinding = oModel.bindProperty("/absolute", undefined, mParameters);
+		assert.strictEqual(oBinding.getGroupId(), "baz");
+		assert.strictEqual(oBinding.getUpdateGroupId(), "baz");
 
 		// buildBindingParameters not called for relative binding
 		oBinding = this.oModel.bindProperty("relative");
@@ -805,22 +825,24 @@ sap.ui.require([
 	//TODO enable this test again and restore the productive code from #1539070/1
 	QUnit.skip("setValue (absolute binding) via control or API", function (assert) {
 		var oControl,
+			oModel = new ODataModel({serviceUrl: "/", synchronizationMode : "None"}),
+			oModelMock = this.oSandbox.mock(oModel),
 			oPropertyBinding,
 			oPropertyBindingCacheMock;
 
-		this.getCacheMock().expects("read").returns(Promise.resolve("HT-1000's Name"));
+		oModelMock.expects("addedRequestToGroup").withExactArgs("groupId", sinon.match.func);
+		this.getCacheMock().expects("read").callsArg(2).returns(Promise.resolve("HT-1000's Name"));
 		oControl = new TestControl({
-			models : this.oModel,
-			text : "{parameters : {'$$groupId' : '$direct'}"
+			models : oModel,
+			text : "{parameters : {'$$groupId' : 'groupId', '$$updateGroupId' : 'updateGroupId'}"
 				+ ", path : '/ProductList(\\'HT-1000\\')/Name'"
 				+ ", type : 'sap.ui.model.odata.type.String'}"
 		});
 		oPropertyBinding = oControl.getBinding("text");
 		oPropertyBindingCacheMock = this.oSandbox.mock(oPropertyBinding.oCache);
-		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup").twice()
-			.withExactArgs("$direct");
+		oModelMock.expects("addedRequestToGroup").twice().withExactArgs("updateGroupId");
 		oPropertyBindingCacheMock.expects("update")
-			.withExactArgs("$direct", "Name", "foo", "ProductList('HT-1000')")
+			.withExactArgs("updateGroupId", "Name", "foo", "ProductList('HT-1000')")
 			.returns(Promise.resolve());
 
 		// code under test
@@ -833,7 +855,7 @@ sap.ui.require([
 
 		// set a different value via API
 		oPropertyBindingCacheMock.expects("update")
-			.withExactArgs("$direct", "Name", "bar", "ProductList('HT-1000')")
+			.withExactArgs("updateGroupId", "Name", "bar", "ProductList('HT-1000')")
 			.returns(Promise.resolve());
 
 		// code under test
