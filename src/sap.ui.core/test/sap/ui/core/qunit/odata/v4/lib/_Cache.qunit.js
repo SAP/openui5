@@ -506,7 +506,10 @@ sap.ui.require([
 		// code under test
 		oCache = _Cache.createSingle(oRequestor, sResourcePath, undefined, /*bSingleProperty*/true);
 
-		oCache.read().then(function (sName) {
+		assert.throws(function () {
+			oCache.post();
+		}, /POST request not allowed/);
+		return oCache.read().then(function (sName) {
 			assert.strictEqual(sName, "John Doe", "automatic {value : ...} unwrapping");
 		});
 	});
@@ -636,52 +639,74 @@ sap.ui.require([
 			oPostData = {},
 			oPromise,
 			oRequestor = _Requestor.create("/~/"),
+			oRequestorMock = this.oSandbox.mock(oRequestor),
 			sResourcePath = "LeaveRequest('1')/Submit",
-			oCache = _Cache.createSingle(oRequestor, sResourcePath),
-			oResult = {};
+			oCache = _Cache.createSingle(oRequestor, sResourcePath, undefined, false, true),
+			oResult1 = {},
+			oResult2 = {};
 
-		this.oSandbox.mock(oRequestor).expects("request")
+		oRequestorMock.expects("request")
 			.withExactArgs("POST", sResourcePath, sGroupId, undefined, oPostData)
-			.returns(Promise.resolve(oResult));
+			.returns(Promise.resolve(oResult1));
+		oRequestorMock.expects("request")
+			.withExactArgs("POST", sResourcePath, sGroupId, undefined, oPostData)
+			.returns(Promise.resolve(oResult2));
 
 		// code under test
-		oPromise = oCache.post(sGroupId, oPostData).then(function (oPostResult) {
-			assert.strictEqual(oPostResult, oResult);
-			return oCache.read("foo", "", fnDataRequested).then(function (oReadResult) {
-				assert.strictEqual(oReadResult, oResult);
-				assert.strictEqual(fnDataRequested.callCount, 0);
-			});
-		});
 		assert.throws(function () {
 			oCache.refresh();
-		}, /Refresh not allowed after POST/);
+		}, /Refresh not allowed when using POST/);
+		assert.throws(function () {
+			oCache.read();
+		}, /Read before a POST request/);
+		oPromise = oCache.post(sGroupId, oPostData).then(function (oPostResult1) {
+			assert.strictEqual(oPostResult1, oResult1);
+			return Promise.all([
+				oCache.read("foo", "", fnDataRequested).then(function (oReadResult) {
+					assert.strictEqual(oReadResult, oResult1);
+					assert.strictEqual(fnDataRequested.callCount, 0);
+				}),
+				oCache.post(sGroupId, oPostData).then(function (oPostResult2) {
+					assert.strictEqual(oPostResult2, oResult2);
+				})
+			]);
+		});
+		assert.throws(function () {
+			oCache.post(sGroupId, oPostData);
+		}, /Parallel POST requests not allowed/);
 		return oPromise;
 	});
 
 	//*********************************************************************************************
-	QUnit.test("SingleCache: post canceled by a subsequent post", function (assert) {
+	QUnit.test("SingleCache: post failure", function (assert) {
 		var sGroupId = "group",
+			sMessage = "deliberate failure",
 			oPostData = {},
+			oPromise,
 			oRequestor = _Requestor.create("/~/"),
+			oRequestorMock = this.oSandbox.mock(oRequestor),
 			sResourcePath = "LeaveRequest('1')/Submit",
-			oCache = _Cache.createSingle(oRequestor, sResourcePath),
-			oResult = {};
+			oCache = _Cache.createSingle(oRequestor, sResourcePath, undefined, false, true);
 
-		this.oSandbox.mock(oRequestor).expects("request").twice()
+		oRequestorMock.expects("request").twice()
 			.withExactArgs("POST", sResourcePath, sGroupId, undefined, oPostData)
-			.returns(Promise.resolve(oResult));
+			.returns(Promise.reject(new Error(sMessage)));
 
 		// code under test
-		return Promise.all([
-			oCache.post(sGroupId, oPostData).then(function (oPostResult) {
+		oPromise = oCache.post(sGroupId, oPostData).then(function () {
+			assert.ok(false);
+		}, function (oError) {
+			assert.strictEqual(oError.message, sMessage);
+			return oCache.post(sGroupId, oPostData).then(function () {
 				assert.ok(false);
 			}, function (oError) {
-				assert.strictEqual(oError.canceled, true, "Canceled error thrown");
-				assert.strictEqual(oError.message,
-					"Refresh canceled processing of pending request: /~/" + sResourcePath);
-			}),
-			oCache.post(sGroupId, oPostData)
-		]);
+				assert.strictEqual(oError.message, sMessage);
+			});
+		});
+		assert.throws(function () {
+			oCache.post(sGroupId, oPostData);
+		}, /Parallel POST requests not allowed/);
+		return oPromise.catch(function () {});
 	});
 
 	//*********************************************************************************************
@@ -746,7 +771,7 @@ sap.ui.require([
 		})["catch"](function (oError) {
 			assert.strictEqual(oError.canceled, true, "Canceled error thrown");
 			assert.strictEqual(oError.message,
-				"Refresh canceled processing of pending request: /~/Employees('1')");
+				"Refresh canceled pending request: /~/Employees('1')");
 		}));
 
 		oCache.refresh();
@@ -799,7 +824,7 @@ sap.ui.require([
 		})["catch"](function (oError) {
 			assert.strictEqual(oError.canceled, true, "Canceled error thrown");
 			assert.strictEqual(oError.message,
-				"Refresh canceled processing of pending request: /~/Employees?$skip=0&$top=10");
+				"Refresh canceled pending request: /~/Employees?$skip=0&$top=10");
 			// Elements for read after refresh must not be removed from the elements array
 			assert.strictEqual(oCache.aElements[9], "j", "elements array must not be cleared");
 		}));

@@ -92,7 +92,7 @@ sap.ui.define([
 	/**
 	 * Requests the elements in the given range and places them into the aElements list. While the
 	 * request is running, all indexes in this range contain the Promise.
-	 * A refresh cancels processing of all pending requests by throwing an error that has a
+	 * A refresh cancels all pending requests. Their promises are rejected with an error that has a
 	 * property <code>canceled</code> which is set to <code>true</code>.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._CollectionCache} oCache
@@ -115,7 +115,7 @@ sap.ui.define([
 				var i, iResultLength = oResult.value.length, oError;
 
 				if (aElements !== oCache.aElements) {
-					oError = new Error("Refresh canceled processing of pending request: "
+					oError = new Error("Refresh canceled pending request: "
 						+ oCache.oRequestor.getServiceUrl() + sResourcePath);
 					oError.canceled = true;
 					throw oError;
@@ -128,7 +128,7 @@ sap.ui.define([
 				for (i = 0; i < iResultLength; i++) {
 					oCache.aElements[iStart + i] = oResult.value[i];
 				}
-			})["catch"](function (oError) {
+			}).catch(function (oError) {
 				if (aElements === oCache.aElements) {
 					fill(oCache.aElements, undefined, iStart, iEnd);
 				}
@@ -161,7 +161,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * Returns a promise resolved with an OData object for a range of the requested data.
+	 * Returns a promise to be resolved with an OData object for a range of the requested data.
 	 *
 	 * @param {number} iIndex
 	 *   The start index of the range; the first row has index 0
@@ -181,8 +181,9 @@ sap.ui.define([
 	 *   "@odata.context" and the rows as an array in the property <code>value</code>) or a single
 	 *   value (in case of drill-down). If an HTTP request fails, the error from the _Requestor is
 	 *   returned and the requested range is reset to undefined.
-	 *   A refresh cancels processing of all pending promises by throwing an error that has a
-	 *   property <code>canceled</code> which is set to <code>true</code>.
+	 *
+	 *   A {@link #refresh} cancels all pending requests. Their promises are rejected with an error
+	 *   that has a property <code>canceled</code> which is set to <code>true</code>.
 	 * @throws {Error} If given index or length is less than 0
 	 * @see sap.ui.model.odata.v4.lib._Requestor#request
 	 */
@@ -246,7 +247,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Clears cache and cancels processing of all pending read requests.
+	 * Clears the cache and cancels all pending {@link #read} requests.
 	 */
 	CollectionCache.prototype.refresh = function () {
 		this.sContext = undefined;
@@ -311,9 +312,14 @@ sap.ui.define([
 	 * @param {boolean} [bSingleProperty]
 	 *   Whether the cache is used to read a single property, not a single entity; automatic
 	 *   unwrapping of <code>{value : "..."}</code> happens then
+	 * @param {boolean} [bPost]
+	 *   Whether the cache uses POST requests. If <code>true</code>, only {@link #post} may lead to
+	 *   a request, {@link #read} may only read from the cache; otherwise {@link #post} throws an
+	 *   error.
 	 */
-	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bSingleProperty) {
-		this.bPosted = false;
+	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bSingleProperty, bPost) {
+		this.bPost = bPost;
+		this.bPosting = false;
 		this.oRequestor = oRequestor;
 		this.sResourcePath = sResourcePath + Cache.buildQueryString(mQueryOptions);
 		this.bSingleProperty = bSingleProperty;
@@ -321,7 +327,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * Returns a promise resolved with an OData object for a POST request with the given data.
+	 * Returns a promise to be resolved with an OData object for a POST request with the given data.
 	 *
 	 * @param {string} [sGroupId]
 	 *   ID of the group to associate the request with;
@@ -330,31 +336,36 @@ sap.ui.define([
 	 *   The data to be sent with the POST request
 	 * @returns {Promise}
 	 *   A promise to be resolved with the result of the request.
-	 *   A subsequent post cancels processing a pending promise by throwing an error that has a
-	 *   property <code>canceled</code> which is set to <code>true</code>.
+	 * @throws {Error}
+	 *   If the cache does not allow POST or another POST is still being processed.
 	 */
 	SingleCache.prototype.post = function (sGroupId, oData) {
-		var oPromise,
-			that = this;
+		var that = this;
 
-		oPromise = this.oRequestor.request("POST", this.sResourcePath, sGroupId, undefined,
-			oData).then(function (oResult) {
-				var oError;
-
-				if (that.oPromise !== oPromise) {
-					oError = new Error("Refresh canceled processing of pending request: " + that);
-					oError.canceled = true;
-					throw oError;
-				}
+		if (!this.bPost) {
+			throw new Error("POST request not allowed");
+		}
+		// We disallow parallel POSTs because they represent OData actions which must not be
+		// canceled. However we cannot decide which POST has been processed last on the server, so
+		// we cannot tell which response represents the final server state.
+		if (this.bPosting) {
+			throw new Error("Parallel POST requests not allowed");
+		}
+		this.oPromise = this.oRequestor.request("POST", this.sResourcePath, sGroupId, undefined,
+				oData)
+			.then(function (oResult) {
+				that.bPosting = false;
 				return oResult;
+			}, function (oError) {
+				that.bPosting = false;
+				throw oError;
 			});
-		this.oPromise = oPromise;
-		this.bPosted = true;
-		return oPromise;
+		this.bPosting = true;
+		return this.oPromise;
 	};
 
 	/**
-	 * Returns a promise resolved with an OData object for the requested data.
+	 * Returns a promise to be resolved with an OData object for the requested data.
 	 *
 	 * @param {string} [sGroupId]
 	 *   ID of the group to associate the request with;
@@ -366,8 +377,11 @@ sap.ui.define([
 	 *   If no back end request is needed, the function is not called.
 	 * @returns {Promise}
 	 *   A promise to be resolved with the element.
-	 *   A refresh cancels processing a pending promise by throwing an error that has a
-	 *   property <code>canceled</code> which is set to <code>true</code>.
+	 *
+	 *   A {@link #refresh} cancels a pending request. Its promise is rejected with an error that
+	 *   has a property <code>canceled</code> which is set to <code>true</code>.
+	 * @throws {Error}
+	 *   If the cache is using POST but no POST request has been sent yet
 	 */
 	SingleCache.prototype.read = function (sGroupId, sPath, fnDataRequested) {
 		var that = this,
@@ -375,12 +389,15 @@ sap.ui.define([
 			sResourcePath = this.sResourcePath;
 
 		if (!this.oPromise) {
+			if (this.bPost) {
+				throw new Error("Read before a POST request");
+			}
 			oPromise = this.oRequestor.request("GET", sResourcePath, sGroupId)
 				.then(function (oResult) {
 					var oError;
 
 					if (that.oPromise !== oPromise) {
-						oError = new Error("Refresh canceled processing of pending request: "
+						oError = new Error("Refresh canceled pending request: "
 							+ that);
 						oError.canceled = true;
 						throw oError;
@@ -409,14 +426,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Clears cache and cancels processing of a pending read request.
+	 * Clears the cache and cancels a pending {@link #read} request.
 	 *
 	 * @throws {Error}
-	 *   If the cache was filled with a {@link #post}
+	 *   If the cache is using POST requests
 	 */
 	SingleCache.prototype.refresh = function () {
-		if (this.bPosted) {
-			throw new Error("Refresh not allowed after POST");
+		if (this.bPost) {
+			throw new Error("Refresh not allowed when using POST");
 		}
 		this.oPromise = undefined;
 	};
@@ -614,12 +631,17 @@ sap.ui.define([
 		 * @param {boolean} [bSingleProperty]
 		 *   Whether the cache is used to read a single property, not a single entity; automatic
 		 *   unwrapping of <code>{value : "..."}</code> happens then
+		 * @param {boolean} [bPost]
+		 *   Whether the cache uses POST requests. If <code>true</code>, only {@link #post} may
+		 *   lead to a request, {@link #read} may only read from the cache; otherwise {@link #post}
+		 *   throws an error.
 		 * @returns {sap.ui.model.odata.v4.lib._Cache}
 		 *   The cache
 		 */
 		createSingle : function _createSingle(oRequestor, sResourcePath, mQueryOptions,
-			bSingleProperty) {
-			return new SingleCache(oRequestor, sResourcePath, mQueryOptions, bSingleProperty);
+				bSingleProperty, bPost) {
+			return new SingleCache(oRequestor, sResourcePath, mQueryOptions, bSingleProperty,
+				bPost);
 		}
 	};
 
