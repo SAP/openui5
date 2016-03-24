@@ -140,7 +140,7 @@ sap.ui.define(['jquery.sap.global'],
 			rm.writeStyles();
 			rm.addClass("sapMPopoverCont");
 			rm.writeClasses();
-			rm.write(">");
+			rm.write(" role='application'>");
 
 			// scroll area
 			rm.write('<div class="sapMPopoverScroll"');
