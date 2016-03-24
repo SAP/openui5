@@ -111,7 +111,7 @@
 
 <span class="shTag">&lt;script&gt;</span>
      sap.ui.getCore().attachInit(<span class="sh-js-keyword">function</span> () {
-         <span class="sh-js-keyword">jQuery</span>(&quot;#content&quot;).<span class="sh-js-keyword">html</span>(&quot;<span class="shString">Hello World - UI5 is ready</span>&quot;);
+         jQuery(<span class="shString">&quot;#content&quot;</span>).html(<span class="shString">&quot;Hello World - UI5 is ready&quot;</span>);
      });
 <span class="shTag">&lt;/script&gt;</span>
 
@@ -163,10 +163,10 @@
 <span class="shTag">&lt;/script&gt;</span>
 
 <span class="shTag">&lt;script&gt;</span>
-    sap.ui.getCore().attachInit(function () {
+    sap.ui.getCore().attachInit(<span class="sh-js-keyword">function</span> () {
         <span class="sh-js-keyword">new</span> sap.m.Text({
-            <span class="shAttr">text</span>: &quot;<span class="shString">Hello World&quot;</span>
-        }).placeAt(&quot;<span class="shString">content</span>&quot;);
+            <span class="shAttr">text</span>: <span class="shString">&quot;Hello World&quot;</span>
+        }).placeAt(<span class="shString">&quot;content&quot;</span>);
     });
 <span class="shTag">&lt;/script&gt;</span>
 
@@ -210,11 +210,11 @@ All Controls of OpenUI have a fixed set of properties and methods to interact wi
 			We define an additional &quot;sap.ui.core.mvc&quot; namespace where the OpenUI5 views and all other Model-View-Controller (MVC) assets are located with an alias &quot;mvc&quot;.
 			The view code will look like this:</p>
 			<pre class="codeblock">
-&lt;mvc:View
-    xmlns=&quot;<span class="shString">sap.m</span>&quot;
-    xmlns:mvc=&quot;<span class="shString">sap.ui.core.mvc</span>&quot;&gt;
-    &lt;Text text=&quot;<span class="shString">Hello World</span>&quot;/&gt;
-&lt;/mvc:View&gt;</pre>
+<span class="shTag">&lt;mvc:View</span>
+    <span class="shAttr">xmlns</span>=<span class="shString">&quot;sap.m&quot;</span>
+    <span class="shAttr">xmlns:mvc</span>=<span class="shString">&quot;sap.ui.core.mvc&quot;</span><span class="shTag">&gt;</span>
+    <span class="shTag">&lt;Text</span> <span class="shAttr">text</span>=<span class="shString">&quot;Hello World&quot;</span> <span class="shTag">/&gt;</span>
+<span class="shTag">&lt;/mvc:View&gt;</span></pre>
 			<p>Inside the view tag we add the declaratively definition of our text control with the same properties as in the previous step. 
 			The XML tags are mapped to controls and the attributes are mapped to the properties of the control.
 			In OpenUI5 each control has its own id. 
@@ -241,10 +241,10 @@ All Controls of OpenUI have a fixed set of properties and methods to interact wi
 <span class="shTag">&lt;/script&gt;</span>
 
 <span class="shTag">&lt;script&gt;</span>
-    sap.ui.getCore().attachInit(function () {
+    sap.ui.getCore().attachInit(<span class="sh-js-keyword">function</span> () {
         <span class="sh-js-keyword">new</span> sap.ui.xmlview({
-            <span class="shAttr">viewName</span>: &quot;<span class="shString">sap.ui.demo.wt.App</span>&quot;
-        }).placeAt(&quot;<span class="shString">content</span>&quot;);
+            <span class="shAttr">viewName</span>: <span class="shString">&quot;sap.ui.demo.wt.App&quot;</span>
+        }).placeAt(<span class="shString">&quot;content&quot;</span>);
     });
 <span class="shTag">&lt;/script&gt;</span>
 
@@ -283,28 +283,28 @@ All Controls of OpenUI have a fixed set of properties and methods to interact wi
 			<p>In this step we replace the text with a button and show the &quot;Hello World&quot; message once the button gets pressed. The handling of this event will be implemented on the controller of the view.</p>
 			
 			<p>Here is the new code for our view:</p>
-			<pre class="codeblock">&lt;mvc:View
-    controllerName=&quot;<span class="shString">sap.ui.demo.wt.controller.App</span>&quot;
-    xmlns=&quot;<span class="shString">sap.m</span>&quot;
-    xmlns:mvc=&quot;<span class="shString">sap.ui.core.mvc</span>&quot;&gt;
-    &lt;Button
-        text=&quot;<span class="shString">Say Hello</span>&quot;
-        press=&quot;<span class="shString">onShowHello</span>&quot;/&gt;
-&lt;/mvc:View&gt;</pre>
+			<pre class="codeblock"><span class="shTag">&lt;mvc:View</span>
+    <span class="shAttr">controllerName</span>=<span class="shString">&quot;sap.ui.demo.wt.controller.App&quot;</span>
+    <span class="shAttr">xmlns</span>=<span class="shString">&quot;sap.m&quot;</span>
+    <span class="shAttr">xmlns:mvc</span>=<span class="shString">&quot;sap.ui.core.mvc&quot;</span><span class="shTag">&gt;</span>
+    <span class="shTag">&lt;Button</span>
+        <span class="shAttr">text</span>=<span class="shString">&quot;Say Hello&quot;</span>
+        <span class="shAttr">press</span>=<span class="shString">&quot;onShowHello&quot;</span> <span class="shTag">/&gt;</span>
+<span class="shTag">&lt;/mvc:View&gt;</span></pre>
 			<p>
 				We replace the text control with a button that carries the text “Say Hello” and calls the &quot;onShowHello&quot; function when being pressed. We also have to state the name of the controller that holds the &quot;onShowHello&quot; function.
 				We create a new file - the controller for our view, which we will call App.controller.js.
 			</p>
 			<pre class="codeblock">sap.ui.define([
-    &quot;sap/ui/core/mvc/Controller&quot;
+    <span class="shString">&quot;sap/ui/core/mvc/Controller&quot;</span>
 ], <span class="sh-js-keyword">function</span> (Controller) {
-    &quot;use strict&quot;;
+    <span class="shString">&quot;use strict&quot;</span>;
 
-    <span class="sh-js-keyword">return</span> Controller.extend(&quot;<span class="shString">sap.ui.demo.wt.App</span>&quot;, {
+    <span class="sh-js-keyword">return</span> Controller.extend(<span class="shString">&quot;sap.ui.demo.wt.App&quot;</span>, {
 
-        <span class="shAttr">onShowHello</span> : <span class="sh-js-keyword">function</span> () {
+        <span class="shAttr">onShowHello</span>: <span class="sh-js-keyword">function</span> () {
             <span class="shComment">// show a native JavaScript alert</span>
-            alert(&quot;<span class="shString">Hello World</span>&quot;);
+            alert(<span class="shString">&quot;Hello World&quot;</span>);
         }
     });
 });</pre>
@@ -344,26 +344,26 @@ All Controls of OpenUI have a fixed set of properties and methods to interact wi
 		</p>
 		<p>The new controller code will look like this:</p>
 <pre class="codeblock">sap.ui.define([
-    &quot;sap/ui/core/mvc/Controller&quot;
+    <span class="shString">&quot;sap/ui/core/mvc/Controller&quot;</span>
 ], <span class="sh-js-keyword">function</span> (Controller) {
-    &quot;use strict&quot;;
+    <span class="shString">&quot;use strict&quot;</span>;
 
-    <span class="sh-js-keyword">return</span> Controller.extend(&quot;<span class="shString">sap.ui.demo.wt.App</span>&quot;, {
+    <span class="sh-js-keyword">return</span> Controller.extend(<span class="shString">&quot;sap.ui.demo.wt.App&quot;</span>, {
 
-        <span class="shAttr">onInit</span> : <span class="sh-js-keyword">function</span> () {
+        <span class="shAttr">onInit</span>: <span class="sh-js-keyword">function</span> () {
             <span class="shComment">// set data model on view</span>
             <span class="sh-js-keyword">var</span> oData = {
-                <span class="shAttr">recipient</span> : {
-                    <span class="shAttr">name</span> : <span class="shString">&quot;World&quot;</span>
+                <span class="shAttr">recipient</span>: {
+                    <span class="shAttr">name</span>: <span class="shString">&quot;World&quot;</span>
                 }
             };
             <span class="sh-js-keyword">var</span> oModel = <span class="sh-js-keyword">new</span> JSONModel(oData);
             this.getView().setModel(oModel);
         },
 
-        <span class="shAttr">onShowHello</span> : <span class="sh-js-keyword">function</span> () {
+        <span class="shAttr">onShowHello</span>: <span class="sh-js-keyword">function</span> () {
             <span class="shComment">// show a native JavaScript alert</span>
-            alert(&quot;<span class="shString">Hello World</span>&quot;);
+            alert(<span class="shString">&quot;Hello World&quot;</span>);
         }
     });
 });</pre>
@@ -373,19 +373,19 @@ All Controls of OpenUI have a fixed set of properties and methods to interact wi
 			To be able to use this model from within the XML view we call the setModel function on the view and pass in our newly created model.
 		</p>
 		<p>Next, let us adapt our view once more:</p>
-<pre class="codeblock">&lt;mvc:View
-    controllerName=&quot;<span class="shString">sap.ui.demo.wt.controller.App</span>&quot;
-    xmlns=&quot;<span class="shString">sap.m</span>&quot;
-    xmlns:mvc=&quot;<span class="shString">sap.ui.core.mvc</span>&quot;&gt;
-    &lt;Button
-        text=&quot;<span class="shString">Say Hello</span>&quot;
-        press=&quot;<span class="shString">onShowHello</span>&quot;/&gt;
-    &lt;Input
-        value=&quot;<span class="shString">{/recipient/name}</span>&quot;
-        description=&quot;<span class="shString">Hello {/recipient/name}</span>&quot;
-        valueLiveUpdate=&quot;<span class="shString">true</span>&quot;
-        width=&quot;<span class="shString">60%</span>"/&gt;
-&lt;/mvc:View&gt;</pre>
+<pre class="codeblock"><span class="shTag">&lt;mvc:View</span>
+    <span class="shAttr">controllerName</span>=<span class="shString">&quot;sap.ui.demo.wt.controller.App&quot;</span>
+    <span class="shAttr">xmlns</span>=<span class="shString">&quot;sap.m&quot;</span>
+    <span class="shAttr">xmlns:mvc</span>=<span class="shString">&quot;sap.ui.core.mvc&quot;</span><span class="shTag">&gt;</span>
+    <span class="shTag">&lt;Button</span>
+        <span class="shAttr">text</span>=<span class="shString">&quot;Say Hello&quot;</span>
+        <span class="shAttr">press</span>=<span class="shString">&quot;onShowHello&quot;</span> <span class="shTag">/&gt;</span>
+    <span class="shTag">&lt;Input</span>
+        <span class="shAttr">value</span>=<span class="shString">&quot;{/recipient/name}&quot;</span>
+        <span class="shAttr">description</span>=<span class="shString">&quot;Hello {/recipient/name}&quot;</span>
+        <span class="shAttr">valueLiveUpdate</span>=<span class="shString">&quot;true&quot;</span>
+        <span class="shAttr">width</span>=<span class="shString">&quot;60%&quot;</span> <span class="shTag">/&gt;</span>
+<span class="shTag">&lt;/mvc:View&gt;</span></pre>
 		<p>
 			We add an sap.m.Input control to the view. With this, the user can input the recipient of our greetings. 
 			We bind its value to a UI5 model by using the declarative binding syntax for XML views:
@@ -412,10 +412,10 @@ All Controls of OpenUI have a fixed set of properties and methods to interact wi
 <span class="shTag">&lt;/script&gt;</span>
 
 <span class="shTag">&lt;script&gt;</span>
-    sap.ui.getCore().attachInit(function () {
+    sap.ui.getCore().attachInit(<span class="sh-js-keyword">function</span> () {
         <span class="sh-js-keyword">new</span> sap.ui.xmlview({
-            <span class="shAttr">viewName</span>: &quot;<span class="shString">sap.ui.demo.wt.App</span>&quot;
-        }).placeAt(&quot;<span class="shString">content</span>&quot;);
+            <span class="shAttr">viewName</span>: <span class="shString">&quot;sap.ui.demo.wt.App&quot;</span>
+        }).placeAt(<span class="shString">&quot;content&quot;</span>);
     });
 <span class="shTag">&lt;/script&gt;</span>
 
