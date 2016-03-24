@@ -1774,10 +1774,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './OverflowToo
 				}
 
 				$w.on("mouseup.sapMDialog", function () {
+					var $dialog = that.$(),
+						$dialogContent = that.$('cont');
+
 					$w.off("mouseup.sapMDialog, mousemove.sapMDialog");
 
 					if (bResize) {
 						that._$dialog.removeClass('sapMDialogResizing');
+						$dialogContent.height(parseInt($dialog.height(), 10) + parseInt($dialog.css("border-top-width"), 10) + parseInt($dialog.css("border-bottom-width"), 10));
 					}
 				});
 
