@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-
+	<meta charset="UTF-8" >
 	<title>Test Page for sap.m.TimePicker</title>
 	<script id="sap-ui-bootstrap"
 			data-sap-ui-theme="sap_bluecrystal"
@@ -386,7 +386,35 @@
 					});
 		});
 
-		test("Value is validated when setValue is called with null or undefined", function () {
+		test("test default locale", function () {
+			var stub = sinon.stub(sap.ui.getCore().getConfiguration(), 'getFormatLocale').returns('ar');
+			//Test default browser locale set to arabic
+			generateValuesTest([
+				{ key: "setDisplayFormat", value: "hh:mm:ss a"},
+				{ key: "setValueFormat", value: "hh:mm a"},
+				{ key: "setDateValue", value: getDate(23, 32, 0)}
+			], {
+				expInputVal: "11:32:00 م",
+				expValue: "11:32 م",
+				expDateValue: getDate(23, 32, 0)
+			});
+			//Test default browser local set to arabic and also custom TimePicker locale set to German
+			generateValuesTest([
+				{ key: "setLocaleId", value: "de_DE"},
+				{ key: "setValueFormat", value: "h:mm a" },
+				{ key: "setDisplayFormat", value: "hh:mm:ss a" },
+				{ key: "setDateValue", value: getDate(17, 23, 18) }
+			],
+			{
+				expValue: "5:23 nachm.",
+				expInputVal: "05:23:18 nachm.",
+				expDateValue: getDate(17, 23, 18)
+			});
+
+			stub.restore();
+		});
+
+		test("When setValue is called mask buffer is always up to date with its valid representation", function () {
 			var oTP = new sap.m.TimePicker({
 					displayFormat: "HH:mm"
 				});
