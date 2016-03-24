@@ -1108,18 +1108,7 @@ sap.ui.define([
 							that._changeField(oConditionGrid);
 						});
 
-						if (oConditionGridData) {
-							oControl.setSelected(oConditionGridData.showIfGrouped);
-						} else {
-							if (this.getUsePrevConditionSetting()) {
-								// select the value from the condition above
-								if (iPos > 0) {
-									oGrid = oTargetGrid.getContent()[iPos - 1];
-									oControl.setSelected(oGrid.showIfGrouped.getSelected());
-								}
-							}
-						}
-
+						oControl.setSelected(oConditionGridData ? oConditionGridData.showIfGrouped : true);
 					} else {
 						if (oConditionGridData) {
 							oControl.setSelected(true);
