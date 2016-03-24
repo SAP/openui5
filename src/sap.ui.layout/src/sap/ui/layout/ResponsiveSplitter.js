@@ -426,8 +426,8 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 			}
 		});
 
-		breakpoints.push(Number.MIN_VALUE); // -Infinity
-		breakpoints.push(Number.MAX_VALUE); // +Infinity
+		breakpoints.push(Number.NEGATIVE_INFINITY); // -Infinity
+		breakpoints.push(Number.POSITIVE_INFINITY); // +Infinity
 
 		breakpoints.sort( function (a, b) {
 			return a - b;
