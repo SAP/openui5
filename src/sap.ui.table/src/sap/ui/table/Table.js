@@ -4974,6 +4974,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		} else if (oEvent.keyCode === jQuery.sap.KeyCodes.F10 && (oEvent.shiftKey)) {
 			// SHIFT + 10 should open the context menu
 			this.oncontextmenu(oEvent);
+		} else if (oEvent.keyCode === jQuery.sap.KeyCodes.NUMPAD_PLUS) {
+			this._expandGroupHeader(oEvent);
+		} else if (oEvent.keyCode === jQuery.sap.KeyCodes.NUMPAD_MINUS) {
+			this._collapseGroupHeader(oEvent);
 		}
 	};
 
@@ -5473,23 +5477,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			}
 		}
 	};
-
-	/**
-	 * Default handler for sapleft event.
-	 * @private
-	 */
-	Table.prototype.onsapleft = function(oEvent) {
-		this._collapseGroupHeader(oEvent);
-	};
-
-	/**
-	 * Default handler for sapright event.
-	 * @private
-	 */
-	Table.prototype.onsapright = function(oEvent) {
-		this._expandGroupHeader(oEvent);
-	};
-
 
 	/**
 	 * If focus is on group header, open/close the group header, depending on the expand state.
