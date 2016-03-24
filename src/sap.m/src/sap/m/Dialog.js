@@ -693,7 +693,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			iDialogWidth = $dialog.innerWidth();
 			iDialogHeight = $dialog.innerHeight();
 
-			if (iDialogWidth % 2 !== 0 || iDialogHeight % 2 !== 0) {
+			if (sap.ui.Device.system.desktop && (iDialogWidth % 2 !== 0 || iDialogHeight % 2 !== 0)) {
 				if (!this._bRTL) {
 					sTranslateX = '-' + Math.floor(iDialogWidth / 2) + "px";
 				} else {
