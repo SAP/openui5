@@ -3220,7 +3220,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 						if (bCtrl) {
 							this.removeSelectionInterval(iRowIndex, iRowIndex);
 						} else {
-							if (this.getSelectedIndices().length === 1) {
+							if (this._getSelectedIndicesCount() === 1) {
 								this.clearSelection();
 							} else {
 								this.setSelectedIndex(iRowIndex);
@@ -4103,6 +4103,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 				rowDeselect: ""
 			}};
 
+		var iSelectedIndicesCount = this._getSelectedIndicesCount();
+
 		if (sSelectionMode === sap.ui.table.SelectionMode.Single) {
 			mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT");
 			mTooltipTexts.mouse.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT");
@@ -4115,14 +4117,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			mTooltipTexts.keyboard.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_MULTI_KEY");
 
 			if (bConsiderSelectionState === true) {
-				if (this.getSelectedIndices().length === 1) {
+				if (iSelectedIndicesCount === 1) {
 					// in multi selection case, if there is only one row selected it's not required
 					// to press CTRL in order to only deselect this single row hence use the description text
 					// of the single de-selection.
 					// for selection it's different since the description for SHIFT/CTRL handling is required
 					mTooltipTexts.mouse.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT");
 					mTooltipTexts.keyboard.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_KEY");
-				} else if (this.getSelectedIndices().length === 0) {
+				} else if (iSelectedIndicesCount === 0) {
 					// if there are no rows selected in multi selection mode, it's not required to press CTRL or SHIFT
 					// in order to enhance the selection.
 					mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT");
@@ -4138,7 +4140,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			// text for de-select is the same like for single selection
 			mTooltipTexts.keyboard.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_KEY");
 
-			if (bConsiderSelectionState === true && this.getSelectedIndices().length === 0) {
+			if (bConsiderSelectionState === true && iSelectedIndicesCount === 0) {
 				// if there is no row selected yet, the selection is like in single selection case
 				mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT");
 				mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_KEY");
@@ -6247,6 +6249,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		} else {
 			jQuery.sap.log.error("Vertical Scrollbar wasn't initialized yet.");
 		}
+	};
+
+	/**
+	 * Retrieves the number of selected entries.
+	 * @private
+	 */
+	Table.prototype._getSelectedIndicesCount = function () {
+		return this.getSelectedIndices().length;
 	};
 
 	return Table;
