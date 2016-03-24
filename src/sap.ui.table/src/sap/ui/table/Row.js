@@ -175,7 +175,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 		}
 
 		if ($DomRefs.rowSelectorText) {
-			$DomRefs.rowSelectorText.text(mTooltipTexts.keyboard[sSelectReference]);
+			var sText = "";
+			if (!(this._oNodeState && this._oNodeState.sum) && !this._bHasChildren) {
+				sText = mTooltipTexts.keyboard[sSelectReference];
+			}
+			$DomRefs.rowSelectorText.text(sText);
 		}
 
 		var $Row = $DomRefs.rowScrollPart;
