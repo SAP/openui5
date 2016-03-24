@@ -2108,13 +2108,9 @@ sap.ui.define([
 			this.oParent = null;
 			this.sParentAggregationName = null;
 			this.oPropagatedProperties = ManagedObject._oEmptyPropagatedProperties;
-
-			// if object is being destroyed no propagation needed
-			if (this._bIsBeingDestroyed) {
-				this.updateBindings(true, null);
-				this.updateBindingContext(false, undefined, true);
-				this.propagateProperties(true);
-			}
+			this.updateBindings(true, null);
+			this.updateBindingContext(false, undefined, true);
+			this.propagateProperties(true);
 
 			jQuery.sap.act.refresh();
 
@@ -2193,9 +2189,6 @@ sap.ui.define([
 	 */
 	ManagedObject.prototype.destroy = function(bSuppressInvalidate) {
 		var that = this;
-
-		// avoid binding update/propagation
-		this._bIsBeingDestroyed = true;
 
 		// set suppress invalidate flag
 		if (bSuppressInvalidate) {
@@ -2388,7 +2381,6 @@ sap.ui.define([
 			sModelName = oBindingInfo.model;
 			boundObject.events = oBindingInfo.events;
 		}
-
 		// if a model separator is found in the path, extract model name and path
 		iSeparatorPos = sPath.indexOf(">");
 		boundObject.sBindingPath = sPath;
