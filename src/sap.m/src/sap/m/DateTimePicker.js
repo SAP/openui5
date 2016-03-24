@@ -415,6 +415,16 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 	};
 
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	DateTimePicker.prototype.getAccessibilityInfo = function() {
+		var oInfo = DatePicker.prototype.getAccessibilityInfo.apply(this, arguments);
+		oInfo.type = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATETIMEINPUT");
+		return oInfo;
+	};
+
 	function _handleOkPress(oEvent){
 
 		this._selectDate();

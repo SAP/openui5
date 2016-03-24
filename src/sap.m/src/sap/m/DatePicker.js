@@ -888,6 +888,25 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 
 	};
 
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	DatePicker.prototype.getAccessibilityInfo = function() {
+		var oRenderer = this.getRenderer();
+		var oInfo = InputBase.prototype.getAccessibilityInfo.apply(this, arguments);
+		var sValue = this.getValue() || "";
+		if (this._bValid) {
+			var oDate = this.getDateValue();
+			if (oDate) {
+				sValue = this._formatValue(oDate);
+			}
+		}
+		oInfo.type = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATEINPUT");
+		oInfo.description = [sValue, oRenderer.getLabelledByAnnouncement(this), oRenderer.getDescribedByAnnouncement(this)].join(" ").trim();
+		return oInfo;
+	};
+
 	function _toggleOpen(){
 
 		if (this.getEditable() && this.getEnabled()) {
