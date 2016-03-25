@@ -974,7 +974,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 			oInfoBar = this._oList.getInfoToolbar();
 
 		// update the selection label
-		oInfoBar.setVisible(!!iSelectedContexts);
+		oInfoBar.setVisible(!!iSelectedContexts && this.getMultiSelect());
 		oInfoBar.getContent()[0].setText(this._oRb.getText("TABLESELECTDIALOG_SELECTEDITEMS", [iSelectedContexts]));
 	};
 
