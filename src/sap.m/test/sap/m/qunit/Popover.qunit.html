@@ -1799,6 +1799,25 @@
 			oPopover.destroy();
 			oButton.destroy();
 		});
+
+		test("ARIA role of the content", function () {
+			var oButton = new sap.m.Button({
+				text: "Open Popover"
+			});
+
+			oButton.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			var oPopover = new sap.m.Popover({
+				title: "Title text"
+			});
+			oPopover.openBy(oButton);
+			this.clock.tick(400);
+			equal(jQuery.sap.byId(oPopover.getId() + "-cont").attr("role"), "application", "Popover's content should have role application");
+
+			oPopover.destroy();
+			oButton.destroy();
+		});
 	</script>
 </head>
 <body id="body" class="sapUiBody">

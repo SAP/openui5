@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ActionSheet.
-sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation'],
-	function(jQuery, Dialog, Popover, library, Control, ItemNavigation) {
+sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/InvisibleText'],
+	function(jQuery, Dialog, Popover, library, Control, ItemNavigation, InvisibleText) {
 	"use strict";
 
 
@@ -63,7 +63,12 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 			/**
 			 * The internally managed cancel button.
 			 */
-			_cancelButton : {type : "sap.m.Button", multiple : false, visibility : "hidden"}
+			_cancelButton : {type : "sap.m.Button", multiple : false, visibility : "hidden"},
+
+			/**
+			* Hidden texts used for accesibility
+			*/
+			_invisibleAriaTexts: {type : "sap.ui.core.InvisibleText", multiple : true, visibility : "hidden"}
 		},
 		events : {
 
@@ -452,16 +457,28 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		this._parent._adjustScrollingPane();
 	};
 
+	ActionSheet.prototype._addAriaHiddenTexts = function(oButton) {
+		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+			var oInvisibleText = new InvisibleText();
+
+			this.addAggregation("_invisibleAriaTexts", oInvisibleText, false);
+			oButton.addAriaLabelledBy(oButton.getId());
+			oButton.addAriaLabelledBy(oInvisibleText.getId());
+		}
+	};
+
 	/* Override API methods */
 	ActionSheet.prototype.addButton = function(oButton) {
-		this.addAggregation("buttons",oButton, false);
+		this.addAggregation("buttons", oButton, false);
+		this._addAriaHiddenTexts(oButton);
 		this._preProcessActionButton(oButton);
 		oButton.attachPress(this._buttonSelected, this);
 		return this;
 	};
 
 	ActionSheet.prototype.insertButton = function(oButton, iIndex) {
-		this.insertAggregation("buttons",oButton, iIndex, false);
+		this.insertAggregation("buttons", oButton, iIndex, false);
+		this._addAriaHiddenTexts(oButton);
 		this._preProcessActionButton(oButton);
 		oButton.attachPress(this._buttonSelected, this);
 		return this;
