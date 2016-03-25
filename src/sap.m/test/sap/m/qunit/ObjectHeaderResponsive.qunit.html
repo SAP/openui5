@@ -95,6 +95,24 @@
 					oObjectHeader.destroy();
 				});
 
+				test("Title text div is not rendered when there is no text for the title", function () {
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						title: ""
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					// Assert
+					var $sTitle = oObjectHeader.$("txt");
+					ok(!$sTitle.attr("href"), "No title text div is rendered");
+
+					// Clean up
+					oObjectHeader.destroy();
+				});
+
 				test("Icon should be rendered", function () {
 					// Arrange
 					var oObjectHeader = createObjectHeader({
@@ -276,6 +294,25 @@
 					// Assert
 					var $sTitle = oObjectHeader.$("txt");
 					equal($sTitle.attr("href"), "#", "Title attribute href is not a link.");
+
+					// Clean up
+					oObjectHeader.destroy();
+				});
+
+				test("titleActive is set to true but no Title is provided", function () {
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						title: "",
+						titleActive: true
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					// Assert
+					var $objectHeader = oObjectHeader.$("title");
+					ok(!$objectHeader.hasClass("sapMOHRTitleActive"), "Title div doesn't have the active class \"sapMOHRTitleActive\".");
 
 					// Clean up
 					oObjectHeader.destroy();

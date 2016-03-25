@@ -1245,7 +1245,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		oRM.writeAttribute("id", oOH.getId() + "-title");
 		oRM.addClass("sapMOHRTitle");
 
-		if (oOH.getTitleActive()) {
+		if (oOH.getTitle().length && oOH.getTitleActive()) {
 			oRM.addClass("sapMOHRTitleActive");
 		}
 		if (oOH.getShowTitleSelector()) {
@@ -1317,7 +1317,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			oRM.writeAttribute("dir", sTextDir.toLowerCase());
 		}
 		oRM.write(">");
-		if (oOH.getTitleActive()) {
+		if (oOH.getTitle().length && oOH.getTitleActive()) {
 			oRM.write("<a");
 			if (oOH.getTitleHref()) { // if title is link write it
 				oRM.writeAttributeEscaped("href", oOH.getTitleHref());
