@@ -99,7 +99,7 @@
 
 		test("setValue", function () {
 			var oControl = this.oMaskInput.setPlaceholderSymbol('_').setMask('aa-aa'),
-				oApplyRulesSpy = sinon.spy(this.oMaskInput, "_applyRules");
+					oApplyRulesSpy = sinon.spy(this.oMaskInput, "_applyRules");
 
 			oControl.setValue(null);
 			strictEqual(oApplyRulesSpy.callCount, 0, "'_applyRules' method is not called when passing 'falsy' value");

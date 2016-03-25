@@ -454,7 +454,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 				sOutputValue;
 
 			sValue = this.validateProperty('value', sValue);
-			MaskInput.prototype.setValue.call(this, sValue, true);
+			MaskInput.prototype.setValue.call(this, sValue);
 			this._bValid = true;
 
 			// convert to date object

@@ -414,7 +414,7 @@
 			stub.restore();
 		});
 
-		test("When setValue is called mask buffer is always up to date with its valid representation", function () {
+		test("Value is validated when setValue is called with null or undefined", function () {
 			var oTP = new sap.m.TimePicker({
 					displayFormat: "HH:mm"
 				});
