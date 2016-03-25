@@ -197,7 +197,7 @@ sap.ui.define([
 
 				/**
 				 *
-				 * An instance of sap.uxap.AnchorBar to be embedded in the header
+				 * An instance of sap.m.Bar to be embedded in the header
 				 */
 				navigationBar: {type: "sap.m.Bar", multiple: false},
 
