@@ -2099,7 +2099,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 		}
 
 		var oSelectAllCheckBox = new CheckBox({
-			text: 'Select All',
+			text: this._rb.getText("COLUMNSPANEL_SELECT_ALL"),
 			selected: bAllSelected,
 			select: function(oEvent) {
 				var bSelected = oEvent.getParameter('selected');
