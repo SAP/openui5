@@ -1266,6 +1266,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @experimental Since 1.27.0 This API is not mature yet and might be changed or removed completely.
 	 * Productive code should not use it, except code that is delivered as part of UI5.
 	 * @private
+	 * @sap-restricted sap.ui.core,sap.ushell
 	 */
 	Core.prototype.loadLibraries = function(aLibraries, mOptions) {
 
