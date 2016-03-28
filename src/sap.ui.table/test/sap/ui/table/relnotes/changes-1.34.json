@@ -401,5 +401,17 @@
         "references": []
       }
     ]
+  },
+  "1.34.10": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "1eb96573079a21a858f2fa32ba563eaf09fd18c8",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: column freeze for columns outside visible area",
+        "references": []
+      }
+    ]
   }
 }
