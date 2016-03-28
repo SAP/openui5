@@ -1537,6 +1537,34 @@
 			oOverflowTB.destroy();
 		});
 
+		module("Control size measurement");
+
+		test("Size of a visible control reported correctly", function () {
+			var oTestButton = new sap.m.Button({width: "200px"});
+			oTestButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var sSize = sap.m.OverflowToolbar._getOptimalControlWidth(oTestButton);
+			strictEqual(sSize, 200);
+		});
+
+		test("Size of an invisible control reported correctly", function () {
+			var oTestButton = new sap.m.Button({width: "200px", visible: false});
+			oTestButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var sSize = sap.m.OverflowToolbar._getOptimalControlWidth(oTestButton);
+			strictEqual(sSize, 0);
+		});
+
+		test("Size of a control that was measured before, but now not in the DOM, reported correctly", function () {
+			var oTestButton = new sap.m.Button();
+
+			var sSize = sap.m.OverflowToolbar._getOptimalControlWidth(oTestButton, 333);
+			strictEqual(sSize, 333);
+		});
+
+
 	})();
 	</script>
 </head>
