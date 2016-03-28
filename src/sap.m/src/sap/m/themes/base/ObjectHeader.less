@@ -293,6 +293,23 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapMOHAttr {
 	clear: both;
 }
 
+.additionalOHNumberDiv.sapMOHNumberDiv {
+	margin-right: 1em;
+}
+
+.sapUiMedia-Std-Phone .additionalOHNumberDiv.sapMOHNumberDiv,
+.sapUiMedia-Std-Tablet .additionalOHNumberDiv.sapMOHNumberDiv {
+	display: none;
+}
+
+.additionalOHNumberDiv.sapMOHNumberDiv .sapMObjectNumber:not(.sapMObjectNumberStatusError):not(.sapMObjectNumberStatusWarning):not(.sapMObjectNumberStatusSuccess) {
+	color: @sapUiLightText;
+}
+
+.additionalOHNumberDiv.sapMOHNumberDiv .sapMObjectNumber .sapMObjectNumberText {
+	font-weight: normal;
+}
+
 /*
  * Do NOT clear if ObjectHeader is placed in a responsive grid layout.
  * The layout will clear after the ObjectHeader by itself. This caused problems
