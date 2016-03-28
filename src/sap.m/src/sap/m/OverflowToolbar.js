@@ -848,7 +848,7 @@ sap.ui.define([
 			iOptimalWidth = parseInt(oControl.$().css('min-width'), 10) || 0 + oControl.$().outerWidth(true) - oControl.$().outerWidth();
 			// For other elements, get the outer width
 		} else {
-			iOptimalWidth = oControl.$().outerWidth(true);
+			iOptimalWidth = oControl.getVisible() ? oControl.$().outerWidth(true) : 0;
 		}
 
 		if (iOptimalWidth === null) {
