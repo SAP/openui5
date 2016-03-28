@@ -947,7 +947,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 		}
 
 		if (this._sOldInputValue !== this._oTempValue.toString()) {
-			this.setValue(sValue);
+			InputBase.prototype.setValue.call(this, sValue);
+			this._sOldInputValue = sValue;
 			if (this.onChange && !this.onChange({value: sValue})) {//if the subclass didn't fire the "change" event by itself
 				this.fireChangeEvent(sValue);
 			}

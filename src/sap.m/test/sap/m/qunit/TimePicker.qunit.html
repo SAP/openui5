@@ -1783,7 +1783,8 @@
 			beforeEach: function () {
 				//system under test
 				this.oTp = new sap.m.TimePicker({
-					valueFormat: "hh mm"
+					valueFormat: "hh mm",
+					displayFormat: "hh mm"
 				});
 				this.oSpy = sinon.spy();
 				this.oTp.attachChange(this.oSpy);
@@ -1825,6 +1826,23 @@
 
 			spy = null;
 			tp.destroy();
+		});
+
+		test("change event fires when the value is reset", function() {
+			var oTpFocusDomRef = jQuery(this.oTp.getFocusDomRef());
+
+			//system under test
+			triggerMultipleKeypress(this.oTp, "09");
+			qutils.triggerKeydown(oTpFocusDomRef, jQuery.sap.KeyCodes.ENTER);
+
+			equals(this.oSpy.callCount, 1, "changed event fired when the value is set");
+
+			while (oTpFocusDomRef.val() !== "-- --") {
+				qutils.triggerKeydown(oTpFocusDomRef, jQuery.sap.KeyCodes.BACKSPACE);
+			}
+			qutils.triggerKeydown(oTpFocusDomRef, jQuery.sap.KeyCodes.ENTER);
+
+			equals(this.oSpy.callCount, 2, "changed event fired when the value is reset");
 		});
 
 		test("upon enter, change event fires only once", function() {
