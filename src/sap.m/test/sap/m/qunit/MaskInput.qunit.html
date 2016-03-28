@@ -98,10 +98,20 @@
 		});
 
 		test("setValue", function () {
-			var oControl = this.oMaskInput.setPlaceholderSymbol('_').setMask('aa-aa');
+			var oControl = this.oMaskInput.setPlaceholderSymbol('_').setMask('aa-aa'),
+					oApplyRulesSpy = sinon.spy(this.oMaskInput, "_applyRules");
 
+			oControl.setValue(null);
+			strictEqual(oApplyRulesSpy.callCount, 0, "'_applyRules' method is not called when passing 'falsy' value");
+			strictEqual(oControl.getValue(), "", "'getValue' is updated and returns correct VALIDATED value");
+			ok(!oControl._oTempValue.differsFromOriginal(), "When setting 'null' buffer is not modified");
+			oControl.setValue(undefined);
+			strictEqual(oApplyRulesSpy.callCount, 0, "'_applyRules' method is not called when passing 'falsy' value");
+			strictEqual(oControl.getValue(), "", "'getValue' is updated and returns correct VALIDATED value");
+			ok(!oControl._oTempValue.differsFromOriginal(), "When setting 'undefined' buffer is not modified");
 			oControl.setValue("");
-			strictEqual(oControl.getValue(), "", "When setValue is called the string is not modified.");
+			strictEqual(oApplyRulesSpy.callCount, 0, "'_applyRules' method is not called when passing 'falsy' value");
+			strictEqual(oControl.getValue(), "", "'getValue' is updated and returns correct VALIDATED value");
 			ok(!oControl._oTempValue.differsFromOriginal(), "When setting empty string buffer is not modified");
 
 			oControl.setValue("bc-d9");
@@ -343,6 +353,8 @@
 
 			strictEqual(getMaskInputDomValue(oControl), '12-3#', "DOM value is validated against MaskInput rules on focusout");
 			strictEqual(oControl._oTempValue._aContent.join(''), '12-3#', "The buffer value is identical with the DOM value");
+
+			oOtherControl.destroy();
 		});
 
 		test("Focus after invalid value is set through the API", function () {
