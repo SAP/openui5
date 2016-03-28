@@ -78,6 +78,27 @@
 			strictEqual(parseInt(aList[aList.length-1].text), iEnd, "the text property of the last element of the array is correct");
 		});
 
+		test("Value help CSS class is applied only when both properties 'Enabled' and 'Editable' are true", function () {
+			//assert
+			ok(this.oTimePicker.$().hasClass("sapMInputVH"), "Value help CSS class is applied by default ('Enabled' = true 'Editable' = true)");
+			//arrange
+			this.oTimePicker.setEnabled(false);
+			this.clock.tick(1000);
+			//assert
+			ok(!this.oTimePicker.$().hasClass("sapMInputVH"), "Value help CSS class is NOT applied by default ('Enabled' = false 'Editable' = true)");
+			//arrange
+			this.oTimePicker.setEnabled(true);
+			this.oTimePicker.setEditable(false);
+			this.clock.tick(1000);
+			//assert
+			ok(!this.oTimePicker.$().hasClass("sapMInputVH"), "Value help CSS class is NOT applied by default ('Enabled' = true 'Editable' = false)");
+			//arrange
+			this.oTimePicker.setEnabled(false);
+			this.oTimePicker.setEditable(false);
+			this.clock.tick(1000);
+			ok(!this.oTimePicker.$().hasClass("sapMInputVH"), "Value help CSS class is NOT applied by default ('Enabled' = true 'Editable' = false)");
+		});
+
 		module("Input formats, display formats and values", {
 			beforeEach: function() {
 				this._defaultFormatter = sap.ui.core.format.DateFormat.getTimeInstance({style: "medium", strictParsing: true, relative: false});
