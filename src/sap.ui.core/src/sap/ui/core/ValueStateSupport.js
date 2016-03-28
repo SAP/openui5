@@ -74,7 +74,7 @@ sap.ui.define(['jquery.sap.global', './Element'],
 		ValueStateSupport.getAdditionalText = function(vValue) {
 			var sState = null;
 
-			if (vValue.getValueState) {
+			if (vValue && vValue.getValueState) {
 				sState = vValue.getValueState();
 			} else if (sap.ui.core.ValueState[vValue]) {
 				sState = vValue;
