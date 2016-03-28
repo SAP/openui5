@@ -304,5 +304,17 @@
         "references": []
       }
     ]
+  },
+  "1.32.14": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "620bca7ee0cf85b029cda23119851b18d5fb790b",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: upload of several files fixed",
+        "references": []
+      }
+    ]
   }
 }

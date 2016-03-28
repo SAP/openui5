@@ -183,5 +183,17 @@
         "references": []
       }
     ]
+  },
+  "1.32.14": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "47a29fccd83966203cf6b2772668e72c19c8d8b2",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.ux3.Shell: Align text selection behavior across browsers",
+        "references": []
+      }
+    ]
   }
 }

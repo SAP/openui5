@@ -3167,5 +3167,108 @@
         "references": []
       }
     ]
+  },
+  "1.32.14": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "87c9ee5f3e8e7d4016ad824b312f57e9a7f05431",
+        "author": "Diana Mihaylova \u003cdiana.mihaylova@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectNumber: ValueStateSupport used to enrich the tooltip\"",
+        "references": []
+      },
+      {
+        "id": "5f963bb78731fc2c73eb9043bb35725360b56c5c",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Displaying large images is now fixed",
+        "references": []
+      },
+      {
+        "id": "107609bea7a07c68ab47f2a5eaf5312cea23b188",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: Resizable dialog layout in chrome 49.0 corrected",
+        "references": []
+      },
+      {
+        "id": "a2bd14c77fc90977d4acc454f8558b33bd6fdbb2",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTaBar: count in RTL is right aligned",
+        "references": []
+      },
+      {
+        "id": "7d0560e32ff2191a1192275ef22703004e429222",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTaBar: scroll arrows in Text-only mode are aligned with the text now",
+        "references": []
+      },
+      {
+        "id": "00417b7c2ab9edd1ed29a1034e39c949369c1651",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: padding on phone fixed",
+        "references": []
+      },
+      {
+        "id": "ab1c192a33f184ba687c7e02eec2c61b8ce2f3ce",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: DOM value should never be undefined but \"\"",
+        "references": []
+      },
+      {
+        "id": "068526a442da1b54afe06931ceb55e27c3d3dc9f",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: support valuestate popup in LTR",
+        "references": []
+      },
+      {
+        "id": "8137c627752742d50aa892af0e2b666efa0fbb68",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ListItemBase: aria-setsize calculation should use children instead of find.",
+        "references": []
+      },
+      {
+        "id": "8e40f004c6db7f623fd0859f9f24776dd692fd0e",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.QuickView: QuickView height is updated when data is changed",
+        "references": []
+      },
+      {
+        "id": "6dede58e6d36c75dc8ccadfac114641734413627",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: fix change event behavior when both mouse and keyboard are used",
+        "references": []
+      },
+      {
+        "id": "792d200356a5c970e2939ee8fb918f351ca7580e",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TableSelectDialog: Explored sample is fixed",
+        "references": []
+      },
+      {
+        "id": "444e568049e2018392e926d3ae48e818c58d2cda",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog: Group items are now properly selectable",
+        "references": []
+      },
+      {
+        "id": "e1b3e4f6fb269403e79967b957ea6943f8aea84a",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Icon: press event is fired twice on mobile device",
+        "references": []
+      }
+    ]
   }
 }

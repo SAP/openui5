@@ -480,5 +480,45 @@
         "references": []
       }
     ]
+  },
+  "1.32.14": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "a2bd14c77fc90977d4acc454f8558b33bd6fdbb2",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTaBar: count in RTL is right aligned",
+        "references": []
+      },
+      {
+        "id": "7d0560e32ff2191a1192275ef22703004e429222",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTaBar: scroll arrows in Text-only mode are aligned with the text now",
+        "references": []
+      },
+      {
+        "id": "00417b7c2ab9edd1ed29a1034e39c949369c1651",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: padding on phone fixed",
+        "references": []
+      },
+      {
+        "id": "898b74f57000a2069f143822ab8681cf55d19f8e",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m: selectable elements should still be selectable on combi device",
+        "references": []
+      },
+      {
+        "id": "61b836dbfaea253d91e3b3291848928971ee43f6",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.ResponsiveLayout: Labels wrong aligned in Edge",
+        "references": []
+      }
+    ]
   }
 }
