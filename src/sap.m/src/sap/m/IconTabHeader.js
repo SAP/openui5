@@ -1108,6 +1108,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		// check for valid changes
 		if (!oTouch || oTouch.pageX === this._iTouchStartPageX) {
+			this._iActiveTouch = undefined;
 			return;
 		}
 
