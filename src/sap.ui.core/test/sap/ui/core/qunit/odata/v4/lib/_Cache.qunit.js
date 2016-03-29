@@ -575,21 +575,29 @@ sap.ui.require([
 			oPatchPromise = new Promise(function (resolve, reject) {
 				fnResolve = resolve;
 			}),
+			oProduct = {},
 			oPromise = Promise.resolve({
 				value : [{
 					SalesOrderID : "0",
 					SO_2_SOITEM : [{
 						"@odata.etag" : sETag,
-						ItemPosition : "0",
-						Note : "Some Note"
+						Note : "Some Note",
+						SideEffect : "before",
+						SOITEM_2_PRODUCT : oProduct // let's assume we had expanded this
 					}]
 				}]
 			}),
 			oRequestor = _Requestor.create("/"),
 			oRequestorMock = this.oSandbox.mock(oRequestor),
 			sResourcePath = "/SalesOrderList(SalesOrderID='0')",
-			// server responds with different value, e.g. upper case
-			oResult = {"@odata.etag" : 'W/"19700101000000.9999999"', Note : "FOO"},
+			// server responds with different value, e.g. upper case, and side effect
+			oResult = {
+				"@odata.etag" : 'W/"19700101000000.9999999"',
+				Note : "FOO",
+				NotSelected : "ignore me",
+				SideEffect : "after"
+				// SOITEM_2_PRODUCT not present in PATCH response!
+			},
 			oCache = _Cache.create(oRequestor, sResourcePath, {$expand : {SO_2_SOITEM : true}});
 
 		oRequestorMock.expects("request")
@@ -604,20 +612,24 @@ sap.ui.require([
 			var oUpdatePromise
 				// code under test
 				= oCache.update("updateGroupId", "Note", "foo", sEditUrl, "0/SO_2_SOITEM/0")
-					.then(function (oResult0) {
-						assert.strictEqual(oResult0, oResult, "A Promise for the PATCH request");
+					.then(function (oResult1) {
+						assert.strictEqual(oResult1, oResult, "A Promise for the PATCH request");
 						return oCache.read(0, 1, undefined, "SO_2_SOITEM/0")
 							.then(function (oResult0) {
 								assert.strictEqual(oResult0["@odata.etag"], oResult["@odata.etag"],
 									"@odata.etag has been updated");
 								assert.strictEqual(oResult0.Note, oResult.Note,
 									"Note has been updated with server's response");
+								assert.strictEqual(oResult0.SideEffect, oResult.SideEffect,
+									"SideEffect has been updated with server's response");
+								assert.strictEqual("NotSelected" in oResult0, false,
+									"Cache not updated with properties not selected by GET");
+								assert.strictEqual(oResult0.SOITEM_2_PRODUCT, oProduct,
+									"Navigational properties not lost by cache update");
 							});
 					});
 
 			oCache.read(0, 1, undefined, "SO_2_SOITEM/0").then(function (oResult0) {
-				assert.strictEqual(oResult0["@odata.etag"], sETag,
-					"@odata.etag has not yet been updated");
 				assert.strictEqual(oResult0.Note, "foo",
 					"Note has been updated with user input");
 
@@ -842,7 +854,9 @@ sap.ui.require([
 		sETag : 'W/"19700101000000.0000000"',
 		oGetResult : {
 			"@odata.etag" : 'W/"19700101000000.0000000"',
-			Name : "MyName"
+			HERE_2_THERE : {},
+			Name : "MyName",
+			SideEffect : "before"
 		},
 		sReadPath : "value",
 		sResourcePath : "ProductList('HT-1000')"
@@ -854,8 +868,9 @@ sap.ui.require([
 			SalesOrderID : "0",
 			SO_2_SOITEM : [{
 				"@odata.etag" : 'W/"19700101000000.0000000"',
-				ItemPosition : "0",
-				Name : "MyName"
+				HERE_2_THERE : {},
+				Name : "MyName",
+				SideEffect : "before"
 			}]
 		},
 		sReadPath : "SO_2_SOITEM",
@@ -870,11 +885,16 @@ sap.ui.require([
 				oRequestor = _Requestor.create("/"),
 				oRequestorMock = this.oSandbox.mock(oRequestor),
 				oCache = _Cache.createSingle(oRequestor, o.sResourcePath, null, o.bSingleProperty),
-				oResult = {"@odata.etag" : 'W/"19700101000000.9999999"'},
+				// server responds with different value, e.g. upper case, and side effect
+				oResult = {
+					"@odata.etag" : 'W/"19700101000000.9999999"',
+					Name : "FOO",
+					NotSelected : "ignore me",
+					SideEffect : "after"
+					// SOITEM_2_PRODUCT not present in PATCH response!
+				},
 				oUpdatePromise;
 
-			// server responds with different value, e.g. upper case
-			oResult[o.bSingleProperty ? "value" : "Name"] = "FOO";
 			oRequestorMock.expects("request")
 				.withExactArgs("GET", o.sResourcePath, "groupId")
 				.returns(Promise.resolve(o.oGetResult));
@@ -885,18 +905,24 @@ sap.ui.require([
 
 			// code under test
 			oUpdatePromise = oCache.update("up", "Name", "foo", o.sEditUrl, o.sUpdatePath)
-				.then(function (oResult0) {
-					assert.strictEqual(oResult0, oResult, "A Promise for the PATCH request");
+				.then(function (oResult1) {
+					assert.strictEqual(oResult1, oResult, "A Promise for the PATCH request");
 
 					return oCache.read(undefined, o.sUpdatePath).then(function (vResult0) {
 						if (o.bSingleProperty) {
-							assert.strictEqual(vResult0, oResult.value,
+							assert.strictEqual(vResult0, oResult.Name,
 								"value has been updated with server's response");
 						} else {
 							assert.strictEqual(vResult0["@odata.etag"], oResult["@odata.etag"],
 								"@odata.etag has been updated");
 							assert.strictEqual(vResult0.Name, oResult.Name,
 								"Name has been updated with server's response");
+							assert.strictEqual(vResult0.SideEffect, oResult.SideEffect,
+								"SideEffect has been updated with server's response");
+							assert.strictEqual("NotSelected" in vResult0, false,
+								"Cache not updated with properties not selected by GET");
+							assert.deepEqual(vResult0.HERE_2_THERE, {/*details omitted*/},
+								"Navigational properties not lost by cache update");
 						}
 					});
 				});
@@ -905,8 +931,6 @@ sap.ui.require([
 					assert.strictEqual(vResult0, "foo",
 						"value has been updated with user input");
 				} else {
-					assert.strictEqual(vResult0["@odata.etag"], o.sETag,
-						"@odata.etag has not yet been updated");
 					assert.strictEqual(vResult0.Name, "foo",
 						"Name has been updated with user input");
 				}
