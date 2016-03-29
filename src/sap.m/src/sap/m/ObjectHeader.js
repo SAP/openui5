@@ -629,6 +629,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.fireIconPress({
 				domRef : iconOrImg
 			});
+		} else if (sSourceId === this.getId() + "-titleArrow") {
+			if (oEvent.type === "sapspace") {
+				oEvent.preventDefault();
+			}
+			this.fireTitleSelectorPress({
+				domRef : jQuery.sap.domById(sSourceId)
+			});
 		}
 	};
 
