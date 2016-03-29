@@ -193,11 +193,13 @@ public class SimpleProxyServlet extends HttpServlet {
 
       try {
 
-        // pipe the content of a POST, PUT and DELETE request
+        // pipe the content of a POST, PUT, PATCH, MERGE and DELETE request
         // -> opening the streams out of the ifs will cause the GET requests
         //    converted into POST requests which happens implicitely by using
         //    conn.getOutputStream().
-        if ("POST".equals(method) || "PUT".equals(method)) {
+        if ("POST".equals(method) || "PUT".equals(method) ||
+            "PATCH".equals(method) || "MERGE".equals(method)) {
+          // PATCH/MERGE => PUT (semantic requests - difference is client intent)
           is = request.getInputStream();
           os = conn.getOutputStream();
           IOUtils.copyLarge(is, os);
