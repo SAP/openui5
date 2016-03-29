@@ -4158,6 +4158,7 @@
 		 *
 		 * @experimental
 		 * @private
+		 * @sap-restricted sap.ui.core,sap.ushell
 		 */
 		jQuery.sap._loadJSResourceAsync = function(sResource, bIgnoreErrors) {
 
