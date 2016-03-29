@@ -620,6 +620,55 @@
 		assert.strictEqual(buttonClassList.contains('sapMNLI-CollapseButtonHide'), true, 'The "Show More" button should be hidden.');
 	});
 
+	QUnit.test('Notifications on L size (bigger than 640px) should position footer differently', function(assert) {
+	    // arrange
+		var lSizeClass = 'sapMNLI-LSize';
+
+	    // act
+		this.list.setWidth('640px');
+		sap.ui.getCore().applyChanges();
+		this.NotificationListItem._resizeNotification(); // Manually triggering resizing
+
+	    // assert
+	    assert.strictEqual(this.NotificationListItem.getDomRef().classList.contains(lSizeClass), true, 'NotificationListItem should have class "sapMNLI-LSize"');
+
+		// act
+		this.list.setWidth('340px');
+		sap.ui.getCore().applyChanges();
+		this.NotificationListItem._resizeNotification();
+
+		// assert
+		assert.strictEqual(this.NotificationListItem.getDomRef().classList.contains(lSizeClass), false, 'NotificationListItem should no longer have class "sapMNLI-LSize"');
+	});
+
+	QUnit.test('Test if _registerResize is called', function(assert) {
+		// arrange
+		this.NotificationListItem.setTitle('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi id lorem at ' +
+		'magna laoreet lobortis quis id tortor. Cras in tellus a nibh cursus porttitor et vel purus. Nulla neque ' +
+		'lacus, eleifend sed quam eget, facilisis luctus nulla. Vestibulum ut mollis sem, ac sollicitudin massa. ' +
+		'Mauris vehicula posuere tortor ac vulputate.');
+
+		this.NotificationListItem.setDescription('Donec felis sem, tincidunt vitae gravida eget, egestas sit amet dolor. ' +
+		'Duis mauris erat, eleifend sit amet dapibus vel, cursus quis ante. Pellentesque erat dui, aliquet id ' +
+		'fringilla eget, aliquam at odio. Interdum et malesuada fames ac ante ipsum primis in faucibus. ' +
+		'Donec tincidunt semper mattis. Nunc id convallis ex. Sed bibendum volutpat urna, vitae eleifend nisi ' +
+		'maximus id. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. ' +
+		'Nunc suscipit nulla ligula, ut faucibus ex pellentesque vel. Suspendisse id aliquet mauris. ');
+
+		this.NotificationListItem.setAuthorPicture('sap-icon://group');
+
+		sap.ui.getCore().applyChanges();
+
+		var fnEventSpy = sinon.spy(this.NotificationListItem, '_registerResize');
+
+		// arrange
+		this.list.setWidth('50%');
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(fnEventSpy.callCount, 1, 'The _registerResize() method should be called on resize.');
+	});
+
 	//================================================================================
 	// Notification List Item events
 	//================================================================================
