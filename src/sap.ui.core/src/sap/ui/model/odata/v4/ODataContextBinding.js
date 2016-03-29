@@ -127,6 +127,49 @@ sap.ui.define([
 			}
 		});
 
+	/**
+	 * Requests the metadata for this operation binding. Caches the result.
+	 *
+	 * @returns {Promise}
+	 *   A promise that is resolved with the operation metadata
+	 * @throws {Error}
+	 *   If the binding is not a deferred operation binding
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype._requestOperationMetadata = function () {
+		var oMetaModel = this.oModel.getMetaModel();
+
+		if (!this.oOperation) {
+			throw new Error("The binding must be deferred: " + this.sPath);
+		}
+		if (!this.oOperation.oMetadataPromise) {
+			// Note: undefined is more efficient than "" here
+			this.oOperation.oMetadataPromise = oMetaModel.requestObject(undefined,
+					oMetaModel.getMetaContext(this.sPath))
+				.then(function (oMetadata) {
+					if (!oMetadata) {
+						throw new Error("Unknown operation");
+					}
+					if (oMetadata.$kind === "ActionImport") {
+						return oMetaModel.requestObject("/" + oMetadata.$Action);
+					}
+					if (oMetadata.$kind === "FunctionImport") {
+						return oMetaModel.requestObject("/" + oMetadata.$Function);
+					}
+					throw new Error("Not an ActionImport or FunctionImport");
+				}).then(function (aOperationMetadata) {
+					var oOperationMetadata = aOperationMetadata[0];
+
+					if (aOperationMetadata.length !== 1) {
+						throw new Error("Unsupported: operation overloading");
+					}
+					return oOperationMetadata;
+				});
+		}
+		return this.oOperation.oMetadataPromise;
+	};
+
 	// See class documentation
 	// @override
 	// @public
@@ -217,58 +260,27 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataContextBinding.prototype.execute = function () {
-		var oMetaModel = this.oModel.getMetaModel(),
-			that = this;
+		var that = this;
 
-		if (!this.oOperation) {
-			throw new Error("The binding must be deferred: " + this.sPath);
-		}
-		if (!this.oOperation.oMetadataPromise) {
-			// Note: undefined is more efficient than "" here
-			this.oOperation.oMetadataPromise = oMetaModel.requestObject(undefined,
-					oMetaModel.getMetaContext(this.sPath))
-				.then(function (oMetaData) {
-					if (!oMetaData) {
-						throw new Error("Unknown operation");
-					}
-					if (oMetaData.$kind === "ActionImport") {
-						return oMetaModel.requestObject("/" + oMetaData.$Action);
-					}
-					if (oMetaData.$kind === "FunctionImport") {
-						return oMetaModel.requestObject("/" + oMetaData.$Function);
-					}
-					throw new Error("Not an ActionImport or FunctionImport");
-				}).then(function (aOperationMetaData) {
-					var oOperationMetaData = aOperationMetaData[0];
-
-					if (aOperationMetaData.length !== 1) {
-						throw new Error("Unsupported: operation overloading");
-					}
-					if (oOperationMetaData.$IsBound) {
-						throw new Error("Unsupported: bound operation");
-					}
-					that.oOperation.bAction = oOperationMetaData.$kind === "Action";
-					if (that.oOperation.bAction) {
-						// the action may reuse the cache because the resource path never changes
-						that.oCache = _Cache.createSingle(that.oModel.oRequestor,
-							that.sPath.replace("(...)", "").slice(1),
-							that.mQueryOptions);
-					}
-					return oOperationMetaData;
-				});
-		}
-		return this.oOperation.oMetadataPromise.then(function (oOperationMetaData) {
+		return this._requestOperationMetadata().then(function (oOperationMetadata) {
 			var sGroupId = that.getGroupId(),
 				aOperationParameters,
 				aParameters,
 				oPromise;
 
+			that.oOperation.bAction = oOperationMetadata.$kind === "Action";
 			if (that.oOperation.bAction) {
+				// the action may reuse the cache because the resource path never changes
+				if (!that.oCache) {
+					that.oCache = _Cache.createSingle(that.oModel.oRequestor,
+						that.sPath.replace("(...)", "").slice(1),
+						that.mQueryOptions);
+				}
 				oPromise = that.oCache.post(sGroupId, that.oOperation.mParameters);
 			} else {
 				// the function must always recreate the cache because the parameters influence the
 				// resource path
-				aOperationParameters = oOperationMetaData.$Parameter;
+				aOperationParameters = oOperationMetadata.$Parameter;
 				aParameters = [];
 				if (aOperationParameters) {
 					aOperationParameters.forEach(function (oParameter) {
