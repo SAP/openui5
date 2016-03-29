@@ -218,19 +218,14 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 			}
 		};
 
-		/* ----------------------------------------------------------- */
-		/* Popover                                                     */
-		/* ----------------------------------------------------------- */
-
 		/**
 		 * Creates an instance of <code>sap.m.Popover</code>.
 		 *
 		 * @returns {sap.m.Popover}
 		 * @private
 		 */
-		ComboBox.prototype._createPopover = function() {
-
-			// initialize Popover
+		ComboBox.prototype.createDropdown = function() {
+			var that = this;
 			var oPicker = new Popover({
 				showHeader: false,
 				placement: sap.m.PlacementType.VerticalPreferredBottom,
@@ -241,29 +236,19 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 				showArrow: false
 			});
 
-			this._decoratePopover(oPicker);
+			oPicker.open = function() {
+				return this.openBy(that);
+			};
+
 			return oPicker;
 		};
 
 		/**
-		 * Decorates a <code>sap.m.Popover</code> instance.
-		 *
-		 * @param {sap.m.Popover}
-		 * @private
-		 */
-		ComboBox.prototype._decoratePopover = function(oPopover) {
-			var that = this;
-			oPopover.open = function() {
-				return this.openBy(that);
-			};
-		};
-
-		/**
-		 * Required adaptations before rendering of the popover.
+		 * Required adaptations before rendering of the dropdown.
 		 *
 		 * @private
 		 */
-		ComboBox.prototype.onBeforeRenderingPopover = function() {
+		ComboBox.prototype.onBeforeRenderingDropdown = function() {
 			var oPopover = this.getPicker(),
 				sWidth = (this.$().outerWidth() / parseFloat(sap.m.BaseFontSize)) + "rem";
 
@@ -271,10 +256,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 				oPopover.setContentMinWidth(sWidth);
 			}
 		};
-
-		/* ----------------------------------------------------------- */
-		/* Dialog                                                      */
-		/* ----------------------------------------------------------- */
 
 		/**
 		 * Creates an instance of <code>sap.m.Dialog</code>.
@@ -889,7 +870,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 				return oPicker;
 			}
 
-			oPicker = this["_create" + sPickerType]();
+			oPicker = this["create" + sPickerType]();
 
 			// define a parent-child relationship between the control's and the picker popup
 			this.setAggregation("picker", oPicker, true);
@@ -989,10 +970,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 		};
 
 		/**
-		 * This event handler is called before the picker popover is opened.
+		 * This event handler is called before the picker popup is opened.
 		 *
 		 */
-		ComboBox.prototype.onBeforeOpenPopover = function() {};
+		ComboBox.prototype.onBeforeOpenDropdown = function() {};
 
 		/**
 		 * This event handler is called after the picker popup is opened.
