@@ -244,8 +244,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		ComboBoxBase.prototype.init = function() {
 			ComboBoxTextField.prototype.init.apply(this, arguments);
 
-			// sets the picker popup type
-			this.setPickerType("Popover");
+			this.setPickerType("Dropdown");
 
 			// initialize composites
 			this.createPicker(this.getPickerType());
