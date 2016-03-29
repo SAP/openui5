@@ -103,5 +103,26 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 			this.selectText(iValueLength, iValueLength);
 		};
 
+		/**
+		 * Indicates whether the custom placeholder is used.
+		 *
+		 * IE9 does not have a native placeholder support.
+		 * IE10+ fires the input event when an input field with a native placeholder is focused.
+		 */
+		ComboBoxTextField.prototype.bShowLabelAsPlaceholder = sap.ui.Device.browser.msie;
+
+		/* =========================================================== */
+		/* Public API methods                                          */
+		/* =========================================================== */
+
+		/**
+		 * Gets the DOM reference the message popup should be docked.
+		 *
+		 * @return {object}
+		 */
+		ComboBoxTextField.prototype.getDomRefForValueStateMessage = function() {
+			return this.getDomRef();
+		};
+
 		return ComboBoxTextField;
 	}, true);
