@@ -897,32 +897,6 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 			});
 		};
 
-		/**
-		 * This function can be called (if available on the concrete control)
-		 * to get the current accessibility state of the control.
-		 *
-		 * Applications must not call this hook method directly, it is called by the framework.
-		 *
-		 * Subclasses of Control should implement this hook to provide any necessary accessibility information:
-		 *
-		 * <code>
-		 * MyControl.prototype.getAccessibilityInfo = function() {
-		 *    return new sap.ui.core.AccInfo(...);
-		 * };
-		 * </code>
-		 *
-		 * Note: The returned object provides the accessibility state of the control at the point in time when this function is called.
-		 *
-		 * @return {sap.ui.core.AccInfo} Current accessibility state of the control.
-		 * @see {sap.ui.core.AccInfo}
-		 * @since 1.37.0
-		 * @function
-		 * @abstract
-		 * @name sap.ui.core.Control.prototype.getAccessibilityInfo
-		 * @protected
-		 */
-		//sap.ui.core.Control.prototype.getAccessibilityInfo = function() { return new sap.ui.core.AccInfo(...);};
-
 	})();
 
 	return Control;
