@@ -31,8 +31,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 		 */
 		TimePickerRenderer.addOuterClasses = function(oRm, oControl) {
 			oRm.addClass(TimePickerRenderer.CSS_CLASS);
-			oRm.addClass(INPUT_WITH_VALUE_HELP_CLASS); // just reuse styling of value help icon
-
+			if (oControl.getEnabled() && oControl.getEditable()) {
+				oRm.addClass(INPUT_WITH_VALUE_HELP_CLASS); // just reuse styling of value help icon
+			}
 			if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {
 				oRm.addClass(INPUT_IE9_CLASS);
 			}
