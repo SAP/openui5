@@ -61,14 +61,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 			return bEnabled ? "" : " " + oBundle.getText("TBL_CTRL_STATE_DISABLED");
 		}
 
-		if (typeof oControl.getAccessibilityInfo === "function") {
-			var oInfo = oControl.getAccessibilityInfo();
-			return { //TBD: Cleanup this indirection
-				editable: oInfo.getFocusable(),
-				text: oInfo.getFullDescription()
-			};
-		}
-
 		switch (oControl.getMetadata().getName()) {
 			case "sap.m.Text":
 			case "sap.m.Label":
