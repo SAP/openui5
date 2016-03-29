@@ -1,5 +1,5 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
-	<QuickView id="quickView" pages="{/pages}">
+	<QuickView id="quickView" pages="{ path : '/pages', templateShareable : 'true'}">
 		<QuickViewPage
 				pageId="{pageId}"
 				header="{header}"
@@ -7,8 +7,8 @@
 				title="{title}"
 				titleUrl="{titleUrl}"
 				description="{description}"
-				groups="{groups}">
-			<QuickViewGroup heading="{heading}" elements="{elements}">
+				groups="{ path : 'groups', templateShareable : 'true'}">
+			<QuickViewGroup heading="{heading}" elements="{ path : 'elements', templateShareable : 'true'}">
 				<QuickViewGroupElement
 						label="{label}"
 						value="{value}"
