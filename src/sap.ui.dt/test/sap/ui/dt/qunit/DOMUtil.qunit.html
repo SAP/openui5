@@ -18,6 +18,14 @@
 				content: "Nr.";
 				color: white;
 			}
+			.shrink {
+				transform: scale(0.1, 0.5);
+				-webkit-transform: scale(0.1, 0.5);
+				-moz-transform: scale(0.1, 0.5);
+				-ms-transform: scale(0.1, 0.5);
+				-o-transform: scale(0.1, 0.5);
+			}
+
 		</style>
 
 		<script id="sap-ui-bootstrap"
@@ -67,6 +75,14 @@
 
 				var zIndex = sap.ui.dt.DOMUtil.getZIndex(oButtonDomRef);
 				assert.equal(zIndex, "1000", 'and the static method "getZIndex" returns the right value');
+			});
+
+			QUnit.test("when a transition style is applied to the underlying element", function(assert) {
+				this.oButton.addStyleClass("shrink");
+				var oButtonDomRef = this.oButton.getDomRef();
+				var mSizeAfterTransition = sap.ui.dt.DOMUtil.getSize(oButtonDomRef);
+				assert.deepEqual(mSizeAfterTransition, {width: 0.1 * this.iWidth, height: 0.5 * this.iHeight}, 'then the static method "getSize" returns the right value');
+				this.oButton.removeStyleClass("shrink");
 			});
 
 			/**
@@ -183,7 +199,7 @@
 				});
 
 				this.oContainer.css({
-					overflow: "auto",
+					overflow: "auto"
 				});
 
 				assert.strictEqual(hasScrollBar(this.oContainer), true, "scroll is shown");
