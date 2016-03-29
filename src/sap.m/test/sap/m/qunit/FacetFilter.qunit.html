@@ -410,7 +410,7 @@
 		ok(oCheckBox1, "A control is contained in the left content of the bar");
 		ok(oCheckBox1 instanceof sap.m.CheckBox, "The bar contains a CheckBox");
 		ok(oCheckBox1.getTooltip(),"CheckBox contain tooltip");
-		ok(oCheckBox1.getSelected(), "Checkbox should be initially checked when the list is active and contains no selections");
+		ok(!oCheckBox1.getSelected(), "Checkbox should be initially unchecked when the list is active and contains no selections");
 		oFFL1.destroy();
 
 		var oFFL2 = new sap.m.FacetFilterList();
@@ -1098,47 +1098,66 @@
 			var oButton = oFF._getButtonForList(oFFL);
 			oPopover.attachEventOnce("afterOpen", function(oEvent) {
 
-				start();
+
 				var oCheckBox = getPopoverSelectAllCheckBox(oPopover);
 				ok(oCheckBox.getTooltip(),"Select All Checkbox for popover has tooltip");
-				strictEqual(oCheckBox.getSelected(), true, "Select all checkbox should be selected");
+				strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected");
 				var oList = getPopoverFilterItemsList(oPopover);
 
 				oFFL.getItems()[0].setSelected(true); // _updateSelectAllCheckBox called implicitly when list selection changes
 				strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected");
 
-				// All items selected
-				oFFL.getItems()[1].setSelected(true);
-				strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected");
+				oFFL.getItems()[1].setSelected(true); // _updateSelectAllCheckBox called implicitly when list selection changes
+				oFFL.getItems()[2].setSelected(true); // _updateSelectAllCheckBox called implicitly when list selection changes
+				setTimeout(function () {
+					strictEqual(oCheckBox.getSelected(), true, "Select all checkbox should be selected");
 
-				// Remove all selections
-				oFFL.getItems()[0].setSelected(false);
-				oFFL.getItems()[1].setSelected(false);
-				strictEqual(oCheckBox.getSelected(), true, "Select all checkbox should be selected");
 
-				oCheckBox.setSelected(false);
+					oFFL.getItems()[2].setSelected(false); // _updateSelectAllCheckBox called implicitly when list selection changes
+					setTimeout(function () {
+						strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected");
 
-				// Verify the select all checkbox state is set correctly after search
-				if (!sap.ui.Device.browser.msie) {
-	 				oFFL._search("c");
-					oFFL.getItems()[0].setSelected(true);
-					strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected");
-				};
+						oCheckBox.setSelected(false);
 
-				oFFL._search("");
-				strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected");
+						// Verify the select all checkbox state is set correctly after search
+						if (!sap.ui.Device.browser.msie) {
+							oFFL._search("c");
+							oFFL.getItems()[0].setSelected(true);
+						};
 
-				// Verify the select all checkbox state remains unchanged after search
-				if (!sap.ui.Device.browser.msie) {
-	 				oFFL._search("a");
-					oFFL.getItems()[0].setSelected(false);
-					strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected");
-				};
+						setTimeout(function () {
+							if (!sap.ui.Device.browser.msie) {
+								strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected after search");
+							};
 
-				oFFL._search("");
-				strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected");
+							oFFL._search("");
 
-				destroyFF(oFF);
+							setTimeout(function () {
+								strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected after search");
+
+								// Verify the select all checkbox state remains unchanged after search
+								if (!sap.ui.Device.browser.msie) {
+									oFFL._search("a");
+									oFFL.getItems()[0].setSelected(false);
+								};
+
+								setTimeout(function () {
+									// Verify the select all checkbox state remains unchanged after search
+									if (!sap.ui.Device.browser.msie) {
+										strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected after search");
+									};
+									oFFL._search("");
+
+									setTimeout(function () {
+										strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected after search");
+										start();
+										destroyFF(oFF);
+									}, 1000);
+								}, 1000);
+							}, 1000);
+						}, 1000);
+					}, 1000);
+				}, 1000);
 			});
 			openPopover(oFF, 0);
 		});
@@ -3221,7 +3240,7 @@
 			destroyFF(oFF);
 		});
 
-		test("'All' checkbox to be unchecked when items are preselected and model is assigned later", function() {
+		asyncTest("'All' checkbox to be unchecked when items are preselected and model is assigned later", function() {
 			var oFF = oSCHelper.createFFWithBinding();
 			var oFFL = oFF.getLists()[0];
 
@@ -3229,17 +3248,28 @@
 				"4" : "Val4"
 			});
 
+
+			oFF.placeAt('content');
+			sap.ui.getCore().applyChanges();
+
 			var oCheckbox = oFF._createSelectAllCheckboxBar(oFFL).getContentLeft()[0];
 
 			oFFL.setModel(oSCHelper.createModel());
 
 			ok(!oCheckbox.getSelected(), "Select all checkbox should be unchecked because of preselected items");
 
-			oCheckbox.fireSelect({
-				selected : true
+			oFFL.setSelectedKeys({
+				"1" : "Val1"
 			});
-			ok(!Object.getOwnPropertyNames(oFFL.getSelectedKeys()).length,
-					"Selected keys should be cleared by selecting 'All' checkbox");
+
+			oCheckbox.fireSelect({
+				selected : false
+			});
+			setTimeout(function () {
+				strictEqual(oFFL.getItems().filter(function (oItem) {return oItem.getSelected()}).length, 0, "Visible selected keys should be cleared by selecting 'All' checkbox");
+				start();
+			}, 1000);
+
 
 			destroyFF(oFF);
 		});
