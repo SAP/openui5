@@ -757,7 +757,7 @@ sap.ui
 				var aProperties = sODataQueryValue.split(',');
 				var aSelectedDataSet = [];
 				var oPushedObject;
-				var oDataEntry = aDataSet[0][aProperties[0].split('/')[0]];
+				var oDataEntry = aDataSet[0] ? aDataSet[0][aProperties[0].split('/')[0]] : null;
 				if (!(oDataEntry != null && oDataEntry.results && oDataEntry.results.length > 0)) {
 					var fnCreatePushedEntry = function(aProperties, oData, oPushedObject, sParentName) {
 						if (oData["__metadata"]) {
