@@ -25,6 +25,11 @@ asyncTest("Selection", function(){
 			oBinding.setSelectedIndex(1);
 			equal(oBinding.getSelectedIndex(), 1, "Selected index should be 1");
 
+			ok(bSelectionChanged, "selectionChanged event fired");
+			ok(!bSelectAll, "selectionChanged event don't sets selectAll");
+			bSelectionChanged= false;
+			bSelectAll = false;
+
 			oBinding.setSelectionInterval(2, 4);
 			equal(oBinding.getSelectedIndex(), 4, "Selected index should be the biggest index in the selection interval");
 			deepEqual(oBinding.getSelectedIndices(), [2,3,4], "Selected indices are [2,3,4]");
@@ -103,7 +108,15 @@ asyncTest("Selection", function(){
 			start();
 		}
 
+		var bSelectionChanged = false;
+		var bSelectAll = false;
+		function handlerSelectionChanged (oEvent) {
+			bSelectionChanged = true;
+			bSelectAll = oEvent.getParameter("selectAll");
+		}
+
 		oBinding.attachChange(handler1);
+		oBinding.attachSelectionChanged(handlerSelectionChanged);
 		oBinding.getContexts(0, 10);
 	});
 });
@@ -122,6 +135,11 @@ asyncTest("Select All", function() {
 			oBinding.selectAll();
 			equal(oBinding.getSelectedIndex(), 9, "The last selected node sets the selected index");
 			equal(oBinding.getSelectedIndices().length, 10, "All loaded nodes are now selected");
+
+			ok(bSelectionChanged, "selectionChanged event fired");
+			ok(bSelectAll, "selectionChanged event sets selectAll");
+			bSelectionChanged= false;
+			bSelectAll = false;
 
 			// 1. Collapse a node and expand it again
 			// 2. Its children aren't selected anymore
@@ -155,7 +173,15 @@ asyncTest("Select All", function() {
 			start();
 		}
 
+		var bSelectionChanged = false;
+		var bSelectAll = false;
+		function handlerSelectionChanged (oEvent) {
+			bSelectionChanged = true;
+			bSelectAll = oEvent.getParameter("selectAll");
+		}
+
 		oBinding.attachChange(handler1);
+		oBinding.attachSelectionChanged(handlerSelectionChanged);
 		oBinding.getContexts(0, 10);
 	});
 });
