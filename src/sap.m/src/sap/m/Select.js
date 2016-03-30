@@ -1982,6 +1982,34 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			return this;
 		};
 
+		/**
+		 * @see {sap.ui.core.Control#getAccessibilityInfo}
+		 * @protected
+		 */
+		Select.prototype.getAccessibilityInfo = function() {
+			var oInfo = {
+				role: this.getRenderer().getAriaRole(this),
+				focusable: this.getEnabled(),
+				enabled: this.getEnabled()
+			};
+
+			if (this.getType() === "IconOnly") {
+				var sDesc = this.getTooltip_AsString();
+				if (!sDesc) {
+					var oIconInfo = IconPool.getIconInfo(this.getIcon());
+					sDesc = oIconInfo && oIconInfo.text ? oIconInfo.text : "";
+				}
+
+				oInfo.type = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON");
+				oInfo.description = sDesc;
+			} else if (this.getType() === "Default") {
+				oInfo.type = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_COMBO");
+				oInfo.description = this._getSelectedItemText();
+			}
+
+			return oInfo;
+		};
+
 		return Select;
 
 }, /* bExport= */ true);

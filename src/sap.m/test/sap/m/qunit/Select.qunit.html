@@ -7813,6 +7813,52 @@
 			// cleanup
 			oSelect.destroy();
 		});
+
+		QUnit.module("getAccessibilityInfo");
+
+		QUnit.test("getAccessibilityInfo", function(assert) {
+			var oSelect = new sap.m.Select({
+				icon: "sap-icon://search",
+				type: "IconOnly",
+				tooltip: "Tooltip",
+				items: [
+					new sap.ui.core.Item({key: "Item1", text: "Item1"}),
+					new sap.ui.core.Item({key: "Item2", text: "Item2"}),
+					new sap.ui.core.Item({key: "Item3", text: "Item3"})
+				]
+			});
+			assert.ok(!!oSelect.getAccessibilityInfo, "Select has a getAccessibilityInfo function");
+			var oInfo = oSelect.getAccessibilityInfo();
+			assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
+
+			assert.strictEqual(oInfo.role, "button", "AriaRole");
+			assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
+			assert.strictEqual(oInfo.description, "Tooltip", "Description");
+			assert.strictEqual(oInfo.focusable, true, "Focusable");
+			assert.strictEqual(oInfo.enabled, true, "Enabled");
+			assert.strictEqual(oInfo.editable, undefined, "Editable");
+
+			oSelect.setTooltip("");
+			var oIconInfo = sap.ui.core.IconPool.getIconInfo(oSelect.getIcon());
+			oInfo = oSelect.getAccessibilityInfo();
+			assert.strictEqual(oInfo.role, "button", "AriaRole");
+			assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
+			assert.strictEqual(oInfo.description, oIconInfo && oIconInfo.text ? oIconInfo.text : "", "Description");
+
+			oSelect.setType("Default");
+			oInfo = oSelect.getAccessibilityInfo();
+			assert.strictEqual(oInfo.role, "combobox", "AriaRole");
+			assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_COMBO"), "Type");
+			assert.strictEqual(oInfo.description, "Item1", "Description");
+
+			oSelect.setSelectedKey("Item2");
+			oInfo = oSelect.getAccessibilityInfo();
+			assert.strictEqual(oInfo.role, "combobox", "AriaRole");
+			assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_COMBO"), "Type");
+			assert.strictEqual(oInfo.description, "Item2", "Description");
+
+			oSelect.destroy();
+		});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
