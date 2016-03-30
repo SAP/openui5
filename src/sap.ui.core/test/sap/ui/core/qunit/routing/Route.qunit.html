@@ -17,7 +17,6 @@
 			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 			jQuery.sap.require("sap.ui.thirdparty.sinon");
 			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
-			sinon.config.useFakeTimers = true;
 
 
 			jQuery.sap.require("sap.ui.core.routing.Route");
@@ -39,7 +38,6 @@
 
 				// Act
 				oRoute._routeMatched({});
-				this.clock.tick(0);
 
 				// Assert
 				strictEqual(fnMatchedSpy.callCount, 1, "did call the attachMatched spy");
@@ -64,9 +62,7 @@
 							oAttachReturnValue = oRoute["attach" + sEventName](oData, fnEventSpy, oListener);
 
 					// Act
-					oRoute._routeMatched({},
-							true);
-					this.clock.tick(0);
+					oRoute._routeMatched({}, true);
 
 					// Assert
 					strictEqual(fnEventSpy.callCount, 1, "did call the attach spy for the event " + sEventName);

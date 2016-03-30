@@ -308,18 +308,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 					oConfig.callback(this, oArguments, oConfig, oTargetControl, oView);
 				}
 
-				setTimeout(function(){
-					this.fireEvent("matched", oEventData);
-					oRouter.fireRouteMatched(oEventData);
-				}.bind(this), 0);
+				this.fireEvent("matched", oEventData);
+				oRouter.fireRouteMatched(oEventData);
 
 				// skip this event in the recursion
 				if (bInital) {
-					setTimeout(function(){
-						$.sap.log.info("The route named '" + oConfig.name + "' did match with its pattern", this);
-						this.fireEvent("patternMatched", oEventData);
-						oRouter.fireRoutePatternMatched(oEventData);
-					}.bind(this), 0);
+					$.sap.log.info("The route named '" + oConfig.name + "' did match with its pattern", this);
+					this.fireEvent("patternMatched", oEventData);
+					oRouter.fireRoutePatternMatched(oEventData);
 				}
 
 				return oPlaceInfo;

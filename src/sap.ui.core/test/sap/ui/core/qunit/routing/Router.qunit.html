@@ -197,7 +197,6 @@
 					router.initialize();
 					hasher.setHash("foo");
 					hasher.setHash("");
-					this.clock.tick(0);
 					router.destroy();
 
 					//Assert
@@ -356,7 +355,6 @@
 
 			// Act
 			oRouter.parse(sPattern);
-			this.clock.tick(0);
 
 			// Assert
 			strictEqual(fnFirstSpy.callCount, 1, "first route gets pattern matched");
@@ -397,7 +395,6 @@
 
 			// Act
 			oRouter.parse(sPattern);
-			this.clock.tick(0);
 
 			// Assert
 			strictEqual(fnFirstSpy.callCount, 1, "First route gets the hashchange");
@@ -427,7 +424,6 @@
 			//Act
 			router.attachRouteMatched(spy);
 			router.initialize();
-			this.clock.tick(0);
 
 			//Assert
 			strictEqual(spy.callCount, 1, "Did call the callback function once");
@@ -448,7 +444,6 @@
 			//Act
 			oRouter.getRoute("name").attachMatched(spy);
 			oRouter.initialize();
-			this.clock.tick(0);
 
 			//Assert
 			strictEqual(spy.callCount, 1, "Did call the callback function once");
@@ -482,7 +477,6 @@
 				foo : "foo"
 			});
 			sap.ui.core.routing.HashChanger.getInstance().setHash(url);
-			this.clock.tick(0);
 
 			//Assert
 			strictEqual(callCount, 1, "Did call the callback function once");
@@ -538,7 +532,6 @@
 				foo : "foo"
 			});
 			sap.ui.core.routing.HashChanger.getInstance().setHash(url);
-			this.clock.tick(0);
 
 			//Assert
 			strictEqual(callCount, 2, "Did call the callback function twice");
@@ -572,7 +565,6 @@
 
 			//Act
 			sap.ui.core.routing.HashChanger.getInstance().setHash("foo/");
-			this.clock.tick(0);
 
 			//Assert
 			strictEqual(callCount, 1, "Did call the callback function once");
@@ -1368,8 +1360,6 @@
 			oRouter.initialize();
 			oRouter.parse("product(1)");
 
-			this.clock.tick(0);
-
 			// Assert
 			assert.strictEqual(callCount, 1, "The route pattern matched handler should be called once");
 
@@ -1459,8 +1449,6 @@
 			assert.strictEqual(oParentRouteMatchedSpy.callCount, 1, "Parent should be matched");
 			assert.strictEqual(oChildRouteMatchedSpy.callCount, 1, "Child is matched");
 
-			this.clock.tick(0);
-
 			assert.strictEqual(oParentRouteMatchedEventSpy.callCount, 1, "routeMatched fired for parent route");
 			assert.strictEqual(oParentRoutePatternMatchedEventSpy.callCount, 0, "routePatternMatched not fired for parent route");
 			assert.strictEqual(oParentRouteMatchedEvent.getParameter("nestedRoute"), oChildRoute, "childRoute is passed to event listeners");
@@ -1543,8 +1531,6 @@
 			// Act
 			// remove the first slash as it will be implicitly added
 			hasher.setHash(sHash.substring(1));
-
-			this.clock.tick(0);
 
 			// Assert
 			aRouteMatchedEvents.forEach(function(oEvent, i, a) {
