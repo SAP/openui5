@@ -468,7 +468,7 @@ sap.ui.require([
 			"sap.ui.model.odata.v4.ODataPropertyBinding");
 
 		//code under test
-		oControl.bindProperty("text", {path : "/path", type : new sap.ui.model.type.String(),
+		oControl.bindProperty("text", {path : "/path", type : new TypeString(),
 			events : {
 				dataReceived : function (oEvent) {
 					assert.strictEqual(oEvent.getParameter("error"), oError, "expected error");
@@ -523,7 +523,7 @@ sap.ui.require([
 		//code under test
 		oControl.bindProperty("text", {
 			path : sPath,
-			type : new sap.ui.model.type.String()
+			type : new TypeString()
 		});
 
 		var oBinding = oControl.getBinding("text");
