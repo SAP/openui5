@@ -535,11 +535,11 @@
 @sapUiListActiveBackground: @sapUiListHighlightColor;
 @sapUiListActiveTextColor: contrast(@sapUiListActiveBackground, @sapUiListTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 @sapUiListSelectionHoverBackground: contrast(@sapUiListSelectionBackgroundColor, darken(@sapUiListSelectionBackgroundColor, 3), lighten(@sapUiListSelectionBackgroundColor, 3));
-@sapUiListFooterBackground: darken(@sapUiListBackground, 3);
-@sapUiListFooterTextColor: contrast(@sapUiListActiveBackground, lighten(@sapUiListTextColor, 20), @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
-@sapUiListGroupHeaderBackground: darken(@sapUiListBackground, 3);
-@sapUiListTableGroupHeaderBackground: darken(@sapUiListBackground, 4);
-@sapUiListTableGroupHeaderBorderColor: @sapUiListBorderColor;
+@sapUiListFooterBackground: @sapUiPageFooterBackground;
+@sapUiListFooterTextColor: contrast(@sapUiListActiveBackground, @sapUiListTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
+@sapUiListGroupHeaderBackground: @sapUiListBackground;
+@sapUiListTableGroupHeaderBackground: darken(@sapUiListBackground, 5);
+@sapUiListTableGroupHeaderBorderColor: darken(@sapUiListBorderColor, 10);
 @sapUiListTableGroupHeaderTextColor: contrast(@sapUiListTableGroupHeaderBackground, @sapUiListTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 @sapUiListTableFooterBorder: darken(@sapUiListBorderColor, 10);
 @sapUiListTableFixedBorder: darken(@sapUiListBorderColor, 30);
