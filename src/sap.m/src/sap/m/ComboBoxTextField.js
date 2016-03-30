@@ -124,5 +124,15 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 			return this.getDomRef();
 		};
 
+		/**
+		 * @see {sap.ui.core.Control#getAccessibilityInfo}
+		 * @protected
+		 */
+		ComboBoxTextField.prototype.getAccessibilityInfo = function() {
+			var oInfo = InputBase.prototype.getAccessibilityInfo.apply(this, arguments);
+			oInfo.type = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_COMBO");
+			return oInfo;
+		};
+
 		return ComboBoxTextField;
 	}, true);
