@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 		var sId = oCheckBox.getId(),
 			bEnabled = oCheckBox.getEnabled(),
 			bEditable = oCheckBox.getEditable(),
-			oCbLabel = oCheckBox._oLabel,
+			oCbLabel = oCheckBox.getAggregation("_label"),
 			bInErrorState = sap.ui.core.ValueState.Error == oCheckBox.getValueState(),
 			bInWarningState = sap.ui.core.ValueState.Warning == oCheckBox.getValueState();
 
@@ -48,7 +48,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 			oRm.addClass("sapMCbWarn");
 		}
 
-		if (oCbLabel) {
+		if (oCheckBox.getText()) {
 			oRm.addClass("sapMCbHasLabel");
 		}
 
