@@ -11,7 +11,7 @@ sap.ui.define([
 
 	function onRejected(oError) {
 		MessageBox.alert(oError.message, {
-			icon : sap.m.MessageBox.Icon.ERROR,
+			icon : MessageBox.Icon.ERROR,
 			title : oError.isConcurrentModification
 				? "Concurrent Modification"
 				: "Unknown Error"
@@ -68,7 +68,7 @@ sap.ui.define([
 				.then(function () {
 					oView.byId("TeamDetails").setBindingContext(oForm.getBindingContext());
 					MessageBox.alert("Budget changed", {
-						icon : sap.m.MessageBox.Icon.SUCCESS,
+						icon : MessageBox.Icon.SUCCESS,
 						title : "Success"});
 				});
 			oView.byId("changeBudgetDialog").close();
@@ -98,7 +98,7 @@ sap.ui.define([
 
 			oEmployeeContext.getModel().remove(oEmployeeContext).then(function () {
 				MessageBox.alert(oEmployeeContext.getPath(), {
-					icon : sap.m.MessageBox.Icon.SUCCESS,
+					icon : MessageBox.Icon.SUCCESS,
 					title : "Success"});
 			}, onRejected);
 		},
@@ -116,7 +116,7 @@ sap.ui.define([
 				.execute()
 				.then(function () {}, function (oError) {
 					MessageBox.alert(oError.message, {
-						icon : sap.m.MessageBox.Icon.ERROR,
+						icon : MessageBox.Icon.ERROR,
 						title : "Error"});
 				});
 		},
@@ -141,7 +141,7 @@ sap.ui.define([
 
 			this.getView().getModel().create("/EMPLOYEES", oEmployeeData).then(function (oData) {
 				MessageBox.alert(JSON.stringify(oData), {
-					icon : sap.m.MessageBox.Icon.SUCCESS,
+					icon : MessageBox.Icon.SUCCESS,
 					title : "Success"});
 				that.onCancelEmployee();
 			}, onRejected);

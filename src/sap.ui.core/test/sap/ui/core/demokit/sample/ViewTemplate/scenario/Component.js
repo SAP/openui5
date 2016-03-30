@@ -10,10 +10,14 @@
 sap.ui.define([
 		'jquery.sap.global',
 		'sap/ui/core/mvc/View', // sap.ui.view()
+		'sap/ui/core/mvc/ViewType',
 		'sap/ui/core/sample/common/Component',
 		'sap/ui/core/util/MockServer',
+		'sap/ui/model/odata/ODataModel',
+		'sap/ui/model/odata/v2/ODataModel',
 		'jquery.sap.script'
-	], function (jQuery, View, BaseComponent, MockServer/*, jQuerySapScript*/) {
+	], function (jQuery, View, ViewType, BaseComponent, MockServer, ODataModel, ODataModel2
+		/*, jQuerySapScript*/) {
 	"use strict";
 
 	var Component = BaseComponent.extend("sap.ui.core.sample.ViewTemplate.scenario.Component", {
@@ -28,9 +32,7 @@ sap.ui.define([
 				sMockServerBaseUri
 					= "test-resources/sap/ui/core/demokit/sample/ViewTemplate/scenario/data/",
 				oUriParameters = jQuery.sap.getUriParameters(),
-				fnModel = oUriParameters.get("oldOData") === "true"
-					? sap.ui.model.odata.ODataModel
-					: sap.ui.model.odata.v2.ODataModel,
+				fnModel = oUriParameters.get("oldOData") === "true" ? ODataModel : ODataModel2,
 				oModel;
 
 			// GWSAMPLE_BASIC with external annotations
@@ -44,7 +46,6 @@ sap.ui.define([
 				sAnnotationUri2 = this.proxy(sAnnotationUri2);
 				sServiceUri = this.proxy(sServiceUri);
 			} else {
-				jQuery.sap.require("sap.ui.core.util.MockServer");
 				this.aMockServers.push(new MockServer({rootUri : sServiceUri}));
 				this.aMockServers[0].simulate(/*TODO sServiceUri?!*/sMockServerBaseUri
 					+ "metadata.xml", {
@@ -83,7 +84,7 @@ sap.ui.define([
 			});
 
 			return sap.ui.view({
-					type : sap.ui.core.mvc.ViewType.XML,
+					type : ViewType.XML,
 					viewName : "sap.ui.core.sample.ViewTemplate.scenario.Main",
 					models : oModel
 				});
