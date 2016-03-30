@@ -708,12 +708,6 @@ var AnnotationsParser =  {
 		var oAnnotationNodes = xPath.selectNodes(oXmlDocument, "./d:Annotation", oParentElement);
 		var oPropertyValueNodes = xPath.selectNodes(oXmlDocument, "./d:PropertyValue", oParentElement);
 
-		jQuery.sap.assert(oAnnotationNodes.length === 0 || oPropertyValueNodes.length === 0, function () {
-			return (
-				"Record contains PropertyValue and Annotation elements, this is not allowed and might lead to " +
-				"annotation values being overwritten. Element: " + xPath.getPath(oParentElement)
-			);
-		});
 
 		if (oAnnotationNodes.length === 0 && oPropertyValueNodes.length === 0) {
 			mProperties = this.getPropertyValue(oXmlDocument, oParentElement, mAlias);
@@ -721,12 +715,34 @@ var AnnotationsParser =  {
 			for (i = 0; i < oAnnotationNodes.length; i++) {
 				var oAnnotationNode = xPath.nextNode(oAnnotationNodes, i);
 				var sTerm = this.replaceWithAlias(oAnnotationNode.getAttribute("Term"), mAlias);
+
+				// The following function definition inside the loop will be removed in non-debug builds.
+				/* eslint-disable no-loop-func */
+				jQuery.sap.assert(!mProperties[sTerm], function () {
+					return (
+						"Record contains values that overwrite previous ones; this is not allowed." +
+						" Element: " + xPath.getPath(oParentElement)
+					);
+				});
+				/* eslint-enable no-loop-func */
+
 				mProperties[sTerm] = this.getPropertyValue(oXmlDocument, oAnnotationNode, mAlias);
 			}
 
 			for (i = 0; i < oPropertyValueNodes.length; i++) {
 				var oPropertyValueNode = xPath.nextNode(oPropertyValueNodes, i);
 				var sPropertyName = oPropertyValueNode.getAttribute("Property");
+
+				// The following function definition inside the loop will be removed in non-debug builds.
+				/* eslint-disable no-loop-func */
+				jQuery.sap.assert(!mProperties[sPropertyName], function () {
+					return (
+						"Record contains values that overwrite previous ones; this is not allowed." +
+						" Element: " + xPath.getPath(oParentElement)
+					);
+				});
+				/* eslint-enable no-loop-func */
+
 				mProperties[sPropertyName] = this.getPropertyValue(oXmlDocument, oPropertyValueNode, mAlias);
 
 				var oApplyNodes = xPath.selectNodes(oXmlDocument, "./d:Apply", oPropertyValueNode);
