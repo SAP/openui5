@@ -320,6 +320,41 @@
 		// cleanup
 		oP13nConditionPanel.destroy();
 	});
+	
+	test("new GroupCondition showIfGrouped must be true", function(qUnit){
+		var oCondition1= { "key": "i1", "text": "", "operation": sap.m.P13nConditionOperation.GroupAscending, "keyField": "CompanyCode", "value1": "", "value2": "", showIfGrouped: true};
+		var oCondition2= { "key": "i2", "text": "", "operation": sap.m.P13nConditionOperation.GroupDescending, "keyField": "CompanyName", "value1": "", "value2": "", showIfGrouped: false};
+		aConditions= [oCondition1, oCondition2];
+
+		// system under test
+		oP13nConditionPanel = new sap.m.P13nConditionPanel({
+ 			maxConditions: -1
+		});
+
+		oP13nConditionPanel.setConditions(aConditions);
+		oP13nConditionPanel.setKeyFields([{key: "CompanyCode", text: "Code"}, {key: "CompanyName", text: "Name"}, {key: "group3", text: "Group3"}]);
+		oP13nConditionPanel.setOperations([ sap.m.P13nConditionOperation.GroupAscending, sap.m.P13nConditionOperation.GroupDescending ]);
+
+		// arrange
+		oP13nConditionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		var nItems= 2;
+		strictEqual(oP13nConditionPanel.getConditions().length, nItems, "getConditions should return '" + nItems + "' items.");
+
+		oP13nConditionPanel._handleAddCondition(oP13nConditionPanel._oConditionsGrid, oP13nConditionPanel._oConditionsGrid.getContent()[1]);
+		oP13nConditionPanel._oConditionsGrid.getContent()[2].keyField.setSelectedKey("group3");
+		
+		nItems= 3;
+		strictEqual(oP13nConditionPanel._oConditionsGrid.getContent().length, nItems, "# Condition grids should should be '" + nItems + "' after an Add.");
+		strictEqual(oP13nConditionPanel.getConditions().length, nItems, "getConditions should return '" + nItems + "' items.");
+		qUnit.ok(oP13nConditionPanel.getConditions()[2].showIfGrouped, "showIfGrouped value should return true");
+
+		// cleanup
+		oP13nConditionPanel.destroy();
+	});
+	
 
 }());
 
