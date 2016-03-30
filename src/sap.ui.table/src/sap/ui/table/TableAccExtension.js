@@ -99,7 +99,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 		var oInfo = ACCInfoHelper.getAccInfoOfControl(oControl);
 		if (oInfo) {
 			return { //TBD: Cleanup this indirection
-				editable: oInfo.getFocusable(),
+				editable: oInfo.focusable,
 				text: ACCInfoHelper.getFullDescription(oInfo, oBundle)
 			};
 		}
