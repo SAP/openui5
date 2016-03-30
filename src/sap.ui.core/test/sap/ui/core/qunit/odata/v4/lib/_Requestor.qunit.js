@@ -388,18 +388,6 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("submitBatch(...): success", function (assert) {
 		var aExpectedRequests = [{
-				method: "GET",
-				url: "Products",
-				headers: {
-					"Accept" : "application/json;odata.metadata=full",
-					"Accept-Language" : "ab-CD",
-					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true",
-					"Foo" : "bar"
-				},
-				body: undefined,
-				$reject: sinon.match.typeOf("function"),
-				$resolve: sinon.match.typeOf("function")
-			}, {
 				method: "POST",
 				url: "Customers",
 				headers: {
@@ -409,14 +397,28 @@ sap.ui.require([
 					"Foo" : "baz"
 				},
 				body: '{"ID":1}',
-				$reject: sinon.match.typeOf("function"),
-				$resolve: sinon.match.typeOf("function")
+				$promise: sinon.match.defined,
+				$reject: sinon.match.func,
+				$resolve: sinon.match.func
+			}, {
+				method: "GET",
+				url: "Products",
+				headers: {
+					"Accept" : "application/json;odata.metadata=full",
+					"Accept-Language" : "ab-CD",
+					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true",
+					"Foo" : "bar"
+				},
+				body: undefined,
+				$promise: sinon.match.defined,
+				$reject: sinon.match.func,
+				$resolve: sinon.match.func
 			}],
 			aPromises = [],
 			aResults = [{"foo1" : "bar1"}, {"foo2" : "bar2"}],
 			aBatchResults = [
-				{responseText: JSON.stringify(aResults[0])},
-				{responseText: JSON.stringify(aResults[1])}
+				{responseText: JSON.stringify(aResults[1])},
+				{responseText: JSON.stringify(aResults[0])}
 			],
 			oRequestor = _Requestor.create("/Service/", {"Accept-Language" : "ab-CD"});
 
@@ -448,12 +450,97 @@ sap.ui.require([
 		aPromises.push(oRequestor.submitBatch("group1")); // must not call request again
 
 		assert.strictEqual(oRequestor.mBatchQueue.group1, undefined);
-		TestUtils.deepContains(oRequestor.mBatchQueue.group2, [{
+		TestUtils.deepContains(oRequestor.mBatchQueue.group2, [[/*change set*/], {
 			method: "GET",
 			url: "SalesOrders"
 		}]);
 
 		return Promise.all(aPromises);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("submitBatch(...): single GET", function (assert) {
+		var oRequestor = _Requestor.create("/");
+
+		oRequestor.request("GET", "Products", "groupId");
+		this.oSandbox.mock(oRequestor).expects("request")
+			.withExactArgs("POST", "$batch", undefined, undefined, [
+				// Note: no empty change set!
+				sinon.match({method: "GET", url: "Products"})
+			]).returns(Promise.resolve([
+				{responseText: "{}"}
+			]));
+
+		// code under test
+		return oRequestor.submitBatch("groupId");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("submitBatch(...): merge PATCH requests", function (assert) {
+		var aPromises = [],
+			oRequestor = _Requestor.create("/");
+
+		aPromises.push(oRequestor
+			.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"}));
+		oRequestor.request("PATCH", "Products", "anotherGroupId", {}, {Name : "foo"});
+		aPromises.push(oRequestor
+			.request("PATCH", "Products('0')", "groupId", {}, {Name : "bar"}));
+		aPromises.push(oRequestor
+			.request("GET", "Products", "groupId"));
+		aPromises.push(oRequestor
+			.request("PATCH", "Products('0')", "groupId", {}, {Note : "hello, world"}));
+		// just different headers
+		aPromises.push(oRequestor
+			.request("PATCH", "Products('0')", "groupId", {"If-Match" : ""}, {Note : "no merge!"}));
+		// just a different verb
+		aPromises.push(oRequestor
+			.request("POST", "Products", "groupId", {"If-Match" : ""}, {Name : "baz"}));
+		this.oSandbox.mock(oRequestor).expects("request")
+			.withExactArgs("POST", "$batch", undefined, undefined, [
+				[
+					sinon.match({
+						body : JSON.stringify({Name : "bar", Note : "hello, world"}),
+						method : "PATCH",
+						url : "Products('0')"
+					}),
+					sinon.match({
+						body : JSON.stringify({Note : "no merge!"}),
+						method : "PATCH",
+						url : "Products('0')"
+					}),
+					sinon.match({
+						body : JSON.stringify({Name : "baz"}),
+						method : "POST",
+						url : "Products"
+					})
+				],
+				sinon.match({
+					method : "GET",
+					url : "Products"
+				})
+			]).returns(Promise.resolve([
+				[
+					{responseText : JSON.stringify({Name : "bar", Note : "hello, world"})},
+					{responseText : JSON.stringify({Note : "no merge!"})},
+					{responseText : JSON.stringify({Name : "baz"})}
+				],
+				{responseText : JSON.stringify({Name : "Name", Note : "Note"})}
+			]));
+
+		// code under test
+		aPromises.push(oRequestor.submitBatch("groupId"));
+
+		return Promise.all(aPromises).then(function (aResults) {
+			assert.deepEqual(aResults, [
+				{Name : "bar", Note : "hello, world"}, // 1st PATCH
+				{Name : "bar", Note : "hello, world"}, // 2nd PATCH, merged with 1st
+				{Name : "Name", Note : "Note"}, // GET
+				{Name : "bar", Note : "hello, world"}, // 3rd PATCH, merged with 1st and 2nd
+				{Note : "no merge!"}, // PATCH with different headers
+				{Name : "baz"}, // POST
+				undefined // submitBatch()
+			]);
+		});
 	});
 
 	//*********************************************************************************************
@@ -552,34 +639,38 @@ sap.ui.require([
 	QUnit.test("request(...): batch group id", function (assert) {
 		var oRequestor = _Requestor.create();
 
-		oRequestor.request("PATCH", "EntitySet", "group", {"foo": "bar"}, {"a": "b"});
-		oRequestor.request("PATCH", "EntitySet", "group", {"bar": "baz"}, {"c": "d"});
-		oRequestor.request("PATCH", "EntitySet", "$auto", {"header": "value"}, {"e": "f"});
+		oRequestor.request("PATCH", "EntitySet1", "group", {"foo": "bar"}, {"a": "b"});
+		oRequestor.request("PATCH", "EntitySet2", "group", {"bar": "baz"}, {"c": "d"});
+		oRequestor.request("PATCH", "EntitySet3", "$auto", {"header": "value"}, {"e": "f"});
 
 		TestUtils.deepContains(oRequestor.mBatchQueue, {
-			"group" : [{
-				method: "PATCH",
-				url: "EntitySet",
-				headers: {
-					"foo": "bar"
-				},
-				body: JSON.stringify({"a": "b"})
-			}, {
-				method: "PATCH",
-				url: "EntitySet",
-				headers: {
-					"bar": "baz"
-				},
-				body: JSON.stringify({"c": "d"})
-			}],
-			"$auto": [{
-				method: "PATCH",
-				url: "EntitySet",
-				headers: {
-					"header": "value"
-				},
-				body: JSON.stringify({"e": "f"})
-			}]
+			"group" : [
+				[/*change set!*/{
+					method: "PATCH",
+					url: "EntitySet1",
+					headers: {
+						"foo": "bar"
+					},
+					body: JSON.stringify({"a": "b"})
+				}, {
+					method: "PATCH",
+					url: "EntitySet2",
+					headers: {
+						"bar": "baz"
+					},
+					body: JSON.stringify({"c": "d"})
+				}]
+			],
+			"$auto": [
+				[/*change set!*/{
+					method: "PATCH",
+					url: "EntitySet3",
+					headers: {
+						"header": "value"
+					},
+					body: JSON.stringify({"e": "f"})
+				}]
+			]
 		});
 	});
 
