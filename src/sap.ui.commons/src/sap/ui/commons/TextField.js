@@ -831,6 +831,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	};
 
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	TextField.prototype.getAccessibilityInfo = function() {
+		return {
+			role: "textbox",
+			type: sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons").getText("ACC_CTR_TYPE_INPUT"),
+			description: this.getValue() || "",
+			focusable: this.getEnabled(),
+			enabled: this.getEnabled(),
+			editable: this.getEnabled() && this.getEditable()
+		};
+	};
+
 
 	return TextField;
 

@@ -503,6 +503,16 @@ sap.ui.define(['jquery.sap.global', './TextField', 'sap/ui/model/type/Date', 'sa
 
 		};
 
+		/**
+		 * @see {sap.ui.core.Control#getAccessibilityInfo}
+		 * @protected
+		 */
+		DatePicker.prototype.getAccessibilityInfo = function() {
+			var oInfo = TextField.prototype.getAccessibilityInfo.apply(this, arguments);
+			oInfo.type = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons").getText("ACC_CTR_TYPE_DATEINPUT");
+			return oInfo;
+		};
+
 		function _getFormatter(oThis){
 
 			var sPattern = "";

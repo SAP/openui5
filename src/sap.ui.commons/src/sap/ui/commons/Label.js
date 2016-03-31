@@ -207,6 +207,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return sap.ui.getCore().byId(sId);
 	};
 
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	Label.prototype.getAccessibilityInfo = function() {
+		return {description: this.getText()};
+	};
+
 	//Enrich Label functionality
 	LabelEnablement.enrich(Label.prototype);
 
