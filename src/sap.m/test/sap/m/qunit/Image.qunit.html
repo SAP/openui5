@@ -605,6 +605,31 @@
 			//Clean up
 			oImage.destroy();
 		});
+
+		module("Accessibility");
+
+		test("getAccessibilityInfo", function() {
+			var oImage = new sap.m.Image({alt: "Alt", tooltip: "Tooltip"});
+			ok(!!oImage.getAccessibilityInfo, "Image has a getAccessibilityInfo function");
+			var oInfo = oImage.getAccessibilityInfo();
+			ok(!oInfo, "getAccessibilityInfo returns no info object in case of decorative images");
+			oImage.setDecorative(false);
+			oInfo = oImage.getAccessibilityInfo();
+			strictEqual(oInfo.role, "img", "AriaRole");
+			strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_IMAGE"), "Type");
+			strictEqual(oInfo.description, "Alt", "Description");
+			strictEqual(oInfo.focusable, false, "Focusable");
+			ok(oInfo.enabled === undefined || oInfo.enabled === null, "Enabled");
+			ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
+			oImage.setAlt("");
+			oImage.attachPress(function(){});
+			oInfo = oImage.getAccessibilityInfo();
+			strictEqual(oInfo.role, "button", "AriaRole");
+			strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
+			strictEqual(oInfo.description, "Tooltip", "Description");
+			strictEqual(oInfo.focusable, true, "Focusable");
+			oImage.destroy();
+		});
 		</script>
 	</head>
 	<body>
