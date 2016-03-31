@@ -17,6 +17,8 @@
 
 <script type="text/javascript">
  	jQuery.sap.require("sap.ui.core.IconPool");
+ 	jQuery.sap.require("sap.ui.thirdparty.sinon");
+	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
 	var domRef = null;
 	var eventHandler = function(oEvent) {
@@ -748,6 +750,55 @@
 		equal(oTitleArrowDomRef.id, ohBasicId + "-titleArrow", "Title Arrow should be clickable");
 		oTitleArrowDomRef = null;
 	});
+
+	test("TestTitleSelector pressing SPACE", function() {
+		//Arrange
+		var oSpy = this.spy();
+		var oArrowOH = new sap.m.ObjectHeader("arrowOH", {
+			title : "Title Arrow test, pressing space key.",
+			showTitleSelector : true,
+			titleSelectorPress : oSpy
+		});
+
+		// System under test
+		oArrowOH.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var oArrow = $("#arrowOH-titleArrow")[0];
+		oArrow.focus(); // set focus on the arrow
+
+		// Assert
+		sap.ui.test.qunit.triggerKeydown(oArrow, jQuery.sap.KeyCodes.SPACE);
+		strictEqual(oSpy.callCount, 1, "SPACE is pressed, titleSelectorPress event was fired");
+
+		// clean up
+		oArrowOH.destroy();
+	});
+
+	test("TestTitleSelector pressing ENTER", function() {
+		//Arrange
+		var oSpy = this.spy();
+		var oArrowOH = new sap.m.ObjectHeader("arrowOH", {
+			title : "Title Arrow test, pressing enter key.",
+			showTitleSelector : true,
+			titleSelectorPress : oSpy
+		});
+
+		// System under test
+		oArrowOH.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var oArrow = $("#arrowOH-titleArrow")[0];
+		oArrow.focus(); // set focus on the arrow
+
+		// Assert
+		sap.ui.test.qunit.triggerKeydown(oArrow, jQuery.sap.KeyCodes.ENTER);
+		strictEqual(oSpy.callCount, 1, "ENTER is pressed, titleSelectorPress event was fired");
+
+		// clean up
+		oArrowOH.destroy();
+	});
+
 
 	//***************************************************************************
 	var oTitleArrowOH = new sap.m.ObjectHeader("titleArrowOH", {
