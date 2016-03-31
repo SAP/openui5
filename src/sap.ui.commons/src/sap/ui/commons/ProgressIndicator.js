@@ -281,6 +281,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 	};
 
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	ProgressIndicator.prototype.getAccessibilityInfo = function() {
+		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
+		return {
+			role: "progressbar",
+			type: oBundle.getText("ACC_CTR_TYPE_PROGRESS"),
+			description: oBundle.getText("ACC_CTR_STATE_PROGRESS", [this.getPercentValue()]),
+			focusable: this.getEnabled(),
+			enabled: this.getEnabled()
+		};
+	};
+
 	return ProgressIndicator;
 
 }, /* bExport= */ true);

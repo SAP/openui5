@@ -119,6 +119,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		return this;
 	};
 
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	TextView.prototype.getAccessibilityInfo = function() {
+		return {description: this.getText()};
+	};
+
 	return TextView;
 
 }, /* bExport= */ true);
