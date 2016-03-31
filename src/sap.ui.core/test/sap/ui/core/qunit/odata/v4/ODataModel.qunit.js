@@ -160,21 +160,21 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Model construction with default group", function (assert) {
+	QUnit.test("Model construction with group ID", function (assert) {
 		var oModel;
 
 		oModel = createModel();
 		assert.strictEqual(oModel.getGroupId(), "$auto");
 
-		oModel = createModel("", {defaultGroup : "$direct"});
+		oModel = createModel("", {groupId : "$direct"});
 		assert.strictEqual(oModel.getGroupId(), "$direct");
 
-		oModel = createModel("", {defaultGroup : "$auto"});
+		oModel = createModel("", {groupId : "$auto"});
 		assert.strictEqual(oModel.getGroupId(), "$auto");
 
 		assert.throws(function () {
-			oModel = createModel("", {defaultGroup : "foo"});
-		}, new Error("Default group must be '$auto' or '$direct'"));
+			oModel = createModel("", {groupId : "foo"});
+		}, new Error("Group ID must be '$auto' or '$direct'"));
 	});
 
 	//*********************************************************************************************

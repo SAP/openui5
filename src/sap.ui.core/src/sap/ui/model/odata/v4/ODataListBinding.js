@@ -47,14 +47,14 @@ sap.ui.define([
 	 *   Query options specified for the binding overwrite model query options.
 	 * @param {string} [mParameters.$$groupId]
 	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
-	 *   specified, the model's default group is used, see
+	 *   specified, the model's group ID is used, see
 	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor}.
 	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
 	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 * @param {string} [mParameters.$$updateGroupId]
 	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
 	 *   if not specified, the binding's parameter "$$groupId" is used and if "$$groupId" is not
-	 *   specified, the model's default group is used,
+	 *   specified, the model's group ID is used,
 	 *   see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
 	 *   For valid values, see parameter "$$groupId".
 	 * @throws {Error} When disallowed binding parameters are provided
