@@ -464,9 +464,7 @@ sap.ui.define([
 	 *   The parameter <code>bForceUpdate</code> has to be set to <code>true</code>.
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for refresh; if not specified, the group ID for this binding is
-	 *   used, see {@link sap.ui.model.odata.v4.ODataListBinding#constructor}, and if that group
-	 *   ID is also not specified the model's default group ID is used, see
-	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor}.
+	 *   used, see {@link sap.ui.model.odata.v4.ODataListBinding#constructor}.
 	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
 	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 * @throws {Error}
@@ -581,6 +579,8 @@ sap.ui.define([
 	 * the value is updated in this binding's cache or in its parent context in case it has no
 	 * cache.
 	 *
+	 * @param {string} [sGroupId=getUpdateGroupId()]
+	 *   The group ID to be used for this update call.
 	 * @param {string} sPropertyName
 	 *   Name of property to update
 	 * @param {any} vValue
@@ -594,17 +594,19 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.updateValue = function (sPropertyName, vValue, sEditUrl, sPath) {
-		var sGroupId, oPromise;
+	ODataListBinding.prototype.updateValue = function (sGroupId, sPropertyName, vValue, sEditUrl,
+		sPath) {
+		var oPromise;
 
 		if (this.oCache) {
-			sGroupId = this.getUpdateGroupId();
+			sGroupId = sGroupId || this.getUpdateGroupId();
 			oPromise = this.oCache.update(sGroupId, sPropertyName, vValue, sEditUrl, sPath);
 			this.oModel.addedRequestToGroup(sGroupId);
 			return oPromise;
 		}
 
-		return this.oContext.updateValue(sPropertyName, vValue, sEditUrl, this.sPath + "/" + sPath);
+		return this.oContext.updateValue(sGroupId, sPropertyName, vValue, sEditUrl,
+			this.sPath + "/" + sPath);
 	};
 
 	return ODataListBinding;

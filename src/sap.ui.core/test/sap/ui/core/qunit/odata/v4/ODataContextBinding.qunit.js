@@ -402,24 +402,26 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("updateValue: absolute binding", function (assert) {
-		var oBinding = this.oModel.bindContext("/absolute", null,
-				{$$groupId : "myGroup", $$updateGroupId : "myUpdateGroup"}),
-			sPath = "SO_2_SOITEM/42",
-			oResult = {};
+	[undefined, "up"].forEach(function (sGroupId) {
+		QUnit.test("updateValue: absolute binding", function (assert) {
+			var oBinding = this.oModel.bindContext("/absolute", null,
+					{$$updateGroupId : "myUpdateGroup"}),
+				sPath = "SO_2_SOITEM/42",
+				oResult = {};
 
-		this.oSandbox.mock(oBinding).expects("fireEvent").never();
-		this.oSandbox.mock(oBinding.oCache).expects("update")
-			.withExactArgs("myUpdateGroup", "bar", Math.PI, "edit('URL')", sPath)
-			.returns(Promise.resolve(oResult));
-		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup")
-			.withExactArgs("myUpdateGroup");
+			this.oSandbox.mock(oBinding).expects("fireEvent").never();
+			this.oSandbox.mock(oBinding.oCache).expects("update")
+				.withExactArgs(sGroupId || "myUpdateGroup", "bar", Math.PI, "edit('URL')", sPath)
+				.returns(Promise.resolve(oResult));
+			this.oSandbox.mock(this.oModel).expects("addedRequestToGroup")
+				.withExactArgs(sGroupId || "myUpdateGroup");
 
-		// code under test
-		return oBinding.updateValue("bar", Math.PI, "edit('URL')", sPath)
-			.then(function (oResult0) {
-				assert.strictEqual(oResult0, oResult);
-			});
+			// code under test
+			return oBinding.updateValue(sGroupId, "bar", Math.PI, "edit('URL')", sPath)
+				.then(function (oResult0) {
+					assert.strictEqual(oResult0, oResult);
+				});
+		});
 	});
 
 	//*********************************************************************************************
@@ -433,12 +435,12 @@ sap.ui.require([
 		this.oSandbox.mock(oBinding).expects("fireEvent").never();
 		this.oSandbox.mock(oBinding).expects("getGroupId").never();
 		this.oSandbox.mock(oContext).expects("updateValue")
-			.withExactArgs("bar", Math.PI, "edit('URL')", "PRODUCT_2_BP/BP_2_XYZ/42")
+			.withExactArgs("up", "bar", Math.PI, "edit('URL')", "PRODUCT_2_BP/BP_2_XYZ/42")
 			.returns(Promise.resolve(oResult));
 		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup").never();
 
 		// code under test
-		return oBinding.updateValue("bar", Math.PI, "edit('URL')", "BP_2_XYZ/42")
+		return oBinding.updateValue("up", "bar", Math.PI, "edit('URL')", "BP_2_XYZ/42")
 			.then(function (oResult0) {
 				assert.strictEqual(oResult0, oResult);
 			});

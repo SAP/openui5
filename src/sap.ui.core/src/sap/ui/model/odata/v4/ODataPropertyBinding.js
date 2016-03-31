@@ -335,9 +335,7 @@ sap.ui.define([
 	 *   The parameter <code>bForceUpdate</code> has to be set to <code>true</code>.
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for refresh; if not specified, the group ID for this binding is
-	 *   used, see {@link sap.ui.model.odata.v4.ODataPropertyBinding#constructor}, and if that group
-	 *   ID is also not specified the model's default group ID is used, see
-	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor}.
+	 *   used, see {@link sap.ui.model.odata.v4.ODataPropertyBinding#constructor}.
 	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
 	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 * @throws {Error}
@@ -406,6 +404,12 @@ sap.ui.define([
 	 *
 	 * @param {any} vValue
 	 *   The new value which must be primitive
+	 * @param {string} [sGroupId]
+	 *   The group ID to be used for this update call; if not specified, the update group ID for
+	 *   this binding (or its relevant parent binding) is used, see
+	 *   {@link sap.ui.model.odata.v4.ODataPropertyBinding#constructor}.
+	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
+	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 * @throws {Error}
 	 *   When the new value is not primitive or the binding is not relative
 	 *
@@ -413,15 +417,16 @@ sap.ui.define([
 	 * @see sap.ui.model.PropertyBinding#setValue
 	 * @since 1.37.0
 	 */
-	ODataPropertyBinding.prototype.setValue = function (vValue) {
+	ODataPropertyBinding.prototype.setValue = function (vValue, sGroupId) {
 		if (typeof vValue === "function" || typeof vValue === "object") {
 			throw new Error("Not a primitive value");
 		}
+		_ODataHelper.checkGroupId(sGroupId);
 
 		if (this.vValue !== vValue) {
 			if (this.bRelative) {
 				if (this.oContext) {
-					this.oContext.updateValue(this.sPath, vValue)
+					this.oContext.updateValue(sGroupId, this.sPath, vValue)
 						.catch(function (oError) {
 							jQuery.sap.log.error(oError.message, oError.stack, sClassName);
 						});

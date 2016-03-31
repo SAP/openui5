@@ -154,11 +154,10 @@ sap.ui.require([
 	QUnit.test("bindProperty with parameters", function (assert) {
 		var oBinding,
 			oError = new Error("Unsupported ..."),
-			oHelperMock,
+			oHelperMock = this.oSandbox.mock(_ODataHelper),
 			mParameters = {"custom" : "foo"},
 			mQueryOptions = {};
 
-		oHelperMock = this.oSandbox.mock(_ODataHelper);
 		oHelperMock.expects("buildQueryOptions")
 			.withExactArgs(this.oModel.mUriParameters, mParameters)
 			.returns(mQueryOptions);
@@ -936,6 +935,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("setValue (relative binding) via control", function (assert) {
 		var oCacheMock = this.getCacheMock(),
+			oHelperMock = this.oSandbox.mock(_ODataHelper),
 			oModel = new ODataModel({
 				defaultGroup : "$direct",
 				serviceUrl : "/service/?sap-client=111",
@@ -945,7 +945,7 @@ sap.ui.require([
 				models : oModel,
 				objectBindings : "/SalesOrderList('0500000000')"
 			}),
-			oContext = oControl.getObjectBinding().getBoundContext();
+			oContextMock = this.oSandbox.mock(oControl.getObjectBinding().getBoundContext());
 
 		this.oSandbox.mock(oModel).expects("addedRequestToGroup").never();
 		oCacheMock.expects("read").withExactArgs("$direct", "Note", sinon.match.func)
@@ -953,11 +953,19 @@ sap.ui.require([
 		oControl.applySettings({
 			text : "{path : 'Note', type : 'sap.ui.model.odata.type.String'}"
 		});
-		this.oSandbox.mock(oContext).expects("updateValue").withExactArgs("Note", "foo")
+		oHelperMock.expects("checkGroupId").withExactArgs(undefined);
+		oContextMock.expects("updateValue").withExactArgs(undefined, "Note", "foo")
 			.returns(Promise.resolve());
 
 		// code under test
 		oControl.setText("foo");
+
+		oHelperMock.expects("checkGroupId").withExactArgs("up");
+		oContextMock.expects("updateValue").withExactArgs("up", "Note", "bar")
+			.returns(Promise.resolve());
+
+		// code under test
+		oControl.getBinding("text").setValue("bar", "up");
 	});
 	//TODO relative path which is not simply a property name (Address/Street)?
 
@@ -971,7 +979,7 @@ sap.ui.require([
 			oPromise = Promise.reject(oError),
 			oPropertyBinding = this.oModel.bindProperty("Name", oContext);
 
-		this.oSandbox.mock(oContext).expects("updateValue").withExactArgs("Name", "foo")
+		this.oSandbox.mock(oContext).expects("updateValue").withExactArgs(undefined, "Name", "foo")
 			.returns(oPromise);
 		this.oLogMock.expects("error").withExactArgs(sMessage, oError.stack,
 			"sap.ui.model.odata.v4.ODataPropertyBinding");

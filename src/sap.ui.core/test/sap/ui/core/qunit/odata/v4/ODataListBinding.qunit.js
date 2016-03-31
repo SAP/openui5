@@ -915,24 +915,26 @@ sap.ui.require([
 	//TODO provide iStart, iLength parameter to requestValue to support paging on nested list
 
 	//*********************************************************************************************
-	QUnit.test("updateValue: absolute binding", function (assert) {
-		var oListBinding = this.oModel.bindList("/SalesOrderList", null, null, null,
-				{$$groupId : "myGroup", $$updateGroupId : "myUpdateGroup"}),
-			sPath = "0/SO_2_SOITEM/42",
-			oResult = {};
+	[undefined, "up"].forEach(function (sGroupId) {
+		QUnit.test("updateValue: absolute binding", function (assert) {
+			var oListBinding = this.oModel.bindList("/SalesOrderList", null, null, null,
+					{$$updateGroupId : "myUpdateGroup"}),
+				sPath = "0/SO_2_SOITEM/42",
+				oResult = {};
 
-		this.oSandbox.mock(oListBinding).expects("fireEvent").never();
-		this.oSandbox.mock(oListBinding.oCache).expects("update")
-			.withExactArgs("myUpdateGroup", "bar", Math.PI, "edit('URL')", sPath)
-			.returns(Promise.resolve(oResult));
-		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup")
-			.withExactArgs("myUpdateGroup");
+			this.oSandbox.mock(oListBinding).expects("fireEvent").never();
+			this.oSandbox.mock(oListBinding.oCache).expects("update")
+				.withExactArgs(sGroupId || "myUpdateGroup", "bar", Math.PI, "edit('URL')", sPath)
+				.returns(Promise.resolve(oResult));
+			this.oSandbox.mock(this.oModel).expects("addedRequestToGroup")
+				.withExactArgs(sGroupId || "myUpdateGroup");
 
-		// code under test
-		return oListBinding.updateValue("bar", Math.PI, "edit('URL')", sPath)
-			.then(function (oResult0) {
-				assert.strictEqual(oResult0, oResult);
-			});
+			// code under test
+			return oListBinding.updateValue(sGroupId, "bar", Math.PI, "edit('URL')", sPath)
+				.then(function (oResult0) {
+					assert.strictEqual(oResult0, oResult);
+				});
+		});
 	});
 
 	//*********************************************************************************************
@@ -946,12 +948,12 @@ sap.ui.require([
 		this.oSandbox.mock(oListBinding).expects("fireEvent").never();
 		this.oSandbox.mock(oListBinding).expects("getGroupId").never();
 		this.oSandbox.mock(oContext).expects("updateValue")
-			.withExactArgs("bar", Math.PI, "edit('URL')", "SO_2_SOITEM/42")
+			.withExactArgs("up", "bar", Math.PI, "edit('URL')", "SO_2_SOITEM/42")
 			.returns(Promise.resolve(oResult));
 		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup").never();
 
 		// code under test
-		return oListBinding.updateValue("bar", Math.PI, "edit('URL')", "42")
+		return oListBinding.updateValue("up", "bar", Math.PI, "edit('URL')", "42")
 			.then(function (oResult0) {
 				assert.strictEqual(oResult0, oResult);
 			});
