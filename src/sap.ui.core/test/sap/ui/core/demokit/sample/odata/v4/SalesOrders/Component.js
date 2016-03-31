@@ -8,14 +8,15 @@
  * @version @version@
  */
 sap.ui.define([
-	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/View", // sap.ui.view()
+	"sap/ui/core/mvc/ViewType",
 	"sap/ui/core/sample/common/Component",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/URI"
-], function (View, BaseComponent, JSONModel, ODataModel, TestUtils, sinon, URI) {
+], function (View, ViewType, BaseComponent, JSONModel, ODataModel, TestUtils, sinon, URI) {
 	"use strict";
 
 	return BaseComponent.extend("sap.ui.core.sample.odata.v4.SalesOrders.Component", {
@@ -24,7 +25,7 @@ sap.ui.define([
 		},
 
 		createContent : function () {
-			var bHasOwnProxy = this.proxy !== sap.ui.core.sample.common.Component.prototype.proxy,
+			var bHasOwnProxy = this.proxy !== BaseComponent.prototype.proxy,
 				oModel = this.getModel(),
 				fnProxy = bHasOwnProxy
 					? this.proxy
@@ -91,7 +92,7 @@ sap.ui.define([
 						icon : bRealOData ? "sap-icon://building" : "sap-icon://record",
 						iconTooltip : bRealOData ? "real OData service" : "mock OData service"}
 				)},
-				type : sap.ui.core.mvc.ViewType.XML,
+				type : ViewType.XML,
 				viewName : "sap.ui.core.sample.odata.v4.SalesOrders.Main"
 			});
 			// TODO: enhance sample application after features are supported

@@ -9,11 +9,13 @@
  */
 sap.ui.define([
 		'jquery.sap.global',
+		'sap/ui/core/mvc/View', // sap.ui.view()
+		'sap/ui/core/mvc/ViewType',
 		'sap/ui/core/sample/common/Component',
 		'sap/ui/core/util/MockServer',
 		'sap/ui/model/json/JSONModel',
 		'sap/ui/model/odata/v2/ODataModel'
-	], function(jQuery, BaseComponent, MockServer, JSONModel, ODataModel) {
+	], function(jQuery, View, ViewType, BaseComponent, MockServer, JSONModel, ODataModel) {
 	"use strict";
 
 	var Component = BaseComponent.extend("sap.ui.core.sample.ViewTemplate.valuelist.Component", {
@@ -34,7 +36,6 @@ sap.ui.define([
 				}
 				sServiceUri = this.proxy(sServiceUri);
 			} else {
-
 				this.aMockServers.push(new MockServer({rootUri : sServiceUri}));
 				this.aMockServers[0].simulate(sMockServerBaseUri + (sValueList === "none" ?
 						"metadata_none.xml" : "metadata.xml"), {
@@ -140,7 +141,7 @@ sap.ui.define([
 					undefined : oModel,
 					ui : new JSONModel({valueHelpDetails : false})
 				},
-				type : sap.ui.core.mvc.ViewType.XML,
+				type : ViewType.XML,
 				viewName : "sap.ui.core.sample.ViewTemplate.valuelist.Main"
 			});
 		}

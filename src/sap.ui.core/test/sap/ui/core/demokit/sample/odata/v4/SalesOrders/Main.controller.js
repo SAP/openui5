@@ -16,7 +16,7 @@ sap.ui.define([
 	function onRejected(oError) {
 		jQuery.sap.log.error(oError.message, oError.stack);
 		MessageBox.alert(oError.message, {
-			icon : sap.m.MessageBox.Icon.ERROR,
+			icon : MessageBox.Icon.ERROR,
 			title : "Error"});
 	}
 
@@ -53,7 +53,7 @@ sap.ui.define([
 			this.getView().getModel().create("/SalesOrderList", oSalesOrderData).then(
 				function (oData) {
 					MessageBox.alert(JSON.stringify(oData),
-						{icon : sap.m.MessageBox.Icon.SUCCESS, title : "Success"});
+						{icon : MessageBox.Icon.SUCCESS, title : "Success"});
 					that.onCancelSalesOrder();
 				},
 				onRejected
@@ -80,7 +80,7 @@ sap.ui.define([
 
 				oModel.remove(oSalesOrderContext).then(function () {
 					MessageBox.alert("Deleted Sales Order: " + sOrderID,
-						{icon : sap.m.MessageBox.Icon.SUCCESS, title : "Success"});
+						{icon : MessageBox.Icon.SUCCESS, title : "Success"});
 					oView.byId("SalesOrderLineItems").setBindingContext(undefined);
 					oView.byId("SupplierContactData").setBindingContext(undefined);
 				}, onRejected);
