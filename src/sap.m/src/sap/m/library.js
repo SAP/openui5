@@ -55,6 +55,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.InputType",
 			"sap.m.LabelDesign",
 			"sap.m.ListHeaderDesign",
+			"sap.m.ListKeyboardMode",
 			"sap.m.ListMode",
 			"sap.m.ListSeparators",
 			"sap.m.ListType",
@@ -1418,6 +1419,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 	};
 
+	/**
+	 * Defines the keyboard handling behaviour of the <code>sap.m.List</code> or <code>sap.m.Table</code>.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.38.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.ListKeyboardMode = {
+
+		/**
+		 * While the last/first interactive element within an item has the focus, pressing tab/shift+tab moves the focus to the next element in the tab chain after/before the <code>sap.m.List</code> or <code>sap.m.Table</code>.
+		 * This default mode is suitable if the number of items is unlimited or there is no editable field within the item.
+		 * @public
+		 */
+		Navigation : "Navigation",
+
+		/**
+		 * While the last/first interactive element within an item has the focus, pressing tab/shift+tab moves the focus to the next element in the tab chain after/before the item </code>.
+		 * This mode is suitable if the number of items is limited and there are editable fields within the item.
+		 * @public
+		 */
+		Edit : "Edit"
+
+	};
 
 	/**
 	 * Defines which separator style will be applied for the items.
