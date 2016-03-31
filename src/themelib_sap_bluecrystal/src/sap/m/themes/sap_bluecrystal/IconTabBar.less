@@ -22,7 +22,8 @@ html.sap-phone .sapMITB .sapMITBHead {
 }
 
 .sap-tablet .sapMITBHead,
-html[data-sap-ui-os=win8] .sapMITBHead {
+html[data-sap-ui-os=win8] .sapMITBHead,
+html[data-sap-ui-os=win10] .sapMITBHead {
 	display: inline-block;
 	margin: 1rem 0.75rem 0 0.25rem;
 	vertical-align: top;
@@ -46,7 +47,8 @@ html[data-sap-ui-os=win8] .sapMITBHead {
 }
 
 .sap-tablet .sapMITBScrollContainer,
-html[data-sap-ui-os=win8] .sapMITBScrollContainer {
+html[data-sap-ui-os=win8] .sapMITBScrollContainer,
+html[data-sap-ui-os=win10] .sapMITBScrollContainer {
 	margin: 0 1.75rem;
 }
 
@@ -141,7 +143,8 @@ html[dir='rtl'] .sapMITBContentArrow {
 
 .sap-phone .sapMITBContainerContent,
 .sap-tablet .sapMITBContainerContent,
-html[data-sap-ui-os=win8] .sapMITBContainerContent {
+html[data-sap-ui-os=win8] .sapMITBContainerContent,
+html[data-sap-ui-os=win10] .sapMITBContainerContent {
 	margin-top: 0;
 }
 
@@ -523,9 +526,11 @@ html[dir='rtl'] .sapMITBHorizontal.sapMITBFilter > .sapMITBHorizontalWrapper > .
 .sap-phone .sapMITBFilter:last-child,
 .sap-tablet .sapMITBFilter:last-child,
 html[data-sap-ui-os=win8] .sapMITBFilter:last-child,
+html[data-sap-ui-os=win10] .sapMITBFilter:last-child,
 .sap-phone .sapMITBNoText .sapMITBFilter:last-child,
 .sap-tablet .sapMITBNoText .sapMITBFilter:last-child,
-html[data-sap-ui-os=win8] .sapMITBNoText .sapMITBFilter:last-child {
+html[data-sap-ui-os=win8] .sapMITBNoText .sapMITBFilter:last-child,
+html[data-sap-ui-os=win10] .sapMITBNoText .sapMITBFilter:last-child {
 	padding-right: 1rem;
 }
 
@@ -580,7 +585,8 @@ html[data-sap-ui-os=win8] .sapMITBNoText .sapMITBFilter:last-child {
 
 .sap-phone .sapMITBArrowScroll,
 .sap-tablet .sapMITBArrowScroll,
-html[data-sap-ui-os=win8] .sapMITBArrowScroll {
+html[data-sap-ui-os=win8] .sapMITBArrowScroll,
+html[data-sap-ui-os=win10] .sapMITBArrowScroll {
 	top: 1rem;
 }
 
@@ -640,7 +646,8 @@ html[data-sap-ui-os=win8] .sapMITBArrowScroll {
 }
 
 .sap-tablet,
-html[data-sap-ui-os=win8] {
+html[data-sap-ui-os=win8],
+html[data-sap-ui-os=win10] {
 	.sapMITBArrowScrollLeftTextOnly,
 	.sapMITBArrowScrollRightTextOnly {
 		padding: 1.25rem 0.4rem
@@ -705,7 +712,8 @@ html[data-sap-ui-os=win8] {
 		}
 	}
 	.sap-tablet .sapMITB.sapMITBStretch,
-	html[data-sap-ui-os=win8] .sapMITB.sapMITBStretch {
+	html[data-sap-ui-os=win8] .sapMITB.sapMITBStretch,
+	html[data-sap-ui-os=win10] .sapMITB.sapMITBStretch {
 		.sapMITBArrowScrollLeftTextOnly,
 		.sapMITBArrowScrollRightTextOnly {
 			padding: 1.25rem 0 0.75rem
@@ -720,7 +728,9 @@ html[data-sap-ui-os=win8] {
 	}
 
 	html[data-sap-ui-os=win8] .sapMITB.sapUiNoContentPadding,
-	html[data-sap-ui-os=win8] .sapMITB.sapUiResponsiveContentPadding {
+	html[data-sap-ui-os=win10] .sapMITB.sapUiNoContentPadding,
+	html[data-sap-ui-os=win8] .sapMITB.sapUiResponsiveContentPadding,
+	html[data-sap-ui-os=win10] .sapMITB.sapUiResponsiveContentPadding {
 		.sapMITBHead {
 			margin: 1rem 1rem 0 0;
 		}
