@@ -1003,6 +1003,15 @@
 				equal(oIntervalRow.getId(), "PC1-Row1", "row returned");
 			});
 
+			test("RowEndDate", function() {
+				var oRow = sap.ui.getCore().byId("PC1-Row1");
+				var oCalendarRow = oRow.getCalendarRow();
+				var oDate = new Date(oPC1.getStartDate().getTime() + oCalendarRow._iRowSize);
+				var oEndDate = oPC1.getRowEndDate();
+
+				equal(oEndDate.getTime(), oDate.getTime(), "Row End Date returned");
+			});
+
 			module("Interaction");
 
 			asyncTest("keyboard navigation", function() {
