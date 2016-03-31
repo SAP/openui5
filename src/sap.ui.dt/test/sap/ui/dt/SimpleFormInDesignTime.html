@@ -35,34 +35,29 @@
 			jQuery.sap.require("sap.ui.dt.DesignTime");
 			jQuery.sap.require("sap.ui.dt.plugin.TabHandling");
 			jQuery.sap.require("sap.ui.dt.plugin.ControlDragDrop");
+			jQuery.sap.require("sap.ui.dt.plugin.CutPaste");
 			jQuery.sap.require("sap.ui.dt.plugin.MouseSelection");
 			var oView = sap.ui.xmlview("testView", "dt.view.TestSimpleForm");
 			oView.placeAt("content");
 
 
 			jQuery(function() {
+				var aMOVABLE_TYPES = ["sap.ui.layout.form.FormElement", "sap.ui.layout.form.FormContainer"];
 				var oTabHandlingPlugin = new sap.ui.dt.plugin.TabHandling();
 				var oSelectionPlugin = new sap.ui.dt.plugin.MouseSelection();
-				var oDragPlugin = new sap.ui.dt.plugin.ControlDragDrop();
-
+				var oDragPlugin = new sap.ui.dt.plugin.ControlDragDrop({
+					draggableTypes: aMOVABLE_TYPES
+				});
+				var oCutPaste = new sap.ui.dt.plugin.CutPaste({
+					movableTypes: aMOVABLE_TYPES
+				});
 				var oDesignTime = new sap.ui.dt.DesignTime({
 					plugins : [
 					    oTabHandlingPlugin,
 						oSelectionPlugin,
-						oDragPlugin
+						oDragPlugin,
+						oCutPaste
 					],
-					designTimeMetadata : {
-						"sap.ui.layout.form.SimpleForm" : {
-							aggregations: {
-								content : {
-									ignore : true
-								},
-								form: {
-									ignore : false
-								}
-							}
-						}
-					},
 					rootElements : [oView]
 				});
 			});

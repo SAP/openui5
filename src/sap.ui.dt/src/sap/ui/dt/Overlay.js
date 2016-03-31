@@ -423,7 +423,7 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	/**
 	 * @private
 	 */
-	Overlay.prototype._syncScrollWithDomRef = function() {
+	Overlay.prototype._syncScrollWithDomRef = function(oEvent) {
 		DOMUtil.syncScroll(this._oDomRefWithScrollHandler, this.$());
 	};
 
@@ -653,6 +653,26 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 			if (!oParent.getDomRef) {
 				return true;
 			}
+		}
+	};
+
+	/**
+	 * Returns child of first ancestor overlay not flagged as inHiddenTree
+	 *
+	 * @return {sap.ui.dt.ElementOverlay} ElementOverlay public parents child
+	 * @public
+	 */
+	Overlay.prototype.getFirstHiddenAggregationOverlay = function() {
+
+		var oPreviousOverlay = this;
+		var oParentOverlay = this.getParentElementOverlay();
+		while (oParentOverlay && oParentOverlay.isInHiddenTree()
+				&& ElementUtil.isInstanceOf(oParentOverlay, "sap.ui.dt.ElementOverlay")) {
+			oPreviousOverlay = oParentOverlay;
+			oParentOverlay = oParentOverlay.getParentElementOverlay();
+		}
+		if (ElementUtil.isInstanceOf(oParentOverlay, "sap.ui.dt.ElementOverlay")) {
+			return oPreviousOverlay.getParent();
 		}
 	};
 
