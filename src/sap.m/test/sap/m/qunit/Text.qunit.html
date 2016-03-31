@@ -247,6 +247,22 @@
 			strictEqual(t6.$().hasClass("sapMTextBreakWord"), false, "Text does not have a class for break word");
 		});
 
+		module("Accessibility");
+
+		test("getAccessibilityInfo", function() {
+			var oControl = new sap.m.Text({text: "Text"});
+			ok(!!oControl.getAccessibilityInfo, "Text has a getAccessibilityInfo function");
+			var oInfo = oControl.getAccessibilityInfo();
+			ok(!!oInfo, "getAccessibilityInfo returns a info object");
+			strictEqual(oInfo.role, undefined, "AriaRole");
+			strictEqual(oInfo.type, undefined, "Type");
+			strictEqual(oInfo.description, "Text", "Description");
+			strictEqual(oInfo.focusable, undefined, "Focusable");
+			strictEqual(oInfo.enabled, undefined, "Enabled");
+			strictEqual(oInfo.editable, undefined, "Editable");
+			oControl.destroy();
+		});
+
 	</script>
 </head>
 <body class="sapUiBody">
