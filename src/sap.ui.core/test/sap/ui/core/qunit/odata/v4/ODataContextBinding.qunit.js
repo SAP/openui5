@@ -722,7 +722,7 @@ sap.ui.require([
 			.returns(Promise.resolve({$kind : "Action"}));
 		this.oSandbox.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(that.oModel.oRequestor), "ActionImport",
-				{"sap-client" : "111"})
+				{"sap-client" : "111"}, false, true)
 			.returns(oSingleCache);
 		oContextBindingMock.expects("getGroupId").returns("foo");
 		oSingleCacheMock.expects("post")

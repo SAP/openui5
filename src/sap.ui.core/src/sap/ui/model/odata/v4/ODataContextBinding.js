@@ -275,7 +275,7 @@ sap.ui.define([
 				if (!that.oCache) {
 					that.oCache = _Cache.createSingle(that.oModel.oRequestor,
 						that.sPath.replace("(...)", "").slice(1),
-						that.mQueryOptions);
+						that.mQueryOptions, false, true);
 				}
 				oPromise = that.oCache.post(sGroupId, that.oOperation.mParameters);
 			} else {
