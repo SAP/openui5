@@ -100,7 +100,7 @@ public class AnonymousLogLine {
 	private String csvUserAgent; // a specially formatted and enriched user-agent string with browser information; only set when isBotLine was called (performance)
 
 	public static void initializeClass(String applicationName) {
-		ANON_LOGLINE_PATTERN = Pattern.compile("^((\\d{4})-([01]\\d)-([0-3]\\d))	(([0-9]+):([0-5][0-9]):([0-5][0-9]))	(\\d+)	(\\w+)	(/" + applicationName + "\\.(\\w\\w)\\d+\\.hana\\.ondemand.com(/(d+\\.\\d+\\.\\d+))?(/[^\\s]*))	(\\d+)	(\\d+)	(\\d+)	\"(([^\\s]+)|[-])\"	\"([^\"]+)\"	.*$");
+		ANON_LOGLINE_PATTERN = Pattern.compile("^((\\d{4})-([01]\\d)-([0-3]\\d))	(([0-9]+):([0-5][0-9]):([0-5][0-9]))	(\\d+)	(\\w+)	(/" + applicationName + "\\.(\\w\\w)\\d+\\.hana\\.ondemand.com(/(d+\\.\\d+\\.\\d+))?(/[^\\s]*))	(\\d+)	(\\d+)	(\\d+)	\"(([^\"]+))\"	\"([^\"]+)\"	.*$");
 		VERSIONED_CORE_CHECK_PATTERN = Pattern.compile(".*GET\\t/" + applicationName + "\\....\\.hana\\.ondemand\\.com/\\d+\\.\\d+\\.\\d+/resources/sap-ui-core\\.js.*");
 		VERSIONED_CORE_LOGLINE_PATTERN = Pattern.compile("^((\\d{4})-([01]\\d)-([0-3]\\d))	(([0-9]+):([0-5][0-9]):([0-5][0-9]))	(\\d+)	(\\w+)	(/" + applicationName + "\\.(\\w\\w)\\d+\\.hana\\.ondemand.com((/([\\d\\.]+))/resources/sap-ui-core.js[^\\s]*))	(\\d+)	(\\d+)	(\\d+)	\"(([^\"]+)|[-])\"	\"([^\"]+)\"	.*$");
 	}
@@ -202,7 +202,8 @@ public class AnonymousLogLine {
 		if (VERSIONED_CORE_CHECK_PATTERN.matcher(line).matches()) { // check whether this is a versioned URL
 			m = VERSIONED_CORE_LOGLINE_PATTERN.matcher(line);
 			if (!m.matches()) {
-				throw new RuntimeException("Line for versioned URL does not match even though checked: " + line);
+				System.out.println("ERROR: Line for versioned URL does not match even though checked: " + line);
+				return null;
 			}
 			url = m.group(13);
 			version = m.group(15);
@@ -381,7 +382,7 @@ public class AnonymousLogLine {
 	public String getReferrerIfInteresting() {
 		String ref = this.referrer;
 		
-		if (ref.equals("-")
+		if (ref == null || ref.equals("-")
 				|| ref.startsWith("http://openui5.org")
 				|| ref.startsWith("http://sap.github.io")
 				|| ref.startsWith("http://openui5.tumblr.com")

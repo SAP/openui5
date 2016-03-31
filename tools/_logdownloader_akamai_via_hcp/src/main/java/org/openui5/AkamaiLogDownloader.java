@@ -68,15 +68,15 @@ public class AkamaiLogDownloader {
 	
 	
 	// dev/debugging mode
-	private final boolean DEV_MODE = false;
+	private static final boolean DEV_MODE = false;
 	
 	// the following array can contain file names to use or folder names (to use all files inside)
 	// the list of already processed log files is then ignored, but results keep adding up if the same log file is processed multiple times, so delete data_openui5.json to get real numbers again
 	/*
 	private final String[] debugFilesOrDirectories = {
-		"C:\\temp\\akamai\\analysis1104\\openui5_333580.esw3c_S.201504110000-2400-0",
-		"C:\\temp\\akamai\\analysis1104\\openui5_333580.esw3c_S.201504110000-2400-1",
-		"C:\\temp\\akamai\\analysis1104\\openui5_333580.esw3c_S.201504120000-2400-0"
+		"C:\\temp\\akamai\\cdn_http_access_2016-01-07-2400_6i7g9a_0_1701115962.log",
+		"C:\\temp\\akamai\\cdn_http_access_2016-01-17-2400_1x3czjh_0_1701115962.log",
+		"C:\\temp\\akamai\\cdn_http_access_2016-02-05-2400_1e1xhu5_0_1701115962.log"
 	};
 	*/
 	
@@ -114,7 +114,7 @@ public class AkamaiLogDownloader {
 					staticError("Unknown commandline parameter '" + paramName + "'. Supported are: --user, --password, --dir, --export");
 				}
 			}
-		} else {
+		} else if (!DEV_MODE) {
 			staticLog("Usage:  java -Xms128m -Xmx1024m org.openui5.AkamaiLogDownloader --user openui5 --password .....");
 			staticLog("   At least password is required.");
 			staticLog("   Supported parameters:");
@@ -130,7 +130,7 @@ public class AkamaiLogDownloader {
 		if (USER == null) {
 			USER = DEFAULT_USER;
 		}
-		if (PASSWORD == null) {
+		if (PASSWORD == null && !DEV_MODE) {
 			staticError("Password was not given, use the '--password' parameter.");
 		}
 
@@ -227,7 +227,7 @@ public class AkamaiLogDownloader {
 	 */
 	public void handleLogFiles(ApplicationConfig applicationConfig) {
 		AnonymousLogLine.initializeClass(applicationConfig.getApplication());
-		List<File> rawLogFiles = new ArrayList<File>();; // these will be the downloaded+unzipped log files that need to be parsed
+		List<File> rawLogFiles = new ArrayList<File>(); // these will be the downloaded+unzipped log files that need to be parsed
 		final String knownFilesFileName = directory + File.separator + KNOWN_FILES_FILE_NAME + "_" + applicationConfig.getApplication() + ".json";
 		final File knownFilesFile = new File(knownFilesFileName);
 		JSONObject knownFiles;
@@ -240,8 +240,8 @@ public class AkamaiLogDownloader {
 
 			// Step 1: get all log file names from the server
 			log("Accessing HCP server to get list of available log files...");
-			List<String> availableLogFileNames = this.getHCPLogFileNames(applicationConfig.getLogUrl());
-			log("...available list of " + availableLogFileNames.size() + " Akamai log files downloaded ( HCP URL: " + applicationConfig.getLogUrl() + ").\n");
+			List<String> availableLogFileNames = this.getHCPLogFileNames(applicationConfig.getLogUrl()); // e.g. "cdn_http_access_2016-03-17-2400_15jdzud_0_1701115962.log"
+			log("...available list of " + availableLogFileNames.size() + " Akamai log files downloaded (HCP URL: " + applicationConfig.getLogUrl() + ").\n");
 	
 	
 			/*
@@ -424,10 +424,12 @@ public class AkamaiLogDownloader {
 	 */
 	private List<File> unzipLogFiles(List<File> gzFiles) {
 		List<File> unzippedFiles = new ArrayList<File>();
-		byte[] buffer = new byte[1024];
+		byte[] buffer = new byte[65536];
 		
 		try {
 			for (File gzFile : gzFiles) {
+				log("- " + gzFile.getName());
+				
 				String unzippedFileName = gzFile.getName() + ".log";
 				File unzippedFile = new File(directory.getAbsolutePath() + File.separator + unzippedFileName);
 				unzippedFile.deleteOnExit();
@@ -564,7 +566,7 @@ public class AkamaiLogDownloader {
 			for (int i = 0; i < logFiles.length(); i++) {
 				JSONObject logFile = logFiles.getJSONObject(i);
 				String logFileName = logFile.getString("name");
-				if (logFileName.startsWith("http_access_cdn_")) { // an Akamai log file we are interested in
+				if (logFileName.startsWith("cdn_http_access_")) { // an Akamai log file we are interested in
 					result.add(logFileName);
 				}
 			}
@@ -631,7 +633,7 @@ public class AkamaiLogDownloader {
 		List<FileWithDate> anonymizedLogFiles = new ArrayList<FileWithDate>();
 		Set<String> usedFileNames = new HashSet<String>();
 
-		final Pattern FILE_DATE_PATTERN = Pattern.compile("http_access_cdn_(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)_.*"); // to get the date from the log file name
+		final Pattern FILE_DATE_PATTERN = Pattern.compile("cdn_http_access_(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)-2400_.*"); // to get the date from the log file name
 
 		try {
 			for (int i = 0; i < rawLogFiles.size(); i++) {
