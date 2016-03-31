@@ -2,11 +2,12 @@
  * ${copyright}
  */
 sap.ui.require([
+	"jquery.sap.global",
 	"sap/ui/model/odata/v4/lib/_Batch",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/test/TestUtils"
-], function (_Batch, _Helper, _Requestor, TestUtils) {
+], function (jQuery, _Batch, _Helper, _Requestor, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -272,7 +273,7 @@ sap.ui.require([
 
 				assert.notStrictEqual(oNewPromise, oPromise, "new promise");
 				// avoid "Uncaught (in promise)"
-				oNewPromise["catch"](function (oError1) {
+				oNewPromise.catch(function (oError1) {
 					assert.strictEqual(oError1, oError);
 				});
 			});
@@ -481,7 +482,7 @@ sap.ui.require([
 		this.oSandbox.mock(oRequestor).expects("request")
 			.returns(Promise.reject(oBatchError));
 
-		aPromises.push(oRequestor.submitBatch("group").then(unexpectedSuccess, function(oError) {
+		aPromises.push(oRequestor.submitBatch("group").then(unexpectedSuccess, function (oError) {
 			assert.strictEqual(oError, oBatchError);
 		}));
 
@@ -523,7 +524,7 @@ sap.ui.require([
 		aPromises.push(oRequestor.request("GET", "ok", "testGroupId")
 			.then(function (oResult) {
 				assert.deepEqual(oResult, {});
-			})["catch"](unexpected));
+			}).catch(unexpected));
 
 		aPromises.push(oRequestor.request("GET", "fail", "testGroupId")
 			.then(unexpected, function (oResultError) {

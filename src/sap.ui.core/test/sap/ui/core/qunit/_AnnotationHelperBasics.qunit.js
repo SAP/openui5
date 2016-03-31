@@ -2,8 +2,9 @@
  * ${copyright}
  */
 sap.ui.require([
+	"jquery.sap.global",
 	'sap/ui/model/odata/_AnnotationHelperBasics'
-], function(Basics) {
+], function (jQuery, Basics) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0*/
 	"use strict";

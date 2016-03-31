@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.require([
+	"jquery.sap.global",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/ChangeReason",
@@ -14,8 +15,8 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/test/TestUtils"
-], function (ManagedObject, BindingMode, ChangeReason, PropertyBinding, TypeString, _Context,
-		_ODataHelper, _Cache, _Helper, ODataModel, ODataPropertyBinding, TestUtils) {
+], function (jQuery, ManagedObject, BindingMode, ChangeReason, PropertyBinding, TypeString,
+		_Context, _ODataHelper, _Cache, _Helper, ODataModel, ODataPropertyBinding, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";

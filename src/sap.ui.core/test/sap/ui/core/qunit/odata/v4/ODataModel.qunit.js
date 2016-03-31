@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.require([
+	"jquery.sap.global",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/type/String",
@@ -16,9 +17,9 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/test/TestUtils"
-], function (BindingMode, Model, TypeString, ODataUtils, _Context, _ODataHelper, _MetadataRequestor,
-		_Requestor, ODataContextBinding, ODataListBinding, ODataMetaModel, ODataModel,
-		ODataPropertyBinding, TestUtils) {
+], function (jQuery, BindingMode, Model, TypeString, ODataUtils, _Context, _ODataHelper,
+		_MetadataRequestor, _Requestor, ODataContextBinding, ODataListBinding, ODataMetaModel,
+		ODataModel, ODataPropertyBinding, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -142,7 +143,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("serviceUrlParams overwrite URL parameters from sServiceUrl", function (assert) {
 		var oMetadataRequestor = {},
-			mModelOptions = {};
+			mModelOptions = {},
+			unused;
 
 		this.mock(_ODataHelper).expects("buildQueryOptions")
 			.withExactArgs({"sap-client" : "111"})
@@ -152,11 +154,12 @@ sap.ui.require([
 			.returns(oMetadataRequestor);
 
 		// code under test
-		new ODataModel({
+		unused = new ODataModel({
 			serviceUrl : "/?sap-client=222",
 			serviceUrlParams : {"sap-client" : "111"},
 			synchronizationMode : "None"
 		});
+		unused = !unused;
 	});
 
 	//*********************************************************************************************

@@ -1,7 +1,10 @@
 /*!
  * ${copyright}
  */
-sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
+sap.ui.require([
+	"jquery.sap.global",
+	'sap/ui/model/odata/_ODataMetaModelUtils'
+], function (jQuery, Utils) {
 	/*global QUnit */
 	"use strict";
 

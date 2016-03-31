@@ -2,9 +2,10 @@
  * ${copyright}
  */
 sap.ui.require([
+	"jquery.sap.global",
 	"sap/ui/model/Context",
 	"sap/ui/model/odata/v4/_Context"
-], function (Context, _Context) {
+], function (jQuery, Context, _Context) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";

@@ -2,9 +2,10 @@
  * ${copyright}
  */
 sap.ui.require([
+	"jquery.sap.global",
 	"sap/ui/model/odata/v4/_SyncPromise",
 	"sap/ui/test/TestUtils"
-], function (_SyncPromise, TestUtils) {
+], function (jQuery, _SyncPromise, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks:[1,5], no-warning-comments: 0 */
 	"use strict";
@@ -240,7 +241,7 @@ sap.ui.require([
 
 		assertPending(assert, oNewPromise);
 
-		return oPromise["catch"](function () {
+		return oPromise.catch(function () {
 			assertRejected(assert, oSyncPromise, oReason);
 		});
 	});
@@ -251,7 +252,7 @@ sap.ui.require([
 			oPromise = Promise.reject(oReason),
 			oSyncPromise = _SyncPromise.resolve(oPromise);
 
-		return oPromise["catch"](function () {
+		return oPromise.catch(function () {
 			var bCalled = false,
 				oNewSyncPromise;
 
@@ -335,7 +336,7 @@ sap.ui.require([
 		oPromiseAll = _SyncPromise.all([oPromise]);
 
 		assertPending(assert, oPromiseAll);
-		return oPromise["catch"](function () {
+		return oPromise.catch(function () {
 			assertRejected(assert, oPromiseAll, oReason);
 		});
 	});
@@ -358,7 +359,7 @@ sap.ui.require([
 		oPromiseAll = _SyncPromise.all(aPromises);
 
 		assertPending(assert, oPromiseAll);
-		return oPromise1["catch"](function () { // wait for the "slower" promise
+		return oPromise1.catch(function () { // wait for the "slower" promise
 			assertRejected(assert, oPromiseAll, oReason); // rejection reason does not change
 			assert.deepEqual(aPromises, [oPromise0, oPromise1], "caller's array unchanged");
 		});
@@ -374,7 +375,7 @@ sap.ui.require([
 			.withExactArgs(undefined, fnOnRejected)
 			.returns(oNewPromise);
 
-		assert.strictEqual(oSyncPromise["catch"](fnOnRejected), oNewPromise);
+		assert.strictEqual(oSyncPromise.catch(fnOnRejected), oNewPromise);
 	});
 
 	//*********************************************************************************************

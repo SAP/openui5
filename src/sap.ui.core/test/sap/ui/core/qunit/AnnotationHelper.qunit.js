@@ -2,11 +2,16 @@
  * ${copyright}
  */
 sap.ui.require([
-	"sap/ui/base/BindingParser", "sap/ui/base/ManagedObject", "sap/ui/model/json/JSONModel",
-	"sap/ui/model/odata/_AnnotationHelperBasics", "sap/ui/model/odata/_AnnotationHelperExpression",
-	"sap/ui/model/odata/v2/ODataModel", "sap/ui/model/PropertyBinding",
+	"jquery.sap.global",
+	"sap/ui/base/BindingParser",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/odata/_AnnotationHelperBasics",
+	"sap/ui/model/odata/_AnnotationHelperExpression",
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/model/PropertyBinding",
 	"sap/ui/test/TestUtils"
-], function(BindingParser, ManagedObject, JSONModel, Basics, Expression, ODataModel,
+], function (jQuery, BindingParser, ManagedObject, JSONModel, Basics, Expression, ODataModel,
 		PropertyBinding, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0*/
@@ -912,7 +917,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		oString10,
 		oString80,
 		oTime
-	].forEach(function(oType, i) {
+	].forEach(function (oType, i) {
 		var sPath = sPath2Product + "/com.sap.vocabularies.UI.v1.Identification/" + i
 				+ "/Value/Eq/0";
 

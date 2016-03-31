@@ -2,6 +2,7 @@
  *{copyright}
  */
 sap.ui.require([
+	"jquery.sap.global",
 	"sap/ui/core/Control",
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/model/FormatException",
@@ -11,8 +12,8 @@ sap.ui.require([
 	"sap/ui/model/odata/type/Decimal",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/test/TestUtils"
-], function (Control, NumberFormat, FormatException, ParseException, ValidateException, Float,
-		Decimal, ODataType, TestUtils) {
+], function (jQuery, Control, NumberFormat, FormatException, ParseException, ValidateException,
+		Float, Decimal, ODataType, TestUtils) {
 	/*global QUnit, sap, sinon */
 	"use strict";
 

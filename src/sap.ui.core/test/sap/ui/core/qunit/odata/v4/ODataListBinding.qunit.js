@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.require([
+	"jquery.sap.global",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/Context",
@@ -11,7 +12,7 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataModel"
-], function (ManagedObject, ChangeReason, Context, ListBinding, Model, _ODataHelper, _Cache,
+], function (jQuery, ManagedObject, ChangeReason, Context, ListBinding, Model, _ODataHelper, _Cache,
 		ODataListBinding, ODataModel) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
@@ -460,7 +461,7 @@ sap.ui.require([
 			});
 			oListBinding.getContexts(0, 2); // successful read
 
-			return oPromise["catch"](function () {
+			return oPromise.catch(function () {
 				assert.ok(true);
 			});
 			//TODO implement faultTolerant setting on list binding which keeps existing contexts?
@@ -791,7 +792,7 @@ sap.ui.require([
 		oListBinding.getContexts(0, 10);
 		oListBinding.refresh(true);
 
-		return oReadPromise["catch"](function () {});
+		return oReadPromise.catch(function () {});
 	});
 
 	//*********************************************************************************************
@@ -842,7 +843,7 @@ sap.ui.require([
 			.withExactArgs({error : oError});
 
 		oListBinding.getContexts(0, 10);
-		return oReadPromise["catch"](function () {});
+		return oReadPromise.catch(function () {});
 	});
 
 	//*********************************************************************************************
@@ -874,7 +875,7 @@ sap.ui.require([
 		// call it again in parallel
 		oListBinding.getContexts(0, 10);
 
-		return oReadPromise["catch"](function () {});
+		return oReadPromise.catch(function () {});
 	});
 
 	//*********************************************************************************************

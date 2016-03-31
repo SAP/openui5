@@ -2,9 +2,13 @@
  * ${copyright}
  */
 sap.ui.require([
-	'sap/ui/base/BindingParser', 'sap/ui/base/ManagedObject', 'sap/ui/model/json/JSONModel',
-	'sap/ui/model/odata/_AnnotationHelperBasics', 'sap/ui/model/odata/_AnnotationHelperExpression'
-], function(BindingParser, ManagedObject, JSONModel, Basics, Expression) {
+	"jquery.sap.global",
+	'sap/ui/base/BindingParser',
+	'sap/ui/base/ManagedObject',
+	'sap/ui/model/json/JSONModel',
+	'sap/ui/model/odata/_AnnotationHelperBasics',
+	'sap/ui/model/odata/_AnnotationHelperExpression'
+], function (jQuery, BindingParser, ManagedObject, JSONModel, Basics, Expression) {
 	/*global QUnit */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0*/
 	"use strict";

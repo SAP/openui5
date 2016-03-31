@@ -63,8 +63,10 @@ sap.ui.require([
 			Then.waitFor({
 				id : /selectInstance/,
 				success : function () {
+					var jQuery = Opa5.getWindow().jQuery;
+
 					// check no warnings and errors
-					Opa5.getWindow().jQuery.sap.log.getLogEntries().forEach(function (oLog) {
+					jQuery.sap.log.getLogEntries().forEach(function (oLog) {
 						var sComponent = oLog.component || "";
 
 						if (( sComponent === "sap.ui.core.util.XMLPreprocessor"

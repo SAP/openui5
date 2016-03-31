@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.require([
+	"jquery.sap.global",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/ContextBinding",
 	"sap/ui/model/FilterProcessor",
@@ -13,8 +14,8 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/PropertyBinding",
 	"sap/ui/test/TestUtils"
-], function (BindingMode, ContextBinding, FilterProcessor, JSONListBinding, MetaModel, _ODataHelper,
-		SyncPromise, ODataMetaModel, ODataModel, PropertyBinding, TestUtils) {
+], function (jQuery, BindingMode, ContextBinding, FilterProcessor, JSONListBinding, MetaModel,
+		_ODataHelper, SyncPromise, ODataMetaModel, ODataModel, PropertyBinding, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -240,7 +241,7 @@ sap.ui.require([
 			assert.strictEqual(oMetaModel[sGetMethodName].apply(oMetaModel, aArguments), undefined,
 				"pending");
 		}
-		return oRejectedPromise["catch"](function () {
+		return oRejectedPromise.catch(function () {
 			// get: rejected
 			if (bThrow) {
 				assert.throws(function () {
@@ -900,7 +901,7 @@ sap.ui.require([
 			return this.oMetaModel.requestCanonicalUrl("/~/", oFixture.dataPath, oContext)
 				.then(function (sCanonicalUrl) {
 					assert.strictEqual(sCanonicalUrl, oFixture.canonicalUrl);
-				})["catch"](function (oError) {
+				}).catch(function (oError) {
 					assert.ok(false, oError.message + "@" + oError.stack);
 				});
 		});
@@ -933,7 +934,7 @@ sap.ui.require([
 			return this.oMetaModel.requestCanonicalUrl("/~/", oFixture.dataPath, oContext)
 				.then(function (sCanonicalUrl) {
 					assert.ok(false, sCanonicalUrl);
-				})["catch"](function (oError) {
+				}).catch(function (oError) {
 					assert.strictEqual(oError.message, oFixture.message);
 				});
 		});

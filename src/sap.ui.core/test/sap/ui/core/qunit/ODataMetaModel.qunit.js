@@ -8,7 +8,7 @@ sap.ui.require([
 	"sap/ui/model/json/JSONTreeBinding", "sap/ui/model/Model",
 	"sap/ui/model/odata/_ODataMetaModelUtils", "sap/ui/model/odata/ODataMetaModel",
 	"sap/ui/model/odata/ODataModel", "sap/ui/model/odata/v2/ODataModel", "sap/ui/test/TestUtils"
-], function(BindingParser, BindingMode, ClientContextBinding, Context, FilterProcessor,
+], function (BindingParser, BindingMode, ClientContextBinding, Context, FilterProcessor,
 	JSONListBinding, JSONPropertyBinding, JSONTreeBinding, Model, Utils, ODataMetaModel,
 	ODataModel1, ODataModel, TestUtils) {
 	/*global QUnit, sinon */

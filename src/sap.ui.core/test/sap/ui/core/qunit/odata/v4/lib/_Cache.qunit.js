@@ -2,11 +2,12 @@
  * ${copyright}
  */
 sap.ui.require([
+	"jquery.sap.global",
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/test/TestUtils"
-], function (_Cache, _Helper, _Requestor, TestUtils) {
+], function (jQuery, _Cache, _Helper, _Requestor, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -452,7 +453,7 @@ sap.ui.require([
 			.returns(Promise.resolve(oSuccess));
 
 		// code under test
-		return oCache.read(0, 5)["catch"](function (oResult1) {
+		return oCache.read(0, 5).catch(function (oResult1) {
 			assert.strictEqual(oResult1, oError);
 			return oCache.read(0, 5).then(function (oResult2) {
 				assert.deepEqual(oResult2, oSuccess);
@@ -780,7 +781,7 @@ sap.ui.require([
 
 		aPromises.push(oCache.read().then(function () {
 			assert.ok(false, "Refresh shall cancel this read");
-		})["catch"](function (oError) {
+		}).catch(function (oError) {
 			assert.strictEqual(oError.canceled, true, "Canceled error thrown");
 			assert.strictEqual(oError.message,
 				"Refresh canceled pending request: /~/Employees('1')");
@@ -833,7 +834,7 @@ sap.ui.require([
 
 		aPromises.push(oCache.read(0, 10).then(function () {
 			assert.ok(false, "Refresh shall cancel this read");
-		})["catch"](function (oError) {
+		}).catch(function (oError) {
 			assert.strictEqual(oError.canceled, true, "Canceled error thrown");
 			assert.strictEqual(oError.message,
 				"Refresh canceled pending request: /~/Employees?$skip=0&$top=10");

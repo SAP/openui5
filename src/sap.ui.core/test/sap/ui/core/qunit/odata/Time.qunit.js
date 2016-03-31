@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.require([
+	"jquery.sap.global",
 	"sap/ui/core/Control",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/FormatException",
@@ -10,8 +11,8 @@ sap.ui.require([
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/model/odata/type/Time",
 	"sap/ui/test/TestUtils"
-], function (Control, DateFormat, FormatException, ParseException, ValidateException, ODataType,
-		Time, TestUtils) {
+], function (jQuery, Control, DateFormat, FormatException, ParseException, ValidateException,
+		ODataType, Time, TestUtils) {
 	/*global QUnit */
 	"use strict";
 

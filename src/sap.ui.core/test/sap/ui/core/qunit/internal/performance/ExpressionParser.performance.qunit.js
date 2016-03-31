@@ -72,7 +72,7 @@ sap.ui.require([
 	}, {
 		name: "complex", expression:
 			"{='foo'.charCodeAt(-17  + 2 * Math.floor(null || (${x} ===  2 ? 5 + 2 * ${x} : 42)))}"
-	}].forEach(function(oFixture) {
+	}].forEach(function (oFixture) {
 
 		QUnit.test("Parse expression binding: " + oFixture.name, function (assert) {
 			sResult += oFixture.name;

@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.require([
+	"jquery.sap.global",
 	"sap/ui/Device",
 	"sap/ui/base/BindingParser",
 	"sap/ui/base/ManagedObject",
@@ -10,14 +11,13 @@ sap.ui.require([
 	"sap/ui/core/util/XMLPreprocessor",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Context",
-	"sap/ui/model/json/JSONModel"
-], function(Device, BindingParser, ManagedObject, CustomizingConfiguration, XMLTemplateProcessor,
-		XMLPreprocessor, BindingMode, Context, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"jquery.sap.xml" // needed to have jQuery.sap.parseXML
+], function (jQuery, Device, BindingParser, ManagedObject, CustomizingConfiguration,
+		XMLTemplateProcessor, XMLPreprocessor, BindingMode, Context, JSONModel/*, jQuerySapXml*/) {
 	/*global QUnit, sinon, window */
 	/*eslint consistent-this: 0, no-loop-func: 0, no-warning-comments: 0*/
 	"use strict";
-
-	jQuery.sap.require("jquery.sap.xml");
 
 	var sComponent = "sap.ui.core.util.XMLPreprocessor",
 		iOldLogLevel = jQuery.sap.log.getLevel();
