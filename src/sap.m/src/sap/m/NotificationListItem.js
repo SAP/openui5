@@ -186,6 +186,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 				this._closeButton.destroy();
 				this._closeButton = null;
 			}
+
+			if (this._collapseButton) {
+				this._collapseButton.destroy();
+				this._collapseButton = null;
+			}
+
 			if (this._ariaDetailsText) {
 				this._ariaDetailsText.destroy();
 				this._ariaDetailsText = null;
