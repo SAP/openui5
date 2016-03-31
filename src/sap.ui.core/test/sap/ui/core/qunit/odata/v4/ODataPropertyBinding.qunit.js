@@ -603,26 +603,45 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("refresh absolute path", function (assert) {
 		var oCacheMock = this.getCacheMock(),
-			done = assert.async(),
+			oError = new Error(),
 			oBinding,
-			sPath = "/EMPLOYEES(ID='1')/Name";
+			oHelperMock = this.oSandbox.mock(_ODataHelper),
+			sPath = "/EMPLOYEES(ID='1')/Name",
+			oReadPromise = Promise.resolve("foo"),
+			oTypePromise = Promise.resolve(new TypeString());
 
 		// initial read and after refresh
-		oCacheMock.expects("read").returns(Promise.resolve("foo"));
-		oCacheMock.expects("refresh");
-		this.oSandbox.mock(this.oModel.getMetaModel()).expects("requestUI5Type")
+		oCacheMock.expects("read").withExactArgs("$direct", undefined, sinon.match.func)
+			.returns(oReadPromise);
+		oCacheMock.expects("refresh").twice();
+		this.oSandbox.mock(this.oModel.getMetaModel()).expects("requestUI5Type").twice()
 			.withExactArgs(sPath)
-			.returns(Promise.resolve(new TypeString()));
+			.returns(oTypePromise);
 
-		oBinding = this.oModel.bindProperty(sPath);
+		oBinding = this.oModel.bindProperty(sPath, undefined, {$$groupId : "$direct"});
 
-		// refresh triggers change
-		oBinding.attachChange(function (oEvent) {
-			assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Refresh);
-			done();
-		});
+		this.oSandbox.mock(oBinding).expects("_fireChange").twice()
+			.withExactArgs({reason: ChangeReason.Refresh});
+		oHelperMock.expects("checkGroupId").withExactArgs(undefined);
 
+		// code under test
 		oBinding.refresh(true);
+
+		oCacheMock.expects("read").withExactArgs("myGroup", undefined, sinon.match.func)
+			.returns(oReadPromise);
+		oHelperMock.expects("checkGroupId").withExactArgs("myGroup");
+
+		// code under test
+		oBinding.refresh(true, "myGroup");
+
+		oHelperMock.expects("checkGroupId").withExactArgs("$Invalid").throws(oError);
+
+		// code under test
+		assert.throws(function () {
+			oBinding.refresh(true, "$Invalid");
+		}, oError);
+
+		return Promise.all([oReadPromise, oTypePromise]);
 	});
 
 	//*********************************************************************************************
@@ -693,10 +712,6 @@ sap.ui.require([
 			oPropertyBinding.refresh("foo"/*truthy*/);
 		}, new Error("Unsupported operation: v4.ODataPropertyBinding#refresh, "
 			+ "bForceUpdate must be true"));
-		assert.throws(function () { //TODO implement
-			oPropertyBinding.refresh(true, "");
-		}, new Error("Unsupported operation: v4.ODataPropertyBinding#refresh, "
-				+ "sGroupId parameter must not be set"));
 
 		assert.throws(function () { //TODO implement
 			oPropertyBinding.resume();

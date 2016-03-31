@@ -203,11 +203,11 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("refresh absolute path", function (assert) {
-		var oCache = {
+		var oBinding,
+			oCache = {
 				refresh : function () {}
 			},
-			oContext = _Context.create(this.oModel, null, "/TEAMS('TEAM_01')"),
-			oBinding;
+			oContext = _Context.create(this.oModel, null, "/TEAMS('TEAM_01')");
 
 		this.oSandbox.mock(_Cache).expects("createSingle").returns(oCache);
 
@@ -220,9 +220,40 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("refresh absolute path, with application group", function (assert) {
+		var oBinding,
+			oCache = {
+				refresh : function () {}
+			},
+			oContext = _Context.create(this.oModel, null, "/TEAMS('TEAM_01')"),
+			oError = new Error(),
+			oHelperMock = this.oSandbox.mock(_ODataHelper);
+
+		this.oSandbox.mock(_Cache).expects("createSingle").returns(oCache);
+
+		oBinding = this.oModel.bindContext("/EMPLOYEES(ID='1')", oContext);
+		this.oSandbox.mock(oCache).expects("refresh");
+		this.oSandbox.mock(oBinding).expects("_fireChange")
+			.withExactArgs({reason : ChangeReason.Refresh});
+		oHelperMock.expects("checkGroupId").withExactArgs("myGroup");
+
+		// code under test
+		oBinding.refresh(true, "myGroup");
+
+		assert.strictEqual(oBinding.sRefreshGroupId, "myGroup");
+
+		oHelperMock.expects("checkGroupId").withExactArgs("$Invalid").throws(oError);
+
+		// code under test
+		assert.throws(function () {
+			oBinding.refresh(true, "$Invalid");
+		}, oError);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("refresh on relative binding is not supported", function (assert) {
-		var oContext = _Context.create(this.oModel, null, "/TEAMS('TEAM_01')"),
-			oBinding;
+		var oBinding,
+			oContext = _Context.create(this.oModel, null, "/TEAMS('TEAM_01')");
 
 		this.oSandbox.mock(_Cache).expects("createSingle").never();
 
@@ -276,6 +307,30 @@ sap.ui.require([
 		return oBinding.requestValue("bar").then(function (vValue) {
 			assert.strictEqual(vValue, "value");
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestValue: absolute binding (read required), with refresh", function (assert) {
+		var oBinding = this.oModel.bindContext("/absolute", undefined, {$$groupId : "$direct"}),
+			oBindingMock = this.oSandbox.mock(oBinding),
+			oPromise;
+
+		oBindingMock.expects("fireDataRequested").withExactArgs();
+		oBindingMock.expects("fireDataReceived").withExactArgs();
+		this.oSandbox.mock(oBinding.oCache).expects("read")
+			.withExactArgs("myGroup", "bar", sinon.match.func)
+			.callsArg(2)
+			.returns(Promise.resolve("value"));
+		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup")
+			.withExactArgs("myGroup", sinon.match.func).callsArg(1);
+		oBinding.sRefreshGroupId = "myGroup";
+
+		oPromise = oBinding.requestValue("bar").then(function (vValue) {
+			assert.strictEqual(vValue, "value");
+		});
+
+		assert.strictEqual(oBinding.sRefreshGroupId, undefined);
+		return oPromise;
 	});
 
 	//*********************************************************************************************
@@ -405,10 +460,6 @@ sap.ui.require([
 			oContextBinding.refresh("foo"/*truthy*/);
 		}, new Error("Unsupported operation: v4.ODataContextBinding#refresh, "
 			+ "bForceUpdate must be true"));
-		assert.throws(function () { //TODO implement
-			oContextBinding.refresh(true, "");
-		}, new Error("Unsupported operation: v4.ODataContextBinding#refresh, "
-				+ "sGroupId parameter must not be set"));
 
 		assert.throws(function () { //TODO implement
 			oContextBinding.resume();

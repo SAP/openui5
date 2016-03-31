@@ -11,6 +11,28 @@ sap.ui.define([
 	var ODataHelper,
 		rApplicationGroupID = /^\w+$/;
 
+	/**
+	 * Returns whether the given group ID is valid, which means it is either undefined, '$auto',
+	 * '$direct' or an application group ID, which is a non-empty string consisting of
+	 * alphanumeric characters from the basic Latin alphabet, including the underscore.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @param {boolean} [bApplicationGroup]
+	 *   Whether only an application group ID is considered valid
+	 * @returns {boolean}
+	 *   Whether the group ID is valid
+	 */
+	function isValidGroupId(sGroupId, bApplicationGroup) {
+		if (typeof sGroupId === "string" && rApplicationGroupID.test(sGroupId)) {
+			return true;
+		}
+		if (!bApplicationGroup) {
+			return sGroupId === undefined || sGroupId === "$auto" || sGroupId === "$direct";
+		}
+		return false;
+	}
+
 	ODataHelper = {
 		/**
 		 * Returns the map of binding-specific parameters from the given map. "Binding-specific"
@@ -44,7 +66,7 @@ sap.ui.define([
 						throw new Error("Unsupported binding parameter: " + sKey);
 					}
 
-					if (!ODataHelper.checkGroupId(sValue)) {
+					if (!isValidGroupId(sValue)) {
 						throw new Error("Unsupported value '" + sValue
 							+ "' for binding parameter '" + sKey + "'");
 					}
@@ -142,7 +164,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns whether the given group ID is valid, which means it is either undefined, '$auto',
+		 * Checks whether the given group ID is valid, which means it is either undefined, '$auto',
 		 * '$direct' or an application group ID, which is a non-empty string consisting of
 		 * alphanumeric characters from the basic Latin alphabet, including the underscore.
 		 *
@@ -150,19 +172,13 @@ sap.ui.define([
 		 *   The group ID
 		 * @param {boolean} [bApplicationGroup]
 		 *   Whether only an application group ID is considered valid
-		 * @returns {boolean}
-		 *   Whether the group ID is valid
+		 * @throws {Error}
+		 *   For invalid group IDs
 		 */
-		checkGroupId : function checkGroupId(sGroupId, bApplicationGroup) {
-			if (typeof sGroupId === "string" && rApplicationGroupID.test(sGroupId)) {
-				return true;
+		checkGroupId : function (sGroupId, bApplicationGroup) {
+			if (!isValidGroupId(sGroupId, bApplicationGroup)) {
+				throw new Error("Invalid group ID: " + sGroupId);
 			}
-
-			if (!bApplicationGroup) {
-				return sGroupId === undefined || sGroupId === "$auto" || sGroupId === "$direct";
-			}
-
-			return false;
 		},
 
 		/**

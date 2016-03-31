@@ -218,18 +218,25 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("checkGroupId", function (assert) {
-		assert.strictEqual(_ODataHelper.checkGroupId("myGroup"), true);
-		assert.strictEqual(_ODataHelper.checkGroupId("$auto"), true);
-		assert.strictEqual(_ODataHelper.checkGroupId("$direct"), true);
-		assert.strictEqual(_ODataHelper.checkGroupId(undefined), true);
-		assert.strictEqual(_ODataHelper.checkGroupId(""), false);
-		assert.strictEqual(_ODataHelper.checkGroupId("$invalid"), false);
-		assert.strictEqual(_ODataHelper.checkGroupId(42, false), false);
+		// valid group IDs
+		_ODataHelper.checkGroupId("myGroup");
+		_ODataHelper.checkGroupId("$auto");
+		_ODataHelper.checkGroupId("$direct");
+		_ODataHelper.checkGroupId(undefined);
+		_ODataHelper.checkGroupId("myGroup", true);
 
-		assert.strictEqual(_ODataHelper.checkGroupId("myGroup", true), true);
-		assert.strictEqual(_ODataHelper.checkGroupId("$auto", true), false);
-		assert.strictEqual(_ODataHelper.checkGroupId("$direct", true), false);
-		assert.strictEqual(_ODataHelper.checkGroupId(undefined, true), false);
-		assert.strictEqual(_ODataHelper.checkGroupId("", true), false);
+		// invalid group IDs
+		["", "$invalid", 42].forEach(function (vGroupId) {
+			assert.throws(function () {
+				_ODataHelper.checkGroupId(vGroupId);
+			}, new Error("Invalid group ID: " + vGroupId));
+		});
+
+		// invalid application group IDs
+		["", "$invalid", 42, "$auto", "$direct", undefined].forEach(function (vGroupId) {
+			assert.throws(function () {
+				_ODataHelper.checkGroupId(vGroupId, true);
+			}, new Error("Invalid group ID: " + vGroupId));
+		});
 	});
 });
