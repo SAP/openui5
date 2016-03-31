@@ -1722,11 +1722,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		var sId = oDomRef.id;
 		if (!this.mUIAreas[sId]) {
 			this.mUIAreas[sId] = new UIArea(this, oDomRef);
-			// propagate Models to newly created UIArea
-			jQuery.each(this.oModels, function (sName, oModel){
-				that.mUIAreas[sId].oPropagatedProperties.oModels[sName] = oModel;
-			});
-			this.mUIAreas[sId].propagateProperties(true);
+			if (!jQuery.isEmptyObject(this.oModels)) {
+				that.mUIAreas[sId].oPropagatedProperties = {
+					oModels: jQuery.extend({}, this.oModels),
+					oBindingContexts: {}
+				};
+				this.mUIAreas[sId].propagateProperties(true);
+			}
 		} else {
 			// this should solve the issue of 'recreation' of a UIArea
 			// e.g. via setRoot with a new domRef
@@ -2590,6 +2592,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			delete this.oModels[sName];
 			// propagate Models to all UI areas
 			jQuery.each(this.mUIAreas, function (i, oUIArea){
+				oUIArea.oPropagatedProperties = {
+						oModels: jQuery.extend({}, oUIArea.oPropagatedProperties.oModels),
+						oBindingContexts: oUIArea.oPropagatedProperties.oBindingContexts
+				};
 				delete oUIArea.oPropagatedProperties.oModels[sName];
 				oUIArea.propagateProperties(sName);
 			});
@@ -2597,6 +2603,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			this.oModels[sName] = oModel;
 			// propagate Models to all UI areas
 			jQuery.each(this.mUIAreas, function (i, oUIArea){
+				oUIArea.oPropagatedProperties = {
+						oModels: jQuery.extend({}, oUIArea.oPropagatedProperties.oModels),
+						oBindingContexts: oUIArea.oPropagatedProperties.oBindingContexts
+				};
 				oUIArea.oPropagatedProperties.oModels[sName] = oModel;
 				oUIArea.propagateProperties(sName);
 			});
