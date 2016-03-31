@@ -524,6 +524,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return oControl;
 	};
 
+	/**
+	 * Gets the correct focus domRef.
+	 * @override
+	 * @returns {Object} the domRef of the ObjectHeader title
+	 */
+	ObjectHeader.prototype.getFocusDomRef = function() {
+		if (this.getResponsive()) {
+			return this.$("txt");
+		} else {
+			return this.$("title");
+		}
+	};
+
 	ObjectHeader.prototype.ontap = function(oEvent) {
 		var sSourceId = oEvent.target.id;
 		if (this.getIntroActive() && sSourceId === this.getId() + "-intro") {
@@ -595,7 +608,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				oEvent.preventDefault();
 			}
 			// The sourceId should be always the id of the "a", even if we click on the inside span element
-			sSourceId = jQuery(oEvent.target).parent().attr('id');
+			sSourceId = this.getId() + "-txt";
 
 			if (!this.getTitleHref()) {
 				oEvent.preventDefault();
