@@ -368,6 +368,22 @@
 					oObjectHeader.destroy();
 				});
 
+				test("Active title getFocusDomRef", function() {
+					var oObjectHeader = createObjectHeader({
+						title: "OH title",
+						titleActive: true
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					equal(oObjectHeader.getFocusDomRef().attr("id"), oObjectHeader.$("txt").attr("id"), "Focus domRef is correct");
+
+					// Clean up
+					oObjectHeader.destroy();
+				});
+
 
 			module("Basic aggregations rendering", {
 				teardown: function () {
