@@ -701,7 +701,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 			if ( !element.href || !mapName || map.nodeName.toLowerCase() !== "map" ) {
 				return false;
 			}
-			img = jQuery( "img[usemap='#" + mapName + "']" )[0];
+			img = jQuery( "img[usemap=#" + mapName + "]" )[0];
 			return !!img && visible( img );
 		}
 		/*eslint-disable no-nested-ternary */
