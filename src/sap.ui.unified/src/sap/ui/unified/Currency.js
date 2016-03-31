@@ -161,6 +161,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			return bHasBinding ? oValueBinding.getValue() !== undefined : true /* no databinding => always true */;
 		};
 
+		/**
+		 * @see {sap.ui.core.Control#getAccessibilityInfo}
+		 * @protected
+		 */
+		Currency.prototype.getAccessibilityInfo = function() {
+			return {description: (this.getFormattedValue() || "") + " " + (this.getCurrency() || "").trim()};
+		};
+
 
 		return Currency;
 
