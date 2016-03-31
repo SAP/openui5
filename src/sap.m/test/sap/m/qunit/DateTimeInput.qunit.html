@@ -203,6 +203,17 @@
 		document.activeElement.blur();
 		ok(!oPicker._popup.isOpen(), "error message is closed");
 	});
+	
+	module("Accessibility");
+	
+	test("getAccessibilityInfo", function() {
+		var oInput = new sap.m.DateTimeInput();
+		ok(!!oInput.getAccessibilityInfo, "DateTimeInput has a getAccessibilityInfo function");
+		var oInfo = oInput.getAccessibilityInfo();
+		ok(!!oInfo, "getAccessibilityInfo returns a info object");
+		//Rest is tested in unit tests of inner controls
+		oInput.destroy();
+	});
 
 </script>
 

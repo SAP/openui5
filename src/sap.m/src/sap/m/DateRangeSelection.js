@@ -715,6 +715,24 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 		}
 	};
 
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	DateRangeSelection.prototype.getAccessibilityInfo = function() {
+		var oRenderer = this.getRenderer();
+		var oInfo = DatePicker.prototype.getAccessibilityInfo.apply(this, arguments);
+		var sValue = this.getValue() || "";
+		if (this._bValid) {
+			var oDate = this.getDateValue();
+			if (oDate) {
+				sValue = this._formatValue(oDate, this.getSecondDateValue());
+			}
+		}
+		oInfo.description = [sValue, oRenderer.getLabelledByAnnouncement(this), oRenderer.getDescribedByAnnouncement(this)].join(" ").trim();
+		return oInfo;
+	};
+
 	function _fireChange(bValid) {
 
 		this.fireChangeEvent(this.getValue(), {

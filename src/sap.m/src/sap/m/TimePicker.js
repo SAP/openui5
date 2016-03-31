@@ -1324,6 +1324,27 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 			return this._oTimeSemanticMaskHelper.replaceChar(sChar, iPlacePosition, sCurrentInputValue);
 		};
 
+
+		/**
+		 * @see {sap.ui.core.Control#getAccessibilityInfo}
+		 * @protected
+		 */
+		TimePicker.prototype.getAccessibilityInfo = function() {
+			var oRenderer = this.getRenderer();
+			var oInfo = MaskInput.prototype.getAccessibilityInfo.apply(this, arguments);
+			var sValue = this.getValue() || "";
+			if (this._bValid) {
+				var oDate = this.getDateValue();
+				if (oDate) {
+					sValue = this._formatValue(oDate);
+				}
+			}
+			oInfo.role = "combobox";
+			oInfo.type = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_TIMEINPUT");
+			oInfo.description = [sValue, oRenderer.getLabelledByAnnouncement(this), oRenderer.getDescribedByAnnouncement(this)].join(" ").trim();
+			return oInfo;
+		};
+
 		function getDefaultDisplayFormat() {
 			var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale(),
 				oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale);
