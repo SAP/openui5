@@ -287,14 +287,16 @@ sap.ui.define([
 			oResult = drillDown(this.aElements, sPath),
 			that = this;
 
-		oBody[sPropertyName] = vValue;
+		oBody[sPropertyName] = oResult[sPropertyName] = vValue;
 		mHeaders = {"If-Match" : oResult["@odata.etag"]};
-		oResult[sPropertyName] = vValue;
 
 		return that.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders, oBody)
 			.then(function (oPatchResult) {
-				oResult["@odata.etag"] = oPatchResult["@odata.etag"];
-				oResult[sPropertyName] = oPatchResult[sPropertyName];
+				for (sPropertyName in oResult) {
+					if (sPropertyName in oPatchResult) {
+						oResult[sPropertyName] = oPatchResult[sPropertyName];
+					}
+				}
 				return oPatchResult;
 			});
 	};
@@ -449,27 +451,28 @@ sap.ui.define([
 	 *   A promise for the PATCH request
 	 */
 	SingleCache.prototype.update = function (sGroupId, sPropertyName, vValue, sEditUrl, sPath) {
-		var oBody = {},
-			that = this;
-
-		oBody[sPropertyName] = vValue;
-		if (this.bSingleProperty) {
-			sPropertyName = "value";
-		}
+		var that = this;
 
 		return this.oPromise.then(function (oResult) {
-			var mHeaders;
+			var oBody = {},
+				mHeaders;
 
 			oResult = drillDown(oResult, sPath);
+			oBody[sPropertyName]
+				= oResult[that.bSingleProperty ? "value" : sPropertyName] = vValue;
 			mHeaders = {"If-Match" : oResult["@odata.etag"]};
-			oResult[sPropertyName] = vValue;
 
 			return that.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders, oBody)
 				.then(function (oPatchResult) {
-					if (!that.bSingleProperty) {
-						oResult["@odata.etag"] = oPatchResult["@odata.etag"];
+					if (that.bSingleProperty) {
+						oResult.value = oPatchResult[sPropertyName];
+					} else {
+						for (sPropertyName in oResult) {
+							if (sPropertyName in oPatchResult) {
+								oResult[sPropertyName] = oPatchResult[sPropertyName];
+							}
+						}
 					}
-					oResult[sPropertyName] = oPatchResult[sPropertyName];
 					return oPatchResult;
 				});
 		});
