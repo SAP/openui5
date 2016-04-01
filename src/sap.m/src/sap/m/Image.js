@@ -561,6 +561,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		return src ? src.indexOf("data:") === 0 : false;
 	};
 
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	Image.prototype.getAccessibilityInfo = function() {
+		var bHasPressListeners = this.hasListeners("press");
+
+		if (this.getDecorative() && !this.getUseMap() && !bHasPressListeners) {
+			return null;
+		}
+
+		return {
+			role: bHasPressListeners ? "button" : "img",
+			type: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText(bHasPressListeners ? "ACC_CTR_TYPE_BUTTON" : "ACC_CTR_TYPE_IMAGE"),
+			description: this.getAlt() || this.getTooltip_AsString() || "",
+			focusable: bHasPressListeners
+		};
+	};
+
 	return Image;
 
 }, /* bExport= */ true);
