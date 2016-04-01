@@ -1022,6 +1022,28 @@
 		ok(oText, "right text visible: expected defined");
 	});
 
+	test("Set value via Slider's API", function () {
+		var initialValue,
+			iValue = 30,
+			oSlider = new sap.ui.commons.Slider({
+				width: '300px',
+				height: '300px',
+				vertical: true,
+				value: iValue
+			}).placeAt("uiArea14");
+
+		sap.ui.getCore().applyChanges();
+		initialValue = oSlider.getDomRef("grip").style.top;
+
+		ok(initialValue, "Have adjusted slider's handler "+initialValue);
+
+		oSlider.setValue(iValue);
+		strictEqual(initialValue, oSlider.getDomRef("grip").style.top, "Slider's handle is at the same place");
+
+		oSlider.destroy();
+		oSlider = null;
+	});
+
 	module("Events");
 
 	asyncTest("Change Event", function() {
