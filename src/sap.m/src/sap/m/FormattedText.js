@@ -31,15 +31,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				library: "sap.m",
 				properties: {
 					/**
-					 * The ARIA role for the control.
-					 */
-					accessibleRole: {
-						type: "sap.ui.core.AccessibleRole",
-						group: "Accessibility",
-						defaultValue: sap.ui.core.AccessibleRole.Document
-					},
-
-					/**
 					 * Text in HTML format.
 					 * The following tags are allowed:
 					 * <ul>
@@ -60,6 +51,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 					 *	<li><code>pre</code></li>
 					 *	<li><code>strong</code></li>
 					 *	<li><code>span</code></li>
+					 *	<li><code>u</code></li>
 					 *	<li><code>dl</code></li>
 					 *	<li><code>dt</code></li>
 					 *	<li><code>dl</code></li>
@@ -90,23 +82,24 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		// rules for the allowed tags
 		_renderingRules.ELEMENTS = {
 			// Text Module Tags
-			'a' : 1,
+			'a' : {cssClass: 'sapMLink'},
 			'abbr': 1,
 			'blockquote': 1,
 			'br': 1,
 			'cite': 1,
 			'code': 1,
 			'em': 1,
-			'h1': 1,
-			'h2': 1,
-			'h3': 1,
-			'h4': 1,
-			'h5': 1,
-			'h6': 1,
+			'h1': {cssClass: 'sapMTitle sapMTitleStyleH1'},
+			'h2': {cssClass: 'sapMTitle sapMTitleStyleH2'},
+			'h3': {cssClass: 'sapMTitle sapMTitleStyleH3'},
+			'h4': {cssClass: 'sapMTitle sapMTitleStyleH4'},
+			'h5': {cssClass: 'sapMTitle sapMTitleStyleH5'},
+			'h6': {cssClass: 'sapMTitle sapMTitleStyleH6'},
 			'p': 1,
 			'pre': 1,
 			'strong': 1,
 			'span': 1,
+			'u' : 1,
 
 			// List Module Tags
 			'dl': 1,
@@ -135,23 +128,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 			var sWarning;
 			var attr, value, openNewWindow;
+			// add UI5 specific classes when appropriate
+			var cssClass = _renderingRules.ELEMENTS[tagName].cssClass || "";
 
 			for (var i = 0; i < attribs.length; i += 2) {
 				// attribs[i] is the name of the tag's attribute.
 				// attribs[i+1] is its corresponding value.
-				// (i.e. <span class="foo"> -> attribs[i] = "class" | attribs[i+1] =
-				// "foo")
+				// (i.e. <span class="foo"> -> attribs[i] = "class" | attribs[i+1] = "foo")
 				attr = attribs[i];
 				value = attribs[i + 1];
-				var sAttribKey = tagName + "::" + attr;
 
-				if (!_renderingRules.ATTRIBS[sAttribKey] && !_renderingRules.ATTRIBS[attr]) {
+				if (!_renderingRules.ATTRIBS[attr] && !_renderingRules.ATTRIBS[tagName + "::" + attr]) {
 					sWarning = 'FormattedText: <' + tagName + '> with attribute [' + attr + '="' + value + '"] is not allowed';
 					jQuery.sap.log.warning(sWarning, this);
-					// to remove this attribute by the sanitizer the value has to be
-					// set to null
+					// to remove the attribute by the sanitizer, set the value to null
 					attribs[i + 1] = null;
-				} else if (attr.toLowerCase() == "href") { // a::href
+					continue;
+				}
+
+				// sanitize hrefs
+				if (attr.toLowerCase() == "href") { // a::href
 					if (!jQuery.sap.validateUrl(value)) {
 						jQuery.sap.log.warning("FormattedText: incorrect href attribute:" + value, this);
 						attribs[i + 1] = "#";
@@ -159,11 +155,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 						openNewWindow = true;
 					}
 				}
+
+				// add UI5 classes to the user defined
+				if (cssClass && attr.toLowerCase() == "class") {
+					attribs[i + 1] = cssClass + " " + value;
+					cssClass = "";
+				}
 			}
+
 			if (openNewWindow) {
 				attribs.push("target");
 				attribs.push("_blank");
 			}
+
+			// add UI5 classes, if not done before
+			if (cssClass) {
+				attribs.push("class");
+				attribs.push(cssClass);
+			}
+
 			return attribs;
 		}
 

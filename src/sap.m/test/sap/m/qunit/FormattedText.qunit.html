@@ -59,7 +59,6 @@
 			$a = oFT.$().find("a");
 			ok(!$a.attr("id"), "id is not rendered");
 			strictEqual($a.attr("href"), sFT, "a::href is rendered");
-			strictEqual($a.attr("class"), "aaa", "a::class is rendered");
 			strictEqual($a.attr("style"), "color:red;", "a::style is rendered");
 			strictEqual($a.attr("target"), "_blank", "a::target attribute is always _blank");
 			setText('<span id="AAA" class="aaa" style="color:red;" href="' +  sFT + '" target="_top">"' + sFT + '</span>');
@@ -69,6 +68,21 @@
 			strictEqual($a.attr("class"), "aaa", "a::class is rendered");
 			strictEqual($a.attr("style"), "color:red;", "a::style is rendered");
 			ok(!$a.attr("target"), "span::target is not rendered");
+		});
+
+		test("css classes", function() {
+			var $a;
+			setText("<h1>" + sFT + "</h1>");
+			$a = oFT.$().find("h1");
+			strictEqual($a.attr("class"), "sapMTitle sapMTitleStyleH1", "h1::class is rendered correctly");
+
+			setText("<h6 class='abc'>" + sFT + "</h6>");
+			$a = oFT.$().find("h6");
+			strictEqual($a.attr("class"), "sapMTitle sapMTitleStyleH6 abc", "h6::class is rendered correctly");
+
+			setText('<a id="AAA" class="abc" style="color:red;" href="' +  sFT + '" target="_top">"' + sFT + '</a>');
+			$a = oFT.$().find("a");
+			strictEqual($a.attr("class"), "sapMLink abc", "a::class is rendered correctly");
 		});
 
 		module("Clean up");
