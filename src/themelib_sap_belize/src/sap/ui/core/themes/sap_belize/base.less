@@ -203,6 +203,11 @@
 // [Tags "Base", "Content", "Color"]
 @sapContent_ContrastIconColor: @sapContent_ContrastTextColor;
 
+// [Label "Content Icon Noninteractive Color"]
+// [Description "The color of noninteractive icons."]
+// [Tags "Base", "Content", "Color"]
+@sapContent_NonInteractiveIconColor: darken(@sapPrimary6, 22);
+
 // [Label "Content Focus Color"]
 // [Description "The color of the focus."]
 // [Tags "Base", "Content", "Color"]
@@ -567,12 +572,12 @@
 // [Label "Scrollbar Face Color"]
 // [Description "The color of the surface of a scrollbar."]
 // [Tags "Base", "Scrollbar", "Color"]
-@sapScrollBar_FaceColor: @sapPrimary6;
+@sapScrollBar_FaceColor: darken(@sapPrimary6, 5);
 
 // [Label "Scrollbar Track Color"]
 // [Description "The color of the track of a scrollbar."]
 // [Tags "Base", "Scrollbar", "Color"]
-@sapScrollBar_TrackColor: lighten(@sapScrollBar_FaceColor, 20);
+@sapScrollBar_TrackColor: lighten(@sapScrollBar_FaceColor, 30);
 
 // [Label "Scrollbar Border Color"]
 // [Description "The color of the borders of a scrollbar."]
@@ -592,7 +597,7 @@
 // [Label "Scrollbar Hover Face Color"]
 // [Description "The hover color of the surface of a scrollbar."]
 // [Tags "Base", "Scrollbar", "Color"]
-@sapScrollBar_Hover_FaceColor: darken(@sapScrollBar_FaceColor, 5);
+@sapScrollBar_Hover_FaceColor: darken(@sapScrollBar_FaceColor, 3);
 
 // [Label "Page Header Background Color"]
 // [Description "The background color of page headers."]
@@ -707,17 +712,17 @@
 // [Label "Chart Color 'Bad'"]
 // [Description "This color is to visualize a 'Bad' value."]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_Bad: #d32030;
+@sapChart_Bad: #dc0d0e;
 
 // [Label "Chart Color 'Critical'"]
 // [Description "This color is to visualize a 'Critical' value."]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_Critical: #e17b24;
+@sapChart_Critical: #de890d;
 
 // [Label "Chart Color 'Good'"]
 // [Description "This color is to visualize a 'Good' value."]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_Good: #61a656;
+@sapChart_Good: #3fa45b;
 
 // [Label "Chart Color 'Neutral'"]
 // [Description "This color is to visualize a 'Neutral' value."]
