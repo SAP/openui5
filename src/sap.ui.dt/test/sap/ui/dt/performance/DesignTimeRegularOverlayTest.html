@@ -35,20 +35,18 @@
 				sap.ui.require(["dt/performance/PerformanceTestUtil"], function(PerformanceTestUtil){
 					//create Vertical Layout
 					oLayout = new sap.ui.layout.VerticalLayout("visibleLayout", {});
-					PerformanceTestUtil.addButtonsTo(oLayout, 1, 200, true /*visible*/);
-					PerformanceTestUtil.addButtonsTo(oLayout, 201, 500, false /*invisible*/);
+					PerformanceTestUtil.addMixedControlsTo(oLayout, 1, 200, true /*visible*/);
+					PerformanceTestUtil.addMixedControlsTo(oLayout, 201, 500, false /*invisible*/);
 
 					oInvisibleLayout = new sap.ui.layout.VerticalLayout("invisibleLayout", {
 						visible : false
 					});
-					PerformanceTestUtil.addButtonsTo(oInvisibleLayout, 2001, 3000, false /*invisible*/);
+					PerformanceTestUtil.addMixedControlsTo(oInvisibleLayout, 2001, 3000, true /*visible*/);
 
 					oHorizontalLayout = new sap.ui.layout.HorizontalLayout("HorizontalLayout", {
 						content : [oLayout, oInvisibleLayout]
 					});
 					oHorizontalLayout.placeAt("content");
-
-					sap.ui.getCore().applyChanges();
 				})
 
 			});
