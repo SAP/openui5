@@ -144,7 +144,13 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			 * <b>Note:</b> If <code>items</code> aggregation is not bound then this property is ignored.
 			 * @since 1.16.6
 			 */
-			rememberSelections : {type : "boolean", group : "Behavior", defaultValue : true}
+			rememberSelections : {type : "boolean", group : "Behavior", defaultValue : true},
+
+			/**
+			 * Defines keyboard handling behaviour of the control.
+			 * @since 1.38.0
+			 */
+			keyboardMode : {type : "sap.m.ListKeyboardMode", group : "Behavior", defaultValue : sap.m.ListKeyboardMode.Navigation}
 		},
 		defaultAggregation : "items",
 		aggregations : {
@@ -1452,6 +1458,11 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			return;
 		}
 
+		// item navigation is not necessary if there is no item in edit mode
+		if (this.getKeyboardMode() == sap.m.ListKeyboardMode.Edit && !this.getItems(true).length) {
+			return;
+		}
+
 		// if focus is not on the navigation items then only invalidate the item navigation
 		if (bIfNeeded && !this.getNavigationRoot().contains(document.activeElement)) {
 			this._bItemNavigationInvalidated = true;
@@ -1522,6 +1533,19 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		return this._oItemNavigation;
 	};
 
+	ListBase.prototype.setKeyboardMode = function(sKeyboardMode) {
+		this.setProperty("keyboardMode", sKeyboardMode, true);
+
+		var oContainerDom = this.getDomRef("listUl");
+		if (oContainerDom) {
+			var iTabIndex = (this.getKeyboardMode() == sap.m.ListKeyboardMode.Edit) ? -1 : 0;
+			jQuery(oContainerDom).prop("tabIndex", iTabIndex);
+			this.$("after").prop("tabIndex", iTabIndex);
+		}
+
+		return this;
+	};
+
 	/*
 	 * Makes the given ListItem(row) focusable via ItemNavigation
 	 *
@@ -1556,6 +1580,10 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 
 	// move focus out of the table for nodata row
 	ListBase.prototype.onsaptabnext = function(oEvent) {
+		if (oEvent.isMarked() || this.getKeyboardMode() == sap.m.ListKeyboardMode.Edit) {
+			return;
+		}
+
 		if (oEvent.target.id == this.getId("nodata")) {
 			this.forwardTab(true);
 		}
@@ -1563,6 +1591,10 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 
 	// move focus out of the table for nodata row
 	ListBase.prototype.onsaptabprevious = function(oEvent) {
+		if (oEvent.isMarked() || this.getKeyboardMode() == sap.m.ListKeyboardMode.Edit) {
+			return;
+		}
+
 		var sTargetId = oEvent.target.id;
 		if (sTargetId == this.getId("nodata")) {
 			this.forwardTab(false);
@@ -1720,11 +1752,34 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		// handle only for backward navigation
 		if (oEvent.isMarked() ||
 			!this._oItemNavigation ||
+			this.getKeyboardMode() == sap.m.ListKeyboardMode.Edit ||
 			oEvent.target.id != this.getId("after")) {
 			return;
 		}
 
 		this.focusPrevious();
+		oEvent.setMarked();
+	};
+
+	// this gets called when items up arrow key is pressed for the edit keyboard mode
+	ListBase.prototype.onItemArrowUpDown = function(oListItem, oEvent) {
+		var aItems = this.getItems(true),
+			iIndex = aItems.indexOf(oListItem) + (oEvent.type == "sapup" ? -1 : 1),
+			oItem = aItems[iIndex];
+
+		if (oItem instanceof GroupHeaderListItem) {
+			oItem = aItems[iIndex + (oEvent.type == "sapup" ? -1 : 1)];
+		}
+
+		if (!oItem) {
+			return;
+		}
+
+		var $Tabbables = oItem.getTabbables(),
+			iFocusPos = oListItem.getTabbables().index(oEvent.target),
+			$Element = $Tabbables.eq($Tabbables[iFocusPos] ? iFocusPos : -1);
+
+		$Element[0] ? $Element.focus() : oItem.focus();
 		oEvent.setMarked();
 	};
 

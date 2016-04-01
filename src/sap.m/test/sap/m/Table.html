@@ -190,6 +190,7 @@
 
 	var oGrowing = new sap.m.ToggleButton({
 		text : "Growing",
+		pressed: true,
 		press : function() {
 			oTable.setGrowing(oGrowing.getPressed());
 			oModel.setDefaultBindingMode(oGrowing.getPressed() ? "OneWay" : "TwoWay");
