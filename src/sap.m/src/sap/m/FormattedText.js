@@ -62,7 +62,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 					 * <code>class, style,</code> and <code>target</code> attributes are allowed.
 					 * Only safe <code>href</code> attributes can be used. See {@link jQuery.sap.validateUrl}
 					 */
-					htmlText: {type: "string", group: "Misc", defaultValue: ""}
+					htmlText: {type: "string", group: "Misc", defaultValue: ""},
+
+					/**
+					 * Optional width of the control in CSS units.
+					 */
+					width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},
+
+					/**
+					 *  Optional height of the control in CSS units.
+					 */
+					height : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null}
 				}
 			}
 		});

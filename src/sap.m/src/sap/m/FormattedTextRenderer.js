@@ -31,6 +31,9 @@ sap.ui.define(['jquery.sap.global'],
 			if (oControl.getTooltip_AsString()) {
 				oRm.writeAttributeEscaped("title", oControl.getTooltip_AsString());
 			}
+			oRm.addStyle("width", oControl.getWidth() || null);
+			oRm.addStyle("height", oControl.getHeight() || null);
+			oRm.writeStyles();
 			oRm.write(">"); // span element
 			// render the remainder of the HTML
 			oRm.write(sHtml);

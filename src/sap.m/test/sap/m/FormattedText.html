@@ -40,7 +40,11 @@
 	htmlText += '<dl><dt>dl - dt - de:</dt><dd>Definition list <code>&lt;dl&gt;</code> of terms <code>&lt;dt&gt;</code> and descriptions <code>&lt;dd&gt;</code></dd>\n';
 	htmlText += '<br><cite>Cite: a reference to a source</cite>\n';
 
-	var oFT = new sap.m.FormattedText("FormattedText", { htmlText: htmlText }).addStyleClass("oft");
+	var oFT = new sap.m.FormattedText("FormattedText", {
+			htmlText: htmlText,
+			width: "80%",
+			height: "auto"
+		}).addStyleClass("oft");
 
 	var oTextArea = new sap.m.TextArea({
 		value:htmlText,
