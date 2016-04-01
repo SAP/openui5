@@ -1492,9 +1492,9 @@
 		var oCheckbox1 = sap.ui.getCore().byId(checkBoxId1);
 		var oCheckbox3 = sap.ui.getCore().byId(checkBoxId3);
 		var oCheckbox5 = sap.ui.getCore().byId(checkBoxId5);
-		oCheckbox1.ontap();
-		oCheckbox3.ontap();
-		oCheckbox5.ontap();
+		oCheckbox1.ontap(new jQuery.Event());
+		oCheckbox3.ontap(new jQuery.Event());
+		oCheckbox5.ontap(new jQuery.Event());
 		equal(sap.ui.getCore().byId(checkBoxId1).getSelected(), true, "MultiSelection: Item 1 should be checked");
 		equal(sap.ui.getCore().byId(checkBoxId2).getSelected(), true, "MultiSelection: Item 2 should be checked");
 		equal(sap.ui.getCore().byId(checkBoxId3).getSelected(), true, "MultiSelection: Item 3 should be checked");

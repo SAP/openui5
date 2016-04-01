@@ -278,11 +278,11 @@
 
 		token.setSelected(false);
 		multiInput1.addToken(token);
-		multiInput1.onsapprevious({srcControl: multiInput1, preventDefault:function(){}});
+		multiInput1.onsapprevious(new jQuery.Event("onsapprevious", {srcControl: multiInput1}));
 		equals(token.getSelected(), false, "Token not selected because popup is open");
 
 		multiInput1._getIsSuggestionPopupOpen = function(){return false;};
-		multiInput1.onsapprevious({srcControl: multiInput1, preventDefault:function(){}});
+		multiInput1.onsapprevious(new jQuery.Event("onsapprevious", {srcControl: multiInput1}));
 		equals(token.getSelected(), true, "Token got selected");
 	});
 

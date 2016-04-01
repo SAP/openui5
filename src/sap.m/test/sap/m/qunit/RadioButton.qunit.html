@@ -495,7 +495,7 @@
 
 			// act
 			oRadioButton.attachSelect(oSelectSpy);
-			oRadioButton.ontap();
+			oRadioButton.ontap(new jQuery.Event());
 
 			// assertions
 			strictEqual(oSelectSpy.callCount, 0, "The select event was not fired yet");
@@ -553,7 +553,7 @@
 			});
 
 			// act
-			oRadioButton.ontap();
+			oRadioButton.ontap(new jQuery.Event());
 
 			// trigger timeout
 			this.clock.tick(1);

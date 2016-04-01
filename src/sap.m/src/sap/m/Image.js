@@ -419,6 +419,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	Image.prototype.onkeyup = function(oEvent) {
 		if (oEvent.which === jQuery.sap.KeyCodes.SPACE || oEvent.which === jQuery.sap.KeyCodes.ENTER) {
 			this.firePress({/* no parameters */});
+
+			// stop the propagation it is handled by the control
+			oEvent.stopPropagation();
 		}
 	};
 
