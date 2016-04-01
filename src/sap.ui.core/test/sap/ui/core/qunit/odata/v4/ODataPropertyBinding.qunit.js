@@ -20,7 +20,8 @@ sap.ui.require([
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
-	var sServiceUrl = "/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/",
+	var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
+		sServiceUrl = "/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/",
 		TestControl = ManagedObject.extend("test.sap.ui.model.odata.v4.ODataPropertyBinding", {
 			metadata : {
 				properties : {
@@ -118,6 +119,26 @@ sap.ui.require([
 				oBinding.attachChange(fnChangeHandler);
 			});
 		}
+	});
+
+	//*********************************************************************************************
+	QUnit.test("toString", function (assert) {
+		var oBinding = this.oModel.bindProperty("/EMPLOYEES(ID='1')/Name"),
+			oContext = {
+				toString: function () {return "/EMPLOYEES(ID='1')";}
+			};
+
+		assert.strictEqual(oBinding.toString(), sClassName + ": /EMPLOYEES(ID='1')/Name",
+			"absolute");
+
+		oBinding = this.oModel.bindProperty("Name");
+		assert.strictEqual(oBinding.toString(), sClassName + ": undefined|Name",
+			"relative, unresolved");
+
+		oBinding = this.oModel.bindProperty("Name", oContext);
+
+		assert.strictEqual(oBinding.toString(), sClassName
+			+ ": /EMPLOYEES(ID='1')|Name", "relative, resolved");
 	});
 
 	//*********************************************************************************************

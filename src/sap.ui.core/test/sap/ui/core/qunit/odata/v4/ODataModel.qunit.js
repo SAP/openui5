@@ -100,6 +100,8 @@ sap.ui.require([
 		}, new Error("Service root URL must end with '/'"));
 
 		assert.strictEqual(createModel().sServiceUrl, getServiceUrl());
+		assert.strictEqual(createModel().toString(),
+			"sap.ui.model.odata.v4.ODataModel: " + getServiceUrl());
 	});
 
 	//*********************************************************************************************

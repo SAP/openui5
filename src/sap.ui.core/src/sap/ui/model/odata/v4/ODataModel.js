@@ -628,5 +628,16 @@ sap.ui.define([
 		return this._submitBatch(sGroupId);
 	};
 
+	/**
+	 * Returns a string representation of this object including the service URL.
+	 *
+	 * @return {string} A string description of this model
+	 * @public
+	 * @since 1.37.0
+	 */
+	ODataModel.prototype.toString = function () {
+		return sClassName + ": " + this.sServiceUrl;
+	};
+
 	return ODataModel;
 }, /* bExport= */ true);
