@@ -91,8 +91,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		// validation of fPercentValue
 		if (typeof (fPercentValue) !== "number" || fPercentValue < 0 || fPercentValue > 100) {
-			jQuery.sap.log.error(this + ": percentValue (" + fPercentValue + ") is not correct! It has to be a number between 0-100.");
-			return this;
+			fPercentValue = 0;
+			jQuery.sap.log.warning(this + ": percentValue (" + fPercentValue + ") is not correct! Setting the default percentValue:0.");
 		}
 
 		if (this.getPercentValue() !== fPercentValue) {
