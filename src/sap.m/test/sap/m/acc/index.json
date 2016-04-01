@@ -37,7 +37,7 @@
 		},
 		{
 			"control": "sap.m.Breadcrumbs",
-			"url": "../Breadcrumbs.html",
+			"url": "Breadcrumbs.html",
 			"appComponent": "CA-UI5-CTR-SOF-PIR"
 		},
 		{
