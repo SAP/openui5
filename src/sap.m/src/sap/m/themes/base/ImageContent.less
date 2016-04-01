@@ -1,0 +1,29 @@
+/* ========================================== */
+/* CSS for control sap.m/ImageContent.control */
+/* ========================================== */
+.sapMImageContent {
+	position: relative;
+	height: 3.875rem;
+	width: 9rem;
+	outline: none;
+}
+
+.sapMImageContentImageIcon {
+	display: block;
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	max-height: 3.5rem;
+}
+
+/* BREAKPOINT FOR SMALL PHONES */
+@media screen and (max-width: 374px) {
+	.sapMImageContent {
+		height: 3.438rem;
+		width: 8rem;
+	}
+
+	.sapMImageContentImageIcon {
+		max-height: 3rem;
+	}
+}

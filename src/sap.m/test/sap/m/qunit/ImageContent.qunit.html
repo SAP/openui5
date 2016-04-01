@@ -1,0 +1,143 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>sap.m.ImageContent</title>
+
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-libs="sap.m" data-sap-ui-language="en">
+</script>
+<!-- QUnit libraries -->
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+
+<script type="text/javascript">
+	if (!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 8)) {
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	}
+
+	QUnit.module("Rendering test - sap.m.ImageContent", {
+		beforeEach : function() {
+			this.oImageContent = new sap.m.ImageContent("img-cnt", {
+				src: "../images/headerImg1.png",
+				description: "image descriptions ...",
+				press: jQuery.noop
+			});
+			this.oImageContent.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oImageContent.destroy();
+			this.oImageContent = null;
+		}
+	});
+
+	QUnit.test("ImageContent and image rendered", function(assert) {
+		assert.ok(jQuery.sap.domById("img-cnt"), "ImageContent was rendered successfully");
+		assert.ok(jQuery.sap.domById("img-cnt-icon-image"), "Image was rendered successfully");
+	});
+
+	QUnit.test("Icon rendered", function(assert) {
+		this.oImageContent.setSrc("sap-icon://travel-expense");
+		sap.ui.getCore().applyChanges();
+		assert.ok(jQuery.sap.domById("img-cnt-icon-image"), "Icon was rendered successfully");
+	});
+
+	QUnit.module("Tooltip test", {
+		beforeEach : function() {
+			this.oImageContent = new sap.m.ImageContent("img-cnt", {
+				src: "../images/headerImg1.png",
+				description: "        image descriptions        ",
+				press: jQuery.noop
+			});
+			this.oImageContent.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oImageContent.destroy();
+			this.oImageContent = null;
+		}
+	});
+
+	QUnit.test("Tooltip generated", function(assert) {
+		var sTooltip = this.oImageContent.getTooltip();
+		assert.equal(sTooltip, "image descriptions", "The tooltip generated correctly");
+	});
+
+	QUnit.module("Event tests", {
+		beforeEach : function() {
+			this.ftnPressHandler = function() {
+			};
+			this.ftnHoverHandler = function() {
+			};
+			this.oImageContent = new sap.m.ImageContent("img-cnt", {
+				src: "../images/headerImg1.png"
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			sinon.spy(this, "ftnPressHandler");
+		},
+		afterEach : function() {
+			this.ftnPressHandler.restore();
+			this.oImageContent.destroy();
+			this.oImageContent = null;
+		}
+	});
+
+	QUnit.test("Tap test", function(assert) {
+		this.oImageContent.attachEvent("press", this.ftnPressHandler);
+		this.oImageContent.$().trigger('tap');
+		assert.ok(this.ftnPressHandler.calledOnce, "Press event is triggered");
+	});
+
+	QUnit.test("Enter test", function(assert) {
+		this.oImageContent.attachEvent("press", this.ftnPressHandler);
+		this.oImageContent.$().trigger(jQuery.Event('keydown', {which: 13}));
+		assert.ok(this.ftnPressHandler.calledOnce, "Press event is triggered");
+	});
+
+	QUnit.test("Space test", function(assert) {
+		this.oImageContent.attachEvent("press", this.ftnPressHandler);
+		this.oImageContent.$().trigger(jQuery.Event('keydown', {which: 32}));
+		assert.ok(this.ftnPressHandler.calledOnce, "Press event is triggered");
+	});
+
+	QUnit.test("Attach not available events", function(assert) {
+		//Arrange
+		//Act
+		this.oImageContent.attachEvent("hover", this.ftnHoverHandler, this.oImageContent);
+		//Assert
+		assert.notOk(this.oImageContent.$().attr("tabindex"), "Attribute has not been added successfully because hover handler was not available");
+		assert.notOk(this.oImageContent.$().hasClass("sapMPointer"), "Class has not been added successfully because hover handler was not available");
+	});
+
+	QUnit.test("Attach events", function(assert) {
+		//Arrange
+		//Act
+		this.oImageContent.attachEvent("press", this.ftnPressHandler, this.oImageContent);
+		//Assert
+		assert.equal(this.oImageContent.$().attr("tabindex"), "0", "Attribute has been added successfully because press handler was available");
+		assert.ok(this.oImageContent.$().hasClass("sapMPointer"), "Class has been added successfully because press handler was available");
+	});
+
+	QUnit.test("Detach events", function(assert) {
+		//Arrange
+		this.oImageContent.attachEvent("press", this.ftnPressHandler, this.oImageContent);
+		//Act
+		this.oImageContent.detachEvent("press", this.ftnPressHandler, this.oImageContent);
+		//Assert
+		assert.notOk(this.oImageContent.$().attr("tabindex"), "Attribute has been removed successfully");
+		assert.notOk(this.oImageContent.$().hasClass("sapMPointer"), "Class has been removed successfully");
+	});
+</script>
+</head>
+
+<body id="body" class="sapUiBody">
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+</body>
+</html>
