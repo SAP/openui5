@@ -151,6 +151,7 @@
 	});
 
 	var oModel = new sap.ui.model.json.JSONModel();
+	oModel.setDefaultBindingMode("OneWay");
 	oModel.setData({modelData: aData});
 
 	var aModes = Object.keys(sap.m.ListMode).map(function(sMode) {

@@ -502,6 +502,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		this._deactivateScrollToEnd();
 
+		// mark the event that it is handled by the control
 		oEvent.setMarked();
 
 	};
@@ -554,6 +555,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		this._deactivateScrollToEnd();
 
+		// mark the event that it is handled by the control
+		oEvent.setMarked();
 	};
 
 	/**

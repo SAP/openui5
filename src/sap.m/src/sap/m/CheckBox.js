@@ -169,10 +169,13 @@ sap.ui.define(['jquery.sap.global', './Label', './library', 'sap/ui/core/Control
 	 */
 	CheckBox.prototype.ontap = function(oEvent) {
 		if (this.getEnabled() && this.getEditable()) {
-            this.$().focus(); // In IE taping on the input doesn`t focus the wrapper div.
+			this.$().focus(); // In IE taping on the input doesn`t focus the wrapper div.
 			var bSelected = !this.getSelected();
 			this.setSelected(bSelected);
 			this.fireSelect({selected:bSelected});
+
+			// mark the event that it is handled by the control
+			oEvent && oEvent.setMarked();
 		}
 	};
 
