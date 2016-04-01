@@ -911,7 +911,7 @@ sap.ui.require([
 		var sMessage = "This call intentionally failed",
 			oError = new Error(sMessage),
 			oModel = new ODataModel({
-				defaultGroup : "$direct",
+				groupId : "$direct",
 				serviceUrl : "/service/?sap-client=111",
 				synchronizationMode : "None"
 			}),
@@ -937,7 +937,7 @@ sap.ui.require([
 	QUnit.test("setValue (relative binding) via control", function (assert) {
 		var oCacheMock = this.getCacheMock(),
 			oModel = new ODataModel({
-				defaultGroup : "$direct",
+				groupId : "$direct",
 				serviceUrl : "/service/?sap-client=111",
 				synchronizationMode : "None"
 			}),

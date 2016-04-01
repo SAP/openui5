@@ -38,7 +38,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mParameters
 	 *   The parameters
-	 * @param {string} [mParameters.defaultGroup="$auto"]
+	 * @param {string} [mParameters.groupId="$auto"]
 	 *   Controls the model's use of batch requests: '$auto' bundles requests from the model in a
 	 *   batch request which is sent automatically before rendering; '$direct' sends requests
 	 *   directly without batch
@@ -60,7 +60,7 @@ sap.ui.define([
 	 *   synchronized at all; all other values are not supported and lead to an error.
 	 * @throws {Error} If an unsupported synchronization mode is given, if the given service root
 	 *   URL does not end with a forward slash, if OData system query options or parameter aliases
-	 *   are specified as parameters or if a default group different from '$auto' or '$direct' is
+	 *   are specified as parameters or if a group ID different from '$auto' or '$direct' is
 	 *   given
 	 *
 	 * @alias sap.ui.model.odata.v4.ODataModel
@@ -102,12 +102,12 @@ sap.ui.define([
 					this.mUriParameters = _ODataHelper.buildQueryOptions(jQuery.extend({},
 						oUri.query(true), mParameters.serviceUrlParams));
 					this.sServiceUrl = oUri.query("").toString();
-					this.sGroupId = mParameters.defaultGroup;
+					this.sGroupId = mParameters.groupId;
 					if (this.sGroupId === undefined) {
 						this.sGroupId = "$auto";
 					}
 					if (this.sGroupId !== "$auto" && this.sGroupId !== "$direct") {
-						throw new Error("Default group must be '$auto' or '$direct'");
+						throw new Error("Group ID must be '$auto' or '$direct'");
 					}
 
 					this.oMetaModel = new ODataMetaModel(
@@ -222,14 +222,14 @@ sap.ui.define([
 	 *   Query options specified for the binding overwrite model query options.
 	 * @param {string} [mParameters.$$groupId]
 	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
-	 *   specified, the model's default group is used, see
+	 *   specified, the model's group ID is used, see
 	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor}.
 	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
 	 *   application group IDs as specified in {@link #submitBatch}.
 	 * @param {string} [mParameters.$$updateGroupId]
 	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
 	 *   if not specified, the binding's parameter "$$groupId" is used and if "$$groupId" is not
-	 *   specified, the model's default group is used,
+	 *   specified, the model's group ID is used,
 	 *   see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
 	 *   For valid values, see parameter "$$groupId".
 	 * @returns {sap.ui.model.odata.v4.ODataContextBinding}
@@ -271,14 +271,14 @@ sap.ui.define([
 	 *   Query options specified for the binding overwrite model query options.
 	 * @param {string} [mParameters.$$groupId]
 	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
-	 *   specified, the model's default group is used, see
+	 *   specified, the model's group ID is used, see
 	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor}.
 	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
 	 *   application group IDs as specified in {@link #submitBatch}.
 	 * @param {string} [mParameters.$$updateGroupId]
 	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
 	 *   if not specified, the binding's parameter "$$groupId" is used and if "$$groupId" is not
-	 *   specified, the model's default group is used,
+	 *   specified, the model's group ID is used,
 	 *   see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
 	 *   For valid values, see parameter "$$groupId".
 	 * @returns {sap.ui.model.odata.v4.ODataListBinding}
@@ -322,14 +322,14 @@ sap.ui.define([
 	 *   Query options specified for the binding overwrite model query options.
 	 * @param {string} [mParameters.$$groupId]
 	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
-	 *   specified, the model's default group is used, see
+	 *   specified, the model's group ID is used, see
 	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor}.
 	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
 	 *   application group IDs as specified in {@link #submitBatch}.
 	 * @param {string} [mParameters.$$updateGroupId]
 	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
 	 *   if not specified, the binding's parameter "$$groupId" is used and if "$$groupId" is not
-	 *   specified, the model's default group is used,
+	 *   specified, the model's group ID is used,
 	 *   see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
 	 *   For valid values, see parameter "$$groupId".
 	 * @returns {sap.ui.model.odata.v4.ODataPropertyBinding}
