@@ -219,7 +219,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './ListIte
 		var oHeaderTBar = oControl.getHeaderToolbar();
 		if (oHeaderTBar) {
 			return oHeaderTBar.getTitleId();
-		} else if (oControl.getHeaderText()) {
+		}
+		if (oControl.getHeaderText()) {
 			return oControl.getId("header");
 		}
 	};
