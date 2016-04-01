@@ -36,12 +36,12 @@ sap.ui.define([
 			oGrouperReturn;
 
 		// System under test
-		var fnGroup = Grouper.UnitNumber(this._oResourceModel.getResourceBundle());
+		var fnGroup = Grouper.groupUnitNumber(this._oResourceModel.getResourceBundle());
 
 		// Assert
 		oGrouperReturn = fnGroup(oContextObject);
 		assert.strictEqual(oGrouperReturn.key, "LE20", "The key is as expected for a low value");
-		assert.strictEqual(oGrouperReturn.text, this._oResourceModel.getResourceBundle().getText("masterGroup1Header1"), "The group header is as expected for a low value");;
+		assert.strictEqual(oGrouperReturn.text, this._oResourceModel.getResourceBundle().getText("masterGroup1Header1"), "The group header is as expected for a low value");
 	});
 
 	QUnit.test("Should group the price", function (assert) {
@@ -50,7 +50,7 @@ sap.ui.define([
 			oGrouperReturn;
 
 		// System under test
-		var fnGroup = Grouper.UnitNumber(this._oResourceModel.getResourceBundle());
+		var fnGroup = Grouper.groupUnitNumber(this._oResourceModel.getResourceBundle());
 
 		// Assert
 		oGrouperReturn = fnGroup(oContextObject);

@@ -10,7 +10,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oModel = new JSONModel({});
 			// System under test
-			this.oGroupSortState = new GroupSortState(this.oModel, function() {})
+			this.oGroupSortState = new GroupSortState(this.oModel, function() {});
 		}
 	});
 

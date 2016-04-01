@@ -22,16 +22,7 @@ sap.ui.define([
 					iChangeTheHashToTheRememberedItem : function () {
 						return this.waitFor({
 							success : function () {
-								var sObjectId = this.getContext().currentListItem.getBindingContext().getProperty("ObjectID");
-								Opa5.getHashChanger().setHash("/Objects/" + sObjectId);
-							}
-						});
-					},
-
-					iChangeTheHashToTheRememberedId : function () {
-						return this.waitFor({
-							success : function () {
-								var sObjectId = this.getContext().currentId;
+								var sObjectId = this.getContext().currentItem.id;
 								Opa5.getHashChanger().setHash("/Objects/" + sObjectId);
 							}
 						});
@@ -63,7 +54,7 @@ sap.ui.define([
 					iShouldSeeTheHashForTheRememberedObject : function () {
 						return this.waitFor({
 							success : function () {
-								var sObjectId = this.getContext().currentListItem.getBindingContext().getProperty("ObjectID"),
+								var sObjectId = this.getContext().currentItem.id,
 									oHashChanger = Opa5.getHashChanger(),
 									sHash = oHashChanger.getHash();
 								Opa5.assert.strictEqual(sHash, "Objects/" + sObjectId, "The Hash is not correct");

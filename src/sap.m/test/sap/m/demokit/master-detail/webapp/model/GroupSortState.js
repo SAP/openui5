@@ -13,6 +13,8 @@ sap.ui.define([
 		 * If a user ungroups, the sorting will be reset to the default sorting.
 		 * @class
 		 * @public
+		 * @param {sap.ui.model.json.JSONModel} oViewModel the model of the current view
+		 * @param {function} fnGroupFunction the grouping function to be applied
 		 * @alias sap.ui.demo.masterdetail.model.GroupSortState
 		 */
 		constructor: function (oViewModel, fnGroupFunction) {
@@ -23,7 +25,7 @@ sap.ui.define([
 		/**
 		 * Sorts by Name, or by UnitNumber
 		 *
-		 * @param sKey - the key of the field used for grouping
+		 * @param {string} sKey - the key of the field used for grouping
 		 * @returns {sap.ui.model.Sorter[]} an array of sorters
 		 */
 		sort: function (sKey) {
@@ -41,7 +43,7 @@ sap.ui.define([
 		/**
 		 * Groups by UnitNumber, or resets the grouping for the key "None"
 		 *
-		 * @param sKey - the key of the field used for grouping
+		 * @param {string} sKey - the key of the field used for grouping
 		 * @returns {sap.ui.model.Sorter[]} an array of sorters
 		 */
 		group: function (sKey) {

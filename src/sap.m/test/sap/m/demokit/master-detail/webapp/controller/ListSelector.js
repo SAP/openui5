@@ -89,12 +89,18 @@ sap.ui.define([
 							return;
 						}
 
-						oList.getItems().some(function (oItem) {
+						var fnSelectListItem = function (oItem) {
 							if (oItem.getBindingContext() && oItem.getBindingContext().getPath() === sBindingPath) {
 								oList.setSelectedItem(oItem);
 								return true;
 							}
-						});
+						};
+
+						if(!oList.getItems().some(fnSelectListItem)) {
+							// Remove last selection if the object currently displayed in the detail view has not been
+							// loaded yet in the master list
+							this.clearMasterListSelection();
+						}
 					}.bind(this),
 					function () {
 						jQuery.sap.log.warning("Could not select the list item with the path" + sBindingPath + " because the list encountered an error or had no items");

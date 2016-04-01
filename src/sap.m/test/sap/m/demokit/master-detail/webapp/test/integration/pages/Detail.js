@@ -83,7 +83,7 @@ sap.ui.define([
 					iShouldSeeTheRememberedObject : function () {
 						return this.waitFor({
 							success : function () {
-								var sBindingPath = this.getContext().currentListItem.getBindingContext().getPath();
+								var sBindingPath = this.getContext().currentItem.bindingPath;
 								this._waitForPageBindingPath(sBindingPath);
 							}
 						});
@@ -172,6 +172,17 @@ sap.ui.define([
 									errorMessage : "The line item list does not display " + iNumberOfItems + " items."
 								});
 							}
+						});
+					},
+
+					iShouldSeeTheShareEmailButton : function () {
+						return this.waitFor({
+							id : "shareEmail",
+							viewName : sViewName,
+							success : function () {
+								Opa5.assert.ok(true, "The E-Mail button is visible");
+							},
+							errorMessage : "The E-Mail button was not found"
 						});
 					}
 				}
