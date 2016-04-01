@@ -60,7 +60,7 @@ sap.ui.define([
 					oView.setModel(oUiModel, "ui");
 
 					that._bindSelectInstance();
-				})["catch"](alertError);
+				}).catch(alertError);
 			}
 		},
 
@@ -159,7 +159,7 @@ sap.ui.define([
 					"sap.ui.core.sample.ViewTemplate.scenario.Main");
 
 				that.onSourceCode();
-			})["catch"](alertError);
+			}).catch(alertError);
 		}
 	});
 

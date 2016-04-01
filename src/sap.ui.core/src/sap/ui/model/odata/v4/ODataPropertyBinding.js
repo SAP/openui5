@@ -218,7 +218,7 @@ sap.ui.define([
 			aPromises.push(this.oModel.getMetaModel().requestUI5Type(sResolvedPath)
 				.then(function (oType) {
 					that.setType(oType, that.sInternalType);
-				})["catch"](function (oError) {
+				}).catch(function (oError) {
 					that.bRequestTypeFailed = true;
 					jQuery.sap.log.warning(oError.message, sResolvedPath, sClassName);
 				})
@@ -241,7 +241,7 @@ sap.ui.define([
 			}
 			bFire = that.vValue !== vValue;
 			that.vValue = vValue;
-		})["catch"](function (oError) {
+		}).catch(function (oError) {
 			// do not rethrow, ManagedObject doesn't react on this either
 			// throwing an exception would cause "Uncaught (in promise)" in Chrome
 			if (!oError.canceled) {
