@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 		 * @version ${version}
 		 *
 		 * @constructor
-		 * @public
+		 * @private
 		 * @alias sap.m.MenuListItem
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
@@ -132,5 +132,5 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 
 		return MenuListItem;
 
-	}, /* bExport= */ true);
+	}, /* bExport= */ false);
 
