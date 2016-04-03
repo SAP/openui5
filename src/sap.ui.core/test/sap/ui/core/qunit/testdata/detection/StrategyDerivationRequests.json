@@ -1,0 +1,43 @@
+[{
+	"DetObjType": "DET1",
+	"Solution": "01",
+	"SelectionMode" : "A",
+	"Results" : [{
+			"DbKey" : "A1",
+			"Id":"AUD_CUST_ALEX",
+			"Version":1,
+			"Description":"Audit Customer Bank account",
+			"DetObjType":"DET1",
+			"InvestigationReason":"AUDIT",
+			"InvestigationReasonDescription":"Audit strategies",
+			"SelectionParamName":"ABC1",
+			"Sign":"I",
+			"SelectOption":"EQ",
+			"Low":"CDFG",
+			"High":"",
+			"StatusDescription":"Active"
+	},
+	{
+			"DbKey" : "BB",
+			"Id":"BBBB",
+			"Version":1,
+			"Description":"BBBB",
+			"DetObjType":"DET1",
+			"InvestigationReason":"BB",
+			"InvestigationReasonDescription":"BBB",
+			"SelectionParamName":"ABC1",
+			"Sign":"I",
+			"SelectOption":"EQ",
+			"Low":"CDFG",
+			"High":"",
+			"StatusDescription":"Active"
+	}],
+	"SelectionCondition" : [
+		{
+			"Sign":"I",
+			"FieldName": "ABC1",
+			"Option":"EQ",
+			"Low":"CDFG",
+			"High":""
+		}	]
+}]
