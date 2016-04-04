@@ -160,7 +160,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @class Implementation of an OData meta data model which offers access to OData V4 meta data.
 	 *   An event handler can only be attached to this meta model for the following event:
-	 *   'messageChange', see {@link sap.ui.core.messages.MessageProcessor#messageChange
+	 *   'messageChange', see {@link sap.ui.core.message.MessageProcessor#messageChange
 	 *   messageChange}.
 	 *   For other events, an error is thrown.
 	 *
