@@ -100,13 +100,13 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 		/* Private methods                                             */
 		/* ----------------------------------------------------------- */
 
-		function fnHandleKeyboardNavigation(oItem) {
+		function fnHandleKeyboardNavigation(oControl, oItem) {
 
 			if (!oItem) {
 				return;
 			}
 
-			var oDomRef = this.getFocusDomRef(),
+			var oDomRef = oControl.getFocusDomRef(),
 				iSelectionStart = oDomRef.selectionStart,
 				iSelectionEnd = oDomRef.selectionEnd,
 				bIsTextSelected = iSelectionStart !== iSelectionEnd,
@@ -114,7 +114,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 				oSelectedItem = this.getSelectedItem();
 
 			if (oItem !== oSelectedItem) {
-				this.updateDomValue(oItem.getText());
+				oControl.updateDomValue(oItem.getText());
 				this.setSelection(oItem);
 				this.fireSelectionChange({ selectedItem: oItem });
 
@@ -124,7 +124,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 					iSelectionStart = 0;
 				}
 
-				this.selectText(iSelectionStart, oDomRef.value.length);
+				oControl.selectText(iSelectionStart, oDomRef.value.length);
 			}
 
 			this.scrollToItem(oItem);
@@ -297,6 +297,11 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 		/* Lifecycle methods                                           */
 		/* =========================================================== */
 
+		ComboBox.prototype.init = function() {
+			ComboBoxBase.prototype.init.apply(this, arguments);
+			this.bOpenValueStateMessage = true;
+		};
+
 		ComboBox.prototype.onBeforeRendering = function() {
 			ComboBoxBase.prototype.onBeforeRendering.apply(this, arguments);
 			this.synchronizeSelection();
@@ -357,19 +362,20 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 			this.loadItems(function() {
 				var oSelectedItem = this.getSelectedItem(),
 					sValue = oEvent.target.value,
-					bEmptyValue = sValue === "";
+					bEmptyValue = sValue === "",
+					oControl = oEvent.srcControl;
 
 				var aVisibleItems = this.filterItems({
 					property: "text",
 					value: sValue
 				}, this.getItems());
 
-				var bItemsVisible = aVisibleItems.length;
+				var bItemsVisible = !!aVisibleItems.length;
 				var oFirstVisibleItem = aVisibleItems[0]; // first item that matches the value
 
 				if (!bEmptyValue && oFirstVisibleItem && oFirstVisibleItem.getEnabled()) {
 
-					if (this._bDoTypeAhead) {
+					if (oControl._bDoTypeAhead) {
 						oEvent.srcControl.updateDomValue(oFirstVisibleItem.getText());
 					}
 
@@ -381,7 +387,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 						});
 					}
 
-					if (this._bDoTypeAhead) {
+					if (oControl._bDoTypeAhead) {
 
 						if (sap.ui.Device.os.blackberry || sap.ui.Device.os.android) {
 
@@ -412,7 +418,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 					this.clearFilter();
 				}
 			}, {
-				id: "input",
+				name: "input",
 				busyIndicator: false
 			});
 
@@ -492,14 +498,15 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		ComboBox.prototype.onkeydown = function(oEvent) {
+			var oControl = oEvent.srcControl;
 			ComboBoxBase.prototype.onkeydown.apply(this, arguments);
 
-			if (!this.getEnabled() || !this.getEditable()) {
+			if (!oControl.getEnabled() || !oControl.getEditable()) {
 				return;
 			}
 
 			var mKeyCode = jQuery.sap.KeyCodes;
-			this._bDoTypeAhead = (oEvent.which !== mKeyCode.BACKSPACE) && (oEvent.which !== mKeyCode.DELETE);
+			oControl._bDoTypeAhead = (oEvent.which !== mKeyCode.BACKSPACE) && (oEvent.which !== mKeyCode.DELETE);
 		};
 
 		/**
@@ -508,8 +515,9 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		ComboBox.prototype.oncut = function(oEvent) {
+			var oControl = oEvent.srcControl;
 			ComboBoxBase.prototype.oncut.apply(this, arguments);
-			this._bDoTypeAhead = false;
+			oControl._bDoTypeAhead = false;
 		};
 
 		/**
@@ -518,15 +526,16 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		ComboBox.prototype.onsapenter = function(oEvent) {
+			var oControl = oEvent.srcControl;
 			ComboBoxBase.prototype.onsapenter.apply(this, arguments);
 
 			// in case of a non-editable or disabled combo box, the selection cannot be modified
-			if (!this.getEnabled() || !this.getEditable()) {
+			if (!oControl.getEnabled() || !oControl.getEditable()) {
 				return;
 			}
 
-			if (this.isOpen()) {
-				this.close();
+			if (oControl.isOpen()) {
+				oControl.close();
 			}
 		};
 
@@ -536,9 +545,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		ComboBox.prototype.onsapdown = function(oEvent) {
+			var oControl = oEvent.srcControl;
 
 			// in case of a non-editable or disabled combo box, the selection cannot be modified
-			if (!this.getEnabled() || !this.getEditable()) {
+			if (!oControl.getEnabled() || !oControl.getEditable()) {
 				return;
 			}
 
@@ -551,7 +561,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 			this.loadItems(function navigateToNextSelectableItem() {
 				var aSelectableItems = this.getSelectableItems();
 				var oNextSelectableItem = aSelectableItems[aSelectableItems.indexOf(this.getSelectedItem()) + 1];
-				fnHandleKeyboardNavigation.call(this, oNextSelectableItem);
+				fnHandleKeyboardNavigation.call(this, oControl, oNextSelectableItem);
 			});
 		};
 
@@ -561,9 +571,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		ComboBox.prototype.onsapup = function(oEvent) {
+			var oControl = oEvent.srcControl;
 
 			// in case of a non-editable or disabled combo box, the selection cannot be modified
-			if (!this.getEnabled() || !this.getEditable()) {
+			if (!oControl.getEnabled() || !oControl.getEditable()) {
 				return;
 			}
 
@@ -576,7 +587,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 			this.loadItems(function navigateToPrevSelectableItem() {
 				var aSelectableItems = this.getSelectableItems();
 				var oPrevSelectableItem = aSelectableItems[aSelectableItems.indexOf(this.getSelectedItem()) - 1];
-				fnHandleKeyboardNavigation.call(this, oPrevSelectableItem);
+				fnHandleKeyboardNavigation.call(this, oControl, oPrevSelectableItem);
 			});
 		};
 
@@ -588,9 +599,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		ComboBox.prototype.onsaphome = function(oEvent) {
+			var oControl = oEvent.srcControl;
 
 			// in case of a non-editable or disabled combo box, the selection cannot be modified
-			if (!this.getEnabled() || !this.getEditable()) {
+			if (!oControl.getEnabled() || !oControl.getEditable()) {
 				return;
 			}
 
@@ -602,7 +614,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 
 			this.loadItems(function navigateToFirstSelectableItem() {
 				var oFirstSelectableItem = this.getSelectableItems()[0];
-				fnHandleKeyboardNavigation.call(this, oFirstSelectableItem);
+				fnHandleKeyboardNavigation.call(this, oControl, oFirstSelectableItem);
 			});
 		};
 
@@ -614,9 +626,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		ComboBox.prototype.onsapend = function(oEvent) {
+			var oControl = oEvent.srcControl;
 
 			// in case of a non-editable or disabled combo box, the selection cannot be modified
-			if (!this.getEnabled() || !this.getEditable()) {
+			if (!oControl.getEnabled() || !oControl.getEditable()) {
 				return;
 			}
 
@@ -628,7 +641,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 
 			this.loadItems(function navigateToLastSelectableItem() {
 				var oLastSelectableItem = this.findLastEnabledItem(this.getSelectableItems());
-				fnHandleKeyboardNavigation.call(this, oLastSelectableItem);
+				fnHandleKeyboardNavigation.call(this, oControl, oLastSelectableItem);
 			});
 		};
 
@@ -638,9 +651,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		ComboBox.prototype.onsappagedown = function(oEvent) {
+			var oControl = oEvent.srcControl;
 
 			// in case of a non-editable or disabled combo box, the selection cannot be modified
-			if (!this.getEnabled() || !this.getEditable()) {
+			if (!oControl.getEnabled() || !oControl.getEditable()) {
 				return;
 			}
 
@@ -658,7 +672,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 				// constrain the index
 				iIndex = (iIndex > aSelectableItems.length - 1) ? aSelectableItems.length - 1 : Math.max(0, iIndex);
 				oItem = aSelectableItems[iIndex];
-				fnHandleKeyboardNavigation.call(this, oItem);
+				fnHandleKeyboardNavigation.call(this, oControl, oItem);
 			});
 		};
 
@@ -668,9 +682,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		ComboBox.prototype.onsappageup = function(oEvent) {
+			var oControl = oEvent.srcControl;
 
 			// in case of a non-editable or disabled combo box, the selection cannot be modified
-			if (!this.getEnabled() || !this.getEditable()) {
+			if (!oControl.getEnabled() || !oControl.getEditable()) {
 				return;
 			}
 
@@ -688,7 +703,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 				// constrain the index
 				iIndex = (iIndex > aSelectableItems.length - 1) ? aSelectableItems.length - 1 : Math.max(0, iIndex);
 				oItem = aSelectableItems[iIndex];
-				fnHandleKeyboardNavigation.call(this, oItem);
+				fnHandleKeyboardNavigation.call(this, oControl, oItem);
 			});
 		};
 
@@ -703,7 +718,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 			if (oEvent.target === this.getOpenArea()) {
 
 				// the value state message can not be opened if click on the open area
-				this.bCanNotOpenMessage = true;
+				this.bOpenValueStateMessage = false;
 
 				// avoid the text-editing mode popup to be open on mobile,
 				// text-editing mode disturbs the usability experience (it blocks the UI in some devices)
@@ -729,11 +744,11 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 				}
 
 				// open the message popup
-				if (!this.isOpen() && !this.bCanNotOpenMessage) {
+				if (!this.isOpen() && this.bOpenValueStateMessage) {
 					this.openValueStateMessage();
 				}
 
-				this.bCanNotOpenMessage = false;
+				this.bOpenValueStateMessage = true;
 			}
 
 			this.$().addClass("sapMFocus");

@@ -4909,6 +4909,7 @@
 			this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 
 			sap.ui.test.qunit.triggerTouchEvent("touchstart", oComboBox.getOpenArea(), {
+				srcControl: oComboBox,
 				touches: {
 					0: {
 						pageX: 10,
@@ -4933,6 +4934,7 @@
 			fnPickerIsOpenSpy = this.spy(oComboBox.getPicker(), "isOpen");
 
 			sap.ui.test.qunit.triggerTouchEvent("touchend", oComboBox.getOpenArea(), {
+				srcControl: oComboBox,
 				targetTouches: {
 					0: {
 						pageX: 10,
@@ -4944,6 +4946,7 @@
 			});
 
 			sap.ui.test.qunit.triggerTouchEvent("tap", oComboBox.getOpenArea(), {
+				srcControl: oComboBox,
 				targetTouches: {
 					0: {
 						pageX: 10,
@@ -9101,9 +9104,9 @@
 			// cleanup
 			oComboBox.destroy();
 		});
-		
+
 		QUnit.module("getAccessibilityInfo");
-		
+
 		QUnit.test("getAccessibilityInfo", function(assert) {
 			var oComboBox = new sap.m.ComboBox({
 				value: "Value",
