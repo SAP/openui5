@@ -1221,11 +1221,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 
 		}
 
-		// "preloadOnly" setting does only apply for "sap.ui.component.load"
-		if (vConfig.asyncHints && vConfig.asyncHints.preloadOnly) {
-			delete vConfig.asyncHints.preloadOnly;
-		}
-
 		function createInstance(oClass) {
 
 			// retrieve the required properties
@@ -1262,18 +1257,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 		}
 
 		// load the component class
-		var vClassOrPromise = loadComponent(vConfig, /* failOnError*/ true, /* createModels */ true);
+		var vClassOrPromise = loadComponent(vConfig, {
+			failOnError: true,
+			createModels: true,
+			waitFor: vConfig.asyncHints && vConfig.asyncHints.waitFor
+		});
 		if ( vConfig.async ) {
 			// async: instantiate component after Promise has been fulfilled with component constructor
-			var waitFor = vConfig.asyncHints && vConfig.asyncHints.waitFor;
-			if ( waitFor ) {
-				// when waitFor Promises have been specified we also wait for
-				// them before we call the component constructor
-				var aPromises = Array.isArray(waitFor) ? waitFor : [ waitFor ];
-				return Promise.all(aPromises).then(function() {
-					return vClassOrPromise;
-				}).then(createInstance);
-			}
 			return vClassOrPromise.then(createInstance);
 		} else {
 			// sync: constructor has been returned, instantiate component immediately
@@ -1335,21 +1325,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 *   restrictions.
 	 */
 	sap.ui.component.load = function(oConfig, bFailOnError) {
-		return loadComponent(oConfig, bFailOnError);
+		return loadComponent(oConfig, {
+			failOnError: bFailOnError,
+			preloadOnly: oConfig.asyncHints && oConfig.asyncHints.preloadOnly
+		});
 	};
 
 	/**
 	 * Internal loading method to decouple "sap.ui.component" / "sap.ui.component.load".
 	 *
 	 * @param {object} oConfig see <code>sap.ui.component</code> / <code>sap.ui.component.load</code>
-	 * @param {boolean} bFailOnError see <code>sap.ui.component.load</code>
-	 * @param {boolean} bCreateModels whether models from manifest should be created during
-	 *                                component preload (should only be set via <code>sap.ui.component</code>)
+	 * @param {object} mOptions internal loading configurations
+	 * @param {boolean} mOptions.failOnError see <code>sap.ui.component.load</code>
+	 * @param {boolean} mOptions.createModels whether models from manifest should be created during
+	 *                                        component preload (should only be set via <code>sap.ui.component</code>)
+	 * @param {boolean} mOptions.preloadOnly see <code>sap.ui.component.load</code> (<code>vConfig.asyncHints.preloadOnly</code>)
+	 * @param {Promise|Promise[]} mOptions.waitFor see <code>sap.ui.component.load</code> (<code>vConfig.asyncHints.waitFor</code>)
 	 * @return {function|Promise} the constructor of the Component class or a Promise that will be fulfilled with the same
 	 *
 	 * @private
 	*/
-	function loadComponent(oConfig, bFailOnError, bCreateModels) {
+	function loadComponent(oConfig, mOptions) {
 
 		var sName = oConfig.name,
 			sUrl = oConfig.url,
@@ -1417,7 +1413,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 
 			if (!oClass) {
 				var sMsg = "The specified component controller '" + sController + "' could not be found!";
-				if (bFailOnError) {
+				if (mOptions.failOnError) {
 					throw new Error(sMsg);
 				} else {
 					jQuery.sap.log.warning(sMsg);
@@ -1608,7 +1604,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 					return preload(sComponentName, true);
 				}));
 
-				if (bCreateModels) {
+				if (mOptions.createModels) {
 					collect(oManifest.then(function(oManifest) {
 
 						// deep clone is needed as the mainfest only returns a read-only copy (freezed object)
@@ -1670,8 +1666,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				} else {
 					return v;
 				}
-			}). then(function() {
-				return hints.preloadOnly ? true : getControllerClass();
+			}).then(function() {
+				return mOptions.preloadOnly ? true : getControllerClass();
+			}).then(function(oControllerClass) {
+				var waitFor = mOptions.waitFor;
+				if (waitFor) {
+					// when waitFor Promises have been specified we also wait for
+					// them before we call the component constructor
+					var aPromises = Array.isArray(waitFor) ? waitFor : [ waitFor ];
+					return Promise.all(aPromises).then(function() {
+						return oControllerClass;
+					});
+				}
+				return oControllerClass;
+			}).catch(function(vError) {
+				// handle preload errors
+
+				// destroy "preloaded" models in case of any error to prevent memory leaks
+				if (mModels) {
+					for (var sName in mModels) {
+						var oModel = mModels[sName];
+						if (oModel && typeof oModel.destroy === "function") {
+							oModel.destroy();
+						}
+					}
+				}
+
+				// re-throw error to hand it over to the application
+				throw vError;
+
 			});
 
 		}
