@@ -110,10 +110,10 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		};
 
 		/**
-		 * Gets the Select's <code>list</code>.
+		 * Gets the <code>list</code>.
 		 *
-		 * @returns {sap.m.SelectList}
-		 * @private
+		 * @returns {sap.m.SelectList} The list instance object or <code>null</code>.
+		 * @protected
 		 */
 		ComboBoxBase.prototype.getList = function() {
 			if (this.bIsDestroyed) {
@@ -209,9 +209,9 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 				mNextMessage = bIsCurrentMessageTheLast ? null : this.aEventQueue[i + 1];
 
 				if (typeof mCurrentMessage.action === "function") {
-					if ((mCurrentMessage.id === "input") &&
+					if ((mCurrentMessage.name === "input") &&
 						!bIsCurrentMessageTheLast &&
-						(mNextMessage.id === "input")) {
+						(mNextMessage.name === "input")) {
 
 						// no need to process this input event because the next is pending
 						continue;
@@ -258,6 +258,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 			this.bInitialBusyIndicatorState = this.getBusy();
 			this.iInitialBusyIndicatorDelay = this.getBusyIndicatorDelay();
 			this._bOnItemsLoadedScheduled = false;
+			this._bDoTypeAhead = true;
 		};
 
 		ComboBoxBase.prototype.exit = function() {
@@ -326,7 +327,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		ComboBoxBase.prototype.ontap = function(oEvent) {
 			ComboBoxTextField.prototype.ontap.apply(this, arguments);
 
-			var CSS_CLASS = this.getRenderer().CSS_CLASS_COMBOBOXBASE;
+			var CSS_CLASS = this.getRenderer().CSS_CLASS_COMBOBOXBASE,
+				oControl = oEvent.srcControl;
 
 			// in case of a non-editable or disabled combo box, the picker popup cannot be opened
 			if (!this.getEnabled() || !this.getEditable()) {
@@ -336,7 +338,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
-			if (this.isOpenArea(oEvent.target)) {
+			if (oControl.isOpenArea(oEvent.target)) {
 
 				if (this.isOpen()) {
 					this.close();
@@ -435,15 +437,15 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 				return;
 			}
 
-			var oControl = sap.ui.getCore().byId(oEvent.relatedControlId);
+			var oRelatedControl = sap.ui.getCore().byId(oEvent.relatedControlId);
 
 			// to prevent the change event from firing when the arrow button is pressed
-			if (oControl === this) {
+			if (oRelatedControl === this) {
 				return;
 			}
 
 			var oPicker = this.getAggregation("picker"),
-				oFocusDomRef = oControl && oControl.getFocusDomRef();
+				oFocusDomRef = oRelatedControl && oRelatedControl.getFocusDomRef();
 
 			// to prevent the change event from firing when an item is pressed
 			if (oPicker && jQuery.sap.containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef)) {
@@ -506,7 +508,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		/**
 		 * Gets the control's picker popup.
 		 *
-		 * @returns {sap.m.Dialog | sap.m.Popover | null} The picker instance, creating it if necessary by calling <code>createPicker()</code> method.
+		 * @returns {sap.m.Dialog | sap.m.Popover | null} The picker instance, creating it if necessary by calling
+		 * the <code>createPicker()</code> method.
 		 * @protected
 		 */
 		ComboBoxBase.prototype.getPicker = function() {
@@ -624,7 +627,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		 *
 		 * @param {string} sProperty An item property.
 		 * @param {string} sValue An item value that specifies the item to be retrieved.
-		 * @returns {sap.ui.core.Item | null} The matched item or null.
+		 * @returns {sap.ui.core.Item | null} The matched item or <code>null</code>.
 		 */
 		ComboBoxBase.prototype.findItem = function(sProperty, sValue) {
 			var oList = this.getList();
@@ -637,7 +640,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		 * <b>Note:</b> If duplicate values exist, the first item matching the value is returned.
 		 *
 		 * @param {string} sText An item value that specifies the item to be retrieved.
-		 * @returns {sap.ui.core.Item | null} The matched item or null.
+		 * @returns {sap.ui.core.Item | null} The matched item or <code>null</code>.
 		 * @protected
 		 */
 		ComboBoxBase.prototype.getItemByText = function(sText) {
