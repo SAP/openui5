@@ -40,7 +40,7 @@
 
 @sapUiContentIconColor: @sapContent_IconColor;
 @sapUiContentContrastIconColor: @sapContent_ContrastIconColor;
-@sapUiContentInactiveIconColor: @sapContent_NonInteractiveIconColor;
+@sapUiContentNonInteractiveIconColor: @sapContent_NonInteractiveIconColor;
 @sapUiContentFocusColor: @sapContent_FocusColor;
 @sapUiContentContrastFocusColor: @sapContent_ContrastFocusColor;
 @sapUiContentShadowColor: @sapContent_ShadowColor;
@@ -439,11 +439,11 @@
 @sapUiChartPaletteSequentialNeutralDark1: saturate(darken(@sapUiChartSequenceNeutral, 10), 1);
 @sapUiChartPaletteSequentialNeutralDark2: saturate(darken(@sapUiChartSequenceNeutral, 17), 1);
 
-@sapUiChoroplethBG: lighten(@sapUiChartSequenceNeutral,42);
-@sapUiChoroplethRegionBorder: lighten(@sapUiContentForegroundBorderColor, 25);
-@sapUiChoroplethRegionBG: saturate(lighten(@sapUiChartSequenceNeutral, 20), 1);
+@sapUiChoroplethBG: lighten(@sapUiChartSequenceNeutral, 42);
+@sapUiChoroplethRegionBorder: lighten(@sapUiChartGridlineColor, 10);
+@sapUiChoroplethRegionBG: @sapUiChartPaletteSemanticNeutralLight2;
 @sapUiMapLegendBG: lighten(@sapUiGroupContentBackground, 2);
-@sapUiMapLegendBorderColor: lighten(@sapUiContentForegroundBorderColor, 5);
+@sapUiMapLegendBorderColor: darken(@sapUiChartGridlineColor, 10);
 
 
 // Shell
@@ -530,7 +530,7 @@
 @sapUiToggleButtonPressedDisabledBorderColor: @sapUiToggleButtonPressedBorderColor;
 @sapUiToggleButtonPressedDisabledTextColor: mix(@sapUiButtonTextColor, #fff, 25);
 @sapUiSegmentedButtonBackground: lighten(@sapUiButtonBackground, 3);
-@sapUiSegmentedButtonBorderColor: darken(@sapUiButtonBackground, 8);
+@sapUiSegmentedButtonBorderColor: lighten(@sapUiButtonBorderColor, 8);
 @sapUiSegmentedButtonTextColor: contrast(@sapUiSegmentedButtonBackground, @sapUiButtonTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 @sapUiSegmentedButtonHoverBackground: @sapUiButtonHoverBackground;
 @sapUiSegmentedButtonActiveBackground: @sapUiButtonActiveBackground;
@@ -557,7 +557,7 @@
 @sapUiListActiveTextColor: contrast(@sapUiListActiveBackground, @sapUiListTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 @sapUiListSelectionHoverBackground: contrast(@sapUiListSelectionBackgroundColor, darken(@sapUiListSelectionBackgroundColor, 3), lighten(@sapUiListSelectionBackgroundColor, 3));
 @sapUiListFooterBackground: @sapUiPageFooterBackground;
-@sapUiListFooterTextColor: contrast(@sapUiListActiveBackground, @sapUiListTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
+@sapUiListFooterTextColor: @sapUiPageFooterTextColor;
 @sapUiListGroupHeaderBackground: @sapUiListBackground;
 @sapUiListTableGroupHeaderBackground: darken(@sapUiListBackground, 5);
 @sapUiListTableGroupHeaderBorderColor: darken(@sapUiListBorderColor, 10);
