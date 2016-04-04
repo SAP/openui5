@@ -50,7 +50,7 @@
 			<headerToolbar>
 				<Toolbar>
 					<content>
-						<Button enabled="{ui>/bRealOData}" icon="sap-icon://add"
+						<Button enabled="false" icon="sap-icon://add"
 							press="onCreateSalesOrderDialog" text="Create Sales Order"/>
 						<Button enabled="false" icon="{ui>/icon}" tooltip="{ui>/iconTooltip}"
 							type="Transparent"/>
@@ -137,7 +137,7 @@
 						<Input enabled="{ui>/bRealOData}" value="{Note}"/>
 					</cells>
 					<cells>
-						<Button enabled="{ui>/bRealOData}" press="onDeleteSalesOrder"
+						<Button enabled="false" press="onDeleteSalesOrder"
 							text="Delete"/>
 					</cells>
 				</ColumnListItem>
@@ -147,8 +147,10 @@
 			<Toolbar design="Transparent">
 				<content>
 					<Title level="H2" text="Sales Order Details" titleStyle="H2"/>
-					<Button icon="sap-icon://refresh" press="onRefreshSalesOrderDetails"/>
-					<Button icon="sap-icon://save" press="onSaveSalesOrder"/>
+					<Button enabled="{ui>/bRealOData}" icon="sap-icon://refresh"
+						press="onRefreshSalesOrderDetails"/>
+					<Button enabled="{ui>/bRealOData}" icon="sap-icon://save"
+						press="onSaveSalesOrder"/>
 				</content>
 			</Toolbar>
 			<form:SimpleForm layout="ResponsiveGridLayout">

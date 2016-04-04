@@ -128,11 +128,10 @@ sap.ui.define([
 		onDeleteEmployee : function (oEvent) {
 			var oEmployeeContext = oEvent.getSource().getBindingContext();
 
-			oEmployeeContext.getModel().remove(oEmployeeContext).then(function () {
-				MessageBox.alert(oEmployeeContext.getPath(), {
-					icon : MessageBox.Icon.SUCCESS,
-					title : "Success"});
-			}, onRejected);
+//			TODO the code will be needed when "remove" is implemented
+//			MessageBox.alert(oEmployeeContext.getPath(), {
+//					icon : MessageBox.Icon.SUCCESS,
+//					title : "Success"});
 		},
 
 		onEmployeeSelect : function (oEvent) {
@@ -153,13 +152,11 @@ sap.ui.define([
 
 			//TODO validate oEmployeeData according to types
 			//TODO deep create incl. LOCATION etc.
-
-			this.getView().getModel().create("/EMPLOYEES", oEmployeeData).then(function (oData) {
-				MessageBox.alert(JSON.stringify(oData), {
-					icon : MessageBox.Icon.SUCCESS,
-					title : "Success"});
-				that.onCancelEmployee();
-			}, onRejected);
+//				TODO the code will be needed when "create" is implemented
+//				MessageBox.alert(JSON.stringify(oData), {
+//					icon : MessageBox.Icon.SUCCESS,
+//					title : "Success"});
+//				that.onCancelEmployee();
 		},
 
 		onTeamSelect : function (oEvent) {

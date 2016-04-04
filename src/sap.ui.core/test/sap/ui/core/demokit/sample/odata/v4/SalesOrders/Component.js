@@ -52,7 +52,7 @@ sap.ui.define([
 			// http://localhost:8080/testsuite/proxy/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/SalesOrderList('050001110')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))
 			if (!bHasOwnProxy) {
 				TestUtils.setupODataV4Server(this.oSandbox, {
-					"$metadata" : {source : "metadata.xml" },
+					"$metadata" : {source : "metadata.xml"},
 					"BusinessPartnerList?$skip=0&$top=100" : {source : "BusinessPartnerList.json"},
 					"$batch" : {
 						"BusinessPartnerList('0100000000')" : {

@@ -50,14 +50,10 @@ sap.ui.define([
 
 			//TODO validate oSalesOrderData according to types
 			//TODO deep create incl. LOCATION etc.
-			this.getView().getModel().create("/SalesOrderList", oSalesOrderData).then(
-				function (oData) {
-					MessageBox.alert(JSON.stringify(oData),
-						{icon : MessageBox.Icon.SUCCESS, title : "Success"});
-					that.onCancelSalesOrder();
-				},
-				onRejected
-			);
+//				TODO the code will be needed when "create" is implemented
+//				MessageBox.alert(JSON.stringify(oData),
+//					{icon : MessageBox.Icon.SUCCESS, title : "Success"});
+//				that.onCancelSalesOrder();
 		},
 
 		onDataEvents : function (oEvent) {
@@ -77,13 +73,11 @@ sap.ui.define([
 				if (sCode !== 'OK') {
 					return;
 				}
-
-				oModel.remove(oSalesOrderContext).then(function () {
-					MessageBox.alert("Deleted Sales Order: " + sOrderID,
-						{icon : MessageBox.Icon.SUCCESS, title : "Success"});
-					oView.byId("SalesOrderLineItems").setBindingContext(undefined);
-					oView.byId("SupplierContactData").setBindingContext(undefined);
-				}, onRejected);
+//					TODO the code will be needed when "remove" is implemented
+//					MessageBox.alert("Deleted Sales Order: " + sOrderID,
+//						{icon : MessageBox.Icon.SUCCESS, title : "Success"});
+//					oView.byId("SalesOrderLineItems").setBindingContext(undefined);
+//					oView.byId("SupplierContactData").setBindingContext(undefined);
 			}
 
 			//TODO make context public and allow access to index and value
