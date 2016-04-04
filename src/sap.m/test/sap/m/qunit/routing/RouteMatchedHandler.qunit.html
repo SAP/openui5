@@ -19,7 +19,6 @@
 	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 	jQuery.sap.require("sap.ui.thirdparty.sinon");
 	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
-	sinon.config.useFakeTimers = true;
 
 	sap.ui.require([
 				"sap/m/routing/RouteMatchedHandler",
@@ -381,7 +380,6 @@
 
 					//Act
 					oRouter.parse(sPattern);
-					this.clock.tick(0);
 
 					//Assert
 					strictEqual(this.oSplitContainer.getCurrentDetailPage().getViewName(), "Detail", "did navigate to the detail view");
@@ -431,7 +429,6 @@
 
 					// Act
 					oRouter.parse(sPattern);
-					this.clock.tick(0);
 
 					//Assert
 					assert.strictEqual(this.oSplitContainer.getCurrentDetailPage().getViewName(), "Detail", "did navigate to the detail view");
@@ -481,7 +478,6 @@
 
 					// Act
 					oRouter.parse("5");
-					this.clock.tick(0);
 
 					// Assert
 					assert.strictEqual(data, "5", "should pass 5 to the page");
@@ -500,7 +496,6 @@
 					},
 					act: function (sPatternOrName) {
 						this.oRouter.parse(sPatternOrName);
-						this.clock.tick(0);
 					},
 					teardown: function () {
 						this.oRouter.destroy();
