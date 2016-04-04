@@ -1858,6 +1858,14 @@ sap.ui.define(['jquery.sap.global',
 			this.sCustomParams = this.oModel.createCustomParams(this.mParameters);
 		}
 
+		// Apply Adapter for Navigation Properties only if no annotations were found.
+		if (this._bShouldBeAdapted && this.oNavigationPaths && !this.bHasTreeAnnotations) {
+			// classic TreeBindingAdapter, no accelerated auto-expand
+			jQuery.sap.require("sap.ui.model.odata.ODataTreeBindingAdapter");
+			var ODataTreeBindingAdapter = sap.ui.model.odata.ODataTreeBindingAdapter;
+			ODataTreeBindingAdapter.apply(this);
+		}
+
 		//after parameter processing:
 		//check if we have navigation parameters
 		if (!this.bHasTreeAnnotations && !this.oNavigationPaths) {
