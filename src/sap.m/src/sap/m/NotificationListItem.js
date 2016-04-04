@@ -61,6 +61,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 			var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
 			this._expandText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_SHOW_MORE');
 			this._collapseText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_SHOW_LESS');
+			this._closeText = resourceBundle.getText('NOTIFICATION_LIST_BASE_CLOSE');
 
 			//set it to an active ListItemBase to the press and tap events are fired
 			this.setType('Active');
@@ -72,6 +73,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 			this._closeButton = new sap.m.Button(this.getId() + '-closeButton', {
 				type: sap.m.ButtonType.Transparent,
 				icon: sap.ui.core.IconPool.getIconURI('decline'),
+				tooltip: this._closeText,
 				press: function () {
 					this.close();
 				}.bind(this)
