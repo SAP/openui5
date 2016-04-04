@@ -39,6 +39,17 @@
 
 		module("Test the basic functions");
 
+		test("parameters", function() {
+			oFT.setWidth("100%").setHeight("auto");
+			setText("formatted text example");
+			strictEqual(oFT.getDomRef().style.width, "100%", "Width of the control is correct");
+			strictEqual(oFT.getDomRef().style.height, "auto", "Height of the control is correct");
+			oFT.setWidth("").setHeight("");
+			sap.ui.getCore().applyChanges();
+			ok(!oFT.getDomRef().style.width, "The width css is cleared");
+			ok(!oFT.getDomRef().style.height, "The height css is cleared");
+		});
+
 		test("tags", function() {
 			setText("<h1>" + sFT + "</h1>");
 			strictEqual(oFT.$().find("h1").text(), sFT, "The text of the h1 element is correct");
