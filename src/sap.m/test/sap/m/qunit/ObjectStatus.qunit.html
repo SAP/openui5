@@ -439,7 +439,25 @@
 
 		//Cleanup
 		oObjectStatus.destroy();
-	})
+	});
+
+	test("getAccessibilityInfo", function() {
+		var oControl = new sap.m.ObjectStatus({text: "Text", title: "Title"});
+		ok(!!oControl.getAccessibilityInfo, "ObjectStatus has a getAccessibilityInfo function");
+		var oInfo = oControl.getAccessibilityInfo();
+		ok(!!oInfo, "getAccessibilityInfo returns a info object");
+		strictEqual(oInfo.role, undefined, "AriaRole");
+		strictEqual(oInfo.type, undefined, "Type");
+		strictEqual(oInfo.description, "Title Text", "Description");
+		strictEqual(oInfo.focusable, undefined, "Focusable");
+		strictEqual(oInfo.enabled, undefined, "Enabled");
+		strictEqual(oInfo.editable, undefined, "Editable");
+		oControl.setState("Warning");
+		oControl.setTitle("");
+		oInfo = oControl.getAccessibilityInfo();
+		strictEqual(oInfo.description, "Text " + sap.ui.core.ValueStateSupport.getAdditionalText(oControl.getState()), "Description");
+		oControl.destroy();
+	});
 </script>
 </head>
 
