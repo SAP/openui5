@@ -103,11 +103,11 @@ sap.ui.require([
 				.withExactArgs(sinon.match.same(oContext))
 				.returns(Promise.resolve("/edit('URL')"));
 			this.oSandbox.mock(oBinding).expects("updateValue")
-				.withExactArgs(sPropertyName, vValue, "edit('URL')",
+				.withExactArgs("up", sPropertyName, vValue, "edit('URL')",
 					iIndex === undefined ? undefined : "" + iIndex)
 				.returns(Promise.resolve(oResult));
 
-			return oContext.updateValue(sPropertyName, vValue).then(function (oResult0) {
+			return oContext.updateValue("up", sPropertyName, vValue).then(function (oResult0) {
 				assert.strictEqual(oResult0, oResult);
 			});
 		});
@@ -129,7 +129,7 @@ sap.ui.require([
 			.returns(Promise.reject(oError)); // rejected!
 		this.oSandbox.mock(oBinding).expects("updateValue").never();
 
-		return oContext.updateValue("bar", Math.PI).then(function (oResult0) {
+		return oContext.updateValue("up", "bar", Math.PI).then(function (oResult0) {
 			assert.ok(false);
 		}, function (oError0) {
 			assert.strictEqual(oError0, oError);
@@ -147,11 +147,11 @@ sap.ui.require([
 			vValue = Math.PI;
 
 		this.oSandbox.mock(oBinding).expects("updateValue")
-			.withExactArgs(sPropertyName, vValue, "edit('URL')", "SO_2_SOITEM/42")
+			.withExactArgs("up", sPropertyName, vValue, "edit('URL')", "SO_2_SOITEM/42")
 			.returns(oResult);
 
 		assert.strictEqual(
-			oContext.updateValue(sPropertyName, vValue, "edit('URL')", "SO_2_SOITEM/42"),
+			oContext.updateValue("up", sPropertyName, vValue, "edit('URL')", "SO_2_SOITEM/42"),
 			oResult);
 	});
 
@@ -166,11 +166,11 @@ sap.ui.require([
 			vValue = Math.PI;
 
 		this.oSandbox.mock(oBinding).expects("updateValue")
-			.withExactArgs(sPropertyName, vValue, "edit('URL')", "0/SO_2_SOITEM/42")
+			.withExactArgs("up", sPropertyName, vValue, "edit('URL')", "0/SO_2_SOITEM/42")
 			.returns(oResult);
 
 		assert.strictEqual(
-			oContext.updateValue(sPropertyName, vValue, "edit('URL')", "SO_2_SOITEM/42"),
+			oContext.updateValue("up", sPropertyName, vValue, "edit('URL')", "SO_2_SOITEM/42"),
 			oResult);
 	});
 });

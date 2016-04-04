@@ -89,6 +89,8 @@ sap.ui.define([
 	 * Delegates to the <code>updateValue</code> method of this context's binding which updates the
 	 * value for the given path, relative to this context, as maintained by that binding.
 	 *
+	 * @param {string} sGroupId
+	 *   The group ID to be used for this update call.
 	 * @param {string} sPropertyName
 	 *   Name of property to update
 	 * @param {any} vValue
@@ -102,7 +104,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	_Context.prototype.updateValue = function (sPropertyName, vValue, sEditUrl, sPath) {
+	_Context.prototype.updateValue = function (sGroupId, sPropertyName, vValue, sEditUrl, sPath) {
 		var that = this;
 
 		if (this.iIndex !== undefined) {
@@ -110,11 +112,12 @@ sap.ui.define([
 		}
 
 		if (sEditUrl) {
-			return this.oBinding.updateValue(sPropertyName, vValue, sEditUrl, sPath);
+			return this.oBinding.updateValue(sGroupId, sPropertyName, vValue, sEditUrl, sPath);
 		}
 
 		return this.oModel.requestCanonicalPath(this).then(function (sEditUrl) {
-			return that.oBinding.updateValue(sPropertyName, vValue, sEditUrl.slice(1), sPath);
+			return that.oBinding.updateValue(sGroupId, sPropertyName, vValue, sEditUrl.slice(1),
+				sPath);
 		});
 	};
 
