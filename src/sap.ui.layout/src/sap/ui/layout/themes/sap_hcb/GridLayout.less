@@ -76,8 +76,19 @@
 	padding-top: 2rem;
 }
 
-html[data-sap-ui-browser^="ff"] .sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiFormElementLbl{
-	padding-top: 0.9375rem;
+html[data-sap-ui-browser^="ff"] {
+	.sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiFormElementLbl{
+		padding-top: 0.9375rem;
+	}
+
+	.sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr.sapUiGridConteinerFirstRow > td.sapUiFormElementLbl{
+		padding-top: 2.9375rem;
+	}
+
+	.sapUiFormEdit.sapUiFormM >.sapUiGrid > tbody > tr:first-child > td.sapUiFormElementLbl, /* if no Form title */
+	.sapUiFormEdit[aria-labelledby].sapUiFormM > .sapUiGrid > tbody > tr:nth-child(2) > td.sapUiFormElementLbl{
+		padding-top: 1.9375rem;
+	}
 }
 
 .sapUiSizeCompact .sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiFormElementLbl{
@@ -88,14 +99,25 @@ html[data-sap-ui-browser^="ff"] .sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody >
 	padding-top: 2.5rem;
 }
 
-.sapUiSizeCompact .sapUiGrid > tbody > tr:first-child > td.sapUiFormElementLbl, /* if no Form title */
-.sapUiSizeCompact .sapUiForm[aria-labelledby] > .sapUiGrid > tbody > tr:nth-child(2) > td.sapUiFormElementLbl{
+.sapUiSizeCompact .sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr:first-child > td.sapUiFormElementLbl, /* if no Form title */
+.sapUiSizeCompact .sapUiFormEdit[aria-labelledby].sapUiFormM > .sapUiGrid > tbody > tr:nth-child(2) > td.sapUiFormElementLbl{
 	padding-top: 1.5rem;
 }
 
-html[data-sap-ui-browser^="ff"].sapUiSizeCompact .sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiFormElementLbl,
-html[data-sap-ui-browser^="ff"] .sapUiSizeCompact .sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiFormElementLbl{
-	padding-top: 0.4375rem;
+html[data-sap-ui-browser^="ff"].sapUiSizeCompact,
+html[data-sap-ui-browser^="ff"] .sapUiSizeCompact{
+	.sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiFormElementLbl{
+		padding-top: 0.4375rem;
+	}
+
+	.sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr.sapUiGridConteinerFirstRow > td.sapUiFormElementLbl{
+		padding-top: 2.4375rem;
+	}
+
+	.sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr:first-child > td.sapUiFormElementLbl, /* if no Form title */
+	.sapUiFormEdit[aria-labelledby].sapUiFormM > .sapUiGrid > tbody > tr:nth-child(2) > td.sapUiFormElementLbl{
+		padding-top: 1.4375rem;
+	}
 }
 
 .sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiGridLabelFull{
