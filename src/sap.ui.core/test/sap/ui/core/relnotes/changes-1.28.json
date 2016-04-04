@@ -2863,5 +2863,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.32": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "b516320e4a5f0ebd80990d236827cab8f247b745",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "jquery.sap.encoder: Fix URL validation according to RFC 3986, 6068",
+        "references": []
+      }
+    ]
   }
 }
