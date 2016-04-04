@@ -229,6 +229,10 @@
 						oToSpy = this.spy(NavContainer.prototype, "to"),
 						oNavigateSpy = this.spy(TargetHandler.prototype, "navigate");
 
+					this.stub(oNavContainer, "getDomRef", function() {
+						return true;
+					});
+
 					//System under Test
 					var oRouteMatchedHandler = new RouteMatchedHandler(this.oRouter);
 
@@ -328,29 +332,29 @@
 				test("Should also work for routes with targets", function () {
 					//Arrange
 					var oMasterView = createViewAndController("Master"),
-							oDetailView = createViewAndController("Detail"),
-							sPattern = "anything",
-							oRouter =  new Router({
-										detail: {
-											pattern: sPattern,
-											target: ["master", "detail"]
-										}
+						oDetailView = createViewAndController("Detail"),
+						sPattern = "anything",
+						oRouter =  new Router({
+									detail: {
+										pattern: sPattern,
+										target: ["master", "detail"]
+									}
+								},
+								{
+									controlId: this.oSplitContainer.getId(),
+									viewType: "JS"
+								},
+								null,
+								{
+									master: {
+										viewName: "Master",
+										controlAggregation: "masterPages"
 									},
-									{
-										controlId: this.oSplitContainer.getId(),
-										viewType: "JS"
-									},
-									null,
-									{
-										master: {
-											viewName: "Master",
-											controlAggregation: "masterPages"
-										},
-										detail: {
-											viewName: "Detail",
-											controlAggregation: "detailPages"
-										}
-									});
+									detail: {
+										viewName: "Detail",
+										controlAggregation: "detailPages"
+									}
+								});
 
 					this.stub(sap.ui.Device.system, "phone", false);
 
