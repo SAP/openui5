@@ -189,5 +189,24 @@
         "references": []
       }
     ]
+  },
+  "1.36.6": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "c843460e14290cf3ffa6c3881cb04f30ef1c28d5",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Slider: Slider\u0027s API call to set value is now properly rendered",
+        "references": []
+      },
+      {
+        "id": "8b95da23c3ef3b9588f416642dd3c182de2a3e0d",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TreeNode: Selection of multiple nodes now is properly animated",
+        "references": []
+      }
+    ]
   }
 }
