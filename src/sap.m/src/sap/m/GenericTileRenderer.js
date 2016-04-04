@@ -32,7 +32,11 @@ sap.ui.define([], function() {
 		oRm.addClass(oControl.getSize());
 		oRm.addClass(oControl.getFrameType());
 
-		oRm.writeAttribute("role", "presentation");
+		if (oControl.hasListeners("press")) {
+			oRm.writeAttribute("role", "button");
+		} else {
+			oRm.writeAttribute("role", "presentation");
+		}
 		oRm.writeAttributeEscaped("aria-label", oControl.getAltText());
 
 		if (oControl.hasListeners("press") && oControl.getState() != sap.m.LoadState.Disabled) {
