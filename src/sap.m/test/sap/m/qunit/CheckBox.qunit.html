@@ -666,6 +666,30 @@ jQuery.sap.require("sap.m.CheckBox");
 		expectedMessage: "CheckBox should be deselected",
 		expectedMessageAria: "Property 'aria-checked' should be 'false'"
 	});
+
+	module("Accessibility");
+
+	test("getAccessibilityInfo", function() {
+		var oControl = new sap.m.CheckBox({text: "Text"});
+		ok(!!oControl.getAccessibilityInfo, "CheckBox has a getAccessibilityInfo function");
+		var oInfo = oControl.getAccessibilityInfo();
+		ok(!!oInfo, "getAccessibilityInfo returns a info object");
+		strictEqual(oInfo.role, "checkbox", "AriaRole");
+		strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_CHECKBOX"), "Type");
+		strictEqual(oInfo.description, "Text", "Description");
+		strictEqual(oInfo.focusable, true, "Focusable");
+		strictEqual(oInfo.enabled, true, "Enabled");
+		strictEqual(oInfo.editable, true, "Editable");
+		oControl.setSelected(true);
+		oControl.setEnabled(false);
+		oControl.setEditable(false);
+		oInfo = oControl.getAccessibilityInfo();
+		strictEqual(oInfo.description, "Text " + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_CHECKED"), "Description");
+		strictEqual(oInfo.focusable, false, "Focusable");
+		strictEqual(oInfo.enabled, false, "Enabled");
+		strictEqual(oInfo.editable, false, "Editable");
+		oControl.destroy();
+	});
 </script>
 
 

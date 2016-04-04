@@ -311,6 +311,22 @@ sap.ui.define(['jquery.sap.global', './Label', './library', 'sap/ui/core/Control
 		return this.getEnabled() ? 0 : -1 ;
 	};
 
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	CheckBox.prototype.getAccessibilityInfo = function() {
+		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		return {
+			role: "checkbox",
+			type: oBundle.getText("ACC_CTR_TYPE_CHECKBOX"),
+			description: (this.getText() || "") + (this.getSelected() ? (" " + oBundle.getText("ACC_CTR_STATE_CHECKED")) : ""),
+			focusable: this.getEnabled(),
+			enabled: this.getEnabled(),
+			editable: this.getEditable()
+		};
+	};
+
 	return CheckBox;
 
 }, /* bExport= */ true);
