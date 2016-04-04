@@ -48,8 +48,7 @@ sap.ui.define([
 	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 * @param {string} [mParameters.$$updateGroupId]
 	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
-	 *   if not specified, the binding's parameter "$$groupId" is used and if "$$groupId" is not
-	 *   specified, the model's group ID is used,
+	 *   if not specified, the model's update group ID is used,
 	 *   see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
 	 *   For valid values, see parameter "$$groupId".
 	 * @throws {Error} When disallowed binding parameters are provided
@@ -268,7 +267,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the group ID of the binding that has to be used for read requests.
+	 * Returns the group ID of the binding that is used for read requests.
 	 *
 	 * @returns {string}
 	 *   The group ID
@@ -280,15 +279,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the group ID of the binding that has to be used for update requests.
+	 * Returns the group ID of the binding that is used for update requests.
 	 *
 	 * @returns {string}
-	 *   The group ID
+	 *   The update group ID
 	 *
 	 * @private
 	 */
 	ODataPropertyBinding.prototype.getUpdateGroupId = function() {
-		return this.sUpdateGroupId || this.getGroupId();
+		return this.sUpdateGroupId || this.oModel.getUpdateGroupId();
 	};
 
 	/**

@@ -43,7 +43,8 @@ sap.ui.define([
 						? "$direct" // switch off batch
 						: undefined,
 					serviceUrl : sServiceUrl + sQuery,
-					synchronizationMode : "None"
+					synchronizationMode : "None",
+					updateGroupId : jQuery.sap.getUriParameters().get("updateGroupId") || undefined
 				});
 				this.setModel(oModel);
 			}

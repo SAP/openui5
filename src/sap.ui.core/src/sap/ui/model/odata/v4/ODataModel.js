@@ -41,7 +41,7 @@ sap.ui.define([
 	 * @param {string} [mParameters.groupId="$auto"]
 	 *   Controls the model's use of batch requests: '$auto' bundles requests from the model in a
 	 *   batch request which is sent automatically before rendering; '$direct' sends requests
-	 *   directly without batch
+	 *   directly without batch; other values result in an error
 	 * @param {string} mParameters.serviceUrl
 	 *   Root URL of the service to request data from. Must end with a forward slash according to
 	 *   OData V4 specification ABNF, rule "serviceRoot" unless you append OData custom query
@@ -58,10 +58,14 @@ sap.ui.define([
 	 *   Controls synchronization between different bindings which refer to the same data for the
 	 *   case data changes in one binding. Must be set to 'None' which means bindings are not
 	 *   synchronized at all; all other values are not supported and lead to an error.
+	 * @param {string} [mParameters.updateGroupId]
+	 *   The group ID that is used for update requests. If no update group ID is specified
+	 *   <code>mParameters.groupId</code> is used. Valid update group IDs are <code>undefined<code>,
+	 *   '$auto', '$direct' or an application group ID, which is a non-empty string consisting of
+	 *   alphanumeric characters from the basic Latin alphabet, including the underscore.
 	 * @throws {Error} If an unsupported synchronization mode is given, if the given service root
 	 *   URL does not end with a forward slash, if OData system query options or parameter aliases
-	 *   are specified as parameters or if a group ID different from '$auto' or '$direct' is
-	 *   given
+	 *   are specified as parameters, if an invalid group ID or update group ID is given.
 	 *
 	 * @alias sap.ui.model.odata.v4.ODataModel
 	 * @author SAP SE
@@ -109,6 +113,9 @@ sap.ui.define([
 					if (this.sGroupId !== "$auto" && this.sGroupId !== "$direct") {
 						throw new Error("Group ID must be '$auto' or '$direct'");
 					}
+					_ODataHelper.checkGroupId(mParameters.updateGroupId, false,
+						"Invalid update group ID: ");
+					this.sUpdateGroupId = mParameters.updateGroupId || this.getGroupId();
 
 					this.oMetaModel = new ODataMetaModel(
 						_MetadataRequestor.create(mHeaders, this.mUriParameters),
@@ -472,6 +479,19 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.getProperty = function () {
 		throw new Error("Unsupported operation: v4.ODataModel#getProperty");
+	};
+
+	/**
+	 * Returns the group ID that is used for update requests.
+	 * If no update group ID is specified the group ID is used (see {@link #getGroupId}).
+	 *
+	 * @returns {string}
+	 *   The update group id
+	 *
+	 * @private
+	 */
+	ODataModel.prototype.getUpdateGroupId = function () {
+		return this.sUpdateGroupId;
 	};
 
 	/**

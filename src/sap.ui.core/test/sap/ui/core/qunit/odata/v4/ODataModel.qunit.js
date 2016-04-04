@@ -181,6 +181,27 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("Model construction with update group ID", function (assert) {
+		var oModel;
+
+		oModel = createModel();
+		assert.strictEqual(oModel.getUpdateGroupId(), "$auto");
+
+		oModel = createModel("", {groupId : "$direct"});
+		assert.strictEqual(oModel.getUpdateGroupId(), "$direct");
+
+		oModel = createModel("", {updateGroupId : "$direct"});
+		assert.strictEqual(oModel.getUpdateGroupId(), "$direct");
+
+		oModel = createModel("", {groupId : "$direct", updateGroupId : "applicationId"});
+		assert.strictEqual(oModel.getUpdateGroupId(), "applicationId");
+
+		assert.throws(function () {
+			oModel = createModel("", {updateGroupId : "$foo"});
+		}, new Error("Invalid update group ID: $foo"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("Model creates _Requestor", function (assert) {
 		var oModel,
 			oRequestor = {};
