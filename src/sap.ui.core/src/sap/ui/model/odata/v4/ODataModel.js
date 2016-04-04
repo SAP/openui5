@@ -67,7 +67,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @class Model implementation for OData V4.
 	 *   An event handler can only be attached to this model for the following event:
-	 *   'messageChange', see {@link sap.ui.core.messages.MessageProcessor#messageChange
+	 *   'messageChange', see {@link sap.ui.core.message.MessageProcessor#messageChange
 	 *   messageChange}.
 	 *   For other events, an error is thrown.
 	 * @extends sap.ui.model.Model
