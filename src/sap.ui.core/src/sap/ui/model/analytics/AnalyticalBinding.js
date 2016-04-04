@@ -2213,8 +2213,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				infoObject : {},
 				success: false,
 				errorobject: oV1Error});
-			// fire event to indicate request failure
-			that.oModel.fireRequestFailed(oV1Error);
+
+			// Legacy Code: Unsure if this is need for OData V1 Model...
+			if (that.iModelVersion === AnalyticalVersionInfo.V1) {
+				that.oModel.fireRequestFailed(oV1Error);
+			}
 
 			that.fireDataReceived();
 		}
