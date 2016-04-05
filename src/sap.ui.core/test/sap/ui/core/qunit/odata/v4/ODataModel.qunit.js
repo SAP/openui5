@@ -145,8 +145,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("serviceUrlParams overwrite URL parameters from sServiceUrl", function (assert) {
 		var oMetadataRequestor = {},
-			mModelOptions = {},
-			unused;
+			mModelOptions = {};
 
 		this.mock(_ODataHelper).expects("buildQueryOptions")
 			.withExactArgs({"sap-client" : "111"})
@@ -156,12 +155,11 @@ sap.ui.require([
 			.returns(oMetadataRequestor);
 
 		// code under test
-		unused = new ODataModel({
+		new ODataModel({ // eslint-disable-line no-new
 			serviceUrl : "/?sap-client=222",
 			serviceUrlParams : {"sap-client" : "111"},
 			synchronizationMode : "None"
 		});
-		unused = !unused;
 	});
 
 	//*********************************************************************************************
