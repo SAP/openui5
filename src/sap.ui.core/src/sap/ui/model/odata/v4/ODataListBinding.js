@@ -542,8 +542,14 @@ sap.ui.define([
 	// @override
 	ODataListBinding.prototype.setContext = function (oContext) {
 		if (this.oContext !== oContext) {
-			this.aContexts = [];
-			Binding.prototype.setContext.call(this, oContext);
+			if (this.bRelative) {
+				this.aContexts = [];
+				// call Binding#setContext because of data state etc.; fires "change"
+				Binding.prototype.setContext.call(this, oContext);
+			} else {
+				// remember context even if no "change" fired
+				this.oContext = oContext;
+			}
 		}
 	};
 

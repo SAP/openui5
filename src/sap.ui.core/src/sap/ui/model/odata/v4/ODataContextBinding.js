@@ -5,13 +5,15 @@
 //Provides class sap.ui.model.odata.v4.ODataContextBinding
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ContextBinding",
 	"./_Context",
 	"./_ODataHelper",
 	"./lib/_Cache",
 	"./lib/_Helper"
-], function (jQuery, ChangeReason, ContextBinding, _Context, _ODataHelper, _Cache, _Helper) {
+], function (jQuery, Binding, ChangeReason, ContextBinding, _Context, _ODataHelper, _Cache,
+		_Helper) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataContextBinding",
@@ -544,21 +546,20 @@ sap.ui.define([
 	 */
 	// @override
 	ODataContextBinding.prototype.setContext = function (oContext) {
-		var oElementContext = this.oElementContext,
-			sResolvedPath;
-
 		if (this.oContext !== oContext) {
-			this.oContext = oContext;
-			if (this.bRelative) {
-				sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
-				this.oElementContext = sResolvedPath
-					? _Context.create(this.oModel, this, sResolvedPath)
+			if (this.bRelative && (this.oElementContext || oContext)) {
+				// fire "change" iff. this.oElementContext changes
+				// do not call Model#resolve in vain
+				this.oElementContext = oContext
+					? _Context.create(this.oModel, this, this.oModel.resolve(this.sPath, oContext))
 					: null;
-				if (this.oElementContext !== oElementContext) {
-					// the binding parameter for a deferred might have changed
-					this.oCache = undefined;
-					this._fireChange({reason : ChangeReason.Context});
-				}
+				// the binding parameter for a deferred might have changed
+				this.oCache = undefined;
+				// call Binding#setContext because of data state etc.; fires "change"
+				Binding.prototype.setContext.call(this, oContext);
+			} else {
+				// remember context even if no "change" fired
+				this.oContext = oContext;
 			}
 		}
 	};

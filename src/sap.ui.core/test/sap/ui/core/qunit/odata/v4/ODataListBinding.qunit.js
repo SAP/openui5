@@ -364,6 +364,7 @@ sap.ui.require([
 		function (assert) {
 		var done = assert.async(),
 			oCacheMock = this.getCacheMock(),
+			oContext = {},
 			oListBinding = this.oModel.bindList("/EMPLOYEES"),
 			oListBindingMock = this.oSandbox.mock(oListBinding),
 			iSizeLimit = this.oModel.iSizeLimit,
@@ -398,6 +399,10 @@ sap.ui.require([
 					.callsArg(4)
 					.returns(createResult(iLength));
 			}
+
+			// code under test, must not ruin aContexts
+			oListBinding.setContext(oContext);
+			assert.strictEqual(oListBinding.oContext, oContext);
 
 			// code under test, read synchronously with previous range
 			aContexts = oListBinding.getContexts(iStart, iLength);
