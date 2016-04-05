@@ -18,13 +18,14 @@ sap.ui.require([
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
-	var TestControl = ManagedObject.extend("test.sap.ui.model.odata.v4.ODataListBinding", {
-		metadata : {
-			aggregations : {
-				items : {multiple : true, type : "test.sap.ui.model.odata.v4.ODataListBinding"}
+	var sClassName = "sap.ui.model.odata.v4.ODataListBinding",
+		TestControl = ManagedObject.extend("test.sap.ui.model.odata.v4.ODataListBinding", {
+			metadata : {
+				aggregations : {
+					items : {multiple : true, type : "test.sap.ui.model.odata.v4.ODataListBinding"}
+				}
 			}
-		}
-	});
+		});
 
 	/**
 	 * Creates a promise as mock for _Cache.read which is fulfilled asynchronously with a result of
@@ -96,6 +97,24 @@ sap.ui.require([
 			this.oSandbox.mock(_Cache).expects("create").returns(oCache);
 			return this.oSandbox.mock(oCache);
 		}
+	});
+
+	//*********************************************************************************************
+	QUnit.test("toString", function (assert) {
+		var oBinding = this.oModel.bindList("/EMPLOYEES"),
+			oContext = {
+				toString: function () {return "/TEAMS(Team_ID='TEAM01')";}
+			};
+
+		assert.strictEqual(oBinding.toString(), sClassName + ": /EMPLOYEES", "absolute");
+
+		oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES");
+		assert.strictEqual(oBinding.toString(), sClassName + ": undefined|TEAM_2_EMPLOYEES",
+			"relative, unresolved");
+
+		oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext);
+		assert.strictEqual(oBinding.toString(), sClassName
+			+ ": /TEAMS(Team_ID='TEAM01')|TEAM_2_EMPLOYEES", "relative, resolved");
 	});
 
 	//*********************************************************************************************

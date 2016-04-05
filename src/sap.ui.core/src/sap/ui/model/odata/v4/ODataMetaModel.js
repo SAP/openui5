@@ -984,5 +984,17 @@ sap.ui.define([
 		throw new Error("Unsupported operation: v4.ODataMetaModel#setLegacySyntax");
 	};
 
+	/**
+	 * Returns a string representation of this object including the URL to the $metadata document of
+	 * the service.
+	 *
+	 * @return {string} A string description of this model
+	 * @public
+	 * @since 1.37.0
+	 */
+	ODataMetaModel.prototype.toString = function () {
+		return sODataMetaModel + ": " + this.sUrl;
+	};
+
 	return ODataMetaModel;
 }, /* bExport= */ true);

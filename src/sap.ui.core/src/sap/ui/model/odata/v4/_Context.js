@@ -121,6 +121,17 @@ sap.ui.define([
 		});
 	};
 
+	/**
+	 * Returns a string representation of this object including the binding path.
+	 *
+	 * @return {string} A string description of this binding
+	 * @public
+	 * @since 1.37.0
+	 */
+	_Context.prototype.toString = function () {
+		return this.iIndex === undefined ? this.sPath : this.sPath + "[" + this.iIndex + "]";
+	};
+
 	return {
 		/**
 		 * Creates a context for an OData V4 model.

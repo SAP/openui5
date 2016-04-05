@@ -70,6 +70,16 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("toString", function (assert) {
+		assert.strictEqual(
+			_Context.create(/*oModel=*/{}, /*oBinding=*/{}, "/Employees").toString(),
+			"/Employees");
+		assert.strictEqual(
+			_Context.create(/*oModel=*/{}, /*oBinding=*/{}, "/Employees", 5).toString(),
+			"/Employees[5]");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("requestValue", function (assert) {
 		var oBinding = {
 				requestValue : function () {}

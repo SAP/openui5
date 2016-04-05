@@ -45,6 +45,25 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("toString", function (assert) {
+		var oBinding1 = this.oModel.bindContext("/Employees(ID='1')"),
+			oBinding2 = this.oModel.bindContext("Employee_2_Team"),
+			oContext = {
+				toString: function () {return "/Employees[1]";}
+			};
+
+		assert.strictEqual(oBinding1.toString(), sClassName + ": /Employees(ID='1')", "absolute");
+
+		assert.strictEqual(oBinding2.toString(), sClassName + ": undefined|Employee_2_Team",
+			"relative, unresolved");
+
+		oBinding2 = this.oModel.bindContext("Employee_2_Team", oContext);
+
+		assert.strictEqual(oBinding2.toString(), sClassName
+			+ ": /Employees[1]|Employee_2_Team", "relative, resolved");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("initialize, resolved path", function (assert) {
 		var oContext = {},
 			oBoundContext = {},

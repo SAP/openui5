@@ -313,6 +313,8 @@ sap.ui.require([
 		assert.strictEqual(oMetaModel.oRequestor, oMetadataRequestor);
 		assert.strictEqual(oMetaModel.sUrl, sUrl);
 		assert.strictEqual(oMetaModel.getDefaultBindingMode(), BindingMode.OneTime);
+		assert.strictEqual(oMetaModel.toString(),
+			"sap.ui.model.odata.v4.ODataMetaModel: /~/$metadata");
 	});
 
 	//*********************************************************************************************
