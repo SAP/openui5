@@ -251,24 +251,30 @@ sap.ui.define([
 	 * control to the empty path, for example <code>&lt;Text text="{}"/&gt;<code>. The OData
 	 * function is only called when a property binding relative to the operation binding exists.
 	 *
+	 * @param {string} [sGroupId]
+	 *   The group ID to be used for the request; if not specified, the group ID for this binding is
+	 *   used, see {@link sap.ui.model.odata.v4.ODataContextBinding#constructor}.
+	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
+	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 * @returns {Promise}
 	 *   A promise that is resolved without data when the operation call succeeded, or rejected
 	 *   with an instance of <code>Error</code> in case of failure.
 	 * @throws {Error} If the binding is not a deferred operation binding (see
-	 *   {@link sap.ui.model.odata.v4.ODataContextBinding}).
+	 *   {@link sap.ui.model.odata.v4.ODataContextBinding}), or if the given group ID is invalid.
 	 *
 	 * @public
 	 * @since 1.37.0
 	 */
-	ODataContextBinding.prototype.execute = function () {
+	ODataContextBinding.prototype.execute = function (sGroupId) {
 		var that = this;
 
+		_ODataHelper.checkGroupId(sGroupId);
 		return this._requestOperationMetadata().then(function (oOperationMetadata) {
-			var sGroupId = that.getGroupId(),
-				aOperationParameters,
+			var aOperationParameters,
 				aParameters,
 				oPromise;
 
+			sGroupId = sGroupId || that.getGroupId();
 			that.oOperation.bAction = oOperationMetadata.$kind === "Action";
 			if (that.oOperation.bAction) {
 				// the action may reuse the cache because the resource path never changes

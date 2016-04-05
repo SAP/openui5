@@ -113,7 +113,7 @@ sap.ui.define([
 
 			oOperation.setParameter("EmployeeID",
 					this.getView().getModel("search").getProperty("/EmployeeID"))
-				.execute()
+				.execute("$direct")
 				.then(function () {}, function (oError) {
 					MessageBox.alert(oError.message, {
 						icon : MessageBox.Icon.ERROR,

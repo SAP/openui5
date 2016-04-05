@@ -639,6 +639,7 @@ sap.ui.require([
 			oContextBinding,
 			oContextBindingMock,
 			oHelperMock = this.oSandbox.mock(_Helper),
+			oModelMock = this.oSandbox.mock(this.oModel),
 			sPath = "/FunctionImport(...)",
 			oSingleCache = {
 				read : function () {}
@@ -674,6 +675,7 @@ sap.ui.require([
 			.returns(oSingleCache);
 		oContextBindingMock.expects("getGroupId").returns("foo");
 		oSingleCacheMock.expects("read").withExactArgs("foo").returns(Promise.resolve({}));
+		oModelMock.expects("addedRequestToGroup").withExactArgs("foo");
 		oContextBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
 
 		// code under test
@@ -690,13 +692,14 @@ sap.ui.require([
 					.withExactArgs(sinon.match.same(that.oModel.oRequestor),
 						"FunctionImport(p1='v''2',p2=42)", {"sap-client" : "111"})
 					.returns(oSingleCache);
-				oContextBindingMock.expects("getGroupId").returns("foo");
-				oSingleCacheMock.expects("read").withExactArgs("foo").returns(Promise.resolve({}));
+				oSingleCacheMock.expects("read").withExactArgs("myGroupId")
+					.returns(Promise.resolve({}));
+				oModelMock.expects("addedRequestToGroup").withExactArgs("myGroupId");
 				oContextBindingMock.expects("_fireChange")
 					.withExactArgs({reason : ChangeReason.Change});
 
 				// code under test
-				return oContextBinding.setParameter("p1", "v'2").execute();
+				return oContextBinding.setParameter("p1", "v'2").execute("myGroupId");
 			});
 	});
 	// TODO function returning collection
@@ -739,16 +742,16 @@ sap.ui.require([
 		return oContextBinding.execute().then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
 
-			oContextBindingMock.expects("getGroupId").returns("foo");
 			oSingleCacheMock.expects("post")
-				.withExactArgs("foo", sinon.match.same(oContextBinding.oOperation.mParameters))
+				.withExactArgs("myGroupId",
+					sinon.match.same(oContextBinding.oOperation.mParameters))
 				.returns(Promise.resolve({}));
-			oModelMock.expects("addedRequestToGroup").withExactArgs("foo");
+			oModelMock.expects("addedRequestToGroup").withExactArgs("myGroupId");
 			oContextBindingMock.expects("_fireChange")
 				.withExactArgs({reason : ChangeReason.Change});
 
 			// code under test
-			return oContextBinding.execute().then(function () {
+			return oContextBinding.execute("myGroupId").then(function () {
 
 				// code under test: must not refresh the cache
 				oContextBinding.refresh(true);
@@ -816,6 +819,19 @@ sap.ui.require([
 		}, function (oError) {
 			assert.strictEqual(oError.message, sMessage);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("execute: invalid group ID", function (assert) {
+		var oContextBinding = this.oModel.bindContext("/Function(...)"),
+			oError = new Error("Invalid");
+
+		this.oSandbox.mock(_ODataHelper).expects("checkGroupId")
+			.withExactArgs("$invalid").throws(oError);
+
+		assert.throws(function () {
+			return oContextBinding.execute("$invalid");
+		}, oError);
 	});
 
 	//*********************************************************************************************
