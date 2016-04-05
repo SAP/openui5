@@ -1,4 +1,5 @@
 <mvc:View
+	class="sapUiSizeCompact"
 	controllerName="sap.ui.core.sample.odata.v4.ListBinding.Main"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
@@ -87,7 +88,8 @@
 		<headerToolbar>
 			<Toolbar>
 				<content>
-					<Button icon="sap-icon://add" text="Create" press="onCreateEmployee"/>
+					<Button enabled="false" icon="sap-icon://add" text="Create"
+						press="onCreateEmployee"/>
 				</content>
 				<dependents>
 					<Dialog id="CreateEmployeeDialog" title="Create New Employee">
@@ -176,11 +178,12 @@
 					<Text text="{path: '@odata.etag', type: 'sap.ui.model.odata.type.String'}"/>
 				</cells>
 				<cells>
-					<Button icon="sap-icon://delete" text="Delete" press="onDeleteEmployee"/>
+					<Button enabled="false" icon="sap-icon://delete" text="Delete"
+						press="onDeleteEmployee"/>
 				</cells>
 				<cells>
-					<Button icon="sap-icon://edit" text="Update" press="onUpdateEmployee"
-						tooltip="Make ETag look outdated"/>
+					<Button enabled="{ui>/bRealOData}" icon="sap-icon://edit" text="Update"
+						press="onUpdateEmployee" tooltip="Make ETag look outdated"/>
 				</cells>
 			</ColumnListItem>
 		</items>
@@ -233,7 +236,8 @@
 					<ToolbarLayoutData shrinkable="false" />
 				</layoutData>
 			</Label>
-			<Input id="EmployeeId" value="{search>/EmployeeID}" width="4em" />
+			<Input enabled="{ui>/bRealOData}" id="EmployeeId" value="{search>/EmployeeID}"
+				width="4em" />
 			<Button text="Search" enabled="{ui>/bRealOData}" press="getEmployeeByID"/>
 		</Toolbar>
 		<form:SimpleForm id="GetEmployeeByID" binding="{/GetEmployeeByID(...)}"
