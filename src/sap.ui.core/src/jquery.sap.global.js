@@ -1341,6 +1341,15 @@
 			return aCategories;
 		}
 
+		function hasCategory(oMeasurement, aCategories) {
+			for (var i = 0; i < aCategories.length; i++) {
+				if (oMeasurement.categories.indexOf(aCategories[i]) > -1) {
+					return true;
+				}
+			}
+			return aCategories.length === 0;
+		}
+
 		var bActive = false,
 			fnAjax = jQuery.ajax,
 			aRestrictedCategories = null,
@@ -1729,35 +1738,39 @@
 
 		/**
 		 * Gets all performance measurements where a provided filter function returns a truthy value.
-		 * If no filter function is provided an empty array is returned.
-		 * To filter for certain categories of measurements a fnFilter can be implemented like this
+		 * If neither a filter function nor a category is provided an empty array is returned.
+		 * To filter for certain properties of measurements a fnFilter can be implemented like this
 		 * <code>
 		 * function(oMeasurement) {
-		 *     return oMeasurement.categories.indexOf("rendering") > -1;
+		 *     return oMeasurement.duration > 50;
 		 * }</code>
 		 *
-		 * @param {function} fnFilter a filter function that returns true if the passed measurement should be added to the result
-		 * @param {boolean} [bCompleted] Whether only completed measurements should be returned, if explicitly set to false only incomplete measurements are returned
+		 * @param {function} [fnFilter] a filter function that returns true if the passed measurement should be added to the result
+		 * @param {boolean|undefined} [bCompleted] Optional parameter to determine if either completed or incomplete measurements should be returned (both if not set or undefined)
+		 * @param {string[]} [aCategories] The function returns only measurements which match these specified categories
 		 *
 		 * @return {object} [] filtered array with measurements containing id, info and start-timestamp, end-timestamp, time, duration, categories (false if error)
 		 * @name jQuery.sap.measure#filterMeasurements
 		 * @function
 		 * @public
 		 * @since 1.34.0
-	 	 */
-		this.filterMeasurements = function(fnFilter, bCompleted) {
-			var aMeasurements = [],
-				oMeasurement,
-				bValid;
-			if (fnFilter) {
-				for (var sId in mMeasurements) {
-					oMeasurement = this.getMeasurement(sId);
-					bValid = (bCompleted === false && oMeasurement.end === 0) || (bCompleted !== false && (!bCompleted || oMeasurement.end));
-					if (bValid && fnFilter(oMeasurement)) {
-						aMeasurements.push(oMeasurement);
-					}
+		 */
+		this.filterMeasurements = function() {
+			var oMeasurement, bValid,
+				i = 0,
+				aMeasurements = [],
+				fnFilter = typeof arguments[i] === "function" ? arguments[i++] : undefined,
+				bCompleted = typeof arguments[i] === "boolean" ? arguments[i++] : undefined,
+				aCategories = Array.isArray(arguments[i]) ? arguments[i] : [];
+
+			for (var sId in mMeasurements) {
+				oMeasurement = this.getMeasurement(sId);
+				bValid = (bCompleted === false && oMeasurement.end === 0) || (bCompleted !== false && (!bCompleted || oMeasurement.end));
+				if (bValid && hasCategory(oMeasurement, aCategories) && (!fnFilter || fnFilter(oMeasurement))) {
+					aMeasurements.push(oMeasurement);
 				}
 			}
+
 			return aMeasurements;
 		};
 
