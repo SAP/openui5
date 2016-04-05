@@ -51,7 +51,7 @@
 
 @sapList_HeaderBackground: darken(@sapBaseColor, 1.5);
 @sapList_BorderColor: lighten(@sapList_Background, 7);
-@sapList_HighlightColor: @sapPrimary2;
+@sapList_HighlightColor: darken(desaturate(@sapHighlightColor, 40), 30);
 @sapList_SelectionBackgroundColor: lighten(saturate(@sapList_Background, 10), 10);
 @sapList_Background: @sapBaseColor;
 @sapList_Hover_Background: contrast(@sapList_Background, lighten(@sapList_Background, 3), darken(@sapList_Background, 3));
