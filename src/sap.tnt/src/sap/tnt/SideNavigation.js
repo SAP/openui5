@@ -91,29 +91,92 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
             return sap.ui.base.ManagedObject.prototype.setAggregation.apply(this, arguments);
         };
 
+        /**
+         * Sets if the control is in expanded or collapsed mode.
+         */
         SideNavigation.prototype.setExpanded = function (isExpanded) {
 
             if (this.getExpanded() === isExpanded) {
                 return this;
             }
 
-            if (this.getAggregation('item')) {
-                this.getAggregation('item').setExpanded(isExpanded);
-            }
-
-            if (this.getAggregation('fixedItem')) {
-                this.getAggregation('fixedItem').setExpanded(isExpanded);
-            }
-
-            if (this.getDomRef()) {
-                this.getDomRef().classList.toggle('sapTntSideNavigationNotExpanded');
-            }
-
             this.setProperty('expanded', isExpanded, true);
 
-            this._toggleArrows();
+            if (!this.getDomRef()) {
+                return this;
+            }
+
+            var that = this,
+                $this = this.$(),
+                width;
+
+            if (that._hasActiveAnimation) {
+                that._finishAnimation(!isExpanded);
+                $this.stop();
+            }
+
+            if (isExpanded) {
+                that.getDomRef().classList.toggle('sapTntSideNavigationNotExpanded', !isExpanded);
+
+                if (that.getAggregation('item')) {
+                    that.getAggregation('item').setExpanded(isExpanded);
+                }
+
+                if (that.getAggregation('fixedItem')) {
+                    that.getAggregation('fixedItem').setExpanded(isExpanded);
+                }
+            }
+
+            that._hasActiveAnimation = true;
+
+            var isCompact = $this.parents('.sapUiSizeCompact').length > 0;
+
+            if (isCompact) {
+                width = isExpanded ? '15rem' : '2rem';
+            } else {
+                width = isExpanded ? '15rem' : '3rem';
+            }
+
+            $this.animate({
+                    width: width
+                },
+                {
+                    duration: 300,
+                    complete: function () {
+                        var isExpanded = that.getExpanded();
+                        that._finishAnimation(isExpanded);
+                    }
+                });
 
             return this;
+        };
+
+        /**
+         * @private
+         */
+        SideNavigation.prototype._finishAnimation = function (isExpanded) {
+            if (!this._hasActiveAnimation || !this.getDomRef()) {
+                return;
+            }
+
+            this.getDomRef().classList.toggle('sapTntSideNavigationNotExpandedWidth', !isExpanded);
+
+            if (!isExpanded) {
+                this.getDomRef().classList.toggle('sapTntSideNavigationNotExpanded', !isExpanded);
+
+                if (this.getAggregation('item')) {
+                    this.getAggregation('item').setExpanded(isExpanded);
+                }
+
+                if (this.getAggregation('fixedItem')) {
+                    this.getAggregation('fixedItem').setExpanded(isExpanded);
+                }
+            }
+
+            this.$().css('width', '');
+            this._hasActiveAnimation = false;
+
+            this._toggleArrows();
         };
 
         /**
@@ -237,6 +300,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
             var scrollContainerWrapper = this.$('Flexible')[0];
             var scrollContainerContent = this.$('Flexible-Content')[0];
             var isAsideExpanded = this.getExpanded();
+
+            if (this._hasActiveAnimation) {
+                domRef.querySelector('.sapTntSideNavigationScrollIconUp').style.display = 'none';
+                domRef.querySelector('.sapTntSideNavigationScrollIconDown').style.display = 'none';
+                return;
+            }
 
             if ((scrollContainerContent.offsetHeight > scrollContainerWrapper.offsetHeight) && !isAsideExpanded) {
                 domRef.querySelector('.sapTntSideNavigationScrollIconUp').style.display = 'block';
