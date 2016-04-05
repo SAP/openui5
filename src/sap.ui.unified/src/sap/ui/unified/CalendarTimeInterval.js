@@ -198,6 +198,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		});
 		oMonthPicker.attachEvent("select", _handleSelectMonth, this);
 		oMonthPicker._bNoThemeChange = true;
+		oMonthPicker.attachEvent("pageChange", _handleMonthPickerPageChange, this);
 		this.setAggregation("monthPicker", oMonthPicker);
 
 		var oYearPicker = new YearPicker(this.getId() + "--YP", {
@@ -205,6 +206,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			years: 6 // default for 12 items
 		});
 		oYearPicker.attachEvent("select", _handleSelectYear, this);
+		oYearPicker.attachEvent("pageChange", _handleYearPickerPageChange, this);
 		this.setAggregation("yearPicker", oYearPicker);
 
 		this.setPickerPopup(false); // to initialize DatesRow
@@ -1793,6 +1795,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		}
 
 		oMonthPicker.setMinMax(iMinMonth, iMaxMonth);
+
+	}
+
+	function _handleMonthPickerPageChange(oEvent) {
+
+		_togglePrevNext.call(this);
+
+	}
+
+	function _handleYearPickerPageChange(oEvent) {
+
+		_togglePrevNexYearPicker.call(this);
 
 	}
 

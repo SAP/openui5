@@ -64,10 +64,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		var oMonthPicker = this.getAggregation("monthPicker");
 		oMonthPicker.setColumns(0);
 		oMonthPicker.setMonths(3); // default for 7 days
+		oMonthPicker.attachEvent("pageChange", _handleMonthPickerPageChange, this);
 
 		var oYearPicker = this.getAggregation("yearPicker");
 		oYearPicker.setColumns(0);
 		oYearPicker.setYears(3); // default for 7 days
+		oYearPicker.attachEvent("pageChange", _handleYearPickerPageChange, this);
 
 		this._iDaysLarge = 10; // if more than this number of days are displayed, start and end month are displayed on the button
 		this._iDaysMonthHead = 35; // if more than this number of days, month names are displayed on top of days
@@ -639,6 +641,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	function _handlePopupClosed(oEvent) {
 
 		this._closedPickers();
+
+	}
+
+	function _handleMonthPickerPageChange(oEvent) {
+
+		var oFocusedDate = this._newUniversalDate(this._getFocusedDate());
+		this._togglePrevNext(oFocusedDate);
+
+	}
+
+	function _handleYearPickerPageChange(oEvent) {
+
+		this._togglePrevNexYearPicker();
 
 	}
 
