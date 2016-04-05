@@ -466,7 +466,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		var $Row = jQuery();
 		if (oEvent.target.id == this.getId("nodata")) {
 			$Row = this.$("nodata");
-		} if (this.isHeaderRowEvent(oEvent)) {
+		} else if (this.isHeaderRowEvent(oEvent)) {
 			$Row = this.$("tblHeader");
 		} else if (this.isFooterRowEvent(oEvent)) {
 			$Row = this.$("tblFooter");

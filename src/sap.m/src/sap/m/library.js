@@ -1421,7 +1421,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	};
 
 	/**
-	 * Defines the keyboard handling behaviour of the <code>sap.m.List</code> or <code>sap.m.Table</code>.
+	 * Defines the keyboard handling behavior of the <code>sap.m.List</code> or <code>sap.m.Table</code>.
 	 *
 	 * @enum {string}
 	 * @public
@@ -1431,15 +1431,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	sap.m.ListKeyboardMode = {
 
 		/**
-		 * While the last/first interactive element within an item has the focus, pressing tab/shift+tab moves the focus to the next element in the tab chain after/before the <code>sap.m.List</code> or <code>sap.m.Table</code>.
-		 * This default mode is suitable if the number of items is unlimited or there is no editable field within the item.
+		 * This default mode is suitable if the number of items is unlimited or if there is no editable field within the item.
+		 * While the last/first interactive element within an item has the focus, pressing tab/shift+tab moves the focus to the next/previous element in the tab chain after/before the <code>sap.m.List</code> or <code>sap.m.Table</code>.
 		 * @public
 		 */
 		Navigation : "Navigation",
 
 		/**
-		 * While the last/first interactive element within an item has the focus, pressing tab/shift+tab moves the focus to the next element in the tab chain after/before the item </code>.
-		 * This mode is suitable if the number of items is limited and there are editable fields within the item.
+		 * This mode is suitable if the number of items is limited and if there are editable fields within the item.
+		 * While the last/first interactive element within an item has the focus, pressing tab/shift+tab moves the focus to the next/previous element in the tab chain after/before the item </code>.
 		 * @public
 		 */
 		Edit : "Edit"
