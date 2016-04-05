@@ -618,6 +618,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 			$this.css(oStyles);
 
+			if (!bStretch && !this._oManuallySetSize) {
+				this._applyCustomTranslate();
+			}
+
 			//In Chrome when the dialog is stretched the footer is not rendered in the right position;
 			if (window.navigator.userAgent.toLowerCase().indexOf("chrome") !== -1 && this.getStretch()) {
 				//forcing repaint
@@ -664,11 +668,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 */
 		Dialog.prototype._onResize = function () {
 			var $dialog = this.$(),
-				$dialogContent = this.$('cont'),
-				iDialogWidth,
-				iDialogHeight,
-				sTranslateX = '',
-				sTranslateY = '';
+				$dialogContent = this.$('cont');
 
 			//if height is set by manually resizing return;
 			if (this._oManuallySetSize) {
@@ -690,8 +690,19 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				return;
 			}
 
-			iDialogWidth = $dialog.innerWidth();
-			iDialogHeight = $dialog.innerHeight();
+			this._applyCustomTranslate();
+		};
+
+		/**
+		 *
+		 * @private
+		 */
+		Dialog.prototype._applyCustomTranslate = function() {
+			var $dialog = this.$(),
+				sTranslateX,
+				sTranslateY,
+				iDialogWidth = $dialog.innerWidth(),
+				iDialogHeight = $dialog.innerHeight();
 
 			if (sap.ui.Device.system.desktop && (iDialogWidth % 2 !== 0 || iDialogHeight % 2 !== 0)) {
 				if (!this._bRTL) {
@@ -702,6 +713,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 				sTranslateY = '-' + Math.floor(iDialogHeight / 2) + "px";
 				$dialog.css('transform', 'translate(' + sTranslateX + ',' + sTranslateY + ') scale(1)');
+			} else {
+				$dialog.css('transform', '');
 			}
 		};
 
