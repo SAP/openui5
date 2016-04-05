@@ -128,7 +128,7 @@ sap.ui.define([
 				for (i = 0; i < iResultLength; i++) {
 					oCache.aElements[iStart + i] = oResult.value[i];
 				}
-			}).catch(function (oError) {
+			})["catch"](function (oError) {
 				if (aElements === oCache.aElements) {
 					fill(oCache.aElements, undefined, iStart, iEnd);
 				}

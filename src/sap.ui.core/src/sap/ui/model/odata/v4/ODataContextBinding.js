@@ -363,7 +363,7 @@ sap.ui.define([
 		}).then(function (oResult) {
 			that._fireChange({reason : ChangeReason.Change});
 			// do not return anything
-		}).catch(function (oError) {
+		})["catch"](function (oError) {
 			jQuery.sap.log.error(oError.message, that.sPath, sClassName);
 			throw oError;
 		});

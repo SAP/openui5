@@ -242,7 +242,7 @@ sap.ui.define([
 						oRequest.$reject(oError);
 					}
 				});
-			}).catch(function (oError) {
+			})["catch"](function (oError) {
 				var oRequestError = new Error(
 					"HTTP request was not processed because $batch failed");
 
