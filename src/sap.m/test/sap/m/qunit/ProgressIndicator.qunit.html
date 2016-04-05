@@ -113,14 +113,14 @@
 		var iPercentTest = 120;
 		oProgInd.setPercentValue(iPercentTest);
 		var iPercentAfter = oProgInd.getPercentValue();
-		equal(iPercentAfter, 30, "we expect value to be the same as before");
+		equal(iPercentAfter, 0, "the value should be set to the default one");
 	});
 
 	test("setPercentValue wrong input (int out of range, too small)", function() {
 		var iPercentTest = -20;
 		oProgInd.setPercentValue(iPercentTest);
 		var iPercentAfter = oProgInd.getPercentValue();
-		equal(iPercentAfter, 30, "we expect value to be the same as before");
+		equal(iPercentAfter, 0, "the value should be set to the default one");
 	});
 
 	test("text should not be rendered when displayValue is not set", function() {
