@@ -817,6 +817,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			} else {
 				var oList = this.getList();
 				if (oList) {
+					this.$().prop("tabIndex", -1);
 					var mKeyboardMode = sap.m.ListKeyboardMode;
 					oList.setKeyboardMode(oList.getKeyboardMode() == mKeyboardMode.Edit ? mKeyboardMode.Navigation : mKeyboardMode.Edit);
 					this._switchFocus(oEvent);

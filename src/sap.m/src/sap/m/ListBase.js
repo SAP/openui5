@@ -147,7 +147,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			rememberSelections : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
-			 * Defines keyboard handling behaviour of the control.
+			 * Defines keyboard handling behavior of the control.
 			 * @since 1.38.0
 			 */
 			keyboardMode : {type : "sap.m.ListKeyboardMode", group : "Behavior", defaultValue : sap.m.ListKeyboardMode.Navigation}
@@ -1780,6 +1780,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			$Element = $Tabbables.eq($Tabbables[iFocusPos] ? iFocusPos : -1);
 
 		$Element[0] ? $Element.focus() : oItem.focus();
+		oEvent.preventDefault();
 		oEvent.setMarked();
 	};
 
