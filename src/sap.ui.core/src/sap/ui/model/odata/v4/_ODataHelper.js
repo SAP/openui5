@@ -172,12 +172,14 @@ sap.ui.define([
 		 *   The group ID
 		 * @param {boolean} [bApplicationGroup]
 		 *   Whether only an application group ID is considered valid
+		 * @param {string} [sErrorMessage]
+		 *   The error message to be used if group ID is not valid; the group ID will be appended
 		 * @throws {Error}
 		 *   For invalid group IDs
 		 */
-		checkGroupId : function (sGroupId, bApplicationGroup) {
+		checkGroupId : function (sGroupId, bApplicationGroup, sErrorMessage) {
 			if (!isValidGroupId(sGroupId, bApplicationGroup)) {
-				throw new Error("Invalid group ID: " + sGroupId);
+				throw new Error((sErrorMessage || "Invalid group ID: ") + sGroupId);
 			}
 		},
 

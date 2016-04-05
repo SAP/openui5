@@ -783,9 +783,11 @@ sap.ui.require([
 				serviceUrl : "/service/",
 				synchronizationMode : "None"
 			}),
+			oModelMock = this.oSandbox.mock(oModel),
 			mParameters = {};
 
-		this.oSandbox.mock(oModel).expects("getGroupId").twice().withExactArgs().returns("baz");
+		oModelMock.expects("getGroupId").withExactArgs().returns("baz");
+		oModelMock.expects("getUpdateGroupId").twice().withExactArgs().returns("fromModel");
 
 		oHelperMock.expects("buildBindingParameters").withExactArgs(mParameters)
 			.returns({$$groupId : "foo", $$updateGroupId : "bar"});
@@ -799,13 +801,13 @@ sap.ui.require([
 		// code under test
 		oBinding = oModel.bindProperty("/absolute", undefined, mParameters);
 		assert.strictEqual(oBinding.getGroupId(), "foo");
-		assert.strictEqual(oBinding.getUpdateGroupId(), "foo");
+		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
 
 		oHelperMock.expects("buildBindingParameters").withExactArgs(mParameters).returns({});
 		// code under test
 		oBinding = oModel.bindProperty("/absolute", undefined, mParameters);
 		assert.strictEqual(oBinding.getGroupId(), "baz");
-		assert.strictEqual(oBinding.getUpdateGroupId(), "baz");
+		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
 
 		// buildBindingParameters not called for relative binding
 		oBinding = this.oModel.bindProperty("relative");

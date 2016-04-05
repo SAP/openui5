@@ -239,5 +239,10 @@ sap.ui.require([
 				_ODataHelper.checkGroupId(vGroupId, true);
 			}, new Error("Invalid group ID: " + vGroupId));
 		});
+
+		// invalid group with custom message
+		assert.throws(function () {
+			_ODataHelper.checkGroupId("$invalid", false, "Custom error message: ");
+		}, new Error("Custom error message: $invalid"));
 	});
 });

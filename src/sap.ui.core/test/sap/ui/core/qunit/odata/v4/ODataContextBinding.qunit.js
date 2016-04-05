@@ -518,13 +518,15 @@ sap.ui.require([
 	QUnit.test("$$groupId, $$updateGroupId", function (assert) {
 		var oBinding,
 			oHelperMock = this.oSandbox.mock(_ODataHelper),
+			oModelMock = this.oSandbox.mock(this.oModel),
 			mParameters = {};
 
-		this.oSandbox.mock(this.oModel).expects("getGroupId").twice()
-			.withExactArgs().returns("baz");
+		oModelMock.expects("getGroupId").withExactArgs().returns("baz");
+		oModelMock.expects("getUpdateGroupId").twice().withExactArgs().returns("fromModel");
 
 		oHelperMock.expects("buildBindingParameters").withExactArgs(mParameters)
 			.returns({$$groupId : "foo", $$updateGroupId : "bar"});
+
 		// code under test
 		oBinding = this.oModel.bindContext("/EMPLOYEES('4711')", undefined, mParameters);
 		assert.strictEqual(oBinding.getGroupId(), "foo");
@@ -535,13 +537,13 @@ sap.ui.require([
 		// code under test
 		oBinding = this.oModel.bindContext("/EMPLOYEES('4711')", undefined, mParameters);
 		assert.strictEqual(oBinding.getGroupId(), "foo");
-		assert.strictEqual(oBinding.getUpdateGroupId(), "foo");
+		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
 
 		oHelperMock.expects("buildBindingParameters").withExactArgs(mParameters).returns({});
 		// code under test
 		oBinding = this.oModel.bindContext("/EMPLOYEES('4711')", undefined, mParameters);
 		assert.strictEqual(oBinding.getGroupId(), "baz");
-		assert.strictEqual(oBinding.getUpdateGroupId(), "baz");
+		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
 
 		// buildBindingParameters not called for relative binding
 		oBinding = this.oModel.bindContext("EMPLOYEE_2_TEAM");
