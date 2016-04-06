@@ -12,6 +12,7 @@ sap.ui.require([
 ], function (jQuery, FormatException, ParseException, ValidateException, Guid, ODataType,
 		TestUtils) {
 	/*global QUnit */
+	/*eslint max-nested-callbacks: 0*/
 	"use strict";
 
 	//*********************************************************************************************

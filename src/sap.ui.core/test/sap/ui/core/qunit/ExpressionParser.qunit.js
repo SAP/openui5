@@ -506,14 +506,13 @@ sap.ui.require([
 		// w/o try/catch, a formatter's exception is thrown out of the control's c'tor...
 		// --> expression binding provides the comfort of an "automatic try/catch"
 		assert.throws(function () {
-			var unused = new Icon({
-					color : {
-						path : '/',
-						formatter : function () { return null.toString(); }
-					},
-					models : new JSONModel()
-				});
-			unused = !unused;
+			return new Icon({
+				color : {
+					path : '/',
+					formatter : function () { return null.toString(); }
+				},
+				models : new JSONModel()
+			});
 		});
 
 		// Note: no need to log the stacktrace, it does not really matter to most people here
