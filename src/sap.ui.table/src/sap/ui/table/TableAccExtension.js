@@ -278,30 +278,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 	var ExtensionHelper = {
 
 		/*
-		 * Initializes the event delegate of the given extension for the related table control
-		 */
-		initEventDelegate : function(oExtension) {
-			var oTable = oExtension.getTable();
-			oTable.addEventDelegate({
-				onfocusin : function(oEvent) {
-					if (oTable._mTimeouts._cleanupACCExtension) {
-						jQuery.sap.clearDelayedCall(oTable._mTimeouts._cleanupACCExtension);
-						oTable._mTimeouts._cleanupACCExtension = null;
-					}
-					oExtension.updateAccForCurrentCell(true);
-				},
-				onfocusout: function(oEvent) {
-					oTable._mTimeouts._cleanupACCExtension = jQuery.sap.delayedCall(100, oExtension, function(){
-						this._iLastRowNumber = null;
-						this._iLastColumnNumber = null;
-						ExtensionHelper.cleanupCellModifications(this);
-						oTable._mTimeouts._cleanupACCExtension = null;
-					});
-				}
-			});
-		},
-
-		/*
 		 * Determines the current row and column and updates the hidden description texts of the table accordingly.
 		 */
 		updateRowColCount : function(oExtension) {
@@ -644,26 +620,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 					break;
 
 				case TableAccExtension.ELEMENTTYPES.ROOT: //The tables root dom element
-					//TBD: Taken directly from TableRenderer, Clarify whether all this is really necessary on the root element
-					mAttributes["aria-readonly"] = "true";
-					if (oTable.getSelectionMode() === sap.ui.table.SelectionMode.Multi) {
-						mAttributes["aria-multiselectable"] = "true";
-					}
+					break;
+
+				case TableAccExtension.ELEMENTTYPES.TABLE: //The "real" table element(s)
+					mAttributes["role"] = "presentation";//oExtension._treeMode ? "treegrid" : "grid";
+					break;
+
+				case TableAccExtension.ELEMENTTYPES.CONTENT: //The content area of the table which contains all the table elements, rowheaders, columnheaders, etc
+					mAttributes["role"] = oExtension._treeMode ? "treegrid" : "grid";
 					mAttributes["aria-labelledby"] = [].concat(oTable.getAriaLabelledBy());
 					if (oTable.getTitle()) {
 						mAttributes["aria-labelledby"].push(oTable.getTitle().getId());
 					}
-					mAttributes["aria-labelledby"] = [].concat(oTable.getAriaLabelledBy());
-					var aAriaOwns = [];
-					if (oTable.getToolbar()) {
-						aAriaOwns.push(oTable.getToolbar().getId());
+					if (oTable.getSelectionMode() === sap.ui.table.SelectionMode.Multi || oTable.getSelectionMode() === sap.ui.table.SelectionMode.MultiToggle) {
+						mAttributes["aria-multiselectable"] = "true";
 					}
-					aAriaOwns.push(oTable.getId() + "-table");
-					mAttributes["aria-owns"] = aAriaOwns;
-					break;
-
-				case TableAccExtension.ELEMENTTYPES.TABLE: //The "real" table element(s)
-					mAttributes["role"] = oExtension._treeMode ? "treegrid" : "grid";
 					break;
 
 				case TableAccExtension.ELEMENTTYPES.TABLEHEADER: //The table header area
@@ -762,7 +733,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 			this._readonly = bReadOnly;
 			this._treeMode = bTreeMode;
 			this._hasTreeColumn = bHasTreeColumn;
-			ExtensionHelper.initEventDelegate(this);
 		},
 
 		/*
@@ -787,6 +757,45 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 		 */
 		_getAriaAttributesFor : function(sType, mParams) {
 			return ExtensionHelper.getAriaAttributesFor(this, sType, mParams);
+		},
+
+		/*
+		 * Delegate function for focusin event
+		 * @see Table._initItemNavigation and Table._destroyItemNavigation
+		 * @public (Part of the API for Table control only!)
+		 */
+		onfocusin : function(oEvent) {
+			var oTable = this.getTable();
+			if (!oTable) {
+				return;
+			}
+			if (oTable._mTimeouts._cleanupACCExtension) {
+				jQuery.sap.clearDelayedCall(oTable._mTimeouts._cleanupACCExtension);
+				oTable._mTimeouts._cleanupACCExtension = null;
+			}
+			this.updateAccForCurrentCell(true);
+		},
+
+		/*
+		 * Delegate function for focusout event
+		 * @see Table._initItemNavigation and Table._destroyItemNavigation
+		 * @public (Part of the API for Table control only!)
+		 */
+		onfocusout: function(oEvent) {
+			var oTable = this.getTable();
+			if (!oTable) {
+				return;
+			}
+			oTable._mTimeouts._cleanupACCExtension = jQuery.sap.delayedCall(100, this, function() {
+				var oTable = this.getTable();
+				if (!oTable) {
+					return;
+				}
+				this._iLastRowNumber = null;
+				this._iLastColumnNumber = null;
+				ExtensionHelper.cleanupCellModifications(this);
+				oTable._mTimeouts._cleanupACCExtension = null;
+			});
 		}
 	});
 
@@ -801,6 +810,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 		ROWHEADER : 		TableHelper.CELLTYPES.ROWHEADER, 		// @see TableHelper.CELLTYPES
 		COLUMNROWHEADER : 	TableHelper.CELLTYPES.COLUMNROWHEADER, 	// @see TableHelper.CELLTYPES
 		ROOT : 				"ROOT", 								// The tables root dom element
+		CONTENT: 			"CONTENT",								// The content area of the table which contains all the table elements, rowheaders, columnheaders, etc
 		TABLE : 			"TABLE", 								// The "real" table element(s)
 		TABLEHEADER : 		"TABLEHEADER", 							// The table header area
 		COLUMNHEADER_ROW : 	"COLUMNHEADER_ROW", 					// The area which contains the column headers (TableHelper.CELLTYPES.COLUMNHEADER)
@@ -855,7 +865,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 	 * @public (Part of the API for Table control only!)
 	 */
 	TableAccExtension.prototype.updateAccForCurrentCell = function(bOnCellFocus) {
-		if (!this._accMode) {
+		if (!this._accMode || !this.getTable()._oItemNavigation) {
 			return;
 		}
 		if (bOnCellFocus) {
