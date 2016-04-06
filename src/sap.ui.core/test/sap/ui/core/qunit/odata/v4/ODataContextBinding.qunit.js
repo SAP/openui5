@@ -4,6 +4,7 @@
 sap.ui.require([
 	"jquery.sap.global",
 	"sap/ui/base/ManagedObject",
+	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ContextBinding",
 	"sap/ui/model/odata/v4/_Context",
@@ -13,8 +14,8 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataContextBinding",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils"
-], function (jQuery, ManagedObject, ChangeReason, ContextBinding, _Context, _ODataHelper, _Cache,
-		_Helper, ODataContextBinding, ODataModel, TestUtils) {
+], function (jQuery, ManagedObject, Binding, ChangeReason, ContextBinding, _Context, _ODataHelper,
+		_Cache, _Helper, ODataContextBinding, ODataModel, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -107,13 +108,14 @@ sap.ui.require([
 		var oContext = {},
 			oBoundContext = {},
 			oBinding = this.oModel.bindContext("relative"),
-			oModelMock = this.mock(this.oModel);
+			oModelMock = this.oSandbox.mock(this.oModel),
+			oSetContextSpy = this.oSandbox.spy(Binding.prototype, "setContext");
 
 		oModelMock.expects("resolve").withExactArgs("relative", sinon.match.same(oContext))
 			.returns("/absolute");
-		this.mock(oBinding).expects("_fireChange").twice()
+		this.oSandbox.mock(oBinding).expects("_fireChange").twice()
 			.withExactArgs({reason : ChangeReason.Context});
-		this.mock(_Context).expects("create")
+		this.oSandbox.mock(_Context).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding), "/absolute")
 			.returns(oBoundContext);
 
@@ -121,31 +123,28 @@ sap.ui.require([
 		oBinding.setContext(oContext);
 		assert.strictEqual(oBinding.oContext, oContext);
 		assert.strictEqual(oBinding.getBoundContext(), oBoundContext);
-
-		oModelMock.expects("resolve").withExactArgs("relative", undefined)
-			.returns(undefined);
+		assert.strictEqual(oSetContextSpy.callCount, 1);
 
 		// reset parent binding fires change
 		// code under test
 		oBinding.setContext(undefined);
 		assert.strictEqual(oBinding.oContext, undefined);
 		assert.strictEqual(oBinding.getBoundContext(), null);
-
-		oModelMock.expects("resolve").withExactArgs("relative", null)
-			.returns(undefined);
+		assert.strictEqual(oSetContextSpy.callCount, 2);
 
 		// set parent context to null does not change the bound context -> no change event
 		// code under test
 		oBinding.setContext(null);
 		assert.strictEqual(oBinding.oContext, null);
 		assert.strictEqual(oBinding.getBoundContext(), null);
+		assert.strictEqual(oSetContextSpy.callCount, 2, "no addt'l change event");
 	});
 
 	//*********************************************************************************************
 	QUnit.test("setContext on resolved binding", function (assert) {
 		var oBinding = this.oModel.bindContext("/EntitySet('foo')/child");
 
-		this.mock(oBinding).expects("_fireChange").never();
+		this.oSandbox.mock(oBinding).expects("_fireChange").never();
 
 		oBinding.setContext(_Context.create(this.oModel, null, "/EntitySet('bar')"));
 
