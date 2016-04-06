@@ -244,7 +244,12 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		ComboBoxBase.prototype.init = function() {
 			ComboBoxTextField.prototype.init.apply(this, arguments);
 
-			this.setPickerType("Dropdown");
+			// sets the picker popup type
+			this.setPickerType(sap.ui.Device.system.phone ? "Dialog" : "Dropdown");
+
+			if (sap.ui.Device.system.phone) {
+				this.attachEvent("_change", this.onPropertyChange, this);
+			}
 
 			// initialize composites
 			this.createPicker(this.getPickerType());
@@ -719,28 +724,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		/* ----------------------------------------------------------- */
 		/* public methods                                              */
 		/* ----------------------------------------------------------- */
-
-		/**
-		 * Getter for property <code>value</code>.
-		 *
-		 * Default value is empty/<code>undefined</code>.
-		 *
-		 * @return {string} the value of property <code>value</code>
-		 * @public
-		 */
-		ComboBoxBase.prototype.getValue = function() {
-			var oDomRef = this.getFocusDomRef();
-
-			// if the input field is rendered
-			if (oDomRef) {
-
-				// return the live value
-				return oDomRef.value;
-			}
-
-			// else return the value from the model
-			return this.getProperty("value");
-		};
 
 		/**
 		 * Adds an item to the aggregation named <code>items</code>.
