@@ -1,0 +1,425 @@
+<!DOCTYPE HTML>
+
+<!--
+  Tested class: sap.ui.core.Component, sap.ui.core.UIComponent
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>QUnit test: Component</title>
+	<script id="sap-ui-bootstrap"
+		type="text/javascript"
+		src="../../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-libs="sap.m"
+		data-sap-ui-language="en"
+		data-sap-ui-noConflict="true">
+	</script>
+
+	<script>
+
+	jQuery.sap.require("sap.ui.qunit.qunit-css");
+	jQuery.sap.require("sap.ui.thirdparty.qunit");
+	jQuery.sap.require("sap.ui.qunit.qunit-junit");
+	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	jQuery.sap.require("sap.ui.qunit.QUnitUtils");
+	jQuery.sap.require("sap.ui.thirdparty.sinon");
+	jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
+	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+
+	sinon.config.useFakeTimers = false;
+
+	QUnit.config.autostart = false;
+
+	jQuery(document).ready(function() {
+		QUnit.start();
+	});
+
+	// ===========================================================================
+
+	// register the module path
+	jQuery.sap.registerModulePath("samples.components", "../../../../../sap/ui/core/samples/components/");
+
+	sap.ui.define("my/Service", ["sap/ui/core/service/Service"], function(Service) {
+
+		return Service.extend("my.ServiceFactory", {
+
+			init: function() {
+				this._bInitialized = true;
+			},
+
+			exit: function() {
+				this._bTerminated = true;
+			},
+
+			doSomething: function() {
+				this._doSomething();
+			},
+
+			_doSomething: function() {
+				this._iCallCount = this._iCallCount && this._iCallCount++ || 1;
+			}
+
+		});
+
+	});
+
+	sap.ui.define("my/ServiceFactory", ["sap/ui/core/service/ServiceFactory", "my/Service"], function(ServiceFactory, MyService) {
+
+		return ServiceFactory.extend("my.ServiceFactory", {
+
+			createInstance: function(oServiceContext) {
+				return Promise.resolve(new MyService(oServiceContext));
+			}
+
+		});
+
+	});
+
+
+	// ===========================================================================
+
+	QUnit.module("Basic API");
+
+	/*
+	 * This test checks the basic API functionality of the Service Factory Registry
+	 * to register/unregister/get a Service Factory.
+	 */
+	QUnit.test("ServiceFactoryRegistry", function(assert) {
+
+		var done = assert.async();
+
+		sap.ui.require(["sap/ui/core/service/ServiceFactoryRegistry", "my/ServiceFactory"], function(ServiceFactoryRegistry, MyServiceFactory) {
+
+			var sServiceFactoryAlias = "my.ServiceFactoryAlias";
+			var oServiceFactory = new MyServiceFactory({
+				scopeObject: {},
+				scopeType: "component"
+			});
+
+			assert.notOk(ServiceFactoryRegistry.get(sServiceFactoryAlias), "Service Factory is not registered yet!");
+
+			ServiceFactoryRegistry.register(sServiceFactoryAlias, oServiceFactory);
+
+			assert.ok(ServiceFactoryRegistry.get(sServiceFactoryAlias), "Service Factory is registered!");
+			assert.equal(ServiceFactoryRegistry.get(sServiceFactoryAlias), oServiceFactory, "Service Factory can be retrieved!");
+
+			ServiceFactoryRegistry.unregister(sServiceFactoryAlias);
+
+			assert.notOk(ServiceFactoryRegistry.get(sServiceFactoryAlias), "Service Factory is unregistered!");
+
+			done();
+
+		});
+
+	});
+
+
+	/*
+	 * This test checks the usage of the Service Factory as a generic factory for
+	 * an arbitrary Service by providing the constructor function.
+	 */
+	QUnit.test("ServiceFactory (generic, should work)", function(assert) {
+
+		var done = assert.async();
+
+		sap.ui.require([
+			"sap/ui/core/service/ServiceFactory",
+			"my/Service"
+		], function(ServiceFactory, MyService) {
+
+			var oServiceFactory = new ServiceFactory(MyService);
+			var oServiceContext = {
+				scopeObject: {},
+				scopeType: "component"
+			};
+
+			oServiceFactory.createInstance(oServiceContext).then(function(oService) {
+				assert.ok(oService instanceof MyService, "Service is an instance of my.Service");
+				assert.deepEqual(oService.getContext(), oServiceContext, "Service has proper context");
+				done();
+			}).catch(function(oError) {
+				assert.ok(false, "An error must no occur here!");
+				done();
+			});
+
+		});
+
+	});
+
+
+	/*
+	 * This test checks the usage of the Service Factory will fail to create a
+	 * Service instance when no constructor function is passed.
+	 */
+	QUnit.test("ServiceFactory (generic, should fail)", function(assert) {
+
+		var done = assert.async();
+
+		sap.ui.require([
+			"sap/ui/core/service/ServiceFactory"
+		], function(ServiceFactory) {
+
+			var oServiceFactory = new ServiceFactory();
+			var oServiceContext = {
+				scopeObject: {},
+				scopeType: "component"
+			};
+
+			oServiceFactory.createInstance(oServiceContext).then(function(oService) {
+				assert.ok(false, "The createInstance function must not work here!");
+				done();
+			}).catch(function(oError) {
+				assert.equal(oError.message, "Usage of sap.ui.core.service.ServiceFactory requires a Service constructor function to create a new Service instance!", "A proper error occurs!");
+				done();
+			});
+
+		});
+
+	});
+
+
+	/*
+	 * This test checks the usage of a custom Service Factory which creates a
+	 * Service instance with an own createInstance function.
+	 */
+	QUnit.test("ServiceFactory (specific)", function(assert) {
+
+		var done = assert.async();
+
+		sap.ui.require([
+			"my/ServiceFactory",
+			"my/Service"
+		], function(MyServiceFactory, MyService) {
+
+			var oServiceFactory = new MyServiceFactory(MyService);
+			var oServiceContext = {
+				scopeObject: {},
+				scopeType: "component"
+			};
+
+			oServiceFactory.createInstance(oServiceContext).then(function(oService) {
+				assert.ok(oService instanceof MyService, "Service is an instance of my.Service");
+				assert.deepEqual(oService.getContext(), oServiceContext, "Service has proper context");
+				done();
+			}).catch(function(oError) {
+				assert.ok(false, "An error must no occur here!");
+				done();
+			});
+
+		});
+
+	});
+
+
+	/*
+	 * This test checks that the Service API is working properly and that the
+	 * Service interface will shield the Service instance properly.
+	 */
+	QUnit.test("Service", function(assert) {
+
+		var done = assert.async();
+
+		sap.ui.require([
+			"sap/ui/base/Interface",
+			"sap/ui/core/service/Service",
+			"my/Service"
+		], function(Interface, Service, MyService) {
+
+			var oMyService = new MyService();
+			var oMyServiceInterface = oMyService.getInterface();
+
+			assert.ok(oMyService instanceof Service, "Service is instance of sap.ui.core.service.Service");
+			assert.equal(typeof oMyService.getInterface, "function", "Service has getInterface function");
+			assert.equal(typeof oMyService.getContext, "function", "Service has getContext function");
+			assert.equal(typeof oMyService.destroy, "function", "Service has destroy function");
+			assert.equal(typeof oMyService.init, "function", "Service has init function");
+			assert.equal(typeof oMyService.exit, "function", "Service has exit function");
+			assert.equal(typeof oMyService.doSomething, "function", "Service has doSomething function");
+			assert.equal(typeof oMyService._doSomething, "function", "Service has _doSomething function");
+
+			assert.ok(oMyServiceInterface instanceof Interface, "Service Interface is of type sap.ui.base.Interface");
+			assert.equal(typeof oMyServiceInterface.getInterface, "undefined", "Service Interface has no getInterface function");
+			assert.equal(typeof oMyServiceInterface.getContext, "undefined", "Service Interface has no getContext function");
+			assert.equal(typeof oMyServiceInterface.destroy, "undefined", "Service Interface has no destroy function");
+			assert.equal(typeof oMyServiceInterface.init, "undefined", "Service Interface has no init function");
+			assert.equal(typeof oMyServiceInterface.exit, "undefined", "Service Interface has no exit function");
+			assert.equal(typeof oMyServiceInterface.doSomething, "function", "Service Interface has doSomething function");
+			assert.equal(typeof oMyServiceInterface._doSomething, "undefined", "Service Interface has no _doSomething function");
+
+			oMyServiceInterface.doSomething();
+			assert.equal(oMyService._iCallCount, 1, "Service interface forwards function call!");
+
+			done();
+
+		});
+
+	});
+
+
+	/*
+	 * This test checks that the Service Lifecycle is working properly.
+	 */
+	QUnit.test("Service Lifecycle", function(assert) {
+
+		var done = assert.async();
+
+		sap.ui.require([
+			"my/Service"
+		], function(MyService) {
+
+			var oMyService = new MyService();
+			assert.ok(oMyService._bInitialized, "Service init hook was called!");
+
+			oMyService.destroy();
+			assert.ok(oMyService._bTerminated, "Service exit hook was called!");
+
+			done();
+
+		});
+
+	});
+
+
+	// ===========================================================================
+
+	QUnit.module("Component Usage", {
+
+		beforeEach : function() {
+
+			// define the manifest for the Component test
+			var oManifest = this.oManifest = {
+				"sap.app" : {
+					"id" : "samples.components.button"
+				},
+				"sap.ui5" : {
+					"services": {
+						"MyServiceAlias": {
+							"factoryName": "my.ServiceFactoryAlias"
+						},
+						"OtherServiceAlias": {
+							"factoryName": "other.ServiceFactoryAlias"
+						}
+					}
+				}
+			};
+
+
+			var oServer = this.oServer = sinon.sandbox.useFakeServer();
+
+			oServer.xhr.useFilters = true;
+			oServer.xhr.filters = [];
+			oServer.xhr.addFilter(function(method, url) {
+				return "/anylocation/manifest.json" !== url;
+			});
+
+			oServer.autoRespond = true;
+			oServer.respondWith("GET", "/anylocation/manifest.json", [
+				200,
+				{
+					"Content-Type": "application/json"
+				},
+				JSON.stringify(oManifest)
+			]);
+
+			// create the component
+			var oComponent = this._oComponent = sap.ui.component({
+				manifestUrl : "/anylocation/manifest.json"
+			});
+
+			// register the Service Factory for: my.ServiceFactoryAlias
+			sap.ui.core.service.ServiceFactoryRegistry.register("my.ServiceFactoryAlias", new my.ServiceFactory());
+
+		},
+
+		afterEach : function() {
+
+			// unregister the Service Factory for: my.ServiceFactoryAlias
+			sap.ui.core.service.ServiceFactoryRegistry.register("my.ServiceFactoryAlias");
+
+			this._oComponent.destroy();
+			delete this._oComponent;
+			delete this._oServer;
+			delete this._oManifest;
+
+		}
+
+	});
+
+
+	/*
+	 * This test checks that a Service can be retrieved properly from the
+	 * Component Service API.
+	 */
+	QUnit.test("Retrieve Service from existing Service Factory", function(assert) {
+
+		var oComponent = this._oComponent;
+
+		var done = assert.async();
+
+		sap.ui.require([
+			"sap/ui/base/Interface",
+			"my/Service"
+		], function(Interface, MyService) {
+
+			oComponent.getService("MyServiceAlias").then(function(oService) {
+
+				assert.ok(oService instanceof Interface, "Service Interface is of type sap.ui.base.Interface");
+				assert.equal(typeof oService.destroy, "undefined", "Service Interface has no destroy function");
+				assert.equal(typeof oService.doSomething, "function", "Service Interface has doSomething function");
+				assert.equal(typeof oService._doSomething, "undefined", "Service Interface has no _doSomething function");
+
+				oComponent.getService("MyServiceAlias").then(function(oSameService) {
+					assert.equal(oService, oSameService, "The service instance is the same!");
+					done();
+				}).catch(function(oError) {
+					assert.ok(false, "getService must not be failing!");
+					done();
+				});
+
+				var oServiceInstance = oComponent._mServices["MyServiceAlias"].instance;
+				assert.ok(oServiceInstance._bInitialized, "Service is initialized properly!");
+				oComponent.destroy();
+				assert.ok(oServiceInstance._bTerminated, "Service is terminated properly!");
+				assert.notOk(oComponent._mServices, "Local Service instance registry is deleted!");
+
+			}).catch(function(oError) {
+
+				assert.ok(false, "getService must not be failing!");
+				done();
+
+			});
+
+		});
+
+	});
+
+	QUnit.test("Retrieve Service from missing Service Factory", function(assert) {
+
+		var oComponent = this._oComponent;
+
+		var done = assert.async();
+		oComponent.getService("OtherServiceAlias").then(function(oService) {
+
+			assert.ok(false, "Service must not be created!");
+			done();
+
+		}).catch(function(oError) {
+
+			assert.equal(oError.message, "ServiceFactory other.ServiceFactoryAlias not found in ServiceFactoryRegistry!", "Service Factory not found Error");
+			done()
+
+		});
+
+	});
+
+	</script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+		<br>
+		<div id="comparea1"></div>
+		<div id="comparea2"></div>
+	</body>
+</html>
