@@ -58,7 +58,7 @@
 				sap.ui.getCore().setModel(oModel);
 
 				var tableArea1 = oCore.createUIArea("tableArea1");
-				var oTable = new sap.ui.table.DataTable({
+				var oTable = new sap.ui.table.Table({
 					title : "Clients Table1",
 					width : "100%",
 					visibleRowCount : 5,
@@ -95,7 +95,7 @@
 				tableArea1.setRootControl(oTable);
 
 				var tableArea2 = oCore.createUIArea("tableArea2");
-				oTable = new sap.ui.table.DataTable({
+				oTable = new sap.ui.table.Table({
 					title : "Clients Table2",
 					width : "100%",
 					visibleRowCount : 5,
