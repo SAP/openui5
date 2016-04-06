@@ -714,12 +714,12 @@
 		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance();
 		equal(oFormat.format(123456.789, "EUR"), "EUR" + "\xa0" + "123,456.79", "123456.789 EUR");
 		equal(oFormat.format([123456.789, "EUR"]), "EUR" + "\xa0" + "123,456.79", "123456.789 EUR");
-		equal(oFormat.format(-123456.789, "EUR"), "EUR-123,456.79", "-123456.789 EUR");
-		equal(oFormat.format([-123456.789, "EUR"]), "EUR-123,456.79", "-123456.789 EUR");
+		equal(oFormat.format(-123456.789, "EUR"), "EUR"+ "\ufeff" +"-123,456.79", "-123456.789 EUR");
+		equal(oFormat.format([-123456.789, "EUR"]), "EUR"+ "\ufeff" +"-123,456.79", "-123456.789 EUR");
 		equal(oFormat.format(123456.789, "JPY"), "JPY" + "\xa0" + "123,457", "123456.789 JPY");
 		equal(oFormat.format([123456.789, "JPY"]), "JPY" + "\xa0" + "123,457", "123456.789 JPY");
-		equal(oFormat.format(-123456.789, "JPY"), "JPY-123,457", "-123456.789 JPY");
-		equal(oFormat.format([-123456.789, "JPY"]), "JPY-123,457", "-123456.789 JPY");
+		equal(oFormat.format(-123456.789, "JPY"), "JPY"+ "\ufeff" +"-123,457", "-123456.789 JPY");
+		equal(oFormat.format([-123456.789, "JPY"]), "JPY"+ "\ufeff" +"-123,457", "-123456.789 JPY");
 	});
 
 	test("Currency format with sMeasure and showMeasure as symbol", function(){
@@ -728,8 +728,8 @@
 		});
 		equal(oFormat.format(123456.789, "EUR"), "\u20ac" + "123,456.79", "123456.789 EUR");
 		equal(oFormat.format([123456.789, "EUR"]), "\u20ac" + "123,456.79", "123456.789 EUR");
-		equal(oFormat.format(-123456.789, "EUR"), "\u20ac" + "-123,456.79", "123456.789 EUR");
-		equal(oFormat.format([-123456.789, "EUR"]), "\u20ac" + "-123,456.79", "123456.789 EUR");
+		equal(oFormat.format(-123456.789, "EUR"), "\u20ac\ufeff" + "-123,456.79", "123456.789 EUR");
+		equal(oFormat.format([-123456.789, "EUR"]), "\u20ac\ufeff" + "-123,456.79", "123456.789 EUR");
 	});
 
 	test("Currency format with sMeasure and showMeasure set to none", function(){
@@ -785,8 +785,8 @@
 
 		equal(oFormat.format(123456.789, "EUR"), "EUR" + "\xa0" + "123,456.8", "123456.789 EUR");
 		equal(oFormat.format([123456.789, "EUR"]), "EUR" + "\xa0" + "123,456.8", "123456.789 EUR");
-		equal(oFormat.format(-123456.789, "EUR"), "EUR-123,456.8", "123456.789 EUR");
-		equal(oFormat.format([-123456.789, "EUR"]), "EUR-123,456.8", "123456.789 EUR");
+		equal(oFormat.format(-123456.789, "EUR"), "EUR"+ "\ufeff" +"-123,456.8", "123456.789 EUR");
+		equal(oFormat.format([-123456.789, "EUR"]), "EUR"+ "\ufeff" +"-123,456.8", "123456.789 EUR");
 	});
 
 	test("check space between currency code and number in different scenarios", function() {
@@ -798,11 +798,11 @@
 			});
 
 		equal(oCurrencyCodeFormatter.format(123456.789, "EUR"), "EUR" + "\xa0" + "123,456.79", "123456.789 EUR");
-		equal(oCurrencyCodeFormatter.format(-123456.789, "EUR"), "EUR-123,456.79", "-123456.789 EUR");
+		equal(oCurrencyCodeFormatter.format(-123456.789, "EUR"), "EUR"+ "\ufeff" +"-123,456.79", "-123456.789 EUR");
 		equal(oCurrencySymbolFormatter.format(123456.789, "EUR"), "\u20ac" + "123,456.79", "123456.789 EUR");
-		equal(oCurrencySymbolFormatter.format(-123456.789, "EUR"), "\u20ac" + "-123,456.79", "-123456.789 EUR");
+		equal(oCurrencySymbolFormatter.format(-123456.789, "EUR"), "\u20ac\ufeff" + "-123,456.79", "-123456.789 EUR");
 		equal(oCurrencySymbolFormatter.format(123456.789, "HKD"), "HK$123,456.79", "123456.789 HKD");
-		equal(oCurrencySymbolFormatter.format(-123456.789, "HKD"), "HK$-123,456.79", "-123456.789 HKD");
+		equal(oCurrencySymbolFormatter.format(-123456.789, "HKD"), "HK$\ufeff-123,456.79", "-123456.789 HKD");
 
 		// in "de-DE" locale there's already space in the currency pattern: #,##0.00 ¤
 		// there shouldn't be more space inserted
