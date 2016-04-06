@@ -458,13 +458,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 
 					if (oControl._bDoTypeAhead) {
 
-						if (sap.ui.Device.os.blackberry || sap.ui.Device.os.android) {
-
-							// note: timeout required for a BlackBerry bug
-							setTimeout(fnSelectTextIfFocused.bind(oControl, sValue.length, oControl.getValue().length), 0);
-						} else {
-							oControl.selectText(sValue.length, 9999999);
-						}
+						// note: timeout required for a Android and Windows Phone bug
+						setTimeout(fnSelectTextIfFocused.bind(oControl, sValue.length, oControl.getValue().length), 0);
 					}
 				}
 
