@@ -4,19 +4,24 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>qUnit Page for sap.m.routing.Router</title>
 
-		<script src="../../../../../../resources/sap-ui-core.js"
-				data-sap-ui-libs="sap.m"
-				data-sap-ui-resourceroots='{"qunit": "../../"}'>
+		<script id="sap-ui-bootstrap"
+			src="../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-resourceroots='{"qunit": "../../"}'>
 		</script>
+		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 		<script>
 			(function () {
-				jQuery.sap.require("sap.ui.qunit.qunit-css");
-				jQuery.sap.require("sap.ui.thirdparty.qunit");
-				jQuery.sap.require("sap.ui.qunit.qunit-junit");
-				jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-				jQuery.sap.require("sap.ui.thirdparty.sinon");
-				jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+
 				sinon.config.useFakeTimers = false;
 
 				sap.ui.require([
@@ -190,7 +195,7 @@
 							});
 
 
-							QUnit.test("Should pass some data to the navContainer", function (assert) {
+							QUnit.test("Should pass some data to the SplitContainer", function (assert) {
 								//Arrange
 								var oSplitContainer = new SplitContainer({
 											masterPages: [createViewAndController("InitialMaster")]
@@ -250,7 +255,8 @@
 										data = oEvent.data.id;
 										// Assert
 										assert.strictEqual(data, "5", "should pass 5 to the page");
-
+									},
+									onAfterShow: function(oEvent) {
 										// Cleanup
 										oRouter.destroy();
 										oNavContainer.destroy();
@@ -307,11 +313,11 @@
 										// Assert
 										assert.strictEqual(oMasterData, "5", "should pass 5 to the master page");
 										assert.strictEqual(oDetailData, "5", "should pass 5 to the detail page");
-
+									},
+									onAfterShow: function(oEvent) {
 										// Cleanup
 										oRouter.destroy();
 										oSplitContainer.destroy();
-
 										done();
 									}
 								});
