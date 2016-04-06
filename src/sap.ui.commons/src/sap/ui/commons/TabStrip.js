@@ -493,39 +493,49 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	TabStrip.prototype.rerenderPanel = function(iOldIndex, fireSelect) {
 
+		var aTabs = this.getTabs();
 		var iNewIndex = this.getSelectedIndex();
-		var oOldTab = this.getTabs()[iOldIndex];
-		var sNewId = this.getTabs()[iNewIndex].getId();
-		var oTab = this.getTabs()[iNewIndex];
+		var oTab = aTabs[iNewIndex];
+		var oOldTab = aTabs[iOldIndex];
 
 		// ensure that events from the controls in the panel are fired
-		jQuery.sap.delayedCall(0, this, function() {
+		jQuery.sap.delayedCall(0, this, function () {
 
 			var $panel = this.$().find('.sapUiTabPanel');
 
-			if ($panel.length > 0) {
-				var rm = sap.ui.getCore().createRenderManager();
-				this.getRenderer().renderTabContents(rm, oTab);
-				rm.flush($panel[0]);
-				rm.destroy();
-			}
+			if (oTab) {
+				if ($panel.length > 0) {
+					var rm = sap.ui.getCore().createRenderManager();
+					this.getRenderer().renderTabContents(rm, oTab);
+					rm.flush($panel[0]);
+					rm.destroy();
+				}
 
-			// change the ID and Label of the panel to the current tab
-			$panel.attr("id",sNewId + "-panel").attr("aria-labelledby", sNewId);
+				var sNewId = oTab.getId();
+
+				// change the ID and Label of the panel to the current tab
+				$panel.attr("id", sNewId + "-panel").attr("aria-labelledby", sNewId);
+			} else {
+				$panel.empty();
+			}
 
 			//store the scroll top and left possitions as a property value in order to be restored later
 			oOldTab.setProperty("scrollTop", $panel.scrollTop(), true);
 			oOldTab.setProperty("scrollLeft", $panel.scrollLeft(), true);
 
 			// call after rendering method of tab to set scroll functions
-			oTab.onAfterRendering();
+			if (oTab) {
+				oTab.onAfterRendering();
+			}
 
 			if (fireSelect) {
 				this.fireSelect({index: iNewIndex});
 			}
 		});
 
-		this.toggleTabClasses(iOldIndex, iNewIndex);
+		if (oTab) {
+			this.toggleTabClasses(iOldIndex, iNewIndex);
+		}
 	};
 
 	/*
