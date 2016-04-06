@@ -360,13 +360,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 
 					if (this._bDoTypeAhead) {
 
-						if (sap.ui.Device.os.blackberry || sap.ui.Device.os.android) {
-
-							// note: timeout required for a BlackBerry bug
-							setTimeout(fnSelectTextIfFocused.bind(this, sValue.length, this.getValue().length), 0);
-						} else {
-							this.selectText(sValue.length, 9999999);
-						}
+						// note: timeout required for a Android and Windows Phone bug
+						setTimeout(fnSelectTextIfFocused.bind(this, sValue.length, this.getValue().length), 0);
 					}
 
 					this.scrollToItem(this.getSelectedItem());
