@@ -46,8 +46,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 			selected: null, // Avoid output aria-selected
 			checked: oRadioButton.getSelected() === true ? true : undefined, // aria-checked=false is default value and must not be set explicitly
 			disabled: !oRadioButton.getEditable() ? true : undefined, // Avoid output aria-disabled=false when the button is editable
-			labelledby: sId + "-label",
-			describedby: sTooltipWithStateMessage ? sId + "-Descr" : undefined
+			labelledby: { value: sId + "-label", append: true },
+			describedby: { value: (sTooltipWithStateMessage ? sId + "-Descr" : undefined), append: true }
 		});
 
 		// Add classes and properties depending on the state
