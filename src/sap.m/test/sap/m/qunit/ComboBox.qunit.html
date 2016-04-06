@@ -5973,7 +5973,7 @@
 			oComboBox.destroy();
 		});
 
-		test("onsapdown the typed value should not gets selected (test case 1)", function() {
+		test("onsapdown the typed value should not get selected (test case 1)", function() {
 
 			// system under test
 			var oExpectedItem;
@@ -6020,7 +6020,7 @@
 			oComboBox.destroy();
 		});
 
-		test("onsapdown the typed value should not gets selected (test case 2)", function() {
+		test("onsapdown the typed value should not get selected (test case 2)", function() {
 
 			// system under test
 			var oExpectedItem;
@@ -6054,6 +6054,7 @@
 			});
 			oComboBox.getFocusDomRef().value = "A";
 			sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
+			this.clock.tick(0);
 			jQuery(oComboBox.getFocusDomRef()).cursorPos(0);
 			this.clock.tick(1000);
 
@@ -6414,6 +6415,7 @@
 			});
 			oComboBox.getFocusDomRef().value = "A";
 			sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
+			this.clock.tick(0);
 			jQuery(oComboBox.getFocusDomRef()).cursorPos(0);
 			this.clock.tick(1000);
 
