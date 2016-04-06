@@ -143,14 +143,7 @@ sap.ui.define([
 				 * If both are set to true, only the locked state will be displayed.
 				 * @since 1.34.0
 				 */
-				markChanges: {type: "boolean", group: "Misc", defaultValue: false},
-
-				/**
-				 * Set to true if the objectPageHeader is inside DynamicSideContent control and you want to show a button
-				 * and use it for opening the Side Content.
-				 * @since 1.38.0
-				 */
-				showSideContentButton: {type: "boolean", group: "Misc", defaultValue: false}
+				markChanges: {type: "boolean", group: "Misc", defaultValue: false}
 			},
 			defaultAggregation: "actions",
 			aggregations: {
@@ -207,7 +200,14 @@ sap.ui.define([
 				 * You can use ObjectPageHeaderActionButton controls to achieve a different visual representation of the action buttons in the action bar and the action sheet (overflow menu).
 				 * You can use ObjectPageHeaderLayoutData to display a visual separator.
 				 */
-				actions: {type: "sap.ui.core.Control", multiple: true, singularName: "action"}
+				actions: {type: "sap.ui.core.Control", multiple: true, singularName: "action"},
+
+				/**
+				 *
+				 * A button that is used for opening the side content of the page or some additional content.
+				 * @since 1.38.0
+				 */
+				sideContentButton: {type: "sap.m.Button", multiple: false}
 			},
 			events: {
 
@@ -249,20 +249,6 @@ sap.ui.define([
 						 */
 						domRef: {type: "string"}
 					}
-				},
-
-				/**
-				 * The event is fired when the unsaved changes button is pressed
-				 */
-				showSideContentButtonPress: {
-					parameters: {
-
-						/**
-						 * DOM reference of the changed item's icon to be used for positioning.
-						 * @since 1.38.0
-						 */
-						domRef: {type: "string"}
-					}
 				}
 			}
 		}
@@ -295,7 +281,6 @@ sap.ui.define([
 		this._oLockIconCont = this._getInternalAggregation("_lockIconCont").attachPress(this._handleLockPress, this);
 		this._oChangesIcon = this._getInternalAggregation("_changesIcon").attachPress(this._handleChangesPress, this);
 		this._oChangesIconCont = this._getInternalAggregation("_changesIconCont").attachPress(this._handleChangesPress, this);
-		this._oSideContentBtn = this._getInternalAggregation("_sideContentBtn").attachPress(this._handleShowSideContentButtonPress, this);
 	};
 
 	ObjectPageHeader.prototype._handleOverflowButtonPress = function (oEvent) {
@@ -316,12 +301,6 @@ sap.ui.define([
 
 	ObjectPageHeader.prototype._handleChangesPress = function (oEvent) {
 		this.fireMarkChangesPress({
-			domRef: oEvent.getSource().getDomRef()
-		});
-	};
-
-	ObjectPageHeader.prototype._handleShowSideContentButtonPress = function (oEvent) {
-		this.fireShowSideContentButtonPress({
 			domRef: oEvent.getSource().getDomRef()
 		});
 	};
@@ -388,9 +367,6 @@ sap.ui.define([
 		},
 		"_changesIcon": function (oParent) {
 			return this._getButton(oParent, "sap-icon://request", "changes", oParent.oLibraryResourceBundleOP.getText("TOOLTIP_OP_CHANGES_MARK_VALUE"));
-		},
-		"_sideContentBtn": function (oParent) {
-			return this._getButton(oParent, "sap-icon://detail-view", "sideContent", oParent.oLibraryResourceBundleOP.getText("TOOLTIP_OP_SHOW_SIDE_CONTENT"));
 		},
 		_getIcon: function (oParent, sIcon, sTooltip) {
 			return IconPool.createControlByURI({
@@ -496,7 +472,7 @@ sap.ui.define([
 	};
 
 	var aPropertiesToOverride = ["objectSubtitle", "showTitleSelector", "markLocked", "markFavorite", "markFlagged",
-			"showMarkers", "showPlaceholder", "markChanges", "showSideContentButton"],
+			"showMarkers", "showPlaceholder", "markChanges"],
 		aObjectImageProperties = ["objectImageURI", "objectImageAlt", "objectImageDensityAware", "objectImageShape"];
 
 	var fnGenerateSetter = function (sPropertyName) {
@@ -566,6 +542,11 @@ sap.ui.define([
 			});
 		}
 
+		var oSideBtn = this.getSideContentButton();
+		if (oSideBtn && !oSideBtn.getTooltip()) {
+			oSideBtn.setTooltip(this.oLibraryResourceBundleOP.getText("TOOLTIP_OP_SHOW_SIDE_CONTENT"));
+		}
+
 		var aActions = this.getActions() || [];
 		this._oOverflowActionSheet.removeAllButtons();
 		this._oActionSheetButtonMap = {};
@@ -591,7 +572,6 @@ sap.ui.define([
 		this._oTitleArrowIcon.setVisible(this.getShowTitleSelector());
 		this._oFavIcon.setVisible(this.getMarkFavorite());
 		this._oFlagIcon.setVisible(this.getMarkFlagged());
-		this._oSideContentBtn.setVisible(this.getShowSideContentButton());
 		this._attachDetachActionButtonsHandler(false);
 	};
 
