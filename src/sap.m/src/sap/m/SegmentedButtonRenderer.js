@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	SegmentedButtonRenderer.render = function(oRM, oControl){
@@ -103,15 +103,6 @@ sap.ui.define(['jquery.sap.global'],
 			if (sButtonWidth) {
 				oRM.addStyle('width', sButtonWidth);
 				oRM.writeStyles();
-			} else {
-
-				// Do not render buttons with their (auto) width now in order not to influence the parent's width.
-				// (egg-chicken problem, e.g. SegmentedButton as "content" aggregation inside sap.m.Dialog).
-				if (!oControl._bPreventWidthRecalculationOnAfterRendering) {//Make sure this happens when a real width
-					// calculation will take place at "onAfterRendering", otherwise buttons will remain with width = 0.
-					oRM.addStyle('width', "0px");
-					oRM.writeStyles();
-				}
 			}
 			sTooltip = oButton.getTooltip_AsString();
 			if (sTooltip) {
