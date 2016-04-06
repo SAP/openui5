@@ -9,14 +9,14 @@ sap.ui.define([
 	], function(Dialog, MessageBox, Controller, JSONModel) {
 	"use strict";
 
-	function onRejected(oError) {
-		MessageBox.alert(oError.message, {
-			icon : MessageBox.Icon.ERROR,
-			title : oError.isConcurrentModification
-				? "Concurrent Modification"
-				: "Unknown Error"
-		});
-	}
+//	function onRejected(oError) {
+//		MessageBox.alert(oError.message, {
+//			icon : MessageBox.Icon.ERROR,
+//			title : oError.isConcurrentModification
+//				? "Concurrent Modification"
+//				: "Unknown Error"
+//		});
+//	}
 
 	var MainController = Controller.extend("sap.ui.core.sample.odata.v4.ListBinding.Main", {
 		cancelChangeTeamBudget : function (oEvent) {
@@ -126,7 +126,7 @@ sap.ui.define([
 		},
 
 		onDeleteEmployee : function (oEvent) {
-			var oEmployeeContext = oEvent.getSource().getBindingContext();
+//			var oEmployeeContext = oEvent.getSource().getBindingContext();
 
 //			TODO the code will be needed when "remove" is implemented
 //			MessageBox.alert(oEmployeeContext.getPath(), {
@@ -146,9 +146,9 @@ sap.ui.define([
 		},
 
 		onSaveEmployee : function (oEvent) {
-			var oCreateEmployeeDialog = this.getView().byId("CreateEmployeeDialog"),
-				oEmployeeData = oCreateEmployeeDialog.getModel("new").getObject("/"),
-				that = this;
+//			var oCreateEmployeeDialog = this.getView().byId("CreateEmployeeDialog"),
+//				oEmployeeData = oCreateEmployeeDialog.getModel("new").getObject("/"),
+//				that = this;
 
 			//TODO validate oEmployeeData according to types
 			//TODO deep create incl. LOCATION etc.

@@ -365,26 +365,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates a new entity from the given data in the collection pointed to by the given path.
-	 *
-	 * @param {string} sPath
-	 *   An absolute data binding path pointing to an entity set, e.g. "/EMPLOYEES"
-	 * @param {object} oEntityData
-	 *   The new entity's properties, e.g.
-	 *   <code>{"ID" : "1", "AGE" : 52, "ENTRYDATE" : "1977-07-24", "Is_Manager" : false}</code>
-	 * @returns {Promise}
-	 *   A promise which is resolved with the server's response data in case of success, or
-	 *   rejected with an instance of <code>Error</code> in case of failure
-	 *
-	 * @private
-	 */
-	ODataModel.prototype.create = function (sPath, oEntityData) {
-		var sResourcePath = sPath.slice(1) + this._sQuery;
-
-		return this.oRequestor.request("POST", sResourcePath, undefined, null, oEntityData);
-	};
-
-	/**
 	 * Cannot create contexts at this model at will; retrieve them from a binding instead.
 	 *
 	 * @throws {Error}
@@ -546,45 +526,6 @@ sap.ui.define([
 			if (oBinding.oCache) { // relative bindings have no cache and cannot be refreshed
 				oBinding.refresh(bForceUpdate, sGroupId);
 			}
-		});
-	};
-
-	/**
-	 * Removes the entity with the given context from the service, using the currently known
-	 * entity tag ("ETag") value.
-	 *
-	 * @param {sap.ui.model.Context} oContext
-	 *   A context in the data model pointing to an entity. It MUST be related to some list
-	 *   binding's context because you can only remove data from the model which has been read
-	 *   into the model before.
-	 * @returns {Promise}
-	 *   A promise which is resolved in case of success, or rejected with an instance of
-	 *   <code>Error</code> in case of failure. The error instance is flagged with
-	 *   <code>isConcurrentModification</code> in case a concurrent modification (e.g. by another
-	 *   user) of the entity between loading and removal has been detected; this should be shown
-	 *   to the user who needs to decide whether to try removal again. If the entity does not exist,
-	 *   we assume it has already been deleted by someone else and report success.
-	 *
-	 * @private
-	 */
-	ODataModel.prototype.remove = function (oContext) {
-		var sPath = oContext.getPath(),
-			that = this;
-
-		return Promise.all([
-			oContext.requestValue("@odata.etag"),
-			this.oMetaModel.requestCanonicalUrl("", sPath, oContext)
-		]).then(function (aValues) {
-			var sEtag = aValues[0],
-				sResourcePath = aValues[1] + that._sQuery; // "canonical path" w/o service URL
-
-			return that.oRequestor.request("DELETE", sResourcePath, undefined, {"If-Match" : sEtag})
-				["catch"](function (oError) {
-					if (oError.status === 404) {
-						return; // map 404 to 200, i.e. resolve if already deleted
-					}
-					throw oError;
-				});
 		});
 	};
 
