@@ -775,13 +775,17 @@ sap.ui.require([
 		$MaxLength : 255,
 		$Type : "Edm.String",
 		__constraints : {maxLength : 255}
-	}].forEach(function (oProperty) {
-		var oConstraints = oProperty.__constraints;
+	}, {
+		$Type : "Edm.String",
+		__constraints : {isDigitSequence : true}
+	}].forEach(function (oProperty0) {
+		// Note: take care not to modify oProperty0, clone it first!
+		[false, true].forEach(function (bNullable) {
+			// Note: JSON.parse(JSON.stringify(...)) cannot clone Infinity!
+			var oProperty = jQuery.extend(true, {}, oProperty0),
+				oConstraints = oProperty.__constraints;
 
-		delete oProperty.__constraints;
-
-		// order is important because oConstraints is modified!
-		[true, false].forEach(function (bNullable) {
+			delete oProperty.__constraints;
 			if (!bNullable) {
 				oProperty.$Nullable = false;
 				oConstraints = oConstraints || {};
@@ -790,11 +794,19 @@ sap.ui.require([
 
 			QUnit.test("fetchUI5Type: " + JSON.stringify(oProperty), function (assert) {
 				var sPath = "/EMPLOYEES/0/ENTRYDATE",
+					oMetaContext = this.oMetaModel.getMetaContext(sPath),
+					oMetaModelMock = this.oSandbox.mock(this.oMetaModel),
 					oType;
 
-				this.oSandbox.mock(this.oMetaModel).expects("fetchObject")
-					.withExactArgs(undefined, this.oMetaModel.getMetaContext(sPath))
+				oMetaModelMock.expects("fetchObject")
+					.withExactArgs(undefined, oMetaContext)
 					.returns(SyncPromise.resolve(oProperty));
+				if (oProperty.$Type === "Edm.String") { // simulate annotation for strings
+					oMetaModelMock.expects("fetchObject")
+						.withExactArgs("@com.sap.vocabularies.Common.v1.IsDigitSequence",
+							oMetaContext)
+						.returns(SyncPromise.resolve(oConstraints && oConstraints.isDigitSequence));
+				}
 
 				oType = this.oMetaModel.fetchUI5Type(sPath).getResult();
 				assert.strictEqual(oType.getName(),
@@ -808,7 +820,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("fetchUI5Type: caching", function (assert) {
 		var sPath = "/EMPLOYEES/0/ENTRYDATE",
-			oProperty = {$Type : "Edm.String"},
+			oProperty = {$Type : "Edm.Boolean"},
 			oType;
 
 		this.oSandbox.mock(this.oMetaModel).expects("fetchObject")
@@ -817,7 +829,7 @@ sap.ui.require([
 
 		oType = this.oMetaModel.fetchUI5Type(sPath).getResult();
 
-		assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.String");
+		assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Boolean");
 		assert.strictEqual(oProperty["$ui5.type"], oType, "cache filled");
 		assert.strictEqual(this.oMetaModel.fetchUI5Type(sPath).getResult(), oType, "cache used");
 	});
