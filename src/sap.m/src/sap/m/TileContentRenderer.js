@@ -21,7 +21,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	TileContentRenderer.render = function(oRm, oControl) {
 
 		var sTooltip = oControl.getTooltip_AsString();
-		var sAltText = oControl.getAltText ? oControl.getAltText() : "";
 
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
@@ -32,20 +31,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		if (sTooltip.trim()) { // trim check needed since IE11 renders white spaces
 			oRm.writeAttributeEscaped("title", sTooltip);
 		}
-		oRm.writeAttribute("aria-describedby", oControl.getId() + "-info");
 		oRm.writeClasses();
 		oRm.write(">");
 		this._renderContent(oRm, oControl);
 		this._renderFooter(oRm, oControl);
 
-		oRm.write("<div");
-		oRm.writeAttribute("id", oControl.getId() + "-info");
-		oRm.addStyle("display", "none");
-		oRm.writeAttribute("aria-hidden", "true");
-		oRm.writeStyles();
-		oRm.write(">");
-		oRm.writeEscaped(sAltText);
-		oRm.write("</div>");
 		oRm.write("</div>");
 	};
 
