@@ -59,8 +59,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 					 *	<li><code>ol</code></li>
 					 *	<li><code>li</code></li>
 					 * </ul>
-					 * <code>class, style,</code> and <code>target</code> attributes are allowed.
-					 * Only safe <code>href</code> attributes can be used. See {@link jQuery.sap.validateUrl}
+					 * <p><code>class, style,</code> and <code>target</code> attributes are allowed.
+					 * If <code>target</code> is not set, links open in a new window per default.
+					 * <p>Only safe <code>href</code> attributes can be used. See {@link jQuery.sap.validateUrl}.
 					 */
 					htmlText: {type: "string", group: "Misc", defaultValue: ""},
 
@@ -86,7 +87,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		_renderingRules.ATTRIBS = {
 			'style' : 1,
 			'class' : 1,
-			'a::href' : 1
+			'a::href' : 1,
+			'a::target' : 1
 		};
 
 		// rules for the allowed tags
@@ -137,7 +139,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		function fnSanitizeAttribs (tagName, attribs) {
 
 			var sWarning;
-			var attr, value, openNewWindow;
+			var attr,
+				value,
+				addTarget = tagName === "a";
 			// add UI5 specific classes when appropriate
 			var cssClass = _renderingRules.ELEMENTS[tagName].cssClass || "";
 
@@ -157,13 +161,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				}
 
 				// sanitize hrefs
-				if (attr.toLowerCase() == "href") { // a::href
+				if (attr == "href") { // a::href
 					if (!jQuery.sap.validateUrl(value)) {
 						jQuery.sap.log.warning("FormattedText: incorrect href attribute:" + value, this);
 						attribs[i + 1] = "#";
-					} else {
-						openNewWindow = true;
+						addTarget = false;
 					}
+				}
+				if (attr == "target") { // a::target already exists
+					addTarget = false;
 				}
 
 				// add UI5 classes to the user defined
@@ -173,7 +179,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				}
 			}
 
-			if (openNewWindow) {
+			if (addTarget) {
 				attribs.push("target");
 				attribs.push("_blank");
 			}
@@ -205,6 +211,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				jQuery.sap.log.warning(sWarning, this);
 			}
 		}
+
+		// prohibit a new window from accessing window.opener.location
+		function openExternalLink (oEvent) {
+			var newWindow = window.open();
+			newWindow.opener = null;
+			newWindow.location = oEvent.currentTarget.href;
+			oEvent.preventDefault();
+		}
+
+		FormattedText.prototype.onAfterRendering = function () {
+			this.$().find('a[target="_blank"]').on("click", openExternalLink);
+		};
 
 		/**
 		 * Sets the HTML text to be displayed.

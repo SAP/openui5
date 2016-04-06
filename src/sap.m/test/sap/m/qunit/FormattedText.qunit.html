@@ -71,7 +71,10 @@
 			ok(!$a.attr("id"), "id is not rendered");
 			strictEqual($a.attr("href"), sFT, "a::href is rendered");
 			strictEqual($a.attr("style"), "color:red;", "a::style is rendered");
-			strictEqual($a.attr("target"), "_blank", "a::target attribute is always _blank");
+			strictEqual($a.attr("target"), "_top", "a::target attribute _top");
+			setText('<a href="' +  sFT + '"' + sFT + '</a>');
+			$a = oFT.$().find("a");
+			strictEqual($a.attr("target"), "_blank", "default a::target attribute is _blank");
 			setText('<span id="AAA" class="aaa" style="color:red;" href="' +  sFT + '" target="_top">"' + sFT + '</span>');
 			$a = oFT.$().find("span");
 			ok(!$a.attr("id"), "id is not rendered");
