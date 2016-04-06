@@ -583,14 +583,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * The preprocessor can be registered for several stages of view initialization, which are
 	 * dependant from the view type, e.g. "raw", "xml" or already initialized "controls". If there is a preprocessor
 	 * passed to or activated at the view instance already, that one is used. When several preprocessors are registered
-	 * for one hook, it has to be made sure, that they do not conflict when beeing processed serially.
+	 * for one hook, it has to be made sure that they do not conflict when beeing processed serially.
 	 *
 	 * It can be either a module name as string of an implementation of {@link sap.ui.core.mvc.View.Preprocessor} or a
 	 * function with a signature according to {@link sap.ui.core.mvc.View.Preprocessor.process}.
 	 *
 	 * <strong>Note</strong>: Preprocessors only work in async views and will be ignored when the view is instantiated
 	 * in sync mode by default, as this could have unexpected side effects. You may override this behaviour by setting the
-	 * bSyncSupport flag to true.
+	 * <code>bSyncSupport</code> flag to <code>true</code>.
 	 *
 	 * @protected
 	 * @static
@@ -605,9 +605,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * 		also for sync views. Please be aware that any kind of async processing (like Promises, XHR, etc) may
 	 * 		break the view initialization and lead to unexpected results.
 	 * @param {boolean} [bOnDemand]
-	 * 		ondemand preprocessor which enables developers to quickly activate the preprocessor for a view,
+	 * 		on-demand preprocessor which enables developers to quickly activate the preprocessor for a view,
 	 * 		by setting <code>preprocessors : { xml }</code>, for example. This should be false except for very special
-	 * 		cases. There can only be one on demand preprocessor per content type.
+	 * 		cases. There can only be one on-demand preprocessor per content type.
 	 * @param {object} [mSettings]
 	 * 		optional configuration for preprocessor
 	 */
@@ -668,16 +668,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * <li>The view loading mode <code>vView.async</code> must be a boolean and defines if the view source is loaded
 	 * synchronously or asynchronously. In async mode, the view is rendered empty initially, and rerenderd with the
 	 * loaded view content.</li>
-	 * <li><code>vView.preprocessors</code></li> can hold a map from source type (e.g. "xml") to an array of
+	 * <li><code>vView.preprocessors</code></li> can hold a map from the specified preprocessor type (e.g. "xml") to an array of
 	 * preprocessor configurations; each configuration consists of a <code>preprocessor</code> property (optional when
-	 * registered as onDemand-preprocessor) and may contain further preprocessor-specific settings. The preprocessor can
+	 * registered as on-demand preprocessor) and may contain further preprocessor-specific settings. The preprocessor can
 	 * be either a module name as string implementation of {@link sap.ui.core.mvc.View.Preprocessor} or a function according to
 	 * {@link sap.ui.core.mvc.View.Preprocessor.process}. Do not set properties starting with underscore like <code>_sProperty</code>
 	 * property, these are reserved for internal purposes. When several preprocessors are provided for one hook, it has to be made
-	 * sure, that they do not conflict when beeing processed serially.
+	 * sure that they do not conflict when beeing processed serially.
 	 *
 	 * <strong>Note</strong>: These preprocessors are only available to this instance. For global or
-	 * on-Demand availability use {@link sap.ui.core.mvc.XMLView.registerPreprocessor}.
+	 * on-demand availability use {@link sap.ui.core.mvc.XMLView.registerPreprocessor}.
 	 *
 	 * <strong>Note</strong>: Please note that preprocessors in general are currently only available
 	 * to XMLViews.
