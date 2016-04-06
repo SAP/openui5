@@ -7,6 +7,9 @@ sap.ui.define(['jquery.sap.global'],
 	function(jQuery) {
 	"use strict";
 
+	/*
+	 * Renders a hidden element with the given id, text and css classes.
+	 */
 	var _writeAccText = function(oRm, sParentId, sId, sText, aCSSClasses) {
 		aCSSClasses = aCSSClasses || [];
 		aCSSClasses.push("sapUiInvisibleText");
@@ -25,7 +28,7 @@ sap.ui.define(['jquery.sap.global'],
 	//********************************************************************
 
 	/**
-	 * Extension for sap.ui.zable.TableRenderer which handles ACC related things.
+	 * Extension for sap.ui.table.TableRenderer which handles ACC related things.
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -35,6 +38,10 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	var AccRenderExtension = {
 
+		/*
+		 * Renders all necessary hidden text elements of the table.
+		 * @public (Part of the API for Table control only!)
+		 */
 		writeHiddenAccTexts: function(oRm, oTable) {
 			if (!oTable._getAccExtension().getAccMode()) {
 				return;
@@ -90,12 +97,20 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.write("</div>");
 		},
 
+		/*
+		 * Renders the default aria attributes of the element with the given type and settings.
+		 * @see TableAccExtension.ELEMENTTYPES
+		 * @see TableAccExtension._getAriaAttributesFor
+		 * @public (Part of the API for Table control only!)
+		 */
 		writeAriaAttributesFor: function(oRm, oTable, sType, mParams) {
-			if (!oTable._getAccExtension().getAccMode()) {
+			var oExtension = oTable._getAccExtension();
+
+			if (!oExtension.getAccMode()) {
 				return;
 			}
 
-			var mAttributes = oTable._getAccExtension()._getAriaAttributesFor(oTable, sType, mParams);
+			var mAttributes = oExtension._getAriaAttributesFor(sType, mParams);
 
 			var oValue, sKey;
 			for (sKey in mAttributes) {
@@ -109,6 +124,11 @@ sap.ui.define(['jquery.sap.global'],
 			}
 		},
 
+		/*
+		 * Renders the default row selector content.
+		 * @see TableRenderer.writeRowSelectorContent
+		 * @public (Part of the API for Table control only!)
+		 */
 		writeAccRowSelectorText: function(oRm, oTable, oRow, iRowIndex) {
 			if (!oTable._getAccExtension().getAccMode()) {
 				return "";
