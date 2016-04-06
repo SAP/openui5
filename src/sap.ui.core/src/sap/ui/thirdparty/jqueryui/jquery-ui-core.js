@@ -134,7 +134,9 @@ function focusable( element, isTabIndexNotNaN ) {
 		if ( !element.href || !mapName || map.nodeName.toLowerCase() !== "map" ) {
 			return false;
 		}
-		img = $( "img[usemap=#" + mapName + "]" )[0];
+		// ##### BEGIN: MODIFIED BY SAP
+		img = $( "img[usemap='#" + mapName + "']" )[0];
+		// ##### END: MODIFIED BY SAP
 		return !!img && visible( img );
 	}
 	return ( /input|select|textarea|button|object/.test( nodeName ) ?
