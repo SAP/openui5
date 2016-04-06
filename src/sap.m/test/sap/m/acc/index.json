@@ -22,7 +22,7 @@
 		},
 		{
 			"control": "sap.m.BusyDialog",
-			"url": "../BusyDialog.html",
+			"url": "BusyDialog.html",
 			"appComponent": "CA-UI5-CTR-SOF-ROD"
 		},
 		{
