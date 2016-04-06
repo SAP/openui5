@@ -8,6 +8,15 @@
 	<description>Planet OpenUI5 - http://openui5.org/</description>
 
 <item>
+	<title>Demos</title>
+	<guid>http://openui5picks.tumblr.com/post/142348967605</guid>
+	<link>http://openui5picks.tumblr.com/post/142348967605</link>
+	<description>&lt;img src=&quot;http://40.media.tumblr.com/ffb0308bd5d8e342a6c248fb154e0b44/tumblr_inline_o57skyTa2w1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;
+
+A while back, I sent this twitter message into the Twitter-verse, with the intention to blog shortly after that on how I got UI5 running on an ESP8266. I’m afraid this blog was conceived a bit...</description>
+	<pubDate>Fri, 01 Apr 2016 16:56:26 +0000</pubDate>
+</item>
+<item>
 	<title>Demos: OpenUI5 Custom Controls for charting</title>
 	<guid>http://openui5picks.tumblr.com/post/141605949215</guid>
 	<link>http://openui5picks.tumblr.com/post/141605949215</link>
@@ -64,13 +73,6 @@ As the UI5 community is growing every day I have experienced that people new to 
 	<link>http://openui5picks.tumblr.com/post/112684181095</link>
 	<description>In this tutorial you will learn how to create modularized SAPUI5 applications using XML Views and Routing. We will create a simple Shell application that loads its content from XML Views, uses Routing...</description>
 	<pubDate>Sun, 01 Mar 2015 12:36:00 +0000</pubDate>
-</item>
-<item>
-	<title>Demos: OpenUI5  &amp; JSBin play well together .. but, is there even more?</title>
-	<guid>http://openui5picks.tumblr.com/post/105856062395</guid>
-	<link>http://openui5picks.tumblr.com/post/105856062395</link>
-	<description>&lt;img src=&quot;http://38.media.tumblr.com/66d6fea024405d6647f8a70734e710c4/tumblr_inline_ngz7emwlky1sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;After posting my blog about how easy it is to get started with web development using OpenUI5  JSBin, I thought Id check out existing alternatives! My result: There are quite a few really good ones....</description>
-	<pubDate>Sat, 20 Dec 2014 12:36:00 +0000</pubDate>
 </item>
 <item>
 	<title>Demos: How OpenUI5 &amp; JSBIN enables students to learn and experience web development</title>
