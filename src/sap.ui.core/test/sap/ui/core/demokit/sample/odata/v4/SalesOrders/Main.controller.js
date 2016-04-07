@@ -13,12 +13,12 @@ sap.ui.define([
 
 	var oDateFormat = DateFormat.getTimeInstance({pattern : "HH:mm"});
 
-	function onRejected(oError) {
-		jQuery.sap.log.error(oError.message, oError.stack);
-		MessageBox.alert(oError.message, {
-			icon : MessageBox.Icon.ERROR,
-			title : "Error"});
-	}
+//	function onRejected(oError) {
+//		jQuery.sap.log.error(oError.message, oError.stack);
+//		MessageBox.alert(oError.message, {
+//			icon : MessageBox.Icon.ERROR,
+//			title : "Error"});
+//	}
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.SalesOrders.Main", {
 		onCancelSalesOrder : function (oEvent) {
@@ -44,9 +44,9 @@ sap.ui.define([
 		},
 
 		onCreateSalesOrder : function (oEvent) {
-			var oCreateSalesOrderDialog = this.getView().byId("createSalesOrderDialog"),
-				oSalesOrderData = oCreateSalesOrderDialog.getModel("new").getObject("/"),
-				that = this;
+//			var oCreateSalesOrderDialog = this.getView().byId("createSalesOrderDialog"),
+//				oSalesOrderData = oCreateSalesOrderDialog.getModel("new").getObject("/"),
+//				that = this;
 
 			//TODO validate oSalesOrderData according to types
 			//TODO deep create incl. LOCATION etc.
@@ -64,10 +64,10 @@ sap.ui.define([
 		},
 
 		onDeleteSalesOrder : function (oEvent) {
-			var oSalesOrderContext = oEvent.getSource().getBindingContext(),
-				oModel = oSalesOrderContext.getModel(),
-				sOrderID,
-				oView = this.getView();
+			var // oSalesOrderContext = oEvent.getSource().getBindingContext(),
+				// oModel = oSalesOrderContext.getModel(),
+				sOrderID;
+				// oView = this.getView();
 
 			function onConfirm(sCode) {
 				if (sCode !== 'OK') {

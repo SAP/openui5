@@ -262,7 +262,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[undefined, "?foo=bar"].forEach(function (sQuery) {
-		QUnit.test("create", function (assert) {
+		QUnit.skip("create", function (assert) {
 			var oEmployeeData = {},
 				oModel = createModel(sQuery),
 				oPromise = {};
@@ -278,7 +278,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[undefined, "?foo=bar"].forEach(function (sQuery) {
-		QUnit.test("remove", function (assert) {
+		QUnit.skip("remove", function (assert) {
 			var sEtag = 'W/"19770724000000.0000000"',
 				oModel = createModel(sQuery),
 				sPath = "/EMPLOYEES/0",
@@ -311,7 +311,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[404, 500].forEach(function (iStatus) {
-		QUnit.test("remove: map 404 to 200, status: " + iStatus, function (assert) {
+		QUnit.skip("remove: map 404 to 200, status: " + iStatus, function (assert) {
 			var oError = new Error(""),
 				oModel = createModel(),
 				oContext = _Context.create(oModel, null, "/EMPLOYEES/0");
