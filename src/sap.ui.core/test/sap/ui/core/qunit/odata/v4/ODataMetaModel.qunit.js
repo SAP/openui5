@@ -111,14 +111,84 @@ sap.ui.require([
 			"empty.Container" : {
 				"$kind" : "EntityContainer"
 			},
+			"name.space.BadContainer" : {
+				"$kind" : "EntityContainer",
+				"DanglingActionImport" : {
+					"$kind" : "ActionImport",
+					"$Action" : "not.Found"
+				},
+				"DanglingFunctionImport" : {
+					"$kind" : "FunctionImport",
+					"$Function" : "not.Found"
+				}
+			},
+			"name.space.Broken" : {
+				"$kind" : "Term",
+				"$Type" : "not.Found"
+			},
+			"name.space.BrokenFunction" : [{
+				"$kind" : "Function",
+				"$ReturnType" : {
+					"$Type" : "not.Found"
+				}
+			}],
+			"name.space.DerivedPrimitiveFunction" : [{
+				"$kind" : "Function",
+				"$ReturnType" : {
+					"$Type" : "name.space.Id"
+				}
+			}],
+			"name.space.EmptyOverloads" : [],
+			"name.space.Id" : {
+				"$kind" : "TypeDefinition",
+				"$UnderlyingType" : "Edm.String",
+				"$MaxLength" : 10
+			},
+			"name.space.Term" : { // only case with a qualified name and a $Type
+				"$kind" : "Term",
+				"$Type" : "tea_busi.Worker"
+			},
+			"name.space.OverloadedAction" : [{
+				"$kind" : "Action"
+			}, {
+				"$kind" : "Action"
+			}],
+			"name.space.OverloadedFunction" : [{
+				"$kind" : "Function",
+				"$ReturnType" : {
+					"$Type" : "Edm.String"
+				}
+			}, {
+				"$kind" : "Function",
+				"$ReturnType" : {
+					"$Type" : "Edm.String"
+				}
+			}],
+			"name.space.VoidAction" : [{
+				"$kind" : "Action"
+			}],
+			"tea_busi.AcChangeManagerOfTeam" : [{
+				"$kind" : "Action",
+				"$ReturnType" : {
+					"$Type" : "tea_busi.TEAM"
+				}
+			}],
 			"tea_busi.DefaultContainer" : {
 				"$kind" : "EntityContainer",
+				"ChangeManagerOfTeam" : {
+					"$kind" : "ActionImport",
+					"$Action" : "tea_busi.AcChangeManagerOfTeam"
+				},
 				"EMPLOYEES" : {
 					"$kind" : "EntitySet",
 					"$NavigationPropertyBinding" : {
 						"EMPLOYEE_2_TEAM" : "T€AMS"
 					},
 					"$Type" : "tea_busi.Worker"
+				},
+				"GetEmployeeMaxAge" : {
+					"$kind" : "FunctionImport",
+					"$Function" : "tea_busi.FuGetEmployeeMaxAge"
 				},
 				"T€AMS" : {
 					"$kind" : "EntitySet",
@@ -128,6 +198,12 @@ sap.ui.require([
 					"$Type" : "tea_busi.TEAM"
 				}
 			},
+			"tea_busi.FuGetEmployeeMaxAge" : [{
+				"$kind" : "Function",
+				"$ReturnType" : {
+					"$Type" : "Edm.Int16"
+				}
+			}],
 			"tea_busi.TEAM" : {
 				"$kind" : "EntityType",
 				"$Key" : ["Team_Id"],
@@ -147,6 +223,10 @@ sap.ui.require([
 					"$kind" : "NavigationProperty",
 					"$isCollection" : true,
 					"$Type" : "tea_busi.Worker"
+				},
+				"value" : {
+					"$kind" : "Property",
+					"$Type" : "Edm.String"
 				}
 			},
 			"tea_busi.Worker" : {
@@ -168,17 +248,6 @@ sap.ui.require([
 					"$Type" : "tea_busi.TEAM",
 					"$Nullable" : false
 				}
-			},
-			"name.space.Broken" : {
-				"$kind" : "Term",
-				"$Type" : "not.Found"
-			},
-			"name.space.Id" : {
-				"$kind" : "Type"
-			},
-			"name.space.Term" : { // only case with a qualified name and a $Type
-				"$kind" : "Term",
-				"$Type" : "tea_busi.Worker"
 			},
 			"$$Loop" : "$$Loop/", // some endless loop
 			"$$Term" : "name.space.Term" // replacement for any reference to the term
@@ -499,6 +568,21 @@ sap.ui.require([
 		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/" : oWorkerData,
 		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/$Type" : "tea_busi.Worker",
 		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/AGE" : oWorkerData.AGE,
+		// operations -----------------------------------------------------------------------------
+		"/ChangeManagerOfTeam/" : oTeamData,
+		//TODO mScope[mScope["..."][0].$ReturnType.$Type] is where the next OData simple identifier
+		//     would live in case of entity/complex type, but we would like to avoid warnings for
+		//     primitive types - how to tell the difference?
+//		"/GetEmployeeMaxAge/" : "Edm.Int16",
+		// Note: "value" is a symbolic name for the whole return type iff. it is primitive
+		"/GetEmployeeMaxAge/value" : mScope["tea_busi.FuGetEmployeeMaxAge"][0].$ReturnType,
+		"/GetEmployeeMaxAge/value/$Type" : "Edm.Int16", // path may continue!
+		"/tea_busi.FuGetEmployeeMaxAge/value"
+			: mScope["tea_busi.FuGetEmployeeMaxAge"][0].$ReturnType,
+		"/name.space.DerivedPrimitiveFunction/value"
+			: mScope["name.space.DerivedPrimitiveFunction"][0].$ReturnType, //TODO merge facets of return type and type definition?!
+		"/ChangeManagerOfTeam/value" : oTeamData.value,
+		"/tea_busi.AcChangeManagerOfTeam/value" : oTeamData.value,
 		// annotations ----------------------------------------------------------------------------
 		"/@DefaultContainer"
 			: mScope["tea_busi."].$Annotations["tea_busi.DefaultContainer"]["@DefaultContainer"],
@@ -590,9 +674,13 @@ sap.ui.require([
 		// "JSON" drill-down ----------------------------------------------------------------------
 		"/$missing",
 		"/tea_busi.DefaultContainer/$missing",
+		"/tea_busi.DefaultContainer/missing", // "17.2 SimpleIdentifier" treated like any property
+		"/tea_busi.FuGetEmployeeMaxAge/0/tea_busi.FuGetEmployeeMaxAge", // "0" switches to JSON
 		"/tea_busi.TEAM/$Key/this.is.missing",
+		"/tea_busi.Worker/missing", // entity container (see above) treated like any schema child
 		// scope lookup ("17.3 QualifiedName") ----------------------------------------------------
 		"/$EntityContainer/$missing",
+		"/$EntityContainer/missing",
 		// implicit $Type insertion ---------------------------------------------------------------
 		"/T€AMS/$Key", // avoid $Type insertion for following $ segments
 		"/T€AMS/missing",
@@ -601,7 +689,9 @@ sap.ui.require([
 		"/tea_busi.Worker@missing",
 		"/tea_busi.Worker/@missing",
 		// "@" to access to all annotations, e.g. for iteration
-		"/tea_busi.Worker/@/@missing"
+		"/tea_busi.Worker/@/@missing",
+		// operations -----------------------------------------------------------------------------
+		"/name.space.VoidAction/"
 	].forEach(function (sPath) {
 		QUnit.test("fetchObject: " + sPath + " --> undefined", function (assert) {
 			var oSyncPromise;
@@ -654,30 +744,44 @@ sap.ui.require([
 			"//$Foo" : "Invalid empty segment",
 			"/tea_busi./$Annotations" : "Invalid segment: $Annotations", // entrance forbidden!
 			// Unknown ... ------------------------------------------------------------------------
-			"/name.space.not.Found" :
-				"Unknown qualified name 'name.space.not.Found'",
-			"/name.space.not.Found@missing" :
-				"Unknown qualified name 'name.space.not.Found'",
+			"/not.Found" : "Unknown qualified name 'not.Found'",
+			"/not.Found@missing" : "Unknown qualified name 'not.Found'",
 			"/." : "Unknown child '.' of 'tea_busi.DefaultContainer'",
 			"/Foo" : "Unknown child 'Foo' of 'tea_busi.DefaultContainer'",
-			"/$EntityContainer/Foo" : "Unknown child 'Foo' of 'tea_busi.DefaultContainer'",
-			"/tea_busi.DefaultContainer/Foo" : "Unknown child 'Foo' of 'tea_busi.DefaultContainer'",
-			"/$EntityContainer/$kind/Foo" : "Unknown child 'EntityContainer'"
+			"/$EntityContainer/$kind/" : "Unknown child 'EntityContainer'"
 				+ " of 'tea_busi.DefaultContainer' at /$EntityContainer/$kind",
-			// implicit $Type insertion
-			"/name.space.Broken/Foo" :
+			// implicit $Action, $Function, $Type insertion
+			"/name.space.BadContainer/DanglingActionImport/" : "Unknown qualified name 'not.Found'"
+				+ " at /name.space.BadContainer/DanglingActionImport/$Action",
+			"/name.space.BadContainer/DanglingFunctionImport/" :
+				"Unknown qualified name 'not.Found'"
+				+ " at /name.space.BadContainer/DanglingFunctionImport/$Function",
+			"/name.space.Broken/" :
 				"Unknown qualified name 'not.Found' at /name.space.Broken/$Type",
+			"/name.space.BrokenFunction/" : "Unknown qualified name 'not.Found'"
+				+ " at /name.space.BrokenFunction/0/$ReturnType/$Type",
+			//TODO align with "/GetEmployeeMaxAge/" : "Edm.Int16"
+			"/GetEmployeeMaxAge/@sapui.name" : "Unknown qualified name 'Edm.Int16'"
+				+ " at /tea_busi.FuGetEmployeeMaxAge/0/$ReturnType/$Type",
+			"/GetEmployeeMaxAge/value/@sapui.name" : "Unknown qualified name 'Edm.Int16'"
+				+ " at /tea_busi.FuGetEmployeeMaxAge/0/$ReturnType/$Type",
 			// implicit scope lookup
-			"/name.space.Broken/$Type/Foo" :
+			"/name.space.Broken/$Type/" :
 				"Unknown qualified name 'not.Found' at /name.space.Broken/$Type",
 			"/tea_busi.DefaultContainer/$kind/@sapui.name" : "Unknown child 'EntityContainer'"
 				+ " of 'tea_busi.DefaultContainer' at /tea_busi.DefaultContainer/$kind",
-			// Unsupported path before @sapui.name -------------------------------------------------
-			"/$Foo/@sapui.name" : "Unsupported path before @sapui.name",
+			// Unsupported path before @sapui.name ------------------------------------------------
+			"/$EntityContainer@sapui.name" : "Unsupported path before @sapui.name",
+			"/tea_busi.FuGetEmployeeMaxAge/0@sapui.name" : "Unsupported path before @sapui.name",
 			"/tea_busi.TEAM/$Key/not.Found/@sapui.name" : "Unsupported path before @sapui.name",
+			"/GetEmployeeMaxAge/value@sapui.name" : "Unsupported path before @sapui.name",
 			// Unsupported path after @sapui.name -------------------------------------------------
 			"/@sapui.name/foo" : "Unsupported path after @sapui.name",
-			"/$EntityContainer/T€AMS/@sapui.name/foo" : "Unsupported path after @sapui.name"
+			"/$EntityContainer/T€AMS/@sapui.name/foo" : "Unsupported path after @sapui.name",
+			// Unsupported overloads --------------------------------------------------------------
+			"/name.space.EmptyOverloads/" : "Unsupported overloads",
+			"/name.space.OverloadedAction/" : "Unsupported overloads",
+			"/name.space.OverloadedFunction/" : "Unsupported overloads"
 		}, function (sPath, sWarning) {
 			QUnit.test("fetchObject fails: " + sPath + ", warn = " + bWarn, function (assert) {
 				var oSyncPromise;
@@ -705,7 +809,8 @@ sap.ui.require([
 			"/$Foo/$Bar" : "Invalid segment: $Bar",
 			"/$Foo/$Bar/$Baz" : "Invalid segment: $Bar",
 			"/$EntityContainer/T€AMS/Team_Id/$MaxLength/." : "Invalid segment: .",
-			"/$EntityContainer/T€AMS/Team_Id/$Nullable/." : "Invalid segment: ."
+			"/$EntityContainer/T€AMS/Team_Id/$Nullable/." : "Invalid segment: .",
+			"/$EntityContainer/T€AMS/Team_Id/NotFound/Invalid" : "Invalid segment: Invalid"
 		}, function (sPath, sMessage) {
 			QUnit.test("fetchObject fails: " + sPath + ", debug = " + bDebug, function (assert) {
 				var oSyncPromise;
@@ -869,10 +974,6 @@ sap.ui.require([
 				"Unsupported EDM type '" + sQualifiedName + "' at " + sPath);
 		});
 	});
-
-	// TODO ActionImport
-	// TODO bound Function/Action
-	// TODO StructuredType: "/FunctionImport()/Property" -> ODataMetaModel#fetchObject
 
 	//*********************************************************************************************
 	QUnit.test("getUI5Type, requestUI5Type", function (assert) {
@@ -1154,11 +1255,13 @@ sap.ui.require([
 		}
 	}, {
 		// <template:repeat list="{meta>/}" ...>
-		// Iterate all OData path segments, i.e. entity sets.
+		// Iterate all OData path segments, i.e. entity sets and imports.
 		// Implicit scope lookup happens here!
 		metaPath : "/",
 		result : {
+			"ChangeManagerOfTeam" : oContainerData.ChangeManagerOfTeam,
 			"EMPLOYEES" : oContainerData.EMPLOYEES,
+			"GetEmployeeMaxAge" : oContainerData.GetEmployeeMaxAge,
 			"T€AMS" : oContainerData["T€AMS"]
 		}
 	}, {
