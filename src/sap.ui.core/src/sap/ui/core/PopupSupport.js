@@ -49,7 +49,7 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/Device', './Element', './Control'],
 
 			// if oThis is an element use its DOM-ref to look for a Popup. Else
 			// 'oThis' is an DOM-ref therefore simply use it
-			var $This = jQuery(oThis instanceof sap.ui.core.Element ? oThis.getDomRef() : oThis);
+			var $This = jQuery(oThis instanceof Element ? oThis.getDomRef() : oThis);
 
 			// look up if there is a Popup above used DOM-ref
 			return $This.closest("[data-sap-ui-popup]");

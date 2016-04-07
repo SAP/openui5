@@ -3,10 +3,12 @@
  */
 
 // Provides control sap.ui.core.mvc.HTMLView.
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/DeclarativeSupport', 'sap/ui/core/library', './View'],
-	function(jQuery, ManagedObject, DeclarativeSupport, library, View) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/DeclarativeSupport', 'sap/ui/core/library', 'sap/ui/model/resource/ResourceModel', './View'],
+	function(jQuery, ManagedObject, DeclarativeSupport, library, ResourceModel, View) {
 	"use strict";
 
+	// shortcut for enum(s)
+	var ViewType = library.mvc.ViewType;
 
 
 	/**
@@ -58,7 +60,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/De
 		 * @return {sap.ui.core.mvc.HTMLView | undefined} the created HTMLView instance in the creation case, otherwise undefined
 		 */
 		sap.ui.htmlview = function(sId, vView) {
-			return sap.ui.view(sId, vView, sap.ui.core.mvc.ViewType.HTML);
+			return sap.ui.view(sId, vView, ViewType.HTML);
 		};
 
 		/**
@@ -67,7 +69,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/De
 		 * view type.
 		 * @private
 		 */
-		HTMLView._sType = sap.ui.core.mvc.ViewType.HTML;
+		HTMLView._sType = ViewType.HTML;
 
 		/**
 		 * Flag for feature detection of asynchronous loading/rendering
@@ -239,7 +241,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/De
 				  that._controllerName = mSettings.controllerName;
 				}
 				if ((mSettings.resourceBundleName || mSettings.resourceBundleUrl) && (!mSettings.models || !mSettings.models[mSettings.resourceBundleAlias])) {
-					var model = new sap.ui.model.resource.ResourceModel({bundleName:mSettings.resourceBundleName, bundleUrl:mSettings.resourceBundleUrl, bundleLocale:mSettings.resourceBundleLocale});
+					var model = new ResourceModel({bundleName:mSettings.resourceBundleName, bundleUrl:mSettings.resourceBundleUrl, bundleLocale:mSettings.resourceBundleLocale});
 					that.setModel(model, mSettings.resourceBundleAlias);
 				}
 			}

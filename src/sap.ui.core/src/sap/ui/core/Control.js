@@ -3,8 +3,8 @@
  */
 
 // Provides base class sap.ui.core.Control for all controls
-sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', './UIArea', /* cyclic: './RenderManager', */ './ResizeHandler', './BusyIndicatorUtils'],
-	function(jQuery, CustomStyleClassSupport, Element, UIArea, ResizeHandler, BusyIndicatorUtils) {
+sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', './UIArea', './RenderManager', './ResizeHandler', './BusyIndicatorUtils'],
+	function(jQuery, CustomStyleClassSupport, Element, UIArea, RenderManager, ResizeHandler, BusyIndicatorUtils) {
 	"use strict";
 
 	/**
@@ -424,8 +424,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 * @protected
 	 */
 	Control.prototype.getRenderer = function () {
-		//TODO introduce caching?
-		return sap.ui.core.RenderManager.getRenderer(this);
+		return RenderManager.getRenderer(this);
 	};
 
 	/**
@@ -593,7 +592,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 		// Controls can have their visible-property set to "false" in which case the Element's destroy method will#
 		// fail to remove the placeholder content from the DOM. We have to remove it here in that case
 		if (!this.getVisible()) {
-			var oPlaceholder = document.getElementById(sap.ui.core.RenderManager.createInvisiblePlaceholderId(this));
+			var oPlaceholder = document.getElementById(RenderManager.createInvisiblePlaceholderId(this));
 			if (oPlaceholder && oPlaceholder.parentNode) {
 				oPlaceholder.parentNode.removeChild(oPlaceholder);
 			}
@@ -642,7 +641,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 
 				//Check if DOM Element where the busy indicator is supposed to be placed can handle content
 				var sTag = $this.get(0) && $this.get(0).tagName;
-				if (sTag && jQuery.inArray(sTag.toLowerCase(), aForbiddenTags) >= 0) {
+				if (sTag && aForbiddenTags.indexOf(sTag.toLowerCase()) >= 0) {
 					jQuery.sap.log.warning("BusyIndicator cannot be placed in elements with tag '" + sTag + "'.");
 					return;
 				}

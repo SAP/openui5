@@ -3,9 +3,12 @@
  */
 
 // Provides base class sap.ui.core.Component for all components
-sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './UIComponentMetadata', './mvc/View'],
-	function(jQuery, ManagedObject, Component, UIComponentMetadata, View) {
+sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './library', './UIComponentMetadata', './mvc/Controller', './mvc/View'],
+	function(jQuery, ManagedObject, Component, library, UIComponentMetadata, Controller, View) {
 	"use strict";
+
+	// shortcut for enum(s)
+	var ViewType = library.mvc.ViewType;
 
 
 	/**
@@ -212,18 +215,18 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './U
 
 		// create the router for the component instance
 		if (vRoutes) {
-			jQuery.sap.require("sap.ui.core.routing.Router");
-			var fnRouterConstructor = getConstructorFunctionFor(oRoutingConfig.routerClass || sap.ui.core.routing.Router);
+			var Router = sap.ui.requireSync("sap/ui/core/routing/Router");
+			var fnRouterConstructor = getConstructorFunctionFor(oRoutingConfig.routerClass || Router);
 			this._oRouter = new fnRouterConstructor(vRoutes, oRoutingConfig, this, oRoutingManifestEntry.targets);
 			this._oTargets = this._oRouter.getTargets();
 			this._oViews = this._oRouter.getViews();
 		} else if (oRoutingManifestEntry.targets) {
-			jQuery.sap.require("sap.ui.core.routing.Targets");
-			jQuery.sap.require("sap.ui.core.routing.Views");
-			this._oViews = new sap.ui.core.routing.Views({
+			var Targets = sap.ui.requireSync("sap/ui/core/routing/Targets");
+			var Views = sap.ui.requireSync("sap/ui/core/routing/Views");
+			this._oViews = new Views({
 				component: this
 			});
-			var fnTargetsConstructor = getConstructorFunctionFor(oRoutingConfig.targetsClass || sap.ui.core.routing.Targets);
+			var fnTargetsConstructor = getConstructorFunctionFor(oRoutingConfig.targetsClass || Targets);
 			this._oTargets = new fnTargetsConstructor({
 				targets: oRoutingManifestEntry.targets,
 				config: oRoutingConfig,
@@ -311,11 +314,11 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './U
 	 */
 	UIComponent.getRouterFor = function(oControllerOrView) {
 		var oView = oControllerOrView;
-		if (oView instanceof sap.ui.core.mvc.Controller) {
+		if (oView instanceof Controller) {
 			oView = oView.getView();
 		}
 		if (oView instanceof View) {
-			var oComponent = sap.ui.core.Component.getOwnerComponentFor(oView);
+			var oComponent = Component.getOwnerComponentFor(oView);
 
 			if (oComponent) {
 				return oComponent.getRouter();
@@ -419,7 +422,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './U
 			// !This should be kept in sync with the UIComponentMetadata functionality!
 			return sap.ui.view({
 				viewName: oRootView,
-				type: sap.ui.core.mvc.ViewType.XML
+				type: ViewType.XML
 			});
 		} else if (oRootView && typeof oRootView === "object") {
 			// make sure to prefix the ID of the rootView

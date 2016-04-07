@@ -109,8 +109,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 				oBaseRenderer = oParent.getRenderer();
 			}
 			if ( !oBaseRenderer ) {
-				jQuery.sap.require("sap.ui.core.Renderer");
-				oBaseRenderer = sap.ui.require('sap/ui/core/Renderer');
+				oBaseRenderer = sap.ui.requireSync('sap/ui/core/Renderer');
 			}
 			var oRenderer = jQuery.sap.newObject(oBaseRenderer);
 			jQuery.extend(oRenderer, vRenderer);

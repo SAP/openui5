@@ -3,8 +3,8 @@
  */
 
 // Provides a popup with technical informations about the running SAPUI5 core
-sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Popup', 'jquery.sap.strings'],
-	function(jQuery, Device, Popup/* , jQuerySap */) {
+sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/core/Popup', 'jquery.sap.strings'],
+	function(jQuery, Device, Global, Popup/* , jQuerySap */) {
 	"use strict";
 
 	/*global alert */
@@ -48,10 +48,11 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/Device
 			var ojQSData = this._ojQSData = callback() || {};
 
 			var bCT = false,bLV = false,bEmbedded = true;
-			if ( jQuery.sap.getObject("sap.ui.debug.DebugEnv") ) {
-				bCT = sap.ui.debug.DebugEnv.getInstance().isControlTreeShown();
-				bLV = sap.ui.debug.DebugEnv.getInstance().isTraceWindowShown();
-				bEmbedded = sap.ui.debug.DebugEnv.getInstance().isRunningEmbedded();
+			var DebugEnv = sap.ui.require("sap/ui/debug/DebugEnv");
+			if ( DebugEnv ) {
+				bCT = DebugEnv.getInstance().isControlTreeShown();
+				bLV = DebugEnv.getInstance().isTraceWindowShown();
+				bEmbedded = DebugEnv.getInstance().isRunningEmbedded();
 			}
 			var sDCUrl = "/sapui5-internal/download/index.jsp";
 			var bDC = jQuery.sap.syncHead(sDCUrl);
@@ -69,13 +70,13 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/Device
 			html.push("<div id='sap-ui-techinfo' class='sapUiTInf sapUiDlg' style='width:800px; position: relative;'>");
 			html.push("<table border='0' cellpadding='3'>");
 			try {
-				var oVersionInfo = sap.ui.getVersionInfo();
+				var oVersionInfo = Global.getVersionInfo();
 				var sVersion = "<a href='" + sap.ui.resource("", "sap-ui-version.json") + "' target='_blank' title='Open Version Info'>" + oVersionInfo.version + "</a>";
 				html.push("<tr><td align='right' valign='top'><b>SAPUI5 Version</b></td><td>", sVersion, " (built at ", oVersionInfo.buildTimestamp, ", last change ", oVersionInfo.scmRevision, ")</td></tr>");
 			} catch (ex) {
 				html.push("<tr><td align='right' valign='top'><b>SAPUI5 Version</b></td><td>not available</td></tr>");
 			}
-			html.push("<tr><td align='right' valign='top'><b>Core Version</b></td><td>", sap.ui.version, " (built at ", sap.ui.buildinfo.buildtime, ", last change ", sap.ui.buildinfo.lastchange, ")</td></tr>");
+			html.push("<tr><td align='right' valign='top'><b>Core Version</b></td><td>", Global.version, " (built at ", Global.buildinfo.buildtime, ", last change ", Global.buildinfo.lastchange, ")</td></tr>");
 			html.push("<tr><td align='right' valign='top'><b>User Agent</b></td><td>", jQuery.sap.encodeHTML(navigator.userAgent), (document.documentMode ? ", Document Mode '" + document.documentMode + "'" : ""), "</td></tr>");
 			html.push("<tr><td align='right' valign='top'><b>Configuration</b></td><td><div class='sapUiTInfCfg'>");
 			list(ojQSData.config);
@@ -160,11 +161,11 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/Device
 					// be able to click on the technical info.
 					this._$().css("z-index", "1000000");
 					// add the QR code when the control is available
-					jQuery.sap.require("sap.ui.dev.qrcode.QRCode");
-					if (sap.ui.dev.qrcode.QRCode._renderQRCode) {
+					var QRCode = sap.ui.requireSync("sap/ui/dev/qrcode/QRCode");
+					if (QRCode._renderQRCode) {
 						var sAbsUrl = window.location.href,
 							sWeinreTargetUrl = sAbsUrl + (sAbsUrl.indexOf("?") > 0 ? "&" : "?") + "sap-ui-weinreId=" + sWeinreId;
-						sap.ui.dev.qrcode.QRCode._renderQRCode(jQuery.sap.domById("sap-ui-techinfo-qrcode"), sWeinreTargetUrl);
+						QRCode._renderQRCode(jQuery.sap.domById("sap-ui-techinfo-qrcode"), sWeinreTargetUrl);
 					}
 				});
 			}
@@ -258,14 +259,15 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/Device
 		},
 
 		ensureDebugEnv : function(bShowControls) {
-			if ( !jQuery.sap.getObject("sap.ui.debug.DebugEnv") ) {
+
+			if ( !this._DebugEnv ) {
 				try {
-					jQuery.sap.require("sap-ui-debug");
+					this._DebugEnv = sap.ui.requireSync("sap/ui/debug/DebugEnv");
 					// when sap-ui-debug is loaded, control tree and property list are shown by defualt
 					// so disable them again if they are not desired
 					if ( !bShowControls ) {
-						sap.ui.debug.DebugEnv.getInstance().hideControlTree();
-						sap.ui.debug.DebugEnv.getInstance().hidePropertyList();
+						this._DebugEnv.getInstance().hideControlTree();
+						this._DebugEnv.getInstance().hidePropertyList();
 					}
 				} catch (e) {
 					// failed to load debug env (not installed?)
@@ -283,11 +285,11 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/Device
 			}
 			if ( this.ensureDebugEnv(true) ) {
 				if ( e.target.checked ) {
-					sap.ui.debug.DebugEnv.getInstance().showControlTree();
-					sap.ui.debug.DebugEnv.getInstance().showPropertyList();
+					this._DebugEnv.getInstance().showControlTree();
+					this._DebugEnv.getInstance().showPropertyList();
 				} else {
-					sap.ui.debug.DebugEnv.getInstance().hideControlTree();
-					sap.ui.debug.DebugEnv.getInstance().hidePropertyList();
+					this._DebugEnv.getInstance().hideControlTree();
+					this._DebugEnv.getInstance().hidePropertyList();
 				}
 			}
 		},
@@ -300,9 +302,9 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/Device
 			}
 			if ( this.ensureDebugEnv(false) ) {
 				if ( e.target.checked ) {
-					sap.ui.debug.DebugEnv.getInstance().showTraceWindow();
+					this._DebugEnv.getInstance().showTraceWindow();
 				} else {
-					sap.ui.debug.DebugEnv.getInstance().hideTraceWindow();
+					this._DebugEnv.getInstance().hideTraceWindow();
 				}
 			}
 		},

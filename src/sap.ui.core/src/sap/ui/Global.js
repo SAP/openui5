@@ -247,7 +247,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 			oPackage = jQuery.sap.getObject(sPackage, 0),
 			oClass = oPackage[sClass],
 			aMethods = (sMethods || "new").split(" "),
-			iConstructor = jQuery.inArray("new", aMethods);
+			iConstructor = aMethods.indexOf("new");
 
 		sModuleName = sModuleName || sFullClass;
 
@@ -404,4 +404,4 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 
 	return sap.ui;
 
-}, /* bExport= */ true);
+});
