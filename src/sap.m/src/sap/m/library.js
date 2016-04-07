@@ -59,7 +59,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.ListMode",
 			"sap.m.ListSeparators",
 			"sap.m.ListType",
-			"sap.m.ListKeyboardNavigationMode",
 			"sap.m.LoadState",
 			"sap.m.MenuButtonMode",
 			"sap.m.OverflowToolbarPriority",
@@ -70,6 +69,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.QuickViewGroupElementType",
 			"sap.m.RatingIndicatorVisualMode",
 			"sap.m.ScreenSize",
+			"sap.m.SelectListKeyboardNavigationMode",
 			"sap.m.SelectType",
 			"sap.m.SplitAppMode",
 			"sap.m.StandardTileType",
@@ -1544,7 +1544,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 * @since 1.38
 	 * @ui5-metamodel This enumeration will also be described in the UI5 (legacy) design time meta model.
 	 */
-	sap.m.ListKeyboardNavigationMode = {
+	sap.m.SelectListKeyboardNavigationMode = {
 
 		/**
 		 * Keyboard navigation is disabled.
