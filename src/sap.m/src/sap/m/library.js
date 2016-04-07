@@ -123,6 +123,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.FeedListItem",
 			"sap.m.FlexBox",
 			"sap.m.FormattedText",
+			"sap.m.FlexibleColumnLayout",
 			"sap.m.GenericTile",
 			"sap.m.GroupHeaderListItem",
 			"sap.m.GrowingList",
@@ -2314,6 +2315,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 	};
 
+	/**
+	 * Types of three-column layout for the sap.m.FlexibleColumnLayout control
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.38
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.ThreeColumnLayoutType = {
+
+		/**
+		 * Emphasized last column (endColumn) - column layout 25/25/50
+		 * @public
+		 */
+		EndColumnEmphasized : "EndColumnEmphasized",
+
+		/**
+		 * Emphasized middle column (midColumn) - column layout 25/50/25
+		 * @public
+		 */
+		MidColumnEmphasized : "MidColumnEmphasized"
+	};
 
 	/**
 	 * Types of the Toolbar Design.
