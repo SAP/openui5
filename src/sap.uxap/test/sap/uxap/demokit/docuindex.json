@@ -44,6 +44,7 @@
 		  "sap.uxap.sample.ObjectPageTabNavigationMode",
 		  "sap.uxap.sample.ObjectPageTitleOnLeft",
 		  "sap.uxap.sample.ObjectPageOnJSONWithLazyLoading",
+		  "sap.uxap.sample.ObjectPageLazyLoadingWithoutBlocks",
 		  "sap.uxap.sample.ObjectPageState",
 		  "sap.uxap.sample.AnchorBar",
 		  "sap.uxap.sample.AnchorBarWithNumbers",
@@ -149,6 +150,11 @@
 		"name": "Object Page with LazyLoading",
 		"description": "Object Page with LazyLoading"
 	  },
+      {
+        "id": "sap.uxap.sample.ObjectPageLazyLoadingWithoutBlocks",
+        "name": "Object Page with LazyLoading without blocks",
+        "description": "This sample showcases the lazy loading using the stashed property of the ObjectPageLazyLoader. It enables usage of lazy loading without the need to have Blocks"
+      },
 	  {
 		"id": "sap.uxap.sample.SingleView",
 		"name": "Single View sample",
