@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+	<meta charset="UTF-8">
+	<title></title>
+	<script type="text/javascript" src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.ui.layout, sap.uxap" data-sap-ui-theme="sap_bluecrystal">
+	</script>
+	<script type="text/javascript">
+		var oFactory = {
+			getSection: function(iNumber) {
+				return new sap.uxap.ObjectPageSection({
+					title: "Section " + iNumber
+				});
+			},
+			getSubSection: function(iNumber, aBlocks) {
+				return new sap.uxap.ObjectPageSubSection({
+					title: "SubSection " + iNumber,
+					blocks: aBlocks || []
+				});
+			},
+			getBlocks: function(sText) {
+				return [
+					new sap.m.Text({
+						text: sText || "something something ... dark side!"
+					})
+				]
+			},
+			getObjectPage: function(iNumberOfSections, iNumberOfSubSectionsInEachSection) {
+				var oSection,
+						oSubSection,
+						oObjectPage = new sap.uxap.ObjectPageLayout();
+
+				for (var i = 0; i < iNumberOfSections; i++) {
+					oSection = oFactory.getSection(i);
+
+
+					for (var j = 0; j < iNumberOfSubSectionsInEachSection; j++) {
+						oSection.addSubSection(oFactory.getSubSection(j, oFactory.getBlocks()));
+					};
+
+					oObjectPage.addSection(oSection);
+				}
+
+				return oObjectPage;
+			}
+		};
+		var getLabel = function (sValue) {
+			return new sap.m.Label({
+				text: sValue
+			});
+		},
+		getLabelWithSelect = function (sValue) {
+			return new sap.ui.layout.VerticalLayout({
+				content: [getLabel(sValue), getSelect(10)]
+			})
+		},
+		getLabelWithSelectCombo = function (iCount) {
+			var aLabelCombos = [];
+
+			for (var i = 0; i < iCount; i++) {
+				aLabelCombos.push(getLabelWithSelect("Something Something" + i));
+			}
+
+			return aLabelCombos;
+		},
+		getSelectItem = function (iNumber) {
+			return new sap.ui.core.Item({
+				text: "Content " + ++iNumber,
+				key: iNumber
+			});
+		},
+		getSelect = function (iCount) {
+			var aSelectItems = [];
+
+			for (var i = 0; i < iCount; i++) {
+				aSelectItems.push(getSelectItem(i));
+			}
+
+			return new sap.m.Select({
+				autoAdjustWidth: true,
+				items: aSelectItems
+			});
+		};
+
+
+		var app = new sap.m.App();
+		var bplHeader = new sap.m.DynamicPageHeader({
+			pinnable: true,
+			content: [
+				new sap.ui.layout.Grid({
+					content: getLabelWithSelectCombo(6),
+					defaultSpan: "XL2 L3 M4 S6"
+				})
+			]
+		});
+
+		app.addPage(new sap.m.DynamicPage({
+			header: bplHeader,
+			headerAlwaysExpanded: true,
+			title: new sap.m.DynamicPageTitle({
+				heading: [new sap.m.Label({
+					text: "Some title"
+				})],
+				snappedContent: [new sap.m.Label({
+					text: "Filtered 1042 items based on 'unknown' criteria"
+				})],
+				actions: [
+					new sap.m.ToolbarSpacer(),
+					new sap.m.Button({
+						icon: "sap-icon://add",
+					}),
+					new sap.m.Button({
+						icon: "sap-icon://edit",
+					}),
+					new sap.m.Button({
+						icon: "sap-icon://delete",
+					})
+				]
+			}),
+			content: oFactory.getObjectPage(6, 3),
+			footer: new sap.m.OverflowToolbar({
+				content: [
+					new sap.m.ToolbarSpacer(),
+					new sap.m.Button({
+						text: "Accept",
+						type: "Accept"
+					}),
+					new sap.m.Button({
+						text: "Reject",
+						type: "Reject"
+					})
+				]
+			})
+		}));
+		app.placeAt("body");
+	</script>
+</head>
+
+<body id="body" class="sapUiBody" role="application">
+</body>
+
+</html>

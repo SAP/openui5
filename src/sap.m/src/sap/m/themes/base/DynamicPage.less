@@ -1,0 +1,212 @@
+.sapMDynamicPage {
+	width: 100%;
+	height: 100%;
+	position: relative;
+}
+
+.sapMDynamicPageContent {
+	padding-top: 1rem;
+	background: @sapUiGroupContentBackground;
+}
+
+.sapMDynamicPageFooterSpacer {
+	.sapMDynamicPageContent {
+		margin-bottom: 4rem;
+	}
+}
+
+.sapUiSizeCompact {
+	.sapMDynamicPageFooterSpacer {
+		.sapMDynamicPageContent {
+			margin-bottom: 3.5rem;
+		}
+	}
+}
+
+.sapMDynamicPageContent {
+	padding-right: 3rem;
+	padding-left: 3rem;
+}
+
+.sapMDynamicPage-Std-Tablet {
+	.sapMDynamicPageContent {
+		padding-right: 2rem;
+		padding-left: 2rem;
+	}
+}
+
+.sapMDynamicPage-Std-Phone {
+	.sapMDynamicPageContent {
+		padding-right: 1rem;
+		padding-left: 1rem;
+	}
+}
+
+.sapMDynamicPageContentWrapper {
+	width: 100%;
+	height: 100%;
+	position: relative;
+	overflow-y: auto;
+	will-change: transform;
+	-webkit-overflow-scrolling: touch;
+}
+
+.sapMDynamicPageSupressScroll {
+	.sapMDynamicPageContentWrapper {
+		overflow: hidden;
+	}
+}
+
+.sapMDynamicPageScrollBar {
+	right: 0;
+	position: absolute;
+	z-index: 10;
+}
+
+.sapMDynamicPage .sapMDynamicPageTitleWrapper {
+	flex-shrink: 0;
+	-webkit-flex-shrink: 0;
+}
+
+.sapMDynamicPageContentWrapper {
+	-webkit-flex-grow: 1;
+	-moz-flex-grow: 1;
+	-ms-flex-grow: 1;
+	flex-grow: 1;
+}
+
+.sapMDynamicPage,
+.sapMDynamicPage.sapMNavItem {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -moz-box;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-flex-direction: column;
+	-moz-flex-direction: column;
+	-ms-flex-direction: column;
+	flex-direction: column;
+}
+
+.sapMDynamicPage {
+	.sapMDynamicPageFooter {
+		position: relative;
+
+		.sapMDynamicPageActualFooterControl {
+			position: absolute;
+			height: 3rem;
+			bottom: 0;
+			right: 0;
+			left: 0;
+			border: 1px solid;
+			border-radius: 0.25rem;
+			margin-left: 0.5rem;
+			margin-right: 0.5rem;
+			margin-bottom: 0.5rem;
+		}
+	}
+}
+
+.sapUiSizeCompact .sapMDynamicPage .sapMDynamicPageFooter .sapMDynamicPageActualFooterControl {
+	height: 2.5rem;
+}
+
+html[data-sap-ui-animation='on'] .sapMDynamicPage {
+	.sapMDynamicPageActualFooterControlShow {
+		-webkit-animation: bounceShow 0.35s forwards ease-in-out;
+		-moz-animation: bounceShow 0.35s forwards ease-in-out;
+		-o-animation: bounceShow 0.35s forwards ease-in-out;
+		animation: bounceShow 0.35s forwards ease-in-out;
+	}
+	.sapMDynamicPageActualFooterControlHide {
+		-webkit-animation: bounceHide 0.35s forwards ease-in-out;
+		-moz-animation: bounceHide 0.35s forwards ease-in-out;
+		-o-animation: bounceHide 0.35s forwards ease-in-out;
+		animation: bounceHide 0.35s forwards ease-in-out;
+	}
+
+	@-webkit-keyframes bounceShow {
+		0% {
+			-webkit-transform: translateY(100%);
+			-moz-transform: translateY(100%);
+			-o-transform: translateY(100%);
+			transform: translateY(100%);
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+	@-moz-keyframes bounceShow {
+		0% {
+			-webkit-transform: translateY(100%);
+			-moz-transform: translateY(100%);
+			-o-transform: translateY(100%);
+			transform: translateY(100%);
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+	@keyframes bounceShow {
+		0% {
+			-webkit-transform: translateY(100%);
+			-moz-transform: translateY(100%);
+			-o-transform: translateY(100%);
+			transform: translateY(100%);
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+	@-webkit-keyframes bounceHide {
+		0% {
+			-webkit-transform: translateY(-5%);
+			-moz-transform: translateY(-5%);
+			-o-transform: translateY(-5%);
+			transform: translateY(-5%);
+			opacity: 1;
+		}
+		100% {
+			-webkit-transform: translateY(100%);
+			-moz-transform: translateY(100%);
+			-o-transform: translateY(100%);
+			transform: translateY(100%);
+			opacity: 0;
+		}
+	}
+	@-moz-keyframes bounceHide {
+		0% {
+			-webkit-transform: translateY(-5%);
+			-moz-transform: translateY(-5%);
+			-o-transform: translateY(-5%);
+			transform: translateY(-5%);
+			opacity: 1;
+		}
+		100% {
+			-webkit-transform: translateY(100%);
+			-moz-transform: translateY(100%);
+			-o-transform: translateY(100%);
+			transform: translateY(100%);
+			opacity: 0;
+		}
+	}
+	@keyframes bounceHide {
+		0% {
+			-webkit-transform: translateY(-5%);
+			-moz-transform: translateY(-5%);
+			-o-transform: translateY(-5%);
+			transform: translateY(-5%);
+			opacity: 1;
+		}
+		100% {
+			-webkit-transform: translateY(100%);
+			-moz-transform: translateY(100%);
+			-o-transform: translateY(100%);
+			transform: translateY(100%);
+			opacity: 0;
+		}
+	}
+}

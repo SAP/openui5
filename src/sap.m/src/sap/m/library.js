@@ -81,6 +81,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		interfaces: [
 			"sap.m.IBar",
 			"sap.m.IconTab",
+			"sap.m.ISnappable",
 			"sap.m.semantic.IGroup",
 			"sap.m.semantic.IFilter",
 			"sap.m.semantic.ISort",
@@ -92,6 +93,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.ActionSheet",
 			"sap.m.App",
 			"sap.m.Bar",
+			"sap.m.DynamicPage",
+			"sap.m.DynamicPageHeader",
+			"sap.m.DynamicPageTitle",
 			"sap.m.BusyDialog",
 			"sap.m.BusyIndicator",
 			"sap.m.Button",
@@ -999,6 +1003,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
+	/**
+	 *
+	 *   Interface for controls which are suitable as a Header in sap.m.DynamicPage.
+	 *   If the control wants to get have the pin/unpin functionality, it must fire the pinUnpinPress event
+	 *
+	 * @since 1.38
+	 * @name sap.m.ISnappable
+	 * @interface
+	 * @public
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
 
 	/**
 	 * Allowed tags for the implementation of the IBar interface.

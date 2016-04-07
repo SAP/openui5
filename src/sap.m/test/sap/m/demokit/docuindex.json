@@ -236,6 +236,13 @@
 		  ]
 		},
 		{
+			"id": "sap.m.DynamicPage",
+			"name": "Dynamic Page",
+			"category": "Container",
+			"since": "1.38",
+			"samples": ["sap.m.sample.DynamicPageListReport"]
+		},
+		{
 			"id" : "sap.m.SlideTile",
 			"name" : "Slide Tile",
 			"category" : "Container",
@@ -1199,6 +1206,11 @@
           "name": "Combo box - Lazy loading",
           "description": "Use this feature to defer initialization of items until the point at which the items are needed. It can improve performance, reduce memory usage and unnecessary client/server round-trips."
         },
+		{
+		  "id": "sap.m.sample.DynamicPageListReport",
+		  "name": "Dynamic Page FIORI 2.0 List Report floor plan",
+		  "description": "The Dynamic Page is a FIORI 2.0 generation layout control. The sample shows how the List Report floor plan can be implemented."
+		},
 		{
 		  "id": "sap.m.sample.DateRangeSelection",
 		  "name": "Date Range Selection",
