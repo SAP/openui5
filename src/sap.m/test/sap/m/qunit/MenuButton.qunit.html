@@ -1,0 +1,772 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>qUnit Page for sap.m.MenuButton</title>
+	<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m">
+	</script>
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<!-- Control initialization -->
+	<script language="javascript">
+		sinon.config.useFakeTimers = true;
+		jQuery.sap.require("sap.m.MenuButton");
+	</script>
+	<!-- Test functions -->
+	<script language="javascript">
+		qutils.delayTestStart();
+
+		module("Basic", {
+			beforeEach: function () {
+				this.sut = new sap.m.MenuButton("menuButton1");
+				this.sut.setText("Menu Button");
+				this.sut.setTooltip("This is a test tooltip");
+				this.oMenu = new sap.m.Menu("menu1");
+				this.sut.setMenu(this.oMenu);
+				var oMenuItem1 = new sap.m.MenuItem("menuitem1", {text:"Item1"});
+				var oMenuItem2 = new sap.m.MenuItem("menuitem2", {text:"Item2"});
+				this.oMenu.addItem(oMenuItem1);
+				this.oMenu.addItem(oMenuItem2);
+				this.sut.placeAt("content");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.sut.destroy();
+				this.sut = null;
+				this.oMenu.destroy();
+				this.oMenu = null;
+			}
+		});
+		test("Initial Rendering", function(){
+			notEqual(jQuery.sap.domById(this.sut.getId()), null, "MenuButton HTML Element should be rendered");
+			equal(jQuery.sap.domById(this.oMenu.getId()), null, "Menu HTML Element is not yet rendered");
+		});
+		test("Property - Default Values", function() {
+			this.sut.destroy();
+			this.sut = null;
+			this.sut = new sap.m.MenuButton('menuButton1');
+			equals(this.sut.getVisible(), true, "Default 'visible':");
+			equals(this.sut.getTooltip(), null, "Default 'tooltip':");
+			equals(this.sut.getEnabled(), true, "Default 'enabled':");
+			equals(this.sut.getText(), "", "Default 'title':");
+			equals(this.sut.getMenu(), null, "Default 'menu':");
+			strictEqual(this.sut.getAggregation('_button').getMetadata().getName() === 'sap.m.Button', true, 'Normal sap m button.');
+		});
+		test("Property - Custom Values", function() {
+			equals(this.sut.getTooltip(), "This is a test tooltip", "Custom 'tooltip':");
+			equals(this.sut.getText(), "Menu Button", "Custom 'title':");
+		});
+
+		module("Accessibility (ARIA)", {
+			beforeEach: function () {
+				this.sut = new sap.m.MenuButton("menuButton1", {
+					menu: new sap.m.Menu("menuButton1Menu", {
+						items: [
+							new sap.m.MenuItem({text: "MenuItem 1"}),
+							new sap.m.MenuItem({text: "MenuItem 2"}),
+							new sap.m.MenuItem({text: "MenuItem 3"})
+						]
+					})
+				});
+				this.sut.placeAt("content");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.sut.destroy();
+				this.sut = null;
+			}
+		});
+
+		test("MenuButton in Regular mode", function () {
+			var oInnerButton = this.sut._getButtonControl(),
+				sAriaHasPopup = oInnerButton.$().attr("aria-haspopup"),
+				sAriaControls,
+				sAriaDescribedBy = oInnerButton.$().attr("aria-describedby");
+
+			//assert
+			strictEqual(sAriaHasPopup, "true", '"aria-haspopup" is present and has a correct value');
+			strictEqual(sAriaDescribedBy, undefined, '"aria-describedby" is not present');
+
+			//open the menu
+			this.sut._handleButtonPress();
+			sAriaControls = this.sut.$().attr("aria-controls");
+
+			strictEqual(sAriaControls, this.sut.getMenu().getDomRefId(), '"aria-controls" is present and is the same as the menu id');
+		});
+
+		test("MenuButton with tooltip in Regular mode", function () {
+			//arrange
+			var sTooltip = "Some meaningful tooltip";
+			this.sut.setTooltip(sTooltip);
+			sap.ui.getCore().applyChanges();
+
+			var oInnerButton = this.sut._getButtonControl(),
+				sAriaDescribedBy = oInnerButton.$().attr("aria-describedby"),
+				sTitleAttr = oInnerButton.$().attr("title");
+
+			//assert
+			strictEqual(sAriaDescribedBy, undefined, '"aria-describedby" is not present and needed (default button tooltip SR)');
+			strictEqual(sTitleAttr, sTooltip, '"title" is present and has the correct value');
+		});
+
+		test("MenuButton IconOnly in Regular mode", function () {
+			//arrange
+			var sIconName = "slim-arrow-down";
+			this.sut.setIcon("sap-icon://" + sIconName);
+			sap.ui.getCore().applyChanges();
+
+			var oInnerButton = this.sut._getButtonControl(),
+				sAriaDescribedBy = oInnerButton.$().attr("aria-describedby"),
+				sTitleAttr = oInnerButton.$().attr("title");
+
+			//assert
+			strictEqual(sAriaDescribedBy, undefined, '"aria-describedby" is not present and needed');
+			strictEqual(sTitleAttr, sIconName, 'Icon name is set as a tooltip');
+		});
+
+		test("MenuButton IconOnly with tooltip in Regular mode", function () {
+			//arrange
+			var sIconName = "slim-arrow-down",
+				sTooltip = "Some meaningful tooltip";
+
+			//act
+			this.sut.setIcon("sap-icon://" + sIconName);
+			this.sut.setTooltip(sTooltip);
+			sap.ui.getCore().applyChanges();
+
+			var oInnerButton = this.sut._getButtonControl(),
+				sAriaDescribedBy = oInnerButton.$().attr("aria-describedby"),
+				sTitleAttr = oInnerButton.$().attr("title");
+
+			//assert
+			strictEqual(sAriaDescribedBy, undefined, '"aria-describedby" is not present and needed');
+			strictEqual(sTitleAttr, sTooltip, "The icon tooltip is successfully overriden");
+		});
+
+		test("Semantic MenuButton in Regular mode", function () {
+			//arrange
+			this.sut.setType(sap.m.ButtonType.Accept);
+			sap.ui.getCore().applyChanges();
+
+			var oInnerButton = this.sut._getButtonControl(),
+				aAriaDescribedIds = oInnerButton.$().attr("aria-describedby").trim().split(" "),
+				oAriaDescribedByCtrl = sap.ui.getCore().byId(aAriaDescribedIds[0]);
+
+			//assert
+			strictEqual(aAriaDescribedIds.length, 1, "There exactly one ID in the aria-describedby");
+			ok(oAriaDescribedByCtrl.getDomRef(), "There is a control with that ID in the DOM");
+
+			var sAriaDescribedByText = oAriaDescribedByCtrl.getText();
+			strictEqual(sAriaDescribedByText,
+					sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("BUTTON_ARIA_TYPE_ACCEPT"),
+					'"aria-describedby" has correct id references');
+		});
+
+		test("Semantic MenuButton with tooltip in Regular mode", function () {
+			//arrange
+			var sTooltip = "Some meaningful tooltip";
+
+			this.sut.setType(sap.m.ButtonType.Emphasized);
+			this.sut.setTooltip(sTooltip);
+			sap.ui.getCore().applyChanges();
+
+			var oInnerButton = this.sut._getButtonControl(),
+				aAriaDescribedIds = oInnerButton.$().attr("aria-describedby").trim().split(" "),
+				oAriaDescribedByCtrl = sap.ui.getCore().byId(aAriaDescribedIds[0]),
+				sTitleAttr = oInnerButton.$().attr("title");
+
+			//assert
+			strictEqual(sTitleAttr, sTooltip, "The provided tooltip is rendered");
+
+			var sAriaDescribedByText = oAriaDescribedByCtrl.getText();
+			strictEqual(sAriaDescribedByText,
+					sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("BUTTON_ARIA_TYPE_EMPHASIZED"),
+					'"aria-describedby" has correct id references');
+		});
+
+		test("Semantic MenuButton IconOnly in Regular mode", function () {
+			var sIconName = "slim-arrow-down";
+
+			//arrange
+			this.sut.setType(sap.m.ButtonType.Reject);
+			this.sut.setIcon("sap-icon://" + sIconName);
+			sap.ui.getCore().applyChanges();
+
+			var oInnerButton = this.sut._getButtonControl(),
+				aAriaDescribedIds = oInnerButton.$().attr("aria-describedby").trim().split(" "),
+				oAriaDescribedByCtrl = sap.ui.getCore().byId(aAriaDescribedIds[0]),
+				sTitleAttr = oInnerButton.$().attr("title");
+
+			//assert
+			strictEqual(sTitleAttr, sIconName, "Icon name is set as a tooltip");
+
+			var sAriaDescribedByText = oAriaDescribedByCtrl.getText();
+			strictEqual(sAriaDescribedByText,
+					sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("BUTTON_ARIA_TYPE_REJECT"),
+					'"aria-describedby" has correct id references');
+		});
+
+		test("Semantic MenuButton IconOnly with tooltip in Regular mode", function () {
+			//arrange
+			var sIconName = "slim-arrow-down",
+				sTooltip = "Some meaningful tooltip";
+
+			this.sut.setType(sap.m.ButtonType.Emphasized);
+			this.sut.setTooltip(sTooltip);
+			this.sut.setIcon("sap-icon://" + sIconName);
+			sap.ui.getCore().applyChanges();
+
+			var oInnerButton = this.sut._getButtonControl(),
+				aAriaDescribedIds = oInnerButton.$().attr("aria-describedby").trim().split(" "),
+				oAriaDescribedByCtrl = sap.ui.getCore().byId(aAriaDescribedIds[0]),
+				sTitleAttr = oInnerButton.$().attr("title");
+
+			//assert
+			strictEqual(sTitleAttr, sTooltip, "The icon tooltip is successfully overriden");
+
+			var sAriaDescribedByText = oAriaDescribedByCtrl.getText();
+			strictEqual(sAriaDescribedByText,
+					sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("BUTTON_ARIA_TYPE_EMPHASIZED"),
+					'"aria-describedby" has correct id references');
+		});
+
+		test("MenuButton in Split root aria attributes", function() {
+			//arrange
+			this.sut.setButtonMode(sap.m.MenuButtonMode.Split);
+			sap.ui.getCore().applyChanges();
+
+			var oInnerButton = this.sut._getButtonControl(),
+				sAriaHasPopup = oInnerButton._getArrowButton().$().attr("aria-haspopup");
+
+			//assert
+			strictEqual(oInnerButton.getMetadata().getName(), "sap.m.SplitButton", "The inner aggregation '_buttonControl' has correct type");
+			strictEqual(sAriaHasPopup, "true", '"aria-haspopup" is present and has a correct value');
+		});
+
+		test("MenuButton in Split mode", function () {
+			//arrange
+			var sText = "Example";
+			this.sut.setText(sText);
+			this.sut.setButtonMode(sap.m.MenuButtonMode.Split);
+			sap.ui.getCore().applyChanges();
+
+			var oInnerButton = this.sut._getButtonControl(),
+				aAriaDescribedIds = oInnerButton.$().attr("aria-describedby").trim().split(" "),
+				oAriaDescribedByCtrl = sap.ui.getCore().byId(aAriaDescribedIds[0]),
+				aAriaLabelledIds = oInnerButton.$().attr("aria-labelledby").trim().split(" "),
+				aAriaLabelledByDomElements = aAriaLabelledIds.map(function(id) {
+					return jQuery("#" + id);
+				});
+
+
+			//assert
+			strictEqual(aAriaLabelledByDomElements.length, 2, "There exactly 2 dom elements referenced in the aria-labelledby");
+			strictEqual(aAriaLabelledByDomElements[0].text(),
+					sText,
+					'Referenced control in "aria-labelledby" shows the text of the button');
+			strictEqual(aAriaLabelledByDomElements[1].text(),
+					sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_DESCRIPTION"),
+					'Referenced control in "aria-labelledby" shows that this is a split button');
+
+			strictEqual(aAriaDescribedIds.length, 1, "There exactly one ID in the aria-describedby");
+			ok(oAriaDescribedByCtrl.getDomRef(), "There is a control with that ID in the DOM");
+
+			aAriaLabelledByDomElements
+			var sAriaDescribedByText = oAriaDescribedByCtrl.getText();
+			strictEqual(sAriaDescribedByText,
+					sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT"),
+					'Referenced control in "aria-describedby" shows the keyboard handling hint');
+		});
+
+		test("MenuButton with tooltip in Split mode", function () {
+			//arrange
+			var sTooltip = "Some meaningful tooltip";
+			this.sut.setButtonMode(sap.m.MenuButtonMode.Split);
+			this.sut.setTooltip(sTooltip);
+			sap.ui.getCore().applyChanges();
+
+			var oInnerButton = this.sut._getButtonControl(),
+				oTextButton = oInnerButton._getTextButton(),
+				oArrowButton = oInnerButton._getArrowButton(),
+				oInvisibleTooltip = oInnerButton._oInvisibleTooltipInfoLabel,
+				aAriaLabelledByIds = oInnerButton.$().attr("aria-labelledby").trim().split(" ");;
+
+			//assert
+			ok(oInvisibleTooltip, "There is a tooltip info label");
+			strictEqual(oInvisibleTooltip.getText(), sTooltip, "The info label holds the tooltip text");
+			ok(oInvisibleTooltip.getDomRef(), "The info label is rendered");
+			ok(aAriaLabelledByIds.indexOf(oInvisibleTooltip.$().attr('id')) !== -1, "The info label is rendered at the correct place");
+			strictEqual(oInnerButton.$().attr("title"), sTooltip, "The inner split button has a title property with the provided tooltip");
+			ok(!oTextButton.getDomRef().hasAttribute("title"), "The inner '_textButton' button does not have and need DOM title property");
+			ok(!oArrowButton.getDomRef().hasAttribute("title"), "The inner '_arrowButton' button does not have DOM title property set to its Icon name");
+		});
+
+		test("MenuButton IconOnly in Split mode", function () {
+			var sIconName = "slim-arrow-down";
+			this.sut.setIcon("sap-icon://" + sIconName);
+			this.sut.setButtonMode(sap.m.MenuButtonMode.Split);
+			sap.ui.getCore().applyChanges();
+
+			var oInnerButton = this.sut._getButtonControl(),
+				oTextButton = oInnerButton._getTextButton(),
+				oArrowButton = oInnerButton._getArrowButton(),
+				bHasAriaDescribedBy = oInnerButton.getDomRef().hasAttribute("aria-describedby"),
+				aAriaDescribedIds = oInnerButton.$().attr("aria-describedby").trim().split(" "),
+				bAriaDescribedByHasCorrectValue = aAriaDescribedIds.every(function (sId) {
+					return sap.ui.getCore().byId(sId).getText() === sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT");
+				});
+
+			//assert
+			ok(bHasAriaDescribedBy && aAriaDescribedIds.length == 1 && bAriaDescribedByHasCorrectValue, '"aria-describedby" is present and has correct value');
+
+			strictEqual(oInnerButton.$().attr("title"), sIconName, "The inner split button has a title property with the icon name");
+			ok(!oTextButton.getDomRef().hasAttribute("title"), "The inner '_textButton' button do not have and need DOM title property");
+			ok(!oArrowButton.getDomRef().hasAttribute("title"), "The inner '_arrowButton' button do not have DOM title property set to its Icon name");
+		});
+
+		test("MenuButton IconOnly with tooltip in Split mode", function () {
+			//arrange
+			var sTooltip = "Some meaningful tooltip",
+				sIconName = "slim-arrow-down";
+			this.sut.setButtonMode(sap.m.MenuButtonMode.Split);
+			this.sut.setTooltip(sTooltip);
+			this.sut.setIcon("sap-icon://" + sIconName);
+			sap.ui.getCore().applyChanges();
+
+			var oInnerButton = this.sut._getButtonControl(),
+				oInvisibleTooltip = oInnerButton._oInvisibleTooltipInfoLabel,
+				aAriaLabelledByIds = oInnerButton.$().attr("aria-labelledby").trim().split(" ");
+
+			//assert
+			ok(oInvisibleTooltip, "There is an inner info label");
+			strictEqual(oInvisibleTooltip.getText(), sTooltip, "The info label holds the tooltip text");
+			ok(oInvisibleTooltip.getDomRef(), "The info label is rendered");
+			ok(aAriaLabelledByIds.indexOf(oInvisibleTooltip.$().attr('id')) !== -1, "The info label is rendered at the correct place");
+			strictEqual(oInnerButton.$().attr("title"), sTooltip, "The inner split button has a title property with the provided tooltip");
+		});
+
+		test("Semantic MenuButton in Split mode", function () {
+			//arrange
+			this.sut.setButtonMode(sap.m.MenuButtonMode.Split);
+			this.sut.setType(sap.m.ButtonType.Emphasized);
+			sap.ui.getCore().applyChanges();
+
+			var oInnerButton = this.sut._getButtonControl(),
+				bHasAriaDescribedBy = oInnerButton.getDomRef().hasAttribute("aria-describedby"),
+				aAriaDescribedIds = oInnerButton.$().attr("aria-describedby").trim().split(" "),
+				bAriaDescribedByHasCorrectValue = aAriaDescribedIds.every(function (sId) {
+					return sap.ui.getCore().byId(sId).getText() === sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT") ||
+							sap.ui.getCore().byId(sId).getText() === sap.ui.getCore().getLibraryResourceBundle("sap.m.").getText("BUTTON_ARIA_TYPE_EMPHASIZED");
+				}),
+				oInvisibleTooltip = oInnerButton._oInvisibleTooltipInfoLabel;
+
+			//assert
+			ok(!oInvisibleTooltip, "There is no tooltip info label");
+			ok(bHasAriaDescribedBy && aAriaDescribedIds.length == 2 && bAriaDescribedByHasCorrectValue, '"aria-describedby" is present and has correct id references');
+		});
+
+		test("Semantic MenuButton with tooltip in Split mode", function () {
+			var sTooltip = "Some meaningful tooltip";
+			this.sut.setTooltip(sTooltip);
+			this.sut.setIcon("sap-icon://slim-arrow-down");
+			this.sut.setText("Hello");
+			this.sut.setType(sap.m.ButtonType.Emphasized);
+			this.sut.setButtonMode(sap.m.MenuButtonMode.Split);
+			sap.ui.getCore().applyChanges();
+
+			var oInnerButton = this.sut._getButtonControl(),
+				bHasAriaDescribedBy = oInnerButton.getDomRef().hasAttribute("aria-describedby"),
+				aAriaDescribedIds = oInnerButton.$().attr("aria-describedby").trim().split(" "),
+				bAriaDescribedByHasCorrectValue = aAriaDescribedIds.every(function (sId) {
+					return sap.ui.getCore().byId(sId).getText() === sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT") ||
+							sap.ui.getCore().byId(sId).getText() === sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("BUTTON_ARIA_TYPE_EMPHASIZED");
+				}),
+				oInvisibleTooltip = oInnerButton._oInvisibleTooltipInfoLabel;
+
+			//assert
+			ok(oInvisibleTooltip, "There is an inner info label");
+			strictEqual(oInvisibleTooltip.getText(), sTooltip, "The info label holds the tooltip text");
+			ok(oInvisibleTooltip.getDomRef(), "The info label is rendered");
+			strictEqual(oInnerButton.$().attr("title"), sTooltip, "The inner split button has a title property with the provided tooltip");
+			ok(bHasAriaDescribedBy && aAriaDescribedIds.length == 2 && bAriaDescribedByHasCorrectValue, '"aria-describedby" is present and has correct id references');
+		});
+
+		test("Semantic MenuButton IconOnly in Split mode", function () {
+			//arrange
+			var sIconName = "slim-arrow-down";
+			this.sut.setButtonMode(sap.m.MenuButtonMode.Split);
+			this.sut.setType(sap.m.ButtonType.Emphasized);
+			this.sut.setIcon("sap-icon://" + sIconName);
+			sap.ui.getCore().applyChanges();
+
+			var oInnerButton = this.sut._getButtonControl(),
+				bHasAriaDescribedBy = oInnerButton.getDomRef().hasAttribute("aria-describedby"),
+				aAriaDescribedIds = oInnerButton.$().attr("aria-describedby").trim().split(" "),
+				bAriaDescribedByHasCorrectValue = aAriaDescribedIds.every(function (sId) {
+					return sap.ui.getCore().byId(sId).getText() === sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT") ||
+							sap.ui.getCore().byId(sId).getText() === sap.ui.getCore().getLibraryResourceBundle("sap.m.").getText("BUTTON_ARIA_TYPE_EMPHASIZED");
+				}),
+				oInvisibleTooltip = oInnerButton._oInvisibleTooltipInfoLabel;
+
+			//assert
+			ok(oInvisibleTooltip, "There is a tooltip info label");
+			strictEqual(oInvisibleTooltip.getText(), sIconName, "The tooltip info label holds the icon name");
+			strictEqual(oInnerButton.$().attr("title"), sIconName, "The inner split button has a title property with the icon name");
+			ok(bHasAriaDescribedBy && aAriaDescribedIds.length == 2 && bAriaDescribedByHasCorrectValue, '"aria-describedby" is present and has correct id references');
+		});
+
+		test("Semantic MenuButton IconOnly with tooltip in Split mode", function () {
+			var sTooltip = "Some meaningful tooltip",
+				sIconName = "slim-arrow-down";
+
+			this.sut.setType(sap.m.ButtonType.Reject);
+			this.sut.setButtonMode(sap.m.MenuButtonMode.Split);
+			this.sut.setIcon("sap-icon://" + sIconName);
+			sap.ui.getCore().applyChanges();
+
+			var oInnerButton = this.sut._getButtonControl(),
+				bHasAriaDescribedBy = oInnerButton.getDomRef().hasAttribute("aria-describedby"),
+				aAriaDescribedIds = oInnerButton.$().attr("aria-describedby").trim().split(" "),
+				bAriaDescribedByHasCorrectValue = aAriaDescribedIds.every(function (sId) {
+					return sap.ui.getCore().byId(sId).getText() === sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT") ||
+							sap.ui.getCore().byId(sId).getText() === sap.ui.getCore().getLibraryResourceBundle("sap.m.").getText("BUTTON_ARIA_TYPE_REJECT");
+				}),
+				oInvisibleTooltip = oInnerButton._oInvisibleTooltipInfoLabel;
+
+			//assert
+			ok(oInvisibleTooltip, "There is a tooltip info label");
+			strictEqual(oInvisibleTooltip.getText(), sIconName, "The tooltip info label holds the icon name");
+			strictEqual(oInnerButton.$().attr('title'), sIconName, "Icon name is set as a tooltip");
+
+			//act
+			this.sut.setTooltip(sTooltip);
+			this.clock.tick(1000);
+
+			//assert
+			ok(oInnerButton._oInvisibleTooltipInfoLabel.getDomRef(), "There is tooltip info label and it is rendered");
+			ok(bHasAriaDescribedBy && aAriaDescribedIds.length == 2 && bAriaDescribedByHasCorrectValue, '"aria-describedby" is present and has correct value');
+			strictEqual(oInnerButton.$().attr('title'), sTooltip, "The icon tooltip is successfully overriden");
+		});
+
+		module("Pressing", {
+			beforeEach: function () {
+				this.sut = new sap.m.MenuButton("menuButton1");
+				this.sut.setText("Menu Button");
+				this.sut.setTooltip("This is a test tooltip");
+
+				this.oMenu = new sap.m.Menu();
+				this.sut.setMenu(this.oMenu);
+
+				this.oMenuItem1 = new sap.m.MenuItem({text:"Item1"});
+				this.oMenuItem2 = new sap.m.MenuItem({text:"Item2"});
+
+				this.oMenu.addItem(this.oMenuItem1);
+				this.oMenu.addItem(this.oMenuItem2);
+
+				this.sut.placeAt("content");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.sut.destroy();
+				this.sut = null;
+				this.oMenu.destroy();
+				this.oMenu = null;
+			}
+		});
+
+		test("Open with mouse", function(){
+			/* ToDo: Currently the _handleButtonPress cannot be spied when triggered from the press event of the internal
+			 button - for this reason assertion is done on the opened control DOM - this test is tightly coupling with sap.m.Menu
+			 - must be decoupled like the keyboard open test below */
+			this.sut.getAggregation('_button').firePress();
+			strictEqual(jQuery('.sapMMenu').length, 1, "Opened control is visible after click");
+		});
+
+
+		test("Open with keyboard", function(){
+			var fnHandleButtonPress = sinon.spy(this.sut, "_handleButtonPress");
+			this.sut.onsapup();
+			strictEqual(fnHandleButtonPress.calledWith(true), true, "Button press handler invoked after 'onsapup' event.");
+
+			fnHandleButtonPress.restore();
+			fnHandleButtonPress = sinon.spy(this.sut, "_handleButtonPress");
+			this.sut.onsapdown();
+			strictEqual(fnHandleButtonPress.calledWith(true), true, "Button press handler invoked after 'onsapdown' event.");
+
+			fnHandleButtonPress.restore();
+			fnHandleButtonPress = sinon.spy(this.sut, "_handleButtonPress");
+			this.sut.onsapupmodifiers();
+			strictEqual(fnHandleButtonPress.calledWith(true), true, "Button press handler invoked after 'onsapupmodifiers' event.");
+
+			fnHandleButtonPress.restore();
+			fnHandleButtonPress = sinon.spy(this.sut, "_handleButtonPress");
+			this.sut.onsapdownmodifiers();
+			strictEqual(fnHandleButtonPress.calledWith(true), true, "Button press handler invoked after 'onsapdownmodifiers' event.");
+
+			fnHandleButtonPress.restore();
+			fnHandleButtonPress = sinon.spy(this.sut, "_handleButtonPress");
+			this.sut.onsapshow();
+			strictEqual(fnHandleButtonPress.calledWith(true), true, "Button press handler invoked after 'onsapshow' event.");
+		});
+
+		test('SplitButton mode', function () {
+			this.sut.destroy();
+			this.sut = null;
+			this.sut = new sap.m.MenuButton({
+				buttonMode: sap.m.MenuButtonMode.Split,
+				defaultAction : function () {}
+			});
+			this.sut.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			fnFireDefaultAction = sinon.spy(this.sut, "fireDefaultAction");
+			this.sut.getAggregation('_button').firePress();
+
+			this.clock.tick(1000);
+			strictEqual(this.sut.getAggregation('_button').getMetadata().getName() === 'sap.m.SplitButton', true, 'Split button.');
+			strictEqual(jQuery('.sapMMenuBtnSplit').length, 1, 'Split button rendered');
+			strictEqual(fnFireDefaultAction.calledOnce, true, 'Default action called.');
+
+			var handlerCalled = 0;
+			this.oMenu = new sap.m.Menu({
+				items : [
+					new sap.m.MenuItem({text: 'item1'}),
+					new sap.m.MenuItem({text: 'item2'})
+				],
+				itemSelected : function () {
+					handlerCalled++;
+				}
+			});
+			this.sut.setMenu(this.oMenu);
+			this.sut.getAggregation('_button')._getArrowButton().firePress();
+			this.clock.tick(1000)
+			this.sut.getMenu().fireItemSelected({item: this.sut.getMenu().getItems()[0]});
+			this.clock.tick(1000);
+			this.sut.getAggregation('_button').firePress();
+			strictEqual(handlerCalled, 2, 'The itemSelected handler of the menu is called when the text button is pressed after an item is selected.');
+			this.clock.tick(1000);
+			strictEqual(jQuery('.sapMBtnContent').text(), '', 'Button text remains unchanged when no default text is set.');
+
+			this.sut.setText('default text');
+			this.clock.tick(1000);
+			this.sut.getAggregation('_button').firePress();
+			strictEqual(handlerCalled, 3, 'The itemSelected handler of the menu is called when the text button is pressed after an item is selected.');
+			this.clock.tick(1000);
+			strictEqual(jQuery('.sapMBtnContent').text(), 'item1', 'Button text corresponds to the last selected item.');
+
+
+			this.sut.setButtonMode(sap.m.MenuButtonMode.Regular);
+			this.clock.tick(1000);
+			strictEqual(this.sut.getAggregation('_button').getMetadata().getName() === 'sap.m.Button', true, 'Normal sap m button.');
+			strictEqual(jQuery('.sapMMenuBtnSplit').length, 0, 'Split button not rendered');
+			strictEqual(jQuery('.sapMMenuBtn').length, 1, 'Normal button rendered');
+
+			this.sut.setButtonMode(sap.m.MenuButtonMode.Split);
+			this.clock.tick(1000);
+			strictEqual(this.sut.getAggregation('_button').getMetadata().getName() === 'sap.m.SplitButton', true, 'Split button.');
+			strictEqual(jQuery('.sapMMenuBtnSplit').length, 1, 'Split button rendered');
+		});
+
+		module("SplitButton integration", {
+			beforeEach: function () {
+				this.sut = new sap.m.MenuButton({
+					buttonMode: sap.m.MenuButtonMode.Split,
+					text: "Example",
+					tooltip: "This is a test tooltip",
+					menu: new sap.m.Menu({
+						items: [
+							new sap.m.MenuItem("menuitem1", { text:"Item1" }),
+							new sap.m.MenuItem("menuitem2", { text:"Item2" })
+						]
+					})
+				});
+				this.sut.placeAt("content");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.sut.destroy();
+				this.sut = null;
+			}
+		});
+
+		test("setProperty", function() {
+			var oSpyControlSetProperty = this.spy(sap.ui.core.Control.prototype, "setProperty"),
+				oSpyButtonSetProperty = this.spy(sap.m.SplitButton.prototype, "setProperty");
+
+			//Some values of 'type' property are forbidden
+			//Act
+			this.sut.setProperty("type", sap.m.ButtonType.Back, true);
+
+			//Assert
+			ok(!oSpyControlSetProperty.called, "Control's setProperty not called because values are forbidden");
+
+			oSpyControlSetProperty.reset();
+
+			//Test allowed values of 'type' also
+			//Act
+			this.sut.setProperty("type", sap.m.ButtonType.Emphasized, true);
+
+			//Assert
+			ok(oSpyControlSetProperty.calledOn(this.sut), "Control's setProperty called on menu button");
+			ok(oSpyControlSetProperty.calledWith("type", sap.m.ButtonType.Emphasized, true), "Control's setProperty called");
+
+
+			//'textDirection' and other properties are propagated to the inner button
+			//while 'type' is not
+
+			//Assert
+			ok(!oSpyButtonSetProperty.called, "SplitButton's setProperty not called for type property");
+
+			//Act
+			this.sut.setProperty("textDirection", sap.ui.core.TextDirection.RTL);
+
+			//Assert
+			ok(oSpyButtonSetProperty.calledWith("textDirection", sap.ui.core.TextDirection.RTL), "SplitButton's setProperty called for textDirection property");
+		});
+
+		test("_getFocusDomRef", function() {
+			strictEqual(this.sut.getFocusDomRef(), this.sut._getButtonControl().getDomRef(), "focus dom ref is right");
+		});
+
+		test("_handleButtonPress", function() {
+			var oSpySetArrowState = this.spy(sap.m.SplitButton.prototype, "setArrowState"),
+				oSpyMenuOpenBy = this.spy(sap.m.Menu.prototype, "openBy");
+
+			//Act
+			this.sut._handleButtonPress(false);
+
+			//Assert
+			ok(oSpySetArrowState.calledOnce, "SplitButton's setArrowState called exactly once");
+			ok(oSpySetArrowState.calledWith(true), "SplitButton's setArrowState(true) called");
+			ok(oSpyMenuOpenBy.calledOnce, "Menu's openBy called exactly once");
+			ok(oSpyMenuOpenBy.calledWith(this.sut, false), "Menu's openBy(menubutton, false) called");
+
+			this.sut.destroyMenu();
+			oSpySetArrowState.reset();
+			oSpyMenuOpenBy.reset();
+
+			//Act
+			this.sut._handleButtonPress(false);
+
+			//Assert
+			ok(!oSpySetArrowState.called, "SplitButton's setArrowState not called");
+			ok(!oSpyMenuOpenBy.called, "Menu's openBy not called");
+		});
+
+		test("_menuClosed", function() {
+			var oSpy = this.spy(sap.m.SplitButton.prototype, "setArrowState");
+			this.sut._menuClosed();
+
+			//Assert
+			ok(oSpy.calledOnce, "SplitButton's setArrowState called exactly once");
+			ok(oSpy.calledWith(false), "SplitButton's setArrowState(false) called");
+		});
+
+		test("SplitButton's setArrowState", function() {
+			var oSplitButton = this.sut._getButtonControl(),
+				$SplitButtonArrow = oSplitButton._getArrowButton().$();
+
+			//Assert
+			ok(!$SplitButtonArrow.hasClass("sapMSBActive"), "Arrow is not active");
+
+			//Act
+			oSplitButton.setArrowState(true);
+
+			//Assert
+			ok($SplitButtonArrow.hasClass("sapMSBActive"), "Arrow is active");
+
+			//Act
+			oSplitButton.setArrowState(false);
+
+			//Assert
+			ok(!$SplitButtonArrow.hasClass("sapMSBActive"), "Arrow is not active");
+		});
+
+		module("SplitButton alone", {
+			beforeEach: function() {
+				this.sut = new sap.m.SplitButton();
+			},
+			afterEach: function() {
+				this.sut.destroy();
+				this.sut = null;
+			}
+		});
+
+		test("Keyboard handling", function() {
+			var oSplitButtonMain = this.sut._getTextButton(),
+				oSplitButtonArrow = this.sut._getArrowButton(),
+				oSpyTextButtonPress = this.spy(oSplitButtonMain, "firePress"),
+				oSpyArrowButtonPress = this.spy(oSplitButtonArrow, "firePress");
+
+			//Act
+			this.sut.onsapenter();
+
+			//Assert
+			strictEqual(oSpyTextButtonPress.callCount, 1, "Main button firePress called");
+			ok(!oSpyArrowButtonPress.called, "Arrow button firePress not called");
+
+			//Act
+			this.sut.onsapspace();
+
+			//Assert
+			strictEqual(oSpyTextButtonPress.callCount, 2, "Main button firePress called");
+			ok(!oSpyArrowButtonPress.called, "Arrow button firePress not called");
+
+			//Act
+			this.sut.onsapup();
+
+			//Assert
+			strictEqual(oSpyTextButtonPress.callCount, 2, "Main button firePress not called");
+			strictEqual(oSpyArrowButtonPress.callCount, 1, "Arrow button firePress called");
+
+			//Act
+			this.sut.onsapdown();
+
+			//Assert
+			strictEqual(oSpyTextButtonPress.callCount, 2, "Main button firePress not called");
+			strictEqual(oSpyArrowButtonPress.callCount, 2, "Arrow button firePress called");
+
+			//Act
+			this.sut.onsapupmodifiers();
+
+			//Assert
+			strictEqual(oSpyTextButtonPress.callCount, 2, "Main button firePress not called");
+			strictEqual(oSpyArrowButtonPress.callCount, 3, "Arrow button firePress called");
+
+			//Act
+			this.sut.onsapdownmodifiers();
+
+			//Assert
+			strictEqual(oSpyTextButtonPress.callCount, 2, "Main button firePress not called");
+			strictEqual(oSpyArrowButtonPress.callCount, 4, "Arrow button firePress called");
+
+			//Act
+			this.sut.onsapshow({ preventDefault: function() {} });
+
+			//Assert
+			strictEqual(oSpyTextButtonPress.callCount, 2, "Main button firePress not called");
+			strictEqual(oSpyArrowButtonPress.callCount, 5, "Arrow button firePress called");
+		});
+	</script>
+</head>
+<body class="sapUiBody" role="application">
+<h1 id="qunit-header">QUnit tests: sap.ui.commons.MenuButton</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+
+<div id="content"></div>
+</body>
+</html>

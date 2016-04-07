@@ -346,9 +346,18 @@ function(jQuery) {
 		// only for public aggregations
 		if (oAggregationMetadata) {
 			// TODO : test altTypes
-			return this.isInstanceOf(oElement, oAggregationMetadata.type);
+			var sTypeOrInterface = oAggregationMetadata.type;
+			return this.isInstanceOf(oElement, sTypeOrInterface) || this.hasInterface(oElement, sTypeOrInterface);
 		}
 
+	};
+
+	/**
+	 *
+	 */
+	ElementUtil.hasInterface = function(oElement, sInterface) {
+		var aInterfaces = oElement.getMetadata().getInterfaces();
+		return aInterfaces.indexOf(sInterface) !== -1;
 	};
 
 	/**

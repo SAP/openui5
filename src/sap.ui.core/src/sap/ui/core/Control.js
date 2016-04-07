@@ -897,6 +897,46 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 			});
 		};
 
+		/**
+		 * This function (if available on the concrete control) provides
+		 * the current accessibility state of the control.
+		 *
+		 * Applications must not call this hook method directly, it is called by the framework.
+		 *
+		 * Subclasses of Control should implement this hook to provide any necessary accessibility information:
+		 *
+		 * <pre>
+		 * MyControl.prototype.getAccessibilityInfo = function() {
+		 *    return {
+		 *      role: "textbox",      // String which represents the WAI-ARIA role which is implemented by the control.
+		 *      type: "date input",   // String which represents the control type (Must be a translated text). Might correlate with
+		 *                            // the role.
+		 *      description: "value", // String which describes the most relevant control state (e.g. the inputs value). Must be a
+		 *                            // translated text.
+		 *                            // Note: The type and the enabled/editable state must not be handled here.
+		 *      focusable: true,      // Boolean which describes whether the control can get the focus.
+		 *      enabled: true,        // Boolean which describes whether the control is enabled. If not relevant it must not be set or
+		 *                            // <code>null</code> can be provided.
+		 *      editable: true,       // Boolean which describes whether the control is editable. If not relevant it must not be set or
+		 *                            // <code>null</code> can be provided.
+		 *      chidlren: []          // Array of accessibility info objects of children of the given control (e.g. when the control is a layout).
+		 *                            // Note: Children should only be provided when it is helpful to understand the accessibility context
+		 *                            //       (e.g. a form control must not provide details of its internals (fields, labels, ...) but a
+		 *                            //       layout should).
+		 *    };
+		 * };
+		 * </pre>
+		 *
+		 * Note: The returned object provides the accessibility state of the control at the point in time when this function is called.
+		 *
+		 * @return {object} Current accessibility state of the control.
+		 * @since 1.37.0
+		 * @function
+		 * @name sap.ui.core.Control.prototype.getAccessibilityInfo
+		 * @protected
+		 */
+		//sap.ui.core.Control.prototype.getAccessibilityInfo = function() { return null; };
+
 	})();
 
 	return Control;

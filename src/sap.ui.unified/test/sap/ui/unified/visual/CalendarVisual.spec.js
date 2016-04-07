@@ -99,12 +99,12 @@ describe("sap.ui.unified.CalendarVisual", function() {
 
 				var sShiftTab = protractor.Key.chord(protractor.Key.SHIFT, protractor.Key.TAB);
 				browser.actions().sendKeys(sShiftTab).perform(); // focus on year
-				expect(takeScreenshot(oCal)).toLookAs("023_keyboard_Shift+Tab1");
+				expect(takeScreenshot(oCal)).toLookAs("023_keyboard_Shift_Tab1");
 				if (browser.testrunner.runtime.browserName != "ie") {
 					browser.actions().sendKeys(sShiftTab).perform(); // focus on month
-					expect(takeScreenshot(oCal)).toLookAs("024_keyboard_Shift+Tab2");
+					expect(takeScreenshot(oCal)).toLookAs("024_keyboard_Shift_Tab2");
 					browser.actions().sendKeys(sShiftTab).perform(); // focus on 30
-					expect(takeScreenshot(oCal)).toLookAs("025_keyboard_Shift+Tab3");
+					expect(takeScreenshot(oCal)).toLookAs("025_keyboard_Shift_Tab3");
 				} else {
 					// shift+Tab don't work in selenium on IE on year and month button - So try to get to the December 30
 					element(by.id("__page0-title")).click();

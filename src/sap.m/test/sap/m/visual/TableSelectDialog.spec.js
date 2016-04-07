@@ -27,7 +27,7 @@ describe('sap.m.TableSelectDialog', function() {
     it('should open table select dialog in multiselect mode with very large data', function() {
         element(by.id('tsdWithVeryLargeDataButton')).click();
         var tableSelectDialog = element(by.id('TableSelectDialog6-dialog'));
-        expect(takeScreenshot(tableSelectDialog)).toLookAs('tableSelectDialog-multiselect-veryLargeData');
+        expect(takeScreenshot(tableSelectDialog)).toLookAs('tableSelectD-multiselect-veryLargeData');
         element(by.id('TableSelectDialog6-cancel')).click();
 
     });

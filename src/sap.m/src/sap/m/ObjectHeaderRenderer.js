@@ -447,7 +447,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 * @private
 	 */
 	ObjectHeaderRenderer._renderNumber = function(oRM, oOH) {
-		if (!oOH.getNumber()) {
+		if (!oOH.getNumber() && !oOH.getAdditionalNumbers()) {
 			return;
 		}
 
@@ -464,8 +464,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			oObjectNumber.setTextDirection(oOH.getNumberTextDirection());
 			this._renderChildControl(oRM, oOH, oObjectNumber);
 		}
-
 		oRM.write("</div>"); // End Number/units container
+
+		this._renderAdditionalNumbers(oRM, oOH);
+
+	};
+
+	/**
+	 * Renders the HTML for the provided in aggregation additionalNumbers {@link sap.ui.core.RenderManager}.
+	 *
+	 * @param {sap.ui.core.RenderManager}
+	 *            oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.Control}
+	 *            oOH an object representation of the ObjectHeader
+	 * @private
+	 */
+	ObjectHeaderRenderer._renderAdditionalNumbers = function(oRM, oOH) {
+		var numbers = oOH.getAdditionalNumbers();
+		if (numbers && !numbers.length) {
+			return;
+		}
+
+		for (var i = 0; i < numbers.length; i++) {
+			oRM.write("<div");
+			oRM.writeAttribute("id", oOH.getId() + "-additionalNumber" + i);
+			oRM.addClass("sapMOHNumberDiv additionalOHNumberDiv");
+			oRM.writeClasses();
+			oRM.write(">");
+			numbers[i].setTextDirection(oOH.getNumberTextDirection());
+			this._renderChildControl(oRM, oOH, numbers[i]);
+
+			oRM.write("</div>"); // End container
+		}
 	};
 
 	/**
@@ -558,7 +588,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 * @private
 	 */
 	ObjectHeaderRenderer._renderFullTitle = function(oRM, oOH) {
-		if (!oOH.getNumber()) {
+		if (!oOH.getNumber() && !oOH.getAdditionalNumbers()) {
 			oRM.addClass("sapMOHTitleDivFull");
 		}
 	};
@@ -1245,7 +1275,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		oRM.writeAttribute("id", oOH.getId() + "-title");
 		oRM.addClass("sapMOHRTitle");
 
-		if (oOH.getTitleActive()) {
+		if (oOH.getTitle().length && oOH.getTitleActive()) {
 			oRM.addClass("sapMOHRTitleActive");
 		}
 		if (oOH.getShowTitleSelector()) {
@@ -1317,7 +1347,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			oRM.writeAttribute("dir", sTextDir.toLowerCase());
 		}
 		oRM.write(">");
-		if (oOH.getTitleActive()) {
+		if (oOH.getTitle().length && oOH.getTitleActive()) {
 			oRM.write("<a");
 			if (oOH.getTitleHref()) { // if title is link write it
 				oRM.writeAttributeEscaped("href", oOH.getTitleHref());

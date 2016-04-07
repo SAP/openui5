@@ -1,0 +1,52 @@
+/* ========================================== */
+/* CSS for control sap.uxap/ObjectPageLayout  */
+/* Belize theme                               */
+/* ========================================== */
+.sapUxAPObjectPageNavigation {
+	background: @sapUiObjectHeaderBackground;
+}
+
+.sapUxAPObjectPageLayout {
+	background: @sapUiGlobalBackgroundColor;
+}
+
+.sapUxAPObjectPageHeaderDetails {
+	.sapMObjectNumberEmph.sapMObjectNumber {
+		color: @sapUiGroupTitleTextColor;
+		> .sapMObjectNumberText {
+			font-family: @sapUiFontHeaderFamily;
+			font-size: 1.375rem;
+			font-weight: @sapUiFontHeaderWeight;
+		}
+		> .sapMObjectNumberUnit {
+			font-family: @sapUiFontFamily;
+			font-size: @sapMFontSmallSize;
+		}
+	}
+	.sapMOHTitle .sapMText {
+		color: @sapUiContentLabelColor;
+	}
+	.sapMLabel {
+		color: @sapUiContentLabelColor;
+	}
+}
+
+.sapUxAPObjectChildPage {
+	background: darken(@sapUiObjectHeaderBackground, 8);
+}
+
+.sapUxAPObjectPageNavigation .sapUxAPObjectChildPage {
+	height: 2.875rem;
+}
+
+.sapUiSizeCompact .sapUxAPObjectPageNavigation .sapUxAPObjectChildPage {
+	height: 1.875rem;
+}
+
+.sapUxAPObjectPageNavigation .sapUxAPITBar.sapUxAPObjectChildPage {
+	height: 2.9375rem;
+}
+
+.sapUiSizeCompact .sapUxAPObjectPageNavigation .sapUxAPITBar.sapUxAPObjectChildPage {
+	height: 1.9375rem;
+}

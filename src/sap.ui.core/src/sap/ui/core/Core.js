@@ -1261,38 +1261,46 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @param {string[]} aLibraries set of libraries that should be loaded
 	 * @param {object} [mOptions] configuration options
 	 * @param {boolean} [mOptions.async=true] whether to load the libraries async (default)
-	 * @returns {Promise|undefined} returns an Ecmascript 6 promise for async, otherwise <code>undefined</code>
+	 * @param {boolean} [mOptions.preloadOnly=false] whether to preload the libraries only (default is to require them as well)
+	 * @returns {Promise|undefined} returns a Promise in async mode, otherwise <code>undefined</code>
 	 *
 	 * @experimental Since 1.27.0 This API is not mature yet and might be changed or removed completely.
 	 * Productive code should not use it, except code that is delivered as part of UI5.
 	 * @private
+	 * @sap-restricted sap.ui.core,sap.ushell
 	 */
 	Core.prototype.loadLibraries = function(aLibraries, mOptions) {
 
-		mOptions = jQuery.extend({ async : true }, mOptions);
+		jQuery.sap.assert(Array.isArray(aLibraries), "aLibraries must be an array");
+
+		// default values for options
+		mOptions = jQuery.extend({ async : true, preloadOnly : false }, mOptions);
 
 		var that = this,
 			bPreload = this.oConfiguration.preload === 'sync' || this.oConfiguration.preload === 'async',
-			bAsync = mOptions.async;
+			bAsync = mOptions.async,
+			bRequire = !mOptions.preloadOnly;
 
 		function preloadLibs(oSyncPoint) {
 			if ( bPreload ) {
-				jQuery.each(aLibraries, function(i,sLibraryName) {
+				aLibraries.forEach(function(sLibraryName) {
 					jQuery.sap.preloadModules(sLibraryName + ".library-preload", !!oSyncPoint, oSyncPoint);
 				});
 			}
 		}
 
 		function requireLibs() {
-			jQuery.each(aLibraries, function(i,sLibraryName) {
-				jQuery.sap.require(sLibraryName + ".library");
-			});
-			if ( that.oThemeCheck && that.isInitialized() ) {
-				that.oThemeCheck.fireThemeChangedEvent(true);
+			if ( bRequire ) {
+				aLibraries.forEach(function(sLibraryName) {
+					jQuery.sap.require(sLibraryName + ".library");
+				});
+				if ( that.oThemeCheck && that.isInitialized() ) {
+					that.oThemeCheck.fireThemeChangedEvent(true);
+				}
 			}
 		}
 
-		if ( bAsync && bPreload ) {
+		if ( bAsync ) {
 
 			return new Promise(function(resolve, reject) {
 
@@ -1302,7 +1310,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 						requireLibs();
 						resolve();
 					} else {
-						reject();
+						reject(new Error("failed to preload libraries"));
 					}
 				});
 

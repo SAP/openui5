@@ -463,6 +463,26 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 		return mAccAttributes;
 	};
 
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	Icon.prototype.getAccessibilityInfo = function() {
+		if (this.getDecorative()) {
+			return null;
+		}
+
+		var bHasPressListeners = this.hasListeners("press");
+		var oIconInfo = IconPool.getIconInfo(this.getSrc());
+
+		return {
+			role: bHasPressListeners ? "button" : "img",
+			type: sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText(bHasPressListeners ? "ACC_CTR_TYPE_BUTTON" : "ACC_CTR_TYPE_IMAGE"),
+			description: this.getAlt() || this.getTooltip_AsString() || (oIconInfo ? oIconInfo.text || oIconInfo.name : ""),
+			focusable: bHasPressListeners
+		};
+	};
+
 	return Icon;
 
 });

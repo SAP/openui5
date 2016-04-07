@@ -315,6 +315,33 @@
 				assert.strictEqual($Icon.attr("tabindex"), undefined, "no tabindex exists after detach press event handler");
 			});
 
+			QUnit.test("getAccessibilityInfo", function (assert) {
+				var oIcon = new sap.ui.core.Icon({alt: "Alt", tooltip: "Tooltip", src: "sap-icon://search"});
+				ok(!!oIcon.getAccessibilityInfo, "Icon has a getAccessibilityInfo function");
+				var oInfo = oIcon.getAccessibilityInfo();
+				ok(!oInfo, "getAccessibilityInfo returns no info object in case of decorative icons");
+				oIcon.setDecorative(false);
+				oInfo = oIcon.getAccessibilityInfo();
+				strictEqual(oInfo.role, "img", "AriaRole");
+				strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("ACC_CTR_TYPE_IMAGE"), "Type");
+				strictEqual(oInfo.description, "Alt", "Description");
+				strictEqual(oInfo.focusable, false, "Focusable");
+				ok(oInfo.enabled === undefined || oInfo.enabled === null, "Enabled");
+				ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
+				oIcon.setAlt("");
+				oIcon.attachPress(function(){});
+				oInfo = oIcon.getAccessibilityInfo();
+				strictEqual(oInfo.role, "button", "AriaRole");
+				strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("ACC_CTR_TYPE_BUTTON"), "Type");
+				strictEqual(oInfo.description, "Tooltip", "Description");
+				strictEqual(oInfo.focusable, true, "Focusable");
+				oIcon.setTooltip("");
+				oInfo = oIcon.getAccessibilityInfo();
+				var oIconInfo = sap.ui.core.IconPool.getIconInfo(oIcon.getSrc());
+				strictEqual(oInfo.description, oIconInfo ? oIconInfo.text || oIconInfo.name : "", "Description");
+				oIcon.destroy();
+			});
+
 			QUnit.module("Property 'useIconTooltip'", {
 				createIcon: function(mSettings) {
 					this.oIcon = new sap.ui.core.Icon(mSettings).placeAt("qunit-fixture");

@@ -109,7 +109,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.oItemNavigation.setTabIndex0();
 
 			// Find the Image control and add delegate to it
-			var $Images = jQuery("img[useMap=" + this.getName() + "]");
+			var $Images = jQuery("img[usemap='#" + this.getName() + "']");
 			$Images.each(function(i, image) {
 				var id = image.getAttribute("id");
 				var imageControl = sap.ui.getCore().byId(id);

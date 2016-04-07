@@ -17,7 +17,6 @@ sap.ui.define([
 			var expanded = !navigationList.getExpanded();
 
 			navigationList.setExpanded(expanded);
-			navigationList.setWidth(expanded? '20rem': '3rem');
 		}
 	});
 

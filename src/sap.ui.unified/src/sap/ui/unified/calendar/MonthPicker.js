@@ -62,7 +62,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			/**
 			 * Month selection changed
 			 */
-			select : {}
+			select : {},
+
+			/**
+			 * If less than 12 months are displayed the <code>pageChange</code> event is fired
+			 * if the displayed months are changed by user navigation.
+			 * @since 1.38.0
+			 */
+			pageChange : {}
 
 		}
 	}});
@@ -414,7 +421,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			case "sapnextmodifiers":
 				if (iMonth < 11) {
 					iMonth++;
-					_updateMonths.call(this, iMonth);
+					_updateMonths.call(this, iMonth, true);
 				}
 				break;
 
@@ -422,21 +429,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			case "sappreviousmodifiers":
 				if (iMonth > 0) {
 					iMonth--;
-					_updateMonths.call(this, iMonth);
+					_updateMonths.call(this, iMonth, true);
 				}
 				break;
 
 			case "sappagedown":
 				if (iMonth < 12 - iMonths) {
 					iMonth = iMonth + iMonths;
-					_updateMonths.call(this, iMonth);
+					_updateMonths.call(this, iMonth, true);
 				}
 				break;
 
 			case "sappageup":
 				if (iMonth > iMonths) {
 					iMonth = iMonth - iMonths;
-					_updateMonths.call(this, iMonth);
+					_updateMonths.call(this, iMonth, true);
 				}
 				break;
 
@@ -526,7 +533,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	}
 
-	function _updateMonths(iMonth){
+	function _updateMonths(iMonth, bFireEvent){
 
 		var aMonths = this._oItemNavigation.getItemDomRefs();
 		if (aMonths.legth > 11) {
@@ -577,6 +584,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		}
 
 		this._oItemNavigation.focusItem(iMonth - iStartMonth);
+
+		if (bFireEvent) {
+			this.firePageChange();
+		}
+
 	}
 
 	return MonthPicker;

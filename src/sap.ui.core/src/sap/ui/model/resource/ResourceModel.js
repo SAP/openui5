@@ -72,7 +72,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 	 * Returns the resource bundle
 	 *
 	 * @param {object} oData
-	 * @return loaded resource bundle or Promise in async case
+	 * @returns {jQuery.sap.util.ResourceBundle|Promise} loaded resource bundle or Promise in async case
 	 * @private
 	 */
 	ResourceModel.prototype.loadResourceBundle = function(oData) {
@@ -98,7 +98,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 	 * @param {string} [oData.bundleUrl] the URL to the base .properties file of a bundle (.properties file without any locale information, e.g. "mybundle.properties")
 	 * @param {string} [oData.bundleName] the UI5 module name of the .properties file; this name will be resolved to a path like the paths of normal UI5 modules and ".properties" will then be appended (e.g. a name like "myBundle" can be given)
 	 * @param {string} [oData.bundleLocale] an optional locale; when not given, the default is the active locale from the UI5 configuration
-	 * @return {Promise} Promise in async case (async ResourceModel) which is resolved when the the enhancement is finished
+	 * @returns {Promise} Promise in async case (async ResourceModel) which is resolved when the the enhancement is finished
 	 * @since 1.16.1
 	 * @public
 	 */
@@ -155,8 +155,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 	 * Returns the value for the property with the given <code>sPropertyName</code>
 	 *
 	 * @param {string} sPath the path to the property
-	 * @type any
-	 * @return the value of the property
+	 * @returns {string} the value of the property
 	 * @public
 	 */
 	ResourceModel.prototype.getProperty = function(sPath) {
@@ -166,7 +165,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 	/**
 	 * Returns the resource bundle of this model
 	 *
-	 * @return loaded resource bundle or ECMA Script 6 Promise in asynchronous case
+	 * @returns {jQuery.sap.util.ResourceBundle|Promise} loaded resource bundle or ECMA Script 6 Promise in asynchronous case
 	 * @public
 	 */
 	ResourceModel.prototype.getResourceBundle = function() {

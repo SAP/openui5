@@ -128,7 +128,12 @@
 
 .sapUiCalItem{
 	background-color: @sapUiExtraLightBG;
-	color:@sapUiDeepText;
+	color: @sapUiDeepText;
+}
+
+.sapUiCalItemDsbl{
+	color: fade(@sapUiDeepText, 50);
+	background-color: fade(@sapUiExtraLightBG, 50);
 }
 
 /* hover and focus makes only sense on desktops. On mobile devices it's not needed */
@@ -159,6 +164,10 @@
 
 .sapUiCalItemWeekEnd{
 	background-color: @sapUiLightBG;
+}
+
+.sapUiCalItemWeekEnd.sapUiCalItemDsbl{
+	background-color: fade(@sapUiLightBG, 50);
 }
 
 .sapUiCalItemSel{

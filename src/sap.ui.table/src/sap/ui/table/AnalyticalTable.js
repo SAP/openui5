@@ -105,6 +105,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		this.setEnableColumnFreeze(true);
 		this.setEnableCellFilter(true);
 		this._aGroupedColumns = [];
+		this._bSuspendUpdateAnalyticalInfo = false;
 	};
 
 	AnalyticalTable.prototype.setFixedRowCount = function() {
@@ -124,9 +125,10 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		return this;
 	};
 
-	AnalyticalTable.prototype.getModel = function(oModel, sName) {
+	AnalyticalTable.prototype.getModel = function(sName) {
 		var oModel = Table.prototype.getModel.apply(this, arguments);
-		if (oModel) {
+		var oRowBindingInfo = this.getBindingInfo("rows");
+		if (oModel && oRowBindingInfo && oRowBindingInfo.model == sName) {
 			sap.ui.model.analytics.ODataModelAdapter.apply(oModel);
 		}
 		return oModel;
@@ -349,29 +351,16 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 
 
 	AnalyticalTable.prototype._updateTableRowContent = function(oRow, bChildren, bExpanded, bHidden, bSum, iLevel, sGroupHeaderText) {
-		//TBD: Cleanup and move ARIA realated coding into Extension
-		var sTitle = null,
-			$Row = oRow.$(),
+		var $Row = oRow.$(),
 			$FixedRow = oRow.$("fixed"),
 			$RowHdr = this.$().find("div[data-sap-ui-rowindex=" + $Row.attr("data-sap-ui-rowindex") + "]"),
 			aRefs = [$Row, $FixedRow, $RowHdr];
 
-		if (!bChildren) {
-			var iIndex = $RowHdr.attr("data-sap-ui-rowindex");
-			var mAttributes = this._getAccExtension()._getAriaAttributesFor(this, "ROWHEADER", {rowSelected: !oRow._bHidden && this.isIndexSelected(iIndex)});
-			sTitle = mAttributes["title"] || null;
-		}
-
-		$RowHdr.attr({
-			"aria-haspopup" : bChildren ? "true" : null,
-			"title" : sTitle
-		});
+		this._getAccExtension().updateAriaForAnalyticalRow(oRow, $Row, $RowHdr, $FixedRow, bChildren, bExpanded, iLevel);
 
 		for (var i = 0; i < aRefs.length; i++) {
 			aRefs[i].attr({
-				"aria-expanded" : bExpanded && bChildren ? bExpanded + "" : null,
-				"data-sap-ui-level" : iLevel,
-				"aria-level": iLevel + 1
+				"data-sap-ui-level" : iLevel
 			});
 
 			aRefs[i].data("sap-ui-level", iLevel);
@@ -409,16 +398,17 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			iFirstRow = this.getFirstVisibleRow(),
 			iFixedBottomRowCount = this.getFixedBottomRowCount(),
 			iCount = this.getVisibleRowCount(),
-			aCols = this.getColumns();
+			aCols = this.getColumns(),
+			that = this;
 
 		var fnRemoveClasses = function (oRow) {
 			var $row = oRow.getDomRefs(true);
 
 			$row.row.removeAttr("data-sap-ui-level");
 			$row.row.removeData("sap-ui-level");
-			$row.row.removeAttr('aria-level');
-			$row.row.removeAttr('aria-expanded');
 			$row.row.removeClass("sapUiTableGroupHeader sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
+
+			that._getAccExtension().updateAriaForAnalyticalRow(oRow, $row.rowScrollPart, $row.rowSelector, $row.rowFixedPart, false, false, -1);
 		};
 
 		var aRows = this.getRows();
@@ -477,11 +467,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 				var $td = jQuery(aCells[i].$().closest("td"));
 				if (oBinding.isMeasure(oCol.getLeadingProperty())) {
 					$td.addClass("sapUiTableMeasureCell");
-					if (!oContextInfo.nodeState.sum || oCol.getSummed()) {
-						$td.removeClass("sapUiTableCellHidden");
-					} else {
-						$td.addClass("sapUiTableCellHidden");
-					}
+					$td.toggleClass("sapUiTableCellHidden", oContextInfo.nodeState.sum && !oCol.getSummed());
 				} else {
 					$td.removeClass("sapUiTableMeasureCell");
 				}
@@ -648,8 +634,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 							that.insertColumn(oColumn, iLastGroupedIndex);
 						});
 					}
-					that._updateTableColumnDetails();
-					that.updateAnalyticalInfo();
+					that._updateColumns();
 					that._getRowContexts();
 				}
 			}));
@@ -668,8 +653,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 						aColumns[i]._bSkipUpdateAI = false;
 					}
 					that._bSupressRefresh = true;
-					that._updateTableColumnDetails();
-					that.updateAnalyticalInfo();
+					that._updateColumns();
 					that._getRowContexts();
 					that._bSupressRefresh = false;
 					that.fireGroup({column: undefined, groupedColumns: [], type: sap.ui.table.GroupEventType.ungroupAll});
@@ -840,6 +824,26 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		this.updateAnalyticalInfo(true, true);
 	};
 
+	/**
+	 * This function is used by some composite controls to avoid updating the AnalyticalInfo when several column are added to the table.
+	 * In order to finally update the AnalyticalInfo and request data, resumeUpdateAnalyticalInfo must be called.
+	 * @protected
+	 */
+	AnalyticalTable.prototype.suspendUpdateAnalyticalInfo = function() {
+		this._bSuspendUpdateAnalyticalInfo = true;
+	};
+
+	/**
+	 * This function is used by some composite controls to force updating the AnalyticalInfo
+	 * @param {boolean} bSuppressRefresh binding shall not refresh data
+	 * @param {boolean} bForceChange forces the binding to fire a change event
+	 * @protected
+	 */
+	AnalyticalTable.prototype.resumeUpdateAnalyticalInfo = function(bSupressRefresh, bForceChange) {
+		this._bSuspendUpdateAnalyticalInfo = false;
+		this._updateColumns(bSupressRefresh, bForceChange);
+	};
+
 	AnalyticalTable.prototype.addColumn = function(vColumn, bSuppressInvalidate) {
 		//@TODO: Implement addColumn(Column[] || oColumn)
 		var oColumn = this._getColumn(vColumn);
@@ -847,8 +851,8 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			this._addGroupedColumn(oColumn.getId());
 		}
 		Table.prototype.addColumn.call(this, oColumn, bSuppressInvalidate);
-		this._updateTableColumnDetails();
-		this.updateAnalyticalInfo(bSuppressInvalidate);
+
+		this._updateColumns(bSuppressInvalidate);
 		return this;
 	};
 
@@ -858,8 +862,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			this._addGroupedColumn(oColumn.getId());
 		}
 		Table.prototype.insertColumn.call(this, oColumn, iIndex, bSuppressInvalidate);
-		this._updateTableColumnDetails();
-		this.updateAnalyticalInfo(bSuppressInvalidate);
+		this._updateColumns(bSuppressInvalidate);
 		return this;
 	};
 
@@ -888,8 +891,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		this._aGroupedColumns = [];
 		var aResult = Table.prototype.removeAllColumns.apply(this, arguments);
 
-		this._updateTableColumnDetails();
-		this.updateAnalyticalInfo(bSuppressInvalidate);
+		this._updateColumns(bSuppressInvalidate);
 
 		return aResult;
 	};
@@ -909,12 +911,18 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		}
 	};
 
-	AnalyticalTable.prototype._updateColumns = function() {
-		this._updateTableColumnDetails();
-		this.updateAnalyticalInfo();
+	AnalyticalTable.prototype._updateColumns = function(bSupressRefresh, bForceChange) {
+		if (!this._bSuspendUpdateAnalyticalInfo) {
+			this._updateTableColumnDetails();
+			this.updateAnalyticalInfo(bSupressRefresh, bForceChange);
+		}
 	};
 
 	AnalyticalTable.prototype.updateAnalyticalInfo = function(bSupressRefresh, bForceChange) {
+		if (this._bSuspendUpdateAnalyticalInfo) {
+			return;
+		}
+
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
 			var aColumnInfo = this._getColumnInformation();
@@ -945,6 +953,10 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	};
 
 	AnalyticalTable.prototype._updateTableColumnDetails = function() {
+		if (this._bSuspendUpdateAnalyticalInfo) {
+			return;
+		}
+
 		var oBinding = this.getBinding("rows"),
 			oResult = oBinding && oBinding.getAnalyticalQueryResult();
 
@@ -1080,8 +1092,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 				this._addGroupedColumn(aColumns[i].getId());
 			}
 		}
-		this._updateTableColumnDetails();
-		this.updateAnalyticalInfo();
+		this._updateColumns();
 	};
 
 	AnalyticalTable.prototype._addGroupedColumn = function(sColumn) {

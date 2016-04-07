@@ -1,0 +1,26 @@
+[{
+	"DbKey": "A1",
+	"Id": "A1",
+	"Version": 1,
+	"Description": "Desc",
+	"DetObjType": "DET1",
+	"InvestigationReason": "IOT1",
+	"InvestigationReasonDescription": "DET 1",
+	"SelectionParamName": "SELPARAM1",
+	"Sign": "I",
+	"SelectOption": "EQ",
+	"Low": "123"
+},
+{
+	"DbKey": "A10",
+	"Id": "A10",
+	"Version": 1,
+	"Description": "Desc",
+	"DetObjType": "DET1",
+	"InvestigationReason": "IOT1",
+	"InvestigationReasonDescription": "DET 1",
+	"SelectionParamName": "SELPARAM1",
+	"Sign": "I",
+	"SelectOption": "EQ",
+	"Low": "123"
+}]

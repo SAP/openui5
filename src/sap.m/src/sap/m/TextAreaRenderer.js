@@ -69,11 +69,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 		}
 	};
 
-	// Returns the accessibility state of the control.
-	TextAreaRenderer.getAccessibilityState = function(oControl) {
-		var mAccessibilityState = InputBaseRenderer.getAccessibilityState.call(this, oControl);
-		mAccessibilityState.multiline = true;
-		return mAccessibilityState;
+	// role=textbox or aria-multiline should not be explicitly defined
+	TextAreaRenderer.getAriaRole = function(oControl) {
+		return "";
 	};
 
 	// Add extra attributes to TextArea

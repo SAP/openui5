@@ -863,5 +863,155 @@
         "references": []
       }
     ]
+  },
+  "1.36.5": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "c065032dfe28a5398c2c7630c31907c849be56b2",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "v2.ODataModel: force Entity update by setting ETag to \u0027*\u0027",
+        "references": []
+      },
+      {
+        "id": "40ddb7f8648f2485557976b6142f06466632b44a",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnalyticalBinding - Aborting of Requests",
+        "references": []
+      },
+      {
+        "id": "2de7d40dbab4ce4c117e92d5602a7b78527f4548",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FIX",
+        "text": "Fix typo in \"FieldGroup\" demo page of Explored",
+        "references": []
+      },
+      {
+        "id": "37e3d72f740768b4c32eec1fde12eea43def8258",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataAnnotations: Reject Promise with Error Instance",
+        "references": []
+      },
+      {
+        "id": "c82a79d2ebcecf067d72695612cf2fa9ed4d6b22",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModel: Fire Annotation-Events asynchronously in sync mode",
+        "references": []
+      },
+      {
+        "id": "1b91cea946be12471e894b446caa6c03f9b0e0de",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModelV2: include metadata payload for media entities",
+        "references": []
+      },
+      {
+        "id": "d222a28f8c828b8577bda3c57327b29863bb7924",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.routing: correctly forward the route parameter to the initial page of target container",
+        "references": []
+      },
+      {
+        "id": "68b994f9c8667675eec396b6472c7900e8aaf2c2",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.ItemNavigation: make focusItem more fail-safe when called without event",
+        "references": []
+      },
+      {
+        "id": "524aee72158c3879fa6a279ced3f5d78b562a09c",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.delegate.ItemNavigation: no items",
+        "references": []
+      },
+      {
+        "id": "7381c74109b4bb51e4702a28017fb724ef11dc90",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.routing.Views: only destroy non-null view instance",
+        "references": []
+      },
+      {
+        "id": "735bb6eb972adb83da68a3ebbceec5046f39d06d",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FIX",
+        "text": "support.plugins.Interaction: cross domain issue is fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.36.6": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "eb82b706842c1aa78f89d92d15a43b6d60af7c23",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "ManagedObject: Propagate properties when setting parent to null\"",
+        "references": []
+      },
+      {
+        "id": "73ec41477d8f6a487cf905b475ea91dce36f5326",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnalyticalBinding - Added Custom URL Paramaters to Download URL",
+        "references": []
+      },
+      {
+        "id": "bacbb75b9dc5d4703fd6b1dcf2b7ba3a6bd7e901",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "ManagedObject: Propagate properties when setting parent to null",
+        "references": []
+      },
+      {
+        "id": "15a450598ea68c56c8eae5978c1f9fac93bc5527",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataAnnotations: AnnotationParser - Error Messages in Debug Mode",
+        "references": []
+      },
+      {
+        "id": "d9af37de854c04490a911d34b663d6bd72c28b11",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FIX",
+        "text": "Rendering: visible property should work with preserved controls",
+        "references": []
+      },
+      {
+        "id": "d380ad9ace977aad0b76af3a870ec2f22107ec4e",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "jquery.sap.encoder: Fix URL validation according to RFC 3986, 6068",
+        "references": []
+      },
+      {
+        "id": "570035b218c57e27885d686da794c2def17f9b7a",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Icon: press event is fired twice on mobile device",
+        "references": []
+      },
+      {
+        "id": "fc471307e7481668d898368a147f39da58502d1e",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.IconPool: icon \"flag\" and \"search\" should be excluded from mirroring in RTL",
+        "references": []
+      },
+      {
+        "id": "5f5e102a81db026eafdcc5dc69a96a70fd8075e7",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: wrong header for merge requests",
+        "references": []
+      }
+    ]
   }
 }

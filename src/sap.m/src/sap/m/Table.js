@@ -450,7 +450,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		}
 
 		// toggle select all header checkbox and fire its event
-		if (oEvent.target === this.getDomRef("tblHeader") && this._selectAllCheckBox) {
+		if (this._selectAllCheckBox && oEvent.target === this.getDomRef("tblHeader")) {
 			this._selectAllCheckBox.setSelected(!this._selectAllCheckBox.getSelected()).fireSelect();
 			oEvent.preventDefault();
 			oEvent.setMarked();
@@ -459,14 +459,14 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 
 	// Handle tab key
 	Table.prototype.onsaptabnext = function(oEvent) {
-		if (oEvent.isMarked()) {
+		if (oEvent.isMarked() || this.getKeyboardMode() == sap.m.ListKeyboardMode.Edit) {
 			return;
 		}
 
 		var $Row = jQuery();
 		if (oEvent.target.id == this.getId("nodata")) {
 			$Row = this.$("nodata");
-		} if (this.isHeaderRowEvent(oEvent)) {
+		} else if (this.isHeaderRowEvent(oEvent)) {
 			$Row = this.$("tblHeader");
 		} else if (this.isFooterRowEvent(oEvent)) {
 			$Row = this.$("tblFooter");
@@ -480,7 +480,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 
 	// Handle shift-tab key
 	Table.prototype.onsaptabprevious = function(oEvent) {
-		if (oEvent.isMarked()) {
+		if (oEvent.isMarked() || this.getKeyboardMode() == sap.m.ListKeyboardMode.Edit) {
 			return;
 		}
 

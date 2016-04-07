@@ -95,6 +95,24 @@
 					oObjectHeader.destroy();
 				});
 
+				test("Title text div is not rendered when there is no text for the title", function () {
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						title: ""
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					// Assert
+					var $sTitle = oObjectHeader.$("txt");
+					ok(!$sTitle.attr("href"), "No title text div is rendered");
+
+					// Clean up
+					oObjectHeader.destroy();
+				});
+
 				test("Icon should be rendered", function () {
 					// Arrange
 					var oObjectHeader = createObjectHeader({
@@ -281,6 +299,25 @@
 					oObjectHeader.destroy();
 				});
 
+				test("titleActive is set to true but no Title is provided", function () {
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						title: "",
+						titleActive: true
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					// Assert
+					var $objectHeader = oObjectHeader.$("title");
+					ok(!$objectHeader.hasClass("sapMOHRTitleActive"), "Title div doesn't have the active class \"sapMOHRTitleActive\".");
+
+					// Clean up
+					oObjectHeader.destroy();
+				});
+
 				test("Intro is sap.mLink when it is active", function () {
 					// Arrange
 					var oObjectHeader = createObjectHeader({
@@ -326,6 +363,22 @@
 					qutils.triggerEvent("tap", oObjectHeader.$("txt").children(0));
 					equal(domRef.id, oObjectHeader.$("txt").attr("id"), "When clicking inner span element of the \"a\" element event should return \"a\" element id as source");
 					domRef = null;
+
+					// Clean up
+					oObjectHeader.destroy();
+				});
+
+				test("Active title getFocusDomRef", function() {
+					var oObjectHeader = createObjectHeader({
+						title: "OH title",
+						titleActive: true
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					equal(oObjectHeader.getFocusDomRef().attr("id"), oObjectHeader.$("txt").attr("id"), "Focus domRef is correct");
 
 					// Clean up
 					oObjectHeader.destroy();

@@ -742,14 +742,24 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	};
 
 	Input.prototype.onsapescape = function(oEvent) {
+		var lastValue;
+
 		if (this._oSuggestionPopup && this._oSuggestionPopup.isOpen()) {
 			// mark the event as already handled
 			oEvent.originalEvent._sapui_handledByControl = true;
 			this._iPopupListSelectedIndex = -1;
 			this._closeSuggestionPopup();
 
-			// if popup is open, simply returns from here to prevent from setting the input to the last known value.
-			return;
+			// restore the initial value that was there before suggestion dialog
+			if (this._sBeforeSuggest !== undefined) {
+				if (this._sBeforeSuggest !== this.getValue()) {
+					lastValue = this._lastValue;
+					this.setValue(this._sBeforeSuggest);
+					this._lastValue = lastValue; // override InputBase.onsapescape()
+				}
+				this._sBeforeSuggest = undefined;
+			}
+			return; // override InputBase.onsapescape()
 		}
 
 		if (InputBase.prototype.onsapescape) {
@@ -1159,6 +1169,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					} else {
 						oInput._oList.destroyItems();
 					}
+				}).attachBeforeOpen(function() {
+					oInput._sBeforeSuggest = oInput.getValue();
 				}))
 			:
 				(new Dialog(oInput.getId() + "-popup", {
@@ -1770,6 +1782,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		this._iSetCount++;
 		InputBase.prototype.setValue.call(this, sValue);
 		return this;
+	};
+
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	Input.prototype.getAccessibilityInfo = function() {
+		var oInfo = InputBase.prototype.getAccessibilityInfo.apply(this, arguments);
+		oInfo.description = ((oInfo.description || "") + " " + this.getDescription()).trim();
+		return oInfo;
 	};
 
 	/**

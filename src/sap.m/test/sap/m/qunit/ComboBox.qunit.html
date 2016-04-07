@@ -1317,6 +1317,73 @@
 			oComboBox.destroy();
 		});
 
+		/* ------------------------------ */
+		/* getLabels()                    */
+		/* ------------------------------ */
+
+		QUnit.test("it should return an array with one object which is the current target of the ariaLabelledBy association", function(assert) {
+
+			// system under test
+			var oLabel = sap.m.Label();
+			var oComboBoxTextField = new sap.m.ComboBoxTextField({
+				ariaLabelledBy: [
+					oLabel
+				]
+			});
+
+			// assertions
+			assert.strictEqual(oComboBoxTextField.getLabels().length, 1);
+			assert.ok(oComboBoxTextField.getLabels()[0] === oLabel);
+
+			// cleanup
+			oComboBoxTextField.destroy();
+			oLabel.destroy();
+		});
+
+		QUnit.test("it should return an array with one object which is the label referencing the text field", function(assert) {
+
+			// system under test
+			var oComboBoxTextField = new sap.m.ComboBoxTextField();
+			var oLabel = new sap.m.Label({
+				labelFor: oComboBoxTextField
+			});
+
+			// assertions
+			assert.strictEqual(oComboBoxTextField.getLabels().length, 1);
+			assert.ok(oComboBoxTextField.getLabels()[0] === oLabel);
+
+			// cleanup
+			oComboBoxTextField.destroy();
+			oLabel.destroy();
+		});
+
+		QUnit.test("it should return an array of objects which are the current targets of the ariaLabelledBy association and the labels referencing the text field", function(assert) {
+
+			// system under test
+			var oLabel1 = new sap.m.Label({
+				id: "lorem-ipsum-label",
+				labelFor: oComboBoxTextField
+			});
+			var oComboBoxTextField = new sap.m.ComboBoxTextField({
+				ariaLabelledBy: [
+					"lorem-ipsum-label"
+				]
+			});
+			var oLabel2 = new sap.m.Label({
+				labelFor: oComboBoxTextField
+			});
+
+			// assertions
+			assert.strictEqual(oComboBoxTextField.getLabels().length, 2);
+			assert.ok(oComboBoxTextField.getLabels()[0] === oLabel1);
+			assert.ok(oComboBoxTextField.getLabels()[1] === oLabel2);
+
+			// cleanup
+			oComboBoxTextField.destroy();
+			oLabel1.destroy();
+			oLabel2.destroy();
+		});
+
 		QUnit.module("addItem");
 
 		QUnit.test("addItem()", function(assert) {
@@ -2129,7 +2196,7 @@
 			var sExpectedActiveDescendantId = oExpectedItem.getId();
 
 			oComboBox.open();
-			this.clock.tick(1000);	// wait 1s after the open animation is completed
+			this.clock.tick(1000); // wait 1s after the open animation is completed
 
 			// assert
 			assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), sExpectedActiveDescendantId, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
@@ -4625,6 +4692,7 @@
 				assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("role"), "combobox");
 				assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-expanded"), "false");
 				assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-autocomplete"), "both");
+				assert.ok(oComboBox.$("inner").hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXTEXTFIELD + "InnerWidthExtraPadding"));
 				assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-required"), undefined);
 				assert.ok(oComboBox.$().hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE), 'The combo box element has the CSS class "' + oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + '"');
 				assert.ok(oComboBox.$("arrow").length, "The HTML span element for the arrow exists");
@@ -4640,6 +4708,25 @@
 				// cleanup
 				oComboBox.destroy();
 			});
+		});
+
+		QUnit.test("it should not render the arrow button", function(assert) {
+
+			// system under test
+			var oComboBox = new sap.m.ComboBox({
+				showButton: false
+			});
+
+			// arrange
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.ok(oComboBox.getDomRef("arrow") === null);
+			assert.ok(!oComboBox.$("inner").hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXTEXTFIELD + "InnerWidthExtraPadding"));
+
+			// cleanup
+			oComboBox.destroy();
 		});
 
 		QUnit.module("setBusy()");
@@ -4909,6 +4996,7 @@
 			this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 
 			sap.ui.test.qunit.triggerTouchEvent("touchstart", oComboBox.getOpenArea(), {
+				srcControl: oComboBox,
 				touches: {
 					0: {
 						pageX: 10,
@@ -4933,6 +5021,7 @@
 			fnPickerIsOpenSpy = this.spy(oComboBox.getPicker(), "isOpen");
 
 			sap.ui.test.qunit.triggerTouchEvent("touchend", oComboBox.getOpenArea(), {
+				srcControl: oComboBox,
 				targetTouches: {
 					0: {
 						pageX: 10,
@@ -4944,6 +5033,7 @@
 			});
 
 			sap.ui.test.qunit.triggerTouchEvent("tap", oComboBox.getOpenArea(), {
+				srcControl: oComboBox,
 				targetTouches: {
 					0: {
 						pageX: 10,
@@ -5066,7 +5156,7 @@
 			sap.ui.getCore().applyChanges();
 			oComboBox.focus();
 			oComboBox.open();
-			this.clock.tick(1000);	// wait 1s after the open animation is completed
+			this.clock.tick(1000); // wait 1s after the open animation is completed
 			var oItemDomRef = oItem.getDomRef();
 			oComboBox.getFocusDomRef().value = "foo";
 
@@ -5326,7 +5416,7 @@
 
 			// act
 			sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.F4);	// close the picker pop-up
-			this.clock.tick(1000);	// wait 1s after the close animation is completed
+			this.clock.tick(1000); // wait 1s after the close animation is completed
 
 			// assert
 			assert.strictEqual(oComboBox.getVisibleItems().length, 4, "The filter is cleared");
@@ -6116,7 +6206,7 @@
 			oComboBox.destroy();
 		});
 
-		QUnit.test("onsapdown the typed value should not gets selected (test case 1)", function(assert) {
+		QUnit.test("onsapdown the typed value should not get selected (test case 1)", function(assert) {
 
 			// system under test
 			var oExpectedItem;
@@ -6163,7 +6253,7 @@
 			oComboBox.destroy();
 		});
 
-		QUnit.test("onsapdown the typed value should not gets selected (test case 2)", function(assert) {
+		QUnit.test("onsapdown the typed value should not get selected (test case 2)", function(assert) {
 
 			// system under test
 			var oExpectedItem;
@@ -6197,8 +6287,8 @@
 			});
 			oComboBox.getFocusDomRef().value = "A";
 			sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
+			this.clock.tick(0);
 			jQuery(oComboBox.getFocusDomRef()).cursorPos(0);
-			this.clock.tick(1000);
 
 			// act
 			sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
@@ -6616,7 +6706,7 @@
 			oComboBox.destroy();
 		});
 
-		QUnit.test("onsapup the typed value should not gets selected (test case 2)", function(assert) {
+		QUnit.test("onsapup the typed value should not get selected (test case 2)", function(assert) {
 
 			// system under test
 			var oExpectedItem;
@@ -6651,6 +6741,7 @@
 			});
 			oComboBox.getFocusDomRef().value = "A";
 			sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
+			this.clock.tick(0);
 			jQuery(oComboBox.getFocusDomRef()).cursorPos(0);
 			this.clock.tick(1000);
 
@@ -8201,7 +8292,7 @@
 		});
 
 		// BCP 1670033530
-		QUnit.test("it should not select the disabled item", function(assert) {
+		QUnit.test("it should not select the disabled item while typing in the text field", function(assert) {
 
 			// system under test
 			var oComboBox = new sap.m.ComboBox({
@@ -9069,6 +9160,130 @@
 			oComboBox.destroy();
 		});
 
+		QUnit.test("it should change the value and fire the change event", function(assert) {
+
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				phone: true,
+				tablet: false
+			});
+
+			// system under test
+			var oComboBox = new sap.m.ComboBox();
+
+			// arrange
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oComboBox.focus();
+			oComboBox.open();
+			this.clock.tick(1000);
+			var oPickerTextField = oComboBox.getPickerTextField();
+			oPickerTextField.focus();
+			var oPickerTextFieldDomRef = oPickerTextField.getFocusDomRef();
+			var fnChangeSpy = this.spy(oComboBox, "fireChange");
+
+			// act
+			oPickerTextField.getFocusDomRef().value = "lorem ipsum";
+			sap.ui.qunit.QUnitUtils.triggerEvent("input", oPickerTextFieldDomRef);
+			sap.ui.test.qunit.triggerKeydown(oPickerTextFieldDomRef, jQuery.sap.KeyCodes.ENTER);
+			oComboBox.close();
+
+			// assert
+			assert.strictEqual(fnChangeSpy.callCount, 1, "The change event was fired");
+			assert.strictEqual(oComboBox.getValue(), "lorem ipsum");
+
+			// cleanup
+			oComboBox.destroy();
+		});
+
+		QUnit.test("it should fire the change event after the dialog is closed", function(assert) {
+
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				phone: true,
+				tablet: false
+			});
+
+			// system under test
+			var oComboBox = new sap.m.ComboBox();
+
+			// arrange
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oComboBox.focus();
+			oComboBox.open();
+			this.clock.tick(1000); // tick the clock ahead some 1 second, after the open animation is completed
+			var oPickerTextField = oComboBox.getPickerTextField();
+			oPickerTextField.focus();
+			var oPickerTextFieldDomRef = oPickerTextField.getFocusDomRef();
+			var fnChangeSpy = this.spy(oComboBox, "fireChange");
+
+			// act
+			oPickerTextField.getFocusDomRef().value = "lorem ipsum";
+			sap.ui.qunit.QUnitUtils.triggerEvent("input", oPickerTextFieldDomRef);
+			oComboBox.close();
+			this.clock.tick(1000); // tick the clock ahead some 1 second, after the close animation is completed
+
+			// assert
+			assert.strictEqual(fnChangeSpy.callCount, 1, "The change event was fired");
+			assert.strictEqual(oComboBox.getValue(), "lorem ipsum");
+			assert.ok(oComboBox.getFocusDomRef() === document.activeElement);
+
+			// cleanup
+			oComboBox.destroy();
+		});
+
+		QUnit.test("it should close the dialog when the close button is pressed", function(assert) {
+
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				phone: true,
+				tablet: false
+			});
+
+			// system under test
+			var oComboBox = new sap.m.ComboBox();
+
+			// arrange
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oComboBox.open();
+			var oParams = {
+				touches: {
+					0: {
+						pageX: 10,
+						length: 1
+					},
+
+					length: 1
+				},
+
+				targetTouches: {
+					0: {
+						pageX: 10,
+						length: 1
+					},
+
+					length: 1
+				}
+			};
+
+			var oButton = oComboBox.getPicker().getButtons()[0];
+
+			// act
+			sap.ui.test.qunit.triggerTouchEvent("touchstart", oButton.getDomRef(), oParams);
+			oButton.focus();
+			sap.ui.test.qunit.triggerTouchEvent("touchend", oButton.getDomRef(), oParams);
+			sap.ui.test.qunit.triggerTouchEvent("tap", oButton.getDomRef(), oParams);
+			this.clock.tick(1000);
+
+			// assert
+			assert.strictEqual(oComboBox.isOpen(), false);
+
+			// cleanup
+			oComboBox.destroy();
+		});
+
 		/* ------------------------------ */
 		/* others                         */
 		/* ------------------------------ */
@@ -9099,6 +9314,39 @@
 			assert.strictEqual(oComboBox.isItemVisible(oItem), false);
 
 			// cleanup
+			oComboBox.destroy();
+		});
+
+		QUnit.module("getAccessibilityInfo");
+
+		QUnit.test("getAccessibilityInfo", function(assert) {
+			var oComboBox = new sap.m.ComboBox({
+				value: "Value",
+				tooltip: "Tooltip",
+				placeholder: "Placeholder"
+			});
+			assert.ok(!!oComboBox.getAccessibilityInfo, "ComboBox has a getAccessibilityInfo function");
+			var oInfo = oComboBox.getAccessibilityInfo();
+			assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
+			assert.strictEqual(oInfo.role, oComboBox.getRenderer().getAriaRole(), "AriaRole");
+			assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_COMBO"), "Type");
+			assert.strictEqual(oInfo.description, "Value Placeholder Tooltip", "Description");
+			assert.strictEqual(oInfo.focusable, true, "Focusable");
+			assert.strictEqual(oInfo.enabled, true, "Enabled");
+			assert.strictEqual(oInfo.editable, true, "Editable");
+			oComboBox.setValue("");
+			oComboBox.setEnabled(false);
+			oInfo = oComboBox.getAccessibilityInfo();
+			assert.strictEqual(oInfo.description, "Placeholder Tooltip", "Description");
+			assert.strictEqual(oInfo.focusable, false, "Focusable");
+			assert.strictEqual(oInfo.enabled, false, "Enabled");
+			assert.strictEqual(oInfo.editable, false, "Editable");
+			oComboBox.setEnabled(true);
+			oComboBox.setEditable(false);
+			oInfo = oComboBox.getAccessibilityInfo();
+			assert.strictEqual(oInfo.focusable, true, "Focusable");
+			assert.strictEqual(oInfo.enabled, true, "Enabled");
+			assert.strictEqual(oInfo.editable, false, "Editable");
 			oComboBox.destroy();
 		});
 		</script>

@@ -110,7 +110,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './ListIte
 		rm.addClass("sapMListUl");
 		rm.writeAttribute("id", oControl.getId("listUl"));
 		if (bRenderItems || oControl.getShowNoData()) {
-			rm.writeAttribute("tabindex", "0");
+			rm.writeAttribute("tabindex", oControl.getKeyboardMode() == sap.m.ListKeyboardMode.Edit ? -1 : 0);
 		}
 
 		// separators
@@ -148,7 +148,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './ListIte
 		rm.write("<div");
 		rm.writeAttribute("id", oControl.getId("after"));
 		if (bRenderItems || oControl.getShowNoData()) {
-			rm.writeAttribute("tabindex", "0");
+			rm.writeAttribute("tabindex", oControl.getKeyboardMode() == sap.m.ListKeyboardMode.Edit ? -1 : 0);
 		}
 		rm.write("></div>");
 
@@ -219,7 +219,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './ListIte
 		var oHeaderTBar = oControl.getHeaderToolbar();
 		if (oHeaderTBar) {
 			return oHeaderTBar.getTitleId();
-		} else if (oControl.getHeaderText()) {
+		}
+		if (oControl.getHeaderText()) {
 			return oControl.getId("header");
 		}
 	};
@@ -285,7 +286,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './ListIte
 	 */
 	ListBaseRenderer.renderNoData = function(rm, oControl) {
 		rm.write("<li");
-		rm.writeAttribute("tabindex", "-1");
+		rm.writeAttribute("tabindex", oControl.getKeyboardMode() == sap.m.ListKeyboardMode.Navigation ? -1 : 0);
 		rm.writeAttribute("id", oControl.getId("nodata"));
 		rm.addClass("sapMLIB sapMListNoData sapMLIBTypeInactive");
 		ListItemBaseRenderer.addFocusableClasses.call(ListItemBaseRenderer, rm);

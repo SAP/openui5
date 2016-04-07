@@ -55,10 +55,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.InputType",
 			"sap.m.LabelDesign",
 			"sap.m.ListHeaderDesign",
+			"sap.m.ListKeyboardMode",
 			"sap.m.ListMode",
 			"sap.m.ListSeparators",
 			"sap.m.ListType",
+			"sap.m.ListKeyboardNavigationMode",
 			"sap.m.LoadState",
+			"sap.m.MenuButtonMode",
 			"sap.m.OverflowToolbarPriority",
 			"sap.m.P13nPanelType",
 			"sap.m.PageBackgroundDesign",
@@ -115,6 +118,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.FeedInput",
 			"sap.m.FeedListItem",
 			"sap.m.FlexBox",
+			"sap.m.FormattedText",
 			"sap.m.GenericTile",
 			"sap.m.GroupHeaderListItem",
 			"sap.m.GrowingList",
@@ -122,6 +126,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.IconTabBar",
 			"sap.m.IconTabHeader",
 			"sap.m.Image",
+			"sap.m.ImageContent",
 			"sap.m.Input",
 			"sap.m.InputBase",
 			"sap.m.InputListItem",
@@ -131,6 +136,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.ListBase",
 			"sap.m.ListItemBase",
 			"sap.m.MaskInput",
+			"sap.m.Menu",
+			"sap.m.MenuButton",
 			"sap.m.MessagePage",
 			"sap.m.MessagePopover",
 			"sap.m.MessageStrip",
@@ -146,6 +153,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.ObjectHeader",
 			"sap.m.ObjectIdentifier",
 			"sap.m.ObjectListItem",
+			"sap.m.ObjectMarker",
 			"sap.m.ObjectNumber",
 			"sap.m.ObjectStatus",
 			"sap.m.OverflowToolbar",
@@ -225,6 +233,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.IconTabSeparator",
 			"sap.m.OverflowToolbarLayoutData",
 			"sap.m.MaskInputRule",
+			"sap.m.MenuItem",
 			"sap.m.MessagePopoverItem",
 			"sap.m.PageAccessibleLandmarkInfo",
 			"sap.m.P13nFilterItem",
@@ -1411,6 +1420,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 	};
 
+	/**
+	 * Defines the keyboard handling behavior of the <code>sap.m.List</code> or <code>sap.m.Table</code>.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.38.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.ListKeyboardMode = {
+
+		/**
+		 * This default mode is suitable if the number of items is unlimited or if there is no editable field within the item.
+		 * While the last/first interactive element within an item has the focus, pressing tab/shift+tab moves the focus to the next/previous element in the tab chain after/before the <code>sap.m.List</code> or <code>sap.m.Table</code>.
+		 * @public
+		 */
+		Navigation : "Navigation",
+
+		/**
+		 * This mode is suitable if the number of items is limited and if there are editable fields within the item.
+		 * While the last/first interactive element within an item has the focus, pressing tab/shift+tab moves the focus to the next/previous element in the tab chain after/before the item </code>.
+		 * @public
+		 */
+		Edit : "Edit"
+
+	};
 
 	/**
 	 * Defines which separator style will be applied for the items.
@@ -1487,6 +1521,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	};
 
 	/**
+	 * Defines the keyboard navigation mode.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.38
+	 * @ui5-metamodel This enumeration will also be described in the UI5 (legacy) design time meta model.
+	 */
+	sap.m.ListKeyboardNavigationMode = {
+
+		/**
+		 * Keyboard navigation is disabled.
+		 * @public
+		 */
+		None: "None",
+
+		/**
+		 * Keyboard navigation is delimited at the last item or first item of the list.
+		 * @public
+		 */
+		Delimited: "Delimited"
+	};
+
+	/**
 	 * Enumeration of possible load statuses.
 	 *
 	 * @enum {string}
@@ -1519,6 +1576,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 * @public
 		 */
 		Disabled : "Disabled"
+	};
+
+	/**
+	 * Different mode for a MenuButton (predefined types)
+	 *
+	 * @enum {string}
+	 * @since 1.38.0
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.MenuButtonMode = {
+
+		/**
+		 * Default regular type (Menu button appears as a regular button, pressing opens a menu)
+		 * @public
+		 */
+		Regular: "Regular",
+
+		/**
+		 * Split type (Menu button appears as a split button, pressing fires the default action a menu,
+		 * pressing the arrow part opens a menu)
+		 * @public
+		 */
+		Split: "Split"
 	};
 
 	/**
@@ -2089,6 +2170,78 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 * @public
 		 */
 		None : "None"
+
+	};
+
+
+	/**
+	 * Predefined types for ObjectMarker.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.ObjectMarkerType = {
+
+		/**
+		 * Flagged type
+		 * @public
+		 */
+		Flagged : "Flagged",
+
+		/**
+		 * Favorite type
+		 * @public
+		 */
+		Favorite : "Favorite",
+
+		/**
+		 * Draft type
+		 * @public
+		 */
+		Draft : "Draft",
+
+		/**
+		 * Locked type
+		 * @public
+		 */
+		Locked : "Locked",
+
+		/**
+		 * Unsaved type
+		 * @public
+		 */
+		Unsaved : "Unsaved"
+
+	};
+
+
+	/**
+	 * Predefined visibility for ObjectMarker.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.ObjectMarkerVisibility = {
+
+		/**
+		 * Shows only icon
+		 * @public
+		 */
+		IconOnly : "IconOnly",
+
+		/**
+		 * Shows only text
+		 * @public
+		 */
+		TextOnly : "TextOnly",
+
+		/**
+		 * Shows icon and text
+		 * @public
+		 */
+		IconAndText : "IconAndText"
 
 	};
 

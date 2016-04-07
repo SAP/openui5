@@ -611,7 +611,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				ontouchstart: function(oEvent) {
 					var oPickerDomRef = this.getDomRef("cont");
 
-					if (oEvent.target === oPickerDomRef) {
+					if ((oEvent.target === oPickerDomRef) || (oEvent.srcControl instanceof sap.ui.core.Item)) {
 						that._bProcessChange = false;
 					}
 				}
@@ -1320,17 +1320,18 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @returns {sap.m.SelectList}
 		 */
 		Select.prototype.createList = function() {
+			var mListKeyboardNavigationMode = sap.m.ListKeyboardNavigationMode,
+				sKeyboardNavigationMode = sap.ui.Device.system.phone ? mListKeyboardNavigationMode.Delimited : mListKeyboardNavigationMode.None;
 
-			// list to use inside the picker
 			this._oList = new SelectList({
-				width: "100%"
+				width: "100%",
+				keyboardNavigationMode: sKeyboardNavigationMode
 			}).addEventDelegate({
 				ontap: function(oEvent) {
 					this.close();
 				}
 			}, this)
 			.attachSelectionChange(this.onSelectionChange, this);
-
 			return this._oList;
 		};
 
@@ -1980,6 +1981,34 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			}
 
 			return this;
+		};
+
+		/**
+		 * @see {sap.ui.core.Control#getAccessibilityInfo}
+		 * @protected
+		 */
+		Select.prototype.getAccessibilityInfo = function() {
+			var oInfo = {
+				role: this.getRenderer().getAriaRole(this),
+				focusable: this.getEnabled(),
+				enabled: this.getEnabled()
+			};
+
+			if (this.getType() === "IconOnly") {
+				var sDesc = this.getTooltip_AsString();
+				if (!sDesc) {
+					var oIconInfo = IconPool.getIconInfo(this.getIcon());
+					sDesc = oIconInfo && oIconInfo.text ? oIconInfo.text : "";
+				}
+
+				oInfo.type = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON");
+				oInfo.description = sDesc;
+			} else if (this.getType() === "Default") {
+				oInfo.type = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_COMBO");
+				oInfo.description = this._getSelectedItemText();
+			}
+
+			return oInfo;
 		};
 
 		return Select;

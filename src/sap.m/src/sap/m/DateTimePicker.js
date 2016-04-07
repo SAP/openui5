@@ -394,9 +394,16 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 		if (oDate) {
 			var oDateTime = this._oSliders.getTimeValues();
-			oDate.setHours(oDateTime.getHours());
-			oDate.setMinutes(oDateTime.getMinutes());
-			oDate.setSeconds(oDateTime.getSeconds());
+			var sPattern = this._oSliders.getFormat();
+			if (sPattern.search("h") >= 0 || sPattern.search("H") >= 0) {
+				oDate.setHours(oDateTime.getHours());
+			}
+			if (sPattern.search("m") >= 0) {
+				oDate.setMinutes(oDateTime.getMinutes());
+			}
+			if (sPattern.search("s") >= 0) {
+				oDate.setSeconds(oDateTime.getSeconds());
+			}
 
 			if (oDate.getTime() < this._oMinDate.getTime()) {
 				oDate = new Date(this._oMinDate);
@@ -413,6 +420,16 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 		return sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString();
 
+	};
+
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	DateTimePicker.prototype.getAccessibilityInfo = function() {
+		var oInfo = DatePicker.prototype.getAccessibilityInfo.apply(this, arguments);
+		oInfo.type = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATETIMEINPUT");
+		return oInfo;
 	};
 
 	function _handleOkPress(oEvent){

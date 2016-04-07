@@ -24,7 +24,7 @@ sap.ui.require([
 				matchers : new Properties({text : "bindTexts"}),
 				success : function (aControls) {
 					// tap on the "bindTexts" check box and trigger a reload w/ bindTexts
-					aControls[0].ontap();
+					aControls[0].ontap(new jQuery.Event());
 				},
 				errorMessage : "'bindTexts' check box not found"
 			});

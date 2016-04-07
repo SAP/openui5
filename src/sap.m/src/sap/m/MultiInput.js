@@ -1466,6 +1466,22 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	MultiInput.prototype.getDomRefForValueStateMessage = MultiInput.prototype.getPopupAnchorDomRef;
 
 
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	MultiInput.prototype.getAccessibilityInfo = function() {
+		var sText = this.getTokens().map(function(oToken) {
+			return oToken.getText();
+		}).join(" ");
+
+		var oInfo = Input.prototype.getAccessibilityInfo.apply(this, arguments);
+		oInfo.type = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_MULTIINPUT");
+		oInfo.description = ((oInfo.description || "") + " " + sText).trim();
+		return oInfo;
+	};
+
+
 	return MultiInput;
 
 }, /* bExport= */ true);

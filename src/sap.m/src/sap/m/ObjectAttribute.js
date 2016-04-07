@@ -169,6 +169,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			this.firePress({
 				domRef : this.getDomRef()
 			});
+
+			// mark the event that it is handled by the control
+			oEvent.setMarked();
 		}
 	};
 

@@ -240,5 +240,24 @@
         "references": []
       }
     ]
+  },
+  "1.36.6": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "dc6677bfc246b1430e01df924fe8d0584afd0597",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: column freeze for columns outside visible area",
+        "references": []
+      },
+      {
+        "id": "19d4ec67b6954d9b94b6e68e59fe2ddebf1facf4",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixed overlapping group header",
+        "references": []
+      }
+    ]
   }
 }

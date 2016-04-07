@@ -3311,7 +3311,8 @@
 
 		// act - clicking on control
 		sap.ui.test.qunit.triggerTouchEvent("tap", oMultiComboBox.getFocusDomRef(), {
-			target : oMultiComboBox.getFocusDomRef()
+			srcControl: oMultiComboBox,
+			target: oMultiComboBox.getFocusDomRef()
 		});
 		this.clock.tick(500);
 
@@ -3488,7 +3489,8 @@
 
 		// act - clicking on arrow
 		sap.ui.test.qunit.triggerTouchEvent("tap", oMultiComboBox.getDomRef("arrow"), {
-			target : oMultiComboBox.getDomRef("arrow")
+			srcControl: oMultiComboBox,
+			target: oMultiComboBox.getDomRef("arrow")
 		});
 		this.clock.tick(500);
 
@@ -4157,6 +4159,48 @@
 		// cleanup
 		oMultiComboBox.destroy();
 		this.clock.reset();
+	});
+
+	module("Accessibility");
+
+	test("getAccessibilityInfo", function() {
+		var oComboBox = new sap.m.MultiComboBox({
+			value: "Value",
+			tooltip: "Tooltip",
+			placeholder: "Placeholder",
+			items: [
+				new sap.ui.core.Item({key: "Item1", text: "Item1"}),
+				new sap.ui.core.Item({key: "Item2", text: "Item2"}),
+				new sap.ui.core.Item({key: "Item3", text: "Item3"})
+			]
+		});
+		ok(!!oComboBox.getAccessibilityInfo, "MultiComboBox has a getAccessibilityInfo function");
+		var oInfo = oComboBox.getAccessibilityInfo();
+		ok(!!oInfo, "getAccessibilityInfo returns a info object");
+		strictEqual(oInfo.role, oComboBox.getRenderer().getAriaRole(), "AriaRole");
+		strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_MULTICOMBO"), "Type");
+		strictEqual(oInfo.description, "Value Placeholder Tooltip", "Description");
+		strictEqual(oInfo.focusable, true, "Focusable");
+		strictEqual(oInfo.enabled, true, "Enabled");
+		strictEqual(oInfo.editable, true, "Editable");
+		oComboBox.setValue("");
+		oComboBox.setEnabled(false);
+		oInfo = oComboBox.getAccessibilityInfo();
+		strictEqual(oInfo.description, "Placeholder Tooltip", "Description");
+		strictEqual(oInfo.focusable, false, "Focusable");
+		strictEqual(oInfo.enabled, false, "Enabled");
+		strictEqual(oInfo.editable, false, "Editable");
+		oComboBox.setEnabled(true);
+		oComboBox.setEditable(false);
+		oInfo = oComboBox.getAccessibilityInfo();
+		strictEqual(oInfo.focusable, true, "Focusable");
+		strictEqual(oInfo.enabled, true, "Enabled");
+		strictEqual(oInfo.editable, false, "Editable");
+		oComboBox.setEditable(true);
+		oComboBox.setSelectedKeys(["Item1", "Item2"]);
+		oInfo = oComboBox.getAccessibilityInfo();
+		strictEqual(oInfo.description, "Placeholder Tooltip Item1 Item2", "Description");
+		oComboBox.destroy();
 	});
 </script>
 </head>

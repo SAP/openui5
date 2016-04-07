@@ -606,6 +606,16 @@ sap.ui.define(['jquery.sap.global', './TextField', './TextView', './library', 's
 		};
 
 
+		/**
+		 * @see {sap.ui.core.Control#getAccessibilityInfo}
+		 * @protected
+		 */
+		InPlaceEdit.prototype.getAccessibilityInfo = function() {
+			var oControl = this.getContent();
+			return oControl && oControl.getAccessibilityInfo ? oControl.getAccessibilityInfo() : null;
+		};
+
+
 		// Private variables
 
 		/**

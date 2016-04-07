@@ -520,7 +520,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 		if (this._oWantedDate && this._oWantedDate.getTime() >= this._oMinDate.getTime() && this._oWantedDate.getTime() <= this._oMaxDate.getTime()) {
 			this.setDateValue(this._oWantedDate);
 		}
-
 	};
 
 	DatePicker.prototype.setValueFormat = function(sValueFormat) {
@@ -888,6 +887,25 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 
 	};
 
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	DatePicker.prototype.getAccessibilityInfo = function() {
+		var oRenderer = this.getRenderer();
+		var oInfo = InputBase.prototype.getAccessibilityInfo.apply(this, arguments);
+		var sValue = this.getValue() || "";
+		if (this._bValid) {
+			var oDate = this.getDateValue();
+			if (oDate) {
+				sValue = this._formatValue(oDate);
+			}
+		}
+		oInfo.type = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATEINPUT");
+		oInfo.description = [sValue, oRenderer.getLabelledByAnnouncement(this), oRenderer.getDescribedByAnnouncement(this)].join(" ").trim();
+		return oInfo;
+	};
+
 	function _toggleOpen(){
 
 		if (this.getEditable() && this.getEnabled()) {
@@ -908,7 +926,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 
 		// do not use this.onChange() because output pattern will change date (e.g. only last 2 number of year -> 1966 -> 2066 )
 		if (!jQuery.sap.equal(oDate, oDateOld)) {
-			this.setDateValue(oDate);
+			this.setDateValue(new Date(oDate));
 			// compare Dates because value can be the same if only 2 digits for year
 			sValue = this.getValue();
 			this.fireChangeEvent(sValue, {valid: true});

@@ -110,10 +110,10 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		};
 
 		/**
-		 * Gets the Select's <code>list</code>.
+		 * Gets the <code>list</code>.
 		 *
-		 * @returns {sap.m.SelectList}
-		 * @private
+		 * @returns {sap.m.SelectList} The list instance object or <code>null</code>.
+		 * @protected
 		 */
 		ComboBoxBase.prototype.getList = function() {
 			if (this.bIsDestroyed) {
@@ -209,9 +209,9 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 				mNextMessage = bIsCurrentMessageTheLast ? null : this.aEventQueue[i + 1];
 
 				if (typeof mCurrentMessage.action === "function") {
-					if ((mCurrentMessage.id === "input") &&
+					if ((mCurrentMessage.name === "input") &&
 						!bIsCurrentMessageTheLast &&
-						(mNextMessage.id === "input")) {
+						(mNextMessage.name === "input")) {
 
 						// no need to process this input event because the next is pending
 						continue;
@@ -245,7 +245,11 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 			ComboBoxTextField.prototype.init.apply(this, arguments);
 
 			// sets the picker popup type
-			this.setPickerType("Popover");
+			this.setPickerType(sap.ui.Device.system.phone ? "Dialog" : "Dropdown");
+
+			if (sap.ui.Device.system.phone) {
+				this.attachEvent("_change", this.onPropertyChange, this);
+			}
 
 			// initialize composites
 			this.createPicker(this.getPickerType());
@@ -259,6 +263,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 			this.bInitialBusyIndicatorState = this.getBusy();
 			this.iInitialBusyIndicatorDelay = this.getBusyIndicatorDelay();
 			this._bOnItemsLoadedScheduled = false;
+			this._bDoTypeAhead = true;
 		};
 
 		ComboBoxBase.prototype.exit = function() {
@@ -327,7 +332,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		ComboBoxBase.prototype.ontap = function(oEvent) {
 			ComboBoxTextField.prototype.ontap.apply(this, arguments);
 
-			var CSS_CLASS = this.getRenderer().CSS_CLASS_COMBOBOXBASE;
+			var CSS_CLASS = this.getRenderer().CSS_CLASS_COMBOBOXBASE,
+				oControl = oEvent.srcControl;
 
 			// in case of a non-editable or disabled combo box, the picker popup cannot be opened
 			if (!this.getEnabled() || !this.getEditable()) {
@@ -337,7 +343,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
-			if (this.isOpenArea(oEvent.target)) {
+			if (oControl.isOpenArea(oEvent.target)) {
 
 				if (this.isOpen()) {
 					this.close();
@@ -436,15 +442,15 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 				return;
 			}
 
-			var oControl = sap.ui.getCore().byId(oEvent.relatedControlId);
+			var oRelatedControl = sap.ui.getCore().byId(oEvent.relatedControlId);
 
 			// to prevent the change event from firing when the arrow button is pressed
-			if (oControl === this) {
+			if (oRelatedControl === this) {
 				return;
 			}
 
 			var oPicker = this.getAggregation("picker"),
-				oFocusDomRef = oControl && oControl.getFocusDomRef();
+				oFocusDomRef = oRelatedControl && oRelatedControl.getFocusDomRef();
 
 			// to prevent the change event from firing when an item is pressed
 			if (oPicker && jQuery.sap.containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef)) {
@@ -459,28 +465,11 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		/* =========================================================== */
 
 		/**
-		 * Indicates whether the custom placeholder is used.
-		 *
-		 * IE9 does not have a native placeholder support.
-		 * IE10+ fires the input event when an input field with a native placeholder is focused.
-		 */
-		ComboBoxBase.prototype.bShowLabelAsPlaceholder = sap.ui.Device.browser.msie;
-
-		/**
 		 * Gets the DOM reference the popup should be docked.
 		 *
 		 * @return {object}
 		 */
 		ComboBoxBase.prototype.getPopupAnchorDomRef = function() {
-			return this.getDomRef();
-		};
-
-		/**
-		 * Gets the DOM reference the message popup should be docked.
-		 *
-		 * @return {object}
-		 */
-		ComboBoxBase.prototype.getDomRefForValueStateMessage = function() {
 			return this.getDomRef();
 		};
 
@@ -524,7 +513,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		/**
 		 * Gets the control's picker popup.
 		 *
-		 * @returns {sap.m.Dialog | sap.m.Popover | null} The picker instance, creating it if necessary by calling <code>createPicker()</code> method.
+		 * @returns {sap.m.Dialog | sap.m.Popover | null} The picker instance, creating it if necessary by calling
+		 * the <code>createPicker()</code> method.
 		 * @protected
 		 */
 		ComboBoxBase.prototype.getPicker = function() {
@@ -642,7 +632,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		 *
 		 * @param {string} sProperty An item property.
 		 * @param {string} sValue An item value that specifies the item to be retrieved.
-		 * @returns {sap.ui.core.Item | null} The matched item or null.
+		 * @returns {sap.ui.core.Item | null} The matched item or <code>null</code>.
 		 */
 		ComboBoxBase.prototype.findItem = function(sProperty, sValue) {
 			var oList = this.getList();
@@ -655,7 +645,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		 * <b>Note:</b> If duplicate values exist, the first item matching the value is returned.
 		 *
 		 * @param {string} sText An item value that specifies the item to be retrieved.
-		 * @returns {sap.ui.core.Item | null} The matched item or null.
+		 * @returns {sap.ui.core.Item | null} The matched item or <code>null</code>.
 		 * @protected
 		 */
 		ComboBoxBase.prototype.getItemByText = function(sText) {
@@ -734,28 +724,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		/* ----------------------------------------------------------- */
 		/* public methods                                              */
 		/* ----------------------------------------------------------- */
-
-		/**
-		 * Getter for property <code>value</code>.
-		 *
-		 * Default value is empty/<code>undefined</code>.
-		 *
-		 * @return {string} the value of property <code>value</code>
-		 * @public
-		 */
-		ComboBoxBase.prototype.getValue = function() {
-			var oDomRef = this.getFocusDomRef();
-
-			// if the input field is rendered
-			if (oDomRef) {
-
-				// return the live value
-				return oDomRef.value;
-			}
-
-			// else return the value from the model
-			return this.getProperty("value");
-		};
 
 		/**
 		 * Adds an item to the aggregation named <code>items</code>.

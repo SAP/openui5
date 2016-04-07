@@ -61,6 +61,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 			var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
 			this._expandText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_SHOW_MORE');
 			this._collapseText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_SHOW_LESS');
+			this._closeText = resourceBundle.getText('NOTIFICATION_LIST_BASE_CLOSE');
 
 			//set it to an active ListItemBase to the press and tap events are fired
 			this.setType('Active');
@@ -72,6 +73,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 			this._closeButton = new sap.m.Button(this.getId() + '-closeButton', {
 				type: sap.m.ButtonType.Transparent,
 				icon: sap.ui.core.IconPool.getIconURI('decline'),
+				tooltip: this._closeText,
 				press: function () {
 					this.close();
 				}.bind(this)
@@ -170,7 +172,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 		};
 
 		NotificationListItem.prototype.onAfterRendering = function () {
-			this._showHideTruncateButton();
 			this._registerResize();
 		};
 
@@ -186,6 +187,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 				this._closeButton.destroy();
 				this._closeButton = null;
 			}
+
+			if (this._collapseButton) {
+				this._collapseButton.destroy();
+				this._collapseButton = null;
+			}
+
 			if (this._ariaDetailsText) {
 				this._ariaDetailsText.destroy();
 				this._ariaDetailsText = null;
@@ -286,23 +293,40 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 		};
 
 		NotificationListItem.prototype._deregisterResize = function() {
-			if (this._sPopupResizeHandler) {
-				sap.ui.core.ResizeHandler.deregister(this._sPopupResizeHandler);
-				this._sPopupResizeHandler = null;
+			if (this._sNotificationResizeHandler) {
+				sap.ui.core.ResizeHandler.deregister(this._sNotificationResizeHandler);
+				this._sNotificationResizeHandler = null;
 			}
 		};
 
 		NotificationListItem.prototype._registerResize = function () {
 			var that = this;
+			that._resizeNotification();
 
-			this._sPopupResizeHandler = sap.ui.core.ResizeHandler.register(this.getDomRef(), function() {
-				that.getDomRef().querySelector('.sapMNLI-TextWrapper').classList.remove('sapMNLI-TextWrapper--is-expanded');
-				that.getDomRef().querySelector('.sapMNLI-Header').classList.remove('sapMNLI-TitleWrapper--is-expanded');
-				that.getDomRef().querySelector('.sapMNLI-TextWrapper').classList.add('sapMNLI-TextWrapper--initial-overwrite');
-				that.getDomRef().querySelector('.sapMNLI-Header').classList.add('sapMNLI-TitleWrapper--initial-overwrite');
-
-				that._showHideTruncateButton();
+			this._sNotificationResizeHandler = sap.ui.core.ResizeHandler.register(this.getDomRef(), function() {
+				that._resizeNotification();
 			});
+		};
+
+		/**
+		 * Resize handler for the NotificationListItem.
+		 * @private
+         */
+		NotificationListItem.prototype._resizeNotification = function() {
+			var notificationDomRef = this.getDomRef();
+
+			if (notificationDomRef.offsetWidth >= 640) {
+				notificationDomRef.classList.add('sapMNLI-LSize');
+			} else {
+				notificationDomRef.classList.remove('sapMNLI-LSize');
+			}
+
+			this.getDomRef().querySelector('.sapMNLI-TextWrapper').classList.remove('sapMNLI-TextWrapper--is-expanded');
+			this.getDomRef().querySelector('.sapMNLI-Header').classList.remove('sapMNLI-TitleWrapper--is-expanded');
+			this.getDomRef().querySelector('.sapMNLI-TextWrapper').classList.add('sapMNLI-TextWrapper--initial-overwrite');
+			this.getDomRef().querySelector('.sapMNLI-Header').classList.add('sapMNLI-TitleWrapper--initial-overwrite');
+
+			this._showHideTruncateButton();
 		};
 
 		return NotificationListItem;

@@ -324,6 +324,41 @@
 				oSwitch.destroy();
 			});
 
+			test("getAccessibilityInfo", function() {
+				var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+				var oSwitch = new sap.m.Switch({
+					customTextOn: "CustomON",
+					customTextOff: "CustomOff"
+				});
+				ok(!!oSwitch.getAccessibilityInfo, "Switch has a getAccessibilityInfo function");
+				var oInfo = oSwitch.getAccessibilityInfo();
+				ok(!!oInfo, "getAccessibilityInfo returns a info object");
+				strictEqual(oInfo.role, "checkbox", "AriaRole");
+				strictEqual(oInfo.type, oBundle.getText("ACC_CTR_TYPE_CHECKBOX"), "Type");
+				strictEqual(oInfo.description, "", "Description");
+				strictEqual(oInfo.focusable, true, "Focusable");
+				strictEqual(oInfo.enabled, true, "Enabled");
+				ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
+
+				oSwitch.setState(true);
+				oInfo = oSwitch.getAccessibilityInfo();
+				strictEqual(oInfo.description, oBundle.getText("ACC_CTR_STATE_CHECKED") + " CustomON", "Description");
+
+				oSwitch.setCustomTextOn("");
+				oInfo = oSwitch.getAccessibilityInfo();
+				strictEqual(oInfo.description, oBundle.getText("ACC_CTR_STATE_CHECKED") + " " + oBundle.getText("SWITCH_ON"), "Description");
+
+				oSwitch.setType("AcceptReject");
+				oInfo = oSwitch.getAccessibilityInfo();
+				strictEqual(oInfo.description, oBundle.getText("ACC_CTR_STATE_CHECKED") + " " + oBundle.getText("SWITCH_ARIA_ACCEPT"), "Description");
+
+				oSwitch.setEnabled(false);
+				oInfo = oSwitch.getAccessibilityInfo();
+				strictEqual(oInfo.focusable, false, "Focusable");
+				strictEqual(oInfo.enabled, false, "Enabled");
+				oSwitch.destroy();
+			});
+
 			/* =========================================================== */
 			/* HTML module                                                 */
 			/* =========================================================== */

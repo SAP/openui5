@@ -1,0 +1,9 @@
+[{
+	"DetectionObjectType": "DET1",
+	"Description": "Bank Country",
+	"SourceDomain": "INTERNAL",
+	"DataType": "CHAR",
+	"CaseSensitive": "false",
+	"Decimals": "3",
+	"FieldName": "BANK_COUNTRY_KEY"
+}]

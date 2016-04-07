@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-
+	<meta charset="UTF-8" >
 	<title>Test Page for sap.m.TimePicker</title>
 	<script id="sap-ui-bootstrap"
 			data-sap-ui-theme="sap_bluecrystal"
@@ -138,6 +138,27 @@
 			strictEqual(typeof aList[aList.length-1], "object", "the last element of the array is an object");
 			strictEqual(parseInt(aList[aList.length-1].key), iEnd, "the key property of the last element of the array is correct");
 			strictEqual(parseInt(aList[aList.length-1].text), iEnd, "the text property of the last element of the array is correct");
+		});
+
+		test("Value help CSS class is applied only when both properties 'Enabled' and 'Editable' are true", function () {
+			//assert
+			ok(this.oTimePicker.$().hasClass("sapMInputVH"), "Value help CSS class is applied by default ('Enabled' = true 'Editable' = true)");
+			//arrange
+			this.oTimePicker.setEnabled(false);
+			this.clock.tick(1000);
+			//assert
+			ok(!this.oTimePicker.$().hasClass("sapMInputVH"), "Value help CSS class is NOT applied by default ('Enabled' = false 'Editable' = true)");
+			//arrange
+			this.oTimePicker.setEnabled(true);
+			this.oTimePicker.setEditable(false);
+			this.clock.tick(1000);
+			//assert
+			ok(!this.oTimePicker.$().hasClass("sapMInputVH"), "Value help CSS class is NOT applied by default ('Enabled' = true 'Editable' = false)");
+			//arrange
+			this.oTimePicker.setEnabled(false);
+			this.oTimePicker.setEditable(false);
+			this.clock.tick(1000);
+			ok(!this.oTimePicker.$().hasClass("sapMInputVH"), "Value help CSS class is NOT applied by default ('Enabled' = true 'Editable' = false)");
 		});
 
 		module("Input formats, display formats and values", {
@@ -384,6 +405,34 @@
 						expValue: "11:50 nachm.",
 						expDateValue: getDate(23, 50, 0)
 					});
+		});
+
+		test("test default locale", function () {
+			var stub = sinon.stub(sap.ui.getCore().getConfiguration(), 'getFormatLocale').returns('ar');
+			//Test default browser locale set to arabic
+			generateValuesTest([
+				{ key: "setDisplayFormat", value: "hh:mm:ss a"},
+				{ key: "setValueFormat", value: "hh:mm a"},
+				{ key: "setDateValue", value: getDate(23, 32, 0)}
+			], {
+				expInputVal: "11:32:00 م",
+				expValue: "11:32 م",
+				expDateValue: getDate(23, 32, 0)
+			});
+			//Test default browser local set to arabic and also custom TimePicker locale set to German
+			generateValuesTest([
+				{ key: "setLocaleId", value: "de_DE"},
+				{ key: "setValueFormat", value: "h:mm a" },
+				{ key: "setDisplayFormat", value: "hh:mm:ss a" },
+				{ key: "setDateValue", value: getDate(17, 23, 18) }
+			],
+			{
+				expValue: "5:23 nachm.",
+				expInputVal: "05:23:18 nachm.",
+				expDateValue: getDate(17, 23, 18)
+			});
+
+			stub.restore();
 		});
 
 		test("Value is validated when setValue is called with null or undefined", function () {
@@ -1829,7 +1878,8 @@
 			beforeEach: function () {
 				//system under test
 				this.oTp = new sap.m.TimePicker({
-					valueFormat: "hh mm"
+					valueFormat: "hh mm",
+					displayFormat: "hh mm"
 				});
 				this.oSpy = sinon.spy();
 				this.oTp.attachChange(this.oSpy);
@@ -1871,6 +1921,23 @@
 
 			spy = null;
 			tp.destroy();
+		});
+
+		test("change event fires when the value is reset", function() {
+			var oTpFocusDomRef = jQuery(this.oTp.getFocusDomRef());
+
+			//system under test
+			triggerMultipleKeypress(this.oTp, "09");
+			qutils.triggerKeydown(oTpFocusDomRef, jQuery.sap.KeyCodes.ENTER);
+
+			equals(this.oSpy.callCount, 1, "changed event fired when the value is set");
+
+			while (oTpFocusDomRef.val() !== "-- --") {
+				qutils.triggerKeydown(oTpFocusDomRef, jQuery.sap.KeyCodes.BACKSPACE);
+			}
+			qutils.triggerKeydown(oTpFocusDomRef, jQuery.sap.KeyCodes.ENTER);
+
+			equals(this.oSpy.callCount, 2, "changed event fired when the value is reset");
 		});
 
 		test("upon enter, change event fires only once", function() {
@@ -1929,6 +1996,44 @@
 				qutils.triggerKeypress($TimePicker, sChar);
 			}
 		}
+
+		module("Accessibility");
+
+		test("getAccessibilityInfo", function() {
+			var oInput = new sap.m.TimePicker({
+				value: "Value",
+				tooltip: "Tooltip",
+				placeholder: "Placeholder"
+			});
+			ok(!!oInput.getAccessibilityInfo, "TimePicker has a getAccessibilityInfo function");
+			var oInfo = oInput.getAccessibilityInfo();
+			ok(!!oInfo, "getAccessibilityInfo returns a info object");
+			strictEqual(oInfo.role, "combobox", "AriaRole");
+			strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_TIMEINPUT"), "Type");
+			strictEqual(oInfo.description, "Value Placeholder Tooltip", "Description");
+			strictEqual(oInfo.focusable, true, "Focusable");
+			strictEqual(oInfo.enabled, true, "Enabled");
+			strictEqual(oInfo.editable, true, "Editable");
+			oInput.setValue("");
+			oInput.setEnabled(false);
+			oInfo = oInput.getAccessibilityInfo();
+			strictEqual(oInfo.description, "Placeholder Tooltip", "Description");
+			strictEqual(oInfo.focusable, false, "Focusable");
+			strictEqual(oInfo.enabled, false, "Enabled");
+			strictEqual(oInfo.editable, false, "Editable");
+			oInput.setEnabled(true);
+			oInput.setEditable(false);
+			oInfo = oInput.getAccessibilityInfo();
+			strictEqual(oInfo.focusable, true, "Focusable");
+			strictEqual(oInfo.enabled, true, "Enabled");
+			strictEqual(oInfo.editable, false, "Editable");
+			oInput.setValueFormat("HH.mm.ss");
+			oInput.setDisplayFormat("HH-mm-ss");
+			oInput.setValue("10.32.30");
+			oInfo = oInput.getAccessibilityInfo();
+			strictEqual(oInfo.description, "10-32-30 Placeholder Tooltip", "Description");
+			oInput.destroy();
+		});
 	</script>
 
 </head>

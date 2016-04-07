@@ -176,10 +176,6 @@
 	white-space: nowrap;
 }
 
-.sapUiCalItemDsbl{
-	opacity: 0.5;
-}
-
 .sapUiCalMonthView .sapUiCalWH,
 .sapUiCalMonthView .sapUiCalItem{
 	width: 12.5%;
@@ -216,6 +212,11 @@
 	background-color: lighten(@sapUiContentForegroundColor,5);
 }
 
+.sapUiCalItemDsbl{
+	color: fade(@sapUiBaseText, 50);
+	background-color: fade(lighten(@sapUiContentForegroundColor,5), 50);
+}
+
 .sap-desktop .sapUiCalItem:focus{
 	background-color: darken(@sapUiContentForegroundColor,5);
 }
@@ -241,6 +242,10 @@
 
 .sapUiCalItemWeekEnd{
 	background-color: @sapUiContentForegroundColor;
+}
+
+.sapUiCalItemWeekEnd.sapUiCalItemDsbl{
+	background-color: fade(@sapUiContentForegroundColor, 50);
 }
 
 .sapUiCalItemSel{

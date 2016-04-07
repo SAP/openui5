@@ -83,6 +83,20 @@ sap.ui.define(['jquery.sap.global', './Button'],
 	};
 
 
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	ToggleButton.prototype.getAccessibilityInfo = function() {
+		var oInfo = Button.prototype.getAccessibilityInfo.apply(this, arguments);
+		if (this.getPressed()) {
+			oInfo.description = ((oInfo.description || "") + " " +
+				sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons").getText("ACC_CTR_STATE_PRESSED")).trim();
+		}
+		return oInfo;
+	};
+
+
 	return ToggleButton;
 
 }, /* bExport= */ true);

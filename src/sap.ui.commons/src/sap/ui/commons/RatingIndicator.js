@@ -481,6 +481,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this;
 	};
 
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	RatingIndicator.prototype.getAccessibilityInfo = function() {
+		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
+		return {
+			role: "slider",
+			type: oBundle.getText("ACC_CTR_TYPE_RATING"),
+			description: oBundle.getText("ACC_CTR_STATE_RATING", [this._getDisplayValue(), this.getMaxValue()]),
+			focusable: true,
+			editable: this.getEditable()
+		};
+	};
+
 
 	return RatingIndicator;
 

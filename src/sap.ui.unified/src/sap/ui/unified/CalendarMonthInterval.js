@@ -186,6 +186,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			years: 6 // default for 12 months
 		});
 		oYearPicker.attachEvent("select", _handleSelectYear, this);
+		oYearPicker.attachEvent("pageChange", _handleYearPickerPageChange, this);
 		this.setAggregation("yearPicker",oYearPicker);
 
 		this._iDaysMonthsHead = 15; // if more than this number of months, year numbers are displayed on top of months
@@ -1189,6 +1190,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			break;
 			// no default
 		}
+
+	}
+
+	function _handleYearPickerPageChange(oEvent) {
+
+		_togglePrevNexYearPicker.call(this);
 
 	}
 

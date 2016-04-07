@@ -1,0 +1,162 @@
+<!DOCTYPE HTML>
+<html style="height: 100%">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>DesignTime - Drag and Drop Overlay Test</title>
+
+		<style>
+			html, body, #content {
+				height : 100%;
+			}
+			.sapUiView {
+				height: 100%;
+			}
+		</style>
+
+		<script id="sap-ui-bootstrap"
+				type="text/javascript"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
+				data-sap-ui-resourceroots='{"dt.performance": "./"}'
+				>
+		</script>
+
+		<script>
+			jQuery(function() {
+				sap.ui.require(["dt/performance/PerformanceTestUtil"], function(PerformanceTestUtil){
+					//create Vertical Layout
+					window.oLayout1 = new sap.ui.layout.VerticalLayout("Layout1");
+					PerformanceTestUtil.addMixedControlsTo(oLayout1, 1, 30, true /*visible*/);
+					PerformanceTestUtil.addMixedControlsTo(oLayout1, 31, 60, false /*invisible*/);
+					window.oContainerLayout1 = new sap.ui.layout.VerticalLayout({
+						id : "ContainerLayout1",
+						content :  [
+							new sap.m.Label({
+								text : "ContainerLayout1"
+							}),
+							oLayout1
+						]
+					});
+					window.oLayout2 = new sap.ui.layout.VerticalLayout("Layout2");
+					PerformanceTestUtil.addMixedControlsTo(oLayout2, 61, 90, true /*visible*/);
+					PerformanceTestUtil.addMixedControlsTo(oLayout2, 91, 120, false /*invisible*/);
+					window.oContainerLayout2 = new sap.ui.layout.VerticalLayout({
+						id : "ContainerLayout2",
+						content :  [
+							new sap.m.Label({
+								text : "ContainerLayout2"
+							}),
+							oLayout2
+						]
+					});
+					window.oLayout3 = new sap.ui.layout.VerticalLayout("Layout3");
+					PerformanceTestUtil.addMixedControlsTo(oLayout3, 121, 150, true /*visible*/);
+					PerformanceTestUtil.addMixedControlsTo(oLayout3, 151, 200, false /*invisible*/);
+					window.oContainerLayout3 = new sap.ui.layout.VerticalLayout({
+						id : "ContainerLayout3",
+						content :  [
+							new sap.m.Label({
+								text : "ContainerLayout3"
+							}),
+							oLayout3
+						]
+					});
+
+					window.oHorizontalLayout = new sap.ui.layout.HorizontalLayout("HorizontalLayout", {
+						content : [oContainerLayout1, oContainerLayout2, oContainerLayout3]
+					});
+					oHorizontalLayout.placeAt("content");
+					sap.ui.getCore().applyChanges();
+
+					PerformanceTestUtil.startDesignTime();
+				})
+
+			});
+
+			function startDragAndDrop(){
+				window.performance.mark("drag.starts");
+				//get overlays
+				var oLayout1Overlay = sap.ui.dt.OverlayRegistry.getOverlay("Layout1");
+				var oControlInLayout1Overlay = sap.ui.dt.OverlayRegistry.getOverlay("Control1");
+				var oLayout2Overlay = sap.ui.dt.OverlayRegistry.getOverlay("Layout2");
+				var oLayout2ContentOverlay = oLayout2Overlay.getAggregationOverlay("content");
+				var oControlInLayout2Overlay = sap.ui.dt.OverlayRegistry.getOverlay("Control61");
+				var oLayout3Overlay = sap.ui.dt.OverlayRegistry.getOverlay("Layout3");
+				var oLayout3ContentOverlay = oLayout3Overlay.getAggregationOverlay("content");
+				var oControlInLayout3Overlay = sap.ui.dt.OverlayRegistry.getOverlay("Control121");
+				//execute operations based on console.log statements in drag&drop plugin
+				// do it in a promise chain so that the browser can render in between...
+				Promise.resolve().then(function(){
+					oLayout1Overlay.$().trigger("click");
+					oLayout1Overlay.$().trigger("dragstart");
+					oLayout1Overlay.$().trigger("drag");
+					oLayout1Overlay.$().trigger("dragenter");
+				}).then(function(){
+					for (var i = 0; i< 100; i++){
+						oLayout1Overlay.$().trigger("dragover");
+						oLayout1Overlay.$().trigger("drag");
+					}
+				}).then(function(){
+					oControlInLayout2Overlay.$().trigger("dragenter");
+					oControlInLayout2Overlay.$().trigger("dragover");
+				}).then(function(){
+					oLayout1Overlay.$().trigger("drag");
+					oLayout1Overlay.$().trigger("dragenter");
+					oLayout2ContentOverlay.$().trigger("dragleave");
+				}).then(function(){
+					for (var i = 0; i< 100; i++){
+						oLayout1Overlay.$().trigger("dragover");
+						oLayout1Overlay.$().trigger("drag");
+					}
+				}).then(function(){
+					oControlInLayout3Overlay.$().trigger("dragenter");
+				}).then(function(){
+					oLayout2ContentOverlay.$().trigger("dragleave");
+				}).then(function(){
+					oControlInLayout3Overlay.$().trigger("dragover");
+				}).then(function(){
+					oLayout1Overlay.$().trigger("drag");
+				}).then(function(){
+					oControlInLayout1Overlay.$().trigger("dragenter");
+				}).then(function(){
+					oLayout1Overlay.$().trigger("dragenter");
+				}).then(function(){
+					oLayout3ContentOverlay.$().trigger("dragleave");
+				}).then(function(){
+					for (var i = 0; i< 100; i++){
+						oControlInLayout1Overlay.$().trigger("dragover");
+						oLayout1Overlay.$().trigger("dragover");
+						oLayout1Overlay.$().trigger("drag");
+					}
+				}).then(function(){
+					oLayout1Overlay.$().trigger("dragenter");
+				}).then(function(){
+					oLayout3ContentOverlay.$().trigger("dragleave");
+				}).then(function(){
+					for (var i = 0; i< 100; i++){
+						oLayout1Overlay.$().trigger("dragover");
+						oLayout1Overlay.$().trigger("drag");
+					}
+				}).then(function(){
+					oLayout3ContentOverlay.$().trigger("drop");
+				}).then(function(){
+					oLayout1Overlay.$().trigger("dragend");
+				}).then(function(){
+					//measure time
+					window.performance.mark("drag.ends");
+					window.performance.measure("DragAndDrop", "drag.starts", "drag.ends");
+					sap.ui.dt.dragDropTime = window.performance.getEntriesByName("DragAndDrop")[0].duration;
+					jQuery.sap.log.info("Drag and Drop took ", sap.ui.dt.dragDropTime + "ms");
+
+					//mark something as done
+					document.getElementById("overlay-container").setAttribute("sap-ui-dt-drag-drop-done","true")
+				});
+			}
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		<div id="content"></div>
+	</body>
+</html>

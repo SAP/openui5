@@ -757,7 +757,7 @@ sap.ui
 				var aProperties = sODataQueryValue.split(',');
 				var aSelectedDataSet = [];
 				var oPushedObject;
-				var oDataEntry = aDataSet[0][aProperties[0].split('/')[0]];
+				var oDataEntry = aDataSet[0] ? aDataSet[0][aProperties[0].split('/')[0]] : null;
 				if (!(oDataEntry != null && oDataEntry.results && oDataEntry.results.length > 0)) {
 					var fnCreatePushedEntry = function(aProperties, oData, oPushedObject, sParentName) {
 						if (oData["__metadata"]) {
@@ -1291,8 +1291,7 @@ sap.ui
 						}
 					});
 				}
-				// create the mock data for the entity sets and enhance
-				// the mock data with metadata
+				// create the mock data for the entity sets
 				jQuery.each(mEntitySets, function(sEntitySetName, oEntitySet) {
 					// we clone because of unique metadata for
 					// individual entity sets otherwise the data of the
@@ -1313,7 +1312,9 @@ sap.ui
 							that._oMockdata[sEntitySetName].push(jQuery.extend(true, {}, oEntity));
 						});
 					}
-
+				});
+				//enhance the mock data with metadata
+				jQuery.each(mEntitySets, function(sEntitySetName, oEntitySet) {
 					// enhance with OData metadata if exists
 					if (that._oMockdata[sEntitySetName].length > 0) {
 						that._enhanceWithMetadata(oEntitySet, that._oMockdata[sEntitySetName]);
@@ -1345,9 +1346,9 @@ sap.ui
 						oEntry.__metadata.uri = sRootUri + sEntitySetName + "(" + that._createKeysString(oEntitySet, oEntry) + ")";
 						// add the navigation properties
 						jQuery.each(oEntitySet.navprops, function(sKey, oNavProp) {
-							if (oEntry[sKey] && !jQuery.isEmptyObject(oEntry[sKey]) && !oEntry[sKey]["__deferred"]) {
+							if (oEntry[sKey] && !jQuery.isEmptyObject(oEntry[sKey]) && !oEntry[sKey]["__deferred"] ) {
 								that._oMockdata[oNavProp.to.entitySet] = that._oMockdata[oNavProp.to.entitySet]
-									.concat([oEntry[sKey]]);
+									.concat(oEntry[sKey]);
 							}
 							oEntry[sKey] = {
 								__deferred: {

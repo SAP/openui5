@@ -16,33 +16,12 @@
 					<semantic:addAction>
 						<semantic:AddAction press="onSemanticButtonPress"/>
 					</semantic:addAction>
-					<semantic:deleteAction>
-						<semantic:DeleteAction press="onSemanticButtonPress"/>
-					</semantic:deleteAction>
-					<semantic:editAction>
-						<semantic:EditAction press="onSemanticButtonPress"/>
-					</semantic:editAction>
 					<semantic:flagAction>
 						<semantic:FlagAction press="onSemanticButtonPress"/>
 					</semantic:flagAction>
 					<semantic:favoriteAction>
 						<semantic:FavoriteAction press="onSemanticButtonPress"/>
 					</semantic:favoriteAction>
-					<semantic:sendEmailAction>
-						<semantic:SendEmailAction press="onSemanticButtonPress"/>
-					</semantic:sendEmailAction>
-					<semantic:sendMessageAction>
-						<semantic:SendMessageAction press="onSemanticButtonPress"/>
-					</semantic:sendMessageAction>
-					<semantic:discussInJamAction>
-						<semantic:DiscussInJamAction press="onSemanticButtonPress"/>
-					</semantic:discussInJamAction>
-					<semantic:shareInJamAction>
-						<semantic:ShareInJamAction press="onSemanticButtonPress"/>
-					</semantic:shareInJamAction>
-					<semantic:printAction>
-						<semantic:PrintAction press="onSemanticButtonPress"/>
-					</semantic:printAction>
 					<semantic:messagesIndicator>
 						<semantic:MessagesIndicator press="onMessagesButtonPress"/>
 					</semantic:messagesIndicator>

@@ -255,13 +255,21 @@
 			equal(jQuery.sap.measure.getAllMeasurements(true).length, 0, "0 completed measurements");
 			equal(jQuery.sap.measure.getAllMeasurements(false).length, 4, "4 incompleted measurements");
 			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test1")>-1 ? o : null}).length,4, "4 test1 measurement filtered");
-			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test2")>-1 ? o : null}).length,2, "2 test1, test2 measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(["test1"]).length,4, "4 test1 measurement retrieved");
+			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test2")>-1 ? o : null}).length,2, "2 test2 measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(["test2"]).length,2, "2 test2 measurement retrieved");
 			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test3")>-1 ? o : null}).length,0, "0 test3 measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(["test3"]).length,0, "0 test3 measurement retrieved");
 			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test4")>-1 ? o : null}).length,0, "0 test4 measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(["test4"]).length,0, "0 test4 measurement retrieved");
 			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test1")>-1 ? o : null},true).length,0, "0 complete test1 measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(true, ["test1"]).length,0, "0 complete test1 measurement retrieved");
 			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test2")>-1 ? o : null},true).length,0, "0 complete test1, test2 measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(true, ["test2"]).length,0, "0 complete test2 measurement retrieved");
 			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test3")>-1 ? o : null},true).length,0, "0 complete test3 measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(true, ["test3"]).length,0, "0 complete test3 measurement retrieved");
 			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test4")>-1 ? o : null},true).length,0, "0 complete test4 measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(true, ["test4"]).length,0, "0 complete test4 measurement retrieved");
 
 			jQuery.sap.measure.end("test1string_1");
 			jQuery.sap.measure.end("test1string_2");
@@ -275,14 +283,21 @@
 			equal(jQuery.sap.measure.getAllMeasurements().length, 4, "4 measurement");
 			equal(jQuery.sap.measure.getAllMeasurements(true).length, 4, "4 completed measurements");
 			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test1")>-1 ? o : null}).length,4, "4 test1 measurement filtered");
-			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test2")>-1 ? o : null}).length,2, "2 test1, test2 measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(["test1"]).length,4, "4 test1 measurement retrieved");
+			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test2")>-1 ? o : null}).length,2, "2 test2 measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(["test2"]).length,2, "2 test2 measurement retrieved");
 			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test3")>-1 ? o : null}).length,0, "0 test3 measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(["test3"]).length,0, "0 test3 measurement retrieved");
 			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test4")>-1 ? o : null}).length,0, "0 test4 measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(["test4"]).length,0, "0 test4 measurement retrieved");
 			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test1")>-1 ? o : null},true).length,4, "4 test1 completed measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(true, ["test1"]).length,4, "4 complete test1 measurement retrieved");
 			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test2")>-1 ? o : null},true).length,2, "2 test1, test2 completed measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(true, ["test2"]).length,2, "2 complete test2 measurement retrieved");
 			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test3")>-1 ? o : null},true).length,0, "0 test3 completed measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(true, ["test3"]).length,0, "0 complete test3 measurement retrieved");
 			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test4")>-1 ? o : null},true).length,0, "0 test4 completed measurement filtered");
-
+			equal(jQuery.sap.measure.filterMeasurements(true, ["test4"]).length,0, "0 complete test4 measurement retrieved");
 
 			jQuery.sap.measure.setActive(true,"test1,test2");
 			jQuery.sap.measure.clear();
@@ -309,11 +324,16 @@
 			equal(jQuery.sap.measure.getAllMeasurements(false).length,1, "1 incompleted measurement");
 
 			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test1")>-1 ? o : null},true).length,4, "4 completed test1 measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(true, ["test1"]).length,4, "4 completed test1 measurement retrieved");
 			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test2")>-1 ? o : null},true).length,6, "6 completed test2 measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(true, ["test2"]).length,6, "6 completed test2 measurement retrieved");
 			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test3")>-1 ? o : null},true).length,2, "2 completed test3 measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(true, ["test3"]).length,2, "2 completed test3 measurement retrieved");
 			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test4")>-1 ? o : null},true).length,0, "0 completed test4 measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(true, ["test4"]).length,0, "0 completed test4 measurement retrieved");
 
 			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test1")>-1 ? o : null}).length,5, "5 test1 measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(["test1"]).length,5, "5 test1 measurement retrieved");
 
 		});
 

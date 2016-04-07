@@ -1,0 +1,286 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="UTF-8">
+	<title>Test Page for sap.m.ObjectMarker</title>
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+	<script id="sap-ui-bootstrap"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-language="en-US"
+			data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
+	</script>
+
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+	<script>
+		module("Rendering");
+
+		test("Creating control should add it in the DOM", function () {
+			// Arrange
+			var oMarker = new sap.m.ObjectMarker({
+				type: sap.m.ObjectMarkerType.Draft
+			});
+
+			oMarker.placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			strictEqual(oMarker.$().length, 1, "Control is in the DOM.");
+
+			// Cleanup
+			oMarker.destroy();
+		});
+
+		test("Creating control w/o setting type property", function () {
+			// Arrange
+			var oMarker = new sap.m.ObjectMarker({
+			});
+
+			oMarker.placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			strictEqual(oMarker.$().children().length, 0, "Object Marker inner control is not rendered when type is not set.");
+
+			// Cleanup
+			oMarker.destroy();
+		});
+
+		test("Creating an interactive control", function() {
+			// Arrange
+			var oMarker = new sap.m.ObjectMarker({
+				type: sap.m.ObjectMarkerType.Draft,
+				press: function() {}
+			});
+
+			oMarker.placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			ok(oMarker.$().find(".sapMLnk").length, "The inner control is rendered as sap.m.Link when a press event is set.");
+
+			// Cleanup
+			oMarker.destroy();
+		});
+
+		test("Creating an non-interactive control", function() {
+			// Arrange
+			var oMarker = new sap.m.ObjectMarker({
+				type: sap.m.ObjectMarkerType.Draft
+			});
+
+			oMarker.placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			ok(oMarker.$().find(".sapMText").length, "The inner control is rendered as sap.m.Text when a press event is not set.");
+
+			// Cleanup
+			oMarker.destroy();
+		});
+
+		module("Visibility");
+
+		test("Resize control to change the device size", function() {
+			// Arrange
+			var oMarker = new sap.m.ObjectMarker({
+				type: sap.m.ObjectMarkerType.Locked
+			});
+
+			oMarker.placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+
+			// Act
+			sinon.stub(oMarker, "_getDeviceType").returns("small");
+			oMarker._handleMediaChange();
+
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			ok(!oMarker.$().text().length, "Control now does not show the text.");
+
+			// Cleanup
+			oMarker.destroy();
+		});
+
+		test("Explicitly set visibility", function() {
+			// Arrange
+			var oMarker = new sap.m.ObjectMarker({
+				type: sap.m.ObjectMarkerType.Locked
+			});
+
+			oMarker.placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+
+			// Act
+			oMarker.setVisibility(sap.m.ObjectMarkerVisibility.IconAndText);
+
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			ok(oMarker.$().text().length, "Control text is visible when visibility is set to IconAndText.");
+			ok(oMarker.$().find(".sapUiIcon").length, "Control icon is visible when visibility is set to IconAndText.");
+
+			// Act
+			oMarker.setVisibility(sap.m.ObjectMarkerVisibility.IconOnly);
+
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			ok(!oMarker.$().text().length, "Control text is not visible when visibility is set to IconOnly.");
+			ok(oMarker.$().find(".sapUiIcon").length, "Control icon is visible when visibility is set to IconOnly.");
+
+			// Act
+			oMarker.setVisibility(sap.m.ObjectMarkerVisibility.TextOnly);
+
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			ok(oMarker.$().text().length, "Control text is visible when visibility is set to TextOnly.");
+			//ok(!oMarker.$().find(".sapUiIcon").length, "Control icon is not visible when visibility is set to TextOnly.");
+
+			// Cleanup
+			oMarker.destroy();
+		});
+
+		test("Switch interactive/non-interactive mode", function() {
+			var fn = function () {};
+
+			// Arrange
+			var oMarker = new sap.m.ObjectMarker({
+				type: sap.m.ObjectMarkerType.Locked
+			});
+
+			oMarker.placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+
+			// Act
+			oMarker.attachPress(fn);
+
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			ok(oMarker.$().find(".sapMLnk").length, "The inner control is re-rendered as sap.m.Link when a press event is set.");
+
+			// Act
+			oMarker.detachPress(fn);
+
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			ok(oMarker.$().find(".sapMText").length, "The inner control is re-rendered as sap.m.Text when a press event is set.");
+
+			// Cleanup
+			oMarker.destroy();
+		});
+
+		module("Eventing");
+
+		test("Fire 'press' event when an inner link control is clicked", function() {
+			// Arrange
+			var oMarker = new sap.m.ObjectMarker({
+				type: sap.m.ObjectMarkerType.Draft,
+				press: function(oEvent) {
+					ok(true, "This should be executed when the link is triggered");
+				}
+			});
+
+			oMarker.placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			expect(1);
+			qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oMarker.$("link")); //should fire event
+			qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oMarker.getId()); //should not fire event
+
+			// Cleanup
+			oMarker.destroy();
+		});
+
+		module("Binding");
+
+		test("Binding - standalone", function() {
+			// Arrange
+			var oModel = new sap.ui.model.json.JSONModel();
+			oModel.setData({ modelData: { type: sap.m.ObjectMarkerType.Locked }});
+
+			var oMarker = new sap.m.ObjectMarker();
+			oMarker.setModel(oModel);
+
+			// Act
+			oMarker.bindProperty("type", "/modelData/type");
+
+			oMarker.placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			strictEqual(oMarker.getType(), sap.m.ObjectMarkerType.Locked, "Control type is set to 'Locked' via binding");
+
+			// Cleanup
+			oMarker.destroy();
+		});
+
+		test("Binding - table", function() {
+			// Arrange
+			var oModel = new sap.ui.model.json.JSONModel();
+			oModel.setData({ modelData: [{ lastName: "Dente", name: "Al", type: sap.m.ObjectMarkerType.Locked }] });
+
+			var oTable = new sap.m.Table({
+				columns : [
+					new sap.m.Column({
+						header : new sap.m.Label({
+							text : "Object Marker (active)"
+						})
+					})
+				]
+			});
+			oTable.setModel(oModel);
+
+			// Act
+			oTable.bindItems("/modelData", new sap.m.ColumnListItem({
+				cells : [
+					new sap.m.ObjectMarker({
+						type: "{type}",
+						press: function() {}
+					})
+				]
+			}));
+
+			oTable.placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			strictEqual(oTable.$().find(".sapMLnk").text(), sap.m.ObjectMarkerType.Locked, "Object Marker type is set to 'Locked' via binding");
+
+			// Cleanup
+			oTable.destroy();
+		});
+
+	</script>
+</head>
+<body>
+<h1 id="qunit-header">QUnit page for sap.m.ObjectMarker</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<div id="qunit-fixture"></div>
+<ol id="qunit-tests"></ol>
+</body>
+</html>

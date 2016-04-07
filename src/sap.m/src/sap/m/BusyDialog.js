@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.BusyDialog.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function (jQuery, library, Control, Popup, Parameters) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIndicator', 'sap/m/Label', 'sap/m/Button'],
+	function (jQuery, library, Control, Dialog, BusyIndicator, Label, Button, Popup, Parameters) {
 		"use strict";
 
 		/**
@@ -102,12 +102,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		});
 
 		BusyDialog.prototype.init = function () {
-			this._busyIndicator = new sap.m.BusyIndicator(this.getId() + '-busyInd', {
+			this._busyIndicator = new BusyIndicator(this.getId() + '-busyInd', {
 				visible: true
 			});
 
 			//create the dialog
-			this._oDialog = new sap.m.Dialog(this.getId() + '-Dialog', {
+			this._oDialog = new Dialog(this.getId() + '-Dialog', {
 				content: this._busyIndicator,
 				showHeader: false,
 				initialFocus: this._busyIndicator
@@ -216,8 +216,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 			if (!this._oLabel) {
 				if (text) {
-					this._oLabel = new sap.m.Label(this.getId() + '-TextLabel', {text: text}).addStyleClass('sapMBusyDialogLabel');
+					this._oLabel = new Label(this.getId() + '-TextLabel', {text: text}).addStyleClass('sapMBusyDialogLabel');
 					this._oDialog.insertAggregation('content', this._oLabel, 0);
+					this._oDialog.addAriaLabelledBy(this._oLabel.getId());
 				}
 			} else {
 				if (text) {
@@ -300,7 +301,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			var cancelButtonText = this.getCancelButtonText();
 			cancelButtonText = cancelButtonText ? cancelButtonText : sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("BUSYDIALOG_CANCELBUTTON_TEXT");
 
-			return this._cancelButton ? this._cancelButton : this._cancelButton = new sap.m.Button(this.getId() + 'busyCancelBtn', {
+			return this._cancelButton ? this._cancelButton : this._cancelButton = new Button(this.getId() + 'busyCancelBtn', {
 				text: cancelButtonText,
 				press: function () {
 					this.close(true);

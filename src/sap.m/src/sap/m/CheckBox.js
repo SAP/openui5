@@ -82,6 +82,12 @@ sap.ui.define(['jquery.sap.global', './Label', './library', 'sap/ui/core/Control
 			 */
 			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : sap.ui.core.ValueState.None}
 		},
+		aggregations: {
+			/**
+			 * The label that represents the text of the checkbox control
+			 */
+			_label: {type: "sap.m.Label", group: "Behavior", multiple: false, visibility: "hidden"}
+		},
 		associations : {
 
 			/**
@@ -117,6 +123,12 @@ sap.ui.define(['jquery.sap.global', './Label', './library', 'sap/ui/core/Control
 		this.addActiveState(this);
 		jQuery.sap.require("sap.ui.core.IconPool");
 		sap.ui.core.IconPool.insertFontFaceStyle();
+
+		var oLabel = new Label(this.getId() + "-label", {
+			labelFor: this.getId()
+		}).addStyleClass("sapMCbLabel");
+
+		this.setAggregation("_label", oLabel, true);
 	};
 
 	CheckBox.prototype.onAfterRendering = function() {
@@ -157,10 +169,13 @@ sap.ui.define(['jquery.sap.global', './Label', './library', 'sap/ui/core/Control
 	 */
 	CheckBox.prototype.ontap = function(oEvent) {
 		if (this.getEnabled() && this.getEditable()) {
-            this.$().focus(); // In IE taping on the input doesn`t focus the wrapper div.
+			this.$().focus(); // In IE taping on the input doesn`t focus the wrapper div.
 			var bSelected = !this.getSelected();
 			this.setSelected(bSelected);
 			this.fireSelect({selected:bSelected});
+
+			// mark the event that it is handled by the control
+			oEvent && oEvent.setMarked();
 		}
 	};
 
@@ -182,47 +197,65 @@ sap.ui.define(['jquery.sap.global', './Label', './library', 'sap/ui/core/Control
 	};
 
 	/**
-	 * Sets a property of the label, and creates the label if it has not been initialized
-	 * @private
+	 * Setter for the text property
+	 * @param sText
+	 * @returns {sap.m.CheckBox}
 	 */
-	CheckBox.prototype._setLabelProperty = function (sPropertyName, vPropertyValue, bSupressRerendering) {
-		var bHasLabel = !!this._oLabel,
-			sUpperPropertyName = jQuery.sap.charToUpperCase(sPropertyName, 0);
+	CheckBox.prototype.setText = function(sText) {
+		var oLabel = this.getAggregation("_label"),
+			bHasText = !!sText;
 
-		this.setProperty(sPropertyName, vPropertyValue, bHasLabel && bSupressRerendering);
-
-		if (!bHasLabel) {
-			this._oLabel = new Label(this.getId() + "-label", {labelFor: this.getId()})
-								.addStyleClass("sapMCbLabel")
-								.setParent(this, null, true);
-		}
-
-		this._oLabel["set" + sUpperPropertyName](this["get" + sUpperPropertyName]()); // e.g. this._oLabel.setText(value);
+		this.setProperty("text", sText, true);
+		oLabel.setText(sText);
+		this.$().toggleClass("sapMCbHasLabel", bHasText);
 
 		return this;
 	};
 
-	CheckBox.prototype.setText = function(sText){
-		this._setLabelProperty("text", sText, true);
+	/**
+	 * Setter for the width property
+	 * @param sWidth
+	 * @returns {sap.m.CheckBox}
+	 */
+	CheckBox.prototype.setWidth = function (sWidth){
+		var oLabel = this.getAggregation("_label");
+
+		this.setProperty("width", sWidth, true);
+		oLabel.setWidth(sWidth);
+
+		return this;
 	};
 
-	CheckBox.prototype.setWidth = function(sWidth){
-		this._setLabelProperty("width", sWidth, true);
+	/**
+	 * Setter for the textDirection property
+	 * @param sDirection
+	 * @returns {sap.m.CheckBox}
+	 */
+	CheckBox.prototype.setTextDirection = function(sDirection) {
+		var oLabel = this.getAggregation("_label");
+
+		this.setProperty("textDirection", sDirection, true);
+		oLabel.setTextDirection(sDirection);
+
+		return this;
 	};
 
-	CheckBox.prototype.setTextDirection = function(sDirection){
-		this._setLabelProperty("textDirection", sDirection);
-	};
+	/**
+	 * Setter for the textAlign property
+	 * @param sAlign
+	 * @returns {sap.m.CheckBox}
+	 */
+	CheckBox.prototype.setTextAlign = function(sAlign) {
+		var oLabel = this.getAggregation("_label");
 
-	CheckBox.prototype.setTextAlign = function(sAlign){
-		this._setLabelProperty("textAlign", sAlign);
+		this.setProperty("textAlign", sAlign, true);
+		oLabel.setTextAlign(sAlign);
+
+		return this;
 	};
 
 	CheckBox.prototype.exit = function() {
 		delete this._iTabIndex;
-		if (this._oLabel) {
-			this._oLabel.destroy();
-		}
 	};
 
 	/**
@@ -276,6 +309,22 @@ sap.ui.define(['jquery.sap.global', './Label', './library', 'sap/ui/core/Control
 			return this._iTabIndex;
 		}
 		return this.getEnabled() ? 0 : -1 ;
+	};
+
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	CheckBox.prototype.getAccessibilityInfo = function() {
+		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		return {
+			role: "checkbox",
+			type: oBundle.getText("ACC_CTR_TYPE_CHECKBOX"),
+			description: (this.getText() || "") + (this.getSelected() ? (" " + oBundle.getText("ACC_CTR_STATE_CHECKED")) : ""),
+			focusable: this.getEnabled(),
+			enabled: this.getEnabled(),
+			editable: this.getEditable()
+		};
 	};
 
 	return CheckBox;

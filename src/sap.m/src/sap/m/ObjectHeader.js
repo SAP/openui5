@@ -57,7 +57,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			introActive : {type : "boolean", group : "Misc", defaultValue : null},
 
 			/**
-			 * Indicates that the title is clickable
+			 * Indicates that the title is clickable and is set only if a title is provided
 			 */
 			titleActive : {type : "boolean", group : "Misc", defaultValue : null},
 
@@ -229,6 +229,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * The object number and unit are managed in this aggregation
 			 */
 			_objectNumber : {type : "sap.m.ObjectNumber", multiple : false, visibility : "hidden"},
+
+			/**
+			 * NOTE: Only applied if you set "responsive=false".
+			 * Additional object numbers and units are managed in this aggregation.
+			 * The numbers are hidden on tablet and phone size screens.
+			 */
+			additionalNumbers : {type : "sap.m.ObjectNumber", multiple : true, singularName : "additionalNumber"},
 
 			/**
 			 * This aggregation takes only effect when you set "responsive" to true.
@@ -524,6 +531,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return oControl;
 	};
 
+	/**
+	 * Gets the correct focus domRef.
+	 * @override
+	 * @returns {Object} the domRef of the ObjectHeader title
+	 */
+	ObjectHeader.prototype.getFocusDomRef = function() {
+		if (this.getResponsive()) {
+			return this.$("txt");
+		} else {
+			return this.$("title");
+		}
+	};
+
 	ObjectHeader.prototype.ontap = function(oEvent) {
 		var sSourceId = oEvent.target.id;
 		if (this.getIntroActive() && sSourceId === this.getId() + "-intro") {
@@ -572,6 +592,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	ObjectHeader.prototype._handleSpaceOrEnter = function(oEvent) {
 		var sSourceId = oEvent.target.id;
 
+		// mark the event that it is handled by the control
+		oEvent.setMarked();
+
 		if (!this.getResponsive() && this.getTitleActive() && ( sSourceId === this.getId() + "-title" ||
 				jQuery(oEvent.target).parent().attr('id') === this.getId() + "-title" || // check if the parent of the "h" tag is the "title"
 				sSourceId === this.getId() + "-titleText-inner" )) {
@@ -595,7 +618,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				oEvent.preventDefault();
 			}
 			// The sourceId should be always the id of the "a", even if we click on the inside span element
-			sSourceId = jQuery(oEvent.target).parent().attr('id');
+			sSourceId = this.getId() + "-txt";
 
 			if (!this.getTitleHref()) {
 				oEvent.preventDefault();
@@ -628,6 +651,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			this.fireIconPress({
 				domRef : iconOrImg
+			});
+		} else if (sSourceId === this.getId() + "-titleArrow") {
+			if (oEvent.type === "sapspace") {
+				oEvent.preventDefault();
+			}
+			this.fireTitleSelectorPress({
+				domRef : jQuery.sap.domById(sSourceId)
 			});
 		}
 	};
@@ -846,8 +876,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				sap.ui.Device.media.attachHandler(this._rerenderOHR, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
 			}
 		} else {
+			var sTextAlign = bPageRTL ? sap.ui.core.TextAlign.Left : sap.ui.core.TextAlign.Right;
 			if (oObjectNumber && oObjectNumber.getNumber()) { // adjust alignment according the design specification
-				oObjectNumber.setTextAlign(bPageRTL ? sap.ui.core.TextAlign.Left : sap.ui.core.TextAlign.Right);
+				oObjectNumber.setTextAlign(sTextAlign);
+			}
+			if (this.getAdditionalNumbers()) { // do the same for the additional numbers
+				this._setTextAlignANum(sTextAlign);
 			}
 		}
 	};
@@ -1012,6 +1046,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return this.getBackgroundDesign();
 		}
 
+	};
+
+	/**
+	 * Sets the text alignment for all additional numbers inside the AdditionalNumbers aggregation
+	 *
+	 * @private
+	 */
+	ObjectHeader.prototype._setTextAlignANum = function(sTextAlign) {
+		var numbers = this.getAdditionalNumbers();
+		for (var i = 0; i < numbers.length; i++) {
+			numbers[i].setTextAlign(sTextAlign);
+		}
 	};
 
 	return ObjectHeader;

@@ -70,8 +70,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			/**
 			 * Month selection changed
 			 */
-			select : {}
+			select : {},
 
+			/**
+			 * The <code>pageChange</code> event is fired if the displayed years are changed by user navigation.
+			 * @since 1.38.0
+			 */
+			pageChange : {}
 		}
 	}});
 
@@ -400,10 +405,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			case "sapnextmodifiers":
 				if (oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_DOWN && iColumns < iYears) {
 					//same column in first row of next group (only if more than one row)
-					_updatePage.call(this, true, this._oItemNavigation.getFocusedIndex() - iYears + iColumns);
+					_updatePage.call(this, true, this._oItemNavigation.getFocusedIndex() - iYears + iColumns, true);
 				} else {
 					// first year in next group
-					_updatePage.call(this, true, 0);
+					_updatePage.call(this, true, 0, true);
 				}
 				break;
 
@@ -411,21 +416,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			case "sappreviousmodifiers":
 				if (oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_UP && iColumns < iYears) {
 					//same column in last row of previous group (only if more than one row)
-					_updatePage.call(this, false, iYears - iColumns + this._oItemNavigation.getFocusedIndex());
+					_updatePage.call(this, false, iYears - iColumns + this._oItemNavigation.getFocusedIndex(), true);
 				} else {
 					// last year in previous group
-					_updatePage.call(this, false, iYears - 1);
+					_updatePage.call(this, false, iYears - 1, true);
 				}
 				break;
 
 			case "sappagedown":
 				// same index in next group
-				_updatePage.call(this, true, this._oItemNavigation.getFocusedIndex());
+				_updatePage.call(this, true, this._oItemNavigation.getFocusedIndex(), true);
 				break;
 
 			case "sappageup":
 				// same index in previous group
-				_updatePage.call(this, false, this._oItemNavigation.getFocusedIndex());
+				_updatePage.call(this, false, this._oItemNavigation.getFocusedIndex(), true);
 				break;
 
 			default:
@@ -464,7 +469,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 
 	}
 
-	function _updatePage(bForward, iSelectedIndex){
+	function _updatePage(bForward, iSelectedIndex, bFireEvent){
 
 		var aDomRefs = this._oItemNavigation.getItemDomRefs();
 		var oFirstDate =  this._newUniversalDate(this._oFormatYyyymmdd.parse(jQuery(aDomRefs[0]).attr("data-sap-year-start"), true));
@@ -502,6 +507,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		}
 
 		_updateYears.call(this, oFirstDate, iSelectedIndex);
+
+		if (bFireEvent) {
+			this.firePageChange();
+		}
 
 	}
 
