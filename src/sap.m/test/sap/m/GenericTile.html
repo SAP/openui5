@@ -46,7 +46,7 @@
 		footerComp : "Compare across regions",
 		scale : "MM",
 		unit : "EUR",
-		value : 7777,
+		value : "17Ñç",
 		size : "Auto",
 		frameType : "OneByOne",
 		state : sap.m.LoadState.Loaded,
@@ -121,7 +121,7 @@
 			deltaDisplayValue : "5555 Mio",
 			width : "100%"
 		}
-	}
+	};
 
 	var oGenericTileModel = new sap.ui.model.json.JSONModel(oGenericTileData);
 
@@ -132,14 +132,14 @@
 		size : "{/size}",
 		formatterValue : "{/isFormatterValue}",
 		truncateValueTo : "{/truncateValueTo}",
-		valueColor : "{/valueColor}",
+		valueColor : "{/valueColor}"
 	});
 
 	var oNVConfS = new sap.m.TileContent("numeric-tile-cont-l", {
 		unit : "{/unit}",
 		size : "{/size}",
 		footer : "{/footerNum}",
-		content : oNVConfContS,
+		content : oNVConfContS
 	});
 
 	var fnPress = function(oEvent) {
@@ -163,7 +163,7 @@
 	var oNumCnt2x1 = new sap.m.NumericContent("numeric-cont-2x1", {
 		value : "-431.241.621,5",
 		scale : "MM",
-		indicator : "Up",
+		indicator : "{/indicator}",
 		size : "{/size}",
 		truncateValueTo : 14,
 		valueColor : "{/valueColor}",
@@ -175,7 +175,7 @@
 		size : "{/size}",
 		footer : "{/footerComp}",
 		frameType : "TwoByOne",
-		content : oNumCnt2x1,
+		content : oNumCnt2x1
 	});
 
 	var oGenericTile3 = new sap.m.GenericTile({
@@ -197,6 +197,8 @@
 		alignItems: "Start",
 		justifyContent: "SpaceAround"
 	});
+
+	oFlexBox.addStyleClass("sapUiSmallMargin");
 
 	var oPage = new sap.m.Page("initial-page", {
 		showHeader : false,
@@ -308,7 +310,6 @@
 		change : function(oE) {
 			var sSelectedKey = oE.getParameter("selectedItem").getKey();
 			oGenericTileData.frameType = sSelectedKey;
-			var bTwo = (sSelectedKey == "TwoByOne");
 			oGenericTileModel.checkUpdate();
 		},
 		items : [new sap.ui.core.Item({
@@ -349,7 +350,7 @@
 		}), new sap.ui.core.Item("picture-item-6", {
 			key : "sap-icon://customer-financial-fact-sheet",
 			text : "Icon2"
-		}), ],
+		}) ],
 		selectedItem : "picture-item-1"
 	});
 
@@ -410,6 +411,25 @@
 		}
 	});
 
+	var oIndicatorLabel = new sap.m.Label({
+		id: "indicator-label",
+		text: "Indicator"
+	});
+
+	var oIndicatorSelect = new sap.m.Select({
+		items: [
+			new sap.ui.core.Item({
+				key: "Up",
+				text: "Up"
+			}),
+			new sap.ui.core.Item({
+				key: "Down",
+				text: "Down"
+			})
+		],
+		selectedKey: "{/indicator}"
+	});
+
 	var oFailedLabel = new sap.m.Label({
 		text : "Failed Text",
 		labelFor : "failed-text"
@@ -428,7 +448,7 @@
 			text : "Modify Tile"
 		}), oTitleLbl, oTitleInput, oTitleDscr, oDescInput, oTitleFoot, oFooterInputNum, oFooterInputComp, oTooltipLbl, oTooltipInput, oUpdateValueLbl, oUpdateValueInput, oTitleUnit,
 				oUnitInput, oFailedLabel, oFailedInput, oSizeLbl, oSizeSlct, oFtLbl, oFtSlct, oPictureLbl, oPictureSlct,
-				oImageDescLbl, oImageDescInput, oTriggerLoadLbl, oTriggerLoadSlct, oPressLbl, oPressSwtch]
+				oImageDescLbl, oImageDescInput, oTriggerLoadLbl, oTriggerLoadSlct, oPressLbl, oPressSwtch, oIndicatorLabel, oIndicatorSelect]
 	});
 	oPage.addContent(editableSimpleForm);
 	//create a mobile App embedding the page and place the App into the HTML document

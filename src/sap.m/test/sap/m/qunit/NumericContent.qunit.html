@@ -154,18 +154,6 @@
 		assert.equal(this.oNumericContent.getAltText(), "Icon description\n10$\nAscending\nGood", "Alternative text is correct with a value and scale set up");
 	});
 
-	QUnit.test("Test icon size class", function (assert) {
-		var $numericContent,
-			$icon;
-
-		//Assert
-		$numericContent = this.oNumericContent.$();
-		$icon = $numericContent.find(".sapMNCIconImage");
-
-		assert.ok($icon.hasClass("L"), "The icon has the correct size class");
-		assert.notOk($icon.hasClass("Auto"), "The icon does not have the default class Auto");
-	});
-
 	QUnit.module("Property withoutMargin", {
 		beforeEach : function() {
 			this.oNumericContent = new sap.m.NumericContent({
