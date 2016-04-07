@@ -466,8 +466,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		}
 		oRM.write("</div>"); // End Number/units container
 
-		this._renderAdditionalNumbers(oRM, oOH);
-
+		if (!oOH.getCondensed()) {
+			this._renderAdditionalNumbers(oRM, oOH);
+		}
 	};
 
 	/**
