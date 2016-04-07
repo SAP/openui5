@@ -42,7 +42,7 @@ sap.ui.define([
 		 */
 		proxy : function (sAbsolutePath) {
 			if (location.hostname !== "localhost") {
-				alert("Cannot use a proxy for hosts other than localhost!");
+				alert("Cannot use a proxy for hosts other than localhost!"); // eslint-disable-line
 				return sAbsolutePath;
 			}
 

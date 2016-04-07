@@ -8,5 +8,5 @@ Content-Type: application/json;odata.metadata=minimal
 Content-Length: 105
 odata-version: 4.0
 
-{"@odata.context":"$metadata#SalesOrderList(SalesOrderID,BuyerName,GrossAmount,CurrencyCode)","value":[]}
+{"@odata.context":"$metadata#SalesOrderList(BuyerName,CurrencyCode,GrossAmount,Note,SalesOrderID)","value":[]}
 --9206B556449D06612AC031DBBD151DAF0--

@@ -4,10 +4,7 @@
 			"files": [
 				"Component.js",
 				"Main.view.xml",
-				"ValueHelp.js",
-				"data/metadata.xml",
-				"data/VL_SH_DEBID.json",
-				"data/VL_SH_H_T001.json"
+				"ValueHelp.js"
 			]
 		}
 	},

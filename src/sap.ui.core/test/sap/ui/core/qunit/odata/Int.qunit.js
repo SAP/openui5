@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.require([
+	"jquery.sap.global",
 	"sap/ui/core/Control",
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/model/FormatException",
@@ -10,7 +11,7 @@ sap.ui.require([
 	"sap/ui/model/odata/type/Int",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/test/TestUtils"
-], function (Control, NumberFormat, FormatException, ParseException, ValidateException, Int,
+], function (jQuery, Control, NumberFormat, FormatException, ParseException, ValidateException, Int,
 		ODataType, TestUtils) {
 	/*global QUnit, sinon */
 	"use strict";

@@ -170,6 +170,9 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 
 						"ODataV4Model": {
 							"dataSource": "ODataV4",
+							"settings": {
+								"synchronizationMode": "None"
+							}
 						},
 
 						"v2-ODataModel": {

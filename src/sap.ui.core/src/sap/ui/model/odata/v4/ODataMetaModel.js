@@ -158,9 +158,9 @@ sap.ui.define([
 	 *
 	 * @alias sap.ui.model.odata.v4.ODataMetaModel
 	 * @author SAP SE
-	 * @class Implementation of an OData meta data model which offers access to OData v4 meta data.
+	 * @class Implementation of an OData meta data model which offers access to OData V4 meta data.
 	 *   An event handler can only be attached to this meta model for the following event:
-	 *   'messageChange', see {@link sap.ui.core.messages.MessageProcessor#messageChange
+	 *   'messageChange', see {@link sap.ui.core.message.MessageProcessor#messageChange
 	 *   messageChange}.
 	 *   For other events, an error is thrown.
 	 *
@@ -553,20 +553,12 @@ sap.ui.define([
 	 * @see #requestUI5Type
 	 */
 	ODataMetaModel.prototype.fetchUI5Type = function (sPath) {
-		var that = this;
-
-		/**
-		 * Determines the type and constraints for the given JSON metadata.
-		 *
-		 * @param {object} oMetadata
-		 *   The JSON metadata for which the type is requested. This can be either a Property or an
-		 *   array of Action/Function (for which the $ReturnType is chosen).
-		 * @returns {sap.ui.model.odata.type.ODataType}
-		 *   The type
-		 * @throws {Error} If there is no UI5 type for the referenced EDM type
-		 */
-		function getType(oMetadata) {
-			var mConstraints, sName, oProperty, oType, oTypeInfo;
+		// Note: undefined is more efficient than "" here
+		return this.fetchObject(undefined, this.getMetaContext(sPath)).then(function (oProperty) {
+			var mConstraints,
+				sName,
+				oType = oProperty["$ui5.type"],
+				oTypeInfo;
 
 			function setConstraint(sKey, vValue) {
 				if (vValue !== undefined) {
@@ -575,11 +567,6 @@ sap.ui.define([
 				}
 			}
 
-			oProperty = Array.isArray(oMetadata) && oMetadata[0].$ReturnType
-				? oMetadata[0].$ReturnType
-				: oMetadata;
-
-			oType = oProperty["$ui5.type"];
 			if (oType) {
 				return oType;
 			}
@@ -603,15 +590,6 @@ sap.ui.define([
 			oProperty["$ui5.type"] = oType;
 
 			return oType;
-		}
-
-		// Note: undefined is more efficient than "" here
-		return this.fetchObject(undefined, this.getMetaContext(sPath)).then(function (oMetadata) {
-			if (oMetadata.$kind === "FunctionImport") {
-				return that.fetchObject(undefined, that.getMetaContext("/" + oMetadata.$Function))
-					.then(getType);
-			}
-			return getType(oMetadata);
 		});
 	};
 
@@ -734,7 +712,7 @@ sap.ui.define([
 	 *   An absolute data binding path pointing to an entity, for example
 	 *   "/TEAMS/0/TEAM_2_EMPLOYEES/0"
 	 * @param {sap.ui.model.Context} oContext
-	 *   OData v4 context object which provides access to data via <code>requestValue()</code>
+	 *   OData V4 context object which provides access to data via <code>requestValue()</code>
 	 * @returns {Promise}
 	 *   A promise which is resolved with the canonical URL (for example
 	 *   "/<service root URL>/EMPLOYEES(ID='1')") in case of success, or rejected with an instance
@@ -1004,6 +982,18 @@ sap.ui.define([
 	// @override
 	ODataMetaModel.prototype.setLegacySyntax = function () {
 		throw new Error("Unsupported operation: v4.ODataMetaModel#setLegacySyntax");
+	};
+
+	/**
+	 * Returns a string representation of this object including the URL to the $metadata document of
+	 * the service.
+	 *
+	 * @return {string} A string description of this model
+	 * @public
+	 * @since 1.37.0
+	 */
+	ODataMetaModel.prototype.toString = function () {
+		return sODataMetaModel + ": " + this.sUrl;
 	};
 
 	return ODataMetaModel;

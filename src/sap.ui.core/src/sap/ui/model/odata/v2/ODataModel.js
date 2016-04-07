@@ -4759,9 +4759,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns an instance of an OData meta model which offers a unified access to both OData v2
-	 * meta data and v4 annotations. It uses the existing {@link sap.ui.model.odata.ODataMetadata}
-	 * as a foundation and merges v4 annotations from the existing
+	 * Returns an instance of an OData meta model which offers a unified access to both OData V2
+	 * meta data and V4 annotations. It uses the existing {@link sap.ui.model.odata.ODataMetadata}
+	 * as a foundation and merges V4 annotations from the existing
 	 * {@link sap.ui.model.odata.v2.ODataAnnotations} directly into the corresponding model element.
 	 *
 	 * <b>BEWARE:</b> Access to this OData meta model will fail before the promise returned by

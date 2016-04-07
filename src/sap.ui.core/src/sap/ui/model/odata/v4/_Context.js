@@ -8,7 +8,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * @class Implementation of an OData v4 model's context.
+	 * @class Implementation of an OData V4 model's context.
 	 *
 	 * @alias sap.ui.model.odata.v4._Context
 	 * @author SAP SE
@@ -70,8 +70,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Delegates to this context's binding <code>requestValue</code> method which requests the
-	 * value for the given path, relative to this context, as maintained by that binding.
+	 * Delegates to the <code>requestValue</code> method of this context's binding which requests
+	 * the value for the given path, relative to this context, as maintained by that binding.
 	 *
 	 * @param {string} [sPath]
 	 *   Some relative path
@@ -85,9 +85,56 @@ sap.ui.define([
 		return this.oBinding.requestValue(sPath, this.iIndex);
 	};
 
+	/**
+	 * Delegates to the <code>updateValue</code> method of this context's binding which updates the
+	 * value for the given path, relative to this context, as maintained by that binding.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID to be used for this update call.
+	 * @param {string} sPropertyName
+	 *   Name of property to update
+	 * @param {any} vValue
+	 *   The new value
+	 * @param {string} [sEditUrl]
+	 *   The edit URL corresponding to the entity to be updated
+	 * @param {string} [sPath]
+	 *   Some relative path
+	 * @returns {Promise}
+	 *   A promise on the outcome of the binding's <code>updateValue</code> call
+	 *
+	 * @private
+	 */
+	_Context.prototype.updateValue = function (sGroupId, sPropertyName, vValue, sEditUrl, sPath) {
+		var that = this;
+
+		if (this.iIndex !== undefined) {
+			sPath = this.iIndex + (sPath ? "/" + sPath : "");
+		}
+
+		if (sEditUrl) {
+			return this.oBinding.updateValue(sGroupId, sPropertyName, vValue, sEditUrl, sPath);
+		}
+
+		return this.oModel.requestCanonicalPath(this).then(function (sEditUrl) {
+			return that.oBinding.updateValue(sGroupId, sPropertyName, vValue, sEditUrl.slice(1),
+				sPath);
+		});
+	};
+
+	/**
+	 * Returns a string representation of this object including the binding path.
+	 *
+	 * @return {string} A string description of this binding
+	 * @public
+	 * @since 1.37.0
+	 */
+	_Context.prototype.toString = function () {
+		return this.iIndex === undefined ? this.sPath : this.sPath + "[" + this.iIndex + "]";
+	};
+
 	return {
 		/**
-		 * Creates a context for an OData v4 model.
+		 * Creates a context for an OData V4 model.
 		 *
 		 * @param {sap.ui.model.odata.v4.ODataModel} oModel
 		 *   The model
@@ -98,7 +145,7 @@ sap.ui.define([
 		 * @param {number} [iIndex]
 		 *   Index of item represented by this context, used by list bindings, not context bindings
 		 * @returns {sap.ui.model.Context}
-		 *   A context for an OData v4 model
+		 *   A context for an OData V4 model
 		 * @throws {Error}
 		 *   If an invalid path is given
 		 *

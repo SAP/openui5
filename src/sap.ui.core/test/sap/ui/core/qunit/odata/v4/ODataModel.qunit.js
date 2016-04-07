@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.require([
+	"jquery.sap.global",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/type/String",
@@ -16,15 +17,15 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/test/TestUtils"
-], function (BindingMode, Model, TypeString, ODataUtils, _Context, _ODataHelper, _MetadataRequestor,
-		_Requestor, ODataContextBinding, ODataListBinding, ODataMetaModel, ODataModel,
-		ODataPropertyBinding, TestUtils) {
+], function (jQuery, BindingMode, Model, TypeString, ODataUtils, _Context, _ODataHelper,
+		_MetadataRequestor, _Requestor, ODataContextBinding, ODataListBinding, ODataMetaModel,
+		ODataModel, ODataPropertyBinding, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
 	/*
-	 * You can run various tests in this module against a real OData v4 service using the request
+	 * You can run various tests in this module against a real OData V4 service using the request
 	 * property "realOData". See src/sap/ui/test/TestUtils.js for details.
 	 */
 
@@ -32,6 +33,7 @@ sap.ui.require([
 			"TEAMS('TEAM_01')/Name" : {source : "Name.json"},
 			"TEAMS('UNKNOWN')" : {code : 404, source : "TEAMS('UNKNOWN').json"}
 		},
+		sServiceUrl = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
 		TestControl = sap.ui.core.Element.extend("test.sap.ui.model.odata.v4.ODataModel", {
 			metadata : {
 				properties : {
@@ -41,13 +43,18 @@ sap.ui.require([
 		});
 
 	/**
-	 * Creates a v4 OData service for <code>TEA_BUSI</code>.
+	 * Creates a V4 OData service for <code>TEA_BUSI</code>.
 	 *
 	 * @param {string} [sQuery] URI query parameters starting with '?'
+	 * @param {object} [mParameters] additional model parameters
 	 * @returns {sap.ui.model.odata.v4.oDataModel} the model
 	 */
-	function createModel(sQuery) {
-		return new ODataModel(getServiceUrl() + (sQuery || ""));
+	function createModel(sQuery, mParameters) {
+		mParameters = jQuery.extend({}, mParameters, {
+			serviceUrl : getServiceUrl() + (sQuery || ""),
+			synchronizationMode : "None"
+		});
+		return new ODataModel(mParameters);
 	}
 
 	/**
@@ -60,18 +67,14 @@ sap.ui.require([
 	 *   a URL within the service
 	 */
 	function getServiceUrl(sPath) {
-		var sAbsolutePath = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/"
-				+ (sPath && sPath.slice(1) || "");
-
-		return TestUtils.proxy(sAbsolutePath);
+		return TestUtils.proxy(sServiceUrl + (sPath && sPath.slice(1) || ""));
 	}
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataModel", {
 		beforeEach : function () {
 			this.oSandbox = sinon.sandbox.create();
-			TestUtils.setupODataV4Server(this.oSandbox, mFixture, undefined,
-				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/");
+			TestUtils.setupODataV4Server(this.oSandbox, mFixture, undefined, sServiceUrl);
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
@@ -87,43 +90,39 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("basics", function (assert) {
-		var mHeaders = {
-				"Accept-Language" : "ab-CD"
-			},
-			oHelperMock = this.mock(_ODataHelper),
-			oMetadataRequestor = {},
-			oMetadataRequestorMock = this.mock(_MetadataRequestor),
+		assert.throws(function () {
+			return new ODataModel();
+		}, new Error("Synchronization mode must be 'None'"));
+		assert.throws(function () {
+			return new ODataModel({synchronizationMode : "None"});
+		}, new Error("Missing service root URL"));
+		assert.throws(function () {
+			return new ODataModel({serviceUrl : "/foo", synchronizationMode : "None"});
+		}, new Error("Service root URL must end with '/'"));
+
+		assert.strictEqual(createModel().sServiceUrl, getServiceUrl());
+		assert.strictEqual(createModel().toString(),
+			"sap.ui.model.odata.v4.ODataModel: " + getServiceUrl());
+	});
+
+	//*********************************************************************************************
+	QUnit.test("with serviceUrlParams", function (assert) {
+		var oMetadataRequestor = {},
 			oMetaModel,
 			oModel,
 			mModelOptions = {};
 
-		assert.throws(function () {
-			return new ODataModel();
-		}, new Error("Missing service root URL"));
-		assert.throws(function () {
-			return new ODataModel("/foo");
-		}, new Error("Service root URL must end with '/'"));
-
-		assert.strictEqual(new ODataModel("/foo/").sServiceUrl, "/foo/");
-		assert.strictEqual(new ODataModel({"serviceUrl" : "/foo/"}).sServiceUrl, "/foo/",
-			"serviceUrl in mParameters");
-		assert.strictEqual(new ODataModel("/foo/", {"serviceUrl" : "/bar/"}).sServiceUrl, "/foo/",
-			"explicit service URL parameter wins over serviceUrl in mParameters");
-
-		oHelperMock.expects("buildQueryOptions").returns(mModelOptions);
-		oMetadataRequestorMock.expects("create").withExactArgs(mHeaders, mModelOptions)
-			.returns(oMetadataRequestor);
-		//code under test
-		oModel = new ODataModel("/foo/");
-		assert.strictEqual(oModel.mUriParameters, mModelOptions);
-
-		oHelperMock.expects("buildQueryOptions").withExactArgs({"sap-client" : "111"})
+		this.mock(_ODataHelper).expects("buildQueryOptions")
+			.withExactArgs({"sap-client" : "111"})
 			.returns(mModelOptions);
-		oMetadataRequestorMock.expects("create").withExactArgs(mHeaders, mModelOptions)
+		this.mock(_MetadataRequestor).expects("create")
+			.withExactArgs({"Accept-Language" : "ab-CD"}, sinon.match.same(mModelOptions))
 			.returns(oMetadataRequestor);
-		//code under test
-		oModel = new ODataModel("/foo/?sap-client=111");
-		assert.strictEqual(oModel.sServiceUrl, "/foo/");
+
+		// code under test
+		oModel = createModel("?sap-client=111");
+
+		assert.strictEqual(oModel.sServiceUrl, getServiceUrl());
 		assert.strictEqual(oModel.mUriParameters, mModelOptions);
 		assert.strictEqual(oModel.getDefaultBindingMode(), BindingMode.TwoWay);
 		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.OneTime), true);
@@ -132,30 +131,74 @@ sap.ui.require([
 		oMetaModel = oModel.getMetaModel();
 		assert.ok(oMetaModel instanceof ODataMetaModel);
 		assert.strictEqual(oMetaModel.oRequestor, oMetadataRequestor);
-		assert.strictEqual(oMetaModel.sUrl, "/foo/$metadata");
-
-		oHelperMock.expects("buildQueryOptions").withExactArgs({"sap-client" : "111"})
-			.returns(mModelOptions);
-		oMetadataRequestorMock.expects("create").withExactArgs(mHeaders, mModelOptions)
-			.returns(oMetadataRequestor);
-		//code under test, serviceUrlParams overwrite URL parameters from this.sServiceUrl
-		oModel = new ODataModel("/foo/?sap-client=222",
-			{serviceUrlParams : {"sap-client" : "111"}});
+		assert.strictEqual(oMetaModel.sUrl, getServiceUrl() + "$metadata");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Model construction with default group", function (assert) {
+	QUnit.test("w/o serviceUrlParams", function (assert) {
+		this.mock(_ODataHelper).expects("buildQueryOptions").withExactArgs({});
+
+		// code under test
+		createModel();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("serviceUrlParams overwrite URL parameters from sServiceUrl", function (assert) {
+		var oMetadataRequestor = {},
+			mModelOptions = {};
+
+		this.mock(_ODataHelper).expects("buildQueryOptions")
+			.withExactArgs({"sap-client" : "111"})
+			.returns(mModelOptions);
+		this.mock(_MetadataRequestor).expects("create")
+			.withExactArgs({"Accept-Language" : "ab-CD"}, sinon.match.same(mModelOptions))
+			.returns(oMetadataRequestor);
+
+		// code under test
+		new ODataModel({ // eslint-disable-line no-new
+			serviceUrl : "/?sap-client=222",
+			serviceUrlParams : {"sap-client" : "111"},
+			synchronizationMode : "None"
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Model construction with group ID", function (assert) {
 		var oModel;
 
-		oModel = new ODataModel("/");
-		assert.strictEqual(oModel.getGroupId(), ""/*sGroupId for _Requestor#request*/);
+		oModel = createModel();
+		assert.strictEqual(oModel.getGroupId(), "$auto");
 
-		oModel = new ODataModel("/foo/", {defaultGroup : "$direct"});
-		assert.strictEqual(oModel.getGroupId(), undefined);
+		oModel = createModel("", {groupId : "$direct"});
+		assert.strictEqual(oModel.getGroupId(), "$direct");
+
+		oModel = createModel("", {groupId : "$auto"});
+		assert.strictEqual(oModel.getGroupId(), "$auto");
 
 		assert.throws(function () {
-			oModel = new ODataModel("/foo/", {defaultGroup : "foo"});
-		}, new Error("Default service group must be '$direct'"));
+			oModel = createModel("", {groupId : "foo"});
+		}, new Error("Group ID must be '$auto' or '$direct'"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Model construction with update group ID", function (assert) {
+		var oModel;
+
+		oModel = createModel();
+		assert.strictEqual(oModel.getUpdateGroupId(), "$auto");
+
+		oModel = createModel("", {groupId : "$direct"});
+		assert.strictEqual(oModel.getUpdateGroupId(), "$direct");
+
+		oModel = createModel("", {updateGroupId : "$direct"});
+		assert.strictEqual(oModel.getUpdateGroupId(), "$direct");
+
+		oModel = createModel("", {groupId : "$direct", updateGroupId : "applicationId"});
+		assert.strictEqual(oModel.getUpdateGroupId(), "applicationId");
+
+		assert.throws(function () {
+			oModel = createModel("", {updateGroupId : "$foo"});
+		}, new Error("Invalid update group ID: $foo"));
 	});
 
 	//*********************************************************************************************
@@ -163,13 +206,11 @@ sap.ui.require([
 		var oModel,
 			oRequestor = {};
 
-		this.mock(_Requestor).expects("create").withExactArgs("/foo/", {
-			"Accept-Language" : "ab-CD"
-		}, {
-			"sap-client" : "123"
-		}).returns(oRequestor);
+		this.mock(_Requestor).expects("create")
+			.withExactArgs(getServiceUrl(), {"Accept-Language" : "ab-CD"}, {"sap-client" : "123"})
+			.returns(oRequestor);
 
-		oModel = new ODataModel("/foo/?sap-client=123");
+		oModel = createModel("?sap-client=123");
 
 		assert.ok(oModel instanceof Model);
 		assert.strictEqual(oModel.oRequestor, oRequestor);
@@ -346,20 +387,31 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("refresh", function (assert) {
-		var oModel = createModel(),
+		var oError = new Error(),
+			oHelperMock = this.oSandbox.mock(_ODataHelper),
+			oModel = createModel(),
 			oListBinding = oModel.bindList("/TEAMS"),
 			oListBinding2 = oModel.bindList("/TEAMS"),
 			oPropertyBinding = oModel.bindProperty("Name");
 
 		oListBinding.attachChange(function () {});
 		oPropertyBinding.attachChange(function () {});
-		this.oSandbox.mock(oListBinding).expects("refresh").withExactArgs(true);
+		this.oSandbox.mock(oListBinding).expects("refresh").withExactArgs(true, "myGroup");
 		//check: only bindings with change event handler are refreshed
 		this.oSandbox.mock(oListBinding2).expects("refresh").never();
 		//check: no refresh on binding with relative path
 		this.oSandbox.mock(oPropertyBinding).expects("refresh").never();
+		oHelperMock.expects("checkGroupId").withExactArgs("myGroup");
 
-		oModel.refresh(true);
+		// code under test
+		oModel.refresh(true, "myGroup");
+
+		oHelperMock.expects("checkGroupId").withExactArgs("$Invalid").throws(oError);
+
+		// code under test
+		assert.throws(function () {
+			oModel.refresh(true, "$Invalid");
+		}, oError);
 	});
 
 	//*********************************************************************************************
@@ -387,40 +439,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("dataRequested", function (assert) {
-		var done = assert.async(),
-			sGroupId1 = "group1",
-			sGroupId2 = "group2",
-			oModel = createModel(),
-			fnSpy1 = sinon.spy(),
-			fnSpy2 = sinon.spy(),
-			oSandbox = this.oSandbox,
-			oRequestorMock = oSandbox.mock(oModel.oRequestor);
-
-		oRequestorMock.expects("submitBatch").never();
-
-		// code under test
-		oModel.dataRequested(sGroupId1, function () {
-			oModel.dataRequested(sGroupId1, function () {
-				assert.ok(fnSpy1.called, "second callback for group1");
-				assert.ok(fnSpy2.called, "callback for group2");
-				done();
-			});
-
-			oRequestorMock.expects("submitBatch").withExactArgs(sGroupId1);
-		});
-		oModel.dataRequested(sGroupId1, fnSpy1);
-		oModel.dataRequested(sGroupId2, fnSpy2);
-
-		// expect it afterwards so that we know that it has not been called synchronously
-		oRequestorMock.expects("submitBatch").withExactArgs(sGroupId1);
-		oRequestorMock.expects("submitBatch").withExactArgs(sGroupId2);
-
-		assert.ok(!fnSpy1.called && !fnSpy2.called, "not called synchronously");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("dataRequested with group ID 'undefined'", function (assert) {
+	QUnit.test("addedRequestToGroup with group ID '$direct'", function (assert) {
 		var bDataRequested = false,
 			oModel = createModel();
 
@@ -428,12 +447,98 @@ sap.ui.require([
 		this.oSandbox.mock(oModel.oRequestor).expects("submitBatch").never();
 
 		// code under test
-		oModel.dataRequested(undefined, function () {
+		oModel.addedRequestToGroup("$direct");
+
+		// code under test
+		oModel.addedRequestToGroup("$direct", function () {
 			bDataRequested = true;
 		});
 
 		assert.strictEqual(bDataRequested, true);
-		assert.strictEqual("undefined" in oModel.mDataRequestedCallbacks, false);
+		assert.strictEqual("$direct" in oModel.mCallbacksByGroupId, false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("addedRequestToGroup with group ID '$auto'", function (assert) {
+		var oModel = createModel(),
+			fnGroupSentCallback = function () {},
+			fnGroupSentCallback2 = function () {},
+			fnSubmitAuto = function () {};
+
+		this.oSandbox.mock(oModel._submitBatch).expects("bind")
+			.withExactArgs(sinon.match.same(oModel), "$auto")
+			.returns(fnSubmitAuto);
+		this.oSandbox.mock(sap.ui.getCore()).expects("addPrerenderingTask")
+			.withExactArgs(fnSubmitAuto);
+
+		// code under test
+		oModel.addedRequestToGroup("$auto");
+
+		assert.deepEqual(oModel.mCallbacksByGroupId["$auto"], []);
+
+		// code under test
+		oModel.addedRequestToGroup("$auto", fnGroupSentCallback);
+		oModel.addedRequestToGroup("$auto", fnGroupSentCallback2);
+
+		assert.deepEqual(oModel.mCallbacksByGroupId["$auto"],
+			[fnGroupSentCallback, fnGroupSentCallback2]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("addedRequestToGroup with application group ID", function (assert) {
+		var oModel = createModel(),
+			fnGroupSentCallback = {},
+			fnGroupSentCallback2 = {};
+
+		this.oSandbox.mock(sap.ui.getCore()).expects("addPrerenderingTask").never();
+
+		// code under test
+		oModel.addedRequestToGroup("groupId");
+
+		assert.deepEqual(oModel.mCallbacksByGroupId["groupId"], []);
+
+		// code under test
+		oModel.addedRequestToGroup("groupId", fnGroupSentCallback);
+		oModel.addedRequestToGroup("groupId", fnGroupSentCallback2);
+
+		assert.deepEqual(oModel.mCallbacksByGroupId["groupId"],
+			[fnGroupSentCallback, fnGroupSentCallback2]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("submitBatch", function (assert) {
+		var fnCallback = sinon.spy(),
+			fnCallback2 = sinon.spy(),
+			oModel = createModel(),
+			oReturn,
+			oSubmitPromise = {};
+
+		this.oSandbox.mock(oModel.oRequestor).expects("submitBatch").withExactArgs("groupId")
+			.returns(oSubmitPromise);
+		this.oSandbox.mock(_ODataHelper).expects("checkGroupId").withExactArgs("groupId", true);
+		oModel.mCallbacksByGroupId["groupId"] = [fnCallback, fnCallback2];
+
+		// code under test
+		oReturn = oModel.submitBatch("groupId");
+
+		assert.strictEqual(oReturn, oSubmitPromise);
+		assert.strictEqual(oModel.mCallbacksByGroupId["groupId"], undefined);
+		assert.ok(fnCallback.calledOnce);
+		assert.ok(fnCallback2.calledOnce);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("submitBatch, invalid group ID", function (assert) {
+		var oError = new Error(),
+			oModel = createModel();
+
+		this.oSandbox.mock(oModel).expects("_submitBatch").never();
+		this.oSandbox.mock(_ODataHelper).expects("checkGroupId").withExactArgs("$auto", true)
+			.throws(oError);
+
+		assert.throws(function () {
+			oModel.submitBatch("$auto");
+		}, oError);
 	});
 
 	//*********************************************************************************************
@@ -445,11 +550,11 @@ sap.ui.require([
 		assert.throws(function () { //TODO implement
 			oModel.bindList(undefined, undefined,  undefined, aFilters);
 		}, new Error("Unsupported operation: v4.ODataModel#bindList, "
-				+ "aSorters parameter must not be set"));
+				+ "aFilters parameter must not be set"));
 		assert.throws(function () { //TODO implement
 			oModel.bindList(undefined, undefined,  aSorters);
 		}, new Error("Unsupported operation: v4.ODataModel#bindList, "
-				+ "aFilters parameter must not be set"));
+				+ "aSorters parameter must not be set"));
 
 		assert.throws(function () { //TODO implement
 			oModel.bindTree();
@@ -487,10 +592,6 @@ sap.ui.require([
 			oModel.refresh("foo"/*truthy*/);
 		}, new Error("Unsupported operation: v4.ODataModel#refresh, "
 			+ "bForceUpdate must be true"));
-		assert.throws(function () { //TODO implement
-			oModel.refresh(true, "");
-		}, new Error("Unsupported operation: v4.ODataModel#refresh, "
-				+ "sGroupId parameter must not be set"));
 
 		assert.throws(function () {
 			oModel.setLegacySyntax();

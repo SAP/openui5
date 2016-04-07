@@ -7,21 +7,22 @@ sap.ui.define([
 		'sap/ui/core/Component',
 		'sap/ui/core/ListItem',
 		'sap/ui/core/mvc/Controller',
-		'sap/ui/core/mvc/View',
+		'sap/ui/core/mvc/View', // sap.ui.view()
+		'sap/ui/core/mvc/ViewType',
 		'sap/ui/model/json/JSONModel',
 		'sap/ui/model/odata/ODataUtils',
 		'jquery.sap.encoder',
 		'jquery.sap.script',
 		'jquery.sap.xml'
-	], function (jQuery, MessageBox, Component, ListItem, Controller, View, JSONModel, ODataUtils
-		/*, jQuerySapEncoder, jQuerySapScript, jQuerySapXML */) {
+	], function (jQuery, MessageBox, Component, ListItem, Controller, View, ViewType, JSONModel,
+		ODataUtils /*, jQuerySapEncoder, jQuerySapScript, jQuerySapXML */) {
 	"use strict";
 
 	function alertError(oError) {
 		jQuery.sap.log.error(oError, oError.stack,
 			"sap.ui.core.sample.ViewTemplate.scenario.Main");
 		MessageBox.alert(oError.message, {
-			icon : sap.m.MessageBox.Icon.ERROR,
+			icon : MessageBox.Icon.ERROR,
 			title : "Error"});
 	}
 
@@ -59,7 +60,7 @@ sap.ui.define([
 					oView.setModel(oUiModel, "ui");
 
 					that._bindSelectInstance();
-				})["catch"](alertError);
+				}).catch(alertError);
 			}
 		},
 
@@ -145,7 +146,7 @@ sap.ui.define([
 								bindTexts : that.getView().getModel("ui").getProperty("/bindTexts")
 							}
 						},
-						type : sap.ui.core.mvc.ViewType.XML,
+						type : ViewType.XML,
 						viewName : "sap.ui.core.sample.ViewTemplate.scenario.Detail"
 					});
 					oDetailView.bindElement(sPath);
@@ -158,7 +159,7 @@ sap.ui.define([
 					"sap.ui.core.sample.ViewTemplate.scenario.Main");
 
 				that.onSourceCode();
-			})["catch"](alertError);
+			}).catch(alertError);
 		}
 	});
 

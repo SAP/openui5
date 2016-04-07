@@ -81,7 +81,7 @@ sap.ui.define([
 		 * @returns {Error}
 		 *   An <code>Error</code> instance with the following properties:
 		 *   <ul>
-		 *     <li><code>error</code>: The "error" value from the OData v4 error response JSON
+		 *     <li><code>error</code>: The "error" value from the OData V4 error response JSON
 		 *     object (if available)
 		 *     <li><code>isConcurrentModification</code>: <code>true</code> In case of a
 		 *     concurrent modification detected via ETags (i.e. HTTP status code 412)

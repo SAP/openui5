@@ -2,11 +2,12 @@
  * ${copyright}
  */
 sap.ui.require([
+	"jquery.sap.global",
 	"sap/ui/model/odata/v4/lib/_Batch",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/test/TestUtils"
-], function (_Batch, _Helper, _Requestor, TestUtils) {
+], function (jQuery, _Batch, _Helper, _Requestor, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -96,12 +97,14 @@ sap.ui.require([
 		this.oSandbox.mock(jQuery).expects("ajax")
 			.withExactArgs(sServiceUrl + "Employees?foo=bar", {
 				data : JSON.stringify(oPayload),
-				headers : sinon.match({"Content-Type" : "application/json;charset=UTF-8"}),
+				headers : sinon.match({
+					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
+				}),
 				method : "FOO"
 			}).returns(createMock(assert, oResult, "OK"));
 
 		// code under test
-		oPromise = oRequestor.request("FOO", "Employees?foo=bar", undefined,
+		oPromise = oRequestor.request("FOO", "Employees?foo=bar", "$direct",
 			{"Content-Type" : "wrong"}, oPayload);
 
 		return oPromise.then(function (result){
@@ -111,10 +114,10 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{ // predefined headers can be overridden, but are not modified for later
-		defaultHeaders : {"Accept" : "application/json;odata.metadata=full"},
+		defaultHeaders : {"Accept" : "application/json;odata.metadata=full;IEEE754Compatible=true"},
 		requestHeaders : {"OData-MaxVersion" : "5.0", "OData-Version" : "4.1"},
 		result : {
-			"Accept" : "application/json;odata.metadata=full",
+			"Accept" : "application/json;odata.metadata=full;IEEE754Compatible=true",
 			"OData-MaxVersion" : "5.0",
 			"OData-Version" : "4.1"
 		}
@@ -141,10 +144,10 @@ sap.ui.require([
 				mRequestHeaders = clone(mHeaders.requestHeaders),
 				oRequestor = _Requestor.create(sServiceUrl, mDefaultHeaders),
 				oResult = {},
-				// add predefined request headers for OData v4
+				// add predefined request headers for OData V4
 				mResultHeaders = jQuery.extend({}, {
-					"Accept" : "application/json;odata.metadata=minimal",
-					"Content-Type" : "application/json;charset=UTF-8",
+					"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
+					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true",
 					"OData-MaxVersion" : "4.0",
 					"OData-Version" : "4.0",
 					"X-CSRF-Token" : "Fetch"
@@ -162,7 +165,7 @@ sap.ui.require([
 				}).returns(createMock(assert, oResult, "OK"));
 
 			// code under test
-			oPromise = oRequestor.request("GET", "Employees", undefined, mRequestHeaders);
+			oPromise = oRequestor.request("GET", "Employees", "$direct", mRequestHeaders);
 
 			assert.deepEqual(mDefaultHeaders, mHeaders.defaultHeaders,
 				"caller's map is unchanged");
@@ -270,7 +273,7 @@ sap.ui.require([
 
 				assert.notStrictEqual(oNewPromise, oPromise, "new promise");
 				// avoid "Uncaught (in promise)"
-				oNewPromise["catch"](function (oError1) {
+				oNewPromise.catch(function (oError1) {
 					assert.strictEqual(oError1, oError);
 				});
 			});
@@ -361,7 +364,7 @@ sap.ui.require([
 				});
 			}
 
-			return oRequestor.request("FOO", "foo", undefined, {"foo" : "bar"}, oRequestPayload)
+			return oRequestor.request("FOO", "foo", "$direct", {"foo" : "bar"}, oRequestPayload)
 				.then(function (oPayload) {
 					assert.ok(bSuccess, "success possible");
 					assert.strictEqual(oPayload, oResponsePayload);
@@ -391,7 +394,7 @@ sap.ui.require([
 				headers: {
 					"Accept" : "application/json;odata.metadata=full",
 					"Accept-Language" : "ab-CD",
-					"Content-Type" : "application/json;charset=UTF-8",
+					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true",
 					"Foo" : "bar"
 				},
 				body: undefined,
@@ -401,9 +404,9 @@ sap.ui.require([
 				method: "POST",
 				url: "Customers",
 				headers: {
-					"Accept" : "application/json;odata.metadata=minimal",
+					"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
 					"Accept-Language" : "ab-CD",
-					"Content-Type" : "application/json;charset=UTF-8",
+					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true",
 					"Foo" : "baz"
 				},
 				body: '{"ID":1}',
@@ -479,7 +482,7 @@ sap.ui.require([
 		this.oSandbox.mock(oRequestor).expects("request")
 			.returns(Promise.reject(oBatchError));
 
-		aPromises.push(oRequestor.submitBatch("group").then(unexpectedSuccess, function(oError) {
+		aPromises.push(oRequestor.submitBatch("group").then(unexpectedSuccess, function (oError) {
 			assert.strictEqual(oError, oBatchError);
 		}));
 
@@ -521,7 +524,7 @@ sap.ui.require([
 		aPromises.push(oRequestor.request("GET", "ok", "testGroupId")
 			.then(function (oResult) {
 				assert.deepEqual(oResult, {});
-			})["catch"](unexpected));
+			}).catch(unexpected));
 
 		aPromises.push(oRequestor.request("GET", "fail", "testGroupId")
 			.then(unexpected, function (oResultError) {
@@ -552,7 +555,7 @@ sap.ui.require([
 
 		oRequestor.request("PATCH", "EntitySet", "group", {"foo": "bar"}, {"a": "b"});
 		oRequestor.request("PATCH", "EntitySet", "group", {"bar": "baz"}, {"c": "d"});
-		oRequestor.request("PATCH", "EntitySet", "", {"header": "value"}, {"e": "f"});
+		oRequestor.request("PATCH", "EntitySet", "$auto", {"header": "value"}, {"e": "f"});
 
 		TestUtils.deepContains(oRequestor.mBatchQueue, {
 			"group" : [{
@@ -570,7 +573,7 @@ sap.ui.require([
 				},
 				body: JSON.stringify({"c": "d"})
 			}],
-			"": [{
+			"$auto": [{
 				method: "PATCH",
 				url: "EntitySet",
 				headers: {
@@ -615,7 +618,7 @@ sap.ui.require([
 			.withExactArgs(sResponseContentType, oResult)
 			.returns(aExpectedResponses);
 
-		return oRequestor.request("POST", "$batch", undefined, undefined, aBatchRequests, true)
+		return oRequestor.request("POST", "$batch", "$direct", undefined, aBatchRequests, true)
 			.then(function (oPayload) {
 				assert.strictEqual(aExpectedResponses, oPayload);
 			});
@@ -635,7 +638,7 @@ sap.ui.require([
 					MEMBER_COUNT: 2,
 					MANAGER_ID: "3",
 					BudgetCurrency: "USD",
-					Budget: 555.55
+					Budget: "555.55"
 				});
 			}
 
@@ -661,7 +664,7 @@ sap.ui.require([
 					MEMBER_COUNT: 2,
 					MANAGER_ID: "3",
 					BudgetCurrency: "USD",
-					Budget: 555.55
+					Budget: "555.55"
 				});
 			}, function (oError) {
 				assert.ok(false, oError);

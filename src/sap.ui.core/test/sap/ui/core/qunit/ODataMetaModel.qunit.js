@@ -8,7 +8,7 @@ sap.ui.require([
 	"sap/ui/model/json/JSONTreeBinding", "sap/ui/model/Model",
 	"sap/ui/model/odata/_ODataMetaModelUtils", "sap/ui/model/odata/ODataMetaModel",
 	"sap/ui/model/odata/ODataModel", "sap/ui/model/odata/v2/ODataModel", "sap/ui/test/TestUtils"
-], function(BindingParser, BindingMode, ClientContextBinding, Context, FilterProcessor,
+], function (BindingParser, BindingMode, ClientContextBinding, Context, FilterProcessor,
 	JSONListBinding, JSONPropertyBinding, JSONTreeBinding, Model, Utils, ODataMetaModel,
 	ODataModel1, ODataModel, TestUtils) {
 	/*global QUnit, sinon */
@@ -581,11 +581,11 @@ sap.ui.require([
 		assert.strictEqual(
 			oMetaModel.getProperty("/dataServices/schema/0/entityType/0/property/1/"
 				+ "com.sap.vocabularies.Common.v1.Label/String"),
-			"Bus. Part. ID", "v2 --> v4");
+			"Bus. Part. ID", "V2 --> V4");
 		assert.strictEqual(
 			oMetaModel.getProperty("/dataServices/schema/0/entityType/0/"
 				+ "com.sap.vocabularies.UI.v1.HeaderInfo/TypeName/String"),
-			"Business Partner", "v4 annotations available");
+			"Business Partner", "V4 annotations available");
 
 		return oMetaModel.loaded().then(function () {
 			assert.strictEqual(arguments.length, 1, "almost no args");
@@ -614,11 +614,11 @@ sap.ui.require([
 			assert.strictEqual(
 				oMetaModel.getProperty("/dataServices/schema/0/entityType/0/property/1/"
 					+ "com.sap.vocabularies.Common.v1.Label/String"),
-				"Bus. Part. ID", "v2 --> v4");
+				"Bus. Part. ID", "V2 --> V4");
 			assert.strictEqual(
 				oMetaModel.getProperty("/dataServices/schema/0/entityType/0/"
 					+ "com.sap.vocabularies.UI.v1.HeaderInfo/TypeName/String"),
-				"Business Partner", "v4 annotations available");
+				"Business Partner", "V4 annotations available");
 		});
 	});
 
@@ -649,11 +649,11 @@ sap.ui.require([
 					assert.strictEqual(
 						oMetaModel.getProperty("/dataServices/schema/0/entityType/0/property/1/"
 							+ "com.sap.vocabularies.Common.v1.Label/String"),
-						"Bus. Part. ID", "v2 --> v4");
+						"Bus. Part. ID", "V2 --> V4");
 					assert.strictEqual(
 						oMetaModel.getProperty("/dataServices/schema/0/entityType/0/"
 							+ "com.sap.vocabularies.UI.v1.HeaderInfo/TypeName/String"),
-						"Business Partner", "v4 annotations available");
+						"Business Partner", "V4 annotations available");
 				} catch (ex) {
 					assert.ok(false, ex);
 				}
@@ -1572,7 +1572,7 @@ sap.ui.require([
 				// sap:required-in-filter
 				assert.deepEqual(oBusinessPartnerId["sap:required-in-filter"], "true");
 				delete oBusinessPartnerId["sap:required-in-filter"];
-				// check that v4 annotations win
+				// check that V4 annotations win
 				assert.deepEqual(
 					oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"], {
 						"RequiredProperties": i === 0
@@ -1886,7 +1886,7 @@ sap.ui.require([
 	 * "Each metadata document used to describe an OData service MUST define exactly one entity
 	 * container." But then again, there is "13.1.2 Attribute Extends"...
 	 *
-	 * ==> SAP Gateway supports a single entity container only, and OData v4 has been adjusted
+	 * ==> SAP Gateway supports a single entity container only, and OData V4 has been adjusted
 	 * accordingly.
 	 */
 
@@ -2483,7 +2483,7 @@ sap.ui.require([
 					oItemTypeLabel,
 					"existing types remain unchanged, as reference");
 
-				// check that v4 annotations are properly merged and that v2 ones are lifted etc.
+				// check that V4 annotations are properly merged and that V2 ones are lifted etc.
 				assert.strictEqual(
 					oClonedType_DEBIA.property[2/*LAND1*/]
 						["com.sap.vocabularies.Common.v1.ValueList"].CollectionPath.String,
@@ -2498,10 +2498,10 @@ sap.ui.require([
 				assert.strictEqual(oClonedSet_DEBIA["sap:deletable"], "false");
 				assert.deepEqual(
 					oClonedSet_DEBIA["Org.OData.Capabilities.V1.InsertRestrictions"],
-					{Insertable : {Bool : "false"}}, "v2 --> v4");
+					{Insertable : {Bool : "false"}}, "V2 --> V4");
 				assert.deepEqual(
 					oClonedSet_DEBIA["Org.OData.Capabilities.V1.DeleteRestrictions"],
-					{Deletable : {Bool : "true"}}, "v4 wins");
+					{Deletable : {Bool : "true"}}, "V4 wins");
 			});
 		});
 	});

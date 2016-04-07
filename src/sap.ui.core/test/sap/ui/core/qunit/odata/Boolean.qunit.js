@@ -2,13 +2,14 @@
  * ${copyright}
  */
 sap.ui.require([
+	"jquery.sap.global",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
 	"sap/ui/model/odata/type/Boolean",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/test/TestUtils"
-], function (FormatException, ParseException, ValidateException, BooleanType, ODataType,
+], function (jQuery, FormatException, ParseException, ValidateException, BooleanType, ODataType,
 		TestUtils) {
 	/*global QUnit */
 	"use strict";

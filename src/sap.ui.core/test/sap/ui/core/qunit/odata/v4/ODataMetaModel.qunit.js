@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.require([
+	"jquery.sap.global",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/ContextBinding",
 	"sap/ui/model/FilterProcessor",
@@ -13,8 +14,8 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/PropertyBinding",
 	"sap/ui/test/TestUtils"
-], function (BindingMode, ContextBinding, FilterProcessor, JSONListBinding, MetaModel, _ODataHelper,
-		SyncPromise, ODataMetaModel, ODataModel, PropertyBinding, TestUtils) {
+], function (jQuery, BindingMode, ContextBinding, FilterProcessor, JSONListBinding, MetaModel,
+		_ODataHelper, SyncPromise, ODataMetaModel, ODataModel, PropertyBinding, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -240,7 +241,7 @@ sap.ui.require([
 			assert.strictEqual(oMetaModel[sGetMethodName].apply(oMetaModel, aArguments), undefined,
 				"pending");
 		}
-		return oRejectedPromise["catch"](function () {
+		return oRejectedPromise.catch(function () {
 			// get: rejected
 			if (bThrow) {
 				assert.throws(function () {
@@ -312,6 +313,8 @@ sap.ui.require([
 		assert.strictEqual(oMetaModel.oRequestor, oMetadataRequestor);
 		assert.strictEqual(oMetaModel.sUrl, sUrl);
 		assert.strictEqual(oMetaModel.getDefaultBindingMode(), BindingMode.OneTime);
+		assert.strictEqual(oMetaModel.toString(),
+			"sap.ui.model.odata.v4.ODataMetaModel: /~/$metadata");
 	});
 
 	//*********************************************************************************************
@@ -838,7 +841,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	//TODO make these types work with odata v4
+	//TODO make these types work with OData V4
 	["Edm.DateTimeOffset", "Edm.Duration", "Edm.TimeOfDay"].forEach(function (sQualifiedName) {
 		QUnit.test("fetchUI5Type: unsupported type " + sQualifiedName, function (assert) {
 			var sPath = "/EMPLOYEES/0/foo",
@@ -855,31 +858,6 @@ sap.ui.require([
 		});
 	});
 
-	//*********************************************************************************************
-	QUnit.test("fetchUI5Type: FunctionImport returning PrimitiveType", function (assert) {
-		var oMetaModelMock = this.oSandbox.mock(this.oMetaModel),
-			sPath = "/FunctionImport()",
-			oType;
-
-		oMetaModelMock.expects("fetchObject")
-			.withExactArgs(undefined, this.oMetaModel.getMetaContext(sPath))
-			.returns(SyncPromise.resolve({
-				$kind : "FunctionImport",
-				$Function : "schema.Function"
-			}));
-		oMetaModelMock.expects("fetchObject")
-			.withExactArgs(undefined, this.oMetaModel.getMetaContext("/schema.Function"))
-			.returns(SyncPromise.resolve([{
-				$ReturnType : {
-					$Type : "Edm.Int16",
-					$Nullable : false
-				}
-			}]));
-
-		oType = this.oMetaModel.fetchUI5Type(sPath).getResult();
-		assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Int16");
-		assert.deepEqual(oType.oConstraints, {nullable : false});
-	});
 	// TODO ActionImport
 	// TODO bound Function/Action
 	// TODO StructuredType: "/FunctionImport()/Property" -> ODataMetaModel#fetchObject
@@ -925,7 +903,7 @@ sap.ui.require([
 			return this.oMetaModel.requestCanonicalUrl("/~/", oFixture.dataPath, oContext)
 				.then(function (sCanonicalUrl) {
 					assert.strictEqual(sCanonicalUrl, oFixture.canonicalUrl);
-				})["catch"](function (oError) {
+				}).catch(function (oError) {
 					assert.ok(false, oError.message + "@" + oError.stack);
 				});
 		});
@@ -958,7 +936,7 @@ sap.ui.require([
 			return this.oMetaModel.requestCanonicalUrl("/~/", oFixture.dataPath, oContext)
 				.then(function (sCanonicalUrl) {
 					assert.ok(false, sCanonicalUrl);
-				})["catch"](function (oError) {
+				}).catch(function (oError) {
 					assert.strictEqual(oError.message, oFixture.message);
 				});
 		});
