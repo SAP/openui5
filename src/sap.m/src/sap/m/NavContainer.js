@@ -354,11 +354,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return null;
 	};
 
-	NavContainer.prototype._ensurePageStackInitialized = function() {
+	NavContainer.prototype._ensurePageStackInitialized = function(data) {
 		if (this._pageStack.length === 0) {
 			var page = this._getActualInitialPage(); // TODO: with bookmarking / deep linking this is the initial, but not the "home"/root page
 			if (page) {
-				this._pageStack.push({id:page.getId(), mode:"initial", data:{}});
+				this._pageStack.push({id: page.getId(), mode: "initial", data: data || {}});
 			}
 		}
 		return this._pageStack;
@@ -572,7 +572,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		data = data || {};
 
 		// make sure the initial page is on the stack
-		this._ensurePageStackInitialized();
+		this._ensurePageStackInitialized(data);
 
 		//add to the queue before checking the current page, because this might change
 		if (this._bNavigating) {
