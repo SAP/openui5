@@ -3,13 +3,13 @@
 		"sample": {
 			"files": [
 				"Component.js",
-				"Main.view.xml",
-				"../../../common/Component.js"
+				"Main.controller.js",
+				"Main.view.xml"
 			]
 		}
 	},
 	"dependencies": [],
-	"description": "Component for OData v4 list binding example",
+	"description": "Component for OData V4 list binding example",
 	"name": "sap.ui.core.demokit.sample.odata.v4.ListBinding",
 	"version": "${version}"
 }

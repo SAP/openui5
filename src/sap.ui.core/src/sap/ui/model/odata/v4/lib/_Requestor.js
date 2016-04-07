@@ -10,14 +10,14 @@ sap.ui.define([
 ], function (jQuery, _Batch, _Helper) {
 	"use strict";
 
-	var mFinalHeaders = { // final (cannot be overridden) request headers for OData v4
-			"Content-Type" : "application/json;charset=UTF-8"
+	var mFinalHeaders = { // final (cannot be overridden) request headers for OData V4
+			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
 		},
 		mPredefinedPartHeaders = { // predefined request headers in $batch parts
-			"Accept" : "application/json;odata.metadata=minimal"
+			"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true"
 		},
 		mPredefinedRequestHeaders = { // predefined request headers for all requests
-			"Accept" : "application/json;odata.metadata=minimal",
+			"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
 			"OData-MaxVersion" : "4.0",
 			"OData-Version" : "4.0",
 			"X-CSRF-Token" : "Fetch"
@@ -51,7 +51,7 @@ sap.ui.define([
 	 *   relative resource paths (see {@link #request})
 	 * @param {object} mHeaders
 	 *   Map of default headers; may be overridden with request-specific headers; certain
-	 *   predefined OData v4 headers are added by default, but may be overridden
+	 *   predefined OData V4 headers are added by default, but may be overridden
 	 * @param {object} mQueryParams
 	 *   A map of query parameters as described in {@link _Helper.buildQuery}; used only to
 	 *   request the CSRF token
@@ -111,7 +111,7 @@ sap.ui.define([
 
 	/**
 	 * Sends an HTTP request using the given method to the given relative URL, using the given
-	 * request-specific headers in addition to the mandatory OData v4 headers and the default
+	 * request-specific headers in addition to the mandatory OData V4 headers and the default
 	 * headers given to the factory. Takes care of CSRF token handling.
 	 *
 	 * @param {string} sMethod
@@ -119,12 +119,12 @@ sap.ui.define([
 	 * @param {string} sResourcePath
 	 *   A resource path relative to the service URL for which this requestor has been created;
 	 *   use "$batch" to send a batch request
-	 * @param {string} [sGroupId]
-	 *   Identifier of the batch group to associate the request with; if <code>undefined</code> the
-	 *   request is sent immediately; if provided, use {@link #submitBatch} to send all requests in
-	 *   that group
+	 * @param {string} [sGroupId="$direct"]
+	 *   Identifier of the group to associate the request with; if '$direct', the request is
+	 *   sent immediately; for all other group ID values, the request is added to the given group
+	 *   and you can use {@link #submitBatch} to send all requests in that group.
 	 * @param {object} [mHeaders]
-	 *   Map of request-specific headers, overriding both the mandatory OData v4 headers and the
+	 *   Map of request-specific headers, overriding both the mandatory OData V4 headers and the
 	 *   default headers given to the factory. This map of headers must not contain
 	 *   "X-CSRF-Token" header.
 	 * @param {object} [oPayload]
@@ -143,6 +143,7 @@ sap.ui.define([
 			bIsBatch = sResourcePath === "$batch",
 			sPayload;
 
+		sGroupId = sGroupId || "$direct";
 		if (bIsBatch) {
 			oBatchRequest = _Batch.serializeBatchRequest(oPayload);
 			sPayload = oBatchRequest.body;
@@ -152,7 +153,7 @@ sap.ui.define([
 		} else {
 			sPayload = JSON.stringify(oPayload);
 
-			if (sGroupId !== undefined) {
+			if (sGroupId !== "$direct") {
 				return new Promise(function (fnResolve, fnReject) {
 					if (!that.mBatchQueue[sGroupId]) {
 						that.mBatchQueue[sGroupId] = [];
@@ -201,10 +202,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sends an OData batch request containing all requests referenced by batch group id.
+	 * Sends an OData batch request containing all requests referenced by the given group ID.
 	 *
 	 * @param {string} sGroupId
-	 *   ID of the batch group which should be sent as an OData batch request
+	 *   ID of the group which should be sent as an OData batch request
 	 * @returns {Promise}
 	 *   A promise on the outcome of the HTTP request resolving with <code>undefined</code>; it is
 	 *   rejected with an error if the batch request itself fails
@@ -268,16 +269,16 @@ sap.ui.define([
 		 *   relative resource paths (see {@link #request})
 		 * @param {object} mHeaders
 		 *   Map of default headers; may be overridden with request-specific headers; certain
-		 *   OData v4 headers are predefined, but may be overridden by the default or
+		 *   OData V4 headers are predefined, but may be overridden by the default or
 		 *   request-specific headers:
 		 *   <pre>{
-		 *     "Accept" : "application/json;odata.metadata=minimal",
+		 *     "Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
 		 *     "OData-MaxVersion" : "4.0",
 		 *     "OData-Version" : "4.0"
 		 *   }</pre>
 		 *   The map of the default headers must not contain "X-CSRF-Token" header. The created
 		 *   <code>_Requestor<code> always sets the "Content-Type" header to
-		 *   "application/json;charset=UTF-8" value.
+		 *   "application/json;charset=UTF-8;IEEE754Compatible=true" value.
 		 * @param {object} mQueryParams
 		 *   A map of query parameters as described in {@link _Helper.buildQuery}; used only to
 		 *   request the CSRF token

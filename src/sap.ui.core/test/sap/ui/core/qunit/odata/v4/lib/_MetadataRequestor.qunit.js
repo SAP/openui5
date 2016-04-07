@@ -2,11 +2,12 @@
  * ${copyright}
  */
 sap.ui.require([
+	"jquery.sap.global",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_MetadataConverter",
 	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
 	"sap/ui/test/TestUtils"
-], function (_Helper, _MetadataConverter, _MetadataRequestor, TestUtils) {
+], function (jQuery, _Helper, _MetadataConverter, _MetadataRequestor, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -114,7 +115,7 @@ sap.ui.require([
 		return oMetadataRequestor.read("/").then(function (oResult) {
 			assert.ok(false);
 		})
-		["catch"](function(oError) {
+		.catch(function (oError) {
 			assert.strictEqual(oError, oExpectedError);
 		});
 	});

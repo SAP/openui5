@@ -2,9 +2,11 @@
  *{copyright}
  */
 sap.ui.require([
-	"sap/ui/core/format/DateFormat", "sap/ui/model/odata/type/Date",
+	"jquery.sap.global",
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/model/odata/type/Date",
 	"sap/ui/model/odata/type/ODataType"
-], function (DateFormat, DateType, ODataType) {
+], function (jQuery, DateFormat, DateType, ODataType) {
 	/*global QUnit */
 	/*eslint no-warning-comments: 0 */ //no ESLint warning for TODO list
 	"use strict";

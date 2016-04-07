@@ -2,11 +2,12 @@
  * ${copyright}
  */
 sap.ui.require([
+	"jquery.sap.global",
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/test/TestUtils"
-], function (_Cache, _Helper, _Requestor, TestUtils) {
+], function (jQuery, _Cache, _Helper, _Requestor, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -274,19 +275,19 @@ sap.ui.require([
 			.withExactArgs(sinon.match.same(oExpand)).returns("expand");
 
 		assert.deepEqual(_Cache.convertQueryOptions({
-			"foo" : "bar",
-			"$expand" : oExpand,
-			"$select" : ["select1", "select2"]
+			foo : "bar",
+			$expand : oExpand,
+			$select : ["select1", "select2"]
 		}), {
-			"foo" : "bar",
-			"$expand" : "expand",
-			"$select" : "select1,select2"
+			foo : "bar",
+			$expand : "expand",
+			$select : "select1,select2"
 		});
 
 		assert.deepEqual(_Cache.convertQueryOptions({
-			"$select" : "singleSelect"
+			$select : "singleSelect"
 		}), {
-			"$select" : "singleSelect"
+			$select : "singleSelect"
 		});
 
 		assert.strictEqual(_Cache.convertQueryOptions(undefined), undefined);
@@ -312,8 +313,8 @@ sap.ui.require([
 			.withExactArgs(sinon.match.same(oExpand)).returns("expand");
 
 		assert.strictEqual(_Cache.convertExpandOptions("foo", {
-			"$expand" : oExpand,
-			"$select" : ["select1", "select2"]
+			$expand : oExpand,
+			$select : ["select1", "select2"]
 		}), "foo($expand=expand;$select=select1,select2)");
 
 		assert.strictEqual(_Cache.convertExpandOptions("foo", {}), "foo");
@@ -333,9 +334,9 @@ sap.ui.require([
 			.withExactArgs("baz", sinon.match.same(oOptions)).returns("baz(options)");
 
 		assert.strictEqual(_Cache.convertExpand({
-			"foo" : true,
-			"bar" : null,
-			"baz" : oOptions
+			foo : true,
+			bar : null,
+			baz : oOptions
 		}), "foo,bar,baz(options)");
 	});
 
@@ -370,17 +371,17 @@ sap.ui.require([
 			o : {$select : ["ID", "Name"]},
 			s : "$select=ID,Name"
 		}, {
-			o : {$expand : {"SO_2_BP" : true, "SO_2_SOITEM" : true}},
+			o : {$expand : {SO_2_BP : true, SO_2_SOITEM : true}},
 			s : "$expand=SO_2_BP,SO_2_SOITEM"
 		}, {
-			o : {$expand : {"SO_2_BP" : true, "SO_2_SOITEM" : {$select : "CurrencyCode"}}},
+			o : {$expand : {SO_2_BP : true, SO_2_SOITEM : {$select : "CurrencyCode"}}},
 			s : "$expand=SO_2_BP,SO_2_SOITEM($select=CurrencyCode)"
 		}, {
 			o : {
 				$expand : {
-					"SO_2_BP" : true,
-					"SO_2_SOITEM" : {
-						"$select" : ["ItemPosition", "Note"]
+					SO_2_BP : true,
+					SO_2_SOITEM : {
+						$select : ["ItemPosition", "Note"]
 					}
 				}
 			},
@@ -388,16 +389,16 @@ sap.ui.require([
 		}, {
 			o : {
 				$expand : {
-					"SO_2_BP" : true,
-					"SO_2_SOITEM" : {
-						"$expand" : {
-							"SOITEM_2_PRODUCT" : {
-								"$expand" : {
-									"PRODUCT_2_BP" : true
+					SO_2_BP : true,
+					SO_2_SOITEM : {
+						$expand : {
+							SOITEM_2_PRODUCT : {
+								$expand : {
+									PRODUCT_2_BP : true
 								},
-								"$select" : "CurrencyCode"
+								$select : "CurrencyCode"
 							},
-							"SOITEM_2_SO" : true
+							SOITEM_2_SO : true
 						}
 					}
 				},
@@ -452,7 +453,7 @@ sap.ui.require([
 			.returns(Promise.resolve(oSuccess));
 
 		// code under test
-		return oCache.read(0, 5)["catch"](function (oResult1) {
+		return oCache.read(0, 5).catch(function (oResult1) {
 			assert.strictEqual(oResult1, oError);
 			return oCache.read(0, 5).then(function (oResult2) {
 				assert.deepEqual(oResult2, oSuccess);
@@ -506,7 +507,10 @@ sap.ui.require([
 		// code under test
 		oCache = _Cache.createSingle(oRequestor, sResourcePath, undefined, /*bSingleProperty*/true);
 
-		oCache.read().then(function (sName) {
+		assert.throws(function () {
+			oCache.post();
+		}, /POST request not allowed/);
+		return oCache.read().then(function (sName) {
 			assert.strictEqual(sName, "John Doe", "automatic {value : ...} unwrapping");
 		});
 	});
@@ -568,6 +572,157 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("update", function (assert) {
+		var sEditUrl = "SOLineItemList(SalesOrderID='0',ItemPosition='0')",
+			sETag = 'W/"19700101000000.0000000"',
+			fnResolve,
+			oPatchPromise = new Promise(function (resolve, reject) {
+				fnResolve = resolve;
+			}),
+			oProduct = {},
+			oPromise = Promise.resolve({
+				value : [{
+					SalesOrderID : "0",
+					SO_2_SOITEM : [{
+						"@odata.etag" : sETag,
+						Note : "Some Note",
+						SideEffect : "before",
+						SOITEM_2_PRODUCT : oProduct // let's assume we had expanded this
+					}]
+				}]
+			}),
+			oRequestor = _Requestor.create("/"),
+			oRequestorMock = this.oSandbox.mock(oRequestor),
+			sResourcePath = "/SalesOrderList(SalesOrderID='0')",
+			// server responds with different value, e.g. upper case, and side effect
+			oResult = {
+				"@odata.etag" : 'W/"19700101000000.9999999"',
+				Note : "FOO",
+				NotSelected : "ignore me",
+				SideEffect : "after"
+				// SOITEM_2_PRODUCT not present in PATCH response!
+			},
+			oCache = _Cache.create(oRequestor, sResourcePath, {$expand : {SO_2_SOITEM : true}});
+
+		oRequestorMock.expects("request")
+			.withExactArgs("GET", sResourcePath + "?$expand=SO_2_SOITEM&$skip=0&$top=1", "groupId")
+			.returns(oPromise);
+		oCache.read(0, 1, "groupId"); // triggers GET
+		oRequestorMock.expects("request")
+			.withExactArgs("PATCH", sEditUrl, "updateGroupId", {"If-Match" : sETag}, {Note : "foo"})
+			.returns(oPatchPromise);
+
+		return oPromise.then(function () {
+			var oUpdatePromise
+				// code under test
+				= oCache.update("updateGroupId", "Note", "foo", sEditUrl, "0/SO_2_SOITEM/0")
+					.then(function (oResult1) {
+						assert.strictEqual(oResult1, oResult, "A Promise for the PATCH request");
+						return oCache.read(0, 1, undefined, "SO_2_SOITEM/0")
+							.then(function (oResult0) {
+								assert.strictEqual(oResult0["@odata.etag"], oResult["@odata.etag"],
+									"@odata.etag has been updated");
+								assert.strictEqual(oResult0.Note, oResult.Note,
+									"Note has been updated with server's response");
+								assert.strictEqual(oResult0.SideEffect, oResult.SideEffect,
+									"SideEffect has been updated with server's response");
+								assert.strictEqual("NotSelected" in oResult0, false,
+									"Cache not updated with properties not selected by GET");
+								assert.strictEqual(oResult0.SOITEM_2_PRODUCT, oProduct,
+									"Navigational properties not lost by cache update");
+							});
+					});
+
+			oCache.read(0, 1, undefined, "SO_2_SOITEM/0").then(function (oResult0) {
+				assert.strictEqual(oResult0.Note, "foo",
+					"Note has been updated with user input");
+
+				// now it's time for the server's response
+				fnResolve(oResult);
+			});
+			return oUpdatePromise;
+		});
+	});
+	// TODO fnLog of drillDown in CollectionCache#update
+
+	//*********************************************************************************************
+	QUnit.test("SingleCache: post", function (assert) {
+		var fnDataRequested = sinon.spy(),
+			sGroupId = "group",
+			oPostData = {},
+			oPromise,
+			oRequestor = _Requestor.create("/~/"),
+			oRequestorMock = this.oSandbox.mock(oRequestor),
+			sResourcePath = "LeaveRequest('1')/Submit",
+			oCache = _Cache.createSingle(oRequestor, sResourcePath, undefined, false, true),
+			oResult1 = {},
+			oResult2 = {};
+
+		oRequestorMock.expects("request")
+			.withExactArgs("POST", sResourcePath, sGroupId, undefined, oPostData)
+			.returns(Promise.resolve(oResult1));
+		oRequestorMock.expects("request")
+			.withExactArgs("POST", sResourcePath, sGroupId, undefined, oPostData)
+			.returns(Promise.resolve(oResult2));
+
+		// code under test
+		assert.throws(function () {
+			oCache.refresh();
+		}, /Refresh not allowed when using POST/);
+		assert.throws(function () {
+			oCache.read();
+		}, /Read before a POST request/);
+		oPromise = oCache.post(sGroupId, oPostData).then(function (oPostResult1) {
+			assert.strictEqual(oPostResult1, oResult1);
+			return Promise.all([
+				oCache.read("foo", "", fnDataRequested).then(function (oReadResult) {
+					assert.strictEqual(oReadResult, oResult1);
+					assert.strictEqual(fnDataRequested.callCount, 0);
+				}),
+				oCache.post(sGroupId, oPostData).then(function (oPostResult2) {
+					assert.strictEqual(oPostResult2, oResult2);
+				})
+			]);
+		});
+		assert.throws(function () {
+			oCache.post(sGroupId, oPostData);
+		}, /Parallel POST requests not allowed/);
+		return oPromise;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("SingleCache: post failure", function (assert) {
+		var sGroupId = "group",
+			sMessage = "deliberate failure",
+			oPostData = {},
+			oPromise,
+			oRequestor = _Requestor.create("/~/"),
+			oRequestorMock = this.oSandbox.mock(oRequestor),
+			sResourcePath = "LeaveRequest('1')/Submit",
+			oCache = _Cache.createSingle(oRequestor, sResourcePath, undefined, false, true);
+
+		oRequestorMock.expects("request").twice()
+			.withExactArgs("POST", sResourcePath, sGroupId, undefined, oPostData)
+			.returns(Promise.reject(new Error(sMessage)));
+
+		// code under test
+		oPromise = oCache.post(sGroupId, oPostData).then(function () {
+			assert.ok(false);
+		}, function (oError) {
+			assert.strictEqual(oError.message, sMessage);
+			return oCache.post(sGroupId, oPostData).then(function () {
+				assert.ok(false);
+			}, function (oError) {
+				assert.strictEqual(oError.message, sMessage);
+			});
+		});
+		assert.throws(function () {
+			oCache.post(sGroupId, oPostData);
+		}, /Parallel POST requests not allowed/);
+		return oPromise.catch(function () {});
+	});
+
+	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
 		QUnit.test("read single employee (real OData)", function (assert) {
 			var oExpectedResult = {
@@ -577,7 +732,7 @@ sap.ui.require([
 					MEMBER_COUNT : 2,
 					MANAGER_ID : "3",
 					BudgetCurrency : "USD",
-					Budget : 555.55
+					Budget : "555.55"
 				},
 				oRequestor = _Requestor.create(TestUtils.proxy(
 					"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/")),
@@ -605,8 +760,6 @@ sap.ui.require([
 		oPromise = oCache.read();
 
 		return oPromise.then(function () {
-			assert.strictEqual(oCache.oPromise, oPromise, "Promise is cached");
-
 			oCache.refresh();
 			assert.strictEqual(oCache.oPromise, undefined, "Cached promise is cleared");
 		});
@@ -628,10 +781,10 @@ sap.ui.require([
 
 		aPromises.push(oCache.read().then(function () {
 			assert.ok(false, "Refresh shall cancel this read");
-		})["catch"](function (oError) {
+		}).catch(function (oError) {
 			assert.strictEqual(oError.canceled, true, "Canceled error thrown");
 			assert.strictEqual(oError.message,
-				"Refresh canceled processing of pending request: /~/Employees('1')");
+				"Refresh canceled pending request: /~/Employees('1')");
 		}));
 
 		oCache.refresh();
@@ -681,10 +834,10 @@ sap.ui.require([
 
 		aPromises.push(oCache.read(0, 10).then(function () {
 			assert.ok(false, "Refresh shall cancel this read");
-		})["catch"](function (oError) {
+		}).catch(function (oError) {
 			assert.strictEqual(oError.canceled, true, "Canceled error thrown");
 			assert.strictEqual(oError.message,
-				"Refresh canceled processing of pending request: /~/Employees?$skip=0&$top=10");
+				"Refresh canceled pending request: /~/Employees?$skip=0&$top=10");
 			// Elements for read after refresh must not be removed from the elements array
 			assert.strictEqual(oCache.aElements[9], "j", "elements array must not be cleared");
 		}));
@@ -700,7 +853,7 @@ sap.ui.require([
 	QUnit.test("_Cache.toString", function (assert) {
 		var oCache,
 			oRequestor = _Requestor.create("/~/"),
-			mQueryParams = {"$select" : "ID"},
+			mQueryParams = {$select : "ID"},
 			sResourcePath = "Employees",
 			sResourcePathSingle = "Employees('1')";
 
@@ -709,7 +862,110 @@ sap.ui.require([
 
 		oCache = _Cache.createSingle(oRequestor, sResourcePathSingle);
 		assert.strictEqual(oCache.toString(), "/~/" + sResourcePathSingle);
-
 	});
-	//TODO: dataRequested handling for SingleCache
+
+	//*********************************************************************************************
+	[{
+		// absolute property binding
+		sEditUrl : "ProductList('HT-1000')",
+		oGetResult : {
+			// "value" is a fixed name here (see "11 Individual Property or Operation Response")
+			value : "MyName"
+		},
+		sResourcePath : "ProductList('HT-1000')/Name",
+		bSingleProperty : true
+	}, {
+		// relative property binding
+		sEditUrl : "ProductList('HT-1000')",
+		sETag : 'W/"19700101000000.0000000"',
+		oGetResult : {
+			"@odata.etag" : 'W/"19700101000000.0000000"',
+			HERE_2_THERE : {},
+			Name : "MyName",
+			SideEffect : "before"
+		},
+		sReadPath : "value",
+		sResourcePath : "ProductList('HT-1000')"
+	}, {
+		// relative list binding (relative context binding is very similar!)
+		sEditUrl : "SOLineItemList(SalesOrderID='0',ItemPosition='0')",
+		sETag : 'W/"19700101000000.0000000"',
+		oGetResult : {
+			SalesOrderID : "0",
+			SO_2_SOITEM : [{
+				"@odata.etag" : 'W/"19700101000000.0000000"',
+				HERE_2_THERE : {},
+				Name : "MyName",
+				SideEffect : "before"
+			}]
+		},
+		sReadPath : "SO_2_SOITEM",
+		sResourcePath : "SalesOrderList(SalesOrderID='0')?$expand=SO_2_SOITEM",
+		sUpdatePath : "SO_2_SOITEM/0"
+	}].forEach(function (o) {
+		QUnit.test("SingleCache.update: " + o.sResourcePath, function (assert) {
+			var fnResolve,
+				oPatchPromise = new Promise(function (resolve, reject) {
+					fnResolve = resolve;
+				}),
+				oRequestor = _Requestor.create("/"),
+				oRequestorMock = this.oSandbox.mock(oRequestor),
+				oCache = _Cache.createSingle(oRequestor, o.sResourcePath, null, o.bSingleProperty),
+				// server responds with different value, e.g. upper case, and side effect
+				oResult = {
+					"@odata.etag" : 'W/"19700101000000.9999999"',
+					Name : "FOO",
+					NotSelected : "ignore me",
+					SideEffect : "after"
+					// SOITEM_2_PRODUCT not present in PATCH response!
+				},
+				oUpdatePromise;
+
+			oRequestorMock.expects("request")
+				.withExactArgs("GET", o.sResourcePath, "groupId")
+				.returns(Promise.resolve(o.oGetResult));
+			oCache.read("groupId", o.sReadPath); // triggers GET
+			oRequestorMock.expects("request")
+				.withExactArgs("PATCH", o.sEditUrl, "up", {"If-Match" : o.sETag}, {Name : "foo"})
+				.returns(oPatchPromise);
+
+			// code under test
+			oUpdatePromise = oCache.update("up", "Name", "foo", o.sEditUrl, o.sUpdatePath)
+				.then(function (oResult1) {
+					assert.strictEqual(oResult1, oResult, "A Promise for the PATCH request");
+
+					return oCache.read(undefined, o.sUpdatePath).then(function (vResult0) {
+						if (o.bSingleProperty) {
+							assert.strictEqual(vResult0, oResult.Name,
+								"value has been updated with server's response");
+						} else {
+							assert.strictEqual(vResult0["@odata.etag"], oResult["@odata.etag"],
+								"@odata.etag has been updated");
+							assert.strictEqual(vResult0.Name, oResult.Name,
+								"Name has been updated with server's response");
+							assert.strictEqual(vResult0.SideEffect, oResult.SideEffect,
+								"SideEffect has been updated with server's response");
+							assert.strictEqual("NotSelected" in vResult0, false,
+								"Cache not updated with properties not selected by GET");
+							assert.deepEqual(vResult0.HERE_2_THERE, {/*details omitted*/},
+								"Navigational properties not lost by cache update");
+						}
+					});
+				});
+			oCache.read(undefined, o.sUpdatePath).then(function (vResult0) {
+				if (o.bSingleProperty) {
+					assert.strictEqual(vResult0, "foo",
+						"value has been updated with user input");
+				} else {
+					assert.strictEqual(vResult0.Name, "foo",
+						"Name has been updated with user input");
+				}
+
+				// now it's time for the server's response
+				fnResolve(oResult);
+			});
+			return oUpdatePromise;
+		});
+	});
+	// TODO fnLog of drillDown in SingleCache#update
 });

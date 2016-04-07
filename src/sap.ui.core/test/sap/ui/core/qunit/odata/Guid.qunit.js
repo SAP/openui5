@@ -2,14 +2,17 @@
  * ${copyright}
  */
 sap.ui.require([
+	"jquery.sap.global",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
 	"sap/ui/model/odata/type/Guid",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/test/TestUtils"
-], function (FormatException, ParseException, ValidateException, Guid, ODataType, TestUtils) {
+], function (jQuery, FormatException, ParseException, ValidateException, Guid, ODataType,
+		TestUtils) {
 	/*global QUnit */
+	/*eslint max-nested-callbacks: 0*/
 	"use strict";
 
 	//*********************************************************************************************

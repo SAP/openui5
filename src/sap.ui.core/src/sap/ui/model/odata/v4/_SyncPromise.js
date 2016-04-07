@@ -91,7 +91,7 @@ sap.ui.define([
 		 * @returns {SyncPromise}
 		 *   A new SyncPromise
 		 */
-		this["catch"] = function (fnOnRejected) {
+		this.catch = function (fnOnRejected) {
 			return this.then(undefined, fnOnRejected);
 		};
 

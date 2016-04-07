@@ -5,19 +5,23 @@
 sap.ui.define([
 		'jquery.sap.global',
 		'sap/ui/core/mvc/Controller',
+		'sap/ui/core/ValueState',
 		'sap/m/MessageBox',
+		'sap/m/MessagePopover',
+		'sap/m/MessagePopoverItem',
 		'sap/m/MessageToast',
 		'jquery.sap.encoder',
 		'jquery.sap.xml'
-	], function(jQuery, Controller, MessageBox, MessageToast) {
+	], function(jQuery, Controller, ValueState, MessageBox, MessagePopover, MessagePopoverItem,
+		MessageToast) {
 	"use strict";
 	var TypesController = Controller.extend("sap.ui.core.sample.ViewTemplate.types.Types", {
 		onInit : function () {
 
-			this.messagePopover = new sap.m.MessagePopover({
+			this.messagePopover = new MessagePopover({
 				items : {
 					path :"message>/",
-					template : new sap.m.MessagePopoverItem({description : "{message>description}",
+					template : new MessagePopoverItem({description : "{message>description}",
 						type : "{message>type}", title :"{message>message}"})
 				}
 			});
@@ -32,7 +36,7 @@ sap.ui.define([
 
 			for (i = 0; i < aObjects.length; i += 1) {
 				if (aObjects[i].setValueState) {
-					aObjects[i].setValueState(sap.ui.core.ValueState.None);
+					aObjects[i].setValueState(ValueState.None);
 				}
 			}
 			this.getView().getModel().resetChanges();

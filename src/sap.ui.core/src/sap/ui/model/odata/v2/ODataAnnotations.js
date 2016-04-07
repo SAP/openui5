@@ -35,7 +35,7 @@ sap.ui.define(['sap/ui/model/odata/AnnotationParser', 'sap/ui/Device', 'sap/ui/b
 	///////////////////////////////////////////////// Class Definition /////////////////////////////////////////////////
 
 	/**
-	 * @class Annotation loader for OData v2 services
+	 * @class Annotation loader for OData V2 services
 	 *
 	 * @author SAP SE
 	 * @version

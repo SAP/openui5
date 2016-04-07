@@ -5,9 +5,10 @@ sap.ui.define([
 		'sap/m/Dialog',
 		'sap/m/MessageBox',
 		'sap/ui/core/format/DateFormat',
+		'sap/ui/core/Item',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'
-	], function (Dialog, MessageBox, DateFormat, Controller, JSONModel) {
+	], function (Dialog, MessageBox, DateFormat, Item, Controller, JSONModel) {
 	"use strict";
 
 	var oDateFormat = DateFormat.getTimeInstance({pattern : "HH:mm"});
@@ -15,7 +16,7 @@ sap.ui.define([
 	function onRejected(oError) {
 		jQuery.sap.log.error(oError.message, oError.stack);
 		MessageBox.alert(oError.message, {
-			icon : sap.m.MessageBox.Icon.ERROR,
+			icon : MessageBox.Icon.ERROR,
 			title : "Error"});
 	}
 
@@ -27,9 +28,18 @@ sap.ui.define([
 		},
 
 		onCreateSalesOrderDialog : function (oEvent) {
-			var oCreateSalesOrderDialog = this.getView().byId("createSalesOrderDialog");
+			var oView = this.getView(),
+				oBuyerIdInput = oView.byId("BuyerID"),
+				oCreateSalesOrderDialog = oView.byId("createSalesOrderDialog");
 
 			oCreateSalesOrderDialog.setModel(new JSONModel({}), "new");
+			if (!oBuyerIdInput.getBinding("suggestionItems")) {
+				oBuyerIdInput.bindAggregation("suggestionItems", {
+					path : '/BusinessPartnerList',
+					parameters : {'$$groupId' : '$direct'},
+					template : new Item({text : "{BusinessPartnerID}"})
+				});
+			}
 			oCreateSalesOrderDialog.open();
 		},
 
@@ -40,14 +50,10 @@ sap.ui.define([
 
 			//TODO validate oSalesOrderData according to types
 			//TODO deep create incl. LOCATION etc.
-			this.getView().getModel().create("/SalesOrderList", oSalesOrderData).then(
-				function (oData) {
-					MessageBox.alert(JSON.stringify(oData),
-						{icon : sap.m.MessageBox.Icon.SUCCESS, title : "Success"});
-					that.onCancelSalesOrder();
-				},
-				onRejected
-			);
+//				TODO the code will be needed when "create" is implemented
+//				MessageBox.alert(JSON.stringify(oData),
+//					{icon : MessageBox.Icon.SUCCESS, title : "Success"});
+//				that.onCancelSalesOrder();
 		},
 
 		onDataEvents : function (oEvent) {
@@ -67,13 +73,11 @@ sap.ui.define([
 				if (sCode !== 'OK') {
 					return;
 				}
-
-				oModel.remove(oSalesOrderContext).then(function () {
-					MessageBox.alert("Deleted Sales Order: " + sOrderID,
-						{icon : sap.m.MessageBox.Icon.SUCCESS, title : "Success"});
-					oView.byId("SalesOrderLineItems").setBindingContext(undefined);
-					oView.byId("SupplierContactData").setBindingContext(undefined);
-				}, onRejected);
+//					TODO the code will be needed when "remove" is implemented
+//					MessageBox.alert("Deleted Sales Order: " + sOrderID,
+//						{icon : MessageBox.Icon.SUCCESS, title : "Success"});
+//					oView.byId("SalesOrderLineItems").setBindingContext(undefined);
+//					oView.byId("SupplierContactData").setBindingContext(undefined);
 			}
 
 			//TODO make context public and allow access to index and value
@@ -88,7 +92,10 @@ sap.ui.define([
 		},
 
 		onRefreshAll : function () {
-			this.getView().getModel().refresh(true);
+			var oModel = this.getView().getModel();
+
+			oModel.refresh(true, "RefreshAll");
+			oModel.submitBatch("RefreshAll");
 		},
 
 		onRefreshFavoriteProduct : function (oEvent) {
@@ -134,21 +141,48 @@ sap.ui.define([
 										}
 									}
 								}
+							},
+							"SO_2_BP" : {
+								"$select" : ["BusinessPartnerID", "CompanyName", "PhoneNumber"]
 							}
 						},
 						"$select" : ["ChangedAt", "CreatedAt" , "LifecycleStatusDesc", "Note",
-							"SalesOrderID"]
+							"SalesOrderID"],
+						"$$updateGroupId" : "SalesOrderUpdateGroup"
 					}
 				});
+				oView.byId("SupplierDetailsForm").unbindObject();
 				oView.byId("SupplierContactData").setBindingContext(undefined);
 			});
 		},
 
 		onSalesOrderLineItemSelect : function (oEvent) {
 			var oView = this.getView(),
-				oSalesOrderLineItemContext = oEvent.getParameters().listItem.getBindingContext();
+				oSalesOrderLineItemContext = oEvent.getParameters().listItem.getBindingContext(),
+				oSupplierDetailsForm = this.getView().byId("SupplierDetailsForm");
 
 			oView.byId("SupplierContactData").setBindingContext(oSalesOrderLineItemContext);
+
+			//TODO the following does not work because requestCanonicalPath() fails later on, when
+			//     the PATCH request is sent, because ProductList has no NavigationPropertyBindings
+//			oSupplierDetailsForm.setBindingContext(oSalesOrderLineItemContext);
+
+			// workaround: manual computation of canonical URL for the time being
+			oSalesOrderLineItemContext
+				.requestValue("SOITEM_2_PRODUCT/PRODUCT_2_BP/BusinessPartnerID")
+				.then(function (sBusinessPartnerID) {
+					//TODO _Helper.formatLiteral
+					oSupplierDetailsForm.bindObject(
+						"/BusinessPartnerList('" + sBusinessPartnerID + "')");
+				});
+		},
+
+		onSaveSalesOrder : function () {
+			this.getView().getModel().submitBatch("SalesOrderUpdateGroup");
+		},
+
+		onSaveSalesOrderList : function () {
+			this.getView().getModel().submitBatch("SalesOrderListUpdateGroup");
 		},
 
 		/**
@@ -160,7 +194,6 @@ sap.ui.define([
 			var oBinding = this.getView().byId("FavoriteProduct").getBinding("value");
 
 			oBinding.setValue(oDateFormat.format(new Date()));
-//			oBinding.refresh(true); // triggers a GET
 		}
 	});
 
