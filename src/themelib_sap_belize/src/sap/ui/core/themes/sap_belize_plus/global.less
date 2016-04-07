@@ -77,7 +77,7 @@
 
 @sapUiChartPaletteSequentialNeutralLight3: lighten(@sapUiChartSequenceNeutral, 30);
 @sapUiChartPaletteSequentialNeutralLight2: lighten(saturate(@sapUiChartSequenceNeutral, 1), 20);
-@sapUiChartPaletteSequentialNeutralDark1: darken(desaturate@sapUiChartSequenceNeutral, 1), 10);
+@sapUiChartPaletteSequentialNeutralDark1: darken(desaturate(@sapUiChartSequenceNeutral, 1), 10);
 @sapUiChartPaletteSequentialNeutralDark2: darken(@sapUiChartSequenceNeutral, 20);
 
 @sapUiChoroplethBG: darken(saturate(@sapUiChartSequenceNeutral, 13), 8);
@@ -104,7 +104,7 @@
 @sapUiSegmentedButtonSelectedIconColor: contrast(@sapUiSegmentedButtonSelectedBackground, lighten(@sapUiContentIconColor, 12), @sapUiContentContrastIconColor, @sapUiContentContrastTextThreshold);
 @sapUiSegmentedButtonFooterBorderColor: @sapUiButtonBorderColor;
 
-@sapUiFieldPlaceholderTextColor: lighten(saturate(@sapUiBaseColor), 24, 52.5);
+@sapUiFieldPlaceholderTextColor: lighten(saturate(@sapUiBaseColor, 24), 52.5);
 
 @sapUiListTextColor: darken(@sapUiBaseText, 2);
 @sapUiListVerticalBorderColor: lighten(@sapUiListBorderColor, 3);
