@@ -1024,6 +1024,27 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("setType: calls setV4 automatically", function (assert) {
+		var oDateTimeOffset = {
+				getName : function () { return "sap.ui.model.odata.type.DateTimeOffset"; },
+				setV4 : function () {}
+			},
+			oSomeType = {
+				getName : function () { return "it.s.not.me"; },
+				setV4 : function () {}
+			},
+			oPropertyBinding = this.oModel.bindProperty("/absolute");
+
+		this.oSandbox.mock(oDateTimeOffset).expects("setV4");
+		this.oSandbox.mock(oSomeType).expects("setV4").never();
+
+		// code under test
+		oPropertyBinding.setType(null);
+		oPropertyBinding.setType(oDateTimeOffset);
+		oPropertyBinding.setType(oSomeType);
+	});
+
+	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
 		//*****************************************************************************************
 		QUnit.test("PATCH an entity", function (assert) {
