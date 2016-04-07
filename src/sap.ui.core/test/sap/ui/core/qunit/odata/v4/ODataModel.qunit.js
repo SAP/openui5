@@ -3,6 +3,8 @@
  */
 sap.ui.require([
 	"jquery.sap.global",
+	"sap/ui/core/message/Message",
+	"sap/ui/core/MessageType",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/type/String",
@@ -17,9 +19,9 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/test/TestUtils"
-], function (jQuery, BindingMode, Model, TypeString, ODataUtils, _Context, _ODataHelper,
-		_MetadataRequestor, _Requestor, ODataContextBinding, ODataListBinding, ODataMetaModel,
-		ODataModel, ODataPropertyBinding, TestUtils) {
+], function (jQuery, Message, MessageType, BindingMode, Model, TypeString, ODataUtils, _Context,
+		_ODataHelper, _MetadataRequestor, _Requestor, ODataContextBinding, ODataListBinding,
+		ODataMetaModel, ODataModel, ODataPropertyBinding, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -618,9 +620,43 @@ sap.ui.require([
 			oModel.attachRequestSent();
 		}, new Error("Unsupported event 'requestSent': v4.ODataModel#attachEvent"));
 	});
+
+	//*********************************************************************************************
+	[{
+		stack : "Failure\n    at _Helper.createError", // like Chrome
+		message : "Failure\n    at _Helper.createError"
+	}, {
+		stack : undefined, // like IE
+		message : "Failure"
+	}, {
+		stack : "_Helper.createError@_Helper.js", // like FF
+		message : "Failure\n_Helper.createError@_Helper.js"
+	}].forEach(function (oFixture) {
+		QUnit.test("reportError", function (assert) {
+			var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
+				oError = {
+					message : "Failure",
+					stack : oFixture.stack
+				},
+				sLogMessage = "Failed to read path /Product('1')/Unknown",
+				oMessageManager = sap.ui.getCore().getMessageManager(),
+				oModel = createModel();
+
+			this.oLogMock.expects("error").withExactArgs(sLogMessage, oFixture.message, sClassName);
+			this.oSandbox.mock(oMessageManager).expects("addMessages")
+				.withExactArgs(sinon.match(function (oMessage) {
+					return oMessage instanceof Message
+						&& oMessage.message === oError.message
+						&& oMessage.processor === oModel
+						&& oMessage.technical === true
+						&& oMessage.type === MessageType.Error;
+				}));
+
+			// code under test
+			oModel.reportError(sLogMessage, sClassName, oError);
+		});
+	});
 });
-// TODO DefaultBindingMode is set to 'OneWay' now. It must be changed if we can 'TwoWay'
-// TODO Extend mSupportedBindingModes for 'TwoWay'
 // TODO constructor: test that the service root URL is absolute?
 // TODO read: support the mParameters context, urlParameters, filters, sorters, batchGroupId
 // TODO read etc.: provide access to "abort" functionality

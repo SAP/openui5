@@ -29,6 +29,8 @@
 					press="onRefreshFavoriteProduct"/>
 				<Button enabled="false" icon="sap-icon://hello-world"
 					press="onUpdateFavoriteProduct" tooltip="Update with current time as HH:mm"/>
+				<Button enabled="{ui>/bRealOData}" icon="sap-icon://message-error"
+					press="produceTechnicalError" tooltip="Provoke read error"/>
 				<ToolbarSpacer />
 				<Button enabled="{ui>/bRealOData}" press="onRefreshAll" text="Refresh all"/>
 			</content>

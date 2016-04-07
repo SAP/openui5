@@ -448,10 +448,9 @@ sap.ui.require([
 			this.oSandbox.mock(this.oModel.getMetaModel()).expects("requestUI5Type")
 				.withExactArgs(sPath)
 				.returns(Promise.reject(oTypeError));
-			this.oLogMock.expects("warning").withExactArgs(oTypeError.message, sPath,
-				"sap.ui.model.odata.v4.ODataPropertyBinding");
+			this.oLogMock.expects("warning").withExactArgs(oTypeError.message, sPath, sClassName);
 			this.oLogMock.expects("error").withExactArgs("Accessed value is not primitive", sPath,
-				"sap.ui.model.odata.v4.ODataPropertyBinding");
+				sClassName);
 
 			//code under test
 			oControl.bindProperty("text", {path : sPath, events : {
@@ -485,8 +484,8 @@ sap.ui.require([
 			oControl = new TestControl({models : this.oModel});
 
 		this.oSandbox.mock(_Cache).expects("createSingle").returns(oCache);
-		this.oLogMock.expects("error").withExactArgs("Failed to read path /path", oError,
-			"sap.ui.model.odata.v4.ODataPropertyBinding");
+		this.oSandbox.mock(this.oModel).expects("reportError").withExactArgs(
+			"Failed to read path /path", sClassName, sinon.match.same(oError));
 
 		//code under test
 		oControl.bindProperty("text", {path : "/path", type : new TypeString(),
@@ -513,7 +512,7 @@ sap.ui.require([
 		oCacheMock.expects("read").returns(Promise.resolve({}));
 
 		this.oLogMock.expects("error").withExactArgs("Accessed value is not primitive", sPath,
-			"sap.ui.model.odata.v4.ODataPropertyBinding");
+			sClassName);
 
 
 		oBinding = this.oModel.bindProperty(sPath);
@@ -601,8 +600,7 @@ sap.ui.require([
 					.withExactArgs(sPath) // always requested only once
 					.returns(Promise.reject(oError)); // UI5 type not found
 				this.oLogMock.expects("warning")
-					.withExactArgs("failed type", sPath,
-						"sap.ui.model.odata.v4.ODataPropertyBinding");
+					.withExactArgs("failed type", sPath, sClassName);
 
 				function onChange() {
 					oBinding.detachChange(onChange);
@@ -850,8 +848,7 @@ sap.ui.require([
 		this.oSandbox.mock(oControl.getBinding("text").oCache).expects("update").never();
 		// Note: if setValue throws, ManagedObject#updateModelProperty does not roll back!
 		this.oLogMock.expects("error").withExactArgs(
-			"Cannot set value on absolute binding", "/ProductList('HT-1000')/Name",
-			"sap.ui.model.odata.v4.ODataPropertyBinding");
+			"Cannot set value on absolute binding", "/ProductList('HT-1000')/Name", sClassName);
 
 		// code under test
 		oControl.setText("foo");
@@ -945,8 +942,7 @@ sap.ui.require([
 		this.oSandbox.mock(oPropertyBinding.oCache).expects("update")
 			.withExactArgs("$direct", "Name", "foo", "ProductList('0')")
 			.returns(oPromise);
-		this.oLogMock.expects("error").withExactArgs(sMessage, oError.stack,
-			"sap.ui.model.odata.v4.ODataPropertyBinding");
+		this.oLogMock.expects("error").withExactArgs(sMessage, oError.stack, sClassName);
 
 		// code under test
 		oPropertyBinding.setValue("foo");
@@ -996,6 +992,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("setValue (relative binding): error handling", function (assert) {
 		var oContext = {
+				getPath : function () { return "/ProductList('HT-1000')"; },
 				updateValue : function () {}
 			},
 			sMessage = "This call intentionally failed",
@@ -1005,8 +1002,9 @@ sap.ui.require([
 
 		this.oSandbox.mock(oContext).expects("updateValue").withExactArgs(undefined, "Name", "foo")
 			.returns(oPromise);
-		this.oLogMock.expects("error").withExactArgs(sMessage, oError.stack,
-			"sap.ui.model.odata.v4.ODataPropertyBinding");
+		this.oSandbox.mock(this.oModel).expects("reportError").withExactArgs(
+			"Failed to update path /ProductList('HT-1000')/Name", sClassName,
+			sinon.match.same(oError));
 
 		// code under test
 		oPropertyBinding.setValue("foo");
@@ -1025,8 +1023,7 @@ sap.ui.require([
 
 		// Note: if setValue throws, ManagedObject#updateModelProperty does not roll back!
 		this.oLogMock.expects("warning").withExactArgs(
-			"Cannot set value on relative binding without context", "Note",
-			"sap.ui.model.odata.v4.ODataPropertyBinding");
+			"Cannot set value on relative binding without context", "Note", sClassName);
 
 		// code under test
 		oControl.setText("foo");

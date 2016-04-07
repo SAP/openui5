@@ -322,10 +322,10 @@ sap.ui.define([
 					if (oError.canceled) {
 						that.fireDataReceived();
 					} else {
-						jQuery.sap.log.error("Failed to get contexts for "
+						oModel.reportError("Failed to get contexts for "
 								+ oModel.sServiceUrl + sResolvedPath.slice(1)
 								+ " with start index " + iStart + " and length " + iLength,
-							oError, sClassName);
+							sClassName, oError);
 						that.fireDataReceived({error : oError});
 					}
 				}
