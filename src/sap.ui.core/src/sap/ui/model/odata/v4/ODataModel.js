@@ -31,6 +31,13 @@ sap.ui.define([
 	var sClassName = "sap.ui.model.odata.v4.ODataModel",
 		mSupportedEvents = {
 			messageChange : true
+		},
+		mSupportedParameters = {
+			groupId : true,
+			serviceUrl : true,
+			serviceUrlParams : true,
+			synchronizationMode : true,
+			updateGroupId : true
 		};
 
 	/**
@@ -64,8 +71,9 @@ sap.ui.define([
 	 *   '$auto', '$direct' or an application group ID, which is a non-empty string consisting of
 	 *   alphanumeric characters from the basic Latin alphabet, including the underscore.
 	 * @throws {Error} If an unsupported synchronization mode is given, if the given service root
-	 *   URL does not end with a forward slash, if OData system query options or parameter aliases
-	 *   are specified as parameters, if an invalid group ID or update group ID is given.
+	 *   URL does not end with a forward slash, if an unsupported parameter is given, if OData
+	 *   system query options or parameter aliases are specified as parameters, if an invalid group
+	 *   ID or update group ID is given.
 	 *
 	 * @alias sap.ui.model.odata.v4.ODataModel
 	 * @author SAP SE
@@ -85,6 +93,7 @@ sap.ui.define([
 					var mHeaders = {
 							"Accept-Language" : sap.ui.getCore().getConfiguration().getLanguageTag()
 						},
+						sParameter,
 						sServiceUrl,
 						oUri;
 
@@ -93,6 +102,11 @@ sap.ui.define([
 
 					if (!mParameters || mParameters.synchronizationMode !== "None") {
 						throw new Error("Synchronization mode must be 'None'");
+					}
+					for (sParameter in mParameters) {
+						if (!(sParameter in mSupportedParameters)) {
+							throw new Error("Unsupported parameter: " + sParameter);
+						}
 					}
 					sServiceUrl = mParameters.serviceUrl;
 					if (!sServiceUrl) {
