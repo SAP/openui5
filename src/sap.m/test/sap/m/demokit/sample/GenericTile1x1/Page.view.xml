@@ -24,7 +24,7 @@
 		</tileContent>
 	</GenericTile>
 
-	<GenericTile header="Approve Travel Request" size="M"
+	<GenericTile header="Approve Travel Request Approve Travel Request Approve Travel Request Approve Travel Request" size="M"
 		frameType="OneByOne" press="press">
 		<tileContent>
 			<TileContent footer="Leave Requests" size="M">
@@ -36,7 +36,7 @@
 		</tileContent>
 	</GenericTile>
 
-	<GenericTile header="123 Demo Opportunity" subheader="SAP Jam Group"
+	<GenericTile header="123 Demo Opportunity Approve Travel Request Approve Travel Request" subheader="SAP Jam Group"
 		size="M" frameType="OneByOne" press="press">
 		<tileContent>
 			<TileContent footer="Hours since last Activity" size="M">
@@ -47,7 +47,7 @@
 		</tileContent>
 	</GenericTile>
 
-	<GenericTile header="Global Margin Global Margin Global Margin Global Margin Global Margin" size="S" frameType="OneByOne" mode="HeaderMode" subheader="SAP Jam Group"
+	<GenericTile header="Global Margin Global Margin Global Margin Global Margin Global Margin Global Margin Global Margin" size="S" frameType="OneByOne" mode="HeaderMode" subheader="SAP Jam Group"
 		press="press">
 		<tileContent>
 			<TileContent unit="EUR" size="S">
@@ -55,7 +55,7 @@
 		</tileContent>
 	</GenericTile>
 
-	<GenericTile header="Global Margin Global Margin Global Margin Global Margin Global Margin" size="S" frameType="OneByOne" mode="HeaderMode"
+	<GenericTile header="Global Margin Global Margin Global Margin Global Margin Global Margin Global Margin Global Margin" size="S" frameType="OneByOne" mode="HeaderMode"
 		press="press">
 		<tileContent>
 			<TileContent footer="Hours since last Activity" size="S">
