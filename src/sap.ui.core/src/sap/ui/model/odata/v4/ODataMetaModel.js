@@ -48,6 +48,10 @@ sap.ui.define([
 					"@com.sap.vocabularies.Common.v1.IsDigitSequence" : "isDigitSequence",
 					"$MaxLength" : "maxLength"
 				}
+			},
+			"Edm.TimeOfDay" : {
+				constraints : {"$Precision" : "precision"},
+				type : "sap.ui.model.odata.type.TimeOfDay"
 			}
 		},
 		mSupportedEvents = {
