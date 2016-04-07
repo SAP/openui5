@@ -4224,11 +4224,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		if (oSelMode === "Multi" || oSelMode === "MultiToggle") {
 			this.$("selall").attr('title',this._oResBundle.getText("TBL_SELECT_ALL")).addClass("sapUiTableSelAll");
 		}
-		this.fireRowSelectionChange({
-			rowIndex: iRowIndex,
-			rowContext: this.getContextByIndex(iRowIndex),
-			rowIndices: aRowIndices
-		});
+
+		if (this._iSourceRowIndex !== undefined) {
+			this.fireRowSelectionChange({
+				rowIndex: iRowIndex,
+				rowContext: this.getContextByIndex(iRowIndex),
+				rowIndices: aRowIndices
+			});
+		}
 	};
 
 
@@ -6156,15 +6159,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @private
 	 */
 	Table.prototype._toggleSelectAll = function() {
-
+		// in order to fire the rowSelectionChanged event, the SourceRowIndex mus be set to -1
+		// to indicate that the selection was changed by user interaction
 		if (!this.$("selall").hasClass("sapUiTableSelAll")) {
+			this._iSourceRowIndex = -1;
 			this.clearSelection();
 		} else {
+			this._iSourceRowIndex = 0;
 			this.selectAll();
 		}
 		if (!!sap.ui.Device.browser.internet_explorer) {
 			this.$("selall").focus();
 		}
+		this._iSourceRowIndex = undefined;
 	};
 
 	/**
