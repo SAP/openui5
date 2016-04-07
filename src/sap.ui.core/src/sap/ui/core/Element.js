@@ -1122,7 +1122,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 			}
 		}
 
-		return aFieldGroupIds;
+		return aFieldGroupIds || [];
 
 	};
 
