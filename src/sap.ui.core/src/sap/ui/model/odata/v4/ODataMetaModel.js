@@ -43,7 +43,10 @@ sap.ui.define([
 			"Edm.Single" : {type : "sap.ui.model.odata.type.Single"},
 			"Edm.String" : {
 				type : "sap.ui.model.odata.type.String",
-				constraints : {"$MaxLength" : "maxLength"}
+				constraints : {
+					"@com.sap.vocabularies.Common.v1.IsDigitSequence" : "isDigitSequence",
+					"$MaxLength" : "maxLength"
+				}
 			}
 		},
 		mSupportedEvents = {
@@ -553,8 +556,11 @@ sap.ui.define([
 	 * @see #requestUI5Type
 	 */
 	ODataMetaModel.prototype.fetchUI5Type = function (sPath) {
+		var oMetaContext = this.getMetaContext(sPath),
+			that = this;
+
 		// Note: undefined is more efficient than "" here
-		return this.fetchObject(undefined, this.getMetaContext(sPath)).then(function (oProperty) {
+		return this.fetchObject(undefined, oMetaContext).then(function (oProperty) {
 			var mConstraints,
 				sName,
 				oType = oProperty["$ui5.type"],
@@ -581,7 +587,9 @@ sap.ui.define([
 			}
 
 			for (sName in oTypeInfo.constraints) {
-				setConstraint(oTypeInfo.constraints[sName], oProperty[sName]);
+				setConstraint(oTypeInfo.constraints[sName], sName[0] === "@"
+					? that.getObject(sName, oMetaContext)
+					: oProperty[sName]);
 			}
 			if (oProperty.$Nullable === false) {
 				setConstraint("nullable", false);
