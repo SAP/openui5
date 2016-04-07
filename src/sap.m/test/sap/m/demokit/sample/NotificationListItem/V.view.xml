@@ -98,6 +98,25 @@
 						<Button text="Reject" type="Reject" press="onRejectPress"></Button>
 					</buttons>
 				</NotificationListItem>
+
+				<NotificationListItem
+						title="New order (#2525) With a very long title and with truncation enabled but 'Show More' hidden! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc."
+						description="And a very long description and long labels of the action buttons - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc."
+						showCloseButton="true"
+						datetime="2 day"
+						unread="false"
+						priority="Low"
+						close="onItemClose"
+						press="onListItemPress"
+						authorName="Jean Doe"
+						authorPicture="test-resources/sap/m/images/Woman_04.png"
+						hideShowMoreButton="true"
+						showButtons="false">
+					<buttons>
+						<Button text="Accept" type="Accept" press="onAcceptPress"></Button>
+						<Button text="Reject" type="Reject" press="onRejectPress"></Button>
+					</buttons>
+				</NotificationListItem>
 			</List>
 		</l:content>
 	</l:VerticalLayout>
