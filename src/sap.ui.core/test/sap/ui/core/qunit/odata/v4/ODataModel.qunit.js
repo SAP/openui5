@@ -100,6 +100,11 @@ sap.ui.require([
 			return new ODataModel({serviceUrl : "/foo", synchronizationMode : "None"});
 		}, new Error("Service root URL must end with '/'"));
 
+		assert.throws(function () {
+			return new ODataModel({synchronizationMode : "None",
+				useBatch : true});
+		}, new Error("Unsupported parameter: useBatch"));
+
 		assert.strictEqual(createModel().sServiceUrl, getServiceUrl());
 		assert.strictEqual(createModel().toString(),
 			"sap.ui.model.odata.v4.ODataModel: " + getServiceUrl());
