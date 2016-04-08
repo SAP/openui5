@@ -309,7 +309,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 					/**
 					 * indicator if "select all" function is used to select rows
 					 */
-					selectAll : {type : "boolean"}
+					selectAll : {type : "boolean"},
+
+					/**
+					 * indicates that the event was fired due to an explicit user interaction like clicking the row header
+					 * or using the keyboard (SPACE or ENTER) to select a row or a range of rows.
+					 */
+					userInteraction: {type: "boolean"}
 				}
 			},
 
@@ -4550,14 +4556,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			this.$("selall").attr('title',this._oResBundle.getText("TBL_SELECT_ALL")).addClass("sapUiTableSelAll");
 		}
 
-		if (this._iSourceRowIndex !== undefined) {
-			this.fireRowSelectionChange({
-				rowIndex: iRowIndex,
-				rowContext: this.getContextByIndex(iRowIndex),
-				rowIndices: aRowIndices,
-				selectAll: bSelectAll
-			});
-		}
+		this.fireRowSelectionChange({
+			rowIndex: iRowIndex,
+			rowContext: this.getContextByIndex(iRowIndex),
+			rowIndices: aRowIndices,
+			selectAll: bSelectAll,
+			userInteraction: this._iSourceRowIndex !== undefined
+		});
 	};
 
 
