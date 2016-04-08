@@ -401,7 +401,7 @@ sap.ui.require([
 
 		oListBinding.attachChange(function () {});
 		oPropertyBinding.attachChange(function () {});
-		this.oSandbox.mock(oListBinding).expects("refresh").withExactArgs(true, "myGroup");
+		this.oSandbox.mock(oListBinding).expects("refresh").withExactArgs("myGroup");
 		//check: only bindings with change event handler are refreshed
 		this.oSandbox.mock(oListBinding2).expects("refresh").never();
 		//check: no refresh on binding with relative path
@@ -409,13 +409,13 @@ sap.ui.require([
 		oHelperMock.expects("checkGroupId").withExactArgs("myGroup");
 
 		// code under test
-		oModel.refresh(true, "myGroup");
+		oModel.refresh("myGroup");
 
 		oHelperMock.expects("checkGroupId").withExactArgs("$Invalid").throws(oError);
 
 		// code under test
 		assert.throws(function () {
-			oModel.refresh(true, "$Invalid");
+			oModel.refresh("$Invalid");
 		}, oError);
 	});
 
@@ -438,7 +438,7 @@ sap.ui.require([
 		oListBinding.attachRefresh(detach);
 		oListBinding2.attachRefresh(detach);
 
-		oModel.refresh(true);
+		oModel.refresh();
 
 		assert.strictEqual(iCallCount, 2, "refresh called for both bindings");
 	});
@@ -588,15 +588,6 @@ sap.ui.require([
 		assert.throws(function () { //TODO implement
 			oModel.isList();
 		}, new Error("Unsupported operation: v4.ODataModel#isList"));
-
-		assert.throws(function () { //TODO implement
-			oModel.refresh(false);
-		}, new Error("Unsupported operation: v4.ODataModel#refresh, "
-			+ "bForceUpdate must be true"));
-		assert.throws(function () {
-			oModel.refresh("foo"/*truthy*/);
-		}, new Error("Unsupported operation: v4.ODataModel#refresh, "
-			+ "bForceUpdate must be true"));
 
 		assert.throws(function () {
 			oModel.setLegacySyntax();

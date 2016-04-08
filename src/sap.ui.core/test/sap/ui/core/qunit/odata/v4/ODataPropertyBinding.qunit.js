@@ -646,20 +646,20 @@ sap.ui.require([
 		oHelperMock.expects("checkGroupId").withExactArgs(undefined);
 
 		// code under test
-		oBinding.refresh(true);
+		oBinding.refresh();
 
 		oCacheMock.expects("read").withExactArgs("myGroup", undefined, sinon.match.func)
 			.returns(oReadPromise);
 		oHelperMock.expects("checkGroupId").withExactArgs("myGroup");
 
 		// code under test
-		oBinding.refresh(true, "myGroup");
+		oBinding.refresh("myGroup");
 
 		oHelperMock.expects("checkGroupId").withExactArgs("$Invalid").throws(oError);
 
 		// code under test
 		assert.throws(function () {
-			oBinding.refresh(true, "$Invalid");
+			oBinding.refresh("$Invalid");
 		}, oError);
 
 		return Promise.all([oReadPromise, oTypePromise]);
@@ -702,7 +702,7 @@ sap.ui.require([
 
 		// trigger read before refresh
 		oBinding.checkUpdate(false);
-		oBinding.refresh(true);
+		oBinding.refresh();
 	});
 
 	//*********************************************************************************************
@@ -713,7 +713,7 @@ sap.ui.require([
 		this.oSandbox.mock(_Cache).expects("createSingle").never();
 
 		assert.throws(function () {
-			oBinding.refresh(true);
+			oBinding.refresh();
 		}, new Error("Refresh on this binding is not supported"));
 	});
 
@@ -724,15 +724,6 @@ sap.ui.require([
 		assert.throws(function () { //TODO implement
 			oPropertyBinding.isInitial();
 		}, new Error("Unsupported operation: v4.ODataPropertyBinding#isInitial"));
-
-		assert.throws(function () { //TODO implement
-			oPropertyBinding.refresh(false);
-		}, new Error("Unsupported operation: v4.ODataPropertyBinding#refresh, "
-			+ "bForceUpdate must be true"));
-		assert.throws(function () {
-			oPropertyBinding.refresh("foo"/*truthy*/);
-		}, new Error("Unsupported operation: v4.ODataPropertyBinding#refresh, "
-			+ "bForceUpdate must be true"));
 
 		assert.throws(function () { //TODO implement
 			oPropertyBinding.resume();

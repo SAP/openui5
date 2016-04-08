@@ -94,20 +94,20 @@ sap.ui.define([
 		onRefreshAll : function () {
 			var oModel = this.getView().getModel();
 
-			oModel.refresh(true, "RefreshAll");
+			oModel.refresh("RefreshAll");
 			oModel.submitBatch("RefreshAll");
 		},
 
 		onRefreshFavoriteProduct : function (oEvent) {
-			this.getView().byId("FavoriteProduct").getBinding("value").refresh(true);
+			this.getView().byId("FavoriteProduct").getBinding("value").refresh();
 		},
 
 		onRefreshSalesOrderDetails : function (oEvent) {
-			this.getView().byId("ObjectPage").getElementBinding().refresh(true);
+			this.getView().byId("ObjectPage").getElementBinding().refresh();
 		},
 
 		onRefreshSalesOrdersList : function (oEvent) {
-			this.getView().byId("SalesOrders").getBinding("items").refresh(true);
+			this.getView().byId("SalesOrders").getBinding("items").refresh();
 		},
 
 		onSalesOrdersSelect : function (oEvent) {

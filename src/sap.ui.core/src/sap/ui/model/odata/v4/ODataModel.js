@@ -503,22 +503,18 @@ sap.ui.define([
 
 	/**
 	 * Refreshes the model by calling refresh on all bindings which have a change event handler
-	 * attached. <code>bForceUpdate</code> has to be set to <code>true</code>.
-	 * If <code>bForceUpdate</code> is not set to <code>true</code>, an error is thrown.
+	 * attached.
 	 *
 	 * Note: When calling refresh multiple times, the result of the request triggered by the last
 	 * call determines the model's data; it is <b>independent</b>
 	 * of the order of calls to {@link #submitBatch} with the given group ID.
 	 *
-	 * @param {boolean} bForceUpdate
-	 *   The parameter <code>bForceUpdate</code> has to be set to <code>true</code>.
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for refresh; valid values are <code>undefined</code>,
 	 *   <code>'$auto'</code>, <code>'$direct'</code> or application group IDs as specified in
 	 *   {@link #submitBatch}
 	 * @throws {Error}
-	 *   When <code>bForceUpdate</code> is not set to <code>true</code> or the given group ID is
-	 *   invalid
+	 *   When the given group ID is invalid
 	 *
 	 * @public
 	 * @see sap.ui.model.Model#refresh
@@ -528,17 +524,12 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	// @override
-	ODataModel.prototype.refresh = function (bForceUpdate, sGroupId) {
-		if (bForceUpdate !== true) {
-			throw new Error("Unsupported operation: v4.ODataModel#refresh, "
-					+ "bForceUpdate must be true");
-		}
-
+	ODataModel.prototype.refresh = function (sGroupId) {
 		_ODataHelper.checkGroupId(sGroupId);
 
 		this.aBindings.slice().forEach(function (oBinding) {
 			if (oBinding.oCache) { // relative bindings have no cache and cannot be refreshed
-				oBinding.refresh(bForceUpdate, sGroupId);
+				oBinding.refresh(sGroupId);
 			}
 		});
 	};

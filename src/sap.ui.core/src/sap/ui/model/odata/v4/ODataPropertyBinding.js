@@ -322,36 +322,26 @@ sap.ui.define([
 	 * Refreshes this binding; refresh is supported for absolute bindings only.
 	 * A refresh retrieves data from the server using the given group ID and fires a change event
 	 * when new data is available.
-	 * <code>bForceUpdate</code> has to be set to <code>true</code>.
-	 * If <code>bForceUpdate</code> is not given or <code>false</code>, an error is thrown.
 	 *
 	 * Note: When calling refresh multiple times, the result of the request triggered by the last
 	 * call determines the binding's data; it is <b>independent</b>
 	 * of the order of calls to {@link sap.ui.model.odata.v4.ODataModel#submitBatch} with the given
 	 * group ID.
 	 *
-	 * @param {boolean} bForceUpdate
-	 *   The parameter <code>bForceUpdate</code> has to be set to <code>true</code>.
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for refresh; if not specified, the group ID for this binding is
 	 *   used, see {@link sap.ui.model.odata.v4.ODataPropertyBinding#constructor}.
 	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
 	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 * @throws {Error}
-	 *   When <code>bForceUpdate</code> is not set to <code>true</code> or the given group ID is
-	 *   invalid or refresh on this binding is not supported.
+	 *   When the given group ID is invalid or refresh on this binding is not supported.
 	 *
 	 * @public
 	 * @see sap.ui.model.Binding#refresh
 	 * @since 1.37.0
 	 */
 	// @override
-	ODataPropertyBinding.prototype.refresh = function (bForceUpdate, sGroupId) {
-		if (bForceUpdate !== true) {
-			throw new Error("Unsupported operation: v4.ODataPropertyBinding#refresh, "
-					+ "bForceUpdate must be true");
-		}
-
+	ODataPropertyBinding.prototype.refresh = function (sGroupId) {
 		if (!this.oCache) {
 			throw new Error("Refresh on this binding is not supported");
 		}

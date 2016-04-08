@@ -236,7 +236,7 @@ sap.ui.require([
 		this.oSandbox.mock(oBinding).expects("_fireChange")
 			.withExactArgs({reason : ChangeReason.Refresh});
 
-		oBinding.refresh(true);
+		oBinding.refresh();
 	});
 
 	//*********************************************************************************************
@@ -258,7 +258,7 @@ sap.ui.require([
 		oHelperMock.expects("checkGroupId").withExactArgs("myGroup");
 
 		// code under test
-		oBinding.refresh(true, "myGroup");
+		oBinding.refresh("myGroup");
 
 		assert.strictEqual(oBinding.sRefreshGroupId, "myGroup");
 
@@ -266,7 +266,7 @@ sap.ui.require([
 
 		// code under test
 		assert.throws(function () {
-			oBinding.refresh(true, "$Invalid");
+			oBinding.refresh("$Invalid");
 		}, oError);
 	});
 
@@ -281,7 +281,7 @@ sap.ui.require([
 		this.oSandbox.mock(oBinding).expects("_fireChange").never();
 
 		assert.throws(function () {
-			oBinding.refresh(true);
+			oBinding.refresh();
 		}, new Error("Refresh on this binding is not supported"));
 	});
 
@@ -306,7 +306,7 @@ sap.ui.require([
 			assert.strictEqual(oError1.canceled, true);
 			// no Error is logged because error has canceled flag
 		});
-		oBinding.refresh(true);
+		oBinding.refresh();
 		return oPromise;
 	});
 
@@ -473,15 +473,6 @@ sap.ui.require([
 		assert.throws(function () { //TODO implement
 			oContextBinding.isInitial();
 		}, new Error("Unsupported operation: v4.ODataContextBinding#isInitial"));
-
-		assert.throws(function () { //TODO implement
-			oContextBinding.refresh(false);
-		}, new Error("Unsupported operation: v4.ODataContextBinding#refresh, "
-			+ "bForceUpdate must be true"));
-		assert.throws(function () {
-			oContextBinding.refresh("foo"/*truthy*/);
-		}, new Error("Unsupported operation: v4.ODataContextBinding#refresh, "
-			+ "bForceUpdate must be true"));
 
 		assert.throws(function () { //TODO implement
 			oContextBinding.resume();
@@ -667,7 +658,7 @@ sap.ui.require([
 		this.oSandbox.mock(oContextBinding).expects("_fireChange").never();
 
 		assert.strictEqual(oContextBinding.oCache, undefined);
-		oContextBinding.refresh(true);
+		oContextBinding.refresh();
 		return oContextBinding.requestValue("").then(function (vValue) {
 			assert.strictEqual(vValue, undefined);
 		});
@@ -794,7 +785,7 @@ sap.ui.require([
 			return oContextBinding.execute("myGroupId").then(function () {
 
 				// code under test: must not refresh the cache
-				oContextBinding.refresh(true);
+				oContextBinding.refresh();
 			});
 		});
 	});

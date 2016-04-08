@@ -748,7 +748,7 @@ sap.ui.require([
 			assert.strictEqual(oListBinding.isLengthFinal(), true);
 
 			//code under test
-			oListBinding.refresh(true);
+			oListBinding.refresh();
 
 			assert.strictEqual(oListBinding.oCache, oCache);
 			assert.deepEqual(oListBinding.aContexts, []);
@@ -769,7 +769,7 @@ sap.ui.require([
 		oHelperMock.expects("checkGroupId").withExactArgs("myGroup");
 
 		// code under test
-		oListBinding.refresh(true, "myGroup");
+		oListBinding.refresh("myGroup");
 
 		assert.strictEqual(oListBinding.sRefreshGroupId, "myGroup");
 
@@ -777,7 +777,7 @@ sap.ui.require([
 
 		// code under test
 		assert.throws(function () {
-			oListBinding.refresh(true, "$Invalid");
+			oListBinding.refresh("$Invalid");
 		}, oError);
 	});
 
@@ -793,7 +793,7 @@ sap.ui.require([
 		//code under test
 		//error for relative paths
 		assert.throws(function () {
-			oListBinding.refresh(true);
+			oListBinding.refresh();
 		}, new Error("Refresh on this binding is not supported"));
 	});
 
@@ -814,7 +814,7 @@ sap.ui.require([
 		oCacheMock.expects("refresh");
 
 		oListBinding.getContexts(0, 10);
-		oListBinding.refresh(true);
+		oListBinding.refresh();
 
 		return oReadPromise.catch(function () {});
 	});
@@ -1028,15 +1028,6 @@ sap.ui.require([
 		assert.throws(function () { //TODO implement
 			oListBinding.isInitial();
 		}, new Error("Unsupported operation: v4.ODataListBinding#isInitial"));
-
-		assert.throws(function () { //TODO implement
-			oListBinding.refresh(false);
-		}, new Error("Unsupported operation: v4.ODataListBinding#refresh, "
-			+ "bForceUpdate must be true"));
-		assert.throws(function () {
-			oListBinding.refresh("foo"/*truthy*/);
-		}, new Error("Unsupported operation: v4.ODataListBinding#refresh, "
-			+ "bForceUpdate must be true"));
 
 		assert.throws(function () { //TODO implement
 			oListBinding.resume();
