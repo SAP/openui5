@@ -289,7 +289,6 @@ QUnit.test("Setting of 'hidden' property on FileUploader instances", function(as
 	assert.deepEqual(this.oUploadCollection._oHeaderToolbar.getContent()[2], oFileUploader3, "oFileUploader3 should be on the fifth position in the toolbar");
 });
 
-
 QUnit.test("Positions of the FileUploader instances in the toolbar", function(assert) {
 	var oFileUploader1 = this.oUploadCollection._oFileUploader; // take the current FU instance
 	oFileUploader1.fireChange({
@@ -311,6 +310,11 @@ QUnit.test("Positions of the FileUploader instances in the toolbar", function(as
 
 QUnit.test("Download fails in pending upload mode", function(assert) {
 	assert.equal(this.oUploadCollection.downloadItem(null, false), false, "In pending upload mode, the download method returns false.");
+});
+
+QUnit.test("Set tooltip of FileUploader", function(assert) {
+	var sText = this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_ADD");
+	assert.strictEqual(this.oUploadCollection._oFileUploader.getTooltip(), sText, "Correct tooltip of FileUploader");
 });
 
 QUnit.module("PendingUpload",  {
