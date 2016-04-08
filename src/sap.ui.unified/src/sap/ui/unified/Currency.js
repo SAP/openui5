@@ -240,7 +240,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		 * @protected
 		 */
 		Currency.prototype.getAccessibilityInfo = function() {
-			if (!this._hasValue()) {
+			if (this._bRenderNoValClass) {
 				return {};
 			}
 			return {description: (this.getFormattedValue() || "") + " " + (this.getCurrency() || "").trim()};
