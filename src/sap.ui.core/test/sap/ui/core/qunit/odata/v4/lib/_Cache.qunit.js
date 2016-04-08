@@ -118,18 +118,25 @@ sap.ui.require([
 		aPromises.push(oCache.read(0, 1, undefined, "foo/bar").then(function (oResult) {
 			assert.strictEqual(oResult, 42);
 		}));
-		this.oLogMock.expects("warning").withExactArgs(
+		this.oLogMock.expects("error").withExactArgs(
 			"Failed to drill-down into Employees?$select=foo&$skip=0&$top=1"
 				+ " via foo/bar/invalid, invalid segment: invalid",
 			null, "sap.ui.model.odata.v4.lib._Cache");
 		aPromises.push(oCache.read(0, 1, undefined, "foo/bar/invalid").then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
 		}));
-		this.oLogMock.expects("warning").withExactArgs(
+		this.oLogMock.expects("error").withExactArgs(
 			"Failed to drill-down into Employees?$select=foo&$skip=0&$top=1"
 				+ " via foo/null/invalid, invalid segment: invalid",
 			null, "sap.ui.model.odata.v4.lib._Cache");
 		aPromises.push(oCache.read(0, 1, undefined, "foo/null/invalid").then(function (oResult) {
+			assert.strictEqual(oResult, undefined);
+		}));
+		this.oLogMock.expects("error").withExactArgs(
+			"Failed to drill-down into Employees?$select=foo&$skip=0&$top=1"
+				+ " via foo/baz, invalid segment: baz",
+			null, "sap.ui.model.odata.v4.lib._Cache");
+		aPromises.push(oCache.read(0, 1, undefined, "foo/baz").then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
 		}));
 		return Promise.all(aPromises);
@@ -556,16 +563,22 @@ sap.ui.require([
 		aPromises.push(oCache.read(undefined, "foo/bar").then(function (oResult) {
 			assert.strictEqual(oResult, 42);
 		}));
-		this.oLogMock.expects("warning").withExactArgs(
+		this.oLogMock.expects("error").withExactArgs(
 			"Failed to drill-down into Employees('1')/foo/bar/invalid, invalid segment: invalid",
 			null, "sap.ui.model.odata.v4.lib._Cache");
 		aPromises.push(oCache.read(undefined, "foo/bar/invalid").then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
 		}));
-		this.oLogMock.expects("warning").withExactArgs(
+		this.oLogMock.expects("error").withExactArgs(
 			"Failed to drill-down into Employees('1')/foo/null/invalid, invalid segment: invalid",
 			null, "sap.ui.model.odata.v4.lib._Cache");
 		aPromises.push(oCache.read(undefined, "foo/null/invalid").then(function (oResult) {
+			assert.strictEqual(oResult, undefined);
+		}));
+		this.oLogMock.expects("error").withExactArgs(
+			"Failed to drill-down into Employees('1')/foo/baz, invalid segment: baz",
+			null, "sap.ui.model.odata.v4.lib._Cache");
+		aPromises.push(oCache.read(undefined, "foo/baz").then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
 		}));
 		return Promise.all(aPromises);
@@ -884,7 +897,7 @@ sap.ui.require([
 			Name : "MyName",
 			SideEffect : "before"
 		},
-		sReadPath : "value",
+		sReadPath : "Name",
 		sResourcePath : "ProductList('HT-1000')"
 	}, {
 		// relative list binding (relative context binding is very similar!)

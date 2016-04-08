@@ -311,7 +311,7 @@ sap.ui.define([
 				oPromise = oContext.requestValue(this.sPath);
 			}
 			oPromise.then(function (vResult) {
-				createContexts(vResult);
+				createContexts(vResult || []);
 				//fire dataReceived after change event fired in createContexts()
 				if (bDataRequested) {
 					that.fireDataReceived(); // no try catch needed: uncaught in promise
@@ -329,6 +329,8 @@ sap.ui.define([
 						that.fireDataReceived({error : oError});
 					}
 				}
+			})["catch"](function (oError) {
+				jQuery.sap.log.error(oError.message, oError.stack, sClassName);
 			});
 		}
 		return this.aContexts.slice(iStart, iStart + iLength);
