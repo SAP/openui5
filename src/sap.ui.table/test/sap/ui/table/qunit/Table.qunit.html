@@ -1207,6 +1207,82 @@
 		sinon.assert.notCalled(spy);
 	});
 
+	module("Events", {
+		setup: createTable,
+		teardown: destroyTable
+	});
+
+	test("RowSelectionChange", 28, function() {
+		var sTestCase = "";
+		var fnHandler = function(oEvent) {
+			switch(sTestCase) {
+				case "userSelectAll":
+					assert.equal(oEvent.getParameter("userInteraction"), true, sTestCase + ": Parameter userInteraction correct");
+					assert.equal(oEvent.getParameter("rowIndex"), 0, sTestCase + ": Parameter rowIndex correct");
+					assert.equal(oEvent.getParameter("rowContext"), oTable.getContextByIndex(0), sTestCase + ": Parameter rowContext correct");
+					assert.deepEqual(oEvent.getParameter("rowIndices"), Array.apply(0, Array(200)).map(function(c, i){return i;}), sTestCase + ": Parameter rowIndices correct");
+					break;
+				case "userClearSelectAll":
+					assert.equal(oEvent.getParameter("userInteraction"), true, sTestCase + ": Parameter userInteraction correct");
+					assert.equal(oEvent.getParameter("rowIndex"), -1, sTestCase + ": Parameter rowIndex correct");
+					assert.equal(oEvent.getParameter("rowContext"), undefined, sTestCase + ": Parameter rowContext correct");
+					assert.deepEqual(oEvent.getParameter("rowIndices"), Array.apply(0, Array(200)).map(function(c, i){return i;}), sTestCase + ": Parameter rowIndices correct");
+					break;
+				case "APISelectAll":
+					assert.equal(oEvent.getParameter("userInteraction"), false, sTestCase + ": Parameter userInteraction correct");
+					assert.equal(oEvent.getParameter("rowIndex"), 0, sTestCase + ": Parameter rowIndex correct");
+					assert.equal(oEvent.getParameter("rowContext"), oTable.getContextByIndex(0), sTestCase + ": Parameter rowContext correct");
+					assert.deepEqual(oEvent.getParameter("rowIndices"), Array.apply(0, Array(200)).map(function(c, i){return i;}), sTestCase + ": Parameter rowIndices correct");
+					break;
+				case "APIClearSelectAll":
+					assert.equal(oEvent.getParameter("userInteraction"), false, sTestCase + ": Parameter userInteraction correct");
+					assert.equal(oEvent.getParameter("rowIndex"), -1, sTestCase + ": Parameter rowIndex correct");
+					assert.equal(oEvent.getParameter("rowContext"), undefined, sTestCase + ": Parameter rowContext correct");
+					assert.deepEqual(oEvent.getParameter("rowIndices"), Array.apply(0, Array(200)).map(function(c, i){return i;}), sTestCase + ": Parameter rowIndices correct");
+					break;
+				case "userSetSelectedIndex":
+					assert.equal(oEvent.getParameter("userInteraction"), true, sTestCase + ": Parameter userInteraction correct");
+					assert.equal(oEvent.getParameter("rowIndex"), 0, sTestCase + ": Parameter rowIndex correct");
+					assert.equal(oEvent.getParameter("rowContext"), oTable.getContextByIndex(0), sTestCase + ": Parameter rowContext correct");
+					assert.deepEqual(oEvent.getParameter("rowIndices"), [0], sTestCase + ": Parameter rowIndices correct");
+					break;
+				case "userUnsetSelectedIndex":
+					assert.equal(oEvent.getParameter("userInteraction"), true, sTestCase + ": Parameter userInteraction correct");
+					assert.equal(oEvent.getParameter("rowIndex"), 0, sTestCase + ": Parameter rowIndex correct");
+					assert.equal(oEvent.getParameter("rowContext"), oTable.getContextByIndex(0), sTestCase + ": Parameter rowContext correct");
+					assert.deepEqual(oEvent.getParameter("rowIndices"), [0], sTestCase + ": Parameter rowIndices correct");
+					break;
+				case "APISetSelectedIndex":
+					assert.equal(oEvent.getParameter("userInteraction"), false, sTestCase + ": Parameter userInteraction correct");
+					assert.equal(oEvent.getParameter("rowIndex"), 0, sTestCase + ": Parameter rowIndex correct");
+					assert.equal(oEvent.getParameter("rowContext"), oTable.getContextByIndex(0), sTestCase + ": Parameter rowContext correct");
+					assert.deepEqual(oEvent.getParameter("rowIndices"), [0], sTestCase + ": Parameter rowIndices correct");
+					break;
+			}
+
+		};
+
+		oTable.attachRowSelectionChange(fnHandler);
+
+		sTestCase = "userSelectAll";
+		jQuery(oTable.getDomRef("selall")).click();
+		sTestCase = "userClearSelectAll";
+		jQuery(oTable.getDomRef("selall")).click();
+
+		sTestCase = "APISelectAll";
+		oTable.selectAll();
+		sTestCase = "APIClearSelectAll";
+		oTable.clearSelection();
+
+		sTestCase = "userSetSelectedIndex";
+		jQuery("#" + oTable.getId() + "-rowsel0").click();
+		sTestCase = "userUnsetSelectedIndex";
+		jQuery("#" + oTable.getId() + "-rowsel0").click();
+
+		sTestCase = "APISetSelectedIndex";
+		oTable.setSelectedIndex(0);
+	});
+
 	</script>
 </head>
 <body class="sapUiBody">
