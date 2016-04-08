@@ -2182,9 +2182,6 @@ sap.ui.define([
 			this.iSuppressInvalidate--;
 		}
 
-		sap.ui.getCore().getMessageManager().removeMessages(this._aMessages);
-		this._aMessages = undefined;
-
 		EventProvider.prototype.destroy.apply(this, arguments);
 
 		// finally make the object unusable
@@ -3206,12 +3203,9 @@ sap.ui.define([
 
 			// if there is a binding and if it became invalid through the current model change, then remove it
 			if ( oBindingInfo.binding && becameInvalid(oBindingInfo) ) {
-				// Remove the validation controlMessages for this Binding from the MessageManager so they will not be propagated again
-				var oDataState = oBindingInfo.binding.getDataState();
-				sap.ui.getCore().getMessageManager().removeMessages(oDataState.getControlMessages(), true);
 				// Also tell the Control that the messages have been removed (if any)
 				if (this.refreshDataState) {
-					this.refreshDataState(sName, oDataState);
+					this.refreshDataState(sName, oBindingInfo.binding.getDataState());
 				}
 
 				oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
