@@ -3,14 +3,15 @@
  */
 
 // Provides default renderer for control sap.ui.demokit.UI5EntityCueCard
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', './library'],
+	function(jQuery, library) {
 	"use strict";
 
 
 	/**
-	 * @class UI5EntityCueCard renderer.
-	 * @static
+	 * UI5EntityCueCard renderer.
+	 * @namespace
+	 * @alias sap.ui.demokit.UI5EntityCueCardRenderer
 	 */
 	var UI5EntityCueCardRenderer = {
 	};
@@ -25,7 +26,7 @@ sap.ui.define(['jquery.sap.global'],
 	UI5EntityCueCardRenderer.render = function(rm, oControl){
 
 		var bNavigable = oControl.getNavigable();
-		var bDemokit = oControl.getStyle() == sap.ui.demokit.UI5EntityCueCardStyle.Demokit;
+		var bDemokit = oControl.getStyle() == library.UI5EntityCueCardStyle.Demokit;
 
 		function isPrimitive(sType) {
 			while ( sType.slice(-2) == "[]" ) {
@@ -121,45 +122,51 @@ sap.ui.define(['jquery.sap.global'],
 			var oDoc = oControl._getDoc();
 
 			if ( oDoc ) {
+
+				var n, i, j, oParam;
+
 				rm.write("<table>");
 				if ( !bDemokit ) {
 					rm.write("<tr><td colspan='3' class='sapDkCueCdHd0", deprClass(oDoc), "'>", oControl.getEntityName(), "</td></tr>");
 					rm.write("<tr><td colspan='3' class='sapDkCueCdDoc'>", oDoc.doc || '', deprDoc(oDoc), "</td></tr>");
 				}
-				if ( oDoc.metatype === ".control" ) {
+				if ( oDoc.metatype === 'control' ) {
 
 					var settings = jQuery.extend({}, oDoc.properties, oDoc.aggregations, oDoc.associations);
-					var n = names(settings);
+					n = names(settings);
 					if ( n.length > 0 ) {
 						rm.write("<tr><td colspan='3' class='sapDkCueCdHd'>", "Properties, Aggregations, Associations", "</td></tr>");
-						for (var i = 0; i < n.length; i++) {
+						for (i = 0; i < n.length; i++) {
 							var oProp = settings[n[i]];
 							rm.write("<tr", alternate(i), "><td class='sapDkCueCdName", deprClass(oProp), defaultAggrClass(n[i] === oDoc.defaultAggregation), "'>", n[i], "</td>", "<td class='sapDkCueCdType'>", crossref(oProp, oProp.type, oProp.cardinality), "</td>", "<td class='sapDkCueCdDoc'>", oProp.doc, deprDoc(oProp), defaultAggrDoc(n[i] === oDoc.defaultAggregation), "</td></tr>");
 						}
 					}
 
-					var n = names(oDoc.events);
+					n = names(oDoc.events);
 					if ( n.length > 0 ) {
 						rm.write("<tr><td colspan='3' class='sapDkCueCdHd'>", "Events", "</td></tr>");
-						for (var i = 0; i < n.length; i++) {
+						for (i = 0; i < n.length; i++) {
 							var oEvent = oDoc.events[n[i]];
 							rm.write("<tr", alternate(i), "><td class='sapDkCueCdName", deprClass(oEvent), "'>", n[i], "</td>", "<td class='sapDkCueCdType'>", "&nbsp", "</td>", "<td class='sapDkCueCdDoc'>", oEvent.doc, deprDoc(oEvent), "</td></tr>");
 							var pnames = names(oEvent.parameters);
-							for (var j = 0; j < pnames.length; j++) {
+							for (j = 0; j < pnames.length; j++) {
 								var pn = pnames[j];
-								var oParam = oEvent.parameters[pn];
+								oParam = oEvent.parameters[pn];
 								rm.write("<tr", alternate(i), "><td class='sapDkCueCdSubName", deprClass(oParam), "'>", pn, "</td>", "<td class='sapDkCueCdType'>", crossref(oParam, oParam.type), "</td>", "<td class='sapDkCueCdDoc'>", oParam.doc, deprDoc(oParam), "</td></tr>");
 							}
 						}
 					}
 
-					var n = names(oDoc.methods);
+					n = names(oDoc.methods);
 					if ( n.length > 0 ) {
 						rm.write("<tr><td colspan='3' class='sapDkCueCdHd'>", "Methods", "</td></tr>");
-						for (var i = 0; i < n.length; i++) {
+						for (i = 0; i < n.length; i++) {
 							var oMethod = oDoc.methods[n[i]];
+							if ( oMethod.synthetic ) {
+								continue;
+							}
 							var signature = n[i] + "(";
-							for (var j = 0; j < oMethod.parameters.length; j++) {
+							for (j = 0; j < oMethod.parameters.length; j++) {
 								if ( j > 0 ) {
 									signature += ",";
 								}
@@ -167,8 +174,8 @@ sap.ui.define(['jquery.sap.global'],
 							}
 							signature += ")";
 							rm.write("<tr", alternate(i), "><td class='sapDkCueCdName", deprClass(oMethod), "' colspan='2'>", signature, "</td>", "<td class='sapDkCueCdDoc'>", oMethod.doc, deprDoc(oMethod), "</td></tr>");
-							for (var j = 0; j < oMethod.parameters.length; j++) {
-								var oParam = oMethod.parameters[j];
+							for (j = 0; j < oMethod.parameters.length; j++) {
+								oParam = oMethod.parameters[j];
 								rm.write("<tr", alternate(i), "><td class='sapDkCueCdSubName", deprClass(oParam), "'>", oParam.name, "</td>", "<td class='sapDkCueCdType'>", crossref(oParam, oParam.type), "</td>", "<td class='sapDkCueCdDoc'>", oParam.doc, deprDoc(oParam), "</td></tr>");
 							}
 							if ( oMethod.type !== "sap.ui.core/void" ) {
@@ -177,11 +184,11 @@ sap.ui.define(['jquery.sap.global'],
 						}
 					}
 				}
-				if ( oDoc.metatype === ".type" ) {
-					var n = names(oDoc.values);
+				if ( oDoc.metatype === 'type' ) {
+					n = names(oDoc.values);
 					if ( n.length > 0 ) {
 						rm.write("<tr><td colspan='3' class='sapDkCueCdHd", deprClass(oDoc), "'>", "Values", "</td></tr>");
-						for (var i = 0; i < n.length; i++) {
+						for (i = 0; i < n.length; i++) {
 							var oValue = oDoc.values[n[i]];
 							rm.write("<tr", alternate(i), "><td class='sapDkCueCdName", deprClass(oValue), "'>", n[i], "</td>", "<td class='sapDkCueCdType'>", "&nbsp;", "</td>", "<td class='sapDkCueCdDoc'>", oValue.doc, deprDoc(oValue), "</td></tr>");
 						}
@@ -200,7 +207,6 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		rm.write("</div>");
 	};
-
 
 
 	return UI5EntityCueCardRenderer;

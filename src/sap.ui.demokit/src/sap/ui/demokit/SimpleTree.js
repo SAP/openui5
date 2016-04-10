@@ -3,8 +3,8 @@
  */
 
 // This is internal control dedicated for Demo Kit application usage
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation'],
-	function(jQuery, Control, ItemNavigation) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/model/Filter', 'sap/ui/model/FilterOperator', 'sap/m/SearchField'],
+	function(jQuery, Control, ItemNavigation, Filter, FilterOperator, SearchField) {
 		"use strict";
 
 		var SimpleTree = Control.extend("sap.ui.demokit.SimpleTree", { metadata : {
@@ -72,7 +72,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		SimpleTree.prototype._initializeSearchField = function() {
 			var that = this;
 			var oSearchField = this.getAggregation("_searchField");
-			oSearchField = new sap.m.SearchField({
+			oSearchField = new SearchField({
 				selectOnFocus: false,
 				showSearchButton : false,
 				liveChange : function(oEvent) {
@@ -84,7 +84,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 
 			function _filterTreeContent(sFilterArgument) {
 				var aFilters = [];
-				var oNameFilter = new sap.ui.model.Filter("text", sap.ui.model.FilterOperator.Contains, sFilterArgument);
+				var oNameFilter = new Filter("text", FilterOperator.Contains, sFilterArgument);
 				aFilters.push(oNameFilter);
 				var oBinding = this.getBinding("nodes");
 				oBinding.filter(aFilters);
