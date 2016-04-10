@@ -163,9 +163,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		DemokitApp.prototype._setIndexData = function (sId, oIndex) {
 			var that = this,
-				i;
+			oTopLevelNavItem, iNodes;
 
 			function processNode(oNode) {
+				var i;
+
 				iNodes++;
 				if (oNode.ref && oNode.controls) {
 					var aControls = jQuery.isArray(oNode.controls) ? oNode.controls : oNode.controls.split(/,/);
@@ -184,12 +186,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				}
 			}
 
-			var oTopLevelNavItem = this._findIndexById(sId);
+			oTopLevelNavItem = this._findIndexById(sId);
 			if (oTopLevelNavItem) {
 				oTopLevelNavItem.ref = oIndex.ref;
 				oTopLevelNavItem.links = oIndex;
 
-				var iNodes = 0;
+				iNodes = 0;
 
 				processNode(oIndex);
 				oTopLevelNavItem._iTreeSize = iNodes;
