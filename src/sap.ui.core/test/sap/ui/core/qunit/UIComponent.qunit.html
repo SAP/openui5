@@ -98,6 +98,25 @@
 
 	});
 
+	QUnit.test("UIComponent initialization callback hook", function(assert) {
+
+		this.oServer.respondWithJSONContent(this.oManifest);
+
+		sap.ui.core.UIComponent._fnOnInstanceInitialized = function(oComponent) {
+			assert.equal(oComponent.getId(), "myComponent", "Initialization hook was called!");
+		};
+
+		var oComponent = sap.ui.component({
+			id : "myComponent",
+			manifestUrl : "/anylocation/manifest.json"
+		});
+
+		delete sap.ui.core.UIComponent._fnOnInstanceInitialized;
+
+		oComponent.destroy();
+
+	});
+
 	QUnit.test("UIComponent check for no autoPrefixId", function(assert) {
 
 		this.oServer.respondWithJSONContent(this.oManifest);
