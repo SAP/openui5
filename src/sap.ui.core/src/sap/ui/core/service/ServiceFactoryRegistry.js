@@ -9,30 +9,31 @@ sap.ui.define(['jquery.sap.global', './ServiceFactory'],
 
 
 	// map of service factories
-	var mServiceFactories = {};
+	var mServiceFactories = Object.create(null);
 
 
 	/**
-	 * The Service Factory Registry.
+	 * The service factory registry.
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 * @alias sap.ui.core.service.ServiceFactoryRegistry
-	 * @sap-restricted sap.ushell
 	 * @private
+	 * @sap-restricted sap.ushell
 	 * @since 1.37.0
 	 */
-	var ServiceFactoryRegistry = {};
+	var ServiceFactoryRegistry = Object.create(null);
 
 
 	/**
-	 * Registers a Service Factory instance for the given name.
+	 * Registers a service factory instance for the given name.
 	 *
-	 * @param {string} sServiceFactoryName Name of the Service Factory
-	 * @param {sap.ui.core.service.ServiceFactory} oServiceFactory A Service Factory instance
-	 * @return {sap.ui.core.service.ServiceFactoryRegistry} Returns <code>this</code> to allow method chaining
-	 * @sap-restricted sap.ushell
+	 * @param {string} sServiceFactoryName Name of the service factory
+	 * @param {sap.ui.core.service.ServiceFactory} oServiceFactory Service factory instance
+	 * @return {sap.ui.core.service.ServiceFactoryRegistry} <code>this</code> to allow method chaining
+	 * @static
 	 * @private
+	 * @sap-restricted sap.ushell
 	 */
 	ServiceFactoryRegistry.register = function(sServiceFactoryName, oServiceFactory) {
 
@@ -47,12 +48,13 @@ sap.ui.define(['jquery.sap.global', './ServiceFactory'],
 
 
 	/**
-	 * Unregisters a Service Factory instance for the given name.
+	 * Unregisters a service factory instance for the given name.
 	 *
-	 * @param {string} sServiceFactoryName Name of the Service Factory
-	 * @return {sap.ui.core.service.ServiceFactoryRegistry} Returns <code>this</code> to allow method chaining
-	 * @sap-restricted sap.ushell
+	 * @param {string} sServiceFactoryName Name of the service factory
+	 * @return {sap.ui.core.service.ServiceFactoryRegistry} <code>this</code> to allow method chaining
+	 * @static
 	 * @private
+	 * @sap-restricted sap.ushell
 	 */
 	ServiceFactoryRegistry.unregister = function(sServiceFactoryName) {
 
@@ -66,12 +68,13 @@ sap.ui.define(['jquery.sap.global', './ServiceFactory'],
 
 
 	/**
-	 * Returns the Service Factory instance for the given name.
+	 * Returns the service factory instance for the given name.
 	 *
-	 * @param {string} sServiceFactoryName Name of the Service Factory
-	 * @return {sap.ui.core.service.ServiceFactory} A Service Factory instance
-	 * @sap-restricted sap.ushell
+	 * @param {string} sServiceFactoryName Name of the service factory
+	 * @return {sap.ui.core.service.ServiceFactory} Service factory instance
+	 * @static
 	 * @private
+	 * @sap-restricted sap.ushell
 	 */
 	ServiceFactoryRegistry.get = function(sServiceFactoryName) {
 		return mServiceFactories[sServiceFactoryName];

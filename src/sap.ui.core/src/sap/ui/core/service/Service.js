@@ -3,71 +3,77 @@
  */
 
 // Provides class sap.ui.core.service.Service
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object'],
-	function(jQuery, Interface, BaseObject) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
+	function(jQuery, BaseObject) {
 	"use strict";
 
 
 	/**
 	 * Creates a service for the given context.
 	 *
-	 * @param {object} oServiceContext a Service context
-	 * @param {object} oServiceContext.scopeObject the scope object (e.g. component instance)
-	 * @param {object} oServiceContext.scopeType the scope type (e.g. component, ...)
+	 * @param {object} oServiceContext Context for which the service is created
+	 * @param {object} oServiceContext.scopeObject Object that is in scope (e.g. component instance)
+	 * @param {string} oServiceContext.scopeType Type of object that is in scope (e.g. component, ...)
 	 *
 	 * @class
-	 * A Service provides a specific functionality. A Service instance can be obtained
+	 * A service provides a specific functionality. A service instance can be obtained
 	 * by a {@link sap.ui.core.service.ServiceFactory ServiceFactory} or at a Component
 	 * via {@link sap.ui.core.Component#getService getService} function.
-	 * <p>
-	 * This class is the abstract base class for Services and needs to be extended:
+	 *
+	 * This class is the abstract base class for services and needs to be extended:
 	 * <pre>
-	 * sap.ui.core.service.Service.extend("my.Service", {
+	 * sap.ui.define("my/Service", [
+	 *   "sap/ui/core/service/Service"
+	 * ], function(Service) {
 	 *
-	 *   init: function() {
-	 *     // handle init lifecycle
-	 *   },
+	 *   return Service.extend("my.Service", {
 	 *
-	 *   exit: function() {
-	 *     // handle exit lifecycle
-	 *   },
+	 *     init: function() {
+	 *       // handle init lifecycle
+	 *     },
 	 *
-	 *   doSomething: function() {
-	 *     // some functionality
-	 *   }
+	 *     exit: function() {
+	 *       // handle exit lifecycle
+	 *     },
+	 *
+	 *     doSomething: function() {
+	 *       // some functionality
+	 *     }
+	 *
+	 *  });
 	 *
 	 * });
 	 * </pre>
-	 * <p>
-	 * A Service instance will have a Service context:
+	 *
+	 * A service instance will have a service context:
 	 * <pre>
 	 * {
 	 *   "scopeObject": oComponent, // the Component instance
 	 *   "scopeType": "component"   // the stereotype of the scopeObject
 	 * }
 	 * </pre>
-	 * <p>
-	 * The Service context can be retrieved with the function <code>getContext</code>.
-	 * This function is private to the Service instance and will not be exposed via
-	 * the Service interface.
-	 * <p>
-	 * For consumers of the Service it is recommended to provide the Service instance
+	 *
+	 * The service context can be retrieved with the function <code>getContext</code>.
+	 * This function is private to the service instance and will not be exposed via
+	 * the service interface.
+	 *
+	 * For consumers of the service it is recommended to provide the service instance
 	 * only - as e.g. the {@link sap.ui.core.Component#getService getService} function
-	 * of the Component does. The Service interface can be accessed via the
+	 * of the Component does. The service interface can be accessed via the
 	 * <code>getInterface</code> function.
-	 * <p>
-	 * Other private functions of the Service instance are the lifecycle functions.
+	 *
+	 * Other private functions of the service instance are the lifecycle functions.
 	 * Currently there are two lifecycle functions: <code>init</code> and <code>exit</code>.
 	 * In addition the <code>destroy</code> function will also by hidden to avoid
-	 * the control of the Service lifecycle for Service interface consumers.
+	 * the control of the service lifecycle for service interface consumers.
 	 *
 	 * @extends sap.ui.base.Object
 	 * @author SAP SE
 	 * @version ${version}
 	 * @alias sap.ui.core.service.Service
 	 * @abstract
-	 * @sap-restricted sap.ushell
 	 * @private
+	 * @sap-restricted sap.ushell
 	 * @since 1.37.0
 	 */
 	var Service = BaseObject.extend("sap.ui.core.service.Service", /** @lends sap.ui.service.Service.prototype */ {
@@ -81,8 +87,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 
 			BaseObject.apply(this);
 
-			jQuery.sap.assert(oServiceContext && typeof oServiceContext.scopeObject === "object", "The service context requires a scope object!");
-			jQuery.sap.assert(oServiceContext && typeof oServiceContext.scopeType === "string", "The service context requires a scope type!");
+			// Service context can either be undefined or null
+			// or an object with the properties scopeObject and scopeType
+			if (oServiceContext) {
+				jQuery.sap.assert(typeof oServiceContext.scopeObject === "object", "The service context requires a scope object!");
+				jQuery.sap.assert(typeof oServiceContext.scopeType === "string", "The service context requires a scope type!");
+			}
 
 			this._oServiceContext = oServiceContext;
 
@@ -97,47 +107,111 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 
 
 	/**
-	 * Returns the public interface of the Service.
-	 * <p>
-	 * This function is not available on the Service interface.
+	 * Creates an anonymous service for the provided structured object with
+	 * service information. It allows to define an anonymous service without
+	 * extending it as follows:
+	 * <pre>
+	 * sap.ui.require([
+	 *   "sap/ui/core/service/Service"
+	 * ], function(Service) {
 	 *
-	 * @return {sap.ui.base.Interface} the public interface of the Service
+	 *   var oAnonymousService = Service.create({
+	 *
+	 *     init: function() { ... },
+	 *     exit: function() { ... },
+	 *
+	 *     doSomething: function() { ... }
+	 *
+	 *  });
+	 *
+	 * });
+	 * </pre>
+	 *
+	 * The anonymous service is defined as object literal and must not implement
+	 * members called <code>metadata</code>, <code>constructor</code>,
+	 * <code>getContext</code> or <code>destroy</code>. Those members will be
+	 * ignored and not applied to the service instance. A warning will be
+	 * reported in the log.
+	 *
+	 * @param {object} oServiceInfo Structured object with information about the service
+	 * @return {function} function to create a new anonymous service instance
+	 * @private
+	 */
+	Service.create = function(oServiceInfo) {
+		var AnonymousService = function AnonymousService(oServiceContext) {
+			for (var sMember in oServiceInfo) {
+				if (!sMember.match(/^(metadata|constructor|getContext|destroy)$/)) {
+					this[sMember] = oServiceInfo[sMember];
+				} else {
+					jQuery.sap.log.warning("The member " + sMember + " is not allowed for anonymous service declaration and will be ignored!");
+				}
+			}
+			Service.apply(this, arguments);
+		};
+		AnonymousService.prototype = Object.create(Service.prototype);
+		return AnonymousService;
+	};
+
+
+	/**
+	 * Returns the public interface of the service. By default, this filters the
+	 * internal functions like <code>getInterface</code>, <code>getContext</code>
+	 * and all other functions starting with "_". Additionally the lifecycle
+	 * functions <code>init</code>, <code>exit</code> and <code>destroy</code>
+	 * will be filtered for the service interface. This function can be
+	 * overridden in order to self-create a service interface.
+	 *
+	 * This function is not available on the service interface.
+	 *
+	 * @return {object} the public interface of the service
 	 * @protected
 	 */
 	Service.prototype.getInterface = function() {
-		// avoid adding lifecycle methods to Interface to e.g. prevent usage of destroy for consumers
-		var aAllPublicMethods = this.getMetadata().getAllPublicMethods();
-		aAllPublicMethods = aAllPublicMethods.filter(function(sMethod, iIndex) {
-			return !sMethod.match(/^getContext$|^destroy$/);
-		});
-		// copied from @see sap.ui.base.Object#getInterface
-		var oInterface = new Interface(this, aAllPublicMethods);
-		this.getInterface = jQuery.sap.getter(oInterface);
-		return oInterface;
+		// create a proxy object (interface)
+		var oProxy = Object.create(null);
+		for (var sMember in this) {
+			// filter out internal functions:
+			//  - metadata, constructor, getInterface, getContext
+			//  - functions starting with "_"
+			// or lifecycle functions:
+			//  - destroy, init, exit
+			if (!sMember.match(/^_|^metadata$|^constructor$|^getInterface$|^destroy$|^init$|^exit$|^getContext$/) &&
+				typeof this[sMember] === "function") {
+				oProxy[sMember] = this[sMember].bind(this);
+			}
+		}
+		// override the getInterface function to avoid the
+		// creation of yet another proxy/interface object again
+		this.getInterface = function() {
+			return oProxy;
+		};
+		return oProxy;
 	};
 
+
 	/**
-	 * Returns the context of the Service:
+	 * Returns the context of the service:
 	 * <pre>
 	 * {
 	 *   "scopeObject": oComponent, // the Component instance
 	 *   "scopeType": "component"   // the stereotype of the scopeObject
 	 * }
 	 * </pre>
-	 * <p>
-	 * This function is not available on the Service interface.
 	 *
-	 * @return {object} The context of the Service
+	 * This function is not available on the service interface.
+	 *
+	 * @return {object} the context of the service
 	 * @protected
 	 */
 	Service.prototype.getContext = function() {
 		return this._oServiceContext;
 	};
 
+
 	/**
-	 * Lifecycle method to destroy the Service instance.
-	 * <p>
-	 * This function is not available on the Service interface.
+	 * Lifecycle method to destroy the service instance.
+	 *
+	 * This function is not available on the service interface.
 	 *
 	 * @protected
 	 */
@@ -155,12 +229,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 
 
 	/**
-	 * Initializes the Service instance after creation.
+	 * Initializes the service instance after creation.
 	 *
 	 * Applications must not call this hook method directly, it is called by the
-	 * framework while the constructor of an Service is executed.
+	 * framework while the constructor of a service is executed.
 	 *
-	 * Subclasses of Service should override this hook to implement any necessary
+	 * Subclasses of service should override this hook to implement any necessary
 	 * initialization.
 	 *
 	 * @function
@@ -171,13 +245,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 
 
 	/**
-	 * Cleans up the Service instance before destruction.
+	 * Cleans up the service instance before destruction.
 	 *
 	 * Applications must not call this hook method directly, it is called by the
-	 * framework when the element is {@link #destroy destroyed}.
+	 * framework when the service is {@link #destroy destroyed}.
 	 *
-	 * Subclasses of Service should override this hook to implement any necessary
-	 * cleanup.
+	 * Subclasses of service should override this hook to implement any necessary
+	 * clean-up.
 	 *
 	 * @function
 	 * @name sap.ui.core.service.Service.prototype.exit

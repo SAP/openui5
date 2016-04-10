@@ -720,45 +720,54 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 
 
 	/**
-	 * Returns a Service interface for the {@link sap.ui.core.service.Service Service}
-	 * declared in the Component manifest. The declaration needs to be done in the
-	 * <code>sap.ui5/services</code> section:
+	 * Returns a service interface for the {@link sap.ui.core.service.Service Service}
+	 * declared in the descriptor for components (manifest.json). The declaration needs
+	 * to be done in the <code>sap.ui5/services</code> section as follows:
 	 * <pre>
 	 * {
 	 *   [...]
 	 *   "sap.ui5": {
 	 *     "services": {
 	 *       "myLocalServiceAlias": {
-	 *         "factoryName": "my.ServiceFactory"
+	 *         "factoryName": "my.ServiceFactory",
+	 *         ["optional": true]
 	 *       }
 	 *     }
 	 *   }
 	 *   [...]
 	 * }
 	 * </pre>
-	 * <p>
-	 * The <code>getService</code> function will lookup the Service Factory and will
-	 * create a new instance by using the Service Factory function
-	 * {@link sap.ui.core.service.ServiceFactory#createInstance createInstance}.
-	 * When creating a new instance of the Service the <code>getService</code> function
-	 * will pass the Component context as <code>oServiceContext</code>:
+	 * The service declaration is used to define a mapping between the local
+	 * alias for the service that can be used in the Component and the name of
+	 * the service factory which will be used to create a service instance.
+	 *
+	 * The <code>getService</code> function will look up the service factory and will
+	 * create a new instance by using the service factory function
+	 * {@link sap.ui.core.service.ServiceFactory#createInstance createInstance}
+	 * The optional property defines that the service is not mandatory and the
+	 * usage will not depend on the availability of this service. When requesting
+	 * an optional service the <code>getService</code> function will reject but
+	 * there will be no error logged in the console.
+	 *
+	 * When creating a new instance of the service the Component context will be
+	 * passed as <code>oServiceContext</code> as follows:
 	 * <pre>
 	 * {
 	 *   "scopeObject": this,     // the Component instance
 	 *   "scopeType": "component" // the stereotype of the scopeObject
 	 * }
 	 * </pre>
-	 * <p>
-	 * The Service will be created only once per Component and re-used for future
+	 *
+	 * The service will be created only once per Component and reused in future
 	 * calls to the <code>getService</code> function.
 	 * <p>
-	 * This function will return a Promise which provides the Service interface
-	 * when resolved or in case of the factoryName could not be found in the
-	 * {@link sap.ui.core.service.ServiceFactoryRegistry Service Factory Registry}
-	 * or the Service declaration in the manifest is missing the Promise will
-	 * reject.
-	 * <p>
-	 * Usage example of the <code>getService</code> function:
+	 * This function will return a <code>Promise</code> which provides the service
+	 * interface when resolved. If the <code>factoryName</code> could not
+	 * be found in the {@link sap.ui.core.service.ServiceFactoryRegistry Service Factory Registry}
+	 * or the service declaration in the descriptor for components (manifest.json)
+	 * is missing the Promise will reject.
+	 *
+	 * This is an example of how the <code>getService</code> function can be used:
 	 * <pre>
 	 * oComponent.getService("myLocalServiceAlias").then(function(oService) {
 	 *   oService.doSomething();
@@ -767,8 +776,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * });
 	 * </pre>
 	 *
-	 * @param {string} sLocalServiceAlias the local service alias as defined in the manifest
-	 * @return {Promise} the Promise which will be resolved with the Service interface
+	 * @param {string} sLocalServiceAlias Local service alias as defined in the manifest.json
+	 * @return {Promise} Promise which will be resolved with the Service interface
 	 * @public
 	 * @since 1.37.0
 	 */
@@ -809,11 +818,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 						// return the Service interface
 						fnResolve(oService.interface);
 
-					}.bind(this));
+					}.bind(this)).catch(fnReject);
 
 				} else {
+
 					// the Service Factory could not be found in the registry
-					fnReject(new Error("ServiceFactory " + sServiceFactoryName + " not found in ServiceFactoryRegistry!"));
+					var sErrorMessage = "The ServiceFactory " + sServiceFactoryName + " for Service " + sLocalServiceAlias + " not found in ServiceFactoryRegistry!";
+					var bOptional = this.getManifestEntry("/sap.ui5/services/" + sLocalServiceAlias + "/optional");
+					if (!bOptional) {
+						// mandatory services will log an error into the console
+						jQuery.sap.log.error(sErrorMessage);
+					}
+					fnReject(new Error(sErrorMessage));
+
 				}
 
 			} else {

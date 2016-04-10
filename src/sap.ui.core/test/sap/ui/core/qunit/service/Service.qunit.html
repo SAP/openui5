@@ -7,7 +7,7 @@
 <html>
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>QUnit test: Component</title>
+	<title>QUnit test: Service Injection</title>
 	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../../resources/sap-ui-core.js"
@@ -80,7 +80,23 @@
 
 	// ===========================================================================
 
-	QUnit.module("Basic API");
+	QUnit.module("Basic API", {
+
+		beforeEach : function() {
+
+			// log spy
+			this.oLogSpy = sinon.spy(jQuery.sap.log, "warning");
+
+		},
+
+		afterEach : function() {
+
+			this.oLogSpy.restore();
+			delete this.oLogSpy;
+
+		}
+
+	});
 
 	/*
 	 * This test checks the basic API functionality of the Service Factory Registry
@@ -93,10 +109,7 @@
 		sap.ui.require(["sap/ui/core/service/ServiceFactoryRegistry", "my/ServiceFactory"], function(ServiceFactoryRegistry, MyServiceFactory) {
 
 			var sServiceFactoryAlias = "my.ServiceFactoryAlias";
-			var oServiceFactory = new MyServiceFactory({
-				scopeObject: {},
-				scopeType: "component"
-			});
+			var oServiceFactory = new MyServiceFactory();
 
 			assert.notOk(ServiceFactoryRegistry.get(sServiceFactoryAlias), "Service Factory is not registered yet!");
 
@@ -150,6 +163,51 @@
 
 
 	/*
+	 * This test checks the usage of the Service Factory as a generic factory for
+	 * an anonymous Service by providing the object literal.
+	 */
+	QUnit.test("ServiceFactory (generic/anonymous, should work)", function(assert) {
+
+		var done = assert.async();
+
+		sap.ui.require([
+			"sap/ui/core/service/ServiceFactory",
+			"sap/ui/core/service/Service"
+		], function(ServiceFactory, Service) {
+
+			var oServiceContext = {
+					scopeObject: {},
+					scopeType: "component"
+				};
+
+			var oServiceFactory = new ServiceFactory({
+				init: function() {
+					assert.deepEqual(this.getContext(), oServiceContext, "Service has proper context in init!");
+				},
+				exit: function() {
+					assert.deepEqual(this.getContext(), oServiceContext, "Service has proper context in exit!");
+				},
+				doSomething: function() {
+					assert.deepEqual(this.getContext(), oServiceContext, "Service has proper context in doSomething!");
+				}
+			});
+
+			oServiceFactory.createInstance(oServiceContext).then(function(oService) {
+				assert.ok(oService instanceof Service, "Service is an instance of sap.ui.core.service.Service");
+				assert.deepEqual(oService.getContext(), oServiceContext, "Service has proper context");
+				oService.doSomething();
+				done();
+			}).catch(function(oError) {
+				assert.ok(false, "An error must no occur here!");
+				done();
+			});
+
+		});
+
+	});
+
+
+	/*
 	 * This test checks the usage of the Service Factory will fail to create a
 	 * Service instance when no constructor function is passed.
 	 */
@@ -171,7 +229,7 @@
 				assert.ok(false, "The createInstance function must not work here!");
 				done();
 			}).catch(function(oError) {
-				assert.equal(oError.message, "Usage of sap.ui.core.service.ServiceFactory requires a Service constructor function to create a new Service instance!", "A proper error occurs!");
+				assert.equal(oError.message, "Usage of sap.ui.core.service.ServiceFactory requires a service constructor function to create a new service instance or to override the createInstance function!");
 				done();
 			});
 
@@ -222,10 +280,9 @@
 		var done = assert.async();
 
 		sap.ui.require([
-			"sap/ui/base/Interface",
 			"sap/ui/core/service/Service",
 			"my/Service"
-		], function(Interface, Service, MyService) {
+		], function(Service, MyService) {
 
 			var oMyService = new MyService();
 			var oMyServiceInterface = oMyService.getInterface();
@@ -239,7 +296,7 @@
 			assert.equal(typeof oMyService.doSomething, "function", "Service has doSomething function");
 			assert.equal(typeof oMyService._doSomething, "function", "Service has _doSomething function");
 
-			assert.ok(oMyServiceInterface instanceof Interface, "Service Interface is of type sap.ui.base.Interface");
+			assert.notOk(oMyServiceInterface instanceof Service, "Service Interface must not be type sap.ui.core.service.Service");
 			assert.equal(typeof oMyServiceInterface.getInterface, "undefined", "Service Interface has no getInterface function");
 			assert.equal(typeof oMyServiceInterface.getContext, "undefined", "Service Interface has no getContext function");
 			assert.equal(typeof oMyServiceInterface.destroy, "undefined", "Service Interface has no destroy function");
@@ -251,9 +308,132 @@
 			oMyServiceInterface.doSomething();
 			assert.equal(oMyService._iCallCount, 1, "Service interface forwards function call!");
 
+			assert.ok(oMyService._bInitialized, "Service is initialized!");
+			assert.notOk(oMyService._bTerminated, "Service is not terminated yet!");
+			oMyService.destroy();
+			assert.ok(oMyService._bTerminated, "Service is terminated!");
+
 			done();
 
 		});
+
+	});
+
+
+	/*
+	 * The following test defines anonymous services with the shorthand notation
+	 * and checks that those object literals become proper services.
+	 */
+	QUnit.test("Service (anonymous)", function(assert) {
+
+		var done = assert.async();
+
+		sap.ui.require([
+			"sap/ui/core/service/ServiceFactory",
+			"sap/ui/core/service/Service"
+		], function(ServiceFactory, Service) {
+
+			var oAnonymousServiceFactory = new ServiceFactory({
+
+				init: function() {
+					this._bInitialized = true;
+				},
+
+				exit: function() {
+					this._bTerminated = true;
+				},
+
+				doSomething: function() {
+					this._doSomething();
+				},
+
+				_doSomething: function() {
+					this._iCallCount = this._iCallCount && this._iCallCount++ || 1;
+				}
+
+			});
+
+			oAnonymousServiceFactory.createInstance().then(function(oMyService) {
+
+				var oMyServiceInterface = oMyService.getInterface();
+
+				assert.ok(oMyService instanceof Service, "Service is instance of sap.ui.core.service.Service");
+				assert.equal(typeof oMyService.getInterface, "function", "Service has getInterface function");
+				assert.equal(typeof oMyService.getContext, "function", "Service has getContext function");
+				assert.equal(typeof oMyService.destroy, "function", "Service has destroy function");
+				assert.equal(typeof oMyService.init, "function", "Service has init function");
+				assert.equal(typeof oMyService.exit, "function", "Service has exit function");
+				assert.equal(typeof oMyService.doSomething, "function", "Service has doSomething function");
+				assert.equal(typeof oMyService._doSomething, "function", "Service has _doSomething function");
+
+				assert.notOk(oMyServiceInterface instanceof Service, "Service Interface must not be type sap.ui.core.service.Service");
+				assert.equal(typeof oMyServiceInterface.getInterface, "undefined", "Service Interface has no getInterface function");
+				assert.equal(typeof oMyServiceInterface.getContext, "undefined", "Service Interface has no getContext function");
+				assert.equal(typeof oMyServiceInterface.destroy, "undefined", "Service Interface has no destroy function");
+				assert.equal(typeof oMyServiceInterface.init, "undefined", "Service Interface has no init function");
+				assert.equal(typeof oMyServiceInterface.exit, "undefined", "Service Interface has no exit function");
+				assert.equal(typeof oMyServiceInterface.doSomething, "function", "Service Interface has doSomething function");
+				assert.equal(typeof oMyServiceInterface._doSomething, "undefined", "Service Interface has no _doSomething function");
+
+				oMyServiceInterface.doSomething();
+				assert.equal(oMyService._iCallCount, 1, "Service interface forwards function call!");
+
+				assert.ok(oMyService._bInitialized, "Service is initialized!");
+				assert.notOk(oMyService._bTerminated, "Service is not terminated yet!");
+				oMyService.destroy();
+				assert.ok(oMyService._bTerminated, "Service is terminated!");
+
+				done();
+
+			}).catch(function(oError) {
+
+				assert.ok(false, "createInstance must not be failing!");
+				done();
+
+			});
+
+		});
+
+	});
+
+
+	/*
+	 * The following test defines anonymous services with the shorthand notation
+	 * and checks that those object literals become proper services.
+	 */
+	QUnit.test("Service (anonymous) - filter special members", function(assert) {
+
+		var done = assert.async();
+
+		sap.ui.require([
+			"sap/ui/core/service/ServiceFactory"
+		], function(ServiceFactory) {
+
+			var oAnonymousServiceFactory = new ServiceFactory({
+				metadata: {},
+				constructor: function() {},
+				getContext: function() {},
+				destroy: function() {},
+				doSomething: function() {}
+			});
+
+			oAnonymousServiceFactory.createInstance().then(function(oMyService) {
+
+				assert.equal(this.oLogSpy.callCount, 4, "4 Warnings have been reported!");
+				["metadata", "constructor", "getContext", "destroy"].forEach(function(sMember, iIndex) {
+					assert.equal(this.oLogSpy.getCall(iIndex).args[0], "The member " + sMember + " is not allowed for anonymous service declaration and will be ignored!", "Warning for " + sMember + " has been reported!");
+				}.bind(this));
+
+				done();
+
+			}.bind(this)).catch(function(oError) {
+
+				assert.ok(false, "createInstance must not be failing!");
+				done();
+
+			});
+
+		}.bind(this));
 
 	});
 
@@ -300,12 +480,20 @@
 						},
 						"OtherServiceAlias": {
 							"factoryName": "other.ServiceFactoryAlias"
+						},
+						"InvalidServiceAlias": {
+							"factoryName": "invalid.ServiceFactoryAlias"
+						},
+						"OptionalServiceAlias": {
+							"factoryName": "optional.ServiceFactoryAlias",
+							"optional": true
 						}
 					}
 				}
 			};
 
 
+			// fake server
 			var oServer = this.oServer = sinon.sandbox.useFakeServer();
 
 			oServer.xhr.useFilters = true;
@@ -323,25 +511,36 @@
 				JSON.stringify(oManifest)
 			]);
 
+
+			// log spy
+			this.oLogSpy = sinon.spy(jQuery.sap.log, "error");
+
+
 			// create the component
-			var oComponent = this._oComponent = sap.ui.component({
+			var oComponent = this.oComponent = sap.ui.component({
 				manifestUrl : "/anylocation/manifest.json"
 			});
 
-			// register the Service Factory for: my.ServiceFactoryAlias
+			// register the Service Factory for: my.ServiceFactoryAlias and invalid.ServiceFactoryAlias
 			sap.ui.core.service.ServiceFactoryRegistry.register("my.ServiceFactoryAlias", new my.ServiceFactory());
+			sap.ui.core.service.ServiceFactoryRegistry.register("invalid.ServiceFactoryAlias", new sap.ui.core.service.ServiceFactory());
 
 		},
 
 		afterEach : function() {
 
 			// unregister the Service Factory for: my.ServiceFactoryAlias
-			sap.ui.core.service.ServiceFactoryRegistry.register("my.ServiceFactoryAlias");
+			sap.ui.core.service.ServiceFactoryRegistry.unregister("my.ServiceFactoryAlias");
 
-			this._oComponent.destroy();
-			delete this._oComponent;
-			delete this._oServer;
-			delete this._oManifest;
+			this.oComponent.destroy();
+			delete this.oComponent;
+
+			this.oLogSpy.restore();
+			delete this.oLogSpy;
+
+			this.oServer.restore();
+			delete this.oServer;
+			delete this.oManifest;
 
 		}
 
@@ -354,18 +553,18 @@
 	 */
 	QUnit.test("Retrieve Service from existing Service Factory", function(assert) {
 
-		var oComponent = this._oComponent;
+		var oComponent = this.oComponent;
 
 		var done = assert.async();
 
 		sap.ui.require([
-			"sap/ui/base/Interface",
+			"sap/ui/core/service/Service",
 			"my/Service"
-		], function(Interface, MyService) {
+		], function(Service, MyService) {
 
 			oComponent.getService("MyServiceAlias").then(function(oService) {
 
-				assert.ok(oService instanceof Interface, "Service Interface is of type sap.ui.base.Interface");
+				assert.notOk(oService instanceof Service, "Service Interface must not be type sap.ui.core.service.Service");
 				assert.equal(typeof oService.destroy, "undefined", "Service Interface has no destroy function");
 				assert.equal(typeof oService.doSomething, "function", "Service Interface has doSomething function");
 				assert.equal(typeof oService._doSomething, "undefined", "Service Interface has no _doSomething function");
@@ -397,7 +596,7 @@
 
 	QUnit.test("Retrieve Service from missing Service Factory", function(assert) {
 
-		var oComponent = this._oComponent;
+		var oComponent = this.oComponent;
 
 		var done = assert.async();
 		oComponent.getService("OtherServiceAlias").then(function(oService) {
@@ -407,10 +606,51 @@
 
 		}).catch(function(oError) {
 
-			assert.equal(oError.message, "ServiceFactory other.ServiceFactoryAlias not found in ServiceFactoryRegistry!", "Service Factory not found Error");
-			done()
+			assert.equal(oError.message, "The ServiceFactory other.ServiceFactoryAlias for Service OtherServiceAlias not found in ServiceFactoryRegistry!", "Service Factory not found Error");
+			assert.equal(this.oLogSpy.callCount, 1, "getService created one error log message");
+			assert.equal(this.oLogSpy.firstCall.args[0], "The ServiceFactory other.ServiceFactoryAlias for Service OtherServiceAlias not found in ServiceFactoryRegistry!", "getService created one error log message");
+			done();
 
-		});
+		}.bind(this));
+
+	});
+
+	QUnit.test("Retrieve optional Service from missing Service Factory", function(assert) {
+
+		var oComponent = this.oComponent;
+
+		var done = assert.async();
+		oComponent.getService("OptionalServiceAlias").then(function(oService) {
+
+			assert.ok(false, "Service must not be created!");
+			done();
+
+		}).catch(function(oError) {
+
+			assert.equal(oError.message, "The ServiceFactory optional.ServiceFactoryAlias for Service OptionalServiceAlias not found in ServiceFactoryRegistry!", "Service Factory not found Error");
+			assert.equal(this.oLogSpy.callCount, 0, "getService created no error log message");
+			done();
+
+		}.bind(this));
+
+	});
+
+	QUnit.test("Retrieve Service from invalid Service Factory", function(assert) {
+
+		var oComponent = this.oComponent;
+
+		var done = assert.async();
+		oComponent.getService("InvalidServiceAlias").then(function(oService) {
+
+			assert.ok(false, "Service must not be created!");
+			done();
+
+		}).catch(function(oError) {
+
+			assert.equal(oError.message, "Usage of sap.ui.core.service.ServiceFactory requires a service constructor function to create a new service instance or to override the createInstance function!", "Service Factory not found Error");
+			done();
+
+		}.bind(this));
 
 	});
 
