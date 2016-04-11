@@ -3796,7 +3796,8 @@ sap.ui.define([
 	 * @param {object} [mParameters] a map which contains the following parameter properties:
 	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead
 	 * @param {string} [mParameters.groupId] defines the group that should be submitted. If not specified all deferred groups will be submitted. Requests belonging to the same groupId will be bundled in one batch request.
-	 * @param {function} [mParameters.success] a callback function which is called when the data has been successfully updated. The handler can have the following parameters: oData
+	 * @param {function} [mParameters.success] a callback function which is called when the data has been successfully updated. The handler can have the following parameters: oData. oData contains the
+	 * parsed response data as a Javascript object. The structure of the response differs if the request was send as a batch or not.
 	 * @param {function} [mParameters.error] a callback function which is called when the request failed. The handler can have the parameter: oError which contains additional error information
 	 * @param {string} [mParameters.eTag] an ETag which can be used for concurrency control. If it is specified, it will be used in an If-Match-Header in the request to the server for this entry
 	 * @return {object} an object which has an <code>abort</code> function to abort the current request or requests
