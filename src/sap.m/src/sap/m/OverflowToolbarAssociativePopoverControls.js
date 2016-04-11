@@ -11,8 +11,8 @@
  * where CONTROL is a camel-cased version of the getMetadata().getName() value, f.e. "sap.m.Button" becomes "sapMButton"
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata'],
-	function(jQuery, Metadata) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', './OverflowToolbarButton', './ToggleButton', './Button'],
+	function(jQuery, Metadata, OverflowToolbarButton, ToggleButton, Button) {
 		"use strict";
 
 		var OverflowToolbarAssociativePopoverControls = Metadata.createClass("sap.m._overflowToolbarHelpers.OverflowToolbarAssociativePopoverControls", {
@@ -212,28 +212,45 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata'],
 		};
 
 		/**
-		 * Returns the control configuration for a given control class (obtained through the control instance)
-		 * @param vControl - either a control instance object, or a control class name string
+		 * Returns the control configuration for a given control
+		 * @param oControl - control instance object
 		 * @returns {*}
 		 */
-		OverflowToolbarAssociativePopoverControls.getControlConfig = function(vControl) {
-			if (typeof vControl === "object") {
-				vControl = vControl.getMetadata().getName();
-			}
-			return OverflowToolbarAssociativePopoverControls._mSupportedControls[vControl];
+		OverflowToolbarAssociativePopoverControls.getControlConfig = function(oControl) {
+			var sClassName = OverflowToolbarAssociativePopoverControls.getControlClass(oControl);
+			return OverflowToolbarAssociativePopoverControls._mSupportedControls[sClassName];
 		};
 
 		/**
 		 * Tells if a control is supported by the associative popover (i.e. can overflow to it)
-		 * @param vControl - either a control instance object, or a control class name string
+		 * @param oControl - control instance object
 		 * @returns {boolean}
 		 */
-		OverflowToolbarAssociativePopoverControls.supportsControl = function(vControl) {
-			if (typeof vControl === "object") {
-				vControl = vControl.getMetadata().getName();
-			}
-			var oCtrlConfig = OverflowToolbarAssociativePopoverControls._mSupportedControls[vControl];
+		OverflowToolbarAssociativePopoverControls.supportsControl = function(oControl) {
+			var sClassName = OverflowToolbarAssociativePopoverControls.getControlClass(oControl);
+			var oCtrlConfig = OverflowToolbarAssociativePopoverControls._mSupportedControls[sClassName];
 			return typeof oCtrlConfig !== "undefined" && oCtrlConfig.canOverflow;
+		};
+
+
+		/**
+		 * Returns the class of a control in terms of overflow behavior
+		 * This is needed so that for example a custom button, extending sap.m.Button, can overflow too
+		 * @param oControl
+		 */
+		OverflowToolbarAssociativePopoverControls.getControlClass = function(oControl) {
+
+			// For now only custom classes, extending the sap.m.Button and its derivatives, are supported for overflow
+			if (oControl instanceof OverflowToolbarButton) {
+				return "sap.m.OverflowToolbarButton";
+			} else if (oControl instanceof ToggleButton) {
+				return "sap.m.ToggleButton";
+			} else if (oControl instanceof Button) {
+				return "sap.m.Button";
+			}
+
+			// All other controls must be the standard sap.m class in order to overflow
+			return oControl.getMetadata().getName();
 		};
 
 		return OverflowToolbarAssociativePopoverControls;

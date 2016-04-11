@@ -737,8 +737,8 @@ sap.ui.define([
 			return;
 		}
 
-		var sSourceControlClass = oEvent.getSource().getMetadata().getName();
-		var oControlConfig = OverflowToolbarAssociativePopoverControls.getControlConfig(sSourceControlClass);
+		var oSourceControl = oEvent.getSource();
+		var oControlConfig = OverflowToolbarAssociativePopoverControls.getControlConfig(oSourceControl);
 		var sParameterName = oEvent.getParameter("name");
 
 		// Do nothing if the changed property is in the blacklist above
