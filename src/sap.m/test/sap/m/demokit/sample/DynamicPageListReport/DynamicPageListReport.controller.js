@@ -9,7 +9,7 @@ sap.ui.define([
 	return Controller.extend("sap.m.sample.DynamicPageListReport.DynamicPageListReport", {
 		onInit: function () {
 			this.oModel = new JSONModel();
-			this.oModel.loadData(this.getJSONPath());
+			this.oModel.loadData(jQuery.sap.getModulePath("sap.m.sample.DynamicPageListReport", "/model.json"));
 			this.getView().setModel(this.oModel);
 
 			this.aKeys = ["Name", "Category", "SupplierName"];
@@ -99,9 +99,6 @@ sap.ui.define([
 		},
 		getSnappedLabel : function () {
 			return new sap.m.Label({text: "{/Filter/text}"});
-		},
-		getJSONPath : function () {
-			return "/testsuite/test-resources/sap/m/demokit/sample/DynamicPageListReport/model.json";
 		}
 	});
 });
