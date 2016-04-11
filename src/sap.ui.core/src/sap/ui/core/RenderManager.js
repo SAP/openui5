@@ -185,13 +185,14 @@ sap.ui.define([
 	 * If the given control is undefined or null, then nothing is rendered.
 	 *
 	 * @param {sap.ui.core.Control} oControl the control that should be rendered
+	 * @returns {sap.ui.core.RenderManager} this render manager instance to allow chaining
 	 * @public
 	 */
 	RenderManager.prototype.renderControl = function(oControl) {
 		jQuery.sap.assert(!oControl || oControl instanceof sap.ui.core.Control, "oControl must be a sap.ui.core.Control or empty");
 		// don't render a NOTHING
 		if (!oControl) {
-			return;
+			return this;
 		}
 
 		// create stack to determine rendered parent
@@ -299,6 +300,7 @@ sap.ui.define([
 		} else if (oControl.getParent() && oControl.getParent().getMetadata().getName() == "sap.ui.core.UIArea") {
 			jQuery.sap.measure.resume(oControl.getParent().getId() + "---rerender");
 		}
+		return this;
 	};
 
 	/**
