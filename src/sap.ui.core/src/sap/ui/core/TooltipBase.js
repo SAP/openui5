@@ -184,7 +184,6 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 	* @private
 	 */
 	TooltipBase.prototype.onmouseover = function(oEvent) {
-
 		// The Element or Control that initiated the event.
 		var oEventSource = jQuery(oEvent.target).control(0);
 		//jQuery.sap.log.debug("MOUSE OVER    " +  oEventSource + "  " + jQuery(oEvent.currentTarget).control(0));
@@ -303,6 +302,11 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 	 * @private
 	 */
 	TooltipBase.prototype.openPopup = function(oSC) {
+		// Popup should be not open if visible is set to false
+		if (!this.getVisible()) {
+			return;
+		}
+
 		if (oSC.getTooltip() != null) {
 
 			// Clear Delayed Call if exist
