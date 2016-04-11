@@ -451,7 +451,7 @@ sap.ui.define([
 
 	/**
 	 * Returns a string representation of this object including the binding path. If the binding is
-	 * relative the parent path is also given, separated by a '|'.
+	 * relative, the parent path is also given, separated by a '|'.
 	 *
 	 * @return {string} A string description of this binding
 	 * @public

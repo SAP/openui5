@@ -70,10 +70,10 @@ sap.ui.define([
 	 *   action imports and function imports. If you want to control the execution time of an
 	 *   operation, for example a function import named "GetNumberOfAvailableItems", create a
 	 *   context binding for the path "/GetNumberOfAvailableItems(...)" (as specified here,
-	 *   including the three dots). Such an operation binding is <i>deferred</i>; meaning that it
+	 *   including the three dots). Such an operation binding is <i>deferred</i>, meaning that it
 	 *   does not request automatically, but only when you call {@link #execute}. {@link #refresh}
-	 *   is always ignored for actions and action imports. For function imports it is ignored if
-	 *   {@link #execute} has not been called yet. Afterwards it results in another call of the
+	 *   is always ignored for actions and action imports. For function imports, it is ignored if
+	 *   {@link #execute} has not yet been called. Afterwards it results in another call of the
 	 *   function with the parameter values of the last execute.
 	 *
 	 *   The binding parameter for bound actions may be given in the binding path, for example
@@ -85,7 +85,7 @@ sap.ui.define([
 	 *   <b>Example</b>: You have a table with a list binding to <code>/TEAMS</code>. In each row
 	 *   you have a button to change the team's manager, with the relative binding
 	 *   <code>tea_busi.AcChangeManagerOfTeam(...)</code>. Then the parent context for such a button
-	 *   refers to an instance of TEAMS, its canonical path is
+	 *   refers to an instance of TEAMS, so its canonical path is
 	 *   <code>/TEAMS(ID='<i>TeamID</i>')</code> and the resulting path for the action is
 	 *   <code>/TEAMS(ID='<i>TeamID</i>')/tea_busi.AcChangeManagerOfTeam</code>.
 	 *
@@ -93,7 +93,8 @@ sap.ui.define([
 	 *   navigation property. Then this navigation property will be part of the operation's
 	 *   resource path, which is still valid.
 	 *
-	 *   A deferred operation binding may not have another deferred operation binding as parent.
+	 *   A deferred operation binding is not allowed to have another deferred operation binding as
+	 *   parent.
 	 *
 	 * @extends sap.ui.model.ContextBinding
 	 * @public
@@ -543,7 +544,7 @@ sap.ui.define([
 				this.oElementContext = oContext
 					? _Context.create(this.oModel, this, this.oModel.resolve(this.sPath, oContext))
 					: null;
-				// the binding parameter for a deferred might have changed
+				// the binding parameter for a deferred context binding might have changed
 				this.oCache = undefined;
 				// call Binding#setContext because of data state etc.; fires "change"
 				Binding.prototype.setContext.call(this, oContext);
