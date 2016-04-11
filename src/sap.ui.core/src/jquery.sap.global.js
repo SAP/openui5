@@ -396,35 +396,43 @@
 	 * and load debug library if necessary
 	 */
 	(function() {
-		//Check URI param
-		var bDebugSources = /sap-ui-debug=(true|x|X)/.test(location.search),
-			bIsOptimized = window["sap-ui-optimized"];
+		// check URI param
+		var mUrlMatch = /(?:^|\?|&)sap-ui-debug=([^&]*)(?:&|$)/.exec(location.search),
+			vDebugInfo = (mUrlMatch && mUrlMatch[1]) || '';
 
-		//Check local storage
+		// check local storage
 		try {
-			bDebugSources = bDebugSources || (window.localStorage.getItem("sap-ui-debug") == "X");
+			vDebugInfo = vDebugInfo || window.localStorage.getItem("sap-ui-debug");
 		} catch (e) {
-			//Happens in FF when Cookies are deactivated
+			// happens in FF when cookies are deactivated
 		}
 
-		window["sap-ui-debug"] = bDebugSources;
+		// normalize
+		if ( /^(?:false|true|x|X)$/.test(vDebugInfo) ) {
+			vDebugInfo = vDebugInfo !== 'false';
+		}
 
-		// if bootstap URL already contains -dbg URL, just set sap-ui-loaddbg
+		window["sap-ui-debug"] = vDebugInfo;
+
+		// if bootstrap URL already contains -dbg URL, just set sap-ui-loaddbg
 		if (/-dbg\.js([?#]|$)/.test(_oBootstrap.url)) {
 			window["sap-ui-loaddbg"] = true;
-			window["sap-ui-debug"] = true;
+			window["sap-ui-debug"] = vDebugInfo = vDebugInfo || true;
 		}
 
-		// if current sources are optimized and debug sources are wanted, restart with debug URL
-		if (bIsOptimized && bDebugSources) {
-			var sDebugUrl = _oBootstrap.url.replace(/\/(?:sap-ui-cachebuster\/)?([^\/]+)\.js/, "/$1-dbg.js");
-			window["sap-ui-optimized"] = false;
+		// if current sources are optimized and debug sources should be used in general, restart with debug URL
+		if ( window["sap-ui-optimized"] ) {
 			window["sap-ui-loaddbg"] = true;
-			document.write("<script type=\"text/javascript\" src=\"" + sDebugUrl + "\"></script>");
-			var oRestart = new Error("Aborting UI5 bootstrap and restarting from: " + sDebugUrl);
-			oRestart.name = "Restart";
-			throw oRestart;
+			if ( vDebugInfo === true ) {
+				var sDebugUrl = _oBootstrap.url.replace(/\/(?:sap-ui-cachebuster\/)?([^\/]+)\.js/, "/$1-dbg.js");
+				window["sap-ui-optimized"] = false;
+				document.write("<script type=\"text/javascript\" src=\"" + sDebugUrl + "\"></script>");
+				var oRestart = new Error("Aborting UI5 bootstrap and restarting from: " + sDebugUrl);
+				oRestart.name = "Restart";
+				throw oRestart;
+			}
 		}
+
 	})();
 
 	/*
@@ -576,9 +584,9 @@
 		} : jQuery.noop;
 	}
 
-	jQuery.sap.debug = makeLocalStorageAccessor('sap-ui-debug', 'boolean', function reloadHint(bUsesDbgSrc) {
+	jQuery.sap.debug = makeLocalStorageAccessor('sap-ui-debug', '', function reloadHint(vDebugInfo) {
 		/*eslint-disable no-alert */
-		alert("Usage of debug sources is " + (bUsesDbgSrc ? "on" : "off") + " now.\nFor the change to take effect, you need to reload the page.");
+		alert("Usage of debug sources is " + (vDebugInfo ? "on" : "off") + " now.\nFor the change to take effect, you need to reload the page.");
 		/*eslint-enable no-alert */
 	});
 
@@ -2522,6 +2530,40 @@
 		}());
 
 		/**
+		 * When defined, checks whether preload should be ignored for the given module.
+		 * If undefined, all preloads will be used.
+		 */
+		var fnIgnorePreload;
+
+		(function() {
+			var vDebugInfo = window["sap-ui-debug"];
+
+			function makeRegExp(sGlobPattern) {
+				if ( !/\/\*\*\/$/.test(sGlobPattern) ) {
+					sGlobPattern = sGlobPattern.replace(/\/$/, '/**/');
+				}
+				return sGlobPattern.replace(/\*\*\/|\*|[[\]{}()+?.\\^$|]/g, function(sMatch) {
+					switch (sMatch) {
+						case '**/' : return '(?:[^/]+/)*';
+						case '*'   : return '[^/]*';
+						default    : return '\\' + sMatch;
+					}
+				});
+			}
+
+			if ( typeof vDebugInfo === 'string' ) {
+				var sPattern =  "^(?:" + vDebugInfo.split(/,/).map(makeRegExp).join("|") + ")",
+					rFilter = new RegExp(sPattern);
+
+				fnIgnorePreload = function(sModuleName) {
+					return rFilter.test(sModuleName);
+				};
+
+				log.debug("Modules that should be excluded from preload: '" + sPattern + "'");
+			}
+		})();
+
+		/**
 		 * A module/resource as managed by the module system.
 		 *
 		 * Each module is an object with the following properties
@@ -2553,7 +2595,7 @@
 		};
 
 		Module.prototype.preload = function(url, data, bundle) {
-			if ( this.state === INITIAL ) {
+			if ( this.state === INITIAL && !(fnIgnorePreload && fnIgnorePreload(this.name)) ) {
 				this.state = PRELOADED;
 				this.url = url;
 				this.data = data;
@@ -3921,7 +3963,6 @@
 			jQuery.each(oData.modules, function(sName,sContent) {
 				sName = bOldSyntax ? ui5ToRJS(sName) + ".js" : sName;
 				Module.get(sName).preload(oData.url + "/" + sName, sContent, oData.name);
-
 				// when a library file is preloaded, also mark its preload file as loaded
 				// for normal library preload, this is redundant, but for non-default merged entities
 				// like sap/fiori/core.js it avoids redundant loading of library preload files

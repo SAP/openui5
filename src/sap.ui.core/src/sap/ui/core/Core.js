@@ -247,7 +247,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			// determine preload mode (e.g. resolve default or auto)
 			var sPreloadMode = this.oConfiguration.preload;
 			// if debug sources are requested, then the preload feature must be deactivated
-			if ( window["sap-ui-debug"] ) {
+			if ( window["sap-ui-debug"] === true ) {
 				sPreloadMode = "";
 			}
 			// when the preload mode is 'auto', it will be set to 'sync' for optimized sources
