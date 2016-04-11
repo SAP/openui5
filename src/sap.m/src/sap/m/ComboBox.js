@@ -246,20 +246,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		};
 
 		/**
-		 * Required adaptations before rendering of the dropdown.
-		 *
-		 * @private
-		 */
-		ComboBox.prototype.onBeforeRenderingDropdown = function() {
-			var oPopover = this.getPicker(),
-				sWidth = (this.$().outerWidth() / parseFloat(sap.m.BaseFontSize)) + "rem";
-
-			if (oPopover) {
-				oPopover.setContentMinWidth(sWidth);
-			}
-		};
-
-		/**
 		 * Creates an instance of <code>sap.m.Dialog</code>.
 		 *
 		 * @returns {sap.m.Dialog}
@@ -272,7 +258,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 			oTextField._handleEvent = function(oEvent) {
 				oTextFieldHandleEvent.apply(this, arguments);
 
-				if (/keydown|sapdown|sapup|saphome|sapend|sappagedown|sappageup|input|tap/.test(oEvent.type)) {
+				if (/keydown|sapdown|sapup|saphome|sapend|sappagedown|sappageup|input/.test(oEvent.type)) {
 					that._handleEvent(oEvent);
 				}
 			};
@@ -313,32 +299,35 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		};
 
 		ComboBox.prototype.createPickerTextField = function() {
-			var oTextField = new ComboBoxTextField({
+			return new ComboBoxTextField({
 				width: "100%",
 				showButton: false
 			}).addEventDelegate({
 				onsapenter: function() {
-					this.updateDomValue(oTextField.getValue());
+					this.updateDomValue(this.getValue());
 					this.onChange();
 				}
 			}, this);
-
-			return oTextField;
 		};
 
 		ComboBox.prototype.updatePickerHeaderTitle = function() {
-			var aLabels = this.getLabels(),
-				oPicker = this.getPicker();
+			var oPicker = this.getPicker();
 
-			if (aLabels.length && oPicker) {
+			if (!oPicker) {
+				return;
+			}
+
+			var aLabels = this.getLabels();
+
+			if (aLabels.length) {
 				var oLabel = aLabels[0];
 
 				if (oLabel && (typeof oLabel.getText === "function")) {
 					oPicker.setShowHeader(true);
 					oPicker.setTitle(oLabel.getText());
-				} else {
-					oPicker.setShowHeader(false);
 				}
+			} else {
+				oPicker.setShowHeader(false);
 			}
 		};
 
@@ -359,6 +348,15 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		ComboBox.prototype.onBeforeRenderingPicker = function() {
 			var fnOnBeforeRenderingPickerType = this["onBeforeRendering" + this.getPickerType()];
 			fnOnBeforeRenderingPickerType && fnOnBeforeRenderingPickerType.call(this);
+		};
+
+		ComboBox.prototype.onBeforeRenderingDropdown = function() {
+			var oPopover = this.getPicker(),
+				sWidth = (this.$().outerWidth() / parseFloat(sap.m.BaseFontSize)) + "rem";
+
+			if (oPopover) {
+				oPopover.setContentMinWidth(sWidth);
+			}
 		};
 
 		ComboBox.prototype.onBeforeRenderingList = function() {
@@ -809,7 +807,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 				// note: This occurs only in some specific mobile devices
 				if (bDropdownPickerType) {
 					setTimeout(function() {
-						if (document.activeElement === this.getFocusDomRef() && !this.bFocusoutDueRendering && !this.getSelectedText()) {
+						if (document.activeElement === this.getFocusDomRef() &&
+							!this.bFocusoutDueRendering &&
+							!this.getSelectedText()) {
+
 							this.selectText(0, this.getValue().length);
 						}
 					}.bind(this), 0);
@@ -885,7 +886,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		};
 
 		/**
-		 * Determines whether the <code>selectedItem</code> association and <code>selectedKey</code> property are synchronized.
+		 * Determines whether the <code>selectedItem</code> association and <code>selectedKey</code>
+		 * property are synchronized.
 		 *
 		 * @returns {boolean}
 		 * @since 1.24.0
@@ -1145,11 +1147,9 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 				sMutator = "set" + sProperty.charAt(0).toUpperCase() + sProperty.slice(1),
 				oControl = (oData && oData.srcControl) || this.getPickerTextField();
 
-			// do not synchronize the width, valueState and valueStateText
-			if (!/width/.test(sProperty) &&
-				!/valueState/.test(sProperty) &&
-				!/valueStateText/.test(sProperty) &&
-				oControl && typeof oControl[sMutator] === "function") {
+			// forward some property changes to the picker text field to synchronize
+			if (/value|enabled|name|placeholder|editable|textAlign|textDirection/.test(sProperty) &&
+				oControl && (typeof oControl[sMutator] === "function")) {
 				oControl[sMutator](sNewValue);
 			}
 		};
