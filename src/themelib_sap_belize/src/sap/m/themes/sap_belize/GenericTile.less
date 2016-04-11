@@ -48,6 +48,18 @@
 }
 
 .sap-desktop .sapMGT:focus .sapMGTFocusDiv {
+	border: 1px solid @sapUiTileBackground;
+}
+
+.sap-desktop .sapMGT:focus .sapMGTFocusDiv:after {
+	content: "";
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	border-radius: 0.25rem;
+	margin: -1px;
 	border: 1px dotted @sapUiFocus;
 }
 

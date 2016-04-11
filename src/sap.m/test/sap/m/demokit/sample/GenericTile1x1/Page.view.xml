@@ -15,7 +15,7 @@
 		<GenericTile header="US Profit Margin" size="S" frameType="OneByOne"
 		press="press">
 		<tileContent>
-			<TileContent footer="Current Quarter" unit="EUR" size="S">
+			<TileContent footer="Target Quarter" unit="EUR" size="S">
 				<content>
 					<NumericContent size="S" scale="M" value="1.96"
 						valueColor="Error" indicator="Down" />
