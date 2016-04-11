@@ -790,6 +790,38 @@
 			start();
 		});
 
+		asyncTest("setSelectedIndex and getSelectedIndex", function(){
+			createTreeBindingAdapter("/bing/root", [], null, {
+				collapseRecursive: false,
+				displayRootNode: false,
+				numberOfExpandedLevels: 1
+			});
+
+			oBinding.getContexts(0, 100);
+
+			//invalidate tree
+			oBinding._fireChange();
+
+			oBinding.getLength();
+
+			oBinding.setSelectedIndex(1);
+
+			equal(oBinding.isIndexSelected(1), true, "isIndexSelected(1) works");
+
+			var aSelectedIndices = oBinding.getSelectedIndices();
+			deepEqual(aSelectedIndices, [1], "Selected indices array is correct, after selecting additional indices");
+
+			oBinding.setSelectedIndex(3);
+
+			equal(oBinding.isIndexSelected(1), false, "isIndexSelected(1) works");
+
+			equal(oBinding.isIndexSelected(3), true, "isIndexSelected(3) works");
+
+			var aSelectedIndices = oBinding.getSelectedIndices();
+			deepEqual(aSelectedIndices, [3], "Selected indices array is correct, after selecting additional indices");
+			start();
+		});
+
 		asyncTest("Sorting with stable expand states", function(){
 
 			createTreeBindingAdapter("/bing/root", null,null, {
