@@ -44,6 +44,14 @@
 	],
 	function(jQuery, URI) {
 
+		// used to get access to the non-public core parts
+		var oRealCore;
+		sap.ui.getCore().registerPlugin({
+			startPlugin: function(oCore, bOnInit) {
+				oRealCore = oCore;
+			}
+		});
+
 		var Helper = {
 			spyModels: function() {
 				this.modelSpy = {
@@ -980,6 +988,10 @@
 
 				jQuery.sap.registerModulePath("samples.components", "../../samples/components/");
 
+				// enable async preloading
+				this.oldCfgPreload = oRealCore.oConfiguration.preload;
+				oRealCore.oConfiguration.preload = "async";
+
 				//setup fake server
 				var oManifest = this.oManifest = {
 					"sap.app" : {
@@ -1046,6 +1058,7 @@
 			afterEach: function() {
 				this.restoreModels();
 				this.oServer.restore();
+				oRealCore.oConfiguration.preload = this.oldCfgPreload;
 			}
 		});
 
@@ -1203,6 +1216,107 @@
 				sinon.assert.callCount(this.modelSpy.json, 0);
 				// sap.ui.model.resource.ResourceModel
 				sinon.assert.callCount(this.modelSpy.resource, 0);
+
+			}.bind(this));
+		});
+
+		QUnit.test("Early model instantiation: error handling 'asyncHints.libs'", function(assert) {
+			return sap.ui.component({
+				manifestUrl: "/anylocation/manifest.json",
+				async: true,
+				asyncHints: {
+					libs: ["should.cause.an.error"]
+				}
+			}).then(function(oComponent) {
+
+				assert.ok(false, "Component Promise should not get resolved.");
+
+			}, function(vError) {
+
+				assert.ok(vError && vError.message && vError.message.indexOf("failed to preload libraries") === 0,
+					"Component Promise should get rejected with library preloading issue.");
+
+				// Models with preload flag should be created
+
+				// sap.ui.model.odata.v2.ODataModel
+				sinon.assert.callCount(this.modelSpy.odataV2, 1);
+				// model: "odata"
+				sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
+					serviceUrl: "/path/to/odata/service1"
+				});
+
+				var oODataModel = this.modelSpy.odataV2.getCall(0).returnValue;
+				assert.ok(oODataModel.bDestroyed, "ODataModel should have been destroyed.");
+
+				// sap.ui.model.json.JSONModel
+				sinon.assert.callCount(this.modelSpy.json, 1);
+				// model: "json"
+				sinon.assert.calledWithExactly(this.modelSpy.json, {
+					data: {
+						foo: "bar"
+					}
+				});
+
+				var oJSONModel = this.modelSpy.json.getCall(0).returnValue;
+				assert.ok(oJSONModel.bDestroyed, "JSONModel should have been destroyed.");
+
+				// sap.ui.model.resource.ResourceModel
+				sinon.assert.callCount(this.modelSpy.resource, 1);
+
+				var oResourceModel = this.modelSpy.resource.getCall(0).returnValue;
+				assert.ok(oResourceModel.bDestroyed, "ResourceModel should have been destroyed.");
+
+			}.bind(this));
+		});
+
+		QUnit.test("Early model instantiation: error handling 'asyncHints.waitFor'", function(assert) {
+			return sap.ui.component({
+				manifestUrl: "/anylocation/manifest.json",
+				async: true,
+				asyncHints: {
+					waitFor: new Promise(function(resolve, reject) {
+						setTimeout(function() {
+							reject("waitFor: rejected");
+						}, 1000);
+					})
+				}
+			}).then(function(oComponent) {
+
+				assert.ok(false, "Component Promise should not get resolved.");
+
+			}, function(vError) {
+
+				assert.equal(vError, "waitFor: rejected", "Component Promise should get rejected.");
+
+				// Models with preload flag should be created
+
+				// sap.ui.model.odata.v2.ODataModel
+				sinon.assert.callCount(this.modelSpy.odataV2, 1);
+				// model: "odata"
+				sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
+					serviceUrl: "/path/to/odata/service1"
+				});
+
+				var oODataModel = this.modelSpy.odataV2.getCall(0).returnValue;
+				assert.ok(oODataModel.bDestroyed, "ODataModel should have been destroyed.");
+
+				// sap.ui.model.json.JSONModel
+				sinon.assert.callCount(this.modelSpy.json, 1);
+				// model: "json"
+				sinon.assert.calledWithExactly(this.modelSpy.json, {
+					data: {
+						foo: "bar"
+					}
+				});
+
+				var oJSONModel = this.modelSpy.json.getCall(0).returnValue;
+				assert.ok(oJSONModel.bDestroyed, "JSONModel should have been destroyed.");
+
+				// sap.ui.model.resource.ResourceModel
+				sinon.assert.callCount(this.modelSpy.resource, 1);
+
+				var oResourceModel = this.modelSpy.resource.getCall(0).returnValue;
+				assert.ok(oResourceModel.bDestroyed, "ResourceModel should have been destroyed.");
 
 			}.bind(this));
 		});
