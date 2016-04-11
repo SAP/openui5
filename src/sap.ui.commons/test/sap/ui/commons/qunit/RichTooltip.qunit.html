@@ -211,6 +211,21 @@
 			});
 		});
 
+		asyncTest("Not Visible tooltip", function() {
+			oRtt2.setVisible(false);
+			sap.ui.getCore().byId("c2").focus();
+			setTimeout(function() {
+				openRtt("c2", true);
+				setTimeout(function() {
+					strictEqual(oRtt2.getDomRef(), null, "Tooltip should not be rendered");
+					closeRtt("c2", true);
+					setTimeout(function() {
+						oRtt2.setVisible(true);
+						start();
+					}, 600);
+				}, 600);
+			}, 600);
+		});
 
 		module("Content");
 
