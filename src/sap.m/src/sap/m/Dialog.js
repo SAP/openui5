@@ -1203,6 +1203,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				// Remove slice when the bug is fixed.
 				labels = this.getAssociation("ariaLabelledBy", []).slice();
 
+			var subHeader = this.getSubHeader();
+			if (subHeader) {
+				labels.unshift(subHeader.getId());
+			}
+
 			if (header) {
 				labels.unshift(header.getId());
 			}
