@@ -103,6 +103,13 @@ sap.ui.define([
 		this._aControlSizes = {}; // A map of control id -> control *optimal* size in pixels; the optimal size is outerWidth for most controls and min-width for spacers
 	};
 
+	OverflowToolbar.prototype.exit = function () {
+		var oPopover = this.getAggregation("_popover");
+		if (oPopover) {
+			oPopover.destroy();
+		}
+	};
+
 	/**
 	 * Called after the control is rendered
 	 */
