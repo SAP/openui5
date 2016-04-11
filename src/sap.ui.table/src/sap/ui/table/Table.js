@@ -1273,6 +1273,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				}
 			}, this);
 			this.addDelegate(this._oItemNavigation);
+			this.addDelegate(this._getAccExtension());
 		}
 
 
@@ -1295,6 +1296,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		// destroy of item navigation for the Table control
 		if (this._oItemNavigation) {
 			this.removeDelegate(this._oItemNavigation);
+			this.removeDelegate(this._getAccExtension());
 			this._oItemNavigation.destroy();
 			this._oItemNavigation = null;
 		}

@@ -90,6 +90,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		rm.addClass("sapUiTableCnt");
 		rm.writeClasses();
 
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "CONTENT");
+
 		// Define group for F6 handling
 		rm.writeAttribute("data-sap-ui-fastnavgroup", "true");
 		rm.write(">");

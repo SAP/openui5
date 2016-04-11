@@ -918,7 +918,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 		 *                            // <code>null</code> can be provided.
 		 *      editable: true,       // Boolean which describes whether the control is editable. If not relevant it must not be set or
 		 *                            // <code>null</code> can be provided.
-		 *      chidlren: []          // Array of accessibility info objects of children of the given control (e.g. when the control is a layout).
+		 *      children: []          // Array of accessibility info objects of children of the given control (e.g. when the control is a layout).
 		 *                            // Note: Children should only be provided when it is helpful to understand the accessibility context
 		 *                            //       (e.g. a form control must not provide details of its internals (fields, labels, ...) but a
 		 *                            //       layout should).
