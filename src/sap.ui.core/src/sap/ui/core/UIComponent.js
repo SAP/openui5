@@ -184,6 +184,25 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './l
 	 */
 
 	/**
+	 * Callback handler which will be executed once a new Component instance is
+	 * initialized.
+	 * <p>
+	 * Example usage:
+	 * <pre>
+	 * sap.ui.core.UIComponent._fnOnInstanceCreated = function(oComponent) {
+	 *   // do some logic with the Component
+	 * }
+	 * </pre>
+	 * <p>
+	 * <b>ATTENTION:</b> This hook must only be used by Fiori 2.0 adapter.
+	 *
+	 * @sap-restricted sap.ushell
+	 * @private
+	 * @since 1.37.0
+	 */
+	UIComponent._fnOnInstanceInitialized = null;
+
+	/**
 	 * Initializes the Component instance after creation.
 	 *
 	 * Applications must not call this hook method directly, it is called by the
@@ -251,6 +270,12 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './l
 				this._oTargets._setRootViewId(oRootControl.getId());
 			}
 		}
+
+		// notify Component initialization callback handler
+		if (typeof UIComponent._fnOnInstanceInitialized === "function") {
+			UIComponent._fnOnInstanceInitialized(this);
+		}
+
 	};
 
 	function getConstructorFunctionFor (vRoutingObjectConstructor) {
