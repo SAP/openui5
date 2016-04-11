@@ -144,9 +144,9 @@ function runODataAnnotationsV2Tests() {
 			serviceValid     : true,
 			annotationsValid : "all"
 		},
-		"Test 2014-12-08": {
+		"Apply Function": {
 			service          : "fakeService://testdata/odata/northwind/",
-			annotations      : "fakeService://testdata/odata/2014-12-08-test.xml",
+			annotations      : "fakeService://testdata/odata/apply-function-test.xml",
 			serviceValid     : true,
 			annotationsValid : "all"
 		},
