@@ -128,7 +128,8 @@ sap.ui.require([
 
 		oHelperMock = this.oSandbox.mock(_ODataHelper);
 		oHelperMock.expects("buildQueryOptions")
-			.withExactArgs(this.oModel.mUriParameters, mParameters, ["$expand", "$select"])
+			.withExactArgs(this.oModel.mUriParameters, mParameters,
+				["$expand", "$filter", "$orderby", "$select"])
 			.returns(mQueryOptions);
 		this.oSandbox.mock(_Cache).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
