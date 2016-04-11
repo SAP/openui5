@@ -135,9 +135,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 			this._sValueFormat = null;
 			this._oPopoverKeydownEventDelegate = null;
 
-			// Indicates if the picker is currently in a process of opening
-			this._bPickerOpening = false;
-
 			this._rPlaceholderRegEx = new RegExp(PLACEHOLDER_SYMBOL, 'g');
 			this._sLastChangeValue = null;
 		};
@@ -202,7 +199,13 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 * @param {jQuery.Event} oEvent Event object
 		 */
 		TimePicker.prototype.onfocusin = function (oEvent) {
+			var oPicker = this._getPicker();
+
 			MaskInput.prototype.onfocusin.apply(this, arguments);
+
+			if (oPicker && oPicker.isOpen()) {
+				this._closePicker();
+			}
 		};
 
 		/**
@@ -219,13 +222,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 * @param {jQuery.Event} oEvent Event object
 		 */
 		TimePicker.prototype.onfocusout = function (oEvent) {
-			var oPicker = this._getPicker();
-
 			MaskInput.prototype.onfocusout.apply(this, arguments);
-
-			if (oPicker && !oPicker.isOpen() && !this._bPickerOpening) {
-				this.$().removeClass("sapMTPInputActive");
-			}
 		};
 
 		/**
@@ -243,8 +240,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 
 			/* Mark input as active */
 			this.$().addClass("sapMTPInputActive");
-
-			this._bPickerOpening = true;
 		};
 
 		/**
@@ -255,8 +250,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 */
 		TimePicker.prototype.onAfterOpen = function() {
 			var oSliders = this._getSliders();
-
-			this._bPickerOpening = false;
 
 			if (oSliders) {
 				oSliders.updateSlidersValues();
