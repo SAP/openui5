@@ -9481,6 +9481,88 @@
 			oComboBox.destroy();
 		});
 
+
+		QUnit.module("onPropertyChange");
+
+		QUnit.test("it should propagate some property changes to the picker text field", function(assert) {
+
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				phone: true,
+				tablet: false
+			});
+
+			// system under test
+			var oComboBox = new sap.m.ComboBox({
+				value: "value",
+				enabled: false,
+				name: "name",
+				placeholder: "placeholder",
+				editable: false,
+				textAlign: sap.ui.core.TextAlign.Center,
+				textDirection: sap.ui.core.TextDirection.LTR
+			});
+
+			// arrange
+			var oComboBoxPickerTextField = oComboBox.getPickerTextField();
+
+			// assert
+			assert.strictEqual(oComboBoxPickerTextField.getValue(), "value");
+			assert.strictEqual(oComboBoxPickerTextField.getEnabled(), false);
+			assert.strictEqual(oComboBoxPickerTextField.getName(), "name");
+			assert.strictEqual(oComboBoxPickerTextField.getPlaceholder(), "placeholder");
+			assert.strictEqual(oComboBoxPickerTextField.getEditable(), false);
+			assert.strictEqual(oComboBoxPickerTextField.getTextAlign(), sap.ui.core.TextAlign.Center);
+			assert.strictEqual(oComboBoxPickerTextField.getTextDirection(), sap.ui.core.TextDirection.LTR);
+
+			// cleanup
+			oComboBox.destroy();
+		});
+
+		QUnit.test("it should propagate some property changes to the picker text field", function(assert) {
+
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				phone: true,
+				tablet: false
+			});
+
+			// system under test
+			var oComboBox = new sap.m.ComboBox({
+				value: "value",
+				enabled: false,
+				name: "name",
+				placeholder: "placeholder",
+				editable: false,
+				textAlign: sap.ui.core.TextAlign.Center,
+				textDirection: sap.ui.core.TextDirection.LTR
+			});
+
+			// arrange
+			var oComboBoxPickerTextField = oComboBox.getPickerTextField();
+
+			// act
+			oComboBox.setValue("new value");
+			oComboBox.setEnabled(true);
+			oComboBox.setName("new name");
+			oComboBox.setPlaceholder("new placeholder");
+			oComboBox.setEditable(true);
+			oComboBox.setTextAlign(sap.ui.core.TextAlign.Initial);
+			oComboBox.setTextDirection(sap.ui.core.TextDirection.RTL);
+
+			// assert
+			assert.strictEqual(oComboBoxPickerTextField.getValue(), "new value");
+			assert.strictEqual(oComboBoxPickerTextField.getEnabled(), true);
+			assert.strictEqual(oComboBoxPickerTextField.getName(), "new name");
+			assert.strictEqual(oComboBoxPickerTextField.getPlaceholder(), "new placeholder");
+			assert.strictEqual(oComboBoxPickerTextField.getEditable(), true);
+			assert.strictEqual(oComboBoxPickerTextField.getTextAlign(), sap.ui.core.TextAlign.Initial);
+			assert.strictEqual(oComboBoxPickerTextField.getTextDirection(), sap.ui.core.TextDirection.RTL);
+
+			// cleanup
+			oComboBox.destroy();
+		});
+
 		/* ------------------------------ */
 		/* others                         */
 		/* ------------------------------ */

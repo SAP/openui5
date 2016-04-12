@@ -1149,7 +1149,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 				sMutator = "set" + sProperty.charAt(0).toUpperCase() + sProperty.slice(1),
 				oControl = (oData && oData.srcControl) || this.getPickerTextField();
 
-			// forward some property changes to the picker text field to synchronize
+			// propagate some property changes to the picker text field
 			if (/value|enabled|name|placeholder|editable|textAlign|textDirection/.test(sProperty) &&
 				oControl && (typeof oControl[sMutator] === "function")) {
 				oControl[sMutator](sNewValue);
