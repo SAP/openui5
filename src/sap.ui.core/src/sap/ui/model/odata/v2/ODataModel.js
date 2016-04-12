@@ -3408,7 +3408,6 @@ sap.ui.define([
 			fnSuccess, fnError,
 			sMethod = "GET",
 			aUrlParams,
-			mInputParams = {},
 			sGroupId,
 			sChangeSetId,
 			mHeaders,
@@ -3426,8 +3425,8 @@ sap.ui.define([
 			sGroupId 		= mParameters.groupId || mParameters.batchGroupId;
 			sChangeSetId 	= mParameters.changeSetId;
 			sMethod			= mParameters.method ? mParameters.method : sMethod;
-			mUrlParams		= mParameters.urlParameters;
-			sETag				= mParameters.eTag;
+			mUrlParams		= jQuery.extend({},mParameters.urlParameters);
+			sETag			= mParameters.eTag;
 			fnSuccess		= mParameters.success;
 			fnError			= mParameters.error;
 			mHeaders		= mParameters.headers;
@@ -3468,12 +3467,9 @@ sap.ui.define([
 					oData[oParam.name] = that._createPropertyValue(oParam.type);
 					if (mUrlParams && mUrlParams[oParam.name] !== undefined) {
 						oData[oParam.name] = mUrlParams[oParam.name];
-						mInputParams[oParam.name] = ODataUtils.formatValue(mUrlParams[oParam.name], oParam.type);
-					}
-				});
-				jQuery.each(mUrlParams, function (sParameterName) {
-					if (mInputParams[sParameterName] === undefined) {
-						jQuery.sap.log.warning(that + " - Parameter '" + sParameterName + "' is not defined for function call '" + sFunctionName + "'!");
+						mUrlParams[oParam.name] = ODataUtils.formatValue(mUrlParams[oParam.name], oParam.type);
+					} else {
+						jQuery.sap.log.warning(that + " - No value for parameter '" + oParam.name + "' found!'");
 					}
 				});
 			}
@@ -3496,7 +3492,7 @@ sap.ui.define([
 			oContext = that.getContext("/" + sKey);
 			fnResolve(oContext);
 
-			aUrlParams = ODataUtils._createUrlParamsArray(mInputParams);
+			aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
 
 			sUrl = that._createRequestUrl(sFunctionName, null, aUrlParams, that.bUseBatch);
 			oRequest = that._createRequest(sUrl, sMethod, mHeaders, undefined);
