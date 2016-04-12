@@ -6313,6 +6313,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			// since the row is an element it has no own renderer. Anyway, logically it has a domref. Let the rows
 			// update their domrefs after the rendering is done. This is required to allow performant access to row domrefs
 			this._initRowDomRefs();
+			this._bItemNavigationInvalidated = true;
 
 			// restore the column icons
 			var aCols = this.getColumns();
