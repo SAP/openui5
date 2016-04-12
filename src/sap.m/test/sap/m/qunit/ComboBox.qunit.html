@@ -9391,6 +9391,45 @@
 			oComboBox.destroy();
 		});
 
+		QUnit.test("it should fire the change event when the ENTER key is pressed", function(assert) {
+
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				phone: true,
+				tablet: false
+			});
+
+			// system under test
+			var oComboBox = new sap.m.ComboBox();
+
+			// arrange
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oComboBox.focus();
+			oComboBox.open();
+
+			// tick the clock ahead some 1 second, after the open animation is completed
+			this.clock.tick(1000);
+			var oPickerTextField = oComboBox.getPickerTextField();
+			oPickerTextField.focus();
+			var oPickerTextFieldDomRef = oPickerTextField.getFocusDomRef();
+			var fnChangeSpy = this.spy(oComboBox, "fireChange");
+
+			// act
+			oPickerTextField.getFocusDomRef().value = "lorem ipsum";
+			sap.ui.qunit.QUnitUtils.triggerEvent("input", oPickerTextFieldDomRef, {
+				srcControl: oPickerTextField
+			});
+			sap.ui.test.qunit.triggerKeydown(oPickerTextFieldDomRef, jQuery.sap.KeyCodes.ENTER);
+
+			// assert
+			assert.strictEqual(fnChangeSpy.callCount, 1, "The change event was fired");
+			assert.strictEqual(oComboBox.getValue(), "lorem ipsum");
+
+			// cleanup
+			oComboBox.destroy();
+		});
+
 		QUnit.test("it should close the dialog when the close button is pressed", function(assert) {
 
 			this.stub(sap.ui.Device, "system", {
