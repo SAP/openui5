@@ -821,6 +821,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			return;
 		}
 
+		// check if something has changed --> deep equal on the column info objects, only 1 level "deep"
+		if (jQuery.sap.equal(this._aLastChangedAnalyticalInfo, aColumns)) {
+			this._fireChange({reason: ChangeReason.Change});
+			return;
+		}
+
+		// make a deep copy of the column definition, so we can ignore duplicate calls the next time, see above
+		// copy is necessary because the original analytical info will be changed and used internally, through out the binding "coding"
+		this._aLastChangedAnalyticalInfo = [];
+		for (var j = 0; j < aColumns.length; j++) {
+			this._aLastChangedAnalyticalInfo[j] = jQuery.extend({}, aColumns[j]);
+		}
+
 		// parameter is an array with elements whose structure is defined by sap.ui.analytics.model.AnalyticalTable.prototype._getColumnInformation()
 		var oPreviousDimensionDetailsSet = this.oDimensionDetailsSet;
 		this.mAnalyticalInfoByProperty = {}; // enable associative access to analytical update information
@@ -2124,10 +2137,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 
 			if (iCurrentAnalyticalInfoVersion != that.iAnalyticalInfoVersionNumber) {
 				// discard responses for outdated analytical infos
-				for (var j = -1, sRequestId; (sRequestId = aExecutedRequestDetails[++j].sRequestId) !== undefined;) {
-					that._deregisterCompletedRequest(sRequestId);
-					that._cleanupGroupingForCompletedRequest(sRequestId);
+				for (var j = 0; j < aExecutedRequestDetails.length; j++) {
+					var sRequestId = aExecutedRequestDetails[j].sRequestId;
+					if (sRequestId !== undefined) {
+						that._deregisterCompletedRequest(sRequestId);
+						that._cleanupGroupingForCompletedRequest(sRequestId);
+					}
 				}
+				that.fireDataReceived({data: []});
 				return;
 			}
 
