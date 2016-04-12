@@ -1456,8 +1456,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			}
 		}
 
-		this._getAccExtension().updateAccForCurrentCell(false);
-
 		if (bFirstVisibleRowChanged && !bSupressEvent) {
 			this.fireFirstVisibleRowChanged({firstVisibleRow: iRowIndex});
 		}

@@ -868,11 +868,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 		if (!this._accMode || !this.getTable()._oItemNavigation) {
 			return;
 		}
+
+		var oTable = this.getTable();
+
+		if (oTable._mTimeouts._cleanupACCFocusRefresh) {
+			jQuery.sap.clearDelayedCall(oTable._mTimeouts._cleanupACCFocusRefresh);
+			oTable._mTimeouts._cleanupACCFocusRefresh = null;
+		}
+
 		if (bOnCellFocus) {
 			ExtensionHelper.cleanupCellModifications(this);
 		}
+
 		var oInfo = TableHelper.getInfoOfFocusedCell(this);
 		if (!oInfo || !oInfo.cell || !oInfo.type || !ExtensionHelper["modifyAccOf" + oInfo.type]) {
+			return;
+		}
+
+		if (!bOnCellFocus) {
+			// Delayed reinitialize the focus when scrolling (focus stays on the same cell, only content is replaced)
+			// to force screenreader announcements
+			if (oInfo.type === TableHelper.CELLTYPES.DATACELL || TableHelper.CELLTYPES.ROWHEADER) {
+				oTable._mTimeouts._cleanupACCFocusRefresh = jQuery.sap.delayedCall(100, this, function($Cell) {
+					var oTable = this.getTable();
+					if (!oTable) {
+						return;
+					}
+					var oInfo = TableHelper.getInfoOfFocusedCell(this);
+					if (oInfo && oInfo.cell && oInfo.type && oInfo.cell.get(0) && $Cell.get(0) === oInfo.cell.get(0)) {
+						oInfo.cell.blur().focus();
+					}
+					oTable._mTimeouts._cleanupACCFocusRefresh = null;
+				}, [oInfo.cell]);
+			}
 			return;
 		}
 
