@@ -375,6 +375,7 @@ sap.ui.require([
 				this.oSandbox.stub(this.oModel.oRequestor, "submitBatch", function () {
 					// submitBatch resolves the promise of the read
 					fnResolveRead(oValue);
+					return Promise.resolve();
 				});
 			} else {
 				sResolvedPath = sContextPath + "/" + sPath;

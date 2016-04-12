@@ -844,6 +844,7 @@ sap.ui.require([
 
 			// submitBatch resolves the promise of the read
 			fnResolveRead(createResult(10));
+			return Promise.resolve();
 		});
 
 		oListBinding.getContexts(0, 10);
@@ -893,6 +894,7 @@ sap.ui.require([
 
 			// submitBatch resolves the promise of the read
 			fnRejectRead(oError);
+			return Promise.resolve();
 		});
 
 		oListBinding.getContexts(0, 10);

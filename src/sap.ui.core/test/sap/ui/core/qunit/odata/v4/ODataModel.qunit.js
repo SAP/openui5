@@ -29,7 +29,8 @@ sap.ui.require([
 	 * property "realOData". See src/sap/ui/test/TestUtils.js for details.
 	 */
 
-	var mFixture = {
+	var sClassName = "sap.ui.model.odata.v4.ODataModel",
+		mFixture = {
 			"TEAMS('TEAM_01')/Name" : {source : "Name.json"},
 			"TEAMS('UNKNOWN')" : {code : 404, source : "TEAMS('UNKNOWN').json"}
 		},
@@ -106,8 +107,7 @@ sap.ui.require([
 		}, new Error("Unsupported parameter: useBatch"));
 
 		assert.strictEqual(createModel().sServiceUrl, getServiceUrl());
-		assert.strictEqual(createModel().toString(),
-			"sap.ui.model.odata.v4.ODataModel: " + getServiceUrl());
+		assert.strictEqual(createModel().toString(), sClassName + ": " + getServiceUrl());
 	});
 
 	//*********************************************************************************************
@@ -511,25 +511,59 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("submitBatch", function (assert) {
-		var fnCallback = sinon.spy(),
+	QUnit.test("_submitBatch: success", function (assert) {
+		var oBatchResult = {},
+			fnCallback1 = sinon.spy(),
 			fnCallback2 = sinon.spy(),
-			oModel = createModel(),
+			oModel = createModel();
+
+		this.oSandbox.mock(oModel.oRequestor).expects("submitBatch").withExactArgs("groupId")
+			.returns(Promise.resolve(oBatchResult));
+		oModel.mCallbacksByGroupId["groupId"] = [fnCallback1, fnCallback2];
+
+		// code under test
+		return oModel._submitBatch("groupId").then(function (oResult) {
+			assert.strictEqual(oResult, oBatchResult);
+			assert.strictEqual(oModel.mCallbacksByGroupId["groupId"], undefined);
+			assert.ok(fnCallback1.calledOnce);
+			assert.ok(fnCallback2.calledOnce);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_submitBatch, failure", function (assert) {
+		var oExpectedError = new Error("deliberate failure"),
+			oModel = createModel();
+
+		oModel.addedRequestToGroup("groupId");
+		this.oSandbox.mock(oModel.oRequestor).expects("submitBatch")
+			.withExactArgs("groupId")
+			.returns(Promise.reject(oExpectedError));
+		this.oLogMock.expects("error")
+			.withExactArgs("$batch failed", oExpectedError.message, sClassName);
+
+		// code under test
+		return oModel._submitBatch("groupId").then(function () {
+			assert.ok(false);
+		}, function (oError) {
+			assert.strictEqual(oError, oExpectedError);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("submitBatch", function (assert) {
+		var oModel = createModel(),
 			oReturn,
 			oSubmitPromise = {};
 
-		this.oSandbox.mock(oModel.oRequestor).expects("submitBatch").withExactArgs("groupId")
-			.returns(oSubmitPromise);
 		this.oSandbox.mock(_ODataHelper).expects("checkGroupId").withExactArgs("groupId", true);
-		oModel.mCallbacksByGroupId["groupId"] = [fnCallback, fnCallback2];
+		this.oSandbox.mock(oModel).expects("_submitBatch").withExactArgs("groupId")
+			.returns(oSubmitPromise);
 
 		// code under test
 		oReturn = oModel.submitBatch("groupId");
 
 		assert.strictEqual(oReturn, oSubmitPromise);
-		assert.strictEqual(oModel.mCallbacksByGroupId["groupId"], undefined);
-		assert.ok(fnCallback.calledOnce);
-		assert.ok(fnCallback2.calledOnce);
 	});
 
 	//*********************************************************************************************
