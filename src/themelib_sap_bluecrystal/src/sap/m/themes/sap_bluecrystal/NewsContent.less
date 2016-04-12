@@ -1,13 +1,14 @@
 /* ========================================= */
 /* CSS for control sap.m/NewsContent.control */
 /* ========================================= */
-.sapMNwCCTxt > .sapMText {
+
+.sapMNwCCTxt .sapMText {
 	font-size: @sapMFontMediumSize;
 }
 
 .sapMNwCSbh {
-	font-size: @sapMFontMediumSize;
 	color: @sapUiLightText;
+	font-size: @sapMFontMediumSize;
 }
 
 .sapMNwC {
@@ -23,13 +24,8 @@
 	outline: none;
 }
 
-/* BREAKPOINT FOR SMALL PHONES */
 @media screen and (max-width: 374px) {
-	.sapMNwCCTxt > .sapMText {
-		font-size: @sapMFontSmallSize;
-	}
-
-	.sapMNwCSbh {
+	.sapMNwCCTxt .sapMText, .sapMNwCSbh {
 		font-size: @sapMFontSmallSize;
 	}
 }
