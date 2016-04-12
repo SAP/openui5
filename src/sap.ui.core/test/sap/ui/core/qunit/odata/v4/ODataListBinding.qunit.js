@@ -490,10 +490,10 @@ sap.ui.require([
 				oCacheMock = this.getCacheMock();
 				oCacheMock.expects("read").once().callsArg(4).returns(createResult(2));
 				oCacheMock.expects("read").once().callsArg(4).returns(oPromise);
-				this.oLogMock.expects("error")
-					.withExactArgs("Failed to get contexts for " + sResolvedPath
-							+ " with start index 1" + " and length 2",
-						oError, "sap.ui.model.odata.v4.ODataListBinding");
+				this.oSandbox.mock(this.oModel).expects("reportError").withExactArgs(
+					"Failed to get contexts for " + sResolvedPath
+					+ " with start index 1 and length 2", sClassName,
+					sinon.match.same(oError));
 			}
 
 			oListBinding = this.oModel.bindList(bRelative ? "TEAM_2_EMPLOYEES" : "/EMPLOYEES",
@@ -880,9 +880,9 @@ sap.ui.require([
 			oListBinding = this.oModel.bindList("/EMPLOYEES"),
 			oReadPromise = Promise.reject(oError);
 
-		this.oLogMock.expects("error")
-			.withExactArgs("Failed to get contexts for /service/EMPLOYEES with start index 0 and "
-				+ "length 10", oError, "sap.ui.model.odata.v4.ODataListBinding");
+		this.oSandbox.mock(this.oModel).expects("reportError").withExactArgs(
+			"Failed to get contexts for /service/EMPLOYEES with start index 0 and length 10",
+			sClassName, sinon.match.same(oError));
 		this.oSandbox.mock(oListBinding.oCache).expects("read").callsArg(4).returns(oReadPromise);
 		this.oSandbox.mock(oListBinding).expects("fireDataReceived")
 			.withExactArgs({error : oError});
@@ -900,9 +900,9 @@ sap.ui.require([
 			oReadPromise = new Promise(function (fn, fnReject) {fnRejectRead = fnReject;}),
 			oSandbox = this.oSandbox;
 
-		this.oLogMock.expects("error")
-			.withExactArgs("Failed to get contexts for /service/EMPLOYEES with start index 0 and "
-				+ "length 10", oError, "sap.ui.model.odata.v4.ODataListBinding");
+		this.oSandbox.mock(this.oModel).expects("reportError").withExactArgs(
+			"Failed to get contexts for /service/EMPLOYEES with start index 0 and length 10",
+			sClassName, sinon.match.same(oError));
 		oCacheMock = oSandbox.mock(oListBinding.oCache);
 		oCacheMock.expects("read").callsArg(4).returns(oReadPromise);
 		oCacheMock.expects("read").returns(oReadPromise);

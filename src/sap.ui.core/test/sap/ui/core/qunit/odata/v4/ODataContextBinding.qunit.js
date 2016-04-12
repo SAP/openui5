@@ -383,8 +383,8 @@ sap.ui.require([
 			.returns(oCachePromise);
 		this.oSandbox.mock(oBinding).expects("fireDataReceived")
 			.withExactArgs({error : oExpectedError});
-		this.oLogMock.expects("error").withExactArgs("Failed to read path /absolute",
-			oExpectedError, "sap.ui.model.odata.v4.ODataContextBinding");
+		this.oSandbox.mock(this.oModel).expects("reportError").withExactArgs(
+			"Failed to read path /absolute", sClassName, sinon.match.same(oExpectedError));
 
 		oBinding.requestValue("foo").then(function () {
 			assert.ok(false, "unexpected success");
@@ -898,9 +898,9 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("execute action, failure", function (assert) {
 		var oCacheMock = this.oSandbox.mock(_Cache),
+			oPostError = new Error("deliberate failure"),
 			sPath = "/ActionImport(...)",
 			oContextBinding = this.oModel.bindContext(sPath),
-			sMessage = "deliberate failure",
 			oSingleCache = {
 				post : function () {}
 			};
@@ -913,25 +913,26 @@ sap.ui.require([
 		this.oSandbox.mock(oContextBinding).expects("getGroupId").returns("groupId");
 		this.oSandbox.mock(oSingleCache).expects("post")
 			.withExactArgs("groupId", sinon.match.same(oContextBinding.oOperation.mParameters))
-			.returns(Promise.reject(new Error(sMessage)));
+			.returns(Promise.reject(oPostError));
 		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup").withExactArgs("groupId");
 		this.oSandbox.mock(oContextBinding).expects("_fireChange").never();
-		this.oLogMock.expects("error").withExactArgs(sMessage, sPath, sClassName);
+		this.oSandbox.mock(this.oModel).expects("reportError").withExactArgs(
+			"Failed to execute " + sPath, sClassName, sinon.match.same(oPostError));
 
 		// code under test
 		return oContextBinding.execute().then(function () {
 			assert.ok(false);
 		}, function (oError) {
-			assert.strictEqual(oError.message, sMessage);
+			assert.strictEqual(oError, oPostError);
 		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("execute action, error in change handler", function (assert) {
 		var oCacheMock = this.oSandbox.mock(_Cache),
+			oChangeHandlerError = new Error("deliberate failure"),
 			sPath = "/ActionImport(...)",
 			oContextBinding = this.oModel.bindContext(sPath),
-			sMessage = "deliberate failure",
 			oSingleCache = {
 				post : function () {
 					return Promise.resolve();
@@ -943,17 +944,18 @@ sap.ui.require([
 		oCacheMock.expects("createSingle")
 			.withArgs(sinon.match.same(this.oModel.oRequestor), "ActionImport")
 			.returns(oSingleCache);
-		this.oLogMock.expects("error").withExactArgs(sMessage, sPath, sClassName);
+		this.oSandbox.mock(this.oModel).expects("reportError").withExactArgs(
+			"Failed to execute " + sPath, sClassName, oChangeHandlerError);
 
 		oContextBinding.attachChange(function () {
-			throw new Error(sMessage);
+			throw oChangeHandlerError;
 		});
 
 		// code under test
 		return oContextBinding.execute().then(function () {
 			assert.ok(false);
 		}, function (oError) {
-			assert.strictEqual(oError.message, sMessage);
+			assert.strictEqual(oError, oChangeHandlerError);
 		});
 	});
 
@@ -1003,7 +1005,10 @@ sap.ui.require([
 		this.oSandbox.mock(oContextBinding).expects("_requestOperationMetadata")
 			.returns(Promise.resolve({$Parameter : [{$Name : "foo", $IsCollection : true}]}));
 		this.oSandbox.mock(_Cache).expects("createSingle").never();
-		this.oLogMock.expects("error").withExactArgs(sMessage, sPath, sClassName);
+		this.oSandbox.mock(this.oModel).expects("reportError").withExactArgs(
+			"Failed to execute " + sPath, sClassName, sinon.match(function (oError) {
+				return oError.message === sMessage;
+			}));
 
 		// code under test
 		return oContextBinding.setParameter("foo", [42]).execute().then(function () {

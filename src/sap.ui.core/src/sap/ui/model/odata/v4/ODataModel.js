@@ -13,6 +13,8 @@
 //Provides class sap.ui.model.odata.v4.ODataModel
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/ui/core/message/Message",
+	"sap/ui/core/MessageType",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Model",
 	"sap/ui/thirdparty/URI",
@@ -23,8 +25,8 @@ sap.ui.define([
 	"./ODataListBinding",
 	"./ODataMetaModel",
 	"./ODataPropertyBinding"
-], function(jQuery, BindingMode, Model, URI, _ODataHelper, _MetadataRequestor, _Requestor,
-		ODataContextBinding, ODataListBinding, ODataMetaModel, ODataPropertyBinding) {
+], function(jQuery, Message, MessageType, BindingMode, Model, URI, _ODataHelper, _MetadataRequestor,
+		_Requestor, ODataContextBinding, ODataListBinding, ODataMetaModel, ODataPropertyBinding) {
 
 	"use strict";
 
@@ -532,6 +534,34 @@ sap.ui.define([
 				oBinding.refresh(sGroupId);
 			}
 		});
+	};
+
+	/**
+	 * Reports a technical error by adding a message to the MessageManager and logging the error to
+	 * the console.
+	 *
+	 * @param {string} sLogMessage
+	 *   The message to write to the console log
+	 * @param {string} sReportingClassName
+	 *   The name of the class reporting the error
+	 * @param {Error} oError
+	 *   The error
+	 *
+	 * @private
+	 */
+	ODataModel.prototype.reportError = function (sLogMessage, sReportingClassName, oError) {
+		var sDetails = oError.stack || oError.message;
+
+		if (sDetails.indexOf(oError.message) < 0) {
+			sDetails = oError.message + "\n" + oError.stack;
+		}
+		jQuery.sap.log.error(sLogMessage, sDetails, sReportingClassName);
+		sap.ui.getCore().getMessageManager().addMessages(new Message({
+				message : oError.message,
+				processor : this,
+				technical : true,
+				type : MessageType.Error
+			}));
 	};
 
 	/**

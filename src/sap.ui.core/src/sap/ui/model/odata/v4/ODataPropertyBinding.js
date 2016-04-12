@@ -245,8 +245,8 @@ sap.ui.define([
 			// throwing an exception would cause "Uncaught (in promise)" in Chrome
 			if (!oError.canceled) {
 				if (bDataRequested) {
-					jQuery.sap.log.error("Failed to read path " + sResolvedPath, oError,
-						sClassName);
+					that.oModel.reportError("Failed to read path " + sResolvedPath,
+						sClassName, oError);
 				}
 				// fire change event only if error was not caused by refresh
 				// and value was not undefined
@@ -407,6 +407,8 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataPropertyBinding.prototype.setValue = function (vValue, sGroupId) {
+		var that = this;
+
 		if (typeof vValue === "function" || typeof vValue === "object") {
 			throw new Error("Not a primitive value");
 		}
@@ -417,7 +419,9 @@ sap.ui.define([
 				if (this.oContext) {
 					this.oContext.updateValue(sGroupId, this.sPath, vValue)
 						["catch"](function (oError) {
-							jQuery.sap.log.error(oError.message, oError.stack, sClassName);
+							that.oModel.reportError("Failed to update path "
+									+ that.oModel.resolve(that.sPath, that.oContext),
+								sClassName, oError);
 						});
 				} else {
 					jQuery.sap.log.warning("Cannot set value on relative binding without context",

@@ -366,7 +366,7 @@ sap.ui.define([
 			that._fireChange({reason : ChangeReason.Change});
 			// do not return anything
 		})["catch"](function (oError) {
-			jQuery.sap.log.error(oError.message, that.sPath, sClassName);
+			that.oModel.reportError("Failed to execute " + that.sPath, sClassName, oError);
 			throw oError;
 		});
 	};
@@ -497,8 +497,8 @@ sap.ui.define([
 						that.fireDataReceived();
 					} else {
 						// log error only once when data request failed
-						jQuery.sap.log.error("Failed to read path " + that.sPath, oError,
-							sClassName);
+						that.oModel.reportError("Failed to read path " + that.sPath, sClassName,
+							oError);
 						that.fireDataReceived({error : oError});
 					}
 				}

@@ -7,8 +7,10 @@ sap.ui.define([
 		'sap/ui/core/format/DateFormat',
 		'sap/ui/core/Item',
 		'sap/ui/core/mvc/Controller',
+		"sap/ui/model/Filter",
+		"sap/ui/model/FilterOperator",
 		'sap/ui/model/json/JSONModel'
-	], function (Dialog, MessageBox, DateFormat, Item, Controller, JSONModel) {
+], function (Dialog, MessageBox, DateFormat, Item, Controller, Filter, FilterOperator, JSONModel) {
 	"use strict";
 
 	var oDateFormat = DateFormat.getTimeInstance({pattern : "HH:mm"});
@@ -88,6 +90,44 @@ sap.ui.define([
 					MessageBox.confirm("Do you really want to delete? " + sOrderID, onConfirm,
 						"Sales Order Deletion");
 				}
+			});
+		},
+
+		onInit : function () {
+			var bMessageOpen = false,
+				oMessageManager = sap.ui.getCore().getMessageManager(),
+				oMessageModel = oMessageManager.getMessageModel();
+
+			this.oMessageModelBinding = oMessageModel.bindList("/", undefined,
+				[], new Filter("technical", FilterOperator.EQ, true));
+
+			this.oMessageModelBinding.attachChange(function (oEvent) {
+				var aContexts = oEvent.getSource().getContexts(),
+					aMessages = [],
+					sPrefix;
+
+				if (bMessageOpen || !aContexts.length) {
+					return;
+				}
+
+				// Extract and remove the technical messages
+				aContexts.forEach(function (oContext) {
+					aMessages.push(oContext.getObject());
+				});
+				oMessageManager.removeMessages(aMessages);
+
+				// Due to batching there can be more than one technical message. However the UX
+				// guidelines say "display a single message in a message box" assuming that there
+				// will be only one at a time.
+				sPrefix = aMessages.length === 1 ? ""
+					: "There have been multiple technical errors. One example: ";
+				MessageBox.error(sPrefix + aMessages[0].message, {
+					id : "serviceErrorMessageBox",
+					onClose: function () {
+						bMessageOpen = false;
+					}
+				});
+				bMessageOpen = true;
 			});
 		},
 
@@ -194,6 +234,12 @@ sap.ui.define([
 			var oBinding = this.getView().byId("FavoriteProduct").getBinding("value");
 
 			oBinding.setValue(oDateFormat.format(new Date()));
+		},
+
+		produceTechnicalError : function () {
+			var oViewElement = this.getView().byId("FavoriteProduct");
+
+			oViewElement.bindProperty("value", {path : "/ProductList('HT-1000')/Unknown"});
 		}
 	});
 
