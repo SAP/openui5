@@ -558,19 +558,36 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		return this;
 	};
 
-	Input.prototype._scrollToItem = function(iIndex, sDir) {
+	Input.prototype._scrollToItem = function(iIndex) {
 		var oPopup = this._oSuggestionPopup,
-			oList = this._oList;
+			oList = this._oList,
+			oScrollDelegate,
+			oPopupRect,
+			oItemRect,
+			iTop,
+			iBottom;
 
 		if (!(oPopup instanceof Popover) || !oList) {
 			return;
 		}
-
+		oScrollDelegate = oPopup.getScrollDelegate();
+		if (!oScrollDelegate) {
+			return;
+		}
 		var oListItem = oList.getItems()[iIndex],
-			oListItemDom = oListItem && oListItem.$()[0];
+			oListItemDom = oListItem && oListItem.getDomRef();
+		if (!oListItemDom) {
+			return;
+		}
+		oPopupRect = oPopup.getDomRef("cont").getBoundingClientRect();
+		oItemRect = oListItemDom.getBoundingClientRect();
 
-		if (oListItemDom) {
-			oListItemDom.scrollIntoView(sDir === "up");
+		iTop = oPopupRect.top - oItemRect.top;
+		iBottom = oItemRect.bottom - oPopupRect.bottom;
+		if (iTop > 0) {
+			oScrollDelegate.scrollTo(oScrollDelegate._scrollX, Math.max(oScrollDelegate._scrollY - iTop, 0));
+		} else if (iBottom > 0) {
+			oScrollDelegate.scrollTo(oScrollDelegate._scrollX, oScrollDelegate._scrollY + iBottom);
 		}
 	};
 
@@ -681,7 +698,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		}
 
 		if (sap.ui.Device.system.desktop) {
-			this._scrollToItem(iSelectedIndex, sDir);
+			this._scrollToItem(iSelectedIndex);
 		}
 
 		// make sure the value doesn't exceed the maxLength
