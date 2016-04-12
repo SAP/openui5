@@ -5073,18 +5073,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 *   <li>Navigation Mode:
 	 *      <ul>
 	 *          <li>If focus is on header: jump to the next focusable control before the table</li>
-	 *          <li>If focus in on content: jump to header for the current column</li>
+	 *          <li>If focus is on content: jump to header for the current column</li>
 	 *      </ul>
-	 *   <li>Action Mode: switch back to navigation mode</li>
+	 *   <li>Action Mode: do nothing, the browser moves focus</li>
 	 * </ul>
 	 * @private
 	 */
 	Table.prototype.onsaptabprevious = function(oEvent) {
 		var $this = this.$();
-		if (this._bActionMode) {
-			this._leaveActionMode();
-			oEvent.preventDefault();
-		} else {
+		if (!this._bActionMode) {
 			var oIN = this._oItemNavigation;
 			var bNoData = this.$().hasClass("sapUiTableEmpty");
 			var oSapUiTableCCnt = $this.find('.sapUiTableCCnt')[0];
@@ -5114,18 +5111,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 *   <li>Navigation Mode:
 	 *      <ul>
 	 *          <li>If focus is on header: jump to the first data column of the focused column header</li>
-	 *          <li>If focus in on content: jump to the next focusable control after the table</li>
+	 *          <li>If focus is on content: jump to the next focusable control after the table</li>
 	 *      </ul>
-	 *   <li>Action Mode: switch back to navigation mode</li>
+	 *   <li>Action Mode: do nothing, the browser moves focus</li>
 	 * </ul>
 	 * @private
 	 */
 	Table.prototype.onsaptabnext = function(oEvent) {
 		var $this = this.$();
-		if (this._bActionMode) {
-			this._leaveActionMode();
-			oEvent.preventDefault();
-		} else {
+		if (!this._bActionMode) {
 			var oIN = this._oItemNavigation;
 			var bContainsColHdrCnt = jQuery.contains($this.find('.sapUiTableColHdrCnt')[0], oEvent.target);
 			var bNoData = this.$().hasClass("sapUiTableEmpty");
