@@ -27,4 +27,3 @@ sap.ui.require([
 		QUnit.start();
 	});
 });
-

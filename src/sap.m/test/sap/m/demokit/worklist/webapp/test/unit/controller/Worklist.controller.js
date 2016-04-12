@@ -10,7 +10,7 @@ sap.ui.define([
 
 		QUnit.module("Table busy indicator delay", {
 
-			setup : function () {
+			beforeEach : function () {
 				this.oWorklistController = new WorklistController();
 				this.oTableStub = new ManagedObject();
 				this.oTableStub.getBusyIndicatorDelay = sinon.stub();
@@ -23,7 +23,7 @@ sap.ui.define([
 				sinon.stub(this.oWorklistController, "byId").returns(this.oTableStub);
 			},
 
-			teardown : function () {
+			afterEach : function () {
 				this.oWorklistController.destroy();
 				this.oTableStub.destroy();
 				this.oViewStub.destroy();

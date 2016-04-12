@@ -120,12 +120,7 @@ sap.ui.define([
 							success: function(oTable) {
 								sFirstObjectTitle = oTable.getItems()[0].getCells()[0].getTitle();
 
-								this.waitFor({
-									id: sSearchFieldId,
-									viewName: sViewName,
-									actions: [new EnterText({text: sFirstObjectTitle}), new Press()],
-									errorMessage: "Failed to find search field in Worklist view.'"
-								});
+								this.iSearchForValue(sFirstObjectTitle);
 
 								this.waitFor({
 									id: [sTableId, sSearchFieldId],
@@ -138,13 +133,17 @@ sap.ui.define([
 						});
 					},
 
-					iSearchForValue : function (aActions) {
+					iSearchForValueWithActions : function (aActions) {
 						return this.waitFor({
 							id : sSearchFieldId,
 							viewName : sViewName,
 							actions: aActions,
 							errorMessage : "Failed to find search field in Worklist view.'"
 						});
+					},
+
+					iSearchForValue : function (sSearchString) {
+						return this.iSearchForValueWithActions([new EnterText({text : sSearchString}), new Press()]);
 					},
 
 					iTypeSomethingInTheSearchThatCannotBeFoundAndTriggerRefresh : function () {
@@ -160,15 +159,15 @@ sap.ui.define([
 
 							oSearchField.fireSearch(oEvent);
 						};
-						return this.iSearchForValue([new EnterText({text: sSomethingThatCannotBeFound}), fireRefreshButtonPressedOnSearchField]);
+						return this.iSearchForValueWithActions([new EnterText({text: sSomethingThatCannotBeFound}), fireRefreshButtonPressedOnSearchField]);
 					},
 
 					iClearTheSearch : function () {
-						return this.iSearchForValue([new EnterText({text: ""}), new Press()]);
+						return this.iSearchForValueWithActions([new EnterText({text: ""}), new Press()]);
 					},
 
 					iSearchForSomethingWithNoResults : function () {
-						return this.iSearchForValue([new EnterText({text: sSomethingThatCannotBeFound}), new Press()]);
+						return this.iSearchForValueWithActions([new EnterText({text: sSomethingThatCannotBeFound}), new Press()]);
 					}
 
 				}, shareOptions.createActions(sViewName)),
