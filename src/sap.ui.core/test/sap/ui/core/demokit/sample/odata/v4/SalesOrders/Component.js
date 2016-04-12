@@ -59,7 +59,13 @@ sap.ui.define([
 						"BusinessPartnerList('0100000000')" : {
 							source : "BusinessPartnerList_0.txt"
 						},
+						"ProductList('HT-1000')/Name" : {
+							source : "ProductList.txt"
+						},
 						"SalesOrderList?$expand=SO_2_BP&$filter=BuyerName%20ge%20'M'&$select=BuyerName,CurrencyCode,GrossAmount,Note,SalesOrderID&$skip=0&$top=5" : {
+							source : "SalesOrderList.txt"
+						},
+						"SalesOrderList?$expand=SO_2_BP&$filter=BuyerName%20ge%20'M'&$select=BuyerName,CurrencyCode,GrossAmount,Note,SalesOrderID&$skip=0&$top=10" : {
 							source : "SalesOrderList.txt"
 						},
 						"SalesOrderList?$expand=SO_2_BP&$filter=BuyerName%20ge%20'M'&$select=BuyerName,CurrencyCode,GrossAmount,Note,SalesOrderID&$skip=5&$top=5" : {
