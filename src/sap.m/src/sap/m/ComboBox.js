@@ -299,15 +299,17 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		};
 
 		ComboBox.prototype.createPickerTextField = function() {
-			return new ComboBoxTextField({
+			var oTextField = new ComboBoxTextField({
 				width: "100%",
 				showButton: false
 			}).addEventDelegate({
 				onsapenter: function() {
-					this.updateDomValue(this.getValue());
+					this.updateDomValue(oTextField.getValue());
 					this.onChange();
 				}
 			}, this);
+
+			return oTextField;
 		};
 
 		ComboBox.prototype.updatePickerHeaderTitle = function() {
