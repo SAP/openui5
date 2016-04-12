@@ -268,7 +268,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("convertQueryOptions", function (assert) {
-		var oCacheMock = this.mock(_Cache),
+		var oCacheMock = this.oSandbox.mock(_Cache),
 			oExpand = {};
 
 		oCacheMock.expects("convertExpand")
@@ -306,7 +306,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("convertExpandOptions", function (assert) {
-		var oCacheMock = this.mock(_Cache),
+		var oCacheMock = this.oSandbox.mock(_Cache),
 			oExpand = {};
 
 		oCacheMock.expects("convertExpand")
@@ -330,7 +330,7 @@ sap.ui.require([
 			}, new Error("$expand must be a valid object"));
 		});
 
-		this.mock(_Cache).expects("convertExpandOptions")
+		this.oSandbox.mock(_Cache).expects("convertExpandOptions")
 			.withExactArgs("baz", sinon.match.same(oOptions)).returns("baz(options)");
 
 		assert.strictEqual(_Cache.convertExpand({
@@ -342,7 +342,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("buildQueryString", function (assert) {
-		var oCacheMock = this.mock(_Cache),
+		var oCacheMock = this.oSandbox.mock(_Cache),
 			oConvertedQueryParams = {},
 			oQueryParams = {};
 
@@ -353,7 +353,7 @@ sap.ui.require([
 
 		oCacheMock.expects("convertQueryOptions")
 			.withExactArgs(oQueryParams).returns(oConvertedQueryParams);
-		this.mock(_Helper).expects("buildQuery")
+		this.oSandbox.mock(_Helper).expects("buildQuery")
 			.withExactArgs(sinon.match.same(oConvertedQueryParams)).returns("?query");
 
 		assert.strictEqual(_Cache.buildQueryString(oQueryParams), "?query");

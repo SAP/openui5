@@ -146,7 +146,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("encodePair", function (assert) {
 		var sEncoded,
-			oHelperMock = this.mock(_Helper);
+			oHelperMock = this.oSandbox.mock(_Helper);
 
 		oHelperMock.expects("encode").withExactArgs("key", true).returns("~key~");
 		oHelperMock.expects("encode").withExactArgs("value", false).returns("~value~");
@@ -164,7 +164,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("buildQuery: query", function (assert) {
 		var sEncoded,
-			oHelperMock = this.mock(_Helper);
+			oHelperMock = this.oSandbox.mock(_Helper);
 
 		oHelperMock.expects("encodePair").withExactArgs("a", "b").returns("a=b");
 		oHelperMock.expects("encodePair").withExactArgs("c", "d").returns("c=d");

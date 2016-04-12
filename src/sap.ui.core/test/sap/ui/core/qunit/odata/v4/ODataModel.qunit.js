@@ -117,10 +117,10 @@ sap.ui.require([
 			oModel,
 			mModelOptions = {};
 
-		this.mock(_ODataHelper).expects("buildQueryOptions")
+		this.oSandbox.mock(_ODataHelper).expects("buildQueryOptions")
 			.withExactArgs({"sap-client" : "111"})
 			.returns(mModelOptions);
-		this.mock(_MetadataRequestor).expects("create")
+		this.oSandbox.mock(_MetadataRequestor).expects("create")
 			.withExactArgs({"Accept-Language" : "ab-CD"}, sinon.match.same(mModelOptions))
 			.returns(oMetadataRequestor);
 
@@ -141,7 +141,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("w/o serviceUrlParams", function (assert) {
-		this.mock(_ODataHelper).expects("buildQueryOptions").withExactArgs({});
+		this.oSandbox.mock(_ODataHelper).expects("buildQueryOptions").withExactArgs({});
 
 		// code under test
 		createModel();
@@ -152,10 +152,10 @@ sap.ui.require([
 		var oMetadataRequestor = {},
 			mModelOptions = {};
 
-		this.mock(_ODataHelper).expects("buildQueryOptions")
+		this.oSandbox.mock(_ODataHelper).expects("buildQueryOptions")
 			.withExactArgs({"sap-client" : "111"})
 			.returns(mModelOptions);
-		this.mock(_MetadataRequestor).expects("create")
+		this.oSandbox.mock(_MetadataRequestor).expects("create")
 			.withExactArgs({"Accept-Language" : "ab-CD"}, sinon.match.same(mModelOptions))
 			.returns(oMetadataRequestor);
 
@@ -211,7 +211,7 @@ sap.ui.require([
 		var oModel,
 			oRequestor = {};
 
-		this.mock(_Requestor).expects("create")
+		this.oSandbox.mock(_Requestor).expects("create")
 			.withExactArgs(getServiceUrl(), {"Accept-Language" : "ab-CD"}, {"sap-client" : "123"})
 			.returns(oRequestor);
 
@@ -272,7 +272,7 @@ sap.ui.require([
 				oModel = createModel(sQuery),
 				oPromise = {};
 
-			this.mock(oModel.oRequestor).expects("request")
+			this.oSandbox.mock(oModel.oRequestor).expects("request")
 				//TODO remove usage of oModel._sQuery once cache is used for all CRUD operations
 				.withExactArgs("POST", "EMPLOYEES" + oModel._sQuery, undefined, null,
 					oEmployeeData).returns(oPromise);
@@ -383,7 +383,7 @@ sap.ui.require([
 
 		oMetaModelMock.expects("requestCanonicalUrl").returns(Promise.resolve(""));
 		if (jQuery.sap.log.getLevel() > jQuery.sap.log.LogLevel.ERROR) { // not for minified code
-			this.mock(jQuery.sap).expects("assert")
+			this.oSandbox.mock(jQuery.sap).expects("assert")
 				.withExactArgs(false, "oEntityContext must belong to this model");
 		}
 
