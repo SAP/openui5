@@ -39,8 +39,7 @@ sap.ui.define([
 		var oPlugin = new OpaPlugin(iFrameLauncher._sLogPrefix),
 			oMatcherPipeline = new MatcherPipeline(),
 			oActionPipeline = new ActionPipeline(),
-			sFrameId = "OpaFrame",
-			bComponentLoaded = false;
+			sFrameId = "OpaFrame";
 
 		/**
 		 * Helps you when writing tests for UI5 applications.
@@ -77,16 +76,13 @@ sap.ui.define([
 				}
 			});
 
-			return this.waitFor({
-				// make sure no controls are searched by the defaults
-				viewName: null,
-				controlType: null,
-				id: null,
-				searchOpenDialogs: false,
-				check : iFrameLauncher.hasLaunched,
-				timeout : iTimeout || 80,
-				errorMessage : "unable to load the iframe with the url: " + sSource
-			});
+			var oOptions = createWaitForObjectWithoutDefaults();
+
+			oOptions.check = iFrameLauncher.hasLaunched;
+			oOptions.timeout = iTimeout || 80;
+			oOptions.errorMessage = "unable to load the IFrame with the url: " + sSource;
+
+			return this.waitFor(oOptions);
 		}
 
 		/**
@@ -101,6 +97,7 @@ sap.ui.define([
 		 * @function
 		 */
 		Opa5.prototype.iStartMyUIComponent = function iStartMyUIComponent (oOptions){
+			var bComponentLoaded = false;
 			oOptions = oOptions || {};
 
 			// wait for starting of component launcher
@@ -122,16 +119,10 @@ sap.ui.define([
 				}
 			});
 
-			var oPropertiesForWaitFor = {
-				// make sure no controls are searched by the defaults
-				viewName: null,
-				controlType: null,
-				id: null,
-				searchOpenDialogs: false,
-				check: function () {
-					return bComponentLoaded;
-				},
-				errorMessage: "Unable to load the component with the name: " + oOptions.name
+			var oPropertiesForWaitFor = createWaitForObjectWithoutDefaults();
+			oPropertiesForWaitFor.errorMessage = "Unable to load the component with the name: " + oOptions.name;
+			oPropertiesForWaitFor.check = function () {
+				return bComponentLoaded;
 			};
 
 			// add timeout to object for waitFor when timeout is specified
@@ -154,10 +145,34 @@ sap.ui.define([
 			return this.waitFor({
 				success : function () {
 					componentLauncher.teardown();
-					bComponentLoaded = false;
 				}
 			});
 
+		};
+
+		/**
+		 * Tears down an IFrame or a component, launched by
+		 * @link{sap.ui.test.Opa5#iStartMyAppInAFrame} or @link{sap.ui.test.Opa5#iStartMyUIComponent}.
+		 * This function desinged for making your test's teardown independent of the startup.
+		 * If nothing has been started, this function will throw an error.
+		 * @returns {jQuery.promise|*|{result, arguments}}
+		 */
+		Opa5.prototype.iTeardownMyApp = function () {
+			var oOptions = createWaitForObjectWithoutDefaults();
+			oOptions.success = function () {
+				if (iFrameLauncher.hasLaunched()) {
+					this.iTeardownMyAppFrame();
+				} else if (componentLauncher.hasLaunched()) {
+					this.iTeardownMyUIComponent();
+				} else {
+					var sErrorMessage = "A teardown was called but there was nothing to tear down use iStartMyComponent or iStartMyAppInAFrame";
+					$.sap.log.error(sErrorMessage, "Opa");
+					throw new Error(sErrorMessage);
+				}
+			}.bind(this);
+
+
+			return this.waitFor(oOptions);
 		};
 
 		/**
@@ -600,6 +615,16 @@ sap.ui.define([
 				source: sSource
 			});
 
+		}
+
+		function createWaitForObjectWithoutDefaults () {
+			return {
+				// make sure no controls are searched by the defaults
+				viewName: null,
+				controlType: null,
+				id: null,
+				searchOpenDialogs: false
+			};
 		}
 
 		$(function () {

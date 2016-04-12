@@ -24,7 +24,13 @@
 		jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 		QUnit.config.autostart = false;
 
-		sap.ui.require(["sap/ui/test/Opa5", "sap/ui/test/Opa", 'unitTests/component', 'unitTests/logging'], function (Opa5, Opa) {
+		sap.ui.require([
+			"sap/ui/test/Opa5",
+			"sap/ui/test/Opa",
+			'unitTests/component',
+			'unitTests/logging',
+			'unitTests/launchers'
+		], function (Opa5, Opa) {
 			jQuery.sap.require("samples.components.button.Component");
 			jQuery.sap.require("sap.ui.core.routing.HashChanger");
 
