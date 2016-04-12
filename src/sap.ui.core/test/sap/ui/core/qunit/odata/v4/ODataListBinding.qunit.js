@@ -324,6 +324,27 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("nested listbinding (deferred association)", function (assert) {
+		var oBinding,
+			oContext = {
+				getPath : function () {
+					return "/TEAMS('4711')";
+				},
+				requestValue : function () {}
+			},
+			oPromise = Promise.resolve();
+
+		this.mock(oContext).expects("requestValue").withExactArgs("TEAM_2_EMPLOYEES")
+			.returns(oPromise);
+
+		// code under test
+		oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext);
+
+		assert.deepEqual(oBinding.getContexts(), []);
+		return oPromise;
+	});
+
+	//*********************************************************************************************
 	QUnit.test("initialize, resolved path", function (assert) {
 		var oContext = {},
 			oListBinding = this.oModel.bindList("foo", oContext);
@@ -1134,6 +1155,30 @@ sap.ui.require([
 		oBinding.sRefreshGroupId = "myGroup";
 
 		oBinding.getContexts(0, 10);
+
+		return oReadPromise;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getContexts: data received handler throws error", function (assert) {
+		var oError = new Error("Expected"),
+			oListBinding = this.oModel.bindList("/EMPLOYEES"),
+			oReadPromise = createResult(0);
+
+		this.oSandbox.mock(oListBinding.oCache).expects("read")
+			.withExactArgs(0, 10, "$auto", undefined, sinon.match.func)
+			.callsArg(4).returns(oReadPromise);
+		// check that error in data received handler is logged
+		this.oLogMock.expects("error").withExactArgs(oError.message,
+			sinon.match(function (sDetails) {
+				return sDetails === oError.stack;
+			}), sClassName);
+		oListBinding.attachDataReceived(function () {
+			throw oError;
+		});
+
+		// code under test
+		oListBinding.getContexts(0, 10);
 
 		return oReadPromise;
 	});
