@@ -100,7 +100,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	 *
 	 * @param {sap.ui.base.Event} oEvent which was fired
 	 */
-	GenericTile.prototype.ontouchcancel = function(oEvent) {
+	SlideTile.prototype.ontouchcancel = function(oEvent) {
 		this.removeStyleClass("sapMSTHvr");
 	};
 
