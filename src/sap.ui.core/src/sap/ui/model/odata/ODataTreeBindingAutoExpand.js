@@ -871,6 +871,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 			var bIgnore = false;
 			var iContainingIndexToCheck = oNode.serverIndex || oNode.containingServerIndex;
 			for (var j in mCollapsedServerIndices) {
+				j = parseInt(j, 10);
 				// if the expanded node is inside a collapsed range -> ignore it
 				if (iContainingIndexToCheck > j && iContainingIndexToCheck < j + mCollapsedServerIndices[j]) {
 					bIgnore = true;
