@@ -408,7 +408,7 @@
 		var currencyType = new sap.ui.model.type.Currency();
 		equal(currencyType.formatValue([22, "EUR"], "string"), "EUR" + "\xa0" + "22.00", "format test");
 		equal(currencyType.formatValue([22, "JPY"], "string"), "JPY" + "\xa0" + "22", "format test");
-		equal(currencyType.formatValue([-6622.333, "EUR"], "string"), "EUR-6,622.33", "format test");
+		equal(currencyType.formatValue([-6622.333, "EUR"], "string"), "EUR" + "\ufeff" + "-6,622.33", "format test");
 		equal(currencyType.formatValue([1.0, "EUR"], "string"), "EUR" + "\xa0" + "1.00", "format test");
 		equal(currencyType.formatValue([1.0000, "EUR"], "string"), "EUR" + "\xa0" + "1.00", "format test");
 
@@ -469,8 +469,8 @@
 		});
 
 		equal(currencyType.formatValue([22, "USD"], "string"), "$22.00", "format test");
-		equal(currencyType.formatValue([-6622.333, "USD"], "string"), "$-6,622.33", "format test");
-		equal(currencyType.formatValue([-6622.339, "EUR"], "string"), "€-6,622.34", "format test");
+		equal(currencyType.formatValue([-6622.333, "USD"], "string"), "$"+ "\ufeff" + "-6,622.33", "format test");
+		equal(currencyType.formatValue([-6622.339, "EUR"], "string"), "€" + "\ufeff" + "-6,622.34", "format test");
 		equal(currencyType.formatValue([1.0, "USD"], "string"), "$1.00", "format test");
 		equal(currencyType.formatValue([1.0000, "JPY"], "string"), "¥1", "format test");
 		equal(currencyType.formatValue([1.009, "EUR"], "string"), "€1.01", "format test");
@@ -486,11 +486,11 @@
 		equal(currencyType.parseValue("EUR3333", "string"), "EUR" + "\xa0" + "3333.00", "parse test");
 		equal(currencyType.parseValue("USD3333.555", "string"), "USD" + "\xa0" + "3333.56", "parse test");
 		equal(currencyType.parseValue("$3.555", "string"), "USD" + "\xa0" + "3.56", "parse test");
-		equal(currencyType.parseValue("JPY-3.555", "string"), "JPY-4", "parse test");
+		equal(currencyType.parseValue("JPY-3.555", "string"), "JPY" + "\ufeff" + "-4", "parse test");
 
 		equal(currencyType.formatValue("EUR22", "string"), "EUR" + "\xa0" + "22.00", "format test");
-		equal(currencyType.formatValue("USD-6622.333", "string"), "USD-6,622.33", "format test");
-		equal(currencyType.formatValue("JPY-6622.339", "string"), "JPY-6,622", "format test");
+		equal(currencyType.formatValue("USD-6622.333", "string"), "USD" + "\ufeff" +"-6,622.33", "format test");
+		equal(currencyType.formatValue("JPY-6622.339", "string"), "JPY" + "\ufeff" + "-6,622", "format test");
 
 	});
 
