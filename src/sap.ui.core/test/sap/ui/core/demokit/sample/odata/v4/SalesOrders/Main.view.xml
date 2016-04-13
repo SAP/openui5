@@ -39,9 +39,10 @@
 			items="{
 					path : '/SalesOrderList',
 					parameters : {
-						'$expand' : 'SO_2_BP',
-						'$select' : 'BuyerName,CurrencyCode,GrossAmount,Note,SalesOrderID',
-						'$$updateGroupId' : 'SalesOrderListUpdateGroup'
+						$expand : 'SO_2_BP',
+						$filter : 'BuyerName ge \'M\'',
+						$select : 'BuyerName,CurrencyCode,GrossAmount,Note,SalesOrderID',
+						$$updateGroupId : 'SalesOrderListUpdateGroup'
 					},
 					events : {
 						dataReceived : '.onDataEvents',

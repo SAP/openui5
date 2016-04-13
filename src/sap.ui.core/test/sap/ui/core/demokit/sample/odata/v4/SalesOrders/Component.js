@@ -59,10 +59,10 @@ sap.ui.define([
 						"BusinessPartnerList('0100000000')" : {
 							source : "BusinessPartnerList_0.txt"
 						},
-						"SalesOrderList?$expand=SO_2_BP\&$select=BuyerName,CurrencyCode,GrossAmount,Note,SalesOrderID&$skip=0&$top=5" : {
+						"SalesOrderList?$expand=SO_2_BP&$filter=BuyerName%20ge%20'M'&$select=BuyerName,CurrencyCode,GrossAmount,Note,SalesOrderID&$skip=0&$top=5" : {
 							source : "SalesOrderList.txt"
 						},
-						"SalesOrderList?$expand=SO_2_BP&$select=BuyerName,CurrencyCode,GrossAmount,Note,SalesOrderID&$skip=5&$top=5" : {
+						"SalesOrderList?$expand=SO_2_BP&$filter=BuyerName%20ge%20'M'&$select=BuyerName,CurrencyCode,GrossAmount,Note,SalesOrderID&$skip=5&$top=5" : {
 							source : "SalesOrderListNoMoreData.txt"
 						},
 						"SalesOrderList(SalesOrderID='0500000000')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT))),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber)&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {

@@ -284,10 +284,14 @@ sap.ui.require([
 		assert.deepEqual(_Cache.convertQueryOptions({
 			foo : "bar",
 			$expand : oExpand,
+			$filter : "BuyerName eq 'SAP'",
+			$orderby : "GrossAmount asc",
 			$select : ["select1", "select2"]
 		}), {
 			foo : "bar",
 			$expand : "expand",
+			$filter : "BuyerName eq 'SAP'",
+			$orderby : "GrossAmount asc",
 			$select : "select1,select2"
 		});
 
@@ -299,8 +303,7 @@ sap.ui.require([
 
 		assert.strictEqual(_Cache.convertQueryOptions(undefined), undefined);
 
-		["$filter", "$format", "$id", "$inlinecount", "$orderby", "$search", "$skip", "$skiptoken",
-			"$top"
+		["$format", "$id", "$inlinecount", "$search", "$skip", "$skiptoken", "$top"
 		].forEach(function (sSystemOption) {
 			assert.throws(function () {
 				var mQueryOptions = {};
@@ -403,6 +406,7 @@ sap.ui.require([
 								$expand : {
 									PRODUCT_2_BP : true
 								},
+								$filter : "CurrencyCode eq 'EUR'",
 								$select : "CurrencyCode"
 							},
 							SOITEM_2_SO : true
@@ -412,7 +416,8 @@ sap.ui.require([
 				"sap-client" : "003"
 			},
 			s : "$expand=SO_2_BP,SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP;"
-				+ "$select=CurrencyCode),SOITEM_2_SO)&sap-client=003"
+				+ "$filter=CurrencyCode%20eq%20'EUR';$select=CurrencyCode),SOITEM_2_SO)"
+				+ "&sap-client=003"
 		}].forEach(function (oFixture) {
 			assert.strictEqual(_Cache.buildQueryString(oFixture.o, false), "?" + oFixture.s,
 				oFixture.s);

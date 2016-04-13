@@ -24,13 +24,16 @@ sap.ui.define([
 			var vValue = mQueryOptions[sKey];
 
 			switch (sKey) {
+				case "$expand":
+					vValue = Cache.convertExpand(vValue);
+					break;
+				case "$filter":
+				case "$orderby":
+					break;
 				case "$select":
 					if (Array.isArray(vValue)) {
 						vValue = vValue.join(",");
 					}
-					break;
-				case "$expand":
-					vValue = Cache.convertExpand(vValue);
 					break;
 				default:
 					if (sKey[0] === '$') {
