@@ -167,6 +167,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 					that.fireAfterOpen({openBy: oEvent.getParameter("openBy")});
 				},
 				afterClose: function (oEvent) {
+					that._navContainer.backToTop();
 					that.fireAfterClose({openBy: oEvent.getParameter("openBy")});
 				},
 				beforeOpen: function (oEvent) {

@@ -206,6 +206,21 @@
 				"callback should be called with correct argument");
 		});
 
+		QUnit.test("AfterOpen should always load control's overview screen", 2, function (assert) {
+			var fnAfterOpen = function() {
+				assert.ok(this.oMessagePopover._isListPage());
+				this.oMessagePopover._navContainer.to(this.oMessagePopover._detailsPage);
+				this.oMessagePopover.close();
+				this.clock.tick(500);
+				assert.ok(this.oMessagePopover._isListPage());
+			}.bind(this);
+
+			this.oMessagePopover.attachAfterOpen(fnAfterOpen);
+
+			this.oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+		});
+
 		QUnit.test("addStyleClass should add class", function (assert) {
 			this.oMessagePopover.openBy(this.oButton);
 			var $oDomRef = this.oMessagePopover.$();
