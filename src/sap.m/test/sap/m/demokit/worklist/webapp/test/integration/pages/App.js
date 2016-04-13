@@ -43,14 +43,17 @@ sap.ui.define([
 						});
 					},
 
-					iShouldSeeTheMessageBox : function (sMessageBoxId) {
+					iShouldSeeTheMessageBox : function () {
 						return this.waitFor({
-							id : sMessageBoxId,
-							success : function () {
+							searchOpenDialogs: true,
+							controlType: "sap.m.Dialog",
+							success: function () {
 								Opa5.assert.ok(true, "The correct MessageBox was shown");
 							}
 						});
+
 					}
+
 				}
 
 			}

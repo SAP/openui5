@@ -6,11 +6,11 @@ sap.ui.define([
 		"use strict";
 
 		QUnit.module("Initialization", {
-			setup : function () {
+			beforeEach : function () {
 				sinon.config.useFakeTimers = false;
 				this.oListSelector = new ListSelector();
 			},
-			teardown : function () {
+			afterEach : function () {
 				this.oListSelector.destroy();
 			}
 		});
@@ -33,11 +33,11 @@ sap.ui.define([
 		});
 
 		QUnit.module("List loading", {
-			setup : function () {
+			beforeEach : function () {
 				sinon.config.useFakeTimers = false;
 				this.oListSelector = new ListSelector();
 			},
-			teardown : function () {
+			afterEach : function () {
 				this.oListSelector.destroy();
 			}
 		});
@@ -109,7 +109,7 @@ sap.ui.define([
 		});
 
 		QUnit.module("Selecting item in the list", {
-			setup : function () {
+			beforeEach : function () {
 				sinon.config.useFakeTimers = false;
 				this.oListSelector = new ListSelector();
 				this.oListSelector.oWhenListLoadingIsDone = {
@@ -118,7 +118,7 @@ sap.ui.define([
 					}.bind(this)
 				};
 			},
-			teardown : function () {
+			afterEach : function () {
 				this.oListSelector.destroy();
 			}
 		});
