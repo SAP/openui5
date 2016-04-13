@@ -1755,14 +1755,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 						});
 
 						if (mAllModelConfigurations) {
+
+							// Read internal URI parameter to enable model preload for testing purposes
+							// Specify comma separated list of model names. Use an empty segment for the "default" model
+							// Examples:
+							//   sap-ui-xx-preload-component-models-<componentName>=, => prelaod default model (empty string key)
+							//   sap-ui-xx-preload-component-models-<componentName>=foo, => prelaod "foo" + default model (empty string key)
+							//   sap-ui-xx-preload-component-models-<componentName>=foo,bar => prelaod "foo" + "bar" models
+							var sPreloadModels = jQuery.sap.getUriParameters().get("sap-ui-xx-preload-component-models-" + oManifest.getComponentName());
+							var aPreloadModels = sPreloadModels && sPreloadModels.split(",");
+
 							var mModelConfigurations = {};
 							for (var sModelName in mAllModelConfigurations) {
 								var mModelConfig = mAllModelConfigurations[sModelName];
 
+								// activate "preload" flag in case URI parameter for testing is used (see code above)
+								if (!mModelConfig.preload && aPreloadModels && aPreloadModels.indexOf(sModelName) > -1 ) {
+									mModelConfig.preload = true;
+									jQuery.sap.log.warning("FOR TESTING ONLY!!! Activating preload for model \"" + sModelName + "\" (" + mModelConfig.type + ")",
+										oManifest.getComponentName(), "sap.ui.core.Component");
+								}
+
 								// Only create models:
-								//   - which are flagged for preload (mModelConfig.preload)
+								//   - which are flagged for preload (mModelConfig.preload) or activated via internal URI param (see above)
 								//   - in case the model class is already loaded
-								//   - which content is not part of the Component-preload to avoid those separate requests
 								if (mModelConfig.preload && jQuery.sap.isDeclared(mModelConfig.type, true)) {
 									mModelConfigurations[sModelName] = mModelConfig;
 								}
