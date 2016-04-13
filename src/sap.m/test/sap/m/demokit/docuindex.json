@@ -236,13 +236,6 @@
 		  ]
 		},
 		{
-			"id": "sap.m.DynamicPage",
-			"name": "Dynamic Page",
-			"category": "Container",
-			"since": "1.38",
-			"samples": ["sap.m.sample.DynamicPageListReport"]
-		},
-		{
 			"id" : "sap.m.SlideTile",
 			"name" : "Slide Tile",
 			"category" : "Container",
