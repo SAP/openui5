@@ -209,6 +209,15 @@
 			assert.ok(jQuery.sap.byId(this.oResponsivePopover.getId() + "-closeButton").length === 1, "CloseButton should be rendered");
 		});
 
+		QUnit.test("Getter for begin/end button", function(assert) {
+			// Act and Arrange
+			this.stub(sap.ui.Device, "system", { phone: true });
+			this.oResponsivePopover = new sap.m.ResponsivePopover(this.oControlProps);
+
+			assert.ok(this.oResponsivePopover.getBeginButton(), "Should be executed without any errors");
+			assert.ok(this.oResponsivePopover.getEndButton(), "Should be executed without any errors");
+		});
+
 		QUnit.test("Clone method", function(assert) {
 
 			// Act and Arrange
