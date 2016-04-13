@@ -10,9 +10,9 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 	// <script> anyway and declaring the dependency would cause it to be loaded twice.
 
 	var rBatch = /\/\$batch($|\?)/,
-		rBoundary = /^--(.*?)\r\n/,
 		mMessageForPath = {}, // a cache for files, see useFakeServer
 		sRealOData = jQuery.sap.getUriParameters().get("realOData"),
+		rRequestLine = /^GET (\S+) HTTP\/1\.1$/,
 		bProxy = sRealOData === "true" || sRealOData === "proxy",
 		bRealOData = bProxy || sRealOData === "direct",
 		TestUtils;
@@ -126,7 +126,7 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 		},
 
 		/**
-		 * Activates a sinon fakeserver in the given sandbox. The fake server responds only to
+		 * Activates a sinon fake server in the given sandbox. The fake server responds only to
 		 * those GET requests given in the fixture. It is automatically restored when the sandbox
 		 * is restored.
 		 *
@@ -152,32 +152,53 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 		 *     case the header <code>Content-Type</code> is determined from the source name's
 		 *     extension.
 		 *   </ul>
-		 *   For "$batch" URLs the value is an object in which the keys are searched within the
-		 *   request message. The value at this key is an object as described above. For "$batch"
-		 *   responses the Content-Type header is automatically calculated by looking into the
-		 *   response message (searching for the batch boundary).
+		 *   Requests ending on "/$batch" are handled differently. They are expected to be multipart
+		 *   mime requests where each part is a GET request. The fixture value is an object in
+		 *   which the key is a request URL and the value is an object as described above.
+		 *
+		 *   Each multipart request in the batch is responded separately. If the URL is not found
+		 *   in the fixture, it is responded with a 404. The batch itself is always responded with a
+		 *   200.
 		 */
 		useFakeServer : function (oSandbox, sBase, mFixture) {
 
 			function batch(mUrls, oRequest) {
-				var oResponse = [
-						500,
-						{"Content-Type" : "text/plain"},
-						"FakeServer: No matching response found"
-					],
-					sUrl;
+				var sBody = oRequest.requestBody,
+					sBoundary,
+					aRequestParts,
+					aResponseParts = [""];
 
-				for (sUrl in mUrls) {
-					if (oRequest.requestBody.indexOf("GET " + sUrl) > 0) {
-						oResponse = mUrls[sUrl];
+				sBoundary = firstLine(sBody);
+				aRequestParts = sBody.split(sBoundary).slice(1, -1);
+				aRequestParts.forEach(function (sRequestPart) {
+					var aMatches,
+						sRequestLine,
+						sResponse;
+
+					sRequestPart = sRequestPart.slice(sRequestPart.indexOf("\r\n\r\n") + 4);
+					sRequestLine = firstLine(sRequestPart);
+					aMatches = rRequestLine.exec(sRequestLine);
+					sResponse = aMatches && mUrls[aMatches[1]];
+					if (sResponse) {
+						aResponseParts.push("\r\n" + sResponse);
+						jQuery.sap.log.info(sRequestLine, null, "sap.ui.test.TestUtils");
+					} else {
+						aResponseParts.push("\r\nContent-Type: application/http\r\n"
+							+ "content-transfer-encoding: binary\r\n\r\n"
+							+ "HTTP/1.1 404 Not Found\r\n"
+							+ "Content-Type: text/plain\r\n\r\nNo mock data found\r\n");
+						jQuery.sap.log.error(sRequestLine, "No mock data found",
+							"sap.ui.test.TestUtils");
 					}
-				}
-				oRequest.respond.apply(oRequest, oResponse);
+				});
+				aResponseParts.push("--\r\n");
+				oRequest.respond.apply(oRequest, [200, {
+					"Content-Type" : "multipart/mixed; boundary=" + sBoundary.slice(2)
+				}, aResponseParts.join(sBoundary)]);
 			}
 
 			function buildResponses(mFixture, bIsBatch) {
 				var oHeaders,
-					aMatches,
 					sMessage,
 					oResponse,
 					sUrl,
@@ -195,18 +216,15 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 								// In Git no files may contain CRLF, but multipart responses
 								// require it. So we simply add the CR again.
 								sMessage = sMessage.replace(/\n/g, "\r\n");
-								aMatches = rBoundary.exec(sMessage);
-								if (aMatches) {
-									oHeaders["Content-Type"] = "multipart/mixed; boundary="
-										+ aMatches[1];
-								}
+							} else {
+								oHeaders["Content-Type"] = oHeaders["Content-Type"]
+									|| contentType(oResponse.source);
 							}
-							oHeaders["Content-Type"] = oHeaders["Content-Type"]
-								|| contentType(oResponse.source);
 						} else {
 							sMessage = oResponse.message || "";
 						}
-						mUrls[sUrl] = [oResponse.code || 200, oHeaders, sMessage];
+						mUrls[sUrl] = bIsBatch ? sMessage
+							: [oResponse.code || 200, oHeaders, sMessage];
 					}
 				}
 				return mUrls;
@@ -220,6 +238,10 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 					return "application/json";
 				}
 				return "application/x-octet-stream";
+			}
+
+			function firstLine(sText) {
+				return sText.slice(0, sText.indexOf("\r\n"));
 			}
 
 			function readMessage(sPath) {

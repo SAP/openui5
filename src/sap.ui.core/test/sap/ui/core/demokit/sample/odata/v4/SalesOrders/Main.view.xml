@@ -25,14 +25,14 @@
 						<ToolbarLayoutData shrinkable="false" />
 					</layoutData>
 				</Input>
-				<Button enabled="{ui>/bRealOData}" icon="sap-icon://refresh"
+				<Button icon="sap-icon://refresh"
 					press="onRefreshFavoriteProduct"/>
 				<Button enabled="false" icon="sap-icon://hello-world"
 					press="onUpdateFavoriteProduct" tooltip="Update with current time as HH:mm"/>
 				<Button enabled="{ui>/bRealOData}" icon="sap-icon://message-error"
 					press="produceTechnicalError" tooltip="Provoke read error"/>
 				<ToolbarSpacer />
-				<Button enabled="{ui>/bRealOData}" press="onRefreshAll" text="Refresh all"/>
+				<Button press="onRefreshAll" text="Refresh all"/>
 			</content>
 		</Toolbar>
 		<Table growing="true" growingThreshold="5" headerText="Sales Orders" id="SalesOrders"
@@ -57,7 +57,7 @@
 							press="onCreateSalesOrderDialog" text="Create Sales Order"/>
 						<Button enabled="false" icon="{ui>/icon}" tooltip="{ui>/iconTooltip}"
 							type="Transparent"/>
-						<Button enabled="{ui>/bRealOData}" icon="sap-icon://refresh"
+						<Button icon="sap-icon://refresh"
 							press="onRefreshSalesOrdersList"/>
 						<Button enabled="{ui>/bRealOData}" icon="sap-icon://save"
 							press="onSaveSalesOrderList" tooltip="Save sales orders"/>
@@ -150,7 +150,7 @@
 			<Toolbar design="Transparent">
 				<content>
 					<Title level="H2" text="Sales Order Details" titleStyle="H2"/>
-					<Button enabled="{ui>/bRealOData}" icon="sap-icon://refresh"
+					<Button icon="sap-icon://refresh"
 						press="onRefreshSalesOrderDetails"/>
 					<Button enabled="{ui>/bRealOData}" icon="sap-icon://save"
 						press="onSaveSalesOrder"/>
