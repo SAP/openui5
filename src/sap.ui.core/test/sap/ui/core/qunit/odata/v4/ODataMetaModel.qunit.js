@@ -884,6 +884,12 @@ sap.ui.require([
 	}, {
 		$Type : "Edm.String",
 		__constraints : {isDigitSequence : true}
+	}, {
+		$Type : "Edm.TimeOfDay"
+	}, {
+		$Precision : 3,
+		$Type : "Edm.TimeOfDay",
+		__constraints : {precision : 3}
 	}].forEach(function (oProperty0) {
 		// Note: take care not to modify oProperty0, clone it first!
 		[false, true].forEach(function (bNullable) {
@@ -960,7 +966,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	//TODO make these types work with OData V4
-	["Edm.DateTimeOffset", "Edm.Duration", "Edm.TimeOfDay"].forEach(function (sQualifiedName) {
+	["Edm.DateTimeOffset", "Edm.Duration"].forEach(function (sQualifiedName) {
 		QUnit.test("fetchUI5Type: unsupported type " + sQualifiedName, function (assert) {
 			var sPath = "/EMPLOYEES/0/foo",
 				oSyncPromise;
