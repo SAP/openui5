@@ -390,11 +390,14 @@
 		oBar.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		elementWidth = oSegmentedButton.$().width();
+		// Using native getBoundingClientRect() method because jQuery.width|outerWidth report rounded widths and
+		// the test becomes unstable.
+		elementWidth = oSegmentedButton.getDomRef().getBoundingClientRect().width;
 
 		// Assert
-		strictEqual(oButton1.$().outerWidth() + oButton2.$().outerWidth(),
-				elementWidth, "Control outer width is the same as sum of all buttons width");
+		strictEqual(oButton1.getDomRef().getBoundingClientRect().width +
+					oButton2.getDomRef().getBoundingClientRect().width,
+					elementWidth, "Control outer width is the same as sum of all buttons width");
 
 		// Cleanup
 		oBar.destroy();
@@ -436,42 +439,48 @@
 		oSegmentedButton.destroy();
 
 	});
+	
+	test("Mixed content buttons width calculation when in bar (all buttons should have the same width)", function() {
 
-	if (sap.ui.Device.browser.name == "ie" && (sap.ui.Device.browser.versionStr == "9" || sap.ui.Device.browser.versionStr == "10")) {
-		// TODO: fix this - do not run this tests on IE9 & IE10 because of width reading problem
-	} else {
-		test("Mixed content buttons width calculation when in bar (all buttons should have the same width)", function() {
+		// Arrange
+		var oButton1 = new sap.m.Button({text: "All"}),
+			oButton2 = new sap.m.Button({text: "Text", icon: sap.ui.core.IconPool.getIconURI("attachment")}),
+			oButton3 = new sap.m.Button({text: "Text", icon: sap.ui.core.IconPool.getIconURI("attachment")}),
+			oSegmentedButton = new sap.m.SegmentedButton({
+				buttons: [oButton1, oButton2, oButton3]
+			}),
+			oBar = new sap.m.Bar({contentMiddle: oSegmentedButton}),
+			iButton1Width,
+			iButton2Width,
+			iButton3Width,
+			iControlWidth;
 
-			// Arrange
-			var oButton1 = new sap.m.Button({text: "All"}),
-				oButton2 = new sap.m.Button({text: "Text", icon: sap.ui.core.IconPool.getIconURI("attachment")}),
-				oButton3 = new sap.m.Button({text: "Text", icon: sap.ui.core.IconPool.getIconURI("attachment")}),
-				oSegmentedButton = new sap.m.SegmentedButton({
-					buttons: [oButton1, oButton2, oButton3]
-				}),
-				oBar = new sap.m.Bar({contentMiddle: oSegmentedButton}),
-				sExpectedWidth;
+		// System under Test
+		oBar.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
 
-			// System under Test
-			oBar.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+		// Using native getBoundingClientRect() method because jQuery.width|outerWidth report rounded widths and
+		// the test becomes unstable.
+		iControlWidth = oSegmentedButton.getDomRef().getBoundingClientRect().width;
+		iButton1Width = oButton1.getDomRef().getBoundingClientRect().width;
+		iButton2Width = oButton2.getDomRef().getBoundingClientRect().width;
+		iButton3Width = oButton3.getDomRef().getBoundingClientRect().width;
 
-			// Control width is the first button width
-			sExpectedWidth = Math.abs(oButton1.$().outerWidth());
+		// Assert
+		strictEqual(Math.floor(iButton2Width), Math.floor(iButton1Width), 'Second button width should be equal to the ' +
+				'first button width (mind here we add 1px to the expected result because of the 2 borders of middle' +
+				'buttons)');
 
-			// Assert
-			strictEqual(Math.abs(oButton2.$().outerWidth()), (sExpectedWidth + 1), 'Second button width should be equal to the ' +
-					'first button width (mind here we add 1px to the expected result because of the 2 borders of middle' +
-					'buttons)');
+		strictEqual(Math.floor(iButton3Width), Math.floor(iButton1Width), 'Third button width should be equal to the ' +
+				'first button width');
 
-			strictEqual(Math.abs(oButton3.$().outerWidth()), sExpectedWidth, 'Third button width should be equal to the ' +
-					'first button width');
+		strictEqual(iControlWidth, Math.round(iButton1Width + iButton2Width + iButton3Width), "The sum of all buttons width " +
+				"should be the same as the control width");
 
-			// Cleanup
-			oBar.destroy();
+		// Cleanup
+		oBar.destroy();
 
-		});
-	}
+	});
 
 	test("Initialize with items aggregation", function() {
 
