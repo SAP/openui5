@@ -286,7 +286,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 		// write separator between standard tools and app tools, if required
 		if (bStandardToolPresent && (aToolItems.length > 0)) {
-			rm.write("<hr id='" + sId + "-tp-separator' class='sapUiUx3ShellToolSep'></hr>");
+			rm.write("<hr id='" + sId + "-tp-separator' class='sapUiUx3ShellToolSep'/>");
 		}
 
 		// write app tools
@@ -296,7 +296,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			for (var i = 0; i < aToolItems.length; i++) {
 				var oToolItem = aToolItems[i];
 				if (oToolItem instanceof sap.ui.core.SeparatorItem) { // TODO: not possible
-					rm.write("<hr class='sapUiUx3ShellToolSep'></hr>");
+					rm.write("<hr class='sapUiUx3ShellToolSep'/>");
 				} else {
 					// regular item
 					rm.write("<a id='" + sId + "-tool-" + oToolItem.getId() + "' class='sapUiUx3ShellTool'");

@@ -105,19 +105,19 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/Device
 			html.push("<tr><td><input id='sap-ui-techinfo-showControls' type='checkbox'",
 					bCT ? " checked='checked'" : "",
 					bEmbedded ? "" : " readonly='readonly'",
-					"><span ",
+					"/><span ",
 					bEmbedded ? "" : " style='color:grey'",
-					">Show UIAreas, Controls and Properties</span></input></td></tr>");
+					">Show UIAreas, Controls and Properties</span></td></tr>");
 			html.push("<tr><td><input id='sap-ui-techinfo-showLogViewer' type='checkbox' ",
 					bLV ? " checked='checked'" : "",
 					bEmbedded ? "" : " readonly='readonly' style='color:grey'",
-					"><span ",
+					"/><span ",
 					bEmbedded ? "" : " style='color:grey'",
-					">Show Log Viewer</span></input></td></tr>");
+					">Show Log Viewer</span></td></tr>");
 			html.push("<tr><td><input id='sap-ui-techinfo-useStatistics' type='checkbox' ",
 					bUseStatistics ? " checked='checked'" : "",
-					"><span ",
-					">Enable SAP-statistics for oData calls</span></input></td></tr>");
+					"/><span ",
+					">Enable SAP-statistics for oData calls</span></td></tr>");
 			html.push("<tr><td colspan='2' align='center' valign='bottom' height='40'><button id='sap-ui-techinfo-close' class='sapUiBtn sapUiBtnS sapUiBtnNorm sapUiBtnStd'>Close</button></td></tr>");
 			html.push("</table>");
 			if ( bDC ) {

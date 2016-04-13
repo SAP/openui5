@@ -121,7 +121,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItem
 				labelledby: {value: /*oMenu.getId() + "-label " + */itemId + "-lbl", append: true}
 			});
 		}
-		rm.write("></input></div></div>");
+		rm.write("/></div></div>");
 
 		// Right border
 		rm.write("<div class=\"sapUiMnuItmR\"></div>");
