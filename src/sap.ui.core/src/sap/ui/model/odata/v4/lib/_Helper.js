@@ -95,12 +95,18 @@ sap.ui.define([
 		 */
 		createError : function (jqXHR) {
 			var sBody = jqXHR.responseText,
-				sContentType = jqXHR.getResponseHeader("Content-Type").split(";")[0],
+				sContentType = jqXHR.getResponseHeader("Content-Type"),
 				oResult = new Error(jqXHR.status + " " + jqXHR.statusText);
 
 			oResult.status = jqXHR.status;
 			oResult.statusText = jqXHR.statusText;
-
+			if (jqXHR.status === 0) {
+				oResult.message = "Network error";
+				return oResult;
+			}
+			if (sContentType) {
+				sContentType = sContentType.split(";")[0];
+			}
 			if (jqXHR.status === 412) {
 				oResult.isConcurrentModification = true;
 			}
