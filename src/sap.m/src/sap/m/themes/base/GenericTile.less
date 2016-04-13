@@ -8,7 +8,6 @@
 	border-radius: 0.125rem;
 	border: 1px solid transparent;
 	position: relative;
-	box-sizing: border-box;
 	outline : none;
 }
 
@@ -145,13 +144,13 @@ html[dir=rtl] .sapMGenericTileFtrFldTxt {
 
 /* the max-height is calculated the same as webkit-line-clamping and supported to work when
 the screen size changes between small and large (e.g. mobile devices auto rotation) without rerendering*/
-html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ff'] {
+html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ed'], html[data-sap-ui-browser*='ff'] {
 	.sapMGT.sapMGTHeaderMode .sapMGTHdrContent .sapMTextMaxLine {
 		max-height: 6.25rem !important;
 	}
 }
 
-html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ff'] {
+html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ed'], html[data-sap-ui-browser*='ff'] {
 	.sapMGT:not(.sapMGTHeaderMode) .sapMGTHdrContent .sapMTextMaxLine {
 		max-height: 3.75rem !important;
 	}
@@ -176,13 +175,13 @@ html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ff'] {
 		max-height: 2.125rem;
 	}
 
-	html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ff'] {
+	html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ed'], html[data-sap-ui-browser*='ff'] {
 		.sapMGT.sapMGTHeaderMode > .sapMGTHdrContent .sapMTextMaxLine {
 			max-height: 5.3rem !important;
 		}
 	}
 
-	html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ff'] {
+	html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ed'], html[data-sap-ui-browser*='ff'] {
 		.sapMGT:not(.sapMGTHeaderMode) > .sapMGTHdrContent .sapMTextMaxLine {
 			max-height: 3.125rem !important;
 		}
