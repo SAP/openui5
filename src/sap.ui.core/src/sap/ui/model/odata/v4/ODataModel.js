@@ -68,7 +68,7 @@ sap.ui.define([
 	 *   case data changes in one binding. Must be set to 'None' which means bindings are not
 	 *   synchronized at all; all other values are not supported and lead to an error.
 	 * @param {string} [mParameters.updateGroupId]
-	 *   The group ID that is used for update requests. If no update group ID is specified
+	 *   The group ID that is used for update requests. If no update group ID is specified,
 	 *   <code>mParameters.groupId</code> is used. Valid update group IDs are <code>undefined<code>,
 	 *   '$auto', '$direct' or an application group ID, which is a non-empty string consisting of
 	 *   alphanumeric characters from the basic Latin alphabet, including the underscore.
@@ -483,7 +483,7 @@ sap.ui.define([
 
 	/**
 	 * Returns the group ID that is used for update requests.
-	 * If no update group ID is specified the group ID is used (see {@link #getGroupId}).
+	 * If no update group ID is specified, the group ID is used (see {@link #getGroupId}).
 	 *
 	 * @returns {string}
 	 *   The update group id
