@@ -69,6 +69,22 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings
 	 */
 
 	/**
+	 * Checks whether the text for the given key can be found in the concrete
+	 * resource bundle or not. Neither the custom resource bundles nor the
+	 * fallback chain will be processed.
+	 *
+	 * When requesting the resource bundle asynchronously this check must only be
+	 * used after the resource bundle has been loaded.
+	 *
+	 * @param {string} sKey
+	 * @return {boolean} true if the text has been found in the concrete bundle
+	 *
+	 * @function
+	 * @name jQuery.sap.util.ResourceBundle.prototype.hasText
+	 * @public
+	 */
+
+	/**
 	 * Enhances the resource bundle with a custom resource bundle. The bundle
 	 * can be enhanced with multiple resource bundles. The last enhanced resource
 	 * bundle wins against the previous ones and the original ones. This function
@@ -344,6 +360,11 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings
 		}
 
 		return sValue;
+	};
+
+	// checks the existence of the text in the concrete properties file
+	Bundle.prototype.hasText = function(sKey) {
+		return this.aPropertyFiles.length > 0 && typeof this.aPropertyFiles[0].getProperty(sKey) === "string";
 	};
 
 	/*
