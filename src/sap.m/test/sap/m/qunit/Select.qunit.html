@@ -3971,7 +3971,7 @@
 			oSelect.setSelectedItem(oSelect.getFirstItem());
 
 			// act
-			var oNextItem = oSelect.findNextItemByFirstCharacter("a");
+			var oNextItem = oSelect.searchNextItemByText("a");
 
 			// assert
 			assert.ok(oNextItem === oExpectedItem);
@@ -4007,7 +4007,7 @@
 			oSelect.setSelectedKey("AR");
 
 			// act
-			var oNextItem = oSelect.findNextItemByFirstCharacter("a");
+			var oNextItem = oSelect.searchNextItemByText("a");
 
 			// assert
 			assert.ok(oNextItem === oExpectedItem);
@@ -4043,7 +4043,7 @@
 			oSelect.setSelectedKey("AU");
 
 			// act
-			var oNextItem = oSelect.findNextItemByFirstCharacter("a");
+			var oNextItem = oSelect.searchNextItemByText("a");
 
 			// assert
 			assert.ok(oNextItem === oExpectedItem);
@@ -4085,7 +4085,7 @@
 			oSelect.setSelectedKey("DZ");
 
 			// act
-			var oNextItem = oSelect.findNextItemByFirstCharacter("a");
+			var oNextItem = oSelect.searchNextItemByText("a");
 
 			// assert
 			assert.ok(oNextItem === oExpectedItem);
@@ -4123,7 +4123,7 @@
 			oSelect.setSelectedItem(oSelect.getFirstItem());
 
 			// act
-			var oNextItem = oSelect.findNextItemByFirstCharacter("a");
+			var oNextItem = oSelect.searchNextItemByText("a");
 
 			// assert
 			assert.ok(oNextItem === oExpectedItem);
@@ -4159,7 +4159,7 @@
 			oSelect.setSelectedKey("DZ");
 
 			// act
-			var oNextItem = oSelect.findNextItemByFirstCharacter("b");
+			var oNextItem = oSelect.searchNextItemByText("b");
 
 			// assert
 			assert.ok(oNextItem === null);
@@ -6171,6 +6171,231 @@
 			assert.strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
 			assert.strictEqual(oSelect.getList().getSelectedKey(), "BE");
 			assert.strictEqual(oSelect.$("label").text(), "Belgium");
+
+			// cleanup
+			oSelect.destroy();
+		});
+
+		QUnit.test("it should select Germany", function(assert) {
+
+			// system under test
+			var oExpectedItem;
+			var oSelect = new sap.m.Select({
+				items: [
+					new sap.ui.core.Item({
+						text: "Argentina"
+					}),
+					oExpectedItem = new sap.ui.core.Item({
+						text: "Germany"
+					}),
+					new sap.ui.core.Item({
+						text: "Ghana"
+					})
+				]
+			});
+
+			// arrange
+			oSelect.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oSelect.focus();
+
+			// act
+			sap.ui.test.qunit.triggerKeypress(oSelect.getDomRef(), "G");
+			sap.ui.test.qunit.triggerKeypress(oSelect.getDomRef(), "E");
+
+			// assert
+			assert.ok(oSelect.getSelectedItem() === oExpectedItem);
+
+			// cleanup
+			oSelect.destroy();
+		});
+
+		QUnit.test("it should select Gglorem", function(assert) {
+
+			// system under test
+			var oExpectedItem;
+			var oSelect = new sap.m.Select({
+				items: [
+					new sap.ui.core.Item({
+						text: "Argentina"
+					}),
+					new sap.ui.core.Item({
+						key: "GER",
+						text: "Germany"
+					}),
+					oExpectedItem = new sap.ui.core.Item({
+						text: "Gglorem"
+					})
+				],
+				selectedKey: "GER"
+			});
+
+			// arrange
+			oSelect.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oSelect.focus();
+
+			// act
+			sap.ui.test.qunit.triggerKeypress(oSelect.getDomRef(), "G");
+			sap.ui.test.qunit.triggerKeypress(oSelect.getDomRef(), "G");
+
+			// assert
+			assert.ok(oSelect.getSelectedItem() === oExpectedItem);
+
+			// cleanup
+			oSelect.destroy();
+		});
+
+		QUnit.test("it should select Ghana", function(assert) {
+
+			// system under test
+			var oExpectedItem;
+			var oSelect = new sap.m.Select({
+				items: [
+					new sap.ui.core.Item({
+						text: "Argentina"
+					}),
+					new sap.ui.core.Item({
+						text: "Germany"
+					}),
+					oExpectedItem = new sap.ui.core.Item({
+						text: "Ghana"
+					})
+				]
+			});
+
+			// arrange
+			oSelect.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oSelect.focus();
+
+			// act
+			sap.ui.test.qunit.triggerKeypress(oSelect.getDomRef(), "G");
+			this.clock.tick(3000);
+			sap.ui.test.qunit.triggerKeypress(oSelect.getDomRef(), "G");
+
+			// assert
+			assert.ok(oSelect.getSelectedItem() === oExpectedItem);
+
+			// cleanup
+			oSelect.destroy();
+		});
+
+		QUnit.test("it should select Greece", function(assert) {
+
+			// system under test
+			var oExpectedItem;
+			var oSelect = new sap.m.Select({
+				items: [
+					new sap.ui.core.Item({
+						text: "Argentina"
+					}),
+					new sap.ui.core.Item({
+						text: "Germany"
+					}),
+					new sap.ui.core.Item({
+						text: "Ghana"
+					}),
+					oExpectedItem = new sap.ui.core.Item({
+						text: "Greece"
+					})
+				]
+			});
+
+			// arrange
+			oSelect.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oSelect.focus();
+
+			// act
+			sap.ui.test.qunit.triggerKeypress(oSelect.getDomRef(), "G");
+			sap.ui.test.qunit.triggerKeypress(oSelect.getDomRef(), "G");
+			sap.ui.test.qunit.triggerKeypress(oSelect.getDomRef(), "G");
+
+			// assert
+			assert.ok(oSelect.getSelectedItem() === oExpectedItem);
+
+			// cleanup
+			oSelect.destroy();
+		});
+
+		QUnit.test("it should select Gglorem", function(assert) {
+
+			// system under test
+			var oExpectedItem;
+			var oSelect = new sap.m.Select({
+				items: [
+					new sap.ui.core.Item({
+						text: "Argentina"
+					}),
+					new sap.ui.core.Item({
+						text: "Germany"
+					}),
+					oExpectedItem = new sap.ui.core.Item({
+						text: "Gglorem"
+					}),
+					new sap.ui.core.Item({
+						text: "Ghana"
+					}),
+					new sap.ui.core.Item({
+						text: "Greece"
+					})
+				]
+			});
+
+			// arrange
+			oSelect.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oSelect.focus();
+
+			// act
+			sap.ui.test.qunit.triggerKeypress(oSelect.getDomRef(), "G");
+			sap.ui.test.qunit.triggerKeypress(oSelect.getDomRef(), "G");
+
+			// assert
+			assert.ok(oSelect.getSelectedItem() === oExpectedItem);
+
+			// cleanup
+			oSelect.destroy();
+		});
+
+		QUnit.test("it should select Greece", function(assert) {
+
+			// system under test
+			var oExpectedItem;
+			var oSelect = new sap.m.Select({
+				items: [
+					new sap.ui.core.Item({
+						text: "Argentina"
+					}),
+					new sap.ui.core.Item({
+						text: "Germany"
+					}),
+					new sap.ui.core.Item({
+						key: "gg",
+						text: "Gglorem"
+					}),
+					new sap.ui.core.Item({
+						text: "Ghana"
+					}),
+					oExpectedItem = new sap.ui.core.Item({
+						text: "Greece"
+					})
+				],
+				selectedKey: "gg"
+			});
+
+			// arrange
+			oSelect.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oSelect.focus();
+
+			// act
+			sap.ui.test.qunit.triggerKeypress(oSelect.getDomRef(), "G");
+			sap.ui.test.qunit.triggerKeypress(oSelect.getDomRef(), "G");
+
+			// assert
+			assert.ok(oSelect.getSelectedItem() === oExpectedItem);
 
 			// cleanup
 			oSelect.destroy();
