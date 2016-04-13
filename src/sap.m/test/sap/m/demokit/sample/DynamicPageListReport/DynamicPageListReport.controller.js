@@ -70,7 +70,7 @@ sap.ui.define([
 
 			return this.aFilters;
 		},
-		getFilterCriterias : function (aCurrentFilterValues){
+		getFilterCriteria : function (aCurrentFilterValues){
 			return this.aKeys.filter(function (el, i) {
 				if (aCurrentFilterValues[i] !== "") return  el;
 			});

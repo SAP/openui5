@@ -4,9 +4,18 @@
 	position: relative;
 }
 
+.sapMDynamicPageFixedContent {
+	.sapMDynamicPageContent {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+	}
+}
+
 .sapMDynamicPageContent {
 	padding-top: 1rem;
-	background: @sapUiGroupContentBackground;
 }
 
 .sapMDynamicPageFooterSpacer {
@@ -49,6 +58,7 @@
 	overflow-y: auto;
 	will-change: transform;
 	-webkit-overflow-scrolling: touch;
+	background: @sapUiGroupContentBackground;
 }
 
 .sapMDynamicPageSupressScroll {
@@ -103,6 +113,16 @@
 			margin-left: 0.5rem;
 			margin-right: 0.5rem;
 			margin-bottom: 0.5rem;
+		}
+	}
+
+	&.sapMDynamicPageFixedContent {
+		.sapMDynamicPageFooter {
+			position: relative;
+
+			.sapMDynamicPageActualFooterControl {
+				bottom: 3rem;
+			}
 		}
 	}
 }
