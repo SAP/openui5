@@ -371,7 +371,7 @@ sap.ui.require([
 			fnOnRejected = function () {},
 			oSyncPromise = _SyncPromise.resolve();
 
-		this.mock(oSyncPromise).expects("then")
+		this.oSandbox.mock(oSyncPromise).expects("then")
 			.withExactArgs(undefined, fnOnRejected)
 			.returns(oNewPromise);
 
@@ -405,7 +405,7 @@ sap.ui.require([
 		fnGet = _SyncPromise.createGetMethod("fetch");
 
 		assert.strictEqual(fnGet.apply(oContext, aArguments), oResult);
-		this.mock(oSyncPromise).expects("isFulfilled").returns(false);
+		this.oSandbox.mock(oSyncPromise).expects("isFulfilled").returns(false);
 		assert.strictEqual(fnGet.apply(oContext, aArguments), undefined);
 	});
 
@@ -422,7 +422,7 @@ sap.ui.require([
 				}
 			},
 			fnGet,
-			oSyncPromiseMock = this.mock(oSyncPromise);
+			oSyncPromiseMock = this.oSandbox.mock(oSyncPromise);
 
 		// code under test
 		fnGet = _SyncPromise.createGetMethod("fetch", true);
@@ -439,7 +439,7 @@ sap.ui.require([
 
 		// verify and restore
 		oSyncPromiseMock.verify();
-		oSyncPromiseMock = this.mock(oSyncPromise);
+		oSyncPromiseMock = this.oSandbox.mock(oSyncPromise);
 
 		// rejected
 		oSyncPromiseMock.expects("isFulfilled").returns(false);
@@ -463,7 +463,7 @@ sap.ui.require([
 			},
 			fnRequest;
 
-		this.mock(Promise).expects("resolve").withExactArgs(oSyncPromise).returns(oResult);
+		this.oSandbox.mock(Promise).expects("resolve").withExactArgs(oSyncPromise).returns(oResult);
 
 		// code under test
 		fnRequest = _SyncPromise.createRequestMethod("fetch");

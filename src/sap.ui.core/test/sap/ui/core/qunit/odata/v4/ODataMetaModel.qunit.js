@@ -428,7 +428,8 @@ sap.ui.require([
 			oPromise = Promise.resolve({/*mScope*/}),
 			oSyncPromise;
 
-		this.mock(oMetadataRequestor).expects("read").withExactArgs(sUrl).returns(oPromise);
+		this.oSandbox.mock(oMetadataRequestor).expects("read").withExactArgs(sUrl)
+			.returns(oPromise);
 
 		// code under test
 		oSyncPromise = oMetaModel.fetchEntityContainer();
@@ -645,7 +646,7 @@ sap.ui.require([
 		QUnit.test("fetchObject: " + sPath, function (assert) {
 			var oSyncPromise;
 
-			this.mock(this.oMetaModel).expects("fetchEntityContainer")
+			this.oSandbox.mock(this.oMetaModel).expects("fetchEntityContainer")
 				.returns(SyncPromise.resolve(mScope));
 
 			oSyncPromise = this.oMetaModel.fetchObject(sPath);
@@ -696,7 +697,7 @@ sap.ui.require([
 		QUnit.test("fetchObject: " + sPath + " --> undefined", function (assert) {
 			var oSyncPromise;
 
-			this.mock(this.oMetaModel).expects("fetchEntityContainer")
+			this.oSandbox.mock(this.oMetaModel).expects("fetchEntityContainer")
 				.returns(SyncPromise.resolve(mScope));
 
 			oSyncPromise = this.oMetaModel.fetchObject(sPath);
@@ -725,7 +726,7 @@ sap.ui.require([
 		QUnit.test("fetchObject returns {} (anonymous empty object): " + sPath, function (assert) {
 			var oSyncPromise;
 
-			this.mock(this.oMetaModel).expects("fetchEntityContainer")
+			this.oSandbox.mock(this.oMetaModel).expects("fetchEntityContainer")
 				.returns(SyncPromise.resolve(mScope));
 
 			oSyncPromise = this.oMetaModel.fetchObject(sPath);
@@ -786,7 +787,7 @@ sap.ui.require([
 			QUnit.test("fetchObject fails: " + sPath + ", warn = " + bWarn, function (assert) {
 				var oSyncPromise;
 
-				this.mock(this.oMetaModel).expects("fetchEntityContainer")
+				this.oSandbox.mock(this.oMetaModel).expects("fetchEntityContainer")
 					.returns(SyncPromise.resolve(mScope));
 				this.oLogMock.expects("isLoggable")
 					.withExactArgs(jQuery.sap.log.Level.WARNING).returns(bWarn);
@@ -815,7 +816,7 @@ sap.ui.require([
 			QUnit.test("fetchObject fails: " + sPath + ", debug = " + bDebug, function (assert) {
 				var oSyncPromise;
 
-				this.mock(this.oMetaModel).expects("fetchEntityContainer")
+				this.oSandbox.mock(this.oMetaModel).expects("fetchEntityContainer")
 					.returns(SyncPromise.resolve(mScope));
 				this.oLogMock.expects("isLoggable")
 					.withExactArgs(jQuery.sap.log.Level.DEBUG).returns(bDebug);
@@ -1003,7 +1004,7 @@ sap.ui.require([
 					}
 				};
 
-			this.mock(this.oMetaModel).expects("fetchEntityContainer")
+			this.oSandbox.mock(this.oMetaModel).expects("fetchEntityContainer")
 				.returns(SyncPromise.resolve(mScope));
 			this.oSandbox.stub(_ODataHelper, "getKeyPredicate",
 				function (oEntityType0, oInstance0) {
@@ -1042,7 +1043,7 @@ sap.ui.require([
 					}
 				};
 
-			this.mock(this.oMetaModel).expects("fetchEntityContainer")
+			this.oSandbox.mock(this.oMetaModel).expects("fetchEntityContainer")
 				.returns(SyncPromise.resolve(mScope));
 			this.oSandbox.mock(_ODataHelper).expects("getKeyPredicate").never();
 
@@ -1067,7 +1068,7 @@ sap.ui.require([
 			sPath = "foo",
 			oValue = {};
 
-		this.mock(this.oMetaModel).expects("getProperty").withExactArgs(sPath, oContext)
+		this.oSandbox.mock(this.oMetaModel).expects("getProperty").withExactArgs(sPath, oContext)
 			.returns(oValue);
 
 		// code under test
@@ -1179,7 +1180,7 @@ sap.ui.require([
 			sPath = "",
 			aSorters = [];
 
-		this.mock(oMetaModel).expects("_getObject")
+		this.oSandbox.mock(oMetaModel).expects("_getObject")
 			.withExactArgs(sPath, oContext)
 			.returns({
 				"ID" : {/*...*/},
@@ -1217,7 +1218,7 @@ sap.ui.require([
 
 		// further tests regarding the getter provided to FilterProcessor.apply()
 		fnGetValue = fnApply.args[0][2];
-		this.mock(this.oMetaModel).expects("getProperty")
+		this.oSandbox.mock(this.oMetaModel).expects("getProperty")
 			.withExactArgs("fooPath", oBinding.oList[aIndices[0]])
 			.returns("foo");
 
@@ -1305,7 +1306,7 @@ sap.ui.require([
 				oObject,
 				sPathIntoObject = oFixture.pathIntoObject || oFixture.metaPath;
 
-			this.mock(this.oMetaModel).expects("fetchEntityContainer")
+			this.oSandbox.mock(this.oMetaModel).expects("fetchEntityContainer")
 				.returns(SyncPromise.resolve(mScope));
 
 			// code under test

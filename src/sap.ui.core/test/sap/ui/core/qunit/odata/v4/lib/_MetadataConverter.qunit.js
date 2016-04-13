@@ -198,7 +198,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("resolveAliasInPath", function (assert) {
 		var oAggregate = {},
-			oMock = this.mock(_MetadataConverter);
+			oMock = this.oSandbox.mock(_MetadataConverter);
 
 			function test(sPath, sExpected) {
 				assert.strictEqual(_MetadataConverter.resolveAliasInPath(sPath, oAggregate),
@@ -684,7 +684,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: TypeDefinition", function (assert) {
-		this.mock(_MetadataConverter).expects("processFacetAttributes")
+		this.oSandbox.mock(_MetadataConverter).expects("processFacetAttributes")
 			.withExactArgs(
 				sinon.match.has("localName", "TypeDefinition"),
 				{
