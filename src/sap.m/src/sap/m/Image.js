@@ -211,6 +211,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 		// if src is empty or there's no image existing, just stop
 		if (!sSrc || this._iLoadImageDensity === 1) {
+			// remove the "sapMNoImg" in order to show the alt text
+			$DomNode.removeClass("sapMNoImg");
 			return;
 		}
 
