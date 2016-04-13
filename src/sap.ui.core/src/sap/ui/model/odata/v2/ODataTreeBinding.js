@@ -1802,6 +1802,11 @@ sap.ui.define(['jquery.sap.global',
 			// exception: the binding runs in operation-mode "Client"
 			// In this case there is no need for the advanced auto expand, since everything is loaded anyway.
 			if (this.oTreeProperties[sMagnitudeAnnotation] && !this.bClientOperation) {
+				// make sure the magnitude is added to the $select if it was not added by the application anyway
+				if (this.mParameters && this.mParameters.select && this.mParameters.select.indexOf(this.oTreeProperties[sMagnitudeAnnotation]) == -1) {
+					this.mParameters.select += ("," + this.oTreeProperties[sMagnitudeAnnotation]);
+					this.sCustomParams = this.oModel.createCustomParams(this.mParameters);
+				}
 				jQuery.sap.require("sap.ui.model.odata.ODataTreeBindingAutoExpand");
 				var ODataTreeBindingAutoExpand = sap.ui.model.odata.ODataTreeBindingAutoExpand;
 				ODataTreeBindingAutoExpand.apply(this);
