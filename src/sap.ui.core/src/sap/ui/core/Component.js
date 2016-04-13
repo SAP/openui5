@@ -1702,18 +1702,82 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 						promises.push(oPromise);
 					}
 				},
+				collectAfterModelPreload = function(fnCreatePromise) {
+					if (oManifest && mOptions.createModels && jQuery.sap.getUriParameters().get("sap-ui-xx-preload-component-models-first") === "true") {
+						collect(oManifest.then(fnCreatePromise));
+					} else {
+						collect(fnCreatePromise());
+					}
+				},
 				identity = function($) { return $; };
+
+			if (oManifest && mOptions.createModels) {
+				collect(oManifest.then(function(oManifest) {
+
+					// deep clone is needed as the mainfest only returns a read-only copy (freezed object)
+					var oManifestDataSources = jQuery.extend(true, {}, oManifest.getEntry("/sap.app/dataSources"));
+					var oManifestModels = jQuery.extend(true, {}, oManifest.getEntry("/sap.ui5/models"));
+
+					var mAllModelConfigurations = Component._createManifestModelConfigurations({
+						models: oManifestModels,
+						dataSources: oManifestDataSources,
+						manifest: oManifest,
+						componentData: oConfig.componentData
+					});
+
+					if (mAllModelConfigurations) {
+
+						// Read internal URI parameter to enable model preload for testing purposes
+						// Specify comma separated list of model names. Use an empty segment for the "default" model
+						// Examples:
+						//   sap-ui-xx-preload-component-models-<componentName>=, => prelaod default model (empty string key)
+						//   sap-ui-xx-preload-component-models-<componentName>=foo, => prelaod "foo" + default model (empty string key)
+						//   sap-ui-xx-preload-component-models-<componentName>=foo,bar => prelaod "foo" + "bar" models
+						var sPreloadModels = jQuery.sap.getUriParameters().get("sap-ui-xx-preload-component-models-" + oManifest.getComponentName());
+						var aPreloadModels = sPreloadModels && sPreloadModels.split(",");
+
+						var mModelConfigurations = {};
+						for (var sModelName in mAllModelConfigurations) {
+							var mModelConfig = mAllModelConfigurations[sModelName];
+
+							// activate "preload" flag in case URI parameter for testing is used (see code above)
+							if (!mModelConfig.preload && aPreloadModels && aPreloadModels.indexOf(sModelName) > -1 ) {
+								mModelConfig.preload = true;
+								jQuery.sap.log.warning("FOR TESTING ONLY!!! Activating preload for model \"" + sModelName + "\" (" + mModelConfig.type + ")",
+									oManifest.getComponentName(), "sap.ui.core.Component");
+							}
+
+							// Only create models:
+							//   - which are flagged for preload (mModelConfig.preload) or activated via internal URI param (see above)
+							//   - in case the model class is already loaded
+							if (mModelConfig.preload && jQuery.sap.isDeclared(mModelConfig.type, true)) {
+								mModelConfigurations[sModelName] = mModelConfig;
+							}
+
+						}
+						if (Object.keys(mModelConfigurations).length > 0) {
+							mModels = Component._createManifestModels(mModelConfigurations, oManifest.getComponentName());
+						}
+					}
+
+					return oManifest;
+				}));
+			}
 
 			// load any required preload bundles
 			if ( hints.preloadBundles ) {
 				jQuery.each(hints.preloadBundles, function(i, vBundle) {
-					collect(jQuery.sap._loadJSResourceAsync(processOptions(vBundle, /* ignoreLazy */ true), /* ignoreErrors */ true));
+					collectAfterModelPreload(function() {
+						return jQuery.sap._loadJSResourceAsync(processOptions(vBundle, /* ignoreLazy */ true), /* ignoreErrors */ true);
+					});
 				});
 			}
 
 			// preload required libraries
 			if ( hints.libs ) {
-				collect(sap.ui.getCore().loadLibraries( hints.libs.map(processOptions).filter(identity) ));
+				collectAfterModelPreload(function() {
+					return sap.ui.getCore().loadLibraries( hints.libs.map(processOptions).filter(identity) );
+				});
 			}
 
 			// preload the component itself
@@ -1739,66 +1803,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 					// preload the component
 					return preload(sComponentName, true);
 				}));
-
-				if (mOptions.createModels) {
-					collect(oManifest.then(function(oManifest) {
-
-						// deep clone is needed as the mainfest only returns a read-only copy (freezed object)
-						var oManifestDataSources = jQuery.extend(true, {}, oManifest.getEntry("/sap.app/dataSources"));
-						var oManifestModels = jQuery.extend(true, {}, oManifest.getEntry("/sap.ui5/models"));
-
-						var mAllModelConfigurations = Component._createManifestModelConfigurations({
-							models: oManifestModels,
-							dataSources: oManifestDataSources,
-							manifest: oManifest,
-							componentData: oConfig.componentData
-						});
-
-						if (mAllModelConfigurations) {
-
-							// Read internal URI parameter to enable model preload for testing purposes
-							// Specify comma separated list of model names. Use an empty segment for the "default" model
-							// Examples:
-							//   sap-ui-xx-preload-component-models-<componentName>=, => prelaod default model (empty string key)
-							//   sap-ui-xx-preload-component-models-<componentName>=foo, => prelaod "foo" + default model (empty string key)
-							//   sap-ui-xx-preload-component-models-<componentName>=foo,bar => prelaod "foo" + "bar" models
-							var sPreloadModels = jQuery.sap.getUriParameters().get("sap-ui-xx-preload-component-models-" + oManifest.getComponentName());
-							var aPreloadModels = sPreloadModels && sPreloadModels.split(",");
-
-							var mModelConfigurations = {};
-							for (var sModelName in mAllModelConfigurations) {
-								var mModelConfig = mAllModelConfigurations[sModelName];
-
-								// activate "preload" flag in case URI parameter for testing is used (see code above)
-								if (!mModelConfig.preload && aPreloadModels && aPreloadModels.indexOf(sModelName) > -1 ) {
-									mModelConfig.preload = true;
-									jQuery.sap.log.warning("FOR TESTING ONLY!!! Activating preload for model \"" + sModelName + "\" (" + mModelConfig.type + ")",
-										oManifest.getComponentName(), "sap.ui.core.Component");
-								}
-
-								// Only create models:
-								//   - which are flagged for preload (mModelConfig.preload) or activated via internal URI param (see above)
-								//   - in case the model class is already loaded
-								if (mModelConfig.preload && jQuery.sap.isDeclared(mModelConfig.type, true)) {
-									mModelConfigurations[sModelName] = mModelConfig;
-								}
-
-							}
-							if (Object.keys(mModelConfigurations).length > 0) {
-								mModels = Component._createManifestModels(mModelConfigurations, oManifest.getComponentName());
-							}
-						}
-
-						return oManifest;
-					}));
-				}
-
 			}
 
 			// if a hint about "used" components is given, preload those components
 			if ( hints.components ) {
 				jQuery.each(hints.components, function(i, vComp) {
-					collect(preload(processOptions(vComp), true));
+					collectAfterModelPreload(function() {
+						return preload(processOptions(vComp), true);
+					});
 				});
 			}
 
