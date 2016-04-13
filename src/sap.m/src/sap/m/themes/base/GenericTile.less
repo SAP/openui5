@@ -66,10 +66,6 @@
 	line-height: 1.25rem;
 }
 
-.sapMGT.sapMGTHeaderMode .sapMGTHdrTxt:nth-last-of-type(2) {
-	max-height: 5rem; /* this is needed for non-webkit browsers that don't support line-clamping */
-}
-
 .sapMGTHdrContent {
 	height: 3.625rem;
 	margin-top: 1rem;
@@ -136,6 +132,32 @@ html[dir=rtl] .sapMGenericTileFtrFldTxt {
 	vertical-align: bottom;
 }
 
+/* the following is needed for non-webkit browsers that don't support line-clamping */
+
+/* some places should be left for subheader when the subheader exists*/
+.sapMGT.sapMGTHeaderMode .sapMGTHdrTxt:nth-last-of-type(2) {
+	max-height: 5rem;
+}
+
+.sapMGT:not(.sapMGTHeaderMode) .sapMGTHdrTxt:nth-last-of-type(2) {
+	max-height: 2.5rem;
+}
+
+/* the max-height is calculated the same as webkit-line-clamping and supported to work when
+the screen size changes between small and large (e.g. mobile devices auto rotation) without rerendering*/
+html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ff'] {
+	.sapMGT.sapMGTHeaderMode .sapMGTHdrContent .sapMTextMaxLine {
+		max-height: 6.25rem !important;
+	}
+}
+
+html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ff'] {
+	.sapMGT:not(.sapMGTHeaderMode) .sapMGTHdrContent .sapMTextMaxLine {
+		max-height: 3.75rem !important;
+	}
+}
+
+
 /* BREAKPOINT FOR SMALL PHONES */
 @media screen and (max-width: 374px) {
 	.sapMGTHdrTxt .sapMText {
@@ -147,7 +169,23 @@ html[dir=rtl] .sapMGenericTileFtrFldTxt {
 	}
 
 	.sapMGT.sapMGTHeaderMode .sapMGTHdrTxt:nth-last-of-type(2) {
-		max-height: 4.25rem; /* this is needed for non-webkit browsers that don't support line-clamping */
+		max-height: 4.25rem;
+	}
+
+	.sapMGT:not(.sapMGTHeaderMode) .sapMGTHdrTxt:nth-last-of-type(2) {
+		max-height: 2.125rem;
+	}
+
+	html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ff'] {
+		.sapMGT.sapMGTHeaderMode > .sapMGTHdrContent .sapMTextMaxLine {
+			max-height: 5.3rem !important;
+		}
+	}
+
+	html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ff'] {
+		.sapMGT:not(.sapMGTHeaderMode) > .sapMGTHdrContent .sapMTextMaxLine {
+			max-height: 3.125rem !important;
+		}
 	}
 
 	.sapMGT.OneByOne {
