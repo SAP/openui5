@@ -986,7 +986,8 @@ sap.ui.define([
 	 *   The context to be used as a starting point in case of a relative path
 	 * @returns {string}
 	 *   Resolved path or <code>undefined</code>
-	 * @throws Error if relative path starts with a dot which is not followed by a forward slash
+	 * @throws {Error}
+	 *   If relative path starts with a dot which is not followed by a forward slash
 	 *
 	 * @private
 	 * @see sap.ui.model.Model#resolve

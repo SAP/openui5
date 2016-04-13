@@ -56,7 +56,8 @@ sap.ui.define([
 	 *   if not specified, the model's update group ID is used,
 	 *   see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
 	 *   For valid values, see parameter "$$groupId".
-	 * @throws {Error} When disallowed binding parameters are provided
+	 * @throws {Error}
+	 *   If disallowed binding parameters are provided
 	 *
 	 * @alias sap.ui.model.odata.v4.ODataListBinding
 	 * @author SAP SE
@@ -204,7 +205,7 @@ sap.ui.define([
 	 *   The array of already created contexts with the first entry containing the context for
 	 *   <code>iStart</code>
 	 * @throws {Error}
-	 *   When <code>iThreshold</code> is given
+	 *   If <code>iThreshold</code> is given
 	 *
 	 * @protected
 	 * @see sap.ui.model.ListBinding#getContexts
@@ -465,7 +466,7 @@ sap.ui.define([
 	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
 	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 * @throws {Error}
-	 *   When the given group ID is invalid or refresh on this binding is not supported.
+	 *   If the given group ID is invalid or refresh on this binding is not supported.
 	 *
 	 * @public
 	 * @see sap.ui.model.Binding#refresh
