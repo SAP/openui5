@@ -163,7 +163,11 @@ sap.ui.define([
 		var aCallbacks = this.mCallbacksByGroupId[sGroupId],
 			oPromise;
 
-		oPromise = this.oRequestor.submitBatch(sGroupId);
+		oPromise = this.oRequestor.submitBatch(sGroupId)
+			["catch"](function (oError) {
+				jQuery.sap.log.error("$batch failed", oError.message, sClassName);
+				throw oError;
+			});
 		if (aCallbacks) {
 			delete this.mCallbacksByGroupId[sGroupId];
 			aCallbacks.forEach(function (fnCallback) {
