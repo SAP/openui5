@@ -289,7 +289,6 @@ QUnit.test("Setting of 'hidden' property on FileUploader instances", function(as
 	assert.deepEqual(this.oUploadCollection._oHeaderToolbar.getContent()[2], oFileUploader3, "oFileUploader3 should be on the fifth position in the toolbar");
 });
 
-
 QUnit.test("Positions of the FileUploader instances in the toolbar", function(assert) {
 	var oFileUploader1 = this.oUploadCollection._oFileUploader; // take the current FU instance
 	oFileUploader1.fireChange({
@@ -307,6 +306,11 @@ QUnit.test("Positions of the FileUploader instances in the toolbar", function(as
 	assert.deepEqual(this.oUploadCollection._oHeaderToolbar.getContent()[4], oFileUploader1, "oFileUploader1 should be on the third position in the toolbar");
 	assert.deepEqual(this.oUploadCollection._oHeaderToolbar.getContent()[3], oFileUploader2, "oFileUploader2 should be on the fourth position in the toolbar");
 	assert.deepEqual(this.oUploadCollection._oHeaderToolbar.getContent()[2], oFileUploader3, "oFileUploader3 should be on the fifth position in the toolbar");
+});
+
+QUnit.test("Set tooltip of FileUploader", function(assert) {
+	var sText = this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_ADD");
+	assert.strictEqual(this.oUploadCollection._oFileUploader.getTooltip(), sText, "Correct tooltip of FileUploader");
 });
 
 QUnit.module("PendingUpload",  {

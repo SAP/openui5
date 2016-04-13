@@ -2173,6 +2173,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			this._iFUCounter = this._iFUCounter + 1; // counter for FileUploader instances
 			this._oFileUploader = new sap.ui.unified.FileUploader(this.getId() + "-" + this._iFUCounter + "-uploader",{
 				buttonOnly : true,
+				buttonText: " ", // Suppresses title of the button in FileUploader
+				tooltip: this.getInstantUpload() ? this._oRb.getText("UPLOADCOLLECTION_UPLOAD") : this._oRb.getText("UPLOADCOLLECTION_ADD"),
 				iconOnly : true,
 				enabled : this.getUploadEnabled(),
 				fileType : this.getFileType(),
@@ -2216,10 +2218,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 					that._onUploadStart(oEvent);
 				}
 			});
-			var sTooltip = this._oFileUploader.getTooltip();
-			if (!sTooltip && !sap.ui.Device.browser.msie) {
-				this._oFileUploader.setTooltip(" ");
-			}
 		}
 		return this._oFileUploader;
 	};
