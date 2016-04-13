@@ -3,8 +3,8 @@
  */
 
 // Provides helper sap.ui.table.TableAccExtension.
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExtension'],
-	function(jQuery, BaseObject, TableAccRenderExtension) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExtension', './TableUtils'],
+	function(jQuery, BaseObject, TableAccRenderExtension, TableUtils) {
 	"use strict";
 
 	/*
@@ -128,7 +128,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 		 */
 		getInfoOfFocusedCell : function(oExtension) {
 			var oTable = oExtension.getTable();
-			var oIN = oTable._oItemNavigation;
+			var oIN = oTable._getItemNavigation();
 			var oTableRef = oTable.getDomRef();
 
 			if (!oExtension.getAccMode() || !oTableRef || !oIN) {
@@ -161,27 +161,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 		},
 
 		/*
-		 * Returns whether the table has a row header or not
-		 */
-		hasRowHeader : function(oTable) {
-			return oTable.getSelectionMode() !== sap.ui.table.SelectionMode.None
-					&& oTable.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly;
-		},
-
-		/*
 		 * Returns the index of the column of the current focused cell
 		 */
 		getColumnIndexOfFocusedCell : function(oTable) {
-			var oIN = oTable._oItemNavigation;
-			return (oIN.iFocusedIndex % oIN.iColumns) - (TableHelper.hasRowHeader(oTable) ? 1 : 0);
+			var oInfo = TableUtils.getFocusedItemInfo(oTable);
+			return oInfo.cellInRow - (TableUtils.hasRowHeader(oTable) ? 1 : 0);
 		},
 
 		/*
 		 * Returns the index of the row (in the rows aggregation) of the current focused cell
 		 */
 		getRowIndexOfFocusedCell : function(oTable) {
-			var oIN = oTable._oItemNavigation;
-			return Math.floor(oIN.iFocusedIndex / oIN.iColumns) - oTable._getHeaderRowCount();
+			var oInfo = TableUtils.getFocusedItemInfo(oTable);
+			return Math.floor(oInfo.cell / oInfo.columnCount) - oTable._getHeaderRowCount();
 		},
 
 		/*
@@ -202,13 +194,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 		 */
 		getVisibleRowCount : function(oTable) {
 			return oTable.getVisibleRowCount();
-		},
-
-		/*
-		 * Returns the number of currently visible columns
-		 */
-		getVisibleColumnCount : function(oTable) {
-			return oTable._getVisibleColumnCount();
 		},
 
 		/*
@@ -282,7 +267,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 		 */
 		updateRowColCount : function(oExtension) {
 			var oTable = oExtension.getTable(),
-				oIN = oTable._oItemNavigation,
+				oIN = oTable._getItemNavigation(),
 				bIsRowChanged = false,
 				bIsColChanged = false,
 				bIsInitial = false;
@@ -290,7 +275,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 			if (oIN) {
 				var iColumnNumber = TableHelper.getColumnIndexOfFocusedCell(oTable) + 1; //+1 -> we want to announce a count and not the index
 				var iRowNumber = TableHelper.getRowIndexOfFocusedCell(oTable) + oTable.getFirstVisibleRow() + 1; //same here + take virtualization into account
-				var iColCount = TableHelper.getVisibleColumnCount(oTable);
+				var iColCount = TableUtils.getVisibleColumnCount(oTable);
 				var iRowCount = TableHelper.getTotalRowCount(oTable, true);
 
 				bIsRowChanged = oExtension._iLastRowNumber != iRowNumber || (oExtension._iLastRowNumber == iRowNumber && oExtension._iLastColumnNumber == iColumnNumber);
@@ -374,7 +359,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 		modifyAccOfDATACELL : function($Cell, bOnCellFocus) {
 			var oTable = this.getTable(),
 				sTableId = oTable.getId(),
-				oIN = oTable._oItemNavigation;
+				oIN = oTable._getItemNavigation();
 
 			if (!oIN) {
 				return;
@@ -761,7 +746,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 
 		/*
 		 * Delegate function for focusin event
-		 * @see Table._initItemNavigation and Table._destroyItemNavigation
+		 * @see TableKeyboardExtension#initItemNavigation and TableKeyboardExtension#destroyItemNavigation
 		 * @public (Part of the API for Table control only!)
 		 */
 		onfocusin : function(oEvent) {
@@ -778,7 +763,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 
 		/*
 		 * Delegate function for focusout event
-		 * @see Table._initItemNavigation and Table._destroyItemNavigation
+		 * @see TableKeyboardExtension#initItemNavigation and TableKeyboardExtension#destroyItemNavigation
 		 * @public (Part of the API for Table control only!)
 		 */
 		onfocusout: function(oEvent) {
@@ -865,7 +850,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 	 * @public (Part of the API for Table control only!)
 	 */
 	TableAccExtension.prototype.updateAccForCurrentCell = function(bOnCellFocus) {
-		if (!this._accMode || !this.getTable()._oItemNavigation) {
+		if (!this._accMode || !this.getTable()._getItemNavigation()) {
 			return;
 		}
 
