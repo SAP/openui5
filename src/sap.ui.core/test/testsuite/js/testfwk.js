@@ -76,7 +76,7 @@ sap.ui.testfwk.TestFWK.JQUERY_VERSIONS = {
 	"1.10.1" : "jQuery 1.10.1",
 	"1.10.2" : "jQuery 1.10.2",
 	"1.11.1" : "jQuery 1.11.1",
-	"2.2.2" : "jQuery 2.2.2"
+	"2.2.3" : "jQuery 2.2.3"
 };
 
 // the themes supported by each library

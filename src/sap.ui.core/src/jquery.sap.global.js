@@ -226,8 +226,8 @@
 	// -----------------------------------------------------------------------
 
 	var oJQVersion = Version(jQuery.fn.jquery);
-	if ( !oJQVersion.inRange("1.7.0", "2.2.3") ) {
-		_earlyLog("error", "SAPUI5 requires a jQuery version of 1.7 or higher, but lower than 2.2.3; current version is " + jQuery.fn.jquery);
+	if ( !oJQVersion.inRange("1.7.0", "2.2.4") ) {
+		_earlyLog("error", "SAPUI5 requires a jQuery version of 1.7 or higher, but lower than 2.2.4; current version is " + jQuery.fn.jquery);
 	}
 
 	// TODO move to a separate module? Only adds 385 bytes (compressed), but...
