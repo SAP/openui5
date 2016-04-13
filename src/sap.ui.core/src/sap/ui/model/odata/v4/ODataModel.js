@@ -268,7 +268,8 @@ sap.ui.define([
 	 *   For valid values, see parameter "$$groupId".
 	 * @returns {sap.ui.model.odata.v4.ODataContextBinding}
 	 *   The context binding
-	 * @throws {Error} When disallowed binding parameters are provided
+	 * @throws {Error}
+	 *   If disallowed binding parameters are provided
 	 *
 	 * @public
 	 * @see sap.ui.model.Model#bindContext
@@ -317,7 +318,8 @@ sap.ui.define([
 	 *   For valid values, see parameter "$$groupId".
 	 * @returns {sap.ui.model.odata.v4.ODataListBinding}
 	 *   The list binding
-	 * @throws {Error} When disallowed binding parameters are provided
+	 * @throws {Error}
+	 *   If disallowed binding parameters are provided
 	 *
 	 * @public
 	 * @see sap.ui.model.Model#bindList
@@ -368,7 +370,8 @@ sap.ui.define([
 	 *   For valid values, see parameter "$$groupId".
 	 * @returns {sap.ui.model.odata.v4.ODataPropertyBinding}
 	 *   The property binding
-	 * @throws {Error} When disallowed binding parameters are provided
+	 * @throws {Error}
+	 *   If disallowed binding parameters are provided
 	 *
 	 * @public
 	 * @see sap.ui.model.Model#bindProperty
@@ -527,7 +530,7 @@ sap.ui.define([
 	 *   <code>'$auto'</code>, <code>'$direct'</code> or application group IDs as specified in
 	 *   {@link #submitBatch}
 	 * @throws {Error}
-	 *   When the given group ID is invalid
+	 *   If the given group ID is invalid
 	 *
 	 * @public
 	 * @see sap.ui.model.Model#refresh
@@ -624,7 +627,7 @@ sap.ui.define([
 	 *   A promise on the outcome of the HTTP request resolving with <code>undefined</code>; it is
 	 *   rejected with an error if the batch request itself fails
 	 * @throws {Error}
-	 *   When the given group ID is not an application group ID
+	 *   If the given group ID is not an application group ID
 	 *
 	 * @public
 	 * @since 1.37.0

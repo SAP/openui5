@@ -95,7 +95,8 @@ sap.ui.define([
 		 *   Map of query options
 		 * @param {string[]} [aAllowed=[]]
 		 *   Names of allowed system query options
-		 * @throws {Error} when disallowed OData query options are provided
+		 * @throws {Error}
+		 *   If disallowed OData query options are provided
 		 * @returns {object}
 		 *   The map of query options
 		 */
