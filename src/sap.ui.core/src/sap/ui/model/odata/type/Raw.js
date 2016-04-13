@@ -11,6 +11,10 @@ sap.ui.define([
 	/**
 	 * Constructor for a placeholder for all unsupported OData primitive types.
 	 *
+	 * @param {object} [oFormatOptions]
+	 *   Must be <code>undefined</code>
+	 * @param {object} [oConstraints]
+	 *   Must be <code>undefined</code>
 	 * @throws {Error}
 	 *   In case any arguments are given
 	 *
@@ -25,9 +29,10 @@ sap.ui.define([
 	 * @version ${version}
 	 */
 	var Raw = ODataType.extend("sap.ui.model.odata.type.Raw", {
-			constructor : function () {
+			constructor : function (oFormatOptions, oConstraints) {
 				ODataType.apply(this, arguments);
-				if (arguments.length) {
+				if (oFormatOptions !== undefined || oConstraints !== undefined
+						|| arguments.length > 2) {
 					throw new Error("Unsupported arguments");
 				}
 			}
