@@ -23,13 +23,15 @@ sap.ui.define([
 	 * A DynamicPage is a control that is used as a layout for an application. It consists of a title, a header,
 	 * content and a footer. Additionally it offers dynamic behavior when scrolling,
 	 * where part of the header snaps to the title.
+	 * Disclaimer: this control is in beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
+	 *
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @public
+	 * @private
 	 * @since 1.38
 	 * @alias sap.m.DynamicPage
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -834,4 +836,4 @@ sap.ui.define([
 
 	return DynamicPage;
 
-}, /* bExport= */ true);
+}, /* bExport= */ false);

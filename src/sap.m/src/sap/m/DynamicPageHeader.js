@@ -16,12 +16,13 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		 * @class
 		 * The DynamicPage header can hold any UI5 layout control. The header has two versions - snapped and expanded.
 		 * The header switches between these modes when the user scrolls below its bottom margin.
+		 * Disclaimer: this control is in beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
 		 *
 		 * @author SAP SE
 		 * @version ${version}
 		 *
 		 * @constructor
-		 * @public
+		 * @private
 		 * @since 1.38
 		 * @alias sap.m.DynamicPageHeader
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -229,4 +230,4 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 
 		return DynamicPageHeader;
 
-	}, /* bExport= */ true);
+	}, /* bExport= */ false);

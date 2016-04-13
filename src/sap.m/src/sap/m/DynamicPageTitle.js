@@ -16,13 +16,15 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Overf
 	 * @class
 	 * The DynamicPage title can hold any UI5 control. It holds the most important information regarding the object
 	 * and will always remain visible while scrolling
+	 * Disclaimer: this control is in beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
+	 *
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @public
+	 * @private
 	 * @since 1.38
 	 * @alias sap.m.DynamicPage
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -210,4 +212,4 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Overf
 	};
 
 	return DynamicPageTitle;
-}, /* bExport= */ true);
+}, /* bExport= */ false);
