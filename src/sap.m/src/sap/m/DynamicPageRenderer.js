@@ -20,22 +20,22 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 	DynamicPageRenderer.render = function (oRm, oDynamicPage) {
 		var oDynamicPageTitle = oDynamicPage.getTitle(),
 			oDynamicPageHeader = oDynamicPage.getHeader(),
-			bHeaderAlwaysExpanded = oDynamicPage.getHeaderAlwaysExpanded(),
 			oDynamicPageFooter = oDynamicPage.getFooter(),
-			oDynamicPageContent = oDynamicPage.getContent();
+			oDynamicPageContent = oDynamicPage.getContent(),
+			bEnableScrolling = oDynamicPage._allowScroll();
 
 		// Dynamic Page Layout Root DOM Element.
 		oRm.write("<article");
 		oRm.writeControlData(oDynamicPage);
 		oRm.addClass("sapMDynamicPage");
+		if (!bEnableScrolling) {
+			oRm.addClass("sapMDynamicPageFixedContent");
+		}
 		oRm.writeClasses();
 		oRm.write(">");
-
 		// Renders Dynamic Page Custom ScrollBar for Desktop mode
-		if (Device.system.desktop && oDynamicPage._allowScroll()) {
+		if (Device.system.desktop && bEnableScrolling) {
 			oRm.renderControl(oDynamicPage._getScrollBar().addStyleClass("sapMDynamicPageScrollBar"));
-		} else {
-			oDynamicPage.addStyleClass("sapMDynamicPageSupressScroll");
 		}
 
 		// Renders Dynamic Page Title.
@@ -45,7 +45,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 		oRm.writeClasses();
 		oRm.write(">");
 		oRm.renderControl(oDynamicPageTitle);
-		if (bHeaderAlwaysExpanded) {
+		if (!bEnableScrolling) {
 			oRm.renderControl(oDynamicPageHeader);
 		}
 		oRm.write("</header>");
@@ -57,7 +57,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 		oRm.addClass("sapMDynamicPageContentWrapper");
 		oRm.writeClasses();
 		oRm.write(">");
-		if (!bHeaderAlwaysExpanded) {
+		if (bEnableScrolling) {
 			oRm.renderControl(oDynamicPageHeader);
 		}
 		oRm.write("<div");
