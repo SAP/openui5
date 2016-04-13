@@ -276,7 +276,6 @@ sap.ui.define([
 
 	NavContainer.prototype.onAfterRendering = function () {
 		var pageToRenderFirst = this.getCurrentPage(),
-			bIsInsideAPopup = !!this.$().closest('[data-sap-ui-area="sap-ui-static"]').length,
 			focusObject, oNavInfo, pageId, oEvent;
 
 		// for the very first rendering
@@ -289,7 +288,7 @@ sap.ui.define([
 
 			// set focus to first focusable object
 			// when NavContainer is inside a popup, the focus is managed by the popup and shouldn't be set here
-			if (!bIsInsideAPopup && this.getAutoFocus()) {
+			if (!this._isInsideAPopup() && this.getAutoFocus()) {
 				focusObject = NavContainer._applyAutoFocusTo(pageId);
 				if (focusObject) {
 					this._mFocusObject[pageId] = focusObject;
@@ -1538,8 +1537,7 @@ sap.ui.define([
 				}
 			}
 
-			if (!bIsInPages || oSource === this.getCurrentPage()) {
-				// TODO: there will be more cases where invalidation is not required...
+			if ((!bIsInPages || oSource === this.getCurrentPage()) && !this._isInsideAPopup()) {
 				this.forceInvalidation();
 			} // else : the invalidation source is a non-current page, so do not rerender anything
 
@@ -1548,6 +1546,10 @@ sap.ui.define([
 			this.forceInvalidation();
 
 		}
+	};
+
+	NavContainer.prototype._isInsideAPopup = function () {
+		return this.getParent() instanceof sap.m.Popover;
 	};
 
 	NavContainer.prototype.removePage = function (oPage) {
