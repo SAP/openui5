@@ -80,10 +80,17 @@ sap.ui.define([
 	 * @alias sap.ui.model.odata.v4.ODataModel
 	 * @author SAP SE
 	 * @class Model implementation for OData V4.
+	 *
+	 *   Every resource path (relative to the service root URL, no query options) according to
+	 *   "4 Resource Path" in specification "OData Version 4.0 Part 2: URL Conventions" is
+	 *   a valid data binding path within this model if a leading slash is added; for example
+	 *   "/" + "EMPLOYEES('A%2FB%26C')" to access an entity instance with key "A/B&C". Note that
+	 *   appropriate URI encoding is necessary. "4.5.1 Addressing Actions" needs an operation
+	 *   binding, see {@link sap.ui.model.odata.v4.ODataContextBinding}.
+	 *
 	 *   An event handler can only be attached to this model for the following event:
 	 *   'messageChange', see {@link sap.ui.core.message.MessageProcessor#messageChange
-	 *   messageChange}.
-	 *   For other events, an error is thrown.
+	 *   messageChange}. For other events, an error is thrown.
 	 * @extends sap.ui.model.Model
 	 * @public
 	 * @version ${version}
