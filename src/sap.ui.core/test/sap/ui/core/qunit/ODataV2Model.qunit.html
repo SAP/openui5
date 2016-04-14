@@ -3439,6 +3439,82 @@
 		});
 	});
 
+	asyncTest("test getProperty with includeExpandEntries __ref", function(){
+		removeSharedServicedata(sURI);
+		var oModel = initModel(sURI, {json:false, useBatch: true});
+		oModel.read("/Products(7)", { urlParameters: {"$expand" : "Category"}, success: function(){
+			var oDeepEntry = oModel.getProperty("/Products(7)");
+			ok(oDeepEntry.Category.__ref, "check ref");
+			equal(oDeepEntry.Category.__ref, "Categories(7)", "check ref value");
+
+			oDeepEntry = oModel.getProperty("/Products(7)", null, true);
+			equal(oDeepEntry.Category.CategoryID, 7, "check id");
+
+			oDeepEntry = oModel.getProperty("/Products(7)");
+			ok(oDeepEntry.Category.__ref, "check ref");
+			equal(oDeepEntry.Category.__ref, "Categories(7)", "check ref value");
+
+			start();
+		}});
+	});
+
+	asyncTest("test getProperty with includeExpandEntries __list", function(){
+		removeSharedServicedata(sURI);
+		var oModel = initModel(sURI, {json:false, useBatch: true});
+		oModel.read("/Categories(7)", { urlParameters: {"$expand" : "Products"}, success: function(){
+			var oDeepEntry = oModel.getProperty("/Categories(7)");
+			ok(oDeepEntry.Products.__list, "check list");
+			equal(oDeepEntry.Products.__list[0], "Products(7)", "check list value");
+
+			oDeepEntry = oModel.getProperty("/Categories(7)", null, true);
+			equal(oDeepEntry.Products.results.length, 5, "check length");
+			equal(oDeepEntry.Products.results[0].CategoryID, oDeepEntry.CategoryID, "check category id");
+			equal(oDeepEntry.Products.results[0].ProductID, 7, "check product id");
+
+			var oDeepEntry = oModel.getProperty("/Categories(7)");
+			ok(oDeepEntry.Products.__list, "check list");
+			equal(oDeepEntry.Products.__list[0], "Products(7)", "check list value");
+
+			start();
+		}});
+	});
+
+	asyncTest("test getProperty with includeExpandEntries and cyclic dependencies", function(){
+		removeSharedServicedata(sURI);
+		var oModel = initModel(sURI, {json:false, useBatch: true});
+		oModel.read("/Products(7)", { urlParameters: {"$expand" : "Category"}, success: function(){
+			oModel.read("/Categories(7)", { urlParameters: {"$expand" : "Products"}, success: function(){
+
+				var oDeepEntry = oModel.getProperty("/Products(7)");
+				ok(oDeepEntry.Category.__ref, "check ref");
+				equal(oDeepEntry.Category.__ref, "Categories(7)", "check ref value");
+
+				oDeepEntry = oModel.getProperty("/Products(7)", null, true);
+				equal(oDeepEntry.Category.Products.results[0].ProductID, oDeepEntry.ProductID, "check same id");
+				equal(oDeepEntry.Category.Products.results[0].Category, oDeepEntry.Category, "check cycle");
+
+				oDeepEntry = oModel.getProperty("/Products(7)");
+				ok(oDeepEntry.Category.__ref, "check ref");
+				equal(oDeepEntry.Category.__ref, "Categories(7)", "check ref value");
+
+				var oDeepEntry = oModel.getProperty("/Categories(7)");
+				ok(oDeepEntry.Products.__list, "check list");
+				equal(oDeepEntry.Products.__list[0], "Products(7)", "check list value");
+
+				oDeepEntry = oModel.getProperty("/Categories(7)", null, true);
+				equal(oDeepEntry.Products.results[0].CategoryID, oDeepEntry.CategoryID, "check same id");
+				equal(oDeepEntry.Products.results[0].Category.Products.results[0], oDeepEntry.Products.results[0], "check cycle");
+
+				var oDeepEntry = oModel.getProperty("/Categories(7)");
+				ok(oDeepEntry.Products.__list, "check list");
+				equal(oDeepEntry.Products.__list[0], "Products(7)", "check list value");
+
+				start();
+			}});
+		}});
+	});
+
+
 	</script>
 
 </head>
