@@ -4,7 +4,7 @@
 
 
 sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/routing/async/Target', 'sap/ui/core/routing/sync/Target'],
-	function($, EventProvider, asyncTarget, syncTarget) {
+	function(jQuery, EventProvider, asyncTarget, syncTarget) {
 		"use strict";
 
 		/**
