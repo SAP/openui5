@@ -4039,18 +4039,6 @@
 		});
 	});
 
-	asyncTest("test oDataModel callFunction: invalid parameter", function() {
-		oModel.callFunction("/SalesOrder_Confirm",{
-			method: "POST",
-			urlParameters: {"Test": "test"}
-		});
-
-		oModel.attachRequestSent(this, function(oEventInfo) {
-			ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm", "Invalid parameter is omitted from URL");
-			start();
-		});
-	});
-
 	asyncTest("test oDataModel callFunction: parameters are preserved", function() {
 		var mUrlParams = {
 			"SalesOrderID": "test"
@@ -4064,6 +4052,24 @@
 		oModel.attachRequestSent(this, function(oEventInfo) {
 			ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm?SalesOrderID='test'", "Valid parameter is added to URL");
 			equal(mUrlParams["SalesOrderID"], "test", "Parameter still exists after sending function import");
+			start();
+		});
+	});
+	
+	asyncTest("test oDataModel callFunction: additional parameters", function() {
+		var mUrlParams = {
+			"SalesOrderID": "test",
+			"$expand": "ToBusinessPartner",
+			"sap-some": "sapTest"
+		}
+
+		oModel.callFunction("/SalesOrder_Confirm",{
+			method: "POST",
+			urlParameters: mUrlParams
+		})
+
+		oModel.attachRequestSent(this, function(oEventInfo) {
+			ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm?SalesOrderID='test'&$expand=ToBusinessPartner&sap-some=sapTest", "Valid parameter is added to URL");
 			start();
 		});
 	});
