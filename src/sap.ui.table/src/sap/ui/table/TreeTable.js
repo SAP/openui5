@@ -299,33 +299,6 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 		}
 	};
 
-	TreeTable.prototype.onsapselect = function(oEvent) {
-		if (jQuery(oEvent.target).hasClass("sapUiTableTreeIcon")) {
-			this._onNodeSelect(oEvent);
-		} else {
-			if (Table.prototype.onsapselect) {
-				Table.prototype.onsapselect.apply(this, arguments);
-			}
-		}
-	};
-
-	TreeTable.prototype.onkeydown = function(oEvent) {
-		Table.prototype.onkeydown.apply(this, arguments);
-		var $Target = jQuery(oEvent.target),
-			$TargetTD = $Target.closest('td');
-		if (oEvent.keyCode == jQuery.sap.KeyCodes.TAB && this._bActionMode && $TargetTD.find('.sapUiTableTreeIcon').length > 0) {
-			//If node icon has focus set tab to control else set tab to node icon
-			if ($Target.hasClass('sapUiTableTreeIcon')) {
-				if (!$Target.hasClass("sapUiTableTreeIconLeaf")) {
-					$TargetTD.find(':sapFocusable:not(.sapUiTableTreeIcon)').first().focus();
-				}
-			} else {
-				$TargetTD.find('.sapUiTableTreeIcon:not(.sapUiTableTreeIconLeaf)').focus();
-			}
-			oEvent.preventDefault();
-		}
-	};
-
 	TreeTable.prototype._onNodeSelect = function(oEvent) {
 
 		var $parent = jQuery(oEvent.target).parents("tr");

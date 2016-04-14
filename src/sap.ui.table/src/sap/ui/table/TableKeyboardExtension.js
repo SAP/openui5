@@ -3,20 +3,20 @@
  */
 
 // Provides helper sap.ui.table.TableKeyboardExtension.
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/delegate/ItemNavigation', './TableUtils'],
-	function(jQuery, BaseObject, ItemNavigation, TableUtils) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/delegate/ItemNavigation', './TableUtils', './TableKeyboardDelegate' /*Switch to TableKeyboardDelegate2 for development of new keyboard behavior*/],
+	function(jQuery, BaseObject, ItemNavigation, TableUtils, TableKeyboardDelegate) {
 	"use strict";
 
 	/*
 	 * Wrapper for event handling of the item navigation.
 	 * Allows to selectively forward the events to the item navigation.
-	 * "this" in the function context is the corresponding keyboard extension
+	 * "this" in the function context is the table instance
 	 */
 	var ItemNavigationDelegate = {
 
-		_forward : function(oExtension, oEvent) {
-			var oIN = oExtension.getTable()._getItemNavigation();
-			if (oIN && !oExtension._itemNavigationSuspended && !oEvent.isMarked("sapUiTableSkipItemNavigation")) {
+		_forward : function(oTable, oEvent) {
+			var oIN = oTable._getItemNavigation();
+			if (oIN && !oTable._getKeyboardExtension()._itemNavigationSuspended && !oEvent.isMarked("sapUiTableSkipItemNavigation")) {
 				oIN["on" + oEvent.type](oEvent);
 			}
 		},
@@ -37,37 +37,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/delegate/
 		onsapkeyup : 			function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); }
 
 	};
-
-
-	/*
-	 * Handles the keyboard events of the table which is associated with the extension.
-	 * "this" in the function context is the corresponding keyboard extension
-	 */
-	var KeyboardDelegate = {
-		tbd : function(oEvent) {
-
-		}
-	};
-
-
-	/*
-	 * Handles the keyboard events of the table inf future (new keyboard behavior) which is associated with the extension.
-	 * "this" in the function context is the corresponding keyboard extension
-	 */
-	var NewKeyboardDelegate = {
-		tbd : function(oEvent) {
-
-		}
-	};
-
-
-	/*
-	 * Switch between old an new keyboard behavior.
-	 * (Only for development purposes to allow smaller commit chunks)
-	 * Use NewKeyboardDelegate to switch to new behavior.
-	 */
-	var USED_KEYBOARD_DELEGATE = NewKeyboardDelegate; //satisfy eslint by using the var
-	USED_KEYBOARD_DELEGATE = KeyboardDelegate;
 
 
 	/*
@@ -182,19 +151,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/delegate/
 		/*
 		 * @see TableKeyboardExtension.enrich
 		 */
-		constructor : function(oTable) {
+		constructor : function(oTable, sTableType) {
 			BaseObject.call(this);
 			this._table = oTable;
 			this._itemNavigation = null;
 			this._itemNavigationInvalidated = false; // determines whether item navigation should be reapplied from scratch
 			this._itemNavigationSuspended = false; // switch off event forwarding to item navigation
+			this._delegate = new TableKeyboardDelegate(sTableType);
 
 			// Register the delegates in correct order
-			// TBD: Maybe do this somewhere else centrally ("DelegateManager")
-			this._table.addEventDelegate(USED_KEYBOARD_DELEGATE, this);
-			this._table.addEventDelegate(ItemNavigationDelegate, this);
-			var oAccExt = this._table._getAccExtension();
-			this._table.addEventDelegate(oAccExt, oAccExt);
+			this._table.addEventDelegate(this._delegate, this._table);
+			this._table.addEventDelegate(ItemNavigationDelegate, this._table);
 		},
 
 		/*
@@ -202,15 +169,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/delegate/
 		 */
 		destroy : function() {
 			// Deregister the delegates
-			// TBD: Maybe do this somewhere else centrally ("DelegateManager")
-			this._table.removeEventDelegate(USED_KEYBOARD_DELEGATE);
+			this._table.removeEventDelegate(this._delegate);
 			this._table.removeEventDelegate(ItemNavigationDelegate);
-			this._table.removeDelegate(this._table._getAccExtension());
 
 			if (this._itemNavigation) {
 				this._itemNavigation.destroy();
 				this._itemNavigation = null;
 			}
+
+			this._delegate.destroy();
+			this._delegate = null;
 
 			this._table = null;
 			BaseObject.prototype.destroy.apply(this, arguments);
@@ -231,19 +199,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/delegate/
 		var oExtension;
 
 		//Preparation for later:
-		/*function _isInstanceOf(oControl, sType) {
+		function _isInstanceOf(oControl, sType) {
 			var oType = sap.ui.require(sType);
 			return oType && (oControl instanceof oType);
 		}
 
+		var sType = "STANDARD"; //TBD: Cleanup
 		if (_isInstanceOf(oTable, "sap/ui/table/TreeTable")) {
-			oExtension = new TableKeyboardExtension(oTable);
+			sType = "TREE";
 		} else if (_isInstanceOf(oTable, "sap/ui/table/AnalyticalTable")) {
-			oExtension = new TableKeyboardExtension(oTable);
-		} else {
-			oExtension = new TableKeyboardExtension(oTable);
-		}*/
-		oExtension = new TableKeyboardExtension(oTable);
+			sType = "ANALYTICAL";
+		}
+
+		oExtension = new TableKeyboardExtension(oTable, sType);
 
 		oTable._getKeyboardExtension = function(){ return oExtension; };
 		oTable._getItemNavigation = function() { return oExtension._itemNavigation; };
