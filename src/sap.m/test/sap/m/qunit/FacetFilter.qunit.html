@@ -896,8 +896,7 @@
 	});
 
 	test("FacetFilter._setButtonText", function() {
-
-		var sItemText1 = "Val1", sItemText2 = "Val2";
+		var sItemText1 = "Val1", sItemText2 = "Val2", sItemText3 = "Val3";
 		var oFF = new sap.m.FacetFilter();
 		var oFFL = new sap.m.FacetFilterList({
 			title: "List",
@@ -905,6 +904,7 @@
 		});
 		oFFL.addItem(new sap.m.FacetFilterItem({text: sItemText1}));
 		oFFL.addItem(new sap.m.FacetFilterItem({text: sItemText2}));
+		oFFL.addItem(new sap.m.FacetFilterItem({text: sItemText3}));
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
 		sap.ui.getCore().applyChanges();
@@ -914,6 +914,36 @@
 		oFF._setButtonText(oFFL);
 		ok(oButton.getText().indexOf(sItemText1) !== -1, "Button should be updated with text for the first list item");
 		ok(oButton.getTooltip().indexOf(sItemText1) !== -1, "Button tooltip should be updated  for the first list item");
+
+		oFFL.setMultiSelect(true);
+		//all items are selected
+		oFFL.getItems()[0].setSelected(true);
+		oFFL.getItems()[1].setSelected(true);
+		oFFL.getItems()[2].setSelected(true);
+		oFF._setButtonText(oFFL);
+
+		ok(oButton.getText().indexOf("List (All)") !== -1, "Button should contain the 'All' as all items are selected");
+		ok(oButton.getTooltip().indexOf("List (All)") !== -1, "Button tooltip should contain the 'All' as all items are selected");
+
+
+		//More than one(but not all) items are selected
+		oFFL.getItems()[0].setSelected(true);
+		oFFL.getItems()[1].setSelected(false);
+		oFFL.getItems()[2].setSelected(true);
+		oFF._setButtonText(oFFL);
+
+		ok(oButton.getText().indexOf("List (2)") !== -1, "Button should contain the count of selected items");
+		ok(oButton.getTooltip().indexOf("List (2)") !== -1, "Button tooltip should contain the count of selected items");
+
+		//Only visible items are count
+		oFFL.getItems()[0].setSelected(true);
+		oFFL.getItems()[1].setSelected(false).setVisible(false);
+		oFFL.getItems()[2].setSelected(true);
+		oFF._setButtonText(oFFL);
+
+		ok(oButton.getText().indexOf("List (All)") !== -1, "Button should contain the 'All' as all visible items are selected");
+		ok(oButton.getTooltip().indexOf("List (All)") !== -1, "Button tooltip should contain the 'All' as all visible items are selected");
+
 		destroyFF(oFF);
 	});
 
@@ -1150,29 +1180,32 @@
 
 							simulateUserSearch();
 
+							// When no item.setSelected is called, no need to async wait via setTimeout. This is because when item.setSelected is called,
+							// the "All" checkbox update is postponed (see FacetFilterList.prototype.onItemSelectedChange)
+
+							// Verify the select all checkbox state remains unchanged after search
+							if (!sap.ui.Device.browser.msie) {
+								strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected after search, because 1 of 3 items is selected");
+								simulateUserSearch("a");
+								oFFL.getItems()[0].setSelected(false);
+							} else {
+								strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected after search, because 0 of 3 items is selected");
+							}
+
 							setTimeout(function () {
 								// Verify the select all checkbox state remains unchanged after search
 								if (!sap.ui.Device.browser.msie) {
-									strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected after search, because 1 of 3 items is selected");
-									simulateUserSearch("a");
-									oFFL.getItems()[0].setSelected(false);
-								} else {
 									strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected after search, because 0 of 3 items is selected");
 								}
+								simulateUserSearch();
+								strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected after search, because 0 of 3 items is selected");
 
-								setTimeout(function () {
-									// Verify the select all checkbox state remains unchanged after search
-									if (!sap.ui.Device.browser.msie) {
-										strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected after search, because 0 of 3 items is selected");
-									}
-									simulateUserSearch();
+								//When search finds no items, the "All" checkbox should not be selected
+								simulateUserSearch("This item surely not exist");
 
-									setTimeout(function () {
-										strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected after search, because 0 of 3 items is selected");
-										start();
-										destroyFF(oFF);
-									}, 1000);
-								}, 1000);
+								strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected after search, because no result is found");
+								start();
+								destroyFF(oFF);
 							}, 1000);
 						}, 1000);
 					}, 1000);
