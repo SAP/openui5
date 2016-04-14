@@ -87,9 +87,7 @@ sap.ui.define([
 	 *   appropriate URI encoding is necessary. "4.5.1 Addressing Actions" needs an operation
 	 *   binding, see {@link sap.ui.model.odata.v4.ODataContextBinding}.
 	 *
-	 *   An event handler can only be attached to this model for the following event:
-	 *   'messageChange', see {@link sap.ui.core.message.MessageProcessor#messageChange
-	 *   messageChange}. For other events, an error is thrown.
+	 *   The model does not support any public events; attaching an event handler leads to an error.
 	 * @extends sap.ui.model.Model
 	 * @public
 	 * @version ${version}
