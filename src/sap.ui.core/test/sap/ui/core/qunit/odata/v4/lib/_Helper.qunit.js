@@ -104,6 +104,20 @@ sap.ui.require([
 			"statusText" : "Forbidden",
 			"responseText" : "ignore this!"
 		}
+	}, {
+		message : "Network error",
+		"response" : {
+			"headers" : {},
+			"status" : 0,
+			"statusText" : "error"
+		}
+	}, {
+		message : "404 Not Found",
+		"response" : {
+			"headers" : {},
+			"status" : 404,
+			"statusText" : "Not Found"
+		}
 	}].forEach(function (oFixture) {
 		QUnit.test("createError: " + oFixture.message, function (assert) {
 			var oError,
