@@ -135,6 +135,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 				iStartIndex = iStartIndex || 0;
 				iLength = iLength || this.getRootContexts().length;
 				this._invalidTree = false;
+				this._aRowIndexMap = []; // clear cache to prevent inconsistent state between cache and real tree
 				TreeBindingAdapter.prototype._buildTree.call(this, iStartIndex, iLength);
 			}
 		};
