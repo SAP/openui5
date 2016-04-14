@@ -860,7 +860,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 				if (this.fireEvent("_validateOnPaste", {texts: aSeparatedText}, true)) {
 					var i = 0;
 					for ( i = 0; i < aSeparatedText.length; i++) {
-						this.setValue(aSeparatedText[i]);
+						this.updateDomValue(aSeparatedText[i]);
 						this._validateCurrentText();
 					}
 				}
