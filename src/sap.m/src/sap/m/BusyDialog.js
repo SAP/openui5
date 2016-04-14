@@ -78,6 +78,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/D
 					 */
 					showCancelButton: {type: "boolean", group: "Appearance", defaultValue: false}
 				},
+				associations: {
+					/**
+					* Association to controls / IDs which label this control (see WAI-ARIA attribute aria-labelledby).
+					*/
+					ariaLabelledBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"}
+				},
 				events: {
 					/**
 					 * Fires when the busy dialog is closed.
@@ -106,10 +112,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/D
 				visible: true
 			});
 
+			function onOpen() {
+				if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+					this._$content.attr('role', 'application');
+				}
+			}
+
 			//create the dialog
 			this._oDialog = new Dialog(this.getId() + '-Dialog', {
 				content: this._busyIndicator,
 				showHeader: false,
+				afterOpen: onOpen,
 				initialFocus: this._busyIndicator
 			}).addStyleClass('sapMBusyDialog');
 
@@ -163,6 +176,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/D
 		 */
 		BusyDialog.prototype.open = function () {
 			jQuery.sap.log.debug("sap.m.BusyDialog.open called at " + new Date().getTime());
+
+			if (this.getAriaLabelledBy() && !this._oDialog._$dialog) {
+				var that = this;
+				this.getAriaLabelledBy().forEach(function(item){
+					that._oDialog.addAriaLabelledBy(item);
+				});
+			}
 
 			//if the code is not ready yet (new sap.m.BusyDialog().open()) wait 50ms and then try ot open it.
 			if (!document.body || !sap.ui.getCore().isInitialized()) {
