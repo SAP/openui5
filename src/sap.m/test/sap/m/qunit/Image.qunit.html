@@ -321,8 +321,9 @@
 				}),
 				oErrorSpy = sinon.spy(function() {
 					equal(oLoadSpy.callCount, 0 ,"load handler shouldn't be called");
+
 					var $i5 = jQuery.sap.byId("i5");
-					equal($i5.css("visibility"), "hidden", "Image with invalid src should be hidden");
+					equal($i5.css("visibility"), "visible", "Image with invalid src should be visible to show the alt text");
 
 					i5.setSrc(sSrcAction);
 				});
@@ -339,29 +340,8 @@
 			sap.ui.getCore().applyChanges();
 		});
 
-		asyncTest("Image with density 1.5, source handling after rerendering", function() {
-			var oSandbox = sinon.sandbox.create();
 
-			oSandbox.stub(sap.m.Image, "_currentDevicePixelRatio", 1.5);
-
-			var oImage = new sap.m.Image({
-				src: sSrc
-			});
-
-			oImage.placeAt("uiArea6");
-			sap.ui.getCore().applyChanges();
-			oImage.$().on("load", function() {
-				ok(oImage.$().attr("src").indexOf("@2") !== -1, "@2 version of image is taken");
-				oImage.rerender();
-				oImage.$().on("load", function() {
-					ok(oImage.$().attr("src").indexOf("@2") !== -1, "@2 version of image is still taken");
-					oImage.destroy();
-					// Restore the stubbed property in the callback
-					oSandbox.restore();
-					start();
-				});
-			});
-		});
+	module("Tabindex");
 
 		test("Existence of attribute tabindex", function() {
 			var fn1 = function() {},
@@ -426,6 +406,91 @@
 				oImage.destroy();
 				equal(oImage._oImage, null, "internal image instance is also set to null");
 				start();
+			});
+		});
+
+	module("Bug fixes");
+
+		asyncTest("Image with valid src under densityAware turned off", function() {
+			var oLoadSpy = sinon.spy(function() {
+					var $Image = oImage.$();
+					equal($Image.css("visibility"), "visible", "Image with valid src should be visible");
+					equal(oErrorSpy.callCount, 0, "Error handler isn't called");
+
+					oImage.destroy();
+					start();
+				}),
+				oErrorSpy = sinon.spy();
+
+			var oImage = new sap.m.Image({
+				src: sSrcAction,
+				densityAware: false,
+				load: oLoadSpy,
+				error: oErrorSpy
+			});
+
+			oImage.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		});
+
+		asyncTest("Image with Invalid src and src change under densityAware turned off", function() {
+			var oLoadSpy = sinon.spy(function() {
+					var $Image = oImage.$();
+					equal($Image.css("visibility"), "visible", "Image with valid src should be set back to visible");
+					equal(oErrorSpy.callCount, 1, "error handler isn't called again");
+
+					oImage.destroy();
+					start();
+				}),
+				oErrorSpy = sinon.spy(function() {
+					equal(oLoadSpy.callCount, 0 ,"load handler shouldn't be called");
+					var $Image = oImage.$();
+					equal($Image.css("visibility"), "visible", "Image with invalid src should be visible to show the alt text");
+
+					oImage.setSrc(sSrcAction);
+				});
+
+			var oImage = new sap.m.Image({
+				src: "invalid_src.png",
+				densityAware: false,
+				width: "48px",
+				height: "48px",
+				load: oLoadSpy,
+				error: oErrorSpy
+			});
+
+			oImage.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		});
+
+		asyncTest("Image with density 1.5, source handling after rerendering", function() {
+			var oSandbox = sinon.sandbox.create(),
+				oLoadSpy = sinon.spy(function() {
+					equal(oErrorSpy.callCount, 0, "error event handler shouldn't be called");
+				}),
+				oErrorSpy = sinon.spy();
+
+			oSandbox.stub(sap.m.Image, "_currentDevicePixelRatio", 1.5);
+
+			var oImage = new sap.m.Image({
+				src: sSrc,
+				load: oLoadSpy
+			});
+
+			oImage.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			oImage.$().on("load", function() {
+				ok(oImage.$().attr("src").indexOf("@2") !== -1, "@2 version of image is taken");
+				equal(oLoadSpy.callCount, 1, "load event handler is called");
+				oImage.rerender();
+				oImage.$().on("load", function() {
+					ok(oImage.$().attr("src").indexOf("@2") !== -1, "@2 version of image is still taken");
+					equal(oLoadSpy.callCount, 2, "load event handler is called again");
+					oImage.destroy();
+					// Restore the stubbed property in the callback
+					oSandbox.restore();
+					start();
+				});
 			});
 		});
 		</script>
