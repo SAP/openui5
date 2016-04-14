@@ -1947,6 +1947,18 @@
 			equals(this.oSpy.callCount, 1, "changed event must be fired only once");
 		});
 
+		test("upon focusin of timepicker input, no picker should be visible", function () {
+			//arrange (open picker in order it to be initialized and rendered
+			this.oTp._openPicker();
+			this.clock.tick(1000);
+			qutils.triggerEvent('focusin', this.oTp.getDomRef());
+			this.clock.tick(1000);
+			//assert
+			ok(!this.oTp._getPicker().isOpen(), "The picker 'isOpen' state is false");
+			ok(!this.oTp._getPicker().$().is(":visible"), "jQuery.is(':visible') returned false");
+			strictEqual(this.oTp._getPicker().$().css('display'), 'none', "The picker css display property is none");
+		});
+
 		test("upon focusout, change event fires only once", function() {
 			//system under test
 			var	oTp2 = new sap.m.TimePicker({
