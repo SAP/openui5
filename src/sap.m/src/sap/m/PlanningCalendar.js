@@ -103,6 +103,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			appointmentsReducedHeight : {type : "boolean", group : "Appearance", defaultValue : false},
 
 			/**
+			 * If set subintervals are shown.
+			 *
+			 * If the interval type is <code>Hour</code>, quarter hours are shown.
+			 *
+			 * If the interval type is <code>Day</code>, hours are shown.
+			 *
+			 * If the interval type is <code>Month</code>, days are shown.
+			 */
+			showSubIntervals: { type: "boolean", group: "Appearance", defaultValue: null},
+
+			/**
 			 * Minimum date that can be shown and selected in the <code>PlanningCalendar</code>. This must be a JavaScript date object.
 			 *
 			 * <b>Note:</b> If the <code>minDate</code> is set to be after the <code>maxDate</code>,
@@ -647,6 +658,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var sIntervalType = oView.getIntervalType();
 			var iIntervals = _getIntervals.call(this, oView);
 
+			if (this.getShowSubIntervals()){
+				oView.setShowSubIntervals(this.getShowSubIntervals());
+			}
+
 			switch (sIntervalType) {
 			case sap.ui.unified.CalendarIntervalType.Hour:
 				if (!this._oTimeInterval) {
@@ -1130,6 +1145,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		return this;
 
+	};
+
+	/**
+	* Return the row end date
+	*
+	* @returns {Date} Row End Date
+	* @public
+	* @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	*/
+	PlanningCalendar.prototype.getRowEndDate = function() {
+		var sKey = this.getViewKey();
+		var oView = _getView.call(this, sKey);
+		var sIntervalType = oView.getIntervalType();
+		var iIntervals = _getIntervals.call(this, oView);
+		var oEndDate = new Date(this.getStartDate().getTime());
+
+		switch (sIntervalType) {
+		case sap.ui.unified.CalendarIntervalType.Hour:
+			oEndDate.setUTCHours(oEndDate.getUTCHours() + iIntervals);
+			break;
+
+		case sap.ui.unified.CalendarIntervalType.Day:
+			oEndDate.setUTCDate(oEndDate.getUTCDate() + iIntervals);
+			break;
+
+		case sap.ui.unified.CalendarIntervalType.Month:
+			oEndDate.setUTCMonth(oEndDate.getUTCMonth() + iIntervals);
+			break;
+
+		default:
+			throw new Error("Unknown IntervalType: " + sIntervalType + "; " + this);
+		}
+
+		oEndDate.setUTCMilliseconds(-1);
+		return oEndDate;
 	};
 
 	PlanningCalendar.prototype.onsaphomemodifiers = function(oEvent) {
