@@ -130,8 +130,8 @@
 	function sortTable() {
 		var aColumns = oTable.getColumns(),
 			fSorting = sap.ui.table.SortOrder;
-		oTable.sort(aColumns[1],fSorting.Ascending, false);
-		oTable.sort(aColumns[0],fSorting.Ascending, true);
+		oTable.sort(aColumns[1], fSorting.Ascending, false);
+		oTable.sort(aColumns[0], fSorting.Ascending, true);
 	}
 
 	//********** Tests start********************************************
@@ -1162,6 +1162,27 @@
 
 		oTable.attachEvent("_rowsUpdated", fnHandler);
 		sortTable();
+	});
+
+	asyncTest("Sort Icon", function() {
+		creatSortingTableData();
+
+		var fnHandler = function() {
+			var aSortedColumns = oTable.getSortedColumns();
+
+			if (aSortedColumns.length === 2) {
+				ok(jQuery.sap.endsWith(aSortedColumns[0].$().find("img").attr("src"), "ico12_sort_asc.gif"), "Sort icon direction for first column OK");
+				ok(jQuery.sap.endsWith(aSortedColumns[1].$().find("img").attr("src"), "ico12_sort_desc.gif"), "Sort icon direction for second column OK");
+
+				oTable.detachEvent("_rowsUpdated", fnHandler);
+				start();
+			}
+		};
+
+		oTable.attachEvent("_rowsUpdated", fnHandler);
+		var aColumns = oTable.getColumns();
+		oTable.sort(aColumns[0], sap.ui.table.SortOrder.Ascending, false);
+		oTable.sort(aColumns[1], sap.ui.table.SortOrder.Descending, true);
 	});
 
 	asyncTest("remove column", function() {
