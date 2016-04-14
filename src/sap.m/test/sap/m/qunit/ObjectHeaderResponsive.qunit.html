@@ -1020,6 +1020,56 @@
 					ok($sImg.attr("aria-label"), "image has attribute aria-label");
 				});
 
+				test("Title has level H1", function(){
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						title: "OH title"
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					// Assert
+					var $sTitle = oObjectHeader.$("title");
+					ok($sTitle.find( "h1" ), "Title has the default titleLevel H1");
+				});
+
+				test("Title has level H3", function(){
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						title: "OH title",
+						titleLevel: "H3"
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					// Assert
+					var $sTitle = oObjectHeader.$("title");
+					ok($sTitle.find( "h3" ), "Title has titleLevel H13");
+				});
+
+				test("Title level is set correctly", function(){
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						title: "OH title"
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					oObjectHeader.setTitleLevel("H4");
+					oCore.applyChanges();
+
+					// Assert
+					var $sTitle = oObjectHeader.$("title");
+					ok($sTitle.find( "h4" ), "Title has titleLevel H4");
+				});
+
+
 		</script>
 
 	</head>
