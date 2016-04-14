@@ -72,6 +72,8 @@ xhr.onCreate = function(request) {
 				[200, oXMLHeaders, sProducts3SelProductNameXML],
 			"Products(3)?$expand=Category":
 				[200, oXMLHeaders, sProducts3ExpCategoryXML],
+			"Products(7)?$expand=Category":
+				[200, oXMLHeaders, sProducts7ExpCategoryXML],
 			"Products(3)?$select=ProductName%2cCategory&$expand=Category":
 				[200, oXMLHeaders, sProducts3SelProductNameExpCategoryXML],
 			"Products(3)?$select=Category%2fCategoryName&$expand=Category":
@@ -7532,3 +7534,68 @@ var sMetadataComplex = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
 		"		}\n" +
 		"	}\n" +
 		"}"
+		var sProducts7ExpCategoryXML = "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>\n" +
+				"<entry xml:base=\"http://services.odata.org/V2/Northwind/Northwind.svc/\"\n" +
+				"	xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\"\n" +
+				"	xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\"\n" +
+				"	xmlns=\"http://www.w3.org/2005/Atom\">\n" +
+				"	<id>http://services.odata.org/V2/Northwind/Northwind.svc/Products(7)</id>\n" +
+				"	<title type=\"text\"></title>\n" +
+				"	<updated>2016-04-11T08:40:49Z</updated>\n" +
+				"	<author>\n" +
+				"		<name />\n" +
+				"	</author>\n" +
+				"	<link rel=\"edit\" title=\"Product\" href=\"Products(7)\" />\n" +
+				"	<link\n" +
+				"		rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category\"\n" +
+				"		type=\"application/atom+xml;type=entry\" title=\"Category\" href=\"Products(7)/Category\">\n" +
+				"		<m:inline>\n" +
+				"			<entry>\n" +
+				"				<id>http://services.odata.org/V2/Northwind/Northwind.svc/Categories(7)</id>\n" +
+				"				<title type=\"text\"></title>\n" +
+				"				<updated>2016-04-11T08:40:49Z</updated>\n" +
+				"				<author>\n" +
+				"					<name />\n" +
+				"				</author>\n" +
+				"				<link rel=\"edit\" title=\"Category\" href=\"Categories(7)\" />\n" +
+				"				<link\n" +
+				"					rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Products\"\n" +
+				"					type=\"application/atom+xml;type=feed\" title=\"Products\"\n" +
+				"					href=\"Categories(7)/Products\" />\n" +
+				"				<category term=\"NorthwindModel.Category\"\n" +
+				"					scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\" />\n" +
+				"				<content type=\"application/xml\">\n" +
+				"					<m:properties>\n" +
+				"						<d:CategoryID m:type=\"Edm.Int32\">7</d:CategoryID>\n" +
+				"						<d:CategoryName m:type=\"Edm.String\">Produce</d:CategoryName>\n" +
+				"						<d:Description m:type=\"Edm.String\">Dried fruit and bean curd</d:Description>\n" +
+				"						<d:Picture m:type=\"Edm.Binary\"></d:Picture>\n" +
+				"					</m:properties>\n" +
+				"				</content>\n" +
+				"			</entry>\n" +
+				"		</m:inline>\n" +
+				"	</link>\n" +
+				"	<link\n" +
+				"		rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details\"\n" +
+				"		type=\"application/atom+xml;type=feed\" title=\"Order_Details\"\n" +
+				"		href=\"Products(7)/Order_Details\" />\n" +
+				"	<link\n" +
+				"		rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier\"\n" +
+				"		type=\"application/atom+xml;type=entry\" title=\"Supplier\" href=\"Products(7)/Supplier\" />\n" +
+				"	<category term=\"NorthwindModel.Product\"\n" +
+				"		scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\" />\n" +
+				"	<content type=\"application/xml\">\n" +
+				"		<m:properties>\n" +
+				"			<d:ProductID m:type=\"Edm.Int32\">7</d:ProductID>\n" +
+				"			<d:ProductName m:type=\"Edm.String\">Uncle Bob\'s Organic Dried Pears</d:ProductName>\n" +
+				"			<d:SupplierID m:type=\"Edm.Int32\">3</d:SupplierID>\n" +
+				"			<d:CategoryID m:type=\"Edm.Int32\">7</d:CategoryID>\n" +
+				"			<d:QuantityPerUnit m:type=\"Edm.String\">12 - 1 lb pkgs.</d:QuantityPerUnit>\n" +
+				"			<d:UnitPrice m:type=\"Edm.Decimal\">30.0000</d:UnitPrice>\n" +
+				"			<d:UnitsInStock m:type=\"Edm.Int16\">15</d:UnitsInStock>\n" +
+				"			<d:UnitsOnOrder m:type=\"Edm.Int16\">0</d:UnitsOnOrder>\n" +
+				"			<d:ReorderLevel m:type=\"Edm.Int16\">10</d:ReorderLevel>\n" +
+				"			<d:Discontinued m:type=\"Edm.Boolean\">false</d:Discontinued>\n" +
+				"		</m:properties>\n" +
+				"	</content>\n" +
+				"</entry>";
