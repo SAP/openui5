@@ -211,11 +211,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				icon : "sap-icon://feeder-arrow",
 				tooltip : this.getButtonTooltip(),
 				press : jQuery.proxy(function (oEvt) {
+					this._oTextArea.focus();
 					this.firePost({
 						value : this.getValue()
 					});
 					this.setValue(null);
-					this._oTextArea.focus();
 				}, this)
 			});
 			this._oButton.setParent(this);
