@@ -4,7 +4,7 @@
 	<GenericTile header="Guy Incognito mentioned you in Sales Pitch March: Guy Incognito mentioned you in Sales Pitch March: Guy Incognito mentioned you in Sales Pitch March:
 	Guy Incognito mentioned you Guy Incognito mentioned you in Sales Pitch March:"
 		frameType="TwoByOne" press="press"
-		headerImage="test-resources/sap/m/demokit/GenericTile2x1SingleCont/images/headerImg2.jpg">
+		headerImage="test-resources/sap/m/demokit/sample/GenericTile2x1SingleCont/images/headerImg2.jpg">
 		<tileContent>
 			<TileContent footer="New Notifications">
 				<content>

@@ -9,7 +9,7 @@ sap.ui.define(['sap/ui/core/UIComponent'], function(UIComponent) {
 			},
 			config : {
 				sample : {
-					files : ["Page.view.xml"]
+					files : ["Page.view.xml", "Page.controller.js"]
 				}
 			}
 		}

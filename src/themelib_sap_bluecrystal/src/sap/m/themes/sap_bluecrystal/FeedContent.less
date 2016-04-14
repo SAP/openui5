@@ -7,18 +7,16 @@
 	font-weight: normal;
 	color: @sapUiTileTextColor;
 
-	font-size: @sapMFontSmallSize;
+	.sapMText {
+		font-size: @sapMFontSmallSize;
+	}
 }
 
 .sapMFCSbh {
 	color: lighten(@sapUiTileTextColor, 20);
 	font-family: @sapUiFontFamily;
 	font-weight: normal;
-}
-
-.sapMFCCTxt > .sapMText,
-.sapMFCSbh {
-	font-size: @sapMFontMediumSize;
+	font-size: @sapMFontSmallSize;
 }
 
 
@@ -40,12 +38,4 @@
 
 .sap-desktop .sapMFC:focus {
 	outline: 1px dotted @sapUiFocus; /* Usage of px as aligned with designers. */
-}
-
-/* BREAKPOINT FOR SMALL PHONES */
-@media screen and (max-width: 374px) {
-	.sapMFCCTxt > .sapMText,
-	.sapMFCSbh {
-		font-size: @sapMFontSmallSize;
-	}
 }

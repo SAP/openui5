@@ -33,7 +33,7 @@
 			<GenericTile
 				header="Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat."
 				frameType="TwoByOne"
-				headerImage="test-resources/sap/m/demokit/GenericTileStates/images/headerImg2.jpg"
+				headerImage="test-resources/sap/m/demokit/sample/GenericTileStates/images/headerImg2.jpg"
 				state="Loading">
 				<tileContent>
 					<TileContent footer="New Notifications">
@@ -49,7 +49,7 @@
 			<GenericTile
 				header="Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat."
 				frameType="TwoByOne"
-				headerImage="test-resources/sap/m/demokit/GenericTileStates/images/headerImg2.jpg"
+				headerImage="test-resources/sap/m/demokit/sample/GenericTileStates/images/headerImg2.jpg"
 				state="Loaded">
 				<tileContent>
 					<TileContent footer="New Notifications">
