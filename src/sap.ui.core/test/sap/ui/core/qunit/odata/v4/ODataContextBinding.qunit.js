@@ -446,25 +446,28 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("updateValue: relative binding", function (assert) {
-		var oContext = {
-				updateValue : function () {}
-			},
-			oBinding = this.oModel.bindContext("PRODUCT_2_BP", oContext),
-			oResult = {};
+	[undefined, "BP_2_XYZ/42"].forEach(function (sPath) {
+		QUnit.test("updateValue: relative binding", function (assert) {
+			var oContext = {
+					updateValue : function () {}
+				},
+				oBinding = this.oModel.bindContext("PRODUCT_2_BP", oContext),
+				oResult = {};
 
-		this.oSandbox.mock(oBinding).expects("fireEvent").never();
-		this.oSandbox.mock(oBinding).expects("getGroupId").never();
-		this.oSandbox.mock(oContext).expects("updateValue")
-			.withExactArgs("up", "bar", Math.PI, "edit('URL')", "PRODUCT_2_BP/BP_2_XYZ/42")
-			.returns(Promise.resolve(oResult));
-		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup").never();
+			this.oSandbox.mock(oBinding).expects("fireEvent").never();
+			this.oSandbox.mock(oBinding).expects("getGroupId").never();
+			this.oSandbox.mock(oContext).expects("updateValue")
+				.withExactArgs("up", "bar", Math.PI, "edit('URL')",
+					sPath ? "PRODUCT_2_BP/" + sPath : "PRODUCT_2_BP")
+				.returns(Promise.resolve(oResult));
+			this.oSandbox.mock(this.oModel).expects("addedRequestToGroup").never();
 
-		// code under test
-		return oBinding.updateValue("up", "bar", Math.PI, "edit('URL')", "BP_2_XYZ/42")
-			.then(function (oResult0) {
-				assert.strictEqual(oResult0, oResult);
-			});
+			// code under test
+			return oBinding.updateValue("up", "bar", Math.PI, "edit('URL')", sPath)
+				.then(function (oResult0) {
+					assert.strictEqual(oResult0, oResult);
+				});
+		});
 	});
 
 	//*********************************************************************************************
