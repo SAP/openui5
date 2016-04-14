@@ -19,9 +19,9 @@
 <script type="text/javascript">
 
 jQuery.sap.require("sap.m.CheckBox");
+jQuery.sap.require("sap.ui.core.ValueState");
 
-
-	module("Properties")
+	module("Properties");
 
 	/* --------------------------------------- */
 	/* Test: Default Values                    */
@@ -216,6 +216,45 @@ jQuery.sap.require("sap.m.CheckBox");
 		ok(!oCheckBox.$("CbBg").hasClass("sapMCbMarkChecked"), "selected=false: CheckBox should not have class sapMCbMarkChecked");
 		ok(!oCheckBox.$("CB").is(":checked"), "selected=false: CheckBox should not have attribute 'checked'");
 		strictEqual(oCheckBox.$().attr("aria-checked"), "false", "Property 'aria-checked': Default value should be 'false'");
+
+		// cleanup
+		oCheckBox.destroy();
+	});
+
+	/* ----------------------------------------------- */
+	/* Test: 'ValueState=Error'						   */
+	/* ----------------------------------------------- */
+
+	test("'ValueState=Error'", function(){
+		// system under test
+		var oCheckBox = new sap.m.CheckBox({valueState: sap.ui.core.ValueState.Error});
+
+		// arrange
+		oCheckBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		ok(oCheckBox.$().hasClass("sapMCbErr"), "The CheckBox has value state error css class.");
+
+		// cleanup
+		oCheckBox.destroy();
+	});
+
+
+	/* ----------------------------------------------- */
+	/* Test: 'ValueState=Warning'						   */
+	/* ----------------------------------------------- */
+
+	test("'ValueState=Warning'", function(){
+		// system under test
+		var oCheckBox = new sap.m.CheckBox({valueState: sap.ui.core.ValueState.Warning});
+
+		// arrange
+		oCheckBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		ok(oCheckBox.$().hasClass("sapMCbWarn"), "The CheckBox has value state warning css class.");
 
 		// cleanup
 		oCheckBox.destroy();
