@@ -731,6 +731,14 @@
 				var oDialog = new sap.m.Dialog({
 					title: "Qunit test",
 					content: [oText],
+					subHeader: new sap.m.Bar({
+						contentMiddle: [
+							new sap.m.SearchField({
+								placeholder: "Search ...",
+								width: "100%"
+							})
+						]
+					}),
 					ariaLabelledBy: [TEXT_ID]
 				});
 
@@ -740,11 +748,14 @@
 
 				// Assert
 				var dialogHeaderId = oDialog.getDomRef('header').getAttribute('id');
+				var subHeaderId = oDialog.$().find('.sapMDialogSubHeader').attr('id');
 				var dialogAriaLabelledBy = oDialog.getAriaLabelledBy();
-				strictEqual(oDialog.getDomRef().getAttribute('aria-labelledby'), dialogHeaderId + ' ' + TEXT_ID);
-				strictEqual(dialogAriaLabelledBy.length, 2)
+				strictEqual(oDialog.getDomRef().getAttribute('aria-labelledby'), dialogHeaderId + ' ' + subHeaderId +
+						' ' + TEXT_ID);
+				strictEqual(dialogAriaLabelledBy.length, 3);
 				strictEqual(dialogAriaLabelledBy.indexOf(dialogHeaderId), 0);
-				strictEqual(dialogAriaLabelledBy.indexOf(TEXT_ID), 1);
+				strictEqual(dialogAriaLabelledBy.indexOf(subHeaderId), 1);
+				strictEqual(dialogAriaLabelledBy.indexOf(TEXT_ID), 2);
 
 				// Clean up
 				oDialog.destroy();

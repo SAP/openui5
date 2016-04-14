@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.table.Table.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/theming/Parameters', 'sap/ui/model/SelectionModel', 'sap/ui/model/ChangeReason', './Row', './library', 'sap/ui/core/IconPool', 'sap/ui/Device', './TableAccExtension', 'jquery.sap.trace'],
-	function(jQuery, Control, ResizeHandler, ItemNavigation, Parameters, SelectionModel, ChangeReason, Row, library, IconPool, Device, TableAccExtension /*,jQuerySAPTrace*/) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', 'sap/ui/core/theming/Parameters', 'sap/ui/model/SelectionModel', 'sap/ui/model/ChangeReason', './Row', './library', 'sap/ui/core/IconPool', 'sap/ui/Device', './TableUtils', './TableAccExtension', './TableKeyboardExtension', 'jquery.sap.trace'],
+	function(jQuery, Control, ResizeHandler, Parameters, SelectionModel, ChangeReason, Row, library, IconPool, Device, TableUtils, TableAccExtension, TableKeyboardExtension /*,jQuerySAPTrace*/) {
 	"use strict";
 
 
@@ -309,7 +309,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 					/**
 					 * indicator if "select all" function is used to select rows
 					 */
-					selectAll : {type : "boolean"}
+					selectAll : {type : "boolean"},
+
+					/**
+					 * indicates that the event was fired due to an explicit user interaction like clicking the row header
+					 * or using the keyboard (SPACE or ENTER) to select a row or a range of rows.
+					 */
+					userInteraction: {type: "boolean"}
 				}
 			},
 
@@ -617,6 +623,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		this._bRtlMode = sap.ui.getCore().getConfiguration().getRTL();
 
 		TableAccExtension.enrich(this);
+		TableKeyboardExtension.enrich(this);
 
 		this._bBindingLengthChanged = false;
 		this._mTimeouts = {};
@@ -715,8 +722,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		// Toolbar has its own F6 stop.
 		// this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 
-		// determines whether item navigation should be reapplied from scratch
-		this._bItemNavigationInvalidated = false;
 		this._bInvalid = true;
 
 		this._bIsScrollVertical = null;
@@ -740,7 +745,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		this._resetRowTemplate();
 
 		// destroy helpers
-		this._destroyItemNavigation();
+		this._getKeyboardExtension().destroy();
 		// cleanup
 		this._cleanUpTimers();
 		this._detachEvents();
@@ -1007,7 +1012,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		this._bOnAfterRendering = false;
 
 		// invalidate item navigation
-		this._bItemNavigationInvalidated = true;
+		this._getKeyboardExtension().invalidateItemNavigation();
 
 		if (this._bFirstRendering && this.getVisibleRowCountMode() == sap.ui.table.VisibleRowCountMode.Auto) {
 			this._bFirstRendering = false;
@@ -1178,123 +1183,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 
 	// =============================================================================
-	// ITEMNAVIGATION
+	// FOCUS
 	// =============================================================================
-
-
-	/**
-	 * initialize ItemNavigation. Transfer relevant controls to ItemNavigation.
-	 * TabIndexes are set by ItemNavigation
-	 * @private
-	*/
-	Table.prototype._initItemNavigation = function() {
-
-		var $this = this.$();
-		var iColumnCount = this._getVisibleColumnCount();
-		var iTotalColumnCount = iColumnCount;
-		var bHasRowHeader = this.getSelectionMode() !== sap.ui.table.SelectionMode.None && this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly;
-
-		// initialization of item navigation for the Column Headers
-		if (!this._oColHdrItemNav) {
-			this._oColHdrItemNav = new ItemNavigation();
-			this._oColHdrItemNav.setCycling(false);
-			this.addDelegate(this._oColHdrItemNav);
-		}
-
-		// create the list of item dom refs
-		var aItemDomRefs = [];
-		if (this.getFixedColumnCount() == 0) {
-			aItemDomRefs = $this.find(".sapUiTableCtrl td[tabindex]").get();
-		} else {
-			var $topLeft = this.$().find('.sapUiTableCtrlFixed.sapUiTableCtrlRowFixed');
-			var $topRight = this.$().find('.sapUiTableCtrlScroll.sapUiTableCtrlRowFixed');
-			var $middleLeft = this.$().find('.sapUiTableCtrlFixed.sapUiTableCtrlRowScroll');
-			var $middleRight = this.$().find('.sapUiTableCtrlScroll.sapUiTableCtrlRowScroll');
-			var $bottomLeft = this.$().find('.sapUiTableCtrlFixed.sapUiTableCtrlRowFixedBottom');
-			var $bottomRight = this.$().find('.sapUiTableCtrlScroll.sapUiTableCtrlRowFixedBottom');
-			for (var i = 0; i < this.getVisibleRowCount(); i++) {
-				aItemDomRefs = aItemDomRefs.concat($topLeft.find('tr[data-sap-ui-rowindex="' + i + '"]').find('td[tabindex]').get());
-				aItemDomRefs = aItemDomRefs.concat($topRight.find('tr[data-sap-ui-rowindex="' + i + '"]').find('td[tabindex]').get());
-				aItemDomRefs = aItemDomRefs.concat($middleLeft.find('tr[data-sap-ui-rowindex="' + i + '"]').find('td[tabindex]').get());
-				aItemDomRefs = aItemDomRefs.concat($middleRight.find('tr[data-sap-ui-rowindex="' + i + '"]').find('td[tabindex]').get());
-				aItemDomRefs = aItemDomRefs.concat($bottomLeft.find('tr[data-sap-ui-rowindex="' + i + '"]').find('td[tabindex]').get());
-				aItemDomRefs = aItemDomRefs.concat($bottomRight.find('tr[data-sap-ui-rowindex="' + i + '"]').find('td[tabindex]').get());
-			}
-		}
-
-		// to later determine the position of the first TD in the aItemDomRefs we keep the
-		// count of TDs => aCount - TDs = first TD (add the row headers to the TD count / except the first one!)
-		var iTDCount = aItemDomRefs.length;
-		var iInitialIndex = 0;
-
-		// add the row header items (if visible)
-		if (bHasRowHeader) {
-			var aRowHdrDomRefs = $this.find(".sapUiTableRowHdr").get();
-			for (var i = aRowHdrDomRefs.length - 1; i >= 0; i--) {
-				aItemDomRefs.splice(i * iColumnCount, 0, aRowHdrDomRefs[i]);
-				// we ignore the row headers
-				iTDCount++;
-			}
-			// except the first row header
-			iTDCount--;
-			// add the row header to the column count
-			iTotalColumnCount++;
-			iInitialIndex = 1;
-		}
-
-		// add the column items
-		if (this.getColumnHeaderVisible()) {
-			aItemDomRefs = $this.find(".sapUiTableCol").get().concat(aItemDomRefs);
-		}
-
-		// add the select all item
-		if (bHasRowHeader && this.getColumnHeaderVisible()) {
-			var aRowHdr = $this.find(".sapUiTableColRowHdr").get();
-			for (var i = this._getHeaderRowCount() - 1; i >= 0; i--) {
-				aItemDomRefs.splice(i * iColumnCount, 0, aRowHdr[0]);
-			}
-		}
-
-		// initialization of item navigation for the Table control
-		if (!this._oItemNavigation) {
-			this._iLastSelectedDataRow = this._getHeaderRowCount();
-			this._oItemNavigation = new ItemNavigation();
-			this._oItemNavigation.setTableMode(true);
-			this._oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, function(oEvent) {
-				var iRow = Math.floor(oEvent.getParameter("index") / this._oItemNavigation.iColumns);
-				if (iRow > 0) {
-					this._iLastSelectedDataRow = iRow;
-				}
-			}, this);
-			this.addDelegate(this._oItemNavigation);
-		}
-
-
-		// configure the item navigation
-		this._oItemNavigation.setColumns(iTotalColumnCount);
-		this._oItemNavigation.setRootDomRef($this.find(".sapUiTableCnt").get(0));
-		this._oItemNavigation.setItemDomRefs(aItemDomRefs);
-		this._oItemNavigation.setFocusedIndex(iInitialIndex);
-
-		// revert invalidation flag
-		this._bItemNavigationInvalidated = false;
-	};
-
-	/**
-	 * destroys ItemNavigation
-	 * @private
-	*/
-	Table.prototype._destroyItemNavigation = function() {
-
-		// destroy of item navigation for the Table control
-		if (this._oItemNavigation) {
-			this.removeDelegate(this._oItemNavigation);
-			this._oItemNavigation.destroy();
-			this._oItemNavigation = null;
-		}
-
-	};
-
 
 	/*
 	 * @see JSDoc generated by SAPUI5 control
@@ -1447,8 +1337,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				}
 			}
 		}
-
-		this._getAccExtension().updateAccForCurrentCell(false);
 
 		if (bFirstVisibleRowChanged && !bSupressEvent) {
 			this.fireFirstVisibleRowChanged({firstVisibleRow: iRowIndex});
@@ -3137,9 +3025,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 */
 	Table.prototype.onmousedown = function(oEvent) {
 		// check whether item navigation should be reapplied from scratch
-		if (this._bItemNavigationInvalidated) {
-			this._initItemNavigation();
-		}
+		this._getKeyboardExtension().initItemNavigation();
 
 		// only move on left click!
 		var bLeftButton = oEvent.button === 0;
@@ -3402,6 +3288,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		return bCancel;
 	};
 
+	Table.prototype.getFocusDomRef = function() {
+		this._getKeyboardExtension().initItemNavigation();
+		// focus is handled by item navigation. It's  not the root element of the table which may get the focus but
+		// the last focused column header or cell.
+		return TableUtils.getFocusedItemInfo(this).domRef || Control.prototype.getFocusDomRef.apply(this, arguments);
+	};
+
 	/**
 	 * handles the focus in to reposition the focus or prevent default handling for
 	 * column resizing
@@ -3409,8 +3302,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 */
 	Table.prototype.onfocusin = function(oEvent) {
 		// check whether item navigation should be reapplied from scratch
-		if (!this._bIgnoreFocusIn && this._bItemNavigationInvalidated) {
-			this._initItemNavigation();
+		if (!this._bIgnoreFocusIn) {
+			this._getKeyboardExtension().initItemNavigation();
 		}
 
 		var $target = jQuery(oEvent.target);
@@ -3424,7 +3317,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			// leave the action mode!
 			this._leaveActionMode();
 			if (jQuery.contains(this.$().find('.sapUiTableColHdrCnt')[0], oEvent.target)) {
-				jQuery(this._oItemNavigation.getFocusedDomRef() || this._oItemNavigation.getRootDomRef()).focus();
+				var oIN = this._getItemNavigation();
+				jQuery(oIN.getFocusedDomRef() || oIN.getRootDomRef()).focus();
 			} else {
 				if (bControlBefore) {
 					if (bNoData) {
@@ -3432,10 +3326,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 						this.$().find(".sapUiTableCtrlEmpty").focus();
 						this._bIgnoreFocusIn = false;
 					} else {
-						this._oItemNavigation.focusItem(this._oItemNavigation.getFocusedIndex() % this._oItemNavigation.iColumns, oEvent);
+						var oInfo = TableUtils.getFocusedItemInfo(this);
+						TableUtils.focusItem(this, oInfo.cellInRow, oEvent);
 					}
 				} else {
-					this._oItemNavigation.focusItem((this._oItemNavigation.getFocusedIndex() % this._oItemNavigation.iColumns) + (this._oItemNavigation.iColumns * this._iLastSelectedDataRow), oEvent);
+					var oInfo = TableUtils.getFocusedItemInfo(this);
+					TableUtils.focusItem(this, oInfo.cellInRow + (oInfo.columnCount * this._iLastSelectedDataRow), oEvent);
 				}
 			}
 
@@ -4046,7 +3942,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 					}
 				}
 			}
-			this._oColHdrItemNav.setFocusedIndex(this._iNewColPos);
 		} else {
 			this._animateColumnMove(iDnDColIndex, this._iNewColPos, iDnDColIndex);
 			oDnDCol.$().css({
@@ -4061,9 +3956,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			window.clearTimeout(this._mTimeouts.reApplyFocusTimer);
 		}
 		this._mTimeouts.reApplyFocusTimer = window.setTimeout(function() {
-			var iOldFocusedIndex = that._oItemNavigation.getFocusedIndex();
-			that._oItemNavigation.focusItem(0, oEvent);
-			that._oItemNavigation.focusItem(iOldFocusedIndex, oEvent);
+			var iOldFocusedIndex = TableUtils.getFocusedItemInfo(that).cell;
+			TableUtils.focusItem(this, 0, oEvent);
+			TableUtils.focusItem(this, iOldFocusedIndex, oEvent);
 		}, 0);
 
 		delete this._iNewColPos;
@@ -4541,14 +4436,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			this.$("selall").attr('title',this._oResBundle.getText("TBL_SELECT_ALL")).addClass("sapUiTableSelAll");
 		}
 
-		if (this._iSourceRowIndex !== undefined) {
-			this.fireRowSelectionChange({
-				rowIndex: iRowIndex,
-				rowContext: this.getContextByIndex(iRowIndex),
-				rowIndices: aRowIndices,
-				selectAll: bSelectAll
-			});
-		}
+		this.fireRowSelectionChange({
+			rowIndex: iRowIndex,
+			rowContext: this.getContextByIndex(iRowIndex),
+			rowIndices: aRowIndices,
+			selectAll: bSelectAll,
+			userInteraction: this._iSourceRowIndex !== undefined
+		});
 	};
 
 
@@ -4810,10 +4704,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 			// in the action mode we need no item navigation
 			this._bActionMode = true;
-			this.removeDelegate(this._oItemNavigation);
+			var oIN = this._getItemNavigation(); //TBD: Cleanup
+			this.removeDelegate(oIN);
 
 			// remove the tab index from the item navigation
-			jQuery(this._oItemNavigation.getFocusedDomRef()).attr("tabindex", "-1");
+			jQuery(oIN.getFocusedDomRef()).attr("tabindex", "-1");
 
 			// set the focus to the active control
 			$Focusable.filter(":sapTabbable").eq(0).focus();
@@ -4836,29 +4731,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 			// in the navigation mode we use the item navigation
 			this._bActionMode = false;
-			this.addDelegate(this._oItemNavigation);
+			var oIN = this._getItemNavigation(); //TBD: Cleanup
+			this.addDelegate(oIN);
 
 			// reset the tabindex of the focused domref of the item navigation
-			jQuery(this._oItemNavigation.getFocusedDomRef()).attr("tabindex", "0");
+			jQuery(oIN.getFocusedDomRef()).attr("tabindex", "0");
 
 			// when we have an event which is responsible to leave the action mode
 			// we search for the closest
 			if (oEvent) {
 				if (jQuery(oEvent.target).closest("td[tabindex='-1']").length > 0) {
 					// triggered when clicking into a cell, then we focus the cell
-					var iIndex = jQuery(this._oItemNavigation.aItemDomRefs).index(jQuery(oEvent.target).closest("td[tabindex='-1']").get(0));
-					this._oItemNavigation.focusItem(iIndex, null);
+					var iIndex = jQuery(oIN.aItemDomRefs).index(jQuery(oEvent.target).closest("td[tabindex='-1']").get(0));
+					TableUtils.focusItem(this, iIndex, null);
 				} else {
 					// somewhere else means whe check if the click happend inside
 					// the container, then we focus the last focused element
 					// (DON'T KNOW IF THIS IS OK - but we don't know where the focus was!)
 					if (jQuery.sap.containsOrEquals(this.$().find(".sapUiTableCCnt").get(0), oEvent.target)) {
-						this._oItemNavigation.focusItem(this._oItemNavigation.getFocusedIndex(), null);
+						TableUtils.focusItem(this, oIN.getFocusedIndex(), null);
 					}
 				}
 			} else {
 				// when no event is given we just focus the last focused index
-				this._oItemNavigation.focusItem(this._oItemNavigation.getFocusedIndex(), null);
+				TableUtils.focusItem(this, oIN.getFocusedIndex(), null);
 			}
 
 		}
@@ -4871,9 +4767,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 * @private
 	 */
 	Table.prototype._getFocusedRowIndex = function() {
-		var iFocusedIndex = this._oItemNavigation.iFocusedIndex;
-		var iColumns = this._oItemNavigation.iColumns;
-		var iSelectedCellInRow = iFocusedIndex % iColumns;
+		var oInfo = TableUtils.getFocusedItemInfo(this);
+		var iFocusedIndex = oInfo.cell;
+		var iColumns = oInfo.columnCount;
+		var iSelectedCellInRow = oInfo.cellInRow;
 		var iSelectedRow = this.getFirstVisibleRow() + (iFocusedIndex - iSelectedCellInRow) / iColumns;
 
 		if (!this.getColumnHeaderVisible()) {
@@ -4891,12 +4788,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		var iSelectedRow = this._getFocusedRowIndex();
 		var bIsFocusedRowSelected = this.isIndexSelected(iSelectedRow);
 
-		var bIsCellRowHeader = (this._oItemNavigation.iFocusedIndex % this._oItemNavigation.iColumns == 0);
+		var bIsCellRowHeader = TableUtils.getFocusedItemInfo(this).columnCount == 0;
 		if (bIsCellRowHeader) {
 			return bIsFocusedRowSelected;
 		} else {
-			var bHasRowHeader = this.getSelectionMode() !== sap.ui.table.SelectionMode.None && this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly;
-			if (bHasRowHeader) {
+			if (TableUtils.hasRowHeader(this)) {
 				return null;
 			} else {
 				return bIsFocusedRowSelected;
@@ -5024,12 +4920,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			}
 		} else if (oEvent.keyCode == jQuery.sap.KeyCodes.A && (oEvent.metaKey || oEvent.ctrlKey)) {
 			// CTRL + A handling
-			var oIN = this._oItemNavigation;
-			var iFocusedIndex = oIN.getFocusedIndex();
+			var oInfo = TableUtils.getFocusedItemInfo(this);
 
 			this._toggleSelectAll();
 
-			oIN.focusItem(iFocusedIndex, oEvent);
+			TableUtils.focusItem(this, oInfo.cell, oEvent);
 
 			oEvent.preventDefault();
 			oEvent.stopImmediatePropagation(true);
@@ -5069,7 +4964,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			this._leaveActionMode();
 			oEvent.preventDefault();
 		} else {
-			var oIN = this._oItemNavigation;
+			var oInfo = TableUtils.getFocusedItemInfo(this);
 			var bNoData = this.$().hasClass("sapUiTableEmpty");
 			var oSapUiTableCCnt = $this.find('.sapUiTableCCnt')[0];
 			var bFocusFromTableContent = jQuery.contains(oSapUiTableCCnt, oEvent.target);
@@ -5077,10 +4972,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			if (bFocusFromTableContent && this.getColumnHeaderVisible()) {
 				// Focus comes from table content. Focus the column header which corresponds to the
 				// selected column (column index)
-				var iColumn = oIN.getFocusedIndex() % oIN.iColumns;
-				oIN.focusItem(iColumn, oEvent);
+				TableUtils.focusItem(this, oInfo.columnCount, oEvent);
 				oEvent.preventDefault();
-			} else if (oIN.getFocusedDomRef() === oEvent.target && jQuery.sap.containsOrEquals(oSapUiTableCCnt, oEvent.target) ||
+			} else if (oInfo.domRef === oEvent.target && jQuery.sap.containsOrEquals(oSapUiTableCCnt, oEvent.target) ||
 				(!this.getColumnHeaderVisible() && bNoData && bFocusFromTableContent)) {
 				// in case of having the focus in the row or column header we do not need to
 				// place the focus to the div before the table control because there we do
@@ -5110,14 +5004,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			this._leaveActionMode();
 			oEvent.preventDefault();
 		} else {
-			var oIN = this._oItemNavigation;
+			var oInfo = TableUtils.getFocusedItemInfo(this);
 			var bContainsColHdrCnt = jQuery.contains($this.find('.sapUiTableColHdrCnt')[0], oEvent.target);
 			var bNoData = this.$().hasClass("sapUiTableEmpty");
 
 			if (bContainsColHdrCnt && !bNoData) {
-				oIN.focusItem(oIN.getFocusedIndex() + oIN.iColumns * this._iLastSelectedDataRow, oEvent);
+				TableUtils.focusItem(this, oInfo.cell + oInfo.columnCount * this._iLastSelectedDataRow, oEvent);
 				oEvent.preventDefault();
-			} else if (oIN.getFocusedDomRef() === oEvent.target || (bNoData && bContainsColHdrCnt)) {
+			} else if (oInfo.domRef === oEvent.target || (bNoData && bContainsColHdrCnt)) {
 				this._bIgnoreFocusIn = true;
 				$this.find(".sapUiTableCtrlAfter").focus();
 				this._bIgnoreFocusIn = false;
@@ -5222,7 +5116,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	Table.prototype.onsappagedown = function(oEvent) {
 		if (!this._bActionMode) {
 			var $this = this.$();
-			var oIN = this._oItemNavigation;
+			var oInfo = TableUtils.getFocusedItemInfo(this);
 
 			var bRowHeader = (this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly);
 			var iHeaderRows = $this.find(".sapUiTableColHdrScr>.sapUiTableColHdr").length;
@@ -5231,17 +5125,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			// Special Handling is required here:
 			// - If not in the last header row, jump to the last header row in the same column
 			// - If in the last header row, scroll table to first row and jump to first row, same column
-			if (this.getColumnHeaderVisible() && oIN.iFocusedIndex < (oIN.iColumns * iHeaderRows)) {
+			if (this.getColumnHeaderVisible() && oInfo.cell < (oInfo.columnCount * iHeaderRows)) {
 				// focus is on header
-				var iCol = oIN.iFocusedIndex % oIN.iColumns;
-				if ((oIN.iFocusedIndex <= (oIN.iColumns * iHeaderRows) && oIN.iFocusedIndex >= (oIN.iColumns * iHeaderRows) - oIN.iColumns) ||
+				var iCol = oInfo.cellInRow;
+				if ((oInfo.cell <= (oInfo.columnCount * iHeaderRows) && oInfo.cell >= (oInfo.columnCount * iHeaderRows) - oInfo.columnCount) ||
 					(iCol === 0 && bRowHeader)) {
 					// move focus to first data row, scroll table to top
 					this.setFirstVisibleRow(0);
-					oIN.focusItem(oIN.iColumns * iHeaderRows + iCol, oEvent);
+					TableUtils.focusItem(this, oInfo.columnCount * iHeaderRows + iCol, oEvent);
 				} else {
 					// set focus to last header row, same column if possible
-					oIN.focusItem(oIN.iColumns * iHeaderRows - oIN.iColumns + iCol, oEvent);
+					TableUtils.focusItem(this, oInfo.columnCount * iHeaderRows - oInfo.columnCount + iCol, oEvent);
 				}
 
 				oEvent.stopImmediatePropagation(true);
@@ -5255,11 +5149,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 					iFixedBottomRowsOffset = 0;
 				}
 
-				var iRowCount = (oIN.aItemDomRefs.length / oIN.iColumns) - iFixedBottomRowsOffset;
-				var iCol = oIN.iFocusedIndex % oIN.iColumns;
-				var iIndex = (iRowCount - 1) * oIN.iColumns + iCol;
+				var iRowCount = (oInfo.cellCount / oInfo.columnCount) - iFixedBottomRowsOffset;
+				var iCol = oInfo.cell % oInfo.columnCount;
+				var iIndex = (iRowCount - 1) * oInfo.columnCount + iCol;
 
-				oIN.focusItem(iIndex, oEvent);
+				TableUtils.focusItem(this, iIndex, oEvent);
 
 				oEvent.stopImmediatePropagation(true);
 			}
@@ -5273,10 +5167,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 */
 	Table.prototype.onsappagedownmodifiers = function(oEvent) {
 		if (!this._bActionMode && oEvent.altKey) {
-			var oIN = this._oItemNavigation;
+			var oInfo = TableUtils.getFocusedItemInfo(this);
 			var bRowHeader = (this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly);
 
-			var iCol = oIN.iFocusedIndex % oIN.iColumns;
+			var iCol = oInfo.columnCount;
 			var iNewCol;
 			if (iCol == 0 && bRowHeader) {
 				iNewCol = 1;
@@ -5292,7 +5186,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 					iNewCol = Math.min(iMaxIndex, iCol + iVisibleColumns);
 				}
 			}
-			oIN.focusItem(oIN.iFocusedIndex - (iCol - iNewCol), oEvent);
+			TableUtils.focusItem(this, oInfo.cell - (iCol - iNewCol), oEvent);
 			oEvent.stopImmediatePropagation(true);
 			oEvent.preventDefault();
 		}
@@ -5305,17 +5199,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	Table.prototype.onsappageup = function(oEvent) {
 		if (!this._bActionMode) {
 			var $this = this.$();
-			var oIN = this._oItemNavigation;
+			var oInfo = TableUtils.getFocusedItemInfo(this);
 
 			var bRowHeader = (this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly);
 			var iHeaderRows = $this.find(".sapUiTableColHdrScr>.sapUiTableColHdr").length;
-			var iCol = oIN.iFocusedIndex % oIN.iColumns;
+			var iCol = oInfo.cellInRow;
 
-			if (this.getColumnHeaderVisible() && oIN.iFocusedIndex < (oIN.iColumns * iHeaderRows)) {
+			if (this.getColumnHeaderVisible() && oInfo.cell < (oInfo.columnCount * iHeaderRows)) {
 				// focus is on header
-				if (oIN.iFocusedIndex > oIN.iColumns) {
+				if (oInfo.cell > oInfo.columnCount) {
 					// focus is not on the first header row, move to first
-					oIN.focusItem(iCol, oEvent);
+					TableUtils.focusItem(this, iCol, oEvent);
 				}
 				oEvent.stopImmediatePropagation(true);
 			} else {
@@ -5323,14 +5217,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				if (this.getColumnHeaderVisible() && this.getFirstVisibleRow() == 0 && this._isTopRow(oEvent)) {
 					// focus is on first row, move to last header row, same column
 					if (bRowHeader && iCol === 0) {
-						oIN.focusItem(iCol, oEvent);
+						TableUtils.focusItem(this, iCol, oEvent);
 					} else {
-						oIN.focusItem(oIN.iColumns * iHeaderRows - oIN.iColumns + iCol, oEvent);
+						TableUtils.focusItem(this, oInfo.columnCount * iHeaderRows - oInfo.columnCount + iCol, oEvent);
 					}
 					oEvent.stopImmediatePropagation(true);
 				} else {
-					var iIndex = this.getColumnHeaderVisible() ? oIN.iColumns * iHeaderRows : 0;
-					oIN.focusItem(iIndex + iCol, oEvent);
+					var iIndex = this.getColumnHeaderVisible() ? oInfo.columnCount * iHeaderRows : 0;
+					TableUtils.focusItem(this, iIndex + iCol, oEvent);
 					oEvent.stopImmediatePropagation(true);
 
 					if (this._isTopRow(oEvent)) {
@@ -5349,10 +5243,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 */
 	Table.prototype.onsappageupmodifiers = function(oEvent) {
 		if (!this._bActionMode && oEvent.altKey) {
-			var oIN = this._oItemNavigation;
+			var oInfo = TableUtils.getFocusedItemInfo(this);
 			var bRowHeader = (this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly);
 
-			var iCol = oIN.iFocusedIndex % oIN.iColumns;
+			var iCol = oInfo.columnCount;
 			if (iCol > 0) {
 				var iNewCol;
 				if (iCol == 1 && bRowHeader) {
@@ -5373,7 +5267,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 						iNewCol = Math.max(iMin, iCol - iVisibleColumns);
 					}
 				}
-				oIN.focusItem(oIN.iFocusedIndex - (iCol - iNewCol), oEvent);
+				TableUtils.focusItem(this, oInfo.cell - (iCol - iNewCol), oEvent);
 			}
 			oEvent.stopImmediatePropagation(true);
 			oEvent.preventDefault();
@@ -5395,9 +5289,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			return;
 		}
 
-		var iFocusedIndex = this._oItemNavigation.iFocusedIndex;
-		var iColumns = this._oItemNavigation.iColumns;
-		var iSelectedCellInRow = iFocusedIndex % iColumns;
+		var oInfo = TableUtils.getFocusedItemInfo(this);
+		var iFocusedIndex = oInfo.cell;
+		var iSelectedCellInRow = oInfo.cellInRow;
 
 		var offset = 0;
 		if (!bIsRowOnly) {
@@ -5407,16 +5301,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		if (iSelectedCellInRow > this.getFixedColumnCount() + offset) {
 			// If there is a fixed column, stop right of it.
 			oEvent.stopImmediatePropagation(true);
-			this._oItemNavigation.focusItem(iFocusedIndex - iSelectedCellInRow + this.getFixedColumnCount() + offset, null);
+			TableUtils.focusItem(this, iFocusedIndex - iSelectedCellInRow + this.getFixedColumnCount() + offset, null);
 		} else if (!bIsRowOnly) {
 			if (iSelectedCellInRow > 1) {
 				// if focus is anywhere in the row, move focus to the first column cell.
 				oEvent.stopImmediatePropagation(true);
-				this._oItemNavigation.focusItem(iFocusedIndex - iSelectedCellInRow + 1, null);
+				TableUtils.focusItem(this, iFocusedIndex - iSelectedCellInRow + 1, null);
 			} else if (iSelectedCellInRow == 1) {
 				// if focus is on first cell, move focus to row header.
 				oEvent.stopImmediatePropagation(true);
-				this._oItemNavigation.focusItem(iFocusedIndex - 1, null);
+				TableUtils.focusItem(this, iFocusedIndex - 1, null);
 			} else {
 				// If focus is on selection cell, do nothing.
 				oEvent.stopImmediatePropagation(true);
@@ -5438,9 +5332,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		}
 
 		// If focus is on a selection cell, move focus to the first cell of the same row.
-		var iFocusedIndex = this._oItemNavigation.iFocusedIndex;
-		var iColumns = this._oItemNavigation.iColumns;
-		var iSelectedCellInRow = iFocusedIndex % iColumns;
+		var oInfo = TableUtils.getFocusedItemInfo(this);
+		var iFocusedIndex = oInfo.cell;
+		var iSelectedCellInRow = oInfo.cellInRow;
 
 		var bIsRowOnly = (this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly);
 		var offset = 0;
@@ -5451,11 +5345,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		if (iSelectedCellInRow === 0 && bIsRowOnly) {
 			// If focus is in row header, select first cell in same row.
 			oEvent.stopImmediatePropagation(true);
-			this._oItemNavigation.focusItem(iFocusedIndex + 1, null);
+			TableUtils.focusItem(this, iFocusedIndex + 1, null);
 		} else if (iSelectedCellInRow < this.getFixedColumnCount() - offset) {
 			// if their is a fixed column, stop left of it.
 			oEvent.stopImmediatePropagation(true);
-			this._oItemNavigation.focusItem(iFocusedIndex - iSelectedCellInRow + this.getFixedColumnCount() - offset, null);
+			TableUtils.focusItem(this, iFocusedIndex - iSelectedCellInRow + this.getFixedColumnCount() - offset, null);
 		}
 	};
 
@@ -5478,16 +5372,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				return;
 			}
 
-			var iFocusedIndex = this._oItemNavigation.iFocusedIndex;
-			var iColumns = this._oItemNavigation.iColumns;
+			var oInfo = TableUtils.getFocusedItemInfo(this);
+			var iFocusedIndex = oInfo.cell;
+			var iSelectedCellInRow = oInfo.cellInRow;
+			var iColumns = oInfo.columnCount;
 			var iSelectedRowInColumn = Math.ceil(iFocusedIndex / iColumns) - 1;
-			var iSelectedCellInRow = iFocusedIndex % iColumns;
 
 			if (this.getColumnHeaderVisible()) {
 				if (iSelectedRowInColumn == 1) {
 					// if focus is in first row, select corresponding header
 					oEvent.stopImmediatePropagation(true);
-					this._oItemNavigation.focusItem(iSelectedCellInRow, oEvent);
+					TableUtils.focusItem(this, iSelectedCellInRow, oEvent);
 				} else if (iSelectedRowInColumn > 1) {
 					oEvent.stopImmediatePropagation(true);
 
@@ -5495,7 +5390,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 					this.setFirstVisibleRow(0);
 
 					var iTargetIndex = iSelectedCellInRow + iColumns;
-					this._oItemNavigation.focusItem(iTargetIndex, oEvent);
+					TableUtils.focusItem(this, iTargetIndex, oEvent);
 				}
 			} else {
 				oEvent.stopImmediatePropagation(true);
@@ -5504,7 +5399,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				this.setFirstVisibleRow(0);
 
 				var iTargetIndex = iFocusedIndex - iSelectedRowInColumn * iColumns;
-				this._oItemNavigation.focusItem(iTargetIndex, oEvent);
+				TableUtils.focusItem(this, iTargetIndex, oEvent);
 			}
 		}
 	};
@@ -5522,20 +5417,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			var oTableHeader = $this.find(".sapUiTableColHdrCnt")[0];
 			var bIsTableHeaderCell = jQuery.contains(oTableHeader, oEvent.target);
 
-			var iFocusedIndex = this._oItemNavigation.iFocusedIndex;
-			var iColumns = this._oItemNavigation.iColumns;
-			var iSelectedCellInRow = iFocusedIndex % iColumns;
+			var oInfo = TableUtils.getFocusedItemInfo(this);
+			var iFocusedIndex = oInfo.cell;
+			var iColumns = oInfo.columnCount;
+			var iSelectedCellInRow = oInfo.cellInRow;
 
 			oEvent.stopImmediatePropagation(true);
 
 			if (bIsTableHeaderCell) {
 				// If focus is on a group header, select first cell row after header.
-				this._oItemNavigation.focusItem(iFocusedIndex + iColumns, oEvent);
+				TableUtils.focusItem(this, iFocusedIndex + iColumns, oEvent);
 			} else {
 				// if focus is on any cell row, select last cell row.
 				this.setFirstVisibleRow(this._getRowCount() - this.getVisibleRowCount());
-				var iTargetIndex = this._oItemNavigation.aItemDomRefs.length - (iColumns - iSelectedCellInRow);
-				this._oItemNavigation.focusItem(iTargetIndex, oEvent);
+				var iTargetIndex = oInfo.cellCount - (iColumns - iSelectedCellInRow);
+				TableUtils.focusItem(this, iTargetIndex, oEvent);
 			}
 		}
 	};
@@ -6299,6 +6195,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			// since the row is an element it has no own renderer. Anyway, logically it has a domref. Let the rows
 			// update their domrefs after the rendering is done. This is required to allow performant access to row domrefs
 			this._initRowDomRefs();
+			this._getKeyboardExtension().invalidateItemNavigation();
 
 			// restore the column icons
 			var aCols = this.getColumns();

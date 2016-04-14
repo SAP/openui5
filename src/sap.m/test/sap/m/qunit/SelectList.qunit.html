@@ -1950,7 +1950,7 @@
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
-				keyboardNavigationMode: sap.m.ListKeyboardNavigationMode.None,
+				keyboardNavigationMode: sap.m.SelectListKeyboardNavigationMode.None,
 				items: [
 					new sap.ui.core.Item({
 						text: "lorem ipsum"
@@ -1973,7 +1973,7 @@
 
 			// system under test
 			var oSelectList = new sap.m.SelectList({
-				keyboardNavigationMode: sap.m.ListKeyboardNavigationMode.Delimited,
+				keyboardNavigationMode: sap.m.SelectListKeyboardNavigationMode.Delimited,
 				items: [
 					new sap.ui.core.Item({
 						text: "lorem ipsum"
@@ -1986,7 +1986,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// act
-			oSelectList.setKeyboardNavigationMode(sap.m.ListKeyboardNavigationMode.None);
+			oSelectList.setKeyboardNavigationMode(sap.m.SelectListKeyboardNavigationMode.None);
 			sap.ui.getCore().applyChanges();
 
 			// assert

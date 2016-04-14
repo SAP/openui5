@@ -1,0 +1,41 @@
+// Cozy mode
+.sapMFCL > {
+	& > .sapMFCLColumnMid.sapMFCLColumnActive {
+		border-left: 1px solid @sapHCStandardFG;
+		border-right: 1px solid @sapHCStandardFG;
+	}
+
+	& > .sapMFCLColumnActive.sapMFCLColumnLastActive {
+		border-right: none;
+		border-left: 1px solid @sapHCStandardFG;
+	}
+
+	& > .sapMFCLColumnActive.sapMFCLColumnFirstActive {
+		border-right: 1px solid @sapHCStandardFG;
+		border-left: none;
+	}
+
+	& > .sapMFCLColumnActive.sapMFCLColumnOnlyActive {
+		border-right: none;
+		border-left: none;
+	}
+}
+
+.sapMFCL {
+	.sapMFCLNavigationButton {
+		&.sapMFCLNavigationButtonLeft {
+			.sapMBtnInner {
+				border: 1px solid @sapHCStandardFG;
+				border-radius: 0 0.375rem 0.375rem 0;
+			}
+		}
+
+		&.sapMFCLNavigationButtonRight {
+			.sapMBtnInner {
+				border: 1px solid @sapHCStandardFG;
+				border-radius: 0.375rem 0 0 0.375rem;
+			}
+		}
+	}
+}
+

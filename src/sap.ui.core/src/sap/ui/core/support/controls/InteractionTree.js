@@ -3,12 +3,14 @@
  */
 
 sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/IconPool',
-       'sap/m/Popover', 'sap/m/Text', 'sap/ui/layout/form/SimpleForm', 'sap/m/Label', 'sap/m/Link',
+    'sap/m/library', 'sap/m/Popover', 'sap/m/Text', 'sap/ui/layout/form/SimpleForm', 'sap/m/Button', 'sap/m/Label', 'sap/m/Link',
     'sap/ui/core/HTML', 'sap/ui/core/Title'],
     function (jQuery, ManagedObject, IconPool,
-              Popover, Text, SimpleForm, Label, Link,
+              mobileLibrary, Popover, Text, SimpleForm, Button, Label, Link,
               HTML, Title) {
        'use strict';
+
+       var PlacementType = mobileLibrary.PlacementType;
 
        var InteractionTree = ManagedObject.extend("sap.ui.core.support.controls.InteractionTree", {
           constructor: function () {
@@ -650,7 +652,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
           function createEmptyPopOver() {
              var oPopover = new Popover({
-                placement: sap.m.PlacementType.Auto,
+                placement: PlacementType.Auto,
                 contentWidth: "400px",
                 showHeader: false,
                 showArrow: true,
@@ -671,7 +673,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           function createPopOverContent() {
              clientVsServerTitle = new HTML();
              progressBar = new HTML();
-             closeButton = new sap.m.Button({
+             closeButton = new Button({
                 icon : IconPool.getIconURI("decline"),
                 type: "Transparent",
                 press : function() {
@@ -793,7 +795,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
           function createEmptyPopOver() {
              var oPopover = new Popover({
-                placement: sap.m.PlacementType.Auto,
+                placement: PlacementType.Auto,
                 contentWidth: "350px",
                 showHeader: false,
                 showArrow: true,
@@ -811,7 +813,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           }
 
           function createPopOverContent() {
-             closeButton = new sap.m.Button({
+             closeButton = new Button({
                 icon : IconPool.getIconURI("decline"),
                 type: "Transparent",
                 press : function() {

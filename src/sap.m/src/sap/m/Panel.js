@@ -197,7 +197,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		// ARIA
-		this._getIcon().$().attr("aria-expanded", bExpanded.toString());
+		this._getIcon().$().attr("aria-expanded", this.getExpanded());
 
 		this._toggleExpandCollapse();
 		this._toggleCssClasses();

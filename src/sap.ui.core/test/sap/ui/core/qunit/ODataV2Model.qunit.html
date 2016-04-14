@@ -2971,6 +2971,36 @@
 		});
 	});
 
+	asyncTest("async test media entity update check metadata", function(){
+		cleanServiceDataCache();
+		var spy = sinon.spy(OData.defaultHttpClient, "request");
+		var oModel = initModel(sURI, {
+			json: true,
+			useBatch: true
+		});
+		var oBinding, oCount = 0;
+		oBinding = oModel.bindContext("/Categories(10)");
+		oBinding.attachChange(function(){});
+		oBinding.initialize();
+		oModel.attachBatchRequestCompleted(function(oData) {
+			oCount++;
+			if (oCount == 1) { // Data loaded initially
+				oModel.setProperty("/Categories(10)/CategoryName","Test");
+				oModel.submitChanges();
+			} else if (oCount == 2) { // Data updated and refreshed
+				var oPayload = spy.args[3][0].data.__batchRequests[0].__changeRequests[0].data;
+				equal(oPayload.__metadata.content_type, "application/octet-stream", "check media entity property");
+				equal(oPayload.__metadata.media_src, "http://services.odata.org/V2/Northwind/Northwind.svc/Categories(10)/Attachment/$value", "check media entity property");
+				equal(oPayload.__metadata.edit_media, undefined, "check media entity property");
+				OData.defaultHttpClient.request.restore();
+				oModel.destroy();
+				start();
+			} else {
+				ok(false, "More than two batch requests sent!");
+			}
+		});
+	});
+
 	module("CSRF Token handling", {
 		setup: function() {
 			window.odataFakeServiceData.forbidHeadRequest = false;

@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * The FormattedText control allows the usage of a limited set of tags for in-line display of formatted text in HTML format.
+		 * The FormattedText control allows the usage of a limited set of tags for inline display of formatted text in HTML format.
 		 * @extends sap.ui.core.Control
 		 * @version ${version}
 		 *
@@ -32,7 +32,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				properties: {
 					/**
 					 * Text in HTML format.
-					 * The following tags are allowed:
+					 * The following tags are supported:
 					 * <ul>
 					 *	<li><code>a</code></li>
 					 *	<li><code>abbr</code></li>
@@ -59,8 +59,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 					 *	<li><code>ol</code></li>
 					 *	<li><code>li</code></li>
 					 * </ul>
-					 * <code>class, style,</code> and <code>target</code> attributes are allowed.
-					 * Only safe <code>href</code> attributes can be used. See {@link jQuery.sap.validateUrl}
+					 * <p><code>class, style,</code> and <code>target</code> attributes are allowed.
+					 * If <code>target</code> is not set, links open in a new window by default.
+					 * <p>Only safe <code>href</code> attributes can be used. See {@link jQuery.sap.validateUrl}.
 					 */
 					htmlText: {type: "string", group: "Misc", defaultValue: ""},
 
@@ -86,7 +87,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		_renderingRules.ATTRIBS = {
 			'style' : 1,
 			'class' : 1,
-			'a::href' : 1
+			'a::href' : 1,
+			'a::target' : 1
 		};
 
 		// rules for the allowed tags
@@ -129,15 +131,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		/**
 		 * Sanitizes attributes on an HTML tag.
 		 *
-		 * @param {string} tagName An HTML tag name in lowercase
+		 * @param {string} tagName An HTML tag name in lower case
 		 * @param {array} attribs An array of alternating names and values
-		 * @return {array} The sanitized attributes as a list of alternating names and values. Null value means to omit the attribute
+		 * @return {array} The sanitized attributes as a list of alternating names and values. Value <code>null</code> removes the attribute.
 		 * @private
 		 */
 		function fnSanitizeAttribs (tagName, attribs) {
 
 			var sWarning;
-			var attr, value, openNewWindow;
+			var attr,
+				value,
+				addTarget = tagName === "a";
 			// add UI5 specific classes when appropriate
 			var cssClass = _renderingRules.ELEMENTS[tagName].cssClass || "";
 
@@ -157,13 +161,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				}
 
 				// sanitize hrefs
-				if (attr.toLowerCase() == "href") { // a::href
+				if (attr == "href") { // a::href
 					if (!jQuery.sap.validateUrl(value)) {
 						jQuery.sap.log.warning("FormattedText: incorrect href attribute:" + value, this);
 						attribs[i + 1] = "#";
-					} else {
-						openNewWindow = true;
+						addTarget = false;
 					}
+				}
+				if (attr == "target") { // a::target already exists
+					addTarget = false;
 				}
 
 				// add UI5 classes to the user defined
@@ -173,7 +179,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				}
 			}
 
-			if (openNewWindow) {
+			if (addTarget) {
 				attribs.push("target");
 				attribs.push("_blank");
 			}
@@ -206,8 +212,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			}
 		}
 
+		// prohibit a new window from accessing window.opener.location
+		function openExternalLink (oEvent) {
+			var newWindow = window.open();
+			newWindow.opener = null;
+			newWindow.location = oEvent.currentTarget.href;
+			oEvent.preventDefault();
+		}
+
+		FormattedText.prototype.onAfterRendering = function () {
+			this.$().find('a[target="_blank"]').on("click", openExternalLink);
+		};
+
 		/**
-		 * Sets the HTML text to be displayed.
+		 * Defines the HTML text to be displayed.
 		 * @param {string} sText HTML text as a string
 		 * @public
 		 */

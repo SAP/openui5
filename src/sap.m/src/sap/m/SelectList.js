@@ -67,13 +67,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				/**
 				 * Defines the keyboard navigation mode.
 				 *
-				 * <b>Note:</b> The <code>sap.m.ListKeyboardNavigationMode.None</code> enumeration value, is only
+				 * <b>Note:</b> The <code>sap.m.SelectListKeyboardNavigationMode.None</code> enumeration value, is only
 				 * intended for use in some composite controls that handles keyboard navigation by themselves.
 				 *
 				 * @protected
 				 * @since 1.38
 				 */
-				keyboardNavigationMode: { type: "sap.m.ListKeyboardNavigationMode", group: "Behavior", defaultValue: sap.m.ListKeyboardNavigationMode.Delimited }
+				keyboardNavigationMode: { type: "sap.m.SelectListKeyboardNavigationMode", group: "Behavior", defaultValue: sap.m.SelectListKeyboardNavigationMode.Delimited }
 			},
 			defaultAggregation: "items",
 			aggregations: {
@@ -265,7 +265,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		};
 
 		SelectList.prototype.onAfterRendering = function() {
-			if (this.getKeyboardNavigationMode() === sap.m.ListKeyboardNavigationMode.None) {
+			if (this.getKeyboardNavigationMode() === sap.m.SelectListKeyboardNavigationMode.None) {
 				this.destroyItemNavigation();
 			} else {
 				this.createItemNavigation();

@@ -38,7 +38,7 @@ sap.ui.define(['jquery.sap.global'],
 		}
 
 		oRm.addClass("sapUiUfdCurrency");
-		if (!oCurrency._hasValue()) {
+		if (oCurrency._bRenderNoValClass) {
 			oRm.addClass("sapUiUfdCurrencyNoVal");
 		}
 		oRm.writeClasses();
@@ -57,11 +57,7 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.addClass("sapUiUfdCurrencyCurrency");
 		oRm.writeClasses();
 		oRm.write(">");
-		if (oCurrency.getUseSymbol()) {
-			oRm.writeEscaped(oCurrency.getCurrencySymbol());
-		} else {
-			oRm.writeEscaped(oCurrency.getCurrency());
-		}
+		oRm.writeEscaped(oCurrency._getCurrency());
 		oRm.write("</span>");
 		oRm.write("</div>");
 		oRm.write("</div>");

@@ -1320,7 +1320,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @returns {sap.m.SelectList}
 		 */
 		Select.prototype.createList = function() {
-			var mListKeyboardNavigationMode = sap.m.ListKeyboardNavigationMode,
+			var mListKeyboardNavigationMode = sap.m.SelectListKeyboardNavigationMode,
 				sKeyboardNavigationMode = sap.ui.Device.system.phone ? mListKeyboardNavigationMode.Delimited : mListKeyboardNavigationMode.None;
 
 			this._oList = new SelectList({

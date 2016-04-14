@@ -676,14 +676,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			}
 
 			if (!this.getContentHeight()) {
-
 				//reset the height so the dialog can grow
 				$dialogContent.css({
 					height: 'auto'
 				});
 
 				//set the newly calculated size by getting it from the browser rendered layout - by the max-height
-				$dialogContent.height(parseInt($dialog.height(), 10) + parseInt($dialog.css("border-top-width"), 10) + parseInt($dialog.css("border-bottom-width"), 10));
+				$dialogContent.height(parseInt($dialog.height(), 10));
 			}
 
 			if (this.getStretch()) {
@@ -1202,6 +1201,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				// Due to a bug in getAssociation in ManagedObject slice the Array
 				// Remove slice when the bug is fixed.
 				labels = this.getAssociation("ariaLabelledBy", []).slice();
+
+			var subHeader = this.getSubHeader();
+			if (subHeader) {
+				labels.unshift(subHeader.getId());
+			}
 
 			if (header) {
 				labels.unshift(header.getId());

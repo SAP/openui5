@@ -42,6 +42,16 @@
 
 				QUnit.module("Public API", {
 					setup : function () {
+						// Replacing jQuery width method to report stable browser screen resolution for the test
+						var that = this;
+						this._ojQueryWidthMethod = jQuery.fn.width;
+						jQuery.fn.width = function (sWidth) {
+							if (!sWidth && this[0] === window) {
+								return 1440;
+							}
+							return that._ojQueryWidthMethod.apply(this, arguments);
+						};
+
 						this._oDSC = new sap.ui.layout.DynamicSideContent();
 						this._oDSC.placeAt("qunit-fixture");
 						sap.ui.getCore().applyChanges();
@@ -49,6 +59,9 @@
 					teardown : function () {
 						this._oDSC.destroy();
 						this._oDSC = null;
+
+						// Restoring jQuery width method to the original one
+						jQuery.fn.width = this._ojQueryWidthMethod;
 					}
 				});
 
@@ -252,15 +265,27 @@
 
 				QUnit.module("Helper functionality", {
 					setup : function () {
+						// Replacing jQuery width method to report stable browser screen resolution for the test
+						var that = this;
+						this._ojQueryWidthMethod = jQuery.fn.width;
+						jQuery.fn.width = function (sWidth) {
+							if (!sWidth && this[0] === window) {
+								return 500;
+							}
+							return that._ojQueryWidthMethod.apply(this, arguments);
+						};
+
 						this._oDSC = new sap.ui.layout.DynamicSideContent();
 						this._oDSC.placeAt("qunit-fixture");
-						$("#qunit-fixture").width(500);
+
 						sap.ui.getCore().applyChanges();
 					},
 					teardown : function () {
-						$("#qunit-fixture").width(1000); // Reset qunit fixture size to original (1000px);
 						this._oDSC.destroy();
 						this._oDSC = null;
+
+						// Restoring jQuery width method to the original one
+						jQuery.fn.width = this._ojQueryWidthMethod;
 					},
 					assertOnSideContentVisibility : function(sBreakpoint, sideContentVisibility, bExpectedResult, bIsInComparisonMode) {
 						this._oDSC.setSideContentVisibility(sideContentVisibility);

@@ -3,8 +3,8 @@
  */
 
 // Provides base class sap.ui.core.Control for all controls
-sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', './UIArea', /* cyclic: './RenderManager', */ './ResizeHandler', './BusyIndicatorUtils'],
-	function(jQuery, CustomStyleClassSupport, Element, UIArea, ResizeHandler, BusyIndicatorUtils) {
+sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', './UIArea', './RenderManager', './ResizeHandler', './BusyIndicatorUtils'],
+	function(jQuery, CustomStyleClassSupport, Element, UIArea, RenderManager, ResizeHandler, BusyIndicatorUtils) {
 	"use strict";
 
 	/**
@@ -424,8 +424,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 * @protected
 	 */
 	Control.prototype.getRenderer = function () {
-		//TODO introduce caching?
-		return sap.ui.core.RenderManager.getRenderer(this);
+		return RenderManager.getRenderer(this);
 	};
 
 	/**
@@ -593,7 +592,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 		// Controls can have their visible-property set to "false" in which case the Element's destroy method will#
 		// fail to remove the placeholder content from the DOM. We have to remove it here in that case
 		if (!this.getVisible()) {
-			var oPlaceholder = document.getElementById(sap.ui.core.RenderManager.createInvisiblePlaceholderId(this));
+			var oPlaceholder = document.getElementById(RenderManager.createInvisiblePlaceholderId(this));
 			if (oPlaceholder && oPlaceholder.parentNode) {
 				oPlaceholder.parentNode.removeChild(oPlaceholder);
 			}
@@ -603,7 +602,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	};
 
 	(function() {
-		var sPreventedEvents = "focusin focusout keydown keypress keyup mousedown touchstart mouseup touchend click",
+		var sPreventedEvents = "focusin focusout keydown keypress keyup mousedown touchstart touchmove mouseup touchend click",
 			oBusyIndicatorDelegate = {
 				onAfterRendering: function() {
 					if (this.getBusy() && this.$() && !this._busyIndicatorDelayedCallId && !this.$("busyIndicator").length) {
@@ -623,6 +622,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 					}
 				}
 			},
+
 			fnAppendBusyIndicator = function() {
 				var $this = this.$(this._sBusySection),
 					aForbiddenTags = ["area", "base", "br", "col", "embed", "hr", "img", "input", "keygen", "link", "menuitem", "meta", "param", "source", "track", "wbr"];
@@ -642,7 +642,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 
 				//Check if DOM Element where the busy indicator is supposed to be placed can handle content
 				var sTag = $this.get(0) && $this.get(0).tagName;
-				if (sTag && jQuery.inArray(sTag.toLowerCase(), aForbiddenTags) >= 0) {
+				if (sTag && aForbiddenTags.indexOf(sTag.toLowerCase()) >= 0) {
 					jQuery.sap.log.warning("BusyIndicator cannot be placed in elements with tag '" + sTag + "'.");
 					return;
 				}
@@ -680,7 +680,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 						tabindex : $this.attr('tabindex')
 					});
 					$this.attr('tabindex', -1);
-					$this.bind(sPreventedEvents, fnPreserveEvents);
+					$this.bind(sPreventedEvents, this._preserveEvents);
 
 					$TabRefs.each(function(iIndex, oObject) {
 						var $Ref = jQuery(oObject),
@@ -696,7 +696,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 						});
 
 						$Ref.attr('tabindex', -1);
-						$Ref.bind(sPreventedEvents, fnPreserveEvents);
+						$Ref.bind(sPreventedEvents, this._preserveEvents);
 					});
 				} else {
 					if (this._busyTabIndices) {
@@ -711,17 +711,18 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 								oObject.ref.removeAttr('tabindex');
 							}
 
-							oObject.ref.unbind(sPreventedEvents, fnPreserveEvents);
+							oObject.ref.unbind(sPreventedEvents, this._preserveEvents);
 						});
 					}
 					this._busyTabIndices = [];
 				}
-			},
-			fnPreserveEvents = function(oEvent) {
-				jQuery.sap.log.debug("Local Busy Indicator Event Suppressed: " + oEvent.type);
-				oEvent.preventDefault();
-				oEvent.stopImmediatePropagation();
 			};
+
+		Control.prototype._preserveEvents = function(oEvent) {
+			jQuery.sap.log.debug("Local Busy Indicator Event Suppressed: " + oEvent.type);
+			oEvent.preventDefault();
+			oEvent.stopImmediatePropagation();
+		};
 
 		/**
 		 * Set the controls busy state.
@@ -919,7 +920,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 		 *                            // <code>null</code> can be provided.
 		 *      editable: true,       // Boolean which describes whether the control is editable. If not relevant it must not be set or
 		 *                            // <code>null</code> can be provided.
-		 *      chidlren: []          // Array of accessibility info objects of children of the given control (e.g. when the control is a layout).
+		 *      children: []          // Array of accessibility info objects of children of the given control (e.g. when the control is a layout).
 		 *                            // Note: Children should only be provided when it is helpful to understand the accessibility context
 		 *                            //       (e.g. a form control must not provide details of its internals (fields, labels, ...) but a
 		 *                            //       layout should).

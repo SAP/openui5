@@ -28,13 +28,13 @@
 @sapUiChartPositiveLargeText: lighten(@sapUiChartGood, 15);  // #a0dbb1
 @sapUiChartNeutralLargeText: lighten(@sapUiChartNeutral, 30);  // #f1f2f3
 
-@sapUiChartDataPointBG: lighten(@sapUiChartNeutral, 10);  // #bac1c4
-@sapUiChartDataPointBGBorderColor: lighten(@sapUiChartNeutral, 10);  // #bac1c4
+@sapUiChartDataPointBG: darken(desaturate(@sapUiChartNeutral, 1), 10);  // #848f94
+@sapUiChartDataPointBGBorderColor: darken(desaturate(@sapUiChartNeutral, 1), 10);  // #848f94
 @sapUiChartDataLineColorWithBG: darken(@sapUiChartGridlineColor, 40);   // #333333
 @sapUiChartDataLineColor: lighten(@sapUiChartGridlineColor, 40);   // #ffffff
 
-@sapUiChartRadialRemainingCircle: lighten(@sapUiChartNeutral, 20);  // #d5dadc
-@sapUiChartRadialRemainingCircleBorderColor: lighten(@sapUiChartNeutral, 20);  // #d5dadc
+@sapUiChartRadialRemainingCircle: darken(desaturate(@sapUiChartNeutral, 1), 10);  // #848f94
+@sapUiChartRadialRemainingCircleBorderColor: darken(desaturate(@sapUiChartNeutral, 1), 10);  // #848f94
 @sapUiChartRadialBG: transparent;
 
 @sapUiChartPaletteSemanticBadLight3: lighten(desaturate(@sapUiChartBad, 2), 22.9);
@@ -77,7 +77,7 @@
 
 @sapUiChartPaletteSequentialNeutralLight3: lighten(@sapUiChartSequenceNeutral, 30);
 @sapUiChartPaletteSequentialNeutralLight2: lighten(saturate(@sapUiChartSequenceNeutral, 1), 20);
-@sapUiChartPaletteSequentialNeutralDark1: darken(desaturate@sapUiChartSequenceNeutral, 1), 10);
+@sapUiChartPaletteSequentialNeutralDark1: darken(desaturate(@sapUiChartSequenceNeutral, 1), 10);
 @sapUiChartPaletteSequentialNeutralDark2: darken(@sapUiChartSequenceNeutral, 20);
 
 @sapUiChoroplethBG: darken(saturate(@sapUiChartSequenceNeutral, 13), 8);
@@ -104,7 +104,7 @@
 @sapUiSegmentedButtonSelectedIconColor: contrast(@sapUiSegmentedButtonSelectedBackground, lighten(@sapUiContentIconColor, 12), @sapUiContentContrastIconColor, @sapUiContentContrastTextThreshold);
 @sapUiSegmentedButtonFooterBorderColor: @sapUiButtonBorderColor;
 
-@sapUiFieldPlaceholderTextColor: lighten(saturate(@sapUiBaseColor), 24, 52.5);
+@sapUiFieldPlaceholderTextColor: lighten(saturate(@sapUiBaseColor, 24), 52.5);
 
 @sapUiListTextColor: darken(@sapUiBaseText, 2);
 @sapUiListVerticalBorderColor: lighten(@sapUiListBorderColor, 3);

@@ -1024,7 +1024,7 @@ sap.ui.define([
 			//performance improvements possible here as .position() is costly
 			oInfo.realTop = $this.position().top; //first get the dom position = scrollTop to get the section at the window top
 			var bHasTitle = (oSectionBase._getInternalTitleVisible() && (oSectionBase.getTitle().trim() !== ""));
-			var bHasButtons = !oInfo.isSection && oSectionBase.getAggregation("actions").length > 0;
+			var bHasButtons = !oInfo.isSection && oSectionBase.getAggregation("actions", []).length > 0;
 			if (!oInfo.isSection && !bHasTitle && !bHasButtons) {
 				oInfo.realTop = $this.find(".sapUiResponsiveMargin.sapUxAPBlockContainer").position().top;
 			}
@@ -1128,7 +1128,8 @@ sap.ui.define([
 	 * The main reason for spacer to exist is to have enogth space for scrolling to the last section.
 	 */
 	ObjectPageLayout.prototype._isSpacerRequired = function (oLastVisibleSubSection, iLastVisibleHeight) {
-		var oSelectedSection = this.getAggregation("_anchorBar").getSelectedSection(),
+		var oAnchorBar = this.getAggregation("_anchorBar"),
+			oSelectedSection = oAnchorBar && oAnchorBar.getSelectedSection(),
 			bIconTabBarWithOneSectionAndOneSubsection = this.getUseIconTabBar() && oSelectedSection
 				&& oSelectedSection.getSubSections().length === 1,
 			bOneSectionOneSubsection = this.getSections().length === 1 && this.getSections()[0].getSubSections().length === 1;
@@ -1213,7 +1214,7 @@ sap.ui.define([
 			oSectionBase = sap.ui.getCore().byId(sSectionId);
 
 			bShouldDisplayParentTitle = oSectionBase && oSectionBase instanceof ObjectPageSubSection &&
-			(oSectionBase.getTitle().trim() === "" || !oSectionBase._getInternalTitleVisible() || oSectionBase.getParent()._getIsHidden());
+				(oSectionBase.getTitle().trim() === "" || !oSectionBase._getInternalTitleVisible() || oSectionBase.getParent()._getIsHidden());
 
 			//the sectionBase title needs to be visible (or the user won't "feel" scrolling that sectionBase but its parent)
 			//see Incident 1570016975 for more details

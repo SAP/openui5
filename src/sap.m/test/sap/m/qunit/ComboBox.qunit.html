@@ -2728,6 +2728,113 @@
 			oComboBox.destroy();
 		});
 
+		QUnit.test("it should propagate the entered value to the picker text field", function(assert) {
+
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				phone: true,
+				tablet: false
+			});
+
+			// system under test
+			var oComboBox = new sap.m.ComboBox();
+
+			// arrange
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oComboBox.focus();
+			var sExpectedValue = "lorem ipsum";
+			var oTarget = oComboBox.getFocusDomRef();
+			var oPicker = oComboBox.getPicker();
+
+			// act
+			oTarget.value = sExpectedValue;
+			sap.ui.qunit.QUnitUtils.triggerEvent("input", oTarget);
+			oComboBox.open();
+			this.clock.tick(1000); // tick the clock ahead some 1 second, after the open animation is completed
+
+			// assert
+			assert.strictEqual(oComboBox.getPickerTextField().getValue(), sExpectedValue);
+			assert.strictEqual(oPicker.getShowHeader(), false, "it should not show the picker header");
+
+			// cleanup
+			oComboBox.destroy();
+		});
+
+		QUnit.test("it should show the label text as picker header title", function(assert) {
+
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				phone: true,
+				tablet: false
+			});
+
+			// system under test
+			var oComboBox = new sap.m.ComboBox();
+			var sExpectedTitle = "lorem ipsum";
+			var oLabel = new sap.m.Label({
+				text: sExpectedTitle,
+				labelFor: oComboBox
+			});
+			var oPicker = oComboBox.getPicker();
+
+			// arrange
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oComboBox.focus();
+
+			// act
+			oComboBox.open();
+			this.clock.tick(1000); // tick the clock ahead some 1 second, after the open animation is completed
+
+			// assert
+			assert.ok(oPicker.getShowHeader());
+			assert.strictEqual(oPicker.getTitle(), sExpectedTitle);
+
+			// cleanup
+			oComboBox.destroy();
+			oLabel.destroy();
+		});
+
+		QUnit.test("it should hide the header if the label reference is destroyed", function(assert) {
+
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				phone: true,
+				tablet: false
+			});
+
+			// system under test
+			var oComboBox = new sap.m.ComboBox();
+			var sExpectedTitle = "lorem ipsum";
+			var oLabel = new sap.m.Label({
+				text: sExpectedTitle,
+				labelFor: oComboBox
+			});
+			var oPicker = oComboBox.getPicker();
+
+			// arrange
+			oComboBox.placeAt("content");
+			oLabel.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oComboBox.focus();
+			oComboBox.open();
+			this.clock.tick(1000); // tick the clock ahead some 1 second, after the open animation is completed
+			oComboBox.close();
+			oLabel.destroy();
+			this.clock.tick(1000); // tick the clock ahead some 1 second, after the close animation is completed
+
+			// act
+			oComboBox.open();
+
+			// assert
+			assert.strictEqual(oPicker.getShowHeader(), false);
+
+			// cleanup
+			oComboBox.destroy();
+			oLabel.destroy();
+		});
+
 		QUnit.module("findFirstEnabledItem()");
 
 		QUnit.test("findFirstEnabledItem()", function(assert) {
@@ -8387,6 +8494,57 @@
 			oModel.destroy();
 		});
 
+		QUnit.test("it should filter the list on phones", function(assert) {
+
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				phone: true,
+				tablet: false
+			});
+
+			// system under test
+			var sExpectedValue = "lorem ipsum";
+			var oComboBox = new sap.m.ComboBox({
+				items: [
+					new sap.ui.core.Item({
+						text: sExpectedValue
+					}),
+					new sap.ui.core.Item({
+						text: "ipsum lorem"
+					})
+				]
+			});
+
+			// arrange
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oComboBox.focus();
+			oComboBox.open();
+			this.clock.tick(1000); // tick the clock ahead some 1 second, after the open animation is completed
+			var oPickerTextField = oComboBox.getPickerTextField();
+			oPickerTextField.focus();
+			var oPickerTextFieldDomRef = oPickerTextField.getFocusDomRef();
+			oPickerTextFieldDomRef.value = "l";
+
+			// act
+			sap.ui.qunit.QUnitUtils.triggerEvent("keydown", oPickerTextFieldDomRef, {
+				which: jQuery.sap.KeyCodes.L,
+				srcControl: oPickerTextField
+			});
+			sap.ui.qunit.QUnitUtils.triggerEvent("input", oPickerTextFieldDomRef, {
+				srcControl: oPickerTextField
+			});
+
+			// assert
+			assert.strictEqual(oPickerTextField.getValue(), sExpectedValue);
+			assert.ok(oComboBox.isFiltered());
+			this.clock.tick(0);
+			assert.strictEqual(oPickerTextField.getSelectedText(), "orem ipsum");
+
+			// cleanup
+			oComboBox.destroy();
+		});
+
 		QUnit.module("onfocusin");
 
 		QUnit.test("onfocusin", function(assert) {
@@ -9233,6 +9391,45 @@
 			oComboBox.destroy();
 		});
 
+		QUnit.test("it should fire the change event when the ENTER key is pressed", function(assert) {
+
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				phone: true,
+				tablet: false
+			});
+
+			// system under test
+			var oComboBox = new sap.m.ComboBox();
+
+			// arrange
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oComboBox.focus();
+			oComboBox.open();
+
+			// tick the clock ahead some 1 second, after the open animation is completed
+			this.clock.tick(1000);
+			var oPickerTextField = oComboBox.getPickerTextField();
+			oPickerTextField.focus();
+			var oPickerTextFieldDomRef = oPickerTextField.getFocusDomRef();
+			var fnChangeSpy = this.spy(oComboBox, "fireChange");
+
+			// act
+			oPickerTextField.getFocusDomRef().value = "lorem ipsum";
+			sap.ui.qunit.QUnitUtils.triggerEvent("input", oPickerTextFieldDomRef, {
+				srcControl: oPickerTextField
+			});
+			sap.ui.test.qunit.triggerKeydown(oPickerTextFieldDomRef, jQuery.sap.KeyCodes.ENTER);
+
+			// assert
+			assert.strictEqual(fnChangeSpy.callCount, 1, "The change event was fired");
+			assert.strictEqual(oComboBox.getValue(), "lorem ipsum");
+
+			// cleanup
+			oComboBox.destroy();
+		});
+
 		QUnit.test("it should close the dialog when the close button is pressed", function(assert) {
 
 			this.stub(sap.ui.Device, "system", {
@@ -9279,6 +9476,88 @@
 
 			// assert
 			assert.strictEqual(oComboBox.isOpen(), false);
+
+			// cleanup
+			oComboBox.destroy();
+		});
+
+
+		QUnit.module("onPropertyChange");
+
+		QUnit.test("it should propagate some property changes to the picker text field", function(assert) {
+
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				phone: true,
+				tablet: false
+			});
+
+			// system under test
+			var oComboBox = new sap.m.ComboBox({
+				value: "value",
+				enabled: false,
+				name: "name",
+				placeholder: "placeholder",
+				editable: false,
+				textAlign: sap.ui.core.TextAlign.Center,
+				textDirection: sap.ui.core.TextDirection.LTR
+			});
+
+			// arrange
+			var oComboBoxPickerTextField = oComboBox.getPickerTextField();
+
+			// assert
+			assert.strictEqual(oComboBoxPickerTextField.getValue(), "value");
+			assert.strictEqual(oComboBoxPickerTextField.getEnabled(), false);
+			assert.strictEqual(oComboBoxPickerTextField.getName(), "name");
+			assert.strictEqual(oComboBoxPickerTextField.getPlaceholder(), "placeholder");
+			assert.strictEqual(oComboBoxPickerTextField.getEditable(), false);
+			assert.strictEqual(oComboBoxPickerTextField.getTextAlign(), sap.ui.core.TextAlign.Center);
+			assert.strictEqual(oComboBoxPickerTextField.getTextDirection(), sap.ui.core.TextDirection.LTR);
+
+			// cleanup
+			oComboBox.destroy();
+		});
+
+		QUnit.test("it should propagate some property changes to the picker text field", function(assert) {
+
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				phone: true,
+				tablet: false
+			});
+
+			// system under test
+			var oComboBox = new sap.m.ComboBox({
+				value: "value",
+				enabled: false,
+				name: "name",
+				placeholder: "placeholder",
+				editable: false,
+				textAlign: sap.ui.core.TextAlign.Center,
+				textDirection: sap.ui.core.TextDirection.LTR
+			});
+
+			// arrange
+			var oComboBoxPickerTextField = oComboBox.getPickerTextField();
+
+			// act
+			oComboBox.setValue("new value");
+			oComboBox.setEnabled(true);
+			oComboBox.setName("new name");
+			oComboBox.setPlaceholder("new placeholder");
+			oComboBox.setEditable(true);
+			oComboBox.setTextAlign(sap.ui.core.TextAlign.Initial);
+			oComboBox.setTextDirection(sap.ui.core.TextDirection.RTL);
+
+			// assert
+			assert.strictEqual(oComboBoxPickerTextField.getValue(), "new value");
+			assert.strictEqual(oComboBoxPickerTextField.getEnabled(), true);
+			assert.strictEqual(oComboBoxPickerTextField.getName(), "new name");
+			assert.strictEqual(oComboBoxPickerTextField.getPlaceholder(), "new placeholder");
+			assert.strictEqual(oComboBoxPickerTextField.getEditable(), true);
+			assert.strictEqual(oComboBoxPickerTextField.getTextAlign(), sap.ui.core.TextAlign.Initial);
+			assert.strictEqual(oComboBoxPickerTextField.getTextDirection(), sap.ui.core.TextDirection.RTL);
 
 			// cleanup
 			oComboBox.destroy();

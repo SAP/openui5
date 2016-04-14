@@ -115,7 +115,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	// ---- SpecialSetting --------------------------------------------------------------------
 
 	/**
-	/* SpecialSetting info object
+	 * SpecialSetting info object
 	 * @private
 	 * @since 1.27.1
 	 */
@@ -131,7 +131,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	// ---- Property --------------------------------------------------------------------------
 
 	/**
-	/* Property info object
+	 * Property info object
 	 * @private
 	 * @since 1.27.1
 	 */
@@ -180,12 +180,12 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		return this._oType || (this._oType = DataType.getType(this.type));
 	};
 
-	Property.prototype.get = function(that) {
-		return that[this._sGetter]();
+	Property.prototype.get = function(instance) {
+		return instance[this._sGetter]();
 	};
 
-	Property.prototype.set = function(that, oValue) {
-		return that[this._sMutator](oValue);
+	Property.prototype.set = function(instance, oValue) {
+		return instance[this._sMutator](oValue);
 	};
 
 	// ---- Aggregation -----------------------------------------------------------------------
@@ -265,32 +265,32 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		return this._oType || (this._oType = DataType.getType(this.type));
 	};
 
-	Aggregation.prototype.get = function(that) {
-		return that[this._sGetter]();
+	Aggregation.prototype.get = function(instance) {
+		return instance[this._sGetter]();
 	};
 
-	Aggregation.prototype.set = function(that, oValue) {
-		return that[this._sMutator](oValue);
+	Aggregation.prototype.set = function(instance, oValue) {
+		return instance[this._sMutator](oValue);
 	};
 
-	Aggregation.prototype.add = function(that, oValue) {
-		return that[this._sMutator](oValue);
+	Aggregation.prototype.add = function(instance, oValue) {
+		return instance[this._sMutator](oValue);
 	};
 
-	Aggregation.prototype.insert = function(that, oValue, iPos) {
-		return that[this._sInsertMutator](oValue, iPos);
+	Aggregation.prototype.insert = function(instance, oValue, iPos) {
+		return instance[this._sInsertMutator](oValue, iPos);
 	};
 
-	Aggregation.prototype.remove = function(that, vValue) {
-		return that[this._sRemoveMutator](vValue);
+	Aggregation.prototype.remove = function(instance, vValue) {
+		return instance[this._sRemoveMutator](vValue);
 	};
 
-	Aggregation.prototype.removeAll = function(that) {
-		return that[this._sRemoveAllMutator]();
+	Aggregation.prototype.removeAll = function(instance) {
+		return instance[this._sRemoveAllMutator]();
 	};
 
-	Aggregation.prototype.indexOf = function(that, oValue) {
-		return that[this._sIndexGetter](oValue);
+	Aggregation.prototype.indexOf = function(instance, oValue) {
+		return instance[this._sIndexGetter](oValue);
 	};
 
 	// ---- Association -----------------------------------------------------------------------
@@ -348,20 +348,20 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		return this._oType || (this._oType = DataType.getType(this.type));
 	};
 
-	Association.prototype.get = function(that) {
-		return that[this._sGetter]();
+	Association.prototype.get = function(instance) {
+		return instance[this._sGetter]();
 	};
 
-	Association.prototype.set = function(that, oValue) {
-		return that[this._sMutator](oValue);
+	Association.prototype.set = function(instance, oValue) {
+		return instance[this._sMutator](oValue);
 	};
 
-	Association.prototype.remove = function(that, vValue) {
-		return that[this._sRemoveMutator](vValue);
+	Association.prototype.remove = function(instance, vValue) {
+		return instance[this._sRemoveMutator](vValue);
 	};
 
-	Association.prototype.removeAll = function(that) {
-		return that[this._sRemoveAllMutator]();
+	Association.prototype.removeAll = function(instance) {
+		return instance[this._sRemoveAllMutator]();
 	};
 
 	// ---- Event -----------------------------------------------------------------------------
@@ -402,16 +402,16 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		add(that._sTrigger, function(p) { return this.fireEvent(n,p, allowPreventDefault, enableEventBubbling); });
 	};
 
-	Event.prototype.attach = function(that,data,fn,listener) {
-		return that[this._sMutator](data,fn,listener);
+	Event.prototype.attach = function(instance,data,fn,listener) {
+		return instance[this._sMutator](data,fn,listener);
 	};
 
-	Event.prototype.detach = function(that,fn,listener) {
-		return that[this._sDetachMutator](fn,listener);
+	Event.prototype.detach = function(instance,fn,listener) {
+		return instance[this._sDetachMutator](fn,listener);
 	};
 
-	Event.prototype.fire = function(that,params, allowPreventDefault, enableEventBubbling) {
-		return that[this._sTrigger](params, allowPreventDefault, enableEventBubbling);
+	Event.prototype.fire = function(instance,params, allowPreventDefault, enableEventBubbling) {
+		return instance[this._sTrigger](params, allowPreventDefault, enableEventBubbling);
 	};
 
 	// ----------------------------------------------------------------------------------------

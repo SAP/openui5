@@ -369,5 +369,41 @@
         "references": []
       }
     ]
+  },
+  "1.28.23": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "d99389e13bad5caf49387b7368c59dee2056ae13",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.ux3.ToolPopup: Content focus issue solved",
+        "references": []
+      }
+    ]
+  },
+  "1.28.25": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "64063cb0248590a8a431753c79c26ab7d50e5b2c",
+        "author": "Ivan Kazandzhiev \u003civan.kazandzhiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.ux3.Toolpoup: Arrow in HCB theme is positioned properly",
+        "references": []
+      }
+    ]
+  },
+  "1.28.32": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "564698311a75bf531d61364c164d59429f005c4b",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.ux3.Shell: Align text selection behavior across browsers",
+        "references": []
+      }
+    ]
   }
 }

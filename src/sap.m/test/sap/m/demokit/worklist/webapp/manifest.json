@@ -98,7 +98,7 @@
 				"controlId": "app",
 				"controlAggregation": "pages",
 				"bypassed": {
-					"target": "notFound"
+					"target": ["notFound"]
 				},
 				"async": true
 			},
@@ -107,12 +107,12 @@
 				{
 					"pattern": "",
 					"name": "worklist",
-					"target": "worklist"
+					"target": ["worklist"]
 				},
 				{
 					"pattern": "Objects/{objectId}",
 					"name": "object",
-					"target": "object"
+					"target": ["object"]
 				}
 			],
 

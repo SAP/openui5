@@ -30,6 +30,10 @@
 </script>
 
 <script>
+	if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	} 		
+
 	QUnit.config.autostart = false;
 	sap.ui.test.qunit.delayTestStart();
 

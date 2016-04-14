@@ -110,7 +110,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * @since 1.33.0
 		 * @private
 		 */
-		sap.ui.core.mvc.Controller.extendIfRequired = function(oController, sName, bAsync) {
+		Controller.extendIfRequired = function(oController, sName, bAsync) {
 			var oCustomControllerDef;
 
 			var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration');
@@ -300,8 +300,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * @public
 		 */
 		Controller.prototype.getOwnerComponent = function () {
-			jQuery.sap.require("sap.ui.core.Component");
-			return sap.ui.core.Component.getOwnerComponentFor(this.getView());
+			var Component = sap.ui.requireSync("sap/ui/core/Component");
+			return Component.getOwnerComponentFor(this.getView());
 		};
 
 

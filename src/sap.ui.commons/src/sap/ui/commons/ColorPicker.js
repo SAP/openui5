@@ -157,12 +157,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				v   :  100,
 				a	:  1,
 				a_old: 1,
-				hex :  "#FFFFFF",
-				old :  "#FFFFFF"
+				hex :  "#ffffff",
+				old :  "#ffffff"
 		};
 
 		//	create global variables
-		this.HexString = "FFFFFF";
+		this.HexString = "ffffff";
 		this.rgbString = "";
 		this.$cpBox = null;
 		this.$cpCur = null;
@@ -866,8 +866,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 */
 	ColorPicker.prototype._handleHexValueChange = function(){
 
-		//	get the new value and convert to uppercase
-		var hexValue = this.oHexField.getValue().toUpperCase();
+		//	get the new value
+		var hexValue = this.oHexField.getValue();
 
 		//	check for correct value
 		if (hexValue.substr(0, 1) == '#') {
@@ -946,7 +946,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this._calculateHSV(this.Color.r, this.Color.g, this.Color.b);
 
 		//	all values except hex set; set the hex value
-		this.Color.hex = "#" + ihexValue.toUpperCase();
+		this.Color.hex = "#" + ihexValue;
 	};
 
 
@@ -1073,7 +1073,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 
 		//	return the HexValue
-		this.HexString = (redStr + greenStr + blueStr).toUpperCase();
+		this.HexString = (redStr + greenStr + blueStr);
 	};
 
 
@@ -1165,12 +1165,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 */
 	ColorPicker.prototype._parseColorString = function(iColorString){
 
-		//	delete #, trim and convert to lower case
+		//	delete #, trim
 		if (iColorString.substr(0, 1) == '#') {
 			iColorString = iColorString.substr(1);
 		}
 		iColorString = iColorString.replace(/ /g,'');
-		iColorString = iColorString.toLowerCase();
 
 		//	parse Names
 		var searchKey = "";
@@ -1201,6 +1200,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				darkcyan: 				'008b8b',
 				darkgoldenrod: 			'b8860b',
 				darkgray: 				'a9a9a9',
+				darkgrey: 				'a9a9a9',
 				darkgreen: 				'006400',
 				darkkhaki: 				'bdb76b',
 				darkmagenta: 			'8b008b',
@@ -1244,6 +1244,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				lightcoral: 			'f08080',
 				lightcyan: 				'e0ffff',
 				lightgoldenrodyellow:	'fafad2',
+				lightgray: 				'd3d3d3',
 				lightgrey: 				'd3d3d3',
 				lightgreen: 			'90ee90',
 				lightpink: 				'ffb6c1',
@@ -1252,6 +1253,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				lightskyblue: 			'87cefa',
 				lightslateblue: 		'8470ff',
 				lightslategray: 		'778899',
+				lightslategrey: 		'778899',
 				lightsteelblue: 		'b0c4de',
 				lightyellow: 			'ffffe0',
 				lime: 					'00ff00',
@@ -1262,7 +1264,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				mediumaquamarine: 		'66cdaa',
 				mediumblue: 			'0000cd',
 				mediumorchid: 			'ba55d3',
-				mediumpurple: 			'9370d8',
+				mediumpurple: 			'9370db',
 				mediumseagreen: 		'3cb371',
 				mediumslateblue: 		'7b68ee',
 				mediumspringgreen: 		'00fa9a',
@@ -1283,7 +1285,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				palegoldenrod: 			'eee8aa',
 				palegreen: 				'98fb98',
 				paleturquoise: 			'afeeee',
-				palevioletred: 			'd87093',
+				palevioletred: 			'db7093',
 				papayawhip: 			'ffefd5',
 				peachpuff: 				'ffdab9',
 				peru: 					'cd853f',
@@ -1304,6 +1306,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				skyblue: 				'87ceeb',
 				slateblue: 				'6a5acd',
 				slategray: 				'708090',
+				slategrey: 				'708090',
 				snow: 					'fffafa',
 				springgreen: 			'00ff7f',
 				steelblue: 				'4682b4',
@@ -1323,7 +1326,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 		for (searchKey in colorNames) {
 			if (iColorString == searchKey) {
-				hexValue = colorNames[searchKey].toUpperCase();
+				hexValue = colorNames[searchKey];
 			}
 		}
 
@@ -1361,7 +1364,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			iColorString = iColorString.replace("(",'');
 			iColorString = iColorString.replace(")",'');
 			iColorString = iColorString.split(' ').join('');
-			var re = /^(((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5])),){2}(((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5])),){1}(([0]\.[0-9]*)|(\.[0-9]{2})|[1]){1}$/;
+
+			var re = /^(((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5])),){2}(((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5])),){1}([0]|([0]\.[0-9]+)|(\.[0-9]+)|[1]){1}$/;
 			if (re.test(iColorString) == true) {
 				//it's a rgba string, get the values and convert to Hex
 				var RGBColor = iColorString.split(",");
