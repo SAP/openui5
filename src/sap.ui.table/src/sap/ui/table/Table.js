@@ -4705,7 +4705,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			// in the action mode we need no item navigation
 			this._bActionMode = true;
 			var oIN = this._getItemNavigation(); //TBD: Cleanup
-			this.removeDelegate(oIN);
+			this._getKeyboardExtension().suspendItemNavigation();
 
 			// remove the tab index from the item navigation
 			jQuery(oIN.getFocusedDomRef()).attr("tabindex", "-1");
@@ -4732,7 +4732,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			// in the navigation mode we use the item navigation
 			this._bActionMode = false;
 			var oIN = this._getItemNavigation(); //TBD: Cleanup
-			this.addDelegate(oIN);
+			this._getKeyboardExtension().resumeItemNavigation();
 
 			// reset the tabindex of the focused domref of the item navigation
 			jQuery(oIN.getFocusedDomRef()).attr("tabindex", "0");

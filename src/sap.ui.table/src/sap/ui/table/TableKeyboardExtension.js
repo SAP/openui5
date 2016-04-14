@@ -8,22 +8,72 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/delegate/
 	"use strict";
 
 	/*
+	 * Wrapper for event handling of the item navigation.
+	 * Allows to selectively forward the events to the item navigation.
+	 * "this" in the function context is the corresponding keyboard extension
+	 */
+	var ItemNavigationDelegate = {
+
+		_forward : function(oExtension, oEvent) {
+			var oIN = oExtension.getTable()._getItemNavigation();
+			if (oIN && !oExtension._itemNavigationSuspended && !oEvent.isMarked("sapUiTableSkipItemNavigation")) {
+				oIN["on" + oEvent.type](oEvent);
+			}
+		},
+
+		onfocusin : 			function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsapfocusleave : 		function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onmousedown : 			function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsapnext : 			function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsapnextmodifiers : 	function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsapprevious : 		function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsappreviousmodifiers : function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsappageup : 			function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsappagedown : 		function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsaphome : 			function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsaphomemodifiers : 	function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsapend : 				function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsapendmodifiers : 	function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsapkeyup : 			function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); }
+
+	};
+
+
+	/*
+	 * Handles the keyboard events of the table which is associated with the extension.
+	 * "this" in the function context is the corresponding keyboard extension
+	 */
+	var KeyboardDelegate = {
+		tbd : function(oEvent) {
+
+		}
+	};
+
+
+	/*
+	 * Handles the keyboard events of the table inf future (new keyboard behavior) which is associated with the extension.
+	 * "this" in the function context is the corresponding keyboard extension
+	 */
+	var NewKeyboardDelegate = {
+		tbd : function(oEvent) {
+
+		}
+	};
+
+
+	/*
+	 * Switch between old an new keyboard behavior.
+	 * (Only for development purposes to allow smaller commit chunks)
+	 * Use NewKeyboardDelegate to switch to new behavior.
+	 */
+	var USED_KEYBOARD_DELEGATE = NewKeyboardDelegate; //satisfy eslint by using the var
+	USED_KEYBOARD_DELEGATE = KeyboardDelegate;
+
+
+	/*
 	 * Provides utility functions used this extension
 	 */
 	var ExtensionHelper = {
-
-		/*
-		 * Destroy the item navigation delegate.
-		 */
-		_destroyItemNavigation : function(oExtension) {
-			if (oExtension._itemNavigation) {
-				var oTable = oExtension.getTable();
-				oTable.removeDelegate(oExtension._itemNavigation);
-				oTable.removeDelegate(oTable._getAccExtension());
-				oExtension._itemNavigation.destroy();
-				oExtension._itemNavigation = null;
-			}
-		},
 
 		/*
 		 * Initialize ItemNavigations (content and header) and transfer relevant dom elements.
@@ -92,7 +142,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/delegate/
 
 			// initialization of item navigation for the Table control
 			if (!oExtension._itemNavigation) {
-				oTable._iLastSelectedDataRow = oTable._getHeaderRowCount();
+				oTable._iLastSelectedDataRow = oTable._getHeaderRowCount(); //TBD: Needed?
 				oExtension._itemNavigation = new ItemNavigation();
 				oExtension._itemNavigation.setTableMode(true);
 				oExtension._itemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, function(oEvent) {
@@ -101,8 +151,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/delegate/
 						oTable._iLastSelectedDataRow = iRow;
 					}
 				}, oTable);
-				oTable.addDelegate(oExtension._itemNavigation);
-				oTable.addDelegate(oTable._getAccExtension());
 			}
 
 
@@ -139,13 +187,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/delegate/
 			this._table = oTable;
 			this._itemNavigation = null;
 			this._itemNavigationInvalidated = false; // determines whether item navigation should be reapplied from scratch
+			this._itemNavigationSuspended = false; // switch off event forwarding to item navigation
+
+			// Register the delegates in correct order
+			// TBD: Maybe do this somewhere else centrally ("DelegateManager")
+			this._table.addEventDelegate(USED_KEYBOARD_DELEGATE, this);
+			this._table.addEventDelegate(ItemNavigationDelegate, this);
+			var oAccExt = this._table._getAccExtension();
+			this._table.addEventDelegate(oAccExt, oAccExt);
 		},
 
 		/*
 		 * @see sap.ui.base.Object#destroy
 		 */
 		destroy : function() {
-			ExtensionHelper._destroyItemNavigation(this);
+			// Deregister the delegates
+			// TBD: Maybe do this somewhere else centrally ("DelegateManager")
+			this._table.removeEventDelegate(USED_KEYBOARD_DELEGATE);
+			this._table.removeEventDelegate(ItemNavigationDelegate);
+			this._table.removeDelegate(this._table._getAccExtension());
+
+			if (this._itemNavigation) {
+				this._itemNavigation.destroy();
+				this._itemNavigation = null;
+			}
+
 			this._table = null;
 			BaseObject.prototype.destroy.apply(this, arguments);
 		},
@@ -211,6 +277,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/delegate/
 	 */
 	TableKeyboardExtension.prototype.invalidateItemNavigation = function() {
 		this._itemNavigationInvalidated = true;
+	};
+
+
+	/*
+	 * Suspends the event handling of the item navigation.
+	 * @public (Part of the API for Table control only!)
+	 */
+	TableKeyboardExtension.prototype.suspendItemNavigation = function() {
+		this._itemNavigationSuspended = true;
+	};
+
+
+	/*
+	 * Resumes the event handling of the item navigation.
+	 * @public (Part of the API for Table control only!)
+	 */
+	TableKeyboardExtension.prototype.resumeItemNavigation = function() {
+		this._itemNavigationSuspended = false;
 	};
 
 
