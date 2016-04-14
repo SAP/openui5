@@ -42,7 +42,7 @@ sap.ui.define([
 	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
-	 *   <li> The $expand and $select "5.1 System Query Options"
+	 *   <li> The $expand, $filter, $orderby and $select "5.1 System Query Options"
 	 *   </ul>
 	 *   All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
@@ -57,7 +57,8 @@ sap.ui.define([
 	 *   if not specified, the model's update group ID is used,
 	 *   see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
 	 *   For valid values, see parameter "$$groupId".
-	 * @throws {Error} When disallowed binding parameters are provided
+	 * @throws {Error}
+	 *   If disallowed binding parameters are provided
 	 *
 	 * @alias sap.ui.model.odata.v4.ODataContextBinding
 	 * @author SAP SE
@@ -70,10 +71,10 @@ sap.ui.define([
 	 *   action imports and function imports. If you want to control the execution time of an
 	 *   operation, for example a function import named "GetNumberOfAvailableItems", create a
 	 *   context binding for the path "/GetNumberOfAvailableItems(...)" (as specified here,
-	 *   including the three dots). Such an operation binding is <i>deferred</i>; meaning that it
+	 *   including the three dots). Such an operation binding is <i>deferred</i>, meaning that it
 	 *   does not request automatically, but only when you call {@link #execute}. {@link #refresh}
-	 *   is always ignored for actions and action imports. For function imports it is ignored if
-	 *   {@link #execute} has not been called yet. Afterwards it results in another call of the
+	 *   is always ignored for actions and action imports. For function imports, it is ignored if
+	 *   {@link #execute} has not yet been called. Afterwards it results in another call of the
 	 *   function with the parameter values of the last execute.
 	 *
 	 *   The binding parameter for bound actions may be given in the binding path, for example
@@ -85,7 +86,7 @@ sap.ui.define([
 	 *   <b>Example</b>: You have a table with a list binding to <code>/TEAMS</code>. In each row
 	 *   you have a button to change the team's manager, with the relative binding
 	 *   <code>tea_busi.AcChangeManagerOfTeam(...)</code>. Then the parent context for such a button
-	 *   refers to an instance of TEAMS, its canonical path is
+	 *   refers to an instance of TEAMS, so its canonical path is
 	 *   <code>/TEAMS(ID='<i>TeamID</i>')</code> and the resulting path for the action is
 	 *   <code>/TEAMS(ID='<i>TeamID</i>')/tea_busi.AcChangeManagerOfTeam</code>.
 	 *
@@ -93,7 +94,8 @@ sap.ui.define([
 	 *   navigation property. Then this navigation property will be part of the operation's
 	 *   resource path, which is still valid.
 	 *
-	 *   A deferred operation binding may not have another deferred operation binding as parent.
+	 *   A deferred operation binding is not allowed to have another deferred operation binding as
+	 *   parent.
 	 *
 	 * @extends sap.ui.model.ContextBinding
 	 * @public
@@ -119,7 +121,7 @@ sap.ui.define([
 
 				if (!this.bRelative || bDeferred) {
 					this.mQueryOptions = _ODataHelper.buildQueryOptions(oModel.mUriParameters,
-						mParameters, ["$expand", "$select"]);
+						mParameters, ["$expand", "$filter", "$orderby", "$select"]);
 					oBindingParameters = _ODataHelper.buildBindingParameters(mParameters);
 					this.sGroupId = oBindingParameters.$$groupId;
 					this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
@@ -365,7 +367,7 @@ sap.ui.define([
 			that._fireChange({reason : ChangeReason.Change});
 			// do not return anything
 		})["catch"](function (oError) {
-			jQuery.sap.log.error(oError.message, that.sPath, sClassName);
+			that.oModel.reportError("Failed to execute " + that.sPath, sClassName, oError);
 			throw oError;
 		});
 	};
@@ -430,8 +432,6 @@ sap.ui.define([
 	/**
 	 * Refreshes the binding. Prompts the model to retrieve data from the server using the given
 	 * group ID and notifies the control that new data is available.
-	 * <code>bForceUpdate</code> has to be set to <code>true</code>. If <code>bForceUpdate</code> is
-	 * not specified or <code>false</code>, an error is thrown.
 	 * Refresh is supported for absolute bindings.
 	 *
 	 * Note: When calling refresh multiple times, the result of the request triggered by the last
@@ -439,27 +439,20 @@ sap.ui.define([
 	 * of the order of calls to {@link sap.ui.model.odata.v4.ODataModel#submitBatch} with the given
 	 * group ID.
 	 *
-	 * @param {boolean} bForceUpdate
-	 *   The parameter <code>bForceUpdate</code> has to be set to <code>true</code>.
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for refresh; if not specified, the group ID for this binding is
 	 *   used, see {@link sap.ui.model.odata.v4.ODataContextBinding#constructor}.
 	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
 	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 * @throws {Error}
-	 *   When <code>bForceUpdate</code> is not set to <code>true</code> or the given group ID is
-	 *   invalid or refresh on this binding is not supported.
+	 *   If the given group ID is invalid or refresh on this binding is not supported.
 	 *
 	 * @public
 	 * @see sap.ui.model.Binding#refresh
 	 * @since 1.37.0
 	 */
 	// @override
-	ODataContextBinding.prototype.refresh = function (bForceUpdate, sGroupId) {
-		if (bForceUpdate !== true) {
-			throw new Error("Unsupported operation: v4.ODataContextBinding#refresh, "
-				+ "bForceUpdate must be true");
-		}
+	ODataContextBinding.prototype.refresh = function (sGroupId) {
 		if (this.oCache) {
 			if (!this.oOperation || !this.oOperation.bAction) {
 				_ODataHelper.checkGroupId(sGroupId);
@@ -505,8 +498,8 @@ sap.ui.define([
 						that.fireDataReceived();
 					} else {
 						// log error only once when data request failed
-						jQuery.sap.log.error("Failed to read path " + that.sPath, oError,
-							sClassName);
+						that.oModel.reportError("Failed to read path " + that.sPath, sClassName,
+							oError);
 						that.fireDataReceived({error : oError});
 					}
 				}
@@ -552,7 +545,7 @@ sap.ui.define([
 				this.oElementContext = oContext
 					? _Context.create(this.oModel, this, this.oModel.resolve(this.sPath, oContext))
 					: null;
-				// the binding parameter for a deferred might have changed
+				// the binding parameter for a deferred context binding might have changed
 				this.oCache = undefined;
 				// call Binding#setContext because of data state etc.; fires "change"
 				Binding.prototype.setContext.call(this, oContext);

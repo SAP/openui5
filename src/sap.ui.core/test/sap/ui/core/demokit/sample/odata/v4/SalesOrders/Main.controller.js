@@ -7,18 +7,20 @@ sap.ui.define([
 		'sap/ui/core/format/DateFormat',
 		'sap/ui/core/Item',
 		'sap/ui/core/mvc/Controller',
+		"sap/ui/model/Filter",
+		"sap/ui/model/FilterOperator",
 		'sap/ui/model/json/JSONModel'
-	], function (Dialog, MessageBox, DateFormat, Item, Controller, JSONModel) {
+], function (Dialog, MessageBox, DateFormat, Item, Controller, Filter, FilterOperator, JSONModel) {
 	"use strict";
 
 	var oDateFormat = DateFormat.getTimeInstance({pattern : "HH:mm"});
 
-	function onRejected(oError) {
-		jQuery.sap.log.error(oError.message, oError.stack);
-		MessageBox.alert(oError.message, {
-			icon : MessageBox.Icon.ERROR,
-			title : "Error"});
-	}
+//	function onRejected(oError) {
+//		jQuery.sap.log.error(oError.message, oError.stack);
+//		MessageBox.alert(oError.message, {
+//			icon : MessageBox.Icon.ERROR,
+//			title : "Error"});
+//	}
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.SalesOrders.Main", {
 		onCancelSalesOrder : function (oEvent) {
@@ -44,9 +46,9 @@ sap.ui.define([
 		},
 
 		onCreateSalesOrder : function (oEvent) {
-			var oCreateSalesOrderDialog = this.getView().byId("createSalesOrderDialog"),
-				oSalesOrderData = oCreateSalesOrderDialog.getModel("new").getObject("/"),
-				that = this;
+//			var oCreateSalesOrderDialog = this.getView().byId("createSalesOrderDialog"),
+//				oSalesOrderData = oCreateSalesOrderDialog.getModel("new").getObject("/"),
+//				that = this;
 
 			//TODO validate oSalesOrderData according to types
 			//TODO deep create incl. LOCATION etc.
@@ -64,10 +66,10 @@ sap.ui.define([
 		},
 
 		onDeleteSalesOrder : function (oEvent) {
-			var oSalesOrderContext = oEvent.getSource().getBindingContext(),
-				oModel = oSalesOrderContext.getModel(),
-				sOrderID,
-				oView = this.getView();
+			var // oSalesOrderContext = oEvent.getSource().getBindingContext(),
+				// oModel = oSalesOrderContext.getModel(),
+				sOrderID;
+				// oView = this.getView();
 
 			function onConfirm(sCode) {
 				if (sCode !== 'OK') {
@@ -91,23 +93,61 @@ sap.ui.define([
 			});
 		},
 
+		onInit : function () {
+			var bMessageOpen = false,
+				oMessageManager = sap.ui.getCore().getMessageManager(),
+				oMessageModel = oMessageManager.getMessageModel();
+
+			this.oMessageModelBinding = oMessageModel.bindList("/", undefined,
+				[], new Filter("technical", FilterOperator.EQ, true));
+
+			this.oMessageModelBinding.attachChange(function (oEvent) {
+				var aContexts = oEvent.getSource().getContexts(),
+					aMessages = [],
+					sPrefix;
+
+				if (bMessageOpen || !aContexts.length) {
+					return;
+				}
+
+				// Extract and remove the technical messages
+				aContexts.forEach(function (oContext) {
+					aMessages.push(oContext.getObject());
+				});
+				oMessageManager.removeMessages(aMessages);
+
+				// Due to batching there can be more than one technical message. However the UX
+				// guidelines say "display a single message in a message box" assuming that there
+				// will be only one at a time.
+				sPrefix = aMessages.length === 1 ? ""
+					: "There have been multiple technical errors. One example: ";
+				MessageBox.error(sPrefix + aMessages[0].message, {
+					id : "serviceErrorMessageBox",
+					onClose: function () {
+						bMessageOpen = false;
+					}
+				});
+				bMessageOpen = true;
+			});
+		},
+
 		onRefreshAll : function () {
 			var oModel = this.getView().getModel();
 
-			oModel.refresh(true, "RefreshAll");
+			oModel.refresh("RefreshAll");
 			oModel.submitBatch("RefreshAll");
 		},
 
 		onRefreshFavoriteProduct : function (oEvent) {
-			this.getView().byId("FavoriteProduct").getBinding("value").refresh(true);
+			this.getView().byId("FavoriteProduct").getBinding("value").refresh();
 		},
 
 		onRefreshSalesOrderDetails : function (oEvent) {
-			this.getView().byId("ObjectPage").getElementBinding().refresh(true);
+			this.getView().byId("ObjectPage").getElementBinding().refresh();
 		},
 
 		onRefreshSalesOrdersList : function (oEvent) {
-			this.getView().byId("SalesOrders").getBinding("items").refresh(true);
+			this.getView().byId("SalesOrders").getBinding("items").refresh();
 		},
 
 		onSalesOrdersSelect : function (oEvent) {
@@ -194,6 +234,12 @@ sap.ui.define([
 			var oBinding = this.getView().byId("FavoriteProduct").getBinding("value");
 
 			oBinding.setValue(oDateFormat.format(new Date()));
+		},
+
+		produceTechnicalError : function () {
+			var oViewElement = this.getView().byId("FavoriteProduct");
+
+			oViewElement.bindProperty("value", {path : "/ProductList('HT-1000')/Unknown"});
 		}
 	});
 

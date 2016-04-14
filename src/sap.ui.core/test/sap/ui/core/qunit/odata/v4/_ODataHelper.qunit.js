@@ -124,7 +124,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("buildQueryOptions: parse system query options", function (assert) {
 		var oExpand = {"foo" : true},
-			oParserMock = this.mock(_Parser),
+			oParserMock = this.oSandbox.mock(_Parser),
 			aSelect = ["bar"];
 
 		oParserMock.expects("parseSystemQueryOption")

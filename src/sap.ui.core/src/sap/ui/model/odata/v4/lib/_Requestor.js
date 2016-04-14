@@ -58,11 +58,11 @@ sap.ui.define([
 	 * @private
 	 */
 	function Requestor(sServiceUrl, mHeaders, mQueryParams) {
-		this.sServiceUrl = sServiceUrl;
+		this.mBatchQueue = {};
 		this.mHeaders = mHeaders || {};
 		this.sQueryParams = _Helper.buildQuery(mQueryParams); // Used for $batch and CSRF token only
 		this.oSecurityTokenPromise = null; // be nice to Chrome v8
-		this.mBatchQueue = {};
+		this.sServiceUrl = sServiceUrl;
 	}
 
 	/**
@@ -112,7 +112,9 @@ sap.ui.define([
 	/**
 	 * Sends an HTTP request using the given method to the given relative URL, using the given
 	 * request-specific headers in addition to the mandatory OData V4 headers and the default
-	 * headers given to the factory. Takes care of CSRF token handling.
+	 * headers given to the factory. Takes care of CSRF token handling. Non-GET requests are bundled
+	 * into a change set, GET requests are placed after that change set. Related PATCH requests are
+	 * merged.
 	 *
 	 * @param {string} sMethod
 	 *   HTTP method, e.g. "GET"
@@ -141,7 +143,9 @@ sap.ui.define([
 		var that = this,
 			oBatchRequest,
 			bIsBatch = sResourcePath === "$batch",
-			sPayload;
+			sPayload,
+			oPromise,
+			oRequest;
 
 		sGroupId = sGroupId || "$direct";
 		if (bIsBatch) {
@@ -154,20 +158,42 @@ sap.ui.define([
 			sPayload = JSON.stringify(oPayload);
 
 			if (sGroupId !== "$direct") {
-				return new Promise(function (fnResolve, fnReject) {
-					if (!that.mBatchQueue[sGroupId]) {
-						that.mBatchQueue[sGroupId] = [];
+				oPromise = new Promise(function (fnResolve, fnReject) {
+					var oLastChange,
+						aRequests = that.mBatchQueue[sGroupId];
+
+					if (!aRequests) {
+						aRequests = that.mBatchQueue[sGroupId] = [[/*empty change set*/]];
 					}
-					that.mBatchQueue[sGroupId].push({
-						method: sMethod,
-						url: sResourcePath,
-						headers: jQuery.extend({}, mPredefinedPartHeaders, that.mHeaders, mHeaders,
+					oRequest = {
+						method : sMethod,
+						url : sResourcePath,
+						headers : jQuery.extend({}, mPredefinedPartHeaders, that.mHeaders, mHeaders,
 							mFinalHeaders),
-						body: sPayload,
-						$reject: fnReject,
-						$resolve: fnResolve
-					});
+						body : sPayload,
+						$reject : fnReject,
+						$resolve : fnResolve
+					};
+					if (sMethod === "GET") { // push behind change set
+						aRequests.push(oRequest);
+					} else {
+						oLastChange = aRequests[0].length && aRequests[0][aRequests[0].length - 1];
+						if (oLastChange
+							&& oLastChange.method === "PATCH"
+							&& oRequest.method === "PATCH"
+							&& oLastChange.url === oRequest.url
+							&& jQuery.sap.equal(oLastChange.headers, oRequest.headers)) {
+							// merge related PATCH requests
+							oLastChange.body = JSON.stringify(
+								jQuery.extend(JSON.parse(oLastChange.body), oPayload));
+							fnResolve(oLastChange.$promise);
+						} else { // push into change set
+							aRequests[0].push(oRequest);
+						}
+					}
 				});
+				oRequest.$promise = oPromise;
+				return oPromise;
 			}
 		}
 
@@ -213,36 +239,52 @@ sap.ui.define([
 	Requestor.prototype.submitBatch = function (sGroupId) {
 		var aRequests = this.mBatchQueue[sGroupId];
 
+		/*
+		 * Visits the given request/response pairs, rejecting or resolving the corresponding
+		 * promises accordingly.
+		 *
+		 * @param {object[]} aRequests
+		 * @param {object[]} aResponses
+		 */
+		function visit(aRequests, aResponses) {
+			var oCause;
+
+			aRequests.forEach(function (vRequest, index) {
+				var oError,
+					vResponse = aResponses[index];
+
+				if (Array.isArray(vRequest)) {
+					visit(vRequest, vResponse);
+				} else if (vResponse) {
+					if (vResponse.status >= 400) {
+						vResponse.getResponseHeader = getResponseHeader;
+						oCause = _Helper.createError(vResponse);
+						vRequest.$reject(oCause);
+					} else {
+						vRequest.$resolve(JSON.parse(vResponse.responseText));
+					}
+				} else {
+					oError = new Error(
+						"HTTP request was not processed because the previous request failed");
+					oError.cause = oCause;
+					vRequest.$reject(oError);
+				}
+			});
+		}
+
 		if (!aRequests) {
 			return Promise.resolve();
 		}
-
 		delete this.mBatchQueue[sGroupId];
 
+		if (aRequests[0].length === 0) {
+			aRequests.splice(0, 1); // delete empty change set
+		} else if (aRequests[0].length === 1) {
+			aRequests[0] = aRequests[0][0]; // unwrap change set
+		}
+
 		return this.request("POST", "$batch", undefined, undefined, aRequests)
-			.then(function (aResponses) {
-				var oCause;
-
-				aRequests.forEach(function (oRequest, index) {
-					var oError,
-						oResponse = aResponses[index];
-
-					if (oResponse) {
-						if (oResponse.status >= 400) {
-							oResponse.getResponseHeader = getResponseHeader;
-							oCause = _Helper.createError(oResponse);
-							oRequest.$reject(oCause);
-						} else {
-							oRequest.$resolve(JSON.parse(oResponse.responseText));
-						}
-					} else {
-						oError = new Error(
-							"HTTP request was not processed because the previous request failed");
-						oError.cause = oCause;
-						oRequest.$reject(oError);
-					}
-				});
-			})["catch"](function (oError) {
+			.then(visit.bind(null, aRequests)).catch(function (oError) {
 				var oRequestError = new Error(
 					"HTTP request was not processed because $batch failed");
 

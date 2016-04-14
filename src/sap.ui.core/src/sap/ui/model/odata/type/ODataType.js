@@ -72,9 +72,11 @@ sap.ui.define(['sap/ui/model/SimpleType'],
 	/**
 	 * Constructor for a new <code>ODataType</code>.
 	 *
-	 * @class This class is an abstract base class for all OData primitive types (see <a
-	 * href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
-	 * Edm Types</a>). All sub-types implement the interface of
+	 * @class This class is an abstract base class for all OData primitive types (see {@link
+	 * http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/part3-csdl/odata-v4.0-errata02-os-part3-csdl-complete.html#_The_edm:Documentation_Element
+	 * OData V4 Edm Types} and
+	 * {@link http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem
+	 * OData V2 Edm Types}). All subtypes implement the interface of
 	 * {@link sap.ui.model.SimpleType}. That means they implement next to the constructor:
 	 * <ul>
 	 * <li>{@link sap.ui.model.SimpleType#getName getName}</li>

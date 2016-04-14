@@ -118,18 +118,25 @@ sap.ui.require([
 		aPromises.push(oCache.read(0, 1, undefined, "foo/bar").then(function (oResult) {
 			assert.strictEqual(oResult, 42);
 		}));
-		this.oLogMock.expects("warning").withExactArgs(
+		this.oLogMock.expects("error").withExactArgs(
 			"Failed to drill-down into Employees?$select=foo&$skip=0&$top=1"
 				+ " via foo/bar/invalid, invalid segment: invalid",
 			null, "sap.ui.model.odata.v4.lib._Cache");
 		aPromises.push(oCache.read(0, 1, undefined, "foo/bar/invalid").then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
 		}));
-		this.oLogMock.expects("warning").withExactArgs(
+		this.oLogMock.expects("error").withExactArgs(
 			"Failed to drill-down into Employees?$select=foo&$skip=0&$top=1"
 				+ " via foo/null/invalid, invalid segment: invalid",
 			null, "sap.ui.model.odata.v4.lib._Cache");
 		aPromises.push(oCache.read(0, 1, undefined, "foo/null/invalid").then(function (oResult) {
+			assert.strictEqual(oResult, undefined);
+		}));
+		this.oLogMock.expects("error").withExactArgs(
+			"Failed to drill-down into Employees?$select=foo&$skip=0&$top=1"
+				+ " via foo/baz, invalid segment: baz",
+			null, "sap.ui.model.odata.v4.lib._Cache");
+		aPromises.push(oCache.read(0, 1, undefined, "foo/baz").then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
 		}));
 		return Promise.all(aPromises);
@@ -268,7 +275,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("convertQueryOptions", function (assert) {
-		var oCacheMock = this.mock(_Cache),
+		var oCacheMock = this.oSandbox.mock(_Cache),
 			oExpand = {};
 
 		oCacheMock.expects("convertExpand")
@@ -277,10 +284,14 @@ sap.ui.require([
 		assert.deepEqual(_Cache.convertQueryOptions({
 			foo : "bar",
 			$expand : oExpand,
+			$filter : "BuyerName eq 'SAP'",
+			$orderby : "GrossAmount asc",
 			$select : ["select1", "select2"]
 		}), {
 			foo : "bar",
 			$expand : "expand",
+			$filter : "BuyerName eq 'SAP'",
+			$orderby : "GrossAmount asc",
 			$select : "select1,select2"
 		});
 
@@ -292,8 +303,7 @@ sap.ui.require([
 
 		assert.strictEqual(_Cache.convertQueryOptions(undefined), undefined);
 
-		["$filter", "$format", "$id", "$inlinecount", "$orderby", "$search", "$skip", "$skiptoken",
-			"$top"
+		["$format", "$id", "$inlinecount", "$search", "$skip", "$skiptoken", "$top"
 		].forEach(function (sSystemOption) {
 			assert.throws(function () {
 				var mQueryOptions = {};
@@ -306,7 +316,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("convertExpandOptions", function (assert) {
-		var oCacheMock = this.mock(_Cache),
+		var oCacheMock = this.oSandbox.mock(_Cache),
 			oExpand = {};
 
 		oCacheMock.expects("convertExpand")
@@ -330,7 +340,7 @@ sap.ui.require([
 			}, new Error("$expand must be a valid object"));
 		});
 
-		this.mock(_Cache).expects("convertExpandOptions")
+		this.oSandbox.mock(_Cache).expects("convertExpandOptions")
 			.withExactArgs("baz", sinon.match.same(oOptions)).returns("baz(options)");
 
 		assert.strictEqual(_Cache.convertExpand({
@@ -342,7 +352,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("buildQueryString", function (assert) {
-		var oCacheMock = this.mock(_Cache),
+		var oCacheMock = this.oSandbox.mock(_Cache),
 			oConvertedQueryParams = {},
 			oQueryParams = {};
 
@@ -353,7 +363,7 @@ sap.ui.require([
 
 		oCacheMock.expects("convertQueryOptions")
 			.withExactArgs(oQueryParams).returns(oConvertedQueryParams);
-		this.mock(_Helper).expects("buildQuery")
+		this.oSandbox.mock(_Helper).expects("buildQuery")
 			.withExactArgs(sinon.match.same(oConvertedQueryParams)).returns("?query");
 
 		assert.strictEqual(_Cache.buildQueryString(oQueryParams), "?query");
@@ -396,6 +406,7 @@ sap.ui.require([
 								$expand : {
 									PRODUCT_2_BP : true
 								},
+								$filter : "CurrencyCode eq 'EUR'",
 								$select : "CurrencyCode"
 							},
 							SOITEM_2_SO : true
@@ -405,7 +416,8 @@ sap.ui.require([
 				"sap-client" : "003"
 			},
 			s : "$expand=SO_2_BP,SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP;"
-				+ "$select=CurrencyCode),SOITEM_2_SO)&sap-client=003"
+				+ "$filter=CurrencyCode%20eq%20'EUR';$select=CurrencyCode),SOITEM_2_SO)"
+				+ "&sap-client=003"
 		}].forEach(function (oFixture) {
 			assert.strictEqual(_Cache.buildQueryString(oFixture.o, false), "?" + oFixture.s,
 				oFixture.s);
@@ -556,16 +568,22 @@ sap.ui.require([
 		aPromises.push(oCache.read(undefined, "foo/bar").then(function (oResult) {
 			assert.strictEqual(oResult, 42);
 		}));
-		this.oLogMock.expects("warning").withExactArgs(
+		this.oLogMock.expects("error").withExactArgs(
 			"Failed to drill-down into Employees('1')/foo/bar/invalid, invalid segment: invalid",
 			null, "sap.ui.model.odata.v4.lib._Cache");
 		aPromises.push(oCache.read(undefined, "foo/bar/invalid").then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
 		}));
-		this.oLogMock.expects("warning").withExactArgs(
+		this.oLogMock.expects("error").withExactArgs(
 			"Failed to drill-down into Employees('1')/foo/null/invalid, invalid segment: invalid",
 			null, "sap.ui.model.odata.v4.lib._Cache");
 		aPromises.push(oCache.read(undefined, "foo/null/invalid").then(function (oResult) {
+			assert.strictEqual(oResult, undefined);
+		}));
+		this.oLogMock.expects("error").withExactArgs(
+			"Failed to drill-down into Employees('1')/foo/baz, invalid segment: baz",
+			null, "sap.ui.model.odata.v4.lib._Cache");
+		aPromises.push(oCache.read(undefined, "foo/baz").then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
 		}));
 		return Promise.all(aPromises);
@@ -884,7 +902,7 @@ sap.ui.require([
 			Name : "MyName",
 			SideEffect : "before"
 		},
-		sReadPath : "value",
+		sReadPath : "Name",
 		sResourcePath : "ProductList('HT-1000')"
 	}, {
 		// relative list binding (relative context binding is very similar!)
