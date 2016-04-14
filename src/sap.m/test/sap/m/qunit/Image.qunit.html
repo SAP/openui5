@@ -299,7 +299,7 @@
 
 		test("Image with Invalid src", function() {
 			var $i5 = jQuery.sap.byId("i5");
-			equal($i5.css("visibility"), "hidden", "Image with invalid src should be hidden");
+			equal($i5.css("visibility"), "visible", "Image with invalid src should be visible");
 		});
 
 		asyncTest("Set image with invalid src to a valid src", function() {
