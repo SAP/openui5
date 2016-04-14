@@ -192,14 +192,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Sets custom text for the tooltip of the select title arrow. If not set, a default text of the tooltip will be displayed.
 			 * @since 1.30.0
 			 */
-			titleSelectorTooltip : {type : "string", group : "Misc", defaultValue : "Options"},
-
-			/**
-			 * Controls the visibility of additionalNumbers aggregation.
-			 * @since 1.38.0
-			 */
-			showAdditionalNumbers : {type : "boolean", group : "Misc", defaultValue : true}
-
+			titleSelectorTooltip : {type : "string", group : "Misc", defaultValue : "Options"}
 		},
 		defaultAggregation : "attributes",
 		aggregations : {
@@ -240,6 +233,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * NOTE: Only applied if you set "responsive=false".
 			 * Additional object numbers and units are managed in this aggregation.
 			 * The numbers are hidden on tablet and phone size screens.
+			 * When only one number is provided, it is rendered with additional separator from the main ObjectHeader number.
 			 * @since 1.38.0
 			 */
 			additionalNumbers : {type : "sap.m.ObjectNumber", multiple : true, singularName : "additionalNumber"},
