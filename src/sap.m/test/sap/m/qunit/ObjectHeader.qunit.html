@@ -1119,7 +1119,7 @@
 			ok(!oAdditionalNum.length, "No error is raised when executing removeAllAttributes");
 		});
 
-		test("Attributes should be destroyed: destroyAttributes", function () {
+		test("AdditionalNumbers should be destroyed: destroyAdditionalNumbers", function () {
 			// Arrange
 			var oObjectHeader = new sap.m.ObjectHeader({
 				title: "test additional numbers",
@@ -1149,6 +1149,58 @@
 			// Assert
 			oAdditionalNum = oObjectHeader.$().find(".additionalOHNumberDiv");
 			ok(!oAdditionalNum.length, "All additional numbers are destroyed.");
+		});
+
+		test("Separator should be rendered when there is one additionalNumber", function () {
+			// Arrange
+			var oObjectHeader = new sap.m.ObjectHeader({
+				title: "test additional numbers",
+				additionalNumbers: [
+					new sap.m.ObjectNumber({
+						number: "2134",
+						unit: "Conversion rate"
+					})
+				]
+			});
+
+			// System under test
+			oObjectHeader.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			var oSeparator = oObjectHeader.$().find(".additionalOHNumberSeparatorDiv");
+			ok(oSeparator.length === 1, "Separator is rendered.");
+
+			// cleanup
+			oObjectHeader.destroy();
+		});
+
+		test("Separator shouldn't be rendered when there is more then one additionalNumber", function () {
+			// Arrange
+			var oObjectHeader = new sap.m.ObjectHeader({
+				title: "test additional numbers",
+				additionalNumbers: [
+					new sap.m.ObjectNumber({
+						number: "2134",
+						unit: "Conversion rate"
+					}),
+					new sap.m.ObjectNumber({
+						number: "1232134",
+						unit: "EUR"
+					})
+				]
+			});
+
+			// System under test
+			oObjectHeader.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			var oSeparator = oObjectHeader.$().find(".additionalOHNumberSeparatorDiv");
+			ok(!oSeparator.length, "Separator is not rendered.");
+
+			// cleanup
+			oObjectHeader.destroy();
 		});
 
 </script>

@@ -466,7 +466,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		}
 		oRM.write("</div>"); // End Number/units container
 
-		if (!oOH.getCondensed() && oOH.getShowAdditionalNumbers()) {
+		if (!oOH.getCondensed()) {
 			this._renderAdditionalNumbers(oRM, oOH);
 		}
 	};
@@ -486,10 +486,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			return;
 		}
 
+		if (numbers.length === 1) {
+			oRM.write("<div");
+			oRM.addClass("additionalOHNumberSeparatorDiv");
+			oRM.writeClasses();
+			oRM.write("></div>");
+		}
+
 		for (var i = 0; i < numbers.length; i++) {
 			oRM.write("<div");
 			oRM.writeAttribute("id", oOH.getId() + "-additionalNumber" + i);
 			oRM.addClass("sapMOHNumberDiv additionalOHNumberDiv");
+			if (numbers.length === 1) {
+				oRM.addClass("sapMOHOnlyANumber");
+			}
 			oRM.writeClasses();
 			oRM.write(">");
 			numbers[i].setTextDirection(oOH.getNumberTextDirection());
