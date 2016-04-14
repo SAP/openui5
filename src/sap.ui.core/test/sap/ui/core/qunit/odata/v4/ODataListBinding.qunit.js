@@ -335,7 +335,7 @@ sap.ui.require([
 			},
 			oPromise = Promise.resolve();
 
-		this.mock(oContext).expects("requestValue").withExactArgs("TEAM_2_EMPLOYEES")
+		this.oSandbox.mock(oContext).expects("requestValue").withExactArgs("TEAM_2_EMPLOYEES")
 			.returns(oPromise);
 
 		// code under test
