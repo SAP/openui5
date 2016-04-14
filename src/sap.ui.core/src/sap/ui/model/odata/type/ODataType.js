@@ -4,13 +4,15 @@
 
 /**
  * The types in this namespace are {@link sap.ui.model.SimpleType simple types} corresponding
- * to the
- * <a href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
- * OData primitive types</a>.
+ * to OData primitive types for both
+ * {@link http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem OData V2}
+ * and
+ * {@link http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part3-csdl.html OData V4} (see
+ * "4.4 Primitive Types").
  *
  * They can be used in any place where simple types are allowed (and the model representation
- * matches), but they are of course most valuable in bindings to an {@link
- * sap.ui.model.odata.v2.ODataModel ODataModel}.
+ * matches), but they are of course most valuable in bindings to a
+ * {@link sap.ui.model.odata.v2.ODataModel} or {@link sap.ui.model.odata.v4.ODataModel}.
  *
  * <b>Example:</b>
  * <pre>
@@ -42,9 +44,9 @@
  * supported by <code>format</code>, not by <code>parse</code>. Supported by all types.</td></tr>
  * </table>
  *
- * All constraints may be given as strings besides their natural types (e.g.
+ * All constraints relevant for OData V2 may be given as strings besides their natural types (e.g.
  * <code>nullable : "false"</code> or <code>maxLength : "10"</code>). This makes the life of
- * template processors easier.
+ * template processors easier, but is not needed for OData V4.
  *
  * <b>Handling of <code>null</code></b>:
  *
