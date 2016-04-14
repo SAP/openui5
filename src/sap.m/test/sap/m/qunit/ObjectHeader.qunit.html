@@ -856,6 +856,64 @@
 		equal(jQuery(".sapMOHIcon.sapMPointer").attr("role"), "link", "ActiveIcon has role=link");
 	});
 
+	test("Title has level H1", function(){
+		// Arrange
+		var oObjectHeader = new sap.m.ObjectHeader({
+				title: "Test title level"
+			});
+
+		// System under test
+		oObjectHeader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		var $sTitle = oObjectHeader.$("title");
+		ok($sTitle.find( "h1" ), "Title has the default titleLevel H1");
+
+		// cleanup
+		oObjectHeader.destroy();
+	});
+
+	test("Title has level H3", function(){
+		// Arrange
+		var oObjectHeader = new sap.m.ObjectHeader({
+				title: "Test title level",
+				titleLevel: "H3"
+			});
+
+		// System under test
+		oObjectHeader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		var $sTitle = oObjectHeader.$("title");
+		ok($sTitle.find( "h3" ), "Title has titleLevel H13");
+
+		// cleanup
+		oObjectHeader.destroy();
+	});
+
+	test("Title level is set correctly", function(){
+		// Arrange
+		var oObjectHeader = new sap.m.ObjectHeader({
+				title: "Test title level"
+			});
+
+		// System under test
+		oObjectHeader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oObjectHeader.setTitleLevel("H4");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		var $sTitle = oObjectHeader.$("title");
+		ok($sTitle.find( "h4" ), "Title has titleLevel H4");
+
+		// cleanup
+		oObjectHeader.destroy();
+	});
+
 	/******************************************************************/
 
 	var iconOH = new sap.m.ObjectHeader("iconOH", {
