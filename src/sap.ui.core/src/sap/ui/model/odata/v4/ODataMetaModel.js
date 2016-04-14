@@ -594,8 +594,8 @@ sap.ui.define([
 	 *   An absolute path to an OData property within the OData data model
 	 * @returns {SyncPromise}
 	 *   A promise that gets resolved with the corresponding UI5 type from
-	 *   <code>sap.ui.model.odata.type</code>; if no type can be determined, the promise is
-	 *   rejected with the corresponding error
+	 *   <code>sap.ui.model.odata.type</code> or rejected with an error; if no specific type can be
+	 *   determined, a warning is logged and <code>sap.ui.model.odata.type.Raw</code> is used
 	 *
 	 * @private
 	 * @see #requestUI5Type
@@ -609,7 +609,8 @@ sap.ui.define([
 			var mConstraints,
 				sName,
 				oType = oProperty["$ui5.type"],
-				oTypeInfo;
+				oTypeInfo,
+				sTypeName = "sap.ui.model.odata.type.Raw";
 
 			function setConstraint(sKey, vValue) {
 				if (vValue !== undefined) {
@@ -623,23 +624,27 @@ sap.ui.define([
 			}
 
 			if (oProperty.$isCollection) {
-				throw new Error("Unsupported collection type at " + sPath);
+				jQuery.sap.log.warning("Unsupported collection type, using " + sTypeName,
+					sPath, sODataMetaModel);
+			} else {
+				oTypeInfo = mUi5TypeForEdmType[oProperty.$Type];
+				if (oTypeInfo) {
+					sTypeName = oTypeInfo.type;
+					for (sName in oTypeInfo.constraints) {
+						setConstraint(oTypeInfo.constraints[sName], sName[0] === "@"
+							? that.getObject(sName, oMetaContext)
+							: oProperty[sName]);
+					}
+					if (oProperty.$Nullable === false) {
+						setConstraint("nullable", false);
+					}
+				} else {
+					jQuery.sap.log.warning("Unsupported type '" + oProperty.$Type + "', using "
+						+ sTypeName, sPath, sODataMetaModel);
+				}
 			}
 
-			oTypeInfo = mUi5TypeForEdmType[oProperty.$Type];
-			if (!oTypeInfo) {
-				throw new Error("Unsupported EDM type '" + oProperty.$Type + "' at " + sPath);
-			}
-
-			for (sName in oTypeInfo.constraints) {
-				setConstraint(oTypeInfo.constraints[sName], sName[0] === "@"
-					? that.getObject(sName, oMetaContext)
-					: oProperty[sName]);
-			}
-			if (oProperty.$Nullable === false) {
-				setConstraint("nullable", false);
-			}
-			oType = new (jQuery.sap.getObject(oTypeInfo.type, 0))({}, mConstraints);
+			oType = new (jQuery.sap.getObject(sTypeName, 0))(undefined, mConstraints);
 			oProperty["$ui5.type"] = oType;
 
 			return oType;
@@ -716,7 +721,8 @@ sap.ui.define([
 	 *   An absolute path to an OData property within the OData data model
 	 * @returns {sap.ui.model.odata.type.ODataType}
 	 *   The corresponding UI5 type from <code>sap.ui.model.odata.type</code>, if all required meta
-	 *   data to calculate this type is already available
+	 *   data to calculate this type is already available; if no specific type can be determined, a
+	 *   warning is logged and <code>sap.ui.model.odata.type.Raw</code> is used
 	 * @throws {Error}
 	 *   If the UI5 type cannot be determined synchronously (due to a pending meta data request) or
 	 *   cannot be determined at all (due to a wrong data path)
@@ -965,8 +971,8 @@ sap.ui.define([
 	 *   An absolute path to an OData property within the OData data model
 	 * @returns {Promise}
 	 *   A promise that gets resolved with the corresponding UI5 type from
-	 *   <code>sap.ui.model.odata.type</code>; if no type can be determined, the promise is
-	 *   rejected with the corresponding error
+	 *   <code>sap.ui.model.odata.type</code> or rejected with an error; if no specific type can be
+	 *   determined, a warning is logged and <code>sap.ui.model.odata.type.Raw</code> is used
 	 *
 	 * @function
 	 * @public

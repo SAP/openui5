@@ -910,7 +910,7 @@ sap.ui.require([
 					oMetaModelMock = this.oSandbox.mock(this.oMetaModel),
 					oType;
 
-				oMetaModelMock.expects("fetchObject")
+				oMetaModelMock.expects("fetchObject").twice()
 					.withExactArgs(undefined, oMetaContext)
 					.returns(SyncPromise.resolve(oProperty));
 				if (oProperty.$Type === "Edm.String") { // simulate annotation for strings
@@ -921,64 +921,59 @@ sap.ui.require([
 				}
 
 				oType = this.oMetaModel.fetchUI5Type(sPath).getResult();
+
 				assert.strictEqual(oType.getName(),
 					"sap.ui.model.odata.type." + oProperty.$Type.slice(4)/*cut off "Edm."*/);
 				assert.deepEqual(oType.oConstraints, oConstraints);
+				assert.strictEqual(this.oMetaModel.getUI5Type(sPath), oType, "cached");
 			});
 		});
 	});
 	//TODO later: support for facet DefaultValue?
 
 	//*********************************************************************************************
-	QUnit.test("fetchUI5Type: caching", function (assert) {
-		var sPath = "/EMPLOYEES/0/ENTRYDATE",
-			oProperty = {$Type : "Edm.Boolean"},
+	QUnit.test("fetchUI5Type: collection", function (assert) {
+		var sPath = "/EMPLOYEES/0/foo",
 			oType;
 
-		this.oSandbox.mock(this.oMetaModel).expects("fetchObject")
-			.withExactArgs(undefined, this.oMetaModel.getMetaContext(sPath)).twice()
-			.returns(SyncPromise.resolve(oProperty));
+		this.oSandbox.mock(this.oMetaModel).expects("fetchObject").twice()
+			.withExactArgs(undefined, this.oMetaModel.getMetaContext(sPath))
+			.returns(SyncPromise.resolve({
+				$isCollection : true,
+				$Nullable : false, // must not be turned into a constraint for Raw!
+				$Type : "Edm.String"
+			}));
+		this.oLogMock.expects("warning").withExactArgs(
+			"Unsupported collection type, using sap.ui.model.odata.type.Raw",
+			sPath, "sap.ui.model.odata.v4.ODataMetaModel");
 
 		oType = this.oMetaModel.fetchUI5Type(sPath).getResult();
 
-		assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Boolean");
-		assert.strictEqual(oProperty["$ui5.type"], oType, "cache filled");
-		assert.strictEqual(this.oMetaModel.fetchUI5Type(sPath).getResult(), oType, "cache used");
+		assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Raw");
+		assert.strictEqual(this.oMetaModel.getUI5Type(sPath), oType, "cached");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchUI5Type: collection", function (assert) {
-		var sPath = "/EMPLOYEES/0/foo",
-			oSyncPromise;
-
-		this.oSandbox.mock(this.oMetaModel).expects("fetchObject")
-			.withExactArgs(undefined, this.oMetaModel.getMetaContext(sPath))
-			.returns(SyncPromise.resolve({
-				$Type : "Edm.String",
-				$isCollection : true
-			}));
-
-		oSyncPromise = this.oMetaModel.fetchUI5Type(sPath);
-		assert.ok(oSyncPromise.isRejected());
-		assert.strictEqual(oSyncPromise.getResult().message,
-			"Unsupported collection type at " + sPath);
-	});
-
-	//*********************************************************************************************
-	//TODO make these types work with OData V4
-	["Edm.Duration"].forEach(function (sQualifiedName) {
+	//TODO make Edm.Duration work with OData V4
+	["acme.Type", "Edm.Duration", "Edm.GeographyPoint"].forEach(function (sQualifiedName) {
 		QUnit.test("fetchUI5Type: unsupported type " + sQualifiedName, function (assert) {
 			var sPath = "/EMPLOYEES/0/foo",
-				oSyncPromise;
+				oType;
 
-			this.oSandbox.mock(this.oMetaModel).expects("fetchObject")
+			this.oSandbox.mock(this.oMetaModel).expects("fetchObject").twice()
 				.withExactArgs(undefined, this.oMetaModel.getMetaContext(sPath))
-				.returns(SyncPromise.resolve({$Type : sQualifiedName}));
+				.returns(SyncPromise.resolve({
+					$Nullable : false, // must not be turned into a constraint for Raw!
+					$Type : sQualifiedName
+				}));
+			this.oLogMock.expects("warning").withExactArgs(
+				"Unsupported type '" + sQualifiedName + "', using sap.ui.model.odata.type.Raw",
+				sPath, "sap.ui.model.odata.v4.ODataMetaModel");
 
-			oSyncPromise = this.oMetaModel.fetchUI5Type(sPath);
-			assert.ok(oSyncPromise.isRejected());
-			assert.strictEqual(oSyncPromise.getResult().message,
-				"Unsupported EDM type '" + sQualifiedName + "' at " + sPath);
+			oType = this.oMetaModel.fetchUI5Type(sPath).getResult();
+
+			assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Raw");
+			assert.strictEqual(this.oMetaModel.getUI5Type(sPath), oType, "cached");
 		});
 	});
 
