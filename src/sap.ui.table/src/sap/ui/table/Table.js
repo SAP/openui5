@@ -1052,11 +1052,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		}
 	};
 
-		/**
+	/**
 	 * First collects all table sizes, then synchronizes row/column heights, updates scrollbars and selection.
 	 * @private
 	 */
-	Table.prototype._updateTableSizes = function(forceUpdateTableSizes) {
+	Table.prototype._updateTableSizes = function(bForceUpdateTableSizes, bSkipHandleRowCountMode) {
 		this._mTimeouts.onAfterRenderingUpdateTableSizes = undefined;
 		var oDomRef = this.getDomRef();
 
@@ -1069,11 +1069,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		this._getDefaultRowHeight(aRowHeights);
 
 		var iRowContentSpace = 0;
-		if (this.getVisibleRowCountMode() == sap.ui.table.VisibleRowCountMode.Auto) {
+		if (!bSkipHandleRowCountMode && this.getVisibleRowCountMode() == sap.ui.table.VisibleRowCountMode.Auto) {
 			iRowContentSpace = this._determineAvailableSpace();
 			// if no height is granted we do not need to do any further row adjustment or layout sync.
 			// Saves time on initial start up and reduces flickering on rendering.
-			if (this._handleRowCountModeAuto(iRowContentSpace) && !forceUpdateTableSizes) {
+			if (this._handleRowCountModeAuto(iRowContentSpace) && !bForceUpdateTableSizes) {
 				// updateTableSizes was already called by insertTableRows, therefore skip the rest of this function execution
 				return;
 			}
@@ -2769,7 +2769,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			}
 
 			this._mTimeouts.handleRowCountModeAutoAdjustRows = this._mTimeouts.handleRowCountModeAutoAdjustRows || window.setTimeout(function() {
-					that._executeAdjustRows();
+					if (!that._executeAdjustRows()) {
+						// table sizes were not updated by AdjustRows
+						that._updateTableSizes(false, true);
+					}
 					that._mTimeouts.handleRowCountModeAutoAdjustRows = undefined;
 					if (bEnableBusyIndicator) {
 						that.setBusy(false);
