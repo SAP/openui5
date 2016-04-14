@@ -6,6 +6,7 @@ sap.ui.require([
 	"sap/ui/core/Control",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/FormatException",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
 	"sap/ui/model/odata/type/DateTime",
@@ -13,8 +14,8 @@ sap.ui.require([
 	"sap/ui/model/odata/type/DateTimeOffset",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Control, DateFormat, FormatException, ParseException, ValidateException,
-		DateTime, DateTimeBase, DateTimeOffset, ODataType, TestUtils) {
+], function (jQuery, Control, DateFormat, FormatException, JSONModel, ParseException,
+		ValidateException, DateTime, DateTimeBase, DateTimeOffset, ODataType, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -158,6 +159,8 @@ sap.ui.require([
 			assert.strictEqual(oType.oFormatOptions, undefined, "format options ignored");
 			assert.strictEqual(oType.oConstraints, undefined, "default constraints");
 			assert.strictEqual(oType.oFormat, null, "no formatter preload");
+
+			createInstance(sTypeName, null, null); // null vs. undefined MUST not make a difference!
 		});
 
 		//*****************************************************************************************
@@ -342,7 +345,11 @@ sap.ui.require([
 		{i : {precision : -1}, o : undefined, warning : "Illegal precision: -1"},
 		{i : {precision : 0.9}, o : undefined, warning : "Illegal precision: 0.9"},
 		{i : {precision : 3.14}, o : undefined, warning : "Illegal precision: 3.14"},
-		{i : {precision : 12.1}, o : undefined, warning : "Illegal precision: 12.1"}
+		{i : {precision : 12.1}, o : undefined, warning : "Illegal precision: 12.1"},
+		{i : {V4 : undefined}, o : undefined},
+		{i : {V4 : false}, o : undefined},
+		{i : {V4 : true}, o : undefined}, // not stored inside oConstraints
+		{i : {V4 : 0}, o : undefined, warning : "Illegal V4: 0"}
 	].forEach(function (oFixture) {
 		QUnit.test("constraints: " + JSON.stringify(oFixture.i) + ")", function (assert) {
 			var oType;
@@ -355,6 +362,7 @@ sap.ui.require([
 
 			oType = new DateTimeOffset({}, oFixture.i);
 			assert.deepEqual(oType.oConstraints, oFixture.o);
+			assert.deepEqual(oType.bV4, !!oFixture.i.V4);
 		});
 	});
 
@@ -399,6 +407,24 @@ sap.ui.require([
 			}, new ValidateException("Illegal sap.ui.model.odata.type.DateTimeOffset value: "
 				+ sDateTimeOffset)
 		);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("V4 : true", function (assert) {
+		var oDateTimeOffsetV4 = new DateTimeOffset(undefined, {V4 : true}),
+			oModel = new JSONModel({
+				DateTimeOffset : sDateTimeOffset
+			}),
+			oControl = new Control({
+				models : oModel,
+				tooltip : "{constraints : {V4 : true}, path : '/DateTimeOffset'"
+					+ ", type : 'sap.ui.model.odata.type.DateTimeOffset'}"
+			});
+
+		assert.strictEqual(oControl.getTooltip(), sFormattedDateTime);
+
+		oDateTimeOffsetV4.validateValue(sDateTimeOffset);
+		oControl.getBinding("tooltip").getType().validateValue(sDateTimeOffset);
 	});
 
 	//*********************************************************************************************
