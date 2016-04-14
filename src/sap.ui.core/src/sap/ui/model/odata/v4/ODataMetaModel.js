@@ -30,10 +30,18 @@ sap.ui.define([
 			"Edm.Boolean" : {type : "sap.ui.model.odata.type.Boolean"},
 			"Edm.Byte" : {type : "sap.ui.model.odata.type.Byte"},
 			"Edm.Date" : {type : "sap.ui.model.odata.type.Date"},
-//			"Edm.DateTimeOffset" : {type : "sap.ui.model.odata.type.DateTimeOffset"},
+			"Edm.DateTimeOffset" : {
+				constraints : {
+					"$Precision" : "precision"
+				},
+				type : "sap.ui.model.odata.type.DateTimeOffset"
+			},
 			"Edm.Decimal" : {
-				type : "sap.ui.model.odata.type.Decimal",
-				constraints : {"$Precision" : "precision", "$Scale" : "scale"}
+				constraints : {
+					"$Precision" : "precision",
+					"$Scale" : "scale"
+				},
+				type : "sap.ui.model.odata.type.Decimal"
 			},
 			"Edm.Double" : {type : "sap.ui.model.odata.type.Double"},
 			"Edm.Guid" : {type : "sap.ui.model.odata.type.Guid"},
@@ -43,14 +51,16 @@ sap.ui.define([
 			"Edm.SByte" : {type : "sap.ui.model.odata.type.SByte"},
 			"Edm.Single" : {type : "sap.ui.model.odata.type.Single"},
 			"Edm.String" : {
-				type : "sap.ui.model.odata.type.String",
 				constraints : {
 					"@com.sap.vocabularies.Common.v1.IsDigitSequence" : "isDigitSequence",
 					"$MaxLength" : "maxLength"
-				}
+				},
+				type : "sap.ui.model.odata.type.String"
 			},
 			"Edm.TimeOfDay" : {
-				constraints : {"$Precision" : "precision"},
+				constraints : {
+					"$Precision" : "precision"
+				},
 				type : "sap.ui.model.odata.type.TimeOfDay"
 			}
 		},

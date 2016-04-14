@@ -843,12 +843,12 @@ sap.ui.require([
 		$Type : "Edm.Byte"
 	}, {
 		$Type : "Edm.Date"
-//	}, {
-//		$Type : "Edm.DateTimeOffset"
-//	},{
-//		$Type : "Edm.DateTimeOffset",
-//		facets : [{Name : "Precision", Value : "7"}]
-//		constraints : {precision : 7} //TODO implement
+	}, {
+		$Type : "Edm.DateTimeOffset"
+	},{
+		$Precision : 7,
+		$Type : "Edm.DateTimeOffset",
+		__constraints : {precision : 7}
 	}, {
 		$Type : "Edm.Decimal"
 	}, {
@@ -966,7 +966,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	//TODO make these types work with OData V4
-	["Edm.DateTimeOffset", "Edm.Duration"].forEach(function (sQualifiedName) {
+	["Edm.Duration"].forEach(function (sQualifiedName) {
 		QUnit.test("fetchUI5Type: unsupported type " + sQualifiedName, function (assert) {
 			var sPath = "/EMPLOYEES/0/foo",
 				oSyncPromise;

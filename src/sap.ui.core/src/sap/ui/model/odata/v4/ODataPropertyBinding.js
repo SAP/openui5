@@ -390,6 +390,27 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets the optional type and internal type for this binding; used for formatting and parsing.
+	 *
+	 * @param {sap.ui.model.Type} oType
+	 *   The type for this binding
+	 * @param {string} sInternalType
+	 *   The internal type of the element property which owns this binding, for example "any",
+	 *   "boolean", "float", "int", "string"; see {@link sap.ui.model.odata.type} for more
+	 *   information
+	 *
+	 * @public
+	 * @see sap.ui.model.PropertyBinding#setType
+	 */
+	// @override
+	ODataPropertyBinding.prototype.setType = function (oType) {
+		if (oType && oType.getName() === "sap.ui.model.odata.type.DateTimeOffset") {
+			oType.setV4();
+		}
+		return PropertyBinding.prototype.setType.apply(this, arguments);
+	};
+
+	/**
 	 * Sets the new current value and updates the cache.
 	 *
 	 * @param {any} vValue
