@@ -179,10 +179,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			// if the step is negative or 0, set to 1 and log a warning
 			if (fStep <= 0) {
 				jQuery.sap.log.warning("Warning: " + "The step could not be negative on ", this);
-				fStep = 1;
-
-				// update the step to 1 and suppress re-rendering
-				this.setProperty("step", fStep, true);
 			}
 
 			// the step can't be bigger than slider range, log a warning
