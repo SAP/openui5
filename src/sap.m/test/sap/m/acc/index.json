@@ -147,6 +147,11 @@
 			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
+			"control": "sap.m.MenuButton",
+			"url": "MenuButton.html",
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
+		},
+		{
 			"control": "sap.m.MessageBox",
 			"url": "MessageBox.html",
 			"appComponent": "CA-UI5-CTR-SOF-RIL"
