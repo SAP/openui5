@@ -1005,18 +1005,29 @@ oPopover.setContentWidth("30%");
 
 			var sText = "";
 			var aSelectedKeyNames = Object.getOwnPropertyNames(oList._oSelectedKeys);
-			var iLength = aSelectedKeyNames.length;
+			var iSelectedKeysLength = aSelectedKeyNames.length,
+				iListLength;
 
-			if (iLength > 0) {
+			iListLength = oList.getItems().filter(function(oItem) {
+				return oItem.getVisible();
+			}).length;
 
-				if (iLength === 1) { // Use selected item value for button label if only one selected
+			switch (iSelectedKeysLength) {
+				case 0:
+					sText = oList.getTitle();
+					break;
+				case 1:
 					var sSelectedItemText = oList._oSelectedKeys[aSelectedKeyNames[0]];
-					sText = this._bundle.getText("FACETFILTER_ITEM_SELECTION", [ oList.getTitle(), sSelectedItemText ]);
-				} else {
-					sText = this._bundle.getText("FACETFILTER_ITEM_SELECTION", [ oList.getTitle(), iLength ]);
-				}
-			} else {
-				sText = this._bundle.getText("FACETFILTER_ALL_SELECTED", [ oList.getTitle() ]);
+					sText = this._bundle.getText("FACETFILTER_ITEM_SELECTION", [oList.getTitle(), sSelectedItemText]);
+					break;
+				case iListLength:
+          //this excludes when iSelectedKeysLength=0, that is handled in the 1st case.
+					//The old behavior was considering for "all" the case where none is selected.
+					sText = this._bundle.getText("FACETFILTER_ALL_SELECTED", [oList.getTitle()]);
+					break;
+				default:
+					sText = this._bundle.getText("FACETFILTER_ITEM_SELECTION", [oList.getTitle(), iSelectedKeysLength]);
+					break;
 			}
 
 			oButton.setText(sText);
