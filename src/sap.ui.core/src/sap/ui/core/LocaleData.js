@@ -227,6 +227,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		},
 
 		/**
+		 * Get combined datetime pattern with given date and and time style
+		 *
+		 * @param {string} sDateStyle the required style for the date part
+		 * @param {string} sTimeStyle the required style for the time part
+		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
+		 * @returns {string} the combined datetime pattern
+		 * @public
+		 */
+		getCombinedDateTimePattern : function(sDateStyle, sTimeStyle, sCalendarType) {
+			jQuery.sap.assert(sDateStyle == "short" || sDateStyle == "medium" || sDateStyle == "long" || sDateStyle == "full", "sStyle must be short, medium, long or full");
+			jQuery.sap.assert(sTimeStyle == "short" || sTimeStyle == "medium" || sTimeStyle == "long" || sTimeStyle == "full", "sStyle must be short, medium, long or full");
+			var sDateTimePattern = this.getDateTimePattern(sDateStyle),
+				sDatePattern = this.getDatePattern(sDateStyle),
+				sTimePattern = this.getTimePattern(sTimeStyle);
+			return sDateTimePattern.replace("{0}", sTimePattern).replace("{1}", sDatePattern);
+		},
+
+		/**
 		 * Get custom datetime pattern for a given skeleton format.
 		 *
 		 * The format string does contain pattern symbols (e.g. "yMMMd" or "Hms") and will be converted into the pattern in the used
