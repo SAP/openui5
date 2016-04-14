@@ -263,11 +263,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
              * Checks if the ToolPopup already has a tabbable element.
              * If not, it's checked whether the fake-element should be used or if there is an element that could be focused instead.
              *
-             * @param {sap.ui.ux3.ToolPopup} that to get/set instance values
+             * @param {sap.ui.ux3.ToolPopup} context to get/set instance values
              * @returns {string} _sInitialFocusId that has been determined here
              * @private
              */
-            var _fnGetInitialFocus = function (that) {
+            var _fnGetInitialFocus = function (context) {
+                var that = context;
                 jQuery.sap.assert(!!that, "No ToolPopup instance given for _fnGetInitialFocus");
 
                 // if there is an initial focus it was already set to the Popup onBeforeRendering
@@ -283,12 +284,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
             /**
              * Determines the new element which will gain the focus.
              *
-             * @param {sap.ui.ux3.ToolPopup} that to get/set instance values
+             * @param {sap.ui.ux3.ToolPopup} context to get/set instance values
              * @private
              */
-            var _fnGetNewFocusElement = function (that) {
+            var _fnGetNewFocusElement = function (context) {
                 var oElement;
                 var oFocusControl;
+                var that = context;
                 var defaultFocusableElements = [that._mParameters.firstFocusable, that._mParameters.lastFocusable];
                 var aTabbables = jQuery(":sapTabbable", that.$()).get();
 
@@ -1122,7 +1124,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
                 return this;
             };
 
-            var fnChangeContent = function (that, sType) {
+            var fnChangeContent = function (context, sType) {
+                var that = context;
                 if (sType === "content") {
                     fnRenderContent(that);
                 } else if (sType === "buttons") {

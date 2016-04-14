@@ -3,16 +3,16 @@
  */
 
 // Provides default renderer for control sap.ui.demokit.HexagonButtonGroup
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(function() {
 	"use strict";
 
 
 	/**
-	 * @class HexagonButtonGroup renderer.
-	 * @static
+	 * HexagonButtonGroup renderer.
+	 * @namespace
+	 * @alias sap.ui.demokit.HexagonButtonGroupRenderer
 	 */
-	var HexagonButtonGroupRenderer = function() {
+	var HexagonButtonGroupRenderer = {
 	};
 
 

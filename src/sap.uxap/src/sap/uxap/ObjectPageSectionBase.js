@@ -187,9 +187,12 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "./library"], functio
 
 	// Generate proxies for aggregation mutators
 	["addAggregation", "insertAggregation", "removeAllAggregation", "removeAggregation", "destroyAggregation"].forEach(function (sMethod) {
-		ObjectPageSectionBase.prototype[sMethod] = function () {
+		ObjectPageSectionBase.prototype[sMethod] = function (sAggregationName, oObject, bSuppressInvalidate) {
 			var vResult = Control.prototype[sMethod].apply(this, arguments);
-			this._notifyObjectPageLayout();
+
+			if (bSuppressInvalidate !== true){
+				this._notifyObjectPageLayout();
+			}
 			return vResult;
 		};
 	});

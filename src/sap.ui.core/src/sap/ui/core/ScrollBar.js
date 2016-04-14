@@ -8,6 +8,9 @@ sap.ui.define(['jquery.sap.global','sap/ui/Device', './Control', './library', 'j
 	"use strict";
 
 
+	// shortcut for enum(s)
+	var ScrollBarAction = library.ScrollBarAction;
+
 
 	/**
 	 * Constructor for a new ScrollBar.
@@ -120,7 +123,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/Device', './Control', './library', 'j
 		this._iMaxContentDivSize = 1000000;  // small value that all browsers still can render without any problems
 
 		if (jQuery.sap.touchEventMode === "ON") {
-			jQuery.sap.require("sap.ui.thirdparty.zyngascroll");
+			sap.ui.requireSync("sap/ui/thirdparty/zyngascroll");
 
 			// Remember last touch scroller position to prevent unneeded rendering
 			this._iLastTouchScrollerPosition = null;
@@ -288,7 +291,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/Device', './Control', './library', 'j
 			var bForward = wheelData > 0 ? true : false;
 
 			if (jQuery.sap.containsOrEquals(this._$ScrollDomRef[0], oEvent.target)) {
-				this._doScroll(sap.ui.core.ScrollBarAction.MouseWheel, bForward);
+				this._doScroll(ScrollBarAction.MouseWheel, bForward);
 			} else {
 
 				this._bMouseWheel = true;
@@ -405,20 +408,20 @@ sap.ui.define(['jquery.sap.global','sap/ui/Device', './Control', './library', 'j
 			iDelta = iDelta * (-1);
 		}
 
-		var eAction = sap.ui.core.ScrollBarAction.Drag;
+		var eAction = ScrollBarAction.Drag;
 		if (iDelta == this._iFactor) {
-			eAction = sap.ui.core.ScrollBarAction.Step;
+			eAction = ScrollBarAction.Step;
 		} else if (iDelta == this._iFactorPage) {
-			eAction = sap.ui.core.ScrollBarAction.Page;
+			eAction = ScrollBarAction.Page;
 		} else if (this._bMouseWheel) {
-			eAction = sap.ui.core.ScrollBarAction.MouseWheel;
+			eAction = ScrollBarAction.MouseWheel;
 		}
 
 		// Proceed scroll
-		if (this._bLargeDataScrolling && eAction === sap.ui.core.ScrollBarAction.Drag) {
+		if (this._bLargeDataScrolling && eAction === ScrollBarAction.Drag) {
 			this._eAction = eAction;
 			this._bForward = bForward;
-			if (sap.ui.Device.browser.internet_explorer) {
+			if (Device.browser.msie) {
 				if (this._scrollTimeout) {
 					window.clearTimeout(this._scrollTimeout);
 				}
@@ -445,7 +448,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/Device', './Control', './library', 'j
 	};
 
 	ScrollBar.prototype.onmouseup = function() {
-		if (this._bLargeDataScrolling && (this._eAction || this._bForward || this._bTouchScroll) && !sap.ui.Device.browser.internet_explorer) {
+		if (this._bLargeDataScrolling && (this._eAction || this._bForward || this._bTouchScroll) && !Device.browser.msie) {
 			this._doScroll(this._eAction, this._bForward);
 			this._eAction = undefined;
 			this._bForward = undefined;
@@ -558,7 +561,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/Device', './Control', './library', 'j
 	 */
 	ScrollBar.prototype.pageUp = function() {
 		// call on scroll
-		this._doScroll(sap.ui.core.ScrollBarAction.Page, false);
+		this._doScroll(ScrollBarAction.Page, false);
 	};
 
 	/**
@@ -569,7 +572,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/Device', './Control', './library', 'j
 	 */
 	ScrollBar.prototype.pageDown = function() {
 		// call on scroll
-		this._doScroll(sap.ui.core.ScrollBarAction.Page, true);
+		this._doScroll(ScrollBarAction.Page, true);
 	};
 
 	//=============================================================================
@@ -711,7 +714,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/Device', './Control', './library', 'j
 			this.fireScroll({ action: eAction, forward: bForward, newScrollPos: iScrollPos, oldScrollPos: this._iOldScrollPos});
 		}
 		// rounding errors in IE lead to infinite scrolling
-		if (Math.round(this._iFactor) == this._iFactor || !sap.ui.Device.browser.internet_explorer) {
+		if (Math.round(this._iFactor) == this._iFactor || !Device.browser.msie) {
 			this._bSuppressScroll = false;
 		}
 		this._iOldScrollPos = iScrollPos;

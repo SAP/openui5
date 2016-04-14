@@ -256,7 +256,10 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 
 	TreeTable.prototype._updateExpandState = function(oRow, $Row) {
 		var $TreeIcon = $Row.find(".sapUiTableTreeIcon");
-		$TreeIcon.css.apply($TreeIcon, this._getLevelIndentCSS(oRow));
+		var aLevelIndentCSS = this._getLevelIndentCSS(oRow);
+		if (aLevelIndentCSS) {
+			$TreeIcon.css.apply($TreeIcon, aLevelIndentCSS);
+		}
 		$TreeIcon.removeClass("sapUiTableTreeIconLeaf sapUiTableTreeIconNodeOpen sapUiTableTreeIconNodeClosed").addClass(oRow._sTreeIconClass);
 		this._getAccExtension().updateAriaExpandState(oRow, $Row, $TreeIcon);
 		$Row.attr("data-sap-ui-level", oRow._iLevel);

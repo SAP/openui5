@@ -952,12 +952,62 @@
 			oObjectHeader.destroy();
 		});
 
-		test("additionalNumbers shouldn't be rendered", function () {
+		test("additionalNumbers shouldn't be rendered if no aggregation is set", function () {
 			// Arrange
 			var oObjectHeader = new sap.m.ObjectHeader({
 				title: "Test numbers",
 				number: "3213",
 				numberUnit: "EUR"
+			});
+
+			// System under test
+			oObjectHeader.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			var oAdditionalNum = oObjectHeader.$().find(".additionalOHNumberDiv");
+			ok(!oAdditionalNum.length, "Zero additionalNumbers are rendered.");
+
+			// cleanup
+			oObjectHeader.destroy();
+		});
+
+		test("additionalNumbers shouldn't be rendered if the condensed property is set to true", function () {
+			// Arrange
+			var oObjectHeader = new sap.m.ObjectHeader({
+				title: "test additional numbers",
+				condensed: true,
+				additionalNumbers: [
+					new sap.m.ObjectNumber({
+						number: "2134",
+						unit: "Conversion rate"
+					})
+				]
+			});
+
+			// System under test
+			oObjectHeader.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			var oAdditionalNum = oObjectHeader.$().find(".additionalOHNumberDiv");
+			ok(!oAdditionalNum.length, "Zero additionalNumbers are rendered.");
+
+			// cleanup
+			oObjectHeader.destroy();
+		});
+
+		test("additionalNumbers shouldn't be rendered if the responsive property is set to true", function () {
+			// Arrange
+			var oObjectHeader = new sap.m.ObjectHeader({
+				title: "test additional numbers",
+				responsive: true,
+				additionalNumbers: [
+					new sap.m.ObjectNumber({
+						number: "2134",
+						unit: "Conversion rate"
+					})
+				]
 			});
 
 			// System under test

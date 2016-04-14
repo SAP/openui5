@@ -122,6 +122,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 */
 	Binding.prototype.setContext = function(oContext) {
 		if (this.oContext != oContext) {
+			sap.ui.getCore().getMessageManager().removeMessages(this.getDataState().getControlMessages(), true);
 			this.oContext = oContext;
 			this.oDataState = null;
 			this._fireChange({reason : ChangeReason.Context});
@@ -515,6 +516,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	Binding.prototype.resume = function() {
 		this.bSuspended = false;
 		this.checkUpdate();
+	};
+
+	/**
+	 * Removes all control messages for this binding from the MessageManager in addition to the standard clean-up tasks.
+	 * @see sap.ui.base.EventProvider#destroy
+	 *
+	 * @public
+	 */
+	sap.ui.model.Binding.prototype.destroy = function() {
+		sap.ui.getCore().getMessageManager().removeMessages(this.getDataState().getControlMessages(), true);
+		sap.ui.base.EventProvider.prototype.destroy.apply(this, arguments);
 	};
 
 	return Binding;

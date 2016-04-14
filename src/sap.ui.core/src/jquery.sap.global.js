@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-/*global ActiveXObject, alert, confirm, console, ES6Promise, localStorage, performance, URI, Promise, XMLHttpRequest */
+/*global ActiveXObject, alert, confirm, console, ES6Promise, localStorage, jQuery, performance, URI, Promise, XMLHttpRequest */
 
 /**
  * @class Provides base functionality of the SAP jQuery plugin as extension of the jQuery framework.<br/>

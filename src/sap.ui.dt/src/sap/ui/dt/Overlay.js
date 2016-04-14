@@ -184,7 +184,7 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	Overlay.prototype.init = function() {
 		this._bVisible = null;
 
-		this._domRefScrollHandler = this._syncScrollWithDomRef.bind(this);
+		this._domRefScrollHandler = this._onSyncScrollWithDomRef.bind(this);
 
 		this.attachBrowserEvent("scroll", this._onOverlayScroll, this);
 	};
@@ -199,6 +199,7 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 		delete this._oDomRef;
 		delete this._bVisible;
 		window.clearTimeout(this._iCloneDomTimeout);
+		window.clearTimeout(this._iSyncScrollWithDomRef);
 		this.fireDestroyed();
 	};
 
@@ -404,6 +405,19 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 			jQuery(this._oDomRefWithScrollHandler).off("scroll", this._domRefScrollHandler);
 			delete this._oDomRefWithScrollHandler;
 		}
+	};
+
+	/**
+	 * @private
+	 */
+	Overlay.prototype._onSyncScrollWithDomRef = function(oEvt) {
+		window.clearTimeout(this._iSyncScrollWithDomRef);
+		var that = this;
+		// timeout needed so that scroll wheel in chrome windows works fast
+		this._iSyncScrollWithDomRef = window.setTimeout(function() {
+			that._syncScrollWithDomRef();
+			delete that._iSyncScrollWithDomRef;
+		}, 0);
 	};
 
 	/**

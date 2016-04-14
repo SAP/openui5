@@ -178,7 +178,7 @@ xhr.onCreate = function(request) {
 				[200, oXMLHeaders, sProductsXML],
 			"Categories(7)/Products/$count":
 				[200, oCountHeaders, "5"],
-			"Categories(1)": 
+			"Categories(1)":
 				[200, oJSONHeaders, sCategory1JSON],
 			"ZeroTest(1)":
 				[200, oJSONHeaders, sZeroTest],
@@ -188,6 +188,8 @@ xhr.onCreate = function(request) {
 				[200, oJSONHeaders, sCategory4JSON],
 			"Categories(5)":
 				[200, oJSONHeaders, sCategoryBrokenJSON],
+			"Categories(10)":
+				[200, oJSONHeaders, sCategory10JSON],
 			"Categories?$skip=0&$top=8&$select=CategoryName":
 				[200, oJSONHeaders, sCategorySelectJSON],
 			"Categories?$skip=0&$top=100&$select=CategoryName":
@@ -282,10 +284,10 @@ xhr.onCreate = function(request) {
 				[204, oNodataHeaders, ""]
 		},
 		"DELETE": {
-			
+
 		},
 		"HEAD": {
-			
+
 		}
 	};
 
@@ -300,7 +302,7 @@ xhr.onCreate = function(request) {
 		var vResponse = typeof(responses[method][url]) === "function"
 			? responses[method][url](url, headers)
 			: responses[method][url];
-		
+
 		switch (method) {
 			case "GET":
 				return vResponse || [404, oJSONHeaders, ""];
@@ -7509,3 +7511,24 @@ var sMetadataComplex = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
 				"  <link rel=\"self\" title=\"Categories\" href=\"Categories\" />\n" +
 				"</feed>";
 
+		var sCategory10JSON = "{\n" +
+		"\"d\" : {\n" +
+		"		\"__metadata\" : {\n" +
+		"			\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Categories(10)\",\n" +
+		"			\"type\" : \"NorthwindModel.Category\",\n" +
+		"			\"etag\" : \"W/\\\"736010m\\\"\",\n" +
+		"			\"content_type\" : \"application/octet-stream\",\n" +
+		"			\"media_src\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Categories(10)/Attachment/$value\",\n" +
+		"			\"edit_media\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Categories(10)/Attachment/$value\"\n" +
+		"		},\n" +
+		"		\"CategoryID\" : 10,\n" +
+		"		\"CategoryName\" : \"Confections\",\n" +
+		"		\"Description\" : \"Desserts, candies, and sweet breads\",\n" +
+		"		\"Picture\" : \"\",\n" +
+		"		\"Products\" : {\n" +
+		"			\"__deferred\" : {\n" +
+		"				\"uri\" : \"http://services.odata.org/V2/Northwind/Northwind.svc/Categories(10)/Products\"\n" +
+		"			}\n" +
+		"		}\n" +
+		"	}\n" +
+		"}"

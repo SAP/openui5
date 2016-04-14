@@ -272,7 +272,7 @@
 		test("RenderManager.renderControl", function() {
 			var oControl1 = new TestControl("TestContr1");
 			var oControl2 = new TestControl("TestContr2");
-			checkRMWriter(getTestControlHtml("TestContr1")+getTestControlHtml("TestContr2"), false, 2, function(rm){
+			checkRMWriter(getTestControlHtml("TestContr1")+getTestControlHtml("TestContr2"), true, 2, function(rm){
 				rm.renderControl(oControl1);
 				return rm.renderControl(oControl2);
 			}, function(rm){

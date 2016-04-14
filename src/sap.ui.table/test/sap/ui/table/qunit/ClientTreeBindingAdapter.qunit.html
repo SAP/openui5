@@ -800,6 +800,38 @@
 			start();
 		});
 
+		asyncTest("setSelectedIndex and getSelectedIndex", function(){
+			createTreeBindingAdapter("/bing/root", [], null, {
+				collapseRecursive: false,
+				displayRootNode: false,
+				numberOfExpandedLevels: 1
+			});
+
+			oBinding.getContexts(0, 100);
+
+			//invalidate tree
+			oBinding._fireChange();
+
+			oBinding.getLength();
+
+			oBinding.setSelectedIndex(1);
+
+			equal(oBinding.isIndexSelected(1), true, "isIndexSelected(1) works");
+
+			var aSelectedIndices = oBinding.getSelectedIndices();
+			deepEqual(aSelectedIndices, [1], "Selected indices array is correct, after selecting additional indices");
+
+			oBinding.setSelectedIndex(3);
+
+			equal(oBinding.isIndexSelected(1), false, "isIndexSelected(1) works");
+
+			equal(oBinding.isIndexSelected(3), true, "isIndexSelected(3) works");
+
+			var aSelectedIndices = oBinding.getSelectedIndices();
+			deepEqual(aSelectedIndices, [3], "Selected indices array is correct, after selecting additional indices");
+			start();
+		});
+
 		asyncTest("Sorting with stable expand states", function(){
 
 			createTreeBindingAdapter("/bing/root", null,null, {
@@ -826,6 +858,71 @@
 			oBinding.attachChange(fnRefreshHandler);
 			//sort descending
 			oBinding.sort(new sap.ui.model.Sorter("name", true));
+		});
+
+
+		var oData2 = {
+			root: [{
+				name: "node_0",
+				root: [
+					{
+						name: "node_1",
+						root: [{name: "node_1a"}, {name: "node_1b"}]
+					},
+					{
+						name: "node_2",
+						root: [{name: "node_2a"}, {name: "node_2b"}]
+					}
+				]
+			}]
+		};
+
+		module("ClientBindingAdapter - Model Data 2", {
+			setup: function() {
+				oModel = new sap.ui.model.json.JSONModel();
+				oModel.setData(jQuery.extend({}, oData2));
+			},
+			teardown: function() {
+				oModel = undefined;
+			}
+		});
+
+
+		asyncTest("Expand with arrayNames == bindingPath", function(){
+
+			createTreeBindingAdapter("/root", null,null, {
+				numberOfExpandedLevels: 1,
+				displayRootNode: false,
+				arrayNames: ["root"]
+			});
+
+			oBinding.getContexts(0, 100);
+
+			// tree-state expectation
+			// node_0
+			//    node_1
+			//    node_2
+			equal(oBinding.getLength(), 3, "initial length is OK");
+
+			// epxand node_1
+			oBinding.attachChange(handler1);
+			oBinding.expand(1);
+			oBinding.getContexts(0, 100);
+
+			function handler1 () {
+				oBinding.detachChange(handler1);
+
+				// tree-state expectation
+				// node_0
+				//    node_1
+				//       node_1a
+				//       node_1b
+				//    node_2
+				equal(oBinding.getLength(), 5, "length after expand is ok");
+
+				start();
+			}
+			
 		});
 
 	</script>

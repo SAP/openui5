@@ -59,7 +59,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.ListMode",
 			"sap.m.ListSeparators",
 			"sap.m.ListType",
-			"sap.m.ListKeyboardNavigationMode",
 			"sap.m.LoadState",
 			"sap.m.MenuButtonMode",
 			"sap.m.OverflowToolbarPriority",
@@ -70,6 +69,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.QuickViewGroupElementType",
 			"sap.m.RatingIndicatorVisualMode",
 			"sap.m.ScreenSize",
+			"sap.m.SelectListKeyboardNavigationMode",
 			"sap.m.SelectType",
 			"sap.m.SplitAppMode",
 			"sap.m.StandardTileType",
@@ -81,6 +81,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		interfaces: [
 			"sap.m.IBar",
 			"sap.m.IconTab",
+			"sap.m.ISnappable",
 			"sap.m.semantic.IGroup",
 			"sap.m.semantic.IFilter",
 			"sap.m.semantic.ISort",
@@ -92,6 +93,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.ActionSheet",
 			"sap.m.App",
 			"sap.m.Bar",
+			"sap.m.DynamicPage",
+			"sap.m.DynamicPageHeader",
+			"sap.m.DynamicPageTitle",
 			"sap.m.BusyDialog",
 			"sap.m.BusyIndicator",
 			"sap.m.Button",
@@ -119,6 +123,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.FeedListItem",
 			"sap.m.FlexBox",
 			"sap.m.FormattedText",
+			"sap.m.FlexibleColumnLayout",
 			"sap.m.GenericTile",
 			"sap.m.GroupHeaderListItem",
 			"sap.m.GrowingList",
@@ -999,6 +1004,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
+	/**
+	 *
+	 *   Interface for controls which are suitable as a Header in sap.m.DynamicPage.
+	 *   If the control wants to get have the pin/unpin functionality, it must fire the pinUnpinPress event
+	 *
+	 * @since 1.38
+	 * @name sap.m.ISnappable
+	 * @interface
+	 * @public
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
 
 	/**
 	 * Allowed tags for the implementation of the IBar interface.
@@ -1528,7 +1544,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 * @since 1.38
 	 * @ui5-metamodel This enumeration will also be described in the UI5 (legacy) design time meta model.
 	 */
-	sap.m.ListKeyboardNavigationMode = {
+	sap.m.SelectListKeyboardNavigationMode = {
 
 		/**
 		 * Keyboard navigation is disabled.
@@ -2299,6 +2315,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 	};
 
+	/**
+	 * Types of three-column layout for the sap.m.FlexibleColumnLayout control
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.38
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.ThreeColumnLayoutType = {
+
+		/**
+		 * Emphasized last column (endColumn) - column layout 25/25/50
+		 * @public
+		 */
+		EndColumnEmphasized : "EndColumnEmphasized",
+
+		/**
+		 * Emphasized middle column (midColumn) - column layout 25/50/25
+		 * @public
+		 */
+		MidColumnEmphasized : "MidColumnEmphasized"
+	};
 
 	/**
 	 * Types of the Toolbar Design.

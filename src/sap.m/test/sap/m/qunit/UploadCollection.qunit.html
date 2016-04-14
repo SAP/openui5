@@ -162,6 +162,11 @@
 		assert.strictEqual(jQuery(jQuery.sap.domById("uploadCollection-numberOfAttachmentsTitle")).text(), sText);
 	});
 
+	QUnit.test("Set tooltip of FileUploader", function(assert) {
+		var sText = this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_UPLOAD");
+		assert.strictEqual(this.oUploadCollection._oFileUploader.getTooltip(), sText, "Correct tooltip of FileUploader");
+	});
+
 	QUnit.test("Determine icon from filename", function(assert) {
 		assert.equal(this.oUploadCollection._getIconFromFilename("fileName"), 'sap-icon://document', "Document icon returned in case no file extension exists.");
 

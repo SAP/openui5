@@ -55,7 +55,7 @@
 }
 
 .sapUiTableRowHdr.sapUiTableGroupHeader,
-.sapUiTableCtrl tr.sapUiTableGroupHeader > td {
+.sapUiTableCtrl tr.sapUiTableGroupHeader > td:nth-last-child(n+2) {
 	border-right: none;
 }
 
@@ -300,7 +300,6 @@
 	border: none;
 }
 
-
 /* Table Column */
 .sapUiTableCol {
 	padding-top: 7px;
@@ -527,4 +526,8 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 	::-webkit-scrollbar {
 		background-color: @sapHCStandardBG;
 	}
+}
+
+.sapUiTableVSb {
+	right: 4px;
 }

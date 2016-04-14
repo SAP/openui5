@@ -5,8 +5,9 @@
 // Provides class sap.ui.core.support.plugins.ControlTree (ControlTree support plugin)
 sap.ui.define([
 	'jquery.sap.global', 'sap/ui/core/support/Plugin', 'sap/ui/core/util/serializer/ViewSerializer', 'sap/ui/thirdparty/jszip',
-	'sap/ui/core/Element', 'sap/ui/core/ElementMetadata', 'sap/ui/core/UIArea', 'sap/ui/core/mvc/View', 'sap/ui/core/mvc/Controller'
-], function(jQuery, Plugin, ViewSerializer, JSZip, Element, ElementMetadata, UIArea, View /*, Controller */) {
+	'sap/ui/base/DataType', 'sap/ui/core/Element', 'sap/ui/core/ElementMetadata', 'sap/ui/core/UIArea', 'sap/ui/core/mvc/View', 'sap/ui/core/mvc/Controller',
+	'sap/ui/model/Binding', 'sap/ui/model/CompositeBinding'
+], function(jQuery, Plugin, ViewSerializer, JSZip, DataType, Element, ElementMetadata, UIArea, View, Controller, Binding, CompositeBinding) {
 	"use strict";
 
 	/*global Blob, Uint8Array, alert */
@@ -1190,8 +1191,8 @@ sap.ui.define([
 
 				if (oProperty && oProperty.type) {
 
-					var oType = sap.ui.base.DataType.getType(oProperty.type);
-					if (oType instanceof sap.ui.base.DataType) {
+					var oType = DataType.getType(oProperty.type);
+					if (oType instanceof DataType) {
 
 						// DATATYPE
 
@@ -1398,8 +1399,8 @@ sap.ui.define([
 								}).length === 1;
 							}
 
-							var oType = sap.ui.base.DataType.getType(oProperty.type);
-							if (oType && !(oType instanceof sap.ui.base.DataType)) {
+							var oType = DataType.getType(oProperty.type);
+							if (oType && !(oType instanceof DataType)) {
 								mProperty["enumValues"] = oType;
 							}
 						});
@@ -1474,9 +1475,9 @@ sap.ui.define([
 						aBindingInfoBuffer = [ mBindingInfo ];
 					}
 
-					if (mBindingInfo.binding instanceof sap.ui.model.CompositeBinding) {
+					if (mBindingInfo.binding instanceof CompositeBinding) {
 						aBindingBuffer = mBindingInfo.binding.getBindings();
-					} else if (mBindingInfo.binding instanceof sap.ui.model.Binding) {
+					} else if (mBindingInfo.binding instanceof Binding) {
 						aBindingBuffer = [ mBindingInfo.binding ];
 					}
 
@@ -1653,7 +1654,7 @@ sap.ui.define([
 				return;
 			}
 
-			if (oBinding instanceof sap.ui.model.CompositeBinding) {
+			if (oBinding instanceof CompositeBinding) {
 
 				var aBindings = oBinding.getBindings();
 

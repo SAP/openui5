@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.demokit.Tag.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
-	function(jQuery, Element, library) {
+sap.ui.define(['sap/ui/core/Element', './library'],
+	function(Element, library) {
 	"use strict";
 
 
@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.demokit.Tag
+	 * @alias sap.ui.demokit.Tag
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Tag = Element.extend("sap.ui.demokit.Tag", /** @lends sap.ui.demokit.Tag.prototype */ { metadata : {
@@ -50,4 +50,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 
 	return Tag;
 
-}, /* bExport= */ true);
+});

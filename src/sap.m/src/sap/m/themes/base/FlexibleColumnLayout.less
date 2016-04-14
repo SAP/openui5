@@ -1,0 +1,84 @@
+/* ============================================ */
+/* CSS for control sap.m/FlexibleColumnLayout   */
+/* ============================================ */
+
+.sapMFCL {
+	display: -webkit-flex;
+	display: flex;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+
+	.sapMFCLColumn {
+		height: 100%;
+		position: relative;
+
+		// When there are more than one panels, the latter get margin
+		&.sapMFCLColumnMargin {
+			margin: 0 0 0 0.5rem;
+		}
+
+		// When there is content in a panel, it needs min-width
+		&.sapMFCLColumnActive {
+			//min-width: 20rem;
+		}
+
+		.sapMFCLNavigationButton {
+			width: 2rem;
+			height: 3.5rem;
+			position: absolute;
+			top: 45%;
+			z-index: 20;
+
+			&.sapMFCLNavigationButtonLeft {
+				left: 0;
+			}
+
+			&.sapMFCLNavigationButtonRight {
+				right: 0;
+			}
+
+			.sapMBtnInner {
+				min-width: 1.67rem;
+			}
+		}
+
+		.sapMFCLContainer {
+			height: 100%;
+		}
+	}
+}
+
+html[data-sap-ui-animation='on'] {
+	.sapMFCL {
+		.sapMFCLColumn {
+			transition: width 150ms ease-in;
+			-webkit-transition: width 150ms ease-in;
+			-ms-transition: width 150ms ease-in;
+			-moz-transition: width 150ms ease-in;
+		}
+	}
+}
+
+// Compact mode
+.sapUiSizeCompact {
+	.sapMFCL {
+		.sapMFCLNavigationButton {
+			width: 1.5rem;
+			height: 2.875rem;
+
+			.sapMBtnInner {
+				min-width: 1.25rem;
+				height: 2.5rem;
+				.sapMBtnIcon {
+					line-height: 2.5rem;
+					width: 1.5rem;
+					font-size: 1rem;
+					margin-left: 0;
+					margin-right: 0;
+				}
+			}
+		}
+	}
+}
+

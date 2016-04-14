@@ -9,6 +9,30 @@ module("ODataTreeBinding - AutoExpand", {
 	}
 });
 
+asyncTest("Initialize & Adapter check", function(){
+	oModel.attachMetadataLoaded(function() {
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			select: "LEVEL,DRILLDOWN_STATE", //incomplete annotation set in $select
+			numberOfExpandedLevels: 2
+		});
+
+		// API Check
+		ok(oBinding.getContexts, "getContexts function is present");
+		ok(oBinding.getNodes, "getNodes function is present");
+		ok(oBinding.getLength, "getLength function is present");
+		ok(oBinding.expand, "expand function is present");
+		ok(oBinding.collapse, "collapse function is present");
+
+		// $select validation
+		equal(oBinding.mParameters.select, "LEVEL,DRILLDOWN_STATE,PARENT_NODE,HIERARCHY_NODE,MAGNITUDE", "$select is complete incl. Magnitude");
+
+		start();
+	});
+});
+
 asyncTest("Initial getContexts and Thresholding", function(){
 	oModel.attachMetadataLoaded(function() {
 		createTreeBinding("/orgHierarchy", null, [], {

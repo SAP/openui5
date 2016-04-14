@@ -12,14 +12,6 @@ sap.ui.define(['jquery.sap.global'],
 		 */
 		var FormattedTextRenderer = {};
 
-		/**
-		 * Renders the HTML for the FormattedText, using the provided
-		 * {@link sap.ui.core.RenderManager}.
-		 *
-		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for
-		 * writing to the render output buffer
-		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
-		 */
 		FormattedTextRenderer.render = function (oRm, oControl) {
 			var sHtml = oControl.getHtmlText();
 

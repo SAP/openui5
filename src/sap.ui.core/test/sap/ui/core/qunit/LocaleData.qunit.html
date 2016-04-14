@@ -227,6 +227,8 @@
 		equal(oLocaleData.getCustomDateTimePattern("Km"), "h:mm a", "datetime format \"Km\"");
 		equal(oLocaleData.getCustomDateTimePattern("jms"), "HH:mm:ss", "datetime format \"jms\"");
 		equal(oLocaleData.getCustomDateTimePattern("Jms"), "HH:mm:ss", "datetime format \"Jms\"");
+		// no pattern defined for "yMMMMdd", the pattern of "yMMdd" should be expanded
+		equal(oLocaleData.getCustomDateTimePattern("yMMMMdd"), "dd.MMMM.y", "datetime format 'yMMMMdd'");
 		equal(oLocaleData.getNumberSymbol("decimal"), ",", "decimal separator");
 		equal(oLocaleData.getNumberSymbol("group"), ".", "group separator");
 		equal(oLocaleData.getFirstDayOfWeek(), 1, "first day of week");
@@ -343,6 +345,9 @@
 		equal(oLocaleData.getDateTimePattern("long"), "{1} {0}", "datetime pattern \"long\"");
 		equal(oLocaleData.getCustomDateTimePattern("y"), "y年", "datetime format \"y\"");
 		equal(oLocaleData.getCustomDateTimePattern("y", "Japanese"), "Gy年", "datetime format \"y\"");
+		// No pattern defined for pattern "yMMMdd" but since the lengths of month field aren't the same between the skeleton (yMMMd) and the pattern (y年M月d日),
+		// the field shouldn't be expanded. But the expansion should be done for the date field since the lengths are the same.
+		equal(oLocaleData.getCustomDateTimePattern("yMMMdd"), "y年M月dd日", "datetime format \"yMMMdd\"");
 		equal(oLocaleData.getNumberSymbol("decimal"), ".", "decimal separator");
 		equal(oLocaleData.getNumberSymbol("group"), ",", "group separator");
 	}

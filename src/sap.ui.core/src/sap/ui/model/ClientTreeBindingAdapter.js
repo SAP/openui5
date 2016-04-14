@@ -103,7 +103,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 				// only split the contextpath along the binding path, if it is not the top-level ("/"),
 				// otherwise the "_" replace regex, will replace wrongly substitute the context-path
 				if (sBindingPath != "/") {
-					sGroupId = sContextPath.split(sBindingPath)[1];
+					// match the context-path in case the "arrayNames" property of the ClientTreeBindings is identical to the binding path
+					var aMatch = sContextPath.match(sBindingPath + "(.*)");
+					if (aMatch != null && aMatch[1]) {
+						sGroupId = aMatch[1];
+					} else {
+						jQuery.sap.log.warning("CTBA: BindingPath/ContextPath matching problem!");
+					}
 				}
 				if (!sGroupId) {
 					sGroupId = sContextPath;
@@ -135,6 +141,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 				iStartIndex = iStartIndex || 0;
 				iLength = iLength || this.getRootContexts().length;
 				this._invalidTree = false;
+				this._aRowIndexMap = []; // clear cache to prevent inconsistent state between cache and real tree
 				TreeBindingAdapter.prototype._buildTree.call(this, iStartIndex, iLength);
 			}
 		};

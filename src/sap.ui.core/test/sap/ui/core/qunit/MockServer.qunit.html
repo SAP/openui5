@@ -3106,6 +3106,16 @@
 		});
 		equal(oResponse.data.d.results.length, 101, "101 entities returned");
 
+        // read the just created resource again with encode datetime
+        var oGetResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection(carrid='BB',connid='009',fldate=datetime'2010-10-20T00%3A00%3A00')",
+			type : 'GET',
+		});
+		ok(oGetResponse.success, "Mock server responded the GET request");
+		equal(oGetResponse.statusCode, 200, "re-read of new resource successfull with encoded datetime");
+		equal(oGetResponse.data.d.connid, "009", "re-read of new resource successfull with encoded datetime");
+
+
 		// read the just created resource again
 		var oGetResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection(carrid='BB',connid='009',fldate=datetime'2010-10-20T00:00:00')",

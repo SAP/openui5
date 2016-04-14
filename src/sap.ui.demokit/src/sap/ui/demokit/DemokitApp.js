@@ -3,10 +3,30 @@
  */
 
 // Main class for Demokit-like applications
-sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/commons/TextView', 'sap/ui/commons/Link', 'sap/ui/commons/Splitter', 'sap/ui/commons/layout/AbsoluteLayout', 'sap/ui/core/ListItem', 'sap/ui/core/search/OpenSearchProvider', './Tag', './TagCloud', './library', 'sap/ui/ux3/NavigationItem', 'sap/ui/ux3/Shell', 'sap/ui/model/json/JSONModel', 'sap/ui/core/Icon'],
-	function (jQuery, DropdownBox, TextView, Link, Splitter, AbsoluteLayout, ListItem, OpenSearchProvider, Tag, TagCloud, library, NavigationItem, Shell, JSONModel, Icon) {
-		"use strict";
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
+	'sap/ui/core/CustomData', 'sap/ui/core/HTML', 'sap/ui/core/library', 'sap/ui/core/ListItem', 'sap/ui/core/Title', 'sap/ui/core/mvc/View', 'sap/ui/core/search/OpenSearchProvider', 'sap/ui/core/util/LibraryInfo',
+	'sap/ui/model/Filter', 'sap/ui/model/FilterOperator', 'sap/ui/model/json/JSONModel',
+	'sap/ui/layout/form/Form', 'sap/ui/layout/form/FormContainer', 'sap/ui/layout/form/FormElement', 'sap/ui/layout/form/GridLayout', 'sap/ui/layout/form/GridElementData', 'sap/ui/layout/VerticalLayout',
+	'sap/ui/commons/Button', 'sap/ui/commons/Dialog', 'sap/ui/commons/DropdownBox', 'sap/ui/commons/FormattedTextView', 'sap/ui/commons/Image', 'sap/ui/commons/Label', 'sap/ui/commons/library',
+	'sap/ui/commons/Link', 'sap/ui/commons/TextView', 'sap/ui/commons/SearchField', 'sap/ui/commons/Splitter', 'sap/ui/commons/Tree', 'sap/ui/commons/TreeNode', 'sap/ui/commons/layout/AbsoluteLayout',
+	'sap/ui/ux3/DataSet', 'sap/ui/ux3/DataSetItem', 'sap/ui/ux3/DataSetSimpleView', 'sap/ui/ux3/NavigationItem', 'sap/ui/ux3/Shell', 'sap/ui/ux3/ToolPopup',
+	'./FeedbackClient', './library', './Tag', './TagCloud',
+	'jquery.sap.script'
+	],
+	function (jQuery, Device,
+	CustomData, HTML, coreLibrary, ListItem, Title, View, OpenSearchProvider, LibraryInfo,
+	Filter, FilterOperator, JSONModel,
+	Form, FormContainer, FormElement, GridLayout, GridElementData, VerticalLayout,
+	Button, Dialog, DropdownBox, FormattedTextView, Image, Label, commonsLibrary,
+	Link, TextView, SearchField, Splitter, Tree, TreeNode, AbsoluteLayout,
+	DataSet, DataSetItem, DataSetSimpleView, NavigationItem, Shell, ToolPopup,
+	FeedbackClient, library, Tag, TagCloud) {
 
+	"use strict";
+
+		var TextViewColor = commonsLibrary.TextViewColor,
+			TextViewDesign = commonsLibrary.TextViewDesign,
+			ViewType = coreLibrary.mvc.ViewType;
 
 		var DemokitApp = function (sTitle, sVersion, aThemes) {
 
@@ -142,9 +162,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 		};
 
 		DemokitApp.prototype._setIndexData = function (sId, oIndex) {
-			var that = this;
+			var that = this,
+			oTopLevelNavItem, iNodes;
 
 			function processNode(oNode) {
+				var i;
+
 				iNodes++;
 				if (oNode.ref && oNode.controls) {
 					var aControls = jQuery.isArray(oNode.controls) ? oNode.controls : oNode.controls.split(/,/);
@@ -152,23 +175,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 				}
 				if (oNode.alias && oNode.ref) {
 					var aAliases = oNode.alias.split(",");
-					for (var i = 0; i < aAliases.length; i++) {
+					for (i = 0; i < aAliases.length; i++) {
 						that._mAliases[aAliases[i]] = oNode.ref;
 					}
 				}
 				if (oNode.links) {
-					for (var i = 0; i < oNode.links.length; i++) {
+					for (i = 0; i < oNode.links.length; i++) {
 						processNode(oNode.links[i]);
 					}
 				}
 			}
 
-			var oTopLevelNavItem = this._findIndexById(sId);
+			oTopLevelNavItem = this._findIndexById(sId);
 			if (oTopLevelNavItem) {
 				oTopLevelNavItem.ref = oIndex.ref;
 				oTopLevelNavItem.links = oIndex;
 
-				var iNodes = 0;
+				iNodes = 0;
 
 				processNode(oIndex);
 				oTopLevelNavItem._iTreeSize = iNodes;
@@ -222,8 +245,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 			var aPaths = sCategory.split('/');
 			var o = oTopLevelNavItem.links;
 			for (var i = 0; i < aPaths.length; i++) {
-				var sPath = aPaths[i];
-				for (var j = 0; j < o.links.length; j++) {
+				var sPath = aPaths[i],
+					j;
+				for (j = 0; j < o.links.length; j++) {
 					if (sPath == o.links[j].text) {
 						break;
 					}
@@ -329,7 +353,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 				return;
 			}
 
-			var oTree = new sap.ui.commons.Tree(oTopLevelNavItem.id + "-index", {
+			var oTree = new Tree(oTopLevelNavItem.id + "-index", {
 				showHeader: false,
 				width: "100%",
 				height: "100%",
@@ -337,20 +361,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 				selectionMode: "Single"
 			});
 			oTree.addStyleClass("sapUiTreeWithHeader");
-			var oTreeNode = new sap.ui.commons.TreeNode({
+			var oTreeNode = new TreeNode({
 				text: "{text}",
 				tooltip: "{tooltip}",
 				expanded: "{expanded}",
 				selectable: "{selectable}",
 				selected: selected
 			});
-			var oTreeNodeCustomDataRef = new sap.ui.core.CustomData({
+			var oTreeNodeCustomDataRef = new CustomData({
 				key: "_ref_",
 				value: "{_ref_}"
 			});
 			oTreeNode.addCustomData(oTreeNodeCustomDataRef);
 
-			var oTreeNodeCustomDataParent = new sap.ui.core.CustomData({
+			var oTreeNodeCustomDataParent = new CustomData({
 				key: "parentName",
 				value: "{parentName}"
 			});
@@ -373,7 +397,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 
 			oTopLevelNavItem._oTree = oTree;
 			oTopLevelNavItem._iTreeSize = iNodes;
-			oTopLevelNavItem._oEmptyTreeLabel = new sap.ui.commons.Label({
+			oTopLevelNavItem._oEmptyTreeLabel = new Label({
 				text: "No matching entry found.",
 				visible: false,
 				width: "100%",
@@ -409,7 +433,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 				value: THEMES[this._sTheme]
 			});
 
-			this._oThemeSwitchPopup = new sap.ui.ux3.ToolPopup({
+			this._oThemeSwitchPopup = new ToolPopup({
 				title: "Select a theme",
 				icon: sIconPrefix + "regular.png", //TODO find a proper icon
 				iconHover: sIconPrefix + "hover.png", //TODO find a proper icon
@@ -418,14 +442,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 				initialFocus: this._oThemeSwitch
 			});
 
-			var oContent = new sap.ui.core.HTML("content", {
+			var oContent = new HTML("content", {
 				content: "<iframe id=\"content\" name=\"content\" src=\"about:blank\" frameborder=\"0\" onload=\"sap.ui.demokit.DemokitApp.getInstance().onContentLoaded();\"></iframe>"
 			});
 
 			var oSidePanelLayout = this._oSidePanelLayout = new AbsoluteLayout();
 
 			// TODO oSidePanelLayout.addContent(oDemokit._aTopLevelNavItems[0]._oTree, {top:"0", bottom:"0", left:"0", right:"0"});
-			sap.ui.Device.os.name == sap.ui.Device.os.OS.IOS ? bShowScrollBars = true : bShowScrollBars = false;
+			Device.os.name == Device.os.OS.IOS ? bShowScrollBars = true : bShowScrollBars = false;
 
 			// Display a warning in the demokit header in case we have a dev version (either with "SNAPSHOT" in the version string or an odd minor version number)
 			var oDevWarning;
@@ -434,17 +458,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 				|| (this._sVersionStr.split(".").length > 1 && parseInt(this._sVersionStr.split(".")[1], 10) % 2 === 1)) {
 				oDevWarning = new TextView({
 					text: "Development version! Work in Progress!",
-					semanticColor: sap.ui.commons.TextViewColor.Negative,
-					design: sap.ui.commons.TextViewDesign.Bold
+					semanticColor: TextViewColor.Negative,
+					design: TextViewDesign.Bold
 				});
 			}
 
-			var oVersionInfoMainPage = new sap.ui.commons.TextView({
+			var oVersionInfoMainPage = new TextView({
 			  text: this._sVersionStr,
 			  tooltip: "Used SAPUI5 Version is " + this._sVersionStr
 			});
 
-			var oVersionInfoDialog = new sap.ui.commons.TextView({
+			var oVersionInfoDialog = new TextView({
 				text: this._sVersionStr,
 				tooltip: "SAPUI5 Version"
 			  });
@@ -454,13 +478,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 				 var renderedDialog = sap.ui.getCore().byId('aboutDlg');
 				 var oLayout;
 
-				 if (renderedDialog instanceof sap.ui.commons.Dialog) {
+				 if (renderedDialog instanceof Dialog) {
 					 oDialog = renderedDialog;
 					 oDialog.open();
 					 return;
 				 }
 
-				var oBtnBack = new sap.ui.commons.Button({
+				var oBtnBack = new Button({
 					text : "Back",
 					visible : false,
 					press : function() {
@@ -468,7 +492,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 					}
 				});
 
-				var oBtnCancel = new sap.ui.commons.Button({
+				var oBtnCancel = new Button({
 					text : "Close",
 					press : function() {
 						oDialog.close();
@@ -481,7 +505,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 					oBtnBack.setVisible(false);
 				};
 
-				var oSAPUI5Logo = new sap.ui.commons.Image();
+				var oSAPUI5Logo = new Image();
 				var sAboutDialogContentHtml;
 
 				//check if it is internal or external version of Demokit and set the dialog content according to it
@@ -513,7 +537,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 				var sAboutDialogContentHtmlOnlyForUI5 = '<span>This software includes third-party open source software.</span><br>';
 				sAboutDialogContentHtmlOnlyForUI5 += '<embed data-index="0"><br>';
 
-				var oLinkToVersionChangeLog = new sap.ui.commons.Link({
+				var oLinkToVersionChangeLog = new Link({
 					text : "here",
 					tooltip: "Go to Version Change Log",
 					press: function() {
@@ -523,7 +547,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 					target: "content"
 				});
 
-				var oLinkToVersionInfo = new sap.ui.commons.Link({
+				var oLinkToVersionInfo = new Link({
 					text : "Version Details",
 					tooltip: "Go to Version Details",
 					press: function() {
@@ -534,7 +558,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 					}
 				});
 
-				var oLinkToCredits = new sap.ui.commons.Link({
+				var oLinkToCredits = new Link({
 					text : "Included Third-Party Software",
 					tooltip: "Go to Included Third-Party Software list",
 					press: function() {
@@ -545,7 +569,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 					}
 				});
 
-				var oLinkToLicenseTxt = new sap.ui.commons.Link({
+				var oLinkToLicenseTxt = new Link({
 					text : "see LICENSE.txt",
 					tooltip: "Go to LICENSE.txt",
 					press: function() {
@@ -555,26 +579,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 					target: "content"
 				});
 
-				var oDialogInitialPageContent = new sap.ui.commons.FormattedTextView();
+				var oDialogInitialPageContent = new FormattedTextView();
 				oDialogInitialPageContent.setContent(sAboutDialogContentHtml, [oVersionInfoDialog, oLinkToVersionChangeLog, oLinkToVersionInfo, oLinkToLicenseTxt]);
 				oDialogInitialPageContent.addStyleClass("extraLeftPadding");
 
-				var oDialogInitialPageContentOnlyForUI5 = new sap.ui.commons.FormattedTextView();
+				var oDialogInitialPageContentOnlyForUI5 = new FormattedTextView();
 				oDialogInitialPageContentOnlyForUI5.setContent(sAboutDialogContentHtmlOnlyForUI5, [oLinkToCredits]);
 				oDialogInitialPageContentOnlyForUI5.addStyleClass("extraLeftPadding");
 
 				//check if it is internal or external version of Demokit and set the dialog content according to it
 				if ( oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav) ) {
-					oLayout = new sap.ui.layout.VerticalLayout({
+					oLayout = new VerticalLayout({
 						content : [oSAPUI5Logo, oDialogInitialPageContent]
 					});
 				} else {
-					oLayout = new sap.ui.layout.VerticalLayout({
+					oLayout = new VerticalLayout({
 						content : [oSAPUI5Logo, oDialogInitialPageContent, oDialogInitialPageContentOnlyForUI5]
 					});
 				}
 
-				oDialog = new sap.ui.commons.Dialog('aboutDlg', {
+				oDialog = new Dialog('aboutDlg', {
 					title: "About",
 					modal: true,
 					buttons : [oBtnBack, oBtnCancel],
@@ -591,12 +615,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 			};
 
 			var fnParseLibInformationVersionInfo = function() {
-				sap.ui.localResources("versioninfo");
+				jQuery.sap.registerModulePath("versioninfo", "./versioninfo/");
 				var oModelVersionInfo = new JSONModel();
 
-				sap.ui.demokit._loadAllLibInfo("", "_getLibraryInfo","", function(aLibs, oLibInfos){
+				library._loadAllLibInfo("", "_getLibraryInfo","", function(aLibs, oLibInfos){
 					var data = {};
-					var oLibInfo = new sap.ui.core.util.LibraryInfo();
+					var oLibInfo = new LibraryInfo();
 
 					for (var i = 0, l = aLibs.length; i < l; i++) {
 						aLibs[i] = oLibInfos[aLibs[i]];
@@ -612,12 +636,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 					var oNotesView = sap.ui.getCore().byId("notesView");
 					var oNotesDialog = sap.ui.getCore().byId("notesDialog");
 					if (!oNotesDialog) {
-						var oText = new sap.ui.commons.TextView({text: "No changes for this library!", id: "noRelNote"});
-						oNotesView = sap.ui.view({id:"notesView", viewName:"versioninfo.notes", type:sap.ui.core.mvc.ViewType.Template});
+						var oText = new TextView({text: "No changes for this library!", id: "noRelNote"});
+						oNotesView = sap.ui.view({id:"notesView", viewName:"versioninfo.notes", type:ViewType.Template});
 						oNotesModel = new JSONModel();
 						oNotesView.setModel(oNotesModel);
-						oNotesDialog = new sap.ui.commons.Dialog("notesDialog");
-						oNotesDialog.addButton(new sap.ui.commons.Button({
+						oNotesDialog = new Dialog("notesDialog");
+						oNotesDialog.addButton(new Button({
 							text: "OK",
 							press: function(){
 								oNotesDialog.close();
@@ -630,7 +654,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 						oNotesDialog.setResizable(true);
 					}
 
-					var oLibInfo = new sap.ui.core.util.LibraryInfo();
+					var oLibInfo = new LibraryInfo();
 					oNotesDialog.setTitle("Change log for: " + this.getBindingContext().getProperty("library"));
 
 					var oVersion = jQuery.sap.Version(this.getBindingContext().getProperty("version"));
@@ -657,36 +681,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 					});
 				};
 
-				var oDataSetVersionInfo = new sap.ui.ux3.DataSet({
+				var oDataSetVersionInfo = new DataSet({
 					items : {
 						path : "/libs",
-						template : new sap.ui.ux3.DataSetItem({
+						template : new DataSetItem({
 							title : "{library}"
 						})
 					},
-					views : [ new sap.ui.ux3.DataSetSimpleView({
+					views : [ new DataSetSimpleView({
 						floating : false,
-						template : new sap.ui.commons.form.Form({
-							title : new sap.ui.core.Title({text : "{library}"}),
+						template : new Form({
+							title : new Title({text : "{library}"}),
 							width : "100%",
-							layout : new sap.ui.commons.form.GridLayout(),
-							formContainers : [ new sap.ui.commons.form.FormContainer({
+							layout : new GridLayout(),
+							formContainers : [ new FormContainer({
 								formElements : [
-									new sap.ui.commons.form.FormElement({
-										label : new sap.ui.commons.Label({text : "Version:", layoutData : new sap.ui.commons.form.GridElementData({hCells : "3"})}),
-										fields : [ new sap.ui.commons.TextView({text : "{version}"})]
+									new FormElement({
+										label : new Label({text : "Version:", layoutData : new GridElementData({hCells : "3"})}),
+										fields : [ new TextView({text : "{version}"})]
 									}),
-									/*new sap.ui.commons.form.FormElement({
-										label : new sap.ui.commons.Label({text : "Vendor:", layoutData : new sap.ui.commons.form.GridElementData({hCells : "3"})}),
+									/*new FormElement({
+										label : new Label({text : "Vendor:", layoutData : new GridElementData({hCells : "3"})}),
 										fields : [ new sap.ui.commons.TextView({text : "{vendor}"})]
 									}),*/
-									new sap.ui.commons.form.FormElement({
-										label : new sap.ui.commons.Label({text : "Description:", layoutData : new sap.ui.commons.form.GridElementData({hCells : "3"})}),
-										fields : [ new sap.ui.commons.TextView({text : "{documentation}"})]
+									new FormElement({
+										label : new Label({text : "Description:", layoutData : new GridElementData({hCells : "3"})}),
+										fields : [ new TextView({text : "{documentation}"})]
 									}),
-									new sap.ui.commons.form.FormElement({
-										label : new sap.ui.commons.Label({text : "Change Log:", layoutData : new sap.ui.commons.form.GridElementData({hCells : "3"})}),
-										fields : [ new sap.ui.commons.Link({text : "Open Change Log", press : fnOpenReleaseDialog})],
+									new FormElement({
+										label : new Label({text : "Change Log:", layoutData : new GridElementData({hCells : "3"})}),
+										fields : [ new Link({text : "Open Change Log", press : fnOpenReleaseDialog})],
 										visible : {
 											path: "releasenotes",
 											formatter: function(oValue) {
@@ -694,9 +718,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 											}
 										}
 									}),
-									new sap.ui.commons.form.FormElement({
-										label : new sap.ui.commons.Label({text : "Component:", layoutData : new sap.ui.commons.form.GridElementData({hCells : "3"})}),
-										fields : [ new sap.ui.commons.TextView({text : "{libDefaultComponent}"})],
+									new FormElement({
+										label : new Label({text : "Component:", layoutData : new GridElementData({hCells : "3"})}),
+										fields : [ new TextView({text : "{libDefaultComponent}"})],
 										visible : {
 											path: "libDefaultComponent",
 											formatter: function(oValue) {
@@ -716,7 +740,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 
 				oDataSetVersionInfo.setModel(oModelVersionInfo);
 
-				var oLayoutVersionInfo = new sap.ui.layout.VerticalLayout({
+				var oLayoutVersionInfo = new VerticalLayout({
 					content : [oDataSetVersionInfo]
 				});
 
@@ -726,7 +750,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 			var fnParseLibInformationCredits = function() {
 				var oModelCredits = new JSONModel();
 
-				sap.ui.demokit._loadAllLibInfo("", "_getThirdPartyInfo", function(aLibs, oLibInfos){
+				library._loadAllLibInfo("", "_getThirdPartyInfo", function(aLibs, oLibInfos){
 					if (!aLibs){
 						return;
 					}
@@ -757,28 +781,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 					oModelCredits.setData(data);
 				});
 
-				var oDataSetCredits = new sap.ui.ux3.DataSet({
+				var oDataSetCredits = new DataSet({
 					items : {
 						path : "/thirdparty",
-						template : new sap.ui.ux3.DataSetItem({
+						template : new DataSetItem({
 							title : "{displayName}"
 						})
 					},
-					views : [ new sap.ui.ux3.DataSetSimpleView({
+					views : [ new DataSetSimpleView({
 						floating : false,
-						template : new sap.ui.commons.form.Form({
-							title : new sap.ui.core.Title({text : "{displayName}"}),
+						template : new Form({
+							title : new Title({text : "{displayName}"}),
 							width : "100%",
-							layout : new sap.ui.commons.form.GridLayout(),
-							formContainers : [ new sap.ui.commons.form.FormContainer({
+							layout : new GridLayout(),
+							formContainers : [ new FormContainer({
 								formElements : [
-									new sap.ui.commons.form.FormElement({
-										fields : [ new sap.ui.commons.Link({text : "Web Site", target : "_blank", href : "{homepage}",layoutData: new sap.ui.layout.form.GridElementData({hCells: "auto"})}),
-													new sap.ui.commons.Link({text : "License Conditions", target : "_blank", href : "{license/url}",layoutData: new sap.ui.layout.form.GridElementData({hCells: "5"})})]
+									new FormElement({
+										fields : [
+											new Link({text : "Web Site", target : "_blank", href : "{homepage}",layoutData: new GridElementData({hCells: "auto"})}),
+											new Link({text : "License Conditions", target : "_blank", href : "{license/url}",layoutData: new GridElementData({hCells: "5"})})
+										]
 									}),
 
-									new sap.ui.commons.form.FormElement({
-										fields : [ new sap.ui.commons.Link({text : "Licensed by SAP under '{license/type}'", target : "_blank", href : "{license/file}"})]
+									new FormElement({
+										fields : [
+											new Link({text : "Licensed by SAP under '{license/type}'", target : "_blank", href : "{license/file}"})
+										]
 									})
 								]
 							})]
@@ -791,25 +819,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 					}
 				});
 
-				jQuery.sap.require("jquery.sap.script");
 				var sDebug = jQuery.sap.getUriParameters().get("sap-ui-debug");
 				if (sDebug === "x" || sDebug === "X" || sDebug === "true"){
-					oModelCredits.getViews()[0].getTemplate().getFormContainers()[0].addFormElement(new sap.ui.commons.form.FormElement({
-						label : new sap.ui.commons.Label({text : "Requested by UI Library:", layoutData : new sap.ui.commons.form.GridElementData({hCells : "3"})}),
-						fields : [ new sap.ui.commons.TextView({text : "{_lib}"})]
+					oModelCredits.getViews()[0].getTemplate().getFormContainers()[0].addFormElement(new FormElement({
+						label : new Label({text : "Requested by UI Library:", layoutData : new GridElementData({hCells : "3"})}),
+						fields : [ new TextView({text : "{_lib}"})]
 					}));
 				}
 
 				oDataSetCredits.setModel(oModelCredits);
 
-				var oLayoutCredits = new sap.ui.layout.VerticalLayout({
+				var oLayoutCredits = new VerticalLayout({
 					content : [oDataSetCredits]
 				});
 
 				return oLayoutCredits;
 			};
 
-			var oAboutDialogLink = new sap.ui.commons.Link({
+			var oAboutDialogLink = new Link({
 				text : "About",
 				tooltip: "About",
 				press : function() {
@@ -817,7 +844,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 				}
 			});
 
-			this._oFeedbackClient = sap.ui.demokit.FeedbackClient();
+			this._oFeedbackClient = new FeedbackClient();
 			this._oFeedbackPopup = this._oFeedbackClient.createFeedbackPopup();
 
 			var oShell = this._oShell = new Shell({
@@ -998,9 +1025,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 			var oNewTLNItem = topNavIdx >= 0 ? this._aTopLevelNavItems[topNavIdx] : null;
 			var oShell = this._oShell;
 			var oSplitter = sap.ui.getCore().byId("demokitSplitter");
+			var sOldPos;
 			if (oNewTLNItem && oNewTLNItem._iTreeSize <= 1) {
 				if (oSplitter.getSplitterBarVisible()) {
-					var sOldPos = oSplitter.getSplitterPosition();
+					sOldPos = oSplitter.getSplitterPosition();
 					if (sOldPos !== "0%") {
 						oSplitter._oldPos = sOldPos;
 						oSplitter.setSplitterPosition("0%");
@@ -1009,7 +1037,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 				}
 			} else {
 				if (!oSplitter.getSplitterBarVisible()) {
-					var sOldPos = oSplitter._oldPos || "20%";
+					sOldPos = oSplitter._oldPos || "20%";
 					oSplitter.setSplitterPosition(sOldPos);
 					oSplitter.setSplitterBarVisible(true);
 				}
@@ -1035,7 +1063,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 
 						if (bTreeNodeFound) {
 							var par = oParent;
-							while (par instanceof sap.ui.commons.TreeNode) {
+							while (par instanceof TreeNode) {
 								par.expand();
 								par = par.getParent();
 							}
@@ -1055,7 +1083,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 			function createTreeFilter(oTree, oEmptyLabel) {
 				var updateTree = function (oTree, sFilter, oEmptyLabel) {
 					var filters = [];
-					var nameFilter = new sap.ui.model.Filter("parentName", sap.ui.model.FilterOperator.Contains, sFilter);
+					var nameFilter = new Filter("parentName", FilterOperator.Contains, sFilter);
 					filters.push(nameFilter);
 					var binding = oTree.getBinding("nodes");
 					binding.filter(filters);
@@ -1068,7 +1096,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 
 				};
 
-				var oSearch = new sap.ui.commons.SearchField({
+				var oSearch = new SearchField({
 					enableListSuggest: false,
 					enableClear: true,
 					enableFilterMode: true,
@@ -1093,7 +1121,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 			}
 
 			function createTreeButtons(oTree, fTreeAction, sIcon, sTooltip, sStyle) {
-				var oButton = new sap.ui.commons.Button({
+				var oButton = new Button({
 					lite: true,
 					icon : sIcon,
 					press : fTreeAction.bind(oTree)
@@ -1341,8 +1369,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 			};
 
 			DemokitApp.extendDevGuide = function (oIndexData, fnCallback) {
-				jQuery.sap.require("sap.ui.core.util.LibraryInfo");
-				var libInfo = new sap.ui.core.util.LibraryInfo();
+				var libInfo = new LibraryInfo();
 				var sUrl = "discovery/all_libs";
 
 				jQuery.ajax({
@@ -1387,4 +1414,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 
 		return DemokitApp;
 
-	}, /* bExport= */ true);
+}, /* bExport= */ true);
