@@ -4,7 +4,6 @@
 sap.ui.require([
 	"jquery.sap.global",
 	"sap/ui/core/message/Message",
-	"sap/ui/core/MessageType",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/type/String",
@@ -19,9 +18,9 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Message, MessageType, BindingMode, Model, TypeString, ODataUtils, _Context,
-		_ODataHelper, _MetadataRequestor, _Requestor, ODataContextBinding, ODataListBinding,
-		ODataMetaModel, ODataModel, ODataPropertyBinding, TestUtils) {
+], function (jQuery, Message, BindingMode, Model, TypeString, ODataUtils, _Context, _ODataHelper,
+		_MetadataRequestor, _Requestor, ODataContextBinding, ODataListBinding, ODataMetaModel,
+		ODataModel, ODataPropertyBinding, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -679,7 +678,7 @@ sap.ui.require([
 						&& oMessage.message === oError.message
 						&& oMessage.processor === oModel
 						&& oMessage.technical === true
-						&& oMessage.type === MessageType.Error;
+						&& oMessage.type === "Error";
 				}));
 
 			// code under test

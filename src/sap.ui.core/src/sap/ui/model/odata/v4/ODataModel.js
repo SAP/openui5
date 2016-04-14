@@ -14,7 +14,6 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/core/message/Message",
-	"sap/ui/core/MessageType",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Model",
 	"sap/ui/thirdparty/URI",
@@ -25,8 +24,8 @@ sap.ui.define([
 	"./ODataListBinding",
 	"./ODataMetaModel",
 	"./ODataPropertyBinding"
-], function(jQuery, Message, MessageType, BindingMode, Model, URI, _ODataHelper, _MetadataRequestor,
-		_Requestor, ODataContextBinding, ODataListBinding, ODataMetaModel, ODataPropertyBinding) {
+], function(jQuery, Message, BindingMode, Model, URI, _ODataHelper, _MetadataRequestor, _Requestor,
+		ODataContextBinding, ODataListBinding, ODataMetaModel, ODataPropertyBinding) {
 
 	"use strict";
 
@@ -574,7 +573,7 @@ sap.ui.define([
 				message : oError.message,
 				processor : this,
 				technical : true,
-				type : MessageType.Error
+				type : "Error"
 			}));
 	};
 
