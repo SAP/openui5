@@ -565,9 +565,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			}
 			oRM.writeClasses();
 			oRM.write(">");
-			oRM.write("<h1>");
+			oRM.write("<" + oOH.getTitleLevel() + ">");
 			this._renderChildControl(oRM, oOH, oOH._titleText);
-			oRM.write("</h1>");
+			oRM.write("</" + oOH.getTitleLevel() + ">");
 			if (oOH.getTitleActive()) {
 				oRM.write("</a>"); // End Title Text container
 			} else {
@@ -1349,7 +1349,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		var sOHTitle, sEllipsis = '', sTextDir = oOH.getTitleTextDirection();
 		var bMarkers = (oOH.getShowMarkers() && (oOH.getMarkFavorite() || oOH.getMarkFlagged()));
 
-		oRM.write("<h1>");
+		oRM.write("<" + oOH.getTitleLevel() + ">");
 		oRM.write("<span");
 		oRM.addClass("sapMOHRTitleTextContainer");
 		oRM.writeClasses();
@@ -1438,7 +1438,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			this._renderChildControl(oRM, oOH, oOH._oTitleArrowIcon);
 			oRM.write("</span>"); // end title arrow container
 		}
-		oRM.write("</h1>");
+		oRM.write("</" + oOH.getTitleLevel() + ">");
 
 	};
 

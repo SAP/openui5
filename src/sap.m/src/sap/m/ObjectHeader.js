@@ -192,7 +192,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Sets custom text for the tooltip of the select title arrow. If not set, a default text of the tooltip will be displayed.
 			 * @since 1.30.0
 			 */
-			titleSelectorTooltip : {type : "string", group : "Misc", defaultValue : "Options"}
+			titleSelectorTooltip : {type : "string", group : "Misc", defaultValue : "Options"},
+
+			/**
+			 * Defines the semantic level of the title.
+			 * This information is e.g. used by assistive technologies like screenreaders to create a hierarchical site map for faster navigation.
+			 * Depending on this setting a HTML h1-h6 element is used.
+			 */
+			titleLevel : {type : "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : sap.ui.core.TitleLevel.H1}
+
 		},
 		defaultAggregation : "attributes",
 		aggregations : {
