@@ -128,7 +128,8 @@ sap.ui.require([
 
 		oHelperMock = this.oSandbox.mock(_ODataHelper);
 		oHelperMock.expects("buildQueryOptions")
-			.withExactArgs(this.oModel.mUriParameters, mParameters, ["$expand", "$select"])
+			.withExactArgs(this.oModel.mUriParameters, mParameters,
+				["$expand", "$filter", "$orderby", "$select"])
 			.returns(mQueryOptions);
 		this.oSandbox.mock(_Cache).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
@@ -324,6 +325,27 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("nested listbinding (deferred association)", function (assert) {
+		var oBinding,
+			oContext = {
+				getPath : function () {
+					return "/TEAMS('4711')";
+				},
+				requestValue : function () {}
+			},
+			oPromise = Promise.resolve();
+
+		this.oSandbox.mock(oContext).expects("requestValue").withExactArgs("TEAM_2_EMPLOYEES")
+			.returns(oPromise);
+
+		// code under test
+		oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext);
+
+		assert.deepEqual(oBinding.getContexts(), []);
+		return oPromise;
+	});
+
+	//*********************************************************************************************
 	QUnit.test("initialize, resolved path", function (assert) {
 		var oContext = {},
 			oListBinding = this.oModel.bindList("foo", oContext);
@@ -469,10 +491,10 @@ sap.ui.require([
 				oCacheMock = this.getCacheMock();
 				oCacheMock.expects("read").once().callsArg(4).returns(createResult(2));
 				oCacheMock.expects("read").once().callsArg(4).returns(oPromise);
-				this.oLogMock.expects("error")
-					.withExactArgs("Failed to get contexts for " + sResolvedPath
-							+ " with start index 1" + " and length 2",
-						oError, "sap.ui.model.odata.v4.ODataListBinding");
+				this.oSandbox.mock(this.oModel).expects("reportError").withExactArgs(
+					"Failed to get contexts for " + sResolvedPath
+					+ " with start index 1 and length 2", sClassName,
+					sinon.match.same(oError));
 			}
 
 			oListBinding = this.oModel.bindList(bRelative ? "TEAM_2_EMPLOYEES" : "/EMPLOYEES",
@@ -748,7 +770,7 @@ sap.ui.require([
 			assert.strictEqual(oListBinding.isLengthFinal(), true);
 
 			//code under test
-			oListBinding.refresh(true);
+			oListBinding.refresh();
 
 			assert.strictEqual(oListBinding.oCache, oCache);
 			assert.deepEqual(oListBinding.aContexts, []);
@@ -769,7 +791,7 @@ sap.ui.require([
 		oHelperMock.expects("checkGroupId").withExactArgs("myGroup");
 
 		// code under test
-		oListBinding.refresh(true, "myGroup");
+		oListBinding.refresh("myGroup");
 
 		assert.strictEqual(oListBinding.sRefreshGroupId, "myGroup");
 
@@ -777,7 +799,7 @@ sap.ui.require([
 
 		// code under test
 		assert.throws(function () {
-			oListBinding.refresh(true, "$Invalid");
+			oListBinding.refresh("$Invalid");
 		}, oError);
 	});
 
@@ -793,7 +815,7 @@ sap.ui.require([
 		//code under test
 		//error for relative paths
 		assert.throws(function () {
-			oListBinding.refresh(true);
+			oListBinding.refresh();
 		}, new Error("Refresh on this binding is not supported"));
 	});
 
@@ -814,7 +836,7 @@ sap.ui.require([
 		oCacheMock.expects("refresh");
 
 		oListBinding.getContexts(0, 10);
-		oListBinding.refresh(true);
+		oListBinding.refresh();
 
 		return oReadPromise.catch(function () {});
 	});
@@ -844,6 +866,7 @@ sap.ui.require([
 
 			// submitBatch resolves the promise of the read
 			fnResolveRead(createResult(10));
+			return Promise.resolve();
 		});
 
 		oListBinding.getContexts(0, 10);
@@ -859,9 +882,9 @@ sap.ui.require([
 			oListBinding = this.oModel.bindList("/EMPLOYEES"),
 			oReadPromise = Promise.reject(oError);
 
-		this.oLogMock.expects("error")
-			.withExactArgs("Failed to get contexts for /service/EMPLOYEES with start index 0 and "
-				+ "length 10", oError, "sap.ui.model.odata.v4.ODataListBinding");
+		this.oSandbox.mock(this.oModel).expects("reportError").withExactArgs(
+			"Failed to get contexts for /service/EMPLOYEES with start index 0 and length 10",
+			sClassName, sinon.match.same(oError));
 		this.oSandbox.mock(oListBinding.oCache).expects("read").callsArg(4).returns(oReadPromise);
 		this.oSandbox.mock(oListBinding).expects("fireDataReceived")
 			.withExactArgs({error : oError});
@@ -879,9 +902,9 @@ sap.ui.require([
 			oReadPromise = new Promise(function (fn, fnReject) {fnRejectRead = fnReject;}),
 			oSandbox = this.oSandbox;
 
-		this.oLogMock.expects("error")
-			.withExactArgs("Failed to get contexts for /service/EMPLOYEES with start index 0 and "
-				+ "length 10", oError, "sap.ui.model.odata.v4.ODataListBinding");
+		this.oSandbox.mock(this.oModel).expects("reportError").withExactArgs(
+			"Failed to get contexts for /service/EMPLOYEES with start index 0 and length 10",
+			sClassName, sinon.match.same(oError));
 		oCacheMock = oSandbox.mock(oListBinding.oCache);
 		oCacheMock.expects("read").callsArg(4).returns(oReadPromise);
 		oCacheMock.expects("read").returns(oReadPromise);
@@ -893,6 +916,7 @@ sap.ui.require([
 
 			// submitBatch resolves the promise of the read
 			fnRejectRead(oError);
+			return Promise.resolve();
 		});
 
 		oListBinding.getContexts(0, 10);
@@ -1030,15 +1054,6 @@ sap.ui.require([
 		}, new Error("Unsupported operation: v4.ODataListBinding#isInitial"));
 
 		assert.throws(function () { //TODO implement
-			oListBinding.refresh(false);
-		}, new Error("Unsupported operation: v4.ODataListBinding#refresh, "
-			+ "bForceUpdate must be true"));
-		assert.throws(function () {
-			oListBinding.refresh("foo"/*truthy*/);
-		}, new Error("Unsupported operation: v4.ODataListBinding#refresh, "
-			+ "bForceUpdate must be true"));
-
-		assert.throws(function () { //TODO implement
 			oListBinding.resume();
 		}, new Error("Unsupported operation: v4.ODataListBinding#resume"));
 
@@ -1143,6 +1158,30 @@ sap.ui.require([
 		oBinding.sRefreshGroupId = "myGroup";
 
 		oBinding.getContexts(0, 10);
+
+		return oReadPromise;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getContexts: data received handler throws error", function (assert) {
+		var oError = new Error("Expected"),
+			oListBinding = this.oModel.bindList("/EMPLOYEES"),
+			oReadPromise = createResult(0);
+
+		this.oSandbox.mock(oListBinding.oCache).expects("read")
+			.withExactArgs(0, 10, "$auto", undefined, sinon.match.func)
+			.callsArg(4).returns(oReadPromise);
+		// check that error in data received handler is logged
+		this.oLogMock.expects("error").withExactArgs(oError.message,
+			sinon.match(function (sDetails) {
+				return sDetails === oError.stack;
+			}), sClassName);
+		oListBinding.attachDataReceived(function () {
+			throw oError;
+		});
+
+		// code under test
+		oListBinding.getContexts(0, 10);
 
 		return oReadPromise;
 	});

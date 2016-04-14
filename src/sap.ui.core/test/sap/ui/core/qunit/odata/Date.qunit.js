@@ -205,7 +205,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("format, parse, validate (DateTime)", function (assert) {
+	QUnit.test("format, parse, validate", function (assert) {
 		var oType = new DateType({pattern : "dd.MMM.yyyy"}),
 		sFormattedDate = oType.formatValue("0715-11-01", "string"),
 		sResultingDate = oType.parseValue(sFormattedDate, "string");

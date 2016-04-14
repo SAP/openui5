@@ -24,13 +24,16 @@ sap.ui.define([
 			var vValue = mQueryOptions[sKey];
 
 			switch (sKey) {
+				case "$expand":
+					vValue = Cache.convertExpand(vValue);
+					break;
+				case "$filter":
+				case "$orderby":
+					break;
 				case "$select":
 					if (Array.isArray(vValue)) {
 						vValue = vValue.join(",");
 					}
-					break;
-				case "$expand":
-					vValue = Cache.convertExpand(vValue);
 					break;
 				default:
 					if (sKey[0] === '$') {
@@ -62,6 +65,10 @@ sap.ui.define([
 					return false;
 				}
 				oResult = oResult[sSegment];
+				if (oResult === undefined) {
+					fnLog(sSegment);
+					return false;
+				}
 				return true;
 			});
 		}
@@ -233,7 +240,7 @@ sap.ui.define([
 			if (sPath != undefined) {
 				oResult = that.aElements[iIndex];
 				return drillDown(oResult, sPath, function (sSegment) {
-					jQuery.sap.log.warning("Failed to drill-down into " + that.sResourcePath
+					jQuery.sap.log.error("Failed to drill-down into " + that.sResourcePath
 						+ "$skip=" + iIndex + "&$top=1 via " + sPath
 						+ ", invalid segment: " + sSegment,
 						null, "sap.ui.model.odata.v4.lib._Cache");
@@ -418,9 +425,9 @@ sap.ui.define([
 			}
 			if (sPath) {
 				return drillDown(oResult, sPath, function (sSegment) {
-					jQuery.sap.log.warning("Failed to drill-down into " + sResourcePath + "/"
-							+ sPath + ", invalid segment: " + sSegment,
-							null, "sap.ui.model.odata.v4.lib._Cache");
+					jQuery.sap.log.error("Failed to drill-down into " + sResourcePath + "/"
+							+ sPath + ", invalid segment: " + sSegment, null,
+						"sap.ui.model.odata.v4.lib._Cache");
 				});
 			}
 			return oResult;

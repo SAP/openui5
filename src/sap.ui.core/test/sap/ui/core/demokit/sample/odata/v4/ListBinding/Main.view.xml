@@ -243,9 +243,11 @@
 		<form:SimpleForm id="GetEmployeeByID" binding="{/GetEmployeeByID(...)}"
 				layout="ResponsiveGridLayout">
 			<Label text="Name"/>
-			<Text text="{path : 'Name', type : 'sap.ui.model.odata.type.String'}"/>
+			<Text text="{Name}"/>
 			<Label text="Age"/>
-			<Text text="{path : 'AGE', type : 'sap.ui.model.odata.type.Int16'}"/>
+			<Text text="{AGE}"/>
+			<Label text="Entry Date"/>
+			<Text text="{ENTRYDATE}"/>
 		</form:SimpleForm>
 	</VBox>
 </mvc:View>

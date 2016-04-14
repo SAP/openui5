@@ -51,7 +51,8 @@ sap.ui.define([
 	 *   if not specified, the model's update group ID is used,
 	 *   see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
 	 *   For valid values, see parameter "$$groupId".
-	 * @throws {Error} When disallowed binding parameters are provided
+	 * @throws {Error}
+	 *   If disallowed binding parameters are provided
 	 *
 	 * @alias sap.ui.model.odata.v4.ODataPropertyBinding
 	 * @author SAP SE
@@ -245,8 +246,8 @@ sap.ui.define([
 			// throwing an exception would cause "Uncaught (in promise)" in Chrome
 			if (!oError.canceled) {
 				if (bDataRequested) {
-					jQuery.sap.log.error("Failed to read path " + sResolvedPath, oError,
-						sClassName);
+					that.oModel.reportError("Failed to read path " + sResolvedPath,
+						sClassName, oError);
 				}
 				// fire change event only if error was not caused by refresh
 				// and value was not undefined
@@ -322,36 +323,26 @@ sap.ui.define([
 	 * Refreshes this binding; refresh is supported for absolute bindings only.
 	 * A refresh retrieves data from the server using the given group ID and fires a change event
 	 * when new data is available.
-	 * <code>bForceUpdate</code> has to be set to <code>true</code>.
-	 * If <code>bForceUpdate</code> is not given or <code>false</code>, an error is thrown.
 	 *
 	 * Note: When calling refresh multiple times, the result of the request triggered by the last
 	 * call determines the binding's data; it is <b>independent</b>
 	 * of the order of calls to {@link sap.ui.model.odata.v4.ODataModel#submitBatch} with the given
 	 * group ID.
 	 *
-	 * @param {boolean} bForceUpdate
-	 *   The parameter <code>bForceUpdate</code> has to be set to <code>true</code>.
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for refresh; if not specified, the group ID for this binding is
 	 *   used, see {@link sap.ui.model.odata.v4.ODataPropertyBinding#constructor}.
 	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
 	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 * @throws {Error}
-	 *   When <code>bForceUpdate</code> is not set to <code>true</code> or the given group ID is
-	 *   invalid or refresh on this binding is not supported.
+	 *   If the given group ID is invalid or refresh on this binding is not supported.
 	 *
 	 * @public
 	 * @see sap.ui.model.Binding#refresh
 	 * @since 1.37.0
 	 */
 	// @override
-	ODataPropertyBinding.prototype.refresh = function (bForceUpdate, sGroupId) {
-		if (bForceUpdate !== true) {
-			throw new Error("Unsupported operation: v4.ODataPropertyBinding#refresh, "
-					+ "bForceUpdate must be true");
-		}
-
+	ODataPropertyBinding.prototype.refresh = function (sGroupId) {
 		if (!this.oCache) {
 			throw new Error("Refresh on this binding is not supported");
 		}
@@ -399,6 +390,27 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets the optional type and internal type for this binding; used for formatting and parsing.
+	 *
+	 * @param {sap.ui.model.Type} oType
+	 *   The type for this binding
+	 * @param {string} sInternalType
+	 *   The internal type of the element property which owns this binding, for example "any",
+	 *   "boolean", "float", "int", "string"; see {@link sap.ui.model.odata.type} for more
+	 *   information
+	 *
+	 * @public
+	 * @see sap.ui.model.PropertyBinding#setType
+	 */
+	// @override
+	ODataPropertyBinding.prototype.setType = function (oType) {
+		if (oType && oType.getName() === "sap.ui.model.odata.type.DateTimeOffset") {
+			oType.setV4();
+		}
+		return PropertyBinding.prototype.setType.apply(this, arguments);
+	};
+
+	/**
 	 * Sets the new current value and updates the cache.
 	 *
 	 * @param {any} vValue
@@ -410,13 +422,15 @@ sap.ui.define([
 	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
 	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 * @throws {Error}
-	 *   When the new value is not primitive or the binding is not relative
+	 *   If the new value is not primitive or the binding is not relative
 	 *
 	 * @public
 	 * @see sap.ui.model.PropertyBinding#setValue
 	 * @since 1.37.0
 	 */
 	ODataPropertyBinding.prototype.setValue = function (vValue, sGroupId) {
+		var that = this;
+
 		if (typeof vValue === "function" || typeof vValue === "object") {
 			throw new Error("Not a primitive value");
 		}
@@ -427,7 +441,9 @@ sap.ui.define([
 				if (this.oContext) {
 					this.oContext.updateValue(sGroupId, this.sPath, vValue)
 						["catch"](function (oError) {
-							jQuery.sap.log.error(oError.message, oError.stack, sClassName);
+							that.oModel.reportError("Failed to update path "
+									+ that.oModel.resolve(that.sPath, that.oContext),
+								sClassName, oError);
 						});
 				} else {
 					jQuery.sap.log.warning("Cannot set value on relative binding without context",
@@ -461,7 +477,7 @@ sap.ui.define([
 
 	/**
 	 * Returns a string representation of this object including the binding path. If the binding is
-	 * relative the parent path is also given, separated by a '|'.
+	 * relative, the parent path is also given, separated by a '|'.
 	 *
 	 * @return {string} A string description of this binding
 	 * @public

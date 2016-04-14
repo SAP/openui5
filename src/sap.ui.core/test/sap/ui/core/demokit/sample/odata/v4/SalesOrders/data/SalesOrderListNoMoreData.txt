@@ -1,4 +1,3 @@
---9206B556449D06612AC031DBBD151DAF0
 Content-Type: application/http
 Content-Length: 220
 content-transfer-encoding: binary
@@ -9,4 +8,3 @@ Content-Length: 105
 odata-version: 4.0
 
 {"@odata.context":"$metadata#SalesOrderList(BuyerName,CurrencyCode,GrossAmount,Note,SalesOrderID)","value":[]}
---9206B556449D06612AC031DBBD151DAF0--

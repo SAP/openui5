@@ -104,6 +104,20 @@ sap.ui.require([
 			"statusText" : "Forbidden",
 			"responseText" : "ignore this!"
 		}
+	}, {
+		message : "Network error",
+		"response" : {
+			"headers" : {},
+			"status" : 0,
+			"statusText" : "error"
+		}
+	}, {
+		message : "404 Not Found",
+		"response" : {
+			"headers" : {},
+			"status" : 404,
+			"statusText" : "Not Found"
+		}
 	}].forEach(function (oFixture) {
 		QUnit.test("createError: " + oFixture.message, function (assert) {
 			var oError,
@@ -146,7 +160,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("encodePair", function (assert) {
 		var sEncoded,
-			oHelperMock = this.mock(_Helper);
+			oHelperMock = this.oSandbox.mock(_Helper);
 
 		oHelperMock.expects("encode").withExactArgs("key", true).returns("~key~");
 		oHelperMock.expects("encode").withExactArgs("value", false).returns("~value~");
@@ -164,7 +178,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("buildQuery: query", function (assert) {
 		var sEncoded,
-			oHelperMock = this.mock(_Helper);
+			oHelperMock = this.oSandbox.mock(_Helper);
 
 		oHelperMock.expects("encodePair").withExactArgs("a", "b").returns("a=b");
 		oHelperMock.expects("encodePair").withExactArgs("c", "d").returns("c=d");

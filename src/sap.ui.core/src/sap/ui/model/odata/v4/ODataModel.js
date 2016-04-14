@@ -13,6 +13,7 @@
 //Provides class sap.ui.model.odata.v4.ODataModel
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/ui/core/message/Message",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Model",
 	"sap/ui/thirdparty/URI",
@@ -23,7 +24,7 @@ sap.ui.define([
 	"./ODataListBinding",
 	"./ODataMetaModel",
 	"./ODataPropertyBinding"
-], function(jQuery, BindingMode, Model, URI, _ODataHelper, _MetadataRequestor, _Requestor,
+], function(jQuery, Message, BindingMode, Model, URI, _ODataHelper, _MetadataRequestor, _Requestor,
 		ODataContextBinding, ODataListBinding, ODataMetaModel, ODataPropertyBinding) {
 
 	"use strict";
@@ -31,6 +32,13 @@ sap.ui.define([
 	var sClassName = "sap.ui.model.odata.v4.ODataModel",
 		mSupportedEvents = {
 			messageChange : true
+		},
+		mSupportedParameters = {
+			groupId : true,
+			serviceUrl : true,
+			serviceUrlParams : true,
+			synchronizationMode : true,
+			updateGroupId : true
 		};
 
 	/**
@@ -59,21 +67,29 @@ sap.ui.define([
 	 *   case data changes in one binding. Must be set to 'None' which means bindings are not
 	 *   synchronized at all; all other values are not supported and lead to an error.
 	 * @param {string} [mParameters.updateGroupId]
-	 *   The group ID that is used for update requests. If no update group ID is specified
+	 *   The group ID that is used for update requests. If no update group ID is specified,
 	 *   <code>mParameters.groupId</code> is used. Valid update group IDs are <code>undefined<code>,
 	 *   '$auto', '$direct' or an application group ID, which is a non-empty string consisting of
 	 *   alphanumeric characters from the basic Latin alphabet, including the underscore.
 	 * @throws {Error} If an unsupported synchronization mode is given, if the given service root
-	 *   URL does not end with a forward slash, if OData system query options or parameter aliases
-	 *   are specified as parameters, if an invalid group ID or update group ID is given.
+	 *   URL does not end with a forward slash, if an unsupported parameter is given, if OData
+	 *   system query options or parameter aliases are specified as parameters, if an invalid group
+	 *   ID or update group ID is given.
 	 *
 	 * @alias sap.ui.model.odata.v4.ODataModel
 	 * @author SAP SE
 	 * @class Model implementation for OData V4.
+	 *
+	 *   Every resource path (relative to the service root URL, no query options) according to
+	 *   "4 Resource Path" in specification "OData Version 4.0 Part 2: URL Conventions" is
+	 *   a valid data binding path within this model if a leading slash is added; for example
+	 *   "/" + "EMPLOYEES('A%2FB%26C')" to access an entity instance with key "A/B&C". Note that
+	 *   appropriate URI encoding is necessary. "4.5.1 Addressing Actions" needs an operation
+	 *   binding, see {@link sap.ui.model.odata.v4.ODataContextBinding}.
+	 *
 	 *   An event handler can only be attached to this model for the following event:
 	 *   'messageChange', see {@link sap.ui.core.message.MessageProcessor#messageChange
-	 *   messageChange}.
-	 *   For other events, an error is thrown.
+	 *   messageChange}. For other events, an error is thrown.
 	 * @extends sap.ui.model.Model
 	 * @public
 	 * @version ${version}
@@ -85,6 +101,7 @@ sap.ui.define([
 					var mHeaders = {
 							"Accept-Language" : sap.ui.getCore().getConfiguration().getLanguageTag()
 						},
+						sParameter,
 						sServiceUrl,
 						oUri;
 
@@ -93,6 +110,11 @@ sap.ui.define([
 
 					if (!mParameters || mParameters.synchronizationMode !== "None") {
 						throw new Error("Synchronization mode must be 'None'");
+					}
+					for (sParameter in mParameters) {
+						if (!(sParameter in mSupportedParameters)) {
+							throw new Error("Unsupported parameter: " + sParameter);
+						}
 					}
 					sServiceUrl = mParameters.serviceUrl;
 					if (!sServiceUrl) {
@@ -147,7 +169,11 @@ sap.ui.define([
 		var aCallbacks = this.mCallbacksByGroupId[sGroupId],
 			oPromise;
 
-		oPromise = this.oRequestor.submitBatch(sGroupId);
+		oPromise = this.oRequestor.submitBatch(sGroupId)
+			["catch"](function (oError) {
+				jQuery.sap.log.error("$batch failed", oError.message, sClassName);
+				throw oError;
+			});
 		if (aCallbacks) {
 			delete this.mCallbacksByGroupId[sGroupId];
 			aCallbacks.forEach(function (fnCallback) {
@@ -223,7 +249,7 @@ sap.ui.define([
 	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
-	 *   <li> The $expand and $select "5.1 System Query Options"
+	 *   <li> The $expand, $filter, $orderby and $select "5.1 System Query Options"
 	 *   </ul>
 	 *   All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
@@ -241,7 +267,8 @@ sap.ui.define([
 	 *   For valid values, see parameter "$$groupId".
 	 * @returns {sap.ui.model.odata.v4.ODataContextBinding}
 	 *   The context binding
-	 * @throws {Error} When disallowed binding parameters are provided
+	 * @throws {Error}
+	 *   If disallowed binding parameters are provided
 	 *
 	 * @public
 	 * @see sap.ui.model.Model#bindContext
@@ -272,7 +299,7 @@ sap.ui.define([
 	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
-	 *   <li> The $expand and $select "5.1 System Query Options"
+	 *   <li> The $expand, $filter, $orderby and $select "5.1 System Query Options"
 	 *   </ul>
 	 *   All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
@@ -290,7 +317,8 @@ sap.ui.define([
 	 *   For valid values, see parameter "$$groupId".
 	 * @returns {sap.ui.model.odata.v4.ODataListBinding}
 	 *   The list binding
-	 * @throws {Error} When disallowed binding parameters are provided
+	 * @throws {Error}
+	 *   If disallowed binding parameters are provided
 	 *
 	 * @public
 	 * @see sap.ui.model.Model#bindList
@@ -341,7 +369,8 @@ sap.ui.define([
 	 *   For valid values, see parameter "$$groupId".
 	 * @returns {sap.ui.model.odata.v4.ODataPropertyBinding}
 	 *   The property binding
-	 * @throws {Error} When disallowed binding parameters are provided
+	 * @throws {Error}
+	 *   If disallowed binding parameters are provided
 	 *
 	 * @public
 	 * @see sap.ui.model.Model#bindProperty
@@ -362,26 +391,6 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.bindTree = function () {
 		throw new Error("Unsupported operation: v4.ODataModel#bindTree");
-	};
-
-	/**
-	 * Creates a new entity from the given data in the collection pointed to by the given path.
-	 *
-	 * @param {string} sPath
-	 *   An absolute data binding path pointing to an entity set, e.g. "/EMPLOYEES"
-	 * @param {object} oEntityData
-	 *   The new entity's properties, e.g.
-	 *   <code>{"ID" : "1", "AGE" : 52, "ENTRYDATE" : "1977-07-24", "Is_Manager" : false}</code>
-	 * @returns {Promise}
-	 *   A promise which is resolved with the server's response data in case of success, or
-	 *   rejected with an instance of <code>Error</code> in case of failure
-	 *
-	 * @private
-	 */
-	ODataModel.prototype.create = function (sPath, oEntityData) {
-		var sResourcePath = sPath.slice(1) + this._sQuery;
-
-		return this.oRequestor.request("POST", sResourcePath, undefined, null, oEntityData);
 	};
 
 	/**
@@ -483,7 +492,7 @@ sap.ui.define([
 
 	/**
 	 * Returns the group ID that is used for update requests.
-	 * If no update group ID is specified the group ID is used (see {@link #getGroupId}).
+	 * If no update group ID is specified, the group ID is used (see {@link #getGroupId}).
 	 *
 	 * @returns {string}
 	 *   The update group id
@@ -509,22 +518,18 @@ sap.ui.define([
 
 	/**
 	 * Refreshes the model by calling refresh on all bindings which have a change event handler
-	 * attached. <code>bForceUpdate</code> has to be set to <code>true</code>.
-	 * If <code>bForceUpdate</code> is not set to <code>true</code>, an error is thrown.
+	 * attached.
 	 *
 	 * Note: When calling refresh multiple times, the result of the request triggered by the last
 	 * call determines the model's data; it is <b>independent</b>
 	 * of the order of calls to {@link #submitBatch} with the given group ID.
 	 *
-	 * @param {boolean} bForceUpdate
-	 *   The parameter <code>bForceUpdate</code> has to be set to <code>true</code>.
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for refresh; valid values are <code>undefined</code>,
 	 *   <code>'$auto'</code>, <code>'$direct'</code> or application group IDs as specified in
 	 *   {@link #submitBatch}
 	 * @throws {Error}
-	 *   When <code>bForceUpdate</code> is not set to <code>true</code> or the given group ID is
-	 *   invalid
+	 *   If the given group ID is invalid
 	 *
 	 * @public
 	 * @see sap.ui.model.Model#refresh
@@ -534,58 +539,42 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	// @override
-	ODataModel.prototype.refresh = function (bForceUpdate, sGroupId) {
-		if (bForceUpdate !== true) {
-			throw new Error("Unsupported operation: v4.ODataModel#refresh, "
-					+ "bForceUpdate must be true");
-		}
-
+	ODataModel.prototype.refresh = function (sGroupId) {
 		_ODataHelper.checkGroupId(sGroupId);
 
 		this.aBindings.slice().forEach(function (oBinding) {
 			if (oBinding.oCache) { // relative bindings have no cache and cannot be refreshed
-				oBinding.refresh(bForceUpdate, sGroupId);
+				oBinding.refresh(sGroupId);
 			}
 		});
 	};
 
 	/**
-	 * Removes the entity with the given context from the service, using the currently known
-	 * entity tag ("ETag") value.
+	 * Reports a technical error by adding a message to the MessageManager and logging the error to
+	 * the console.
 	 *
-	 * @param {sap.ui.model.Context} oContext
-	 *   A context in the data model pointing to an entity. It MUST be related to some list
-	 *   binding's context because you can only remove data from the model which has been read
-	 *   into the model before.
-	 * @returns {Promise}
-	 *   A promise which is resolved in case of success, or rejected with an instance of
-	 *   <code>Error</code> in case of failure. The error instance is flagged with
-	 *   <code>isConcurrentModification</code> in case a concurrent modification (e.g. by another
-	 *   user) of the entity between loading and removal has been detected; this should be shown
-	 *   to the user who needs to decide whether to try removal again. If the entity does not exist,
-	 *   we assume it has already been deleted by someone else and report success.
+	 * @param {string} sLogMessage
+	 *   The message to write to the console log
+	 * @param {string} sReportingClassName
+	 *   The name of the class reporting the error
+	 * @param {Error} oError
+	 *   The error
 	 *
 	 * @private
 	 */
-	ODataModel.prototype.remove = function (oContext) {
-		var sPath = oContext.getPath(),
-			that = this;
+	ODataModel.prototype.reportError = function (sLogMessage, sReportingClassName, oError) {
+		var sDetails = oError.stack || oError.message;
 
-		return Promise.all([
-			oContext.requestValue("@odata.etag"),
-			this.oMetaModel.requestCanonicalUrl("", sPath, oContext)
-		]).then(function (aValues) {
-			var sEtag = aValues[0],
-				sResourcePath = aValues[1] + that._sQuery; // "canonical path" w/o service URL
-
-			return that.oRequestor.request("DELETE", sResourcePath, undefined, {"If-Match" : sEtag})
-				["catch"](function (oError) {
-					if (oError.status === 404) {
-						return; // map 404 to 200, i.e. resolve if already deleted
-					}
-					throw oError;
-				});
-		});
+		if (sDetails.indexOf(oError.message) < 0) {
+			sDetails = oError.message + "\n" + oError.stack;
+		}
+		jQuery.sap.log.error(sLogMessage, sDetails, sReportingClassName);
+		sap.ui.getCore().getMessageManager().addMessages(new Message({
+				message : oError.message,
+				processor : this,
+				technical : true,
+				type : "Error"
+			}));
 	};
 
 	/**
@@ -637,7 +626,7 @@ sap.ui.define([
 	 *   A promise on the outcome of the HTTP request resolving with <code>undefined</code>; it is
 	 *   rejected with an error if the batch request itself fails
 	 * @throws {Error}
-	 *   When the given group ID is not an application group ID
+	 *   If the given group ID is not an application group ID
 	 *
 	 * @public
 	 * @since 1.37.0

@@ -375,6 +375,7 @@ sap.ui.require([
 				this.oSandbox.stub(this.oModel.oRequestor, "submitBatch", function () {
 					// submitBatch resolves the promise of the read
 					fnResolveRead(oValue);
+					return Promise.resolve();
 				});
 			} else {
 				sResolvedPath = sContextPath + "/" + sPath;
@@ -448,10 +449,9 @@ sap.ui.require([
 			this.oSandbox.mock(this.oModel.getMetaModel()).expects("requestUI5Type")
 				.withExactArgs(sPath)
 				.returns(Promise.reject(oTypeError));
-			this.oLogMock.expects("warning").withExactArgs(oTypeError.message, sPath,
-				"sap.ui.model.odata.v4.ODataPropertyBinding");
+			this.oLogMock.expects("warning").withExactArgs(oTypeError.message, sPath, sClassName);
 			this.oLogMock.expects("error").withExactArgs("Accessed value is not primitive", sPath,
-				"sap.ui.model.odata.v4.ODataPropertyBinding");
+				sClassName);
 
 			//code under test
 			oControl.bindProperty("text", {path : sPath, events : {
@@ -485,8 +485,8 @@ sap.ui.require([
 			oControl = new TestControl({models : this.oModel});
 
 		this.oSandbox.mock(_Cache).expects("createSingle").returns(oCache);
-		this.oLogMock.expects("error").withExactArgs("Failed to read path /path", oError,
-			"sap.ui.model.odata.v4.ODataPropertyBinding");
+		this.oSandbox.mock(this.oModel).expects("reportError").withExactArgs(
+			"Failed to read path /path", sClassName, sinon.match.same(oError));
 
 		//code under test
 		oControl.bindProperty("text", {path : "/path", type : new TypeString(),
@@ -513,7 +513,7 @@ sap.ui.require([
 		oCacheMock.expects("read").returns(Promise.resolve({}));
 
 		this.oLogMock.expects("error").withExactArgs("Accessed value is not primitive", sPath,
-			"sap.ui.model.odata.v4.ODataPropertyBinding");
+			sClassName);
 
 
 		oBinding = this.oModel.bindProperty(sPath);
@@ -601,8 +601,7 @@ sap.ui.require([
 					.withExactArgs(sPath) // always requested only once
 					.returns(Promise.reject(oError)); // UI5 type not found
 				this.oLogMock.expects("warning")
-					.withExactArgs("failed type", sPath,
-						"sap.ui.model.odata.v4.ODataPropertyBinding");
+					.withExactArgs("failed type", sPath, sClassName);
 
 				function onChange() {
 					oBinding.detachChange(onChange);
@@ -646,20 +645,20 @@ sap.ui.require([
 		oHelperMock.expects("checkGroupId").withExactArgs(undefined);
 
 		// code under test
-		oBinding.refresh(true);
+		oBinding.refresh();
 
 		oCacheMock.expects("read").withExactArgs("myGroup", undefined, sinon.match.func)
 			.returns(oReadPromise);
 		oHelperMock.expects("checkGroupId").withExactArgs("myGroup");
 
 		// code under test
-		oBinding.refresh(true, "myGroup");
+		oBinding.refresh("myGroup");
 
 		oHelperMock.expects("checkGroupId").withExactArgs("$Invalid").throws(oError);
 
 		// code under test
 		assert.throws(function () {
-			oBinding.refresh(true, "$Invalid");
+			oBinding.refresh("$Invalid");
 		}, oError);
 
 		return Promise.all([oReadPromise, oTypePromise]);
@@ -702,7 +701,7 @@ sap.ui.require([
 
 		// trigger read before refresh
 		oBinding.checkUpdate(false);
-		oBinding.refresh(true);
+		oBinding.refresh();
 	});
 
 	//*********************************************************************************************
@@ -713,7 +712,7 @@ sap.ui.require([
 		this.oSandbox.mock(_Cache).expects("createSingle").never();
 
 		assert.throws(function () {
-			oBinding.refresh(true);
+			oBinding.refresh();
 		}, new Error("Refresh on this binding is not supported"));
 	});
 
@@ -724,15 +723,6 @@ sap.ui.require([
 		assert.throws(function () { //TODO implement
 			oPropertyBinding.isInitial();
 		}, new Error("Unsupported operation: v4.ODataPropertyBinding#isInitial"));
-
-		assert.throws(function () { //TODO implement
-			oPropertyBinding.refresh(false);
-		}, new Error("Unsupported operation: v4.ODataPropertyBinding#refresh, "
-			+ "bForceUpdate must be true"));
-		assert.throws(function () {
-			oPropertyBinding.refresh("foo"/*truthy*/);
-		}, new Error("Unsupported operation: v4.ODataPropertyBinding#refresh, "
-			+ "bForceUpdate must be true"));
 
 		assert.throws(function () { //TODO implement
 			oPropertyBinding.resume();
@@ -850,8 +840,7 @@ sap.ui.require([
 		this.oSandbox.mock(oControl.getBinding("text").oCache).expects("update").never();
 		// Note: if setValue throws, ManagedObject#updateModelProperty does not roll back!
 		this.oLogMock.expects("error").withExactArgs(
-			"Cannot set value on absolute binding", "/ProductList('HT-1000')/Name",
-			"sap.ui.model.odata.v4.ODataPropertyBinding");
+			"Cannot set value on absolute binding", "/ProductList('HT-1000')/Name", sClassName);
 
 		// code under test
 		oControl.setText("foo");
@@ -945,8 +934,7 @@ sap.ui.require([
 		this.oSandbox.mock(oPropertyBinding.oCache).expects("update")
 			.withExactArgs("$direct", "Name", "foo", "ProductList('0')")
 			.returns(oPromise);
-		this.oLogMock.expects("error").withExactArgs(sMessage, oError.stack,
-			"sap.ui.model.odata.v4.ODataPropertyBinding");
+		this.oLogMock.expects("error").withExactArgs(sMessage, oError.stack, sClassName);
 
 		// code under test
 		oPropertyBinding.setValue("foo");
@@ -996,6 +984,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("setValue (relative binding): error handling", function (assert) {
 		var oContext = {
+				getPath : function () { return "/ProductList('HT-1000')"; },
 				updateValue : function () {}
 			},
 			sMessage = "This call intentionally failed",
@@ -1005,8 +994,9 @@ sap.ui.require([
 
 		this.oSandbox.mock(oContext).expects("updateValue").withExactArgs(undefined, "Name", "foo")
 			.returns(oPromise);
-		this.oLogMock.expects("error").withExactArgs(sMessage, oError.stack,
-			"sap.ui.model.odata.v4.ODataPropertyBinding");
+		this.oSandbox.mock(this.oModel).expects("reportError").withExactArgs(
+			"Failed to update path /ProductList('HT-1000')/Name", sClassName,
+			sinon.match.same(oError));
 
 		// code under test
 		oPropertyBinding.setValue("foo");
@@ -1025,13 +1015,33 @@ sap.ui.require([
 
 		// Note: if setValue throws, ManagedObject#updateModelProperty does not roll back!
 		this.oLogMock.expects("warning").withExactArgs(
-			"Cannot set value on relative binding without context", "Note",
-			"sap.ui.model.odata.v4.ODataPropertyBinding");
+			"Cannot set value on relative binding without context", "Note", sClassName);
 
 		// code under test
 		oControl.setText("foo");
 
 		assert.strictEqual(oControl.getText(), undefined, "control change is rolled back");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setType: calls setV4 automatically", function (assert) {
+		var oDateTimeOffset = {
+				getName : function () { return "sap.ui.model.odata.type.DateTimeOffset"; },
+				setV4 : function () {}
+			},
+			oSomeType = {
+				getName : function () { return "it.s.not.me"; },
+				setV4 : function () {}
+			},
+			oPropertyBinding = this.oModel.bindProperty("/absolute");
+
+		this.oSandbox.mock(oDateTimeOffset).expects("setV4");
+		this.oSandbox.mock(oSomeType).expects("setV4").never();
+
+		// code under test
+		oPropertyBinding.setType(null);
+		oPropertyBinding.setType(oDateTimeOffset);
+		oPropertyBinding.setType(oSomeType);
 	});
 
 	//*********************************************************************************************

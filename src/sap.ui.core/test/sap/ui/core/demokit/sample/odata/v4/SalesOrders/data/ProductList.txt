@@ -1,10 +1,10 @@
 Content-Type: application/http
-Content-Length: 165
+Content-Length: 203
 content-transfer-encoding: binary
 
 HTTP/1.1 200 OK
 Content-Type: application/json;odata.metadata=minimal
-Content-Length: 51
+Content-Length: 89
 odata-version: 4.0
 
-{"@odata.context":"$metadata#Edm.Int16","value":56}
+{"@odata.context":"../$metadata#ProductList('HT-1000')/Name","value":"Notebook Basic 15"}
