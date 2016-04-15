@@ -989,7 +989,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		this._bOnAfterRendering = true;
 		var $this = this.$();
 
-		this._renderOverlay();
 		this._attachEvents();
 
 		// since the row is an element it has no own renderer. Anyway, logically it has a domref. Let the rows
@@ -1115,26 +1114,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		}, 0);
 	};
 
-	/**
-	 * Render overlay div
-	 * @private
-	 */
-	Table.prototype._renderOverlay = function() {
-		var $this = this.$(),
-		    $overlay = $this.find(".sapUiTableOverlay"),
-		    bShowOverlay = this.getShowOverlay();
-		if (bShowOverlay && $overlay.length === 0) {
-			$overlay = jQuery("<div>").addClass("sapUiOverlay sapUiTableOverlay").css("z-index", "1");
-			$this.append($overlay);
-		} else if (!bShowOverlay) {
-			$overlay.remove();
-		}
-	};
-
 	Table.prototype.setShowOverlay = function(bShow) {
-		this.setProperty("showOverlay", bShow, true);
-		this._renderOverlay();
-		return this;
+		if (this.getDomRef()) {
+			this.$().toggleClass("sapUiTableOverlay", bShow);
+		}
+
+		return this.setProperty("showOverlay", bShow, true);
 	};
 
 	/**
