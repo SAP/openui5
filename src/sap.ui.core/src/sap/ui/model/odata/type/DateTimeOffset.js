@@ -18,9 +18,8 @@ sap.ui.define([
 	 *
 	 *   In {@link sap.ui.model.odata.v2.ODataModel} this type is represented as a
 	 *   <code>Date</code> instance in local time. In {@link sap.ui.model.odata.v4.ODataModel} this
-	 *   type is represented as a <code>string</code> like "2014-11-27T13:47:26Z". This type
-	 *   automatically adapts whenever it is used within an OData V4 model via
-	 *   {@link sap.ui.model.odata.v4.ODataPropertyBinding#setType}.
+	 *   type is represented as a <code>string</code> like "2014-11-27T13:47:26Z". See parameter
+	 *   <code>oConstraints.V4</code> for more information.
 	 *
 	 * @extends sap.ui.model.odata.type.DateTimeBase
 	 *
@@ -38,17 +37,32 @@ sap.ui.define([
 	 * @param {boolean} [oConstraints.precision=0]
 	 *   The number of decimal places allowed in the seconds portion of a valid string value
 	 *   (OData V4 only); only integer values between 0 and 12 are valid (since 1.37.0)
+	 * @param {boolean} [oConstraints.V4=false]
+	 *   Whether OData V4 semantics apply and the model representation is expected to be a
+	 *   <code>string</code> like "2014-11-27T13:47:26Z" (see {@link #parseValue} and
+	 *   {@link #validateValue}); this type automatically adapts itself whenever it is used within
+	 *   an OData V4 model via {@link sap.ui.model.odata.v4.ODataPropertyBinding#setType}.
 	 * @public
 	 * @since 1.27.0
 	 */
 	var DateTimeOffset = DateTimeBase.extend("sap.ui.model.odata.type.DateTimeOffset", {
 			constructor : function (oFormatOptions, oConstraints) {
+				var bV4;
+
 				DateTimeBase.call(this, oFormatOptions, {
-					nullable : oConstraints && oConstraints.nullable,
-					precision : oConstraints && oConstraints.precision
+					nullable : oConstraints ? oConstraints.nullable : undefined,
+					precision : oConstraints ? oConstraints.precision : undefined
 				});
 				this.rDateTimeOffset = undefined; // @see #validateValue
 				this.bV4 = false; // @see #setV4
+				if (oConstraints) {
+					bV4 = oConstraints.V4;
+					if (bV4 === true) {
+						this.bV4 = true;
+					} else if (bV4 !== undefined && bV4 !== false) {
+						jQuery.sap.log.warning("Illegal V4: " + bV4, null, this.getName());
+					}
+				}
 			}
 		}),
 		oModelFormat;
