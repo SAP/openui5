@@ -435,7 +435,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				} else {
 					oSymbol = mCLDRSymbols[sChar];
 					// If symbol is a CLDR symbol and is contained in the group, expand length
-					if (oSymbol && mGroups[oSymbol.group] && mPatternGroups[oSymbol.group]) {
+				if (oSymbol && mGroups[oSymbol.group] && mPatternGroups[oSymbol.group]) {
 						oSkeletonToken = mGroups[oSymbol.group];
 						oBestToken = mPatternGroups[oSymbol.group];
 						oSkeletonSymbol = oSkeletonToken.symbol;
@@ -1069,16 +1069,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				aCalendars = sCalendarPreference ? sCalendarPreference.split(" ") : [],
 				sCalendarName, sType, i;
 
+			// lazy load of sap.ui.core library to avoid cyclic dependencies
+			sap.ui.getCore().loadLibrary('sap.ui.core');
+			var CalendarType = sap.ui.require("sap/ui/core/library").CalendarType;
+
 			for ( i = 0 ; i < aCalendars.length ; i++ ) {
 				sCalendarName = aCalendars[i];
-				for (sType in sap.ui.core.CalendarType) {
+				for (sType in CalendarType) {
 					if (sCalendarName === getCLDRCalendarName(sType).substring(3)) {
 						return sType;
 					}
 				}
 			}
 
-			return sap.ui.core.CalendarType.Gregorian;
+			return CalendarType.Gregorian;
 		},
 
 		/**
@@ -1579,7 +1583,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 	 * @alias sap.ui.core.CustomLocaleData
 	 * @private
 	 */
-	LocaleData.extend("sap.ui.core.CustomLocaleData", {
+	var CustomLocaleData = LocaleData.extend("sap.ui.core.CustomLocaleData", {
 		constructor : function(oLocale) {
 			LocaleData.apply(this, arguments);
 			this.mCustomData = sap.ui.getCore().getConfiguration().getFormatSettings().getCustomLocaleData();
@@ -1603,7 +1607,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 	 *
 	 */
 	LocaleData.getInstance = function(oLocale) {
-		return oLocale.hasPrivateUseSubtag("sapufmt") ? new sap.ui.core.CustomLocaleData(oLocale) : new LocaleData(oLocale);
+		return oLocale.hasPrivateUseSubtag("sapufmt") ? new CustomLocaleData(oLocale) : new LocaleData(oLocale);
 	};
 
 	return LocaleData;

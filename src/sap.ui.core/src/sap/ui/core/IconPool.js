@@ -21,6 +21,9 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 
 		var oCoreResourceBundle = core.getLibraryResourceBundle("sap.ui.core");
 
+		// lazy dependency, to avoid cycle
+		var Icon;
+
 		/**
 		 * Constructor for IconPool - must not be used: all of the methods that are under
 		 * IconPool are static methods.
@@ -66,10 +69,8 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 				var sSrc = setting.src,
 					fnConstructor = constructor;
 				if (IconPool.isIconURI(sSrc)) {
-					if (!sap.ui.core.Icon) {
-						jQuery.sap.require("sap.ui.core.Icon");
-					}
-					fnConstructor = sap.ui.core.Icon;
+					Icon = Icon || sap.ui.requireSync("sap/ui/core/Icon");
+					fnConstructor = Icon;
 					//converting to press event in case tap is specified
 					if (setting.tap) {
 						setting.press = setting.tap;

@@ -15,8 +15,8 @@
 	function defineLessSupport() {
 
 		// Provides class sap.ui.core.plugin.LessSupport
-		sap.ui.define('sap/ui/core/plugin/LessSupport', ['jquery.sap.global', 'sap/ui/core/Core'],
-			function(jQuery, Core) {
+		sap.ui.define('sap/ui/core/plugin/LessSupport', ['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/core/ThemeCheck'],
+			function(jQuery, Core, ThemeCheck) {
 
 			var LESS_FILENAME = "library.source";
 			var CSS_FILENAME = "library";
@@ -128,7 +128,7 @@
 					var ok = true;
 					var check;
 					for (var i = 0; i < aLibs.length; i++) {
-						check = sap.ui.core.ThemeCheck.checkStyle("less:" + aLibs[i], true);
+						check = ThemeCheck.checkStyle("less:" + aLibs[i], true);
 						if (check) {
 							jQuery.sap.byId("sap-ui-theme-" + aLibs[i]).attr("data-sap-ui-ready", "true");
 						}
@@ -142,7 +142,7 @@
 					}
 
 					if (ok) {
-						sap.ui.core.ThemeCheck.themeLoaded = true;
+						ThemeCheck.themeLoaded = true;
 						jQuery.sap.delayedCall(0, oCore, "fireThemeChanged", [{theme: oCore.sTheme}]);
 					} else {
 						that.iCheckThemeAppliedTimeout = jQuery.sap.delayedCall(100, null, checkThemeApplied);
@@ -487,8 +487,8 @@
 					window.less.refresh();
 
 					// Update Theming Parameters without triggering an library-parameters.json request
-					jQuery.sap.require("sap.ui.core.theming.Parameters");
-					sap.ui.core.theming.Parameters._setOrLoadParameters(mLibVariables);
+					var Parameters = sap.ui.requireSync('sap/ui/core/theming/Parameters');
+					Parameters._setOrLoadParameters(mLibVariables);
 
 					// Restore original function
 					window.less.tree.Rule.prototype.eval = fnLessTreeRuleEval;

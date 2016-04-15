@@ -9,8 +9,8 @@
  */
 
 // Provides class sap.ui.core.delegate.ScrollEnablement
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
-	function(jQuery, Device, BaseObject) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/ui/core/ResizeHandler'],
+	function(jQuery, Device, BaseObject, ResizeHandler) {
 	"use strict";
 
 
@@ -442,12 +442,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 			_toggleResizeListeners : function(bToggle){
 
 				if (this._sScrollerResizeListenerId) {
-					sap.ui.core.ResizeHandler.deregister(this._sScrollerResizeListenerId);
+					ResizeHandler.deregister(this._sScrollerResizeListenerId);
 					this._sScrollerResizeListenerId = null;
 				}
 
 				if (this._sContentResizeListenerId) {
-					sap.ui.core.ResizeHandler.deregister(this._sContentResizeListenerId);
+					ResizeHandler.deregister(this._sContentResizeListenerId);
 					this._sContentResizeListenerId = null;
 				}
 
@@ -455,8 +455,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 
 					//TODO Prevent a double refresh
 					var $fRefresh = $.proxy(this._refresh, this);
-					this._sScrollerResizeListenerId = sap.ui.core.ResizeHandler.register( $.sap.domById(this._sScrollerId), $fRefresh );
-					this._sContentResizeListenerId = sap.ui.core.ResizeHandler.register( $.sap.domById(this._sContentId), $fRefresh );
+					this._sScrollerResizeListenerId = ResizeHandler.register( $.sap.domById(this._sScrollerId), $fRefresh );
+					this._sContentResizeListenerId = ResizeHandler.register( $.sap.domById(this._sContentId), $fRefresh );
 				}
 
 			},
@@ -683,12 +683,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 
 			_cleanup : function() {
 				if (this._sScrollerResizeListenerId) {
-					sap.ui.core.ResizeHandler.deregister(this._sScrollerResizeListenerId);
+					ResizeHandler.deregister(this._sScrollerResizeListenerId);
 					this._sScrollerResizeListenerId = null;
 				}
 
 				if (this._sContentResizeListenerId) {
-					sap.ui.core.ResizeHandler.deregister(this._sContentResizeListenerId);
+					ResizeHandler.deregister(this._sContentResizeListenerId);
 					this._sContentResizeListenerId = null;
 				}
 
@@ -717,11 +717,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 
 				this._scroller.scrollTo(this._scrollX, this._scrollY, false);
 
-				this._sContentResizeListenerId = sap.ui.core.ResizeHandler.register(
+				this._sContentResizeListenerId = ResizeHandler.register(
 					$.sap.domById(this._sContentId),
 					$.proxy(function(){
 						if ((!this._sContentId || !$.sap.domById(this._sContentId)) && this._sContentResizeListenerId) {
-							sap.ui.core.ResizeHandler.deregister(this._sContentResizeListenerId);
+							ResizeHandler.deregister(this._sContentResizeListenerId);
 							this._sContentResizeListenerId = null;
 						} else {
 							this._refresh();
@@ -777,7 +777,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 
 			_cleanup : function() {
 				if (this._sResizeListenerId) {
-					sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
+					ResizeHandler.deregister(this._sResizeListenerId);
 					this._sResizeListenerId = null;
 				}
 			},
@@ -825,7 +825,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 					&& !Device.browser.internet_explorer) {
 					// for IE the resize listener must remain in place for the case when navigating away and coming back.
 					// For the other browsers it seems to work fine without.
-					sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
+					ResizeHandler.deregister(this._sResizeListenerId);
 					this._sResizeListenerId = null;
 				}
 			},
@@ -972,7 +972,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 					return;
 				}
 
-				if (sap.ui.Device.os.blackberry) {
+				if (Device.os.blackberry) {
 					if (this._iLastTouchMoveTime && oEvent.timeStamp - this._iLastTouchMoveTime < 100) {
 						oEvent.stopPropagation();
 					} else {
@@ -1051,7 +1051,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 
 			onBeforeRendering: function() {
 				if (this._sResizeListenerId) {
-					sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
+					ResizeHandler.deregister(this._sResizeListenerId);
 					this._sResizeListenerId = null;
 				}
 
@@ -1085,7 +1085,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 					|| this._fnScrollLoadCallback) {
 
 					// element may be hidden and have height 0
-					this._sResizeListenerId = sap.ui.core.ResizeHandler.register($Container[0], _fnRefresh);
+					this._sResizeListenerId = ResizeHandler.register($Container[0], _fnRefresh);
 				}
 
 				// Set event listeners
