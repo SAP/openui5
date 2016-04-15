@@ -3,8 +3,8 @@
  */
 
 // Provides helper sap.ui.table.TableAccExtension.
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExtension', './TableUtils'],
-	function(jQuery, BaseObject, TableAccRenderExtension, TableUtils) {
+sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtension', './TableUtils'],
+	function(jQuery, TableExtension, TableAccRenderExtension, TableUtils) {
 	"use strict";
 
 	/*
@@ -699,46 +699,55 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 	 *
 	 * @class Extension for sap.ui.table.Table which handles ACC related things.
 	 *
-	 * @extends sap.ui.base.Object
+	 * @extends sap.ui.table.TableExtension
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
 	 * @private
 	 * @alias sap.ui.table.TableAccExtension
 	 */
-	var TableAccExtension = BaseObject.extend("sap.ui.table.TableAccExtension", /* @lends sap.ui.table.TableAccExtension */ {
+	var TableAccExtension = TableExtension.extend("sap.ui.table.TableAccExtension", /* @lends sap.ui.table.TableAccExtension */ {
 
 		/*
-		 * @see TableAccExtension.enrich
+		 * @see TableExtension._init
 		 */
-		constructor : function(oTable, bReadOnly, bTreeMode, bHasTreeColumn) {
-			BaseObject.call(this);
-			this._table = oTable;
+		_init : function(oTable, sTableType, mSettings) {
 			this._accMode = sap.ui.getCore().getConfiguration().getAccessibility();
-			this._readonly = bReadOnly;
-			this._treeMode = bTreeMode;
-			this._hasTreeColumn = bHasTreeColumn;
+			this._readonly = false;
+			this._treeMode = false;
+			this._hasTreeColumn = false;
 
-			this._table.addEventDelegate(this);
+			switch (sTableType) {
+				case TableExtension.TABLETYPES.ANALYTICAL:
+					this._readonly = true;
+					this._treeMode = true;
+					break;
+				case TableExtension.TABLETYPES.TREE:
+					this._treeMode = true;
+					this._hasTreeColumn = true;
+					break;
+			}
+
+			oTable.addEventDelegate(this);
+
+			// Initialize Render extension
+			TableExtension.enrich(oTable, TableAccRenderExtension);
+
+			return "AccExtension";
 		},
 
 		/*
 		 * @see sap.ui.base.Object#destroy
 		 */
 		destroy : function() {
-			this._table.removeEventDelegate(this);
+			this.getTable().removeEventDelegate(this);
 
-			this._table = null;
 			this._readonly = false;
 			this._treeMode = false;
 			this._hasTreeColumn = false;
-			BaseObject.prototype.destroy.apply(this, arguments);
-		},
 
-		/*
-		 * @see sap.ui.base.Object#getInterface
-		 */
-		getInterface : function() { return this; },
+			TableExtension.prototype.destroy.apply(this, arguments);
+		},
 
 		/*
 		 * Provide protected access for TableACCRenderExtension
@@ -808,43 +817,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 	};
 
 	/*
-	 * Initializes the ACC Extension based on the type of the given Table control.
-	 * @public (Part of the API for Table control only!)
-	 */
-	TableAccExtension.enrich = function(oTable) {
-		var oExtension;
-
-		function _isInstanceOf(oControl, sType) {
-			var oType = sap.ui.require(sType);
-			return oType && (oControl instanceof oType);
-		}
-
-		if (_isInstanceOf(oTable, "sap/ui/table/TreeTable")) {
-			oExtension = new TableAccExtension(oTable, false, true, true);
-		} else if (_isInstanceOf(oTable, "sap/ui/table/AnalyticalTable")) {
-			oExtension = new TableAccExtension(oTable, true, true, false);
-		} else {
-			oExtension = new TableAccExtension(oTable, false, false, false);
-		}
-
-		oTable._getAccExtension = function(){ return oExtension; };
-		oTable._getAccRenderExtension = function(){ return TableAccRenderExtension; };
-	};
-
-	/*
 	 * Returns whether acc mode is switched on ore not.
 	 * @public (Part of the API for Table control only!)
 	 */
 	TableAccExtension.prototype.getAccMode = function() {
 		return this._accMode;
-	};
-
-	/*
-	 * Returns the related table control.
-	 * @public (Part of the API for Table control only!)
-	 */
-	TableAccExtension.prototype.getTable = function() {
-		return this._table;
 	};
 
 	/*

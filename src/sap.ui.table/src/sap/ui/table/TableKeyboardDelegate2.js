@@ -3,8 +3,8 @@
  */
 
 // Provides helper sap.ui.table.TableKeyboardDelegate2.
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableUtils'],
-	function(jQuery, BaseObject, TableUtils) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', './TableUtils'],
+	function(jQuery, BaseObject, TableExtension, TableUtils) {
 	"use strict";
 
 	/**

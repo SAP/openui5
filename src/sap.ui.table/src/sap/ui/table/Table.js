@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.table.Table.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', 'sap/ui/core/theming/Parameters', 'sap/ui/model/SelectionModel', 'sap/ui/model/ChangeReason', './Row', './library', 'sap/ui/core/IconPool', 'sap/ui/Device', './TableUtils', './TableAccExtension', './TableKeyboardExtension', 'jquery.sap.trace'],
-	function(jQuery, Control, ResizeHandler, Parameters, SelectionModel, ChangeReason, Row, library, IconPool, Device, TableUtils, TableAccExtension, TableKeyboardExtension /*,jQuerySAPTrace*/) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', 'sap/ui/core/theming/Parameters', 'sap/ui/model/SelectionModel', 'sap/ui/model/ChangeReason', './Row', './library', 'sap/ui/core/IconPool', 'sap/ui/Device', './TableUtils', './TableExtension', './TableAccExtension', './TableKeyboardExtension', 'jquery.sap.trace'],
+	function(jQuery, Control, ResizeHandler, Parameters, SelectionModel, ChangeReason, Row, library, IconPool, Device, TableUtils, TableExtension, TableAccExtension, TableKeyboardExtension /*,jQuerySAPTrace*/) {
 	"use strict";
 
 
@@ -622,8 +622,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		this._oResBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.table");
 		this._bRtlMode = sap.ui.getCore().getConfiguration().getRTL();
 
-		TableKeyboardExtension.enrich(this);
-		TableAccExtension.enrich(this); //Must be registered after keyboard to reach correct delegate order
+		this._attachExtensions();
 
 		this._bBindingLengthChanged = false;
 		this._mTimeouts = {};
@@ -729,6 +728,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 
 	/**
+	 * Attach table extensions
+	 * @private
+	 */
+	Table.prototype._attachExtensions = function() {
+		TableExtension.enrich(this, TableKeyboardExtension);
+		TableExtension.enrich(this, TableAccExtension); //Must be registered after keyboard to reach correct delegate order
+	};
+
+
+	/**
 	 * Termination of the Table control
 	 * @private
 	 */
@@ -743,13 +752,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		this._resetRowTemplate();
 
 		// destroy helpers
-		this._getKeyboardExtension().destroy();
-		this._getAccExtension().destroy();
+		this._detachExtensions();
 
 		// cleanup
 		this._cleanUpTimers();
 		this._detachEvents();
 	};
+
+
+	/**
+	 * Detach table extensions
+	 * @private
+	 */
+	Table.prototype._detachExtensions = function(){
+		this._getKeyboardExtension().destroy();
+		this._getAccExtension().destroy();
+	};
+
 
 	/**
 	 * theme changed
