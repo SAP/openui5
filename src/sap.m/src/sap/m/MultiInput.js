@@ -670,9 +670,8 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 
 		Input.prototype.onAfterRendering.apply(this, arguments);
 
-		if (!(this._bUseDialog && this._isMultiLineMode)) {
-			this._setContainerSizes();
-		}
+		this._setContainerSizes();
+
 	};
 
 	/**
