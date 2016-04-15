@@ -129,9 +129,8 @@ sap.ui.define([
 	 * @abstract
 	 * @alias sap.ui.model.odata.type.DateTimeBase
 	 * @author SAP SE
-	 * @class This is an abstract base class for the <a
-	 *   href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
-	 *   OData primitive types</a> <code>Edm.DateTime</code> and <code>Edm.DateTimeOffset</code>.
+	 * @class This is an abstract base class for the OData primitive types
+	 *   <code>Edm.DateTime</code> and <code>Edm.DateTimeOffset</code>.
 	 * @extends sap.ui.model.odata.type.ODataType
 	 * @public
 	 * @since 1.27.0
