@@ -1033,7 +1033,16 @@
 							"i18n2": {
 								"type": "sap.ui.model.resource.ResourceModel",
 								"uri": "./i18n.properties"
+							},
+
+							// This model should not get preloaded as the class is not declared.
+							// When creating the model on component init an error should get logged
+							// but all other models should still be created
+							"class-not-loaded": {
+								"type": "sap.ui.sample.model.MyModel",
+								"preload": true
 							}
+
 						}
 					}
 				};

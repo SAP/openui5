@@ -1749,9 +1749,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 
 							// Only create models:
 							//   - which are flagged for preload (mModelConfig.preload) or activated via internal URI param (see above)
-							//   - in case the model class is already loaded
-							if (mModelConfig.preload && jQuery.sap.isDeclared(mModelConfig.type, true)) {
-								mModelConfigurations[sModelName] = mModelConfig;
+							//   - in case the model class is already loaded (otherwise log a warning)
+							if (mModelConfig.preload) {
+								if (jQuery.sap.isDeclared(mModelConfig.type, true)) {
+									mModelConfigurations[sModelName] = mModelConfig;
+								} else {
+									jQuery.sap.log.warning("Can not preload model \"" + sModelName + "\" as required class has not been loaded: \"" + mModelConfig.type + "\"",
+										oManifest.getComponentName(), "sap.ui.core.Component");
+								}
 							}
 
 						}
