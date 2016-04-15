@@ -61,37 +61,6 @@ oConfig.factory = function(bAsync) {
 };
 asyncTestsuite("XMLView Factory", oConfig);
 
-QUnit.module("FlexProcessor");
-
-QUnit.test("function", function(assert) {
-	jQuery.sap.require("sap.ui.core.mvc.XMLView");
-	var done = assert.async(),
-		sXml = jQuery('#view').html(),
-		xmlDoc = jQuery.sap.parseXML(sXml).documentElement;
-
-	sap.ui.core.mvc.XMLView._flexProcessor = function(xmlDoc) {
-		return Promise.resolve(xmlDoc);
-	};
-	oSpy = sinon.spy(sap.ui.core.mvc.XMLView, "_flexProcessor");
-
-	return sap.ui.xmlview({
-		viewContent: sXml,
-		async: true
-	}).loaded().then(function(oView) {
-		assert.ok(oSpy.calledOnce);
-		assert.ok(oSpy.args[0][0].isEqualNode(xmlDoc));
-		var oInfo = oSpy.args[0][1];
-		assert.equal(oInfo.componentId, undefined, "no component id");
-		assert.equal(oInfo.viewId, oView.getId(), "view id set");
-		return oSpy.returnValues[0].then(function(xml) {
-			assert.ok(xmlDoc.isEqualNode(xml));
-			done();
-		});
-	});
-
-});
-
-
 </script>
 </head>
 <body>
