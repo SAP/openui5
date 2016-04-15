@@ -4,8 +4,11 @@
 
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/demokit/icex/model/Config"
-], function (Controller, Config) {
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/demokit/icex/model/Config",
+	"sap/ui/Device"], function (Controller, Filter, FilterOperator, JSONModel, Config, Device) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demokit.icex.view.Master", {
@@ -13,11 +16,11 @@ sap.ui.define([
 		onInit : function () {
 
 			// set ui model
-			var oModel = new sap.ui.model.json.JSONModel({
-				listMode : (sap.ui.Device.system.phone) ? "None" : "SingleSelectMaster",
-				listItemType : (sap.ui.Device.system.phone) ? "Active" : "Inactive",
+			var oModel = new JSONModel({
+				listMode : (Device.system.phone) ? "None" : "SingleSelectMaster",
+				listItemType : (Device.system.phone) ? "Active" : "Inactive",
 				listPageSize : Config.getPageSize(),
-				showFooter : !sap.ui.Device.system.phone
+				showFooter : !Device.system.phone
 			});
 			this.getView().setModel(oModel, "ui");
 
@@ -39,7 +42,7 @@ sap.ui.define([
 			// filter icon list
 			var binding = iconList.getBinding("items");
 			if (showSearch && binding !== undefined) {
-				var filterName = new sap.ui.model.Filter("name", sap.ui.model.FilterOperator.Contains, searchValue);
+				var filterName = new Filter("name", FilterOperator.Contains, searchValue);
 				binding.filter([filterName]);
 			}
 		},

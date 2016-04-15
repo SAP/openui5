@@ -4,8 +4,10 @@
 
 sap.ui.define([
 	"sap/ui/core/mvc/JSView",
-	"sap/ui/core/mvc/XMLView"
-], function (JSView, XMLView) {
+	"sap/ui/core/mvc/XMLView",
+	"sap/m/Shell",
+	"sap/m/SplitApp"
+], function (JSView, XMLView, Shell, SplitApp) {
 	"use strict";
 
 	sap.ui.jsview("sap.ui.demokit.icex.view.App", {
@@ -19,13 +21,13 @@ sap.ui.define([
 			// to avoid scrollbars on desktop the root view must be set to block display
 			this.setDisplayBlock(true);
 
-			this.app = new sap.m.SplitApp();
+			this.app = new SplitApp();
 
 			this.app.addMasterPage(sap.ui.xmlview("Master", "sap.ui.demokit.icex.view.Master"));
 
 			this.app.addDetailPage(sap.ui.xmlview("Welcome", "sap.ui.demokit.icex.view.Welcome"));
 
-			return new sap.m.Shell("Shell", {
+			return new Shell("Shell", {
 				title : "SAPUI5 Icon Explorer",
 				showLogout : false,
 				app : this.app,
