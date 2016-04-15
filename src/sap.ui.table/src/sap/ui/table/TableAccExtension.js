@@ -718,12 +718,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 			this._readonly = bReadOnly;
 			this._treeMode = bTreeMode;
 			this._hasTreeColumn = bHasTreeColumn;
+
+			this._table.addEventDelegate(this);
 		},
 
 		/*
 		 * @see sap.ui.base.Object#destroy
 		 */
 		destroy : function() {
+			this._table.removeEventDelegate(this);
+
 			this._table = null;
 			this._readonly = false;
 			this._treeMode = false;
@@ -746,7 +750,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 
 		/*
 		 * Delegate function for focusin event
-		 * @see TableKeyboardExtension#initItemNavigation and TableKeyboardExtension#destroyItemNavigation
 		 * @public (Part of the API for Table control only!)
 		 */
 		onfocusin : function(oEvent) {
@@ -763,7 +766,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 
 		/*
 		 * Delegate function for focusout event
-		 * @see TableKeyboardExtension#initItemNavigation and TableKeyboardExtension#destroyItemNavigation
 		 * @public (Part of the API for Table control only!)
 		 */
 		onfocusout: function(oEvent) {
