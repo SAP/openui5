@@ -6,9 +6,10 @@ sap.ui.define([
 		'jquery.sap.global',
 		'sap/ui/base/Object'
 	],
-	function($, UI5Object) {
+	function(jQuery, UI5Object) {
 		"use strict";
 
+		var $ = jQuery;
 
 		/**
 		 * Filters a set of controls or a single control by multiple conditions
