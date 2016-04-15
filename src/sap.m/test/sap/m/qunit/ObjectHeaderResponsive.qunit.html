@@ -188,6 +188,26 @@
 					oObjectHeader.destroy();
 				});
 
+				test("Title occupies the whole available space when no number", function() {
+					// arrange
+					var oObjectHeader = new sap.m.ObjectHeader({
+						title: "Full title test",
+						responsive: true
+					});
+	
+					// system under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+	
+					// Assert
+					var $objectHeader = oObjectHeader.$("titlediv");
+
+					ok($objectHeader.hasClass("sapMOHRTitleDivFull"), "title occupies the whole available space");
+
+					// Clean up
+					oObjectHeader.destroy();
+				});
+
 				test("Title arrow should be rendered", function () {
 					// Arrange
 					var oObjectHeader = createObjectHeader({
@@ -1068,6 +1088,7 @@
 					var $sTitle = oObjectHeader.$("title");
 					ok($sTitle.find( "h4" ), "Title has titleLevel H4");
 				});
+
 		</script>
 
 	</head>
