@@ -11,7 +11,7 @@
  * "4.4 Primitive Types").
  *
  * They can be used in any place where simple types are allowed (and the model representation
- * matches), but they are of course most valuable in bindings to a
+ * matches), but they are of course most valuable when used in bindings to a
  * {@link sap.ui.model.odata.v2.ODataModel} or {@link sap.ui.model.odata.v4.ODataModel}.
  *
  * <b>Example:</b>
