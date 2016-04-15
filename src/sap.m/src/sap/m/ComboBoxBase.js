@@ -151,7 +151,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 						busyIndicatorDelay: 300
 					}, mOptions);
 
-					this.aEventQueue.push(mOptions);
+					this.aMessageQueue.push(mOptions);
 
 					// sets up a timeout to know if the items are not loaded after a 300ms delay,
 					// to show the busy indicator in the text field, notice that if the items
@@ -202,11 +202,11 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 			}
 
 			// process the event queue
-			for (var i = 0, mCurrentMessage, mNextMessage, bIsCurrentMessageTheLast; i < this.aEventQueue.length; i++) {
-				mCurrentMessage = this.aEventQueue.shift(); // get and delete the first event from the queue
+			for (var i = 0, mCurrentMessage, mNextMessage, bIsCurrentMessageTheLast; i < this.aMessageQueue.length; i++) {
+				mCurrentMessage = this.aMessageQueue.shift(); // get and delete the first event from the queue
 				i--;
-				bIsCurrentMessageTheLast = (i + 1) === this.aEventQueue.length;
-				mNextMessage = bIsCurrentMessageTheLast ? null : this.aEventQueue[i + 1];
+				bIsCurrentMessageTheLast = (i + 1) === this.aMessageQueue.length;
+				mNextMessage = bIsCurrentMessageTheLast ? null : this.aMessageQueue[i + 1];
 
 				if (typeof mCurrentMessage.action === "function") {
 					if ((mCurrentMessage.name === "input") &&
@@ -259,7 +259,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 
 			this.bProcessingLoadItemsEvent = false;
 			this.iLoadItemsEventInitialProcessingTimeoutID = -1;
-			this.aEventQueue = [];
+			this.aMessageQueue = [];
 			this.bInitialBusyIndicatorState = this.getBusy();
 			this.iInitialBusyIndicatorDelay = this.getBusyIndicatorDelay();
 			this._bOnItemsLoadedScheduled = false;
@@ -275,7 +275,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 			}
 
 			clearTimeout(this.iLoadItemsEventInitialProcessingTimeoutID);
-			this.aEventQueue = [];
+			this.aMessageQueue = null;
 		};
 
 		/* =========================================================== */

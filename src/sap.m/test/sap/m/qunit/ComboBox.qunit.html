@@ -3387,13 +3387,13 @@
 			});
 
 			// arrange
-			oComboBox.aEventQueue.push(function() {});
+			oComboBox.aMessageQueue.push(function() {});
 
 			// act
 			oComboBox.destroy();
 
 			// assert
-			assert.strictEqual(oComboBox.aEventQueue.length, 0);
+			assert.ok(oComboBox.aMessageQueue === null);
 
 			// cleanup
 			oComboBox.destroy();
