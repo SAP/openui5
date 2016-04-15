@@ -2065,22 +2065,38 @@ sap.ui
 						path: new RegExp("\\$batch([?#].*)?"),
 						response: function(oXhr) {
 							jQuery.sap.log.debug("MockServer: incoming request for url: " + oXhr.url);
-							var fnResovleStatus = function(iStatusCode) {
-								switch (iStatusCode) {
+							var fnResovleStatus = function(oResponse) {
+								switch (oResponse.statusCode) {
 									case 200:
 										return "200 OK";
-									case 204:
-										return "204 No Content";
 									case 201:
 										return "201 Created";
+									case 204:
+										return "204 No Content";
 									case 400:
 										return "400 Bad Request";
+									case 401:
+										return "401 Unauthorized";
 									case 403:
 										return "403 Forbidden";
 									case 404:
 										return "404 Not Found";
+									case 405:
+										return "405 Method Not Allowed";
+									case 409:
+										return "409 Conflict";
+									case 412:
+										return "412 Precondition Failed";
+									case 415:
+										return "415 Unsupported Media Type";
+									case 500:
+										return "500 Internal Server Error";
+									case 501:
+										return "501 Not Implemented";
+									case 503:
+										return "503 Service Unavailable";
 									default:
-										return iStatusCode;
+										return oResponse.statusCode + " " + oResponse.status;
 								}
 							};
 							var fnBuildResponseString = function(oResponse, sContentType) {
@@ -2089,10 +2105,10 @@ sap.ui
 									sResponseData = oResponse.errorResponse;
 								}
 								if (sContentType) {
-									return "HTTP/1.1 " + fnResovleStatus(oResponse.statusCode) + "\r\nContent-Type: " + sContentType + "\r\nContent-Length: " +
+									return "HTTP/1.1 " + fnResovleStatus(oResponse) + "\r\nContent-Type: " + sContentType + "\r\nContent-Length: " +
 										sResponseData.length + "\r\ndataserviceversion: 2.0\r\n\r\n" + sResponseData + "\r\n";
 								}
-								return "HTTP/1.1 " + fnResovleStatus(oResponse.statusCode) + "\r\nContent-Type: application/json\r\nContent-Length: " +
+								return "HTTP/1.1 " + fnResovleStatus(oResponse) + "\r\nContent-Type: application/json\r\nContent-Length: " +
 									sResponseData.length + "\r\ndataserviceversion: 2.0\r\n\r\n" + sResponseData + "\r\n";
 							};
 							// START BATCH HANDLING
@@ -2152,7 +2168,7 @@ sap.ui
 											});
 
 											if (oResponse.statusCode === 400 || oResponse.statusCode === 404) {
-												var sError = "\r\nHTTP/1.1 " + fnResovleStatus(oResponse.statusCode) +
+												var sError = "\r\nHTTP/1.1 " + fnResovleStatus(oResponse) +
 													"\r\nContent-Type: application/json\r\nContent-Length: 0\r\n\r\n";
 												throw new Error(sError);
 											}
