@@ -447,7 +447,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 * @private
 	 */
 	ObjectHeaderRenderer._renderNumber = function(oRM, oOH) {
-		if (!oOH.getNumber() && !oOH.getAdditionalNumbers()) {
+		var numbers = oOH.getAdditionalNumbers();
+
+		if (!oOH.getNumber() && (numbers && !numbers.length)) {
 			return;
 		}
 
@@ -599,7 +601,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 * @private
 	 */
 	ObjectHeaderRenderer._renderFullTitle = function(oRM, oOH) {
-		if (!oOH.getNumber() && !oOH.getAdditionalNumbers()) {
+		var numbers = oOH.getAdditionalNumbers();
+
+		if (!oOH.getNumber() && (numbers && !numbers.length)) {
 			oRM.addClass("sapMOHTitleDivFull");
 		}
 	};

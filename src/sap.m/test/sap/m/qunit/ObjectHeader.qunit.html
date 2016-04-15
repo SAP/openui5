@@ -607,6 +607,45 @@
 		ok(ohOnlyProgressIndicator._hasStatus(), "Object header has rendered statuses if ProgressIndicator is only present");
 	});
 
+	test("Title gets all length when no number", function() {
+		// arrange
+		var oObjectHeader = new sap.m.ObjectHeader({
+			title: "Full title test"
+		});
+
+		// system under test
+		oObjectHeader.placeAt("objectHeaders");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		var $objectHeader = oObjectHeader.$("titlediv");
+
+		ok($objectHeader.hasClass("sapMOHTitleDivFull"), "title occupies the whole available space");
+
+		// cleanup
+		oObjectHeader.destroy();
+	});
+
+	test("Title gets all length when no number in Condensed OH", function() {
+		// arrange
+		var oObjectHeader = new sap.m.ObjectHeader({
+			title: "Full title test",
+			condensed: true
+		});
+
+		// system under test
+		oObjectHeader.placeAt("objectHeaders");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		var $objectHeader = oObjectHeader.$("titlediv");
+
+		ok($objectHeader.hasClass("sapMOHTitleDivFull"), "title occupies the whole available space");
+
+		// cleanup
+		oObjectHeader.destroy();
+	});
+
 	asyncTest("FlagMarkerSet", function() {
 
 		ohFlagAndFavoriteMarker.setMarkFlagged(true);
