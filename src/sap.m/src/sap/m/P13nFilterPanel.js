@@ -599,7 +599,7 @@ sap.ui.define([
 	};
 
 	P13nFilterPanel.prototype.addFilterItem = function(oFilterItem) {
-		this.addAggregation("filterItems", oFilterItem);
+		this.addAggregation("filterItems", oFilterItem, true);
 
 		if (!this._bIgnoreBindCalls) {
 			this._bUpdateRequired = true;
@@ -607,7 +607,7 @@ sap.ui.define([
 	};
 
 	P13nFilterPanel.prototype.insertFilterItem = function(oFilterItem, iIndex) {
-		this.insertAggregation("filterItems", oFilterItem, iIndex);
+		this.insertAggregation("filterItems", oFilterItem, iIndex, true);
 
 		if (!this._bIgnoreBindCalls) {
 			this._bUpdateRequired = true;
@@ -625,7 +625,7 @@ sap.ui.define([
 	};
 
 	P13nFilterPanel.prototype.removeFilterItem = function(oFilterItem) {
-		oFilterItem = this.removeAggregation("filterItems", oFilterItem);
+		oFilterItem = this.removeAggregation("filterItems", oFilterItem, true);
 
 		if (!this._bIgnoreBindCalls) {
 			this._bUpdateRequired = true;
@@ -635,7 +635,7 @@ sap.ui.define([
 	};
 
 	P13nFilterPanel.prototype.removeAllFilterItems = function() {
-		var aFilterItems = this.removeAllAggregation("filterItems");
+		var aFilterItems = this.removeAllAggregation("filterItems", true);
 
 		if (!this._bIgnoreBindCalls) {
 			this._bUpdateRequired = true;

@@ -61,6 +61,18 @@ sap.ui.define([
 		}
 	});
 
+	P13nGroupItem.prototype.setColumnKey = function(v) {
+		return this.setProperty("columnKey", v, true);
+	};
+
+	P13nGroupItem.prototype.setOperation = function(v) {
+		return this.setProperty("operation", v, true);
+	};
+
+	P13nGroupItem.prototype.setShowIfGrouped = function(v) {
+		return this.setProperty("showIfGrouped", v, true);
+	};
+
 	return P13nGroupItem;
 
 }, /* bExport= */true);

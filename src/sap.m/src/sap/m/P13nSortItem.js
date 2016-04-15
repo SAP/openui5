@@ -51,6 +51,14 @@ sap.ui.define([
 		}
 	});
 
+	P13nSortItem.prototype.setColumnKey = function(v) {
+		return this.setProperty("columnKey", v, true);
+	};
+
+	P13nSortItem.prototype.setOperation = function(v) {
+		return this.setProperty("operation", v, true);
+	};
+
 	return P13nSortItem;
 
 }, /* bExport= */true);

@@ -355,7 +355,7 @@ sap.ui.define([
 	};
 
 	P13nGroupPanel.prototype.addGroupItem = function(oGroupItem) {
-		this.addAggregation("groupItems", oGroupItem);
+		this.addAggregation("groupItems", oGroupItem, true);
 
 		if (!this._bIgnoreBindCalls) {
 			this._bUpdateRequired = true;
@@ -363,7 +363,7 @@ sap.ui.define([
 	};
 
 	P13nGroupPanel.prototype.insertGroupItem = function(oGroupItem, iIndex) {
-		this.insertAggregation("groupItems", oGroupItem, iIndex);
+		this.insertAggregation("groupItems", oGroupItem, iIndex, true);
 
 		if (!this._bIgnoreBindCalls) {
 			this._bUpdateRequired = true;
@@ -381,7 +381,7 @@ sap.ui.define([
 	};
 
 	P13nGroupPanel.prototype.removeGroupItem = function(oGroupItem) {
-		oGroupItem = this.removeAggregation("groupItems", oGroupItem);
+		oGroupItem = this.removeAggregation("groupItems", oGroupItem, true);
 
 		if (!this._bIgnoreBindCalls) {
 			this._bUpdateRequired = true;
@@ -391,7 +391,7 @@ sap.ui.define([
 	};
 
 	P13nGroupPanel.prototype.removeAllGroupItems = function() {
-		var aGroupItems = this.removeAllAggregation("groupItems");
+		var aGroupItems = this.removeAllAggregation("groupItems", true);
 
 		if (!this._bIgnoreBindCalls) {
 			this._bUpdateRequired = true;
