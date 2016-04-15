@@ -122,6 +122,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 					"xx-suppressDeactivationOfControllerCode" : { type : "boolean",  defaultValue : false }, //temporarily to suppress the deactivation of controller code in design mode
 					"xx-lesssupport"        : { type : "boolean",  defaultValue : false },
 					"xx-handleValidation"   : { type : "boolean",  defaultValue : false },
+					"xx-fiori2Adaptation"   : { type : "string[]",  defaultValue : [] },
 					"statistics"            : { type : "boolean",  defaultValue : false }
 			};
 
@@ -366,6 +367,16 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 				aLangs = aCoreLangs || [];
 			}
 			config['xx-supportedLanguages'] = aLangs;
+
+			//parse fiori 2 adaptation parameters
+			var vAdaptations = config['xx-fiori2Adaptation'];
+			if ( vAdaptations.length === 0 || (vAdaptations.length === 1 && vAdaptations[0] === 'false') ) {
+				vAdaptations = false;
+			} else if ( vAdaptations.length === 1 && vAdaptations[0] === 'true' ) {
+				vAdaptations = true;
+			}
+
+			config['xx-fiori2Adaptation'] = vAdaptations;
 
 			// determine default for binding syntax
 			if ( config["bindingSyntax"] === "default" ) {
@@ -790,6 +801,16 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		getRTL : function () {
 			// if rtl has not been set (still null), return the rtl mode derived from the language
 			return this.rtl === null ? this.derivedRTL : this.rtl;
+		},
+
+		/**
+		 * Returns whether the Fiori2Adaptation is on
+		 * @return {boolean|string} false - no adaptation, true - full adaptation, comma-separated list - partial adaptation
+		 * Possible values: style, collapse, title, back, hierarchy
+		 * @public
+		 */
+		getFiori2Adaptation : function () {
+			return this["xx-fiori2Adaptation"];
 		},
 
 		/**
