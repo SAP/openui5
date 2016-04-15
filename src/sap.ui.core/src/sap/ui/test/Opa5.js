@@ -517,6 +517,15 @@ sap.ui.define([
 		Opa5.emptyQueue = Opa.emptyQueue;
 
 		/**
+		 * Clears the queue and stops running tests so that new tests can be run
+		 * See {@link sap.ui.test.Opa#.stopQueue} for the description
+		 * @returns {boolean} If the clear was successful, true will be returned. Otherwise false.
+		 * @public
+		 * @function
+		 */
+		Opa5.stopQueue = Opa.stopQueue;
+
+		/**
 		 * Gives access to a singleton object you can save values in.
 		 * See {@link sap.ui.test.Opa#.getContext} for the description
 		 * @since 1.29.0
