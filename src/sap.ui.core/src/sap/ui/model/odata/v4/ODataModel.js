@@ -51,15 +51,15 @@ sap.ui.define([
 	 *   batch request which is sent automatically before rendering; '$direct' sends requests
 	 *   directly without batch; other values result in an error
 	 * @param {string} mParameters.serviceUrl
-	 *   Root URL of the service to request data from. Must end with a forward slash according to
-	 *   OData V4 specification ABNF, rule "serviceRoot" unless you append OData custom query
-	 *   options to the service root URL separated with a "?", e.g. "/MyService/?custom=foo". See
-	 *   parameter <code>mParameters.serviceUrlParams</code> for details on custom query options.
+	 *   Root URL of the service to request data from. The path part of the URL must end with a
+	 *   forward slash according to OData V4 specification ABNF, rule "serviceRoot". You may append
+	 *   OData custom query options to the service root URL separated with a "?",
+	 *   e.g. "/MyService/?custom=foo". See parameter <code>mParameters.serviceUrlParams</code> for
+	 *   details on custom query options.
 	 * @param {object} [mParameters.serviceUrlParams]
 	 *   Map of OData custom query options to be used in each data service request for this model,
 	 *   see specification "OData Version 4.0 Part 2: URL Conventions", "5.2 Custom Query Options".
-	 *   OData system query options
-	 *   and OData parameter aliases lead to an error.
+	 *   OData system query options and OData parameter aliases lead to an error.
 	 *   Query options from this map overwrite query options with the same name specified via the
 	 *   <code>sServiceUrl</code> parameter.
 	 * @param {string} mParameters.synchronizationMode
