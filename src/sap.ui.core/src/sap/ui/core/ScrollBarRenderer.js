@@ -46,6 +46,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		var oBSS = jQuery.sap.scrollbarSize(sScrollBarTouchClass);
 		var sWidth = oBSS.width;
 		var sHeight = oBSS.height;
+		// Fix for Fiory Client and Edge in Mobile Mode on Win8 and Win10
+		if (Device.browser.edge) {
+			if (!sWidth) {
+				sWidth = "15";
+			}
+			if (!sHeight) {
+				sHeight = "15";
+			}
+		}
 
 		if (bVertical) {
 			// First div. <div style="overflow:hidden;width:16px;height:200px">
