@@ -91,8 +91,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 				// no default
 			}
 
-			if (oSelect._isRequiredSelectElement()) {
-				this.renderSelectElement(oRm, oSelect);
+			var oList = oSelect.getList();
+
+			if (oSelect._isShadowListRequired() && oList) {
+				oRm.renderControl(oList);
+			}
+
+			if (oSelect.getName()) {
+				this.renderInput(oRm, oSelect);
 			}
 
 			oRm.write("</div>");
@@ -160,56 +166,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 			});
 		};
 
-		/**
-		 * Renders the HTMLSelectElement for the select control, using the provided {@link sap.ui.core.RenderManager}.
-		 *
-		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.m.Select} oSelect An object representation of the select that should be rendered.
-		 * @private
-		 */
-		SelectRenderer.renderSelectElement = function(oRm, oSelect) {
-			var sName = oSelect.getName(),
-				oSelectedItem = oSelect.getSelectedItem(),
-				sSelectedItemText = oSelectedItem ? oSelectedItem.getText() : "";
-
-			oRm.write('<select class="' + SelectRenderer.CSS_CLASS + "Native" + '"');
-
-			if (sName) {
-				oRm.writeAttributeEscaped("name", sName);
-			}
-
-			oRm.writeAttribute("id", oSelect.getId() + "-select");
+		SelectRenderer.renderInput = function(oRm, oSelect) {
+			oRm.write("<input hidden");
+			oRm.writeAttribute("id", oSelect.getId() + "-input");
+			oRm.addClass(SelectRenderer.CSS_CLASS + "Input");
 			oRm.writeAttribute("aria-hidden", "true");
 			oRm.writeAttribute("tabindex", "-1");
-			oRm.write(">");
-			this.renderOptions(oRm, oSelect, sSelectedItemText);
-			oRm.write("</select>");
-		};
 
-		/**
-		 * Renders the HTMLOptionElement(s) for the select control, using the provided {@link sap.ui.core.RenderManager}.
-		 *
-		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.m.Select} oSelect An object representation of the select that should be rendered.
-		 * @param {string} sSelectedItemText
-		 * @private
-		 */
-		SelectRenderer.renderOptions = function(oRm, oSelect, sSelectedItemText) {
-			var aItems = oSelect.getItems(),
-				aItemsLength = aItems.length,
-				i = 0;
-
-			for (; i < aItemsLength; i++) {
-				oRm.write("<option>");
-				oRm.writeEscaped(aItems[i].getText());
-				oRm.write("</option>");
+			if (!oSelect.getEnabled()) {
+				oRm.write("disabled");
 			}
 
-			if (aItemsLength === 0) {
-				oRm.write("<option>");
-				oRm.writeEscaped(sSelectedItemText);
-				oRm.write("</option>");
-			}
+			oRm.writeClasses();
+			oRm.writeAttributeEscaped("name", oSelect.getName());
+			oRm.writeAttributeEscaped("value", oSelect.getSelectedKey());
+			oRm.write("/>");
 		};
 
 		/**

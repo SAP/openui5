@@ -8,18 +8,17 @@
 /* ------------------------------ */
 
 .sapMSlt > .sapMSltLabel,
-.sapMSltNative {
+.sapMSlt .sapMSelectListItemBase {
 	padding: 0 0.625rem;
 }
 
 .sapMSltWithArrow > .sapMSltLabel,
-.sapMSltWithArrow > .sapMSltNative {
+.sapMSltWithArrow .sapMSelectListItemBase {
 	padding: 0 3rem 0 0.625rem;
 }
 
 .sapMSlt > .sapMSltLabel,
-.sapMSltArrow,
-.sapMSltNative {
+.sapMSltArrow {
 	height: 100%;
 }
 
@@ -142,15 +141,6 @@ html.sap-desktop .sapMSlt:not(.sapMSltDisabled):focus {
 
 .sapMSltPressed > .sapMSltArrow::before {
 	color: @sapUiContentContrastIconColor;
-}
-
-/* ------------------------------ */
-/* Native HTML select element     */
-/* ------------------------------ */
-
-.sapMSltNative {
-	visibility: hidden;
-	font-size: 0.9375rem;
 }
 
 /* ====================================================== */
@@ -300,9 +290,9 @@ div.sapMSltPicker .sapMDialogScrollCont {
 /* ------------------------------ */
 
 .sapUiSizeCompact .sapMSltLabel,
-.sapUiSizeCompact .sapMSltNative,
+.sapUiSizeCompact .sapMSlt .sapMSelectListItemBase,
 .sapUiSizeCondensed .sapUiTableCell .sapMSltLabel,
-.sapUiSizeCondensed .sapUiTableCell .sapMSltNative {
+.sapUiSizeCondensed .sapUiTableCell .sapMSlt .sapMSelectListItemBase {
 	padding-right: 2.5rem;
 	padding-left: 0.5rem;
 }
