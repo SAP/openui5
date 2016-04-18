@@ -35,14 +35,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._SyncPromise", {
 		beforeEach : function () {
-			this.oSandbox = sinon.sandbox.create();
-			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
+			this.oLogMock = sinon.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		},
 
 		afterEach : function () {
-			this.oSandbox.verifyAndRestore();
+			this.oLogMock.verify();
 		}
 	});
 
@@ -56,8 +55,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("access to state and result: fulfills", function (assert) {
-		var done = assert.async(),
-			oNewPromise,
+		var oNewPromise,
 			oPromise = Promise.resolve(42),
 			oSyncPromise;
 
@@ -70,7 +68,6 @@ sap.ui.require([
 
 		oNewPromise = oSyncPromise.then(function (iResult) {
 			assertFulfilled(assert, oSyncPromise, iResult);
-			done(); // test completes once returned promise is settled AND done is called
 		});
 
 		assertPending(assert, oNewPromise);
@@ -78,6 +75,7 @@ sap.ui.require([
 		return oPromise.then(function (iResult) {
 			// _SyncPromise fulfills as soon as Promise fulfills
 			assertFulfilled(assert, oSyncPromise, iResult);
+			return oNewPromise;
 		});
 	});
 
@@ -116,8 +114,7 @@ sap.ui.require([
 		{wrap : true, reject : true}
 	].forEach(function (oFixture) {
 		QUnit.test("sync -> async: " + JSON.stringify(oFixture), function (assert) {
-			var done = assert.async(),
-				oPromise = oFixture.reject ? Promise.reject() : Promise.resolve(),
+			var oPromise = oFixture.reject ? Promise.reject() : Promise.resolve(),
 				oSyncPromise = _SyncPromise.resolve(oPromise);
 
 			return oPromise[oFixture.reject ? "catch" : "then"](function () {
@@ -151,10 +148,9 @@ sap.ui.require([
 
 				assert.notStrictEqual(oNewSyncPromise, oResult, "'then' returns a new promise");
 
-				oNewSyncPromise.then(function (vResult) {
+				return oNewSyncPromise.then(function (vResult) {
 					assertFulfilled(assert, oNewSyncPromise, oFulfillment);
 					assert.strictEqual(vResult, oFulfillment);
-					done();
 				});
 			});
 		});
@@ -221,8 +217,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("access to state and result: rejects", function (assert) {
-		var done = assert.async(),
-			oNewPromise,
+		var oNewPromise,
 			oReason = {},
 			oPromise = Promise.reject(oReason),
 			oSyncPromise;
@@ -233,16 +228,15 @@ sap.ui.require([
 
 		oNewPromise = oSyncPromise.then(function () {
 			assert.ok(false);
-			done();
 		}, function (vReason) {
 			assert.strictEqual(vReason, oReason);
-			done();
 		});
 
 		assertPending(assert, oNewPromise);
 
 		return oPromise.catch(function () {
 			assertRejected(assert, oSyncPromise, oReason);
+			return oNewPromise;
 		});
 	});
 
@@ -412,7 +406,7 @@ sap.ui.require([
 			fnOnRejected = function () {},
 			oSyncPromise = _SyncPromise.resolve();
 
-		this.oSandbox.mock(oSyncPromise).expects("then")
+		this.mock(oSyncPromise).expects("then")
 			.withExactArgs(undefined, fnOnRejected)
 			.returns(oNewPromise);
 
@@ -446,7 +440,7 @@ sap.ui.require([
 		fnGet = _SyncPromise.createGetMethod("fetch");
 
 		assert.strictEqual(fnGet.apply(oContext, aArguments), oResult);
-		this.oSandbox.mock(oSyncPromise).expects("isFulfilled").returns(false);
+		this.mock(oSyncPromise).expects("isFulfilled").returns(false);
 		assert.strictEqual(fnGet.apply(oContext, aArguments), undefined);
 	});
 
@@ -463,7 +457,7 @@ sap.ui.require([
 				}
 			},
 			fnGet,
-			oSyncPromiseMock = this.oSandbox.mock(oSyncPromise);
+			oSyncPromiseMock = this.mock(oSyncPromise);
 
 		// code under test
 		fnGet = _SyncPromise.createGetMethod("fetch", true);
@@ -480,7 +474,7 @@ sap.ui.require([
 
 		// verify and restore
 		oSyncPromiseMock.verify();
-		oSyncPromiseMock = this.oSandbox.mock(oSyncPromise);
+		oSyncPromiseMock = this.mock(oSyncPromise);
 
 		// rejected
 		oSyncPromiseMock.expects("isFulfilled").returns(false);
@@ -504,7 +498,7 @@ sap.ui.require([
 			},
 			fnRequest;
 
-		this.oSandbox.mock(Promise).expects("resolve")
+		this.mock(Promise).expects("resolve")
 			.withExactArgs(sinon.match.same(oSyncPromise)).returns(oResult);
 
 		// code under test

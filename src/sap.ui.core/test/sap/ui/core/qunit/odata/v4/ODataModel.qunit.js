@@ -110,10 +110,10 @@ sap.ui.require([
 			return new ODataModel({synchronizationMode : "None", useBatch : true});
 		}, new Error("Unsupported parameter: useBatch"));
 
-		this.oSandbox.mock(_ODataHelper).expects("buildQueryOptions")
+		this.mock(_ODataHelper).expects("buildQueryOptions")
 			.withExactArgs(null, {}, null, true)
 			.returns(mModelOptions);
-		this.oSandbox.mock(_MetadataRequestor).expects("create")
+		this.mock(_MetadataRequestor).expects("create")
 			.withExactArgs({"Accept-Language" : "ab-CD"}, sinon.match.same(mModelOptions))
 			.returns(oMetadataRequestor);
 
@@ -138,7 +138,7 @@ sap.ui.require([
 		var oModel,
 			mModelOptions = {};
 
-		this.oSandbox.mock(_ODataHelper).expects("buildQueryOptions")
+		this.mock(_ODataHelper).expects("buildQueryOptions")
 			.withExactArgs(null, {"sap-client" : "111"}, null, true)
 			.returns(mModelOptions);
 
@@ -193,7 +193,7 @@ sap.ui.require([
 		var oModel,
 			oRequestor = {};
 
-		this.oSandbox.mock(_Requestor).expects("create")
+		this.mock(_Requestor).expects("create")
 			.withExactArgs(getServiceUrl(), {"Accept-Language" : "ab-CD"}, {"sap-client" : "123"})
 			.returns(oRequestor);
 
@@ -254,7 +254,7 @@ sap.ui.require([
 				oModel = createModel(sQuery),
 				oPromise = {};
 
-			this.oSandbox.mock(oModel.oRequestor).expects("request")
+			this.mock(oModel.oRequestor).expects("request")
 				//TODO remove usage of oModel._sQuery once cache is used for all CRUD operations
 				.withExactArgs("POST", "EMPLOYEES" + oModel._sQuery, undefined, null,
 					sinon.match.same(oEmployeeData)).returns(oPromise);
@@ -271,13 +271,13 @@ sap.ui.require([
 				sPath = "/EMPLOYEES/0",
 				oContext = Context.create(oModel, null, sPath);
 
-			this.oSandbox.mock(oModel.oRequestor).expects("request")
+			this.mock(oModel.oRequestor).expects("request")
 				.withExactArgs("DELETE", "EMPLOYEES(ID='1')" + oModel._sQuery, undefined,
 					{"If-Match" : sEtag})
 				.returns(Promise.resolve(undefined));
-			this.oSandbox.mock(oContext).expects("fetchValue").withExactArgs("@odata.etag")
+			this.mock(oContext).expects("fetchValue").withExactArgs("@odata.etag")
 				.returns(Promise.resolve(sEtag));
-			this.oSandbox.stub(oModel.getMetaModel(), "requestCanonicalUrl",
+			this.stub(oModel.getMetaModel(), "requestCanonicalUrl",
 				function (sServiceUrl, sPath0, oContext0) {
 					assert.strictEqual(sServiceUrl, "",
 						"no service URL, return resource path only");
@@ -304,11 +304,11 @@ sap.ui.require([
 				oContext = Context.create(oModel, null, "/EMPLOYEES/0");
 
 			oError.status = iStatus;
-			this.oSandbox.mock(oContext).expects("fetchValue").withExactArgs("@odata.etag")
+			this.mock(oContext).expects("fetchValue").withExactArgs("@odata.etag")
 				.returns(Promise.resolve('W/""'));
-			this.oSandbox.stub(oModel.getMetaModel(), "requestCanonicalUrl")
+			this.stub(oModel.getMetaModel(), "requestCanonicalUrl")
 				.returns(Promise.resolve(getServiceUrl("/EMPLOYEES(ID='1')")));
-			this.oSandbox.stub(oModel.oRequestor, "request")
+			this.stub(oModel.oRequestor, "request")
 				.returns(Promise.reject(oError));
 
 			return oModel.remove(oContext)
@@ -327,7 +327,7 @@ sap.ui.require([
 		var oModel = createModel(),
 			oEntityContext = Context.create(oModel, null, "/EMPLOYEES/42"),
 			oMetaModel = oModel.getMetaModel(),
-			oMetaModelMock = this.oSandbox.mock(oMetaModel);
+			oMetaModelMock = this.mock(oMetaModel);
 
 		oMetaModelMock.expects("requestCanonicalUrl")
 			.withExactArgs("/", oEntityContext.getPath(), sinon.match.same(oEntityContext))
@@ -344,7 +344,7 @@ sap.ui.require([
 			oModel = createModel(),
 			oNotAnEntityContext = Context.create(oModel, null, "/EMPLOYEES/42/Name"),
 			oMetaModel = oModel.getMetaModel(),
-			oMetaModelMock = this.oSandbox.mock(oMetaModel);
+			oMetaModelMock = this.mock(oMetaModel);
 
 		oMetaModelMock.expects("requestCanonicalUrl")
 			.returns(Promise.reject(oError));
@@ -361,11 +361,11 @@ sap.ui.require([
 			oModel2 = createModel(),
 			oEntityContext = Context.create(oModel2, null, "/EMPLOYEES/42"),
 			oMetaModel = oModel.getMetaModel(),
-			oMetaModelMock = this.oSandbox.mock(oMetaModel);
+			oMetaModelMock = this.mock(oMetaModel);
 
 		oMetaModelMock.expects("requestCanonicalUrl").returns(Promise.resolve(""));
 		if (jQuery.sap.log.getLevel() > jQuery.sap.log.LogLevel.ERROR) { // not for minified code
-			this.oSandbox.mock(jQuery.sap).expects("assert")
+			this.mock(jQuery.sap).expects("assert")
 				.withExactArgs(false, "oEntityContext must belong to this model");
 		}
 
@@ -375,7 +375,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("refresh", function (assert) {
 		var oError = new Error(),
-			oHelperMock = this.oSandbox.mock(_ODataHelper),
+			oHelperMock = this.mock(_ODataHelper),
 			oModel = createModel(),
 			oListBinding = oModel.bindList("/TEAMS"),
 			oListBinding2 = oModel.bindList("/TEAMS"),
@@ -383,11 +383,11 @@ sap.ui.require([
 
 		oListBinding.attachChange(function () {});
 		oPropertyBinding.attachChange(function () {});
-		this.oSandbox.mock(oListBinding).expects("refresh").withExactArgs("myGroup");
+		this.mock(oListBinding).expects("refresh").withExactArgs("myGroup");
 		//check: only bindings with change event handler are refreshed
-		this.oSandbox.mock(oListBinding2).expects("refresh").never();
+		this.mock(oListBinding2).expects("refresh").never();
 		//check: no refresh on binding with relative path
-		this.oSandbox.mock(oPropertyBinding).expects("refresh").never();
+		this.mock(oPropertyBinding).expects("refresh").never();
 		oHelperMock.expects("checkGroupId").withExactArgs("myGroup");
 
 		// code under test
@@ -430,8 +430,8 @@ sap.ui.require([
 		var bDataRequested = false,
 			oModel = createModel();
 
-		this.oSandbox.mock(sap.ui.getCore()).expects("addPrerenderingTask").never();
-		this.oSandbox.mock(oModel.oRequestor).expects("submitBatch").never();
+		this.mock(sap.ui.getCore()).expects("addPrerenderingTask").never();
+		this.mock(oModel.oRequestor).expects("submitBatch").never();
 
 		// code under test
 		oModel.addedRequestToGroup("$direct");
@@ -452,10 +452,10 @@ sap.ui.require([
 			fnGroupSentCallback2 = function () {},
 			fnSubmitAuto = function () {};
 
-		this.oSandbox.mock(oModel._submitBatch).expects("bind")
+		this.mock(oModel._submitBatch).expects("bind")
 			.withExactArgs(sinon.match.same(oModel), "$auto")
 			.returns(fnSubmitAuto);
-		this.oSandbox.mock(sap.ui.getCore()).expects("addPrerenderingTask")
+		this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
 			.withExactArgs(fnSubmitAuto);
 
 		// code under test
@@ -477,7 +477,7 @@ sap.ui.require([
 			fnGroupSentCallback = {},
 			fnGroupSentCallback2 = {};
 
-		this.oSandbox.mock(sap.ui.getCore()).expects("addPrerenderingTask").never();
+		this.mock(sap.ui.getCore()).expects("addPrerenderingTask").never();
 
 		// code under test
 		oModel.addedRequestToGroup("groupId");
@@ -499,7 +499,7 @@ sap.ui.require([
 			fnCallback2 = sinon.spy(),
 			oModel = createModel();
 
-		this.oSandbox.mock(oModel.oRequestor).expects("submitBatch").withExactArgs("groupId")
+		this.mock(oModel.oRequestor).expects("submitBatch").withExactArgs("groupId")
 			.returns(Promise.resolve(oBatchResult));
 		oModel.mCallbacksByGroupId["groupId"] = [fnCallback1, fnCallback2];
 
@@ -518,7 +518,7 @@ sap.ui.require([
 			oModel = createModel();
 
 		oModel.addedRequestToGroup("groupId");
-		this.oSandbox.mock(oModel.oRequestor).expects("submitBatch")
+		this.mock(oModel.oRequestor).expects("submitBatch")
 			.withExactArgs("groupId")
 			.returns(Promise.reject(oExpectedError));
 		this.oLogMock.expects("error")
@@ -538,8 +538,8 @@ sap.ui.require([
 			oReturn,
 			oSubmitPromise = {};
 
-		this.oSandbox.mock(_ODataHelper).expects("checkGroupId").withExactArgs("groupId", true);
-		this.oSandbox.mock(oModel).expects("_submitBatch").withExactArgs("groupId")
+		this.mock(_ODataHelper).expects("checkGroupId").withExactArgs("groupId", true);
+		this.mock(oModel).expects("_submitBatch").withExactArgs("groupId")
 			.returns(oSubmitPromise);
 
 		// code under test
@@ -553,8 +553,8 @@ sap.ui.require([
 		var oError = new Error(),
 			oModel = createModel();
 
-		this.oSandbox.mock(oModel).expects("_submitBatch").never();
-		this.oSandbox.mock(_ODataHelper).expects("checkGroupId").withExactArgs("$auto", true)
+		this.mock(oModel).expects("_submitBatch").never();
+		this.mock(_ODataHelper).expects("checkGroupId").withExactArgs("$auto", true)
 			.throws(oError);
 
 		assert.throws(function () {
@@ -658,7 +658,7 @@ sap.ui.require([
 
 			this.oLogMock.expects("error").withExactArgs(sLogMessage, oFixture.message, sClassName)
 				.twice();
-			this.oSandbox.mock(oMessageManager).expects("addMessages")
+			this.mock(oMessageManager).expects("addMessages")
 				.once()// add each error only once to the MessageManager
 				.withExactArgs(sinon.match(function (oMessage) {
 					return oMessage instanceof Message
@@ -677,7 +677,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("destroy", function (assert) {
 		var oModel = createModel(),
-			oModelPrototypeMock = this.oSandbox.mock(Model.prototype);
+			oModelPrototypeMock = this.mock(Model.prototype);
 
 		oModelPrototypeMock.expects("destroy").on(oModel).withExactArgs(1, 2, 3).returns("foo");
 		oModelPrototypeMock.expects("destroy").on(oModel.getMetaModel()).withExactArgs();

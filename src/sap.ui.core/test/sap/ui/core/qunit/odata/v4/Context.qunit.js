@@ -14,14 +14,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.Context", {
 		beforeEach : function () {
-			this.oSandbox = sinon.sandbox.create();
-			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
+			this.oLogMock = sinon.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		},
 
 		afterEach : function () {
-			this.oSandbox.verifyAndRestore();
+			this.oLogMock.verify();
 		}
 	});
 
@@ -78,7 +77,7 @@ sap.ui.require([
 			oResult = {},
 			sPath = "bar";
 
-		this.oSandbox.mock(oBinding).expects("fetchValue").withExactArgs(sPath, 42)
+		this.mock(oBinding).expects("fetchValue").withExactArgs(sPath, 42)
 			.returns(oResult);
 
 		assert.strictEqual(oContext.fetchValue(sPath), oResult);
@@ -91,7 +90,7 @@ sap.ui.require([
 				oPromise,
 				oSyncPromise = _SyncPromise.resolve(Promise.resolve(oData));
 
-			this.oSandbox.mock(oContext).expects("fetchValue").withExactArgs("bar")
+			this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 				.returns(oSyncPromise);
 
 			//code under test
@@ -115,7 +114,7 @@ sap.ui.require([
 				oResult,
 				oSyncPromise = _SyncPromise.resolve(oData);
 
-			this.oSandbox.mock(oContext).expects("fetchValue").withExactArgs("bar")
+			this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 				.returns(oSyncPromise);
 
 			//code under test
@@ -133,7 +132,7 @@ sap.ui.require([
 		var oContext = Context.create(null, null, "/foo"),
 			oSyncPromise = _SyncPromise.resolve(Promise.resolve(42));
 
-		this.oSandbox.mock(oContext).expects("fetchValue").withExactArgs("bar")
+		this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 			.returns(oSyncPromise);
 
 		//code under test
@@ -146,7 +145,7 @@ sap.ui.require([
 			var oContext = Context.create(null, null, "/foo"),
 				oSyncPromise = _SyncPromise.resolve(vResult);
 
-			this.oSandbox.mock(oContext).expects("fetchValue").withExactArgs("bar")
+			this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 				.returns(oSyncPromise);
 
 			//code under test
@@ -159,8 +158,8 @@ sap.ui.require([
 		var oContext = Context.create(null, null, "/foo", 1),
 			oSyncPromise = _SyncPromise.resolve({});
 
-		this.oSandbox.mock(oContext).expects("getPath").withExactArgs("bar").returns("~");
-		this.oSandbox.mock(oContext).expects("fetchValue").withExactArgs("bar")
+		this.mock(oContext).expects("getPath").withExactArgs("bar").returns("~");
+		this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 			.returns(oSyncPromise);
 
 		//code under test
@@ -174,7 +173,7 @@ sap.ui.require([
 		var oContext = Context.create(null, null, "/foo"),
 			oSyncPromise = _SyncPromise.resolve(Promise.resolve(42));
 
-		this.oSandbox.mock(oContext).expects("fetchValue").withExactArgs("bar")
+		this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 			.returns(oSyncPromise);
 
 		//code under test
@@ -187,7 +186,7 @@ sap.ui.require([
 			oPromise = Promise.reject("read error"),
 			oSyncPromise = _SyncPromise.resolve(oPromise);
 
-		this.oSandbox.mock(oContext).expects("fetchValue").withExactArgs("bar")
+		this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 			.returns(oSyncPromise);
 
 		return oPromise["catch"](function () {
@@ -215,13 +214,13 @@ sap.ui.require([
 				oSyncPromiseType = _SyncPromise.resolve(oResolvedType),
 				oSyncPromiseValue = _SyncPromise.resolve(1234);
 
-			this.oSandbox.mock(oContext).expects("getPath").withExactArgs("bar").returns("~");
-			this.oSandbox.mock(oContext).expects("fetchValue").withExactArgs("bar")
+			this.mock(oContext).expects("getPath").withExactArgs("bar").returns("~");
+			this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 				.returns(oSyncPromiseValue);
-			this.oSandbox.mock(oMetaModel).expects("fetchUI5Type").withExactArgs("~")
+			this.mock(oMetaModel).expects("fetchUI5Type").withExactArgs("~")
 				.returns(oSyncPromiseType);
 			if (bTypeIsResolved) {
-				this.oSandbox.mock(oType).expects("formatValue").withExactArgs(1234, "string")
+				this.mock(oType).expects("formatValue").withExactArgs(1234, "string")
 					.returns("1,234");
 			}
 
@@ -237,7 +236,7 @@ sap.ui.require([
 			var oContext = Context.create(null, null, "/foo"),
 				oSyncPromise = _SyncPromise.resolve(Promise.resolve(vResult));
 
-			this.oSandbox.mock(oContext).expects("fetchValue").withExactArgs("bar")
+			this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 				.returns(oSyncPromise);
 
 			//code under test
@@ -252,7 +251,7 @@ sap.ui.require([
 		var oContext = Context.create(null, null, "/foo", 1),
 			oSyncPromise = _SyncPromise.resolve(Promise.resolve({}));
 
-		this.oSandbox.mock(oContext).expects("fetchValue").withExactArgs("bar")
+		this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 			.returns(oSyncPromise);
 
 		//code under test
@@ -280,11 +279,11 @@ sap.ui.require([
 			oSyncPromiseType = _SyncPromise.resolve(Promise.resolve(oType)),
 			oSyncPromiseValue = _SyncPromise.resolve(1234);
 
-		this.oSandbox.mock(oContext).expects("fetchValue").withExactArgs("bar")
+		this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 			.returns(oSyncPromiseValue);
-		this.oSandbox.mock(oMetaModel).expects("fetchUI5Type").withExactArgs("/foo/bar")
+		this.mock(oMetaModel).expects("fetchUI5Type").withExactArgs("/foo/bar")
 			.returns(oSyncPromiseType);
-		this.oSandbox.mock(oType).expects("formatValue").withExactArgs(1234, "string")
+		this.mock(oType).expects("formatValue").withExactArgs(1234, "string")
 			.returns("1,234");
 
 		//code under test
@@ -308,10 +307,10 @@ sap.ui.require([
 				sPropertyName = "bar",
 				vValue = Math.PI;
 
-			this.oSandbox.mock(oModel).expects("requestCanonicalPath")
+			this.mock(oModel).expects("requestCanonicalPath")
 				.withExactArgs(sinon.match.same(oContext))
 				.returns(Promise.resolve("/edit('URL')"));
-			this.oSandbox.mock(oBinding).expects("updateValue")
+			this.mock(oBinding).expects("updateValue")
 				.withExactArgs("up", sPropertyName, vValue, "edit('URL')",
 					iIndex === undefined ? undefined : "" + iIndex)
 				.returns(Promise.resolve(oResult));
@@ -333,10 +332,10 @@ sap.ui.require([
 			oContext = Context.create(oModel, oBinding, "/foo", 0),
 			oError = new Error();
 
-		this.oSandbox.mock(oModel).expects("requestCanonicalPath")
+		this.mock(oModel).expects("requestCanonicalPath")
 			.withExactArgs(sinon.match.same(oContext))
 			.returns(Promise.reject(oError)); // rejected!
-		this.oSandbox.mock(oBinding).expects("updateValue").never();
+		this.mock(oBinding).expects("updateValue").never();
 
 		return oContext.updateValue("up", "bar", Math.PI).then(function (oResult0) {
 			assert.ok(false);
@@ -355,7 +354,7 @@ sap.ui.require([
 			sPropertyName = "bar",
 			vValue = Math.PI;
 
-		this.oSandbox.mock(oBinding).expects("updateValue")
+		this.mock(oBinding).expects("updateValue")
 			.withExactArgs("up", sPropertyName, vValue, "edit('URL')", "SO_2_SOITEM/42")
 			.returns(oResult);
 
@@ -374,7 +373,7 @@ sap.ui.require([
 			sPropertyName = "bar",
 			vValue = Math.PI;
 
-		this.oSandbox.mock(oBinding).expects("updateValue")
+		this.mock(oBinding).expects("updateValue")
 			.withExactArgs("up", sPropertyName, vValue, "edit('URL')", "0/SO_2_SOITEM/42")
 			.returns(oResult);
 

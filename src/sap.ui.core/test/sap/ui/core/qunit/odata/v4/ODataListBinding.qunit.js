@@ -127,12 +127,12 @@ sap.ui.require([
 			mParameters = {"$expand" : "foo", "$select" : "bar", "custom" : "baz"},
 			mQueryOptions = {};
 
-		oHelperMock = this.oSandbox.mock(_ODataHelper);
+		oHelperMock = this.mock(_ODataHelper);
 		oHelperMock.expects("buildQueryOptions")
 			.withExactArgs(sinon.match.same(this.oModel.mUriParameters),
 				sinon.match.same(mParameters), ["$expand", "$filter", "$orderby", "$select"])
 			.returns(mQueryOptions);
-		this.oSandbox.mock(_Cache).expects("create")
+		this.mock(_Cache).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
 				sinon.match.same(mQueryOptions));
 
@@ -286,9 +286,9 @@ sap.ui.require([
 			assert.strictEqual(oBinding.aContexts.length, 0, "reset context");
 		}
 
-		this.oSandbox.mock(ODataListBinding.prototype).expects("getGroupId").never();
+		this.mock(ODataListBinding.prototype).expects("getGroupId").never();
 		oControl.bindObject("/TEAMS('4711')");
-		that.oSandbox.mock(oControl.getObjectBinding()).expects("fetchValue")
+		that.mock(oControl.getObjectBinding()).expects("fetchValue")
 			.withExactArgs(sPath, undefined)
 			.returns(oPromise);
 
@@ -336,7 +336,7 @@ sap.ui.require([
 			},
 			oPromise = Promise.resolve();
 
-		this.oSandbox.mock(oContext).expects("fetchValue").withExactArgs("TEAM_2_EMPLOYEES")
+		this.mock(oContext).expects("fetchValue").withExactArgs("TEAM_2_EMPLOYEES")
 			.returns(oPromise);
 
 		// code under test
@@ -351,10 +351,10 @@ sap.ui.require([
 		var oContext = {},
 			oListBinding = this.oModel.bindList("foo", oContext);
 
-		this.oSandbox.mock(this.oModel).expects("resolve")
+		this.mock(this.oModel).expects("resolve")
 			.withExactArgs("foo", sinon.match.same(oContext))
 			.returns("/absolute");
-		this.oSandbox.mock(oListBinding).expects("_fireChange")
+		this.mock(oListBinding).expects("_fireChange")
 			.withExactArgs({reason : ChangeReason.Change});
 
 		assert.strictEqual(oListBinding.initialize(), undefined, "no chaining");
@@ -364,9 +364,9 @@ sap.ui.require([
 	QUnit.test("initialize, unresolved path", function () {
 		var oListBinding = this.oModel.bindList("Suppliers");
 
-		this.oSandbox.mock(this.oModel).expects("resolve")
+		this.mock(this.oModel).expects("resolve")
 			.returns(undefined /*relative path, no context*/);
-		this.oSandbox.mock(oListBinding).expects("_fireChange").never();
+		this.mock(oListBinding).expects("_fireChange").never();
 
 		oListBinding.initialize();
 	});
@@ -376,7 +376,7 @@ sap.ui.require([
 		var oContext = {},
 			oListBinding = this.oModel.bindList("Suppliers");
 
-		this.oSandbox.mock(oListBinding).expects("_fireChange")
+		this.mock(oListBinding).expects("_fireChange")
 			.withExactArgs({reason : ChangeReason.Context});
 
 		oListBinding.setContext(oContext);
@@ -389,7 +389,7 @@ sap.ui.require([
 			oCacheMock = this.getCacheMock(),
 			oContext = {},
 			oListBinding = this.oModel.bindList("/EMPLOYEES"),
-			oListBindingMock = this.oSandbox.mock(oListBinding),
+			oListBindingMock = this.mock(oListBinding),
 			iSizeLimit = this.oModel.iSizeLimit,
 			iRangeIndex = 0,
 			// fixture with array of ranges for getContexts calls with
@@ -484,7 +484,7 @@ sap.ui.require([
 					: "/service/EMPLOYEES";
 
 			if (bRelative) {
-				oContextMock = this.oSandbox.mock(oContext);
+				oContextMock = this.mock(oContext);
 				oContextMock.expects("fetchValue").returns(createResult(2));
 				oContextMock.expects("fetchValue").returns(oPromise);
 				// no error logged by ODataListBinding; parent context logged the error already
@@ -492,7 +492,7 @@ sap.ui.require([
 				oCacheMock = this.getCacheMock();
 				oCacheMock.expects("read").callsArg(4).returns(createResult(2));
 				oCacheMock.expects("read").callsArg(4).returns(oPromise);
-				this.oSandbox.mock(this.oModel).expects("reportError").withExactArgs(
+				this.mock(this.oModel).expects("reportError").withExactArgs(
 					"Failed to get contexts for " + sResolvedPath
 					+ " with start index 1 and length 2", sClassName,
 					sinon.match.same(oError));
@@ -538,7 +538,7 @@ sap.ui.require([
 				.returns(oPromise);
 			oListBinding = this.oModel.bindList("/EMPLOYEES", oContext, undefined, undefined,
 				{$$groupId : "$direct"});
-			this.oSandbox.mock(oListBinding).expects("_fireChange")
+			this.mock(oListBinding).expects("_fireChange")
 				.exactly(oFixture.changeEvent === false ? 0 : 1)
 				.withExactArgs({reason : ChangeReason.Change});
 
@@ -749,7 +749,7 @@ sap.ui.require([
 	QUnit.test("refresh", function (assert) {
 		var oCacheMock = this.getCacheMock(),
 			oListBinding = this.oModel.bindList("/EMPLOYEES"),
-			oListBindingMock = this.oSandbox.mock(oListBinding),
+			oListBindingMock = this.mock(oListBinding),
 			oReadPromise = createResult(9);
 
 		// change event during getContexts
@@ -784,11 +784,11 @@ sap.ui.require([
 	QUnit.test("refresh absolute path, with application group", function (assert) {
 		var oCacheMock = this.getCacheMock(),
 			oError = new Error(),
-			oHelperMock = this.oSandbox.mock(_ODataHelper),
+			oHelperMock = this.mock(_ODataHelper),
 			oListBinding = this.oModel.bindList("/EMPLOYEES");
 
 		oCacheMock.expects("refresh");
-		this.oSandbox.mock(oListBinding).expects("_fireRefresh")
+		this.mock(oListBinding).expects("_fireRefresh")
 			.withExactArgs({reason : ChangeReason.Refresh});
 		oHelperMock.expects("checkGroupId").withExactArgs("myGroup");
 
@@ -808,9 +808,9 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("refresh on relative binding is not supported", function (assert) {
 		var oListBinding = this.oModel.bindList("EMPLOYEES"),
-			oListBindingMock = this.oSandbox.mock(oListBinding);
+			oListBindingMock = this.mock(oListBinding);
 
-		this.oSandbox.mock(_Cache).expects("create").never();
+		this.mock(_Cache).expects("create").never();
 		// refresh event during refresh
 		oListBindingMock.expects("_fireRefresh").never();
 
@@ -826,7 +826,7 @@ sap.ui.require([
 		var oCacheMock = this.getCacheMock(),
 			oError = new Error(),
 			oListBinding = this.oModel.bindList("/EMPLOYEES"),
-			oListBindingMock = this.oSandbox.mock(oListBinding),
+			oListBindingMock = this.mock(oListBinding),
 			oReadPromise = Promise.reject(oError);
 
 		// change event during getContexts
@@ -848,21 +848,21 @@ sap.ui.require([
 		var oListBinding = this.oModel.bindList("/EMPLOYEES"),
 			fnResolveRead,
 			oReadPromise = new Promise(function (fnResolve) {fnResolveRead = fnResolve;}),
-			oSandbox = this.oSandbox;
+			that = this;
 
 		// read returns an unresolved Promise to be resolved by submitBatch; otherwise this Promise
 		// would be resolved before the rendering and dataReceived would be fired before
 		// dataRequested
-		oSandbox.mock(oListBinding.oCache).expects("read").callsArg(4).returns(oReadPromise);
-		oSandbox.stub(this.oModel.oRequestor, "submitBatch", function () {
-			var oListBindingMock = oSandbox.mock(oListBinding);
+		this.mock(oListBinding.oCache).expects("read").callsArg(4).returns(oReadPromise);
+		this.stub(this.oModel.oRequestor, "submitBatch", function () {
+			var oListBindingMock = that.mock(oListBinding);
 
 			// These events must be fired _after_ submitBatch
 			oListBindingMock.expects("fireEvent")
 				.withExactArgs("dataRequested", undefined);
 			oListBindingMock.expects("fireEvent")
 				.withExactArgs("change", {reason : "change"});
-			oSandbox.stub(oListBinding, "fireDataReceived", function () {
+			that.stub(oListBinding, "fireDataReceived", function () {
 				assert.strictEqual(oListBinding.aContexts.length, 10, "data already processed");
 			});
 
@@ -884,11 +884,11 @@ sap.ui.require([
 			oListBinding = this.oModel.bindList("/EMPLOYEES"),
 			oReadPromise = Promise.reject(oError);
 
-		this.oSandbox.mock(this.oModel).expects("reportError").withExactArgs(
+		this.mock(this.oModel).expects("reportError").withExactArgs(
 			"Failed to get contexts for /service/EMPLOYEES with start index 0 and length 10",
 			sClassName, sinon.match.same(oError));
-		this.oSandbox.mock(oListBinding.oCache).expects("read").callsArg(4).returns(oReadPromise);
-		this.oSandbox.mock(oListBinding).expects("fireDataReceived")
+		this.mock(oListBinding.oCache).expects("read").callsArg(4).returns(oReadPromise);
+		this.mock(oListBinding).expects("fireDataReceived")
 			.withExactArgs({error : oError});
 
 		oListBinding.getContexts(0, 10);
@@ -902,18 +902,18 @@ sap.ui.require([
 			oListBinding = this.oModel.bindList("/EMPLOYEES"),
 			fnRejectRead,
 			oReadPromise = new Promise(function (fn, fnReject) {fnRejectRead = fnReject;}),
-			oSandbox = this.oSandbox;
+			that = this;
 
-		this.oSandbox.mock(this.oModel).expects("reportError").withExactArgs(
+		this.mock(this.oModel).expects("reportError").withExactArgs(
 			"Failed to get contexts for /service/EMPLOYEES with start index 0 and length 10",
 			sClassName, sinon.match.same(oError));
-		oCacheMock = oSandbox.mock(oListBinding.oCache);
+		oCacheMock = this.mock(oListBinding.oCache);
 		oCacheMock.expects("read").callsArg(4).returns(oReadPromise);
 		oCacheMock.expects("read").returns(oReadPromise);
-		oSandbox.stub(this.oModel.oRequestor, "submitBatch", function () {
-			oSandbox.mock(oListBinding).expects("fireEvent")
+		this.stub(this.oModel.oRequestor, "submitBatch", function () {
+			that.mock(oListBinding).expects("fireEvent")
 				.withExactArgs("dataRequested", undefined);
-			oSandbox.mock(oListBinding).expects("fireDataReceived")
+			that.mock(oListBinding).expects("fireDataReceived")
 				.withExactArgs({error : oError});
 
 			// submitBatch resolves the promise of the read
@@ -934,7 +934,7 @@ sap.ui.require([
 			oPromise,
 			oReadResult = {};
 
-		this.oSandbox.mock(oListBinding.oCache).expects("read")
+		this.mock(oListBinding.oCache).expects("read")
 			.withExactArgs(42, 1, undefined, "bar")
 			.returns(_SyncPromise.resolve(oReadResult));
 
@@ -952,7 +952,7 @@ sap.ui.require([
 		var oContext = {
 				fetchValue : function () {}
 			},
-			oContextMock = this.oSandbox.mock(oContext),
+			oContextMock = this.mock(oContext),
 			oListBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext),
 			oPromise = {};
 
@@ -978,11 +978,11 @@ sap.ui.require([
 				sPath = "0/SO_2_SOITEM/42",
 				oResult = {};
 
-			this.oSandbox.mock(oListBinding).expects("fireEvent").never();
-			this.oSandbox.mock(oListBinding.oCache).expects("update")
+			this.mock(oListBinding).expects("fireEvent").never();
+			this.mock(oListBinding.oCache).expects("update")
 				.withExactArgs(sGroupId || "myUpdateGroup", "bar", Math.PI, "edit('URL')", sPath)
 				.returns(Promise.resolve(oResult));
-			this.oSandbox.mock(this.oModel).expects("addedRequestToGroup")
+			this.mock(this.oModel).expects("addedRequestToGroup")
 				.withExactArgs(sGroupId || "myUpdateGroup");
 
 			// code under test
@@ -1001,12 +1001,12 @@ sap.ui.require([
 			oListBinding = this.oModel.bindList("SO_2_SOITEM", oContext),
 			oResult = {};
 
-		this.oSandbox.mock(oListBinding).expects("fireEvent").never();
-		this.oSandbox.mock(oListBinding).expects("getGroupId").never();
-		this.oSandbox.mock(oContext).expects("updateValue")
+		this.mock(oListBinding).expects("fireEvent").never();
+		this.mock(oListBinding).expects("getGroupId").never();
+		this.mock(oContext).expects("updateValue")
 			.withExactArgs("up", "bar", Math.PI, "edit('URL')", "SO_2_SOITEM/42")
 			.returns(Promise.resolve(oResult));
-		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup").never();
+		this.mock(this.oModel).expects("addedRequestToGroup").never();
 
 		// code under test
 		return oListBinding.updateValue("up", "bar", Math.PI, "edit('URL')", "42")
@@ -1019,7 +1019,7 @@ sap.ui.require([
 	QUnit.test("getContexts calls addedRequestToGroup", function (assert) {
 		var oListBinding;
 
-		this.oSandbox.stub(_Cache, "create", function (oRequestor, sUrl, mQueryOptions) {
+		this.stub(_Cache, "create", function (oRequestor, sUrl, mQueryOptions) {
 			return {
 				read: function (iIndex, iLength, sGroupId, sPath, fnDataRequested) {
 					fnDataRequested();
@@ -1027,7 +1027,7 @@ sap.ui.require([
 				}
 			};
 		});
-		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup")
+		this.mock(this.oModel).expects("addedRequestToGroup")
 			.withExactArgs("$auto", sinon.match.func).callsArg(1);
 
 		oListBinding = this.oModel.bindList("/EMPLOYEES");
@@ -1080,7 +1080,7 @@ sap.ui.require([
 			oListBinding,
 			oReturn = {};
 
-		this.oSandbox.mock(ListBinding.prototype).expects("attachEvent")
+		this.mock(ListBinding.prototype).expects("attachEvent")
 			.withExactArgs("change", mEventParameters).returns(oReturn);
 
 		oListBinding = this.oModel.bindList("/EMPLOYEES");
@@ -1099,8 +1099,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("$$groupId, $$updateGroupId", function (assert) {
 		var oBinding,
-			oHelperMock = this.oSandbox.mock(_ODataHelper),
-			oModelMock = this.oSandbox.mock(this.oModel),
+			oHelperMock = this.mock(_ODataHelper),
+			oModelMock = this.mock(this.oModel),
 			mParameters = {};
 
 		oModelMock.expects("getGroupId").withExactArgs().returns("baz");
@@ -1137,11 +1137,11 @@ sap.ui.require([
 				{$$groupId : "myGroup"}),
 			oReadPromise = createResult(0);
 
-		this.oSandbox.mock(oBinding.oCache).expects("read")
+		this.mock(oBinding.oCache).expects("read")
 			.withExactArgs(0, 10, "myGroup", undefined, sinon.match.func)
 			.callsArg(4)
 			.returns(oReadPromise);
-		this.oSandbox.mock(oBinding.oModel).expects("addedRequestToGroup")
+		this.mock(oBinding.oModel).expects("addedRequestToGroup")
 			.withExactArgs("myGroup", sinon.match.func)
 			.callsArg(1);
 
@@ -1156,11 +1156,11 @@ sap.ui.require([
 				{$$groupId : "$direct"}),
 			oReadPromise = createResult(0);
 
-		this.oSandbox.mock(oBinding.oCache).expects("read")
+		this.mock(oBinding.oCache).expects("read")
 			.withExactArgs(0, 10, "myGroup", undefined, sinon.match.func)
 			.callsArg(4)
 			.returns(oReadPromise);
-		this.oSandbox.mock(oBinding.oModel).expects("addedRequestToGroup")
+		this.mock(oBinding.oModel).expects("addedRequestToGroup")
 			.withExactArgs("myGroup", sinon.match.func)
 			.callsArg(1);
 		oBinding.sRefreshGroupId = "myGroup";
@@ -1176,7 +1176,7 @@ sap.ui.require([
 			oListBinding = this.oModel.bindList("/EMPLOYEES"),
 			oReadPromise = createResult(0);
 
-		this.oSandbox.mock(oListBinding.oCache).expects("read")
+		this.mock(oListBinding.oCache).expects("read")
 			.withExactArgs(0, 10, "$auto", undefined, sinon.match.func)
 			.callsArg(4).returns(oReadPromise);
 		// check that error in data received handler is logged

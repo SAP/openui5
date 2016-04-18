@@ -61,14 +61,13 @@ sap.ui.require([
 			// resource "sap-ui-version.json" and thus interferes with mocks for jQuery.ajax
 			sap.ui.getVersionInfo();
 
-			this.oSandbox = sinon.sandbox.create();
-			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
+			this.oLogMock = sinon.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		},
 
 		afterEach : function () {
-			this.oSandbox.verifyAndRestore();
+			this.oLogMock.verify();
 		}
 	});
 
@@ -94,7 +93,7 @@ sap.ui.require([
 			}),
 			oResult = {};
 
-		this.oSandbox.mock(jQuery).expects("ajax")
+		this.mock(jQuery).expects("ajax")
 			.withExactArgs(sServiceUrl + "Employees?foo=bar", {
 				data : JSON.stringify(oPayload),
 				headers : sinon.match({
@@ -157,7 +156,7 @@ sap.ui.require([
 				return o && JSON.parse(JSON.stringify(o));
 			}
 
-			this.oSandbox.mock(jQuery).expects("ajax")
+			this.mock(jQuery).expects("ajax")
 				.withExactArgs(sServiceUrl + "Employees", {
 					data : undefined,
 					headers : mResultHeaders,
@@ -182,7 +181,7 @@ sap.ui.require([
 	QUnit.test("request(), store CSRF token from server", function (assert) {
 		var oRequestor = _Requestor.create("/");
 
-		this.oSandbox.mock(jQuery).expects("ajax")
+		this.mock(jQuery).expects("ajax")
 			.withExactArgs("/", sinon.match({headers : {"X-CSRF-Token" : "Fetch"}}))
 			.returns(createMock(assert, {/*oPayload*/}, "OK", "abc123"));
 
@@ -195,7 +194,7 @@ sap.ui.require([
 	QUnit.test("request(), keep old CSRF token in case no one is sent", function (assert) {
 		var oRequestor = _Requestor.create("/", {"X-CSRF-Token" : "abc123"});
 
-		this.oSandbox.mock(jQuery).expects("ajax")
+		this.mock(jQuery).expects("ajax")
 			.withExactArgs("/", sinon.match({headers : {"X-CSRF-Token" : "abc123"}}))
 			.returns(createMock(assert, {/*oPayload*/}, "OK", /*sToken*/null));
 
@@ -206,7 +205,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("request(), keep fetching CSRF token in case no one is sent", function (assert) {
-		var oMock = this.oSandbox.mock(jQuery),
+		var oMock = this.mock(jQuery),
 			oRequestor = _Requestor.create("/");
 
 		oMock.expects("ajax")
@@ -230,12 +229,12 @@ sap.ui.require([
 				oRequestor = _Requestor.create("/Service/", undefined, {"sap-client" : "123"}),
 				oTokenRequiredResponse = {};
 
-			this.oSandbox.mock(_Helper).expects("createError")
+			this.mock(_Helper).expects("createError")
 				.exactly(bSuccess ? 0 : 2)
 				.withExactArgs(sinon.match.same(oTokenRequiredResponse))
 				.returns(oError);
 
-			this.oSandbox.stub(jQuery, "ajax", function (sUrl, oSettings) {
+			this.stub(jQuery, "ajax", function (sUrl, oSettings) {
 				var jqXHR;
 
 				assert.strictEqual(sUrl, "/Service/?sap-client=123");
@@ -273,7 +272,7 @@ sap.ui.require([
 
 				assert.notStrictEqual(oNewPromise, oPromise, "new promise");
 				// avoid "Uncaught (in promise)"
-				oNewPromise.catch(function (oError1) {
+				return oNewPromise.catch(function (oError1) {
 					assert.strictEqual(oError1, oError);
 				});
 			});
@@ -314,7 +313,7 @@ sap.ui.require([
 					"status" : o.iStatus || 403
 				};
 
-			this.oSandbox.mock(_Helper).expects("createError")
+			this.mock(_Helper).expects("createError")
 				.exactly(bSuccess || o.bReadFails ? 0 : 1)
 				.withExactArgs(sinon.match.same(oTokenRequiredResponse))
 				.returns(oError);
@@ -323,7 +322,7 @@ sap.ui.require([
 			// with <code>bRequestSucceeds === true</code>, "request" always succeeds,
 			// else "request" first fails due to missing CSRF token which can be fetched via
 			// "ODataModel#refreshSecurityToken".
-			this.oSandbox.stub(jQuery, "ajax", function (sUrl0, oSettings) {
+			this.stub(jQuery, "ajax", function (sUrl0, oSettings) {
 				var jqXHR;
 
 				assert.strictEqual(sUrl0, "/Service/foo");
@@ -346,9 +345,9 @@ sap.ui.require([
 			});
 
 			if (o.bRequestSucceeds !== undefined) {
-				this.oSandbox.mock(oRequestor).expects("refreshSecurityToken").never();
+				this.mock(oRequestor).expects("refreshSecurityToken").never();
 			} else {
-				this.oSandbox.stub(oRequestor, "refreshSecurityToken", function () {
+				this.stub(oRequestor, "refreshSecurityToken", function () {
 					return new Promise(function (fnResolve, fnReject) {
 						setTimeout(function () {
 							if (o.bReadFails) { // reading of CSRF token fails
@@ -397,17 +396,17 @@ sap.ui.require([
 				"status" : 403
 			};
 
-		this.oSandbox.mock(_Batch).expects("serializeBatchRequest").twice()
+		this.mock(_Batch).expects("serializeBatchRequest").twice()
 			.withExactArgs(sinon.match.same(oRequestPayload))
 			.returns(oBatchRequest);
-		this.oSandbox.mock(_Batch).expects("deserializeBatchResponse").once()
+		this.mock(_Batch).expects("deserializeBatchResponse").once()
 			.withExactArgs(sResponseContentType, sinon.match.same(oResponsePayload))
 			.returns(oResponsePayload);
-		this.oSandbox.mock(_Helper).expects("createError").never();
+		this.mock(_Helper).expects("createError").never();
 
 		// "request" first fails due to missing CSRF token which can be fetched via
 		// "ODataModel#refreshSecurityToken".
-		this.oSandbox.stub(jQuery, "ajax", function (sUrl0, oSettings) {
+		this.stub(jQuery, "ajax", function (sUrl0, oSettings) {
 			var jqXHR;
 
 			assert.strictEqual(sUrl0, "/Service/$batch?sap-client=111");
@@ -437,7 +436,7 @@ sap.ui.require([
 			return jqXHR;
 		});
 
-		this.oSandbox.stub(oRequestor, "refreshSecurityToken", function () {
+		this.stub(oRequestor, "refreshSecurityToken", function () {
 			return new Promise(function (fnResolve, fnReject) {
 				setTimeout(function () {
 					oRequestor.mHeaders["X-CSRF-Token"] = "abc123";
@@ -458,7 +457,7 @@ sap.ui.require([
 	QUnit.test("submitBatch(...): with empty group", function (assert) {
 		var oRequestor = _Requestor.create();
 
-		this.oSandbox.mock(oRequestor).expects("request").never();
+		this.mock(oRequestor).expects("request").never();
 
 		return oRequestor.submitBatch("testGroupId").then(function (oResult) {
 			assert.deepEqual(oResult, undefined);
@@ -519,7 +518,7 @@ sap.ui.require([
 		}));
 		oRequestor.request("GET", "SalesOrders", "group2");
 
-		this.oSandbox.mock(oRequestor).expects("request")
+		this.mock(oRequestor).expects("request")
 			.withExactArgs("POST", "$batch", undefined, undefined, aExpectedRequests)
 			.returns(Promise.resolve(aBatchResults));
 
@@ -543,7 +542,7 @@ sap.ui.require([
 		var oRequestor = _Requestor.create("/");
 
 		oRequestor.request("GET", "Products", "groupId");
-		this.oSandbox.mock(oRequestor).expects("request")
+		this.mock(oRequestor).expects("request")
 			.withExactArgs("POST", "$batch", undefined, undefined, [
 				// Note: no empty change set!
 				sinon.match({method: "GET", url: "Products"})
@@ -575,7 +574,7 @@ sap.ui.require([
 		// just a different verb
 		aPromises.push(oRequestor
 			.request("POST", "Products", "groupId", {"If-Match" : ""}, {Name : "baz"}));
-		this.oSandbox.mock(oRequestor).expects("request")
+		this.mock(oRequestor).expects("request")
 			.withExactArgs("POST", "$batch", undefined, undefined, [
 				[
 					sinon.match({
@@ -649,7 +648,7 @@ sap.ui.require([
 		aPromises.push(oRequestor.request("GET", "Customers", "group")
 			.then(unexpectedSuccess, assertError));
 
-		this.oSandbox.mock(oRequestor).expects("request")
+		this.mock(oRequestor).expects("request")
 			.returns(Promise.reject(oBatchError));
 
 		aPromises.push(oRequestor.submitBatch("group").then(unexpectedSuccess, function (oError) {
@@ -709,7 +708,7 @@ sap.ui.require([
 				assertError(oResultError.cause);
 			}));
 
-		this.oSandbox.mock(oRequestor).expects("request")
+		this.mock(oRequestor).expects("request")
 			.returns(Promise.resolve(aBatchResult));
 
 		aPromises.push(oRequestor.submitBatch("testGroupId").then(function (oResult) {
@@ -774,11 +773,11 @@ sap.ui.require([
 			sResponseContentType = "multipart/mixed; boundary=foo",
 			oJqXHRMock = createMock(assert, oResult, "OK", "abc123", sResponseContentType);
 
-		this.oSandbox.mock(_Batch).expects("serializeBatchRequest")
+		this.mock(_Batch).expects("serializeBatchRequest")
 			.withExactArgs(sinon.match.same(aBatchRequests))
 			.returns(oBatchRequest);
 
-		this.oSandbox.mock(jQuery).expects("ajax")
+		this.mock(jQuery).expects("ajax")
 			.withExactArgs("/Service/$batch?sap-client=123", {
 				data : oBatchRequest.body,
 				headers : sinon.match({
@@ -788,7 +787,7 @@ sap.ui.require([
 				method : "POST"
 			}).returns(oJqXHRMock);
 
-		this.oSandbox.mock(_Batch).expects("deserializeBatchResponse")
+		this.mock(_Batch).expects("deserializeBatchResponse")
 			.withExactArgs(sResponseContentType, oResult)
 			.returns(aExpectedResponses);
 

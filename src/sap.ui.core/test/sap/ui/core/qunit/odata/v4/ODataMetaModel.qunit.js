@@ -285,7 +285,7 @@ sap.ui.require([
 			oSyncPromise = SyncPromise.resolve(oRejectedPromise);
 
 		// resolve...
-		oExpectation = oTestContext.oSandbox.mock(oMetaModel).expects(sMethodName).exactly(4);
+		oExpectation = oTestContext.mock(oMetaModel).expects(sMethodName).exactly(4);
 		oExpectation = oExpectation.withExactArgs.apply(oExpectation, aArguments);
 		oExpectation.returns(SyncPromise.resolve(oResult));
 
@@ -294,7 +294,7 @@ sap.ui.require([
 
 		// reject...
 		oExpectation.returns(oSyncPromise);
-		oTestContext.oSandbox.mock(Promise).expects("resolve")
+		oTestContext.mock(Promise).expects("resolve")
 			.withExactArgs(sinon.match.same(oSyncPromise))
 			.returns(oRejectedPromise); // return any promise (this is not unwrapping!)
 
@@ -355,8 +355,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataMetaModel", {
 		beforeEach : function () {
-			this.oSandbox = sinon.sandbox.create();
-			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
+			this.oLogMock = sinon.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 
@@ -364,7 +363,7 @@ sap.ui.require([
 		},
 
 		afterEach : function () {
-			this.oSandbox.verifyAndRestore();
+			this.oLogMock.verify();
 		}
 	});
 
@@ -429,7 +428,7 @@ sap.ui.require([
 			oPromise = Promise.resolve({/*mScope*/}),
 			oSyncPromise;
 
-		this.oSandbox.mock(oMetadataRequestor).expects("read").withExactArgs(sUrl)
+		this.mock(oMetadataRequestor).expects("read").withExactArgs(sUrl)
 			.returns(oPromise);
 
 		// code under test
@@ -647,7 +646,7 @@ sap.ui.require([
 		QUnit.test("fetchObject: " + sPath, function (assert) {
 			var oSyncPromise;
 
-			this.oSandbox.mock(this.oMetaModel).expects("fetchEntityContainer")
+			this.mock(this.oMetaModel).expects("fetchEntityContainer")
 				.returns(SyncPromise.resolve(mScope));
 
 			oSyncPromise = this.oMetaModel.fetchObject(sPath);
@@ -698,7 +697,7 @@ sap.ui.require([
 		QUnit.test("fetchObject: " + sPath + " --> undefined", function (assert) {
 			var oSyncPromise;
 
-			this.oSandbox.mock(this.oMetaModel).expects("fetchEntityContainer")
+			this.mock(this.oMetaModel).expects("fetchEntityContainer")
 				.returns(SyncPromise.resolve(mScope));
 
 			oSyncPromise = this.oMetaModel.fetchObject(sPath);
@@ -727,7 +726,7 @@ sap.ui.require([
 		QUnit.test("fetchObject returns {} (anonymous empty object): " + sPath, function (assert) {
 			var oSyncPromise;
 
-			this.oSandbox.mock(this.oMetaModel).expects("fetchEntityContainer")
+			this.mock(this.oMetaModel).expects("fetchEntityContainer")
 				.returns(SyncPromise.resolve(mScope));
 
 			oSyncPromise = this.oMetaModel.fetchObject(sPath);
@@ -788,7 +787,7 @@ sap.ui.require([
 			QUnit.test("fetchObject fails: " + sPath + ", warn = " + bWarn, function (assert) {
 				var oSyncPromise;
 
-				this.oSandbox.mock(this.oMetaModel).expects("fetchEntityContainer")
+				this.mock(this.oMetaModel).expects("fetchEntityContainer")
 					.returns(SyncPromise.resolve(mScope));
 				this.oLogMock.expects("isLoggable")
 					.withExactArgs(jQuery.sap.log.Level.WARNING).returns(bWarn);
@@ -817,7 +816,7 @@ sap.ui.require([
 			QUnit.test("fetchObject fails: " + sPath + ", debug = " + bDebug, function (assert) {
 				var oSyncPromise;
 
-				this.oSandbox.mock(this.oMetaModel).expects("fetchEntityContainer")
+				this.mock(this.oMetaModel).expects("fetchEntityContainer")
 					.returns(SyncPromise.resolve(mScope));
 				this.oLogMock.expects("isLoggable")
 					.withExactArgs(jQuery.sap.log.Level.DEBUG).returns(bDebug);
@@ -908,7 +907,7 @@ sap.ui.require([
 			QUnit.test("fetchUI5Type: " + JSON.stringify(oProperty), function (assert) {
 				var sPath = "/EMPLOYEES/0/ENTRYDATE",
 					oMetaContext = this.oMetaModel.getMetaContext(sPath),
-					oMetaModelMock = this.oSandbox.mock(this.oMetaModel),
+					oMetaModelMock = this.mock(this.oMetaModel),
 					oType;
 
 				oMetaModelMock.expects("fetchObject").twice()
@@ -937,7 +936,7 @@ sap.ui.require([
 		var sPath = "/EMPLOYEES/0/foo",
 			oType;
 
-		this.oSandbox.mock(this.oMetaModel).expects("fetchObject").twice()
+		this.mock(this.oMetaModel).expects("fetchObject").twice()
 			.withExactArgs(undefined, this.oMetaModel.getMetaContext(sPath))
 			.returns(SyncPromise.resolve({
 				$isCollection : true,
@@ -961,7 +960,7 @@ sap.ui.require([
 			var sPath = "/EMPLOYEES/0/foo",
 				oType;
 
-			this.oSandbox.mock(this.oMetaModel).expects("fetchObject").twice()
+			this.mock(this.oMetaModel).expects("fetchObject").twice()
 				.withExactArgs(undefined, this.oMetaModel.getMetaContext(sPath))
 				.returns(SyncPromise.resolve({
 					$Nullable : false, // must not be turned into a constraint for Raw!
@@ -1006,9 +1005,9 @@ sap.ui.require([
 					}
 				};
 
-			this.oSandbox.mock(this.oMetaModel).expects("fetchEntityContainer")
+			this.mock(this.oMetaModel).expects("fetchEntityContainer")
 				.returns(SyncPromise.resolve(mScope));
-			this.oSandbox.stub(_ODataHelper, "getKeyPredicate",
+			this.stub(_ODataHelper, "getKeyPredicate",
 				function (oEntityType0, oInstance0) {
 					assert.strictEqual(oEntityType0, mScope[oFixture.entityType]);
 					assert.strictEqual(oInstance0, oInstance);
@@ -1045,9 +1044,9 @@ sap.ui.require([
 					}
 				};
 
-			this.oSandbox.mock(this.oMetaModel).expects("fetchEntityContainer")
+			this.mock(this.oMetaModel).expects("fetchEntityContainer")
 				.returns(SyncPromise.resolve(mScope));
-			this.oSandbox.mock(_ODataHelper).expects("getKeyPredicate").never();
+			this.mock(_ODataHelper).expects("getKeyPredicate").never();
 
 			return this.oMetaModel.requestCanonicalUrl("/~/", oFixture.dataPath, oContext)
 				.then(function (sCanonicalUrl) {
@@ -1070,7 +1069,7 @@ sap.ui.require([
 			sPath = "foo",
 			oValue = {};
 
-		this.oSandbox.mock(this.oMetaModel).expects("getProperty")
+		this.mock(this.oMetaModel).expects("getProperty")
 			.withExactArgs(sPath, sinon.match.same(oContext))
 			.returns(oValue);
 
@@ -1173,7 +1172,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("bindList", function (assert) {
-		var fnApply = this.oSandbox.mock(FilterProcessor).expects("apply"),
+		var fnApply = this.mock(FilterProcessor).expects("apply"),
 			oBinding,
 			oMetaModel = this.oMetaModel, // instead of "that = this"
 			oContext = oMetaModel.getMetaContext("/EMPLOYEES"),
@@ -1183,7 +1182,7 @@ sap.ui.require([
 			sPath = "",
 			aSorters = [];
 
-		this.oSandbox.mock(oMetaModel).expects("_getObject")
+		this.mock(oMetaModel).expects("_getObject")
 			.withExactArgs(sPath, sinon.match.same(oContext))
 			.returns({
 				"ID" : {/*...*/},
@@ -1221,7 +1220,7 @@ sap.ui.require([
 
 		// further tests regarding the getter provided to FilterProcessor.apply()
 		fnGetValue = fnApply.args[0][2];
-		this.oSandbox.mock(this.oMetaModel).expects("getProperty")
+		this.mock(this.oMetaModel).expects("getProperty")
 			.withExactArgs("fooPath", sinon.match.same(oBinding.oList[aIndices[0]]))
 			.returns("foo");
 
@@ -1309,7 +1308,7 @@ sap.ui.require([
 				oObject,
 				sPathIntoObject = oFixture.pathIntoObject || oFixture.metaPath;
 
-			this.oSandbox.mock(this.oMetaModel).expects("fetchEntityContainer")
+			this.mock(this.oMetaModel).expects("fetchEntityContainer")
 				.returns(SyncPromise.resolve(mScope));
 
 			// code under test
