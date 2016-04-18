@@ -1770,6 +1770,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			var sUpdateReason;
 			if (sReason == ChangeReason.Filter || sReason == ChangeReason.Sort) {
 				sUpdateReason = "skipNoDataUpdate";
+				this.setFirstVisibleRow(0);
 			}
 			this._updateBindingContexts(true, iRowsToDisplay, sUpdateReason);
 		}
