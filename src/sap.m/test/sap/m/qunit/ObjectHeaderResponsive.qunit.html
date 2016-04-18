@@ -1059,7 +1059,7 @@
 					// Arrange
 					var oObjectHeader = createObjectHeader({
 						title: "OH title",
-						titleLevel: "H3"
+						titleLevel: sap.ui.core.TitleLevel.H3
 					});
 
 					// System under test
@@ -1088,6 +1088,23 @@
 					var $sTitle = oObjectHeader.$("title");
 					ok($sTitle.find( "h4" ), "Title has titleLevel H4");
 				});
+
+				test("When set to Auto title has level H1", function(){
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						title: "OH title",
+						titleLevel: sap.ui.core.TitleLevel.Auto
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					// Assert
+					var $sTitle = oObjectHeader.$("title");
+					ok($sTitle.find( "h1" ), "Title has titleLevel H1");
+				});
+
 
 		</script>
 
