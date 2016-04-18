@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>sap.m.Bar - Accessibility</title>
+
+	<script src="../../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+	</script>
+
+	<script>
+
+		var app = new sap.m.App("myApp");
+
+		var oPage = new sap.m.Page("page1", {
+			title: "Bar Test page",
+			content: [
+				new sap.m.Button({text:'Button'}),
+				new sap.ui.core.InvisibleText("L1", { text: "This is invisible text" }).placeAt('body'),
+				new sap.m.Bar("bar1", {
+					contentLeft: [new sap.m.Button({text: "One"})],
+					ariaLabelledBy: "L1"
+				}),
+			]
+		});
+
+		app.addPage(oPage);
+
+		app.placeAt("body");
+
+	</script>
+</head>
+<body id="body" class="sapUiBody" role="application">
+</body>
+</html>
