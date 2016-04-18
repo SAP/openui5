@@ -362,7 +362,7 @@ License: MIT License
 <year> = 2014
 <copyright holders> = jQuery Foundation and other contributors
 
-Component: jQuery 2.2.1
+Component: jQuery 2.2.3
 Licensor: jQuery Foundation and other contributors
 Website: http://jquery.com/
 License: MIT License
