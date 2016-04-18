@@ -954,7 +954,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 * Rerendering handling
 	 * @private
 	 */
-	Table.prototype.onBeforeRendering = function() {
+	Table.prototype.onBeforeRendering = function(oEvent) {
+		if (oEvent && oEvent.isMarked("insertTableRows")) {
+			return;
+		}
+
 		this._cleanUpTimers();
 		this._detachEvents();
 
@@ -983,7 +987,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 * Rerendering handling
 	 * @private
 	 */
-	Table.prototype.onAfterRendering = function() {
+	Table.prototype.onAfterRendering = function(oEvent) {
+		if (oEvent && oEvent.isMarked("insertTableRows")) {
+			return;
+		}
+
 		this._iDefaultRowHeight = undefined;
 		this._bInvalid = false;
 		this._bOnAfterRendering = true;
@@ -5462,6 +5470,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				}
 			}
 
+			// make sure to call rendering event delegates even in case of DOM patching
+			var oEvent = jQuery.Event("BeforeRendering");
+			oEvent.setMarked("insertTableRows");
+			oEvent.srcControl = this;
+			this._handleEvent(oEvent);
+
 			var oRM = new sap.ui.getCore().createRenderManager(),
 				oRenderer = this.getRenderer();
 
@@ -5469,6 +5483,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			oRenderer.renderTableCCnt(oRM, this);
 			oRM.flush(oTBody, false, false);
 			oRM.destroy();
+
+			// make sure to call rendering event delegates even in case of DOM patching
+			oEvent = jQuery.Event("AfterRendering");
+			oEvent.setMarked("insertTableRows");
+			oEvent.srcControl = this;
+			this._handleEvent(oEvent);
 
 			// since the row is an element it has no own renderer. Anyway, logically it has a domref. Let the rows
 			// update their domrefs after the rendering is done. This is required to allow performant access to row domrefs
