@@ -120,7 +120,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					expand: {type : "boolean"}
 				}
 			}
-		}
+		},
+		designTime: true
 	}});
 
 	Panel.prototype.init = function () {

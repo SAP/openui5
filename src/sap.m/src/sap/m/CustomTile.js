@@ -37,7 +37,8 @@ sap.ui.define(['jquery.sap.global', './Tile', './library'],
 			 * Defines the content of the CustomTile.
 			 */
 			content : {type : "sap.ui.core.Control", multiple : false}
-		}
+		},
+		designTime: true
 	}});
 
 
