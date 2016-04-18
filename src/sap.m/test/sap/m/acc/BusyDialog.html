@@ -15,7 +15,11 @@
 			var app = new sap.m.App('myApp', {initialPage: 'initialPage'});
 			var _buttonWidth = '300px';
 
-			var defaultLightBusyDialog = new sap.m.BusyDialog('defaultLightBusyDialog', {});
+			var invText = new sap.ui.core.InvisibleText("hiddenTxt", {text: "Additional descriptive text added"}).placeAt("content");
+			var defaultLightBusyDialog = new sap.m.BusyDialog('defaultLightBusyDialog');
+			var defaultLightBusyDialogARIA = new sap.m.BusyDialog('defaultLightBusyDialogARIA', {
+				ariaLabelledBy: "hiddenTxt"
+			});
 
 			var standartBusyDialog = new sap.m.BusyDialog('standaratBusyDialog', {
 				title: 'Dummy preloader',
@@ -53,6 +57,16 @@
 						}
 					}),
 					new sap.m.Button({
+						text: 'Default (light) - ARIA',
+						width: _buttonWidth,
+						press: function () {
+							defaultLightBusyDialogARIA.open();
+							jQuery.sap.delayedCall(20000, this, function () {
+								defaultLightBusyDialogARIA.close();
+							});
+						}
+					}),
+					new sap.m.Button({
 						text: 'Standart (static)',
 						width: _buttonWidth,
 						press: function () {
@@ -86,6 +100,7 @@
 
 	</head>
 	<body id='body' class='sapUiBody' role='application'>
-		<div id='content'></div>
+		<div id='content'>
+		</div>
 	</body>
 </html>
