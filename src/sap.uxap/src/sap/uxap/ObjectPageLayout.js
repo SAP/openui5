@@ -1100,13 +1100,13 @@ sap.ui.define([
 					//therefore we need to create enough space below the last subsection to get it displayed on top = the spacer
 					//the "top" is just below the sticky header + anchorBar, therefore we just need enough space to get the last subsection below these elements
 
+					iSpacerHeight = this.iScreenHeight - iLastVisibleHeight - this.iAnchorBarHeight - this.iHeaderTitleHeight;
+
 					//the latest position is below the last subsection title in case of a mobile scroll to the last subsection
 					if (this.iHeaderContentHeight || this._bHContentAlwaysExpanded) {
 						// Not always when we scroll the HeaderTitle is in Sticky position so instead of taking out its StickyHeight we have to take out its height and the HeaderGap,
 						// which will be zero when the HeaderTitle is in normal mode
-						iSpacerHeight = this.iScreenHeight - iLastVisibleHeight - this.iHeaderTitleHeight - iHeaderGap - this.iAnchorBarHeight;
-					} else {
-						iSpacerHeight = this.iScreenHeight - iLastVisibleHeight - this.iAnchorBarHeight;
+						iSpacerHeight -= iHeaderGap;
 					}
 
 					//take into account that we may need to scroll down to the positionMobile, thus we need to make sure we have enough space at the bottom
