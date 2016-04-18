@@ -172,14 +172,14 @@
 					<Input enabled="{ui>/bRealOData}" id="Note" value="{Note}" />
 				</form:SimpleForm>
 				<form:SimpleForm backgroundDesign="Transparent" binding="{SO_2_BP}"
-					labelSpanM="4" layout="ResponsiveGridLayout">
+					editable="true" labelSpanM="4" layout="ResponsiveGridLayout">
 					<core:Title text="Business Partner"/>
 					<Label text="Business Partner ID" />
 					<Text text="{BusinessPartnerID}" />
 					<Label text="CompanyName" />
 					<Text text="{CompanyName}" />
-					<Label text="PhoneNumber" />
-					<Text text="{PhoneNumber}" />
+					<Label labelFor="BPPhoneNumber" text="PhoneNumber" />
+					<Input enabled="{ui>/bRealOData}" id="BPPhoneNumber" value="{PhoneNumber}" />
 				</form:SimpleForm>
 			</form:SimpleForm>
 			<Table headerText="Sales Order Line Items" id="SalesOrderLineItems"

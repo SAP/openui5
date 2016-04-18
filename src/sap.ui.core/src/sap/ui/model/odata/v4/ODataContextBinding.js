@@ -637,7 +637,7 @@ sap.ui.define([
 		}
 
 		return this.oContext.updateValue(sGroupId, sPropertyName, vValue, sEditUrl,
-			this.sPath + "/" + sPath);
+			this.sPath + (sPath ? "/" + sPath : ""));
 	};
 
 	return ODataContextBinding;
