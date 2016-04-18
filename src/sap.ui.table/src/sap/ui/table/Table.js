@@ -1093,7 +1093,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		this._updateRowHeader(oTableSizes.tableRowHeights);
 		this._syncColumnHeaders(oTableSizes);
 		this._determineVisibleCols(oTableSizes);
-		this._setRowContentHeight(iRowContentSpace);
+		if (!bSkipHandleRowCountMode) {
+			this._setRowContentHeight(iRowContentSpace);
+		}
 		this._updateHSb(oTableSizes);
 		this._updateVSb(oTableSizes);
 
