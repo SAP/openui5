@@ -113,13 +113,13 @@ sap.ui.define([
 	 * <code>Edm.DateTimeOffset</code>.
 	 *
 	 * @param {object} [oFormatOptions]
-	 *   Type-specific format options; see sub-types
+	 *   Type-specific format options; see subtypes
 	 * @param {object} [oConstraints]
 	 *   Constraints; {@link #validateValue validateValue} throws an error if any constraint is
 	 *   violated
 	 * @param {boolean} [oConstraints.isDateOnly=false]
 	 *   If <code>true</code>, only the date part is used, the time part is always 00:00:00 and
-	 *   the timezone is UTC to avoid timezone-related problems
+	 *   the time zone is UTC to avoid time-zone-related problems
 	 * @param {boolean|string} [oConstraints.nullable=true]
 	 *   If <code>true</code>, the value <code>null</code> is accepted
 	 * @param {boolean} [oConstraints.precision=0]
