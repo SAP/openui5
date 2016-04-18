@@ -917,7 +917,7 @@
 		// Arrange
 		var oObjectHeader = new sap.m.ObjectHeader({
 				title: "Test title level",
-				titleLevel: "H3"
+				titleLevel: sap.ui.core.TitleLevel.H3
 			});
 
 		// System under test
@@ -926,7 +926,7 @@
 
 		// Assert
 		var $sTitle = oObjectHeader.$("title");
-		ok($sTitle.find( "h3" ), "Title has titleLevel H13");
+		ok($sTitle.find( "h3" ), "Title has titleLevel H3");
 
 		// cleanup
 		oObjectHeader.destroy();
@@ -953,6 +953,24 @@
 		oObjectHeader.destroy();
 	});
 
+	test("When set to Auto title has level H1", function(){
+		// Arrange
+		var oObjectHeader = new sap.m.ObjectHeader({
+				title: "Test title level",
+				titleLevel: sap.ui.core.TitleLevel.Auto
+			});
+
+		// System under test
+		oObjectHeader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		var $sTitle = oObjectHeader.$("title");
+		ok($sTitle.find( "h1" ), "Title has titleLevel H1");
+
+		// cleanup
+		oObjectHeader.destroy();
+	});
 
 	/******************************************************************/
 
