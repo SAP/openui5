@@ -941,7 +941,7 @@ QUnit.asyncTest("Scrolling", function(assert) {
 
 	assert.ok((oTable.$("cellacc").html() || "").indexOf("A3") >= 0, "Acc Text before scrolling");
 	oTable.addEventDelegate(oDelegate);
-	qutils.triggerKeyboardEvent($Cell, "ARROW_DOWN");
+	oTable.setFirstVisibleRow(1); // Simulate scrolling by one row
 	assert.ok(!bFocusTriggered, "No sync refocus of cell done");
 
 	setTimeout(function() {

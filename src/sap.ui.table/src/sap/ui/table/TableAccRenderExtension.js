@@ -3,8 +3,8 @@
  */
 
 // Provides helper sap.ui.table.TableAccRenderExtension.
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', './TableExtension'],
+	function(jQuery, TableExtension) {
 	"use strict";
 
 	/*
@@ -30,13 +30,23 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * Extension for sap.ui.table.TableRenderer which handles ACC related things.
 	 *
+	 * @class Extension for sap.ui.table.TableRenderer which handles ACC related things.
+	 *
+	 * @extends sap.ui.table.TableExtension
 	 * @author SAP SE
 	 * @version ${version}
-	 * @namespace
+	 * @constructor
 	 * @private
 	 * @alias sap.ui.table.TableAccRenderExtension
 	 */
-	var AccRenderExtension = {
+	var AccRenderExtension = TableExtension.extend("sap.ui.table.TableAccRenderExtension", /* @lends sap.ui.table.TableAccRenderExtension */ {
+
+		/*
+		 * @see TableExtension._init
+		 */
+		_init : function(oTable, sTableType, mSettings) {
+			return "AccRenderExtension";
+		},
 
 		/*
 		 * Renders all necessary hidden text elements of the table.
@@ -141,7 +151,7 @@ sap.ui.define(['jquery.sap.global'],
 			_writeAccText(oRm, oRow.getId(), "rowselecttext", sText, ["sapUiTableAriaRowSel"]);
 		}
 
-	};
+	});
 
 	return AccRenderExtension;
 

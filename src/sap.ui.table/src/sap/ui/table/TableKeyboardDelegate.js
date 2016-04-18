@@ -3,8 +3,8 @@
  */
 
 // Provides helper sap.ui.table.TableKeyboardDelegate.
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableUtils'],
-	function(jQuery, BaseObject, TableUtils) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', './TableUtils'],
+	function(jQuery, BaseObject, TableExtension, TableUtils) {
 	"use strict";
 
 	/**
@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableUtils'],
 		constructor : function(sType) {
 			BaseObject.call(this);
 
-			if (sType === "ANALYTICAL") {
+			if (sType === TableExtension.TABLETYPES.ANALYTICAL) {
 
 				this.onsapselect = function(oEvent) {
 					if (jQuery(oEvent.target).hasClass("sapUiTableGroupIcon")) {
@@ -48,7 +48,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableUtils'],
 					}
 				};
 
-			} else if (sType === "TREE") {
+			} else if (sType === TableExtension.TABLETYPES.TREE) {
 
 				this.onsapselect = function(oEvent) {
 					if (jQuery(oEvent.target).hasClass("sapUiTableTreeIcon")) {

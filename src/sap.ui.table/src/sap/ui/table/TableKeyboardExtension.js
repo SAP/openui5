@@ -3,8 +3,8 @@
  */
 
 // Provides helper sap.ui.table.TableKeyboardExtension.
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/delegate/ItemNavigation', './TableUtils', './TableKeyboardDelegate' /*Switch to TableKeyboardDelegate2 for development of new keyboard behavior*/],
-	function(jQuery, BaseObject, ItemNavigation, TableUtils, TableKeyboardDelegate) {
+sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/ItemNavigation', './TableUtils', './TableKeyboardDelegate' /*Switch to TableKeyboardDelegate2 for development of new keyboard behavior*/],
+	function(jQuery, TableExtension, ItemNavigation, TableUtils, TableKeyboardDelegate) {
 	"use strict";
 
 	/*
@@ -139,29 +139,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/delegate/
 	 *
 	 * @class Extension for sap.ui.table.Table which handles keyboard related things.
 	 *
-	 * @extends sap.ui.base.Object
+	 * @extends sap.ui.table.TableExtension
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
 	 * @private
 	 * @alias sap.ui.table.TableKeyboardExtension
 	 */
-	var TableKeyboardExtension = BaseObject.extend("sap.ui.table.TableKeyboardExtension", /* @lends sap.ui.table.TableKeyboardExtension */ {
+	var TableKeyboardExtension = TableExtension.extend("sap.ui.table.TableKeyboardExtension", /* @lends sap.ui.table.TableKeyboardExtension */ {
 
 		/*
-		 * @see TableKeyboardExtension.enrich
+		 * @see TableExtension._init
 		 */
-		constructor : function(oTable, sTableType) {
-			BaseObject.call(this);
-			this._table = oTable;
+		_init : function(oTable, sTableType, mSettings) {
 			this._itemNavigation = null;
 			this._itemNavigationInvalidated = false; // determines whether item navigation should be reapplied from scratch
 			this._itemNavigationSuspended = false; // switch off event forwarding to item navigation
 			this._delegate = new TableKeyboardDelegate(sTableType);
 
 			// Register the delegates in correct order
-			this._table.addEventDelegate(this._delegate, this._table);
-			this._table.addEventDelegate(ItemNavigationDelegate, this._table);
+			oTable.addEventDelegate(this._delegate, oTable);
+			oTable.addEventDelegate(ItemNavigationDelegate, oTable);
+
+			var that = this;
+			oTable._getItemNavigation = function() { return that._itemNavigation; };
+
+			return "KeyboardExtension";
 		},
 
 		/*
@@ -169,8 +172,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/delegate/
 		 */
 		destroy : function() {
 			// Deregister the delegates
-			this._table.removeEventDelegate(this._delegate);
-			this._table.removeEventDelegate(ItemNavigationDelegate);
+			this.getTable().removeEventDelegate(this._delegate);
+			this.getTable().removeEventDelegate(ItemNavigationDelegate);
 
 			if (this._itemNavigation) {
 				this._itemNavigation.destroy();
@@ -180,51 +183,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/delegate/
 			this._delegate.destroy();
 			this._delegate = null;
 
-			this._table = null;
-			BaseObject.prototype.destroy.apply(this, arguments);
-		},
-
-		/*
-		 * @see sap.ui.base.Object#getInterface
-		 */
-		getInterface : function() { return this; }
+			TableExtension.prototype.destroy.apply(this, arguments);
+		}
 
 	});
-
-	/*
-	 * Initializes the Keyboard Extension based on the type of the given Table control.
-	 * @public (Part of the API for Table control only!)
-	 */
-	TableKeyboardExtension.enrich = function(oTable) {
-		var oExtension;
-
-		//Preparation for later:
-		function _isInstanceOf(oControl, sType) {
-			var oType = sap.ui.require(sType);
-			return oType && (oControl instanceof oType);
-		}
-
-		var sType = "STANDARD"; //TBD: Cleanup
-		if (_isInstanceOf(oTable, "sap/ui/table/TreeTable")) {
-			sType = "TREE";
-		} else if (_isInstanceOf(oTable, "sap/ui/table/AnalyticalTable")) {
-			sType = "ANALYTICAL";
-		}
-
-		oExtension = new TableKeyboardExtension(oTable, sType);
-
-		oTable._getKeyboardExtension = function(){ return oExtension; };
-		oTable._getItemNavigation = function() { return oExtension._itemNavigation; };
-	};
-
-
-	/*
-	 * Returns the related table control.
-	 * @public (Part of the API for Table control only!)
-	 */
-	TableKeyboardExtension.prototype.getTable = function() {
-		return this._table;
-	};
 
 
 	/*
@@ -235,7 +197,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/delegate/
 		if (!this._itemNavigation || this._itemNavigationInvalidated) {
 			ExtensionHelper._initItemNavigation(this);
 		}
-		return this._table;
 	};
 
 
