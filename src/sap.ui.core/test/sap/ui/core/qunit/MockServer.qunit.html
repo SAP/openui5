@@ -3699,6 +3699,70 @@
 		oModel.submitChanges();
 	});
 
+	test("$batch: cusotm headers of contained requests", function(assert) {
+
+		var done = assert.async();
+		var sUri = "/mock/";
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : sUri
+		});
+		var sMetadataUrl = "testdata/DataModel.xml";
+		var sMockdataBaseUrl = "testdata/";
+
+		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
+		var aRequests = oMockServer.getRequests();
+
+		var sHeaderMsgString = JSON.stringify({
+			"code": "CI_DRAFTBP_MESSAGE/015",
+			"message": "Enter Reconciliation Account under Company Code before saving your entry",
+			"severity": "warning",
+			"target": "ReconciliationAccount",
+			"details": []
+		});
+
+		aRequests.push({
+			method : "GET",
+			path: /.*LeaveItemCollection/,
+			response : function(oXhr, sCode) {
+				oXhr.respondJSON(200,
+					{
+						"Content-Type" : "application/json",
+						"sap-message": sHeaderMsgString,
+						"my-custom-header" : "HelloWorld"
+					},
+					{ d: [{"itemid": sCode}] }
+				);
+				return true;
+			}
+		});
+
+		oMockServer.setRequests(aRequests);
+		oMockServer.start();
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel(sUri, true);
+		oModel.setDeferredBatchGroups([ "myId" ]);
+
+		oModel.read("/LeaveItemCollection", {
+			batchGroupId : "myId",
+			success : function(oData, oResponse) {
+				assert.equal(oResponse.headers["sap-message"], sHeaderMsgString, "sap-message header available");
+				assert.equal(oResponse.headers["my-custom-header"], "HelloWorld", "my-custom-header was transferred correctly");
+			},
+			error : function(oResponse) {
+				ok(false, "Request failed...");
+			}
+		});
+
+		oModel.attachBatchRequestCompleted(this, function(test) {
+			setTimeout(function(){
+				oMockServer.destroy();
+				done();
+			},0);
+		});
+
+		oModel.submitChanges();
+	});
+
 	asyncTest("test mock data in one file", 10, function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
