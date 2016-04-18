@@ -687,7 +687,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				$dialogContent.height(parseInt($dialog.height(), 10));
 			}
 
-			if (this.getStretch()) {
+			if (this.getStretch() || this._bDisableRepositioning) {
 				return;
 			}
 
