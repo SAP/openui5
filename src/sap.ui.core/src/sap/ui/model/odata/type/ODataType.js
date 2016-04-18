@@ -103,9 +103,9 @@ sap.ui.define(['sap/ui/model/SimpleType'],
 	 *
 	 * @alias sap.ui.model.odata.type.ODataType
 	 * @param {object} [oFormatOptions]
-	 *   type-specific format options; see sub-types
+	 *   type-specific format options; see subtypes
 	 * @param {object} [oConstraints]
-	 *   type-specific constraints (e.g. <code>oConstraints.nullable</code>), see sub-types
+	 *   type-specific constraints (e.g. <code>oConstraints.nullable</code>), see subtypes
 	 * @public
 	 * @since 1.27.0
 	 */
