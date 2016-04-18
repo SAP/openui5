@@ -25,9 +25,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		oRm.write("<span ");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMObjectMarker");
+		if (oControl._isIconVisible()) {
+			oRm.addClass("sapMObjectMarkerIcon");
+		}
+		if (oControl._isTextVisible()) {
+			oRm.addClass("sapMObjectMarkerText");
+		}
 		oRm.writeClasses();
 		oRm.write(">");
-
 		oRm.renderControl(oControl._getInnerControl());
 
 		// end control wrapper
