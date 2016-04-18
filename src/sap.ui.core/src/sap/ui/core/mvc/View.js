@@ -639,6 +639,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 		}
 	};
 
+	function isOnDemand(oPreprocessor) {
+		return !!oPreprocessor._onDemand;
+	}
+
 	/**
 	* Checks if any preprocessors are active for the specified type
 	*
@@ -647,13 +651,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	* @protected
 	*/
 	View.prototype.hasPreprocessor = function(sType) {
-		function isNotOnDemand(oPreprocessor) {
-			return !oPreprocessor._onDemand;
-		}
-		var sViewType =  this.getMetadata().getClass()._sType;
-		return !!(this.mPreprocessors && this.mPreprocessors[sType] ||
-		View._mPreprocessors && View._mPreprocessors[sViewType] &&
-		View._mPreprocessors[sViewType][sType] && View._mPreprocessors[sViewType][sType].every(isNotOnDemand));
+		var bHasGlobalPreprocessor, bHasLocalPreprocessor, sViewType;
+		sViewType =  this.getMetadata().getClass()._sType;
+
+		// if a local preprocessor is present there is either a local or an on-demand preprocessor active
+		bHasLocalPreprocessor = this.mPreprocessors && this.mPreprocessors[sType];
+		// global preprocessor may be on-demand, hence we need to check for at least one non on-demand preprocessor
+		bHasGlobalPreprocessor = View._mPreprocessors && View._mPreprocessors[sViewType] && View._mPreprocessors[sViewType][sType];
+		bHasGlobalPreprocessor = bHasGlobalPreprocessor && !View._mPreprocessors[sViewType][sType].every(isOnDemand);
+
+		return !!(bHasLocalPreprocessor || bHasGlobalPreprocessor);
 	};
 
 	/**
