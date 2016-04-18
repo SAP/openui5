@@ -201,7 +201,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 				this.setInternalBusyIndicatorDelay(this.iInitialBusyIndicatorDelay);
 			}
 
-			// process the event queue
+			// process the message queue
 			for (var i = 0, mCurrentMessage, mNextMessage, bIsCurrentMessageTheLast; i < this.aMessageQueue.length; i++) {
 				mCurrentMessage = this.aMessageQueue.shift(); // get and delete the first event from the queue
 				i--;

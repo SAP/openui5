@@ -238,14 +238,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		/* ----------------------------------------------------------- */
 
 		function fnHandleKeyboardNavigation(oItem) {
-
 			if (oItem) {
-
 				this.setSelection(oItem);
 				this.setValue(oItem.getText());
+				this.scrollToItem(oItem);
 			}
-
-			this.scrollToItem(oItem);
 		}
 
 		Select.prototype._handleFocusout = function() {
@@ -595,8 +592,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 */
 		Select.prototype._createPopover = function() {
 
-			var that = this,
-				oPicker = new Popover({
+			var that = this;
+			var oPicker = new Popover({
 				showArrow: false,
 				showHeader: false,
 				placement: sap.m.PlacementType.VerticalPreferredBottom,
@@ -606,7 +603,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				bounce: false
 			});
 
-			// detect when the scrollbar is pressed
+			// detect when the scrollbar or an item is pressed
 			oPicker.addEventDelegate({
 				ontouchstart: function(oEvent) {
 					var oPickerDomRef = this.getDomRef("cont");
@@ -720,6 +717,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			// used to prevent the change event from firing when the user scrolls
 			// the picker popup (dropdown) list using the mouse
 			this._bProcessChange = false;
+
+			this.sTypedChars = "";
+			this.iTypingTimeoutID = -1;
 		};
 
 		Select.prototype.onBeforeRendering = function() {
@@ -854,7 +854,31 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
-			var oItem = this.findNextItemByFirstCharacter(String.fromCharCode(oEvent.which));	// note: jQuery oEvent.which normalizes oEvent.keyCode and oEvent.charCode
+			// note: jQuery oEvent.which normalizes oEvent.keyCode and oEvent.charCode
+			var sTypedCharacter = String.fromCharCode(oEvent.which),
+				oSelectedItem = this.getSelectedItem(),
+				sText = sTypedCharacter,
+				oItem = null;
+
+			this.sTypedChars += sTypedCharacter;
+
+			// the typed characters match the text of the selected item
+			if ((oSelectedItem && jQuery.sap.startsWithIgnoreCase(oSelectedItem.getText(), this.sTypedChars)) ||
+
+				// one or more characters have been typed (excluding patterns such as "aa" or "bb")
+				((this.sTypedChars.length === 1) ||
+				((this.sTypedChars.length > 1) &&
+				(this.sTypedChars.charAt(0) !== this.sTypedChars.charAt(1))))) {
+
+				sText = this.sTypedChars;
+			}
+
+			oItem = this.searchNextItemByText(sText);
+			clearTimeout(this.iTypingTimeoutID);
+			this.iTypingTimeoutID = setTimeout(function() {
+				this.sTypedChars = "";
+				this.iTypingTimeoutID = -1;
+			}.bind(this), 1000);
 			fnHandleKeyboardNavigation.call(this, oItem);
 		};
 
@@ -1289,13 +1313,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 
 		/**
 		 * Retrieves the next item from the aggregation named <code>items</code>
-		 * whose first character match with the given <code>sChar</code>.
+		 * whose text match with the given <code>sText</code>.
 		 *
-		 * @param {string} sChar
+		 * @param {string} sText
 		 * @returns {sap.ui.core.Item | null}
 		 * @since 1.26.0
 		 */
-		Select.prototype.findNextItemByFirstCharacter = function(sChar) {
+		Select.prototype.searchNextItemByText = function(sText) {
 			var aItems = this.getItems(),
 				iSelectedIndex = this.getSelectedIndex(),
 				aItemsAfterSelection = aItems.splice(iSelectedIndex + 1, aItems.length - iSelectedIndex),
@@ -1306,7 +1330,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			for (var i = 0, oItem; i < aItems.length; i++) {
 				oItem = aItems[i];
 
-				if (oItem.getEnabled() && !(oItem instanceof sap.ui.core.SeparatorItem) && jQuery.sap.startsWithIgnoreCase(oItem.getText(), sChar)) {
+				if (oItem.getEnabled() && !(oItem instanceof sap.ui.core.SeparatorItem) && jQuery.sap.startsWithIgnoreCase(oItem.getText(), sText)) {
 					return oItem;
 				}
 			}
