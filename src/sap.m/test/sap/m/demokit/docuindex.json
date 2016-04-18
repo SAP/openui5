@@ -609,6 +609,15 @@
 			"sap.m.sample.Table"
 		  ]
 		},
+        {
+          "id": "sap.m.ObjectMarker",
+          "name": "Object Marker",
+          "category": "Display",
+          "since": "1.38",
+          "samples": [
+            "sap.m.sample.ObjectMarker"
+          ]
+        },
 		{
 		  "id": "sap.m.ObjectNumber",
 		  "name": "Object Number",
@@ -1552,6 +1561,11 @@
 		  "id": "sap.m.sample.ObjectIdentifier",
 		  "name": "Object Identifier",
 		  "description": "The object identifier is a small building block representing an object by a title and short description. Often it is used in the first column of a table."
+		},
+		{
+		"id": "sap.m.sample.ObjectMarker",
+		"name": "Object Marker in a table",
+		"description": "The <code>ObjectMarker</code> is a small building block representing an object by an icon or text and icon. Often it is used in a table."
 		},
 		{
 		  "id": "sap.m.sample.ObjectNumber",
