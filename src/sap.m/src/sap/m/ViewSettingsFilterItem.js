@@ -70,7 +70,9 @@ sap.ui.define(['jquery.sap.global', './ViewSettingsItem', './library'],
 				propertyValue   : oEvent.getParameter('propertyValue')
 			});
 		}.bind(this));
-		this.fireFilterDetailItemsAggregationChange();
+		this.fireFilterDetailItemsAggregationChange({
+			item: oObject
+		});
 	};
 
 
