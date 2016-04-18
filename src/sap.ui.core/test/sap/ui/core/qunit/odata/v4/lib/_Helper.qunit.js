@@ -14,14 +14,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._Helper", {
 		beforeEach : function () {
-			this.oSandbox = sinon.sandbox.create();
-			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
+			this.oLogMock = sinon.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		},
 
 		afterEach : function () {
-			this.oSandbox.verifyAndRestore();
+			this.oLogMock.verify();
 		}
 	});
 
@@ -160,7 +159,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("encodePair", function (assert) {
 		var sEncoded,
-			oHelperMock = this.oSandbox.mock(_Helper);
+			oHelperMock = this.mock(_Helper);
 
 		oHelperMock.expects("encode").withExactArgs("key", true).returns("~key~");
 		oHelperMock.expects("encode").withExactArgs("value", false).returns("~value~");
@@ -178,7 +177,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("buildQuery: query", function (assert) {
 		var sEncoded,
-			oHelperMock = this.oSandbox.mock(_Helper);
+			oHelperMock = this.mock(_Helper);
 
 		oHelperMock.expects("encodePair").withExactArgs("a", "b").returns("a=b");
 		oHelperMock.expects("encodePair").withExactArgs("c", "d").returns("c=d");

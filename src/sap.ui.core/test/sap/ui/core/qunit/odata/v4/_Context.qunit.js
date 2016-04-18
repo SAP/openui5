@@ -13,14 +13,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4._Context", {
 		beforeEach : function () {
-			this.oSandbox = sinon.sandbox.create();
-			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
+			this.oLogMock = sinon.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		},
 
 		afterEach : function () {
-			this.oSandbox.verifyAndRestore();
+			this.oLogMock.verify();
 		}
 	});
 
@@ -88,7 +87,7 @@ sap.ui.require([
 			oResult = {},
 			sPath = "bar";
 
-		this.oSandbox.mock(oBinding).expects("requestValue").withExactArgs(sPath, 42)
+		this.mock(oBinding).expects("requestValue").withExactArgs(sPath, 42)
 			.returns(oResult);
 
 		assert.strictEqual(oContext.requestValue(sPath), oResult);
@@ -109,10 +108,10 @@ sap.ui.require([
 				sPropertyName = "bar",
 				vValue = Math.PI;
 
-			this.oSandbox.mock(oModel).expects("requestCanonicalPath")
+			this.mock(oModel).expects("requestCanonicalPath")
 				.withExactArgs(sinon.match.same(oContext))
 				.returns(Promise.resolve("/edit('URL')"));
-			this.oSandbox.mock(oBinding).expects("updateValue")
+			this.mock(oBinding).expects("updateValue")
 				.withExactArgs("up", sPropertyName, vValue, "edit('URL')",
 					iIndex === undefined ? undefined : "" + iIndex)
 				.returns(Promise.resolve(oResult));
@@ -134,10 +133,10 @@ sap.ui.require([
 			oContext = _Context.create(oModel, oBinding, "/foo", 0),
 			oError = new Error();
 
-		this.oSandbox.mock(oModel).expects("requestCanonicalPath")
+		this.mock(oModel).expects("requestCanonicalPath")
 			.withExactArgs(sinon.match.same(oContext))
 			.returns(Promise.reject(oError)); // rejected!
-		this.oSandbox.mock(oBinding).expects("updateValue").never();
+		this.mock(oBinding).expects("updateValue").never();
 
 		return oContext.updateValue("up", "bar", Math.PI).then(function (oResult0) {
 			assert.ok(false);
@@ -156,7 +155,7 @@ sap.ui.require([
 			sPropertyName = "bar",
 			vValue = Math.PI;
 
-		this.oSandbox.mock(oBinding).expects("updateValue")
+		this.mock(oBinding).expects("updateValue")
 			.withExactArgs("up", sPropertyName, vValue, "edit('URL')", "SO_2_SOITEM/42")
 			.returns(oResult);
 
@@ -175,7 +174,7 @@ sap.ui.require([
 			sPropertyName = "bar",
 			vValue = Math.PI;
 
-		this.oSandbox.mock(oBinding).expects("updateValue")
+		this.mock(oBinding).expects("updateValue")
 			.withExactArgs("up", sPropertyName, vValue, "edit('URL')", "0/SO_2_SOITEM/42")
 			.returns(oResult);
 

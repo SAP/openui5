@@ -25,9 +25,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataContextBinding", {
 		beforeEach : function () {
-			this.oSandbox = sinon.sandbox.create();
-
-			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
+			this.oLogMock = sinon.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 
@@ -36,12 +34,13 @@ sap.ui.require([
 				serviceUrl : "/service/?sap-client=111",
 				synchronizationMode : "None"
 			});
-			this.oRequestorMock = this.oSandbox.mock(this.oModel.oRequestor);
+			this.oRequestorMock = sinon.mock(this.oModel.oRequestor);
 			this.oRequestorMock.expects("request").never();
 		},
 
 		afterEach : function () {
-			this.oSandbox.verifyAndRestore();
+			this.oLogMock.verify();
+			this.oRequestorMock.verify();
 		}
 	});
 
@@ -70,12 +69,12 @@ sap.ui.require([
 			oBoundContext = {},
 			oBinding = this.oModel.bindContext("foo", oContext);
 
-		this.oSandbox.mock(this.oModel).expects("resolve")
+		this.mock(this.oModel).expects("resolve")
 			.withExactArgs("foo", sinon.match.same(oContext))
 			.returns("/absolute");
-		this.oSandbox.mock(oBinding).expects("_fireChange")
+		this.mock(oBinding).expects("_fireChange")
 			.withExactArgs({reason : ChangeReason.Change});
-		this.oSandbox.mock(_Context).expects("create")
+		this.mock(_Context).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding), "/absolute")
 			.returns(oBoundContext);
 
@@ -87,9 +86,9 @@ sap.ui.require([
 	QUnit.test("initialize, unresolved path", function () {
 		var oBinding = this.oModel.bindContext("foo");
 
-		this.oSandbox.mock(this.oModel).expects("resolve")
+		this.mock(this.oModel).expects("resolve")
 			.returns(undefined /*relative path, no context*/);
-		this.oSandbox.mock(oBinding).expects("_fireChange").never();
+		this.mock(oBinding).expects("_fireChange").never();
 
 		oBinding.initialize();
 	});
@@ -108,14 +107,14 @@ sap.ui.require([
 		var oContext = {},
 			oBoundContext = {},
 			oBinding = this.oModel.bindContext("relative"),
-			oModelMock = this.oSandbox.mock(this.oModel),
-			oSetContextSpy = this.oSandbox.spy(Binding.prototype, "setContext");
+			oModelMock = this.mock(this.oModel),
+			oSetContextSpy = this.spy(Binding.prototype, "setContext");
 
 		oModelMock.expects("resolve").withExactArgs("relative", sinon.match.same(oContext))
 			.returns("/absolute");
-		this.oSandbox.mock(oBinding).expects("_fireChange").twice()
+		this.mock(oBinding).expects("_fireChange").twice()
 			.withExactArgs({reason : ChangeReason.Context});
-		this.oSandbox.mock(_Context).expects("create")
+		this.mock(_Context).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding), "/absolute")
 			.returns(oBoundContext);
 
@@ -144,7 +143,7 @@ sap.ui.require([
 	QUnit.test("setContext on resolved binding", function (assert) {
 		var oBinding = this.oModel.bindContext("/EntitySet('foo')/child");
 
-		this.oSandbox.mock(oBinding).expects("_fireChange").never();
+		this.mock(oBinding).expects("_fireChange").never();
 
 		oBinding.setContext(_Context.create(this.oModel, null, "/EntitySet('bar')"));
 
@@ -161,12 +160,12 @@ sap.ui.require([
 				oBinding;
 
 			if (bAbsolute) {
-				this.oSandbox.mock(_Cache).expects("createSingle")
+				this.mock(_Cache).expects("createSingle")
 				.withExactArgs(sinon.match.same(this.oModel.oRequestor), sPath.slice(1), {
 					"sap-client" : "111"
 				}).returns(oCache);
 			} else {
-				this.oSandbox.mock(_Cache).expects("createSingle").never();
+				this.mock(_Cache).expects("createSingle").never();
 			}
 
 			oBinding = this.oModel.bindContext(sPath, oContext);
@@ -195,12 +194,12 @@ sap.ui.require([
 			mParameters = {"$expand" : "foo", "$select" : "bar", "custom" : "baz"},
 			mQueryOptions = {};
 
-		oHelperMock = this.oSandbox.mock(_ODataHelper);
+		oHelperMock = this.mock(_ODataHelper);
 		oHelperMock.expects("buildQueryOptions")
 			.withExactArgs(this.oModel.mUriParameters, mParameters,
 				["$expand", "$filter", "$orderby", "$select"])
 			.returns(mQueryOptions);
-		this.oSandbox.mock(_Cache).expects("createSingle")
+		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES(ID='1')",
 				sinon.match.same(mQueryOptions));
 
@@ -230,11 +229,11 @@ sap.ui.require([
 			},
 			oContext = _Context.create(this.oModel, null, "/TEAMS('TEAM_01')");
 
-		this.oSandbox.mock(_Cache).expects("createSingle").returns(oCache);
+		this.mock(_Cache).expects("createSingle").returns(oCache);
 
 		oBinding = this.oModel.bindContext("/EMPLOYEES(ID='1')", oContext);
-		this.oSandbox.mock(oCache).expects("refresh");
-		this.oSandbox.mock(oBinding).expects("_fireChange")
+		this.mock(oCache).expects("refresh");
+		this.mock(oBinding).expects("_fireChange")
 			.withExactArgs({reason : ChangeReason.Refresh});
 
 		oBinding.refresh();
@@ -248,13 +247,13 @@ sap.ui.require([
 			},
 			oContext = _Context.create(this.oModel, null, "/TEAMS('TEAM_01')"),
 			oError = new Error(),
-			oHelperMock = this.oSandbox.mock(_ODataHelper);
+			oHelperMock = this.mock(_ODataHelper);
 
-		this.oSandbox.mock(_Cache).expects("createSingle").returns(oCache);
+		this.mock(_Cache).expects("createSingle").returns(oCache);
 
 		oBinding = this.oModel.bindContext("/EMPLOYEES(ID='1')", oContext);
-		this.oSandbox.mock(oCache).expects("refresh");
-		this.oSandbox.mock(oBinding).expects("_fireChange")
+		this.mock(oCache).expects("refresh");
+		this.mock(oBinding).expects("_fireChange")
 			.withExactArgs({reason : ChangeReason.Refresh});
 		oHelperMock.expects("checkGroupId").withExactArgs("myGroup");
 
@@ -276,10 +275,10 @@ sap.ui.require([
 		var oBinding,
 			oContext = _Context.create(this.oModel, null, "/TEAMS('TEAM_01')");
 
-		this.oSandbox.mock(_Cache).expects("createSingle").never();
+		this.mock(_Cache).expects("createSingle").never();
 
 		oBinding = this.oModel.bindContext("TEAM_2_EMPLOYEES(ID='1')", oContext);
-		this.oSandbox.mock(oBinding).expects("_fireChange").never();
+		this.mock(oBinding).expects("_fireChange").never();
 
 		assert.throws(function () {
 			oBinding.refresh();
@@ -296,7 +295,7 @@ sap.ui.require([
 		this.oRequestorMock.expects("request").returns(Promise.resolve({"ID" : "1"}));
 		oBinding = this.oModel.bindContext("/EMPLOYEES(ID='1')", oContext);
 
-		oBindingMock = this.oSandbox.mock(oBinding);
+		oBindingMock = this.mock(oBinding);
 		oBindingMock.expects("_fireChange");
 		oBindingMock.expects("fireDataReceived").withExactArgs();
 
@@ -314,15 +313,15 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("requestValue: absolute binding (read required)", function (assert) {
 		var oBinding = this.oModel.bindContext("/absolute", undefined, {$$groupId : "$direct"}),
-			oBindingMock = this.oSandbox.mock(oBinding);
+			oBindingMock = this.mock(oBinding);
 
 		oBindingMock.expects("fireDataRequested").withExactArgs();
 		oBindingMock.expects("fireDataReceived").withExactArgs();
-		this.oSandbox.mock(oBinding.oCache).expects("read")
+		this.mock(oBinding.oCache).expects("read")
 			.withExactArgs("$direct", "bar", sinon.match.func)
 			.callsArg(2)
 			.returns(Promise.resolve("value"));
-		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup")
+		this.mock(this.oModel).expects("addedRequestToGroup")
 			.withExactArgs("$direct", sinon.match.func).callsArg(1);
 
 		return oBinding.requestValue("bar").then(function (vValue) {
@@ -333,16 +332,16 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("requestValue: absolute binding (read required), with refresh", function (assert) {
 		var oBinding = this.oModel.bindContext("/absolute", undefined, {$$groupId : "$direct"}),
-			oBindingMock = this.oSandbox.mock(oBinding),
+			oBindingMock = this.mock(oBinding),
 			oPromise;
 
 		oBindingMock.expects("fireDataRequested").withExactArgs();
 		oBindingMock.expects("fireDataReceived").withExactArgs();
-		this.oSandbox.mock(oBinding.oCache).expects("read")
+		this.mock(oBinding.oCache).expects("read")
 			.withExactArgs("myGroup", "bar", sinon.match.func)
 			.callsArg(2)
 			.returns(Promise.resolve("value"));
-		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup")
+		this.mock(this.oModel).expects("addedRequestToGroup")
 			.withExactArgs("myGroup", sinon.match.func).callsArg(1);
 		oBinding.sRefreshGroupId = "myGroup";
 
@@ -357,11 +356,11 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("requestValue: absolute binding (no read required)", function (assert) {
 		var oBinding = this.oModel.bindContext("/absolute", undefined, {$$groupId : "$direct"}),
-			oBindingMock = this.oSandbox.mock(oBinding);
+			oBindingMock = this.mock(oBinding);
 
 		oBindingMock.expects("fireDataRequested").never();
 		oBindingMock.expects("fireDataReceived").never();
-		this.oSandbox.mock(oBinding.oCache).expects("read")
+		this.mock(oBinding.oCache).expects("read")
 			.withExactArgs("$direct", "bar", sinon.match.func)
 			// no read required! .callsArg(2)
 			.returns(Promise.resolve("value"));
@@ -374,7 +373,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("requestValue: absolute binding (failure)", function (assert) {
 		var oBinding = this.oModel.bindContext("/absolute", undefined, {$$groupId : "$direct"}),
-			oCacheMock = this.oSandbox.mock(oBinding.oCache),
+			oCacheMock = this.mock(oBinding.oCache),
 			oExpectedError = new Error("Expected read failure"),
 			oCachePromise = Promise.reject(oExpectedError);
 
@@ -382,9 +381,9 @@ sap.ui.require([
 			.callsArg(2).returns(oCachePromise);
 		oCacheMock.expects("read").withExactArgs("$direct", "bar", sinon.match.func)
 			.returns(oCachePromise);
-		this.oSandbox.mock(oBinding).expects("fireDataReceived")
+		this.mock(oBinding).expects("fireDataReceived")
 			.withExactArgs({error : oExpectedError});
-		this.oSandbox.mock(this.oModel).expects("reportError").withExactArgs(
+		this.mock(this.oModel).expects("reportError").withExactArgs(
 			"Failed to read path /absolute", sClassName, sinon.match.same(oExpectedError));
 
 		oBinding.requestValue("foo").then(function () {
@@ -407,10 +406,10 @@ sap.ui.require([
 			oNestedBinding,
 			oPromise = {};
 
-		this.oSandbox.mock(oBinding).expects("getGroupId").never();
+		this.mock(oBinding).expects("getGroupId").never();
 		oBinding.initialize();
 		oContext = oBinding.getBoundContext();
-		oContextMock = this.oSandbox.mock(oContext);
+		oContextMock = this.mock(oContext);
 		oNestedBinding = this.oModel.bindContext("navigation", oContext);
 
 		oContextMock.expects("requestValue").withExactArgs("navigation/bar").returns(oPromise);
@@ -430,11 +429,11 @@ sap.ui.require([
 				sPath = "SO_2_SOITEM/42",
 				oResult = {};
 
-			this.oSandbox.mock(oBinding).expects("fireEvent").never();
-			this.oSandbox.mock(oBinding.oCache).expects("update")
+			this.mock(oBinding).expects("fireEvent").never();
+			this.mock(oBinding.oCache).expects("update")
 				.withExactArgs(sGroupId || "myUpdateGroup", "bar", Math.PI, "edit('URL')", sPath)
 				.returns(Promise.resolve(oResult));
-			this.oSandbox.mock(this.oModel).expects("addedRequestToGroup")
+			this.mock(this.oModel).expects("addedRequestToGroup")
 				.withExactArgs(sGroupId || "myUpdateGroup");
 
 			// code under test
@@ -454,13 +453,13 @@ sap.ui.require([
 				oBinding = this.oModel.bindContext("PRODUCT_2_BP", oContext),
 				oResult = {};
 
-			this.oSandbox.mock(oBinding).expects("fireEvent").never();
-			this.oSandbox.mock(oBinding).expects("getGroupId").never();
-			this.oSandbox.mock(oContext).expects("updateValue")
+			this.mock(oBinding).expects("fireEvent").never();
+			this.mock(oBinding).expects("getGroupId").never();
+			this.mock(oContext).expects("updateValue")
 				.withExactArgs("up", "bar", Math.PI, "edit('URL')",
 					sPath ? "PRODUCT_2_BP/" + sPath : "PRODUCT_2_BP")
 				.returns(Promise.resolve(oResult));
-			this.oSandbox.mock(this.oModel).expects("addedRequestToGroup").never();
+			this.mock(this.oModel).expects("addedRequestToGroup").never();
 
 			// code under test
 			return oBinding.updateValue("up", "bar", Math.PI, "edit('URL')", sPath)
@@ -490,7 +489,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("events", function (assert) {
 		var oContextBinding,
-			oContextBindingMock = this.oSandbox.mock(ContextBinding.prototype),
+			oContextBindingMock = this.mock(ContextBinding.prototype),
 			mEventParameters = {},
 			oReturn = {};
 
@@ -511,8 +510,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("$$groupId, $$updateGroupId", function (assert) {
 		var oBinding,
-			oHelperMock = this.oSandbox.mock(_ODataHelper),
-			oModelMock = this.oSandbox.mock(this.oModel),
+			oHelperMock = this.mock(_ODataHelper),
+			oModelMock = this.mock(this.oModel),
 			mParameters = {};
 
 		oModelMock.expects("getGroupId").withExactArgs().returns("baz");
@@ -547,17 +546,17 @@ sap.ui.require([
 	QUnit.test("getGroupId", function (assert) {
 		var oBinding = this.oModel.bindContext("/absolute", undefined, {$$groupId : "$direct"}),
 			oBinding2 = this.oModel.bindContext("/absolute"),
-			oModelMock = this.oSandbox.mock(this.oModel),
+			oModelMock = this.mock(this.oModel),
 			oReadPromise = Promise.resolve();
 
-		this.oSandbox.mock(oBinding.oCache).expects("read")
+		this.mock(oBinding.oCache).expects("read")
 			.withExactArgs("$direct", "foo", sinon.match.func)
 			.callsArg(2)
 			.returns(oReadPromise);
 		oModelMock.expects("addedRequestToGroup")
 			.withExactArgs("$direct", sinon.match.func)
 			.callsArg(1);
-		this.oSandbox.mock(oBinding2.oCache).expects("read")
+		this.mock(oBinding2.oCache).expects("read")
 			.withExactArgs("$auto", "bar", sinon.match.func)
 			.callsArg(2)
 			.returns(oReadPromise);
@@ -618,7 +617,7 @@ sap.ui.require([
 		QUnit.test("_requestOperationMetadata: " + oFixture.path, function (assert) {
 			var oContextBinding = this.oModel.bindContext(oFixture.path),
 				oMetaModel = this.oModel.getMetaModel(),
-				oMetaModelMock = this.oSandbox.mock(oMetaModel),
+				oMetaModelMock = this.mock(oMetaModel),
 				oParentBinding,
 				oPromise,
 				oResult = oFixture.metadata1;
@@ -659,7 +658,7 @@ sap.ui.require([
 	QUnit.test("function, no execute", function (assert) {
 		var oContextBinding = this.oModel.bindContext("/FunctionImport(...)");
 
-		this.oSandbox.mock(oContextBinding).expects("_fireChange").never();
+		this.mock(oContextBinding).expects("_fireChange").never();
 
 		assert.strictEqual(oContextBinding.oCache, undefined);
 		oContextBinding.refresh();
@@ -670,22 +669,22 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("execute function", function (assert) {
-		var oCacheMock = this.oSandbox.mock(_Cache),
+		var oCacheMock = this.mock(_Cache),
 			oContextBinding,
 			oContextBindingMock,
-			oHelperMock = this.oSandbox.mock(_Helper),
-			oModelMock = this.oSandbox.mock(this.oModel),
+			oHelperMock = this.mock(_Helper),
+			oModelMock = this.mock(this.oModel),
 			sPath = "/FunctionImport(...)",
 			oSingleCache = {
 				read : function () {}
 			},
-			oSingleCacheMock = this.oSandbox.mock(oSingleCache),
+			oSingleCacheMock = this.mock(oSingleCache),
 			that = this;
 
 		oCacheMock.expects("createSingle").never();
 
 		oContextBinding = this.oModel.bindContext(sPath);
-		oContextBindingMock = this.oSandbox.mock(oContextBinding);
+		oContextBindingMock = this.mock(oContextBinding);
 
 		oContextBindingMock.expects("_requestOperationMetadata").twice()
 			.returns(Promise.resolve({
@@ -744,24 +743,24 @@ sap.ui.require([
 	QUnit.test("execute action, success", function (assert) {
 		var oContextBinding,
 			oContextBindingMock,
-			oModelMock = this.oSandbox.mock(this.oModel),
+			oModelMock = this.mock(this.oModel),
 			mParameters = {},
 			sPath = "/ActionImport(...)",
 			oSingleCache = {
 				post : function () {},
 				refresh : function () {}
 			},
-			oSingleCacheMock = this.oSandbox.mock(oSingleCache),
+			oSingleCacheMock = this.mock(oSingleCache),
 			that = this;
 
 		oSingleCacheMock.expects("refresh").never();
 
 		oContextBinding = this.oModel.bindContext(sPath, undefined, mParameters);
-		oContextBindingMock = this.oSandbox.mock(oContextBinding);
+		oContextBindingMock = this.mock(oContextBinding);
 
 		oContextBindingMock.expects("_requestOperationMetadata").twice()
 			.returns(Promise.resolve({$kind : "Action"}));
-		this.oSandbox.mock(_Cache).expects("createSingle")
+		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(that.oModel.oRequestor), "ActionImport",
 				{"sap-client" : "111"}, false, true)
 			.returns(oSingleCache);
@@ -796,16 +795,16 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("execute bound action, absolute binding", function (assert) {
-		var oCacheMock = this.oSandbox.mock(_Cache),
+		var oCacheMock = this.mock(_Cache),
 			oContextBinding = this.oModel.bindContext("/EntitySet(ID='1')/schema.Action(...)"),
-			oContextBindingMock = this.oSandbox.mock(oContextBinding),
+			oContextBindingMock = this.mock(oContextBinding),
 			oPostResult = {},
 			oSingleCache = {
 				post : function () {},
 				read : function () {},
 				refresh : function () {}
 			},
-			oSingleCacheMock = this.oSandbox.mock(oSingleCache);
+			oSingleCacheMock = this.mock(oSingleCache);
 
 		oSingleCacheMock.expects("refresh").never();
 		oContextBindingMock.expects("_requestOperationMetadata")
@@ -818,7 +817,7 @@ sap.ui.require([
 		oSingleCacheMock.expects("post")
 			.withExactArgs("groupId", {"foo" : 42, "bar" : "baz"})
 			.returns(Promise.resolve(oPostResult));
-		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup").withExactArgs("groupId");
+		this.mock(this.oModel).expects("addedRequestToGroup").withExactArgs("groupId");
 		oContextBindingMock.expects("_fireChange")
 			.withExactArgs({reason : ChangeReason.Change});
 
@@ -831,10 +830,10 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("execute bound action, relative binding", function (assert) {
-		var oCacheMock = this.oSandbox.mock(_Cache),
+		var oCacheMock = this.mock(_Cache),
 			oContextBinding,
 			oContextBindingMock,
-			oModelMock = this.oSandbox.mock(this.oModel),
+			oModelMock = this.mock(this.oModel),
 			oParentBinding1 = this.oModel.bindContext("/EntitySet(ID='1')/navigation1"),
 			oParentBinding2 = this.oModel.bindContext("/EntitySet(ID='2')/navigation1"),
 			oPostResult = {},
@@ -843,14 +842,14 @@ sap.ui.require([
 				read : function () {},
 				refresh : function () {}
 			},
-			oSingleCacheMock = this.oSandbox.mock(oSingleCache),
+			oSingleCacheMock = this.mock(oSingleCache),
 			that = this;
 
 		oParentBinding1.initialize();
 		oParentBinding2.initialize();
 		oContextBinding = this.oModel.bindContext("navigation2/schema.Action(...)",
 			oParentBinding1.getBoundContext());
-		oContextBindingMock = this.oSandbox.mock(oContextBinding);
+		oContextBindingMock = this.mock(oContextBinding);
 
 		oSingleCacheMock.expects("refresh").never();
 		oContextBindingMock.expects("_requestOperationMetadata").twice()
@@ -901,7 +900,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("execute action, failure", function (assert) {
-		var oCacheMock = this.oSandbox.mock(_Cache),
+		var oCacheMock = this.mock(_Cache),
 			oPostError = new Error("deliberate failure"),
 			sPath = "/ActionImport(...)",
 			oContextBinding = this.oModel.bindContext(sPath),
@@ -909,18 +908,18 @@ sap.ui.require([
 				post : function () {}
 			};
 
-		this.oSandbox.mock(oContextBinding).expects("_requestOperationMetadata")
+		this.mock(oContextBinding).expects("_requestOperationMetadata")
 			.returns(Promise.resolve({$kind : "Action"}));
 		oCacheMock.expects("createSingle")
 			.withArgs(sinon.match.same(this.oModel.oRequestor), "ActionImport")
 			.returns(oSingleCache);
-		this.oSandbox.mock(oContextBinding).expects("getGroupId").returns("groupId");
-		this.oSandbox.mock(oSingleCache).expects("post")
+		this.mock(oContextBinding).expects("getGroupId").returns("groupId");
+		this.mock(oSingleCache).expects("post")
 			.withExactArgs("groupId", sinon.match.same(oContextBinding.oOperation.mParameters))
 			.returns(Promise.reject(oPostError));
-		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup").withExactArgs("groupId");
-		this.oSandbox.mock(oContextBinding).expects("_fireChange").never();
-		this.oSandbox.mock(this.oModel).expects("reportError").withExactArgs(
+		this.mock(this.oModel).expects("addedRequestToGroup").withExactArgs("groupId");
+		this.mock(oContextBinding).expects("_fireChange").never();
+		this.mock(this.oModel).expects("reportError").withExactArgs(
 			"Failed to execute " + sPath, sClassName, sinon.match.same(oPostError));
 
 		// code under test
@@ -933,7 +932,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("execute action, error in change handler", function (assert) {
-		var oCacheMock = this.oSandbox.mock(_Cache),
+		var oCacheMock = this.mock(_Cache),
 			oChangeHandlerError = new Error("deliberate failure"),
 			sPath = "/ActionImport(...)",
 			oContextBinding = this.oModel.bindContext(sPath),
@@ -943,12 +942,12 @@ sap.ui.require([
 				}
 			};
 
-		this.oSandbox.mock(oContextBinding).expects("_requestOperationMetadata")
+		this.mock(oContextBinding).expects("_requestOperationMetadata")
 			.returns(Promise.resolve({$kind : "Action"}));
 		oCacheMock.expects("createSingle")
 			.withArgs(sinon.match.same(this.oModel.oRequestor), "ActionImport")
 			.returns(oSingleCache);
-		this.oSandbox.mock(this.oModel).expects("reportError").withExactArgs(
+		this.mock(this.oModel).expects("reportError").withExactArgs(
 			"Failed to execute " + sPath, sClassName, oChangeHandlerError);
 
 		oContextBinding.attachChange(function () {
@@ -968,7 +967,7 @@ sap.ui.require([
 		var oContextBinding = this.oModel.bindContext("/Function(...)"),
 			oError = new Error("Invalid");
 
-		this.oSandbox.mock(_ODataHelper).expects("checkGroupId")
+		this.mock(_ODataHelper).expects("checkGroupId")
 			.withExactArgs("$invalid").throws(oError);
 
 		assert.throws(function () {
@@ -1006,10 +1005,10 @@ sap.ui.require([
 			oContextBinding = this.oModel.bindContext(sPath),
 			sMessage = "Unsupported: collection parameter";
 
-		this.oSandbox.mock(oContextBinding).expects("_requestOperationMetadata")
+		this.mock(oContextBinding).expects("_requestOperationMetadata")
 			.returns(Promise.resolve({$Parameter : [{$Name : "foo", $IsCollection : true}]}));
-		this.oSandbox.mock(_Cache).expects("createSingle").never();
-		this.oSandbox.mock(this.oModel).expects("reportError").withExactArgs(
+		this.mock(_Cache).expects("createSingle").never();
+		this.mock(this.oModel).expects("reportError").withExactArgs(
 			"Failed to execute " + sPath, sClassName, sinon.match(function (oError) {
 				return oError.message === sMessage;
 			}));
