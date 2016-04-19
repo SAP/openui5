@@ -55,12 +55,8 @@
 		return new sap.ui.model.odata.v2.ODataModel(sServiceUri, {json: bJSON});
 	}
 
-	function removeSharedMetadata() {
-		var sURI = sServiceUri.replace(/\/$/, "");
-		if (sap.ui.model.odata.v2.ODataModel.mServiceData
-				&& sap.ui.model.odata.v2.ODataModel.mServiceData[sURI]) {
-			delete sap.ui.model.odata.v2.ODataModel.mServiceData[sURI].oMetadata;
-		}
+	function cleanServiceDataCache() {
+		sap.ui.model.odata.v2.ODataModel.mServiceData = {};
 	}
 	/*module("ODataModelV2 XML", {
 		setup : function() {
@@ -69,7 +65,7 @@
 		},
 		teardown : function() {
 			oModel = undefined;
-			removeSharedMetadata();
+			cleanServiceDataCache();
 			stopServer();
 		}
 	});
@@ -99,7 +95,7 @@
 		},
 		teardown : function() {
 			oModel = undefined;
-			removeSharedMetadata();
+			cleanServiceDataCache();
 			stopServer();
 		}
 	});
@@ -841,7 +837,7 @@
 		},
 		teardown : function() {
 			oModel = undefined;
-			removeSharedMetadata();
+			cleanServiceDataCache();
 			stopServer();
 		}
 	});
@@ -1811,7 +1807,7 @@
 		},
 		teardown : function() {
 			oModel = undefined;
-			removeSharedMetadata();
+			cleanServiceDataCache();
 			stopServer();
 		}
 	});
@@ -2429,7 +2425,7 @@
 		},
 		teardown : function() {
 			oModel = undefined;
-			removeSharedMetadata();
+			cleanServiceDataCache();
 			stopServer();
 		}
 	});
