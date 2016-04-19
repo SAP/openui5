@@ -4867,5 +4867,31 @@
         "references": []
       }
     ]
+  },
+  "1.28.33": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "3c1d07fa1110f0961fdfc1cd5e87f112a2a1c5f6",
+        "author": "Bohdan Pukalskyi \u003cbohdan.pukalskyi@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedInput: Setting focus before firing Post event to make",
+        "references": []
+      },
+      {
+        "id": "38e4e4ea49ea4a7d74f746111896094ca704ba2d",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Tab selection in Chrome is now fixed",
+        "references": []
+      },
+      {
+        "id": "02c743a9fa72ea47cde070348a7084054b734c06",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: First page is always rendered as initial after open",
+        "references": []
+      }
+    ]
   }
 }

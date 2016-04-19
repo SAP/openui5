@@ -2875,5 +2875,24 @@
         "references": []
       }
     ]
+  },
+  "1.28.33": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "24d748d53f3773975bf5b64313b3c253478fcd4a",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "DataBinding: Properly cleanup binding info when binding becomes invalid",
+        "references": []
+      },
+      {
+        "id": "08e2d380d4e1291fc9a673c62d1e253d353eac8c",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Themeroots / preloadLibCss: Register correct module paths",
+        "references": []
+      }
+    ]
   }
 }
