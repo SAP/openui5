@@ -385,5 +385,31 @@
         "references": []
       }
     ]
+  },
+  "1.36.7": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "6ed98ad23673c3a8d29d6282d2d05863702171b0",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.IconTabBar: windows 10 rules added",
+        "references": []
+      },
+      {
+        "id": "fa7f7bdb202e998789e7ae5143cd9c91dfb3d747",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton - width recalculation is more effective now.",
+        "references": []
+      },
+      {
+        "id": "8ff20e7cab228bd50d78e6c711149a1992b23012",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.GridLayout: labels not aligned in Firefox",
+        "references": []
+      }
+    ]
   }
 }
