@@ -42,7 +42,6 @@ sap.ui.define(['jquery.sap.global'],
 		// write the HTML into the render manager
 		oRM.write("<ul");
 		oRM.addClass("sapMSegB");
-		oRM.addClass("sapMSegBHide");
 		oRM.writeClasses();
 		if (oControl.getWidth() && oControl.getWidth() !== '') {
 			oRM.addStyle('width', oControl.getWidth());
