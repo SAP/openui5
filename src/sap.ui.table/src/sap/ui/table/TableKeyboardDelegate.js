@@ -254,7 +254,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 			if (bFocusFromTableContent && this.getColumnHeaderVisible()) {
 				// Focus comes from table content. Focus the column header which corresponds to the
 				// selected column (column index)
-				TableUtils.focusItem(this, oInfo.columnCount, oEvent);
+				TableUtils.focusItem(this, oInfo.cellInRow, oEvent);
 				oEvent.preventDefault();
 			} else if (oInfo.domRef === oEvent.target && jQuery.sap.containsOrEquals(oSapUiTableCCnt, oEvent.target) ||
 				(!this.getColumnHeaderVisible() && bNoData && bFocusFromTableContent)) {
