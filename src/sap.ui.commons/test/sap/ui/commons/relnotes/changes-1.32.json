@@ -475,5 +475,31 @@
         "references": []
       }
     ]
+  },
+  "1.32.15": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "634c1d4c99015bcdcc8c6f5036469e34cacafc30",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Slider: Slider\u0027s API call to set value is now properly rendered",
+        "references": []
+      },
+      {
+        "id": "81b3b2d3d305ba559000d20c15dfec4c438c4733",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Hiding the last visible tab no longer throws an exception",
+        "references": []
+      },
+      {
+        "id": "a4e8de0fbe67ec2b7a10a46d0115bb40d17e19dc",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TreeNode: Selection of multiple nodes now is properly animated",
+        "references": []
+      }
+    ]
   }
 }

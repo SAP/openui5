@@ -3270,5 +3270,150 @@
         "references": []
       }
     ]
+  },
+  "1.32.15": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "fd7dd21e16daeefcb81b38420adeb46c90bb7aec",
+        "author": "D051856 \u003cmartin.wittmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "fixed Master-Detail Opa Test",
+        "references": []
+      },
+      {
+        "id": "0c3c7db95804910549f2d43929e1fbb0fdc54d5b",
+        "author": "D051856 \u003cmartin.wittmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "fixed failing OPA test for worklist app",
+        "references": []
+      },
+      {
+        "id": "0ba3e415b8186828440c0f63d7cb69fb7814a2b6",
+        "author": "D051856 \u003cmartin.wittmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "fixed formatting in test.html",
+        "references": []
+      },
+      {
+        "id": "09bad64cd81cd6c67516f6603d09ce58f424f64b",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.IconTabBar: windows 10 rules added",
+        "references": []
+      },
+      {
+        "id": "28aa91a32bd4bd9268bda37baeab39e792a7c1ed",
+        "author": "D051856 \u003cmartin.wittmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "made sure all worklist-app files have unix-style line endings",
+        "references": []
+      },
+      {
+        "id": "636f15f2507e767d85c1ed969763ee5a1ed92869",
+        "author": "Bohdan Pukalskyi \u003cbohdan.pukalskyi@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedInput: Setting focus before firing Post event to make",
+        "references": []
+      },
+      {
+        "id": "f65e7c6082b8280ba51ec7682fb575d5f09a4922",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Displaying is now fixed when the IconTabBar is in ObjectHeader and open on phone",
+        "references": []
+      },
+      {
+        "id": "1a97d458d2e80491628a65ea1987c43156eb2c1d",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: IconTabBar unexpected shrink issue is now fixed",
+        "references": []
+      },
+      {
+        "id": "d1f0331c0cba8a377afa3896f0fa95db5b618e55",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Tab selection in Chrome is now fixed",
+        "references": []
+      },
+      {
+        "id": "93f06bf30df11fd2c61273dbbeb327a8c759fa79",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Image: should remove the sapMNoImg class when the src is invalid",
+        "references": []
+      },
+      {
+        "id": "a57e2baa57d687117b72719d91706df30fa3fa05",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: adjust container sizes in phone mode",
+        "references": []
+      },
+      {
+        "id": "7f47ddd073c79e53ff4c49b58319c167d23643be",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: avoid setting value in MultiInput in paste event",
+        "references": []
+      },
+      {
+        "id": "62121c8c86daf1dd653e4425d64159ae1cd592a8",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NavContainer: the data of \u0027to\u0027 navigation on initial page should be given back to the \u0027back\u0027 navigation",
+        "references": []
+      },
+      {
+        "id": "a56aefe17445527b03381260d3fc530b60aed706",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: handle space and enter on title arrow",
+        "references": []
+      },
+      {
+        "id": "88e3c1e0aa4932a2f0d86ff0c02c356d3862a986",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PullToRefresh - encode description field",
+        "references": []
+      },
+      {
+        "id": "09fe3ac6b60667647de44af866c1421ee8fc9de2",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton - width recalculation is more effective now.",
+        "references": []
+      },
+      {
+        "id": "c95d0f33b01e2205edeeaeb149edc9cfbee6fd8a",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton: Resizing delay is now refactored",
+        "references": []
+      },
+      {
+        "id": "9a20612a6d873ec529d36183a864c6f6d51e6e20",
+        "author": "Hristo Petrov \u003ch.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SelectDialog InfoBar should not be shown in single select mode even if there is a selected option",
+        "references": []
+      },
+      {
+        "id": "f613f7a55610ba46bbb2d8bb70d10d9bd9f8cda8",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.routing: correctly forward the route parameter to the initial page of target container",
+        "references": []
+      },
+      {
+        "id": "681dff27f10c858c34ed5b51a4e9886cbaa71571",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ListItemBase: Content should not overflow",
+        "references": []
+      }
+    ]
   }
 }
