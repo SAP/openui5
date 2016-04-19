@@ -7,6 +7,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 	"use strict";
 
+	var LIST_ITEM_SUFFIX = "-list-item";
+
 	/**
 	 * Constructor for a new ViewSettingsDialog.
 	 *
@@ -1332,17 +1334,21 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 	 */
 	ViewSettingsDialog.prototype._initSortItems = function() {
 		var aSortItems,
-		    oListItem;
+			oListItem;
+
 		this._sortList.removeAllItems();
 		aSortItems = this.getSortItems();
 
 		if (aSortItems.length) {
 			aSortItems.forEach(function(oItem) {
-				oListItem = new sap.m.StandardListItem({
-					title : oItem.getText(),
-					type : sap.m.ListType.Active,
-					selected : oItem.getSelected()
-				}).data("item", oItem);
+				oListItem = sap.ui.getCore().byId(oItem.getId() + LIST_ITEM_SUFFIX);
+				if (!oListItem) {
+					oListItem = new sap.m.StandardListItem({
+						id: oItem.getId() + LIST_ITEM_SUFFIX,
+						type: sap.m.ListType.Active
+					}).data("item", oItem);
+				}
+				oListItem.setTitle(oItem.getText());
 				this._sortList.addItem(oListItem);
 			}, this);
 		}
@@ -1418,11 +1424,17 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 
 		if (!!aGroupItems.length) {
 			aGroupItems.forEach(function (oItem) {
-				oListItem = new sap.m.StandardListItem({
-					title: oItem.getText(),
-					type: sap.m.ListType.Active,
-					selected: oItem.getSelected()
-				}).data("item", oItem);
+				oListItem = sap.ui.getCore().byId(oItem.getId() + LIST_ITEM_SUFFIX);
+				if (!oListItem) {
+					oListItem = new sap.m.StandardListItem({
+						id: oItem.getId() + LIST_ITEM_SUFFIX,
+						type: sap.m.ListType.Active,
+						selected: oItem.getSelected()
+					}).data("item", oItem);
+				}
+
+				oListItem.setTitle(oItem.getText());
+
 				this._groupList.addItem(oListItem);
 			}, this);
 
@@ -1442,14 +1454,19 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 				});
 
 				!bHasSelections && this.setAssociation("selectedGroupItem", this._oGroupingNoneItem, true);
+
+				// Append the None button to the list
+				oListItem = new sap.m.StandardListItem({
+					id: this._oGroupingNoneItem.getId() + LIST_ITEM_SUFFIX,
+					title: this._oGroupingNoneItem.getText(),
+					type: sap.m.ListType.Active,
+					selected: this._oGroupingNoneItem.getSelected()
+				}).data("item", this._oGroupingNoneItem);
+			} else {
+				oListItem = sap.ui.getCore().byId(this._oGroupingNoneItem.getId() + LIST_ITEM_SUFFIX);
 			}
 
-			// Append the None button to the list
-			oListItem = new sap.m.StandardListItem({
-				title: this._oGroupingNoneItem.getText(),
-				type: sap.m.ListType.Active,
-				selected: this._oGroupingNoneItem.getSelected()
-			}).data("item", this._oGroupingNoneItem);
+
 			this._groupList.addItem(oListItem);
 		}
 	};
@@ -1519,47 +1536,59 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 		aPresetFilterItems = this.getPresetFilterItems();
 		if (aPresetFilterItems.length) {
 			aPresetFilterItems.forEach(function(oItem) {
-				oListItem = new sap.m.StandardListItem({
-					title : oItem.getText(),
-					type : sap.m.ListType.Active,
-					selected : oItem.getSelected()
-				}).data("item", oItem);
+				oListItem = sap.ui.getCore().byId(oItem.getId() + LIST_ITEM_SUFFIX);
+				if (!oListItem) {
+					oListItem = new sap.m.StandardListItem({
+						id: oItem.getId() + LIST_ITEM_SUFFIX,
+						type: sap.m.ListType.Active,
+						selected: oItem.getSelected()
+					}).data("item", oItem);
+				}
+				oListItem.setTitle(oItem.getText());
+
 				this._presetFilterList.addItem(oListItem);
 			}, this);
 		}
 		// add none item to preset filter list
 		if (aPresetFilterItems.length) {
-			oListItem = new sap.m.StandardListItem({
-				title : this._rb.getText("VIEWSETTINGS_NONE_ITEM"),
-				selected : !!this.getSelectedPresetFilterItem()
-			});
+			oListItem = sap.ui.getCore().byId("none" + LIST_ITEM_SUFFIX);
+			if (!oListItem) {
+				oListItem = new sap.m.StandardListItem({
+					id: "none" + LIST_ITEM_SUFFIX,
+					title: this._rb.getText("VIEWSETTINGS_NONE_ITEM"),
+					selected: !!this.getSelectedPresetFilterItem()
+				});
+			}
 			this._presetFilterList.addItem(oListItem);
 		}
 
 		this._filterList.removeAllItems();
 		aFilterItems = this.getFilterItems();
 		if (aFilterItems.length) {
-			aFilterItems.forEach(function(oItem) {
-				oListItem = new sap.m.StandardListItem(
-					{
-						title : oItem.getText(),
-						type : sap.m.ListType.Active,
-						press : (function(oItem) {
-							return function(oEvent) {
+			aFilterItems.forEach(function (oItem) {
+				oListItem = sap.ui.getCore().byId(oItem.getId() + LIST_ITEM_SUFFIX);
+				if (!oListItem) {
+					oListItem = new sap.m.StandardListItem({
+						id: oItem.getId() + LIST_ITEM_SUFFIX,
+						type: sap.m.ListType.Active,
+						press: (function (oItem) {
+							return function (oEvent) {
 								// navigate to details page
-								if (that._navContainer.getCurrentPage() .getId() !== that.getId() + '-page2') {
+								if (that._navContainer.getCurrentPage().getId() !== that.getId() + '-page2') {
 									that._switchToPage(3, oItem);
 									that._prevSelectedFilterItem = this;
-									jQuery.sap.delayedCall(0, that._navContainer, "to", [ that.getId() + '-page2', "slide" ]);
+									jQuery.sap.delayedCall(0, that._navContainer, "to", [that.getId() + '-page2', "slide"]);
 								}
 								if (sap.ui.Device.system.desktop && that._filterDetailList && that._filterDetailList.getItems()[0]) {
-									that._getNavContainer().attachEventOnce("afterNavigate", function() {
+									that._getNavContainer().attachEventOnce("afterNavigate", function () {
 										that._filterDetailList.getItems()[0].focus();
 									});
 								}
 							};
 						}(oItem))
 					}).data("item", oItem);
+				}
+				oListItem.setTitle(oItem.getText());
 				this._filterList.addItem(oListItem);
 			}, this);
 		}
