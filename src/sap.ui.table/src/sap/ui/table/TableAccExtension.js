@@ -634,11 +634,16 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtensi
 					break;
 
 				case TableAccExtension.ELEMENTTYPES.TH: //The "technical" column headers
-					mAttributes["role"] = "columnheader";
+					var bHasFixedColumns = oTable.getFixedColumnCount() > 0;
+					mAttributes["role"] = bHasFixedColumns ? "columnheader" : "presentation";
 					mAttributes["scope"] = "col";
-					if (mParams && mParams.column) {
-						mAttributes["aria-owns"] = mParams.column.getId();
-						mAttributes["aria-labelledby"] = mParams.column.getId();
+					if (bHasFixedColumns) {
+						if (mParams && mParams.column) {
+							mAttributes["aria-owns"] = mParams.column.getId();
+							mAttributes["aria-labelledby"] = mParams.column.getId();
+						}
+					} else {
+						mAttributes["aria-hidden"] = "true";
 					}
 					break;
 
