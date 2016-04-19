@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.SegmentedButton.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/delegate/ItemNavigation'],
-	function(jQuery, library, Control, EnabledPropagator, ItemNavigation) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/ResizeHandler'],
+	function(jQuery, library, Control, EnabledPropagator, ItemNavigation, ResizeHandler) {
 	"use strict";
 
 
@@ -121,7 +121,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	SegmentedButton.prototype.init = function () {
 		// Used to store individual button widths
-		this.aWidths = [];
+		this._aWidths = [];
 
 		// Delegate keyboard processing to ItemNavigation, see commons.SegmentedButton
 		this._oItemNavigation = new ItemNavigation();
@@ -143,7 +143,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		});
 
 		if (this._sResizeListenerId) {
-			sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
+			ResizeHandler.deregister(this._sResizeListenerId);
 			this._sResizeListenerId = null;
 		}
 
@@ -156,34 +156,73 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	SegmentedButton.prototype.onAfterRendering = function () {
-		var aButtons = this.getButtons();
-
-		// Collect rendered button widths
-		this.aWidths = aButtons.map(function (oButton) {
-			return oButton.$().outerWidth();
-		});
+		var aButtons = this.getButtons(),
+			oParentDom;
 
 		//register resize listener on parent
 		if (!this._sResizeListenerId) {
-			var oParent = this.getParent(),
-				oParentDom = null;
-
-			if (oParent instanceof Control) {
-				oParentDom = oParent.getDomRef();
-			} else if (oParent instanceof sap.ui.core.UIArea) {
-				oParentDom = oParent.getRootNode();
-			}
+			oParentDom = this.getDomRef().parentNode;
 			if (oParentDom) {
-				this._sResizeListenerId = sap.ui.core.ResizeHandler.register(oParentDom,  this._updateWidth.bind(this));
+				this._sResizeListenerId = ResizeHandler.register(oParentDom,
+					this._handleContainerResize.bind(this));
 			}
 		}
-
-		this.$().removeClass("sapMSegBHide");
 
 		// Keyboard
 		this._setItemNavigation();
 
+		// Calculate and apply widths
+		this._aWidths = this._getRenderedButtonWidths(aButtons);
 		this._updateWidth();
+	};
+
+	/**
+	 * Method to handle container resize events and trigger needed reset/recalculation if needed.
+	 * @private
+	 */
+	SegmentedButton.prototype._handleContainerResize = function () {
+		var aButtons = this.getButtons();
+
+		// Needed to provide correct width recalculation
+		this._clearAutoWidthAppliedToControl();
+
+		// Get new widths and apply to button
+		this._aWidths = this._getRenderedButtonWidths(aButtons);
+		this._updateWidth();
+	};
+
+	/**
+	 * Clear width, previously calculated by the SegmentedButton and applied to the control
+	 * @private
+	 */
+	SegmentedButton.prototype._clearAutoWidthAppliedToControl = function () {
+		var aButtons = this.getButtons(),
+			iButtonsLength = aButtons.length,
+			oButton,
+			i = 0;
+
+		if (!this.getWidth()) {
+			this.$().css("width", "");
+		}
+		while (i < iButtonsLength) {
+			oButton = aButtons[i];
+			if (!oButton.getWidth()) {
+				oButton.$().css("width", "");
+			}
+			i++;
+		}
+	};
+
+	/**
+	 * Returns a new array with all rendered button widths.
+	 * @param {array} aButtons with buttons
+	 * @returns {array}
+	 * @private
+	 */
+	SegmentedButton.prototype._getRenderedButtonWidths = function (aButtons) {
+		return aButtons.map(function (oButton) {
+			return oButton.$().outerWidth();
+		});
 	};
 
 	/**
@@ -250,34 +289,31 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	SegmentedButton.prototype._updateWidth = function () {
-		// If this method is called before the dom is rendered we don't do any calculations
-		if (this.$().length === 0) {
+		// If this method is called before the dom is rendered or sapUiSegmentedButtonNoAutoWidth style class is applied
+		// we skip width calculations
+		if (this.$().length === 0 || this.hasStyleClass("sapMSegmentedButtonNoAutoWidth")) {
 			return;
 		}
 
 		var sControlWidth = this.getWidth(),
 			aButtons = this.getButtons(),
 			iButtonsCount = aButtons.length,
-			aWidths = this.aWidths,
-			iMaxWidth = (aWidths.length > 0) ? Math.max.apply(Math, this.aWidths) : 0,
+			iMaxWidth = (this._aWidths.length > 0) ? Math.max.apply(Math, this._aWidths) : 0,
 			iButtonWidthPercent = (100 / iButtonsCount),
 			iParentWidth = this.$().parent().innerWidth(),
 			sWidth = this._getButtonWidth(aButtons),
 			oButton,
 			i;
 
-		// If sapUiSegmentedButtonNoAutoWidth style class is applied skip width calculations
-		if (this.hasStyleClass("sapMSegmentedButtonNoAutoWidth")) {
-			return;
-		}
-
 		if (!sControlWidth) {
+			// Modify whole control width if needed
 			if ((iMaxWidth * iButtonsCount) > iParentWidth) {
 				this.$().css("width", "100%");
-			} else {
+			} else if (iMaxWidth > 0) {
 				// Here we add 1px to compensate for the border which is taken within the calculation of max width
 				this.$().width((iMaxWidth * iButtonsCount) + 1);
 			}
+			// Modify button widths
 			i = 0;
 			while (i < iButtonsCount) {
 				oButton = aButtons[i];
@@ -285,6 +321,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				i++;
 			}
 		} else if (sControlWidth && !this._bCustomButtonWidth) {
+			// Modify button widths
 			i = 0;
 			while (i < iButtonsCount) {
 				aButtons[i].$().css("width", iButtonWidthPercent + "%");
@@ -295,7 +332,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	SegmentedButton.prototype.exit = function () {
 		if (this._sResizeListenerId) {
-			sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
+			ResizeHandler.deregister(this._sResizeListenerId);
 			this._sResizeListenerId = null;
 		}
 		if (this._oItemNavigation) {
@@ -304,7 +341,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			delete this._oItemNavigation;
 		}
 		this._bCustomButtonWidth = null;
-		this.aWidths = null;
+		this._aWidths = null;
 	};
 
 	/**
@@ -459,6 +496,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			bUpdate = true;
 		}
 
+		aItems = aItems || [];
 		/* Create buttons */
 		for (i = 0; i < aItems.length; i++) {
 			this._createButtonFromItem(aItems[i]);
