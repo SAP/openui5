@@ -1,9 +1,9 @@
 sap.ui.define(['sap/ui/core/UIComponent'], function(UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.m.sample.GenericTile2x1TwoCont.Component", {
+	var Component = UIComponent.extend("sap.m.sample.GenericTileAsMonitorTile.Component", {
 		metadata : {
-			rootView : "sap.m.sample.GenericTile2x1TwoCont.Page",
+			rootView : "sap.m.sample.GenericTileAsMonitorTile.Page",
 			dependencies : {
 				libs : ["sap.m"]
 			},
