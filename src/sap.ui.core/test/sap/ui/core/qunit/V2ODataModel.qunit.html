@@ -55,14 +55,6 @@
 		return new sap.ui.model.odata.v2.ODataModel(sServiceUri, mParameters);
 	}
 
-	function removeSharedMetadata() {
-		var sURI = sServiceUri.replace(/\/$/, "");
-		if (sap.ui.model.odata.v2.ODataModel.mServiceData
-				&& sap.ui.model.odata.v2.ODataModel.mServiceData[sURI]) {
-			delete sap.ui.model.odata.v2.ODataModel.mServiceData[sURI].oMetadata;
-		}
-	}
-
 	/**
 	 * Removes all shared Metadata
 	 */
@@ -78,7 +70,7 @@
 		teardown : function() {
 			oModel.destroy();
 			oModel = undefined;
-			removeSharedMetadata();
+			cleanServiceDataCache();
 			stopServer();
 		}
 	});
@@ -106,7 +98,7 @@
 		teardown : function() {
 			oModel.destroy();
 			oModel = undefined;
-			removeSharedMetadata();
+			cleanServiceDataCache();
 			stopServer();
 		}
 	});
@@ -225,7 +217,7 @@
 			ok(false, "oNewP Promise resolved");
 		}, function(){
 			ok(true, "oNewP Promise rejected");
-			removeSharedMetadata();
+			cleanServiceDataCache();
 			sServiceUri = sTempService;
 			start();
 		});
@@ -261,7 +253,7 @@
 		})
 		.then(function(result){
 			ok(true, "oNewP2 Promise resolved");
-			removeSharedMetadata();
+			cleanServiceDataCache();
 			sServiceUri = sTempService;
 			start();
 		}, function(){
@@ -291,7 +283,7 @@
 			ok(false, "oNewP Promise resolved");
 		}, function(){
 			ok(true, "oNewP Promise rejected");
-			removeSharedMetadata();
+			cleanServiceDataCache();
 			sServiceUri = sTempService;
 			start();
 		});
@@ -326,7 +318,7 @@
 		})
 		.then(function(result){
 			ok(true, "oNewP2 Promise resolved");
-			removeSharedMetadata();
+			cleanServiceDataCache();
 			sServiceUri = sTempService;
 			start();
 		}, function(){
@@ -974,7 +966,7 @@
 		teardown : function() {
 			oModel.destroy();
 			oModel = undefined;
-			removeSharedMetadata();
+			cleanServiceDataCache();
 			stopServer();
 		}
 	});
@@ -2994,7 +2986,7 @@
 		teardown : function() {
 			oModel.destroy();
 			oModel = undefined;
-			removeSharedMetadata();
+			cleanServiceDataCache();
 			stopServer();
 		}
 	});
@@ -4187,7 +4179,7 @@
 		teardown : function() {
 			oModel.destroy();
 			oModel = undefined;
-			removeSharedMetadata();
+			cleanServiceDataCache();
 			stopServer();
 		}
 	});
