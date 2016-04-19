@@ -3979,8 +3979,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		}
 		this._mTimeouts.reApplyFocusTimer = window.setTimeout(function() {
 			var iOldFocusedIndex = TableUtils.getFocusedItemInfo(that).cell;
-			TableUtils.focusItem(this, 0, oEvent);
-			TableUtils.focusItem(this, iOldFocusedIndex, oEvent);
+			TableUtils.focusItem(that, 0, oEvent);
+			TableUtils.focusItem(that, iOldFocusedIndex, oEvent);
 		}, 0);
 
 		delete this._iNewColPos;
