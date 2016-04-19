@@ -327,20 +327,6 @@ License: MIT License
 <year> = 2008-2013
 <copyright holders> = Matteo Spinelli
 
-Component: jQuery 1.7.1
-Licensor: John Resig
-Website: http://jszip.org/redist/jquery
-License: MIT License
-<year> = 2011
-<copyright holders> = John Resig
-
-Component: jQuery 1.8.1
-Licensor: jQuery Foundation and other contributors
-Website: http://github.com/jquery/jquery/
-License: MIT License
-<year> = 2012
-<copyright holders> = jQuery Foundation and other contributors
-
 Component: jQuery 1.10.1
 Licensor: jQuery Foundation and other contributors
 Website: http://jquery.com/
