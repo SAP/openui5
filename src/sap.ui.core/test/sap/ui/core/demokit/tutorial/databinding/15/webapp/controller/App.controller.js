@@ -36,7 +36,7 @@ function(Controller, Currency) {
 				oUIControl = new sap.m.StandardListItem(sId, {
 					icon : "sap-icon://warning",
 					title : sDescription,
-					info : { path: "i18n>discontinued" },
+					info : { path: "i18n>Discontinued" },
 					infoState : "Error"
 				});
 			} else {
@@ -71,7 +71,6 @@ function(Controller, Currency) {
 			oUIControl.setType(sap.m.ListType.Active);
 			oUIControl.attachPress(this.onItemSelected, this);
 			return oUIControl;
-		},
-
+		}
 	});
 });
