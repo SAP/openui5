@@ -420,9 +420,10 @@
 			window["sap-ui-debug"] = vDebugInfo = vDebugInfo || true;
 		}
 
-		// if current sources are optimized and debug sources should be used in general, restart with debug URL
-		if ( window["sap-ui-optimized"] ) {
+		if ( window["sap-ui-optimized"] && vDebugInfo ) {
+			// if current sources are optimized and any debug sources should be used, enable the "-dbg" suffix
 			window["sap-ui-loaddbg"] = true;
+			// if debug sources should be used in general, restart with debug URL
 			if ( vDebugInfo === true ) {
 				var sDebugUrl = _oBootstrap.url.replace(/\/(?:sap-ui-cachebuster\/)?([^\/]+)\.js/, "/$1-dbg.js");
 				window["sap-ui-optimized"] = false;
