@@ -1,0 +1,238 @@
+{
+  "1.38.0": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "0ffad962505bfa7845ab3887a59dae27f4bc86e2",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.commons: Provide function getAccessibilityInfo for various controls",
+        "references": []
+      },
+      {
+        "id": "815aac7018dd2ab889109f892821d1c07c71683f",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "ImageMap: Use Selector As Written In The Spec",
+        "references": []
+      },
+      {
+        "id": "d960aa4a1f8264e7b4605011234278362b30c351",
+        "author": "Shtiliyan Uzunov \u003cshtiliyan.uzunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "LisBox-GoldReflection.qunit.html - test fixed to cover IE Edge case",
+        "references": []
+      },
+      {
+        "id": "2629b588f28d1b58e708fa96823308a84794225d",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "M/COMMONS",
+        "text": ".Dialog, ux3.ToolPopup: Preserve DOM only if rendered",
+        "references": []
+      },
+      {
+        "id": "7ae011a10cccc86bf5a2c44c755565502a8bafe1",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "commons.Dialog: Trigger Re-Rendering for Setting Title",
+        "references": []
+      },
+      {
+        "id": "b23117e9d845a4dcaa488643cad595870232c781",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FIX",
+        "text": "commons.TabStrip: Scroll position is fixed",
+        "references": []
+      },
+      {
+        "id": "8bab239018250b75a084000a61851384e7a097d5",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.Dialog,commons.Dialog,ux3.ToolPopup: Preserve Content on Remove",
+        "references": []
+      },
+      {
+        "id": "82f78671b8c222d1f774aa453e62732da5b957b0",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.commons.Dialog: setInitialFocus is fixed",
+        "references": []
+      },
+      {
+        "id": "b4508ae88dc23d5c85efce98ccadcb76480e9188",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: if date is deleted open calendar on today",
+        "references": []
+      },
+      {
+        "id": "da672d3693a56bb3c42b91fd54cc81d2966a4937",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: issues with date \u003e 99991231",
+        "references": []
+      },
+      {
+        "id": "93fccb5f22a8cf3bf679297a83f652c9b3814820",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.RadioButtonGroup: setEnabled behaviour corrected",
+        "references": []
+      },
+      {
+        "id": "ae832fbb0665e298dd940d9434d5ff5454ebfcfd",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Accordion: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "ab5af6ac97312c741640ced051628119cce9d330",
+        "author": "Nikolay Kolarov \u003cnikolay.kolarov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ApplicationHeader: Composite parts are initialized only once now",
+        "references": []
+      },
+      {
+        "id": "94c09b4cea68abccd1fff5c2dc131a5df08031dd",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.DatePicker: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "bc196daecf0ac7d1cecf42320069796d855b6026",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.MenuButton: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "c20b406d0360b9706fbae21b81742afbf5ea868f",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.MessageToast: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "0a0a85e88602337fc74abcdb9b0de4d591bc2b75",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.MessageToast: fix css img urls (again)",
+        "references": []
+      },
+      {
+        "id": "3cb56ec05afb7c5bb49ff500b75c0b11a14b741e",
+        "author": "Nikolay Kolarov \u003cnikolay.kolarov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Paginator: Aria-disabled state is correctly updated now",
+        "references": []
+      },
+      {
+        "id": "2fc9398f215f698f15722075f7f2c0dd15d3cafd",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Paginator: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "6185ff9b29c1448f4303d37aec28cb4bf9b03331",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Panel: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "50fee71409885beeca78e00c8eb7e143029aa670",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.SearchField: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "5400d5df1141f346fb1b753119f3bee05a84f740",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Slider: Aria-readonly property is now correctly read",
+        "references": []
+      },
+      {
+        "id": "a5b09e07ddd03db583960487adaca17b30290a5a",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Slider: Slider\u0027s API call to set value is now properly rendered",
+        "references": []
+      },
+      {
+        "id": "951109730028172d3813c02e39ef97ebe2ca1969",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Closing tab is now fixed",
+        "references": []
+      },
+      {
+        "id": "518ce4b3972b318bc17753f4afb2151abe3c36da",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Event flow is now correct",
+        "references": []
+      },
+      {
+        "id": "500294881e78aebd916e1ee3b6a2315b1f4e6e91",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Focus outline on IE corrected",
+        "references": []
+      },
+      {
+        "id": "eecaea01ac0087cddb07d5d43ae1896d9ea8faec",
+        "author": "Nikolay Vankov \u003cnikolay.vankov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Generating correct tab id in createTab() method fixed.",
+        "references": []
+      },
+      {
+        "id": "16c6a05367ca7d7eaabc8a377e5fd5dfa6097e7e",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Hiding the last visible tab no longer throws an exception",
+        "references": []
+      },
+      {
+        "id": "5907bedc4ea638803daa248e6986b3a624bb1246",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Tree: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "2d133761402fbd3f2060d7611d5ca433032a3478",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TreeNode: Selection of multiple nodes now is properly animated",
+        "references": []
+      },
+      {
+        "id": "b23ba24deef9e2b5d76bb55476acee3f8aed608d",
+        "author": "Mihail Yordanov \u003cmihail.yordanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TriStateCheckBox scroll trigger fixed",
+        "references": []
+      },
+      {
+        "id": "96536e12543c9608435a4142a3cf85ec49b5cd88",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TriStateCheckBox: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "d098eca952fc4528d834e325de76bb595c6d95c3",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.TooltipBase: Tooltip should not be open if visibility is set to false",
+        "references": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "1.38.0": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "590c934741e977aa9877caa17681342df57a0aac",
+        "author": "Amiram Wingarten \u003camiram.wingarten@sap.com\u003e",
+        "type": "FIX",
+        "text": "DOMUtil.getSize to also support transition style on the control",
+        "references": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "1.38.0": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "80b7fbdebe09755545c61ef72914ff6f965b4eb4",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.NavigationListItem: Added one click navigation",
+        "references": []
+      },
+      {
+        "id": "2c354fd3c83429916d8048a9868097f6c1281fc9",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.tnt.SideNavigation: Added animation when collapse/expand",
+        "references": []
+      },
+      {
+        "id": "2455a09ca1f6365fe8633c6cb2614450c0e0cb8a",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SideNavigation: Reduced control width",
+        "references": []
+      },
+      {
+        "id": "4bf589e3e3ab1b885abaeb8903a84e07eb8687a1",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.tnt.NavigationList: Focus is now styled correctly",
+        "references": []
+      },
+      {
+        "id": "8485c3f9f1d64c95a6e86bb6599719267f1c5fb8",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.tnt.SideNavigation: Blinking effect on collapse is not visible anymore",
+        "references": []
+      },
+      {
+        "id": "0e2f3315124f17d6043cbddc970e9e2c9a739f81",
+        "author": "Timo Staudinger \u003cstaudinger.timo@gmail.com\u003e",
+        "type": "FIX",
+        "text": "sap.tnt.SideNavigation: Fix Typo in Sample",
+        "references": []
+      }
+    ]
+  }
+}

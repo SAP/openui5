@@ -1,0 +1,21 @@
+{
+  "1.38.0": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "048613f2ea00bd1f1314f121e9147e4e022994c5",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "New Theme Library: sap_belize",
+        "references": []
+      },
+      {
+        "id": "5c12096d50367e6fcb7e629a8d20889c5a2a608e",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "New Theme: sap_belize_plus",
+        "references": []
+      }
+    ]
+  }
+}
