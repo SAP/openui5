@@ -175,6 +175,28 @@
 			strictEqual(this.sut.isOpen(), false, 'Popup is closed');
 		});
 
+		test("popover resizing", function () {
+			var initialWidth;
+
+			this.sut.openBy(this.oOpeningButton);
+			this.clock.tick(1000);
+
+			//Act
+			initialWidth = this.sut._getPopover().getContentWidth();
+			this.sut._getSegmentedButton().getItems()[0].firePress();
+			this.clock.tick(1000);
+
+			//Check
+			ok(initialWidth != this.sut._getPopover().getContentWidth(), "Popover width is changed");
+
+			//Act
+			this.sut._getSegmentedButton().getItems()[0].firePress();
+			this.clock.tick(1000);
+
+			//Check
+			ok(initialWidth == this.sut._getPopover().getContentWidth(), "Popover width is back to initial state");
+		});
+
 		test("segmented button", function() {
 			var oSegmentedButton,
 				oSegmentedButtonItems;
