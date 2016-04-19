@@ -1013,5 +1013,87 @@
         "references": []
       }
     ]
+  },
+  "1.36.7": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "a4c73f220d8c144e9a0d634cff4951c80539067c",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "jQuery.sap.interaction: ui-interaction detection",
+        "references": []
+      },
+      {
+        "id": "fbc167cc81bbdbcfe108c9245532d9c3d1004802",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnalyticalBinding - Fixed error when requests are aborted",
+        "references": []
+      },
+      {
+        "id": "7397d7abde29ef771de5fefe0c746293d7e386e7",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "Bindings: Remove Messages on Destroy and Rebind",
+        "references": []
+      },
+      {
+        "id": "e82034c821e22b09b1ff8d47ccbfcb7fd71afe1a",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "ClientTreeBindingAdapter - Fixed Issue with groupID calculation",
+        "references": []
+      },
+      {
+        "id": "616bb87f475dc0269d8b3697f1fa70d49397363a",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "ClientTreeBindingAdapter - Reset Cache",
+        "references": []
+      },
+      {
+        "id": "7434df10a4fe98ba348cf2772f59d54f950aeda9",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "DataBinding: properly cleanup binding info when binding becomes invalid",
+        "references": []
+      },
+      {
+        "id": "696b5b9452c6880430847c63983ada4baf50ef67",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "ManagedObject: Propagate properties when setting parent to null",
+        "references": []
+      },
+      {
+        "id": "ff4423d1616b10af66e29b836e3b8be3fe9f3923",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FIX",
+        "text": "jquery.sap.unicode: improved jQuery.sap.isStringNFC performance",
+        "references": []
+      },
+      {
+        "id": "2865813899af7ae964b9aa7b40ff3259ead5b29e",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.TooltipBase: Tooltip should not be open if visibility is set to false",
+        "references": []
+      },
+      {
+        "id": "ff75a56611b7f02d43cc55a412513fcdb97fcb70",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.model.analytics.AnalyticalBinding: removed RequestFailed event",
+        "references": []
+      },
+      {
+        "id": "f4424d3393412a2fbe79c379dadd2a1d17eaebf2",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.v2.ODataModel: no undefined x-csrf-token header",
+        "references": []
+      }
+    ]
   }
 }
