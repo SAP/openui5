@@ -37,7 +37,7 @@ function(Controller, Currency) {
 					icon : "sap-icon://warning",
 					title : sDescription,
 					info : {
-						path : "i18n>discontinued"
+						path : "i18n>Discontinued"
 					},
 					infoState : "Error"
 				});
