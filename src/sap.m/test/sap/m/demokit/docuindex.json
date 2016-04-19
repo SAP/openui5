@@ -353,11 +353,12 @@
 			"category": "Tile",
 			"since": "1.34",
 			"samples": [
-				"sap.m.sample.GenericTile1x1",
-				"sap.m.sample.GenericTile2x1SingleCont",
-				"sap.m.sample.GenericTile2x1TwoCont",
-				"sap.m.sample.GenericTileStates",
-				"sap.m.sample.SlideTile"
+				"sap.m.sample.GenericTileAsLaunchTile",
+				"sap.m.sample.GenericTileAsMonitorTile",
+				"sap.m.sample.GenericTileAsKPITile",
+				"sap.m.sample.GenericTileAsFeedTile",
+				"sap.m.sample.SlideTile",
+				"sap.m.sample.GenericTileStates"
 			]
 		},
 		{
@@ -2258,29 +2259,34 @@
 		  "description": "The Draft Indicator shows that eighter currently a draft is saving or that it is already saved. It does not block the current UI screen so other operations could be triggered in parallel."
 		},
 		{
-		  "id": "sap.m.sample.GenericTile1x1",
-		  "name": "Generic Tile 1x1",
-		  "description": "Shows the 1x1 frame type containing the title, the description, and the customizable main area. The 1x1 frame type is shown in two different sizes defined with explicit tile sizes."
-		},
-		{
-		  "id": "sap.m.sample.GenericTile2x1SingleCont",
-		  "name": "Generic Tile 2x1 - Single Content",
-		  "description": "Shows the 2x1 frame type containing the title, the description, and the customizable main area. The size of the tiles is defined with automatic sizing and depends on the device it is running on."
-		},
-		{
-		  "id": "sap.m.sample.GenericTile2x1TwoCont",
-		  "name": "Generic Tile 2x1 - Two Contents",
-		  "description": "Shows the 2x1 frame type containing the title, the description and two customizable areas. The 2x1 frame type is shown in different sizes defined with explicit tile sizes."
-		},
-		{
 		  "id": "sap.m.sample.SlideTile",
-		  "name": "Generic Tiles Sliding",
-		  "description": "Generic Tile controls with the 2x1 frame type are displayed as sliding tiles. The size of the tiles is defined with automatic sizing and depends on the device it is running on."
+		  "name": "Slide Tile",
+		  "description": "GenericTile controls with the 2x1 frame type are displayed as sliding tiles."
 		},
 		{
 		  "id": "sap.m.sample.GenericTileStates",
-		  "name": "Generic Tile Statuses",
-		  "description": "Shows the GenericTile while it is loading, if loading fails, and in disabled status. The size of the tiles is defined with automatic sizing and depends on the device it is running on."
+		  "name": "Generic Tile Status",
+		  "description": "Shows the GenericTile while it is loading, if loading fails, and in disabled status."
+		},
+		{
+		  "id": "sap.m.sample.GenericTileAsLaunchTile",
+		  "name": "Launch Tile",
+		  "description": "Shows samples of Launch Tile, which can contain header, subheader, image content, and footer."
+		},
+		{
+		  "id": "sap.m.sample.GenericTileAsMonitorTile",
+		  "name": "Monitor Tile",
+		  "description": "Shows samples of Monitor Tile, which can contain header, subheader, icon, key value, unit, and footer."
+		},
+		{
+		  "id": "sap.m.sample.GenericTileAsKPITile",
+		  "name": "KPI Tile",
+		  "description": "Shows samples of KPI Tile, which can contain header, subheader, key value, trend, unit, and footer."
+		},
+		{
+		  "id": "sap.m.sample.GenericTileAsFeedTile",
+		  "name": "Feed Tile",
+		  "description": "Shows samples of Feed Tile and News Tile, which can contain feed content, news content, and footer."
 		},
 		{
 		  "id": "sap.m.sample.TileContent",
