@@ -1,0 +1,98 @@
+{
+  "1.38.0": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "1a1d469e9e649f28197cdc9606e1209a7c40d126",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.DateTimePicker: new control",
+        "references": []
+      },
+      {
+        "id": "8ca0bbd80efa4bf265228ec568de166b3086dbc9",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.FlexBox, sap.ui.layout.Grid,",
+        "references": []
+      },
+      {
+        "id": "508b5963c95cb19172b7893c49a8baeedfeeace0",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.ResponsiveSplitter: New control implementation",
+        "references": []
+      },
+      {
+        "id": "c0bee4cebb852c829c2881e7f92ae639f8d0d8cc",
+        "author": "Hristo Petrov \u003ch.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.Splitter RTL vertical resize fix",
+        "references": []
+      },
+      {
+        "id": "52e76864f9feb2cb1bb634f8a12611684581ef59",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: No padding between FormContainer if no Title",
+        "references": []
+      },
+      {
+        "id": "83b505a8191ff828ea30ecf158bde2564289d8c6",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: double role \"form\" if only one container",
+        "references": []
+      },
+      {
+        "id": "22a6d56c45f1ff0012b07221e0931d9cc8e4fbe1",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: too much padding if only 1 container",
+        "references": []
+      },
+      {
+        "id": "47123cd5e9f74c2be76122de39a839d7af67939f",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.GridLayout: labels not aligned in Firefox",
+        "references": []
+      },
+      {
+        "id": "a2567b89ce2ddb03f0050ddf1ce34670729baa23",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.GridLayout: padding ar bottom missing in IE",
+        "references": []
+      },
+      {
+        "id": "b050b347e4628f938060af72aa35f8ee17e18364",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.ResponsiveGridLayout: 1st container invisible",
+        "references": []
+      },
+      {
+        "id": "77175b448808ef45ef31704c22fad751558b71bb",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.ResponsiveLayout: Labels wrong aligned in Edge",
+        "references": []
+      },
+      {
+        "id": "a608106e829bb8a4e9be646977b6ad60481a8c57",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm: errors by changing content",
+        "references": []
+      },
+      {
+        "id": "8a84899cd550472d3a7431e5c7d51e9b95848afc",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm: improve documentation",
+        "references": []
+      }
+    ]
+  }
+}
