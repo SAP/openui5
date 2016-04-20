@@ -89,17 +89,16 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 	 */
 	FlexBoxStylingHelper.setFlexItemStyles = function(oRm, oLayoutData, oControl) {
 		oRm = oRm || null;
-		oControl = oControl || null;
 
 		// Set values if different from default
 		var order = oLayoutData.getOrder();
 		if (order) {
-			FlexBoxStylingHelper.setStyle(oRm, oControl, "order", order);
+			FlexBoxStylingHelper.setStyle(oRm, oLayoutData, "order", order);
 		}
 
 		var growFactor = oLayoutData.getGrowFactor();
 		if (growFactor !== undefined) {
-			FlexBoxStylingHelper.setStyle(oRm, oControl, "flex-grow", growFactor);
+			FlexBoxStylingHelper.setStyle(oRm, oLayoutData, "flex-grow", growFactor);
 		}
 
 		var alignSelf = oLayoutData.getAlignSelf().toLowerCase();
@@ -110,18 +109,18 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 		}
 
 		if (alignSelf && alignSelf !== "auto") {
-			FlexBoxStylingHelper.setStyle(oRm, oControl, "align-self", alignSelf);
+			FlexBoxStylingHelper.setStyle(oRm, oLayoutData, "align-self", alignSelf);
 		}
 
 		if (jQuery.support.newFlexBoxLayout || jQuery.support.ie10FlexBoxLayout) {
 			var shrinkFactor = oLayoutData.getShrinkFactor();
 			if (shrinkFactor !== 1) {
-				FlexBoxStylingHelper.setStyle(oRm, oControl, "flex-shrink", shrinkFactor);
+				FlexBoxStylingHelper.setStyle(oRm, oLayoutData, "flex-shrink", shrinkFactor);
 			}
 
 			var baseSize = oLayoutData.getBaseSize().toLowerCase();
 			if (baseSize !== undefined) {
-				sap.m.FlexBoxStylingHelper.setStyle(oRm, oControl, "flex-basis", baseSize);
+				sap.m.FlexBoxStylingHelper.setStyle(oRm, oLayoutData, "flex-basis", baseSize);
 			}
 		}
 	};
@@ -255,6 +254,18 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 			sPropertyPrefix = sVendorPrefix;
 		} else {
 			sValuePrefix = sVendorPrefix;
+		}
+
+		// IE 10-11 miscalculate the width of the flex items when box-sizing: border-box
+		// Instead of using flex-basis, we use an explicit width/height
+		// @see https://github.com/philipwalton/flexbugs#7-flex-basis-doesnt-account-for-box-sizingborder-box
+		if (oControl instanceof sap.m.FlexItemData && sap.ui.Device.browser.internet_explorer && (sProperty === "flex-basis" || sProperty === "flex-preferred-size")) {
+			sPropertyPrefix = "";
+			if (oControl.getParent().getDirection().indexOf("Row") > -1) {
+				sProperty = "width";
+			} else {
+				sProperty = "height";
+			}
 		}
 
 		// Finally write property value to control using either renderer or element directly
