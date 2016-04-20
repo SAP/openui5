@@ -235,6 +235,7 @@ sap.ui.define([
 			dataChange: this._handleDataChange()
 		});
 		this._oSortPanel.setOperations(this._aOperations);
+		this._oSortPanel._sAddRemoveIconTooltipKey = "SORT";
 
 		this.addAggregation("content", this._oSortPanel);
 	};
