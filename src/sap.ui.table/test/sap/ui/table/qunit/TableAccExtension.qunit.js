@@ -3,135 +3,45 @@
 // Preparation Code
 //************************************************************************
 
-sap.ui.core.Control.extend("TestControl", {
-	metadata : {
-		properties : {
-			"text" : "string",
-			"src" : "sap.ui.core.URI",
-			"alt" : "string",
-			"visible" : "boolean",
-			"index" : "int" //Results in different behavior of the control in different columns
-		}
-	},
-
-	renderer : function(oRm, oControl) {
-		oRm.write("<span");
-		oRm.writeControlData(oControl);
-		oRm.writeClasses();
-		oRm.write(">");
-		oRm.writeEscaped(oControl.getText() || oControl.getAlt() || "");
-		oRm.write("</span>");
-	},
-
-	getAccessibilityInfo : function() {
-		var iMode = this.getIndex();
-		switch (iMode) {
-			case 0:
-				return {
-					type: "TYPE_" + this.getText(),
-					description: "DESCRIPTION_" + this.getText(),
-					focusable: true,
-					enabled: true,
-					editable: false
-				};
-			case 1:
-				return {
-					type: "TYPE_" + this.getText(),
-					description: "DESCRIPTION_" + this.getText(),
-					focusable: false,
-					enabled: true
-				};
-			case 2:
-				return {
-					type: "TYPE_" + this.getText(),
-					description: "DESCRIPTION_" + this.getText(),
-					focusable: true,
-					enabled: false,
-					children: [{description: "CHILD1"}, {description: "CHILD2"}]
-				};
-			case 3:
-				return {
-					type: "TYPE_" + this.getText(),
-					description: "DESCRIPTION_" + this.getText(),
-					focusable: true,
-					enabled: true
-				};
-			default:
-				return null;
-		}
+TestControl.prototype.getAccessibilityInfo = function() {
+	var iMode = this.getIndex();
+	switch (iMode) {
+		case 0:
+			return {
+				type: "TYPE_" + this.getText(),
+				description: "DESCRIPTION_" + this.getText(),
+				focusable: true,
+				enabled: true,
+				editable: false
+			};
+		case 1:
+			return {
+				type: "TYPE_" + this.getText(),
+				description: "DESCRIPTION_" + this.getText(),
+				focusable: false,
+				enabled: true
+			};
+		case 2:
+			return {
+				type: "TYPE_" + this.getText(),
+				description: "DESCRIPTION_" + this.getText(),
+				focusable: true,
+				enabled: false,
+				children: [{description: "CHILD1"}, {description: "CHILD2"}]
+			};
+		case 3:
+			return {
+				type: "TYPE_" + this.getText(),
+				description: "DESCRIPTION_" + this.getText(),
+				focusable: true,
+				enabled: true
+			};
+		default:
+			return null;
 	}
-});
-
-sap.ui.table.TableHelper = {
-	createLabel: function(mConfig){ return new TestControl(mConfig); },
-	createTextView: function(mConfig){ return new TestControl(mConfig); },
-	createTextField: function(mConfig){ throw new Error("no TextField control available!"); },
-	createImage: function(mConfig){ return new TestControl(mConfig); },
-	addTableClass: function() { return "sapUiTableM"; },
-	bFinal: true
 };
 
-var oTable = new sap.ui.table.Table({
-	rows: "{/rows}",
-	title: "TABLE_TITLE",
-	selectionMode: "MultiToggle",
-	visibleRowCount: 3,
-	ariaLabelledBy: "ARIALABELLEDBY",
-	fixedColumnCount: 1
-});
-
-var oTreeTable = new sap.ui.table.TreeTable({
-	rows: {
-		path: "/tree",
-		parameters: {arrayNames:["rows"]}
-	},
-	title: "TABLE_TITLE",
-	selectionMode: "Single",
-	visibleRowCount: 3,
-	ariaLabelledBy: "ARIALABELLEDBY"
-});
-
-var aFields = ["A", "B", "C", "D", "E"];
-var oData = {rows: [], tree: {rows: []}};
-var oRow;
-for (var i = 0; i < 5; i++) {
-	oRow = {};
-	oTree = {rows: [{}]};
-	for (var j = 0; j < aFields.length; j++) {
-		oRow[aFields[j]] = aFields[j] + (i+1);
-		oTree[aFields[j]] = aFields[j] + (i+1);
-		oTree.rows[0][aFields[j]] = aFields[j] + "SUB" + (i+1);
-		if (i == 0) {
-			oTable.addColumn(new sap.ui.table.Column({
-				label: aFields[j] + "_TITLE",
-				width: "100px",
-				template: new TestControl({
-					text: "{" + aFields[j] + "}",
-					index: j,
-					visible: j!=3
-				})
-			}));
-			oTreeTable.addColumn(new sap.ui.table.Column({
-				label: aFields[j] + "_TITLE",
-				width: "100px",
-				template: new TestControl({
-					text: "{" + aFields[j] + "}"
-				})
-			}));
-		}
-	}
-	oData.rows.push(oRow);
-	oData.tree.rows.push(oTree);
-}
-
-jQuery.sap.require("sap.ui.model.json.JSONModel");
-var oModel = new sap.ui.model.json.JSONModel();
-oModel.setData(oData);
-oTable.setModel(oModel);
-oTable.setSelectedIndex(0);
-oTable.placeAt("content");
-oTreeTable.setModel(oModel);
-oTreeTable.placeAt("content");
+createTables();
 
 var oColumn = oTable.getColumns()[1];
 oColumn.setSortProperty(aFields[1]);
@@ -139,94 +49,6 @@ oColumn.setFilterProperty(aFields[1]);
 oColumn.setSortOrder("Ascending");
 oColumn.setSorted(true);
 oColumn.setFiltered(true);
-
-//************************************************************************
-// Helper Functions
-//************************************************************************
-
-function getCell(iRow, iCol, bFocus, assert) {
-	var oCell = jQuery.sap.domById(oTable.getId() + "-rows-row" + iRow + "-col" + iCol);
-	if (bFocus) {
-		oCell.focus();
-		assert.ok(oCell === document.activeElement, "Cell [" + iRow + ", " + iCol + "] focused");
-	} else {
-		assert.ok(oCell != document.activeElement, "Cell [" + iRow + ", " + iCol + "] not focused");
-	}
-	return jQuery(oCell);
-}
-
-function getColumnHeader(iCol, bFocus, assert) {
-	var oCell = jQuery.sap.domById((oTable.getColumns()[iCol]).getId());
-	if (bFocus) {
-		oCell.focus();
-		assert.ok(oCell === document.activeElement, "Column Header " + iCol + " focused");
-	} else {
-		assert.ok(oCell != document.activeElement, "Column Header " + iCol + " not focused");
-	}
-	return jQuery(oCell);
-}
-
-function getRowHeader(iRow, bFocus, assert) {
-	var oCell = jQuery.sap.domById(oTable.getId() + "-rowsel" + iRow);
-	if (bFocus) {
-		oCell.focus();
-		assert.ok(oCell === document.activeElement, "Row Header " + iRow + " focused");
-	} else {
-		assert.ok(oCell != document.activeElement, "Row Header " + iRow + " not focused");
-	}
-	return jQuery(oCell);
-}
-
-function getSelectAll(bFocus, assert) {
-	var oCell = jQuery.sap.domById(oTable.getId() + "-selall");
-	if (bFocus) {
-		oCell.focus();
-		assert.ok(oCell === document.activeElement, "Select All focused");
-	} else {
-		assert.ok(oCell != document.activeElement, "Select All not focused");
-	}
-	return jQuery(oCell);
-}
-
-function setFocusOutsideOfTable() {
-	var oOuterElement = jQuery.sap.domById("outerelement");
-	oOuterElement.focus();
-	assert.ok(oOuterElement === document.activeElement, "Outer element focused");
-}
-
-function fakeGroupRow(iRow) {
-	var oRow = oTable.getRows()[iRow];
-	var $Row = oTable.$("rows-row" + iRow);
-	var $RowFixed = oTable.$("rows-row" + iRow + "-fixed");
-	var $RowHdr = oTable.$("rowsel" + iRow);
-
-	$Row.toggleClass("sapUiTableGroupHeader", true).data("sap-ui-level", 1);
-	$RowFixed.toggleClass("sapUiTableGroupHeader", true).data("sap-ui-level", 1);
-	$RowHdr.toggleClass("sapUiTableGroupHeader", true).data("sap-ui-level", 1);
-	oTable._getAccExtension().updateAriaForAnalyticalRow(oRow, $Row, $RowHdr, $RowFixed, true, true, 1);
-	return {
-		row: $Row,
-		fixed: $RowFixed,
-		hdr: $RowHdr
-	};
-}
-
-function fakeSumRow(iRow) {
-	var oRow = oTable.getRows()[iRow];
-	var $Row = oTable.$("rows-row" + iRow);
-	var $RowFixed = oTable.$("rows-row" + iRow + "-fixed");
-	var $RowHdr = oTable.$("rowsel" + iRow);
-
-	$Row.toggleClass("sapUiAnalyticalTableSum", true).data("sap-ui-level", 1);
-	$RowFixed.toggleClass("sapUiAnalyticalTableSum", true).data("sap-ui-level", 1);
-	$RowHdr.toggleClass("sapUiAnalyticalTableSum", true).data("sap-ui-level", 1);
-	oTable._getAccExtension().updateAriaForAnalyticalRow(oRow, $Row, $RowHdr, $RowFixed, false, false, 1);
-	return {
-		row: $Row,
-		fixed: $RowFixed,
-		hdr: $RowHdr
-	};
-}
 
 
 //************************************************************************
