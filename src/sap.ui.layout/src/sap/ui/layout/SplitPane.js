@@ -59,6 +59,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 		}
 	};
 
+	SplitPane.prototype.onLayoutDataChange = function() {
+		var oParent = this.getParent();
+		if (oParent) {
+			oParent._oSplitter._delayedResize();
+		}
+	};
+
 	return SplitPane;
 
 }, /* bExport= */ true);
