@@ -645,6 +645,33 @@
 		}
 	});
 
+	module("API assertions", {
+		setup: function() {
+			this.clock = sinon.useFakeTimers();
+			createTable({
+				visibleRowCount: 10,
+				width: "100px",
+				firstVisibleRow: 1
+			});
+		},
+		teardown: function () {
+			destroyTable();
+			this.clock.restore();
+		}
+	});
+
+	test("Scrollbars can be accessed by inheriting controls", function(assert) {
+		var oHsb = oTable.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar);
+		var oVsb = oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
+		assert.ok(oHsb);
+		assert.ok(oVsb);
+
+		oHsb.scrollLeft = 5;
+
+		assert.equal(oVsb.scrollTop, 28, "ScrollTop can be set and read.");
+		assert.equal(oHsb.scrollLeft, 5, "ScrollLeft can be set and read.");
+	});
+
 	module("Fixed rows and columns", {
 		setup: function() {
 			this.clock = sinon.useFakeTimers();

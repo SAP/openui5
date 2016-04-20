@@ -892,7 +892,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			oSizes.tableCtrlScrWidth = oCtrlScrDomRef.clientWidth;
 		}
 
-		var oHsb = this.getDomRef("hsb");
+		var oHsb = this.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar);
 		if (oHsb) {
 			oSizes.tableHSbScrollLeft = oHsb.scrollLeft;
 		}
@@ -1289,7 +1289,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 * @private
 	 */
 	Table.prototype._adjustTablePosition = function() {
-		var iScrollTop = this.getDomRef("vsb").scrollTop;
+		var iScrollTop = this.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar).scrollTop;
 		var iDefaultRowHeight = this._getDefaultRowHeight();
 		var iRowHeightOffset = iScrollTop % iDefaultRowHeight;
 
@@ -1345,7 +1345,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		if (bFirstVisibleRowChanged && this.getBinding("rows") && !this._bRefreshing) {
 			this.updateRows();
 			if (!bOnScroll) {
-				var oVSb = this.getDomRef("vsb");
+				var oVSb = this.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
 				if (oVSb) {
 					oVSb.scrollTop = iRowIndex * (this._getDefaultRowHeight() || 28);
 				}
@@ -1961,8 +1961,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 		this._enableColumnAutoResizing();
 
-		var $vsb = jQuery(this.getDomRef("vsb"));
-		var $hsb = jQuery(this.getDomRef("hsb"));
+		var $vsb = jQuery(this.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar));
+		var $hsb = jQuery(this.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar));
 		$vsb.bind("scroll.sapUiTableVScroll", this.onvscroll.bind(this));
 		$hsb.bind("scroll.sapUiTableHScroll", this.onhscroll.bind(this));
 
@@ -2005,11 +2005,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		$this.find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed, .sapUiTableColHdrScr, .sapUiTableColHdrFixed").unbind();
 		$this.find(".sapUiTableColRsz").unbind();
 
-		var $vsb = jQuery(this.getDomRef("vsb"));
+		var $vsb = jQuery(this.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar));
 		$vsb.unbind("scroll.sapUiTableVScroll");
 		$vsb.unbind("mousedown.sapUiTableVScroll");
 
-		var $hsb = jQuery(this.getDomRef("hsb"));
+		var $hsb = jQuery(this.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar));
 		$hsb.unbind("scroll.sapUiTableHScroll");
 		$hsb.unbind("mousedown.sapUiTableHScroll");
 
@@ -2168,7 +2168,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 */
 	Table.prototype._updateVSb = function(oTableSizes) {
 		// move the vertical scrollbar to the scrolling table only
-		var oVSb = this.getDomRef("vsb");
+		var oVSb = this.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
 		if (!oVSb) {
 			return;
 		}
@@ -2496,7 +2496,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 * @private
 	 */
 	Table.prototype._getFirstVisibleRowByScrollTop = function(iScrollTop) {
-		var oVsb = this.getDomRef("vsb");
+		var oVsb = this.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
 		if (oVsb) {
 			iScrollTop = (typeof iScrollTop === "undefined") ? oVsb.scrollTop : iScrollTop;
 			if (this._bVariableRowHeightEnabled) {
@@ -2945,12 +2945,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		}
 
 		if (bIsHorizontal) {
-			var oHsb = this.getDomRef("hsb");
+			var oHsb = this.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar);
 			if (oHsb) {
 				oHsb.scrollLeft = oHsb.scrollLeft + iScrollDelta;
 			}
 		} else {
-			var oVsb = this.getDomRef("vsb");
+			var oVsb = this.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
 			if (oVsb) {
 				this._bIsScrolledByWheel = true;
 				oVsb.scrollTop = oVsb.scrollTop + iScrollDelta;
@@ -3000,7 +3000,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 */
 	Table.prototype._oncolscroll = function() {
 		if (!this._bSyncScrollLeft) {
-			var oHsb = this.getDomRef("hsb");
+			var oHsb = this.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar);
 			if (oHsb) {
 				var oColHdrScr = this.getDomRef().querySelector(".sapUiTableColHdrScr");
 				var iScrollLeft = 0;
@@ -3019,7 +3019,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 */
 	Table.prototype._oncntscroll = function() {
 		if (!this._bSyncScrollLeft) {
-			var oHsb = this.getDomRef("hsb");
+			var oHsb = this.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar);
 			if (oHsb) {
 				var oColHdrScr = this.getDomRef().querySelector(".sapUiTableCtrlScr");
 				oHsb.scrollLeft = oColHdrScr.scrollLeft;
@@ -3371,7 +3371,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			var iOffsetLeft = iCellLeft - iCtrlScrScrollLeft;
 			var iOffsetRight = iCellRight - iCtrlScrWidth - iCtrlScrScrollLeft;
 
-			var oHsb = this.getDomRef("hsb");
+			var oHsb = this.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar);
 			if (iOffsetRight > 0) {
 				oHsb.scrollLeft = oHsb.scrollLeft + iOffsetRight + 2;
 			} else if (iOffsetLeft < 0) {
@@ -3645,12 +3645,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			if (bDoScroll) {
 				var oTouch = oEvent.targetTouches[0];
 				this._aTouchStartPosition = [oTouch.pageX, oTouch.pageY];
-				var oVsb = this.getDomRef("vsb");
+				var oVsb = this.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
 				if (oVsb) {
 					this._iTouchScrollTop = oVsb.scrollTop;
 				}
 
-				var oHsb = this.getDomRef("hsb");
+				var oHsb = this.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar);
 				if (oHsb) {
 					this._iTouchScrollLeft = oHsb.scrollLeft;
 				}
@@ -3672,7 +3672,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			}
 
 			if (this._bIsScrollVertical) {
-				var oVsb = this.getDomRef("vsb");
+				var oVsb = this.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
 				if (oVsb) {
 					var iScrollTop = this._iTouchScrollTop - iDeltaY;
 
@@ -3683,7 +3683,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 					oVsb.scrollTop = iScrollTop;
 				}
 			} else {
-				var oHsb = this.getDomRef("hsb");
+				var oHsb = this.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar);
 				if (oHsb) {
 					var iScrollLeft = this._iTouchScrollLeft - iDeltaX;
 
