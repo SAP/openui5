@@ -7,7 +7,7 @@
 <script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
 	type="text/javascript" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
-
+	
 </script>
 
 <link rel="stylesheet"
@@ -25,9 +25,9 @@
 	src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <script type="text/javascript">
-	if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
-			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-	} 		
+	if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	}
 
 	(function() {
 		jQuery.sap.require("sap.m.P13nSortPanel");
@@ -41,10 +41,6 @@
 		var gData = {
 			"items": [
 				{
-					"key": null,
-					"text": "(none)",
-					"tooltip": "nix"
-				}, {
 					"key": "c0",
 					"text": "Name"
 				}, {
@@ -114,8 +110,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			var nItems = 4;
-			strictEqual(oP13nSortPanel.getItems().length, nItems, "length of getItems should be '" + nItems + "'");
+			strictEqual(oP13nSortPanel.getItems().length, 3, "length of getItems should be 3");
 
 			// cleanup
 			oP13nSortPanel.destroy();
@@ -238,10 +233,6 @@
 			var oP13nSortPanel = new sap.m.P13nSortPanel({
 				items: [
 					new sap.m.P13nItem({
-						key: null,
-						text: "(none)",
-						tooltip: "nix"
-					}), new sap.m.P13nItem({
 						key: "c0",
 						text: "Name"
 					}), new sap.m.P13nItem({
@@ -269,7 +260,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			strictEqual(oP13nSortPanel.getItems().length, 4, "length of getItems should be 4'");
+			strictEqual(oP13nSortPanel.getItems().length, 3, "length of getItems should be 3'");
 			strictEqual(oP13nSortPanel.getSortItems().length, 2, "length of getSortItems should be 2'");
 
 			// cleanup
@@ -285,11 +276,6 @@
 			oP13nSortPanel.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
-			oP13nSortPanel.addItem(new sap.m.P13nItem({
-				key: null,
-				text: "(none)",
-				tooltip: "nix"
-			}));
 			oP13nSortPanel.addItem(new sap.m.P13nItem({
 				key: "c0",
 				text: "Name"
@@ -316,12 +302,32 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			strictEqual(oP13nSortPanel.getItems().length, 4, "length of getItems should be 4'");
+			strictEqual(oP13nSortPanel.getItems().length, 3, "length of getItems should be 3'");
 			strictEqual(oP13nSortPanel.getSortItems().length, 2, "length of getSortItems should be 2'");
 
 			// cleanup
 			oP13nSortPanel.destroy();
 		});
+
+		test("'none'", function() {
+
+			// system under test
+			var oP13nSortPanel = new sap.m.P13nSortPanel();
+
+			bindSortPanel(oP13nSortPanel);
+
+			// arrange
+			oP13nSortPanel.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assertions
+			strictEqual(oP13nSortPanel.getItems().length, 3, "length of getItems should be 3");
+			strictEqual(oP13nSortPanel._oSortPanel.getKeyFields().length, 4, "length of getItems should be 4");
+
+			// cleanup
+			oP13nSortPanel.destroy();
+		});
+
 	}());
 </script>
 
