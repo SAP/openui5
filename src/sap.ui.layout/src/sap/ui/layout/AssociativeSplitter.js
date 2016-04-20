@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.layout.AssociativeSplitter.
 sap.ui.define(['./Splitter', './SplitterRenderer'],
-	function(Splitter, SplitterRenderer) {
+	function (Splitter, SplitterRenderer) {
 	"use strict";
 
 	/**
@@ -37,7 +37,42 @@ sap.ui.define(['./Splitter', './SplitterRenderer'],
 		renderer: SplitterRenderer
 	});
 
-	AssociativeSplitter.prototype.addAssociatedContentArea = function(oContent) {
+	AssociativeSplitter.prototype.init = function () {
+		Splitter.prototype.init.call(this);
+		// We need to have different step size than the existing in the Splitter
+		this._keyListeners = {
+			increase     : this._onKeyboardResize.bind(this, "inc", 1),
+			decrease     : this._onKeyboardResize.bind(this, "dec", 1),
+			increaseMore : this._onKeyboardResize.bind(this, "incMore", 2),
+			decreaseMore : this._onKeyboardResize.bind(this, "decMore", 2),
+			max          : this._onKeyboardResize.bind(this, "max", 1),
+			min          : this._onKeyboardResize.bind(this, "min", 1)
+		};
+		this._enableKeyboardListeners();
+	};
+
+	/**
+	 * Adds shift + arrows keyboard handling to the existing one
+	 * @returns {void}
+	 * @private
+	 */
+	AssociativeSplitter.prototype._enableKeyboardListeners = function () {
+		Splitter.prototype._enableKeyboardListeners.call(this);
+		this.onsaprightmodifiers = this._keyListeners.increase;
+		this.onsapleftmodifiers = this._keyListeners.decrease;
+		this.onsapupmodifiers = this._keyListeners.decrease;
+		this.onsapdownmodifiers = this._keyListeners.increase;
+		this.onsapright = this._keyListeners.increaseMore;
+		this.onsapdown = this._keyListeners.increaseMore;
+		this.onsapleft = this._keyListeners.decreaseMore;
+		this.onsapup = this._keyListeners.decreaseMore;
+		this.onsapend = this._keyListeners.max;
+		this.onsaphome = this._keyListeners.min;
+
+		this._keyboardEnabled = true;
+	};
+
+	AssociativeSplitter.prototype.addAssociatedContentArea = function (oContent) {
 		this._needsInvalidation = true;
 		_ensureLayoutData(oContent);
 		return this.addAssociation("associatedContentAreas", oContent);
@@ -80,14 +115,18 @@ sap.ui.define(['./Splitter', './SplitterRenderer'],
 		this.removeAssociation("associatedContentAreas", area);
 	};
 
-	AssociativeSplitter.prototype._getContentAreas = function() {
+	AssociativeSplitter.prototype._getContentAreas = function () {
 		var aAssociatedContentAreas = this.getAssociatedContentAreas() || [];
-		return this.getContentAreas().concat(aAssociatedContentAreas.map(function(oContent) {
-			return sap.ui.getCore().byId(oContent);
-		}));
+		var aContentAreas = this.getContentAreas();
+
+		var aValidAssContentAreas = aAssociatedContentAreas.map(function (sId) {
+			return sap.ui.getCore().byId(sId);
+		}).filter(function (oContent) { return oContent; });
+
+		return aContentAreas.concat(aValidAssContentAreas);
 	};
 
-	AssociativeSplitter.prototype.ondblclick = function(oEvent) {
+	AssociativeSplitter.prototype.ondblclick = function (oEvent) {
 		// For some reason dblclick returns the whole Splitter not only the clicked splitbar
 		var sId = this.getId();
 		if (!this._oLastDOMclicked || this._oLastDOMclicked.id.indexOf(sId + "-splitbar") != 0) {
@@ -115,7 +154,7 @@ sap.ui.define(['./Splitter', './SplitterRenderer'],
 	 * @param {jQuery.Event} [oJEv] The jQuery event
 	 * @private
 	 */
-	AssociativeSplitter.prototype.onmousedown = function(oJEv) {
+	AssociativeSplitter.prototype.onmousedown = function (oJEv) {
 		if (this._ignoreMouse) {
 			return;
 		}
@@ -141,7 +180,7 @@ sap.ui.define(['./Splitter', './SplitterRenderer'],
 	 * @param {jQuery.Event} [oJEv] The jQuery event
 	 * @private
 	 */
-	AssociativeSplitter.prototype.ontouchstart = function(oJEv) {
+	AssociativeSplitter.prototype.ontouchstart = function (oJEv) {
 		if (this._ignoreTouch) {
 			return;
 		}
@@ -165,7 +204,7 @@ sap.ui.define(['./Splitter', './SplitterRenderer'],
 		this._onBarMoveStart(oJEv.changedTouches[0], true);
 	};
 
-	AssociativeSplitter.prototype._onBarMoveStart = function(oJEv, bTouch) {
+	AssociativeSplitter.prototype._onBarMoveStart = function (oJEv, bTouch) {
 		var sId = this.getId();
 
 		// Disable auto resize during bar move
@@ -229,7 +268,7 @@ sap.ui.define(['./Splitter', './SplitterRenderer'],
 		this._onBarMove(oJEv);
 	};
 
-	AssociativeSplitter.prototype._ensureAllSplittersCollapsed = function(iBar) {
+	AssociativeSplitter.prototype._ensureAllSplittersCollapsed = function (iBar) {
 		var aAreas = this._getContentAreas();
 		var bAllCollapsed = false;
 		for (var i = 0; i < aAreas.length; i++) {
@@ -266,11 +305,11 @@ sap.ui.define(['./Splitter', './SplitterRenderer'],
 	 * @param {boolean} [bTouch] If set to true, touch events instead of mouse events are captured
 	 */
 	function _preventTextSelection(bTouch) {
-		var fnPreventSelection = function(oEvent) {
+		var fnPreventSelection = function (oEvent) {
 			oEvent.preventDefault();
 		};
 		var fnAllowSelection = null;
-		fnAllowSelection = function() {
+		fnAllowSelection = function () {
 			document.removeEventListener("touchend",  fnAllowSelection);
 			document.removeEventListener("touchmove", fnPreventSelection);
 			document.removeEventListener("mouseup",   fnAllowSelection);
