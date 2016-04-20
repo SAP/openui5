@@ -1,14 +1,14 @@
 {
 	"@odata.context" : "$metadata#SalesOrderList(BuyerName,CurrencyCode,GrossAmount,Note,SalesOrderID)",
-	"value" : [{
-		"@odata.etag" : "W/\"20160411220000.0000000\"",
+	"value" : [ {
+		"@odata.etag" : "W/\"20160419220000.0000000\"",
 		"BuyerName" : "SAP",
 		"CurrencyCode" : "EUR",
 		"GrossAmount" : "25867.03",
 		"Note" : "EPM DG: SO ID 0500000000 Deliver as fast as possible",
 		"SalesOrderID" : "0500000000",
 		"SO_2_BP" : {
-			"@odata.etag" : "W/\"20160412111832.4652430\"",
+			"@odata.etag" : "W/\"20160420143945.0000000\"",
 			"BusinessPartnerID" : "0100000000",
 			"BusinessPartnerRole" : "01",
 			"CompanyName" : "SAP",
@@ -18,8 +18,8 @@
 			"FaxNumber" : "0622734004",
 			"LegalForm" : "SE",
 			"CurrencyCode" : "EUR",
-			"CreatedAt" : "2016-04-08T23:00:49Z",
-			"ChangedAt" : "2016-04-12T11:18:32.465243Z",
+			"CreatedAt" : "2016-04-20T14:39:45Z",
+			"ChangedAt" : "2016-04-20T14:39:45Z",
 			"Address" : {
 				"City" : "Walldorf",
 				"PostalCode" : "69190",
@@ -34,47 +34,14 @@
 			}
 		}
 	}, {
-		"@odata.etag" : "W/\"20160411220000.0000000\"",
-		"BuyerName" : "DelBont Industries",
-		"CurrencyCode" : "EUR",
-		"GrossAmount" : "14602.49",
-		"Note" : "EPM DG: SO ID 0500000001 Deliver as fast as possible",
-		"SalesOrderID" : "0500000001",
-		"SO_2_BP" : {
-			"@odata.etag" : "W/\"20160408230049.0000000\"",
-			"BusinessPartnerID" : "0100000002",
-			"BusinessPartnerRole" : "01",
-			"CompanyName" : "DelBont Industries",
-			"WebAddress" : "http://www.delbont.com",
-			"EmailAddress" : "maria.brown@delbont.com",
-			"PhoneNumber" : "3023352668",
-			"FaxNumber" : "3023352004",
-			"LegalForm" : "Ltd.",
-			"CurrencyCode" : "USD",
-			"CreatedAt" : "2016-04-08T23:00:49Z",
-			"ChangedAt" : "2016-04-08T23:00:49Z",
-			"Address" : {
-				"City" : "Wilmington, Delaware",
-				"PostalCode" : "19899",
-				"Street" : "1 2345 King Street",
-				"Building" : "1",
-				"Country" : "US",
-				"AddressType" : "02",
-				"GeoLocation" : {
-					"Longitude" : "-75.546589000000",
-					"Latitude" : "39.745946800000"
-				}
-			}
-		}
-	}, {
-		"@odata.etag" : "W/\"20160411220000.0000000\"",
+		"@odata.etag" : "W/\"20160419220000.0000000\"",
 		"BuyerName" : "TECUM",
 		"CurrencyCode" : "EUR",
 		"GrossAmount" : "5631.08",
 		"Note" : "EPM DG: SO ID 0500000002 Deliver as fast as possible",
 		"SalesOrderID" : "0500000002",
 		"SO_2_BP" : {
-			"@odata.etag" : "W/\"20160408230049.0000000\"",
+			"@odata.etag" : "W/\"20160420143945.0000000\"",
 			"BusinessPartnerID" : "0100000005",
 			"BusinessPartnerRole" : "01",
 			"CompanyName" : "TECUM",
@@ -84,8 +51,8 @@
 			"FaxNumber" : "2511004",
 			"LegalForm" : "AG",
 			"CurrencyCode" : "EUR",
-			"CreatedAt" : "2016-04-08T23:00:49Z",
-			"ChangedAt" : "2016-04-08T23:00:49Z",
+			"CreatedAt" : "2016-04-20T14:39:45Z",
+			"ChangedAt" : "2016-04-20T14:39:45Z",
 			"Address" : {
 				"City" : "Münster",
 				"PostalCode" : "48155",
@@ -100,70 +67,103 @@
 			}
 		}
 	}, {
-		"@odata.etag" : "W/\"20160411220000.0000000\"",
-		"BuyerName" : "Asia High tech",
+		"@odata.etag" : "W/\"20160419220000.0000000\"",
+		"BuyerName" : "Talpa",
 		"CurrencyCode" : "EUR",
-		"GrossAmount" : "1704.04",
-		"Note" : "EPM DG: SO ID 0500000003 Deliver as fast as possible",
-		"SalesOrderID" : "0500000003",
+		"GrossAmount" : "250.73",
+		"Note" : "EPM DG: SO ID 0500000006 Deliver as fast as possible",
+		"SalesOrderID" : "0500000006",
 		"SO_2_BP" : {
-			"@odata.etag" : "W/\"20160408230049.0000000\"",
-			"BusinessPartnerID" : "0100000006",
+			"@odata.etag" : "W/\"20160420143945.0000000\"",
+			"BusinessPartnerID" : "0100000003",
 			"BusinessPartnerRole" : "01",
-			"CompanyName" : "Asia High tech",
-			"WebAddress" : "http://www.asia-ht.com",
-			"EmailAddress" : "yoko.nakamura@asia-ht.com",
-			"PhoneNumber" : "9078563412",
-			"FaxNumber" : "9078563004",
-			"LegalForm" : "Inc.",
-			"CurrencyCode" : "JPY",
-			"CreatedAt" : "2016-04-08T23:00:49Z",
-			"ChangedAt" : "2016-04-08T23:00:49Z",
+			"CompanyName" : "Talpa",
+			"WebAddress" : "http://www.talpa-hannover.de",
+			"EmailAddress" : "saskia.sommer@talpa-hannover.de",
+			"PhoneNumber" : "511403266",
+			"FaxNumber" : "511403004",
+			"LegalForm" : "GmbH",
+			"CurrencyCode" : "EUR",
+			"CreatedAt" : "2016-04-20T14:39:45Z",
+			"ChangedAt" : "2016-04-20T14:39:45Z",
 			"Address" : {
-				"City" : "Tokyo",
-				"PostalCode" : "100-0004",
-				"Street" : "1-7-2 Otemachi",
-				"Building" : "1",
-				"Country" : "JP",
+				"City" : "Hannover",
+				"PostalCode" : "30625",
+				"Street" : "An der Breiten Wiese",
+				"Building" : "422",
+				"Country" : "DE",
 				"AddressType" : "02",
 				"GeoLocation" : {
-					"Longitude" : "139.763682287452",
-					"Latitude" : "35.693347450000"
+					"Longitude" : "9.823618171812",
+					"Latitude" : "52.382990802599"
 				}
 			}
 		}
 	}, {
-		"@odata.etag" : "W/\"20160411220000.0000000\"",
-		"BuyerName" : "Asia High tech",
+		"@odata.etag" : "W/\"20160419220000.0000000\"",
+		"BuyerName" : "Panorama Studios",
 		"CurrencyCode" : "EUR",
-		"GrossAmount" : "761.24",
-		"Note" : "EPM DG: SO ID 0500000004 Deliver as fast as possible",
-		"SalesOrderID" : "0500000004",
+		"GrossAmount" : "10311.35",
+		"Note" : "EPM DG: SO ID 0500000007 Deliver as fast as possible",
+		"SalesOrderID" : "0500000007",
 		"SO_2_BP" : {
-			"@odata.etag" : "W/\"20160408230049.0000000\"",
-			"BusinessPartnerID" : "0100000006",
+			"@odata.etag" : "W/\"20160420143945.0000000\"",
+			"BusinessPartnerID" : "0100000004",
 			"BusinessPartnerRole" : "01",
-			"CompanyName" : "Asia High tech",
-			"WebAddress" : "http://www.asia-ht.com",
-			"EmailAddress" : "yoko.nakamura@asia-ht.com",
-			"PhoneNumber" : "9078563412",
-			"FaxNumber" : "9078563004",
+			"CompanyName" : "Panorama Studios",
+			"WebAddress" : "http://www.panorama-studios.biz",
+			"EmailAddress" : "bob.buyer@panorama-studios.biz",
+			"PhoneNumber" : "2244668800",
+			"FaxNumber" : "2244668004",
 			"LegalForm" : "Inc.",
-			"CurrencyCode" : "JPY",
-			"CreatedAt" : "2016-04-08T23:00:49Z",
-			"ChangedAt" : "2016-04-08T23:00:49Z",
+			"CurrencyCode" : "USD",
+			"CreatedAt" : "2016-04-20T14:39:45Z",
+			"ChangedAt" : "2016-04-20T14:39:45Z",
 			"Address" : {
-				"City" : "Tokyo",
-				"PostalCode" : "100-0004",
-				"Street" : "1-7-2 Otemachi",
-				"Building" : "1",
-				"Country" : "JP",
+				"City" : "Hollywood, California",
+				"PostalCode" : "91602",
+				"Street" : "Morning Drive",
+				"Building" : "178",
+				"Country" : "US",
 				"AddressType" : "02",
 				"GeoLocation" : {
-					"Longitude" : "139.763682287452",
-					"Latitude" : "35.693347450000"
+					"Longitude" : "-118.352803603805",
+					"Latitude" : "34.136429050000"
 				}
 			}
 		}
-	}]
+	}, {
+		"@odata.etag" : "W/\"20160419220000.0000000\"",
+		"BuyerName" : "Telecomunicaciones Star",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "195.16",
+		"Note" : "EPM DG: SO ID 0500000008 Deliver as fast as possible",
+		"SalesOrderID" : "0500000008",
+		"SO_2_BP" : {
+			"@odata.etag" : "W/\"20160420143945.0000000\"",
+			"BusinessPartnerID" : "0100000009",
+			"BusinessPartnerRole" : "01",
+			"CompanyName" : "Telecomunicaciones Star",
+			"WebAddress" : "http://www.telecomunicacionesstar.com",
+			"EmailAddress" : "jorge.velez@telecomunicacionesstar.com",
+			"PhoneNumber" : "1133557799",
+			"FaxNumber" : "1133557004",
+			"LegalForm" : "S.A.",
+			"CurrencyCode" : "ARS",
+			"CreatedAt" : "2016-04-20T14:39:45Z",
+			"ChangedAt" : "2016-04-20T14:39:45Z",
+			"Address" : {
+				"City" : "Buenos Aires",
+				"PostalCode" : "1511",
+				"Street" : "Av. Libertador",
+				"Building" : "12221",
+				"Country" : "AR",
+				"AddressType" : "02",
+				"GeoLocation" : {
+					"Longitude" : "-58.573947800000",
+					"Latitude" : "-34.864871900000"
+				}
+			}
+		}
+	} ]
 }

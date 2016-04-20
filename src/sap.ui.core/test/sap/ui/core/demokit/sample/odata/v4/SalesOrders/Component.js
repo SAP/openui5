@@ -73,16 +73,16 @@ sap.ui.define([
 					"SalesOrderList(SalesOrderID='0500000000')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT))),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber)&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
 						source : "SalesOrderList_0.json"
 					},
-					"SalesOrderList(SalesOrderID='0500000001')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT))),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber)&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
+					"SalesOrderList(SalesOrderID='0500000002')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT))),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber)&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
 						source : "SalesOrderList_1.json"
 					},
-					"SalesOrderList(SalesOrderID='0500000002')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT))),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber)&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
+					"SalesOrderList(SalesOrderID='0500000006')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT))),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber)&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
 						source : "SalesOrderList_2.json"
 					},
-					"SalesOrderList(SalesOrderID='0500000003')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT))),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber)&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
+					"SalesOrderList(SalesOrderID='0500000007')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT))),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber)&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
 						source : "SalesOrderList_3.json"
 					},
-					"SalesOrderList(SalesOrderID='0500000004')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT))),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber)&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
+					"SalesOrderList(SalesOrderID='0500000008')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT))),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber)&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
 						source : "SalesOrderList_4.json"
 					}
 				}, "sap/ui/core/demokit/sample/odata/v4/SalesOrders/data",
