@@ -171,7 +171,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control',
 		var iSelectedIndex = this.getSelectedIndex();
 		var oTab = aTabs[iSelectedIndex];
 
-		if (oTab && oTab.$().length > 0) {
+		if (this._oScroller && oTab && oTab.$().length > 0) {
 
 			if (!this._oScroller._$Container) {
 				this._oScroller.onAfterRendering();
