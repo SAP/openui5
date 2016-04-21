@@ -89,7 +89,7 @@ sap.ui.define(['jquery.sap.global'],
 					rm.addStyle('width', aWidths[j]); // use style because col width in HTML supports only be px or %
 					rm.writeStyles();
 				}
-				rm.write("/>");
+				rm.write("></col>");
 			}
 			rm.write("</colgroup>");
 		}

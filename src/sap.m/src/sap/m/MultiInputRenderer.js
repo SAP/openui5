@@ -85,7 +85,7 @@ sap.ui.define(['jquery.sap.global', './InputRenderer', 'sap/ui/core/Renderer'],
 
 		oRm.write("</div>");
 		oRm.write("</div>");
-		oRm.write("<div class=\"sapMMultiInputShadowDiv\"/>");
+		oRm.write("<div class=\"sapMMultiInputShadowDiv\"></div>");
 	};
 
 
