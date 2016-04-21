@@ -318,7 +318,11 @@ sap.ui.define([
 						 */
 						oldValue : { type : 'any' }
 					}
-				}
+				},
+				/**
+				 * Fired when models or contexts are changed on this object (either by calling setModel/setBindingContext or due to propagation)
+				 */
+				"modelContextChange" : {}
 			},
 			specialSettings : {
 
@@ -2107,7 +2111,7 @@ sap.ui.define([
 
 			this.oParent = null;
 			this.sParentAggregationName = null;
-			this.oPropagatedProperties = ManagedObject._oEmptyPropagatedProperties;
+			var oPropagatedProperties = ManagedObject._oEmptyPropagatedProperties;
 
 			/* In case of a 'move' - remove/add controls snychronous in an aggregation -
 			 * we should not propagate synchronous when setting the parent to null.
@@ -2116,15 +2120,19 @@ sap.ui.define([
 			 * This could lead to a data refetch, and in some scenarios to endless
 			 * request loops.
 			 */
-			if (!this._bIsBeingDestroyed) {
-				setTimeout(function() {
-					// if object is being destroyed or parent is set again (move) no propagation is needed
-					if (!this.oParent) {
-						this.updateBindings(true, null);
-						this.updateBindingContext(false, undefined, true);
-						this.propagateProperties(true);
-					}
-				}.bind(this), 0);
+			if (oPropagatedProperties !== this.oPropagatedProperties) {
+				this.oPropagatedProperties = oPropagatedProperties;
+				if (!this._bIsBeingDestroyed) {
+					setTimeout(function() {
+						// if object is being destroyed or parent is set again (move) no propagation is needed
+						if (!this.oParent) {
+							this.updateBindings(true, null);
+							this.updateBindingContext(false, undefined, true);
+							this.propagateProperties(true);
+							this.fireModelContextChange();
+						}
+					}.bind(this), 0);
+				}
 			}
 
 			jQuery.sap.act.refresh();
@@ -2154,13 +2162,18 @@ sap.ui.define([
 		this.sParentAggregationName = sAggregationName;
 
 		//get properties to propagate
-		this.oPropagatedProperties = oParent._getPropertiesToPropagate();
+		var oPropagatedProperties = oParent._getPropertiesToPropagate();
 
-		// update bindings
-		if (this.hasModel()) {
-			this.updateBindings(true, null); // TODO could be restricted to models that changed
-			this.updateBindingContext(false, undefined, true);
-			this.propagateProperties(true);
+		if (oPropagatedProperties !== this.oPropagatedProperties) {
+			this.oPropagatedProperties = oPropagatedProperties;
+
+			// update bindings
+			if (this.hasModel()) {
+				this.updateBindings(true, null); // TODO could be restricted to models that changed
+				this.updateBindingContext(false, undefined, true);
+				this.propagateProperties(true);
+			}
+			this.fireModelContextChange();
 		}
 
 		// only the parent knows where to render us, so we have to invalidate it
@@ -2506,6 +2519,7 @@ sap.ui.define([
 			if ( !_bSkipUpdateBindingContext ) {
 				this.updateBindingContext(false, sModelName);
 				this.propagateProperties(sModelName);
+				this.fireModelContextChange();
 			}
 		}
 		return this;
@@ -3404,6 +3418,7 @@ sap.ui.define([
 			this.oBindingContexts[sModelName] = oContext;
 			this.updateBindingContext(false, sModelName);
 			this.propagateProperties(sModelName);
+			this.fireModelContextChange();
 		}
 		return this;
 	};
@@ -3419,6 +3434,7 @@ sap.ui.define([
 			this.mElementBindingContexts[sModelName] = oContext;
 			this.updateBindingContext(true, sModelName);
 			this.propagateProperties(sModelName);
+			this.fireModelContextChange();
 		}
 		return this;
 	};
@@ -3585,6 +3601,7 @@ sap.ui.define([
 			this.propagateProperties(sName);
 			// if the model instance for a name changes, all bindings for that model name have to be updated
 			this.updateBindings(false, sName);
+			this.fireModelContextChange();
 		} else if ( oModel && oModel !== this.oModels[sName] ) {
 			//TODO: handle null!
 			this.oModels[sName] = oModel;
@@ -3595,6 +3612,7 @@ sap.ui.define([
 			this.updateBindingContext(false, sName);
 			// if the model instance for a name changes, all bindings for that model name have to be updated
 			this.updateBindings(false, sName);
+			this.fireModelContextChange();
 		} // else nothing to do
 		return this;
 	};
@@ -3642,6 +3660,7 @@ sap.ui.define([
 			oObject.updateBindings(bUpdateAll,sName);
 			oObject.updateBindingContext(false, sName, bUpdateAll);
 			oObject.propagateProperties(vName);
+			oObject.fireModelContextChange();
 		}
 	};
 

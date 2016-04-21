@@ -1744,11 +1744,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		if (!this.mUIAreas[sId]) {
 			this.mUIAreas[sId] = new UIArea(this, oDomRef);
 			if (!jQuery.isEmptyObject(this.oModels)) {
-				that.mUIAreas[sId].oPropagatedProperties = {
+				var oProperties = {
 					oModels: jQuery.extend({}, this.oModels),
 					oBindingContexts: {}
 				};
-				this.mUIAreas[sId].propagateProperties(true);
+				that.mUIAreas[sId]._propagateProperties(true, that.mUIAreas[sId], oProperties, true);
 			}
 		} else {
 			// this should solve the issue of 'recreation' of a UIArea
@@ -2614,27 +2614,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	Core.prototype.setModel = function(oModel, sName) {
 		jQuery.sap.assert(oModel == null || lazyInstanceof(oModel, 'sap/ui/model/Model'), "oModel must be an instance of sap.ui.model.Model, null or undefined");
 		jQuery.sap.assert(sName === undefined || (typeof sName === "string" && !/^(undefined|null)?$/.test(sName)), "sName must be a string or omitted");
+		var that = this,
+			oProperties;
+
 		if (!oModel && this.oModels[sName]) {
 			delete this.oModels[sName];
+			if (jQuery.isEmptyObject(that.oModels) && jQuery.isEmptyObject(that.oBindingContexts)) {
+				oProperties = ManagedObject._oEmptyPropagatedProperties;
+			} else {
+				oProperties = {
+					oModels: jQuery.extend({}, that.oModels),
+					oBindingContexts: {}
+				};
+			}
 			// propagate Models to all UI areas
 			jQuery.each(this.mUIAreas, function (i, oUIArea){
-				oUIArea.oPropagatedProperties = {
-						oModels: jQuery.extend({}, oUIArea.oPropagatedProperties.oModels),
-						oBindingContexts: oUIArea.oPropagatedProperties.oBindingContexts
-				};
-				delete oUIArea.oPropagatedProperties.oModels[sName];
-				oUIArea.propagateProperties(sName);
+				if (oModel != oUIArea.getModel(sName)) {
+					oUIArea._propagateProperties(sName, oUIArea, oProperties, false, sName);
+				}
 			});
 		} else if (oModel && oModel !== this.oModels[sName] ) {
 			this.oModels[sName] = oModel;
 			// propagate Models to all UI areas
 			jQuery.each(this.mUIAreas, function (i, oUIArea){
-				oUIArea.oPropagatedProperties = {
-						oModels: jQuery.extend({}, oUIArea.oPropagatedProperties.oModels),
-						oBindingContexts: oUIArea.oPropagatedProperties.oBindingContexts
-				};
-				oUIArea.oPropagatedProperties.oModels[sName] = oModel;
-				oUIArea.propagateProperties(sName);
+				if (oModel != oUIArea.getModel(sName)) {
+					var oProperties = {
+						oModels: jQuery.extend({}, that.oModels),
+						oBindingContexts: {}
+					};
+					oUIArea._propagateProperties(sName, oUIArea, oProperties, false, sName);
+				}
 			});
 		} //else nothing to do
 		return this;
