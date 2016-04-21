@@ -869,6 +869,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 				rm.addStyle("text-align", sHAlign);
 			}
 			rm.writeStyles();
+			rm.addClass("sapUiTableTd");
 			if (bIsFirstColumn) {
 				rm.addClass("sapUiTableTdFirst");
 			}
