@@ -1,6 +1,6 @@
 {
 	"@odata.context" : "$metadata#BusinessPartnerList/$entity",
-	"@odata.etag" : "W/\"20160317141911.0579740\"",
+	"@odata.etag" : "W/\"20160420143945.0000000\"",
 	"BusinessPartnerID" : "0100000000",
 	"BusinessPartnerRole" : "01",
 	"CompanyName" : "SAP",
@@ -10,8 +10,8 @@
 	"FaxNumber" : "0622734004",
 	"LegalForm" : "SE",
 	"CurrencyCode" : "EUR",
-	"CreatedAt" : "2016-03-16T07:29:33Z",
-	"ChangedAt" : "2016-03-17T14:19:11.057974Z",
+	"CreatedAt" : "2016-04-20T14:39:45Z",
+	"ChangedAt" : "2016-04-20T14:39:45Z",
 	"Address" : {
 		"City" : "Walldorf",
 		"PostalCode" : "69190",
@@ -20,8 +20,8 @@
 		"Country" : "DE",
 		"AddressType" : "02",
 		"GeoLocation" : {
-			"Longitude" : 8.641701933686,
-			"Latitude" : 49.293673600000
+			"Longitude" : "8.641701933686",
+			"Latitude" : "49.293673600000"
 		}
 	}
 }

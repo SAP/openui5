@@ -1,22 +1,22 @@
 {
 	"@odata.context" : "$metadata#SalesOrderList(ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID,SO_2_BP(BusinessPartnerID,CompanyName,PhoneNumber))/$entity",
-	"@odata.etag" : "W/\"20160411220000.0000000\"",
-	"ChangedAt" : "20160411220000.0000000 ",
-	"CreatedAt" : "20160411220000.0000000 ",
+	"@odata.etag" : "W/\"20160419220000.0000000\"",
+	"ChangedAt" : "20160419220000.0000000 ",
+	"CreatedAt" : "20160419220000.0000000 ",
 	"LifecycleStatusDesc" : "",
 	"Note" : "EPM DG: SO ID 0500000000 Deliver as fast as possible",
 	"SalesOrderID" : "0500000000",
 	"SO_2_SOITEM" : [
 			{
 				"SalesOrderID" : "0500000000",
-				"ItemPosition" : "10",
+				"ItemPosition" : "0000000010",
 				"Note" : "EPM DG: SO ID 0500000000 Item 0000000010",
-				"NoteLanguage" : "EN",
+				"NoteLanguage" : "E",
 				"CurrencyCode" : "EUR",
 				"GrossAmount" : "1137.64",
 				"NetAmount" : "956.00",
 				"TaxAmount" : "181.64",
-				"DeliveryDate" : "2016-04-18T22:00:00Z",
+				"DeliveryDate" : "2016-04-26T22:00:00Z",
 				"Quantity" : "1",
 				"QuantityUnit" : "EA",
 				"Product" : {
@@ -43,10 +43,10 @@
 					"Depth" : "18.000",
 					"Height" : "3.000",
 					"DimUnit" : "CM",
-					"CreatedAt" : "2016-04-08T23:00:49Z",
-					"ChangedAt" : "2016-04-08T23:00:49Z",
+					"CreatedAt" : "2016-04-20T14:39:45Z",
+					"ChangedAt" : "2016-04-20T14:39:45Z",
 					"PRODUCT_2_BP" : {
-						"@odata.etag" : "W/\"20160412111832.4652430\"",
+						"@odata.etag" : "W/\"20160420143945.0000000\"",
 						"BusinessPartnerID" : "0100000000",
 						"BusinessPartnerRole" : "01",
 						"CompanyName" : "SAP",
@@ -56,8 +56,8 @@
 						"FaxNumber" : "0622734004",
 						"LegalForm" : "SE",
 						"CurrencyCode" : "EUR",
-						"CreatedAt" : "2016-04-08T23:00:49Z",
-						"ChangedAt" : "2016-04-12T11:18:32.465243Z",
+						"CreatedAt" : "2016-04-20T14:39:45Z",
+						"ChangedAt" : "2016-04-20T14:39:45Z",
 						"Address" : {
 							"City" : "Walldorf",
 							"PostalCode" : "69190",
@@ -70,8 +70,8 @@
 								"Latitude" : "49.293673600000"
 							}
 						},
-						"BP_2_CONTACT" : [{
-							"ContactGUID" : "005056a7-1e3d-1ee5-bfbb-b78f653f1b39",
+						"BP_2_CONTACT" : [ {
+							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5b0035",
 							"BusinessPartnerID" : "0100000000",
 							"Title" : "",
 							"FirstName" : "Karl",
@@ -83,7 +83,7 @@
 							"PhoneNumber" : "0622734567",
 							"FaxNumber" : "0622734004",
 							"EmailAddress" : "do.not.reply@sap.com",
-							"Language" : "EN",
+							"Language" : "E",
 							"DateOfBirth" : null,
 							"Address" : {
 								"City" : "Walldorf",
@@ -98,7 +98,7 @@
 								}
 							}
 						}, {
-							"ContactGUID" : "005056a7-1e3d-1ee5-bfbb-b78f653f3b39",
+							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5b2035",
 							"BusinessPartnerID" : "0100000000",
 							"Title" : "",
 							"FirstName" : "Harald",
@@ -110,7 +110,7 @@
 							"PhoneNumber" : "0622746358",
 							"FaxNumber" : "0622734004",
 							"EmailAddress" : "hjg@sap.com",
-							"Language" : "EN",
+							"Language" : "E",
 							"DateOfBirth" : null,
 							"Address" : {
 								"City" : "St.-Leon Rot",
@@ -124,34 +124,34 @@
 									"Latitude" : "49.246162000000"
 								}
 							}
-						}]
+						} ]
 					}
 				}
 			},
 			{
 				"SalesOrderID" : "0500000000",
-				"ItemPosition" : "20",
+				"ItemPosition" : "0000000020",
 				"Note" : "EPM DG: SO ID 0500000000 Item 0000000020",
-				"NoteLanguage" : "EN",
+				"NoteLanguage" : "E",
 				"CurrencyCode" : "EUR",
 				"GrossAmount" : "2972.62",
 				"NetAmount" : "2498.00",
 				"TaxAmount" : "474.62",
-				"DeliveryDate" : "2016-04-18T22:00:00Z",
+				"DeliveryDate" : "2016-04-26T22:00:00Z",
 				"Quantity" : "2",
 				"QuantityUnit" : "EA",
 				"Product" : {
 					"ProductID" : "HT-1001",
-					"ProductName" : "modified by QUnit test"
+					"ProductName" : "Notebook Basic 17"
 				},
 				"SOITEM_2_PRODUCT" : {
 					"ProductID" : "HT-1001",
 					"TypeCode" : "PR",
 					"Category" : "Notebooks",
-					"Name" : "modified by QUnit test",
-					"NameLanguage" : "DE",
+					"Name" : "Notebook Basic 17",
+					"NameLanguage" : "EN",
 					"Description" : "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
-					"DescriptionLanguage" : "DE",
+					"DescriptionLanguage" : "EN",
 					"SupplierID" : "0100000001",
 					"SupplierName" : "Becker Berlin",
 					"TaxTarifCode" : 1,
@@ -164,10 +164,10 @@
 					"Depth" : "17.000",
 					"Height" : "3.100",
 					"DimUnit" : "CM",
-					"CreatedAt" : "2016-04-08T23:00:49Z",
-					"ChangedAt" : "2016-04-08T23:00:49Z",
+					"CreatedAt" : "2016-04-20T14:39:45Z",
+					"ChangedAt" : "2016-04-20T14:39:45Z",
 					"PRODUCT_2_BP" : {
-						"@odata.etag" : "W/\"20160408230049.0000000\"",
+						"@odata.etag" : "W/\"20160420143945.0000000\"",
 						"BusinessPartnerID" : "0100000001",
 						"BusinessPartnerRole" : "02",
 						"CompanyName" : "Becker Berlin",
@@ -177,8 +177,8 @@
 						"FaxNumber" : "3088004",
 						"LegalForm" : "GmbH",
 						"CurrencyCode" : "EUR",
-						"CreatedAt" : "2016-04-08T23:00:49Z",
-						"ChangedAt" : "2016-04-08T23:00:49Z",
+						"CreatedAt" : "2016-04-20T14:39:45Z",
+						"ChangedAt" : "2016-04-20T14:39:45Z",
 						"Address" : {
 							"City" : "Berlin",
 							"PostalCode" : "13467",
@@ -191,8 +191,8 @@
 								"Latitude" : "52.612914300000"
 							}
 						},
-						"BP_2_CONTACT" : [{
-							"ContactGUID" : "005056a7-1e3d-1ee5-bfbb-b78f653f5b39",
+						"BP_2_CONTACT" : [ {
+							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5b4035",
 							"BusinessPartnerID" : "0100000001",
 							"Title" : "",
 							"FirstName" : "Dagmar",
@@ -204,7 +204,7 @@
 							"PhoneNumber" : "3088530",
 							"FaxNumber" : "3088004",
 							"EmailAddress" : "dagmar.schulze@beckerberlin.de",
-							"Language" : "EN",
+							"Language" : "E",
 							"DateOfBirth" : null,
 							"Address" : {
 								"City" : "Berlin",
@@ -219,7 +219,7 @@
 								}
 							}
 						}, {
-							"ContactGUID" : "005056a7-1e3d-1ee5-bfbb-b78f653f7b39",
+							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5b6035",
 							"BusinessPartnerID" : "0100000001",
 							"Title" : "",
 							"FirstName" : "Ursula",
@@ -231,7 +231,7 @@
 							"PhoneNumber" : "3088529",
 							"FaxNumber" : "3088004",
 							"EmailAddress" : "ursula.wexler@beckerberlin.de",
-							"Language" : "EN",
+							"Language" : "E",
 							"DateOfBirth" : null,
 							"Address" : {
 								"City" : "Berlin",
@@ -245,20 +245,20 @@
 									"Latitude" : "52.613766000000"
 								}
 							}
-						}]
+						} ]
 					}
 				}
 			},
 			{
 				"SalesOrderID" : "0500000000",
-				"ItemPosition" : "30",
+				"ItemPosition" : "0000000030",
 				"Note" : "EPM DG: SO ID 0500000000 Item 0000000030",
-				"NoteLanguage" : "EN",
+				"NoteLanguage" : "E",
 				"CurrencyCode" : "USD",
 				"GrossAmount" : "3736.60",
 				"NetAmount" : "3140.00",
 				"TaxAmount" : "596.60",
-				"DeliveryDate" : "2016-04-18T22:00:00Z",
+				"DeliveryDate" : "2016-04-26T22:00:00Z",
 				"Quantity" : "2",
 				"QuantityUnit" : "EA",
 				"Product" : {
@@ -285,10 +285,10 @@
 					"Depth" : "19.000",
 					"Height" : "2.500",
 					"DimUnit" : "CM",
-					"CreatedAt" : "2016-04-08T23:00:49Z",
-					"ChangedAt" : "2016-04-08T23:00:49Z",
+					"CreatedAt" : "2016-04-20T14:39:45Z",
+					"ChangedAt" : "2016-04-20T14:39:45Z",
 					"PRODUCT_2_BP" : {
-						"@odata.etag" : "W/\"20160408230049.0000000\"",
+						"@odata.etag" : "W/\"20160420143945.0000000\"",
 						"BusinessPartnerID" : "0100000002",
 						"BusinessPartnerRole" : "01",
 						"CompanyName" : "DelBont Industries",
@@ -298,8 +298,8 @@
 						"FaxNumber" : "3023352004",
 						"LegalForm" : "Ltd.",
 						"CurrencyCode" : "USD",
-						"CreatedAt" : "2016-04-08T23:00:49Z",
-						"ChangedAt" : "2016-04-08T23:00:49Z",
+						"CreatedAt" : "2016-04-20T14:39:45Z",
+						"ChangedAt" : "2016-04-20T14:39:45Z",
 						"Address" : {
 							"City" : "Wilmington, Delaware",
 							"PostalCode" : "19899",
@@ -312,8 +312,8 @@
 								"Latitude" : "39.745946800000"
 							}
 						},
-						"BP_2_CONTACT" : [{
-							"ContactGUID" : "005056a7-1e3d-1ee5-bfbb-b78f653f9b39",
+						"BP_2_CONTACT" : [ {
+							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5b8035",
 							"BusinessPartnerID" : "0100000002",
 							"Title" : "",
 							"FirstName" : "Maria",
@@ -325,7 +325,7 @@
 							"PhoneNumber" : "3023352668",
 							"FaxNumber" : "3023352004",
 							"EmailAddress" : "maria.brown@delbont.com",
-							"Language" : "EN",
+							"Language" : "E",
 							"DateOfBirth" : null,
 							"Address" : {
 								"City" : "Wilmington, Delaware",
@@ -340,7 +340,7 @@
 								}
 							}
 						}, {
-							"ContactGUID" : "005056a7-1e3d-1ee5-bfbb-b78f653fbb39",
+							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5ba035",
 							"BusinessPartnerID" : "0100000002",
 							"Title" : "",
 							"FirstName" : "Sam",
@@ -352,7 +352,7 @@
 							"PhoneNumber" : "25621140333",
 							"FaxNumber" : "3023352004",
 							"EmailAddress" : "sam.pelt@delbont.com",
-							"Language" : "EN",
+							"Language" : "E",
 							"DateOfBirth" : null,
 							"Address" : {
 								"City" : "Wilmington, Delaware",
@@ -366,20 +366,20 @@
 									"Latitude" : "39.751013000000"
 								}
 							}
-						}]
+						} ]
 					}
 				}
 			},
 			{
 				"SalesOrderID" : "0500000000",
-				"ItemPosition" : "40",
+				"ItemPosition" : "0000000040",
 				"Note" : "EPM DG: SO ID 0500000000 Item 0000000040",
-				"NoteLanguage" : "EN",
+				"NoteLanguage" : "E",
 				"CurrencyCode" : "EUR",
 				"GrossAmount" : "3927.00",
 				"NetAmount" : "3300.00",
 				"TaxAmount" : "627.00",
-				"DeliveryDate" : "2016-04-18T22:00:00Z",
+				"DeliveryDate" : "2016-04-26T22:00:00Z",
 				"Quantity" : "2",
 				"QuantityUnit" : "EA",
 				"Product" : {
@@ -406,10 +406,10 @@
 					"Depth" : "21.000",
 					"Height" : "4.000",
 					"DimUnit" : "CM",
-					"CreatedAt" : "2016-04-08T23:00:49Z",
-					"ChangedAt" : "2016-04-08T23:00:49Z",
+					"CreatedAt" : "2016-04-20T14:39:45Z",
+					"ChangedAt" : "2016-04-20T14:39:45Z",
 					"PRODUCT_2_BP" : {
-						"@odata.etag" : "W/\"20160408230049.0000000\"",
+						"@odata.etag" : "W/\"20160420143945.0000000\"",
 						"BusinessPartnerID" : "0100000003",
 						"BusinessPartnerRole" : "01",
 						"CompanyName" : "Talpa",
@@ -419,8 +419,8 @@
 						"FaxNumber" : "511403004",
 						"LegalForm" : "GmbH",
 						"CurrencyCode" : "EUR",
-						"CreatedAt" : "2016-04-08T23:00:49Z",
-						"ChangedAt" : "2016-04-08T23:00:49Z",
+						"CreatedAt" : "2016-04-20T14:39:45Z",
+						"ChangedAt" : "2016-04-20T14:39:45Z",
 						"Address" : {
 							"City" : "Hannover",
 							"PostalCode" : "30625",
@@ -433,8 +433,8 @@
 								"Latitude" : "52.382990802599"
 							}
 						},
-						"BP_2_CONTACT" : [{
-							"ContactGUID" : "005056a7-1e3d-1ee5-bfbb-b78f653fdb39",
+						"BP_2_CONTACT" : [ {
+							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5bc035",
 							"BusinessPartnerID" : "0100000003",
 							"Title" : "",
 							"FirstName" : "Saskia",
@@ -446,7 +446,7 @@
 							"PhoneNumber" : "511403266",
 							"FaxNumber" : "511403004",
 							"EmailAddress" : "saskia.sommer@talpa-hannover.de",
-							"Language" : "EN",
+							"Language" : "E",
 							"DateOfBirth" : null,
 							"Address" : {
 								"City" : "Hannover",
@@ -461,7 +461,7 @@
 								}
 							}
 						}, {
-							"ContactGUID" : "005056a7-1e3d-1ee5-bfbb-b78f653ffb39",
+							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5be035",
 							"BusinessPartnerID" : "0100000003",
 							"Title" : "",
 							"FirstName" : "Julia",
@@ -473,7 +473,7 @@
 							"PhoneNumber" : "03848362558616",
 							"FaxNumber" : "511403004",
 							"EmailAddress" : "julia.pfeffer@talpa-hannover.de",
-							"Language" : "EN",
+							"Language" : "E",
 							"DateOfBirth" : null,
 							"Address" : {
 								"City" : "Hannover",
@@ -487,20 +487,20 @@
 									"Latitude" : "52.377257000000"
 								}
 							}
-						}]
+						} ]
 					}
 				}
 			},
 			{
 				"SalesOrderID" : "0500000000",
-				"ItemPosition" : "50",
+				"ItemPosition" : "0000000050",
 				"Note" : "EPM DG: SO ID 0500000000 Item 0000000050",
-				"NoteLanguage" : "EN",
+				"NoteLanguage" : "E",
 				"CurrencyCode" : "USD",
 				"GrossAmount" : "1067.43",
 				"NetAmount" : "897.00",
 				"TaxAmount" : "170.43",
-				"DeliveryDate" : "2016-04-18T22:00:00Z",
+				"DeliveryDate" : "2016-04-26T22:00:00Z",
 				"Quantity" : "3",
 				"QuantityUnit" : "EA",
 				"Product" : {
@@ -527,10 +527,10 @@
 					"Depth" : "22.000",
 					"Height" : "3.000",
 					"DimUnit" : "CM",
-					"CreatedAt" : "2016-04-08T23:00:49Z",
-					"ChangedAt" : "2016-04-08T23:00:49Z",
+					"CreatedAt" : "2016-04-20T14:39:45Z",
+					"ChangedAt" : "2016-04-20T14:39:45Z",
 					"PRODUCT_2_BP" : {
-						"@odata.etag" : "W/\"20160408230049.0000000\"",
+						"@odata.etag" : "W/\"20160420143945.0000000\"",
 						"BusinessPartnerID" : "0100000004",
 						"BusinessPartnerRole" : "01",
 						"CompanyName" : "Panorama Studios",
@@ -540,8 +540,8 @@
 						"FaxNumber" : "2244668004",
 						"LegalForm" : "Inc.",
 						"CurrencyCode" : "USD",
-						"CreatedAt" : "2016-04-08T23:00:49Z",
-						"ChangedAt" : "2016-04-08T23:00:49Z",
+						"CreatedAt" : "2016-04-20T14:39:45Z",
+						"ChangedAt" : "2016-04-20T14:39:45Z",
 						"Address" : {
 							"City" : "Hollywood, California",
 							"PostalCode" : "91602",
@@ -554,8 +554,8 @@
 								"Latitude" : "34.136429050000"
 							}
 						},
-						"BP_2_CONTACT" : [{
-							"ContactGUID" : "005056a7-1e3d-1ee5-bfbb-b78f65401b39",
+						"BP_2_CONTACT" : [ {
+							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5c0035",
 							"BusinessPartnerID" : "0100000004",
 							"Title" : "",
 							"FirstName" : "Bob",
@@ -567,7 +567,7 @@
 							"PhoneNumber" : "2244668800",
 							"FaxNumber" : "2244668004",
 							"EmailAddress" : "bob.buyer@panorama-studios.biz",
-							"Language" : "EN",
+							"Language" : "E",
 							"DateOfBirth" : null,
 							"Address" : {
 								"City" : "Los Angeles, California",
@@ -582,7 +582,7 @@
 								}
 							}
 						}, {
-							"ContactGUID" : "005056a7-1e3d-1ee5-bfbb-b78f65403b39",
+							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5c2035",
 							"BusinessPartnerID" : "0100000004",
 							"Title" : "",
 							"FirstName" : "Timothy",
@@ -594,7 +594,7 @@
 							"PhoneNumber" : "25621140333",
 							"FaxNumber" : "2244668004",
 							"EmailAddress" : "timothy.oshaughnessy@panorama-studios.biz",
-							"Language" : "EN",
+							"Language" : "E",
 							"DateOfBirth" : null,
 							"Address" : {
 								"City" : "Santa Clara, California",
@@ -608,20 +608,20 @@
 									"Latitude" : "37.410870000000"
 								}
 							}
-						}]
+						} ]
 					}
 				}
 			},
 			{
 				"SalesOrderID" : "0500000000",
-				"ItemPosition" : "60",
+				"ItemPosition" : "0000000060",
 				"Note" : "EPM DG: SO ID 0500000000 Item 0000000060",
-				"NoteLanguage" : "EN",
+				"NoteLanguage" : "E",
 				"CurrencyCode" : "EUR",
 				"GrossAmount" : "4757.62",
 				"NetAmount" : "3998.00",
 				"TaxAmount" : "759.62",
-				"DeliveryDate" : "2016-04-18T22:00:00Z",
+				"DeliveryDate" : "2016-04-26T22:00:00Z",
 				"Quantity" : "2",
 				"QuantityUnit" : "EA",
 				"Product" : {
@@ -648,10 +648,10 @@
 					"Depth" : "20.000",
 					"Height" : "3.000",
 					"DimUnit" : "CM",
-					"CreatedAt" : "2016-04-08T23:00:49Z",
-					"ChangedAt" : "2016-04-08T23:00:49Z",
+					"CreatedAt" : "2016-04-20T14:39:45Z",
+					"ChangedAt" : "2016-04-20T14:39:45Z",
 					"PRODUCT_2_BP" : {
-						"@odata.etag" : "W/\"20160408230049.0000000\"",
+						"@odata.etag" : "W/\"20160420143945.0000000\"",
 						"BusinessPartnerID" : "0100000005",
 						"BusinessPartnerRole" : "01",
 						"CompanyName" : "TECUM",
@@ -661,8 +661,8 @@
 						"FaxNumber" : "2511004",
 						"LegalForm" : "AG",
 						"CurrencyCode" : "EUR",
-						"CreatedAt" : "2016-04-08T23:00:49Z",
-						"ChangedAt" : "2016-04-08T23:00:49Z",
+						"CreatedAt" : "2016-04-20T14:39:45Z",
+						"ChangedAt" : "2016-04-20T14:39:45Z",
 						"Address" : {
 							"City" : "Münster",
 							"PostalCode" : "48155",
@@ -675,8 +675,8 @@
 								"Latitude" : "51.940081800000"
 							}
 						},
-						"BP_2_CONTACT" : [{
-							"ContactGUID" : "005056a7-1e3d-1ee5-bfbb-b78f65405b39",
+						"BP_2_CONTACT" : [ {
+							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5c4035",
 							"BusinessPartnerID" : "0100000005",
 							"Title" : "",
 							"FirstName" : "Bart",
@@ -688,7 +688,7 @@
 							"PhoneNumber" : "2511415",
 							"FaxNumber" : "2511004",
 							"EmailAddress" : "bart.koenig@tecum-ag.de",
-							"Language" : "EN",
+							"Language" : "E",
 							"DateOfBirth" : null,
 							"Address" : {
 								"City" : "Münster",
@@ -703,7 +703,7 @@
 								}
 							}
 						}, {
-							"ContactGUID" : "005056a7-1e3d-1ee5-bfbb-b78f65407b39",
+							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5c6035",
 							"BusinessPartnerID" : "0100000005",
 							"Title" : "",
 							"FirstName" : "Nicole",
@@ -715,7 +715,7 @@
 							"PhoneNumber" : "0736689984351",
 							"FaxNumber" : "2511004",
 							"EmailAddress" : "nicole.bohm@tecum-ag.de",
-							"Language" : "EN",
+							"Language" : "E",
 							"DateOfBirth" : null,
 							"Address" : {
 								"City" : "Telgte",
@@ -729,20 +729,20 @@
 									"Latitude" : "51.980880000000"
 								}
 							}
-						}]
+						} ]
 					}
 				}
 			},
 			{
 				"SalesOrderID" : "0500000000",
-				"ItemPosition" : "70",
+				"ItemPosition" : "0000000070",
 				"Note" : "EPM DG: SO ID 0500000000 Item 0000000070",
-				"NoteLanguage" : "EN",
+				"NoteLanguage" : "E",
 				"CurrencyCode" : "JPY",
 				"GrossAmount" : "547162",
 				"NetAmount" : "459800",
 				"TaxAmount" : "87362",
-				"DeliveryDate" : "2016-04-18T22:00:00Z",
+				"DeliveryDate" : "2016-04-26T22:00:00Z",
 				"Quantity" : "2",
 				"QuantityUnit" : "EA",
 				"Product" : {
@@ -769,10 +769,10 @@
 					"Depth" : "23.000",
 					"Height" : "2.000",
 					"DimUnit" : "CM",
-					"CreatedAt" : "2016-04-08T23:00:49Z",
-					"ChangedAt" : "2016-04-08T23:00:49Z",
+					"CreatedAt" : "2016-04-20T14:39:45Z",
+					"ChangedAt" : "2016-04-20T14:39:45Z",
 					"PRODUCT_2_BP" : {
-						"@odata.etag" : "W/\"20160408230049.0000000\"",
+						"@odata.etag" : "W/\"20160420143945.0000000\"",
 						"BusinessPartnerID" : "0100000006",
 						"BusinessPartnerRole" : "01",
 						"CompanyName" : "Asia High tech",
@@ -782,8 +782,8 @@
 						"FaxNumber" : "9078563004",
 						"LegalForm" : "Inc.",
 						"CurrencyCode" : "JPY",
-						"CreatedAt" : "2016-04-08T23:00:49Z",
-						"ChangedAt" : "2016-04-08T23:00:49Z",
+						"CreatedAt" : "2016-04-20T14:39:45Z",
+						"ChangedAt" : "2016-04-20T14:39:45Z",
 						"Address" : {
 							"City" : "Tokyo",
 							"PostalCode" : "100-0004",
@@ -796,8 +796,8 @@
 								"Latitude" : "35.693347450000"
 							}
 						},
-						"BP_2_CONTACT" : [{
-							"ContactGUID" : "005056a7-1e3d-1ee5-bfbb-b78f65409b39",
+						"BP_2_CONTACT" : [ {
+							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5c8035",
 							"BusinessPartnerID" : "0100000006",
 							"Title" : "",
 							"FirstName" : "Yoko",
@@ -809,7 +809,7 @@
 							"PhoneNumber" : "9078563412",
 							"FaxNumber" : "9078563004",
 							"EmailAddress" : "yoko.nakamura@asia-ht.com",
-							"Language" : "EN",
+							"Language" : "E",
 							"DateOfBirth" : null,
 							"Address" : {
 								"City" : "Tokyo",
@@ -824,7 +824,7 @@
 								}
 							}
 						}, {
-							"ContactGUID" : "005056a7-1e3d-1ee5-bfbb-b78f6540bb39",
+							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5ca035",
 							"BusinessPartnerID" : "0100000006",
 							"Title" : "",
 							"FirstName" : "Hidehisa",
@@ -836,7 +836,7 @@
 							"PhoneNumber" : "9078563413",
 							"FaxNumber" : "9078563004",
 							"EmailAddress" : "hidehisa.koshiishi@asia-ht.com",
-							"Language" : "EN",
+							"Language" : "E",
 							"DateOfBirth" : null,
 							"Address" : {
 								"City" : "Tokyo",
@@ -850,19 +850,19 @@
 									"Latitude" : "35.617576600000"
 								}
 							}
-						}]
+						} ]
 					}
 				}
 			}, {
 				"SalesOrderID" : "0500000000",
-				"ItemPosition" : "80",
+				"ItemPosition" : "0000000080",
 				"Note" : "EPM DG: SO ID 0500000000 Item 0000000080",
-				"NoteLanguage" : "EN",
+				"NoteLanguage" : "E",
 				"CurrencyCode" : "EUR",
 				"GrossAmount" : "547.40",
 				"NetAmount" : "460.00",
 				"TaxAmount" : "87.40",
-				"DeliveryDate" : "2016-04-18T22:00:00Z",
+				"DeliveryDate" : "2016-04-26T22:00:00Z",
 				"Quantity" : "2",
 				"QuantityUnit" : "EA",
 				"Product" : {
@@ -889,10 +889,10 @@
 					"Depth" : "12.000",
 					"Height" : "36.000",
 					"DimUnit" : "CM",
-					"CreatedAt" : "2016-04-08T23:00:49Z",
-					"ChangedAt" : "2016-04-08T23:00:49Z",
+					"CreatedAt" : "2016-04-20T14:39:45Z",
+					"ChangedAt" : "2016-04-20T14:39:45Z",
 					"PRODUCT_2_BP" : {
-						"@odata.etag" : "W/\"20160408230049.0000000\"",
+						"@odata.etag" : "W/\"20160420143945.0000000\"",
 						"BusinessPartnerID" : "0100000011",
 						"BusinessPartnerRole" : "01",
 						"CompanyName" : "Alpine Systems",
@@ -902,8 +902,8 @@
 						"FaxNumber" : "6623612004",
 						"LegalForm" : "AG",
 						"CurrencyCode" : "EUR",
-						"CreatedAt" : "2016-04-08T23:00:49Z",
-						"ChangedAt" : "2016-04-08T23:00:49Z",
+						"CreatedAt" : "2016-04-20T14:39:45Z",
+						"ChangedAt" : "2016-04-20T14:39:45Z",
 						"Address" : {
 							"City" : "Salzburg",
 							"PostalCode" : "5020",
@@ -916,8 +916,8 @@
 								"Latitude" : "47.803414200000"
 							}
 						},
-						"BP_2_CONTACT" : [{
-							"ContactGUID" : "005056a7-1e3d-1ee5-bfbb-b78f6541db39",
+						"BP_2_CONTACT" : [ {
+							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5dc035",
 							"BusinessPartnerID" : "0100000011",
 							"Title" : "",
 							"FirstName" : "Joseph",
@@ -929,7 +929,7 @@
 							"PhoneNumber" : "6623612804",
 							"FaxNumber" : "6623612004",
 							"EmailAddress" : "joseph_gschwandtner@alp-systems.at",
-							"Language" : "EN",
+							"Language" : "E",
 							"DateOfBirth" : null,
 							"Address" : {
 								"City" : "Salzburg",
@@ -944,7 +944,7 @@
 								}
 							}
 						}, {
-							"ContactGUID" : "005056a7-1e3d-1ee5-bfbb-b78f6541fb39",
+							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5de035",
 							"BusinessPartnerID" : "0100000011",
 							"Title" : "",
 							"FirstName" : "Karolin",
@@ -956,7 +956,7 @@
 							"PhoneNumber" : "6623612812",
 							"FaxNumber" : "6623612004",
 							"EmailAddress" : "karolin.schroeder@alp-systems.at",
-							"Language" : "EN",
+							"Language" : "E",
 							"DateOfBirth" : null,
 							"Address" : {
 								"City" : "Linz",
@@ -970,19 +970,19 @@
 									"Latitude" : "48.297957000000"
 								}
 							}
-						}]
+						} ]
 					}
 				}
 			}, {
 				"SalesOrderID" : "0500000000",
-				"ItemPosition" : "90",
+				"ItemPosition" : "0000000090",
 				"Note" : "EPM DG: SO ID 0500000000 Item 0000000090",
-				"NoteLanguage" : "EN",
+				"NoteLanguage" : "E",
 				"CurrencyCode" : "GBP",
 				"GrossAmount" : "1017.45",
 				"NetAmount" : "855.00",
 				"TaxAmount" : "162.45",
-				"DeliveryDate" : "2016-04-18T22:00:00Z",
+				"DeliveryDate" : "2016-04-26T22:00:00Z",
 				"Quantity" : "3",
 				"QuantityUnit" : "EA",
 				"Product" : {
@@ -1009,10 +1009,10 @@
 					"Depth" : "19.000",
 					"Height" : "43.000",
 					"DimUnit" : "CM",
-					"CreatedAt" : "2016-04-08T23:00:49Z",
-					"ChangedAt" : "2016-04-08T23:00:49Z",
+					"CreatedAt" : "2016-04-20T14:39:45Z",
+					"ChangedAt" : "2016-04-20T14:39:45Z",
 					"PRODUCT_2_BP" : {
-						"@odata.etag" : "W/\"20160408230049.0000000\"",
+						"@odata.etag" : "W/\"20160420143945.0000000\"",
 						"BusinessPartnerID" : "0100000012",
 						"BusinessPartnerRole" : "01",
 						"CompanyName" : "New Line Design",
@@ -1022,8 +1022,8 @@
 						"FaxNumber" : "2589436004",
 						"LegalForm" : "Ltd.",
 						"CurrencyCode" : "GBP",
-						"CreatedAt" : "2016-04-08T23:00:49Z",
-						"ChangedAt" : "2016-04-08T23:00:49Z",
+						"CreatedAt" : "2016-04-20T14:39:45Z",
+						"ChangedAt" : "2016-04-20T14:39:45Z",
 						"Address" : {
 							"City" : "Manchester",
 							"PostalCode" : "M11 3ER",
@@ -1036,8 +1036,8 @@
 								"Latitude" : "53.482612000000"
 							}
 						},
-						"BP_2_CONTACT" : [{
-							"ContactGUID" : "005056a7-1e3d-1ee5-bfbb-b78f65421b39",
+						"BP_2_CONTACT" : [ {
+							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5e0035",
 							"BusinessPartnerID" : "0100000012",
 							"Title" : "",
 							"FirstName" : "George",
@@ -1049,7 +1049,7 @@
 							"PhoneNumber" : "2589436180",
 							"FaxNumber" : "2589436004",
 							"EmailAddress" : "george_d_grant@newlinedesign.co.uk",
-							"Language" : "EN",
+							"Language" : "E",
 							"DateOfBirth" : null,
 							"Address" : {
 								"City" : "Ashton-under-Lyne",
@@ -1064,7 +1064,7 @@
 								}
 							}
 						}, {
-							"ContactGUID" : "005056a7-1e3d-1ee5-bfbb-b78f65423b39",
+							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5e2035",
 							"BusinessPartnerID" : "0100000012",
 							"Title" : "",
 							"FirstName" : "Brigida",
@@ -1076,7 +1076,7 @@
 							"PhoneNumber" : "2089177317",
 							"FaxNumber" : "2589436004",
 							"EmailAddress" : "wright_brigida@newlinedesign.co.uk",
-							"Language" : "EN",
+							"Language" : "E",
 							"DateOfBirth" : null,
 							"Address" : {
 								"City" : "Manchester",
@@ -1090,19 +1090,19 @@
 									"Latitude" : "53.473788000000"
 								}
 							}
-						}]
+						} ]
 					}
 				}
 			}, {
 				"SalesOrderID" : "0500000000",
-				"ItemPosition" : "100",
+				"ItemPosition" : "0000000100",
 				"Note" : "EPM DG: SO ID 0500000000 Item 0000000100",
-				"NoteLanguage" : "EN",
+				"NoteLanguage" : "E",
 				"CurrencyCode" : "EUR",
 				"GrossAmount" : "1231.65",
 				"NetAmount" : "1035.00",
 				"TaxAmount" : "196.65",
-				"DeliveryDate" : "2016-04-18T22:00:00Z",
+				"DeliveryDate" : "2016-04-26T22:00:00Z",
 				"Quantity" : "3",
 				"QuantityUnit" : "EA",
 				"Product" : {
@@ -1129,10 +1129,10 @@
 					"Depth" : "19.000",
 					"Height" : "43.000",
 					"DimUnit" : "CM",
-					"CreatedAt" : "2016-04-08T23:00:49Z",
-					"ChangedAt" : "2016-04-08T23:00:49Z",
+					"CreatedAt" : "2016-04-20T14:39:45Z",
+					"ChangedAt" : "2016-04-20T14:39:45Z",
 					"PRODUCT_2_BP" : {
-						"@odata.etag" : "W/\"20160408230049.0000000\"",
+						"@odata.etag" : "W/\"20160420143945.0000000\"",
 						"BusinessPartnerID" : "0100000013",
 						"BusinessPartnerRole" : "01",
 						"CompanyName" : "HEPA Tec",
@@ -1142,8 +1142,8 @@
 						"FaxNumber" : "4507867004",
 						"LegalForm" : "GmbH",
 						"CurrencyCode" : "EUR",
-						"CreatedAt" : "2016-04-08T23:00:49Z",
-						"ChangedAt" : "2016-04-08T23:00:49Z",
+						"CreatedAt" : "2016-04-20T14:39:45Z",
+						"ChangedAt" : "2016-04-20T14:39:45Z",
 						"Address" : {
 							"City" : "Bremen",
 							"PostalCode" : "28213",
@@ -1156,8 +1156,8 @@
 								"Latitude" : "53.084664600000"
 							}
 						},
-						"BP_2_CONTACT" : [{
-							"ContactGUID" : "005056a7-1e3d-1ee5-bfbb-b78f65425b39",
+						"BP_2_CONTACT" : [ {
+							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5e4035",
 							"BusinessPartnerID" : "0100000013",
 							"Title" : "",
 							"FirstName" : "Sarah",
@@ -1169,7 +1169,7 @@
 							"PhoneNumber" : "4507867136",
 							"FaxNumber" : "4507867004",
 							"EmailAddress" : "sarah.schwind@hepa-tec.de",
-							"Language" : "EN",
+							"Language" : "E",
 							"DateOfBirth" : null,
 							"Address" : {
 								"City" : "Bremen",
@@ -1184,7 +1184,7 @@
 								}
 							}
 						}, {
-							"ContactGUID" : "005056a7-1e3d-1ee5-bfbb-b78f65427b39",
+							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5e6035",
 							"BusinessPartnerID" : "0100000013",
 							"Title" : "",
 							"FirstName" : "Marko",
@@ -1196,7 +1196,7 @@
 							"PhoneNumber" : "0659410795031",
 							"FaxNumber" : "4507867004",
 							"EmailAddress" : "marko.koenig@hepa-tec.de",
-							"Language" : "EN",
+							"Language" : "E",
 							"DateOfBirth" : null,
 							"Address" : {
 								"City" : "Bremen",
@@ -1210,12 +1210,12 @@
 									"Latitude" : "53.075630000000"
 								}
 							}
-						}]
+						} ]
 					}
 				}
-			}],
+			} ],
 	"SO_2_BP" : {
-		"@odata.etag" : "W/\"20160412111832.4652430\"",
+		"@odata.etag" : "W/\"20160420143945.0000000\"",
 		"BusinessPartnerID" : "0100000000",
 		"CompanyName" : "SAP",
 		"PhoneNumber" : "0622734567"
