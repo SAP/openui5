@@ -339,20 +339,34 @@
 // 						equal(jQuery("#flexbox6").css(sVendorPrefix + 'flex-wrap'), "wrap-reverse", "Flex Box 6 " + sVendorPrefix + "flex-wrap property should be set correctly");
 // 					});
 					test("justify-content", function() {
-						equal(jQuery("#flexbox1").css(sVendorPrefix + 'justify-content'), "flex-start", "Flex Box 1 " + sVendorPrefix + "justify-content property should be set correctly");
+						if(sap.ui.Device.browser.name === "cr" || sap.ui.Device.browser.name === "ff") {
+							equal(jQuery("#flexbox1").css(sVendorPrefix + 'justify-content'), "normal", "Flex Box 1 " + sVendorPrefix + "justify-content property should be set correctly");
+						} else {
+							equal(jQuery("#flexbox1").css(sVendorPrefix + 'justify-content'), "flex-start", "Flex Box 1 " + sVendorPrefix + "justify-content property should be set correctly");
+						}
 						equal(jQuery("#flexbox2").css(sVendorPrefix + 'justify-content'), "flex-end", "Flex Box 2 " + sVendorPrefix + "justify-content property should be set correctly");
 						equal(jQuery("#flexbox3").css(sVendorPrefix + 'justify-content'), "center", "Flex Box 3 " + sVendorPrefix + "justify-content property should be set correctly");
 						equal(jQuery("#flexbox4").css(sVendorPrefix + 'justify-content'), "space-between", "Flex Box 4 " + sVendorPrefix + "justify-content property should be set correctly");
 						equal(jQuery("#flexbox5").css(sVendorPrefix + 'justify-content'), "space-around", "Flex Box 5 " + sVendorPrefix + "justify-content property should be set correctly");
-						equal(jQuery("#flexbox6").css(sVendorPrefix + 'justify-content'), "flex-start", "Flex Box 6 " + sVendorPrefix + "justify-content property should be set correctly");
+						if(sap.ui.Device.browser.name === "cr" || sap.ui.Device.browser.name === "ff") {
+							equal(jQuery("#flexbox6").css(sVendorPrefix + 'justify-content'), "normal", "Flex Box 6 " + sVendorPrefix + "justify-content property should be set correctly");
+						} else {
+							equal(jQuery("#flexbox6").css(sVendorPrefix + 'justify-content'), "flex-start", "Flex Box 6 " + sVendorPrefix + "justify-content property should be set correctly");
+						}
 					});
 					test("align-items", function() {
 						equal(jQuery("#flexbox1").css(sVendorPrefix + 'align-items'), "flex-start", "Flex Box 1 " + sVendorPrefix + "align-items property should be set correctly");
 						equal(jQuery("#flexbox2").css(sVendorPrefix + 'align-items'), "flex-end", "Flex Box 2 " + sVendorPrefix + "align-items property should be set correctly");
 						equal(jQuery("#flexbox3").css(sVendorPrefix + 'align-items'), "center", "Flex Box 3 " + sVendorPrefix + "align-items property should be set correctly");
 						equal(jQuery("#flexbox4").css(sVendorPrefix + 'align-items'), "baseline", "Flex Box 4 " + sVendorPrefix + "align-items property should be set correctly");
-						equal(jQuery("#flexbox5").css(sVendorPrefix + 'align-items'), "stretch", "Flex Box 5 " + sVendorPrefix + "align-items property should be set correctly");
-						equal(jQuery("#flexbox6").css(sVendorPrefix + 'align-items'), "stretch", "Flex Box 6 " + sVendorPrefix + "align-items property should be set correctly");
+						if(sap.ui.Device.browser.name === "ff") {
+							equal(jQuery("#flexbox5").css(sVendorPrefix + 'align-items'), "normal", "Flex Box 5 " + sVendorPrefix + "align-items property should be set correctly");
+							equal(jQuery("#flexbox6").css(sVendorPrefix + 'align-items'), "normal", "Flex Box 6 " + sVendorPrefix + "align-items property should be set correctly");
+						} else {
+							equal(jQuery("#flexbox5").css(sVendorPrefix + 'align-items'), "stretch", "Flex Box 5 " + sVendorPrefix + "align-items property should be set correctly");
+							equal(jQuery("#flexbox6").css(sVendorPrefix + 'align-items'), "stretch", "Flex Box 6 " + sVendorPrefix + "align-items property should be set correctly");
+						}
+						
 					});
 // 					test("align-content", function() {
 // 						equal(jQuery("#flexbox1").css(sVendorPrefix + 'align-content'), "flex-start", "Flex Box 1 " + sVendorPrefix + "align-content property should be set correctly");
@@ -400,22 +414,28 @@
 						equal(jQuery("#item5").parent().css(sVendorPrefix + 'align-self'), "flex-start", "Item 5 " + sVendorPrefix + "align-self property should be set correctly");
 						equal(jQuery("#item6").parent().css(sVendorPrefix + 'align-self'), "flex-end", "Item 6 " + sVendorPrefix + "align-self property should be set correctly");
 					});
-					test("flex-basis", function() {
-						equal(jQuery("#item1").parent().css(sVendorPrefix + 'flex-basis'), "200px", "Item 1 " + sVendorPrefix + "flex-basis property should be set correctly");
-						equal(jQuery("#item2").parent().css(sVendorPrefix + 'flex-basis'), "2500px", "Item 2 " + sVendorPrefix + "flex-basis property should be set correctly");
-						equal(jQuery("#item3").parent().css(sVendorPrefix + 'flex-basis'), "137px", "Item 3 " + sVendorPrefix + "flex-basis property should be set correctly");
-						if (sap.ui.Device.browser.msie) {
-							equal(jQuery("#item4").parent().css(sVendorPrefix + 'flex-basis'), "160pt", "Item 4 " + sVendorPrefix + "flex-basis property should be set correctly");
-						} else {
-							equal(Math.round(parseFloat(jQuery("#item4").parent().css(sVendorPrefix + 'flex-basis'))*100)/100, 213.33, "Item 4 " + sVendorPrefix + "flex-basis property should be set correctly");
-						}
-						equal(jQuery("#item5").parent().css(sVendorPrefix + 'flex-basis'), "888px", "Item 5 " + sVendorPrefix + "flex-basis property should be set correctly");
-						if (sap.ui.Device.browser.msie) {
-							equal(jQuery("#item6").parent().css(sVendorPrefix + 'flex-basis'), "7em", "Item 6 " + sVendorPrefix + "flex-basis property should be set correctly");
-						} else {
-							equal(jQuery("#item6").parent().css(sVendorPrefix + 'flex-basis'), "112px", "Item 6 " + sVendorPrefix + "flex-basis property should be set correctly");
-						}
-					});
+				
+					// Due to setting the width/height instead of flex-preferred-size because of an IE bug,
+					// these tests don't make sense anymore for IE
+					// TODO Create respective tests for width/height
+					if(!navigator.userAgent.match(/Trident.+rv:11\.0/g)) {
+						test("flex-basis", function() {
+							equal(jQuery("#item1").parent().css(sVendorPrefix + 'flex-basis'), "200px", "Item 1 " + sVendorPrefix + "flex-basis property should be set correctly");
+							equal(jQuery("#item2").parent().css(sVendorPrefix + 'flex-basis'), "2500px", "Item 2 " + sVendorPrefix + "flex-basis property should be set correctly");
+							equal(jQuery("#item3").parent().css(sVendorPrefix + 'flex-basis'), "137px", "Item 3 " + sVendorPrefix + "flex-basis property should be set correctly");
+							if (sap.ui.Device.browser.msie) {
+								equal(jQuery("#item4").parent().css(sVendorPrefix + 'flex-basis'), "160pt", "Item 4 " + sVendorPrefix + "flex-basis property should be set correctly");
+							} else {
+								equal(Math.round(parseFloat(jQuery("#item4").parent().css(sVendorPrefix + 'flex-basis'))*100)/100, 213.33, "Item 4 " + sVendorPrefix + "flex-basis property should be set correctly");
+							}
+							equal(jQuery("#item5").parent().css(sVendorPrefix + 'flex-basis'), "888px", "Item 5 " + sVendorPrefix + "flex-basis property should be set correctly");
+							if (sap.ui.Device.browser.msie) {
+								equal(jQuery("#item6").parent().css(sVendorPrefix + 'flex-basis'), "7em", "Item 6 " + sVendorPrefix + "flex-basis property should be set correctly");
+							} else {
+								equal(jQuery("#item6").parent().css(sVendorPrefix + 'flex-basis'), "112px", "Item 6 " + sVendorPrefix + "flex-basis property should be set correctly");
+							}
+						});
+					}
 				}
 
 				if(jQuery.support.ie10FlexBoxLayout) { // Internet Explorer 10 which supports most of the final spec, but with some strange naming
@@ -493,14 +513,17 @@
 						equal(jQuery("#item5").parent().css(sVendorPrefix + 'flex-item-align'), "start", "Item 5 " + sVendorPrefix + "flex-item-align property should be set correctly");
 						equal(jQuery("#item6").parent().css(sVendorPrefix + 'flex-item-align'), "end", "Item 6 " + sVendorPrefix + "flex-item-align property should be set correctly");
 					});
-					test("flex-preferred-size", function() {
+					// Due to setting the width/height instead of flex-preferred-size because of an IE bug,
+					// these tests don't make sense anymore
+					// TODO Create respective tests for width/height
+					/*test("flex-preferred-size", function() {
 						equal(jQuery("#item1").parent().css(sVendorPrefix + 'flex-preferred-size'), "200px", "Item 1 " + sVendorPrefix + "flex-preferred-size property should be set correctly");
 						equal(jQuery("#item2").parent().css(sVendorPrefix + 'flex-preferred-size'), "2500px", "Item 2 " + sVendorPrefix + "flex-preferred-size property should be set correctly");
 						equal(jQuery("#item3").parent().css(sVendorPrefix + 'flex-preferred-size'), "137px", "Item 3 " + sVendorPrefix + "flex-preferred-size property should be set correctly");
 						equal(jQuery("#item4").parent().css(sVendorPrefix + 'flex-preferred-size'), "160pt", "Item 4 " + sVendorPrefix + "flex-preferred-size property should be set correctly");
 						equal(jQuery("#item5").parent().css(sVendorPrefix + 'flex-preferred-size'), "888px", "Item 5 " + sVendorPrefix + "flex-preferred-size property should be set correctly");
 						equal(jQuery("#item6").parent().css(sVendorPrefix + 'flex-preferred-size'), "7em", "Item 6 " + sVendorPrefix + "flex-preferred-size property should be set correctly");
-					});
+					});*/
 				}
 
 				if(!jQuery.support.newFlexBoxLayout && jQuery.support.flexBoxLayout) { // Browsers that should support the old spec but not the final one

@@ -259,7 +259,10 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 		// IE 10-11 miscalculate the width of the flex items when box-sizing: border-box
 		// Instead of using flex-basis, we use an explicit width/height
 		// @see https://github.com/philipwalton/flexbugs#7-flex-basis-doesnt-account-for-box-sizingborder-box
-		if (oControl instanceof sap.m.FlexItemData && sap.ui.Device.browser.internet_explorer && (sProperty === "flex-basis" || sProperty === "flex-preferred-size")) {
+		if (oControl instanceof sap.m.FlexItemData
+			&& oControl.getParent()
+			&& sap.ui.Device.browser.internet_explorer
+			&& (sProperty === "flex-basis" || sProperty === "flex-preferred-size")) {
 			sPropertyPrefix = "";
 			if (oControl.getParent().getParent().getDirection().indexOf("Row") > -1) {
 				sProperty = "width";
