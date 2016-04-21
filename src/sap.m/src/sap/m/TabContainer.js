@@ -8,13 +8,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		"use strict";
 
 		/**
-		 * Constructor for a new TabContainer.
+		 * Constructor for a new <code>TabContainer</code>.
 		 *
 		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * The TabContainer control represents a collection of tabs with associated content.
+		 * The <code>TabContainer</code> control represents a collection of tabs with associated content.
+		 *
+		 * The <code>TabContainer</code> is a full-page container that takes 100% of the parent width and height.
+		 * As the control is expected to occupy the the whole parent, it should be the only child of its parent.
 		 *
 		 * @extends sap.ui.core.Control
 		 *
