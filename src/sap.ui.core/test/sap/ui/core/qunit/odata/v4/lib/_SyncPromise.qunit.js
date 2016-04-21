@@ -283,6 +283,47 @@ sap.ui.require([
 		assertFulfilled(assert, _SyncPromise.all([]), []);
 		assertFulfilled(assert, _SyncPromise.all([42]), [42]);
 		assertFulfilled(assert, _SyncPromise.all([_SyncPromise.resolve(42)]), [42]);
+
+		return _SyncPromise.all([42]).then(function (aAnswers) {
+			assert.deepEqual(aAnswers, [42]);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_SyncPromise.all: then", function (assert) {
+		var oPromiseAll = _SyncPromise.all([Promise.resolve(42)]),
+			oThenResult,
+			done = assert.async();
+
+		assertPending(assert, oPromiseAll);
+
+		// code under test: "then" on a _SyncPromise.all()
+		oThenResult = oPromiseAll.then(function (aAnswers) {
+			assert.strictEqual(aAnswers[0], 42);
+			assertFulfilled(assert, oPromiseAll, [42]);
+			done();
+		});
+
+		assertPending(assert, oThenResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_SyncPromise.all: catch", function (assert) {
+		var oCatchResult,
+			oReason = {},
+			oPromiseAll = _SyncPromise.all([Promise.reject(oReason)]),
+			done = assert.async();
+
+		assertPending(assert, oPromiseAll);
+
+		// code under test: "catch" on a _SyncPromise.all()
+		oCatchResult = oPromiseAll.catch(function (oReason0) {
+			assert.strictEqual(oReason0, oReason);
+			assertRejected(assert, oPromiseAll, oReason);
+			done();
+		});
+
+		assertPending(assert, oCatchResult);
 	});
 
 	//*********************************************************************************************
