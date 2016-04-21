@@ -227,7 +227,7 @@ sap.ui.define([
 			);
 		}
 		if (this.isRelative()) {
-			oReadPromise = this.oContext.requestValue(this.sPath);
+			oReadPromise = this.oContext.fetchValue(this.sPath);
 		} else {
 			sGroupId = this.sRefreshGroupId || this.getGroupId();
 			this.sRefreshGroupId = undefined;

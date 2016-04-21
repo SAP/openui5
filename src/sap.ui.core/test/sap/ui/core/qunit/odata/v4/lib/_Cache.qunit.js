@@ -6,8 +6,9 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_Requestor",
+	"sap/ui/model/odata/v4/lib/_SyncPromise",
 	"sap/ui/test/TestUtils"
-], function (jQuery, _Cache, _Helper, _Requestor, TestUtils) {
+], function (jQuery, _Cache, _Helper, _Requestor, _SyncPromise, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -72,7 +73,8 @@ sap.ui.require([
 			// code under test
 			oPromise = oCache.read(oFixture.index, oFixture.length, "group");
 
-			assert.ok(oPromise instanceof Promise, "returns a Promise");
+			assert.ok(!oPromise.isFulfilled());
+			assert.ok(!oPromise.isRejected());
 			return oPromise.then(function (aResult) {
 				assert.deepEqual(aResult, {
 					"@odata.context" : "$metadata#TEAMS",
@@ -508,6 +510,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("read single property", function (assert) {
 		var oExpectedResult = {value : "John Doe"},
+			oPromise,
 			oRequestor = _Requestor.create("/~/"),
 			sResourcePath = "Employees('1')/Name",
 			oCache;
@@ -522,9 +525,12 @@ sap.ui.require([
 		assert.throws(function () {
 			oCache.post();
 		}, /POST request not allowed/);
-		return oCache.read().then(function (sName) {
+		oPromise = oCache.read().then(function (sName) {
 			assert.strictEqual(sName, "John Doe", "automatic {value : ...} unwrapping");
 		});
+		assert.ok(!oPromise.isFulfilled());
+		assert.ok(!oPromise.isRejected());
+		return oPromise;
 	});
 
 	//*********************************************************************************************
@@ -702,6 +708,8 @@ sap.ui.require([
 				})
 			]);
 		});
+		assert.ok(!oPromise.isFulfilled());
+		assert.ok(!oPromise.isRejected());
 		assert.throws(function () {
 			oCache.post(sGroupId, oPostData);
 		}, /Parallel POST requests not allowed/);

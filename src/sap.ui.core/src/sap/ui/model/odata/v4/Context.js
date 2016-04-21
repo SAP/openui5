@@ -7,6 +7,27 @@ sap.ui.define([
 ], function (BaseContext) {
 	"use strict";
 
+	/*
+	 * Checks if the given value is primitive.
+	 * @param {sap.ui.model.odata.v4.Context} oContext The context
+	 * @param {string} sPath The requested path
+	 * @param {any} oResult The result
+	 * @throws {Error} If the result is not primitive
+	 */
+	function checkPrimitive(oContext, sPath, oResult) {
+		if (oResult && typeof oResult === "object") {
+			throw new Error(oContext + "/" + sPath + ": Accessed value is not primitive");
+		}
+		return oResult;
+	}
+
+	/*
+	 * Clones the object.
+	 */
+	function clone(o) {
+		return o && JSON.parse(JSON.stringify(o));
+	}
+
 	/**
 	 * Do <strong>NOT</strong> call this private constructor for a new <code>Context</code>. In the
 	 * OData V4 model you cannot create contexts at will: retrieve them from a binding or a view
@@ -25,6 +46,18 @@ sap.ui.define([
 	 * @alias sap.ui.model.odata.v4.Context
 	 * @author SAP SE
 	 * @class Implementation of an OData V4 model's context.
+	 *
+	 *   The context is a pointer to model data as returned by a query from a
+	 *   {@link sap.ui.model.odata.v4.ODataContextBinding context binding} or a
+	 *   {@link sap.ui.model.odata.v4.ODataListBinding list binding}. Contexts are always and only
+	 *   created by such bindings. A context for a context binding points to the complete query
+	 *   result. A context for a list binding points to one specific entry in the binding's
+	 *   collection. A property binding does not have a context, you can access its value via
+	 *   {@link sap.ui.model.odata.v4.ODataPropertyBinding#getValue getValue}.
+	 *
+	 *   Applications can access model data only via a context, either synchronously with the risk
+	 *   that the values are not available yet ({@link #getProperty} and {@link #getObject}) or
+	 *   asynchronously ({@link #requestProperty} and {@link #requestObject}).
 	 * @extends sap.ui.model.Context
 	 * @public
 	 * @version ${version}
@@ -51,11 +84,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the context's list index within the binding.
+	 * Returns the context's index within the binding's collection.
 	 *
 	 * @returns {number}
-	 *   The context's list index within the binding or <code>undefined</code> if the context does
-	 *   not belong to a list binding.
+	 *   The context's index within the binding's collection or <code>undefined</code> if the
+	 *   context does not belong to a list binding.
 	 *
 	 * @public
 	 * @since 1.39.0
@@ -65,46 +98,112 @@ sap.ui.define([
 	};
 
 	/**
-	 * Cannot access data synchronously, use {@link #requestValue} instead.
+	 * Returns the value for the given path relative to this context. The function allows access to
+	 * the complete data the context points to (when <code>sPath</code> is "") or any part thereof.
+	 * The data is a JSON structure as described in
+	 * <a href="http://docs.oasis-open.org/odata/odata-json-format/v4.0/odata-json-format-v4.0.html">"OData JSON Format Version 4.0"</a>.
+	 * Note that the function clones the result. Modify values via
+	 * {@link sap.ui.model.odata.v4.ODataPropertyBinding#setValue}.
 	 *
-	 * @throws {Error}
+	 * Returns <code>undefined</code> if the data is not (yet) available. Use
+	 * {@link #requestObject} for asynchronous access.
+	 *
+	 * @param {string} [sPath=""]
+	 *   A relative path within the JSON structure
+	 * @returns {any}
+	 *   The requested value
 	 *
 	 * @public
 	 * @see sap.ui.model.Context#getObject
 	 * @since 1.39.0
 	 */
 	// @override
-	Context.prototype.getObject = function () {
-		throw new Error("No synchronous access to data");
+	Context.prototype.getObject = function (sPath) {
+		var oSyncPromise = this.fetchValue(sPath);
+
+		if (!oSyncPromise.isFulfilled()) {
+			return undefined;
+		}
+		return clone(oSyncPromise.getResult());
 	};
 
 	/**
-	 * Cannot access data synchronously, use {@link #requestValue} instead.
+	 * Returns the value for the given path relative to this context. The path is expected to point
+	 * to a structural property with primitive type. Returns <code>undefined</code> if the data is
+	 * not (yet) available. Use {@link #requestProperty} for asynchronous access.
 	 *
+	 * @param {string} sPath
+	 *   A relative path within the JSON structure
+	 * @returns {any}
+	 *   The requested property value
 	 * @throws {Error}
+	 *   If the value is not primitive
 	 *
 	 * @public
 	 * @see sap.ui.model.Context#getProperty
 	 * @since 1.39.0
 	 */
 	// @override
-	Context.prototype.getProperty = function () {
-		throw new Error("No synchronous access to data");
+	Context.prototype.getProperty = function (sPath) {
+		var oSyncPromise = this.fetchValue(sPath);
+
+		if (!oSyncPromise.isFulfilled()) {
+			return undefined;
+		}
+		return checkPrimitive(this, sPath, oSyncPromise.getResult());
 	};
 
 	/**
-	 * Delegates to the <code>requestValue</code> method of this context's binding which requests
+	 * Delegates to the <code>fetchValue</code> method of this context's binding which requests
 	 * the value for the given path, relative to this context, as maintained by that binding.
 	 *
 	 * @param {string} [sPath]
-	 *   Some relative path
-	 * @returns {Promise}
+	 *   A relative path within the JSON structure
+	 * @returns {SyncPromise}
 	 *   A promise on the outcome of the binding's <code>requestValue</code> call
 	 *
 	 * @private
 	 */
-	Context.prototype.requestValue = function (sPath) {
-		return this.oBinding.requestValue(sPath, this.iIndex);
+	Context.prototype.fetchValue = function (sPath) {
+		return this.oBinding.fetchValue(sPath, this.iIndex);
+	};
+
+	/**
+	 * Returns a promise on the value for the given path relative to this context. The function
+	 * allows access to the complete data the context points to (when <code>sPath</code> is "") or
+	 * any part thereof. The data is a JSON structure as described in
+	 * <a href="http://docs.oasis-open.org/odata/odata-json-format/v4.0/odata-json-format-v4.0.html">"OData JSON Format Version 4.0"</a>.
+	 * Note that the function clones the result. Modify values via
+	 * {@link sap.ui.model.odata.v4.ODataPropertyBinding#setValue}.
+	 *
+	 * @param {string} [sPath=""]
+	 *   A relative path within the JSON structure
+	 * @returns {Promise}
+	 *   A promise on the requested value
+	 *
+	 * @public
+	 * @since 1.39.0
+	 */
+	Context.prototype.requestObject = function (sPath) {
+		return Promise.resolve(this.fetchValue(sPath)).then(function (oResult) {
+			return clone(oResult);
+		});
+	};
+
+	/**
+	 * Returns a promise on the value for the given path relative to this context. The path is
+	 * expected to point to a structural property with primitive type.
+	 *
+	 * @param {string} sPath
+	 *   A relative path
+	 * @returns {Promise}
+	 *   A promise on the requested value; it is rejected if the value is not primitive
+	 *
+	 * @public
+	 * @since 1.39.0
+	 */
+	Context.prototype.requestProperty = function (sPath) {
+		return Promise.resolve(this.fetchValue(sPath)).then(checkPrimitive.bind(null, this, sPath));
 	};
 
 	/**

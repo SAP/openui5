@@ -1000,7 +1000,7 @@ sap.ui.require([
 		QUnit.test("requestCanonicalUrl: " + oFixture.dataPath, function (assert) {
 			var oInstance = {},
 				oContext = {
-					requestValue : function (sPath) {
+					fetchValue : function (sPath) {
 						assert.strictEqual(sPath, "");
 						return Promise.resolve(oInstance);
 					}
@@ -1039,7 +1039,7 @@ sap.ui.require([
 	}].forEach(function (oFixture) {
 		QUnit.test("requestCanonicalUrl: error for " + oFixture.dataPath, function (assert) {
 			var oContext = {
-					requestValue : function (sPath) {
+					fetchValue : function (sPath) {
 						assert.strictEqual(sPath, "");
 						return Promise.resolve({});
 					}

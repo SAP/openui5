@@ -5,8 +5,9 @@
 //Provides class sap.ui.model.odata.v4.lib.Cache
 sap.ui.define([
 	"jquery.sap.global",
-	"./_Helper"
-], function (jQuery, _Helper) {
+	"./_Helper",
+	"./_SyncPromise"
+], function (jQuery, _Helper, _SyncPromise) {
 	"use strict";
 
 	var Cache;
@@ -183,7 +184,7 @@ sap.ui.define([
 	 * @param {function} [fnDataRequested]
 	 *   The function is called directly after all back end requests have been triggered.
 	 *   If no back end request is needed, the function is not called.
-	 * @returns {Promise}
+	 * @returns {SyncPromise}
 	 *   A promise to be resolved with the requested range given as an OData response object (with
 	 *   "@odata.context" and the rows as an array in the property <code>value</code>) or a single
 	 *   value (in case of drill-down). If an HTTP request fails, the error from the _Requestor is
@@ -234,7 +235,7 @@ sap.ui.define([
 			fnDataRequested();
 		}
 
-		return Promise.all(this.aElements.slice(iIndex, iEnd)).then(function () {
+		return _SyncPromise.all(this.aElements.slice(iIndex, iEnd)).then(function () {
 			var oResult;
 
 			if (sPath !== undefined) {
@@ -343,7 +344,7 @@ sap.ui.define([
 	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
 	 * @param {object} [oData]
 	 *   The data to be sent with the POST request
-	 * @returns {Promise}
+	 * @returns {SyncPromise}
 	 *   A promise to be resolved with the result of the request.
 	 * @throws {Error}
 	 *   If the cache does not allow POST or another POST is still being processed.
@@ -360,15 +361,16 @@ sap.ui.define([
 		if (this.bPosting) {
 			throw new Error("Parallel POST requests not allowed");
 		}
-		this.oPromise = this.oRequestor.request("POST", this.sResourcePath, sGroupId, undefined,
-				oData)
-			.then(function (oResult) {
-				that.bPosting = false;
-				return oResult;
-			}, function (oError) {
-				that.bPosting = false;
-				throw oError;
-			});
+		this.oPromise = _SyncPromise.resolve(
+				this.oRequestor.request("POST", this.sResourcePath, sGroupId, undefined, oData)
+					.then(function (oResult) {
+						that.bPosting = false;
+						return oResult;
+					}, function (oError) {
+						that.bPosting = false;
+						throw oError;
+					})
+			);
 		this.bPosting = true;
 		return this.oPromise;
 	};
@@ -384,7 +386,7 @@ sap.ui.define([
 	 * @param {function()} [fnDataRequested]
 	 *   The function is called directly after the back end request has been triggered.
 	 *   If no back end request is needed, the function is not called.
-	 * @returns {Promise}
+	 * @returns {SyncPromise}
 	 *   A promise to be resolved with the element.
 	 *
 	 *   A {@link #refresh} cancels a pending request. Its promise is rejected with an error that
@@ -401,8 +403,8 @@ sap.ui.define([
 			if (this.bPost) {
 				throw new Error("Read before a POST request");
 			}
-			oPromise = this.oRequestor.request("GET", sResourcePath, sGroupId)
-				.then(function (oResult) {
+			oPromise = _SyncPromise.resolve(
+				this.oRequestor.request("GET", sResourcePath, sGroupId).then(function (oResult) {
 					var oError;
 
 					if (that.oPromise !== oPromise) {
@@ -412,7 +414,7 @@ sap.ui.define([
 						throw oError;
 					}
 					return oResult;
-				});
+				}));
 			if (fnDataRequested) {
 				fnDataRequested();
 			}

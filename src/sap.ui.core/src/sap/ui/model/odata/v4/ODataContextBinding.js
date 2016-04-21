@@ -472,12 +472,12 @@ sap.ui.define([
 	 *
 	 * @param {string} [sPath]
 	 *   Some relative path
-	 * @returns {Promise}
+	 * @returns {SyncPromise}
 	 *   A promise on the outcome of the cache's <code>read</code> call
 	 *
 	 *  @private
 	 */
-	ODataContextBinding.prototype.requestValue = function (sPath) {
+	ODataContextBinding.prototype.fetchValue = function (sPath) {
 		var bDataRequested = false,
 			sGroupId,
 			that = this;
@@ -508,7 +508,7 @@ sap.ui.define([
 			});
 		}
 		if (this.oContext) {
-			return this.oContext.requestValue(this.sPath + (sPath ? "/" + sPath : ""));
+			return this.oContext.fetchValue(this.sPath + (sPath ? "/" + sPath : ""));
 		}
 		return Promise.resolve();
 	};

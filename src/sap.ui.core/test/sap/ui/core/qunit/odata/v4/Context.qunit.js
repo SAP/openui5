@@ -4,8 +4,9 @@
 sap.ui.require([
 	"jquery.sap.global",
 	"sap/ui/model/Context",
-	"sap/ui/model/odata/v4/Context"
-], function (jQuery, BaseContext, Context) {
+	"sap/ui/model/odata/v4/Context",
+	"sap/ui/model/odata/v4/lib/_SyncPromise"
+], function (jQuery, BaseContext, Context, _SyncPromise) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -59,19 +60,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getObject, getProperty: not supported", function (assert) {
-		var oContext = Context.create(null, null, "/foo");
-
-		assert.throws(function () {
-			oContext.getObject();
-		}, new Error("No synchronous access to data"));
-
-		assert.throws(function () {
-			oContext.getProperty();
-		}, new Error("No synchronous access to data"));
-	});
-
-	//*********************************************************************************************
 	QUnit.test("toString", function (assert) {
 		assert.strictEqual(
 			Context.create(/*oModel=*/{}, /*oBinding=*/{}, "/Employees").toString(),
@@ -82,18 +70,158 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestValue", function (assert) {
+	QUnit.test("fetchValue", function (assert) {
 		var oBinding = {
-				requestValue : function () {}
+				fetchValue : function () {}
 			},
 			oContext = Context.create(null, oBinding, "/foo", 42),
 			oResult = {},
 			sPath = "bar";
 
-		this.oSandbox.mock(oBinding).expects("requestValue").withExactArgs(sPath, 42)
+		this.oSandbox.mock(oBinding).expects("fetchValue").withExactArgs(sPath, 42)
 			.returns(oResult);
 
-		assert.strictEqual(oContext.requestValue(sPath), oResult);
+		assert.strictEqual(oContext.fetchValue(sPath), oResult);
+	});
+
+	//*********************************************************************************************
+	[{value : 42}, undefined].forEach(function (oData) {
+		QUnit.test("requestObject " + JSON.stringify(oData), function (assert) {
+			var oContext = Context.create(null, null, "/foo"),
+				oPromise,
+				oSyncPromise = _SyncPromise.resolve(Promise.resolve(oData));
+
+			this.oSandbox.mock(oContext).expects("fetchValue").withExactArgs("bar")
+				.returns(oSyncPromise);
+
+			//code under test
+			oPromise = oContext.requestObject("bar");
+
+			assert.ok(oPromise instanceof Promise);
+
+			return oPromise.then(function (oResult) {
+				assert.deepEqual(oResult, oData);
+				if (oResult) {
+					assert.notStrictEqual(oResult, oData);
+				}
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	[{value : 42}, undefined].forEach(function (oData) {
+		QUnit.test("getObject: " + JSON.stringify(oData), function (assert) {
+			var oContext = Context.create(null, null, "/foo"),
+				oResult,
+				oSyncPromise = _SyncPromise.resolve(oData);
+
+			this.oSandbox.mock(oContext).expects("fetchValue").withExactArgs("bar")
+				.returns(oSyncPromise);
+
+			//code under test
+			oResult = oContext.getObject("bar");
+
+			assert.deepEqual(oResult, oData);
+			if (oResult) {
+				assert.notStrictEqual(oResult, oData);
+			}
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getObject: unresolved", function (assert) {
+		var oContext = Context.create(null, null, "/foo"),
+			oSyncPromise = _SyncPromise.resolve(Promise.resolve(42));
+
+		this.oSandbox.mock(oContext).expects("fetchValue").withExactArgs("bar")
+			.returns(oSyncPromise);
+
+		//code under test
+		assert.strictEqual(oContext.getObject("bar"), undefined);
+	});
+
+	//*********************************************************************************************
+	[42, null].forEach(function (vResult) {
+		QUnit.test("getProperty: primitive result " + vResult, function (assert) {
+			var oContext = Context.create(null, null, "/foo"),
+				oSyncPromise = _SyncPromise.resolve(vResult);
+
+			this.oSandbox.mock(oContext).expects("fetchValue").withExactArgs("bar")
+				.returns(oSyncPromise);
+
+			//code under test
+			assert.strictEqual(oContext.getProperty("bar"), vResult);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getProperty: structured result", function (assert) {
+		var oContext = Context.create(null, null, "/foo", 1),
+			oSyncPromise = _SyncPromise.resolve({});
+
+		this.oSandbox.mock(oContext).expects("fetchValue").withExactArgs("bar")
+			.returns(oSyncPromise);
+
+		//code under test
+		assert.throws(function () {
+			oContext.getProperty("bar");
+		}, new Error("/foo[1]/bar: Accessed value is not primitive"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getProperty: unresolved", function (assert) {
+		var oContext = Context.create(null, null, "/foo"),
+			oSyncPromise = _SyncPromise.resolve(Promise.resolve(42));
+
+		this.oSandbox.mock(oContext).expects("fetchValue").withExactArgs("bar")
+			.returns(oSyncPromise);
+
+		//code under test
+		assert.strictEqual(oContext.getProperty("bar"), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getProperty: rejected", function (assert) {
+		var oContext = Context.create(null, null, "/foo"),
+			oSyncPromise = _SyncPromise.resolve(Promise.reject("read error"));
+
+		this.oSandbox.mock(oContext).expects("fetchValue").withExactArgs("bar")
+			.returns(oSyncPromise);
+
+		//code under test
+		assert.strictEqual(oContext.getProperty("bar"), undefined);
+	});
+
+	//*********************************************************************************************
+	[42, null].forEach(function (vResult) {
+		QUnit.test("requestProperty: primitive result " + vResult, function (assert) {
+			var oContext = Context.create(null, null, "/foo"),
+				oSyncPromise = _SyncPromise.resolve(Promise.resolve(vResult));
+
+			this.oSandbox.mock(oContext).expects("fetchValue").withExactArgs("bar")
+				.returns(oSyncPromise);
+
+			//code under test
+			return oContext.requestProperty("bar").then(function (vActual) {
+				assert.strictEqual(vActual, vResult);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestProperty: structured result", function (assert) {
+		var oContext = Context.create(null, null, "/foo", 1),
+			oSyncPromise = _SyncPromise.resolve(Promise.resolve({}));
+
+		this.oSandbox.mock(oContext).expects("fetchValue").withExactArgs("bar")
+			.returns(oSyncPromise);
+
+		//code under test
+		return oContext.requestProperty("bar").then(function () {
+			assert.ok(false);
+		}, function (oError) {
+			assert.strictEqual(oError.message, "/foo[1]/bar: Accessed value is not primitive");
+		});
 	});
 
 	//*********************************************************************************************
