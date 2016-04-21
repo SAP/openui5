@@ -108,14 +108,25 @@
 
     });
 
-   QUnit.test("Anchors for sections with multiple subsection must have arrow-down icon", function () {
+	QUnit.test("Anchors for sections with multiple subsection must have arrow-down icon", function (assert) {
 		var $arrowDownIcons;
 
 		this.anchorBarView.setModel(oModel);
-		this.clock.tick(1000);
+		this.clock.tick(iRenderingDelay);
 
 		$arrowDownIcons = this.oObjectPage.$().find(".sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnIcon");
-		ok($arrowDownIcons.length === 1, "Anchorbar has 1 button with arrow-down icon");
+		assert.ok($arrowDownIcons.length === 1, "Anchorbar has 1 button with arrow-down icon");
+	});
+
+	QUnit.test("When using the objectPageNavigation the 'navigate' event is fired with the appropriate arguments", function (assert) {
+		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
+			oExpectedSection = this.oObjectPage.getSections()[0],
+			navigateSpy = this.spy(this.oObjectPage, "fireNavigate");
+
+		this.oObjectPage.setShowAnchorBarPopover(false);
+		oAnchorBar.getContent()[0].firePress();
+
+		assert.ok(navigateSpy.calledWithMatch(sinon.match.has("section", oExpectedSection)), "Event fired has the correct parameters attached");
 	});
 
 }(jQuery, QUnit, sinon, sap.uxap.Importance));
