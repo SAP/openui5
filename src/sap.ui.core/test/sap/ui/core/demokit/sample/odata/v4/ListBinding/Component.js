@@ -35,13 +35,11 @@ sap.ui.define([
 
 			if (!bHasOwnProxy) {
 				TestUtils.setupODataV4Server(this.oSandbox, {
-					"$batch" : {
-						"TEAMS?$expand=TEAM_2_EMPLOYEES($expand=EMPLOYEE_2_EQUIPMENTS),TEAM_2_MANAGER&$skip=0&$top=100" : {
-							source : "TEAMS.txt"
-						},
-						"GetEmployeeMaxAge()" : {
-							source : "GetEmployeeMaxAge.txt"
-						}
+					"TEAMS?$expand=TEAM_2_EMPLOYEES($expand=EMPLOYEE_2_EQUIPMENTS),TEAM_2_MANAGER&$skip=0&$top=100" : {
+						source : "TEAMS.json"
+					},
+					"GetEmployeeMaxAge()" : {
+						source : "GetEmployeeMaxAge.json"
 					},
 					"$metadata" : {source : "metadata.xml"}
 				}, "sap/ui/core/demokit/sample/odata/v4/ListBinding/data",
