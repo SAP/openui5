@@ -261,7 +261,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 		// @see https://github.com/philipwalton/flexbugs#7-flex-basis-doesnt-account-for-box-sizingborder-box
 		if (oControl instanceof sap.m.FlexItemData && sap.ui.Device.browser.internet_explorer && (sProperty === "flex-basis" || sProperty === "flex-preferred-size")) {
 			sPropertyPrefix = "";
-			if (oControl.getParent().getDirection().indexOf("Row") > -1) {
+			if (oControl.getParent().getParent().getDirection().indexOf("Row") > -1) {
 				sProperty = "width";
 			} else {
 				sProperty = "height";
