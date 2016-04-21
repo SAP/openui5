@@ -279,6 +279,10 @@ sap.ui.define([
 					tooltip: fGetValueOfProperty("tooltip", oContext, oItem_)
 				});
 			});
+			aKeyFields.splice(0, 0, {
+				key: null,
+				text: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_SELECTION_NONE")
+			});
 			this._oSortPanel.setKeyFields(aKeyFields);
 
 			var aConditions = [];
