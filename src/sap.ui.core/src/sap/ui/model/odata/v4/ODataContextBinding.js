@@ -8,11 +8,11 @@ sap.ui.define([
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ContextBinding",
-	"./_Context",
 	"./_ODataHelper",
+	"./Context",
 	"./lib/_Cache",
 	"./lib/_Helper"
-], function (jQuery, Binding, ChangeReason, ContextBinding, _Context, _ODataHelper, _Cache,
+], function (jQuery, Binding, ChangeReason, ContextBinding, _ODataHelper, Context, _Cache,
 		_Helper) {
 	"use strict";
 
@@ -31,7 +31,7 @@ sap.ui.define([
 	 *   The OData V4 model
 	 * @param {string} sPath
 	 *   The binding path in the model; must not end with a slash
-	 * @param {sap.ui.model.Context} [oContext]
+	 * @param {sap.ui.model.odata.v4.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters which can be OData query options as specified in
@@ -411,7 +411,7 @@ sap.ui.define([
 		if (!sResolvedPath) {
 			return;
 		}
-		this.oElementContext = _Context.create(this.oModel, this, sResolvedPath);
+		this.oElementContext = Context.create(this.oModel, this, sResolvedPath);
 		this._fireChange({reason : ChangeReason.Change});
 	};
 
@@ -530,7 +530,7 @@ sap.ui.define([
 	 * Sets the (base) context which is used when the binding path is relative.
 	 * Fires a change event if the bound context is changed.
 	 *
-	 * @param {sap.ui.model.Context} [oContext]
+	 * @param {sap.ui.model.odata.v4.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 *
 	 * @private
@@ -543,7 +543,7 @@ sap.ui.define([
 				// fire "change" iff. this.oElementContext changes
 				// do not call Model#resolve in vain
 				this.oElementContext = oContext
-					? _Context.create(this.oModel, this, this.oModel.resolve(this.sPath, oContext))
+					? Context.create(this.oModel, this, this.oModel.resolve(this.sPath, oContext))
 					: null;
 				// the binding parameter for a deferred context binding might have changed
 				this.oCache = undefined;

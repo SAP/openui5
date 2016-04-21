@@ -4,42 +4,65 @@
 
 sap.ui.define([
 	"sap/ui/model/Context"
-], function (Context) {
+], function (BaseContext) {
 	"use strict";
 
 	/**
-	 * @class Implementation of an OData V4 model's context.
+	 * Do <strong>NOT</strong> call this private constructor for a new <code>Context</code>. In the
+	 * OData V4 model you cannot create contexts at will: retrieve them from a binding or a view
+	 * element instead.
 	 *
-	 * @alias sap.ui.model.odata.v4._Context
+	 * @param {sap.ui.model.odata.v4.ODataModel} oModel
+	 *   The model
+	 * @param {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding} oBinding
+	 *   A binding that belongs to the model
+	 * @param {string} sPath
+	 *   An absolute path without trailing slash
+	 * @param {number} [iIndex]
+	 *   Index of item (within the collection addressed by <code>sPath</code>) represented
+	 *   by this context; used by list bindings, not context bindings
+	 *
+	 * @alias sap.ui.model.odata.v4.Context
 	 * @author SAP SE
+	 * @class Implementation of an OData V4 model's context.
 	 * @extends sap.ui.model.Context
-	 * @private
+	 * @public
 	 * @version ${version}
 	 */
-	var _Context = Context.extend("sap.ui.model.odata.v4._Context", {
-			/**
-			 * Do <strong>NOT</strong> call this private constructor for a new
-			 * <code>_Context</code>, but rather use
-			 * {@link sap.ui.model.odata.v4._Context.create create} instead.
-			 *
-			 * @param {sap.ui.model.odata.v4.ODataModel} oModel
-			 *   The model
-			 * @param {sap.ui.model.Binding} oBinding
-			 *   A binding that belongs to the model
-			 * @param {string} sPath
-			 *   An absolute path without trailing slash
-			 * @param {number} [iIndex]
-			 *   Index of item (within the collection addressed by <code>sPath</code>) represented
-			 *   by this context; used by list bindings, not context bindings
-			 *
-			 * @private
-			 */
+	var Context = BaseContext.extend("sap.ui.model.odata.v4.Context", {
 			constructor : function (oModel, oBinding, sPath, iIndex) {
-				Context.call(this, oModel, sPath);
+				BaseContext.call(this, oModel, sPath);
 				this.oBinding = oBinding;
 				this.iIndex = iIndex;
 			}
 		});
+
+	/**
+	 * Returns the binding this context belongs to.
+	 *
+	 * @returns {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding}
+	 *   The context's binding
+	 *
+	 * @public
+	 * @since 1.39.0
+	 */
+	Context.prototype.getBinding = function () {
+		return this.oBinding;
+	};
+
+	/**
+	 * Returns the context's list index within the binding.
+	 *
+	 * @returns {number}
+	 *   The context's list index within the binding or <code>undefined</code> if the context does
+	 *   not belong to a list binding.
+	 *
+	 * @public
+	 * @since 1.39.0
+	 */
+	Context.prototype.getIndex = function () {
+		return this.iIndex;
+	};
 
 	/**
 	 * Cannot access data synchronously, use {@link #requestValue} instead.
@@ -48,10 +71,10 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @see sap.ui.model.Context#getObject
-	 * @since 1.37.0
+	 * @since 1.39.0
 	 */
 	// @override
-	_Context.prototype.getObject = function () {
+	Context.prototype.getObject = function () {
 		throw new Error("No synchronous access to data");
 	};
 
@@ -62,10 +85,10 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @see sap.ui.model.Context#getProperty
-	 * @since 1.37.0
+	 * @since 1.39.0
 	 */
 	// @override
-	_Context.prototype.getProperty = function () {
+	Context.prototype.getProperty = function () {
 		throw new Error("No synchronous access to data");
 	};
 
@@ -78,10 +101,9 @@ sap.ui.define([
 	 * @returns {Promise}
 	 *   A promise on the outcome of the binding's <code>requestValue</code> call
 	 *
-	 * @public
-	 * @since 1.37.0
+	 * @private
 	 */
-	_Context.prototype.requestValue = function (sPath) {
+	Context.prototype.requestValue = function (sPath) {
 		return this.oBinding.requestValue(sPath, this.iIndex);
 	};
 
@@ -104,7 +126,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	_Context.prototype.updateValue = function (sGroupId, sPropertyName, vValue, sEditUrl, sPath) {
+	Context.prototype.updateValue = function (sGroupId, sPropertyName, vValue, sEditUrl, sPath) {
 		var that = this;
 
 		if (this.iIndex !== undefined) {
@@ -126,9 +148,9 @@ sap.ui.define([
 	 *
 	 * @return {string} A string description of this binding
 	 * @public
-	 * @since 1.37.0
+	 * @since 1.39.0
 	 */
-	_Context.prototype.toString = function () {
+	Context.prototype.toString = function () {
 		return this.iIndex === undefined ? this.sPath : this.sPath + "[" + this.iIndex + "]";
 	};
 
@@ -138,13 +160,13 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.model.odata.v4.ODataModel} oModel
 		 *   The model
-		 * @param {sap.ui.model.Binding} oBinding
+		 * @param {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding} oBinding
 		 *   A binding that belongs to the model
 		 * @param {string} sPath
 		 *   An absolute path without trailing slash
 		 * @param {number} [iIndex]
 		 *   Index of item represented by this context, used by list bindings, not context bindings
-		 * @returns {sap.ui.model.Context}
+		 * @returns {sap.ui.model.odata.v4.Context}
 		 *   A context for an OData V4 model
 		 * @throws {Error}
 		 *   If an invalid path is given
@@ -158,7 +180,7 @@ sap.ui.define([
 			if (sPath.slice(-1) === "/") {
 				throw new Error("Unsupported trailing slash: " + sPath);
 			}
-			return new _Context(oModel, oBinding, sPath, iIndex);
+			return new Context(oModel, oBinding, sPath, iIndex);
 		}
 	};
 }, /* bExport= */ false);

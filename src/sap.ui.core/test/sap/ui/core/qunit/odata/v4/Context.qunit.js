@@ -4,14 +4,14 @@
 sap.ui.require([
 	"jquery.sap.global",
 	"sap/ui/model/Context",
-	"sap/ui/model/odata/v4/_Context"
-], function (jQuery, Context, _Context) {
+	"sap/ui/model/odata/v4/Context"
+], function (jQuery, BaseContext, Context) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
 
 	//*********************************************************************************************
-	QUnit.module("sap.ui.model.odata.v4._Context", {
+	QUnit.module("sap.ui.model.odata.v4.Context", {
 		beforeEach : function () {
 			this.oSandbox = sinon.sandbox.create();
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
@@ -28,37 +28,39 @@ sap.ui.require([
 	QUnit.test("create", function (assert) {
 		var oContext,
 			oModel = {},
+			oBinding = {},
 			sPath = "/foo";
 
 		// see below for tests with oBinding parameter
-		oContext = _Context.create(oModel, null, sPath);
+		oContext = Context.create(oModel, oBinding, sPath, 42);
 
-		assert.ok(oContext instanceof Context);
+		assert.ok(oContext instanceof BaseContext);
 		assert.strictEqual(oContext.getModel(), oModel);
+		assert.strictEqual(oContext.getBinding(), oBinding);
 		assert.strictEqual(oContext.getPath(), sPath);
-		assert.strictEqual(oContext.toString(), sPath, "useful for debugging, logging etc.");
+		assert.strictEqual(oContext.getIndex(), 42);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("path must be absolute", function (assert) {
 		assert.throws(function () {
-			_Context.create(null, null, "foo");
+			Context.create(null, null, "foo");
 		}, new Error("Not an absolute path: foo"));
 	});
 
 	//*********************************************************************************************
 	QUnit.test("path must not contain trailing slash", function (assert) {
 		assert.throws(function () {
-			_Context.create(null, null, "/");
+			Context.create(null, null, "/");
 		}, new Error("Unsupported trailing slash: /"));
 		assert.throws(function () {
-			_Context.create(null, null, "/foo/");
+			Context.create(null, null, "/foo/");
 		}, new Error("Unsupported trailing slash: /foo/"));
 	});
 
 	//*********************************************************************************************
 	QUnit.test("getObject, getProperty: not supported", function (assert) {
-		var oContext = _Context.create(null, null, "/foo");
+		var oContext = Context.create(null, null, "/foo");
 
 		assert.throws(function () {
 			oContext.getObject();
@@ -72,10 +74,10 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("toString", function (assert) {
 		assert.strictEqual(
-			_Context.create(/*oModel=*/{}, /*oBinding=*/{}, "/Employees").toString(),
+			Context.create(/*oModel=*/{}, /*oBinding=*/{}, "/Employees").toString(),
 			"/Employees");
 		assert.strictEqual(
-			_Context.create(/*oModel=*/{}, /*oBinding=*/{}, "/Employees", 5).toString(),
+			Context.create(/*oModel=*/{}, /*oBinding=*/{}, "/Employees", 5).toString(),
 			"/Employees[5]");
 	});
 
@@ -84,7 +86,7 @@ sap.ui.require([
 		var oBinding = {
 				requestValue : function () {}
 			},
-			oContext = _Context.create(null, oBinding, "/foo", 42),
+			oContext = Context.create(null, oBinding, "/foo", 42),
 			oResult = {},
 			sPath = "bar";
 
@@ -104,7 +106,7 @@ sap.ui.require([
 				oModel = {
 					requestCanonicalPath : function () {}
 				},
-				oContext = _Context.create(oModel, oBinding, "/foo", iIndex),
+				oContext = Context.create(oModel, oBinding, "/foo", iIndex),
 				oResult = {},
 				sPropertyName = "bar",
 				vValue = Math.PI;
@@ -131,7 +133,7 @@ sap.ui.require([
 			oModel = {
 				requestCanonicalPath : function () {}
 			},
-			oContext = _Context.create(oModel, oBinding, "/foo", 0),
+			oContext = Context.create(oModel, oBinding, "/foo", 0),
 			oError = new Error();
 
 		this.oSandbox.mock(oModel).expects("requestCanonicalPath")
@@ -151,7 +153,7 @@ sap.ui.require([
 		var oBinding = {
 				updateValue : function () {}
 			},
-			oContext = _Context.create(null, oBinding, "/foo"),
+			oContext = Context.create(null, oBinding, "/foo"),
 			oResult = {},
 			sPropertyName = "bar",
 			vValue = Math.PI;
@@ -170,7 +172,7 @@ sap.ui.require([
 		var oBinding = {
 				updateValue : function () {}
 			},
-			oContext = _Context.create(null, oBinding, "/foo", 0),
+			oContext = Context.create(null, oBinding, "/foo", 0),
 			oResult = {},
 			sPropertyName = "bar",
 			vValue = Math.PI;

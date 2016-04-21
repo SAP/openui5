@@ -7,14 +7,14 @@ sap.ui.require([
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ContextBinding",
-	"sap/ui/model/odata/v4/_Context",
 	"sap/ui/model/odata/v4/_ODataHelper",
+	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/ODataContextBinding",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils"
-], function (jQuery, ManagedObject, Binding, ChangeReason, ContextBinding, _Context, _ODataHelper,
+], function (jQuery, ManagedObject, Binding, ChangeReason, ContextBinding, _ODataHelper, Context,
 		_Cache, _Helper, ODataContextBinding, ODataModel, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
@@ -75,7 +75,7 @@ sap.ui.require([
 			.returns("/absolute");
 		this.oSandbox.mock(oBinding).expects("_fireChange")
 			.withExactArgs({reason : ChangeReason.Change});
-		this.oSandbox.mock(_Context).expects("create")
+		this.oSandbox.mock(Context).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding), "/absolute")
 			.returns(oBoundContext);
 
@@ -115,7 +115,7 @@ sap.ui.require([
 			.returns("/absolute");
 		this.oSandbox.mock(oBinding).expects("_fireChange").twice()
 			.withExactArgs({reason : ChangeReason.Context});
-		this.oSandbox.mock(_Context).expects("create")
+		this.oSandbox.mock(Context).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding), "/absolute")
 			.returns(oBoundContext);
 
@@ -146,7 +146,7 @@ sap.ui.require([
 
 		this.oSandbox.mock(oBinding).expects("_fireChange").never();
 
-		oBinding.setContext(_Context.create(this.oModel, null, "/EntitySet('bar')"));
+		oBinding.setContext(Context.create(this.oModel, null, "/EntitySet('bar')"));
 
 		assert.strictEqual(oBinding.getContext().getPath(), "/EntitySet('bar')",
 			"stored nevertheless");
@@ -157,7 +157,7 @@ sap.ui.require([
 		QUnit.test("bindContext, sPath = '" + sPath + "'", function (assert) {
 			var bAbsolute = jQuery.sap.startsWith(sPath, "/"),
 				oCache = {},
-				oContext = _Context.create(this.oModel, null, "/TEAMS('TEAM_01')"),
+				oContext = Context.create(this.oModel, null, "/TEAMS('TEAM_01')"),
 				oBinding;
 
 			if (bAbsolute) {
@@ -228,7 +228,7 @@ sap.ui.require([
 			oCache = {
 				refresh : function () {}
 			},
-			oContext = _Context.create(this.oModel, null, "/TEAMS('TEAM_01')");
+			oContext = Context.create(this.oModel, null, "/TEAMS('TEAM_01')");
 
 		this.oSandbox.mock(_Cache).expects("createSingle").returns(oCache);
 
@@ -246,7 +246,7 @@ sap.ui.require([
 			oCache = {
 				refresh : function () {}
 			},
-			oContext = _Context.create(this.oModel, null, "/TEAMS('TEAM_01')"),
+			oContext = Context.create(this.oModel, null, "/TEAMS('TEAM_01')"),
 			oError = new Error(),
 			oHelperMock = this.oSandbox.mock(_ODataHelper);
 
@@ -274,7 +274,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("refresh on relative binding is not supported", function (assert) {
 		var oBinding,
-			oContext = _Context.create(this.oModel, null, "/TEAMS('TEAM_01')");
+			oContext = Context.create(this.oModel, null, "/TEAMS('TEAM_01')");
 
 		this.oSandbox.mock(_Cache).expects("createSingle").never();
 
@@ -290,7 +290,7 @@ sap.ui.require([
 	QUnit.test("refresh cancels pending read", function (assert) {
 		var oBinding,
 			oBindingMock,
-			oContext = _Context.create(this.oModel, null, "/TEAMS('TEAM_01')"),
+			oContext = Context.create(this.oModel, null, "/TEAMS('TEAM_01')"),
 			oPromise;
 
 		this.oRequestorMock.expects("request").returns(Promise.resolve({"ID" : "1"}));
