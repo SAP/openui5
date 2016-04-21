@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+	<title>LRUPersistentCache - sap.ui.core</title>
+
+	<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal">
+	</script>
+	<script src="resources/large_cache_content.js"></script>
+
+	<script>
+		var oCache;
+		sap.ui.require(["sap/ui/core/cache/CacheManager"], function (classCacheManager) {
+			oCache = classCacheManager;
+		});
+		function addEntry(key, idValue) {
+			var oValue = document.getElementById(idValue).value,
+					output = document.getElementById("output").innerHTML;
+			key = "key" + Date.now();
+			oCache.set(key, oValue).then(function () {
+				output += "<br/> Added new entry with key " + key;
+			}, function (eMsg) {
+				output += "<br/> Error: key " + key + " was not added. Details: " + eMsg;
+			}).then(function () {
+				document.getElementById("output").innerHTML = output;
+			});
+		}
+
+		function getEntry(idKey) {
+			var key = document.getElementById(idKey).value,
+					output = document.getElementById("output").innerHTML;
+			oCache.get(key).then(function (v) {
+				output += "<br/> Got entry of type [" + typeof v + "] for key [" + key + "]";
+			}, function (eMsg) {
+				output += "<br/> Error: entry for key [" + key + "] was not gotten. Details: " + eMsg;
+			}).then(function () {
+				document.getElementById("output").innerHTML = output;
+			});
+		}
+
+		function addLargeEntry() {
+			var oValue = m1;//came from the large script
+			output = document.getElementById("output").innerHTML;
+			key = "key" + Date.now();
+			oCache.set(key, oValue).then(function () {
+				output += "<br/> Added new entry with key " + key;
+			}, function (eMsg) {
+				output += "<br/> Error: key " + key + " was not added. Details: " + eMsg;
+			}).then(function () {
+				document.getElementById("output").innerHTML = output;
+			});
+		}
+	</script>
+</head>
+<body>
+<input type="text" id="idValue" value="Some entry value....">
+<button onclick="addEntry('key1', 'idValue')">Add Entry</button>
+<button onclick="addLargeEntry()">Add large entry</button>
+<input type="text" id="idGetKey" value="">
+<button onclick="getEntry('idGetKey')">Get Entry</button>
+<section id="output"></section>
+
+</body>
+</html>
