@@ -1274,16 +1274,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	};
 
 	/**
-	 * Callback handler which will be executed once the manifest is loaded. The
-	 * manifest object and the asyncHints objects will be passed into the registered
-	 * function but must not be modified. Also a return value is not expected from
-	 * the callback handler. It will only be called for asynchronous manifest first
-	 * scenarios.
+	 * Callback handler which will be executed once the component is loaded. The
+	 * configuration object will be passed into the registered function but must not
+	 * be modified. Also a return value is not expected from the callback handler.
+	 * It will only be called for asynchronous manifest first scenarios.
 	 * <p>
 	 * Example usage:
 	 * <pre>
-	 * sap.ui.core.Component._fnManifestLoadCallback = function(oManifest, mAsyncHints) {
-	 *   // do some logic with the Manifest and the AsyncHints
+	 * sap.ui.core.Component._fnLoadComponentCallback = function(oConfig) {
+	 *   // do some logic with the config
 	 * }
 	 * </pre>
 	 * <p>
@@ -1294,7 +1293,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * @private
 	 * @since 1.37.0
 	 */
-	Component._fnManifestLoadCallback = null;
+	Component._fnLoadComponentCallback = null;
 
 	/**
 	 * Creates a new instance of a <code>Component</code> or returns the instance
@@ -1482,6 +1481,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * @private
 	*/
 	function loadComponent(oConfig, mOptions) {
+
+		// if a callback is registered to the component load call it with the configuration
+		if (typeof Component._fnLoadComponentCallback === "function") {
+			// secure configuration from manipulation
+			var oConfigCopy = jQuery.extend(true, {}, oConfig);
+			Component._fnLoadComponentCallback(oConfigCopy);
+		}
 
 		var sName = oConfig.name,
 			sUrl = oConfig.url,
@@ -1798,11 +1804,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 					// the name is the package in which the component is located (dot separated)
 					if (sUrl) {
 						jQuery.sap.registerModulePath(sComponentName, sUrl);
-					}
-
-					// notify the manifest load callback handler
-					if (typeof Component._fnManifestLoadCallback === "function") {
-						Component._fnManifestLoadCallback(oManifest, oConfig.asyncHints);
 					}
 
 					// preload the component

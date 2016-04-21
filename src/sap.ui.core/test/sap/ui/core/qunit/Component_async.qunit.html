@@ -368,30 +368,6 @@
 		});
 	});
 
-	QUnit.test("manifest load callback", function(assert) {
-		var done = assert.async();
-
-		// install a manifest load callback hook
-		sap.ui.core.Component._fnManifestLoadCallback = function(oManifest, oAsyncHints) {
-			assert.ok(true, "sap.ui.core.Component._fnManifestLoadCallback called!");
-			assert.deepEqual(oAsyncHints, {
-				libs: ["sap.ui.core"],
-				requests: [{ name: "sap.ui.fl.changes", url: "any/url/changes.json" }]
-			}, "sap.ui.core.Component._fnManifestLoadCallback oAsyncHints passed!");
-			done();
-		};
-
-		// start test
-		sap.ui.component({
-			manifestUrl : "./testdata/components/async/manifestcomp/manifest.json",
-			async: true,
-			asyncHints: {
-				libs: ["sap.ui.core"],
-				requests: [{ name: "sap.ui.fl.changes", url: "any/url/changes.json" }]
-			}
-		});
-	});
-
 	</script>
 	</head>
 	<body><h1 id="qunit-header">QUnit tests: Components (async)</h1>
