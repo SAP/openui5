@@ -8,7 +8,6 @@
 		position: relative;
 		.sapMTabContainerInnerContent {
 			position: relative;
-			padding: 1rem;
 		}
 	}
 }
@@ -18,8 +17,10 @@
 		.sapMTabContainerContent {
 			.sapMTabContainerInnerContent {
 				top: 2rem;
-				padding: 0.5rem;
 			}
 		}
 	}
 }
+
+/* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
+.sapUiContainerContentPadding(~".sapMTabContainer", ~"> .sapMTabContainerContent > .sapMTabContainerInnerContent");
