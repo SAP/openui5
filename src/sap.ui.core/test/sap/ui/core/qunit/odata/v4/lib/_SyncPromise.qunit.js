@@ -3,7 +3,7 @@
  */
 sap.ui.require([
 	"jquery.sap.global",
-	"sap/ui/model/odata/v4/_SyncPromise",
+	"sap/ui/model/odata/v4/lib/_SyncPromise",
 	"sap/ui/test/TestUtils"
 ], function (jQuery, _SyncPromise, TestUtils) {
 	/*global QUnit, sinon */
@@ -33,7 +33,7 @@ sap.ui.require([
 	}
 
 	//*********************************************************************************************
-	QUnit.module("sap.ui.model.odata.v4._SyncPromise", {
+	QUnit.module("sap.ui.model.odata.v4.lib._SyncPromise", {
 		beforeEach : function () {
 			this.oSandbox = sinon.sandbox.create();
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);

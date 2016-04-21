@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/ui/model/MetaModel",
 	"sap/ui/model/PropertyBinding",
 	"./_ODataHelper",
-	"./_SyncPromise"
+	"./lib/_SyncPromise"
 ], function (jQuery, BindingMode, ContextBinding, Context, FilterProcessor, JSONListBinding,
 		MetaModel, PropertyBinding, _ODataHelper, _SyncPromise) {
 	"use strict";
