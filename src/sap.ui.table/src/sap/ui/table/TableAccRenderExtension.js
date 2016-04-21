@@ -60,7 +60,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension'],
 			var oBundle = oTable._oResBundle,
 				sTableId = oTable.getId();
 
-			oRm.write("<div class='sapUiTableHiddenTexts' style='display:none;'>");
+			oRm.write("<div class='sapUiTableHiddenTexts' style='display:none;' aria-hidden='true'>");
 
 			// aria description for the table
 			var sDesc = oTable.getTitle() && oTable.getTitle().getText && oTable.getTitle().getText() != "" ?
