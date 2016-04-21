@@ -29,6 +29,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
          *
          * @constructor
          * @public
+         * @deprecated Since version 1.38. Instead, use the <code>sap.m.Popup</code> control.
          * @alias sap.ui.ux3.ToolPopup
          * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
          */
