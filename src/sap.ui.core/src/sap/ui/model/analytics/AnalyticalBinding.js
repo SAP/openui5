@@ -809,16 +809,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * Invoking this function resets the state of the binding and subsequent data requests such as calls to getNodeContexts() will
 	 * need to trigger OData requests in order to fetch the data that are in line with this analytical information.
 	 *
+	 * Please be aware that a call of this function might lead to additional back-end requests, as well as a control re-rendering later on.
+	 * Whenever possible use the API of the analytical control, instead of relying on the binding.
+	 *
 	 * @function
 	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.updateAnalyticalInfo
 	 * @param {array}
 	 *            aColumns an array with objects holding the analytical information for every column, from left to right.
-	 * @public
+	 * @protected
 	 */
 	AnalyticalBinding.prototype.updateAnalyticalInfo = function(aColumns, bForceChange) {
 		if (!this.oModel.oMetadata || !this.oModel.oMetadata.isLoaded() || this.bInitial) {
 			this.aInitialAnalyticalInfo = aColumns;
 			return;
+		}
+
+		// check if something has changed --> deep equal on the column info objects, only 1 level "deep"
+		if (jQuery.sap.equal(this._aLastChangedAnalyticalInfo, aColumns)) {
+			if (bForceChange) {
+				this._fireChange({reason: ChangeReason.Change});
+			}
+			return;
+		}
+
+		// make a deep copy of the column definition, so we can ignore duplicate calls the next time, see above
+		// copy is necessary because the original analytical info will be changed and used internally, through out the binding "coding"
+		this._aLastChangedAnalyticalInfo = [];
+		for (var j = 0; j < aColumns.length; j++) {
+			this._aLastChangedAnalyticalInfo[j] = jQuery.extend({}, aColumns[j]);
 		}
 
 		// parameter is an array with elements whose structure is defined by sap.ui.analytics.model.AnalyticalTable.prototype._getColumnInformation()
@@ -2130,10 +2148,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 
 			if (iCurrentAnalyticalInfoVersion != that.iAnalyticalInfoVersionNumber) {
 				// discard responses for outdated analytical infos
-				for (var j = -1, sRequestId; (sRequestId = aExecutedRequestDetails[++j].sRequestId) !== undefined;) {
-					that._deregisterCompletedRequest(sRequestId);
-					that._cleanupGroupingForCompletedRequest(sRequestId);
+				for (var j = 0; j < aExecutedRequestDetails.length; j++) {
+					var sRequestId = aExecutedRequestDetails[j].sRequestId;
+					if (sRequestId !== undefined) {
+						that._deregisterCompletedRequest(sRequestId);
+						that._cleanupGroupingForCompletedRequest(sRequestId);
+					}
 				}
+				that.fireDataReceived({data: []});
 				return;
 			}
 

@@ -607,6 +607,45 @@
 		ok(ohOnlyProgressIndicator._hasStatus(), "Object header has rendered statuses if ProgressIndicator is only present");
 	});
 
+	test("Title gets all length when no number", function() {
+		// arrange
+		var oObjectHeader = new sap.m.ObjectHeader({
+			title: "Full title test"
+		});
+
+		// system under test
+		oObjectHeader.placeAt("objectHeaders");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		var $objectHeader = oObjectHeader.$("titlediv");
+
+		ok($objectHeader.hasClass("sapMOHTitleDivFull"), "title occupies the whole available space");
+
+		// cleanup
+		oObjectHeader.destroy();
+	});
+
+	test("Title gets all length when no number in Condensed OH", function() {
+		// arrange
+		var oObjectHeader = new sap.m.ObjectHeader({
+			title: "Full title test",
+			condensed: true
+		});
+
+		// system under test
+		oObjectHeader.placeAt("objectHeaders");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		var $objectHeader = oObjectHeader.$("titlediv");
+
+		ok($objectHeader.hasClass("sapMOHTitleDivFull"), "title occupies the whole available space");
+
+		// cleanup
+		oObjectHeader.destroy();
+	});
+
 	asyncTest("FlagMarkerSet", function() {
 
 		ohFlagAndFavoriteMarker.setMarkFlagged(true);
@@ -854,6 +893,83 @@
 	test("Active icon has aria attributes", function(){
 		ok(jQuery(".sapMOHIcon.sapMPointer").attr("aria-haspopup"), "ActiveIcon has attribute aria-haspopup");
 		equal(jQuery(".sapMOHIcon.sapMPointer").attr("role"), "link", "ActiveIcon has role=link");
+	});
+	
+	test("Title has level H1", function(){
+		// Arrange
+		var oObjectHeader = new sap.m.ObjectHeader({
+				title: "Test title level"
+			});
+
+		// System under test
+		oObjectHeader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		var $sTitle = oObjectHeader.$("title");
+		ok($sTitle.find( "h1" ), "Title has the default titleLevel H1");
+
+		// cleanup
+		oObjectHeader.destroy();
+	});
+
+	test("Title has level H3", function(){
+		// Arrange
+		var oObjectHeader = new sap.m.ObjectHeader({
+				title: "Test title level",
+				titleLevel: sap.ui.core.TitleLevel.H3
+			});
+
+		// System under test
+		oObjectHeader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		var $sTitle = oObjectHeader.$("title");
+		ok($sTitle.find( "h3" ), "Title has titleLevel H3");
+
+		// cleanup
+		oObjectHeader.destroy();
+	});
+
+	test("Title level is set correctly", function(){
+		// Arrange
+		var oObjectHeader = new sap.m.ObjectHeader({
+				title: "Test title level"
+			});
+
+		// System under test
+		oObjectHeader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oObjectHeader.setTitleLevel("H4");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		var $sTitle = oObjectHeader.$("title");
+		ok($sTitle.find( "h4" ), "Title has titleLevel H4");
+
+		// cleanup
+		oObjectHeader.destroy();
+	});
+
+	test("When set to Auto title has level H1", function(){
+		// Arrange
+		var oObjectHeader = new sap.m.ObjectHeader({
+				title: "Test title level",
+				titleLevel: sap.ui.core.TitleLevel.Auto
+			});
+
+		// System under test
+		oObjectHeader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		var $sTitle = oObjectHeader.$("title");
+		ok($sTitle.find( "h1" ), "Title has titleLevel H1");
+
+		// cleanup
+		oObjectHeader.destroy();
 	});
 
 	/******************************************************************/
@@ -1119,7 +1235,7 @@
 			ok(!oAdditionalNum.length, "No error is raised when executing removeAllAttributes");
 		});
 
-		test("Attributes should be destroyed: destroyAttributes", function () {
+		test("AdditionalNumbers should be destroyed: destroyAdditionalNumbers", function () {
 			// Arrange
 			var oObjectHeader = new sap.m.ObjectHeader({
 				title: "test additional numbers",
@@ -1149,6 +1265,58 @@
 			// Assert
 			oAdditionalNum = oObjectHeader.$().find(".additionalOHNumberDiv");
 			ok(!oAdditionalNum.length, "All additional numbers are destroyed.");
+		});
+
+		test("Separator should be rendered when there is one additionalNumber", function () {
+			// Arrange
+			var oObjectHeader = new sap.m.ObjectHeader({
+				title: "test additional numbers",
+				additionalNumbers: [
+					new sap.m.ObjectNumber({
+						number: "2134",
+						unit: "Conversion rate"
+					})
+				]
+			});
+
+			// System under test
+			oObjectHeader.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			var oSeparator = oObjectHeader.$().find(".additionalOHNumberSeparatorDiv");
+			ok(oSeparator.length === 1, "Separator is rendered.");
+
+			// cleanup
+			oObjectHeader.destroy();
+		});
+
+		test("Separator shouldn't be rendered when there is more then one additionalNumber", function () {
+			// Arrange
+			var oObjectHeader = new sap.m.ObjectHeader({
+				title: "test additional numbers",
+				additionalNumbers: [
+					new sap.m.ObjectNumber({
+						number: "2134",
+						unit: "Conversion rate"
+					}),
+					new sap.m.ObjectNumber({
+						number: "1232134",
+						unit: "EUR"
+					})
+				]
+			});
+
+			// System under test
+			oObjectHeader.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			var oSeparator = oObjectHeader.$().find(".additionalOHNumberSeparatorDiv");
+			ok(!oSeparator.length, "Separator is not rendered.");
+
+			// cleanup
+			oObjectHeader.destroy();
 		});
 
 </script>

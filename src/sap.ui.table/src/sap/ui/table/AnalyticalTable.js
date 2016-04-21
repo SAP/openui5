@@ -494,28 +494,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		}
 	};
 
-	AnalyticalTable.prototype.onsapselect = function(oEvent) {
-		if (jQuery(oEvent.target).hasClass("sapUiTableGroupIcon")) {
-			this._onNodeSelect(oEvent);
-		} else if (jQuery(oEvent.target).hasClass("sapUiAnalyticalTableSum")) {
-			//Summs connot be selected
-			oEvent.preventDefault();
-			return;
-		} else {
-			var $Target = jQuery(oEvent.target),
-				$TargetDIV = $Target.closest('div.sapUiTableRowHdr');
-			if ($TargetDIV.hasClass('sapUiTableGroupHeader') && $TargetDIV.hasClass('sapUiTableRowHdr')) {
-				var iRowIndex = this.getFirstVisibleRow() + parseInt($TargetDIV.attr("data-sap-ui-rowindex"), 10);
-				var oBinding = this.getBinding("rows");
-				oBinding.toggleIndex(iRowIndex);
-				return;
-			}
-			if (Table.prototype.onsapselect) {
-				Table.prototype.onsapselect.apply(this, arguments);
-			}
-		}
-	};
-
 	AnalyticalTable.prototype._onNodeSelect = function(oEvent) {
 
 		var $parent = jQuery(oEvent.target).parent();

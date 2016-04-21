@@ -1,0 +1,641 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>sap.m.MenuButton Test</title>
+
+	<script src="../../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+	</script>
+
+	<script>
+		var oMenu = new sap.m.Menu({
+			title: "random 2",
+			itemSelected: function(oEvent) {
+				var oItem = oEvent.getParameter("item"),
+						sItemPath = "";
+				while (oItem instanceof sap.m.MenuItem) {
+					sItemPath = oItem.getText() + " > " + sItemPath;
+					oItem = oItem.getParent();
+				}
+
+				sItemPath = sItemPath.substr(0, sItemPath.lastIndexOf(" > "));
+
+				sap.m.MessageToast.show("itemSelected: " + sItemPath);
+			},
+			items: [
+				new sap.m.MenuItem({
+					text: "fridge",
+					icon: "sap-icon://fridge",
+					items: [
+						new sap.m.MenuItem({
+							text: "accidental leave",
+							icon: "sap-icon://accidental-leave",
+							items: [
+								new sap.m.MenuItem({
+									icon: "sap-icon://factory",
+									text: "factory"
+								}),
+								new sap.m.MenuItem({
+									icon: "sap-icon://flag",
+									text: "flag"
+								}),
+								new sap.m.MenuItem({
+									icon: "sap-icon://flight",
+									text: "flight"
+								})
+							]
+						}),
+						new sap.m.MenuItem({
+							text: "iphone",
+							icon: "sap-icon://iphone",
+							items: [
+								new sap.m.MenuItem({
+									icon: "sap-icon://video",
+									text: "video"
+								}),
+								new sap.m.MenuItem({
+									icon: "sap-icon://loan",
+									text: "loan"
+								}),
+								new sap.m.MenuItem({
+									icon: "sap-icon://commission-check",
+									text: "commission check"
+								}),
+								new sap.m.MenuItem({
+									icon: "sap-icon://doctor",
+									text: "doctor"
+								})
+							]
+						})
+					]
+				}),
+				new sap.m.MenuItem({
+					text: "globe",
+					icon: "sap-icon://globe",
+					items: [
+						new sap.m.MenuItem({
+							text: "e-care",
+							icon: "sap-icon://e-care"
+						})
+					]
+				})
+			]
+		});
+
+		var oLabel = new sap.m.Label({
+			text: "This one has a default action and uses only the default action, when in Split mode"
+		});
+		var oMenuButton = new sap.m.MenuButton({
+			text: "Random Stuff",
+			menu: oMenu,
+			useDefaultActionOnly: true,
+			defaultAction: function() {
+				sap.m.MessageToast.show("Default action is always the same");
+			}
+		});
+
+
+
+		//second menu button
+
+
+
+		var oMenu2 = new sap.m.Menu({
+			title: "random 2",
+			itemSelected: function(oEvent) {
+				var oItem = oEvent.getParameter("item"),
+						sItemPath = "";
+				while (oItem instanceof sap.m.MenuItem) {
+					sItemPath = oItem.getText() + " > " + sItemPath;
+					oItem = oItem.getParent();
+				}
+
+				sItemPath = sItemPath.substr(0, sItemPath.lastIndexOf(" > "));
+
+				sap.m.MessageToast.show("itemSelected: " + sItemPath);
+			},
+			items: [
+				new sap.m.MenuItem({
+					text: "fridge",
+					icon: "sap-icon://fridge",
+					items: [
+						new sap.m.MenuItem({
+							text: "accidental leave",
+							icon: "sap-icon://accidental-leave",
+							items: [
+								new sap.m.MenuItem({
+									icon: "sap-icon://factory",
+									text: "factory"
+								}),
+								new sap.m.MenuItem({
+									icon: "sap-icon://flag",
+									text: "flag"
+								}),
+								new sap.m.MenuItem({
+									icon: "sap-icon://flight",
+									text: "flight"
+								})
+							]
+						}),
+						new sap.m.MenuItem({
+							text: "iphone",
+							icon: "sap-icon://iphone",
+							items: [
+								new sap.m.MenuItem({
+									icon: "sap-icon://video",
+									text: "video"
+								}),
+								new sap.m.MenuItem({
+									icon: "sap-icon://loan",
+									text: "loan"
+								}),
+								new sap.m.MenuItem({
+									icon: "sap-icon://commission-check",
+									text: "commission check"
+								}),
+								new sap.m.MenuItem({
+									icon: "sap-icon://doctor",
+									text: "doctor"
+								})
+							]
+						})
+					]
+				}),
+				new sap.m.MenuItem({
+					text: "globe",
+					icon: "sap-icon://globe",
+					items: [
+						new sap.m.MenuItem({
+							text: "e-care",
+							icon: "sap-icon://e-care"
+						})
+					]
+				})
+			]
+		});
+
+var oMenu22 = new sap.m.Menu({
+	title: "random 2",
+	itemSelected: function(oEvent) {
+		var oItem = oEvent.getParameter("item"),
+				sItemPath = "";
+		while (oItem instanceof sap.m.MenuItem) {
+			sItemPath = oItem.getText() + " > " + sItemPath;
+			oItem = oItem.getParent();
+		}
+
+		sItemPath = sItemPath.substr(0, sItemPath.lastIndexOf(" > "));
+
+		sap.m.MessageToast.show("itemSelected: " + sItemPath);
+	},
+	items: [
+		new sap.m.MenuItem({
+			text: "fridge",
+			icon: "sap-icon://fridge",
+			items: [
+				new sap.m.MenuItem({
+					text: "accidental leave",
+					icon: "sap-icon://accidental-leave",
+					items: [
+						new sap.m.MenuItem({
+							icon: "sap-icon://factory",
+							text: "factory"
+						}),
+						new sap.m.MenuItem({
+							icon: "sap-icon://flag",
+							text: "flag"
+						}),
+						new sap.m.MenuItem({
+							icon: "sap-icon://flight",
+							text: "flight"
+						})
+					]
+				}),
+				new sap.m.MenuItem({
+					text: "iphone",
+					icon: "sap-icon://iphone",
+					items: [
+						new sap.m.MenuItem({
+							icon: "sap-icon://video",
+							text: "video"
+						}),
+						new sap.m.MenuItem({
+							icon: "sap-icon://loan",
+							text: "loan"
+						}),
+						new sap.m.MenuItem({
+							icon: "sap-icon://commission-check",
+							text: "commission check"
+						}),
+						new sap.m.MenuItem({
+							icon: "sap-icon://doctor",
+							text: "doctor"
+						})
+					]
+				})
+			]
+		}),
+		new sap.m.MenuItem({
+			text: "globe",
+			icon: "sap-icon://globe",
+			items: [
+				new sap.m.MenuItem({
+					text: "e-care",
+					icon: "sap-icon://e-care"
+				})
+			]
+		})
+	]
+});
+
+		var oLabel2 = new sap.m.Label({
+			text: "This one has a default action, but uses the default action, when in Split mode, until a leaf item from the menu is selected"
+		});
+		var oMenuButton2 = new sap.m.MenuButton({
+			text: "Random Stuff",
+			buttonMode: sap.m.MenuButtonMode.Split,
+			type : sap.m.ButtonType.Transparent,
+			icon: "sap-icon://e-care",
+			menu: oMenu2,
+			defaultAction: function() {
+				sap.m.MessageToast.show("Default action is used until a menu item is selected");
+			}
+		});
+
+		var oMenu3 = new sap.m.Menu({
+			title: "random 3",
+			itemSelected: function(oEvent) {
+				var oItem = oEvent.getParameter("item"),
+						sItemPath = "";
+				while (oItem instanceof sap.m.MenuItem) {
+					sItemPath = oItem.getText() + " > " + sItemPath;
+					oItem = oItem.getParent();
+				}
+
+				sItemPath = sItemPath.substr(0, sItemPath.lastIndexOf(" > "));
+
+				sap.m.MessageToast.show("itemSelected: " + sItemPath);
+			},
+			items: [
+				new sap.m.MenuItem({
+					text: "Send the response now",
+					icon: "sap-icon://accept"
+				}),
+				new sap.m.MenuItem({
+					text: "Edit the response before sending",
+					icon: "sap-icon://accept"
+				}),
+				new sap.m.MenuItem({
+					text: "Do not send a response",
+					icon: "sap-icon://accept"
+				})
+			]
+		});
+
+		var oLabel3 = new sap.m.Label({
+			text: "This one has a type Accept and no default action"
+		});
+		var oMenuButton3 = new sap.m.MenuButton({
+			text: "Accept",
+			buttonMode: sap.m.MenuButtonMode.Split,
+			type: sap.m.ButtonType.Accept,
+			useDefaultActionOnly: true,
+			menu: oMenu3,
+			defaultAction: function() {
+				sap.m.MessageToast.show("Accepted");
+			}
+		});
+
+		var oMenu6 = new sap.m.Menu({
+			title: "random 6",
+			itemSelected: function(oEvent) {
+				var oItem = oEvent.getParameter("item"),
+						sItemPath = "";
+				while (oItem instanceof sap.m.MenuItem) {
+					sItemPath = oItem.getText() + " > " + sItemPath;
+					oItem = oItem.getParent();
+				}
+
+				sItemPath = sItemPath.substr(0, sItemPath.lastIndexOf(" > "));
+
+				sap.m.MessageToast.show("itemSelected: " + sItemPath);
+			},
+			items: [
+				new sap.m.MenuItem({
+					text: "Send the response now",
+					icon: "sap-icon://accept"
+				}),
+				new sap.m.MenuItem({
+					text: "Edit the response before sending",
+					icon: "sap-icon://accept"
+				}),
+				new sap.m.MenuItem({
+					text: "Do not send a response",
+					icon: "sap-icon://accept"
+				})
+			]
+		});
+
+		var oLabel6 = new sap.m.Label({
+			text: "width: 100%"
+		});
+		var oMenuButton6 = new sap.m.MenuButton({
+			text: "Accept",
+			width: "100%",
+			buttonMode: sap.m.MenuButtonMode.Split,
+			useDefaultActionOnly: true,
+			menu: oMenu6,
+			defaultAction: function() {
+				sap.m.MessageToast.show("Accepted");
+			}
+		});
+
+		var oMenu7 = new sap.m.Menu({
+			title: "random 7",
+			itemSelected: function(oEvent) {
+				var oItem = oEvent.getParameter("item"),
+						sItemPath = "";
+				while (oItem instanceof sap.m.MenuItem) {
+					sItemPath = oItem.getText() + " > " + sItemPath;
+					oItem = oItem.getParent();
+				}
+
+				sItemPath = sItemPath.substr(0, sItemPath.lastIndexOf(" > "));
+
+				sap.m.MessageToast.show("itemSelected: " + sItemPath);
+			},
+			items: [
+				new sap.m.MenuItem({
+					text: "Send the response now",
+					icon: "sap-icon://accept"
+				}),
+				new sap.m.MenuItem({
+					text: "Edit the response before sending",
+					icon: "sap-icon://accept"
+				}),
+				new sap.m.MenuItem({
+					text: "Do not send a response",
+					icon: "sap-icon://accept"
+				})
+			]
+		});
+
+		var oLabel7 = new sap.m.Label({
+			text: "width: 15rem"
+		});
+		var oMenuButton7 = new sap.m.MenuButton({
+			width: "15rem",
+			text: "Accept",
+			buttonMode: sap.m.MenuButtonMode.Split,
+			type: sap.m.ButtonType.Emphasized,
+			useDefaultActionOnly: true,
+			menu: oMenu7,
+			defaultAction: function() {
+				sap.m.MessageToast.show("Accepted");
+			}
+		});
+
+		var oMenu8 = new sap.m.Menu({
+			title: "random 8",
+			itemSelected: function(oEvent) {
+				var oItem = oEvent.getParameter("item"),
+						sItemPath = "";
+				while (oItem instanceof sap.m.MenuItem) {
+					sItemPath = oItem.getText() + " > " + sItemPath;
+					oItem = oItem.getParent();
+				}
+
+				sItemPath = sItemPath.substr(0, sItemPath.lastIndexOf(" > "));
+
+				sap.m.MessageToast.show("itemSelected: " + sItemPath);
+			},
+			items: [
+				new sap.m.MenuItem({
+					text: "Send the response now",
+					icon: "sap-icon://accept"
+				}),
+				new sap.m.MenuItem({
+					text: "Edit the response before sending",
+					icon: "sap-icon://accept"
+				}),
+				new sap.m.MenuItem({
+					text: "Do not send a response",
+					icon: "sap-icon://accept"
+				})
+			]
+		});
+
+		var oLabel8 = new sap.m.Label({
+			text: "width: 250px"
+		});
+		var oMenuButton8 = new sap.m.MenuButton({
+			width: "250px",
+			text: "Accept",
+			buttonMode: sap.m.MenuButtonMode.Regular,
+			useDefaultActionOnly: true,
+			menu: oMenu8,
+			defaultAction: function() {
+				sap.m.MessageToast.show("Accepted");
+			}
+		});
+
+		var oButton = new sap.m.Button({
+			text: "Change Mode",
+			press: function() {
+				oVBox.getItems().forEach(function (oItem) {
+					var otherMode;
+
+					if (oItem.setButtonMode) {
+						otherMode = oItem.getButtonMode() === sap.m.MenuButtonMode.Regular ? sap.m.MenuButtonMode.Split : sap.m.MenuButtonMode.Regular;
+						oItem.setButtonMode(otherMode);
+					}
+				})
+			}
+		});
+
+		var oTestButton1 = new sap.m.MenuButton({
+			width: "250px",
+			text: "Test"
+		});
+
+		var oTestButton11 = new sap.m.MenuButton({
+			width: "250px",
+			icon: "sap-icon://doctor"
+		});
+
+		var oTestButton111 = new sap.m.MenuButton({
+			width: "250px",
+			icon: "sap-icon://doctor",
+			text: "Test"
+		});
+
+		var oTestButton2 = new sap.m.MenuButton({
+			text: "Test"
+		});
+
+		var oTestButton22 = new sap.m.MenuButton({
+			icon: "sap-icon://doctor",
+			tooltip: "Surgeon",
+			menu: oMenu22
+		});
+
+		var oTestButton222 = new sap.m.MenuButton({
+			icon: "sap-icon://doctor",
+			text: "Test"
+		});
+
+		var oMenuButton15 = new sap.m.MenuButton({
+			text: "Deny",
+			buttonMode: sap.m.MenuButtonMode.Split,
+			type: sap.m.ButtonType.Reject,
+			tooltip: "Meainingful tooltip"
+		});
+
+		var bToggleTruncation = false;
+		var oButtonShowTruncation = new sap.m.Button({
+			text: "Show/Hide Truncation",
+			press: function() {
+				if (!bToggleTruncation) {
+					oTestButton1.setText("Lorem ipsum dolor sit amet, ad pro quando fierent, quem op");
+					oTestButton111.setText("Lorem ipsum dolor sit amet, ad pro quando fierent, quem op");
+					bToggleTruncation = true;
+				} else {
+					oTestButton1.setText("Test");
+					oTestButton111.setText("Test");
+					bToggleTruncation = false;
+				}
+			}
+		});
+
+		function getControls() {
+			var keys = [
+				"buttonMode",
+				"text",
+				"icon",
+				"type",
+				"tooltip"
+			],
+			values = [
+				[sap.m.MenuButtonMode.Split], //mode
+				[null, "Example"],
+				[null, "sap-icon://doctor"],
+				[sap.m.ButtonType.Default, sap.m.ButtonType.Reject],
+				[null, "Some tooltip"]
+			],
+			aResult = [],
+			aIndexes = [];
+
+			//init indexes
+			for (var i = 0; i < values.length; i++) {
+				aIndexes.push(0);
+			}
+
+			function resetUntil(index) {
+				for (var i = index + 1; i < aIndexes.length; i++) {
+					aIndexes[i] = 0;
+				}
+			}
+
+			function modifyIndex(index) {
+				getCombination();
+
+				while (index >= 0 && aIndexes[index] === values[index].length - 1) {
+					index -= 1;
+				}
+
+				if (index >= 0) {
+					aIndexes[index]++;
+					resetUntil(index);
+					modifyIndex(aIndexes.length - 1);
+				}
+			}
+
+			function getCombination() {
+				if (aIndexes[1] === 0 && aIndexes[2] === 0) {
+					return;
+				}
+
+				var options = {};
+				var aLabels = [];
+				for (var i = 0; i < keys.length; i++) {
+					options[keys[i]] = values[i][aIndexes[i]];
+
+					//we only care for the not default keys
+					if (aIndexes[i] > 0) {
+						aLabels.push(keys[i]);
+					}
+				}
+
+				aResult.push(new sap.m.Label({
+					text: aLabels.join(', ')
+				}));
+
+				options.menu = new sap.m.Menu({
+					items: [
+						new sap.m.MenuItem({
+							text: "flight",
+							icon: "sap-icon://flight"
+						}),
+						new sap.m.MenuItem({
+							text: "factory",
+							icon: "sap-icon://factory"
+						})
+					]
+				});
+
+				var oMB = new sap.m.MenuButton(options);
+				aResult.push(oMB);
+			}
+
+			modifyIndex(aIndexes.length - 1);
+
+			return aResult;
+		}
+
+		var oVBox = new sap.m.VBox({
+			items: getControls()
+		});
+
+		var oPage = new sap.m.Page("page0", {
+			customHeader: new sap.m.Toolbar({
+				content: [
+					oLabel8,
+					oMenuButton8
+				]
+			}),
+			subHeader: new sap.m.Toolbar({
+				content: [
+					oLabel,
+					oMenuButton
+				]
+			}),
+			content: [
+				oVBox
+			],
+			footer: new sap.m.Toolbar({
+				content: [
+					oLabel2,
+					oMenuButton2
+				]
+			})
+		});
+
+		var oApp = new sap.m.App({
+			initialPage: "page0",
+			pages: [
+				oPage
+			]
+		});
+
+		oApp.placeAt("body");
+	</script>
+</head>
+<body id="body" class="sapUiBody" role="application">
+</body>
+</html>

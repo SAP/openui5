@@ -11,7 +11,7 @@
  * "4.4 Primitive Types").
  *
  * They can be used in any place where simple types are allowed (and the model representation
- * matches), but they are of course most valuable in bindings to a
+ * matches), but they are of course most valuable when used in bindings to a
  * {@link sap.ui.model.odata.v2.ODataModel} or {@link sap.ui.model.odata.v4.ODataModel}.
  *
  * <b>Example:</b>
@@ -103,9 +103,9 @@ sap.ui.define(['sap/ui/model/SimpleType'],
 	 *
 	 * @alias sap.ui.model.odata.type.ODataType
 	 * @param {object} [oFormatOptions]
-	 *   type-specific format options; see sub-types
+	 *   type-specific format options; see subtypes
 	 * @param {object} [oConstraints]
-	 *   type-specific constraints (e.g. <code>oConstraints.nullable</code>), see sub-types
+	 *   type-specific constraints (e.g. <code>oConstraints.nullable</code>), see subtypes
 	 * @public
 	 * @since 1.27.0
 	 */

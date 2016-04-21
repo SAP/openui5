@@ -87,6 +87,7 @@ sap.ui.define([
 					throw new Error("Bindings with a relative path do not support parameters");
 				}
 
+				this.bInitial = true;
 				this.bRequestTypeFailed = false;
 				this.vValue = undefined;
 			},
@@ -96,9 +97,10 @@ sap.ui.define([
 		});
 
 	/**
-	 * The 'change' event is fired when the binding is initialized, refreshed or its parent context
-	 * is changed. It is to be used by controls to get notified about changes to the value of this
-	 * property binding. Registered event handlers are called with the change reason as parameter.
+	 * The 'change' event is fired when the binding is initialized or refreshed or its type is
+	 * changed or its parent context is changed. It is to be used by controls to get notified about
+	 * changes to the value of this property binding. Registered event handlers are called with the
+	 * change reason as parameter.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {object} oEvent.getParameters
@@ -258,6 +260,7 @@ sap.ui.define([
 		}));
 
 		return Promise.all(aPromises).then(function () {
+			that.bInitial = false;
 			if (bForceUpdate || bFire) {
 				that._fireChange(oChangeReason);
 			}
@@ -391,6 +394,7 @@ sap.ui.define([
 
 	/**
 	 * Sets the optional type and internal type for this binding; used for formatting and parsing.
+	 * Fires a change event if the type has changed.
 	 *
 	 * @param {sap.ui.model.Type} oType
 	 *   The type for this binding
@@ -404,10 +408,15 @@ sap.ui.define([
 	 */
 	// @override
 	ODataPropertyBinding.prototype.setType = function (oType) {
+		var oOldType = this.oType;
+
 		if (oType && oType.getName() === "sap.ui.model.odata.type.DateTimeOffset") {
 			oType.setV4();
 		}
-		return PropertyBinding.prototype.setType.apply(this, arguments);
+		PropertyBinding.prototype.setType.apply(this, arguments);
+		if (!this.bInitial && oOldType !== oType) {
+			this._fireChange({reason : ChangeReason.Change});
+		}
 	};
 
 	/**

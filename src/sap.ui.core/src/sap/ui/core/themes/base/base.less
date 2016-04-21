@@ -45,7 +45,8 @@
 @sapContent_ForegroundBorderColor: #000;
 @sapContent_ForegroundTextColor: contrast(@sapContent_ForegroundColor, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
-@sapShell_Background: #fff;
+@sapShell_Background: @sapShellColor;
+@sapShell_BackgroundGradient: @sapShell_Background;
 @sapShell_BorderColor: #666;
 @sapShell_TextColor: contrast(@sapShell_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 

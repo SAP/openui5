@@ -1,0 +1,80 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>ViewSettingsPopover</title>
+
+	<!-- Bootstrap the UI5 core library -->
+	<script id="sap-ui-bootstrap"
+			src="../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+	</script>
+
+	<script type="text/javascript">
+		sap.ui.getCore().attachInit(function () {
+			var oVSPopover = new sap.m.ViewSettingsPopover({
+						sortItems: [
+							new sap.m.ViewSettingsItem({
+								key: "1",
+								text: "item 1"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "2",
+								text: "item 2"
+							})
+						],
+						groupItems: [
+							new sap.m.ViewSettingsItem({
+								key: "1",
+								text: "item 1"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "2",
+								text: "item 2"
+							})
+						],
+						filterItems: [
+							new sap.m.ViewSettingsFilterItem({
+								key: "filter0",
+								text: "filter item 0",
+								items: [
+									new sap.m.ViewSettingsItem({
+										key: "filter0-sub0",
+										text: "filter item 0 sub 0"
+									}),
+									new sap.m.ViewSettingsItem({
+										key: "filter0-sub1",
+										text: "filter item 0 sub 1"
+									})
+								]
+							}),
+							new sap.m.ViewSettingsFilterItem({
+								key: "filter1",
+								text: "filter item 1"
+							}),
+							new sap.m.ViewSettingsFilterItem({
+								key: "filter2",
+								text: "filter item 2",
+								items: [
+									new sap.m.ViewSettingsItem({
+										key: "filter2-sub0",
+										text: "filter item 2 sub 0"
+									})
+								]
+							})
+						]
+					}).placeAt("content"),
+					oBtn = new sap.m.Button({
+						text: "Open Popover",
+						press: function () {
+							oVSPopover.openBy(this);
+						}
+					}).placeAt("content");
+		});
+	</script>
+</head>
+<body id="content" role="application"></body>
+</html>

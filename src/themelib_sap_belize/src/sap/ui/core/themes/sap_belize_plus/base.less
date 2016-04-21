@@ -23,10 +23,11 @@
 @sapContent_LabelColor: darken(@sapPrimary5, 7);
 @sapContent_ContrastTextColor: darken(@sapPrimary1, 8);
 @sapContent_ForegroundColor: lighten(@sapBaseColor, 7);
-@sapContent_ForegroundBorderColor: lighten(@sapBaseColor, 4);
+@sapContent_ForegroundBorderColor: lighten(@sapBaseColor, 30);
 @sapContent_ForegroundTextColor: @sapPrimary5;
 
-@sapShell_Background: linear-gradient(to bottom, #2c4e6c, #9ec7d8);
+@sapShell_Background: #658aa2;
+@sapShell_BackgroundGradient: linear-gradient(to bottom, darken(saturate(@sapShell_Background, 17), 23), lighten(saturate(@sapShell_Background, 25), 23));
 @sapShell_TextColor: @sapPrimary4;
 
 @sapButton_Background: lighten(@sapBaseColor, 2);

@@ -81,7 +81,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * @constructor
 	 * @alias sap.ui.model.odata.type.Int
 	 * @param {object} [oFormatOptions]
-	 *   type-specific format options; see sub-types
+	 *   type-specific format options; see subtypes
 	 * @param {object} [oConstraints]
 	 *   constraints; {@link #validateValue validateValue} throws an error if any constraint is
 	 *   violated

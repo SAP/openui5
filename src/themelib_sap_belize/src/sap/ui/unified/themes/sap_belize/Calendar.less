@@ -66,6 +66,10 @@
 	outline-color: @sapUiContentContrastFocusColor;
 }
 
+.sap-desktop[data-sap-ui-browser^="ff"].sap-desktop .sapUiCalHead > .sapUiCalHeadB:focus{
+	outline-offset: 0; /* to hide firefox bug with native outline always displayed */
+}
+
 .sap-desktop[data-sap-ui-browser^="ie"],
 .sap-desktop[data-sap-ui-browser^="ed"]{
 	.sapUiCalHead > .sapUiCalHeadB{

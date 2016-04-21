@@ -4,8 +4,11 @@
 
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/core/IconPool"
-], function (Controller, IconPool) {
+	"sap/ui/core/IconPool",
+	"sap/ui/model/json/JSONModel",
+	"sap/m/InstanceManager",
+	"sap/m/MessageToast",
+	"sap/ui/Device"], function (Controller, IconPool, JSONModel, InstanceManager, MessageToast, Device) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demokit.icex.view.Detail", {
@@ -26,7 +29,7 @@ sap.ui.define([
 			var favorite = (favModel) ? favModel.isFavorite(iconName) : false;
 			var model = this.getView().getModel();
 			if (!model) {
-				model = new sap.ui.model.json.JSONModel({});
+				model = new JSONModel({});
 				this.getView().setModel(model);
 			}
 			var info = IconPool.getIconInfo(iconName);
@@ -36,8 +39,8 @@ sap.ui.define([
 				id : id,
 				showFavorite : !favorite,
 				showUnfavorite : favorite,
-				isPhone : sap.ui.Device.system.phone,
-				isNoPhone : !sap.ui.Device.system.phone
+				isPhone : Device.system.phone,
+				isNoPhone : !Device.system.phone
 			});
 		},
 
@@ -61,13 +64,13 @@ sap.ui.define([
 				var nowAFavorite = favModel.toggleFavorite(data.name);
 
 				// show  message
-				if (sap.m.InstanceManager.hasOpenPopover()) {
-					sap.m.InstanceManager.closeAllPopovers();
+				if (InstanceManager.hasOpenPopover()) {
+					InstanceManager.closeAllPopovers();
 				}
 				if (nowAFavorite) {
-					sap.m.MessageToast.show('The icon has been added to your favorites');
+					MessageToast.show('The icon has been added to your favorites');
 				} else {
-					sap.m.MessageToast.show('The icon has been removed from your favorites');
+					MessageToast.show('The icon has been removed from your favorites');
 				}
 
 				// update my model

@@ -91,6 +91,11 @@
 			"appComponent": "CA-UI5-BS-FCW"
 		},
 		{
+			"control": "sap.m.FormattedText",
+			"url": "FormattedText.html",
+			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
 			"control": "sap.m.GenericTile",
 			"url": "../GenericTile.html",
 			"appComponent" : "CA-UI5-BS-FCW"
@@ -144,6 +149,11 @@
 		{
 			"control": "sap.m.MaskInput",
 			"url": "../MaskInput.html",
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
+		},
+		{
+			"control": "sap.m.MenuButton",
+			"url": "MenuButton.html",
 			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{

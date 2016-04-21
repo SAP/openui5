@@ -431,6 +431,7 @@
 		var oEndPage = oFactory.createPage("end");
 
 		this.oFCL = oFactory.createFCL(oBeginPage, oMidPage, oEndPage);
+		this.clock.tick(ANIMATION_WAIT_TIME);
 
 		$("#" + sQUnitFixture).width(TABLET_SIZE);
 		this.clock.tick(ANIMATION_WAIT_TIME);

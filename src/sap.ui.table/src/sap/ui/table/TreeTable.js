@@ -184,9 +184,7 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 		sName = sName || "rows";
 		var oBinding = sap.ui.core.Element.prototype.getBinding.call(this, sName);
 
-		// the check for the tree binding is only relevant becuase of the DataTable migration
-		//  --> once the DataTable is deleted after the deprecation period this check can be deleted
-		if (oBinding && this.isTreeBinding(sName) && sName === "rows" && !oBinding.getLength) {
+		if (oBinding && sName === "rows" && !oBinding.getLength) {
 			if (sap.ui.model.odata.ODataTreeBinding && oBinding instanceof sap.ui.model.odata.ODataTreeBinding) {
 				// use legacy tree binding adapter
 				TreeBindingCompatibilityAdapter(oBinding, this);
@@ -296,33 +294,6 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 			if (Table.prototype.onclick) {
 				Table.prototype.onclick.apply(this, arguments);
 			}
-		}
-	};
-
-	TreeTable.prototype.onsapselect = function(oEvent) {
-		if (jQuery(oEvent.target).hasClass("sapUiTableTreeIcon")) {
-			this._onNodeSelect(oEvent);
-		} else {
-			if (Table.prototype.onsapselect) {
-				Table.prototype.onsapselect.apply(this, arguments);
-			}
-		}
-	};
-
-	TreeTable.prototype.onkeydown = function(oEvent) {
-		Table.prototype.onkeydown.apply(this, arguments);
-		var $Target = jQuery(oEvent.target),
-			$TargetTD = $Target.closest('td');
-		if (oEvent.keyCode == jQuery.sap.KeyCodes.TAB && this._bActionMode && $TargetTD.find('.sapUiTableTreeIcon').length > 0) {
-			//If node icon has focus set tab to control else set tab to node icon
-			if ($Target.hasClass('sapUiTableTreeIcon')) {
-				if (!$Target.hasClass("sapUiTableTreeIconLeaf")) {
-					$TargetTD.find(':sapFocusable:not(.sapUiTableTreeIcon)').first().focus();
-				}
-			} else {
-				$TargetTD.find('.sapUiTableTreeIcon:not(.sapUiTableTreeIconLeaf)').focus();
-			}
-			oEvent.preventDefault();
 		}
 	};
 

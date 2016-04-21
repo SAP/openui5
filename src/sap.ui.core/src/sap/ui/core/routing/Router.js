@@ -3,7 +3,7 @@
  */
 
 sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger', './Route', './Views', './Targets', 'sap/ui/thirdparty/crossroads'],
-	function($, EventProvider, HashChanger, Route, Views, Targets, crossroads) {
+	function(jQuery, EventProvider, HashChanger, Route, Views, Targets, crossroads) {
 	"use strict";
 
 		var oRouters = {};
@@ -205,23 +205,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger'
 					oRoutes = {};
 				}
 
-				if ($.isArray(oRoutes)) {
+				if (jQuery.isArray(oRoutes)) {
 					//Convert route object
 					aRoutes = oRoutes;
 					oRoutes = {};
-					$.each(aRoutes, function(iRouteIndex, oRouteConfig) {
+					jQuery.each(aRoutes, function(iRouteIndex, oRouteConfig) {
 						oRoutes[oRouteConfig.name] = oRouteConfig;
 					});
 				}
 
-				$.each(oRoutes, function(sRouteName, oRouteConfig) {
+				jQuery.each(oRoutes, function(sRouteName, oRouteConfig) {
 					if (oRouteConfig.name === undefined) {
 						oRouteConfig.name = sRouteName;
 					}
 					that.addRoute(oRouteConfig);
 				});
 
-				this._oRouter.bypassed.add($.proxy(this._onBypassed, this));
+				this._oRouter.bypassed.add(jQuery.proxy(this._onBypassed, this));
 			},
 
 			/**
@@ -233,11 +233,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger'
 			 */
 			addRoute : function (oConfig, oParent) {
 				if (!oConfig.name) {
-					$.sap.log.error("A name has to be specified for every route", this);
+					jQuery.sap.log.error("A name has to be specified for every route", this);
 				}
 
 				if (this._oRoutes[oConfig.name]) {
-					$.sap.log.error("Route with name " + oConfig.name + " already exists", this);
+					jQuery.sap.log.error("Route with name " + oConfig.name + " already exists", this);
 				}
 				this._oRoutes[oConfig.name] = new Route(this, oConfig, oParent);
 			},
@@ -252,7 +252,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger'
 				if (this._oRouter) {
 					this._oRouter.parse(sNewHash);
 				} else {
-					$.sap.log.warning("This router has been destroyed while the hash changed. No routing events where fired by the destroyed instance.", this);
+					jQuery.sap.log.warning("This router has been destroyed while the hash changed. No routing events where fired by the destroyed instance.", this);
 				}
 			},
 
@@ -267,7 +267,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger'
 					oHashChanger = this.oHashChanger = HashChanger.getInstance();
 
 				if (this._bIsInitialized) {
-					$.sap.log.warning("Router is already initialized.", this);
+					jQuery.sap.log.warning("Router is already initialized.", this);
 					return this;
 				}
 
@@ -278,7 +278,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger'
 				};
 
 				if (!oHashChanger) {
-					$.sap.log.error("navTo of the router is called before the router is initialized. If you want to replace the current hash before you initialize the router you may use getUrl and use replaceHash of the Hashchanger.", this);
+					jQuery.sap.log.error("navTo of the router is called before the router is initialized. If you want to replace the current hash before you initialize the router you may use getUrl and use replaceHash of the Hashchanger.", this);
 					return;
 				}
 
@@ -301,7 +301,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger'
 			stop : function () {
 
 				if (!this._bIsInitialized) {
-					$.sap.log.warning("Router is not initialized. But it got stopped", this);
+					jQuery.sap.log.warning("Router is not initialized. But it got stopped", this);
 				}
 
 				if (this.fnHashChanged) {
@@ -325,7 +325,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger'
 				EventProvider.prototype.destroy.apply(this);
 
 				if (!this._bIsInitialized) {
-					$.sap.log.info("Router is not initialized, but got destroyed.", this);
+					jQuery.sap.log.info("Router is not initialized, but got destroyed.", this);
 				}
 
 				if (this.fnHashChanged) {
@@ -336,7 +336,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger'
 				this._oRouter.removeAllRoutes();
 				this._oRouter = null;
 
-				$.each(this._oRoutes, function(iRouteIndex, oRoute) {
+				jQuery.each(this._oRoutes, function(iRouteIndex, oRoute) {
 					oRoute.destroy();
 				});
 				this._oRoutes = null;
@@ -368,7 +368,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger'
 
 				var oRoute = this.getRoute(sName);
 				if (!oRoute) {
-					$.sap.log.warning("Route with name " + sName + " does not exist", this);
+					jQuery.sap.log.warning("Route with name " + sName + " does not exist", this);
 					return;
 				}
 				return oRoute.getURL(oParameters);

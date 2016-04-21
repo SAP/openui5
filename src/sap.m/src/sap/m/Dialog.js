@@ -317,7 +317,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 					top: that._oManuallySetPosition ? that._oManuallySetPosition.y : '50%'
 				};
 
+				//deregister the content resize handler before repositioning
+				that._deregisterContentResizeHandler();
 				Popup.prototype._applyPosition.call(this, oPosition);
+
+				//register the content resize handler
+				that._registerContentResizeHandler();
 			};
 
 			if (Dialog._bPaddingByDefault) {
@@ -366,6 +371,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 		Dialog.prototype.exit = function () {
 			InstanceManager.removeDialogInstance(this);
+			this._deregisterContentResizeHandler();
 			this._deregisterResizeHandler();
 
 			if (this.oPopup) {
@@ -461,6 +467,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				this._oManuallySetPosition = null;
 				this._oManuallySetSize = null;
 				oPopup.close();
+				this._deregisterContentResizeHandler();
 			}
 			return this;
 		};
@@ -685,7 +692,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				$dialogContent.height(parseInt($dialog.height(), 10));
 			}
 
-			if (this.getStretch()) {
+			if (this.getStretch() || this._bDisableRepositioning) {
 				return;
 			}
 
@@ -1051,6 +1058,28 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 			//set the initial size of the content container so when a dialog with large content is open there will be a scroller
 			this._onResize();
+		};
+
+		/**
+		 *
+		 * @private
+		 */
+		Dialog.prototype._deregisterContentResizeHandler = function () {
+			if (this._sContentResizeListenerId) {
+				sap.ui.core.ResizeHandler.deregister(this._sContentResizeListenerId);
+				this._sContentResizeListenerId = null;
+			}
+		};
+
+		/**
+		 *
+		 * @param oScrollDomRef
+		 * @private
+		 */
+		Dialog.prototype._registerContentResizeHandler = function() {
+			if (!this._sContentResizeListenerId) {
+				this._sContentResizeListenerId = sap.ui.core.ResizeHandler.register(this.getDomRef("scrollCont"), jQuery.proxy(this._onResize, this));
+			}
 		};
 
 		Dialog.prototype._attachHandler = function(oButton) {

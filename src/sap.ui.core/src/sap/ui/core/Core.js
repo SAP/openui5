@@ -247,7 +247,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			// determine preload mode (e.g. resolve default or auto)
 			var sPreloadMode = this.oConfiguration.preload;
 			// if debug sources are requested, then the preload feature must be deactivated
-			if ( window["sap-ui-debug"] ) {
+			if ( window["sap-ui-debug"] === true ) {
 				sPreloadMode = "";
 			}
 			// when the preload mode is 'auto', it will be set to 'sync' for optimized sources
@@ -789,23 +789,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Returns the URL of the folder in which the CSS file for the given theme and the given library is located .
-	 * The returned URL ends with a slash.
+	 * Makes sure to register the correct module path for the given library and theme
+	 * in case a themeRoot has been defined.
 	 *
-	 * @param sLibName
-	 * @param sThemeName
+	 * @param {string} sLibName Library name (dot separated)
+	 * @param {string} sThemeName Theme name
 	 * @private
 	 */
-	Core.prototype._getThemePath = function(sLibName, sThemeName) {
+	Core.prototype._ensureThemeRoot = function(sLibName, sThemeName) {
 		if (this._mThemeRoots) {
 			var path =  this._mThemeRoots[sThemeName + " " + sLibName] || this._mThemeRoots[sThemeName];
 			// check whether for this combination (theme+lib) a URL is registered or for this theme a default location is registered
 			if (path) {
 				path = path + sLibName.replace(/\./g, "/") + "/themes/" + sThemeName + "/";
 				jQuery.sap.registerModulePath(sLibName + ".themes." + sThemeName, path);
-				return path;
 			}
 		}
+	};
+
+	/**
+	 * Returns the URL of the folder in which the CSS file for the given theme and the given library is located.
+	 *
+	 * @param {string} sLibName Library name (dot separated)
+	 * @param {string} sThemeName Theme name
+	 * @returns {string} module path URL (ends with a slash)
+	 * @private
+	 */
+	Core.prototype._getThemePath = function(sLibName, sThemeName) {
+
+		// make sure to register correct theme module path in case themeRoots are defined
+		this._ensureThemeRoot(sLibName, sThemeName);
 
 		// use the library location as theme location
 		return jQuery.sap.getModulePath(sLibName + ".themes." + sThemeName, "/");
@@ -1526,12 +1539,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		}
 
 		// include the library theme, but only if it has not been suppressed in library metadata or by configuration
-		if ( !oLibInfo.noLibraryCSS && this.oConfiguration['preloadLibCss'].indexOf(sLibName) < 0 ) {
+		if ( !oLibInfo.noLibraryCSS) {
 
-			// check for configured query parameters and use them
-			var sQuery = this._getLibraryCssQueryParams(oLibInfo);
+			// ensure to register correct library theme module path even when "preloadLibCss" prevents
+			// including the library theme as controls might use it to calculate theme-specific URLs
+			this._ensureThemeRoot(sLibName, this.sTheme);
 
-			this.includeLibraryTheme(sLibName, undefined, sQuery);
+			if (this.oConfiguration['preloadLibCss'].indexOf(sLibName) < 0) {
+				// check for configured query parameters and use them
+				var sQuery = this._getLibraryCssQueryParams(oLibInfo);
+
+				this.includeLibraryTheme(sLibName, undefined, sQuery);
+			}
 		}
 
 		// expose some legacy names

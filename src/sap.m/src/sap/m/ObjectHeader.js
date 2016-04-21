@@ -195,10 +195,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			titleSelectorTooltip : {type : "string", group : "Misc", defaultValue : "Options"},
 
 			/**
-			 * Controls the visibility of additionalNumbers aggregation.
-			 * @since 1.38.0
+			 * Defines the semantic level of the title.
+			 * This information is e.g. used by assistive technologies like screenreaders to create a hierarchical site map for faster navigation.
+			 * Depending on this setting a HTML h1-h6 element is used.
 			 */
-			showAdditionalNumbers : {type : "boolean", group : "Misc", defaultValue : true}
+			titleLevel : {type : "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : sap.ui.core.TitleLevel.H1}
 
 		},
 		defaultAggregation : "attributes",
@@ -240,6 +241,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * NOTE: Only applied if you set "responsive=false".
 			 * Additional object numbers and units are managed in this aggregation.
 			 * The numbers are hidden on tablet and phone size screens.
+			 * When only one number is provided, it is rendered with additional separator from the main ObjectHeader number.
 			 * @since 1.38.0
 			 */
 			additionalNumbers : {type : "sap.m.ObjectNumber", multiple : true, singularName : "additionalNumber"},

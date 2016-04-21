@@ -1079,14 +1079,16 @@
 				// arrange
 				oPage.addContent(oSlider);
 				sap.ui.getCore().applyChanges();
+				var fnLogWarning = this.spy(jQuery.sap.log, "warning");
 
 				// act
-				oSlider.setStep(-1);	// if the step is negative or 0, set to 1 and log a warning
+				oSlider.setStep(-1);
 				sap.ui.getCore().applyChanges();
 
 				// assert
-				assert.strictEqual(oSlider.getStep(), 1);
+				assert.strictEqual(oSlider.getStep(), -1);
 				assert.strictEqual(oSlider.getValue(), 50);
+				assert.strictEqual(fnLogWarning.callCount, 1);
 
 				// cleanup
 				oSlider.destroy();

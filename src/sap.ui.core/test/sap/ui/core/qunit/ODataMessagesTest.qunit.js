@@ -137,7 +137,6 @@ function runODataMessagesTests() {
 				url: "/EditProduct",
 				parameters: {
 					"ProductUUID": "00000000-0000-0000-0000-000000000001",
-					"foo": "bar"
 				},
 
 				numMessages: 1,
@@ -149,7 +148,6 @@ function runODataMessagesTests() {
 				url: "/EditProduct",
 				parameters: {
 					"ProductUUID": "00000000-0000-0000-0000-000000000002",
-					"foo": "bar"
 				},
 
 				numMessages: 2,
@@ -161,7 +159,6 @@ function runODataMessagesTests() {
 				url: "/EditProduct",
 				parameters: {
 					"ProductUUID": "30000000-0000-0000-0000-000000000003",
-					"foo": "bar"
 				},
 
 				numMessages: 3,
@@ -643,7 +640,6 @@ function runODataMessagesTests() {
 				url: "/ActionForFunction",
 				parameters: {
 					"SupplierUUID": "00000000-0000-0000-0000-000000000001",
-					"foo": "bar"
 				},
 
 				numMessages: 1,
@@ -655,7 +651,6 @@ function runODataMessagesTests() {
 				url: "/ActionForFunction",
 				parameters: {
 					"SupplierUUID": "00000000-0000-0000-0000-000000000002",
-					"foo": "bar"
 				},
 
 				numMessages: 2,
@@ -667,7 +662,6 @@ function runODataMessagesTests() {
 				url: "/ActionForFunction",
 				parameters: {
 					"SupplierUUID": "00000000-0000-0000-0000-000000000002",
-					"foo": "bar"
 				},
 
 				numMessages: 2,

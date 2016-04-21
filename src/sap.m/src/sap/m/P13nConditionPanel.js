@@ -908,7 +908,6 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nConditionPanel.prototype.exit = function() {
-
 		this._unregisterResizeHandler();
 
 		this._aConditionsFields = null;
@@ -1573,6 +1572,16 @@ sap.ui.define([
 				oConditionGrid.oFormatter = null;
 				oControl = new sap.m.Input(params);
 
+				if (this._fSuggestCallback) {
+					var oCurrentKeyField = this._getCurrentKeyFieldItem(oConditionGrid.keyField);
+					if (oCurrentKeyField && oCurrentKeyField.key) {
+						var oSuggestProvider = this._fSuggestCallback(oControl, oCurrentKeyField.key);
+						if (oSuggestProvider) {
+							oControl._oSuggestProvider = oSuggestProvider;
+						}
+					}
+				}
+
 		}
 
 		if (sCtrlType !== "boolean" && sCtrlType !== "enum") {
@@ -1640,7 +1649,7 @@ sap.ui.define([
 			if (typeof oCurrentKeyField.maxLength === "number") {
 				l = oCurrentKeyField.maxLength;
 			}
-			if (l > 0) {
+			if (l > 0 && (!oControl.getShowSuggestion || !oControl.getShowSuggestion())) {
 				oControl.setMaxLength(l);
 			}
 		}
@@ -1774,6 +1783,10 @@ sap.ui.define([
 
 			var ctrlIndex = oConditionGrid.indexOfContent(oCtrl);
 			oConditionGrid.removeContent(oCtrl);
+			if (oCtrl._oSuggestProvider) {
+				oCtrl._oSuggestProvider.destroy();
+				oCtrl._oSuggestProvider = null;
+			}
 			oCtrl.destroy();
 			var fieldInfo = this._aConditionsFields[index];
 			oCtrl = this._createValueField(oCurrentKeyField, fieldInfo, oConditionGrid);

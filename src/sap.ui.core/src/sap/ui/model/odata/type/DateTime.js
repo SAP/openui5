@@ -49,7 +49,7 @@ sap.ui.define(['sap/ui/model/odata/type/DateTimeBase'],
 	 * (resp. the constraint <code>displayFormat: "Date"</code>) to display only a date.
 	 *
 	 * In {@link sap.ui.model.odata.v2.ODataModel} this type is represented as a
-	 * <code>Date</code>. With the constraint <code>displayFormat: "Date"</code>, the timezone is
+	 * <code>Date</code>. With the constraint <code>displayFormat: "Date"</code>, the time zone is
 	 * UTF and the time part is ignored, otherwise it is a date/time value in local time.
 	 *
 	 * @extends sap.ui.model.odata.type.DateTimeBase
@@ -67,7 +67,7 @@ sap.ui.define(['sap/ui/model/odata/type/DateTimeBase'],
 	 *   if <code>true</code>, the value <code>null</code> is accepted
 	 * @param {string} [oConstraints.displayFormat=undefined]
 	 *   may be "Date", in this case only the date part is used, the time part is always 00:00:00
-	 *   and the timezone is UTC to avoid timezone-related problems
+	 *   and the time zone is UTC to avoid time-zone-related problems
 	 * @public
 	 * @since 1.27.0
 	 */

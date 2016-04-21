@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/CustomData",
+	"sap/ui/core/Icon",
 	"sap/ui/Device",
 	"sap/m/Breadcrumbs",
 	"./ObjectPageHeaderActionButton",
@@ -15,10 +16,9 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/ActionSheet",
 	"sap/m/Image",
-	"sap/ui/core/Icon",
 	"./library"
-], function (Control, IconPool, CustomData, Device, Breadcrumbs, ObjectPageHeaderActionButton,
-			 ResizeHandler, Text, Button, ActionSheet, Image, Icon, library) {
+], function (Control, IconPool, CustomData, Icon, Device, Breadcrumbs, ObjectPageHeaderActionButton,
+			 ResizeHandler, Text, Button, ActionSheet, Image, library) {
 	"use strict";
 
 	/**
@@ -467,8 +467,23 @@ sap.ui.define([
 	 * @param {string} sTitle title string
 	 * @return {*} this
 	 */
-	ObjectPageHeader.prototype.setObjectTitle = function (sTitle) {
-		return this._applyActionProperty("objectTitle", Array.prototype.slice.call(arguments));
+	ObjectPageHeader.prototype.setObjectTitle = function (sNewTitle) {
+
+		var sOldTitle = this.getProperty("objectTitle"),
+			bChanged = sOldTitle !== sNewTitle;
+
+		this._applyActionProperty("objectTitle", Array.prototype.slice.call(arguments));
+
+		if (bChanged && this.mEventRegistry["_titleChange"] ) {
+			this.fireEvent("_titleChange", {
+				"id": this.getId(),
+				"name": "objectTitle",
+				"oldValue": sOldTitle,
+				"newValue": sNewTitle
+			});
+		}
+
+		return this;
 	};
 
 	var aPropertiesToOverride = ["objectSubtitle", "showTitleSelector", "markLocked", "markFavorite", "markFlagged",
@@ -915,6 +930,29 @@ sap.ui.define([
 			ResizeHandler.deregister(this._iResizeId);
 		}
 	};
+
+
+	/**
+	 * Fiori 2.0 adaptation
+	 */
+	ObjectPageHeader.prototype.setNavigationBar = function(oBar) {
+
+		this.setAggregation("navigationBar", oBar);
+
+		if (oBar && this.mEventRegistry["_adaptableContentChange"] ) {
+			this.fireEvent("_adaptableContentChange", {
+				"parent": this,
+				"adaptableContent": oBar
+			});
+		}
+
+		return this;
+	};
+
+	ObjectPageHeader.prototype._getAdaptableContent = function() {
+		return this.getNavigationBar();
+	};
+
 
 	return ObjectPageHeader;
 });

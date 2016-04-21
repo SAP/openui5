@@ -573,7 +573,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	function onDemandPreprocessorExists(oView, sViewType, sType) {
 		 View._mPreprocessors[sViewType][sType].forEach(function(oPreprocessor) {
 			if (oPreprocessor._onDemand) {
-				jQuery.sap.log.error("Registration for \"" + sType + "\" failed, only one onDemand-preprocessor allowed", oView.getMetadata().getName());
+				jQuery.sap.log.error("Registration for \"" + sType + "\" failed, only one on-demand-preprocessor allowed", oView.getMetadata().getName());
 				return false;
 			}
 		});
@@ -632,13 +632,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 				_syncSupport: bSyncSupport,
 				_settings: mSettings
 			});
-			jQuery.sap.log.debug("Registered " + (bOnDemand ? "onDemand-" : "") + "preprocessor for \"" + sType + "\"" +
+			jQuery.sap.log.debug("Registered " + (bOnDemand ? "on-demand-" : "") + "preprocessor for \"" + sType + "\"" +
 			(bSyncSupport ? " with syncSupport" : ""), this.getMetadata().getName());
 		} else {
 			jQuery.sap.log.error("Registration for \"" + sType + "\" failed, no preprocessor specified",  this.getMetadata().getName());
 		}
 	};
 
+	function isOnDemand(oPreprocessor) {
+		return !!oPreprocessor._onDemand;
+	}
+
+	/**
+	* Checks if any preprocessors are active for the specified type
+	*
+	* @param {string} sType Type of the preprocessor, e.g. "raw", "xml" or "controls"
+	* @returns {boolean} <code>true</code> if a preprocessor is active
+	* @protected
+	*/
+	View.prototype.hasPreprocessor = function(sType) {
+		var bHasGlobalPreprocessor, bHasLocalPreprocessor, sViewType;
+		sViewType =  this.getMetadata().getClass()._sType;
+
+		// if a local preprocessor is present there is either a local or an on-demand preprocessor active
+		bHasLocalPreprocessor = this.mPreprocessors && this.mPreprocessors[sType];
+		// global preprocessor may be on-demand, hence we need to check for at least one non on-demand preprocessor
+		bHasGlobalPreprocessor = View._mPreprocessors && View._mPreprocessors[sViewType] && View._mPreprocessors[sViewType][sType];
+		bHasGlobalPreprocessor = bHasGlobalPreprocessor && !View._mPreprocessors[sViewType][sType].every(isOnDemand);
+
+		return !!(bHasLocalPreprocessor || bHasGlobalPreprocessor);
+	};
 
 	/**
 	 * An (optional) method to be implemented by Views. When no controller instance is given at View instantiation time

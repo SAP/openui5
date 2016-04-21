@@ -2065,22 +2065,38 @@ sap.ui
 						path: new RegExp("\\$batch([?#].*)?"),
 						response: function(oXhr) {
 							jQuery.sap.log.debug("MockServer: incoming request for url: " + oXhr.url);
-							var fnResovleStatus = function(iStatusCode) {
-								switch (iStatusCode) {
+							var fnResovleStatus = function(oResponse) {
+								switch (oResponse.statusCode) {
 									case 200:
 										return "200 OK";
-									case 204:
-										return "204 No Content";
 									case 201:
 										return "201 Created";
+									case 204:
+										return "204 No Content";
 									case 400:
 										return "400 Bad Request";
+									case 401:
+										return "401 Unauthorized";
 									case 403:
 										return "403 Forbidden";
 									case 404:
 										return "404 Not Found";
+									case 405:
+										return "405 Method Not Allowed";
+									case 409:
+										return "409 Conflict";
+									case 412:
+										return "412 Precondition Failed";
+									case 415:
+										return "415 Unsupported Media Type";
+									case 500:
+										return "500 Internal Server Error";
+									case 501:
+										return "501 Not Implemented";
+									case 503:
+										return "503 Service Unavailable";
 									default:
-										return iStatusCode;
+										return oResponse.statusCode + " " + oResponse.status;
 								}
 							};
 							var fnBuildResponseString = function(oResponse, sContentType) {
@@ -2088,13 +2104,71 @@ sap.ui
 								if (!oResponse.success) {
 									sResponseData = oResponse.errorResponse;
 								}
+
+								if (oResponse.responseHeaders) {
+									return "HTTP/1.1 " + fnResovleStatus(oResponse) + "\r\n" + oResponse.responseHeaders +
+										"dataserviceversion: 2.0\r\n\r\n" + sResponseData + "\r\n";
+								}
+
 								if (sContentType) {
-									return "HTTP/1.1 " + fnResovleStatus(oResponse.statusCode) + "\r\nContent-Type: " + sContentType + "\r\nContent-Length: " +
+									return "HTTP/1.1 " + fnResovleStatus(oResponse) + "\r\nContent-Type: " + sContentType + "\r\nContent-Length: " +
 										sResponseData.length + "\r\ndataserviceversion: 2.0\r\n\r\n" + sResponseData + "\r\n";
 								}
-								return "HTTP/1.1 " + fnResovleStatus(oResponse.statusCode) + "\r\nContent-Type: application/json\r\nContent-Length: " +
+								return "HTTP/1.1 " + fnResovleStatus(oResponse) + "\r\nContent-Type: application/json\r\nContent-Length: " +
 									sResponseData.length + "\r\ndataserviceversion: 2.0\r\n\r\n" + sResponseData + "\r\n";
 							};
+
+							var fnCUDRequest = function(sUrl, sData, sType,aChangesetResponses) {
+								var oResponse;
+								var fnAjaxSuccess = function(data, textStatus, xhr){
+									oResponse = { success : true, data : data, status : textStatus, statusCode : xhr && xhr.status, responseHeaders : xhr && xhr.getAllResponseHeaders() };
+								};
+								var fnAjaxError = function(xhr, textStatus, error) {
+									oResponse = { success : false, data : undefined, status : textStatus, error : error, statusCode : xhr.status, errorResponse :  xhr.responseText, responseHeaders : xhr && xhr.getAllResponseHeaders()};
+								};
+								jQuery.ajax({
+									type: sType,
+									async: false,
+									url: sUrl,
+									data: sData,
+									dataType: "json",
+									success: fnAjaxSuccess,
+									error: fnAjaxError
+								});
+								if (oResponse.statusCode === 400 || oResponse.statusCode === 404) {
+									var sError = "\r\nHTTP/1.1 " + fnResovleStatus(oResponse) +
+										"\r\nContent-Type: application/json\r\nContent-Length: 0\r\n\r\n";
+									throw new Error(sError);
+								}
+								aChangesetResponses.push(fnBuildResponseString(oResponse));
+							};
+
+							var fnRRequest = function(sUrl, aBatchBodyResponse) {
+								var oResponse;
+								var sResponseString;
+								var fnAjaxSuccess = function(data, textStatus, xhr){
+									oResponse = { success : true, data : data, status : textStatus, statusCode : xhr && xhr.status, responseHeaders : xhr && xhr.getAllResponseHeaders() };
+								};
+								var fnAjaxError = function(xhr, textStatus, error) {
+									oResponse = { success : false, data : undefined, status : textStatus, error : error, statusCode : xhr.status, errorResponse :  xhr.responseText, responseHeaders : xhr && xhr.getAllResponseHeaders()};
+								};
+								jQuery.ajax({
+									async: false,
+									url: sUrl,
+									dataType: "json",
+									success: fnAjaxSuccess,
+									error: fnAjaxError
+								});
+								var sResponseString;
+								if (sUrl.indexOf('$count') !== -1) {
+									sResponseString = fnBuildResponseString(oResponse, "text/plain");
+								} else {
+									sResponseString = fnBuildResponseString(oResponse);
+								}
+								aBatchBodyResponse.push("\r\nContent-Type: application/http\r\n" + "Content-Length: " + sResponseString.length + "\r\n" +
+									"content-transfer-encoding: binary\r\n\r\n" + sResponseString);
+							};
+
 							// START BATCH HANDLING
 							var sRequestBody = oXhr.requestBody;
 							var oBoundaryRegex = new RegExp("--batch_[a-z0-9-]*");
@@ -2118,47 +2192,17 @@ sap.ui
 									if (rGet.test(sBatchRequest) && sBatchRequest.indexOf("multipart/mixed") === -1) {
 										//In case of POST, PUT or DELETE not in ChangeSet
 										if (rPut.test(sBatchRequest) || rPost.test(sBatchRequest) || rDelete.test(sBatchRequest)) {
-											oXhr
-												.respond(400, null,
-													"The Data Services Request could not be understood due to malformed syntax");
+											oXhr.respond(400, null, "The Data Services Request could not be understood due to malformed syntax");
 											jQuery.sap.log.debug("MockServer: response sent with: 400");
 											return true;
 										}
-										var oResponse = jQuery.sap.sjax({
-											url: sServiceURL + rGet.exec(sBatchRequest)[1],
-											dataType: "json"
-										});
-										var sResponseString;
-										if (rGet.exec(sBatchRequest)[1].indexOf('$count') !== -1) {
-											sResponseString = fnBuildResponseString(oResponse, "text/plain");
+										fnRRequest(sServiceURL + rGet.exec(sBatchRequest)[1], aBatchBodyResponse);
 										} else {
-											sResponseString = fnBuildResponseString(oResponse);
-										}
-										aBatchBodyResponse.push("\r\nContent-Type: application/http\r\n" + "Content-Length: " + sResponseString.length + "\r\n" +
-											"content-transfer-encoding: binary\r\n\r\n" + sResponseString);
-									} else {
 										//CUD handling within changesets
 										// copying the mock data to support rollback
 										var oCopiedMockdata = jQuery.extend(true, {}, that._oMockdata);
 										var aChangesetResponses = [];
 
-										/*eslint-disable no-loop-func */
-										var fnCUDRequest = function(rCUD, sData, sType) {
-											var oResponse = jQuery.sap.sjax({
-												type: sType,
-												url: sServiceURL + rCUD.exec(sChangesetRequest)[1],
-												dataType: "json",
-												data: sData
-											});
-
-											if (oResponse.statusCode === 400 || oResponse.statusCode === 404) {
-												var sError = "\r\nHTTP/1.1 " + fnResovleStatus(oResponse.statusCode) +
-													"\r\nContent-Type: application/json\r\nContent-Length: 0\r\n\r\n";
-												throw new Error(sError);
-											}
-											aChangesetResponses.push(fnBuildResponseString(oResponse));
-										};
-										/*eslint-enable no-loop-func */
 										// extract changeset
 										var sChangesetBoundary = sBatchRequest.substring(
 											sBatchRequest.indexOf("boundary=") + 9, sBatchRequest.indexOf("\r\n\r\n"));
@@ -2181,26 +2225,31 @@ sap.ui
 													// PUT
 													sData = sChangesetRequest.substring(sChangesetRequest.indexOf("{"),
 														sChangesetRequest.lastIndexOf("}") + 1);
-													fnCUDRequest(rPut, sData, 'PUT');
+													fnCUDRequest(sServiceURL + rPut.exec(sChangesetRequest)[1], sData, 'PUT', aChangesetResponses);
 												} else if (rMerge.test(sChangesetRequest)) {
 													// MERGE
 													sData = sChangesetRequest.substring(sChangesetRequest.indexOf("{"),
 														sChangesetRequest.lastIndexOf("}") + 1);
-													fnCUDRequest(rMerge, sData, 'MERGE');
+													fnCUDRequest(sServiceURL + rMerge.exec(sChangesetRequest)[1], sData, 'MERGE', aChangesetResponses);
 												} else if (rPost.test(sChangesetRequest)) {
 													// POST
 													sData = sChangesetRequest.substring(sChangesetRequest.indexOf("{"),
 														sChangesetRequest.lastIndexOf("}") + 1);
-													fnCUDRequest(rPost, sData, 'POST');
+													fnCUDRequest(sServiceURL + rPost.exec(sChangesetRequest)[1], sData, 'POST', aChangesetResponses);
 												} else if (rDelete.test(sChangesetRequest)) {
 													// DELETE
-													fnCUDRequest(rDelete, null, 'DELETE');
+													fnCUDRequest(sServiceURL + rDelete.exec(sChangesetRequest)[1], sData, 'DELETE', aChangesetResponses);
 												}
 											} //END ChangeSets FOR
 											var sChangesetRespondData = "\r\nContent-Type: multipart/mixed; boundary=ejjeeffe1\r\n\r\n--ejjeeffe1";
 											for (var k = 0; k < aChangesetResponses.length; k++) {
-												sChangesetRespondData += "\r\nContent-Type: application/http\r\n" + "Content-Length: " + aChangesetResponses[k].length +
-													"\r\n" + "content-transfer-encoding: binary\r\n\r\n" + aChangesetResponses[k] + "--ejjeeffe1";
+												sChangesetRespondData += "\r\nContent-Type: application/http\r\n"
+													+ "Content-Length: "
+													+ aChangesetResponses[k].length
+													+ "\r\n"
+													+ "content-transfer-encoding: binary\r\n\r\n"
+													+ aChangesetResponses[k]
+													+ "--ejjeeffe1";
 											}
 											sChangesetRespondData += "--\r\n";
 											aBatchBodyResponse.push(sChangesetRespondData);

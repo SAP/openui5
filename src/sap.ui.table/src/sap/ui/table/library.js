@@ -39,7 +39,6 @@ sap.ui.define(['jquery.sap.global',
 			"sap.ui.table.AnalyticalColumnMenu",
 			"sap.ui.table.AnalyticalTable",
 			"sap.ui.table.ColumnMenu",
-			"sap.ui.table.DataTable",
 			"sap.ui.table.Table",
 			"sap.ui.table.TreeTable"
 		],
@@ -262,9 +261,6 @@ sap.ui.define(['jquery.sap.global',
 
 	// map the new Column to the old ColumnHeader
 	sap.ui.table.ColumnHeader = sap.ui.table.Column;
-
-	// map the SelectionMode All to Multi
-	sap.ui.table.SelectionMode.All = sap.ui.table.SelectionMode.Multi;
 
 	//factory for table to create labels an textviews to be overwritten by commons and mobile library
 	if (!sap.ui.table.TableHelper) {

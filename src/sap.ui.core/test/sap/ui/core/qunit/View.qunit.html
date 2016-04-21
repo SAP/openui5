@@ -503,7 +503,7 @@
 
 	});
 
-	asyncTest("run together with local preprocessor", 3, function () {
+	asyncTest("run together with local preprocessor", 5, function () {
 		var oLocalPreprocessor = function(vSource, sCaller, mSettings) {
 			// async test part
 			jQuery.sap.log.debug("[TEST] " + mSettings.message, sCaller);
@@ -532,11 +532,13 @@
 
 		oView.attachAfterInit(function() {
 			sinon.assert.calledTwice(spy);
+			ok(oView.hasPreprocessor("xml"), "active xml preprocessor");
+			ok(oView.hasPreprocessor("controls"), "active controls preprocessor");
 			start();
 		});
 	});
 
-	asyncTest("global preprocessor and local preprocessor on one hook", 3, function () {
+	asyncTest("global preprocessor and local preprocessor on one hook", 5, function () {
 		var oLocalPreprocessor = function(vSource, sCaller, mSettings) {
 			ok(true, "Local preprocessor executed");
 			return new Promise(function(resolve) {
@@ -563,11 +565,13 @@
 
 		oView.attachAfterInit(function() {
 			sinon.assert.calledTwice(spy);
+			ok(!oView.hasPreprocessor("xml"), "no active xml preprocessor");
+			ok(oView.hasPreprocessor("controls"), "active controls preprocessor");
 			start();
 		});
 	});
 
-	asyncTest("on demand preprocessor provided", 3, function () {
+	asyncTest("on demand preprocessor provided", 5, function () {
 		sap.ui.core.mvc.XMLView.registerPreprocessor("xml", this.oPreprocessor, true, this.mSettings);
 
 		var mDefaultSettings = {
@@ -588,11 +592,13 @@
 
 		oView.attachAfterInit(function() {
 			sinon.assert.calledTwice(spy);
+			ok(oView.hasPreprocessor("xml"), "active xml preprocessor");
+			ok(!oView.hasPreprocessor("controls"), "no active controls preprocessor");
 			start();
 		});
 	});
 
-	asyncTest("on demand preprocessor not provided", 2, function () {
+	asyncTest("on demand preprocessor not provided", 4, function () {
 		sap.ui.core.mvc.XMLView.registerPreprocessor("xml", this.oPreprocessor, true, true, this.mSettings);
 
 		var mDefaultSettings = {
@@ -610,6 +616,8 @@
 		oView.attachAfterInit(function() {
 			ok(!logSpy.calledWithExactly("Running preprocessor for \"xml\" via given function", oView), "No log statement");
 			sinon.assert.calledTwice(spy);
+			ok(!oView.hasPreprocessor("controls"), "no active controls preprocessor");
+			ok(!oView.hasPreprocessor("xml"), "no active xml preprocessor");
 			start();
 		});
 	});

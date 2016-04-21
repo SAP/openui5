@@ -517,13 +517,14 @@ sap.ui.require([
 
 
 		oBinding = this.oModel.bindProperty(sPath);
+		oBinding.attachChange(function () {
+			bChangeReceived = true;
+		});
 		oBinding.setType(new TypeString());
+		assert.ok(!bChangeReceived, "No Change event while initial");
 
 		oBinding.checkUpdate(false).then(function () {
 			assert.strictEqual(oBinding.getValue(), "foo");
-			oBinding.attachChange(function () {
-				bChangeReceived = true;
-			});
 			oBinding.checkUpdate(false).then(function () {
 				assert.strictEqual(oBinding.getValue(), undefined, "Value reset");
 				assert.ok(bChangeReceived, "Change event received");
@@ -1042,6 +1043,34 @@ sap.ui.require([
 		oPropertyBinding.setType(null);
 		oPropertyBinding.setType(oDateTimeOffset);
 		oPropertyBinding.setType(oSomeType);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setType: change events", function (assert) {
+		return this.createTextBinding(assert).then(function (oBinding) {
+			var sChangeReason,
+				oSomeType = {
+					getName : function () { return "foo"; },
+					formatValue : function (vValue) { return vValue; }
+				};
+
+			oBinding.attachChange(function (oEvent) {
+				sChangeReason = oEvent.getParameter("reason");
+				assert.strictEqual(oBinding.getType(), oSomeType);
+			});
+
+			// code under test
+			oBinding.setType(oSomeType);
+
+			assert.strictEqual(sChangeReason, ChangeReason.Change);
+
+			sChangeReason = undefined;
+
+			// code under test
+			oBinding.setType(oSomeType);
+
+			assert.strictEqual(sChangeReason, undefined, "no event for same type");
+		});
 	});
 
 	//*********************************************************************************************
