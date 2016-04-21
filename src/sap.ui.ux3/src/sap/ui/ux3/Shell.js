@@ -23,6 +23,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Menu', 'sap/ui/core/Control'
 	 *
 	 * @constructor
 	 * @public
+	 * @deprecated Since version 1.38.
 	 * @alias sap.ui.ux3.Shell
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
