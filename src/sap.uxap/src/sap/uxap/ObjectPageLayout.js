@@ -987,7 +987,8 @@ sap.ui.define([
 		this._aSectionBases.forEach(function (oSectionBase) {
 			var oInfo = this._oSectionInfo[oSectionBase.getId()],
 				$this = oSectionBase.$(),
-				$mobileAnchor;
+				$mobileAnchor,
+				bPromoted = false;
 
 			if (!oInfo /* sectionBase is visible */ || !$this.length) {
 				return;
@@ -1016,13 +1017,17 @@ sap.ui.define([
 				$mobileAnchor = oSectionBase.$("headerTitle");
 			}
 
+			bPromoted = $mobileAnchor.length > 0;
+
 			//calculate the mobile position
-			if ($mobileAnchor.length > 0) {
+			if (bPromoted) {
 				oInfo.positionTopMobile = Math.ceil($mobileAnchor.position().top) + $mobileAnchor.outerHeight() - this.iAnchorBarHeight - iHeaderGap;
 			} else {
 				//title wasn't found (=first section, hidden title, promoted subsection), scroll to the same position as desktop
 				oInfo.positionTopMobile = oInfo.positionTop;
 			}
+
+			oInfo.sectionReference.toggleStyleClass("sapUxAPObjectPageSubSectionPromoted", !bPromoted);
 
 			//for calculating the currently scrolled section of subsection (and for lazy loading) we also need to know the bottom of the section and subsections
 			//we can't use oInfo.$dom.height() since the margin are not taken into account.
