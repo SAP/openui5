@@ -18,12 +18,15 @@ sap.ui.define([
 	 * <code>Promise.resolve</code> to wrap e.g. a <code>jQuery.Deferred</code> instance).
 	 * </ul>
 	 *
-	 * @param {Promise|SyncPromise|any} oPromise
-	 *   The promise to wrap or the result to synchronously fulfill with
+	 * @param {Promise|SyncPromise|any} [oPromise]
+	 *   The promise to wrap or the result to synchronously fulfill with; may be omitted if and
+	 *   only if <code>aValues</code> is provided
 	 * @param {function} [fnCallback]
-	 *   Function to apply to the result of the SyncPromise to be wrapped
+	 *   Function to apply to the result of the SyncPromise to be wrapped; requires
+	 *   <code>oPromise</code>
 	 * @param {any[]} [aValues]
-	 *   The values to be combined via the static method <code>SyncPromise.all</code>
+	 *   The values to be combined via the static method <code>SyncPromise.all</code>; assumes that
+	 *   <code>oPromise</code> and <code>fnCallback</code> are both omitted (<code>null</code>)
 	 * @returns {SyncPromise}
 	 *   The SyncPromise created
 	 */
@@ -131,6 +134,10 @@ sap.ui.define([
 		this.then = function (fnOnFulfilled, fnOnRejected) {
 			if (bFulfilled || bRejected) {
 				return new SyncPromise(that, bFulfilled ? fnOnFulfilled : fnOnRejected);
+			}
+			if (!oPromise) {
+				// iPending > 0 ==> aValues contains pending promises
+				oPromise = Promise.all(aValues);
 			}
 			return new SyncPromise(oPromise.then(fnOnFulfilled, fnOnRejected));
 		};
