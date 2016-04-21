@@ -5553,7 +5553,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 */
 	Table.prototype._getDefaultRowHeight = function(aRowHeights) {
 		if (this._bVariableRowHeightEnabled) {
-			this._iDefaultRowHeight = 28;
+			this._iDefaultRowHeight = this.getRowHeight() || 28;
 		} else {
 			if (!this._iDefaultRowHeight && this.getDomRef()) {
 				aRowHeights = aRowHeights || this._collectRowHeights();
