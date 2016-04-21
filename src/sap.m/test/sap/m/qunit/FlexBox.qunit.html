@@ -254,7 +254,7 @@
 				ok(!jQuery.sap.domById("flexbox7"), "Flex Box 7 should not be rendered");
 			});
 
-			if(jQuery.support.flexBoxLayout || jQuery.support.newFlexBoxLayout) {
+			if(jQuery.support.flexBoxLayout || jQuery.support.newFlexBoxLayout || jQuery.support.ie10FlexBoxLayout) {
 				test("Flex Boxes rendered", function() {
 					ok(jQuery.sap.domById("flexbox1"), "Flex Box 1 should be rendered");
 					equal(jQuery.sap.byId("flexbox1").get(0).tagName, "DIV", "Flex Box 1 should be rendered as DIV");
@@ -315,20 +315,33 @@
 // 						equal(jQuery("#flexbox6").css(sVendorPrefix + 'flex-wrap'), "wrap-reverse", "Flex Box 6 " + sVendorPrefix + "flex-wrap property should be set correctly");
 // 					});
 					test("justify-content", function() {
-						equal(jQuery("#flexbox1").css(sVendorPrefix + 'justify-content'), "flex-start", "Flex Box 1 " + sVendorPrefix + "justify-content property should be set correctly");
+						if(sap.ui.Device.browser.name === "cr" || sap.ui.Device.browser.name === "ff") {
+							equal(jQuery("#flexbox1").css(sVendorPrefix + 'justify-content'), "normal", "Flex Box 1 " + sVendorPrefix + "justify-content property should be set correctly");
+						} else {
+							equal(jQuery("#flexbox1").css(sVendorPrefix + 'justify-content'), "flex-start", "Flex Box 1 " + sVendorPrefix + "justify-content property should be set correctly");
+						}
 						equal(jQuery("#flexbox2").css(sVendorPrefix + 'justify-content'), "flex-end", "Flex Box 2 " + sVendorPrefix + "justify-content property should be set correctly");
 						equal(jQuery("#flexbox3").css(sVendorPrefix + 'justify-content'), "center", "Flex Box 3 " + sVendorPrefix + "justify-content property should be set correctly");
 						equal(jQuery("#flexbox4").css(sVendorPrefix + 'justify-content'), "space-between", "Flex Box 4 " + sVendorPrefix + "justify-content property should be set correctly");
 						equal(jQuery("#flexbox5").css(sVendorPrefix + 'justify-content'), "space-around", "Flex Box 5 " + sVendorPrefix + "justify-content property should be set correctly");
-						equal(jQuery("#flexbox6").css(sVendorPrefix + 'justify-content'), "flex-start", "Flex Box 6 " + sVendorPrefix + "justify-content property should be set correctly");
+						if(sap.ui.Device.browser.name === "cr" || sap.ui.Device.browser.name === "ff") {
+							equal(jQuery("#flexbox6").css(sVendorPrefix + 'justify-content'), "normal", "Flex Box 6 " + sVendorPrefix + "justify-content property should be set correctly");
+						} else {
+							equal(jQuery("#flexbox6").css(sVendorPrefix + 'justify-content'), "flex-start", "Flex Box 6 " + sVendorPrefix + "justify-content property should be set correctly");
+						}
 					});
 					test("align-items", function() {
 						equal(jQuery("#flexbox1").css(sVendorPrefix + 'align-items'), "flex-start", "Flex Box 1 " + sVendorPrefix + "align-items property should be set correctly");
 						equal(jQuery("#flexbox2").css(sVendorPrefix + 'align-items'), "flex-end", "Flex Box 2 " + sVendorPrefix + "align-items property should be set correctly");
 						equal(jQuery("#flexbox3").css(sVendorPrefix + 'align-items'), "center", "Flex Box 3 " + sVendorPrefix + "align-items property should be set correctly");
 						equal(jQuery("#flexbox4").css(sVendorPrefix + 'align-items'), "baseline", "Flex Box 4 " + sVendorPrefix + "align-items property should be set correctly");
-						equal(jQuery("#flexbox5").css(sVendorPrefix + 'align-items'), "stretch", "Flex Box 5 " + sVendorPrefix + "align-items property should be set correctly");
-						equal(jQuery("#flexbox6").css(sVendorPrefix + 'align-items'), "stretch", "Flex Box 6 " + sVendorPrefix + "align-items property should be set correctly");
+						if(sap.ui.Device.browser.name === "ff") {
+							equal(jQuery("#flexbox5").css(sVendorPrefix + 'align-items'), "normal", "Flex Box 5 " + sVendorPrefix + "align-items property should be set correctly");
+							equal(jQuery("#flexbox6").css(sVendorPrefix + 'align-items'), "normal", "Flex Box 6 " + sVendorPrefix + "align-items property should be set correctly");
+						} else {
+							equal(jQuery("#flexbox5").css(sVendorPrefix + 'align-items'), "stretch", "Flex Box 5 " + sVendorPrefix + "align-items property should be set correctly");
+							equal(jQuery("#flexbox6").css(sVendorPrefix + 'align-items'), "stretch", "Flex Box 6 " + sVendorPrefix + "align-items property should be set correctly");
+						}
 					})
 // 					test("align-content", function() {
 // 						equal(jQuery("#flexbox1").css(sVendorPrefix + 'align-content'), "flex-start", "Flex Box 1 " + sVendorPrefix + "align-content property should be set correctly");
