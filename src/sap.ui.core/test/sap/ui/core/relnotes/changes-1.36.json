@@ -1095,5 +1095,24 @@
         "references": []
       }
     ]
+  },
+  "1.36.8": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "d026cb2c6923a829cf022b7f4eef7eb482436961",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Themeroots / preloadLibCss: Register correct module paths",
+        "references": []
+      },
+      {
+        "id": "ca9b42e66a9d4a4fa4e8e7d3380a5b6aed63df0e",
+        "author": "Irina Goetzenberger \u003cirina.goetzenberger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Scrollbar: fix scrolling in the ui.table.Table for FioriClient and Edge browser on Windows 10 and Windows 8.",
+        "references": []
+      }
+    ]
   }
 }

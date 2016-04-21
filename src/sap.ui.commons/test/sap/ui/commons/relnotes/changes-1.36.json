@@ -234,5 +234,17 @@
         "references": []
       }
     ]
+  },
+  "1.36.8": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "8b37e380f925e15dce3553ecb2d4a62afff323b9",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Error is not thrown any more when Scroller in not initialized",
+        "references": []
+      }
+    ]
   }
 }

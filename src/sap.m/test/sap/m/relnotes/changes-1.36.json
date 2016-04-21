@@ -1858,5 +1858,17 @@
         "references": []
       }
     ]
+  },
+  "1.36.8": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "32abc01f87fc20bb4b4e82596a8cfc0a6c27dde7",
+        "author": "Dimo Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "OverflowtoolBar wasn\u0027t displaying properly segmentedButton in the overflow popup",
+        "references": []
+      }
+    ]
   }
 }
