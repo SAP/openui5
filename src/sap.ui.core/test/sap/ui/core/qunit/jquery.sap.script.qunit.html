@@ -252,6 +252,27 @@
 			});
 
 			// -------------------------------------------------------------------------------
+			// hashCode
+			// -------------------------------------------------------------------------------
+
+			QUnit.module("hashCode");
+
+			QUnit.test("empty string", function(assert) {
+				var s = "";
+				assert.equal(jQuery.sap.hashCode(s), 0, "empty string hash-code is 0");
+			});
+
+			QUnit.test("equality", function(assert) {
+				var s = "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...";
+				assert.strictEqual(jQuery.sap.hashCode(s), jQuery.sap.hashCode(s), "same string - same hash-code");
+			});
+
+			QUnit.test("inequality", function(assert) {
+				var s = "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...";
+				assert.notEqual(jQuery.sap.hashCode(s), jQuery.sap.hashCode(s + "."), "different string - different hash-code");
+			});
+
+			// -------------------------------------------------------------------------------
 			// jQuery.sap.unique
 			// -------------------------------------------------------------------------------
 

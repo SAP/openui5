@@ -27,6 +27,24 @@ sap.ui.define(['jquery.sap.global'],
 	};
 
 	/**
+	 * This function generates a hash-code from a string
+	 * @param {string} sString The string to generate the hash-code from
+	 * @return {integer} The generated hash-code
+	 * @since 1.39
+	 * @private
+	 */
+	jQuery.sap.hashCode = function(sString) {
+		var i = sString.length, iHash = 0;
+
+		while (i--) {
+			iHash = (iHash << 5) - iHash + sString.charCodeAt(i);
+			iHash = iHash & iHash; // convert to 32 bit
+		}
+
+		return iHash;
+	};
+
+	/**
 	 * Calls a method after a given delay and returns an id for this timer
 	 *
 	 * @param {int} iDelay Delay time in milliseconds
