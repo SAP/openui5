@@ -103,4 +103,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableUtils'],
 
 	return TableExtension;
 
-}, /* bExport= */ true);
+});

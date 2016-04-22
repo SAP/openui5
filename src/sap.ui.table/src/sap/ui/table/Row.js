@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.table.Row.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
-	function(jQuery, Element, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Context', './library'],
+	function(jQuery, Element, Context, library) {
 	"use strict";
 
 
@@ -203,7 +203,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 
 	Row.prototype.setRowBindingContext = function(oContext, sModelName, oBinding) {
 		var oNode;
-		if (oContext && !(oContext instanceof sap.ui.model.Context)) {
+		if (oContext && !(oContext instanceof Context)) {
 			oNode = oContext;
 			oContext = oContext.context;
 		}
@@ -224,7 +224,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 	};
 
 	Row.prototype.setBindingContext = function(oContext, sModelName) {
-		var bReturn = sap.ui.core.Element.prototype.setBindingContext.call(this, oContext || null, sModelName);
+		var bReturn = Element.prototype.setBindingContext.call(this, oContext || null, sModelName);
 
 		this._updateTableCells(oContext);
 		return bReturn;
@@ -283,4 +283,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 
 	return Row;
 
-}, /* bExport= */ true);
+});
