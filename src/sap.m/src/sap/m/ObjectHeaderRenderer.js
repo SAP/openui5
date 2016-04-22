@@ -503,7 +503,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 						oRM.writeAttributeEscaped("target", oOH.getTitleTarget());
 					}
 				} else {
-					oRM.writeAttribute("href", "#");
+					/*eslint-disable no-script-url */
+					oRM.writeAttribute("href", "javascript:void(0);");
+					/*eslint-enable no-script-url */
 				}
 
 				//ARIA attributes
@@ -1328,7 +1330,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 					oRM.writeAttributeEscaped("target", oOH.getTitleTarget());
 				}
 			} else {
-				oRM.writeAttribute("href", "#");
+				/*eslint-disable no-script-url */
+				oRM.writeAttribute("href", "javascript:void(0);");
+				/*eslint-enable no-script-url */
 			}
 
 			oRM.writeAttribute("tabindex", "0");
