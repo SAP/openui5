@@ -96,6 +96,9 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.addClass("sapUiCalItem");
 			if (i + iStartMonth == iMonth) {
 				oRm.addClass("sapUiCalItemSel");
+				mAccProps["selected"] = true;
+			} else {
+				mAccProps["selected"] = false;
 			}
 			oRm.writeAttribute("tabindex", "-1");
 			oRm.addStyle("width", sWidth);

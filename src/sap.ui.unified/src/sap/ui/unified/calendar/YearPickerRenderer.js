@@ -68,6 +68,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 
 		for ( var i = 0; i < iYears; i++) {
 			var sYyyymmdd = oYP._oFormatYyyymmdd.format(oDate.getJSDate(), true);
+			var mAccProps = {
+					role: "gridcell"
+				};
 
 			if (iColumns > 0 && i % iColumns == 0) {
 				// begin of row
@@ -81,13 +84,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 			oRm.addClass("sapUiCalItem");
 			if ( oDate.getUTCFullYear() == iCurrentYear) {
 				oRm.addClass("sapUiCalItemSel");
+				mAccProps["selected"] = true;
+			} else {
+				mAccProps["selected"] = false;
 			}
 			oRm.writeAttribute("tabindex", "-1");
 			oRm.writeAttribute("data-sap-year-start", sYyyymmdd);
 			oRm.addStyle("width", sWidth);
 			oRm.writeClasses();
 			oRm.writeStyles();
-			oRm.writeAccessibilityState(null, {role: "gridcell"});
+			oRm.writeAccessibilityState(null, mAccProps);
 			oRm.write(">"); // div element
 			oRm.write(oYP._oYearFormat.format(oDate, true)); // to render era in Japanese
 			oRm.write("</div>");
