@@ -456,8 +456,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			$DomRef = jQuery(aDomRefs[i]);
 			if ($DomRef.attr("id") == sId) {
 				$DomRef.addClass("sapUiCalItemSel");
+				$DomRef.attr("aria-selected", "true");
 			}else {
 				$DomRef.removeClass("sapUiCalItemSel");
+				$DomRef.attr("aria-selected", "false");
 			}
 		}
 
@@ -537,8 +539,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			$DomRef.attr("data-sap-year-start", sYyyymmdd);
 			if ($DomRef.hasClass("sapUiCalItemSel") && sYyyymmdd != sCurrentYyyymmdd) {
 				$DomRef.removeClass("sapUiCalItemSel");
+				$DomRef.attr("aria-selected", "false");
 			} else if (!$DomRef.hasClass("sapUiCalItemSel") && sYyyymmdd == sCurrentYyyymmdd) {
 				$DomRef.addClass("sapUiCalItemSel");
+				$DomRef.attr("aria-selected", "true");
 			}
 
 			var bEnabled = true;
