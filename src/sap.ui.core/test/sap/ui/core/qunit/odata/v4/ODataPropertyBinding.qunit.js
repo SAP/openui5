@@ -508,9 +508,11 @@ sap.ui.require([
 			sPath = "/EMPLOYEES(ID='1')/Name";
 
 		// initial read and after refresh
-		oCacheMock.expects("read").returns(Promise.resolve("foo"));
+		oCacheMock.expects("read").withExactArgs("$auto", undefined, sinon.match.func)
+			.returns(Promise.resolve("foo"));
 		// force non-primitive error
-		oCacheMock.expects("read").returns(Promise.resolve({}));
+		oCacheMock.expects("read").withExactArgs("$auto", undefined, sinon.match.func)
+			.returns(Promise.resolve({}));
 
 		this.oLogMock.expects("error").withExactArgs("Accessed value is not primitive", sPath,
 			sClassName);
@@ -539,7 +541,8 @@ sap.ui.require([
 			sPath = "/EMPLOYEES(ID='42')/Name",
 			done = assert.async();
 
-		this.getCacheMock().expects("read").returns(Promise.resolve("foo"));
+		this.getCacheMock().expects("read").withExactArgs("$auto", undefined, sinon.match.func)
+			.returns(Promise.resolve("foo"));
 		this.oSandbox.mock(this.oModel.getMetaModel()).expects("requestUI5Type").never();
 
 		//code under test
@@ -562,7 +565,8 @@ sap.ui.require([
 			oType = new TypeString(),
 			done = assert.async();
 
-		this.getCacheMock().expects("read").returns(Promise.resolve("foo"));
+		this.getCacheMock().expects("read").withExactArgs("$auto", undefined, sinon.match.func)
+			.returns(Promise.resolve("foo"));
 		this.oSandbox.mock(this.oModel.getMetaModel()).expects("requestUI5Type")
 			.withExactArgs(sPath)
 			.returns(Promise.resolve(oType));
@@ -595,8 +599,9 @@ sap.ui.require([
 					oControl = new TestControl({models : this.oModel}),
 					sPath = "/EMPLOYEES(ID='42')/Name";
 
-				oCacheMock.expects("read").returns(Promise.resolve("foo"));
-				oCacheMock.expects("read")
+				oCacheMock.expects("read").withExactArgs("$auto", undefined, sinon.match.func)
+					.returns(Promise.resolve("foo"));
+				oCacheMock.expects("read").withExactArgs("$auto", undefined, sinon.match.func)
 					.returns(Promise.resolve("update")); // 2nd read gets an update
 				this.oSandbox.mock(this.oModel.getMetaModel()).expects("requestUI5Type")
 					.withExactArgs(sPath) // always requested only once
@@ -677,8 +682,10 @@ sap.ui.require([
 
 		oError.canceled = true; // simulate canceled cache read
 		// initial read and after refresh
-		oCacheMock.expects("read").callsArg(2).returns(Promise.reject(oError));
-		oCacheMock.expects("read").callsArg(2).returns(Promise.resolve("foo"));
+		oCacheMock.expects("read").withExactArgs("$auto", undefined, sinon.match.func).callsArg(2)
+			.returns(Promise.reject(oError));
+		oCacheMock.expects("read").withExactArgs("$auto", undefined, sinon.match.func).callsArg(2)
+			.returns(Promise.resolve("foo"));
 		oCacheMock.expects("refresh");
 		this.oSandbox.mock(this.oModel.getMetaModel()).expects("requestUI5Type").twice()
 			.withExactArgs(sPath)
@@ -831,7 +838,8 @@ sap.ui.require([
 	QUnit.test("setValue (absolute binding): forbidden", function (assert) {
 		var oControl;
 
-		this.getCacheMock().expects("read").returns(Promise.resolve("HT-1000's Name"));
+		this.getCacheMock().expects("read").withExactArgs("$auto", undefined, sinon.match.func)
+			.returns(Promise.resolve("HT-1000's Name"));
 		oControl = new TestControl({
 			models : this.oModel,
 			text : "{path : '/ProductList(\\'HT-1000\\')/Name'"
@@ -859,7 +867,8 @@ sap.ui.require([
 			oPropertyBindingCacheMock;
 
 		oModelMock.expects("addedRequestToGroup").withExactArgs("groupId", sinon.match.func);
-		this.getCacheMock().expects("read").callsArg(2).returns(Promise.resolve("HT-1000's Name"));
+		this.getCacheMock().expects("read").withExactArgs("$auto", undefined, sinon.match.func)
+			.callsArg(2).returns(Promise.resolve("HT-1000's Name"));
 		oControl = new TestControl({
 			models : oModel,
 			text : "{parameters : {'$$groupId' : 'groupId', '$$updateGroupId' : 'updateGroupId'}"
