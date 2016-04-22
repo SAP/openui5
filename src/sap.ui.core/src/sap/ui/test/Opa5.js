@@ -517,9 +517,11 @@ sap.ui.define([
 		Opa5.emptyQueue = Opa.emptyQueue;
 
 		/**
-		 * Clears the queue and stops running tests so that new tests can be run
-		 * See {@link sap.ui.test.Opa#.stopQueue} for the description
-		 * @returns {boolean} If the clear was successful, true will be returned. Otherwise false.
+		 * Clears the queue and stops running tests so that new tests can be run.
+		 * This means all waitFor statements registered by {@link sap.ui.test.Opa5#waitFor} will not be invoked anymore and
+		 * the promise returned by {@link sap.ui.test.Opa5#.emptyQueue} will be rejected.
+		 * When its called inside of a check in {@link sap.ui.test.Opa5#waitFor}
+		 * the success function of this waitFor will not be called.
 		 * @public
 		 * @function
 		 */

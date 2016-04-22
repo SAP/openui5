@@ -254,9 +254,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 	};
 
 	/**
-	 * Clears the queue and stops running tests so that new tests can be run
-	 * See {@link sap.ui.test.Opa#.stopQueue} for the description
-	 * @returns {boolean} If the clear was successful, true will be returned. Otherwise false.
+	 * Clears the queue and stops running tests so that new tests can be run.
+	 * This means all waitFor statements registered by {@link sap.ui.test.Opa#waitFor} will not be invoked anymore and
+	 * the promise returned by {@link sap.ui.test.Opa#.emptyQueue} will be rejected.
+	 * When its called inside of a check in {@link sap.ui.test.Opa#waitFor}
+	 * the success function of this waitFor will not be called.
 	 * @public
 	 */
 	Opa.stopQueue = function stopQueue () {
