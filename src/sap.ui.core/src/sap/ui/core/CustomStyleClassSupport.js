@@ -76,12 +76,12 @@ sap.ui.define(['jquery.sap.global', './Element'],
 
 
 		this.addStyleClass = function(sStyleClass, bSuppressRerendering) { // bSuppressRerendering is experimental and hence undocumented
-			jQuery.sap.assert(sStyleClass && typeof sStyleClass === "string", "sStyleClass must be a string");
+			jQuery.sap.assert(typeof sStyleClass === "string", "sStyleClass must be a string");
 
 			if (!this.aCustomStyleClasses) {
 				this.aCustomStyleClasses = [];
 			}
-			if (sStyleClass) {
+			if (sStyleClass && typeof sStyleClass === "string") {
 				// ensure the "class" attribute is not closed
 				if (sStyleClass.indexOf("\"") > -1) {
 					return this;
@@ -111,9 +111,9 @@ sap.ui.define(['jquery.sap.global', './Element'],
 
 
 		this.removeStyleClass = function(sStyleClass, bSuppressRerendering) { // bSuppressRerendering is experimental and hence undocumented
-			jQuery.sap.assert(sStyleClass && typeof sStyleClass === "string", "sStyleClass must be a string");
+			jQuery.sap.assert(typeof sStyleClass === "string", "sStyleClass must be a string");
 
-			if (sStyleClass && this.aCustomStyleClasses) {
+			if (sStyleClass && typeof sStyleClass === "string" && this.aCustomStyleClasses) {
 				for (var i = this.aCustomStyleClasses.length - 1; i >= 0; i--) {
 					if (this.aCustomStyleClasses[i] == sStyleClass) {
 						this.aCustomStyleClasses.splice(i, 1);
@@ -132,7 +132,7 @@ sap.ui.define(['jquery.sap.global', './Element'],
 
 
 		this.toggleStyleClass = function(sStyleClass, bAdd) {
-			jQuery.sap.assert(sStyleClass && typeof sStyleClass === "string", "sStyleClass must be a string");
+			jQuery.sap.assert(typeof sStyleClass === "string", "sStyleClass must be a string");
 
 			if (sStyleClass && typeof sStyleClass === "string") {
 				if (bAdd === true) {
@@ -151,9 +151,9 @@ sap.ui.define(['jquery.sap.global', './Element'],
 
 
 		this.hasStyleClass = function(sStyleClass) {
-			jQuery.sap.assert(sStyleClass && typeof sStyleClass === "string", "sStyleClass must be a string");
+			jQuery.sap.assert(typeof sStyleClass === "string", "sStyleClass must be a string");
 
-			if (sStyleClass && this.aCustomStyleClasses) {
+			if (sStyleClass && typeof sStyleClass === "string" && this.aCustomStyleClasses) {
 				for (var i = this.aCustomStyleClasses.length - 1; i >= 0; i--) {
 					if (this.aCustomStyleClasses[i] == sStyleClass) {
 						return true;
