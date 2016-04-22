@@ -196,6 +196,7 @@ QUnit.test("getFocusedItemInfo", function(assert) {
 	var oCell = getCell(1, 1, true);
 	var oInfo = TableUtils.getFocusedItemInfo(oTable);
 	assert.strictEqual(oInfo.cell, 14, "cell");
+	assert.strictEqual(oInfo.row, 2, "row");
 	assert.strictEqual(oInfo.columnCount, iNumberOfCols + 1 /*row header*/, "columnCount");
 	assert.strictEqual(oInfo.cellInRow, 2, "cellInRow");
 	assert.strictEqual(oInfo.cellCount, (iNumberOfCols + 1) * (3 /*visible rows*/ + 1), "cellCount");
@@ -204,6 +205,7 @@ QUnit.test("getFocusedItemInfo", function(assert) {
 	oCell = getCell(0, 0, true);
 	oInfo = TableUtils.getFocusedItemInfo(oTable);
 	assert.strictEqual(oInfo.cell, 7, "cell");
+	assert.strictEqual(oInfo.row, 1, "row");
 	assert.strictEqual(oInfo.columnCount, iNumberOfCols + 1 /*row header*/, "columnCount");
 	assert.strictEqual(oInfo.cellInRow, 1, "cellInRow");
 	assert.strictEqual(oInfo.cellCount, (iNumberOfCols + 1) * (3 /*visible rows*/ + 1), "cellCount");

@@ -112,6 +112,51 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 	});
 
 
+	QUnit.test("Action Mode on mouseup", function(assert) {
+		var oTestArgs = {};
+		var bSkipActionMode = false;
+		var bTestArguments = true;
+		var bHandlerCalled = false;
+
+		function testHandler (oArgs) {
+			assert.ok(!!oArgs, "Arguments given");
+			if (bTestArguments) {
+				assert.strictEqual(oArgs, oTestArgs, "Arguments forwarded as expected");
+			}
+			bHandlerCalled = true;
+		};
+
+		var oControl = new TestControl();
+		var oExtension = sap.ui.table.TableExtension.enrich(oControl, sap.ui.table.TableKeyboardExtension);
+		oExtension._delegate = {
+			enterActionMode : function(oArgs) {
+				testHandler(oArgs);
+				return !bSkipActionMode;
+			},
+			leaveActionMode : testHandler
+		};
+
+		oExtension.setActionMode(true, oTestArgs); //Set to action mode
+		assert.ok(oExtension.isInActionMode(), "In action mode again");
+		bHandlerCalled = false;
+		bTestArguments = false;
+		var oEvent = jQuery.Event({type: "mouseup"});
+		oControl._handleEvent(oEvent);
+		assert.ok(bHandlerCalled, "leaveActionMode called on mouseup");
+		assert.ok(!oExtension.isInActionMode(), "Not in action mode");
+		oExtension.setActionMode(true, oTestArgs); //Set to action mode
+		assert.ok(oExtension.isInActionMode(), "In action mode again");
+		bHandlerCalled = false;
+		oEvent = jQuery.Event({type: "mouseup"});
+		oEvent.setMarked();
+		oControl._handleEvent(oEvent);
+		assert.ok(!bHandlerCalled, "leaveActionMode not called on marked mouseup");
+		assert.ok(oExtension.isInActionMode(), "Still in action mode");
+
+		oControl.destroy();
+	});
+
+
 } else if (checkDelegateType("sap.ui.table.TableKeyboardDelegate2")) {
 
 //************************************************************************
