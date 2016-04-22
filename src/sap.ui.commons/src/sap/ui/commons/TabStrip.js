@@ -110,6 +110,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control',
 
 	TabStrip.prototype.init = function() {
 
+		this._bInitialized = true;
+
 		this._bRtl = sap.ui.getCore().getConfiguration().getRTL();
 		this._iCurrentScrollLeft = 0;
 		this._iMaxOffsetLeft = null;
@@ -270,6 +272,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control',
 	 * @private
 	 */
 	TabStrip.prototype.exit = function () {
+
+		this._bInitialized = false;
 
 		this._iCurrentScrollLeft = null;
 		this._iMaxOffsetLeft = null;
@@ -543,6 +547,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control',
 
 		// ensure that events from the controls in the panel are fired
 		jQuery.sap.delayedCall(0, this, function () {
+
+			if (!this._bInitialized) {
+				return;
+			}
 
 			var $panel = this.$().find('.sapUiTabPanel');
 
