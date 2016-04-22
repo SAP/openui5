@@ -68,6 +68,7 @@ sap.ui.define(['jquery.sap.global'],
 				cell: oIN.getFocusedIndex(),
 				columnCount: oIN.iColumns,
 				cellInRow: oIN.getFocusedIndex() % oIN.iColumns,
+				row: Math.floor(oIN.getFocusedIndex() / oIN.iColumns),
 				cellCount: oIN.getItemDomRefs().length,
 				domRef: oIN.getFocusedDomRef()
 			};
@@ -86,7 +87,7 @@ sap.ui.define(['jquery.sap.global'],
 		 */
 		getRowIndexOfFocusedCell : function(oTable) {
 			var oInfo = TableUtils.getFocusedItemInfo(oTable);
-			return Math.floor(oInfo.cell / oInfo.columnCount) - oTable._getHeaderRowCount();
+			return oInfo.row - oTable._getHeaderRowCount();
 		},
 
 		/*
