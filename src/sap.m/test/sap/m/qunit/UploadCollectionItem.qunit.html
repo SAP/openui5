@@ -270,6 +270,35 @@
 		assert.ok(this.oUploadCollectionItem.getSelected(), "Item has been selected");
 	});
 
+	QUnit.module("UploadCollectionItem with markers", {
+		beforeEach : function() {
+			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
+				markers : [ new sap.m.ObjectMarker({
+					type : "Locked",
+					visibility : "IconOnly"
+				})]
+			});
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oUploadCollectionItem.destroy();
+			this.oUploadCollectionItem.fireEvent.restore();
+		}
+	});
+
+	QUnit.test("Test accessing marker", function(assert) {
+		//Arrange
+		var eventSpy = sinon.stub(this.oUploadCollectionItem, "fireEvent");
+
+		//Act
+		var aMarkers = this.oUploadCollectionItem.getMarkers();
+
+		//Assert
+		assert.ok(aMarkers.length, 1);
+		assert.ok(aMarkers[0].getType(), sap.m.ObjectMarkerType.Locked);
+		assert.ok(aMarkers[0].getVisibility(), sap.m.ObjectMarkerVisibility.IconOnly);
+	});
+
 	QUnit.module("V. Test XMLHttpRequest", {
 		beforeEach : function() {
 			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({

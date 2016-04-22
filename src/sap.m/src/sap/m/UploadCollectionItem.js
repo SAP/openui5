@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.UploadCollectionItem.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/ObjectAttribute', 'sap/m/ObjectStatus', 'sap/ui/core/util/File'],
-	function(jQuery, library, Element, ObjectAttribute, ObjectStatus, FileUtil) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/ObjectAttribute', 'sap/m/ObjectStatus', 'sap/m/ObjectMarker', 'sap/ui/core/util/File'],
+	function(jQuery, library, Element, ObjectAttribute, ObjectStatus, ObjectMarker, FileUtil) {
 	"use strict";
 
 	/**
@@ -204,6 +204,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 				 */
 				statuses : {
 					type : "sap.m.ObjectStatus",
+					multiple : true
+				},
+				/**
+				 * Markers of an uploaded item
+				 * Markers will be displayed after an item has been uploaded
+				 * But not in Edit mode
+				 * @since 1.40
+				 */
+				markers : {
+					type : "sap.m.ObjectMarker",
 					multiple : true
 				}
 			},

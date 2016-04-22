@@ -28,6 +28,11 @@
 					"title":"First status' title",
 					"text":"First status' text"
 				}
+			],
+			"markers":[
+				{
+					"type":"Flagged"
+				}
 			]
 		}, {
 			"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcde",
@@ -63,6 +68,14 @@
 					"text":"None",
 					"state":"None"
 				}
+			],
+			"markers":[
+				{
+					"type":"Flagged"
+				},
+				{
+					"type":"Favorite"
+				}
 			]
 		}, {
 			"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcdf",
@@ -90,6 +103,11 @@
 					"title":"Status",
 					"text":"Success",
 					"state":"Success"
+				}
+			],
+			"markers":[
+				{
+					"type":"Locked"
 				}
 			]
 		}, {
@@ -121,6 +139,11 @@
 					"text":"Warning",
 					"state":"Warning"
 				}
+			],
+			"markers":[
+				{
+					"type":"Draft"
+				}
 			]
 		}, {
 			"documentId" : "34e484e4-a523-6c50-685b-e5ae66069250",
@@ -149,6 +172,23 @@
 					"title":"Status",
 					"text":"Error",
 					"state":"Error"
+				}
+			],
+			"markers":[
+				{
+					"type":"Draft"
+				},
+				{
+					"type":"Locked"
+				},
+				{
+					"type":"Favorite"
+				},
+				{
+					"type":"Unsaved"
+				},
+				{
+					"type":"Flagged"
 				}
 			]
 		}, {

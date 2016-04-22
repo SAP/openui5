@@ -34,7 +34,11 @@
 				"thumbnailUrl" : "",
 				"uploadedDate" : "2014-07-30",
 				"url" : "",
-				"ariaLabelForPicture" : "textForIconOfItemSusanBaker"
+				"ariaLabelForPicture" : "textForIconOfItemSusanBaker",
+				"markers" : [{
+					"type" : "Locked",
+					"visibility" : "IconAndText"
+				}]
 			},{
 				"contributor" : "John Smith",
 				"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcde",
@@ -43,7 +47,11 @@
 				"mimeType" : "text/plain",
 				"thumbnailUrl" : "",
 				"uploadedDate" : "2014-08-01",
-				"url" : "/pathToTheFile/Notes.txt"
+				"url" : "/pathToTheFile/Notes.txt",
+				"markers" : [{
+					"type" : "Locked",
+					"visibility" : "IconAndText"
+				}]
 			},{
 				"contributor" : "J Edgar Hoover",
 				"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcdf",
@@ -72,6 +80,11 @@
 			}]
 		};
 
+	var oMarkerTemplate = new sap.m.ObjectMarker({
+		type : "{type}",
+		visibility : "{visibility}"
+	});
+
 	var oItemTemplate = new sap.m.UploadCollectionItem({
 		contributor : "{contributor}",
 		documentId : "{documentId}",
@@ -83,7 +96,11 @@
 		thumbnailUrl : "{thumbnailUrl}",
 		uploadedDate : "{uploadedDate}",
 		url : "{url}",
-		ariaLabelForPicture : "{ariaLabelForPicture}"
+		ariaLabelForPicture : "{ariaLabelForPicture}",
+		markers : {
+			path : "markers",
+			template : oMarkerTemplate
+		}
 	});
 
 	var oModel = new sap.ui.model.json.JSONModel(oData);
@@ -116,6 +133,47 @@
 		assert.ok(jQuery.sap.domById(this.oUploadCollection.getId() + "-" + this.oUploadCollection._iFUCounter + "-uploader"), "FileUploader is rendered");
 	});
 
+	QUnit.test("Marker is rendered with text and icon", function(assert) {
+		//Arrange
+		//Act
+		var oFirstItem = this.oUploadCollection.getItems()[0];
+		var aMarkers = oFirstItem.getMarkers();
+
+		//Assert
+		assert.ok(aMarkers.length, 1);
+		assert.ok(aMarkers[0].$().hasClass("sapMUCObjectMarker"), "Css class sapMUCObjectMarker is present");
+	});
+
+	QUnit.test("Marker is rendered with the calculated width for the file name", function(assert) {
+		//Arrange
+		//Act
+		var oFirstItem = this.oUploadCollection.getItems()[0];
+		var $FileName = this.oUploadCollection.$().find("#" + oFirstItem.getId() + "-ta_filenameHL");
+		var sFileNameStyle = $FileName.attr("style");
+
+		//Assert
+		assert.ok(sFileNameStyle.indexOf("max-width: calc(100%") >= 0, "FileName max width was calculated due to marker presence");
+	});
+
+	QUnit.test("Marker is not displayed when the item is in edit mode", function(assert) {
+		//Arrange
+		var oFirstItem = this.oUploadCollection.getItems()[0];
+		var oMarkerFirstItem = oFirstItem.getMarkers()[0];
+		var oSecondItem = this.oUploadCollection.getItems()[1];
+		var oMarkerSecondItem = oSecondItem.getMarkers()[0];
+		oFirstItem.setEnableEdit(true);
+		oFirstItem._status = "Edit";
+		this.oUploadCollection.rerender();
+		//Act
+		var $MarkerContainerFirstItem = jQuery.sap.domById(oMarkerFirstItem.getId()).parentNode;
+		var sMarkerFirstItemStyle = $MarkerContainerFirstItem.getAttribute("style");
+		var $MarkerContainerSecondItem = jQuery.sap.domById(oMarkerSecondItem.getId()).parentNode;
+		var sMarkerSecondItemStyle = $MarkerContainerSecondItem.getAttribute("style");
+
+		//Assert
+		assert.ok(sMarkerFirstItemStyle.indexOf("display: none") >= 0, "First Item in edit mode: Marker not displayed");
+		assert.ok(!sMarkerSecondItemStyle || sMarkerSecondItemStyle.indexOf("display: none") === -1, "Second Item in normal mode: Marker is displayed");
+	});
 
 	/* --------------------------------------- */
 	/* Test methods                            */
@@ -144,7 +202,7 @@
 		}
 	});
 
-	QUnit.test("Set number of attachments title (defaul text)", function(assert) {
+	QUnit.test("Set number of attachments title (default text)", function(assert) {
 		var sText = this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_ATTACHMENTS", [999]);
 		this.oUploadCollection._setNumberOfAttachmentsTitle(999);
 		assert.strictEqual(this.oUploadCollection._oNumberOfAttachmentsTitle.getText(), sText, "Correct Title text for number of attachments.");
