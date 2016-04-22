@@ -128,7 +128,6 @@ sap.ui.require([
 		var oType = new BooleanType();
 
 		this.mock(jQuery.sap.log).expects("warning")
-			.once()
 			.withExactArgs("Illegal nullable: foo", null, "sap.ui.model.odata.type.Boolean");
 
 		oType = new BooleanType({}, {nullable : false});

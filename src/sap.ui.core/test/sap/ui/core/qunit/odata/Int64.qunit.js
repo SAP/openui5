@@ -55,7 +55,7 @@ sap.ui.require([
 
 			if (oFixture.warning) {
 				this.mock(jQuery.sap.log).expects("warning")
-				.once().withExactArgs(oFixture.warning, null, "sap.ui.model.odata.type.Int64");
+					.withExactArgs(oFixture.warning, null, "sap.ui.model.odata.type.Int64");
 			} else {
 				this.mock(jQuery.sap.log).expects("warning").never();
 			}

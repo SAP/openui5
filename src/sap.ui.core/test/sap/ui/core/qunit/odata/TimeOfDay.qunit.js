@@ -77,7 +77,7 @@ sap.ui.require([
 		QUnit.test("illegal nullable value " + sNullable, function (assert) {
 			var oType;
 
-			this.oLogMock.expects("warning").once()
+			this.oLogMock.expects("warning")
 				.withExactArgs("Illegal nullable: " + sNullable, null,
 					"sap.ui.model.odata.type.TimeOfDay");
 

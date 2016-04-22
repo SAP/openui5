@@ -193,8 +193,8 @@ sap.ui.require([
 		QUnit.test("nullable", function (assert) {
 			oType.validateValue(null);
 
-			this.mock(jQuery.sap.log).expects("warning").withExactArgs("Illegal nullable: 42",
-				null, sName);
+			this.mock(jQuery.sap.log).expects("warning")
+				.withExactArgs("Illegal nullable: 42", null, sName);
 
 			oType = new (jQuery.sap.getObject(sName))({});
 			assert.strictEqual(oType.oConstraints, undefined);

@@ -66,7 +66,7 @@ sap.ui.require([
 
 			if (oFixture.warning) {
 				this.mock(jQuery.sap.log).expects("warning")
-				.once().withExactArgs(oFixture.warning, null, "sap.ui.model.odata.type.Decimal");
+					.withExactArgs(oFixture.warning, null, "sap.ui.model.odata.type.Decimal");
 			} else {
 				this.mock(jQuery.sap.log).expects("warning").never();
 			}

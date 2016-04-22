@@ -49,7 +49,7 @@ sap.ui.require([
 	QUnit.test("default nullable is true", function (assert) {
 		var oType = new Guid({}, {nullable : false});
 
-		this.mock(jQuery.sap.log).expects("warning").once()
+		this.mock(jQuery.sap.log).expects("warning")
 			.withExactArgs("Illegal nullable: foo", null, "sap.ui.model.odata.type.Guid");
 
 		oType = new Guid(null, {nullable : "foo"});

@@ -197,8 +197,8 @@ sap.ui.require([
 
 		oHelperMock = this.oSandbox.mock(_ODataHelper);
 		oHelperMock.expects("buildQueryOptions")
-			.withExactArgs(this.oModel.mUriParameters, mParameters,
-				["$expand", "$filter", "$orderby", "$select"])
+			.withExactArgs(sinon.match.same(this.oModel.mUriParameters),
+				sinon.match.same(mParameters), ["$expand", "$filter", "$orderby", "$select"])
 			.returns(mQueryOptions);
 		this.oSandbox.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES(ID='1')",
@@ -498,7 +498,7 @@ sap.ui.require([
 
 		["change", "dataRequested", "dataReceived"].forEach(function (sEvent) {
 			oContextBindingMock.expects("attachEvent")
-				.withExactArgs(sEvent, mEventParameters).returns(oReturn);
+				.withExactArgs(sEvent, sinon.match.same(mEventParameters)).returns(oReturn);
 
 			assert.strictEqual(oContextBinding.attachEvent(sEvent, mEventParameters), oReturn);
 		});
@@ -518,7 +518,7 @@ sap.ui.require([
 		oModelMock.expects("getGroupId").withExactArgs().returns("baz");
 		oModelMock.expects("getUpdateGroupId").twice().withExactArgs().returns("fromModel");
 
-		oHelperMock.expects("buildBindingParameters").withExactArgs(mParameters)
+		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters))
 			.returns({$$groupId : "foo", $$updateGroupId : "bar"});
 
 		// code under test
@@ -526,14 +526,15 @@ sap.ui.require([
 		assert.strictEqual(oBinding.getGroupId(), "foo");
 		assert.strictEqual(oBinding.getUpdateGroupId(), "bar");
 
-		oHelperMock.expects("buildBindingParameters").withExactArgs(mParameters)
+		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters))
 			.returns({$$groupId : "foo"});
 		// code under test
 		oBinding = this.oModel.bindContext("/EMPLOYEES('4711')", undefined, mParameters);
 		assert.strictEqual(oBinding.getGroupId(), "foo");
 		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
 
-		oHelperMock.expects("buildBindingParameters").withExactArgs(mParameters).returns({});
+		oHelperMock.expects("buildBindingParameters")
+			.withExactArgs(sinon.match.same(mParameters)).returns({});
 		// code under test
 		oBinding = this.oModel.bindContext("/EMPLOYEES('4711')", undefined, mParameters);
 		assert.strictEqual(oBinding.getGroupId(), "baz");
@@ -949,7 +950,7 @@ sap.ui.require([
 			.withArgs(sinon.match.same(this.oModel.oRequestor), "ActionImport")
 			.returns(oSingleCache);
 		this.oSandbox.mock(this.oModel).expects("reportError").withExactArgs(
-			"Failed to execute " + sPath, sClassName, oChangeHandlerError);
+			"Failed to execute " + sPath, sClassName, sinon.match.same(oChangeHandlerError));
 
 		oContextBinding.attachChange(function () {
 			throw oChangeHandlerError;

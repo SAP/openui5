@@ -157,7 +157,7 @@ sap.ui.require([
 			oType.validateValue(null); // does not throw
 			assert.strictEqual(oType.oConstraints, undefined, "nullable: true");
 
-			this.mock(jQuery.sap.log).expects("warning").once()
+			this.mock(jQuery.sap.log).expects("warning")
 				.withExactArgs("Illegal nullable: ", null, "sap.ui.model.odata.type.String");
 
 			oType = new StringType(null, {nullable : ""});

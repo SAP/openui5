@@ -294,7 +294,8 @@ sap.ui.require([
 
 		// reject...
 		oExpectation.returns(oSyncPromise);
-		oTestContext.oSandbox.mock(Promise).expects("resolve").withExactArgs(oSyncPromise)
+		oTestContext.oSandbox.mock(Promise).expects("resolve")
+			.withExactArgs(sinon.match.same(oSyncPromise))
 			.returns(oRejectedPromise); // return any promise (this is not unwrapping!)
 
 		// request (promise still pending!)
@@ -1069,7 +1070,8 @@ sap.ui.require([
 			sPath = "foo",
 			oValue = {};
 
-		this.oSandbox.mock(this.oMetaModel).expects("getProperty").withExactArgs(sPath, oContext)
+		this.oSandbox.mock(this.oMetaModel).expects("getProperty")
+			.withExactArgs(sPath, sinon.match.same(oContext))
 			.returns(oValue);
 
 		// code under test
@@ -1182,7 +1184,7 @@ sap.ui.require([
 			aSorters = [];
 
 		this.oSandbox.mock(oMetaModel).expects("_getObject")
-			.withExactArgs(sPath, oContext)
+			.withExactArgs(sPath, sinon.match.same(oContext))
 			.returns({
 				"ID" : {/*...*/},
 				"AGE" : {/*...*/},
@@ -1220,7 +1222,7 @@ sap.ui.require([
 		// further tests regarding the getter provided to FilterProcessor.apply()
 		fnGetValue = fnApply.args[0][2];
 		this.oSandbox.mock(this.oMetaModel).expects("getProperty")
-			.withExactArgs("fooPath", oBinding.oList[aIndices[0]])
+			.withExactArgs("fooPath", sinon.match.same(oBinding.oList[aIndices[0]]))
 			.returns("foo");
 
 		// code under test: "@sapui.name" is treated specially

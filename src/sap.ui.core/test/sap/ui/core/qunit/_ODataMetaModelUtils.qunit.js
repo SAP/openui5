@@ -5,7 +5,7 @@ sap.ui.require([
 	"jquery.sap.global",
 	'sap/ui/model/odata/_ODataMetaModelUtils'
 ], function (jQuery, Utils) {
-	/*global QUnit */
+	/*global QUnit, sinon */
 	"use strict";
 
 	var oContactAnnotationFromV2 = {
@@ -820,7 +820,7 @@ sap.ui.require([
 
 		// Define expectations
 		this.mock(Utils).expects("addFilterRestriction")
-			.withExactArgs(oProperty, oEntitySet).returns("");
+			.withExactArgs(sinon.match.same(oProperty), oEntitySet).returns("");
 
 		// run code under test
 		Utils.calculateEntitySetAnnotations(oEntitySet, oEntityType);

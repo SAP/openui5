@@ -276,7 +276,7 @@ sap.ui.require([
 			this.oSandbox.mock(oModel.oRequestor).expects("request")
 				//TODO remove usage of oModel._sQuery once cache is used for all CRUD operations
 				.withExactArgs("POST", "EMPLOYEES" + oModel._sQuery, undefined, null,
-					oEmployeeData).returns(oPromise);
+					sinon.match.same(oEmployeeData)).returns(oPromise);
 
 			assert.strictEqual(oModel.create("/EMPLOYEES", oEmployeeData), oPromise);
 		});
@@ -349,7 +349,7 @@ sap.ui.require([
 			oMetaModelMock = this.oSandbox.mock(oMetaModel);
 
 		oMetaModelMock.expects("requestCanonicalUrl")
-			.withExactArgs("/", oEntityContext.getPath(), oEntityContext)
+			.withExactArgs("/", oEntityContext.getPath(), sinon.match.same(oEntityContext))
 			.returns(Promise.resolve("/EMPLOYEES(ID='1')"));
 
 		return oModel.requestCanonicalPath(oEntityContext).then(function (sCanonicalPath) {

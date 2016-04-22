@@ -861,7 +861,7 @@ sap.ui.require([
 
 			fnGetValue = fnApply.args[0][2];
 			oGlobalSandbox.mock(oMetaModel).expects("getProperty")
-				.withExactArgs("0/namespace", oBinding.oList["schema"])
+				.withExactArgs("0/namespace", sinon.match.same(oBinding.oList["schema"]))
 				.returns("foo");
 
 			// code under test

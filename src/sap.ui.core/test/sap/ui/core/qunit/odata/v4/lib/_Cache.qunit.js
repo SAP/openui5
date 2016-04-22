@@ -362,7 +362,7 @@ sap.ui.require([
 		assert.strictEqual(_Cache.buildQueryString(undefined), "");
 
 		oCacheMock.expects("convertQueryOptions")
-			.withExactArgs(oQueryParams).returns(oConvertedQueryParams);
+			.withExactArgs(sinon.match.same(oQueryParams)).returns(oConvertedQueryParams);
 		this.oSandbox.mock(_Helper).expects("buildQuery")
 			.withExactArgs(sinon.match.same(oConvertedQueryParams)).returns("?query");
 
@@ -487,7 +487,7 @@ sap.ui.require([
 			sResourcePath = "Employees('1')";
 
 		this.oSandbox.mock(_Cache).expects("buildQueryString")
-			.withExactArgs(mQueryParams).returns("?~");
+			.withExactArgs(sinon.match.same(mQueryParams)).returns("?~");
 		this.oSandbox.mock(oRequestor).expects("request")
 			.withExactArgs("GET", sResourcePath + "?~", "group")
 			.returns(Promise.resolve(oExpectedResult));
@@ -677,10 +677,10 @@ sap.ui.require([
 			oResult2 = {};
 
 		oRequestorMock.expects("request")
-			.withExactArgs("POST", sResourcePath, sGroupId, undefined, oPostData)
+			.withExactArgs("POST", sResourcePath, sGroupId, undefined, sinon.match.same(oPostData))
 			.returns(Promise.resolve(oResult1));
 		oRequestorMock.expects("request")
-			.withExactArgs("POST", sResourcePath, sGroupId, undefined, oPostData)
+			.withExactArgs("POST", sResourcePath, sGroupId, undefined, sinon.match.same(oPostData))
 			.returns(Promise.resolve(oResult2));
 
 		// code under test
@@ -720,7 +720,7 @@ sap.ui.require([
 			oCache = _Cache.createSingle(oRequestor, sResourcePath, undefined, false, true);
 
 		oRequestorMock.expects("request").twice()
-			.withExactArgs("POST", sResourcePath, sGroupId, undefined, oPostData)
+			.withExactArgs("POST", sResourcePath, sGroupId, undefined, sinon.match.same(oPostData))
 			.returns(Promise.reject(new Error(sMessage)));
 
 		// code under test

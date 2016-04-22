@@ -58,7 +58,7 @@ sap.ui.require([
 			oPathValue = {path : "/path/to/foo", value : {foo : "bar"}},
 			sMessage = oPathValue.path + ": " + sErrorText;
 
-		this.mock(jQuery.sap.log).expects("error").once().withExactArgs(sMessage,
+		this.mock(jQuery.sap.log).expects("error").withExactArgs(sMessage,
 			Basics.toErrorString(oPathValue.value), "sap.ui.model.odata.AnnotationHelper");
 
 		assert.throws(function () {
@@ -87,8 +87,8 @@ sap.ui.require([
 				if (vTest === oFixture.ok) {
 					this.mock(Basics).expects("error").never();
 				} else {
-					this.mock(Basics).expects("error").once()
-						.withExactArgs(oPathValue, "Expected " + oFixture.type);
+					this.mock(Basics).expects("error")
+						.withExactArgs(sinon.match.same(oPathValue), "Expected " + oFixture.type);
 				}
 
 				Basics.expectType(oPathValue, oFixture.type);
@@ -120,7 +120,8 @@ sap.ui.require([
 					oResult,
 					oBasics = this.mock(Basics);
 
-				oBasics.expects("expectType").withExactArgs(oStart, oFixture.type);
+				oBasics.expects("expectType")
+					.withExactArgs(sinon.match.same(oStart), oFixture.type);
 				oBasics.expects("expectType").exactly(bTestProperty ? 1 : 0)
 					.withExactArgs(oEnd, "string");
 
@@ -136,7 +137,8 @@ sap.ui.require([
 	QUnit.test("property", function (assert) {
 		var oPathValue = {};
 
-		this.mock(Basics).expects("descend").once().withExactArgs(oPathValue, "p", "string")
+		this.mock(Basics).expects("descend")
+			.withExactArgs(sinon.match.same(oPathValue), "p", "string")
 			.returns({value : "foo"});
 
 		assert.strictEqual(Basics.property(oPathValue, "p", "string"), "foo");
