@@ -3405,7 +3405,9 @@ sap.ui.define([
 	 * @param {string} [mParameters.eTag] If the functionImport changes an entity, the eTag for this entity could be passed with this parameter
 	 * @param {string} [mParameters.changeSetId] changeSetId for this request
 	 *
-	 * @return {object} oRequestHandle An object which has an <code>abort</code> function to abort the current request.
+	 * @return {object} oRequestHandle An object which has a <code>contextCreated</code> function that returns a <code>Promise</code>.
+	 *         This resolves with the created {@link sap.ui.model.Context}.
+	 *         In addition it has an <code>abort</code> function to abort the current request.
 	 *
 	 * @public
 	 *
