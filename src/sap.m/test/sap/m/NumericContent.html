@@ -52,53 +52,37 @@
 		iconDesc : "icon image",
 		withMargin : true,
 		icon: "sap-icon://travel-expense"
-	}
+	};
 	var oConfModel = new sap.ui.model.json.JSONModel();
 	oConfModel.setData(oConfData);
 	sap.ui.getCore().setModel(oConfModel);
-	var aNCs = [];
 	var fnPress = function(oEvent) {
 		sap.m.MessageToast.show("The numeric content is pressed.");
 	};
-	var buildNC = function(sSize, sText) {
-		var oNC = new sap.m.NumericContent("configurable-nc-"
-				+ sSize, {
-			formatterValue : "{/isFormatterValue}",
-			icon : "{/icon}",
-			indicator : "{/indicator}",
-			nullifyValue : "{/nullifyValue}",
-			scale : "{/scale}",
-			size : sSize,
-			state : "{/state}",
-			truncateValueTo : "{/truncateValueTo}",
-			value : "{/value}",
-			valueColor : "{/valueColor}",
-			tooltip : "{/tooltip}",
-			iconDescription : "{/iconDesc}",
-			withMargin : "{/withMargin}",
-			press : fnPress
-		});
-		aNCs.push(oNC);
-		return oNC;
-	};
-	var oNCL = buildNC("L", "large");
-	var oNCM = buildNC("M", "medium");
-	var oNCS = buildNC("S", "small");
-	var oNCAuto = buildNC("Auto", "auto");
-	var buildNCFB = function(sSize, oNC) {
-		return new sap.m.FlexBox("nc-fb" + sSize, {
-			items : [ oNC ],
-			layoutData : new sap.ui.commons.layout.ResponsiveFlowLayoutData({
-				minWidth : 370
-			}),
-			height : "95px"
-		});
-	};
-	var oControlForm = new sap.ui.layout.form.SimpleForm(
-			"numeric-content-form", {
-				content : [ buildNCFB("L", oNCL), buildNCFB("M", oNCM),
-						buildNCFB("S", oNCS), buildNCFB("Auto", oNCAuto) ]
-			});
+	var oNumericContent = new sap.m.NumericContent("configurable-nc-", {
+		formatterValue : "{/isFormatterValue}",
+		icon : "{/icon}",
+		indicator : "{/indicator}",
+		nullifyValue : "{/nullifyValue}",
+		scale : "{/scale}",
+		state : "{/state}",
+		truncateValueTo : "{/truncateValueTo}",
+		value : "{/value}",
+		valueColor : "{/valueColor}",
+		tooltip : "{/tooltip}",
+		iconDescription : "{/iconDesc}",
+		withMargin : "{/withMargin}",
+		press : fnPress
+	});
+	oNumericContent.addStyleClass("sapUiSmallMargin");
+	var oFlexBox = sap.m.FlexBox("nc-fb", {
+		items : [ oNumericContent ],
+		alignItems: "Start",
+		justifyContent: "SpaceAround"
+	});
+	var oControlForm = new sap.ui.layout.form.SimpleForm("numeric-content-form", {
+		content : [ oFlexBox ]
+	});
 	var oScaleLbl = new sap.m.Label({
 		text : "Scale",
 		labelFor : "scale-value"
@@ -166,26 +150,27 @@
 			oConfModel.checkUpdate();
 		},
 		items : [
-				new sap.ui.core.Item("actual-value-color-no-color", {
-					key : "NoColor",
-					text : "No color"
-				}),
-				new sap.ui.core.Item("actual-value-color-" + sap.m.ValueColor.Neutral, {
-					key : sap.m.ValueColor.Neutral,
-					text : sap.m.ValueColor.Neutral
-				}),
-				new sap.ui.core.Item("actual-value-color-" + sap.m.ValueColor.Good, {
-					key : sap.m.ValueColor.Good,
-					text : sap.m.ValueColor.Good
-				}),
-				new sap.ui.core.Item("actual-value-color-" + sap.m.ValueColor.Critical, {
-					key : sap.m.ValueColor.Critical,
-					text : sap.m.ValueColor.Critical
-				}),
-				new sap.ui.core.Item("actual-value-color-" + sap.m.ValueColor.Error, {
-					key : sap.m.ValueColor.Error,
-					text : sap.m.ValueColor.Error
-				}) ],
+			new sap.ui.core.Item("actual-value-color-no-color", {
+				key : "NoColor",
+				text : "No color"
+			}),
+			new sap.ui.core.Item("actual-value-color-" + sap.m.ValueColor.Neutral, {
+				key : sap.m.ValueColor.Neutral,
+				text : sap.m.ValueColor.Neutral
+			}),
+			new sap.ui.core.Item("actual-value-color-" + sap.m.ValueColor.Good, {
+				key : sap.m.ValueColor.Good,
+				text : sap.m.ValueColor.Good
+			}),
+			new sap.ui.core.Item("actual-value-color-" + sap.m.ValueColor.Critical, {
+				key : sap.m.ValueColor.Critical,
+				text : sap.m.ValueColor.Critical
+			}),
+			new sap.ui.core.Item("actual-value-color-" + sap.m.ValueColor.Error, {
+				key : sap.m.ValueColor.Error,
+				text : sap.m.ValueColor.Error
+			})
+		],
 		selectedItem : "actual-value-color-Good"
 	});
 	var oDeviationChangeLbl = new sap.m.Label({
@@ -199,21 +184,22 @@
 			oConfModel.checkUpdate();
 		},
 		items : [
-				new sap.ui.core.Item("deviation-change-"
-						+ sap.m.DeviationIndicator.None, {
-					key : sap.m.DeviationIndicator.None,
-					text : sap.m.DeviationIndicator.None
-				}),
-				new sap.ui.core.Item("deviation-change-"
-						+ sap.m.DeviationIndicator.Up, {
-					key : sap.m.DeviationIndicator.Up,
-					text : sap.m.DeviationIndicator.Up
-				}),
-				new sap.ui.core.Item("deviation-change-"
-						+ sap.m.DeviationIndicator.Down, {
-					key : sap.m.DeviationIndicator.Down,
-					text : sap.m.DeviationIndicator.Down
-				}) ],
+			new sap.ui.core.Item("deviation-change-"
+					+ sap.m.DeviationIndicator.None, {
+				key : sap.m.DeviationIndicator.None,
+				text : sap.m.DeviationIndicator.None
+			}),
+			new sap.ui.core.Item("deviation-change-"
+					+ sap.m.DeviationIndicator.Up, {
+				key : sap.m.DeviationIndicator.Up,
+				text : sap.m.DeviationIndicator.Up
+			}),
+			new sap.ui.core.Item("deviation-change-"
+					+ sap.m.DeviationIndicator.Down, {
+				key : sap.m.DeviationIndicator.Down,
+				text : sap.m.DeviationIndicator.Down
+			})
+		],
 		selectedItem : "deviation-change-Up"
 	});
 	var oFormatterValueChangeLbl = new sap.m.Label({
@@ -249,22 +235,24 @@
 			oConfData.icon = sSelectedItem;
 			oConfModel.checkUpdate();
 		},
-		items : [ new sap.ui.core.Item("icon-item-1", {
-			key : undefined,
-			text : "No icon"
-		}), new sap.ui.core.Item("icon-item-2", {
-			key : "images/grass.jpg",
-			text : "grass.jpg"
-		}), new sap.ui.core.Item("icon-item-3", {
-			key : "demokit/images/persons/img_contacts_02.png",
-			text : "img_contacts_02.png"
-		}), new sap.ui.core.Item("icon-item-4", {
-			key : "sap-icon://travel-expense",
-			text : "travel-expense"
-		}), new sap.ui.core.Item("icon-item-5", {
-			key : "sap-icon://customer-financial-fact-sheet",
-			text : "customer-financial-fact-sheet"
-		}), ],
+		items : [
+			new sap.ui.core.Item("icon-item-1", {
+				key : undefined,
+				text : "No icon"
+			}), new sap.ui.core.Item("icon-item-2", {
+				key : "images/grass.jpg",
+				text : "grass"
+			}), new sap.ui.core.Item("icon-item-3", {
+				key : "images/analytics_64.png",
+				text : "analytics"
+			}), new sap.ui.core.Item("icon-item-4", {
+				key : "sap-icon://travel-expense",
+				text : "travel-expense"
+			}), new sap.ui.core.Item("icon-item-5", {
+				key : "sap-icon://customer-financial-fact-sheet",
+				text : "customer-financial-fact-sheet"
+			})
+		],
 		selectedItem : "icon-item-4"
 	});
 	var oPressLbl = new sap.m.Label({
@@ -274,14 +262,12 @@
 	var oPressSwtch = new sap.m.Switch({
 		id : "press-action",
 		state : true,
-		change : function(oE) {
-			var bState = oE.getParameter("state");
-			for (var i = 0; i < aNCs.length; i++) {
-				if (bState) {
-					aNCs[i].attachPress(fnPress);
-				} else {
-					aNCs[i].detachPress(fnPress);
-				}
+		change : function(oEvent) {
+			var bState = oEvent.getParameter("state");
+			if (bState) {
+				oNumericContent.attachPress(fnPress);
+			} else {
+				oNumericContent.detachPress(fnPress);
 			}
 		}
 	});
@@ -289,13 +275,11 @@
 		text : "Tooltip",
 		labelFor : "tooltip"
 	});
-	var oTooltipInput = new sap.m.TextArea(
-			"tooltip",
-			{
-				rows : 3,
-				placeholder : 'Enter tooltip (use {AltText} for inserting the default text) ...',
-				value : "{/tooltip}"
-			});
+	var oTooltipInput = new sap.m.TextArea("tooltip", {
+		rows : 3,
+		placeholder : "Enter tooltip (use {AltText} for inserting the default text) ...",
+		value : "{/tooltip}"
+	});
 	var oTooltipSwtchLbl = new sap.m.Label({
 		text : "QuickView Tooltip",
 		labelFor : "tooltip-swtch"
@@ -304,16 +288,14 @@
 		id : "tooltip-swtch",
 		state : false,
 		name : "QuickView tooltip",
-		change : function(oE) {
-			var bState = oE.getParameter("state");
-			for (var i = 0; i < aNCs.length; i++) {
-				aNCs[i].setTooltip(bState ? new sap.ui.ux3.QuickView({
-					content : new sap.m.Text({
-						text : oTooltipInput.getValue().split("{AltText}")
-								.join(aNCs[i].getAltText())
-					})
-				}) : oTooltipInput.getValue());
-			}
+		change : function(oEvent) {
+			var bState = oEvent.getParameter("state");
+			oNumericContent.setTooltip(bState ? new sap.ui.ux3.QuickView({
+				content : new sap.m.Text({
+					text : oTooltipInput.getValue().split("{AltText}")
+							.join(oNumericContent.getAltText())
+				})
+			}) : oTooltipInput.getValue());
 		}
 	});
 	var oIconDescLbl = new sap.m.Label({
@@ -322,24 +304,64 @@
 	});
 	var oIconDescInput = new sap.m.TextArea("iconDesc", {
 		rows : 1,
-		placeholder : '',
 		value : "{/iconDesc}"
+	});
+	var oSizeLbl = new sap.m.Label({
+		text : "Size",
+		labelFor : "size-value"
+	});
+	var bBtnEnabled = (window.innerWidth < 375) ? false: true;
+	var oSizeButton = new sap.m.Button("size-button", {
+		press : function(oEvent) {
+			var sTheme = sap.ui.getCore().getConfiguration().getTheme();
+			sap.ui.getCore().applyTheme(sTheme);
+			var url = window.location.href;
+			window.open(url, "", "height=900,width=370,top=0,left=0,toolbar=no,menubar=no");
+		},
+		enabled: bBtnEnabled,
+		text: "Open new page with small screen size",
+		width: "300px"
 	});
 	var oInputForm = new sap.ui.layout.form.SimpleForm("controls", {
 		maxContainerCols : 2,
 		editable : true,
-		content : [ new sap.ui.core.Title({
-			text : "Modify Numeric Content"
-		}), oScaleLbl, oScaleInput, oValueLbl, oValueInput, oTriggerLoadLbl,
-				oTriggerLoadSlct, oValueColorChangeLbl, oValueColorChangeSlct,
-				oTruncateLbl, oTruncateInput, oDeviationChangeLbl,
-				oDeviationChangeSlct, oFormatterValueChangeLbl,
-				oFormattedCheckBox, oNullifyLbl, oNullifyCheckBox, oIconLbl,
-				oIconSlct, oIconDescLbl, oIconDescInput, oPressLbl,
-				oPressSwtch, oTooltipLbl, oTooltipInput, oTooltipSwtchLbl,
-				oTooltipSwtch, new sap.m.Label({
-					text : "With Margin"
-				}), oWithMarginCheckBox ]
+		content : [
+			new sap.ui.core.Title({
+				text : "Modify Numeric Content"
+			}),
+			oScaleLbl,
+			oScaleInput,
+			oValueLbl,
+			oValueInput,
+			oTriggerLoadLbl,
+			oTriggerLoadSlct,
+			oValueColorChangeLbl,
+			oValueColorChangeSlct,
+			oTruncateLbl,
+			oTruncateInput,
+			oDeviationChangeLbl,
+			oDeviationChangeSlct,
+			oFormatterValueChangeLbl,
+			oFormattedCheckBox,
+			oNullifyLbl,
+			oNullifyCheckBox,
+			oIconLbl,
+			oIconSlct,
+			oIconDescLbl,
+			oIconDescInput,
+			oPressLbl,
+			oPressSwtch,
+			oTooltipLbl,
+			oTooltipInput,
+			oTooltipSwtchLbl,
+			oTooltipSwtch,
+			new sap.m.Label({
+				text : "With Margin"
+			}),
+			oWithMarginCheckBox,
+			oSizeLbl,
+			oSizeButton
+		]
 	});
 	var oPage = new sap.m.Page("initial-page", {
 		showHeader : false,

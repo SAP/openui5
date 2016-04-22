@@ -82,9 +82,15 @@
 	var editableSimpleForm = new sap.ui.layout.form.SimpleForm("controls", {
 		maxContainerCols : 2,
 		editable : true,
-		content : [new sap.ui.core.Title({
-			text : "Modify Image Content"
-		}), oPictureLbl, oPictureSlct, oPressLbl, oPressSwtch, ]
+		content : [
+			new sap.ui.core.Title ({
+				text : "Modify Image Content"
+			}),
+			oPictureLbl,
+			oPictureSlct,
+			oPressLbl,
+			oPressSwtch
+		]
 	});
 
 	var oPage = new sap.m.Page({
