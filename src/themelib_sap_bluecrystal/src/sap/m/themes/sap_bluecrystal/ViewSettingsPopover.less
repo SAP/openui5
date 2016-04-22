@@ -12,7 +12,10 @@
 }
 
 .sap-phone, .sap-tablet:not(.sap-desktop) {
-	.sapMTB.sapMVSDFilterHeaderToolbar .sapMBarChild.sapMCb:focus {
-		outline: none;
+	.sapMVSPopover {
+		.sapMLIBSelectM > .sapMCb:focus,
+		.sapMBarChild.sapMCb:focus {
+			outline: none;
+		}
 	}
 }
