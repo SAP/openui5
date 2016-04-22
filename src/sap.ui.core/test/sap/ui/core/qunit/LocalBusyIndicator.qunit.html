@@ -73,6 +73,53 @@
 			}, 1200);
 		});
 
+		QUnit.test("Check suppressed events", function(assert) {
+			var done = assert.async();
+			this.oListBox.setBusyIndicatorDelay(0);
+			this.oListBox.setBusy(true);
+			var $LB = this.oListBox.$();
+
+			var aPreventedEvents = [
+				"focusin",
+				"focusout",
+				"keydown",
+				"keypress",
+				"keyup",
+				"mousedown",
+				"touchstart",
+				"touchmove",
+				"mouseup",
+				"touchend",
+				"click"
+			];
+
+			setTimeout(function() {
+				var bNotHandled = true;
+				var fnEventistener = function(oEvent) {
+					bNotHandled = false;
+				};
+
+				for (var i = 0; i < aPreventedEvents.length; i++) {
+					$LB.bind(aPreventedEvents[i], fnEventistener);
+
+					try {
+						sap.ui.test.qunit.triggerEvent(aPreventedEvents[i], $LB);
+
+						assert.ok(bNotHandled, "Event '" + aPreventedEvents[i] + "' suppressed");
+					} catch (ex) {
+						assert.ok(false, "Event '" + aPreventedEvents[i] + "' NOT suppressed");
+					}
+
+					$LB.unbind(aPreventedEvents[i], fnEventistener);
+					bNotHandled = true;
+
+					if ((i + 1) === aPreventedEvents.length) {
+						done();
+					}
+				}
+			}.bind(this), 250);
+		});
+
 		QUnit.module("Open and Close", {
 			beforeEach : function() {
 				this.oListBox = new sap.ui.commons.ListBox({
