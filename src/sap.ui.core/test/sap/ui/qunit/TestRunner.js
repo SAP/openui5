@@ -440,7 +440,7 @@
 				var $test = jQuery(aTestResults[i]);
 				var sTestSummary = $test.find("strong").text();
 
-				var m = sTestSummary.match(/^(.*)\((\d+)(?:,\s*(\d+),\s*(\d+))?\)\s*$/);
+				var m = sTestSummary.match(/^([\S\s]*)\((\d+)(?:,\s*(\d+),\s*(\d+))?\)\s*$/);
 				var sTestName;
 				var sNumFailed;
 				var sNumPassed;
