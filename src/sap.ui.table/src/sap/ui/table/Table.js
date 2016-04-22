@@ -2192,56 +2192,48 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	};
 
 	/**
-	 * updates the vertical scrollbar
+	 * Toggles the visibility of the Vertical Scroll Bar/Paginator.
 	 * @private
 	 */
 	Table.prototype._toggleVSb = function() {
 		var $this = this.$();
-		var bHasVsb = $this.hasClass("sapUiTableVScr");
 		var oBinding = this.getBinding("rows");
-		if (oBinding) {
-			// check for paging mode or scrollbar mode
-			if (this._oPaginator && this.getNavigationMode() === sap.ui.table.NavigationMode.Paginator) {
-				// update the paginator (set the first visible row property)
-				var iNumberOfPages = Math.ceil((this._iBindingLength || 0) / this.getVisibleRowCount());
-				this._oPaginator.setNumberOfPages(iNumberOfPages);
-				var iPage = Math.min(iNumberOfPages, Math.ceil((this.getFirstVisibleRow() + 1) / this.getVisibleRowCount()));
-				this.setProperty("firstVisibleRow", (Math.max(iPage,1) - 1) * this.getVisibleRowCount(), true);
-				this._oPaginator.setCurrentPage(iPage);
-				if (this._oPaginator.getDomRef()) {
-					this._oPaginator.rerender();
-				}
+		if (this._oPaginator && this.getNavigationMode() === sap.ui.table.NavigationMode.Paginator) {
+			var iNumberOfPages = 0;
+			var iCurrentPage = 0;
 
-				$this.removeClass("sapUiTableVScr");
-			} else {
-				// in case of scrollbar mode show or hide the scrollbar depending on the
-				// calculated steps:
-				if (this.getDomRef()) {
-					var bIsScrollbarNeeded = this._iBindingLength > this.getVisibleRowCount();
-					if (bIsScrollbarNeeded) {
-						if (!bHasVsb) {
-							$this.addClass("sapUiTableVScr");
-						}
-					} else {
-						if (bHasVsb) {
-							$this.removeClass("sapUiTableVScr");
-						}
-					}
-				}
-			}
-		} else {
-			// check for paging mode or scrollbar mode
-			if (this._oPaginator && this.getNavigationMode() === sap.ui.table.NavigationMode.Paginator) {
+			if (oBinding) {
 				// update the paginator (set the first visible row property)
-				this._oPaginator.setNumberOfPages(0);
-				this._oPaginator.setCurrentPage(0);
-				if (this._oPaginator.getDomRef()) {
-					this._oPaginator.rerender();
-				}
-			} else if (bHasVsb) {
+				var iVisibleRowCount = this.getVisibleRowCount();
+				iNumberOfPages = Math.ceil((this._iBindingLength || 0) / iVisibleRowCount);
+				var iPage = Math.min(iNumberOfPages, Math.ceil((this.getFirstVisibleRow() + 1) / iVisibleRowCount));
+				this.setProperty("firstVisibleRow", (Math.max(iPage,1) - 1) * iVisibleRowCount, true);
+				iCurrentPage = iPage;
+			}
+
+			this._oPaginator.setNumberOfPages(iNumberOfPages);
+			this._oPaginator.setCurrentPage(iCurrentPage);
+
+			if (this._oPaginator.getDomRef()) {
+				this._oPaginator.rerender();
+			}
+
+			if (this.getDomRef()) {
 				$this.removeClass("sapUiTableVScr");
 			}
+		} else if (this.getDomRef()) {
+			// in case of Scrollbar Mode show/hide the scrollbar depending whether it is needed.
+			$this.toggleClass("sapUiTableVScr", this._isVSbRequired());
 		}
+	};
+
+	/**
+	 * Indicates whether a Vertical Scroll Bar is needed.
+	 * @private
+	 * @returns {Boolean} true/false when Vertical Scroll Bar is required
+	 */
+	Table.prototype._isVSbRequired = function() {
+		return this.getNavigationMode() === sap.ui.table.NavigationMode.Scrollbar && this.getBinding("rows") && this._iBindingLength > this.getVisibleRowCount();
 	};
 
 	/**

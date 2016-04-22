@@ -45,7 +45,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		}
 
 		rm.addClass("sapUiTableSelMode" + oTable.getSelectionMode()); // row selection mode
-		if (oTable.getNavigationMode() === sap.ui.table.NavigationMode.Scrollbar) {
+		if (oTable._isVSbRequired()) {
 			rm.addClass("sapUiTableVScr"); // show vertical scrollbar
 		}
 		if (oTable.getEditable()) {
