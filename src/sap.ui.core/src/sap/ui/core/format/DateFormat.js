@@ -3,10 +3,12 @@
  */
 
 // Provides class sap.ui.core.format.DateFormat
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleData', 'jquery.sap.strings', 'sap/ui/core/date/UniversalDate'],
-	function(jQuery, Locale, LocaleData, jQuerySapStrings, UniversalDate) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale', 'sap/ui/core/LocaleData', 'sap/ui/core/date/UniversalDate', 'jquery.sap.strings'],
+	function(jQuery, library, Locale, LocaleData, UniversalDate/* , jQuerySapStrings*/) {
 	"use strict";
 
+	// shortcut
+	var CalendarType = library.CalendarType;
 
 	/**
 	 * Constructor for DateFormat - must not be used: To get a DateFormat instance, please use getInstance, getDateTimeInstance or getTimeInstance.
@@ -190,7 +192,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 		var oFormat = jQuery.sap.newObject(this.prototype);
 
 		// Handle optional parameters
-		if ( oFormatOptions instanceof sap.ui.core.Locale ) {
+		if ( oFormatOptions instanceof Locale ) {
 			oLocale = oFormatOptions;
 			oFormatOptions = undefined;
 		}
@@ -447,7 +449,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 					}
 					// When parsing we assume dates less than 100 to be in the current/last century,
 					// so when formatting we have to make sure they are differentiable by prefixing with zeros
-					if (sCalendarType != sap.ui.core.CalendarType.Japanese && oPart.digits == 1 && iYear < 100) {
+					if (sCalendarType != CalendarType.Japanese && oPart.digits == 1 && iYear < 100) {
 						sYear = jQuery.sap.padLeft(sYear, "0", 4);
 					}
 					aBuffer.push(jQuery.sap.padLeft(sYear, "0", oPart.digits));
@@ -750,7 +752,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 					checkValid(oPart.type, sPart === "");
 					iYear = parseInt(sPart, 10);
 					// Find the right century for two-digit years
-					if (sCalendarType != sap.ui.core.CalendarType.Japanese && sPart.length <= 2) {
+					if (sCalendarType != CalendarType.Japanese && sPart.length <= 2) {
 						var oCurrentDate = UniversalDate.getInstance(new Date(), sCalendarType),
 							iCurrentYear = oCurrentDate.getFullYear(),
 							iCurrentCentury = Math.floor(iCurrentYear / 100),

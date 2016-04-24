@@ -374,7 +374,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
 		 */
 		Parameters._getThemeImage = function(sParamName, bForce) {
 			sParamName = sParamName || "sapUiGlobalLogo";
-			var logo = sap.ui.core.theming.Parameters.get(sParamName);
+			var logo = Parameters.get(sParamName);
 			if (logo) {
 				var match = /url[\s]*\('?"?([^\'")]*)'?"?\)/.exec(logo);
 				if (match) {
