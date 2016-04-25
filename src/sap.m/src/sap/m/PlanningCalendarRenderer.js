@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
-	function(jQuery, Renderer) {
+sap.ui.define(['jquery.sap.global'],
+	function(jQuery) {
 	"use strict";
 
 	/**
@@ -12,24 +12,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	var PlanningCalendarRenderer = {};
 
 	/**
-	 * Renders the HTML for the given control, using the provided {@link sap.ui.fw.RenderManager}.
+	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.fw.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-	 * @param {sap.ui.commons.Slider} oTC An object representation of the <code>PlanningCalendar</code> control that should be rendered.
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.m.PlanningCalendar} oPC An object representation of the <code>PlanningCalendar</code> control that should be rendered.
 	 */
-	PlanningCalendarRenderer.render = function(oRm, oTC){
+	PlanningCalendarRenderer.render = function(oRm, oPC){
 
-		var sTooltip = oTC.getTooltip_AsString();
+		var sId = oPC.getId();
+		var sTooltip = oPC.getTooltip_AsString();
 
 		oRm.write("<div");
-		oRm.writeControlData(oTC);
+		oRm.writeControlData(oPC);
 		oRm.addClass("sapMPlanCal");
 
-		if (!oTC.getSingleSelection()) {
+		if (!oPC.getSingleSelection()) {
 			oRm.addClass("sapMPlanCalMultiSel");
 		}
 
-		if (!oTC.getShowRowHeaders()) {
+		if (!oPC.getShowRowHeaders()) {
 			oRm.addClass("sapMPlanCalNoHead");
 		}
 
@@ -37,24 +38,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 			oRm.writeAttributeEscaped('title', sTooltip);
 		}
 
-		var sWidth = oTC.getWidth();
+		var sWidth = oPC.getWidth();
 		if (sWidth) {
 			oRm.addStyle("width", sWidth);
 		}
 
-		var sHeight = oTC.getHeight();
+		var sHeight = oPC.getHeight();
 		if (sHeight) {
 			oRm.addStyle("height", sHeight);
 		}
 
-		oRm.writeAccessibilityState(oTC);
+		oRm.writeAccessibilityState(oPC);
 
 		oRm.writeClasses();
 		oRm.writeStyles();
 		oRm.write(">"); // div element
 
-		var oTable = oTC.getAggregation("table");
+		var oTable = oPC.getAggregation("table");
 		oRm.renderControl(oTable);
+
+		var sAriaText = oPC._oRB.getText("PLANNINGCALENDAR");
+		oRm.write("<span id=\"" + sId + "-Descr\" class=\"sapUiInvisibleText\">" + sAriaText + "</span>");
+
+		sAriaText = oPC._oRB.getText("PLANNINGCALENDAR_VIEW");
+		oRm.write("<span id=\"" + sId + "-SelDescr\" class=\"sapUiInvisibleText\">" + sAriaText + "</span>");
 
 		oRm.write("</div>");
 	};

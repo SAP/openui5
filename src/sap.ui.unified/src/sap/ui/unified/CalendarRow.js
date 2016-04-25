@@ -165,8 +165,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			/**
 			 * Association to controls / IDs which label this control (see WAI-ARIA attribute aria-labelledby).
+			 *
+			 * <b>Note</b> These labels are also assigned to the appointments.
 			 */
-			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
+			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" },
+
+			/**
+			 * Association to the <code>CalendarLegend</code> explaining the colors of the <code>Appointments</code>.
+			 *
+			 * <b>Note</b> The legend does not have to be rendered but must exist, and all required types must be assigned.
+			 * @since 1.40.0
+			 */
+			legend: { type: "sap.ui.unified.CalendarLegend", multiple: false}
 		},
 		events : {
 
@@ -239,6 +249,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	CalendarRow.prototype.init = function(){
 
 		this._bRtl  = sap.ui.getCore().getConfiguration().getRTL();
+		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+
+		if (!sap.ui.unified.CalendarRow._oStaticAppointmentText) {
+			sap.ui.unified.CalendarRow._oStaticAppointmentText = new sap.ui.core.InvisibleText({text: this._oRb.getText("APPOINTMENT")});
+			sap.ui.unified.CalendarRow._oStaticAppointmentText.toStatic(); //Put to Static UiArea
+			sap.ui.unified.CalendarRow._oStaticTentativeText = new sap.ui.core.InvisibleText({text: this._oRb.getText("APPOINTMENT_TENTATIVE")});
+			sap.ui.unified.CalendarRow._oStaticTentativeText.toStatic(); //Put to Static UiArea
+		}
+
+		this._oFormatAria = sap.ui.core.format.DateFormat.getDateTimeInstance({style: "long/short"});
 
 		this._iHoursMinDelta = 1; // minutes - to position appointments in 1 minutes steps
 		this._iDaysMinDelta = 30; // minutes
