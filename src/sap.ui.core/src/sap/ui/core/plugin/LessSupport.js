@@ -309,7 +309,7 @@
 			 */
 			LessSupport.prototype.applyTheme = function(sThemeName, sThemeBaseUrl) {
 				// execute the default behavior (referenced via global name as the local 'Core' only exposes the public API)
-				Core.prototype.applyTheme.apply(this.oCore, arguments);
+				sap.ui.core.Core.prototype.applyTheme.apply(this.oCore, arguments);
 				// update the created links for less support
 				var that = this, bUseLess = false;
 				jQuery("link[id^=sap-ui-theme-]").each(function() {
@@ -327,7 +327,7 @@
 			 */
 			LessSupport.prototype.includeLibraryTheme = function(sLibName) {
 				// execute the default behavior (referenced via global name as the local 'Core' only exposes the public API)
-				Core.prototype.includeLibraryTheme.apply(this.oCore, arguments);
+				sap.ui.core.Core.prototype.includeLibraryTheme.apply(this.oCore, arguments);
 				// initialize the created link for less support
 				var that = this, bUseLess = false;
 				jQuery("link[id='sap-ui-theme-" + sLibName + "']").each(function() {
