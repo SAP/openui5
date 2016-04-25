@@ -15,6 +15,11 @@ module.exports = function(grunt, config) {
 			proxypath: 'proxy',
 			cors: {
 				origin: "*"
+			},
+			lessOptions: {
+				parser: {
+					relativeUrls: false
+				}
 			}
 
 		},
