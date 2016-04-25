@@ -195,6 +195,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 		}
 	}
 
+	function initAsyncState(oView) {
+		oView.oAsyncState = {};
+		oView.oAsyncState.promise = new Promise(function(fnResolve, fnReject) {
+			oView.oAsyncState.complete = function() {
+				if (!oView.oAsyncState.error) {
+					fnResolve(oView);
+				} else {
+					fnReject(oView.oAsyncState.error);
+				}
+			};
+		});
+	}
+
 	/**
 	* Initialize the View and connect (create if no instance is given) the Controller
 	*
@@ -221,11 +234,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 
 		// create a Promise that represents the view initialization state
 		if (mSettings.async) {
-			this._oAsyncState = {};
-			this._oAsyncState.promise = new Promise(function(fnResolve) {
-				// remember resolve method for calling it later
-				that._oAsyncState.resolve = fnResolve;
-			});
+			initAsyncState(this);
 		}
 
 		//check if there are custom properties configured for this view, and only if there are, create a settings preprocessor applying these
@@ -289,8 +298,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 					})
 					.then(function() {
 						fnPropagateOwner(that.fireAfterInit.bind(that));
-						// resolve View.prototype.loaded() methods promise
-						that._oAsyncState.resolve(that);
+						// resolve/reject the #loaded Promise
+						that.oAsyncState.complete();
 					});
 			} else {
 				this.initViewSettings(mSettings);
@@ -382,9 +391,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 			}
 
 			if ( oController ) {
-				oController = Controller.extendIfRequired(oController, sName, oThis._oAsyncState);
+				oController = Controller.extendIfRequired(oController, sName, oThis.oAsyncState);
 				if (oController instanceof Promise) {
-					if (!oThis._oAsyncState) {
+					if (!oThis.oAsyncState) {
 						throw new Error("The view " + oThis.sViewName + " runs in sync mode and therefore cannot use async controller extensions!");
 					}
 					return oController.then(function(oController) {
@@ -414,6 +423,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 		return this.oViewData;
 	};
 
+	function deleteAsyncState() {
+		this.oAsyncState = null;
+	}
+
 	/**
 	 * exit hook
 	 *
@@ -422,7 +435,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	View.prototype.exit = function() {
 		this.fireBeforeExit();
 		this.oController = null;
-		this._oAsyncState = null;
+		if (this.oAsyncState) {
+			var fnDelete = deleteAsyncState.bind(this);
+			// async state needs to be kept until completed
+			this.oAsyncState.promise.then(fnDelete, fnDelete);
+		}
 	};
 
 	/**
@@ -797,14 +814,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	*
 	* @since 1.30
 	* @public
-	* @return {Promise} resolves with the view instance, fulfilled when completely initialized
+	* @return {Promise} resolves with the complete view instance, reject with any thrown error
 	*/
 	View.prototype.loaded = function() {
-		if (!this._oAsyncState) {
+		if (!this.oAsyncState) {
 			// resolve immediately with this view instance
 			return Promise.resolve(this);
 		} else {
-			return this._oAsyncState.promise;
+			return this.oAsyncState.promise;
 		}
 	};
 

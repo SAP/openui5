@@ -108,15 +108,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 			}
 		}
 
-		function validateViewSettings(mSettings) {
+		function validateViewSettings(oView, mSettings) {
+			var error;
 			if (!mSettings) {
-				throw new Error("mSettings must be given");
+				error = new Error("mSettings must be given");
 			} else if (mSettings.viewName && mSettings.viewContent) {
-				throw new Error("View name and view content are given. There is no point in doing this, so please decide.");
+				error = new Error("View name and view content are given. There is no point in doing this, so please decide.");
 			} else if ((mSettings.viewName || mSettings.viewContent) && mSettings.xmlNode) {
-				throw new Error("View name/content AND an XML node are given. There is no point in doing this, so please decide.");
+				error = new Error("View name/content AND an XML node are given. There is no point in doing this, so please decide.");
 			} else if (!(mSettings.viewName || mSettings.viewContent) && !mSettings.xmlNode) {
-				throw new Error("Neither view name/content nor an XML node is given. One of them is required.");
+				error = new Error("Neither view name/content nor an XML node is given. One of them is required.");
+			}
+			if (error) {
+				// error needs to be stored so that the view can reject with it
+				if (oView.oAsyncState) {
+						oView.oAsyncState.error = error;
+				}
+				throw error;
 			}
 		}
 
@@ -187,12 +195,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 
 			this._oContainingView = mSettings.containingView || this;
 
-			if (this._oAsyncState) {
+			if (this.oAsyncState) {
 				// suppress rendering of preserve content
-				this._oAsyncState.suppressPreserve = true;
+				this.oAsyncState.suppressPreserve = true;
 			}
 
-			validateViewSettings(mSettings);
+			validateViewSettings(this, mSettings);
 
 			// either template name or XML node is given
 			if (mSettings.viewName) {
@@ -232,8 +240,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 				// parse the XML tree
 				that._aParsedContent = XMLTemplateProcessor.parseTemplate(that._xContent, that);
 				// allow rendering of preserve content
-				if (that._oAsyncState) {
-					delete that._oAsyncState.suppressPreserve;
+				if (that.oAsyncState) {
+					delete that.oAsyncState.suppressPreserve;
 				}
 			}, {
 				settings: this._fnSettingsPreprocessor
