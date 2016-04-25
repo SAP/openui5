@@ -1,4 +1,5 @@
 /*!
+
  * ${copyright}
  */
 
@@ -45,6 +46,7 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 			}
 			this.aApplicationFilters = aFilters;
 			this.bUseExtendedChangeDetection = false;
+			this.bDetectUpdates = true;
 		},
 
 		metadata : {
@@ -241,10 +243,21 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 
 	/**
 	 * Enable extended change detection
+	 *
+	 * @param {boolean} bDetectUpdates Whether changes within the same entity should cause a delete and insert command
+	 * @param {function|string} vKey The path of the property containing the key or a function getting the context as only parameter to calculate a key to identify an entry
 	 * @private
 	 */
-	ListBinding.prototype.enableExtendedChangeDetection = function( ) {
-		this.bUseExtendedChangeDetection  = true;
+	ListBinding.prototype.enableExtendedChangeDetection = function(bDetectUpdates, vKey) {
+		this.bUseExtendedChangeDetection = true;
+		this.bDetectUpdates = bDetectUpdates;
+		if (typeof vKey === "string") {
+			this.fnGetEntryKey = function(oContext) {
+				return oContext.getProperty(vKey);
+			};
+		} else if (typeof vKey === "function") {
+			this.fnGetEntryKey = vKey;
+		}
 		if (this.update) {
 			this.update();
 		}
