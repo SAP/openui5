@@ -612,6 +612,10 @@ sap.ui.require([
 			oModel.getContext();
 		}, new Error("Unsupported operation: v4.ODataModel#getContext"));
 
+		assert.throws(function () {
+			oModel.getObject();
+		}, new Error("Unsupported operation: v4.ODataModel#getObject"));
+
 		assert.throws(function () { //TODO implement
 			oModel.getOriginalProperty();
 		}, new Error("Unsupported operation: v4.ODataModel#getOriginalProperty"));
