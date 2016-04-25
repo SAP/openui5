@@ -247,7 +247,9 @@ sap.ui.define([
 	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
-	 *   <li> The $expand, $filter, $orderby and $select "5.1 System Query Options"
+	 *   <li> The $expand, $filter, $orderby and $select "5.1 System Query Options"; OData V4 only
+	 *   allows $filter and $orderby inside resource paths that identify a collection. In our case
+	 *   here, this means you can only use them inside $expand.
 	 *   </ul>
 	 *   All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
@@ -459,6 +461,20 @@ sap.ui.define([
 	// @override
 	ODataModel.prototype.getMetaModel = function () {
 		return this.oMetaModel;
+	};
+
+	/**
+	 * Method not supported
+	 *
+	 * @throws {Error}
+	 *
+	 * @public
+	 * @see sap.ui.model.Model#getObject
+	 * @since 1.37.0
+	 */
+	// @override
+	ODataModel.prototype.getObject = function () {
+		throw new Error("Unsupported operation: v4.ODataModel#getObject");
 	};
 
 	/**
