@@ -483,6 +483,7 @@ sap.ui.define([
 	 * <ul>
 	 * <li><code>library : <i>string</i></code></li>
 	 * <li><code>properties : <i>object</i></code></li>
+	 * <li><code>defaultProperty : <i>string</i></code></li>
 	 * <li><code>aggregations : <i>object</i></code></li>
 	 * <li><code>defaultAggregation : <i>string</i></code></li>
 	 * <li><code>associations : <i>object</i></code></li>
@@ -498,9 +499,11 @@ sap.ui.define([
 	 *   metadata : {
 	 *     library: 'sap.mylib',
 	 *     properties : {
+	 *       value: 'string',
 	 *       width: 'sap.ui.core.CSSSize',
 	 *       height: { type: 'sap.ui.core.CSSSize', defaultValue: '100%' }
 	 *     },
+	 *     defaultProperty : 'value',
 	 *     aggregations : {
 	 *       header : { type: 'sap.mylib.FancyHeader', multiple : false }
 	 *       items : 'sap.ui.core.Control'
@@ -560,6 +563,11 @@ sap.ui.define([
 	 * <li>bindFoo(c) - (only if property was defined to be 'bindable'): convenience function that wraps {@link #bindProperty}
 	 * <li>unbindFoo() - (only if property was defined to be 'bindable'): convenience function that wraps {@link #unbindProperty}
 	 * </ul>
+	 *
+	 *
+	 * <b>'defaultProperty'</b> : <i>string</i><br>
+	 * When specified, the default property must match the name of one of the properties defined for the new subclass (either own or inherited).
+	 * The named property can be used to identify the main property to be used for bound data. E.g. the value property of a field control.
 	 *
 	 *
 	 * <b>'aggregations'</b> : <i>object</i><br>
