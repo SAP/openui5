@@ -46,29 +46,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 		}
 
 		var aContexts = this._getContexts(iStartIndex, iLength),
-			oContextData = {};
+			aContextData = [];
 
 		if (this.bUseExtendedChangeDetection) {
 
 			for (var i = 0; i < aContexts.length; i++) {
-				oContextData[aContexts[i].getPath()] = aContexts[i].getObject();
+				aContextData.push(this.getContextData(aContexts[i]));
 			}
 
 			//Check diff
-			if (this.aLastContexts && iStartIndex < this.iLastEndIndex) {
-				var that = this;
-				var aDiff = jQuery.sap.arrayDiff(this.aLastContexts, aContexts, function(oOldContext, oNewContext) {
-					return jQuery.sap.equal(
-							oOldContext && that.oLastContextData && that.oLastContextData[oOldContext.getPath()],
-							oNewContext && oContextData && oContextData[oNewContext.getPath()]
-						);
-				});
-				aContexts.diff = aDiff;
+			if (this.aLastContextData && iStartIndex < this.iLastEndIndex) {
+				aContexts.diff = jQuery.sap.arraySymbolDiff(this.aLastContextData, aContextData);
 			}
 
 			this.iLastEndIndex = iStartIndex + iLength;
 			this.aLastContexts = aContexts.slice(0);
-			this.oLastContextData = jQuery.extend(true, {}, oContextData);
+			this.aLastContextData = aContextData.slice(0);
 		}
 
 		return aContexts;
@@ -79,6 +72,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 			return this.aLastContexts || [];
 		} else {
 			return this.getContexts(this.iLastStartIndex, this.iLastLength);
+		}
+	};
+
+	/**
+	 * Returns the context data as required for change detection/diff. This may not contain
+	 * all of the data, but just the key property
+	 *
+	 * @private
+	 */
+	JSONListBinding.prototype.getContextData = function(oContext) {
+		var oObject = oContext.getObject();
+		if (this.fnGetEntryKey && !this.bDetectUpdates) {
+			return this.fnGetEntryKey(oObject);
+		} else {
+			return JSON.stringify(oObject);
 		}
 	};
 
@@ -165,8 +173,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 				if (this.aLastContexts.length != aContexts.length) {
 					bChangeDetected = true;
 				} else {
-					jQuery.each(this.aLastContexts, function(iIndex, oContext) {
-						if (!jQuery.sap.equal(aContexts[iIndex].getObject(), that.oLastContextData[oContext.getPath()])) {
+					jQuery.each(this.aLastContextData, function(iIndex, oLastData) {
+						var oCurrentData = that.getContextData(aContexts[iIndex]);
+						if (oCurrentData !== oLastData) {
 							bChangeDetected = true;
 							return false;
 						}
