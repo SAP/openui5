@@ -3448,7 +3448,7 @@ sap.ui.define([
 				oModel = this.getModel(sModelName);
 				oBoundObject = this.mBoundObjects[sModelName];
 
-				if (oModel && oBoundObject && oBoundObject.sBindingPath && !bSkipLocal) {
+				if (oModel && oBoundObject && !bSkipLocal) {
 					if (!oBoundObject.binding) {
 						this._bindObject(sModelName, oBoundObject);
 					} else {
