@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-/*global URI, Promise, alert, console, XMLHttpRequest */
+/*global URI, Promise, alert, console, XMLHttpRequest, ES6Promise */
 
 /**
  * @class Provides base functionality of the SAP jQuery plugin as extension of the jQuery framework.<br/>
@@ -30,6 +30,19 @@
 	// ensure not to initialize twice
 	if (jQuery.sap) {
 		return;
+	}
+
+	// The native Promise in MS Edge is not fully compliant with the ES6 spec for promises.
+	// It executes callbacks as tasks, not as micro tasks (see https://connect.microsoft.com/IE/feedback/details/1658365).
+	// We therefore enforce the use of the es6-promise polyfill also in MS Edge, it works properly.
+	// @see jQuery.sap.promise
+	if (sap.ui.Device.browser.edge) {
+		window.Promise = undefined; // if not unset, the polyfill assumes that the native Promise is fine
+	}
+
+	// Enable promise polyfill if native promise is not available
+	if (!window.Promise) {
+		ES6Promise.polyfill();
 	}
 
 	/**
