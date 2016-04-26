@@ -9,15 +9,41 @@
 	<l:ResponsiveSplitter defaultPane="default">
 		<l:PaneContainer>
 			<l:SplitPane requiredParentWidth="0" id="default">
-				<m:Panel headerText="Minimum parent width 400"/>
+				<m:Panel headerText="Minimum parent width 400" height="100%">
+					<m:List headerText="Products" items="{ path: '/ProductCollection' }">
+						<m:StandardListItem title="{Name}" counter="{Quantity}"/>
+					</m:List>
+				</m:Panel>
 			</l:SplitPane>
-
 			<l:PaneContainer orientation="Vertical">
 				<l:SplitPane  requiredParentWidth="600">
-					<m:Panel headerText="Minimum parent width 600"/>
+					<m:Panel headerText="Minimum parent width 600">
+						<m:Select forceSelection="false" selectedKey="1239102" 
+							items="{
+								path: '/ProductCollection',
+								sorter: { path: 'Name' }
+							}">
+							<core:Item key="{ProductId}" text="{Name}" />
+						</m:Select>
+					</m:Panel>
 				</l:SplitPane>
 				<l:SplitPane  requiredParentWidth="800">
-					<m:Panel headerText="Minimum parent width 800"/>
+					<m:Page title="Minimum parent width 800">
+						<m:footer>
+							<m:OverflowToolbar id="otb3">
+								<m:Label text="Buttons:" />
+								<m:ToolbarSpacer />
+								<m:Button text="New" type="Transparent"/>
+								<m:Button text="Open" type="Transparent"/>
+								<m:Button text="Save" type="Transparent"/>
+								<m:Button text="Save as" type="Transparent"/>
+								<m:Button text="Cut" type="Transparent"/>
+								<m:Button text="Copy" type="Transparent"/>
+								<m:Button text="Paste" type="Transparent"/>
+								<m:Button text="Undo" type="Transparent"/>
+							</m:OverflowToolbar>
+						</m:footer>
+					</m:Page>
 				</l:SplitPane>
 			</l:PaneContainer>
 		</l:PaneContainer>

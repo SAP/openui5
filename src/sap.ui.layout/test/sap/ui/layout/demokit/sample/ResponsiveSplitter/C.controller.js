@@ -7,9 +7,11 @@ sap.ui.define([
 
 	var ResponsiveSplitterController = Controller.extend("sap.ui.layout.sample.ResponsiveSplitter.C", {
 
-		onInit: function () {
-			//TODO
-		},
+		onInit : function (evt) {
+			// set explored app's demo model on this sample
+			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
+			this.getView().setModel(oModel);
+		}
 
 	});
 

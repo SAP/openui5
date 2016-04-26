@@ -9,7 +9,7 @@
 }
 
 .sapUiRSVisiblePaginator {
-	.sapUiResponsiveSplitterPaginator {
+	& .sapUiResponsiveSplitterPaginator {
 		width: 100%;
 		display: flex;
 		justify-content: center;
@@ -18,11 +18,11 @@
 		background-color: @sapUiExtraLightBG;
 	}
 
-	.sapUiResponsiveSplitterPage {
+	& .sapUiResponsiveSplitterPage {
 		height: ~"calc(100% - 2.5rem)";
 	}
 
-	.sapUiResponsiveSplitterPaginator.sapUiResponsiveSplitterWithNavButtons {
+	& .sapUiResponsiveSplitterPaginator.sapUiResponsiveSplitterWithNavButtons {
 		justify-content: space-between;
 	}
 }
@@ -60,12 +60,19 @@
 		margin-top: 16px;
 		border-radius: 50%;
 	};
-}
 
-.sapUiResponsiveSplitterPaginatorButton:focus,
-.sapUiResponsiveSplitterPaginatorNavButton:focus {
-	outline: 1px dotted @sapUiFocus;
-	outline-offset: -3px;
+	&:focus {
+		outline: none;
+	}
+
+	&:focus:before {
+		content: "";
+		position: absolute;
+		border: 1px dotted @sapUiFocus;
+		width: 2.125rem;
+		height: 2.125rem;
+		margin: 2px 0 0 2px;
+	}
 }
 
 .sapUiResponsiveSplitterPaginatorButton:first-child {
@@ -213,4 +220,17 @@ html.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage .sapUiLo
 .sapUiResponsiveSplitter .sapUiLoSplitterH.sapUiLoSplitter > .sapUiLoSplitterBar,
 .sapUiResponsiveSplitter .sapUiLoSplitterH > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
 	width: 0.25rem !important;
+}
+
+html[data-sap-ui-browser^=ie].sap-desktop .sapUiResponsiveSplitter {
+	.sapUiLoSplitterH > .sapUiLoSplitterBar:focus::after {
+		width: 2px;
+		z-index: 1;
+	}
+
+	.sapUiLoSplitterV > .sapUiLoSplitterBar:focus::after {
+		height: 2px;
+		top: -6px;
+		z-index: 1;
+	}
 }

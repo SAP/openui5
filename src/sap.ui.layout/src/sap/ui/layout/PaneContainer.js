@@ -32,7 +32,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', './Split
 			/**
 			 The orientation of the Splitter
 			 */
-			orientation : { type : "sap.ui.core.Orientation", group : "Behavior", defaultValue : sap.ui.core.Orientation.Horizontal}
+			orientation : { type : "sap.ui.core.Orientation", group : "Behavior", defaultValue : sap.ui.core.Orientation.Horizontal }
 		},
 		defaultAggregation : "panes",
 		aggregations : {
@@ -73,7 +73,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', './Split
 	 */
 	PaneContainer.prototype.addPane = function(oElement) {
 		this.addAggregation("panes", oElement);
-
 		if (oElement instanceof sap.ui.layout.SplitPane) {
 			this._oSplitter.addAssociatedContentArea(oElement.getContent());
 		} else {

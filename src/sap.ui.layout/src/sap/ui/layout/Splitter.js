@@ -709,7 +709,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 				$Bar = this.$("splitbar-" + (i - 1));
 				$Bar.toggleClass("sapUiLoSplitterNoResize", !bResizable);
 				$Bar.attr("tabindex", bResizable && this._keyboardEnabled ? "0" : "-1");
-				$Bar.attr("title", bResizable ? this._getText("SPLITTER_MOVE") : "");
 			}
 			bLastContentResizable = bContentResizable;
 		}

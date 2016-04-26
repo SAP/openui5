@@ -23,7 +23,7 @@
 		this.oPaneContainer2 = new sap.ui.layout.PaneContainer({ orientation: "Vertical", panes: [this.oSplitPane2, this.oSplitPane3]});
 		this.oPaneContainer1 = new sap.ui.layout.PaneContainer({ panes: [this.oSplitPane1, this.oPaneContainer2]});
 		this.oResponsiveSplitter.setRootPaneContainer(this.oPaneContainer1);
-		this.oScrollContainer.placeAt("content");
+		this.oScrollContainer.placeAt(DOM_RENDER_LOCATION);
 		sap.ui.getCore().applyChanges();
 	}
 
@@ -155,7 +155,7 @@
 			this.oResponsiveSplitter.setAssociation("defaultPane", "first");
 
 
-			this.oScrollContainer.placeAt("content");
+			this.oScrollContainer.placeAt(DOM_RENDER_LOCATION);
 
 			sap.ui.getCore().applyChanges();
 		},
@@ -278,5 +278,39 @@
 		this.triggerKeyOnPaginator(0, jQuery.sap.KeyCodes.ARROW_RIGHT);
 		this.triggerKeyOnPaginator(1, jQuery.sap.KeyCodes.ARROW_RIGHT);
 		assert.strictEqual(document.activeElement, this.getButtonByIndex(1), "Should not move the focus");
+	});
+
+	QUnit.module("Aria support", {
+		setup: function () {
+			initSetup.call(this);
+			var oPaneContainer = new sap.ui.layout.PaneContainer({
+				orientation: "Vertical",
+				panes: [new sap.ui.layout.SplitPane({
+					requiredParentWidth: 300,
+					content: new sap.m.Button()
+				}), new sap.ui.layout.SplitPane({
+					requiredParentWidth: 300,
+					content: new sap.m.Button()
+				})]
+			});
+
+			this.oResponsiveSplitter.getRootPaneContainer().addPane(oPaneContainer);
+			sap.ui.getCore().applyChanges();
+		}, teardown: function () {
+			this.oScrollContainer.destroy();
+		}
+	});
+
+	QUnit.test("SplitterBars' tooltip", function (assert) {
+		var aSplitterBars = this.oResponsiveSplitter.$().find(".sapUiLoSplitterBar");
+		assert.strictEqual(aSplitterBars[0].getAttribute("title"), "Resize split screen between pane 1 and pane 2");
+		assert.strictEqual(aSplitterBars[1].getAttribute("title"), "Resize split screen between pane 2 and pane 3");
+		assert.strictEqual(aSplitterBars[2].getAttribute("title"), "Resize split screen between pane 3.1 and pane 3.2");
+	});
+
+	QUnit.test("Paginator button's tooltip", function (assert) {
+		var aPaginationButtons = this.oResponsiveSplitter._getVisibleButtons();
+		assert.strictEqual(aPaginationButtons[0].getAttribute("title"), "Go to split screen 1, 2 and 3");
+		assert.strictEqual(aPaginationButtons[1].getAttribute("title"), "Go to screen 4");
 	});
 })();
