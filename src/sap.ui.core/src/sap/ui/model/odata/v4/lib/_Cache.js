@@ -206,7 +206,7 @@ sap.ui.define([
 		}
 		if (iLength < 0) {
 			throw new Error("Illegal length " + iLength + ", must be >= 0");
-		} else if (iLength !== 1 && sPath != undefined) {
+		} else if (iLength !== 1 && sPath !== undefined) {
 			throw new Error("Cannot drill-down for length " + iLength);
 		}
 
@@ -237,7 +237,7 @@ sap.ui.define([
 		return Promise.all(this.aElements.slice(iIndex, iEnd)).then(function () {
 			var oResult;
 
-			if (sPath != undefined) {
+			if (sPath !== undefined) {
 				oResult = that.aElements[iIndex];
 				return drillDown(oResult, sPath, function (sSegment) {
 					jQuery.sap.log.error("Failed to drill-down into " + that.sResourcePath

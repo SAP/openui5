@@ -114,7 +114,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 		}
 
 		function setConstraint(sName, vValue, vDefault) {
-			if (vValue != vDefault) {
+			if (vValue !== vDefault) {
 				oType.oConstraints = oType.oConstraints || {};
 				oType.oConstraints[sName] = vValue;
 			}
