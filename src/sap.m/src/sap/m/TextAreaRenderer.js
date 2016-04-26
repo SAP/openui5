@@ -84,6 +84,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 		oRm.writeAttribute("cols", oControl.getCols());
 	};
 
+	// Add extra styles to TextArea
+	TextAreaRenderer.addInnerStyles = function(oRm, oControl) {
+		var sHeight = oControl.getHeight();
+		if (sHeight && !/^(auto|inherit)$/i.test(sHeight)) {
+			oRm.addStyle("height", "100%");
+		}
+	};
+
 	return TextAreaRenderer;
 
 }, /* bExport= */ true);
