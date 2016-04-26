@@ -167,47 +167,11 @@ sap.ui.define([
 
 		onSalesOrdersSelect : function (oEvent) {
 			var oSalesOrderContext = oEvent.getParameters().listItem.getBindingContext(),
-				that = this,
 				oView = this.getView();
 
-			//TODO use path "" for bindElement and call setBindingContext(oSalesOrderContext) on
-			//  the control; this leads to a .setContext call on the binding.
-			//  This requires the binding to create a cache even for a relative path in case the
-			//  binding has parameters.
-			oSalesOrderContext.requestCanonicalPath().then(function (sCanonicalPath) {
-				oView.byId("ObjectPage").bindElement({
-					events : {
-						dataReceived : that.onDataEvents.bind(that),
-						dataRequested : that.onDataEvents.bind(that)
-					},
-					path : sCanonicalPath,
-					parameters : {
-						"$expand" : {
-							"SO_2_SOITEM" : {
-								"$expand" : {
-									"SOITEM_2_PRODUCT" : {
-										"$expand" : {
-											"PRODUCT_2_BP" : {
-												"$expand" : {
-													"BP_2_CONTACT" : true
-												}
-											}
-										}
-									}
-								}
-							},
-							"SO_2_BP" : {
-								"$select" : ["BusinessPartnerID", "CompanyName", "PhoneNumber"]
-							}
-						},
-						"$select" : ["ChangedAt", "CreatedAt" , "LifecycleStatusDesc", "Note",
-							"SalesOrderID"],
-						"$$updateGroupId" : "SalesOrderUpdateGroup"
-					}
-				});
-				oView.byId("SupplierDetailsForm").unbindObject();
-				oView.byId("SupplierContactData").setBindingContext(undefined);
-			});
+			oView.byId("ObjectPage").setBindingContext(oSalesOrderContext);
+			oView.byId("SupplierDetailsForm").unbindObject();
+			oView.byId("SupplierContactData").setBindingContext(undefined);
 		},
 
 		onSalesOrderLineItemSelect : function (oEvent) {
