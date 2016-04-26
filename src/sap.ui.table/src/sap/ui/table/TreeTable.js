@@ -659,23 +659,6 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 		return this;
 	};
 
-	TreeTable.prototype._enterActionMode = function($Tabbable) {
-		var $domRef = $Tabbable.eq(0);
-
-		Table.prototype._enterActionMode.apply(this, arguments);
-		if ($Tabbable.length > 0 && $domRef.hasClass("sapUiTableTreeIcon") && !$domRef.hasClass("sapUiTableTreeIconLeaf")) {
-			//Set tabindex to 0 to have make node icon accessible
-			$domRef.attr("tabindex", 0).focus();
-			//set action mode to true so that _leaveActionMode is called to remove the tabindex again
-			this._bActionMode = true;
-		}
-	};
-
-	TreeTable.prototype._leaveActionMode = function(oEvent) {
-		Table.prototype._leaveActionMode.apply(this, arguments);
-		this.$().find(".sapUiTableTreeIcon").attr("tabindex", -1);
-	};
-
 	TreeTable.prototype.getContextByIndex = function (iRowIndex) {
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {

@@ -40,6 +40,31 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 
 
 	/*
+	 * Event handling which is independent of the used keyboard delegate.
+	 * "this" in the function context is the table instance.
+	 */
+	var ExtensionDelegate = {
+
+		onfocusin : function(oEvent) {
+			var oExtension = this._getKeyboardExtension();
+			if (!oExtension._bIgnoreFocusIn) {
+				oExtension.initItemNavigation();
+			} else {
+				oEvent.setMarked("sapUiTableIgnoreFocusIn");
+			}
+
+			if (oEvent.target && oEvent.target.id === this.getId() + "-rsz") {
+				// prevent that the ItemNavigation grabs the focus!
+				// only for the column resizing
+				oEvent.preventDefault();
+				oEvent.setMarked("sapUiTableSkipItemNavigation");
+			}
+		}
+
+	};
+
+
+	/*
 	 * Provides utility functions used this extension
 	 */
 	var ExtensionHelper = {
@@ -79,7 +104,6 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 			// to later determine the position of the first TD in the aItemDomRefs we keep the
 			// count of TDs => aCount - TDs = first TD (add the row headers to the TD count / except the first one!)
 			var iTDCount = aItemDomRefs.length;
-			var iInitialIndex = 0;
 
 			// add the row header items (if visible)
 			if (bHasRowHeader) {
@@ -93,7 +117,6 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 				iTDCount--;
 				// add the row header to the column count
 				iTotalColumnCount++;
-				iInitialIndex = 1;
 			}
 
 			// add the column items
@@ -111,26 +134,31 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 
 			// initialization of item navigation for the Table control
 			if (!oExtension._itemNavigation) {
-				oTable._iLastSelectedDataRow = oTable._getHeaderRowCount(); //TBD: Needed?
 				oExtension._itemNavigation = new ItemNavigation();
 				oExtension._itemNavigation.setTableMode(true);
 				oExtension._itemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, function(oEvent) {
-					var iRow = Math.floor(oEvent.getParameter("index") / oExtension._itemNavigation.iColumns);
-					if (iRow > 0) {
-						oTable._iLastSelectedDataRow = iRow;
+					var oInfo = TableUtils.getFocusedItemInfo(oTable);
+					oInfo.header = oTable._getHeaderRowCount();
+					oInfo.domRef = null; //Do not keep dom references
+
+					if (oInfo.row >= oInfo.header) {
+						oExtension._oLastFocusedCellInfo = oInfo;
 					}
 				}, oTable);
 			}
-
 
 			// configure the item navigation
 			oExtension._itemNavigation.setColumns(iTotalColumnCount);
 			oExtension._itemNavigation.setRootDomRef($Table.find(".sapUiTableCnt").get(0));
 			oExtension._itemNavigation.setItemDomRefs(aItemDomRefs);
-			oExtension._itemNavigation.setFocusedIndex(iInitialIndex);
+			oExtension._itemNavigation.setFocusedIndex(ExtensionHelper.getInitialItemNavigationIndex(oExtension));
 
 			// revert invalidation flag
 			oExtension._itemNavigationInvalidated = false;
+		},
+
+		getInitialItemNavigationIndex : function(oExtension) {
+			return TableUtils.hasRowHeader(oExtension.getTable()) ? 1 : 0;
 		}
 	};
 
@@ -155,9 +183,12 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 			this._itemNavigation = null;
 			this._itemNavigationInvalidated = false; // determines whether item navigation should be reapplied from scratch
 			this._itemNavigationSuspended = false; // switch off event forwarding to item navigation
+			this._type = sTableType;
 			this._delegate = new TableKeyboardDelegate(sTableType);
+			this._actionMode = false;
 
 			// Register the delegates in correct order
+			oTable.addEventDelegate(ExtensionDelegate, oTable);
 			oTable.addEventDelegate(this._delegate, oTable);
 			oTable.addEventDelegate(ItemNavigationDelegate, oTable);
 
@@ -172,6 +203,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 		 */
 		destroy : function() {
 			// Deregister the delegates
+			this.getTable().removeEventDelegate(ExtensionDelegate);
 			this.getTable().removeEventDelegate(this._delegate);
 			this.getTable().removeEventDelegate(ItemNavigationDelegate);
 
@@ -210,20 +242,88 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 
 
 	/*
-	 * Suspends the event handling of the item navigation.
+	 * Set or resets the action mode of the table.
+	 * In the action mode the user can navigate through the interactive controls of the table.
 	 * @public (Part of the API for Table control only!)
 	 */
-	TableKeyboardExtension.prototype.suspendItemNavigation = function() {
+	TableKeyboardExtension.prototype.setActionMode = function(bActionMode, oArgs) {
+		if (bActionMode && !this._actionMode && this._delegate.enterActionMode) {
+			this._actionMode = !!this._delegate.enterActionMode.apply(this.getTable(), [oArgs || {}]);
+		} else if (!bActionMode && this._actionMode && this._delegate.leaveActionMode) {
+			this._actionMode = false;
+			this._delegate.leaveActionMode.apply(this.getTable(), [oArgs || {}]);
+		}
+	};
+
+
+	/*
+	 * Returns true when the table is in action mode, false otherwise.
+	 * @public (Part of the API for Table control only!)
+	 */
+	TableKeyboardExtension.prototype.isInActionMode = function() {
+		return this._actionMode;
+	};
+
+
+	/*
+	 * Suspends the event handling of the item navigation.
+	 * @protected (Only to be used by the keyboard delegate)
+	 */
+	TableKeyboardExtension.prototype._suspendItemNavigation = function() {
 		this._itemNavigationSuspended = true;
 	};
 
 
 	/*
 	 * Resumes the event handling of the item navigation.
-	 * @public (Part of the API for Table control only!)
+	 * @protected (Only to be used by the keyboard delegate)
 	 */
-	TableKeyboardExtension.prototype.resumeItemNavigation = function() {
+	TableKeyboardExtension.prototype._resumeItemNavigation = function() {
 		this._itemNavigationSuspended = false;
+	};
+
+
+	/*
+	 * Returns the combined info about the last focused data cell (based on the item navigation)
+	 * @protected (Only to be used by the keyboard delegate)
+	 */
+	TableKeyboardExtension.prototype._getLastFocusedCellInfo = function() {
+		var iHeader = this.getTable()._getHeaderRowCount();
+		if (!this._oLastFocusedCellInfo || this._oLastFocusedCellInfo.header != iHeader) {
+			var oInfo = TableUtils.getFocusedItemInfo(this.getTable());
+			var iDfltIdx = ExtensionHelper.getInitialItemNavigationIndex(this);
+			return {
+				cellInRow : iDfltIdx,
+				row : iHeader,
+				header : iHeader,
+				cellCount : oInfo.cellCount,
+				columnCount : oInfo.columnCount,
+				cell : oInfo.columnCount * iHeader + iDfltIdx
+			};
+		}
+		return this._oLastFocusedCellInfo;
+	};
+
+
+	/*
+	 * Sets the focus to the given DOM reference or jQuery Object and
+	 * marks the resulting focus event to be ignored.
+	 * @protected (Only to be used by the keyboard delegate)
+	 */
+	TableKeyboardExtension.prototype._setSilentFocus = function(oRef) {
+		this._bIgnoreFocusIn = true;
+		oRef.focus();
+		this._bIgnoreFocusIn = false;
+	};
+
+
+	/*
+	 * Returns the type of the related table
+	 * @see TableExtension.TABLETYPES
+	 * @protected (Only to be used by the keyboard delegate)
+	 */
+	TableKeyboardExtension.prototype._getTableType = function() {
+		return this._type;
 	};
 
 
