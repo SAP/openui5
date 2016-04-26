@@ -48,7 +48,16 @@ html.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUi
 	};
 
 	&:focus {
-		outline: 2px dotted @sapHCStandardFG;
+		outline: none;
+	}
+
+	&:focus:before {
+		content: "";
+		position: absolute;
+		border: 2px dotted @sapUiFocus;
+		width: 2.125rem;
+		height: 2.125rem;
+		margin: 1px 0 0 1px;
 	}
 }
 
