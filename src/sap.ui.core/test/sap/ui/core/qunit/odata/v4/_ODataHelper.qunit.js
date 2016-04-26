@@ -15,14 +15,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4._ODataHelper", {
 		beforeEach : function () {
-			this.oSandbox = sinon.sandbox.create();
-			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
+			this.oLogMock = sinon.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		},
 
 		afterEach : function () {
-			this.oSandbox.verifyAndRestore();
+			this.oLogMock.verify();
 		}
 	});
 
@@ -67,7 +66,7 @@ sap.ui.require([
 		QUnit.test("getKeyPredicate: " + oFixture.sKeyPredicate, function (assert) {
 			var sProperty;
 
-			this.oSandbox.spy(_Helper, "formatLiteral");
+			this.spy(_Helper, "formatLiteral");
 
 			assert.strictEqual(
 				_ODataHelper.getKeyPredicate(oFixture.oEntityType, oFixture.oEntityInstance),
@@ -124,7 +123,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("buildQueryOptions: parse system query options", function (assert) {
 		var oExpand = {"foo" : true},
-			oParserMock = this.oSandbox.mock(_Parser),
+			oParserMock = this.mock(_Parser),
 			aSelect = ["bar"];
 
 		oParserMock.expects("parseSystemQueryOption")

@@ -30,14 +30,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._Cache", {
 		beforeEach : function () {
-			this.oSandbox = sinon.sandbox.create();
-			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
+			this.oLogMock = sinon.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		},
 
 		afterEach : function () {
-			this.oSandbox.verifyAndRestore();
+			this.oLogMock.verify();
 		}
 	});
 
@@ -64,7 +63,7 @@ sap.ui.require([
 					value : aData.slice(oFixture.index, oFixture.index + oFixture.length)
 				};
 
-			this.oSandbox.mock(oRequestor).expects("request")
+			this.mock(oRequestor).expects("request")
 				.withExactArgs("GET", sResourcePath + "?$skip=" + oFixture.index + "&$top="
 					+ oFixture.length, "group")
 				.returns(Promise.resolve(oMockResult));
@@ -98,7 +97,7 @@ sap.ui.require([
 			oCache = _Cache.create(oRequestor, sResourcePath, {$select : "foo"}),
 			aPromises = [];
 
-		this.oSandbox.mock(oRequestor).expects("request")
+		this.mock(oRequestor).expects("request")
 			.withExactArgs("GET", sResourcePath + "?$select=foo&$skip=0&$top=1", undefined)
 			.returns(Promise.resolve(oExpectedResult));
 
@@ -148,7 +147,7 @@ sap.ui.require([
 			sResourcePath = "Employees",
 			oCache = _Cache.create(oRequestor, sResourcePath);
 
-		this.oSandbox.mock(oRequestor).expects("request").never();
+		this.mock(oRequestor).expects("request").never();
 
 		// code under test
 		assert.throws(function () {
@@ -162,7 +161,7 @@ sap.ui.require([
 			sResourcePath = "Employees",
 			oCache = _Cache.create(oRequestor, sResourcePath);
 
-		this.oSandbox.mock(oRequestor).expects("request").never();
+		this.mock(oRequestor).expects("request").never();
 
 		// code under test
 		assert.throws(function () {
@@ -221,7 +220,7 @@ sap.ui.require([
 				sResourcePath = "Employees",
 				oCache = _Cache.create(oRequestor, sResourcePath),
 				oPromise = Promise.resolve(),
-				oRequestorMock = this.oSandbox.mock(oRequestor);
+				oRequestorMock = this.mock(oRequestor);
 
 			oFixture.expectedRequests.forEach(function (oRequest) {
 				mockRequest(oRequestorMock, sResourcePath, oRequest.skip, oRequest.top);
@@ -251,7 +250,7 @@ sap.ui.require([
 				sResourcePath = "Employees",
 				oCache = _Cache.create(oRequestor, sResourcePath),
 				aPromises = [],
-				oRequestorMock = this.oSandbox.mock(oRequestor);
+				oRequestorMock = this.mock(oRequestor);
 
 			oFixture.expectedRequests.forEach(function (oRequest) {
 				mockRequest(oRequestorMock, sResourcePath, oRequest.skip, oRequest.top);
@@ -275,7 +274,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("convertQueryOptions", function (assert) {
-		var oCacheMock = this.oSandbox.mock(_Cache),
+		var oCacheMock = this.mock(_Cache),
 			oExpand = {};
 
 		oCacheMock.expects("convertExpand")
@@ -316,7 +315,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("convertExpandOptions", function (assert) {
-		var oCacheMock = this.oSandbox.mock(_Cache),
+		var oCacheMock = this.mock(_Cache),
 			oExpand = {};
 
 		oCacheMock.expects("convertExpand")
@@ -340,7 +339,7 @@ sap.ui.require([
 			}, new Error("$expand must be a valid object"));
 		});
 
-		this.oSandbox.mock(_Cache).expects("convertExpandOptions")
+		this.mock(_Cache).expects("convertExpandOptions")
 			.withExactArgs("baz", sinon.match.same(oOptions)).returns("baz(options)");
 
 		assert.strictEqual(_Cache.convertExpand({
@@ -352,7 +351,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("buildQueryString", function (assert) {
-		var oCacheMock = this.oSandbox.mock(_Cache),
+		var oCacheMock = this.mock(_Cache),
 			oConvertedQueryParams = {},
 			oQueryParams = {};
 
@@ -363,7 +362,7 @@ sap.ui.require([
 
 		oCacheMock.expects("convertQueryOptions")
 			.withExactArgs(oQueryParams).returns(oConvertedQueryParams);
-		this.oSandbox.mock(_Helper).expects("buildQuery")
+		this.mock(_Helper).expects("buildQuery")
 			.withExactArgs(sinon.match.same(oConvertedQueryParams)).returns("?query");
 
 		assert.strictEqual(_Cache.buildQueryString(oQueryParams), "?query");
@@ -432,14 +431,14 @@ sap.ui.require([
 			oRequestor,
 			sResourcePath = "Employees";
 
-		this.oSandbox.mock(_Cache).expects("buildQueryString")
+		this.mock(_Cache).expects("buildQueryString")
 			.withExactArgs(sinon.match.same(mQueryParams))
 			.returns(sQueryParams);
 
 		oRequestor = _Requestor.create("/~/");
 		oCache = _Cache.create(oRequestor, sResourcePath, mQueryParams);
 
-		this.oSandbox.mock(oRequestor).expects("request")
+		this.mock(oRequestor).expects("request")
 			.withExactArgs("GET", sResourcePath + sQueryParams + "&$skip=0&$top=5", undefined)
 			.returns(Promise.resolve({value: []}));
 
@@ -455,7 +454,7 @@ sap.ui.require([
 			oSuccess = createResult(0, 5),
 			sResourcePath = "Employees",
 			oCache = _Cache.create(oRequestor, sResourcePath),
-			oRequestorMock = this.oSandbox.mock(oRequestor);
+			oRequestorMock = this.mock(oRequestor);
 
 		oRequestorMock.expects("request")
 			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=5", undefined)
@@ -486,9 +485,9 @@ sap.ui.require([
 			oRequestor = _Requestor.create("/~/"),
 			sResourcePath = "Employees('1')";
 
-		this.oSandbox.mock(_Cache).expects("buildQueryString")
+		this.mock(_Cache).expects("buildQueryString")
 			.withExactArgs(mQueryParams).returns("?~");
-		this.oSandbox.mock(oRequestor).expects("request")
+		this.mock(oRequestor).expects("request")
 			.withExactArgs("GET", sResourcePath + "?~", "group")
 			.returns(Promise.resolve(oExpectedResult));
 
@@ -512,7 +511,7 @@ sap.ui.require([
 			sResourcePath = "Employees('1')/Name",
 			oCache;
 
-		this.oSandbox.mock(oRequestor).expects("request")
+		this.mock(oRequestor).expects("request")
 			.withExactArgs("GET", sResourcePath, undefined)
 			.returns(Promise.resolve(oExpectedResult));
 
@@ -533,7 +532,7 @@ sap.ui.require([
 			sResourcePath = "Employees('1')/DateOfBirth",
 			oCache;
 
-		this.oSandbox.mock(oRequestor).expects("request")
+		this.mock(oRequestor).expects("request")
 			.withExactArgs("GET", sResourcePath, undefined)
 			.returns(Promise.resolve(undefined)); // 204 No Content
 
@@ -558,7 +557,7 @@ sap.ui.require([
 			oCache = _Cache.createSingle(oRequestor, sResourcePath),
 			aPromises = [];
 
-		this.oSandbox.mock(oRequestor).expects("request")
+		this.mock(oRequestor).expects("request")
 			.withExactArgs("GET", sResourcePath, undefined)
 			.returns(Promise.resolve(oExpectedResult));
 
@@ -610,7 +609,7 @@ sap.ui.require([
 				}]
 			}),
 			oRequestor = _Requestor.create("/"),
-			oRequestorMock = this.oSandbox.mock(oRequestor),
+			oRequestorMock = this.mock(oRequestor),
 			sResourcePath = "/SalesOrderList(SalesOrderID='0')",
 			// server responds with different value, e.g. upper case, and side effect
 			oResult = {
@@ -670,7 +669,7 @@ sap.ui.require([
 			oPostData = {},
 			oPromise,
 			oRequestor = _Requestor.create("/~/"),
-			oRequestorMock = this.oSandbox.mock(oRequestor),
+			oRequestorMock = this.mock(oRequestor),
 			sResourcePath = "LeaveRequest('1')/Submit",
 			oCache = _Cache.createSingle(oRequestor, sResourcePath, undefined, false, true),
 			oResult1 = {},
@@ -715,7 +714,7 @@ sap.ui.require([
 			oPostData = {},
 			oPromise,
 			oRequestor = _Requestor.create("/~/"),
-			oRequestorMock = this.oSandbox.mock(oRequestor),
+			oRequestorMock = this.mock(oRequestor),
 			sResourcePath = "LeaveRequest('1')/Submit",
 			oCache = _Cache.createSingle(oRequestor, sResourcePath, undefined, false, true);
 
@@ -770,7 +769,7 @@ sap.ui.require([
 			oRequestor = _Requestor.create("/~/"),
 			sResourcePath = "Employees('1')";
 
-		this.oSandbox.mock(oRequestor).expects("request")
+		this.mock(oRequestor).expects("request")
 			.withExactArgs("GET", sResourcePath, undefined)
 			.returns(Promise.resolve({}));
 
@@ -790,7 +789,7 @@ sap.ui.require([
 			oRequestor = _Requestor.create("/~/"),
 			sResourcePath = "Employees('1')";
 
-		this.oSandbox.mock(oRequestor).expects("request").twice()
+		this.mock(oRequestor).expects("request").twice()
 			.withExactArgs("GET", sResourcePath, undefined)
 			.onFirstCall().returns(Promise.resolve({}))
 			.onSecondCall().returns(Promise.resolve({}));
@@ -818,7 +817,7 @@ sap.ui.require([
 			oRequestor = _Requestor.create("/~/"),
 			sResourcePath = "Employees";
 
-		this.oSandbox.mock(oRequestor).expects("request")
+		this.mock(oRequestor).expects("request")
 			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=20", undefined)
 			.returns(Promise.resolve(createResult(0, 10)));
 
@@ -844,7 +843,7 @@ sap.ui.require([
 			oRequestor = _Requestor.create("/~/"),
 			sResourcePath = "Employees";
 
-		this.oSandbox.mock(oRequestor).expects("request").twice()
+		this.mock(oRequestor).expects("request").twice()
 			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=10", undefined)
 			.returns(Promise.resolve(createResult(0, 10)));
 
@@ -927,7 +926,7 @@ sap.ui.require([
 					fnResolve = resolve;
 				}),
 				oRequestor = _Requestor.create("/"),
-				oRequestorMock = this.oSandbox.mock(oRequestor),
+				oRequestorMock = this.mock(oRequestor),
 				oCache = _Cache.createSingle(oRequestor, o.sResourcePath, null, o.bSingleProperty),
 				// server responds with different value, e.g. upper case, and side effect
 				oResult = {
