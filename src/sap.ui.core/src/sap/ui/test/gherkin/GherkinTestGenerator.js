@@ -111,7 +111,7 @@ sap.ui.define([
         throw new Error("GherkinTestGenerator constructor: parameter 'vFeature' must be a valid String or a valid Feature object");
       }
 
-      if (($.type(fnStepDefsConstructor) !== "function") || !((new fnStepDefsConstructor()).register)) {
+      if (($.type(fnStepDefsConstructor) !== "function") || !((new fnStepDefsConstructor())._generateTestStep)) {
         throw new Error("GherkinTestGenerator constructor: parameter 'fnStepDefsConstructor' must be a valid StepDefinitions constructor");
       }
 
