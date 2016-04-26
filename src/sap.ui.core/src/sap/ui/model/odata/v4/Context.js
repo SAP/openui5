@@ -3,29 +3,48 @@
  */
 
 sap.ui.define([
-	"sap/ui/model/Context"
-], function (BaseContext) {
+	"sap/ui/model/Context",
+	"./lib/_SyncPromise"
+], function (BaseContext, _SyncPromise) {
 	"use strict";
-
-	/*
-	 * Checks if the given value is primitive.
-	 * @param {sap.ui.model.odata.v4.Context} oContext The context
-	 * @param {string} sPath The requested path
-	 * @param {any} oResult The result
-	 * @throws {Error} If the result is not primitive
-	 */
-	function checkPrimitive(oContext, sPath, oResult) {
-		if (oResult && typeof oResult === "object") {
-			throw new Error(oContext + "/" + sPath + ": Accessed value is not primitive");
-		}
-		return oResult;
-	}
 
 	/*
 	 * Clones the object.
 	 */
 	function clone(o) {
 		return o && JSON.parse(JSON.stringify(o));
+	}
+
+	/*
+	 * Fetches and formats the primitive value at the given path.
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} oContext The context
+	 * @param {string} sPath The requested path
+	 * @param {boolean} [bExternalFormat=false]
+	 *   If <code>true</code>, the value is returned in external format using a UI5 type for the
+	 *   given property path that formats corresponding to the property's EDM type and constraints.
+	 * @returns {SyncPromise} a promise on the formatted value
+	 */
+	function fetchPrimitiveValue(oContext, sPath, bExternalFormat) {
+		var oError,
+			aPromises = [oContext.fetchValue(sPath)],
+			sResolvedPath = oContext.getPath(sPath);
+
+		if (bExternalFormat) {
+			aPromises.push(
+				oContext.oModel.getMetaModel().fetchUI5Type(sResolvedPath));
+		}
+		return _SyncPromise.all(aPromises).then(function (aResults) {
+			var oType = aResults[1],
+				vValue = aResults[0];
+
+			if (vValue && typeof vValue === "object") {
+				oError = new Error("Accessed value is not primitive: " + sResolvedPath);
+				oError.isNotPrimitive = true;
+				throw oError;
+			}
+			return bExternalFormat ? oType.formatValue(vValue, "string") : vValue;
+		});
 	}
 
 	/**
@@ -128,12 +147,16 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the value for the given path relative to this context. The path is expected to point
-	 * to a structural property with primitive type. Returns <code>undefined</code> if the data is
-	 * not (yet) available. Use {@link #requestProperty} for asynchronous access.
+	 * Returns the property value for the given path relative to this context. The path is expected
+	 * to point to a structural property with primitive type. Returns <code>undefined</code>
+	 * if the data is not (yet) available. Use {@link #requestProperty} for asynchronous access.
 	 *
 	 * @param {string} sPath
 	 *   A relative path within the JSON structure
+	 * @param {boolean} [bExternalFormat=false]
+	 *   If <code>true</code>, the value is returned in external format using a UI5 type for the
+	 *   given property path that formats corresponding to the property's EDM type and constraints.
+	 *   If the type is not yet available, <code>undefined</code> is returned.
 	 * @returns {any}
 	 *   The requested property value
 	 * @throws {Error}
@@ -141,16 +164,21 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @see sap.ui.model.Context#getProperty
+	 * @see sap.ui.model.odata.v4.ODataMetaModel#requestUI5Type
 	 * @since 1.39.0
 	 */
 	// @override
-	Context.prototype.getProperty = function (sPath) {
-		var oSyncPromise = this.fetchValue(sPath);
+	Context.prototype.getProperty = function (sPath, bExternalFormat) {
+		var oError,
+			oSyncPromise = fetchPrimitiveValue(this, sPath, bExternalFormat);
 
-		if (!oSyncPromise.isFulfilled()) {
-			return undefined;
+		if (oSyncPromise.isRejected()) {
+			oError = oSyncPromise.getResult();
+			if (oError.isNotPrimitive) {
+				throw oError;
+			}
 		}
-		return checkPrimitive(this, sPath, oSyncPromise.getResult());
+		return oSyncPromise.isFulfilled() ? oSyncPromise.getResult() : undefined;
 	};
 
 	/**
@@ -185,25 +213,29 @@ sap.ui.define([
 	 * @since 1.39.0
 	 */
 	Context.prototype.requestObject = function (sPath) {
-		return Promise.resolve(this.fetchValue(sPath)).then(function (oResult) {
-			return clone(oResult);
+		return Promise.resolve(this.fetchValue(sPath)).then(function (vResult) {
+			return clone(vResult);
 		});
 	};
 
 	/**
-	 * Returns a promise on the value for the given path relative to this context. The path is
-	 * expected to point to a structural property with primitive type.
+	 * Returns a promise on the property value for the given path relative to this context. The path
+	 * is expected to point to a structural property with primitive type.
 	 *
-	 * @param {string} sPath
-	 *   A relative path
+	 * @param {string} [sPath]
+	 *   A relative path within the JSON structure
+	 * @param {boolean} [bExternalFormat=false]
+	 *   If <code>true</code>, the value is returned in external format using a UI5 type for the
+	 *   given property path that formats corresponding to the property's EDM type and constraints.
 	 * @returns {Promise}
 	 *   A promise on the requested value; it is rejected if the value is not primitive
 	 *
 	 * @public
+	 * @see sap.ui.model.odata.v4.ODataMetaModel#requestUI5Type
 	 * @since 1.39.0
 	 */
-	Context.prototype.requestProperty = function (sPath) {
-		return Promise.resolve(this.fetchValue(sPath)).then(checkPrimitive.bind(null, this, sPath));
+	Context.prototype.requestProperty = function (sPath, bExternalFormat) {
+		return Promise.resolve(fetchPrimitiveValue(this, sPath, bExternalFormat));
 	};
 
 	/**
