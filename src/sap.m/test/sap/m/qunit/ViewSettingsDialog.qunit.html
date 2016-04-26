@@ -741,6 +741,41 @@
 				this.oVSD._resetButton.firePress();
 			});
 
+			test("Grouping items selection", function (assert) {
+				var clock = sinon.useFakeTimers(),
+					fnOnConfirmObject = sinon.spy(function (oEvent) {
+						ok(typeof oEvent.getParameter("groupItem") == "object", "Group Item is an object");
+					}),
+					fnOnConfirmUndefined = sinon.spy(function (oEvent) {
+						ok(typeof oEvent.getParameter("groupItem") == "undefined", "'None' Item is undefined");
+					});
+
+				//Act
+				this.oVSD.attachConfirm(fnOnConfirmObject);
+				this.oVSD.open("group");
+				this.oVSD.setSelectedGroupItem(this.oVSD.getGroupItems()[0]);
+				this.oVSD._getDialog().getBeginButton().firePress();
+				sap.ui.getCore().applyChanges();
+				clock.tick(1000);
+
+				//Check
+				ok(fnOnConfirmObject.calledOnce, "Event handler is being called");
+
+				// Act
+				this.oVSD.detachConfirm(fnOnConfirmObject);
+				this.oVSD.attachConfirm(fnOnConfirmUndefined);
+				this.oVSD.open("group");
+				this.oVSD.setSelectedGroupItem(this.oVSD._oGroupingNoneItem);
+				this.oVSD._getDialog().getBeginButton().firePress();
+				sap.ui.getCore().applyChanges();
+				clock.tick(1000);
+
+				//Check
+				ok(fnOnConfirmUndefined.calledOnce, "Event handler is being called");
+
+				clock.restore();
+			});
+
 			module ("Construction/Destruction", {
 				setup : function () {
 					this.oVSD = new sap.m.ViewSettingsDialog();
