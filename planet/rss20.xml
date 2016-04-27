@@ -57,7 +57,7 @@ As the UI5 community is growing every day I have experienced that people new to 
 	<title>Demos: Why initializing properties on prototypes can have nasty side effects in SAPUI5</title>
 	<guid>http://openui5picks.tumblr.com/post/121254537550</guid>
 	<link>http://openui5picks.tumblr.com/post/121254537550</link>
-	<description>&lt;img src=&quot;http://41.media.tumblr.com/6b1db0873385eb413a1fa522a212aecb/tumblr_inline_nprphnCYtc1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Recently a colleague reviewed some of my SAPUI5 tutorials. He pointed out that declaring and initializing private properties directly on the prototype object can lead to issues. This could especially...</description>
+	<description>&lt;img src=&quot;http://67.media.tumblr.com/6b1db0873385eb413a1fa522a212aecb/tumblr_inline_nprphnCYtc1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Recently a colleague reviewed some of my SAPUI5 tutorials. He pointed out that declaring and initializing private properties directly on the prototype object can lead to issues. This could especially...</description>
 	<pubDate>Sun, 31 May 2015 11:36:00 +0000</pubDate>
 </item>
 <item>

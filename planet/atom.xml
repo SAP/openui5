@@ -5,7 +5,7 @@
 	<link rel="self" href="http://openui5.org/atom.xml"/>
 	<link href="http://openui5.org/"/>
 	<id>http://openui5.org/atom.xml</id>
-	<updated>2016-04-27T16:00:11+00:00</updated>
+	<updated>2016-04-27T20:00:20+00:00</updated>
 	<generator uri="http://www.planetplanet.org/">Planet/2.0 +http://www.planetplanet.org</generator>
 
 	<entry>
@@ -24,7 +24,7 @@ A while back, I sent this twitter message into the Twitter-verse, with the inten
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2016-04-27T16:00:11+00:00</updated>
+			<updated>2016-04-27T20:00:20+00:00</updated>
 		</source>
 	</entry>
 
@@ -42,7 +42,7 @@ A while back, I sent this twitter message into the Twitter-verse, with the inten
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2016-04-27T16:00:11+00:00</updated>
+			<updated>2016-04-27T20:00:20+00:00</updated>
 		</source>
 	</entry>
 
@@ -60,7 +60,7 @@ A while back, I sent this twitter message into the Twitter-verse, with the inten
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2016-04-27T16:00:11+00:00</updated>
+			<updated>2016-04-27T20:00:20+00:00</updated>
 		</source>
 	</entry>
 
@@ -80,7 +80,7 @@ As the UI5 community is growing every day I have experienced that people new to 
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2016-04-27T16:00:11+00:00</updated>
+			<updated>2016-04-27T20:00:20+00:00</updated>
 		</source>
 	</entry>
 
@@ -98,7 +98,7 @@ As the UI5 community is growing every day I have experienced that people new to 
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2016-04-27T16:00:11+00:00</updated>
+			<updated>2016-04-27T20:00:20+00:00</updated>
 		</source>
 	</entry>
 
@@ -116,7 +116,7 @@ As the UI5 community is growing every day I have experienced that people new to 
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2016-04-27T16:00:11+00:00</updated>
+			<updated>2016-04-27T20:00:20+00:00</updated>
 		</source>
 	</entry>
 
@@ -125,7 +125,7 @@ As the UI5 community is growing every day I have experienced that people new to 
 		<link href="http://openui5picks.tumblr.com/post/121254537550"/>
 		<id>http://openui5picks.tumblr.com/post/121254537550</id>
 		<updated>2015-05-31T11:36:00+00:00</updated>
-		<content type="html">&lt;img src=&quot;http://41.media.tumblr.com/6b1db0873385eb413a1fa522a212aecb/tumblr_inline_nprphnCYtc1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Recently a colleague reviewed some of my SAPUI5 tutorials. He pointed out that declaring and initializing private properties directly on the prototype object can lead to issues. This could especially...</content>
+		<content type="html">&lt;img src=&quot;http://67.media.tumblr.com/6b1db0873385eb413a1fa522a212aecb/tumblr_inline_nprphnCYtc1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Recently a colleague reviewed some of my SAPUI5 tutorials. He pointed out that declaring and initializing private properties directly on the prototype object can lead to issues. This could especially...</content>
 		<author>
 			<name>Demos</name>
 			<uri>http://openui5picks.tumblr.com/</uri>
@@ -134,7 +134,7 @@ As the UI5 community is growing every day I have experienced that people new to 
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2016-04-27T16:00:11+00:00</updated>
+			<updated>2016-04-27T20:00:20+00:00</updated>
 		</source>
 	</entry>
 
@@ -152,7 +152,7 @@ As the UI5 community is growing every day I have experienced that people new to 
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2016-04-27T16:00:11+00:00</updated>
+			<updated>2016-04-27T20:00:20+00:00</updated>
 		</source>
 	</entry>
 
@@ -170,7 +170,7 @@ As the UI5 community is growing every day I have experienced that people new to 
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2016-04-27T16:00:11+00:00</updated>
+			<updated>2016-04-27T20:00:20+00:00</updated>
 		</source>
 	</entry>
 
@@ -188,7 +188,7 @@ As the UI5 community is growing every day I have experienced that people new to 
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2016-04-27T16:00:11+00:00</updated>
+			<updated>2016-04-27T20:00:20+00:00</updated>
 		</source>
 	</entry>
 
@@ -208,7 +208,7 @@ This blog demonstrates how to load, transform and analyse UK road traffic accide
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2016-04-27T16:00:11+00:00</updated>
+			<updated>2016-04-27T20:00:20+00:00</updated>
 		</source>
 	</entry>
 
