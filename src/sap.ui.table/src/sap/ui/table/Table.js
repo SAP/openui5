@@ -3289,7 +3289,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 */
 	Table.prototype._onColumnSelect = function(oColumn, oDomRef, bIsTouchMode, bWithKeyboard) {
 		// On tablet open special column header menu
-		if (bIsTouchMode) {
+		if (bIsTouchMode && (oColumn.getResizable() || oColumn._menuHasItems())) {
 			var $ColumnHeader = jQuery(oDomRef);
 			var $ColumnCell = $ColumnHeader.find(".sapUiTableColCell");
 
