@@ -1,10 +1,11 @@
+jQuery.sap.require("sap.ui.core.mvc.JSONView");
+jQuery.sap.require("sap.ui.core.mvc.JSView");
+jQuery.sap.require("sap.ui.core.mvc.XMLView");
+jQuery.sap.require("sap.ui.core.mvc.HTMLView");
+
 module("Start-up");
 
 test("Check dependencies", 4, function() {
-	jQuery.sap.require("sap.ui.core.mvc.JSONView");
-	jQuery.sap.require("sap.ui.core.mvc.JSView");
-	jQuery.sap.require("sap.ui.core.mvc.XMLView");
-	jQuery.sap.require("sap.ui.core.mvc.HTMLView")
 	ok(sap.ui.core.mvc.JSONView, "sap.ui.core.mvc.JSONView must be defined");
 	ok(sap.ui.core.mvc.JSView, "sap.ui.core.mvc.JSView must be defined");
 	ok(sap.ui.core.mvc.XMLView, "sap.ui.core.mvc.XMLView must be defined");

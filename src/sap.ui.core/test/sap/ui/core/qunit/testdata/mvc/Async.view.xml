@@ -27,7 +27,7 @@
 				<TextField id="Material" value="titanium"></TextField>
 			</layout:MatrixLayoutCell>
 		</layout:MatrixLayoutRow>
-		<layout:MatrixLayoutRow visible="false">
+		<layout:MatrixLayoutRow>
 			<layout:MatrixLayoutCell>
 				<Label id="More1" text="Diameter:"></Label>
 			</layout:MatrixLayoutCell>
@@ -35,7 +35,7 @@
 				<TextField id="TFMore1" value="1/4 inch"></TextField>
 			</layout:MatrixLayoutCell>
 		</layout:MatrixLayoutRow>
-		<layout:MatrixLayoutRow visible="false">
+		<layout:MatrixLayoutRow>
 			<layout:MatrixLayoutCell>
 				<Label id="More2" text="Length:"></Label>
 			</layout:MatrixLayoutCell>
@@ -43,7 +43,7 @@
 				<TextField id="TFMore2" value="2 inch"></TextField>
 			</layout:MatrixLayoutCell>
 		</layout:MatrixLayoutRow>
-		<layout:MatrixLayoutRow visible="false">
+		<layout:MatrixLayoutRow>
 			<layout:MatrixLayoutCell>
 				<Label id="More3" text="Package Quantity:"></Label>
 			</layout:MatrixLayoutCell>
@@ -54,8 +54,7 @@
 		<layout:MatrixLayoutRow>
 			<layout:MatrixLayoutCell>
 				<Link id="showMore" text="show details..." press="showMore"></Link>
-				<Link id="hideMore" text="hide details..." press="hideMore"
-					visible="false"></Link>
+				<Link id="hideMore" text="hide details..." press="hideMore"></Link>
 			</layout:MatrixLayoutCell>
 		</layout:MatrixLayoutRow>
 	</layout:MatrixLayout>
