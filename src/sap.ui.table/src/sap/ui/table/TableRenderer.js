@@ -522,7 +522,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		if (oRow._bHidden) {
 			rm.addClass("sapUiTableRowHidden");
 		} else {
-			if (oTable.isIndexSelected(iRowIndex)) {
+			if (oTable.isIndexSelected(oTable._getAbsoluteRowIndex(iRowIndex))) {
 				rm.addClass("sapUiTableRowSel");
 				bRowSelected = true;
 			}
@@ -793,7 +793,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		if (oRow._bHidden) {
 			rm.addClass("sapUiTableRowHidden");
 		} else {
-			if (oTable.isIndexSelected(iRowIndex)) {
+			if (oTable.isIndexSelected(oTable._getAbsoluteRowIndex(iRowIndex))) {
 				rm.addClass("sapUiTableRowSel");
 			}
 
@@ -826,7 +826,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			aCells.length === 0) {
 			rm.write("<td");
 			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "ROWHEADER_TD", {
-				rowSelected: !oRow._bHidden && oTable.isIndexSelected(iRowIndex), //see TableRenderer.renderRowHdrRow
+				rowSelected: !oRow._bHidden && oTable.isIndexSelected(oTable._getAbsoluteRowIndex(iRowIndex)), //see TableRenderer.renderRowHdrRow
 				index: iRowIndex
 			});
 			rm.write("></td>");
