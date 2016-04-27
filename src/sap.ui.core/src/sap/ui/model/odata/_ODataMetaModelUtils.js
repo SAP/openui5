@@ -372,12 +372,12 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 					Utils.addEntitySetAnnotation(o, oExtension, sTypeClass, "false", true);
 					break;
 				case "deletable-path":
-					sTerm = "Org.OData.Core.V1.DeleteRestrictions";
+					sTerm = "Org.OData.Capabilities.V1.DeleteRestrictions";
 					o[sTerm] = o[sTerm] || {};
 					o[sTerm].Deletable = { "Path" : oExtension.value };
 					break;
 				case "updatable-path":
-					sTerm = "Org.OData.Core.V1.UpdateRestrictions";
+					sTerm = "Org.OData.Capabilities.V1.UpdateRestrictions";
 					o[sTerm] = o[sTerm] || {};
 					o[sTerm].Updatable = { "Path" : oExtension.value };
 					break;
