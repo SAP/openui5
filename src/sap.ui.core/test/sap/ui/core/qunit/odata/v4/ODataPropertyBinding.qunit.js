@@ -181,7 +181,8 @@ sap.ui.require([
 			mQueryOptions = {};
 
 		oHelperMock.expects("buildQueryOptions")
-			.withExactArgs(this.oModel.mUriParameters, mParameters)
+			.withExactArgs(sinon.match.same(this.oModel.mUriParameters),
+				sinon.match.same(mParameters))
 			.returns(mQueryOptions);
 		this.oSandbox.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES(ID='1')/Name",
@@ -787,21 +788,22 @@ sap.ui.require([
 		oModelMock.expects("getGroupId").withExactArgs().returns("baz");
 		oModelMock.expects("getUpdateGroupId").twice().withExactArgs().returns("fromModel");
 
-		oHelperMock.expects("buildBindingParameters").withExactArgs(mParameters)
+		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters))
 			.returns({$$groupId : "foo", $$updateGroupId : "bar"});
 		// code under test
 		oBinding = oModel.bindProperty("/absolute", undefined, mParameters);
 		assert.strictEqual(oBinding.getGroupId(), "foo");
 		assert.strictEqual(oBinding.getUpdateGroupId(), "bar");
 
-		oHelperMock.expects("buildBindingParameters").withExactArgs(mParameters)
+		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters))
 			.returns({$$groupId : "foo"});
 		// code under test
 		oBinding = oModel.bindProperty("/absolute", undefined, mParameters);
 		assert.strictEqual(oBinding.getGroupId(), "foo");
 		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
 
-		oHelperMock.expects("buildBindingParameters").withExactArgs(mParameters).returns({});
+		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters))
+			.returns({});
 		// code under test
 		oBinding = oModel.bindProperty("/absolute", undefined, mParameters);
 		assert.strictEqual(oBinding.getGroupId(), "baz");

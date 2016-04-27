@@ -504,7 +504,8 @@ sap.ui.require([
 			},
 			fnRequest;
 
-		this.oSandbox.mock(Promise).expects("resolve").withExactArgs(oSyncPromise).returns(oResult);
+		this.oSandbox.mock(Promise).expects("resolve")
+			.withExactArgs(sinon.match.same(oSyncPromise)).returns(oResult);
 
 		// code under test
 		fnRequest = _SyncPromise.createRequestMethod("fetch");

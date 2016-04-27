@@ -9,7 +9,7 @@ sap.ui.require([
 	'sap/ui/model/odata/_AnnotationHelperBasics',
 	'sap/ui/model/odata/_AnnotationHelperExpression'
 ], function (jQuery, BindingParser, ManagedObject, JSONModel, Basics, Expression) {
-	/*global QUnit */
+	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0*/
 	"use strict";
 
@@ -275,13 +275,14 @@ sap.ui.require([
 
 			if (oFixture.value.Type) {
 				oBasics.expects("property")
-					.withExactArgs(oPathValue, "Type", "string").returns(oFixture.value.Type);
+					.withExactArgs(sinon.match.same(oPathValue), "Type", "string")
+					.returns(oFixture.value.Type);
 			}
 			oBasics.expects("descend")
-				.withExactArgs(oPathValue, oFixture.property)
+				.withExactArgs(sinon.match.same(oPathValue), oFixture.property)
 				.returns(oSubPathValue);
 			this.mock(Expression).expects("path")
-				.withExactArgs(oInterface, oSubPathValue)
+				.withExactArgs(sinon.match.same(oInterface), oSubPathValue)
 				.returns(oResult);
 
 			assert.strictEqual(Expression.expression(oInterface, oPathValue), oResult);
@@ -302,12 +303,14 @@ sap.ui.require([
 
 			if (oFixture.value.Type) {
 				oBasics.expects("property")
-					.withExactArgs(oPathValue, "Type", "string").returns("Apply");
+					.withExactArgs(sinon.match.same(oPathValue), "Type", "string").returns("Apply");
 			}
 			oBasics.expects("descend")
-				.withExactArgs(oPathValue, oFixture.property).returns(oSubPathValue);
+				.withExactArgs(sinon.match.same(oPathValue), oFixture.property)
+				.returns(oSubPathValue);
 			this.mock(Expression).expects("apply")
-				.withExactArgs(oInterface, oSubPathValue).returns(oResult);
+				.withExactArgs(sinon.match.same(oInterface), sinon.match.same(oSubPathValue))
+				.returns(oResult);
 
 			assert.strictEqual(Expression.expression(oInterface, oPathValue), oResult);
 		});
@@ -327,13 +330,14 @@ sap.ui.require([
 
 			if (oFixture.value.Type) {
 				oBasics.expects("property")
-					.withExactArgs(oPathValue, "Type", "string").returns("If");
+					.withExactArgs(sinon.match.same(oPathValue), "Type", "string").returns("If");
 			}
 			oBasics.expects("descend")
-				.withExactArgs(oPathValue, oFixture.property)
+				.withExactArgs(sinon.match.same(oPathValue), oFixture.property)
 				.returns(oSubPathValue);
 			this.mock(Expression).expects("conditional")
-				.withExactArgs(oInterface, oSubPathValue).returns(oResult);
+				.withExactArgs(sinon.match.same(oInterface), sinon.match.same(oSubPathValue))
+				.returns(oResult);
 
 			assert.strictEqual(Expression.expression(oInterface, oPathValue), oResult);
 		});
@@ -363,7 +367,8 @@ sap.ui.require([
 					oResult = {};
 
 				this.mock(Expression).expects("operator")
-					.withExactArgs(oInterface, oSubPathValue, sOperator).returns(oResult);
+					.withExactArgs(sinon.match.same(oInterface), oSubPathValue, sOperator)
+					.returns(oResult);
 
 				assert.strictEqual(Expression.expression(oInterface, oPathValue), oResult);
 			});
@@ -396,7 +401,7 @@ sap.ui.require([
 					oResult = {};
 
 				this.mock(Expression).expects("not")
-					.withExactArgs(oInterface, oSubPathValue).returns(oResult);
+					.withExactArgs(sinon.match.same(oInterface), oSubPathValue).returns(oResult);
 
 				assert.strictEqual(Expression.expression(oInterface, oPathValue), oResult);
 			});
@@ -432,7 +437,7 @@ sap.ui.require([
 		var oPathValue = {value : {}};
 
 		this.mock(Basics).expects("error")
-			.withExactArgs(oPathValue, "Unsupported OData expression");
+			.withExactArgs(sinon.match.same(oPathValue), "Unsupported OData expression");
 
 		Expression.expression({}, oPathValue);
 	});
@@ -494,11 +499,11 @@ sap.ui.require([
 			oBasics = this.mock(Basics);
 
 		oBasics.expects("descend")
-			.withExactArgs(oPathValue, "Name", "string")
+			.withExactArgs(sinon.match.same(oPathValue), "Name", "string")
 			.returns(oPathValueName);
-		oBasics.expects("descend").withExactArgs(oPathValue, "Parameters");
+		oBasics.expects("descend").withExactArgs(sinon.match.same(oPathValue), "Parameters");
 		oBasics.expects("error")
-			.withExactArgs(oPathValueName, "unknown function: foo");
+			.withExactArgs(sinon.match.same(oPathValueName), "unknown function: foo");
 
 		Expression.apply(oInterface, oPathValue); // no result, would never return
 	});
@@ -513,13 +518,14 @@ sap.ui.require([
 				oBasics = this.mock(Basics);
 
 			oBasics.expects("descend")
-				.withExactArgs(oPathValue, "Name", "string")
+				.withExactArgs(sinon.match.same(oPathValue), "Name", "string")
 				.returns({value : "odata." + sName});
 			oBasics.expects("descend")
-				.withExactArgs(oPathValue, "Parameters")
+				.withExactArgs(sinon.match.same(oPathValue), "Parameters")
 				.returns(oPathValueParameters);
 			this.mock(Expression).expects(sName)
-				.withExactArgs(oInterface, oPathValueParameters).returns(oResult);
+				.withExactArgs(sinon.match.same(oInterface), sinon.match.same(oPathValueParameters))
+				.returns(oResult);
 
 			assert.strictEqual(Expression.apply(oInterface, oPathValue), oResult);
 		});
@@ -531,7 +537,7 @@ sap.ui.require([
 			oPathValue = {};
 
 		this.mock(Expression).expects("parameter")
-			.withExactArgs(oInterface, oPathValue, 0)
+			.withExactArgs(sinon.match.same(oInterface), sinon.match.same(oPathValue), 0)
 			.returns({
 				result : "binding",
 				value : "path",
@@ -577,29 +583,31 @@ sap.ui.require([
 					: {result : "expression", value : "(C)", type : "foo"};
 
 			oExpression.expects("parameter")
-				.withExactArgs(oInterface, oPathValue, 0, "Edm.Boolean")
+				.withExactArgs(sinon.match.same(oInterface), sinon.match.same(oPathValue), 0,
+					"Edm.Boolean")
 				.returns(oParameter0);
 			oExpression.expects("parameter")
-				.withExactArgs(oInterface, oPathValue, 1)
+				.withExactArgs(sinon.match.same(oInterface), sinon.match.same(oPathValue), 1)
 				.returns(oParameter1);
 			oExpression.expects("parameter")
-				.withExactArgs(oInterface, oPathValue, 2)
+				.withExactArgs(sinon.match.same(oInterface), sinon.match.same(oPathValue), 2)
 				.returns(oParameter2);
 
 			oExpression.expects("wrapExpression")
-				.withExactArgs(oParameter0).returns(oWrappedParameter0);
+				.withExactArgs(sinon.match.same(oParameter0)).returns(oWrappedParameter0);
 			oExpression.expects("wrapExpression")
-				.withExactArgs(oParameter1).returns(oWrappedParameter1);
+				.withExactArgs(sinon.match.same(oParameter1)).returns(oWrappedParameter1);
 			oExpression.expects("wrapExpression")
-				.withExactArgs(oParameter2).returns(oWrappedParameter2);
+				.withExactArgs(sinon.match.same(oParameter2)).returns(oWrappedParameter2);
 
-			oBasics.expects("resultToString").withExactArgs(oWrappedParameter0, true, false)
+			oBasics.expects("resultToString")
+				.withExactArgs(sinon.match.same(oWrappedParameter0), true, false)
 				.returns("(A)");
 			oBasics.expects("resultToString")
-				.withExactArgs(oWrappedParameter1, true, "withType")
+				.withExactArgs(sinon.match.same(oWrappedParameter1), true, "withType")
 				.returns(oWrappedParameter1.value);
 			oBasics.expects("resultToString")
-				.withExactArgs(oWrappedParameter2, true, "withType")
+				.withExactArgs(sinon.match.same(oWrappedParameter2), true, "withType")
 				.returns(oWrappedParameter2.value);
 
 			assert.deepEqual(Expression.conditional(oInterface, oPathValue), {
@@ -625,14 +633,18 @@ sap.ui.require([
 			oParameter2 = {type : "bar"};
 
 		oExpression.expects("parameter")
-			.withExactArgs(oInterface, oPathValue, 0, "Edm.Boolean").returns(oParameter0);
+			.withExactArgs(sinon.match.same(oInterface), sinon.match.same(oPathValue), 0,
+				"Edm.Boolean")
+			.returns(oParameter0);
 		oExpression.expects("parameter")
-			.withExactArgs(oInterface, oPathValue, 1).returns(oParameter1);
+			.withExactArgs(sinon.match.same(oInterface), sinon.match.same(oPathValue), 1)
+			.returns(oParameter1);
 		oExpression.expects("parameter")
-			.withExactArgs(oInterface, oPathValue, 2).returns(oParameter2);
+			.withExactArgs(sinon.match.same(oInterface), sinon.match.same(oPathValue), 2)
+			.returns(oParameter2);
 
 		this.mock(Basics).expects("error")
-			.withExactArgs(oPathValue,
+			.withExactArgs(sinon.match.same(oPathValue),
 				"Expected same type for second and third parameter, types are 'foo' and 'bar'")
 			.throws(new SyntaxError());
 
@@ -647,7 +659,7 @@ sap.ui.require([
 			oPathValue = {};
 
 		this.mock(Expression).expects("parameter")
-			.withExactArgs(oInterface, oPathValue, 0)
+			.withExactArgs(sinon.match.same(oInterface), sinon.match.same(oPathValue), 0)
 			.returns({
 				result : "constant",
 				value : "2015-03-24",
@@ -667,7 +679,7 @@ sap.ui.require([
 			oPathValue = {};
 
 		this.mock(Expression).expects("parameter")
-			.withExactArgs(oInterface, oPathValue, 0)
+			.withExactArgs(sinon.match.same(oInterface), sinon.match.same(oPathValue), 0)
 			.returns({
 				result : "constant",
 				value : "13:57:06.123456789012",
@@ -723,11 +735,13 @@ sap.ui.require([
 					},
 					oParameter1 = {result : "binding", value : "path", type : "Edm.String"};
 
-				oBasics.expects("expectType").withExactArgs(oPathValue, "array");
+				oBasics.expects("expectType").withExactArgs(sinon.match.same(oPathValue), "array");
 				oExpression.expects("parameter")
-					.withExactArgs(oInterface, oPathValue, 0).returns(oParameter1);
+					.withExactArgs(sinon.match.same(oInterface), sinon.match.same(oPathValue), 0)
+					.returns(oParameter1);
 				oExpression.expects("parameter")
-					.withExactArgs(oInterface, oPathValue, 1).returns(clone(oFixture.parameter2));
+					.withExactArgs(sinon.match.same(oInterface), sinon.match.same(oPathValue), 1)
+					.returns(clone(oFixture.parameter2));
 
 				assert.deepEqual(Expression.concat(oInterface, oPathValue), {
 					result : oFixture.result.result,
@@ -750,7 +764,9 @@ sap.ui.require([
 			};
 
 		this.mock(Expression).expects("parameter")
-			.withExactArgs(oInterface, oPathValue, 0, "Edm.String").returns(oResult);
+			.withExactArgs(sinon.match.same(oInterface), sinon.match.same(oPathValue), 0,
+				"Edm.String")
+			.returns(oResult);
 
 		assert.deepEqual(Expression.fillUriTemplate(oInterface, oPathValue), {
 			result : "expression",
@@ -779,16 +795,22 @@ sap.ui.require([
 			oExpression = this.mock(Expression);
 
 		oExpression.expects("parameter")
-			.withExactArgs(oInterface, oPathValue, 0, "Edm.String").returns(oResultTemplate);
+			.withExactArgs(sinon.match.same(oInterface), sinon.match.same(oPathValue), 0,
+				"Edm.String")
+			.returns(oResultTemplate);
 		oBasics.expects("descend")
-			.withExactArgs(oPathValue, 1, "object").returns(oSubPathValueNamedParameter);
+			.withExactArgs(sinon.match.same(oPathValue), 1, "object")
+			.returns(oSubPathValueNamedParameter);
 		oBasics.expects("property")
-			.withExactArgs(oSubPathValueNamedParameter, "Name", "string").returns("p1");
+			.withExactArgs(sinon.match.same(oSubPathValueNamedParameter), "Name", "string")
+			.returns("p1");
 		oBasics.expects("descend")
-			.withExactArgs(oSubPathValueNamedParameter, "Value")
+			.withExactArgs(sinon.match.same(oSubPathValueNamedParameter), "Value")
 			.returns(oSubPathValueParameter);
 		oExpression.expects("expression")
-			.withExactArgs(oInterface, oSubPathValueParameter, true).returns(oResultParameter);
+			.withExactArgs(sinon.match.same(oInterface), sinon.match.same(oSubPathValueParameter),
+				true)
+			.returns(oResultParameter);
 
 		assert.deepEqual(Expression.fillUriTemplate(oInterface, oPathValue), {
 			result : "expression",
@@ -837,12 +859,15 @@ sap.ui.require([
 			oExpression = this.mock(Expression);
 
 		oExpression.expects("parameter")
-			.withExactArgs(oInterface, oPathValue, 0, "Edm.String").returns(oResultTemplate);
+			.withExactArgs(sinon.match.same(oInterface), sinon.match.same(oPathValue), 0,
+				"Edm.String")
+			.returns(oResultTemplate);
 		oExpression.expects("expression")
-			.withExactArgs(oInterface, oPathValueP1, true).returns(aResultParameters1);
+			.withExactArgs(sinon.match.same(oInterface), oPathValueP1, true)
+			.returns(aResultParameters1);
 		oExpression.expects("expression")
-			.withExactArgs(oInterface, oPathValueP2, true).returns(aResultParameters2);
-
+			.withExactArgs(sinon.match.same(oInterface), oPathValueP2, true)
+			.returns(aResultParameters2);
 
 		assert.deepEqual(Expression.fillUriTemplate(oInterface, oPathValue), {
 			result : "expression",
@@ -868,7 +893,7 @@ sap.ui.require([
 				};
 
 			this.mock(Expression).expects("expression")
-				.withExactArgs(oInterface, {path : "/foo", asExpression : true})
+				.withExactArgs(sinon.match.same(oInterface), {path : "/foo", asExpression : true})
 				.returns(oFixture.parameter);
 
 			assert.deepEqual(Expression.not(oInterface, {path : "/foo"}), oExpectedResult);
@@ -885,10 +910,12 @@ sap.ui.require([
 				function (assert) {
 					if (bWrap) {
 						this.mock(Expression).expects("wrapExpression")
-							.withExactArgs(oFixture.i).returns(oFixture.i);
+							.withExactArgs(sinon.match.same(oFixture.i))
+							.returns(oFixture.i);
 					}
 					this.mock(Basics).expects("resultToString")
-						.withExactArgs(oFixture.i, true).returns(oFixture.o);
+						.withExactArgs(sinon.match.same(oFixture.i), true)
+						.returns(oFixture.o);
 
 					assert.strictEqual(Expression.formatOperand({}, 42, oFixture.i, bWrap),
 						oFixture.o);
@@ -1094,10 +1121,12 @@ sap.ui.require([
 				oExpression = this.mock(Expression);
 
 			oExpression.expects("parameter")
-				.withExactArgs(oInterface, oPathValue, 0, oFixture.type)
+				.withExactArgs(sinon.match.same(oInterface), sinon.match.same(oPathValue), 0,
+					oFixture.type)
 				.returns(oParameter0);
 			oExpression.expects("parameter")
-				.withExactArgs(oInterface, oPathValue, 1, oFixture.type)
+				.withExactArgs(sinon.match.same(oInterface), sinon.match.same(oPathValue), 1,
+					oFixture.type)
 				.returns(oParameter1);
 
 			assert.deepEqual(Expression.operator(oInterface, oPathValue, oFixture.text),
@@ -1137,20 +1166,26 @@ sap.ui.require([
 				sExpectedResult = "odata.compare(p0,p1,true)===0";
 			}
 			oExpression.expects("parameter")
-				.withExactArgs(oInterface, oPathValue, 0, undefined)
+				.withExactArgs(sinon.match.same(oInterface), sinon.match.same(oPathValue), 0,
+					undefined)
 				.returns(oParameter0);
 			oExpression.expects("parameter")
-				.withExactArgs(oInterface, oPathValue, 1, undefined)
+				.withExactArgs(sinon.match.same(oInterface), sinon.match.same(oPathValue), 1,
+					undefined)
 				.returns(oParameter1);
 
-			oExpression.expects("adjustOperands").withExactArgs(oParameter0, oParameter1);
-			oExpression.expects("adjustOperands").withExactArgs(oParameter1, oParameter0);
+			oExpression.expects("adjustOperands")
+				.withExactArgs(sinon.match.same(oParameter0), sinon.match.same(oParameter1));
+			oExpression.expects("adjustOperands")
+				.withExactArgs(sinon.match.same(oParameter1), sinon.match.same(oParameter0));
 
 			oExpression.expects("formatOperand")
-				.withExactArgs(oPathValue, 0, oParameter0, !oFixture.compare)
+				.withExactArgs(sinon.match.same(oPathValue), 0, sinon.match.same(oParameter0),
+					!oFixture.compare)
 				.returns("p0");
 			oExpression.expects("formatOperand")
-				.withExactArgs(oPathValue, 1, oParameter1, !oFixture.compare)
+				.withExactArgs(sinon.match.same(oPathValue), 1, sinon.match.same(oParameter1),
+					!oFixture.compare)
 				.returns("p1");
 
 			assert.deepEqual(Expression.operator(oInterface, oPathValue, "Eq"),
@@ -1170,18 +1205,20 @@ sap.ui.require([
 			oParameter1 = {type : "Edm.Boolean"};
 
 		oExpression.expects("parameter")
-			.withExactArgs(oInterface, oPathValue, 0, undefined)
+			.withExactArgs(sinon.match.same(oInterface), sinon.match.same(oPathValue), 0, undefined)
 			.returns(oParameter0);
 		oExpression.expects("parameter")
-			.withExactArgs(oInterface, oPathValue, 1, undefined)
+			.withExactArgs(sinon.match.same(oInterface), sinon.match.same(oPathValue), 1, undefined)
 			.returns(oParameter1);
 
-		oExpression.expects("adjustOperands").withExactArgs(oParameter0, oParameter1);
-		oExpression.expects("adjustOperands").withExactArgs(oParameter1, oParameter0);
+		oExpression.expects("adjustOperands")
+			.withExactArgs(sinon.match.same(oParameter0), sinon.match.same(oParameter1));
+		oExpression.expects("adjustOperands")
+			.withExactArgs(sinon.match.same(oParameter1), sinon.match.same(oParameter0));
 
 		this.mock(Basics).expects("error")
-			.withExactArgs(oPathValue, "Expected two comparable parameters but instead saw "
-				+ "Edm.String and Edm.Boolean")
+			.withExactArgs(sinon.match.same(oPathValue), "Expected two comparable parameters "
+				+ "but instead saw Edm.String and Edm.Boolean")
 			.throws(new SyntaxError());
 
 		assert.throws(function () {
@@ -1201,19 +1238,21 @@ sap.ui.require([
 			oParameter1 = {type : sType1};
 
 			oExpression.expects("parameter")
-				.withExactArgs(oInterface, oPathValue, 0, undefined)
+				.withExactArgs(sinon.match.same(oInterface), sinon.match.same(oPathValue), 0,
+					undefined)
 				.returns(oParameter0);
 			oExpression.expects("parameter")
-				.withExactArgs(oInterface, oPathValue, 1, undefined)
+				.withExactArgs(sinon.match.same(oInterface), sinon.match.same(oPathValue), 1,
+					undefined)
 				.returns(oParameter1);
 
 			oExpression.expects("adjustOperands").never();
 
 			oExpression.expects("formatOperand")
-				.withExactArgs(oPathValue, 0, oParameter0, true)
+				.withExactArgs(sinon.match.same(oPathValue), 0, sinon.match.same(oParameter0), true)
 				.returns(sResult0);
 			oExpression.expects("formatOperand")
-				.withExactArgs(oPathValue, 1, oParameter1, true)
+				.withExactArgs(sinon.match.same(oPathValue), 1, sinon.match.same(oParameter1), true)
 				.returns(sResult1);
 
 			assert.deepEqual(Expression.operator(oInterface, oPathValue, "Eq"),
@@ -1244,7 +1283,8 @@ sap.ui.require([
 			oResult = {};
 
 		this.mock(Expression).expects("expression")
-			.withExactArgs(oInterface, oPathValueParameter).returns(oResult);
+			.withExactArgs(sinon.match.same(oInterface), oPathValueParameter)
+			.returns(oResult);
 
 		assert.strictEqual(Expression.parameter(oInterface, oPathValue, 0), oResult);
 	});
@@ -1268,7 +1308,7 @@ sap.ui.require([
 			oResult = {type : "Edm.String"};
 
 		this.mock(Expression).expects("expression")
-			.withExactArgs(oInterface, oPathValueParameter).returns(oResult);
+			.withExactArgs(sinon.match.same(oInterface), oPathValueParameter).returns(oResult);
 
 		assert.strictEqual(Expression.parameter(oInterface, oPathValue, 0, "Edm.String"), oResult);
 	});
@@ -1292,7 +1332,7 @@ sap.ui.require([
 			oResult = {type : "Edm.Float"};
 
 		this.mock(Expression).expects("expression")
-			.withExactArgs(oInterface, oPathValueParameter).returns(oResult);
+			.withExactArgs(sinon.match.same(oInterface), oPathValueParameter).returns(oResult);
 		this.mock(Basics).expects("error")
 			.withExactArgs(oPathValueParameter, "Expected Edm.String but instead saw Edm.Float")
 			.throws(new SyntaxError());
@@ -1406,9 +1446,9 @@ sap.ui.require([
 			sResult = {};
 
 		this.mock(Expression).expects("expression")
-			.withExactArgs(oInterface, oPathValue).returns(oResult);
+			.withExactArgs(sinon.match.same(oInterface), oPathValue).returns(oResult);
 		this.mock(Basics).expects("resultToString")
-			.withExactArgs(oResult, false, "bWithType").returns(sResult);
+			.withExactArgs(sinon.match.same(oResult), false, "bWithType").returns(sResult);
 
 		assert.strictEqual(Expression.getExpression(oInterface, oRawValue, "bWithType"), sResult,
 			"result");

@@ -85,7 +85,7 @@ sap.ui.require([
 	QUnit.test("illegal value for nullable", function (assert) {
 		var oType = new Time({}, {nullable : false});
 
-		this.mock(jQuery.sap.log).expects("warning").once()
+		this.mock(jQuery.sap.log).expects("warning")
 			.withExactArgs("Illegal nullable: foo", null, "sap.ui.model.odata.type.Time");
 
 		oType = new Time(null, {nullable : "foo"});

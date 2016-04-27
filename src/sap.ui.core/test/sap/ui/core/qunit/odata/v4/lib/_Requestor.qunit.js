@@ -232,7 +232,7 @@ sap.ui.require([
 
 			this.oSandbox.mock(_Helper).expects("createError")
 				.exactly(bSuccess ? 0 : 2)
-				.withExactArgs(oTokenRequiredResponse)
+				.withExactArgs(sinon.match.same(oTokenRequiredResponse))
 				.returns(oError);
 
 			this.oSandbox.stub(jQuery, "ajax", function (sUrl, oSettings) {
@@ -316,7 +316,7 @@ sap.ui.require([
 
 			this.oSandbox.mock(_Helper).expects("createError")
 				.exactly(bSuccess || o.bReadFails ? 0 : 1)
-				.withExactArgs(oTokenRequiredResponse)
+				.withExactArgs(sinon.match.same(oTokenRequiredResponse))
 				.returns(oError);
 
 			// With <code>bRequestSucceeds === false</code>, "request" always fails,
@@ -692,7 +692,7 @@ sap.ui.require([
 			oJqXHRMock = createMock(assert, oResult, "OK", "abc123", sResponseContentType);
 
 		this.oSandbox.mock(_Batch).expects("serializeBatchRequest")
-			.withExactArgs(aBatchRequests)
+			.withExactArgs(sinon.match.same(aBatchRequests))
 			.returns(oBatchRequest);
 
 		this.oSandbox.mock(jQuery).expects("ajax")

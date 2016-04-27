@@ -128,8 +128,8 @@ sap.ui.require([
 
 		oHelperMock = this.oSandbox.mock(_ODataHelper);
 		oHelperMock.expects("buildQueryOptions")
-			.withExactArgs(this.oModel.mUriParameters, mParameters,
-				["$expand", "$filter", "$orderby", "$select"])
+			.withExactArgs(sinon.match.same(this.oModel.mUriParameters),
+				sinon.match.same(mParameters), ["$expand", "$filter", "$orderby", "$select"])
 			.returns(mQueryOptions);
 		this.oSandbox.mock(_Cache).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
@@ -484,13 +484,13 @@ sap.ui.require([
 
 			if (bRelative) {
 				oContextMock = this.oSandbox.mock(oContext);
-				oContextMock.expects("requestValue").once().returns(createResult(2));
-				oContextMock.expects("requestValue").once().returns(oPromise);
+				oContextMock.expects("requestValue").returns(createResult(2));
+				oContextMock.expects("requestValue").returns(oPromise);
 				// no error logged by ODataListBinding; parent context logged the error already
 			} else {
 				oCacheMock = this.getCacheMock();
-				oCacheMock.expects("read").once().callsArg(4).returns(createResult(2));
-				oCacheMock.expects("read").once().callsArg(4).returns(oPromise);
+				oCacheMock.expects("read").callsArg(4).returns(createResult(2));
+				oCacheMock.expects("read").callsArg(4).returns(oPromise);
 				this.oSandbox.mock(this.oModel).expects("reportError").withExactArgs(
 					"Failed to get contexts for " + sResolvedPath
 					+ " with start index 1 and length 2", sClassName,
@@ -1106,14 +1106,15 @@ sap.ui.require([
 		assert.strictEqual(oBinding.getGroupId(), "foo");
 		assert.strictEqual(oBinding.getUpdateGroupId(), "bar");
 
-		oHelperMock.expects("buildBindingParameters").withExactArgs(mParameters)
+		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters))
 			.returns({$$groupId : "foo"});
 		// code under test
 		oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined, mParameters);
 		assert.strictEqual(oBinding.getGroupId(), "foo");
 		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
 
-		oHelperMock.expects("buildBindingParameters").withExactArgs(mParameters).returns({});
+		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters))
+			.returns({});
 		// code under test
 		oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined, mParameters);
 		assert.strictEqual(oBinding.getGroupId(), "baz");

@@ -60,8 +60,7 @@ sap.ui.require([
 
 			if (oFixture.warning) {
 				this.mock(jQuery.sap.log).expects("warning")
-					.once().withExactArgs(oFixture.warning, null,
-						"sap.ui.model.odata.type.Double");
+					.withExactArgs(oFixture.warning, null, "sap.ui.model.odata.type.Double");
 			} else {
 				this.mock(jQuery.sap.log).expects("warning").never();
 			}

@@ -750,7 +750,8 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				oGetObjectMock = oGlobalSandbox.mock(oInterface).expects("getObject");
 
 			oGlobalSandbox.mock(Expression).expects("getExpression")
-				.withExactArgs(oInterface, oRawValue, true).returns(sResult);
+				.withExactArgs(sinon.match.same(oInterface), sinon.match.same(oRawValue), true)
+				.returns(sResult);
 
 			if (bWithRawValue) {
 				oGetObjectMock.never();
@@ -794,7 +795,8 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 			oRawValue = oMetaModel.getProperty(sMetaPath);
 
 			oGlobalSandbox.mock(Expression).expects("getExpression")
-				.withExactArgs(oCurrentContext, oRawValue, true).returns(sString);
+				.withExactArgs(sinon.match.same(oCurrentContext), sinon.match.same(oRawValue), true)
+				.returns(sString);
 
 			AnnotationHelper.format(oCurrentContext);
 		});
@@ -974,7 +976,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		var sError = "Unsupported: " + Basics.toErrorString(oApply);
 
 		QUnit.test("14.5.3 Expression edm:Apply: " + sError, function (assert) {
-			oGlobalSandbox.mock(Basics).expects("error").once().throws(new SyntaxError());
+			oGlobalSandbox.mock(Basics).expects("error").throws(new SyntaxError());
 
 			return withGwsampleModel(assert, function (oMetaModel) {
 				var sPath = sPath2Contact + "/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value",
@@ -1003,7 +1005,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 	//*********************************************************************************************
 	QUnit.test("14.5.3.1.1 Function odata.concat: escaping & unsupported type", function (assert) {
-		oGlobalSandbox.mock(Basics).expects("error").once().throws(new SyntaxError());
+		oGlobalSandbox.mock(Basics).expects("error").throws(new SyntaxError());
 
 		return withGwsampleModel(assert, function (oMetaModel) {
 			var sPath = sPath2Contact + "/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value",
@@ -1025,7 +1027,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 	//*********************************************************************************************
 	QUnit.test("14.5.3.1.1 Function odata.concat: null parameter", function (assert) {
-		oGlobalSandbox.mock(Basics).expects("error").once().throws(new SyntaxError());
+		oGlobalSandbox.mock(Basics).expects("error").throws(new SyntaxError());
 
 		return withGwsampleModel(assert, function (oMetaModel) {
 			var sPath = sPath2Contact + "/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value",
@@ -1116,7 +1118,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		QUnit.test("14.5.3.1.3 Function odata.uriEncode: " + JSON.stringify(oFixture.type),
 			function (assert) {
 				if (oFixture.error) {
-					oGlobalSandbox.mock(Basics).expects("error").once().throws(new SyntaxError());
+					oGlobalSandbox.mock(Basics).expects("error").throws(new SyntaxError());
 				}
 
 				return withGwsampleModel(assert, function (oMetaModel) {
@@ -1244,7 +1246,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	//*********************************************************************************************
 	QUnit.test("14.5.3 Nested apply (odata.fillUriTemplate & invalid uriEncode)",
 		function (assert) {
-			oGlobalSandbox.mock(Basics).expects("error").once().throws(new SyntaxError());
+			oGlobalSandbox.mock(Basics).expects("error").throws(new SyntaxError());
 
 			return withGwsampleModel(assert, function (oMetaModel) {
 				var sMetaPath = sPath2BusinessPartner + "/com.sap.vocabularies.UI.v1."
@@ -1431,7 +1433,8 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				oGetObjectMock = oGlobalSandbox.mock(oInterface).expects("getObject");
 
 			oGlobalSandbox.mock(Expression).expects("getExpression")
-				.withExactArgs(oInterface, oRawValue, false).returns(sResult);
+				.withExactArgs(sinon.match.same(oInterface), sinon.match.same(oRawValue), false)
+				.returns(sResult);
 
 			if (bWithRawValue) {
 				oGetObjectMock.never();
