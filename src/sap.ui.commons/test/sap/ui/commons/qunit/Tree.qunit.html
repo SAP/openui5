@@ -1280,6 +1280,72 @@
 			notOk(this.oNodes.node33.getIsSelected(), "Node 33 should not be selected");
 		});
 
+		module("Model filtering", {
+			beforeEach: function () {
+				var oNodeTemplate;
+
+				// Do not change the tree declaration with bindAggregation because the test wont fail if a regression
+				// is introduced and the tree is bound differently
+				this.oTree = new sap.ui.commons.Tree();
+				oNodeTemplate = new sap.ui.commons.TreeNode();
+				oNodeTemplate.bindProperty("text", "name");
+				this.oTree.bindAggregation("nodes", "/root", oNodeTemplate);
+
+				this.oTree.setModel(new sap.ui.model.json.JSONModel({
+					root:{
+						name: "root",
+						0: {
+							name: "JSON_item1",
+							0: {
+								name: "JSON_subitem1",
+								0: {
+									name: "JSON_subsubitem1"
+								},
+								1: {
+									name: "JSON_subsubitem2"
+								}
+							},
+							1: {
+								name: "JSON_subitem2",
+								0: {
+									name: "JSON_subsubitem3"
+								}
+							}
+						},
+						1:{
+							name: "JSON_item2",
+							0: {
+								name: "JSON_subitem3"
+							}
+						}
+					}
+				}));
+
+				this.oTree.placeAt("target5");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				// Restore tree node animation duration
+				this.oTree.destroy();
+			}
+		});
+
+		test("Filtering", function () {
+			// Arrange
+			var oTreeBinding = this.oTree.getBinding("nodes"),
+				oFilter = new sap.ui.model.Filter("name","StartsWith","JSON_i"),
+				aNodes;
+
+			// Act
+			oTreeBinding.filter([oFilter]);
+			aNodes = this.oTree.getNodes();
+
+			// Assert
+			strictEqual(aNodes.length, 2, "There should be 2 items that survive the filtering");
+			strictEqual(aNodes[0].getText(), "JSON_item1", "Item 1 text should match");
+			strictEqual(aNodes[1].getText(), "JSON_item2", "Item 2 text should match");
+		});
+
 		</script>
 	</head>
 	<body>
