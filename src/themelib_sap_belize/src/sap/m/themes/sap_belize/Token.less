@@ -26,7 +26,28 @@
 }
 
 .sapMToken:focus {
-	border: 0.0625rem dotted @sapUiContentFocusColor;
+	outline: 0.125rem dotted @sapUiFocus;
+	outline-offset: -3px;
+	outline-color: @sapUiInvertedFocus;
+}
+
+.sap-desktop[data-sap-ui-browser^="ie"],
+.sap-desktop[data-sap-ui-browser^="ed"]{
+	.sapMToken:focus{
+		position: relative;
+		outline: none;
+	}
+
+	.sapMTokenText:before{
+		position: absolute;
+		top: 2px;
+		left: 2px;
+		right: 2px;
+		bottom: 2px;
+		border: 0.0625rem dotted @sapUiInvertedFocus;
+		content: "";
+		pointer-events: none;
+	}
 }
 
 .sapMTokenSelected {
