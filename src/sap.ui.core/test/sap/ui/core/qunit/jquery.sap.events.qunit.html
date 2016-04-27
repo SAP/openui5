@@ -18,8 +18,11 @@
 	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
 	<style type="text/css">
 		#uiArea {
 			height:200px;
@@ -50,6 +53,7 @@
 
 	<!-- Initialization -->
 	<script type="text/javascript">
+	sinon.config.useFakeTimers = false;
 
 	(function(sName){
 		jQuery.sap.declare("test."+sName);
@@ -820,6 +824,56 @@
 	fnIsSpecialKeyTestCase("keypress", { which: jQuery.sap.KeyCodes.X }, false, "Event: keypress, Key: X");
 	fnIsSpecialKeyTestCase("keypress", { which: jQuery.sap.KeyCodes.Y }, false, "Event: keypress, Key: Y");
 	fnIsSpecialKeyTestCase("keypress", { which: jQuery.sap.KeyCodes.Z }, false, "Event: keypress, Key: Z");
+
+	QUnit.module("jQuery.sap.isMouseEventDelayed");
+
+	QUnit.test("isMouseEventDelayed is set", function(assert) {
+		assert.notEqual(jQuery.sap.isMouseEventDelayed, undefined, "isMouseEventDelayed is set");
+	});
+
+	QUnit.test("Under iOS WebView with iOS version 8", function(assert) {
+		this.stub(sap.ui.Device, "os", {
+			ios: true,
+			version: 8
+		});
+		this.stub(sap.ui.Device, "browser", {
+			safari: true,
+			webview: true,
+			mobile: true
+		});
+
+		jQuery.sap._refreshMouseEventDelayedFlag();
+
+		assert.ok(jQuery.sap.isMouseEventDelayed, "isMouseEventDelayed should be marked with true for webview in iOS 8");
+	});
+
+	QUnit.test("Under iOS with iOS version 8 (not a webview)", function(assert) {
+		this.stub(sap.ui.Device, "os", {
+			ios: true,
+			version: 8
+		});
+		this.stub(sap.ui.Device, "browser", {
+			safari: true,
+			webview: false,
+			mobile: true
+		});
+
+		jQuery.sap._refreshMouseEventDelayedFlag();
+
+		assert.ok(!jQuery.sap.isMouseEventDelayed, "isMouseEventDelayed should be marked with false for safari (not a webview) iOS 8");
+	});
+
+	QUnit.test("Under Chrome (version >= 32)", function(assert) {
+		this.stub(sap.ui.Device, "browser", {
+			chrome: true,
+			mobile: true,
+			version: 32
+		});
+
+		jQuery.sap._refreshMouseEventDelayedFlag();
+
+		assert.ok(!jQuery.sap.isMouseEventDelayed, "isMouseEventDelayed should be marked with false for Chrome with version >= 32");
+	});
 	</script>
 </head>
 <body>

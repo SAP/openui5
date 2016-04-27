@@ -1741,20 +1741,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', "sap
 	 *
 	 * Mobile browsers fire mouse events after touch events with a delay (~300ms)
 	 * Some modern mobile browsers already removed the delay under some condition. Those browsers are:
-	 *  1. iOS Safari in iOS 8.
+	 *  1. iOS Safari in iOS 8 (except UIWebView / WKWebView).
 	 *  2. Chrome on Android from version 32 (exclude the Samsung stock browser which also uses Chrome kernel)
 	 *
 	 * @private
+	 * @name jQuery.sap.isMouseEventDelayed
 	 * @since 1.30.0
 	 */
-	jQuery.sap.isMouseEventDelayed =
-		(Device.browser.mobile
-			&& !(
-				(Device.os.ios && Device.os.version >= 8 && Device.browser.safari)
-				|| (Device.browser.chrome && !/SAMSUNG/.test(navigator.userAgent) && Device.browser.version >= 32)
-			)
-		);
 
+	// expose the function for unit test to refresh the jQuery.sap.isMouseEventDelayed
+	jQuery.sap._refreshMouseEventDelayedFlag = function() {
+		jQuery.sap.isMouseEventDelayed =
+			!!(Device.browser.mobile
+				&& !(
+					(Device.os.ios && Device.os.version >= 8 && Device.browser.safari && !Device.browser.webview)
+					|| (Device.browser.chrome && !/SAMSUNG/.test(navigator.userAgent) && Device.browser.version >= 32)
+				)
+			);
+	};
+
+	jQuery.sap._refreshMouseEventDelayedFlag();
 
 	/* ************************************************ */
 
