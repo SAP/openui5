@@ -2273,19 +2273,27 @@ function(jQuery, library, Control, IconPool) {
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._onConfirm = function(oEvent) {
-		var that            = this,
-		    oDialog         = this._getDialog(),
-		    fnAfterClose    = function() {
-			    var  oSettingsState  = {
-				    sortItem            : sap.ui.getCore().byId(that.getSelectedSortItem()),
-				    sortDescending      : that.getSortDescending(),
-				    groupItem           : sap.ui.getCore().byId(that.getSelectedGroupItem()),
-				    groupDescending     : that.getGroupDescending(),
-				    presetFilterItem    : sap.ui.getCore().byId(that.getSelectedPresetFilterItem()),
-				    filterItems         : that.getSelectedFilterItems(),
-				    filterKeys          : that.getSelectedFilterKeys(),
-				    filterString        : that.getSelectedFilterString()
-			    };
+		var oDialog         = this._getDialog(),
+			that            = this,
+			fnAfterClose = function () {
+				var oSettingsState, vGroupItem,
+					sGroupItemId = that.getSelectedGroupItem();
+
+				// BCP: 1670245110 "None" should be undefined
+				if (!that._oGroupingNoneItem || sGroupItemId != that._oGroupingNoneItem.getId()) {
+					vGroupItem = sap.ui.getCore().byId(sGroupItemId);
+				}
+
+				oSettingsState = {
+					sortItem            : sap.ui.getCore().byId(that.getSelectedSortItem()),
+					sortDescending      : that.getSortDescending(),
+					groupItem           : vGroupItem,
+					groupDescending     : that.getGroupDescending(),
+					presetFilterItem    : sap.ui.getCore().byId(that.getSelectedPresetFilterItem()),
+					filterItems         : that.getSelectedFilterItems(),
+					filterKeys          : that.getSelectedFilterKeys(),
+					filterString        : that.getSelectedFilterString()
+				};
 
 			    // detach this function
 			    that._dialog.detachAfterClose(fnAfterClose);
