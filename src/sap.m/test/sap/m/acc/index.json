@@ -17,7 +17,7 @@
 		},
 		{
 			"control": "sap.m.Bar",
-			"url": "../Bar.html",
+			"url": "Bar.html",
 			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
