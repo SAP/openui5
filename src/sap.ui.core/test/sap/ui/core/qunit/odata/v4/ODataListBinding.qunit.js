@@ -61,6 +61,32 @@ sap.ui.require([
 		}));
 	}
 
+	/**
+	 * Calls getContexts and getCurrentContexts and checks whether both return the right
+	 * contexts
+	 *
+	 * @param {object} assert QUnit's assert object
+	 * @param {sap.ui.model.odata.v4.ODataListBinding} oListBinding the list binding to test with
+	 * @param {number} iStart the start index
+	 * @param {number} iLength the length
+	 * @param {number} [iResultLength=iLength]
+	 *   the expected length of the array returned by getCurrentContexts
+	 */
+	function getContexts(assert, oListBinding, iStart, iLength, iResultLength) {
+		var aContexts = oListBinding.getContexts(iStart, iLength),
+			aCurrentContexts = oListBinding.getCurrentContexts(),
+			i;
+
+		if (iResultLength === undefined) {
+			iResultLength = iLength;
+		}
+		assert.strictEqual(aCurrentContexts.length, iResultLength);
+		assert.deepEqual(aCurrentContexts.slice(0, aContexts.length), aContexts);
+		for (i = aContexts.length; i < iResultLength; i++) {
+			assert.strictEqual(aCurrentContexts[i], undefined);
+		}
+	}
+
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataListBinding", {
 		beforeEach : function () {
@@ -144,6 +170,8 @@ sap.ui.require([
 		assert.strictEqual(oBinding.getPath(), "/EMPLOYEES");
 		assert.deepEqual(oBinding.aContexts, []);
 		assert.strictEqual(oBinding.iMaxLength, Infinity);
+		assert.strictEqual(oBinding.iCurrentBegin, 0);
+		assert.strictEqual(oBinding.iCurrentEnd, 0);
 		assert.strictEqual(oBinding.isLengthFinal(), false);
 		assert.strictEqual(oBinding.mParameters, undefined);
 
@@ -545,7 +573,7 @@ sap.ui.require([
 			assert.strictEqual(oListBinding.isLengthFinal(), false, "Length is not yet final");
 			assert.strictEqual(oListBinding.getLength(), 10, "Initial estimated length is 10");
 
-			oListBinding.getContexts(oFixture.start, 30);
+			getContexts(assert, oListBinding, oFixture.start, 30);
 
 			// attach then handler after ODataListBinding attached its then handler to be
 			// able to check length and isLengthFinal
@@ -553,18 +581,20 @@ sap.ui.require([
 				// if there are less entries returned than requested then final length is known
 				assert.strictEqual(oListBinding.isLengthFinal(), oFixture.isFinal);
 				assert.strictEqual(oListBinding.getLength(), oFixture.length);
+				assert.deepEqual(oListBinding.getCurrentContexts(),
+					oListBinding.aContexts.slice(oFixture.start, oFixture.length));
 			});
 		});
 	});
 
 	//*********************************************************************************************
 	[
-		{start : 40, result : 5, isFinal : true, length : 45, text : "greater than before"},
-		{start : 20, result : 5, isFinal : true, length : 25, text : "less than before"},
-		{start : 0, result : 30, isFinal : true, length : 35, text : "full read before"},
-		{start : 20, result : 30, isFinal : false, length : 60, text : "full read after"},
-		{start : 15, result : 0, isFinal : true, length : 15, text : "empty read before"},
-		{start : 40, result : 0, isFinal : true, length : 35, text : "empty read after"}
+		{start : 40, result : 5, isFinal : true, curr : 0, len : 45, text : "greater than before"},
+		{start : 20, result : 5, isFinal : true, curr : 15, len : 25, text : "less than before"},
+		{start : 0, result : 30, isFinal : true, curr : 30, len : 35, text : "full read before"},
+		{start : 20, result : 30, isFinal : false, curr : 15, len : 60, text : "full read after"},
+		{start : 15, result : 0, isFinal : true, curr : 20, len : 15, text : "empty read before"},
+		{start : 40, result : 0, isFinal : true, curr : 0, len : 35, text : "empty read after"}
 	].forEach(function (oFixture) {
 		QUnit.test("paging: adjust final length: " + oFixture.text, function (assert) {
 			var oCacheMock = this.getCacheMock(),
@@ -582,20 +612,25 @@ sap.ui.require([
 				.callsArg(4)
 				.returns(oReadPromise2);
 
+			assert.deepEqual(oListBinding.getCurrentContexts(), []);
 			oListBinding.getContexts(20, 30); // creates cache
 
 			return oReadPromise1.then(function () {
+				assert.deepEqual(oListBinding.getCurrentContexts(),
+					oListBinding.aContexts.slice(20, 35));
 				assert.strictEqual(oListBinding.isLengthFinal(), true);
 				assert.strictEqual(oListBinding.getLength(), 35);
 
-				oListBinding.getContexts(oFixture.start, 30);
+				getContexts(assert, oListBinding, oFixture.start, 30, oFixture.curr);
 
 				return oReadPromise2;
 			}).then(function () {
+				assert.deepEqual(oListBinding.getCurrentContexts(),
+					oListBinding.aContexts.slice(oFixture.start, oFixture.start + oFixture.result));
 				assert.strictEqual(oListBinding.isLengthFinal(), oFixture.isFinal, "final");
-				assert.strictEqual(oListBinding.getLength(), oFixture.length);
+				assert.strictEqual(oListBinding.getLength(), oFixture.len);
 				assert.strictEqual(oListBinding.aContexts.length,
-					oFixture.length - (oFixture.isFinal ? 0 : 10), "Context array length");
+					oFixture.len - (oFixture.isFinal ? 0 : 10), "Context array length");
 				for (i = oFixture.start, n = oFixture.start + oFixture.result; i < n; i++) {
 					assert.strictEqual(oListBinding.aContexts[i].sPath,
 						"/EMPLOYEES/" + i, "check content");
@@ -778,6 +813,7 @@ sap.ui.require([
 			assert.deepEqual(oListBinding.aContexts, []);
 			assert.strictEqual(oListBinding.iMaxLength, Infinity);
 			assert.strictEqual(oListBinding.isLengthFinal(), false);
+			assert.deepEqual(oListBinding.getCurrentContexts(), []);
 		});
 	});
 	//*********************************************************************************************
@@ -885,14 +921,16 @@ sap.ui.require([
 			oReadPromise = Promise.reject(oError);
 
 		this.mock(this.oModel).expects("reportError").withExactArgs(
-			"Failed to get contexts for /service/EMPLOYEES with start index 0 and length 10",
+			"Failed to get contexts for /service/EMPLOYEES with start index 0 and length 3",
 			sClassName, sinon.match.same(oError));
 		this.mock(oListBinding.oCache).expects("read").callsArg(4).returns(oReadPromise);
 		this.mock(oListBinding).expects("fireDataReceived")
 			.withExactArgs({error : oError});
 
-		oListBinding.getContexts(0, 10);
-		return oReadPromise.catch(function () {});
+		oListBinding.getContexts(0, 3);
+		return oReadPromise.catch(function () {
+			assert.deepEqual(oListBinding.getCurrentContexts(), [undefined, undefined, undefined]);
+		});
 	});
 
 	//*********************************************************************************************
@@ -1048,10 +1086,6 @@ sap.ui.require([
 		}, new Error("Unsupported operation: v4.ODataListBinding#getContexts, "
 				+ "iThreshold parameter must not be set"));
 
-		assert.throws(function () { //TODO implement
-			oListBinding.getCurrentContexts();
-		}, new Error("Unsupported operation: v4.ODataListBinding#getCurrentContexts"));
-
 		assert.throws(function () {
 			oListBinding.getDistinctValues();
 		}, new Error("Unsupported operation: v4.ODataListBinding#getDistinctValues"));
@@ -1192,6 +1226,35 @@ sap.ui.require([
 		oListBinding.getContexts(0, 10);
 
 		return oReadPromise;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("sync getCurrentContexts while reading", function (assert) {
+		var oListBinding = this.oModel.bindList("/EMPLOYEES"),
+			oReadPromise1 = createResult(10),
+			oCacheMock = this.mock(oListBinding.oCache);
+
+		oCacheMock.expects("read")
+			.withExactArgs(0, 10, "$auto", undefined, sinon.match.func)
+			.callsArg(4).returns(oReadPromise1);
+
+		oListBinding.getContexts(0, 10);
+
+		return oReadPromise1.then(function () {
+			var oReadPromise2 = createResult(0);
+
+			oCacheMock.expects("read")
+				.withExactArgs(10, 5, "$auto", undefined, sinon.match.func)
+				.callsArg(4).returns(oReadPromise2);
+
+			oListBinding.getContexts(10, 5);
+
+			oListBinding.getContexts(0, 5);
+			return oReadPromise2.then(function () {
+				assert.deepEqual(oListBinding.getCurrentContexts(),
+					oListBinding.aContexts.slice(0, 5));
+			});
+		});
 	});
 });
 //TODO to avoid complete re-rendering of lists implement bUseExtendedChangeDetection support
