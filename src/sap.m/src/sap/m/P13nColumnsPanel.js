@@ -1330,8 +1330,9 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nColumnsPanel.prototype.init = function() {
-		var iLiveChangeTimer = 0;
 		var that = this;
+		this._iLiveChangeTimer = 0;
+		this._iSearchTimer = 0;
 		this._bOnBeforeRenderingFirstTimeExecuted = false;
 		this._bOnAfterRenderingFirstTimeExecuted = false;
 		this._aExistingColumnsItems = null;
@@ -1475,9 +1476,9 @@ sap.ui.define([
 				var sValue = oEvent.getSource().getValue(), iDelay = (sValue ? 300 : 0); // no delay if value is empty
 
 				// execute search after user stops typing for 300ms
-				window.clearTimeout(iLiveChangeTimer);
+				window.clearTimeout(that._iSearchTimer);
 				if (iDelay) {
-					iLiveChangeTimer = window.setTimeout(function() {
+					that._iSearchTimer = window.setTimeout(function() {
 						that._executeSearch();
 					}, iDelay);
 				} else {
@@ -1630,13 +1631,13 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nColumnsPanel.prototype.onAfterRendering = function() {
-		var that = this, iLiveChangeTimer = 0;
+		var that = this;
 
 		// adapt scroll-container very first time to the right size of the browser
 		if (!this._bOnAfterRenderingFirstTimeExecuted) {
 			this._bOnAfterRenderingFirstTimeExecuted = true;
-			window.clearTimeout(iLiveChangeTimer);
-			iLiveChangeTimer = window.setTimeout(function() {
+			window.clearTimeout(this._iLiveChangeTimer);
+			this._iLiveChangeTimer = window.setTimeout(function() {
 				// following line is needed to get layout of OverflowToolbar rearranged IF it is used in a dialog
 				that._oToolbar._resetAndInvalidateToolbar();
 			}, 0);
@@ -1724,6 +1725,9 @@ sap.ui.define([
 
 		this._oTable.destroy();
 		this._oTable = null;
+
+		window.clearTimeout(this._iLiveChangeTimer);
+		window.clearTimeout(this._iSearchTimer);
 	};
 
 	/**
