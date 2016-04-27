@@ -978,14 +978,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			return;
 		}
 
+		if (this._mTimeouts.bindingTimer) {
+			this._updateBindingContexts();
+		}
+
 		this._cleanUpTimers();
 		this._detachEvents();
 
 		var sVisibleRowCountMode = this.getVisibleRowCountMode();
-
-		if (this._mTimeouts.bindingTimer) {
-			jQuery.sap.clearDelayedCall(this._mTimeouts.bindingTimer);
-		}
 
 		if ((sVisibleRowCountMode == sap.ui.table.VisibleRowCountMode.Interactive) ||
 			sVisibleRowCountMode == sap.ui.table.VisibleRowCountMode.Fixed ||
