@@ -135,7 +135,7 @@ module.exports = function(grunt, config) {
 			aTasks.push('replace');
 
 			// Only bundle core modules if library is included
-			if (config.libraries.indexOf('sap.ui.core') !== -1) {
+			if (config.libraries.some(function(lib) { return lib.name === 'sap.ui.core'; })) {
 				aTasks.push('concat:coreNoJQueryJS');
 				aTasks.push('concat:coreJs');
 
