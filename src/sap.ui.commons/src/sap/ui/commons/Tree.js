@@ -615,7 +615,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 		// Delete all old node instances
 		if (sReason === "filter") {
-			aNodes = this._getNodes();
+			aNodes = this.getAggregation("nodes");
 			iNodesLength = aNodes.length;
 			for (i = 0; i < iNodesLength; i++) {
 				aNodes[i].destroy();
