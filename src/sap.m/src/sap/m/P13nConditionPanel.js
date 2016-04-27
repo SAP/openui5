@@ -1193,6 +1193,11 @@ sap.ui.define([
 												oControl.setSelectedItem(oControl.getItems()[index]);
 											}
 										}, this);
+
+										// if no item is selected, we have to select at least the first keyFieldItem
+										if (!oControl.getSelectedItem() && oControl.getItems().length > 0) {
+											oControl.setSelectedItem(oControl.getItems()[0]);
+										}
 									}
 								} else {
 									this._aKeyFields.forEach(function(oKeyField, index) {
