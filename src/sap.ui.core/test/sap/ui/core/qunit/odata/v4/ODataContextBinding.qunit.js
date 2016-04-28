@@ -692,7 +692,7 @@ sap.ui.require([
 			.returns(Promise.resolve({
 				$kind : "Function",
 				$Parameter : [{
-					$Name : "p1",
+					$Name : "føø",
 					$Type : "Edm.String"
 				}, {
 					$Name : "p2",
@@ -703,11 +703,12 @@ sap.ui.require([
 					$IsCollection : true
 				}]
 			}));
-		oHelperMock.expects("formatLiteral").withExactArgs("v'1", "Edm.String").returns("'v''1'");
+		oHelperMock.expects("formatLiteral").withExactArgs("bãr'1", "Edm.String")
+			.returns("'bãr''1'");
 		oHelperMock.expects("formatLiteral").withExactArgs(42, "Edm.Int16").returns("42");
 		oCacheMock.expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor),
-				"FunctionImport(p1='v''1',p2=42)", {"sap-client" : "111"})
+				"FunctionImport(f%C3%B8%C3%B8='b%C3%A3r''1',p2=42)", {"sap-client" : "111"})
 			.returns(oSingleCache);
 		oContextBindingMock.expects("getGroupId").returns("foo");
 		oSingleCacheMock.expects("read").withExactArgs("foo").returns(Promise.resolve({}));
@@ -715,18 +716,18 @@ sap.ui.require([
 		oContextBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
 
 		// code under test
-		return oContextBinding.setParameter("p1", "v'1").setParameter("p2", 42)
+		return oContextBinding.setParameter("føø", "bãr'1").setParameter("p2", 42)
 			.execute().then(function (oResult) {
 				assert.strictEqual(oContextBinding.oCache, oSingleCache);
 				assert.strictEqual(oResult, undefined);
 
 				oHelperMock.expects("formatLiteral")
-					.withExactArgs("v'2", "Edm.String").returns("'v''2'");
+					.withExactArgs("bãr'2", "Edm.String").returns("'bãr''2'");
 				oHelperMock.expects("formatLiteral")
 					.withExactArgs(42, "Edm.Int16").returns("42");
 				oCacheMock.expects("createSingle")
 					.withExactArgs(sinon.match.same(that.oModel.oRequestor),
-						"FunctionImport(p1='v''2',p2=42)", {"sap-client" : "111"})
+						"FunctionImport(f%C3%B8%C3%B8='b%C3%A3r''2',p2=42)", {"sap-client" : "111"})
 					.returns(oSingleCache);
 				oSingleCacheMock.expects("read").withExactArgs("myGroupId")
 					.returns(Promise.resolve({}));
@@ -735,7 +736,7 @@ sap.ui.require([
 					.withExactArgs({reason : ChangeReason.Change});
 
 				// code under test
-				return oContextBinding.setParameter("p1", "v'2").execute("myGroupId");
+				return oContextBinding.setParameter("føø", "bãr'2").execute("myGroupId");
 			});
 	});
 	// TODO function returning collection

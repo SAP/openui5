@@ -330,8 +330,9 @@ sap.ui.define([
 							if (oParameter.$IsCollection) {
 								throw new Error("Unsupported: collection parameter");
 							}
-							aParameters.push(sName + "=" + _Helper.formatLiteral(
-									that.oOperation.mParameters[sName], oParameter.$Type));
+							aParameters.push(encodeURIComponent(sName) + "="
+								+ encodeURIComponent(_Helper.formatLiteral(
+									that.oOperation.mParameters[sName], oParameter.$Type)));
 						}
 					});
 				}
