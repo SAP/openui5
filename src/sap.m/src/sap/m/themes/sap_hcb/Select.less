@@ -67,7 +67,7 @@
 	outline-offset: -0.1875rem;
 }
 
-.sap-desktop .sapMSlt:not(.sapMSltIconOnly):not(.sapMSltDisabled):focus,
+html.sap-desktop .sapMSlt:not(.sapMSltIconOnly):not(.sapMSltDisabled):focus,
 .sapMSltHoverable:not(.sapMSltIconOnly):hover {
 	border-color: @sapHCStandardFG;
 }
@@ -111,7 +111,7 @@ html[data-sap-ui-browser^="ff"] .sapMBar .sapMSlt:focus {
 
 /* IE does not support css outline-offset */
 
-.sap-desktop[data-sap-ui-browser^="ie"] {
+html[data-sap-ui-browser^="ie"].sap-desktop {
 
 	.sapMSlt:focus.sapMSltIconOnly {
 		outline:          none;
@@ -140,7 +140,7 @@ html[data-sap-ui-browser^="ff"] .sapMBar .sapMSlt:focus {
 	background: @sapHCHighlightAltBG;
 }
 
-.sap-desktop .sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
+html.sap-desktop .sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
 	border-color: transparent;
 }
 
@@ -225,8 +225,8 @@ html[data-sap-ui-browser^="ff"] .sapMBar .sapMSlt:focus {
 
 /* focus: Select IconOnly in all contexts get dotted outline */
 
-.sap-desktop .sapMBar-CTX .sapMSltIconOnly:focus,
-.sap-desktop .sapMSltIconOnly:focus {
+html.sap-desktop .sapMBar-CTX .sapMSltIconOnly:focus,
+html.sap-desktop .sapMSltIconOnly:focus {
 	outline: 0.125rem dotted @sapHCStandardFG;
 	outline-offset: -0.125rem;
 	border-color: transparent;
@@ -234,10 +234,10 @@ html[data-sap-ui-browser^="ff"] .sapMBar .sapMSlt:focus {
 
 /* hover: Select IconOnly in all contexts */
 
-.sap-desktop .sapMHeader-CTX .sapMSltIconOnly:hover:not(.sapMSltPressed),
-.sap-desktop .sapMSubHeader-CTX .sapMSltIconOnly:hover:not(.sapMSltPressed),
-.sap-desktop .sapMFooter-CTX .sapMSltIconOnly:hover:not(.sapMSltPressed),
-.sap-desktop .sapMSltIconOnly:hover:not(.sapMSltPressed) {
+html.sap-desktop .sapMHeader-CTX .sapMSltIconOnly:hover:not(.sapMSltPressed),
+html.sap-desktop .sapMSubHeader-CTX .sapMSltIconOnly:hover:not(.sapMSltPressed),
+html.sap-desktop .sapMFooter-CTX .sapMSltIconOnly:hover:not(.sapMSltPressed),
+html.sap-desktop .sapMSltIconOnly:hover:not(.sapMSltPressed) {
 	color: @sapHCStandardFG;
 	background-color: @sapHCHighlightBG;
 }
