@@ -80,8 +80,11 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		};
 
 		/*************************************** Lifecycle members ******************************************/
-
 		DynamicPageHeader.prototype.onBeforeRendering = function () {
+			if (sap.ui.getCore().getConfiguration().getTheme() === "sap_belize_plus") {
+				this.addStyleClass("sapContrastPlus");
+			}
+
 			if (this.getPinnable()) {
 				this._getPinButton().addAriaLabelledBy(this._getARIAInvisibleText());
 			}
@@ -93,6 +96,13 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		};
 
 		/*************************************** Private members ******************************************/
+
+		/**
+		 * Handler for theme changing
+		 */
+		DynamicPageHeader.prototype.onThemeChanged = function (){
+			this.invalidate(); // triggers a re-rendering
+		};
 
 		/**
 		 * Determines the pin/unpin toggle button state
