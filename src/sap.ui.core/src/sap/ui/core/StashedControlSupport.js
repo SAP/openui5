@@ -160,12 +160,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Control'
 		function unstash(oControl, oParent) {
 			if (oControl instanceof StashedControl) {
 				// remember activation function and parent aggregation name of surrogate
-				var fnCreate = oControl.fnCreate,
+				var aControls, Component, oOwnerComponent,
+					fnCreate = oControl.fnCreate,
 					sParentAggregationName = oControl.sParentAggregationName;
 				// destroy obsolete surrogate control - free the id
 				oControl.destroy();
+
+				// as the runAsOwner context is missing here we need to call it
+				Component = sap.ui.require("sap/ui/core/Component");
+				oOwnerComponent = Component && Component.getOwnerComponentFor(oParent);
+				if (oOwnerComponent) {
+					aControls = oOwnerComponent.runAsOwner(fnCreate);
+				} else {
+					aControls = fnCreate();
+				}
+
 				// call hook to create the actual control (multiple controls in case of fragment)
-				fnCreate().forEach(function(c) {
+				aControls.forEach(function(c) {
 					oParent.getMetadata().getAggregation(sParentAggregationName).add(oParent, c);
 				});
 			}
