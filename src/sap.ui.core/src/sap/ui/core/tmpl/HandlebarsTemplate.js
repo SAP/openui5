@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', './Template', 'sap/ui/thirdparty/handlebars', 'sap/ui/base/ManagedObject'],
-	function(jQuery, Core, Template, Handlebars, ManagedObject) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', './Template', './TemplateControl', 'sap/ui/thirdparty/handlebars', 'sap/ui/base/ManagedObject'],
+	function(jQuery, Core, Template, TemplateControl, Handlebars, ManagedObject) {
 	"use strict";
 
 
@@ -519,8 +519,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', './Template', 'sap/ui/th
 		// identify the control metadata: properties, aggregations, ...
 		// the template will be executed with specific options
 		var oMetadata = {},
-			mJSONKeys = sap.ui.core.tmpl.TemplateControl.getMetadata().getAllSettings(),
-			mPrivateAggregations = sap.ui.core.tmpl.TemplateControl.getMetadata().getAllPrivateAggregations();
+			mJSONKeys = TemplateControl.getMetadata().getAllSettings(),
+			mPrivateAggregations = TemplateControl.getMetadata().getAllPrivateAggregations();
 
 		// the options to identify the properties, aggregations, events, ...
 		var oHelpers = {

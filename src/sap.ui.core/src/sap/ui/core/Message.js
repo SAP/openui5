@@ -7,6 +7,9 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 	function(jQuery, Element, library) {
 	"use strict";
 
+	// shortcut
+	var MessageType = library.MessageType;
+
 
 	/**
 	 * Constructor for a new Message.
@@ -51,7 +54,7 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 			/**
 			 * Setting the message's level.
 			 */
-			level : {type : "sap.ui.core.MessageType", group : "Misc", defaultValue : sap.ui.core.MessageType.None},
+			level : {type : "sap.ui.core.MessageType", group : "Misc", defaultValue : MessageType.None},
 
 			/**
 			 * Determines whether the message should be read only. This helps the application to handle a message a different way if the application differentiates between read-only and common messages.
@@ -88,24 +91,24 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 		var sUrl = "";
 
 		switch (this.getProperty("level")) {
-		case sap.ui.core.MessageType.Error:
+		case MessageType.Error:
 			sUrl = sImagesPath + "Message_Icon_Error.png";
 			break;
 
-		case sap.ui.core.MessageType.Information:
+		case MessageType.Information:
 			sUrl = sImagesPath
 					+ "Message_Icon_Information.png";
 			break;
 
-		case sap.ui.core.MessageType.Warning:
+		case MessageType.Warning:
 			sUrl = sImagesPath + "Message_Icon_Warning.png";
 			break;
 
-		case sap.ui.core.MessageType.Success:
+		case MessageType.Success:
 			sUrl = sImagesPath + "Message_Icon_Success.png";
 			break;
 
-		case sap.ui.core.MessageType.None:
+		case MessageType.None:
 		default:
 			sUrl = this.getProperty("icon");
 			break;
@@ -160,26 +163,25 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 
 		var sLvl1 = oMessage1.getLevel();
 		var sLvl2 = oMessage2.getLevel();
-		var t = sap.ui.core.MessageType;
 
 		if (sLvl1 === sLvl2) {
 			return 0;
 		}
 
 		switch (sLvl1) {
-		case t.Error:
+		case MessageType.Error:
 			return 1;
 
-		case t.Warning:
-			return sLvl2 === t.Error ? -1 : 1;
+		case MessageType.Warning:
+			return sLvl2 === MessageType.Error ? -1 : 1;
 
-		case t.Success:
-			return sLvl2 === t.Error || sLvl2 === t.Warning ? -1 : 1;
+		case MessageType.Success:
+			return sLvl2 === MessageType.Error || sLvl2 === MessageType.Warning ? -1 : 1;
 
-		case t.Information:
-			return sLvl2 === t.None ? 1 : -1;
+		case MessageType.Information:
+			return sLvl2 === MessageType.None ? 1 : -1;
 
-		case t.None:
+		case MessageType.None:
 			return -1;
 
 		default:
