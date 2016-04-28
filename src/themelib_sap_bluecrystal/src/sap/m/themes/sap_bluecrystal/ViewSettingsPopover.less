@@ -8,7 +8,7 @@
 }
 
 /* Custom focus outline: */
-.sap-desktop {
+html.sap-desktop {
 	.sapMSegBBtnFocusable:focus + .sapMSegBBtn {
 		outline: none;
 		border-left: 1px dotted transparent;
@@ -40,7 +40,7 @@
 	background: @sapUiLightestBG;
 }
 
-.sap-phone, .sap-tablet:not(.sap-desktop) {
+html.sap-phone, html.sap-tablet:not(.sap-desktop) {
   .sapMVSPopover {
 	.sapMLIBSelectM > .sapMCb:focus,
 	.sapMBarChild.sapMCb:focus {
