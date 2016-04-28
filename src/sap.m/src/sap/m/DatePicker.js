@@ -746,7 +746,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 				sPlaceholder = "medium";
 			}
 
-			if (sPlaceholder == "short" || sPlaceholder == "medium" || sPlaceholder == "long") {
+			if (this._checkStyle(sPlaceholder)) {
 				var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
 				var oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale);
 				sPlaceholder = this._getPlaceholderPattern(oLocaleData, sPlaceholder);
@@ -884,6 +884,16 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 	DatePicker.prototype._getFormatInstance = function(oArguments, bDisplayFormat){
 
 		return sap.ui.core.format.DateFormat.getInstance(oArguments);
+
+	};
+
+	DatePicker.prototype._checkStyle = function(sPattern){
+
+		if (sPattern == "short" || sPattern == "medium" || sPattern == "long" || sPattern == "full") {
+			return true;
+		} else {
+			return false;
+		}
 
 	};
 
@@ -1096,7 +1106,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 		}
 
 		if (!oFormat) {
-			if (sPattern == "short" || sPattern == "medium" || sPattern == "long") {
+			if (this._checkStyle(sPattern)) {
 				oFormat = this._getFormatInstance({style: sPattern, strictParsing: true, relative: bRelative, calendarType: sCalendarType}, bDisplayFormat);
 			} else {
 				oFormat = this._getFormatInstance({pattern: sPattern, strictParsing: true, relative: bRelative, calendarType: sCalendarType}, bDisplayFormat);
