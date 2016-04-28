@@ -2094,11 +2094,22 @@ sap.ui.define([
 			this.sParentAggregationName = null;
 			this.oPropagatedProperties = ManagedObject._oEmptyPropagatedProperties;
 
-			// if object is being destroyed no propagation needed
+			/* In case of a 'move' - remove/add controls snychronous in an aggregation -
+			 * we should not propagate synchronous when setting the parent to null.
+			 * Synchronous propagation destroys the bindings when removing a control
+			 * from the aggregation and recreates them when adding the control again.
+			 * This could lead to a data refetch, and in some scenarios to endless
+			 * request loops.
+			 */
 			if (!this._bIsBeingDestroyed) {
-				this.updateBindings(true, null);
-				this.updateBindingContext(false, undefined, true);
-				this.propagateProperties(true);
+				setTimeout(function() {
+					// if object is being destroyed or parent is set again (move) no propagation is needed
+					if (!this.oParent) {
+						this.updateBindings(true, null);
+						this.updateBindingContext(false, undefined, true);
+						this.propagateProperties(true);
+					}
+				}.bind(this), 0);
 			}
 
 			jQuery.sap.act.refresh();
