@@ -15,6 +15,10 @@ module.exports = function(grunt, config) {
 			// set compress flag using grunt option (--minifiy-css)
 			compiler: {
 				compress: grunt.option('minify-css')
+			},
+
+			parser: {
+				relativeUrls: false
 			}
 		}
 
