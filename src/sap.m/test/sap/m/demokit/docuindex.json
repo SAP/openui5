@@ -524,7 +524,7 @@
 			"category" : "Tile",
 			"since" : "1.34",
 			"samples" : [
-				"sap.m.sample.NumericContentDifSizes",
+				"sap.m.sample.NumericContentDifColors",
 				"sap.m.sample.NumericContentIcon",
 				"sap.m.sample.NumericContentWithoutMargin"
 			]
@@ -955,8 +955,7 @@
 		  "category" : "Tile",
 		  "since" : "1.34",
 		  "samples" : [
-		  	"sap.m.sample.TileContent",
-		  	"sap.m.sample.TileContentAutoSize"
+		  	"sap.m.sample.TileContent"
 		  ]
 		},
 		{
@@ -1708,9 +1707,9 @@
 			"description": "Number of Tokens in MultiInput cannot exceed the maxToken number."
 		},
 		{
-			"id": "sap.m.sample.NumericContentDifSizes",
-			"name": "Numeric Content of Different Sizes",
-			"description": "Shows NumericContent including numbers, units of measurement and status arrows indicating a trend. The numbers can be colored according to their meaning. The size of the numbers can be fixed or can adapt to the device used."
+			"id": "sap.m.sample.NumericContentDifColors",
+			"name": "Numeric Content of Different Colors",
+			"description": "Shows NumericContent including numbers, units of measurement, and status arrows indicating a trend. The numbers can be colored according to their meaning."
 		},
 		{
 			"id": "sap.m.sample.NumericContentIcon",
@@ -2274,8 +2273,8 @@
 		},
 		{
 		  "id": "sap.m.sample.SlideTile",
-		  "name": "Generic Tiles Sliding",
-		  "description": "Generic Tile controls with the 2x1 frame type are displayed as sliding tiles. The size of the tiles is defined with automatic sizing and depends on the device it is running on."
+		  "name": "Slide Tile",
+		  "description": "GenericTile controls with the 2x1 frame type are displayed as sliding tiles."
 		},
 		{
 		  "id": "sap.m.sample.GenericTileStates",
@@ -2285,12 +2284,7 @@
 		{
 		  "id": "sap.m.sample.TileContent",
 		  "name": "Tile Content",
-		  "description": "Shows the universal container for different content types and context information in the footer area. The tile is shown in two different sizes defined with explicit tile sizes."
-		},
-		{
-		  "id": "sap.m.sample.TileContentAutoSize",
-		  "name": "Tile Content with Auto Size to Fit to Small Screen Sizes",
-		  "description": "Shows the universal container with auto size for different types of content and context information in the footer area to fit to small screens."
+		  "description": "Shows the universal container for different content types and context information in the footer area."
 		},
 		{
 		  "id": "sap.m.sample.Breadcrumbs",
