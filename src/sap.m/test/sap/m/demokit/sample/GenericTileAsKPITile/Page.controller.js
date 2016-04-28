@@ -2,9 +2,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', 'sap/m/Message
 	function(jQuery, Controller, MessageToast) {
 	"use strict";
 
-	var PageController = Controller.extend("sap.m.sample.GenericTile1x1.Page", {
+	var PageController = Controller.extend("sap.m.sample.GenericTileAsKPITile.Page", {
 		press : function(evt) {
-			MessageToast.show("The generic tile is pressed.");
+			MessageToast.show("The GenericTile is pressed.");
 		}
 	});
 
