@@ -1102,14 +1102,20 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 * Flag if statistics are requested
 		 *
 		 * Flag set by TechnicalInfo Popup will also be checked
-		 * So its active if set by ULP parameter or by TechnicalInfo property
+		 * So its active if set by URL parameter or by TechnicalInfo property
 		 *
 		 * @returns {boolean} statistics flag
 		 * @private
 		 * @since 1.20.0
 		 */
 		getStatistics : function() {
-			return this.statistics || window.localStorage.getItem("sap-ui-statistics") == "X";
+			var result = this.statistics;
+			try {
+				result = result || window.localStorage.getItem("sap-ui-statistics") == "X";
+			} catch (e) {
+				// access to local storage might fail due to security / privacy settings
+			}
+			return result;
 		},
 
 		/**
