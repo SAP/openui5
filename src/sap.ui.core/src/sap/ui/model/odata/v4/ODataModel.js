@@ -36,7 +36,6 @@ sap.ui.define([
 		mSupportedParameters = {
 			groupId : true,
 			serviceUrl : true,
-			serviceUrlParams : true,
 			synchronizationMode : true,
 			updateGroupId : true
 		};
@@ -53,15 +52,10 @@ sap.ui.define([
 	 * @param {string} mParameters.serviceUrl
 	 *   Root URL of the service to request data from. The path part of the URL must end with a
 	 *   forward slash according to OData V4 specification ABNF, rule "serviceRoot". You may append
-	 *   OData custom query options to the service root URL separated with a "?",
-	 *   e.g. "/MyService/?custom=foo". See parameter <code>mParameters.serviceUrlParams</code> for
-	 *   details on custom query options.
-	 * @param {object} [mParameters.serviceUrlParams]
-	 *   Map of OData custom query options to be used in each data service request for this model,
-	 *   see specification "OData Version 4.0 Part 2: URL Conventions", "5.2 Custom Query Options".
+	 *   OData custom query options to the service root URL separated with a "?", for example
+	 *   "/MyService/?custom=foo".
+	 *   See specification "OData Version 4.0 Part 2: URL Conventions", "5.2 Custom Query Options".
 	 *   OData system query options and OData parameter aliases lead to an error.
-	 *   Query options from this map overwrite query options with the same name specified via the
-	 *   <code>sServiceUrl</code> parameter.
 	 * @param {string} mParameters.synchronizationMode
 	 *   Controls synchronization between different bindings which refer to the same data for the
 	 *   case data changes in one binding. Must be set to 'None' which means bindings are not
@@ -123,8 +117,9 @@ sap.ui.define([
 						throw new Error("Service root URL must end with '/'");
 					}
 					this._sQuery = oUri.search(); //return query part with leading "?"
-					this.mUriParameters = _ODataHelper.buildQueryOptions(jQuery.extend({},
-						oUri.query(true), mParameters.serviceUrlParams));
+					// Note: strict checking for model's URI parameters, but "sap-*" is allowed
+					this.mUriParameters
+						= _ODataHelper.buildQueryOptions(null, oUri.query(true), null, true);
 					this.sServiceUrl = oUri.query("").toString();
 					this.sGroupId = mParameters.groupId;
 					if (this.sGroupId === undefined) {
