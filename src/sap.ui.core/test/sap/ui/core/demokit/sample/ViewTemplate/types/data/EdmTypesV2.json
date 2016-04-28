@@ -1,6 +1,5 @@
 {
 	"d" : {
-		"results" : [{
 			"__metadata" : {
 				"id" : "/sap/opu/odata/sap/ZUI5_EDM_TYPES/EdmTypesCollection('1')",
 				"uri" : "/sap/opu/odata/sap/ZUI5_EDM_TYPES/EdmTypesCollection('1')",
@@ -28,6 +27,5 @@
 			"Time" : "PT11H33M55S",
 			"TimeStampLong" : "\/Date(1395747235112)\/",
 			"TimeStampShort" : "\/Date(1395747235000)\/"
-		}]
 	}
 }
