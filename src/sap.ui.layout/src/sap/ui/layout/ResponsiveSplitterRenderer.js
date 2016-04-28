@@ -13,7 +13,6 @@ sap.ui.define(['sap/ui/core/IconPool'],
 	var ResponsiveSplitterRenderer = {};
 	IconPool.insertFontFaceStyle();
 
-
 	ResponsiveSplitterRenderer.render = function (oRm, oControl) {
 		oRm.write("<div class='sapUiResponsiveSplitter'");
 		oRm.writeControlData(oControl);
@@ -32,7 +31,7 @@ sap.ui.define(['sap/ui/core/IconPool'],
 	};
 
 	ResponsiveSplitterRenderer.renderPaginator = function (oRm, oControl) {
-		oRm.write("<div");
+		oRm.write("<div ");
 		oRm.addClass("sapUiResponsiveSplitterPaginator");
 		oRm.writeClasses();
 		oRm.write(">");
@@ -50,7 +49,7 @@ sap.ui.define(['sap/ui/core/IconPool'],
 		oRm.write(">");
 
 		for (var i = 0; i < bpCount; i++) {
-			oRm.write("<div ");
+			oRm.write("<div tabindex='0' ");
 			oRm.write("page-index='" + i + "'");
 			oRm.addClass("sapUiResponsiveSplitterHiddenElement");
 			oRm.addClass("sapUiResponsiveSplitterPaginatorButton");

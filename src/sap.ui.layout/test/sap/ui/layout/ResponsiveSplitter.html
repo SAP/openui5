@@ -17,6 +17,7 @@
 			height: 100%;
 			padding: 0;
 			margin: 0;
+			overflow: hidden;
 		}
 	</style>
 
@@ -100,7 +101,10 @@
 							headerText: "header 1000",
 							content: new sap.m.Text({text: lorem + lorem})
 						}),
-						requiredParentWidth: 1000
+						requiredParentWidth: 1000,
+						layoutData: new sap.ui.layout.SplitterLayoutData({
+							size: "30%"
+						})
 					}),
 					new sap.ui.layout.PaneContainer({
 						orientation: "Vertical",
