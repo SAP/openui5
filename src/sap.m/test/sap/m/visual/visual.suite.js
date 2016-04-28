@@ -21,6 +21,7 @@ module.exports = [
 	"RadioButtonGroup.spec.js",
 	"SemanticPage.spec.js",
 	"SplitApp.spec.js",
+	"StepInput.spec.js",
 	"TableSelectDialog.spec.js",
 	//"Table.spec.js",
 	"Text.spec.js",

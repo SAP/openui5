@@ -1,0 +1,145 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+		<title>StepInput - sap.m</title>
+
+		<script src="../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+		</script>
+
+		<script type="text/javascript">
+			jQuery.sap.require("sap.m.StepInput");
+
+			var app = new sap.m.App("myApp", {initialPage: "page1"});
+			var page1 = new sap.m.Page("page1",{
+				title: "Input Types",
+                content : [new sap.m.VBox({
+//					backgroundDesign: "Transparent",
+					items: [
+						new sap.m.Label({
+							text: "Step = 1 (default behavior); value = 6, min = 5, max = 15"
+						}),
+						new sap.m.StepInput({
+							min: 5,
+							max: 15,
+							value: 6,
+							width: "75%"
+						}),
+                        new sap.m.Label({
+                            text: "value = 5, min = 6, it sets the min because the value is lower"
+                        }),
+                        new sap.m.StepInput({
+                            min: 6,
+                            value: 5
+                        }),
+						new sap.m.Label({
+							text: "Step = 5 (customized scenario), no value, min and max limitations"
+						}),
+						new sap.m.StepInput({
+							step: 5,
+                            width: "50%"
+						}),
+						new sap.m.Label({
+							text: "Step = 2.1 (customized scenario), no value, min=-6, max=23.5"
+						}),
+						new sap.m.StepInput({
+							step: 2.1,
+							min: -6,
+							max: 23.5,
+                            width: "200px"
+						}),
+						new sap.m.Label({
+							text: "Step = 1.1, no value, no min, no max"
+						}),
+						new sap.m.StepInput({
+							step: 1.1
+						}),
+						new sap.m.Label({
+							text: "Disabled and error state"
+						}),
+						new sap.m.StepInput({
+							enabled: false,
+							valueState: "Error"
+						}),
+                        new sap.m.Label({
+                            text: "Display only"
+                        }),
+                        new sap.m.StepInput({
+                            editable: false
+                        }),
+						new sap.m.Label({
+							text: "Visual test slider: step = 3, value = 2, min = 0, max = 10, width=50%"
+						}),
+						new sap.m.Toolbar({
+							width: '300px',
+							content: [
+								new sap.m.StepInput("visual_test_step_input", {
+									width: '50%',
+									value: 2,
+									min: 0,
+									max: 10,
+									step: 3
+								})
+							]
+						}),
+						new sap.m.Button("change_step_input_width_btn", {
+							text: "change width",
+							press: fnGetChangePropertyValueFunction(sap.ui.getCore().byId("visual_test_step_input"), "width", ['12rem', '100%', '130px'])
+//							,
+//							press: fnGetChangePropertyValueFunction(sap.ui.getCore().byId("visual_test_step_input"), "value", [4, 5, 6])
+						}),
+
+
+						new sap.m.Label({
+							text: "Error"
+						}),
+						new sap.m.StepInput({
+							valueState: "Error"
+						}),
+						new sap.m.Label({
+							text: "Warning"
+						}),
+						new sap.m.StepInput({
+							valueState: "Warning"
+						}),
+
+						new sap.m.Label({
+							text: "Disabled"
+						}),
+						new sap.m.StepInput({
+							enabled: false
+						}),
+						new sap.m.Label({
+							text: "Read Only"
+						}),
+						new sap.m.StepInput({
+							editable: false
+						})
+					]
+				})]
+			});
+
+			function fnGetChangePropertyValueFunction(oControl, propertyName, aValues) {
+				var iIndex = 0,
+					sSetterName = "set" + propertyName.charAt(0).toUpperCase() + propertyName.slice(1);
+
+				return function() {
+					oControl[sSetterName](aValues[iIndex]);
+					iIndex = (iIndex + 1) % aValues.length;
+				};
+			}
+
+			app.addPage(page1);
+
+			app.placeAt("body");
+	</script>
+
+	</head>
+	<body id="body" class="sapUiBody" role="application" >
+	</body>
+</html>
