@@ -8,15 +8,15 @@ sap.ui.require([
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/PropertyBinding",
 	"sap/ui/model/odata/type/String",
-	"sap/ui/model/odata/v4/_Context",
 	"sap/ui/model/odata/v4/_ODataHelper",
+	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/test/TestUtils"
 ], function (jQuery, ManagedObject, BindingMode, ChangeReason, PropertyBinding, TypeString,
-		_Context, _ODataHelper, _Cache, _Helper, ODataModel, ODataPropertyBinding, TestUtils) {
+		_ODataHelper, Context, _Cache, _Helper, ODataModel, ODataPropertyBinding, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -148,7 +148,7 @@ sap.ui.require([
 			var bAbsolute = sPath[0] === "/",
 				oBinding,
 				oCache = {},
-				oContext = _Context.create(this.oModel, null, "/EMPLOYEES(ID='42')");
+				oContext = Context.create(this.oModel, null, "/EMPLOYEES(ID='42')");
 
 			if (bAbsolute) {
 				this.oSandbox.mock(_Cache).expects("createSingle")
@@ -325,7 +325,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("setContext on binding with absolute path", function (assert) {
-		var oContext = _Context.create(this.oModel, null, "/EntitySet('bar')"),
+		var oContext = Context.create(this.oModel, null, "/EntitySet('bar')"),
 			oBinding = this.oModel.bindProperty("/EntitySet('foo')/property");
 
 		this.oSandbox.mock(oContext).expects("requestValue").never(); // due to absolute path

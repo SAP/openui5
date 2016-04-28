@@ -8,8 +8,8 @@ sap.ui.require([
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/ODataUtils",
-	"sap/ui/model/odata/v4/_Context",
 	"sap/ui/model/odata/v4/_ODataHelper",
+	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/model/odata/v4/ODataContextBinding",
@@ -18,7 +18,7 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Message, BindingMode, Model, TypeString, ODataUtils, _Context, _ODataHelper,
+], function (jQuery, Message, BindingMode, Model, TypeString, ODataUtils, _ODataHelper, Context,
 		_MetadataRequestor, _Requestor, ODataContextBinding, ODataListBinding, ODataMetaModel,
 		ODataModel, ODataPropertyBinding, TestUtils) {
 	/*global QUnit, sinon */
@@ -288,7 +288,7 @@ sap.ui.require([
 			var sEtag = 'W/"19770724000000.0000000"',
 				oModel = createModel(sQuery),
 				sPath = "/EMPLOYEES/0",
-				oContext = _Context.create(oModel, null, sPath);
+				oContext = Context.create(oModel, null, sPath);
 
 			this.oSandbox.mock(oModel.oRequestor).expects("request")
 				.withExactArgs("DELETE", "EMPLOYEES(ID='1')" + oModel._sQuery, undefined,
@@ -320,7 +320,7 @@ sap.ui.require([
 		QUnit.skip("remove: map 404 to 200, status: " + iStatus, function (assert) {
 			var oError = new Error(""),
 				oModel = createModel(),
-				oContext = _Context.create(oModel, null, "/EMPLOYEES/0");
+				oContext = Context.create(oModel, null, "/EMPLOYEES/0");
 
 			oError.status = iStatus;
 			this.oSandbox.mock(oContext).expects("requestValue").withExactArgs("@odata.etag")
@@ -344,7 +344,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("requestCanonicalPath fulfills", function (assert) {
 		var oModel = createModel(),
-			oEntityContext = _Context.create(oModel, null, "/EMPLOYEES/42"),
+			oEntityContext = Context.create(oModel, null, "/EMPLOYEES/42"),
 			oMetaModel = oModel.getMetaModel(),
 			oMetaModelMock = this.oSandbox.mock(oMetaModel);
 
@@ -361,7 +361,7 @@ sap.ui.require([
 	QUnit.test("requestCanonicalPath rejects", function (assert) {
 		var oError = new Error("Intentionally failed"),
 			oModel = createModel(),
-			oNotAnEntityContext = _Context.create(oModel, null, "/EMPLOYEES/42/Name"),
+			oNotAnEntityContext = Context.create(oModel, null, "/EMPLOYEES/42/Name"),
 			oMetaModel = oModel.getMetaModel(),
 			oMetaModelMock = this.oSandbox.mock(oMetaModel);
 
@@ -378,7 +378,7 @@ sap.ui.require([
 	QUnit.test("requestCanonicalPath, context from different model", function (assert) {
 		var oModel = createModel(),
 			oModel2 = createModel(),
-			oEntityContext = _Context.create(oModel2, null, "/EMPLOYEES/42"),
+			oEntityContext = Context.create(oModel2, null, "/EMPLOYEES/42"),
 			oMetaModel = oModel.getMetaModel(),
 			oMetaModelMock = this.oSandbox.mock(oMetaModel);
 

@@ -768,7 +768,7 @@ sap.ui.define([
 	 * @param {string} sPath
 	 *   An absolute data binding path pointing to an entity, for example
 	 *   "/TEAMS/0/TEAM_2_EMPLOYEES/0"
-	 * @param {sap.ui.model.Context} oContext
+	 * @param {sap.ui.model.odata.v4.Context} oContext
 	 *   OData V4 context object which provides access to data via <code>requestValue()</code>
 	 * @returns {Promise}
 	 *   A promise which is resolved with the canonical URL (for example
