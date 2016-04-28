@@ -826,12 +826,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 
 	/**
-	 * Event handler for changes of RGB or HSL radio buttonfield
+	 * Event handler for changes of RGB or HSL radio button field
 	 */
 	ColorPicker.prototype._handleRGBorHSLValueChange = function() {
 
 		// store new value
 		this.Color.formatHSL = (this.oRGBorHSLRBGroup.getSelectedIndex() === 1);
+
+		this.setProperty('colorString', this._getRGBString(), true); // No re-rendering!
 
 		// fire events & update property
 		this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL});
@@ -1357,8 +1359,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	ColorPicker.prototype._updateCursorPosition = function() {
 		var x;
 		//	get the width & height
-		var cpCurWidth  = this.$cpCur.width();
-		var cpCurHeight = this.$cpCur.height();
+		var cpCurWidth  = this.$cpCur.outerWidth();
+		var cpCurHeight = this.$cpCur.outerHeight();
 		var cpBoxWidth  = this.$cpBox.width();
 		var cpBoxHeight = this.$cpBox.height();
 
@@ -1368,11 +1370,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		if (this.getMode() == "HSL") {
 			var litValue = this.oLitField.getValue();
 			// calculate the x and y values
-			x = parseInt(litValue * cpBoxWidth / 100, 10);
+			x = Math.round(litValue * cpBoxWidth / 100.0);
 		} else {
 			var valValue = this.oValField.getValue();
 			// calculate the x and y values
-			x = parseInt(valValue * cpBoxWidth / 100, 10);
+			x = Math.round(valValue * cpBoxWidth / 100.0);
 		}
 
 		//	calculate x if we are in RTL mode
@@ -1380,9 +1382,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			var rX = cpBoxWidth - x;
 			x = rX;
 		}
-		var y = parseInt((1 - satValue / 100) * cpBoxHeight, 10);
-		x = Math.min(Math.max(x, 0), cpBoxWidth - cpCurWidth / 2) - cpCurWidth / 2;
-		y = Math.min(Math.max(y, 0), cpBoxHeight - cpCurHeight / 2) - cpCurHeight / 2;
+		var y = Math.round((1 - satValue / 100.0) * cpBoxHeight);
+		x = Math.round(Math.max(x, 0) - cpCurWidth / 2.0 - 1.0);
+		y = Math.round(Math.max(y, 0) - cpCurHeight / 2.0 - 1.0);
 
 		//	set the new cursor position
 		this.$cpCur.css("left", x).css("top", y);
