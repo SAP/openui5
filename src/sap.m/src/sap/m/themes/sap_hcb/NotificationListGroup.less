@@ -94,11 +94,11 @@
 
 // Focus Styles ========================================================================================================
 
-.sap-desktop .sapMLIB.sapMNLG:focus {
+html.sap-desktop .sapMLIB.sapMNLG:focus {
   outline: none;
 }
 
-.sap-desktop .sapMLIB.sapMNLG:focus::before, {
+html.sap-desktop .sapMLIB.sapMNLG:focus::before, {
   content: "";
   border: 0.125rem dotted @sapHCStandardFG;
   border-left-style: solid;
@@ -111,7 +111,7 @@
   z-index: 2;
 }
 
-.sap-desktop .sapMLIB.sapMNLG:focus::after, {
+html.sap-desktop .sapMLIB.sapMNLG:focus::after, {
   content: "";
   border-left: 0.125rem dotted @sapHCStandardBG;
   position: absolute;
@@ -127,7 +127,7 @@ html[data-sap-ui-browser*='ie'].sap-desktop .sapMLIB.sapMNLG:focus .sapMNLI::bef
   border-right: none;
 }
 
-[data-sap-ui-browser^='ie'].sap-desktop .sapMLIB.sapMNLG:focus::before {
+html[data-sap-ui-browser^='ie'].sap-desktop .sapMLIB.sapMNLG:focus::before {
   content: "";
   border: 0.125rem dotted @sapHCStandardFG;
   border-left-style: solid;
@@ -140,7 +140,7 @@ html[data-sap-ui-browser*='ie'].sap-desktop .sapMLIB.sapMNLG:focus .sapMNLI::bef
   z-index: 2;
 }
 
-[data-sap-ui-browser^='ie'].sap-desktop .sapMLIB.sapMNLG:focus::after {
+html[data-sap-ui-browser^='ie'].sap-desktop .sapMLIB.sapMNLG:focus::after {
   content: "";
   border-left: 0.125rem dotted @sapHCStandardBG;
   position: absolute;
