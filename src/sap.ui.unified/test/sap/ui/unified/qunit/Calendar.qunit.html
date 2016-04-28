@@ -119,6 +119,8 @@
 				var $Today = jQuery(jQuery("#Cal1--Month0-days").find(".sapUiCalItemNow"));
 				equal($Today.attr("data-sap-day"), oFormatYyyymmdd.format(oToday), "current date is marked as today");
 				ok(!$Today.hasClass(".sapUiCalItemOtherMonth"), "current date is not in other month");
+				ok(!$Today.hasClass("sapUiCalItemSel"), "current date not marked as selected");
+				equal($Today.attr("aria-selected"), "false", "current date aria-selected = false");
 
 				equal(jQuery("#Cal2--Head-B1").text(), "Januar", "January shown");
 				equal(jQuery("#Cal2--Head-B2").text(), "2011", "year 2011 shown");
@@ -128,8 +130,10 @@
 				equal(aSelectedDays.length, 4, "4 days selected");
 				equal(jQuery(aSelectedDays[0]).attr("data-sap-day"), "20110110", "first day selected: 10");
 				ok(jQuery(aSelectedDays[0]).hasClass("sapUiCalItemSelStart"), "first selected day marked as selction start");
+				equal(jQuery(aSelectedDays[0]).attr("aria-selected"), "true", "first selected day aria-selected = true");
 				equal(jQuery(aSelectedDays[3]).attr("data-sap-day"), "20110113", "last day selected: 13");
 				ok(jQuery(aSelectedDays[3]).hasClass("sapUiCalItemSelEnd"), "last selected day marked as selction end");
+				equal(jQuery(aSelectedDays[3]).attr("aria-selected"), "true", "last selected day aria-selected  = true");
 				var aDays = jQuery("#Cal2--Month0-days").find(".sapUiCalItem");
 				equal(jQuery(aDays[0]).attr("data-sap-day"), "20101227", "first displayed day");
 				equal(jQuery(aDays[0]).attr("id"), "Cal2--Month0-20101227", "first displayed day has right ID");
@@ -486,6 +490,7 @@
 				ok(bSelectFired, "Select event fired");
 				equal(oSelectedDate.getDate(), oToday.getDate(), "Today was selected");
 				ok($Today.hasClass("sapUiCalItemSel"), "Today marked as selected");
+				equal($Today.attr("aria-selected"), "true", "Today aria-selected = true");
 
 				bSelectFired = false;
 				oSelectedDate = undefined;
@@ -494,6 +499,7 @@
 				qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
 				ok(!bSelectFired, "No Select event fired on disabled date");
 				ok(!$Date.hasClass("sapUiCalItemSel"), "Disabled date not marked as selected");
+				equal($Date.attr("aria-selected"), "false", "Disabled date aria-selected = false");
 			});
 
 		</script>
