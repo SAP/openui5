@@ -665,7 +665,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	Panel.prototype.getScrollTop = function () {
 		var scrollTop = 0;
 		if (this._oScrollDomRef) {
-			scrollTop = this._oScrollDomRef.scrollTop;
+
+			// The scrollTop returns float number when the browser is zoomed and therefore we need to cast it.
+			scrollTop = Math.ceil(this._oScrollDomRef.scrollTop);
 			this.setProperty("scrollTop", scrollTop, true);
 		}
 
