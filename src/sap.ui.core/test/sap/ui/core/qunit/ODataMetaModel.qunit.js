@@ -179,12 +179,12 @@ sap.ui.require([
 				EnumMember="com.sap.vocabularies.Common.v1.FieldControlType/ReadOnly"/>\
 	</Annotations>\
 	<Annotations Target="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/BusinessPartnerSet">\
-		<Annotation Term="Org.OData.Core.V1.DeleteRestrictions">\
+		<Annotation Term="Org.OData.Capabilities.V1.DeleteRestrictions">\
 			<Record>\
 				<PropertyValue Property="Deletable" Path="DeletableFromAnnotation"/>\
 			</Record>\
 		</Annotation>\
-		<Annotation Term="Org.OData.Core.V1.UpdateRestrictions">\
+		<Annotation Term="Org.OData.Capabilities.V1.UpdateRestrictions">\
 			<Record>\
 				<PropertyValue Property="Updatable" Path="UpdatableFromAnnotation"/>\
 			</Record>\
@@ -1689,18 +1689,20 @@ sap.ui.require([
 				// sap:deletable-path (EntitySet)
 				assert.deepEqual(oBusinessPartnerSet["sap:deletable-path"], "Deletable");
 				delete oBusinessPartnerSet["sap:deletable-path"];
-				assert.deepEqual(oBusinessPartnerSet["Org.OData.Core.V1.DeleteRestrictions"],
+				assert.deepEqual(
+					oBusinessPartnerSet["Org.OData.Capabilities.V1.DeleteRestrictions"],
 					{ "Deletable" : { "Path" :
 						( i === 0 ? "Deletable" : "DeletableFromAnnotation") }}, "deletable-path");
-				delete oBusinessPartnerSet["Org.OData.Core.V1.DeleteRestrictions"];
+				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.DeleteRestrictions"];
 
 				// sap:updatable-path (EntitySet)
 				assert.deepEqual(oBusinessPartnerSet["sap:updatable-path"], "Updatable");
 				delete oBusinessPartnerSet["sap:updatable-path"];
-				assert.deepEqual(oBusinessPartnerSet["Org.OData.Core.V1.UpdateRestrictions"],
+				assert.deepEqual(
+					oBusinessPartnerSet["Org.OData.Capabilities.V1.UpdateRestrictions"],
 					{ "Updatable" : { "Path" :
 						( i === 0 ? "Updatable" : "UpdatableFromAnnotation") }}, "updatable-path");
-				delete oBusinessPartnerSet["Org.OData.Core.V1.UpdateRestrictions"];
+				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.UpdateRestrictions"];
 
 				// sap:filter-restriction (Property)
 				assert.deepEqual(oBusinessPartnerId["sap:filter-restriction"], "multi-value");
