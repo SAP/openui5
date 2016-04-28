@@ -4,7 +4,7 @@
 /* ================================ */
 
 .sapMFeedIn {
-	background-color: @sapUiContentForegroundColor;
+	background-color: darken(@sapUiBaseColor, 9);
 	padding: 0.5rem 0.5rem 0.5rem 5rem;
 	width: 100%;
 	box-sizing: border-box;
@@ -40,11 +40,12 @@
 }
 
 .sapMFeedInImage {
-	color: darken(@sapUiGroupContentBackground,25);
+	background-color: darken(@sapUiBaseColor, 9);
+	color: @sapUiListBackground;
 }
 
 .sapMFeedIn .sapMFeedInContainer {
-	background-color: @sapUiGroupContentBackground;
+	background-color: @sapUiFieldBackground;
 	width: 100%;
 	min-height: 4rem;
 	max-height: 20rem;
