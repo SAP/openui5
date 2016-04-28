@@ -92,6 +92,11 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("basics", function (assert) {
+		var oMetadataRequestor = {},
+			oMetaModel,
+			oModel,
+			mModelOptions = {};
+
 		assert.throws(function () {
 			return new ODataModel();
 		}, new Error("Synchronization mode must be 'None'"));
@@ -101,34 +106,22 @@ sap.ui.require([
 		assert.throws(function () {
 			return new ODataModel({serviceUrl : "/foo", synchronizationMode : "None"});
 		}, new Error("Service root URL must end with '/'"));
-
 		assert.throws(function () {
-			return new ODataModel({synchronizationMode : "None",
-				useBatch : true});
+			return new ODataModel({synchronizationMode : "None", useBatch : true});
 		}, new Error("Unsupported parameter: useBatch"));
 
-		assert.strictEqual(createModel().sServiceUrl, getServiceUrl());
-		assert.strictEqual(createModel().toString(), sClassName + ": " + getServiceUrl());
-	});
-
-	//*********************************************************************************************
-	QUnit.test("with serviceUrlParams", function (assert) {
-		var oMetadataRequestor = {},
-			oMetaModel,
-			oModel,
-			mModelOptions = {};
-
 		this.oSandbox.mock(_ODataHelper).expects("buildQueryOptions")
-			.withExactArgs({"sap-client" : "111"})
+			.withExactArgs(null, {}, null, true)
 			.returns(mModelOptions);
 		this.oSandbox.mock(_MetadataRequestor).expects("create")
 			.withExactArgs({"Accept-Language" : "ab-CD"}, sinon.match.same(mModelOptions))
 			.returns(oMetadataRequestor);
 
 		// code under test
-		oModel = createModel("?sap-client=111");
+		oModel = createModel();
 
 		assert.strictEqual(oModel.sServiceUrl, getServiceUrl());
+		assert.strictEqual(oModel.toString(), sClassName + ": " + getServiceUrl());
 		assert.strictEqual(oModel.mUriParameters, mModelOptions);
 		assert.strictEqual(oModel.getDefaultBindingMode(), BindingMode.TwoWay);
 		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.OneTime), true);
@@ -141,31 +134,19 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("w/o serviceUrlParams", function (assert) {
-		this.oSandbox.mock(_ODataHelper).expects("buildQueryOptions").withExactArgs({});
-
-		// code under test
-		createModel();
-	});
-
-	//*********************************************************************************************
-	QUnit.test("serviceUrlParams overwrite URL parameters from sServiceUrl", function (assert) {
-		var oMetadataRequestor = {},
+	QUnit.test("with serviceUrl params", function (assert) {
+		var oModel,
 			mModelOptions = {};
 
 		this.oSandbox.mock(_ODataHelper).expects("buildQueryOptions")
-			.withExactArgs({"sap-client" : "111"})
+			.withExactArgs(null, {"sap-client" : "111"}, null, true)
 			.returns(mModelOptions);
-		this.oSandbox.mock(_MetadataRequestor).expects("create")
-			.withExactArgs({"Accept-Language" : "ab-CD"}, sinon.match.same(mModelOptions))
-			.returns(oMetadataRequestor);
 
 		// code under test
-		new ODataModel({ // eslint-disable-line no-new
-			serviceUrl : "/?sap-client=222",
-			serviceUrlParams : {"sap-client" : "111"},
-			synchronizationMode : "None"
-		});
+		oModel = createModel("?sap-client=111");
+
+		assert.strictEqual(oModel.sServiceUrl, getServiceUrl());
+		assert.strictEqual(oModel.mUriParameters, mModelOptions);
 	});
 
 	//*********************************************************************************************

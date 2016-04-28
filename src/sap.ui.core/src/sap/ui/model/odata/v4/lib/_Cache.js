@@ -18,10 +18,16 @@ sap.ui.define([
 	 * @param {object} mQueryOptions The query options
 	 * @param {function(string,any)} fnResultHandler
 	 *   The function to process the converted options getting the name and the value
+	 * @param {boolean} [bDropSystemQueryOptions=false]
+	 *   Whether all system query options are dropped (useful for non-GET requests)
 	 */
-	function convertSystemQueryOptions(mQueryOptions, fnResultHandler) {
+	function convertSystemQueryOptions(mQueryOptions, fnResultHandler, bDropSystemQueryOptions) {
 		Object.keys(mQueryOptions).forEach(function (sKey) {
 			var vValue = mQueryOptions[sKey];
+
+			if (bDropSystemQueryOptions && sKey[0] === '$') {
+				return;
+			}
 
 			switch (sKey) {
 				case "$expand":
@@ -159,12 +165,12 @@ sap.ui.define([
 	function CollectionCache(oRequestor, sResourcePath, mQueryOptions) {
 		var sQuery = Cache.buildQueryString(mQueryOptions);
 
-		sQuery += sQuery.length ? "&" : "?";
-		this.oRequestor = oRequestor;
-		this.sResourcePath = sResourcePath + sQuery;
 		this.sContext = undefined;  // the "@odata.context" from the responses
-		this.iMaxElements = -1;     // the max. number of elements if known, -1 otherwise
 		this.aElements = [];        // the available elements
+		this.iMaxElements = -1;     // the max. number of elements if known, -1 otherwise
+		this.mQueryOptions = mQueryOptions;
+		this.oRequestor = oRequestor;
+		this.sResourcePath = sResourcePath + sQuery + (sQuery.length ? "&" : "?");
 	}
 
 	/**
@@ -292,13 +298,13 @@ sap.ui.define([
 	CollectionCache.prototype.update = function (sGroupId, sPropertyName, vValue, sEditUrl, sPath) {
 		var oBody = {},
 			mHeaders,
-			oResult = drillDown(this.aElements, sPath),
-			that = this;
+			oResult = drillDown(this.aElements, sPath);
 
-		oBody[sPropertyName] = oResult[sPropertyName] = vValue;
+		sEditUrl += Cache.buildQueryString(this.mQueryOptions, true);
 		mHeaders = {"If-Match" : oResult["@odata.etag"]};
+		oBody[sPropertyName] = oResult[sPropertyName] = vValue;
 
-		return that.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders, oBody)
+		return this.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders, oBody)
 			.then(function (oPatchResult) {
 				for (sPropertyName in oResult) {
 					if (sPropertyName in oPatchResult) {
@@ -329,10 +335,11 @@ sap.ui.define([
 	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bSingleProperty, bPost) {
 		this.bPost = bPost;
 		this.bPosting = false;
+		this.oPromise = null;
+		this.mQueryOptions = mQueryOptions;
 		this.oRequestor = oRequestor;
 		this.sResourcePath = sResourcePath + Cache.buildQueryString(mQueryOptions);
 		this.bSingleProperty = bSingleProperty;
-		this.oPromise = null;
 	}
 
 	/**
@@ -481,10 +488,11 @@ sap.ui.define([
 			var oBody = {},
 				mHeaders;
 
+			sEditUrl += Cache.buildQueryString(that.mQueryOptions, true);
 			oResult = drillDown(oResult, sPath);
+			mHeaders = {"If-Match" : oResult["@odata.etag"]};
 			oBody[sPropertyName]
 				= oResult[that.bSingleProperty ? "value" : sPropertyName] = vValue;
-			mHeaders = {"If-Match" : oResult["@odata.etag"]};
 
 			return that.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders, oBody)
 				.then(function (oPatchResult) {
@@ -504,12 +512,14 @@ sap.ui.define([
 
 	Cache = {
 		/**
-		 * Builds a query string from the parameter map. Converts $select (which may be an array)
-		 * and $expand (which must be an object) accordingly. All other system query options are
-		 * rejected.
+		 * Builds a query string from the parameter map. Converts the known OData system query
+		 * options, all other OData system query options are rejected; with
+		 * <code>bDropSystemQueryOptions</code> they are dropped altogether.
 		 *
 		 * @param {object} mQueryOptions
 		 *   A map of key-value pairs representing the query string
+		 * @param {boolean} [bDropSystemQueryOptions=false]
+		 *   Whether all system query options are dropped (useful for non-GET requests)
 		 * @returns {string}
 		 *   The query string; it is empty if there are no options; it starts with "?" otherwise
 		 * @example
@@ -531,8 +541,9 @@ sap.ui.define([
 		 *		"sap-client" : "003"
 		 *	}
 		 */
-		buildQueryString : function (mQueryOptions) {
-			return _Helper.buildQuery(Cache.convertQueryOptions(mQueryOptions));
+		buildQueryString : function (mQueryOptions, bDropSystemQueryOptions) {
+			return _Helper.buildQuery(
+				Cache.convertQueryOptions(mQueryOptions, bDropSystemQueryOptions));
 		},
 
 		/**
@@ -582,13 +593,16 @@ sap.ui.define([
 		},
 
 		/**
-		 * Converts the query options. All system query options are converted to strings, so that
-		 * the result can be used for _Helper.buildQuery.
+		 * Converts the query options. All known OData system query options are converted to
+		 * strings, so that the result can be used for _Helper.buildQuery; with
+		 * <code>bDropSystemQueryOptions</code> they are dropped altogether.
 		 *
 		 * @param {object} mQueryOptions The query options
+		 * @param {boolean} [bDropSystemQueryOptions=false]
+		 *   Whether all system query options are dropped (useful for non-GET requests)
 		 * @returns {object} The converted query options
 		 */
-		convertQueryOptions : function (mQueryOptions) {
+		convertQueryOptions : function (mQueryOptions, bDropSystemQueryOptions) {
 			var mConvertedQueryOptions = {};
 
 			if (!mQueryOptions) {
@@ -596,7 +610,7 @@ sap.ui.define([
 			}
 			convertSystemQueryOptions(mQueryOptions, function (sKey, vValue) {
 				mConvertedQueryOptions[sKey] = vValue;
-			});
+			}, bDropSystemQueryOptions);
 			return mConvertedQueryOptions;
 		},
 

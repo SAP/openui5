@@ -151,9 +151,6 @@ sap.ui.define([
 		if (bIsBatch) {
 			oBatchRequest = _Batch.serializeBatchRequest(oPayload);
 			sPayload = oBatchRequest.body;
-			// This would have been the responsibility of submitBatch. But doing it here makes the
-			// $batch recognition easier.
-			sResourcePath += this.sQueryParams;
 		} else {
 			sPayload = JSON.stringify(oPayload);
 
@@ -198,7 +195,9 @@ sap.ui.define([
 		}
 
 		return new Promise(function (fnResolve, fnReject) {
-			jQuery.ajax(that.sServiceUrl + sResourcePath, {
+			// Adding query parameters could have been the responsibility of submitBatch, but doing
+			// it here makes the $batch recognition easier.
+			jQuery.ajax(that.sServiceUrl + sResourcePath + (bIsBatch ? that.sQueryParams : ""), {
 				data : sPayload,
 				headers : jQuery.extend({}, mPredefinedRequestHeaders, that.mHeaders, mHeaders,
 					bIsBatch ? oBatchRequest.headers : mFinalHeaders),
