@@ -55,7 +55,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 			"sap.ui.commons.layout.HAlign",
 			"sap.ui.commons.layout.Padding",
 			"sap.ui.commons.layout.Separation",
-			"sap.ui.commons.layout.VAlign"
+			"sap.ui.commons.layout.VAlign",
+			"sap.ui.commons.ColorPickerMode"
 		],
 		interfaces: [
 			"sap.ui.commons.FormattedTextViewControl",
@@ -189,6 +190,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 		 * @public
 		 */
 		Default : "Default"
+
+	};
+
+
+	/**
+	 * different styles for a ColorPicker.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.ui.commons.ColorPickerMode = {
+
+			/**
+			 * Color picker works with HSV values.
+			 * @public
+			 */
+			HSV : "HSV",
+
+			/**
+			 * Color picker works with HSL values.
+			 * @public
+			 */
+			HSL : "HSL"
 
 	};
 
