@@ -165,19 +165,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 			return oParseError;
 		}
 
-		// Safari
+		// Safari or Chrome
 		if (!!Device.browser.webkit && oDocument && oDocument.documentElement
-				&& oDocument.documentElement.tagName == "html"
 				&& oDocument.getElementsByTagName("parsererror").length > 0) {
 
-			var sErrorText = jQuery.sap.serializeXML(oDocument), rParserError = /error on line (\d+) at column (\d+): ([^<]*)/;
+			var sErrorText = jQuery.sap.serializeXML(oDocument), rParserError = /(error|warning) on line (\d+) at column (\d+): ([^<]*)\n/;
 
 			if (rParserError.test(sErrorText)) {
-				oParseError.reason = RegExp.$3;
+				oParseError.reason = RegExp.$4;
 				oParseError.url = "";
-				oParseError.line = parseInt(RegExp.$1, 10);
-				oParseError.linepos = parseInt(RegExp.$2, 10);
+				oParseError.line = parseInt(RegExp.$2, 10);
+				oParseError.linepos = parseInt(RegExp.$3, 10);
 				oParseError.srcText = "";
+				oParseError.type = RegExp.$1;
 
 			}
 			return oParseError;
