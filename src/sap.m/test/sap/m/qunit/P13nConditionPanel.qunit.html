@@ -55,7 +55,7 @@ if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <=
  		var oKeyField9= {key: "Boolean", text: "Boolean", type: "boolean"};
  		var aKeyFields= [oKeyField1,oKeyField2,oKeyField3,oKeyField4,oKeyField5,oKeyField6,oKeyField7,oKeyField8,oKeyField9];
 
-		var oCondition0= { "key": "i0", "text": "", "operation": sap.m.P13nConditionOperation.BT, "keyField": "Date", "value1": "1", "value2": "10"};
+		var oCondition0= { "key": "i0", "text": "", "operation": sap.m.P13nConditionOperation.BT, "keyField": "Numeric", "value1": "1", "value2": "10"};
 		var oCondition1= { "key": "i1", "text": "", "operation": sap.m.P13nConditionOperation.EQ, "keyField": "CompanyCode", "value1": "a", "value2": ""};
 		var oCondition2= { "key": "i2", "text": "", "operation": sap.m.P13nConditionOperation.LT, "keyField": "CompanyName", "value1": "g", "value2": ""};
 		var aConditions= [oCondition0, oCondition1, oCondition2];
@@ -277,12 +277,12 @@ if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <=
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		var oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[0];
+		var oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[1];
 		oConditionGrid.keyField.setSelectedKey("CompanyName");
 		oP13nConditionPanel._handleSelectionChangeOnKeyField(oP13nConditionPanel._oConditionsGrid, oConditionGrid);
 
 		var sKeyField= "CompanyName";
-		qUnit.strictEqual(oP13nConditionPanel.getConditions()[0].keyField, sKeyField, "KeyFields of first condition must be '" + sKeyField + "'.");
+		qUnit.strictEqual(oP13nConditionPanel.getConditions()[1].keyField, sKeyField, "KeyFields of first condition must be '" + sKeyField + "'.");
 
 
 
@@ -290,14 +290,14 @@ if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <=
 		oP13nConditionPanel._handleChangeOnOperationField(oP13nConditionPanel._oConditionsGrid, oConditionGrid);
 
 		var sOperation= "Contains";
-		qUnit.strictEqual(oP13nConditionPanel.getConditions()[0].operation, sOperation, "Operation of first condition must be '" + sOperation + "'.");
+		qUnit.strictEqual(oP13nConditionPanel.getConditions()[1].operation, sOperation, "Operation of first condition must be '" + sOperation + "'.");
 
 
 		oConditionGrid.value1.setValue("foo");
 		oP13nConditionPanel._changeField(oConditionGrid);
 
 		var sValue1 = "foo";
-		qUnit.strictEqual(oP13nConditionPanel.getConditions()[0].value1, sValue1, "Value1 of first condition must be '" + sValue1 + "'.");
+		qUnit.strictEqual(oP13nConditionPanel.getConditions()[1].value1, sValue1, "Value1 of first condition must be '" + sValue1 + "'.");
 
 
 		// cleanup
@@ -470,7 +470,7 @@ if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <=
 		qUnit.strictEqual(oConditionGrid.value1.getValueState(), sap.ui.core.ValueState.Warning, "ValueState must be Warning!");
 
 		oP13nConditionPanel.removeValidationErrors();
-		qUnit.strictEqual(oConditionGrid.value1.getValueState(), sap.ui.core.ValueState.None, "ValueState must be Warning!");
+		qUnit.strictEqual(oConditionGrid.value1.getValueState(), sap.ui.core.ValueState.None, "ValueState must be None!");
 
 		oP13nConditionPanel.validateConditions();
 		oP13nConditionPanel.removeInvalidConditions();
@@ -558,8 +558,9 @@ if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <=
 		oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[3];
 		qUnit.strictEqual(oConditionGrid.value1.getSelectedIndex(), 2, "value1 of condition 3 must be select control with selected index 2!");
 
+		var oFormatter = sap.ui.core.format.NumberFormat.getFloatInstance();
 		oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[4];
-		qUnit.strictEqual(oConditionGrid.value1.getValue(), "1.5", "value1 of condition 4 must be number 1.5");
+		qUnit.equal(oFormatter.parse(oConditionGrid.value1.getValue()), 1.5, "value1 of condition 4 must be number 1.5");
 
 		// cleanup
 		oP13nConditionPanel.destroy();
