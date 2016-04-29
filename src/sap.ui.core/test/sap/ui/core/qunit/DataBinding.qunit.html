@@ -373,7 +373,7 @@
 		ok(oBindingBefore === oBindingAfter, "binding should not change as it is not affected");
 	});
 
-	test("remove content from uiArea: no models set", function(){
+	asyncTest("remove content from uiArea: no models set", function(){
 		sap.ui.getCore().setModel();
 		mPropagationInfo = {};
 
@@ -407,8 +407,14 @@
 		ctrl.removeAllChildren();
 		ok(!mPropagationInfo[uiArea.getId()], "ModelContextChange event not fired on uiArea");
 		ok(!mPropagationInfo[ctrl.getId()], "ModelContextChange event not fired on ctrl");
-		ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event on child");
+		ok(!mPropagationInfo[child.getId()], "ModelContextChange event not fire on child - should happen async");
 		mPropagationInfo = {};
+		setTimeout(function() {
+			ok(!mPropagationInfo[uiArea.getId()], "ModelContextChange event not fired on uiArea");
+			ok(!mPropagationInfo[ctrl.getId()], "ModelContextChange event not fired on ctrl");
+			ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event on child - should happen async");
+			start();
+		},0);
 	});
 
 	test("remove content from uiArea: model set", function(){
@@ -418,6 +424,55 @@
 		ok(mPropagationInfo[ctrl.getId()] === 1, "ModelContextChange event on ctrl");
 		ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event on child");
 		mPropagationInfo = {};
+	});
+
+	asyncTest("Move child / remove child: async setParent null propagation", function() {
+		//remove from parent
+		var moveCtrl = uiArea.removeContent(ctrl);
+
+		// check for expected modifications: not yet propagated
+		ok(child.getParent() != null, "parent shouldn't be null");
+		ok(ctrl.getParent() == null, "parent should be null");
+		ok(child.getModel() != null, "child should have a default model");
+		ok(ctrl.getModel() == null, "ctrl should have no model");
+		ok(child.getBinding("value") != null, "child should have a binding for the default model");
+		ok(child.oPropagatedProperties !== ctrl.oPropagatedProperties, "child should no longer inherit propagatedProperties 1:1 from ctrl");
+		ok(ctrl.oPropagatedProperties === sap.ui.base.ManagedObject._oEmptyPropagatedProperties, "ctrl has no propagated properties");
+
+		//simulate a move by sync adding the control again
+		uiArea.addContent(moveCtrl);
+
+		setTimeout(function() {
+			// check for expected modifications
+			ok(child.getParent() != null, "parent shouldn't be null");
+			ok(ctrl.getParent() != null, "parent shouldn't be null");
+			ok(child.getModel() != null, "child should have a default model");
+			ok(ctrl.getModel() != null, "ctrl should have a default model");
+			ok(child.getBinding("value") != null, "child should have a binding for the default model");
+			ok(child.oPropagatedProperties === ctrl.oPropagatedProperties, "child should no longer inherit propagatedProperties 1:1 from ctrl");
+
+			// remove from parent - no move
+			var moveCtrl = uiArea.removeContent(ctrl);
+			// check for expected modifications: not yet propagated
+			ok(child.getParent() != null, "parent shouldn't be null");
+			ok(ctrl.getParent() == null, "parent should be null");
+			ok(child.getModel() != null, "child should have a default model");
+			ok(ctrl.getModel() == null, "ctrl should have no model");
+			ok(child.getBinding("value") != null, "child should have a binding for the default model");
+			ok(child.oPropagatedProperties !== ctrl.oPropagatedProperties, "child should no longer inherit propagatedProperties 1:1 from ctrl");
+			ok(ctrl.oPropagatedProperties === sap.ui.base.ManagedObject._oEmptyPropagatedProperties, "ctrl has no propagated properties");
+
+			setTimeout(function() {
+				// check for expected modifications: async propagation done
+				ok(ctrl.getParent() == null, "parent should be null");
+				ok(child.getModel() == null, "child shouldn't have a default model");
+				ok(ctrl.getModel() == null, "ctrl shouldn't have a default model");
+				ok(child.getBinding("value") == null, "child shouldn't have a binding for the default model");
+				ok(child.oPropagatedProperties === sap.ui.base.ManagedObject._oEmptyPropagatedProperties, "child should no longer inherit propagatedProperties 1:1 from ctrl");
+				ok(ctrl.oPropagatedProperties === sap.ui.base.ManagedObject._oEmptyPropagatedProperties, "ctrl should no longer inherit propagatedProperties 1:1 from ctrl");
+				start();
+			}, 0);
+		}, 0);
 	});
 
 	module("More Complex Updates", {
