@@ -406,9 +406,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 			// update iLength (only when the inline count was requested and is available)
 			if (bInlineCountRequested && oData.__count) {
 				that.iLength = parseInt(oData.__count, 10);
-				if (that.sCountMode != CountMode.InlineRepeat) {
-					that.bLengthFinal = true;
-				}
+				that.bLengthFinal = true;
 			}
 
 			// if we got data and the results + startindex is larger than the

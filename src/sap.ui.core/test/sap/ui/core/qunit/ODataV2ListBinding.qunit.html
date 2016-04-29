@@ -720,7 +720,7 @@
 			// data from its data-sources
 			equal(oBinding.aKeys.length, 2, "Loaded data count");
 			equal(oBinding.iLength, 3, "Service says there are still entities to load");
-			equal(oBinding.bLengthFinal, false, "Length should not be final already");
+			equal(oBinding.bLengthFinal, true, "Length should be final as provided by the service");
 
 			oBinding.attachChange(handler2);
 			oBinding.getContexts(2, 1, 0);
