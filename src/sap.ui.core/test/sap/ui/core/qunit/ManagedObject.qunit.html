@@ -1457,6 +1457,16 @@
 				changed = false;
 			});
 
+			test("Bind object with empty path", function() {
+				var oContext = oModel.createBindingContext("/list/0");
+				this.obj.bindObject({path:"", events:{change:fnChange}});
+				this.obj.setBindingContext(oContext);
+				equal(changed,true,"handler attached/change event fired");
+				ok(this.obj.getObjectBinding().getBoundContext() === oContext, "Bound context equals set context");
+				changed = false;
+				this.obj.setBindingContext(null);
+			});
+
 			module("ManagedObjectMetadata");
 
 			test("Check for generated IDs", function() {
