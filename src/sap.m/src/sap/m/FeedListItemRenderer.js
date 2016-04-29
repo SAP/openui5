@@ -24,12 +24,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 	 */
 	FeedListItemRenderer.renderLIAttributes = function(rm, oFeedListItem) {
 		rm.addClass("sapMFeedListItemTitleDiv");
-		if (oFeedListItem._showSeparators === sap.m.ListSeparators.None) {
-			rm.addClass("sapMFeedListShowSeparatorsNone");
-		} else {
-			rm.addClass("sapMFeedListShowSeparatorsAll");
-		}
-
+		rm.addClass("sapMFeedListShowSeparatorsAll");
 	};
 
 	/**
