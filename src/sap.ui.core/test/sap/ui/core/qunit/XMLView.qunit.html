@@ -144,6 +144,29 @@ sap.ui.core.mvc.Controller</title>
 		});
 	});
 
+	QUnit.test("invisible control", function(assert) {
+		// load and place view, force rendering
+		var oView = sap.ui.xmlview('example.mvc.test').placeAt('content');
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oView.byId("myPanel").getDomRef(), "panel rendered");
+		oView.byId("myPanel").setVisible(false);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(!oView.byId("myPanel").getDomRef(), "panel hidden");
+		oView.setVisible(false);
+		sap.ui.getCore().applyChanges();
+		oView.setVisible(true);
+		// DO NOT sap.ui.getCore().applyChanges(); to create scenario circumstances
+
+		assert.ok(oView.getDomRef(), "view rendered");
+		assert.ok(!oView.byId("myPanel").getDomRef(), "panel not rendered");
+
+		oView.byId("myPanel").setVisible(true);
+		sap.ui.getCore().applyChanges();
+		assert.ok(oView.byId("myPanel").getDomRef(), "panel rendered");
+	});
+
 	QUnit.test("with custom RenderManager", function(assert) {
 
 		// load view, embed it in a Panel and force rendering
@@ -176,14 +199,14 @@ sap.ui.core.mvc.Controller</title>
 	QUnit.test("visible property", function(assert) {
 
 		var xmlview;
-		
+
 		function check(bVisible, sMsgSuffix) {
 			var vLayoutNode = jQuery.sap.domById('vLayout');
 			var btnBeforeNode = jQuery.sap.domById('btnBefore');
 			var xmlviewNode = jQuery.sap.domById('xmlview');
 			var xmlviewPlaceholderNode = jQuery.sap.domById('sap-ui-invisible-xmlview');
 			var btnAfterNode = jQuery.sap.domById('btnAfter');
-			
+
 			assert.ok(vLayout, "vLayout be rendered");
 			assert.ok(btnBeforeNode, "btnBefore should be rendered");
 			assert.ok(btnAfterNode, "btnBefore should be rendered");
@@ -195,7 +218,7 @@ sap.ui.core.mvc.Controller</title>
 				assert.ok(sap.ui.core.RenderManager.isPreservedContent(xmlviewNode), "xmlview should be part of the preserved area");
 			}
 
-			if ( bVisible ) { 
+			if ( bVisible ) {
 				assert.ok(vLayout.compareDocumentPosition(xmlviewNode) & Node.DOCUMENT_POSITION_CONTAINED_BY, "xmlview should be a descendant of vLayout" + sMsgSuffix);
 				assert.ok(btnBeforeNode.compareDocumentPosition(xmlviewNode) & Node.DOCUMENT_POSITION_FOLLOWING, "xmlview should follow the btnBeforeNode" + sMsgSuffix);
 				assert.ok(btnAfterNode.compareDocumentPosition(xmlviewNode) & Node.DOCUMENT_POSITION_PRECEDING, "xmlview should preced the btnAfterNode" + sMsgSuffix);
@@ -235,11 +258,11 @@ sap.ui.core.mvc.Controller</title>
 			}
 		});
 		oLayout.placeAt('content');
-		
+
 		sap.ui.getCore().applyChanges();
 		check(true, " (after initial rendering)");
 		assert.equal(1, iLayoutRendered, "layout initially should have been rendered once");
-		
+
 		xmlview.setVisible(false);
 		sap.ui.getCore().applyChanges();
 		check(false, " (after becoming invisible)");
@@ -249,7 +272,7 @@ sap.ui.core.mvc.Controller</title>
 		sap.ui.getCore().applyChanges();
 		check(true, " (after becoming visible again)");
 		assert.equal(1, iLayoutRendered, "layout still should have been rendered only once (after making the xmlview visible again)");
-		
+
 		oLayout.destroy();
 	});
 
