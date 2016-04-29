@@ -253,6 +253,7 @@ sap.ui.define([
 			validationExecutor: jQuery.proxy(this._callValidationExecutor, this)
 		});
 		this._oGroupPanel.setOperations(this._aOperations);
+		this._oGroupPanel._sAddRemoveIconTooltipKey = "GROUP";
 
 		this.addAggregation("content", this._oGroupPanel);
 	};
