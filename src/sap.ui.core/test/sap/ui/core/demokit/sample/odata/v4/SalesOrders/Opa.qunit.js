@@ -18,7 +18,9 @@ sap.ui.require([
 	}
 
 	opaTest("Find view elements", function (Given, When, Then) {
-		var sUrl = "../../../common/index.html?component=odata.v4.SalesOrders&realOData="
+		var sUrl = "../../../common/index.html?component=odata.v4.SalesOrders"
+				+ "&sap-server=test" // just to add some URL parameter to each OData request
+				+ "&realOData="
 				+ encodeURIComponent(jQuery.sap.getUriParameters().get("realOData"));
 
 		Given.iStartMyAppInAFrame(sUrl);

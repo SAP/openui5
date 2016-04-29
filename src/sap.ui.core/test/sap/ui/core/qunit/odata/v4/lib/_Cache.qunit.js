@@ -296,6 +296,18 @@ sap.ui.require([
 		});
 
 		assert.deepEqual(_Cache.convertQueryOptions({
+			foo : "bar",
+			"sap-client" : "111",
+			$expand : oExpand,
+			$filter : "BuyerName eq 'SAP'",
+			$orderby : "GrossAmount asc",
+			$select : ["select1", "select2"]
+		}, /*bDropSystemQueryOptions*/true), {
+			foo : "bar",
+			"sap-client" : "111"
+		});
+
+		assert.deepEqual(_Cache.convertQueryOptions({
 			$select : "singleSelect"
 		}), {
 			$select : "singleSelect"
@@ -357,16 +369,16 @@ sap.ui.require([
 			oQueryParams = {};
 
 		oCacheMock.expects("convertQueryOptions")
-			.withExactArgs(undefined).returns(undefined);
+			.withExactArgs(undefined, undefined).returns(undefined);
 
-		assert.strictEqual(_Cache.buildQueryString(undefined), "");
+		assert.strictEqual(_Cache.buildQueryString(), "");
 
 		oCacheMock.expects("convertQueryOptions")
-			.withExactArgs(sinon.match.same(oQueryParams)).returns(oConvertedQueryParams);
+			.withExactArgs(sinon.match.same(oQueryParams), true).returns(oConvertedQueryParams);
 		this.oSandbox.mock(_Helper).expects("buildQuery")
 			.withExactArgs(sinon.match.same(oConvertedQueryParams)).returns("?query");
 
-		assert.strictEqual(_Cache.buildQueryString(oQueryParams), "?query");
+		assert.strictEqual(_Cache.buildQueryString(oQueryParams, true), "?query");
 	});
 
 	//*********************************************************************************************
@@ -419,7 +431,7 @@ sap.ui.require([
 				+ "$filter=CurrencyCode%20eq%20'EUR';$select=CurrencyCode),SOITEM_2_SO)"
 				+ "&sap-client=003"
 		}].forEach(function (oFixture) {
-			assert.strictEqual(_Cache.buildQueryString(oFixture.o, false), "?" + oFixture.s,
+			assert.strictEqual(_Cache.buildQueryString(oFixture.o), "?" + oFixture.s,
 				oFixture.s);
 		});
 	});
@@ -620,14 +632,21 @@ sap.ui.require([
 				SideEffect : "after"
 				// SOITEM_2_PRODUCT not present in PATCH response!
 			},
-			oCache = _Cache.create(oRequestor, sResourcePath, {$expand : {SO_2_SOITEM : true}});
+			oCache = _Cache.create(oRequestor, sResourcePath, {
+				$expand : {SO_2_SOITEM : true},
+				føø : "bãr",
+				"sap-client" : "111"
+			});
 
 		oRequestorMock.expects("request")
-			.withExactArgs("GET", sResourcePath + "?$expand=SO_2_SOITEM&$skip=0&$top=1", "groupId")
+			.withExactArgs("GET", sResourcePath
+				+ "?$expand=SO_2_SOITEM&f%C3%B8%C3%B8=b%C3%A3r&sap-client=111&$skip=0&$top=1",
+				"groupId")
 			.returns(oPromise);
 		oCache.read(0, 1, "groupId"); // triggers GET
 		oRequestorMock.expects("request")
-			.withExactArgs("PATCH", sEditUrl, "updateGroupId", {"If-Match" : sETag}, {Note : "foo"})
+			.withExactArgs("PATCH", sEditUrl + "?f%C3%B8%C3%B8=b%C3%A3r&sap-client=111",
+				"updateGroupId", {"If-Match" : sETag}, {Note : "foo"})
 			.returns(oPatchPromise);
 
 		return oPromise.then(function () {
@@ -928,7 +947,11 @@ sap.ui.require([
 				}),
 				oRequestor = _Requestor.create("/"),
 				oRequestorMock = this.oSandbox.mock(oRequestor),
-				oCache = _Cache.createSingle(oRequestor, o.sResourcePath, null, o.bSingleProperty),
+				oCache = _Cache.createSingle(oRequestor, o.sResourcePath, {
+					$orderby: "Name", // whatever system query option might make sense...
+					føø : "bãr",
+					"sap-client" : "111"
+				}, o.bSingleProperty),
 				// server responds with different value, e.g. upper case, and side effect
 				oResult = {
 					"@odata.etag" : 'W/"19700101000000.9999999"',
@@ -940,11 +963,14 @@ sap.ui.require([
 				oUpdatePromise;
 
 			oRequestorMock.expects("request")
-				.withExactArgs("GET", o.sResourcePath, "groupId")
+				.withExactArgs("GET",
+					o.sResourcePath + "?$orderby=Name&f%C3%B8%C3%B8=b%C3%A3r&sap-client=111",
+					"groupId")
 				.returns(Promise.resolve(o.oGetResult));
 			oCache.read("groupId", o.sReadPath); // triggers GET
 			oRequestorMock.expects("request")
-				.withExactArgs("PATCH", o.sEditUrl, "up", {"If-Match" : o.sETag}, {Name : "foo"})
+				.withExactArgs("PATCH", o.sEditUrl + "?f%C3%B8%C3%B8=b%C3%A3r&sap-client=111",
+					"up", {"If-Match" : o.sETag}, {Name : "foo"})
 				.returns(oPatchPromise);
 
 			// code under test
