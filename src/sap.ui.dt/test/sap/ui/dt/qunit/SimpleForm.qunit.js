@@ -14,7 +14,6 @@ jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
 	var fnParamerizedTest = function(oSimpleFormLayout) {
 
 		var oView;
-		var oElementMover;
 		var oCutPaste;
 		var oDesignTime;
 		var oSimpleForm;
@@ -23,11 +22,15 @@ jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
 			beforeEach : function(assert) {
 
 				var done = assert.async();
+
 				oView = sap.ui.xmlview("testView", "dt.view.TestSimpleForm");
-				oView.placeAt("content");
-				sap.ui.getCore().applyChanges();
-				oSimpleForm = sap.ui.getCore().byId("testView--SimpleForm");
+				oSimpleForm = sap.ui.getCore().byId("testView--SimpleForm0");
 				oSimpleForm.setLayout(oSimpleFormLayout);
+				oView.placeAt("content");
+
+				//oSimpleForm.addEventDelegate(oOnAfterRenderingDelegate);
+				sap.ui.getCore().applyChanges();
+
 				var oTabHandlingPlugin = new TabHandlingPlugin();
 				var oSelectionPlugin = new MouseSelectionPlugin();
 				oCutPaste = new CutPastePlugin({
@@ -42,11 +45,13 @@ jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
 				oDesignTime.attachEventOnce("synced", function() {
 					done();
 				});
+
 			},
 
 			afterEach : function() {
 				oView.destroy();
 				oDesignTime.destroy();
+				oCutPaste.destroy();
 			}
 		});
 
@@ -57,7 +62,7 @@ jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
 				var aData = oEvent.getParameter("data");
 
 				assert.equal(aData.length, 1, "then resulting action array contains 3 entries");
-				var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm--Form");
+				var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form");
 				var aFormContainers = oSimpleFormForm.getFormContainers();
 				var iPosition = aFormContainers.indexOf(oElementGroup1.getParent());
 				assert.ok(iPosition === 2, "The titel1 is now located at index 2");
@@ -81,7 +86,7 @@ jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
 			oCutPaste.getElementMover().attachElementMoved(function(oEvent) {
 				var aData = oEvent.getParameter("data");
 				assert.equal(aData.length, 1, "then resulting action array contains 3 entries");
-				var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm--Form");
+				var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form");
 				var aFormContainers = oSimpleFormForm.getFormContainers();
 				var iPosition = aFormContainers.indexOf(oElementGroup1.getParent());
 				assert.ok(iPosition === 1, "The titel2 is now located at index 1");
@@ -95,7 +100,6 @@ jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
 
 			oCutPaste.cut(oSourceOverlay);
 			oCutPaste.paste(oTargetOverlay);
-			sap.ui.getCore().applyChanges();
 
 		});
 
@@ -108,7 +112,7 @@ jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
 				assert.equal(aData[0].changeType, "reorder_aggregation", "then the expected reordering action was created");
 				sap.ui.getCore().applyChanges();
 
-				var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm--Form").getParent();
+				var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form").getParent();
 				var iPositionLabel = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Label1"));
 				var iPositionInput1 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input1"));
 				var iPositionInput2 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input2"));
@@ -127,7 +131,6 @@ jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
 
 			oCutPaste.cut(oSourceOverlay);
 			oCutPaste.paste(oTargetOverlay);
-			sap.ui.getCore().applyChanges();
 
 		});
 
@@ -140,7 +143,7 @@ jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
 				assert.equal(aData[0].changeType, "reorder_aggregation", "then the expected reordering action was created");
 				sap.ui.getCore().applyChanges();
 
-				var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm--Form").getParent();
+				var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form").getParent();
 				var iPositionLabel1 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Label1"));
 				var iPositionInput1 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input1"));
 				var iPositionInput2 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input2"));
@@ -164,85 +167,74 @@ jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
 
 			oCutPaste.cut(oSourceOverlay);
 			oCutPaste.paste(oTargetOverlay);
-			sap.ui.getCore().applyChanges();
 
 		});
 
-		// TODO: moving element to empty container at the end only works for ResponsiveLayout
-		if (oSimpleFormLayout !== sap.ui.layout.form.SimpleFormLayout.GridLayout) {
+		QUnit.test("When moving label2 into empty first group0", function(assert) {
 
-			QUnit.test("When moving label2 into empty first group0", function(assert) {
+			var done = assert.async();
+			oCutPaste.getElementMover().attachElementMoved(function(oEvent) {
+				var aData = oEvent.getParameter("data");
 
-				var done = assert.async();
-				oCutPaste.getElementMover().attachElementMoved(function(oEvent) {
-					var aData = oEvent.getParameter("data");
-
-					assert.equal(aData[0].changeType, "reorder_aggregation", "then the expected reordering action was created");
-					sap.ui.getCore().applyChanges();
-
-					var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm--Form").getParent();
-					var iPositionLabel = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Label1"));
-					var iPositionInput1 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input1"));
-					var iPositionInput2 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input2"));
-
-					assert.ok(iPositionLabel === 1, "and the label1 is now located at index 1");
-					assert.ok(iPositionInput1 === 2, "and the Input1 is now located at index 2");
-					assert.ok(iPositionInput2 === 3, "and the Input2 is now located at index 3");
-
-					done();
-				}, this);
-
-				var oElement0 = sap.ui.getCore().byId("testView--Input1").getParent();
-				var oSourceOverlay = OverlayRegistry.getOverlay(oElement0);
-
-				var oElement1 = sap.ui.getCore().byId("testView--Group0");
-				var oTargetOverlay = OverlayRegistry.getOverlay(oElement1);
-				oTargetOverlay = oTargetOverlay.getParentElementOverlay();
-
-				oCutPaste.cut(oSourceOverlay);
-				oCutPaste.paste(oTargetOverlay);
+				assert.equal(aData[0].changeType, "reorder_aggregation", "then the expected reordering action was created");
 				sap.ui.getCore().applyChanges();
 
-			});
-		}
-		
-		// TODO: moving element to empty container at the end only works for ResponsiveLayout
-		if (oSimpleFormLayout === sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout) {
+				var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form").getParent();
+				var iPositionLabel = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Label1"));
+				var iPositionInput1 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input1"));
+				var iPositionInput2 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input2"));
 
-			QUnit.test("When moving label2 into empty last group42", function(assert) {
+				assert.ok(iPositionLabel === 1, "and the label1 is now located at index 1");
+				assert.ok(iPositionInput1 === 2, "and the Input1 is now located at index 2");
+				assert.ok(iPositionInput2 === 3, "and the Input2 is now located at index 3");
 
-				var done = assert.async();
-				oCutPaste.getElementMover().attachElementMoved(function(oEvent) {
-					var aData = oEvent.getParameter("data");
+				done();
+			}, this);
 
-					assert.equal(aData[0].changeType, "reorder_aggregation", "then the expected reordering action was created");
-					sap.ui.getCore().applyChanges();
+			var oElement0 = sap.ui.getCore().byId("testView--Input1").getParent();
+			var oSourceOverlay = OverlayRegistry.getOverlay(oElement0);
 
-					var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm--Form").getParent();
-					var iPositionLabel = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Label1"));
-					var iPositionInput1 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input1"));
-					var iPositionInput2 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input2"));
+			var oElement1 = sap.ui.getCore().byId("testView--Group0");
+			var oTargetOverlay = OverlayRegistry.getOverlay(oElement1);
+			oTargetOverlay = oTargetOverlay.getParentElementOverlay();
 
-					assert.ok(iPositionLabel === 21, "and the label1 is now located at index 21");
-					assert.ok(iPositionInput1 === 22, "and the Input1 is now located at index 22");
-					assert.ok(iPositionInput2 === 23, "and the Input2 is now located at index 23");
+			oCutPaste.cut(oSourceOverlay);
+			oCutPaste.paste(oTargetOverlay);
 
-					done();
-				}, this);
+		});
 
-				var oElement0 = sap.ui.getCore().byId("testView--Input1").getParent();
-				var oSourceOverlay = OverlayRegistry.getOverlay(oElement0);
+		QUnit.test("When moving label2 into empty last group42", function(assert) {
 
-				var oElement1 = sap.ui.getCore().byId("testView--Group42");
-				var oTargetOverlay = OverlayRegistry.getOverlay(oElement1);
-				oTargetOverlay = oTargetOverlay.getParentElementOverlay();
+			var done = assert.async();
+			oCutPaste.getElementMover().attachElementMoved(function(oEvent) {
+				var aData = oEvent.getParameter("data");
 
-				oCutPaste.cut(oSourceOverlay);
-				oCutPaste.paste(oTargetOverlay);
+				assert.equal(aData[0].changeType, "reorder_aggregation", "then the expected reordering action was created");
 				sap.ui.getCore().applyChanges();
 
-			});
-		}
+				var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form").getParent();
+				var iPositionLabel = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Label1"));
+				var iPositionInput1 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input1"));
+				var iPositionInput2 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input2"));
+
+				assert.ok(iPositionLabel === 21, "and the label1 is now located at index 21");
+				assert.ok(iPositionInput1 === 22, "and the Input1 is now located at index 22");
+				assert.ok(iPositionInput2 === 23, "and the Input2 is now located at index 23");
+
+				done();
+			}, this);
+
+			var oElement0 = sap.ui.getCore().byId("testView--Input1").getParent();
+			var oSourceOverlay = OverlayRegistry.getOverlay(oElement0);
+
+			var oElement1 = sap.ui.getCore().byId("testView--Group42");
+			var oTargetOverlay = OverlayRegistry.getOverlay(oElement1);
+			oTargetOverlay = oTargetOverlay.getParentElementOverlay();
+
+			oCutPaste.cut(oSourceOverlay);
+			oCutPaste.paste(oTargetOverlay);
+
+		});
 
 	};
 
