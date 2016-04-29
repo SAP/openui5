@@ -9,7 +9,7 @@ sap.ui.define(function() {
 
 	/**
 	* @class
-	* Change Reason for ListBinding/TreeBinding.
+	* Change Reason for Model/ListBinding/TreeBinding.
 	*
 	* @static
 	* @public
@@ -54,7 +54,13 @@ sap.ui.define(function() {
 			 * The tree node was collapsed
 			 * @public
 			 */
-			Collapse: "collapse"
+			Collapse: "collapse",
+			/**
+			 *
+			 * Binding changes a model property value
+			 * @public
+			 */
+			Binding: "binding"
 	};
 
 	return ChangeReason;

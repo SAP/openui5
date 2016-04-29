@@ -3,7 +3,7 @@
  */
 
 // Provides class sap.ui.model.odata.ODataPropertyBinding
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/PropertyBinding'],
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/PropertyBinding', 'sap/ui/model/ChangeReason'],
 	function(jQuery, ChangeReason, PropertyBinding) {
 	"use strict";
 
@@ -78,6 +78,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/P
 
 			var oDataState = this.getDataState();
 			oDataState.setValue(this.oValue);
+			this.oModel.firePropertyChange({reason: ChangeReason.Binding, path: this.sPath, context: this.oContext, value: oValue});
 		}
 	};
 
