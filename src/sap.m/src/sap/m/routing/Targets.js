@@ -361,6 +361,25 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 
 			_constructTarget : function (oOptions, oParent) {
 				return new Target(oOptions, this._oViews, oParent, this._oTargetHandler);
+			},
+
+			/**
+			 * Traverse up from the given target through the parent chain to find out the first target with a defined view level.
+			 * @param {sap.m.routing.Target} oTarget the target from which the traverse starts to find the first defined view level
+			 * @return {number} The view level
+			 * @private
+			 */
+			_getViewLevel : function (oTarget) {
+				var iViewLevel;
+				do {
+					iViewLevel = oTarget._oOptions.viewLevel;
+					if (iViewLevel !== undefined) {
+						return iViewLevel;
+					}
+					oTarget = oTarget._oParent;
+				} while (oTarget);
+
+				return iViewLevel;
 			}
 		});
 
