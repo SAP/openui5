@@ -31,7 +31,7 @@
 <item rdf:about="http://openui5picks.tumblr.com/post/142348967605">
 	<title>Demos</title>
 	<link>http://openui5picks.tumblr.com/post/142348967605</link>
-	<content:encoded>&lt;img src=&quot;http://40.media.tumblr.com/ffb0308bd5d8e342a6c248fb154e0b44/tumblr_inline_o57skyTa2w1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;
+	<content:encoded>&lt;img src=&quot;http://66.media.tumblr.com/ffb0308bd5d8e342a6c248fb154e0b44/tumblr_inline_o57skyTa2w1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;
 
 A while back, I sent this twitter message into the Twitter-verse, with the intention to blog shortly after that on how I got UI5 running on an ESP8266. I’m afraid this blog was conceived a bit...</content:encoded>
 	<dc:date>2016-04-01T16:56:26+00:00</dc:date>
@@ -51,7 +51,7 @@ A while back, I sent this twitter message into the Twitter-verse, with the inten
 <item rdf:about="http://openui5picks.tumblr.com/post/134911941785">
 	<title>Demos: SAPUI5 single file template using XMLViews, Controllers, Fragments and Custom Controls for bug illustrations, support requests or demos</title>
 	<link>http://openui5picks.tumblr.com/post/134911941785</link>
-	<content:encoded>&lt;img src=&quot;http://66.media.tumblr.com/19acd17bb61739ee11aaaeaac970f780/tumblr_inline_nz4yibwTG51sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;
+	<content:encoded>&lt;img src=&quot;http://40.media.tumblr.com/19acd17bb61739ee11aaaeaac970f780/tumblr_inline_nz4yibwTG51sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;
 
 As the UI5 community is growing every day I have experienced that people new to UI5 find it hard to create simple demos demonstrating their issues. I have seem many questions onStackoverflow and...</content:encoded>
 	<dc:date>2015-08-29T21:20:26+00:00</dc:date>
@@ -59,25 +59,25 @@ As the UI5 community is growing every day I have experienced that people new to 
 <item rdf:about="http://openui5picks.tumblr.com/post/126093935815">
 	<title>Demos: Hybrid apps for Windows Phone</title>
 	<link>http://openui5picks.tumblr.com/post/126093935815</link>
-	<content:encoded>&lt;img src=&quot;http://65.media.tumblr.com/ee418a251b5ba1231676aa417cbe8a0b/tumblr_inline_nsps6hJVSG1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;As we had several inquiries about how to build up a OpenUI5 application in a Windows Phone hybrid app recently, we have investigated a bit in that area. You may have heard that there is a problem...</content:encoded>
+	<content:encoded>&lt;img src=&quot;http://36.media.tumblr.com/ee418a251b5ba1231676aa417cbe8a0b/tumblr_inline_nsps6hJVSG1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;As we had several inquiries about how to build up a OpenUI5 application in a Windows Phone hybrid app recently, we have investigated a bit in that area. You may have heard that there is a problem...</content:encoded>
 	<dc:date>2015-07-28T21:20:26+00:00</dc:date>
 </item>
 <item rdf:about="http://openui5picks.tumblr.com/post/126093309405">
 	<title>Demos: Lessons Learned From Working With Fakes and Mocks in UI5</title>
 	<link>http://openui5picks.tumblr.com/post/126093309405</link>
-	<content:encoded>&lt;img src=&quot;http://36.media.tumblr.com/fd1baf0e04b27c18bd02ba43f9b59911/tumblr_inline_nsprugXuUb1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;I have recently worked on a UI5 project where we built an event-driven service-based architecture. We followed the TDD principles for most parts, so naturally, we ended up having lots of fake and mock...</content:encoded>
+	<content:encoded>&lt;img src=&quot;http://65.media.tumblr.com/fd1baf0e04b27c18bd02ba43f9b59911/tumblr_inline_nsprugXuUb1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;I have recently worked on a UI5 project where we built an event-driven service-based architecture. We followed the TDD principles for most parts, so naturally, we ended up having lots of fake and mock...</content:encoded>
 	<dc:date>2015-07-05T08:27:26+00:00</dc:date>
 </item>
 <item rdf:about="http://openui5picks.tumblr.com/post/121254537550">
 	<title>Demos: Why initializing properties on prototypes can have nasty side effects in SAPUI5</title>
 	<link>http://openui5picks.tumblr.com/post/121254537550</link>
-	<content:encoded>&lt;img src=&quot;http://67.media.tumblr.com/6b1db0873385eb413a1fa522a212aecb/tumblr_inline_nprphnCYtc1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Recently a colleague reviewed some of my SAPUI5 tutorials. He pointed out that declaring and initializing private properties directly on the prototype object can lead to issues. This could especially...</content:encoded>
+	<content:encoded>&lt;img src=&quot;http://41.media.tumblr.com/6b1db0873385eb413a1fa522a212aecb/tumblr_inline_nprphnCYtc1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Recently a colleague reviewed some of my SAPUI5 tutorials. He pointed out that declaring and initializing private properties directly on the prototype object can lead to issues. This could especially...</content:encoded>
 	<dc:date>2015-05-31T11:36:00+00:00</dc:date>
 </item>
 <item rdf:about="http://openui5picks.tumblr.com/post/116631893405">
 	<title>Demos: Rounded Tiles in UI5</title>
 	<link>http://openui5picks.tumblr.com/post/116631893405</link>
-	<content:encoded>&lt;img src=&quot;http://40.media.tumblr.com/36551487bd811e98d767e6643d797d67/tumblr_inline_nmy30caJXf1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Ive been working with OpenUI5 for a few months now and I grew tired of the sharp tiles provided by the standard library. Good thing OpenUI5 allows the inheritance between components so that we can...</content:encoded>
+	<content:encoded>&lt;img src=&quot;http://66.media.tumblr.com/36551487bd811e98d767e6643d797d67/tumblr_inline_nmy30caJXf1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Ive been working with OpenUI5 for a few months now and I grew tired of the sharp tiles provided by the standard library. Good thing OpenUI5 allows the inheritance between components so that we can...</content:encoded>
 	<dc:date>2015-03-27T11:36:00+00:00</dc:date>
 </item>
 <item rdf:about="http://openui5picks.tumblr.com/post/112684181095">
