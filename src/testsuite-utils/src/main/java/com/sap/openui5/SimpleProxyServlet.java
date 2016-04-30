@@ -3,6 +3,7 @@ package com.sap.openui5;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URI;
@@ -158,7 +159,19 @@ public class SimpleProxyServlet extends HttpServlet {
       //   - HTTP: http.proxyHost, http.proxyPort, http.proxyByPass
       //   - HTTPS: https.proxyHost, https.proxyPort, https.proxyByPass
       HttpURLConnection conn = (HttpURLConnection) new URL(targetUriString).openConnection();
-      conn.setRequestMethod(method);
+      try {
+        conn.setRequestMethod(method);
+      } catch (ProtocolException pex) {
+        // workaround for setting not supported HTTP methods by JRE (e.g. PATCH)
+        //  - search for "setRequestMethodUsingWorkaroundForJREBug"
+        try {
+          Field methodField = HttpURLConnection.class.getDeclaredField("method");
+          methodField.setAccessible(true);
+          methodField.set(conn, method);
+        } catch (Exception ex) {
+          throw new RuntimeException(ex); // NOSONAR
+        }
+      }
       conn.setDoOutput(true);
       conn.setDoInput(true);
       conn.setUseCaches(false);
