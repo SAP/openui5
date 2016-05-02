@@ -567,7 +567,7 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.ODataContextBinding}
 	 *   <code>this</code> to enable method chaining
 	 * @throws {Error} If the binding is not a deferred operation binding (see
-	 *   {@link sap.ui.model.odata.v4.ODataContextBinding}).
+	 *   {@link sap.ui.model.odata.v4.ODataContextBinding}) or if the value is missing
 	 *
 	 * @public
 	 * @since 1.37.0
@@ -575,6 +575,9 @@ sap.ui.define([
 	ODataContextBinding.prototype.setParameter = function (sParameterName, vValue) {
 		if (!this.oOperation) {
 			throw new Error("The binding must be deferred: " + this.sPath);
+		}
+		if (vValue === undefined) {
+			throw new Error("Missing value for parameter: " + sParameterName);
 		}
 		this.oOperation.mParameters[sParameterName] = vValue;
 		return this;

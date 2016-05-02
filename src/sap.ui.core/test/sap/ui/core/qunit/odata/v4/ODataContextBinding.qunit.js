@@ -1045,6 +1045,14 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("setParameter: undefined", function (assert) {
+		var oContextBinding = this.oModel.bindContext("/Function(...)");
+		assert.throws(function () {
+			return oContextBinding.setParameter("foo", undefined);
+		}, new Error("Missing value for parameter: foo"));
+	});
+
+	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
 		//*****************************************************************************************
 		QUnit.test("Action import on navigation property", function (assert) {
