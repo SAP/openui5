@@ -431,16 +431,33 @@
 				ok(!oPC1.getAppointmentsReducedHeight(), "AppointmentsReducedHeight is disabled by default");
 				var aRows = oPC1.getRows();
 				for(var i = 0; i < aRows.length; i++) {
-					ok(!aRows[i].getCalendarRow().getAppointmentsReducedHeight(), "Row " + i + ": ShowIntervalHeaders notset");
+					ok(!aRows[i].getCalendarRow().getAppointmentsReducedHeight(), "Row " + i + ": AppointmentsReducedHeight not set");
 				}
 
 				oPC1.setAppointmentsReducedHeight(true);
 				sap.ui.getCore().applyChanges();
 				for(var i = 0; i < aRows.length; i++) {
-					ok(aRows[i].getCalendarRow().getAppointmentsReducedHeight(), "Row " + i + ": ShowIntervalHeaders set");
+					ok(aRows[i].getCalendarRow().getAppointmentsReducedHeight(), "Row " + i + ": AppointmentsReducedHeight set");
 				}
 
 				oPC1.setAppointmentsReducedHeight(false);
+				sap.ui.getCore().applyChanges();
+			});
+
+			test("appointmentsVisualization", function() {
+				equal(oPC1.getAppointmentsVisualization(), sap.ui.unified.CalendarAppointmentVisualization.Standard, "AppointmentVisualization default set");
+				var aRows = oPC1.getRows();
+				for(var i = 0; i < aRows.length; i++) {
+					equal(aRows[i].getCalendarRow().getAppointmentsVisualization(), sap.ui.unified.CalendarAppointmentVisualization.Standard, "Row " + i + ": AppointmentVisualization default set");
+				}
+
+				oPC1.setAppointmentsVisualization(sap.ui.unified.CalendarAppointmentVisualization.Filled);
+				sap.ui.getCore().applyChanges();
+				for(var i = 0; i < aRows.length; i++) {
+					equal(aRows[i].getCalendarRow().getAppointmentsVisualization(), sap.ui.unified.CalendarAppointmentVisualization.Filled, "Row " + i + ": AppointmentVisualization Filled set");
+				}
+
+				oPC1.setAppointmentsVisualization(sap.ui.unified.CalendarAppointmentVisualization.Standard);
 				sap.ui.getCore().applyChanges();
 			});
 
