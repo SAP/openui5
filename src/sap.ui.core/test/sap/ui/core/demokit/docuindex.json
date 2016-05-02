@@ -403,8 +403,8 @@
 			},
 			{
 				"id": "sap.ui.core.sample.odata.v4.ListBinding",
-				"name": "List Binding",
-				"description": "Example for list binding with an OData V4 model"
+				"name": "Operation Binding",
+				"description": "OData V4 model operation bindings example; refer to the Sales Orders example to understand other OData V4 model features"
 			},
 			{
 				"id": "sap.ui.core.sample.odata.v4.SalesOrders",
