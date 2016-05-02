@@ -287,10 +287,23 @@ sap.ui.define([
 				var oRequestError = new Error(
 					"HTTP request was not processed because $batch failed");
 
+				/*
+				 * Rejects all given requests (recursively) with <code>oRequestError</code>.
+				 *
+				 * @param {object[]} aRequests
+				 */
+				function rejectAll(aRequests) {
+					aRequests.forEach(function (vRequest) {
+						if (Array.isArray(vRequest)) {
+							rejectAll(vRequest);
+						} else {
+							vRequest.$reject(oRequestError);
+						}
+					});
+				}
+
 				oRequestError.cause = oError;
-				aRequests.forEach(function (oRequest) {
-					oRequest.$reject(oRequestError);
-				});
+				rejectAll(aRequests);
 				throw oError;
 			});
 	};
