@@ -30,7 +30,8 @@
 			xmlNode: {}
 		};
 		var clone = element.clone();
-		equal(clone._sapui_declarativeSourceInfo, element._sapui_declarativeSourceInfo);
+		notStrictEqual(clone._sapui_declarativeSourceInfo, element._sapui_declarativeSourceInfo);
+		deepEqual(clone._sapui_declarativeSourceInfo.xmlNode, element._sapui_declarativeSourceInfo.xmlNode);
 	});
 
 
