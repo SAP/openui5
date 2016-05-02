@@ -141,7 +141,7 @@ sap.ui.define([
 
 		onInit : function () {
 			this.getView().setModel(new JSONModel({
-				EmployeeID: undefined
+				EmployeeID: null
 			}), "search");
 		},
 
