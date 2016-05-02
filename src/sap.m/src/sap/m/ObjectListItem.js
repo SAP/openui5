@@ -136,7 +136,8 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 				 * Second status text field displayed on the right side of the attributes.
 				 */
 				secondStatus : {type : "sap.m.ObjectStatus", multiple : false}
-			}
+			},
+			designTime: true
 		}});
 
 		// get resource translation bundle;
