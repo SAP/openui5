@@ -861,6 +861,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			tableCtrlScrWidth: 0,
 			tableHSbScrollLeft: 0,
 			tableCtrlFixedWidth: 0,
+			tableCntHeight: 0,
+			tableCntWidth: 0,
 			columnRowHeight: 0,
 			columnRowOuterHeight: 0,
 			invisibleColWidth: 0
@@ -870,6 +872,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		if (!oDomRef) {
 			return oSizes;
 		}
+
+		var oSapUiTableCnt = oDomRef.querySelector(".sapUiTableCnt");
+		if (oSapUiTableCnt) {
+			oSizes.tableCntHeight = oSapUiTableCnt.clientHeight;
+			oSizes.tableCntWidth = oSapUiTableCnt.clientWidth;
+		}
+
 
 		var oSapUiTableCtrlScroll = oDomRef.querySelector(".sapUiTableCtrlScroll");
 		if (oSapUiTableCtrlScroll) {
@@ -1140,7 +1149,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 		var oTableSizes = this._collectTableSizes(aRowHeights);
 
-		var that = this;
+		if (this._mTimeouts.afterUpdateTableSizes) {
+			window.clearTimeout(this._mTimeouts.afterUpdateTableSizes);
+		}
+
+		if (oTableSizes.tableCntHeight == 0 && oTableSizes.tableCntWidth == 0) {
+			// the table has no size at all. This may be due to one of the parents has display:none. In order to
+			// recognize when the parent size changes, the resize handler must be registered synchronously, otherwise
+			// the browser may finish painting before the resize handler is registered
+			if (oDomRef && oDomRef.parentNode) {
+				this._sResizeHandlerId = ResizeHandler.register(oDomRef.parentNode, this._onTableResize.bind(this));
+			}
+
+			return;
+		}
 
 		// Manipulation of UI Sizes
 		this._updateRowHeader(oTableSizes.tableRowHeights);
@@ -1157,7 +1179,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		if (this._mTimeouts.afterUpdateTableSizes) {
 			window.clearTimeout(this._mTimeouts.afterUpdateTableSizes);
 		}
-		this._mTimeouts.afterUpdateTableSizes = window.setTimeout(function() {
+
+		var that = this;
+		this._mTimeouts.afterUpdateTableSizes = window.setTimeout(function () {
+			// size changes of the parent happen due to adaptations of the table sizes. In order to first let the
+			// browser finish painting, the resize handler is registered in a timeout. If this would be done synchronously,
+			// updateTableSizes would always run twice.
 			if (that._sResizeHandlerId) {
 				ResizeHandler.deregister(that._sResizeHandlerId);
 				that._sResizeHandlerId = undefined;
