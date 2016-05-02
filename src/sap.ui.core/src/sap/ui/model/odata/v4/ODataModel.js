@@ -404,6 +404,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * Destroys this model and its meta model.
+	 *
+	 * @public
+	 * @see sap.ui.model.Model#destroy
+	 * @since 1.38.0
+	 */
+	// @override
+	ODataModel.prototype.destroy = function () {
+		this.oMetaModel.destroy();
+		return Model.prototype.destroy.apply(this, arguments);
+	};
+
+	/**
 	 * Method not supported
 	 *
 	 * @throws {Error}
