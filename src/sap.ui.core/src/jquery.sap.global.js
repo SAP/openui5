@@ -2395,12 +2395,6 @@
 				'sap/ui/thirdparty/jquery.js': {
 					amd: true
 				},
-				'sap/ui/thirdparty/jquery/jquery.1.7.1.js': {
-					amd: true
-				},
-				'sap/ui/thirdparty/jquery/jquery.1.8.1.js': {
-					amd: true
-				},
 				'sap/ui/thirdparty/jquery/jquery-1.10.1.js': {
 					amd: true
 				},
