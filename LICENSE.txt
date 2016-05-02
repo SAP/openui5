@@ -269,6 +269,13 @@ License: MIT License
 <year> = unspecified
 <copyright holders> = Microsoft
 
+Component: es6-promise 2.3.0 - a tiny implementation of Promises/A+.
+Licensor: Jake Archibald
+Website: https://github.com/jakearchibald/es6-promise
+License: MIT License
+<year> = 2014
+<copyright holders> = Yehuda Katz, Tom Dale, Stefan Penner, Jake Archibald and contributors
+
 Component: Flexie 1.0.3
 Licensor: Richard Herrera
 Website: http://github.com/doctyper/flexie/

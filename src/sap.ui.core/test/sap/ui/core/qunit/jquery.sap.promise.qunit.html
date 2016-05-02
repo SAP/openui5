@@ -7,7 +7,7 @@
 
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>Test Page for jquery.sap.promise</title>
 	<script>
 		//Ensure that custom API is populated to global namespace for testimng purposes
@@ -19,7 +19,7 @@
 		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true">
 	</script>
-	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 
@@ -37,21 +37,17 @@
 			sap.ui.Device.browser.firefox && sap.ui.Device.browser.version > 28 ||
 			sap.ui.Device.browser.chrome  && sap.ui.Device.browser.version > 32 ||
 			sap.ui.Device.browser.safari  && sap.ui.Device.browser.version >= 7.1 ||
-			sap.ui.Device.os.ios          && sap.ui.Device.browser.safari && sap.ui.Device.browser.version >= 8
+			sap.ui.Device.os.ios          && sap.ui.Device.browser.safari && sap.ui.Device.os.version >= 8
+			// || sap.ui.Device.browser.edge // For edge we currently replace the native promise with the polyfill due to timing issues (setTimeout vs Promise.resolve)
 		);
 	}
 
 	sap.ui.getCore().attachInit(function() {
-		if (hasNativePromiseSupport()) {
-			jQuery.sap.require("jquery.sap.script");
-			// If native Promise support is available test it as well as the polyfill
+		var bNativePromise = window.Promise.toString().indexOf("[native code]") > -1;
+		if (bNativePromise) {
 			testPromise(window.Promise, "Native: ");
 		}
-
-		// Test the UI5 promise polyfill in any case window._UI5Promise is defined due to
-		// window.sap.__ui5PublishPromisePolyfill being set to true in the first script tag of this page (before the
-		// UI5 bootstrap)
-		testPromise(window._UI5Promise, "Polyfill: ");
+		testPromise(window.ES6Promise.Promise, "Polyfill: ");
 	});
 
 	</script>
@@ -122,18 +118,20 @@
 
 		module(sTestPrefix + "Basics");
 
-		var bNative = P !== window._UI5Promise;
+		var bNative = P.toString().indexOf("[native code]") > -1;
 
 		test((bNative ? "Native" : "Custom") +" API tested", function() {
-			var p = new P(function(res, rej){rej();});
-			ok(!p._deferred && bNative || p._deferred && !bNative , (bNative ? "Native" : "Custom") + " Promise implementation active.");
+			var p = new P(function(res, rej) {
+				rej();
+			});
+			ok(!p._subscribers && bNative || p._subscribers && !bNative , (bNative ? "Native" : "Custom") + " Promise implementation active.");
 		});
 
 		test(sTestPrefix + "Native Support", function() {
 			doOnNativeSupport(function(){
-				ok(window.Promise != window._UI5Promise, "Firefox, Chrome and Safari support Promises natively.");
+				ok(window.Promise.toString().indexOf("[native code]") > -1, "Firefox, Chrome and Safari support Promises natively.");
 			}, function(){
-				ok(window.Promise == window._UI5Promise, "Browsers other than Firefox, Chrome and Safari does not support Promises natively.");
+				ok(window.Promise.toString().indexOf("[native code]") == -1, "Browsers other than Firefox, Chrome and Safari does not support Promises natively.");
 			});
 		});
 
@@ -185,43 +183,31 @@
 			}, 40);
 		});
 
-		asyncTest(sTestPrefix + "Promise vs setTimeout, immediate resolve", function() {
-			var p = P.resolve(),
-				i = 0;
+		asyncTest(sTestPrefix + "Promise then always asynchronous", function() {
+			expect(4);
 
-			equal(i++, 0, "before");
+			var iCounter = 0;
 
-			p.then(function() {
-				equal(i++, 2, "promise first");
+			var pResolvedDirectly = P.resolve();
+			var fnResolveSecondPromise;
+			var pResolvedLater = new Promise(function(fnResolve /*, fnReject */) {
+				fnResolveSecondPromise = fnResolve;
 			});
 
-			setTimeout(function() {
-				equal(i++, 3, "setTimeout second");
+			equal(iCounter++, 0, "Synchronous Before");
+
+			pResolvedDirectly.then(function() {
+				equal(iCounter++, 2, "First promise.then() - Resolved after synchronous code");
+			});
+
+			pResolvedLater.then(function() {
+				equal(iCounter++, 3, "Second promise.then() - Resolved after first promise.then()");
 				start();
-			}, 0);
+			});
 
+			fnResolveSecondPromise();
 
-			equal(i++, 1, "after");
-		});
-
-		asyncTest(sTestPrefix + "Promise vs setTimeout, after timeout", function() {
-			var p = P.resolve(),
-				i = 0;
-
-			setTimeout(function() {
-				equal(i++, 0, "before");
-
-				p.then(function() {
-					equal(i++, 2, "promise first");
-				});
-
-				setTimeout(function() {
-					equal(i++, 3, "setTimeout second");
-					start();
-				}, 0);
-
-				equal(i++, 1, "after");
-			}, 0);
+			equal(iCounter++, 1, "Synchronous After - befor promise.then()");
 		});
 
 
@@ -549,7 +535,7 @@
 				ok(false, "Success should not be called");
 				start();
 			}, function(oVal){
-				ok(oVal instanceof TypeError, "Fail should be called with an TypeError");
+				ok(oVal instanceof Error, "Fail should be called with an Error");
 				start();
 			});
 		});
