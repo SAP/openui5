@@ -182,7 +182,7 @@
 						press="onDeleteEmployee"/>
 				</cells>
 				<cells>
-					<Button enabled="{ui>/bRealOData}" icon="sap-icon://edit" text="Update"
+					<Button enabled="false" icon="sap-icon://edit" text="Update"
 						press="onUpdateEmployee" tooltip="Make ETag look outdated"/>
 				</cells>
 			</ColumnListItem>
