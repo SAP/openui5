@@ -945,7 +945,11 @@
 
 				var oLogSpy = this.spy(jQuery.sap.log, "error");
 				var oClone = this.obj.clone("clone");
-				sinon.assert.calledWith(oLogSpy, "A shared template must be marked with templateShareable:true in the binding info");
+				sinon.assert.calledWith(oLogSpy,
+					sinon.match(/templateShareable/) // msg should contain the term templateShareable
+					.and(sinon.match(/['"<]elements[>"']/)) // msg should contain the name of the aggregation
+					.and(sinon.match(new RegExp('[\'"<]' + jQuery.sap.escapeRegExp(this.obj.getId()) + '[>"\']'))) // and the name of the aggregating object
+				);
 				oLogSpy.restore();
 
 				strictEqual(this.obj.getBindingInfo("elements").templateShareable, true, "after clone operation, templateShareable should have changed from MAYBE to true in origin");
@@ -963,7 +967,7 @@
 
 				var oLogSpy = this.spy(jQuery.sap.log, "error");
 				var oClone = this.obj.clone("clone");
-				sinon.assert.neverCalledWith(oLogSpy, "A shared template must be marked with templateShareable:true in the binding info");
+				sinon.assert.neverCalledWith(oLogSpy, sinon.match(/templateShareable/));
 				oLogSpy.restore();
 
 				strictEqual(this.obj.getBindingInfo("elements").templateShareable, false, "after clone operation, templateShareable of origin still should be false");
@@ -982,7 +986,7 @@
 
 				var oLogSpy = this.spy(jQuery.sap.log, "error");
 				var oClone = this.obj.clone("clone");
-				sinon.assert.neverCalledWith(oLogSpy, "A shared template must be marked with templateShareable:true in the binding info");
+				sinon.assert.neverCalledWith(oLogSpy, sinon.match(/templateShareable/));
 				oLogSpy.restore();
 
 				strictEqual(this.obj.getBindingInfo("elements").templateShareable, true, "after clone operation, templateSharable of origin still should be false");
