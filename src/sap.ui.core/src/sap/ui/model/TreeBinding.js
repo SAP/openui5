@@ -69,8 +69,8 @@ sap.ui.define(['./Binding'],
 	 *
 	 * @function
 	 * @name sap.ui.model.TreeBinding.prototype.getRootContexts
-	 * @param {integer} iStartIndex the startIndex where to start the retrieval of contexts
-	 * @param {integer} iLength determines how many contexts to retrieve beginning from the start index.
+	 * @param {int} iStartIndex the startIndex where to start the retrieval of contexts
+	 * @param {int} iLength determines how many contexts to retrieve beginning from the start index.
 	 * @return {Array} the array of child contexts for the root node
 	 *
 	 * @public
@@ -82,8 +82,8 @@ sap.ui.define(['./Binding'],
 	 * @function
 	 * @name sap.ui.model.TreeBinding.prototype.getNodeContexts
 	 * @param {Object} oContext the context element of the node
-	 * @param {integer} iStartIndex the startIndex where to start the retrieval of contexts
-	 * @param {integer} iLength determines how many contexts to retrieve beginning from the start index.
+	 * @param {int} iStartIndex the startIndex where to start the retrieval of contexts
+	 * @param {int} iLength determines how many contexts to retrieve beginning from the start index.
 	 * @return {Array} the array of child contexts for the given node
 	 *
 	 * @public
@@ -104,7 +104,7 @@ sap.ui.define(['./Binding'],
 	 * Returns the number of child nodes of a specific context
 	 *
 	 * @param {Object} oContext the context element of the node
-	 * @return {integer} the number of children
+	 * @return {int} the number of children
 	 *
 	 * @public
 	 */

@@ -686,7 +686,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	///////////////////////////
 	/**
 	 * Returns if the bar is sensitive to the container context. Implementation of the IBar interface
-	 * @returns {bool} isContextSensitive
+	 * @returns {boolean} isContextSensitive
 	 * @protected
 	 */
 	Toolbar.prototype.isContextSensitive = BarInPageEnabler.prototype.isContextSensitive;

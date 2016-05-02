@@ -1230,7 +1230,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	 * Functions returns the current input field's cursor position
 	 *
 	 * @private
-	 * @return {integer} the cursor position
+	 * @return {int} the cursor position
 	 */
 	MultiInput.prototype.getCursorPosition = function() {
 		return this._$input.cursorPos();

@@ -311,7 +311,7 @@ sap.ui.define(['jquery.sap.global',
 	/**
 	 * Returns the CheckBox`s tab index.
 	 *
-	 * @return {Integer} iTabIndex for Checkbox
+	 * @return {int} iTabIndex for Checkbox
 	 * @since 1.22
 	 * @protected
 	 */
