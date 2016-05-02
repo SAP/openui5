@@ -32,7 +32,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function ($, UI5Objec
       UI5Object.apply(this, arguments);
 
       /**
-       * {[StepDefinition]} An array of StepDefinition objects, one of which is added to the array every time
+       * {StepDefinition[]} An array of StepDefinition objects, one of which is added to the array every time
        * the user calls the 'register' method. Each StepDefinition object can generate one TestStep object.
        *
        * @see #register
@@ -109,7 +109,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function ($, UI5Objec
      *
      * @param {object} oStep - a Gherkin test step, optionally with an associated data table
      * @param {string} oStep.text - the Gherkin test step's human-readable text
-     * @param {[[string]]} [oStep.data] - (optional) a matrix of strings that represents a Gherkin data table
+     * @param {string[][]} [oStep.data] - (optional) a matrix of strings that represents a Gherkin data table
      * @returns {TestStep} a TestStep object
      * @see sap.ui.test.gherkin.GherkinTestGenerator
      * @private

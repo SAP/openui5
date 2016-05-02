@@ -29,7 +29,7 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * This function generates a hash-code from a string
 	 * @param {string} sString The string to generate the hash-code from
-	 * @return {integer} The generated hash-code
+	 * @return {int} The generated hash-code
 	 * @since 1.39
 	 * @private
 	 */

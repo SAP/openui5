@@ -123,9 +123,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 				 */
 				editableChange : {
 					parameters : {
-						selected : {
-							editable : "boolean"
-						}
+						editable : { type : "boolean" }
 					}
 				},
 				/**

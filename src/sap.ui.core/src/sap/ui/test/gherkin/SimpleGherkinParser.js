@@ -26,6 +26,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function ($, UI5Objec
     /**
      * Parses correctly formed Gherkin. The parsed return object (a Gherkin feature!) looks like this:
      *
+     * <pre>
      * {
      *   tags : ['@wip', '@integration'],
      *   name : 'Serve coffee',
@@ -47,6 +48,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function ($, UI5Objec
      *     }
      *   ]
      * }
+     * </pre>
      *
      * @param {string} sText - Gherkin text to parse
      * @returns {object} parsed representation of the Gherkin feature

@@ -583,8 +583,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Selects the text within the input field between the specified start and end positions.
 	 * Only supported for input control's type of Text, Url, Tel and Password.
 	 *
-	 * @param {integer} iSelectionStart The index into the text at which the first selected character is located.
-	 * @param {integer} iSelectionEnd The index into the text at which the last selected character is located.
+	 * @param {int} iSelectionStart The index into the text at which the first selected character is located.
+	 * @param {int} iSelectionEnd The index into the text at which the last selected character is located.
 	 * @returns {sap.m.InputBase} <code>this</code> to allow method chaining.
 	 * @protected
 	 * @since 1.22.1

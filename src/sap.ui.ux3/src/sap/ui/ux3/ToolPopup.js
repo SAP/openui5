@@ -1297,7 +1297,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
              * Adds an ID to the Popup that should be focusable as well when using <code>autoclose</code>.
              * Chaining is only possible if a valid type (string) is given.
              *
-             * @param {sap.ui.core.string} [sID] ID of the corresponding element that should be focusable as well
+             * @param {string} [sID] ID of the corresponding element that should be focusable as well
              * @since 1.19.0
              * @public
              * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -1320,7 +1320,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
              * Removes an ID to the Popup that should be focusable as well when using <code>autoclose</code>.
              * Chaining is only possible if a valid type (string) is given.
              *
-             * @param {sap.ui.core.string} [sID] ID of the corresponding element
+             * @param {string} [sID] ID of the corresponding element
              * @since 1.19.0
              * @public
              * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
