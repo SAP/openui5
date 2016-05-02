@@ -40,6 +40,7 @@ sap.ui.define([
 				//replace model from manifest in case of proxy
 				sQuery = URI.buildQuery(oModel.mUriParameters);
 				sQuery = sQuery ? "?" + sQuery : "";
+				oModel.destroy();
 				oModel = new ODataModel({
 					groupId : jQuery.sap.getUriParameters().get("$direct")
 						? "$direct" // switch off batch
