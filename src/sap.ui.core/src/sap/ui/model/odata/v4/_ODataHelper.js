@@ -87,7 +87,7 @@ sap.ui.define([
 		 * <li> System query options (key starts with "$") except those specified in
 		 *   <code>aAllowed</code>
 		 * <li> Parameter aliases (key starts with "@")
-		 * <li> Custom query options starting with "sap-"
+		 * <li> Custom query options starting with "sap-", unless <code>bSapAllowed</code> is set
 		 * </ul>
 		 * @param {object} [mModelOptions={}]
 		 *   Map of query options specified for the model
@@ -95,12 +95,14 @@ sap.ui.define([
 		 *   Map of query options
 		 * @param {string[]} [aAllowed=[]]
 		 *   Names of allowed system query options
+		 * @param {boolean} [bSapAllowed=false]
+		 *   Whether Custom query options starting with "sap-" are allowed
 		 * @throws {Error}
 		 *   If disallowed OData query options are provided
 		 * @returns {object}
 		 *   The map of query options
 		 */
-		buildQueryOptions : function (mModelOptions, mOptions, aAllowed) {
+		buildQueryOptions : function (mModelOptions, mOptions, aAllowed, bSapAllowed) {
 			var mResult = JSON.parse(JSON.stringify(mModelOptions || {}));
 
 			/**
@@ -155,7 +157,7 @@ sap.ui.define([
 							vValue = _Parser.parseSystemQueryOption(sKey + "=" + vValue)[sKey];
 						}
 						validateSystemQueryOption(sKey, vValue);
-					} else if (sKey.indexOf("sap-") === 0) {
+					} else if (!bSapAllowed && sKey.indexOf("sap-") === 0) {
 						throw new Error("Custom query option " + sKey + " is not supported");
 					}
 					mResult[sKey] = vValue;
