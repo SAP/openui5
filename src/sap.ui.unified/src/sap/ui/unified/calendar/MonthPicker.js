@@ -257,8 +257,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	/**
 	 * sets a minimum an maximum month
 	 *
-	 * @param {integer} [iMin] minimum month as integer (starting with 0)
-	 * @param {integer} [iMax] maximum month as integer (starting with 0)
+	 * @param {int} [iMin] minimum month as integer (starting with 0)
+	 * @param {int} [iMax] maximum month as integer (starting with 0)
 	 * @returns {sap.ui.unified.calendar.MonthPicker} <code>this</code> to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel

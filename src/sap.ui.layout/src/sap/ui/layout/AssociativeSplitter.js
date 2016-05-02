@@ -263,7 +263,7 @@ sap.ui.define(['./Splitter', './SplitterRenderer'],
 	/**
 	 * Prevents the selection of text while the mouse is moving when pressed
 	 *
-	 * @param {bool} [bTouch] If set to true, touch events instead of mouse events are captured
+	 * @param {boolean} [bTouch] If set to true, touch events instead of mouse events are captured
 	 */
 	function _preventTextSelection(bTouch) {
 		var fnPreventSelection = function(oEvent) {

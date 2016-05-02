@@ -244,10 +244,10 @@ sap.ui.define(['jquery.sap.global',
 
 	/**
 	 * Returns root contexts for the tree. You can specify the start index and the length for paging requests
-	 * @param {integer} [iStartIndex=0] the start index of the requested contexts
-	 * @param {integer} [iLength=v2.ODataModel.sizeLimit] the requested amount of contexts. If none given, the default value is the size limit of the underlying
+	 * @param {int} [iStartIndex=0] the start index of the requested contexts
+	 * @param {int} [iLength=v2.ODataModel.sizeLimit] the requested amount of contexts. If none given, the default value is the size limit of the underlying
 	 *                                                 sap.ui.model.odata.v2.ODataModel instance.
-	 * @param {integer} [iThreshold=0] the number of entities which should be retrieved in addition to the given length.
+	 * @param {int} [iThreshold=0] the number of entities which should be retrieved in addition to the given length.
 	 *                  A higher threshold reduces the number of backend requests, yet these request blow up in size, since more data is loaded.
 	 * @return {sap.ui.model.Context[]} an array containing the contexts for the entities returned by the backend, might be fewer than requested
 	 *                                  if the backend does not have enough data.
@@ -317,9 +317,9 @@ sap.ui.define(['jquery.sap.global',
 	 * Returns the contexts of the child nodes for the given context.
 	 *
 	 * @param {sap.ui.model.Context} oContext the context for which the child nodes should be retrieved
-	 * @param {integer} iStartIndex the start index of the requested contexts
-	 * @param {integer} iLength the requested amount of contexts
-	 * @param {integer} iThreshold
+	 * @param {int} iStartIndex the start index of the requested contexts
+	 * @param {int} iLength the requested amount of contexts
+	 * @param {int} iThreshold
 	 * @return {sap.ui.model.Context[]} the contexts array
 	 * @public
 	 */
@@ -409,7 +409,7 @@ sap.ui.define(['jquery.sap.global',
 	 * Returns the number of child nodes
 	 *
 	 * @param {Object} oContext the context element of the node
-	 * @return {integer} the number of children
+	 * @return {int} the number of children
 	 *
 	 * @public
 	 */
@@ -443,9 +443,9 @@ sap.ui.define(['jquery.sap.global',
 	 * Gets or loads all contexts for a specified node id (dependent on mode)
 	 *
 	 * @param {String} sNodeId the value of the hierarchy node property on which a parent node filter will be performed
-	 * @param {integer} iStartIndex start index of the page
-	 * @param {integer} iLength length of the page
-	 * @param {integer} iThreshold additionally loaded entities
+	 * @param {int} iStartIndex start index of the page
+	 * @param {int} iLength length of the page
+	 * @param {int} iThreshold additionally loaded entities
 	 * @param {object} mParameters additional request parameters
 	 *
 	 * @return {sap.ui.model.Context[]} Array of contexts
@@ -830,9 +830,9 @@ sap.ui.define(['jquery.sap.global',
 	 * Triggers backend requests to load the child nodes of the node with the given sNodeId.
 	 *
 	 * @param {String} sNodeId the value of the hierarchy node property on which a parent node filter will be performed
-	 * @param {integer} iStartIndex start index of the page
-	 * @param {integer} iLength length of the page
-	 * @param {integer} iThreshold additionally loaded entities
+	 * @param {int} iStartIndex start index of the page
+	 * @param {int} iLength length of the page
+	 * @param {int} iThreshold additionally loaded entities
 	 * @param {array} aParams odata url parameters, already concatenated with "="
 	 * @param {object} mParameters additional request parameters
 	 * @param {object} mParameters.navPath the navigation path

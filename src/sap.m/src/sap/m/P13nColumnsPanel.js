@@ -494,7 +494,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @param {inteter} iStartIndex is the table index from where the search start
-	 * @returns {integer} is the index of a previous items; if no item is found it will be returned -1
+	 * @returns {int} is the index of a previous items; if no item is found it will be returned -1
 	 */
 	P13nColumnsPanel.prototype._getPreviousItemIndex = function(iStartIndex) {
 		var iResult = -1, i = 0;
@@ -525,7 +525,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @param {inteter} iStartIndex is the table index from where the search start
-	 * @returns {integer} is the index of the next item; if no item is found it will be returned -1
+	 * @returns {int} is the index of the next item; if no item is found it will be returned -1
 	 */
 	P13nColumnsPanel.prototype._getNextItemIndex = function(iStartIndex) {
 		var iResult = -1, i = 0, iLength = null;
@@ -728,7 +728,7 @@ sap.ui.define([
 	 * @private
 	 * @param {string} sItemKey is the key for that item for that the index shall be found in the array
 	 * @param {array} aItems is the array in that the item will be searched
-	 * @returns {integer} is the index of the identified item
+	 * @returns {int} is the index of the identified item
 	 */
 	P13nColumnsPanel.prototype._getArrayIndexByItemKey = function(sItemKey, aItems) {
 		var iResult = -1;

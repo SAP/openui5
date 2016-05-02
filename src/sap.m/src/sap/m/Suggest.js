@@ -249,7 +249,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './SuggestionsList', '.
 		/**
 		 * Getter for the selected item index.
 		 *
-		 * @returns {integer} Index of the selected item or -1
+		 * @returns {int} Index of the selected item or -1
 		 * @private
 		 */
 		this.getSelected = function() {
@@ -259,7 +259,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './SuggestionsList', '.
 		/**
 		 * Setter for the selected item index.
 		 *
-		 * @param {integer} index Index of the item to select or -1 to remove selection
+		 * @param {int} index Index of the item to select or -1 to remove selection
 		 * @private
 		 */
 		this.setSelected = function(index, bRelative) {

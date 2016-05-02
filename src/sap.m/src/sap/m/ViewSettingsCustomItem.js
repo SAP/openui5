@@ -86,7 +86,7 @@ sap.ui.define(['jquery.sap.global', './ViewSettingsItem', 'sap/ui/base/ManagedOb
 	/**
 	 * Sets the filterCount without invalidating the control as it is never rendered directly.
 	 * @override
-	 * @param {integer} iValue The new value for property filterCount
+	 * @param {int} iValue The new value for property filterCount
 	 * @public
 	 * @return {sap.m.ViewSettingsItem} this pointer for chaining
 	 */

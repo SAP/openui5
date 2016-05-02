@@ -2269,7 +2269,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	/**
 	 * updates the binding contexts of the currently visible controls
 	 * @param {boolean} bSuppressUpdate if true, only context will be requested but no binding context set
-	 * @param {Integer} iRowCount number of rows to be updated and number of contexts to be requested from binding
+	 * @param {int} iRowCount number of rows to be updated and number of contexts to be requested from binding
 	 * @param {String} sReason reason for the update; used to control further lifecycle
 	 * @private
 	 */
@@ -2307,7 +2307,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 * @param {sap.ui.table.Row} oRow row to update
 	 * @param {sap.ui.model.Context} oContext binding context of the row
 	 * @param {String} sModelName name of the model
-	 * @param {Integer} iAbsoluteRowIndex index of row considering the scroll position
+	 * @param {int} iAbsoluteRowIndex index of row considering the scroll position
 	 * @param {boolean} bExecuteCallback if true this._updateTableCell must be implemented and will be executed
 	 * @private
 	 */

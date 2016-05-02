@@ -334,7 +334,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	/**
 	 * Verifies whether a character at a given position is allowed according to its mask rule.
 	 * @param {String} sChar The character
-	 * @param {integer} iIndex The position of the character
+	 * @param {int} iIndex The position of the character
 	 * @protected
 	 */
 	MaskInput.prototype._isCharAllowed = function (sChar, iIndex) {
@@ -347,7 +347,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	 * character with other for time input purposes. As an example, if the user enters "2" (in 12-hour format), the consumer may use
 	 * this method to replace the input from "2" to "02".
 	 * @param {String} sChar The current character from the input
-	 * @param {integer} iPlacePosition The position the character should occupy
+	 * @param {int} iPlacePosition The position the character should occupy
 	 * @param {string} sCurrentInputValue The value currently inside the input field (may differ from the property value)
 	 * @returns {String} A string that replaces the character
 	 * @protected
@@ -479,7 +479,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	/**
 	 * Applies a rule to a character.
 	 * @param {String} sChar The character to which the rule will be applied
-	 * @param {Integer} iIndex The index of the rule
+	 * @param {int} iIndex The index of the rule
 	 * @returns {boolean} True if the character passes the validation rule, false otherwise.
 	 * @private
 	 */
@@ -1257,7 +1257,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	 * Determine the right caret position based on the current selection state
 	 * @private
 	 * @param sDirection
-	 * @returns {integer} iNewCaretPos
+	 * @returns {int} iNewCaretPos
 	 */
 	MaskInput.prototype._determineRtlCaretPositionFromSelection = function (sDirection, bWithChromeFix) {
 		var iNewCaretPos,

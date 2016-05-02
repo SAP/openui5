@@ -137,9 +137,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 	 * This overrides the function of TooltipBase to create a FormattedTextView that
 	 * should be used for rendering
 	 *
-	 * @override sap.ui.core.TooltipBase.setText
+	 * @override
 	 * @param sText
-	 *            {sap.ui.core.string} the text that should be shown
+	 *            {string} the text that should be shown
 	 */
 	RichTooltip.prototype.setText = function(sText) {
 		if (!!sText) {
@@ -165,8 +165,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 	 * being read and returned. If no text was set an empty string is being
 	 * returned.
 	 *
-	 * @returns {sap.ui.core.string} the text that was previously set.
-	 * @override TooltipBase.getText
+	 * @returns {string} the text that was previously set.
+	 * @override
 	 */
 	RichTooltip.prototype.getText = function() {
 		var oText = this.getAggregation("formattedText");

@@ -348,7 +348,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.hasAvailableNodeContexts
 	 * @param {sap.ui.model.Context}
 	 *            oContext the parent context identifying the aggregation level.
-	 * @param {integer}
+	 * @param {int}
 	 *            iLevel the level number of oContext (because the context might occur at multiple levels).
 	 * @return {boolean}
 	 *            property of sap.ui.model.analytics.AnalyticalBinding.ContextsAvailabilityStatus,
@@ -382,9 +382,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.getGroupSize
 	 * @param {sap.ui.model.Context}
 	 *            oContext the parent context identifying the requested group of child contexts.
-	 * @param {integer}
+	 * @param {int}
 	 *            iLevel the level number of oContext (because the context might occur at multiple levels)
-	 * @return {integer}
+	 * @return {int}
 	 *            The currently known group size, or -1, if not yet determined
 	 * @public
 	 */
@@ -406,7 +406,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 *
 	 * @function
 	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.getTotalSize
-	 * @return {integer}
+	 * @return {int}
 	 *            the total number of addressed entities in the OData entity set
 	 *
 	 * @public
@@ -742,7 +742,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.getGroupName
 	 * @param {sap.ui.model.Context}
 	 *            oContext the parent context identifying the requested group.
-	 * @param {integer}
+	 * @param {int}
 	 *            iLevel the level number of oContext (because the context might occur at multiple levels)
 	 * @return {string} a printable name for the group.
 	 * @public
@@ -3304,7 +3304,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	};
 
 	/**
-	 * @param {integer} iNumLevels anchestors starting at the root if greater than 0, or starting at the parent of sGroupId if less than 0.
+	 * @param {int} iNumLevels anchestors starting at the root if greater than 0, or starting at the parent of sGroupId if less than 0.
 	 * @private
 	 */
 	AnalyticalBinding.prototype._getGroupIdAncestors = function(sGroupId, iNumLevels) {
