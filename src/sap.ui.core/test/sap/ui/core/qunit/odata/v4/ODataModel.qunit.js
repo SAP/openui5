@@ -275,7 +275,7 @@ sap.ui.require([
 				.withExactArgs("DELETE", "EMPLOYEES(ID='1')" + oModel._sQuery, undefined,
 					{"If-Match" : sEtag})
 				.returns(Promise.resolve(undefined));
-			this.oSandbox.mock(oContext).expects("requestValue").withExactArgs("@odata.etag")
+			this.oSandbox.mock(oContext).expects("fetchValue").withExactArgs("@odata.etag")
 				.returns(Promise.resolve(sEtag));
 			this.oSandbox.stub(oModel.getMetaModel(), "requestCanonicalUrl",
 				function (sServiceUrl, sPath0, oContext0) {
@@ -304,7 +304,7 @@ sap.ui.require([
 				oContext = Context.create(oModel, null, "/EMPLOYEES/0");
 
 			oError.status = iStatus;
-			this.oSandbox.mock(oContext).expects("requestValue").withExactArgs("@odata.etag")
+			this.oSandbox.mock(oContext).expects("fetchValue").withExactArgs("@odata.etag")
 				.returns(Promise.resolve('W/""'));
 			this.oSandbox.stub(oModel.getMetaModel(), "requestCanonicalUrl")
 				.returns(Promise.resolve(getServiceUrl("/EMPLOYEES(ID='1')")));

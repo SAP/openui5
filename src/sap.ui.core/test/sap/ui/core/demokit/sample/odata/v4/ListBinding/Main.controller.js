@@ -96,8 +96,8 @@ sap.ui.define([
 					oTeamContext = oView.byId("TeamSelect").getBinding("items").getContexts()[0];
 
 				oView.byId("TeamDetails").setBindingContext(oTeamContext);
-				oEmployees.setBindingContext(oTeamContext);
 				oEmployees.getBinding("items").attachEventOnce("change", setEmployeeContext);
+				oEmployees.setBindingContext(oTeamContext);
 			}
 
 			function setEmployeeContext() {

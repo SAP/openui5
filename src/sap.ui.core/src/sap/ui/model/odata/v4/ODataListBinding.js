@@ -309,7 +309,7 @@ sap.ui.define([
 					that.oModel.addedRequestToGroup(sGroupId, that.fireDataRequested.bind(that));
 				});
 			} else {
-				oPromise = oContext.requestValue(this.sPath);
+				oPromise = oContext.fetchValue(this.sPath);
 			}
 			oPromise.then(function (vResult) {
 				createContexts(vResult || []);
@@ -496,15 +496,15 @@ sap.ui.define([
 	 *   Some relative path
 	 * @param {number} iIndex
 	 *   Index corresponding to some current context of this binding
-	 * @returns {Promise}
+	 * @returns {SyncPromise}
 	 *   A promise on the outcome of the cache's <code>read</code> call
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.requestValue = function (sPath, iIndex) {
+	ODataListBinding.prototype.fetchValue = function (sPath, iIndex) {
 		return this.oCache
 			? this.oCache.read(iIndex, /*iLength*/1, undefined, sPath)
-			: this.oContext.requestValue(this.sPath + "/" + iIndex
+			: this.oContext.fetchValue(this.sPath + "/" + iIndex
 				+ (sPath ? "/" + sPath : ""));
 	};
 

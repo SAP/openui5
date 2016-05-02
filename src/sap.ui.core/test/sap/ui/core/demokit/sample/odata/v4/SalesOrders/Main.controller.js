@@ -82,15 +82,9 @@ sap.ui.define([
 //					oView.byId("SupplierContactData").setBindingContext(undefined);
 			}
 
-			//TODO make context public and allow access to index and value
-			//   oEvent.getSource().getBindingContext().getIndex() / .requestValue("SalesOrderID")
-			this.getView().byId("SalesOrders").getItems().forEach(function (oItem) {
-				if (oItem.getBindingContext() === oEvent.getSource().getBindingContext()) {
-					sOrderID = oItem.getCells()[0].getText();
-					MessageBox.confirm("Do you really want to delete? " + sOrderID, onConfirm,
-						"Sales Order Deletion");
-				}
-			});
+			sOrderID = oEvent.getSource().getBindingContext().getProperty("SalesOrderID");
+			MessageBox.confirm("Do you really want to delete? " + sOrderID, onConfirm,
+				"Sales Order Deletion");
 		},
 
 		onInit : function () {
@@ -208,13 +202,11 @@ sap.ui.define([
 //			oSupplierDetailsForm.setBindingContext(oSalesOrderLineItemContext);
 
 			// workaround: manual computation of canonical URL for the time being
-			oSalesOrderLineItemContext
-				.requestValue("SOITEM_2_PRODUCT/PRODUCT_2_BP/BusinessPartnerID")
-				.then(function (sBusinessPartnerID) {
-					//TODO _Helper.formatLiteral
-					oSupplierDetailsForm.bindObject(
-						"/BusinessPartnerList('" + sBusinessPartnerID + "')");
-				});
+			//TODO _Helper.formatLiteral
+			oSupplierDetailsForm.bindObject("/BusinessPartnerList('"
+				+ oSalesOrderLineItemContext.getProperty(
+					"SOITEM_2_PRODUCT/PRODUCT_2_BP/BusinessPartnerID")
+				+ "')");
 		},
 
 		onSaveSalesOrder : function () {
