@@ -455,7 +455,7 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 	 *   the first value to compare
 	 * @param {any} vValue2
 	 *   the second value to compare
-	 * @return {integer}
+	 * @return {int}
 	 *   the result of the compare: <code>0</code> if the values are equal, <code>-1</code> if the
 	 *   first value is smaller, <code>1</code> if the first value is larger, <code>NaN</code> if
 	 *   they cannot be compared
@@ -506,7 +506,7 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 	 *   the first value to compare
 	 * @param {string} sValue2
 	 *   the second value to compare
-	 * @return {integer}
+	 * @return {int}
 	 *   the result of the compare: <code>0</code> if the values are equal, <code>-1</code> if the
 	 *   first value is smaller, <code>1</code> if the first value is larger, <code>NaN</code> if
 	 *   they cannot be compared
@@ -562,7 +562,7 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 	 *   if <code>true</code>, the string values <code>vValue1</code> and <code>vValue2</code> are
 	 *   compared as a decimal number (only sign, integer and fraction digits; no exponential
 	 *   format). Otherwise they are recognized by looking at their types.
-	 * @return {integer}
+	 * @return {int}
 	 *   the result of the compare: <code>0</code> if the values are equal, <code>-1</code> if the
 	 *   first value is smaller, <code>1</code> if the first value is larger, <code>NaN</code> if
 	 *   they cannot be compared

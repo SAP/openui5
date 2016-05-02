@@ -49,8 +49,8 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBindin
 	 *
 	 * @return {object[]} the contexts array
 	 * @protected
-	 * @param {integer} iStartIndex the startIndex where to start the retrieval of contexts
-	 * @param {integer} iLength determines how many contexts to retrieve beginning from the start index.
+	 * @param {int} iStartIndex the startIndex where to start the retrieval of contexts
+	 * @param {int} iLength determines how many contexts to retrieve beginning from the start index.
 	 */
 	ClientTreeBinding.prototype.getRootContexts = function(iStartIndex, iLength) {
 		if (!iStartIndex) {
@@ -90,8 +90,8 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBindin
 	/**
 	 * Return node contexts for the tree
 	 * @param {object} oContext to use for retrieving the node contexts
-	 * @param {integer} iStartIndex the startIndex where to start the retrieval of contexts
-	 * @param {integer} iLength determines how many contexts to retrieve beginning from the start index.
+	 * @param {int} iStartIndex the startIndex where to start the retrieval of contexts
+	 * @param {int} iLength determines how many contexts to retrieve beginning from the start index.
 	 * @return {object[]} the contexts array
 	 * @protected
 	 */

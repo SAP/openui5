@@ -252,7 +252,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		/**
 		 * Gets the <code>TabContainerItem</code> content if present.
-		 * @returns { null | array <sap.ui.core.Control> }
+		 * @returns { null | Array<sap.ui.core.Control> }
 		 * @private
 		 */
 		TabContainer.prototype._getSelectedItemContent = function() {

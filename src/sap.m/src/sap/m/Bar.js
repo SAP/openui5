@@ -269,9 +269,9 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 	 * Returns the CSS for the contentMiddle aggregation.
 	 * It is centered if there is enough space for it to fit between the left and the right content, otherwise it is centered between them.
 	 * If not it will be centered between those two.
-	 * @param {integer} iRightBarWidth The width in px
-	 * @param {integer} iBarWidth The width in px
-	 * @param {integer} iLeftBarWidth The width in px
+	 * @param {int} iRightBarWidth The width in px
+	 * @param {int} iBarWidth The width in px
+	 * @param {int} iLeftBarWidth The width in px
 	 * @returns {object} The new _$MidBarPlaceHolder CSS value
 	 * @private
 	 */

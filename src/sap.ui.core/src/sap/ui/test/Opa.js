@@ -308,8 +308,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 		 *
 		 * @public
 		 * @param {object} options These contain check, success and error functions
-		 * @param {integer} [oOptions.timeout] default: 15 - (seconds) Specifies how long the waitFor function polls before it fails.
-		 * @param {integer} [oOptions.pollingInterval] default: 400 - (milliseconds) Specifies how often the waitFor function polls.
+		 * @param {int} [oOptions.timeout] default: 15 - (seconds) Specifies how long the waitFor function polls before it fails.
+		 * @param {int} [oOptions.pollingInterval] default: 400 - (milliseconds) Specifies how often the waitFor function polls.
 		 * @param {function} [oOptions.check] Will get invoked in every polling interval. If it returns true, the check is successful and the polling will stop.
 		 * The first parameter passed into the function is the same value that gets passed to the success function.
 		 * Returning something other than boolean in the check will not change the first parameter of success.

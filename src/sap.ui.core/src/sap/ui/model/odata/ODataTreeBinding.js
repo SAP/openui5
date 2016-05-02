@@ -56,9 +56,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 
 	/**
 	 * Return root contexts for the tree
-	 * @param {integer} iStartIndex the start index of the requested contexts
-	 * @param {integer} iLength the requested amount of contexts
-	 * @param {integer} iThreshold
+	 * @param {int} iStartIndex the start index of the requested contexts
+	 * @param {int} iLength the requested amount of contexts
+	 * @param {int} iThreshold
 	 * @return {Array} the contexts array
 	 * @protected
 	 */
@@ -129,9 +129,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 
 	/**
 	 * Return node contexts for the tree
-	 * @param {integer} iStartIndex the start index of the requested contexts
-	 * @param {integer} iLength the requested amount of contexts
-	 * @param {integer} iThreshold
+	 * @param {int} iStartIndex the start index of the requested contexts
+	 * @param {int} iLength the requested amount of contexts
+	 * @param {int} iThreshold
 	 * @return {Array} the contexts array
 	 * @protected
 	 */
@@ -190,7 +190,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 	 * Returns the number of child nodes
 	 *
 	 * @param {Object} oContext the context element of the node
-	 * @return {integer} the number of children
+	 * @return {int} the number of children
 	 *
 	 * @public
 	 */
@@ -220,9 +220,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 	 * Gets or loads all contexts for a specified node id (dependent on mode)
 	 *
 	 * @param {String} sNodeId the absolute path to be loaded
-	 * @param {integer} iStartIndex
-	 * @param {integer} iLength
-	 * @param {integer} iThreshold
+	 * @param {int} iStartIndex
+	 * @param {int} iLength
+	 * @param {int} iThreshold
 	 * @param {object} mParameters
 	 * @return {array} Array of contexts
 	 *

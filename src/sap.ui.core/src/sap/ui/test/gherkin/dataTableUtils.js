@@ -104,25 +104,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function($, UI5Object
      * Takes the inputed 2D list 'aData' and returns an equivalent list of objects. The data is expected to
      * have a header row, with each subsequent row being an entity, and each column being a property of that
      * entity. E.g.
+     * <pre>
      *   [
      *     ["Their Name",  "Their Age"],
      *     ["Alice",       "16"],
      *     ["Bob",         "22"]
      *   ]
+     * </pre>
      *
      * The data's column headers become the returned objects' property names. The property names get normalized
      * according to the strategy defined by the parameter 'oNorm'. E.g. using hyphenation strategy this is returned:
-     *
+     * <pre>
      *   [
      *     {their-name: "Alice", their-age: "16"},
      *     {their-name: "Bob", their-age: "22"}
      *   ]
+     * </pre>
      *
-     * @param {[[string]]} aData - the input data to be converted, with a header row
-     * @param {string or function} [oNorm='none'] - the normalization function to use to normalize property
+     * @param {string[][]} aData - the input data to be converted, with a header row
+     * @param {string | function} [oNorm='none'] - the normalization function to use to normalize property
      *                                              names. Can also be a String with values 'titleCase', 'pascalCase',
      *                                              'camelCase', 'hyphenated' or 'none'.
-     * @returns {[object]} - a list of objects equivalent to the input data, with property names normalized
+     * @returns {object[]} - a list of objects equivalent to the input data, with property names normalized
      * @public
      */
     toTable : function(aData, oNorm) {
@@ -144,18 +147,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function($, UI5Object
     /**
      * Takes the inputed 2D list 'aData' and returns an equivalent object. Each row of data is expected to
      * be a property-value pair. To create nested objects, add extra columns to the data. E.g.
-     *
+     * <pre>
      *  [
      *    ['Name', 'Alice'],
      *    ['Mass', '135 lbs'],
      *    ['Telephone Number', 'Home', '123-456-7890'],
      *    ['Telephone Number', 'Work', '123-456-0987']
      *  ]
-     *
+     * </pre>
      * For each data row, the right-most element becomes a property value, and everything else is a property
      * name. The property names get normalized according to the strategy defined by the parameter 'oNorm'.
      * E.g. using camelCase strategy
-     *
+     * <pre>
      *   {
      *     name: 'Alice',
      *     mass: '135 lbs',
@@ -164,9 +167,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function($, UI5Object
      *       work: '123-456-0987'
      *     }
      *   }
-     *
-     * @param {[[string]]} aData - the input data to be converted
-     * @param {string or function} [oNorm='none'] - the normalization function to use to normalize property
+     * </pre>
+     * @param {string[][]} aData - the input data to be converted
+     * @param {string | function} [oNorm='none'] - the normalization function to use to normalize property
      *                                              names. Can also be a string with values 'titleCase', 'pascalCase',
      *                                              'camelCase', 'hyphenated' or 'none'.
      * @returns {object} - an object equivalent to the input data, with property names normalized
@@ -220,12 +223,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function($, UI5Object
     /**
      * Finds the normalization function equivalent to input parameter 'oFun'
      *
-     * @param {string or function} [oFun='none'] - a normalization function. Can also be a string with values
+     * @param {string | function} [oFun='none'] - a normalization function. Can also be a string with values
      *                                            'titleCase', 'pascalCase', 'camelCase', 'hyphenated' or 'none'.
      * @param {string} sFunc - the name of the calling function, for error reporting
      * @returns {function} the normalization function equivalent to the inputed value, or <none> if the input was
      *                     undefined.
-     * @throws {error} if the input string is invalid
+     * @throws {Error} if the input string is invalid
      * @private
      */
     _getNormalizationFunction: function(oFun, sFunc) {
@@ -258,7 +261,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function($, UI5Object
      *
      * @param {string} sString - the parameter to test
      * @param {string} sNormalizationFunction - the normalization function whose input we're testing
-     * @throws {error} if the input string is invalid
+     * @throws {Error} if the input string is invalid
      * @private
      */
     _testNormalizationInput: function(sString, sNormalizationFunction) {
@@ -270,9 +273,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function($, UI5Object
     /**
      * Tests a conversion function's input parameter to make sure it's valid
      *
-     * @param {string} aArray - the parameter to test
+     * @param {any} aArray - the parameter to test
      * @param {string} sFunc - the conversion function whose input we're testing (e.g. 'toObject' or 'toTable')
-     * @throws {error} if the input parameter is invalid
+     * @throws {Error} if the input parameter is invalid
      * @private
      */
     _testArrayInput: function(aArray, sFunc) {

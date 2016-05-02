@@ -5,7 +5,7 @@
 /*global ActiveXObject, alert, confirm, console, ES6Promise, localStorage, jQuery, performance, URI, Promise, XMLHttpRequest */
 
 /**
- * @class Provides base functionality of the SAP jQuery plugin as extension of the jQuery framework.<br/>
+ * Provides base functionality of the SAP jQuery plugin as extension of the jQuery framework.<br/>
  * See also <a href="http://api.jquery.com/jQuery/">jQuery</a> for details.<br/>
  * Although these functions appear as static ones, they are meant to be used on jQuery instances.<br/>
  * If not stated differently, the functions follow the fluent interface paradigm and return the jQuery instance for chaining of statements.
@@ -16,8 +16,7 @@
  *   alert("Top Position: " + oRect.top);
  * </pre>
  *
- * @name jQuery
- * @static
+ * @namespace jQuery
  * @public
  */
 
@@ -2091,7 +2090,7 @@
 		/**
 		 * Sets the request buffer size for the measurement safely
 		 *
-		 * @param {integer} iSize size of the buffer
+		 * @param {int} iSize size of the buffer
 		 *
 		 * @name jQuery.sap.measure#setRequestBufferSize
 		 * @function
