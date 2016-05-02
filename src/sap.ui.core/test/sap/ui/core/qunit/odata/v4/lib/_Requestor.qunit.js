@@ -640,6 +640,10 @@ sap.ui.require([
 			assert.strictEqual(oError.cause, oBatchError);
 		}
 
+		aPromises.push(oRequestor.request("PATCH", "Products('0')", "group", {}, {Name : "foo"})
+			.then(unexpectedSuccess, assertError));
+		aPromises.push(oRequestor.request("PATCH", "Products('1')", "group", {}, {Name : "foo"})
+			.then(unexpectedSuccess, assertError));
 		aPromises.push(oRequestor.request("GET", "Products", "group")
 			.then(unexpectedSuccess, assertError));
 		aPromises.push(oRequestor.request("GET", "Customers", "group")
