@@ -666,6 +666,18 @@ sap.ui.require([
 			oModel.reportError(sLogMessage, sClassName, oError);
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("destroy", function (assert) {
+		var oModel = createModel(),
+			oModelPrototypeMock = this.oSandbox.mock(Model.prototype);
+
+		oModelPrototypeMock.expects("destroy").on(oModel).withExactArgs(1, 2, 3).returns("foo");
+		oModelPrototypeMock.expects("destroy").on(oModel.getMetaModel()).withExactArgs();
+
+		//code under test
+		assert.strictEqual(oModel.destroy(1, 2, 3), "foo");
+	});
 });
 // TODO constructor: test that the service root URL is absolute?
 // TODO read: support the mParameters context, urlParameters, filters, sorters, batchGroupId
