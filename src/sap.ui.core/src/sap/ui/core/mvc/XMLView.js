@@ -344,8 +344,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 			XML : "xml",
 
 			/**
-			 * This preprocessor receives a valid view xml with control declarations enriched with their full via which they
-			 * are also queryable during runtime
+			 * This preprocessor receives a valid xml source for View creation without any template tags but with control
+			 * declarations. These include their full IDs by which they can also be queried during runtime.
 			 * @public
 			 */
 			VIEWXML : "viewxml",
