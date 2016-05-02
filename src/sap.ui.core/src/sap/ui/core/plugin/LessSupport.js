@@ -222,17 +222,19 @@
 				var sBaseUrl = this.oCore._getThemePath(sLibName, this.oCore.sTheme);
 
 				// check if the less file of the current theme is more up-to-date than the css file
+				// or if the last modified of the less file is 0 (no last modified) we assume that it is newer
 				var iLessLastModified = this.getLastModified(sBaseUrl + LESS_FILENAME + ".less");
 				var iCssLastModified = this.getLastModified(sBaseUrl + CSS_FILENAME + ".css");
-				var bUseLess = iLessLastModified > iCssLastModified;
+				var bUseLess = (iLessLastModified == 0 && iCssLastModified > 0) || iLessLastModified > iCssLastModified;
 
 				if (!bUseLess) {
 					var sBaseThemeUrl = this.oCore._getThemePath(sLibName, "base");
 
 					// also check if the less file of the base theme is more up-to-date than the css file
+					// or if the last modified of the less file is 0 (no last modified) we assume that it is newer
 					var iBaseLessLastModified = this.getLastModified(sBaseThemeUrl + LESS_FILENAME + ".less");
 					var iBaseCssLastModified = this.getLastModified(sBaseThemeUrl + CSS_FILENAME + ".css");
-					bUseLess = iBaseLessLastModified > iBaseCssLastModified;
+					bUseLess = (iBaseLessLastModified == 0 && iBaseCssLastModified > 0) || iBaseLessLastModified > iBaseCssLastModified;
 				}
 
 				var sFileName = (bUseLess) ? LESS_FILENAME : CSS_FILENAME;
