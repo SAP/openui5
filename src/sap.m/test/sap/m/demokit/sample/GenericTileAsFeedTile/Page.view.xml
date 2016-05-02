@@ -1,6 +1,6 @@
 <core:View controllerName="sap.m.sample.GenericTileAsFeedTile.Page"
 	xmlns="sap.m" xmlns:core="sap.ui.core">
-	<GenericTile class="sapUiTinyMargin tileLayout" header="Feed Tile Title Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed:"
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Feed Tile Title Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed:"
 		frameType="TwoByOne" press="press">
 		<tileContent>
 			<TileContent footer="New Notifications">
@@ -13,7 +13,7 @@
 		</tileContent>
 	</GenericTile>
 
-	<SlideTile class="sapUiTinyMargin tileLayout">
+	<SlideTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout">
 		<tiles>
 			<GenericTile
 				backgroundImage="test-resources/sap/m/demokit/sample/GenericTileAsFeedTile/images/NewsImage1.png"
