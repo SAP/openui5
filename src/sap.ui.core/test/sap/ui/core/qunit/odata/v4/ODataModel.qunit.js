@@ -656,8 +656,10 @@ sap.ui.require([
 				oMessageManager = sap.ui.getCore().getMessageManager(),
 				oModel = createModel();
 
-			this.oLogMock.expects("error").withExactArgs(sLogMessage, oFixture.message, sClassName);
+			this.oLogMock.expects("error").withExactArgs(sLogMessage, oFixture.message, sClassName)
+				.twice();
 			this.oSandbox.mock(oMessageManager).expects("addMessages")
+				.once()// add each error only once to the MessageManager
 				.withExactArgs(sinon.match(function (oMessage) {
 					return oMessage instanceof Message
 						&& oMessage.message === oError.message
@@ -667,6 +669,7 @@ sap.ui.require([
 				}));
 
 			// code under test
+			oModel.reportError(sLogMessage, sClassName, oError);
 			oModel.reportError(sLogMessage, sClassName, oError);
 		});
 	});
