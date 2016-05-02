@@ -47,7 +47,9 @@
 					associations : {
 						selectedObject : { type : "sap.ui.core.TestManagedObject", multiple : false},
 						associatedObjects : { type : "sap.ui.core.TestManagedObject", multiple : true, singularName : "associatedObj"}
-					}
+					},
+					defaultAggregation : "singleAggr",
+					defaultProperty: "value"
 				},
 
 				init : function() {
@@ -91,6 +93,9 @@
 				}
 
 			});
+
+			//derive
+			sap.ui.core.TestManagedObject.extend("sap.ui.core.TestManagedObjectDerived", {});
 
 			var changed = false;
 
@@ -1467,7 +1472,13 @@
 				this.obj.setBindingContext(null);
 			});
 
-			module("ManagedObjectMetadata");
+			module("ManagedObjectMetadata", {
+				setup: function() {
+					this.obj = new sap.ui.core.TestManagedObject();
+					this.obj2 = new sap.ui.core.TestManagedObjectDerived();
+					this.obj3 =  new sap.test.TestManagedObject();
+				}
+			});
 
 			test("Check for generated IDs", function() {
 				var mIdChecks = {
@@ -1493,6 +1504,23 @@
 				}
 
 
+			});
+
+			test("Check Metadata defaults", function() {
+				ok(this.obj.getMetadata().getDefaultAggregation() === this.obj.getMetadata().getAggregation("singleAggr"), "singleAggr is defaultAggregation");
+				ok(this.obj.getMetadata().getDefaultProperty() === this.obj.getMetadata().getDefaultProperty("value"), "value is defaultProperty");
+				ok(this.obj.getMetadata().getDefaultAggregationName() === "singleAggr", "singleAggr is defaultAggregationName");
+				ok(this.obj.getMetadata().getDefaultPropertyName() === "value", "value is defaultPropertyName");
+
+				ok(this.obj2.getMetadata().getDefaultAggregation() === this.obj.getMetadata().getAggregation("singleAggr"), "derived correctly, singleAggr is defaultAggregation");
+				ok(this.obj2.getMetadata().getDefaultProperty() === this.obj.getMetadata().getDefaultProperty("value"), "derived correctly, value is defaultProperty");
+				ok(this.obj2.getMetadata().getDefaultAggregationName() === "singleAggr", "derived correctly, singleAggr is defaultAggregationName");
+				ok(this.obj2.getMetadata().getDefaultPropertyName() === "value", "derived correctly, value is defaultPropertyName");
+
+				ok(this.obj3.getMetadata().getDefaultAggregation() === undefined, "undefined defaultAggregation");
+				ok(this.obj3.getMetadata().getDefaultProperty() === undefined, "undefined defaultProperty");
+				ok(this.obj3.getMetadata().getDefaultAggregationName() === null, "empty defaultAggregationName");
+				ok(this.obj3.getMetadata().getDefaultPropertyName() === null, "empty defaultPropertyName");
 			});
 
 		</script>
