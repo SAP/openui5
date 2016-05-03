@@ -27,14 +27,14 @@ A while back, I sent this twitter message into the Twitter-verse, with the inten
 	<title>Demos: Instantly Prototype Responsive MVC-based Web Apps</title>
 	<guid>http://openui5picks.tumblr.com/post/137623135285</guid>
 	<link>http://openui5picks.tumblr.com/post/137623135285</link>
-	<description>&lt;img src=&quot;http://40.media.tumblr.com/fa8614bea3d00cf8aff78c24af2e783d/tumblr_inline_o17hl6UvPp1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;At NCDEVCON - North Carolinas Premier Web  Mobile Conference - Alex shows how to build instant prototypes with UI5 in this recording. Watch how to build UI5 apps with just very few steps.</description>
+	<description>&lt;img src=&quot;http://66.media.tumblr.com/fa8614bea3d00cf8aff78c24af2e783d/tumblr_inline_o17hl6UvPp1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;At NCDEVCON - North Carolinas Premier Web  Mobile Conference - Alex shows how to build instant prototypes with UI5 in this recording. Watch how to build UI5 apps with just very few steps.</description>
 	<pubDate>Fri, 08 Jan 2016 21:57:54 +0000</pubDate>
 </item>
 <item>
 	<title>Demos: SAPUI5 single file template using XMLViews, Controllers, Fragments and Custom Controls for bug illustrations, support requests or demos</title>
 	<guid>http://openui5picks.tumblr.com/post/134911941785</guid>
 	<link>http://openui5picks.tumblr.com/post/134911941785</link>
-	<description>&lt;img src=&quot;http://40.media.tumblr.com/19acd17bb61739ee11aaaeaac970f780/tumblr_inline_nz4yibwTG51sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;
+	<description>&lt;img src=&quot;http://66.media.tumblr.com/19acd17bb61739ee11aaaeaac970f780/tumblr_inline_nz4yibwTG51sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;
 
 As the UI5 community is growing every day I have experienced that people new to UI5 find it hard to create simple demos demonstrating their issues. I have seem many questions onStackoverflow and...</description>
 	<pubDate>Sat, 29 Aug 2015 21:20:26 +0000</pubDate>
@@ -57,7 +57,7 @@ As the UI5 community is growing every day I have experienced that people new to 
 	<title>Demos: Why initializing properties on prototypes can have nasty side effects in SAPUI5</title>
 	<guid>http://openui5picks.tumblr.com/post/121254537550</guid>
 	<link>http://openui5picks.tumblr.com/post/121254537550</link>
-	<description>&lt;img src=&quot;http://67.media.tumblr.com/6b1db0873385eb413a1fa522a212aecb/tumblr_inline_nprphnCYtc1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Recently a colleague reviewed some of my SAPUI5 tutorials. He pointed out that declaring and initializing private properties directly on the prototype object can lead to issues. This could especially...</description>
+	<description>&lt;img src=&quot;http://41.media.tumblr.com/6b1db0873385eb413a1fa522a212aecb/tumblr_inline_nprphnCYtc1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Recently a colleague reviewed some of my SAPUI5 tutorials. He pointed out that declaring and initializing private properties directly on the prototype object can lead to issues. This could especially...</description>
 	<pubDate>Sun, 31 May 2015 11:36:00 +0000</pubDate>
 </item>
 <item>
