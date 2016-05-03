@@ -255,5 +255,17 @@
         "references": []
       }
     ]
+  },
+  "1.38.1": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "aa35b75ca0548a4a1f4f24cbb6ad6daa53595a8d",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Bar: Toolbar now has a consistent color across devices",
+        "references": []
+      }
+    ]
   }
 }

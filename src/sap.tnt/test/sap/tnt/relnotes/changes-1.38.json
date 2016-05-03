@@ -45,5 +45,17 @@
         "references": []
       }
     ]
+  },
+  "1.38.1": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "7cb91c4e314a7d8e530c2eee0d4c8f6f4ea1ac70",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.tnt.SideNavigation: Window scrolling in iOS is now prevented",
+        "references": []
+      }
+    ]
   }
 }
