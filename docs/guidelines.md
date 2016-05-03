@@ -304,9 +304,9 @@ After that, describe the technical details of what you changed. It is important 
 
 ###Data Section
 The data section consists of name-value pairs
-	-   `Fixes: https://github.com/SAP/openui5/issues/(issueNumber)` when the change fixes a GitHub-reported bug; it is important that there is NO colon between "Fixes" and the URL!
-	-   `Closes: https://github.com/SAP/openui5/pull/(pullRequestNumber)` when the change comes from a pull request; it is important that there is NO colon between "Fixes" and the URL! As the pull request number is not known before it is created, this is usually added by the OpenUI5 committer handling the pull request
-    -   Further internal information - like `CSS` (for old SAP-internally reported bugs), `BCP` (for customer messages reported at SAP and new internal bug reports), a mandatory `Change-Id`, and the `CR-Id` ("Change Request ID", mandatory for maintenance codelines) - is added by SAP developers when required
+-   `Fixes: https://github.com/SAP/openui5/issues/(issueNumber)` if the change fixes a GitHub-reported bug
+-   `Closes: https://github.com/SAP/openui5/pull/(pullRequestNumber)` if the change comes from a pull request. This is usually added by the OpenUI5 committer handling the pull request
+-   Further internal information - like `BCP` (for customer and internal messages reported at SAP and new internal bug reports), a mandatory `Change-Id` for Gerrit, and the `CR-Id` ("Change Request ID", mandatory for maintenance codelines) - is added by SAP developers if required
 -   A commit message can thus look like this:
 
     ``` wiki
@@ -319,7 +319,7 @@ The data section consists of name-value pairs
     focus/blur event listener in onBefore/AfterRerendering
 
     Change-Id: I3c7d6e4d52fa71e9412b729b7a234a112915c2a4
-    Fixes https://github.com/SAP/openui5/issues/1
+    Fixes: https://github.com/SAP/openui5/issues/1
     ```
 
 
