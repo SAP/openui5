@@ -918,9 +918,7 @@
 		createListBinding("/teamMembers/member");
 
 		var oListBinding = bindings[0];
-		oListBinding.enableExtendedChangeDetection(false, function(oNode) {
-			return oNode.getAttribute("lastName");
-		});
+		oListBinding.enableExtendedChangeDetection(false, "@lastName");
 		var aContexts = oListBinding.getContexts(0, 10);
 		oModel.setProperty("/teamMembers/member/4/@firstName", "Paul");
 		aContexts = oListBinding.getContexts(0, 10);

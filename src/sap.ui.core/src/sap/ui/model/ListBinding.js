@@ -1,4 +1,5 @@
 /*!
+
  * ${copyright}
  */
 
@@ -244,15 +245,15 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 	 * Enable extended change detection
 	 *
 	 * @param {boolean} bDetectUpdates Whether changes within the same entity should cause a delete and insert command
-	 * @param {function|string} vKey The name of the property containing the key or a function to calculate a key to identify an entry
+	 * @param {function|string} vKey The path of the property containing the key or a function getting the context as only parameter to calculate a key to identify an entry
 	 * @private
 	 */
 	ListBinding.prototype.enableExtendedChangeDetection = function(bDetectUpdates, vKey) {
 		this.bUseExtendedChangeDetection = true;
 		this.bDetectUpdates = bDetectUpdates;
 		if (typeof vKey === "string") {
-			this.fnGetEntryKey = function(oObject) {
-				return oObject[vKey];
+			this.fnGetEntryKey = function(oContext) {
+				return oContext.getProperty(vKey);
 			};
 		} else if (typeof vKey === "function") {
 			this.fnGetEntryKey = vKey;

@@ -243,19 +243,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 	 * @private
 	 */
 	ODataListBinding.prototype.getContextData = function(oContext) {
-		var oObject;
-
 		// if no updates need to be detected and no custom key method was defined,
 		// just return the context path as unique key
 		if (!this.bDetectUpdates && !this.fnGetEntryKey) {
 			return oContext.getPath();
 		}
 
-		oObject = oContext.getObject();
 		if (!this.bDetectUpdates) {
-			return this.fnGetEntryKey(oObject);
+			return this.fnGetEntryKey(oContext);
 		} else {
-			return JSON.stringify(oObject);
+			return JSON.stringify(oContext.getObject());
 		}
 	};
 

@@ -49,19 +49,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 			aContextData = [];
 
 		if (this.bUseExtendedChangeDetection) {
+			// Use try/catch to detect issues with cyclic references in JS objects,
+			// in this case diff will be disabled.
+			try {
+				for (var i = 0; i < aContexts.length; i++) {
+					aContextData.push(this.getContextData(aContexts[i]));
+				}
 
-			for (var i = 0; i < aContexts.length; i++) {
-				aContextData.push(this.getContextData(aContexts[i]));
+				//Check diff
+				if (this.aLastContextData && iStartIndex < this.iLastEndIndex) {
+					aContexts.diff = jQuery.sap.arraySymbolDiff(this.aLastContextData, aContextData);
+				}
+
+				this.iLastEndIndex = iStartIndex + iLength;
+				this.aLastContexts = aContexts.slice(0);
+				this.aLastContextData = aContextData.slice(0);
+			} catch (oError) {
+				this.bUseExtendedChangeDetection = false;
+				jQuery.sap.log.warning("JSONListBinding: Extended change detection has been disabled as JSON data could not be serialized.");
 			}
-
-			//Check diff
-			if (this.aLastContextData && iStartIndex < this.iLastEndIndex) {
-				aContexts.diff = jQuery.sap.arraySymbolDiff(this.aLastContextData, aContextData);
-			}
-
-			this.iLastEndIndex = iStartIndex + iLength;
-			this.aLastContexts = aContexts.slice(0);
-			this.aLastContextData = aContextData.slice(0);
 		}
 
 		return aContexts;
@@ -82,11 +88,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 	 * @private
 	 */
 	JSONListBinding.prototype.getContextData = function(oContext) {
-		var oObject = oContext.getObject();
 		if (this.fnGetEntryKey && !this.bDetectUpdates) {
-			return this.fnGetEntryKey(oObject);
+			return this.fnGetEntryKey(oContext);
 		} else {
-			return JSON.stringify(oObject);
+			return JSON.stringify(oContext.getObject());
 		}
 	};
 
