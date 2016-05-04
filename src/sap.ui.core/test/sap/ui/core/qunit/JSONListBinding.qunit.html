@@ -950,6 +950,15 @@
 		deepEqual(aContexts.diff, [], "Nothing changed");
 	});
 
+	test("setProperty delta with cyclic references", function() {
+		this.oListBinding.enableExtendedChangeDetection();
+		var aContexts = this.oListBinding.getContexts(0, 10);
+		this.oModel.setProperty("/4/firstName", new sap.ui.model.type.Date());
+		aContexts = this.oListBinding.getContexts(0, 10);
+		equal(aContexts.diff, undefined, "No diff for data with cyclic references");
+		this.oModel.setProperty("/4/firstName", "Peter");
+	});
+
 	test("setProperty delta with key", function() {
 		this.oListBinding.enableExtendedChangeDetection(false, "lastName");
 		var aContexts = this.oListBinding.getContexts(0, 10);

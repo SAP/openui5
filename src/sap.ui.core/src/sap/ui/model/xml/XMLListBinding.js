@@ -81,11 +81,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 	 * @private
 	 */
 	XMLListBinding.prototype.getContextData = function(oContext) {
-		var oNode = oContext.getObject();
 		if (this.fnGetEntryKey && !this.bDetectUpdates) {
-			return this.fnGetEntryKey(oNode);
+			return this.fnGetEntryKey(oContext);
 		} else {
-			return jQuery.sap.serializeXML(oNode);
+			return jQuery.sap.serializeXML(oContext.getObject());
 		}
 	};
 
