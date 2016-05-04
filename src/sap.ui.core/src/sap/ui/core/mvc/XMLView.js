@@ -166,21 +166,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 				});
 			}
 
+			function setxContent(xContent) {
+				that._xContent = xContent;
+			}
+
 			function runViewxmlPreprocessor(bAsync) {
 				if (that.hasPreprocessor("viewxml")) {
 					// for the viewxml preprocessor fully qualified ids are provided on the xml source
 					XMLTemplateProcessor.enrichTemplateIds(that._xContent, that);
 					return that.runPreprocessor("viewxml", that._xContent, !bAsync);
 				}
+				return that._xContent;
 			}
 
 			function runPreprocessorsAsync() {
-				return that.runPreprocessor("xml", that._xContent).then(runViewxmlPreprocessor.bind(that, true));
+				return that.runPreprocessor("xml", that._xContent).then(setxContent)
+					.then(runViewxmlPreprocessor.bind(that, true)).then(setxContent);
 			}
 
 			function loadResourceAsync(sResourceName) {
 				return jQuery.sap.loadResource(sResourceName, {async: true}).then(function(oData) {
-					that._xContent = oData.documentElement; // result is the document node
+					setxContent(oData.documentElement); // result is the document node
 					return that._xContent;
 				});
 			}
@@ -201,19 +207,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 					// return here, as the left processing is taking place inside the promise chain
 					return loadResourceAsync(sResourceName).then(runPreprocessorsAsync).then(processView);
 				} else {
-					this._xContent = jQuery.sap.loadResource(sResourceName).documentElement;
+					setxContent(jQuery.sap.loadResource(sResourceName).documentElement);
 				}
 			} else if (mSettings.viewContent) {
-				this._xContent = getxContent(this, mSettings);
+				setxContent(getxContent(this, mSettings));
 			} else if (mSettings.xmlNode) {
-				this._xContent = mSettings.xmlNode;
+				setxContent(mSettings.xmlNode);
 			}
 
 			if (mSettings.async) {
 				return runPreprocessorsAsync(this._xContent).then(processView);
 			} else {
-				this.runPreprocessor("xml", this._xContent, true);
-				runViewxmlPreprocessor();
+				setxContent(this.runPreprocessor("xml", this._xContent, true));
+				setxContent(runViewxmlPreprocessor());
 				processView();
 			}
 		};
