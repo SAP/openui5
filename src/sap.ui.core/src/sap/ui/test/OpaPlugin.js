@@ -30,7 +30,8 @@ sap.ui.define(['jquery.sap.global',
 			aControlSelectorsForMatchingControls = [
 				"id",
 				"viewName",
-				"controlType"
+				"controlType",
+				"searchOpenDialogs"
 			];
 
 		/**
@@ -78,12 +79,10 @@ sap.ui.define(['jquery.sap.global',
 					}
 
 					oControl = oCoreElements[sPropertyName];
+
 					if (!fnConstructorType) {
 						aResult.push(oControl);
-						continue;
-					}
-
-					if (oControl instanceof fnConstructorType) {
+					} else if (oControl instanceof fnConstructorType) {
 						aResult.push(oControl);
 					}
 				}
@@ -116,19 +115,23 @@ sap.ui.define(['jquery.sap.global',
 			 * eg : { viewName : "bar", viewNamespace : "baz." } will return all the Controls in the view with the name baz.bar<br/>
 			 *
 			 * @param {object} oOptions that may contain a viewName, id, viewNamespace and controlType properties.
-			 * @returns {sap.ui.core.Element|sap.ui.core.Element[]} the found control, an array of matching controls, undefined or null
+			 * @returns {sap.ui.core.Element|sap.ui.core.Element[]} the found control, an array of matching controls, if the view  is not found an empty array is returned
 			 * @public
 			 */
 			getControlInView : function (oOptions) {
-				var sViewName = oOptions.viewNamespace + oOptions.viewName,
+				var sViewName = (oOptions.viewNamespace || "") + oOptions.viewName,
 					oView = this.getView(sViewName),
 					aResult = [],
 					oControl,
+					bIdIsString = typeof oOptions.id === "string",
 					sViewId;
 
 				if (!oView) {
 					$.sap.log.debug("Found no view with the name: " + sViewName, this._sLogPrefix);
-					return null;
+					if (bIdIsString) {
+						return null;
+					}
+					return [];
 				}
 
 				if ($.isArray(oOptions.id)) {
@@ -142,7 +145,7 @@ sap.ui.define(['jquery.sap.global',
 					return aResult;
 				}
 
-				if (typeof oOptions.id === "string") {
+				if (bIdIsString) {
 					var oElement = oView.byId(oOptions.id);
 					if (!oElement) {
 						$.sap.log.debug("Found no control with the id " + oOptions.id + " in the view " + sViewName, this._sLogPrefix);
@@ -182,7 +185,7 @@ sap.ui.define(['jquery.sap.global',
 			/**
 			 * Tries to find a control depending on the options provided.
 			 *
-			 * @param {object} oOptions a map of options used to describe the control you are looking for.
+			 * @param {object} [oOptions] a map of options used to describe the control you are looking for.
 			 * @param {string} [oOptions.viewName] Controls will only be searched inside of the view.
 			 * Inside means, if you are giving an ID - the control will be found by using the byId function of the view.
 			 * If you are specifying other options than the id, the view has to be an ancestor of the control - when you call myControl.getParent,
@@ -191,11 +194,19 @@ sap.ui.define(['jquery.sap.global',
 			 * @param {boolean} [oOptions.visible=true] States if a control need to have a visible domref (jQUery's :visible will be used to determine this).
 			 * @param {boolean} [oOptions.interactable=false] @since 1.34 States if a control has to match the interactable matcher {@link sap.ui.test.matchers.Interactable}.
 			 * @param {boolean} [oOptions.searchOpenDialogs] Only controls in the static UI area of UI5 are searched.
-			 * @returns {sap.ui.core.Element|sap.ui.core.Element[]|undefined|null} the found control/element, an array of found Controls, an empty array and null or undefined are possible depending of the parameters you specify
+			 * @returns {sap.ui.core.Element|sap.ui.core.Element[]|undefined|null}
+			 * <ul>
+			 *     <li>an array of found Controls depending on the options</li>
+			 *     <li>an empty array if no id was given</li>
+			 *     <li>the found control/element when an id as a string is specified</li>
+			 *     <li>null if an id as string was specified</li>
+			 * </ul>
+			 *
 			 * @public
 			 */
 			getMatchingControls : function (oOptions) {
 				var vResult;
+				oOptions = oOptions || {};
 				if (oOptions.searchOpenDialogs) {
 					vResult = this.getAllControlsInContainer($("#sap-ui-static"), oOptions.controlType);
 				} else if (oOptions.viewName) {
@@ -205,7 +216,7 @@ sap.ui.define(['jquery.sap.global',
 				} else if (oOptions.controlType) {
 					vResult = this.getAllControlsInContainer($("body"), oOptions.controlType);
 				} else {
-					vResult = null;
+					vResult = this.getAllControls();
 				}
 
 				if (!vResult || oOptions.visible === false) {
@@ -327,7 +338,7 @@ sap.ui.define(['jquery.sap.global',
 			 */
 			_isLookingForAControl : function (oOptions) {
 				return Object.keys(oOptions).some(function (sKey) {
-					return aControlSelectorsForMatchingControls.indexOf(sKey) !== -1;
+					return aControlSelectorsForMatchingControls.indexOf(sKey) !== -1 && !!oOptions[sKey];
 				});
 			},
 
