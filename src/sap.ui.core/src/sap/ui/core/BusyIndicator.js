@@ -25,12 +25,43 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', '../base/EventProvider', '.
 
 	EventProvider.apply(BusyIndicator);
 
+	BusyIndicator.M_EVENTS = {
+		Open: "Open",
+
+		Close: "Close"
+	};
+
 	/**
-	 * Map of event names and ids, that are provided by this class
-	 * @private
-	 * @name sap.ui.core.BusyIndicator.M_EVENTS
+	 * The <code>Open</code> event is fired, after the <code>BusyIndicator</code>
+	 * has opened.
+	 *
+	 * @name sap.ui.core.BusyIndicator#Open
+	 * @event
+	 * @param {sap.ui.base.Event} oControlEvent is the event object
+	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource is the instance
+	 *                                    that fired the event
+	 * @param {object} oControlEvent.getParameters provides all additional parameters
+	 *                                    that are delivered with the event
+	 * @param {jQuery} oControlEvent.getParameters.$Busy is the jQuery object
+	 *                                    of the BusyIndicator
+	 * @public
 	 */
-	BusyIndicator.M_EVENTS = {Open: "Open", Close: "Close"};
+
+	/**
+	 * The <code>Close</code> event is fired, <strong>before</strong> the
+	 * <code>BusyIndicator</code> has closed.
+	 *
+	 * @name sap.ui.core.BusyIndicator#Close
+	 * @event
+	 * @param {sap.ui.base.Event} oControlEvent is the event object
+	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource is the instance
+	 *                                    that fired the event
+	 * @param {object} oControlEvent.getParameters provides all additional parameters
+	 *                                    that are delivered with the event
+	 * @param {jQuery} oControlEvent.getParameters.$Busy is the jQuery object
+	 *                                    of the BusyIndicator
+	 * @public
+	 */
 
 
 	/**
