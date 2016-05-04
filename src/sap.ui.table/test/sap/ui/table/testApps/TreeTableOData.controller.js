@@ -45,6 +45,8 @@ sap.ui.define([
 			this.aRenderResults = [];
 			this.aFunctionResults = [];
 			this.aVisibleRow = [];
+
+			this.nIdForNewNode = 3000;
 		},
 
 		/**
@@ -78,7 +80,7 @@ sap.ui.define([
 			// threshold for OperationMode.Auto
 			var sBindingThreshold = oViewModel.getProperty("/bindingThreshold");
 			var iBindingThreshold = parseInt(oView.byId("bindingThreshold").getValue(), 10);
-			
+
 			// table threshold
 			var iTableThreshold = parseInt(oView.byId("tableThreshold").getValue(), 10);
 
@@ -112,7 +114,7 @@ sap.ui.define([
 				};
 
 			this.aVisibleRow.push(oVisibleRow);
-			
+
 			/**
 			 * Clear the Table and rebind it
 			 */
@@ -182,7 +184,7 @@ sap.ui.define([
 			//for easier table dbg
 			window.oTable = oTable;
 		},
-		
+
 		/**
 		 * Performance Tools
 		 */
@@ -241,7 +243,7 @@ sap.ui.define([
 
 			oTable.attachEvent("_rowsUpdated", fnRowsUpdated);
 		},
-		
+
 		/**
 		 * jQuery Measure Tools
 		 */
@@ -282,7 +284,7 @@ sap.ui.define([
 
 			this.aFunctionResults.push(oFunctionResult);
 		},
-		
+
 		/**
 		 * Set up the Cut and Paste Model
 		 */
@@ -298,28 +300,52 @@ sap.ui.define([
 		},
 
 		/**
+		 * Create new node
+		 */
+		onCreate: function() {
+			var oTable = this.getView().byId("tableOData");
+			var iSelectedIndex = oTable.getSelectedIndex();
+			var oModel = this.getView().getModel();
+
+			if (iSelectedIndex !== -1) {
+				var oBinding = oTable.getBinding();
+				var oTableModel = oTable.getModel("odata");
+				var oContext = oTableModel.createEntry(oModel.getProperty("/collection"));
+				oTableModel.setProperty("DESCRIPTION", "New Node - " + this.nIdForNewNode, oContext);
+				oTableModel.setProperty("DRILLDOWN_STATE", "leaf", oContext);
+				oTableModel.setProperty("HIERARCHY_NODE", "" + this.nIdForNewNode, oContext);
+				oTableModel.setProperty("MAGNITUDE", 0, oContext);
+				this.nIdForNewNode++;
+
+				oBinding.addContexts(oTable.getContextByIndex(iSelectedIndex), [oContext]);
+			} else {
+				MessageToast.show("Select a parent node first.");
+			}
+		},
+
+		/**
 		 * Cut out logic
 		 */
 		onCut: function () {
 			var iSelectedIndex = oTable.getSelectedIndex();
 			var oBinding = oTable.getBinding();
-			
+
 			// keep track of the removed handle
 			var oTreeHandle = oBinding.removeContext(oTable.getContextByIndex(iSelectedIndex));
 			this._oLastTreeHandle = oTreeHandle;
-			
+
 			// only for demo: get the odata-key
 			var sKey = oTreeHandle._oSubtreeRoot.key;
 			this._mTreeHandles = this._mTreeHandles || {};
 			this._mTreeHandles[sKey] = oTreeHandle;
-			
+
 			this._oClipboardModelData.nodes.push({
 				key: sKey
 			});
-			
+
 			this._oClipboardModel.setData(this._oClipboardModelData);
 		},
-		
+
 		/**
 		 * Paste logic
 		 */
@@ -332,7 +358,7 @@ sap.ui.define([
 				MessageToast.show("Select a new parent node first.\nOh and maybe cut out some nodes first ;)");
 			}
 		},
-		
+
 		/**
 		 * Opens the Clipboard for cut out contexts
 		 */
@@ -348,22 +374,22 @@ sap.ui.define([
 			this._oDialog.setRememberSelections(false);
 
 			jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this._oDialog);
-			
+
 			this._oDialog.open();
 		},
-		
+
 		/**
 		 * Paste Action after closing the clipboard
 		 */
 		closeClipboard: function(oEvent) {
 			var aContexts = oEvent.getParameter("selectedContexts");
-			
+
 			if (aContexts.length >= 0) {
 				var oCtx = aContexts[0];
 				var oData = oCtx.getProperty();
 				var sKey = oData.key;
 				var oTreeHandle = this._mTreeHandles[sKey];
-				
+
 				// insert in currently selected index
 				var iSelectedIndex = oTable.getSelectedIndex();
 				if (iSelectedIndex != -1 && oTreeHandle) {
@@ -372,18 +398,18 @@ sap.ui.define([
 					if (oNewParentContext) {
 						oBinding.addContexts(oNewParentContext, oTreeHandle);
 					}
-					
+
 					// remove the re-inserted node from the clipboard
 					this._oClipboardModelData.nodes = this._oClipboardModelData.nodes.filter(function(o) {
 						return o.key != sKey;
 					});
 					this._oClipboardModel.setData(this._oClipboardModelData);
 				}
-				
+
 				MessageToast.show("Node '" + oData.key + "' was re-inserted.");
 			}
 		},
-		
+
 		/**
 		 * Performance Measure download
 		 */

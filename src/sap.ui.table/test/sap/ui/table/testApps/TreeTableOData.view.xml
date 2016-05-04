@@ -202,6 +202,7 @@
 				<table:toolbar>
 					<Toolbar>
 						<Label text="Table-Tools" />
+						<Button text="Create" icon="sap-icon://add" press=".onCreate"></Button>
 						<Button text="Cut" icon="sap-icon://scissors" press=".onCut"></Button>
 						<Button text="Paste" icon="sap-icon://paste" press=".onPaste"></Button>
 						<ToolbarSpacer />
