@@ -14,7 +14,7 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * The <code>StepInput<code> control allows the user to change the input values with predefined increments (steps).
+		 * The <code>StepInput</code> control allows the user to change the input values with predefined increments (steps).
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
@@ -101,8 +101,6 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 
 		/**
 		 * Initializes the control.
-		 *
-		 * @public
 		 */
 		StepInput.prototype.init = function () {
 			this._attachPressEvents();
@@ -220,7 +218,7 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 			if (!this.getAggregation("_input")) {
 				this.setAggregation("_input", new Input({
 					// sap.m.StepInput should inherit visually sap.m.Input's styling
-					width: "100%",
+					width: this.getWidth(),
 					id: this.getId() + "-input",
 					textAlign: sap.ui.core.TextAlign.End,
 					type: sap.m.InputType.Number,
@@ -573,13 +571,13 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 		StepInput.prototype.setEditable = function (bEditable) {
 			var args = Array.prototype.slice.call(arguments);
 
-			this.getAggregation("_input").setEditable(bEditable);
-			this._getInput().setTextAlign(sap.ui.core.TextAlign.Begin);
+			bEditable = this.validateProperty('editable', bEditable);
 
-			if (!bEditable) {
-				this.removeAggregation("_decrementButton", false);
-				this.removeAggregation("_incrementButton");
-			}
+				if (!bEditable) {
+					this._getInput().setTextAlign(sap.ui.core.TextAlign.Begin);
+					this.removeAggregation("_decrementButton", false);
+					this.removeAggregation("_incrementButton");
+				}
 
 			StepInput.prototype.setProperty.apply(this, ["editable"].concat(args));
 		};
