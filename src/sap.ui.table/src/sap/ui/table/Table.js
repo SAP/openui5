@@ -6022,7 +6022,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		}
 
 		this.setBusy(false);
-		if (mParameters) {
+		if (mParameters && this._iDataRequestedCounter > 0) {
 			var sReason = mParameters.reason;
 			if (mParameters.contexts && mParameters.contexts.length !== undefined) {
 				// TreeBinding and AnalyticalBinding always return a contexts array with the
