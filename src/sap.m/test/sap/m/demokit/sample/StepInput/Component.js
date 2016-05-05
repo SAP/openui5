@@ -5,7 +5,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.StepInput.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.StepInput.V",
+			rootView : "sap.m.sample.StepInput.StepInput",
 			dependencies : {
 				libs : [
 					"sap.m"
@@ -14,7 +14,8 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 			config : {
 				sample : {
 					files : [
-						"V.view.xml"
+						"StepInput.view.xml",
+						"StepInput.controller.js"
 					]
 				}
 			}

@@ -1,0 +1,35 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+    controllerName="sap.m.sample.StepInput.StepInput"
+	xmlns="sap.m">
+
+    <Table id="idTable"
+           items="{
+                path: '/modelData'
+            }">
+        <columns>
+            <Column/>
+            <Column/>
+        </columns>
+
+        <items>
+            <ColumnListItem>
+                <cells>
+                    <Label
+                            text="{label}"/>
+                    <StepInput
+                            value="{value}"
+                            min="{min}"
+                            max="{max}"
+                            width="{width}"
+                            step="{step}"
+                            valueState="{valueState}"
+                            enabled="{enabled}"
+                            editable="{editable}"/>
+
+                </cells>
+            </ColumnListItem>
+        </items>
+    </Table>
+
+</mvc:View>
