@@ -2,22 +2,22 @@
  * ${copyright}
  */
 
-/* global jQuery,QUnit */
-/* eslint-disable quotes,consistent-this,no-eval */
+/* global QUnit */
+/* eslint-disable no-eval */
 
-jQuery.sap.require("sap.ui.qunit.qunit-css");
+// Load synchronously to avoid QUnit issue where tests run before QUnit is loaded
 jQuery.sap.require("sap.ui.thirdparty.qunit");
-jQuery.sap.require("sap.ui.qunit.qunit-junit");
 
 // put qunit-coverage last so library files don't get measured
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', "sap/ui/test/opaQunit", "sap/ui/test/Opa5",
-  "sap/ui/test/gherkin/GherkinTestGenerator", "sap/ui/test/gherkin/dataTableUtils",
-  "sap/ui/test/gherkin/StepDefinitions", "sap/ui/qunit/qunit-coverage"],
-function($, UI5Object, opaTest, Opa5, GherkinTestGenerator, dataTableUtils, StepDefinitions) {
-  'use strict';
+sap.ui.define([
+  "jquery.sap.global", "sap/ui/base/Object", "sap/ui/test/opaQunit", "sap/ui/test/Opa5",
+  "sap/ui/test/gherkin/GherkinTestGenerator", "sap/ui/test/gherkin/dataTableUtils", "sap/ui/test/gherkin/StepDefinitions",
+  "sap/ui/qunit/qunit-css", "sap/ui/qunit/qunit-junit", "sap/ui/qunit/qunit-coverage"
+], function($, UI5Object, opaTest, Opa5, GherkinTestGenerator, dataTableUtils, StepDefinitions) {
+  "use strict";
 
   /**
-   * Dynamically generates Opa5 tests based on a Gherkin feature file and step definitions
+   * Dynamically generates Opa5 tests based on a Gherkin feature file and step definitions.
    *
    * Logs activity to Opa5, and some debug information to the console with the prefix "[GHERKIN]"
    *
@@ -120,8 +120,8 @@ function($, UI5Object, opaTest, Opa5, GherkinTestGenerator, dataTableUtils, Step
         teardown: function() {
           oOpa5.iTeardownMyApp();
           // Add a link to the page to allow the user to close the frame
-          if ($('#frame-close-link').length === 0) {
-            $('#qunit-header').append('<input id="frame-close-link" type="button"' +
+          if ($("#frame-close-link").length === 0) {
+            $("#qunit-header").append('<input id="frame-close-link" type="button"' +
                 'onclick="sap.ui.test.Opa5.emptyQueue(); $(\'#frame-close-link\').remove();" style="float: right; ' +
                 'margin-right: 0.5em; margin-top: -0.4em;" value="Close &#13;&#10;Frame"></input>');
           }
@@ -138,7 +138,7 @@ function($, UI5Object, opaTest, Opa5, GherkinTestGenerator, dataTableUtils, Step
             // Put test execution inside a waitFor so that they are executed in order, even if the user fails to put
             // a waitFor statement in one of the test steps
             oOpa5.waitFor({
-              viewName: '',
+              viewName: "",
               success: function() {
                 $.sap.log.info("[GHERKIN] Running step: text='" + oTestStep.text + "' regex='" + oTestStep.regex + "'");
                 Opa5.assert.ok(oTestStep.isMatch, oTestStep.text);

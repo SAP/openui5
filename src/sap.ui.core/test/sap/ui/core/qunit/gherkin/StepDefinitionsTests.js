@@ -2,13 +2,12 @@
  * ${copyright}
  */
 
-/* eslint-disable quotes */
 /* global QUnit */
 
 sap.ui.require([
   "sap/ui/test/gherkin/StepDefinitions",
 ], function(StepDefinitions) {
-  'use strict';
+  "use strict";
 
   QUnit.module("Step Definitions Tests", {
 
@@ -24,7 +23,7 @@ sap.ui.require([
   });
 
   QUnit.test("Given no registered steps, cannot match", function() {
-    deepEqual(this.stepDefs._generateTestStep({text: 'hello world'}), {
+    deepEqual(this.stepDefs._generateTestStep({text: "hello world"}), {
       isMatch: false,
       text: "(NOT FOUND) hello world"
     }, "Given no registered steps, cannot match");
@@ -44,7 +43,7 @@ sap.ui.require([
     var function3 = function() {};
     this.stepDefs.register(regex1, function1);
 
-    deepEqual(this.stepDefs._generateTestStep({text: 'gas giant'}), {
+    deepEqual(this.stepDefs._generateTestStep({text: "gas giant"}), {
       isMatch: false,
       text: "(NOT FOUND) gas giant"
     }, "Given three registered steps, when we try a bad step name, then cannot match");
@@ -56,9 +55,9 @@ sap.ui.require([
     var function1 = function() {};
     this.stepDefs.register(regex1, function1);
 
-    deepEqual(this.stepDefs._generateTestStep({text: 'hello world'}), {
+    deepEqual(this.stepDefs._generateTestStep({text: "hello world"}), {
       isMatch: true,
-      text: 'hello world',
+      text: "hello world",
       regex: regex1,
       parameters: [],
       func: function1
@@ -75,9 +74,9 @@ sap.ui.require([
     var function2 = function() {};
     this.stepDefs.register(regex2, function2);
 
-    deepEqual(this.stepDefs._generateTestStep({text: 'goodbye cruel world'}), {
+    deepEqual(this.stepDefs._generateTestStep({text: "goodbye cruel world"}), {
       isMatch: true,
-      text: 'goodbye cruel world',
+      text: "goodbye cruel world",
       regex: regex1,
       parameters: [],
       func: function1
@@ -93,9 +92,9 @@ sap.ui.require([
     var function2 = function() {};
     this.stepDefs.register(regex, function2);
 
-    deepEqual(this.stepDefs._generateTestStep({text: 'hello world'}), {
+    deepEqual(this.stepDefs._generateTestStep({text: "hello world"}), {
       isMatch: true,
-      text: 'hello world',
+      text: "hello world",
       regex: regex,
       parameters: [],
       func: function2
@@ -108,11 +107,11 @@ sap.ui.require([
     var function1 = function() {};
     this.stepDefs.register(regex1, function1);
 
-    deepEqual(this.stepDefs._generateTestStep({text: 'thing # 12 is better than theng # 6 and thang # 8'}), {
+    deepEqual(this.stepDefs._generateTestStep({text: "thing # 12 is better than theng # 6 and thang # 8"}), {
       isMatch: true,
-      text: 'thing # 12 is better than theng # 6 and thang # 8',
+      text: "thing # 12 is better than theng # 6 and thang # 8",
       regex: regex1,
-      parameters: ['12', '6', '8'],
+      parameters: ["12", "6", "8"],
       func: function1
     }, "Parameters without data");
   });
@@ -123,14 +122,14 @@ sap.ui.require([
     var function1 = function() {};
     this.stepDefs.register(regex1, function1);
 
-    var data = [['Hello', 'World'], ['Goodbye', 'Cruel', 'World']];
+    var data = [["Hello", "World"], ["Goodbye", "Cruel", "World"]];
 
     deepEqual(this.stepDefs._generateTestStep({
-      text: 'Yet another regex',
+      text: "Yet another regex",
       data: data
     }), {
       isMatch: true,
-      text: 'Yet another regex',
+      text: "Yet another regex",
       regex: regex1,
       parameters: [data],
       func: function1
@@ -143,16 +142,16 @@ sap.ui.require([
     var function1 = function() {};
     this.stepDefs.register(regex1, function1);
 
-    var data = [['Hello', 'World'], ['Goodbye', 'Cruel', 'World']];
+    var data = [["Hello", "World"], ["Goodbye", "Cruel", "World"]];
 
     deepEqual(this.stepDefs._generateTestStep({
-      text: 'Regex # 42',
+      text: "Regex # 42",
       data: data
     }), {
       isMatch: true,
-      text: 'Regex # 42',
+      text: "Regex # 42",
       regex: regex1,
-      parameters: ['42', data],
+      parameters: ["42", data],
       func: function1
     }, "Parameters and data");
   });
@@ -187,7 +186,7 @@ sap.ui.require([
     );
 
     throws( function(){
-      this.stepDefs.register('not a regex', 'not a function');
+      this.stepDefs.register("not a regex", "not a function");
     }, function(error) {
       return (error.message === missingRegexError) || (error.message === missingFunctionError);
     },
@@ -195,7 +194,7 @@ sap.ui.require([
     );
 
     throws( function(){
-      this.stepDefs.register('not a regex', function(){});
+      this.stepDefs.register("not a regex", function(){});
     }, function(error) {
       return error.message === missingRegexError;
     },
@@ -203,7 +202,7 @@ sap.ui.require([
     );
 
     throws( function(){
-      this.stepDefs.register(/regex/g, 'not a function');
+      this.stepDefs.register(/regex/g, "not a function");
     }, function(error) {
       return error.message === missingFunctionError;
     },

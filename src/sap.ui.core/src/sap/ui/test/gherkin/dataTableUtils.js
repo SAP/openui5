@@ -2,14 +2,12 @@
  * ${copyright}
  */
 
-/* eslint-disable quotes */
-
-sap.ui.define(['jquery.sap.global'], function($) {
-  'use strict';
+sap.ui.define(["jquery.sap.global"], function($) {
+  "use strict";
 
   /**
-   * Provides utility functions for formatting 2D lists of strings (such as the raw data loaded from a Gherkin
-   * feature file) into a more useful format such as a list of objects or a single object. Also handles normalization
+   * Provides utility functions for formatting 2D arrays of strings (such as the raw data loaded from a Gherkin
+   * feature file) into a more useful format such as an array of objects or a single object. Also handles normalization
    * of the raw strings.
    *
    * @author Rodrigo Jordao
@@ -34,69 +32,69 @@ sap.ui.define(['jquery.sap.global'], function($) {
     normalization: {
 
       /**
-       * e.g. "first name" -> "First Name"
+       * For example: "first name" -> "First Name"
        *
        * @param {string} sString - the string to normalize
-       * @returns {string} the input string trimmed and with all words capitalized
+       * @returns {string} the trimmed input string with all words capitalized
        * @public
        * @function
        * @static
        */
       titleCase : function(sString) {
-        dataTableUtils._testNormalizationInput(sString, 'titleCase');
+        dataTableUtils._testNormalizationInput(sString, "titleCase");
         return sString
             .trim()
-            .replace(/(?!\s)\W/g, '')
-            .replace(/\s+/g, ' ')
+            .replace(/(?!\s)\W/g, "")
+            .replace(/\s+/g, " ")
             .replace(/\w\S*/g, function(s){return s.charAt(0).toUpperCase() + s.substr(1).toLowerCase();});
       },
 
       /**
-       * e.g. "first name" -> "FirstName"
+       * For example: "first name" -> "FirstName"
        *
        * @param {string} sString - the string to normalize
-       * @returns {string} the input string with all words capitalized and all spaces removed
+       * @returns {string} the trimmed input string with all words capitalized and all spaces removed
        * @public
        * @function
        * @static
        */
       pascalCase : function(sString) {
-        dataTableUtils._testNormalizationInput(sString, 'pascalCase');
-        return dataTableUtils.normalization.titleCase(sString).split(/\s/).join('');
+        dataTableUtils._testNormalizationInput(sString, "pascalCase");
+        return dataTableUtils.normalization.titleCase(sString).split(/\s/).join("");
       },
 
       /**
-       * e.g. "First Name" -> "firstName"
+       * For example: "First Name" -> "firstName"
        *
        * @param {string} sString - the string to normalize
-       * @returns {string} the input string with all words after the first capitalized and all spaces removed
+       * @returns {string} the trimmed input string with all words after the first capitalized and all spaces removed
        * @public
        * @function
        * @static
        */
       camelCase : function(sString) {
-        dataTableUtils._testNormalizationInput(sString, 'camelCase');
+        dataTableUtils._testNormalizationInput(sString, "camelCase");
         return dataTableUtils.normalization.pascalCase(sString)
             .replace(/^(\w)/, function(s){return s.toLowerCase();});
       },
 
       /**
-       * e.g. "First Name" -> "first-name"
+       * For example: "First Name" -> "first-name"
        *
        * @param {string} sString - the string to normalize
-       * @returns {string} the input string trimmed, changed to lower case and with space between words
-       *                   replaced by a hyphen ('-')
+       * @returns {string} the trimmed input string changed to lower case and with space between words
+       *                   replaced by a hyphen ("-")
        * @public
        * @function
        * @static
        */
       hyphenated : function(sString) {
-        dataTableUtils._testNormalizationInput(sString, 'hyphenated');
-        return sString.trim().replace(/(?!\s)\W/g, '').replace(/\s+/g, '-').toLowerCase();
+        dataTableUtils._testNormalizationInput(sString, "hyphenated");
+        return sString.trim().replace(/(?!\s)\W/g, "").replace(/\s+/g, "-").toLowerCase();
       },
 
       /**
-       * e.g. "First Name" -> "First Name"
+       * For example: "First Name" -> "First Name"
        *
        * @param {string} sString - the string to normalize
        * @returns {string} the original unchanged input string
@@ -105,13 +103,13 @@ sap.ui.define(['jquery.sap.global'], function($) {
        * @static
        */
       none : function(sString) {
-        dataTableUtils._testNormalizationInput(sString, 'none');
+        dataTableUtils._testNormalizationInput(sString, "none");
         return sString;
       }
     },
 
     /**
-     * Takes the inputed 2D list 'aData' and returns an equivalent list of objects. The data is expected to
+     * Takes the inputed 2D array "aData" and returns an equivalent array of objects. The data is expected to
      * have a header row, with each subsequent row being an entity, and each column being a property of that
      * entity. E.g.
      * <pre>
@@ -123,7 +121,7 @@ sap.ui.define(['jquery.sap.global'], function($) {
      * </pre>
      *
      * The data's column headers become the returned objects' property names. The property names get normalized
-     * according to the strategy defined by the parameter 'oNorm'. E.g. using hyphenation strategy this is returned:
+     * according to the strategy defined by the parameter "vNorm". E.g. using hyphenation strategy this is returned:
      * <pre>
      *   [
      *     {their-name: "Alice", their-age: "16"},
@@ -131,22 +129,22 @@ sap.ui.define(['jquery.sap.global'], function($) {
      *   ]
      * </pre>
      *
-     * @param {string[][]} aData - the input data to be converted, with a header row
-     * @param {string | function} [oNorm='none'] - the normalization function to use to normalize property
-     *                                              names. Can also be a String with values 'titleCase', 'pascalCase',
-     *                                              'camelCase', 'hyphenated' or 'none'.
-     * @returns {object[]} - a list of objects equivalent to the input data, with property names normalized
+     * @param {string[]} aData - the 2D array of strings to be converted, with a header row
+     * @param {(string|function)} [vNorm="none"] - the normalization function to use to normalize property
+     *                                             names. Can also be a String with values "titleCase", "pascalCase",
+     *                                             "camelCase", "hyphenated" or "none".
+     * @returns {object[]} - an array of objects equivalent to the input data, with property names normalized
      * @public
      * @function
      * @static
      */
-    toTable : function(aData, oNorm) {
+    toTable : function(aData, vNorm) {
 
-      this._testArrayInput(aData, 'toTable');
-      oNorm = this._getNormalizationFunction(oNorm, 'toTable');
+      this._testArrayInput(aData, "toTable");
+      var fnNorm = this._getNormalizationFunction(vNorm, "toTable");
 
       // first row are the object's keys (table column headers)
-      var aKeyStore = aData[0].map(oNorm);
+      var aKeyStore = aData[0].map(fnNorm);
       return aData.slice(1).map(function(aRow) {
         var oGeneratedObject = {};
         for (var i = 0; i < aKeyStore.length; ++i) {
@@ -157,42 +155,42 @@ sap.ui.define(['jquery.sap.global'], function($) {
     },
 
     /**
-     * Takes the inputed 2D list 'aData' and returns an equivalent object. Each row of data is expected to
+     * Takes the inputed 2D array "aData" and returns an equivalent object. Each row of data is expected to
      * be a property-value pair. To create nested objects, add extra columns to the data. E.g.
      * <pre>
      *  [
-     *    ['Name', 'Alice'],
-     *    ['Mass', '135 lbs'],
-     *    ['Telephone Number', 'Home', '123-456-7890'],
-     *    ['Telephone Number', 'Work', '123-456-0987']
+     *    ["Name", "Alice"],
+     *    ["Mass", "135 lbs"],
+     *    ["Telephone Number", "Home", "123-456-7890"],
+     *    ["Telephone Number", "Work", "123-456-0987"]
      *  ]
      * </pre>
      * For each data row, the right-most element becomes a property value, and everything else is a property
-     * name. The property names get normalized according to the strategy defined by the parameter 'oNorm'.
+     * name. The property names get normalized according to the strategy defined by the parameter "vNorm".
      * E.g. using camelCase strategy
      * <pre>
      *   {
-     *     name: 'Alice',
-     *     mass: '135 lbs',
+     *     name: "Alice",
+     *     mass: "135 lbs",
      *     telephoneNumber: {
-     *       home: '123-456-7890',
-     *       work: '123-456-0987'
+     *       home: "123-456-7890",
+     *       work: "123-456-0987"
      *     }
      *   }
      * </pre>
-     * @param {string[][]} aData - the input data to be converted
-     * @param {string | function} [oNorm='none'] - the normalization function to use to normalize property
-     *                                              names. Can also be a string with values 'titleCase', 'pascalCase',
-     *                                              'camelCase', 'hyphenated' or 'none'.
+     * @param {string[]} aData - the 2D array of strings to be converted
+     * @param {(string|function)} [vNorm="none"] - the normalization function to use to normalize property
+     *                                             names. Can also be a string with values "titleCase", "pascalCase",
+     *                                             "camelCase", "hyphenated" or "none".
      * @returns {object} - an object equivalent to the input data, with property names normalized
      * @public
      * @function
      * @static
      */
-    toObject : function(aData, oNorm) {
+    toObject : function(aData, vNorm) {
 
-      this._testArrayInput(aData, 'toObject');
-      oNorm = this._getNormalizationFunction(oNorm, 'toObject');
+      this._testArrayInput(aData, "toObject");
+      vNorm = this._getNormalizationFunction(vNorm, "toObject");
 
       var oResult = {};
       for (var i = 0; i < aData.length; ++i) {
@@ -202,7 +200,7 @@ sap.ui.define(['jquery.sap.global'], function($) {
         if (sValue.length === 1) {
           sValue = sValue[0];
         } else {
-          sValue = this.toObject([sValue], oNorm); // recurse on array data
+          sValue = this.toObject([sValue], vNorm); // recurse on array data
         }
         if (oResult[sKey]) {
           $.extend(oResult[sKey], sValue);
@@ -210,7 +208,7 @@ sap.ui.define(['jquery.sap.global'], function($) {
           oResult[sKey] = sValue;
         }
       }
-      return this._normalizeKeys(oResult, oNorm);
+      return this._normalizeKeys(oResult, vNorm);
     },
 
     /**
@@ -235,34 +233,34 @@ sap.ui.define(['jquery.sap.global'], function($) {
     },
 
     /**
-     * Finds the normalization function equivalent to input parameter 'oFun'
+     * Finds the normalization function equivalent to input parameter "vFun"
      *
-     * @param {string | function} [oFun='none'] - a normalization function. Can also be a string with values
-     *                                            'titleCase', 'pascalCase', 'camelCase', 'hyphenated' or 'none'.
+     * @param {(string|function)} [vFun="none"] - a normalization function. Can also be a string with values
+     *                                            "titleCase", "pascalCase", "camelCase", "hyphenated" or "none".
      * @param {string} sFunc - the name of the calling function, for error reporting
      * @returns {function} the normalization function equivalent to the inputed value, or <none> if the input was
      *                     undefined.
      * @throws {Error} if the input string is invalid
      * @private
      */
-    _getNormalizationFunction: function(oFun, sFunc) {
+    _getNormalizationFunction: function(vFun, sFunc) {
 
-      var sErrorMessage = "dataTableUtils." + sFunc + ": parameter 'oNorm' must be either a Function or a String with the value 'titleCase', 'pascalCase', 'camelCase', 'hyphenated' or 'none'";
+      var sErrorMessage = "dataTableUtils." + sFunc + ": parameter 'vNorm' must be either a Function or a String with the value 'titleCase', 'pascalCase', 'camelCase', 'hyphenated' or 'none'";
 
-      switch ($.type(oFun)) {
+      switch ($.type(vFun)) {
 
-        case 'string':
-          var fnNormalize = this.normalization[oFun];
+        case "string":
+          var fnNormalize = this.normalization[vFun];
           if (fnNormalize === undefined) {
             throw new Error(sErrorMessage);
           }
           return fnNormalize;
 
-        case 'function':
-          return oFun;
+        case "function":
+          return vFun;
 
-        case 'undefined':
-        case 'null':
+        case "undefined":
+        case "null":
           return this.normalization.none;
 
         default:
@@ -287,8 +285,8 @@ sap.ui.define(['jquery.sap.global'], function($) {
     /**
      * Tests a conversion function's input parameter to make sure it's valid
      *
-     * @param {any} aArray - the parameter to test
-     * @param {string} sFunc - the conversion function whose input we're testing (e.g. 'toObject' or 'toTable')
+     * @param {array} aArray - the parameter to test
+     * @param {string} sFunc - the conversion function whose input we're testing (e.g. "toObject" or "toTable")
      * @throws {Error} if the input parameter is invalid
      * @private
      */

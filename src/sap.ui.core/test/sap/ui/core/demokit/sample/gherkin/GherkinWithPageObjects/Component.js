@@ -1,8 +1,7 @@
-sap.ui.define(['sap/ui/core/UIComponent'],
-	function(UIComponent) {
+sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.ui.core.sample.OpaPageObject.Component", {
+	var Component = UIComponent.extend("sap.ui.core.sample.gherkin.GherkinWithPageObjects.Component", {
 
 		metadata : {
 			dependencies : {
@@ -12,10 +11,13 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 			},
 			config : {
 				sample : {
-					iframe : "OpaPageObject.html",
+					iframe : "GherkinTestRunner.html",
 					stretch : true,
 					files : [
-						"OpaPageObject.html",
+						"GherkinTestRunner.html",
+						"Requirements1.feature",
+						"Requirements2.feature",
+						"Steps.js",
 						"pageObjects/Intro.js",
 						"pageObjects/Overview.js",
 						"pageObjects/Common.js",

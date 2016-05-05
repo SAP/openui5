@@ -1,10 +1,7 @@
-#
-# ${copyright}
-##
-
 Feature: Lemmings Have Names Now
-    Are you tired of seeing lemmings throw themselves off of cliffs? One of the reasons this is happening is because
-    they are severely depressed due to not having names. If you name a lemming it is 300% less likely to leap.
+    Are you tired of seeing lemmings throw themselves off of cliffs? One of the reasons
+    this is happening is because they are severely depressed due to not having names.
+    If you name a lemming it is 300% less likely to leap.
 
   Background:
     Given I have started the app

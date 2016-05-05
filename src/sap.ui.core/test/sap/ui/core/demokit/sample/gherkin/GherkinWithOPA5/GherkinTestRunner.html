@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Using Gherkin with OPA5</title>
+
+    <script
+      id="sap-ui-bootstrap" src="../../../../../../../../resources/sap-ui-core.js"
+      data-sap-ui-resourceroots='{"GherkinWithOPA5": "./"}'
+      data-sap-ui-loglevel="INFO"
+    ></script>
+
+    <script>
+      sap.ui.require([
+        "jquery.sap.global",
+        "sap/ui/test/gherkin/opa5TestHarness",
+        // Code coverage will be calculated for all modules loaded after the harness
+        "GherkinWithOPA5/Steps"
+      ], function($, opa5TestHarness, Steps) {
+        "use strict";
+
+        opa5TestHarness.test({
+          featurePath: "GherkinWithOPA5.Requirements1",
+          steps: Steps
+        });
+        opa5TestHarness.test({
+          featurePath: "GherkinWithOPA5.Requirements2",
+          steps: Steps
+        });
+      });
+    </script>
+
+  </head>
+  <body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
+  </body>
+</html>
+
+
+
