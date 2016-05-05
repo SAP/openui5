@@ -728,6 +728,48 @@
 		openPopover(oFF, 0);
 	});
 
+	asyncTest("FacetFilter._displayRemoveIcon should be visible until the user releases the mouse (saptouchend)", function() {
+
+		var oFF = new sap.m.FacetFilter({
+			showPersonalization: true
+		});
+		var oFFL = new sap.m.FacetFilterList({title: "List"});
+		oFF.addList(oFFL);
+		oFF.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var oPopover = oFF._getPopover();
+
+		oPopover.attachEventOnce("afterOpen", function(oEvent) {
+			var oIcon = getRemoveIconCtrl(oFF, 0);
+
+			function callDelegate(sEventName) {
+				oIcon.aBeforeDelegates[0].oDelegate[sEventName].call(oIcon, {});
+			}
+
+			equal(oIcon.aBeforeDelegates.length, 1, "There must be single delegate");
+
+			//touch start
+			callDelegate("onsaptouchstart");
+			ok(oIcon.sapTouchStarted, "A flag indicated mousedown on icon " + oIcon.getId() + " must present");
+			ok(oIcon.$().hasClass("sapMFFLVisibleRemoveIcon"),"The 'remove icon ' should be visible");
+
+			//touch end
+			callDelegate("onsaptouchend");
+			ok(oIcon.sapTouchStarted, "A flag indicated mousedown on icon " + oIcon.getId() + " must present");
+			ok(oIcon.$().hasClass("sapMFFLHiddenRemoveIcon"),"The 'remove icon ' should not be visible");
+
+			//press
+			oIcon.firePress();
+			ok(!oIcon.sapTouchStarted, "A flag indicated mousedown on icon " + oIcon.getId() + " should be removed");
+			ok(oIcon.$().hasClass("sapMFFLHiddenRemoveIcon"),"The 'remove icon ' should not be visible");
+			start();
+			destroyFF(oFF);
+		});
+
+		openPopover(oFF, 0);
+	});
+
   asyncTest("FacetFilter RemoveIcon should be displayed", function() {
          var oFF = new sap.m.FacetFilter({
          showPersonalization: true
