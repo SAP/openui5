@@ -1,4 +1,4 @@
-sap.ui.define(["sap/ui/test/Opa5"], function(Opa5){
+sap.ui.define(["sap/ui/test/Opa5", "sap/ui/test/actions/Press"], function(Opa5, Press){
 	"use strict";
 
 	Opa5.createPageObjects({
@@ -8,9 +8,7 @@ sap.ui.define(["sap/ui/test/Opa5"], function(Opa5){
 				iPressOnGoToOverview : function () {
 					return this.waitFor({
 						id : "navToOverview",
-						success : function (oNavToOverviewButton) {
-							oNavToOverviewButton.$().trigger("tap");
-						}
+						actions: new Press()
 					});
 				}
 			}

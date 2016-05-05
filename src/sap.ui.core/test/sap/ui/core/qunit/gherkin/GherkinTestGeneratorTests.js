@@ -112,7 +112,7 @@ sap.ui.require([
       skip: false,
       wip: false,
       testScenarios: [{
-        name: "Scenario Outline: Coffee changes peoples moods",
+        name: "Scenario Outline: Coffee changes peoples moods #1",
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -128,7 +128,11 @@ sap.ui.require([
           regex: regex2,
           parameters: ["happy"],
           func: function2
-        },{
+        }]
+      },{
+        name: "Scenario Outline: Coffee changes peoples moods #2",
+        wip: false,
+        testSteps: [{
           isMatch: true,
           skip: false,
           text: "the user 'Elvis' has been given 4 cups of coffee",
@@ -142,7 +146,11 @@ sap.ui.require([
           regex: regex2,
           parameters: ["electrified"],
           func: function2
-        },{
+        }]
+      },{
+        name: "Scenario Outline: Coffee changes peoples moods #3",
+        wip: false,
+        testSteps: [{
           isMatch: true,
           skip: false,
           text: "the user 'John' has been given 2 cups of coffee",
@@ -223,7 +231,8 @@ sap.ui.require([
           regex: normalRegex1,
           parameters: [],
           func: normalFunction1
-      }]},{
+        }]
+      },{
         name: "Scenario: Buy second coffee",
         wip: false,
         testSteps: [{
@@ -240,7 +249,8 @@ sap.ui.require([
           regex: normalRegex2,
           parameters: [],
           func: normalFunction2
-      }]}]
+        }]
+      }]
     };
 
     deepEqual(actualFeatureTest, expectedFeatureTest, "Background gets run before every scenario in the feature");
@@ -292,7 +302,7 @@ sap.ui.require([
     strictEqual(featureTest.testScenarios.length, 2, "@wip tag on feature 04");
 
     strictEqual(featureTest.testScenarios[0].name,
-      "(WIP) Scenario Outline: Coffee changes peoples moods if you are ready", "@wip tag on feature 05");
+      "(WIP) Scenario Outline: Coffee changes peoples moods if you are ready #1", "@wip tag on feature 05");
     strictEqual(featureTest.testScenarios[0].wip, true, "@wip tag on feature 06");
     strictEqual(featureTest.testScenarios[0].testSteps.length, 3, "@wip tag on feature 07");
     this.assertAllTestsAreMatchedAndSkipped(featureTest.testScenarios[0]);
@@ -1002,7 +1012,7 @@ sap.ui.require([
       skip: false,
       wip: false,
       testScenarios: [{
-        name: "Scenario Outline: Coffee changes peoples moods",
+        name: "Scenario Outline: Coffee changes peoples moods #1",
         wip: false,
         testSteps: [{
           isMatch: true,
@@ -1011,14 +1021,22 @@ sap.ui.require([
           regex: regex2,
           parameters: ["happy"],
           func: function2
-        },{
+        }]
+      },{
+        name: "Scenario Outline: Coffee changes peoples moods #2",
+        wip: false,
+        testSteps: [{
           isMatch: true,
           skip: false,
           text: "he should be 'electrified'",
           regex: regex2,
           parameters: ["electrified"],
           func: function2
-        },{
+        }]
+      },{
+        name: "Scenario Outline: Coffee changes peoples moods #3",
+        wip: false,
+        testSteps: [{
           isMatch: true,
           skip: false,
           text: "he should be 'sad'",
@@ -1031,6 +1049,274 @@ sap.ui.require([
 
     deepEqual(actualFeatureTest, expectedFeatureTest,
       "Scenario Outline should generate the scenario with single-column concrete values");
+  });
+
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  QUnit.test("Background should run before each execution of the Scenario Outline", function() {
+    var text = [
+      "Feature: Coffee improves mood in the background",
+      "",
+      "  Background:",
+      "    Given the user drank coffee",
+      "",
+      "  Scenario Outline: Coffee changes peoples moods",
+      "    * user <USER> should be <MOOD>",
+      "",
+      "  Examples:",
+      "    | USER     | MOOD         |",
+      "    |  Michael |  happy       |",
+      "    |  Elvis   |  electrified |",
+      "    |  John    |  sad         |",
+      ""
+    ].join("\n");
+
+    var feature = this.parser.parse(text);
+
+    var regex1 = /^the user drank coffee$/i;
+    var function1 = function() {};
+    var regex2 = /^user (.*?) should be (.*?)$/i;
+    var function2 = function() {};
+    var steps = StepDefinitions.extend("sap.ui.test.gherkin.StepDefinitionsTest", {
+      init: function() {
+        this.register(regex1, function1);
+        this.register(regex2, function2);
+      }
+    });
+
+    var testGenerator = new GherkinTestGenerator(feature, steps);
+    var actualFeatureTest = testGenerator.generate();
+    var expectedFeatureTest = {
+      name: "Feature: Coffee improves mood in the background",
+      skip: false,
+      wip: false,
+      testScenarios: [{
+        name: "Scenario Outline: Coffee changes peoples moods #1",
+        wip: false,
+        testSteps: [{
+          isMatch: true,
+          skip: false,
+          text: "the user drank coffee",
+          regex: regex1,
+          parameters: [],
+          func: function1
+        },{
+          isMatch: true,
+          skip: false,
+          text: "user Michael should be happy",
+          regex: regex2,
+          parameters: ["Michael", "happy"],
+          func: function2
+        }]
+      },{
+        name: "Scenario Outline: Coffee changes peoples moods #2",
+        wip: false,
+        testSteps: [{
+          isMatch: true,
+          skip: false,
+          text: "the user drank coffee",
+          regex: regex1,
+          parameters: [],
+          func: function1
+        },{
+          isMatch: true,
+          skip: false,
+          text: "user Elvis should be electrified",
+          regex: regex2,
+          parameters: ["Elvis", "electrified"],
+          func: function2
+        }]
+      },{
+        name: "Scenario Outline: Coffee changes peoples moods #3",
+        wip: false,
+        testSteps: [{
+          isMatch: true,
+          skip: false,
+          text: "the user drank coffee",
+          regex: regex1,
+          parameters: [],
+          func: function1
+        },{
+          isMatch: true,
+          skip: false,
+          text: "user John should be sad",
+          regex: regex2,
+          parameters: ["John", "sad"],
+          func: function2
+        }]
+      }]
+    };
+
+    deepEqual(actualFeatureTest, expectedFeatureTest,
+      "Background should run before each execution of the Scenario Outline");
+  });
+
+
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  QUnit.test("Given missing Background definition + Scenario Outline then all tests skipped", function() {
+    var text = [
+      "Feature: Coffee improves mood in the background",
+      "",
+      "  Background:",
+      "    Given the user drank coffee",
+      "      And the user drank more coffee",
+      "",
+      "  Scenario Outline: Coffee changes peoples moods",
+      "    * user <USER> should be <MOOD>",
+      "",
+      "  Examples:",
+      "    | USER     | MOOD         |",
+      "    |  Michael |  happy       |",
+      "    |  Elvis   |  electrified |",
+      "    |  John    |  sad         |",
+      ""
+    ].join("\n");
+
+    var feature = this.parser.parse(text);
+
+    var regex1 = /^the user drank coffee$/i;
+    var function1 = function() {};
+    var regex2 = /^user (.*?) should be (.*?)$/i;
+    var function2 = function() {};
+    var steps = StepDefinitions.extend("sap.ui.test.gherkin.StepDefinitionsTest", {
+      init: function() {
+        this.register(regex1, function1);
+        this.register(regex2, function2);
+      }
+    });
+
+    var testGenerator = new GherkinTestGenerator(feature, steps);
+    var actualFeatureTest = testGenerator.generate();
+    var expectedFeatureTest = {
+      name: "Feature: Coffee improves mood in the background",
+      skip: false,
+      wip: false,
+      testScenarios: [{
+        name: "Scenario Outline: Coffee changes peoples moods #1",
+        wip: false,
+        testSteps: [{
+          isMatch: true,
+          skip: false,
+          text: "the user drank coffee",
+          regex: regex1,
+          parameters: [],
+          func: function1
+        },{
+          isMatch: false,
+          skip: true,
+          text: "(NOT FOUND) the user drank more coffee"
+        },{
+          isMatch: true,
+          skip: true,
+          text: "(SKIPPED) user Michael should be happy",
+          regex: regex2,
+          parameters: ["Michael", "happy"],
+          func: function2
+        }]
+      },{
+        name: "Scenario Outline: Coffee changes peoples moods #2",
+        wip: false,
+        testSteps: [{
+          isMatch: true,
+          skip: false,
+          text: "the user drank coffee",
+          regex: regex1,
+          parameters: [],
+          func: function1
+        },{
+          isMatch: false,
+          skip: true,
+          text: "(NOT FOUND) the user drank more coffee"
+        },{
+          isMatch: true,
+          skip: true,
+          text: "(SKIPPED) user Elvis should be electrified",
+          regex: regex2,
+          parameters: ["Elvis", "electrified"],
+          func: function2
+        }]
+      },{
+        name: "Scenario Outline: Coffee changes peoples moods #3",
+        wip: false,
+        testSteps: [{
+          isMatch: true,
+          skip: false,
+          text: "the user drank coffee",
+          regex: regex1,
+          parameters: [],
+          func: function1
+        },{
+          isMatch: false,
+          skip: true,
+          text: "(NOT FOUND) the user drank more coffee"
+        },{
+          isMatch: true,
+          skip: true,
+          text: "(SKIPPED) user John should be sad",
+          regex: regex2,
+          parameters: ["John", "sad"],
+          func: function2
+        }]
+      }]
+    };
+
+    deepEqual(actualFeatureTest, expectedFeatureTest,
+      "Given missing Background definition + Scenario Outline then all tests skipped");
+  });
+
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  QUnit.test("Given nested variables, Scenario Outline should re-write multiple times", function() {
+    // Believe it or not, the Cucumber Java reference implementation does this
+
+    var text = [
+      "Feature: Give cups of coffee to users",
+      "",
+      "  Scenario Outline: Coffee changes peoples moods",
+      "    Given user '<USER>' given <NUMBER> cups of coffee is '<MOOD>'",
+      "",
+      "  Examples:",
+      "    | USER      | NUMBER  | MOOD       |",
+      "    |  <NUMBER> |  <MOOD> |  delighted |",
+      ""
+    ].join("\n");
+
+    var feature = this.parser.parse(text);
+
+    var regex1 = /^user '(.*?)' given (.*?) cups of coffee is '(.*?)'$/i;
+    var function1 = function(user, number, mood) {};
+    var steps = StepDefinitions.extend("sap.ui.test.gherkin.StepDefinitionsTest", {
+      init: function() {
+        this.register(regex1, function1);
+      }
+    });
+
+    var testGenerator = new GherkinTestGenerator(feature, steps);
+    var actualFeatureTest = testGenerator.generate();
+    var expectedFeatureTest = {
+      name: "Feature: Give cups of coffee to users",
+      skip: false,
+      wip: false,
+      testScenarios: [{
+        name: "Scenario Outline: Coffee changes peoples moods #1",
+        wip: false,
+        testSteps: [{
+          isMatch: true,
+          skip: false,
+          text: "user 'delighted' given delighted cups of coffee is 'delighted'",
+          regex: regex1,
+          parameters: ["delighted", "delighted", "delighted"],
+          func: function1
+        }]
+      }]
+    };
+
+    deepEqual(actualFeatureTest, expectedFeatureTest,
+      "Given nested variables, Scenario Outline should re-write multiple times");
   });
 
 });

@@ -17,11 +17,11 @@ Feature: Lemmings Have Names Now
       | Elektra |
 
   Scenario Outline: Using a Scenario Outline to Save Lemmings
-    When I click on the life saving button
+    When I click on the life saving button <NUM_CLICKS> times
     Then I see <NAME> at the end of the list of named lemmings
 
   Examples:
-      | NAME    |
-      | Alice   |
-      | Bob     |
-      | Charlie |
+      | NUM_CLICKS | NAME    |
+      |  1         | Alice   |
+      |  2         | Bob     |
+      |  3         | Charlie |
