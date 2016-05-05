@@ -95,7 +95,7 @@ sap.ui.define([
 	/**
 	 * STATIC MEMBERS
 	 */
-	DynamicPage.HEADER_MAX_ALLOWED_PINNED_PERCENTАGE = 0.6;
+	DynamicPage.HEADER_MAX_ALLOWED_PINNED_PERCENTAGE = 0.6;
 
 	DynamicPage.FOOTER_ANIMATION_DURATION = 350;
 
@@ -385,7 +385,7 @@ sap.ui.define([
 			iHeaderHeight = oDynamicPageHeader.$().outerHeight();
 		}
 
-		return iTitleHeight + iHeaderHeight > DynamicPage.HEADER_MAX_ALLOWED_PINNED_PERCENTАGE * iHeight;
+		return iTitleHeight + iHeaderHeight > DynamicPage.HEADER_MAX_ALLOWED_PINNED_PERCENTAGE * iHeight;
 	};
 
 	/**
