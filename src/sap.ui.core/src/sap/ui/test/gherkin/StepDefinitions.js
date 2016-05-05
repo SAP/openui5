@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function ($, UI5Objec
    * @author Jonathan Benn
    * @extends sap.ui.base.Object
    * @alias sap.ui.test.gherkin.StepDefinitions
-   * @since 1.38
+   * @since 1.40
    * @public
    */
   return UI5Object.extend("sap.ui.test.gherkin.StepDefinitions",
