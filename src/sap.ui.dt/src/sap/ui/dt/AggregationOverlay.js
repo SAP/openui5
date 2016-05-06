@@ -96,13 +96,17 @@ function(jQuery, Overlay, DOMUtil, ElementUtil, OverlayUtil) {
 		var sAggregationName = this.getAggregationName();
 
 		var oElementDomRef = ElementUtil.getDomRef(oElement);
+		var oDesignTimeMetadata = this.getDesignTimeMetadata();
+		var vAggregationDomRef = oDesignTimeMetadata.getDomRef();
 		if (oElementDomRef) {
-			var oDesignTimeMetadata = this.getDesignTimeMetadata();
-			var vAggregationDomRef = oDesignTimeMetadata.getDomRef();
 			if (typeof vAggregationDomRef === "function") {
 				return vAggregationDomRef.call(oElement, sAggregationName);
 			} else if (typeof vAggregationDomRef === "string") {
 				return DOMUtil.getDomRefForCSSSelector(oElementDomRef, vAggregationDomRef).get(0);
+			}
+		} else {
+			if (typeof vAggregationDomRef === "function") {
+				return vAggregationDomRef.call(oElement, sAggregationName);
 			}
 		}
 	};
