@@ -417,11 +417,30 @@ sap.ui.core.mvc.Controller</title>
 					_syncSupport: !!bSyncSupport
 				};
 			};
+			this.fnChangeSourcePreprocessor = function(xml) {
+				this.xml = jQuery.sap.parseXML("<mvc:XMLView xmlns:mvc='sap.ui.core.mvc/>").documentElement;
+				return this.xml;
+			}.bind(this);
+			this.createView = function(bAsync) {
+				var preprocessor = {
+					preprocessor: this.fnChangeSourcePreprocessor,
+					_syncSupport: true
+				};
+				return sap.ui.xmlview({
+					async: bAsync,
+					viewContent: "<mvc:XMLView xmlns:mvc='sap.ui.core.mvc'/>",
+					preprocessors: {
+						xml:preprocessor,
+						viewxml: preprocessor
+					},
+				});
+			}.bind(this);
 		},
 		afterEach: function() {
 			// reset global preprocessors
 			this.View._mPreprocessors = {};
 			this.runPreprocessorSpy.restore();
+			delete this.xml;
 		}
 	});
 
@@ -450,6 +469,17 @@ sap.ui.core.mvc.Controller</title>
 		});
 
 		sinon.assert.notCalled(preprocessorSpy);
+	});
+
+	QUnit.test("sync: assignment of preprocessor results", 1, function(assert) {
+		var oView = this.createView();
+		assert.strictEqual(oView._xContent, this.xml, "Result was correctly assigned");
+	});
+
+	QUnit.test("async: assignment of preprocessor results", 1, function(assert) {
+		return this.createView(true).loaded().then(function(oView) {
+			assert.strictEqual(oView._xContent, this.xml, "Result was correctly assigned");
+		}.bind(this));
 	});
 
 	/*
