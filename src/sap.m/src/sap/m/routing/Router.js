@@ -220,7 +220,7 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 					iViewLevel;
 
 				if (this._oTargets && this._oTargets._oLastDisplayedTarget) {
-					iViewLevel = this._oTargets._oLastDisplayedTarget._oOptions.viewLevel;
+					iViewLevel = this._oTargets._getViewLevel(this._oTargets._oLastDisplayedTarget);
 				}
 
 				this._oTargetHandler.navigate({

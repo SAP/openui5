@@ -194,6 +194,61 @@
 								oRouter.destroy();
 							});
 
+							QUnit.test("Should take the viewLevel from the first ancester which has a viewLevel if a target doesn't have viewLevel defined", function (assert) {
+								//Arrange
+								var oNavContainer = new NavContainer(),
+									oRouter = fnCreateRouter(
+										{
+											"route": {
+												pattern: "anyPattern",
+												target: ["third"]
+											}
+										},
+										{
+											viewType: "JS",
+											controlAggregation:"pages",
+											controlId: oNavContainer.getId()
+										},
+										null,
+										{
+											first: {
+												viewName: "first",
+												viewLevel: 1
+											},
+											second: {
+												parent: "first",
+												viewName: "second"
+											},
+											third: {
+												parent: "second",
+												viewName: "third"
+											},
+											initial: {
+												viewName: "initial",
+												viewLevel: 2
+											}
+										}),
+									fnBackSpy = this.spy(oNavContainer, "backToPage");
+
+								// views
+								createViewAndController("first");
+								createViewAndController("second");
+								createViewAndController("third");
+								createViewAndController("initial");
+
+								oRouter.getTargets().display("initial");
+
+								// Act
+								oRouter.parse("anyPattern");
+
+								// Assert
+								assert.strictEqual(fnBackSpy.callCount, 1, "Did execute a back navigation");
+								assert.strictEqual(fnBackSpy.firstCall.args[0], oRouter.getView("third").getId(), "The second page was target of the back navigation");
+
+								// Cleanup
+								oRouter.destroy();
+							});
+
 
 							QUnit.test("Should pass some data to the SplitContainer", function (assert) {
 								//Arrange
