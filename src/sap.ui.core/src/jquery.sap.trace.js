@@ -69,8 +69,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Global'],
 									// assign the current interaction to the xhr for later response header retrieval.
 									this.pendingInteraction = oPendingInteraction;
 
-									iStepCounter++;
-
 									if (bFesrActive) {
 										// set FESR
 										if (sFESR) {
@@ -78,8 +76,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Global'],
 											this.setRequestHeader("SAP-Perf-FESRec-opt", sFESRopt);
 											sFESR = null;
 											sFESRopt = null;
-											iStepCounter = 0;
 											sFESRTransactionId = sTransactionId;
+											iStepCounter++;
 										} else if (!sFESRTransactionId) {
 											// initial request should set the FESR Transaction Id
 											sFESRTransactionId = sTransactionId;
