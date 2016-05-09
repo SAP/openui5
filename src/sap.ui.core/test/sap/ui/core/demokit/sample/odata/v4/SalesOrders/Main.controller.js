@@ -66,8 +66,9 @@ sap.ui.define([
 		},
 
 		onDeleteSalesOrder : function (oEvent) {
-			var // oSalesOrderContext = oEvent.getSource().getBindingContext(),
+			var oSalesOrderContext = oEvent.getSource().getBindingContext(),
 				// oModel = oSalesOrderContext.getModel(),
+				sMessage,
 				sOrderID;
 				// oView = this.getView();
 
@@ -75,16 +76,18 @@ sap.ui.define([
 				if (sCode !== 'OK') {
 					return;
 				}
+				MessageBox.alert("Not yet implemented");
 //					TODO the code will be needed when "remove" is implemented
 //					MessageBox.alert("Deleted Sales Order: " + sOrderID,
 //						{icon : MessageBox.Icon.SUCCESS, title : "Success"});
 //					oView.byId("SalesOrderLineItems").setBindingContext(undefined);
 //					oView.byId("SupplierContactData").setBindingContext(undefined);
 			}
-
-			sOrderID = oEvent.getSource().getBindingContext().getProperty("SalesOrderID");
-			MessageBox.confirm("Do you really want to delete? " + sOrderID, onConfirm,
-				"Sales Order Deletion");
+			sOrderID = oSalesOrderContext.getProperty("SalesOrderID", true);
+			sMessage = "Do you really want to delete: " + sOrderID
+				+ ", Gross Amount: " + oSalesOrderContext.getProperty("GrossAmount", true)
+				+ " " + oSalesOrderContext.getProperty("CurrencyCode", true) + "?";
+			MessageBox.confirm(sMessage, onConfirm, "Sales Order Deletion");
 		},
 
 		onInit : function () {

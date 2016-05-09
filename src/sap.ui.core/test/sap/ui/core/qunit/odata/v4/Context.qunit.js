@@ -159,13 +159,14 @@ sap.ui.require([
 		var oContext = Context.create(null, null, "/foo", 1),
 			oSyncPromise = _SyncPromise.resolve({});
 
+		this.oSandbox.mock(oContext).expects("getPath").withExactArgs("bar").returns("~");
 		this.oSandbox.mock(oContext).expects("fetchValue").withExactArgs("bar")
 			.returns(oSyncPromise);
 
 		//code under test
 		assert.throws(function () {
 			oContext.getProperty("bar");
-		}, new Error("/foo[1]/bar: Accessed value is not primitive"));
+		}, new Error("Accessed value is not primitive: ~"));
 	});
 
 	//*********************************************************************************************
@@ -183,13 +184,51 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("getProperty: rejected", function (assert) {
 		var oContext = Context.create(null, null, "/foo"),
-			oSyncPromise = _SyncPromise.resolve(Promise.reject("read error"));
+			oPromise = Promise.reject("read error"),
+			oSyncPromise = _SyncPromise.resolve(oPromise);
 
 		this.oSandbox.mock(oContext).expects("fetchValue").withExactArgs("bar")
 			.returns(oSyncPromise);
 
-		//code under test
-		assert.strictEqual(oContext.getProperty("bar"), undefined);
+		return oPromise["catch"](function () {
+			//code under test
+			assert.strictEqual(oContext.getProperty("bar"), undefined);
+		});
+	});
+
+	//*********************************************************************************************
+	[true, false].forEach(function (bTypeIsResolved) {
+		QUnit.test("getProperty: external, bTypeIsResolved=" + bTypeIsResolved, function (assert) {
+			var oMetaModel = {
+					fetchUI5Type : function () {}
+				},
+				oModel = {
+					getMetaModel : function () {
+						return oMetaModel;
+					}
+				},
+				oType = {
+					formatValue : function () {}
+				},
+				oContext = Context.create(oModel, null, "/foo", 42),
+				oResolvedType = bTypeIsResolved ? oType : Promise.resolve(oType),
+				oSyncPromiseType = _SyncPromise.resolve(oResolvedType),
+				oSyncPromiseValue = _SyncPromise.resolve(1234);
+
+			this.oSandbox.mock(oContext).expects("getPath").withExactArgs("bar").returns("~");
+			this.oSandbox.mock(oContext).expects("fetchValue").withExactArgs("bar")
+				.returns(oSyncPromiseValue);
+			this.oSandbox.mock(oMetaModel).expects("fetchUI5Type").withExactArgs("~")
+				.returns(oSyncPromiseType);
+			if (bTypeIsResolved) {
+				this.oSandbox.mock(oType).expects("formatValue").withExactArgs(1234, "string")
+					.returns("1,234");
+			}
+
+			//code under test
+			assert.strictEqual(oContext.getProperty("bar", true),
+				bTypeIsResolved ? "1,234" : undefined);
+		});
 	});
 
 	//*********************************************************************************************
@@ -220,7 +259,37 @@ sap.ui.require([
 		return oContext.requestProperty("bar").then(function () {
 			assert.ok(false);
 		}, function (oError) {
-			assert.strictEqual(oError.message, "/foo[1]/bar: Accessed value is not primitive");
+			assert.strictEqual(oError.message, "Accessed value is not primitive: /foo/bar");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestProperty: external", function (assert) {
+		var oMetaModel = {
+				fetchUI5Type : function () {}
+			},
+			oModel = {
+				getMetaModel : function () {
+					return oMetaModel;
+				}
+			},
+			oType = {
+				formatValue : function () {}
+			},
+			oContext = Context.create(oModel, null, "/foo", 42),
+			oSyncPromiseType = _SyncPromise.resolve(Promise.resolve(oType)),
+			oSyncPromiseValue = _SyncPromise.resolve(1234);
+
+		this.oSandbox.mock(oContext).expects("fetchValue").withExactArgs("bar")
+			.returns(oSyncPromiseValue);
+		this.oSandbox.mock(oMetaModel).expects("fetchUI5Type").withExactArgs("/foo/bar")
+			.returns(oSyncPromiseType);
+		this.oSandbox.mock(oType).expects("formatValue").withExactArgs(1234, "string")
+			.returns("1,234");
+
+		//code under test
+		return oContext.requestProperty("bar", true).then(function (oResult) {
+			assert.strictEqual(oResult, "1,234");
 		});
 	});
 
