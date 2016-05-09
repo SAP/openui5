@@ -71,9 +71,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		oRM.renderControl(oControl._getScrollingArrow("left"));
 
 		// render scroll container on touch devices
-		if (oControl._bDoScroll) {
-			oRM.write("<div id='" + oControl.getId() + "-scrollContainer' class='sapMITBScrollContainer'>");
-		}
+		oRM.write("<div id='" + oControl.getId() + "-scrollContainer' class='sapMITBScrollContainer'>");
 
 		oRM.write("<div id='" + oControl.getId() + "-head'");
 		oRM.addClass("sapMITBHead");
@@ -242,9 +240,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 		oRM.write("</div>");
 
-		if (oControl._bDoScroll) {
-			oRM.write("</div>"); //scrollContainer
-		}
+		oRM.write("</div>"); //scrollContainer
 
 		// render right scroll arrow
 		oRM.renderControl(oControl._getScrollingArrow("right"));
