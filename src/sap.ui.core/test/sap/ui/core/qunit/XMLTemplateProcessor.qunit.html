@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+	<title>qUnit Page for XMLTemplateProcessor</title>
+
+	<script id="sap-ui-bootstrap" src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.m"
+		data-sap-ui-bindingSyntax="complex">
+	</script>
+
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+	<script id="view" type="application/xml">
+		<mvc:View height="100%" class="ViewClassA ViewClassB" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" id="view">
+			<Panel id="panel" class="PanelClassA PanelClassB">
+				<content>
+					<Button text="Button" id="button"></Button>
+				</content>
+			</Panel>
+		</mvc:View>
+	</script>
+
+	<script>
+		sap.ui.require(["sap/ui/core/XMLTemplateProcessor", "jquery.sap.xml"], function (XMLTemplateProcessor) {
+
+			var sView = jQuery('#view').html();
+
+			QUnit.module("General");
+
+			QUnit.test("Style class(es)", function() {
+				var oView = sap.ui.xmlview({
+					viewContent: sView,
+					async: true
+				});
+
+				return oView.loaded().then(function(oView) {
+					var oPanel = oView.byId("panel");
+					assert.ok(oView.hasStyleClass("ViewClassA"), "The view has class 'ViewClassA'");
+					assert.ok(oView.hasStyleClass("ViewClassB"), "The view has class 'ViewClassB'");
+					assert.ok(oPanel.hasStyleClass("PanelClassA"), "The panel has class 'PanelClassA'");
+					assert.ok(oPanel.hasStyleClass("PanelClassB"), "The panel has class 'PanelClassB'");
+					oView.destroy();
+				});
+			});
+		});
+	</script>
+</head>
+
+<body>
+	<h1 id="qunit-header">qUnit Page for XMLTemplateProcessor</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<div id="content"></div>
+</body>
+
+</html>
