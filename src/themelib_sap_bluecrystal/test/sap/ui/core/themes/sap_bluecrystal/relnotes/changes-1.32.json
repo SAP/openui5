@@ -553,5 +553,17 @@
         "references": []
       }
     ]
+  },
+  "1.32.16": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "cf4632490f859f9860ebcd894c319edf78c0426c",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ActionListItem: Legacy outline offset fix for IE.",
+        "references": []
+      }
+    ]
   }
 }

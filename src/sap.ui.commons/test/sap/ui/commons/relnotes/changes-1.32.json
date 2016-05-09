@@ -501,5 +501,38 @@
         "references": []
       }
     ]
+  },
+  "1.32.16": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "ac8a1331e32a2f6a24eb4fd40d3691db8ec79c5e",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Error is not thrown any more when Scroller in not initialized",
+        "references": []
+      },
+      {
+        "id": "f6c68eea4941fcbf34701be3fa26087a7cec4666",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Error is not thrown any more when Scroller in not initialized",
+        "references": []
+      },
+      {
+        "id": "58268d8b52470fc8345d12351334d46579a19fdd",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Tab content is no longer rendered when the control is destroyed",
+        "references": []
+      },
+      {
+        "id": "eabce2957742c291524d46dc659870f91e12da36",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.TooltipBase: Tooltip should not be open if visibility is set to false",
+        "references": []
+      }
+    ]
   }
 }

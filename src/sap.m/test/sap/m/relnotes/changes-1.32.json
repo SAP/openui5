@@ -3415,5 +3415,94 @@
         "references": []
       }
     ]
+  },
+  "1.32.16": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "4fc0fb492481defe59fcb99e08c3555ed5317d2f",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "ManagedObject: Propagate properties when setting parent to null",
+        "references": []
+      },
+      {
+        "id": "bba2e7b640b46e9ceeebcfeb805be7562bddc78f",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FacetFilter: remove facet icon is closed when mouse is really released over icon.",
+        "references": []
+      },
+      {
+        "id": "436e53573a31829ba0f37b93655773a79ff0e144",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedListItem: Screen reader support improved",
+        "references": []
+      },
+      {
+        "id": "62edfdf0b6bda6fc87840c10d3cf1598696cb90c",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FlexBox: Adjustments to tests due to browser changes",
+        "references": []
+      },
+      {
+        "id": "97e1b1004536a29d896b6445c5b611e470b0a587",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FlexBox: Corrected workaround for IE",
+        "references": []
+      },
+      {
+        "id": "a0782f287d20d60eb31dddf8f709c302732ab518",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FlexBox: Workaround for incorrect base size calculation (IE)",
+        "references": []
+      },
+      {
+        "id": "cd3b774de7925f881b1f36acaaae33802b6fc621",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: fix overlay issue of MultiInput in layout control",
+        "references": []
+      },
+      {
+        "id": "7ebf3b4564bcc150e400d14ac9becb04a7f65ca8",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: Active title link fixed",
+        "references": []
+      },
+      {
+        "id": "2fe52b6806df26fde4a6471402d387e065e8b627",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.QuickViewCard: texts truncation",
+        "references": []
+      },
+      {
+        "id": "78586eefa63dd732168113b0296a512bf3f07b11",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Table: ItemNavigation should include only direct children.",
+        "references": []
+      },
+      {
+        "id": "94c09d22069184914bfb5a33b33f6abe9d1371a7",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog: Focus is now preserved on list items re-render",
+        "references": []
+      },
+      {
+        "id": "a8c89e2f82b4b28b4cb3f9f92f4f4c077ef06582",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog: Group\u0027s \"None\" button now returns undefined",
+        "references": []
+      }
+    ]
   }
 }
