@@ -490,6 +490,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			return this;
 		}
 
+		var oMaxDate = this.getMaxDate();
+
 		if (oDate) {
 			if (!(oDate instanceof Date)) {
 				throw new Error("Date must be a JavaScript date object; " + this);
@@ -501,6 +503,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 
 			this.setProperty("minDate", oDate, true);
+			this._bNoStartDateChange = true; // set the start date after all calendars are updated
 
 			if (this._oTimeInterval) {
 				this._oTimeInterval.setMinDate(new Date(oDate.getTime())); // use new date object
@@ -514,11 +517,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				this._oMonthInterval.setMinDate(new Date(oDate.getTime())); // use new date object
 			}
 
-			var oMaxDate = this.getMaxDate();
 			if (oMaxDate && oMaxDate.getTime() < oDate.getTime()) {
 				jQuery.sap.log.warning("minDate > maxDate -> maxDate set to end of the month", this);
 				oMaxDate = new Date(oDate.getTime());
-				oMaxDate.setMonth(oMaxDate.getonth() + 1, 0);
+				oMaxDate.setMonth(oMaxDate.getMonth() + 1, 0);
 				oMaxDate.setHours(23);
 				oMaxDate.setMinutes(59);
 				oMaxDate.setSeconds(59);
@@ -526,6 +528,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				this.setMaxDate(oMaxDate);
 			}
 
+			this._bNoStartDateChange = undefined;
 			var oStartDate = this.getStartDate();
 			if (oStartDate && oStartDate.getTime() < oDate.getTime()) {
 				jQuery.sap.log.warning("StartDate < minDate -> StartDate set to minDate", this);
@@ -548,6 +551,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 		}
 
+		var oToday = new Date();
+		if (oDate && oToday.getTime() < oDate.getTime()) {
+			this._oTodayButton.setVisible(false);
+		} else if (!oMaxDate || oToday.getTime() < oMaxDate.getTime()) {
+				this._oTodayButton.setVisible(true);
+		}
+
 		return this;
 
 	};
@@ -557,6 +567,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		if (jQuery.sap.equal(oDate, this.getMaxDate())) {
 			return this;
 		}
+
+		var oMinDate = this.getMinDate();
 
 		if (oDate) {
 			if (!(oDate instanceof Date)) {
@@ -569,6 +581,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 
 			this.setProperty("maxDate", oDate, true);
+			this._bNoStartDateChange = true; // set the start date after all calendars are updated
 
 			if (this._oTimeInterval) {
 				this._oTimeInterval.setMaxDate(new Date(oDate.getTime())); // use new date object
@@ -582,7 +595,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				this._oMonthInterval.setMaxDate(new Date(oDate.getTime())); // use new date object
 			}
 
-			var oMinDate = this.getMinDate();
 			if (oMinDate && oMinDate.getTime() > oDate.getTime()) {
 				jQuery.sap.log.warning("maxDate < minDate -> maxDate set to begin of the month", this);
 				oMinDate = new Date(oDate.getTime());
@@ -594,6 +606,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				this.setMinDate(oMinDate);
 			}
 
+			this._bNoStartDateChange = undefined;
 			var oStartDate = this.getStartDate();
 			if (oStartDate && oStartDate.getTime() > oDate.getTime()) {
 				jQuery.sap.log.warning("StartDate > maxDate -> StartDate set to minDate", this);
@@ -619,6 +632,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			if (this._oMonthInterval) {
 				this._oMonthInterval.setMaxDate();
 			}
+		}
+
+		var oToday = new Date();
+		if (oDate && oToday.getTime() > oDate.getTime()) {
+			this._oTodayButton.setVisible(false);
+		} else if (!oMinDate || oToday.getTime() > oMinDate.getTime()) {
+				this._oTodayButton.setVisible(true);
 		}
 
 		return this;
@@ -1183,6 +1203,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	}
 
 	function _handleStartDateChange(oEvent){
+
+		if (this._bNoStartDateChange) {
+			return;
+		}
 
 		var oStartDate = oEvent.oSource.getStartDate();
 
