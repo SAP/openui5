@@ -240,14 +240,24 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 
 			var sImgId = this.getId() + '-img';
 			var sSize = "2.5rem";
-			var mProperties = {
-				src : this.getIcon(),
-				height : sSize,
-				width : sSize,
-				size: sSize,
-				useIconTooltip : false,
-				densityAware : this.getIconDensityAware()
-			};
+			var mProperties;
+			if (IconPool.isIconURI(this.getIcon())) {
+				mProperties = {
+					src : this.getIcon(),
+					height : sSize,
+					width : sSize,
+					size: sSize,
+					useIconTooltip : false,
+					densityAware : this.getIconDensityAware()
+				};
+			} else {
+				mProperties = {
+					src : this.getIcon(),
+					useIconTooltip : false,
+					densityAware : this.getIconDensityAware()
+				};
+			}
+
 			var aCssClasses = ['sapMObjLIcon'];
 
 			this._oImageControl = sap.m.ImageHelper.getImageControl(sImgId, this._oImageControl, this, mProperties, aCssClasses);
