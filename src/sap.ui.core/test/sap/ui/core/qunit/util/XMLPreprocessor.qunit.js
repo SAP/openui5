@@ -16,7 +16,7 @@ sap.ui.require([
 ], function (jQuery, Device, BindingParser, ManagedObject, CustomizingConfiguration,
 		XMLTemplateProcessor, XMLPreprocessor, BindingMode, Context, JSONModel/*, jQuerySapXml*/) {
 	/*global QUnit, sinon, window */
-	/*eslint consistent-this: 0, no-loop-func: 0, no-warning-comments: 0*/
+	/*eslint consistent-this: 0, max-nested-callbacks: 0, no-loop-func: 0, no-warning-comments: 0*/
 	"use strict";
 
 	var sComponent = "sap.ui.core.util.XMLPreprocessor",
@@ -2443,6 +2443,293 @@ sap.ui.require([
 		process(xml(assert, aContent));
 		assert.strictEqual(oResolvedSpy.callCount, 4, "getResolvedBinding");
 		assert.strictEqual(oResolvedEndSpy.callCount, 4, "getResolvedBinding end");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("plugIn returns old visitor", function (assert) {
+		var fnElementVisitor = function element() {},
+			fnNamespaceVisitor = function namespace() {};
+
+		try {
+			assert.strictEqual(XMLPreprocessor.plugIn(fnNamespaceVisitor, "foo"),
+				XMLPreprocessor.visitNodeWrapper);
+		} finally {
+			assert.strictEqual(XMLPreprocessor.plugIn(null, "foo"), fnNamespaceVisitor);
+		}
+
+		try {
+			assert.strictEqual(XMLPreprocessor.plugIn(fnElementVisitor, "foo", "Bar"),
+				XMLPreprocessor.visitNodeWrapper);
+		} finally {
+			assert.strictEqual(XMLPreprocessor.plugIn(null, "foo", "Bar"), fnElementVisitor);
+		}
+
+		// namespace visitor is old visitor for all its local names!
+		try {
+			assert.strictEqual(XMLPreprocessor.plugIn(fnNamespaceVisitor, "foo"),
+				XMLPreprocessor.visitNodeWrapper);
+			assert.strictEqual(XMLPreprocessor.plugIn(fnElementVisitor, "foo", "Bar"),
+				fnNamespaceVisitor);
+		} finally {
+			assert.strictEqual(XMLPreprocessor.plugIn(null, "foo", "Bar"), fnElementVisitor);
+			assert.strictEqual(XMLPreprocessor.plugIn(null, "foo"), fnNamespaceVisitor);
+		}
+	});
+
+	//*********************************************************************************************
+	QUnit.test("plugIn, debug tracing", function (assert) {
+		var fnVisitor = function () {};
+
+		this.oLogMock.expects("debug")
+			.withExactArgs("Plug-in visitor for namespace 'foo', local name 'Bar'", fnVisitor,
+				sComponent);
+
+		XMLPreprocessor.plugIn(fnVisitor, "foo", "Bar");
+	});
+
+	//*********************************************************************************************
+	[{
+		aContent : [
+			mvcView(),
+			'<f:Bar xmlns:f="foo"'
+				+ ' attribute="{path: \'/\', formatter: \'foo.Helper.forbidden\'}"/>',
+			'<f:Baz xmlns:f="foo"/>', // must not trigger visitor!
+			'</mvc:View>'
+		],
+		sLocalName : "Bar"
+	}, {
+		aContent : [
+			mvcView(),
+			'<f:Bar xmlns:f="foo"/>',
+			'</mvc:View>'
+		],
+		sLocalName : undefined
+	}].forEach(function (oFixture) {
+		QUnit.test("plugIn, sLocalName: " + oFixture.sLocalName, function (assert) {
+			var fnVisitor = this.spy(),
+				oXml = xml(assert, oFixture.aContent); // <mvc:View>
+
+			window.foo = {
+				Helper: {
+					forbidden : function (oRawValue) {
+						assert.ok(false, "formatter MUST not be called!");
+					}
+				}
+			};
+
+			try {
+				XMLPreprocessor.plugIn(fnVisitor, "foo", oFixture.sLocalName);
+				// must not override other visitors
+				XMLPreprocessor.plugIn(fnVisitor, "foo", "Invalid");
+
+				process(oXml, {models : new JSONModel()});
+			} finally {
+				// remove old visitors
+				// Q: should we delete from mVisitors? A: No, we cannot observe it anyway...
+				XMLPreprocessor.plugIn(null, "foo", oFixture.sLocalName);
+				XMLPreprocessor.plugIn(null, "foo", "Invalid");
+			}
+
+			assert.strictEqual(fnVisitor.callCount, 1);
+			assert.ok(fnVisitor.alwaysCalledWithExactly(
+				oXml.firstChild,
+				sinon.match.instanceOf(ManagedObject),
+				{
+					getResult : sinon.match.func,
+					insertFragment : sinon.match.func,
+					visitAttributes : sinon.match.func,
+					visitChildNodes : sinon.match.func,
+					visitNode : sinon.match.func
+				})); // does not work in IE: fnVisitor.printf("%C")
+		});
+	});
+
+	//*********************************************************************************************
+	[undefined, "0", true, {}, XMLPreprocessor.visitNodeWrapper].forEach(function (fnVisitor) {
+		QUnit.test("plugIn, fnVisitor: " + fnVisitor, function (assert) {
+			this.oLogMock.expects("debug").never();
+
+			assert.throws(function () {
+				XMLPreprocessor.plugIn(fnVisitor, "foo");
+			}, new Error("Invalid visitor: " + fnVisitor));
+		});
+	});
+
+	//*********************************************************************************************
+	[
+		undefined,
+		"foo bar",
+		"sap.ui.core",
+		"http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
+	].forEach(function (sNamespace) {
+		QUnit.test("plugIn, sNamespace: " + sNamespace, function (assert) {
+			this.oLogMock.expects("debug").never();
+
+			assert.throws(function () {
+				XMLPreprocessor.plugIn(function () {}, sNamespace);
+			}, new Error("Invalid namespace: " + sNamespace));
+		});
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bDebug) {
+		QUnit.test("plugIn, debug tracing for visitor calls: " + bDebug, function (assert) {
+			var aExpectedMessages = [
+					{m : "[ 0] Start processing qux"},
+					{m : "[ 1] Calling visitor", d : 1},
+					{m : "I am your visitor!"},
+					{m : "[ 1] Finished", d : '</f:Bar>'}, // Note: logs the closing tag!
+					{m : "[ 0] Finished processing qux"}
+				],
+				aViewContent = [
+					mvcView(),
+					'<f:Bar xmlns:f="foo"/>',
+					'</mvc:View>'
+				];
+
+			try {
+				XMLPreprocessor.plugIn(function () {
+					if (bDebug) {
+						jQuery.sap.log.debug("I am your visitor!", undefined, sComponent);
+					}
+				}, "foo", "Bar");
+
+				this.checkTracing(assert, bDebug, aExpectedMessages, aViewContent, {},
+					[aViewContent[1]]);
+			} finally {
+				this.oLogMock.expects("debug")
+					.withExactArgs("Plug-in visitor for namespace 'foo', local name 'Bar'", null,
+						sComponent);
+				XMLPreprocessor.plugIn(null, "foo", "Bar");
+			}
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("plugIn, getResult", function (assert) {
+		var aViewContent = [
+				mvcView(),
+				'<f:Bar xmlns:f="foo" test="{/answer}" value="\\{\\}"/>',
+				'</mvc:View>'
+			],
+			that = this;
+
+		try {
+			XMLPreprocessor.plugIn(function (oElement, oWithControl, oInterface) {
+				assert.strictEqual(oInterface.getResult(oElement.getAttribute("test"),
+					oElement, oWithControl), 42, "returns {any} value");
+
+				assert.strictEqual(oInterface.getResult(oElement.getAttribute("value"),
+					oElement, oWithControl, false), "{}", "bMandatory must be hardcoded to true");
+				oInterface.getResult("", oElement, oWithControl, true, function () {
+					assert.ok(false, "fnCallIfConstant must be ignored");
+				});
+				assert.throws(function () {
+					warn(that.oLogMock, "[ 1] Binding not ready", aViewContent[1]);
+					oInterface.getResult("{missing>/}", oElement, oWithControl);
+				}, new Error("Binding not ready: {missing>/}"));
+			}, "foo", "Bar");
+
+			process(xml(assert, aViewContent), {models: new JSONModel({answer: 42})});
+		} finally {
+			XMLPreprocessor.plugIn(null, "foo", "Bar");
+		}
+	});
+
+	//*********************************************************************************************
+	QUnit.test("plugIn, visit*", function (assert) {
+		try {
+			XMLPreprocessor.plugIn(function (oElement, oWithControl, oInterface) {
+				var oChildNodes = oElement.childNodes;
+
+				oInterface.visitAttributes(oChildNodes.item(0), oWithControl);
+				oInterface.visitChildNodes(oChildNodes.item(1), oWithControl);
+				oInterface.visitNode(oChildNodes.item(2), oWithControl);
+				// this is initially returned as old visitor, see above
+				XMLPreprocessor.visitNodeWrapper(oChildNodes.item(3), oWithControl, oInterface);
+			}, "foo", "Bar");
+
+			this.check(assert, [
+				mvcView(),
+				'<f:Bar xmlns:f="foo">',
+				'<In id="visitAttributes: {/answer}">',
+				'<Out id="no visitAttributes: {/answer}"/>',
+				'</In>',
+				'<Out id="no visitChildNodes: {/answer}">',
+				'<In id="visitChildNodes: {/answer}"/>',
+				'</Out>',
+				'<In id="visitNode: {/answer}">',
+				'<In id="visitNode: {/pi}"/>',
+				'</In>',
+				'<In id="visitNodeWrapper: {/answer}">',
+				'<In id="visitNodeWrapper: {/pi}"/>',
+				'</In>',
+				'</f:Bar>',
+				'</mvc:View>'
+			], {
+				models: new JSONModel({answer : 42, pi : 3.14})
+			}, [
+				'<f:Bar xmlns:f="foo">',
+				'<In id="visitAttributes: 42">',
+				'<Out id="no visitAttributes: {/answer}"/>',
+				'</In>',
+				'<Out id="no visitChildNodes: {/answer}">',
+				'<In id="visitChildNodes: 42"/>',
+				'</Out>',
+				'<In id="visitNode: 42">',
+				'<In id="visitNode: 3.14"/>',
+				'</In>',
+				'<In id="visitNodeWrapper: 42">',
+				'<In id="visitNodeWrapper: 3.14"/>',
+				'</In>',
+				'</f:Bar>'
+			]);
+		} finally {
+			XMLPreprocessor.plugIn(null, "foo", "Bar");
+		}
+	});
+
+	//*********************************************************************************************
+	QUnit.test("plugIn, insertFragment", function (assert) {
+		this.mock(XMLTemplateProcessor).expects("loadTemplate")
+			.withExactArgs("fragmentName", "fragment")
+			.returns(xml(assert, ['<In xmlns="sap.ui.core"/>']));
+
+		try {
+			XMLPreprocessor.plugIn(function (oElement, oWithControl, oInterface) {
+				oInterface.insertFragment("fragmentName", oElement, oWithControl);
+			}, "foo", "Bar");
+
+			this.check(assert, [
+				mvcView(),
+				'<f:Bar xmlns:f="foo"/>',
+				'</mvc:View>'
+			], null, [
+				'<In />'
+			]);
+		} finally {
+			XMLPreprocessor.plugIn(null, "foo", "Bar");
+		}
+	});
+
+	//*********************************************************************************************
+	QUnit.test("plugIn, call returns something", function (assert) {
+		var aViewContent = [
+				mvcView(),
+				'<f:Bar xmlns:f="foo"/>',
+				'</mvc:View>'
+			];
+
+		try {
+			XMLPreprocessor.plugIn(function (oElement, oWithControl, oInterface) {
+				return null; // something other than undefined
+			}, "foo", "Bar");
+
+			this.checkError(assert, aViewContent, "Unexpected return value from visitor for {0}",
+				null, 1);
+		} finally {
+			XMLPreprocessor.plugIn(null, "foo", "Bar");
+		}
 	});
 });
 //TODO we have completely missed support for unique IDs in fragments via the "id" property!
