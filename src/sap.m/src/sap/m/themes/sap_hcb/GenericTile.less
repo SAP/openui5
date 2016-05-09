@@ -2,6 +2,7 @@
 /* CSS for control sap.m/GenericTile.control */
 /* ========================================= */
 .sapMGT {
+	border: none;
 	border-radius: 0.375rem;
 	box-shadow: 0 0 0 1px @sapHCStandardFG; /* Usage of px as aligned with designers. */
 }
@@ -33,7 +34,11 @@
 }
 
 html.sap-desktop .sapMGT:focus .sapMGTFocusDiv {
-	border: 0.125rem dotted @sapHCStandardFG;
+	left: 0rem;
+	top: 0rem;
+	right: 0rem;
+	bottom: 0rem;
+	border: 0.125rem dotted @sapUiContentFocusColor;
 }
 
 html.sap-desktop .sapMGT:focus:not([tabindex]) {

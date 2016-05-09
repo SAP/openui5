@@ -16,6 +16,8 @@
 <script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 <script type="text/javascript">
 	if (!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 8)) {
 		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
@@ -26,12 +28,10 @@
 			this.oGenericTile = new sap.m.GenericTile("generic-tile", {
 				subheader : "Expenses By Region",
 				frameType : sap.m.FrameType.OneByOne,
-				size : "Auto",
 				header : "Comparative Annual Totals",
 				headerImage : "../images/female_BaySu.jpg",
 				tileContent : new sap.m.TileContent("tile-cont", {
 					unit : "EUR",
-					size : "Auto",
 					footer : "Current Quarter",
 					content : new sap.m.NumericContent("numeric-cnt", {
 						state : sap.m.LoadState.Loaded,
@@ -110,7 +110,7 @@
 
 		var done = assert.async();
 		this.applyTheme("sap_bluecrystal", function() {
-			// the complete property name should be written for text in 'ie' and 'firefox'
+			// the complete property name should be written for test in 'ie' and 'firefox'
 			assert.equal($tile.css('border-bottom-width'), "1px", "Border bottom width was rendered successfully");
 			assert.equal($tile.css('border-bottom-style'), "solid", "Border bottom style was rendered successfully");
 			assert.equal($tile.css('border-top-width'), "1px", "Border top width was rendered successfully");
@@ -130,17 +130,8 @@
 		}
 		var done = assert.async();
 		this.applyTheme("sap_bluecrystal", function() {
-			var $tile = this.oGenericTile.$();
-			$tile.focus();
-			if (!this.checkFocus($tile)) {
-				assert.expect(0);
-				done();
-				return;
-			}
-			assert.equal(jQuery.sap.byId("generic-tile-focus").css('border-bottom-style'), "solid", "Generic Tile focus bottom border was rendered successfully");
-			assert.equal(jQuery.sap.byId("generic-tile-focus").css("border-top-style"), "solid", "Generic Tile focus top border was rendered successfully");
-			assert.equal(jQuery.sap.byId("generic-tile-focus").css("border-right-style"), "solid", "Generic Tile focus right border was rendered successfully");
-			assert.equal(jQuery.sap.byId("generic-tile-focus").css("border-left-style"), "solid", "Generic Tile focus left border was rendered successfully");
+			assert.ok(jQuery.sap.byId("generic-tile-hover-overlay"), "Hover overlay div was rendered successfully");
+			assert.ok(jQuery.sap.byId("generic-tile-focus"), "Focus div was rendered successfully");
 			done();
 		}.bind(this));
 	});
@@ -154,11 +145,11 @@
 		this.applyTheme("sap_hcb", function() {
 			this.oGenericTile.rerender();
 			var $tile = this.oGenericTile.$();
-			// the complete property name should be written for text in 'ie' and 'firefox'
-			assert.equal($tile.css('border-bottom-style'), "solid", "Border bottom style was rendered successfully");
-			assert.equal($tile.css('border-top-style'), "solid", "Border top style was rendered successfully");
-			assert.equal($tile.css('border-right-style'), "solid", "Border right style was rendered successfully");
-			assert.equal($tile.css('border-left-style'), "solid", "Border left style was rendered successfully");
+			// the complete property name should be written for test in 'ie' and 'firefox'
+			assert.equal($tile.css('border-bottom-style'), "none", "Border bottom style was rendered successfully");
+			assert.equal($tile.css('border-top-style'), "none", "Border top style was rendered successfully");
+			assert.equal($tile.css('border-right-style'), "none", "Border right style was rendered successfully");
+			assert.equal($tile.css('border-left-style'), "none", "Border left style was rendered successfully");
 			done();
 		}.bind(this));
 	});
@@ -171,18 +162,45 @@
 		var done = assert.async();
 		this.applyTheme("sap_hcb", function() {
 			this.oGenericTile.rerender();
-			var $tile = this.oGenericTile.$();
-			$tile.focus();
-			if (!this.checkFocus($tile)) {
-				assert.expect(0);
-				done();
-				return;
-			}
-			assert.equal(jQuery.sap.byId("generic-tile-focus").css("border-bottom-style"), "dotted", "Generic Tile focus bottom border was rendered successfully");
-			assert.equal(jQuery.sap.byId("generic-tile-focus").css("border-top-style"), "dotted", "Generic Tile focus top border was rendered successfully");
-			assert.equal(jQuery.sap.byId("generic-tile-focus").css("border-right-style"), "dotted", "Generic Tile focus right border was rendered successfully");
-			assert.equal(jQuery.sap.byId("generic-tile-focus").css("border-left-style"), "dotted", "Generic Tile focus left border was rendered successfully");
+			assert.ok(jQuery.sap.byId("generic-tile-hover-overlay"), "Hover overlay div was rendered successfully");
+			assert.ok(jQuery.sap.byId("generic-tile-focus"), "Focus div was rendered successfully");
+			done();
+		});
+	});
 
+	QUnit.test("GenericTile border rendered - Belize", function(assert) {
+		if (sap.ui.Device.browser.phantomJS) {
+			assert.expect(0);
+			return;
+		}
+		var done = assert.async();
+		this.applyTheme("sap_belize", function() {
+			this.oGenericTile.rerender();
+			var $tile = this.oGenericTile.$();
+			// the complete property name should be written for test in 'ie' and 'firefox'
+			assert.equal($tile.css('border-bottom-style'), "none", "Border bottom style was rendered successfully");
+			assert.equal($tile.css('border-top-style'), "none", "Border top style was rendered successfully");
+			assert.equal($tile.css('border-right-style'), "none", "Border right style was rendered successfully");
+			assert.equal($tile.css('border-left-style'), "none", "Border left style was rendered successfully");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("GenericTile focus and hover overlay rendered - Belize", function(assert) {
+		if (sap.ui.Device.browser.phantomJS) {
+			assert.expect(0);
+			return;
+		}
+		var done = assert.async();
+		this.applyTheme("sap_belize", function() {
+			this.oGenericTile.rerender();
+			assert.ok(jQuery.sap.byId("generic-tile-focus"), "Focus div was rendered successfully");
+			assert.ok(jQuery.sap.byId("generic-tile-hover-overlay").hasClass("sapMGTWithoutImageHoverOverlay"), "Hover overlay was rendered successfully");
+			assert.ok(!jQuery.sap.byId("generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action is not triggered");
+			this.oGenericTile.ontouchstart();
+			assert.ok(jQuery.sap.byId("generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action is triggered and press active selector is added");
+			this.oGenericTile.ontouchend();
+			assert.ok(!jQuery.sap.byId("generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action stopped and press active selector is removed");
 			done();
 		});
 	});
@@ -199,7 +217,7 @@
 
 			//set :focus on tile
 			$tile.focus();
-			if(!this.checkFocus($tile)){
+			if (!this.checkFocus($tile)){
 				assert.expect(0);
 				done();
 				return;
@@ -228,7 +246,7 @@
 
 			//set :focus on tile
 			$tile.focus();
-			if(!this.checkFocus($tile)){
+			if (!this.checkFocus($tile)){
 				assert.expect(0);
 				done();
 				return;
@@ -251,12 +269,10 @@
 				state : sap.m.LoadState.Failed,
 				subheader : "Expenses By Region",
 				frameType : sap.m.FrameType.OneByOne,
-				size : "Auto",
 				header : "Comparative Annual Totals",
 				headerImage : "../images/female_BaySu.jpg",
 				tileContent : new sap.m.TileContent("tile-cont-failed", {
 					unit : "EUR",
-					size : "Auto",
 					footer : "Current Quarter",
 					content : new sap.m.NumericContent("numeric-cnt-failed", {
 						state : sap.m.LoadState.Loading,
@@ -310,11 +326,9 @@
 			this.oGenericTile = new sap.m.GenericTile("generic-tile", {
 				subheader : "Expenses By Region",
 				frameType : sap.m.FrameType.OneByOne,
-				size : "Auto",
 				header : "Comparative Annual Totals",
 				tileContent : new sap.m.TileContent("tile-cont", {
 					unit : "EUR",
-					size : "Auto",
 					footer : "Current Quarter",
 					content : new sap.m.NumericContent({
 						state : sap.m.LoadState.Loading,
@@ -521,12 +535,9 @@
 			this.oGenericTile = new sap.m.GenericTile("generic-tile", {
 				subheader : "Expenses By Region",
 				frameType : sap.m.FrameType.OneByOne,
-				size : "Auto",
 				header : "Comparative Annual Totals",
-				headerImage : "../images/female_BaySu.jpg",
 				tileContent : new sap.m.TileContent("tile-cont", {
 					unit : "EUR",
-					size : "Auto",
 					footer : "Current Quarter",
 					content : new sap.m.NumericContent("numeric-cnt", {
 						state : sap.m.LoadState.Loaded,
@@ -751,105 +762,77 @@
 		assert.ok(!sTitleOfNumericContent, "NumericContent doesn't contain title attribute after content changed");
 	});
 
-	/* Module wrapper to define a scope for helper functions. This can be replaced with nested approach of QUnit in the future
-	 * This approach is not working in the current TestSuite configuration.
-	 * See 'Hooks stack on nested modules' sample at https://api.qunitjs.com/QUnit.module/ */
-	(function() {
-		QUnit.module("Event Tests", {
-			beforeEach : function() {
-				this.oGenericTile = new sap.m.GenericTile("generic-tile", {
-					subheader : "Expenses By Region",
-					frameType : sap.m.FrameType.OneByOne,
-					size : "Auto",
-					header : "Comparative Annual Totals",
-					headerImage : "../images/female_BaySu.jpg",
-					tileContent : new sap.m.TileContent("tile-cont", {
-						unit : "EUR",
-						size : "Auto",
-						footer : "Current Quarter",
-						content : new sap.m.NumericContent("numeric-cnt", {
-							state : sap.m.LoadState.Loaded,
-							scale : "M",
-							indicator : sap.m.DeviationIndicator.Up,
-							truncateValueTo : 4,
-							value : 20,
-							nullifyValue : true,
-							formatterValue : false,
-							valueColor : sap.m.ValueColor.Good,
-							icon : "sap-icon://customer-financial-fact-sheet"
-						})
+	QUnit.module("Event Tests", {
+		beforeEach : function() {
+			this.ftnPressHandler = function() {
+			};
+			this.hasAttribute = function(sAttribute, oCurrentObject) {
+				var sAttributeValue = oCurrentObject.$().attr(sAttribute);
+				if (typeof sAttributeValue !== typeof undefined && sAttributeValue !== false) {
+					return true;
+				} else {
+					return false;
+				}
+			};
+			this.oGenericTile = new sap.m.GenericTile("generic-tile", {
+				subheader : "Expenses By Region",
+				frameType : sap.m.FrameType.OneByOne,
+				header : "Comparative Annual Totals",
+				headerImage : "../images/female_BaySu.jpg",
+				tileContent : new sap.m.TileContent("tile-cont", {
+					unit : "EUR",
+					footer : "Current Quarter",
+					content : new sap.m.NumericContent("numeric-cnt", {
+						state : sap.m.LoadState.Loaded,
+						scale : "M",
+						indicator : sap.m.DeviationIndicator.Up,
+						truncateValueTo : 4,
+						value : 20,
+						nullifyValue : true,
+						formatterValue : false,
+						valueColor : sap.m.ValueColor.Good,
+						icon : "sap-icon://customer-financial-fact-sheet"
 					})
-				}).placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-			},
-			afterEach : function() {
-				this.oGenericTile.destroy();
-				this.oGenericTile = null;
-			}
-		});
-
-		QUnit.test("Attach events", function(assert) {
-			//Arrange
-			//Act
-			var oGenericTile = this.oGenericTile.attachEvent("hover", fnHoverHandler, this.oGenericTile);
-			//Assert
-			assert.deepEqual(oGenericTile, this.oGenericTile, "GenericTile returned is equal to initial one");
-			assert.equal(hasAttribute("tabindex", this.oGenericTile), false, "Attribute has not been added successfully since press handler was not available");
-			assert.equal(this.oGenericTile.$().hasClass("sapMPointer"), false, "Class has not been added successfully since press handler was not available");
-
-			//Arrange
-			//Act
-			oGenericTile = this.oGenericTile.attachEvent("press", fnPressHandler, this.oGenericTile);
-			//Assert
-			assert.ok(hasAttribute("tabindex", this.oGenericTile), "Attribute has been added successfully since press handler was available");
-			assert.ok(this.oGenericTile.$().hasClass("sapMPointer"), "Class has been added successfully since press handler was available");
-
-			//this.oGenericTile.rerender();
-		});
-
-		QUnit.test("Detach events", function(assert) {
-			//Arrange
-			//Act
-			var oGenericTile = this.oGenericTile.detachEvent("press", fnPressHandler, this.oGenericTile);
-			//Assert
-			assert.deepEqual(oGenericTile, this.oGenericTile, "GenericTile returned is equal to initial one");
-			assert.equal(hasAttribute("tabindex", this.oGenericTile), false, "Attribute not available since press was not defined");
-			assert.equal(this.oGenericTile.$().hasClass("sapMPointer"), false, "Class not available since press was not defined");
-
-			//Arrange
-			oGenericTile = this.oGenericTile.attachEvent("press", fnPressHandler, this.oGenericTile);
-			oGenericTile = this.oGenericTile.attachEvent("hover", fnHoverHandler, this.oGenericTile);
-			//Act
-			var oGenericTile = this.oGenericTile.detachEvent("hover", fnHoverHandler, this.oGenericTile);
-			//Assert
-			assert.ok(hasAttribute("tabindex", this.oGenericTile), "Attribute still available since hover was unregistered (not press)");
-			assert.ok(this.oGenericTile.$().hasClass("sapMPointer"), "Class still available since hover was unregistered (not press)");
-
-			//Arrange
-			//Act
-			oGenericTile = this.oGenericTile.detachEvent("press", fnPressHandler, this.oGenericTile);
-			//Assert
-			assert.equal(hasAttribute("tabindex", this.oGenericTile), false, "Attribute has been removed successfully");
-			assert.equal(this.oGenericTile.$().hasClass("sapMPointer"), false, "Class has been removed successfully");
-		});
-
-		/* --- Helpers --- */
-
-		fnHoverHandler = function() {
+				})
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			sinon.spy(this, "ftnPressHandler");
+		},
+		afterEach : function() {
+			this.ftnPressHandler.restore();
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
 		}
+	});
 
-		fnPressHandler = function() {
-		}
+	QUnit.test("No press event test", function(assert) {
+		assert.equal(this.hasAttribute("tabindex", this.oGenericTile), true, "GenericTile can have focus no matter it has press event or not");
+		assert.equal(this.oGenericTile.$().hasClass("sapMPointer"), true, "GenericTile can have hand pointer no matter it has press event or not");
+		this.oGenericTile.$().trigger('tap');
+		assert.notOk(this.ftnPressHandler.calledOnce, "no press event is triggered");
+	});
 
-		hasAttribute = function(sAttribute, oCurrentObject) {
-			var sAttributeValue = oCurrentObject.$().attr(sAttribute);
-			if (typeof sAttributeValue !== typeof undefined && sAttributeValue !== false) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-	}());
+	QUnit.test("Press event tap test", function(assert) {
+		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
+		this.oGenericTile.$().trigger('tap');
+		assert.ok(this.ftnPressHandler.calledOnce, "Press event is triggered when mouse click");
+	});
+
+	QUnit.test("Press event enter up test", function(assert) {
+		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
+		var e = jQuery.Event('keyup');
+		e.keyCode = jQuery.sap.KeyCodes.ENTER;
+		this.oGenericTile.$().trigger(e);
+		assert.ok(this.ftnPressHandler.calledOnce, "Press event is triggered when enter up");
+	});
+
+	QUnit.test("Press event enter down test", function(assert) {
+		this.oGenericTile.attachEvent("press", this.ftnPressHandler);
+		var e = jQuery.Event('keydown');
+		e.keyCode = jQuery.sap.KeyCodes.ENTER;
+		this.oGenericTile.$().trigger(e);
+		assert.ok(this.ftnPressHandler.notCalled, "Press event is not triggered when enter down")
+	});
 </script>
 </head>
 

@@ -27,6 +27,10 @@ html.sap-desktop .sapMFC:focus {
 	outline: 1px dotted @sapHCStandardFG; /* Usage of px as aligned with designers. */
 }
 
+html.sap-desktop .sapMFC:focus:not([tabindex]) {
+	outline: none;
+}
+
 .sapMFCValue {
 	font-family: @sapUiFontFamily;
 }

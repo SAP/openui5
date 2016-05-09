@@ -111,4 +111,15 @@
 			</TileContent>
 		</tileContent>
 	</GenericTile>
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Status Disabled - with press event"
+		subheader="Subheader" frameType="OneByOne" state="Disabled" press="press">
+		<tileContent>
+			<TileContent footer="Footer" unit="Unit">
+				<content>
+					<NumericContent value="3"
+						icon="sap-icon://travel-expense" />
+				</content>
+			</TileContent>
+		</tileContent>
+	</GenericTile>
 	</core:View>
