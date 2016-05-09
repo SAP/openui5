@@ -418,7 +418,7 @@ sap.ui.core.mvc.Controller</title>
 				};
 			};
 			this.fnChangeSourcePreprocessor = function(xml) {
-				this.xml = jQuery.sap.parseXML("<mvc:XMLView xmlns:mvc='sap.ui.core.mvc/>").documentElement;
+				this.xml = jQuery.sap.parseXML(this.sViewContent).documentElement;
 				return this.xml;
 			}.bind(this);
 			this.createView = function(bAsync) {
@@ -428,7 +428,7 @@ sap.ui.core.mvc.Controller</title>
 				};
 				return sap.ui.xmlview({
 					async: bAsync,
-					viewContent: "<mvc:XMLView xmlns:mvc='sap.ui.core.mvc'/>",
+					viewContent: this.sViewContent,
 					preprocessors: {
 						xml:preprocessor,
 						viewxml: preprocessor
