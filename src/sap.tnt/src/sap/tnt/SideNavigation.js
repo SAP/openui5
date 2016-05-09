@@ -124,7 +124,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
             }
 
             if (isExpanded) {
-                that.getDomRef().classList.toggle('sapTntSideNavigationNotExpanded', !isExpanded);
+                that.$().toggleClass('sapTntSideNavigationNotExpanded', !isExpanded);
 
                 if (that.getAggregation('item')) {
                     that.getAggregation('item').setExpanded(isExpanded);
@@ -167,10 +167,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
                 return;
             }
 
-            this.getDomRef().classList.toggle('sapTntSideNavigationNotExpandedWidth', !isExpanded);
+            this.$().toggleClass('sapTntSideNavigationNotExpandedWidth', !isExpanded);
 
             if (!isExpanded) {
-                this.getDomRef().classList.toggle('sapTntSideNavigationNotExpanded', !isExpanded);
+                this.$().toggleClass('sapTntSideNavigationNotExpanded', !isExpanded);
 
                 if (this.getAggregation('item')) {
                     this.getAggregation('item').setExpanded(isExpanded);
