@@ -45,6 +45,28 @@ QUnit.module("Basics", {
 	}
 });
 
+QUnit.test("Check If PopupSupport Was Loaded Properly", function(assert) {
+	var aMethods = this.oPopup.getMetadata().getPublicMethods();
+
+	assert.ok(aMethods.indexOf("getParentPopup"), "'getParentPopup' was added as public method");
+	assert.ok(aMethods.indexOf("isInPopup"), "'isInPopup' was added as public method");
+	assert.ok(aMethods.indexOf("getParentPopupId"), "'getParentPopupId' was added as public method");
+	assert.ok(aMethods.indexOf("addToPopup"), "'addToPopup' was added as public method");
+	assert.ok(aMethods.indexOf("removeFromPopup"), "'removeFromPopup' was added as public method");
+});
+
+QUnit.test("Check Amount of Public Methods", function(assert) {
+	var oPopup1DomRef = jQuery.sap.domById("popup1"),
+			oPopup1 = new sap.ui.core.Popup(oPopup1DomRef),
+			iMethodsCount1 = oPopup1.getMetadata()._aPublicMethods.length,
+
+			oPopup2DomRef = jQuery.sap.domById("popup2"),
+			oPopup2 = new sap.ui.core.Popup(oPopup2DomRef),
+			iMethodsCount2 = oPopup2.getMetadata()._aPublicMethods.length;
+
+	assert.equal(iMethodsCount1, iMethodsCount2, "Both Popups must have the same amount of public methods");
+});
+
 QUnit.asyncTest("Open Popup", function(assert) {
 	expect(7);
 
