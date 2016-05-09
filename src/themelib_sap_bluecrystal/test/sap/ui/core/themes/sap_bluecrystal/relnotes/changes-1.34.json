@@ -643,5 +643,24 @@
         "references": []
       }
     ]
+  },
+  "1.34.12": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "8ae686d5a9fd7836325ee32a4519e3e92a04066c",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ActionListItem: Legacy outline offset fix for IE.",
+        "references": []
+      },
+      {
+        "id": "65380a6174cdc4d3a248bc1703b87f4012e0c27a",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: The underlying elements below the focus overlay can be clicked",
+        "references": []
+      }
+    ]
   }
 }

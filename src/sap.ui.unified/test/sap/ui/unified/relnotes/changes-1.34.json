@@ -353,5 +353,17 @@
         "references": []
       }
     ]
+  },
+  "1.34.12": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "d9e722b0520be9e9ebe648d11080dadc577e928a",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarRow: appointments wrong position if theme applied late",
+        "references": []
+      }
+    ]
   }
 }
