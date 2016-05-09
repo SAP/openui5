@@ -299,5 +299,17 @@
         "references": []
       }
     ]
+  },
+  "1.36.9": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "bc5d2491918010b411c3eabaf65b79d1f77a840e",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.table.Table: Column header menu on touch devices",
+        "references": []
+      }
+    ]
   }
 }

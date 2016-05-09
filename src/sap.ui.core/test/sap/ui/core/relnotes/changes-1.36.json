@@ -1114,5 +1114,115 @@
         "references": []
       }
     ]
+  },
+  "1.36.9": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "2cb1d3a9f2fae0e0acf968fd0d8372ac3a071855",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "model.odata.AnnotationParser: Support Nested Annotations",
+        "references": []
+      },
+      {
+        "id": "79bb6de0f060691b43b8228ad0bc6d31256b3fdf",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "BusyIndicator: Supress \u0027touchmove\u0027 on Control Level",
+        "references": []
+      },
+      {
+        "id": "c7377dca20fd22281eb9bea3a79cb602e8c3918d",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "Component: Delegate runAsOwner using sap.ui.component async",
+        "references": []
+      },
+      {
+        "id": "b32bccaa9fd8abe0b5879fe7428fe7c69973aa9b",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "Databinding tutorial: Fix minor bugs in explored examples",
+        "references": []
+      },
+      {
+        "id": "2e3a503fec8546a4151d53d3a77314e6fbec7653",
+        "author": "Martin Schaus \u003cmartin.schaus@sap.com\u003e",
+        "type": "FIX",
+        "text": "Fieldgroups might return undefined, leading to issues in UIArea",
+        "references": []
+      },
+      {
+        "id": "dc116daefc451ce79e7dd73624cd3c540b388aa7",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "ManagedObject: Propagate properties when setting parent to null",
+        "references": []
+      },
+      {
+        "id": "05e110eb07c3388aae24b1e370c6ca39379a7931",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "Popup: Order of Functions During Opening Fixed",
+        "references": []
+      },
+      {
+        "id": "86609ca0dfcf1367a481df20979c4276daf2f654",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FIX",
+        "text": "core/StashedControlSupport: Unstash with owner component",
+        "references": []
+      },
+      {
+        "id": "847833d14a6f6623c9d28f864eee660024f42a01",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "don\u0027t fail when access to local storage is disallowed",
+        "references": []
+      },
+      {
+        "id": "59761b95645f039533d0828442ab21f079559fba",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FIX",
+        "text": "mvc/XMLView: Fixed rendering of invisible child controls",
+        "references": []
+      },
+      {
+        "id": "b6b55347bcb8a9afd87083a32b2970585fadb8e3",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.LocaleData: Correctly expand fields in custom date pattern",
+        "references": []
+      },
+      {
+        "id": "b300356af841ed753be9a1c22325caa85ddd77b3",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.format.NumberFormat: Make currency with negative number non breakable",
+        "references": []
+      },
+      {
+        "id": "c1e0c3a93526ac0b231dbdf0a725f5330b932c55",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.util.File: Handle utf-8 content on Safari",
+        "references": []
+      },
+      {
+        "id": "2e9e34d192eb7f98e866942830d95d3d70973814",
+        "author": "Sven Bernhard \u003csven.bernhard@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.ODataMetaModel: Fixed wrong vocabulary",
+        "references": []
+      },
+      {
+        "id": "2e32557737117ee576075d6bb95319ef5b42ab8a",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataListBinding: Set length to final in InlineRepeat mode",
+        "references": []
+      }
+    ]
   }
 }

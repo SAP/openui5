@@ -246,5 +246,24 @@
         "references": []
       }
     ]
+  },
+  "1.36.9": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "960c65b078732ce97219f2f503b1c6970dea72e1",
+        "author": "Teodor Taushanov \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Tab content is no longer rendered when the control is destroyed",
+        "references": []
+      },
+      {
+        "id": "4ae6b966de619c828f138b5db754e7d13b295a7c",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Tree - Base images provided.",
+        "references": []
+      }
+    ]
   }
 }

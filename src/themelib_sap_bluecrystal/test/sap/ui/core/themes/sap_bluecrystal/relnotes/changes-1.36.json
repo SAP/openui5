@@ -18,7 +18,7 @@
       },
       {
         "id": "f884a156e1d83d5c09984593675ada65d67063fc",
-        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "author": "Cahit Guerguec \u003ccahit.guerguec@sap.com\u003e",
         "type": "FEATURE",
         "text": "sap.m.DateTimeInput: Deprecated.",
         "references": []
@@ -408,6 +408,32 @@
         "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FIX",
         "text": "sap.ui.layout.form.GridLayout: labels not aligned in Firefox",
+        "references": []
+      }
+    ]
+  },
+  "1.36.9": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "30fe729f418aeea6f4dd4f48e28ceccb0b230fa7",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ActionListItem: Legacy outline offset fix for IE.",
+        "references": []
+      },
+      {
+        "id": "1f39dc50271dd8381954a00687ec31dedb770680",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: The underlying elements below the focus overlay can be clicked",
+        "references": []
+      },
+      {
+        "id": "676c11d61b678b56ad6c204563a39a1c6b4d25a8",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: Active attribute focus outline fixed",
         "references": []
       }
     ]

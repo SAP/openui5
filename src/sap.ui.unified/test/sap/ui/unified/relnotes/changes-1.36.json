@@ -217,5 +217,24 @@
         "references": []
       }
     ]
+  },
+  "1.36.9": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "b4271ed011f87ac91bc2969d59c32a29cfbe65b7",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarRow: Appointments wrong position if theme applied late",
+        "references": []
+      },
+      {
+        "id": "9be3302f714ebbbb8e1102fd1d4530e1980ded10",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": ": sap.ui.unified.Calendar: Aria-selected missing on MonthPicker and YearPicker",
+        "references": []
+      }
+    ]
   }
 }
