@@ -36,3 +36,7 @@
 html.sap-desktop .sapMFC:focus {
 	outline: 1px dotted @sapUiContentFocusColor; /* Usage of px as aligned with designers. */
 }
+
+html.sap-desktop .sapMFC:focus:not([tabindex]) {
+	outline: none;
+}
