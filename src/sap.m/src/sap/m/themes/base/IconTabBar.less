@@ -82,11 +82,12 @@
 /* Head Container */
 
 .sapMITBHead {
-	display: block;
-	margin: 1rem 2rem 0 2rem;
 	overflow: hidden;
 	position: relative;
 	white-space: nowrap;
+	display: inline-block;
+	margin: 1rem 0.75rem 0 0.25rem;
+	vertical-align: top;
 }
 
 html.sap-phone .sapMITB .sapMITBHead {
@@ -96,17 +97,9 @@ html.sap-phone .sapMITB .sapMITBHead {
 	padding: 0;
 }
 
-html.sap-tablet .sapMITBHead,
-html[data-sap-ui-os=win8] .sapMITBHead,
-html[data-sap-ui-os=win10] .sapMITBHead {
-	display: inline-block;
-	margin: 1rem 0.75rem 0 0.25rem;
-	vertical-align: top;
-}
-
 .sapMITBScrollContainer {
 	display: block;
-	margin: 0 1.5rem;
+	margin: 0 1.75rem;
 }
 
 html.sap-phone .sapMITBScrollContainer {
@@ -116,12 +109,6 @@ html.sap-phone .sapMITBScrollContainer {
 
 .sapMITBScrollContainer::-webkit-scrollbar {
 	display: none;
-}
-
-html.sap-tablet .sapMITBScrollContainer,
-html[data-sap-ui-os=win8] .sapMITBScrollContainer,
-html[data-sap-ui-os=win10] .sapMITBScrollContainer {
-	margin: 0 1.75rem;
 }
 
 /* scrollbar from iscroll should not be visible */
@@ -184,13 +171,6 @@ html.sap-phone .sapMITBContent {
 	position: relative;
 }
 
-html.sap-phone .sapMITBContainerContent,
-html.sap-tablet .sapMITBContainerContent,
-html[data-sap-ui-os=win8] .sapMITBContainerContent,
-html[data-sap-ui-os=win10] .sapMITBContainerContent {
-	margin-top: 0;
-}
-
 .sapMITBContainerContent.sapMITBContentClosed {
 	background-color: transparent;
 	border-bottom: none;
@@ -225,7 +205,7 @@ html[dir=rtl] .sapMITBTextOnly .sapMITBTab {
 	vertical-align: top;
 }
 
-html.sap-desktop .sapMITBFilter {
+.sap-desktop .sapMITBFilter {
 	cursor: pointer;
 }
 
@@ -440,14 +420,8 @@ html.sap-phone .sapMITBAll .sapMITBText {
 	padding-right: 0.5rem;
 }
 
-html.sap-phone .sapMITBFilter:last-child,
-html.sap-tablet .sapMITBFilter:last-child,
-html[data-sap-ui-os=win8] .sapMITBFilter:last-child,
-html[data-sap-ui-os=win10] .sapMITBFilter:last-child,
-html.sap-phone .sapMITBNoText .sapMITBFilter:last-child,
-html.sap-tablet .sapMITBNoText .sapMITBFilter:last-child,
-html[data-sap-ui-os=win8] .sapMITBNoText .sapMITBFilter:last-child,
-html[data-sap-ui-os=win10] .sapMITBNoText .sapMITBFilter:last-child {
+.sapMITBFilter:last-child,
+.sapMITBNoText .sapMITBFilter:last-child {
 	padding-right: 1rem;
 }
 
@@ -493,10 +467,7 @@ html.sap-phone .sapMITBSepLine {
 	top: 1px;
 }
 
-html.sap-phone .sapMITBArrowScroll,
-html.sap-tablet .sapMITBArrowScroll,
-html[data-sap-ui-os=win8] .sapMITBArrowScroll,
-html[data-sap-ui-os=win10] .sapMITBArrowScroll {
+.sapMITBArrowScroll {
 	top: 1rem;
 }
 
@@ -577,7 +548,7 @@ html.sap-phone .sapMITB.sapMITBStretch {
 	.sapMITB.sapUiNoContentPadding,
 	.sapMITB.sapUiResponsiveContentPadding {
 		.sapMITBHead {
-			margin: 1rem 1rem 0 1rem;
+			margin: 1rem 1rem 0 0;
 		}
 
 		.sapMITBScrollContainer {
@@ -604,28 +575,11 @@ html.sap-phone .sapMITB.sapMITBStretch {
 			right: 0.25rem;
 		}
 	}
-	.sap-tablet .sapMITB.sapMITBStretch,
-	html[data-sap-ui-os=win8] .sapMITB.sapMITBStretch,
-	html[data-sap-ui-os=win10] .sapMITB.sapMITBStretch {
-		.sapMITBArrowScrollLeftTextOnly,
-		.sapMITBArrowScrollRightTextOnly {
-			padding: 1.25rem 0 0.75rem
-		}
-	}
 
 	.sapMITB.sapMITBStretch {
 		.sapMITBArrowScrollLeftTextOnly,
 		.sapMITBArrowScrollRightTextOnly {
-			padding: 2.1rem 0 0.75rem;
-		}
-	}
-
-	html[data-sap-ui-os=win8] .sapMITB.sapUiNoContentPadding,
-	html[data-sap-ui-os=win10] .sapMITB.sapUiNoContentPadding,
-	html[data-sap-ui-os=win8] .sapMITB.sapUiResponsiveContentPadding,
-	html[data-sap-ui-os=win10] .sapMITB.sapUiResponsiveContentPadding {
-		.sapMITBHead {
-			margin: 1rem 1rem 0 0;
+			padding: 1.25rem 0 0.75rem
 		}
 	}
 }
