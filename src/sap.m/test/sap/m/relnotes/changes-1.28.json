@@ -4893,5 +4893,38 @@
         "references": []
       }
     ]
+  },
+  "1.28.34": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "0ee7297ca8b03034befe6bbb8594476aa282d4de",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedListItem: Screen reader support improved",
+        "references": []
+      },
+      {
+        "id": "c76b543e067dce79fd2bc6945ed3a9b59dbe6047",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FlexBox: Adjustments to tests due to browser changes",
+        "references": []
+      },
+      {
+        "id": "90dd8408f173012a78ad35c6f5d26578c552522a",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: Active title link fixed",
+        "references": []
+      },
+      {
+        "id": "61c4a214022ab203e8253e6f7e33182563571145",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TextArea: Rows property should not conflict with height property.",
+        "references": []
+      }
+    ]
   }
 }
