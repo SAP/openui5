@@ -441,6 +441,33 @@
 
 	});
 
+	test("parse and format fractional seconds", function(){
+		var oDate1 = new Date(1234),
+			oDate2 = new Date(14),
+			oMS1 = sap.ui.core.format.DateFormat.getDateInstance({pattern: "s.S"}),
+			oMS2 = sap.ui.core.format.DateFormat.getDateInstance({pattern: "s.SSS"}),
+			oMS3 = sap.ui.core.format.DateFormat.getDateInstance({pattern: "s.SSSSSS"});
+
+		equal(oMS1.format(oDate1, true), "1.2", "1.2");
+		equal(oMS2.format(oDate1, true), "1.234", "1.234");
+		equal(oMS3.format(oDate1, true), "1.234000", "1.234000");
+		equal(oMS1.format(oDate2, true), "0.0", "0.0");
+		equal(oMS2.format(oDate2, true), "0.014", "0.014");
+		equal(oMS3.format(oDate2, true), "0.014000", "0.014000");
+		equal(oMS1.parse("0.1", true).valueOf(), 100, "0.1");
+		equal(oMS1.parse("0.003", true), null, "0.003");
+		equal(oMS1.parse("0.123", true), null, "0.123");
+		equal(oMS1.parse("0.123456", true), null, "0.123456");
+		equal(oMS2.parse("0.1", true).valueOf(), 100, "0.1");
+		equal(oMS2.parse("0.003", true).valueOf(), 3, "0.003");
+		equal(oMS2.parse("0.123", true).valueOf(), 123, "0.123");
+		equal(oMS2.parse("0.123456", true), null, "0.123456");
+		equal(oMS3.parse("0.1", true).valueOf(), 100, "0.1");
+		equal(oMS3.parse("0.003", true).valueOf(), 3, "0.003");
+		equal(oMS3.parse("0.123", true).valueOf(), 123, "0.123");
+		equal(oMS3.parse("0.123456", true).valueOf(), 123, "0.123456");
+	});
+
 
 	/** TODO: Move to sap.ui.core.date.Gregorian
 	test("DateFormat.calculateWeekNumber", function() {

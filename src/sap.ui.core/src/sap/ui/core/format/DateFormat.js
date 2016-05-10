@@ -314,7 +314,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 		"h": "hour1_12",
 		"m": "minute",
 		"s": "second",
-		"S": "millisecond",
+		"S": "fractionalsecond",
 		"z": "timezoneGeneral",
 		"Z": "timezoneRFC822",
 		"X": "timezoneISO8601"
@@ -502,8 +502,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 				case "second":
 					aBuffer.push(jQuery.sap.padLeft(String(iSeconds), "0", oPart.digits));
 					break;
-				case "millisecond":
-					aBuffer.push(jQuery.sap.padRight(jQuery.sap.padLeft(String(iMilliseconds), "0", Math.min(3, oPart.digits)), "0", oPart.digits));
+				case "fractionalsecond":
+					var sMilliseconds = String(iMilliseconds),
+						sFractionalseconds = jQuery.sap.padLeft(sMilliseconds, "0", 3);
+					sFractionalseconds = sFractionalseconds.substr(0, oPart.digits);
+					sFractionalseconds = jQuery.sap.padRight(sFractionalseconds, "0", oPart.digits);
+					aBuffer.push(sFractionalseconds);
 					break;
 				case "amPmMarker":
 					var iDayPeriod = iHours < 12 ? 0 : 1;
@@ -845,9 +849,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 						bValid = false;
 					}
 					break;
-				case "millisecond":
-					sPart = findNumbers(Math.max(oPart.digits, 3));
+				case "fractionalsecond":
+					sPart = findNumbers(oPart.digits);
 					iIndex += sPart.length;
+					sPart = sPart.substr(0, 3);
 					sPart = jQuery.sap.padRight(sPart, "0", 3);
 					iMilliseconds = parseInt(sPart, 10);
 					break;
@@ -1238,7 +1243,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 			case "hour1_12":
 			case "minute":
 			case "second":
-			case "millisecond":
+			case "fractionalsecond":
 				if (!bNumbers) {
 					sAllowedCharacters += "0123456789";
 					bNumbers = true;
