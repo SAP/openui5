@@ -427,7 +427,7 @@
 				var sDebugUrl = _oBootstrap.url.replace(/\/(?:sap-ui-cachebuster\/)?([^\/]+)\.js/, "/$1-dbg.js");
 				window["sap-ui-optimized"] = false;
 				document.write("<script type=\"text/javascript\" src=\"" + sDebugUrl + "\"></script>");
-				var oRestart = new Error("Aborting UI5 bootstrap and restarting from: " + sDebugUrl);
+				var oRestart = new Error("This is not a real error. Aborting UI5 bootstrap and restarting from: " + sDebugUrl);
 				oRestart.name = "Restart";
 				throw oRestart;
 			}
