@@ -101,7 +101,7 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	 * @param {boolean|string} [oConstraints.nullable=true]
 	 *   if <code>true</code>, the value <code>null</code> is accepted
 	 * @public
-	 * @since 1.33.0
+	 * @since 1.37.0
 	 * @see http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part3-csdl.html
 	 */
 	var EdmDate = ODataType.extend("sap.ui.model.odata.type.Date",
