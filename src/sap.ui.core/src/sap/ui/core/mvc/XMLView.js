@@ -44,7 +44,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 			 * that subtree is provided with this setting.
 			 */
 			xmlNode : true
-		}
+		},
+		designtime : true
 	}});
 
 		/**
