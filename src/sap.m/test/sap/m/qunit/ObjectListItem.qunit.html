@@ -302,6 +302,51 @@
 			imageSrc = imageOLI1.$('img').attr('src');
 			strictEqual(imageSrc, imageOLI1.getIcon(), "The icon should be inactive");
 		});
+
+		module("Icon / Image ratio");
+
+		asyncTest("Icon has equal width and height", function() {
+			var imageOLIIcon = new sap.m.ObjectListItem("imageOLIIcon", {
+				icon : "sap-icon://hint",
+				iconDensityAware: false,
+				intro : "On behalf of John Smith",
+				title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
+				number : "5.624",
+				numberUnit : "EUR"
+			});
+			list.addItem(imageOLIIcon);
+			sap.ui.getCore().applyChanges();
+
+			setTimeout(function() {
+				var iconWidth = imageOLIIcon.$().find('.sapMObjLIcon').width();
+				var iconHeight = imageOLIIcon.$().find('.sapMObjLIcon').height();
+				ok(iconWidth == iconHeight, "Icon has equal width and height");
+				imageOLIIcon.destroy();
+				start();
+			},1000);
+		});
+
+		asyncTest("Image has different width and height", function() {
+			var imageOLIImg = new sap.m.ObjectListItem("imageOLIImg", {
+				icon : "../images/grass.jpg",
+				iconDensityAware: false,
+				intro : "On behalf of John Smith",
+				title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
+				number : "5.624",
+				numberUnit : "EUR"
+			});
+			list.addItem(imageOLIImg);
+			sap.ui.getCore().applyChanges();
+
+			setTimeout(function() {
+				var imageWidth = imageOLIImg.$('img').width();
+				var imageHeight = imageOLIImg.$('img').height();
+				ok(imageWidth > imageHeight, "The image still has different width and height");
+				imageOLIImg.destroy();
+				start();
+			},1000);
+		});
+
 		/******************************************************************/
 
 		module("Events", {
