@@ -151,7 +151,7 @@ html.sap-desktop .sapMSegBBtnFocusable:hover {
 }
 
 .sapMSegBBtnSel:active,
-.sap-desktop .sapMSegBBtnSel:hover,
+html.sap-desktop .sapMSegBBtnSel:hover,
 .sapMSegBBtnFocusable.sapMBtnActive:hover {
 	background: @sapHCHighlightBG;
 }
@@ -267,21 +267,6 @@ html[data-sap-ui-os^="Android4.3"][data-sap-ui-browser^="an"] {
 	}
 	.sapMSegBBtnSel:focus {
 		background-color: @sapHCHighlightBG;
-	}
-}
-
-/* Android 4.4 Specific fixes */
-html[data-sap-ui-os^="Android4.4"] {
-	.sapMSegB {
-		display: block;
-	}
-	header,
-	footer,
-	.sapMBar {
-		.sapMSegB {
-			line-height: 1.5rem;
-			display: inline-block;
-		}
 	}
 }
 

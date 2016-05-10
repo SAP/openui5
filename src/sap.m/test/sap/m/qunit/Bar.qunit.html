@@ -384,6 +384,22 @@
 				sut.destroy();
 			});
 
+				test("ariaLabbeledBy", function() {
+
+				//Arrange
+				var oBar = new sap.m.Bar(),
+				oInvisibleText = new sap.ui.core.InvisibleText({text: "invisible text"});
+
+				oBar.addAriaLabelledBy(oInvisibleText.toStatic());
+
+				//Assert
+				equal(oBar.getAriaLabelledBy(), oInvisibleText.getId(), "Bar has attribute aria-labelledby to the internal label");
+
+				//Cleanup
+				oInvisibleText.destroy();
+				oBar.destroy();
+			});
+
 			//Firefox has flexbox therefore positioning is different
 			if(sap.ui.Device.browser.firefox) {
 				return;

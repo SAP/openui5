@@ -1,92 +1,8 @@
-
 //************************************************************************
 // Preparation Code
 //************************************************************************
 
-sap.ui.core.Control.extend("TestControl", {
-	metadata : {
-		properties : {
-			"text" : "string",
-			"src" : "sap.ui.core.URI",
-			"alt" : "string",
-			"index" : "int" // Results in different behavior of the control in different columns
-		}
-	},
-
-	renderer : function(oRm, oControl) {
-		oRm.write("<span");
-		oRm.writeControlData(oControl);
-		oRm.writeClasses();
-		oRm.write(">");
-		oRm.writeEscaped(oControl.getText() || oControl.getAlt() || "");
-		oRm.write("</span>");
-	}
-});
-
-sap.ui.table.TableHelper = {
-	createLabel: function(mConfig){ return new TestControl(mConfig); },
-	createTextView: function(mConfig){ return new TestControl(mConfig); },
-	createTextField: function(mConfig){ throw new Error("no TextField control available!"); },
-	createImage: function(mConfig){ return new TestControl(mConfig); },
-	addTableClass: function() { return "sapUiTableM"; },
-	bFinal: true
-};
-
-var oTable = new sap.ui.table.Table({
-	rows: "{/rows}",
-	title: "TABLE_TITLE",
-	selectionMode: "MultiToggle",
-	visibleRowCount: 3,
-	fixedColumnCount: 1
-});
-
-var aFields = ["A", "B", "C", "D", "E"];
-var oData = {rows: []};
-var oRow;
-for (var i = 0; i < 5; i++) {
-	oRow = {};
-	for (var j = 0; j < aFields.length; j++) {
-		oRow[aFields[j]] = aFields[j] + (i+1);
-		if (i == 0) {
-			oTable.addColumn(new sap.ui.table.Column({
-				label: aFields[j] + "_TITLE",
-				width: "100px",
-				template: new TestControl({
-					text: "{" + aFields[j] + "}",
-					index: j
-				})
-			}));
-		}
-	}
-	oData.rows.push(oRow);
-}
-
-jQuery.sap.require("sap.ui.model.json.JSONModel");
-var oModel = new sap.ui.model.json.JSONModel();
-oModel.setData(oData);
-oTable.setModel(oModel);
-oTable.placeAt("content");
-
-//************************************************************************
-// Helper Functions
-//************************************************************************
-
-function getCell(iRow, iCol, bFocus, assert) {
-	var oCell = jQuery.sap.domById(oTable.getId() + "-rows-row" + iRow + "-col" + iCol);
-	if (bFocus) {
-		oCell.focus();
-		assert.ok(oCell === document.activeElement, "Cell [" + iRow + ", " + iCol + "] focused");
-	} else {
-		assert.ok(oCell != document.activeElement, "Cell [" + iRow + ", " + iCol + "] not focused");
-	}
-	return jQuery(oCell);
-}
-
-function setFocusOutsideOfTable() {
-	var oOuterElement = jQuery.sap.domById("outerelement");
-	oOuterElement.focus();
-	assert.ok(oOuterElement === document.activeElement, "Outer element focused");
-}
+createTables();
 
 
 //************************************************************************
@@ -131,11 +47,11 @@ QUnit.test("init() / destroy()", function(assert) {
 
 QUnit.test("invalidation", function(assert) {
 	var oExtension = oTable._getKeyboardExtension();
-	ok(!oExtension._itemNavigationInvalidated, "Item Navigation not invalid");
+	assert.ok(!oExtension._itemNavigationInvalidated, "Item Navigation not invalid");
 	oExtension.invalidateItemNavigation();
-	ok(oExtension._itemNavigationInvalidated, "Item Navigation invalid");
+	assert.ok(oExtension._itemNavigationInvalidated, "Item Navigation invalid");
 	oExtension.initItemNavigation();
-	ok(!oExtension._itemNavigationInvalidated, "Item Navigation not invalid");
+	assert.ok(!oExtension._itemNavigationInvalidated, "Item Navigation not invalid");
 });
 
 var aEvents = ["focusin", "sapfocusleave", "mousedown", "sapnext", "sapnextmodifiers", "sapprevious", "sappreviousmodifiers",
@@ -166,7 +82,7 @@ QUnit.test("ItemNavigationDelegate", function(assert) {
 QUnit.test("Suspend / Resume", function(assert) {
 	var oControl = setupItemNavigationFakeTest();
 
-	oControl._getKeyboardExtension().suspendItemNavigation();
+	oControl._getKeyboardExtension()._suspendItemNavigation();
 
 	assert.expect(14);
 
@@ -174,7 +90,7 @@ QUnit.test("Suspend / Resume", function(assert) {
 		oControl._handleEvent(jQuery.Event(aEvents[i]));
 	}
 
-	oControl._getKeyboardExtension().resumeItemNavigation();
+	oControl._getKeyboardExtension()._resumeItemNavigation();
 
 	for (var i = 0; i < aEvents.length; i++) {
 		oControl._handleEvent(jQuery.Event(aEvents[i]));
@@ -199,6 +115,130 @@ QUnit.test("Marked Event", function(assert) {
 	}
 
 	oControl._getKeyboardExtension().destroy();
+});
+
+QUnit.test("Stored Focus Position", function(assert) {
+	var oExtension = oTable._getKeyboardExtension();
+	oExtension._oLastFocusedCellInfo = null;
+
+	var oInfo = oExtension._getLastFocusedCellInfo();
+	assert.strictEqual(oInfo.cell, iNumberOfCols + 2 /* 2* row header*/, "cell");
+	assert.strictEqual(oInfo.row, 1, "row");
+	assert.strictEqual(oInfo.columnCount, iNumberOfCols + 1 /*row header*/, "columnCount");
+	assert.strictEqual(oInfo.cellInRow, 1, "cellInRow");
+	assert.strictEqual(oInfo.cellCount, (iNumberOfCols + 1) * (3 /*visible rows*/ + 1), "cellCount");
+	assert.strictEqual(oInfo.header, 1, "header");
+
+	ok(!oExtension._oLastFocusedCellInfo, "No LastFocusedCellInfo stored");
+
+	getCell(1, 2, true, assert);
+
+	oInfo = oExtension._getLastFocusedCellInfo();
+	assert.strictEqual(oInfo.cell, 2 * (iNumberOfCols + 1) + 3, "cell");
+	assert.strictEqual(oInfo.row, 2, "row");
+	assert.strictEqual(oInfo.columnCount, iNumberOfCols + 1 /*row header*/, "columnCount");
+	assert.strictEqual(oInfo.cellInRow, 3, "cellInRow");
+	assert.strictEqual(oInfo.cellCount, (iNumberOfCols + 1) * (3 /*visible rows*/ + 1), "cellCount");
+	assert.strictEqual(oInfo.header, 1, "header");
+
+	ok(oExtension._oLastFocusedCellInfo === oInfo, "LastFocusedCellInfo stored");
+});
+
+
+QUnit.module("Misc");
+
+
+QUnit.test("Silent Focus", function(assert) {
+	var oDelegate = {
+		onfocusin : function(oEvent) {
+			assert.ok(oEvent.isMarked("sapUiTableIgnoreFocusIn"), "Focus Event is marked to be ignored");
+		}
+	};
+	oTable.addEventDelegate(oDelegate);
+	assert.expect(1);
+	var oExtension = oTable._getKeyboardExtension();
+	oExtension._setSilentFocus(getCell(0, 0));
+	oTable.removeEventDelegate(oDelegate);
+});
+
+
+QUnit.test("Resize Bar", function(assert) {
+	var oDelegate = {
+		onfocusin : function(oEvent) {
+			assert.ok(oEvent.isMarked("sapUiTableSkipItemNavigation"), "Focus Event is marked to be ignored by the item navigation");
+		}
+	};
+	oTable.addEventDelegate(oDelegate);
+	assert.expect(1);
+	jQuery.sap.domById(oTable.getId() + "-rsz").focus();
+	oTable.removeEventDelegate(oDelegate);
+});
+
+
+QUnit.test("Action Mode", function(assert) {
+	var oTestArgs = {};
+	var bSkipActionMode = false;
+	var bTestArguments = true;
+	var bHandlerCalled = false;
+
+	function testHandler (oArgs) {
+		assert.ok(!!oArgs, "Arguments given");
+		if (bTestArguments) {
+			assert.strictEqual(oArgs, oTestArgs, "Arguments forwarded as expected");
+		}
+		bHandlerCalled = true;
+	};
+
+	var oControl = new TestControl();
+	var oExtension = sap.ui.table.TableExtension.enrich(oControl, sap.ui.table.TableKeyboardExtension);
+	oExtension._delegate = {
+		enterActionMode : function(oArgs) {
+			testHandler(oArgs);
+			return !bSkipActionMode;
+		},
+		leaveActionMode : testHandler
+	};
+
+	assert.ok(!oExtension.isInActionMode(), "Initially no action mode");
+
+	oExtension.setActionMode(true, oTestArgs);
+	assert.ok(bHandlerCalled, "enterActionMode called");
+	assert.ok(oExtension.isInActionMode(), "Switched to action mode");
+	bHandlerCalled = false;
+
+	bTestArguments = false;
+	oExtension.setActionMode(true, oTestArgs);
+	assert.ok(!bHandlerCalled, "enterActionMode not called after duplicate setActionMode");
+	assert.ok(oExtension.isInActionMode(), "Still in action mode");
+	bTestArguments = true;
+
+	oExtension.setActionMode(false, oTestArgs);
+	assert.ok(bHandlerCalled, "leaveActionMode called");
+	assert.ok(!oExtension.isInActionMode(), "Switched off action mode");
+	bHandlerCalled = false;
+
+	bTestArguments = false;
+	oExtension.setActionMode(false, oTestArgs);
+	assert.ok(!bHandlerCalled, "leaveActionMode not called after duplicate setActionMode");
+	assert.ok(!oExtension.isInActionMode(), "Still not in action mode");
+	bTestArguments = true;
+
+	bSkipActionMode = true;
+	oExtension.setActionMode(true, oTestArgs);
+	assert.ok(bHandlerCalled, "enterActionMode called");
+	assert.ok(!oExtension.isInActionMode(), "Still not in action mode");
+
+	oControl.destroy();
+});
+
+
+QUnit.test("Table Type", function(assert) {
+	assert.strictEqual((new sap.ui.table.TreeTable())._getKeyboardExtension()._getTableType(),
+		sap.ui.table.TableExtension.TABLETYPES.TREE, "TREE");
+	assert.strictEqual((new sap.ui.table.Table())._getKeyboardExtension()._getTableType(),
+		sap.ui.table.TableExtension.TABLETYPES.STANDARD, "STANDARD");
+	assert.strictEqual((new sap.ui.table.AnalyticalTable())._getKeyboardExtension()._getTableType(),
+		sap.ui.table.TableExtension.TABLETYPES.ANALYTICAL, "ANALYTICAL");
 });
 
 

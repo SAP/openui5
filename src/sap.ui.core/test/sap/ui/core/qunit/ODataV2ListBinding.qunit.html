@@ -825,11 +825,55 @@
 				{ index: 2, type: "insert" },
 				{ index: 3, type: "insert" }
 			], "2 deletes & 2 inserts");
+			var aContexts = oBinding.getCurrentContexts();
+			aContexts[0].getObject().CategoryName = "Other";
+			deepEqual(oBinding.getContexts(4, 4).diff, [
+				{ index: 0, type: "delete" },
+			    { index: 0, type: "insert" }
+			], "Property change causes delete and insert")
 			oBinding.detachChange(handler);
 			start(); // resume normal testing
 		}
 		oBinding.attachChange(handler);
-		oBinding.bUseExtendedChangeDetection = true;
+		oBinding.enableExtendedChangeDetection(true);
+		oBinding.attachRefresh(function() {
+			oBinding.getContexts(0, 8);
+		});
+	});
+
+	asyncTest("ListBinding Diff with key", function(){
+		var oBinding = oModel.bindList("/Categories");
+		var handler = function(oEvent) {
+			ok(!oBinding.getContexts(0, 2).diff,"No diff if binding was initial")
+			ok(oBinding.getContexts(0, 2).diff.length == 0,"Diff with length 0")
+			deepEqual(oBinding.getContexts(0, 8).diff, [
+				{ index: 2, type: "insert" },
+				{ index: 3, type: "insert" },
+				{ index: 4, type: "insert" },
+				{ index: 5, type: "insert" },
+				{ index: 6, type: "insert" },
+				{ index: 7, type: "insert" }
+			], "6 insertions");
+			deepEqual(oBinding.getContexts(2, 4).diff, [
+				{ index: 0, type: "delete" },
+				{ index: 0, type: "delete" },
+				{ index: 4, type: "delete" },
+				{ index: 4, type: "delete" }
+			], "4 deletes");
+			deepEqual(oBinding.getContexts(4, 4).diff, [
+				{ index: 0, type: "delete" },
+				{ index: 0, type: "delete" },
+				{ index: 2, type: "insert" },
+				{ index: 3, type: "insert" }
+			], "2 deletes & 2 inserts");
+			var aContexts = oBinding.getCurrentContexts();
+			aContexts[0].getObject().CategoryName = "Other";
+			ok(oBinding.getContexts(4, 4).diff.length == 0, "No diff for property change")
+			oBinding.detachChange(handler);
+			start(); // resume normal testing
+		}
+		oBinding.attachChange(handler);
+		oBinding.enableExtendedChangeDetection(false);
 		oBinding.attachRefresh(function() {
 			oBinding.getContexts(0, 8);
 		});
@@ -994,7 +1038,7 @@
 			// data from its data-sources
 			equal(oBinding.aKeys.length, 2, "Loaded data count");
 			equal(oBinding.iLength, 3, "Service says there are still entities to load");
-			equal(oBinding.bLengthFinal, false, "Length should not be final already");
+			equal(oBinding.bLengthFinal, true, "Length should be final as provided by the service");
 
 			oBinding.attachChange(handler2);
 			oBinding.getContexts(2, 1, 0);
@@ -1159,7 +1203,8 @@
 			oBinding.attachChange(handler2);
 			equal(oSpy.callCount, 1, "1 Request has been triggered to load data")
 			oSpy.reset();
-			equal(oBinding.getContexts().length, 8, "Current context length is 8");
+			oBinding.getContexts();
+			equal(oBinding.getCurrentContexts().length, 8, "Current context length is 8");
 			oBinding.suspend();
 			oModel.remove("/Categories(1)", {groupId: "changes"});
 			oModel.submitChanges({groupId: "changes", success: handler3});
@@ -1172,7 +1217,7 @@
 			oBinding.attachChange(handler4);
 			equal(oSpy.callCount, 0, "No request was triggered for autorefresh")
 			oSpy.reset();
-			equal(oBinding.getContexts().length, 8, "Current context length is 8");
+			equal(oBinding.getCurrentContexts().length, 8, "Current context length is 8");
 			oBinding.resume();
 		};
 		var handler4 = function() {

@@ -27,18 +27,159 @@
 
 	<script>
 		jQuery.sap.require("sap.ui.core.format.DateFormat");
+		jQuery.sap.require("sap.m.TimePickerSliders");
 		jQuery.sap.require("sap.m.TimePickerSlider");
+		jQuery.sap.require("sap.m.VisibleItem");
+
+		module("step precision in time picker", {
+			beforeEach: function() {
+				this.oTp = new sap.m.TimePicker();
+				this.oTp.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function() {
+				this.oTp.destroy();
+				this.oTp = null;
+			}
+		});
+
+		test("sliders initial minutesStep value", function() {
+			var STEP = 17;
+			this.oTp.setMinutesStep(STEP);
+
+			//Assert
+			ok(!this.oTp._getSliders(), "no picker -> no sliders");
+
+			//Act
+			this.oTp._createPicker(this.oTp.getDisplayFormat());
+
+			//Assert
+			equal(this.oTp._getSliders().getMinutesStep(), STEP, "initial value of the time picker for minutesStep is used");
+		});
+
+		test("setMinutesStep", function() {
+			var oSpySetProperty,
+					oSpySlidersSetMinutesStep,
+					STEP = 23;
+			//arrange
+			this.oTp._createPicker(this.oTp.getDisplayFormat());
+
+			oSpySetProperty = this.spy(this.oTp, "setProperty");
+			oSpySlidersSetMinutesStep = this.spy(this.oTp._getSliders(), "setMinutesStep");
+
+			//Act
+			this.oTp.setMinutesStep(STEP);
+
+			//Assert
+			ok(oSpySlidersSetMinutesStep.calledWith(STEP), "setMinutesStep is propagated to the picker part");
+			ok(oSpySetProperty.calledWith("minutesStep", STEP, true), "property is updated without re-rendering");
+		});
+
+		module("step precision in sliders", {
+			beforeEach: function() {
+				this.oSliders = new sap.m.TimePickerSliders({
+					format: "hh mm ss",
+					labelText: "label",
+					minutesStep: this.STEP
+				});
+				this.oSliders.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function() {
+				this.oSliders.destroy();
+				this.oSliders = null;
+			},
+			STEP: 5,
+			ANOTHER_STEP: 14
+		});
+
+		test("setMinutesStep", function() {
+			var oSpySetProperty = this.spy(this.oSliders, "setProperty"),
+				oSpySetupLists = this.spy(this.oSliders, "_setupLists");
+
+			//Act
+			this.oSliders.setMinutesStep(this.ANOTHER_STEP);
+
+			//Assert
+			ok(oSpySetProperty.calledWith("minutesStep", this.ANOTHER_STEP, true), "property updated without re-rendering");
+			ok(oSpySetupLists.calledOnce, "sliders are re-build");
+		});
+
+		module("step precision in a single slider", {
+			beforeEach: function() {
+				this.oSlider = new sap.m.TimePickerSlider({
+					items: [
+						sap.m.TimePickerSliders.prototype._generatePickerListValues(0, 59, this.STEP, true)
+					]
+				});
+				this.oSlider.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function() {
+				this.oSlider.destroy();
+				this.oSlider = null;
+			},
+			STEP: 11,
+			ANOTHER_STEP: 14
+		});
+
+		test("_updateStepAndValue", function() {
+			var $ValuesContainer = this.oSlider.$().find(".sapMTimePickerSlider"),
+				SELECTED_VALUE = 18,
+				STEP = this.ANOTHER_STEP,
+				fnHasValueMultipleOfStepOrEqualToSelectedValue = function(oItem) {
+					var iItemValue = parseInt(oItem.getText());
+					return iItemValue === SELECTED_VALUE
+							|| iItemValue % STEP === 0;
+				};
+
+			//Act
+			this.oSlider._updateStepAndValue(SELECTED_VALUE, STEP);
+
+			//Assert
+			ok($ValuesContainer.hasClass("SliderValues6"), "values container has the right class");
+			ok(this.oSlider._getVisibleItems().every(fnHasValueMultipleOfStepOrEqualToSelectedValue), "all visible items have correct values");
+			equal(this.oSlider.getSelectedValue(), SELECTED_VALUE, "slider has the right selected value");
+		});
+
+		test("margins are updated on expand", function() {
+			var oSpyUpdateMargins = this.spy(this.oSlider, "_updateMargins");
+
+			//Act
+			this.oSlider.setIsExpanded(true, true);
+
+			//Assert
+			ok(oSpyUpdateMargins.calledOnce, "margins are updated on expand");
+
+			//Act
+			this.oSlider.setIsExpanded(false, true);
+
+			//Assert
+			ok(oSpyUpdateMargins.calledTwice, "margins are updated on collapse");
+		});
+
+		test("setIsCyclic", function() {
+			this.oSlider.setIsCyclic(true);
+
+			ok(!this.oSlider.$().hasClass("sapMTimePickerSliderShort"), "slider styled correctly");
+			equal(this.oSlider.getProperty("isCyclic"), true, "property is updated");
+
+			this.oSlider.setIsCyclic(false);
+
+			ok(this.oSlider.$().hasClass("sapMTimePickerSliderShort"), "slider styled correctly");
+			equal(this.oSlider.getProperty("isCyclic"), false, "property is updated")
+		});
 
 		module("slider select value by typing", {
 			beforeEach: function() {
 				//SUT
 				this.oSlider = new sap.m.TimePickerSlider({
 					items: [
-						{key: "1", text: "01"},
-						{key: "2", text: "02"},
-						{key: "3", text: "03"},
-						{key: "11", text: "11"},
-						{key: "113", text: "113"}
+						new sap.m.VisibleItem({key: "1", text: "01"}),
+						new sap.m.VisibleItem({key: "2", text: "02"}),
+						new sap.m.VisibleItem({key: "3", text: "03"}),
+						new sap.m.VisibleItem({key: "11", text: "11"}),
+						new sap.m.VisibleItem({key: "113", text: "113"})
 					]
 				});
 				this.oSpy = sinon.spy(this.oSlider, "setSelectedValue");
@@ -106,7 +247,7 @@
 		});
 
 		test("After creating a timePicker, the picker aggregation is empty until the picker is opened", function () {
-			ok(!this.oTimePicker._getPicker(), "the picker aggregation is empty before opening the picker")
+			ok(!this.oTimePicker._getPicker(), "the picker aggregation is empty before opening the picker");
 		});
 
 		test("After creating a timePicker, the picker aggregation holds a responsivePopover instance", function() {
@@ -128,16 +269,13 @@
 		test("The method generatePickerListValues generates the correct result", function() {
 			var iStart = 2;
 			var iEnd = 5;
-			this.oTimePicker._openPicker();
-			var aList = this.oTimePicker._getSliders()._generatePickerListValues(iStart, iEnd);
+			var aList = sap.m.TimePickerSliders.prototype._generatePickerListValues(iStart, iEnd, 1, false);
 			strictEqual(jQuery.isArray(aList), true, "the method returns an array");
 			strictEqual(aList.length, iEnd - iStart + 1, "the method returns an array with the correct number of objects");
-			strictEqual(typeof aList[0], "object", "the first element of the array is an object");
-			strictEqual(parseInt(aList[0].key), iStart, "the key property of the first element of the array is correct");
-			strictEqual(parseInt(aList[0].text), iStart, "the text property of the first element of the array is correct");
-			strictEqual(typeof aList[aList.length-1], "object", "the last element of the array is an object");
-			strictEqual(parseInt(aList[aList.length-1].key), iEnd, "the key property of the last element of the array is correct");
-			strictEqual(parseInt(aList[aList.length-1].text), iEnd, "the text property of the last element of the array is correct");
+			strictEqual(parseInt(aList[0].getKey()), iStart, "the key property of the first element of the array is correct");
+			strictEqual(parseInt(aList[0].getText()), iStart, "the text property of the first element of the array is correct");
+			strictEqual(parseInt(aList[aList.length-1].getKey()), iEnd, "the key property of the last element of the array is correct");
+			strictEqual(parseInt(aList[aList.length-1].getText()), iEnd, "the text property of the last element of the array is correct");
 		});
 
 		test("Value help CSS class is applied only when both properties 'Enabled' and 'Editable' are true", function () {

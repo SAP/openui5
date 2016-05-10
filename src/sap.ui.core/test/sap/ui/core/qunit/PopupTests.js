@@ -45,6 +45,28 @@ QUnit.module("Basics", {
 	}
 });
 
+QUnit.test("Check If PopupSupport Was Loaded Properly", function(assert) {
+	var aMethods = this.oPopup.getMetadata().getPublicMethods();
+
+	assert.ok(aMethods.indexOf("getParentPopup"), "'getParentPopup' was added as public method");
+	assert.ok(aMethods.indexOf("isInPopup"), "'isInPopup' was added as public method");
+	assert.ok(aMethods.indexOf("getParentPopupId"), "'getParentPopupId' was added as public method");
+	assert.ok(aMethods.indexOf("addToPopup"), "'addToPopup' was added as public method");
+	assert.ok(aMethods.indexOf("removeFromPopup"), "'removeFromPopup' was added as public method");
+});
+
+QUnit.test("Check Amount of Public Methods", function(assert) {
+	var oPopup1DomRef = jQuery.sap.domById("popup1"),
+			oPopup1 = new sap.ui.core.Popup(oPopup1DomRef),
+			iMethodsCount1 = oPopup1.getMetadata()._aPublicMethods.length,
+
+			oPopup2DomRef = jQuery.sap.domById("popup2"),
+			oPopup2 = new sap.ui.core.Popup(oPopup2DomRef),
+			iMethodsCount2 = oPopup2.getMetadata()._aPublicMethods.length;
+
+	assert.equal(iMethodsCount1, iMethodsCount2, "Both Popups must have the same amount of public methods");
+});
+
 QUnit.asyncTest("Open Popup", function(assert) {
 	expect(7);
 
@@ -249,6 +271,18 @@ QUnit.module("Animation", {
 		}
 
 		this.$Ref = jQuery.sap.byId("popup");
+
+		this.oSpyOpened = sinon.spy(this.oPopup, "_opened");
+		this.oSpyDuringOpen = sinon.spy(this.oPopup, "_duringOpen");
+		this.oSpyClosed = sinon.spy(this.oPopup, "_closed");
+		this.oSpyDuringClose = sinon.spy(this.oPopup, "_duringClose");
+	},
+
+	afterEach : function() {
+		this.oSpyOpened.restore();
+		this.oSpyDuringOpen.restore();
+		this.oSpyClosed.restore();
+		this.oSpyDuringClose.restore();
 	}
 });
 
@@ -315,8 +349,8 @@ QUnit.asyncTest("Open Animation", function(assert) {
 	var fnOpened = function() {
 		this.oPopup.detachOpened(fnOpened, this);
 
-		start();
 		this.oPopup.close(0);
+		start();
 	};
 
 	var that = this;
@@ -361,6 +395,98 @@ QUnit.asyncTest("Closing Animation", function(assert) {
 	this.oPopup.attachOpened(fnOpened, this);
 	this.oPopup.attachClosed(fnClosed, this);
 	this.oPopup.open(0);
+});
+
+QUnit.test("Check the order of function calls during open/close - with animation", function(assert) {
+	var done = assert.async();
+
+	var fnOpened = function() {
+		this.oPopup.detachOpened(fnOpened);
+
+		assert.ok(this.oSpyDuringOpen.calledBefore(this.oSpyOpened), "Function for 'before/during' open called before '_opened'");
+		assert.ok(this.oSpyOpened.calledOnce, "Popup.prototype._opened function should have been called");
+		assert.ok(this.oSpyDuringOpen.calledOnce, "Popup.prototype._duringOpen function should have been called");
+
+		this.oPopup.close();
+	}
+
+	var fnClosed = function() {
+		this.oPopup.detachClosed(fnClosed);
+
+		assert.ok(this.oSpyDuringClose.calledBefore(this.oSpyClosed), "Function for 'before/during' open called before '_closed'");
+		assert.ok(this.oSpyClosed.calledOnce, "Popup.prototype._closed function should have been called");
+		assert.ok(this.oSpyDuringClose.calledOnce, "Popup.prototype._duringClose function should have been called");
+
+		done();
+	}
+
+	this.oPopup.attachOpened(fnOpened, this);
+	this.oPopup.attachClosed(fnClosed, this);
+	this.oPopup.open();
+});
+
+QUnit.test("Check the order of function calls during open/close - with no animation", function(assert) {
+	assert.expect(6);
+	var done = assert.async();
+
+	var fnOpened = function() {
+		this.oPopup.detachOpened(fnOpened);
+
+		assert.ok(this.oSpyDuringOpen.calledBefore(this.oSpyOpened), "Function for 'before/during' open called before 'opened'");
+		assert.ok(this.oSpyOpened.calledOnce, "Popup.prototype._opened function should have been called");
+		assert.ok(this.oSpyDuringOpen.calledOnce, "Popup.prototype._duringOpen function should have been called");
+
+		this.oPopup.close(0);
+	}
+	var fnClosed = function() {
+		this.oPopup.detachClosed(fnClosed);
+
+		assert.ok(this.oSpyDuringClose.calledBefore(this.oSpyClosed), "Function for 'before/during' open called before 'opened'");
+		assert.ok(this.oSpyClosed.calledOnce, "Popup.prototype._close function should have been called");
+		assert.ok(this.oSpyDuringClose.calledOnce, "no further call before/during opening should have happened");
+
+		done();
+	}
+
+	this.oPopup.attachOpened(fnOpened, this);
+	this.oPopup.attachClosed(fnClosed, this);
+	this.oPopup.open(0);
+});
+
+QUnit.test("Check the order of function calls during open/close with custom animations", function(assert) {
+	assert.expect(8);
+	var done = assert.async();
+
+	var fnOpened = function() {
+		this.oPopup.detachOpened(fnOpened);
+
+		assert.ok(this.oSpyDuringOpen.calledBefore(this.oSpyOpened), "Function for 'before/during' open called before '_opened'");
+		assert.ok(this.oSpyOpened.calledOnce, "Popup.prototype._opened function should be called now");
+		assert.ok(this.oSpyDuringOpen.calledOnce, "no further call before/during opening should have happened");
+
+		this.oPopup.close();
+	}
+	var fnClosed = function() {
+		this.oPopup.detachClosed(fnClosed);
+
+		assert.ok(this.oSpyDuringClose.calledBefore(this.oSpyClosed), "Function for 'before/during' close called before '_closed'");
+		assert.ok(this.oSpyClosed.calledOnce, "Popup.prototype._closed function should be called now");
+		assert.ok(this.oSpyDuringClose.calledOnce, "no further call before/during closing should have happened");
+
+		done();
+	}
+
+	this.oPopup.setAnimations(function($Ref, iRealDuration, fnOpenCallback) {
+		assert.ok(typeof(fnOpenCallback) === "function", "OpenCallback handler is provided");
+		fnOpenCallback();
+	}.bind(this), function($Ref, iRealDuration, fnCloseCallback) {
+		assert.ok(typeof(fnCloseCallback) === "function", "CloseCallback handler is provided");
+		fnCloseCallback();
+	}.bind(this));
+
+	this.oPopup.attachOpened(fnOpened, this);
+	this.oPopup.attachClosed(fnClosed, this);
+	this.oPopup.open();
 });
 
 /*
@@ -441,6 +567,52 @@ QUnit.module("Event", {
 
 		this.$Ref = jQuery.sap.byId("popup");
 	}
+});
+
+QUnit.test("Event registration and deregistration", function(assert) {
+	var done = assert.async();
+
+	var oSpyEventProviderAttach = sinon.spy(sap.ui.base.EventProvider.prototype, "attachEvent");
+	var oSpyEventProviderDetach = sinon.spy(sap.ui.base.EventProvider.prototype, "detachEvent");
+
+	this.fnOpened = function(oEvent) {
+		assert.ok(this.oSpyOpened.calledOnce, "Opened callback called");
+		assert.ok(!this.oSpyClosed.calledOnce, "Closed callback not called yet");
+
+		this.oPopup.close(0);
+	};
+	this.oSpyOpened = sinon.spy(this, "fnOpened");
+
+	this.fnClosed = function(oEvent) {
+		this.oPopup.detachOpened(this.fnOpened, this);
+		this.oPopup.detachClosed(this.fnClosed, this);
+
+		assert.ok(oSpyEventProviderDetach.callCount >= 2, "EventProvider.attachEvent called at least two times");
+		assert.ok(oSpyEventProviderDetach.calledWith("opened", this.fnOpened), "EventProvider called with correct 'open' values");
+		assert.ok(oSpyEventProviderDetach.calledWith("closed", this.fnClosed), "EventProvider called with correct 'close' values");
+
+		assert.ok(this.oSpyOpened.calledOnce, "Opened callback called");
+		assert.ok(this.oSpyClosed.calledOnce, "Closed callback called");
+
+		assert.ok(!!!this.oPopup.mEventRegistry.length, "Event registries should have been removed for 'opened' & 'closed'");
+
+		this.oSpyOpened.restore();
+		delete this.oSpyOpened;
+		this.oSpyClosed.restore();
+		delete this.oSpyClosed;
+
+		done();
+	};
+	this.oSpyClosed = sinon.spy(this, "fnClosed");
+
+	this.oPopup.attachOpened(this.fnOpened, this);
+	this.oPopup.attachClosed(this.fnClosed, this);
+
+	assert.equal(oSpyEventProviderAttach.callCount, 2, "EventProvider.attachEvent called");
+	assert.ok(oSpyEventProviderAttach.calledWith("opened", this.fnOpened), "EventProvider called with correct 'open' values");
+	assert.ok(oSpyEventProviderAttach.calledWith("closed", this.fnClosed), "EventProvider called with correct 'close' values");
+
+	this.oPopup.open(0);
 });
 
 QUnit.asyncTest("Opened / closed", function(assert) {
@@ -606,7 +778,6 @@ QUnit.asyncTest("Increase z-index: Child must not be re-rendered", function(asse
 
 	var fnChildOpened = function() {
 		oChildPop.detachOpened(fnParentOpened);
-		start();
 
 		assert.equal(this.oRenderingStub.callCount, 1, "'onBeforeRendering' should have been called once for rendering for child");
 
@@ -628,6 +799,9 @@ QUnit.asyncTest("Increase z-index: Child must not be re-rendered", function(asse
 		assert.ok(iParentOldIndex < iParentNewIndex, "Parent z-index should have been increased");
 
 		assert.equal(this.oRenderingStub.callCount, 1, "'onBeforeRendering' shouldn't have been called after increasing the z-index for child");
+
+		oChildPop.destroy();
+		start();
 	}.bind(this);
 
 	this.oParentPop.attachOpened(fnParentOpened);
@@ -635,25 +809,11 @@ QUnit.asyncTest("Increase z-index: Child must not be re-rendered", function(asse
 	this.oParentPop.open();
 });
 
-QUnit.module("Special cases and combinations");
-
-QUnit.test("Close a popup without opening animation in 'opened' event handler", function(assert) {
-	var oPopupDomRef = jQuery.sap.domById("popup"),
-		oPopup = new sap.ui.core.Popup(oPopupDomRef),
-		fnOpened = function() {
-			oPopup.detachOpened(fnOpened);
-			oPopup.close();
-		};
-
-	oPopup.setDurations(0, 0);
-	oPopup.attachOpened(fnOpened);
-	oPopup.open();
-
-	assert.equal(oPopup.getOpenState(), sap.ui.core.OpenState.CLOSED, "Popup state is CLOSED");
-	assert.ok(!oPopup.isOpen(), "isOpen method returns the correct state.");
+QUnit.module("BlockLayer", {
+	afterEach : function() {
+		sap.ui.getCore().applyChanges();
+	}
 });
-
-QUnit.module("BlockLayer");
 
 QUnit.test("Check if the BlockLayer is displayed", function(assert) {
 	var done = assert.async();
@@ -743,7 +903,10 @@ QUnit.test("Stacked Modal Popups Should Change Z-Index of BlockLayer", function(
 		assert.ok($oDomRefBL.length, "BlockLayer should still in DOM");
 
 		assert.ok(iZIndex1 && iZIndexBL && iZIndexBL < iZIndex1, "Z-Index of BlockLayer must be smaller than z-index of Popup1 now");
+
 		oPopup1.close();
+		oPopup1.destroy();
+		oPopup2.destroy();
 	}.bind(this);
 
 
@@ -754,4 +917,110 @@ QUnit.test("Stacked Modal Popups Should Change Z-Index of BlockLayer", function(
 	oPopup2.attachOpened(fnOpened);
 	oPopup2.attachClosed(fnClosed2);
 	oPopup2.open();
+});
+
+QUnit.test("Open/close with IE and check BlindLayer", function(assert) {
+	var done = assert.async();
+
+	var oPopupDomRef = jQuery.sap.domById("popup");
+	this.oPopup = new sap.ui.core.Popup(oPopupDomRef, /*bModal*/ true);
+	this.$Ref = this.oPopup._$();
+
+	sap.ui.require("sap.ui.Device");
+	var oDeviceStub = sinon.stub(sap.ui.Device);
+	oDeviceStub.browser.internet_explorer = true;
+	oDeviceStub.os.windows_phone = false;
+
+	var oSpyOpened = sinon.spy(this.oPopup, "_opened");
+	var oSpyClosed = sinon.spy(this.oPopup, "_closed");
+
+	var fnOpened = function() {
+		this.oPopup.detachOpened(fnOpened, this);
+		sap.ui.getCore().applyChanges();
+
+		var $BlockLayer = jQuery(jQuery(".sapUiBliLy"));
+		$BlockLayer.width();
+		assert.ok($BlockLayer.length, "BlockLayer rendered in DOM");
+
+		var oRectBlockLayer = $BlockLayer.rect();
+		var oRectPopup = this.$Ref.rect();
+
+		assert.equal(oRectBlockLayer.top, oRectPopup.top, "Top position is same of BlockLayer and Popup");
+		assert.equal(oRectBlockLayer.left, oRectPopup.left, "Left position is same of BlockLayer and Popup");
+		assert.equal(oRectBlockLayer.width, oRectPopup.width, "Width is same of BlockLayer and Popup");
+		assert.equal(oRectBlockLayer.height, oRectPopup.height, "Height is same of BlockLayer and Popup");
+
+		assert.ok(this.oPopup._resizeListenerId, "ResizeHandler was registered");
+
+		this.oPopup.close(0);
+	};
+	var fnClosed = function() {
+		this.oPopup.detachClosed(fnClosed, this);
+		sap.ui.getCore().applyChanges();
+
+		var $BlockLayer = jQuery(jQuery(".sapUiBliLy"));
+		assert.ok($BlockLayer.length, "BlockLayer still in DOM");
+
+		assert.ok(!this.oPopup._resizeListenerId, "ResizeHandler deregistered");
+		assert.ok(oSpyOpened.calledBefore(oSpyClosed), "Order of open and close correct");
+
+		this.oPopup.attachOpened(fnReopen, this);
+		this.oPopup.open(0);
+	};
+	var fnReopen = function() {
+		this.oPopup.detachOpened(fnReopen, this);
+
+		assert.equal(oSpyOpened.callCount, 2, "Now _opened called for the second time");
+		assert.equal(oSpyClosed.callCount, 1, "_closed called still only once");
+		assert.ok(oSpyOpened.calledBefore(oSpyClosed), "Oder of open and close correct");
+
+		this.oPopup.close(0);
+		this.oPopup.destroy();
+		done();
+	}
+
+	this.oPopup.attachOpened(fnOpened, this);
+	this.oPopup.attachClosed(fnClosed, this);
+	this.oPopup.open(0);
+});
+
+QUnit.module("ShieldLayer", {
+	beforeEach : function() {
+		this.bOldMouseEventDelayed = jQuery.sap.isMouseEventDelayed;
+		jQuery.sap.isMouseEventDelayed = true;
+
+		var oPopupDomRef = jQuery.sap.domById("popup");
+		this.oPopup = new sap.ui.core.Popup(oPopupDomRef, /*bModal*/ true);
+	},
+
+	afterEach : function() {
+		jQuery.sap.isMouseEventDelayed = this.bOldMouseEventDelayed;
+
+		this.oPopup.destroy();
+	}
+});
+
+QUnit.test("Creation And Destruction of ShieldLayer", function(assert) {
+	var done = assert.async();
+	var oSpyShieldBorrowObject = sinon.spy(this.oPopup.oShieldLayerPool, "borrowObject");
+	var oSpyShieldReturnObject = sinon.spy(this.oPopup.oShieldLayerPool, "returnObject");
+
+	var fnOpened = function() {
+		this.oPopup.detachOpened(fnOpened, this);
+
+		assert.ok(oSpyShieldBorrowObject.calledOnce, "Calling the ShieldLayer factory");
+		assert.ok(this.oPopup._oTopShieldLayer, "ShieldLayer was created");
+		assert.ok(this.oPopup._iTopShieldRemoveTimer, "Timeout was started");
+
+		setTimeout(function() {
+			assert.ok(oSpyShieldReturnObject.calledOnce, "ShieldLayer was returned");
+			assert.ok(!this.oPopup._oTopShieldLayer, "ShieldLayer was removed");
+			assert.ok(!this.oPopup._iTopShieldRemoveTimer, "Timeout has passed");
+
+			done();
+		}.bind(this), 510);
+	};
+
+	this.oPopup.attachOpened(fnOpened, this);
+	this.oPopup.open();
 });

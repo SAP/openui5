@@ -123,9 +123,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 				 */
 				editableChange : {
 					parameters : {
-						selected : {
-							editable : "boolean"
-						}
+						editable : { type : "boolean" }
 					}
 				},
 				/**
@@ -553,7 +551,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	ElementOverlay.prototype._onDomChanged = function(oEvent) {
 		var aIds = oEvent.getParameters().elementIds || [];
 		var oElement = this.getElementInstance();
-		if (aIds.indexOf(oElement.getId()) !== -1) {
+		if (oElement && aIds.indexOf(oElement.getId()) !== -1) {
 			// if element's DOM turns visible (via DOM mutations, classes and so on)
 			if (this._mGeometry && !this._mGeometry.visible) {
 				delete this._mGeometry;
@@ -686,6 +684,47 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 			return false;
 		}
 
+	};
+
+	/**
+	 * Returns first ancestor overlay not flagged as inHiddenTree
+	 * @return {sap.ui.dt.ElementOverlay} ElementOverlay public parent
+	 * @public
+	 */
+	ElementOverlay.prototype.getPublicParentElementOverlay = function() {
+		var oParentElementOverlay = this.getParentElementOverlay();
+		while (oParentElementOverlay && ElementUtil.isInstanceOf(oParentElementOverlay, "sap.ui.dt.ElementOverlay") && oParentElementOverlay.isInHiddenTree()) {
+			oParentElementOverlay = oParentElementOverlay.getParentElementOverlay();
+		}
+		return oParentElementOverlay;
+	};
+
+	/**
+	 * Returns first aggregation overlay not flagged as inHiddenTree
+	 *
+	 * @return {sap.ui.dt.Overlay} Overlay public parent
+	 * @public
+	 */
+	ElementOverlay.prototype.getPublicParentAggregationOverlay = function() {
+		var oPublicParentAggregationOverlay;
+
+		var oPublicParentElementOverlay = this.getPublicParentElementOverlay();
+		var oElement = this.getElementInstance();
+		if (oPublicParentElementOverlay) {
+			oPublicParentElementOverlay.getAggregationOverlays().some(function(oAggregationOverlay) {
+				if (!oAggregationOverlay.isInHiddenTree()) {
+					var oPublicParent = oPublicParentElementOverlay.getElementInstance();
+					var sPublicParentAggregationName = oAggregationOverlay.getAggregationName();
+					var iIndex = ElementUtil.getIndexInAggregation(oElement, oPublicParent, sPublicParentAggregationName);
+					if (iIndex !== -1) {
+						oPublicParentAggregationOverlay = oAggregationOverlay;
+						return true;
+					}
+				}
+			});
+		}
+
+		return oPublicParentAggregationOverlay;
 	};
 
 	return ElementOverlay;

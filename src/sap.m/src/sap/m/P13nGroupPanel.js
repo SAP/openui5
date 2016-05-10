@@ -253,6 +253,8 @@ sap.ui.define([
 			validationExecutor: jQuery.proxy(this._callValidationExecutor, this)
 		});
 		this._oGroupPanel.setOperations(this._aOperations);
+		this._oGroupPanel._sAddRemoveIconTooltipKey = "GROUP";
+
 
 		this.addAggregation("content", this._oGroupPanel);
 	};
@@ -296,6 +298,10 @@ sap.ui.define([
 					text: fGetValueOfProperty("text", oContext, oItem_),
 					tooltip: fGetValueOfProperty("tooltip", oContext, oItem_)
 				});
+			});
+			aKeyFields.splice(0, 0, {
+				key: null,
+				text: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_SELECTION_NONE")
 			});
 			this._oGroupPanel.setKeyFields(aKeyFields);
 

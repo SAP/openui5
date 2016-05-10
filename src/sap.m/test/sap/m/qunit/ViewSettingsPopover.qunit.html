@@ -143,7 +143,7 @@
 			}
 		});
 
-		test("opening and reopening", function () {
+		test("opening, closing and reopening", function () {
 			strictEqual(this.sut.isOpen(), false, 'Popup is closed');
 
 			//Act
@@ -173,6 +173,28 @@
 
 			//Assert
 			strictEqual(this.sut.isOpen(), false, 'Popup is closed');
+		});
+
+		test("popover resizing", function () {
+			var initialWidth;
+
+			this.sut.openBy(this.oOpeningButton);
+			this.clock.tick(1000);
+
+			//Act
+			initialWidth = this.sut._getPopover().getContentWidth();
+			this.sut._getSegmentedButton().getItems()[0].firePress();
+			this.clock.tick(1000);
+
+			//Check
+			ok(initialWidth != this.sut._getPopover().getContentWidth(), "Popover width is changed");
+
+			//Act
+			this.sut._getSegmentedButton().getItems()[0].firePress();
+			this.clock.tick(1000);
+
+			//Check
+			ok(initialWidth == this.sut._getPopover().getContentWidth(), "Popover width is back to initial state");
 		});
 
 		test("segmented button", function() {
@@ -674,7 +696,7 @@
 			ok(aFirstFilterItemSubItems[0].getSelected(), "filter items are restored to previous selection");
 		});
 
-		test("_confirm", function() {
+		test("_confirmFilterDetail", function() {
 			var aFirstFilterItemSubItems = this.sut.getFilterItems()[0].getItems(),
 				oSpyFireFilterSelected = this.spy(this.sut, "fireFilterSelected");
 
@@ -690,7 +712,7 @@
 			this.checkToggleDetailListItemAt(0, false);
 			this.clock.tick(1000);
 
-			this.sut._confirm();
+			this.sut._confirmFilterDetail();
 			this.clock.tick(1000);
 
 			//Assert
@@ -1183,6 +1205,434 @@
 				done();
 			});
 		});
+
+
+
+		module("Single Data Point", {
+			beforeEach : function () {
+				this.sut = new sap.m.ViewSettingsPopover();
+				this.bindAggregations();
+
+				this.oOpeningButton = new sap.m.Button();
+				this.oOpeningButton.placeAt("content");
+
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach : function () {
+				destroyControls.call(this);
+			},
+			openDetailsPageForItemAt: function(index) {
+				var oListItem = this.sut._findListItemFromViewSettingsItem(this.sut.getFilterItems()[index]);
+				this.sut._showContentFor(PAGE_KEYS.FilterDetail, oListItem);
+			},
+			getFirstModelData: function() {
+				return {
+					sortData: [
+						{
+							myKey: "key1",
+							myText: "Sort text 1 A"
+						}
+					],
+					groupData: [
+						{
+							myKey: "groupKey1",
+							myText: "Group text A"
+						}
+					],
+					filterData: [
+						{
+							myKey: "filterKey1",
+							myText: "Filter text A",
+							myItems: [
+								{
+									myKey: 'item1',
+									myText: 'item A'
+								}
+							]
+						}
+					]
+				};
+			},
+			bindAggregations: function() {
+				var template1 = new sap.m.ViewSettingsItem({
+						key: "{myKey}",
+						text: "{myText}"
+					}),
+					template2 = new sap.m.ViewSettingsItem({
+						key: "{myKey}",
+						text: "{myText}"
+					}),
+					template3 = new sap.m.ViewSettingsFilterItem({
+						key: "{myKey}",
+						text: "{myText}",
+						items: {
+							path: 'myItems',
+							template: new sap.m.ViewSettingsItem({
+								key: "{myKey}",
+								text: "{myText}"
+							}),
+							templateShareable: true
+						}
+					});
+
+				var oModel = new sap.ui.model.json.JSONModel();
+				oModel.setData(this.getFirstModelData());
+
+				this.sut.setModel(oModel);
+
+				this.sut.bindAggregation("sortItems", "/sortData", template1);
+				this.sut.bindAggregation("groupItems", "/groupData", template2);
+				this.sut.bindAggregation("filterItems", "/filterData", template3);
+			}
+		});
+
+		test("Single sort data point", function (assert) {
+			//Act
+			this.sut.openBy(this.oOpeningButton);
+			this.clock.tick(1000);
+
+			//Assert
+			strictEqual(this.sut.isOpen(), true, 'Popup is open');
+
+			//Act
+			var fnFireSortSelectedSpy = sinon.spy(this.sut, "fireSortSelected");
+
+			this.sut._getSegmentedButton().getButtons()[0].firePress();
+			this.clock.tick(1000);
+
+			//Assert
+			strictEqual(fnFireSortSelectedSpy.calledOnce, true, "sortSelected event fired");
+			strictEqual(this.sut.isOpen(), false, 'Popup is closed');
+		});
+
+		test("Single filter data point", function (assert) {
+			//Act
+			this.sut.openBy(this.oOpeningButton);
+			this.clock.tick(1000);
+
+			//Assert
+			strictEqual(this.sut.isOpen(), true, 'Popup is open');
+
+			//Act
+			this.sut._getSegmentedButton().getButtons()[1].firePress();
+			this.clock.tick(1000);
+
+			//Assert
+			strictEqual(this.sut.isOpen(), true, 'Popup is still open');
+			strictEqual(sap.ui.getCore().byId(this.sut.getId() + '-backbutton'), undefined, 'No back button');
+		});
+
+		test("Single group data point", function (assert) {
+			//Act
+			this.sut.openBy(this.oOpeningButton);
+			this.clock.tick(1000);
+
+			//Assert
+			strictEqual(this.sut.isOpen(), true, 'Popup is open');
+
+			//Act
+			var fnFireGroupSelectedSpy = sinon.spy(this.sut, "fireGroupSelected");
+
+			this.sut._getSegmentedButton().getButtons()[2].firePress();
+			this.clock.tick(1000);
+
+			//Assert
+			strictEqual(fnFireGroupSelectedSpy.calledOnce, true, "groupSelected event fired");
+			strictEqual(this.sut.isOpen(), false, 'Popup is closed');
+		});
+
+
+
+
+		module("Single Tab", {
+			beforeEach : function () {
+				this.sut = new sap.m.ViewSettingsPopover();
+				this.bindAggregations();
+
+				this.oOpeningButton = new sap.m.Button();
+				this.oOpeningButton.placeAt("content");
+
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach : function () {
+				destroyControls.call(this);
+			},
+			openDetailsPageForItemAt: function(index) {
+				var oListItem = this.sut._findListItemFromViewSettingsItem(this.sut.getFilterItems()[index]);
+				this.sut._showContentFor(PAGE_KEYS.FilterDetail, oListItem);
+			},
+			getFirstModelData: function() {
+				return {
+					sortData: [
+						{
+							myKey: "key1",
+							myText: "Sort text 1 A"
+						},
+						{
+							myKey: "key21",
+							myText: "Sort text 2 A"
+						}
+					]
+				};
+			},
+			bindAggregations: function() {
+				var template1 = new sap.m.ViewSettingsItem({
+						key: "{myKey}",
+						text: "{myText}"
+					}),
+					template2 = new sap.m.ViewSettingsItem({
+						key: "{myKey}",
+						text: "{myText}"
+					}),
+					template3 = new sap.m.ViewSettingsFilterItem({
+						key: "{myKey}",
+						text: "{myText}",
+						items: {
+							path: 'myItems',
+							template: new sap.m.ViewSettingsItem({
+								key: "{myKey}",
+								text: "{myText}"
+							}),
+							templateShareable: true
+						}
+					});
+
+				var oModel = new sap.ui.model.json.JSONModel();
+				oModel.setData(this.getFirstModelData());
+
+				this.sut.setModel(oModel);
+
+				this.sut.bindAggregation("sortItems", "/sortData", template1);
+				this.sut.bindAggregation("groupItems", "/groupData", template2);
+				this.sut.bindAggregation("filterItems", "/filterData", template3);
+			}
+		});
+
+		test("Single sort tab", function (assert) {
+			//Act
+			this.sut.openBy(this.oOpeningButton);
+			this.clock.tick(1000);
+
+			//Assert
+			strictEqual(this.sut.isOpen(), true, 'Popup is open');
+
+			//Assert
+			strictEqual(this.sut._getTitle().getText(), 'Sort By');
+		});
+
+		test("Single group tab", function (assert) {
+			//Act
+			this.sut.removeAllAggregation('sortItems');
+			this.sut.addGroupItem(new sap.m.TabStripItem({
+				key: 'test1',
+				value: 'test1'
+			}));
+			this.sut.openBy(this.oOpeningButton);
+			this.clock.tick(1000);
+
+			//Assert
+			strictEqual(this.sut.isOpen(), true, 'Popup is open');
+
+			//Assert
+			strictEqual(this.sut._getTitle().getText(), 'Sort By');
+		});
+
+		test("Single filter tab", function (assert) {
+			//Act
+			this.sut.removeAllAggregation('groupItems');
+			this.sut.addFilterItem(new sap.m.TabStripItem({
+				key: 'test2',
+				value: 'test2'
+			}));
+			this.sut.openBy(this.oOpeningButton);
+			this.clock.tick(1000);
+
+			//Assert
+			strictEqual(this.sut.isOpen(), true, 'Popup is open');
+
+			//Assert
+			strictEqual(this.sut._getTitle().getText(), 'View');
+		});
+
+
+		module("Remove Filter", {
+			beforeEach : function () {
+				this.sut = new sap.m.ViewSettingsPopover('removefilter');
+				this.bindAggregations();
+
+				this.oOpeningButton = new sap.m.Button();
+				this.oOpeningButton.placeAt("content");
+
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach : function () {
+//				destroyControls.call(this);
+			},
+			getFirstModelData: function() {
+				return {
+					sortData: [
+						{
+							myKey: "key1",
+							myText: "Sort text 1 A"
+						},
+						{
+							myKey: "key21",
+							myText: "Sort text 2 A"
+						}
+					],
+					groupData: [
+						{
+							myKey: "groupKey1",
+							myText: "Group text A"
+						},
+						{
+							myKey: "groupKey2",
+							myText: "Group text B"
+						}
+					],
+					filterData: [
+						{
+							myKey: "filterKey1",
+							myText: "Filter text A",
+							myItems: [
+								{
+									myKey: 'item1',
+									myText: 'item A'
+								}
+							]
+						},
+						{
+							myKey: "filterKey2",
+							myText: "Filter text B",
+							myItems: [
+								{
+									myKey: 'item2',
+									myText: 'item B'
+								}
+							]
+						}
+					]
+				};
+			},
+			bindAggregations: function() {
+				var template1 = new sap.m.ViewSettingsItem({
+						key: "{myKey}",
+						text: "{myText}"
+					}),
+					template2 = new sap.m.ViewSettingsItem({
+						key: "{myKey}",
+						text: "{myText}"
+					}),
+					template3 = new sap.m.ViewSettingsFilterItem({
+						key: "{myKey}",
+						text: "{myText}",
+						items: {
+							path: 'myItems',
+							template: new sap.m.ViewSettingsItem({
+								key: "{myKey}",
+								text: "{myText}"
+							}),
+							templateShareable: true
+						}
+					});
+
+				var oModel = new sap.ui.model.json.JSONModel();
+				oModel.setData(this.getFirstModelData());
+
+				this.sut.setModel(oModel);
+
+				this.sut.bindAggregation("sortItems", "/sortData", template1);
+				this.sut.bindAggregation("groupItems", "/groupData", template2);
+				this.sut.bindAggregation("filterItems", "/filterData", template3);
+			}
+		});
+
+		test("No filter by default, setting and removing a filter", function (assert) {
+			//Act
+			this.sut.openBy(this.oOpeningButton);
+			this.clock.tick(1000);
+
+			//Act
+			this.sut._getSegmentedButton().getButtons()[1].firePress();
+			this.clock.tick(1000);
+
+			// Assert
+			var oFilterList = this.sut._getFilterList();
+			var oFilterItems = oFilterList.getItems();
+			var oLastListItem = oFilterItems[oFilterItems.length - 1];
+
+			strictEqual(oLastListItem.getTitle(), 'Filter text B', 'Last item is not "Remove Filter"');
+
+			// Act
+			var oListItem = this.sut._findListItemFromViewSettingsItem(this.sut.getFilterItems()[0]);
+			this.sut._showContentFor('filterDetail', oListItem);
+			this.clock.tick(1000);
+			var oDetailItem = this.sut._getFilterDetailList().getItems()[0];
+			oDetailItem.setSelected(true);
+			this.sut._getFilterDetailList()._fireSelectionChangeEvent([oDetailItem]);
+			this.clock.tick(1000);
+			this.sut._showContentFor('filter');
+			this.clock.tick(1000);
+
+			oFilterList = this.sut._getFilterList();
+			oFilterItems = oFilterList.getItems();
+			oLastListItem = oFilterItems[oFilterItems.length - 1];
+
+			// Assert
+			strictEqual(oLastListItem.getTitle(), 'Remove Filter', 'Last item is "Remove Filter"');
+
+			// Act
+			var oListItem = this.sut._findListItemFromViewSettingsItem(this.sut.getFilterItems()[0]);
+			this.sut._showContentFor('filterDetail', oListItem);
+			this.clock.tick(1000);
+			var oDetailItem = this.sut._getFilterDetailList().getItems()[0];
+			oDetailItem.setSelected(false);
+			this.sut._getFilterDetailList()._fireSelectionChangeEvent([oDetailItem]);
+			this.clock.tick(1000);
+			this.sut._showContentFor('filter');
+			this.clock.tick(1000);
+
+			oFilterList = this.sut._getFilterList();
+			oFilterItems = oFilterList.getItems();
+			oLastListItem = oFilterItems[oFilterItems.length - 1];
+
+			// Assert
+			strictEqual(oLastListItem.getTitle(), 'Filter text B', 'Last item is not "Remove Filter"');
+
+			// Act
+			var oListItem = this.sut._findListItemFromViewSettingsItem(this.sut.getFilterItems()[0]);
+			this.sut._showContentFor('filterDetail', oListItem);
+			this.clock.tick(1000);
+			var oDetailItem = this.sut._getFilterDetailList().getItems()[0];
+			oDetailItem.setSelected(true);
+			this.sut._getFilterDetailList()._fireSelectionChangeEvent([oDetailItem]);
+			this.clock.tick(1000);
+			this.sut._showContentFor('filter');
+			this.clock.tick(1000);
+
+			oFilterList = this.sut._getFilterList();
+			oFilterItems = oFilterList.getItems();
+			oLastListItem = oFilterItems[oFilterItems.length - 1];
+
+			// Assert
+			strictEqual(oLastListItem.getTitle(), 'Remove Filter', 'Last item is "Remove Filter"');
+
+			// Act
+			oLastListItem.firePress();
+			this.sut.openBy(this.oOpeningButton);
+			this.clock.tick(1000);
+
+			this.sut._getSegmentedButton().getButtons()[1].firePress();
+			this.clock.tick(1000);
+
+			// Assert
+			var oFilterList = this.sut._getFilterList();
+			var oFilterItems = oFilterList.getItems();
+			var oLastListItem = oFilterItems[oFilterItems.length - 1];
+
+			strictEqual(oLastListItem.getTitle(), 'Filter text B', 'Last item is not "Remove Filter"');
+		});
+
 	</script>
 </head>
 <body id="body" class="sapUiBody">
@@ -1191,5 +1641,6 @@
 	<h2 id="qunit-userAgent"></h2>
 	<ol id="qunit-tests"></ol>
 	<div id="qunit-fixture"></div>
+	<div id="content"></div>
 </body>
 </html>

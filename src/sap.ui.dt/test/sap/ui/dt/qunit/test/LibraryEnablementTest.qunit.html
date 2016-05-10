@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Test Page for sap.ui.dt.test.LibraryEnablementTest</title>
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				type="text/javascript"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-libs="sap.ui.dt,sap.ui.layout,sap.m"
+				src="../../../../../../resources/sap-ui-core.js">
+		</script>
+		<style>
+			.minSize {
+				min-width : 100px;
+				min-height: 100px;
+			}
+		</style>
+		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript">
+
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
+			jQuery.sap.require("sap.ui.thirdparty.sinon");
+			jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
+			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+
+			jQuery.sap.require("sap.m.Button");
+
+			jQuery.sap.require("sap.ui.dt.test.LibraryEnablementTest");
+			var LibraryEnablementTest = sap.ui.dt.test.LibraryEnablementTest;
+
+			QUnit.module("Given that a sap.m Library is tested", {
+				beforeEach : function(assert) {
+
+					function fnCreate() {
+						return new sap.m.Button();
+					}
+
+					this.fnSpyCreate = sinon.spy(fnCreate);
+
+					this.bCreateCalled = false;
+					this.oLibraryEnablementTest = new LibraryEnablementTest({
+						libraryName : "sap.m",
+						testData : {
+							"sap.m.Button" : {
+								create : this.fnSpyCreate
+							}
+						}
+					});
+				},
+				afterEach : function() {
+					sinon.restore(this.fnSpyCreate);
+					this.oLibraryEnablementTest.destroy();
+				}
+			});
+
+			QUnit.test("when the test is started", function(assert) {
+				var done = assert.async();
+				var that = this;
+
+				this.oLibraryEnablementTest.run().then(function(oResult) {
+					assert.ok(oResult, "A result is returned");
+					assert.ok(oResult.children.length > 1, "Library Test was successfully performed");
+					assert.ok(that.fnSpyCreate.callCount, 1, "and the create function was called once");
+					done();
+				});
+			});
+
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit page for sap.ui.dt.test.LibraryEnablementTest</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>

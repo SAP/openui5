@@ -472,6 +472,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		this._mAggregations = filter(mAllAggregations, true);
 		this._mPrivateAggregations = filter(mAllAggregations, false);
 		this._sDefaultAggregation = oStaticInfo.defaultAggregation || null;
+		this._sDefaultProperty = oStaticInfo.defaultProperty || null;
 		this._mAssociations = normalize(oStaticInfo.associations, this.metaFactoryAssociation);
 		this._mEvents = normalize(oStaticInfo.events, this.metaFactoryEvent);
 
@@ -498,6 +499,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 			this._mAllAggregations = jQuery.extend({}, oParent._mAllAggregations, this._mAggregations);
 			this._mAllAssociations = jQuery.extend({}, oParent._mAllAssociations, this._mAssociations);
 			this._sDefaultAggregation = this._sDefaultAggregation || oParent._sDefaultAggregation;
+			this._sDefaultProperty = this._sDefaultProperty || oParent._sDefaultProperty;
 			this._mAllSpecialSettings = jQuery.extend({}, oParent._mAllSpecialSettings, this._mSpecialSettings);
 		} else {
 			this._mAllEvents = this._mEvents;
@@ -741,6 +743,31 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 */
 	ManagedObjectMetadata.prototype.getDefaultAggregation = function() {
 		return this.getAggregation();
+	};
+
+	/**
+	 * Returns the name of the default property of the described class.
+	 *
+	 * If the class itself does not define a default property, then the default property
+	 * of the parent is returned. If no class in the hierarchy defines a default property,
+	 * <code>undefined</code> is returned.
+	 *
+	 * @return {string} Name of the default property
+	 */
+	ManagedObjectMetadata.prototype.getDefaultPropertyName = function() {
+		return this._sDefaultProperty;
+	};
+
+	/**
+	 * Returns an info object for the default property of the described class.
+	 *
+	 * If the class itself does not define a default property, then the
+	 * info object for the default property of the parent class is returned.
+	 *
+	 * @return {Object} An info object for the default property
+	 */
+	ManagedObjectMetadata.prototype.getDefaultProperty = function() {
+		return this.getProperty(this.getDefaultPropertyName());
 	};
 
 	/**

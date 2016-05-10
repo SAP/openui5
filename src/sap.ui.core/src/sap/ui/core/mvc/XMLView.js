@@ -44,7 +44,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 			 * that subtree is provided with this setting.
 			 */
 			xmlNode : true
-		}
+		},
+		designTime: true
 	}});
 
 		/**
@@ -108,15 +109,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 			}
 		}
 
-		function validateViewSettings(mSettings) {
+		function validateViewSettings(oView, mSettings) {
+			var error;
 			if (!mSettings) {
-				throw new Error("mSettings must be given");
+				error = new Error("mSettings must be given");
 			} else if (mSettings.viewName && mSettings.viewContent) {
-				throw new Error("View name and view content are given. There is no point in doing this, so please decide.");
+				error = new Error("View name and view content are given. There is no point in doing this, so please decide.");
 			} else if ((mSettings.viewName || mSettings.viewContent) && mSettings.xmlNode) {
-				throw new Error("View name/content AND an XML node are given. There is no point in doing this, so please decide.");
+				error = new Error("View name/content AND an XML node are given. There is no point in doing this, so please decide.");
 			} else if (!(mSettings.viewName || mSettings.viewContent) && !mSettings.xmlNode) {
-				throw new Error("Neither view name/content nor an XML node is given. One of them is required.");
+				error = new Error("Neither view name/content nor an XML node is given. One of them is required.");
+			}
+			if (error) {
+				// error needs to be stored so that the view can reject with it
+				if (oView.oAsyncState) {
+						oView.oAsyncState.error = error;
+				}
+				throw error;
 			}
 		}
 
@@ -166,33 +175,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 				});
 			}
 
+			function setxContent(xContent) {
+				that._xContent = xContent;
+			}
+
 			function runViewxmlPreprocessor(bAsync) {
 				if (that.hasPreprocessor("viewxml")) {
 					// for the viewxml preprocessor fully qualified ids are provided on the xml source
 					XMLTemplateProcessor.enrichTemplateIds(that._xContent, that);
 					return that.runPreprocessor("viewxml", that._xContent, !bAsync);
 				}
+				return that._xContent;
 			}
 
 			function runPreprocessorsAsync() {
-				return that.runPreprocessor("xml", that._xContent).then(runViewxmlPreprocessor.bind(that, true));
+				return that.runPreprocessor("xml", that._xContent).then(setxContent)
+					.then(runViewxmlPreprocessor.bind(that, true)).then(setxContent);
 			}
 
 			function loadResourceAsync(sResourceName) {
 				return jQuery.sap.loadResource(sResourceName, {async: true}).then(function(oData) {
-					that._xContent = oData.documentElement; // result is the document node
+					setxContent(oData.documentElement); // result is the document node
 					return that._xContent;
 				});
 			}
 
 			this._oContainingView = mSettings.containingView || this;
 
-			if (this._oAsyncState) {
+			if (this.oAsyncState) {
 				// suppress rendering of preserve content
-				this._oAsyncState.suppressPreserve = true;
+				this.oAsyncState.suppressPreserve = true;
 			}
 
-			validateViewSettings(mSettings);
+			validateViewSettings(this, mSettings);
 
 			// either template name or XML node is given
 			if (mSettings.viewName) {
@@ -201,19 +216,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 					// return here, as the left processing is taking place inside the promise chain
 					return loadResourceAsync(sResourceName).then(runPreprocessorsAsync).then(processView);
 				} else {
-					this._xContent = jQuery.sap.loadResource(sResourceName).documentElement;
+					setxContent(jQuery.sap.loadResource(sResourceName).documentElement);
 				}
 			} else if (mSettings.viewContent) {
-				this._xContent = getxContent(this, mSettings);
+				setxContent(getxContent(this, mSettings));
 			} else if (mSettings.xmlNode) {
-				this._xContent = mSettings.xmlNode;
+				setxContent(mSettings.xmlNode);
 			}
 
 			if (mSettings.async) {
 				return runPreprocessorsAsync(this._xContent).then(processView);
 			} else {
-				this.runPreprocessor("xml", this._xContent, true);
-				runViewxmlPreprocessor();
+				setxContent(this.runPreprocessor("xml", this._xContent, true));
+				setxContent(runViewxmlPreprocessor());
 				processView();
 			}
 		};
@@ -232,8 +247,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 				// parse the XML tree
 				that._aParsedContent = XMLTemplateProcessor.parseTemplate(that._xContent, that);
 				// allow rendering of preserve content
-				if (that._oAsyncState) {
-					delete that._oAsyncState.suppressPreserve;
+				if (that.oAsyncState) {
+					delete that.oAsyncState.suppressPreserve;
 				}
 			}, {
 				settings: this._fnSettingsPreprocessor
@@ -344,8 +359,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 			XML : "xml",
 
 			/**
-			 * This preprocessor receives a valid view xml with control declarations enriched with their full via which they
-			 * are also queryable during runtime
+			 * This preprocessor receives a valid xml source for View creation without any template tags but with control
+			 * declarations. These include their full IDs by which they can also be queried during runtime.
 			 * @public
 			 */
 			VIEWXML : "viewxml",

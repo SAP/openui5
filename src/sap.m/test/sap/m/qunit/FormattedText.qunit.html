@@ -70,7 +70,7 @@
 			$a = oFT.$().find("a");
 			ok(!$a.attr("id"), "id is not rendered");
 			strictEqual($a.attr("href"), sFT, "a::href is rendered");
-			strictEqual($a.attr("style"), "color:red;", "a::style is rendered");
+			strictEqual($a[0].style.color, "red", "a::style is rendered");
 			strictEqual($a.attr("target"), "_top", "a::target attribute _top");
 			setText('<a href="' +  sFT + '"' + sFT + '</a>');
 			$a = oFT.$().find("a");
@@ -80,7 +80,7 @@
 			ok(!$a.attr("id"), "id is not rendered");
 			ok(!$a.attr("href"), "span::href is not rendered");
 			strictEqual($a.attr("class"), "aaa", "a::class is rendered");
-			strictEqual($a.attr("style"), "color:red;", "a::style is rendered");
+			strictEqual($a[0].style.color, "red", "a::style is rendered");
 			ok(!$a.attr("target"), "span::target is not rendered");
 		});
 

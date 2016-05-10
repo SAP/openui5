@@ -66,13 +66,13 @@ html[data-sap-ui-browser^='ie10'] .sapMRIIconUnsel {
 
 
 /* Custom focus outline */
-.sap-desktop .sapMRI:focus:not(.sapMRIDisabled) {
+html.sap-desktop .sapMRI:focus:not(.sapMRIDisabled) {
 	outline: 1px dotted @sapUiFocus;
 	outline-offset: -1px;
 }
 
 /* IE ignores outline-offset. Use an overlay: */
-.sap-desktop[data-sap-ui-browser^="ie"]{
+html[data-sap-ui-browser^="ie"].sap-desktop {
 	.sapMRI:focus {
 		outline: none;
 		position: relative;

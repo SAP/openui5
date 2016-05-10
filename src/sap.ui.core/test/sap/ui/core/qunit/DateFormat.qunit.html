@@ -61,6 +61,23 @@
 		equal(oDefaultTime.format(oTZDateTime, true), "10:16:13 PM", "default time UTC");
 	});
 
+	test("format date with given style", function(){
+		equal(sap.ui.core.format.DateFormat.getDateInstance({style: "short"}).format(oDateTime), "9/11/01", "short date");
+		equal(sap.ui.core.format.DateFormat.getDateInstance({style: "medium"}).format(oDateTime), "Sep 11, 2001", "medium date");
+		equal(sap.ui.core.format.DateFormat.getDateInstance({style: "long"}).format(oDateTime), "September 11, 2001", "long date");
+		equal(sap.ui.core.format.DateFormat.getDateInstance({style: "full"}).format(oDateTime), "Tuesday, September 11, 2001", "full date");
+		equal(sap.ui.core.format.DateFormat.getDateTimeInstance({style: "short"}).format(oDateTime), "9/11/01, 8:46 AM", "short datetime");
+		equal(sap.ui.core.format.DateFormat.getDateTimeInstance({style: "medium"}).format(oDateTime), "Sep 11, 2001, 8:46:13 AM", "medium datetime");
+		equal(sap.ui.core.format.DateFormat.getDateTimeInstance({style: "long"}).format(oDateTime), "September 11, 2001 at 8:46:13 AM GMT+02:00", "long datetime");
+		equal(sap.ui.core.format.DateFormat.getDateTimeInstance({style: "full"}).format(oDateTime), "Tuesday, September 11, 2001 at 8:46:13 AM GMT+02:00", "full datetime");
+		equal(sap.ui.core.format.DateFormat.getDateTimeInstance({style: "medium/short"}).format(oDateTime), "Sep 11, 2001, 8:46 AM", "medium/short datetime");
+		equal(sap.ui.core.format.DateFormat.getDateTimeInstance({style: "long/medium"}).format(oDateTime), "September 11, 2001 at 8:46:13 AM", "long/medium datetime");
+		equal(sap.ui.core.format.DateFormat.getTimeInstance({style: "short"}).format(oDateTime), "8:46 AM", "short time");
+		equal(sap.ui.core.format.DateFormat.getTimeInstance({style: "medium"}).format(oDateTime), "8:46:13 AM", "medium time");
+		equal(sap.ui.core.format.DateFormat.getTimeInstance({style: "long"}).format(oDateTime), "8:46:13 AM GMT+02:00", "long time");
+		equal(sap.ui.core.format.DateFormat.getTimeInstance({style: "full"}).format(oDateTime), "8:46:13 AM GMT+02:00", "full time");
+	});
+
 	test("format date for a specific locale", function(){
 		var oLocale = new sap.ui.core.Locale("de-DE");
 		equal(sap.ui.core.format.DateFormat.getDateInstance(oLocale).format(oDateTime), "11.09.2001", "date with defaults for given locale");
@@ -422,6 +439,33 @@
 		equal(oFormat.parse("1975-04-16").getTime(), iCompare, "Parse fallback ISO");
 		equal(oFormat.parse("19750416").getTime(), iCompare, "Parse fallback ABAP");
 
+	});
+
+	test("parse and format fractional seconds", function(){
+		var oDate1 = new Date(1234),
+			oDate2 = new Date(14),
+			oMS1 = sap.ui.core.format.DateFormat.getDateInstance({pattern: "s.S"}),
+			oMS2 = sap.ui.core.format.DateFormat.getDateInstance({pattern: "s.SSS"}),
+			oMS3 = sap.ui.core.format.DateFormat.getDateInstance({pattern: "s.SSSSSS"});
+
+		equal(oMS1.format(oDate1, true), "1.2", "1.2");
+		equal(oMS2.format(oDate1, true), "1.234", "1.234");
+		equal(oMS3.format(oDate1, true), "1.234000", "1.234000");
+		equal(oMS1.format(oDate2, true), "0.0", "0.0");
+		equal(oMS2.format(oDate2, true), "0.014", "0.014");
+		equal(oMS3.format(oDate2, true), "0.014000", "0.014000");
+		equal(oMS1.parse("0.1", true).valueOf(), 100, "0.1");
+		equal(oMS1.parse("0.003", true), null, "0.003");
+		equal(oMS1.parse("0.123", true), null, "0.123");
+		equal(oMS1.parse("0.123456", true), null, "0.123456");
+		equal(oMS2.parse("0.1", true).valueOf(), 100, "0.1");
+		equal(oMS2.parse("0.003", true).valueOf(), 3, "0.003");
+		equal(oMS2.parse("0.123", true).valueOf(), 123, "0.123");
+		equal(oMS2.parse("0.123456", true), null, "0.123456");
+		equal(oMS3.parse("0.1", true).valueOf(), 100, "0.1");
+		equal(oMS3.parse("0.003", true).valueOf(), 3, "0.003");
+		equal(oMS3.parse("0.123", true).valueOf(), 123, "0.123");
+		equal(oMS3.parse("0.123456", true).valueOf(), 123, "0.123456");
 	});
 
 

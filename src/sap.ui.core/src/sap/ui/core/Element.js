@@ -1008,7 +1008,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 		}
 
 		if (this._sapui_declarativeSourceInfo) {
-			oClone._sapui_declarativeSourceInfo = this._sapui_declarativeSourceInfo;
+			oClone._sapui_declarativeSourceInfo = jQuery.extend({}, this._sapui_declarativeSourceInfo);
 		}
 
 		return oClone;
@@ -1122,7 +1122,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 			}
 		}
 
-		return aFieldGroupIds;
+		return aFieldGroupIds || [];
 
 	};
 

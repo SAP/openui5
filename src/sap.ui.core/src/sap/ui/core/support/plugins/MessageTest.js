@@ -57,7 +57,7 @@ sap.ui.define(['jquery.sap.global', '../Plugin', '../Support'],
 
 			var rm = sap.ui.getCore().createRenderManager();
 			rm.write("<div class='sapUiSupportToolbar'>");
-			rm.write("<input type='text' id='" + this.getId() + "-input' class='sapUiSupportTxtFld'></input>");
+			rm.write("<input type='text' id='" + this.getId() + "-input' class='sapUiSupportTxtFld'/>");
 			rm.write("<button id='" + this.getId() + "-send' class='sapUiSupportBtn'>Send</button>");
 			rm.write("</div><div class='sapUiSupportMessageCntnt'></div>");
 			rm.flush(this.$().get(0));

@@ -437,9 +437,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Icon'],
 			oRm.writeClasses();
 
 			oRm.writeAttributeEscaped("src", sUri);
-			oRm.write(">");
-
-			oRm.write("</img>");
+			oRm.write("/>");
 		};
 
 		/**

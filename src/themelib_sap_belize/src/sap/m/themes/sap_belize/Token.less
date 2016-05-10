@@ -19,14 +19,35 @@
 	padding: 0.25rem 0.375rem;
 }
 
-.sap-desktop .sapMToken:hover {
+html.sap-desktop .sapMToken:hover {
 	background: @sapUiButtonHoverBackground;
 	border: 1px solid darken(@sapUiButtonHoverBackground, 5);
 	border-radius: 0.125rem;
 }
 
 .sapMToken:focus {
-	border: 0.0625rem dotted @sapUiContentFocusColor;
+	outline: 0.125rem dotted @sapUiFocus;
+	outline-offset: -3px;
+	outline-color: @sapUiInvertedFocus;
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMToken:focus{
+		position: relative;
+		outline: none;
+	}
+
+	.sapMTokenText:before{
+		position: absolute;
+		top: 2px;
+		left: 2px;
+		right: 2px;
+		bottom: 2px;
+		border: 0.0625rem dotted @sapUiInvertedFocus;
+		content: "";
+		pointer-events: none;
+	}
 }
 
 .sapMTokenSelected {

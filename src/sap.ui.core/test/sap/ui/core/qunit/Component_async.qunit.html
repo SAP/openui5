@@ -368,28 +368,35 @@
 		});
 	});
 
-	QUnit.test("manifest load callback", function(assert) {
+	QUnit.module("Misc", {
+		beforeEach: function() {
+			// Register test module path
+			jQuery.sap.registerModulePath("sap.test", "./testdata/components/async");
+		},
+		afterEach: function() {
+			unloadResources();
+		}
+	});
+
+	QUnit.test("delegate runAsOwner", function(assert) {
 		var done = assert.async();
 
-		// install a manifest load callback hook
-		sap.ui.core.Component._fnManifestLoadCallback = function(oManifest, oAsyncHints) {
-			assert.ok(true, "sap.ui.core.Component._fnManifestLoadCallback called!");
-			assert.deepEqual(oAsyncHints, {
-				libs: ["sap.ui.core"],
-				requests: [{ name: "sap.ui.fl.changes", url: "any/url/changes.json" }]
-			}, "sap.ui.core.Component._fnManifestLoadCallback oAsyncHints passed!");
-			done();
-		};
+		var oOwnerComponent = new sap.ui.core.UIComponent("ownerId");
 
 		// start test
-		sap.ui.component({
-			manifestUrl : "./testdata/components/async/manifestcomp/manifest.json",
-			async: true,
-			asyncHints: {
-				libs: ["sap.ui.core"],
-				requests: [{ name: "sap.ui.fl.changes", url: "any/url/changes.json" }]
-			}
+		oOwnerComponent.runAsOwner(function() {
+			sap.ui.component({
+				manifestUrl : "./testdata/components/async/manifestcomp/manifest.json",
+				async: true
+			}).then(function(oComponent) {
+				assert.equal(sap.ui.core.Component.getOwnerIdFor(oComponent), "ownerId", "Owner Component delegated properly.");
+				done();
+			}.bind(this), function(oError) {
+				assert.ok(false, "Promise of Component hasn't been resolved correctly.");
+				done();
+			});
 		});
+
 	});
 
 	</script>

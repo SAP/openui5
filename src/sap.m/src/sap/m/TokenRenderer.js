@@ -27,6 +27,7 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.write("<div tabindex=\"-1\"");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMToken");
+
 		oRm.writeClasses();
 
 		oRm.writeAttribute("role", "listitem");

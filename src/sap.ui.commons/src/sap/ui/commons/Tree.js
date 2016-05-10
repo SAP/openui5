@@ -22,6 +22,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *
 	 * @constructor
 	 * @public
+	 * @deprecated Since version 1.38.
 	 * @alias sap.ui.commons.Tree
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -554,21 +555,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @param {sap.ui.commons.TreeNode} oNode The current node to look at
 	 * @param {sap.ui.commons.TreeNode} oRootNode The root node that was collapsed
 	 */
-	function rememberSelectedChildren(oNode, oRootNode, oTree) {
-		var aNodes = oNode._getNodes();
-		var oCurrentNode = null;
+	function rememberSelectedChildren(oNode, oRootNode) {
+		var aNodes = oNode._getNodes(),
+			oCurrentNode;
+
 		for (var i = 0; i < aNodes.length; i++) {
 			oCurrentNode = aNodes[i];
-
-			if (oTree.getSelectionMode() === sap.ui.commons.TreeSelectionMode.Multi && oCurrentNode.getIsSelected()) {
-				oTree._delMultiSelection(oCurrentNode);
-			}
 
 			if (oCurrentNode.getIsSelected()) {
 				oRootNode.addAssociation("selectedForNodes", oCurrentNode, true);
 			}
 
-			rememberSelectedChildren(oCurrentNode, oRootNode, oTree);
+			rememberSelectedChildren(oCurrentNode, oRootNode);
 		}
 	}
 
@@ -585,7 +583,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 		// the root node, which needs to update references for selected children,
 		// is also the first node to look at
-		rememberSelectedChildren(oCollapsingNode, oCollapsingNode, this);
+		rememberSelectedChildren(oCollapsingNode, oCollapsingNode);
 
 		//update dom if necessary
 		if (oCollapsingNode.getSelectedForNodes().length) {
@@ -608,25 +606,57 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * override element updateAggregation method with this one and update the tree node bindings
 	 * @private
 	 */
-	Tree.prototype.updateNodes = function(sReason){
-		var oNode,
-			oContext;
+	Tree.prototype.updateNodes = function(sReason) {
+		var aNodes,
+			oNode,
+			sKey,
+			iNodesLength,
+			i;
+
+		// Delete all old node instances
+		if (sReason === "filter") {
+			aNodes = this.getAggregation("nodes");
+			iNodesLength = aNodes.length;
+			for (i = 0; i < iNodesLength; i++) {
+				aNodes[i].destroy();
+			}
+			// We reset here mSelectedNodes as it collects id's and after filtering
+			// the tree nodes they are recreated with new id's which can be the same as
+			// the old ones and to result of false positives for node selection.
+			this.mSelectedNodes = {};
+		}
 
 		this.updateAggregation("nodes");
 
-		// If the reason for updating the model is "filter" clear selected nodes.
-		if (sReason === "filter") {
-			this._clearSelection();
-		} else {
-			for (var sKey in this.mSelectedContexts) {
-				oContext = this.mSelectedContexts[sKey];
-				oNode = this.getNodeByContext(oContext);
-				if (oNode) {
-					oNode.setIsSelected(true);
-				}
+		for (sKey in this.mSelectedContexts) {
+			oNode = this.getNodeByContext(this.mSelectedContexts[sKey]);
+			if (oNode) {
+				oNode.setIsSelected(true);
+			} else {
+				this.mSelectedContexts = this._removeItemFromObject(this.mSelectedContexts, sKey);
 			}
 		}
 
+	};
+
+	/**
+	 * Clones a flat object removing a key/value pair from the old one
+	 * @param oObject {object} The object from which the key shall be removed
+	 * @param sKeyToRemove {string} Key to be removed from the object
+	 * @returns {object} The new object without the removed key
+	 * @private
+	 */
+	Tree.prototype._removeItemFromObject = function (oObject, sKeyToRemove) {
+		var sKey,
+			oReturn = {};
+
+		for (sKey in oObject) {
+			if (sKey !== sKeyToRemove) {
+				oReturn[sKey] = oObject[sKey];
+			}
+		}
+
+		return oReturn;
 	};
 
 	/**
@@ -652,9 +682,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	Tree.prototype.getNodeByContext = function(oContext){
 		var oBindingInfo = this.getBindingInfo("nodes"),
 			sModelName = oBindingInfo && oBindingInfo.model;
+
 		return this.findNode(this, function(oNode) {
-			return oNode.getBindingContext(sModelName) == oContext;
+			var oBindingContext = oNode.getBindingContext(sModelName);
+			return (oContext && oBindingContext && oContext.getPath() === oBindingContext.getPath());
 		});
+
 	};
 
 	/**
@@ -755,10 +788,31 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 		this.iSelectionUpdateTimer = setTimeout(function() {
 			that.mSelectedNodes = {};
-			that.mSelectedContexts = {};
+			that.mSelectedContexts = [];
 			that.updateSelection(that, true);
 			that.iSelectionUpdateTimer = null;
 		}, 0);
+	};
+
+	/**
+	 * Add's node context to the internal mSelectedContexts object.
+	 * Taking care if TreeSelectionMode === Multi to not duplicate the node context in mSelectedContexts.
+	 * @param oContext The binding context of the node
+	 * @private
+	 */
+	Tree.prototype._addSelectedNodeContext = function (oContext) {
+		var sPath;
+		if (oContext && oContext.sPath) {
+			sPath = oContext.sPath;
+			if (this.getSelectionMode() === sap.ui.commons.TreeSelectionMode.Multi) {
+				if (!(sPath in this.mSelectedContexts)) {
+					this.mSelectedContexts[sPath] = oContext;
+				}
+			} else {
+				this.mSelectedContexts = {};
+				this.mSelectedContexts[sPath] = oContext;
+			}
+		}
 	};
 
 	/**
@@ -777,7 +831,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 					case sap.ui.commons.TreeSelectionMode.Legacy:
 						if (jQuery.isEmptyObject(that.mSelectedNodes)) {
 							that.mSelectedNodes[oNode.getId()] = oNode;
-							that.mSelectedContexts[oNode.getId()] = that.getNodeContext(oNode);
+							that._addSelectedNodeContext(that.getNodeContext(oNode));
 						}
 						break;
 					case sap.ui.commons.TreeSelectionMode.Single:
@@ -786,7 +840,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 							oNode.setIsSelected(false);
 						} else {
 							that.mSelectedNodes[oNode.getId()] = oNode;
-							that.mSelectedContexts[oNode.getId()] = that.getNodeContext(oNode);
+							that._addSelectedNodeContext(that.getNodeContext(oNode));
 						}
 						break;
 					case sap.ui.commons.TreeSelectionMode.Multi:
@@ -795,7 +849,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 							oNode.setIsSelected(false);
 						} else {
 							that.mSelectedNodes[oNode.getId()] = oNode;
-							that.mSelectedContexts[oNode.getId()] = that.getNodeContext(oNode);
+							that._addSelectedNodeContext(that.getNodeContext(oNode));
 						}
 						break;
 				}
@@ -821,7 +875,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 		oNode._select(bSuppressEvent, true);
 		this.mSelectedNodes[oNode.getId()] = oNode;
-		this.mSelectedContexts[oNode.getId()] = oContext;
+		this._addSelectedNodeContext(oContext);
 		this.oLeadSelection = oNode;
 		if (!bSuppressEvent) {
 			this.fireSelectionChange({nodes: [oNode], nodeContexts: [oContext]});
@@ -878,8 +932,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	Tree.prototype._setNodeSelection = function(oNode, bIsSelected, bSuppressEvent) {
 		var aSelectedNodes = [],
-			aSelectedNodeContexts = [];
-		var oVisibleNode;
+			aSelectedNodeContexts = [],
+			oVisibleNode;
 
 		if (this.getSelectionMode() == sap.ui.commons.TreeSelectionMode.Single) {
 			if (bIsSelected) {
@@ -923,16 +977,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 		oSelNode._select(bSuppressEvent);
 		this.mSelectedNodes[oSelNode.getId()] = oSelNode;
-		this.mSelectedContexts[oSelNode.getId()] = this.getNodeContext(oSelNode);
+		this._addSelectedNodeContext(this.getNodeContext(oSelNode));
 	};
 
-	Tree.prototype._delMultiSelection = function(oSelNode, bSuppressEvent) {
+	Tree.prototype._delMultiSelection = function(oSelNode) {
+		var oContext;
+
 		if (!oSelNode) {
 			return;
 		}
 		oSelNode._deselect();
-		delete this.mSelectedNodes[oSelNode.getId()];
-		delete this.mSelectedContexts[oSelNode.getId()];
+		this.mSelectedNodes = this._removeItemFromObject(this.mSelectedNodes, oSelNode.getId());
+
+		oContext = oSelNode.getBindingContext();
+
+		if (oContext && oContext.sPath) {
+			if (oContext.sPath in this.mSelectedContexts) {
+				this.mSelectedContexts = this._removeItemFromObject(this.mSelectedContexts, oContext.sPath);
+			}
+		}
 	};
 
 	Tree.prototype._delSelection = function() {
@@ -959,16 +1022,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			oVisibleNode = this._getVisibleNode(oParentNode);
 		}
 		return oVisibleNode;
-	};
-
-	/**
-	 * Clears tree selection and fires <code>SelectionChange</code> event with blank parameters.
-	 *
-	 * @private
-	 */
-	Tree.prototype._clearSelection = function () {
-		this._delSelection();
-		this.fireSelectionChange({nodes: [], nodeContexts: []});
 	};
 
 	return Tree;

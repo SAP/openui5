@@ -114,7 +114,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 		 * Contains Parameters: url, type, async, info (<strong>deprecated</strong>), infoObject, success, errorobject
 		 *
 		 */
-		RequestCompleted : "requestCompleted"
+		RequestCompleted : "requestCompleted",
+
+		/**
+		 * Event is fired when changes occur to a property value in the model. The event contains a reason parameter which describes the cause of the property value change.
+		 * Currently the event is only fired with reason <code>sap.ui.model.ChangeReason.Binding</code> which is fired when two way changes occur to a value of a property binding.
+		 * Contains the parameters:
+		 * reason, path, context, value
+		 *
+		 */
+		PropertyChange : "propertyChange"
 	};
 
 	/**
@@ -421,6 +430,60 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 
 	Model.prototype.detachMessageChange = function(fnFunction, oListener) {
 		this.detachEvent("messageChange", fnFunction, oListener);
+		return this;
+	};
+
+	/**
+	 * Fire event propertyChange to attached listeners.
+	 *
+	 * @param {object} [mArguments] the arguments to pass along with the event.
+	 * @param {sap.ui.model.ChangeReason} [mArguments.reason] The reason of the property change
+	 * @param {string} [mArguments.path] The path of the property
+	 * @param {object} [mArguments.context] the context of the property
+	 * @param {object} [mArguments.value] the value of the property
+	 *
+	 * @return {sap.ui.model.Model} <code>this</code> to allow method chaining
+	 * @protected
+	 */
+	Model.prototype.firePropertyChange = function(mArguments) {
+		this.fireEvent("propertyChange", mArguments);
+		return this;
+	};
+
+	/**
+	 * Attach event-handler <code>fnFunction</code> to the 'propertyChange' event of this <code>sap.ui.model.Model</code>.
+	 *
+	 *
+	 * @param {object}
+	 *            [oData] The object, that should be passed along with the event-object when firing the event.
+	 * @param {function}
+	 *            fnFunction The function to call, when the event occurs. This function will be called on the
+	 *            oListener-instance (if present) or in a 'static way'.
+	 * @param {object}
+	 *            [oListener] Object on which to call the given function. If empty, the global context (window) is used.
+	 *
+	 * @return {sap.ui.model.Model} <code>this</code> to allow method chaining
+	 * @public
+	 */
+	Model.prototype.attachPropertyChange = function(oData, fnFunction, oListener) {
+		this.attachEvent("propertyChange", oData, fnFunction, oListener);
+		return this;
+	};
+
+	/**
+	 * Detach event-handler <code>fnFunction</code> from the 'propertyChange' event of this <code>sap.ui.model.Model</code>.
+	 *
+	 * The passed function and listener object must match the ones previously used for event registration.
+	 *
+	 * @param {function}
+	 *            fnFunction The function to call, when the event occurs.
+	 * @param {object}
+	 *            oListener Object on which the given function had to be called.
+	 * @return {sap.ui.model.Model} <code>this</code> to allow method chaining
+	 * @public
+	 */
+	Model.prototype.detachPropertyChange = function(fnFunction, oListener) {
+		this.detachEvent("propertyChange", fnFunction, oListener);
 		return this;
 	};
 

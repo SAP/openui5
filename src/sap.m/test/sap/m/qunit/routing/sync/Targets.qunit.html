@@ -100,8 +100,6 @@
 					///////////////////////////////////////////////////////
 					QUnit.module("Integration tests");
 
-
-
 					QUnit.test("Should respect the viewlevel with multiple navigations", function (assert) {
 						//Arrange
 						var oFirstNavContainer = new NavContainer(),
@@ -162,6 +160,62 @@
 						oTargets.destroy();
 						oFirstNavContainer.destroy();
 						oSecondNavContainer.destroy();
+					});
+
+					QUnit.test("Should take the viewLevel from the first ancester which has a viewLevel if a target doesn't have viewLevel defined", function(assert) {
+						//Arrange
+						var oNavContainer = new NavContainer(),
+							fnBackSpy = this.spy(oNavContainer, "backToPage"),
+							oTargetConfig = {
+								first: {
+									controlId: oNavContainer.getId(),
+									viewName: "FirstView",
+									viewLevel: 2
+								},
+								second: {
+									controlId: oNavContainer.getId(),
+									viewName: "SecondView",
+									parent: "first",
+									viewLevel: 1
+								},
+								third: {
+									controlId: oNavContainer.getId(),
+									viewName: "ThirdView",
+									parent: "second"
+								},
+								fourth: {
+									controlId: oNavContainer.getId(),
+									viewName: "FourthView",
+									parent: "third"
+								}
+							},
+							oViews = new Views({async: false}),
+							oTargets = new Targets({
+								targets: oTargetConfig,
+								config: {
+									viewType: "JS",
+									controlAggregation: "pages",
+									async: false
+								},
+								views: oViews,
+							});
+
+						//views
+						helpers.createViewAndController("FirstView");
+						helpers.createViewAndController("SecondView");
+						helpers.createViewAndController("ThirdView");
+						helpers.createViewAndController("FourthView");
+
+						//Act
+						oTargets.display("first");
+						oTargets.display("fourth");
+
+						//Assert
+						assert.strictEqual(fnBackSpy.callCount, 1, "did a back navigation on the first container since a navigation from 2 to 1 took place");
+
+						oViews.destroy();
+						oTargets.destroy();
+						oNavContainer.destroy();
 					});
 
 					/**

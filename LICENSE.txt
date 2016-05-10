@@ -327,20 +327,6 @@ License: MIT License
 <year> = 2008-2013
 <copyright holders> = Matteo Spinelli
 
-Component: jQuery 1.7.1
-Licensor: John Resig
-Website: http://jszip.org/redist/jquery
-License: MIT License
-<year> = 2011
-<copyright holders> = John Resig
-
-Component: jQuery 1.8.1
-Licensor: jQuery Foundation and other contributors
-Website: http://github.com/jquery/jquery/
-License: MIT License
-<year> = 2012
-<copyright holders> = jQuery Foundation and other contributors
-
 Component: jQuery 1.10.1
 Licensor: jQuery Foundation and other contributors
 Website: http://jquery.com/
@@ -446,6 +432,13 @@ Website: http://mobiscroll.codeplex.com/
 License: MIT License
 <year> = unspecified
 <copyright holders> = Mathias Bynens
+
+Component: node-lru-cache 2.7.3 - A cache object that deletes the least-recently-used items.
+Licensor: Isaac Z. Schlueter and Contributors
+Website: https://github.com/isaacs/node-lru-cache/blob/v2.7.3/
+License: ISC License
+<year> = 2015
+<copyright holders> = Isaac Z. Schlueter and Contributors
 
 Component: punycode.js 1.2.3
 Licensor: Acid Media
@@ -635,3 +628,21 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+--------------------------------------------------------------------------------------------------------------------------
+
+The ISC License
+
+Copyright (c) Year(s), Company or Person's Name
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
+IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.

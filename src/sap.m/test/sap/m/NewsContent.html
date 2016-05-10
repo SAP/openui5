@@ -46,30 +46,23 @@
 
 	var oConfModel = new sap.ui.model.json.JSONModel(oConfData);
 	sap.ui.getCore().setModel(oConfModel);
-	var aNewsConts = [];
 
 	var fnPress = function(oEvent) {
 		sap.m.MessageToast.show("The news content is pressed.");
 	};
 
-	var buildNewsContent = function(sSize, sText) {
-		var oNC = new sap.m.NewsContent("configurable-news-content-" + sSize, {
-			contentText : "{/contentText}",
-			subheader : "{/subheader}",
-			tooltip : "{/tooltip}",
-			size : sSize,
-			press : fnPress
-		});
-		aNewsConts.push(oNC);
-		return new sap.m.FlexBox("nc-fb" + sSize, {
-			items : [oNC],
-			width : "370px",
-			height : "80px"
-		});
-	};
+	var oNC = new sap.m.NewsContent("configurable-news-content-", {
+		contentText : "{/contentText}",
+		subheader : "{/subheader}",
+		tooltip : "{/tooltip}",
+		press : fnPress
+	});
+	oNC.addStyleClass("sapUiSmallMargin");
 
-	var oNCForm = new sap.ui.layout.form.SimpleForm("news-content-form", {
-		content : [buildNewsContent("L", "large"), buildNewsContent("S", "small"), buildNewsContent("Auto", "auto")]
+	var oFlexBox = new sap.m.FlexBox("flexbox", {
+		items : [oNC],
+		alignItems: "Start",
+		justifyContent: "SpaceAround"
 	});
 
 	var oCTLbl = new sap.m.Label({
@@ -114,15 +107,13 @@
 		id : "tooltip-swtch",
 		state : false,
 		name : "QuickView tooltip",
-		change : function(oE) {
-			var bState = oE.getParameter("state");
-			for (var i = 0; i < aNewsConts.length; i++) {
-				aNewsConts[i].setTooltip(bState ? new sap.ui.ux3.QuickView({
-					content : new sap.m.Text({
-						text : oTooltipInput.getValue().split("{AltText}").join(aNewsConts[i].getAltText())
-					})
-				}) : oTooltipInput.getValue());
-			}
+		change : function(oEvent) {
+			var bState = oEvent.getParameter("state");
+			oNC.setTooltip(bState ? new sap.ui.ux3.QuickView({
+				content : new sap.m.Text({
+					text : oTooltipInput.getValue().split("{AltText}").join(oNC.getAltText())
+				})
+			}) : oTooltipInput.getValue());
 		}
 	});
 
@@ -134,14 +125,12 @@
 	var oPressSwtch = new sap.m.Switch({
 		id : "press-action",
 		state : true,
-		change : function(oE) {
-			var bState = oE.getParameter("state");
-			for (var i = 0; i < aNewsConts.length; i++) {
-				if (bState) {
-					aNewsConts[i].attachPress(fnPress);
-				} else {
-					aNewsConts[i].detachPress(fnPress);
-				}
+		change : function(oEvent) {
+			var bState = oEvent.getParameter("state");
+			if (bState) {
+				oNC.attachPress(fnPress);
+			} else {
+				oNC.detachPress(fnPress);
 			}
 		}
 	});
@@ -156,7 +145,7 @@
 	});
 
 	var oPage = new sap.m.Page({
-		content : [oNCForm, editableSimpleForm]
+		content : [oFlexBox, editableSimpleForm]
 	});
 	//create a mobile App embedding the page and place the App into the HTML document
 	var app = new sap.m.App("myApp", {

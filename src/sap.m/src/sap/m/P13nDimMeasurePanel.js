@@ -95,6 +95,8 @@ sap.ui.define([
 
 	P13nDimMeasurePanel.prototype.init = function() {
 		var that = this;
+		this._iLiveChangeTimer = 0;
+		this._iSearchTimer = 0;
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._bOnAfterRenderingFirstTimeExecuted = false;
 		this._bOnBeforeRenderingFirstTimeExecuted = false;
@@ -288,13 +290,13 @@ sap.ui.define([
 	};
 
 	P13nDimMeasurePanel.prototype.onAfterRendering = function() {
-		var that = this, iLiveChangeTimer = 0;
+		var that = this;
 
 		// adapt scroll-container very first time to the right size of the browser
 		if (!this._bOnAfterRenderingFirstTimeExecuted) {
 			this._bOnAfterRenderingFirstTimeExecuted = true;
-			window.clearTimeout(iLiveChangeTimer);
-			iLiveChangeTimer = window.setTimeout(function() {
+			window.clearTimeout(this._iLiveChangeTimer);
+			this._iLiveChangeTimer = window.setTimeout(function() {
 				that._fnHandleResize();
 
 				// following line is needed to get layout of OverflowToolbar rearranged IF it is used in a dialog
@@ -393,6 +395,9 @@ sap.ui.define([
 		if (this.getModel("$sapmP13nDimMeasurePanel")) {
 			this.getModel("$sapmP13nDimMeasurePanel").destroy();
 		}
+
+		window.clearTimeout(this._iLiveChangeTimer);
+		window.clearTimeout(this._iSearchTimer);
 	};
 
 	// ----------------------- Overwrite Method of chartTypeKey Property --------------------------
@@ -1176,14 +1181,13 @@ sap.ui.define([
 		});
 		oShowSelectedButton.setModel(oModel);
 
-		var iLiveChangeTimer = 0;
 		var oSearchField = new SearchField(this.getId() + "-searchField", {
 			liveChange: function(oEvent) {
 				var sValue = oEvent.getSource().getValue(), iDelay = (sValue ? 300 : 0); // no delay if value is empty
 				// execute search after user stops typing for 300ms
-				window.clearTimeout(iLiveChangeTimer);
+				window.clearTimeout(that._iSearchTimer);
 				if (iDelay) {
-					iLiveChangeTimer = window.setTimeout(function() {
+					that._iSearchTimer = window.setTimeout(function() {
 						that._onExecuteSearch();
 					}, iDelay);
 				} else {

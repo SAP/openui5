@@ -123,6 +123,10 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 					"xx-lesssupport"        : { type : "boolean",  defaultValue : false },
 					"xx-handleValidation"   : { type : "boolean",  defaultValue : false },
 					"xx-fiori2Adaptation"   : { type : "string[]",  defaultValue : [] },
+					"xx-cache-use"          : { type : "boolean",  defaultValue : true},
+					"xx-cache-excludedKeys" : { type : "string[]", defaultValue : []},
+					"xx-cache-serialization": { type : "boolean",  defaultValue : false},
+					"xx-nosync"             : { type : "string",   defaultValue : "" },
 					"statistics"            : { type : "boolean",  defaultValue : false }
 			};
 
@@ -634,6 +638,60 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		},
 
 		/**
+		 * Checks whether the Cache Manager is switched on.
+		 * @experimental
+		 * @since 1.37.0
+		 * @returns {boolean}
+		 */
+		isUI5CacheOn: function () {
+			return this["xx-cache-use"];
+		},
+		/**
+		 * Enables/Disables the Cache configuration.
+		 * @experimental
+		 * @since 1.37.0
+		 * @param {boolean} on true to switch it on, false if to switch it off
+		 * @returns {sap.ui.core.Configuration}
+		 */
+		setUI5CacheOn: function (on) {
+			this["xx-cache-use"] = on;
+			return this;
+		},
+
+		/**
+		 * Checks whether the Cache Manager serialization support is switched on.
+		 * @experimental
+		 * @since 1.37.0
+		 * @returns {boolean}
+		 */
+		isUI5CacheSerializationSupportOn: function () {
+			return this["xx-cache-serialization"];
+		},
+
+		/**
+		 * Enables/Disables the Cache serialization support
+		 * @experimental
+		 * @since 1.37.0
+		 * @param {boolean} on true to switch it on, false if to switch it off
+		 * @returns {sap.ui.core.Configuration}
+		 */
+		setUI5CacheSerializationSupport: function (on) {
+			this["xx-cache-serialization"] = on;
+			return this;
+		},
+
+		/**
+		 * Returns all keys, that the CacheManager will ignore when set/get values.
+		 * @experimental
+		 * @since 1.37.0
+		 * @returns {string[]} array of keys that CacheManager should ignore
+		 * @see sap.ui.core.cache.LRUPersistentCache#keyMatchesExclusionStrings
+		 */
+		getUI5CacheExcludedKeys: function () {
+			return this["xx-cache-excludedKeys"];
+		},
+
+		/**
 		 * Returns the calendar type which is being used in locale dependent functionalities.
 		 *
 		 * When it's explicitly set by calling <code>setCalendar</code>, the set calendar type is returned.
@@ -1123,14 +1181,20 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 * Flag if statistics are requested
 		 *
 		 * Flag set by TechnicalInfo Popup will also be checked
-		 * So its active if set by ULP parameter or by TechnicalInfo property
+		 * So its active if set by URL parameter or by TechnicalInfo property
 		 *
 		 * @returns {boolean} statistics flag
 		 * @private
 		 * @since 1.20.0
 		 */
 		getStatistics : function() {
-			return this.statistics || window.localStorage.getItem("sap-ui-statistics") == "X";
+			var result = this.statistics;
+			try {
+				result = result || window.localStorage.getItem("sap-ui-statistics") == "X";
+			} catch (e) {
+				// access to local storage might fail due to security / privacy settings
+			}
+			return result;
 		},
 
 		/**

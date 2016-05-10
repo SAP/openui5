@@ -1,0 +1,24 @@
+<core:View controllerName="sap.m.sample.GenericTileAsMonitorTile.Page"
+	xmlns="sap.m" xmlns:core="sap.ui.core">
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Cumulative Totals" subheader="Expenses" frameType="OneByOne"
+		press="press">
+		<tileContent>
+			<TileContent unit="Unit" footer="Notification Text">
+				<content>
+					<NumericContent value="1762" icon="sap-icon://line-charts"/>
+				</content>
+			</TileContent>
+		</tileContent>
+	</GenericTile>
+
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Cumulative Totals" subheader="Expenses" frameType="OneByOne"
+		press="press">
+		<tileContent>
+			<TileContent unit="Unit" footer="Notification Text">
+				<content>
+					<NumericContent value="12"/>
+				</content>
+			</TileContent>
+		</tileContent>
+	</GenericTile>
+</core:View>

@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.ResponsiveContainerRange.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function(jQuery, library, Control) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
+	function(jQuery, library, Element) {
 	"use strict";
 
 
@@ -17,17 +17,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *
 	 * @class
 	 * Defines a range for the ResponsiveContainer
-	 * @extends sap.ui.core.Control
+	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
 	 * @constructor
 	 * @public
+	 * @deprecated Since version 1.38.
 	 * @alias sap.ui.commons.ResponsiveContainerRange
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var ResponsiveContainerRange = Control.extend("sap.ui.commons.ResponsiveContainerRange", /** @lends sap.ui.commons.ResponsiveContainerRange.prototype */ { metadata : {
+	var ResponsiveContainerRange = Element.extend("sap.ui.commons.ResponsiveContainerRange", /** @lends sap.ui.commons.ResponsiveContainerRange.prototype */ { metadata : {
 
 		library : "sap.ui.commons",
 		properties : {

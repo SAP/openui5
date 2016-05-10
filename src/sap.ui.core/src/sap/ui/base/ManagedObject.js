@@ -318,7 +318,11 @@ sap.ui.define([
 						 */
 						oldValue : { type : 'any' }
 					}
-				}
+				},
+				/**
+				 * Fired when models or contexts are changed on this object (either by calling setModel/setBindingContext or due to propagation)
+				 */
+				"modelContextChange" : {}
 			},
 			specialSettings : {
 
@@ -479,6 +483,7 @@ sap.ui.define([
 	 * <ul>
 	 * <li><code>library : <i>string</i></code></li>
 	 * <li><code>properties : <i>object</i></code></li>
+	 * <li><code>defaultProperty : <i>string</i></code></li>
 	 * <li><code>aggregations : <i>object</i></code></li>
 	 * <li><code>defaultAggregation : <i>string</i></code></li>
 	 * <li><code>associations : <i>object</i></code></li>
@@ -494,9 +499,11 @@ sap.ui.define([
 	 *   metadata : {
 	 *     library: 'sap.mylib',
 	 *     properties : {
+	 *       value: 'string',
 	 *       width: 'sap.ui.core.CSSSize',
 	 *       height: { type: 'sap.ui.core.CSSSize', defaultValue: '100%' }
 	 *     },
+	 *     defaultProperty : 'value',
 	 *     aggregations : {
 	 *       header : { type: 'sap.mylib.FancyHeader', multiple : false }
 	 *       items : 'sap.ui.core.Control'
@@ -556,6 +563,11 @@ sap.ui.define([
 	 * <li>bindFoo(c) - (only if property was defined to be 'bindable'): convenience function that wraps {@link #bindProperty}
 	 * <li>unbindFoo() - (only if property was defined to be 'bindable'): convenience function that wraps {@link #unbindProperty}
 	 * </ul>
+	 *
+	 *
+	 * <b>'defaultProperty'</b> : <i>string</i><br>
+	 * When specified, the default property must match the name of one of the properties defined for the new subclass (either own or inherited).
+	 * The named property can be used to identify the main property to be used for bound data. E.g. the value property of a field control.
 	 *
 	 *
 	 * <b>'aggregations'</b> : <i>object</i><br>
@@ -2107,13 +2119,28 @@ sap.ui.define([
 
 			this.oParent = null;
 			this.sParentAggregationName = null;
-			this.oPropagatedProperties = ManagedObject._oEmptyPropagatedProperties;
+			var oPropagatedProperties = ManagedObject._oEmptyPropagatedProperties;
 
-			// if object is being destroyed no propagation needed
-			if (!this._bIsBeingDestroyed) {
-				this.updateBindings(true, null);
-				this.updateBindingContext(false, undefined, true);
-				this.propagateProperties(true);
+			/* In case of a 'move' - remove/add controls snychronous in an aggregation -
+			 * we should not propagate synchronous when setting the parent to null.
+			 * Synchronous propagation destroys the bindings when removing a control
+			 * from the aggregation and recreates them when adding the control again.
+			 * This could lead to a data refetch, and in some scenarios to endless
+			 * request loops.
+			 */
+			if (oPropagatedProperties !== this.oPropagatedProperties) {
+				this.oPropagatedProperties = oPropagatedProperties;
+				if (!this._bIsBeingDestroyed) {
+					setTimeout(function() {
+						// if object is being destroyed or parent is set again (move) no propagation is needed
+						if (!this.oParent) {
+							this.updateBindings(true, null);
+							this.updateBindingContext(false, undefined, true);
+							this.propagateProperties(true);
+							this.fireModelContextChange();
+						}
+					}.bind(this), 0);
+				}
 			}
 
 			jQuery.sap.act.refresh();
@@ -2143,13 +2170,18 @@ sap.ui.define([
 		this.sParentAggregationName = sAggregationName;
 
 		//get properties to propagate
-		this.oPropagatedProperties = oParent._getPropertiesToPropagate();
+		var oPropagatedProperties = oParent._getPropertiesToPropagate();
 
-		// update bindings
-		if (this.hasModel()) {
-			this.updateBindings(true, null); // TODO could be restricted to models that changed
-			this.updateBindingContext(false, undefined, true);
-			this.propagateProperties(true);
+		if (oPropagatedProperties !== this.oPropagatedProperties) {
+			this.oPropagatedProperties = oPropagatedProperties;
+
+			// update bindings
+			if (this.hasModel()) {
+				this.updateBindings(true, null); // TODO could be restricted to models that changed
+				this.updateBindingContext(false, undefined, true);
+				this.propagateProperties(true);
+			}
+			this.fireModelContextChange();
 		}
 
 		// only the parent knows where to render us, so we have to invalidate it
@@ -2495,6 +2527,7 @@ sap.ui.define([
 			if ( !_bSkipUpdateBindingContext ) {
 				this.updateBindingContext(false, sModelName);
 				this.propagateProperties(sModelName);
+				this.fireModelContextChange();
 			}
 		}
 		return this;
@@ -2894,6 +2927,7 @@ sap.ui.define([
 	 * @param {number} oBindingInfo.length the amount of entries to be created (may exceed the sizelimit of the model)
 	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [oBindingInfo.sorter] the initial sort order (optional)
 	 * @param {sap.ui.model.Filter[]} [oBindingInfo.filters] the predefined filters for this aggregation (optional)
+	 * @param {string|function} oBindingInfo.key the name of the key property or a function getting the context as only parameter to calculate a key for entries. This can be used to improve udpate behaviour in models, where a key is not already available.
 	 * @param {object} [oBindingInfo.parameters] a map of parameters which is passed to the binding.
 	 * The supported parameters are listed in the corresponding model-specific implementation of <code>sap.ui.model.ListBinding</code> or <code>sap.ui.model.TreeBinding</code>.
 	 * @param {function} [oBindingInfo.groupHeaderFactory] a factory function to generate custom group visualization (optional)
@@ -2955,7 +2989,11 @@ sap.ui.define([
 			// set default for templateShareable
 			if ( oBindingInfo.template._sapui_candidateForDestroy ) {
 				// template became active again, we should no longer consider to destroy it
-				jQuery.sap.log.warning("A template was reused in a binding, but was already marked as candidate for destroy. You better should declare such a usage with templateShareable:true in the binding configuration.");
+				jQuery.sap.log.warning(
+					"A binding template that is marked as 'candidate for destroy' is reused in a binding. " +
+					"You can use 'templateShareable:true' to fix this issue for all bindings that are affected " +
+					"(The template is used in aggregation '" + sName + "' of object '" + this.getId() + "'). " +
+					"For more information, see documentation under 'Aggregation Binding'.");
 				delete oBindingInfo.template._sapui_candidateForDestroy;
 			}
 			if (oBindingInfo.templateShareable === undefined) {
@@ -3015,7 +3053,7 @@ sap.ui.define([
 			}
 
 		if (this.bUseExtendedChangeDetection === true) {
-			oBinding.enableExtendedChangeDetection();
+			oBinding.enableExtendedChangeDetection(!oBindingInfo.template, oBindingInfo.key);
 		}
 
 		if (oBindingInfo.suspended) {
@@ -3393,6 +3431,7 @@ sap.ui.define([
 			this.oBindingContexts[sModelName] = oContext;
 			this.updateBindingContext(false, sModelName);
 			this.propagateProperties(sModelName);
+			this.fireModelContextChange();
 		}
 		return this;
 	};
@@ -3408,6 +3447,7 @@ sap.ui.define([
 			this.mElementBindingContexts[sModelName] = oContext;
 			this.updateBindingContext(true, sModelName);
 			this.propagateProperties(sModelName);
+			this.fireModelContextChange();
 		}
 		return this;
 	};
@@ -3448,7 +3488,7 @@ sap.ui.define([
 				oModel = this.getModel(sModelName);
 				oBoundObject = this.mBoundObjects[sModelName];
 
-				if (oModel && oBoundObject && oBoundObject.sBindingPath && !bSkipLocal) {
+				if (oModel && oBoundObject && !bSkipLocal) {
 					if (!oBoundObject.binding) {
 						this._bindObject(sModelName, oBoundObject);
 					} else {
@@ -3574,6 +3614,7 @@ sap.ui.define([
 			this.propagateProperties(sName);
 			// if the model instance for a name changes, all bindings for that model name have to be updated
 			this.updateBindings(false, sName);
+			this.fireModelContextChange();
 		} else if ( oModel && oModel !== this.oModels[sName] ) {
 			//TODO: handle null!
 			this.oModels[sName] = oModel;
@@ -3584,6 +3625,7 @@ sap.ui.define([
 			this.updateBindingContext(false, sName);
 			// if the model instance for a name changes, all bindings for that model name have to be updated
 			this.updateBindings(false, sName);
+			this.fireModelContextChange();
 		} // else nothing to do
 		return this;
 	};
@@ -3631,6 +3673,7 @@ sap.ui.define([
 			oObject.updateBindings(bUpdateAll,sName);
 			oObject.updateBindingContext(false, sName, bUpdateAll);
 			oObject.propagateProperties(vName);
+			oObject.fireModelContextChange();
 		}
 	};
 
@@ -3870,7 +3913,11 @@ sap.ui.define([
 				} else if ( oBindingInfo.templateShareable === MAYBE_SHAREABLE_OR_NOT ) {
 					// a 'clone' operation implies sharing the template (if templateShareable is not set to false)
 					oBindingInfo.templateShareable = oCloneBindingInfo.templateShareable = true;
-					jQuery.sap.log.error("A shared template must be marked with templateShareable:true in the binding info");
+					jQuery.sap.log.error(
+						"During a clone operation, a template was found that neither was marked with 'templateShareable:true' nor 'templateShareable:false'. " +
+						"The framework won't destroy the template. This could cause errors (e.g. duplicate IDs) or memory leaks " +
+						"(The template is used in aggregation '" + sName + "' of object '" + this.getId() + "')." +
+						"For more information, see documentation under 'Aggregation Binding'.");
 				}
 
 				 // remove the runtime binding data (otherwise the property will not be connected again!)

@@ -75,7 +75,15 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 			 *  Represents the right content area. Controls such as action buttons or search field can be placed here.
 			 */
 			contentRight : {type : "sap.ui.core.Control", multiple : true, singularName : "contentRight"}
-		}
+		},
+		associations : {
+
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 */
+			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+		},
+		designTime: true
 	}});
 
 	Bar.prototype.onBeforeRendering = function() {
@@ -261,9 +269,9 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 	 * Returns the CSS for the contentMiddle aggregation.
 	 * It is centered if there is enough space for it to fit between the left and the right content, otherwise it is centered between them.
 	 * If not it will be centered between those two.
-	 * @param {integer} iRightBarWidth The width in px
-	 * @param {integer} iBarWidth The width in px
-	 * @param {integer} iLeftBarWidth The width in px
+	 * @param {int} iRightBarWidth The width in px
+	 * @param {int} iBarWidth The width in px
+	 * @param {int} iLeftBarWidth The width in px
 	 * @returns {object} The new _$MidBarPlaceHolder CSS value
 	 * @private
 	 */

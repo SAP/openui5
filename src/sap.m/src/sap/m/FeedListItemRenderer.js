@@ -24,12 +24,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 	 */
 	FeedListItemRenderer.renderLIAttributes = function(rm, oFeedListItem) {
 		rm.addClass("sapMFeedListItemTitleDiv");
-		if (oFeedListItem._showSeparators === sap.m.ListSeparators.None) {
-			rm.addClass("sapMFeedListShowSeparatorsNone");
-		} else {
-			rm.addClass("sapMFeedListShowSeparatorsAll");
-		}
-
+		rm.addClass("sapMFeedListShowSeparatorsAll");
 	};
 
 	/**
@@ -101,10 +96,12 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		} else {
 			rm.write('<div class= "sapMFeedListItemText ');
 			if (!!oFeedListItem.getShowIcon()) {
-				rm.write('sapMFeedListItemHasFigure ');
+				rm.write('sapMFeedListItemHasFigure');
 			}
 			rm.write('" >');
-			rm.write('<p id="' + sMyId + '-text" class="sapMFeedListItemTextText" >');
+			rm.write('<p id="' + sMyId + '-text" class="sapMFeedListItemTextText"');
+			rm.writeAttribute("aria-hidden", true);
+			rm.write('>');
 			if (!!oFeedListItem.getSender()) {
 				rm.write('<span id="' + sMyId + '-name" class="sapMFeedListItemTextName">');
 				rm.renderControl(oFeedListItem._getLinkSender(true));
@@ -155,6 +152,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 
 	FeedListItemRenderer._writeImageControl = function(rm, oFeedListItem, sMyId) {
 		rm.write('<figure id="' + sMyId + '-figure"');
+		rm.writeAttribute("aria-hidden", true);
 		rm.addClass('sapMFeedListItemFigure');
 		if (!oFeedListItem.getIcon()) {
 			rm.addClass('sapMFeedListItemIsDefaultIcon');

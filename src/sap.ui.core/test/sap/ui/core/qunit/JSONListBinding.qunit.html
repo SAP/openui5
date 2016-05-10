@@ -915,7 +915,7 @@
 	});
 
 	test("setData delta", function() {
-		this.oListBinding.bUseExtendedChangeDetection = true;
+		this.oListBinding.enableExtendedChangeDetection();
 		var aContexts = this.oListBinding.getContexts(0, 10);
 		this.oModel.setData(testData.teamMembersNew);
 		aContexts = this.oListBinding.getContexts(0, 10);
@@ -928,7 +928,7 @@
 	});
 
 	test("setProperty delta", function() {
-		this.oListBinding.bUseExtendedChangeDetection = true;
+		this.oListBinding.enableExtendedChangeDetection();
 		var aContexts = this.oListBinding.getContexts(0, 10);
 		this.oModel.setProperty("/4/firstName", "Paul");
 		aContexts = this.oListBinding.getContexts(0, 10);
@@ -936,6 +936,35 @@
 			{ index : 4, type : "delete" },
 			{ index : 4, type : "insert" }
 		], "Replace one property");
+		this.oModel.setProperty("/4", {
+			firstName : "Peter",
+			lastName : "Johnson",
+			gender : "male"
+		});
+		aContexts = this.oListBinding.getContexts(0, 10);
+		deepEqual(aContexts.diff, [
+			{ index : 4, type : "delete" },
+			{ index : 4, type : "insert" }
+		], "Replace whole entry");
+		aContexts = this.oListBinding.getContexts(0, 10);
+		deepEqual(aContexts.diff, [], "Nothing changed");
+	});
+
+	test("setProperty delta with cyclic references", function() {
+		this.oListBinding.enableExtendedChangeDetection();
+		var aContexts = this.oListBinding.getContexts(0, 10);
+		this.oModel.setProperty("/4/firstName", new sap.ui.model.type.Date());
+		aContexts = this.oListBinding.getContexts(0, 10);
+		equal(aContexts.diff, undefined, "No diff for data with cyclic references");
+		this.oModel.setProperty("/4/firstName", "Peter");
+	});
+
+	test("setProperty delta with key", function() {
+		this.oListBinding.enableExtendedChangeDetection(false, "lastName");
+		var aContexts = this.oListBinding.getContexts(0, 10);
+		this.oModel.setProperty("/4/firstName", "Paul");
+		aContexts = this.oListBinding.getContexts(0, 10);
+		deepEqual(aContexts.diff, [], "No diff detected, as key didn't change");
 		this.oModel.setProperty("/4", {
 			firstName : "Peter",
 			lastName : "Johnson",

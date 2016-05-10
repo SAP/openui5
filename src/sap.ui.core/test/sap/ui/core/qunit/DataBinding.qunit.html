@@ -46,7 +46,7 @@
 
 	});
 
-    var oModel1 = new sap.ui.model.json.JSONModel({
+	var oModel1 = new sap.ui.model.json.JSONModel({
     	value : "1"
     });
     var oModel2 = new sap.ui.model.json.JSONModel({
@@ -62,27 +62,45 @@
 
 	module("Model propagation", {
 		setup : function() {
-			uiArea = sap.ui.getCore().createUIArea("content");
-			//uiArea.setModel(null);
+			var oDiv = jQuery("<div></div>").appendTo("#uiAreas");
+			uiArea = sap.ui.getCore().createUIArea(oDiv[0]);
+
+			mPropagationInfo = {};
+
+			fnChange = function(oEvent) {
+				mPropagationInfo[oEvent.getSource().getId()] ? mPropagationInfo[oEvent.getSource().getId()]++ : mPropagationInfo[oEvent.getSource().getId()] = 1;
+			};
+
+			uiArea.attachModelContextChange(fnChange);
 			sap.ui.getCore().setModel(oModel1);
 			child = new sap.ui.core.TestControl({
 				value : "{/value}"
 			});
+			child.attachModelContextChange(fnChange);
 			ctrl = new sap.ui.core.TestControl({
 				value : "{/value}",
 				children : [child]
 			});
-			ctrl.placeAt("content");
+			ctrl.attachModelContextChange(fnChange);
+			ctrl.placeAt(uiArea.getId());
 		},
 
 		teardown : function() {
+			uiArea.detachModelContextChange(fnChange);
 			ctrl.destroy();
 			ctrl = null;
 			child = null;
+			iPropagationCounter = 0;
+			sap.ui.getCore().setModel();
 		}
 	});
 
 	test("Model propagated from Core", function() {
+		ok(mPropagationInfo[uiArea.getId()] === 1, "ModelContextChange event on uiArea");
+		ok(mPropagationInfo[ctrl.getId()] === 1, "ModelContextChange event on ctrl");
+		ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event on child");
+		mPropagationInfo = {};
+
 		equal(uiArea.getModel(), oModel1, "effective model of UIArea should be from Core");
 		equal(ctrl.getModel(), oModel1, "effective model of Root Control should be from Core");
 		equal(child.getModel(), oModel1, "effective model of Nested Control should be from Core");
@@ -93,6 +111,11 @@
 		var oCtrlBindingBefore = ctrl.getBinding("value");
 		var oChildBindingBefore = child.getBinding("value");
 		sap.ui.getCore().setModel(oModel1);
+		ok(!mPropagationInfo[uiArea.getId()], "ModelContextChange event not fired on uiArea");
+		ok(!mPropagationInfo[ctrl.getId()], "ModelContextChange event not fired on ctrl");
+		ok(!mPropagationInfo[child.getId()], "ModelContextChange event not fired on child");
+		mPropagationInfo = {};
+
 		equal(uiArea.getModel(), oModel1, "effective model of UIArea still should be from Core");
 		equal(ctrl.getModel(), oModel1, "effective model of Root Control still should be from Core");
 		equal(child.getModel(), oModel1, "effective model of Nested Control still should be from Core");
@@ -103,6 +126,10 @@
 
 		// model change in Core should be reflected in UIArea and controls
 		sap.ui.getCore().setModel(oModel3);
+		ok(mPropagationInfo[uiArea.getId()] === 1, "ModelContextChange event on uiArea");
+		ok(mPropagationInfo[ctrl.getId()] === 1, "ModelContextChange event on ctrl");
+		ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event on child");
+
 		equal(uiArea.getModel(), oModel3, "new model should have been propagated from Core to UIArea");
 		equal(ctrl.getModel(), oModel3, "new model should have been propagated from Core to Root Control");
 		equal(child.getModel(), oModel3, "new model should have been propagated from Core to Nested Control");
@@ -113,7 +140,17 @@
 	});
 
 	test("Model propagated from UIArea", function() {
+		ok(mPropagationInfo[uiArea.getId()] === 1, "ModelContextChange event on uiArea");
+		ok(mPropagationInfo[ctrl.getId()] === 1, "ModelContextChange event on ctrl");
+		ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event on child");
+		mPropagationInfo = {};
+
 		uiArea.setModel(oModel2);
+		ok(mPropagationInfo[uiArea.getId()] === 1, "ModelContextChange event on uiArea");
+		ok(mPropagationInfo[ctrl.getId()] === 1, "ModelContextChange event on ctrl");
+		ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event on child");
+		mPropagationInfo = {};
+
 		equal(ctrl.getModel(), oModel2, "model should be inherited from UIArea model");
 		equal(child.getModel(), oModel2, "model should be inherited from UIArea model");
 		equal(ctrl.getValue(), "2", "value should be inherited from UIArea model");
@@ -123,6 +160,24 @@
 		var oCtrlBindingBefore = ctrl.getBinding("value");
 		var oChildBindingBefore = child.getBinding("value");
 		uiArea.setModel(oModel2);
+		ok(!mPropagationInfo[uiArea.getId()], "ModelContextChange event not fired on uiArea");
+		ok(!mPropagationInfo[ctrl.getId()], "ModelContextChange event not fired on ctrl");
+		ok(!mPropagationInfo[child.getId()], "ModelContextChange event not fired on child");
+
+		equal(uiArea.getModel(), oModel2, "model should have been propagated from UIArea");
+		equal(ctrl.getModel(), oModel2, "model should have been propagated from UIArea");
+		equal(child.getModel(), oModel2, "model should have been propagated from UIArea");
+		equal(ctrl.getValue(), "2", "value should be inherited from UIArea model");
+		equal(child.getValue(), "2", "value should be inherited from UIArea model");
+		ok(oCtrlBindingBefore === ctrl.getBinding("value"), "binding should not have changed");
+		ok(oChildBindingBefore === child.getBinding("value"), "binding should not have changed");
+
+		// model change in Core should not be reflected in UIArea and controls
+		sap.ui.getCore().setModel(oModel2);
+		ok(!mPropagationInfo[uiArea.getId()], "ModelContextChange event not fired on uiArea");
+		ok(!mPropagationInfo[ctrl.getId()], "ModelContextChange event not fired on ctrl");
+		ok(!mPropagationInfo[child.getId()], "ModelContextChange event not fired on child");
+
 		equal(uiArea.getModel(), oModel2, "model should have been propagated from UIArea");
 		equal(ctrl.getModel(), oModel2, "model should have been propagated from UIArea");
 		equal(child.getModel(), oModel2, "model should have been propagated from UIArea");
@@ -133,6 +188,11 @@
 
 		// model change in Core should not be reflected in UIArea and controls
 		sap.ui.getCore().setModel(oModel3);
+		ok(mPropagationInfo[uiArea.getId()] === 1, "ModelContextChange event on uiArea");
+		ok(mPropagationInfo[ctrl.getId()] === 1, "ModelContextChange event on ctrl");
+		ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event on child");
+		mPropagationInfo = {};
+
 		equal(uiArea.getModel(), oModel2, "model should have been propagated from UIArea");
 		equal(ctrl.getModel(), oModel2, "model should have been propagated from UIArea");
 		equal(child.getModel(), oModel2, "model should have been propagated from UIArea");
@@ -141,9 +201,18 @@
 		ok(oCtrlBindingBefore === ctrl.getBinding("value"), "binding should not have changed");
 		ok(oChildBindingBefore === child.getBinding("value"), "binding should not have changed");
 		sap.ui.getCore().setModel(oModel1);
+		ok(mPropagationInfo[uiArea.getId()] === 1, "ModelContextChange event on uiArea");
+		ok(mPropagationInfo[ctrl.getId()] === 1, "ModelContextChange event on ctrl");
+		ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event on child");
+		mPropagationInfo = {};
 
 		// model change in UIArea should be reflected in UIArea and controls
 		uiArea.setModel(oModel3);
+		ok(mPropagationInfo[uiArea.getId()] === 1, "ModelContextChange event on uiArea");
+		ok(mPropagationInfo[ctrl.getId()] === 1, "ModelContextChange event on ctrl");
+		ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event on child");
+		mPropagationInfo = {};
+
 		equal(uiArea.getModel(), oModel3, "model should have been propagated from UIArea");
 		equal(ctrl.getModel(), oModel3, "model should have been propagated from UIArea");
 		equal(child.getModel(), oModel3, "model should have been propagated from UIArea");
@@ -156,6 +225,11 @@
 		var oCtrlBindingBefore = ctrl.getBinding("value");
 		var oChildBindingBefore = child.getBinding("value");
 		uiArea.setModel();
+		ok(mPropagationInfo[uiArea.getId()] === 1, "ModelContextChange event on uiArea");
+		ok(mPropagationInfo[ctrl.getId()] === 1, "ModelContextChange event on ctrl");
+		ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event on child");
+		mPropagationInfo = {};
+
 		equal(uiArea.getModel(), oModel1, "model should have been propagated from Core");
 		equal(ctrl.getModel(), oModel1, "model should have been propagated from Core");
 		equal(child.getModel(), oModel1, "model should have been propagated from Core");
@@ -163,10 +237,21 @@
 		equal(child.getValue(), "1", "value should be inherited from UIArea model");
 		ok(oCtrlBindingBefore !== ctrl.getBinding("value"), "binding should have changed");
 		ok(oChildBindingBefore !== child.getBinding("value"), "binding should have changed");
+
 	});
 
 	test("Model propagated from parent", function() {
+		ok(mPropagationInfo[uiArea.getId()] === 1, "ModelContextChange event on uiArea");
+		ok(mPropagationInfo[ctrl.getId()] === 1, "ModelContextChange event on ctrl");
+		ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event on child");
+		mPropagationInfo = {};
+
 		ctrl.setModel(oModel2);
+		ok(!mPropagationInfo[uiArea.getId()], "ModelContextChange event not fired on uiArea");
+		ok(mPropagationInfo[ctrl.getId()] === 1, "ModelContextChange event on ctrl");
+		ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event on child");
+		mPropagationInfo = {};
+
 		equal(ctrl.getModel(), oModel2, "model should be inherited from UIArea model");
 		equal(child.getModel(), oModel2, "model should be inherited from UIArea model");
 		equal(ctrl.getValue(), "2", "value should be inherited from UIArea model");
@@ -176,6 +261,11 @@
 		var oCtrlBindingBefore = ctrl.getBinding("value");
 		var oChildBindingBefore = child.getBinding("value");
 		ctrl.setModel(oModel2);
+		ok(!mPropagationInfo[uiArea.getId()], "ModelContextChange event not fired on uiArea");
+		ok(!mPropagationInfo[ctrl.getId()], "ModelContextChange event not fired on ctrl");
+		ok(!mPropagationInfo[child.getId()], "ModelContextChange event not fired on child");
+		mPropagationInfo = {};
+
 		equal(ctrl.getModel(), oModel2, "model should have been propagated from parent");
 		equal(child.getModel(), oModel2, "model should have been propagated from parent");
 		equal(ctrl.getValue(), "2", "value should be inherited from parent model");
@@ -185,6 +275,11 @@
 
 		// model change in UIArea should not be reflected in child
 		uiArea.setModel(oModel3);
+		ok(mPropagationInfo[uiArea.getId()] === 1, "ModelContextChange event on uiArea");
+		ok(mPropagationInfo[ctrl.getId()] === 1, "ModelContextChange event on ctrl");
+		ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event on child");
+		mPropagationInfo = {};
+
 		equal(ctrl.getModel(), oModel2, "model should have been propagated from parent");
 		equal(child.getModel(), oModel2, "model should have been propagated from parent");
 		equal(ctrl.getValue(), "2", "value should be inherited from parent model");
@@ -194,6 +289,11 @@
 
 		// model change in Core should not be reflected in child
 		sap.ui.getCore().setModel(oModel3);
+		ok(!mPropagationInfo[uiArea.getId()], "ModelContextChange event not fired on uiArea");
+		ok(!mPropagationInfo[ctrl.getId()], "ModelContextChange event not fired on ctrl");
+		ok(!mPropagationInfo[child.getId()], "ModelContextChange event not fired on child");
+		mPropagationInfo = {};
+
 		equal(ctrl.getModel(), oModel2, "model should have been propagated from parent");
 		equal(child.getModel(), oModel2, "model should have been propagated from parent");
 		equal(ctrl.getValue(), "2", "value should be inherited from parent model");
@@ -203,6 +303,11 @@
 
 		// model change in parent should be reflected in child
 		ctrl.setModel(oModel3);
+		ok(!mPropagationInfo[uiArea.getId()], "ModelContextChange event not fired on uiArea");
+		ok(mPropagationInfo[ctrl.getId()] === 1, "ModelContextChange event fired on ctrl");
+		ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event fired on child");
+		mPropagationInfo = {};
+
 		equal(ctrl.getModel(), oModel3, "model should have been propagated from parent");
 		equal(child.getModel(), oModel3, "model should have been propagated from parent");
 		equal(ctrl.getValue(), "3", "value should be inherited from parent model");
@@ -214,6 +319,11 @@
 		var oCtrlBindingBefore = ctrl.getBinding("value");
 		var oChildBindingBefore = child.getBinding("value");
 		ctrl.setModel();
+		ok(!mPropagationInfo[uiArea.getId()], "ModelContextChange event not fired on uiArea");
+		ok(mPropagationInfo[ctrl.getId()] === 1, "ModelContextChange event fired on ctrl");
+		ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event fired on child");
+		mPropagationInfo = {};
+
 		equal(ctrl.getModel(), oModel3, "model should have been propagated from UIArea");
 		equal(child.getModel(), oModel3, "model should have been propagated from UIArea");
 		equal(ctrl.getValue(), "3", "value should be inherited from UIArea model");
@@ -223,19 +333,146 @@
 	});
 
 	test("Model propagated from UIArea", function(){
+		ok(mPropagationInfo[uiArea.getId()] === 1, "ModelContextChange event on uiArea");
+		ok(mPropagationInfo[ctrl.getId()] === 1, "ModelContextChange event on ctrl");
+		ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event on child");
+		mPropagationInfo = {};
+
 		var oBindingBefore = ctrl.getBinding("value");
 		ctrl.setModel(oModel2);
+		ok(!mPropagationInfo[uiArea.getId()], "ModelContextChange event not fired on uiArea");
+		ok(mPropagationInfo[ctrl.getId()] === 1, "ModelContextChange event on ctrl");
+		ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event on child");
+		mPropagationInfo = {};
+
 		var oBindingAfter = ctrl.getBinding("value");
 		equal(ctrl.getValue(), "2", "value should not be inherited from core model ");
 	});
 
 	test("override core model", function(){
+		ok(mPropagationInfo[uiArea.getId()] === 1, "ModelContextChange event on uiArea");
+		ok(mPropagationInfo[ctrl.getId()] === 1, "ModelContextChange event on ctrl");
+		ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event on child");
+		mPropagationInfo = {};
+
 		ctrl.setModel(oModel2);
+		ok(!mPropagationInfo[uiArea.getId()], "ModelContextChange event not fired on uiArea");
+		ok(mPropagationInfo[ctrl.getId()] === 1, "ModelContextChange event on ctrl");
+		ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event on child");
+		mPropagationInfo = {};
+
 		var oBindingBefore = ctrl.getBinding("value");
 		sap.ui.getCore().setModel(oModel3);
+		ok(mPropagationInfo[uiArea.getId()] === 1, "ModelContextChange event on uiArea");
+		ok(mPropagationInfo[ctrl.getId()] === 1, "ModelContextChange event on ctrl");
+		ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event on child");
+		mPropagationInfo = {};
+
 		var oBindingAfter = ctrl.getBinding("value");
 		equal(ctrl.getValue(), "2", "value still should not be inherited from core model ");
 		ok(oBindingBefore === oBindingAfter, "binding should not change as it is not affected");
+	});
+
+	asyncTest("remove content from uiArea: no models set", function(){
+		sap.ui.getCore().setModel();
+		mPropagationInfo = {};
+
+		content = uiArea.removeAllContent();
+		ok(!mPropagationInfo[uiArea.getId()], "ModelContextChange event not fired on uiArea");
+		ok(!mPropagationInfo[ctrl.getId()], "ModelContextChange event not fired on ctrl");
+		ok(!mPropagationInfo[child.getId()], "ModelContextChange event not fired on child");
+		mPropagationInfo = {};
+
+		ok(!ctrl.getModel(), "no model set on ctrl");
+		ok(!child.getModel(), "no model set on child");
+		ok(!uiArea.getModel(), "no model set on uiArea");
+
+		var oBindingBefore = ctrl.getBinding("value");
+		sap.ui.getCore().setModel(oModel3);
+		ok(mPropagationInfo[uiArea.getId()] === 1, "ModelContextChange event on uiArea");
+		ok(!mPropagationInfo[ctrl.getId()], "ModelContextChange event not fired on ctrl");
+		ok(!mPropagationInfo[child.getId()], "ModelContextChange event not fired on child");
+		mPropagationInfo = {};
+
+		uiArea.addContent(content[0]);
+		ok(!mPropagationInfo[uiArea.getId()], "ModelContextChange event not fired on uiArea");
+		ok(mPropagationInfo[ctrl.getId()] === 1, "ModelContextChange event on ctrl");
+		ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event on child");
+		mPropagationInfo = {};
+
+		equal(ctrl.getModel(), oModel3, "model should have been propagated from UIArea");
+		equal(child.getModel(), oModel3, "model should have been propagated from control");
+		equal(uiArea.getModel(), oModel3, "model should have been propagated from core");
+
+		ctrl.removeAllChildren();
+		ok(!mPropagationInfo[uiArea.getId()], "ModelContextChange event not fired on uiArea");
+		ok(!mPropagationInfo[ctrl.getId()], "ModelContextChange event not fired on ctrl");
+		ok(!mPropagationInfo[child.getId()], "ModelContextChange event not fire on child - should happen async");
+		mPropagationInfo = {};
+		setTimeout(function() {
+			ok(!mPropagationInfo[uiArea.getId()], "ModelContextChange event not fired on uiArea");
+			ok(!mPropagationInfo[ctrl.getId()], "ModelContextChange event not fired on ctrl");
+			ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event on child - should happen async");
+			start();
+		},0);
+	});
+
+	test("remove content from uiArea: model set", function(){
+
+		uiArea.removeContent();
+		ok(mPropagationInfo[uiArea.getId()] === 1, "ModelContextChange event on uiArea");
+		ok(mPropagationInfo[ctrl.getId()] === 1, "ModelContextChange event on ctrl");
+		ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event on child");
+		mPropagationInfo = {};
+	});
+
+	asyncTest("Move child / remove child: async setParent null propagation", function() {
+		//remove from parent
+		var moveCtrl = uiArea.removeContent(ctrl);
+
+		// check for expected modifications: not yet propagated
+		ok(child.getParent() != null, "parent shouldn't be null");
+		ok(ctrl.getParent() == null, "parent should be null");
+		ok(child.getModel() != null, "child should have a default model");
+		ok(ctrl.getModel() == null, "ctrl should have no model");
+		ok(child.getBinding("value") != null, "child should have a binding for the default model");
+		ok(child.oPropagatedProperties !== ctrl.oPropagatedProperties, "child should no longer inherit propagatedProperties 1:1 from ctrl");
+		ok(ctrl.oPropagatedProperties === sap.ui.base.ManagedObject._oEmptyPropagatedProperties, "ctrl has no propagated properties");
+
+		//simulate a move by sync adding the control again
+		uiArea.addContent(moveCtrl);
+
+		setTimeout(function() {
+			// check for expected modifications
+			ok(child.getParent() != null, "parent shouldn't be null");
+			ok(ctrl.getParent() != null, "parent shouldn't be null");
+			ok(child.getModel() != null, "child should have a default model");
+			ok(ctrl.getModel() != null, "ctrl should have a default model");
+			ok(child.getBinding("value") != null, "child should have a binding for the default model");
+			ok(child.oPropagatedProperties === ctrl.oPropagatedProperties, "child should no longer inherit propagatedProperties 1:1 from ctrl");
+
+			// remove from parent - no move
+			var moveCtrl = uiArea.removeContent(ctrl);
+			// check for expected modifications: not yet propagated
+			ok(child.getParent() != null, "parent shouldn't be null");
+			ok(ctrl.getParent() == null, "parent should be null");
+			ok(child.getModel() != null, "child should have a default model");
+			ok(ctrl.getModel() == null, "ctrl should have no model");
+			ok(child.getBinding("value") != null, "child should have a binding for the default model");
+			ok(child.oPropagatedProperties !== ctrl.oPropagatedProperties, "child should no longer inherit propagatedProperties 1:1 from ctrl");
+			ok(ctrl.oPropagatedProperties === sap.ui.base.ManagedObject._oEmptyPropagatedProperties, "ctrl has no propagated properties");
+
+			setTimeout(function() {
+				// check for expected modifications: async propagation done
+				ok(ctrl.getParent() == null, "parent should be null");
+				ok(child.getModel() == null, "child shouldn't have a default model");
+				ok(ctrl.getModel() == null, "ctrl shouldn't have a default model");
+				ok(child.getBinding("value") == null, "child shouldn't have a binding for the default model");
+				ok(child.oPropagatedProperties === sap.ui.base.ManagedObject._oEmptyPropagatedProperties, "child should no longer inherit propagatedProperties 1:1 from ctrl");
+				ok(ctrl.oPropagatedProperties === sap.ui.base.ManagedObject._oEmptyPropagatedProperties, "ctrl should no longer inherit propagatedProperties 1:1 from ctrl");
+				start();
+			}, 0);
+		}, 0);
 	});
 
 	module("More Complex Updates", {
@@ -353,15 +590,24 @@
 
 	module("Context Binding", {
 		setup : function() {
-			sap.ui.getCore().setModel(oModel4);
+			mPropagationInfo = {};
+			fnChange = function(oEvent) {
+				mPropagationInfo[oEvent.getSource().getId()] ? mPropagationInfo[oEvent.getSource().getId()]++ : mPropagationInfo[oEvent.getSource().getId()] = 1;
+			};
 			uiArea = sap.ui.getCore().createUIArea("content");
+			uiArea.attachModelContextChange(fnChange);
+
+			sap.ui.getCore().setModel(oModel4);
+
 			child = new sap.ui.core.TestControl({
 				value : "{}",
 			});
+			child.attachModelContextChange(fnChange);
 			ctrl = new sap.ui.core.TestControl({
 				value : "{}",
 				children : [child]
 			});
+			ctrl.attachModelContextChange(fnChange);
 			ctrl.placeAt("content");
 		},
 
@@ -373,17 +619,40 @@
 		}
 	});
 	test("Context binding instance", function() {
+		mPropagationInfo = {};
 		ctrl.bindElement("/data");
+		ok(!mPropagationInfo[uiArea.getId()], "ModelContextChange event not fired on uiArea");
+		ok(mPropagationInfo[ctrl.getId()] === 1, "ModelContextChange event fired on ctrl");
+		ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event fired on child");
+		mPropagationInfo = {};
+
 		ok(ctrl.getElementBinding() instanceof sap.ui.model.ContextBinding, "ContextBinding should exist");
 		ok(child.getBindingContext() === ctrl.getBindingContext(), "Context should be propagated");
 		ok(child.getBindingContext().getPath() === "/data", "Context path should be '/data'");
+
 		ctrl.unbindElement();
+		ok(!mPropagationInfo[uiArea.getId()], "ModelContextChange event not fired on uiArea");
+		ok(mPropagationInfo[ctrl.getId()] === 1, "ModelContextChange event fired on ctrl");
+		ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event fired on child");
+		mPropagationInfo = {};
+
 		ok(!ctrl.getElementBinding(), "ContextBinding should be deleted");
 		ok(!ctrl.getBindingContext(), "No binding context should exist");
 		ok(!child.getBindingContext(), "No binding context should exist");
+
 		ctrl.bindElement("/nodata");
+		ok(!mPropagationInfo[uiArea.getId()], "ModelContextChange event not fired on uiArea");
+		ok(mPropagationInfo[ctrl.getId()] === 1, "ModelContextChange event fired on ctrl");
+		ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event fired on child");
+		mPropagationInfo = {};
+
 		ok(child.getBindingContext().getPath() === "/nodata", "Context path should be '/nodata'");
 		ctrl.bindElement("/data");
+		ok(!mPropagationInfo[uiArea.getId()], "ModelContextChange event not fired on uiArea");
+		ok(mPropagationInfo[ctrl.getId()] === 1, "ModelContextChange event fired on ctrl");
+		ok(mPropagationInfo[child.getId()] === 1, "ModelContextChange event fired on child");
+		mPropagationInfo = {};
+
 		ok(child.getBindingContext().getPath() === "/data", "Context path should be '/data'");
 	});
 	test("Context binding values", function() {
@@ -394,7 +663,6 @@
 		ctrl.unbindElement();
 		ok(!child.getValue(), "Value should be cleared");
 	});
-
 	</script>
 
 </head>
@@ -406,5 +674,6 @@
 <ol id="qunit-tests"></ol>
 <br>
 <div id="content"></div>
+<div id="uiAreas"></div>
 </body>
 </html>

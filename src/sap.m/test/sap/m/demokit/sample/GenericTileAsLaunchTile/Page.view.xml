@@ -1,0 +1,43 @@
+<core:View controllerName="sap.m.sample.GenericTileAsLaunchTile.Page"
+	xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:html="http://www.w3.org/1999/xhtml">
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Sales Fulfillment Application Title"
+		subheader="Subtitle" press="press">
+		<tileContent>
+			<TileContent unit="EUR" footer="Current Quarter">
+				<content>
+					<ImageContent src="sap-icon://home-share"/>
+				</content>
+			</TileContent>
+		</tileContent>
+		
+	</GenericTile>
+
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Manage Activity Type Master Data Lorem Ipsum Long Title"
+		subheader="Subtitle" press="press">
+		<tileContent>
+			<TileContent>
+				<content>
+					<ImageContent src="test-resources/sap/m/demokit/sample/GenericTileAsLaunchTile/images/SAPLogoLargeTile_28px_height.png"></ImageContent>
+				</content>
+			</TileContent>
+		</tileContent>
+	</GenericTile>
+
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Manage Activity Type Master Data Lorem Ipsum Long Title without Icon"
+		subheader="Subtitle Launch Tile" mode="HeaderMode" press="press">
+		<tileContent>
+			<TileContent unit="EUR" footer="Current Quarter" />
+		</tileContent>
+	</GenericTile>
+
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Firstlongname Jessica D. Prince"
+		subheader="Department" press="press">
+		<tileContent>
+			<TileContent>
+				<content>
+					<ImageContent src="test-resources/sap/m/demokit/sample/GenericTileAsLaunchTile/images/ProfileImage_LargeGenTile.png"/>
+				</content>
+			</TileContent>
+		</tileContent>
+	</GenericTile>
+</core:View>

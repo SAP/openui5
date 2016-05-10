@@ -64,7 +64,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 					TableKeyboardDelegate.prototype.onkeydown.apply(this, arguments);
 					var $Target = jQuery(oEvent.target),
 						$TargetTD = $Target.closest('td');
-					if (oEvent.keyCode == jQuery.sap.KeyCodes.TAB && this._bActionMode && $TargetTD.find('.sapUiTableTreeIcon').length > 0) {
+					if (oEvent.keyCode == jQuery.sap.KeyCodes.TAB
+							&& this._getKeyboardExtension().isInActionMode()
+							&& $TargetTD.find('.sapUiTableTreeIcon').length > 0) {
 						//If node icon has focus set tab to control else set tab to node icon
 						if ($Target.hasClass('sapUiTableTreeIcon')) {
 							if (!$Target.hasClass("sapUiTableTreeIconLeaf")) {
@@ -93,8 +95,155 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 	});
 
 	/*
+	 * Restores the focus to the last known cell position.
+	 */
+	TableKeyboardDelegate._restoreFocusOnLastFocusedDataCell = function(oTable, oEvent) {
+		var oInfo = TableUtils.getFocusedItemInfo(oTable);
+		var oLastInfo = oTable._getKeyboardExtension()._getLastFocusedCellInfo();
+		TableUtils.focusItem(oTable, oInfo.cellInRow + (oInfo.columnCount * oLastInfo.row), oEvent);
+	};
+
+
+	/*
 	 * NOTE: "this" in the function context is the table instance
 	 */
+
+
+	/*
+	 * Hook which is called by the keyboard extension when the table should be set to action mode
+	 * @see TableKeyboardExtension#setActionMode
+	 */
+	TableKeyboardDelegate.prototype.enterActionMode = function(oArgs) {
+		var $Focusable = oArgs.$Dom;
+		var bEntered = false;
+
+		if ($Focusable.length > 0) {
+
+			var $Tabbables = $Focusable.filter(":sapTabbable");
+			var oExtension = this._getKeyboardExtension();
+
+			if ($Tabbables.length > 0) { //If cell has no tabbable element, we don't do anything
+				bEntered = true;
+
+				// in the action mode we need no item navigation
+				var oIN = this._getItemNavigation();
+				oExtension._suspendItemNavigation();
+
+				// remove the tab index from the item navigation
+				jQuery(oIN.getFocusedDomRef()).attr("tabindex", "-1");
+
+				// set the focus to the active control
+				$Tabbables.eq(0).focus();
+			}
+
+			//Special handling for the tree icon in the TreeTable
+			if (oExtension._getTableType() === TableExtension.TABLETYPES.TREE) {
+				var $domRef = $Focusable.eq(0);
+				if ($domRef.hasClass("sapUiTableTreeIcon") && !$domRef.hasClass("sapUiTableTreeIconLeaf")) {
+					bEntered = true;
+
+					//Set tabindex to 0 to have make node icon accessible
+					$domRef.attr("tabindex", 0).focus();
+				}
+			}
+		}
+
+		return bEntered;
+	};
+
+
+	/*
+	 * Hook which is called by the keyboard extension when the table should leave the action mode
+	 * @see TableKeyboardExtension#setActionMode
+	 */
+	TableKeyboardDelegate.prototype.leaveActionMode = function(oArgs) {
+		 // TODO: update ItemNavigation position otherwise the position is strange!
+		 //       EDIT AN SCROLL!
+
+		var oEvent = oArgs.event;
+		var oExtension = this._getKeyboardExtension();
+
+		// in the navigation mode we use the item navigation
+		var oIN = this._getItemNavigation(); //TBD: Cleanup
+		oExtension._resumeItemNavigation();
+
+		// reset the tabindex of the focused domref of the item navigation
+		jQuery(oIN.getFocusedDomRef()).attr("tabindex", "0");
+
+		// when we have an event which is responsible to leave the action mode
+		// we search for the closest
+		if (oEvent) {
+			if (jQuery(oEvent.target).closest("td[tabindex='-1']").length > 0) {
+				// triggered when clicking into a cell, then we focus the cell
+				var iIndex = jQuery(oIN.aItemDomRefs).index(jQuery(oEvent.target).closest("td[tabindex='-1']").get(0));
+				TableUtils.focusItem(this, iIndex, null);
+			} else {
+				// somewhere else means whe check if the click happend inside
+				// the container, then we focus the last focused element
+				// (DON'T KNOW IF THIS IS OK - but we don't know where the focus was!)
+				if (jQuery.sap.containsOrEquals(this.$().find(".sapUiTableCCnt").get(0), oEvent.target)) {
+					TableUtils.focusItem(this, oIN.getFocusedIndex(), null);
+				}
+			}
+		} else {
+			// when no event is given we just focus the last focused index
+			TableUtils.focusItem(this, oIN.getFocusedIndex(), null);
+		}
+
+		//Special handling for the tree icon in the TreeTable
+		if (oExtension._getTableType() === TableExtension.TABLETYPES.TREE) {
+			this.$().find(".sapUiTableTreeIcon").attr("tabindex", -1);
+		}
+	};
+
+
+	TableKeyboardDelegate.prototype.onmouseup = function(oEvent) {
+		if (oEvent.isMarked()) { // the event was already handled by some other handler, do nothing.
+			return;
+		}
+
+		// When clicking into a focusable control we enter the action mode
+		// When clicking anywhere else in the table we leave the action mode
+		var $Dom = this.$().find(".sapUiTableCtrl td :focus");
+		this._getKeyboardExtension().setActionMode($Dom.length > 0, {$Dom: $Dom, event: oEvent});
+	};
+
+
+	TableKeyboardDelegate.prototype.onfocusin = function(oEvent) {
+		if (oEvent.isMarked("sapUiTableIgnoreFocusIn")) {
+			return;
+		}
+
+		var $target = jQuery(oEvent.target);
+		var bNoData = this.$().hasClass("sapUiTableEmpty");
+		var bControlBefore = $target.hasClass("sapUiTableCtrlBefore");
+
+		if (bControlBefore || $target.hasClass("sapUiTableCtrlAfter")) {
+			// when entering the before or after helper DOM elements we put the
+			// focus on the current focus element of the item navigation and we
+			// leave the action mode!
+			this._getKeyboardExtension().setActionMode(false);
+			if (jQuery.contains(this.$().find('.sapUiTableColHdrCnt')[0], oEvent.target)) {
+				var oIN = this._getItemNavigation();
+				jQuery(oIN.getFocusedDomRef() || oIN.getRootDomRef()).focus();
+			} else {
+				if (bControlBefore) {
+					if (bNoData) {
+						this._getKeyboardExtension()._setSilentFocus(this.$().find(".sapUiTableCtrlEmpty"));
+					} else {
+						var oInfo = TableUtils.getFocusedItemInfo(this);
+						TableUtils.focusItem(this, oInfo.cellInRow, oEvent);
+					}
+				} else {
+					TableKeyboardDelegate._restoreFocusOnLastFocusedDataCell(this, oEvent);
+				}
+			}
+
+			if (!bNoData) {
+				oEvent.preventDefault();
+			}
+		}
+	};
 
 	/*
 	 * handle the row selection via SPACE or ENTER key if key is pressed on a group header, the open state is toggled
@@ -157,19 +306,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 	 */
 	TableKeyboardDelegate.prototype.onkeydown = function(oEvent) {
 		var $this = this.$();
+		var bActionMode = this._getKeyboardExtension().isInActionMode();
 
-		if (!this._bActionMode &&
+		if (!bActionMode &&
 			oEvent.keyCode == jQuery.sap.KeyCodes.F2 ||
 			oEvent.keyCode == jQuery.sap.KeyCodes.ENTER) {
 			if ($this.find(".sapUiTableCtrl td:focus").length > 0) {
-				this._enterActionMode($this.find(".sapUiTableCtrl td:focus").find(":sapFocusable"));
+				this._getKeyboardExtension().setActionMode(true, {$Dom: $this.find(".sapUiTableCtrl td:focus").find(":sapFocusable")});
 				oEvent.preventDefault();
 				oEvent.stopPropagation();
 			}
-		} else if (this._bActionMode &&
+		} else if (bActionMode &&
 			oEvent.keyCode == jQuery.sap.KeyCodes.F2) {
-			this._leaveActionMode(oEvent);
-		} else if (oEvent.keyCode == jQuery.sap.KeyCodes.TAB && this._bActionMode) {
+			this._getKeyboardExtension().setActionMode(false);
+		} else if (oEvent.keyCode == jQuery.sap.KeyCodes.TAB && bActionMode) {
 			//Set tabindex to second table if fixed columns are used
 			if (this.getFixedColumnCount() > 0) {
 				var $cell = jQuery(oEvent.target);
@@ -225,7 +375,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 	 * handle the ESCAPE key to leave the action mode
 	 */
 	TableKeyboardDelegate.prototype.onsapescape = function(oEvent) {
-		this._leaveActionMode(oEvent);
+		this._getKeyboardExtension().setActionMode(false, {event: oEvent});
 	};
 
 	/*
@@ -242,8 +392,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 	 */
 	TableKeyboardDelegate.prototype.onsaptabprevious = function(oEvent) {
 		var $this = this.$();
-		if (this._bActionMode) {
-			this._leaveActionMode();
+		if (this._getKeyboardExtension().isInActionMode()) {
+			this._getKeyboardExtension().setActionMode(false);
 			oEvent.preventDefault();
 		} else {
 			var oInfo = TableUtils.getFocusedItemInfo(this);
@@ -254,16 +404,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 			if (bFocusFromTableContent && this.getColumnHeaderVisible()) {
 				// Focus comes from table content. Focus the column header which corresponds to the
 				// selected column (column index)
-				TableUtils.focusItem(this, oInfo.columnCount, oEvent);
+				TableUtils.focusItem(this, oInfo.cellInRow, oEvent);
 				oEvent.preventDefault();
 			} else if (oInfo.domRef === oEvent.target && jQuery.sap.containsOrEquals(oSapUiTableCCnt, oEvent.target) ||
 				(!this.getColumnHeaderVisible() && bNoData && bFocusFromTableContent)) {
 				// in case of having the focus in the row or column header we do not need to
 				// place the focus to the div before the table control because there we do
 				// not need to skip the table controls anymore.
-				this._bIgnoreFocusIn = true;
-				$this.find(".sapUiTableCtrlBefore").focus();
-				this._bIgnoreFocusIn = false;
+				this._getKeyboardExtension()._setSilentFocus($this.find(".sapUiTableCtrlBefore"));
 			}
 		}
 	};
@@ -282,8 +430,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 	 */
 	TableKeyboardDelegate.prototype.onsaptabnext = function(oEvent) {
 		var $this = this.$();
-		if (this._bActionMode) {
-			this._leaveActionMode();
+		if (this._getKeyboardExtension().isInActionMode()) {
+			this._getKeyboardExtension().setActionMode(false);
 			oEvent.preventDefault();
 		} else {
 			var oInfo = TableUtils.getFocusedItemInfo(this);
@@ -291,12 +439,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 			var bNoData = this.$().hasClass("sapUiTableEmpty");
 
 			if (bContainsColHdrCnt && !bNoData) {
-				TableUtils.focusItem(this, oInfo.cell + oInfo.columnCount * this._iLastSelectedDataRow, oEvent);
+				TableKeyboardDelegate._restoreFocusOnLastFocusedDataCell(this, oEvent);
 				oEvent.preventDefault();
 			} else if (oInfo.domRef === oEvent.target || (bNoData && bContainsColHdrCnt)) {
-				this._bIgnoreFocusIn = true;
-				$this.find(".sapUiTableCtrlAfter").focus();
-				this._bIgnoreFocusIn = false;
+				this._getKeyboardExtension()._setSilentFocus($this.find(".sapUiTableCtrlAfter"));
 			}
 		}
 	};
@@ -305,7 +451,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 	 * dynamic scrolling when reaching the bottom row with the ARROW DOWN key
 	 */
 	TableKeyboardDelegate.prototype.onsapdown = function(oEvent) {
-		if (!this._bActionMode && this._isBottomRow(oEvent)) {
+		if (!this._getKeyboardExtension().isInActionMode() && this._isBottomRow(oEvent)) {
 			if (this.getFirstVisibleRow() != this._getRowCount() - this.getVisibleRowCount()) {
 				oEvent.stopImmediatePropagation(true);
 				if (this.getNavigationMode() === sap.ui.table.NavigationMode.Scrollbar) {
@@ -371,7 +517,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 	 * dynamic scrolling when reaching the top row with the ARROW UP key
 	 */
 	TableKeyboardDelegate.prototype.onsapup = function(oEvent) {
-		if (!this._bActionMode && this._isTopRow(oEvent)) {
+		if (!this._getKeyboardExtension().isInActionMode() && this._isTopRow(oEvent)) {
 			if (this.getFirstVisibleRow() != 0) {
 				oEvent.stopImmediatePropagation(true);
 			}
@@ -388,7 +534,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 	 * dynamic scrolling when reaching the bottom row with the PAGE DOWN key
 	 */
 	TableKeyboardDelegate.prototype.onsappagedown = function(oEvent) {
-		if (!this._bActionMode) {
+		if (!this._getKeyboardExtension().isInActionMode()) {
 			var $this = this.$();
 			var oInfo = TableUtils.getFocusedItemInfo(this);
 
@@ -439,7 +585,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 	 * dynamic scrolling when reaching the top row with the PAGE DOWN key
 	 */
 	TableKeyboardDelegate.prototype.onsappagedownmodifiers = function(oEvent) {
-		if (!this._bActionMode && oEvent.altKey) {
+		if (!this._getKeyboardExtension().isInActionMode() && oEvent.altKey) {
 			var oInfo = TableUtils.getFocusedItemInfo(this);
 			var bRowHeader = (this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly);
 
@@ -469,7 +615,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 	 * dynamic scrolling when reaching the top row with the PAGE UP key
 	 */
 	TableKeyboardDelegate.prototype.onsappageup = function(oEvent) {
-		if (!this._bActionMode) {
+		if (!this._getKeyboardExtension().isInActionMode()) {
 			var $this = this.$();
 			var oInfo = TableUtils.getFocusedItemInfo(this);
 
@@ -513,7 +659,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 	 * dynamic scrolling when reaching the top row with the PAGE UP key
 	 */
 	TableKeyboardDelegate.prototype.onsappageupmodifiers = function(oEvent) {
-		if (!this._bActionMode && oEvent.altKey) {
+		if (!this._getKeyboardExtension().isInActionMode() && oEvent.altKey) {
 			var oInfo = TableUtils.getFocusedItemInfo(this);
 			var bRowHeader = (this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly);
 

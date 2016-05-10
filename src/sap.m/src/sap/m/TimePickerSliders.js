@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersRenderer', './TimePickerSlider'],
-	function (jQuery, Control, SlidersRenderer, TimePickerSlider) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersRenderer', './TimePickerSlider', './VisibleItem'],
+	function (jQuery, Control, SlidersRenderer, TimePickerSlider, VisibleItem) {
 		"use strict";
 
 		/**
@@ -41,7 +41,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 					 *
 					 * It is read by screen readers. It is visible only on phone.
 					 */
-					labelText: {name: "labelText", type: "string"}
+					labelText: {name: "labelText", type: "string"},
+
+					/**
+					 * Sets the minutes slider step.
+					 * The minutes slider is populated only by multiples of the step.
+					 */
+					minutesStep: {type: "integer", group: "Misc", defaultValue: 1},
+
+					/**
+					 * Sets the seconds slider step.
+					 * The seconds slider is populated only by multiples of the step.
+					 */
+					secondsStep: {type: "integer", group: "Misc", defaultValue: 1}
 				},
 				aggregations: {
 
@@ -162,6 +174,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		};
 
 		/**
+		 * Sets the minutes slider step.
+		 * @param iValue The step used to generate values for the minutes slider
+		 * @returns {*} this
+		 * @public
+		 */
+		TimePickerSliders.prototype.setMinutesStep = function(iValue) {
+			this.setProperty("minutesStep", iValue, true);
+			var aColumns = this.getAggregation("_columns");
+
+			if (aColumns) {
+				this.destroyAggregation("_columns");
+			}
+
+			this._setupLists(this.getFormat());
+
+			return this;
+		};
+
+		/**
+		 * Sets the seconds slider step.
+		 * @param iValue The step used to generate values for the seconds slider
+		 * @returns {*} this
+		 * @public
+		 */
+		TimePickerSliders.prototype.setSecondsStep = function(iValue) {
+			this.setProperty("secondsStep", iValue, true);
+			var aColumns = this.getAggregation("_columns");
+
+			if (aColumns) {
+				this.destroyAggregation("_columns");
+			}
+
+			this._setupLists(this.getFormat());
+
+			return this;
+		};
+
+		/**
 		 * Gets the time values from the sliders, as a date object.
 		 *
 		 * @returns {Object} A JavaScript date object
@@ -219,21 +269,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 				oListSeconds = oCore.byId(this.getId() + "-listSecs"),
 				oListAmPm = oCore.byId(this.getId() + "-listFormat"),
 				iHours,
-				sAmpm = null;
+				sAmPm = null;
 
 			oDate = oDate || new Date();
 			iHours = oDate.getHours();
 
 			if (oListAmPm) {
-				sAmpm = iHours >= 12 ? "pm" : "am";
+				sAmPm = iHours >= 12 ? "pm" : "am";
 				iHours = (iHours > 12) ? iHours - 12 : iHours;
 				iHours = (iHours === 0 ? 12 : iHours);
 			}
 
 			oListHours && oListHours.setSelectedValue(iHours.toString());
-			oListMinutes && oListMinutes.setSelectedValue(oDate.getMinutes().toString());
-			oListSeconds && oListSeconds.setSelectedValue(oDate.getSeconds().toString());
-			oListAmPm && oListAmPm.setSelectedValue(sAmpm);
+			oListMinutes && oListMinutes._updateStepAndValue(oDate.getMinutes(), this.getMinutesStep());
+			oListSeconds && oListSeconds._updateStepAndValue(oDate.getSeconds(), this.getSecondsStep());
+			oListAmPm && oListAmPm.setSelectedValue(sAmPm);
 		};
 
 		/**
@@ -393,18 +443,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		 * @returns {array} Array of key/value pairs
 		 * @private
 		 */
-		TimePickerSliders.prototype._generatePickerListValues = function (iFrom, iTo, bLeadingZeroes) {
+		TimePickerSliders.prototype._generatePickerListValues = function (iFrom, iTo, iStep, bLeadingZeroes) {
 			var aValues = [],
 				sText;
 
-			for (var iIndex = iFrom; iIndex <= iTo; iIndex++) {
+			for (var iIndex = iFrom; iIndex <= iTo; iIndex += 1) {
 				if (iIndex < 10 && bLeadingZeroes) {
 					sText = "0" + iIndex.toString();
 				} else {
 					sText = iIndex.toString();
 				}
 
-				aValues.push({key: iIndex.toString(), text: sText});
+				var oItem = new VisibleItem({
+					key: iIndex.toString(),
+					text: sText
+				});
+
+				if (iIndex % iStep !== 0) {
+					oItem.setVisible(false);
+				}
+
+				aValues.push(oItem);
 			}
 
 			return aValues;
@@ -421,7 +480,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 				sLabelHours = oRb.getText("TIMEPICKER_LBL_HOURS"),
 				sLabelMinutes = oRb.getText("TIMEPICKER_LBL_MINUTES"),
 				sLabelSeconds = oRb.getText("TIMEPICKER_LBL_SECONDS"),
-				sLabelAMPM = oRb.getText("TIMEPICKER_LBL_AMPM");
+				sLabelAMPM = oRb.getText("TIMEPICKER_LBL_AMPM"),
+				iMinutesStep = this.getMinutesStep(),
+				iSecondsStep = this.getSecondsStep();
 
 			var bHours = false, bHoursTrailingZero = false, iFrom, iTo;
 
@@ -447,23 +508,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 
 			if (bHours) {
 				this.addAggregation("_columns", new TimePickerSlider(this.getId() + "-listHours", {
-					items: this._generatePickerListValues(iFrom, iTo, bHoursTrailingZero),
+					items: this._generatePickerListValues(iFrom, iTo, 1, bHoursTrailingZero),
 					expanded: jQuery.proxy(onSliderExpanded, this),
 					label: sLabelHours
 				}));
 			}
 
 			if (sFormat.indexOf("m") !== -1) {
+				var aValues = this._generatePickerListValues(0, 59, iMinutesStep, true);
+
 				this.addAggregation("_columns", new TimePickerSlider(this.getId() + "-listMins", {
-					items: this._generatePickerListValues(0, 59, true),
+					items: aValues,
 					expanded: jQuery.proxy(onSliderExpanded, this),
 					label: sLabelMinutes
 				}));
 			}
 
 			if (sFormat.indexOf("s") !== -1) {
+				var aValues = this._generatePickerListValues(0, 59, iSecondsStep, true);
 				this.addAggregation("_columns", new TimePickerSlider(this.getId() + "-listSecs", {
-					items: this._generatePickerListValues(0, 59, true),
+					items: aValues,
 					expanded: jQuery.proxy(onSliderExpanded, this),
 					label: sLabelSeconds
 				}));

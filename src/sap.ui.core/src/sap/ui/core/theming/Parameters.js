@@ -156,8 +156,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
 			// load and evaluate parameter file
 			oResponse = jQuery.sap.sjax({url:sUrl,dataType:'json'});
 			if (oResponse.success) {
+				oResult = oResponse.data;
 
-				oResult = (typeof oResponse.data == "string") ? jQuery.parseJSON(oResponse.data) : oResponse.data; // FIXME jQuery1.7.1 always parses JSON, so why is it checked here?
 				if ( jQuery.isArray(oResult) ) {
 					// in the sap-ui-merged use case, multiple JSON files are merged into and transfered as a single JSON array
 					for (var j = 0; j < oResult.length; j++) {
@@ -374,7 +374,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
 		 */
 		Parameters._getThemeImage = function(sParamName, bForce) {
 			sParamName = sParamName || "sapUiGlobalLogo";
-			var logo = sap.ui.core.theming.Parameters.get(sParamName);
+			var logo = Parameters.get(sParamName);
 			if (logo) {
 				var match = /url[\s]*\('?"?([^\'")]*)'?"?\)/.exec(logo);
 				if (match) {

@@ -16,7 +16,7 @@
 /* ------------------------------ */
 
 /* hover */
-.sap-desktop .sapMComboBoxBaseArrow:not(.sapMComboBoxBasePressed):hover {
+html.sap-desktop .sapMComboBoxBaseArrow:not(.sapMComboBoxBasePressed):hover {
 	background: @sapHCHighlightBG;
 	border-left: 1px solid @sapHCStandardFG;
 }
@@ -24,7 +24,7 @@
 /* pressed */
 /* note: do not optimize this selector, the sap.m.MulticomboBox DOM structure differ from sap.m.ComboBox */
 .sapMComboBoxBasePressed .sapMComboBoxBaseArrow,
-.sap-desktop .sapMComboBoxBasePressed .sapMComboBoxBaseArrow:hover {
+html.sap-desktop .sapMComboBoxBasePressed .sapMComboBoxBaseArrow:hover {
 	background: @sapHCHighlightAltBG;
 	border-left: 1px solid @sapHCStandardFG;
 }

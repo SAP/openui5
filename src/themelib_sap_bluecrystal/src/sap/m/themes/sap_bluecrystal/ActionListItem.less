@@ -12,7 +12,7 @@
 	border-color: @sapUiPageFooterBorderColor;
 }
 
-.sap-desktop .sapMList .sapMLIB.sapMALI:not(.sapMLIBActive) {
+html.sap-desktop .sapMList .sapMLIB.sapMALI:not(.sapMLIBActive) {
 	background: @sapUiPageFooterBackground;
 	border-color: @sapUiPageFooterBorderColor;
 }
@@ -20,6 +20,10 @@
 .sapMList .sapMLIB.sapMALI:focus {
 	outline: 0.0625rem dotted @sapUiInvertedFocus;
 	outline-offset: -0.0625rem;
+}
+
+.sapMALI.sapMLIBLegacyOutline:focus::before {
+	border: 0.0625rem dotted @sapUiInvertedFocus;
 }
 
 .sapMALI > .sapMLIBContent {
@@ -34,7 +38,7 @@
 	margin: 0 0 0 0.5rem;
 }
 
-.sap-desktop .sapMList .sapMLIB.sapMALI:hover:not(.sapMLIBActive) {
+html.sap-desktop .sapMList .sapMLIB.sapMALI:hover:not(.sapMLIBActive) {
 	background: lighten(@sapUiPageFooterBackground, 6);
 }
 

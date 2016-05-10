@@ -7,7 +7,7 @@
 
 <script
 	src="../../../../../../resources/sap-ui-core.js"
-	data-sap-ui-libs="sap.ui.commons">
+	data-sap-ui-libs="sap.ui.commons, sap.m">
 
 </script>
 
@@ -422,6 +422,63 @@ QUnit.test("Should not throw an exception if the elements of core are not define
 
 	// Assert
 	assert.ok(true, "did not throw an exception");
+});
+
+module("Controls in a dialog", {
+	beforeEach: function () {
+		this.oButtonInDialog = new sap.m.Button("buttonInDialog",{text: "OK"});
+		this.oDialog = new sap.m.Dialog({
+			content: this.oButtonInDialog
+		});
+		// System under Test
+		this.oPlugin = new OpaPlugin();
+	},
+	afterEach: function () {
+		this.oDialog.destroy();
+		this.oPlugin.destroy();
+	}
+});
+
+test("Should match a control in an open dialog specifying the control type", function (assert) {
+	// Arrange
+	var fnStart = assert.async();
+
+	// Act
+	this.oDialog.attachAfterOpen(function () {
+		var aRetrievedControls = this.oPlugin.getMatchingControls({
+			searchOpenDialogs : true,
+			controlType: sap.m.Button,
+			id : ["buttonInDialog"]
+		});
+
+		// Assert
+		assert.ok(aRetrievedControls.length == 1, "Found exactly one control in dialog");
+		assert.ok(aRetrievedControls[0] == this.oButtonInDialog, "Found the 'sap.m.button' we were looking");
+
+		fnStart();
+	}, this);
+	// Act
+	this.oDialog.open();
+});
+
+test("Should match a control in an open dialog without specifying the control type", function (assert) {
+	// Arrange
+	var fnStart = assert.async();
+
+	// Act
+	this.oDialog.attachAfterOpen(function () {
+		var aRetrievedControls = this.oPlugin.getMatchingControls({
+			searchOpenDialogs : true,
+			id : ["buttonInDialog"]
+		});
+
+		// Assert
+		assert.ok(jQuery.inArray(this.oButtonInDialog, aRetrievedControls) > -1, "Found button in dialog");
+
+		fnStart();
+	}, this);
+	// Act
+	this.oDialog.open();
 });
 
 sap.ui.require([

@@ -946,97 +946,140 @@
 			oDeepTree.destroy();
 		});
 
-		module("Data binding", {
+		module("Helper methods", {
+			beforeEach: function () {
+				this.oTree = new sap.ui.commons.Tree();
+			},
+			afterEach: function () {
+				this.oTree.destroy();
+				this.oTree = null;
+			}
+		});
+
+		test("_removeItemFromObject private method", function () {
+			// Arrange
+			var oOriginal,
+				oClone;
+
+			oOriginal = {
+				keyOne: "1",
+				keyTwo: "2",
+				keyThree: "3"
+			};
+
+			// Act
+			oClone = this.oTree._removeItemFromObject(oOriginal, "keyOne");
+
+			// Assert
+			notOk(oClone === oOriginal, "Clone object is not a reference to original object");
+			notDeepEqual(oOriginal, oClone, "Clone object is different from original object");
+			strictEqual(oClone.hasOwnProperty("keyOne"), false, "KeyOne does not exist in cloned object");
+			strictEqual(oClone.hasOwnProperty("keyTwo"), true, "keyTwo exist in cloned object");
+			strictEqual(oClone.hasOwnProperty("keyThree"), true, "keyThree exist in cloned object");
+
+			// Act
+			oClone = this.oTree._removeItemFromObject(oOriginal, "keyThatDontExistInObject");
+
+			// Assert
+			deepEqual(oOriginal, oClone, "Clone object is the same as original object");
+		});
+
+		module("Preserve selection", {
 			beforeEach: function () {
 				this.oTree = new sap.ui.commons.Tree({
 					showHeader: false,
 					showHeaderIcons: false,
 					showHorizontalScrollbar: true,
-					selectionMode: sap.ui.commons.TreeSelectionMode.Single
+					selectionMode: sap.ui.commons.TreeSelectionMode.Single,
+					nodes: {
+						path : "/",
+						template : new sap.ui.commons.TreeNode({
+							text : {
+								path : "text"
+							}
+						}),
+						parameters : { arrayNames : [ "children" ] }
+					}
 				});
+
+				// Remove tree node animation and preserve the default one to restore it after the test
+				this.defaultAnimationDuration = sap.ui.commons.TreeNode.ANIMATION_DURATION;
+				sap.ui.commons.TreeNode.ANIMATION_DURATION = 0;
+
 				this.oTree.setModel(new sap.ui.model.json.JSONModel({
 					children : [
 						{
 							bShow : true,
-							text : "node 1",
+							text : "root",
 							children : [
 								{
 									bShow : true,
-									text : "node 11"
-								},
-								{
-									bShow : true,
-									text : "node 12"
-								},
-								{
-									bShow : true,
-									text : "node 13"
-								}
-							]
-						},
-						{
-							bShow : false,
-							text : "node 2",
-							children : [
-								{
-									bShow : true,
-									text : "node 21"
-								},
-								{
-									bShow : true,
-									text : "node 22"
-								},
-								{
-									bShow : true,
-									text : "node 23"
-								}
-							]
-						},
-						{
-							bShow : true,
-							text : "node 3",
-							children : [
-								{
-									bShow : true,
-									text : "node 31"
+									text : "node1",
+									children : [
+										{
+											bShow : true,
+											text : "node11"
+										},
+										{
+											bShow : true,
+											text : "node12"
+										},
+										{
+											bShow : true,
+											text : "node13"
+										}
+									]
 								},
 								{
 									bShow : false,
-									text : "node 32"
+									text : "node2",
+									children : [
+										{
+											bShow : true,
+											text : "node21"
+										},
+										{
+											bShow : true,
+											text : "node22"
+										},
+										{
+											bShow : true,
+											text : "node23"
+										}
+									]
 								},
 								{
-									bShow : false,
-									text : "node 33"
+									bShow : true,
+									text : "node3",
+									children : [
+										{
+											bShow : true,
+											text : "node31"
+										},
+										{
+											bShow : false,
+											text : "node32"
+										},
+										{
+											bShow : false,
+											text : "node33"
+										}
+									]
 								}
 							]
 						}
 					]
 				}));
-				this.oTree.bindNodes({
-					path : "/",
-					template : new sap.ui.commons.TreeNode({
-						text : {
-							path : "text"
-						}
-					}),
-					parameters : { arrayNames : [ "children" ] }
-				});
+
 				this.oTree.placeAt("target5");
 				sap.ui.getCore().applyChanges();
-				this.fnSelectionChangeHandler = function (oEvent) {
-					this.oSelectionChangeEventStorage = jQuery.extend({}, oEvent);
-				}.bind(this);
-				this.spySelectNodeHandler = sinon.spy(sap.ui.commons.TreeNode.prototype, "fireSelected");
-				this.sandbox = sinon.sandbox;
-				this.spySelectionChangeHandler = sinon.spy(this.fnSelectionChangeHandler);
-				this.oTree.attachEvent('selectionChange', this.spySelectionChangeHandler);
+
+				this.createNodesFlatStructure();
 			},
 			afterEach: function () {
+				// Restore tree node animation duration
+				sap.ui.commons.TreeNode.ANIMATION_DURATION = this.defaultAnimationDuration;
 				this.oTree.destroy();
-				this.fnSelectionChangeHandler = null;
-				this.oSelectionChangeEventStorage = null;
-				this.spySelectNodeHandler = null;
-				this.sandbox.restore();
 			},
 			applyFilter: function (sShowValue) {
 				var aFiltersToApply = [];
@@ -1047,7 +1090,7 @@
 					case "False":
 						aFiltersToApply.push(new sap.ui.model.Filter('bShow', sap.ui.model.FilterOperator.EQ, false));
 						break;
-					default:
+					case "All":
 						aFiltersToApply = [
 							new sap.ui.model.Filter('bShow', sap.ui.model.FilterOperator.EQ, true),
 							new sap.ui.model.Filter('bShow', sap.ui.model.FilterOperator.EQ, false)
@@ -1055,55 +1098,254 @@
 						break;
 				}
 				this.oTree.getBinding("nodes").filter(aFiltersToApply);
+
+				// Recreate nodes flat structure when model is updated
+				this.createNodesFlatStructure();
+			},
+			createNodesFlatStructure: function () {
+				var that = this;
+				this.oNodes = {};
+				var loopNodes = function (aNodes) {
+					var aSubNodes;
+					for (var i = 0;i < aNodes.length;i++) {
+						aSubNodes = aNodes[i].getNodes();
+						that.oNodes[aNodes[i].getText()] = aNodes[i];
+						if (aSubNodes.length > 0) {
+							loopNodes(aSubNodes);
+						}
+					}
+				};
+				loopNodes(this.oTree.getNodes());
 			}
 		});
 
-		test("Selection is cleared on data model filtering", function () {
-			//arrange
-			var oTreeNodes = this.oTree.getAggregation("nodes"),
-				oNodeToSelect = oTreeNodes[1].getNodes()[1]; // node 2-2
+		test("Selection is preserved on node collapse/expand in single selection mode", function () {
+			var that = this,
+				oTestIfNodesSelectionIsPreservedOnExpand;
 
-			this.oTree.setSelection(oNodeToSelect, false, sap.ui.commons.TreeSelectionMode.Single ,true);
-			sap.ui.getCore().applyChanges();
-			//assert
-			strictEqual(this.spySelectNodeHandler.callCount, 1, "TreeNode select event was fired successfully");
-			ok(this.spySelectionChangeHandler.calledOnce, "Tree selection change event was fired successfully");
-			equal(this.oSelectionChangeEventStorage.mParameters.nodes[0], oNodeToSelect, "Tree selection change event was fired with correct node parameter");
-			equal(this.oSelectionChangeEventStorage.mParameters.nodeContexts[0], this.oTree.getNodeContext(oNodeToSelect), "Tree selection change event was fired with correct nodeContexts parameter");
-			strictEqual(this.oTree.getSelection(), oNodeToSelect, "The correct node was selected");
-			//arrange
-			this.applyFilter("False");
-			sap.ui.getCore().applyChanges();
-			//assert
-			strictEqual(this.spySelectNodeHandler.callCount, 1, "TreeNode select event was not fired on data model filtering");
-			equal(this.oSelectionChangeEventStorage.mParameters.nodes[0], null, "Tree selection change event was fired with correct node parameter");
-			equal(this.oSelectionChangeEventStorage.mParameters.nodeContexts[0], null, "Tree selection change event was fired with correct nodeContexts parameter");
-			strictEqual(this.oTree.getSelection(), null, "getSelection() returned null when performing data model filtering");
-			//arrange
-			this.applyFilter("Reset"); //reset the filters and data to its original state
-			sap.ui.getCore().applyChanges();
-			//assert
-			strictEqual(this.spySelectNodeHandler.callCount, 1, "TreeNode select event was not fired on data model filtering");
-			equal(this.oSelectionChangeEventStorage.mParameters.nodes[0], null, "Tree selection change event was fired with correct node parameter");
-			equal(this.oSelectionChangeEventStorage.mParameters.nodeContexts[0], null, "Tree selection change event was fired with correct nodeContexts parameter");
-			strictEqual(this.oTree.getSelection(), null, "getSelection() returned null when performing data model filtering");
-			//arrange
-			this.oTree.setSelection(oNodeToSelect, false, sap.ui.commons.TreeSelectionMode.Single ,true); //select the same (2-2) node
-			sap.ui.getCore().applyChanges();
-			//assert
-			strictEqual(this.spySelectNodeHandler.callCount, 2, "Tree selection change was fired on data model filtering");
-			equal(this.oSelectionChangeEventStorage.mParameters.nodes[0], oNodeToSelect, "Tree selection change event was fired with correct node parameter");
-			equal(this.oSelectionChangeEventStorage.mParameters.nodeContexts[0], this.oTree.getNodeContext(oNodeToSelect), "Tree selection change event was fired with correct nodeContexts parameter");
-			strictEqual(this.oTree.getSelection(), oNodeToSelect, "getSelection() returned null when performing data model filtering");
-			//arrange
-			this.applyFilter("True");
-			sap.ui.getCore().applyChanges();
-			//assert
-			strictEqual(this.spySelectNodeHandler.callCount, 2, "TreeNode select event was not fired on data model filtering");
-			equal(this.oSelectionChangeEventStorage.mParameters.nodes[0], null, "Tree selection change event was fired with correct node parameter");
-			equal(this.oSelectionChangeEventStorage.mParameters.nodeContexts[0], null, "Tree selection change event was fired with correct nodeContexts parameter");
-			strictEqual(this.oTree.getSelection(), null, "getSelection() returned null when performing data model filtering");
+			oTestIfNodesSelectionIsPreservedOnExpand = function () {
+				ok(that.oNodes.node31.isVisible(), "Node 31 should be visible");
+				ok(that.oNodes.node32.isVisible(), "Node 32 should be visible");
+				ok(that.oNodes.node33.isVisible(), "Node 33 should be visible");
+				ok(that.oNodes.node33.getIsSelected(), "Node 33 should be selected");
+			};
+
+			// Mark node as selected
+			this.oNodes.node33.setIsSelected(true);
+
+			// Collapse and then expand node 3
+			this.oNodes.node3.collapse();
+			this.oNodes.node3.expand();
+
+			// Assert
+			oTestIfNodesSelectionIsPreservedOnExpand();
+
+			// Collapse and then expand root node
+			this.oNodes.root.collapse();
+			this.oNodes.root.expand();
+
+			// Assert
+			oTestIfNodesSelectionIsPreservedOnExpand();
+
+			// Collapse and then expand all nodes
+			this.oTree.collapseAll();
+			this.oTree.expandAll();
+
+			// Assert
+			oTestIfNodesSelectionIsPreservedOnExpand();
+
 		});
+
+		test("Selection is preserved on node collapse/expand in multi selection mode", function () {
+			var that = this,
+				oTestIfNodesSelectionIsPreservedOnExpand;
+
+			// Set tree selection mode to Multi
+			this.oTree.setSelectionMode(sap.ui.commons.TreeSelectionMode.Multi);
+
+			oTestIfNodesSelectionIsPreservedOnExpand = function () {
+					ok(that.oNodes.node31.isVisible(), "Node 31 should be visible");
+					ok(that.oNodes.node32.isVisible(), "Node 32 should be visible");
+					ok(that.oNodes.node33.isVisible(), "Node 33 should be visible");
+					ok(that.oNodes.node31.getIsSelected(), "Node 31 should be selected");
+					ok(!that.oNodes.node32.getIsSelected(), "Node 32 should not be selected");
+					ok(that.oNodes.node33.getIsSelected(), "Node 33 should be selected");
+			};
+
+			// Mark nodes as selected
+			this.oNodes.node31.setIsSelected(true);
+			this.oNodes.node33.setIsSelected(true);
+
+			// Collapse and then expand node 3
+			this.oNodes.node3.collapse();
+			this.oNodes.node3.expand();
+
+			// Assert
+			oTestIfNodesSelectionIsPreservedOnExpand();
+
+			// Collapse and then expand root node
+			this.oNodes.root.collapse();
+			this.oNodes.root.expand();
+
+			// Assert
+			oTestIfNodesSelectionIsPreservedOnExpand();
+
+			// Collapse and then expand all nodes
+			this.oTree.collapseAll();
+			this.oTree.expandAll();
+
+			// Assert
+			oTestIfNodesSelectionIsPreservedOnExpand();
+		});
+
+		test("Selection is preserved on oDate model filtering with single selection", function () {
+			// Mark node as selected
+			this.oNodes.node33.setIsSelected(true);
+
+			// Filter the model
+			this.applyFilter("False");
+
+			// Assert
+			ok(this.oNodes.node33.getIsSelected(), "Node 33 should remain selected");
+
+			// Filter the model
+			this.applyFilter("True");
+			this.applyFilter("All");
+
+			// Assert
+			ok(!this.oNodes.node33.getIsSelected(), "Node 33 should not be selected");
+		});
+
+		test("Selection is preserved on oDate model filtering with multiple selection", function () {
+			var oNode31 = this.oNodes.node31;
+
+			// Set tree selection mode to Multi
+			this.oTree.setSelectionMode(sap.ui.commons.TreeSelectionMode.Multi);
+
+			// Mark node as selected
+			this.oNodes.node31.setIsSelected(true);
+			this.oNodes.node32.setIsSelected(true);
+			this.oNodes.node33.setIsSelected(true);
+
+			// Filter the model
+			this.applyFilter("False");
+
+			// Assert
+			strictEqual(oNode31.bIsDestroyed, true, "Initial Node 31 should be destroyed on updateNodes fired " +
+					"with reason filter. We destroy all old nodes on filtering to prevent memory leak and unpredictable " +
+					"selection behavior");
+
+			notOk(this.oNodes.hasOwnProperty("node31"), "Node 31 should be removed");
+			ok(this.oNodes.node32.getIsSelected(), "Node 32 should remain selected");
+			ok(this.oNodes.node33.getIsSelected(), "Node 33 should remain selected");
+
+			// Deselect node 32
+			this.oNodes.node32.setIsSelected(false);
+
+			// Filter the model
+			this.applyFilter("All");
+
+			// Assert
+			notOk(this.oNodes.node31.getIsSelected(), "Node 31 should not be selected");
+			notOk(this.oNodes.node32.getIsSelected(), "Node 32 should not be selected");
+			ok(this.oNodes.node33.getIsSelected(), "Node 33 should be selected");
+
+			// Cleanup
+			oNode31 = null;
+		});
+
+		test("Selection is preserved on oDate model filtering with multiple selection", function () {
+			// Set tree selection mode to Multi
+			this.oTree.setSelectionMode(sap.ui.commons.TreeSelectionMode.Multi);
+
+			// Mark node as selected
+			this.oNodes.node31.setIsSelected(true);
+			this.oNodes.node32.setIsSelected(true);
+			this.oNodes.node33.setIsSelected(true);
+
+			// Filter the model
+			this.applyFilter("True");
+
+			// Assert
+			ok(this.oNodes.node31.getIsSelected(), "Node 31 should remain selected");
+			notOk(this.oNodes.hasOwnProperty("node32"), "Node 32 should be removed");
+			notOk(this.oNodes.hasOwnProperty("node33"), "Node 33 should be removed");
+
+			// Filter the model
+			this.applyFilter("All");
+
+			// Assert
+			ok(this.oNodes.node31.getIsSelected(), "Node 31 should be selected");
+			notOk(this.oNodes.node32.getIsSelected(), "Node 32 should not be selected");
+			notOk(this.oNodes.node33.getIsSelected(), "Node 33 should not be selected");
+		});
+
+		module("Model filtering", {
+			beforeEach: function () {
+				var oNodeTemplate;
+
+				// Do not change the tree declaration with bindAggregation because the test wont fail if a regression
+				// is introduced and the tree is bound differently
+				this.oTree = new sap.ui.commons.Tree();
+				oNodeTemplate = new sap.ui.commons.TreeNode();
+				oNodeTemplate.bindProperty("text", "name");
+				this.oTree.bindAggregation("nodes", "/root", oNodeTemplate);
+
+				this.oTree.setModel(new sap.ui.model.json.JSONModel({
+					root:{
+						name: "root",
+						0: {
+							name: "JSON_item1",
+							0: {
+								name: "JSON_subitem1",
+								0: {
+									name: "JSON_subsubitem1"
+								},
+								1: {
+									name: "JSON_subsubitem2"
+								}
+							},
+							1: {
+								name: "JSON_subitem2",
+								0: {
+									name: "JSON_subsubitem3"
+								}
+							}
+						},
+						1:{
+							name: "JSON_item2",
+							0: {
+								name: "JSON_subitem3"
+							}
+						}
+					}
+				}));
+
+				this.oTree.placeAt("target5");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				// Restore tree node animation duration
+				this.oTree.destroy();
+			}
+		});
+
+		test("Filtering", function () {
+			// Arrange
+			var oTreeBinding = this.oTree.getBinding("nodes"),
+				oFilter = new sap.ui.model.Filter("name","StartsWith","JSON_i"),
+				aNodes;
+
+			// Act
+			oTreeBinding.filter([oFilter]);
+			aNodes = this.oTree.getNodes();
+
+			// Assert
+			strictEqual(aNodes.length, 2, "There should be 2 items that survive the filtering");
+			strictEqual(aNodes[0].getText(), "JSON_item1", "Item 1 text should match");
+			strictEqual(aNodes[1].getText(), "JSON_item2", "Item 2 text should match");
+		});
+
 		</script>
 	</head>
 	<body>

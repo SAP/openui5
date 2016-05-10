@@ -235,6 +235,7 @@ sap.ui.define([
 			dataChange: this._handleDataChange()
 		});
 		this._oSortPanel.setOperations(this._aOperations);
+		this._oSortPanel._sAddRemoveIconTooltipKey = "SORT";
 
 		this.addAggregation("content", this._oSortPanel);
 	};
@@ -278,6 +279,10 @@ sap.ui.define([
 					text: fGetValueOfProperty("text", oContext, oItem_),
 					tooltip: fGetValueOfProperty("tooltip", oContext, oItem_)
 				});
+			});
+			aKeyFields.splice(0, 0, {
+				key: null,
+				text: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_SELECTION_NONE")
 			});
 			this._oSortPanel.setKeyFields(aKeyFields);
 

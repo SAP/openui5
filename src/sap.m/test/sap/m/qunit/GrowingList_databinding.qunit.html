@@ -155,7 +155,7 @@
 		});
 
 		asyncTest("change data property", function(){
-			expect(6); // incl rendering
+			expect(5);
 			model.setProperty("name", "Adx", gl.getItems()[1].getBindingContext())
 
 			window.setTimeout(function(){
@@ -171,7 +171,7 @@
 		});
 
 		test("New Data", function(){
-			expect(8); // incl. rerendering
+			expect(7);
 			model.setData(data2);
 			sap.ui.getCore().applyChanges();
 			equal($ul().children().length, 12, "GrowingList should have six headers and six items rendered");
