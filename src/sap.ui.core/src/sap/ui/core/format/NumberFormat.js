@@ -1106,43 +1106,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 
 	function getNumberFromShortened(sValue, sStyle, oLocaleData) {
 
-		var sNumber;
-		var iFactor = 1;
+
 
 		if (sStyle != "short" && sStyle != "long") {
 			return;
 		}
-
-		var iKey = 10;
-		var sPlural;
-		var sCldrFormat;
-		while ( iKey < 1e14) {
-			for (var i = 0; i < 6; i++) {
-				switch (i) {
-				case 0:
-					sPlural = "zero";
-					break;
-
-				case 1:
-					sPlural = "one";
-					break;
-
-				case 2:
-					sPlural = "two";
-					break;
-
-				case 3:
-					sPlural = "few";
-					break;
-
-				case 4:
-					sPlural = "many";
-					break;
-
-				default:
-					sPlural = "other";
-				}
-
+		var sNumber,
+			iFactor = 1,
+			iKey = 10,
+			aPlurals = ["zero", "one", "two", "few", "many", "other"],
+			sCldrFormat,
+			fnGetFactor = function(sPlural) {
 				sCldrFormat = oLocaleData.getDecimalFormat(sStyle, iKey.toString(), sPlural);
 
 				if (sCldrFormat) {
@@ -1156,18 +1130,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 						// determine unit -> may be on the beginning e.g. for he
 						var sValueSubString = match[0];
 						var sUnit = sCldrFormat.replace(sValueSubString, "");
+						if (!sUnit) {
+							// If there's no scale defined in the pattern, skip the pattern
+							return;
+						}
 						var iIndex = sValue.indexOf(sUnit);
 						if (iIndex >= 0) {
 							// parse the number part like every other number and then use the factor to get the real number
 							sNumber = sValue.replace(sUnit, "");
 							iFactor = iKey;
-							break;
+							return true;
 						}
 					}
 				}
-			}
-
-			if (sNumber) {
+			};
+		while (iKey < 1e14) {
+			if (aPlurals.some(fnGetFactor)) {
 				break;
 			}
 
