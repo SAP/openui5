@@ -306,9 +306,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			this._offsets = ["0 -18", "18 0", "0 18", "-18 0"];
 
 			this._arrowOffset = 18;
-			if (sap.m._bSizeCompact || !!document.querySelector('body.sapUiSizeCompact')) {
-				this._arrowOffset = 9;
-			}
 
 			this._followOfTolerance = 32;
 
@@ -606,6 +603,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				sFocusId = this._getInitialFocusId(),
 				oParentDomRef, iPlacePos;
 
+			// Determines if the Popover will be rendered in a compact mode
+			this._bSizeCompact = sap.m._bSizeCompact || !!document.querySelector('body.sapUiSizeCompact') || this.hasStyleClass("sapUiSizeCompact");
+
 			this._adaptPositionParams();
 
 			if (ePopupState === sap.ui.core.OpenState.OPEN || ePopupState === sap.ui.core.OpenState.OPENING) {
@@ -653,9 +653,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 					jQuery.sap.log.error("sap.m.Popover id = " + this.getId() + ": is opened by a control which isn't rendered yet.");
 					return this;
 				}
-
-				// Set compact style class if the referenced DOM element is compact too
-				this.toggleStyleClass("sapUiSizeCompact", sap.m._bSizeCompact || !!document.querySelector('body.sapUiSizeCompact'));
 
 				oPopup.setAutoCloseAreas([oParentDomRef]);
 				oPopup.setContent(this);
@@ -1800,7 +1797,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				this._arrowOffset = 18;
 				this._offsets = ["0 -18", "18 0", "0 18", "-18 0"];
 
-				if (sap.m._bSizeCompact || !!document.querySelector('body.sapUiSizeCompact')) {
+				if (this._bSizeCompact) {
 					this._arrowOffset = 9;
 					this._offsets = ["0 -9", "9 0", "0 9", "-9 0"];
 				}
