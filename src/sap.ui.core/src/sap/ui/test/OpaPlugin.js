@@ -164,7 +164,7 @@ sap.ui.define(['jquery.sap.global',
 					if (fnControlType) {
 						return oControl instanceof fnControlType;
 					}
-					return false;
+					return true;
 				});
 			},
 
