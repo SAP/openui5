@@ -569,20 +569,28 @@ sap.ui.define([
 		//display overflow if there are more than 1 item or only 1 item and it is showing its text
 		if (aActions.length > 1 || this._hasOneButtonShowText(aActions)) {
 			//create responsive equivalents of the provided controls
-			jQuery.each(aActions, jQuery.proxy(function (iIndex, oAction) {
+			aActions.forEach(function(oAction) {
 				// Force the design of the button to transparent
 				if (oAction instanceof Button && oAction.getVisible()) {
 					if (oAction instanceof Button && (oAction.getType() === "Default" || oAction.getType() === "Unstyled")) {
 						oAction.setProperty("type", sap.m.ButtonType.Transparent, false);
 					}
 
+					var oObjectPageHeader = this;
 					var oActionSheetButton = this._createActionSheetButton(oAction);
 
 					this._oActionSheetButtonMap[oAction.getId()] = oActionSheetButton; //store the originalId/reference for later use (adaptLayout)
-
 					this._oOverflowActionSheet.addButton(oActionSheetButton);
+
+					oAction.setText = function(sText) {
+						var oActionSheetButton = oObjectPageHeader._oActionSheetButtonMap[this.getId()];
+
+						oActionSheetButton && oActionSheetButton.setText(sText);
+
+						return this.setProperty("text", sText, false);
+					};
 				}
-			}, this));
+			}, this);
 		}
 		this._oTitleArrowIcon.setVisible(this.getShowTitleSelector());
 		this._oFavIcon.setVisible(this.getMarkFavorite());
