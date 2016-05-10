@@ -520,10 +520,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 				oControl.$("triggerList").css("display", "");
 			} else {
 				var oBinding = oControl.getBinding("items"),
-					iBindingLength = oBinding.getLength() || 0,
+					iBindingLength = 0,
 					iItemsLength = oControl.getItems(true).length,
-					bLengthFinal = oBinding.isLengthFinal(),
+					bLengthFinal = true,
 					bHasScrollToLoad = oControl.getGrowingScrollToLoad();
+
+				if (oBinding) {
+					iBindingLength = oBinding.getLength();
+					bLengthFinal = oBinding.isLengthFinal();
+				}
 
 				// show, update or hide the growing button
 				if (!iItemsLength || !this._iLimit ||
