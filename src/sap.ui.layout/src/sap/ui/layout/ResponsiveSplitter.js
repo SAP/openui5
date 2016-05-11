@@ -65,6 +65,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 	});
 
 	ResponsiveSplitter.prototype.init = function () {
+		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout");
 		this.addEventDelegate({
 			onAfterRendering: function () {
 				this._initItemNavigation();
@@ -72,16 +73,99 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 		}, this);
 	};
 
+	/**
+	 * Sets tooltips to the SplitterBars
+	 * @returns {void}
+	 * @private
+	 */
+	ResponsiveSplitter.prototype._setSplitterBarsTooltips = function (oContent, iParent) {
+		var	aSplitterBars = oContent.$().find(" > .sapUiLoSplitterBar"),
+			aContentAreas = oContent.$().find(" > .sapUiLoSplitterContent"),
+			sBaseTooltip = this._oResourceBundle.getText("RESPONSIVE_SPLITTER_RESIZE") + " ",
+			sTooltip = sBaseTooltip,
+			iCurrentPaneIndex, iNextPaneIndex, oAreaContent, sContentId;
+
+		for (var i = 0; i < aContentAreas.length; i++) {
+			sContentId = aContentAreas[i].childNodes[0].id;
+			oAreaContent = sap.ui.getCore().byId(sContentId);
+			iCurrentPaneIndex = i + 1;
+			iNextPaneIndex = i + 2;
+
+			if (iParent) {
+				sTooltip += this._oResourceBundle.getText("RESPONSIVE_SPLITTER_PANES", [iParent + "." + iCurrentPaneIndex, iParent + "." + iNextPaneIndex]);
+			} else {
+				sTooltip += this._oResourceBundle.getText("RESPONSIVE_SPLITTER_PANES", [iCurrentPaneIndex, iNextPaneIndex]);
+			}
+
+			if (aSplitterBars[i]) {
+				aSplitterBars[i].setAttribute("title", sTooltip);
+				sTooltip = sBaseTooltip;
+			}
+			if (oAreaContent instanceof sap.ui.layout.Splitter) {
+				this._setSplitterBarsTooltips(oAreaContent, iCurrentPaneIndex);
+			}
+		}
+	};
+
+	/**
+	 * Sets and updates the tooltips of the Paginator's buttons.E.g.
+	 * Go to split screen 1 and 2
+	 * Go to screen 3
+	 * @returns {void}
+	 * @private
+	 */
+	ResponsiveSplitter.prototype._updatePaginatorButtonsTooltips = function () {
+		var aVisibleButtons = this._getVisibleButtons(),
+			iHomePageCount = this.getRootPaneContainer()._oSplitter.getAssociatedContentAreas().length,
+			sHomeTooltip = this._oResourceBundle.getText("RESPONSIVE_SPLITTER_HOME") + " ",
+			sAnd = this._oResourceBundle.getText("RESPONSIVE_SPLITTER_AND"),
+			sTooltip = "",
+			that = this,
+			oHomeButton;
+
+		if (aVisibleButtons.length > 0) {
+			oHomeButton = aVisibleButtons.shift();
+			for (var i = 1; i <= iHomePageCount; i++) {
+				sHomeTooltip += i;
+
+				if (i < (iHomePageCount - 1)) {
+					sHomeTooltip += ", ";
+				} else if (i === iHomePageCount - 1){
+					sHomeTooltip += " " + sAnd + " ";
+				}
+			}
+			oHomeButton.setAttribute("title", sHomeTooltip);
+
+			[].forEach.call(aVisibleButtons, function(oButton) {
+				sTooltip = that._oResourceBundle.getText("RESPONSIVE_SPLITTER_GOTO") + " " + (iHomePageCount + 1);
+				iHomePageCount += 1;
+				oButton.setAttribute("title", sTooltip);
+			});
+		}
+	};
+
 	ResponsiveSplitter.prototype.onBeforeRendering = function () {
-		var bDefaultPane = this._checkForDefault();
+		var bDefaultPane = this._checkForDefault(),
+			oRootContainer = this.getRootPaneContainer(),
+			sFirstPaneId;
+
 		if (!bDefaultPane) {
-			var sFirstPaneId = this._getfirstPaneId();
+			sFirstPaneId = this._getfirstPaneId();
 			if (sFirstPaneId) {
 				this.setAssociation("defaultPane", sFirstPaneId);
 				jQuery.sap.log.warning("No defaultPane association defined so the first pane added in the ResponsiveSplitter is set as а default");
 			} else {
 				return;
 			}
+		}
+
+		if (oRootContainer) {
+			oRootContainer._oSplitter.addEventDelegate({
+				onAfterRendering: function () {
+					this._setSplitterBarsTooltips(oRootContainer._oSplitter);
+					this._updatePaginatorButtonsTooltips();
+				}
+			}, this);
 		}
 
 		this._detachResizeHandler();
@@ -305,10 +389,10 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 	 */
 	ResponsiveSplitter.prototype._activatePage = function (iPageIndex, iButtonIndex) {
 		iButtonIndex = iButtonIndex || iPageIndex;
+		var $PaginatorButton = jQuery(this.$().find(".sapUiResponsiveSplitterPaginatorButton")[iButtonIndex]);
 		this.getAggregation("pages")[iPageIndex].setVisible(true);
 		this.$().find(".sapUiResponsiveSplitterPaginatorButton").removeClass("sapUiResponsiveSplitterPaginatorSelectedButton");
-		jQuery(this.$().find(".sapUiResponsiveSplitterPaginatorButton")[iButtonIndex]).addClass("sapUiResponsiveSplitterPaginatorSelectedButton");
-		jQuery(this.$().find(".sapUiResponsiveSplitterPaginatorButton")[iButtonIndex]).attr("tabindex", 0);
+		$PaginatorButton.addClass("sapUiResponsiveSplitterPaginatorSelectedButton").attr("tabindex", 0);
 	};
 
 	/**
@@ -367,7 +451,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 				// TODO .. handle
 			} else {
 				iButtonIndex = 1;
-				//this._currentInterval.pages.filter(function(pane) { return pane.demandPane && pane.content.getId() === oDefaultPane.getContent().getId()})[0].contentIndex
+				//this._currentInterval.pages.filter(function(pane) { return pane.demandPane && pane.content.getId() === oDefaultPan/etContent().getId()})[0].contentIndex
 			}
 
 			this._activatePage(iPageIndex, iButtonIndex);
@@ -482,12 +566,12 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 
 		buttons.addClass("sapUiResponsiveSplitterHiddenElement");
 		if (pagesCount > 1) {
-			this.addStyleClass("sapUiRSVisiblePaginator");
+			this.getDomRef().classList.add("sapUiRSVisiblePaginator");
 			buttons = buttons.slice(0, pagesCount > 7 ? 7 : pagesCount);
 			buttons.removeClass("sapUiResponsiveSplitterHiddenElement");
 			buttons.removeClass("sapUiResponsiveSplitterHiddenPaginatorButton");
 		} else {
-			this.removeStyleClass("sapUiRSVisiblePaginator");
+			this.getDomRef().classList.remove("sapUiRSVisiblePaginator");
 		}
 	};
 
