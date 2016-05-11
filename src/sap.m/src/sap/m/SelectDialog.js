@@ -722,7 +722,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	};
 
 	SelectDialog.prototype.getBindingContext = function (sModelName) {
-		return this._oList.getBindingContext(sModelName);
+		return this._oList && this._oList.getBindingContext(sModelName);
 	};
 
 	/*

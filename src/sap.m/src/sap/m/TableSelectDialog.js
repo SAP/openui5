@@ -708,7 +708,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	};
 
 	TableSelectDialog.prototype.getBindingContext = function (sModelName) {
-		return this._oTable.getBindingContext(sModelName);
+		return this._oTable && this._oTable.getBindingContext(sModelName);
 	};
 
 	/**
