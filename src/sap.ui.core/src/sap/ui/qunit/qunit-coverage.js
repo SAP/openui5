@@ -18,7 +18,7 @@
 	// client-side instrument filter options (data-attributes of qunit-coverage script tag)
 	var sFilterAttr, sAntiFilterAttr;
 
-	// extract base URL from script to attach the qunit-reporter-junit script
+	// extract base URL from script to attach the qunit-coverage script
 	var sDocumentLocation = document.location.href.replace(/\?.*|#.*/g, ""),
 			aScripts = document.getElementsByTagName("script"),
 			sBaseUrl = null,

@@ -176,7 +176,7 @@
 			<id>internal.build</id>
 
 			<properties>
-				<sap.ui5.translationArea>033000</sap.ui5.translationArea>
+				<sap.ui5.translationArea>073002</sap.ui5.translationArea>
 				<sap.ui5.translationDomain>BC</sap.ui5.translationDomain>
 				<sap.ui5.translationDeveloper></sap.ui5.translationDeveloper>
 				<sap.ui5.translationCollection>SAPUI5 UI library</sap.ui5.translationCollection>

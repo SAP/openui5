@@ -8,7 +8,7 @@
 	type="text/javascript" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js"
 	data-sap-ui-resourceroots='{ "resourceroot": "./" }'>
-
+	
 </script>
 
 <link rel="stylesheet"
@@ -26,9 +26,9 @@
 	src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <script type="text/javascript">
-	if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
-			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-	} 		
+	if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	}
 
 	(function() {
 		jQuery.sap.require("sap.m.P13nDialog");
@@ -396,6 +396,187 @@
 			strictEqual(oP13nDialog._getNavigationItemByPanel(oP13nPanelD).getText(), "Without Binding");
 
 			// cleanup
+			oP13nDialog.destroy();
+		});
+
+		/*test("showValidationDialog: show bullet point for move then one messages", function() {
+			// system under test
+			var oPanelC = new sap.m.P13nPanel({
+				title: "Columns",
+				type: sap.m.P13nPanelType.culumns
+			});
+			var oPanelG = new sap.m.P13nPanel({
+				title: "Group",
+				type: sap.m.P13nPanelType.group
+			});
+			var oP13nDialog = new sap.m.P13nDialog({
+				panels: [
+					oPanelC, oPanelG
+				]
+			});
+
+			// arrange
+			oP13nDialog.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oP13nDialog.showValidationDialog(function() {
+			}, [], [
+				{
+					columnKey: "columnKey1",
+					panelTypes: [
+						"group", "columns"
+					],
+					messageType: "Warning",
+					messageText: "Dummy Warning 1..."
+				}, {
+					columnKey: "columnKey2",
+					panelTypes: [
+						"group", "columns"
+					],
+					messageType: "Warning",
+					messageText: "Dummy Warning 2..."
+				}
+			]);
+			var $Dialog = jQuery.find(".sapMMessageBoxWarning");
+			var oDialog = jQuery($Dialog).control(0);
+
+			// assertions
+			ok(oDialog);
+			strictEqual(oDialog.getContent()[0].getText(), "• Dummy Warning 2...\n• Dummy Warning 1...\n");
+
+			// cleanup
+			oDialog.destroy();
+			oP13nDialog.destroy();
+		});*/
+
+		test("showValidationDialog: show no bullet point for one message", function() {
+			// system under test
+			var oPanelC = new sap.m.P13nPanel({
+				title: "Columns",
+				type: sap.m.P13nPanelType.culumns
+			});
+			var oPanelG = new sap.m.P13nPanel({
+				title: "Group",
+				type: sap.m.P13nPanelType.group
+			});
+			var oP13nDialog = new sap.m.P13nDialog({
+				panels: [
+					oPanelC, oPanelG
+				]
+			});
+
+			// arrange
+			oP13nDialog.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oP13nDialog.showValidationDialog(function() {
+			}, [], [
+				{
+					columnKey: "columnKey1",
+					panelTypes: [
+						"group", "columns"
+					],
+					messageType: "Warning",
+					messageText: "Dummy Warning..."
+				}
+			]);
+			var $Dialog = jQuery.find(".sapMMessageBoxWarning");
+			var oDialog = jQuery($Dialog).control(0);
+
+			// assertions
+			ok(oDialog);
+			strictEqual(oDialog.getContent()[0].getText(), "Dummy Warning...\n");
+
+			// cleanup
+			oDialog.destroy();
+			oP13nDialog.destroy();
+		});
+
+		// BCP 1670188253
+		test("showValidationDialog: show only one message of many equal messages", function() {
+			// system under test
+			var oPanelC = new sap.m.P13nPanel({
+				title: "Columns",
+				type: sap.m.P13nPanelType.culumns
+			});
+			var oPanelG = new sap.m.P13nPanel({
+				title: "Group",
+				type: sap.m.P13nPanelType.group
+			});
+			var oP13nDialog = new sap.m.P13nDialog({
+				panels: [
+					oPanelC, oPanelG
+				]
+			});
+
+			// arrange
+			oP13nDialog.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oP13nDialog.showValidationDialog(function() {
+			}, [], [
+				{
+					columnKey: "columnKey1",
+					panelTypes: [
+						"group", "columns"
+					],
+					messageType: "Warning",
+					messageText: "Dummy Warning..."
+				}, {
+					columnKey: "columnKey2",
+					panelTypes: [
+						"group", "columns"
+					],
+					messageType: "Warning",
+					messageText: "Dummy Warning..."
+				}
+			]);
+			var $Dialog = jQuery.find(".sapMMessageBoxWarning");
+			var oDialog = jQuery($Dialog).control(0);
+
+			// assertions
+			ok(oDialog);
+			strictEqual(oDialog.getContent()[0].getText(), "Dummy Warning...\n");
+
+			// cleanup
+			oDialog.destroy();
+			oP13nDialog.destroy();
+		});
+
+		test("showValidationDialog: show no dialog if no messages exist", function() {
+			// system under test
+			var oPanelC = new sap.m.P13nPanel({
+				title: "Columns",
+				type: sap.m.P13nPanelType.culumns
+			});
+			var oPanelG = new sap.m.P13nPanel({
+				title: "Group",
+				type: sap.m.P13nPanelType.group
+			});
+			var oP13nDialog = new sap.m.P13nDialog({
+				panels: [
+					oPanelC, oPanelG
+				]
+			});
+
+			// arrange
+			oP13nDialog.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oP13nDialog.showValidationDialog(function() {
+			}, [], []);
+			var $Dialog = jQuery.find(".sapMMessageBoxWarning");
+			var oDialog = jQuery($Dialog).control(0);
+
+			// assertions
+			ok(!oDialog);
+			//strictEqual(oDialog.getContent()[0].getText(), "Dummy Warning...\n");
+
+			// cleanup			
 			oP13nDialog.destroy();
 		});
 

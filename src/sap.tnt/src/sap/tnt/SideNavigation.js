@@ -3,8 +3,10 @@
  */
 
 // Provides control sap.t.SideNavigation.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', 'sap/ui/core/Icon', './NavigationList'],
-    function (jQuery, library, Control, ResizeHandler, Icon) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler',
+        'sap/ui/core/Icon', 'sap/ui/core/delegate/ScrollEnablement'],
+    function (jQuery, library, Control, ResizeHandler,
+              Icon, ScrollEnablement) {
         'use strict';
 
         /**
@@ -79,6 +81,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
         });
 
         SideNavigation.prototype.init = function () {
+
+            this._scroller = new ScrollEnablement(this, this.getId() + "-Flexible-Content", {
+                horizontal: false,
+                vertical: true
+            });
+
             // Define group for F6 handling
             this.data('sap-ui-fastnavgroup', 'true', true);
         };
@@ -116,7 +124,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
             }
 
             if (isExpanded) {
-                that.getDomRef().classList.toggle('sapTntSideNavigationNotExpanded', !isExpanded);
+                that.$().toggleClass('sapTntSideNavigationNotExpanded', !isExpanded);
 
                 if (that.getAggregation('item')) {
                     that.getAggregation('item').setExpanded(isExpanded);
@@ -159,10 +167,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
                 return;
             }
 
-            this.getDomRef().classList.toggle('sapTntSideNavigationNotExpandedWidth', !isExpanded);
+            this.$().toggleClass('sapTntSideNavigationNotExpandedWidth', !isExpanded);
 
             if (!isExpanded) {
-                this.getDomRef().classList.toggle('sapTntSideNavigationNotExpanded', !isExpanded);
+                this.$().toggleClass('sapTntSideNavigationNotExpanded', !isExpanded);
 
                 if (this.getAggregation('item')) {
                     this.getAggregation('item').setExpanded(isExpanded);
@@ -198,6 +206,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
          * @private
          */
         SideNavigation.prototype.exit = function () {
+
+            if (this._scroller) {
+                this._scroller.destroy();
+                this._scroller = null;
+            }
+
             this._deregisterControl();
         };
 
@@ -232,15 +246,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
                 ResizeHandler.deregister(this._ResizeHandler);
                 this._ResizeHandler = null;
             }
-        };
-
-        /**
-         * @private
-         * @param {Object} event
-         */
-        SideNavigation.prototype.ontouchmove = function (event) {
-            // mark the event for components that needs to know if the event was handled
-            event.setMarked();
         };
 
         /**

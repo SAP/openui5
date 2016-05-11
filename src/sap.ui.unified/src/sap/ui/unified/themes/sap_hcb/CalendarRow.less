@@ -17,7 +17,7 @@
 }
 
 /* as outlines can't have different offsets on one side (no left border) and don't work in IE just use a inner border */
-.sap-desktop .sapUiCalendarApp:focus > .sapUiCalendarAppCont:after{
+html.sap-desktop .sapUiCalendarApp:focus > .sapUiCalendarAppCont:after{
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -27,7 +27,7 @@
 	border: 0.125rem dotted @sapUiFocus;
 }
 
-.sap-desktop .sapUiCalendarApp:hover:not(:active) > .sapUiCalendarAppCont{
+html.sap-desktop .sapUiCalendarApp:hover:not(:active) > .sapUiCalendarAppCont{
 	border-color: @sapHCStandardFG;
 }
 

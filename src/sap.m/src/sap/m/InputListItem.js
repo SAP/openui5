@@ -50,7 +50,8 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 			 * Content controls can be added
 			 */
 			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content", bindable : "bindable"}
-		}
+		},
+		designTime: true
 	}});
 
 

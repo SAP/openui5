@@ -639,10 +639,55 @@
 		equals(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
 		equals($table.find('.sapUiTableCtrlFixed .sapUiTableCtrlCol th').length, 3, "Fixed tabled has 6 Columns");
 		equals($table.find('.sapUiTableCtrlScroll .sapUiTableCtrlCol th').length, 6, "Scroll tabled has 3 Columns");
-		if (!sap.ui.Device.browser.phantomJS) {
-			equals(jQuery(oTable.getDomRef("hsb")).css('padding-left'), "25px", "Horizontal scrollbar has correct left padding");
-			equals(jQuery(oTable.getDomRef("hsb")).css('margin-left'), "325px", "Horizontal scrollbar has correct left margin");
+		equals(jQuery(oTable.getDomRef("hsb")).css('padding-left'), "25px", "Horizontal scrollbar has correct left padding");
+		equals(jQuery(oTable.getDomRef("hsb")).css('margin-left'), "325px", "Horizontal scrollbar has correct left margin");
+	});
+
+	test("No fixed column used, when table is too small.", function() {
+		oTable.setFixedColumnCount(3);
+		oTable.setWidth("400px");
+
+		sap.ui.getCore().applyChanges();
+
+		this.clock.tick(1000);
+
+		equals(oTable.getFixedColumnCount(), 0, "No Fixed Columns used");
+		equals(oTable.getProperty("fixedColumnCount"), 3, "Orignal fixed column count is 3");
+
+		oTable.setWidth("500px");
+
+		sap.ui.getCore().applyChanges();
+
+		this.clock.tick(1000);
+
+		equals(oTable.getFixedColumnCount(), 3, "Fixed Column Count is 3 again");
+	});
+
+	module("API assertions", {
+		setup: function() {
+			this.clock = sinon.useFakeTimers();
+			createTable({
+				visibleRowCount: 10,
+				width: "100px",
+				firstVisibleRow: 1
+			});
+		},
+		teardown: function () {
+			destroyTable();
+			this.clock.restore();
 		}
+	});
+
+	test("Scrollbars can be accessed by inheriting controls", function(assert) {
+		var oHsb = oTable.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar);
+		var oVsb = oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
+		assert.ok(oHsb);
+		assert.ok(oVsb);
+
+		oHsb.scrollLeft = 5;
+
+		assert.equal(oVsb.scrollTop, 28, "ScrollTop can be set and read.");
+		assert.equal(oHsb.scrollLeft, 5, "ScrollLeft can be set and read.");
 	});
 
 	module("Fixed rows and columns", {
@@ -1283,7 +1328,9 @@
 	});
 
 	module("Events", {
-		setup: createTable,
+		setup: function() {
+			createTable();
+		},
 		teardown: destroyTable
 	});
 

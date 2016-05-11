@@ -353,11 +353,12 @@
 			"category": "Tile",
 			"since": "1.34",
 			"samples": [
-				"sap.m.sample.GenericTile1x1",
-				"sap.m.sample.GenericTile2x1SingleCont",
-				"sap.m.sample.GenericTile2x1TwoCont",
-				"sap.m.sample.GenericTileStates",
-				"sap.m.sample.SlideTile"
+				"sap.m.sample.GenericTileAsLaunchTile",
+				"sap.m.sample.GenericTileAsMonitorTile",
+				"sap.m.sample.GenericTileAsKPITile",
+				"sap.m.sample.GenericTileAsFeedTile",
+				"sap.m.sample.SlideTile",
+				"sap.m.sample.GenericTileStates"
 			]
 		},
 		{
@@ -524,7 +525,7 @@
 			"category" : "Tile",
 			"since" : "1.34",
 			"samples" : [
-				"sap.m.sample.NumericContentDifSizes",
+				"sap.m.sample.NumericContentDifColors",
 				"sap.m.sample.NumericContentIcon",
 				"sap.m.sample.NumericContentWithoutMargin"
 			]
@@ -888,6 +889,13 @@
 		  "formFactors": "L",
 		  "samples": ["sap.m.sample.TileContainer"]
 		},
+        {
+          "id": "sap.m.StepInput",
+          "name": "StepInput",
+          "category": "User Input",
+          "since": "1.40",
+          "samples": ["sap.m.sample.StepInput"]
+        },
 		{
 		  "id": "sap.m.Switch",
 		  "name": "Switch",
@@ -955,8 +963,7 @@
 		  "category" : "Tile",
 		  "since" : "1.34",
 		  "samples" : [
-		  	"sap.m.sample.TileContent",
-		  	"sap.m.sample.TileContentAutoSize"
+		  	"sap.m.sample.TileContent"
 		  ]
 		},
 		{
@@ -1708,9 +1715,9 @@
 			"description": "Number of Tokens in MultiInput cannot exceed the maxToken number."
 		},
 		{
-			"id": "sap.m.sample.NumericContentDifSizes",
-			"name": "Numeric Content of Different Sizes",
-			"description": "Shows NumericContent including numbers, units of measurement and status arrows indicating a trend. The numbers can be colored according to their meaning. The size of the numbers can be fixed or can adapt to the device used."
+			"id": "sap.m.sample.NumericContentDifColors",
+			"name": "Numeric Content of Different Colors",
+			"description": "Shows NumericContent including numbers, units of measurement, and status arrows indicating a trend. The numbers can be colored according to their meaning."
 		},
 		{
 			"id": "sap.m.sample.NumericContentIcon",
@@ -2197,6 +2204,11 @@
 		  "name": "Remove Margins",
 		  "description": "Use our standard 'No-Margins' classes to remove existing margins from your control. You can either remove all margins at once or remove the margin on one or more sides."
 		},
+        {
+          "id": "sap.m.sample.StepInput",
+          "name": "StepInput",
+          "description": "The StepInput allows the user to change stepwise a value by a predefined step."
+        },
 		{
 		"id": "sap.m.sample.TimePicker",
 		"name": "Time Picker",
@@ -2258,39 +2270,39 @@
 		  "description": "The Draft Indicator shows that eighter currently a draft is saving or that it is already saved. It does not block the current UI screen so other operations could be triggered in parallel."
 		},
 		{
-		  "id": "sap.m.sample.GenericTile1x1",
-		  "name": "Generic Tile 1x1",
-		  "description": "Shows the 1x1 frame type containing the title, the description, and the customizable main area. The 1x1 frame type is shown in two different sizes defined with explicit tile sizes."
-		},
-		{
-		  "id": "sap.m.sample.GenericTile2x1SingleCont",
-		  "name": "Generic Tile 2x1 - Single Content",
-		  "description": "Shows the 2x1 frame type containing the title, the description, and the customizable main area. The size of the tiles is defined with automatic sizing and depends on the device it is running on."
-		},
-		{
-		  "id": "sap.m.sample.GenericTile2x1TwoCont",
-		  "name": "Generic Tile 2x1 - Two Contents",
-		  "description": "Shows the 2x1 frame type containing the title, the description and two customizable areas. The 2x1 frame type is shown in different sizes defined with explicit tile sizes."
-		},
-		{
 		  "id": "sap.m.sample.SlideTile",
-		  "name": "Generic Tiles Sliding",
-		  "description": "Generic Tile controls with the 2x1 frame type are displayed as sliding tiles. The size of the tiles is defined with automatic sizing and depends on the device it is running on."
+		  "name": "Slide Tile",
+		  "description": "GenericTile controls with the 2x1 frame type are displayed as sliding tiles."
 		},
 		{
 		  "id": "sap.m.sample.GenericTileStates",
-		  "name": "Generic Tile Statuses",
-		  "description": "Shows the GenericTile while it is loading, if loading fails, and in disabled status. The size of the tiles is defined with automatic sizing and depends on the device it is running on."
+		  "name": "Generic Tile Status",
+		  "description": "Shows the GenericTile while it is loading, if loading fails, and in disabled status."
+		},
+		{
+		  "id": "sap.m.sample.GenericTileAsLaunchTile",
+		  "name": "Launch Tile",
+		  "description": "Shows samples of Launch Tile, which can contain header, subheader, image content, and footer."
+		},
+		{
+		  "id": "sap.m.sample.GenericTileAsMonitorTile",
+		  "name": "Monitor Tile",
+		  "description": "Shows samples of Monitor Tile, which can contain header, subheader, icon, key value, unit, and footer."
+		},
+		{
+		  "id": "sap.m.sample.GenericTileAsKPITile",
+		  "name": "KPI Tile",
+		  "description": "Shows samples of KPI Tile, which can contain header, subheader, key value, trend, unit, and footer."
+		},
+		{
+		  "id": "sap.m.sample.GenericTileAsFeedTile",
+		  "name": "Feed Tile",
+		  "description": "Shows samples of Feed Tile and News Tile, which can contain feed content, news content, and footer."
 		},
 		{
 		  "id": "sap.m.sample.TileContent",
 		  "name": "Tile Content",
-		  "description": "Shows the universal container for different content types and context information in the footer area. The tile is shown in two different sizes defined with explicit tile sizes."
-		},
-		{
-		  "id": "sap.m.sample.TileContentAutoSize",
-		  "name": "Tile Content with Auto Size to Fit to Small Screen Sizes",
-		  "description": "Shows the universal container with auto size for different types of content and context information in the footer area to fit to small screens."
+		  "description": "Shows the universal container for different content types and context information in the footer area."
 		},
 		{
 		  "id": "sap.m.sample.Breadcrumbs",

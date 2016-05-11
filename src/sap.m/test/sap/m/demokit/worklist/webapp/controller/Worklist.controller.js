@@ -3,9 +3,8 @@ sap.ui.define([
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/demo/worklist/model/formatter",
 		"sap/ui/model/Filter",
-		"sap/ui/model/FilterOperator",
-		"sap/ui/core/routing/History"
-	], function (BaseController, JSONModel, formatter, Filter, FilterOperator, History) {
+		"sap/ui/model/FilterOperator"
+	], function (BaseController, JSONModel, formatter, Filter, FilterOperator) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.demo.worklist.controller.Worklist", {

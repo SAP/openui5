@@ -102,7 +102,7 @@ sap.ui.require(['jquery.sap.global', 'sap/ui/model/json/JSONModel', 'sap/ui/mode
 				for (var i = 0; i < iRows; i++) {
 					var mRow = {};
 					for (var k = 0; k < iColumns; k++) {
-						mRow["column" + k] = (Math.random() + 1).toString(36).substring(7);
+						mRow["column" + k] = (Math.random() + 1).toString(36).substring(7) + " ✓";
 					}
 					aData.push(mRow);
 				}

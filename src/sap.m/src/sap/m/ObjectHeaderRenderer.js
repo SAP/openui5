@@ -546,7 +546,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 						oRM.writeAttributeEscaped("target", oOH.getTitleTarget());
 					}
 				} else {
-					oRM.writeAttribute("href", "#");
+					/*eslint-disable no-script-url */
+					oRM.writeAttribute("href", "javascript:void(0);");
+					/*eslint-enable no-script-url */
 				}
 
 				//ARIA attributes
@@ -672,7 +674,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 		this._renderNumber(oRM, oOH);
 
-		oRM.write("<div class=\"sapMOHDivider\"/>");
+		oRM.write("<div class=\"sapMOHDivider\"></div>");
 		oRM.write("</div>"); // End Top row container
 
 		if (oOH._hasBottomContent()) {
@@ -683,7 +685,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 			this._renderAttributesAndStatuses(oRM, oOH);
 
-			oRM.write("<div class=\"sapMOHDivider\"/>");
+			oRM.write("<div class=\"sapMOHDivider\"></div>");
 			oRM.write("</div>"); // End Bottom row container
 		}
 	};
@@ -774,7 +776,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			this._renderFullOH(oRM, oOH);
 		}
 
-		oRM.write("<div class=\"sapMOHLastDivider\"/>");
+		oRM.write("<div class=\"sapMOHLastDivider\"></div>");
 
 		oRM.write("</div>"); // End Main container\
 
@@ -1373,7 +1375,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 					oRM.writeAttributeEscaped("target", oOH.getTitleTarget());
 				}
 			} else {
-				oRM.writeAttribute("href", "#");
+				/*eslint-disable no-script-url */
+				oRM.writeAttribute("href", "javascript:void(0);");
+				/*eslint-enable no-script-url */
 			}
 
 			oRM.writeAttribute("tabindex", "0");

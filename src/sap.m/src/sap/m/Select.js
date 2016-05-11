@@ -222,7 +222,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 							}
 						}
 					}
-				}
+				},
+				designTime: true
 			}
 		});
 

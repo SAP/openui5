@@ -255,7 +255,7 @@ sap.ui.define([
 	 *
 	 * @param {object} oCondition the new condition of type { "key": "007", "operation": sap.m.P13nConditionOperation.Ascending, "keyField":
 	 *        "keyFieldKey", "value1": "", "value2": ""};
-	 * @param {integer} index of the new condition
+	 * @param {int} index of the new condition
 	 * @public
 	 * @since 1.26.0
 	 */
@@ -605,6 +605,7 @@ sap.ui.define([
 		this._iConditions = 0;
 		this._sLayoutMode = "Desktop";
 		this._sConditionType = "Filter";
+		this._sAddRemoveIconTooltip = "FILTER";
 
 		this._iBreakPointTablet = sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD].points[0];
 		this._iBreakPointDesktop = sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD].points[1];
@@ -767,7 +768,7 @@ sap.ui.define([
 
 		this._oAddButton = new sap.m.Button({
 			icon: sap.ui.core.IconPool.getIconURI("add"),
-			tooltip: this._oRb.getText("CONDITIONPANEL_ADD_TOOLTIP"),
+			tooltip: this._oRb.getText("CONDITIONPANEL_ADD" + (this._sAddRemoveIconTooltipKey ? "_" + this._sAddRemoveIconTooltipKey : "") + "_TOOLTIP"),
 			visible: true,
 			press: function(oEvent) {
 				var oConditionGrid = that._createConditionRow(that._oConditionsGrid, undefined, null, 0);
@@ -1064,7 +1065,7 @@ sap.ui.define([
 	 * @param {grid} oTargetGrid the main grid in which the new condition grid will be added
 	 * @param {object} oConditionGridData the condition data for the new added condition grid controls
 	 * @param {string} sKey the key for the new added condition grid
-	 * @param {integer} iPos the index of the new condition in the targetGrid
+	 * @param {int} iPos the index of the new condition in the targetGrid
 	 */
 	P13nConditionPanel.prototype._createConditionRow = function(oTargetGrid, oConditionGridData, sKey, iPos) {
 		var oButtonContainer = null;
@@ -1193,6 +1194,11 @@ sap.ui.define([
 												oControl.setSelectedItem(oControl.getItems()[index]);
 											}
 										}, this);
+
+										// if no item is selected, we have to select at least the first keyFieldItem
+										if (!oControl.getSelectedItem() && oControl.getItems().length > 0) {
+											oControl.setSelectedItem(oControl.getItems()[0]);
+										}
 									}
 								} else {
 									this._aKeyFields.forEach(function(oKeyField, index) {
@@ -1343,7 +1349,7 @@ sap.ui.define([
 		var oRemoveControl = new sap.m.Button({
 			type: sap.m.ButtonType.Transparent,
 			icon: sap.ui.core.IconPool.getIconURI("sys-cancel"),
-			tooltip: this._oRb.getText("CONDITIONPANEL_REMOVE_TOOLTIP"),
+			tooltip: this._oRb.getText("CONDITIONPANEL_REMOVE" + (this._sAddRemoveIconTooltipKey ? "_" + this._sAddRemoveIconTooltipKey : "") + "_TOOLTIP"),
 			press: function() {
 				that._handleRemoveCondition(this.oTargetGrid, oConditionGrid);
 			},
@@ -1361,7 +1367,7 @@ sap.ui.define([
 		var oAddControl = new sap.m.Button({
 			type: sap.m.ButtonType.Transparent,
 			icon: sap.ui.core.IconPool.getIconURI("add"),
-			tooltip: this._oRb.getText("CONDITIONPANEL_ADD_TOOLTIP"),
+			tooltip: this._oRb.getText("CONDITIONPANEL_ADD" + (this._sAddRemoveIconTooltipKey ? "_" + this._sAddRemoveIconTooltipKey : "") + "_TOOLTIP"),
 			press: function() {
 				that._handleAddCondition(this.oTargetGrid, oConditionGrid);
 			},

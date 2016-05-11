@@ -151,7 +151,6 @@
 	});
 
 	var oModel = new sap.ui.model.json.JSONModel();
-	oModel.setDefaultBindingMode("OneWay");
 	oModel.setData({modelData: aData});
 
 	var aModes = Object.keys(sap.m.ListMode).map(function(sMode) {
@@ -194,7 +193,6 @@
 		pressed: true,
 		press : function() {
 			oTable.setGrowing(oGrowing.getPressed());
-			oModel.setDefaultBindingMode(oGrowing.getPressed() ? "OneWay" : "TwoWay");
 			oTable.bindItems("/modelData", oTemplate);
 		}
 	});
@@ -392,6 +390,7 @@
 
 	var oTable = new sap.m.Table({
 		growing: true,
+		growingThreshold: 5,
 		growingScrollToLoad : true,
 		footerText : "Static table footer text",
 		headerToolbar : oTableHeader,

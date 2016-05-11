@@ -24,6 +24,7 @@
 					<Select id="ThemeButtons" width="100%">
 						<core:Item key="sap_hcb" text="High Contrast Black"/>
 						<core:Item key="sap_bluecrystal" text="Blue Crystal"/>
+						<core:Item key="sap_belize" text="Belize"/>
 						<layoutData>
 							<l:GridData span="L12 M12 S12"/>
 						</layoutData>

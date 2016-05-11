@@ -59,14 +59,25 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 	if ( typeof window.sap.ui !== "object") {
 		window.sap.ui = {};
 	}
+
 	sap.ui = jQuery.extend(sap.ui, {
-			/**
-			 * The version of the SAP UI Library
-			 * @type string
-			 */
-			version: "${version}",
-			buildinfo : { lastchange : "${lastchange}", buildtime : "${buildtime}" }
-		});
+		/**
+		 * The version of the SAP UI Library
+		 * @type string
+		 */
+		version: "${version}",
+		buildinfo : { lastchange : "${lastchange}", buildtime : "${buildtime}" }
+	});
+
+	var oCfgData = window["sap-ui-config"] || {};
+
+	var syncCallBehavior = 0; // ignore
+	if ( oCfgData['xx-nosync'] === 'warn' || /(?:\?|&)sap-ui-xx-nosync=(?:warn)/.exec(window.location.search) ) {
+		syncCallBehavior = 1;
+	}
+	if ( oCfgData['xx-nosync'] === true || oCfgData['xx-nosync'] === 'true' || /(?:\?|&)sap-ui-xx-nosync=(?:x|X|true)/.exec(window.location.search) ) {
+		syncCallBehavior = 2;
+	}
 
 	/**
 	 * Stores the loading Promise for "sap-ui-version.json".
@@ -240,6 +251,11 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 		jQuery.sap.assert(typeof sClassName === "string" && sClassName, "lazyRequire: sClassName must be a non-empty string");
 		jQuery.sap.assert(!sMethods || typeof sMethods === "string", "lazyRequire: sMethods must be empty or a string");
 
+		if ( syncCallBehavior === 2 ) {
+			jQuery.sap.log.error("[nosync] lazy stub creation ignored for '" + sClassName + "'");
+			return;
+		}
+
 		var sFullClass = sClassName.replace(/\//gi,"\."),
 			iLastDotPos = sFullClass.lastIndexOf("."),
 			sPackage = sFullClass.substr(0, iLastDotPos),
@@ -257,7 +273,13 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 
 				// Create dummy constructor which loads the class on demand
 				oClass = function() {
-					jQuery.sap.log.debug("lazy stub for '" + sFullClass + "' (constructor) called.");
+					if ( syncCallBehavior ) {
+						if ( syncCallBehavior === 1 ) {
+							jQuery.sap.log.error("[nosync] lazy stub for constructor '" + sFullClass + "' called");
+						}
+					} else {
+						jQuery.sap.log.debug("lazy stub for constructor '" + sFullClass + "' called.");
+					}
 					jQuery.sap.require(sModuleName);
 					var oRealClass = oPackage[sClass];
 					jQuery.sap.assert(typeof oRealClass === "function", "lazyRequire: oRealClass must be a function after loading");
@@ -296,7 +318,13 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 			// check whether method is already available
 			if (!oClass[sMethod]) {
 				oClass[sMethod] = function() {
-					jQuery.sap.log.debug("lazy stub for '" + sFullClass + "." + sMethod + "' called.");
+					if ( syncCallBehavior ) {
+						if ( syncCallBehavior === 1 ) {
+							jQuery.sap.log.error("[no-sync] lazy stub for method '" + sFullClass + "." + sMethod + "' called");
+						}
+					} else {
+						jQuery.sap.log.debug("lazy stub for method '" + sFullClass + "." + sMethod + "' called.");
+					}
 					jQuery.sap.require(sModuleName);
 					var oRealClass = oPackage[sClass];
 					jQuery.sap.assert(typeof oRealClass === "function" || typeof oRealClass === "object", "lazyRequire: oRealClass must be a function or object after loading");

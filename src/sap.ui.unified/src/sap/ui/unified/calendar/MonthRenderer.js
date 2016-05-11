@@ -320,6 +320,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		if (iSelected > 0) {
 			oRm.addClass("sapUiCalItemSel"); // day selected
 			mAccProps["selected"] = true;
+		} else {
+			mAccProps["selected"] = false;
 		}
 		if (iSelected == 2) {
 			oRm.addClass("sapUiCalItemSelStart"); // interval start

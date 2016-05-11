@@ -84,7 +84,7 @@
 		assert.equal(jQuery.sap.byId("numeric-cnt-value").text(), "68Mi", "Value was rendered successfully with formatter switched off");
 		assert.equal(jQuery.sap.byId("numeric-cnt-scale").text(), "M", "Scale was rendered successfully with formatter switched off");
 		this.oNumericContent.setFormatterValue(true);
-		this.oNumericContent.setValue("68Mio");
+		this.oNumericContent.setValue("68 Mio");
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(jQuery.sap.byId("numeric-cnt-value").text(), "68", "Value was rendered successfully with formatter switched on");
@@ -93,6 +93,16 @@
 		sap.ui.getCore().applyChanges();
 		assert.equal(jQuery.sap.byId("numeric-cnt-value").text(), "0", "Value cleaned successfully with formatter switched on");
 		assert.equal(jQuery.sap.byId("numeric-cnt-scale").text(), "", "Scale cleaned successfully with formatter switched on");
+	});
+
+	QUnit.test("Test processing of formatter value with RTL and LTR mark", function(assert) {
+		this.oNumericContent.setFormatterValue(true);
+		var sFormattedValue = String.fromCharCode(8206) + String.fromCharCode(8207) + "58,7 Mio";
+		this.oNumericContent.setValue(sFormattedValue);
+		sap.ui.getCore().applyChanges();
+
+		assert.equal(jQuery.sap.byId("numeric-cnt-value").text(), "58,7", "Value was rendered successfully with formatter switched on");
+		assert.equal(jQuery.sap.byId("numeric-cnt-scale").text(), "Mio", "Scale was rendered successfully with formatter switched on");
 	});
 
 	QUnit.test("Test nullify parameter", function(assert) {

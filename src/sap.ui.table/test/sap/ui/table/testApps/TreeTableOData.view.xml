@@ -9,14 +9,12 @@
 
 	<Panel
 		expandable="true"
-		expanded="true"
+		expanded="false"
 		width="auto"
 		class="sapUiResponsiveMargin sapUiNoContentPadding">
 		<headerToolbar>
 			<Toolbar>
 				<Title text="TreeTable/Binding settings" level="H2"/>
-				<ToolbarSpacer />
-				<Button icon="sap-icon://restart" press="onCreateTableClick"/>
 			</Toolbar>
 		</headerToolbar>
 		<content>
@@ -122,14 +120,12 @@
 	</Panel>
 	<Panel
 		expandable="true"
-		expanded="true"
+		expanded="false"
 		width="auto"
 		class="sapUiResponsiveMargin sapUiNoContentPadding">
 		<headerToolbar>
 			<Toolbar>
 				<Title text="Hierarchy Properties" level="H2"/>
-				<ToolbarSpacer />
-				<Button icon="sap-icon://restart" press="onCreateTableClick"/>
 			</Toolbar>
 		</headerToolbar>
 		<content>
@@ -187,6 +183,7 @@
 		expandable="true"
 		expanded="true"
 		width="auto"
+		height="auto"
 		class="sapUiResponsiveMargin sapUiNoContentPadding"
 		id="tableContainerPanel">
 		<headerToolbar>
@@ -197,16 +194,27 @@
 		<content>
 			<table:TreeTable
 				id="tableOData"
+				selectionMode="Single"
 				visibleRowCount="{path:'/visibleRowCount', type:'Integer'}"
 				visibleRowCountMode="{/visibleRowCountMode}"
 				threshold="{/tableThreshold}"
 				rootLevel="{path:'/rootLevel', type:'Integer'}">
+				<table:toolbar>
+					<Toolbar>
+						<Label text="Table-Tools" />
+						<Button text="Create" icon="sap-icon://add" press=".onCreate"></Button>
+						<Button text="Cut" icon="sap-icon://scissors" press=".onCut"></Button>
+						<Button text="Paste" icon="sap-icon://paste" press=".onPaste"></Button>
+						<ToolbarSpacer />
+						<Button type="Emphasized" text="doMagic()" icon="sap-icon://activate" press="onCreateTableClick"/>
+					</Toolbar>
+				</table:toolbar>
 			</table:TreeTable>
 		</content>
 	</Panel>
 		<Panel
 		expandable="true"
-		expanded="true"
+		expanded="false"
 		width="auto"
 		class="sapUiResponsiveMargin sapUiNoContentPadding">
 		<headerToolbar>

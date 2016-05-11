@@ -126,7 +126,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 	 * @param {int} iYear year for the week number. (In en-US the week number for the last Days in December depends on the year.)
 	 * @param {string} sLocale used locale
 	 * @param {object} oLocaleData locale date for used locale
-	 * @return {integer} week number
+	 * @return {int} week number
 	 * @private
 	 */
 	CalendarUtils.calculateWeekNumber = function(oDate, iYear, sLocale, oLocaleData){

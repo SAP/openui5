@@ -148,8 +148,6 @@
 .sapUiTableCCnt {
 	position: relative;
 	overflow: hidden;
-	display: -webkit-flex;
-	display: flex;
 	border-bottom: 1px solid @sapUiListHeaderBorderColor;
 }
 
@@ -345,15 +343,13 @@
 	vertical-align: middle;
 }
 
-html[data-sap-ui-browser^="ie9"] {
-	.sapUiTableCtrlScrFixed {
-		float: left;
-	}
+.sapUiTableCtrlScrFixed {
+	float: left;
+}
 
-	.sapUiTableCtrlScrFixed, .sapUiTableColHdrFixed {
-		max-width:100%;
-		overflow:hidden;
-	}
+.sapUiTableCtrlScrFixed, .sapUiTableColHdrFixed {
+	max-width:100%;
+	overflow:hidden;
 }
 
 .sapUiTableCell {

@@ -16,7 +16,15 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/Device', './Element', './Control'],
 	 * @alias sap.ui.core.PopupSupport
 	 */
 	var PopupSupport = function() {
-		this.getMetadata().addPublicMethods([ "getParentPopup", "isInPopup", "getParentPopupId", "addToPopup", "removeFromPopup" ]);
+		if (this.getMetadata().getPublicMethods().indexOf("addToPopup") < 0) {
+			this.getMetadata().addPublicMethods([
+				"addToPopup",
+				"isInPopup",
+				"getParentPopup",
+				"getParentPopupId",
+				"removeFromPopup"
+			]);
+		}
 
 		/**
 		 * Checks if the (optional) given jQuery-object or DOM-node is within a

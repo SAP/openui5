@@ -3,7 +3,7 @@
 */
 
 // Provides control sap.ui.layout.ResponsiveSplitter.
-sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./ResponsiveSplitterUtilities", "./ResponsiveSplitterPage"], function (jQuery, library, Control, RSUtil, ResponsiveSplitterPage) {
+sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./ResponsiveSplitterUtilities", "./ResponsiveSplitterPage", "sap/ui/core/delegate/ItemNavigation"], function (jQuery, library, Control, RSUtil, ResponsiveSplitterPage, ItemNavigation) {
 	"use strict";
 
 	/**
@@ -64,7 +64,15 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 		}
 	});
 
-	ResponsiveSplitter.prototype.onBeforeRendering = function() {
+	ResponsiveSplitter.prototype.init = function () {
+		this.addEventDelegate({
+			onAfterRendering: function () {
+				this._initItemNavigation();
+			}
+		}, this);
+	};
+
+	ResponsiveSplitter.prototype.onBeforeRendering = function () {
 		var bDefaultPane = this._checkForDefault();
 		if (!bDefaultPane) {
 			var sFirstPaneId = this._getfirstPaneId();
@@ -79,10 +87,9 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 		this._detachResizeHandler();
 		this._createWidthIntervals();
 		this._createPages();
-
 	};
 
-	ResponsiveSplitter.prototype.onAfterRendering = function() {
+	ResponsiveSplitter.prototype.onAfterRendering = function () {
 		this._parentResizeHandler = sap.ui.core.ResizeHandler.register(this, this._onParentResize.bind(this));
 
 		if (this.getAggregation("pages")) {
@@ -90,9 +97,15 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 		}
 	};
 
-	ResponsiveSplitter.prototype.ontap = function (oEvent) {
+	/**
+	 * Handles tab / space / enter of Paginator's button
+	 * @returns {void}
+	 * @private
+	 */
+	ResponsiveSplitter.prototype._handlePaginatorButtonTap = function (oEvent) {
+		var iOldFocusedIndex = this._oItemNavigation.getFocusedIndex();
 		if (jQuery(oEvent.target).hasClass("sapUiResponsiveSplitterPaginatorButton")) {
-
+			jQuery(oEvent.target).attr("tabindex", 0);
 			var iPageIndex = parseInt(jQuery(oEvent.target).attr("page-index"), 10);
 			this.getAggregation("pages").forEach(function (page) {
 				page.setVisible(false);
@@ -113,22 +126,124 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 			} else {
 				this._handlePaginatorBack(oEvent);
 			}
+			this._setItemNavigation();
+			this._oItemNavigation.focusItem(iOldFocusedIndex);
 		}
+		this._setItemNavigation();
+	};
+
+	ResponsiveSplitter.prototype.ontap = ResponsiveSplitter.prototype._handlePaginatorButtonTap;
+
+	ResponsiveSplitter.prototype.onsapenter = ResponsiveSplitter.prototype._handlePaginatorButtonTap;
+
+	ResponsiveSplitter.prototype.onsapspace = ResponsiveSplitter.prototype._handlePaginatorButtonTap;
+
+	ResponsiveSplitter.prototype.onsapright = function (oEvent) {
+		this._handleArrowNavigation(6, "Forward", oEvent);
+	};
+
+	ResponsiveSplitter.prototype.onsapleft = function (oEvent) {
+		this._handleArrowNavigation(0, "Back", oEvent);
+	};
+
+
+	/**
+	 * Creates an ItemNavigation
+	 * @returns {void}
+	 * @private
+	 */
+	ResponsiveSplitter.prototype._initItemNavigation = function () {
+		if (this._oItemNavigation) {
+			this._bPrevItemNavigation = true;
+			this._clearItemNavigation();
+		}
+		this._oItemNavigation = new ItemNavigation();
+		this._oItemNavigation.setCycling(false);
+		this.addDelegate(this._oItemNavigation);
+		this._setItemNavigation();
+
+		if (this._bPrevItemNavigation) {
+			this._oItemNavigation.focusItem(0);
+		}
+	};
+
+	/**
+	 * Enables ItemNavigation for Paginator
+	 * @returns {void}
+	 * @private
+	 */
+	ResponsiveSplitter.prototype._setItemNavigation = function () {
+		var aButtons = this._getVisibleButtons(),
+			aDomRefs = [];
+
+		this._oItemNavigation.setRootDomRef(this.$().find(".sapUiResponsiveSplitterPaginator")[0]);
+		for (var i = 0; i < aButtons.length; i++) {
+			if (aButtons[i]) {
+				aDomRefs.push(aButtons[i]);
+			}
+		}
+		this._oItemNavigation.setItemDomRefs(aDomRefs);
+	};
+
+	/**
+	 * Destroys the ItemNavigation
+	 * @returns {void}
+	 * @private
+	 */
+	ResponsiveSplitter.prototype._clearItemNavigation = function () {
+		this.removeDelegate(this._oItemNavigation);
+		this._oItemNavigation.destroy();
+		delete this._oItemNavigation;
+	};
+
+	/**
+	 * Handle for arrow keys
+	 * @returns {void}
+	 * @private
+	 */
+	ResponsiveSplitter.prototype._handleArrowNavigation = function (iButtonIndex, sDirection, oEvent) {
+		if (oEvent.target === this._getVisibleButtons()[iButtonIndex]) {
+			this["_handlePaginator" + sDirection](oEvent);
+			this._setItemNavigation();
+		} else {
+			return;
+		}
+	};
+
+	/**
+	 * Returns whether this.currentInterval[0] is an object or an Array
+	 * @returns {boolean}
+	 * @private
+	 */
+	ResponsiveSplitter.prototype._isFirstPageArray = function () {
+		var oFirstPage = this._currentInterval.pages[0];
+		return Array.isArray(oFirstPage) ? true : false;
 	};
 
 	/**
 	 * @returns {boolean}
 	 * @private
 	 */
-	ResponsiveSplitter.prototype._checkForDefault = function() {
+	ResponsiveSplitter.prototype._checkForDefault = function () {
 		return this.getAssociation("defaultPane") ? true : false;
+	};
+
+	/**
+	 * Returns an array of all visible buttons from the Paginator
+	 * @returns {array}
+	 * @private
+	 */
+	ResponsiveSplitter.prototype._getVisibleButtons = function () {
+		var aPaginatorButtons = this.$().find(".sapUiResponsiveSplitterPaginatorButton:not(.sapUiResponsiveSplitterHiddenElement):not(.sapUiResponsiveSplitterHiddenPaginatorButton)");
+
+		return Array.prototype.slice.call(aPaginatorButtons);
 	};
 
 	/**
 	 * @returns {*} Returns the ID of the first SplitPane found in a PaneContainer or false if there are no SplitPanes
 	 * @private
 	 */
-	ResponsiveSplitter.prototype._getfirstPaneId = function() {
+	ResponsiveSplitter.prototype._getfirstPaneId = function () {
 		var bFirstPane = true,
 			sFirstPaneId;
 		RSUtil.visitPanes(this.getRootPaneContainer(), function (oPane) {
@@ -147,8 +262,8 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 	 * @private
 	 */
 	ResponsiveSplitter.prototype._handlePaginatorForward = function(oEvent) {
-		var aVisibleButtons = this.$().find(".sapUiResponsiveSplitterPaginatorButton:not(.sapUiResponsiveSplitterHiddenElement):not(.sapUiResponsiveSplitterHiddenPaginatorButton)");
-		var aHiddenRightButtons = this.$().find(".sapUiResponsiveSplitterPaginatorButton.sapUiResponsiveSplitterHiddenElement");
+		var aVisibleButtons = this._getVisibleButtons(),
+			aHiddenRightButtons = this.$().find(".sapUiResponsiveSplitterPaginatorButton.sapUiResponsiveSplitterHiddenElement");
 
 		// To check when restoring the visibility of paginator
 		aHiddenRightButtons = Array.prototype.splice.call(aHiddenRightButtons, 0, aHiddenRightButtons.length - ((this._currentInterval.pages[0].length || 0) - 1) -
@@ -169,11 +284,9 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 	 * @private
 	 */
 	ResponsiveSplitter.prototype._handlePaginatorBack = function(oEvent) {
-		var aVisibleButtons = this.$().find(".sapUiResponsiveSplitterPaginatorButton:not(.sapUiResponsiveSplitterHiddenElement):not(.sapUiResponsiveSplitterHiddenPaginatorButton)");
-		var aHiddenLeftButtons = this.$().find(".sapUiResponsiveSplitterPaginatorButton.sapUiResponsiveSplitterHiddenPaginatorButton");
-
-
-		var iLastHiddenLeftButton = aHiddenLeftButtons.length - 1;
+		var aVisibleButtons = this._getVisibleButtons(),
+			aHiddenLeftButtons = this.$().find(".sapUiResponsiveSplitterPaginatorButton.sapUiResponsiveSplitterHiddenPaginatorButton"),
+			iLastHiddenLeftButton = aHiddenLeftButtons.length - 1;
 
 		if (aHiddenLeftButtons.length === 0) {
 			return;
@@ -195,6 +308,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 		this.getAggregation("pages")[iPageIndex].setVisible(true);
 		this.$().find(".sapUiResponsiveSplitterPaginatorButton").removeClass("sapUiResponsiveSplitterPaginatorSelectedButton");
 		jQuery(this.$().find(".sapUiResponsiveSplitterPaginatorButton")[iButtonIndex]).addClass("sapUiResponsiveSplitterPaginatorSelectedButton");
+		jQuery(this.$().find(".sapUiResponsiveSplitterPaginatorButton")[iButtonIndex]).attr("tabindex", 0);
 	};
 
 	/**
@@ -262,12 +376,12 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 		}
 	};
 
-	ResponsiveSplitter.prototype._revertDefaultPaneLD = function() {
+	ResponsiveSplitter.prototype._revertDefaultPaneLD = function () {
 		var oDefaultPane = sap.ui.getCore().byId(this.getAssociation("defaultPane"));
 		oDefaultPane.setLayoutData(this._oDefaultPaneLD ? this._oDefaultPaneLD : new sap.ui.layout.SplitterLayoutData( {size: "auto"} ));
 	};
 
-	ResponsiveSplitter.prototype._getActivePage = function() {
+	ResponsiveSplitter.prototype._getActivePage = function () {
 		return this.getAggregation("pages").indexOf(this.getAggregation("pages").filter(function(page) { return page.getVisible(); })[0]);
 	};
 
@@ -296,14 +410,14 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 		};
 
 		if (this._currentInterval.pages.filter(function(oPage) { return oPage.demandPane; }).length >= 7) {
-			this.$().find(".sapUiResponsiveSplitterPaginatorNavButton").each(function() {
+			this.$().find(".sapUiResponsiveSplitterPaginatorNavButton").each(function () {
 				jQuery(this).removeClass("sapUiResponsiveSplitterHiddenPaginatorButton");
 			});
 
 			this.$().find(".sapUiResponsiveSplitterPaginator").addClass("sapUiResponsiveSplitterWithNavButtons");
 		} else {
 			this.$().find(".sapUiResponsiveSplitterPaginator").removeClass("sapUiResponsiveSplitterWithNavButtons");
-			this.$().find(".sapUiResponsiveSplitterPaginatorNavButton").each(function() {
+			this.$().find(".sapUiResponsiveSplitterPaginatorNavButton").each(function () {
 				jQuery(this).addClass("sapUiResponsiveSplitterHiddenPaginatorButton");
 			});
 		}

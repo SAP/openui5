@@ -98,6 +98,9 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.addClass("sapUiCalItem");
 			if (iCurrentMonth == iMonth) {
 				oRm.addClass("sapUiCalItemSel");
+				mAccProps["selected"] = true;
+			} else {
+				mAccProps["selected"] = false;
 			}
 
 			if (iCurrentMonth < oMP._iMinMonth || iCurrentMonth > oMP._iMaxMonth) {

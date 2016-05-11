@@ -1028,7 +1028,10 @@
 							"i18n1": {
 								"type": "sap.ui.model.resource.ResourceModel",
 								"uri": "./i18n.properties",
-								"preload": true
+								"preload": true,
+								"settings": {
+									"async": true
+								}
 							},
 							"i18n2": {
 								"type": "sap.ui.model.resource.ResourceModel",
@@ -1052,7 +1055,7 @@
 				oServer.xhr.useFilters = true;
 				oServer.xhr.filters = [];
 				oServer.xhr.addFilter(function(method, url) {
-					return ("/anylocation/manifest.json" !== url);
+					return ("/anylocation/manifest.json" !== url && !/should\/cause\/an\/error\/library-preload\.json$/.test(url));
 				});
 
 				oServer.autoRespond = true;
@@ -1062,6 +1065,13 @@
 						"Content-Type": "application/json"
 					},
 					JSON.stringify(oManifest)
+				]);
+				oServer.respondWith("GET", /should\/cause\/an\/error\/library-preload\.json$/, [
+					404,
+					{
+						"Content-Type": "text/plain"
+					},
+					"Not found"
 				]);
 			},
 			afterEach: function() {

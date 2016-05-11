@@ -189,7 +189,7 @@ sap.ui.define([
 		/**
 		 * Starts an app in an IFrame. Only works reliably if running on the same server.
 		 * @param {string} sSource The source of the IFrame
-		 * @param {integer} [iTimeout=80] The timeout for loading the IFrame in seconds - default is 80
+		 * @param {int} [iTimeout=80] The timeout for loading the IFrame in seconds - default is 80
 		 * @returns {jQuery.promise} A promise that gets resolved on success
 		 * @public
 		 * @function
@@ -264,9 +264,9 @@ sap.ui.define([
 		 * @param {string} [oOptions.controlType] For example <code>"sap.m.Button"</code> will search for all buttons inside of a container. If an id ID given, this is ignored.
 		 * @param {boolean} [oOptions.searchOpenDialogs=false] If set to true, Opa5 will only look in open dialogs. All the other values except control type will be ignored
 		 * @param {boolean} [oOptions.visible=true] If set to false, Opa5 will also look for unrendered and invisible controls.
-		 * @param {integer} [oOptions.timeout=15] (seconds) Specifies how long the waitFor function polls before it fails.
+		 * @param {int} [oOptions.timeout=15] (seconds) Specifies how long the waitFor function polls before it fails.
 		 * Timeout will increased to 5 minutes if running in debug mode e.g. with URL parameter sap-ui-debug=true.
-		 * @param {integer} [oOptions.pollingInterval=400] (milliseconds) Specifies how often the waitFor function polls.
+		 * @param {int} [oOptions.pollingInterval=400] (milliseconds) Specifies how often the waitFor function polls.
 		 * @param {function} [oOptions.check] Will get invoked in every polling interval. If it returns true, the check is successful and the polling will stop.
 		 * The first parameter passed into the function is the same value that gets passed to the success function.
 		 * Returning something other than boolean in check will not change the first parameter of success.
@@ -515,6 +515,17 @@ sap.ui.define([
 		 * @function
 		 */
 		Opa5.emptyQueue = Opa.emptyQueue;
+
+		/**
+		 * Clears the queue and stops running tests so that new tests can be run.
+		 * This means all waitFor statements registered by {@link sap.ui.test.Opa5#waitFor} will not be invoked anymore and
+		 * the promise returned by {@link sap.ui.test.Opa5#.emptyQueue} will be rejected.
+		 * When its called inside of a check in {@link sap.ui.test.Opa5#waitFor}
+		 * the success function of this waitFor will not be called.
+		 * @public
+		 * @function
+		 */
+		Opa5.stopQueue = Opa.stopQueue;
 
 		/**
 		 * Gives access to a singleton object you can save values in.

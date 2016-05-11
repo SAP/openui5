@@ -134,7 +134,7 @@ html[data-sap-ui-browser^="ie9"] .sapMDialog {
 	min-height: 0 !important; //this is for preventing the dialog to hold it's width in small screens
 }
 
-.sap-phone .sapMDialog {
+html.sap-phone .sapMDialog {
 	min-width: 18rem;
 	overflow: hidden;
 
@@ -161,8 +161,8 @@ html[data-sap-ui-browser^="ie9"] .sapMDialog {
 	}
 }
 
-.sap-tablet .sapMDialog,
-.sap-desktop .sapMDialog {
+html.sap-tablet .sapMDialog,
+html.sap-desktop .sapMDialog {
 	min-width: 25rem;
 }
 

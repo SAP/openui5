@@ -131,9 +131,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 		};
 
 		NotificationListItem.prototype.setUnread = function (unread) {
-			/** @type {sap.m.NotificationListItem} Reference to <code>this</code> to allow method chaining */
+			/* @type {sap.m.NotificationListItem} Reference to <code>this</code> to allow method chaining */
 			var result = this.setProperty('unread', unread, true);
-			/** @type {sap.m.Title} */
+			/* @type {sap.m.Title} */
 			var title = this.getAggregation("_headerTitle");
 			if (title) {
 				title.toggleStyleClass('sapMNLI-Unread', this.getUnread());

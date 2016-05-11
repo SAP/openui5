@@ -22,6 +22,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Image
 	 *
 	 * @constructor
 	 * @public
+	 * @deprecated Since version 1.38. Instead, use the <code>sap.tnt.ToolHeader</code> control.
 	 * @alias sap.ui.commons.ApplicationHeader
 	 * @ui5-metamodel This control/element also will be described in the UI5 design-time metamodel
 	 */

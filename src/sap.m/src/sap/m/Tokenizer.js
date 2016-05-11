@@ -661,7 +661,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Function returns a callback function which is used for executing validators after an asynchronous validator was triggered
 	 * @param {array} aValidators
 	 * 					the validators
-	 * @param {integer} iValidatorIndex
+	 * @param {int} iValidatorIndex
 	 * 						current validator index
 	 * @param {string} sInitialText
 	 * 					initial text used for validation

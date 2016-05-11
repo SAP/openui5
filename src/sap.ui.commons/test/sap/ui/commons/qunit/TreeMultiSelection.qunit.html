@@ -66,7 +66,7 @@
 		return oTree;
 	}
 
-	var oStandardTree
+	var oStandardTree;
 
 	qutils.delayTestStart();
 
@@ -165,7 +165,7 @@
 		ok(!node1.getExpanded(), "Node 1 is now collapsed");
 		node1.expand();
 		ok(node1.getExpanded(), "Node 1 is expanded");
-		ok(!node11.getIsSelected(), "Node 1.1 is not selected");
+		ok(node11.getIsSelected(), "Node 1.1 is selected");
 	});
 
 	module("Multiselect interactions", {

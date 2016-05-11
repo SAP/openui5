@@ -71,12 +71,6 @@ sap.ui.define([
 			// toggle compact style
 			jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this.oPersonalizationDialog);
 
-			// set explored app's demo model on this sample
-			this.getView().setModel(new JSONModel("test-resources/sap/m/demokit/sample/P13nDialog/products.json"));
-			this.getView().setModel(new ResourceModel({
-				bundleName: "sap.m.sample.P13nDialog.i18n.i18n"
-			}), "i18n");
-
 			return this.oPersonalizationDialog;
 		}
 

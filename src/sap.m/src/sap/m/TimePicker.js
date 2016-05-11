@@ -82,7 +82,19 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 					 * Displays the text of the general picker label and is read by screen readers.
 					 * It is visible only on phone.
 					 */
-					title: {type: "string", group: "Misc", defaultValue: null}
+					title: {type: "string", group: "Misc", defaultValue: null},
+
+					/**
+					 * Sets the minutes slider step.
+					 * The minutes slider is populated only by multiples of the step.
+					 */
+					minutesStep: {type: "integer", group: "Misc", defaultValue: 1},
+
+					/**
+					 * Sets the seconds slider step.
+					 * The seconds slider is populated only by multiples of the step.
+					 */
+					secondsStep: {type: "integer", group: "Misc", defaultValue: 1}
 				},
 				aggregations: {
 					/**
@@ -282,8 +294,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 * @returns {boolean} true if <code>change</code> event was called, false otherwise.
 		 */
 		TimePicker.prototype._handleInputChange = function (sValue) {
-			var oDate,
-				oPicker;
+			var oDate;
 
 			sValue = sValue || this._$input.val();
 
@@ -311,8 +322,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 				sValue = this._formatValue(oDate, true);
 			}
 
-			oPicker = this._getPicker();
-
 			this.setProperty("value", sValue, true); // no rerendering
 			if (this._bValid) {
 				this.setProperty("dateValue", oDate, true); // no rerendering
@@ -320,9 +329,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 
 			this.fireChangeEvent(sValue, {valid: this._bValid});
 
-			if (oPicker) {
-				oPicker.getContent()[0].setTimeValues(oDate);
-			}
 			return true;
 		};
 
@@ -343,6 +349,36 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 				return this._handleInputChange(sValueParam);
 			}
 			return false;
+		};
+
+		/**
+		 * Sets the minutes slider step.
+		 * @param iStep The step used to generate values for the minutes slider
+		 * @returns {*} this
+		 * @public
+		 */
+		TimePicker.prototype.setMinutesStep = function(iStep) {
+			var oSliders = this._getSliders();
+
+			if (oSliders) {
+				oSliders.setMinutesStep(iStep);
+			}
+			return this.setProperty("minutesStep", iStep, true);
+		};
+
+		/**
+		 * Sets the seconds slider step.
+		 * @param iStep The step used to generate values for the seconds slider
+		 * @returns {*} this
+		 * @public
+		 */
+		TimePicker.prototype.setSecondsStep = function(iStep) {
+			var oSliders = this._getSliders();
+
+			if (oSliders) {
+				oSliders.setSecondsStep(iStep);
+			}
+			return this.setProperty("secondsStep", iStep, true);
 		};
 
 		/**
@@ -791,7 +827,9 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 					new TimePickerSliders(this.getId() + "-sliders", {
 						format: sFormat,
 						labelText: sTitle ? sTitle : "",
-						invokedBy: that.getId()
+						invokedBy: that.getId(),
+						minutesStep: this.getMinutesStep(),
+						secondsStep: this.getSecondsStep()
 					})
 				],
 				contentHeight: TimePicker._PICKER_CONTENT_HEIGHT

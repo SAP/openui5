@@ -66,12 +66,11 @@
 
 // Focus Styles ========================================================================================================
 
-.sap-desktop .sapMLIB.sapMNLI:focus {
+html.sap-desktop .sapMLIB.sapMNLI:focus {
   outline: none;
 }
 
-[data-sap-ui-browser^='ie'].sap-desktop .sapMLIB.sapMNLI:focus::before,
-.sap-desktop .sapMLIB.sapMNLI:focus::before {
+html.sap-desktop .sapMLIB.sapMNLI:focus::before {
   border: 0.125rem dotted @sapHCStandardFG;
   border-left-style: solid;
   position: absolute;
@@ -84,8 +83,7 @@
   pointer-events: none;
 }
 
-[data-sap-ui-browser^='ie'].sap-desktop .sapMLIB.sapMNLI:focus::after,
-.sap-desktop .sapMLIB.sapMNLI:focus::after {
+html.sap-desktop .sapMLIB.sapMNLI:focus::after {
   border-left: 0.125rem dotted @sapHCStandardBG;
   position: absolute;
   content: "";

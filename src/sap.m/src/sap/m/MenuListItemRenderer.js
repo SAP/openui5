@@ -42,9 +42,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		 */
 		MenuListItemRenderer.renderLIAttributes = function(rm, oLI) {
 			rm.addClass("sapMSLI");
-			if (oLI._showSeparators  == sap.m.ListSeparators.None && !oLI.getIconInset()) {
-				rm.addClass("sapMSLIShowSeparatorNone");
-			}
 			if (oLI.getIcon()) {
 				rm.addClass("sapMSLIIcon");
 			}

@@ -10,12 +10,13 @@ sap.ui.define([
 	"sap/ui/core/CustomData",
 	"sap/ui/Device",
 	"sap/ui/core/delegate/ScrollEnablement",
+	"./ObjectPageSection",
 	"./ObjectPageSubSection",
 	"./ObjectPageSubSectionLayout",
 	"./LazyLoading",
 	"./ObjectPageLayoutABHelper",
 	"./library"
-], function (jQuery, ResizeHandler, Control, CustomData, Device, ScrollEnablement, ObjectPageSubSection, ObjectPageSubSectionLayout, LazyLoading, ABHelper, library) {
+], function (jQuery, ResizeHandler, Control, CustomData, Device, ScrollEnablement, ObjectPageSection, ObjectPageSubSection, ObjectPageSubSectionLayout, LazyLoading, ABHelper, library) {
 	"use strict";
 
 	/**
@@ -181,10 +182,10 @@ sap.ui.define([
 				editHeaderButtonPress: {},
 
 				/**
-				 * The event is fired when the selected tab changes.
-				 * <b>Note:</b> Event is fired only when IconTabBar is used for navigation.
+				 * The event is fired when the selected section is changed using the navigation.
+				 * @since 1.38.1
 				 */
-				tabSelect: {
+				navigate: {
 					parameters: {
 
 						/**
@@ -628,9 +629,6 @@ sap.ui.define([
 		}
 
 		if (this._oCurrentTabSection !== oSection) {
-			if (bIsTabClicked) {
-				this.fireTabSelect({section: oSection});
-			}
 			this._renderSection(oSection);
 			this._oCurrentTabSection = oSection;
 		}
@@ -806,7 +804,7 @@ sap.ui.define([
 			positionTopMobile: 0,
 			realTop: 0.0,
 			buttonId: "",
-			isSection: (oSectionBase instanceof library.ObjectPageSection),
+			isSection: (oSectionBase instanceof ObjectPageSection),
 			sectionReference: oSectionBase
 		};
 
@@ -826,10 +824,7 @@ sap.ui.define([
 		var oSection = sap.ui.getCore().byId(sId);
 
 		if (this.getUseIconTabBar()) {
-			var oToSelect = oSection;
-			if (oToSelect instanceof sap.uxap.ObjectPageSubSection) {
-				oToSelect = oToSelect.getParent();
-			}
+			var oToSelect = ObjectPageSection._getClosestSection(oSection);
 
 			/* exclude the previously selected tab from propagation chain for performance reasons */
 			if (this._oCurrentTabSection) {
@@ -837,8 +832,12 @@ sap.ui.define([
 			}
 			oToSelect._allowPropagationToLoadedViews(true); /* include the newly selected tab back to the propagation chain */
 
-			this._setCurrentTabSection(oSection, bIsTabClicked);
+			this._setCurrentTabSection(oSection);
 			this.getAggregation("_anchorBar").setSelectedButton(this._oSectionInfo[oToSelect.getId()].buttonId);
+		}
+
+		if (bIsTabClicked) {
+			this.fireNavigate({section: ObjectPageSection._getClosestSection(oSection)});
 		}
 
 		if (this._bIsHeaderExpanded) {
@@ -883,7 +882,7 @@ sap.ui.define([
 		iDuration = iDuration >= 0 ? iDuration : this._iScrollToSectionDuration;
 
 		if (this.getUseIconTabBar()
-			&& ((oTargetSection instanceof sap.uxap.ObjectPageSection) || this._isFirstVisibleSubSection(oTargetSection))
+			&& ((oTargetSection instanceof ObjectPageSection) || this._isFirstVisibleSubSection(oTargetSection))
 			&& this._bStickyAnchorBar) { // in this case we are only scrolling
 			// a section from expanded to sticky position,
 			// so the scrolling animation in not needed, instead it looks unnatural, so set a 0 duration
@@ -894,13 +893,13 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._computeScrollPosition = function (oTargetSection) {
 
-		var bFirstLevel = oTargetSection && (oTargetSection instanceof sap.uxap.ObjectPageSection),
+		var bFirstLevel = oTargetSection && (oTargetSection instanceof ObjectPageSection),
 			sId = oTargetSection.getId();
 
 		var iScrollTo = this._bMobileScenario || bFirstLevel ? this._oSectionInfo[sId].positionTopMobile : this._oSectionInfo[sId].positionTop;
 
 		if (this.getUseIconTabBar()
-			&& ((oTargetSection instanceof sap.uxap.ObjectPageSection) || this._isFirstVisibleSubSection(oTargetSection))
+			&& ((oTargetSection instanceof ObjectPageSection) || this._isFirstVisibleSubSection(oTargetSection))
 			&& !this._bStickyAnchorBar) { // preserve expanded header if no need to stick
 
 			iScrollTo -= this.iHeaderContentHeight; // scroll to the position where the header is still expanded
@@ -914,7 +913,7 @@ sap.ui.define([
 			aToLoad;
 
 		if (!this.getEnableLazyLoading() && this.getUseIconTabBar()) {
-			aToLoad = (oTargetSection instanceof sap.uxap.ObjectPageSection) ? oTargetSection : oTargetSection.getParent();
+			aToLoad = (oTargetSection instanceof ObjectPageSection) ? oTargetSection : oTargetSection.getParent();
 			this._connectModelsForSections([aToLoad]);
 		}
 
@@ -1012,7 +1011,8 @@ sap.ui.define([
 		this._aSectionBases.forEach(function (oSectionBase) {
 			var oInfo = this._oSectionInfo[oSectionBase.getId()],
 				$this = oSectionBase.$(),
-				$mobileAnchor;
+				$mobileAnchor,
+				bPromoted = false;
 
 			if (!oInfo /* sectionBase is visible */ || !$this.length) {
 				return;
@@ -1041,13 +1041,17 @@ sap.ui.define([
 				$mobileAnchor = oSectionBase.$("headerTitle");
 			}
 
+			bPromoted = $mobileAnchor.length === 0;
+
 			//calculate the mobile position
-			if ($mobileAnchor.length > 0) {
+			if (!bPromoted) {
 				oInfo.positionTopMobile = Math.ceil($mobileAnchor.position().top) + $mobileAnchor.outerHeight() - this.iAnchorBarHeight - iHeaderGap;
 			} else {
 				//title wasn't found (=first section, hidden title, promoted subsection), scroll to the same position as desktop
 				oInfo.positionTopMobile = oInfo.positionTop;
 			}
+
+			oInfo.sectionReference.toggleStyleClass("sapUxAPObjectPageSubSectionPromoted", bPromoted);
 
 			//for calculating the currently scrolled section of subsection (and for lazy loading) we also need to know the bottom of the section and subsections
 			//we can't use oInfo.$dom.height() since the margin are not taken into account.

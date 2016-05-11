@@ -795,6 +795,41 @@
 				}, 1000);
 			});
 
+			test("Grouping items selection", function (assert) {
+				var clock = sinon.useFakeTimers(),
+					fnOnConfirmObject = sinon.spy(function (oEvent) {
+						ok(typeof oEvent.getParameter("groupItem") == "object", "Group Item is an object");
+					}),
+					fnOnConfirmUndefined = sinon.spy(function (oEvent) {
+						ok(typeof oEvent.getParameter("groupItem") == "undefined", "'None' Item is undefined");
+					});
+
+				//Act
+				this.oVSD.attachConfirm(fnOnConfirmObject);
+				this.oVSD.open("group");
+				this.oVSD.setSelectedGroupItem(this.oVSD.getGroupItems()[0]);
+				this.oVSD._getDialog().getBeginButton().firePress();
+				sap.ui.getCore().applyChanges();
+				clock.tick(1000);
+
+				//Check
+				ok(fnOnConfirmObject.calledOnce, "Event handler is being called");
+
+				// Act
+				this.oVSD.detachConfirm(fnOnConfirmObject);
+				this.oVSD.attachConfirm(fnOnConfirmUndefined);
+				this.oVSD.open("group");
+				this.oVSD.setSelectedGroupItem(this.oVSD._oGroupingNoneItem);
+				this.oVSD._getDialog().getBeginButton().firePress();
+				sap.ui.getCore().applyChanges();
+				clock.tick(1000);
+
+				//Check
+				ok(fnOnConfirmUndefined.calledOnce, "Event handler is being called");
+
+				clock.restore();
+			});
+
 			module ("Construction/Destruction", {
 				setup : function () {
 					this.oVSD = new sap.m.ViewSettingsDialog();
@@ -2172,6 +2207,125 @@
 			ok(!!oClone.getCustomControl(), "Custom control is cloned");
 		});
 
+		module("Accessibility", {
+			setup : function () {
+				this.oVSD = new sap.m.ViewSettingsDialog();
+				this.bindAggregations(this.oVSD);
+
+				this.oVSD.placeAt("content");
+				sap.ui.getCore().applyChanges();
+			},
+			teardown : function () {
+				this.oVSD.destroy();
+				this.oVSD = null;
+			},
+			getFirstModelData: function() {
+				return {
+					sortData: [
+						{
+							myKey: "key1",
+							myText: "Sort text 1 A"
+						},
+						{
+							myKey: "key2",
+							myText: "Sort text 2 A"
+						}],
+					groupData: [
+						{
+							myKey: "groupKey1",
+							myText: "Group text A"
+						},
+						{
+							myKey: "groupKey2",
+							myText: "Group text 2 A"
+						}],
+					filterData: [
+						{
+							myKey: "filterKey1",
+							myText: "Filter text A",
+							myItems: [
+								{
+									myKey: 'item1',
+									myText: 'item A'
+								}
+							]
+						},
+						{
+							myKey: "filterKey2",
+							myText: "Filter text 2 A"
+						}]
+				};
+			},
+			bindAggregations: function(oVsdInst) {
+				var template1 = new sap.m.ViewSettingsItem({
+					key: "{myKey}",
+					text: "{myText}"
+				});
+				var template2 = new sap.m.ViewSettingsItem({
+					key: "{myKey}",
+					text: "{myText}"
+				});
+				var template3 = new sap.m.ViewSettingsFilterItem({
+					key: "{myKey}",
+					text: "{myText}",
+					items: {
+						path: 'myItems',
+						template: new sap.m.ViewSettingsItem({
+							key: "{myKey}",
+							text: "{myText}"
+						}),
+						templateShareable: true
+					}
+				});
+
+				var oModel = new sap.ui.model.json.JSONModel();
+				oModel.setData(this.getFirstModelData());
+
+				this.oVSD.setModel(oModel);
+
+				this.oVSD.bindAggregation("sortItems", "/sortData", template1);
+				this.oVSD.bindAggregation("groupItems", "/groupData", template2);
+				this.oVSD.bindAggregation("filterItems", "/filterData", template3);
+			},
+			clickOnItem: function (sItemId) {
+				jQuery("#" + sItemId).focus().trigger("touchstart").trigger("mousedown").trigger("mouseup").trigger("touchend");
+			},
+			checkItemFocus: function (sItemId) {
+				strictEqual(jQuery("#" + sItemId).is(":focus"), true, "The proper item is focused");
+			}
+		});
+
+		test("Focus on sortItems is being preserved on re-rendering", function (assert) {
+			var aSortItems, sItemToSelect,
+					done = assert.async();
+
+			this.oVSD.open();
+			this.oVSD._switchToPage(0);
+			aSortItems = this.oVSD.getSortItems();
+			sItemToSelect = aSortItems[1].getId();
+
+			setTimeout(function () {
+				this.clickOnItem(sItemToSelect + "-list-item");
+				this.checkItemFocus(sItemToSelect + "-list-item");
+				done();
+			}.bind(this), 500);
+		});
+
+		test("Focus on groupItems is being preserved on re-rendering", function (assert) {
+			var aSortItems, sItemToSelect,
+					done = assert.async();
+
+			this.oVSD.open();
+			this.oVSD._switchToPage(1);
+			aSortItems = this.oVSD.getGroupItems();
+			sItemToSelect = aSortItems[1].getId();
+
+			setTimeout(function () {
+				this.clickOnItem(sItemToSelect + "-list-item");
+				this.checkItemFocus(sItemToSelect + "-list-item");
+				done();
+			}.bind(this), 500);
+		});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

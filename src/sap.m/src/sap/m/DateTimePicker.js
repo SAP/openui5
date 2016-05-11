@@ -231,12 +231,61 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 	DateTimePicker.prototype._getFormatInstance = function(oArguments, bDisplayFormat){
 
-		if (bDisplayFormat) {
-			// also create a date formatter as fallback for parsing
-			this._oDisplayFormatDate = sap.ui.core.format.DateFormat.getInstance(oArguments);
+		var oMyArguments = jQuery.extend({}, oArguments);
+
+		// check for mixed styles
+		var iSlashIndex = -1;
+
+		if (oMyArguments.style) {
+			iSlashIndex = oMyArguments.style.indexOf("/");
 		}
 
-		return sap.ui.core.format.DateFormat.getDateTimeInstance(oArguments);
+		if (bDisplayFormat) {
+			// also create a date formatter as fallback for parsing
+			var oDateArguments = jQuery.extend({}, oMyArguments);
+
+			if (iSlashIndex > 0) {
+				oDateArguments.style = oDateArguments.style.substr(0, iSlashIndex);
+			}
+
+			this._oDisplayFormatDate = sap.ui.core.format.DateFormat.getInstance(oDateArguments);
+		}
+
+		return sap.ui.core.format.DateFormat.getDateTimeInstance(oMyArguments);
+
+	};
+
+	DateTimePicker.prototype._checkStyle = function(sPattern){
+
+		if (DatePicker.prototype._checkStyle.apply(this, arguments)) {
+			// it's a simple style
+			return true;
+		} else if (sPattern.indexOf("/") > 0) {
+			// could be a mixed style
+			var aStyles = ["short", "medium", "long", "full"];
+			var bStyle = false;
+
+			for (var i = 0; i < aStyles.length; i++) {
+				var sStyle1 = aStyles[i];
+
+				for (var j = 0; j < aStyles.length; j++) {
+					var sStyle2 = aStyles[j];
+					if (sPattern == sStyle1 + "/" + sStyle2) {
+						bStyle = true;
+						break;
+					}
+				}
+
+				if (bStyle) {
+					break;
+				}
+			}
+
+			return bStyle;
+		}
+
+		// is something else
+		return false;
 
 	};
 
@@ -266,14 +315,12 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 	DateTimePicker.prototype._getPlaceholderPattern = function(oLocaleData, sPlaceholder) {
 
-		var sDateTimePattern = oLocaleData.getDateTimePattern(sPlaceholder);
-		var sDatePattern = oLocaleData.getDatePattern(sPlaceholder);
-		var sTimePattern = oLocaleData.getTimePattern(sPlaceholder);
-
-		sDateTimePattern = sDateTimePattern.replace("{1}", sDatePattern);
-		sDateTimePattern = sDateTimePattern.replace("{0}", sTimePattern);
-
-		return sDateTimePattern;
+		var iSlashIndex = sPlaceholder.indexOf("/");
+		if (iSlashIndex > 0) {
+			return oLocaleData.getCombinedDateTimePattern(sPlaceholder.substr(0, iSlashIndex), sPlaceholder.substr(iSlashIndex + 1));
+		} else {
+			return oLocaleData.getCombinedDateTimePattern(sPlaceholder, sPlaceholder);
+		}
 
 	};
 
@@ -475,7 +522,12 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 			sDisplayFormat = "medium";
 		}
 
-		if (sDisplayFormat == "short" || sDisplayFormat == "medium" || sDisplayFormat == "long") {
+		var iSlashIndex = sDisplayFormat.indexOf("/");
+		if (iSlashIndex > 0 && this._checkStyle(sDisplayFormat)) {
+			sDisplayFormat = sDisplayFormat.substr(iSlashIndex + 1);
+		}
+
+		if (sDisplayFormat == "short" || sDisplayFormat == "medium" || sDisplayFormat == "long" || sDisplayFormat == "full") {
 			var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
 			var oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale);
 			sTimePattern = oLocaleData.getTimePattern(sDisplayFormat);

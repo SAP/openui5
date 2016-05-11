@@ -21,6 +21,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './TextView', './library', 's
 	 * @constructor
 	 * @public
 	 * @since 1.8.0
+	 * @deprecated Since version 1.38.
 	 * @alias sap.ui.commons.InPlaceEdit
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */

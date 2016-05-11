@@ -12,24 +12,18 @@
 
 /* Item Icon */
 .sapMUCItemIcon {
-	color:					@sapUiContentIconColor;
+	color: @sapUiContentNonInteractiveIconColor;
 }
 
 /*if no image is provided a standard placeholder is displayed */
 .sapMUCItemPlaceholder {
-	background-color: darken(@sapUiGroupContentBackground, 5);
-	color: darken(@sapUiGroupContentBackground, 23);
+	background-color: darken(@sapUiBaseColor, 9);
+	color: @sapUiListBackground;
 }
-
 
 /*if no link is provided the file name is displayed as an disabled link */
 .sapMLnkDsbl.sapMUCFileName {
 	color: @sapUiListTextColor;
-}
-
-/* regular and hover state */
-.sapMUCDeleteBtn > .sapMBtnInner > .sapMBtnIcon {
-	color: @sapUiNegativeElement;
 }
 
 /* disabled state */

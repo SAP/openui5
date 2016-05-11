@@ -145,6 +145,29 @@ sap.ui.core.mvc.Controller</title>
 		});
 	});
 
+	QUnit.test("invisible control", function(assert) {
+		// load and place view, force rendering
+		var oView = sap.ui.xmlview('example.mvc.test').placeAt('content');
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oView.byId("myPanel").getDomRef(), "panel rendered");
+		oView.byId("myPanel").setVisible(false);
+		sap.ui.getCore().applyChanges();
+
+		assert.notOk(oView.byId("myPanel").getDomRef(), "panel hidden");
+		oView.setVisible(false);
+		sap.ui.getCore().applyChanges();
+		oView.setVisible(true);
+		// DO NOT sap.ui.getCore().applyChanges(); to create scenario circumstances
+
+		assert.ok(oView.getDomRef(), "view rendered");
+		assert.notOk(oView.byId("myPanel").getDomRef(), "panel not rendered");
+
+		oView.byId("myPanel").setVisible(true);
+		sap.ui.getCore().applyChanges();
+		assert.ok(oView.byId("myPanel").getDomRef(), "panel rendered");
+	});
+
 	QUnit.test("with custom RenderManager", function(assert) {
 
 		// load view, embed it in a Panel and force rendering
@@ -394,11 +417,30 @@ sap.ui.core.mvc.Controller</title>
 					_syncSupport: !!bSyncSupport
 				};
 			};
+			this.fnChangeSourcePreprocessor = function(xml) {
+				this.xml = jQuery.sap.parseXML(this.sViewContent).documentElement;
+				return this.xml;
+			}.bind(this);
+			this.createView = function(bAsync) {
+				var preprocessor = {
+					preprocessor: this.fnChangeSourcePreprocessor,
+					_syncSupport: true
+				};
+				return sap.ui.xmlview({
+					async: bAsync,
+					viewContent: this.sViewContent,
+					preprocessors: {
+						xml:preprocessor,
+						viewxml: preprocessor
+					},
+				});
+			}.bind(this);
 		},
 		afterEach: function() {
 			// reset global preprocessors
 			this.View._mPreprocessors = {};
 			this.runPreprocessorSpy.restore();
+			delete this.xml;
 		}
 	});
 
@@ -427,6 +469,17 @@ sap.ui.core.mvc.Controller</title>
 		});
 
 		sinon.assert.notCalled(preprocessorSpy);
+	});
+
+	QUnit.test("sync: assignment of preprocessor results", 1, function(assert) {
+		var oView = this.createView();
+		assert.strictEqual(oView._xContent, this.xml, "Result was correctly assigned");
+	});
+
+	QUnit.test("async: assignment of preprocessor results", 1, function(assert) {
+		return this.createView(true).loaded().then(function(oView) {
+			assert.strictEqual(oView._xContent, this.xml, "Result was correctly assigned");
+		}.bind(this));
 	});
 
 	/*

@@ -19,7 +19,28 @@
 }
 
 .sapMGHLI .sapMLIBContent {
+	display: -webkit-box;
+	display: -moz-box;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-align: center;
+	-moz-box-align: center;
+	-ms-flex-align: center;
+	align-items: center;
+}
+
+.sapMGHLITitle, 
+.sapMGHLICounter {
+	display: inline-block;
+	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	overflow: hidden;
+} 
+
+.sapMGHLICounter {
+	padding-left: 0.25rem;
+	webkit-box-flex: 0;
+	-moz-box-flex: 0;
+	-ms-flex: none;
+	flex: none;
 }

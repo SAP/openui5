@@ -45,7 +45,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			 * The controls inside this layout
 			 */
 			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
-		}
+		},
+		designTime: true
 	}});
 
 	/**

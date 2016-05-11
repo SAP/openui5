@@ -21,6 +21,7 @@
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 		<!-- Control initialization -->
@@ -269,7 +270,7 @@
 			//Testcase 12: Input a wrong HUE - value
 			test("Wrong data - HUE changed to -30 => other values calculated [Control 1]: ", function() {
 				oColorPicker1.oHueField.setValue(-30);
-				oColorPicker1.oHueField.fireChange({newValue:oColorPicker5.oHueField.getValue()});
+				oColorPicker1.oHueField.fireChange({newValue:oColorPicker1.oHueField.getValue()});
 				expect(7);
 				equal(oColorPicker1.oRedField.getValue(), "255" , "RED changed from 123 -> 255: ");
 				equal(oColorPicker1.oGreenField.getValue(), "122" , "GREEN changed from 255 -> 122: ");

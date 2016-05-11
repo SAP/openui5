@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<!-- Initialization -->
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal"></script>
+
+<script type="text/javascript">
+	jQuery.sap.require("sap.ui.core.util.MockServer");
+</script>
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+<!-- Test functions -->
+<script language="javascript">
+	sinon.config.useFakeTimers = false;
+
+	jQuery.sap.require("sap.ui.model.odata.v2.ODataModel");
+
+	var sServiceUrl = "/odataFake/";
+
+	//Initialize mock servers
+	var oMockServer = new sap.ui.core.util.MockServer({
+		rootUri: sServiceUrl
+	});
+	oMockServer.simulate("./model/metadata_orgHierarchy.xml", "./model/orgHierarchy/");
+	oMockServer.start();
+
+	// create a dummy AMD fdefine to check if shim works for datajs
+	window.define = function() {
+		throw Error("define should not be called");
+	}
+	window.define.amd = { vendor : "SAPUI5 QUnit Test" };
+
+	var oModel, oBinding;
+
+	function createTreeBinding(sPath, oContext, aFilters, mParameters, aSorters){
+		// create binding
+		oBinding = oModel.bindTree(sPath, oContext, aFilters, mParameters, aSorters).initialize();
+		oBinding.applyAdapter();
+	};
+</script>
+
+<script src="ODataV2TreeBindingFlat_Paging.qunit.js"></script>
+<script src="ODataV2TreeBindingFlat_Selection.qunit.js"></script>
+<script src="ODataV2TreeBindingFlat_ExpandCollapse.qunit.js"></script>
+<script src="ODataV2TreeBindingFlat_Remove.qunit.js"></script>
+
+</head>
+<body>
+	<h1 id="qunit-header">QUnit tests: ODataTreeBinding</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+</body>
+</html>

@@ -278,6 +278,95 @@
 		oBinding.resume();
 	});
 
+	asyncTest("propertyChange event", function(){
+		setup();
+		var oInput = new sap.m.Input({
+			value: "{/name}"
+		});
+		oInput.placeAt("target1");
+		oModel.attachPropertyChange(this, function(oEvent){
+			var sPath = oEvent.getParameter('path');
+			var oContext = oEvent.getParameter('context');
+			var oValue = oEvent.getParameter('value');
+			var sReason = oEvent.getParameter('reason');
+			equal(sPath, "/name", "path check!");
+			equal(oContext, undefined, "context check!");
+			equal(oValue, "blubb", "property value check!");
+			equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
+			oInput.destroy();
+			start();
+		});
+		var oBinding = oInput.getBinding("value");
+		ok(oBinding !== undefined, "binding check");
+		// should not trigger event 
+		oModel.setProperty(oBinding.getPath(), "blubb2", oBinding.getContext());
+		// should trigger event
+		oInput.setValue("blubb");
+	});
+
+	asyncTest("propertyChange event relative", function(){
+		setup();
+		var oInput = new sap.m.Input({
+			value: "{@firstName}"
+		});
+		oInput.placeAt("target1");
+		oModel.attachPropertyChange(this, function(oEvent){
+			var sPath = oEvent.getParameter('path');
+			var oContext = oEvent.getParameter('context');
+			var oValue = oEvent.getParameter('value');
+			var sReason = oEvent.getParameter('reason');
+			equal(sPath, "@firstName", "path check!");
+			equal(oContext.getPath(), "/teamMembers/member/1", "context check!");
+			equal(oValue, "blubb", "property value check!");
+			equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
+			oInput.destroy();
+			start();
+		});
+		oInput.bindObject("/teamMembers/member/1");
+		var oBinding = oInput.getBinding("value");
+		ok(oBinding !== undefined, "binding check");
+		// should not trigger event 
+		oModel.setProperty(oBinding.getPath(), "blubb2", oBinding.getContext());
+		// should trigger event
+		oInput.setValue("blubb");
+	});
+
+	asyncTest("propertyChange event reset", function(){
+		setup();
+		var oInput = new sap.m.Input({
+			value: "{@firstName}"
+		});
+		var iCount = 0;
+		oInput.placeAt("target1");
+		oModel.attachPropertyChange(this, function(oEvent){
+			iCount++;
+			var sPath = oEvent.getParameter('path');
+			var oContext = oEvent.getParameter('context');
+			var oValue = oEvent.getParameter('value');
+			var sReason = oEvent.getParameter('reason');
+			if (iCount === 1) {
+				equal(sPath, "@firstName", "path check!");
+				equal(oContext.getPath(), "/teamMembers/member/1", "context check!");
+				equal(oValue, "blubb", "property value check!");
+				equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
+				oInput.setValue("Andreas");
+				
+			} else if (iCount === 2) {
+				equal(sPath, "@firstName", "path check!");
+				equal(oContext.getPath(), "/teamMembers/member/1", "context check!");
+				equal(oValue, "Andreas", "property value check!");
+				equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
+			}
+		});
+		oInput.bindObject("/teamMembers/member/1");
+		var oBinding = oInput.getBinding("value");
+		ok(oBinding !== undefined, "binding check");
+		// should trigger event
+		oInput.setValue("blubb");
+		oInput.destroy();
+		start();
+	});
+
 </script>
 
 </head>

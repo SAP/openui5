@@ -12,12 +12,12 @@
 	QUnit.test("ObjectPageSection", function (assert) {
 
 		var ObjectPageSectionView = sap.ui.xmlview("UxAP-13_objectPageSection", {
-            viewName: "view.UxAP-13_ObjectPageSection"
-        });
-        var iRenderingDelay = 1000;
+			viewName: "view.UxAP-13_ObjectPageSection"
+		});
+		var iRenderingDelay = 1000;
 
-        ObjectPageSectionView.placeAt('qunit-fixture');
-        sap.ui.getCore().applyChanges();
+		ObjectPageSectionView.placeAt('qunit-fixture');
+		sap.ui.getCore().applyChanges();
 
 		// get the object page section
 		// By default title is not centered, CSS:0120061532 0001349139 2014
@@ -209,5 +209,17 @@
 
 		oButton.destroy();
 	});
+
+	QUnit.test("Testing ObjectPageSubSection._getClosestSection", function (assert) {
+		var ObjectPageSectionView = sap.ui.xmlview("UxAP-13_objectPageSection", {
+				viewName: "view.UxAP-13_ObjectPageSection"
+			}),
+			oSectionWithTwoSubSection = ObjectPageSectionView.byId("SectionWithSubSection"),
+			oFirstSubSection = oSectionWithTwoSubSection.getSubSections()[0],
+			fnGetClosestSection = sap.uxap.ObjectPageSection._getClosestSection;
+
+		assert.equal(fnGetClosestSection(oFirstSubSection).getId(), oSectionWithTwoSubSection.getId());
+		assert.equal(fnGetClosestSection(oSectionWithTwoSubSection).getId(), oSectionWithTwoSubSection.getId());
+	})
 
 }(jQuery, QUnit, sinon, sap.uxap.Importance));

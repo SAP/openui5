@@ -8,7 +8,8 @@
 
 
 <!-- UI5 Bootstrap -->
-<script id="sap-ui-bootstrap" type="text/javascript" src="../../../../resources/sap-ui-core.js" data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m"></script>
+	<script id="sap-ui-bootstrap" type="text/javascript" src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m" data-sap-ui-language="en_US"></script>
 
 <!-- QUnit libraries -->
 <script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
@@ -727,6 +728,48 @@
 
 			destroyFF(oFF);
 		});
+		openPopover(oFF, 0);
+	});
+
+	asyncTest("FacetFilter._displayRemoveIcon should be visible until the user releases the mouse (saptouchend)", function() {
+
+		var oFF = new sap.m.FacetFilter({
+			showPersonalization: true
+		});
+		var oFFL = new sap.m.FacetFilterList({title: "List"});
+		oFF.addList(oFFL);
+		oFF.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var oPopover = oFF._getPopover();
+
+		oPopover.attachEventOnce("afterOpen", function(oEvent) {
+			var oIcon = getRemoveIconCtrl(oFF, 0);
+
+			function callDelegate(sEventName) {
+				oIcon.aBeforeDelegates[0].oDelegate[sEventName].call(oIcon, {});
+			}
+
+			equal(oIcon.aBeforeDelegates.length, 1, "There must be single delegate");
+
+			//touch start
+			callDelegate("onsaptouchstart");
+			ok(oIcon.sapTouchStarted, "A flag indicated mousedown on icon " + oIcon.getId() + " must present");
+			ok(oIcon.$().hasClass("sapMFFLVisibleRemoveIcon"),"The 'remove icon ' should be visible");
+
+			//touch end
+			callDelegate("onsaptouchend");
+			ok(oIcon.sapTouchStarted, "A flag indicated mousedown on icon " + oIcon.getId() + " must present");
+			ok(oIcon.$().hasClass("sapMFFLHiddenRemoveIcon"),"The 'remove icon ' should not be visible");
+
+			//press
+			oIcon.firePress();
+			notOk(oIcon.sapTouchStarted, "A flag indicated mousedown on icon " + oIcon.getId() + " should be removed");
+			ok(oIcon.$().hasClass("sapMFFLHiddenRemoveIcon"),"The 'remove icon ' should not be visible");
+			start();
+			destroyFF(oFF);
+		});
+
 		openPopover(oFF, 0);
 	});
 
@@ -2948,24 +2991,27 @@
 		/* Helper functions for the module */
 		var oSCHelper = {
 
-			createFFWithBinding : function() {
+			createFFWithBinding : function(iLists) {
+				iLists = iLists == undefined ? 1 : iLists;
 				var oFF = new sap.m.FacetFilter({
 					showPersonalization : true
 				});
-				var oFFL = new sap.m.FacetFilterList({
-					title : "List1",
-					growing : true,
-					growingThreshold : 3,
-					items : {
-						path : "/values",
-						template : new sap.m.FacetFilterItem({
-							text : "{text}",
-							key : "{key}"
-						})
-					}
-				});
+				for (var i = 0; i < iLists; i++) {
+					var oFFL = new sap.m.FacetFilterList({
+						title : "List" + (i+1),
+						growing : true,
+						growingThreshold : 3,
+						items : {
+							path : "/values",
+							template : new sap.m.FacetFilterItem({
+								text : "{text}",
+								key : "{key}"
+							})
+						}
+					});
+					oFF.addList(oFFL);
+				}
 
-				oFF.addList(oFFL);
 				return oFF;
 			},
 
@@ -3437,6 +3483,62 @@
 			strictEqual(sRightArrowCSSVisibility, "hidden", "Right arrow is hidden");
 		});
 
+		module("Aria support", {
+			beforeEach: function () {
+				this.oFF = oSCHelper.createFFWithBinding(5);
+				for (var i = 0; i < 5; i++) {
+					this.oFF.getLists()[i].setModel(oSCHelper.createModel());
+				}
+				this.oFF.placeAt("content");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				destroyFF(this.oFF);
+			},
+			/**
+			 *
+			 * @param iListCount the number of expected ff lists
+			 */
+			testFacetFilterList: function (iListCount) {
+				var aExpectedDescribedBy = [],
+						bAriaRemoveFacetFound = false;
+
+				for (var i = 0; i < iListCount; i++) {
+					var sAriaDescribedByList = getButtonCtrl(this.oFF, i).$().attr("aria-describedby");
+					ok(sAriaDescribedByList, "There must be attribute 'aria-describedby' for List" + (i + 1));
+
+					var aAriaDescribedByList = sAriaDescribedByList.split(" ");
+					equal(aAriaDescribedByList.length, 2, "There must be attribute 'aria-describedby' for List" + (i + 1));
+
+					var $InvisibleText0 = jQuery("#" + aAriaDescribedByList[0]);
+					ok($InvisibleText0.length, "'aria-describedby' must point to an existing static text");
+					var sExpectedText = "Facet Filter " + (i + 1) + " of " + iListCount;
+					equal($InvisibleText0.text(), sExpectedText, "Positioning info");
+
+					if (!bAriaRemoveFacetFound) {
+						bAriaRemoveFacetFound = true;
+						aExpectedDescribedBy.push(aAriaDescribedByList[1]);
+					}
+					aExpectedDescribedBy.push(aAriaDescribedByList[0]);
+				}
+
+				equal(this.oFF.getRenderer().getAriaDescribedBy(this.oFF), aExpectedDescribedBy.join(" "), "FacetFilterRenderer.getAriaDescribedBy array check");
+			}
+		});
+		test("Facet filter list positioning - initial", function () {
+			this.testFacetFilterList(5);
+		});
+
+		test("Facet filter list positioning - after removal of list(s)", function () {
+			var aExpectedDescribedBy = [],
+					bAriaRemoveFacetFound = false,
+					oListToRemove = this.oFF.getLists()[2];
+
+			this.oFF.removeList(oListToRemove);
+			sap.ui.getCore().applyChanges();
+
+			this.testFacetFilterList(4);
+		});
 		// Helper functions
 
 		function getButtonCtrl(oFF, iIndex) {

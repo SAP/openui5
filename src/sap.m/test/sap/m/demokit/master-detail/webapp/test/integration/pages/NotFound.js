@@ -1,8 +1,9 @@
 sap.ui.define([
 		"sap/ui/test/Opa5",
 		"sap/ui/test/actions/Press",
+		"sap/ui/test/matchers/PropertyStrictEquals",
 		"sap/ui/demo/masterdetail/test/integration/pages/Common"
-	], function(Opa5, Press, Common) {
+	], function(Opa5, Press, PropertyStrictEquals, Common) {
 		"use strict";
 
 		var sNotFoundPageId = "page",
@@ -17,11 +18,13 @@ sap.ui.define([
 
 					iPressTheBackButton : function (sViewName) {
 						return this.waitFor({
-							id : sNotFoundPageId,
 							viewName : sViewName,
-							actions : function (oPage) {
-								oPage.$("navButton").trigger("tap");
+							controlType: "sap.m.Button",
+							matchers: new PropertyStrictEquals({name : "type", value : "Back"}),
+							actions : function (oButton) {
+								oButton.$().trigger("tap");
 							},
+							errorMessage : "Did not find the back button"
 						});
 					}
 

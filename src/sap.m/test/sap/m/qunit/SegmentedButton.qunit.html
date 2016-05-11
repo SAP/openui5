@@ -483,9 +483,6 @@
 
 	});
 
-	var sBrowserName = sap.ui.Device.browser.name,
-		sBrowserVersion = sap.ui.Device.browser.versionStr;
-
 	test("Mixed content buttons width calculation when in bar (all buttons should have the same width)", function() {
 
 		// Arrange
@@ -1501,6 +1498,203 @@
 		oSB = null;
 		aButtons = null;
 
+	});
+
+	test("_getRenderedButtonWidths private method", function () {
+		// Arrange
+		var oSB,
+			aButtons;
+
+		oSB = new sap.m.SegmentedButton({
+			buttons: [
+				new sap.m.Button({text: "Btn 1", width: "100px"}),
+				new sap.m.Button({text: "Btn 2 long", width: "100px"}),
+				new sap.m.Button({text: "Btn 3 again longer", width: "100px"})
+			]
+		});
+		aButtons = oSB.getButtons();
+
+		// Assert
+		deepEqual(oSB._getRenderedButtonWidths(aButtons), [null,null,null], "Before the control is rendered an array " +
+				"of empty widths is returned");
+
+		// Act
+		oSB.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		deepEqual(oSB._getRenderedButtonWidths(aButtons), [100,100,100], "Returned array of widths " +
+				"equals to predefined widths of the buttons");
+
+		// Cleanup
+		oSB.destroy();
+		oSB = null;
+		aButtons = null;
+	});
+
+	test("_clearAutoWidthAppliedToControl private method", function () {
+		// Arrange
+		var oSB,
+			aButtons,
+			i;
+
+		oSB = new sap.m.SegmentedButton({
+			items: [
+				new sap.m.SegmentedButtonItem({text: "Btn 1"}),
+				new sap.m.SegmentedButtonItem({text: "Btn 2", width: "20px"}),
+				new sap.m.SegmentedButtonItem({text: "Btn 3"})
+			]
+		}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		aButtons = oSB.getButtons();
+
+		// Assert
+		ok(oSB.$().attr("style").indexOf("width:") !== -1, "Auto width is applied to control");
+		for (i = 0;i < aButtons.length; i++) {
+			ok(aButtons[i].$().attr("style").indexOf("width:") !== -1, "Auto|predefined width is applied to internal " +
+					"button");
+		}
+
+		// Act
+		oSB._clearAutoWidthAppliedToControl();
+
+		// Assert
+		notOk(oSB.$().attr("style"), "Auto width is removed from control");
+		notOk(aButtons[0].$().attr("style"), "Auto width is removed from internal button");
+		ok(aButtons[1].$().attr("style").indexOf("20px") !== -1, "Predefined width is not removed from internal button");
+		notOk(aButtons[2].$().attr("style"), "Auto width is removed from internal button");
+
+		// Act
+		oSB.setWidth("200px");
+		aButtons[0].setWidth("10px");
+		sap.ui.getCore().applyChanges();
+		oSB._clearAutoWidthAppliedToControl();
+
+		// Assert
+		ok(oSB.$().attr("style").indexOf("200px") !== -1, "Control width is not cleared if predefined");
+		ok(aButtons[0].$().attr("style").indexOf("10px") !== -1, "First button width is not cleared if predefined");
+
+		// Cleanup
+		oSB.destroy();
+		oSB = null;
+		aButtons = null;
+	});
+
+	test("_handleContainerResize private method", function () {
+		// Arrange
+		var oSB = new sap.m.SegmentedButton({
+			items: [
+				new sap.m.SegmentedButtonItem({text: "Btn 1"}),
+				new sap.m.SegmentedButtonItem({text: "Btn 2"}),
+				new sap.m.SegmentedButtonItem({text: "Btn 3"})
+			]
+		});
+
+		this.spy(oSB, "_clearAutoWidthAppliedToControl");
+		this.spy(oSB, "_getRenderedButtonWidths");
+		this.spy(oSB, "_updateWidth");
+
+		// Act
+		oSB._handleContainerResize();
+
+		// Assert
+		ok(oSB._clearAutoWidthAppliedToControl.calledOnce, "Method _clearAutoWidthAppliedToControl called once");
+		ok(oSB._getRenderedButtonWidths.calledOnce, "Method _getRenderedButtonWidths called once");
+		ok(oSB._updateWidth.calledOnce, "Method _updateWidth called once");
+
+		// Cleanup
+		oSB.destroy();
+		oSB = null;
+	});
+
+	test("_updateWidth private method", function () {
+		// Arrange
+		var oSB,
+			aButtons,
+			i;
+
+		oSB = new sap.m.SegmentedButton({
+			items: [
+				new sap.m.SegmentedButtonItem({text: "Btn 1"}),
+				new sap.m.SegmentedButtonItem({text: "Btn 2"}),
+				new sap.m.SegmentedButtonItem({text: "Btn 3"}),
+				new sap.m.SegmentedButtonItem({text: "Btn 4"})
+			]
+		}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		aButtons = oSB.getButtons();
+
+		// Act
+		oSB._aWidths = [20, 20, 20, 20];
+		oSB._updateWidth();
+
+		// Assert
+		strictEqual(oSB.$().attr("style"), "width: 81px;", "Result should be sum of all 4 button widths which is 80 " +
+				"plus one pixel added for the border");
+
+		// Act
+		oSB.setWidth("400px");
+
+		// Assert
+		for (i = 0;i < aButtons.length;i++) {
+			strictEqual(aButtons[i].$().attr("style"), "width: 25%;", "Width of all buttons should be 25%");
+		}
+
+		// Act
+		oSB._aWidths = [0, 0, 0, 0];
+		oSB._updateWidth();
+
+		// Assert
+		notOk(oSB.$().css("width") === "1px", "Corner case when all reported inner buttons width is 0 applied width " +
+				"should not be 1px");
+
+		// Cleanup
+		aButtons = null;
+		oSB.destroy();
+		oSB = null;
+	});
+
+	test("_updateWidth - sum of buttons width is greater than parent element width", function () {
+		// Arrange
+		var that = this,
+			oSB = new sap.m.SegmentedButton({
+				items: [
+					new sap.m.SegmentedButtonItem({text: "Btn 1"}),
+					new sap.m.SegmentedButtonItem({text: "Btn 2"}),
+					new sap.m.SegmentedButtonItem({text: "Btn 3"}),
+					new sap.m.SegmentedButtonItem({text: "Btn 4"})
+				]
+			}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		// Here we replace the jQuery.innerWidth method to report stable width for the parent element if the parent
+		// element is the qunit-fixture itself
+		this._ojQueryInnerWidthMethod = jQuery.fn.innerWidth;
+		jQuery.fn.innerWidth = function (sWidth) {
+			if (!sWidth && this[0].id === "qunit-fixture") {
+				return 100;
+			}
+			return that._ojQueryInnerWidthMethod.apply(this, arguments);
+		};
+
+		oSB._aWidths = [100, 100, 100];
+		oSB._updateWidth();
+
+		// Assert
+		strictEqual(oSB.$().attr("style"), "width: 100%;", "a");
+
+		// Restore jQuery.innerWidth method
+		jQuery.fn.innerWidth = this._ojQueryInnerWidthMethod;
+
+		// Cleanup
+		oSB.destroy();
+		oSB = null;
+		this._ojQueryInnerWidthMethod = null;
 	});
 
 	/* =========================================================== */

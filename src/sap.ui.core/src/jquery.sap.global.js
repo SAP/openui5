@@ -5,7 +5,7 @@
 /*global ActiveXObject, alert, confirm, console, ES6Promise, localStorage, jQuery, performance, URI, Promise, XMLHttpRequest */
 
 /**
- * @class Provides base functionality of the SAP jQuery plugin as extension of the jQuery framework.<br/>
+ * Provides base functionality of the SAP jQuery plugin as extension of the jQuery framework.<br/>
  * See also <a href="http://api.jquery.com/jQuery/">jQuery</a> for details.<br/>
  * Although these functions appear as static ones, they are meant to be used on jQuery instances.<br/>
  * If not stated differently, the functions follow the fluent interface paradigm and return the jQuery instance for chaining of statements.
@@ -16,8 +16,7 @@
  *   alert("Top Position: " + oRect.top);
  * </pre>
  *
- * @name jQuery
- * @static
+ * @namespace jQuery
  * @public
  */
 
@@ -25,7 +24,7 @@
 	"use strict";
 
 	if ( !jQuery ) {
-		throw new Error("SAPUI5 requires jQuery as a prerequisite (>= version 1.7)");
+		throw new Error("SAPUI5 requires jQuery as a prerequisite (>= version 1.10)");
 	}
 
 	// ensure not to initialize twice
@@ -226,8 +225,8 @@
 	// -----------------------------------------------------------------------
 
 	var oJQVersion = Version(jQuery.fn.jquery);
-	if ( !oJQVersion.inRange("1.7.0", "2.2.4") ) {
-		_earlyLog("error", "SAPUI5 requires a jQuery version of 1.7 or higher, but lower than 2.2.4; current version is " + jQuery.fn.jquery);
+	if ( !oJQVersion.inRange("1.10.1", "2.2.4") ) {
+		_earlyLog("error", "SAPUI5 requires a jQuery version of 1.10 or higher, but lower than 2.2.4; current version is " + jQuery.fn.jquery);
 	}
 
 	// TODO move to a separate module? Only adds 385 bytes (compressed), but...
@@ -480,6 +479,8 @@
 					oCfg = undefined;
 				}
 			});
+			oCfg = oCfg || {};
+			oCfg.__loaded = true;
 		}
 
 		oCfg = normalize(oCfg || {});
@@ -525,6 +526,18 @@
 
 		return oCfg;
 	}());
+
+	var syncCallBehavior = 0; // ignore
+	if ( oCfgData['xx-nosync'] === 'warn' || /(?:\?|&)sap-ui-xx-nosync=(?:warn)/.exec(window.location.search) ) {
+		syncCallBehavior = 1;
+	}
+	if ( oCfgData['xx-nosync'] === true || oCfgData['xx-nosync'] === 'true' || /(?:\?|&)sap-ui-xx-nosync=(?:x|X|true)/.exec(window.location.search) ) {
+		syncCallBehavior = 2;
+	}
+
+	if ( syncCallBehavior && oCfgData.__loaded ) {
+		_earlyLog(syncCallBehavior === 1 ? "warning" : "error", "[nosync]: configuration loaded via sync XHR");
+	}
 
 	// check whether noConflict must be used...
 	if ( oCfgData.noconflict === true || oCfgData.noconflict === "true"  || oCfgData.noconflict === "x" ) {
@@ -1258,6 +1271,10 @@
 			l = aNames.length,
 			iEndCreate = isNaN(iNoCreates) ? 0 : l - iNoCreates,
 			i;
+
+		if ( syncCallBehavior && oContext === window ) {
+			jQuery.sap.log.error("[nosync] getObject called to retrieve global name '" + sName + "'");
+		}
 
 		for (i = 0; oObject && i < l; i++) {
 			if (!oObject[aNames[i]] && i < iEndCreate ) {
@@ -2073,7 +2090,7 @@
 		/**
 		 * Sets the request buffer size for the measurement safely
 		 *
-		 * @param {integer} iSize size of the buffer
+		 * @param {int} iSize size of the buffer
 		 *
 		 * @name jQuery.sap.measure#setRequestBufferSize
 		 * @function
@@ -2393,12 +2410,6 @@
 					exports: 'iScroll'
 				},
 				'sap/ui/thirdparty/jquery.js': {
-					amd: true
-				},
-				'sap/ui/thirdparty/jquery/jquery.1.7.1.js': {
-					amd: true
-				},
-				'sap/ui/thirdparty/jquery/jquery.1.8.1.js': {
 					amd: true
 				},
 				'sap/ui/thirdparty/jquery/jquery-1.10.1.js': {
@@ -2869,7 +2880,7 @@
 			return oModule;
 		}
 
-		function requireModule(sModuleName) {
+		function requireModule(sModuleName, bSync) {
 
 			// TODO enable when preload has been adapted:
 			// sModuleName = mAMDAliases[sModuleName] || sModuleName;
@@ -2877,7 +2888,7 @@
 			var bLoggable = log.isLoggable(),
 				m = rJSSubtypes.exec(sModuleName),
 				oShim = mAMDShim[sModuleName],
-				sBaseName, sType, oModule, aExtensions, i;
+				sBaseName, sType, oModule, aExtensions, i, sMsg;
 
 			// only for robustness, should not be possible by design (all callers append '.js')
 			if ( !m ) {
@@ -2893,7 +2904,7 @@
 					if ( bLoggable ) {
 						log.debug("  require " + oShim.deps[i]);
 					}
-					requireModule(oShim.deps[i] + '.js');
+					requireModule(oShim.deps[i] + '.js', bSync);
 				}
 			}
 
@@ -2943,6 +2954,16 @@
 				if ( bLoggable ) {
 					log.debug(sLogPrefix + "loading " + (aExtensions[i] ? aExtensions[i] + " version of " : "") + "'" + sModuleName + "' from '" + oModule.url + "'");
 				}
+
+				if ( bSync && syncCallBehavior && sModuleName !== 'sap/ui/core/Core.js' ) {
+					sMsg = "[nosync] loading module '" + oModule.url + "'";
+					if ( syncCallBehavior === 1 ) {
+						log.error(sMsg);
+					} else {
+						throw new Error(sMsg);
+					}
+				}
+
 				/*eslint-disable no-loop-func */
 				jQuery.ajax({
 					url : oModule.url,
@@ -3486,7 +3507,7 @@
 				vModuleName = ui5ToRJS(vModuleName) + ".js";
 			}
 
-			requireModule(vModuleName);
+			requireModule(vModuleName, true);
 
 		};
 
@@ -3762,7 +3783,7 @@
 					log.debug("define(" + sResourceName + "): calling factory " + typeof vFactory);
 				}
 
-				if ( bExport ) {
+				if ( bExport && syncCallBehavior !== 2 ) {
 					// ensure parent namespace
 					var sPackage = sResourceName.split('/').slice(0,-1).join('.');
 					if ( sPackage ) {
@@ -3777,7 +3798,7 @@
 				}
 
 				// HACK: global export
-				if ( bExport ) {
+				if ( bExport && syncCallBehavior !== 2 ) {
 					if ( oModule.content == null ) {
 						log.error("module '" + sResourceName + "' returned no content, but should be exported");
 					} else {
@@ -3911,14 +3932,23 @@
 		 * @private
 		 */
 		sap.ui.requireSync = function(sModuleName) {
-			return requireModule(sModuleName + ".js");
+			return requireModule(sModuleName + ".js", true);
 		};
 
 		jQuery.sap.preloadModules = function(sPreloadModule, bAsync, oSyncPoint) {
 
-			var sURL, iTask;
+			var sURL, iTask, sMsg;
 
 			jQuery.sap.assert(!bAsync || oSyncPoint, "if mode is async, a syncpoint object must be given");
+
+			if ( !bAsync && syncCallBehavior ) {
+				sMsg = "[nosync] synchronous preload of '" + sPreloadModule + "'";
+				if ( syncCallBehavior === 1 ) {
+					log.warning(sMsg);
+				} else {
+					throw new Error(sMsg);
+				}
+			}
 
 			if ( mPreloadModules[sPreloadModule] ) {
 				return;
@@ -4150,6 +4180,14 @@
 				}
 
 			} else {
+
+				if ( !mOptions.async && syncCallBehavior ) {
+					if ( syncCallBehavior >= 1 ) { // temp. raise a warning only
+						log.error("[nosync] loading resource '" + (sResourceName || mOptions.url) + "' with sync XHR");
+					} else {
+						throw new Error("[nosync] loading resource '" + (sResourceName || mOptions.url) + "' with sync XHR");
+					}
+				}
 
 				jQuery.ajax({
 					url : sUrl = mOptions.url || getResourcePath(sResourceName),

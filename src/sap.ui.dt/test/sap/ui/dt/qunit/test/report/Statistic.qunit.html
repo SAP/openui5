@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Test Page for sap.ui.dt.test.report.Statistic</title>
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				type="text/javascript"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-xx-bindingSyntax="complex"
+				data-sap-ui-libs="sap.ui.dt,sap.ui.layout,sap.m"
+				src="../../../../../../../resources/sap-ui-core.js">
+		</script>
+		<style>
+			.minSize {
+				min-width : 100px;
+				min-height: 100px;
+			}
+		</style>
+		<link rel="stylesheet" href="../../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript">
+
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			jQuery.sap.require("sap.ui.dt.test.report.Statistic");
+
+			QUnit.module("Given that a statistic report is created", {
+				beforeEach : function(assert) {
+					this.oResult = {
+						statistic : {
+							SUPPORTED : 10,
+							PARTIAL_SUPPORTED : 0,
+							NOT_SUPPORTED : 20,
+							UNKNOWN : 10,
+							ERROR : 5
+						}
+					}
+					this.oStatistic = new sap.ui.dt.test.report.Statistic({
+						data : this.oResult
+					});
+					this.oStatistic.placeAt("content");
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					//this.oStatistic.destroy();
+				}
+			});
+
+			QUnit.test("when data are set", function(assert) {
+				var oStatistic = this.oStatistic;
+				assert.equal(getValue(oStatistic, "supported"), this.oResult.statistic.SUPPORTED, "then the supported value is displayed correctly");
+				assert.equal(getValue(oStatistic, "partial-supported"), this.oResult.statistic.PARTIAL_SUPPORTED, "and the partial supported value is displayed correctly");
+				assert.equal(getValue(oStatistic, "not-supported"), this.oResult.statistic.NOT_SUPPORTED, "and the not-supported value is displayed correctly");
+				assert.equal(getValue(oStatistic, "unknown"), this.oResult.statistic.UNKNOWN, "and the unknown value is displayed correctly");
+				assert.equal(getValue(oStatistic, "error"), this.oResult.statistic.ERROR, "and the error value is displayed correctly");
+			});
+
+
+			var getValue = function(oControl, sStatus) {
+				return sap.ui.getCore().byId(oControl.getId() + "--form-" + sStatus + "-value").getText();
+			}
+
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit page for sap.ui.dt.test.report.Statistic</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>

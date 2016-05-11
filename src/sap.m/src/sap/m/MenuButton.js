@@ -398,7 +398,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 		 * Override setter because the parent control has placed custom logic in it and all changes need to be propagated
 		 * to the internal button aggregation.
 		 * @param {string} sValue
-		 * @return {this} This instance for chaining
+		 * @return {sap.m.MenuButton} This instance for chaining
 		 */
 		MenuButton.prototype.setText = function (sValue) {
 			Button.prototype.setProperty.call(this, 'text', sValue);
@@ -410,7 +410,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 		 * Override setter because the parent control has placed custom logic in it and all changes need to be propagated
 		 * to the internal button aggregation.
 		 * @param {string} sValue`
-		 * @return {this} This instance for chaining
+		 * @return {sap.m.MenuButton} This instance for chaining
 		 */
 		MenuButton.prototype.setType = function (sValue) {
 			Button.prototype.setProperty.call(this, 'type', sValue);
@@ -421,7 +421,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 		 * Override setter because the parent control has placed custom logic in it and all changes need to be propagated
 		 * to the internal button aggregation.
 		 * @param {string} vValue
-		 * @return {this} This instance for chaining
+		 * @return {sap.m.MenuButton} This instance for chaining
 		 */
 		MenuButton.prototype.setIcon = function (vValue) {
 			Button.prototype.setProperty.call(this, 'icon', vValue);

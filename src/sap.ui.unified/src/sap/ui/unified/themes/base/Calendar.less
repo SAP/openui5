@@ -76,14 +76,14 @@
 }
 
 /* hover and focus makes only sense on desktops. On mobile devices it's not needed */
-.sap-desktop .sapUiCalHead > button:focus,
-.sap-desktop .sapUiCalCancel:focus{
+html.sap-desktop .sapUiCalHead > button:focus,
+html.sap-desktop .sapUiCalCancel:focus{
 	background-color: @sapUiButtonHoverBackground;
 	color: @sapUiButtonHoverTextColor;
 }
 
-.sap-desktop .sapUiCalHead > button:hover,
-.sap-desktop .sapUiCalCancel:hover{
+html.sap-desktop .sapUiCalHead > button:hover,
+html.sap-desktop .sapUiCalCancel:hover{
 	background-color: @sapUiButtonHoverBackground;
 	color: @sapUiButtonHoverTextColor;
 }
@@ -91,9 +91,9 @@
 /* once for desktop to overwrite focus and once for all devices needed */
 .sapUiCalHead > button:active,
 .sapUiCalCancel:active,
-.sap-desktop .sapUiCalHead > button:active,
-.sap-desktop .sapUiCalHead > button:active > .sapUiCalHeadBAddText,
-.sap-desktop .sapUiCalCancel:active{
+html.sap-desktop .sapUiCalHead > button:active,
+html.sap-desktop .sapUiCalHead > button:active > .sapUiCalHeadBAddText,
+html.sap-desktop .sapUiCalCancel:active{
 	background-color: @sapUiButtonActiveBackground;
 	color: @sapUiButtonActiveTextColor;
 }
@@ -104,7 +104,7 @@
 	filter: alpha(opacity=30);
 }
 
-.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
+html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 .sapUiCalHead > button.sapUiCalDsbl:hover,
 .sapUiCalHead > button.sapUiCalDsbl:active{
 	background-color: @sapUiButtonLiteBackground;
@@ -217,7 +217,7 @@
 	background-color: fade(lighten(@sapUiContentForegroundColor,5), 50);
 }
 
-.sap-desktop .sapUiCalItem:focus{
+html.sap-desktop .sapUiCalItem:focus{
 	background-color: darken(@sapUiContentForegroundColor,5);
 }
 

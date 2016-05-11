@@ -128,12 +128,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 
 		// Create bound listener functions for keyboard event handling
 		this._keyListeners = {
-			increase     : this._onKeyboardResize.bind(this, "inc"),
-			decrease     : this._onKeyboardResize.bind(this, "dec"),
-			increaseMore : this._onKeyboardResize.bind(this, "incMore"),
-			decreaseMore : this._onKeyboardResize.bind(this, "decMore"),
-			max          : this._onKeyboardResize.bind(this, "max"),
-			min          : this._onKeyboardResize.bind(this, "min")
+			increase     : this._onKeyboardResize.bind(this, "inc", 20),
+			decrease     : this._onKeyboardResize.bind(this, "dec", 20),
+			increaseMore : this._onKeyboardResize.bind(this, "incMore", 20),
+			decreaseMore : this._onKeyboardResize.bind(this, "decMore", 20),
+			max          : this._onKeyboardResize.bind(this, "max", 20),
+			min          : this._onKeyboardResize.bind(this, "min", 20)
 		};
 		this._enableKeyboardListeners();
 
@@ -194,7 +194,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 * in every control instance by default.
 	 * For performance reasons this behavior can be disabled by calling disableAutoResize()
 	 *
-	 * @param {bool} [bTemporarily=false] Only enables autoResize if it was previously disabled temporarily (used for live resize)
+	 * @param {boolean} [bTemporarily=false] Only enables autoResize if it was previously disabled temporarily (used for live resize)
 	 * @protected
 	 * @deprecated This method is declared as protected in order to assess the need for this feature. It is declared as deprecated because the API might change in case the need for this is high enough to make it part of the official Splitter interface
 	 */
@@ -220,7 +220,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 * in every control instance by default.
 	 * For performance reasons this behavior can be disabled by calling disableAutoResize()
 	 *
-	 * @param {bool} [bTemporarily=false] Only disable autoResize temporarily (used for live resize), so that the previous status can be restored afterwards
+	 * @param {boolean} [bTemporarily=false] Only disable autoResize temporarily (used for live resize), so that the previous status can be restored afterwards
 	 * @protected
 	 * @deprecated This method is declared as protected in order to assess the need for this feature. It is declared as deprecated because the API might change in case the need for this is high enough to make it part of the official Splitter interface
 	 */
@@ -369,7 +369,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 * Starts a resize (for touch and click)
 	 *
 	 * @param {jQuery.Event} [oJEv] The jQuery event
-	 * @param {bool} [bTouch] Whether the first parameter is a touch event
+	 * @param {boolean} [bTouch] Whether the first parameter is a touch event
 	 * @private
 	 */
 	Splitter.prototype._onBarMoveStart = function(oJEv, bTouch) {
@@ -542,7 +542,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 *
 	 * @param {Number} [iLeftContent] Number of the first (left) content that is resized
 	 * @param {Number} [iPixels] Number of pixels to increase the first and decrease the second content
-	 * @param {bool} [bFinal] Whether this is the final position (sets the size in the layoutData of the
+	 * @param {boolean} [bFinal] Whether this is the final position (sets the size in the layoutData of the
 	 * content areas)
 	 */
 	Splitter.prototype._resizeContents = function(iLeftContent, iPixels, bFinal) {
@@ -929,13 +929,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 * @param {string} [sType] The type of resize step ("inc", "dec", "max", "min")
 	 * @param {jQuery.Event} [oEvent] The original keyboard event
 	 */
-	Splitter.prototype._onKeyboardResize = function(sType, oEvent) {
+	Splitter.prototype._onKeyboardResize = function(sType, iStepSize, oEvent) {
 		var sBarId = this.getId() + "-splitbar-";
 		if (!oEvent || !oEvent.target || !oEvent.target.id || oEvent.target.id.indexOf(sBarId) !== 0) {
 			return;
 		}
 
-		var iStepSize = 20;
+		var iStepSize = iStepSize;
 		var iBigStep  = 999999;
 
 		var iBar = parseInt(oEvent.target.id.substr(sBarId.length), 10);
@@ -1027,7 +1027,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 *
 	 * @param {Number[]} [aSizes1] The array of numbers to compare against
 	 * @param {Number[]} [aSizes2] The array of numbers that is compared to the first one
-	 * @returns {bool} True if the size-arrays differ, false otherwise
+	 * @returns {boolean} True if the size-arrays differ, false otherwise
 	 * @private
 	 */
 	function _sizeArraysDiffer(aSizes1, aSizes2) {
@@ -1057,7 +1057,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	/**
 	 * Prevents the selection of text while the mouse is moving when pressed
 	 *
-	 * @param {bool} [bTouch] If set to true, touch events instead of mouse events are captured
+	 * @param {boolean} [bTouch] If set to true, touch events instead of mouse events are captured
 	 */
 	function _preventTextSelection(bTouch) {
 		var fnPreventSelection = function(oEvent) {

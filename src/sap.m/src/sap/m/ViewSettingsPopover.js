@@ -312,20 +312,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		ViewSettingsPopover.prototype.close = function () {
 			this._getPopover().close();
 			this._cleanAfterClose();
-			this._currentPageId = undefined;
 			return this;
-		};
-
-		/**
-		 * Cleans up the state after close.
-		 * @private
-		 */
-		ViewSettingsPopover.prototype._cleanAfterClose = function () {
-			this._removePageContents(this._currentPageId);
-			this._getPopover().setContentHeight(this._initialHeight);
-			this._removeFooter();
-			this._slideToPage('Main');
-			this._currentPageId = null;
 		};
 
 		/**
@@ -367,10 +354,12 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 * Manage internal aggregations so that the correct contents are being set for rendering.
 		 * @param {string} sPageId ID of the page for which to show content
 		 * @param {object} oParentItem of a parent item (e.g. filter details page parent)
+		 * @param {boolean} bDisableSlideEffect Flag enabling or disabling the slide animation on pages navigation
 		 * @private
 		 */
-		ViewSettingsPopover.prototype._showContentFor = function (sPageId, oParentItem) {
+		ViewSettingsPopover.prototype._showContentFor = function (sPageId, oParentItem, bDisableSlideEffect) {
 			this._getPopover().setContentHeight('300px');
+			this._getPopover().setContentWidth('300px');
 
 			// remove any current contents from the page
 			this._removePageContents(sPageId);
@@ -380,7 +369,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 
 			if (sPageId === this._tabMap['filterDetail']) {
 				this._updateTitleText(this._getText('VIEWSETTINGS_TITLE_FILTERBY') + oParentItem.getTitle(), true);
-				this._goToDetailsPage(oParentItem);
+				this._goToDetailsPage(oParentItem, bDisableSlideEffect);
 			} else {
 				this._updateTitleText(sPageId);
 				if (sPageId === this._tabMap['filter']) {
@@ -419,11 +408,12 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		};
 
 		/**
-		 * Goes to the details page
+		 * Goes to the details page.
 		 * @param {object} oParentItem
+		 * @param {boolean} bDisableSlideEffect Flag enabling or disabling the slide animation on pages navigation
 		 * @private
 		 */
-		ViewSettingsPopover.prototype._goToDetailsPage = function (oParentItem) {
+		ViewSettingsPopover.prototype._goToDetailsPage = function (oParentItem, bDisableSlideEffect) {
 			var bMultiSelectMode = this._findViewSettingsItemFromListItem(oParentItem).getMultiSelect();
 			if (bMultiSelectMode) {
 				// add toolbar with 'search' field and 'show selected only' button
@@ -440,7 +430,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 				this._getFilterDetailList().removeAllAggregation('headerToolbar');
 			}
 			this._updateFilterDetailListFor(oParentItem);
-			this._slideToPage('Details');
+			this._navigateToPage('Details', bDisableSlideEffect);
 			this._addFooterButtons();
 			this._updateSelectAllCheckBoxState();
 
@@ -469,6 +459,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			if (!this._oShowSelectedOnlyButton) {
 				this._oShowSelectedOnlyButton = new sap.m.Button({
 					icon : IconPool.getIconURI("multiselect-all"),
+					tooltip: this._getText('SHOW_SELECTED_ONLY'),
 					press: function (oEvent) {
 						bShowSelectedOnly = !bShowSelectedOnly;
 						if (bShowSelectedOnly) {
@@ -499,16 +490,21 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		ViewSettingsPopover.prototype._updateSelectAllCheckBoxState = function() {
 			var oSelectAllCheckBox = sap.ui.getCore().byId(this.getId() + SELECT_ALL_SUFFIX),
 				aItems = this._getFilterDetailList().getItems() || [],
-				bAllSelected = aItems.length && aItems.every(function (oItem) {
-					if (oItem.getVisible() && oItem.getSelected()) {
-						return true;
-					} else {
-						return !oItem.getVisible();
+				bAllSelected = true,
+				iVisibleItems = 0,
+				i;
+
+			for (i = 0; i < aItems.length; i++) {
+				if (aItems[i].getVisible()) {
+					iVisibleItems++;
+					if (!aItems[i].getSelected()) {
+						bAllSelected = false;
 					}
-				});
+				}
+			}
 
 			if (oSelectAllCheckBox) {
-				oSelectAllCheckBox.setSelected(bAllSelected);
+				oSelectAllCheckBox.setSelected(bAllSelected && iVisibleItems);
 			}
 		};
 
@@ -519,7 +515,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		ViewSettingsPopover.prototype._addFooterButtons = function () {
 			var oButtonOk = new Button({
 					text: this._getText("VIEWSETTINGS_ACCEPT"),
-					press: this._confirm.bind(this)
+					press: this._confirmFilterDetail.bind(this)
 				}),
 				oButtonCancel = new Button({
 					text: this._getText("VIEWSETTINGS_CANCEL"),
@@ -534,7 +530,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 * Handles selected items confirmation.
 		 * @private
 		 */
-		ViewSettingsPopover.prototype._confirm = function () {
+		ViewSettingsPopover.prototype._confirmFilterDetail = function () {
 			var oSelectedListItems = this._getFilterDetailList().getItems().filter(function (oItem) {
 				return oItem.getSelected();
 			});
@@ -552,8 +548,8 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 * @private
 		 */
 		ViewSettingsPopover.prototype._cancel = function () {
-			this._updateFilterListItemsCount();
 			this._restorePreviousState();
+			this._updateFilterListItemsCount();
 			this.close();
 		};
 
@@ -610,7 +606,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			this._getPopover().setShowHeader(true);
 			this._getPopover().setCustomHeader(this._getToolbar());
 			this._oPreviousSelectedFilters = null;
-			this._slideToPage('Main');
+			this._navigateToPage('Main');
 		};
 
 		/**
@@ -634,19 +630,28 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 				iButtonWidth = iButtonWidth * 2;
 			}
 			iNewWidth = (iButtonWidth + iButtonMargin) * (iButtonsLen + 1.6); // make more room for close button
-			this._getPopover().$().width(iNewWidth);
+			this._getPopover().setContentWidth(iNewWidth + "px");
 		};
 
 		/**
 		 * Triggers the sliding effect of nav container to display certain page.
 		 * @param {string} sPageName Name of the page to be shown
+		 * @param {boolean} bDisableSlideEffect Flag enabling or disabling sliding animation on page navigation
 		 * @private
 		 */
-		ViewSettingsPopover.prototype._slideToPage = function (sPageName) {
+		ViewSettingsPopover.prototype._navigateToPage = function (sPageName, bDisableSlideEffect) {
+			var oBackButton;
 			// navigate to details page
 			if (this._getNavContainer().getCurrentPage().getId() !== this['_get' + sPageName + 'PageId']()) {
 				if (sPageName === 'Details') {
-					jQuery.sap.delayedCall(0, this._getNavContainer(), "to", [ this['_get' + sPageName + 'Page'](), "slide" ]);
+					if (bDisableSlideEffect) {
+						this._getNavContainer().to(this['_get' + sPageName + 'Page'](), 'show');
+						oBackButton = sap.ui.getCore().byId(this.getId() + BACK_BUTTON_SUFFIX);
+						oBackButton && oBackButton.destroy();
+						oBackButton = null;
+					} else {
+						jQuery.sap.delayedCall(0, this._getNavContainer(), "to", [this['_get' + sPageName + 'Page'](), "slide"]);
+					}
 				} else {
 					jQuery.sap.delayedCall(0, this._getNavContainer(), 'back');
 				}
@@ -741,7 +746,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			for (sProperty in this._tabMap) {
 				sType = this._tabMap[sProperty];
 				if (oPageList) {
-					if (oPageList.getId().indexOf(sType) !== -1) {
+					if (oPageList.getId() === sType + 'list') {
 						this['_' + sType + 'List'] = oPageList;
 					}
 				}
@@ -848,7 +853,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 						return oItem.getVisible();
 					}).forEach(function(oItem) {
 						var oVSDItem = this._findViewSettingsItemFromListItem(oItem);
-						oVSDItem.setSelected(bSelected);
+						oVSDItem.setProperty('selected', bSelected, true);
 					}.bind(this));
 
 					this._toggleRemoveFilterItem();
@@ -871,7 +876,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 					var aFilterItems;
 					var aSubItems;
 					var aAllDetailItems = [];
-					oVSPItem.setSelected(oEvent.getParameter('selected'));
+					oVSPItem.setProperty('selected', oEvent.getParameter('selected'), true);
 
 					// make sure only one item is selected in single select mode
 					if (oList.getMode() !== sap.m.ListMode.MultiSelect) {
@@ -890,11 +895,10 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 								oFilterDetailItem.getSelected(true) &&
 								oFilterDetailItem.getId() !== oVSPItem.getId()
 							) {
-								oFilterDetailItem.setSelected(false);
+								oFilterDetailItem.setProperty('selected', false, true);
 							}
 						});
 					}
-
 
 					var sEventName = sType.slice(0,1).toUpperCase() + sType.slice(1);
 					if (sType === 'filterDetail') {
@@ -949,9 +953,11 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 					press: function () {
 						this.getFilterItems().forEach(function (oFilterItem) {
 							oFilterItem.getItems().forEach(function (oSubItem) {
-								oSubItem.setSelected(false);
+								oSubItem.setProperty('selected', false, true);
 							});
 						});
+
+						this.close();
 
 						// self destruct
 						this._removeFilteringItem.destroy();
@@ -980,10 +986,31 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 				tooltip : this._getText("VIEWSETTINGS_TITLE_" + sType.toUpperCase()),
 				press: function onTabPress (oEvent) {
 					var sPageId = oEvent.getSource().getProperty('key');
-					if (this._currentPageId === sPageId) {
-						this._hideContent();
+					var aItems = this['get' + sPageId.slice(0, 1).toUpperCase() + sPageId.slice(1) + 'Items']();
+					if (this._currentPageId === sPageId || this._currentPageId === this._tabMap['filterDetail'] && aItems && aItems.length > 1) {
+						if (sap.ui.Device.system.phone) {
+							this._cancel();
+						} else {
+							this._hideContent();
+						}
 					} else {
-						this._showContentFor(sPageId);
+						if (aItems && aItems.length === 1) {
+							if (sPageId !== 'filter') {
+								// if there's a single item for 'sort' and 'group' - directly consider it as selected
+								aItems.forEach(function (oItem) {
+									// toggle selection property
+									oItem.setSelected(!oItem.getSelected());
+								});
+								this['fire' + sPageId.slice(0, 1).toUpperCase() + sPageId.slice(1) + 'Selected']({
+									items: aItems
+								});
+								this.close();
+							} else {
+								this._showContentFor('filterDetail', this._findListItemFromViewSettingsItem(aItems[0]), true);
+							}
+						} else {
+							this._showContentFor(sPageId);
+						}
 					}
 				}.bind(this)
 			});
@@ -1001,6 +1028,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			}
 
 			this._getSegmentedButton().updateItems();
+
 		};
 
 
@@ -1008,11 +1036,22 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 * Hides content and collapses in toolbar view.
 		 */
 		ViewSettingsPopover.prototype._hideContent = function () {
-			this._removePageContents(this._currentPageId);
-			this._currentPageId = undefined;
-			this._getPopover().setContentHeight(this._initialHeight);
 			this._removeSegmentedButtonSelection();
-			jQuery.sap.delayedCall(50, this, '_adjustInitialWidth');
+			this._cleanAfterClose();
+			jQuery.sap.delayedCall(0, this, '_adjustInitialWidth');
+		};
+
+
+		/**
+		 * Cleans up the state after close.
+		 * @private
+		 */
+		ViewSettingsPopover.prototype._cleanAfterClose = function () {
+			this._removePageContents(this._currentPageId);
+			this._getPopover().setContentHeight(this._initialHeight);
+			this._removeFooter();
+			this._navigateToPage('Main');
+			this._currentPageId = null;
 		};
 
 
@@ -1078,7 +1117,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 */
 		ViewSettingsPopover.prototype.addAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
 			if (this._isItemsAggregation(sAggregationName)) {
-				!this.getAggregation(sAggregationName) && this._addTab(sAggregationName.replace('Items', ''));
+				(!this.getAggregation(sAggregationName) || this.getAggregation(sAggregationName).length === 0) && this._addTab(sAggregationName.replace('Items', ''));
 				this._handleItemsAggregation.call(this, ['addAggregation', sAggregationName, oObject, bSuppressInvalidate], true);
 			}
 			return Control.prototype.addAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
@@ -1096,7 +1135,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 */
 		ViewSettingsPopover.prototype.insertAggregation = function(sAggregationName, oObject, iIndex, bSuppressInvalidate) {
 			if (this._isItemsAggregation(sAggregationName)) {
-				!this.getAggregation(sAggregationName) && this._addTab(sAggregationName.replace('Items', ''));
+				(!this.getAggregation(sAggregationName) || this.getAggregation(sAggregationName).length === 0) && this._addTab(sAggregationName.replace('Items', ''));
 				this._handleItemsAggregation.call(this, ['insertAggregation', sAggregationName, oObject, iIndex, bSuppressInvalidate], true);
 			}
 			return Control.prototype.insertAggregation.call(this, sAggregationName, oObject, iIndex, bSuppressInvalidate);
@@ -1318,15 +1357,14 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			var oItem = oEvent.getParameter('changedItem');
 			var oListItem = this._findListItemFromViewSettingsItem(oItem);
 			var sParamKey = oEvent.getParameter('propertyKey');
+			var vNewValue = oEvent.getParameter('propertyValue');
 			if (sParamKey === 'text') {
 				sParamKey = 'title';
 			}
 
 			if (oListItem && ['key', 'multiSelect'].indexOf(sParamKey) == -1) {
-				oListItem.setProperty(sParamKey, oEvent.getParameter('propertyValue'));
+				oListItem.setProperty(sParamKey, vNewValue);
 			}
-
-			this._handleFilterDetailItemsAggregationChange(oEvent);
 		};
 
 		/**
@@ -1389,7 +1427,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 				title   : oViewSettingsItem.getText(),
 				type    : sap.m.ListType.Active
 			});
-			bHasDetailsPage && oListItem.attachPress(this._showContentFor.bind(this, 'filterDetail', oListItem)) && oListItem.setType(sap.m.ListType.Navigation);
+			bHasDetailsPage && oListItem.attachPress(this._showContentFor.bind(this, 'filterDetail', oListItem, false)) && oListItem.setType(sap.m.ListType.Navigation);
 
 			return oListItem;
 		};
@@ -1458,22 +1496,23 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 					id        : this._getDetailsPageId()
 				});
 
-				// create back button here, as it is meant to be present only on the details page
-				oBackButton = new sap.m.Button(this.getId() + BACK_BUTTON_SUFFIX, {
-					icon : IconPool.getIconURI("nav-back"),
-					press: this._handleBack.bind(this)
-				});
-
 				var oTitle = new sap.m.Label({
 					text: this._getText("VIEWSETTINGS_TITLE")
 				}).addStyleClass("sapMVSDTitle");
 
 				oDetailHeader = new sap.m.Bar({
-					contentLeft  : [oBackButton],
 					contentMiddle: [oTitle]
 				}).addStyleClass("sapMVSPCompactHeaderBar");
 
 				this._getDetailsPage().addHeaderContent(oDetailHeader);
+
+
+				// create back button here, as it is meant to be present only on the details page
+				oBackButton = new sap.m.Button(this.getId() + BACK_BUTTON_SUFFIX, {
+					icon : IconPool.getIconURI("nav-back"),
+					press: this._handleBack.bind(this)
+				});
+				oDetailHeader.addContentLeft(oBackButton);
 			}
 			return this._detailsPage;
 		};
@@ -1626,7 +1665,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 				oCloseBtn = new Button({
 					icon: IconPool.getIconURI("decline"),
 					ariaLabelledBy: sCloseBtnARIAHiddenDescr,
-					press: this.close.bind(this)
+					press: this._cancel.bind(this)
 				}).addStyleClass('sapMVSPCloseBtn');
 
 				this._toolbar.addContent(this._getSegmentedButton());

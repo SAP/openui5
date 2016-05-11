@@ -64,7 +64,7 @@
 	border-color: @sapUiFieldHoverBorderColor;
 }
 
-.sap-desktop .sapMSlt:not(.sapMSltDisabled):focus {
+html.sap-desktop .sapMSlt:not(.sapMSltDisabled):focus {
 	border-color: @sapUiFieldFocusBorderColor;
 }
 
@@ -159,16 +159,16 @@
 
 /* focus: in the footer all of the selects should get the outline */
 
-.sap-desktop .sapMHeader-CTX .sapMSltIconOnly:focus,
-.sap-desktop .sapMSubHeader-CTX .sapMSltIconOnly:focus,
-.sap-desktop .sapMFooter-CTX .sapMSlt:focus {
+html.sap-desktop .sapMHeader-CTX .sapMSltIconOnly:focus,
+html.sap-desktop .sapMSubHeader-CTX .sapMSltIconOnly:focus,
+html.sap-desktop .sapMFooter-CTX .sapMSlt:focus {
 	outline: 0.0625rem dotted;
 	outline-offset: -0.0625rem;
 }
 
-.sap-desktop .sapMHeader-CTX .sapMSltPressed.sapMSltIconOnly:focus,
-.sap-desktop .sapMSubHeader-CTX .sapMSltPressed.sapMSltIconOnly:focus,
-.sap-desktop .sapMFooter-CTX .sapMSlt:focus {
+html.sap-desktop .sapMHeader-CTX .sapMSltPressed.sapMSltIconOnly:focus,
+html.sap-desktop .sapMSubHeader-CTX .sapMSltPressed.sapMSltIconOnly:focus,
+html.sap-desktop .sapMFooter-CTX .sapMSlt:focus {
 	outline-color: @sapUiContentContrastFocusColor;
 }
 

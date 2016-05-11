@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Test Page for sap.ui.dt.test.report.QUnit</title>
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				type="text/javascript"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-xx-bindingSyntax="complex"
+				data-sap-ui-libs="sap.ui.dt,sap.ui.layout,sap.m"
+				src="../../../../../../../resources/sap-ui-core.js">
+		</script>
+		<style>
+			.minSize {
+				min-width : 100px;
+				min-height: 100px;
+			}
+		</style>
+		<link rel="stylesheet" href="../../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript">
+
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			jQuery.sap.require("sap.m.Button");
+			jQuery.sap.require("sap.ui.dt.test.ElementEnablementTest");
+			jQuery.sap.require("sap.ui.dt.test.report.QUnit");
+
+			var ElementEnablementTest = sap.ui.dt.test.ElementEnablementTest;
+
+			var iQUnitTests = 0;
+			QUnit.log(function(oResult) {
+				iQUnitTests++;
+			});
+
+			jQuery(function() {
+
+				var oElementEnablementTest = new ElementEnablementTest({
+					type : "sap.m.Button"
+				});
+
+				oElementEnablementTest.run().then(function(oResult) {
+
+					var oQUnit = new sap.ui.dt.test.report.QUnit({
+						data : oResult
+					});
+
+					QUnit.module("Given that a sap.m.Button is tested")
+
+					QUnit.test("when the result is returned and displayed with the QUnit report, then", function(assert) {
+						assert.ok(oQUnit, "the QUnit instance is created");
+						assert.ok(iQUnitTests > 4, "and the QUnit tests were running");
+						oQUnit.destroy();
+						oElementEnablementTest.destroy();
+					});
+
+				});
+
+			});
+
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit page for sap.ui.dt.test.report.QUnit</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>

@@ -54,10 +54,8 @@
 		return new sap.ui.model.odata.v2.ODataModel(sServiceUri, {json: bJSON, defaultUpdateMethod : sUpdateMethod});
 	}
 
-	function removeSharedMetadata() {
-		jQuery.each(function(sUri, oData) {
-			delete sap.ui.model.odata.v2.ODataModel.mServiceData[sUri].oMetadata
-		});
+	function cleanServiceDataCache() {
+		sap.ui.model.odata.v2.ODataModel.mServiceData = {};
 	}
 
 	/*module("ODataModelV2 XML", {
@@ -66,7 +64,7 @@
 			oModel = initModel(false);
 		},
 		teardown : function() {
-			removeSharedMetadata();
+			cleanServiceDataCache();
 			oModel.destroy();
 			oModel = undefined;
 			stopServer();
@@ -98,7 +96,7 @@
 		teardown : function() {
 			oModel.destroy();
 			oModel = undefined;
-			removeSharedMetadata();
+			cleanServiceDataCache();
 			stopServer();
 		}
 	});
@@ -233,7 +231,7 @@
 				ok(false, "oNewP Promise resolved");
 			}, function(){
 				ok(true, "oNewP Promise rejected");
-				removeSharedMetadata();
+				cleanServiceDataCache();
 				sServiceUri = sTempService;
 				start();
 			});
@@ -269,7 +267,7 @@
 			})
 			.then(function(result){
 				ok(true, "oNewP2 Promise resolved");
-				removeSharedMetadata();
+				cleanServiceDataCache();
 				sServiceUri = sTempService;
 				start();
 			}, function(){
@@ -980,7 +978,7 @@
 		teardown : function() {
 			oModel.destroy();
 			oModel = undefined;
-			removeSharedMetadata();
+			cleanServiceDataCache();
 			stopServer();
 		}
 	});
@@ -2836,7 +2834,7 @@
 		teardown : function() {
 			oModel.destroy();
 			oModel = undefined;
-			removeSharedMetadata();
+			cleanServiceDataCache();
 			stopServer();
 		}
 	});
@@ -3455,7 +3453,7 @@
 		teardown : function() {
 			oModel.destroy();
 			oModel = undefined;
-			removeSharedMetadata();
+			cleanServiceDataCache();
 			stopServer();
 		}
 	});
@@ -4065,7 +4063,7 @@
 		teardown : function() {
 			oModel.destroy();
 			oModel = undefined;
-			removeSharedMetadata();
+			cleanServiceDataCache();
 			stopServer();
 		}
 	});

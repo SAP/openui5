@@ -57,21 +57,21 @@
 	right: 0.5rem;
 }
 
-.sap-desktop .sapUiCalHead > .sapUiCalHeadB:focus{
+html.sap-desktop .sapUiCalHead > .sapUiCalHeadB:focus{
 	outline: 0.0625rem dotted @sapUiFocus;
 	outline-offset:   -3px;
 }
 
-.sap-desktop .sapUiCalHead > .sapUiCalHeadB:focus:active{
+html.sap-desktop .sapUiCalHead > .sapUiCalHeadB:focus:active{
 	outline-color: @sapUiInvertedFocus;
 }
 
-.sap-desktop[data-sap-ui-browser^="ff"].sap-desktop .sapUiCalHead > .sapUiCalHeadB:focus{
+html[data-sap-ui-browser^="ff"].sap-desktop .sapUiCalHead > .sapUiCalHeadB:focus{
 	outline-offset: 0; /* to hide firefox bug with native outline always displayed */
 }
 
-.sap-desktop[data-sap-ui-browser^="ie"],
-.sap-desktop[data-sap-ui-browser^="ed"]{
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapUiCalHead > .sapUiCalHeadB{
 		position: relative;
 		outline: none;
@@ -107,18 +107,18 @@
 	}
 }
 
-.sap-desktop .sapUiCalHead > .sapUiCalHeadB:focus:not(:hover):not(:active){
+html.sap-desktop .sapUiCalHead > .sapUiCalHeadB:focus:not(:hover):not(:active){
 	background-color: transparent;
 }
 
 .sapUiCalHead > .sapUiCalHeadB,
 .sapUiCalCancel,
-.sap-desktop .sapUiCalHead > .sapUiCalHeadB:hover,
-.sap-desktop .sapUiCalHead > .sapUiCalHeadB:focus{
+html.sap-desktop .sapUiCalHead > .sapUiCalHeadB:hover,
+html.sap-desktop .sapUiCalHead > .sapUiCalHeadB:focus{
 	color: @sapUiLink;
 }
 
-.sap-desktop .sapUiCalHead > .sapUiCalHeadB:active{
+html.sap-desktop .sapUiCalHead > .sapUiCalHeadB:active{
 	color: @sapUiContentContrastTextColor;
 }
 
@@ -126,7 +126,7 @@
 	width: 5.75rem;
 }
 
-.sapUiMedia-Std-Phone .sapUiCalHeadB0{
+html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 	width: 3rem; /* do not overflow buttons on phone */
 }
 
@@ -221,30 +221,30 @@
 }
 
 /* hover and focus makes only sense on desktops. On mobile devices it's not needed */
-.sap-desktop .sapUiCalItem:hover{
+html.sap-desktop .sapUiCalItem:hover{
 	background-color: darken(@sapUiContentForegroundColor,5);
 }
 
-.sap-desktop .sapUiCalItem:focus > .sapUiCalItemText,
-.sap-desktop .sapUiCalMonthPicker .sapUiCalItem:focus,
-.sap-desktop .sapUiCalYearPicker .sapUiCalItem:focus{
+html.sap-desktop .sapUiCalItem:focus > .sapUiCalItemText,
+html.sap-desktop .sapUiCalMonthPicker .sapUiCalItem:focus,
+html.sap-desktop .sapUiCalYearPicker .sapUiCalItem:focus{
 	outline: 0.0625rem dotted @sapUiFocus;
 	outline-offset: -3px;
 }
 
-.sap-desktop .sapUiCalMonthPicker .sapUiCalItem:focus,
-.sap-desktop .sapUiCalYearPicker .sapUiCalItem:focus{
+html.sap-desktop .sapUiCalMonthPicker .sapUiCalItem:focus,
+html.sap-desktop .sapUiCalYearPicker .sapUiCalItem:focus{
 	outline-offset: -4px;
 }
 
-.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetween):focus > .sapUiCalItemText,
-.sap-desktop .sapUiCalMonthPicker .sapUiCalItemSel:focus,
-.sap-desktop .sapUiCalYearPicker .sapUiCalItemSel:focus{
+html.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetween):focus > .sapUiCalItemText,
+html.sap-desktop .sapUiCalMonthPicker .sapUiCalItemSel:focus,
+html.sap-desktop .sapUiCalYearPicker .sapUiCalItemSel:focus{
 	outline-color: @sapUiInvertedFocus;
 }
 
-.sap-desktop[data-sap-ui-browser^="ie"],
-.sap-desktop[data-sap-ui-browser^="ed"]{
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapUiCalItem:focus > .sapUiCalItemText,
 	.sapUiCalMonthPicker .sapUiCalItem:focus,
 	.sapUiCalYearPicker .sapUiCalItem:focus{
@@ -278,8 +278,8 @@
 	}
 }
 
-.sap-desktop .sapUiCalItemWeekEnd:hover,
-.sap-desktop .sapUiCalItemWeekEnd:focus{
+html.sap-desktop .sapUiCalItemWeekEnd:hover,
+html.sap-desktop .sapUiCalItemWeekEnd:focus{
 	background-color: darken(@sapUiContentForegroundColor,10);
 }
 
@@ -293,8 +293,8 @@
 	color: lighten(@sapUiStandardText, 50);
 }
 
-.sap-desktop .sapUiCalItemOtherMonth:hover,
-.sap-desktop .sapUiCalItemOtherMonth:focus{
+html.sap-desktop .sapUiCalItemOtherMonth:hover,
+html.sap-desktop .sapUiCalItemOtherMonth:focus{
 	background-color: darken(@sapUiListBackground , 10);
 }
 
@@ -312,8 +312,8 @@
 	color: @sapUiStandardText;
 }
 
-.sap-desktop .sapUiCalItemSel:hover,
-.sap-desktop .sapUiCalItemSel:focus{
+html.sap-desktop .sapUiCalItemSel:hover,
+html.sap-desktop .sapUiCalItemSel:focus{
 	background-color: darken(@sapUiSelected, 10);
 }
 
@@ -323,8 +323,8 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalYearPicker .sapUiCalItemSel
 	border-color: @sapUiInvertedFocus;
 }
 
-.sap-desktop .sapUiCalItemSelBetween:hover,
-.sap-desktop .sapUiCalItemSelBetween:focus{
+html.sap-desktop .sapUiCalItemSelBetween:hover,
+html.sap-desktop .sapUiCalItemSelBetween:focus{
 	background-color: lighten(@sapUiSelected, 40);
 }
 
@@ -646,7 +646,7 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalYearPicker .sapUiCalItemSel
 /*** Phone ***/
 /* make calendar full-screen if on popup (DatePicker), but not if stand alone */
 
-.sap-phone .sapUiCal[data-sap-ui-popup]{
+html.sap-phone .sapUiCal[data-sap-ui-popup]{
 	position: absolute;
 	top: 0 !important;
 	bottom: 0 !important;
@@ -656,8 +656,8 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalYearPicker .sapUiCalItemSel
 	border: none;
 }
 
-.sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCalContent > .sapUiCalMonthPicker,
-.sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCalContent > .sapUiCalYearPicker{
+html.sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCalContent > .sapUiCalMonthPicker,
+html.sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCalContent > .sapUiCalYearPicker{
 	width: 100%;
 	box-sizing: border-box;
 	margin: 0;
@@ -666,12 +666,12 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalYearPicker .sapUiCalItemSel
 	padding-bottom: 1rem;
 }
 
-.sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCalCancel{
+html.sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCalCancel{
 	display: block;
 }
 
-.sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCalContent > .sapUiCalMonthPicker,
-.sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCalContent > .sapUiCalYearPicker{
+html.sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCalContent > .sapUiCalMonthPicker,
+html.sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCalContent > .sapUiCalYearPicker{
 	left: 0;
 }
 

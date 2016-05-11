@@ -21,7 +21,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './DatePickerRendere
 	 */
 	DateRangeSelectionRenderer.writeInnerValue = function(oRm, oControl) {
 
-		oRm.writeAttributeEscaped("value", oControl._formatValue(oControl.getDateValue(), oControl.getSecondDateValue()));
+		if (oControl._bValid) {
+			oRm.writeAttributeEscaped("value", oControl._formatValue(oControl.getDateValue(), oControl.getSecondDateValue()));
+		} else {
+			oRm.writeAttributeEscaped("value", oControl.getValue());
+		}
 
 	};
 

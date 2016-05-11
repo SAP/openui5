@@ -104,22 +104,9 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtensi
 
 
 	/*
-	 * Provides utility functions related to the table controls
-	 *
-	 * TBD: Maybe some of them might be relevant also in other usecases and there should
-	 *      be provided either on the control itself or as separate class.
+	 * Provides utility functions used this extension
 	 */
-	var TableHelper = {
-
-		/*
-		 * Known basic cell types in the table
-		 */
-		CELLTYPES : {
-			DATACELL : "DATACELL", // standard data cell (standard, group or sum)
-			COLUMNHEADER : "COLUMNHEADER", // column header
-			ROWHEADER : "ROWHEADER", // row header (standard, group or sum)
-			COLUMNROWHEADER : "COLUMNROWHEADER" // select all row selector (top left cell)
-		},
+	var ExtensionHelper = {
 
 		/*
 		 * If the current focus is on a cell of the table, this function returns
@@ -139,75 +126,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtensi
 				return null;
 			}
 
-			if (oCellRef.nodeName.toLowerCase() == "td") {
-				var $Cell = jQuery(oCellRef);
-				if ($Cell.attr("role") == "gridcell") {
-					return {type: TableHelper.CELLTYPES.DATACELL, cell: $Cell};
-				}
-			} else {
-				var $Cell = jQuery(oCellRef);
-				if ($Cell.attr("role") == "columnheader") {
-					return {type: TableHelper.CELLTYPES.COLUMNHEADER, cell: $Cell};
-				}
-				if ($Cell.hasClass("sapUiTableRowHdr")) {
-					return {type: TableHelper.CELLTYPES.ROWHEADER, cell: $Cell};
-				}
-				if ($Cell.hasClass("sapUiTableColRowHdr")) {
-					return {type: TableHelper.CELLTYPES.COLUMNROWHEADER, cell: $Cell};
-				}
-			}
-
-			return null;
-		},
-
-		/*
-		 * Returns the index of the column of the current focused cell
-		 */
-		getColumnIndexOfFocusedCell : function(oTable) {
-			var oInfo = TableUtils.getFocusedItemInfo(oTable);
-			return oInfo.cellInRow - (TableUtils.hasRowHeader(oTable) ? 1 : 0);
-		},
-
-		/*
-		 * Returns the index of the row (in the rows aggregation) of the current focused cell
-		 */
-		getRowIndexOfFocusedCell : function(oTable) {
-			var oInfo = TableUtils.getFocusedItemInfo(oTable);
-			return Math.floor(oInfo.cell / oInfo.columnCount) - oTable._getHeaderRowCount();
-		},
-
-		/*
-		 * Returns the logical number of rows
-		 * Optionally empty visible rows are added (in case that the number of data
-		 * rows is smaller than the number of visible rows)
-		 */
-		getTotalRowCount : function(oTable, bIncludeEmptyRows) {
-			var iRowCount = oTable._getRowCount();
-			if (bIncludeEmptyRows) {
-				iRowCount = Math.max(iRowCount, TableHelper.getVisibleRowCount(oTable));
-			}
-			return iRowCount;
-		},
-
-		/*
-		 * Returns the number of currently visible rows
-		 */
-		getVisibleRowCount : function(oTable) {
-			return oTable.getVisibleRowCount();
-		},
-
-		/*
-		 * Returns whether the given cell is located in a group header.
-		 */
-		isInGroupingRow : function($Cell) {
-			return $Cell.hasClass("sapUiTableGroupHeader") /*Row Header*/ || $Cell.parent().hasClass("sapUiTableGroupHeader"); /*Data Cell*/
-		},
-
-		/*
-		 * Returns whether the given cell is located in a summary row.
-		 */
-		isInSumRow : function($Cell) {
-			return $Cell.hasClass("sapUiAnalyticalTableSum") /*Row Header*/ || $Cell.parent().hasClass("sapUiAnalyticalTableSum"); /*Data Cell*/
+			return TableUtils.getCellInfo(oCellRef);
 		},
 
 		/*
@@ -215,7 +134,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtensi
 		 */
 		isHiddenCell : function($Cell) {
 			return $Cell.parent().hasClass("sapUiTableRowHidden") || $Cell.hasClass("sapUiTableCellHidden")
-					|| (TableHelper.isInGroupingRow($Cell) && $Cell.hasClass("sapUiTableTdFirst") && !$Cell.hasClass("sapUiTableMeasureCell"));
+					|| (TableUtils.isInGroupingRow($Cell) && $Cell.hasClass("sapUiTableTdFirst") && !$Cell.hasClass("sapUiTableMeasureCell"));
 		},
 
 		/*
@@ -224,43 +143,6 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtensi
 		isTreeColumnCell : function(oExtension, $Cell) {
 			return oExtension._hasTreeColumn && $Cell.hasClass("sapUiTableTdFirst");
 		},
-
-		/*
-		 * Returns whether column with the given index is a fixed column.
-		 */
-		isFixedColumn : function(oTable, iColIdx) {
-			return iColIdx < oTable.getFixedColumnCount();
-		},
-
-		/*
-		 * Returns the Row, Column and Cell instances for the given row and column index.
-		 */
-		getRowColCell : function(oTable, iRowIdx, iColIdx) {
-			var oRow = oTable.getRows()[iRowIdx];
-			var oColumn = oTable._getVisibleColumns()[iColIdx];
-			var oCell = oRow && oRow.getCells()[iColIdx];
-
-			//TBD: Clarify why this is needed!
-			if (oCell && oCell.data("sap-ui-colid") != oColumn.getId()) {
-				var aCells = oRow.getCells();
-				for (var i = 0; i < aCells.length; i++) {
-					if (aCells[i].data("sap-ui-colid") === oColumn.getId()) {
-						oCell = aCells[i];
-						break;
-					}
-				}
-			}
-
-			return {row: oRow, column: oColumn, cell: oCell};
-		}
-
-	};
-
-
-	/*
-	 * Provides utility functions used this extension
-	 */
-	var ExtensionHelper = {
 
 		/*
 		 * Determines the current row and column and updates the hidden description texts of the table accordingly.
@@ -273,10 +155,10 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtensi
 				bIsInitial = false;
 
 			if (oIN) {
-				var iColumnNumber = TableHelper.getColumnIndexOfFocusedCell(oTable) + 1; //+1 -> we want to announce a count and not the index
-				var iRowNumber = TableHelper.getRowIndexOfFocusedCell(oTable) + oTable.getFirstVisibleRow() + 1; //same here + take virtualization into account
+				var iColumnNumber = TableUtils.getColumnIndexOfFocusedCell(oTable) + 1; //+1 -> we want to announce a count and not the index
+				var iRowNumber = TableUtils.getRowIndexOfFocusedCell(oTable) + oTable.getFirstVisibleRow() + 1; //same here + take virtualization into account
 				var iColCount = TableUtils.getVisibleColumnCount(oTable);
-				var iRowCount = TableHelper.getTotalRowCount(oTable, true);
+				var iRowCount = TableUtils.getTotalRowCount(oTable, true);
 
 				bIsRowChanged = oExtension._iLastRowNumber != iRowNumber || (oExtension._iLastRowNumber == iRowNumber && oExtension._iLastColumnNumber == iColumnNumber);
 				bIsColChanged = oExtension._iLastColumnNumber != iColumnNumber;
@@ -365,26 +247,26 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtensi
 				return;
 			}
 
-			var iRow = TableHelper.getRowIndexOfFocusedCell(oTable),
-				iCol = TableHelper.getColumnIndexOfFocusedCell(oTable),
-				oTableInstances = TableHelper.getRowColCell(oTable, iRow, iCol),
+			var iRow = TableUtils.getRowIndexOfFocusedCell(oTable),
+				iCol = TableUtils.getColumnIndexOfFocusedCell(oTable),
+				oTableInstances = TableUtils.getRowColCell(oTable, iRow, iCol),
 				oInfo = null,
-				bHidden = TableHelper.isHiddenCell($Cell),
-				bIsTreeColumnCell = TableHelper.isTreeColumnCell(this, $Cell),
+				bHidden = ExtensionHelper.isHiddenCell($Cell),
+				bIsTreeColumnCell = ExtensionHelper.isTreeColumnCell(this, $Cell),
 				aDefaultLabels = ExtensionHelper.getAriaAttributesFor(this, TableAccExtension.ELEMENTTYPES.DATACELL, {
 					index: iCol,
 					column: oTableInstances.column,
-					fixed: TableHelper.isFixedColumn(oTable, iCol)
+					fixed: TableUtils.isFixedColumn(oTable, iCol)
 				})["aria-labelledby"] || [],
 				aDescriptions = [],
 				aLabels = [sTableId + "-rownumberofrows", sTableId + "-colnumberofcols"];
 
-			if (TableHelper.isInGroupingRow($Cell)) {
+			if (TableUtils.isInGroupingRow($Cell)) {
 				aLabels.push(sTableId + "-ariarowgrouplabel");
 				aLabels.push(sTableId + "-rows-row" + iRow + "-groupHeader");
 			}
 
-			if (TableHelper.isInSumRow($Cell)) {
+			if (TableUtils.isInSumRow($Cell)) {
 				var iLevel = $Cell.parent().data("sap-ui-level");
 				if (iLevel == 0) {
 					aLabels.push(sTableId + "-ariagrandtotallabel");
@@ -433,8 +315,8 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtensi
 		modifyAccOfROWHEADER : function($Cell, bOnCellFocus) {
 			var oTable = this.getTable(),
 				sTableId = oTable.getId(),
-				bGroupHeader = TableHelper.isInGroupingRow($Cell),
-				bSum = TableHelper.isInSumRow($Cell),
+				bGroupHeader = TableUtils.isInGroupingRow($Cell),
+				bSum = TableUtils.isInSumRow($Cell),
 				oRow = oTable.getRows()[$Cell.attr("data-sap-ui-rowindex")],
 				aDefaultLabels = ExtensionHelper.getAriaAttributesFor(this, TableAccExtension.ELEMENTTYPES.ROWHEADER)["aria-labelledby"] || [],
 				aLabels = aDefaultLabels.concat([sTableId + "-rownumberofrows"]);
@@ -626,7 +508,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtensi
 					mAttributes["role"] = "heading";
 					break;
 
-				case TableAccExtension.ELEMENTTYPES.COLUMNHEADER_ROW: //The area which contains the column headers (TableHelper.CELLTYPES.COLUMNHEADER)
+				case TableAccExtension.ELEMENTTYPES.COLUMNHEADER_ROW: //The area which contains the column headers (TableUtils.CELLTYPES.COLUMNHEADER)
 					if (oTable.getSelectionMode() === sap.ui.table.SelectionMode.None ||
 							 oTable.getSelectionBehavior() === sap.ui.table.SelectionBehavior.RowOnly) {
 						mAttributes["role"] = "row";
@@ -634,11 +516,16 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtensi
 					break;
 
 				case TableAccExtension.ELEMENTTYPES.TH: //The "technical" column headers
-					mAttributes["role"] = "columnheader";
+					var bHasFixedColumns = oTable.getFixedColumnCount() > 0;
+					mAttributes["role"] = bHasFixedColumns ? "columnheader" : "presentation";
 					mAttributes["scope"] = "col";
-					if (mParams && mParams.column) {
-						mAttributes["aria-owns"] = mParams.column.getId();
-						mAttributes["aria-labelledby"] = mParams.column.getId();
+					if (bHasFixedColumns) {
+						if (mParams && mParams.column) {
+							mAttributes["aria-owns"] = mParams.column.getId();
+							mAttributes["aria-labelledby"] = mParams.column.getId();
+						}
+					} else {
+						mAttributes["aria-hidden"] = "true";
 					}
 					break;
 
@@ -763,7 +650,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtensi
 		 */
 		onfocusin : function(oEvent) {
 			var oTable = this.getTable();
-			if (!oTable) {
+			if (!oTable || !TableUtils.getCellInfo(oEvent.target)) {
 				return;
 			}
 			if (oTable._mTimeouts._cleanupACCExtension) {
@@ -801,15 +688,15 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtensi
 	 * @public (Part of the API for Table control only!)
 	 */
 	TableAccExtension.ELEMENTTYPES = {
-		DATACELL : 			TableHelper.CELLTYPES.DATACELL, 		// @see TableHelper.CELLTYPES
-		COLUMNHEADER : 		TableHelper.CELLTYPES.COLUMNHEADER, 	// @see TableHelper.CELLTYPES
-		ROWHEADER : 		TableHelper.CELLTYPES.ROWHEADER, 		// @see TableHelper.CELLTYPES
-		COLUMNROWHEADER : 	TableHelper.CELLTYPES.COLUMNROWHEADER, 	// @see TableHelper.CELLTYPES
+		DATACELL : 			TableUtils.CELLTYPES.DATACELL, 		// @see TableUtils.CELLTYPES
+		COLUMNHEADER : 		TableUtils.CELLTYPES.COLUMNHEADER, 	// @see TableUtils.CELLTYPES
+		ROWHEADER : 		TableUtils.CELLTYPES.ROWHEADER, 		// @see TableUtils.CELLTYPES
+		COLUMNROWHEADER : 	TableUtils.CELLTYPES.COLUMNROWHEADER, 	// @see TableUtils.CELLTYPES
 		ROOT : 				"ROOT", 								// The tables root dom element
 		CONTENT: 			"CONTENT",								// The content area of the table which contains all the table elements, rowheaders, columnheaders, etc
 		TABLE : 			"TABLE", 								// The "real" table element(s)
 		TABLEHEADER : 		"TABLEHEADER", 							// The table header area
-		COLUMNHEADER_ROW : 	"COLUMNHEADER_ROW", 					// The area which contains the column headers (TableHelper.CELLTYPES.COLUMNHEADER)
+		COLUMNHEADER_ROW : 	"COLUMNHEADER_ROW", 					// The area which contains the column headers (TableUtils.CELLTYPES.COLUMNHEADER)
 		TH : 				"TH", 									// The "technical" column headers
 		ROWHEADER_TD : 		"ROWHEADER_TD", 						// The "technical" row headers
 		TR : 				"TR", 									// The rows
@@ -844,7 +731,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtensi
 			ExtensionHelper.cleanupCellModifications(this);
 		}
 
-		var oInfo = TableHelper.getInfoOfFocusedCell(this);
+		var oInfo = ExtensionHelper.getInfoOfFocusedCell(this);
 		if (!oInfo || !oInfo.cell || !oInfo.type || !ExtensionHelper["modifyAccOf" + oInfo.type]) {
 			return;
 		}
@@ -852,13 +739,13 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtensi
 		if (!bOnCellFocus) {
 			// Delayed reinitialize the focus when scrolling (focus stays on the same cell, only content is replaced)
 			// to force screenreader announcements
-			if (oInfo.type === TableHelper.CELLTYPES.DATACELL || TableHelper.CELLTYPES.ROWHEADER) {
+			if (oInfo.type === TableUtils.CELLTYPES.DATACELL || TableUtils.CELLTYPES.ROWHEADER) {
 				oTable._mTimeouts._cleanupACCFocusRefresh = jQuery.sap.delayedCall(100, this, function($Cell) {
 					var oTable = this.getTable();
 					if (!oTable) {
 						return;
 					}
-					var oInfo = TableHelper.getInfoOfFocusedCell(this);
+					var oInfo = ExtensionHelper.getInfoOfFocusedCell(this);
 					if (oInfo && oInfo.cell && oInfo.type && oInfo.cell.get(0) && $Cell.get(0) === oInfo.cell.get(0)) {
 						oInfo.cell.blur().focus();
 					}

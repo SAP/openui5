@@ -113,7 +113,7 @@
 									<ColumnListItem type="Navigation" press="onNavToSample" vAlign="Middle">
 										<cells>
 											<Text text="{entity>name}" class="entitySampleName" wrapping="false" />
-											<Text text="{entity>description}" />
+											<core:HTML content="{path: 'entity>description', formatter:'.descriptionText'}"></core:HTML>
 										</cells>
 									</ColumnListItem>
 								</items>
