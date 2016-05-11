@@ -5,8 +5,9 @@
 //Provides class sap.ui.model.odata.v4.lib.Cache
 sap.ui.define([
 	"jquery.sap.global",
-	"./_Helper"
-], function (jQuery, _Helper) {
+	"./_Helper",
+	"./_SyncPromise"
+], function (jQuery, _Helper, _SyncPromise) {
 	"use strict";
 
 	var Cache;
@@ -18,10 +19,16 @@ sap.ui.define([
 	 * @param {object} mQueryOptions The query options
 	 * @param {function(string,any)} fnResultHandler
 	 *   The function to process the converted options getting the name and the value
+	 * @param {boolean} [bDropSystemQueryOptions=false]
+	 *   Whether all system query options are dropped (useful for non-GET requests)
 	 */
-	function convertSystemQueryOptions(mQueryOptions, fnResultHandler) {
+	function convertSystemQueryOptions(mQueryOptions, fnResultHandler, bDropSystemQueryOptions) {
 		Object.keys(mQueryOptions).forEach(function (sKey) {
 			var vValue = mQueryOptions[sKey];
+
+			if (bDropSystemQueryOptions && sKey[0] === '$') {
+				return;
+			}
 
 			switch (sKey) {
 				case "$expand":
@@ -159,12 +166,12 @@ sap.ui.define([
 	function CollectionCache(oRequestor, sResourcePath, mQueryOptions) {
 		var sQuery = Cache.buildQueryString(mQueryOptions);
 
-		sQuery += sQuery.length ? "&" : "?";
-		this.oRequestor = oRequestor;
-		this.sResourcePath = sResourcePath + sQuery;
 		this.sContext = undefined;  // the "@odata.context" from the responses
-		this.iMaxElements = -1;     // the max. number of elements if known, -1 otherwise
 		this.aElements = [];        // the available elements
+		this.iMaxElements = -1;     // the max. number of elements if known, -1 otherwise
+		this.mQueryOptions = mQueryOptions;
+		this.oRequestor = oRequestor;
+		this.sResourcePath = sResourcePath + sQuery + (sQuery.length ? "&" : "?");
 	}
 
 	/**
@@ -183,7 +190,7 @@ sap.ui.define([
 	 * @param {function} [fnDataRequested]
 	 *   The function is called directly after all back end requests have been triggered.
 	 *   If no back end request is needed, the function is not called.
-	 * @returns {Promise}
+	 * @returns {SyncPromise}
 	 *   A promise to be resolved with the requested range given as an OData response object (with
 	 *   "@odata.context" and the rows as an array in the property <code>value</code>) or a single
 	 *   value (in case of drill-down). If an HTTP request fails, the error from the _Requestor is
@@ -206,7 +213,7 @@ sap.ui.define([
 		}
 		if (iLength < 0) {
 			throw new Error("Illegal length " + iLength + ", must be >= 0");
-		} else if (iLength !== 1 && sPath != undefined) {
+		} else if (iLength !== 1 && sPath !== undefined) {
 			throw new Error("Cannot drill-down for length " + iLength);
 		}
 
@@ -234,10 +241,10 @@ sap.ui.define([
 			fnDataRequested();
 		}
 
-		return Promise.all(this.aElements.slice(iIndex, iEnd)).then(function () {
+		return _SyncPromise.all(this.aElements.slice(iIndex, iEnd)).then(function () {
 			var oResult;
 
-			if (sPath != undefined) {
+			if (sPath !== undefined) {
 				oResult = that.aElements[iIndex];
 				return drillDown(oResult, sPath, function (sSegment) {
 					jQuery.sap.log.error("Failed to drill-down into " + that.sResourcePath
@@ -292,13 +299,13 @@ sap.ui.define([
 	CollectionCache.prototype.update = function (sGroupId, sPropertyName, vValue, sEditUrl, sPath) {
 		var oBody = {},
 			mHeaders,
-			oResult = drillDown(this.aElements, sPath),
-			that = this;
+			oResult = drillDown(this.aElements, sPath);
 
-		oBody[sPropertyName] = oResult[sPropertyName] = vValue;
+		sEditUrl += Cache.buildQueryString(this.mQueryOptions, true);
 		mHeaders = {"If-Match" : oResult["@odata.etag"]};
+		oBody[sPropertyName] = oResult[sPropertyName] = vValue;
 
-		return that.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders, oBody)
+		return this.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders, oBody)
 			.then(function (oPatchResult) {
 				for (sPropertyName in oResult) {
 					if (sPropertyName in oPatchResult) {
@@ -329,10 +336,11 @@ sap.ui.define([
 	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bSingleProperty, bPost) {
 		this.bPost = bPost;
 		this.bPosting = false;
+		this.oPromise = null;
+		this.mQueryOptions = mQueryOptions;
 		this.oRequestor = oRequestor;
 		this.sResourcePath = sResourcePath + Cache.buildQueryString(mQueryOptions);
 		this.bSingleProperty = bSingleProperty;
-		this.oPromise = null;
 	}
 
 	/**
@@ -343,7 +351,7 @@ sap.ui.define([
 	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
 	 * @param {object} [oData]
 	 *   The data to be sent with the POST request
-	 * @returns {Promise}
+	 * @returns {SyncPromise}
 	 *   A promise to be resolved with the result of the request.
 	 * @throws {Error}
 	 *   If the cache does not allow POST or another POST is still being processed.
@@ -360,15 +368,16 @@ sap.ui.define([
 		if (this.bPosting) {
 			throw new Error("Parallel POST requests not allowed");
 		}
-		this.oPromise = this.oRequestor.request("POST", this.sResourcePath, sGroupId, undefined,
-				oData)
-			.then(function (oResult) {
-				that.bPosting = false;
-				return oResult;
-			}, function (oError) {
-				that.bPosting = false;
-				throw oError;
-			});
+		this.oPromise = _SyncPromise.resolve(
+				this.oRequestor.request("POST", this.sResourcePath, sGroupId, undefined, oData)
+					.then(function (oResult) {
+						that.bPosting = false;
+						return oResult;
+					}, function (oError) {
+						that.bPosting = false;
+						throw oError;
+					})
+			);
 		this.bPosting = true;
 		return this.oPromise;
 	};
@@ -384,7 +393,7 @@ sap.ui.define([
 	 * @param {function()} [fnDataRequested]
 	 *   The function is called directly after the back end request has been triggered.
 	 *   If no back end request is needed, the function is not called.
-	 * @returns {Promise}
+	 * @returns {SyncPromise}
 	 *   A promise to be resolved with the element.
 	 *
 	 *   A {@link #refresh} cancels a pending request. Its promise is rejected with an error that
@@ -401,8 +410,8 @@ sap.ui.define([
 			if (this.bPost) {
 				throw new Error("Read before a POST request");
 			}
-			oPromise = this.oRequestor.request("GET", sResourcePath, sGroupId)
-				.then(function (oResult) {
+			oPromise = _SyncPromise.resolve(
+				this.oRequestor.request("GET", sResourcePath, sGroupId).then(function (oResult) {
 					var oError;
 
 					if (that.oPromise !== oPromise) {
@@ -412,7 +421,7 @@ sap.ui.define([
 						throw oError;
 					}
 					return oResult;
-				});
+				}));
 			if (fnDataRequested) {
 				fnDataRequested();
 			}
@@ -481,10 +490,11 @@ sap.ui.define([
 			var oBody = {},
 				mHeaders;
 
+			sEditUrl += Cache.buildQueryString(that.mQueryOptions, true);
 			oResult = drillDown(oResult, sPath);
+			mHeaders = {"If-Match" : oResult["@odata.etag"]};
 			oBody[sPropertyName]
 				= oResult[that.bSingleProperty ? "value" : sPropertyName] = vValue;
-			mHeaders = {"If-Match" : oResult["@odata.etag"]};
 
 			return that.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders, oBody)
 				.then(function (oPatchResult) {
@@ -504,12 +514,14 @@ sap.ui.define([
 
 	Cache = {
 		/**
-		 * Builds a query string from the parameter map. Converts $select (which may be an array)
-		 * and $expand (which must be an object) accordingly. All other system query options are
-		 * rejected.
+		 * Builds a query string from the parameter map. Converts the known OData system query
+		 * options, all other OData system query options are rejected; with
+		 * <code>bDropSystemQueryOptions</code> they are dropped altogether.
 		 *
 		 * @param {object} mQueryOptions
 		 *   A map of key-value pairs representing the query string
+		 * @param {boolean} [bDropSystemQueryOptions=false]
+		 *   Whether all system query options are dropped (useful for non-GET requests)
 		 * @returns {string}
 		 *   The query string; it is empty if there are no options; it starts with "?" otherwise
 		 * @example
@@ -531,8 +543,9 @@ sap.ui.define([
 		 *		"sap-client" : "003"
 		 *	}
 		 */
-		buildQueryString : function (mQueryOptions) {
-			return _Helper.buildQuery(Cache.convertQueryOptions(mQueryOptions));
+		buildQueryString : function (mQueryOptions, bDropSystemQueryOptions) {
+			return _Helper.buildQuery(
+				Cache.convertQueryOptions(mQueryOptions, bDropSystemQueryOptions));
 		},
 
 		/**
@@ -582,13 +595,16 @@ sap.ui.define([
 		},
 
 		/**
-		 * Converts the query options. All system query options are converted to strings, so that
-		 * the result can be used for _Helper.buildQuery.
+		 * Converts the query options. All known OData system query options are converted to
+		 * strings, so that the result can be used for _Helper.buildQuery; with
+		 * <code>bDropSystemQueryOptions</code> they are dropped altogether.
 		 *
 		 * @param {object} mQueryOptions The query options
+		 * @param {boolean} [bDropSystemQueryOptions=false]
+		 *   Whether all system query options are dropped (useful for non-GET requests)
 		 * @returns {object} The converted query options
 		 */
-		convertQueryOptions : function (mQueryOptions) {
+		convertQueryOptions : function (mQueryOptions, bDropSystemQueryOptions) {
 			var mConvertedQueryOptions = {};
 
 			if (!mQueryOptions) {
@@ -596,7 +612,7 @@ sap.ui.define([
 			}
 			convertSystemQueryOptions(mQueryOptions, function (sKey, vValue) {
 				mConvertedQueryOptions[sKey] = vValue;
-			});
+			}, bDropSystemQueryOptions);
 			return mConvertedQueryOptions;
 		},
 

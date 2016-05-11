@@ -6,8 +6,9 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_Requestor",
+	"sap/ui/model/odata/v4/lib/_SyncPromise",
 	"sap/ui/test/TestUtils"
-], function (jQuery, _Cache, _Helper, _Requestor, TestUtils) {
+], function (jQuery, _Cache, _Helper, _Requestor, _SyncPromise, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -71,7 +72,8 @@ sap.ui.require([
 			// code under test
 			oPromise = oCache.read(oFixture.index, oFixture.length, "group");
 
-			assert.ok(oPromise instanceof Promise, "returns a Promise");
+			assert.ok(!oPromise.isFulfilled());
+			assert.ok(!oPromise.isRejected());
 			return oPromise.then(function (aResult) {
 				assert.deepEqual(aResult, {
 					"@odata.context" : "$metadata#TEAMS",
@@ -295,6 +297,18 @@ sap.ui.require([
 		});
 
 		assert.deepEqual(_Cache.convertQueryOptions({
+			foo : "bar",
+			"sap-client" : "111",
+			$expand : oExpand,
+			$filter : "BuyerName eq 'SAP'",
+			$orderby : "GrossAmount asc",
+			$select : ["select1", "select2"]
+		}, /*bDropSystemQueryOptions*/true), {
+			foo : "bar",
+			"sap-client" : "111"
+		});
+
+		assert.deepEqual(_Cache.convertQueryOptions({
 			$select : "singleSelect"
 		}), {
 			$select : "singleSelect"
@@ -356,16 +370,16 @@ sap.ui.require([
 			oQueryParams = {};
 
 		oCacheMock.expects("convertQueryOptions")
-			.withExactArgs(undefined).returns(undefined);
+			.withExactArgs(undefined, undefined).returns(undefined);
 
-		assert.strictEqual(_Cache.buildQueryString(undefined), "");
+		assert.strictEqual(_Cache.buildQueryString(), "");
 
 		oCacheMock.expects("convertQueryOptions")
-			.withExactArgs(oQueryParams).returns(oConvertedQueryParams);
+			.withExactArgs(sinon.match.same(oQueryParams), true).returns(oConvertedQueryParams);
 		this.mock(_Helper).expects("buildQuery")
 			.withExactArgs(sinon.match.same(oConvertedQueryParams)).returns("?query");
 
-		assert.strictEqual(_Cache.buildQueryString(oQueryParams), "?query");
+		assert.strictEqual(_Cache.buildQueryString(oQueryParams, true), "?query");
 	});
 
 	//*********************************************************************************************
@@ -418,7 +432,7 @@ sap.ui.require([
 				+ "$filter=CurrencyCode%20eq%20'EUR';$select=CurrencyCode),SOITEM_2_SO)"
 				+ "&sap-client=003"
 		}].forEach(function (oFixture) {
-			assert.strictEqual(_Cache.buildQueryString(oFixture.o, false), "?" + oFixture.s,
+			assert.strictEqual(_Cache.buildQueryString(oFixture.o), "?" + oFixture.s,
 				oFixture.s);
 		});
 	});
@@ -486,7 +500,7 @@ sap.ui.require([
 			sResourcePath = "Employees('1')";
 
 		this.mock(_Cache).expects("buildQueryString")
-			.withExactArgs(mQueryParams).returns("?~");
+			.withExactArgs(sinon.match.same(mQueryParams)).returns("?~");
 		this.mock(oRequestor).expects("request")
 			.withExactArgs("GET", sResourcePath + "?~", "group")
 			.returns(Promise.resolve(oExpectedResult));
@@ -507,6 +521,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("read single property", function (assert) {
 		var oExpectedResult = {value : "John Doe"},
+			oPromise,
 			oRequestor = _Requestor.create("/~/"),
 			sResourcePath = "Employees('1')/Name",
 			oCache;
@@ -521,9 +536,12 @@ sap.ui.require([
 		assert.throws(function () {
 			oCache.post();
 		}, /POST request not allowed/);
-		return oCache.read().then(function (sName) {
+		oPromise = oCache.read().then(function (sName) {
 			assert.strictEqual(sName, "John Doe", "automatic {value : ...} unwrapping");
 		});
+		assert.ok(!oPromise.isFulfilled());
+		assert.ok(!oPromise.isRejected());
+		return oPromise;
 	});
 
 	//*********************************************************************************************
@@ -619,14 +637,21 @@ sap.ui.require([
 				SideEffect : "after"
 				// SOITEM_2_PRODUCT not present in PATCH response!
 			},
-			oCache = _Cache.create(oRequestor, sResourcePath, {$expand : {SO_2_SOITEM : true}});
+			oCache = _Cache.create(oRequestor, sResourcePath, {
+				$expand : {SO_2_SOITEM : true},
+				føø : "bãr",
+				"sap-client" : "111"
+			});
 
 		oRequestorMock.expects("request")
-			.withExactArgs("GET", sResourcePath + "?$expand=SO_2_SOITEM&$skip=0&$top=1", "groupId")
+			.withExactArgs("GET", sResourcePath
+				+ "?$expand=SO_2_SOITEM&f%C3%B8%C3%B8=b%C3%A3r&sap-client=111&$skip=0&$top=1",
+				"groupId")
 			.returns(oPromise);
 		oCache.read(0, 1, "groupId"); // triggers GET
 		oRequestorMock.expects("request")
-			.withExactArgs("PATCH", sEditUrl, "updateGroupId", {"If-Match" : sETag}, {Note : "foo"})
+			.withExactArgs("PATCH", sEditUrl + "?f%C3%B8%C3%B8=b%C3%A3r&sap-client=111",
+				"updateGroupId", {"If-Match" : sETag}, {Note : "foo"})
 			.returns(oPatchPromise);
 
 		return oPromise.then(function () {
@@ -676,10 +701,10 @@ sap.ui.require([
 			oResult2 = {};
 
 		oRequestorMock.expects("request")
-			.withExactArgs("POST", sResourcePath, sGroupId, undefined, oPostData)
+			.withExactArgs("POST", sResourcePath, sGroupId, undefined, sinon.match.same(oPostData))
 			.returns(Promise.resolve(oResult1));
 		oRequestorMock.expects("request")
-			.withExactArgs("POST", sResourcePath, sGroupId, undefined, oPostData)
+			.withExactArgs("POST", sResourcePath, sGroupId, undefined, sinon.match.same(oPostData))
 			.returns(Promise.resolve(oResult2));
 
 		// code under test
@@ -701,6 +726,8 @@ sap.ui.require([
 				})
 			]);
 		});
+		assert.ok(!oPromise.isFulfilled());
+		assert.ok(!oPromise.isRejected());
 		assert.throws(function () {
 			oCache.post(sGroupId, oPostData);
 		}, /Parallel POST requests not allowed/);
@@ -719,7 +746,7 @@ sap.ui.require([
 			oCache = _Cache.createSingle(oRequestor, sResourcePath, undefined, false, true);
 
 		oRequestorMock.expects("request").twice()
-			.withExactArgs("POST", sResourcePath, sGroupId, undefined, oPostData)
+			.withExactArgs("POST", sResourcePath, sGroupId, undefined, sinon.match.same(oPostData))
 			.returns(Promise.reject(new Error(sMessage)));
 
 		// code under test
@@ -927,7 +954,11 @@ sap.ui.require([
 				}),
 				oRequestor = _Requestor.create("/"),
 				oRequestorMock = this.mock(oRequestor),
-				oCache = _Cache.createSingle(oRequestor, o.sResourcePath, null, o.bSingleProperty),
+				oCache = _Cache.createSingle(oRequestor, o.sResourcePath, {
+					$orderby: "Name", // whatever system query option might make sense...
+					føø : "bãr",
+					"sap-client" : "111"
+				}, o.bSingleProperty),
 				// server responds with different value, e.g. upper case, and side effect
 				oResult = {
 					"@odata.etag" : 'W/"19700101000000.9999999"',
@@ -939,11 +970,14 @@ sap.ui.require([
 				oUpdatePromise;
 
 			oRequestorMock.expects("request")
-				.withExactArgs("GET", o.sResourcePath, "groupId")
+				.withExactArgs("GET",
+					o.sResourcePath + "?$orderby=Name&f%C3%B8%C3%B8=b%C3%A3r&sap-client=111",
+					"groupId")
 				.returns(Promise.resolve(o.oGetResult));
 			oCache.read("groupId", o.sReadPath); // triggers GET
 			oRequestorMock.expects("request")
-				.withExactArgs("PATCH", o.sEditUrl, "up", {"If-Match" : o.sETag}, {Name : "foo"})
+				.withExactArgs("PATCH", o.sEditUrl + "?f%C3%B8%C3%B8=b%C3%A3r&sap-client=111",
+					"up", {"If-Match" : o.sETag}, {Name : "foo"})
 				.returns(oPatchPromise);
 
 			// code under test

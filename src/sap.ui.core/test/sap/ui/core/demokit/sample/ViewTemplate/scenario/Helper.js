@@ -82,8 +82,8 @@ sap.ui.define([
 		} else {
 			aResult = [];
 			// "probe for the smallest non-negative integer"
-			for (i = 0; sPath = oInterface.getPath(i); i += 1) {
-				aResult.push(sPath.replace(rBadIdChars, "."));
+			for (i = 0; oInterface.getPath(i); i += 1) {
+				aResult.push(oInterface.getPath(i).replace(rBadIdChars, "."));
 			}
 			return aResult.join("::");
 		}

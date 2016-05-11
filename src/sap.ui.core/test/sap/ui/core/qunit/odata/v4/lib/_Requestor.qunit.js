@@ -231,7 +231,7 @@ sap.ui.require([
 
 			this.mock(_Helper).expects("createError")
 				.exactly(bSuccess ? 0 : 2)
-				.withExactArgs(oTokenRequiredResponse)
+				.withExactArgs(sinon.match.same(oTokenRequiredResponse))
 				.returns(oError);
 
 			this.stub(jQuery, "ajax", function (sUrl, oSettings) {
@@ -315,7 +315,7 @@ sap.ui.require([
 
 			this.mock(_Helper).expects("createError")
 				.exactly(bSuccess || o.bReadFails ? 0 : 1)
-				.withExactArgs(oTokenRequiredResponse)
+				.withExactArgs(sinon.match.same(oTokenRequiredResponse))
 				.returns(oError);
 
 			// With <code>bRequestSucceeds === false</code>, "request" always fails,
@@ -372,6 +372,85 @@ sap.ui.require([
 					assert.strictEqual(oError0, o.bReadFails ? oReadFailure : oError);
 				});
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("$batch repeated", function (assert) {
+		var oBatchRequest = {
+				body: "payload",
+				headers: {
+					"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
+					"MIME-Version" : "1.0"
+				}
+			},
+			oRequestor = _Requestor.create("/Service/", {"_foo" : "_bar"}, {"sap-client" : "111"}),
+			oRequestPayload = {},
+			sResponseContentType = "multipart/mixed; boundary=foo",
+			oResponsePayload = {},
+			oTokenRequiredResponse = {
+				getResponseHeader : function (sName) {
+					// Note: getResponseHeader treats sName case insensitive!
+					assert.strictEqual(sName, "X-CSRF-Token");
+					return "required";
+				},
+				"status" : 403
+			};
+
+		this.mock(_Batch).expects("serializeBatchRequest").twice()
+			.withExactArgs(sinon.match.same(oRequestPayload))
+			.returns(oBatchRequest);
+		this.mock(_Batch).expects("deserializeBatchResponse").once()
+			.withExactArgs(sResponseContentType, sinon.match.same(oResponsePayload))
+			.returns(oResponsePayload);
+		this.mock(_Helper).expects("createError").never();
+
+		// "request" first fails due to missing CSRF token which can be fetched via
+		// "ODataModel#refreshSecurityToken".
+		this.stub(jQuery, "ajax", function (sUrl0, oSettings) {
+			var jqXHR;
+
+			assert.strictEqual(sUrl0, "/Service/$batch?sap-client=111");
+			assert.strictEqual(oSettings.data, oBatchRequest.body);
+			assert.strictEqual(oSettings.method, "FOO");
+
+			if (oSettings.headers["X-CSRF-Token"] === "abc123") {
+				jqXHR = createMock(assert, oResponsePayload, "OK", null, sResponseContentType);
+			} else {
+				jqXHR = new jQuery.Deferred();
+				setTimeout(function () {
+					jqXHR.reject(oTokenRequiredResponse);
+				}, 0);
+			}
+
+			delete oSettings.headers["X-CSRF-Token"];
+			assert.deepEqual(oSettings.headers, {
+				"Accept": "application/json;odata.metadata=minimal;IEEE754Compatible=true",
+				"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
+				"MIME-Version" : "1.0",
+				"OData-MaxVersion": "4.0",
+				"OData-Version": "4.0",
+				"_foo": "_bar",
+				"foo": "bar"
+			});
+
+			return jqXHR;
+		});
+
+		this.stub(oRequestor, "refreshSecurityToken", function () {
+			return new Promise(function (fnResolve, fnReject) {
+				setTimeout(function () {
+					oRequestor.mHeaders["X-CSRF-Token"] = "abc123";
+					fnResolve();
+				}, 0);
+			});
+		});
+
+		return oRequestor.request("FOO", "$batch", "$direct", {"foo" : "bar"}, oRequestPayload)
+			.then(function (oPayload) {
+				assert.strictEqual(oPayload, oResponsePayload);
+			}, function (oError0) {
+				assert.ok(false);
+			});
 	});
 
 	//*********************************************************************************************
@@ -560,6 +639,10 @@ sap.ui.require([
 			assert.strictEqual(oError.cause, oBatchError);
 		}
 
+		aPromises.push(oRequestor.request("PATCH", "Products('0')", "group", {}, {Name : "foo"})
+			.then(unexpectedSuccess, assertError));
+		aPromises.push(oRequestor.request("PATCH", "Products('1')", "group", {}, {Name : "foo"})
+			.then(unexpectedSuccess, assertError));
 		aPromises.push(oRequestor.request("GET", "Products", "group")
 			.then(unexpectedSuccess, assertError));
 		aPromises.push(oRequestor.request("GET", "Customers", "group")
@@ -691,7 +774,7 @@ sap.ui.require([
 			oJqXHRMock = createMock(assert, oResult, "OK", "abc123", sResponseContentType);
 
 		this.mock(_Batch).expects("serializeBatchRequest")
-			.withExactArgs(aBatchRequests)
+			.withExactArgs(sinon.match.same(aBatchRequests))
 			.returns(oBatchRequest);
 
 		this.mock(jQuery).expects("ajax")

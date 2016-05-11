@@ -91,15 +91,20 @@ sap.ui.require([
 	[{
 		mModelOptions : {"sap-client" : "111"},
 		mOptions : {"$expand" : {"foo" : null}, "$select" : ["bar"], "custom" : "baz"},
-		allowed : ["$expand", "$select"]
+		aAllowed : ["$expand", "$select"]
 	}, {
 		mModelOptions : {"custom" : "bar"},
 		mOptions : {"custom" : "foo"},
-		allowed : []
+		aAllowed : []
 	}, {
-		mOptions : undefined,
 		mModelOptions : undefined,
-		allowed : undefined
+		mOptions : undefined,
+		aAllowed : undefined
+	}, {
+		mModelOptions : null,
+		mOptions : {"sap-client" : "111"},
+		aAllowed : null,
+		bSapAllowed : true
 	}].forEach(function (o) {
 		QUnit.test("buildQueryOptions success " + JSON.stringify(o), function (assert) {
 			var mOptions,
@@ -107,7 +112,8 @@ sap.ui.require([
 					o.mModelOptions && JSON.parse(JSON.stringify(o.mModelOptions)),
 				mOriginalOptions = o.mOptions && JSON.parse(JSON.stringify(o.mOptions));
 
-			mOptions = _ODataHelper.buildQueryOptions(o.mModelOptions, o.mOptions, o.allowed);
+			mOptions = _ODataHelper.buildQueryOptions(o.mModelOptions, o.mOptions, o.aAllowed,
+				o.bSapAllowed);
 
 			assert.deepEqual(mOptions, jQuery.extend({}, o.mModelOptions, o.mOptions));
 			assert.deepEqual(o.mModelOptions, mOriginalModelOptions);
@@ -144,37 +150,37 @@ sap.ui.require([
 	[{
 		mModelOptions : {},
 		mOptions : {"$foo" : "foo"},
-		allowed : ["$expand", "$select"],
+		aAllowed : ["$expand", "$select"],
 		error : "System query option $foo is not supported"
 	}, {
 		mModelOptions : {},
 		mOptions : {"@alias" : "alias"},
-		allowed : ["$expand", "$select"],
+		aAllowed : ["$expand", "$select"],
 		error : "Parameter @alias is not supported"
 	}, {
 		mModelOptions : undefined,
 		mOptions : {"$expand" : {"foo" : true}},
-		allowed : undefined,
+		aAllowed : undefined,
 		error : "System query option $expand is not supported"
 	}, {
 		mModelOptions : undefined,
 		mOptions : {"$expand" : {"foo" : {"$select" : "bar"}}},
-		allowed : ["$expand"],
+		aAllowed : ["$expand"],
 		error : "System query option $select is not supported"
 	}, {
 		mModelOptions : undefined,
 		mOptions : {"$expand" : {"foo" : {"select" : "bar"}}},
-		allowed : ["$expand", "$select"],
+		aAllowed : ["$expand", "$select"],
 		error : "System query option select is not supported"
 	}, {
 		mModelOptions : undefined,
 		mOptions : {"sap-foo" : "300"},
-		allowed : undefined,
+		aAllowed : undefined,
 		error : "Custom query option sap-foo is not supported"
 	}].forEach(function (o) {
 		QUnit.test("buildQueryOptions error " + JSON.stringify(o), function (assert) {
 			assert.throws(function () {
-				_ODataHelper.buildQueryOptions(o.mModelOptions, o.mOptions, o.allowed);
+				_ODataHelper.buildQueryOptions(o.mModelOptions, o.mOptions, o.aAllowed);
 			}, new Error(o.error));
 		});
 	});

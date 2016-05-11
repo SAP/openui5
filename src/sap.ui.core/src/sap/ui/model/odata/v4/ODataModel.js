@@ -36,7 +36,6 @@ sap.ui.define([
 		mSupportedParameters = {
 			groupId : true,
 			serviceUrl : true,
-			serviceUrlParams : true,
 			synchronizationMode : true,
 			updateGroupId : true
 		};
@@ -53,15 +52,10 @@ sap.ui.define([
 	 * @param {string} mParameters.serviceUrl
 	 *   Root URL of the service to request data from. The path part of the URL must end with a
 	 *   forward slash according to OData V4 specification ABNF, rule "serviceRoot". You may append
-	 *   OData custom query options to the service root URL separated with a "?",
-	 *   e.g. "/MyService/?custom=foo". See parameter <code>mParameters.serviceUrlParams</code> for
-	 *   details on custom query options.
-	 * @param {object} [mParameters.serviceUrlParams]
-	 *   Map of OData custom query options to be used in each data service request for this model,
-	 *   see specification "OData Version 4.0 Part 2: URL Conventions", "5.2 Custom Query Options".
+	 *   OData custom query options to the service root URL separated with a "?", for example
+	 *   "/MyService/?custom=foo".
+	 *   See specification "OData Version 4.0 Part 2: URL Conventions", "5.2 Custom Query Options".
 	 *   OData system query options and OData parameter aliases lead to an error.
-	 *   Query options from this map overwrite query options with the same name specified via the
-	 *   <code>sServiceUrl</code> parameter.
 	 * @param {string} mParameters.synchronizationMode
 	 *   Controls synchronization between different bindings which refer to the same data for the
 	 *   case data changes in one binding. Must be set to 'None' which means bindings are not
@@ -86,6 +80,8 @@ sap.ui.define([
 	 *   "/" + "EMPLOYEES('A%2FB%26C')" to access an entity instance with key "A/B&C". Note that
 	 *   appropriate URI encoding is necessary. "4.5.1 Addressing Actions" needs an operation
 	 *   binding, see {@link sap.ui.model.odata.v4.ODataContextBinding}.
+	 *
+	 *   Note that the OData V4 model has its own {@link sap.ui.model.odata.v4.Context} class.
 	 *
 	 *   The model does not support any public events; attaching an event handler leads to an error.
 	 * @extends sap.ui.model.Model
@@ -123,8 +119,9 @@ sap.ui.define([
 						throw new Error("Service root URL must end with '/'");
 					}
 					this._sQuery = oUri.search(); //return query part with leading "?"
-					this.mUriParameters = _ODataHelper.buildQueryOptions(jQuery.extend({},
-						oUri.query(true), mParameters.serviceUrlParams));
+					// Note: strict checking for model's URI parameters, but "sap-*" is allowed
+					this.mUriParameters
+						= _ODataHelper.buildQueryOptions(null, oUri.query(true), null, true);
 					this.sServiceUrl = oUri.query("").toString();
 					this.sGroupId = mParameters.groupId;
 					if (this.sGroupId === undefined) {
@@ -236,7 +233,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath
 	 *   The binding path in the model; must not end with a slash
-	 * @param {sap.ui.model.Context} [oContext]
+	 * @param {sap.ui.model.odata.v4.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters which can be OData query options as specified in
@@ -284,7 +281,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath
 	 *   The binding path in the model; must not be empty or end with a slash
-	 * @param {sap.ui.model.Context} [oContext]
+	 * @param {sap.ui.model.odata.v4.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 * @param {sap.ui.model.Sorter[]} [aSorters]
 	 *   The parameter <code>aSorters</code> is not supported and must be <code>undefined</code>
@@ -344,7 +341,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath
 	 *   The binding path in the model; must not be empty or end with a slash
-	 * @param {sap.ui.model.Context} [oContext]
+	 * @param {sap.ui.model.odata.v4.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters which can be OData query options as specified in
@@ -406,6 +403,19 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.createBindingContext = function () {
 		throw new Error("Unsupported operation: v4.ODataModel#createBindingContext");
+	};
+
+	/**
+	 * Destroys this model and its meta model.
+	 *
+	 * @public
+	 * @see sap.ui.model.Model#destroy
+	 * @since 1.38.0
+	 */
+	// @override
+	ODataModel.prototype.destroy = function () {
+		this.oMetaModel.destroy();
+		return Model.prototype.destroy.apply(this, arguments);
 	};
 
 	/**
@@ -565,7 +575,7 @@ sap.ui.define([
 
 	/**
 	 * Reports a technical error by adding a message to the MessageManager and logging the error to
-	 * the console.
+	 * the console. Takes care that the error is only added once to the MessageManager.
 	 *
 	 * @param {string} sLogMessage
 	 *   The message to write to the console log
@@ -583,12 +593,16 @@ sap.ui.define([
 			sDetails = oError.message + "\n" + oError.stack;
 		}
 		jQuery.sap.log.error(sLogMessage, sDetails, sReportingClassName);
+		if (oError.$reported) {
+			return;
+		}
+		oError.$reported = true;
 		sap.ui.getCore().getMessageManager().addMessages(new Message({
-				message : oError.message,
-				processor : this,
-				technical : true,
-				type : "Error"
-			}));
+			message : oError.message,
+			processor : this,
+			technical : true,
+			type : "Error"
+		}));
 	};
 
 	/**
@@ -599,7 +613,7 @@ sap.ui.define([
 	 * Use the canonical path in {@link sap.ui.core.Element#bindElement} to create an element
 	 * binding.
 	 *
-	 * @param {sap.ui.model.Context} oEntityContext
+	 * @param {sap.ui.model.odata.v4.Context} oEntityContext
 	 *   A context in this model which must point to a non-contained OData entity
 	 * @returns {Promise}
 	 *   A promise which is resolved with the canonical path (e.g. "/EMPLOYEES(ID='1')") in case of

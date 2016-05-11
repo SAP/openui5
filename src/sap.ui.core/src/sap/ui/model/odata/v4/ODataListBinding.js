@@ -8,10 +8,10 @@ sap.ui.define([
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ListBinding",
-	"./_Context",
 	"./_ODataHelper",
+	"./Context",
 	"./lib/_Cache"
-], function (jQuery, Binding, ChangeReason, ListBinding, _Context, _ODataHelper, _Cache) {
+], function (jQuery, Binding, ChangeReason, ListBinding, _ODataHelper, Context, _Cache) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataListBinding",
@@ -30,7 +30,7 @@ sap.ui.define([
 	 *   The OData V4 model
 	 * @param {string} sPath
 	 *   The binding path in the model; must not be empty or end with a slash
-	 * @param {sap.ui.model.Context} [oContext]
+	 * @param {sap.ui.model.odata.v4.Context} [oContext]
 	 *   The parent context which is required as base for a relative path
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters which can be OData query options as specified in
@@ -201,7 +201,7 @@ sap.ui.define([
 	 *   size limit, see {@link sap.ui.model.Model#setSizeLimit}
 	 * @param {number} [iThreshold]
 	 *   The parameter <code>iThreshold</code> is not supported.
-	 * @returns {sap.ui.model.Context[]}
+	 * @returns {sap.ui.model.odata.v4.Context[]}
 	 *   The array of already created contexts with the first entry containing the context for
 	 *   <code>iStart</code>
 	 * @throws {Error}
@@ -255,7 +255,7 @@ sap.ui.define([
 			for (i = iStart; i < n; i += 1) {
 				if (that.aContexts[i] === undefined) {
 					bChanged = true;
-					that.aContexts[i] = _Context.create(oModel, that, sResolvedPath + "/" + i, i);
+					that.aContexts[i] = Context.create(oModel, that, sResolvedPath + "/" + i, i);
 				}
 			}
 			if (that.aContexts.length > that.iMaxLength) {
@@ -309,7 +309,7 @@ sap.ui.define([
 					that.oModel.addedRequestToGroup(sGroupId, that.fireDataRequested.bind(that));
 				});
 			} else {
-				oPromise = oContext.requestValue(this.sPath);
+				oPromise = oContext.fetchValue(this.sPath);
 			}
 			oPromise.then(function (vResult) {
 				createContexts(vResult || []);
@@ -496,15 +496,15 @@ sap.ui.define([
 	 *   Some relative path
 	 * @param {number} iIndex
 	 *   Index corresponding to some current context of this binding
-	 * @returns {Promise}
+	 * @returns {SyncPromise}
 	 *   A promise on the outcome of the cache's <code>read</code> call
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.requestValue = function (sPath, iIndex) {
+	ODataListBinding.prototype.fetchValue = function (sPath, iIndex) {
 		return this.oCache
 			? this.oCache.read(iIndex, /*iLength*/1, undefined, sPath)
-			: this.oContext.requestValue(this.sPath + "/" + iIndex
+			: this.oContext.fetchValue(this.sPath + "/" + iIndex
 				+ (sPath ? "/" + sPath : ""));
 	};
 
@@ -525,7 +525,7 @@ sap.ui.define([
 	/**
 	 * Sets the context and resets the cached contexts of the list items.
 	 *
-	 * @param {sap.ui.model.Context} oContext
+	 * @param {sap.ui.model.odata.v4.Context} oContext
 	 *   The context object
 	 *
 	 * @private

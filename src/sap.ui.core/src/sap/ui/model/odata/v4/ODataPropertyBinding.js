@@ -29,7 +29,7 @@ sap.ui.define([
 	 *   The OData V4 model
 	 * @param {string} sPath
 	 *   The binding path in the model; must not be empty or end with a slash
-	 * @param {sap.ui.model.Context} [oContext]
+	 * @param {sap.ui.model.odata.v4.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters which can be OData query options as specified in
@@ -227,7 +227,7 @@ sap.ui.define([
 			);
 		}
 		if (this.isRelative()) {
-			oReadPromise = this.oContext.requestValue(this.sPath);
+			oReadPromise = this.oContext.fetchValue(this.sPath);
 		} else {
 			sGroupId = this.sRefreshGroupId || this.getGroupId();
 			this.sRefreshGroupId = undefined;
@@ -376,7 +376,7 @@ sap.ui.define([
 	 * {@link #checkUpdate} to check for the current value if the context has changed.
 	 * In case of absolute bindings nothing is done.
 	 *
-	 * @param {sap.ui.model.Context} [oContext]
+	 * @param {sap.ui.model.odata.v4.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 *
 	 * @private
