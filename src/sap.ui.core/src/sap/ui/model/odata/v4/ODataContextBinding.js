@@ -8,11 +8,11 @@ sap.ui.define([
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ContextBinding",
-	"./_Context",
 	"./_ODataHelper",
+	"./Context",
 	"./lib/_Cache",
 	"./lib/_Helper"
-], function (jQuery, Binding, ChangeReason, ContextBinding, _Context, _ODataHelper, _Cache,
+], function (jQuery, Binding, ChangeReason, ContextBinding, _ODataHelper, Context, _Cache,
 		_Helper) {
 	"use strict";
 
@@ -31,7 +31,7 @@ sap.ui.define([
 	 *   The OData V4 model
 	 * @param {string} sPath
 	 *   The binding path in the model; must not end with a slash
-	 * @param {sap.ui.model.Context} [oContext]
+	 * @param {sap.ui.model.odata.v4.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters which can be OData query options as specified in
@@ -332,8 +332,9 @@ sap.ui.define([
 							if (oParameter.$IsCollection) {
 								throw new Error("Unsupported: collection parameter");
 							}
-							aParameters.push(sName + "=" + _Helper.formatLiteral(
-									that.oOperation.mParameters[sName], oParameter.$Type));
+							aParameters.push(encodeURIComponent(sName) + "="
+								+ encodeURIComponent(_Helper.formatLiteral(
+									that.oOperation.mParameters[sName], oParameter.$Type)));
 						}
 					});
 				}
@@ -413,7 +414,7 @@ sap.ui.define([
 		if (!sResolvedPath) {
 			return;
 		}
-		this.oElementContext = _Context.create(this.oModel, this, sResolvedPath);
+		this.oElementContext = Context.create(this.oModel, this, sResolvedPath);
 		this._fireChange({reason : ChangeReason.Change});
 	};
 
@@ -473,12 +474,12 @@ sap.ui.define([
 	 *
 	 * @param {string} [sPath]
 	 *   Some relative path
-	 * @returns {Promise}
+	 * @returns {SyncPromise}
 	 *   A promise on the outcome of the cache's <code>read</code> call
 	 *
 	 *  @private
 	 */
-	ODataContextBinding.prototype.requestValue = function (sPath) {
+	ODataContextBinding.prototype.fetchValue = function (sPath) {
 		var bDataRequested = false,
 			sGroupId,
 			that = this;
@@ -509,7 +510,7 @@ sap.ui.define([
 			});
 		}
 		if (this.oContext) {
-			return this.oContext.requestValue(this.sPath + (sPath ? "/" + sPath : ""));
+			return this.oContext.fetchValue(this.sPath + (sPath ? "/" + sPath : ""));
 		}
 		return Promise.resolve();
 	};
@@ -532,7 +533,7 @@ sap.ui.define([
 	 * Sets the (base) context which is used when the binding path is relative.
 	 * Fires a change event if the bound context is changed.
 	 *
-	 * @param {sap.ui.model.Context} [oContext]
+	 * @param {sap.ui.model.odata.v4.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 *
 	 * @private
@@ -545,7 +546,7 @@ sap.ui.define([
 				// fire "change" iff. this.oElementContext changes
 				// do not call Model#resolve in vain
 				this.oElementContext = oContext
-					? _Context.create(this.oModel, this, this.oModel.resolve(this.sPath, oContext))
+					? Context.create(this.oModel, this, this.oModel.resolve(this.sPath, oContext))
 					: null;
 				// the binding parameter for a deferred context binding might have changed
 				this.oCache = undefined;
@@ -568,7 +569,7 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.ODataContextBinding}
 	 *   <code>this</code> to enable method chaining
 	 * @throws {Error} If the binding is not a deferred operation binding (see
-	 *   {@link sap.ui.model.odata.v4.ODataContextBinding}).
+	 *   {@link sap.ui.model.odata.v4.ODataContextBinding}) or if the value is missing
 	 *
 	 * @public
 	 * @since 1.37.0
@@ -576,6 +577,9 @@ sap.ui.define([
 	ODataContextBinding.prototype.setParameter = function (sParameterName, vValue) {
 		if (!this.oOperation) {
 			throw new Error("The binding must be deferred: " + this.sPath);
+		}
+		if (vValue === undefined) {
+			throw new Error("Missing value for parameter: " + sParameterName);
 		}
 		this.oOperation.mParameters[sParameterName] = vValue;
 		return this;

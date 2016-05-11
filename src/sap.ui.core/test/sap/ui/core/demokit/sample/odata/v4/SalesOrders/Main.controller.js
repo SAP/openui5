@@ -66,8 +66,9 @@ sap.ui.define([
 		},
 
 		onDeleteSalesOrder : function (oEvent) {
-			var // oSalesOrderContext = oEvent.getSource().getBindingContext(),
+			var oSalesOrderContext = oEvent.getSource().getBindingContext(),
 				// oModel = oSalesOrderContext.getModel(),
+				sMessage,
 				sOrderID;
 				// oView = this.getView();
 
@@ -75,22 +76,18 @@ sap.ui.define([
 				if (sCode !== 'OK') {
 					return;
 				}
+				MessageBox.alert("Not yet implemented");
 //					TODO the code will be needed when "remove" is implemented
 //					MessageBox.alert("Deleted Sales Order: " + sOrderID,
 //						{icon : MessageBox.Icon.SUCCESS, title : "Success"});
 //					oView.byId("SalesOrderLineItems").setBindingContext(undefined);
 //					oView.byId("SupplierContactData").setBindingContext(undefined);
 			}
-
-			//TODO make context public and allow access to index and value
-			//   oEvent.getSource().getBindingContext().getIndex() / .requestValue("SalesOrderID")
-			this.getView().byId("SalesOrders").getItems().forEach(function (oItem) {
-				if (oItem.getBindingContext() === oEvent.getSource().getBindingContext()) {
-					sOrderID = oItem.getCells()[0].getText();
-					MessageBox.confirm("Do you really want to delete? " + sOrderID, onConfirm,
-						"Sales Order Deletion");
-				}
-			});
+			sOrderID = oSalesOrderContext.getProperty("SalesOrderID", true);
+			sMessage = "Do you really want to delete: " + sOrderID
+				+ ", Gross Amount: " + oSalesOrderContext.getProperty("GrossAmount", true)
+				+ " " + oSalesOrderContext.getProperty("CurrencyCode", true) + "?";
+			MessageBox.confirm(sMessage, onConfirm, "Sales Order Deletion");
 		},
 
 		onInit : function () {
@@ -208,13 +205,11 @@ sap.ui.define([
 //			oSupplierDetailsForm.setBindingContext(oSalesOrderLineItemContext);
 
 			// workaround: manual computation of canonical URL for the time being
-			oSalesOrderLineItemContext
-				.requestValue("SOITEM_2_PRODUCT/PRODUCT_2_BP/BusinessPartnerID")
-				.then(function (sBusinessPartnerID) {
-					//TODO _Helper.formatLiteral
-					oSupplierDetailsForm.bindObject(
-						"/BusinessPartnerList('" + sBusinessPartnerID + "')");
-				});
+			//TODO _Helper.formatLiteral
+			oSupplierDetailsForm.bindObject("/BusinessPartnerList('"
+				+ oSalesOrderLineItemContext.getProperty(
+					"SOITEM_2_PRODUCT/PRODUCT_2_BP/BusinessPartnerID")
+				+ "')");
 		},
 
 		onSaveSalesOrder : function () {

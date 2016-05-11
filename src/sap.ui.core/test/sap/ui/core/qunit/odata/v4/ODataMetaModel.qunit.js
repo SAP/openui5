@@ -9,7 +9,7 @@ sap.ui.require([
 	"sap/ui/model/json/JSONListBinding",
 	"sap/ui/model/MetaModel",
 	"sap/ui/model/odata/v4/_ODataHelper",
-	"sap/ui/model/odata/v4/_SyncPromise",
+	"sap/ui/model/odata/v4/lib/_SyncPromise",
 	"sap/ui/model/odata/v4/ODataMetaModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/PropertyBinding",
@@ -294,7 +294,8 @@ sap.ui.require([
 
 		// reject...
 		oExpectation.returns(oSyncPromise);
-		oTestContext.mock(Promise).expects("resolve").withExactArgs(oSyncPromise)
+		oTestContext.mock(Promise).expects("resolve")
+			.withExactArgs(sinon.match.same(oSyncPromise))
 			.returns(oRejectedPromise); // return any promise (this is not unwrapping!)
 
 		// request (promise still pending!)
@@ -998,7 +999,7 @@ sap.ui.require([
 		QUnit.test("requestCanonicalUrl: " + oFixture.dataPath, function (assert) {
 			var oInstance = {},
 				oContext = {
-					requestValue : function (sPath) {
+					fetchValue : function (sPath) {
 						assert.strictEqual(sPath, "");
 						return Promise.resolve(oInstance);
 					}
@@ -1037,7 +1038,7 @@ sap.ui.require([
 	}].forEach(function (oFixture) {
 		QUnit.test("requestCanonicalUrl: error for " + oFixture.dataPath, function (assert) {
 			var oContext = {
-					requestValue : function (sPath) {
+					fetchValue : function (sPath) {
 						assert.strictEqual(sPath, "");
 						return Promise.resolve({});
 					}
@@ -1068,7 +1069,8 @@ sap.ui.require([
 			sPath = "foo",
 			oValue = {};
 
-		this.mock(this.oMetaModel).expects("getProperty").withExactArgs(sPath, oContext)
+		this.mock(this.oMetaModel).expects("getProperty")
+			.withExactArgs(sPath, sinon.match.same(oContext))
 			.returns(oValue);
 
 		// code under test
@@ -1181,7 +1183,7 @@ sap.ui.require([
 			aSorters = [];
 
 		this.mock(oMetaModel).expects("_getObject")
-			.withExactArgs(sPath, oContext)
+			.withExactArgs(sPath, sinon.match.same(oContext))
 			.returns({
 				"ID" : {/*...*/},
 				"AGE" : {/*...*/},
@@ -1219,7 +1221,7 @@ sap.ui.require([
 		// further tests regarding the getter provided to FilterProcessor.apply()
 		fnGetValue = fnApply.args[0][2];
 		this.mock(this.oMetaModel).expects("getProperty")
-			.withExactArgs("fooPath", oBinding.oList[aIndices[0]])
+			.withExactArgs("fooPath", sinon.match.same(oBinding.oList[aIndices[0]]))
 			.returns("foo");
 
 		// code under test: "@sapui.name" is treated specially

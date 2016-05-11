@@ -10,10 +10,11 @@ sap.ui.require([
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/lib/_Cache",
+	"sap/ui/model/odata/v4/lib/_SyncPromise",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataModel"
 ], function (jQuery, ManagedObject, ChangeReason, Context, ListBinding, Model, _ODataHelper, _Cache,
-		ODataListBinding, ODataModel) {
+		_SyncPromise, ODataListBinding, ODataModel) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -42,7 +43,7 @@ sap.ui.require([
 	 *   the promise which is fulfilled as specified
 	 */
 	function createResult(iLength, iStart, bDrillDown) {
-		return new Promise(function (resolve, reject) {
+		return _SyncPromise.resolve(new Promise(function (resolve, reject) {
 			var oData = {value : []},
 				i;
 
@@ -57,7 +58,7 @@ sap.ui.require([
 				};
 			}
 			resolve(bDrillDown ? oData.value : oData);
-		});
+		}));
 	}
 
 	//*********************************************************************************************
@@ -128,8 +129,8 @@ sap.ui.require([
 
 		oHelperMock = this.mock(_ODataHelper);
 		oHelperMock.expects("buildQueryOptions")
-			.withExactArgs(this.oModel.mUriParameters, mParameters,
-				["$expand", "$filter", "$orderby", "$select"])
+			.withExactArgs(sinon.match.same(this.oModel.mUriParameters),
+				sinon.match.same(mParameters), ["$expand", "$filter", "$orderby", "$select"])
 			.returns(mQueryOptions);
 		this.mock(_Cache).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
@@ -287,7 +288,7 @@ sap.ui.require([
 
 		this.mock(ODataListBinding.prototype).expects("getGroupId").never();
 		oControl.bindObject("/TEAMS('4711')");
-		that.mock(oControl.getObjectBinding()).expects("requestValue")
+		that.mock(oControl.getObjectBinding()).expects("fetchValue")
 			.withExactArgs(sPath, undefined)
 			.returns(oPromise);
 
@@ -331,11 +332,11 @@ sap.ui.require([
 				getPath : function () {
 					return "/TEAMS('4711')";
 				},
-				requestValue : function () {}
+				fetchValue : function () {}
 			},
 			oPromise = Promise.resolve();
 
-		this.mock(oContext).expects("requestValue").withExactArgs("TEAM_2_EMPLOYEES")
+		this.mock(oContext).expects("fetchValue").withExactArgs("TEAM_2_EMPLOYEES")
 			.returns(oPromise);
 
 		// code under test
@@ -439,13 +440,13 @@ sap.ui.require([
 					assert.strictEqual(aContexts[i].getPath(),
 						"/EMPLOYEES/" + (iStart + i),
 						sMessage);
-					//check delegation of requestValue from context
+					//check delegation of fetchValue from context
 					oPromise = {}; // a fresh new object each turn around
-					oListBindingMock.expects("requestValue")
+					oListBindingMock.expects("fetchValue")
 						.withExactArgs("foo/bar/" + i, iStart + i)
 						.returns(oPromise);
 
-					assert.strictEqual(aContexts[i].requestValue("foo/bar/" + i), oPromise);
+					assert.strictEqual(aContexts[i].fetchValue("foo/bar/" + i), oPromise);
 				}
 			}
 		}
@@ -472,7 +473,7 @@ sap.ui.require([
 			var oCacheMock,
 				oContext = {
 					getPath : function () { return "/EMPLOYEES(1)"; },
-					requestValue : function () {}
+					fetchValue : function () {}
 				},
 				oContextMock,
 				oError = new Error("Intentionally failed"),
@@ -484,13 +485,13 @@ sap.ui.require([
 
 			if (bRelative) {
 				oContextMock = this.mock(oContext);
-				oContextMock.expects("requestValue").once().returns(createResult(2));
-				oContextMock.expects("requestValue").once().returns(oPromise);
+				oContextMock.expects("fetchValue").returns(createResult(2));
+				oContextMock.expects("fetchValue").returns(oPromise);
 				// no error logged by ODataListBinding; parent context logged the error already
 			} else {
 				oCacheMock = this.getCacheMock();
-				oCacheMock.expects("read").once().callsArg(4).returns(createResult(2));
-				oCacheMock.expects("read").once().callsArg(4).returns(oPromise);
+				oCacheMock.expects("read").callsArg(4).returns(createResult(2));
+				oCacheMock.expects("read").callsArg(4).returns(oPromise);
 				this.mock(this.oModel).expects("reportError").withExactArgs(
 					"Failed to get contexts for " + sResolvedPath
 					+ " with start index 1 and length 2", sClassName,
@@ -524,7 +525,7 @@ sap.ui.require([
 	].forEach(function (oFixture) {
 		QUnit.test("paging: " + oFixture.text, function (assert) {
 			var oContext = {
-					requestValue : function () {
+					fetchValue : function () {
 						assert.ok(false, "context must be ignored for absolute bindings");
 					}
 				},
@@ -586,6 +587,7 @@ sap.ui.require([
 			return oReadPromise1.then(function () {
 				assert.strictEqual(oListBinding.isLengthFinal(), true);
 				assert.strictEqual(oListBinding.getLength(), 35);
+
 				oListBinding.getContexts(oFixture.start, 30);
 
 				return oReadPromise2;
@@ -927,41 +929,46 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestValue: absolute binding", function (assert) {
+	QUnit.test("fetchValue: absolute binding", function (assert) {
 		var oListBinding = this.oModel.bindList("/EMPLOYEES"),
-			oPromise = {};
+			oPromise,
+			oReadResult = {};
 
 		this.mock(oListBinding.oCache).expects("read")
 			.withExactArgs(42, 1, undefined, "bar")
-			.returns(oPromise);
+			.returns(_SyncPromise.resolve(oReadResult));
 
-		assert.strictEqual(oListBinding.requestValue("bar", 42), oPromise);
+		oPromise = oListBinding.fetchValue("bar", 42);
+		assert.ok(oPromise.isFulfilled());
+		return oPromise.then( function (oResult){
+			assert.strictEqual(oResult, oReadResult);
+		});
 	});
-	//TODO support dataRequested/dataReceived event in requestValue:
-	//     common implementation used by requestValue and getContexts?
+	//TODO support dataRequested/dataReceived event in fetchValue:
+	//     common implementation used by fetchValue and getContexts?
 
 	//*********************************************************************************************
-	QUnit.test("requestValue: relative binding", function (assert) {
+	QUnit.test("fetchValue: relative binding", function (assert) {
 		var oContext = {
-				requestValue : function () {}
+				fetchValue : function () {}
 			},
 			oContextMock = this.mock(oContext),
 			oListBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext),
 			oPromise = {};
 
-		oContextMock.expects("requestValue")
+		oContextMock.expects("fetchValue")
 			.withExactArgs("TEAM_2_EMPLOYEES/42/bar")
 			.returns(oPromise);
 
-		assert.strictEqual(oListBinding.requestValue("bar", 42), oPromise);
+		assert.strictEqual(oListBinding.fetchValue("bar", 42), oPromise);
 
-		oContextMock.expects("requestValue")
+		oContextMock.expects("fetchValue")
 			.withExactArgs("TEAM_2_EMPLOYEES/42")
 			.returns(oPromise);
 
-		assert.strictEqual(oListBinding.requestValue("", 42), oPromise);
+		assert.strictEqual(oListBinding.fetchValue("", 42), oPromise);
 	});
-	//TODO provide iStart, iLength parameter to requestValue to support paging on nested list
+	//TODO provide iStart, iLength parameter to fetchValue to support paging on nested list
 
 	//*********************************************************************************************
 	[undefined, "up"].forEach(function (sGroupId) {
@@ -1106,14 +1113,15 @@ sap.ui.require([
 		assert.strictEqual(oBinding.getGroupId(), "foo");
 		assert.strictEqual(oBinding.getUpdateGroupId(), "bar");
 
-		oHelperMock.expects("buildBindingParameters").withExactArgs(mParameters)
+		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters))
 			.returns({$$groupId : "foo"});
 		// code under test
 		oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined, mParameters);
 		assert.strictEqual(oBinding.getGroupId(), "foo");
 		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
 
-		oHelperMock.expects("buildBindingParameters").withExactArgs(mParameters).returns({});
+		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters))
+			.returns({});
 		// code under test
 		oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined, mParameters);
 		assert.strictEqual(oBinding.getGroupId(), "baz");

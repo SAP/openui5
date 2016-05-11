@@ -37,10 +37,10 @@ sap.ui.define([
 				.setParameter("Budget", oUiModel.getProperty("/Budget"))
 				.execute()
 				.then(function () {
-					var oTeamDetails = oView.byId("TeamDetails");
+					var oBinding = oView.byId("Budget").getBinding("text");
 
-					oTeamDetails.setBindingContext(null);
-					oTeamDetails.setBindingContext(oForm.getBindingContext());
+					oBinding.setContext(null);
+					oBinding.setContext(oForm.getBindingContext());
 					MessageBox.alert("Budget changed", {
 						icon : MessageBox.Icon.SUCCESS,
 						title : "Success"});
@@ -57,8 +57,11 @@ sap.ui.define([
 				.setParameter("ManagerID", oUiModel.getProperty("/ManagerID"))
 				.execute()
 				.then(function () {
-					// TODO update parent (this would require a read, but the read delivers the
-					// old value)
+					var oControl = oView.byId("ManagerID");
+
+					oControl.bindProperty("text", "MANAGER_ID");
+					oControl.getBinding("text").setContext(null);
+					oControl.getBinding("text").setContext(oForm.getBindingContext());
 					MessageBox.alert("Manager changed", {
 						icon : MessageBox.Icon.SUCCESS,
 						title : "Success"});
@@ -93,8 +96,8 @@ sap.ui.define([
 					oTeamContext = oView.byId("TeamSelect").getBinding("items").getContexts()[0];
 
 				oView.byId("TeamDetails").setBindingContext(oTeamContext);
-				oEmployees.setBindingContext(oTeamContext);
 				oEmployees.getBinding("items").attachEventOnce("change", setEmployeeContext);
+				oEmployees.setBindingContext(oTeamContext);
 			}
 
 			function setEmployeeContext() {
@@ -106,8 +109,8 @@ sap.ui.define([
 				oView.setBusy(false);
 			}
 
-			//TODO: as long as there is no dataReceived event in V4 we attach to "change"
-			oView.byId("TeamSelect").getBinding("items").attachEventOnce("change", setTeamContext);
+			oView.byId("TeamSelect").getBinding("items")
+				.attachEventOnce("dataReceived", setTeamContext);
 		},
 
 		onCancelEmployee : function (oEvent) {
@@ -141,7 +144,7 @@ sap.ui.define([
 
 		onInit : function () {
 			this.getView().setModel(new JSONModel({
-				EmployeeID: undefined
+				EmployeeID: null
 			}), "search");
 		},
 
@@ -177,18 +180,18 @@ sap.ui.define([
 		},
 
 		onUpdateEmployee : function (oEvent) {
-			var oEmployeeContext = oEvent.getSource().getBindingContext(),
-				aItems = this.getView().byId("Employees").getItems();
-
-			oEmployeeContext.getModel().read(oEmployeeContext.getPath(), true)
-				.then(function (oEntityInstance) {
-					oEntityInstance["@odata.etag"] = "W/\"19700000000000.0000000\"";
-
-					// have "ETag" column check for updates
-					aItems.forEach(function (oItem) {
-						oItem.getCells()[5].getBinding("text").checkUpdate();
-					});
-				});
+//			var oEmployeeContext = oEvent.getSource().getBindingContext(),
+//				aItems = this.getView().byId("Employees").getItems();
+//
+//			oEmployeeContext.getModel().read(oEmployeeContext.getPath(), true)
+//				.then(function (oEntityInstance) {
+//					oEntityInstance["@odata.etag"] = "W/\"19700000000000.0000000\"";
+//
+//					// have "ETag" column check for updates
+//					aItems.forEach(function (oItem) {
+//						oItem.getCells()[5].getBinding("text").checkUpdate();
+//					});
+//				});
 		},
 
 		openChangeTeamBudgetDialog : function (oEvent) {

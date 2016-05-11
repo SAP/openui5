@@ -1,0 +1,739 @@
+{
+	"@odata.context" : "$metadata#SalesOrderList(ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID,SO_2_BP(BusinessPartnerID,CompanyName,PhoneNumber))/$entity",
+	"@odata.etag" : "W/\"20160419220000.0000000\"",
+	"ChangedAt" : "20160419220000.0000000 ",
+	"CreatedAt" : "20160419220000.0000000 ",
+	"LifecycleStatusDesc" : "",
+	"Note" : "EPM DG: SO ID 0500000008 Deliver as fast as possible",
+	"SalesOrderID" : "0500000008",
+	"SO_2_SOITEM" : [
+			{
+				"SalesOrderID" : "0500000008",
+				"ItemPosition" : "0000000010",
+				"Note" : "EPM DG: SO ID 0500000008 Item 0000000010",
+				"NoteLanguage" : "E",
+				"CurrencyCode" : "EUR",
+				"GrossAmount" : "21.42",
+				"NetAmount" : "18.00",
+				"TaxAmount" : "3.42",
+				"DeliveryDate" : "2016-04-26T22:00:00Z",
+				"Quantity" : "2",
+				"QuantityUnit" : "EA",
+				"Product" : {
+					"ProductID" : "HT-1060",
+					"ProductName" : "Schnurlose Computermaus"
+				},
+				"SOITEM_2_PRODUCT" : {
+					"ProductID" : "HT-1060",
+					"TypeCode" : "PR",
+					"Category" : "Mice",
+					"Name" : "Schnurlose Computermaus",
+					"NameLanguage" : "DE",
+					"Description" : "Cordless Optical USB Mice, Laptop, Color: Black, Plug&Play",
+					"DescriptionLanguage" : "EN",
+					"SupplierID" : "0100000025",
+					"SupplierName" : "Tessile Casa Di Roma",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.090",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "9.00",
+					"Width" : "6.000",
+					"Depth" : "14.500",
+					"Height" : "3.500",
+					"DimUnit" : "CM",
+					"CreatedAt" : "2016-04-20T14:39:45Z",
+					"ChangedAt" : "2016-04-20T14:39:45Z",
+					"PRODUCT_2_BP" : {
+						"@odata.etag" : "W/\"20160420143945.0000000\"",
+						"BusinessPartnerID" : "0100000025",
+						"BusinessPartnerRole" : "01",
+						"CompanyName" : "Tessile Casa Di Roma",
+						"WebAddress" : "http://www.tcdr.it",
+						"EmailAddress" : "alessio.galasso@tcdr.it",
+						"PhoneNumber" : "4580963184",
+						"FaxNumber" : "4580963004",
+						"LegalForm" : "Srl",
+						"CurrencyCode" : "EUR",
+						"CreatedAt" : "2016-04-20T14:39:45Z",
+						"ChangedAt" : "2016-04-20T14:39:45Z",
+						"Address" : {
+							"City" : "Rome",
+							"PostalCode" : "00185",
+							"Street" : "Via San Martino della Battaglia",
+							"Building" : "63",
+							"Country" : "IT",
+							"AddressType" : "02",
+							"GeoLocation" : {
+								"Longitude" : "12.504023500000",
+								"Latitude" : "41.905312500000"
+							}
+						},
+						"BP_2_CONTACT" : [ {
+							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd614035",
+							"BusinessPartnerID" : "0100000025",
+							"Title" : "",
+							"FirstName" : "Alessio",
+							"MiddleName" : "",
+							"LastName" : "Galasso",
+							"Nickname" : "",
+							"Initials" : "",
+							"Sex" : "M",
+							"PhoneNumber" : "4580963184",
+							"FaxNumber" : "4580963004",
+							"EmailAddress" : "alessio.galasso@tcdr.it",
+							"Language" : "E",
+							"DateOfBirth" : null,
+							"Address" : {
+								"City" : "Rome",
+								"PostalCode" : "00144",
+								"Street" : "Via Avignone",
+								"Building" : "64",
+								"Country" : "IT",
+								"AddressType" : "02",
+								"GeoLocation" : {
+									"Longitude" : "12.456178000000",
+									"Latitude" : "41.819646000000"
+								}
+							}
+						}, {
+							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd616035",
+							"BusinessPartnerID" : "0100000025",
+							"Title" : "",
+							"FirstName" : "Lorella",
+							"MiddleName" : "",
+							"LastName" : "Bottegoni",
+							"Nickname" : "",
+							"Initials" : "",
+							"Sex" : "F",
+							"PhoneNumber" : "2351073332",
+							"FaxNumber" : "4580963004",
+							"EmailAddress" : "lorella.santucci@tcdr.it",
+							"Language" : "E",
+							"DateOfBirth" : null,
+							"Address" : {
+								"City" : "Bologna",
+								"PostalCode" : "40128",
+								"Street" : "Via della Liberazione",
+								"Building" : "17",
+								"Country" : "IT",
+								"AddressType" : "02",
+								"GeoLocation" : {
+									"Longitude" : "11.351644000000",
+									"Latitude" : "44.511389000000"
+								}
+							}
+						} ]
+					}
+				}
+			},
+			{
+				"SalesOrderID" : "0500000008",
+				"ItemPosition" : "0000000020",
+				"Note" : "EPM DG: SO ID 0500000008 Item 0000000020",
+				"NoteLanguage" : "E",
+				"CurrencyCode" : "EUR",
+				"GrossAmount" : "16.66",
+				"NetAmount" : "14.00",
+				"TaxAmount" : "2.66",
+				"DeliveryDate" : "2016-04-26T22:00:00Z",
+				"Quantity" : "2",
+				"QuantityUnit" : "EA",
+				"Product" : {
+					"ProductID" : "HT-1061",
+					"ProductName" : "Speed-Computermaus"
+				},
+				"SOITEM_2_PRODUCT" : {
+					"ProductID" : "HT-1061",
+					"TypeCode" : "PR",
+					"Category" : "Mice",
+					"Name" : "Speed-Computermaus",
+					"NameLanguage" : "DE",
+					"Description" : "Optical USB, PS/2 Mouse, Color: Blue, 3-button-functionality (incl. Scroll wheel)",
+					"DescriptionLanguage" : "EN",
+					"SupplierID" : "0100000026",
+					"SupplierName" : "Vente Et Réparation de Ordinateur",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.090",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "7.00",
+					"Width" : "7.000",
+					"Depth" : "15.000",
+					"Height" : "3.100",
+					"DimUnit" : "CM",
+					"CreatedAt" : "2016-04-20T14:39:45Z",
+					"ChangedAt" : "2016-04-20T14:39:45Z",
+					"PRODUCT_2_BP" : {
+						"@odata.etag" : "W/\"20160420143945.0000000\"",
+						"BusinessPartnerID" : "0100000026",
+						"BusinessPartnerRole" : "01",
+						"CompanyName" : "Vente Et Réparation de Ordinateur",
+						"WebAddress" : "http://www.verdo.fr",
+						"EmailAddress" : "romain.le_mason@verdo.fr",
+						"PhoneNumber" : "1012697341",
+						"FaxNumber" : "1012697004",
+						"LegalForm" : "S.A.R.L.",
+						"CurrencyCode" : "EUR",
+						"CreatedAt" : "2016-04-20T14:39:45Z",
+						"ChangedAt" : "2016-04-20T14:39:45Z",
+						"Address" : {
+							"City" : "Paris",
+							"PostalCode" : "75013",
+							"Street" : "Rue Lourmel",
+							"Building" : "42",
+							"Country" : "FR",
+							"AddressType" : "02",
+							"GeoLocation" : {
+								"Longitude" : "2.352133400000",
+								"Latitude" : "48.856505600000"
+							}
+						},
+						"BP_2_CONTACT" : [ {
+							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd618035",
+							"BusinessPartnerID" : "0100000026",
+							"Title" : "",
+							"FirstName" : "Romain",
+							"MiddleName" : "",
+							"LastName" : "Le Mason",
+							"Nickname" : "",
+							"Initials" : "",
+							"Sex" : "M",
+							"PhoneNumber" : "1012697341",
+							"FaxNumber" : "1012697004",
+							"EmailAddress" : "romain.le_mason@verdo.fr",
+							"Language" : "E",
+							"DateOfBirth" : null,
+							"Address" : {
+								"City" : "Paris",
+								"PostalCode" : "75014",
+								"Street" : "Rue du Montparnasse",
+								"Building" : "67",
+								"Country" : "FR",
+								"AddressType" : "02",
+								"GeoLocation" : {
+									"Longitude" : "2.325230000000",
+									"Latitude" : "48.841700000000"
+								}
+							}
+						}, {
+							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd61a035",
+							"BusinessPartnerID" : "0100000026",
+							"Title" : "",
+							"FirstName" : "Sebastien",
+							"MiddleName" : "Andrew",
+							"LastName" : "Frati",
+							"Nickname" : "",
+							"Initials" : "",
+							"Sex" : "M",
+							"PhoneNumber" : "444228-6270",
+							"FaxNumber" : "1012697004",
+							"EmailAddress" : "sebastien.frati@verdo.fr",
+							"Language" : "E",
+							"DateOfBirth" : null,
+							"Address" : {
+								"City" : "Paris",
+								"PostalCode" : "57490",
+								"Street" : "Rue de la Frontiere",
+								"Building" : "4",
+								"Country" : "FR",
+								"AddressType" : "02",
+								"GeoLocation" : {
+									"Longitude" : "6.719325000000",
+									"Latitude" : "49.167615000000"
+								}
+							}
+						} ]
+					}
+				}
+			},
+			{
+				"SalesOrderID" : "0500000008",
+				"ItemPosition" : "0000000030",
+				"Note" : "EPM DG: SO ID 0500000008 Item 0000000030",
+				"NoteLanguage" : "E",
+				"CurrencyCode" : "ARS",
+				"GrossAmount" : "26.18",
+				"NetAmount" : "22.00",
+				"TaxAmount" : "4.18",
+				"DeliveryDate" : "2016-04-26T22:00:00Z",
+				"Quantity" : "2",
+				"QuantityUnit" : "EA",
+				"Product" : {
+					"ProductID" : "HT-1062",
+					"ProductName" : "Trackball-Maus"
+				},
+				"SOITEM_2_PRODUCT" : {
+					"ProductID" : "HT-1062",
+					"TypeCode" : "PR",
+					"Category" : "Mice",
+					"Name" : "Trackball-Maus",
+					"NameLanguage" : "DE",
+					"Description" : "Optical USB Mouse, Color: Red, 5-button-functionality(incl. Scroll wheel), Plug&Play",
+					"DescriptionLanguage" : "EN",
+					"SupplierID" : "0100000027",
+					"SupplierName" : "Developement Para O Governo",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.030",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "ARS",
+					"Price" : "11.00",
+					"Width" : "3.000",
+					"Depth" : "7.000",
+					"Height" : "4.000",
+					"DimUnit" : "CM",
+					"CreatedAt" : "2016-04-20T14:39:45Z",
+					"ChangedAt" : "2016-04-20T14:39:45Z",
+					"PRODUCT_2_BP" : {
+						"@odata.etag" : "W/\"20160420143945.0000000\"",
+						"BusinessPartnerID" : "0100000027",
+						"BusinessPartnerRole" : "01",
+						"CompanyName" : "Developement Para O Governo",
+						"WebAddress" : "http://www.dpg.ar",
+						"EmailAddress" : "martha.calcagno@dpg.ar",
+						"PhoneNumber" : "7345697824",
+						"FaxNumber" : "7345697004",
+						"LegalForm" : "S.A.",
+						"CurrencyCode" : "ARS",
+						"CreatedAt" : "2016-04-20T14:39:45Z",
+						"ChangedAt" : "2016-04-20T14:39:45Z",
+						"Address" : {
+							"City" : "Santa Fe",
+							"PostalCode" : "1510",
+							"Street" : "de Enero",
+							"Building" : "85",
+							"Country" : "AR",
+							"AddressType" : "02",
+							"GeoLocation" : {
+								"Longitude" : "-60.702975300000",
+								"Latitude" : "-31.618455300000"
+							}
+						},
+						"BP_2_CONTACT" : [ {
+							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd61c035",
+							"BusinessPartnerID" : "0100000027",
+							"Title" : "",
+							"FirstName" : "Martha",
+							"MiddleName" : "",
+							"LastName" : "Calcagno",
+							"Nickname" : "",
+							"Initials" : "",
+							"Sex" : "F",
+							"PhoneNumber" : "7345697824",
+							"FaxNumber" : "7345697004",
+							"EmailAddress" : "martha.calcagno@dpg.ar",
+							"Language" : "E",
+							"DateOfBirth" : null,
+							"Address" : {
+								"City" : "Buenos Aires",
+								"PostalCode" : "1630",
+								"Street" : "Del Pino Virrey Joaquin",
+								"Building" : "2407",
+								"Country" : "AR",
+								"AddressType" : "02",
+								"GeoLocation" : {
+									"Longitude" : "-58.450438000000",
+									"Latitude" : "-34.564816000000"
+								}
+							}
+						}, {
+							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd61e035",
+							"BusinessPartnerID" : "0100000027",
+							"Title" : "",
+							"FirstName" : "Nicolas",
+							"MiddleName" : "Pablo",
+							"LastName" : "Borio",
+							"Nickname" : "",
+							"Initials" : "",
+							"Sex" : "M",
+							"PhoneNumber" : "1145593331",
+							"FaxNumber" : "7345697004",
+							"EmailAddress" : "nicolas.borio@dpg.ar",
+							"Language" : "E",
+							"DateOfBirth" : null,
+							"Address" : {
+								"City" : "Paraná, Entre Ríos",
+								"PostalCode" : "1510",
+								"Street" : "Francisco Soler",
+								"Building" : "3100",
+								"Country" : "AR",
+								"AddressType" : "02",
+								"GeoLocation" : {
+									"Longitude" : "-60.512909000000",
+									"Latitude" : "-31.727180000000"
+								}
+							}
+						} ]
+					}
+				}
+			}, {
+				"SalesOrderID" : "0500000008",
+				"ItemPosition" : "0000000040",
+				"Note" : "EPM DG: SO ID 0500000008 Item 0000000040",
+				"NoteLanguage" : "E",
+				"CurrencyCode" : "BRL",
+				"GrossAmount" : "49.98",
+				"NetAmount" : "42.00",
+				"TaxAmount" : "7.98",
+				"DeliveryDate" : "2016-04-26T22:00:00Z",
+				"Quantity" : "3",
+				"QuantityUnit" : "EA",
+				"Product" : {
+					"ProductID" : "HT-1063",
+					"ProductName" : "Ergonomische Tastatur"
+				},
+				"SOITEM_2_PRODUCT" : {
+					"ProductID" : "HT-1063",
+					"TypeCode" : "PR",
+					"Category" : "Keyboards",
+					"Name" : "Ergonomische Tastatur",
+					"NameLanguage" : "DE",
+					"Description" : "Ergonomic USB Keyboard for Desktop, Plug&Play",
+					"DescriptionLanguage" : "EN",
+					"SupplierID" : "0100000028",
+					"SupplierName" : "Brazil Technologies",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "2.100",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "BRL",
+					"Price" : "14.00",
+					"Width" : "50.000",
+					"Depth" : "21.000",
+					"Height" : "3.500",
+					"DimUnit" : "CM",
+					"CreatedAt" : "2016-04-20T14:39:45Z",
+					"ChangedAt" : "2016-04-20T14:39:45Z",
+					"PRODUCT_2_BP" : {
+						"@odata.etag" : "W/\"20160420143945.0000000\"",
+						"BusinessPartnerID" : "0100000028",
+						"BusinessPartnerRole" : "01",
+						"CompanyName" : "Brazil Technologies",
+						"WebAddress" : "http://www.brazil-tec.br",
+						"EmailAddress" : "beatriz.da_silva@brazil-tec.br",
+						"PhoneNumber" : "469614115",
+						"FaxNumber" : "469614004",
+						"LegalForm" : "S.A.",
+						"CurrencyCode" : "BRL",
+						"CreatedAt" : "2016-04-20T14:39:45Z",
+						"ChangedAt" : "2016-04-20T14:39:45Z",
+						"Address" : {
+							"City" : "Rio de Janeiro",
+							"PostalCode" : "20230",
+							"Street" : "Rua do Passeio",
+							"Building" : "7",
+							"Country" : "BR",
+							"AddressType" : "02",
+							"GeoLocation" : {
+								"Longitude" : "-43.175630800000",
+								"Latitude" : "-22.911798300000"
+							}
+						},
+						"BP_2_CONTACT" : [ {
+							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd620035",
+							"BusinessPartnerID" : "0100000028",
+							"Title" : "",
+							"FirstName" : "Beatriz",
+							"MiddleName" : "",
+							"LastName" : "da Silva",
+							"Nickname" : "",
+							"Initials" : "",
+							"Sex" : "F",
+							"PhoneNumber" : "469614115",
+							"FaxNumber" : "469614004",
+							"EmailAddress" : "beatriz.da_silva@brazil-tec.br",
+							"Language" : "E",
+							"DateOfBirth" : null,
+							"Address" : {
+								"City" : "Rio de Janeiro",
+								"PostalCode" : "22430-040",
+								"Street" : "Av Borges de Medeiros",
+								"Building" : "633 Sl 708",
+								"Country" : "BR",
+								"AddressType" : "02",
+								"GeoLocation" : {
+									"Longitude" : "-43.215546300000",
+									"Latitude" : "-22.982672600000"
+								}
+							}
+						}, {
+							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd622035",
+							"BusinessPartnerID" : "0100000028",
+							"Title" : "",
+							"FirstName" : "Isabelle",
+							"MiddleName" : "Nado",
+							"LastName" : "Alves",
+							"Nickname" : "",
+							"Initials" : "",
+							"Sex" : "F",
+							"PhoneNumber" : "1117093497",
+							"FaxNumber" : "469614004",
+							"EmailAddress" : "alves.isabelle@brazil-tec.br",
+							"Language" : "E",
+							"DateOfBirth" : null,
+							"Address" : {
+								"City" : "Rio Branco",
+								"PostalCode" : "69906-400",
+								"Street" : "R Omar Sabino",
+								"Building" : "117",
+								"Country" : "BR",
+								"AddressType" : "02",
+								"GeoLocation" : {
+									"Longitude" : "-67.831767300000",
+									"Latitude" : "-9.971882200000"
+								}
+							}
+						} ]
+					}
+				}
+			}, {
+				"SalesOrderID" : "0500000008",
+				"ItemPosition" : "0000000050",
+				"Note" : "EPM DG: SO ID 0500000008 Item 0000000050",
+				"NoteLanguage" : "E",
+				"CurrencyCode" : "CAD",
+				"GrossAmount" : "19.04",
+				"NetAmount" : "16.00",
+				"TaxAmount" : "3.04",
+				"DeliveryDate" : "2016-04-26T22:00:00Z",
+				"Quantity" : "1",
+				"QuantityUnit" : "EA",
+				"Product" : {
+					"ProductID" : "HT-1064",
+					"ProductName" : "Internet-Tastatur"
+				},
+				"SOITEM_2_PRODUCT" : {
+					"ProductID" : "HT-1064",
+					"TypeCode" : "PR",
+					"Category" : "Keyboards",
+					"Name" : "Internet-Tastatur",
+					"NameLanguage" : "DE",
+					"Description" : "Corded Keyboard with special keys for Internet Usability, USB",
+					"DescriptionLanguage" : "EN",
+					"SupplierID" : "0100000029",
+					"SupplierName" : "C.R.T.U.",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "1.800",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "CAD",
+					"Price" : "16.00",
+					"Width" : "52.000",
+					"Depth" : "25.000",
+					"Height" : "3.000",
+					"DimUnit" : "CM",
+					"CreatedAt" : "2016-04-20T14:39:45Z",
+					"ChangedAt" : "2016-04-20T14:39:45Z",
+					"PRODUCT_2_BP" : {
+						"@odata.etag" : "W/\"20160420143945.0000000\"",
+						"BusinessPartnerID" : "0100000029",
+						"BusinessPartnerRole" : "02",
+						"CompanyName" : "C.R.T.U.",
+						"WebAddress" : "http://www.crtu.ca",
+						"EmailAddress" : "anthony.lebouef@crtu.ca",
+						"PhoneNumber" : "6839542781",
+						"FaxNumber" : "6839542004",
+						"LegalForm" : "Ltd.",
+						"CurrencyCode" : "CAD",
+						"CreatedAt" : "2016-04-20T14:39:45Z",
+						"ChangedAt" : "2016-04-20T14:39:45Z",
+						"Address" : {
+							"City" : "Montreal",
+							"PostalCode" : "H2T1R1",
+							"Street" : "Avenue du Mont-Royal Est",
+							"Building" : "370",
+							"Country" : "CA",
+							"AddressType" : "02",
+							"GeoLocation" : {
+								"Longitude" : "-73.571180800000",
+								"Latitude" : "45.536494100000"
+							}
+						},
+						"BP_2_CONTACT" : [ {
+							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd624035",
+							"BusinessPartnerID" : "0100000029",
+							"Title" : "",
+							"FirstName" : "Anthony",
+							"MiddleName" : "",
+							"LastName" : "Leboeuf",
+							"Nickname" : "",
+							"Initials" : "",
+							"Sex" : "M",
+							"PhoneNumber" : "6839542781",
+							"FaxNumber" : "6839542004",
+							"EmailAddress" : "anthony.lebouef@crtu.ca",
+							"Language" : "E",
+							"DateOfBirth" : null,
+							"Address" : {
+								"City" : "Toronto",
+								"PostalCode" : "ONM3B2V1",
+								"Street" : "Lesmill Road",
+								"Building" : "253",
+								"Country" : "CA",
+								"AddressType" : "02",
+								"GeoLocation" : {
+									"Longitude" : "-79.358827000000",
+									"Latitude" : "43.761590000000"
+								}
+							}
+						}, {
+							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd626035",
+							"BusinessPartnerID" : "0100000029",
+							"Title" : "",
+							"FirstName" : "Pascale",
+							"MiddleName" : "",
+							"LastName" : "Monty-Demers",
+							"Nickname" : "",
+							"Initials" : "",
+							"Sex" : "F",
+							"PhoneNumber" : "15132282099",
+							"FaxNumber" : "6839542004",
+							"EmailAddress" : "pascale.monty-demers@crtu.ca",
+							"Language" : "E",
+							"DateOfBirth" : null,
+							"Address" : {
+								"City" : "Montreal",
+								"PostalCode" : "QCH2Y3Z7",
+								"Street" : "Rue McGill",
+								"Building" : "32",
+								"Country" : "CA",
+								"AddressType" : "02",
+								"GeoLocation" : {
+									"Longitude" : "-73.553499000000",
+									"Latitude" : "45.498769000000"
+								}
+							}
+						} ]
+					}
+				}
+			}, {
+				"SalesOrderID" : "0500000008",
+				"ItemPosition" : "0000000060",
+				"Note" : "EPM DG: SO ID 0500000008 Item 0000000060",
+				"NoteLanguage" : "E",
+				"CurrencyCode" : "CHF",
+				"GrossAmount" : "61.88",
+				"NetAmount" : "52.00",
+				"TaxAmount" : "9.88",
+				"DeliveryDate" : "2016-04-26T22:00:00Z",
+				"Quantity" : "2",
+				"QuantityUnit" : "EA",
+				"Product" : {
+					"ProductID" : "HT-1065",
+					"ProductName" : "Medien-Tastatur"
+				},
+				"SOITEM_2_PRODUCT" : {
+					"ProductID" : "HT-1065",
+					"TypeCode" : "PR",
+					"Category" : "Keyboards",
+					"Name" : "Medien-Tastatur",
+					"NameLanguage" : "DE",
+					"Description" : "Corded Ergonomic Keyboard with special keys for Media Usability, USB",
+					"DescriptionLanguage" : "EN",
+					"SupplierID" : "0100000030",
+					"SupplierName" : "Jologa",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "2.300",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "CHF",
+					"Price" : "26.00",
+					"Width" : "51.400",
+					"Depth" : "23.000",
+					"Height" : "4.000",
+					"DimUnit" : "CM",
+					"CreatedAt" : "2016-04-20T14:39:45Z",
+					"ChangedAt" : "2016-04-20T14:39:45Z",
+					"PRODUCT_2_BP" : {
+						"@odata.etag" : "W/\"20160420143945.0000000\"",
+						"BusinessPartnerID" : "0100000030",
+						"BusinessPartnerRole" : "01",
+						"CompanyName" : "Jologa",
+						"WebAddress" : "http://www.jologa.ch",
+						"EmailAddress" : "lisa.felske@jologa.ch",
+						"PhoneNumber" : "6714954542",
+						"FaxNumber" : "6714954004",
+						"LegalForm" : "GmbH",
+						"CurrencyCode" : "CHF",
+						"CreatedAt" : "2016-04-20T14:39:45Z",
+						"ChangedAt" : "2016-04-20T14:39:45Z",
+						"Address" : {
+							"City" : "Zürich",
+							"PostalCode" : "2564",
+							"Street" : "Paul-Clairmont-Strasse",
+							"Building" : "23",
+							"Country" : "CH",
+							"AddressType" : "02",
+							"GeoLocation" : {
+								"Longitude" : "8.499567900000",
+								"Latitude" : "47.366965600000"
+							}
+						},
+						"BP_2_CONTACT" : [ {
+							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd628035",
+							"BusinessPartnerID" : "0100000030",
+							"Title" : "",
+							"FirstName" : "Lisa",
+							"MiddleName" : "",
+							"LastName" : "Felske",
+							"Nickname" : "",
+							"Initials" : "",
+							"Sex" : "F",
+							"PhoneNumber" : "6714954542",
+							"FaxNumber" : "6714954004",
+							"EmailAddress" : "lisa.felske@jologa.ch",
+							"Language" : "E",
+							"DateOfBirth" : null,
+							"Address" : {
+								"City" : "Zürich",
+								"PostalCode" : "8045",
+								"Street" : "Räffelstrasse",
+								"Building" : "24",
+								"Country" : "CH",
+								"AddressType" : "02",
+								"GeoLocation" : {
+									"Longitude" : "8.512572000000",
+									"Latitude" : "47.363108000000"
+								}
+							}
+						}, {
+							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd62a035",
+							"BusinessPartnerID" : "0100000030",
+							"Title" : "",
+							"FirstName" : "Hansjoerg",
+							"MiddleName" : "",
+							"LastName" : "Wegmann",
+							"Nickname" : "",
+							"Initials" : "",
+							"Sex" : "M",
+							"PhoneNumber" : "41688716735",
+							"FaxNumber" : "6714954004",
+							"EmailAddress" : "hansjoerg.wegmann@jologa.ch",
+							"Language" : "E",
+							"DateOfBirth" : null,
+							"Address" : {
+								"City" : "Biel/Bienne",
+								"PostalCode" : "2504",
+								"Street" : "Grenchenstrasse",
+								"Building" : "13",
+								"Country" : "CH",
+								"AddressType" : "02",
+								"GeoLocation" : {
+									"Longitude" : "7.293895000000",
+									"Latitude" : "47.160307000000"
+								}
+							}
+						} ]
+					}
+				}
+			} ],
+	"SO_2_BP" : {
+		"@odata.etag" : "W/\"20160420143945.0000000\"",
+		"BusinessPartnerID" : "0100000009",
+		"CompanyName" : "Telecomunicaciones Star",
+		"PhoneNumber" : "1133557799"
+	}
+}

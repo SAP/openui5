@@ -140,7 +140,7 @@
 						<Input enabled="{ui>/bRealOData}" value="{Note}"/>
 					</cells>
 					<cells>
-						<Button enabled="false" press="onDeleteSalesOrder"
+						<Button enabled="{ui>/bRealOData}" press="onDeleteSalesOrder"
 							text="Delete"/>
 					</cells>
 				</ColumnListItem>

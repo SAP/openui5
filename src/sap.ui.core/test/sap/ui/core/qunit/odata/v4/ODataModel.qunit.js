@@ -8,8 +8,8 @@ sap.ui.require([
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/ODataUtils",
-	"sap/ui/model/odata/v4/_Context",
 	"sap/ui/model/odata/v4/_ODataHelper",
+	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/model/odata/v4/ODataContextBinding",
@@ -18,7 +18,7 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Message, BindingMode, Model, TypeString, ODataUtils, _Context, _ODataHelper,
+], function (jQuery, Message, BindingMode, Model, TypeString, ODataUtils, _ODataHelper, Context,
 		_MetadataRequestor, _Requestor, ODataContextBinding, ODataListBinding, ODataMetaModel,
 		ODataModel, ODataPropertyBinding, TestUtils) {
 	/*global QUnit, sinon */
@@ -92,6 +92,11 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("basics", function (assert) {
+		var oMetadataRequestor = {},
+			oMetaModel,
+			oModel,
+			mModelOptions = {};
+
 		assert.throws(function () {
 			return new ODataModel();
 		}, new Error("Synchronization mode must be 'None'"));
@@ -101,34 +106,22 @@ sap.ui.require([
 		assert.throws(function () {
 			return new ODataModel({serviceUrl : "/foo", synchronizationMode : "None"});
 		}, new Error("Service root URL must end with '/'"));
-
 		assert.throws(function () {
-			return new ODataModel({synchronizationMode : "None",
-				useBatch : true});
+			return new ODataModel({synchronizationMode : "None", useBatch : true});
 		}, new Error("Unsupported parameter: useBatch"));
 
-		assert.strictEqual(createModel().sServiceUrl, getServiceUrl());
-		assert.strictEqual(createModel().toString(), sClassName + ": " + getServiceUrl());
-	});
-
-	//*********************************************************************************************
-	QUnit.test("with serviceUrlParams", function (assert) {
-		var oMetadataRequestor = {},
-			oMetaModel,
-			oModel,
-			mModelOptions = {};
-
 		this.mock(_ODataHelper).expects("buildQueryOptions")
-			.withExactArgs({"sap-client" : "111"})
+			.withExactArgs(null, {}, null, true)
 			.returns(mModelOptions);
 		this.mock(_MetadataRequestor).expects("create")
 			.withExactArgs({"Accept-Language" : "ab-CD"}, sinon.match.same(mModelOptions))
 			.returns(oMetadataRequestor);
 
 		// code under test
-		oModel = createModel("?sap-client=111");
+		oModel = createModel();
 
 		assert.strictEqual(oModel.sServiceUrl, getServiceUrl());
+		assert.strictEqual(oModel.toString(), sClassName + ": " + getServiceUrl());
 		assert.strictEqual(oModel.mUriParameters, mModelOptions);
 		assert.strictEqual(oModel.getDefaultBindingMode(), BindingMode.TwoWay);
 		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.OneTime), true);
@@ -141,31 +134,19 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("w/o serviceUrlParams", function (assert) {
-		this.mock(_ODataHelper).expects("buildQueryOptions").withExactArgs({});
-
-		// code under test
-		createModel();
-	});
-
-	//*********************************************************************************************
-	QUnit.test("serviceUrlParams overwrite URL parameters from sServiceUrl", function (assert) {
-		var oMetadataRequestor = {},
+	QUnit.test("with serviceUrl params", function (assert) {
+		var oModel,
 			mModelOptions = {};
 
 		this.mock(_ODataHelper).expects("buildQueryOptions")
-			.withExactArgs({"sap-client" : "111"})
+			.withExactArgs(null, {"sap-client" : "111"}, null, true)
 			.returns(mModelOptions);
-		this.mock(_MetadataRequestor).expects("create")
-			.withExactArgs({"Accept-Language" : "ab-CD"}, sinon.match.same(mModelOptions))
-			.returns(oMetadataRequestor);
 
 		// code under test
-		new ODataModel({ // eslint-disable-line no-new
-			serviceUrl : "/?sap-client=222",
-			serviceUrlParams : {"sap-client" : "111"},
-			synchronizationMode : "None"
-		});
+		oModel = createModel("?sap-client=111");
+
+		assert.strictEqual(oModel.sServiceUrl, getServiceUrl());
+		assert.strictEqual(oModel.mUriParameters, mModelOptions);
 	});
 
 	//*********************************************************************************************
@@ -276,7 +257,7 @@ sap.ui.require([
 			this.mock(oModel.oRequestor).expects("request")
 				//TODO remove usage of oModel._sQuery once cache is used for all CRUD operations
 				.withExactArgs("POST", "EMPLOYEES" + oModel._sQuery, undefined, null,
-					oEmployeeData).returns(oPromise);
+					sinon.match.same(oEmployeeData)).returns(oPromise);
 
 			assert.strictEqual(oModel.create("/EMPLOYEES", oEmployeeData), oPromise);
 		});
@@ -288,13 +269,13 @@ sap.ui.require([
 			var sEtag = 'W/"19770724000000.0000000"',
 				oModel = createModel(sQuery),
 				sPath = "/EMPLOYEES/0",
-				oContext = _Context.create(oModel, null, sPath);
+				oContext = Context.create(oModel, null, sPath);
 
 			this.mock(oModel.oRequestor).expects("request")
 				.withExactArgs("DELETE", "EMPLOYEES(ID='1')" + oModel._sQuery, undefined,
 					{"If-Match" : sEtag})
 				.returns(Promise.resolve(undefined));
-			this.mock(oContext).expects("requestValue").withExactArgs("@odata.etag")
+			this.mock(oContext).expects("fetchValue").withExactArgs("@odata.etag")
 				.returns(Promise.resolve(sEtag));
 			this.stub(oModel.getMetaModel(), "requestCanonicalUrl",
 				function (sServiceUrl, sPath0, oContext0) {
@@ -320,10 +301,10 @@ sap.ui.require([
 		QUnit.skip("remove: map 404 to 200, status: " + iStatus, function (assert) {
 			var oError = new Error(""),
 				oModel = createModel(),
-				oContext = _Context.create(oModel, null, "/EMPLOYEES/0");
+				oContext = Context.create(oModel, null, "/EMPLOYEES/0");
 
 			oError.status = iStatus;
-			this.mock(oContext).expects("requestValue").withExactArgs("@odata.etag")
+			this.mock(oContext).expects("fetchValue").withExactArgs("@odata.etag")
 				.returns(Promise.resolve('W/""'));
 			this.stub(oModel.getMetaModel(), "requestCanonicalUrl")
 				.returns(Promise.resolve(getServiceUrl("/EMPLOYEES(ID='1')")));
@@ -344,12 +325,12 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("requestCanonicalPath fulfills", function (assert) {
 		var oModel = createModel(),
-			oEntityContext = _Context.create(oModel, null, "/EMPLOYEES/42"),
+			oEntityContext = Context.create(oModel, null, "/EMPLOYEES/42"),
 			oMetaModel = oModel.getMetaModel(),
 			oMetaModelMock = this.mock(oMetaModel);
 
 		oMetaModelMock.expects("requestCanonicalUrl")
-			.withExactArgs("/", oEntityContext.getPath(), oEntityContext)
+			.withExactArgs("/", oEntityContext.getPath(), sinon.match.same(oEntityContext))
 			.returns(Promise.resolve("/EMPLOYEES(ID='1')"));
 
 		return oModel.requestCanonicalPath(oEntityContext).then(function (sCanonicalPath) {
@@ -361,7 +342,7 @@ sap.ui.require([
 	QUnit.test("requestCanonicalPath rejects", function (assert) {
 		var oError = new Error("Intentionally failed"),
 			oModel = createModel(),
-			oNotAnEntityContext = _Context.create(oModel, null, "/EMPLOYEES/42/Name"),
+			oNotAnEntityContext = Context.create(oModel, null, "/EMPLOYEES/42/Name"),
 			oMetaModel = oModel.getMetaModel(),
 			oMetaModelMock = this.mock(oMetaModel);
 
@@ -378,7 +359,7 @@ sap.ui.require([
 	QUnit.test("requestCanonicalPath, context from different model", function (assert) {
 		var oModel = createModel(),
 			oModel2 = createModel(),
-			oEntityContext = _Context.create(oModel2, null, "/EMPLOYEES/42"),
+			oEntityContext = Context.create(oModel2, null, "/EMPLOYEES/42"),
 			oMetaModel = oModel.getMetaModel(),
 			oMetaModelMock = this.mock(oMetaModel);
 
@@ -675,8 +656,10 @@ sap.ui.require([
 				oMessageManager = sap.ui.getCore().getMessageManager(),
 				oModel = createModel();
 
-			this.oLogMock.expects("error").withExactArgs(sLogMessage, oFixture.message, sClassName);
+			this.oLogMock.expects("error").withExactArgs(sLogMessage, oFixture.message, sClassName)
+				.twice();
 			this.mock(oMessageManager).expects("addMessages")
+				.once()// add each error only once to the MessageManager
 				.withExactArgs(sinon.match(function (oMessage) {
 					return oMessage instanceof Message
 						&& oMessage.message === oError.message
@@ -687,7 +670,20 @@ sap.ui.require([
 
 			// code under test
 			oModel.reportError(sLogMessage, sClassName, oError);
+			oModel.reportError(sLogMessage, sClassName, oError);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("destroy", function (assert) {
+		var oModel = createModel(),
+			oModelPrototypeMock = this.mock(Model.prototype);
+
+		oModelPrototypeMock.expects("destroy").on(oModel).withExactArgs(1, 2, 3).returns("foo");
+		oModelPrototypeMock.expects("destroy").on(oModel.getMetaModel()).withExactArgs();
+
+		//code under test
+		assert.strictEqual(oModel.destroy(1, 2, 3), "foo");
 	});
 });
 // TODO constructor: test that the service root URL is absolute?

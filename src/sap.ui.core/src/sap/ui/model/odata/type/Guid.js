@@ -137,7 +137,7 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 		}
 		// remove all whitespaces and separators
 		sResult = sValue.replace(rAllWhitespaceAndSeparators, '');
-		if (sResult.length != 32) {
+		if (sResult.length !== 32) {
 			// don't try to add separators to invalid value
 			return sValue;
 		}
