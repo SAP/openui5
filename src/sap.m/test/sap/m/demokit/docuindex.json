@@ -2282,22 +2282,22 @@
 		{
 		  "id": "sap.m.sample.GenericTileAsLaunchTile",
 		  "name": "Launch Tile",
-		  "description": "Shows samples of Launch Tile, which can contain header, subheader, image content, and footer."
+		  "description": "Shows Launch Tile samples that can contain header, subheader, image content, unit, and a footer."
 		},
 		{
 		  "id": "sap.m.sample.GenericTileAsMonitorTile",
 		  "name": "Monitor Tile",
-		  "description": "Shows samples of Monitor Tile, which can contain header, subheader, icon, key value, unit, and footer."
+		  "description": "Shows Monitor Tile samples that can contain header, subheader, icon, key value, unit, and a footer."
 		},
 		{
 		  "id": "sap.m.sample.GenericTileAsKPITile",
 		  "name": "KPI Tile",
-		  "description": "Shows samples of KPI Tile, which can contain header, subheader, key value, trend, unit, and footer."
+		  "description": "Shows KPI Tile samples that can contain header, subheader, key value, trend, scale, unit, and a footer."
 		},
 		{
 		  "id": "sap.m.sample.GenericTileAsFeedTile",
-		  "name": "Feed Tile",
-		  "description": "Shows samples of Feed Tile and News Tile, which can contain feed content, news content, and footer."
+		  "name": "Feed and News Tile",
+		  "description": "Shows Feed Tile and News Tile samples that can contain feed content, news content, and a footer."
 		},
 		{
 		  "id": "sap.m.sample.TileContent",
