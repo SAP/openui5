@@ -26,7 +26,9 @@
 	var sDeleteIconURI = sap.ui.core.IconPool.getIconURI("delete");
 	var sChangeIconURI = sap.ui.core.IconPool.getIconURI("cause");
 	var sSrcIconURI = sap.ui.core.IconPool.getIconURI("employee");
+	var sSrcActiveIconURI = sap.ui.core.IconPool.getIconURI("employee-lookup");
 	var sStoreIconURI = sap.ui.core.IconPool.getIconURI("retail-store");
+	var sStoreActiveIconURI = sap.ui.core.IconPool.getIconURI("cart-full");
 	var sNotesIconURI = sap.ui.core.IconPool.getIconURI("notes");
 
 	var oHelper = {
@@ -85,7 +87,8 @@
 			oButton.setActiveIcon("./images/travel_request.png");
 		},
 		removeImage : function(oButton) {
-			oButton.setIcon("");
+			oButton.setIcon(null);
+			oButton.setActiveIcon(null);
 		},
 		alignImage : function(oButton) {
 			if (oButton.getIconFirst()) {
@@ -96,9 +99,11 @@
 		},
 		addIcon : function(oButton) {
 			oButton.setIcon(sSrcIconURI);
+			oButton.setActiveIcon(sSrcActiveIconURI);
 		},
 		removeIcon : function(oButton) {
 			oButton.setIcon(null);
+			oButton.setActiveIcon(null);
 		},
 		alignIcon : function(oButton) {
 			if (oButton.getIconFirst()) {
@@ -109,6 +114,7 @@
 		},
 		changeIcon : function(oButton) {
 			oButton.setIcon(sStoreIconURI);
+			oButton.setActiveIcon(sStoreActiveIconURI);
 		},
 		hide : function(oButton) {
 			oButton.setVisible(false);
