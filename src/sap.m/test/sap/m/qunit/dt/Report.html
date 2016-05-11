@@ -12,6 +12,7 @@
 				data-sap-ui-preload="async"
 				data-sap-ui-compatVersion="edge"
 				data-sap-ui-libs="sap.ui.dt,sap.m"
+				data-sap-ui-resourceroots='{"dt": "./"}'
 				src="../../../../../resources/sap-ui-core.js">
 		</script>
 		<script type="text/javascript">
@@ -21,12 +22,20 @@
 					'sap/ui/dt/test/report/Table',
 					'sap/ui/dt/test/report/Statistic',
 					'sap/ui/dt/test/ElementEnablementTest',
-					'sap/ui/dt/test/LibraryEnablementTest'
-				], function (Table, Statistic, ElementEnablementTest, LibraryEnablementTest) {
+					'sap/ui/dt/test/LibraryEnablementTest',
+					'dt/Page',
+					'dt/Bar',
+					'dt/CustomListItem'
+				], function (Table, Statistic, ElementEnablementTest, LibraryEnablementTest, Page, Bar, CustomListItem) {
 
 
 					var oLibraryEnablementTest = new LibraryEnablementTest({
-						libraryName : "sap.m"
+						libraryName : "sap.m",
+						testData : {
+							"sap.m.Bar" : Bar,
+							"sap.m.Page" : Page,
+							"sap.m.CustomListItem" : CustomListItem
+						}
 					});
 
 					oLibraryEnablementTest.run().then(function(oData) {
