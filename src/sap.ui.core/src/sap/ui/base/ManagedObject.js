@@ -2706,6 +2706,9 @@ sap.ui.define([
 			oType = oPart.type;
 			if (typeof oType == "string") {
 				clType = jQuery.sap.getObject(oType);
+				if (typeof clType !== "function") {
+					throw new Error("Cannot find type \"" + oType + "\" used in control \"" + that.getId() + "\"!");
+				}
 				oType = new clType(oPart.formatOptions, oPart.constraints);
 			}
 
