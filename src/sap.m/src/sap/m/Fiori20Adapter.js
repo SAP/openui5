@@ -280,6 +280,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 				this._adaptContent(oChangedContent, oControl, oAdaptOptions);
 			}.bind(this));
 
+			if (isInstanceOf(oControl, "sap/m/Page")) {
+				oControl._attachModifyAggregation("content", oAdaptOptions, function(oEvent) {
+					var sType = oEvent.getParameter("type"),
+						oObject = oEvent.getParameter("object");
+
+					if ((sType === "add") || (sType === "insert")) {
+						this.traverse(oObject, oAdaptOptions);
+					}
+				}, this);
+			}
+
 			// attach listener for changes in the nav container current page
 			if (isInstanceOf(oControl, "sap/m/NavContainer")) {
 				oControl.attachNavigate(function(oEvent){
