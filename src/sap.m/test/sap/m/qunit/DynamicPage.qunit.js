@@ -9,6 +9,9 @@
 	var core = sap.ui.getCore(),
 		TESTS_DOM_CONTAINER = "qunit-fixture",
 		oFactory = {
+			getResourceBundle: function () {
+				return sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			},
 			getDynamicPage: function () {
 				return new DynamicPage({
 					showFooter: true,
@@ -20,7 +23,7 @@
 			},
 			getDynamicPageWithHeaderAlwaysExpanded: function () {
 				return new DynamicPage({
-					headerAlwaysExpanded : true,
+					headerAlwaysExpanded: true,
 					title: this.getDynamicPageTitle(),
 					header: this.getDynamicPageHeader(),
 					content: this.getContent(100)
@@ -62,10 +65,10 @@
 					heading: new sap.m.Title({
 						text: "Anna Maria Luisa"
 					}),
-					snappedContent : [
+					snappedContent: [
 						this.getLabel("Snapped Content")
 					],
-					expandedContent : [
+					expandedContent: [
 						this.getLabel("Expanded Content")
 					]
 				});
@@ -344,7 +347,6 @@
 	});
 
 
-
 	QUnit.module("DynamicPage - Rendering - No Title", {
 		beforeEach: function () {
 			this.oDynamicPageNoTitle = oFactory.getDynamicPageNoTitle();
@@ -359,7 +361,6 @@
 	QUnit.test("DynamicPage Title not rendered", function (assert) {
 		assert.ok(!oUtil.exists(this.oDynamicPageNoTitle.getTitle()), "The DynamicPage Title has not successfully");
 	});
-
 
 
 	QUnit.module("DynamicPage - Rendering - Header Always Expanded", {
@@ -391,7 +392,6 @@
 	});
 
 
-
 	QUnit.module("DynamicPage - Rendering - No Header", {
 		beforeEach: function () {
 			this.oDynamicPageNoHeader = oFactory.getDynamicPageNoHeader();
@@ -406,7 +406,6 @@
 	QUnit.test("DynamicPage Header not rendered", function (assert) {
 		assert.ok(!oUtil.exists(this.oDynamicPageNoHeader.getHeader()), "The DynamicPage Header has not successfully");
 	});
-
 
 
 	QUnit.module("DynamicPage - Rendering - No Title and No Header", {
@@ -424,7 +423,6 @@
 		assert.ok(!oUtil.exists(this.oDynamicPageNoTitleAndHeader.getTitle()), "The DynamicPage Title has not rendered");
 		assert.ok(!oUtil.exists(this.oDynamicPageNoTitleAndHeader.getHeader()), "The DynamicPage Header has not rendered ");
 	});
-
 
 
 	QUnit.module("DynamicPage - Rendering - Title Expanded/Snapped Content", {
@@ -660,8 +658,8 @@
 		var $header = this.oDynamicPage.getHeader().$(),
 			sRole = "region",
 			sAriaExpandedValue = "true",
-			sAriaLabelValue = "Expanded header",
-			stub = this.stub(this.oDynamicPage, "_shouldSnap", function (){
+			sAriaLabelValue = oFactory.getResourceBundle().getText("EXPANDED_HEADER"),
+			stub = this.stub(this.oDynamicPage, "_shouldSnap", function () {
 				return true;
 			});
 
@@ -673,7 +671,7 @@
 			"DynamicPage Header aria-label is 'Header expanded'");
 
 		sAriaExpandedValue = "false";
-		sAriaLabelValue = "Snapped header";
+		sAriaLabelValue = oFactory.getResourceBundle().getText("SNAPPED_HEADER");
 		this.oDynamicPage._toggleHeader();
 
 		assert.equal($header.attr("aria-expanded"), sAriaExpandedValue,
