@@ -1,6 +1,6 @@
 <core:View controllerName="sap.m.sample.GenericTileAsLaunchTile.Page"
 	xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:html="http://www.w3.org/1999/xhtml">
-	<GenericTile class="sapUiTinyMargin tileLayout" header="Sales Fulfillment Application Title"
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Sales Fulfillment Application Title"
 		subheader="Subtitle" press="press">
 		<tileContent>
 			<TileContent unit="EUR" footer="Current Quarter">
@@ -12,7 +12,7 @@
 		
 	</GenericTile>
 
-	<GenericTile class="sapUiTinyMargin tileLayout" header="Manage Activity Type Master Data Lorem Ipsum Long Title"
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Manage Activity Type Master Data Lorem Ipsum Long Title"
 		subheader="Subtitle" press="press">
 		<tileContent>
 			<TileContent>
@@ -23,14 +23,14 @@
 		</tileContent>
 	</GenericTile>
 
-	<GenericTile class="sapUiTinyMargin tileLayout" header="Manage Activity Type Master Data Lorem Ipsum Long Title without Icon"
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Manage Activity Type Master Data Lorem Ipsum Long Title without Icon"
 		subheader="Subtitle Launch Tile" mode="HeaderMode" press="press">
 		<tileContent>
 			<TileContent unit="EUR" footer="Current Quarter" />
 		</tileContent>
 	</GenericTile>
 
-	<GenericTile class="sapUiTinyMargin tileLayout" header="Firstlongname Jessica D. Prince"
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Firstlongname Jessica D. Prince"
 		subheader="Department" press="press">
 		<tileContent>
 			<TileContent>
