@@ -3050,11 +3050,10 @@ sap.ui.define([
 				oBinding = oModel.bindTree(oBindingInfo.path, this.getBindingContext(oBindingInfo.model), oBindingInfo.filters, oBindingInfo.parameters, oBindingInfo.sorter);
 			} else {
 				oBinding = oModel.bindList(oBindingInfo.path, this.getBindingContext(oBindingInfo.model), oBindingInfo.sorter, oBindingInfo.filters, oBindingInfo.parameters);
+				if (this.bUseExtendedChangeDetection) {
+					oBinding.enableExtendedChangeDetection(!oBindingInfo.template, oBindingInfo.key);
+				}
 			}
-
-		if (this.bUseExtendedChangeDetection === true) {
-			oBinding.enableExtendedChangeDetection(!oBindingInfo.template, oBindingInfo.key);
-		}
 
 		if (oBindingInfo.suspended) {
 			oBinding.suspend(true);
@@ -3130,6 +3129,14 @@ sap.ui.define([
 			sGroupFunction = oAggregationInfo._sMutator + "Group",
 			that = this;
 
+		function getIdSuffix(oControl, iIndex) {
+			if (that.bUseExtendedChangeDetection) {
+				return ManagedObjectMetadata.uid('clone');
+			} else {
+				return oControl.getId() + "-" + iIndex;
+			}
+		}
+
 		// Update a single aggregation with the array of contexts. Reuse existing children
 		// and just append or remove at the end, if some are missing or too many.
 		function update(oControl, aContexts, fnBefore, fnAfter) {
@@ -3139,7 +3146,7 @@ sap.ui.define([
 			if (aChildren.length > aContexts.length) {
 				for (var i = aContexts.length; i < aChildren.length; i++) {
 					oControl[oAggregationInfo._sRemoveMutator](aChildren[i]);
-					aChildren[i].destroy();
+					aChildren[i].destroy("KeepDom");
 				}
 			}
 			for (var i = 0; i < aContexts.length; i++) {
@@ -3151,14 +3158,54 @@ sap.ui.define([
 				if (oClone) {
 					oClone.setBindingContext(oContext, oBindingInfo.model);
 				} else {
-					var sId = oControl.getId() + "-" + i;
-					oClone = fnFactory(sId, oContext);
+					oClone = fnFactory(getIdSuffix(oControl, i), oContext);
 					oClone.setBindingContext(oContext, oBindingInfo.model);
 					oControl[oAggregationInfo._sMutator](oClone);
 				}
 				if (fnAfter) {
 					fnAfter(oContext, oClone);
 				}
+			}
+		}
+
+		// Update a single aggregation with the array of contexts. Use the calculated diff to
+		// only add/remove children as the data has changed to minimize control updates and rendering
+		function updateDiff(oControl, aContexts) {
+			var aDiff = aContexts.diff,
+				aChildren = oControl[oAggregationInfo._sGetter]() || [],
+				oDiff, oClone, oContext, aChildren;
+			// If no diff exists or aggregation is empty, fall back to default update
+			if (!aDiff || aChildren.length === 0) {
+				update(oControl, aContexts);
+				return;
+			}
+			// If diff is empty, nothing needs to be changed
+			if (aDiff.length == 0) {
+				return;
+			}
+			// Loop through the diff and apply it
+			for (var i = 0; i < aDiff.length; i++) {
+				oDiff = aDiff[i];
+				switch (oDiff.type) {
+					case "insert":
+						oContext = aContexts[oDiff.index];
+						oClone = fnFactory(getIdSuffix(oControl, oDiff.index), oContext);
+						oClone.setBindingContext(oContext, oBindingInfo.model);
+						oControl[oAggregationInfo._sInsertMutator](oClone, oDiff.index);
+						break;
+					case "delete":
+						oClone = oControl[oAggregationInfo._sRemoveMutator](oDiff.index);
+						oClone.destroy("KeepDom");
+						break;
+					default:
+						jQuery.sap.log.error("Unknown diff type \"" + oDiff.type + "\"");
+				}
+			}
+			// Loop through all children and set the binding context again. This is needed for
+			// indexed contexts, where inserting/deleting entries shifts the index of all following items
+			aChildren = oControl[oAggregationInfo._sGetter]() || [];
+			for (var i = 0; i < aChildren.length; i++) {
+				aChildren[i].setBindingContext(aContexts[i]);
 			}
 		}
 
@@ -3184,22 +3231,29 @@ sap.ui.define([
 			});
 		}
 
-		// If a factory function is used, aggregation must be completely rebuild
-		if (!oBindingInfo.template) {
-			this[oAggregationInfo._sDestructor]();
-		}
-
 		if (oBinding instanceof ListBinding) {
-			// If grouping is enabled, use updateGroup as fnBefore to create groups
+			aContexts = oBinding.getContexts(oBindingInfo.startIndex, oBindingInfo.length);
 			bGrouped = oBinding.isGrouped() && sGroupFunction;
-			// Destroy children if binding is grouped or was grouped last time
 			if (bGrouped || oBinding.bWasGrouped) {
+				// If grouping is enabled, destroy aggregation and use updateGroup as fnBefore to create groups
 				this[oAggregationInfo._sDestructor]();
+				update(this, aContexts, bGrouped ? updateGroup : undefined);
+			} else if (this.bUseExtendedChangeDetection) {
+				// With extended change detection just update according to the diff
+				updateDiff(this, aContexts);
+			} else {
+				// If factory function is used without extended change detection, destroy aggregation
+				if (!oBindingInfo.template) {
+					this[oAggregationInfo._sDestructor]();
+				}
+				update(this, aContexts);
 			}
 			oBinding.bWasGrouped = bGrouped;
-			aContexts = oBinding.getContexts(oBindingInfo.startIndex, oBindingInfo.length);
-			update(this, aContexts, bGrouped ? updateGroup : null);
 		} else if (oBinding instanceof TreeBinding) {
+			// Destroy all children in case a factory function is used
+			if (!oBinding.template) {
+				this[oAggregationInfo._sDestructor]();
+			}
 			// In fnAfter call update recursively for the child nodes of the current tree node
 			updateRecursive(this, oBinding.getRootContexts());
 		}
