@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', "sap/ui/test/opaQunit"
    * @author Jonathan Benn
    * @alias sap.ui.test.gherkin.opa5TestHarness
    * @extends sap.ui.base.Object
-   * @since 1.38
+   * @since 1.40
    * @public
    */
   var oClass = UI5Object.extend('sap.ui.test.gherkin.opa5TestHarness', {});
