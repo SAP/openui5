@@ -1,6 +1,6 @@
 <core:View controllerName="sap.m.sample.GenericTileAsKPITile.Page"
 	xmlns="sap.m" xmlns:core="sap.ui.core">
-	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Lorem Ipsum Profit Margin" press="press">
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Country-Specific Profit Margin" subheader="Expenses" press="press">
 		<tileContent>
 			<TileContent unit="EUR" footer="Current Quarter">
 				<content>
@@ -11,7 +11,7 @@
 		</tileContent>
 	</GenericTile>
 
-	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="US Profit Margin"	press="press">
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="US Profit Margin" press="press">
 		<tileContent>
 			<TileContent unit="Unit">
 				<content>
