@@ -335,7 +335,7 @@ sap.ui.define([
 	};
 
 	P13nSortPanel.prototype.addSortItem = function(oSortItem) {
-		this.addAggregation("sortItems", oSortItem);
+		this.addAggregation("sortItems", oSortItem, true);
 
 		if (!this._bIgnoreBindCalls) {
 			this._bUpdateRequired = true;
@@ -343,7 +343,7 @@ sap.ui.define([
 	};
 
 	P13nSortPanel.prototype.insertSortItem = function(oSortItem, iIndex) {
-		this.insertAggregation("sortItems", oSortItem, iIndex);
+		this.insertAggregation("sortItems", oSortItem, iIndex, true);
 
 		if (!this._bIgnoreBindCalls) {
 			this._bUpdateRequired = true;
@@ -361,7 +361,7 @@ sap.ui.define([
 	};
 
 	P13nSortPanel.prototype.removeSortItem = function(oSortItem) {
-		oSortItem = this.removeAggregation("sortItems", oSortItem);
+		oSortItem = this.removeAggregation("sortItems", oSortItem, true);
 
 		if (!this._bIgnoreBindCalls) {
 			this._bUpdateRequired = true;
@@ -371,7 +371,7 @@ sap.ui.define([
 	};
 
 	P13nSortPanel.prototype.removeAllSortItems = function() {
-		var aSortItems = this.removeAllAggregation("sortItems");
+		var aSortItems = this.removeAllAggregation("sortItems", true);
 
 		if (!this._bIgnoreBindCalls) {
 			this._bUpdateRequired = true;
