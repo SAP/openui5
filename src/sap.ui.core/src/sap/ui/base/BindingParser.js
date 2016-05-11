@@ -229,9 +229,11 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'sap/ui/model/BindingM
 			} else {
 				if (sProp === "filters" || sParentProp === "filters") {
 					FNType = jQuery.sap.getObject("sap.ui.model.Filter");
+					resolveRef(o[sProp], "test");
 				} else if (sProp === "sorter" || sParentProp === "sorter") {
 					FNType = jQuery.sap.getObject("sap.ui.model.Sorter");
 					resolveRef(o[sProp], "group");
+					resolveRef(o[sProp], "comparator");
 				}
 				if (FNType) {
 					o[sProp] = new FNType(o[sProp]);
