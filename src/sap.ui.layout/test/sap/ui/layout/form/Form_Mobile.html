@@ -68,7 +68,7 @@
 				new sap.ui.layout.form.FormContainer("C1",{
 					title: "contact data",
 					formElements: [
-						new sap.ui.layout.form.FormElement({
+						new sap.ui.layout.form.FormElement("F1C1E1", {
 							label: "Name",
 							fields: [new sap.m.Input({value: "Name"})]
 						}),
@@ -160,11 +160,33 @@
 				new sap.ui.layout.form.FormContainer("C4",{
 					formElements: [
 						new sap.ui.layout.form.FormElement({
-							fields: [new sap.m.Button({text: 'OK',
+							fields: [new sap.m.ToggleButton({text: 'move container',
+														press: function(oEvent) {
+									        		var bPressed = oEvent.getParameter("pressed");
+									        		var oForm = sap.ui.getCore().byId("F1");
+									        		var oContainer = sap.ui.getCore().byId("C1");
+									        		oForm.removeFormContainer(oContainer);
+									        		if (bPressed) {
+									        			oForm.insertFormContainer(oContainer, 1);
+									        		} else {
+									        			oForm.insertFormContainer(oContainer, 0);
+									        		}
+									        	 },
 														layoutData: new sap.ui.core.VariantLayoutData({
 															multipleLayoutData: [new sap.ui.layout.form.GridElementData({hCells: "1"})]})
 												}),
-							         new sap.m.Button({text: 'Cancel',
+							         new sap.m.ToggleButton({text: 'move element',
+													press: function(oEvent) {
+								        		var bPressed = oEvent.getParameter("pressed");
+								        		var oContainer = sap.ui.getCore().byId("C1");
+								        		var oElement = sap.ui.getCore().byId("F1C1E1");
+								        		oContainer.removeFormElement(oElement);
+								        		if (bPressed) {
+								        			oContainer.insertFormElement(oElement, 1);
+								        		} else {
+								        			oContainer.insertFormElement(oElement, 0);
+								        		}
+								        	 },
 														layoutData: new sap.ui.core.VariantLayoutData({
 															multipleLayoutData: [new sap.ui.layout.form.GridElementData({hCells: "1"})]})
 							         })]
