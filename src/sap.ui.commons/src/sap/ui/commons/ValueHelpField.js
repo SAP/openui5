@@ -60,17 +60,10 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Ico
 	}});
 
 
-	ValueHelpField.prototype.onBeforeRendering = function(){
-		var sThemeModuleName = "sap.ui.commons.themes." + sap.ui.getCore().getConfiguration().getTheme();
-		var sIcon = Parameters.get('sap.ui.commons.ValueHelpField:sapUiValueHelpIconDsblUrl');
-
-		this.sIconDsblUrl = jQuery.sap.getModulePath(sThemeModuleName, sIcon);
-
-		sIcon = Parameters.get('sap.ui.commons.ValueHelpField:sapUiValueHelpIconRegularUrl');
-		this.sIconRegularUrl = jQuery.sap.getModulePath(sThemeModuleName, sIcon);
-
-		sIcon = Parameters.get('sap.ui.commons.ValueHelpField:sapUiValueHelpIconHoverUrl');
-		this.sIconHoverUrl = jQuery.sap.getModulePath(sThemeModuleName, sIcon);
+	ValueHelpField.prototype.onBeforeRendering = function() {
+		this.sIconDsblUrl = "sap-icon://value-help";
+		this.sIconRegularUrl = "sap-icon://value-help";
+		this.sIconHoverUrl = "sap-icon://value-help";
 	};
 
 	ValueHelpField.prototype.onmouseover = function (oEvent) {
@@ -81,8 +74,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Ico
 			} else if (this.getIconURL()) {
 				this.sIconHoverUrl = this.sIconRegularUrl;
 			} else {
-				var sIcon = Parameters.get('sap.ui.commons.ValueHelpField:sapUiValueHelpIconHoverUrl');
-				this.sIconHoverUrl = jQuery.sap.getModulePath("sap.ui.commons.themes." + sap.ui.getCore().getConfiguration().getTheme(), sIcon);
+				this.sIconHoverUrl = "sap-icon://value-help";
 			}
 			var oIcon = jQuery.sap.byId(oEvent.target.id);
 			oIcon.attr( 'src', this.sIconHoverUrl );
