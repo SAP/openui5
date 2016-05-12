@@ -8,12 +8,11 @@
         id="treeTable"
         selectionMode="Single"
         enableColumnReordering="false"
-        expandFirstLevel="true"
+        expandFirstLevel="false"
         rows="{
             path : '/Nodes',
             parameters : {
                 countMode: 'Inline',
-                numberOfExpandedLevels : 2,
                 treeAnnotationProperties : {
                     hierarchyLevelFor : 'HierarchyLevel',
                     hierarchyNodeFor : 'NodeID',
