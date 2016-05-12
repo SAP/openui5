@@ -381,4 +381,81 @@ sap.ui.require([
 			oContext.updateValue("up", sPropertyName, vValue, "edit('URL')", "SO_2_SOITEM/42"),
 			oResult);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchCanonicalPath", function (assert) {
+		var oMetaModel = {
+				fetchCanonicalUrl : function () {}
+			},
+			oModel = {
+				getMetaModel : function () {
+					return oMetaModel;
+				}
+			},
+			oContext = Context.create(oModel, null, "/EMPLOYEES/42"),
+			oPromise = {};
+
+		this.mock(oMetaModel).expects("fetchCanonicalUrl")
+			.withExactArgs("/", oContext.getPath(), sinon.match.same(oContext))
+			.returns(oPromise);
+
+		// code under test
+		assert.strictEqual(oContext.fetchCanonicalPath(), oPromise);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestCanonicalPath", function (assert) {
+		var oContext = Context.create(null, null, "/EMPLOYEES/42"),
+			oPromise,
+			oSyncPromise = _SyncPromise.resolve(Promise.resolve("/EMPLOYEES(ID='1')"));
+
+		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs().returns(oSyncPromise);
+
+		//code under test
+		oPromise = oContext.requestCanonicalPath();
+
+		assert.ok(oPromise instanceof Promise);
+
+		return oPromise.then(function (oResult) {
+			assert.deepEqual(oResult, "/EMPLOYEES(ID='1')");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getCanonicalPath: success", function (assert) {
+		var oContext = Context.create(null, null, "/EMPLOYEES/42"),
+			oSyncPromise = _SyncPromise.resolve("/EMPLOYEES(ID='1')");
+
+		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs().returns(oSyncPromise);
+
+		//code under test
+		assert.strictEqual(oContext.getCanonicalPath(), "/EMPLOYEES(ID='1')");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getCanonicalPath: unresolved", function (assert) {
+		var oContext = Context.create(null, null, "/EMPLOYEES/42"),
+			oSyncPromise = _SyncPromise.resolve(Promise.resolve("/EMPLOYEES(ID='1')"));
+
+		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs().returns(oSyncPromise);
+
+		//code under test
+		assert.throws(function () {
+			oContext.getCanonicalPath();
+		}, new Error("Result pending"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getCanonicalPath: failure", function (assert) {
+		var oContext = Context.create(null, null, "/EMPLOYEES/42"),
+			oError = new Error("Intentionally failed"),
+			oSyncPromise = _SyncPromise.resolve().then(function () {throw oError;});
+
+		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs().returns(oSyncPromise);
+
+		//code under test
+		assert.throws(function () {
+			oContext.getCanonicalPath();
+		}, oError);
+	});
 });
