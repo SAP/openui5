@@ -1,0 +1,127 @@
+<mvc:View
+		xmlns:c="sap.ui.core"
+		controllerName="sap.m.sample.DynamicPageAnalyticalTable.DynamicPageAnalyticalTable"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		xmlns:t="sap.ui.table"
+		xmlns:f="sap.ui.layout.form"
+		xmlns:layout="sap.ui.layout"
+		height="100%">
+	<App>
+		<DynamicPage id="dynamicPageId" headerAlwaysExpanded="true">
+			<!-- DynamicPage Title -->
+			<title>
+				<DynamicPageTitle>
+					<heading>
+						<Title text="My Products"/>
+					</heading>
+
+					<actions>
+						<ToolbarSpacer/>
+						<OverflowToolbarButton
+								icon="sap-icon://add"
+								text="Add"
+								type="Transparent"/>
+						<OverflowToolbarButton
+								icon="sap-icon://edit"
+								text="Edit"
+								type="Transparent"/>
+						<OverflowToolbarButton
+								icon="sap-icon://delete"
+								text="Delete"
+								type="Transparent"/>
+						<Button
+								icon="sap-icon://post"
+								text="Toggle Footer"
+								type="Transparent"
+								press="onToggleFooter"/>
+					</actions>
+				</DynamicPageTitle>
+			</title>
+
+			<!-- DynamicPage Header -->
+			<header>
+				<DynamicPageHeader pinnable="true">
+					<content>
+						<layout:Grid defaultSpan="XL4 L6 M6 S12">
+							<layout:VerticalLayout>
+								<Label text="Name:"/>
+								<Select
+										id="slName"
+										width="200px"
+										forceSelection="true"
+										items="{path: '/ProductNames'}">
+									<c:Item key="{key}" text="{name}"/>
+								</Select>
+							</layout:VerticalLayout>
+							<layout:VerticalLayout>
+								<Label text="Category:"/>
+								<Select
+										id="slCategory"
+										width="200px"
+										change="onSelectChange"
+										forceSelection="true"
+										items="{
+                                                    path: '/ProductCategories'
+                                                 }">
+									<c:Item key="{key}" text="{name}"/>
+								</Select>
+							</layout:VerticalLayout>
+							<layout:VerticalLayout>
+								<Label text="SupplierName:"/>
+								<Select
+										id="slSupplierName"
+										width="200px"
+										change="onSelectChange"
+										forceSelection="true"
+										items="{
+                                                    path: '/ProductSuppliers'
+                                                }">
+									<c:Item key="{key}" text="{name}"/>
+								</Select>
+							</layout:VerticalLayout>
+						</layout:Grid>
+					</content>
+				</DynamicPageHeader>
+			</header>
+
+			<content>
+				<VBox fitContainer="true">
+					<t:AnalyticalTable visibleRowCountMode="Auto" selectionMode="MultiToggle" rowHeight="32">
+						<t:toolbar>
+							<OverflowToolbar>
+								<Title text="Title Bar Here"/>
+								<ToolbarSpacer/>
+								<SearchField width="12rem"/>
+								<SegmentedButton>
+									<buttons>
+										<Button icon="sap-icon://table-view"/>
+										<Button icon="sap-icon://bar-chart"/>
+									</buttons>
+								</SegmentedButton>
+								<Button icon="sap-icon://group-2" type="Transparent"/>
+								<Button icon="sap-icon://action-settings" type="Transparent"/>
+							</OverflowToolbar>
+						</t:toolbar>
+						<t:columns>
+							<t:AnalyticalColumn/>
+							<t:AnalyticalColumn/>
+							<t:AnalyticalColumn/>
+						</t:columns>
+						<t:layoutData>
+							<FlexItemData growFactor="1" baseSize="0%" styleClass="sapUiResponsiveContentPadding"/>
+						</t:layoutData>
+					</t:AnalyticalTable>
+				</VBox>
+			</content>
+			<!-- DynamicPage Footer -->
+			<footer>
+				<OverflowToolbar>
+					<ToolbarSpacer/>
+					<Button type="Accept" text="Accept"/>
+					<Button type="Reject" text="Reject"/>
+				</OverflowToolbar>
+			</footer>
+		</DynamicPage>
+	</App>
+</mvc:View>

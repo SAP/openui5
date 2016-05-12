@@ -1220,6 +1220,11 @@
 		  "name": "Dynamic Page FIORI 2.0 List Report floor plan",
 		  "description": "The Dynamic Page is a FIORI 2.0 generation layout control. The sample shows how the List Report floor plan can be implemented."
 		},
+        {
+          "id": "sap.m.sample.DynamicPageAnalyticalTable",
+          "name": "Dynamic Page FIORI 2.0 Analytical Table floor plan",
+          "description": "The Dynamic Page is a FIORI 2.0 generation layout control. The sample shows how the AnalyticalTable works inside it."
+        },
 		{
 		  "id": "sap.m.sample.DateRangeSelection",
 		  "name": "Date Range Selection",
