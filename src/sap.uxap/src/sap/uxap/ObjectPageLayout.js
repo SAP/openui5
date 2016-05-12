@@ -281,6 +281,13 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Handler for theme changing
+	 */
+	ObjectPageLayout.prototype.onThemeChanged = function () {
+		this.invalidate(); // triggers a re-rendering
+	};
+
 	ObjectPageLayout.prototype._preloadSectionsOnBeforeFirstRendering = function () {
 		var aToLoad;
 		if (!this.getEnableLazyLoading()) {
