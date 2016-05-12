@@ -53,7 +53,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Control'
 						/**
 						 * the stashed state of the control
 						 */
-						stashed: true,
+						stashed: { type: 'boolean', visibility: 'hidden' },
 						// /**
 						//  * description of the stashed control for display purposes
 						//  */
@@ -61,15 +61,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Control'
 						/**
 						 * id of the actual parent of the control (virtual control tree position)
 						 */
-						sParentId: true,
+						sParentId: { type: 'string', visibility: 'hidden' },
 						/**
 						 * name of the aggregation in which the actual control would be placed
 						 */
-						sParentAggregationName: true,
+						sParentAggregationName: { type: 'string', visibility: 'hidden' },
 						/**
 						 * hook for the later creation, which should return the actual control
 						 */
-						fnCreate: true
+						fnCreate: { type: 'function', visibility: 'hidden' }
 					}
 				}
 			});
