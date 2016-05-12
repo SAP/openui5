@@ -109,7 +109,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			numberState : {type : "sap.ui.core.ValueState", group : "Misc", defaultValue : sap.ui.core.ValueState.None},
 
 			/**
-			 * Displays the condensed object header with title, one attribute, number and number unit.
+			 * ObjectHeader with title, one attribute, number, and number unit.
+			 * NOTE: Only applied if the responsive property is set to false.
 			 */
 			condensed : {type : "boolean", group : "Appearance", defaultValue : false},
 
@@ -130,9 +131,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			responsive : {type : "boolean", group : "Behavior", defaultValue : false},
 
 			/**
-			 * NOTE: Only applied if you set "responsive=true".
-			 * If this property is set to true, the control occupies the available screen area so that the contents are arranged in a different way to fit in that area.
-			 * If it is set to false, the control is optimized for the master detail view.
+			 * Optimizes the display of the elements of the ObjectHeader.
+			 * NOTE: Only applied if the responsive property is set to true.
+			 *
+			 * If set to false, the attributes and statuses are being positioned below the Title/Number of the ObjectHeader in 2 or 3 columns depending on their number:
+			 *
+			 *                - On desktop, 1-4 attributes/statuses - 2 columns
+			 *                - On desktop, 5+ attributes/statuses - 3 columns
+			 *                - On tablet, always in 2 columns
+			 *
+			 * If set to true, the following situations apply:
+			 *
+			 *                 - On desktop, 1-3 attributes/statuses - positioned as a third block on the right side of the Title/Number group
+			 *                 - On desktop, 4+ attributes/statuses - 4 columns below the Title/Number
+			 *                 - On tablet (portrait mode), always in 2 columns below the Title/Number
+			 *                 - On tablet (landscape mode), 1-2 attributes/statuses - 2 columns below the Title/Number
+			 *                 - On tablet (landscape mode), 3+ attributes/statuses - 3 columns below the Title/Number
+			 *
+			 * On phone, the attributes and statuses are always positioned in 1 column below the Title/Number of the ObjectHeader.
+			 *
 			 * @since 1.28
 			 */
 			fullScreenOptimized : {type : "boolean", group : "Appearance", defaultValue : false},
