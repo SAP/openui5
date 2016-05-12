@@ -3,20 +3,6 @@
 	<SlideTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout">
 		<tiles>
 			<GenericTile
-				backgroundImage="test-resources/sap/m/demokit/sample/SlideTile/images/NewsImage1.png"
-				frameType="TwoByOne" press="press">
-				<tileContent>
-					<TileContent footer="August 21, 2016">
-						<content>
-							<NewsContent
-								contentText="Wind Map: Monitoring Real-Time and Forecasted Wind Conditions over the Globe"
-								subheader="Today, SAP News">
-							</NewsContent>
-						</content>
-					</TileContent>
-				</tileContent>
-			</GenericTile>
-			<GenericTile
 				backgroundImage="test-resources/sap/m/demokit/sample/SlideTile/images/NewsImage2.png"
 				frameType="TwoByOne" press="press">
 				<tileContent>
@@ -30,9 +16,23 @@
 					</TileContent>
 				</tileContent>
 			</GenericTile>
+			<GenericTile
+				backgroundImage="test-resources/sap/m/demokit/sample/SlideTile/images/NewsImage1.png"
+				frameType="TwoByOne" press="press">
+				<tileContent>
+					<TileContent footer="August 21, 2016">
+						<content>
+							<NewsContent
+								contentText="Wind Map: Monitoring Real-Time and Forecasted Wind Conditions across the Globe"
+								subheader="Today, SAP News">
+							</NewsContent>
+						</content>
+					</TileContent>
+				</tileContent>
+			</GenericTile>
 		</tiles>
 	</SlideTile>
-	<SlideTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout">
+	<SlideTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" transitionTime="250" displayTime="2500">
 		<tiles>
 			<GenericTile
 				backgroundImage="test-resources/sap/m/demokit/sample/SlideTile/images/NewsImage1.png"
@@ -41,7 +41,7 @@
 					<TileContent footer="August 21, 2016">
 						<content>
 							<NewsContent
-								contentText="Wind Map: Monitoring Real-Time and Forecasted Wind Conditions over the Globe"
+								contentText="Wind Map: Monitoring Real-Time and Forecasted Wind Conditions across the Globe"
 								subheader="Today, SAP News">
 							</NewsContent>
 						</content>
