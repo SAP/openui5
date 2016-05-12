@@ -332,31 +332,30 @@ sap.ui.define([
 				 * AutoIDs use a unique prefix that must not be used for Ids that the application (or other code) creates.
 				 * It can be configured option 'autoIDPrefix', see {@link sap.ui.core.Configuration}.
 				 */
-				id : true,
-				//id : {type : "string", group : "Identification", defaultValue : '', readOnly : true}
+				id : 'sap.ui.core.ID',
 
 				/**
 				 * A map of model instances to which the object should be attached.
 				 * The models are keyed by their model name. For the default model, String(undefined) is expected.
 				 */
-				models : true,
+				models : 'object',
 
 				/**
 				 * A map of model instances to which the object should be attached.
 				 * The models are keyed by their model name. For the default model, String(undefined) is expected.
 				 */
-				bindingContexts : true,
+				bindingContexts : 'object',
 
 				/**
 				 * A map of model instances to which the object should be attached.
 				 * The models are keyed by their model name. For the default model, String(undefined) is expected.
 				 */
-				objectBindings : true,
+				objectBindings : 'object',
 
 				/**
 				 * Used by ManagedObject.create.
 				 */
-				Type : true
+				Type : { type: 'string', visibility: 'hidden' }
 			}
 		},
 

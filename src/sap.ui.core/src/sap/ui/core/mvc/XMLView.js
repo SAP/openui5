@@ -33,18 +33,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		library : "sap.ui.core",
 
 		specialSettings : {
+
 			/**
 			 * If an XMLView instance is used to represent a HTML subtree of another XMLView,
 			 * then that other XMLView is provided with this setting to be able to delegate
 			 * View functionality (createId, getController) to that 'real' view.
 			 */
-			containingView : true,
+			containingView : { type: 'sap.ui.core.mvc.XMLView', visibility: 'hidden' },
+
 			/**
 			 * If an XMLView instance is used to represent a HTML subtree of another XMLView,
 			 * that subtree is provided with this setting.
 			 */
-			xmlNode : true
+			xmlNode : { type: 'Element', visibility: 'hidden' }
 		},
+
 		designTime: true
 	}});
 

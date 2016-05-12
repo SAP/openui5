@@ -97,58 +97,57 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 			/**
 			 * Controller instance to use for this view.
 			 */
-			controller : true,
+			controller : 'sap.ui.core.mvc.Controller',
 
 			/**
 			 * Name of the controller class to use for this view.
 			 * If given, it overrides the same information in the view definition (XML, HTML).
 			 */
-			controllerName : true,
+			controllerName : 'string',
 
 			/**
 			 * Preprocessors that the view can use before constructing the view.
 			 */
-			preprocessors : true,
+			preprocessors : 'Object',
 
 			/**
 			 * (module) Name of a resource bundle that should be loaded for this view
 			 */
-			resourceBundleName : true,
+			resourceBundleName : 'string',
 
 			/**
 			 * URL of a resource bundle that should be loaded for this view
 			 */
-			resourceBundleUrl : true,
+			resourceBundleUrl : 'sap.ui.core.URI',
 
 			/**
-			 * Locale that should be used to load a resourcebundle for thisview
+			 * Locale that should be used to load a resourcebundle for this view
 			 */
-			resourceBundleLocale : true,
+			resourceBundleLocale : 'string', // should be something like 'languageTag'
 
 			/**
 			 * Model name under which the resource bundle should be stored.
 			 */
-			resourceBundleAlias : true,
+			resourceBundleAlias : 'string',
 
 			/**
 			 * Type of the view
 			 */
-			type : true,
+			type : 'string',
 
 			/**
 			 * A view definition
 			 */
-			viewContent : true,
+			viewContent : 'any',
 
 			/**
 			 * Additional configuration data that should be given to the view at construction time
 			 * and which will be available early, even before model data or other constructor settings are applied.
 			 */
-			viewData : true,
+			viewData : 'any',
 
 			/**
 			 * Determines initialization mode of the view
-			 * @type {Boolean}
 			 * @since 1.30
 			 */
 			async : {
