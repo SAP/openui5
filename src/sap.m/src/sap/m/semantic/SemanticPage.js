@@ -457,6 +457,7 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 						SemanticConfiguration.getSequenceOrderIndex(sType),
 						bSuppressInvalidate);
 			}
+			return ManagedObject.prototype.setAggregation.call(this, sAggregationName, oObject, true);// no need to invalidate entire page since the change only affects custom footer/header of page
 		}
 
 		return ManagedObject.prototype.setAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
