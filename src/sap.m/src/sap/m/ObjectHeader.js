@@ -117,8 +117,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			numberState : {type : "sap.ui.core.ValueState", group : "Misc", defaultValue : sap.ui.core.ValueState.None},
 
 			/**
-			 * NOTE: Only applied if you set "responsive=false".
-			 * Displays the condensed object header with title, one attribute, number and number unit.
+			 * <code>ObjectHeader</code> with title, one attribute, number, and number unit.<br>
+			 * <b>Note:</b> Only applied if the <code>responsive</code> property is set to <code>false</code>.
 			 */
 			condensed : {type : "boolean", group : "Appearance", defaultValue : false},
 
@@ -139,9 +139,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			responsive : {type : "boolean", group : "Behavior", defaultValue : false},
 
 			/**
-			 * NOTE: Only applied if you set "responsive=true".
-			 * If this property is set to true, the control occupies the available screen area so that the contents are arranged in a different way to fit in that area.
-			 * If it is set to false, the control is optimized for the master detail view.
+			 * Optimizes the display of the elements of the <code>ObjectHeader</code>.<br>
+			 * <b>Note</b>: Only applied if the <code>responsive</code> property is set to <code>true</code>.
+			 *
+			 * If set to <code>false</code>, the attributes and statuses are being positioned below the Title/Number of the <code>ObjectHeader</code> in 2 or 3 columns depending on their number:
+			 * <ul>
+			 *                <li>On desktop, 1-4 attributes/statuses - 2 columns</li>
+			 *                <li>On desktop, 5+ attributes/statuses - 3 columns</li>
+			 *                <li>On tablet, always in 2 columns</li>
+			 * </ul>
+			 * If set to <code>true</code>, the following situations apply:
+			 * <ul>
+			 *                 <li>On desktop, 1-3 attributes/statuses - positioned as a third block on the right side of the Title/Number group</li>
+			 *                 <li>On desktop, 4+ attributes/statuses - 4 columns below the Title/Number</li>
+			 *                 <li>On tablet (portrait mode), always in 2 columns below the Title/Number</li>
+			 *                 <li>On tablet (landscape mode), 1-2 attributes/statuses - 2 columns below the Title/Number</li>
+			 *                 <li>On tablet (landscape mode), 3+ attributes/statuses - 3 columns below the Title/Number</li>
+			 *
+			 * On phone, the attributes and statuses are always positioned in 1 column below the Title/Number of the <code>ObjectHeader</code>.
+			 *
 			 * @since 1.28
 			 */
 			fullScreenOptimized : {type : "boolean", group : "Appearance", defaultValue : false},
