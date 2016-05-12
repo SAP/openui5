@@ -1,9 +1,40 @@
 <core:View controllerName="sap.m.sample.GenericTileStates.Page"
 	xmlns="sap.m" xmlns:core="sap.ui.core">
-	<GenericTile class="sapUiSmallMargin" header="Cumulative Totals"
-		subheader="Expenses" frameType="OneByOne" state="Loading">
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Status Loaded - no press event"
+		subheader="Subheader">
 		<tileContent>
-			<TileContent footer="Actual and Target" unit="EUR">
+			<TileContent unit="Unit" footer="Footer">
+				<content>
+					<ImageContent src="sap-icon://line-charts"/>
+				</content>
+			</TileContent>
+		</tileContent>
+	</GenericTile>
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Status Loaded - with press event"
+		subheader="Subheader" press="press">
+		<tileContent>
+			<TileContent unit="Unit" footer="Footer">
+				<content>
+					<ImageContent src="sap-icon://home-share"/>
+				</content>
+			</TileContent>
+		</tileContent>
+	</GenericTile>
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Status Loading - no press event"
+		subheader="Subheader" frameType="OneByOne" state="Loading">
+		<tileContent>
+			<TileContent unit="Unit" footer="Footer">
+				<content>
+					<NumericContent scale="M" value="2.1"
+						valueColor="Good" indicator="Up" />
+				</content>
+			</TileContent>
+		</tileContent>
+	</GenericTile>
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Status Loading - with press event"
+		subheader="Subheader" frameType="OneByOne" state="Loading" press="press">
+		<tileContent>
+			<TileContent unit="Unit" footer="Footer">
 				<content>
 					<NumericContent scale="M" value="1.96"
 						valueColor="Error" indicator="Down" />
@@ -11,63 +42,68 @@
 			</TileContent>
 		</tileContent>
 	</GenericTile>
-	<GenericTile class="sapUiSmallMargin" header="Comparative Annual Totals"
-		subheader="Expenses By Region" frameType="TwoByOne" state="Failed">
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Status Failed - no press event"
+		subheader="Subheader" frameType="TwoByOne" state="Failed">
 		<tileContent>
-			<TileContent footer="Actual and Target" unit="EUR">
+			<TileContent unit="Unit" footer="Footer">
 				<content>
-					<NumericContent scale="M" value="1.96"
-						valueColor="Error" indicator="Up" />
-				</content>
-			</TileContent>
-			<TileContent>
-				<content>
-					<NumericContent value="3"
-						icon="sap-icon://travel-expense" />
+					<FeedContent
+						contentText="@@notify Great outcome of the Presentation today. The new functionality and the design was well received. Berlin, Tokyo, Rome, Budapest, New York, Munich, London"
+						subheader="Subheader" value="9">
+					</FeedContent>
 				</content>
 			</TileContent>
 		</tileContent>
 	</GenericTile>
-	<SlideTile class="sapUiSmallMargin">
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Status Failed - with press event"
+		subheader="Subheader" frameType="TwoByOne" state="Failed" press="press">
+		<tileContent>
+			<TileContent unit="Unit" footer="Footer">
+				<content>
+					<FeedContent
+						contentText="@@notify Great outcome of the Presentation today. The new functionality and the design was well received. Berlin, Tokyo, Rome, Budapest, New York, Munich, London"
+						subheader="Subheader" value="9">
+					</FeedContent>
+				</content>
+			</TileContent>
+		</tileContent>
+	</GenericTile>
+	<SlideTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout">
 		<tiles>
 			<GenericTile
-				header="Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat."
-				frameType="TwoByOne"
-				headerImage="test-resources/sap/m/demokit/GenericTileStates/images/headerImg2.jpg"
-				state="Loading">
+				backgroundImage="test-resources/sap/m/demokit/sample/GenericTileAsFeedTile/images/NewsImage1.png"
+				frameType="TwoByOne" state="Loading">
 				<tileContent>
-					<TileContent footer="New Notifications">
+					<TileContent unit="Unit" footer="Footer">
 						<content>
-							<FeedContent
-								contentText="@@notify Great outcome of the Presentation today. The new functionality and the design was well received. Berlin, Tokyo, Rome, Budapest, New York, Munich, London"
-								subheader="about 1 minute ago in Computer Market" value="9">
-							</FeedContent>
+							<NewsContent
+								contentText="Status Loading"
+								subheader="Subheader">
+							</NewsContent>
 						</content>
 					</TileContent>
 				</tileContent>
 			</GenericTile>
 			<GenericTile
-				header="Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat."
-				frameType="TwoByOne"
-				headerImage="test-resources/sap/m/demokit/GenericTileStates/images/headerImg2.jpg"
-				state="Loaded">
+				backgroundImage="test-resources/sap/m/demokit/sample/GenericTileAsFeedTile/images/NewsImage2.png"
+				frameType="TwoByOne" state="Loaded" press="press">
 				<tileContent>
-					<TileContent footer="New Notifications">
+					<TileContent unit="Unit" footer="Footer">
 						<content>
-							<FeedContent
-								contentText="@@notify Great outcome of the Presentation today. The new functionality and the design was well received. Berlin, Tokyo, Rome, Budapest."
-								subheader="about 1 minute ago in Computer Cluster" value="9999">
-							</FeedContent>
+							<NewsContent
+								contentText="Status Loaded"
+								subheader="Subheader">
+							</NewsContent>
 						</content>
 					</TileContent>
 				</tileContent>
 			</GenericTile>
 		</tiles>
 	</SlideTile>
-	<GenericTile class="sapUiSmallMargin" header="Cumulative Totals"
-		subheader="Expenses" frameType="OneByOne" state="Disabled">
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Status Disabled"
+		subheader="Subheader" frameType="OneByOne" state="Disabled">
 		<tileContent>
-			<TileContent footer="Actual and Target" unit="EUR">
+			<TileContent footer="Footer" unit="Unit">
 				<content>
 					<NumericContent value="3"
 						icon="sap-icon://travel-expense" />
@@ -75,4 +111,4 @@
 			</TileContent>
 		</tileContent>
 	</GenericTile>
-</core:View>
+	</core:View>

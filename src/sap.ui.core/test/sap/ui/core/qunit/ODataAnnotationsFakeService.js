@@ -72,8 +72,8 @@ xhr.onCreate = function(request) {
 				sAnswer = sEPMAnnotationsComplex;
 				break;
 
-			case "fakeService://testdata/odata/2014-12-08-test.xml":
-				sAnswer = sTest20141208Annotations;
+			case "fakeService://testdata/odata/apply-function-test.xml":
+				sAnswer = sTestApplyFunctionAnnotations;
 				break;
 
 			case "fakeService://testdata/odata/multiple-property-annotations.xml":
@@ -217,6 +217,10 @@ xhr.onCreate = function(request) {
 
 			case "fakeService://testdata/odata/edmtype-for-navigationproperties":
 				sAnswer = sEdmtypeForNavigationproperties;
+				break;
+
+			case "fakeService://testdata/odata/nested-annotations":
+				sAnswer = sNestedAnnotations;
 				break;
 
 			default:
@@ -3412,7 +3416,7 @@ var sEPMAnnotationsComplex = '\
 		</edmx:DataServices>\
 	</edmx:Edmx>';
 
-var sTest20141208Annotations = '\
+var sTestApplyFunctionAnnotations = '\
 <?xml version="1.0" encoding="utf-8"?>\
 <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
 	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
@@ -5264,6 +5268,100 @@ var sEdmtypeForNavigationproperties = '\
 							<PropertyValue Property="Value" Path="Products/ProductID" />\
 						</Record>\
 					</Collection>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
+
+var sNestedAnnotations = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/coco/vocabularies/UI.xml">\
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI" />\
+	</edmx:Reference>\
+	<edmx:Reference Uri="http://services.odata.org/Northwind/Northwind.svc/$metadata" >\
+		<edmx:Include Namespace="NorthwindModel" Alias="NorthwindModel" />\
+	</edmx:Reference>	\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="NorthwindModel.Product">\
+				<Annotation Term="com.sap.vocabularies.UI.v1.LineItem">\
+					<Collection>\
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+							<PropertyValue Property="Label" String="Business Partner"/>\
+							<PropertyValue Property="Value" Path="BusinessPartnerID"/>\
+							<Annotation Term="com.sap.vocabularies.UI.v1.Importance"\
+								EnumMember="com.sap.vocabularies.UI.v1.ImportanceType/High"/>\
+						</Record>\
+					</Collection>\
+				</Annotation>\
+				<Annotation Term="com.sap.vocabularies.Common.v1.Text" Path="CategoryName">\
+					<!-- We are keeping this (invalid) example in to document the behavior of the parser in cases that are not allowed in actual annotation sources -->\
+					<Term Name="TextArrangement" Type="UI.TextArrangementType" AppliesTo="Annotation EntityType">\
+						<Annotation Term="Core.Description1" String="Describes the arrangement of the property values and its text"/>\
+						<Annotation Term="Core.Description2" String="If used for a single property the Common.Text annotation is annotated"/>\
+					</Term>\
+				</Annotation>\
+				<Annotation Term="com.sap.vocabularies.Common.v1.Text2" Path="CategoryName">\
+					<Annotation Term="com.sap.vocabularies.UI.v1.TextArrangement" EnumMember="com.sap.vocabularies.UI.v1.TextArrangementType/TextLast" />\
+				</Annotation>\
+				<Annotation Term="unittest.ui5.parentAnnotation">\
+					<Annotation Term="unittest.ui5.constantExpressions">\
+						<String>Rosinenbroetchen</String>\
+						<Binary>1100101</Binary>\
+						<Bool>almost true</Bool>\
+						<Date>2016-04-14</Date>\
+						<DateTimeOffset>2016-04-14T16:19:00.000-02:00</DateTimeOffset>\
+						<Decimal>3.14159</Decimal>\
+						<Duration>P11D23H59M59.999999999999S</Duration>\
+						<EnumMember>unittest.ui5.enum/test1</EnumMember>\
+						<Float>6.28318</Float>\
+						<Guid>21EC2020-3AEA-1069-A2DD-08002B30309D</Guid>\
+						<Int>23</Int>\
+						<TimeOfDay>23:42:58</TimeOfDay>\
+					</Annotation>\
+					<Annotation Term="unittest.ui5.dynamicExpression1">\
+						<Apply Function="odata.concat">\
+							<String>***</String>\
+							<String>, </String>\
+							<String>Drugs </String>\
+							<String> and </String>\
+							<String>Rock \'n Roll</String>\
+						</Apply>\
+					</Annotation>\
+					<Annotation Term="unittest.ui5.dynamicExpression2">\
+						<Collection>\
+							<String>One</String>\
+							<String>Two</String>\
+							<String>Five</String>\
+						</Collection>\
+					</Annotation>\
+					<Annotation Term="unittest.ui5.dynamicExpression3">\
+						<If>\
+							<Path>IsFemale</Path>\
+							<String>Iron Man</String>\
+							<String>Someone else</String>\
+						</If>\
+					</Annotation>\
+					<Annotation Term="unittest.ui5.dynamicExpression4">\
+						<Null/>\
+					</Annotation>\
+					<Annotation Term="unittest.ui5.dynamicExpression5">\
+						<Record>\
+							<PropertyValue Property="GivenName" Path="FirstName" />\
+							<PropertyValue Property="Surname" Path="LastName" />\
+							<PropertyValue Property="Manager" Path="DirectSupervisor" />\
+							<PropertyValue Property="CostCenter">\
+								<UrlRef>\
+									<Apply Function="odata.fillUriTemplate">\
+										<String>http://host/anotherservice/CostCenters(\'{ccid}\')</String>\
+										<LabeledElement Name="ccid" Path="CostCenterID" />\
+									</Apply>\
+								</UrlRef>\
+							</PropertyValue>\
+						</Record>\
+					</Annotation>\
 				</Annotation>\
 			</Annotations>\
 		</Schema>\

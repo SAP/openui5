@@ -98,10 +98,20 @@
 		});
 
 		test("setValue", function () {
-			var oControl = this.oMaskInput.setPlaceholderSymbol('_').setMask('aa-aa');
+			var oControl = this.oMaskInput.setPlaceholderSymbol('_').setMask('aa-aa'),
+					oApplyRulesSpy = sinon.spy(this.oMaskInput, "_applyRules");
 
+			oControl.setValue(null);
+			strictEqual(oApplyRulesSpy.callCount, 0, "'_applyRules' method is not called when passing 'falsy' value");
+			strictEqual(oControl.getValue(), "", "'getValue' is updated and returns correct VALIDATED value");
+			ok(!oControl._oTempValue.differsFromOriginal(), "When setting 'null' buffer is not modified");
+			oControl.setValue(undefined);
+			strictEqual(oApplyRulesSpy.callCount, 0, "'_applyRules' method is not called when passing 'falsy' value");
+			strictEqual(oControl.getValue(), "", "'getValue' is updated and returns correct VALIDATED value");
+			ok(!oControl._oTempValue.differsFromOriginal(), "When setting 'undefined' buffer is not modified");
 			oControl.setValue("");
-			strictEqual(oControl.getValue(), "", "When setValue is called the string is not modified.");
+			strictEqual(oApplyRulesSpy.callCount, 0, "'_applyRules' method is not called when passing 'falsy' value");
+			strictEqual(oControl.getValue(), "", "'getValue' is updated and returns correct VALIDATED value");
 			ok(!oControl._oTempValue.differsFromOriginal(), "When setting empty string buffer is not modified");
 
 			oControl.setValue("bc-d9");
@@ -375,6 +385,62 @@
 			checkForEmptyValue(oControl);
 		});
 
+		test("Initial focusing of MaskInput - caret positioning", function () {
+			//arrange
+			this.oMaskInput.setPlaceholderSymbol("_").setMask("9999-9999-99");
+			sap.ui.getCore().applyChanges();
+			jQuery(this.oMaskInput).focus();
+			this.clock.tick(1000);
+
+			//assert
+			checkCursorIsAtPosition(this.oMaskInput, 0, "On initial focus the caret is on the first placeholder symbol");
+		});
+
+		test("Focus of MaskInput when it has incomplete value - caret positioning", function () {
+			//arrange
+			this.oMaskInput.setPlaceholderSymbol("_").setMask("9999-9999-99");
+			sap.ui.getCore().applyChanges();
+			jQuery(this.oMaskInput).focus();
+			this.clock.tick(1000);
+			qutils.triggerKeypress(this.oMaskInput.getDomRef(), "1");
+			qutils.triggerKeypress(this.oMaskInput.getDomRef(), "2");
+			qutils.triggerKeypress(this.oMaskInput.getDomRef(), "3");
+			this.clock.tick(3000);
+			jQuery(this.oMaskInput).focus();
+			this.clock.tick(1000);
+
+			//assert
+			strictEqual(this.oMaskInput._getInputValue(), "123_-____-__", "The correct value is set through the keypress events");
+			checkCursorIsAtPosition(this.oMaskInput, 3, "When partially value is present and we focus again the caret is on the first placeholder position");
+		});
+
+		test("Focus of MaskInput when it has complete value - caret positioning", function () {
+			//arrange
+			this.oMaskInput.setPlaceholderSymbol("_").setMask("9999-9999-99");
+			sap.ui.getCore().applyChanges();
+			jQuery(this.oMaskInput).focus();
+			this.clock.tick(1000);
+			qutils.triggerKeypress(this.oMaskInput.getDomRef(), "1");
+			qutils.triggerKeypress(this.oMaskInput.getDomRef(), "2");
+			qutils.triggerKeypress(this.oMaskInput.getDomRef(), "3");
+			qutils.triggerKeypress(this.oMaskInput.getDomRef(), "4");
+			qutils.triggerKeypress(this.oMaskInput.getDomRef(), "5");
+			qutils.triggerKeypress(this.oMaskInput.getDomRef(), "6");
+			qutils.triggerKeypress(this.oMaskInput.getDomRef(), "7");
+			qutils.triggerKeypress(this.oMaskInput.getDomRef(), "8");
+			qutils.triggerKeypress(this.oMaskInput.getDomRef(), "9");
+			qutils.triggerKeypress(this.oMaskInput.getDomRef(), "0");
+			this.clock.tick(5000);
+			jQuery(this.oMaskInput).focusout();
+			this.clock.tick(1000);
+			jQuery(this.oMaskInput).focusin();
+			this.clock.tick(1000);
+
+			//assert
+			strictEqual(this.oMaskInput._getInputValue(), "1234-5678-90", "The correct value is set through the keypress events");
+			checkSelection(this.oMaskInput, 0, this.oMaskInput.getMask().length, "When complete value is present (no placeholders are left) and we focus the input all the input is selected");
+		});
+
 		test("Focusout for input with deleted value restores an empty value", function () {
 			var oControl = this.oMaskInput.setPlaceholder("Enter number").setPlaceholderSymbol("#").setMask("999").setValue("123"),
 				oOtherControl = new sap.m.Input({value: "some other value"});
@@ -413,6 +479,8 @@
 
 			strictEqual(getMaskInputDomValue(oControl), '12-3#', "DOM value is validated against MaskInput rules on focusout");
 			strictEqual(oControl._oTempValue._aContent.join(''), '12-3#', "The buffer value is identical with the DOM value");
+
+			oOtherControl.destroy();
 		});
 
 		test("Focus after invalid value is set through the API", function () {
@@ -966,8 +1034,8 @@
 
 		function setCursorPosition(iPosition, oControl) {
 			var _$oControl = jQuery(oControl.getFocusDomRef());
-			if (sap.ui.Device.browser.chrome) {
-				return setCursorPositionChrome(oControl, iPosition);
+			if (sap.ui.Device.browser.webkit) {
+				return setCursorPositionWebkit(oControl, iPosition);
 			}
 
 			return _$oControl.cursorPos(iPosition);
@@ -981,7 +1049,7 @@
 					"The value [" + oControl.getValue() + "] should be empty ");
 		}
 
-		function setCursorPositionChrome(oControl, iPosition) {
+		function setCursorPositionWebkit(oControl, iPosition) {
 			var sValue = oControl.getValue(),
 				$oControl = jQuery(oControl.getFocusDomRef()),
 				iLength = sValue.length,
@@ -999,7 +1067,7 @@
 					bModified = true;
 				}
 				if (bModified) {
-					jQuery.sap.log.warning("Chrome bug for selection API. Modifying cursor position");
+					jQuery.sap.log.warning("Webkit bug for selection API. Modifying cursor position");
 				}
 			}
 			return $oControl.cursorPos(iPosition);
@@ -1014,8 +1082,8 @@
 			var $oControl = jQuery(oControl.getFocusDomRef())[0],
 				oSelection;
 
-			if (sap.ui.Device.browser.chrome) {
-				oSelection = getCursorSelectionChrome(oControl);
+			if (sap.ui.Device.browser.webkit) {
+				oSelection = getCursorSelectionWebkit(oControl);
 			} else {
 				oSelection = {iFrom: $oControl.selectionStart, iTo: $oControl.selectionEnd};
 			}
@@ -1033,7 +1101,7 @@
 			deepEqual(oSelection, {iFrom: iExpectedStartPosition, iTo: iExpectedEndPosition}, sMessagePrefix +": selection start check");
 		}
 
-		function getCursorSelectionChrome(oControl) {
+		function getCursorSelectionWebkit(oControl) {
 			var sValue = oControl.getValue(),
 				$oControl = jQuery(oControl.getFocusDomRef())[0],
 				iLength = sValue.length,
@@ -1055,7 +1123,7 @@
 				bModified = true;
 			}
 			if (bModified) {
-				jQuery.sap.log.warning("Chrome bug for selection API. Modifying selectionStart & selectionEnd returned values");
+				jQuery.sap.log.warning("Webkit bug for selection API. Modifying selectionStart & selectionEnd returned values");
 			}
 			return oSelection;
 		}

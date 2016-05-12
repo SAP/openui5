@@ -431,6 +431,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return this;
 		};
 
+		/**
+		 * @see {sap.ui.core.Control#getAccessibilityInfo}
+		 * @protected
+		 */
+		Switch.prototype.getAccessibilityInfo = function() {
+			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+			var sDesc = "";
+			if (this.getState()) {
+				sDesc = oBundle.getText("ACC_CTR_STATE_CHECKED") + " " + oBundle.getText(this.getInvisibleElementText());
+			}
+
+			return {
+				role: "checkbox",
+				type: oBundle.getText("ACC_CTR_TYPE_CHECKBOX"),
+				description: sDesc.trim(),
+				focusable: this.getEnabled(),
+				enabled: this.getEnabled()
+			};
+		};
+
 		return Switch;
 
 	}, /* bExport= */ true);

@@ -2,19 +2,20 @@
  * ${copyright}
  */
 sap.ui.require([
+	"jquery.sap.global",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/ContextBinding",
 	"sap/ui/model/FilterProcessor",
 	"sap/ui/model/json/JSONListBinding",
 	"sap/ui/model/MetaModel",
 	"sap/ui/model/odata/v4/_ODataHelper",
-	"sap/ui/model/odata/v4/_SyncPromise",
+	"sap/ui/model/odata/v4/lib/_SyncPromise",
 	"sap/ui/model/odata/v4/ODataMetaModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/PropertyBinding",
 	"sap/ui/test/TestUtils"
-], function (BindingMode, ContextBinding, FilterProcessor, JSONListBinding, MetaModel, _ODataHelper,
-		SyncPromise, ODataMetaModel, ODataModel, PropertyBinding, TestUtils) {
+], function (jQuery, BindingMode, ContextBinding, FilterProcessor, JSONListBinding, MetaModel,
+		_ODataHelper, SyncPromise, ODataMetaModel, ODataModel, PropertyBinding, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -110,14 +111,84 @@ sap.ui.require([
 			"empty.Container" : {
 				"$kind" : "EntityContainer"
 			},
+			"name.space.BadContainer" : {
+				"$kind" : "EntityContainer",
+				"DanglingActionImport" : {
+					"$kind" : "ActionImport",
+					"$Action" : "not.Found"
+				},
+				"DanglingFunctionImport" : {
+					"$kind" : "FunctionImport",
+					"$Function" : "not.Found"
+				}
+			},
+			"name.space.Broken" : {
+				"$kind" : "Term",
+				"$Type" : "not.Found"
+			},
+			"name.space.BrokenFunction" : [{
+				"$kind" : "Function",
+				"$ReturnType" : {
+					"$Type" : "not.Found"
+				}
+			}],
+			"name.space.DerivedPrimitiveFunction" : [{
+				"$kind" : "Function",
+				"$ReturnType" : {
+					"$Type" : "name.space.Id"
+				}
+			}],
+			"name.space.EmptyOverloads" : [],
+			"name.space.Id" : {
+				"$kind" : "TypeDefinition",
+				"$UnderlyingType" : "Edm.String",
+				"$MaxLength" : 10
+			},
+			"name.space.Term" : { // only case with a qualified name and a $Type
+				"$kind" : "Term",
+				"$Type" : "tea_busi.Worker"
+			},
+			"name.space.OverloadedAction" : [{
+				"$kind" : "Action"
+			}, {
+				"$kind" : "Action"
+			}],
+			"name.space.OverloadedFunction" : [{
+				"$kind" : "Function",
+				"$ReturnType" : {
+					"$Type" : "Edm.String"
+				}
+			}, {
+				"$kind" : "Function",
+				"$ReturnType" : {
+					"$Type" : "Edm.String"
+				}
+			}],
+			"name.space.VoidAction" : [{
+				"$kind" : "Action"
+			}],
+			"tea_busi.AcChangeManagerOfTeam" : [{
+				"$kind" : "Action",
+				"$ReturnType" : {
+					"$Type" : "tea_busi.TEAM"
+				}
+			}],
 			"tea_busi.DefaultContainer" : {
 				"$kind" : "EntityContainer",
+				"ChangeManagerOfTeam" : {
+					"$kind" : "ActionImport",
+					"$Action" : "tea_busi.AcChangeManagerOfTeam"
+				},
 				"EMPLOYEES" : {
 					"$kind" : "EntitySet",
 					"$NavigationPropertyBinding" : {
 						"EMPLOYEE_2_TEAM" : "T€AMS"
 					},
 					"$Type" : "tea_busi.Worker"
+				},
+				"GetEmployeeMaxAge" : {
+					"$kind" : "FunctionImport",
+					"$Function" : "tea_busi.FuGetEmployeeMaxAge"
 				},
 				"T€AMS" : {
 					"$kind" : "EntitySet",
@@ -127,6 +198,12 @@ sap.ui.require([
 					"$Type" : "tea_busi.TEAM"
 				}
 			},
+			"tea_busi.FuGetEmployeeMaxAge" : [{
+				"$kind" : "Function",
+				"$ReturnType" : {
+					"$Type" : "Edm.Int16"
+				}
+			}],
 			"tea_busi.TEAM" : {
 				"$kind" : "EntityType",
 				"$Key" : ["Team_Id"],
@@ -146,6 +223,10 @@ sap.ui.require([
 					"$kind" : "NavigationProperty",
 					"$isCollection" : true,
 					"$Type" : "tea_busi.Worker"
+				},
+				"value" : {
+					"$kind" : "Property",
+					"$Type" : "Edm.String"
 				}
 			},
 			"tea_busi.Worker" : {
@@ -167,17 +248,6 @@ sap.ui.require([
 					"$Type" : "tea_busi.TEAM",
 					"$Nullable" : false
 				}
-			},
-			"name.space.Broken" : {
-				"$kind" : "Term",
-				"$Type" : "not.Found"
-			},
-			"name.space.Id" : {
-				"$kind" : "Type"
-			},
-			"name.space.Term" : { // only case with a qualified name and a $Type
-				"$kind" : "Term",
-				"$Type" : "tea_busi.Worker"
 			},
 			"$$Loop" : "$$Loop/", // some endless loop
 			"$$Term" : "name.space.Term" // replacement for any reference to the term
@@ -215,7 +285,7 @@ sap.ui.require([
 			oSyncPromise = SyncPromise.resolve(oRejectedPromise);
 
 		// resolve...
-		oExpectation = oTestContext.oSandbox.mock(oMetaModel).expects(sMethodName).exactly(4);
+		oExpectation = oTestContext.mock(oMetaModel).expects(sMethodName).exactly(4);
 		oExpectation = oExpectation.withExactArgs.apply(oExpectation, aArguments);
 		oExpectation.returns(SyncPromise.resolve(oResult));
 
@@ -224,7 +294,8 @@ sap.ui.require([
 
 		// reject...
 		oExpectation.returns(oSyncPromise);
-		oTestContext.oSandbox.mock(Promise).expects("resolve").withExactArgs(oSyncPromise)
+		oTestContext.mock(Promise).expects("resolve")
+			.withExactArgs(sinon.match.same(oSyncPromise))
 			.returns(oRejectedPromise); // return any promise (this is not unwrapping!)
 
 		// request (promise still pending!)
@@ -240,7 +311,7 @@ sap.ui.require([
 			assert.strictEqual(oMetaModel[sGetMethodName].apply(oMetaModel, aArguments), undefined,
 				"pending");
 		}
-		return oRejectedPromise["catch"](function () {
+		return oRejectedPromise.catch(function () {
 			// get: rejected
 			if (bThrow) {
 				assert.throws(function () {
@@ -284,8 +355,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataMetaModel", {
 		beforeEach : function () {
-			this.oSandbox = sinon.sandbox.create();
-			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
+			this.oLogMock = sinon.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 
@@ -293,7 +363,7 @@ sap.ui.require([
 		},
 
 		afterEach : function () {
-			this.oSandbox.verifyAndRestore();
+			this.oLogMock.verify();
 		}
 	});
 
@@ -312,6 +382,8 @@ sap.ui.require([
 		assert.strictEqual(oMetaModel.oRequestor, oMetadataRequestor);
 		assert.strictEqual(oMetaModel.sUrl, sUrl);
 		assert.strictEqual(oMetaModel.getDefaultBindingMode(), BindingMode.OneTime);
+		assert.strictEqual(oMetaModel.toString(),
+			"sap.ui.model.odata.v4.ODataMetaModel: /~/$metadata");
 	});
 
 	//*********************************************************************************************
@@ -356,7 +428,8 @@ sap.ui.require([
 			oPromise = Promise.resolve({/*mScope*/}),
 			oSyncPromise;
 
-		this.mock(oMetadataRequestor).expects("read").withExactArgs(sUrl).returns(oPromise);
+		this.mock(oMetadataRequestor).expects("read").withExactArgs(sUrl)
+			.returns(oPromise);
 
 		// code under test
 		oSyncPromise = oMetaModel.fetchEntityContainer();
@@ -496,6 +569,21 @@ sap.ui.require([
 		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/" : oWorkerData,
 		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/$Type" : "tea_busi.Worker",
 		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/AGE" : oWorkerData.AGE,
+		// operations -----------------------------------------------------------------------------
+		"/ChangeManagerOfTeam/" : oTeamData,
+		//TODO mScope[mScope["..."][0].$ReturnType.$Type] is where the next OData simple identifier
+		//     would live in case of entity/complex type, but we would like to avoid warnings for
+		//     primitive types - how to tell the difference?
+//		"/GetEmployeeMaxAge/" : "Edm.Int16",
+		// Note: "value" is a symbolic name for the whole return type iff. it is primitive
+		"/GetEmployeeMaxAge/value" : mScope["tea_busi.FuGetEmployeeMaxAge"][0].$ReturnType,
+		"/GetEmployeeMaxAge/value/$Type" : "Edm.Int16", // path may continue!
+		"/tea_busi.FuGetEmployeeMaxAge/value"
+			: mScope["tea_busi.FuGetEmployeeMaxAge"][0].$ReturnType,
+		"/name.space.DerivedPrimitiveFunction/value"
+			: mScope["name.space.DerivedPrimitiveFunction"][0].$ReturnType, //TODO merge facets of return type and type definition?!
+		"/ChangeManagerOfTeam/value" : oTeamData.value,
+		"/tea_busi.AcChangeManagerOfTeam/value" : oTeamData.value,
 		// annotations ----------------------------------------------------------------------------
 		"/@DefaultContainer"
 			: mScope["tea_busi."].$Annotations["tea_busi.DefaultContainer"]["@DefaultContainer"],
@@ -587,9 +675,13 @@ sap.ui.require([
 		// "JSON" drill-down ----------------------------------------------------------------------
 		"/$missing",
 		"/tea_busi.DefaultContainer/$missing",
+		"/tea_busi.DefaultContainer/missing", // "17.2 SimpleIdentifier" treated like any property
+		"/tea_busi.FuGetEmployeeMaxAge/0/tea_busi.FuGetEmployeeMaxAge", // "0" switches to JSON
 		"/tea_busi.TEAM/$Key/this.is.missing",
+		"/tea_busi.Worker/missing", // entity container (see above) treated like any schema child
 		// scope lookup ("17.3 QualifiedName") ----------------------------------------------------
 		"/$EntityContainer/$missing",
+		"/$EntityContainer/missing",
 		// implicit $Type insertion ---------------------------------------------------------------
 		"/T€AMS/$Key", // avoid $Type insertion for following $ segments
 		"/T€AMS/missing",
@@ -598,7 +690,9 @@ sap.ui.require([
 		"/tea_busi.Worker@missing",
 		"/tea_busi.Worker/@missing",
 		// "@" to access to all annotations, e.g. for iteration
-		"/tea_busi.Worker/@/@missing"
+		"/tea_busi.Worker/@/@missing",
+		// operations -----------------------------------------------------------------------------
+		"/name.space.VoidAction/"
 	].forEach(function (sPath) {
 		QUnit.test("fetchObject: " + sPath + " --> undefined", function (assert) {
 			var oSyncPromise;
@@ -651,30 +745,44 @@ sap.ui.require([
 			"//$Foo" : "Invalid empty segment",
 			"/tea_busi./$Annotations" : "Invalid segment: $Annotations", // entrance forbidden!
 			// Unknown ... ------------------------------------------------------------------------
-			"/name.space.not.Found" :
-				"Unknown qualified name 'name.space.not.Found'",
-			"/name.space.not.Found@missing" :
-				"Unknown qualified name 'name.space.not.Found'",
+			"/not.Found" : "Unknown qualified name 'not.Found'",
+			"/not.Found@missing" : "Unknown qualified name 'not.Found'",
 			"/." : "Unknown child '.' of 'tea_busi.DefaultContainer'",
 			"/Foo" : "Unknown child 'Foo' of 'tea_busi.DefaultContainer'",
-			"/$EntityContainer/Foo" : "Unknown child 'Foo' of 'tea_busi.DefaultContainer'",
-			"/tea_busi.DefaultContainer/Foo" : "Unknown child 'Foo' of 'tea_busi.DefaultContainer'",
-			"/$EntityContainer/$kind/Foo" : "Unknown child 'EntityContainer'"
+			"/$EntityContainer/$kind/" : "Unknown child 'EntityContainer'"
 				+ " of 'tea_busi.DefaultContainer' at /$EntityContainer/$kind",
-			// implicit $Type insertion
-			"/name.space.Broken/Foo" :
+			// implicit $Action, $Function, $Type insertion
+			"/name.space.BadContainer/DanglingActionImport/" : "Unknown qualified name 'not.Found'"
+				+ " at /name.space.BadContainer/DanglingActionImport/$Action",
+			"/name.space.BadContainer/DanglingFunctionImport/" :
+				"Unknown qualified name 'not.Found'"
+				+ " at /name.space.BadContainer/DanglingFunctionImport/$Function",
+			"/name.space.Broken/" :
 				"Unknown qualified name 'not.Found' at /name.space.Broken/$Type",
+			"/name.space.BrokenFunction/" : "Unknown qualified name 'not.Found'"
+				+ " at /name.space.BrokenFunction/0/$ReturnType/$Type",
+			//TODO align with "/GetEmployeeMaxAge/" : "Edm.Int16"
+			"/GetEmployeeMaxAge/@sapui.name" : "Unknown qualified name 'Edm.Int16'"
+				+ " at /tea_busi.FuGetEmployeeMaxAge/0/$ReturnType/$Type",
+			"/GetEmployeeMaxAge/value/@sapui.name" : "Unknown qualified name 'Edm.Int16'"
+				+ " at /tea_busi.FuGetEmployeeMaxAge/0/$ReturnType/$Type",
 			// implicit scope lookup
-			"/name.space.Broken/$Type/Foo" :
+			"/name.space.Broken/$Type/" :
 				"Unknown qualified name 'not.Found' at /name.space.Broken/$Type",
 			"/tea_busi.DefaultContainer/$kind/@sapui.name" : "Unknown child 'EntityContainer'"
 				+ " of 'tea_busi.DefaultContainer' at /tea_busi.DefaultContainer/$kind",
-			// Unsupported path before @sapui.name -------------------------------------------------
-			"/$Foo/@sapui.name" : "Unsupported path before @sapui.name",
+			// Unsupported path before @sapui.name ------------------------------------------------
+			"/$EntityContainer@sapui.name" : "Unsupported path before @sapui.name",
+			"/tea_busi.FuGetEmployeeMaxAge/0@sapui.name" : "Unsupported path before @sapui.name",
 			"/tea_busi.TEAM/$Key/not.Found/@sapui.name" : "Unsupported path before @sapui.name",
+			"/GetEmployeeMaxAge/value@sapui.name" : "Unsupported path before @sapui.name",
 			// Unsupported path after @sapui.name -------------------------------------------------
 			"/@sapui.name/foo" : "Unsupported path after @sapui.name",
-			"/$EntityContainer/T€AMS/@sapui.name/foo" : "Unsupported path after @sapui.name"
+			"/$EntityContainer/T€AMS/@sapui.name/foo" : "Unsupported path after @sapui.name",
+			// Unsupported overloads --------------------------------------------------------------
+			"/name.space.EmptyOverloads/" : "Unsupported overloads",
+			"/name.space.OverloadedAction/" : "Unsupported overloads",
+			"/name.space.OverloadedFunction/" : "Unsupported overloads"
 		}, function (sPath, sWarning) {
 			QUnit.test("fetchObject fails: " + sPath + ", warn = " + bWarn, function (assert) {
 				var oSyncPromise;
@@ -702,7 +810,8 @@ sap.ui.require([
 			"/$Foo/$Bar" : "Invalid segment: $Bar",
 			"/$Foo/$Bar/$Baz" : "Invalid segment: $Bar",
 			"/$EntityContainer/T€AMS/Team_Id/$MaxLength/." : "Invalid segment: .",
-			"/$EntityContainer/T€AMS/Team_Id/$Nullable/." : "Invalid segment: ."
+			"/$EntityContainer/T€AMS/Team_Id/$Nullable/." : "Invalid segment: .",
+			"/$EntityContainer/T€AMS/Team_Id/NotFound/Invalid" : "Invalid segment: Invalid"
 		}, function (sPath, sMessage) {
 			QUnit.test("fetchObject fails: " + sPath + ", debug = " + bDebug, function (assert) {
 				var oSyncPromise;
@@ -734,12 +843,12 @@ sap.ui.require([
 		$Type : "Edm.Byte"
 	}, {
 		$Type : "Edm.Date"
-//	}, {
-//		$Type : "Edm.DateTimeOffset"
-//	},{
-//		$Type : "Edm.DateTimeOffset",
-//		facets : [{Name : "Precision", Value : "7"}]
-//		constraints : {precision : 7} //TODO implement
+	}, {
+		$Type : "Edm.DateTimeOffset"
+	},{
+		$Precision : 7,
+		$Type : "Edm.DateTimeOffset",
+		__constraints : {precision : 7}
 	}, {
 		$Type : "Edm.Decimal"
 	}, {
@@ -772,13 +881,23 @@ sap.ui.require([
 		$MaxLength : 255,
 		$Type : "Edm.String",
 		__constraints : {maxLength : 255}
-	}].forEach(function (oProperty) {
-		var oConstraints = oProperty.__constraints;
+	}, {
+		$Type : "Edm.String",
+		__constraints : {isDigitSequence : true}
+	}, {
+		$Type : "Edm.TimeOfDay"
+	}, {
+		$Precision : 3,
+		$Type : "Edm.TimeOfDay",
+		__constraints : {precision : 3}
+	}].forEach(function (oProperty0) {
+		// Note: take care not to modify oProperty0, clone it first!
+		[false, true].forEach(function (bNullable) {
+			// Note: JSON.parse(JSON.stringify(...)) cannot clone Infinity!
+			var oProperty = jQuery.extend(true, {}, oProperty0),
+				oConstraints = oProperty.__constraints;
 
-		delete oProperty.__constraints;
-
-		// order is important because oConstraints is modified!
-		[true, false].forEach(function (bNullable) {
+			delete oProperty.__constraints;
 			if (!bNullable) {
 				oProperty.$Nullable = false;
 				oConstraints = oConstraints || {};
@@ -787,102 +906,76 @@ sap.ui.require([
 
 			QUnit.test("fetchUI5Type: " + JSON.stringify(oProperty), function (assert) {
 				var sPath = "/EMPLOYEES/0/ENTRYDATE",
+					oMetaContext = this.oMetaModel.getMetaContext(sPath),
+					oMetaModelMock = this.mock(this.oMetaModel),
 					oType;
 
-				this.oSandbox.mock(this.oMetaModel).expects("fetchObject")
-					.withExactArgs(undefined, this.oMetaModel.getMetaContext(sPath))
+				oMetaModelMock.expects("fetchObject").twice()
+					.withExactArgs(undefined, oMetaContext)
 					.returns(SyncPromise.resolve(oProperty));
+				if (oProperty.$Type === "Edm.String") { // simulate annotation for strings
+					oMetaModelMock.expects("fetchObject")
+						.withExactArgs("@com.sap.vocabularies.Common.v1.IsDigitSequence",
+							oMetaContext)
+						.returns(SyncPromise.resolve(oConstraints && oConstraints.isDigitSequence));
+				}
 
 				oType = this.oMetaModel.fetchUI5Type(sPath).getResult();
+
 				assert.strictEqual(oType.getName(),
 					"sap.ui.model.odata.type." + oProperty.$Type.slice(4)/*cut off "Edm."*/);
 				assert.deepEqual(oType.oConstraints, oConstraints);
+				assert.strictEqual(this.oMetaModel.getUI5Type(sPath), oType, "cached");
 			});
 		});
 	});
 	//TODO later: support for facet DefaultValue?
 
 	//*********************************************************************************************
-	QUnit.test("fetchUI5Type: caching", function (assert) {
-		var sPath = "/EMPLOYEES/0/ENTRYDATE",
-			oProperty = {$Type : "Edm.String"},
-			oType;
-
-		this.oSandbox.mock(this.oMetaModel).expects("fetchObject")
-			.withExactArgs(undefined, this.oMetaModel.getMetaContext(sPath)).twice()
-			.returns(SyncPromise.resolve(oProperty));
-
-		oType = this.oMetaModel.fetchUI5Type(sPath).getResult();
-
-		assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.String");
-		assert.strictEqual(oProperty["$ui5.type"], oType, "cache filled");
-		assert.strictEqual(this.oMetaModel.fetchUI5Type(sPath).getResult(), oType, "cache used");
-	});
-
-	//*********************************************************************************************
 	QUnit.test("fetchUI5Type: collection", function (assert) {
 		var sPath = "/EMPLOYEES/0/foo",
-			oSyncPromise;
-
-		this.oSandbox.mock(this.oMetaModel).expects("fetchObject")
-			.withExactArgs(undefined, this.oMetaModel.getMetaContext(sPath))
-			.returns(SyncPromise.resolve({
-				$Type : "Edm.String",
-				$isCollection : true
-			}));
-
-		oSyncPromise = this.oMetaModel.fetchUI5Type(sPath);
-		assert.ok(oSyncPromise.isRejected());
-		assert.strictEqual(oSyncPromise.getResult().message,
-			"Unsupported collection type at " + sPath);
-	});
-
-	//*********************************************************************************************
-	//TODO make these types work with odata v4
-	["Edm.DateTimeOffset", "Edm.Duration", "Edm.TimeOfDay"].forEach(function (sQualifiedName) {
-		QUnit.test("fetchUI5Type: unsupported type " + sQualifiedName, function (assert) {
-			var sPath = "/EMPLOYEES/0/foo",
-				oSyncPromise;
-
-			this.oSandbox.mock(this.oMetaModel).expects("fetchObject")
-				.withExactArgs(undefined, this.oMetaModel.getMetaContext(sPath))
-				.returns(SyncPromise.resolve({$Type : sQualifiedName}));
-
-			oSyncPromise = this.oMetaModel.fetchUI5Type(sPath);
-			assert.ok(oSyncPromise.isRejected());
-			assert.strictEqual(oSyncPromise.getResult().message,
-				"Unsupported EDM type '" + sQualifiedName + "' at " + sPath);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("fetchUI5Type: FunctionImport returning PrimitiveType", function (assert) {
-		var oMetaModelMock = this.oSandbox.mock(this.oMetaModel),
-			sPath = "/FunctionImport()",
 			oType;
 
-		oMetaModelMock.expects("fetchObject")
+		this.mock(this.oMetaModel).expects("fetchObject").twice()
 			.withExactArgs(undefined, this.oMetaModel.getMetaContext(sPath))
 			.returns(SyncPromise.resolve({
-				$kind : "FunctionImport",
-				$Function : "schema.Function"
+				$isCollection : true,
+				$Nullable : false, // must not be turned into a constraint for Raw!
+				$Type : "Edm.String"
 			}));
-		oMetaModelMock.expects("fetchObject")
-			.withExactArgs(undefined, this.oMetaModel.getMetaContext("/schema.Function"))
-			.returns(SyncPromise.resolve([{
-				$ReturnType : {
-					$Type : "Edm.Int16",
-					$Nullable : false
-				}
-			}]));
+		this.oLogMock.expects("warning").withExactArgs(
+			"Unsupported collection type, using sap.ui.model.odata.type.Raw",
+			sPath, "sap.ui.model.odata.v4.ODataMetaModel");
 
 		oType = this.oMetaModel.fetchUI5Type(sPath).getResult();
-		assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Int16");
-		assert.deepEqual(oType.oConstraints, {nullable : false});
+
+		assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Raw");
+		assert.strictEqual(this.oMetaModel.getUI5Type(sPath), oType, "cached");
 	});
-	// TODO ActionImport
-	// TODO bound Function/Action
-	// TODO StructuredType: "/FunctionImport()/Property" -> ODataMetaModel#fetchObject
+
+	//*********************************************************************************************
+	//TODO make Edm.Duration work with OData V4
+	["acme.Type", "Edm.Duration", "Edm.GeographyPoint"].forEach(function (sQualifiedName) {
+		QUnit.test("fetchUI5Type: unsupported type " + sQualifiedName, function (assert) {
+			var sPath = "/EMPLOYEES/0/foo",
+				oType;
+
+			this.mock(this.oMetaModel).expects("fetchObject").twice()
+				.withExactArgs(undefined, this.oMetaModel.getMetaContext(sPath))
+				.returns(SyncPromise.resolve({
+					$Nullable : false, // must not be turned into a constraint for Raw!
+					$Type : sQualifiedName
+				}));
+			this.oLogMock.expects("warning").withExactArgs(
+				"Unsupported type '" + sQualifiedName + "', using sap.ui.model.odata.type.Raw",
+				sPath, "sap.ui.model.odata.v4.ODataMetaModel");
+
+			oType = this.oMetaModel.fetchUI5Type(sPath).getResult();
+
+			assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Raw");
+			assert.strictEqual(this.oMetaModel.getUI5Type(sPath), oType, "cached");
+		});
+	});
 
 	//*********************************************************************************************
 	QUnit.test("getUI5Type, requestUI5Type", function (assert) {
@@ -906,7 +999,7 @@ sap.ui.require([
 		QUnit.test("requestCanonicalUrl: " + oFixture.dataPath, function (assert) {
 			var oInstance = {},
 				oContext = {
-					requestValue : function (sPath) {
+					fetchValue : function (sPath) {
 						assert.strictEqual(sPath, "");
 						return Promise.resolve(oInstance);
 					}
@@ -914,7 +1007,7 @@ sap.ui.require([
 
 			this.mock(this.oMetaModel).expects("fetchEntityContainer")
 				.returns(SyncPromise.resolve(mScope));
-			this.oSandbox.stub(_ODataHelper, "getKeyPredicate",
+			this.stub(_ODataHelper, "getKeyPredicate",
 				function (oEntityType0, oInstance0) {
 					assert.strictEqual(oEntityType0, mScope[oFixture.entityType]);
 					assert.strictEqual(oInstance0, oInstance);
@@ -925,7 +1018,7 @@ sap.ui.require([
 			return this.oMetaModel.requestCanonicalUrl("/~/", oFixture.dataPath, oContext)
 				.then(function (sCanonicalUrl) {
 					assert.strictEqual(sCanonicalUrl, oFixture.canonicalUrl);
-				})["catch"](function (oError) {
+				}).catch(function (oError) {
 					assert.ok(false, oError.message + "@" + oError.stack);
 				});
 		});
@@ -945,7 +1038,7 @@ sap.ui.require([
 	}].forEach(function (oFixture) {
 		QUnit.test("requestCanonicalUrl: error for " + oFixture.dataPath, function (assert) {
 			var oContext = {
-					requestValue : function (sPath) {
+					fetchValue : function (sPath) {
 						assert.strictEqual(sPath, "");
 						return Promise.resolve({});
 					}
@@ -953,12 +1046,12 @@ sap.ui.require([
 
 			this.mock(this.oMetaModel).expects("fetchEntityContainer")
 				.returns(SyncPromise.resolve(mScope));
-			this.oSandbox.mock(_ODataHelper).expects("getKeyPredicate").never();
+			this.mock(_ODataHelper).expects("getKeyPredicate").never();
 
 			return this.oMetaModel.requestCanonicalUrl("/~/", oFixture.dataPath, oContext)
 				.then(function (sCanonicalUrl) {
 					assert.ok(false, sCanonicalUrl);
-				})["catch"](function (oError) {
+				}).catch(function (oError) {
 					assert.strictEqual(oError.message, oFixture.message);
 				});
 		});
@@ -976,7 +1069,8 @@ sap.ui.require([
 			sPath = "foo",
 			oValue = {};
 
-		this.mock(this.oMetaModel).expects("getProperty").withExactArgs(sPath, oContext)
+		this.mock(this.oMetaModel).expects("getProperty")
+			.withExactArgs(sPath, sinon.match.same(oContext))
 			.returns(oValue);
 
 		// code under test
@@ -1078,7 +1172,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("bindList", function (assert) {
-		var fnApply = this.oSandbox.mock(FilterProcessor).expects("apply"),
+		var fnApply = this.mock(FilterProcessor).expects("apply"),
 			oBinding,
 			oMetaModel = this.oMetaModel, // instead of "that = this"
 			oContext = oMetaModel.getMetaContext("/EMPLOYEES"),
@@ -1089,7 +1183,7 @@ sap.ui.require([
 			aSorters = [];
 
 		this.mock(oMetaModel).expects("_getObject")
-			.withExactArgs(sPath, oContext)
+			.withExactArgs(sPath, sinon.match.same(oContext))
 			.returns({
 				"ID" : {/*...*/},
 				"AGE" : {/*...*/},
@@ -1127,7 +1221,7 @@ sap.ui.require([
 		// further tests regarding the getter provided to FilterProcessor.apply()
 		fnGetValue = fnApply.args[0][2];
 		this.mock(this.oMetaModel).expects("getProperty")
-			.withExactArgs("fooPath", oBinding.oList[aIndices[0]])
+			.withExactArgs("fooPath", sinon.match.same(oBinding.oList[aIndices[0]]))
 			.returns("foo");
 
 		// code under test: "@sapui.name" is treated specially
@@ -1164,11 +1258,13 @@ sap.ui.require([
 		}
 	}, {
 		// <template:repeat list="{meta>/}" ...>
-		// Iterate all OData path segments, i.e. entity sets.
+		// Iterate all OData path segments, i.e. entity sets and imports.
 		// Implicit scope lookup happens here!
 		metaPath : "/",
 		result : {
+			"ChangeManagerOfTeam" : oContainerData.ChangeManagerOfTeam,
 			"EMPLOYEES" : oContainerData.EMPLOYEES,
+			"GetEmployeeMaxAge" : oContainerData.GetEmployeeMaxAge,
 			"T€AMS" : oContainerData["T€AMS"]
 		}
 	}, {

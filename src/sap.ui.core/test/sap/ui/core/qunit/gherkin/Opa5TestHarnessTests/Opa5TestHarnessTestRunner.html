@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Opa5 Test Harness Test Runner</title>
+</head>
+<body>
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+
+  <script
+    id="sap-ui-bootstrap" src="../../../../../../../resources/sap-ui-core.js"
+    data-sap-ui-resourceroots='{"sap.ui.test.gherkin.test": "./"}'>
+  </script>
+
+	<script>
+    (function($){
+    'use strict';
+
+    // Load the Test Harness first so that code coverage will be calculated for all modules loaded afterward
+    $.sap.require("sap.ui.test.gherkin.opa5TestHarness");
+    $.sap.require("sap.ui.test.gherkin.test.Opa5TestHarnessSteps");
+
+    $.sap.log.setLevel($.sap.log.LogLevel.INFO);
+    sap.ui.test.Opa.config.timeout = 5;
+
+    var testHarness = sap.ui.test.gherkin.opa5TestHarness;
+    testHarness.test({featurePath: 'sap.ui.test.gherkin.test.Opa5TestHarness1', steps: sap.ui.test.gherkin.test.Opa5TestHarnessSteps});
+    testHarness.test({featurePath: 'sap.ui.test.gherkin.test.Opa5TestHarness2', steps: sap.ui.test.gherkin.test.Opa5TestHarnessSteps});
+
+    }(jQuery))
+  </script>
+
+</body>
+</html>
+
+
+

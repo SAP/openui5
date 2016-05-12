@@ -1,0 +1,26 @@
+.sapMSB:focus .sapMSBInner::after {
+	top: 0.25rem;
+	bottom: 0.25rem;
+	left: 0;
+	right: 0;
+	border: 0.125rem dotted @sapHCStandardFG;
+}
+
+.sapMSB:focus .sapMBtnInner {
+	border-color: @sapHCStandardBG;
+}
+
+.sapMSB:focus .sapMSBText .sapMBtnInner {
+	border-right-color: @sapHCStandardFG;
+}
+
+.sapMSB:focus .sapMSBArrow .sapMBtnInner {
+	border-left-color: @sapHCStandardFG;
+}
+
+.sapUiSizeCompact {
+	.sapMSB:focus .sapMSBInner::after {
+		top: 0.1875rem;
+		bottom: 0.1875rem;
+	}
+}

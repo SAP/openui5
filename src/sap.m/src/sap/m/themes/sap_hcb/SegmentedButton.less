@@ -5,13 +5,17 @@
 
 .sapMSegB {
 	height: 2.5rem;
-	padding: 0.250rem 0;
 	position: relative;
+}
+
+// Adding margin to be displayed correct in sap.m.Bar
+.sapMBar .sapMSegB {
+	margin: 0.250rem 0;
 }
 
 .sapMSegBBtn {
 	font-size: 0.875rem;
-	height: 2.375rem;
+	height: 2.5rem;
 	line-height: 2.375rem;
 	padding-left: 1rem;
 	padding-right: 1rem;
@@ -19,7 +23,6 @@
 	text-shadow: none;
 	color: @sapHCStandardFG;
 	border: 1px solid @sapHCStandardFG;
-	border-right: 0;
 	background-color: @sapHCStandardBG;
 	margin-right: 0;
 	-webkit-tap-highlight-color: transparent;
@@ -47,12 +50,36 @@
 	}
 }
 
-html.sap-desktop .sapMSegBBtnFocusable:hover {
-	background: @sapHCHighlightBG;
+.sapMSegB.sapMSegBIcons {
+	.sapMSegBBtn:not(.sapMSegBBtnMixed) {
+		padding: 0;
+	}
+	.sapMSegBBtn.sapMSegBBtnMixed .sapMImg,
+	.sapMSegBBtn.sapMSegBBtnMixed .sapUiIcon {
+		padding-left: 0;
+		padding-right: 0.5rem;
+	}
 }
 
-.sapMSegBBtn:last-child {
-	border-right: 1px solid @sapHCStandardFG;
+.sapMSegB {
+	.sapMSegBBtn {
+		&:not(:last-child) {
+			border-right: 1px solid transparent;
+		}
+		+ .sapMSegBBtn.sapMSegBBtnFocusable:focus {
+			border-right: 1px solid transparent;
+		}
+		&:last-child:not(.sapMSegBBtnDis) {
+			border-right: 1px solid @sapHCStandardFG;
+		}
+		&.sapMSegBBtnDis:last-child {
+			border-right: 1px solid rgba(153, 153, 153, 0.5);
+		}
+	}
+}
+
+html.sap-desktop .sapMSegBBtnFocusable:hover {
+	background: @sapHCHighlightBG;
 }
 
 /* Fix for disabled button border nested between active buttons */
@@ -84,22 +111,15 @@ html.sap-desktop .sapMSegBBtnFocusable:hover {
 	&:focus + .sapMSegBBtn {
 		border-left: 1px solid transparent;
 		&:not(:last-child) {
-			border-right: none;
-			border-left: none;
+			border-left: 1px solid transparent;
 		}
 		&:last-child {
-			border-left: none;
+			border-left: 1px solid transparent;
 		}
 	}
 	&.sapMSegBBtnSel:focus + .sapMSegBBtn {
-		border-left: 0;
+		border-left: 1px solid transparent;
 	}
-}
-
-.sapMFooter-CTX .sapMSegB:not(.sapMSegBIcons) .sapMSegBBtnFocusable.sapMSegBBtnSel:focus,
-.sapMSegB:not(.sapMSegBIcons):not(.sapMBarChild) .sapMSegBBtnFocusable.sapMSegBBtnSel:focus {
-	padding-right: 1.0625rem;
-	border-right: none;
 }
 
 .sapMSegBIcons .sapMSegBBtn {
@@ -131,7 +151,7 @@ html.sap-desktop .sapMSegBBtnFocusable:hover {
 }
 
 .sapMSegBBtnSel:active,
-.sap-desktop .sapMSegBBtnSel:hover,
+html.sap-desktop .sapMSegBBtnSel:hover,
 .sapMSegBBtnFocusable.sapMBtnActive:hover {
 	background: @sapHCHighlightBG;
 }
@@ -155,11 +175,10 @@ html.sap-desktop .sapMSegBBtnFocusable:hover {
 .sapUiSizeCompact {
 	.sapMSegB {
 		height: 1.625rem;
-		padding: 0.1875rem 0;
 	}
 
-	.sapMSegBBtn {
-		height: 1.5rem;
+	.sapMSegBBtn:not(.sapMSegBIcons) {
+		height: 1.625rem;
 		line-height: 1.5rem;
 		padding-left: 0.4375rem;
 		padding-right: 0.4375rem;
@@ -181,11 +200,11 @@ html.sap-desktop .sapMSegBBtnFocusable:hover {
 
 	.sapMSegBIcons .sapMSegBBtn img,
 	.sapMSegBIcons .sapMSegBBtn .sapUiIcon {
-		padding: 0 .5rem;
+		padding: 0;
 	}
 
 	.sapMSegB img {
-		line-height: 1.5rem;
+		line-height: 1.3rem;
 		height: 1.3rem;
 		width: 1.3rem;
 	}
@@ -199,10 +218,21 @@ html.sap-desktop .sapMSegBBtnFocusable:hover {
 	.sapMSegB .sapMBtnIconLeft {
 		margin-left: 0;
 	}
-	.sapMFooter-CTX .sapMSegB:not(.sapMSegBIcons) .sapMSegBBtnFocusable.sapMSegBBtnSel:focus,
-	.sapMSegB:not(.sapMSegBIcons):not(.sapMBarChild) .sapMSegBBtnFocusable.sapMSegBBtnSel:focus {
-		padding-right: 0.5rem;
-		border-right: none;
+	.sapMSegBIcons:not(.sapMSegBBtnMixed) {
+		.sapMImg,
+		.sapUiIcon {
+			padding-left: 0.4375rem;
+			padding-right: 0.4375rem;
+		}
+	}
+	.sapMSegBIcons {
+		.sapMSegBBtn.sapMSegBBtnMixed {
+			.sapMImg,
+			.sapUiIcon {
+				padding-left: 0;
+				padding-right: 0;
+			}
+		}
 	}
 }
 
@@ -237,21 +267,6 @@ html[data-sap-ui-os^="Android4.3"][data-sap-ui-browser^="an"] {
 	}
 	.sapMSegBBtnSel:focus {
 		background-color: @sapHCHighlightBG;
-	}
-}
-
-/* Android 4.4 Specific fixes */
-html[data-sap-ui-os^="Android4.4"] {
-	.sapMSegB {
-		display: block;
-	}
-	header,
-	footer,
-	.sapMBar {
-		.sapMSegB {
-			line-height: 1.5rem;
-			display: inline-block;
-		}
 	}
 }
 

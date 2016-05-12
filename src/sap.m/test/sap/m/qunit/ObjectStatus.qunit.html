@@ -439,7 +439,53 @@
 
 		//Cleanup
 		oObjectStatus.destroy();
-	})
+	});
+
+	test("getAccessibilityInfo", function() {
+		var oControl = new sap.m.ObjectStatus({text: "Text", title: "Title"});
+		ok(!!oControl.getAccessibilityInfo, "ObjectStatus has a getAccessibilityInfo function");
+		var oInfo = oControl.getAccessibilityInfo();
+		ok(!!oInfo, "getAccessibilityInfo returns a info object");
+		strictEqual(oInfo.role, undefined, "AriaRole");
+		strictEqual(oInfo.type, undefined, "Type");
+		strictEqual(oInfo.description, "Title Text", "Description");
+		strictEqual(oInfo.focusable, undefined, "Focusable");
+		strictEqual(oInfo.enabled, undefined, "Enabled");
+		strictEqual(oInfo.editable, undefined, "Editable");
+		oControl.setState("Warning");
+		oControl.setTitle("");
+		oInfo = oControl.getAccessibilityInfo();
+		strictEqual(oInfo.description, "Text " + sap.ui.core.ValueStateSupport.getAdditionalText(oControl.getState()), "Description");
+		oControl.destroy();
+	});
+
+	module("textDirection");
+
+	test("Title has dir set to LTR when Inherit", function () {
+		//Arange
+		var oObjectStatus = new sap.m.ObjectStatus({title: "Staus", text: "Success object"});
+		oObjectStatus.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		equal(oObjectStatus.$("title").attr("dir"), "ltr", "When the textDirection has the Inherit value, for the title is set LTR when on LTR page");
+
+		//Cleanup
+		oObjectStatus.destroy();
+	});
+
+	test("Title has dir set to RTL when textDirection=RTL", function () {
+		//Arange
+		var oObjectStatus = new sap.m.ObjectStatus({title: "Staus", text: "Success object", textDirection: sap.ui.core.TextDirection.RTL});
+		oObjectStatus.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		equal(oObjectStatus.$("title").attr("dir"), "rtl", "When textDirection=RTL, for the title is set also RTL");
+
+		//Cleanup
+		oObjectStatus.destroy();
+	});
 </script>
 </head>
 

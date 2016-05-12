@@ -108,6 +108,28 @@
 				test("visibilityOK", function(){
 					ok(!!jQuery("#tf4").parent(".sapUiGridHiddenM.sapUiGridHiddenL"), "CSS class for hidden on large and medium screens");
 				});
+
+				module("Accessibility");
+
+				test("getAccessibilityInfo", function() {
+					var oLayout = new sap.ui.layout.Grid({
+						content: [
+							new sap.ui.layout.Grid(),
+							new sap.ui.layout.Grid()
+						]
+					});
+					ok(!!oLayout.getAccessibilityInfo, "Grid has a getAccessibilityInfo function");
+					var oInfo = oLayout.getAccessibilityInfo();
+					ok(!!oInfo, "getAccessibilityInfo returns a info object");
+					ok(oInfo.role === undefined || oInfo.editable === null, "AriaRole");
+					ok(oInfo.type === undefined || oInfo.editable === null, "Type");
+					ok(oInfo.description === undefined || oInfo.editable === null, "Description");
+					ok(oInfo.focusable === undefined || oInfo.editable === null, "Focusable");
+					ok(oInfo.enabled === undefined || oInfo.editable === null, "Enabled");
+					ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
+					ok(oInfo.children && oInfo.children.length == 2, "Children");
+					oLayout.destroy();
+				});
 			} else {
 				if (window.console){
 					window.console.log('IE8 is too dumb for the grid');

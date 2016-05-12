@@ -328,6 +328,15 @@
 		  ]
 		},
 		{
+		  "id": "sap.m.FormattedText",
+		  "name": "Formatted Text",
+		  "category": "Display",
+		  "since": "1.38",
+		  "samples": [
+			"sap.m.sample.FormattedText"
+		  ]
+		},
+		{
 		  "id": "sap.m.UploadCollection",
 		  "name": "Upload Collection",
 		  "category": "Action",
@@ -344,11 +353,12 @@
 			"category": "Tile",
 			"since": "1.34",
 			"samples": [
-				"sap.m.sample.GenericTile1x1",
-				"sap.m.sample.GenericTile2x1SingleCont",
-				"sap.m.sample.GenericTile2x1TwoCont",
-				"sap.m.sample.GenericTileStates",
-				"sap.m.sample.SlideTile"
+				"sap.m.sample.GenericTileAsLaunchTile",
+				"sap.m.sample.GenericTileAsMonitorTile",
+				"sap.m.sample.GenericTileAsKPITile",
+				"sap.m.sample.GenericTileAsFeedTile",
+				"sap.m.sample.SlideTile",
+				"sap.m.sample.GenericTileStates"
 			]
 		},
 		{
@@ -473,6 +483,15 @@
 		  ]
 		},
 		{
+		  "id": "sap.m.MenuButton",
+		  "name": "Menu Button",
+		  "category": "User Input",
+		  "since": "1.38",
+		  "samples": [
+			"sap.m.sample.MenuButton"
+		  ]
+		},
+		{
 		  "id": "sap.m.MessageBox ",
 		  "name": "Message Box",
 		  "category": "Popup",
@@ -506,7 +525,7 @@
 			"category" : "Tile",
 			"since" : "1.34",
 			"samples" : [
-				"sap.m.sample.NumericContentDifSizes",
+				"sap.m.sample.NumericContentDifColors",
 				"sap.m.sample.NumericContentIcon",
 				"sap.m.sample.NumericContentWithoutMargin"
 			]
@@ -591,6 +610,15 @@
 			"sap.m.sample.Table"
 		  ]
 		},
+        {
+          "id": "sap.m.ObjectMarker",
+          "name": "Object Marker",
+          "category": "Display",
+          "since": "1.38",
+          "samples": [
+            "sap.m.sample.ObjectMarker"
+          ]
+        },
 		{
 		  "id": "sap.m.ObjectNumber",
 		  "name": "Object Number",
@@ -677,7 +705,8 @@
 		  	"sap.m.sample.PlanningCalendarMulti",
 		  	"sap.m.sample.PlanningCalendarSingle",
 		  	"sap.m.sample.PlanningCalendarViews",
-		  	"sap.m.sample.PlanningCalendarOneLine"]
+		  	"sap.m.sample.PlanningCalendarOneLine",
+		  	"sap.m.sample.PlanningCalendarMinMax"]
 		},
 		{
 		  "id": "sap.m.Popover",
@@ -824,6 +853,14 @@
 		  ]
 		},
 		{
+			  "id": "sap.m.RangeSlider",
+			  "name": "RangeSlider",
+			  "category": "User Input",
+			  "since": "1.40",
+			  "formFactors": "L",
+			  "samples": ["sap.m.sample.RangeSlider"]
+		},
+		{
 		  "id": "sap.m.SelectDialog",
 		  "name": "Select Dialog",
 		  "category": "Popup",
@@ -860,6 +897,13 @@
 		  "formFactors": "L",
 		  "samples": ["sap.m.sample.TileContainer"]
 		},
+        {
+          "id": "sap.m.StepInput",
+          "name": "StepInput",
+          "category": "User Input",
+          "since": "1.40",
+          "samples": ["sap.m.sample.StepInput"]
+        },
 		{
 		  "id": "sap.m.Switch",
 		  "name": "Switch",
@@ -927,8 +971,7 @@
 		  "category" : "Tile",
 		  "since" : "1.34",
 		  "samples" : [
-		  	"sap.m.sample.TileContent",
-		  	"sap.m.sample.TileContentAutoSize"
+		  	"sap.m.sample.TileContent"
 		  ]
 		},
 		{
@@ -1181,6 +1224,16 @@
           "description": "Use this feature to defer initialization of items until the point at which the items are needed. It can improve performance, reduce memory usage and unnecessary client/server round-trips."
         },
 		{
+		  "id": "sap.m.sample.DynamicPageListReport",
+		  "name": "Dynamic Page FIORI 2.0 List Report floor plan",
+		  "description": "The Dynamic Page is a FIORI 2.0 generation layout control. The sample shows how the List Report floor plan can be implemented."
+		},
+        {
+          "id": "sap.m.sample.DynamicPageAnalyticalTable",
+          "name": "Dynamic Page FIORI 2.0 Analytical Table floor plan",
+          "description": "The Dynamic Page is a FIORI 2.0 generation layout control. The sample shows how the AnalyticalTable works inside it."
+        },
+		{
 		  "id": "sap.m.sample.DateRangeSelection",
 		  "name": "Date Range Selection",
 		  "description": "The Date Range Selection is an extension of the Date Picker Control and enables the user to select range of dates."
@@ -1351,6 +1404,20 @@
 		  "description": "Flex Boxes can be nested. Remember also that HBox and VBox are 'convenience' controls based on the Flex Box control."
 		},
 		{
+		  "id": "sap.m.sample.FormattedText",
+		  "name": "Formatted Text",
+		  "description": "The control can be used for embedding formatted HTML text into your application."
+		},
+		{  "id": "sap.m.sample.FlexibleColumnLayoutSimple",
+		  "name": "Flexible Column Layout basic sample",
+		  "description": "This sample demonstrates a Flexible Column Layout aggregating three pages. Additionally the option to switch between the two different types of three-column layout is enabled. To observe how the control behaves on Desktop, it is recommended to view the sample in Fullscreen mode."
+		},
+		{
+		  "id": "sap.m.sample.FlexibleColumnLayoutDynamicPage",
+		  "name": "Flexible Column Layout with Dynamic Pages",
+		  "description": "This sample demonstrates how to configure a Flexible Column Layout with three Dynamic Page instances, and additionally add a Fullscreen button to the page in the rightmost visible column. To observe how the control behaves on Desktop, it is recommended to view the sample in Fullscreen mode."
+		},
+		{
 		  "id": "sap.m.sample.Page",
 		  "name": "Page,Toolbar and Bar",
 		  "description": "Each screen of a mobile application is typically represented by a 'Page' consisting of a header, a scrollable content area and optionally a footer. The standard header offers a navigation button and a title. Alternatively you can provide a customer header. Gernerally you should use Toolbars in the Page. If you need a centered title you may use a Bar."
@@ -1516,6 +1583,11 @@
 		  "description": "The object identifier is a small building block representing an object by a title and short description. Often it is used in the first column of a table."
 		},
 		{
+		"id": "sap.m.sample.ObjectMarker",
+		"name": "Object Marker in a table",
+		"description": "The <code>ObjectMarker</code> is a small building block representing an object by an icon or text and icon. Often it is used in a table."
+		},
+		{
 		  "id": "sap.m.sample.ObjectNumber",
 		  "name": "Object Number",
 		  "description": "The object number is a small building block representing an important, numerical attribute of an object together with it's unit. Often it is used in the last column of a table."
@@ -1656,9 +1728,9 @@
 			"description": "Number of Tokens in MultiInput cannot exceed the maxToken number."
 		},
 		{
-			"id": "sap.m.sample.NumericContentDifSizes",
-			"name": "Numeric Content of Different Sizes",
-			"description": "Shows NumericContent including numbers, units of measurement and status arrows indicating a trend. The numbers can be colored according to their meaning. The size of the numbers can be fixed or can adapt to the device used."
+			"id": "sap.m.sample.NumericContentDifColors",
+			"name": "Numeric Content of Different Colors",
+			"description": "Shows NumericContent including numbers, units of measurement, and status arrows indicating a trend. The numbers can be colored according to their meaning."
 		},
 		{
 			"id": "sap.m.sample.NumericContentIcon",
@@ -1680,6 +1752,11 @@
 		  "name": "Tokenizer",
 		  "description": "Tokenizer displays multiple tokens."
 		},
+		{
+			"id": "sap.m.sample.RangeSlider",
+			"name": "RangeSlider",
+			"description": "With the RangeSlider a user can specify range from a numerical interval."
+	  	},
 		{
 		  "id": "sap.m.sample.Slider",
 		  "name": "Slider",
@@ -1981,6 +2058,11 @@
 		  "description": "The sap.m.MaskInput control allows users to easily enter data in a certain format and in a fixed-width input (for example: date, time, credit card number, and others)."
 		},
 		{
+		  "id": "sap.m.sample.MenuButton",
+		  "name": "Menu Button",
+		  "description": "This control is used to open a menu in both desktop and mobile."
+		},
+		{
 		  "id": "sap.m.sample.MessageBox",
 		  "name": "Message Box",
 		  "description": "MessageBox is an easy way of displaying a message-type dialog to the user. You can display different types of dialogs:\n- Types of message (Alert, Confirmation, etc.)\n- Initial focus can be set to the buttons or the controls used in the message"
@@ -2140,6 +2222,11 @@
 		  "name": "Remove Margins",
 		  "description": "Use our standard 'No-Margins' classes to remove existing margins from your control. You can either remove all margins at once or remove the margin on one or more sides."
 		},
+        {
+          "id": "sap.m.sample.StepInput",
+          "name": "StepInput",
+          "description": "The StepInput allows the user to change stepwise a value by a predefined step."
+        },
 		{
 		"id": "sap.m.sample.TimePicker",
 		"name": "Time Picker",
@@ -2201,39 +2288,39 @@
 		  "description": "The Draft Indicator shows that eighter currently a draft is saving or that it is already saved. It does not block the current UI screen so other operations could be triggered in parallel."
 		},
 		{
-		  "id": "sap.m.sample.GenericTile1x1",
-		  "name": "Generic Tile 1x1",
-		  "description": "Shows the 1x1 frame type containing the title, the description, and the customizable main area. The 1x1 frame type is shown in two different sizes defined with explicit tile sizes."
-		},
-		{
-		  "id": "sap.m.sample.GenericTile2x1SingleCont",
-		  "name": "Generic Tile 2x1 - Single Content",
-		  "description": "Shows the 2x1 frame type containing the title, the description, and the customizable main area. The size of the tiles is defined with automatic sizing and depends on the device it is running on."
-		},
-		{
-		  "id": "sap.m.sample.GenericTile2x1TwoCont",
-		  "name": "Generic Tile 2x1 - Two Contents",
-		  "description": "Shows the 2x1 frame type containing the title, the description and two customizable areas. The 2x1 frame type is shown in different sizes defined with explicit tile sizes."
-		},
-		{
 		  "id": "sap.m.sample.SlideTile",
-		  "name": "Generic Tiles Sliding",
-		  "description": "Generic Tile controls with the 2x1 frame type are displayed as sliding tiles. The size of the tiles is defined with automatic sizing and depends on the device it is running on."
+		  "name": "Slide Tile",
+		  "description": "GenericTile controls with the 2x1 frame type are displayed as sliding tiles."
 		},
 		{
 		  "id": "sap.m.sample.GenericTileStates",
-		  "name": "Generic Tile Statuses",
-		  "description": "Shows the GenericTile while it is loading, if loading fails, and in disabled status. The size of the tiles is defined with automatic sizing and depends on the device it is running on."
+		  "name": "Generic Tile Status",
+		  "description": "Shows the GenericTile while it is loading, if loading fails, and in disabled status."
+		},
+		{
+		  "id": "sap.m.sample.GenericTileAsLaunchTile",
+		  "name": "Launch Tile",
+		  "description": "Shows Launch Tile samples that can contain header, subheader, image content, unit, and a footer."
+		},
+		{
+		  "id": "sap.m.sample.GenericTileAsMonitorTile",
+		  "name": "Monitor Tile",
+		  "description": "Shows Monitor Tile samples that can contain header, subheader, icon, key value, unit, and a footer."
+		},
+		{
+		  "id": "sap.m.sample.GenericTileAsKPITile",
+		  "name": "KPI Tile",
+		  "description": "Shows KPI Tile samples that can contain header, subheader, key value, trend, scale, unit, and a footer."
+		},
+		{
+		  "id": "sap.m.sample.GenericTileAsFeedTile",
+		  "name": "Feed and News Tile",
+		  "description": "Shows Feed Tile and News Tile samples that can contain feed content, news content, and a footer."
 		},
 		{
 		  "id": "sap.m.sample.TileContent",
 		  "name": "Tile Content",
-		  "description": "Shows the universal container for different content types and context information in the footer area. The tile is shown in two different sizes defined with explicit tile sizes."
-		},
-		{
-		  "id": "sap.m.sample.TileContentAutoSize",
-		  "name": "Tile Content with Auto Size to Fit to Small Screen Sizes",
-		  "description": "Shows the universal container with auto size for different types of content and context information in the footer area to fit to small screens."
+		  "description": "Shows the universal container for different content types and context information in the footer area."
 		},
 		{
 		  "id": "sap.m.sample.Breadcrumbs",
@@ -2274,6 +2361,11 @@
 		  "id": "sap.m.sample.PlanningCalendarOneLine",
 		  "name": "PlanningCalendar - with one line appointments",
 		  "description": "PlanningCalendar showing appointment with only title in one line to save space. The interval headers are only shown if there are some assigned in the visible area."
+		},
+		{
+		  "id": "sap.m.sample.PlanningCalendarMinMax",
+		  "name": "PlanningCalendar - with min. and max. date",
+		  "description": "PlanningCalendar with min. date 2000-01-01 and max. date 2050-12-31"
 		}
 		]
 	}

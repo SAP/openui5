@@ -1,0 +1,62 @@
+//type Default, Transparent(header)
+.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner::after {
+	color: @sapUiElement;
+}
+
+.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner.sapMBtnActive::after {
+	color: @sapUiInvertedElement;
+}
+
+//type Emphasized
+.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner.sapMBtnEmphasized::after {
+	color: @sapUiButtonEmphasizedTextColor;
+	text-shadow: 0 1px 0 fade(@sapUiDarkShadowTint, 50);
+}
+
+.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner.sapMBtnEmphasized.sapMBtnActive::after {
+	text-shadow: none;
+}
+
+//type Accept
+.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner.sapMBtnAccept::after {
+	color: @sapUiButtonAcceptTextColor;
+}
+
+//type Reject
+.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner.sapMBtnReject::after {
+	color: @sapUiButtonRejectTextColor;
+}
+
+//Transparent(footer)
+.sapMIBar-CTX.sapMFooter-CTX .sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner::after {
+	color: @sapUiInvertedElement;
+	text-shadow: 0 1px 0 fade(@sapUiDarkShadowTint , 50);
+}
+
+.sapMIBar-CTX.sapMFooter-CTX .sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner.sapMBtnActive::after {
+	text-shadow: none;
+}
+
+.sapMMenuBtn.sapMMenuBtnSplit .sapMSBActive:not(.sapMBtnDisabled) > .sapMBtnInner {
+	background-color: @sapUiButtonActiveBackground;
+	border-color:     @sapUiButtonActiveBorderColor;
+}
+
+.sapMMenuBtn.sapMMenuBtnSplit .sapMSBActive:not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnReject {
+	background-color: @sapUiButtonRejectActiveBackground;
+	border-color:     @sapUiButtonRejectActiveBorderColor;
+}
+
+.sapMMenuBtn.sapMMenuBtnSplit .sapMSBActive:not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnAccept {
+	background-color: @sapUiButtonAcceptActiveBackground;
+	border-color:     @sapUiButtonAcceptActiveBorderColor;
+}
+
+.sapMMenuBtn.sapMMenuBtnSplit .sapMSBActive:not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnEmphasized {
+	background-color: @sapUiButtonEmphasizedActiveBackground;
+	border-color:     @sapUiButtonEmphasizedActiveBorderColor;
+}
+
+.sapMMenuBtn.sapMMenuBtnSplit .sapMSBActive:not(.sapMBtnDisabled) > .sapMBtnInner .sapMBtnIcon {
+	color: @sapUiButtonActiveTextColor;
+}

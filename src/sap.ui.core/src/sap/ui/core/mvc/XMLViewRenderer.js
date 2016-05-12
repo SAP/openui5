@@ -8,7 +8,8 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer', '../RenderManager', '../li
 	"use strict";
 
 	// shortcut
-	var PREFIX_DUMMY = CoreLib.RenderPrefixes.Dummy;
+	var PREFIX_DUMMY = CoreLib.RenderPrefixes.Dummy,
+		PREFIX_INVISIBLE = CoreLib.RenderPrefixes.Invisible;
 
 	/**
 	 * @namespace
@@ -42,7 +43,7 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer', '../RenderManager', '../li
 				rm.addClass("sapUiView");
 				rm.addClass("sapUiXMLView");
 				ViewRenderer.addDisplayClass(rm, oControl);
-				if (!oControl._oAsyncState || !oControl._oAsyncState.suppressPreserve) {
+				if (!oControl.oAsyncState || !oControl.oAsyncState.suppressPreserve) {
 					// do not preserve when rendering initially in async mode
 					rm.writeAttribute("data-sap-ui-preserve", oControl.getId());
 				}
@@ -87,8 +88,16 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer', '../RenderManager', '../li
 			for (var i = 0; i < oControl._aParsedContent.length; i++) {
 				var fragment = oControl._aParsedContent[i];
 				if ( typeof (fragment) !== "string") {
+
+					// we also need to replace invisible placeholders
+					var sFragmentId = fragment.getId(),
+						$fragment = jQuery.sap.byId(sFragmentId, $oldContent);
+					if ($fragment.length == 0) {
+						$fragment = jQuery.sap.byId(PREFIX_INVISIBLE + sFragmentId, $oldContent);
+					}
+
 					// jQuery.sap.log.debug("replacing preserved DOM for child " + fragment + " with a placeholder");
-					jQuery.sap.byId(fragment.getId(), $oldContent).replaceWith('<div id="' + PREFIX_DUMMY + fragment.getId() + '" class="sapUiHidden"/>');
+					$fragment.replaceWith('<div id="' + PREFIX_DUMMY + sFragmentId + '" class="sapUiHidden"/>');
 					rm.renderControl(fragment);
 				}
 			}

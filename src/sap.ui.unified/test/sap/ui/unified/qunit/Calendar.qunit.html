@@ -119,6 +119,8 @@
 				var $Today = jQuery(jQuery("#Cal1--Month0-days").find(".sapUiCalItemNow"));
 				equal($Today.attr("data-sap-day"), oFormatYyyymmdd.format(oToday), "current date is marked as today");
 				ok(!$Today.hasClass(".sapUiCalItemOtherMonth"), "current date is not in other month");
+				ok(!$Today.hasClass("sapUiCalItemSel"), "current date not marked as selected");
+				equal($Today.attr("aria-selected"), "false", "current date aria-selected = false");
 
 				equal(jQuery("#Cal2--Head-B1").text(), "Januar", "January shown");
 				equal(jQuery("#Cal2--Head-B2").text(), "2011", "year 2011 shown");
@@ -128,8 +130,10 @@
 				equal(aSelectedDays.length, 4, "4 days selected");
 				equal(jQuery(aSelectedDays[0]).attr("data-sap-day"), "20110110", "first day selected: 10");
 				ok(jQuery(aSelectedDays[0]).hasClass("sapUiCalItemSelStart"), "first selected day marked as selction start");
+				equal(jQuery(aSelectedDays[0]).attr("aria-selected"), "true", "first selected day aria-selected = true");
 				equal(jQuery(aSelectedDays[3]).attr("data-sap-day"), "20110113", "last day selected: 13");
 				ok(jQuery(aSelectedDays[3]).hasClass("sapUiCalItemSelEnd"), "last selected day marked as selction end");
+				equal(jQuery(aSelectedDays[3]).attr("aria-selected"), "true", "last selected day aria-selected  = true");
 				var aDays = jQuery("#Cal2--Month0-days").find(".sapUiCalItem");
 				equal(jQuery(aDays[0]).attr("data-sap-day"), "20101227", "first displayed day");
 				equal(jQuery(aDays[0]).attr("id"), "Cal2--Month0-20101227", "first displayed day has right ID");
@@ -427,7 +431,39 @@
 
 				ok(!jQuery("#Cal3--Head-prev").hasClass("sapUiCalDsbl"), "Calendar3: Previous Button enabled");
 				ok(jQuery("#Cal3--Head-next").hasClass("sapUiCalDsbl"), "Calendar3: Next Button disabled");
+				qutils.triggerEvent("click", "Cal3--Head-B1");
+				ok(!jQuery("#Cal3--Head-prev").hasClass("sapUiCalDsbl"), "Calendar3: Previous Button for MonthPicker enabled");
+				ok(jQuery("#Cal3--Head-next").hasClass("sapUiCalDsbl"), "Calendar3: Next Button for MonthPicker disabled");
+				ok(!jQuery("#Cal3--MP-m0").hasClass("sapUiCalItemDsbl"), "Calendar3: January enabled");
+				ok(!jQuery("#Cal3--MP-m1").hasClass("sapUiCalItemDsbl"), "Calendar3: February enabled");
+				ok(jQuery("#Cal3--MP-m2").hasClass("sapUiCalItemDsbl"), "Calendar3: March disabled");
+				ok(jQuery("#Cal3--MP-m3").hasClass("sapUiCalItemDsbl"), "Calendar3: April disabled");
+				ok(jQuery("#Cal3--MP-m4").hasClass("sapUiCalItemDsbl"), "Calendar3: May disabled");
+				ok(jQuery("#Cal3--MP-m5").hasClass("sapUiCalItemDsbl"), "Calendar3: June disabled");
+				ok(jQuery("#Cal3--MP-m6").hasClass("sapUiCalItemDsbl"), "Calendar3: July disabled");
+				ok(jQuery("#Cal3--MP-m7").hasClass("sapUiCalItemDsbl"), "Calendar3: August disabled");
+				ok(jQuery("#Cal3--MP-m8").hasClass("sapUiCalItemDsbl"), "Calendar3: September disabled");
+				ok(jQuery("#Cal3--MP-m9").hasClass("sapUiCalItemDsbl"), "Calendar3: October disabled");
+				ok(jQuery("#Cal3--MP-m10").hasClass("sapUiCalItemDsbl"), "Calendar3: November disabled");
+				ok(jQuery("#Cal3--MP-m11").hasClass("sapUiCalItemDsbl"), "Calendar3: December disabled");
+				qutils.triggerEvent("click", "Cal3--Head-prev");
+				ok(!jQuery("#Cal3--Head-prev").hasClass("sapUiCalDsbl"), "Calendar3: Previous Button for MonthPicker enabled");
+				ok(!jQuery("#Cal3--Head-next").hasClass("sapUiCalDsbl"), "Calendar3: Next Button for MonthPicker enabled");
+				ok(!jQuery("#Cal3--MP-m0").hasClass("sapUiCalItemDsbl"), "Calendar3: January enabled");
+				ok(!jQuery("#Cal3--MP-m1").hasClass("sapUiCalItemDsbl"), "Calendar3: February enabled");
+				ok(!jQuery("#Cal3--MP-m2").hasClass("sapUiCalItemDsbl"), "Calendar3: March enabled");
+				ok(!jQuery("#Cal3--MP-m3").hasClass("sapUiCalItemDsbl"), "Calendar3: April enabled");
+				ok(!jQuery("#Cal3--MP-m4").hasClass("sapUiCalItemDsbl"), "Calendar3: May enabled");
+				ok(!jQuery("#Cal3--MP-m5").hasClass("sapUiCalItemDsbl"), "Calendar3: June enabled");
+				ok(!jQuery("#Cal3--MP-m6").hasClass("sapUiCalItemDsbl"), "Calendar3: July enabled");
+				ok(!jQuery("#Cal3--MP-m7").hasClass("sapUiCalItemDsbl"), "Calendar3: August enabled");
+				ok(!jQuery("#Cal3--MP-m8").hasClass("sapUiCalItemDsbl"), "Calendar3: September enabled");
+				ok(!jQuery("#Cal3--MP-m9").hasClass("sapUiCalItemDsbl"), "Calendar3: October enabled");
+				ok(!jQuery("#Cal3--MP-m10").hasClass("sapUiCalItemDsbl"), "Calendar3: November enabled");
+				ok(!jQuery("#Cal3--MP-m11").hasClass("sapUiCalItemDsbl"), "Calendar3: December enabled");
 				qutils.triggerEvent("click", "Cal3--Head-B2");
+				ok(jQuery("#Cal3--Head-prev").hasClass("sapUiCalDsbl"), "Calendar3: Previous Button for YearPicker disabled");
+				ok(jQuery("#Cal3--Head-next").hasClass("sapUiCalDsbl"), "Calendar3: Next Button for YearPicker disabled");
 				var aYears = jQuery("#Cal3--YP").find(".sapUiCalItem");
 				equal(jQuery(aYears[0]).text(), "1996", "Calendar3: first displayed year");
 				ok(jQuery(aYears[0]).hasClass("sapUiCalItemDsbl"), "Calendar3: 1996 is disabled");
@@ -454,6 +490,7 @@
 				ok(bSelectFired, "Select event fired");
 				equal(oSelectedDate.getDate(), oToday.getDate(), "Today was selected");
 				ok($Today.hasClass("sapUiCalItemSel"), "Today marked as selected");
+				equal($Today.attr("aria-selected"), "true", "Today aria-selected = true");
 
 				bSelectFired = false;
 				oSelectedDate = undefined;
@@ -462,6 +499,7 @@
 				qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
 				ok(!bSelectFired, "No Select event fired on disabled date");
 				ok(!$Date.hasClass("sapUiCalItemSel"), "Disabled date not marked as selected");
+				equal($Date.attr("aria-selected"), "false", "Disabled date aria-selected = false");
 			});
 
 		</script>

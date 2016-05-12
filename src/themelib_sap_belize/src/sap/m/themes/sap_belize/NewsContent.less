@@ -2,44 +2,39 @@
 /* CSS for control sap.m/NewsContent  */
 /* Belize theme                       */
 /* ================================== */
-
-.sapUiMedia-Std-Desktop .sapMNwCCTxt.Auto > .sapMText,
-.sapUiMedia-Std-Tablet .sapMNwCCTxt.Auto > .sapMText,
-.sapMNwCCTxt.L > .sapMText, .sapMNwCCTxt.M > .sapMText{
+.sapMNwCCTxt .sapMText {
 	font-size: @sapMFontMediumSize;
-}
-
-.sapUiMedia-Std-Phone .sapMNwCCTxt.Auto > .sapMText,
-.sapMNwCCTxt.S > .sapMText, .sapMNwCCTxt.XS > .sapMText {
-	font-size: 0.625rem;
-}
-
-.sapUiMedia-Std-Desktop .sapMNwCSbh.Auto,
-.sapUiMedia-Std-Tablet .sapMNwCSbh.Auto,
-.sapMNwCSbh.L, .sapMNwCSbh.M {
-	font-size: @sapMFontMediumSize;
-}
-
-.sapUiMedia-Std-Phone .sapMNwCSbh.Auto,
-.sapMNwCSbh.S, .sapMNwCSbh.XS {
-	font-size: 0.625rem;
 }
 
 .sapMNwC {
-	color: @sapUiTileTextColor;
 	background-color: fade(@sapUiTileBackground, 60);
 }
 
-.sap-desktop .sapMNwC:focus {
-	outline-color: @sapUiContentFocusColor;
-	outline-style: dotted;
-	outline-width: 1px; /*Check with Carmen about 3 decimals*/
+.sapMNwCSbh {
+	color: @sapUiContentLabelColor;
+	font-size: @sapMFontMediumSize;
+}
+
+.sapMTileCnt.News {
+	.sapMNwCSbh, .sapMNwC {
+		text-shadow: 0 1px 0 fade(@sapUiContentShadowColor, 50);
+		color: @sapUiContentContrastTextColor;
+	}
+	.sapMNwCSbh {
+		color: lighten(@sapUiContentLabelColor, 45);
+	}
+}
+
+.sapMNwC:focus {
+	outline: 1px dotted @sapUiContentFocusColor; /*Check with Carmen about 3 decimals*/
 }
 
 .sapMNwC:focus:not([tabindex]) {
 	outline: none;
 }
 
-.sapMNwCSbh {
-	color: @sapUiContentLabelColor;
+@media screen and (max-width: 374px) {
+	.sapMNwCCTxt .sapMText, .sapMNwCSbh {
+		font-size: @sapMFontSmallSize;
+	}
 }

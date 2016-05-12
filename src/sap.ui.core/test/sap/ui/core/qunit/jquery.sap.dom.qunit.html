@@ -406,6 +406,43 @@
 			$Ref.remove();
 		});
 
+		QUnit.module("Selector", {
+			beforeEach: function() {
+				this.$Image = jQuery('' +
+					'<img id="image" data-sap-ui="image" src="jquery/SAPLogo.gif" class="sapUiImg" usemap="#Map1" alt="Alternative image text for Image2" tabindex="0" style="width:300px;height:200px;">'
+				);
+				this.$ImageMap = jQuery('' +
+					'<map tabindex="-1" id="imgMap1" data-sap-ui="imgMap1" name="Map1">' +
+						'<area id="area11" data-sap-ui="area11" style="display: inline;" aria-describedby="imgMap1-Descr" shape="rect" coords="1,1,100,100" href="#" alt="Text on Alt1" tabindex="-1">' +
+						'<area id="area12" data-sap-ui="area12" style="display: inline;" aria-describedby="imgMap1-Descr" shape="rect" coords="101,1,200,100" href="#" alt="Text on Alt2" tabindex="-1">' +
+						'<area id="area13" data-sap-ui="area13" style="display: inline;" aria-describedby="imgMap1-Descr" shape="rect" coords="201,1,300,100" href="#" alt="Text on Alt3" tabindex="-1">' +
+						'<area id="area14" data-sap-ui="area14" style="display: inline;" aria-describedby="imgMap1-Descr" shape="rect" coords="1,101,100,200" href="#" alt="Text on Alt4" tabindex="0">' +
+						'<area id="area15" data-sap-ui="area15" style="display: inline;" aria-describedby="imgMap1-Descr" shape="rect" coords="101,101,200,200" href="#" alt="Text on Alt5" tabindex="-1"></map>' +
+					'</map>'
+				);
+
+				// let the reference have parent to replace
+				jQuery(document.body).append(this.$Image);
+				jQuery(document.body).append(this.$ImageMap);
+
+				sap.ui.getCore().applyChanges();
+			},
+
+			afterEach: function() {
+				this.$Image.remove();
+				this.$ImageMap.remove();
+			}
+		});
+
+		QUnit.test("Using Quotes for selector ':sapFocusable' on ImageMap", function(assert) {
+			var $Area11 = jQuery("#area11");
+			// this caused an issue while introducing jQuery 2.2.2 in the ImageMap
+			// visual test page
+			var bFocusable = $Area11.is(":sapFocusable");
+
+			assert.ok(bFocusable, "Map is :sapFocusable");
+		});
+
 
 		</script>
 	</head>

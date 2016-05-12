@@ -1,0 +1,448 @@
+{
+  "1.38.0": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "b7df3a81d03d477101790894e1fc9f6a03bf0522",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "m.MenuButton: Implementation",
+        "references": []
+      },
+      {
+        "id": "5ec3a5f222a6bd29eb8e62d8a0d9197efd4ef1be",
+        "author": "Mihail Yordanov \u003cmihail.yordanov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.CheckBox valueState support implemented",
+        "references": []
+      },
+      {
+        "id": "ab6fdc54d2e97122285401accdfeee2521579c3f",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.ComboBox: redesign for mobile devices",
+        "references": []
+      },
+      {
+        "id": "44696a064842623f024f13e03d56ee0c50baf07f",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.ComboBoxBase: add \"loadItem\" event",
+        "references": []
+      },
+      {
+        "id": "4e79347aa014699bf930ae4a30ffa6ad300ff9a4",
+        "author": "Dimo Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.DynamicPage - new control implemented",
+        "references": []
+      },
+      {
+        "id": "fec45c227e4abdc91f49394587c1579c1e00f892",
+        "author": "Vladislav Tasev \u003cvladislav.tasev@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.FlexibleColumnLayout - new control",
+        "references": []
+      },
+      {
+        "id": "e706b356dc3c50c208f3e63d352782cf07ecc01d",
+        "author": "Dominic Holzwarth \u003cdominic.holzwarth@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.GenericTile: Tile and font size adapted, size property set to deprecated",
+        "references": []
+      },
+      {
+        "id": "7163a4f261ea5e8539d92ea4bcdce680c6dd2298",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.ImageContent: New control ImageContent added",
+        "references": []
+      },
+      {
+        "id": "3ddcb0c0c023d3724fe2526bd793c0649e4423ad",
+        "author": "Jordan Dichev \u003cjordan.dichev@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.MessagePopover - Resizing functionality",
+        "references": []
+      },
+      {
+        "id": "64b5d943036a9f462f6dc74daa2978a35fd605f8",
+        "author": "Teodor Todorov \u003cteodor.todorov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.ObjectMarker: New control implementation",
+        "references": []
+      },
+      {
+        "id": "e87907de502b2bfa9060035e522876da749f654a",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.PlanningCalendar new features",
+        "references": []
+      },
+      {
+        "id": "ca6b8697002e0545f40f64f400233fee143fb885",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.PlanningCalendar: new focus visualization",
+        "references": []
+      },
+      {
+        "id": "648f50d3972a5c37abb59e25470a11f4976b6c5c",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.TextArea: \"growing\" and \"growingMaxLines\" properties are added.",
+        "references": []
+      },
+      {
+        "id": "abf2f5c49b811d4a8d86d6bbdd4cc0a306cc2c4a",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.table: Performance improvements for table library",
+        "references": []
+      },
+      {
+        "id": "5216182ccb56d9215c4071fb9392476b027d93ea",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.Calendar: add width property",
+        "references": []
+      },
+      {
+        "id": "abb22af2036393ea061181d325800642f38a2e69",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.Calendar: focus vizualisation for header",
+        "references": []
+      },
+      {
+        "id": "203bf7029ff102941d7643ab8468bdd44013e696",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "Less Parameter @sapUiFieldRequiredColor contrast issue",
+        "references": []
+      },
+      {
+        "id": "c40f68462e1eb53161b02141bbbccad6cbb5c583",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.IconTabBar: windows 10 rules added",
+        "references": []
+      },
+      {
+        "id": "bc43bf5ffd54f9d719d55491cf3bbef8af4ad87a",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.ViewSettingsDialog: Selection corrected on first click on Select All checkbox label",
+        "references": []
+      },
+      {
+        "id": "7fe4a2fea662774101b689722acc891a95f06310",
+        "author": "Shtiliyan Uzunov \u003cshtiliyan.uzunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ActionSheet visual design bug fix",
+        "references": []
+      },
+      {
+        "id": "2f41ee778bf2781aec17d266a6e755798afd093e",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Fixed nav arrows on combi devices",
+        "references": []
+      },
+      {
+        "id": "97ef610475cd3beb18ecb830b1d0b16011b520d9",
+        "author": "Mihail Yordanov \u003cmihail.yordanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Checkbox fixed position in form on compact size",
+        "references": []
+      },
+      {
+        "id": "c58118fd93a7553cec77857676bc93d2ba71854b",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: Calendar on phone in landscape design issues",
+        "references": []
+      },
+      {
+        "id": "8385968f5bc23f5ed89a628168e586acca1ab18c",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Border, hover and focus changed in CSS",
+        "references": []
+      },
+      {
+        "id": "f963522a3f0fa291dc2b57f428ba856338cd1dc0",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Focus improved in CSS",
+        "references": []
+      },
+      {
+        "id": "373a5366152f8d953904fe1f3f470854ed7211d6",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTaBar: count in RTL is right aligned",
+        "references": []
+      },
+      {
+        "id": "913fdf09e73a97ec42b34f3e58606a57603c5632",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTaBar: scroll arrows in Text-only mode are aligned with the text now",
+        "references": []
+      },
+      {
+        "id": "ee76c989f5bf4078976ae30640f0c13b9ef9c8e9",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar scroll arrow shows correct on phone",
+        "references": []
+      },
+      {
+        "id": "535dc6a0f3e09290fa419d23325e94f7e69bb71f",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: padding on phone fixed",
+        "references": []
+      },
+      {
+        "id": "1c7fd3e56b0bafa149fb2edcf861ea28494c3cd5",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: remove max-width of value state message",
+        "references": []
+      },
+      {
+        "id": "f27423499b08e9c31b60638fac9b1def6dca31ec",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessageStrip: Focus opacity of the close button removed",
+        "references": []
+      },
+      {
+        "id": "663f6411d949ab7e4f782e0010b37a9edb65af03",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: HCB improvements",
+        "references": []
+      },
+      {
+        "id": "1cbb532c1ae75534415fd3aa24219094f5525250",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton - Bluecrystal theme hover and borders are now ok",
+        "references": []
+      },
+      {
+        "id": "c143195d3452eb516d1fb1120b371012fd42baa6",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton - Left padding on compact mode and buttons with icons is now correct",
+        "references": []
+      },
+      {
+        "id": "e198e7f2fa58968aec4e5d0c379133f3c49a8c2f",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton - width recalculation is more effective now.",
+        "references": []
+      },
+      {
+        "id": "5a302892555340f816adce1f883e600bbaf4f0fa",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: prevents actions from occurring when the control is disabled in IE11",
+        "references": []
+      },
+      {
+        "id": "eeff9e833074149c73201211d1d8842304c5c2df",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TileContainer: Arrows\u0027 click behaviour in firefox is now handled properly",
+        "references": []
+      },
+      {
+        "id": "086b168c067900c06f561458546dae14974aaaae",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Token: add outline:none to token",
+        "references": []
+      },
+      {
+        "id": "34e4f55ffbf6a8d29681827b3d918cf319936571",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Token: adjust the icon position to be aligned in the middle",
+        "references": []
+      },
+      {
+        "id": "f7a345b6508801b6df9f79024175582920b3acbe",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m: selectable elements should still be selectable on combi device",
+        "references": []
+      },
+      {
+        "id": "4bf589e3e3ab1b885abaeb8903a84e07eb8687a1",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.tnt.NavigationList: Focus is now styled correctly",
+        "references": []
+      },
+      {
+        "id": "bc196daecf0ac7d1cecf42320069796d855b6026",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.MenuButton: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "c20b406d0360b9706fbae21b81742afbf5ea868f",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.MessageToast: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "0a0a85e88602337fc74abcdb9b0de4d591bc2b75",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.MessageToast: fix css img urls (again)",
+        "references": []
+      },
+      {
+        "id": "7ca03997cba07a28a92c2f2a6f9df726d2c90c70",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Panel: One pixel is missing when Panel is used in a flexbox on IE",
+        "references": []
+      },
+      {
+        "id": "50fee71409885beeca78e00c8eb7e143029aa670",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.SearchField: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "04e2833f9e917a8c00d8b81ae84d811feb0891f5",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Splitter: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "5907bedc4ea638803daa248e6986b3a624bb1246",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Tree: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "96536e12543c9608435a4142a3cf85ec49b5cd88",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TriStateCheckBox: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "52e76864f9feb2cb1bb634f8a12611684581ef59",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: No padding between FormContainer if no Title",
+        "references": []
+      },
+      {
+        "id": "22a6d56c45f1ff0012b07221e0931d9cc8e4fbe1",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: too much padding if only 1 container",
+        "references": []
+      },
+      {
+        "id": "47123cd5e9f74c2be76122de39a839d7af67939f",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.GridLayout: labels not aligned in Firefox",
+        "references": []
+      },
+      {
+        "id": "77175b448808ef45ef31704c22fad751558b71bb",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.ResponsiveLayout: Labels wrong aligned in Edge",
+        "references": []
+      },
+      {
+        "id": "276b1e6d709467f3bd2ad079691aa0d3af7ad6bd",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: border styles in hcb and bluecrystal",
+        "references": []
+      },
+      {
+        "id": "9e571814ccc5a094154970795ac517ec81ef9356",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "fcaa4a24791d297c0600f57dd1f8ee010830a95b",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fix for Visual Tests",
+        "references": []
+      },
+      {
+        "id": "0d92eb42c7043efb773a20f3f2a6d2620190e9c4",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes regressions related to table rendering - async DOM/ControlTree for updateTableSizes",
+        "references": []
+      },
+      {
+        "id": "9fb664e46a040f213f01d5d95caaba7e7517bf68",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.ux3.ActionBar: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "5f6a679b96d7f349c89dc48fa89b5129b6db5a45",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.ux3.ExactList: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "5b5ed9029bc778d607dd631f1caac2ffdc1c9cfd",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.ux3.Overlay: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "d1d5fec0824b8034d9cbe5ccfbdfe668d7f7eaea",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.ux3.Shell: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "28a0c6da31d14b930bbcfd309f1f6e7fe3b79870",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.ux3.ToolPopup: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "2f71510bb09973df6129fb9b75269e45745b96f2",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.Shell: Left and right part of the header do not overlap",
+        "references": []
+      }
+    ]
+  }
+}

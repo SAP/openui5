@@ -99,7 +99,7 @@ sap.ui.define([
 
 		/**
 		 * Sets the item count on the worklist view header
-		 * @param {integer} iTotalItems the total number of items in the table
+		 * @param {int} iTotalItems the total number of items in the table
 		 * @private
 		 */
 		_updateListItemCount: function (iTotalItems) {

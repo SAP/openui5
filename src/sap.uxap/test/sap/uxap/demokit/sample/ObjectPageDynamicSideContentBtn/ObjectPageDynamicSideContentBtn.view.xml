@@ -23,8 +23,6 @@
 												  showMarkers="true"
 												  markFavorite="true"
 												  markFlagged="true"
-												  showSideContentButton="true"
-												  showSideContentButtonPress="handleSCBtnPress"
 												  objectSubtitle="Senior Developer"
 												  objectImageURI="test-resources/sap/uxap/images/imageID_273624.png"
 												  objectImageShape="Circle"
@@ -32,6 +30,9 @@
 												  isObjectTitleAlwaysVisible="false"
 												  isObjectSubtitleAlwaysVisible="false"
 												  isActionAreaAlwaysVisible="true">
+									<sideContentButton>
+										<m:Button icon="sap-icon://detail-view" type="Transparent" press="handleSCBtnPress"></m:Button>
+									</sideContentButton>
 									<actions>
 										<ObjectPageHeaderActionButton text="Public Profile" iconFirst="true" icon="sap-icon://edit"/>
 										<ObjectPageHeaderActionButton text="Take Action" iconFirst="true" icon="sap-icon://action"/>

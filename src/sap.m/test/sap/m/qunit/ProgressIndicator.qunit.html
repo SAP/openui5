@@ -113,14 +113,14 @@
 		var iPercentTest = 120;
 		oProgInd.setPercentValue(iPercentTest);
 		var iPercentAfter = oProgInd.getPercentValue();
-		equal(iPercentAfter, 30, "we expect value to be the same as before");
+		equal(iPercentAfter, 0, "the value should be set to the default one");
 	});
 
 	test("setPercentValue wrong input (int out of range, too small)", function() {
 		var iPercentTest = -20;
 		oProgInd.setPercentValue(iPercentTest);
 		var iPercentAfter = oProgInd.getPercentValue();
-		equal(iPercentAfter, 30, "we expect value to be the same as before");
+		equal(iPercentAfter, 0, "the value should be set to the default one");
 	});
 
 	test("text should not be rendered when displayValue is not set", function() {
@@ -242,6 +242,25 @@
 		equal(bDirAttributeExists, true, "the attribute 'dir' should exist");
 	});
 
+	test("getAccessibilityInfo", function() {
+		var oControl = new sap.m.ProgressIndicator({percentValue: 50});
+		ok(!!oControl.getAccessibilityInfo, "ProgressIndicator has a getAccessibilityInfo function");
+		var oInfo = oControl.getAccessibilityInfo();
+		ok(!!oInfo, "getAccessibilityInfo returns a info object");
+		strictEqual(oInfo.role, "progressbar", "AriaRole");
+		strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_PROGRESS"), "Type");
+		strictEqual(oInfo.description, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_PROGRESS", [50]), "Description");
+		strictEqual(oInfo.focusable, true, "Focusable");
+		strictEqual(oInfo.enabled, true, "Enabled");
+		ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
+		oControl.setPercentValue(10);
+		oControl.setEnabled(false);
+		oInfo = oControl.getAccessibilityInfo();
+		strictEqual(oInfo.description, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_PROGRESS", [10]), "Description");
+		strictEqual(oInfo.focusable, false, "Focusable");
+		strictEqual(oInfo.enabled, false, "Enabled");
+		oControl.destroy();
+	});
 </script>
 
 </head>

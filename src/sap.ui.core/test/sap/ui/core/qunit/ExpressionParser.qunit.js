@@ -2,12 +2,13 @@
  * ${copyright}
  */
 sap.ui.require([
+	"jquery.sap.global",
 	"sap/ui/base/BindingParser",
 	"sap/ui/base/ExpressionParser",
 	"sap/ui/core/Icon",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/ODataUtils"
-], function (BindingParser, ExpressionParser, Icon, JSONModel, ODataUtils) {
+], function (jQuery, BindingParser, ExpressionParser, Icon, JSONModel, ODataUtils) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -109,7 +110,7 @@ sap.ui.require([
 		{ binding: "{='foo'}", literal: 'foo' },
 		{ binding: '{="foo"}', literal: 'foo' },
 		{ binding: "{= 'foo bar' }", literal: 'foo bar' }
-	].forEach(function(oFixture) {
+	].forEach(function (oFixture) {
 		QUnit.test("Valid String literal " + oFixture.binding, function (assert) {
 			var oExpression;
 
@@ -130,7 +131,7 @@ sap.ui.require([
 		{ binding: "{=${target>sap:semantics}}" },
 		{ binding: "{=${ b}   }" },
 		{ binding: "{=     ${ b} }" }
-	].forEach(function(oFixture) {
+	].forEach(function (oFixture) {
 		QUnit.test("Valid embedded binding " + oFixture.binding, function (assert) {
 			var oBinding = {
 					result: {/*bindingInfo*/},
@@ -242,7 +243,7 @@ sap.ui.require([
 		function (oSandbox) {
 			var mGlobals = {
 					odata: {
-						fillUriTemplate: function(sTemplate, mParameters) {
+						fillUriTemplate: function (sTemplate, mParameters) {
 							var sKey;
 							if (!sTemplate) {
 								return "TODO";
@@ -266,7 +267,7 @@ sap.ui.require([
 
 			//use test globals in expression parser
 			oSandbox.stub(ExpressionParser, "parse",
-				function(fnResolveBinding, sInput, iStart) {
+				function (fnResolveBinding, sInput, iStart) {
 					return fnOriginalParse.call(null, fnResolveBinding, sInput, iStart, mGlobals);
 				}
 			);
@@ -298,7 +299,7 @@ sap.ui.require([
 		{ binding: "{=[1 2]}", message: "Expected , but instead saw 2", token: "2"},
 		{ binding: "{=[1+]}", message: "Unexpected ]", token: "]"},
 		{ binding: "{=[1,]}", message: "Unexpected ]", token: "]"}
-	].forEach(function(oFixture) {
+	].forEach(function (oFixture) {
 		QUnit.test("Error handling " + oFixture.binding + " --> " + oFixture.message,
 			function (assert) {
 				this.checkError(assert, oFixture.binding, oFixture.message,
@@ -314,7 +315,7 @@ sap.ui.require([
 		{binding: "{=odata foo}", at: 8},
 		{binding: "{=odata.fillUriTemplate )}", at: 24},
 		{binding: "{='foo' , 'bar'}", at: 8}
-	].forEach(function(oFixture) {
+	].forEach(function (oFixture) {
 		QUnit.test("Error handling: excess tokens: " + oFixture.binding, function (assert) {
 			assert.throws(function () {
 				BindingParser.complexParser(oFixture.binding);
@@ -331,7 +332,7 @@ sap.ui.require([
 		{ binding: "{={'foo': 'bar'}}", result: {foo: "bar"} },
 		{ binding: "{={foo: 'bar'}}", result: {foo: "bar"} },
 		{ binding: "{={a: 'a', \"b\": \"b\"}}", result: {a: "a", b: "b"} }
-	].forEach(function(oFixture) {
+	].forEach(function (oFixture) {
 		QUnit.test("Object literal " + oFixture.binding, function (assert) {
 			var oBindingInfo = ExpressionParser.parse(undefined /*fnResolver*/,
 					oFixture.binding, 2);
@@ -505,14 +506,13 @@ sap.ui.require([
 		// w/o try/catch, a formatter's exception is thrown out of the control's c'tor...
 		// --> expression binding provides the comfort of an "automatic try/catch"
 		assert.throws(function () {
-			var unused = new Icon({
-					color : {
-						path : '/',
-						formatter : function () { return null.toString(); }
-					},
-					models : new JSONModel()
-				});
-			unused = !unused;
+			return new Icon({
+				color : {
+					path : '/',
+					formatter : function () { return null.toString(); }
+				},
+				models : new JSONModel()
+			});
 		});
 
 		// Note: no need to log the stacktrace, it does not really matter to most people here

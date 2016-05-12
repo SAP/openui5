@@ -147,7 +147,36 @@
 
 .sapUiTableCCnt {
 	position: relative;
+	overflow: hidden;
 	border-bottom: 1px solid @sapUiListHeaderBorderColor;
+}
+
+.sapUiTableOverlay {
+	pointer-events: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+/* Since in visibleRowCountMode=Auto, the table has no height, the overlay must be applied to every child div
+ of the table root div. Because they have some borders and margins applied, the strech the overlay by 2 pixels to top and
+ bottom to be able to cover margins and borders*/
+.sapUiTable.sapUiTableOverlay > div:after {
+	content: '';
+	z-index: 10;
+	/* same as sapUiOverlay */
+	background-color: fade(@sapUiExtraLightBG, 80%);
+	position: absolute;
+	top: -2px;
+	left: 0;
+	right: 0;
+	bottom: -2px;
+	/* same as sapUiOverlay */
+}
+
+.sapUiTable.sapUiTableOverlay > div {
+	position: relative;
 }
 
 /* COL HEADER */
@@ -318,6 +347,11 @@
 	float: left;
 }
 
+.sapUiTableCtrlScrFixed, .sapUiTableColHdrFixed {
+	max-width:100%;
+	overflow:hidden;
+}
+
 .sapUiTableCell {
 	height: inherit;
 	text-overflow: ellipsis;
@@ -470,6 +504,7 @@ html[dir=rtl] .sapUiTableColRsz {
 
 html[data-sap-ui-browser^="ie"] .sapUiTableVSb {
 	width: 18px;
+	right: -1px;
 }
 
 .sapUiTableVScr .sapUiTableVSb {

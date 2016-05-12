@@ -1,0 +1,26 @@
+{
+  "sEntity": "Theme",
+  "sId": "sap_belize_plus",
+  "oExtends": "sap_belize",
+  "sVendor": "SAP",
+  "aBundled": ["sap_belize"],
+  "mCssScopes": {
+    "library": {
+      "sBaseFile": "sap_belize.library",
+      "sEmbeddingMethod": "APPEND",
+      "aScopes": [
+        {
+          "sLabel": "Contrast",
+          "sSelector": "sapContrastPlus",
+          "sEmbeddedFile": "library",
+          "sEmbeddedCompareFile": "sap_belize.library",
+          "sThemeIdSuffix": "Contrast",
+          "sThemability": "PUBLIC",
+          "aThemabilityFilter": [
+            "Color"
+          ]
+        }
+      ]
+    }
+  }
+}

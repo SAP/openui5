@@ -70,10 +70,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			/**
 			 * Month selection changed
 			 */
-			select : {}
+			select : {},
 
+			/**
+			 * The <code>pageChange</code> event is fired if the displayed years are changed by user navigation.
+			 * @since 1.38.0
+			 */
+			pageChange : {}
 		}
 	}});
+
+	/* eslint-disable no-lonely-if */
 
 	YearPicker.prototype.init = function(){
 
@@ -398,10 +405,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			case "sapnextmodifiers":
 				if (oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_DOWN && iColumns < iYears) {
 					//same column in first row of next group (only if more than one row)
-					_updatePage.call(this, true, this._oItemNavigation.getFocusedIndex() - iYears + iColumns);
+					_updatePage.call(this, true, this._oItemNavigation.getFocusedIndex() - iYears + iColumns, true);
 				} else {
 					// first year in next group
-					_updatePage.call(this, true, 0);
+					_updatePage.call(this, true, 0, true);
 				}
 				break;
 
@@ -409,21 +416,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			case "sappreviousmodifiers":
 				if (oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_UP && iColumns < iYears) {
 					//same column in last row of previous group (only if more than one row)
-					_updatePage.call(this, false, iYears - iColumns + this._oItemNavigation.getFocusedIndex());
+					_updatePage.call(this, false, iYears - iColumns + this._oItemNavigation.getFocusedIndex(), true);
 				} else {
 					// last year in previous group
-					_updatePage.call(this, false, iYears - 1);
+					_updatePage.call(this, false, iYears - 1, true);
 				}
 				break;
 
 			case "sappagedown":
 				// same index in next group
-				_updatePage.call(this, true, this._oItemNavigation.getFocusedIndex());
+				_updatePage.call(this, true, this._oItemNavigation.getFocusedIndex(), true);
 				break;
 
 			case "sappageup":
 				// same index in previous group
-				_updatePage.call(this, false, this._oItemNavigation.getFocusedIndex());
+				_updatePage.call(this, false, this._oItemNavigation.getFocusedIndex(), true);
 				break;
 
 			default:
@@ -449,8 +456,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			$DomRef = jQuery(aDomRefs[i]);
 			if ($DomRef.attr("id") == sId) {
 				$DomRef.addClass("sapUiCalItemSel");
+				$DomRef.attr("aria-selected", "true");
 			}else {
 				$DomRef.removeClass("sapUiCalItemSel");
+				$DomRef.attr("aria-selected", "false");
 			}
 		}
 
@@ -462,18 +471,48 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 
 	}
 
-	function _updatePage(bForward, iSelectedIndex){
+	function _updatePage(bForward, iSelectedIndex, bFireEvent){
 
 		var aDomRefs = this._oItemNavigation.getItemDomRefs();
 		var oFirstDate =  this._newUniversalDate(this._oFormatYyyymmdd.parse(jQuery(aDomRefs[0]).attr("data-sap-year-start"), true));
+		var iYears = this.getYears();
 
 		if (bForward) {
-			oFirstDate.setUTCFullYear(oFirstDate.getUTCFullYear() + this.getYears());
+			var oMaxDate = this._newUniversalDate(this._oMaxDate);
+			oMaxDate.setUTCFullYear(oMaxDate.getUTCFullYear() - iYears + 1);
+			if (oFirstDate.getTime() < oMaxDate.getTime()){
+				oFirstDate.setUTCFullYear(oFirstDate.getUTCFullYear() + iYears);
+				if (oFirstDate.getTime() > oMaxDate.getTime()){
+					iSelectedIndex = iSelectedIndex + (oFirstDate.getUTCFullYear() - oMaxDate.getUTCFullYear());
+					if (iSelectedIndex > iYears - 1) {
+						iSelectedIndex = iYears - 1;
+					}
+					oFirstDate = this._oMaxDate;
+					oFirstDate.setUTCMonth(0, 1);
+				}
+			} else {
+				return;
+			}
 		} else {
-			oFirstDate.setUTCFullYear(oFirstDate.getUTCFullYear() - this.getYears());
+			if (oFirstDate.getTime() > this._oMinDate.getTime()) {
+				oFirstDate.setUTCFullYear(oFirstDate.getUTCFullYear() - iYears);
+				if (oFirstDate.getTime() < this._oMinDate.getTime()) {
+					iSelectedIndex = iSelectedIndex - (this._oMinDate.getUTCFullYear() - oFirstDate.getUTCFullYear());
+					if (iSelectedIndex < 0) {
+						iSelectedIndex = 0;
+					}
+					oFirstDate = this._newUniversalDate(this._oMinDate);
+				}
+			} else {
+				return;
+			}
 		}
 
 		_updateYears.call(this, oFirstDate, iSelectedIndex);
+
+		if (bFireEvent) {
+			this.firePageChange();
+		}
 
 	}
 
@@ -500,8 +539,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			$DomRef.attr("data-sap-year-start", sYyyymmdd);
 			if ($DomRef.hasClass("sapUiCalItemSel") && sYyyymmdd != sCurrentYyyymmdd) {
 				$DomRef.removeClass("sapUiCalItemSel");
+				$DomRef.attr("aria-selected", "false");
 			} else if (!$DomRef.hasClass("sapUiCalItemSel") && sYyyymmdd == sCurrentYyyymmdd) {
 				$DomRef.addClass("sapUiCalItemSel");
+				$DomRef.attr("aria-selected", "true");
 			}
 
 			var bEnabled = true;

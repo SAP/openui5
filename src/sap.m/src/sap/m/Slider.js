@@ -9,7 +9,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Constructor for a new <code>sap.m.Slider</code>.
 		 *
-		 * @param {string} [sId] Id for the new control, generated automatically if no ID is given.
+		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given.
 		 * @param {object} [mSettings] Initial settings for the new control.
 		 *
 		 * @class
@@ -81,7 +81,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				 * @since 1.31
 				 *
 				 */
-				showHandleTooltip: { type: "boolean", group: "Appearance", defaultValue: true }
+				showHandleTooltip: { type: "boolean", group: "Appearance", defaultValue: true}
 			},
 			associations: {
 
@@ -179,10 +179,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			// if the step is negative or 0, set to 1 and log a warning
 			if (fStep <= 0) {
 				jQuery.sap.log.warning("Warning: " + "The step could not be negative on ", this);
-				fStep = 1;
-
-				// update the step to 1 and suppress re-rendering
-				this.setProperty("step", fStep, true);
 			}
 
 			// the step can't be bigger than slider range, log a warning

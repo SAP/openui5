@@ -1,6 +1,6 @@
 /*!
- * ${copyright}
- */
+* ${copyright}
+*/
 
 // Provides control sap.m.FacetFilter.
 sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/delegate/ItemNavigation'],
@@ -811,6 +811,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 					if (!subHeaderBar) {
 						this.setSubHeader(that._createSelectAllCheckboxBar(that._displayedList));
 					}
+					clearDeleteFacetIconTouchStartFlag(that._displayedList);
 				},
 				afterClose: function(oEvent) {
 
@@ -850,6 +851,17 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 			// This is not the same as setting Popover.contentWidth, which sets a fixed width size. We want the popover
 			// to grow in width if any of its content is wider than the min width.
 			oPopover.addStyleClass("sapMFFPop");
+
+			var clearDeleteFacetIconTouchStartFlag = function(oList) {
+				if (!oList) {
+					return;
+				}
+				var oIcon = that._getFacetRemoveIcon(oList);
+
+				if (oIcon) {
+					oIcon.sapTouchStarted = false;
+				}
+			};
 		}
 
 		if (this.getShowPopoverOKButton()) {
@@ -866,7 +878,13 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 *
 	 * @private
 	 */
-	FacetFilter.prototype._handlePopoverAfterClose = function(oList) {
+	FacetFilter.prototype._handlePopoverAfterClose = function (oList) {
+		var oIcon = this._getFacetRemoveIcon(oList);
+		if (oIcon && oIcon.sapTouchStarted) {
+			//do not react on popover close if the "remove facet" button was touched, but not released (i.e. no 'press' event)
+			return;
+		}
+
 		this._displayRemoveIcon(false, oList);
 		oList._fireListCloseEvent();
 		// Destroy the popover aggregation, otherwise if the list is then moved to the dialog filter items page, it will still think it's DOM element parent
@@ -973,8 +991,11 @@ oPopover.setContentWidth("30%");
 					if (oPopover.isOpen()) {
 						// create a deferred that will be triggered after the popover is closed
 						jQuery.sap.delayedCall(100, this, function() {
-						that._oOpenPopoverDeferred = jQuery.Deferred();
-						that._oOpenPopoverDeferred.promise().done(fnOpenPopover);
+							if (oPopover.isOpen()) {
+								return;
+							}
+							that._oOpenPopoverDeferred = jQuery.Deferred();
+							that._oOpenPopoverDeferred.promise().done(fnOpenPopover);
 						});
 					} else {
 						jQuery.sap.delayedCall(100, this, fnOpenPopover);
@@ -1002,18 +1023,29 @@ oPopover.setContentWidth("30%");
 
 			var sText = "";
 			var aSelectedKeyNames = Object.getOwnPropertyNames(oList._oSelectedKeys);
-			var iLength = aSelectedKeyNames.length;
+			var iSelectedKeysLength = aSelectedKeyNames.length,
+				iListLength;
 
-			if (iLength > 0) {
+			iListLength = oList.getItems().filter(function(oItem) {
+				return oItem.getVisible();
+			}).length;
 
-				if (iLength === 1) { // Use selected item value for button label if only one selected
+			switch (iSelectedKeysLength) {
+				case 0:
+					sText = oList.getTitle();
+					break;
+				case 1:
 					var sSelectedItemText = oList._oSelectedKeys[aSelectedKeyNames[0]];
-					sText = this._bundle.getText("FACETFILTER_ITEM_SELECTION", [ oList.getTitle(), sSelectedItemText ]);
-				} else {
-					sText = this._bundle.getText("FACETFILTER_ITEM_SELECTION", [ oList.getTitle(), iLength ]);
-				}
-			} else {
-				sText = this._bundle.getText("FACETFILTER_ALL_SELECTED", [ oList.getTitle() ]);
+					sText = this._bundle.getText("FACETFILTER_ITEM_SELECTION", [oList.getTitle(), sSelectedItemText]);
+					break;
+				case iListLength:
+          //this excludes when iSelectedKeysLength=0, that is handled in the 1st case.
+					//The old behavior was considering for "all" the case where none is selected.
+					sText = this._bundle.getText("FACETFILTER_ALL_SELECTED", [oList.getTitle()]);
+					break;
+				default:
+					sText = this._bundle.getText("FACETFILTER_ITEM_SELECTION", [oList.getTitle(), iSelectedKeysLength]);
+					break;
 			}
 
 			oButton.setText(sText);
@@ -1028,21 +1060,33 @@ oPopover.setContentWidth("30%");
 	 * @private
 	 */
 	FacetFilter.prototype._getFacetRemoveIcon = function(oList) {
+		var that = this,
+			oIcon = this._removeFacetIcons[oList.getId()];
 
-		var oIcon = this._removeFacetIcons[oList.getId()];
 		if (!oIcon) {
 			oIcon = new sap.ui.core.Icon({
-
 				src : IconPool.getIconURI("sys-cancel"),
 				tooltip:this._bundle.getText("FACETFILTER_REMOVE"),
 				press : function(oEvent) {
-					var oList = sap.ui.getCore().byId(this.getAssociation("list"));
 					oList.removeSelections(true);
 					oList.setSelectedKeys();
 					oList.setProperty("active", false, true);
+					oIcon.sapTouchStarted = false;
+					that._handlePopoverAfterClose(oList);
 				}
 			});
 
+			oIcon.addDelegate({
+				onsaptouchstart: function(oEvent){
+					//Mark this icon as touch started
+					oIcon.sapTouchStarted = true;
+				},
+				onsaptouchend: function(oEvent) {
+					// Not all saptouchend are followed by "press" event(e.g. touchstart over the icon, but the user touchends somwere else.
+					// So make sure the "remove icon" is always hidden
+					that._displayRemoveIcon(false, oList);
+				}
+			}, true);
 			oIcon.setAssociation("list", oList.getId(), true);
 			oIcon.addStyleClass("sapMFFLRemoveIcon");
 			this._removeFacetIcons[oList.getId()] = oIcon;
@@ -1372,7 +1416,6 @@ oPopover.setContentWidth("30%");
 		oFacetList.attachUpdateFinished(function() {
 
 			for (var i = 0; i < oFacetList.getItems().length; i++) {
-
 				var oFacetListItem = this.getItems()[i];
 				oFacetListItem.detachPress(that._handleFacetListItemPress, that);
 				oFacetListItem.attachPress(that._handleFacetListItemPress, that);
@@ -1393,55 +1436,45 @@ oPopover.setContentWidth("30%");
 	 * @private
 	 */
 	FacetFilter.prototype._createSelectAllCheckboxBar = function(oList) {
+		if (!oList.getMultiSelect()) {
+			return null;
+		}
 
-			if (!oList.getMultiSelect()) {
-				return null;
+		var bSelected = oList.getActive() && Object.getOwnPropertyNames(oList._oSelectedKeys).length === oList.getItems().length;
+
+		var oCheckbox = new sap.m.CheckBox(oList.getId() + "-selectAll", {
+			text : this._bundle.getText("FACETFILTER_CHECKBOX_ALL"),
+			tooltip:this._bundle.getText("FACETFILTER_CHECKBOX_ALL"),
+			selected: bSelected,
+			select : function(oEvent) {
+				oCheckbox.setSelected(oEvent.getParameter("selected"));
+				handleSelectAll(oEvent.getParameter("selected"));
 			}
+		});
 
-			var oCheckbox = new sap.m.CheckBox(oList.getId() + "-selectAll", {
-				text : this._bundle.getText("FACETFILTER_CHECKBOX_ALL"),
-				tooltip:this._bundle.getText("FACETFILTER_CHECKBOX_ALL"),
-				selected: oList.getActive() && !oList.getSelectedItem() && !Object.getOwnPropertyNames(oList._oSelectedKeys).length,
-				select : function(oEvent) {
+		// We need to get the checkbox from the list when selection changes so that we can set the state of the
+		// checkbox.  See the selection change handler on FacetFilterList.
+		oList.setAssociation("allcheckbox", oCheckbox);
 
-					fnHandleCheckboxSelection(!oEvent.getParameter("selected"));
+		var oBar = new sap.m.Bar();
+
+		// Bar does not support the tap event, so create a delegate to handle tap and set the state of the select all checkbox.
+		oBar.addEventDelegate({
+			ontap: function(oEvent) {
+				if (oEvent.srcControl === this) {
+					handleSelectAll(oCheckbox.getSelected());
 				}
-			});
+			}
+		}, oBar);
+		oBar.addContentLeft(oCheckbox);
 
-			// We need to get the checkbox from the list when selection changes so that we can set the state of the
-			// checkbox.  See the selection change handler on FacetFilterList.
-			oList.setAssociation("allcheckbox", oCheckbox);
+		var handleSelectAll = function(bSelected) {
+				oList.getItems().forEach(function (oItem) {
+					oItem.setSelected(bSelected);
+				}, this);
+		};
+		oBar.addStyleClass("sapMFFCheckbar");
 
-			var oBar = new sap.m.Bar();
-
-			// Bar does not support the tap event, so create a delegate to handle tap and set the state of the select all checkbox.
-			oBar.addEventDelegate({
-				ontap: function(oEvent) {
-
-					if (oEvent.srcControl === this) {
-
-						fnHandleCheckboxSelection(oCheckbox.getSelected());
-					}
-				}
-			}, oBar);
-			oBar.addContentLeft(oCheckbox);
-
-			var fnHandleCheckboxSelection = function(bSelected) {
-
-				if (oList.getActive()) {
-
-					oCheckbox.setSelected(true);
-
-				} else {
-
-					oCheckbox.setSelected(!bSelected);
-				}
-				if (oCheckbox.getSelected()) {
-					oList.removeSelections(true);
-					oList.setSelectedKeys();
-				}
-			};
-			oBar.addStyleClass("sapMFFCheckbar");
 		return oBar;
 	};
 

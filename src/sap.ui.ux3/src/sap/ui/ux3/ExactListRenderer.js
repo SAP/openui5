@@ -126,7 +126,7 @@ sap.ui.define(['jquery.sap.global'],
 			if (bActiveTitle) {
 				rm.write("<span class=\"sapUiUx3ExactLstHeadTopIco\"></span>");
 			}
-			rm.write("</span></h3>");
+			rm.write("</h3>");
 	    } else {
 			// render the header content for non-top list
 			rm.write("<h3 id=\"" + oControl.getId() + "-head-txt\" class=\"sapUiUx3ExactLstHeadTxt\"");

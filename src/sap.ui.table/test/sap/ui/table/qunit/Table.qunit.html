@@ -130,8 +130,8 @@
 	function sortTable() {
 		var aColumns = oTable.getColumns(),
 			fSorting = sap.ui.table.SortOrder;
-		oTable.sort(aColumns[1],fSorting.Ascending, false);
-		oTable.sort(aColumns[0],fSorting.Ascending, true);
+		oTable.sort(aColumns[1], fSorting.Ascending, false);
+		oTable.sort(aColumns[0], fSorting.Ascending, true);
 	}
 
 	//********** Tests start********************************************
@@ -543,11 +543,15 @@
 
 	asyncTest("After initialization", function(){
 		var fnTest = function() {
+			oTable.attachEvent("_rowsUpdated", fnTest2);
+		};
+
+		var fnTest2 = function() {
 			equal(oTable.getVisibleRowCount(), 27, "Expected visibleRowCount: 27, Is: " + oTable.getVisibleRowCount());
 			start();
 		};
 
-		oTable.attachEvent("_rowsUpdated", fnTest);
+		oTable.attachEventOnce("_rowsUpdated", fnTest);
 	});
 
 	module("VisibleRowcountMode Interactive", {
@@ -589,115 +593,6 @@
 		this.clock.tick(1000);
 
 		equals(oTable.getVisibleRowCount(), 16, "Row count of 16 expected. Has: " + oTable.getVisibleRowCount());
-	});
-
-	module("Keyboard navigation", {
-		setup: function() {
-			this.clock = sinon.useFakeTimers();
-			createTable();
-		},
-		teardown: function () {
-			destroyTable();
-			this.clock.restore();
-		}
-	});
-
-	test("Arrow keys", function() {
-		this.clock.tick(1000);
-		var sCellId = oTable.getId() + "-rows-row0-col0",
-			oRow = oTable.getRows()[9],
-			$focused;
-
-		jQuery.sap.byId(sCellId).focus();
-
-		$focused = jQuery(document.activeElement);
-		equal($focused.attr('id'), sCellId, "The correct cell has the focus");
-
-		qutils.triggerKeyboardEvent($focused[0], "ARROW_LEFT", false, false, false);
-
-		$focused = jQuery(document.activeElement);
-		equal($focused.attr('id'), oTable.getId() + "-rowsel0", "The correct cell has the focus");
-
-		qutils.triggerKeyboardEvent($focused[0], "ARROW_LEFT", false, false, false);
-
-		$focused = jQuery(document.activeElement);
-		equal($focused.attr('id'), oTable.getId() + "-rowsel0", "The correct cell has the focus");
-
-		qutils.triggerKeyboardEvent($focused[0], "ARROW_UP", false, false, false);
-
-		$focused = jQuery(document.activeElement);
-		equal($focused.attr('id'), oTable.getId() + "-selall", "The correct cell has the focus");
-
-		qutils.triggerKeyboardEvent($focused[0], "ARROW_RIGHT", false, false, false);
-
-		$focused = jQuery(document.activeElement);
-		equal($focused.attr('id'), oTable.getColumns()[0].getId(), "The correct cell has the focus");
-
-		qutils.triggerKeyboardEvent($focused[0], "ARROW_RIGHT", false, false, false);
-
-		$focused = jQuery(document.activeElement);
-		equal($focused.attr('id'), oTable.getColumns()[1].getId(), "The correct cell has the focus");
-
-
-		qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
-
-		$focused = jQuery(document.activeElement);
-		equal($focused.attr('id'), oTable.getId() + "-rows-row0-col1", "The correct cell has the focus");
-
-		qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
-
-		$focused = jQuery(document.activeElement);
-		equal($focused.attr('id'), oTable.getId() + "-rows-row1-col1", "The correct cell has the focus");
-
-		qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
-		$focused = jQuery(document.activeElement);
-		qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
-		$focused = jQuery(document.activeElement);
-		qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
-		$focused = jQuery(document.activeElement);
-		qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
-		$focused = jQuery(document.activeElement);
-		qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
-		$focused = jQuery(document.activeElement);
-		qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
-		$focused = jQuery(document.activeElement);
-		qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
-		$focused = jQuery(document.activeElement);
-		qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
-		$focused = jQuery(document.activeElement);
-
-		equal(oRow.getIndex(), 9, "The correct cell has the focus");
-		equal($focused.attr('id'), oTable.getId() + "-rows-row9-col1", "The correct cell has the focus");
-
-		qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
-		$focused = jQuery(document.activeElement);
-
-		equal(oRow.getIndex(), 10, "The correct cell has the focus");
-		equal($focused.attr('id'), oTable.getId() + "-rows-row9-col1", "The correct cell has the focus");
-	});
-
-	test("Home end keys", function() {
-		this.clock.tick(1000);
-		var sCellId = oTable.getId() + "-rows-row0-col0",
-			oRow = oTable.getRows()[9],
-			$focused;
-
-		jQuery.sap.byId(sCellId).focus();
-
-		$focused = jQuery(document.activeElement);
-		equal($focused.attr('id'), oTable.getId() + "-rows-row0-col0", "The correct cell has the focus");
-
-		qutils.triggerKeyboardEvent($focused[0], "HOME", false, false, false);
-		$focused = jQuery(document.activeElement);
-
-		equal($focused.attr('id'), oTable.getId() + "-rowsel0", "The correct cell has the focus");
-
-		qutils.triggerKeyboardEvent($focused[0], "END", false, false, false);
-		$focused = jQuery(document.activeElement);
-
-		equal($focused.attr('id'), oTable.getId() + "-rows-row0-col0", "The correct cell has the focus");
-
-		equal(oRow.getIndex(), 9, "The correct cell has the focus");
 	});
 
 	module("Fixed columns", {
@@ -746,6 +641,53 @@
 		equals($table.find('.sapUiTableCtrlScroll .sapUiTableCtrlCol th').length, 6, "Scroll tabled has 3 Columns");
 		equals(jQuery(oTable.getDomRef("hsb")).css('padding-left'), "25px", "Horizontal scrollbar has correct left padding");
 		equals(jQuery(oTable.getDomRef("hsb")).css('margin-left'), "325px", "Horizontal scrollbar has correct left margin");
+	});
+
+	test("No fixed column used, when table is too small.", function() {
+		oTable.setFixedColumnCount(3);
+		oTable.setWidth("400px");
+
+		sap.ui.getCore().applyChanges();
+
+		this.clock.tick(1000);
+
+		equals(oTable.getFixedColumnCount(), 0, "No Fixed Columns used");
+		equals(oTable.getProperty("fixedColumnCount"), 3, "Orignal fixed column count is 3");
+
+		oTable.setWidth("500px");
+
+		sap.ui.getCore().applyChanges();
+
+		this.clock.tick(1000);
+
+		equals(oTable.getFixedColumnCount(), 3, "Fixed Column Count is 3 again");
+	});
+
+	module("API assertions", {
+		setup: function() {
+			this.clock = sinon.useFakeTimers();
+			createTable({
+				visibleRowCount: 10,
+				width: "100px",
+				firstVisibleRow: 1
+			});
+		},
+		teardown: function () {
+			destroyTable();
+			this.clock.restore();
+		}
+	});
+
+	test("Scrollbars can be accessed by inheriting controls", function(assert) {
+		var oHsb = oTable.getDomRef(sap.ui.table.SharedDomRef.HorizontalScrollBar);
+		var oVsb = oTable.getDomRef(sap.ui.table.SharedDomRef.VerticalScrollBar);
+		assert.ok(oHsb);
+		assert.ok(oVsb);
+
+		oHsb.scrollLeft = 5;
+
+		assert.equal(oVsb.scrollTop, 28, "ScrollTop can be set and read.");
+		assert.equal(oHsb.scrollLeft, 5, "ScrollLeft can be set and read.");
 	});
 
 	module("Fixed rows and columns", {
@@ -932,8 +874,11 @@
 	});
 
 	asyncTest("Grouping rendering", 10, function() {
-		var oColumn = oTable.getColumns()[3],
-			oBinding;
+		var oColumn = oTable.getColumns()[3];
+
+		var fnHandlerProxy = function() {
+			oTable.attachEventOnce("_rowsUpdated", fnHandler);
+		};
 
 		var fnHandler = function() {
 			var $Table = oTable.$(),
@@ -952,7 +897,7 @@
 			start();
 		}
 
-		oTable.attachEventOnce("_rowsUpdated", fnHandler);
+		oTable.attachEventOnce("_rowsUpdated", fnHandlerProxy);
 		oTable.setGroupBy(oColumn);
 	});
 
@@ -1157,6 +1102,27 @@
 		sortTable();
 	});
 
+	asyncTest("Sort Icon", function() {
+		creatSortingTableData();
+
+		var fnHandler = function() {
+			var aSortedColumns = oTable.getSortedColumns();
+
+			if (aSortedColumns.length === 2) {
+				ok(jQuery.sap.endsWith(aSortedColumns[0].$().find("img").attr("src"), "ico12_sort_asc.gif"), "Sort icon direction for first column OK");
+				ok(jQuery.sap.endsWith(aSortedColumns[1].$().find("img").attr("src"), "ico12_sort_desc.gif"), "Sort icon direction for second column OK");
+
+				oTable.detachEvent("_rowsUpdated", fnHandler);
+				start();
+			}
+		};
+
+		oTable.attachEvent("_rowsUpdated", fnHandler);
+		var aColumns = oTable.getColumns();
+		oTable.sort(aColumns[0], sap.ui.table.SortOrder.Ascending, false);
+		oTable.sort(aColumns[1], sap.ui.table.SortOrder.Descending, true);
+	});
+
 	asyncTest("remove column", function() {
 		creatSortingTableData();
 		var oRemovedColumn;
@@ -1359,6 +1325,91 @@
 
 		oTable.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
+	});
+
+	module("Events", {
+		setup: function() {
+			createTable();
+		},
+		teardown: destroyTable
+	});
+
+	test("RowSelectionChange", 35, function() {
+		var sTestCase = "";
+		var fnHandler = function(oEvent) {
+			switch(sTestCase) {
+				case "userSelectAll":
+					assert.equal(oEvent.getParameter("selectAll"), true, sTestCase + ": Parameter selectAll correct");
+					assert.equal(oEvent.getParameter("userInteraction"), true, sTestCase + ": Parameter userInteraction correct");
+					assert.equal(oEvent.getParameter("rowIndex"), 0, sTestCase + ": Parameter rowIndex correct");
+					assert.equal(oEvent.getParameter("rowContext"), oTable.getContextByIndex(0), sTestCase + ": Parameter rowContext correct");
+					assert.deepEqual(oEvent.getParameter("rowIndices"), Array.apply(0, Array(200)).map(function(c, i){return i;}), sTestCase + ": Parameter rowIndices correct");
+					break;
+				case "userClearSelectAll":
+					assert.equal(oEvent.getParameter("selectAll"), undefined, sTestCase + ": Parameter selectAll correct");
+					assert.equal(oEvent.getParameter("userInteraction"), true, sTestCase + ": Parameter userInteraction correct");
+					assert.equal(oEvent.getParameter("rowIndex"), -1, sTestCase + ": Parameter rowIndex correct");
+					assert.equal(oEvent.getParameter("rowContext"), undefined, sTestCase + ": Parameter rowContext correct");
+					assert.deepEqual(oEvent.getParameter("rowIndices"),Array.apply(0, Array(200)).map(function(c, i){return i;}), sTestCase + ": Parameter rowIndices correct");
+					break;
+				case "APISelectAll":
+					assert.equal(oEvent.getParameter("selectAll"), true, sTestCase + ": Parameter selectAll correct");
+					assert.equal(oEvent.getParameter("userInteraction"), false, sTestCase + ": Parameter userInteraction correct");
+					assert.equal(oEvent.getParameter("rowIndex"), 0, sTestCase + ": Parameter rowIndex correct");
+					assert.equal(oEvent.getParameter("rowContext"), oTable.getContextByIndex(0), sTestCase + ": Parameter rowContext correct");
+					assert.deepEqual(oEvent.getParameter("rowIndices"), Array.apply(0, Array(200)).map(function(c, i){return i;}), sTestCase + ": Parameter rowIndices correct");
+					break;
+				case "APIClearSelectAll":
+					assert.equal(oEvent.getParameter("selectAll"), undefined, sTestCase + ": Parameter selectAll correct");
+					assert.equal(oEvent.getParameter("userInteraction"), false, sTestCase + ": Parameter userInteraction correct");
+					assert.equal(oEvent.getParameter("rowIndex"), -1, sTestCase + ": Parameter rowIndex correct");
+					assert.equal(oEvent.getParameter("rowContext"), undefined, sTestCase + ": Parameter rowContext correct");
+					assert.deepEqual(oEvent.getParameter("rowIndices"), Array.apply(0, Array(200)).map(function(c, i){return i;}), sTestCase + ": Parameter rowIndices correct");
+					break;
+				case "userSetSelectedIndex":
+					assert.equal(oEvent.getParameter("selectAll"), undefined, sTestCase + ": Parameter selectAll correct");
+					assert.equal(oEvent.getParameter("userInteraction"), true, sTestCase + ": Parameter userInteraction correct");
+					assert.equal(oEvent.getParameter("rowIndex"), 0, sTestCase + ": Parameter rowIndex correct");
+					assert.equal(oEvent.getParameter("rowContext"), oTable.getContextByIndex(0), sTestCase + ": Parameter rowContext correct");
+					assert.deepEqual(oEvent.getParameter("rowIndices"), [0], sTestCase + ": Parameter rowIndices correct");
+					break;
+				case "userUnsetSelectedIndex":
+					assert.equal(oEvent.getParameter("selectAll"), undefined, sTestCase + ": Parameter selectAll correct");
+					assert.equal(oEvent.getParameter("userInteraction"), true, sTestCase + ": Parameter userInteraction correct");
+					assert.equal(oEvent.getParameter("rowIndex"), 0, sTestCase + ": Parameter rowIndex correct");
+					assert.equal(oEvent.getParameter("rowContext"), oTable.getContextByIndex(0), sTestCase + ": Parameter rowContext correct");
+					assert.deepEqual(oEvent.getParameter("rowIndices"), [0], sTestCase + ": Parameter rowIndices correct");
+					break;
+				case "APISetSelectedIndex":
+					assert.equal(oEvent.getParameter("selectAll"), undefined, sTestCase + ": Parameter selectAll correct");
+					assert.equal(oEvent.getParameter("userInteraction"), false, sTestCase + ": Parameter userInteraction correct");
+					assert.equal(oEvent.getParameter("rowIndex"), 0, sTestCase + ": Parameter rowIndex correct");
+					assert.equal(oEvent.getParameter("rowContext"), oTable.getContextByIndex(0), sTestCase + ": Parameter rowContext correct");
+					assert.deepEqual(oEvent.getParameter("rowIndices"), [0], sTestCase + ": Parameter rowIndices correct");
+					break;
+			}
+
+		};
+
+		oTable.attachRowSelectionChange(fnHandler);
+
+		sTestCase = "userSelectAll";
+		jQuery(oTable.getDomRef("selall")).click();
+		sTestCase = "userClearSelectAll";
+		jQuery(oTable.getDomRef("selall")).click();
+
+		sTestCase = "APISelectAll";
+		oTable.selectAll();
+		sTestCase = "APIClearSelectAll";
+		oTable.clearSelection();
+
+		sTestCase = "userSetSelectedIndex";
+		jQuery("#" + oTable.getId() + "-rowsel0").click();
+		sTestCase = "userUnsetSelectedIndex";
+		jQuery("#" + oTable.getId() + "-rowsel0").click();
+
+		sTestCase = "APISetSelectedIndex";
+		oTable.setSelectedIndex(0);
 	});
 
 	</script>

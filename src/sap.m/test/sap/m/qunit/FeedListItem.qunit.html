@@ -306,6 +306,14 @@
 				assert.ok(oFeedList.getItems()[0].$("maxCharacters").length === 0, "maxCharacters is nothing to be rendered");
 			});
 
+			QUnit.test("Test aria-hidden attribute", function(assert) {
+				var sFeedListItemId = oFeedList.getItems()[0].getId();
+				var sImageAria = jQuery.sap.byId(sFeedListItemId + "-figure").attr("aria-hidden");
+				var sTextAria = jQuery.sap.byId(sFeedListItemId + "-text").attr("aria-hidden");
+				assert.equal(sImageAria, "true", "aria-hidden was set successfully at Image");
+				assert.equal(sTextAria, "true", "aria-hidden was set successfully at Text");
+			});
+
 			QUnit.test("Sender inactive, Icon inactive", function(assert) {
 				assert.ok(oFeedList.getItems()[2]._oLinkControl.$().hasClass("sapMLnkDsbl"), " Sender Link inactive");
 			});

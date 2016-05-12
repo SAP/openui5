@@ -749,15 +749,18 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * @private
 	 */
 	Element.prototype._refreshTooltipBaseDelegate = function (oTooltip) {
-		var oOldTooltip = this.getTooltip();
-		// if the old tooltip was a Tooltip object, remove it as a delegate
-		if (oOldTooltip instanceof sap.ui.core.TooltipBase) {
-			this.removeDelegate(oOldTooltip);
-		}
-		// if the new tooltip is a Tooltip object, add it as a delegate
-		if (oTooltip instanceof sap.ui.core.TooltipBase) {
-			oTooltip._currentControl = this;
-			this.addDelegate(oTooltip);
+		var TooltipBase = sap.ui.require('sap/ui/core/TooltipBase');
+		if ( TooltipBase ) {
+			var oOldTooltip = this.getTooltip();
+			// if the old tooltip was a Tooltip object, remove it as a delegate
+			if (oOldTooltip instanceof TooltipBase) {
+				this.removeDelegate(oOldTooltip);
+			}
+			// if the new tooltip is a Tooltip object, add it as a delegate
+			if (oTooltip instanceof TooltipBase) {
+				oTooltip._currentControl = this;
+				this.addDelegate(oTooltip);
+			}
 		}
 	};
 
@@ -895,12 +898,13 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 
 				// ADD or CHANGE
 			} else {
+				var CustomData = sap.ui.requireSync('sap/ui/core/CustomData');
 				var dataObject = getDataObject(element, key);
 				if (dataObject) {
 					dataObject.setValue(value);
 					dataObject.setWriteToDom(writeToDom);
 				} else {
-					var dataObject = new sap.ui.core.CustomData({key:key,value:value, writeToDom:writeToDom});
+					var dataObject = new CustomData({key:key,value:value, writeToDom:writeToDom});
 					element.addAggregation("customData", dataObject, true);
 				}
 			}
@@ -1004,7 +1008,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 		}
 
 		if (this._sapui_declarativeSourceInfo) {
-			oClone._sapui_declarativeSourceInfo = this._sapui_declarativeSourceInfo;
+			oClone._sapui_declarativeSourceInfo = jQuery.extend({}, this._sapui_declarativeSourceInfo);
 		}
 
 		return oClone;
@@ -1118,7 +1122,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 			}
 		}
 
-		return aFieldGroupIds;
+		return aFieldGroupIds || [];
 
 	};
 

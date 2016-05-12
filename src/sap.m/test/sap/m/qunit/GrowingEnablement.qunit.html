@@ -20,7 +20,7 @@
 
 		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
@@ -30,7 +30,7 @@
 			jQuery.sap.require("sap.m.GrowingEnablement");
 
 			module("trigger");
-			test("Should update the trigger state correctly", function() {
+			asyncTest("Should update the trigger state correctly", function() {
 				//Arrange
 				var data = { items: [ {},{}] };
 
@@ -62,57 +62,67 @@
 				var oTrigger = oGrowingDelegate._oTrigger;
 
 				// Act
-				ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible after initial rendering");
+				setTimeout(function() {
+					ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible after initial rendering");
 
-				// act + assert loading is started case
-				oGrowingDelegate._updateTrigger(true);
+					// act + assert loading is started case
+					oGrowingDelegate._updateTrigger(true);
 
-				ok(oTrigger.getBusy(), "Trigger shows the busy indicator");
-				ok(!oTrigger.$().hasClass("sapMLIBActive"), "Trigger is not active since it is busy");
-				ok(oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is added");
-				strictEqual(oList.$("triggerText").css("visibility"), "hidden", "Growing trigger text is hidden");
-				strictEqual(oList.$("triggerInfo").css("visibility"), "hidden", "Growing infor text is hidden");
-				ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
+					ok(oTrigger.getBusy(), "Trigger shows the busy indicator");
+					ok(!oTrigger.$().hasClass("sapMLIBActive"), "Trigger is not active since it is busy");
+					ok(oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is added");
+					strictEqual(oList.$("triggerText").css("visibility"), "hidden", "Growing trigger text is hidden");
+					strictEqual(oList.$("triggerInfo").css("visibility"), "hidden", "Growing infor text is hidden");
+					ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
 
-				// act + assert loading is finished case for growingScrollToLoad=false
-				oGrowingDelegate._updateTrigger(false);
-				ok(!oTrigger.getBusy(), "Trigger does not show the busy indicator");
-				ok(!oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is removed");
-				strictEqual(oList.$("triggerText").css("visibility"), "visible", "Growing trigger text is visible");
-				strictEqual(oList.$("triggerInfo").css("visibility"), "visible", "Growing info text is visible");
-				ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
+					// act + assert loading is finished case for growingScrollToLoad=false
+					oGrowingDelegate._updateTrigger(false);
+					ok(!oTrigger.getBusy(), "Trigger does not show the busy indicator");
+					ok(!oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is removed");
+					strictEqual(oList.$("triggerText").css("visibility"), "visible", "Growing trigger text is visible");
+					strictEqual(oList.$("triggerInfo").css("visibility"), "visible", "Growing info text is visible");
+					ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
 
-				// act + assert growingScrollToLoad=true
-				oList.setGrowingScrollToLoad(true);
-				sap.ui.getCore().applyChanges();
-				ok(oList.$("triggerList").is(":hidden"), "Load more trigger is not visible");
+					// act + assert growingScrollToLoad=true
+					oList.setGrowingScrollToLoad(true);
+					sap.ui.getCore().applyChanges();
+					ok(oList.$("triggerList").is(":hidden"), "Load more trigger is not visible");
 
-				// act + assert loading is started case for growingScrollToLoad=true
-				oGrowingDelegate._updateTrigger(true);
-				ok(oTrigger.getBusy(), "Trigger shows the busy indicator");
-				ok(!oTrigger.$().hasClass("sapMLIBActive"), "Trigger is not active since it is busy");
-				ok(oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is added");
-				strictEqual(oList.$("triggerText").css("visibility"), "hidden", "Growing trigger text is hidden");
-				strictEqual(oList.$("triggerInfo").css("visibility"), "hidden", "Growing infor text is hidden");
-				ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
+					// act + assert loading is started case for growingScrollToLoad=true
+					oGrowingDelegate._updateTrigger(true);
+					ok(oTrigger.getBusy(), "Trigger shows the busy indicator");
+					ok(!oTrigger.$().hasClass("sapMLIBActive"), "Trigger is not active since it is busy");
+					ok(oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is added");
+					strictEqual(oList.$("triggerText").css("visibility"), "hidden", "Growing trigger text is hidden");
+					strictEqual(oList.$("triggerInfo").css("visibility"), "hidden", "Growing infor text is hidden");
+					ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
 
-				// act + assert loading is finished case for growingScrollToLoad=true
-				oGrowingDelegate._updateTrigger(false);
-				ok(!oTrigger.getBusy(), "Trigger does not show the busy indicator");
-				ok(!oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is removed");
-				ok(!oList.$("triggerText").is(":visible"), "visible", "Growing trigger text is not visible");
-				ok(!oList.$("triggerInfo").css(":visible"), "visible", "Growing info text is not visible");
-				ok(!oList.$("triggerList").is(":visible"), "Load more trigger is not visible");
+					// act + assert loading is finished case for growingScrollToLoad=true
+					oGrowingDelegate._updateTrigger(false);
+					ok(!oTrigger.getBusy(), "Trigger does not show the busy indicator");
+					ok(!oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is removed");
+					ok(!oList.$("triggerText").is(":visible"), "visible", "Growing trigger text is not visible");
+					ok(!oList.$("triggerInfo").css(":visible"), "visible", "Growing info text is not visible");
+					ok(!oList.$("triggerList").is(":visible"), "Load more trigger is not visible");
 
-				// act + assert growingScrollToLoad=true
-				oList.setGrowingScrollToLoad(false);
-				sap.ui.getCore().applyChanges();
-				ok(oList.$("triggerList").is(":visible"), "Load more trigger is  visible");
-				oGrowingDelegate.requestNewPage();
-				ok(!oList.$("triggerList").is(":visible"), "Load more trigger is not visible everything is loaded");
+					// act + assert growingScrollToLoad=true
+					oList.setGrowingScrollToLoad(false);
+					sap.ui.getCore().applyChanges();
 
-				oPage.destroy();
-				oModel.destroy();
+					setTimeout(function() {
+						ok(oList.$("triggerList").is(":visible"), "Load more trigger is  visible");
+						oGrowingDelegate.requestNewPage();
+
+						setTimeout(function() {
+							ok(!oList.$("triggerList").is(":visible"), "Load more trigger is not visible everything is loaded");
+							oPage.destroy();
+							oModel.destroy();
+							start();
+						}, 0);
+
+					}, 0);
+
+				}, 0);
 			});
 
 			module("Integration tests");
@@ -129,7 +139,7 @@
 					items : {
 					path : "/items",
 					template : new sap.m.CustomListItem({
-							content : new sap.ui.core.HTML({content:'<div style="height: 1000px"></div>'}),
+							content : new sap.ui.core.HTML({content:'<div style="height: 1000px"></div>'})
 						})
 					}
 				}).setModel(oModel);
@@ -156,9 +166,9 @@
 			test("Should determine if the list is not scrollable", function() {
 				//Arrange
 				var oList = new sap.m.List({
-						growing : true,
-						growingScrollToLoad : true
-					});
+					growing : true,
+					growingScrollToLoad : true
+				});
 
 				//System under Test
 				var sut = new sap.m.GrowingEnablement(oList);
@@ -171,6 +181,29 @@
 
 				sut.destroy();
 				oList.destroy();
+			});
+
+			asyncTest("List without model", function() {
+				//Arrange
+				var oList = new sap.m.List({
+					growing : true,
+					growingScrollToLoad : true,
+					items: {
+						path : "/items",
+						template : new sap.m.StandardListItem()
+					}
+				});
+
+				oList.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				//Act + Assert
+				ok(!!oList.getDomRef(), "DomRef OK");
+
+				window.setTimeout(function() {
+					oList.destroy();
+					start();
+				}, 0);
 			});
 
 			module("Odata");

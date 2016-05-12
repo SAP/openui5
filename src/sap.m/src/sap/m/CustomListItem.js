@@ -39,7 +39,8 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 			 * The content of this list item
 			 */
 			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content", bindable : "bindable"}
-		}
+		},
+		designTime: true
 	}});
 
 

@@ -8,7 +8,8 @@
 
 
 <!-- UI5 Bootstrap -->
-<script id="sap-ui-bootstrap" type="text/javascript" src="../../../../resources/sap-ui-core.js" data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m"></script>
+	<script id="sap-ui-bootstrap" type="text/javascript" src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m" data-sap-ui-language="en_US"></script>
 
 <!-- QUnit libraries -->
 <script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
@@ -71,10 +72,10 @@
 		strictEqual(oFFL1.getMultiSelect(), true, "List multi select should be enabled by default");
 		strictEqual(oFFL1.getMode(), sap.m.ListMode.MultiSelect, "List mode should be multi select by default");
 		strictEqual(oFFL1.getGrowing(), true, 'Growing is enabled by default');
-        strictEqual(oFFL1.getShowRemoveFacetIcon(), true, "Remove icon should be shown by default");
-        strictEqual(oFFL1.getRetainListSequence(), false, "List sequence should not be retained by default when list is inactive and made active again");
+		strictEqual(oFFL1.getShowRemoveFacetIcon(), true, "Remove icon should be shown by default");
+		strictEqual(oFFL1.getRetainListSequence(), false, "List sequence should not be retained by default when list is inactive and made active again");
 		strictEqual(oFFL1.getDataType(), sap.m.FacetFilterListDataType.String, 'Data Type is String by default');
-        oFFL1.destroy();
+		oFFL1.destroy();
 
 		// Test overrides
 		var oFFL2 = new sap.m.FacetFilterList({
@@ -83,7 +84,7 @@
 			growing: false,
 			mode: sap.m.ListMode.SingleSelectMaster
 		});
-        strictEqual(oFFL2.getActive(), false, "List active should be disabled");
+		strictEqual(oFFL2.getActive(), false, "List active should be disabled");
 		strictEqual(oFFL2.getMultiSelect(), false, "List multi select should be disabled");
 		strictEqual(oFFL2.getMode(), sap.m.ListMode.SingleSelectMaster, "List mode should be single select master");
 		strictEqual(oFFL2.getGrowing(), false, 'Growing should be disabled');
@@ -412,7 +413,7 @@
 		ok(oCheckBox1, "A control is contained in the left content of the bar");
 		ok(oCheckBox1 instanceof sap.m.CheckBox, "The bar contains a CheckBox");
 		ok(oCheckBox1.getTooltip(),"CheckBox contain tooltip");
-		ok(oCheckBox1.getSelected(), "Checkbox should be initially checked when the list is active and contains no selections");
+		ok(!oCheckBox1.getSelected(), "Checkbox should be initially unchecked when the list is active and contains no selections");
 		oFFL1.destroy();
 
 		var oFFL2 = new sap.m.FacetFilterList();
@@ -666,7 +667,7 @@
 		aSequencedLists = oFF._getSequencedLists();
 		equal(aSequencedLists.length, 2, "There should be two sequenced lists");
 		equal(aSequencedLists[0].getSequence(), 5, "Sequence of the first list should be 5");
-        equal(aSequencedLists[1].getSequence(), 6, "Sequence of the second list should be 6");
+		equal(aSequencedLists[1].getSequence(), 6, "Sequence of the second list should be 6");
 
 		oFF.destroy();
 	});
@@ -730,38 +731,80 @@
 		openPopover(oFF, 0);
 	});
 
+	asyncTest("FacetFilter._displayRemoveIcon should be visible until the user releases the mouse (saptouchend)", function() {
+
+		var oFF = new sap.m.FacetFilter({
+			showPersonalization: true
+		});
+		var oFFL = new sap.m.FacetFilterList({title: "List"});
+		oFF.addList(oFFL);
+		oFF.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var oPopover = oFF._getPopover();
+
+		oPopover.attachEventOnce("afterOpen", function(oEvent) {
+			var oIcon = getRemoveIconCtrl(oFF, 0);
+
+			function callDelegate(sEventName) {
+				oIcon.aBeforeDelegates[0].oDelegate[sEventName].call(oIcon, {});
+			}
+
+			equal(oIcon.aBeforeDelegates.length, 1, "There must be single delegate");
+
+			//touch start
+			callDelegate("onsaptouchstart");
+			ok(oIcon.sapTouchStarted, "A flag indicated mousedown on icon " + oIcon.getId() + " must present");
+			ok(oIcon.$().hasClass("sapMFFLVisibleRemoveIcon"),"The 'remove icon ' should be visible");
+
+			//touch end
+			callDelegate("onsaptouchend");
+			ok(oIcon.sapTouchStarted, "A flag indicated mousedown on icon " + oIcon.getId() + " must present");
+			ok(oIcon.$().hasClass("sapMFFLHiddenRemoveIcon"),"The 'remove icon ' should not be visible");
+
+			//press
+			oIcon.firePress();
+			notOk(oIcon.sapTouchStarted, "A flag indicated mousedown on icon " + oIcon.getId() + " should be removed");
+			ok(oIcon.$().hasClass("sapMFFLHiddenRemoveIcon"),"The 'remove icon ' should not be visible");
+			start();
+			destroyFF(oFF);
+		});
+
+		openPopover(oFF, 0);
+	});
+
   asyncTest("FacetFilter RemoveIcon should be displayed", function() {
-         var oFF = new sap.m.FacetFilter({
-         showPersonalization: true
-         });
-         var oFFL = new sap.m.FacetFilterList({title: "List",showRemoveFacetIcon:true});
-         oFF.addList(oFFL);
-         oFF.placeAt("content");
-         sap.ui.getCore().applyChanges();
-         var oPopover = oFF._getPopover();
-         oPopover.attachEventOnce("afterOpen", function(oEvent) {
-             start();
-             ok(getRemoveIconCtrl(oFF, 0).$().hasClass("sapMFFLVisibleRemoveIcon"), "The remove icon should  be displayed.");
-             destroyFF(oFF);
-         });
-         openPopover(oFF, 0);
+		 var oFF = new sap.m.FacetFilter({
+		 showPersonalization: true
+		 });
+		 var oFFL = new sap.m.FacetFilterList({title: "List",showRemoveFacetIcon:true});
+		 oFF.addList(oFFL);
+		 oFF.placeAt("content");
+		 sap.ui.getCore().applyChanges();
+		 var oPopover = oFF._getPopover();
+		 oPopover.attachEventOnce("afterOpen", function(oEvent) {
+			 start();
+			 ok(getRemoveIconCtrl(oFF, 0).$().hasClass("sapMFFLVisibleRemoveIcon"), "The remove icon should  be displayed.");
+			 destroyFF(oFF);
+		 });
+		 openPopover(oFF, 0);
   });
 
-    asyncTest("FacetFilter RemoveIcon should not be displayed", function() {
-         var oFF = new sap.m.FacetFilter({
-         showPersonalization: true
-         });
-         var oFFL = new sap.m.FacetFilterList({title: "List",showRemoveFacetIcon:false});
-         oFF.addList(oFFL);
-         oFF.placeAt("content");
-         sap.ui.getCore().applyChanges();
-         var oPopover = oFF._getPopover();
-         oPopover.attachEventOnce("afterOpen", function(oEvent) {
-             start();
-             ok(getRemoveIconCtrl(oFF, 0).$().hasClass("sapMFFLHiddenRemoveIcon"), "The remove icon should not be displayed.");
-             destroyFF(oFF);
-         });
-         openPopover(oFF, 0);
+	asyncTest("FacetFilter RemoveIcon should not be displayed", function() {
+		 var oFF = new sap.m.FacetFilter({
+		 showPersonalization: true
+		 });
+		 var oFFL = new sap.m.FacetFilterList({title: "List",showRemoveFacetIcon:false});
+		 oFF.addList(oFFL);
+		 oFF.placeAt("content");
+		 sap.ui.getCore().applyChanges();
+		 var oPopover = oFF._getPopover();
+		 oPopover.attachEventOnce("afterOpen", function(oEvent) {
+			 start();
+			 ok(getRemoveIconCtrl(oFF, 0).$().hasClass("sapMFFLHiddenRemoveIcon"), "The remove icon should not be displayed.");
+			 destroyFF(oFF);
+		 });
+		 openPopover(oFF, 0);
   });
 
 
@@ -786,8 +829,8 @@
 		ok(oResetButton.getTooltip(),"Reset Button has tooltip");
 
 		 oFF.addList(new sap.m.FacetFilterList("list1"));
-         oFF.addList(new sap.m.FacetFilterList("list2"));
-         oResetButton.firePress();
+		 oFF.addList(new sap.m.FacetFilterList("list2"));
+		 oResetButton.firePress();
 
 		destroyFF(oFF);
 	});
@@ -835,46 +878,46 @@
 	});
 
 	test("FacetFilter._getSelectedItemsText", function() {
-	    var oFF = new sap.m.FacetFilter();
-	    var oFFL = new sap.m.FacetFilterList({
-	           title : "List1",
-	           items : [
-	                 new sap.m.FacetFilterItem({text: "Val1"}),
-	                 new sap.m.FacetFilterItem({key: "2", text: "Val2"}),
-	                 new sap.m.FacetFilterItem({text: "Val3"}),
-	                 new sap.m.FacetFilterItem({text: "Val4"})
-	           ]
-	    });
+		var oFF = new sap.m.FacetFilter();
+		var oFFL = new sap.m.FacetFilterList({
+			   title : "List1",
+			   items : [
+					 new sap.m.FacetFilterItem({text: "Val1"}),
+					 new sap.m.FacetFilterItem({key: "2", text: "Val2"}),
+					 new sap.m.FacetFilterItem({text: "Val3"}),
+					 new sap.m.FacetFilterItem({text: "Val4"})
+			   ]
+		});
 
 
-	    oFF.addList(oFFL);
+		oFF.addList(oFFL);
 
-	    oFFL.setSelectedKeys({"2" : "Val2"});
-	    oFFL.getItems()[0].setSelected(true);
+		oFFL.setSelectedKeys({"2" : "Val2"});
+		oFFL.getItems()[0].setSelected(true);
 
-	    var aText = oFF._getSelectedItemsText(oFFL);
-	    equal(aText.length, 2, "There are two texts from selected items");
-	    equal(aText[0], "Val1", "Check that value matches the text of selected item");
-	    equal(aText[1], "Val2", "Check that value matches the text of selected item");
+		var aText = oFF._getSelectedItemsText(oFFL);
+		equal(aText.length, 2, "There are two texts from selected items");
+		equal(aText[0], "Val1", "Check that value matches the text of selected item");
+		equal(aText[1], "Val2", "Check that value matches the text of selected item");
 
-	    destroyFF(oFF);
+		destroyFF(oFF);
 	});
 
 	test("FacetFilter._getSummaryText", function() {
 
-	    var oFF = oSCHelper.createFFWithModel();
-	    var oFFL = oFF.getLists()[0];
+		var oFF = oSCHelper.createFFWithModel();
+		var oFFL = oFF.getLists()[0];
 	   // var oFFL1 = oFF.getLists()[1];
-	    oFF.placeAt("content");
+		oFF.placeAt("content");
 
-	    oFFL.setSelectedKeys({"4" : "Val4"});
-	    oFFL.getItems()[2].setSelected(true);
+		oFFL.setSelectedKeys({"4" : "Val4"});
+		oFFL.getItems()[2].setSelected(true);
 
-	    ok(oFF._getSummaryText().indexOf("Val3") > -1, "Summary text contains the selected item");
-	    ok(oFF._getSummaryText().indexOf("Val4") > -1, "Summary text contains the selected item");
+		ok(oFF._getSummaryText().indexOf("Val3") > -1, "Summary text contains the selected item");
+		ok(oFF._getSummaryText().indexOf("Val4") > -1, "Summary text contains the selected item");
 
 
-	    destroyFF(oFF);
+		destroyFF(oFF);
 	});
 
 
@@ -896,8 +939,7 @@
 	});
 
 	test("FacetFilter._setButtonText", function() {
-
-		var sItemText1 = "Val1", sItemText2 = "Val2";
+		var sItemText1 = "Val1", sItemText2 = "Val2", sItemText3 = "Val3";
 		var oFF = new sap.m.FacetFilter();
 		var oFFL = new sap.m.FacetFilterList({
 			title: "List",
@@ -905,6 +947,7 @@
 		});
 		oFFL.addItem(new sap.m.FacetFilterItem({text: sItemText1}));
 		oFFL.addItem(new sap.m.FacetFilterItem({text: sItemText2}));
+		oFFL.addItem(new sap.m.FacetFilterItem({text: sItemText3}));
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
 		sap.ui.getCore().applyChanges();
@@ -914,6 +957,36 @@
 		oFF._setButtonText(oFFL);
 		ok(oButton.getText().indexOf(sItemText1) !== -1, "Button should be updated with text for the first list item");
 		ok(oButton.getTooltip().indexOf(sItemText1) !== -1, "Button tooltip should be updated  for the first list item");
+
+		oFFL.setMultiSelect(true);
+		//all items are selected
+		oFFL.getItems()[0].setSelected(true);
+		oFFL.getItems()[1].setSelected(true);
+		oFFL.getItems()[2].setSelected(true);
+		oFF._setButtonText(oFFL);
+
+		ok(oButton.getText().indexOf("List (All)") !== -1, "Button should contain the 'All' as all items are selected");
+		ok(oButton.getTooltip().indexOf("List (All)") !== -1, "Button tooltip should contain the 'All' as all items are selected");
+
+
+		//More than one(but not all) items are selected
+		oFFL.getItems()[0].setSelected(true);
+		oFFL.getItems()[1].setSelected(false);
+		oFFL.getItems()[2].setSelected(true);
+		oFF._setButtonText(oFFL);
+
+		ok(oButton.getText().indexOf("List (2)") !== -1, "Button should contain the count of selected items");
+		ok(oButton.getTooltip().indexOf("List (2)") !== -1, "Button tooltip should contain the count of selected items");
+
+		//Only visible items are count
+		oFFL.getItems()[0].setSelected(true);
+		oFFL.getItems()[1].setSelected(false).setVisible(false);
+		oFFL.getItems()[2].setSelected(true);
+		oFF._setButtonText(oFFL);
+
+		ok(oButton.getText().indexOf("List (All)") !== -1, "Button should contain the 'All' as all visible items are selected");
+		ok(oButton.getTooltip().indexOf("List (All)") !== -1, "Button tooltip should contain the 'All' as all visible items are selected");
+
 		destroyFF(oFF);
 	});
 
@@ -1080,7 +1153,7 @@
 			var aValues = [{key : 'k1',text : "a"}, {key : 'k2',text : "ba"}, {key : 'k3',text : "c"}];
 			oModel = new sap.ui.model.json.JSONModel({
 				values : aValues
-			})
+			});
 
 			var oFFL = new sap.m.FacetFilterList();
 			oFFL.bindAggregation("items", {
@@ -1096,51 +1169,90 @@
 			oFF.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
-			var oPopover = oFF._getPopover();
-			var oButton = oFF._getButtonForList(oFFL);
-			oPopover.attachEventOnce("afterOpen", function(oEvent) {
+			function simulateUserSearch(sSearchStr) {
+				var oEventParams = { query: sSearchStr, newValue: sSearchStr};
+				if (sSearchStr === undefined) { //this is how the search field works when search value is cleared
+					oEventParams.query = undefined;
+					oEventParams.newValue = "";
+				}
+				var oEvent = {};
+				oEvent.getParameters = function() {
+					return oEventParams;
+				};
+				oFFL._handleSearchEvent(oEvent);
+			}
 
-				start();
+			var oPopover = oFF._getPopover();
+			oPopover.attachEventOnce("afterOpen", function(oEvent) {
+				var sSearchId = getPopoverFilterItemsList(oPopover).getAssociation("search");
+				var oSearch = sap.ui.getCore().byId(sSearchId);
+				//This moves the focus out of the filter items, because when item is focused and deleted (due to filtering) on Crhome the focus for this item is lost and the popover closes.
+				oSearch.focus();
+
 				var oCheckBox = getPopoverSelectAllCheckBox(oPopover);
 				ok(oCheckBox.getTooltip(),"Select All Checkbox for popover has tooltip");
-				strictEqual(oCheckBox.getSelected(), true, "Select all checkbox should be selected");
-				var oList = getPopoverFilterItemsList(oPopover);
+				strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected");
+
 
 				oFFL.getItems()[0].setSelected(true); // _updateSelectAllCheckBox called implicitly when list selection changes
-				strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected");
+				strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected when only 1 of 3 items is selected");
 
-				// All items selected
-				oFFL.getItems()[1].setSelected(true);
-				strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected");
+				oFFL.getItems()[1].setSelected(true); // _updateSelectAllCheckBox called implicitly when list selection changes
+				oFFL.getItems()[2].setSelected(true); // _updateSelectAllCheckBox called implicitly when list selection changes
+				setTimeout(function () {
+					strictEqual(oCheckBox.getSelected(), true, "Select all checkbox should be selected because all 3 of 3 items are selected");
 
-				// Remove all selections
-				oFFL.getItems()[0].setSelected(false);
-				oFFL.getItems()[1].setSelected(false);
-				strictEqual(oCheckBox.getSelected(), true, "Select all checkbox should be selected");
 
-				oCheckBox.setSelected(false);
+					oFFL.getItems()[2].setSelected(false); // _updateSelectAllCheckBox called implicitly when list selection changes
+					setTimeout(function () {
+						strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected, because only 2 of 3 items is selected");
 
-				// Verify the select all checkbox state is set correctly after search
-				if (!sap.ui.Device.browser.msie) {
-	 				oFFL._search("c");
-					oFFL.getItems()[0].setSelected(true);
-					strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected");
-				};
+						oFFL.getItems()[0].setSelected(false); // _updateSelectAllCheckBox called implicitly when list selection changes
+						oFFL.getItems()[1].setSelected(false); // _updateSelectAllCheckBox called implicitly when list selection changes
 
-				oFFL._search("");
-				strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected");
+						// Verify the select all checkbox state is set correctly after search
+						if (!sap.ui.Device.browser.msie) {
+							simulateUserSearch("c");
+							oFFL.getItems()[0].setSelected(true);
+						}
 
-				// Verify the select all checkbox state remains unchanged after search
-				if (!sap.ui.Device.browser.msie) {
-	 				oFFL._search("a");
-					oFFL.getItems()[0].setSelected(false);
-					strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected");
-				};
+						setTimeout(function () {
+							if (!sap.ui.Device.browser.msie) {
+								strictEqual(oCheckBox.getSelected(), true, "Select all checkbox should be selected after search, because 1 of 1 items is selected");
+							}
 
-				oFFL._search("");
-				strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected");
+							simulateUserSearch();
 
-				destroyFF(oFF);
+							// When no item.setSelected is called, no need to async wait via setTimeout. This is because when item.setSelected is called,
+							// the "All" checkbox update is postponed (see FacetFilterList.prototype.onItemSelectedChange)
+
+							// Verify the select all checkbox state remains unchanged after search
+							if (!sap.ui.Device.browser.msie) {
+								strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected after search, because 1 of 3 items is selected");
+								simulateUserSearch("a");
+								oFFL.getItems()[0].setSelected(false);
+							} else {
+								strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected after search, because 0 of 3 items is selected");
+							}
+
+							setTimeout(function () {
+								// Verify the select all checkbox state remains unchanged after search
+								if (!sap.ui.Device.browser.msie) {
+									strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected after search, because 0 of 3 items is selected");
+								}
+								simulateUserSearch();
+								strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected after search, because 0 of 3 items is selected");
+
+								//When search finds no items, the "All" checkbox should not be selected
+								simulateUserSearch("This item surely not exist");
+
+								strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected after search, because no result is found");
+								start();
+								destroyFF(oFF);
+							}, 1000);
+						}, 1000);
+					}, 1000);
+				}, 1000);
 			});
 			openPopover(oFF, 0);
 		});
@@ -1193,7 +1305,7 @@
 			ok(oArrow.hasStyleClass("sapMFFArrowScroll"), "Style class is set");
 			ok(oArrow.hasStyleClass("sapMFFArrowScrollLeft"), "Style class is set");
 			ok(oFF.getAggregation("arrowLeft"), "arrowLeft aggregation is set");
-            ok(oArrow.getTooltip(), "arrowLeft has tooltip");
+			ok(oArrow.getTooltip(), "arrowLeft has tooltip");
 			strictEqual(oFF._getScrollingArrow("left"), oArrow, "Icon is created only once");
 
 
@@ -1205,7 +1317,7 @@
 			ok(oArrow.hasStyleClass("sapMFFArrowScroll"), "Style class is set");
 			ok(oArrow.hasStyleClass("sapMFFArrowScrollRight"), "Style class is set");
 			ok(oFF.getAggregation("arrowRight"), "arrowLeft aggregation is set");
-            ok(oArrow.getTooltip(), "arrowRight has tooltip");
+			ok(oArrow.getTooltip(), "arrowRight has tooltip");
 			strictEqual(oFF._getScrollingArrow("right"), oArrow, "Icon is created only once");
 
 			destroyFF(oFF);
@@ -1806,8 +1918,9 @@
 				var oPopover = oFF._getPopover();
 				// click another button after the first popover is opened
 				oPopover.attachEventOnce("afterOpen", function(oEvent) {
-
-					openPopover(oFF, 1);
+					setTimeout(function() {
+						openPopover(oFF, 1);
+					}, 1000);
 					oFF._closePopover();
 				});
 
@@ -2149,11 +2262,11 @@
 				ok(oSummaryBarText.getText(), "There should be text in the summary bar");
 				ok(oSummaryBarText.getTooltip(), "There should be tooltip for the text in the summary bar");
 
-		        testResetInSummaryBar(oFF, true);
+				testResetInSummaryBar(oFF, true);
 
-		        oFF.setShowReset(false);
-		  		testResetInSummaryBar(oFF, false);
-		  		};
+				oFF.setShowReset(false);
+				testResetInSummaryBar(oFF, false);
+				};
 			fnTestLight(oFFLight);
 
 
@@ -2617,7 +2730,7 @@
 
 		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[1];
-  		oFF.oItemNavigation.setFocusedIndex(1);
+		oFF.oItemNavigation.setFocusedIndex(1);
 		oFF.onsapupmodifiers(oEvent);
 		ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsapupmodifiers tested - focus on List1");
 
@@ -2644,13 +2757,13 @@
 		ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapdownmodifiers event tested - focus on Add button");
 
 //onsappagedow
-   		var oFF = createFF(oFF);
+		var oFF = createFF(oFF);
 //  	var sapTabbable = oFF.$().find(":sapTabbable");
 		oEvent.target = oFF.$().find(":sapTabbable")[2];
 		oFF.oItemNavigation.setFocusedIndex(2);
 		ok(jQuery(oFF.onsappagedown(oEvent)), "keyboard onsappagedown tested - case 1");
 
-   		var oFF = createFF(oFF);
+		var oFF = createFF(oFF);
 		oFF.oItemNavigation.setFocusedIndex(0);
 		oEvent.target = oFF.$().find(":sapTabbable")[0];
 		ok(jQuery(oFF.onsappagedown(oEvent)), "keyboard onsappagedown tested - case 2");
@@ -2660,24 +2773,24 @@
 		oEvent.target = oFF.$().find(":sapTabbable")[0];
 		ok(jQuery(oFF.onsaptabnext(oEvent)), "keyboard onsaptabnext tested - case 1");
 
- 		var oFF = createFF(oFF);
+		var oFF = createFF(oFF);
 		oFF._invalidateFlag = true;
 		oEvent.target = oFF.$().find(":sapTabbable")[3];
 		ok(jQuery(oFF.onsaptabnext(oEvent)), "keyboard onsaptabnext tested - case 2");
 
- 		var oFF = createFF(oFF);
+		var oFF = createFF(oFF);
 		oFF._closePopoverFlag = true;
 		oEvent.target = oFF.$().find(":sapTabbable")[3];
 		ok(jQuery(oFF.onsaptabnext(oEvent)), "keyboard onsaptabnext tested - case 3");
 //onsapend
- 		var oFF = createFF(oFF);
+		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[0];
 		oFF.onsapend(oEvent);
 //		ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapend tested - focus on add button");
 		ok(jQuery(oFF.onsapend(oEvent)), "keyboard onsapend tested - case 1");
 
-  		var oFF = createFF(oFF);
-  		oFF._addTarget = null;
+		var oFF = createFF(oFF);
+		oFF._addTarget = null;
 		oEvent.target = oFF.$().find(":sapTabbable")[0];
 		ok(jQuery(oFF.onsapend(oEvent)), "keyboard onsapend tested - case 2");
 
@@ -2724,27 +2837,27 @@
 		ok(jQuery(oFF.onsaptabprevious(oEvent)), "keyboard onsaptabprevious tested - case 1");
 
 		var oFF = createFF(oFF);
- 		oEvent.target = oFF.$().find(":sapTabbable")[3];
+		oEvent.target = oFF.$().find(":sapTabbable")[3];
 		oFF._previousTarget = oFF.$().find(":sapTabbable")[1];
 		oFF.onsaptabprevious(oEvent);
 //		ok(oFF.oItemNavigation.getFocusedIndex() == 1, "keyboard onsaptabprevious tested");
 		ok(jQuery(oFF.onsaptabprevious(oEvent)), "keyboard onsaptabprevious tested - case 2");
 
 		var oFF = createFF(oFF);
- 		oEvent.target = oFF.$().find(":sapTabbable")[3];
+		oEvent.target = oFF.$().find(":sapTabbable")[3];
 		oFF._previousTarget = oFF.$().find(":sapTabbable")[0];
 		oFF.onsaptabprevious(oEvent);
 //		ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsaptabprevious tested");
 		ok(jQuery(oFF.onsaptabprevious(oEvent)), "keyboard onsaptabprevious tested - case 3");
 
- 		var oFF = createFF(oFF);
+		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[3];
 		oFF._previousTarget = oFF.$().find(":sapTabbable")[2];
 		oFF.onsaptabprevious(oEvent);
 //		ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsaptabprevious tested");
 		ok(jQuery(oFF.onsaptabprevious(oEvent)), "keyboard onsaptabprevious tested - case 4");
 
- 		var oFF = createFF(oFF);
+		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[2];
 //		ok(jQuery(oFF.onsaptabprevious(oEvent)), "keyboard onsaptabprevious tested");
 		ok(jQuery(oFF.onsaptabprevious(oEvent)), "keyboard onsaptabprevious tested - case 5");
@@ -2754,12 +2867,12 @@
 		oEvent.target = oFF.$().find(":sapTabbable")[1];
 		ok(jQuery(oFF.onsapdown(oEvent)), "keyboard onsapdown tested - case 1");
 
- 		var oFF = createFF(oFF);
+		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[3];
 		ok(jQuery(oFF.onsapdown(oEvent)), "keyboard onsapdown tested - case2 ");
 
 //onsapescape
-  		oFF.oItemNavigation.setFocusedIndex(1);
+		oFF.oItemNavigation.setFocusedIndex(1);
 		oEvent.target = oFF.$().find(":sapTabbable")[0];
 		ok(jQuery(oFF.onsapescape(oEvent)), "keyboard onsapescape tested - case 1");
 
@@ -2770,7 +2883,7 @@
 //onsapup
 		//*why need to comment out oEvent.hover in facetfilter.js -?????
 		var oFF = createFF(oFF);
-  		oFF.oItemNavigation.setFocusedIndex(1);
+		oFF.oItemNavigation.setFocusedIndex(1);
 		oEvent.target = oFF.$().find(":sapTabbable")[1];
 		ok(jQuery(oFF.onsapup(oEvent)), "keyboard onsapup tested - case 1");
 
@@ -2782,7 +2895,7 @@
 //onsapleft
 		//*why need to comment out oEvent.hover in facetfilter.js -?????
 		var oFF = createFF(oFF);
-  		oFF.oItemNavigation.setFocusedIndex(1);
+		oFF.oItemNavigation.setFocusedIndex(1);
 		oEvent.target = oFF.$().find(":sapTabbable")[1];
 		oFF.onsapleft(oEvent);
 		ok(oFF.oItemNavigation.getFocusedIndex() == 1, "keyboard onsapleft tested - case 1");
@@ -2801,14 +2914,14 @@
 		ok(jQuery(oFF.onsapright(oEvent)), "keyboard onsaprigh tested - case 2");
 
 //onsapdelete
- 		var oFF = createFF(oFF);
+		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[0];
 		oFF.onsapdelete(oEvent);
 		equal(oFF.getLists()[0].getActive(), false, "keyboard onsapdelete tested - list1 deleted");
 		equal(oFF.getAggregation("buttons").length, 2, "There should be two buttons in the 'buttons' aggregation");
 		equal(oFF.getAggregation("removeFacetIcons").length, 2, "There should be two remove icons in the aggregation");
 
- 		var oFF = createFF(oFF);
+		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[1];
 		oFF.onsapdelete(oEvent);
 		equal(oFF.getLists()[1].getActive(), false, "keyboard onsapdelete tested - list2 deleted");
@@ -2816,35 +2929,35 @@
 		equal(oFF.getAggregation("removeFacetIcons").length, 2, "There should be two remove icons in the aggregation");
 
 
- 		var oFF = createFF(oFF);
+		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[2];
 		oFF.onsapdelete(oEvent);
 		ok(oFF.getAggregation("addFacetButton"), "keyboard onsapdelete tested - can't delete addFacetButton");
 
- 		var oFF = createFF(oFF);
+		var oFF = createFF(oFF);
 		oEvent.target = oFF.$().find(":sapTabbable")[3];
 		oFF.onsapdelete(oEvent);
 		ok(oFF.getAggregation("resetButton"), "keyboard onsapdelete tested - can't delete resetbutton");
 
- 		var oFF = createFF(oFF);
+		var oFF = createFF(oFF);
 		oFF.setShowPersonalization(false)
 		oEvent.target = oFF.$().find(":sapTabbable")[0];
 		equal(oFF.getLists()[0].getActive(), true, "keyboard onsapdelete tested - no delete allowed, list1 active");
 		equal(oFF.getAggregation("buttons").length, 2, "There should be two buttons in the 'buttons' aggregation");
 		equal(oFF.getAggregation("removeFacetIcons").length, 2, "There should be two remove icons in the aggregation");
 
- 		var oFF = createFF(oFF);
- 		var oList = oFF.getLists()[1]
- 		oList.setShowRemoveFacetIcon(false);
+		var oFF = createFF(oFF);
+		var oList = oFF.getLists()[1]
+		oList.setShowRemoveFacetIcon(false);
 		oEvent.target = oFF.$().find(":sapTabbable")[1];
 		equal(oFF.getLists()[1].getActive(), true, "keyboard onsapdelete tested - no delete allowed, list2 active");
 		equal(oFF.getAggregation("buttons").length, 2, "There should be two buttons in the 'buttons' aggregation");
 		equal(oFF.getAggregation("removeFacetIcons").length, 2, "There should be two remove icons in the aggregation");
 
 
- 		var oFF = createFF(oFF);
- 		oFF.getLists()[1].setActive(false);
- 		oFF.getLists()[0].setActive(false);
+		var oFF = createFF(oFF);
+		oFF.getLists()[1].setActive(false);
+		oFF.getLists()[0].setActive(false);
 		oFF.oItemNavigation.setFocusedIndex(0);
 		ok(jQuery(oFF.onsapdelete(oEvent)), "keyboard onsapdelete tested");
 
@@ -2878,24 +2991,27 @@
 		/* Helper functions for the module */
 		var oSCHelper = {
 
-			createFFWithBinding : function() {
+			createFFWithBinding : function(iLists) {
+				iLists = iLists == undefined ? 1 : iLists;
 				var oFF = new sap.m.FacetFilter({
 					showPersonalization : true
 				});
-				var oFFL = new sap.m.FacetFilterList({
-					title : "List1",
-					growing : true,
-					growingThreshold : 3,
-					items : {
-						path : "/values",
-						template : new sap.m.FacetFilterItem({
-							text : "{text}",
-							key : "{key}"
-						})
-					}
-				});
+				for (var i = 0; i < iLists; i++) {
+					var oFFL = new sap.m.FacetFilterList({
+						title : "List" + (i+1),
+						growing : true,
+						growingThreshold : 3,
+						items : {
+							path : "/values",
+							template : new sap.m.FacetFilterItem({
+								text : "{text}",
+								key : "{key}"
+							})
+						}
+					});
+					oFF.addList(oFFL);
+				}
 
-				oFF.addList(oFFL);
 				return oFF;
 			},
 
@@ -3241,7 +3357,7 @@
 			destroyFF(oFF);
 		});
 
-		test("'All' checkbox to be unchecked when items are preselected and model is assigned later", function() {
+		asyncTest("'All' checkbox to be unchecked when items are preselected and model is assigned later", function() {
 			var oFF = oSCHelper.createFFWithBinding();
 			var oFFL = oFF.getLists()[0];
 
@@ -3249,17 +3365,28 @@
 				"4" : "Val4"
 			});
 
+
+			oFF.placeAt('content');
+			sap.ui.getCore().applyChanges();
+
 			var oCheckbox = oFF._createSelectAllCheckboxBar(oFFL).getContentLeft()[0];
 
 			oFFL.setModel(oSCHelper.createModel());
 
 			ok(!oCheckbox.getSelected(), "Select all checkbox should be unchecked because of preselected items");
 
-			oCheckbox.fireSelect({
-				selected : true
+			oFFL.setSelectedKeys({
+				"1" : "Val1"
 			});
-			ok(!Object.getOwnPropertyNames(oFFL.getSelectedKeys()).length,
-					"Selected keys should be cleared by selecting 'All' checkbox");
+
+			oCheckbox.fireSelect({
+				selected : false
+			});
+			setTimeout(function () {
+				strictEqual(oFFL.getItems().filter(function (oItem) {return oItem.getSelected()}).length, 0, "Visible selected keys should be cleared by selecting 'All' checkbox");
+				start();
+			}, 1000);
+
 
 			destroyFF(oFF);
 		});
@@ -3356,6 +3483,62 @@
 			strictEqual(sRightArrowCSSVisibility, "hidden", "Right arrow is hidden");
 		});
 
+		module("Aria support", {
+			beforeEach: function () {
+				this.oFF = oSCHelper.createFFWithBinding(5);
+				for (var i = 0; i < 5; i++) {
+					this.oFF.getLists()[i].setModel(oSCHelper.createModel());
+				}
+				this.oFF.placeAt("content");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				destroyFF(this.oFF);
+			},
+			/**
+			 *
+			 * @param iListCount the number of expected ff lists
+			 */
+			testFacetFilterList: function (iListCount) {
+				var aExpectedDescribedBy = [],
+						bAriaRemoveFacetFound = false;
+
+				for (var i = 0; i < iListCount; i++) {
+					var sAriaDescribedByList = getButtonCtrl(this.oFF, i).$().attr("aria-describedby");
+					ok(sAriaDescribedByList, "There must be attribute 'aria-describedby' for List" + (i + 1));
+
+					var aAriaDescribedByList = sAriaDescribedByList.split(" ");
+					equal(aAriaDescribedByList.length, 2, "There must be attribute 'aria-describedby' for List" + (i + 1));
+
+					var $InvisibleText0 = jQuery("#" + aAriaDescribedByList[0]);
+					ok($InvisibleText0.length, "'aria-describedby' must point to an existing static text");
+					var sExpectedText = "Facet Filter " + (i + 1) + " of " + iListCount;
+					equal($InvisibleText0.text(), sExpectedText, "Positioning info");
+
+					if (!bAriaRemoveFacetFound) {
+						bAriaRemoveFacetFound = true;
+						aExpectedDescribedBy.push(aAriaDescribedByList[1]);
+					}
+					aExpectedDescribedBy.push(aAriaDescribedByList[0]);
+				}
+
+				equal(this.oFF.getRenderer().getAriaDescribedBy(this.oFF), aExpectedDescribedBy.join(" "), "FacetFilterRenderer.getAriaDescribedBy array check");
+			}
+		});
+		test("Facet filter list positioning - initial", function () {
+			this.testFacetFilterList(5);
+		});
+
+		test("Facet filter list positioning - after removal of list(s)", function () {
+			var aExpectedDescribedBy = [],
+					bAriaRemoveFacetFound = false,
+					oListToRemove = this.oFF.getLists()[2];
+
+			this.oFF.removeList(oListToRemove);
+			sap.ui.getCore().applyChanges();
+
+			this.testFacetFilterList(4);
+		});
 		// Helper functions
 
 		function getButtonCtrl(oFF, iIndex) {

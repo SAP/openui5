@@ -32,23 +32,23 @@ some.lib/
 |   +---some/
 |       +---lib/
 |           +---themes/
-|               +---base
+|               +---base/
 |                   +---img/
 |                       img-RTL/
 |                       library.source.less
-|                       SomeControl.css
-|                   sap_bluecrystal
+|                       SomeControl.less
+|                   sap_bluecrystal/
 |                   +---img/
 |                       img-RTL/
 |                       library.source.less
-|                       SomeControl.css
+|                       SomeControl.less
 |           .library
 |           library.js
 |           messagebundle.properties
 |           messagebundle_<any-locale>.properties
 |           SomeControl.js
 |           SomeControlRenderer.js
-+---test
++---test/
     +---some/
         +---lib/
             +---SomeControl.html
@@ -232,15 +232,17 @@ The one in the base theme imports `base.less` and `global.less` from the core li
 ...
 ```
 
-The one in the specific theme (here: sap\_hcb) imports the above `library.source.less` from the base theme in this library and `global.less` from the specific theme in the core library (and all existing sap\_hcb CSS files of the controls in this library):
+The one in the specific theme (here: sap\_bluecrystal) imports the above `library.source.less` from the base theme in this library and `base.less` and `global.less` from the specific theme in the core library (and all existing sap\_bluecrystal CSS files of the controls as well as `shared.css` in this library):
 ```css
 @import "../base/library.source.less";
-@import "../../../../sap/ui/core/themes/sap_hcb/global.less";
+@import "../../../../sap/ui/core/themes/sap_bluecrystal/base.less";
+@import "../../../../sap/ui/core/themes/sap_bluecrystal/global.less";
 @import "shared.less";
 
 @import "ActionListItem.less";
 ...
 ```
+Note that the relative paths, which are going up four levels and then descending into `sap/ui/core/themes/sap_bluecrystal`, do not correspond to the physical file locations of the sources, but to the file tree as it would exist at runtime (where the content of source folders like `sap.ui.core` and `themelib_sap_bluecrystal` is merged into one tree).
 
 `shared.less` is by convention the name of a CSS file for library-level styles. It is handled and imported just like normal control CSS files, the separation is purely for better maintainability.
 

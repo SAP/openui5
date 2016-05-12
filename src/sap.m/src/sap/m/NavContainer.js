@@ -6,9 +6,8 @@
 sap.ui.define([
 	'jquery.sap.global',
 	'./library',
-	'sap/ui/core/Control',
-	'sap/ui/core/PopupSupport'
-], function (jQuery, library, Control, PopupSupport) {
+	'sap/ui/core/Control'
+], function (jQuery, library, Control) {
 	"use strict";
 
 
@@ -276,7 +275,6 @@ sap.ui.define([
 
 	NavContainer.prototype.onAfterRendering = function () {
 		var pageToRenderFirst = this.getCurrentPage(),
-			bIsInsideAPopup = !!this.$().closest('[data-sap-ui-area="sap-ui-static"]').length,
 			focusObject, oNavInfo, pageId, oEvent;
 
 		// for the very first rendering
@@ -289,7 +287,7 @@ sap.ui.define([
 
 			// set focus to first focusable object
 			// when NavContainer is inside a popup, the focus is managed by the popup and shouldn't be set here
-			if (!bIsInsideAPopup && this.getAutoFocus()) {
+			if (!this._isInsideAPopup() && this.getAutoFocus()) {
 				focusObject = NavContainer._applyAutoFocusTo(pageId);
 				if (focusObject) {
 					this._mFocusObject[pageId] = focusObject;
@@ -360,11 +358,11 @@ sap.ui.define([
 		return null;
 	};
 
-	NavContainer.prototype._ensurePageStackInitialized = function () {
+	NavContainer.prototype._ensurePageStackInitialized = function (data) {
 		if (this._pageStack.length === 0) {
 			var page = this._getActualInitialPage(); // TODO: with bookmarking / deep linking this is the initial, but not the "home"/root page
 			if (page) {
-				this._pageStack.push({id: page.getId(), mode: "initial", data: {}});
+				this._pageStack.push({id: page.getId(), mode: "initial", data: data || {}});
 			}
 		}
 		return this._pageStack;
@@ -577,7 +575,7 @@ sap.ui.define([
 		data = data || {};
 
 		// make sure the initial page is on the stack
-		this._ensurePageStackInitialized();
+		this._ensurePageStackInitialized(data);
 
 		//add to the queue before checking the current page, because this might change
 		if (this._bNavigating) {
@@ -1538,8 +1536,7 @@ sap.ui.define([
 				}
 			}
 
-			if (!bIsInPages || oSource === this.getCurrentPage()) {
-				// TODO: there will be more cases where invalidation is not required...
+			if ((!bIsInPages || oSource === this.getCurrentPage()) && !this._isInsideAPopup()) {
 				this.forceInvalidation();
 			} // else : the invalidation source is a non-current page, so do not rerender anything
 
@@ -1548,6 +1545,10 @@ sap.ui.define([
 			this.forceInvalidation();
 
 		}
+	};
+
+	NavContainer.prototype._isInsideAPopup = function () {
+		return this.getParent() instanceof sap.m.Popover;
 	};
 
 	NavContainer.prototype.removePage = function (oPage) {
@@ -1610,6 +1611,7 @@ sap.ui.define([
 		if (iPreviousPageCount === 0 && /* get the NEW pages count */ this.getPages().length === 1 && this.getDomRef()) { // the added page is the first and only page and has been newly added
 			this._ensurePageStackInitialized();
 			this.rerender();
+			this._fireAdaptableContentChange(oPage);
 		}
 
 		return this;
@@ -1626,11 +1628,28 @@ sap.ui.define([
 		if (iPreviousPageCount === 0 && this.getPages().length === 1 && this.getDomRef()) { // the added page is the first and only page and has been newly added
 			this._ensurePageStackInitialized();
 			this.rerender();
+			this._fireAdaptableContentChange(oPage);
 		}
 
 		return this;
 	};
 
+
+	/**
+	 * Fiori 2.0 Adaptation
+	 */
+	NavContainer.prototype._getAdaptableContent = function() {
+		return this.getCurrentPage();
+	};
+
+	NavContainer.prototype._fireAdaptableContentChange = function(oPage) {
+		if (oPage && this.mEventRegistry["_adaptableContentChange"] ) { //workaround for accessing the first page displayed in the navContainer, since "navigate" event is not thrown for it
+			this.fireEvent("_adaptableContentChange", {
+				"parent": this,
+				"adaptableContent": oPage
+			});
+		}
+	};
 
 	// documentation of the pseudo events (beforeShow, afterShow, beforeHide etc.)
 

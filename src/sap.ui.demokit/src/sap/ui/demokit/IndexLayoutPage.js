@@ -2,10 +2,9 @@
  * ${copyright}
  */
 // Creates Index Page within the Demokit
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', './IndexLayout', 'sap/ui/model/json/JSONModel', 'jquery.sap.encoder'],
-	function(jQuery, IconPool, IndexLayout, JSONModel/* , jQuerySap */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', './IndexLayout', 'sap/ui/model/json/JSONModel', 'sap/ui/core/Control', 'sap/ui/core/Element', 'jquery.sap.encoder'],
+	function(jQuery, IconPool, IndexLayout, JSONModel, Control, Element/* , jQuerySap */) {
 	"use strict";
-
 
 
 	var IndexLayoutPage = function IndexPage(oData, sTarget, sBaseUrl, bCustomFont) {
@@ -68,7 +67,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', './IndexLayout', 'sa
 	};
 
 
-	sap.ui.core.Element.extend("sap.ui.demokit.IndexLayoutPage.Cat", {
+	Element.extend("sap.ui.demokit.IndexLayoutPage.Cat", {
 		metadata : {
 			properties : {
 				"title" : "string"
@@ -80,7 +79,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', './IndexLayout', 'sa
 	});
 
 
-	sap.ui.core.Control.extend("sap.ui.demokit.IndexLayoutPage.Repeat", {
+	Control.extend("sap.ui.demokit.IndexLayoutPage.Repeat", {
 		metadata : {
 			aggregations : {
 				"categories" : {type : "sap.ui.demokit.IndexLayoutPage.Cat", multiple : true}

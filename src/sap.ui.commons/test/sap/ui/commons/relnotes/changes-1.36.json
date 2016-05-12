@@ -177,5 +177,93 @@
         "references": []
       }
     ]
+  },
+  "1.36.5": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "60aa548d901cede9286e627feb21cd68a998efd7",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Closing tab is now fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.36.6": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "c843460e14290cf3ffa6c3881cb04f30ef1c28d5",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Slider: Slider\u0027s API call to set value is now properly rendered",
+        "references": []
+      },
+      {
+        "id": "8b95da23c3ef3b9588f416642dd3c182de2a3e0d",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TreeNode: Selection of multiple nodes now is properly animated",
+        "references": []
+      }
+    ]
+  },
+  "1.36.7": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "f7adda535402279cbeb1a31c67886ba0f806a776",
+        "author": "Nikolay Kolarov \u003cnikolay.kolarov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Paginator: Aria-disabled state is correctly updated now",
+        "references": []
+      },
+      {
+        "id": "0d5574a8b522f49b0b88859bcfd355311f41a802",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Hiding the last visible tab no longer throws an exception",
+        "references": []
+      },
+      {
+        "id": "2865813899af7ae964b9aa7b40ff3259ead5b29e",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.TooltipBase: Tooltip should not be open if visibility is set to false",
+        "references": []
+      }
+    ]
+  },
+  "1.36.8": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "8b37e380f925e15dce3553ecb2d4a62afff323b9",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Error is not thrown any more when Scroller in not initialized",
+        "references": []
+      }
+    ]
+  },
+  "1.36.9": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "960c65b078732ce97219f2f503b1c6970dea72e1",
+        "author": "Teodor Taushanov \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Tab content is no longer rendered when the control is destroyed",
+        "references": []
+      },
+      {
+        "id": "4ae6b966de619c828f138b5db754e7d13b295a7c",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Tree - Base images provided.",
+        "references": []
+      }
+    ]
   }
 }

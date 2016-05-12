@@ -237,6 +237,71 @@
 			assert.strictEqual(document.activeElement, oFirstPageLink[0]);
 		});
 
+		QUnit.module("ARIA disabled link states", {
+			setup: function () {
+				this.oPaginator = new sap.ui.commons.Paginator({
+					numberOfPages: 7,
+					currentPage: 1
+				});
+
+				this.oPaginator.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				this.$firstPageLink = this._getLink("firstPage");
+				this.$lastPageLink = this._getLink("lastPage");
+				this.$forwardLink = this._getLink("forward");
+				this.$backLink = this._getLink("back");
+			},
+			updateCurrentPage: function (iCurrentPage) {
+				this.oPaginator.setCurrentPage(iCurrentPage);
+				sap.ui.getCore().applyChanges();
+			},
+			hasAriaDisabledState: function ($element) {
+				return $element.attr("aria-disabled") === "true";
+			},
+			_getLink: function (sLinkId) {
+				var sSuffix = "-" + sLinkId + "Link";
+				return this.oPaginator.$(sSuffix);
+			},
+			teardown: function () {
+				this.oPaginator.destroy();
+				this.$firstPageLink = null;
+				this.$lastPageLink = null;
+				this.$forwardLink = null;
+				this.$backLink = null;
+			}
+		});
+
+		QUnit.test("Initial 'aria-disabled=true' state for paginator with current page 1 and 7 pages", function (assert) {
+			assert.strictEqual(this.hasAriaDisabledState(this.$firstPageLink), true, "Should be added for the first page link");
+			assert.strictEqual(this.hasAriaDisabledState(this.$backLink), true, "Should be added for the back link");
+			assert.strictEqual(this.hasAriaDisabledState(this.$forwardLink), false, "Should not be added for the forward link");
+			assert.strictEqual(this.hasAriaDisabledState(this.$lastPageLink), false, "Should not be added for the last page link");
+		});
+
+		QUnit.test("When the currentPage is updated to 7 and pages are 7 'aria-disabled=true' state", function (assert) {
+			this.updateCurrentPage(7);
+			assert.strictEqual(this.hasAriaDisabledState(this.$firstPageLink), false, "Should not be added for the first page link");
+			assert.strictEqual(this.hasAriaDisabledState(this.$backLink), false, "Should not be added for the back link");
+			assert.strictEqual(this.hasAriaDisabledState(this.$forwardLink), true, "Should be added for the forward link");
+			assert.strictEqual(this.hasAriaDisabledState(this.$lastPageLink), true, "Should be added for the last page link");
+		});
+
+		QUnit.test("When the currentPage is updated to 1 and pages are 7 'aria-disabled=true' state", function (assert) {
+			this.updateCurrentPage(1);
+			assert.strictEqual(this.hasAriaDisabledState(this.$firstPageLink), true, "Should be added for the first page link");
+			assert.strictEqual(this.hasAriaDisabledState(this.$backLink), true, "Should be added for the back link");
+			assert.strictEqual(this.hasAriaDisabledState(this.$forwardLink), false, "Should not be added for the forward link");
+			assert.strictEqual(this.hasAriaDisabledState(this.$lastPageLink), false, "Should not be added for the last page link");
+		});
+
+		QUnit.test("When the currentPage is updated to 3 and pages are 7 'aria-disabled=true' state", function (assert) {
+			this.updateCurrentPage(3);
+			assert.strictEqual(this.hasAriaDisabledState(this.$firstPageLink), false, "Should not be added for the first page link");
+			assert.strictEqual(this.hasAriaDisabledState(this.$backLink), false, "Should not be added for the back link");
+			assert.strictEqual(this.hasAriaDisabledState(this.$forwardLink), false, "Should not be added for the forward link");
+			assert.strictEqual(this.hasAriaDisabledState(this.$lastPageLink), false, "Should not be added for the last page link");
+		});
 		</script>
 	</head>
 	<body class="sapUiBody">

@@ -4,13 +4,12 @@
 			"files": [
 				"Component.js",
 				"Main.controller.js",
-				"Main.view.xml",
-				"../../../common/Component.js"
+				"Main.view.xml"
 			]
 		}
 	},
 	"dependencies": [],
-	"description": "Component for OData v4 EPM Sales Orders",
+	"description": "Component for OData V4 EPM Sales Orders",
 	"name": "sap.ui.core.demokit.sample.odata.v4.SalesOrder",
 	"version": "${version}"
 }

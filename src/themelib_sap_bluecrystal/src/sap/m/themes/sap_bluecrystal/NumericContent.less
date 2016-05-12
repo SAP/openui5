@@ -7,15 +7,14 @@
 	color: @sapUiHighlight;
 }
 
+.sapMNCInner {
+	left: 0;
+}
+
 .sapMNCScale {
 	font-family: @sapUiFontHeaderFamily;
 	font-weight: @sapUiFontHeaderWeight;
-	font-size: @sapMFontMediumSize;
 	display: block;
-}
-
-.sapUiMedia-Std-Phone .sapMNCScale.Auto, .sapMNCScale.S, .sapMNCScale.XS {
-	font-size: 0.75rem;
 }
 
 .sapMNCValue {
@@ -23,42 +22,28 @@
 	font-weight: @sapUiFontHeaderWeight;
 }
 
-.sapMNCScale.L {
-	font-size: @sapMFontHeader5Size;
-}
-
 .sapMNCValue.Neutral,
 .sapMNCIndicator.Neutral {
 	color: @sapUiChartNeutral;
 }
-
-.sapMNCValue.Good,
-.sapMNCIndicator.Good {
-	color: @sapUiPositiveText;
-}
-
-.sapMNCValue.Critical,
-.sapMNCIndicator.Critical {
-	color: @sapUiCriticalText;
-}
-
-.sapMNCValue.Error,
-.sapMNCIndicator.Error {
-	color: @sapUiNegativeText;
-}
-
 .sapMNCScale.Neutral {
 	color: @sapUiLightText;
 }
 
+.sapMNCValue.Good,
+.sapMNCIndicator.Good,
 .sapMNCScale.Good {
 	color: @sapUiPositiveText;
 }
 
+.sapMNCValue.Critical,
+.sapMNCIndicator.Critical,
 .sapMNCScale.Critical {
 	color: @sapUiCriticalText;
 }
 
+.sapMNCValue.Error,
+.sapMNCIndicator.Error,
 .sapMNCScale.Error {
 	color: @sapUiNegativeText;
 }
@@ -75,10 +60,8 @@
 	opacity: 0.25;
 }
 
-.sap-desktop .sapMNC:focus {
-	outline-color: @sapUiFocus;
-	outline-style: dotted;
-	outline-width: 1px; /* Usage of px as aligned with designers. */
+html.sap-desktop .sapMNC:focus {
+	outline: 1px dotted @sapUiFocus; /* Usage of px as aligned with designers. */
 }
 
 .sapMNC:focus:not([tabindex]) {

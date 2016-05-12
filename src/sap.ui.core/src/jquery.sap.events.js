@@ -924,9 +924,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', "sap
 				if (oEvent.type === "mouseout") {
 					oNewEvent.setMarked("fromMouseout");
 				}
-				oConfig.eventHandle.handler.call(oConfig.domRef, oNewEvent);
-				// here the fromMouseout flag is checked, terminate the touch progress only when touchend event is not marked with fromMouseout.
-				if (oConfig.eventName === "touchend" && !oNewEvent.isMarked("fromMouseout")) {
+
+				// dragstart event is only used to determine when to stop the touch process and shouldn't trigger any event
+				if (oEvent.type !== "dragstart") {
+					oConfig.eventHandle.handler.call(oConfig.domRef, oNewEvent);
+				}
+
+				// here the fromMouseout flag is checked, terminate the touch progress when the native event is dragstart or touchend event
+				// is not marked with fromMouseout.
+				if ((oConfig.eventName === "touchend" || oEvent.type === "dragstart") && !oNewEvent.isMarked("fromMouseout")) {
 					$DomRef.removeData("__touch_in_progress");
 					$DomRef.removeData("__touchstart_control");
 				}
@@ -935,7 +941,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', "sap
 		if (!(Device.support.pointer && Device.support.touch)) {
 			createSimulatedEvent("touchstart", ["mousedown"], fnMouseToTouchHandler);
 			createSimulatedEvent("touchend", ["mouseup", "mouseout"], fnMouseToTouchHandler);
-			createSimulatedEvent("touchmove", ["mousemove"], fnMouseToTouchHandler);
+			// Browser doesn't fire any mouse event after dragstart, so we need to listen to dragstart to cancel the current touch process in order
+			// to correctly stop firing the touchmove event
+			createSimulatedEvent("touchmove", ["mousemove", "dragstart"], fnMouseToTouchHandler);
 		}
 
 		// Simulate mouse events on touch devices
@@ -1741,20 +1749,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', "sap
 	 *
 	 * Mobile browsers fire mouse events after touch events with a delay (~300ms)
 	 * Some modern mobile browsers already removed the delay under some condition. Those browsers are:
-	 *  1. iOS Safari in iOS 8.
+	 *  1. iOS Safari in iOS 8 (except UIWebView / WKWebView).
 	 *  2. Chrome on Android from version 32 (exclude the Samsung stock browser which also uses Chrome kernel)
 	 *
 	 * @private
+	 * @name jQuery.sap.isMouseEventDelayed
 	 * @since 1.30.0
 	 */
-	jQuery.sap.isMouseEventDelayed =
-		(Device.browser.mobile
-			&& !(
-				(Device.os.ios && Device.os.version >= 8 && Device.browser.safari)
-				|| (Device.browser.chrome && !/SAMSUNG/.test(navigator.userAgent) && Device.browser.version >= 32)
-			)
-		);
 
+	// expose the function for unit test to refresh the jQuery.sap.isMouseEventDelayed
+	jQuery.sap._refreshMouseEventDelayedFlag = function() {
+		jQuery.sap.isMouseEventDelayed =
+			!!(Device.browser.mobile
+				&& !(
+					(Device.os.ios && Device.os.version >= 8 && Device.browser.safari && !Device.browser.webview)
+					|| (Device.browser.chrome && !/SAMSUNG/.test(navigator.userAgent) && Device.browser.version >= 32)
+				)
+			);
+	};
+
+	jQuery.sap._refreshMouseEventDelayedFlag();
 
 	/* ************************************************ */
 

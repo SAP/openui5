@@ -414,6 +414,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		return iEllipsisPos;
 	};
 
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	Text.prototype.getAccessibilityInfo = function() {
+		return {description: this.getText()};
+	};
+
 	return Text;
 
 }, /* bExport= */ true);

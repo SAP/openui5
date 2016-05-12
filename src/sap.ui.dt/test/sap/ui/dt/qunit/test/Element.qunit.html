@@ -1,0 +1,157 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Test Page for sap.ui.dt.test.Element</title>
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				type="text/javascript"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-libs="sap.ui.dt,sap.ui.layout,sap.m"
+				src="../../../../../../resources/sap-ui-core.js">
+		</script>
+		<style>
+			.minSize {
+				min-width : 100px;
+				min-height: 100px;
+			}
+		</style>
+		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript">
+
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			jQuery.sap.require("sap.m.Button");
+			jQuery.sap.require("sap.ui.layout.VerticalLayout");
+			jQuery.sap.require("sap.ui.dt.DesignTime");
+			jQuery.sap.require("sap.ui.dt.test.Element");
+
+			var DesignTime = sap.ui.dt.DesignTime;
+			var ElementTest = sap.ui.dt.test.Element;
+
+			QUnit.module("Given that a sap.mButton is tested", {
+				beforeEach : function(assert) {
+					this.oButton = new sap.m.Button({text : "my button"});
+					this.oButton.placeAt("content");
+					sap.ui.getCore().applyChanges();
+
+					var done = assert.async();
+
+					this.oDesignTime = new DesignTime({
+						rootElements : [this.oButton]
+					});
+					this.oDesignTime.attachEventOnce("synced", function() {
+						done();
+					}, this);
+				},
+				afterEach : function() {
+					this.oButton.destroy();
+					this.oDesignTime.destroy();
+				}
+			});
+
+			QUnit.test("when the getInfo is called", function(assert) {
+				var oElementTestInfo = ElementTest.getInfo(this.oButton);
+				assert.ok(oElementTestInfo.metadata, "metadata is retrieved");
+				assert.ok(!oElementTestInfo.designTimeMetadata, "designtime metadata is retrieved");
+				assert.ok(oElementTestInfo.overlay, "overlay is retrieved");
+				assert.ok(oElementTestInfo.overlayDesignTimeMetadata, "overlay designtime metadata is retrieved");
+			});
+
+			QUnit.test("when the getAggregationsInfo is called for layout without content", function(assert) {
+				var oAggregationsTestInfo = ElementTest.getAggregationsInfo(this.oButton);
+				var aAggregationNames = Object.keys(oAggregationsTestInfo);
+				var bNotIgnoredAggregationFound = false;
+				aAggregationNames.forEach(function(sAggregationName) {
+					bNotIgnoredAggregationFound = bNotIgnoredAggregationFound || !oAggregationsTestInfo[sAggregationName].ignored;
+				});
+				assert.strictEqual(bNotIgnoredAggregationFound, false, "no not-ignored aggregations found");
+			});
+
+			QUnit.module("Given that a sap.ui.layout.VerticalLayout without content is tested", {
+				beforeEach : function(assert) {
+					this.oVerticalLayout = new sap.ui.layout.VerticalLayout();
+					this.oVerticalLayout.placeAt("content");
+					sap.ui.getCore().applyChanges();
+
+					var done = assert.async();
+					var that = this;
+
+					this.oDesignTime = new DesignTime({
+						rootElements : [this.oVerticalLayout]
+					});
+					this.oDesignTime.attachEventOnce("synced", function() {
+						done();
+					}, this);
+				},
+				afterEach : function() {
+					this.oVerticalLayout.destroy();
+					this.oDesignTime.destroy();
+				}
+			});
+
+			QUnit.test("when the getAggregationInfo is called for layout without content", function(assert) {
+				var oAggregationTestInfo = ElementTest.getAggregationInfo(this.oVerticalLayout, "content");
+				assert.strictEqual(oAggregationTestInfo.ignored, false, "aggregation isn't ignored in DT Metadata");
+				assert.strictEqual(oAggregationTestInfo.domRefDeclared, true, "domRef for content aggregation is declared in DT Metadata");
+				assert.strictEqual(oAggregationTestInfo.domRefFound, true, "domRef for content aggregation is found in dom");
+				assert.strictEqual(oAggregationTestInfo.domRefVisible, true, "domRef for content aggregation isn't visible");
+				assert.strictEqual(oAggregationTestInfo.overlayTooSmall, true, "overlay domRef is too small");
+				assert.strictEqual(oAggregationTestInfo.overlayGeometryCalculatedByChildren, false, "overlay geometry is not calculated by children");
+				assert.strictEqual(oAggregationTestInfo.overlayVisible, false, "overlay isn't visible");
+			});
+
+			QUnit.test("when the getAggregationsInfo is called for layout without content", function(assert) {
+				var oAggregationsTestInfo = ElementTest.getAggregationsInfo(this.oVerticalLayout);
+				assert.ok(oAggregationsTestInfo.content, "content aggregation info is retrieved");
+			});
+
+			QUnit.module("Given that a sap.ui.layout.VerticalLayout with content is tested", {
+				beforeEach : function(assert) {
+					this.oButton = new sap.m.Button({text : "my button"});
+					this.oVerticalLayout = new sap.ui.layout.VerticalLayout({
+						content : [this.oButton]
+					});
+					this.oVerticalLayout.placeAt("content");
+					sap.ui.getCore().applyChanges();
+
+					var done = assert.async();
+					var that = this;
+
+					this.oDesignTime = new DesignTime({
+						rootElements : [this.oVerticalLayout]
+					});
+					this.oDesignTime.attachEventOnce("synced", function() {
+						done();
+					}, this);
+				},
+				afterEach : function() {
+					this.oVerticalLayout.destroy();
+					this.oDesignTime.destroy();
+				}
+			});
+
+			QUnit.test("when the getAggregationInfo is called for layout with content", function(assert) {
+				var oAggregationTestInfo = ElementTest.getAggregationInfo(this.oVerticalLayout, "content");
+				assert.strictEqual(oAggregationTestInfo.ignored, false, "aggregation isn't ignored in DT Metadata");
+				assert.strictEqual(oAggregationTestInfo.domRefDeclared, true, "domRef for content aggregation is declared in DT Metadata");
+				assert.strictEqual(oAggregationTestInfo.domRefFound, true, "domRef for content aggregation is found in dom");
+				assert.strictEqual(oAggregationTestInfo.domRefVisible, true, "domRef for content aggregation is visible");
+				assert.strictEqual(oAggregationTestInfo.overlayTooSmall, false, "overlay domRef is big enough");
+				assert.strictEqual(oAggregationTestInfo.overlayGeometryCalculatedByChildren, false, "overlay geometry is not calculated by children");
+				assert.strictEqual(oAggregationTestInfo.overlayVisible, true, "overlay is visible");
+			});
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit page for sap.ui.dt.ControlObserver</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>

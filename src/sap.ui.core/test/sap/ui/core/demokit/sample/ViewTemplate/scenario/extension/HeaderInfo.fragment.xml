@@ -2,12 +2,9 @@
 <core:FragmentDefinition
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
-	xmlns:form="sap.ui.layout.form"
+	xmlns:scenario="sap.ui.core.sample.ViewTemplate.scenario"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
-	<form:SimpleForm layout="ResponsiveGridLayout">
-		<form:title>
-			<core:Title text="HeaderInfo"/>
-		</form:title>
+	<scenario:Form title="HeaderInfo">
 		<template:with path="entityType>com.sap.vocabularies.UI.v1.HeaderInfo">
 			<!-- Note: separate labels instead of composite bindings for testing only! -->
 			<Label labelFor="{path: 'entityType>TypeName', formatter: '.id'}"
@@ -25,5 +22,5 @@
 				</template:with>
 			</template:if>
 		</template:with>
-	</form:SimpleForm>
+	</scenario:Form>
 </core:FragmentDefinition>

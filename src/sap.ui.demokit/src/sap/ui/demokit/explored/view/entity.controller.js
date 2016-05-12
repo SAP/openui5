@@ -11,6 +11,10 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.demokit.explored.view.entity", {
 
+		descriptionText: function (text) {
+			return "<span>" + text + "</span>";
+		},
+
 		// ====== event handling ====================================================================
 		onInit: function () {
 			this.router = sap.ui.core.UIComponent.getRouterFor(this);

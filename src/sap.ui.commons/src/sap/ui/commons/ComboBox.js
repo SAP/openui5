@@ -26,6 +26,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 	 *
 	 * @constructor
 	 * @public
+	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.ComboBox</code> control.
 	 * @alias sap.ui.commons.ComboBox
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1750,6 +1751,17 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 			}
 		}
 
+	};
+
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	ComboBox.prototype.getAccessibilityInfo = function() {
+		var oInfo = TextField.prototype.getAccessibilityInfo.apply(this, arguments);
+		oInfo.role = "combobox";
+		oInfo.type = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons").getText("ACC_CTR_TYPE_COMBO");
+		return oInfo;
 	};
 
 	// to overwrite JS doc with new event parameter

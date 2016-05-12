@@ -789,6 +789,75 @@
 		oModel.destroy()
 	});
 
+	test("Binding a table cell item after table column has been destroyed", function() {
+
+		//Arrange
+		var oTable = new sap.m.Table({
+			columns: [
+				new sap.m.Column({
+					header: new sap.m.Label({
+						text: "Label1"
+					})
+				}),
+				new sap.m.Column({
+					header: new sap.m.Label({
+						text: "Label2"
+					})
+				})
+			],
+			items: [
+				new sap.m.ColumnListItem("item", {
+					cells: [
+						new sap.m.ObjectIdentifier({
+							title: "title1",
+							text: "text1"
+						}),
+						new sap.m.ObjectIdentifier({
+							title: "title2",
+							text: "text2"
+						})
+					]
+				})
+			]
+		});
+
+		var oModel = new sap.ui.model.json.JSONModel({
+			items:[
+				{ "title": "New Title" }
+			]
+		});
+
+		//System under test
+		oTable.setModel(oModel);
+		oTable.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		var oColumn = oTable.getColumns()[0];
+		oTable.removeColumn(0);
+		oColumn.destroy();
+
+		oTable.removeItem(0);
+
+		var oItemTemplate = sap.ui.getCore().byId('item');
+		oItemTemplate.getCells()[0].bindProperty('title', {
+			path:'title'
+		});
+
+		oTable.bindAggregation('items', {
+			path:'/items',
+			template: oItemTemplate
+		});
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		equal(oTable.getColumns().length, 1, "The table has just one column");
+
+		//Cleanup
+		oTable.destroy();
+		oModel.destroy()
+	});
+
 </script>
 </head>
 
@@ -797,7 +866,6 @@
 	<h2 id="qunit-banner"></h2>
 	<h2 id="qunit-userAgent"></h2>
 	<ol id="qunit-tests"></ol>
-	</div>
 	<div id="content"></div>
 	<div id="qunit-fixture"></div>
 </body>

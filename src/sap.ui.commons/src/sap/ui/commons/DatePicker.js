@@ -26,6 +26,7 @@ sap.ui.define(['jquery.sap.global', './TextField', 'sap/ui/model/type/Date', 'sa
 	 *
 	 * @constructor
 	 * @public
+	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.DatePicker</code> control.
 	 * @alias sap.ui.commons.DatePicker
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -501,6 +502,16 @@ sap.ui.define(['jquery.sap.global', './TextField', 'sap/ui/model/type/Date', 'sa
 			var sValue = oFormat.format(oDate);
 			return sValue;
 
+		};
+
+		/**
+		 * @see {sap.ui.core.Control#getAccessibilityInfo}
+		 * @protected
+		 */
+		DatePicker.prototype.getAccessibilityInfo = function() {
+			var oInfo = TextField.prototype.getAccessibilityInfo.apply(this, arguments);
+			oInfo.type = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons").getText("ACC_CTR_TYPE_DATEINPUT");
+			return oInfo;
 		};
 
 		function _getFormatter(oThis){

@@ -173,6 +173,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		var sYyyymm = oMonthsRow._oFormatYyyymm.format(oDate.getJSDate(), true);
 		var iSelected = oMonthsRow._checkDateSelected(oDate);
 		var oType = oMonthsRow._getDateType(oDate);
+		var bEnabled = oMonthsRow._checkMonthEnabled(oDate);
 
 		oRm.write("<div");
 		oRm.writeAttribute("id", oHelper.sId + "-" + sYyyymm);
@@ -210,6 +211,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 			if (oType.tooltip) {
 				oRm.writeAttributeEscaped('title', oType.tooltip);
 			}
+		}
+
+		if (!bEnabled) {
+			oRm.addClass("sapUiCalItemDsbl"); // month disabled
+			mAccProps["disabled"] = true;
 		}
 
 		oRm.writeAttribute("tabindex", "-1");

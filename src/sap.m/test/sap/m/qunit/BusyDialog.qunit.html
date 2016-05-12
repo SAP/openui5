@@ -23,6 +23,8 @@
 			// Testing a Default Busy Dialog - initialised with no properties/options
 			// =========================================================================================================
 
+			sinon.config.useFakeTimers = true;
+
 			QUnit.module('Creating Default BusyDialog.', {
 				setup: function () {
 					this.busyDialog = new sap.m.BusyDialog();
@@ -345,6 +347,47 @@
 				myView.destroy();
 
 			});
+
+			// =========================================================================================================
+			// Testing ARIA
+			// =========================================================================================================
+
+			QUnit.module('Aria', {
+				setup: function () {
+					this.busyDialog = new sap.m.BusyDialog('busyAria', {
+					});
+
+				},
+				teardown: function () {
+					this.busyDialog.close();
+					this.busyDialog.destroy();
+					this.busyDialog = null;
+				}
+			});
+
+			QUnit.test('Setting the ariaLabelledBy association', function (assert) {
+				var invText = new sap.ui.core.InvisibleText('hiddenTxt', {text: 'Aria labelled by test'}).placeAt('content');
+				this.busyDialog.addAriaLabelledBy('hiddenTxt');
+
+				this.busyDialog.open();
+
+				assert.strictEqual(this.busyDialog._oDialog.getAriaLabelledBy()[0], invText.getId(), 'Should be the same as ariaLabelledBy in the dialog.');
+			});
+
+			QUnit.test('Setting the Text property', function (assert) {
+				this.busyDialog.setText('Loading...');
+				this.busyDialog.open();
+
+				assert.strictEqual(this.busyDialog._oDialog.getAriaLabelledBy()[0], this.busyDialog._oLabel.getId(), 'Should be the same as ariaLabelledBy in the dialog.');
+			});
+
+			QUnit.test('Checking role property', function (assert) {
+				this.busyDialog.setText('Loading...');
+				this.busyDialog.open();
+				this.clock.tick(500);
+				assert.strictEqual(this.busyDialog._oDialog._$content.attr('role'), 'application', 'Should be application.');
+			});
+
 		</script>
 	</head>
 	<body id='body' class='sapUiBody'>

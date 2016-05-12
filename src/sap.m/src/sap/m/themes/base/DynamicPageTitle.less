@@ -1,0 +1,115 @@
+.sapMDynamicPageTitle {
+	z-index: 2;
+	position: relative;
+	padding: 0 2rem 0 3rem;
+	display: flex;
+	display: -webkit-flex;
+
+	align-items: center;
+	-webkit-align-items: center;
+
+	flex-direction: row;
+	-webkit-flex-direction: row;
+	box-sizing: border-box;
+}
+
+.sapMDynamicPageTitleRightActions .sapMDynamicPageTitleOverflowToolbar {
+	justify-content: flex-end;
+}
+
+.sapMDynamicPageTitle:hover {
+	cursor: pointer;
+}
+
+.sapMDynamicPageTitleWrapper.sapMDynamicPageTitleSnapped > .sapMDynamicPageTitle {
+	.sapMDynamicPageHeader {
+		border-bottom: none;
+	}
+}
+
+/* Title Left and Right Areas*/
+.sapMDynamicPageTitle > .sapMDynamicPageTitleLeft {
+	width: 60%;
+}
+
+.sapMDynamicPageTitle > .sapMDynamicPageTitleRight {
+	width: 40%;
+}
+
+.sapMDynamicPageTitle > .sapMDynamicPageTitleLeft {
+	.sapMDynamicPageTitleLeftInner {
+		.sapMDynamicPageTitleLeftHeading,
+		.sapMDynamicPageTitleLeftSnappedExpandContent {
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			box-sizing: border-box;
+			vertical-align: middle;
+		}
+
+		.sapMDynamicPageTitleLeftHeading {
+			flex-shrink: 1;
+			-webkit-flex-shrink: 1;
+			padding-right: 1rem;
+		}
+
+		.sapMDynamicPageTitleLeftSnappedExpandContent {
+			flex: 1 1 10rem;
+			-webkit-flex: 1 1 10rem;
+			padding-right: 1rem;
+			font-size: 0.875rem;
+		}
+
+		.sapMDynamicPageTitleLeftSnappedExpandContent.sapMDynamicPageSnapContentVisible,
+		.sapMDynamicPageTitleLeftSnappedExpandContent.sapMDynamicPageExpandContentVisible {
+			min-width: 8rem;
+		}
+
+		display: flex;
+		display: -webkit-flex;
+
+		align-items: center;
+		-webkit-align-items: center;
+
+		flex-direction: row;
+		-webkit-flex-direction: row;
+
+		flex-wrap: wrap;
+		-webkit-flex-wrap: wrap; /* Safari */
+	}
+
+	.sapMTitle, .sapMLabel {
+		vertical-align: middle;
+	}
+	.sapMTitle {
+		font-size: 1.375rem;
+	}
+}
+
+.sapMDynamicPageTitle > .sapMDynamicPageTitleRight .sapMTB {
+	border: none;
+}
+
+/* Tablet Size */
+.sapMDynamicPage-Std-Tablet {
+	.sapMDynamicPageTitle {
+		padding-left: 2rem;
+		padding-right: 1rem;
+	}
+}
+
+/* Phone Size */
+.sapMDynamicPage-Std-Phone {
+	.sapMDynamicPageTitle {
+		padding-left: 1rem;
+		padding-right: 0;
+	}
+}
+
+/* Compact */
+.sapUiSizeCompact {
+	.sapMDynamicPageTitle {
+		padding-left: 3rem;
+		padding-right: 2rem;
+	}
+}

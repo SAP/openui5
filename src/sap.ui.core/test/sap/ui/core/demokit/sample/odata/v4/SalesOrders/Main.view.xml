@@ -1,4 +1,5 @@
 <mvc:View
+	class="sapUiSizeCompact"
 	controllerName="sap.ui.core.sample.odata.v4.SalesOrders.Main"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
@@ -7,14 +8,14 @@
 	<VBox>
 		<Toolbar design="Transparent">
 			<content>
-				<Label design="Bold" text="Favorite product:">
+				<Label design="Bold" labelFor="FavoriteProduct" text="Favorite product:">
 					<layoutData>
 						<ToolbarLayoutData shrinkable="false" />
 					</layoutData>
 				</Label>
-				<Input id="FavoriteProduct" enabled="{ui>/bRealOData}" width="auto"
+				<Input enabled="false" id="FavoriteProduct" width="auto"
 					value="{
-						path: '/ProductList(\'HT-1000\')/Name',
+						path : '/ProductList(\'HT-1000\')/Name',
 						events : {
 							dataReceived : '.onDataEvents',
 							dataRequested : '.onDataEvents'
@@ -25,24 +26,23 @@
 					</layoutData>
 				</Input>
 				<Button icon="sap-icon://refresh"
-					enabled="{ui>/bRealOData}"
 					press="onRefreshFavoriteProduct"/>
-				<Button icon="sap-icon://hello-world"
-					enabled="{ui>/bRealOData}"
-					press="onUpdateFavoriteProduct"
-					tooltip="Update with current time as HH:mm"/>
+				<Button enabled="false" icon="sap-icon://hello-world"
+					press="onUpdateFavoriteProduct" tooltip="Update with current time as HH:mm"/>
+				<Button enabled="{ui>/bRealOData}" icon="sap-icon://message-error"
+					press="produceTechnicalError" tooltip="Provoke read error"/>
 				<ToolbarSpacer />
-				<Button text="Refresh all"
-					enabled="{ui>/bRealOData}"
-					press="onRefreshAll"/>
+				<Button press="onRefreshAll" text="Refresh all"/>
 			</content>
 		</Toolbar>
-		<Table id="SalesOrders" growing="true" growingThreshold="5" headerText="Sales Orders"
+		<Table growing="true" growingThreshold="5" headerText="Sales Orders" id="SalesOrders"
 			items="{
 					path : '/SalesOrderList',
 					parameters : {
-						'$expand' : 'SO_2_BP',
-						'$select' : 'SalesOrderID,BuyerName,GrossAmount,CurrencyCode'
+						$expand : 'SO_2_BP',
+						$filter : 'BuyerName ge \'M\'',
+						$select : 'BuyerName,CurrencyCode,GrossAmount,Note,SalesOrderID',
+						$$updateGroupId : 'SalesOrderListUpdateGroup'
 					},
 					events : {
 						dataReceived : '.onDataEvents',
@@ -53,40 +53,40 @@
 			<headerToolbar>
 				<Toolbar>
 					<content>
-						<Button text="Create Sales Order" icon="sap-icon://add"
-							enabled="{ui>/bRealOData}"
-							press="onCreateSalesOrderDialog"/>
+						<Button enabled="false" icon="sap-icon://add"
+							press="onCreateSalesOrderDialog" text="Create Sales Order"/>
 						<Button enabled="false" icon="{ui>/icon}" tooltip="{ui>/iconTooltip}"
 							type="Transparent"/>
 						<Button icon="sap-icon://refresh"
-							enabled="{ui>/bRealOData}"
 							press="onRefreshSalesOrdersList"/>
+						<Button enabled="{ui>/bRealOData}" icon="sap-icon://save"
+							press="onSaveSalesOrderList" tooltip="Save sales orders"/>
 					</content>
 					<dependents>
 						<Dialog id="createSalesOrderDialog" title="Create New Sales Order">
 							<buttons>
-								<Button text="Create" icon="sap-icon://create"
-									press="onCreateSalesOrder" type="Accept"/>
-								<Button text="Cancel"  icon="sap-icon://sys-cancel-2"
-									press="onCancelSalesOrder" type="Reject"/>
+								<Button icon="sap-icon://create" press="onCreateSalesOrder"
+									text="Create" type="Accept"/>
+								<Button icon="sap-icon://sys-cancel-2" press="onCancelSalesOrder"
+									text="Cancel" type="Reject"/>
 							</buttons>
 							<content>
-								<form:SimpleForm layout="ResponsiveGridLayout">
+								<form:SimpleForm editable="true" layout="ResponsiveGridLayout">
 									<form:content>
 										<!-- TODO types should be determined automatically from OData $metadata -->
-										<Label text="Buyer ID"/>
+										<Label labelFor="BuyerID" text="Buyer ID"/>
 										<!-- TODO Q: derive maxLength from type's constraints?! A: SmartField?! -->
-										<Input
-											maxLength="10" value="{
-												path: 'new>/BuyerID',
-												type: 'sap.ui.model.odata.type.String',
-												constraints: {maxLength: 10, nullable: false}}"
-											type="Text"
+										<Input id="BuyerID"
+											maxLength="10"
 											placeholder="Enter Buyer ID starting with '0'..."
 											showSuggestion="true"
-											suggestionItems="{/BusinessPartnerList}" >
+											type="Text"
+											value="{
+												path: 'new>/BuyerID',
+												type: 'sap.ui.model.odata.type.String',
+												constraints: {maxLength: 10, nullable: false}}">
 											<suggestionItems>
-												<core:Item text="{BusinessPartnerID}" />
+												<core:Item text="{BusinessPartnerID}"/>
 											</suggestionItems>
 										</Input>
 									</form:content>
@@ -113,6 +113,9 @@
 					<Text text="Supplier Company Name"/>
 				</Column>
 				<Column>
+					<Text text="Note"/>
+				</Column>
+				<Column>
 					<Text text="Delete Sales Order"/>
 				</Column>
 			</columns>
@@ -134,8 +137,11 @@
 						<Text text="{SO_2_BP/CompanyName}"/>
 					</cells>
 					<cells>
-						<Button text="Delete" press="onDeleteSalesOrder"
-							enabled="{ui>/bRealOData}"/>
+						<Input enabled="{ui>/bRealOData}" value="{Note}"/>
+					</cells>
+					<cells>
+						<Button enabled="{ui>/bRealOData}" press="onDeleteSalesOrder"
+							text="Delete"/>
 					</cells>
 				</ColumnListItem>
 			</items>
@@ -143,12 +149,17 @@
 		<VBox id="ObjectPage">
 			<Toolbar design="Transparent">
 				<content>
-					<Title level="H2" titleStyle="H2" text="Sales Order Details"/>
-					<Button icon="sap-icon://refresh" press="onRefreshSalesOrderDetails"/>
+					<Title level="H2" text="Sales Order Details" titleStyle="H2"/>
+					<Button icon="sap-icon://refresh"
+						press="onRefreshSalesOrderDetails"/>
+					<Button enabled="{ui>/bRealOData}" icon="sap-icon://save"
+						press="onSaveSalesOrder"/>
 				</content>
 			</Toolbar>
-			<form:SimpleForm id="SalesOrderForm" layout="ResponsiveGridLayout">
-				<form:content>
+			<form:SimpleForm layout="ResponsiveGridLayout">
+				<form:SimpleForm backgroundDesign="Transparent" editable="true" labelSpanM="4"
+					layout="ResponsiveGridLayout">
+					<core:Title text="Sales Order"/>
 					<Label text="Sales Order ID" />
 					<Text text="{SalesOrderID}" />
 					<Label text="Created At" />
@@ -157,11 +168,21 @@
 					<Text text="{ChangedAt}" />
 					<Label text="Lifecycle Status Desc" />
 					<Text text="{LifecycleStatusDesc}" />
-					<Label text="Note" />
-					<Text text="{Note}" />
-				</form:content>
+					<Label labelFor="Note" text="Note" />
+					<Input enabled="{ui>/bRealOData}" id="Note" value="{Note}" />
+				</form:SimpleForm>
+				<form:SimpleForm backgroundDesign="Transparent" binding="{SO_2_BP}"
+					editable="true" labelSpanM="4" layout="ResponsiveGridLayout">
+					<core:Title text="Business Partner"/>
+					<Label text="Business Partner ID" />
+					<Text text="{BusinessPartnerID}" />
+					<Label text="CompanyName" />
+					<Text text="{CompanyName}" />
+					<Label labelFor="BPPhoneNumber" text="PhoneNumber" />
+					<Input enabled="{ui>/bRealOData}" id="BPPhoneNumber" value="{PhoneNumber}" />
+				</form:SimpleForm>
 			</form:SimpleForm>
-			<Table id="SalesOrderLineItems" headerText="Sales Order Line Items"
+			<Table headerText="Sales Order Line Items" id="SalesOrderLineItems"
 				items="{SO_2_SOITEM}" mode="SingleSelectMaster"
 				selectionChange="onSalesOrderLineItemSelect">
 				<columns>
@@ -179,6 +200,9 @@
 					</Column>
 					<Column>
 						<Text text="Delivery Date"/>
+					</Column>
+					<Column>
+						<Text text="Note ({:= ${ui>/bRealOData} ? 'editable' : 'read-only'})"/>
 					</Column>
 				</columns>
 				<items>
@@ -198,17 +222,33 @@
 						<cells>
 							<Text text="{DeliveryDate}"/>
 						</cells>
+						<cells>
+							<Input editable="{ui>/bRealOData}" value="{Note}"/>
+						</cells>
 					</ColumnListItem>
 				</items>
 			</Table>
 		</VBox>
-		<List id="SupplierContactData"
-			headerText="Supplier Contact Information"
+		<VBox>
+			<Toolbar design="Transparent">
+				<content>
+					<Title level="H2" text="Supplier Details" titleStyle="H2"/>
+				</content>
+			</Toolbar>
+			<form:SimpleForm binding="{SOITEM_2_PRODUCT/PRODUCT_2_BP}" editable="true"
+				id="SupplierDetailsForm" layout="ResponsiveGridLayout">
+				<form:content>
+					<Label text="Supplier" />
+					<Text text="{CompanyName} {LegalForm}" />
+					<Label labelFor="PhoneNumber" text="Phone Number" />
+					<Input editable="{ui>/bRealOData}" id="PhoneNumber" value="{PhoneNumber}"/>
+				</form:content>
+			</form:SimpleForm>
+		</VBox>
+		<List headerText="Supplier Contact Information" id="SupplierContactData"
 			items="{SOITEM_2_PRODUCT/PRODUCT_2_BP/BP_2_CONTACT}">
-			<StandardListItem
-				title="{FirstName} {LastName} {DateOfBirth}"
-				description="{PhoneNumber}"
-				info="{EmailAddress}"/>
+			<StandardListItem description="{PhoneNumber}" info="{EmailAddress}"
+				title="{FirstName} {LastName} {DateOfBirth}"/>
 		</List>
 	</VBox>
 </mvc:View>

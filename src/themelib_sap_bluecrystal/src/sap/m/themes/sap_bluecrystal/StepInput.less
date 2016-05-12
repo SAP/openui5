@@ -1,0 +1,18 @@
+/* ============================================= */
+/* CSS for control sap.m/StepInput.control           */
+/* BlueCrystal theme                             */
+/* ============================================= */
+.sapMStepInput-CTX {
+  &:focus {
+    .sapMInput .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):not(.sapMStepInputReadOnly):not(.sapMStepInputDisabled) {
+      outline: 1px dotted @sapUiContentFocusColor;
+      outline-offset: -3px;
+      border: 1px solid @sapUiFieldBorderColor;
+    }
+  }
+  .sapMInput .sapMInputBaseInner:focus {
+    outline: 1px dotted @sapUiContentFocusColor;
+    outline-offset: -3px;
+    border: 1px solid @sapUiFieldBorderColor;
+  }
+}

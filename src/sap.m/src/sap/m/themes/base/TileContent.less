@@ -7,51 +7,23 @@
 	position: relative;
 }
 
-.sapUiMedia-Std-Desktop .sapMTileCnt.Auto.ft-Auto,
-.sapUiMedia-Std-Tablet .sapMTileCnt.Auto.ft-Auto,
-.sapMTileCnt.L.ft-Auto,
-.sapMTileCnt.M.ft-Auto {
-	height: 7rem;
-	min-width: 11.5rem;
-	max-width: 23.5rem;
-}
-
-.sapUiMedia-Std-Phone .sapMTileCnt.Auto.ft-Auto,
-.sapMTileCnt.S.ft-Auto {
-	height: 5.375rem;
-	min-width: 9.25rem;
-	max-width: 19rem;
+.sapMTileCnt.ft-Auto {
+	height: 6.375rem;
+	min-width: 11rem;
+	max-width: 22.5rem;
 }
 
 
 /* TwoByOne size */
-.sapUiMedia-Std-Desktop .sapMTileCnt.Auto.ft-TwoByOne,
-.sapUiMedia-Std-Tablet .sapMTileCnt.Auto.ft-TwoByOne,
-.sapMTileCnt.L.ft-TwoByOne,
-.sapMTileCnt.M.ft-TwoByOne {
-	height: 7rem;
-	width: 23.5rem;
-}
-
-.sapUiMedia-Std-Phone .sapMTileCnt.Auto.ft-TwoByOne,
-.sapMTileCnt.S.ft-TwoByOne {
-	height: 5.375rem;
-	width: 19rem;
+.sapMTileCnt.ft-TwoByOne {
+	height: 6.375rem;
+	width: 22.5rem;
 }
 
 /* OneByOne size */
-.sapUiMedia-Std-Desktop .sapMTileCnt.Auto.ft-OneByOne,
-.sapUiMedia-Std-Tablet .sapMTileCnt.Auto.ft-OneByOne,
-.sapMTileCnt.L.ft-OneByOne,
-.sapMTileCnt.M.ft-OneByOne {
-	height: 7rem;
-	width: 11.5rem;
-}
-
-.sapUiMedia-Std-Phone .sapMTileCnt.Auto.ft-OneByOne,
-.sapMTileCnt.S.ft-OneByOne {
-	height: 5.375rem;
-	width: 9.25rem;
+.sapMTileCnt.ft-OneByOne {
+	height: 6.375rem;
+	width: 11rem;
 }
 
 /* Footer CSS */
@@ -59,68 +31,43 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	margin-left: 0.5rem;
-	margin-right: 0.5rem;
 	text-align: right;
 	position: absolute;
-	bottom: 0.5rem;
-	right: 0rem;
-	left: 0rem;
+	right: 0;
+	left: 0;
 	box-sizing: border-box;
+
+	height: 1rem;
+	bottom: 1rem;
+	margin-left: 1rem;
+	margin-right: 1rem;
+	line-height: 1rem;
 }
 
 html[dir=rtl] .sapMTileCntFtrTxt {
 	text-align: left;
 }
 
-.sapUiMedia-Std-Phone .sapMTileCntFtrTxt.Auto,
-.sapMTileCntFtrTxt.S {
-	font-size: 0.75rem;
-	line-height: 0.75rem;
-	height: 0.875rem;
-}
-
-.sapUiMedia-Std-Desktop .sapMTileCntFtrTxt.Auto,
-.sapMTileCntFtrTxt.L,
-.sapUiMedia-Std-Tablet .sapMTileCntFtrTxt.Auto,
-.sapMTileCntFtrTxt.M {
-	font-size: 0.875rem;
-	line-height: 0.875rem;
-	height: 1rem;
-}
-
 /* Content */
 .sapMTileCntContent {
 	overflow: hidden;
-	padding-left: 0.5rem;
-	padding-right: 0.5rem;
 	display: inline-block;
 	width: 100%;
 	box-sizing: border-box;
 }
 
-.sapMTileCntContent > .sapMTcInnerMarker{
+.sapMTileCntContent > .sapMTcInnerMarker {
 	display: inline-block;
 	vertical-align: bottom;
 	line-height: normal;
 }
 
-.sapUiMedia-Std-Desktop .sapMTileCntContent.Auto,
-.sapUiMedia-Std-Tablet .sapMTileCntContent.Auto,
-.sapMTileCntContent.L,
-.sapMTileCntContent.M {
-	height: 4.5rem;
-	margin-bottom: 0.5rem;
-	margin-top: 0.5rem;
-	line-height: 4.5rem;
-}
-
-.sapUiMedia-Std-Phone .sapMTileCntContent.Auto,
-.sapMTileCntContent.S {
-	height: 3.5rem;
+.sapMTileCntContent {
+	height: 3.875rem;
 	margin-bottom: 0.25rem;
 	margin-top: 0.25rem;
-	line-height: 3.5rem;
+	padding-left: 1rem;
+	padding-right: 1rem;
 }
 
 .sapMTileCnt + .sapMTileCnt {
@@ -129,4 +76,52 @@ html[dir=rtl] .sapMTileCntFtrTxt {
 
 .sapMTileCntContent > .sapMNwC {
 	background-color: inherit;
+}
+
+.sapMTileCnt.News {
+	height: 6.125rem;
+	margin-top: 0.25rem;
+
+	.sapMTileCntContent > .sapMTcInnerMarker {
+		vertical-align: top;
+	}
+}
+
+/* BREAKPOINT FOR SMALL PHONES */
+@media screen and (max-width: 374px) {
+	.sapMTileCnt.ft-Auto {
+		height: 5.5rem;
+		min-width: 9.25rem;
+		max-width: 19rem;
+	}
+
+	.sapMTileCnt.ft-TwoByOne {
+		height: 5.5rem;
+		width: 19rem;
+	}
+
+	.sapMTileCnt.ft-OneByOne {
+		height: 5.5rem;
+		width: 9.25rem;
+	}
+
+	.sapMTileCntFtrTxt {
+		height: 0.938rem; /*according to spec but doesn't sum up to max tile height of 9.25rem*/
+		bottom: 0.625rem;
+		margin-left: 0.625rem;
+		margin-right: 0.625rem;
+	}
+
+	.sapMTileCntContent {
+		height: 3.438rem;
+		line-height: 3.438rem;
+		margin-bottom: 0.25rem;
+		margin-top: 0.25rem;
+		padding-left: 0.625rem;
+		padding-right: 0.625rem;
+	}
+
+	.sapMTileCnt.News {
+		height: 5.25rem;
+	}
 }

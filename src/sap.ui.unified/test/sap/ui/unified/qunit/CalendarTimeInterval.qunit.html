@@ -268,21 +268,15 @@
 			});
 
 			test("change block", function() {
-				qutils.triggerEvent("click", "Cal1--Head-prev");
+				ok(jQuery("#Cal1--Head-prev").hasClass("sapUiCalDsbl"), "Calendar1: previous button disabled");
+				ok(!jQuery("#Cal1--Head-next").hasClass("sapUiCalDsbl"), "Calendar1: next button enabled");
+				qutils.triggerEvent("click", "Cal1--Head-next");
+				ok(!jQuery("#Cal1--Head-prev").hasClass("sapUiCalDsbl"), "Calendar1: previous button enabled");
+				ok(jQuery("#Cal1--Head-next").hasClass("sapUiCalDsbl"), "Calendar1: next button disabled");
 				var $DatesRow = sap.ui.getCore().byId("Cal1").getAggregation("datesRow").$();
 				var aDays = $DatesRow.find(".sapUiCalItem");
-				equal(jQuery(aDays[0]).text(), "1", "Calendar1: first displayed day unchanged");
-				equal(jQuery(aDays[0]).attr("tabindex"), "0", "Calendar1: 1. displayed day is now focused");
-				qutils.triggerEvent("click", "Cal1--Head-next");
-				$DatesRow = sap.ui.getCore().byId("Cal1").getAggregation("datesRow").$();
-				aDays = $DatesRow.find(".sapUiCalItem");
 				equal(jQuery(aDays[0]).text(), "14", "Calendar1: first displayed day");
-				equal(jQuery(aDays[5]).attr("tabindex"), "0", "Calendar1: 1. displayed day is focused");
-				qutils.triggerEvent("click", "Cal1--Head-next");
-				$DatesRow = sap.ui.getCore().byId("Cal1").getAggregation("datesRow").$();
-				aDays = $DatesRow.find(".sapUiCalItem");
-				equal(jQuery(aDays[0]).text(), "14", "Calendar1: first displayed day unchanged");
-				equal(jQuery(aDays[17]).attr("tabindex"), "0", "Calendar1: last displayed day is focused");
+				equal(jQuery(aDays[14]).attr("tabindex"), "0", "Calendar1: 14. displayed day is focused");
 				qutils.triggerEvent("click", "Cal1--Head-B0");
 				ok(jQuery("#Cal1--DatesRow").get(0), "Calendar1: Day picker still rendered after closing");
 				ok(!jQuery(jQuery("#Cal1--DatesRow").get(0)).is(":visible"), "Calendar1: Day picker not visible after closing");
@@ -356,7 +350,11 @@
 			});
 
 			test("change block", function() {
+				ok(jQuery("#Cal1--Head-prev").hasClass("sapUiCalDsbl"), "Calendar1: previous button disabled");
+				ok(!jQuery("#Cal1--Head-next").hasClass("sapUiCalDsbl"), "Calendar1: next button enabled");
 				qutils.triggerEvent("click", "Cal1--Head-next");
+				ok(!jQuery("#Cal1--Head-prev").hasClass("sapUiCalDsbl"), "Calendar1: previous button enabled");
+				ok(jQuery("#Cal1--Head-next").hasClass("sapUiCalDsbl"), "Calendar1: next button disabled");
 				var $MP = sap.ui.getCore().byId("Cal1").getAggregation("monthPicker").$();
 				var aMonths = $MP.find(".sapUiCalItem");
 				equal(jQuery(aMonths[0]).text(), "Jul", "Calendar1: first displayed month");

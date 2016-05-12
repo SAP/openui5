@@ -32,14 +32,14 @@ sap.ui.define(['jquery.sap.global',
 			"sap.ui.table.SelectionBehavior",
 			"sap.ui.table.SelectionMode",
 			"sap.ui.table.SortOrder",
-			"sap.ui.table.VisibleRowCountMode"
+			"sap.ui.table.VisibleRowCountMode",
+			"sap.ui.table.SharedDomRef"
 		],
 		interfaces: [],
 		controls: [
 			"sap.ui.table.AnalyticalColumnMenu",
 			"sap.ui.table.AnalyticalTable",
 			"sap.ui.table.ColumnMenu",
-			"sap.ui.table.DataTable",
 			"sap.ui.table.Table",
 			"sap.ui.table.TreeTable"
 		],
@@ -217,6 +217,30 @@ sap.ui.define(['jquery.sap.global',
 	};
 
 	/**
+	 * Shared DOM Reference IDs of the table.
+	 *
+	 * Contains IDs of shared DOM references, which should be accessible to inheriting controls via getDomRef() function.
+	 *
+	 * @version ${version}
+	 * @enum {string}
+	 * @public
+	 */
+	sap.ui.table.SharedDomRef = {
+
+		/**
+		 * The element id of the Horizontal Scroll Bar of the sap.ui.table.Table.
+		 * @public
+		 */
+		HorizontalScrollBar : "hsb",
+
+		/**
+		 * The element id of the Vertical Scroll Bar of the sap.ui.table.Table.
+		 * @public
+		 */
+		VerticalScrollBar : "vsb"
+	};
+
+	/**
 	 * Details about the group event to distinguish between different actions associated with grouping
 	 * @enum {string}
 	 * @public
@@ -262,9 +286,6 @@ sap.ui.define(['jquery.sap.global',
 
 	// map the new Column to the old ColumnHeader
 	sap.ui.table.ColumnHeader = sap.ui.table.Column;
-
-	// map the SelectionMode All to Multi
-	sap.ui.table.SelectionMode.All = sap.ui.table.SelectionMode.Multi;
 
 	//factory for table to create labels an textviews to be overwritten by commons and mobile library
 	if (!sap.ui.table.TableHelper) {

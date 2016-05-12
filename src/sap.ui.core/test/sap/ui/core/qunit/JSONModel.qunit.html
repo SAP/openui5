@@ -28,6 +28,7 @@
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 <![endif]-->
 <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+<script type="text/javascript" src="JSONModelFakeService.js"></script>
 
 <!-- Test functions -->
 <script language="javascript">
@@ -302,24 +303,97 @@
 		equal(oLabel.getText(), "rat", "new text value from model");
 	});
 
+	test("test JSONModel loadData: sync",function(){
+		var testModel = new sap.ui.model.json.JSONModel();
+		testModel.loadData("testdata.json", null, false);
+		equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
+		equal(testModel.getProperty("/bar"), "ABCDEFG");
+		equal(testModel.getProperty("/baz")[1], 97);
+	});
+
 	asyncTest("test JSONModel loadData",function(){
 		var testModel = new sap.ui.model.json.JSONModel();
 		testModel.loadData("testdata.json");
 		testModel.attachRequestCompleted(function() {
-			start();          // resume normal testing
 			equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
 			equal(testModel.getProperty("/bar"), "ABCDEFG");
 			equal(testModel.getProperty("/baz")[1], 97);
+			start();          // resume normal testing
+		});
+	});
+
+	asyncTest("test JSONModel loadData: multiple requests - merge",function(){
+		var testModel = new sap.ui.model.json.JSONModel();
+		var loadCount = 0;
+		testModel.loadData("testdata.json");
+		testModel.loadData("testdata2.json",null,true,null,true);
+		testModel.attachRequestCompleted(function() {
+			loadCount++;
+			if (loadCount == 1) {
+				// resume normal testing
+				equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
+				equal(testModel.getProperty("/bar"), "ABCDEFG");
+				equal(testModel.getProperty("/baz")[1], 97);
+			} else {
+				equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
+				equal(testModel.getProperty("/bar"), "ABCDEFGHIJ");
+				equal(testModel.getProperty("/baz")[1], 97);
+				equal(testModel.getProperty("/merged"), true);
+				start();
+			}
+		});
+	});
+
+	asyncTest("test JSONModel loadData: multiple requests",function(){
+		var testModel = new sap.ui.model.json.JSONModel();
+		var loadCount = 0;
+		testModel.loadData("testdata.json");
+		testModel.loadData("testdata2.json");
+		testModel.attachRequestCompleted(function() {
+			loadCount++;
+			if (loadCount == 1) {
+				// resume normal testing
+				equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
+				equal(testModel.getProperty("/bar"), "ABCDEFG");
+				equal(testModel.getProperty("/baz")[1], 97);
+			} else {
+				ok(!testModel.getProperty("/foo"), "deleted as no merge");
+				equal(testModel.getProperty("/bar"), "ABCDEFGHIJ");
+				ok(!testModel.getProperty("/baz"), "deleted as no merge");
+				equal(testModel.getProperty("/merged"), true);
+				start();
+			}
+		});
+	});
+
+	asyncTest("test JSONModel loadData: multiple requests with merge: 1. request slow",function(){
+		var testModel = new sap.ui.model.json.JSONModel();
+		var loadCount = 0;
+		testModel.loadData("/fake/testdata3.json");
+		testModel.loadData("/fake/testdata4.json");
+		testModel.attachRequestCompleted(function(oInfo) {
+			loadCount++;
+			if (loadCount == 1) {
+				ok(oInfo.getParameter("url") == "/fake/testdata3.json", "first request");
+			} else {
+				// resume normal testing
+				ok(oInfo.getParameter("url") == "/fake/testdata4.json", "second request");
+				equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
+				equal(testModel.getProperty("/bar"), "ABCDEFGHIJ");
+				equal(testModel.getProperty("/baz")[1], 97);
+				equal(testModel.getProperty("/merged"), true);
+				start();
+			}
 		});
 	});
 
 	asyncTest("test JSONModel loadData constructor",function(){
 		var testModel = new sap.ui.model.json.JSONModel("testdata.json");
 		testModel.attachRequestCompleted(function() {
-			start();          // resume normal testing
 			equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
 			equal(testModel.getProperty("/bar"), "ABCDEFG");
 			equal(testModel.getProperty("/baz")[1], 97);
+			start();          // resume normal testing
 		});
 	});
 

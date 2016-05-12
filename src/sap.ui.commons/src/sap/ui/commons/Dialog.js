@@ -25,6 +25,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 *
 		 * @constructor
 		 * @public
+		 * @deprecated Since version 1.38. Instead, use the <code>sap.m.Dialog</code> control.
 		 * @alias sap.ui.commons.Dialog
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
@@ -284,8 +285,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		Dialog.prototype.init = function () {
 
 			this.oPopup = new Popup(this, true, true);
-			var eDock = Popup.Dock;
-			this.oPopup.setPosition(eDock.CenterCenter, eDock.CenterCenter, window);
 
 			// the technical minWidth, not the one set via API; will be calculated after rendering
 			this._minWidth = 64;
@@ -298,6 +297,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._mParameters.that = this;
 			this._mParameters.firstFocusable = this.getId() + "-fhfe";
 			this._mParameters.lastFocusable = this.getId() + "-fhee";
+			this._fnOnResizeRecenter = jQuery.proxy(this._onResize, this);
 		};
 
 		Dialog.prototype.setInitialFocus = function (sId) {
@@ -404,10 +404,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 				this.oPopup.attachEvent("opened", this.handleOpened, this);
 				this.oPopup.attachEvent("closed", this.handleClosed, this);
+
 				this.oPopup.setModal(this.getModal());
 				this.oPopup.setAutoClose(this.getAutoClose());
 				this.oPopup.open(400);
 				this._bOpen = true;
+				this._registerContentResizeHandler();
 			}
 		};
 
@@ -502,6 +504,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 */
 		Dialog.prototype.handleClosed = function () {
 			this.oPopup.detachEvent("closed", this.handleClosed, this);
+			this._deregisterContentResizeHandler();
 
 			this.fireClosed(this._oRect);
 			this.close();
@@ -533,15 +536,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 
 		Dialog.prototype.setTitle = function (sText) {
-			if (this.oPopup.getOpenState() === sap.ui.core.OpenState.OPENING) {
-				// if the title is changed while the dialog opens a re-rendering
-				// has to be triggered to apply the position of the dialog's popup
-				// properly
-				this.setProperty("title", sText, /*bSuppressInvalidate*/ false);
-			} else {
-				this.setProperty("title", sText, /*bSuppressInvalidate*/ true);
-				this.$("lbl").text(sText);
-			}
+
+			this.setProperty("title", sText, true); // last parameter avoids invalidation
+			this.$("lbl").text(sText);
 
 			return this;
 		};
@@ -559,6 +556,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			// just to ensure that any attached event is being detached
 			this.oPopup.detachEvent("opened", this.handleOpened, this);
 			this.oPopup.detachEvent("closed", this.handleClosed, this);
+			this._deregisterContentResizeHandler();
 
 			this.oPopup.destroy();
 			if (bWasOpen) {
@@ -569,6 +567,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			jQuery.sap.clearDelayedCall(this._sDelayedCall);
 			this._sDelayedCall = null;
 			delete this._mParameters;
+			this._fnOnResizeRecenter = null;
 		};
 
 		/**
@@ -912,9 +911,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 
 			event = event || window.event;
+			this._deregisterContentResizeHandler();
 
 			if (this.sDragMode == "resize") {
-
 				var deltaX = event.screenX - this.startDragX || 0;
 				var deltaY = event.screenY - this.startDragY || 0;
 
@@ -964,6 +963,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 
 			event.cancelBubble = true;
+			this._registerContentResizeHandler();
 			return false;
 		};
 
@@ -1015,6 +1015,33 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.oPopup.getAutoClose();
 		};
 
+		/**
+		*
+		* @private
+		*/
+		Dialog.prototype._deregisterContentResizeHandler = function () {
+			if (this._sContentResizeListenerId) {
+				sap.ui.core.ResizeHandler.deregister(this._sContentResizeListenerId);
+				this._sContentResizeListenerId = null;
+			}
+		};
+
+		/**
+		 *
+		 * @private
+		 */
+		Dialog.prototype._registerContentResizeHandler = function() {
+			if (!this._sContentResizeListenerId) {
+				this._sContentResizeListenerId = sap.ui.core.ResizeHandler.register(this.getDomRef("cont"), this._fnOnResizeRecenter);
+			}
+		};
+
+		Dialog.prototype._onResize = function() {
+			var eDock = Popup.Dock;
+			if (this.oPopup) {
+				this.oPopup.setPosition(eDock.CenterCenter, eDock.CenterCenter, window);
+			}
+		};
 
 		return Dialog;
 

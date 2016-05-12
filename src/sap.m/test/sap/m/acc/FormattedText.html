@@ -1,0 +1,43 @@
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Accessibility test for the FormattedText control</title>
+<script src="../../../../resources/sap-ui-core.js"
+	type="text/javascript"
+	id="sap-ui-bootstrap"
+	data-sap-ui-libs="sap.m"
+	data-sap-ui-theme="sap_bluecrystal">
+</script>
+
+<script type="text/javascript">
+	var fnOriginalSetHtmlText;
+
+	var htmlText = '<h1>Header 1</h1>\n';
+	htmlText += '<h3>Header 3</h3>\n';
+	// link
+	htmlText += '<p><a HREF="//www.sap.com">link to sap.com</a> - links open in a new window.\n';
+	// list
+	htmlText += '<p>List:<ul>\n';
+	htmlText += '<li>list item 1</li>\n';
+	htmlText += '<li>list item 2</li>\n';
+	htmlText += '</ul>\n';
+	// dl - dt - dd
+	htmlText += '<dl><dt>Definition list:</dt><dd>This is a description of the definition list.</dd>\n';
+	htmlText += '<br><cite>Cite is a reference to a source.</cite>\n';
+
+	var oFT = new sap.m.FormattedText("FormattedText", { htmlText: htmlText }).addStyleClass("sapUiLargeMargin");
+
+	var page = new sap.m.Page({
+		title : "sap.m.FormattedText Control",
+		enableScrolling : true,
+		content : new sap.m.VBox({ items: [
+			oFT
+		]})
+	});
+
+	new sap.m.App().addPage(page).placeAt("body");
+</script>
+</head>
+<body id="body" class="sapUiBody" role="application">
+</body>
+</html>

@@ -5574,6 +5574,18 @@ if (typeof sinon == "undefined") {
                 }
 
                 if (typeof oldDone != "function") {
+                    // ##### BEGIN OF MODIFICATION BY SAP
+                    // @see https://github.com/sinonjs/sinon-test/issues/6
+                    if (result && typeof result.then === "function") {
+                        return result.then(function (result) {
+                            sandbox.verifyAndRestore();
+                            return result;
+                        }, function (exception) {
+                            sandbox.restore();
+                            throw exception;
+                        });
+                    }
+                    // ##### END OF MODIFICATION BY SAP
                     if (typeof exception !== "undefined") {
                         sandbox.restore();
                         throw exception;

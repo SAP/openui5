@@ -13,9 +13,11 @@ sap.ui.define([
 	"sap/ui/layout/GridData",
 	"sap/m/Button",
 	"sap/ui/Device",
+	"./ObjectPageLazyLoader",
+	"sap/ui/core/StashedControlSupport",
 	"./library"
 ], function (CustomData, Grid, ObjectPageSectionBase, ObjectPageSubSectionLayout,
-			 ObjectPageSubSectionMode, BlockBase, GridData, Button, Device, library) {
+			 ObjectPageSubSectionMode, BlockBase, GridData, Button, Device, ObjectPageLazyLoader, StashedControlSupport, library) {
 	"use strict";
 
 	/**
@@ -127,10 +129,18 @@ sap.ui.define([
 		return this.getAggregation("_grid");
 	};
 
+	ObjectPageSubSection.prototype._unStashControls = function () {
+		StashedControlSupport.getStashedControls(this.getId()).forEach(function (oControl) {
+			oControl.setStashed(false);
+		});
+	};
+
 	ObjectPageSubSection.prototype.connectToModels = function () {
 		var aBlocks = this.getBlocks() || [],
 			aMoreBlocks = this.getMoreBlocks() || [],
 			sCurrentMode = this.getMode();
+
+		this._unStashControls();
 
 		aBlocks.forEach(function (oBlock) {
 			if (oBlock instanceof BlockBase) {
@@ -508,22 +518,33 @@ sap.ui.define([
 		return this._aAggregationProxy[sAggregationName];
 	};
 
-	ObjectPageSubSection.prototype._setAggregation = function (sAggregationName, aValue) {
+	ObjectPageSubSection.prototype._setAggregation = function (sAggregationName, aValue, bSuppressInvalidate) {
 		this._aAggregationProxy[sAggregationName] = aValue;
-		this._notifyObjectPageLayout();
-		this.invalidate();
+		if (bSuppressInvalidate !== true){
+			this._notifyObjectPageLayout();
+			this.invalidate();
+		}
 		return this._aAggregationProxy[sAggregationName];
 	};
 
-	ObjectPageSubSection.prototype.addAggregation = function (sAggregationName, oObject) {
+	ObjectPageSubSection.prototype.addAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
 		var aAggregation;
+
+		if (oObject instanceof ObjectPageLazyLoader) {
+			oObject.getContent().forEach(function (oControl) {
+				this.addAggregation(sAggregationName, oControl, true);
+			}, this);
+
+			this.invalidate();
+			return this;
+		}
 
 		if (this.hasProxy(sAggregationName)) {
 			aAggregation = this._getAggregation(sAggregationName);
 			aAggregation.push(oObject);
-			this._setAggregation(aAggregation);
+			this._setAggregation(sAggregationName, aAggregation, bSuppressInvalidate);
 
-			if (oObject instanceof BlockBase) {
+			if (oObject instanceof BlockBase || oObject instanceof ObjectPageLazyLoader) {
 				oObject.setParent(this); //let the block know of its parent subsection
 			}
 
@@ -740,7 +761,7 @@ sap.ui.define([
 	};
 
 	ObjectPageSubSection.prototype.getVisibleBlocksCount = function () {
-		var iVisibleBlocks = 0;
+		var iVisibleBlocks = StashedControlSupport.getStashedControls(this.getId()).length;
 
 		(this.getBlocks() || []).forEach(function (oBlock) {
 			if (oBlock.getVisible && !oBlock.getVisible()) {

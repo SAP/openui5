@@ -1,0 +1,17 @@
+<mvc:View
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<VBox class="sapUiLargeMargin">
+		<FormattedText
+			htmlText='&lt;h3&gt;subheader&lt;/h3&gt;
+				&lt;p&gt;link: &lt;a href="//www.sap.com" style="color:green; font-weight:600;"&gt;link to sap.com&lt;/a&gt; - links open in a new window.&lt;/p&gt;
+				&lt;p&gt;paragraph: &lt;strong&gt;strong&lt;/strong&gt; and &lt;em&gt;emphasized&lt;/em&gt;.&lt;/p&gt;
+				&lt;p&gt;list:&lt;/p&gt;
+				&lt;ul&gt;&lt;li&gt;list item 1&lt;/li&gt;&lt;li&gt;list item 2&lt;ul&gt;&lt;li&gt;sub item 1&lt;/li&gt;&lt;li&gt;sub item 2&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;
+				&lt;p&gt;pre:&lt;/p&gt;&lt;pre&gt;abc    def    ghi&lt;/pre&gt;
+				&lt;p&gt;code: &lt;code&gt;var el = document.getElementById("myId");&lt;/code&gt;&lt;/p&gt;
+				&lt;p&gt;cite: &lt;cite&gt;a reference to a source&lt;/cite&gt;&lt;/p&gt;
+				&lt;dl&gt;&lt;dt&gt;definition:&lt;/dt&gt;&lt;dd&gt;definition list of terms and descriptions&lt;/dd&gt;'/>
+	</VBox>
+</mvc:View>

@@ -129,7 +129,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './ListItemBase', './
 				ontouchend: this.ontouchend,
 				ontouchcancel: this.ontouchcancel,
 				onsaptabnext: this.onsaptabnext,
-				onsaptabprevious: this.onsaptabprevious
+				onsaptabprevious: this.onsaptabprevious,
+				onsapup: this.onsapup,
+				onsapdown: this.onsapdown
 			}, this).setParent(this, null, true);
 		}
 

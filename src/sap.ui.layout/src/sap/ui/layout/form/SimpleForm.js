@@ -285,7 +285,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 			 * @since 1.32.0
 			 */
 			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
-		}
+		},
+		designTime: true
 	}});
 
 	SimpleForm.prototype.init = function() {
@@ -614,7 +615,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 				oOldFormContainer = oOldElement.getParent();
 				iContainerIndex = oForm.indexOfFormContainer(oOldFormContainer);
 				aFormContainers = oForm.getFormContainers();
-				oFormContainer = aFormContainers[iContainerIndex - 1];
+				if (iContainerIndex == 0) {
+					// it's the first container - insert new container before
+					oFormContainer = _createFormContainer(this);
+					oForm.insertFormContainer(oFormContainer, iContainerIndex);
+					this._changedFormContainers.push(oFormContainer);
+				} else {
+					oFormContainer = aFormContainers[iContainerIndex - 1];
+				}
 				oFormElement = _addFormElement(this, oFormContainer, oElement);
 			} else if (oOldElement.getMetadata().isInstanceOf("sap.ui.core.Label")) {
 				// insert new form element before this one
@@ -779,10 +787,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 				var iElementIndex = oFormContainer.indexOfFormElement(oFormElement);
 				if (iElementIndex == 0) {
 					// its the first Element of the container -> just remove label
-					if (!oFormElement.getFields()) {
+					if (oFormElement.getFields().lenght == 0) {
 						// FormElement has no fields -> just delete
 						oFormContainer.removeFormElement(oFormElement);
 						oFormElement.destroy();
+						if (oFormContainer.getFormElements().length == 0) {
+							oForm.removeFormContainer(oFormContainer);
+							oFormContainer.destroy();
+						}
 					} else {
 						_markFormElementForUpdate(this._changedFormElements, oFormElement);
 					}
@@ -797,15 +809,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 					_markFormElementForUpdate(this._changedFormElements, oPrevFormElement);
 					oFormContainer.removeFormElement(oFormElement);
 					oFormElement.destroy();
+					if (oFormContainer.getFormElements().length == 0) {
+						oForm.removeFormContainer(oFormContainer);
+						oFormContainer.destroy();
+					}
 				}
 			} else { // remove field
 				oFormElement = oElement.getParent();
 				oFormElement.removeField(oElement);
-				if (!oFormElement.getFields() && !oFormElement.getLabel()) {
+				if (oFormElement.getFields().length == 0 && !oFormElement.getLabel()) {
 					// FormElement has no more fields and no label -> just delete
 					oFormContainer = oFormElement.getParent();
 					oFormContainer.removeFormElement(oFormElement);
 					oFormElement.destroy();
+					if (oFormContainer.getFormElements().length == 0) {
+						oForm.removeFormContainer(oFormContainer);
+						oFormContainer.destroy();
+					}
 				} else {
 					_markFormElementForUpdate(this._changedFormElements, oFormElement);
 				}

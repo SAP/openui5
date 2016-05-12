@@ -10,15 +10,17 @@ sap.ui.define([
 		'sap/m/FlexItemData',
 		'sap/m/HBox',
 		'sap/m/MessageBox',
-		'sap/ui/core/mvc/View',
+		'sap/ui/core/mvc/View', // sap.ui.view()
+		'sap/ui/core/mvc/ViewType',
 		'sap/ui/core/sample/common/Component',
 		'sap/ui/core/util/MockServer',
+		'sap/ui/model/BindingMode',
 		'sap/ui/model/json/JSONModel',
 		'sap/ui/model/odata/AnnotationHelper',
 		'sap/ui/model/odata/v2/ODataModel',
 		'jquery.sap.script'
-	], function(jQuery, FlexItemData, HBox, MessageBox, View, BaseComponent, MockServer, JSONModel,
-		AnnotationHelper, ODataModel/*, jQuerySapScript*/) {
+	], function(jQuery, FlexItemData, HBox, MessageBox, View, ViewType, BaseComponent, MockServer,
+		BindingMode, JSONModel, AnnotationHelper, ODataModel/*, jQuerySapScript*/) {
 	"use strict";
 
 	var Component = BaseComponent.extend("sap.ui.core.sample.ViewTemplate.types.Component", {
@@ -34,7 +36,6 @@ sap.ui.define([
 			if (bRealOData) {
 				sUri = this.proxy(sUri);
 			} else {
-				jQuery.sap.require("sap.ui.core.util.MockServer");
 				this.aMockServers.push(new MockServer({rootUri: sUri}));
 				this.aMockServers[0].simulate(sMockServerBaseUri + "metadata.xml", {
 					sMockdataBaseUrl: sMockServerBaseUri
@@ -44,7 +45,7 @@ sap.ui.define([
 
 			oModel = new ODataModel(sUri, {
 				annotationURI : sMockServerBaseUri + "annotations.xml",
-				defaultBindingMode : sap.ui.model.BindingMode.TwoWay
+				defaultBindingMode : BindingMode.TwoWay
 			});
 
 			oModel.getMetaModel().loaded().then(function () {
@@ -62,7 +63,7 @@ sap.ui.define([
 								models : {meta : oMetaModel}
 							}
 						},
-						type : sap.ui.core.mvc.ViewType.XML,
+						type : ViewType.XML,
 						viewName : "sap.ui.core.sample.ViewTemplate.types.Types"
 					});
 
@@ -70,7 +71,7 @@ sap.ui.define([
 				oLayout.addItem(oView);
 			}, function (oError) {
 				MessageBox.alert(oError.message, {
-					icon : sap.m.MessageBox.Icon.ERROR,
+					icon : MessageBox.Icon.ERROR,
 					title : "Error"});
 			});
 			return oLayout;

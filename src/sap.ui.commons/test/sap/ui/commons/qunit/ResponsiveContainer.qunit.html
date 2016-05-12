@@ -58,6 +58,11 @@
 			}
 		});
 
+		QUnit.test("Inheritance", function (assert) {
+			var oFirstRange = this.oRC.getRanges()[0];
+			assert.strictEqual(oFirstRange.getMetadata().getParent().getName(), "sap.ui.core.Element", "'sap.ui.commons.ResponsiveContainerRange' inherits correctly");
+		});
+
 		QUnit.test("Control is rendered correctly", function (assert){
 			var $hiddenDiv = this.oRC.$().find("> div");
 			var aRangeDivs = $hiddenDiv.find("> div");

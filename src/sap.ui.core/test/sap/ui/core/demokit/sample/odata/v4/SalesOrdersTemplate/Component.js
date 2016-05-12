@@ -9,13 +9,14 @@
  */
 sap.ui.define([
 	"sap/m/HBox",
-	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/View", // sap.ui.view()
+	"sap/ui/core/mvc/ViewType",
 	"sap/ui/core/sample/common/Component",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/sinon"
-], function (HBox, View, BaseComponent, JSONModel, ODataModel, TestUtils, sinon) {
+], function (HBox, View, ViewType, BaseComponent, JSONModel, ODataModel, TestUtils, sinon) {
 	"use strict";
 
 	return BaseComponent.extend("sap.ui.core.sample.odata.v4.SalesOrdersTemplate.Component", {
@@ -24,7 +25,7 @@ sap.ui.define([
 		},
 
 		createContent : function () {
-			var bHasOwnProxy = this.proxy !== sap.ui.core.sample.common.Component.prototype.proxy,
+			var bHasOwnProxy = this.proxy !== BaseComponent.prototype.proxy,
 				oLayout = new HBox(),
 				oMetaModel,
 				oModel = this.getModel(),
@@ -36,7 +37,11 @@ sap.ui.define([
 
 			if (oModel.sServiceUrl !== sServiceUrl) {
 				//replace model from manifest in case of proxy
-				oModel = new ODataModel(sServiceUrl);
+				oModel.destroy();
+				oModel = new ODataModel({
+					serviceUrl : sServiceUrl,
+					synchronizationMode : "None"
+				});
 				this.setModel(oModel);
 			}
 			oMetaModel = oModel.getMetaModel();
@@ -71,7 +76,7 @@ sap.ui.define([
 							}
 						}
 					},
-					type : sap.ui.core.mvc.ViewType.XML,
+					type : ViewType.XML,
 					viewName : "sap.ui.core.sample.odata.v4.SalesOrdersTemplate.Main"
 				}));
 			});

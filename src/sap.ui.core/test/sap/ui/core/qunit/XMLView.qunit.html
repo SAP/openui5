@@ -35,6 +35,7 @@ sap.ui.core.mvc.Controller</title>
 // FIXME: the following tests will fail with PhantomJS => check how to renable them
 
 	jQuery.sap.require("sap.ui.core.mvc.View");
+	jQuery.sap.require("sap.ui.core.mvc.XMLView");
 
 	var oConfig = {
 		viewClassName : "sap.ui.core.mvc.XMLView",
@@ -144,6 +145,29 @@ sap.ui.core.mvc.Controller</title>
 		});
 	});
 
+	QUnit.test("invisible control", function(assert) {
+		// load and place view, force rendering
+		var oView = sap.ui.xmlview('example.mvc.test').placeAt('content');
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oView.byId("myPanel").getDomRef(), "panel rendered");
+		oView.byId("myPanel").setVisible(false);
+		sap.ui.getCore().applyChanges();
+
+		assert.notOk(oView.byId("myPanel").getDomRef(), "panel hidden");
+		oView.setVisible(false);
+		sap.ui.getCore().applyChanges();
+		oView.setVisible(true);
+		// DO NOT sap.ui.getCore().applyChanges(); to create scenario circumstances
+
+		assert.ok(oView.getDomRef(), "view rendered");
+		assert.notOk(oView.byId("myPanel").getDomRef(), "panel not rendered");
+
+		oView.byId("myPanel").setVisible(true);
+		sap.ui.getCore().applyChanges();
+		assert.ok(oView.byId("myPanel").getDomRef(), "panel rendered");
+	});
+
 	QUnit.test("with custom RenderManager", function(assert) {
 
 		// load view, embed it in a Panel and force rendering
@@ -173,6 +197,85 @@ sap.ui.core.mvc.Controller</title>
 		sap.ui.getCore().applyChanges();
 	});
 
+	QUnit.test("visible property", function(assert) {
+
+		var xmlview;
+
+		function check(bVisible, sMsgSuffix) {
+			var vLayoutNode = jQuery.sap.domById('vLayout');
+			var btnBeforeNode = jQuery.sap.domById('btnBefore');
+			var xmlviewNode = jQuery.sap.domById('xmlview');
+			var xmlviewPlaceholderNode = jQuery.sap.domById('sap-ui-invisible-xmlview');
+			var btnAfterNode = jQuery.sap.domById('btnAfter');
+
+			assert.ok(vLayout, "vLayout be rendered");
+			assert.ok(btnBeforeNode, "btnBefore should be rendered");
+			assert.ok(btnAfterNode, "btnBefore should be rendered");
+			assert.ok(xmlviewNode, "xmlview should be rendered");
+			if ( bVisible ) {
+				assert.ok(!xmlviewPlaceholderNode, "there should be no invisible placeholder for the xmlview");
+			} else {
+				assert.ok(xmlviewPlaceholderNode, "xmlview placeholder should be rendered");
+				assert.ok(sap.ui.core.RenderManager.isPreservedContent(xmlviewNode), "xmlview should be part of the preserved area");
+			}
+
+			if ( bVisible ) {
+				assert.ok(vLayout.compareDocumentPosition(xmlviewNode) & Node.DOCUMENT_POSITION_CONTAINED_BY, "xmlview should be a descendant of vLayout" + sMsgSuffix);
+				assert.ok(btnBeforeNode.compareDocumentPosition(xmlviewNode) & Node.DOCUMENT_POSITION_FOLLOWING, "xmlview should follow the btnBeforeNode" + sMsgSuffix);
+				assert.ok(btnAfterNode.compareDocumentPosition(xmlviewNode) & Node.DOCUMENT_POSITION_PRECEDING, "xmlview should preced the btnAfterNode" + sMsgSuffix);
+			} else {
+				assert.ok(!(vLayout.compareDocumentPosition(xmlviewNode) & Node.DOCUMENT_POSITION_CONTAINED_BY), "xmlview should not be a descendant of vLayout" + sMsgSuffix);
+				assert.ok(vLayout.compareDocumentPosition(xmlviewPlaceholderNode) & Node.DOCUMENT_POSITION_CONTAINED_BY, "xmlview placeholder should be a descendant of vLayout" + sMsgSuffix);
+				assert.ok(btnBeforeNode.compareDocumentPosition(xmlviewPlaceholderNode) & Node.DOCUMENT_POSITION_FOLLOWING, "xmlview placeholder should follow the btnBeforeNode" + sMsgSuffix);
+				assert.ok(btnAfterNode.compareDocumentPosition(xmlviewPlaceholderNode) & Node.DOCUMENT_POSITION_PRECEDING, "xmlview placeholder should preced the btnAfterNode" + sMsgSuffix);
+			}
+
+			// check children of xmlview
+			var xmlviewChildHTMLNode = jQuery.sap.domById(xmlview.createId('localTableId'));
+			var xmlviewChildButton3Node = jQuery.sap.domById(xmlview.createId('Button3'));
+			assert.ok(xmlviewChildHTMLNode, "xmlview child DOM should be rendered");
+			assert.ok(xmlviewChildButton3Node, "xmlview child control should be rendered");
+			assert.ok(xmlviewNode.compareDocumentPosition(xmlviewChildHTMLNode) & Node.DOCUMENT_POSITION_CONTAINED_BY, "xmlview DOM should contain child DOM" + sMsgSuffix);
+			assert.ok(xmlviewNode.compareDocumentPosition(xmlviewChildButton3Node) & Node.DOCUMENT_POSITION_CONTAINED_BY, "xmlview DOM should contain child control DOM" + sMsgSuffix);
+			if ( xmlviewPlaceholderNode ) {
+				assert.ok(!(xmlviewPlaceholderNode.compareDocumentPosition(xmlviewChildHTMLNode) & Node.DOCUMENT_POSITION_CONTAINED_BY), "xmlview placeholder should not contain child DOM of xmlview" + sMsgSuffix);
+				assert.ok(!(xmlviewPlaceholderNode.compareDocumentPosition(xmlviewChildButton3Node) & Node.DOCUMENT_POSITION_CONTAINED_BY), "xmlview placeholder should not contain child control DOM of xmlview" + sMsgSuffix);
+			}
+
+		}
+
+		var iLayoutRendered = 0;
+		var oLayout = new sap.ui.layout.VerticalLayout({
+			id: 'vLayout',
+			content: [
+				new sap.ui.commons.Button({id: 'btnBefore', text:'Button Before'}),
+				xmlview = sap.ui.xmlview('xmlview', 'example.mvc.test'),
+				new sap.ui.commons.Button({id: 'btnAfter', text:'Button After'})
+			]
+		});
+		oLayout.addEventDelegate({
+			onAfterRendering: function() {
+				iLayoutRendered++;
+			}
+		});
+		oLayout.placeAt('content');
+
+		sap.ui.getCore().applyChanges();
+		check(true, " (after initial rendering)");
+		assert.equal(1, iLayoutRendered, "layout initially should have been rendered once");
+
+		xmlview.setVisible(false);
+		sap.ui.getCore().applyChanges();
+		check(false, " (after becoming invisible)");
+		assert.equal(1, iLayoutRendered, "layout still should have been rendered only once (after making the xmlview invisible)");
+
+		xmlview.setVisible(true);
+		sap.ui.getCore().applyChanges();
+		check(true, " (after becoming visible again)");
+		assert.equal(1, iLayoutRendered, "layout still should have been rendered only once (after making the xmlview visible again)");
+
+		oLayout.destroy();
+	});
 
 
 	QUnit.module("Additional tests:");
@@ -302,121 +405,138 @@ sap.ui.core.mvc.Controller</title>
 
 	});
 
-	QUnit.module("Preprocessor API");
+	QUnit.module("Preprocessor API", {
+		beforeEach: function() {
+			this.XMLView = jQuery.sap.getObject("sap.ui.core.mvc.XMLView");
+			this.View = jQuery.sap.getObject("sap.ui.core.mvc.View");
+			this.sViewContent = '<mvc:View xmlns:mvc="sap.ui.core.mvc"/>';
+			this.runPreprocessorSpy = sinon.spy(this.View.prototype, "runPreprocessor");
+			this.fnGetConfig = function(fnPreprocessor, bSyncSupport) {
+				return {
+					preprocessor: fnPreprocessor,
+					_syncSupport: !!bSyncSupport
+				};
+			};
+			this.fnChangeSourcePreprocessor = function(xml) {
+				this.xml = jQuery.sap.parseXML(this.sViewContent).documentElement;
+				return this.xml;
+			}.bind(this);
+			this.createView = function(bAsync) {
+				var preprocessor = {
+					preprocessor: this.fnChangeSourcePreprocessor,
+					_syncSupport: true
+				};
+				return sap.ui.xmlview({
+					async: bAsync,
+					viewContent: this.sViewContent,
+					preprocessors: {
+						xml:preprocessor,
+						viewxml: preprocessor
+					},
+				});
+			}.bind(this);
+		},
+		afterEach: function() {
+			// reset global preprocessors
+			this.View._mPreprocessors = {};
+			this.runPreprocessorSpy.restore();
+			delete this.xml;
+		}
+	});
 
 	QUnit.test("registration", function(assert) {
-		jQuery.sap.require("sap.ui.core.mvc.XMLView");
-		jQuery.sap.require("sap.ui.core.mvc.View");
-		var XMLView =  jQuery.sap.getObject("sap.ui.core.mvc.XMLView"),
-			View =   jQuery.sap.getObject("sap.ui.core.mvc.View"),
-			oPreprocessor = function(vSource, sCaller, mSettings) {
-				return vSource;
-			};
+		this.XMLView.registerPreprocessor(this.XMLView.PreprocessorType.XML, jQuery.noop, false);
+		this.XMLView.registerPreprocessor(this.XMLView.PreprocessorType.VIEWXML, jQuery.noop, false);
+		this.XMLView.registerPreprocessor(this.XMLView.PreprocessorType.CONTROLS, jQuery.noop, false);
 
-		XMLView.registerPreprocessor(XMLView.PreprocessorType.XML, oPreprocessor, false, {type: "xml"});
-		XMLView.registerPreprocessor(XMLView.PreprocessorType.CONTROLS, oPreprocessor, false, {type: "controls"});
-
-		assert.strictEqual(View._mPreprocessors["XML"]["xml"].settings.type, "xml", "Registration for xml successful");
-		assert.strictEqual(View._mPreprocessors["XML"]["controls"].settings.type, "controls", "Registration for content successful");
-
-		assert.throws(XMLView.registerPreprocessor("unknown", oPreprocessor, false, {type: "unknown"}), "Error thrown when registering invalid type");
-
-		assert.strictEqual(View._mPreprocessors["XML"]["unknown"], undefined, "Registration for invalid type refused");
+		assert.strictEqual(this.View._mPreprocessors["XML"]["xml"][1].preprocessor, jQuery.noop, "Registration for xml successful");
+		assert.strictEqual(this.View._mPreprocessors["XML"]["viewxml"][0].preprocessor, jQuery.noop, "Registration for viewxml successful");
+		assert.strictEqual(this.View._mPreprocessors["XML"]["controls"][0].preprocessor, jQuery.noop, "Registration for content successful");
+		assert.throws(this.XMLView.registerPreprocessor("unknown", jQuery.noop, false, {type: "unknown"}), "Error thrown when registering invalid type");
+		assert.throws(this.XMLView.registerPreprocessor(this.XMLView.PreprocessorType.XML, jQuery.noop, false, true), "Error thrown when registering more than one ondemand pp");
+		assert.strictEqual(this.View._mPreprocessors["XML"]["unknown"], undefined, "Registration for invalid type refused");
 	});
 
 	QUnit.test("sync / no execution", 1, function(assert) {
-		var oResult,
-			bCalled,
-			oView,
-			sViewContent = [
-				'<mvc:View xmlns:mvc="sap.ui.core.mvc"/>'
-			].join(''),
-			oPreprocessor = function(vSource, sCaller, mSettings) {
-				// async test part
-				jQuery.sap.log.debug("[TEST] " + mSettings.message, sCaller);
-				bCalled = true;
-				assert.ok(false, "Preprocessor executed");
-				return vSource;
-			};
+		var bCalled,
+			preprocessorSpy = sinon.spy();
 
-		oView = sap.ui.xmlview({
-			viewContent: sViewContent,
+		sap.ui.xmlview({
+			viewContent: this.sViewContent,
 			preprocessors: {
-				xml: {
-					preprocessor: oPreprocessor,
-					message: "Preprocessor executed"
-				}
-			}
-		});
-
-		assert.ok(!bCalled, "Preprocessor not called as no syncSupport declared.");
-	});
-
-	QUnit.test("sync", 3, function(assert) {
-		var oResult,
-			bCalled,
-			oView,
-			sViewContent = [
-				'<mvc:View xmlns:mvc="sap.ui.core.mvc"/>'
-			].join(''),
-			spy = sinon.spy(sap.ui.core.mvc.View.prototype, "runPreprocessor"),
-			oPreprocessor = function(vSource, sCaller, mSettings) {
-				// async test part
-				jQuery.sap.log.debug("[TEST] " + mSettings.message, sCaller);
-				bCalled = true;
-				assert.ok(true, "Preprocessor executed");
-				return vSource;
-			};
-
-		oView = sap.ui.xmlview({
-			viewContent: sViewContent,
-			preprocessors: {
-				xml: {
-					preprocessor: oPreprocessor,
-					message: "Preprocessor executed",
-					syncSupport: true
-				}
-			}
-		});
-
-		sinon.assert.calledTwice(spy);
-		assert.ok(bCalled, "Preprocessor called in sync view as declared.");
-		// reset the spy for coming tests
-		spy.restore();
-	});
-
-	QUnit.test("async", 2, function(assert) {
-		var done = assert.async(),
-			oResult,
-			oView,
-			sViewContent = [
-				'<mvc:View xmlns:mvc="sap.ui.core.mvc"/>'
-			].join(''),
-			spy = sinon.spy(sap.ui.core.mvc.View.prototype, "runPreprocessor"),
-			oPreprocessor = function(vSource, sCaller, mSettings) {
-				// async test part
-				jQuery.sap.log.debug("[TEST] " + mSettings.message, sCaller);
-				assert.ok(true, "Preprocessor executed");
-				return new Promise(function(resolve) {
-					resolve(vSource);
-				});
-			};
-
-		oView = sap.ui.xmlview({
-			viewContent: sViewContent,
-			preprocessors: {
-				controls: {
-					preprocessor: oPreprocessor,
-					message: "Preprocessor executed"
-				}
+				xml: this.fnGetConfig(preprocessorSpy)
 			},
-			async: true
 		});
 
-		oView.attachAfterInit(function() {
-			sinon.assert.calledTwice(spy);
-			spy.restore();
-			done();
+		sinon.assert.notCalled(preprocessorSpy);
+	});
+
+	QUnit.test("sync: assignment of preprocessor results", 1, function(assert) {
+		var oView = this.createView();
+		assert.strictEqual(oView._xContent, this.xml, "Result was correctly assigned");
+	});
+
+	QUnit.test("async: assignment of preprocessor results", 1, function(assert) {
+		return this.createView(true).loaded().then(function(oView) {
+			assert.strictEqual(oView._xContent, this.xml, "Result was correctly assigned");
+		}.bind(this));
+	});
+
+	/*
+	 * @param {boolean} bSync view loading mode
+	 * @param {string} sType preprocessor type
+	 * @param {integer} [iCount] number of preprocessors, if not set the legacy version is tested
+	 * @return {undefined|Promise} view promise in async mode
+	 */
+	function testPreprocessor(assert, bSync, sType, iCount) {
+		var oView, oPreprocessors = {},
+			preprocessorSpy = sinon.spy(function(vSource) {
+				return bSync ? vSource : Promise.resolve(vSource);
+			}),
+			fnAssert = function() {
+				if (sType === "viewxml") {
+					sinon.assert.calledThrice(this.runPreprocessorSpy);
+				} else {
+					sinon.assert.calledTwice(this.runPreprocessorSpy);
+				}
+				sinon.assert.calledWith(this.runPreprocessorSpy, sType);
+				sinon.assert.callCount(preprocessorSpy, iCount);
+			}.bind(this);
+
+		assert.expect(3);
+
+		if (!iCount) {
+			// compatible / legacy version with single preprocessor declaration
+			iCount = 1;
+			oPreprocessors[sType] = this.fnGetConfig(preprocessorSpy, true);
+		} else {
+			oPreprocessors[sType] = [];
+			for(var i = 0; i < iCount; i++) {
+				oPreprocessors[sType][i] = this.fnGetConfig(preprocessorSpy, true);
+			}
+		}
+
+		oView = sap.ui.xmlview({
+			viewContent: this.sViewContent,
+			preprocessors: oPreprocessors,
+			async: !bSync
+		});
+
+		return bSync ? fnAssert() : oView.loaded().then(fnAssert);
+	}
+
+	jQuery.each(sap.ui.core.mvc.XMLView.PreprocessorType, function(sProp, sType) {
+		QUnit.test("sync - single preprocessor " + sType + " (compatible)", function(assert) {
+			testPreprocessor.call(this, assert, true, sType);
+		});
+		QUnit.test("sync - multiple preprocessors " + sType, function(assert) {
+			testPreprocessor.call(this, assert, true, sType, 2);
+		});
+		QUnit.test("async - single preprocessor " + sType + " (compatible)", function(assert) {
+			return testPreprocessor.call(this, assert, false, sType);
+		});
+		QUnit.test("async - multiple preprocessors " + sType, function(assert) {
+			return testPreprocessor.call(this, assert, false, sType, 2);
 		});
 	});
 

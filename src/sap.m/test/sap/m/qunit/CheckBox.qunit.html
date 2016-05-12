@@ -19,9 +19,9 @@
 <script type="text/javascript">
 
 jQuery.sap.require("sap.m.CheckBox");
+jQuery.sap.require("sap.ui.core.ValueState");
 
-
-	module("Properties")
+	module("Properties");
 
 	/* --------------------------------------- */
 	/* Test: Default Values                    */
@@ -216,6 +216,45 @@ jQuery.sap.require("sap.m.CheckBox");
 		ok(!oCheckBox.$("CbBg").hasClass("sapMCbMarkChecked"), "selected=false: CheckBox should not have class sapMCbMarkChecked");
 		ok(!oCheckBox.$("CB").is(":checked"), "selected=false: CheckBox should not have attribute 'checked'");
 		strictEqual(oCheckBox.$().attr("aria-checked"), "false", "Property 'aria-checked': Default value should be 'false'");
+
+		// cleanup
+		oCheckBox.destroy();
+	});
+
+	/* ----------------------------------------------- */
+	/* Test: 'ValueState=Error'						   */
+	/* ----------------------------------------------- */
+
+	test("'ValueState=Error'", function(){
+		// system under test
+		var oCheckBox = new sap.m.CheckBox({valueState: sap.ui.core.ValueState.Error});
+
+		// arrange
+		oCheckBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		ok(oCheckBox.$().hasClass("sapMCbErr"), "The CheckBox has value state error css class.");
+
+		// cleanup
+		oCheckBox.destroy();
+	});
+
+
+	/* ----------------------------------------------- */
+	/* Test: 'ValueState=Warning'						   */
+	/* ----------------------------------------------- */
+
+	test("'ValueState=Warning'", function(){
+		// system under test
+		var oCheckBox = new sap.m.CheckBox({valueState: sap.ui.core.ValueState.Warning});
+
+		// arrange
+		oCheckBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		ok(oCheckBox.$().hasClass("sapMCbWarn"), "The CheckBox has value state warning css class.");
 
 		// cleanup
 		oCheckBox.destroy();
@@ -665,6 +704,30 @@ jQuery.sap.require("sap.m.CheckBox");
 		expectedSelection : false,
 		expectedMessage: "CheckBox should be deselected",
 		expectedMessageAria: "Property 'aria-checked' should be 'false'"
+	});
+
+	module("Accessibility");
+
+	test("getAccessibilityInfo", function() {
+		var oControl = new sap.m.CheckBox({text: "Text"});
+		ok(!!oControl.getAccessibilityInfo, "CheckBox has a getAccessibilityInfo function");
+		var oInfo = oControl.getAccessibilityInfo();
+		ok(!!oInfo, "getAccessibilityInfo returns a info object");
+		strictEqual(oInfo.role, "checkbox", "AriaRole");
+		strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_CHECKBOX"), "Type");
+		strictEqual(oInfo.description, "Text", "Description");
+		strictEqual(oInfo.focusable, true, "Focusable");
+		strictEqual(oInfo.enabled, true, "Enabled");
+		strictEqual(oInfo.editable, true, "Editable");
+		oControl.setSelected(true);
+		oControl.setEnabled(false);
+		oControl.setEditable(false);
+		oInfo = oControl.getAccessibilityInfo();
+		strictEqual(oInfo.description, "Text " + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_CHECKED"), "Description");
+		strictEqual(oInfo.focusable, false, "Focusable");
+		strictEqual(oInfo.enabled, false, "Enabled");
+		strictEqual(oInfo.editable, false, "Editable");
+		oControl.destroy();
 	});
 </script>
 

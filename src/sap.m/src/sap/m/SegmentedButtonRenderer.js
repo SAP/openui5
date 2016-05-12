@@ -46,7 +46,6 @@ sap.ui.define(['jquery.sap.global'],
 			oRM.addClass("sapMSegBIcons");
 		}
 		oRM.addClass("sapMSegB");
-		oRM.addClass("sapMSegBHide");
 		oRM.writeClasses();
 		if (oControl.getWidth() && oControl.getWidth() !== '') {
 			oRM.addStyle('width', oControl.getWidth());
@@ -112,16 +111,8 @@ sap.ui.define(['jquery.sap.global'],
 				if (sButtonWidth) {
 					oRM.addStyle('width', sButtonWidth);
 					oRM.writeStyles();
-				} else {
-
-					// Do not render buttons with their (auto) width now in order not to influence the parent's width.
-					// (egg-chicken problem, e.g. SegmentedButton as "content" aggregation inside sap.m.Dialog).
-					if (!oControl._bPreventWidthRecalculationOnAfterRendering) {//Make sure this happens when a real width
-						// calculation will take place at "onAfterRendering", otherwise buttons will remain with width = 0.
-						oRM.addStyle('width', "0px");
-						oRM.writeStyles();
-					}
 				}
+
 				sTooltip = oButton.getTooltip_AsString();
 				if (sTooltip) {
 					oRM.writeAttributeEscaped("title", sTooltip);

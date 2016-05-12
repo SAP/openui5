@@ -354,9 +354,13 @@
 	oTable.bindRows("/modelData");
 
 	oTable.attachRowSelectionChange(function(oEvent) {
+		var sAll = "";
+		if (oEvent.getParameter("selectAll")) {
+			sAll = "; selectAll";
+		}
 		var oMessage = new sap.ui.commons.Message({
 			type: sap.ui.commons.MessageType.Success,
-			text: "Selected Row Index: " + oEvent.getParameter("rowIndex")
+			text: "Selected Row Index: " + oEvent.getParameter("rowIndex") + sAll
 		});
 		oMsgBar.addMessages([oMessage]);
 	});

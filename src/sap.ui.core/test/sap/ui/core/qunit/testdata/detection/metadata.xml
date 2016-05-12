@@ -1,0 +1,137 @@
+<edmx:Edmx Version="1.0"
+    xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+    xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+    xmlns:sap="http://www.sap.com/Protocols/SAPData">
+    <edmx:Reference Uri="https://localhost:8080/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value"
+        xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Common"/>
+    </edmx:Reference>
+    <edmx:DataServices m:DataServiceVersion="2.0">
+        <Schema Namespace="FRA_STRATEGY_DERIVATION_SRV" xml:lang="en" sap:schema-version="1"
+            xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+            <EntityType Name="StrategyDerivationRequest" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="DetObjType"/>
+                    <PropertyRef Name="Solution"/>
+                </Key>
+                <Property Name="DetObjType" Type="Edm.String" Nullable="false" MaxLength="10" sap:label="DetectObj Type" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Solution" Type="Edm.String" Nullable="false" MaxLength="2" sap:label="Solution" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="SelectionMode" Type="Edm.String" Nullable="false" MaxLength="1" sap:label="Single-Character Flag" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <NavigationProperty Name="Results" Relationship="FRA_STRATEGY_DERIVATION_SRV.StrategyDerivationRequest_Results" FromRole="FromRole_StrategyDerivationRequest_Results" ToRole="ToRole_StrategyDerivationRequest_Results"/>
+                <NavigationProperty Name="SelectionConditions" Relationship="FRA_STRATEGY_DERIVATION_SRV.StrategyDerivationRequest_SelConditions" FromRole="FromRole_StrategyDerivationRequest_SelConditions" ToRole="ToRole_StrategyDerivationRequest_SelConditions"/>
+            </EntityType>
+            <EntityType Name="StrategyDerivationRequestSelCondition" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="FieldName"/>
+                </Key>
+                <Property Name="FieldName" Type="Edm.String" Nullable="false" MaxLength="45" sap:label="Selection Field"/>
+                <Property Name="Sign" Type="Edm.String" Nullable="false" MaxLength="1" sap:label="Type of SIGN component in row type of a Ranges type"/>
+                <Property Name="Option" Type="Edm.String" Nullable="false" MaxLength="2" sap:label="Type of OPTION component in row type of a Ranges type"/>
+                <Property Name="Low" Type="Edm.String" MaxLength="40" sap:label="Value"/>
+                <Property Name="High" Type="Edm.String" MaxLength="40" sap:label="Value"/>
+            </EntityType>
+            <EntityType Name="StrategyDerivationRequestResult" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="DbKey"/>
+                </Key>
+                <Property Name="DbKey" Type="Edm.Guid" Nullable="false" sap:label="NodeID" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Id" Type="Edm.String" MaxLength="20" sap:label="Det. Strategy" sap:updatable="false"/>
+                <Property Name="Version" Type="Edm.Int16" sap:label="Version" sap:updatable="false"/>
+                <Property Name="Description" Type="Edm.String" MaxLength="50" sap:label="Description" sap:updatable="false"/>
+                <Property Name="DetObjType" Type="Edm.String" MaxLength="10" sap:label="DetectObj Type" sap:updatable="false"/>
+                <Property Name="InvestigationReason" Type="Edm.String" MaxLength="10" sap:label="Investigation Reason" sap:updatable="false"/>
+                <Property Name="InvestigationReasonDescription" Type="Edm.String" MaxLength="50" sap:label="Description" sap:updatable="false"/>
+                <Property Name="SelectionParamName" Type="Edm.String" MaxLength="45" sap:label="Name" sap:updatable="false"/>
+                <Property Name="Sign" Type="Edm.String" MaxLength="1" sap:label="Type of SIGN component in row type of a Ranges type" sap:updatable="false"/>
+                <Property Name="SelectOption" Type="Edm.String" MaxLength="2" sap:label="Select Option" sap:updatable="false"/>
+                <Property Name="Low" Type="Edm.String" MaxLength="40" sap:label="Value" sap:updatable="false"/>
+                <Property Name="High" Type="Edm.String" MaxLength="40" sap:label="Value" sap:updatable="false"/>
+                <Property Name="SelectionParameterOrder" Type="Edm.Int32" sap:label="Number" sap:updatable="false"/>
+                <Property Name="StatusDescription" Type="Edm.String" MaxLength="50" sap:label="Description" sap:updatable="false"/>
+            </EntityType>
+            <EntityType Name="FRA_CV_SD_DetObjectTypeType" sap:label="Detection Object Type, Solution and Number of Strategies" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="DetObjType"/>
+                    <PropertyRef Name="Solution"/>
+                </Key>
+                <Property Name="DetObjType" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="DetectObj Type" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Solution" Type="Edm.String" Nullable="false" MaxLength="2" sap:display-format="UpperCase" sap:label="Solution" sap:creatable="false" sap:updatable="false" sap:value-list="standard"/>
+                <Property Name="DetObjTypeDescription" Type="Edm.String" MaxLength="50" sap:label="Detection Object Type"/>
+                <Property Name="SolutionDescription" Type="Edm.String" MaxLength="60" sap:label="Solution" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="InvObjType" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="Invest Obj. Type" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="InvObjTypeDescription" Type="Edm.String" MaxLength="50" sap:label="Investigation Object Type" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="TotalActiveStrategies" Type="Edm.String" MaxLength="264" sap:display-format="UpperCase" sap:label="Number of Detection Strategies"/>
+                <NavigationProperty Name="to_SelectionFields" Relationship="FRA_STRATEGY_DERIVATION_SRV.assoc_1FD5065160E2B9B255228BBC6C1F12EF" FromRole="FromRole_assoc_1FD5065160E2B9B255228BBC6C1F12EF" ToRole="ToRole_assoc_1FD5065160E2B9B255228BBC6C1F12EF" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="FRA_CV_SD_DetObjTypeSelFieldsType" sap:label="Detection Object Type Selection Fields" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="DetectionObjectType"/>
+                    <PropertyRef Name="FieldName"/>
+                </Key>
+                <Property Name="Description" Type="Edm.String" MaxLength="50" sap:display-format="UpperCase"/>
+                <Property Name="SourceDomain" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="Source Domain"/>
+                <Property Name="DataType" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:label="Data Type"/>
+                <Property Name="CaseSensitive" Type="Edm.Boolean" sap:display-format="UpperCase" sap:label="Case Sensitive"/>
+                <Property Name="Length" Type="Edm.Int32"/>
+                <Property Name="Decimals" Type="Edm.String" MaxLength="6" sap:display-format="NonNegative" sap:label="Decimals"/>
+                <Property Name="HasValues" Type="Edm.Boolean" sap:display-format="UpperCase" sap:label="Checkbox"/>
+                <Property Name="DetectionObjectType" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="DetectObj Type"/>
+                <Property Name="FieldName" Type="Edm.String" Nullable="false" MaxLength="45" sap:label="Selection Field"/>
+                <NavigationProperty Name="to_Values" Relationship="FRA_STRATEGY_DERIVATION_SRV.assoc_1652F67A4940CDE62D8DEC9DB99B8116" FromRole="FromRole_assoc_1652F67A4940CDE62D8DEC9DB99B8116" ToRole="ToRole_assoc_1652F67A4940CDE62D8DEC9DB99B8116" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="FRA_CV_SD_SelectionFieldValuesType" sap:label="DO Selection Field Values Dummy View" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Value"/>
+                </Key>
+                <Property Name="Value" Type="Edm.String" Nullable="false" MaxLength="60" sap:label="Field Value"/>
+                <Property Name="DetectionObjectType" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="DetectObj Type"/>
+                <Property Name="FieldName" Type="Edm.String" MaxLength="100" sap:label="Field"/>
+                <Property Name="ValueDescription" Type="Edm.String" MaxLength="50" sap:label="Description"/>
+            </EntityType>
+            <Association Name="StrategyDerivationRequest_Results" sap:content-version="1">
+                <End Type="FRA_STRATEGY_DERIVATION_SRV.StrategyDerivationRequest" Multiplicity="1" Role="FromRole_StrategyDerivationRequest_Results"/>
+                <End Type="FRA_STRATEGY_DERIVATION_SRV.StrategyDerivationRequestResult" Multiplicity="*" Role="ToRole_StrategyDerivationRequest_Results"/>
+            </Association>
+            <Association Name="StrategyDerivationRequest_SelConditions" sap:content-version="1">
+                <End Type="FRA_STRATEGY_DERIVATION_SRV.StrategyDerivationRequest" Multiplicity="1" Role="FromRole_StrategyDerivationRequest_SelConditions"/>
+                <End Type="FRA_STRATEGY_DERIVATION_SRV.StrategyDerivationRequestSelCondition" Multiplicity="*" Role="ToRole_StrategyDerivationRequest_SelConditions"/>
+            </Association>
+            <Association Name="assoc_1FD5065160E2B9B255228BBC6C1F12EF" sap:content-version="1">
+                <End Type="FRA_STRATEGY_DERIVATION_SRV.FRA_CV_SD_DetObjectTypeType" Multiplicity="1" Role="FromRole_assoc_1FD5065160E2B9B255228BBC6C1F12EF"/>
+                <End Type="FRA_STRATEGY_DERIVATION_SRV.FRA_CV_SD_DetObjTypeSelFieldsType" Multiplicity="*" Role="ToRole_assoc_1FD5065160E2B9B255228BBC6C1F12EF"/>
+            </Association>
+            <Association Name="assoc_1652F67A4940CDE62D8DEC9DB99B8116" sap:content-version="1">
+                <End Type="FRA_STRATEGY_DERIVATION_SRV.FRA_CV_SD_DetObjTypeSelFieldsType" Multiplicity="1" Role="FromRole_assoc_1652F67A4940CDE62D8DEC9DB99B8116"/>
+                <End Type="FRA_STRATEGY_DERIVATION_SRV.FRA_CV_SD_SelectionFieldValuesType" Multiplicity="*" Role="ToRole_assoc_1652F67A4940CDE62D8DEC9DB99B8116"/>
+            </Association>
+            <EntityContainer Name="FRA_STRATEGY_DERIVATION_SRV_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
+                <EntitySet Name="FRA_CV_SD_DetObjectType" EntityType="FRA_STRATEGY_DERIVATION_SRV.FRA_CV_SD_DetObjectTypeType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="FRA_CV_SD_DetObjTypeSelFields" EntityType="FRA_STRATEGY_DERIVATION_SRV.FRA_CV_SD_DetObjTypeSelFieldsType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="FRA_CV_SD_SelectionFieldValues" EntityType="FRA_STRATEGY_DERIVATION_SRV.FRA_CV_SD_SelectionFieldValuesType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="StrategyDerivationRequests" EntityType="FRA_STRATEGY_DERIVATION_SRV.StrategyDerivationRequest" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="StrategyDerivationRequestSelConditions" EntityType="FRA_STRATEGY_DERIVATION_SRV.StrategyDerivationRequestSelCondition" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="StrategyDerivationRequestResults" EntityType="FRA_STRATEGY_DERIVATION_SRV.StrategyDerivationRequestResult" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
+                <AssociationSet Name="assoc_1652F67A4940CDE62D8DEC9DB99B8116" Association="FRA_STRATEGY_DERIVATION_SRV.assoc_1652F67A4940CDE62D8DEC9DB99B8116" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="FRA_CV_SD_DetObjTypeSelFields" Role="FromRole_assoc_1652F67A4940CDE62D8DEC9DB99B8116"/>
+                    <End EntitySet="FRA_CV_SD_SelectionFieldValues" Role="ToRole_assoc_1652F67A4940CDE62D8DEC9DB99B8116"/>
+                </AssociationSet>
+                <AssociationSet Name="StrategyDerivationRequest_SelConditioSet" Association="FRA_STRATEGY_DERIVATION_SRV.StrategyDerivationRequest_SelConditions" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="StrategyDerivationRequests" Role="FromRole_StrategyDerivationRequest_SelConditions"/>
+                    <End EntitySet="StrategyDerivationRequestSelConditions" Role="ToRole_StrategyDerivationRequest_SelConditions"/>
+                </AssociationSet>
+                <AssociationSet Name="StrategyDerivationRequest_ResultsSet" Association="FRA_STRATEGY_DERIVATION_SRV.StrategyDerivationRequest_Results" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="StrategyDerivationRequests" Role="FromRole_StrategyDerivationRequest_Results"/>
+                    <End EntitySet="StrategyDerivationRequestResults" Role="ToRole_StrategyDerivationRequest_Results"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_1FD5065160E2B9B255228BBC6C1F12EF" Association="FRA_STRATEGY_DERIVATION_SRV.assoc_1FD5065160E2B9B255228BBC6C1F12EF" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="FRA_CV_SD_DetObjectType" Role="FromRole_assoc_1FD5065160E2B9B255228BBC6C1F12EF"/>
+                    <End EntitySet="FRA_CV_SD_DetObjTypeSelFields" Role="ToRole_assoc_1FD5065160E2B9B255228BBC6C1F12EF"/>
+                </AssociationSet>
+            </EntityContainer>
+            <atom:link rel="self" href="https://localhost:8080/sap/opu/odata/sap/FRA_STRATEGY_DERIVATION_SRV/$metadata"
+                xmlns:atom="http://www.w3.org/2005/Atom"/>
+                <atom:link rel="latest-version" href="https://localhost:8080/sap/opu/odata/sap/FRA_STRATEGY_DERIVATION_SRV/$metadata"
+                    xmlns:atom="http://www.w3.org/2005/Atom"/>
+                </Schema>
+            </edmx:DataServices>
+</edmx:Edmx>

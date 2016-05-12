@@ -1,0 +1,18 @@
+[{
+	"DetObjType": "DET1",
+	"Solution": "01",
+	"DetObjTypeDescription": "DET 1",
+	"InvObjType": "IOT1",
+	"InvObjTypeDescription": "IOT 1",
+	"SolutionDescription": "SOL 01",
+	"NumberOfStrategies": 1,
+	"TotalActiveStrategies": "1"
+}, {
+	"DetObjType": "DET2",
+	"Solution": "02",
+	"DetObjTypeDescription": "DET 2",
+	"SolutionDescription": "SOL 02",
+	"InvObjType": "IOT2",
+	"InvObjTypeDescription": "IOT 2",
+	"TotalActiveStrategies": "1"
+}]

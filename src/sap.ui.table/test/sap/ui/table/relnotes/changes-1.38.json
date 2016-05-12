@@ -1,0 +1,469 @@
+{
+  "1.38.0": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "b45077ff3afbd43bc0d9bf4f036ef4d6532586eb",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.core.AccInfo: Option for controls to provide information about their accessibility state\"",
+        "references": []
+      },
+      {
+        "id": "9a76a362544478fbe2737b34f1af424da9ef9c05",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "TreeTable - Support for AutoExpand Paging",
+        "references": []
+      },
+      {
+        "id": "2c10ab9161fa0e85930d1b6ae1ef9caade53b9a6",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.core.AccInfo: Option for controls to provide information about their accessibility state",
+        "references": []
+      },
+      {
+        "id": "5d673fd2c5926688e3c873541b03df13cf2b47d0",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.core.Control: Introduce function getAccessibilityInfo",
+        "references": []
+      },
+      {
+        "id": "81918bd1151cf9aea2eb2702bd5fce0a0cd65ed7",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.table.AnalyticalTable: suspend and resume UpdateAnalyticalInfo",
+        "references": []
+      },
+      {
+        "id": "0ea455578b026d24a3a56e5aaadfb89afdc272eb",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.table.Table: Expand/Collapse Group via SPACE, ENTER, NUMPAD + or NUMBAD - instead of arrow keys",
+        "references": []
+      },
+      {
+        "id": "db4841b701d78d3204e39b2fdbcdfb03eaef15e1",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.table.Table: implement variable row height",
+        "references": []
+      },
+      {
+        "id": "d16716c8445f81d071fe9684e3b7fcbdfb74423b",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.table.Table: rowSelectionChange - selectAll property",
+        "references": []
+      },
+      {
+        "id": "abf2f5c49b811d4a8d86d6bbdd4cc0a306cc2c4a",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.table: Performance improvements for table library",
+        "references": []
+      },
+      {
+        "id": "8227debc45790a1c9f4e59b4f9c8b3d9d25c440b",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.Menu: Delayed opening of submenus on hover",
+        "references": []
+      },
+      {
+        "id": "9ee6082188ff07fdf01b23e05c257f49969eb03f",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "ClientTreeBindingAdapter - Fixed Issue with groupID calculation",
+        "references": []
+      },
+      {
+        "id": "8e6cb02156c5deb9aaa3a612280a7895e94d8267",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "ClientTreeBindingAdapter - Reset Cache",
+        "references": []
+      },
+      {
+        "id": "1b7d6a4f6f9b41b4507c53bb0fef667640e79d07",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "JSDoc typo: sap.ui.table.AnalyticalColumn",
+        "references": []
+      },
+      {
+        "id": "fcb06e533961ba6b61efeb7df4f9254f9d8077b7",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.model.TreeBindingAdapter: fix \u0027toggleIndex\u0027 with fixed rows in table",
+        "references": []
+      },
+      {
+        "id": "481fba1f9edfe2cdcc5add7dd5edf0d7c2fb0dcc",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Column: HTML entities should be encoded in JSDoc.",
+        "references": []
+      },
+      {
+        "id": "0d87e4dcf656ae8e6a3f4873d2ca18bd762b6b63",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Column: fixes _setFilterValue is not a function",
+        "references": []
+      },
+      {
+        "id": "2063912d29499e1389a2f6fdf61e399db340dbcb",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Column: sort order indicator for multi column sorting",
+        "references": []
+      },
+      {
+        "id": "bbdbaa74b753586281a033a7fac012d8e0201da3",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: BusyIndicator gets not removed when fixed rows are requested",
+        "references": []
+      },
+      {
+        "id": "6163f3948dd666c6f335cb21021982be6e9499b3",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Column Header was not aligned to column",
+        "references": []
+      },
+      {
+        "id": "9396382f0769789b6294cde6e5eb6b752125d30f",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Fix HCB Scrollbar Border",
+        "references": []
+      },
+      {
+        "id": "9c595ef29d0faafacb4df21230724842b398f04e",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Fix HCB Scrollbar Border",
+        "references": []
+      },
+      {
+        "id": "b373392399d38e74e31e1dbdb97f97770d25ac8f",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Fixed Scrollbar Flickering Bug",
+        "references": []
+      },
+      {
+        "id": "551cd928a4312326068fdde27ef8be5e7fb36beb",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Fixes unit test issues and resize trigger",
+        "references": []
+      },
+      {
+        "id": "1b1eedd5e5a5246d192cb9560eda33fb981b950d",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: IE should work with subpixel row height",
+        "references": []
+      },
+      {
+        "id": "3f8f23de66fcf34a9b76ccac61700c0c362a2baf",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: IE9 did not set correct row height",
+        "references": []
+      },
+      {
+        "id": "a31393aa226ef116bc19742e815b8cab5772ca6f",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Improve ACC implementation",
+        "references": []
+      },
+      {
+        "id": "deac058b49b340b66ac38a46e642166ead39195e",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Improve ACC implementation - Part 10",
+        "references": []
+      },
+      {
+        "id": "200eff0eb1441fa7927d4a0e11caa0fa45054101",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Improve ACC implementation - Part 11",
+        "references": []
+      },
+      {
+        "id": "b7b6f85a39cc04eae6578c862a9293e7076f2cce",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Improve ACC implementation - Part 3",
+        "references": []
+      },
+      {
+        "id": "c192ed35ecf8f49fc12048f38bd018bd34e54b8e",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Improve ACC implementation - Part 4",
+        "references": []
+      },
+      {
+        "id": "080d3084cf640301b06be941ea91a8c2a633330f",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Improve ACC implementation - Part 5",
+        "references": []
+      },
+      {
+        "id": "1b8a532ad15d6ab92dd94ff1604c1c151fb794d3",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Improve ACC implementation - Part 6",
+        "references": []
+      },
+      {
+        "id": "307bd5e45da341dbf767aa368b2420f556246029",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Improve ACC implementation - Part 7",
+        "references": []
+      },
+      {
+        "id": "185b071ea10a65149c072c0643a2e52c7f0d6948",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Improve ACC implementation - Part 8",
+        "references": []
+      },
+      {
+        "id": "02d1e3897cb6a7948549582cd742fc23007be65b",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Improve ACC implementation - Part 9",
+        "references": []
+      },
+      {
+        "id": "18adbe35de516f9075c4788af8739b5dfc440964",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Improve ACC implementation - Part2",
+        "references": []
+      },
+      {
+        "id": "46579f0fa9f6b3ec10f4de5a60f0f01a2d02d377",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Missing border-right on group header in HCB",
+        "references": []
+      },
+      {
+        "id": "a6d1b10d4f9f898a09216bb475b1eb67f9ae5ae6",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Prevent wrapping of fixed area",
+        "references": []
+      },
+      {
+        "id": "a47672b70e237343cbd047627c5bdcaa75c8d004",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Resize Handler did not work correctly in Touch Mode",
+        "references": []
+      },
+      {
+        "id": "10f89b1d627d6c09f855e8c9be6b4251bd34df7f",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "ONLY",
+        "text": "when clicking on dummy td",
+        "references": []
+      },
+      {
+        "id": "1d0f1fa2f1890c93cf4e6cec335f25360a795dad",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: SuppressReset for rows aggregation if bound",
+        "references": []
+      },
+      {
+        "id": "2347c50585a435b0b01db99fd48b76fe02cb682c",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: VisibleRowCountMode Auto when no parent height set",
+        "references": []
+      },
+      {
+        "id": "276b1e6d709467f3bd2ad079691aa0d3af7ad6bd",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: border styles in hcb and bluecrystal",
+        "references": []
+      },
+      {
+        "id": "bcc8c59cc6c0da13fdafca18d3859ee1d376bb7d",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: call _updateTableCell",
+        "references": []
+      },
+      {
+        "id": "710e2bd06386c12de5a48af290dc18ea8d60390d",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: call rendering event delegates for DOM patching step",
+        "references": []
+      },
+      {
+        "id": "1d73712804efb26ff4e1ae12a4681a1f532506fa",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: column freeze for columns outside visible area",
+        "references": []
+      },
+      {
+        "id": "24c763df6e7813699755a23c6e495548f77cb18a",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: corrects rowHeights when transitions used to display table",
+        "references": []
+      },
+      {
+        "id": "9e571814ccc5a094154970795ac517ec81ef9356",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fix css img urls",
+        "references": []
+      },
+      {
+        "id": "fcaa4a24791d297c0600f57dd1f8ee010830a95b",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fix for Visual Tests",
+        "references": []
+      },
+      {
+        "id": "fb084c51c8e48f4f2eae4f34c27bdfd6f3200674",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fix invisible column header after column with HeaderSpan",
+        "references": []
+      },
+      {
+        "id": "ee33e46c37a5fcaa1638585f8e3c7497b5dc1bf8",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes RowCountModeAuto without binding",
+        "references": []
+      },
+      {
+        "id": "8e2fc72fec7793db5046d98881e507daced0812e",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes events for columnResize on dependant columns",
+        "references": []
+      },
+      {
+        "id": "482899c2b57806f5af36140b93e1845b56598e06",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes null-ref issue with rowSelector of rows which do not have a parent",
+        "references": []
+      },
+      {
+        "id": "0d92eb42c7043efb773a20f3f2a6d2620190e9c4",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes regressions related to table rendering - async DOM/ControlTree for updateTableSizes",
+        "references": []
+      },
+      {
+        "id": "75425532569b2899bf9d705460d6c3db4bc74af6",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes requestCounter for changing bindings while request is still pending",
+        "references": []
+      },
+      {
+        "id": "882e87c7f70f4bc8e57955c26bf2cddd5380959c",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes showOverlay for visibleRowCountMode Auto",
+        "references": []
+      },
+      {
+        "id": "58c1dc8451dcbdb209636a8c4555427a7be5a7d7",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes the scroll position after sort or filter",
+        "references": []
+      },
+      {
+        "id": "f89facbaace7559657566ce2b75fb7e385be93f4",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes updateTableSizes",
+        "references": []
+      },
+      {
+        "id": "3ffac6e2a73c1f58c6ff18fb66917039cd2e6a82",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: getFocusDomRef to return focused DOM ref from ItemNavigation",
+        "references": []
+      },
+      {
+        "id": "6ccbfc264bcc719639ee3e2eaa3894c001524ea3",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: itemNavigation invalidation on DOM patching",
+        "references": []
+      },
+      {
+        "id": "4f194eb97197edc7ad8c872c593e38f3815a4a7f",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: mark rowSelectionChange event when fired by user interaction",
+        "references": []
+      },
+      {
+        "id": "fbc403a9f4afa987aea894ca324f2afea15ba0ce",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: prevent rowSelectionChange event on implicit row selection change",
+        "references": []
+      },
+      {
+        "id": "3c74c17fe77e2de15e8d9444b3ec2289889ebff1",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: resizing of columns which should not be resizable",
+        "references": []
+      },
+      {
+        "id": "1d5bfbf6ea45058c81beb24f4af4baecd8762b1d",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: setVisibleRowCount to a lower value than before",
+        "references": []
+      },
+      {
+        "id": "7000d938de09a59bf10df55aa139d275952d1456",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable: fixes useGroupMode for TreeTable",
+        "references": []
+      },
+      {
+        "id": "d8755875d002021a4770884d9c2d48de86fb98ca",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table: Scroll performance",
+        "references": []
+      }
+    ]
+  }
+}

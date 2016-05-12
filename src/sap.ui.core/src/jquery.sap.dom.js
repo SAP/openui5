@@ -374,6 +374,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		return !isNaN(iTabIndex) && iTabIndex >= 0;
 	};
 
+	/**
+	 * Checks whether an Element is invisible for the end user.
+	 *
+	 * This is a modified version of jQuery's :hidden selector, but with a slightly
+	 * different semantic:
+	 *
+	 * Since jQuery 2.x, inline elements (SPAN etc.) might be considered 'visible'
+	 * although they have zero dimensions (e.g. an empty span). In jQuery 1.x such
+	 * elements had been treated as 'hidden'.
+	 *
+	 * As some UI5 controls rely on the old behavior, this method restores it.
+	 *
+	 * @param {Element} oElem Element to check the dimensions for
+	 * @returns {boolean} whether the Element has only zero dimensions
+	 */
+	function hasZeroDimensions(oElem) {
+		return oElem.offsetWidth <= 0 && oElem.offsetHeight <= 0;
+	}
 
 	/**
 	 * Returns the first focusable domRef in a given container (the first element of the collection)
@@ -390,7 +408,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		var visibilityHiddenFilter = function (idx){
 			return jQuery(this).css("visibility") == "hidden";
 		};
-		if (!oContainerDomRef || jQuery(oContainerDomRef).is(':hidden') ||
+		if (!oContainerDomRef || hasZeroDimensions(oContainerDomRef) ||
 				jQuery(oContainerDomRef).filter(visibilityHiddenFilter).length == 1) {
 			return null;
 		}
@@ -399,7 +417,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 			oDomRefFound = null;
 
 		while (oCurrDomRef) {
-			if (oCurrDomRef.nodeType == 1 && jQuery(oCurrDomRef).is(':visible')) {
+			if (oCurrDomRef.nodeType == 1 && !hasZeroDimensions(oCurrDomRef)) {
 				if (jQuery(oCurrDomRef).hasTabIndex()) {
 					return oCurrDomRef;
 				}
@@ -433,7 +451,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		var visibilityHiddenFilter = function (idx){
 			return jQuery(this).css("visibility") == "hidden";
 		};
-		if (!oContainerDomRef || jQuery(oContainerDomRef).is(':hidden') ||
+		if (!oContainerDomRef || hasZeroDimensions(oContainerDomRef) ||
 				jQuery(oContainerDomRef).filter(visibilityHiddenFilter).length == 1) {
 			return null;
 		}
@@ -442,7 +460,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 			oDomRefFound = null;
 
 		while (oCurrDomRef) {
-			if (oCurrDomRef.nodeType == 1 && jQuery(oCurrDomRef).is(':visible')) {
+			if (oCurrDomRef.nodeType == 1 && !hasZeroDimensions(oCurrDomRef)) {
 				if (oCurrDomRef.childNodes) {
 					oDomRefFound = jQuery(oCurrDomRef).lastFocusableDomRef();
 					if (oDomRefFound) {
@@ -701,7 +719,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 			if ( !element.href || !mapName || map.nodeName.toLowerCase() !== "map" ) {
 				return false;
 			}
-			img = jQuery( "img[usemap=#" + mapName + "]" )[0];
+			img = jQuery( "img[usemap='#" + mapName + "']" )[0];
 			return !!img && visible( img );
 		}
 		/*eslint-disable no-nested-ternary */

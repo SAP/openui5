@@ -22,8 +22,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated Since version 1.4.0.
-	 * A new messaging concept will be created in future. Therefore this control might be removed in one of the next versions.
+	 * @deprecated Since version 1.4.0. Instead, use the <code>sap.m.MessagePopover</code> control.
 	 * @alias sap.ui.commons.MessageBar
 	 * @ui5-metamodel This control/element also will be described in the UI5 design-time metamodel
 	 */

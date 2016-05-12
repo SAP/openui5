@@ -102,9 +102,9 @@ sap.ui.define(['jquery.sap.global', './Tile', './library', 'sap/ui/core/IconPool
 	};
 
 	/**
-	 * Overrides the icon property of the StandardTile control.
+	 * Gets the icon of the StandardTile control.
 	 *
-	 * @private
+	 * @public
 	 */
 	StandardTile.prototype.getIcon = function() {
 		if (!this.getProperty("icon") && this.getType() === "Create") {

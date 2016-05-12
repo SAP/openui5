@@ -2,10 +2,11 @@
  * ${copyright}
  */
 sap.ui.require([
-	"jquery.sap.xml", // needed to have jQuery.sap.parseXML
+	"jquery.sap.global",
 	"sap/ui/model/odata/v4/lib/_MetadataConverter",
-	"sap/ui/test/TestUtils"
-], function (jQueryXML, _MetadataConverter, TestUtils) {
+	"sap/ui/test/TestUtils",
+	"jquery.sap.xml" // needed to have jQuery.sap.parseXML
+], function (jQuery, _MetadataConverter, TestUtils/*, jQuerySapXml*/) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0 */
 	"use strict";
@@ -164,11 +165,11 @@ sap.ui.require([
 	QUnit.test("traverse: __postProcessor", function (assert) {
 		var oXML = xml(assert, "<And><Bool>true</Bool><Bool>false</Bool></And>"),
 			oResult = _MetadataConverter.traverse(oXML.documentElement, {}, {
-				__postProcessor : function(oElement, aResults) {
+				__postProcessor : function (oElement, aResults) {
 					return {$And : aResults};
 				},
 				"Bool" : {
-					__postProcessor : function(oElement, aResults) {
+					__postProcessor : function (oElement, aResults) {
 						assert.deepEqual(aResults, []);
 						return oElement.childNodes[0].nodeValue === "true";
 					}

@@ -29,7 +29,7 @@ describe("sap.m.Text", function() {
 		var txt3a = element(by.id('text3a'));
 		//next line is to move the view in the window
 		txt3a.click();
-		expect(takeScreenshot(txt3a)).toLookAs("3a_fixed_width_in_%");
+		expect(takeScreenshot(txt3a)).toLookAs("3a_fixed_width_in_percentage");
 	});
 
 	// fixed width in px

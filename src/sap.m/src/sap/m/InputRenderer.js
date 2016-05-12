@@ -112,7 +112,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	InputRenderer.writeValueHelpIcon = function(oRm, oControl) {
 
 		if (oControl.getShowValueHelp() && oControl.getEnabled() && oControl.getEditable()) {
-			oRm.write('<div class="sapMInputValHelp">');
+			// Set tabindex to -1 to prevent the focus from going to the underlying list row,
+			// in case when the input is placed inside of a list/table.
+			oRm.write('<div class="sapMInputValHelp" tabindex="-1">');
 			oRm.renderControl(oControl._getValueHelpIcon());
 			oRm.write("</div>");
 		}

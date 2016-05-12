@@ -46,6 +46,10 @@
 			var result = sap.ui.core.ValueStateSupport.getAdditionalText(element);
 			equal(result, null, "text should not be returned when there is no special state");
 
+			// null
+			result = sap.ui.core.ValueStateSupport.getAdditionalText(null);
+			equal(result, null, "text should not be returned when there is no special state");
+
 			// error
 			element.setValueState(sap.ui.core.ValueState.Error);
 			result = sap.ui.core.ValueStateSupport.getAdditionalText(element);

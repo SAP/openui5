@@ -350,7 +350,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			}
 
 			// first navigation level
-			if (navList.getExpanded()) {
+			if (navList.getExpanded() || this.getItems().length == 0) {
 
 				if (!source || source.getMetadata().getName() != 'sap.ui.core.Icon' || !source.$().hasClass('sapTntNavLIExpandIcon')) {
 					this._selectItem(event);

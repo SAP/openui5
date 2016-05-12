@@ -26,6 +26,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 *
 	 * @constructor
 	 * @public
+	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.Toolbar</code> or <code>sap.m.OverflowToolbar</code> control.
 	 * @alias sap.ui.ux3.ActionBar
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */

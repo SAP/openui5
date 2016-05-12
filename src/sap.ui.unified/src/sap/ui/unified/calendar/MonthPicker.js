@@ -62,7 +62,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			/**
 			 * Month selection changed
 			 */
-			select : {}
+			select : {},
+
+			/**
+			 * If less than 12 months are displayed the <code>pageChange</code> event is fired
+			 * if the displayed months are changed by user navigation.
+			 * @since 1.38.0
+			 */
+			pageChange : {}
 
 		}
 	}});
@@ -72,6 +79,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		// set default calendar type from configuration
 		var sCalendarType = sap.ui.getCore().getConfiguration().getCalendarType();
 		this.setProperty("primaryCalendarType", sCalendarType);
+
+		this._iMinMonth = 0;
+		this._iMaxMonth = 11;
 
 	};
 
@@ -96,7 +106,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		if (this.getDomRef()) {
 			if (this.getMonths() < 12) {
-				var iStartMonth = _getStartMonth.call(this);
+				var iStartMonth = this.getStartMonth();
 				if (iMonth >= iStartMonth && iMonth <= iStartMonth + this.getMonths() - 1) {
 					_selectMonth.call(this, iMonth, true);
 					this._oItemNavigation.focusItem(iMonth - iStartMonth);
@@ -155,10 +165,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		// focused item must be selected
 		var iIndex = this._oItemNavigation.getFocusedIndex();
-		var iMonth = iIndex + _getStartMonth.call(this);
+		var iMonth = iIndex + this.getStartMonth();
 
-		_selectMonth.call(this, iMonth);
-		this.fireSelect();
+		if (iMonth >= this._iMinMonth && iMonth <= this._iMaxMonth) {
+			_selectMonth.call(this, iMonth);
+			this.fireSelect();
+		}
 
 	};
 
@@ -204,7 +216,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 */
 	MonthPicker.prototype.nextPage = function(){
 
-		var iStartMonth = _getStartMonth.call(this);
+		var iStartMonth = this.getStartMonth();
 		var iIndex = this._oItemNavigation.getFocusedIndex();
 		var iMonth = iIndex + iStartMonth;
 		var iMonths = this.getMonths();
@@ -228,7 +240,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 */
 	MonthPicker.prototype.previousPage = function(){
 
-		var iStartMonth = _getStartMonth.call(this);
+		var iStartMonth = this.getStartMonth();
 		var iIndex = this._oItemNavigation.getFocusedIndex();
 		var iMonth = iIndex + iStartMonth;
 		var iMonths = this.getMonths();
@@ -239,6 +251,71 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		}
 		_updateMonths.call(this, iMonth);
 		return this;
+
+	};
+
+	/**
+	 * sets a minimum an maximum month
+	 *
+	 * @param {int} [iMin] minimum month as integer (starting with 0)
+	 * @param {int} [iMax] maximum month as integer (starting with 0)
+	 * @returns {sap.ui.unified.calendar.MonthPicker} <code>this</code> to allow method chaining
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	MonthPicker.prototype.setMinMax = function(iMin, iMax){
+
+		if (iMin == this._iMinMonth && iMax == this._iMaxMonth) {
+			return this;
+		}
+
+		iMin = parseInt(iMin, 10);
+		if (isNaN(iMin) || iMin < 0 || iMin > 11) {
+			iMin = 0;
+		}
+
+		iMax = parseInt(iMax, 10);
+		if (isNaN(iMax) || iMax < 0 || iMax > 11) {
+			iMax = 11;
+		}
+
+		if (iMin <= iMax) {
+			this._iMinMonth = iMin;
+			this._iMaxMonth = iMax;
+		} else {
+			this._iMaxMonth = iMin;
+			this._iMinMonth = iMax;
+		}
+
+		if (this.getDomRef()) {
+			var aMonths = this._oItemNavigation.getItemDomRefs();
+			var iIDLength = this.getId().length + 2;
+
+			for (var i = 0; i < aMonths.length; i++) {
+				var $DomRef = jQuery(aMonths[i]);
+				var iMonth = parseInt( $DomRef.attr("id").slice( iIDLength), 10);
+				if (iMonth < this._iMinMonth || iMonth > this._iMaxMonth) {
+					$DomRef.addClass("sapUiCalItemDsbl");
+					$DomRef.attr("aria-disabled", true);
+				} else {
+					$DomRef.removeClass("sapUiCalItemDsbl");
+					$DomRef.removeAttr("aria-disabled");
+				}
+			}
+		}
+
+		return this;
+
+	};
+
+	MonthPicker.prototype.getStartMonth = function(){
+
+		if (this.getMonths() < 12) {
+			var oFirstMonth = this._oItemNavigation.getItemDomRefs()[0];
+			return parseInt( oFirstMonth.id.slice( this.getId().length + 2), 10);
+		} else {
+			return 0;
+		}
 
 	};
 
@@ -272,7 +349,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		this._oItemNavigation.setItemDomRefs(aDomRefs);
 		this._oItemNavigation.setCycling(bCycling);
 		this._oItemNavigation.setColumns(iColumns, !bCycling);
-		var iIndex = this.getMonth() - _getStartMonth.call(this);
+		var iIndex = this.getMonth() - this.getStartMonth();
 		this._oItemNavigation.setFocusedIndex(iIndex);
 		this._oItemNavigation.setPageSize(aDomRefs.length); // to make sure that pageup/down goes out of month
 
@@ -317,10 +394,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			return;
 		}
 
-		var iMonth = iIndex + _getStartMonth.call(this);
+		var iMonth = iIndex + this.getStartMonth();
 
-		_selectMonth.call(this, iMonth);
-		this._bMousedownChange = true;
+		if (iMonth >= this._iMinMonth && iMonth <= this._iMaxMonth) {
+			_selectMonth.call(this, iMonth);
+			this._bMousedownChange = true;
+		}
 
 		oEvent.preventDefault(); // to prevent focus set outside of DatePicker
 		oEvent.setMark("cancelAutoClose");
@@ -332,7 +411,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		var oEvent = oControlEvent.getParameter("event");
 
 		if (oEvent.type) {
-			var iStartMonth = _getStartMonth.call(this);
+			var iStartMonth = this.getStartMonth();
 			var iIndex = this._oItemNavigation.getFocusedIndex();
 			var iMonth = iIndex + iStartMonth;
 			var iMonths = this.getMonths();
@@ -342,7 +421,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			case "sapnextmodifiers":
 				if (iMonth < 11) {
 					iMonth++;
-					_updateMonths.call(this, iMonth);
+					_updateMonths.call(this, iMonth, true);
 				}
 				break;
 
@@ -350,21 +429,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			case "sappreviousmodifiers":
 				if (iMonth > 0) {
 					iMonth--;
-					_updateMonths.call(this, iMonth);
+					_updateMonths.call(this, iMonth, true);
 				}
 				break;
 
 			case "sappagedown":
 				if (iMonth < 12 - iMonths) {
 					iMonth = iMonth + iMonths;
-					_updateMonths.call(this, iMonth);
+					_updateMonths.call(this, iMonth, true);
 				}
 				break;
 
 			case "sappageup":
 				if (iMonth > iMonths) {
 					iMonth = iMonth - iMonths;
-					_updateMonths.call(this, iMonth);
+					_updateMonths.call(this, iMonth, true);
 				}
 				break;
 
@@ -384,8 +463,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			$DomRef = jQuery(aDomRefs[i]);
 			if ($DomRef.attr("id") == sId) {
 				$DomRef.addClass("sapUiCalItemSel");
+				$DomRef.attr("aria-selected", "true");
 			}else {
 				$DomRef.removeClass("sapUiCalItemSel");
+				$DomRef.attr("aria-selected", "false");
 			}
 		}
 
@@ -454,18 +535,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	}
 
-	function _getStartMonth(){
-
-		if (this.getMonths() < 12) {
-			var oFirstMonth = this._oItemNavigation.getItemDomRefs()[0];
-			return parseInt( oFirstMonth.id.slice( this.getId().length + 2), 10);
-		} else {
-			return 0;
-		}
-
-	}
-
-	function _updateMonths(iMonth){
+	function _updateMonths(iMonth, bFireEvent){
 
 		var aMonths = this._oItemNavigation.getItemDomRefs();
 		if (aMonths.legth > 11) {
@@ -493,20 +563,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		var iSelectedMonth = this.getMonth();
 
 		for (var i = 0; i < aMonths.length; i++) {
+			var iCurrentMonth = i + iStartMonth;
 			var $DomRef = jQuery(aMonths[i]);
 			$DomRef.text(aMonthNames[i + iStartMonth]);
 			$DomRef.attr("id", this.getId() + "-m" + (i + iStartMonth));
 			if (!this._bLongMonth) {
 				$DomRef.attr("aria-label", aMonthNamesWide[i + iStartMonth]);
 			}
-			if (i + iStartMonth == iSelectedMonth) {
+			if (iCurrentMonth == iSelectedMonth) {
 				$DomRef.addClass("sapUiCalItemSel");
+				$DomRef.attr("aria-selected", "true");
 			}else {
 				$DomRef.removeClass("sapUiCalItemSel");
+				$DomRef.attr("aria-selected", "false");
+			}
+
+			if (iCurrentMonth < this._iMinMonth || iCurrentMonth > this._iMaxMonth) {
+				$DomRef.addClass("sapUiCalItemDsbl");
+				$DomRef.attr("aria-disabled", true);
+			} else {
+				$DomRef.removeClass("sapUiCalItemDsbl");
+				$DomRef.removeAttr("aria-disabled");
 			}
 		}
 
 		this._oItemNavigation.focusItem(iMonth - iStartMonth);
+
+		if (bFireEvent) {
+			this.firePageChange();
+		}
+
 	}
 
 	return MonthPicker;

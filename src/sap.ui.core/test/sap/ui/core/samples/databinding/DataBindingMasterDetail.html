@@ -55,7 +55,7 @@
 		sap.ui.getCore().setModel(oModel);
 
 		// clients table
-		var oTable = new sap.ui.table.DataTable({
+		var oTable = new sap.ui.table.Table({
 			title : "Clients",
 			width : "100%",
 			visibleRowCount : 5,
@@ -81,7 +81,7 @@
 		oTable.placeAt("master");
 
         // items table
-		var oItemsTable = new sap.ui.table.DataTable({
+		var oItemsTable = new sap.ui.table.Table({
 			title : "Items",
 			width : "100%",
 			visibleRowCount : 3,

@@ -10,7 +10,7 @@ sap.ui.define([
 
 		QUnit.module("Initialization", {
 
-			setup : function () {
+			beforeEach : function () {
 				this.oViewStub = new Control();
 				this.oComponentStub = new Control();
 
@@ -33,7 +33,7 @@ sap.ui.define([
 				sinon.stub(Controller.prototype, "getView").returns(this.oViewStub);
 			},
 
-			teardown : function () {
+			afterEach : function () {
 				Controller.prototype.getOwnerComponent.restore();
 				Controller.prototype.getView.restore();
 

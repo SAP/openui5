@@ -203,6 +203,11 @@
 // [Tags "Base", "Content", "Color"]
 @sapContent_ContrastIconColor: @sapContent_ContrastTextColor;
 
+// [Label "Content Icon Noninteractive Color"]
+// [Description "The color of noninteractive icons."]
+// [Tags "Base", "Content", "Color"]
+@sapContent_NonInteractiveIconColor: darken(@sapPrimary6, 22);
+
 // [Label "Content Focus Color"]
 // [Description "The color of the focus."]
 // [Tags "Base", "Content", "Color"]
@@ -279,7 +284,12 @@
 // [Label "Shell Background Color"]
 // [Description "The background color of the shell."]
 // [Tags "Base", "Shell", "Color"]
-@sapShell_Background: linear-gradient(to bottom, #a9c6de, #e7ecf0);
+@sapShell_Background: #c8d9e7;
+
+// [Label "Shell Background Gradient"]
+// [Description "The background gradient of the shell."]
+// [Tags "Base", "Shell", "Protected"]
+@sapShell_BackgroundGradient: linear-gradient(to bottom, darken(saturate(@sapShell_Background, 6), 7.8), lighten(desaturate(@sapShell_Background, 16), 7.8));
 
 // [Label "Shell Border Color"]
 // [Description "The color of the borders of the shell."]
@@ -289,7 +299,7 @@
 // [Label "Shell Text Color"]
 // [Description "The color of texts in the shell."]
 // [Tags "Base", "Shell", "Color", "Font"]
-@sapShell_TextColor: darken(@sapPrimary2, 10);
+@sapShell_TextColor: darken(@sapPrimary2, 10); // no contrast function allowed because background can be gradient
 
 // [Label "Button Border Thickness"]
 // [Description "The thickness of button borders."]
@@ -486,7 +496,7 @@
 // [Label "Group Content Background Color"]
 // [Description "The background color of the content area of a group."]
 // [Tags "Base", "Group", "Color"]
-@sapGroup_ContentBackground: @sapBackgroundColor;
+@sapGroup_ContentBackground: lighten(@sapBackgroundColor, 2);
 
 // [Label "Group Content Border Color"]
 // [Description "The color of the borders of a group's content area."]
@@ -516,7 +526,7 @@
 // [Label "Toolbar Separator Color"]
 // [Description "The color of a toolbar's separators."]
 // [Tags "Base", "Toolbar", "Color"]
-@sapToolbar_SeparatorColor: @sapPrimary6;
+@sapToolbar_SeparatorColor: fade(@sapPrimary1, 20);
 
 // [Label "List Header Background Color"]
 // [Description "The background color of the header area of lists."]
@@ -567,12 +577,12 @@
 // [Label "Scrollbar Face Color"]
 // [Description "The color of the surface of a scrollbar."]
 // [Tags "Base", "Scrollbar", "Color"]
-@sapScrollBar_FaceColor: @sapPrimary6;
+@sapScrollBar_FaceColor: darken(@sapPrimary6, 5);
 
 // [Label "Scrollbar Track Color"]
 // [Description "The color of the track of a scrollbar."]
 // [Tags "Base", "Scrollbar", "Color"]
-@sapScrollBar_TrackColor: lighten(@sapScrollBar_FaceColor, 20);
+@sapScrollBar_TrackColor: lighten(@sapScrollBar_FaceColor, 30);
 
 // [Label "Scrollbar Border Color"]
 // [Description "The color of the borders of a scrollbar."]
@@ -582,7 +592,7 @@
 // [Label "Scrollbar Symbol Color"]
 // [Description "The color of the scroll arrows in a scrollbar."]
 // [Tags "Base", "Scrollbar", "Color"]
-@sapScrollBar_SymbolColor: darken(@sapPrimary2, 10);
+@sapScrollBar_SymbolColor: @sapContent_IconColor;
 
 // [Label "Scrollbar Dimension"]
 // [Description "The size of the scrollbar (in pixel)."]
@@ -592,7 +602,7 @@
 // [Label "Scrollbar Hover Face Color"]
 // [Description "The hover color of the surface of a scrollbar."]
 // [Tags "Base", "Scrollbar", "Color"]
-@sapScrollBar_Hover_FaceColor: darken(@sapScrollBar_FaceColor, 5);
+@sapScrollBar_Hover_FaceColor: darken(@sapScrollBar_FaceColor, 3);
 
 // [Label "Page Header Background Color"]
 // [Description "The background color of page headers."]
@@ -612,7 +622,7 @@
 // [Label "Page Footer Background Color"]
 // [Description "The background color of page footers."]
 // [Tags "Base", "Page", "Color"]
-@sapPageFooter_Background: darken(@sapBaseColor, 9);
+@sapPageFooter_Background: @sapPrimary4;
 
 // [Label "Page Footer Text Color"]
 // [Description "The color of texts on page footers."]
@@ -707,17 +717,17 @@
 // [Label "Chart Color 'Bad'"]
 // [Description "This color is to visualize a 'Bad' value."]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_Bad: #d32030;
+@sapChart_Bad: #dc0d0e;
 
 // [Label "Chart Color 'Critical'"]
 // [Description "This color is to visualize a 'Critical' value."]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_Critical: #e17b24;
+@sapChart_Critical: #de890d;
 
 // [Label "Chart Color 'Good'"]
 // [Description "This color is to visualize a 'Good' value."]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_Good: #61a656;
+@sapChart_Good: #3fa45b;
 
 // [Label "Chart Color 'Neutral'"]
 // [Description "This color is to visualize a 'Neutral' value."]

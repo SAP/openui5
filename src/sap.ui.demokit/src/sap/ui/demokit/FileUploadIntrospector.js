@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.demokit.FileUploadIntrospector
+	 * @alias sap.ui.demokit.FileUploadIntrospector
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FileUploadIntrospector = Control.extend("sap.ui.demokit.FileUploadIntrospector", /** @lends sap.ui.demokit.FileUploadIntrospector.prototype */ { metadata : {
@@ -103,4 +103,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 
 	return FileUploadIntrospector;
 
-}, /* bExport= */ true);
+});

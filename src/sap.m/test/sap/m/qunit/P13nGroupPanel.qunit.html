@@ -7,7 +7,7 @@
 <script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
 	type="text/javascript" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
-
+	
 </script>
 
 <link rel="stylesheet"
@@ -25,6 +25,10 @@
 	src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <script type="text/javascript">
+	if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	}
+
 	(function() {
 		jQuery.sap.require("sap.m.P13nGroupPanel");
 		jQuery.sap.require("sap.m.P13nGroupItem");
@@ -38,10 +42,6 @@
 		var gData = {
 			"items": [
 				{
-					"key": null,
-					"text": "(none)",
-					"tooltip": "nix"
-				}, {
 					"key": "c0",
 					"text": "Name"
 				}, {
@@ -141,8 +141,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			var nItems = 4;
-			strictEqual(oP13nGroupPanel.getItems().length, nItems, "length of getItems should be '" + nItems + "'");
+			strictEqual(oP13nGroupPanel.getItems().length, 3, "length of getItems should be 3");
 
 			// cleanup
 			oP13nGroupPanel.destroy();
@@ -284,7 +283,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			strictEqual(oP13nGroupPanel.getItems().length, 4, "length of getItems should be 4'");
+			strictEqual(oP13nGroupPanel.getItems().length, 3, "length of getItems should be 3'");
 			strictEqual(oP13nGroupPanel.getGroupItems().length, 2, "length of getGroupItems should be 2'");
 
 			// cleanup
@@ -297,10 +296,6 @@
 			var oP13nGroupPanel = new sap.m.P13nGroupPanel({
 				items: [
 					new sap.m.P13nItem({
-						key: null,
-						text: "(none)",
-						tooltip: "nix"
-					}), new sap.m.P13nItem({
 						key: "c0",
 						text: "Name"
 					}), new sap.m.P13nItem({
@@ -330,7 +325,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			strictEqual(oP13nGroupPanel.getItems().length, 4, "length of getItems should be 4'");
+			strictEqual(oP13nGroupPanel.getItems().length, 3, "length of getItems should be 3'");
 			strictEqual(oP13nGroupPanel.getGroupItems().length, 2, "length of getGroupItems should be 2'");
 
 			// cleanup
@@ -346,11 +341,6 @@
 			oP13nGroupPanel.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
-			oP13nGroupPanel.addItem(new sap.m.P13nItem({
-				key: null,
-				text: "(none)",
-				tooltip: "nix"
-			}));
 			oP13nGroupPanel.addItem(new sap.m.P13nItem({
 				key: "c0",
 				text: "Name"
@@ -379,8 +369,27 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			strictEqual(oP13nGroupPanel.getItems().length, 4, "length of getItems should be 4'");
+			strictEqual(oP13nGroupPanel.getItems().length, 3, "length of getItems should be 3'");
 			strictEqual(oP13nGroupPanel.getGroupItems().length, 2, "length of getGroupItems should be 2'");
+
+			// cleanup
+			oP13nGroupPanel.destroy();
+		});
+
+		test("'none'", function() {
+
+			// system under test
+			var oP13nGroupPanel = new sap.m.P13nGroupPanel();
+
+			bindGroupPanel(oP13nGroupPanel);
+
+			// arrange
+			oP13nGroupPanel.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assertions
+			strictEqual(oP13nGroupPanel.getItems().length, 3, "length of getItems should be 3");
+			strictEqual(oP13nGroupPanel._oGroupPanel.getKeyFields().length, 4, "length of getItems should be 4");
 
 			// cleanup
 			oP13nGroupPanel.destroy();

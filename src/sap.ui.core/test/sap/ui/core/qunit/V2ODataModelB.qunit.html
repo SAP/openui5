@@ -54,10 +54,8 @@
 		return new sap.ui.model.odata.v2.ODataModel(sServiceUri, {json: bJSON, defaultUpdateMethod : sUpdateMethod});
 	}
 
-	function removeSharedMetadata() {
-		jQuery.each(function(sUri, oData) {
-			delete sap.ui.model.odata.v2.ODataModel.mServiceData[sUri].oMetadata
-		});
+	function cleanServiceDataCache() {
+		sap.ui.model.odata.v2.ODataModel.mServiceData = {};
 	}
 
 	/*module("ODataModelV2 XML", {
@@ -66,7 +64,7 @@
 			oModel = initModel(false);
 		},
 		teardown : function() {
-			removeSharedMetadata();
+			cleanServiceDataCache();
 			oModel.destroy();
 			oModel = undefined;
 			stopServer();
@@ -98,7 +96,7 @@
 		teardown : function() {
 			oModel.destroy();
 			oModel = undefined;
-			removeSharedMetadata();
+			cleanServiceDataCache();
 			stopServer();
 		}
 	});
@@ -233,7 +231,7 @@
 				ok(false, "oNewP Promise resolved");
 			}, function(){
 				ok(true, "oNewP Promise rejected");
-				removeSharedMetadata();
+				cleanServiceDataCache();
 				sServiceUri = sTempService;
 				start();
 			});
@@ -269,7 +267,7 @@
 			})
 			.then(function(result){
 				ok(true, "oNewP2 Promise resolved");
-				removeSharedMetadata();
+				cleanServiceDataCache();
 				sServiceUri = sTempService;
 				start();
 			}, function(){
@@ -980,7 +978,7 @@
 		teardown : function() {
 			oModel.destroy();
 			oModel = undefined;
-			removeSharedMetadata();
+			cleanServiceDataCache();
 			stopServer();
 		}
 	});
@@ -2836,7 +2834,7 @@
 		teardown : function() {
 			oModel.destroy();
 			oModel = undefined;
-			removeSharedMetadata();
+			cleanServiceDataCache();
 			stopServer();
 		}
 	});
@@ -3455,7 +3453,7 @@
 		teardown : function() {
 			oModel.destroy();
 			oModel = undefined;
-			removeSharedMetadata();
+			cleanServiceDataCache();
 			stopServer();
 		}
 	});
@@ -3884,25 +3882,6 @@
 		});
 	});
 
-	asyncTest("test oDataModel callFunction: invalid parameter", function() {
-		oModel = initModel();
-		var fnTest = function() {
-			oModel.callFunction("/SalesOrder_Confirm",{
-				method: "POST",
-				urlParameters: {"Test": "test"}
-			});
-		};
-
-		oModel.attachRequestSent(this, function(oEventInfo) {
-			ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm", "Invalid parameter is omitted from URL");
-			start();
-		});
-
-		oModel.attachMetadataLoaded(this, function() {
-			fnTest();
-		});
-	});
-
 	asyncTest("test oDataModel callFunction: parameters are preserved", function() {
 		var mUrlParams = {
 			"SalesOrderID": "test"
@@ -3925,8 +3904,32 @@
 		oModel.attachMetadataLoaded(this, function() {
 			fnTest();
 		});
-});
+	});
+	
+	asyncTest("test oDataModel callFunction: additional parameters", function() {
+		var mUrlParams = {
+			"SalesOrderID": "test",
+			"$expand": "ToBusinessPartner",
+			"sap-some": "sapTest"
+		}
 
+		oModel = initModel();
+		var fnTest = function() {
+			oModel.callFunction("/SalesOrder_Confirm",{
+				method: "POST",
+				urlParameters: mUrlParams
+			})
+		};
+
+		oModel.attachRequestSent(this, function(oEventInfo) {
+			ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm?SalesOrderID='test'&$expand=ToBusinessPartner&sap-some=sapTest", "Valid parameter is added to URL");
+			start();
+		});
+		
+		oModel.attachMetadataLoaded(this, function() {
+			fnTest();
+		});
+	});
 	
 	asyncTest("test oDataModel binding function import parameters deferred", function() {
 		var iCount = 0;
@@ -4060,7 +4063,7 @@
 		teardown : function() {
 			oModel.destroy();
 			oModel = undefined;
-			removeSharedMetadata();
+			cleanServiceDataCache();
 			stopServer();
 		}
 	});

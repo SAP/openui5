@@ -1944,6 +1944,58 @@
 			oSelectList.destroy();
 		});
 
+		module("keyboard navigation mode");
+
+		test("it should not enable the item navigation (initial rendering)", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				keyboardNavigationMode: sap.m.SelectListKeyboardNavigationMode.None,
+				items: [
+					new sap.ui.core.Item({
+						text: "lorem ipsum"
+					})
+				]
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oSelectList.getItemNavigation() === null);
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("it should not enable the item navigation", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				keyboardNavigationMode: sap.m.SelectListKeyboardNavigationMode.Delimited,
+				items: [
+					new sap.ui.core.Item({
+						text: "lorem ipsum"
+					})
+				]
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oSelectList.setKeyboardNavigationMode(sap.m.SelectListKeyboardNavigationMode.None);
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oSelectList.getItemNavigation() === null);
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
 		module("removeItem()");
 
 		test("it should give a warning when called with faulty parameter", function() {

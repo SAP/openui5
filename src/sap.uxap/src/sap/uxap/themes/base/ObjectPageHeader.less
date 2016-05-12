@@ -338,9 +338,26 @@ html[dir=rtl] .sapUxAPObjectPageHeaderMarks .sapMObjStatusMarker .sapUiIcon:firs
 	height: 2rem;
 	margin-top: 0.5rem;
 	width: 1px;
+	visibility: hidden;
+}
+
+
+.sapUxAPObjectPageHeaderSideContentBtn > .sapUxAPObjectPageHeaderSeparator:only-of-type {
+	visibility: visible;
 }
 
 .sapUiSizeCompact .sapUxAPObjectPageHeaderSeparator {
 	height: 1.5rem;
 	margin-top: 0.25rem;
 }
+
+/* Fiori 2.0 adaptation */
+.sapF2CollapsedHeader .sapUxAPObjectPageHeaderNavigation > .sapMBar {
+  height: 0;
+}
+
+.sapF2Adapted .sapUxAPObjectPageHeaderNavigation > .sapMIBar {
+  background: transparent;
+  box-shadow: none;
+}
+

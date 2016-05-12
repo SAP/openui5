@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <title>SplitButton</title>
+    <script id="sap-ui-bootstrap"
+            src="../../../resources/sap-ui-core.js"
+            data-sap-ui-libs="sap.m"
+            data-sap-ui-theme="sap_bluecrystal">
+    </script>
+    <script>
+        new sap.m.App().addPage(new sap.m.Page({
+            title: "sap.m.SplitButton",
+            content: [
+                new sap.m.SplitButton({
+                    text: "abc",
+                    arrowPress: function(oEvent) {
+                        alert("arrow down: " + oEvent.getParameter('down'));
+                    },
+                    press: function() {
+                        alert("press");
+                    }
+                })
+            ]
+        })).placeAt("body");
+    </script>
+</head>
+<body id="body" class="sapUiBody">
+<!--<body id="body" class="sapUiBody sapUiSizeCompact">-->
+</body>
+</html>

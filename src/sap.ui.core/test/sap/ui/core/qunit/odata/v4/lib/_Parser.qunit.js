@@ -2,8 +2,9 @@
  * ${copyright}
  */
 sap.ui.require([
+	"jquery.sap.global",
 	"sap/ui/model/odata/v4/lib/_Parser"
-], function (_Parser) {
+], function (jQuery, _Parser) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -11,14 +12,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._Parser", {
 		beforeEach : function () {
-			this.oSandbox = sinon.sandbox.create();
-			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
+			this.oLogMock = sinon.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		},
 
 		afterEach : function () {
-			this.oSandbox.verifyAndRestore();
+			this.oLogMock.verify();
 		}
 	});
 

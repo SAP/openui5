@@ -6,8 +6,8 @@
 	text-shadow: 0 0.625rem 0 fade(@sapUiLightShadowTint, 0.5);
 }
 
-.sap-desktop .sapMQuickViewHeader,
-.sap-tablet .sapMQuickViewHeader {
+html.sap-desktop .sapMQuickViewHeader,
+html.sap-tablet .sapMQuickViewHeader {
 	font-size: @sapMFontHeader5Size;
 }
 
@@ -53,12 +53,12 @@
 }
 
 .sapMQuickViewPage .sapUiIcon:focus,
-.sap-phone .sapMQuickViewPage .sapMLnk:focus,
-.sap-tablet .sapMQuickViewPage .sapMLnk:focus {
+html.sap-phone .sapMQuickViewPage .sapMLnk:focus,
+html.sap-tablet .sapMQuickViewPage .sapMLnk:focus {
   outline: none;
 }
 
-.sap-desktop .sapMQuickViewPage .sapUiIcon:focus {
+html.sap-desktop .sapMQuickViewPage .sapUiIcon:focus {
 	outline: 1px dotted @sapUiFocus;
 	outline-offset: -1px;
 }

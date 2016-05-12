@@ -1,13 +1,11 @@
 <core:FragmentDefinition
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
-	xmlns:form="sap.ui.layout.form"
+	xmlns:scenario="sap.ui.core.sample.ViewTemplate.scenario"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
 
-	<form:SimpleForm binding="{path: 'facet>Target', formatter: 'sap.ui.model.odata.AnnotationHelper.getNavigationPath'}">
-		<form:title>
-			<core:Title text="{path: 'facet>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
-		</form:title>
+	<scenario:Form binding="{path: 'facet>Target', formatter: 'sap.ui.model.odata.AnnotationHelper.getNavigationPath'}"
+		title="{path: 'facet>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}">
 		<core:ExtensionPoint name="afterTitle"/>
 
 		<template:with path="facet>Target" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="target">
@@ -25,5 +23,5 @@
 				</template:else>
 			</template:if>
 		</template:with>
-	</form:SimpleForm>
+	</scenario:Form>
 </core:FragmentDefinition>

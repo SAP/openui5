@@ -47,7 +47,9 @@
 					associations : {
 						selectedObject : { type : "sap.ui.core.TestManagedObject", multiple : false},
 						associatedObjects : { type : "sap.ui.core.TestManagedObject", multiple : true, singularName : "associatedObj"}
-					}
+					},
+					defaultAggregation : "singleAggr",
+					defaultProperty: "value"
 				},
 
 				init : function() {
@@ -91,6 +93,9 @@
 				}
 
 			});
+
+			//derive
+			sap.ui.core.TestManagedObject.extend("sap.ui.core.TestManagedObjectDerived", {});
 
 			var changed = false;
 
@@ -321,6 +326,48 @@
 				oModel.setProperty("/value", "testvalue");
 			});
 
+			test("Bind property TwoWay with type", function() {
+				this.obj.bindProperty("value", {
+					path: "/value",
+					mode: "TwoWay",
+					type: new sap.ui.model.type.String()
+				});
+				equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+				equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
+				oModel.setProperty("/value", "newvalue");
+				equal(this.obj.getProperty("value"), "newvalue", "New model value must be reflected");
+				this.obj.setProperty("value", "othervalue");
+				equal(oModel.getProperty("/value"), "othervalue", "Control property change must update model");
+				equal(this.obj.getProperty("value"), "othervalue", "New property value must be kept");
+				oModel.setProperty("/value", "testvalue");
+			});
+
+			test("Bind property TwoWay with type as string", function() {
+				this.obj.bindProperty("value", {
+					path: "/value",
+					mode: "TwoWay",
+					type: "sap.ui.model.type.String"
+				});
+				equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+				equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
+				oModel.setProperty("/value", "newvalue");
+				equal(this.obj.getProperty("value"), "newvalue", "New model value must be reflected");
+				this.obj.setProperty("value", "othervalue");
+				equal(oModel.getProperty("/value"), "othervalue", "Control property change must update model");
+				equal(this.obj.getProperty("value"), "othervalue", "New property value must be kept");
+				oModel.setProperty("/value", "testvalue");
+			});
+
+			test("Bind property TwoWay with unkown type as string", function() {
+				raises(function() {
+					this.obj.bindProperty("value", {
+						path: "/value",
+						mode: "TwoWay",
+						type: "sap.unknown.Type"
+					});
+				}, "Raises unknown type error");
+			});
+
 			test("Bind property TwoWay with formatter & parts", function() {
 				this.obj.bindProperty("value", {
 					parts: [{
@@ -469,6 +516,102 @@
 				checkIfDestroyed(this.subObj);
 			});
 
+			test("Set, unset and destroy single aggregation with modifyAggregation event", function() {
+				var aParameters = [];
+					aExpected = [];
+
+				function modifyAggregationHandler(oEvent) {
+					aParameters.push(oEvent.getParameters());
+				}
+
+				function modifyEventDataEquals() {
+					if (aParameters.length !== aExpected.length) {
+						return false;
+					}
+					for (var i = 0; i < aParameters.length; i++) {
+						if (aParameters[i] && aParameters[i]) {
+							for (var n in aExpected) {
+								if (aParameters[i][n] !== aExpected[i][n]) {
+									return false
+								}
+							}
+						}
+					}
+					aExpected = [];
+					aParameters = [];
+					return true;
+				}
+				this.obj._attachModifyAggregation("singleAggr", modifyAggregationHandler);
+				// set
+				aExpected = [
+					{id: this.obj.getId(), type: "insert", name: "singleAggr", object: this.subObj}
+				];
+				this.obj.setAggregation("singleAggr", this.subObj);
+				equal(modifyEventDataEquals(), true, "set - modifyAggregation event with singleAggr, insert");
+
+				//unset
+				aExpected = [
+					{id: this.obj.getId(), type: "remove", name: "singleAggr", object: this.subObj},
+				];
+				this.obj.setAggregation("singleAggr", null);
+				equal(modifyEventDataEquals(), true, "unset - modifyAggregation event with singleAggr, remove");
+
+				//set - unset - set
+				aExpected = [
+					{id: this.obj.getId(), type: "insert", name: "singleAggr", object: this.subObj},
+					{id: this.obj.getId(), type: "remove", name: "singleAggr", object: this.subObj},
+					{id: this.obj.getId(), type: "insert", name: "singleAggr", object: this.subObj}
+				];
+				this.obj.setAggregation("singleAggr", this.subObj);
+				this.obj.setAggregation("singleAggr", null);
+				this.obj.setAggregation("singleAggr", this.subObj);
+				equal(modifyEventDataEquals(), true, "set - unset - set - modifyAggregation event with singleAggr, insert, remove, insert");
+
+				//reset
+				aExpected = [];
+				this.obj.setAggregation("singleAggr", this.subObj);
+				equal(modifyEventDataEquals(), true, "reset - modifyAggregation event not called");
+
+				//set other
+				aExpected = [
+					{id: this.obj.getId(), type: "remove", name: "singleAggr", object: this.subObj},
+					{id: this.obj.getId(), type: "insert", name: "singleAggr", object: this.subObj2}
+				];
+				this.obj.setAggregation("singleAggr", this.subObj2);
+				equal(modifyEventDataEquals(), true, "set other - modifyAggregation event called remove, insert");
+
+				//detached not fired
+				this.obj._detachModifyAggregation("singleAggr", modifyAggregationHandler);
+				this.obj.setAggregation("singleAggr", this.subObj);
+				this.obj.setAggregation("singleAggr", null);
+				this.obj.setAggregation("singleAggr", this.subObj2);
+				equal(modifyEventDataEquals(), true, "detached - modifyAggregation event not called anymore");
+				this.obj._attachModifyAggregation("singleAggr", modifyAggregationHandler);
+				
+				//multi aggregation not attached not fired
+				this.obj.addAggregation("subObjects", this.subObj);
+				equal(modifyEventDataEquals(), true, "not attached - modifyAggregation event not called");
+				
+				//destroy child
+				aExpected = [
+					{id: this.obj.getId(), type: "remove", name: "singleAggr", object: this.subObj2}
+				];
+				this.subObj2.destroy();
+				equal(aExpected.length == 1 && aParameters.length == 1, true,"destroy - modifyAggregation event called 1 time");
+				equal(modifyEventDataEquals(), true, "destroy - modifyAggregation event called remove");
+				checkIfDestroyed(this.subObj2);
+
+				//destroy aggregation
+				aExpected = [
+					{id: this.obj.getId(), type: "insert", name: "singleAggr", object: this.subObj},
+					{id: this.obj.getId(), type: "remove", name: "singleAggr", object: this.subObj}
+				];
+				this.obj.setAggregation("singleAggr", this.subObj);
+				this.obj.destroyAggregation("singleAggr");
+				equal(modifyEventDataEquals(), true, "destroy aggregation - modifyAggregation event called insert, remove");
+				checkIfDestroyed(this.subObj);
+			});
+
 			test("Add, Get, Remove and Destroy multiple aggregation", function() {
 				this.obj.addAggregation("subObjects", this.subObj);
 				deepEqual(this.obj.getAggregation("subObjects"), [this.subObj], "Getter must return objects array");
@@ -498,6 +641,143 @@
 				checkIfDestroyed(this.subObj);
 				checkIfDestroyed(this.subObj2);
 				checkIfDestroyed(this.subObj3);
+			});
+
+			test("Add, Get, Remove and Destroy multiple aggregation with modifyAggregation event", function() {
+				var aParameters = [];
+					aExpected = [];
+				function modifyAggregationHandler(oEvent) {
+					aParameters.push(oEvent.getParameters());
+				}
+				function modifyEventDataEquals() {
+					if (aParameters.length !== aExpected.length) {
+						return false;
+					}
+					for (var i = 0; i < aParameters.length; i++) {
+						if (aParameters[i] && aParameters[i]) {
+							for (var n in aExpected) {
+								if (aParameters[i][n] !== aExpected[i][n]) {
+									return false
+								}
+							}
+						}
+					}
+					aExpected = [];
+					aParameters = [];
+					return true;
+				}
+				this.obj._attachModifyAggregation("subObjects", modifyAggregationHandler);
+
+				//add
+				aExpected = [
+					{id: this.obj.getId(), type: "insert", name: "subObjects", object: this.subObj}
+				];
+				this.obj.addAggregation("subObjects", this.subObj);
+				equal(modifyEventDataEquals(), true, "add - modifyAggregation event with subObjects, insert");
+
+				//remove
+				aExpected = [
+					{id: this.obj.getId(), type: "remove", name: "subObjects", object: this.subObj},
+				];
+				this.obj.removeAggregation("subObjects", 0);
+				equal(modifyEventDataEquals(), true, "remove - modifyAggregation event with subObjects, remove");
+
+				//add - remove - add
+				aExpected = [
+					{id: this.obj.getId(), type: "insert", name: "subObjects", object: this.subObj},
+					{id: this.obj.getId(), type: "remove", name: "subObjects", object: this.subObj},
+					{id: this.obj.getId(), type: "insert", name: "subObjects", object: this.subObj}
+				];
+				this.obj.addAggregation("subObjects", this.subObj);
+				this.obj.removeAggregation("subObjects", 0);
+				this.obj.addAggregation("subObjects", this.subObj);
+				equal(modifyEventDataEquals(), true, "add - remove - add - modifyAggregation event with subObjects, insert, remove, insert");
+
+				//add same
+				aExpected = [
+					{id: this.obj.getId(), type: "remove", name: "subObjects", object: this.subObj},
+					{id: this.obj.getId(), type: "insert", name: "subObjects", object: this.subObj}
+				];
+				this.obj.addAggregation("subObjects", this.subObj);
+				equal(modifyEventDataEquals(), true, "add same - modifyAggregation event called 2 times");
+
+				//add other
+				aExpected = [
+					{id: this.obj.getId(), type: "insert", name: "subObjects", object: this.subObj2}
+				];
+				this.obj.addAggregation("subObjects", this.subObj2);
+				equal(modifyEventDataEquals(), true, "add other - modifyAggregation event called remove, insert");
+
+				//insert
+				aExpected = [
+					{id: this.obj.getId(), type: "insert", name: "subObjects", object: this.subObj3}
+				];
+				this.obj.insertAggregation("subObjects", this.subObj3, 0);
+				equal(modifyEventDataEquals(), true, "insert other - modifyAggregation event called remove, insert");
+
+				//remove all
+				aExpected = [
+					{id: this.obj.getId(), type: "remove", name: "subObjects", object: this.subObj3},
+					{id: this.obj.getId(), type: "remove", name: "subObjects", object: this.subObj},
+					{id: this.obj.getId(), type: "remove", name: "subObjects", object: this.subObj2}
+				];
+				this.obj.removeAllAggregation("subObjects");
+				equal(modifyEventDataEquals(), true, "remove all - modifyAggregation event called remove, insert");
+
+				//insert many
+				aExpected = [
+					{id: this.obj.getId(), type: "insert", name: "subObjects", object: this.subObj},
+					{id: this.obj.getId(), type: "insert", name: "subObjects", object: this.subObj2},
+					{id: this.obj.getId(), type: "insert", name: "subObjects", object: this.subObj3},
+					{id: this.obj.getId(), type: "remove", name: "subObjects", object: this.subObj3},
+					{id: this.obj.getId(), type: "insert", name: "subObjects", object: this.subObj3}
+				];
+				this.obj.insertAggregation("subObjects", this.subObj, 0);
+				this.obj.insertAggregation("subObjects", this.subObj2, 0);
+				this.obj.insertAggregation("subObjects", this.subObj3, 1);
+				this.obj.insertAggregation("subObjects", this.subObj3, 0);
+				equal(modifyEventDataEquals(), true, "insert many - modifyAggregation event called insert, insert, insert, remove, insert");
+
+				//detached not fired
+				this.obj._detachModifyAggregation("subObjects", modifyAggregationHandler);
+				this.obj.removeAllAggregation("subObjects", this.subObj, 0);
+				this.obj.insertAggregation("subObjects", this.subObj, 0);
+				this.obj.insertAggregation("subObjects", this.subObj2, 0);
+				this.obj.insertAggregation("subObjects", this.subObj3, 1);
+				this.obj.insertAggregation("subObjects", this.subObj3, 0);
+				equal(modifyEventDataEquals(), true, "detached - modifyAggregation event not called anymore");
+				this.obj._attachModifyAggregation("subObjects", modifyAggregationHandler);
+
+				//single aggregation not attached not fired
+				aExpected = [
+					{id: this.obj.getId(), type: "remove", name: "subObjects", object: this.subObj}
+				];
+				this.obj.setAggregation("singleAggr", this.subObj);
+				equal(modifyEventDataEquals(), true, "not attached - modifyAggregation event called remove");
+				this.obj.addAggregation("subObjects", this.subObj);
+				aExpected = [
+					{id: this.obj.getId(), type: "insert", name: "subObjects", object: this.subObj}
+				];
+				equal(modifyEventDataEquals(), true, "not attached - modifyAggregation event called insert");
+				
+				//destroy child
+				aExpected = [
+					{id: this.obj.getId(), type: "remove", name: "subObjects", object: this.subObj2}
+				];
+
+				this.subObj2.destroy();
+				equal(modifyEventDataEquals(), true, "destroy - modifyAggregation event called remove");
+				checkIfDestroyed(this.subObj2);
+				
+				//destroy aggregation
+				aExpected = [
+					{id: this.obj.getId(), type: "remove", name: "subObjects", object: this.subObj3},
+					{id: this.obj.getId(), type: "remove", name: "subObjects", object: this.subObj},
+				];
+				this.obj.destroyAggregation("subObjects");
+				equal(modifyEventDataEquals(), true, "destroy aggregation - modifyAggregation event called remove");
+				checkIfDestroyed(this.subObj3);
+				checkIfDestroyed(this.subObj);
 			});
 
 			test("applySettings on a 'multiple' aggregation", function() {
@@ -566,6 +846,112 @@
 				this.obj.bindAggregation("subObjects", "/list", this.template);
 				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
 				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+			});
+
+			test("Bind aggregation reuse templates on updates", function() {
+				var aOldObjects, aNewObjects;
+				oModel.setProperty("/changingList", [
+					{value: 1},
+					{value: 2},
+					{value: 3}
+				]);
+				this.obj.bindAggregation("subObjects", "/changingList", this.template);
+				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+				aOldObjects = this.obj.getAggregation("subObjects");
+				oModel.setProperty("/changingList", [
+					{value: 4},
+					{value: 5},
+					{value: 6},
+					{value: 7},
+					{value: 8}
+				]);
+				equal(this.obj.getAggregation("subObjects", []).length, 5, "Aggregation length should match model list length");
+				aNewObjects = this.obj.getAggregation("subObjects");
+				ok(aOldObjects[0] === aNewObjects[0], "First SubObject is reused after update");
+				ok(aOldObjects[1] === aNewObjects[1], "Second SubObject is reused after update");
+				ok(aOldObjects[2] === aNewObjects[2], "Third SubObject is reused after update");
+			});
+
+			test("Bind aggregation don't reuse factory objects on updates", function() {
+				var aOldObjects, aNewObjects;
+				oModel.setProperty("/changingList", [
+					{value: 1},
+					{value: 2},
+					{value: 3}
+				]);
+				this.obj.bindAggregation("subObjects", "/changingList", function(sIdSuffix, oContext) {
+					return this.template.clone(sIdSuffix)
+				}.bind(this));
+				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+				aOldObjects = this.obj.getAggregation("subObjects");
+				oModel.setProperty("/changingList", [
+					{value: 4},
+					{value: 5},
+					{value: 6},
+					{value: 7},
+					{value: 8}
+				]);
+				equal(this.obj.getAggregation("subObjects", []).length, 5, "Aggregation length should match model list length");
+				aNewObjects = this.obj.getAggregation("subObjects");
+				ok(aOldObjects[0] !== aNewObjects[0], "First SubObject is not reused after update");
+				ok(aOldObjects[1] !== aNewObjects[1], "Second SubObject is not reused after update");
+				ok(aOldObjects[2] !== aNewObjects[2], "Third SubObject is not reused after update");
+			});
+
+			test("Bind aggregation reuse templates on updates with extended change detection", function() {
+				var aOldObjects, aNewObjects;
+				oModel.setProperty("/changingList", [
+					{value: 1},
+					{value: 2},
+					{value: 3}
+				]);
+				this.obj.bUseExtendedChangeDetection = true;
+				this.obj.bindAggregation("subObjects", "/changingList", this.template);
+				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+				aOldObjects = this.obj.getAggregation("subObjects");
+				oModel.setProperty("/changingList", [
+					{value: 1},
+					{value: 2},
+					{value: 4},
+					{value: 5},
+					{value: 3}
+				]);
+				equal(this.obj.getAggregation("subObjects", []).length, 5, "Aggregation length should match model list length");
+				aNewObjects = this.obj.getAggregation("subObjects");
+				ok(aOldObjects[0] === aNewObjects[0], "First SubObject is reused after update");
+				ok(aOldObjects[1] === aNewObjects[1], "Second SubObject is reused after update");
+				ok(aOldObjects[2] === aNewObjects[4], "Third SubObject is reused after update");
+				this.obj.bUseExtendedChangeDetection = false;
+			});
+
+			test("Bind aggregation reuse factory objects on updates with extended change detection", function() {
+				var aOldObjects, aNewObjects;
+				oModel.setProperty("/changingList", [
+					{value: 1},
+					{value: 2},
+					{value: 3}
+				]);
+				this.obj.bUseExtendedChangeDetection = true;
+				this.obj.bindAggregation("subObjects", "/changingList", this.template);
+				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+				aOldObjects = this.obj.getAggregation("subObjects");
+				oModel.setProperty("/changingList", [
+					{value: 1},
+					{value: 2},
+					{value: 4},
+					{value: 5},
+					{value: 3}
+				]);
+				equal(this.obj.getAggregation("subObjects", []).length, 5, "Aggregation length should match model list length");
+				aNewObjects = this.obj.getAggregation("subObjects");
+				ok(aOldObjects[0] === aNewObjects[0], "First SubObject is reused after update");
+				ok(aOldObjects[1] === aNewObjects[1], "Second SubObject is reused after update");
+				ok(aOldObjects[2] === aNewObjects[4], "Third SubObject is reused after update");
+				this.obj.bUseExtendedChangeDetection = false;
 			});
 
 			test("Bind single aggregation", function() {
@@ -707,7 +1093,11 @@
 
 				var oLogSpy = this.spy(jQuery.sap.log, "error");
 				var oClone = this.obj.clone("clone");
-				sinon.assert.calledWith(oLogSpy, "A shared template must be marked with templateShareable:true in the binding info");
+				sinon.assert.calledWith(oLogSpy,
+					sinon.match(/templateShareable/) // msg should contain the term templateShareable
+					.and(sinon.match(/['"<]elements[>"']/)) // msg should contain the name of the aggregation
+					.and(sinon.match(new RegExp('[\'"<]' + jQuery.sap.escapeRegExp(this.obj.getId()) + '[>"\']'))) // and the name of the aggregating object
+				);
 				oLogSpy.restore();
 
 				strictEqual(this.obj.getBindingInfo("elements").templateShareable, true, "after clone operation, templateShareable should have changed from MAYBE to true in origin");
@@ -725,7 +1115,7 @@
 
 				var oLogSpy = this.spy(jQuery.sap.log, "error");
 				var oClone = this.obj.clone("clone");
-				sinon.assert.neverCalledWith(oLogSpy, "A shared template must be marked with templateShareable:true in the binding info");
+				sinon.assert.neverCalledWith(oLogSpy, sinon.match(/templateShareable/));
 				oLogSpy.restore();
 
 				strictEqual(this.obj.getBindingInfo("elements").templateShareable, false, "after clone operation, templateShareable of origin still should be false");
@@ -744,7 +1134,7 @@
 
 				var oLogSpy = this.spy(jQuery.sap.log, "error");
 				var oClone = this.obj.clone("clone");
-				sinon.assert.neverCalledWith(oLogSpy, "A shared template must be marked with templateShareable:true in the binding info");
+				sinon.assert.neverCalledWith(oLogSpy, sinon.match(/templateShareable/));
 				oLogSpy.restore();
 
 				strictEqual(this.obj.getBindingInfo("elements").templateShareable, true, "after clone operation, templateSharable of origin still should be false");
@@ -1224,7 +1614,23 @@
 				changed = false;
 			});
 
-			module("ManagedObjectMetadata");
+			test("Bind object with empty path", function() {
+				var oContext = oModel.createBindingContext("/list/0");
+				this.obj.bindObject({path:"", events:{change:fnChange}});
+				this.obj.setBindingContext(oContext);
+				equal(changed,true,"handler attached/change event fired");
+				ok(this.obj.getObjectBinding().getBoundContext() === oContext, "Bound context equals set context");
+				changed = false;
+				this.obj.setBindingContext(null);
+			});
+
+			module("ManagedObjectMetadata", {
+				setup: function() {
+					this.obj = new sap.ui.core.TestManagedObject();
+					this.obj2 = new sap.ui.core.TestManagedObjectDerived();
+					this.obj3 =  new sap.test.TestManagedObject();
+				}
+			});
 
 			test("Check for generated IDs", function() {
 				var mIdChecks = {
@@ -1250,6 +1656,23 @@
 				}
 
 
+			});
+
+			test("Check Metadata defaults", function() {
+				ok(this.obj.getMetadata().getDefaultAggregation() === this.obj.getMetadata().getAggregation("singleAggr"), "singleAggr is defaultAggregation");
+				ok(this.obj.getMetadata().getDefaultProperty() === this.obj.getMetadata().getDefaultProperty("value"), "value is defaultProperty");
+				ok(this.obj.getMetadata().getDefaultAggregationName() === "singleAggr", "singleAggr is defaultAggregationName");
+				ok(this.obj.getMetadata().getDefaultPropertyName() === "value", "value is defaultPropertyName");
+
+				ok(this.obj2.getMetadata().getDefaultAggregation() === this.obj.getMetadata().getAggregation("singleAggr"), "derived correctly, singleAggr is defaultAggregation");
+				ok(this.obj2.getMetadata().getDefaultProperty() === this.obj.getMetadata().getDefaultProperty("value"), "derived correctly, value is defaultProperty");
+				ok(this.obj2.getMetadata().getDefaultAggregationName() === "singleAggr", "derived correctly, singleAggr is defaultAggregationName");
+				ok(this.obj2.getMetadata().getDefaultPropertyName() === "value", "derived correctly, value is defaultPropertyName");
+
+				ok(this.obj3.getMetadata().getDefaultAggregation() === undefined, "undefined defaultAggregation");
+				ok(this.obj3.getMetadata().getDefaultProperty() === undefined, "undefined defaultProperty");
+				ok(this.obj3.getMetadata().getDefaultAggregationName() === null, "empty defaultAggregationName");
+				ok(this.obj3.getMetadata().getDefaultPropertyName() === null, "empty defaultPropertyName");
 			});
 
 		</script>

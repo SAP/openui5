@@ -21,6 +21,7 @@
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 
 	<!-- Control initialization -->
 	<script language="javascript">
@@ -43,13 +44,14 @@
 			return oMenu;
 		};
 
-		var createMenuItem = function(idx, sText, bIcon, bEnabled, bVisible, oSubMenu){
+		var createMenuItem = function(idx, sText, bIcon, bEnabled, bVisible, oSubMenu, bSection){
 			var sId = "item"+idx;
 			var oMenuItem = new sap.ui.unified.MenuItem(sId);
 			if(sText) oMenuItem.setText(sText);
 			if(bIcon) oMenuItem.setIcon("../images/help.gif");
 			if(bEnabled != -1) oMenuItem.setEnabled(bEnabled);
 			if(bVisible != -1) oMenuItem.setVisible(bVisible);
+			if(bSection) oMenuItem.setStartsSection(true);
 			if(oSubMenu) oMenuItem.setSubmenu(oSubMenu);
 			oMenuItem.attachSelect(function(oControlEvent){
 				lastSelectedItemId = oControlEvent.getParameter("id");
@@ -72,7 +74,7 @@
 		var oSubMenu = createMenu(3, true);
 		var oSubSubMenu = createMenu(4, true);
 		oRootMenu.addItem(createMenuItem(3, "I3", false, -1, -1, null));
-		oRootMenu.addItem(createMenuItem(4, "I4", true, -1, -1, null));
+		oRootMenu.addItem(createMenuItem(4, "I4", true, -1, -1, null, true));
 		oRootMenu.addItem(createMenuItem(5, "I5", false, false, -1, null));
 		oRootMenu.addItem(createMenuItem(6, "I6", false, true, false, null));
 		oRootMenu.addItem(createMenuItem(7, "I7", false, -1, -1, oSubMenu));
@@ -213,7 +215,7 @@
 
 		qutils.delayTestStart();
 
-		module("Properties");
+		module("Properties an Aggregations");
 
 		test("Item - Default Values", function() {
 			var oItem = oMenuItems["item1"];
@@ -239,7 +241,7 @@
 		test("Menu - Default Values", function() {
 			equals(oRootMenu.getEnabled(), true, "Default 'enabled':");
 			equals(oRootMenu.getPageSize(), 5, "Default 'page size':");
-		 });
+		});
 
 		test("Menu - Custom Values", function() {
 			qutils.triggerEvent("click", "button2", {});
@@ -248,6 +250,29 @@
 			equals(oRootMenu.getEnabled(), true, "Custom 'enabled':");
 		});
 
+		asyncTest("Menu - Item Aggregation", function() {
+			var oMenu = new sap.ui.unified.Menu();
+			openMenu(oMenu, true);
+			oMenu.addItem(new sap.ui.unified.MenuItem());
+			equals(oMenu.getItems().length, 1, "Number of items after add");
+			var oItem = new sap.ui.unified.MenuItem();
+			oMenu.insertItem(oItem, 0);
+			equals(oMenu.getItems().length, 2, "Number of items after insert");
+			equals(oMenu.getItems()[0].getId(), oItem.getId(), "Item at first position");
+			oMenu.removeItem(oItem);
+			equals(oMenu.getItems().length, 1, "Number of items after remove");
+			oMenu.removeAllItems();
+			equals(oMenu.getItems().length, 0, "Number of items after removeAll");
+			oMenu.addItem(new sap.ui.unified.MenuItem());
+			equals(oMenu.getItems().length, 1, "Number of items after add");
+			oMenu.destroyItems();
+			equals(oMenu.getItems().length, 0, "Number of items after destroyItems");
+			setTimeout(function(){
+				oMenu.close();
+				oMenu.destroy();
+				start();
+			}, 100);
+		});
 
 		module("Keyboard");
 
@@ -875,6 +900,107 @@
 			qutils.triggerKeyboardEvent(sTfId, "ESCAPE");
 			checkMenusClosed("after Escape");
 			ok(!lastSelectedItemId, "No Event triggered on Escape");
+		});
+
+		module("Misc");
+
+		test("Destruction", function() {
+			var sId = oRootMenu.getId();
+			var sSubId = oSubMenu.getId();
+			var bHasPopup = !!oRootMenu.oPopup;
+			oRootMenu.destroy();
+			ok(!sap.ui.getCore().byId(sId), "No Menu registered in the Core anymore");
+			ok(!sap.ui.getCore().byId(sSubId), "No Submenu registered in the Core anymore");
+			ok(!oRootMenu.oPopup && bHasPopup, "Internal Popup cleaned up");
+		});
+
+		test("setRootMenuTopStyle", function() {
+			var oSubMenu = new sap.ui.unified.Menu();
+			var oMenu = new sap.ui.unified.Menu({
+				items: [new sap.ui.unified.MenuItem({submenu: oSubMenu})]
+			});
+			oMenu.open();
+			ok(oSubMenu.getRootMenu() === oMenu, "Menu is the root");
+			oSubMenu.setRootMenuTopStyle(true);
+			ok(oMenu.bUseTopStyle, "Top Style active");
+			ok(oMenu.$().hasClass("sapUiMnuTop"), "Top Style CSS class set");
+			oMenu.setRootMenuTopStyle(false);
+			ok(!oMenu.bUseTopStyle, "Top Style inactive");
+			ok(!oMenu.$().hasClass("sapUiMnuTop"), "Top Style CSS class not set");
+			oMenu.destroy();
+		});
+
+		test("getPreviousSelectableItem", function() {
+			var oItem1 = new sap.ui.unified.MenuItem();
+			var oItem2 = new sap.ui.unified.MenuItem();
+			var oItem3 = new sap.ui.unified.MenuItem({enabled: false});
+			var oItem4 = new sap.ui.unified.MenuItem({visible: false});
+			var oMenu = new sap.ui.unified.Menu({
+				items: [oItem1, oItem2, oItem3, oItem4]
+			});
+
+			var oItem = oMenu.getPreviousSelectableItem(1);
+			ok(oItem === oItem1, "Previous selectable item of item 2 is item 1");
+			oItem = oMenu.getPreviousSelectableItem(0);
+			ok(oItem === oItem2, "Previous selectable item of item 1 is item 2");
+			oMenu.destroy();
+		});
+
+		test("getNextSelectableItem", function() {
+			var oItem1 = new sap.ui.unified.MenuItem();
+			var oItem2 = new sap.ui.unified.MenuItem();
+			var oItem3 = new sap.ui.unified.MenuItem({enabled: false});
+			var oItem4 = new sap.ui.unified.MenuItem({visible: false});
+			var oMenu = new sap.ui.unified.Menu({
+				items: [oItem1, oItem2, oItem3, oItem4]
+			});
+			
+			var oItem = oMenu.getNextSelectableItem(0);
+			ok(oItem === oItem2, "Previous selectable item of item 1 is item 2");
+			oItem = oMenu.getNextSelectableItem(1);
+			ok(oItem === oItem1, "Previous selectable item of item 2 is item 1");
+			oMenu.destroy();
+		});
+
+		test("Max Height", function() {
+			var oMenu = new sap.ui.unified.Menu({maxVisibleItems: 5});
+			for (var i = 0; i < 10; i++) {
+				oMenu.addItem(new sap.ui.unified.MenuItemBase());
+			}
+			openMenu(oMenu, false);
+			ok(!!oMenu.$().css("max-height"), "Max. height is set");
+			ok(oMenu.$().hasClass("sapUiMnuScroll"), "Scrolling is enabled");
+			oMenu.destroy();
+		});
+
+		test("Legacy Positioning", function() {
+			var flipfit = jQuery.ui.position.flipfit;
+			jQuery.ui.position.flipfit = null;
+
+			var oMenu = new sap.ui.unified.Menu();
+			for (var i = 0; i < 10; i++) {
+				oMenu.addItem(new sap.ui.unified.MenuItem());
+			}
+			openMenu(oMenu, false);
+
+			oMenu.destroy();
+			jQuery.ui.position.flipfit = flipfit;
+		});
+
+		test("Cozy Mode", function() {
+			jQuery.sap.byId("menuDockRef").toggleClass("sapUiSizeCozy", true);
+
+			var oMenu = new sap.ui.unified.Menu({tooltip: "a tooltip"});
+			for (var i = 0; i < 10; i++) {
+				oMenu.addItem(new sap.ui.unified.MenuItem());
+			}
+			openMenu(oMenu, false);
+
+			ok(oMenu.getRootMenu().isCozy(), "Cozy Mode recognized by Menu");
+			ok(oMenu.$().hasClass("sapUiSizeCozy"), "Cozy CSS class set");
+
+			oMenu.destroy();
+			jQuery.sap.byId("menuDockRef").toggleClass("sapUiSizeCozy", false);
 		});
 
 	</script>

@@ -9,7 +9,7 @@
 <!-- UI5 Bootstrap -->
 <script src="../../../resources/sap-ui-core.js"
 	type="text/javascript" id="sap-ui-bootstrap"
-	data-sap-ui-libs="sap.ui.layout, sap.m"
+	data-sap-ui-libs="sap.ui.layout, sap.m, sap.ui.commons"
 	data-sap-ui-theme="sap_bluecrystal"></script>
 
 <script type="text/javascript">
@@ -21,7 +21,6 @@
 		valueColor : sap.m.ValueColor.Error,
 		indicator : sap.m.DeviationIndicator.None,
 		value : "2435",
-		size : "Auto",
 		footer : "Current Quarter",
 		jc : {
 			contentText : "@@notify Great outcome of the Presentation today. The new functionality and the design was well received. Berlin, Tokyo, Rome, Budapest, New York, Munich, London",
@@ -37,62 +36,41 @@
 	var oNewsTileContent = new sap.m.TileContent({
 		footer : "{/footer}",
 		unit : "{/unit}",
-		size : "{/size}",
 		content : new sap.m.NewsContent({
-			size : "{/size}",
 			contentText : "{/nc/contentText}",
 			subheader : "{/nc/subheader}"
 		})
 	});
+	oNewsTileContent.addStyleClass("sapUiSmallMargin");
 
 	var oFeedTileContent = new sap.m.TileContent({
 		footer : "{/footer}",
 		unit : "{/unit}",
-		size : "{/size}",
 		content : new sap.m.FeedContent({
-			size : "{/size}",
 			contentText : "{/jc/contentText}",
 			subheader : "{/jc/subheader}",
 			value : "{/jc/value}"
 		})
 	});
+	oFeedTileContent.addStyleClass("sapUiSmallMargin");
 
 	var oNVConfContS = new sap.m.NumericContent("configurable-tile-cont-S", {
 		value : "{/value}",
 		scale : "{/scale}",
 		indicator : "{/indicator}",
-		size : "{/size}",
 		formatterValue : "{/isFormatterValue}",
 		truncateValueTo : "{/truncateValueTo}"
 	});
 
-	var oConfModel = new sap.ui.model.json.JSONModel();
-	oConfModel.setData(oConfData);
-	sap.ui.getCore().setModel(oConfModel);
-
 	var oNVConfS = new sap.m.TileContent("configurable-tile-num-cont-S", {
 		unit : "{/unit}",
-		size : "{/size}",
 		footer : "{/footer}",
 		content : oNVConfContS
 	});
+	oNVConfS.addStyleClass("sapUiSmallMargin");
 
-	var oFlexBox = new sap.m.FlexBox("flexbox", {
-		items : [oNVConfS, oFeedTileContent, oNewsTileContent],
-		alignItems: "Start",
-		justifyContent: "SpaceAround"
-	});
-
-	var oPage = new sap.m.Page("initial-page", {
-		showHeader : false,
-		content : [oFlexBox]
-	});
-
-	var oSizeInput = new sap.m.Input("size-value", {
-		type : sap.m.InputType.Text,
-		placeholder : 'Enter Size ...'
-	});
-	oSizeInput.bindValue("/size");
+	var oConfModel = new sap.ui.model.json.JSONModel();
+	oConfModel.setData(oConfData);
 
 	var oUnitLbl = new sap.m.Label({
 		text : "Unit",
@@ -115,27 +93,22 @@
 	});
 	oFooterInput.bindValue("/footer");
 
-	var oSizeChangeLbl = new sap.m.Label({
+	var oSizeLbl = new sap.m.Label({
 		text : "Size",
-		labelFor : "size-change"
+		labelFor : "size-button"
 	});
 
-	var oSizeChangeSlct = new sap.m.Select("size-change", {
-		change : function(oE) {
-			var selectedItem = oE.getParameter("selectedItem");
-			oConfData.size = selectedItem.getKey();
-			oConfModel.checkUpdate();
+	var bBtnEnabled = (window.innerWidth < 375) ? false: true;
+	var oSizeBtn = new sap.m.Button("size-button", {
+		press : function(oEvent) {
+			var sTheme = sap.ui.getCore().getConfiguration().getTheme();
+			sap.ui.getCore().applyTheme(sTheme);
+			var url = window.location.href;
+			window.open(url, "", "height=900,width=370,top=0,left=0,toolbar=no,menubar=no");
 		},
-		items : [new sap.ui.core.Item({
-			key : "Auto",
-			text : "Auto"
-		}), new sap.ui.core.Item({
-			key : "M",
-			text : "Middle"
-		}), new sap.ui.core.Item({
-			key : "S",
-			text : "Small"
-		})]
+		enabled: bBtnEnabled,
+		text: "Open new page with small screen size",
+		width: "300px"
 	});
 
 	var editableSimpleForm = new sap.ui.layout.form.SimpleForm("controls", {
@@ -143,9 +116,29 @@
 		editable : true,
 		content : [new sap.ui.core.Title({ // this starts a new group
 			text : "Modify Tiles"
-		}), oSizeChangeLbl, oSizeChangeSlct, oUnitLbl, oUnitInput, oFooterLbl, oFooterInput]
+		}), oUnitLbl, oUnitInput, oFooterLbl, oFooterInput, oSizeLbl, oSizeBtn]
 	});
-	oPage.addContent(editableSimpleForm);
+
+	var buildTC = function(oContent) {
+		return new sap.m.FlexBox({
+			items : [ oContent ],
+			layoutData : new sap.ui.commons.layout.ResponsiveFlowLayoutData({
+				minWidth : 400
+			}),
+			height : "150px"
+		});
+	};
+
+	var oControlForm = new sap.ui.layout.form.SimpleForm("tile-content-form", {
+		content : [buildTC(oNVConfS), buildTC(oFeedTileContent), buildTC(oNewsTileContent)]
+	});
+
+	var oPage = new sap.m.Page("initial-page", {
+		showHeader : false,
+		content : [oControlForm, editableSimpleForm]
+	});
+	oPage.setModel(oConfModel);
+
 	//create a mobile App embedding the page and place the App into the HTML document
 	var app = new sap.m.App("myApp", {
 		pages : [oPage]

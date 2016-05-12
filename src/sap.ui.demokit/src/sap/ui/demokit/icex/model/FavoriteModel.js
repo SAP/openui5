@@ -4,11 +4,12 @@
 
 sap.ui.define([
 	"sap/ui/demokit/icex/util/Sorter",
+	"sap/ui/model/json/JSONModel",
 	"jquery.sap.storage"
-], function(Sorter, jQuery) {
+], function(Sorter, JSONModel, jQuery) {
 	"use strict";
 
-	return sap.ui.model.json.JSONModel.extend("sap.ui.demokit.icex.model.FavoriteModel", {
+	return JSONModel.extend("sap.ui.demokit.icex.model.FavoriteModel", {
 
 		_STORAGE_KEY : "ICON_EXPLORER_FAVORITES",
 
@@ -17,7 +18,7 @@ sap.ui.define([
 		constructor : function(oSettings) {
 
 			// call super constructor
-			sap.ui.model.json.JSONModel.apply(this, arguments);
+			JSONModel.apply(this, arguments);
 
 			this.setSizeLimit(1000000);
 
@@ -39,7 +40,7 @@ sap.ui.define([
 
 		isFavorite : function(name) {
 			var data = this.getData();
-			for (var i = 0; i < data.icons.length ; i++) {
+			for (var i = 0; i < data.icons.length; i++) {
 				if (data.icons[i].name === name) {
 					return true;
 				}

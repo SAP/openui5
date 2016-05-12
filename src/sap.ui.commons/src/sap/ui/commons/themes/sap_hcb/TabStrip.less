@@ -112,6 +112,26 @@
   }
 }
 
+.sapUiTabBar .sapUiTabStripScrollIcon {
+	padding-top: 3px;
+	margin-top: 0;
+	height: 19px;
+}
+
 .sapUiTabDsbl:focus::before {
   border-color: @sapUiContentDisabledTextColor;
+}
+
+.sapUiTabStripScrollIcon {
+	color: @sapHCStandardFG;
+	background: @sapHCStandardBG;
+	border: 1px solid @sapHCStandardFG;
+}
+
+.sapUiTabStripScrollIcon:hover {
+	background: @sapHCHighlightBG;
+}
+
+.sapUiTabStripScrollIcon:active {
+	background: @sapHCHighlightAltBG;
 }

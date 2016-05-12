@@ -68,6 +68,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 		return this;
 	};
 
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	VerticalLayout.prototype.getAccessibilityInfo = function() {
+		var aContent = this.getContent();
+		var aChildren = [];
+		for (var i = 0; i < aContent.length; i++) {
+			if (aContent[i].getAccessibilityInfo) {
+				var oInfo = aContent[i].getAccessibilityInfo();
+				if (oInfo) {
+					aChildren.push(oInfo);
+				}
+			}
+		}
+		return {children: aChildren};
+	};
+
 	EnabledPropagator.call(VerticalLayout.prototype);
 
 	return VerticalLayout;

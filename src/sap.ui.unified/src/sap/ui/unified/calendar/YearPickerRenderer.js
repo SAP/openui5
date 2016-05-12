@@ -85,9 +85,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 			oRm.addClass("sapUiCalItem");
 			if ( oDate.getUTCFullYear() == iCurrentYear) {
 				oRm.addClass("sapUiCalItemSel");
+				mAccProps["selected"] = true;
+			} else {
+				mAccProps["selected"] = false;
 			}
 			if (!bEnabled) {
-				oRm.addClass("sapUiCalItemDsbl"); // day disabled
+				oRm.addClass("sapUiCalItemDsbl"); // year disabled
 				mAccProps["disabled"] = true;
 			}
 			oRm.writeAttribute("tabindex", "-1");

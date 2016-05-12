@@ -19,6 +19,7 @@ sap.ui.define([
 		 */
 		constructor: function (oObjectPageLayout) {
 			this._oObjectPageLayout = oObjectPageLayout;
+			this._iScrollDuration = oObjectPageLayout._iScrollToSectionDuration;
 		}
 	});
 
@@ -95,6 +96,16 @@ sap.ui.define([
 		}
 	};
 
+	ABHelper.prototype._focusOnSectionWhenUsingKeyboard = function (oEvent) {
+		var oSourceData = oEvent.srcControl.data(),
+			oSection = sap.ui.getCore().byId(oSourceData.sectionId),
+			oObjectPage = this.getObjectPageLayout();
+
+		if (oSection && !oSourceData.bHasSubMenu && !oObjectPage.getUseIconTabBar()) {
+			jQuery.sap.delayedCall(this._iScrollDuration, oSection.$(), "focus");
+		}
+	};
+
 	/**
 	 * build a sap.m.button equivalent to a section or sub section for insertion in the anchorBar
 	 * also registers the section info for further dom position updates
@@ -111,7 +122,12 @@ sap.ui.define([
 			oSectionBindingInfo,
 			sModelName,
 			sId,
-			aSubSections = oSectionBase.getAggregation("subSections");
+			aSubSections = oSectionBase.getAggregation("subSections"),
+			fnButtonKeyboardUseHandler = this._focusOnSectionWhenUsingKeyboard.bind(this),
+			oEventDelegatesForkeyBoardHandler = {
+				onsapenter: fnButtonKeyboardUseHandler,
+				onsapspace: fnButtonKeyboardUseHandler
+			};
 
 		if (oSectionBase.getVisible() && oSectionBase._getInternalVisible()) {
 			oButton = oSectionBase.getCustomAnchorBarButton();
@@ -124,6 +140,8 @@ sap.ui.define([
 					ariaDescribedBy: oSectionBase,
 					id: sId
 				});
+
+				oButtonClone.addEventDelegate(oEventDelegatesForkeyBoardHandler);
 
 				//has a ux rule been applied that we need to reflect here?
 				if (oSectionBase._getInternalTitle() != "") {

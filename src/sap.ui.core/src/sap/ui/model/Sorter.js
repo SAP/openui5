@@ -94,7 +94,7 @@ sap.ui.define(['sap/ui/base/Object'],
 	 *
 	 * @param {any} a the first value to compare
 	 * @param {any} b the second value to compare
-	 * @returns {integer} -1, 0 or 1 depending on the compare result
+	 * @returns {int} -1, 0 or 1 depending on the compare result
 	 * @public
 	 */
 	Sorter.defaultComparator = function(a, b) {

@@ -1,0 +1,112 @@
+/* ============================================ */
+/* CSS for control sap.uxap/HierarchicalSelect  */
+/* Belize theme                                 */
+/* ============================================ */
+
+.sapUxAPHierarchicalSelect {
+	border: none;
+	background-color: transparent;
+
+	&.sapMSltHoverable {
+		border: none;
+
+		&.sapMSltIconOnly:hover {
+			background: transparent;
+		}
+
+		&:not(.sapMSltPressed) > .sapMSltIcon:hover {
+			background: @sapUiButtonHoverBackground;
+		}
+	}
+
+	&.sapMSltPressed {
+
+		&.sapMSltIconOnly:not(.sapMSltDisabled) {
+			background: transparent;
+		}
+
+		> .sapMSltIcon {
+			background: @sapUiButtonLiteActiveBackground;
+			color: @sapUiButtonActiveTextColor;
+		}
+	}
+
+	.sapMSltLabel,
+	.sapMSltArrow {
+		font-size: @sapMFontHeader6Size;
+		color: @sapUiGroupTitleTextColor;
+		background-color: @sapUiObjectHeaderBackground;
+	}
+
+	.sapMSltIcon {
+		background: @sapUiButtonLiteBackground;
+		color: @sapUiButtonIconColor;
+	}
+}
+
+/* mobile-only: appears in a dialog */
+.sapMSltPicker .sapUxAPHierarchicalSelect.sapMIBar.sapMHeader-CTX,
+.sapMSltPicker .sapUxAPHierarchicalSelect.sapMSltBar::after {
+	background: @sapUiObjectHeaderBackground;
+	border: none;
+}
+
+.sapMSltPicker .sapUxAPHierarchicalSelect.sapMSltBar::after {
+	color: @sapUiContentIconColor;
+}
+
+.sapUxAPHierarchicalSelectFirstLevel.sapMSelectListItem:not(:first-child) {
+	border-top: 0.0625rem solid @sapUiListBorderColor;
+}
+
+.sapUxAPHierarchicalSelectFirstLevel.sapMSelectListItem {
+	color: @sapUiListTextColor;
+}
+
+.sapUxAPHierarchicalSelectSecondLevel.sapMSelectListItem {
+	color: lighten(@sapUiListTextColor, 20);
+}
+
+.sapUxAPHierarchicalSelectFirstLevel.sapMSelectListItem,
+.sapUxAPHierarchicalSelectSecondLevel.sapMSelectListItem {
+	font-size: @sapMFontMediumSize;
+}
+
+.sapUxAPHierarchicalSelect .sapMSltPicker-CTX .sapMSelectList {
+	border: 1px solid darken(@sapUiContentForegroundBorderColor, 15);
+}
+
+/* active */
+.sapUxAPHierarchicalSelectFirstLevel.sapMSelectListItem:active,
+.sapUxAPHierarchicalSelectSecondLevel.sapMSelectListItem:active {
+	color: @sapUiListActiveTextColor;
+}
+
+/* hover */
+.sapUxAPHierarchicalSelect .sapMSelectListItemSelected:hover {
+	background: @sapUiListSelectionHoverBackground;
+}
+
+/* styling needed to achieve underline of the select label on phone */
+html.sapUiMedia-Std-Phone, html.sap-phone {
+	.sapUxAPHierarchicalSelect .sapMSltLabel {
+		border-bottom: 0.125rem solid darken(@sapUiContentForegroundBorderColor, 15);
+	}
+
+	.sapUxAPHierarchicalSelect .sapMSltArrow {
+		box-shadow: inset 0 -0.125rem lighten(@sapUiContentForegroundBorderColor, 21);
+	}
+
+	.sapMSlt.sapUxAPHierarchicalSelect {
+		box-shadow: inset 0 -0.125rem lighten(@sapUiContentForegroundBorderColor, 21);
+	}
+}
+
+/* styling needed to achieve underline of the select label on phone on Android 4.4.2
+(this is specific for webview (Fiori client) and Chrome browser) */
+html[data-sap-ui-browser^="cr4"].sapUiMedia-Std-Phone,
+html[data-sap-ui-browser^="cr4"].sap-phone {
+	.sapUxAPHierarchicalSelect .sapMSltLabel {
+		box-shadow: inset 0 -0.125rem darken(@sapUiObjectHeaderBackground, 8);
+	}
+}

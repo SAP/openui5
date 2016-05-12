@@ -2851,5 +2851,29 @@
         "references": []
       }
     ]
+  },
+  "1.28.31": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "5facecbebf68002dd5bc2005122e8d8b56b110ad",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "v2.ODataModel: Force Entity update by setting ETag to \u0027*\u0027",
+        "references": []
+      }
+    ]
+  },
+  "1.28.32": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "b516320e4a5f0ebd80990d236827cab8f247b745",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "jquery.sap.encoder: Fix URL validation according to RFC 3986, 6068",
+        "references": []
+      }
+    ]
   }
 }

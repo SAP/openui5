@@ -2,6 +2,14 @@
 /* CSS for sap.ui.ux3.Shell.control (base theme) */
 /* ============================================= */
 
+/* Define function to make user-select consistent across browsers */
+.userSelect(@value) {
+	-webkit-user-select: @value;  /* Chrome all / Safari all */
+	-moz-user-select: @value;     /* Firefox all */
+	-ms-user-select: @value;      /* IE 10+ */
+	user-select: @value;          /* Likely future */
+}
+
 .sapUiUx3Shell {
 	margin: 0;
 	padding: 0;
@@ -9,9 +17,7 @@
 	font-family: Arial, Helvetica, sans-serif;
 	width: 100%;
 	overflow-x: hidden;
-	-moz-user-select: none;
-	-webkit-user-select: none;
-	user-select: none;
+	.userSelect(none);
 }
 
 .sapUiUx3ShellHeader {
@@ -61,9 +67,7 @@
 .sapUiUx3ShellHeader > .sapUiUx3ShellHeaderTitleLeft > span {
 	font-size: 0.75rem;
 	font-weight: bold;
-	-moz-user-select: none;
-	-webkit-user-select: none;
-	user-select: none;
+	.userSelect(none);
 }
 
 .sapUiUx3ShellHeader > .sapUiUx3ShellHeaderTitleLeft > img { /* the logo image */
@@ -71,9 +75,7 @@
 	max-height: 18px;
 	margin-right: 3px;
 	margin-top: -3px;
-	-moz-user-select: none;
-	-webkit-user-select: none;
-	user-select: none;
+	.userSelect(none);
 }
 
 .sapUiUx3ShellHeader.sapUiUx3ShellHeaderFlex > .sapUiUx3ShellHeaderTitleLeft > img {
@@ -156,9 +158,7 @@
 	background-position: right top;
 	padding-top: 12px;
 	line-height: 1px;
-	-moz-user-select: none;
-	-webkit-user-select: none;
-	user-select: none;
+	.userSelect(none);
 	z-index: 1; /* must be in front of the right-hand side Pane, otherwise that one will overlap when the window is very narrow */
 }
 
@@ -292,9 +292,7 @@ html[data-sap-ui-browser^="ff"] .sapUiUx3ShellToolFontIcon {
 	display: inline-block;
 	height: 100%;
 	box-sizing: border-box;
-	-moz-user-select: none;
-	-webkit-user-select: none;
-	user-select: none;
+	.userSelect(none);
 }
 
 /** Overflow button and menu**/
@@ -426,8 +424,7 @@ html[data-sap-ui-browser^="ff"] .sapUiUx3ShellToolFontIcon {
 	overflow: auto;
 	box-sizing: border-box;
 	border-right: 2px solid @sapUiMediumBorder;
-	-moz-user-select: auto;
-	-webkit-user-select: auto;
+	.userSelect(text);
 }
 
 .sapUiUx3ShellPaneBarOpen .sapUiUx3ShellPaneBarContent {
@@ -464,8 +461,7 @@ html[data-sap-ui-browser^="ff"] .sapUiUx3ShellToolFontIcon {
 	width: 100%;
 	-webkit-overflow-scrolling: touch;
 	overflow-x: auto;
-	-moz-user-select: auto;
-	-webkit-user-select: auto;
+	.userSelect(text);
 }
 
 .sapUiUx3ShellFullHeightContent .sapUiUx3ShellContent {

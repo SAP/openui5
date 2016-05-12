@@ -19,13 +19,11 @@ sap.ui.define([],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	NumericContentRenderer.render = function(oRm, oControl) {
-		var sSize = oControl.getSize();
 		var sValue = oControl.getValue();
 		var sIndicator = oControl.getIndicator();
 		var sScale = oControl.getScale();
 		var sState = oControl.getState();
 		var bIndicator = sap.m.DeviationIndicator.None !== sIndicator && sValue !== "";
-		var oIcon = oControl._oIcon;
 		var bWithMargin = oControl.getWithMargin();
 		var sWithoutMargin;
 		if (bWithMargin) {
@@ -62,7 +60,6 @@ sap.ui.define([],
 			oRm.addStyle("width", oControl.getWidth());
 		}
 		oRm.writeStyles();
-		oRm.addClass(sSize);
 		oRm.addClass("sapMNC");
 		oRm.addClass(sWithoutMargin);
 		if (oControl.hasListeners("press")) {
@@ -74,17 +71,14 @@ sap.ui.define([],
 		oRm.write("<div");
 		oRm.addClass("sapMNCInner");
 		oRm.addClass(sWithoutMargin);
-		oRm.addClass(sSize);
 		oRm.writeClasses();
 		oRm.write(">");
 		if (bWithMargin) {
-			this._renderScaleAndIndicator(oRm, oControl, bIndicator, bScale, sWithoutMargin, sSize, sIndicator, sScale);
-			this._prepareAndRenderIcon(oRm, oControl, oIcon);
-			this._renderValue(oRm, oControl, sWithoutMargin, sSize, sValue);
+			this._renderScaleAndIndicator(oRm, oControl, bIndicator, bScale, sWithoutMargin, sIndicator, sScale);
+			this._renderValue(oRm, oControl, sWithoutMargin, sValue);
 		} else {
-			this._prepareAndRenderIcon(oRm, oControl, oIcon);
-			this._renderValue(oRm, oControl, sWithoutMargin, sSize, sValue);
-			this._renderScaleAndIndicator(oRm, oControl, bIndicator, bScale, sWithoutMargin, sSize, sIndicator, sScale);
+			this._renderValue(oRm, oControl, sWithoutMargin, sValue);
+			this._renderScaleAndIndicator(oRm, oControl, bIndicator, bScale, sWithoutMargin, sIndicator, sScale);
 		}
 		oRm.write("</div>");
 		oRm.write("</div>");
@@ -101,7 +95,20 @@ sap.ui.define([],
 	 */
 	NumericContentRenderer._prepareAndRenderIcon = function(oRm, oControl, oIcon) {
 		if (oIcon) {
-			oIcon.addStyleClass("sapMNCIconImage").addStyleClass(oControl.getSize()).addStyleClass(oControl.getState());
+			var sState,
+			oLoadState = sap.m.LoadState,
+			sCurrentState = oControl.getState();
+
+			//remove state classes from icon and only add the current state's class
+			for (sState in oLoadState) {
+				if (oLoadState.hasOwnProperty(sState) && sState !== sCurrentState) {
+					oIcon.removeStyleClass(sState);
+				} else if (oLoadState.hasOwnProperty(sState) && sState === sCurrentState) {
+					oIcon.addStyleClass(sState);
+				}
+			}
+
+			oIcon.addStyleClass("sapMNCIconImage");
 			oRm.renderControl(oIcon);
 		}
 	};
@@ -115,25 +122,22 @@ sap.ui.define([],
 	 * @param {boolean} isIndicator
 	 * @param {boolean} isScale
 	 * @param {String} withoutMargin
-	 * @param {String} size
 	 * @param {String} textIndicator
 	 * @param {String} textScale
 	 */
-	NumericContentRenderer._renderScaleAndIndicator = function(oRm, oControl, isIndicator, isScale, withoutMargin, size, textIndicator, textScale) {
+	NumericContentRenderer._renderScaleAndIndicator = function(oRm, oControl, isIndicator, isScale, withoutMargin, textIndicator, textScale) {
 		if (isIndicator || isScale) {
 			var sState = oControl.getState();
 			var sColor = oControl.getValueColor();
 			oRm.write("<div");
 			oRm.addClass("sapMNCIndScale");
 			oRm.addClass(withoutMargin);
-			oRm.addClass(size);
 			oRm.addClass(sState);
 			oRm.writeClasses();
 			oRm.write(">");
 			oRm.write("<div");
 			oRm.writeAttribute("id", oControl.getId() + "-indicator");
 			oRm.addClass("sapMNCIndicator");
-			oRm.addClass(size);
 			oRm.addClass(textIndicator);
 			oRm.addClass(sState);
 			oRm.addClass(sColor);
@@ -143,7 +147,6 @@ sap.ui.define([],
 				oRm.write("<div");
 				oRm.writeAttribute("id", oControl.getId() + "-scale");
 				oRm.addClass("sapMNCScale");
-				oRm.addClass(size);
 				oRm.addClass(sState);
 				oRm.addClass(sColor);
 				oRm.writeClasses();
@@ -162,10 +165,9 @@ sap.ui.define([],
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control whose title should be rendered
 	 * @param {String} withoutMargin
-	 * @param {String} size
 	 * @param {String} value
 	 */
-	NumericContentRenderer._renderValue = function(oRm, oControl, withoutMargin, size, value) {
+	NumericContentRenderer._renderValue = function(oRm, oControl, withoutMargin, value) {
 		var sEmptyValue;
 		if (oControl.getNullifyValue()) {
 			sEmptyValue = "0";
@@ -177,17 +179,19 @@ sap.ui.define([],
 		oRm.addClass("sapMNCValue");
 		oRm.addClass(withoutMargin);
 		oRm.addClass(oControl.getValueColor());
-		oRm.addClass(size);
 		oRm.addClass(oControl.getState());
 		oRm.writeClasses();
 		oRm.write(">");
+
 		oRm.write("<div");
 		oRm.writeAttribute("id", oControl.getId() + "-value-scr");
 		oRm.addClass("sapMNCValueScr");
 		oRm.addClass(withoutMargin);
-		oRm.addClass(size);
 		oRm.writeClasses();
 		oRm.write(">");
+
+		this._prepareAndRenderIcon(oRm, oControl, oControl._oIcon);
+
 		var iChar = oControl.getTruncateValueTo();
 		//Control shows only iChar characters. If the last shown character is decimal separator - show only first N-1 characters. So "144.5" is shown like "144" and not like "144.".
 		if (value.length >= iChar && (value[iChar - 1] === "." || value[iChar - 1] === ",")) {

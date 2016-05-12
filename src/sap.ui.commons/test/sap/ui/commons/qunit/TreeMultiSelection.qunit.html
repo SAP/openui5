@@ -66,7 +66,7 @@
 		return oTree;
 	}
 
-	var oStandardTree
+	var oStandardTree;
 
 	qutils.delayTestStart();
 
@@ -165,7 +165,81 @@
 		ok(!node1.getExpanded(), "Node 1 is now collapsed");
 		node1.expand();
 		ok(node1.getExpanded(), "Node 1 is expanded");
-		ok(!node11.getIsSelected(), "Node 1.1 is not selected");
+		ok(node11.getIsSelected(), "Node 1.1 is selected");
+	});
+
+	module("Multiselect interactions", {
+		setup: function () {
+			var oData = {
+				"children": [
+					{"NAME": "A"},
+					{"NAME": "B"},
+					{"NAME": "C"},
+					{"NAME": "D"},
+					{"NAME": "E"},
+					{"NAME": "F"},
+					{"NAME": "G"},
+					{"NAME": "H"},
+					{"NAME": "I"},
+					{"NAME": "J"},
+					{"NAME": "K"},
+					{"NAME": "L"},
+					{"NAME": "M"},
+					{"NAME": "N"},
+					{"NAME": "O"},
+					{"NAME": "P"},
+					{"NAME": "Q"},
+					{"NAME": "R"},
+					{"NAME": "S"},
+					{"NAME": "T"},
+					{"NAME": "U"},
+					{"NAME": "V"},
+					{"NAME": "W"},
+					{"NAME": "X"},
+					{"NAME": "Y"},
+					{"NAME": "Z"}
+				]
+			};
+
+			oStandardTree = new sap.ui.commons.Tree({
+				id: "tree",
+				title: "Tree",
+				width: "300px",
+				height: "300px",
+				selectionMode: "Multi",
+				nodes: {
+					path: "/hierarchy",
+					template: new sap.ui.commons.TreeNode({
+						text: {
+							path: "NAME"
+						}
+					}),
+					parameters: {
+						arrayNames: ["children"]
+					}
+				}
+			}).setModel(new sap.ui.model.json.JSONModel({hierarchy: oData}));
+
+			oStandardTree.placeAt("target1");
+			sap.ui.getCore().applyChanges();
+		},
+		teardown: function () {
+			oStandardTree.destroy();
+			oStandardTree = null;
+		}
+	});
+
+	test("animate only last selection", function () {
+		var oTree = oStandardTree,
+			aNodes = oTree.getNodes(),
+			$TreeCont = oTree.$().find(".sapUiTreeCont");
+
+		aNodes.forEach(function (oNode) {
+			oTree.setSelection(oNode, true, sap.ui.commons.Tree.SelectionType.Range);
+		});
+
+
+		strictEqual($TreeCont.queue().length, 1, "Only the last selection to be animated");
 	});
 	</script>
 </head>

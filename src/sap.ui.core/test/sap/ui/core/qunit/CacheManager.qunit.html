@@ -1,0 +1,291 @@
+<!DOCTYPE HTML>
+
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<!-- Initialization -->
+	<script id="sap-ui-bootstrap" type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js" ,
+			data-sap-ui-theme="sap_bluecrystal">
+	</script>
+
+	<link rel="stylesheet"
+		  href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
+		  media="screen"/>
+	<script type="text/javascript"
+			src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript"
+			src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript"
+			src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script type="text/javascript"
+			src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+	<script type="text/javascript"
+			src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script type="text/javascript"
+			src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+	<!-- Test functions -->
+	<script language="javascript">
+		QUnit.config.autostart = false;
+		var oCache;
+		sap.ui.require(["sap/ui/core/cache/CacheManager"], function (classCacheManager) {
+			oCache = classCacheManager;
+			QUnit.start();
+		});
+
+		var aSupportedEnv = [];
+
+		aSupportedEnv.push({
+			system: sap.ui.Device.system.SYSTEMTYPE.DESKTOP,
+			browserName: sap.ui.Device.browser.BROWSER.CHROME,
+			browserVersion: 49
+		});
+		aSupportedEnv.push({
+			system: sap.ui.Device.system.SYSTEMTYPE.DESKTOP,
+			browserName: sap.ui.Device.browser.BROWSER.INTERNET_EXPLORER,
+			browserVersion: 11
+		});
+		var bSupportedEnv = aSupportedEnv.some(function (oSuppportedEnv) {
+			var bSupportedSystem = sap.ui.Device.system[oSuppportedEnv.system],
+					bSupportedBrowserName = oSuppportedEnv.browserName === sap.ui.Device.browser.name,
+					bSupportedBrowserVersion = sap.ui.Device.browser.version >= oSuppportedEnv.browserVersion;
+
+			return bSupportedSystem && bSupportedBrowserName && bSupportedBrowserVersion;
+		});
+
+		if (!bSupportedEnv) {
+			test("All tests are skipped, as the CacheManager is not supported on the underlying environment (see assert)", function () {
+				ok(true, "Environment: system [" + JSON.stringify(sap.ui.Device.system) + "],  browser: " + JSON.stringify(sap.ui.Device.browser));
+			});
+		} else {
+			module("Instantiation", {
+				beforeEach: function () {
+					this.sandbox = sinon.sandbox.create();
+					this.oBrowserBackup = {};
+					this.oSystemBackup = {};
+					jQuery.extend(this.oBrowserBackup, sap.ui.Device.browser);
+					jQuery.extend(this.oSystemBackup, sap.ui.Device.system);
+
+				},
+				afterEach: function () {
+					if (oCache._instance) {
+						oCache._instance._db.close();
+						oCache._instance = null;
+						oCache._bSupportedEnvironment = null;
+					}
+					this.sandbox.restore();
+					sap.ui.Device.browser = this.oBrowserBackup;
+					sap.ui.Device.system = this.oSystemBackup;
+				}
+			});
+
+			test('basic creation', function (assert) {
+				oCache._instance = null;
+				return oCache._getInstance()
+						.then(function (cmImpl) {
+							assert.ok(cmImpl, 'Should return a cache implementation');
+							oCache._instance.myOwn = "created";
+							return oCache._getInstance().then(function (cm) {
+								ok(cm.myOwn, "Calling getInstance for the second time returns the previous instance");
+							});
+						});
+			});
+
+			test("Certain implementation is selected based on browser support", function () {
+				var that = this,
+						aNonSupportedEnv = [];
+
+				for (var syst in sap.ui.Device.system.SYSTEMTYPE) {
+					for (var browser in sap.ui.Device.browser.BROWSER) {
+						var oEnv = {};
+						oEnv.system = sap.ui.Device.system.SYSTEMTYPE[syst];
+						oEnv.browserName = sap.ui.Device.browser.BROWSER[browser];
+						oEnv.browserVersion = sap.ui.Device.browser.version;
+
+						if (!aSupportedEnv.some(function (oSuppportedEnv) {
+									var bSupportedSystem = oSuppportedEnv.system === oEnv.system,
+											bSupportedBrowserName = oSuppportedEnv.browserName === oEnv.browserName,
+											bSupportedBrowserVersion = oEnv.browserVersion >= oSuppportedEnv.browserVersion;
+
+									return bSupportedSystem && bSupportedBrowserName && bSupportedBrowserVersion;
+								})) {
+							aNonSupportedEnv.push(oEnv);
+						}
+					}
+				}
+
+				function createInstance(env, sExpectedImplementation) {
+					if (oCache._instance) {
+						oCache._instance._db.close();
+						oCache._instance = undefined;
+					}
+					oCache._bSupportedEnvironment = null;
+					return oCache._getInstance().then(function (cmImpl) {
+						equals(cmImpl.name, sExpectedImplementation, "For environment [" + JSON.stringify(env) +
+						"] implementation [" + sExpectedImplementation + "] is required");
+					});
+				}
+
+				return Promise.all(aSupportedEnv.map(function (oEnv) {
+					that.sandbox.stub(sap.ui.Device.system, oEnv.system, true);
+					that.sandbox.stub(sap.ui.Device.browser, "name", oEnv.browserName);
+					that.sandbox.stub(sap.ui.Device.browser, "version", oEnv.browserVersion);
+					return createInstance(oEnv, "LRUPersistentCache");
+				})).then(function () {
+					return Promise.all(aNonSupportedEnv.map(function (oEnv) {
+						for (var systemType in sap.ui.Device.system.SYSTEMTYPE) {
+							if (sap.ui.Device.system.SYSTEMTYPE[systemType] === oEnv.system) {
+								that.sandbox.stub(sap.ui.Device.system, oEnv.system, true);
+							} else {
+								that.sandbox.stub(sap.ui.Device.system, sap.ui.Device.system.SYSTEMTYPE[systemType], false);
+							}
+						}
+						that.sandbox.stub(sap.ui.Device.browser, "name", oEnv.browserName);
+						that.sandbox.stub(sap.ui.Device.browser, "version", oEnv.browserVersion);
+						return createInstance(oEnv, "CacheManagerNOP");
+					}));
+				});
+			});
+
+
+			//Testing mainly _callInstanceMethod method
+			module("Proxy: each API call is being forwarded to the real implementation", {
+				beforeEach: function () {
+					this.sandbox = sinon.sandbox.create();
+					if (oCache._instance == null) {
+						return oCache._getInstance();
+					}
+				},
+				afterEach: function () {
+					this.sandbox.restore();
+				},
+				/***
+				 * Executes given method with given arguments and verifies the execution had happened.
+				 * @param sMethod the method
+				 * @param args the arguments to call the method with
+				 * @param resolveValue value that the Promise resolves with
+				 * @returns {*}
+				 */
+				executeMethodSuccessfully: function (sMethod, args, resolveValue) {
+					var that = this;
+					that.instanceMock = that.sandbox.mock(oCache._instance);
+					that.instanceMock.expects(sMethod).once().withExactArgs(args).returns(Promise.resolve(resolveValue));
+
+					return oCache[sMethod](args).then(function (value) {
+						that.instanceMock.verify();
+						equal(value, resolveValue, "Promise must be resolved with the given value");
+					}, function (error) {
+						ok(false, "Calling CacheManager." + sMethod + " should have resolved, but it rejects with error [" + error + "]");
+					})
+				},
+
+				/***
+				 * Executes given method with given arguments and verifies the execution had happened.
+				 * @param sMethod the method
+				 * @param args the arguments to call the method with
+				 * @param reject value that the Promise reject with
+				 * @returns {*}
+				 */
+				executeMethodWithError: function (sMethod, args, rejectValue) {
+					var that = this;
+
+					that.instanceMock = that.sandbox.mock(oCache._instance);
+					that.instanceMock.expects(sMethod).withExactArgs(args).returns(Promise.reject(rejectValue));
+
+					return oCache[sMethod](args).then(function (value) {
+						ok(false, "Calling CacheManager." + sMethod + " should have rejected, but it succeeds with value [" + value + "]");
+					}, function (value) {
+						that.instanceMock.verify();
+						equal(value, rejectValue, "Promise must be rejected with the given value");
+					});
+				}
+			});
+
+			test("#get", function () {
+				return this.executeMethodSuccessfully("get", ["promised_sallary"], "1000E").then(function () {
+					return this.executeMethodWithError("get", ["actual_sallary"], "Error: access denied");
+				}.bind(this));
+			});
+
+			test("#has", function () {
+				return this.executeMethodSuccessfully("has", ["promised_sallary"], true).then(function () {
+					return this.executeMethodWithError("has", ["actual_sallary"], "Error: access denied");
+				}.bind(this));
+			});
+
+			test("#set", function () {
+				return this.executeMethodSuccessfully("set", ["promised_sallary", {"amount": "1000E"}]).then(function () {
+					return this.executeMethodWithError("set", ["promised_sallary", {"amount": "1000E"}], "Error: access denied");
+				}.bind(this));
+			});
+
+			test("#del", function () {
+				return this.executeMethodSuccessfully("del", ["promised_sallary"]).then(function () {
+					this.executeMethodWithError("del", ["promised_sallary"], "Error: access denied");
+				}.bind(this));
+			});
+
+			test("#reset", function () {
+				return this.executeMethodSuccessfully("reset", []).then(function () {
+					return this.executeMethodWithError("reset", ["promised_sallary"], "Error: access denied");
+				}.bind(this));
+			});
+
+			module("Switching on/off", {
+				afterEach: function () {
+					return deleteDatabaseEntries();
+				}
+			});
+
+			test("Switching", function () {
+				return oCache._switchOn().then(function () {
+					return oCache.set("testKey", "testValue")
+				}).then(function () {
+					return oCache._switchOff();
+				}).then(function () {
+					ok(!oCache._instance, "After shutdown, no _instance should exist.");
+					return oCache.get("testKey");
+				}).then(function (value) {
+					ok(oCache._instance, "After shutdown, on the first get the CM will reinit itself");
+					equals(typeof value, "undefined", "The implementation has been switched with dummy one, so no response is expected");
+				}).then(function () {
+					return oCache._switchOn();
+				}).then(function () {
+					return oCache.get("testKey");
+				}).then(function (value) {
+					ok(oCache._instance, "After shutdown, the first #get will reinit the instance");
+					equals(value, "testValue", "The implementation has been switched with real one, so a certain #get response is expected");
+				});
+			});
+
+
+			function deleteDatabaseEntries() {
+				if (oCache) {
+					return Promise.resolve(function () {
+						jQuery.sap.log.debug(new Date() + ". Deleting all entries");
+					}).then(function () {
+						return oCache.reset();
+					}).then(function () {
+						jQuery.sap.log.debug(new Date() + ". Entries deleted ");
+					});
+				}
+			}
+		}
+	</script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit tests: Cache Manager</h1>
+
+<h2 id="qunit-banner"></h2>
+
+<h2 id="qunit-userAgent"></h2>
+
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+<br>
+
+</body>
+</html>

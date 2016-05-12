@@ -31,9 +31,10 @@ function(jQuery) {
 	 *
 	 */
 	DOMUtil.getSize = function(oDomRef) {
+		var oClientRec = oDomRef.getBoundingClientRect();
 		return {
-			width : oDomRef.offsetWidth,
-			height : oDomRef.offsetHeight
+			width: oClientRec.width,
+			height: oClientRec.height
 		};
 	};
 

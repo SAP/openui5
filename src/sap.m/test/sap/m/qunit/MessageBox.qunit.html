@@ -643,6 +643,17 @@
 			oMessageBox.destroy();
 		});
 
+        test("Language change", function () {
+            sap.ui.getCore().getConfiguration().setLanguage("de");
+            notEqual(sap.ui.getCore().getLibraryResourceBundle("sap.m"), sap.m.MessageBox._rb, "The MessageBox should have a different resource bundle before opening");
+            sap.m.MessageBox.show(sMessageText, {
+                title: sMessageTitle,
+                details: "Some details",
+                id: "messagebox8"
+            });
+            equal(sap.ui.getCore().getLibraryResourceBundle("sap.m"), sap.m.MessageBox._rb, "The ResourceBundle should be the same.");
+        });
+
 	</script>
 </head>
 <body id="body" class="sapUiBody">

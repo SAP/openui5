@@ -25,6 +25,7 @@ sap.ui.define([], function () {
 	var classNameBullet = 'sapMNLB-Bullet';
 	var classNameBaseFooter = 'sapMNLB-Footer';
 	var classNameFooter = 'sapMNLI-Footer';
+	var classNameNoFooter = 'sapMNLI-No-Footer';
 	var classNameCloseButton = 'sapMNLB-CloseButton';
 	var classNameCollapseButton = 'sapMNLI-CollapseButton';
 	var classNameInitialOverwriteTitle = 'sapMNLI-TitleWrapper--initial-overwrite';
@@ -159,6 +160,10 @@ sap.ui.define([], function () {
 		oRm.addClass(classNameHeader);
 		oRm.addClass(classNameInitialOverwriteTitle);
 
+		if (buttonsShouldBeRendered(oControl)) {
+		    oRm.addClass(classNameNoFooter);
+		}
+
 		oRm.writeClasses();
 		oRm.write('>');
 
@@ -188,7 +193,16 @@ sap.ui.define([], function () {
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 	 */
 	NotificationListItemRenderer.renderBody = function (oRm, oControl) {
-		oRm.write('<div class=' + classNameBody + '>');
+
+		oRm.write('<div');
+		oRm.addClass(classNameBody);
+
+		if (buttonsShouldBeRendered(oControl)) {
+		    oRm.addClass(classNameNoFooter);
+		}
+
+		oRm.writeClasses();
+		oRm.write('>');
 
 		this.renderAuthorPicture(oRm, oControl);
 		oRm.write('<div class=' + classNameDescription + '>');
@@ -278,8 +292,6 @@ sap.ui.define([], function () {
 	NotificationListItemRenderer.renderFooter = function (oRm, oControl) {
 		var aButtons = oControl.getButtons();
 
-		//oRm.write('<div class=' + classNameFooter + '>');
-
 		oRm.write('<div');
 		oRm.addClass(classNameFooter);
 		oRm.addClass(classNameBaseFooter);
@@ -294,6 +306,15 @@ sap.ui.define([], function () {
 		}
 		oRm.write('</div>');
 	};
+
+	/**
+	 * Checks if the body width should be 100%
+	 * @param {sap.m.NotificationListItem} oControl The NotificationListItem to be checked
+	 * @returns {boolean} If all the buttons are hidden
+     */
+	function buttonsShouldBeRendered(oControl) {
+		return oControl.getHideShowMoreButton() && (!oControl.getShowButtons() || !oControl.getButtons());
+	}
 
 	return NotificationListItemRenderer;
 

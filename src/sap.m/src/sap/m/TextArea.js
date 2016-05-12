@@ -148,6 +148,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 
 	// overwrite the input base enter handling for change event
 	TextArea.prototype.onsapenter = function(oEvent) {
+		oEvent.setMarked();
 	};
 
 	// Overwrite input base revert handling for escape
@@ -181,6 +182,16 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 	TextArea.prototype.getValue = function() {
 		var oTextArea = this.getFocusDomRef();
 		return oTextArea ? oTextArea.value : this.getProperty("value");
+	};
+
+	// mark the event that it is handled by the textarea
+	TextArea.prototype.onsapnext = function(oEvent) {
+		oEvent.setMarked();
+	};
+
+	// mark the event that it is handled by the textarea
+	TextArea.prototype.onsapprevious = function(oEvent) {
+		oEvent.setMarked();
 	};
 
 	TextArea.prototype.oninput = function(oEvent) {

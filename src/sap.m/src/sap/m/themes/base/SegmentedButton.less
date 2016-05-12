@@ -7,19 +7,21 @@
 	padding: 0;
 	-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
 	border: none;
-	display: inline-block;
 	white-space: nowrap;
+	display: inline-block;
+	box-sizing: border-box;
 }
 
-.sapMSegBBtn {
+.sapMSegB .sapMSegBBtn {
 	list-style: none;
-	text-overflow:ellipsis;
+	text-overflow: ellipsis;
 	overflow: hidden;
 	-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
-	display: inline-block;
 	text-align: center;
 	cursor: pointer;
 	vertical-align: text-bottom;
+	box-sizing: border-box;
+	display: inline-block;
 }
 
 .sapMSegBBtn:focus {
@@ -41,6 +43,7 @@
 
 .sapMSegB .sapMSegBBtn.sapMSegBBtnMixed {
 	padding-right: 0.5rem;
+	padding-left: 0.5rem;
 }
 
 //BCP: 1580200804
@@ -52,10 +55,6 @@
 	margin: 0;
 	vertical-align: top;
 	pointer-events: none; /*To disable the save image menu on ios*/
-}
-
-.sapMSegB.sapMSegBHide {
-	visibility: hidden;
 }
 
 .sapMSegBBtn.sapMSegBBtnDis {

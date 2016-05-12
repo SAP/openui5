@@ -499,7 +499,9 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 
 		// necessary to display expanded MultiInput which is inside SimpleForm
 		var $Parent;
-		if (this.$().parent('[class*="sapUiRespGridSpan"]')) {
+		if (this.$().closest('.sapUiVlt')) {
+			$Parent = this.$().closest('.sapUiVlt');
+		} else if (this.$().parent('[class*="sapUiRespGridSpan"]')) {
 			$Parent = this.$().parent('[class*="sapUiRespGridSpan"]');
 		} else if (this.$().parents(".sapUiRFLContainer")) {
 			$Parent = this.$().parents(".sapUiRFLContainer");
@@ -696,9 +698,8 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 
 		Input.prototype.onAfterRendering.apply(this, arguments);
 
-		if (!(this._bUseDialog && this._isMultiLineMode)) {
-			this._setContainerSizes();
-		}
+		this._setContainerSizes();
+
 	};
 
 	/**
@@ -866,7 +867,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 				if (this.fireEvent("_validateOnPaste", {texts: aSeparatedText}, true)) {
 					var i = 0;
 					for ( i = 0; i < aSeparatedText.length; i++) {
-						this.setValue(aSeparatedText[i]);
+						this.updateDomValue(aSeparatedText[i]);
 						this._validateCurrentText();
 					}
 				}
@@ -1229,7 +1230,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	 * Functions returns the current input field's cursor position
 	 *
 	 * @private
-	 * @return {integer} the cursor position
+	 * @return {int} the cursor position
 	 */
 	MultiInput.prototype.getCursorPosition = function() {
 		return this._$input.cursorPos();
@@ -1464,6 +1465,22 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	 * @function
 	 */
 	MultiInput.prototype.getDomRefForValueStateMessage = MultiInput.prototype.getPopupAnchorDomRef;
+
+
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	MultiInput.prototype.getAccessibilityInfo = function() {
+		var sText = this.getTokens().map(function(oToken) {
+			return oToken.getText();
+		}).join(" ");
+
+		var oInfo = Input.prototype.getAccessibilityInfo.apply(this, arguments);
+		oInfo.type = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_MULTIINPUT");
+		oInfo.description = ((oInfo.description || "") + " " + sText).trim();
+		return oInfo;
+	};
 
 
 	return MultiInput;

@@ -2534,6 +2534,21 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		return oItem ? oItem.data(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "ListItem") : null;
 	};
 
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	MultiComboBox.prototype.getAccessibilityInfo = function() {
+		var sText = this.getSelectedItems().map(function(oItem) {
+			return oItem.getText();
+		}).join(" ");
+
+		var oInfo = ComboBoxBase.prototype.getAccessibilityInfo.apply(this, arguments);
+		oInfo.type = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_MULTICOMBO");
+		oInfo.description = ((oInfo.description || "") + " " + sText).trim();
+		return oInfo;
+	};
+
 	return MultiComboBox;
 
 	}, /* bExport= */ true);

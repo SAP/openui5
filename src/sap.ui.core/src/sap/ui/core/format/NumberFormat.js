@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.format.NumberFormat
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleData'],
-	function(jQuery, BaseObject, LocaleData) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 'sap/ui/core/LocaleData'],
+	function(jQuery, BaseObject, Locale, LocaleData) {
 	"use strict";
 
 
@@ -372,7 +372,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 	NumberFormat.createInstance = function(oFormatOptions, oLocale) {
 		var oFormat = jQuery.sap.newObject(this.prototype),
 			oPatternOptions;
-		if ( oFormatOptions instanceof sap.ui.core.Locale ) {
+		if ( oFormatOptions instanceof Locale ) {
 			oLocale = oFormatOptions;
 			oFormatOptions = undefined;
 		}
@@ -733,9 +733,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 	};
 
 	NumberFormat.prototype._composeCurrencyResult = function(sPattern, sFormattedNumber, sMeasure, oOptions) {
-		if (oOptions.negative) {
-			sPattern = sPattern.replace(/-/, oOptions.minusSign);
-		}
+		var sMinusSign = oOptions.minusSign;
 
 		sPattern = sPattern.replace(/[0#.,]+/, sFormattedNumber);
 
@@ -747,7 +745,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 					"[:^S:]": /[^\$\xA2-\xA5\u058F\u060B\u09F2\u09F3\u09FB\u0AF1\u0BF9\u0E3F\u17DB\u20A0-\u20BD\uA838\uFDFC\uFE69\uFF04\uFFE0\uFFE1\uFFE5\uFFE6]/
 				},
 				iMeasureStart = sPattern.indexOf(sPlaceHolder),
-				// determine whether the measure is before the number or after it by comparing the position of measure placeholder with half of the length of the pattern string
+				// determine whether the number is before the measure or after it by comparing the position of measure placeholder with half of the length of the pattern string
 				sPosition = iMeasureStart < sPattern.length / 2 ? "after" : "before",
 				oSpacingSetting = this.oLocaleData.getCurrencySpacing(sPosition),
 				sCurrencyChar = (sPosition === "after" ? sMeasure.charAt(sMeasure.length - 1) : sMeasure.charAt(0)),
@@ -771,10 +769,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 
 				// insert the space char between the measure and the number
 				sPattern = sPattern.slice(0, iInsertPos) + oSpacingSetting.insertBetween + sPattern.slice(iInsertPos);
+			} else if (oOptions.negative && sPosition === "after") {
+				// when no space is inserted between measure and number
+				// and when the number is negative and the measure is shown before the number
+				// a zero-width non-breakable space ("\ufeff") is inserted before the minus sign
+				// in order to prevent the formatted currency number from being wrapped after the
+				// minus sign when the space isn't enough for displaying the currency number within
+				// one line
+				sMinusSign = "\ufeff" + oOptions.minusSign;
 			}
 		} else {
 			// If measure is not shown, also remove whitespace next to the measure symbol
 			sPattern = sPattern.replace(/\s*\u00a4\s*/, "");
+		}
+
+		if (oOptions.negative) {
+			sPattern = sPattern.replace(/-/, sMinusSign);
 		}
 
 		return sPattern;

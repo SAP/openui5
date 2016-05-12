@@ -1,0 +1,99 @@
+/* ============================================= */
+/* CSS for control sap.m/StepInput.control */
+/* ============================================= */
+
+.sapMStepInput {
+  display: inline-block;
+  width: 100%;
+  position: relative;
+  outline: none;
+
+  .sapMStepInputBtnWrapper {
+    margin: 0 0.0625rem;
+    outline: none;
+    position: absolute;
+    z-index: 1;
+    top: 0;
+
+    &.sapMStepInputBtnDecrease {
+      left: 0;
+    }
+    &.sapMStepInputBtnIncrease {
+      right: 0;
+    }
+  }
+}
+
+.sapMStepInput-CTX {
+  .sapMInput {
+    .sapMInputBaseInner {
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box;
+      padding: 0 2.75rem;
+    }
+  }
+
+  .sapMInputBaseWidthPadding {
+    padding: 0;
+  }
+
+  &.sapMStepInputDisabled .sapMInput .sapMInputBaseInner {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .sapMBtn {
+    padding: 0;
+    height: 100%;
+
+    .sapMBtnInner {
+      min-width: 0;
+      border-radius: 0;
+      width: 2.375rem;
+
+      .sapMBtnIcon {
+        font-size: 1rem;
+      }
+    }
+  }
+
+  &.sapMStepInputError, &.sapMStepInputWarning {
+    .sapMInput .sapMInputBaseInner {
+      padding: 0 2.5rem;
+    }
+
+    .sapMBtn .sapMBtnInner {
+      width: 2.25rem;
+    }
+  }
+}
+
+.sapUiSizeCompact .sapMStepInput-CTX {
+  .sapMInput .sapMInputBaseInner {
+    padding: 0 1.75rem;
+  }
+
+  .sapMInputBaseWidthPadding {
+    padding: 0;
+  }
+
+  .sapMBtn .sapMBtnInner {
+    width: 1.5rem;
+
+    .sapMBtnIcon {
+      margin: 0;
+      font-size: 0.875rem;
+    }
+  }
+
+  &.sapMStepInputError, &.sapMStepInputWarning {
+    .sapMInput .sapMInputBaseInner {
+      padding: 0 1.625rem;
+    }
+
+    .sapMBtn .sapMBtnInner {
+      width: 1.375rem;
+    }
+  }
+}

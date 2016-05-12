@@ -48,7 +48,7 @@
 		var oSource = {},
 			oView = new sap.ui.core.mvc.View({});
 
-		deepEqual(oView.mPreprocessors, {}, "empty preprocessors stored at view");
+		deepEqual(oView.mPreprocessors, undefined, "no preprocessors stored at view");
 		sinon.assert.notCalled(expectProcess);
 		equal(oView.runPreprocessor("xml", oSource, true), oSource);
 	});
@@ -68,19 +68,18 @@
 			oView = new sap.ui.core.mvc.View({
 				preprocessors: oPreprocessors,
 				viewName: "foo"
-			}),
-			logSpy = this.spy(jQuery.sap.log, "debug");
+			});
 
 		var oViewInfo = { name: oView.sViewName, id: oView.getId(), async: false, sCaller: oView + " (foo)"};
 		expectProcess.never();
 
 		oPreprocessors.foo.preprocessor = sap.ui.core.util.XMLPreprocessor.process;
 
-		strictEqual(oView.mPreprocessors, oPreprocessors, "preprocessors stored at view");
+		strictEqual(oView.mPreprocessors.foo[0], oPreprocessors.foo, "preprocessors stored at view");
 		expectProcess.verify();
 	});
 
-	test("runPreprocessor w/ config and settings", 4, function () {
+	test("runPreprocessor w/ config and settings", 5, function () {
 		var oPreprocessors = {
 				// Note: the type does matter, as it is describing the phase of view initialization in which the preprocessor is executed.
 				// These types can be different for several view types.
@@ -88,8 +87,10 @@
 					preprocessor: function(vSource, oViewInfo, oConfig) {
 							return vSource;
 						},
-					settings: {foo: undefined},
-					syncSupport: true
+					foofoo: "barbar",
+					// internal settings for test purposes
+					_settings: {foo: undefined},
+					_syncSupport: true
 				}
 			},
 			oView = new sap.ui.core.mvc.View({
@@ -100,11 +101,12 @@
 
 		oView.runPreprocessor("foo", {}, true);
 
-		oPreprocessors.foo.settings.foo = "bar";
+		oPreprocessors.foo._settings.foo = "bar";
 		sinon.assert.calledOnce(oSpy);
-		strictEqual(oSpy.args[0][2].settings.foo, oPreprocessors.foo.settings.foo, "Configured object instance gets passed to the preprocessor");
-		ok(oSpy.args[0][2].settings.foo === "bar", "Property got set correctly");
-		ok(Object.keys(oSpy.args[0][2]).length == 3, "Nothing has been added to the pp config");
+		strictEqual(oSpy.args[0][2].foo, oPreprocessors.foo._settings.foo, "Configured object instance gets passed to the preprocessor");
+		ok(oSpy.args[0][2].foo === "bar", "Property got set correctly");
+		strictEqual(oSpy.args[0][2].foofoo, oPreprocessors.foo.foofoo, "Relevant settings have been passed to the pp");
+		ok(Object.keys(oSpy.args[0][2]).length == 3, "Only relevant settings have been passed to the pp");
 	});
 
 
@@ -156,7 +158,7 @@
 							bCalled = true;
 							return val;
 						},
-						syncSupport: true
+						_syncSupport: true
 					}
 				}
 			});
@@ -183,7 +185,7 @@
 		sinon.assert.notCalled(expectProcess);
 	});
 
-	test("runPreprocessor w/o syncSupport preprocessor", 2, function () {
+	test("runPreprocessor w/o syncSupport preprocessor", 3, function () {
 		var oSource = {},
 			bCalled = false,
 			oView = new sap.ui.core.mvc.View({
@@ -201,6 +203,7 @@
 		try {
 			oView.runPreprocessor("xml", oSource, true);
 			ok(!bCalled, "Preprocessor was ignored in sync view");
+			sinon.assert.calledWith(logSpy, "Async \"xml\"-preprocessor was skipped in sync view execution for undefinedView", oView.getId());
 		} catch (ex) {
 			ok(false, ex); // TypeError: string is not a function
 		}
@@ -225,7 +228,7 @@
 		var oSource = {},
 			oView = new sap.ui.core.mvc.View({});
 
-		deepEqual(oView.mPreprocessors, {}, "empty preprocessors stored at view");
+		deepEqual(oView.mPreprocessors, undefined, "empty preprocessors stored at view");
 		sinon.assert.notCalled(expectProcess);
 
 		oView.runPreprocessor("xml", oSource).then(function(vSource) {
@@ -234,9 +237,8 @@
 		});
 	});
 
-	asyncTest("runPreprocessor w/ config", 4, function () {
-		var sCaller,
-			oPreprocessors = {
+	asyncTest("runPreprocessor w/ config", 3, function () {
+		var oPreprocessors = {
 				// Note: the type does matter, as it is describing the phase of view initialization in which the preprocessor is executed.
 				// These types can be different for several view types.
 				foo: {
@@ -245,32 +247,35 @@
 					models: {}
 				}
 			},
-			oResult = {},
-			oSource = {},
-			oView = new sap.ui.core.mvc.View({
-				preprocessors: oPreprocessors,
-				viewName: "foo",
-				async: true
-			}),
-			logSpy = this.spy(jQuery.sap.log, "debug");
+			oResult = {foo:true},
+			oSource = {bar:true},
+			oView,
+			oViewInfo;
 
-		var oViewInfo = {
+		oView = new sap.ui.core.mvc.View({
+			preprocessors: oPreprocessors,
+			viewName: "foo",
+			async: true
+		});
+
+		oViewInfo = {
 			caller: oView + " (foo)",
 			id: oView.getId(),
 			name: oView.sViewName,
 			componentId: undefined,
 			sync: false
 		};
-		expectProcess.once().withExactArgs(oSource, oViewInfo, oPreprocessors.foo).returns(Promise.resolve(oResult));
 
+		// instruct the mock before view creation to not miss the important call
 		oPreprocessors.foo.preprocessor = sap.ui.core.util.XMLPreprocessor.process;
+		expectProcess.returns(Promise.resolve(oResult));
+		expectProcess.once().withExactArgs(oSource, oViewInfo, oPreprocessors.foo._settings);
 
-		strictEqual(oView.mPreprocessors, oPreprocessors, "preprocessors stored at view");
+
+		strictEqual(oView.mPreprocessors.foo[0], oPreprocessors.foo, "preprocessors stored at view");
 
 		oView.runPreprocessor("foo", oSource).then(function(oProcessedSource) {
 			strictEqual(oProcessedSource, oResult, "Results equal");
-			ok(logSpy.calledWithExactly("Running preprocessor for \"foo\" via given function", oView), "Log statement");
-			logSpy.restore();
 			expectProcess.verify();
 			start();
 		});
@@ -306,17 +311,14 @@
 	});
 
 	asyncTest("runPreprocessor w/ default preprocessor for xml view", 3, function () {
-		var oConfig = {},
-			sViewContent = [
-			    '<mvc:View xmlns:mvc="sap.ui.core.mvc"/>'
-			].join('');
+		var sViewContent = '<mvc:View xmlns:mvc="sap.ui.core.mvc"/>';
 
 		// returns the processed vSource
 		expectProcess.returnsArg(0);
 
 		var oView = new sap.ui.core.mvc.XMLView({
 			preprocessors: {
-				xml: oConfig // the type is of course important here!
+				xml: {} // the type is of course important here!
 			},
 			async: true,
 			viewContent: sViewContent
@@ -327,7 +329,7 @@
 			strictEqual(oView._xContent, expectProcess.returnValues[0]);
 			expectProcess.verify();
 			start();
-		})
+		});
 	});
 
 	asyncTest("runPreprocessor w/ invalid preprocessor", 2, function () {
@@ -353,7 +355,7 @@
 		}
 	});
 
-	asyncTest("runPreprocessor w/ valid preprocessor", 3, function () {
+	asyncTest("runPreprocessor w/ valid preprocessor", 2, function () {
 		var oSource = {},
 			oView = new sap.ui.core.mvc.View({
 				preprocessors: {
@@ -362,14 +364,11 @@
 					},
 				},
 				async: true
-			}),
-			logSpy = this.spy(jQuery.sap.log, "debug");
-		expect(3);
+			});
 
 		try {
 			oView.runPreprocessor("xml", oSource). then(function() {
 				ok(true);
-				ok(logSpy.calledWithExactly("Running preprocessor for \"xml\" via module string \"sap.ui.core.util.XMLPreprocessor\"", oView), "Log statement");
 				sinon.assert.calledOnce(expectProcess);
 				start();
 			});
@@ -427,13 +426,15 @@
 		deepEqual(
 			sap.ui.core.mvc.View._mPreprocessors,
 			{
-			  "XML": {
-			    "xml": {
-			      "onDemand": true,
-			      "preprocessor": "sap.ui.core.util.XMLPreprocessor",
-				  "syncSupport": true
-			    }
-			  }
+				"XML": {
+					"xml": [
+						{
+							"_onDemand": true,
+							"_syncSupport": true,
+							"preprocessor": "sap.ui.core.util.XMLPreprocessor"
+						}
+					]
+				}
 			} ,
 			"default templating preprocessor stored at view");
 
@@ -441,7 +442,7 @@
 		// now a preprocessor is set
 		deepEqual(
 			sap.ui.core.mvc.View._mPreprocessors["test"]["controls"],
-			{onDemand: false, preprocessor: this.oPreprocessor, syncSupport: true, settings: this.mSettings},
+			[{_onDemand: false, preprocessor: this.oPreprocessor, _syncSupport: true, _settings: this.mSettings}],
 			"preprocessor stored at view"
 		);
 	});
@@ -502,7 +503,7 @@
 
 	});
 
-	asyncTest("run together with local preprocessor", 3, function () {
+	asyncTest("run together with local preprocessor", 5, function () {
 		var oLocalPreprocessor = function(vSource, sCaller, mSettings) {
 			// async test part
 			jQuery.sap.log.debug("[TEST] " + mSettings.message, sCaller);
@@ -531,11 +532,13 @@
 
 		oView.attachAfterInit(function() {
 			sinon.assert.calledTwice(spy);
+			ok(oView.hasPreprocessor("xml"), "active xml preprocessor");
+			ok(oView.hasPreprocessor("controls"), "active controls preprocessor");
 			start();
 		});
 	});
 
-	asyncTest("global preprocessor locally overridden", 2, function () {
+	asyncTest("global preprocessor and local preprocessor on one hook", 5, function () {
 		var oLocalPreprocessor = function(vSource, sCaller, mSettings) {
 			ok(true, "Local preprocessor executed");
 			return new Promise(function(resolve) {
@@ -562,17 +565,18 @@
 
 		oView.attachAfterInit(function() {
 			sinon.assert.calledTwice(spy);
+			ok(!oView.hasPreprocessor("xml"), "no active xml preprocessor");
+			ok(oView.hasPreprocessor("controls"), "active controls preprocessor");
 			start();
 		});
 	});
 
-	asyncTest("on demand preprocessor provided", 3, function () {
+	asyncTest("on demand preprocessor provided", 5, function () {
 		sap.ui.core.mvc.XMLView.registerPreprocessor("xml", this.oPreprocessor, true, this.mSettings);
 
 		var mDefaultSettings = {
 				message: "OnDemand preprocessor executed"
-			},
-			logSpy = this.spy(jQuery.sap.log, "debug");
+			};
 
 		// call via init
 		var oView = sap.ui.xmlview({
@@ -587,13 +591,14 @@
 		});
 
 		oView.attachAfterInit(function() {
-			ok(logSpy.calledWithExactly("Running preprocessor for \"xml\" via given function", oView), "Log statement");
 			sinon.assert.calledTwice(spy);
+			ok(oView.hasPreprocessor("xml"), "active xml preprocessor");
+			ok(!oView.hasPreprocessor("controls"), "no active controls preprocessor");
 			start();
 		});
 	});
 
-	asyncTest("on demand preprocessor not provided", 2, function () {
+	asyncTest("on demand preprocessor not provided", 4, function () {
 		sap.ui.core.mvc.XMLView.registerPreprocessor("xml", this.oPreprocessor, true, true, this.mSettings);
 
 		var mDefaultSettings = {
@@ -611,6 +616,8 @@
 		oView.attachAfterInit(function() {
 			ok(!logSpy.calledWithExactly("Running preprocessor for \"xml\" via given function", oView), "No log statement");
 			sinon.assert.calledTwice(spy);
+			ok(!oView.hasPreprocessor("controls"), "no active controls preprocessor");
+			ok(!oView.hasPreprocessor("xml"), "no active xml preprocessor");
 			start();
 		});
 	});

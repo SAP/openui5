@@ -1,22 +1,19 @@
 /* ========================================= */
 /* CSS for control sap.m/GenericTile.control */
 /* ========================================= */
-.sapUiMedia-Std-Desktop .sapMGTHdrTxt.Auto > .sapMText,
-.sapMGTHdrTxt.L > .sapMText,
-.sapUiMedia-Std-Tablet .sapMGTHdrTxt.Auto > .sapMText,
-.sapMGTHdrTxt.M > .sapMText  {
+
+.sapMGTHdrTxt > .sapMText {
 	color: @sapUiDarkText;
+	font-weight: normal;
 	font-family: @sapUiFontFamily;
 	font-size: @sapMFontHeader5Size;
-	font-weight: normal;
 }
 
 .sapMGTSubHdrTxt {
+	color: @sapUiLightText;
 	font-family: @sapUiFontFamily;
 	font-size: @sapMFontMediumSize;
 	font-weight: normal;
-	color: @sapUiLightText;
-	line-height: @sapUiLineHeight;
 }
 
 .sapMGTHdrIconImage {
@@ -29,20 +26,23 @@
 	border: 1px solid @sapUiTileBorderColor;
 }
 
-.sapMGTFocusDiv {
-	position: absolute;
-	left: 1px;
-	top: 1px;
-	right: 1px;
-	bottom: 1px;
-	border-radius: 0.25rem;
+html.sap-desktop .sapMGT:focus .sapMGTFocusDiv {
+	border: 1px solid @sapUiLightShadowTint;
 }
 
-.sap-desktop .sapMGT:focus .sapMGTFocusDiv {
+html.sap-desktop .sapMGT:focus .sapMGTFocusDiv:after {
+	content: "";
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	border-radius: 0.25rem;
+	margin: -1px;
 	border: 1px dotted @sapUiFocus;
 }
 
-.sap-desktop .sapMGT:focus:not([tabindex]) {
+html.sap-desktop .sapMGT:focus:not([tabindex]) {
 	border-color: transparent;
 }
 
@@ -56,17 +56,21 @@
 	color: @sapUiLightText;
 }
 
-.sap-desktop .sapMGT:hover,
-.sap-phone .sapMGTHvrOutln:hover,
-.sap-tablet .sapMGTHvrOutln:hover {
-	box-shadow: 0rem 0rem 0rem 0.125rem @sapUiLightShadowTint;
+.sapMGenericTileFtrFldIcn {
+	color: lighten(@sapUiTileTextColor, 20);
+}
+
+html.sap-desktop .sapMGT:hover,
+html.sap-phone .sapMGTHvrOutln:active,
+html.sap-tablet .sapMGTHvrOutln:active {
+	box-shadow: 0 0 0 0.125rem @sapUiLightShadowTint;
 	border-color: transparent;
 }
 
-.sap-desktop .sapMGTBackgroundImage:hover,
-.sap-phone .sapMGTBackgroundHvrOutln:hover,
-.sap-tablet .sapMGTBackgroundHvrOutln:hover {
-	box-shadow: 0rem 0rem 0rem 0.125rem @sapUiLightShadowTint;
+html.sap-desktop .sapMGTBackgroundImage:hover,
+html.sap-phone .sapMGTBackgroundHvrOutln:active,
+html.sap-tablet .sapMGTBackgroundHvrOutln:active {
+	box-shadow: 0 0 0 0.125rem @sapUiLightShadowTint;
 	border-color: fade(@sapUiTileBorderColor, 60);
 }
 
@@ -76,4 +80,15 @@
 
 .sapMGTOverlay {
 	background-color: @sapUiLightestBG;
+}
+
+/* BREAKPOINT FOR SMALL PHONES */
+@media screen and (max-width: 374px) {
+	.sapMGTHdrTxt > .sapMText {
+		font-size: @sapMFontHeader6Size;
+	}
+
+	.sapMGTSubHdrTxt {
+		font-size: @sapMFontMediumSize;
+	}
 }

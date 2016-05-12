@@ -1291,6 +1291,111 @@
 		});
 	});
 
+	asyncTest("propertyChange event", function(){
+		var oModel = initModel(sURI, {json:false});
+		oModel.setDefaultBindingMode("TwoWay");
+		var oInput = new sap.m.Input({
+			value: "{/Categories(2)/CategoryName}"
+		});
+		oInput.setModel(oModel);
+		oInput.placeAt("target1");
+
+		oModel.attachRequestCompleted(this, function() {
+			oModel.attachPropertyChange(this, function(oEvent){
+				var sPath = oEvent.getParameter('path');
+				var oContext = oEvent.getParameter('context');
+				var oValue = oEvent.getParameter('value');
+				var sReason = oEvent.getParameter('reason');
+				equal(sPath, "/Categories(2)/CategoryName", "path check!");
+				equal(oContext, undefined, "context check!");
+				equal(oValue, "blubb", "property value check!");
+				equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
+				oInput.destroy();
+				start();
+			});
+			var oBinding = oInput.getBinding("value");
+			ok(oBinding !== undefined, "binding check");
+			// should not trigger event 
+			oModel.setProperty(oBinding.getPath(), "blubb2", oBinding.getContext());
+			// should trigger event
+			oInput.setValue("blubb");
+		});
+		oModel.read("/Categories");
+	});
+
+	asyncTest("propertyChange event relative", function(){
+		var oModel = initModel(sURI, {json:false});
+		oModel.setDefaultBindingMode("TwoWay");
+		var oInput = new sap.m.Input({
+			value: "{CategoryName}"
+		});
+		oInput.setModel(oModel);
+		oInput.placeAt("target1");
+
+		oModel.attachRequestCompleted(this, function() {
+			oModel.attachPropertyChange(this, function(oEvent){
+				var sPath = oEvent.getParameter('path');
+				var oContext = oEvent.getParameter('context');
+				var oValue = oEvent.getParameter('value');
+				var sReason = oEvent.getParameter('reason');
+				equal(sPath, "CategoryName", "path check!");
+				equal(oContext.getPath(), "/Categories(2)", "context check!");
+				equal(oValue, "blubb", "property value check!");
+				equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
+				oInput.destroy();
+				start();
+			});
+			oInput.bindObject("/Categories(2)");
+			var oBinding = oInput.getBinding("value");
+			ok(oBinding !== undefined, "binding check");
+			// should not trigger event 
+			oModel.setProperty(oBinding.getPath(), "blubb2", oBinding.getContext());
+			// should trigger event
+			oInput.setValue("blubb");
+		});
+		oModel.read("/Categories");
+	});
+
+	asyncTest("propertyChange event reset", function(){
+		var oModel = initModel(sURI, {json:false});
+		oModel.setDefaultBindingMode("TwoWay");
+		var oInput = new sap.m.Input({
+			value: "{/Categories(2)/CategoryName}"
+		});
+		oInput.setModel(oModel);
+		oInput.placeAt("target1");
+		var iCount = 0;
+		oModel.attachRequestCompleted(this, function() {
+			oModel.attachPropertyChange(this, function(oEvent){
+				iCount++;
+				var sPath = oEvent.getParameter('path');
+				var oContext = oEvent.getParameter('context');
+				var oValue = oEvent.getParameter('value');
+				var sReason = oEvent.getParameter('reason');
+				if (iCount === 1) {
+					equal(sPath, "/Categories(2)/CategoryName", "path check!");
+					equal(oContext, undefined, "context check!");
+					equal(oValue, "blubb", "property value check!");
+					equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
+					oInput.setValue("Condiments");
+					
+				} else if (iCount === 2) {
+					equal(sPath, "/Categories(2)/CategoryName", "path check!");
+					equal(oContext, undefined, "context check!");
+					equal(oValue, "Condiments", "property value check!");
+					equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
+				}
+			});
+			var oBinding = oInput.getBinding("value");
+			ok(oBinding !== undefined, "binding check");
+			equal(oBinding.getValue(), "Condiments", "property name check!");
+			oInput.setValue("blubb");
+			oInput.destroy();
+			start();
+		});
+		oModel.read("/Categories");
+	});
+
 	asyncTest("test setProperty on complex Types (internal)",function(){
 		var oModel = initModel(sURI, {useBatch : true});
 		oModel.attachMetadataLoaded(function(){
@@ -2971,6 +3076,36 @@
 		});
 	});
 
+	asyncTest("async test media entity update check metadata", function(){
+		cleanServiceDataCache();
+		var spy = sinon.spy(OData.defaultHttpClient, "request");
+		var oModel = initModel(sURI, {
+			json: true,
+			useBatch: true
+		});
+		var oBinding, oCount = 0;
+		oBinding = oModel.bindContext("/Categories(10)");
+		oBinding.attachChange(function(){});
+		oBinding.initialize();
+		oModel.attachBatchRequestCompleted(function(oData) {
+			oCount++;
+			if (oCount == 1) { // Data loaded initially
+				oModel.setProperty("/Categories(10)/CategoryName","Test");
+				oModel.submitChanges();
+			} else if (oCount == 2) { // Data updated and refreshed
+				var oPayload = spy.args[3][0].data.__batchRequests[0].__changeRequests[0].data;
+				equal(oPayload.__metadata.content_type, "application/octet-stream", "check media entity property");
+				equal(oPayload.__metadata.media_src, "http://services.odata.org/V2/Northwind/Northwind.svc/Categories(10)/Attachment/$value", "check media entity property");
+				equal(oPayload.__metadata.edit_media, undefined, "check media entity property");
+				OData.defaultHttpClient.request.restore();
+				oModel.destroy();
+				start();
+			} else {
+				ok(false, "More than two batch requests sent!");
+			}
+		});
+	});
+
 	module("CSRF Token handling", {
 		setup: function() {
 			window.odataFakeServiceData.forbidHeadRequest = false;
@@ -3610,6 +3745,82 @@
 			}
 		});
 	});
+
+	asyncTest("test getProperty with includeExpandEntries __ref", function(){
+		removeSharedServicedata(sURI);
+		var oModel = initModel(sURI, {json:false, useBatch: true});
+		oModel.read("/Products(7)", { urlParameters: {"$expand" : "Category"}, success: function(){
+			var oDeepEntry = oModel.getProperty("/Products(7)");
+			ok(oDeepEntry.Category.__ref, "check ref");
+			equal(oDeepEntry.Category.__ref, "Categories(7)", "check ref value");
+
+			oDeepEntry = oModel.getProperty("/Products(7)", null, true);
+			equal(oDeepEntry.Category.CategoryID, 7, "check id");
+
+			oDeepEntry = oModel.getProperty("/Products(7)");
+			ok(oDeepEntry.Category.__ref, "check ref");
+			equal(oDeepEntry.Category.__ref, "Categories(7)", "check ref value");
+
+			start();
+		}});
+	});
+
+	asyncTest("test getProperty with includeExpandEntries __list", function(){
+		removeSharedServicedata(sURI);
+		var oModel = initModel(sURI, {json:false, useBatch: true});
+		oModel.read("/Categories(7)", { urlParameters: {"$expand" : "Products"}, success: function(){
+			var oDeepEntry = oModel.getProperty("/Categories(7)");
+			ok(oDeepEntry.Products.__list, "check list");
+			equal(oDeepEntry.Products.__list[0], "Products(7)", "check list value");
+
+			oDeepEntry = oModel.getProperty("/Categories(7)", null, true);
+			equal(oDeepEntry.Products.results.length, 5, "check length");
+			equal(oDeepEntry.Products.results[0].CategoryID, oDeepEntry.CategoryID, "check category id");
+			equal(oDeepEntry.Products.results[0].ProductID, 7, "check product id");
+
+			var oDeepEntry = oModel.getProperty("/Categories(7)");
+			ok(oDeepEntry.Products.__list, "check list");
+			equal(oDeepEntry.Products.__list[0], "Products(7)", "check list value");
+
+			start();
+		}});
+	});
+
+	asyncTest("test getProperty with includeExpandEntries and cyclic dependencies", function(){
+		removeSharedServicedata(sURI);
+		var oModel = initModel(sURI, {json:false, useBatch: true});
+		oModel.read("/Products(7)", { urlParameters: {"$expand" : "Category"}, success: function(){
+			oModel.read("/Categories(7)", { urlParameters: {"$expand" : "Products"}, success: function(){
+
+				var oDeepEntry = oModel.getProperty("/Products(7)");
+				ok(oDeepEntry.Category.__ref, "check ref");
+				equal(oDeepEntry.Category.__ref, "Categories(7)", "check ref value");
+
+				oDeepEntry = oModel.getProperty("/Products(7)", null, true);
+				equal(oDeepEntry.Category.Products.results[0].ProductID, oDeepEntry.ProductID, "check same id");
+				equal(oDeepEntry.Category.Products.results[0].Category, oDeepEntry.Category, "check cycle");
+
+				oDeepEntry = oModel.getProperty("/Products(7)");
+				ok(oDeepEntry.Category.__ref, "check ref");
+				equal(oDeepEntry.Category.__ref, "Categories(7)", "check ref value");
+
+				var oDeepEntry = oModel.getProperty("/Categories(7)");
+				ok(oDeepEntry.Products.__list, "check list");
+				equal(oDeepEntry.Products.__list[0], "Products(7)", "check list value");
+
+				oDeepEntry = oModel.getProperty("/Categories(7)", null, true);
+				equal(oDeepEntry.Products.results[0].CategoryID, oDeepEntry.CategoryID, "check same id");
+				equal(oDeepEntry.Products.results[0].Category.Products.results[0], oDeepEntry.Products.results[0], "check cycle");
+
+				var oDeepEntry = oModel.getProperty("/Categories(7)");
+				ok(oDeepEntry.Products.__list, "check list");
+				equal(oDeepEntry.Products.__list[0], "Products(7)", "check list value");
+
+				start();
+			}});
+		}});
+	});
+
 
 	</script>
 

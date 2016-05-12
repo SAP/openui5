@@ -251,6 +251,25 @@
 			oLink.destroy();
 		});
 
+		test("getAccessibilityInfo", function() {
+			var oControl = new sap.m.Link({text: "Text", href: "HRef"});
+			ok(!!oControl.getAccessibilityInfo, "Link has a getAccessibilityInfo function");
+			var oInfo = oControl.getAccessibilityInfo();
+			ok(!!oInfo, "getAccessibilityInfo returns a info object");
+			strictEqual(oInfo.role, "link", "AriaRole");
+			strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_LINK"), "Type");
+			strictEqual(oInfo.description, "Text", "Description");
+			strictEqual(oInfo.focusable, true, "Focusable");
+			strictEqual(oInfo.enabled, true, "Enabled");
+			ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
+			oControl.setText("");
+			oControl.setEnabled(false);
+			oInfo = oControl.getAccessibilityInfo();
+			strictEqual(oInfo.description, "HRef", "Description");
+			strictEqual(oInfo.focusable, false, "Focusable");
+			oControl.destroy();
+		});
+
 		</script>
 
 	</head>

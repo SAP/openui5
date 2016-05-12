@@ -1,6 +1,12 @@
 /* ======================================== */
 /* CSS for control sap.m/FeedContent.control */
 /* ======================================== */
+
+.sapMFCCTxt .sapMText, .sapMFCSbh {
+	color: @sapHCStandardFG;
+	font-size: @sapMFontSmallSize;
+}
+
 .sapMFCValue.Neutral {
 	color: @sapHCNeutral;
 }
@@ -17,17 +23,10 @@
 	color: @sapHCNegative;
 }
 
-.sap-desktop .sapMFC:focus {
-	outline-color: @sapHCStandardFG;
-	outline-style: dotted;
-	outline-width: 1px; /* Usage of px as aligned with designers. */
+html.sap-desktop .sapMFC:focus {
+	outline: 1px dotted @sapHCStandardFG; /* Usage of px as aligned with designers. */
 }
 
 .sapMFCValue {
 	font-family: @sapUiFontFamily;
-}
-
-.sapMFCSbh,
-.sapMFCCTxt {
-	color: @sapHCStandardFG;
 }

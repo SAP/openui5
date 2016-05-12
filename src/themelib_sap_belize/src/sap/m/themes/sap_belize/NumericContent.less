@@ -6,63 +6,43 @@
 .sapMNCIconImage {
 	font-family: @sapUiFontHeaderFamily;
 	font-weight: @sapUiFontHeaderWeight;
-	color: @sapUiHighlight;
+	color: lighten(@sapUiContentIconColor, 34);
+	float: none;
 }
 
 .sapMNCScale {
 	font-family: @sapUiFontHeaderFamily;
 	font-weight: @sapUiFontHeaderWeight;
-	font-size: @sapMFontMediumSize;
-	display: block;
-}
-
-.sapUiMedia-Std-Phone .sapMNCScale.Auto, .sapMNCScale.S, .sapMNCScale.XS {
-	font-size: 0.75rem;
 }
 
 .sapMNCValue {
 	font-family: @sapUiFontHeaderFamily;
 	font-weight: @sapUiFontHeaderWeight;
-}
-
-.sapMNCScale.L {
-	font-size: @sapMFontHeader5Size;
+	font-size: 2.5rem;
 }
 
 .sapMNCValue.Neutral,
-.sapMNCIndicator.Neutral {
-	color: @sapUiNeutralElement;
-}
-
-.sapMNCValue.Good,
-.sapMNCIndicator.Good {
-	color: @sapUiPositiveElement ;
-}
-
-.sapMNCValue.Critical,
-.sapMNCIndicator.Critical {
-	color: @sapUiCriticalElement;
-}
-
-.sapMNCValue.Error,
-.sapMNCIndicator.Error {
-	color: @sapUiNegativeElement;
-}
-
+.sapMNCIndicator.Neutral,
 .sapMNCScale.Neutral {
 	color: @sapUiNeutralElement;
 }
 
+.sapMNCValue.Good,
+.sapMNCIndicator.Good,
 .sapMNCScale.Good {
 	color: @sapUiPositiveElement ;
 }
 
-.sapMNCScale.Critical {
-	color: @sapUiCriticalElement;
-}
-
+.sapMNCValue.Error,
+.sapMNCIndicator.Error,
 .sapMNCScale.Error {
 	color: @sapUiNegativeElement;
+}
+
+.sapMNCValue.Critical,
+.sapMNCIndicator.Critical,
+.sapMNCScale.Critical {
+	color: @sapUiCriticalElement;
 }
 
 .sapMNCIndicator.Loading,
@@ -77,12 +57,21 @@
 	opacity: 0.25;
 }
 
-.sap-desktop .sapMNC:focus {
-	outline-color: @sapUiContentFocusColor;
-	outline-style: dotted;
-	outline-width: 1px; /* Usage of px as aligned with designers. */
+.sapMNC:focus {
+	outline: 1px dotted @sapUiContentFocusColor; /* Usage of px as aligned with designers. */
 }
 
 .sapMNC:focus:not([tabindex]) {
 	outline: none;
+}
+
+/* BREAKPOINT FOR SMALL PHONES */
+@media screen and (max-width: 374px) {
+	.sapMGTHdrTxt > .sapMText {
+		font-size: @sapMFontHeader6Size;
+	}
+
+	.sapMNCValue {
+		font-size: 2rem;
+	}
 }

@@ -215,16 +215,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 
 		var $DomNode = this.$(),
-				sMode = this.getMode(),
-				// In Background mode, the src property should be read from the temp Image object
-				sSrc = (sMode === sap.m.ImageMode.Image) ? $DomNode.attr("src") : this._oImage.src,
-				d = Image._currentDevicePixelRatio,
-				sCurrentSrc = this._isActiveState ? this.getActiveSrc() : this.getSrc();
+			sMode = this.getMode(),
+			// In Background mode, the src property should be read from the temp Image object
+			sSrc = (sMode === sap.m.ImageMode.Image) ? $DomNode.attr("src") : this._oImage.src,
+			d = Image._currentDevicePixelRatio,
+			sCurrentSrc = this._isActiveState ? this.getActiveSrc() : this.getSrc();
 
 		$DomNode.addClass("sapMNoImg");
 
 		// if src is empty or there's no image existing, just stop
 		if (!sSrc || this._iLoadImageDensity === 1) {
+			// remove the "sapMNoImg" in order to show the alt text
+			$DomNode.removeClass("sapMNoImg");
 			this.fireError();
 			return;
 		}
@@ -232,15 +234,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		if (d === 2 || d < 1) {
 			// load the default image
 			this._iLoadImageDensity = 1;
-			// $DomNode.attr("src", this._generateSrcByDensity(this._isActiveState ? this.getActiveSrc() : this.getSrc(), 1));
 			this._updateDomSrc(this._generateSrcByDensity(sCurrentSrc, 1));
 		} else if (d === 1.5) {
 			if (this._bVersion2Tried) {
 				setTimeout(jQuery.proxy(function() {
-
 					// if version 2 isn't on the server, load the default image
 					this._iLoadImageDensity = 1;
-					// $DomNode.attr("src", this._generateSrcByDensity(this._isActiveState ? this.getActiveSrc() : this.getSrc(), 1));
 					this._updateDomSrc(this._generateSrcByDensity(sCurrentSrc, 1));
 				}, this), 0);
 			} else {
@@ -248,7 +247,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 					// special treatment for density 1.5
 					// verify if the version for density 2 is provided or not
 					this._iLoadImageDensity = 2;
-					// $DomNode.attr("src", this._generateSrcByDensity(this._isActiveState ? this.getActiveSrc() : this.getSrc(), 2));
 					this._updateDomSrc(this._generateSrcByDensity(sCurrentSrc, 2));
 					this._bVersion2Tried = true;
 				}, this), 0);
@@ -272,26 +270,24 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @private
 	 */
 	Image.prototype.onAfterRendering = function() {
-		// if densityAware is set to true, we need to do extra steps for getting and resizing the density perfect version of the image.
-		if (this.getDensityAware()) {
-			var $DomNode = this.$(),
-					sMode = this.getMode();
+		var $DomNode = this.$(),
+			oDomRef = $DomNode[0],
+			sMode = this.getMode();
 
-			if (sMode === sap.m.ImageMode.Image) {
-				// bind the load and error event handler
-				$DomNode.on("load", jQuery.proxy(this.onload, this));
-				$DomNode.on("error", jQuery.proxy(this.onerror, this));
+		if (sMode === sap.m.ImageMode.Image) {
+			// bind the load and error event handler
+			$DomNode.on("load", jQuery.proxy(this.onload, this));
+			$DomNode.on("error", jQuery.proxy(this.onerror, this));
 
-				var oDomRef = this.getDomRef();
-
-				// if image has already been loaded and the load or error event handler hasn't been called, trigger it manually.
-				if (oDomRef.complete && !this._defaultEventTriggered) {
-					// need to use the naturalWidth property instead of jDomNode.width(),
-					// the later one returns positive value even in case of broken image
-					$DomNode.trigger(oDomRef.naturalWidth > 0 ? "load" : "error");	//  image loaded successfully or with error
+			// if image has already been loaded and the load or error event handler hasn't been called, trigger it manually.
+			if (oDomRef && oDomRef.complete && !this._defaultEventTriggered) {
+				// need to use the naturalWidth property instead of jDomNode.width(),
+				// the later one returns positive value even in case of broken image
+				if (oDomRef.naturalWidth > 0) {
+					this.onload({/* empty event object*/});
+				} else {
+					this.onerror({/* empty event object*/});
 				}
-			} else {
-				$DomNode.addClass("sapMNoImg");
 			}
 		}
 	};
@@ -301,6 +297,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			// deregister the events from the window.Image object
 			jQuery(this._oImage).off("load", this.onload).off("error", this.onerror);
 			this._oImage = null;
+		} else {
+			this.$().off("load", this.onload).off("error", this.onerror);
 		}
 	};
 
@@ -352,7 +350,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 		var oDomRef = this.getDomRef();
 		if (oDomRef) {
-			this._updateDomSrc(sSrc);
+			this._updateDomSrc(this._getDensityAwareSrc());
 		}
 
 		return this;
@@ -419,6 +417,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	Image.prototype.onkeyup = function(oEvent) {
 		if (oEvent.which === jQuery.sap.KeyCodes.SPACE || oEvent.which === jQuery.sap.KeyCodes.ENTER) {
 			this.firePress({/* no parameters */});
+
+			// stop the propagation it is handled by the control
+			oEvent.stopPropagation();
 		}
 	};
 
@@ -428,7 +429,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	*/
 	Image.prototype._updateDomSrc = function(sSrc) {
 		var $DomNode = this.$(),
-				sMode = this.getMode();
+			sMode = this.getMode();
 
 		if ($DomNode.length) {
 			// the src is updated on the output DOM element when mode is set to Image
@@ -467,7 +468,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 		// if the source image is already loaded, manually trigger the load event
 		if (this._oImage.complete) {
-			$InternalImage.trigger("load");
+			$InternalImage.trigger(this._oImage.naturalWidth > 0 ? "load" : "error");	//  image loaded successfully or with error
 		}
 	};
 
@@ -487,14 +488,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @private
 	 */
 	Image.prototype._getDensityAwareSrc = function() {
-		var d = Image._currentDevicePixelRatio,
-			sSrc = this.getSrc();
+		var sSrc = this.getSrc(),
+			bDensityAware = this.getDensityAware(),
+			d = bDensityAware ? Image._currentDevicePixelRatio : 1;
 
 		// this property is used for resizing the higher resolution image when image is loaded.
 		this._iLoadImageDensity = d;
 
-		// if devicePixelRatio equals 1 or densityAware set to false, simply return the src property
-		if (d === 1 || !this.getDensityAware()) {
+		// if the currect density equals 1, simply return the src property
+		if (d === 1) {
 			return sSrc;
 		}
 
@@ -507,14 +509,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @private
 	 */
 	Image.prototype._getDensityAwareActiveSrc = function() {
-		var d = Image._currentDevicePixelRatio,
-			sActiveSrc = this.getActiveSrc();
+		var sActiveSrc = this.getActiveSrc(),
+			bDensityAware = this.getDensityAware(),
+			d = bDensityAware ? Image._currentDevicePixelRatio : 1;
 
 		// this property is used for resizing the higher resolution image when image is loaded.
 		this._iLoadImageDensity = d;
 
-		// if devicePixelRatio equals 1 or densityAware set to false, simply return the src property
-		if (d === 1 || !this.getDensityAware()) {
+		// if the currect density equals 1, simply return the src property
+		if (d === 1) {
 			return sActiveSrc;
 		}
 
@@ -559,6 +562,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	Image.prototype._isDataUri = function(src) {
 		return src ? src.indexOf("data:") === 0 : false;
+	};
+
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	Image.prototype.getAccessibilityInfo = function() {
+		var bHasPressListeners = this.hasListeners("press");
+
+		if (this.getDecorative() && !this.getUseMap() && !bHasPressListeners) {
+			return null;
+		}
+
+		return {
+			role: bHasPressListeners ? "button" : "img",
+			type: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText(bHasPressListeners ? "ACC_CTR_TYPE_BUTTON" : "ACC_CTR_TYPE_IMAGE"),
+			description: this.getAlt() || this.getTooltip_AsString() || "",
+			focusable: bHasPressListeners
+		};
 	};
 
 	return Image;

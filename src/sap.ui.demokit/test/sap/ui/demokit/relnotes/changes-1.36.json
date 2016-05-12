@@ -24,5 +24,17 @@
         "references": []
       }
     ]
+  },
+  "1.36.9": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "4fdc7774e733fec753821d6d45820a628d7ff2b8",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "Explored app: Samples tab \u003ccode\u003e tag visualization corrected",
+        "references": []
+      }
+    ]
   }
 }

@@ -3,14 +3,20 @@
  */
 
 // Provides helper sap.ui.table.TableAccRenderExtension.
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', './TableExtension'],
+	function(jQuery, TableExtension) {
 	"use strict";
 
-	var _writeAccText = function(oRm, sTableId, sId, sText) {
+	/*
+	 * Renders a hidden element with the given id, text and css classes.
+	 */
+	var _writeAccText = function(oRm, sParentId, sId, sText, aCSSClasses) {
+		aCSSClasses = aCSSClasses || [];
+		aCSSClasses.push("sapUiInvisibleText");
+
 		oRm.write("<span");
-		oRm.writeAttribute("id", sTableId + "-" + sId);
-		oRm.writeAttribute("class", "sapUiInvisibleText");
+		oRm.writeAttribute("id", sParentId + "-" + sId);
+		oRm.writeAttribute("class", aCSSClasses.join(" "));
 		oRm.writeAttribute("aria-hidden", "true");
 		oRm.write(">");
 		if (sText) {
@@ -22,18 +28,30 @@ sap.ui.define(['jquery.sap.global'],
 	//********************************************************************
 
 	/**
-	 * Extension for sap.ui.zable.TableRenderer which handles ACC related things.
+	 * Extension for sap.ui.table.TableRenderer which handles ACC related things.
 	 *
+	 * @class Extension for sap.ui.table.TableRenderer which handles ACC related things.
+	 *
+	 * @extends sap.ui.table.TableExtension
 	 * @author SAP SE
 	 * @version ${version}
-	 * @namespace
+	 * @constructor
 	 * @private
 	 * @alias sap.ui.table.TableAccRenderExtension
 	 */
-	var AccRenderExtension = {
+	var AccRenderExtension = TableExtension.extend("sap.ui.table.TableAccRenderExtension", /* @lends sap.ui.table.TableAccRenderExtension */ {
 
+		/*
+		 * @see TableExtension._init
+		 */
+		_init : function(oTable, sTableType, mSettings) {
+			return "AccRenderExtension";
+		},
 
-
+		/*
+		 * Renders all necessary hidden text elements of the table.
+		 * @public (Part of the API for Table control only!)
+		 */
 		writeHiddenAccTexts: function(oRm, oTable) {
 			if (!oTable._getAccExtension().getAccMode()) {
 				return;
@@ -42,7 +60,7 @@ sap.ui.define(['jquery.sap.global'],
 			var oBundle = oTable._oResBundle,
 				sTableId = oTable.getId();
 
-			oRm.write("<div class='sapUiTableHiddenTexts' style='display:none;'>");
+			oRm.write("<div class='sapUiTableHiddenTexts' style='display:none;' aria-hidden='true'>");
 
 			// aria description for the table
 			var sDesc = oTable.getTitle() && oTable.getTitle().getText && oTable.getTitle().getText() != "" ?
@@ -56,6 +74,12 @@ sap.ui.define(['jquery.sap.global'],
 			_writeAccText(oRm, sTableId, "ariaselectall", oBundle.getText("TBL_SELECT_ALL_KEY"));
 			// aria label for row headers
 			_writeAccText(oRm, sTableId, "ariarowheaderlabel", oBundle.getText("TBL_ROW_HEADER_LABEL"));
+			// aria label for group rows
+			_writeAccText(oRm, sTableId, "ariarowgrouplabel", oBundle.getText("TBL_ROW_GROUP_LABEL"));
+			// aria label for grand total sums
+			_writeAccText(oRm, sTableId, "ariagrandtotallabel", oBundle.getText("TBL_GRAND_TOTAL_ROW"));
+			// aria label for group total sums
+			_writeAccText(oRm, sTableId, "ariagrouptotallabel", oBundle.getText("TBL_GROUP_TOTAL_ROW"));
 			// aria label for column row header
 			_writeAccText(oRm, sTableId, "ariacolrowheaderlabel", oBundle.getText("TBL_ROW_COL_HEADER_LABEL"));
 			// aria description for table row count
@@ -83,12 +107,20 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.write("</div>");
 		},
 
+		/*
+		 * Renders the default aria attributes of the element with the given type and settings.
+		 * @see TableAccExtension.ELEMENTTYPES
+		 * @see TableAccExtension._getAriaAttributesFor
+		 * @public (Part of the API for Table control only!)
+		 */
 		writeAriaAttributesFor: function(oRm, oTable, sType, mParams) {
-			if (!oTable._getAccExtension().getAccMode()) {
+			var oExtension = oTable._getAccExtension();
+
+			if (!oExtension.getAccMode()) {
 				return;
 			}
 
-			var mAttributes = oTable._getAccExtension()._getAriaAttributesFor(oTable, sType, mParams);
+			var mAttributes = oExtension._getAriaAttributesFor(sType, mParams);
 
 			var oValue, sKey;
 			for (sKey in mAttributes) {
@@ -102,61 +134,24 @@ sap.ui.define(['jquery.sap.global'],
 			}
 		},
 
-		getAccRowSelectorText: function(oTable, oRow, iRowIndex) {
+		/*
+		 * Renders the default row selector content.
+		 * @see TableRenderer.writeRowSelectorContent
+		 * @public (Part of the API for Table control only!)
+		 */
+		writeAccRowSelectorText: function(oRm, oTable, oRow, iRowIndex) {
 			if (!oTable._getAccExtension().getAccMode()) {
 				return "";
 			}
 
 			var bIsSelected = oTable.isIndexSelected(iRowIndex);
-
-			var sText = "<div id='" + oRow.getId() + "-rowselecttext' aria-hidden='true' class='sapUiTableAriaRowSel sapUiInvisibleText'>";
 			var mTooltipTexts = oTable._getAccExtension().getAriaTextsForSelectionMode(true);
-			sText += mTooltipTexts.keyboard[bIsSelected ? "rowDeselect" : "rowSelect"];
-			return sText + "</div>";
-		},
+			var sText = mTooltipTexts.keyboard[bIsSelected ? "rowDeselect" : "rowSelect"];
 
-		getCellLabels: function(oTable, oColumn, bFixedColumn, bJoin) {
-			var aLabels = [];
-
-			var aMultiLabels = oColumn.getMultiLabels();
-			var iMultiLabels = aMultiLabels.length;
-
-			// get IDs of column labels
-			if (oTable.getColumnHeaderVisible()) {
-				var sColumnId = oColumn.getId();
-				aLabels.push(sColumnId); // first column header has no suffix, just the column ID
-				if (iMultiLabels > 1) {
-					for (var i = 1; i < iMultiLabels; i++) {
-						aLabels.push(sColumnId + "_" + i); // for all other column header rows we add the suffix
-					}
-				}
-			} else {
-				// column header is not rendered therefore there is no <div> tag. Link aria description to label
-				var oLabel;
-				if (iMultiLabels == 0) {
-					oLabel = oColumn.getLabel();
-					if (oLabel) {
-						aLabels.push(oLabel.getId());
-					}
-				} else {
-					for (var i = 0; i < iMultiLabels; i++) {
-						// for all other column header rows we add the suffix
-						oLabel = aMultiLabels[i];
-						if (oLabel) {
-							aLabels.push(oLabel.getId());
-						}
-					}
-				}
-			}
-
-			if (bFixedColumn) {
-				aLabels.push(oTable.getId() + "-ariafixedcolumn");
-			}
-
-			return bJoin ? aLabels.join(" ") : aLabels;
+			_writeAccText(oRm, oRow.getId(), "rowselecttext", sText, ["sapUiTableAriaRowSel"]);
 		}
 
-	};
+	});
 
 	return AccRenderExtension;
 

@@ -27,6 +27,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
+	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.Link</code> control.
 	 * @alias sap.ui.commons.Link
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -155,6 +156,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	Link.prototype.onsapenter = function(oEvent) {
 		oEvent.stopPropagation();
+	};
+
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	Link.prototype.getAccessibilityInfo = function() {
+		return {
+			role: "link",
+			type: sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons").getText("ACC_CTR_TYPE_LINK"),
+			description: this.getText() || this.getHref() || "",
+			focusable: this.getEnabled(),
+			enabled: this.getEnabled()
+		};
 	};
 
 	return Link;

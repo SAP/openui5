@@ -33,6 +33,20 @@
 	box-sizing: border-box;
 }
 
+/* Fix for a ToolBar set as headerContent */
+html[data-sap-ui-browser^="ff"].sap-desktop {
+	.sapMPage > .sapMBar.sapMPageHeader .sapMBarContainer {
+		display: initial;
+	}
+
+	.sapUiSizeCompact .sapMPage > .sapMBar.sapMPageHeader .sapMBarContainer {
+		vertical-align: -moz-middle-with-baseline;
+	}
+
+	.sapMPage > .sapMTitle {
+		font-size: 1rem;
+	}
+}
 /*
 	* Workaround for IOS 7 - on orientation change to lanscape mode:
 	* on the Ipad the footer is cut off.
@@ -97,3 +111,43 @@ html[data-sap-ui-os^="iOS7"][data-sap-ui-browser^="msf"]:not(.sap-tablet){
 
 /* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
 .sapUiContainerContentPadding(~".sapMPage", ~"> section");
+
+
+
+/* Fiori 2.0 adaptation */
+
+.sapMPage.sapF2Adapted > .sapMIBar.sapMPageHeader,
+.sapMPage.sapF2Adapted > .sapMIBar.sapMSubHeader-CTX {
+  background: transparent;
+  box-shadow: none;
+}
+
+.sapF2CollapsedHeader > .sapMPageHeader {
+  display: none;
+}
+
+.sapMPage.sapF2CollapsedHeader > .sapMPageHeader + section, .sapMPage.sapF2CollapsedHeader > .sapMPageHeader + .sapUiHiddenPlaceholder + section {
+  top: 0em;
+}
+
+.sapMPage.sapF2CollapsedHeader > .sapMPageHeader + .sapMPageSubHeader + section {
+  top: 3rem;
+}
+
+.sapUiSizeCompact .sapF2CollapsedHeader.sapMPageWithHeader > section {
+  top: 0rem;
+}
+
+.sapUiSizeCompact .sapF2CollapsedHeader.sapMPageWithHeader.sapMPageWithSubHeader > section {
+  top: 2rem;
+}
+
+.sapUiSizeCompact .sapF2CollapsedHeader > .sapMIBar.sapMPageHeader {
+  height : 0rem;
+}
+
+.sapMIBar .sapF2AdaptedTitle,
+.sapMIBar .sapF2AdaptedNavigation {
+  display: none;
+}
+

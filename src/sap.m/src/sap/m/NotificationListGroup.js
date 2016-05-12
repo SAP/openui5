@@ -54,6 +54,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 	NotificationListGroup.prototype.init = function () {
 		sap.m.NotificationListBase.prototype.init.call(this);
 
+		var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
+		this._closeText = resourceBundle.getText('NOTIFICATION_LIST_BASE_CLOSE');
+
 		/**
 		 * @type {sap.m.Button}
 		 * @private
@@ -61,6 +64,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 		this._closeButton = new sap.m.Button(this.getId() + '-closeButton', {
 			type: sap.m.ButtonType.Transparent,
 			icon: sap.ui.core.IconPool.getIconURI('decline'),
+			tooltip: this._closeText,
 			press: function () {
 				this.close();
 			}.bind(this)

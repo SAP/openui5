@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html style="height: 100%">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>DesignTime - Massive Overlay Test</title>
+
+		<style>
+			html, body, #content {
+				height : 100%;
+			}
+			.sapUiView {
+				height: 100%;
+			}
+
+			.sapUiDtOverlay {
+        		background-color: rgba(255,0,0,0.1);
+			}
+			#overlay-container {
+				background-color: rgba(255,0,255,0.5);
+			}
+		</style>
+
+		<script id="sap-ui-bootstrap"
+				type="text/javascript"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
+				data-sap-ui-resourceroots='{"dt.performance": "./"}'
+				>
+		</script>
+
+		<script>
+			jQuery(function() {
+				sap.ui.require(["dt/performance/PerformanceTestUtil"], function(PerformanceTestUtil){
+					//create Vertical Layout
+					oLayout = new sap.ui.layout.VerticalLayout("visibleLayout", {});
+					PerformanceTestUtil.addMixedControlsTo(oLayout, 1, 500, true /*visible*/);
+					PerformanceTestUtil.addMixedControlsTo(oLayout, 1001, 2000, false /*invisible*/);
+
+					oInvisibleLayout = new sap.ui.layout.VerticalLayout("invisibleLayout", {
+						visible : false
+					});
+					PerformanceTestUtil.addMixedControlsTo(oInvisibleLayout, 2001, 3000, true /*visible*/);
+
+					oHorizontalLayout = new sap.ui.layout.HorizontalLayout("HorizontalLayout", {
+						content : [oLayout, oInvisibleLayout]
+					});
+					oHorizontalLayout.placeAt("content");
+				})
+
+			});
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		<div id="content"></div>
+	</body>
+</html>

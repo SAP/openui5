@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-
+	<meta charset="UTF-8" >
 	<title>Test Page for sap.m.TimePicker</title>
 	<script id="sap-ui-bootstrap"
 			data-sap-ui-theme="sap_bluecrystal"
@@ -27,18 +27,159 @@
 
 	<script>
 		jQuery.sap.require("sap.ui.core.format.DateFormat");
+		jQuery.sap.require("sap.m.TimePickerSliders");
 		jQuery.sap.require("sap.m.TimePickerSlider");
+		jQuery.sap.require("sap.m.VisibleItem");
+
+		module("step precision in time picker", {
+			beforeEach: function() {
+				this.oTp = new sap.m.TimePicker();
+				this.oTp.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function() {
+				this.oTp.destroy();
+				this.oTp = null;
+			}
+		});
+
+		test("sliders initial minutesStep value", function() {
+			var STEP = 17;
+			this.oTp.setMinutesStep(STEP);
+
+			//Assert
+			ok(!this.oTp._getSliders(), "no picker -> no sliders");
+
+			//Act
+			this.oTp._createPicker(this.oTp.getDisplayFormat());
+
+			//Assert
+			equal(this.oTp._getSliders().getMinutesStep(), STEP, "initial value of the time picker for minutesStep is used");
+		});
+
+		test("setMinutesStep", function() {
+			var oSpySetProperty,
+					oSpySlidersSetMinutesStep,
+					STEP = 23;
+			//arrange
+			this.oTp._createPicker(this.oTp.getDisplayFormat());
+
+			oSpySetProperty = this.spy(this.oTp, "setProperty");
+			oSpySlidersSetMinutesStep = this.spy(this.oTp._getSliders(), "setMinutesStep");
+
+			//Act
+			this.oTp.setMinutesStep(STEP);
+
+			//Assert
+			ok(oSpySlidersSetMinutesStep.calledWith(STEP), "setMinutesStep is propagated to the picker part");
+			ok(oSpySetProperty.calledWith("minutesStep", STEP, true), "property is updated without re-rendering");
+		});
+
+		module("step precision in sliders", {
+			beforeEach: function() {
+				this.oSliders = new sap.m.TimePickerSliders({
+					format: "hh mm ss",
+					labelText: "label",
+					minutesStep: this.STEP
+				});
+				this.oSliders.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function() {
+				this.oSliders.destroy();
+				this.oSliders = null;
+			},
+			STEP: 5,
+			ANOTHER_STEP: 14
+		});
+
+		test("setMinutesStep", function() {
+			var oSpySetProperty = this.spy(this.oSliders, "setProperty"),
+				oSpySetupLists = this.spy(this.oSliders, "_setupLists");
+
+			//Act
+			this.oSliders.setMinutesStep(this.ANOTHER_STEP);
+
+			//Assert
+			ok(oSpySetProperty.calledWith("minutesStep", this.ANOTHER_STEP, true), "property updated without re-rendering");
+			ok(oSpySetupLists.calledOnce, "sliders are re-build");
+		});
+
+		module("step precision in a single slider", {
+			beforeEach: function() {
+				this.oSlider = new sap.m.TimePickerSlider({
+					items: [
+						sap.m.TimePickerSliders.prototype._generatePickerListValues(0, 59, this.STEP, true)
+					]
+				});
+				this.oSlider.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function() {
+				this.oSlider.destroy();
+				this.oSlider = null;
+			},
+			STEP: 11,
+			ANOTHER_STEP: 14
+		});
+
+		test("_updateStepAndValue", function() {
+			var $ValuesContainer = this.oSlider.$().find(".sapMTimePickerSlider"),
+				SELECTED_VALUE = 18,
+				STEP = this.ANOTHER_STEP,
+				fnHasValueMultipleOfStepOrEqualToSelectedValue = function(oItem) {
+					var iItemValue = parseInt(oItem.getText());
+					return iItemValue === SELECTED_VALUE
+							|| iItemValue % STEP === 0;
+				};
+
+			//Act
+			this.oSlider._updateStepAndValue(SELECTED_VALUE, STEP);
+
+			//Assert
+			ok($ValuesContainer.hasClass("SliderValues6"), "values container has the right class");
+			ok(this.oSlider._getVisibleItems().every(fnHasValueMultipleOfStepOrEqualToSelectedValue), "all visible items have correct values");
+			equal(this.oSlider.getSelectedValue(), SELECTED_VALUE, "slider has the right selected value");
+		});
+
+		test("margins are updated on expand", function() {
+			var oSpyUpdateMargins = this.spy(this.oSlider, "_updateMargins");
+
+			//Act
+			this.oSlider.setIsExpanded(true, true);
+
+			//Assert
+			ok(oSpyUpdateMargins.calledOnce, "margins are updated on expand");
+
+			//Act
+			this.oSlider.setIsExpanded(false, true);
+
+			//Assert
+			ok(oSpyUpdateMargins.calledTwice, "margins are updated on collapse");
+		});
+
+		test("setIsCyclic", function() {
+			this.oSlider.setIsCyclic(true);
+
+			ok(!this.oSlider.$().hasClass("sapMTimePickerSliderShort"), "slider styled correctly");
+			equal(this.oSlider.getProperty("isCyclic"), true, "property is updated");
+
+			this.oSlider.setIsCyclic(false);
+
+			ok(this.oSlider.$().hasClass("sapMTimePickerSliderShort"), "slider styled correctly");
+			equal(this.oSlider.getProperty("isCyclic"), false, "property is updated")
+		});
 
 		module("slider select value by typing", {
 			beforeEach: function() {
 				//SUT
 				this.oSlider = new sap.m.TimePickerSlider({
 					items: [
-						{key: "1", text: "01"},
-						{key: "2", text: "02"},
-						{key: "3", text: "03"},
-						{key: "11", text: "11"},
-						{key: "113", text: "113"}
+						new sap.m.VisibleItem({key: "1", text: "01"}),
+						new sap.m.VisibleItem({key: "2", text: "02"}),
+						new sap.m.VisibleItem({key: "3", text: "03"}),
+						new sap.m.VisibleItem({key: "11", text: "11"}),
+						new sap.m.VisibleItem({key: "113", text: "113"})
 					]
 				});
 				this.oSpy = sinon.spy(this.oSlider, "setSelectedValue");
@@ -106,7 +247,7 @@
 		});
 
 		test("After creating a timePicker, the picker aggregation is empty until the picker is opened", function () {
-			ok(!this.oTimePicker._getPicker(), "the picker aggregation is empty before opening the picker")
+			ok(!this.oTimePicker._getPicker(), "the picker aggregation is empty before opening the picker");
 		});
 
 		test("After creating a timePicker, the picker aggregation holds a responsivePopover instance", function() {
@@ -128,16 +269,34 @@
 		test("The method generatePickerListValues generates the correct result", function() {
 			var iStart = 2;
 			var iEnd = 5;
-			this.oTimePicker._openPicker();
-			var aList = this.oTimePicker._getSliders()._generatePickerListValues(iStart, iEnd);
+			var aList = sap.m.TimePickerSliders.prototype._generatePickerListValues(iStart, iEnd, 1, false);
 			strictEqual(jQuery.isArray(aList), true, "the method returns an array");
 			strictEqual(aList.length, iEnd - iStart + 1, "the method returns an array with the correct number of objects");
-			strictEqual(typeof aList[0], "object", "the first element of the array is an object");
-			strictEqual(parseInt(aList[0].key), iStart, "the key property of the first element of the array is correct");
-			strictEqual(parseInt(aList[0].text), iStart, "the text property of the first element of the array is correct");
-			strictEqual(typeof aList[aList.length-1], "object", "the last element of the array is an object");
-			strictEqual(parseInt(aList[aList.length-1].key), iEnd, "the key property of the last element of the array is correct");
-			strictEqual(parseInt(aList[aList.length-1].text), iEnd, "the text property of the last element of the array is correct");
+			strictEqual(parseInt(aList[0].getKey()), iStart, "the key property of the first element of the array is correct");
+			strictEqual(parseInt(aList[0].getText()), iStart, "the text property of the first element of the array is correct");
+			strictEqual(parseInt(aList[aList.length-1].getKey()), iEnd, "the key property of the last element of the array is correct");
+			strictEqual(parseInt(aList[aList.length-1].getText()), iEnd, "the text property of the last element of the array is correct");
+		});
+
+		test("Value help CSS class is applied only when both properties 'Enabled' and 'Editable' are true", function () {
+			//assert
+			ok(this.oTimePicker.$().hasClass("sapMInputVH"), "Value help CSS class is applied by default ('Enabled' = true 'Editable' = true)");
+			//arrange
+			this.oTimePicker.setEnabled(false);
+			this.clock.tick(1000);
+			//assert
+			ok(!this.oTimePicker.$().hasClass("sapMInputVH"), "Value help CSS class is NOT applied by default ('Enabled' = false 'Editable' = true)");
+			//arrange
+			this.oTimePicker.setEnabled(true);
+			this.oTimePicker.setEditable(false);
+			this.clock.tick(1000);
+			//assert
+			ok(!this.oTimePicker.$().hasClass("sapMInputVH"), "Value help CSS class is NOT applied by default ('Enabled' = true 'Editable' = false)");
+			//arrange
+			this.oTimePicker.setEnabled(false);
+			this.oTimePicker.setEditable(false);
+			this.clock.tick(1000);
+			ok(!this.oTimePicker.$().hasClass("sapMInputVH"), "Value help CSS class is NOT applied by default ('Enabled' = true 'Editable' = false)");
 		});
 
 		module("Input formats, display formats and values", {
@@ -386,30 +545,46 @@
 					});
 		});
 
-		test("When setValue is called mask buffer is always up to date with its valid representation", function () {
+		test("test default locale", function () {
+			var stub = sinon.stub(sap.ui.getCore().getConfiguration(), 'getFormatLocale').returns('ar');
+			//Test default browser locale set to arabic
+			generateValuesTest([
+				{ key: "setDisplayFormat", value: "hh:mm:ss a"},
+				{ key: "setValueFormat", value: "hh:mm a"},
+				{ key: "setDateValue", value: getDate(23, 32, 0)}
+			], {
+				expInputVal: "11:32:00 م",
+				expValue: "11:32 م",
+				expDateValue: getDate(23, 32, 0)
+			});
+			//Test default browser local set to arabic and also custom TimePicker locale set to German
+			generateValuesTest([
+				{ key: "setLocaleId", value: "de_DE"},
+				{ key: "setValueFormat", value: "h:mm a" },
+				{ key: "setDisplayFormat", value: "hh:mm:ss a" },
+				{ key: "setDateValue", value: getDate(17, 23, 18) }
+			],
+			{
+				expValue: "5:23 nachm.",
+				expInputVal: "05:23:18 nachm.",
+				expDateValue: getDate(17, 23, 18)
+			});
+
+			stub.restore();
+		});
+
+		test("Value is validated when setValue is called with null or undefined", function () {
 			var oTP = new sap.m.TimePicker({
 					displayFormat: "HH:mm"
-				}),
-				oOtherControl = new sap.m.Input({value: "some other input"}),
-				sFirstSetValue = '17:45',
-				sSecondSetValue = '-3:20',
-				sThirdSetValue = 'jfssf',
-				sFourthSetValue = '13:85',
-				sFifthSetValue = '--:--';
+				});
 
 			oTP.placeAt('qunit-fixture');
 			sap.ui.getCore().applyChanges();
 
-			oTP.setValue(sFirstSetValue);
-			strictEqual(oTP._oTempValue._aContent.join(''), sFirstSetValue, "When setting a valid value mask buffer value is modified with the correct (same) value");
-			oTP.setValue(sSecondSetValue);
-			strictEqual(oTP._oTempValue._aContent.join(''), "20:--", "When setting a partial completed " + sSecondSetValue + " value mask buffer value is modified with the correct validated value");
-			oTP.setValue(sThirdSetValue);
-			strictEqual(oTP._oTempValue._aContent.join(''), "--:--", "Mask buffer value is modified with the correct validated value");
-			oTP.setValue(sFourthSetValue);
-			strictEqual(oTP._oTempValue._aContent.join(''), "13:5-", "Mask buffer value is modified with the correct validated value");
-			oTP.setValue(sFifthSetValue);
-			strictEqual(oTP._oTempValue._aContent.join(''), "13:5-", "Mask buffer value is not modified when trying to set initial value");
+			oTP.setValue(null);
+			strictEqual(oTP.getValue(), "", "'getValue' is updated and returns correct VALIDATED value");
+			oTP.setValue(undefined);
+			strictEqual(oTP.getValue(), "", "'getValue' is updated and returns correct VALIDATED value");
 
 			oTP.destroy();
 		});
@@ -1841,7 +2016,8 @@
 			beforeEach: function () {
 				//system under test
 				this.oTp = new sap.m.TimePicker({
-					valueFormat: "hh mm"
+					valueFormat: "hh mm",
+					displayFormat: "hh mm"
 				});
 				this.oSpy = sinon.spy();
 				this.oTp.attachChange(this.oSpy);
@@ -1885,11 +2061,40 @@
 			tp.destroy();
 		});
 
+		test("change event fires when the value is reset", function() {
+			var oTpFocusDomRef = jQuery(this.oTp.getFocusDomRef());
+
+			//system under test
+			triggerMultipleKeypress(this.oTp, "09");
+			qutils.triggerKeydown(oTpFocusDomRef, jQuery.sap.KeyCodes.ENTER);
+
+			equals(this.oSpy.callCount, 1, "changed event fired when the value is set");
+
+			while (oTpFocusDomRef.val() !== "-- --") {
+				qutils.triggerKeydown(oTpFocusDomRef, jQuery.sap.KeyCodes.BACKSPACE);
+			}
+			qutils.triggerKeydown(oTpFocusDomRef, jQuery.sap.KeyCodes.ENTER);
+
+			equals(this.oSpy.callCount, 2, "changed event fired when the value is reset");
+		});
+
 		test("upon enter, change event fires only once", function() {
 			//act
 			triggerMultipleKeypress(this.oTp, "09");
 			qutils.triggerKeydown(jQuery(this.oTp.getFocusDomRef()), jQuery.sap.KeyCodes.ENTER);
 			equals(this.oSpy.callCount, 1, "changed event must be fired only once");
+		});
+
+		test("upon focusin of timepicker input, no picker should be visible", function () {
+			//arrange (open picker in order it to be initialized and rendered
+			this.oTp._openPicker();
+			this.clock.tick(1000);
+			qutils.triggerEvent('focusin', this.oTp.getDomRef());
+			this.clock.tick(1000);
+			//assert
+			ok(!this.oTp._getPicker().isOpen(), "The picker 'isOpen' state is false");
+			ok(!this.oTp._getPicker().$().is(":visible"), "jQuery.is(':visible') returned false");
+			strictEqual(this.oTp._getPicker().$().css('display'), 'none', "The picker css display property is none");
 		});
 
 		test("upon focusout, change event fires only once", function() {
@@ -1941,6 +2146,44 @@
 				qutils.triggerKeypress($TimePicker, sChar);
 			}
 		}
+
+		module("Accessibility");
+
+		test("getAccessibilityInfo", function() {
+			var oInput = new sap.m.TimePicker({
+				value: "Value",
+				tooltip: "Tooltip",
+				placeholder: "Placeholder"
+			});
+			ok(!!oInput.getAccessibilityInfo, "TimePicker has a getAccessibilityInfo function");
+			var oInfo = oInput.getAccessibilityInfo();
+			ok(!!oInfo, "getAccessibilityInfo returns a info object");
+			strictEqual(oInfo.role, "combobox", "AriaRole");
+			strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_TIMEINPUT"), "Type");
+			strictEqual(oInfo.description, "Value Placeholder Tooltip", "Description");
+			strictEqual(oInfo.focusable, true, "Focusable");
+			strictEqual(oInfo.enabled, true, "Enabled");
+			strictEqual(oInfo.editable, true, "Editable");
+			oInput.setValue("");
+			oInput.setEnabled(false);
+			oInfo = oInput.getAccessibilityInfo();
+			strictEqual(oInfo.description, "Placeholder Tooltip", "Description");
+			strictEqual(oInfo.focusable, false, "Focusable");
+			strictEqual(oInfo.enabled, false, "Enabled");
+			strictEqual(oInfo.editable, false, "Editable");
+			oInput.setEnabled(true);
+			oInput.setEditable(false);
+			oInfo = oInput.getAccessibilityInfo();
+			strictEqual(oInfo.focusable, true, "Focusable");
+			strictEqual(oInfo.enabled, true, "Enabled");
+			strictEqual(oInfo.editable, false, "Editable");
+			oInput.setValueFormat("HH.mm.ss");
+			oInput.setDisplayFormat("HH-mm-ss");
+			oInput.setValue("10.32.30");
+			oInfo = oInput.getAccessibilityInfo();
+			strictEqual(oInfo.description, "10-32-30 Placeholder Tooltip", "Description");
+			oInput.destroy();
+		});
 	</script>
 
 </head>

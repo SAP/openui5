@@ -19,7 +19,6 @@
     <!-- excludes for the all-in-one file -->
     <packaging xmlns="http://www.sap.com/ui5/buildext/packaging" version="2.0" >
       <module-infos>
-        <raw-module name="jquery-1.7.1.js" />
         <raw-module name="jquery.sap.global.js" depends="sap/ui/Device.js,sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/jqueryui/jquery-ui-position.js,sap/ui/thirdparty/URI.js,sap/ui/thirdparty/es6-promise.js" />
         <raw-module name="sap/ui/core/support/trace/EppLib.js" />
         <raw-module name="sap/ui/core/support/trace/E2eTraceLib.js" depends="sap/ui/core/support/trace/EppLib.js" />
@@ -35,13 +34,10 @@
         <raw-module name="sap/ui/thirdparty/iscroll.js" />
         <raw-module name="sap/ui/thirdparty/iscroll-lite.js" />
         <raw-module name="sap/ui/thirdparty/jquery.js" />
-        <raw-module name="sap/ui/thirdparty/jquery/jquery-1.7.1.js" />
-        <raw-module name="sap/ui/thirdparty/jquery/jquery-1.8.1.js" />
         <raw-module name="sap/ui/thirdparty/jquery/jquery-1.10.1.js" />
         <raw-module name="sap/ui/thirdparty/jquery/jquery-1.10.2.js" />
         <raw-module name="sap/ui/thirdparty/jquery/jquery-1.11.1.js" />
-        <raw-module name="sap/ui/thirdparty/jquery/jquery-2.1.4.js" />
-        <raw-module name="sap/ui/thirdparty/jquery/jquery-2.2.1.js" />
+        <raw-module name="sap/ui/thirdparty/jquery/jquery-2.2.3.js" />
         <raw-module name="sap/ui/thirdparty/jquery-mobile-custom.js" depends="sap/ui/thirdparty/jquery.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" depends="sap/ui/thirdparty/jquery.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-blind.js" depends="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" />
@@ -216,9 +212,7 @@
         <exclude name=".library-all" />
         <exclude name=".library-preload" />
         <exclude name="jquery-*" />
-        <exclude name="sap-ui-core-*" />
-        <exclude name="sap-ui-debug" />
-        <exclude name="sap-ui-testenv" />
+        <exclude name="sap-ui-*" />
         <exclude name="testsuite." />
         <exclude name="sap.ui.debug." />
         <exclude name="sap.ui.jsunit." />

@@ -128,17 +128,22 @@
 
 .sapUiCalItem{
 	background-color: @sapUiExtraLightBG;
-	color:@sapUiDeepText;
+	color: @sapUiDeepText;
+}
+
+.sapUiCalItemDsbl{
+	color: fade(@sapUiDeepText, 50);
+	background-color: fade(@sapUiExtraLightBG, 50);
 }
 
 /* hover and focus makes only sense on desktops. On mobile devices it's not needed */
-.sap-desktop .sapUiCalItem:hover,
-.sap-desktop .sapUiCalItem:focus{
+html.sap-desktop .sapUiCalItem:hover,
+html.sap-desktop .sapUiCalItem:focus{
 	background-color: @sapUiHighlight;
 	color: @sapUiTextSelection;
 }
 
-.sap-desktop .sapUiCalItem:focus{
+html.sap-desktop .sapUiCalItem:focus{
 	outline: none;
 }
 
@@ -152,13 +157,17 @@
 	box-shadow: inset 1px 1px 0 1px @sapUiCalendarColorToday, inset -1px -1px 0 1px @sapUiCalendarColorToday;
 }
 
-.sap-desktop .sapUiCalItemNow:hover > .sapUiCalItemText,
-.sap-desktop .sapUiCalItemNow:focus > .sapUiCalItemText{
+html.sap-desktop .sapUiCalItemNow:hover > .sapUiCalItemText,
+html.sap-desktop .sapUiCalItemNow:focus > .sapUiCalItemText{
 	background-color: @sapUiHighlight;
 }
 
 .sapUiCalItemWeekEnd{
 	background-color: @sapUiLightBG;
+}
+
+.sapUiCalItemWeekEnd.sapUiCalItemDsbl{
+	background-color: fade(@sapUiLightBG, 50);
 }
 
 .sapUiCalItemSel{
@@ -169,8 +178,8 @@
 	border-color: @sapUiButtonHoverBackground;
 }
 
-.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):hover > .sapUiCalItemText,
-.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):focus > .sapUiCalItemText{
+html.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):hover > .sapUiCalItemText,
+html.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):focus > .sapUiCalItemText{
 	box-shadow: inset 1px 1px 0 0 @sapUiFieldBackground, inset -1px -1px 0 0 @sapUiFieldBackground;
 }
 

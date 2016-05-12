@@ -373,6 +373,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.fireTitlePress({
 				domRef: oClickedItem
 			});
+
+			// mark the event that it is handled by the control
+			oEvent.setMarked();
 		}
 	};
 
@@ -420,9 +423,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			var sResultTexts = [];
 
 			aAriaLabelledAssociation.forEach(function (sId) {
-				if (sId) {
+				var oControl = sap.ui.getCore().byId(sId);
+				if (oControl) {
 					sResultIds.push(sId);
-					var oControl = sap.ui.getCore().byId(sId);
 					var sControlText = oControl.getText();
 					if (sControlText) {
 						sResultTexts.push(sControlText);

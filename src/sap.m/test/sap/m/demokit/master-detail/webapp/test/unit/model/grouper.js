@@ -1,9 +1,7 @@
 sap.ui.define([
 		"sap/ui/demo/masterdetail/model/grouper",
 		"sap/ui/model/resource/ResourceModel",
-		"jquery.sap.global",
-		"sap/ui/thirdparty/sinon",
-		"sap/ui/thirdparty/sinon-qunit"
+		"jquery.sap.global"
 	], function (Grouper, ResourceModel, $) {
 	"use strict";
 

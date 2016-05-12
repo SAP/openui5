@@ -227,6 +227,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		},
 
 		/**
+		 * Get combined datetime pattern with given date and and time style
+		 *
+		 * @param {string} sDateStyle the required style for the date part
+		 * @param {string} sTimeStyle the required style for the time part
+		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
+		 * @returns {string} the combined datetime pattern
+		 * @public
+		 */
+		getCombinedDateTimePattern : function(sDateStyle, sTimeStyle, sCalendarType) {
+			jQuery.sap.assert(sDateStyle == "short" || sDateStyle == "medium" || sDateStyle == "long" || sDateStyle == "full", "sStyle must be short, medium, long or full");
+			jQuery.sap.assert(sTimeStyle == "short" || sTimeStyle == "medium" || sTimeStyle == "long" || sTimeStyle == "full", "sStyle must be short, medium, long or full");
+			var sDateTimePattern = this.getDateTimePattern(sDateStyle),
+				sDatePattern = this.getDatePattern(sDateStyle),
+				sTimePattern = this.getTimePattern(sTimeStyle);
+			return sDateTimePattern.replace("{0}", sTimePattern).replace("{1}", sDatePattern);
+		},
+
+		/**
 		 * Get custom datetime pattern for a given skeleton format.
 		 *
 		 * The format string does contain pattern symbols (e.g. "yMMMd" or "Hms") and will be converted into the pattern in the used
@@ -307,10 +325,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				iDistance,
 				bMatch,
 				sBestPattern,
+				aBestPatternTokens,
 				aBestMissingTokens,
 				iBestDistance = 10000,
 				sPattern,
-				rMixedSkeleton = /^([GyYqQMLwWEecdD]+)([hHkKjJmszZvVOXx]+)$/;
+				rMixedSkeleton = /^([GyYqQMLwWEecdD]+)([hHkKjJmszZvVOXx]+)$/,
+				oTokenSymbol,
+				oTestTokenSymbol,
+				iFirstDiffPos,
+				iBestFirstDiffPos = -1;
 			// Loop through all available tokens, find matches and calculate distance
 			for (var sTestSkeleton in oAvailableFormats) {
 				aTestTokens = this._parseSkeletonFormat(sTestSkeleton);
@@ -321,35 +344,65 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				if (aTokens.length < aTestTokens.length) {
 					continue;
 				}
-				var iTest = 0;
+				iTest = 0;
+				iFirstDiffPos = aTokens.length;
 				for (var i = 0; i < aTokens.length; i++) {
 					oToken = aTokens[i];
 					oTestToken = aTestTokens[iTest];
-					// if the symbol matches, just add the length difference to the distance
-					if (oTestToken && oToken.symbol === oTestToken.symbol) {
-						iDistance += Math.abs(oToken.length - oTestToken.length);
-						iTest++;
-						continue;
+					if (iFirstDiffPos === aTokens.length) {
+						iFirstDiffPos = i;
 					}
-					// if only the group matches, add some more distance in addition to length difference
-					if (oTestToken && oToken.match == oTestToken.match) {
-						iDistance += Math.abs(oToken.length - oTestToken.length) + 10;
-						iTest++;
-						continue;
+					if (oTestToken) {
+						oTokenSymbol = mCLDRSymbols[oToken.symbol];
+						oTestTokenSymbol = mCLDRSymbols[oTestToken.symbol];
+						// if the symbol matches, just add the length difference to the distance
+						if (oToken.symbol === oTestToken.symbol) {
+							if (oToken.length === oTestToken.length) {
+								// both symbol and length match, check the next token
+								// clear the first difference position
+								if (iFirstDiffPos === i) {
+									iFirstDiffPos = aTokens.length;
+								}
+							} else {
+								if (oToken.length < oTokenSymbol.numericCeiling ? oTestToken.length < oTestTokenSymbol.numericCeiling : oTestToken.length >= oTestTokenSymbol.numericCeiling) {
+									// if the symbols are in the same category (either numeric or text representation), add the length diff
+									iDistance += Math.abs(oToken.length - oTestToken.length);
+								} else {
+									// otherwise add 5 which is bigger than any length difference
+									iDistance += 5;
+								}
+							}
+							iTest++;
+							continue;
+						} else {
+							// if only the group matches, add some more distance in addition to length difference
+							if (oToken.match == oTestToken.match) {
+								iDistance += Math.abs(oToken.length - oTestToken.length) + 10;
+								iTest++;
+								continue;
+							}
+						}
 					}
 					// if neither symbol or group matched, add it to the missing tokens and add distance
 					aMissingTokens.push(oToken);
 					iDistance += 50 - i;
 				}
+
 				// if not all test tokens have been found, the format does not match
 				if (iTest < aTestTokens.length) {
 					bMatch = false;
 				}
-				// if it is a match and the distance is below current best distance, then save it
-				if (bMatch && iDistance < iBestDistance) {
+
+				// The current pattern is saved as the best pattern when there is a match and
+				//  1. the distance is smaller than the best distance or
+				//  2. the distance equals the best distance and the position of the token in the given skeleton which
+				//   isn't the same between the given skeleton and the available skeleton is bigger than the best one's.
+				if (bMatch && (iDistance < iBestDistance || (iDistance === iBestDistance && iFirstDiffPos > iBestFirstDiffPos))) {
 					iBestDistance = iDistance;
+					iBestFirstDiffPos = iFirstDiffPos;
 					aBestMissingTokens = aMissingTokens;
 					sBestPattern = oAvailableFormats[sTestSkeleton];
+					aBestPatternTokens = aTestTokens;
 				}
 			}
 
@@ -365,11 +418,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 					if (rMixedSkeleton.test(sSkeleton)) {
 						sPattern = this._getMixedFormatPattern(sSkeleton, oAvailableFormats, sCalendarType);
 					} else {
-						sPattern = this._expandFields(sBestPattern, aTokens);
+						sPattern = this._expandFields(sBestPattern, aBestPatternTokens, aTokens);
 						sPattern = this._appendItems(sPattern, aBestMissingTokens, sCalendarType);
 					}
 				} else {
-					sPattern = this._expandFields(sBestPattern, aTokens);
+					sPattern = this._expandFields(sBestPattern, aBestPatternTokens, aTokens);
 				}
 			}
 			// If special input token "J" was used, remove dayperiod from pattern
@@ -380,19 +433,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			return sPattern;
 		},
 
-		_expandFields: function(sPattern, aTokens) {
+		_expandFields: function(sPattern, aPatternTokens, aTokens) {
 			var mGroups = {},
+				mPatternGroups = {},
 				sResultPatterm = "",
 				bQuoted = false,
 				i = 0,
 				iSkeletonLength,
+				iPatternLength,
 				iOldLength,
 				iNewLength,
+				oSkeletonToken,
+				oBestToken,
 				oSymbol,
+				oSkeletonSymbol,
+				oBestSymbol,
 				sChar;
-			// Create a map of group names to length
+			// Create a map of group names to token
 			aTokens.forEach(function(oToken) {
-				mGroups[oToken.group] = oToken.length;
+				mGroups[oToken.group] = oToken;
+			});
+			// Create a map of group names to token in best pattern
+			aPatternTokens.forEach(function(oToken) {
+				mPatternGroups[oToken.group] = oToken;
 			});
 			// Loop through pattern and adjust symbol length
 			while (i < sPattern.length) {
@@ -405,14 +468,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				} else {
 					oSymbol = mCLDRSymbols[sChar];
 					// If symbol is a CLDR symbol and is contained in the group, expand length
-					if (oSymbol && mGroups[oSymbol.group]) {
-						iSkeletonLength = mGroups[oSymbol.group];
+				if (oSymbol && mGroups[oSymbol.group] && mPatternGroups[oSymbol.group]) {
+						oSkeletonToken = mGroups[oSymbol.group];
+						oBestToken = mPatternGroups[oSymbol.group];
+						oSkeletonSymbol = mCLDRSymbols[oSkeletonToken.symbol];
+						oBestSymbol = mCLDRSymbols[oBestToken.symbol];
+
+						iSkeletonLength = oSkeletonToken.length;
+						iPatternLength = oBestToken.length;
+
 						iOldLength = 1;
 						while (sPattern.charAt(i + 1) == sChar) {
 							i++;
 							iOldLength++;
 						}
-						iNewLength = Math.max(iOldLength, iSkeletonLength);
+
+						// Prevent expanding the length of the field when:
+						// 1. The length in the best matching skeleton (iPatternLength) matches the length of the application provided skeleton (iSkeletonLength) or
+						// 2. The length of the provided skeleton (iSkeletonLength) and the length of the result pattern (iOldLength) are not in the same category (numeric or text)
+						//	because swtiching between numeric to text representation is wrong in all cases
+						if (iSkeletonLength === iPatternLength ||
+							((iSkeletonLength < oSkeletonSymbol.numericCeiling) ?
+								(iPatternLength >= oBestSymbol.numericCeiling) : (iPatternLength < oBestSymbol.numericCeiling)
+							)) {
+							iNewLength = iOldLength;
+						} else {
+							iNewLength = Math.max(iOldLength, iSkeletonLength);
+						}
+
 						for (var j = 0; j < iNewLength; j++) {
 							sResultPatterm += sChar;
 						}
@@ -1019,16 +1102,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				aCalendars = sCalendarPreference ? sCalendarPreference.split(" ") : [],
 				sCalendarName, sType, i;
 
+			// lazy load of sap.ui.core library to avoid cyclic dependencies
+			sap.ui.getCore().loadLibrary('sap.ui.core');
+			var CalendarType = sap.ui.require("sap/ui/core/library").CalendarType;
+
 			for ( i = 0 ; i < aCalendars.length ; i++ ) {
 				sCalendarName = aCalendars[i];
-				for (sType in sap.ui.core.CalendarType) {
+				for (sType in CalendarType) {
 					if (sCalendarName === getCLDRCalendarName(sType).substring(3)) {
 						return sType;
 					}
 				}
 			}
 
-			return sap.ui.core.CalendarType.Gregorian;
+			return CalendarType.Gregorian;
 		},
 
 		/**
@@ -1059,43 +1146,43 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 	};
 
 	var mCLDRSymbols = {
-		"G": { group: "Era", match: "Era" },
-		"y": { group: "Year", match: "Year" },
-		"Y": { group: "Year", match: "Year" },
-		"Q": { group: "Quarter", match: "Quarter" },
-		"q": { group: "Quarter", match: "Quarter" },
-		"M": { group: "Month", match: "Month" },
-		"L": { group: "Month", match: "Month" },
-		"w": { group: "Week", match: "Week" },
-		"W": { group: "Week", match: "Week" },
-		"d": { group: "Day", match: "Day" },
-		"D": { group: "Day", match: "Day" },
-		"E": { group: "Day-Of-Week", match: "Day-Of-Week" },
-		"e": { group: "Day-Of-Week", match: "Day-Of-Week" },
-		"c": { group: "Day-Of-Week", match: "Day-Of-Week" },
-		"h": { group: "Hour", match: "Hour12" },
-		"H": { group: "Hour", match: "Hour24" },
-		"k": { group: "Hour", match: "Hour24" },
-		"K": { group: "Hour", match: "Hour12" },
-		"m": { group: "Minute", match: "Minute" },
-		"s": { group: "Second", match: "Second" },
-		"z": { group: "Timezone", match: "Timezone" },
-		"Z": { group: "Timezone", match: "Timezone" },
-		"O": { group: "Timezone", match: "Timezone" },
-		"v": { group: "Timezone", match: "Timezone" },
-		"V": { group: "Timezone", match: "Timezone" },
-		"X": { group: "Timezone", match: "Timezone" },
-		"x": { group: "Timezone", match: "Timezone" },
-		"S": { group: "Other" },
-		"u": { group: "Other" },
-		"U": { group: "Other" },
-		"r": { group: "Other" },
-		"F": { group: "Other" },
-		"g": { group: "Other" },
-		"a": { group: "Other" },
-		"b": { group: "Other" },
-		"B": { group: "Other" },
-		"A": { group: "Other" }
+		"G": { group: "Era", match: "Era", numericCeiling: 1},
+		"y": { group: "Year", match: "Year", numericCeiling: 100},
+		"Y": { group: "Year", match: "Year", numericCeiling: 100},
+		"Q": { group: "Quarter", match: "Quarter", numericCeiling: 3},
+		"q": { group: "Quarter", match: "Quarter", numericCeiling: 3},
+		"M": { group: "Month", match: "Month", numericCeiling: 3},
+		"L": { group: "Month", match: "Month", numericCeiling: 3},
+		"w": { group: "Week", match: "Week", numericCeiling: 100},
+		"W": { group: "Week", match: "Week", numericCeiling: 100},
+		"d": { group: "Day", match: "Day", numericCeiling: 100},
+		"D": { group: "Day", match: "Day", numericCeiling: 100},
+		"E": { group: "Day-Of-Week", match: "Day-Of-Week", numericCeiling: 1},
+		"e": { group: "Day-Of-Week", match: "Day-Of-Week", numericCeiling: 3},
+		"c": { group: "Day-Of-Week", match: "Day-Of-Week", numericCeiling: 2},
+		"h": { group: "Hour", match: "Hour12", numericCeiling: 100},
+		"H": { group: "Hour", match: "Hour24", numericCeiling: 100},
+		"k": { group: "Hour", match: "Hour24", numericCeiling: 100},
+		"K": { group: "Hour", match: "Hour12", numericCeiling: 100},
+		"m": { group: "Minute", match: "Minute", numericCeiling: 100},
+		"s": { group: "Second", match: "Second", numericCeiling: 100},
+		"z": { group: "Timezone", match: "Timezone", numericCeiling: 1},
+		"Z": { group: "Timezone", match: "Timezone", numericCeiling: 1},
+		"O": { group: "Timezone", match: "Timezone", numericCeiling: 1},
+		"v": { group: "Timezone", match: "Timezone", numericCeiling: 1},
+		"V": { group: "Timezone", match: "Timezone", numericCeiling: 1},
+		"X": { group: "Timezone", match: "Timezone", numericCeiling: 1},
+		"x": { group: "Timezone", match: "Timezone", numericCeiling: 1},
+		"S": { group: "Other", numericCeiling: 100},
+		"u": { group: "Other", numericCeiling: 100},
+		"U": { group: "Other", numericCeiling: 1},
+		"r": { group: "Other", numericCeiling: 100},
+		"F": { group: "Other", numericCeiling: 100},
+		"g": { group: "Other", numericCeiling: 100},
+		"a": { group: "Other", numericCeiling: 1},
+		"b": { group: "Other", numericCeiling: 1},
+		"B": { group: "Other", numericCeiling: 1},
+		"A": { group: "Other", numericCeiling: 100}
 	};
 
 	/**
@@ -1529,7 +1616,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 	 * @alias sap.ui.core.CustomLocaleData
 	 * @private
 	 */
-	LocaleData.extend("sap.ui.core.CustomLocaleData", {
+	var CustomLocaleData = LocaleData.extend("sap.ui.core.CustomLocaleData", {
 		constructor : function(oLocale) {
 			LocaleData.apply(this, arguments);
 			this.mCustomData = sap.ui.getCore().getConfiguration().getFormatSettings().getCustomLocaleData();
@@ -1553,7 +1640,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 	 *
 	 */
 	LocaleData.getInstance = function(oLocale) {
-		return oLocale.hasPrivateUseSubtag("sapufmt") ? new sap.ui.core.CustomLocaleData(oLocale) : new LocaleData(oLocale);
+		return oLocale.hasPrivateUseSubtag("sapufmt") ? new CustomLocaleData(oLocale) : new LocaleData(oLocale);
 	};
 
 	return LocaleData;

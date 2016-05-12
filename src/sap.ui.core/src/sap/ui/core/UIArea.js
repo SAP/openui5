@@ -7,6 +7,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 	function(jQuery, ManagedObject, Element, RenderManager /* , jQuerySap1, jQuerySap, jQuerySap2 */) {
 	"use strict";
 
+	//lazy dependency (to avoid cycle)
+	var Control;
+
 	/**
 	 * A private logger instance used for 'debugRendering' logging.
 	 *
@@ -654,8 +657,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 		var oDomRef = null;
 		if (oControl) {
 			oDomRef = oControl.getDomRef();
-			if (!oDomRef) {
-				// If no DOM node was found, look for the invisible placeholder node
+			if (!oDomRef || RenderManager.isPreservedContent(oDomRef) ) {
+				// In case no old DOM node was found or only preserved DOM, search for an 'invisible' placeholder
 				oDomRef = jQuery.sap.domById(sap.ui.core.RenderPrefixes.Invisible + oControl.getId());
 			}
 		}
@@ -1009,12 +1012,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 		var oCurrentControl = this.getFieldGroupControl();
 		if (oElement != oCurrentControl) {
 			var oControl = null;
-			if (oElement instanceof sap.ui.core.Control) {
-				oControl = oElement;
-			} else {
-				oControl = findParent(oElement,function(oElement){
-					return oElement instanceof sap.ui.core.Control;
-				});
+			Control = Control || sap.ui.require('sap/ui/core/Control'); // resolve lazy dependency
+			if ( Control ) {
+				if (oElement instanceof Control) {
+					oControl = oElement;
+				} else {
+					oControl = findParent(oElement,function(oElement){
+						return oElement instanceof Control;
+					});
+				}
 			}
 			var aCurrentGroupIds = (oCurrentControl ? oCurrentControl._getFieldGroupIds() : []),
 				aNewGroupIds = (oControl ? oControl._getFieldGroupIds() : []),

@@ -388,7 +388,9 @@
 				growingThreshold : iThreshold,
 				updateFinished : function(oEvent) {
 					strictEqual(oEvent.getParameter("total") > oEvent.getParameter("actual"), true, "Total items is higher than actual items");
-					ok(oList.$().find(".sapMGrowingList").is(":visible"), "Growing indicator is visible");
+					setTimeout(function() {
+						ok(oList.$().find(".sapMGrowingList").is(":visible"), "Growing indicator is visible");
+					}, 0);
 				}
 			}, {
 				parameters: {
@@ -398,9 +400,11 @@
 
 		// when initial binding is completed
 		oList.done(function () {
-			oMockServer.stop();
-			oList.destroy();
-			start();
+			setTimeout(function() {
+				oMockServer.stop();
+				oList.destroy();
+				start();
+			}, 0);
 		});
 	});
 

@@ -17,12 +17,12 @@
 		},
 		{
 			"control": "sap.m.Bar",
-			"url": "../Bar.html",
+			"url": "Bar.html",
 			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
 			"control": "sap.m.BusyDialog",
-			"url": "../BusyDialog.html",
+			"url": "BusyDialog.html",
 			"appComponent": "CA-UI5-CTR-SOF-ROD"
 		},
 		{
@@ -37,7 +37,7 @@
 		},
 		{
 			"control": "sap.m.Breadcrumbs",
-			"url": "../Breadcrumbs.html",
+			"url": "Breadcrumbs.html",
 			"appComponent": "CA-UI5-CTR-SOF-PIR"
 		},
 		{
@@ -89,6 +89,11 @@
 			"control": "sap.m.FeedListItem",
 			"url": "../FeedListItem.html",
 			"appComponent": "CA-UI5-BS-FCW"
+		},
+		{
+			"control": "sap.m.FormattedText",
+			"url": "FormattedText.html",
+			"appComponent": "CA-UI5-CTR-WDF"
 		},
 		{
 			"control": "sap.m.GenericTile",
@@ -144,6 +149,11 @@
 		{
 			"control": "sap.m.MaskInput",
 			"url": "../MaskInput.html",
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
+		},
+		{
+			"control": "sap.m.MenuButton",
+			"url": "MenuButton.html",
 			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{

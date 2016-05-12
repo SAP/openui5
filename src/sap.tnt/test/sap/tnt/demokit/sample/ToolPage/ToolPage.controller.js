@@ -25,7 +25,8 @@ sap.ui.define([
 				}]
 			}, {
 				title: 'Root Item',
-				icon: 'sap-icon://building'
+				icon: 'sap-icon://building',
+				key: 'root2'
 			}, {
 				title: 'Root Item',
 				icon: 'sap-icon://card',

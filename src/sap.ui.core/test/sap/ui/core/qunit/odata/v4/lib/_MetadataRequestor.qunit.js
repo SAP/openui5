@@ -2,11 +2,12 @@
  * ${copyright}
  */
 sap.ui.require([
+	"jquery.sap.global",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_MetadataConverter",
 	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
 	"sap/ui/test/TestUtils"
-], function (_Helper, _MetadataConverter, _MetadataRequestor, TestUtils) {
+], function (jQuery, _Helper, _MetadataConverter, _MetadataRequestor, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -77,17 +78,17 @@ sap.ui.require([
 			oMetadataRequestor,
 			sUrl = "/~/";
 
-		this.oSandbox.mock(_Helper).expects("buildQuery")
+		this.mock(_Helper).expects("buildQuery")
 			.withExactArgs(sinon.match.same(oQueryParams))
 			.returns("?...");
 
-		this.oSandbox.mock(jQuery).expects("ajax")
+		this.mock(jQuery).expects("ajax")
 			.withExactArgs(sUrl + "?...", {
 				headers : sinon.match.same(oHeaders),
 				method : "GET"
 			}).returns(createMock(oExpectedXml));
 
-		this.oSandbox.mock(_MetadataConverter).expects("convertXMLMetadata")
+		this.mock(_MetadataConverter).expects("convertXMLMetadata")
 			.withExactArgs(sinon.match.same(oExpectedXml))
 			.returns(oExpectedJson);
 
@@ -105,16 +106,16 @@ sap.ui.require([
 			oExpectedError = {},
 			oMetadataRequestor = _MetadataRequestor.create();
 
-		this.oSandbox.mock(jQuery).expects("ajax")
+		this.mock(jQuery).expects("ajax")
 			.returns(createMock(jqXHR, true)); // true  = fail
-		this.oSandbox.mock(_Helper).expects("createError")
+		this.mock(_Helper).expects("createError")
 			.withExactArgs(sinon.match.same(jqXHR))
 			.returns(oExpectedError);
 
 		return oMetadataRequestor.read("/").then(function (oResult) {
 			assert.ok(false);
 		})
-		["catch"](function(oError) {
+		.catch(function (oError) {
 			assert.strictEqual(oError, oExpectedError);
 		});
 	});

@@ -7,6 +7,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 	"use strict";
 
+	var LIST_ITEM_SUFFIX = "-list-item";
+
 	/**
 	 * Constructor for a new ViewSettingsDialog.
 	 *
@@ -1326,7 +1328,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 
 		if (bMultiSelectMode) {
 			this._filterSearchField = this._getFilterSearchField(this._filterDetailList);
-			this._selectAllCheckBox = this._getSelectAllCheckbox(aSubFilters, this._filterDetailList);
+			this._selectAllCheckBox = this._createSelectAllCheckbox(aSubFilters, this._filterDetailList);
 			this._getPage2().addContent(this._filterSearchField.addStyleClass('sapMVSDFilterSearchField'));
 			this._filterDetailList.setHeaderToolbar(new Toolbar({
 				content: [ this._selectAllCheckBox ]
@@ -1343,12 +1345,13 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 	ViewSettingsDialog.prototype._initSortItems = function() {
 		var aSortItems,
 		    oListItem;
-		this._sortList.removeAllItems();
+		this._sortList.destroyItems();
 		aSortItems = this.getSortItems();
 
 		if (aSortItems.length) {
 			aSortItems.forEach(function(oItem) {
 				oListItem = new sap.m.StandardListItem({
+					id: oItem.getId() + LIST_ITEM_SUFFIX,
 					title : oItem.getText(),
 					type : sap.m.ListType.Active,
 					selected : oItem.getSelected()
@@ -1424,11 +1427,12 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 			bHasSelections,
 			aGroupItems = this.getGroupItems();
 
-		this._groupList.removeAllItems();
+		this._groupList.destroyItems();
 
 		if (!!aGroupItems.length) {
 			aGroupItems.forEach(function (oItem) {
 				oListItem = new sap.m.StandardListItem({
+					id: oItem.getId() + LIST_ITEM_SUFFIX,
 					title: oItem.getText(),
 					type: sap.m.ListType.Active,
 					selected: oItem.getSelected()
@@ -1456,6 +1460,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 
 			// Append the None button to the list
 			oListItem = new sap.m.StandardListItem({
+				id: this._oGroupingNoneItem.getId() + LIST_ITEM_SUFFIX,
 				title: this._oGroupingNoneItem.getText(),
 				type: sap.m.ListType.Active,
 				selected: this._oGroupingNoneItem.getSelected()
@@ -1506,16 +1511,8 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 				mode : sap.m.ListMode.SingleSelectLeft,
 				includeItemInSelection : true,
 				selectionChange: function (oEvent) {
-					var oSelectedGroupItem = sap.ui.getCore().byId(that.getSelectedGroupItem()),
-						item = oEvent.getParameter("listItem").data("item");
-
-					if (!!item) {
-						if (!!oSelectedGroupItem) {
-							oSelectedGroupItem.setSelected(!oEvent.getParameter("listItem").getSelected());
-						}
-						item.setProperty('selected', oEvent.getParameter("listItem").getSelected(), true);
-					}
-					that.setAssociation("selectedGroupItem", item, true);
+					var item = oEvent.getParameter("listItem").data("item");
+					that.setSelectedGroupItem(item);
 				},
 				ariaLabelledBy: this._ariaGroupListInvisibleText
 			});
@@ -1533,14 +1530,15 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 		    oListItem,
 			that = this;
 
-		this._presetFilterList.removeAllItems();
+		this._presetFilterList.destroyItems();
 		aPresetFilterItems = this.getPresetFilterItems();
 		if (aPresetFilterItems.length) {
 			aPresetFilterItems.forEach(function(oItem) {
 				oListItem = new sap.m.StandardListItem({
-					title : oItem.getText(),
-					type : sap.m.ListType.Active,
-					selected : oItem.getSelected()
+					id: oItem.getId() + LIST_ITEM_SUFFIX,
+					title: oItem.getText(),
+					type: sap.m.ListType.Active,
+					selected: oItem.getSelected()
 				}).data("item", oItem);
 				this._presetFilterList.addItem(oListItem);
 			}, this);
@@ -1548,18 +1546,20 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 		// add none item to preset filter list
 		if (aPresetFilterItems.length) {
 			oListItem = new sap.m.StandardListItem({
+				id: "none" + LIST_ITEM_SUFFIX,
 				title : this._rb.getText("VIEWSETTINGS_NONE_ITEM"),
 				selected : !!this.getSelectedPresetFilterItem()
 			});
 			this._presetFilterList.addItem(oListItem);
 		}
 
-		this._filterList.removeAllItems();
+		this._filterList.destroyItems();
 		aFilterItems = this.getFilterItems();
 		if (aFilterItems.length) {
 			aFilterItems.forEach(function(oItem) {
 				oListItem = new sap.m.StandardListItem(
 					{
+						id: oItem.getId() + LIST_ITEM_SUFFIX,
 						title : oItem.getText(),
 						type : sap.m.ListType.Active,
 						press : (function(oItem) {
@@ -2112,10 +2112,18 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 	 * @returns {sap.m.CheckBox} A checkbox instance
 	 * @private
 	 */
-	ViewSettingsDialog.prototype._getSelectAllCheckbox = function(aFilterSubItems, oFilterDetailList) {
+	ViewSettingsDialog.prototype._createSelectAllCheckbox = function(aFilterSubItems, oFilterDetailList) {
+		var bAllSelected = false;
+
+		if (aFilterSubItems && aFilterSubItems.length !== 0) {
+			bAllSelected = aFilterSubItems.every(function (oItem) {
+				return oItem.getSelected();
+			});
+		}
+
 		var oSelectAllCheckBox = new CheckBox({
-			text: 'Select All',
-			selected: aFilterSubItems.every(function(oItem) { return oItem.getSelected(); }),
+			text: this._rb.getText("COLUMNSPANEL_SELECT_ALL"),
+			selected: bAllSelected,
 			select: function(oEvent) {
 				var bSelected = oEvent.getParameter('selected');
 				//update the list items
@@ -2138,14 +2146,27 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._updateSelectAllCheckBoxState = function() {
-		var bAllSelected = this._filterDetailList.getItems().filter(function(oItem) {
-			return oItem.getVisible();
-		}).every(function(oItem) {
-			return oItem.getSelected();
-		});
-		if (this._selectAllCheckBox) {
-			this._selectAllCheckBox.setSelected(bAllSelected);
+		var bAllSelected = false,
+		    aItems = this._filterDetailList.getItems(),
+		    aItemsVisible = [];
+
+		if (!this._selectAllCheckBox) {
+			return;
 		}
+
+		if (aItems && aItems.length !== 0) {
+			aItemsVisible = aItems.filter(function (oItem) {
+				return oItem.getVisible();
+			});
+		}
+		// if empty array, the 'every' call will return true
+		if (aItemsVisible.length !== 0) {
+			bAllSelected = aItemsVisible.every(function (oItem) {
+				return oItem.getSelected();
+			});
+		}
+
+		this._selectAllCheckBox.setSelected(bAllSelected);
 	};
 
 	/**
@@ -2409,19 +2430,27 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._onConfirm = function(oEvent) {
-		var that            = this,
-		    oDialog         = this._getDialog(),
-		    fnAfterClose    = function() {
-			    var  oSettingsState  = {
-				    sortItem            : sap.ui.getCore().byId(that.getSelectedSortItem()),
-				    sortDescending      : that.getSortDescending(),
-				    groupItem           : sap.ui.getCore().byId(that.getSelectedGroupItem()),
-				    groupDescending     : that.getGroupDescending(),
-				    presetFilterItem    : sap.ui.getCore().byId(that.getSelectedPresetFilterItem()),
-				    filterItems         : that.getSelectedFilterItems(),
-				    filterKeys          : that.getSelectedFilterKeys(),
-				    filterString        : that.getSelectedFilterString()
-			    };
+		var oDialog         = this._getDialog(),
+			that            = this,
+			fnAfterClose = function () {
+				var oSettingsState, vGroupItem,
+					sGroupItemId = that.getSelectedGroupItem();
+
+				// BCP: 1670245110 "None" should be undefined
+				if (!that._oGroupingNoneItem || sGroupItemId != that._oGroupingNoneItem.getId()) {
+					vGroupItem = sap.ui.getCore().byId(sGroupItemId);
+				}
+
+				oSettingsState = {
+					sortItem            : sap.ui.getCore().byId(that.getSelectedSortItem()),
+					sortDescending      : that.getSortDescending(),
+					groupItem           : vGroupItem,
+					groupDescending     : that.getGroupDescending(),
+					presetFilterItem    : sap.ui.getCore().byId(that.getSelectedPresetFilterItem()),
+					filterItems         : that.getSelectedFilterItems(),
+					filterKeys          : that.getSelectedFilterKeys(),
+					filterString        : that.getSelectedFilterString()
+				};
 
 				// detach this function
 				that._dialog.detachAfterClose(fnAfterClose);

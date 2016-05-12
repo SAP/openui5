@@ -44,9 +44,6 @@
 
 	var oh1 = new sap.m.ObjectHeader(
 			"oh1", {
-				intro : "On behalf of John Smith Ñagçyfox",
-				title : "some normal title",
-				number : "3.624,00",
 				intro : "1234 On behalf of John Smith Ñagçyfox RTL",
 				introTextDirection: sap.ui.core.TextDirection.RTL,
 				title : "5678 some normal title RTL",
@@ -151,7 +148,7 @@
 					text : "This one is invisible",
 					visible : false
 				}),
-				    new sap.m.ObjectAttribute({
+				new sap.m.ObjectAttribute({
 					text : "Ñagçyfox Contract #D1234567890"
 				}) ],
 				markFavorite : true
@@ -372,37 +369,37 @@
 	var oh16EventHandler = function(oEvent) {
 		domRef = oEvent.getParameters().domRef;
 		var popover = new sap.m.Popover({
-			   placement: sap.m.PlacementType.Bottom,
-			   showHeader: true,
-			   content: new sap.m.List({
-					 mode: "SingleSelectMaster",
-					 includeItemInSelection : true,
-					 select : function (evt) {
+				placement: sap.m.PlacementType.Bottom,
+				showHeader: true,
+				content: new sap.m.List({
+					mode: "SingleSelectMaster",
+					includeItemInSelection : true,
+					select : function (evt) {
 							header.setTitle(evt.getParameter("listItem").getTitle());
 							popover.close();
-					 },
-					 items: [
+					},
+					items: [
 							new sap.m.StandardListItem({
-								  title : "Lorem ipsum dolor",
-								  selected : true
+								title : "Lorem ipsum dolor",
+								selected : true
 							}),
 							new sap.m.StandardListItem({
-								  title : "Lorem ipsum",
+								title : "Lorem ipsum",
 							}),
 							new sap.m.StandardListItem({
-								  title : "Lorem ipsum dolor sit amet et sineat",
+								title : "Lorem ipsum dolor sit amet et sineat",
 							}),
 							new sap.m.StandardListItem({
-								  title : "Lorem ipsum",
+								title : "Lorem ipsum",
 							}),
 							new sap.m.ActionListItem({
-								  text : "Lorem ipsum",
+								text : "Lorem ipsum",
 							}),
 							new sap.m.ActionListItem({
-								  text : "Lorem ipsum",
+								text : "Lorem ipsum",
 							})
 					 ] //end of item
-			   }) // end of content
+				}) // end of content
 		}); //end of popover
 		popover.openBy(domRef);
 	}
@@ -626,17 +623,30 @@
 
 	var ohCondensed9 = new sap.m.ObjectHeader(ohCondensedId9, {
 		title : "InLayoutNotworkingfineWithSapceInName verrrrrrrryyyyyyyyyyylongggggggggggname",
-        showTitleSelector : true,
-        condensed : true,
+		showTitleSelector : true,
+		condensed : true,
 		titleSelectorPress : oh16EventHandler
 	});
 
+	var ohAdditionalNumbers = new sap.m.ObjectHeader(
+			"ohAdditionalNumbers", {
+				title : "Additional numbers example",
+				showTitleSelector : true,
+				number : "500230.09",
+				numberUnit : "USD",
+				numberState : sap.ui.core.ValueState.Success,
+				additionalNumbers : [ 
+					new sap.m.ObjectNumber({
+						number : "1.10234",
+						unit : "Conversion Rate"
+				}) ]
+			});
 
 	var objectHeaderLayout = new sap.m.VBox({
 		width : "200px"
 	}
-                                            );
-  	objectHeaderLayout.addItem(ohCondensed9);
+);
+	objectHeaderLayout.addItem(ohCondensed9);
 
 	// put all the testing object header objects on the testing page
 	var app = new sap.m.App();
@@ -712,7 +722,7 @@
 	addToPage(ohCondensed6);
 	addToPage(ohCondensed7);
 	addToPage(ohCondensed8);
-
+	addToPage(ohAdditionalNumbers);
 
 	app.placeAt('body');
 </script>

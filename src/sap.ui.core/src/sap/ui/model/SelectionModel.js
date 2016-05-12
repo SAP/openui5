@@ -170,7 +170,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * Changes the selection to be equal to the range <code>iFromIndex</code> and <code>iToIndex</code>
 	 * inclusive. If <code>iFromIndex</code> is smaller than <code>iToIndex</code>, both parameters are swapped.
 	 *
-	 * In <code>SINGLE_SELECTION</code> selection mode, only <code>iToindex</iToIndex> is used.
+	 * In <code>SINGLE_SELECTION</code> selection mode, only <code>iToIndex</iToIndex> is used.
 	 *
 	 * If this call results in a change to the current selection, then a
 	 * <code>SelectionChanged</code> event is fired.
@@ -496,13 +496,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @param {int[]} aSelectedIndices selected row indices
 	 * @param {int} iLeadSelection lead selection index
 	 * @param {int[]} aChangedRowIndices changed row indices
+	 * @param {boolean} bSelectAll indicator if all rows are selected
 	 * @private
 	 */
-	SelectionModel.prototype._update = function(aSelectedIndices, iLeadSelection, aChangedRowIndices) {
+	SelectionModel.prototype._update = function(aSelectedIndices, iLeadSelection, aChangedRowIndices, bSelectAll) {
 
 		// create the event parameters with the changed row indices (sorted!)
 		var mParams = {
-			rowIndices: aChangedRowIndices && aChangedRowIndices.sort(this.fnSort)
+			rowIndices: aChangedRowIndices && aChangedRowIndices.sort(this.fnSort),
+			selectAll: bSelectAll
 		};
 
 		// update the selected indices
@@ -517,12 +519,59 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		}
 
 		// fire change event
-	  if ( aChangedRowIndices.length > 0 || typeof mParams.leadIndex !== "undefined" ) {
+		if ( aChangedRowIndices.length > 0 || typeof mParams.leadIndex !== "undefined" ) {
 			this.fireSelectionChanged( mParams );
 		}
 
 	};
 
+	/**
+	 * Selects all rows up to the <code>iToIndex</iToIndex>.
+	 *
+	 * If this call results in a change to the current selection, then a
+	 * <code>SelectionChanged</code> event is fired.
+	 *
+	 * @param {int} iToIndex end of the interval
+	 * @return {sap.ui.model.SelectionModel} <code>this</code> to allow method chaining
+	 * @public
+	 */
+	SelectionModel.prototype.selectAll = function(iToIndex) {
+
+		jQuery.sap.assert(typeof iToIndex === "number", "iToIndex must be an integer");
+
+		// set new selection range, determine set of changed indices
+		var aOldSelectedRowIndices = this.aSelectedIndices.slice();
+
+		// build a lookup map
+		var mLookup = {};
+		var aChangedRowIndices = [];
+		var aSelectedIndices = [];
+		var i = 0;
+
+		for (i = 0; i < aOldSelectedRowIndices.length; i++) {
+			mLookup[aOldSelectedRowIndices[i]] = true;
+			if (aOldSelectedRowIndices[i] > iToIndex) {
+				// the old index will be deselected when it's not in the range of the new interval, therefore it's a changed index
+				aChangedRowIndices.push(aOldSelectedRowIndices[i]);
+			}
+		}
+
+		for (i = 0; i <= iToIndex; i++) {
+			aSelectedIndices.push(i);
+			// if the index was not selected before it is now selected and therefore part of changed indices
+			if (!mLookup[i]) {
+				aChangedRowIndices.push(i);
+			}
+		}
+
+		// 0 will be used as leadIndex. It more likely that in oData case the index 0 is already loaded than that the last index is loaded.
+		// The leadIndex will be used to determine the leadContext in the selectionChange event.
+		// If not yet loaded it would need to be request. To avoid unnecessary roundtrips the lead index is set to 0.
+		this._update(aSelectedIndices, 0, aChangedRowIndices, true);
+
+		return this;
+
+	};
 
 	return SelectionModel;
 

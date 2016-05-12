@@ -1,0 +1,228 @@
+<View xmlns="sap.m" xmlns:l="sap.ui.layout" displayBlock="true" controllerName="sap.m.sample.FlexibleColumnLayoutDynamicPage.Detail"
+      height="100%">
+    <DynamicPage id="detailPage">
+
+        <title>
+            <DynamicPageTitle>
+                <heading>
+                    <Label text="Filtered 1042 items based on 'unknown' criteria"></Label>
+                </heading>
+                <snappedContent>
+                    <MessageStrip text="Filtered by name"></MessageStrip>
+                    <MessageStrip text="Filtered by location"></MessageStrip>
+                    <MessageStrip text="Filtered by status"></MessageStrip>
+                    <MessageStrip text="Filtered by type"></MessageStrip>
+                </snappedContent>
+                <expandedContent>
+                    <SearchField value="Filter items..."></SearchField>
+                </expandedContent>
+                <actions>
+                    <Button text="Chart" icon="sap-icon://bar-chart"/>
+                    <OverflowToolbarButton text="Add" icon="sap-icon://add"/>
+                    <OverflowToolbarButton text="Edit" icon="sap-icon://edit"/>
+                    <OverflowToolbarButton text="Delete" icon="sap-icon://delete" press="deleteContentPressHandler"/>
+                </actions>
+            </DynamicPageTitle>
+        </title>
+
+        <header>
+            <DynamicPageHeader>
+                <content>
+                    <l:VerticalLayout>
+                        <l:HorizontalLayout>
+                            <Label text="type"/>
+                            <Label text="Payment"/>
+                        </l:HorizontalLayout>
+                        <l:HorizontalLayout>
+                            <Label text="category"/>
+                            <Label text="Debit"/>
+                        </l:HorizontalLayout>
+                        <l:HorizontalLayout>
+                            <Label text="date of expire"/>
+                            <Label text="16.02.2016"/>
+                        </l:HorizontalLayout>
+                    </l:VerticalLayout>
+                    <l:VerticalLayout>
+                        <l:HorizontalLayout>
+                            <Label text="type"/>
+                            <Label text="Payment"/>
+                        </l:HorizontalLayout>
+                        <l:HorizontalLayout>
+                            <Label text="category"/>
+                            <Label text="Debit"/>
+                        </l:HorizontalLayout>
+                        <l:HorizontalLayout>
+                            <Label text="date of expire"/>
+                            <Label text="16.02.2016"/>
+                        </l:HorizontalLayout>
+                    </l:VerticalLayout>
+                    <l:VerticalLayout>
+                        <l:HorizontalLayout>
+                            <Label text="type"/>
+                            <Label text="Payment"/>
+                        </l:HorizontalLayout>
+                        <l:HorizontalLayout>
+                            <Label text="category"/>
+                            <Label text="Debit"/>
+                        </l:HorizontalLayout>
+                        <l:HorizontalLayout>
+                            <Label text="date of expire"/>
+                            <Label text="16.02.2016"/>
+                        </l:HorizontalLayout>
+                    </l:VerticalLayout>
+                </content>
+            </DynamicPageHeader>
+        </header>
+
+        <content>
+            <l:VerticalLayout width="100%">
+                <Table>
+                    <columns>
+                        <Column>
+                            <Title text="Detail List"/>
+                        </Column>
+                    </columns>
+                    <items>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                            <cells>
+                                <Text text="Mid column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                            <cells>
+                                <Text text="Mid column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                            <cells>
+                                <Text text="Mid column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                            <cells>
+                                <Text text="Mid column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                            <cells>
+                                <Text text="Mid column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                            <cells>
+                                <Text text="Mid column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                            <cells>
+                                <Text text="Mid column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                            <cells>
+                                <Text text="Mid column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                            <cells>
+                                <Text text="Mid column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                            <cells>
+                                <Text text="Mid column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                            <cells>
+                                <Text text="Mid column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                            <cells>
+                                <Text text="Mid column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                            <cells>
+                                <Text text="Mid column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                            <cells>
+                                <Text text="Mid column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                            <cells>
+                                <Text text="Mid column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                            <cells>
+                                <Text text="Mid column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                            <cells>
+                                <Text text="Mid column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                            <cells>
+                                <Text text="Mid column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                            <cells>
+                                <Text text="Mid column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                            <cells>
+                                <Text text="Mid column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                            <cells>
+                                <Text text="Mid column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                            <cells>
+                                <Text text="Mid column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                            <cells>
+                                <Text text="Mid column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                            <cells>
+                                <Text text="Mid column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                            <cells>
+                                <Text text="Mid column"/>
+                            </cells>
+                        </ColumnListItem>
+                        <ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+                            <cells>
+                                <Text text="Mid column LAST"/>
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+            </l:VerticalLayout>
+        </content>
+        <footer>
+            <OverflowToolbar>
+                <ToolbarSpacer/>
+                <Button type="Accept" text="Accept"/>
+                <Button type="Reject" text="Reject"/>
+            </OverflowToolbar>
+        </footer>
+    </DynamicPage>
+</View>

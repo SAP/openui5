@@ -69,8 +69,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Global'],
 									// assign the current interaction to the xhr for later response header retrieval.
 									this.pendingInteraction = oPendingInteraction;
 
-									iStepCounter++;
-
 									if (bFesrActive) {
 										// set FESR
 										if (sFESR) {
@@ -78,8 +76,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Global'],
 											this.setRequestHeader("SAP-Perf-FESRec-opt", sFESRopt);
 											sFESR = null;
 											sFESRopt = null;
-											iStepCounter = 0;
 											sFESRTransactionId = sTransactionId;
+											iStepCounter++;
 										} else if (!sFESRTransactionId) {
 											// initial request should set the FESR Transaction Id
 											sFESRTransactionId = sTransactionId;
@@ -216,7 +214,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Global'],
 
 
 			/**
-			 * @class Provides base functionality for interaction detection heuristics & API<br>
+			 * @namespace Provides base functionality for interaction detection heuristics & API<br>
 			 * <p>
 			 * Interaction detection works through the detection of relevant events and tracking of rendering activities.<br>
 			 * An example:<br>
@@ -227,16 +225,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Global'],
 			 * </p>
 			 * All measurement takes place in {@link jQuery.sap.measure}<br>.
 			 *
+			 * Namespace exists since 1.32 and became public API since 1.36.
+			 *
 			 * @name jQuery.sap.interaction
 			 * @static
-			 * @private
+			 * @public
+			 * @since 1.36
 			 */
 			jQuery.sap.interaction = {};
 
 			/**
+			 * Enables the interaction tracking.
+			 *
 			 * @param {boolean} bActive state of the interaction detection
-			 * @private
-			 * @since 1.32
+			 * @public
+			 * @since 1.36
 			 */
 			jQuery.sap.interaction.setActive = function(bActive) {
 				if (bActive && !bInteractionActive) {
@@ -297,6 +300,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Global'],
 			};
 
 			/**
+			 * This method ends the started interaction measurement.
+			 *
 			 * @private
 			 * @since 1.32
 			 */
@@ -310,6 +315,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Global'],
 			};
 
 			/**
+			 * This method notifies if a relevant event has been triggered.
+			 *
 			 * @param {Event} oEvent event whose processing has started
 			 * @private
 			 * @since 1.32
@@ -324,6 +331,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Global'],
 			}
 
 			/**
+			 * This method notifies if a scroll event has been triggered. Some controls require this special treatment,
+			 * as the generic detection process via notifyEventStart is not sufficient.
+			 *
 			 * @param {Event} oEvent scroll event whose processing has started
 			 * @private
 			 * @since 1.36.2
@@ -341,6 +351,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Global'],
 			};
 
 			/**
+			 * This method notifies if a relevant event has ended by detecting another interaction.
+			 *
 			 * @private
 			 * @since 1.32
 			 */
@@ -355,7 +367,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Global'],
 
 
 			/**
-			 * @class FESR API, consumed by E2eTraceLib instead of former EppLib.js <br>
+			 * @namespace FESR API, consumed by E2eTraceLib instead of former EppLib.js <br>
 			 *<p>
 			 * Provides functionalities for creating the headers for the frontend-subrecords which will be sent with each
 			 * first request of an interaction. The headers have a specific format, you may have a look at the createFESR
@@ -433,7 +445,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Global'],
 
 
 			/**
-			 * @class Passport implementation, former EppLib.js <br>
+			 * @namespace Passport implementation, former EppLib.js <br>
 			 *
 			 * Provides functionalities which where former located in the EppLib.js, but as the PASSPORT header is mandatory
 			 * for correct assignment of the FESR headers some functionality had to be moved to here. The actual tracing

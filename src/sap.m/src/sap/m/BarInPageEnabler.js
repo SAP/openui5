@@ -9,7 +9,7 @@ sap.ui.define(['sap/ui/base/Object', './PageAccessibleLandmarkInfo', 'sap/ui/cor
 
 	var mContexts = {
 		footer : {
-			contextClass : "sapMFooter-CTX",
+			contextClass : "sapMFooter-CTX sapContrast sapContrastPlus",
 			tag : "Footer",
 			internalAriaLabel: "BAR_ARIA_DESCRIPTION_FOOTER"
 		},

@@ -17,24 +17,17 @@
   font-size: @sapMFontLargeSize;
 }
 
-.sapMNLI-None {
-  background-color: @sapUiNeutralBorder;
-}
-
-.sapMNLI-Low {
-  background-color: @sapUiSuccessBorder;
-}
-
-.sapMNLI-Medium {
-  background-color: @sapUiWarningBorder;
-}
-
-.sapMNLI-High {
-  background-color: @sapUiErrorBorder;
+.sapMNLI-Header > .sapMText {
+  color: @sapUiListTextColor;
 }
 
 .sapMNLI-Body .sapMNLI-Details {
   font-size: @sapMFontMediumSize;
+  color: @sapUiContentLabelColor;
+}
+
+.sapMNLI-Description .sapMNLI-Text {
+  color: @sapUiContentLabelColor;
 }
 
 .sapMNLI-CloseButton {
@@ -47,7 +40,7 @@
 
 // Focus Styles ========================================================================================================
 
-.sap-desktop .sapMLIB.sapMNLI:focus {
+html.sap-desktop .sapMLIB.sapMNLI:focus {
   outline: none;
 }
 

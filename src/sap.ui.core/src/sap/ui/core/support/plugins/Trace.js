@@ -31,8 +31,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 				if (this.isToolPlugin()) {
 					this._aLogEntries = [];
 					this._iLogLevel = jQuery.sap.log.Level.ALL;
-					jQuery.sap.require("sap.ui.core.format.DateFormat");
-					this._oDateFormat = sap.ui.core.format.DateFormat.getDateTimeInstance();
+					this._oDateFormat = sap.ui.requireSync('sap/ui/core/format/DateFormat').getDateTimeInstance();
 				} else {
 					var that = this;
 					this._oldLogLevel = jQuery.sap.log.getLevel();
@@ -71,7 +70,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 			var rm = sap.ui.getCore().createRenderManager();
 			rm.write("<div class='sapUiSupportToolbar'>");
 			rm.write("<button id='" + this.getId() + "-clear' class='sapUiSupportBtn'>Clear</button>");
-			rm.write("<label class='sapUiSupportLabel'>Filter:</label><input type='text' id='" + this.getId() + "-filter' class='sapUiSupportTxtFld'></input>");
+			rm.write("<label class='sapUiSupportLabel'>Filter:</label><input type='text' id='" + this.getId() + "-filter' class='sapUiSupportTxtFld'/>");
 			rm.write("<label class='sapUiSupportLabel'>Log Level:</label><select id='" + this.getId() + "-loglevel' class='sapUiSupportTxtFld'>");
 			rm.write("<option value='0'>FATAL</option>");
 			rm.write("<option value='1'>ERROR</option>");

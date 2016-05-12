@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/m/Button",
 	"sap/ui/core/StashedControlSupport",
+	"./ObjectPageSubSection",
 	"./library"
-], function (jQuery, InvisibleText, ObjectPageSectionBase, Device, Button, StashedControlSupport, library) {
+], function (jQuery, InvisibleText, ObjectPageSectionBase, Device, Button, StashedControlSupport, ObjectPageSubSection, library) {
 	"use strict";
 
 	/**
@@ -75,6 +76,16 @@ sap.ui.define([
 
 	ObjectPageSection.MEDIA_RANGE = Device.media.RANGESETS.SAP_STANDARD;
 
+	/**
+	 * Returns the closest ObjectPageSection
+	 * @param  {sap.uxap.ObjectPageSectionBase} oSectionBase
+	 * @returns {sap.uxap.ObjectPageSection}
+	 * @private
+	 */
+	ObjectPageSection._getClosestSection = function (oSectionBase) {
+		return (oSectionBase instanceof ObjectPageSubSection) ? oSectionBase.getParent() : oSectionBase;
+	};
+
 	ObjectPageSection.prototype._expandSection = function () {
 		ObjectPageSectionBase.prototype._expandSection.call(this)
 			._updateShowHideAllButton(!this._thereAreHiddenSubSections());
@@ -88,18 +99,6 @@ sap.ui.define([
 
 	ObjectPageSection.prototype.exit = function () {
 		Device.media.detachHandler(this._updateImportance, this, ObjectPageSection.MEDIA_RANGE);
-	};
-
-	/**
-	 * Handler for key up - handle
-	 * @param oEvent - The event object
-	 */
-
-	ObjectPageSection.prototype.onkeyup = function (oEvent) {
-		var eventTarget = sap.ui.getCore().byId(jQuery(oEvent.target).attr("id"));
-		if (oEvent.keyCode === jQuery.sap.KeyCodes.TAB && eventTarget instanceof sap.uxap.ObjectPageSection && this._getObjectPageLayout()._isFirstSection(this)) {
-			this._getObjectPageLayout().$("opwrapper").scrollTop(0);
-		}
 	};
 
 	ObjectPageSection.prototype._getImportanceLevelToHide = function (oCurrentMedia) {

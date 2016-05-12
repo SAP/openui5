@@ -1,0 +1,67 @@
+/* ============================================= */
+
+
+/* CSS for control sap.m/ViewSettingsPopover.control    */
+/* ============================================= */
+.sapUiSizeCompact .sapMBar.sapMVSPCompactHeaderBar {
+	/* fix nested layouts in the header of the details page */
+	position: relative;
+	top: -3px;
+	box-shadow: none;
+}
+.sapMVSPopover .sapMPopoverHeader .sapMSegBBtn, .sapMVSPopover .sapMDialogTitle .sapMSegBBtn {
+	margin-right: 5px;
+	border-radius: 3px;
+}
+
+/* ------------------------------------------------ */
+/* Compact size                                     */
+/* ------------------------------------------------ */
+
+.sapMVSPCloseBtn {
+	height: 2rem;
+	padding: 0.1875rem 0;
+	.sapMBtnInner {
+		height: 1.625rem;
+		min-width: 2.0rem;
+	}
+	.sapMBtnInner.sapMBtnText {
+		padding-left: 0.4375rem;
+		padding-right: 0.4375rem;
+	}
+	.sapMBtnInner.sapMBtnText.sapMBtnIconFirst,
+	.sapMBtnInner.sapMBtnText.sapMBtnBack {
+		padding-left: 1.875rem;
+	}
+	.sapMBtnInner.sapMBtnText.sapMBtnBack.sapMBtnIconFirst {
+		padding-left: 3.75rem;
+	}
+	.sapMBtnInner.sapMBtnText.sapMBtnIconLast {
+	padding-right: 1.875rem;
+	}
+
+	.sapMBtnContent {
+		line-height:      1.500rem;
+	}
+
+	.sapMBtnIcon {
+		line-height:      1.500rem;
+		width:            1.000rem;
+		font-size:        1.000rem;
+		max-height:       1.500rem;
+		margin-left:      0.4375rem;
+		margin-right:     0.4375rem;
+	}
+	.sapMBtnIconLeft + .sapMBtnIconLeft {
+		left: 1.875rem;
+	}
+	.sapMBtnInner > img {
+		height:           1.500rem;
+		width:            1.500rem;
+		margin-left:      0.250rem;
+		margin-right:     0.250rem;
+	}
+}
+
+
+

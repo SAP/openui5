@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/mvc/Controller"], function (Controller) {
+sap.ui.define(["sap/ui/core/mvc/Controller", "sap/ui/model/json/JSONModel", "sap/ui/Device"], function (Controller, JSONModel, Device) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demokit.icex.view.Favorite", {
@@ -22,12 +22,12 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], function (Controller) {
 			if (!model) {
 
 				// init
-				model = new sap.ui.model.json.JSONModel({
+				model = new JSONModel({
 					inEdit : false,
 					inDisplay : true,
-					listMode : (sap.ui.Device.system.phone) ? "None" : "SingleSelectMaster",
-					listItemType : (sap.ui.Device.system.phone) ? "Active" : "Inactive",
-					showToolbar : (sap.ui.Device.system.phone) ? false : true
+					listMode : (Device.system.phone) ? "None" : "SingleSelectMaster",
+					listItemType : (Device.system.phone) ? "Active" : "Inactive",
+					showToolbar : (Device.system.phone) ? false : true
 				});
 				this.getView().setModel(model, "ui");
 
@@ -43,9 +43,9 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], function (Controller) {
 					_listMode = "Delete";
 					_listItemType = "Inactive";
 				} else {
-					_listMode = (sap.ui.Device.system.phone) ? "None" : "SingleSelectMaster";
-					_listItemType = (sap.ui.Device.system.phone) ? "Active" : "Inactive";
-					_showToolbar = (sap.ui.Device.system.phone) ? false : true;
+					_listMode = (Device.system.phone) ? "None" : "SingleSelectMaster";
+					_listItemType = (Device.system.phone) ? "Active" : "Inactive";
+					_showToolbar = (Device.system.phone) ? false : true;
 				}
 
 				model.setData({

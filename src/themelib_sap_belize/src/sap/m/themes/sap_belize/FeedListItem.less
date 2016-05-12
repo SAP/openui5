@@ -15,7 +15,7 @@
 	outline-width: 0.0625rem;
 }
 
-.sap-tablet .sapMFeedListItem .sapMLnk:focus{
+html.sap-tablet .sapMFeedListItem .sapMLnk:focus{
 	outline-style: dotted;
 	outline-color: @sapUiContentFocusColor;
 	outline-width: 0.0625rem;
@@ -32,7 +32,7 @@
 }
 
 
-.sap-desktop .sapMFeedListItem .sapMLnk:focus{
+html.sap-desktop .sapMFeedListItem .sapMLnk:focus{
 	outline-color: @sapUiContentFocusColor;
 }
 
@@ -90,7 +90,7 @@
 
 .sapMFeedListItemTextText>.sapMLnk.sapMLnkDsbl,
 .sapMFeedListItemTextName>.sapMLnk.sapMLnkDsbl,
-.sap-desktop .sapMFeedListItemTextName>.sapMLnk.sapMLnkDsbl:hover {
+html.sap-desktop .sapMFeedListItemTextName>.sapMLnk.sapMLnkDsbl:hover {
 	opacity: 1;
 	color: @sapUiBaseText;
 }
@@ -103,7 +103,7 @@
 	color: @sapUiBaseText;
 }
 
-.sap-desktop .sapMFeedListItemTextText>.sapMLnk.sapMLnkDsbl:hover {
+html.sap-desktop .sapMFeedListItemTextText>.sapMLnk.sapMLnkDsbl:hover {
 	color: @sapUiBaseText;
 }
 
@@ -123,21 +123,21 @@ li.sapMLIB.sapMFeedListItemTitleDiv.sapMLIBNoFlex>.sapMLIBContent>.sapMLIBConten
 	}
 }
 
-.sap-phone .sapMFeedListItemTextName a {
+html.sap-phone .sapMFeedListItemTextName a {
 	line-height: normal;
 	font-size: @sapMFontLargeSize;
 }
 
-.sap-phone .sapMFeedListItemText,
-.sap-phone .sapMFeedListItemTimestamp{
+html.sap-phone .sapMFeedListItemText,
+html.sap-phone .sapMFeedListItemTimestamp{
 	font-size: @sapMFontMediumSize;
 }
 
-.sap-phone .sapMFeedListItemFooter {
+html.sap-phone .sapMFeedListItemFooter {
 	font-size: @sapMFontSmallSize;
 }
 
-.sap-phone .sapMFeedListItemTimestamp {
+html.sap-phone .sapMFeedListItemTimestamp {
 	color: @sapUiContentLabelColor;
 	line-height: normal;
 }
@@ -159,6 +159,6 @@ li.sapMLIB.sapMFeedListItemTitleDiv.sapMLIBNoFlex>.sapMLIBContent>.sapMLIBConten
 	font-size: @sapMFontMediumSize;
 	font-style: normal;
 	font-weight: normal;
-	color: @sapUiBaseText;
+	color: @sapUiListTextColor;
 	line-height: 1.4;
 }

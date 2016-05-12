@@ -1,0 +1,143 @@
+<mvc:View
+        controllerName="sap.m.sample.DynamicPageListReport.DynamicPageListReport"
+        height="95%"
+        xmlns:mvc="sap.ui.core.mvc"
+        xmlns:core="sap.ui.core"
+        xmlns:layout="sap.ui.layout"
+        xmlns="sap.m">
+
+        <App>
+            <DynamicPage id="dynamicPageId">
+
+                <!-- DynamicPage Title -->
+                <title>
+                    <DynamicPageTitle>
+                        <heading>
+                            <Title text="My Products" />
+                        </heading>
+
+                        <actions>
+                            <ToolbarSpacer />
+                            <OverflowToolbarButton
+                                    icon = "sap-icon://add"
+                                    text="Add"
+                                    type="Transparent"/>
+                            <OverflowToolbarButton
+                                    icon = "sap-icon://edit"
+                                    text="Edit"
+                                    type="Transparent"/>
+                            <OverflowToolbarButton
+                                    icon = "sap-icon://delete"
+                                    text="Delete"
+                                    type="Transparent"/>
+                            <Button
+                                    icon="sap-icon://post"
+                                    text="Toggle Footer"
+                                    type="Transparent"
+                                    press="onToggleFooter"/>
+                        </actions>
+                    </DynamicPageTitle>
+                </title>
+
+                <!-- DynamicPage Header -->
+                <header>
+                    <DynamicPageHeader pinnable="true">
+                        <content>
+                            <layout:Grid defaultSpan="XL4 L6 M6 S12">
+                                    <layout:VerticalLayout>
+                                        <Label text="Name:"/>
+                                        <Select
+                                                id="slName"
+                                                width="200px"
+                                                forceSelection="true"
+                                                change="onSelectChange"
+                                                items="{
+                                                    path: '/ProductNames'
+                                                }">
+                                            <core:Item key="{key}" text="{name}" />
+                                        </Select>
+                                    </layout:VerticalLayout>
+                                    <layout:VerticalLayout>
+                                        <Label text="Category:"/>
+                                        <Select
+                                                id="slCategory"
+                                                width="200px"
+                                                change="onSelectChange"
+                                                forceSelection="true"
+                                                items="{
+                                                    path: '/ProductCategories'
+                                                 }">
+                                            <core:Item key="{key}" text="{name}" />
+                                        </Select>
+                                    </layout:VerticalLayout>
+                                    <layout:VerticalLayout>
+                                        <Label text="SupplierName:"/>
+                                        <Select
+                                                id="slSupplierName"
+                                                width="200px"
+                                                change="onSelectChange"
+                                                forceSelection="true"
+                                                items="{
+                                                    path: '/ProductSuppliers'
+                                                }">
+                                            <core:Item key="{key}" text="{name}" />
+                                        </Select>
+                                    </layout:VerticalLayout>
+                            </layout:Grid>
+                        </content>
+                    </DynamicPageHeader>
+                </header>
+
+                <!-- DynamicPage Content -->
+                <content>
+                    <Table
+                        id="idProductsTable"
+                        inset="false"
+                        items="{
+                            path: '/ProductCollection'
+                        }">
+
+                        <columns>
+                            <Column
+                                    minScreenWidth="Tablet"
+                                    demandPopin="true">
+                                <Text text="Name" />
+                            </Column>
+                            <Column
+                                    minScreenWidth="Tablet"
+                                    demandPopin="true">
+                                <Text text="Category" />
+                            </Column>
+                            <Column
+                                    minScreenWidth="Tablet"
+                                    demandPopin="true">
+                                <Text text="SupplierName" />
+                            </Column>
+                        </columns>
+
+                        <items>
+                            <ColumnListItem
+                                    vAlign="Middle">
+                                <cells>
+                                    <ObjectIdentifier
+                                            title="{Name}"
+                                            text="{ProductId}"/>
+                                    <Text text="{Category}"/>
+                                    <Text text="{SupplierName}"/>
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                </content>
+
+                <!-- DynamicPage Footer -->
+                <footer>
+                    <OverflowToolbar>
+                            <ToolbarSpacer />
+                            <Button type="Accept" text="Accept"/>
+                            <Button type="Reject" text="Reject"/>
+                    </OverflowToolbar>
+                </footer>
+            </DynamicPage>
+        </App>
+</mvc:View>

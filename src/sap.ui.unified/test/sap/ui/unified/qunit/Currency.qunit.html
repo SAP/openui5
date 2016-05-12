@@ -36,6 +36,9 @@
 				},
 				fnGetRenderedValue: function () {
 					return this.sut.$().find(".sapUiUfdCurrencyAlign .sapUiUfdCurrencyValue").text();
+				},
+				fnGetRenderedCurrency: function () {
+					return this.sut.$().find(".sapUiUfdCurrencyAlign .sapUiUfdCurrencyCurrency").text();
 				}
 			});
 
@@ -50,6 +53,24 @@
 				strictEqual(this.sut.getCurrency(), "", "Default currency is correct");
 				strictEqual(this.sut.getMaxPrecision(), 3, "Default precision is correct");
 				strictEqual(this.sut.getUseSymbol(), true, "Default useSymbol is correct");
+			});
+
+			test("Control default state/visibility with no parameters", function () {
+				// Assert
+				strictEqual(this.sut.$().hasClass("sapUiUfdCurrencyNoVal"), false, "Control has no class " +
+						"sapUiUfdCurrencyNoVal applied");
+				strictEqual(this.fnGetRenderedValue(), "0.00\u2007", "Default value rendered");
+				strictEqual(this.fnGetRenderedCurrency(), "", "No currency rendered");
+			});
+
+			test("Control visibility with no model and setValue set to undefined", function () {
+				// Act
+				this.sut.setValue(undefined);
+
+				// Assert
+				strictEqual(this.sut._bRenderNoValClass, undefined, "_bRenderNoValClass should be undefined");
+				strictEqual(this.sut.$().hasClass("sapUiUfdCurrencyNoVal"), false, "Control has no class " +
+						"sapUiUfdCurrencyNoVal applied when value set to undefined and value is not bound to a model");
 			});
 
 			test("Testing setters", function () {
@@ -130,6 +151,72 @@
 				strictEqual(this.fnGetRenderedValue(), "123.23\u2007", "Value is rendered when currency is other than *");
 			});
 
+			module("Control API - helper methods", {
+				beforeEach : function () {
+					this.oCurrency = new sap.ui.unified.Currency();
+				},
+				afterEach : function() {
+					this.oCurrency.destroy();
+				}
+			});
+
+			test("_getCurrency private method", function () {
+				// Assert
+				strictEqual(this.oCurrency._getCurrency(), "", "No currency returned by default");
+
+				// Act
+				this.oCurrency.setCurrency("EUR");
+				// Assert
+				strictEqual(this.oCurrency._getCurrency(), "€", "Symbol for currency returned");
+
+				// Act
+				this.oCurrency.setUseSymbol(false);
+				// Assert
+				strictEqual(this.oCurrency._getCurrency(), "EUR", "ISO 4217 code for EURO returned");
+			});
+
+			test("getFormattedValue method", function () {
+				// Assert
+				strictEqual(this.oCurrency.getFormattedValue(), "0.00 ", "By default we get '0.00 '");
+
+				// Act
+				this.oCurrency.setValue(45012.91);
+				this.oCurrency.setCurrency("EUR");
+				// Assert
+				strictEqual(this.oCurrency.getFormattedValue(), "45,012.91\u2007", "Default formatting for EUR");
+
+				// Act
+				this.oCurrency.setMaxPrecision(0);
+				// Assert
+				strictEqual(this.oCurrency.getFormattedValue(), "45,012", "Format number without precision in EUR");
+
+				// Act
+				this.oCurrency.setMaxPrecision(-1);
+				// Assert
+				strictEqual(this.oCurrency.getFormattedValue(), "45,01", "Unlikely usage: Precision with negative value for EUR");
+
+				// Act
+				this.oCurrency.setCurrency("JPY");
+				// Assert
+				strictEqual(this.oCurrency.getFormattedValue(), "45,01", "Unlikely usage: Precision with negative value for JPY");
+
+				// Act
+				this.oCurrency.setMaxPrecision(0);
+				// Assert
+				strictEqual(this.oCurrency.getFormattedValue(), "45,013", "Format number without precision in JPY");
+
+				// Act
+				this.oCurrency.setMaxPrecision(2);
+				// Assert
+				strictEqual(this.oCurrency.getFormattedValue(), "45,013\u2008\u2007\u2007", "Format number with 2 decimals in JPY");
+
+				// Act
+				this.oCurrency.setValue(undefined);
+				this.oCurrency.setMaxPrecision(0);
+				// Assert
+				strictEqual(this.oCurrency.getFormattedValue(), "0", "For undefined value we expect 0 as a result");
+			});
+
 			module("Data binding", {
 				beforeEach: function () {
 					this.oData = {
@@ -190,6 +277,164 @@
 					strictEqual(oCurrency.getUseSymbol(), this.oData.currencyCollection[iIndex].useSymbol, "Control " + (iIndex + 1) + " useSymbol is correctly bound");
 				}
 			});
+
+			module("Visibility with undefined value", {
+				beforeEach: function () {
+					var oData = {
+						currencyCollection: [
+							{
+								value: undefined,
+								currency: "EUR",
+								maxPrecision: 4,
+								useSymbol: true
+							},
+							{
+								value: 1021,
+								currency: "GBP",
+								maxPrecision: 1,
+								useSymbol: true
+							},
+							{
+								currency: "JPY",
+								maxPrecision: 5,
+								useSymbol: true
+							}
+						]
+					},
+					oCurrencyTemplate = new sap.ui.unified.Currency({
+						value: "{value}",
+						currency: "{currency}",
+						maxPrecision: "{maxPrecision}",
+						useSymbol: "{useSymbol}"
+					});
+					sap.ui.getCore().setModel(new sap.ui.model.json.JSONModel(oData));
+					this.oVbox = new sap.m.VBox({});
+					this.oVbox.bindAggregation("items", "/currencyCollection", oCurrencyTemplate);
+					this.oVbox.placeAt('qunit-fixture');
+					sap.ui.getCore().applyChanges();
+					this.aItems = this.oVbox.getItems();
+				},
+				afterEach: function () {
+					this.oVbox.destroy();
+					this.aItems = null;
+				}
+			});
+
+			test("Internal _bHasBoundValue value set correct on model bound", function () {
+				strictEqual(this.aItems[0]._bRenderNoValClass, true, "Value should be true");
+				strictEqual(this.aItems[1]._bRenderNoValClass, false, "Value should be false");
+				strictEqual(this.aItems[2]._bRenderNoValClass, true, "Value should be true");
+			});
+
+			test("Undefined value from model", function () {
+				strictEqual(this.aItems[0].$().hasClass("sapUiUfdCurrencyNoVal"), true, "Class sapUiUfdCurrencyNoVal is applied to control");
+				strictEqual(this.aItems[1].$().hasClass("sapUiUfdCurrencyNoVal"), false, "Class sapUiUfdCurrencyNoVal is not applied to control");
+				strictEqual(this.aItems[2].$().hasClass("sapUiUfdCurrencyNoVal"), true, "Class sapUiUfdCurrencyNoVal is applied to control");
+			});
+
+			test("Setting value from undefined to number and back", function () {
+				var $Item = this.aItems[0].$();
+
+				// Act
+				this.aItems[0].setValue(120);
+				// Assert
+				strictEqual($Item.hasClass("sapUiUfdCurrencyNoVal"), false, "Class sapUiUfdCurrencyNoVal is not applied to control");
+
+				// Act
+				this.aItems[0].setValue(undefined);
+				// Assert
+				ok($Item.hasClass("sapUiUfdCurrencyNoVal"), "Class sapUiUfdCurrencyNoVal is applied to control");
+			});
+
+			module("Control live update", {
+				beforeEach : function () {
+					this.sandbox = sinon.sandbox;
+					this.oCurrency = new sap.ui.unified.Currency({
+						value: 120,
+						currency: "EUR"
+					});
+					this.oCurrencyRenderer = this.oCurrency.getRenderer();
+					this.oCurrency.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+
+					this.sandbox.spy(this.oCurrency, '_renderValue');
+					this.sandbox.spy(this.oCurrency, '_renderCurrency');
+					this.sandbox.spy(this.oCurrencyRenderer, 'render');
+				},
+				afterEach : function() {
+					this.sandbox.restore();
+					this.oCurrency.destroy();
+					this.oCurrencyRenderer = null;
+				}
+			});
+
+			test("Value and Currency setters", function () {
+				// Arrange
+				this.oCurrency.setValue(5);
+				this.oCurrency.setCurrency("USD");
+
+				// Assert
+				strictEqual(this.oCurrency._renderValue.callCount, 1, "Internal method should be called once");
+				strictEqual(this.oCurrency._renderCurrency.callCount, 1, "Internal method should be called once");
+				strictEqual(this.oCurrencyRenderer.render.callCount, 0, "Currency renderer should not be called");
+			});
+
+			test("MaxPrecision and UseSymbol setters", function () {
+				// Arrange
+				this.oCurrency.setUseSymbol(false);
+				this.oCurrency.setMaxPrecision(2);
+
+				// Assert
+				strictEqual(this.oCurrency._renderValue.callCount, 1, "Internal method should be called once");
+				strictEqual(this.oCurrency._renderCurrency.callCount, 1, "Internal method should be called once");
+				strictEqual(this.oCurrencyRenderer.render.callCount, 0, "Currency renderer should not be called");
+			});
+
+			test("Special * currency case - Both methods should be called when changing currency to something different then *", function () {
+				// Arrange
+				this.oCurrency.setCurrency("*");
+				this.oCurrency.setValue(120);
+				sap.ui.getCore().applyChanges();
+
+				// Resetting counters after modification
+				this.sandbox.reset();
+
+				// Act
+				this.oCurrency.setCurrency("USD");
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				strictEqual(this.oCurrency._renderValue.callCount, 1, "Internal method should be called once");
+				strictEqual(this.oCurrency._renderCurrency.callCount, 1, "Internal method should be called once");
+
+				// Resetting counters after modification
+				this.sandbox.reset();
+
+				// Act
+				this.oCurrency.setCurrency("*");
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				strictEqual(this.oCurrency._renderValue.callCount, 1, "Internal method should be called once");
+				strictEqual(this.oCurrency._renderCurrency.callCount, 1, "Internal method should be called once");
+			});
+
+			module("Accessibility");
+
+			test("getAccessibilityInfo", function() {
+				var oControl = new sap.ui.unified.Currency({value: 100, currency: "EUR", maxPrecision: 2});
+				ok(!!oControl.getAccessibilityInfo, "Currency has a getAccessibilityInfo function");
+				var oInfo = oControl.getAccessibilityInfo();
+				ok(!!oInfo, "getAccessibilityInfo returns a info object");
+				strictEqual(oInfo.role, undefined, "AriaRole");
+				strictEqual(oInfo.type, undefined, "Type");
+				strictEqual(oInfo.description, "100.00 EUR", "Description");
+				strictEqual(oInfo.focusable, undefined, "Focusable");
+				strictEqual(oInfo.enabled, undefined, "Enabled");
+				strictEqual(oInfo.editable, undefined, "Editable");
+				oControl.destroy();
+			});
+
 		</script>
 
 	</head>

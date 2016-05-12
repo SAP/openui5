@@ -129,6 +129,8 @@
 			equal(typeof oLocaleData.getDateTimePattern("medium", aCalendarTypes[i]), "string", "getTimePattern(\"medium\", \"" + aCalendarTypes[i] + "\")");
 			equal(typeof oLocaleData.getDateTimePattern("long", aCalendarTypes[i]), "string", "getTimePattern(\"long\", \"" + aCalendarTypes[i] + "\")");
 			equal(typeof oLocaleData.getDateTimePattern("full", aCalendarTypes[i]), "string", "getTimePattern(\"full\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getCombinedDateTimePattern("full", "medium", aCalendarTypes[i]), "string", "getTimePattern(\"full\", \"medium\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getCombinedDateTimePattern("medium", "short", aCalendarTypes[i]), "string", "getTimePattern(\"medium\", \"short\", \"" + aCalendarTypes[i] + "\")");
 			equal(typeof oLocaleData.getCustomDateTimePattern("y", aCalendarTypes[i]), "string", "getCustomDateTimePattern(\"y\", \"" + aCalendarTypes[i] + "\")");
 			equal(typeof oLocaleData.getCustomDateTimePattern("yMd", aCalendarTypes[i]), "string", "getCustomDateTimePattern(\"yMd\", \"" + aCalendarTypes[i] + "\")");
 			equal(typeof oLocaleData.getCustomDateTimePattern("Hms", aCalendarTypes[i]), "string", "getCustomDateTimePattern(\"Hms\", \"" + aCalendarTypes[i] + "\")");
@@ -215,9 +217,10 @@
 		equal(oLocaleData.getDatePattern("medium"), "dd.MM.y", "date pattern \"medium\"");
 		equal(oLocaleData.getTimePattern("medium"), "HH:mm:ss", "time pattern \"medium\"");
 		equal(oLocaleData.getDateTimePattern("long"), "{1} 'um' {0}", "datetime pattern \"long\"");
+		equal(oLocaleData.getCombinedDateTimePattern("medium", "short"), "dd.MM.y, HH:mm", "datetime pattern \"medium\", \"short\"");
 		equal(oLocaleData.getCustomDateTimePattern("y"), "y", "datetime format \"y\"");
 		equal(oLocaleData.getCustomDateTimePattern("y", "Japanese"), "y G", "datetime format \"y\"");
-		equal(oLocaleData.getCustomDateTimePattern("yMMd"), "d.MM.y", "datetime format \"yMMd\"");
+		equal(oLocaleData.getCustomDateTimePattern("yMMd"), "dd.MM.y", "datetime format \"yMMd\"");
 		equal(oLocaleData.getCustomDateTimePattern("yMMMw"), "MMM y ('Woche': w)", "datetime format \"yMMMw\"");
 		equal(oLocaleData.getCustomDateTimePattern("yMdHms"), "d.M.y, HH:mm:ss", "datetime format \"yMdHms\"");
 		equal(oLocaleData.getCustomDateTimePattern("yMMMMEEEEdHms"), "EEEE, d. MMMM y 'um' HH:mm:ss", "datetime format \"yMMMMdEEEEHms\"");
@@ -227,6 +230,11 @@
 		equal(oLocaleData.getCustomDateTimePattern("Km"), "h:mm a", "datetime format \"Km\"");
 		equal(oLocaleData.getCustomDateTimePattern("jms"), "HH:mm:ss", "datetime format \"jms\"");
 		equal(oLocaleData.getCustomDateTimePattern("Jms"), "HH:mm:ss", "datetime format \"Jms\"");
+		// skeleton "yMMdd" has pattern "dd.MM.y" and
+		// skeleton "yMMMd" has pattern "d. MMM y"
+		// "yMMMMdd"'s best match is "yMMMd" since both "month" and "day" have the same representation category
+		// and both should be expanded which results in "dd. MMMM y"
+		equal(oLocaleData.getCustomDateTimePattern("yMMMMdd"), "dd. MMMM y", "datetime format 'yMMMMdd'");
 		equal(oLocaleData.getNumberSymbol("decimal"), ",", "decimal separator");
 		equal(oLocaleData.getNumberSymbol("group"), ".", "group separator");
 		equal(oLocaleData.getFirstDayOfWeek(), 1, "first day of week");
@@ -263,6 +271,7 @@
 		equal(oLocaleData.getDatePattern("medium"), "d MMM y", "date pattern \"medium\"");
 		equal(oLocaleData.getTimePattern("medium"), "HH:mm:ss", "time pattern \"medium\"");
 		equal(oLocaleData.getDateTimePattern("long"), "{1} 'at' {0}", "datetime pattern \"long\"");
+		equal(oLocaleData.getCombinedDateTimePattern("medium", "short"), "d MMM y, HH:mm", "datetime pattern \"medium\", \"short\"");
 		equal(oLocaleData.getCustomDateTimePattern("y"), "y", "datetime format \"y\"");
 		equal(oLocaleData.getCustomDateTimePattern("y", "Japanese"), "y G", "datetime format \"y\"");
 		equal(oLocaleData.getCustomDateTimePattern("yMMd"), "dd/MM/y", "datetime format \"yMMd\"");
@@ -343,6 +352,9 @@
 		equal(oLocaleData.getDateTimePattern("long"), "{1} {0}", "datetime pattern \"long\"");
 		equal(oLocaleData.getCustomDateTimePattern("y"), "y年", "datetime format \"y\"");
 		equal(oLocaleData.getCustomDateTimePattern("y", "Japanese"), "Gy年", "datetime format \"y\"");
+		// skeleton "yMMMd" has pattern "y年M月d日"
+		// "yMMMdd"'s best match should be "yMMMd" and the "day" should be expanded which results in "y年M月dd日"
+		equal(oLocaleData.getCustomDateTimePattern("yMMMdd"), "y年M月dd日", "datetime format \"yMMMdd\"");
 		equal(oLocaleData.getNumberSymbol("decimal"), ".", "decimal separator");
 		equal(oLocaleData.getNumberSymbol("group"), ",", "group separator");
 	}
@@ -365,6 +377,7 @@
 		equal(oLocaleData.getDatePattern("medium"), "d MMM y 'г'.", "date pattern \"medium\"");
 		equal(oLocaleData.getTimePattern("medium"), "H:mm:ss", "time pattern \"medium\"");
 		equal(oLocaleData.getDateTimePattern("long"), "{1}, {0}", "datetime pattern \"long\"");
+		equal(oLocaleData.getCombinedDateTimePattern("medium", "short"), "d MMM y 'г'., H:mm", "datetime pattern \"medium\", \"short\"");
 		equal(oLocaleData.getCustomDateTimePattern("y"), "y", "datetime format \"y\"");
 		equal(oLocaleData.getCustomDateTimePattern("y", "Japanese"), "y G", "datetime format \"y\"");
 		equal(oLocaleData.getCustomDateTimePattern("yMMd"), "dd.MM.y", "datetime format \"yMMd\"");

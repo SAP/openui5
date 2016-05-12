@@ -831,7 +831,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 		oGrid._getAccessibleRole = function() {
 
 			var oContainer = sap.ui.getCore().byId(this.__myParentContainerId);
-			if (!oContainer.getToolbar() && !oContainer.getTitle() && !oContainer.getExpandable()) {
+			var oLayout = this.__myParentLayout;
+			if (oLayout._mainGrid && oLayout._mainGrid.__bIsUsed && !oContainer.getToolbar() && !oContainer.getTitle() && !oContainer.getExpandable()) {
 				return "form";
 			}
 

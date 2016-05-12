@@ -8,7 +8,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		"use strict";
 
 		/**
-		 * Constructor for a new SelectList.
+		 * Constructor for a new <code>sap.m.SelectList</code>.
 		 *
 		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given.
 		 * @param {object} [mSettings] Initial settings for the new control.
@@ -59,10 +59,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				selectedItemId: { type: "string", group: "Misc", defaultValue: "" },
 
 				/**
-				 * Indicates whether the text values of the <code>additionalText</code> property of a {@link sap.ui.core.ListItem} is shown.
+				 * Indicates whether the text values of the <code>additionalText</code> property of a {@link sap.ui.core.ListItem} are shown.
 				 * @since 1.32.3
 				 */
-				showSecondaryValues: { type: "boolean", group: "Misc", defaultValue: false }
+				showSecondaryValues: { type: "boolean", group: "Misc", defaultValue: false },
+
+				/**
+				 * Defines the keyboard navigation mode.
+				 *
+				 * <b>Note:</b> The <code>sap.m.SelectListKeyboardNavigationMode.None</code> enumeration value, is only
+				 * intended for use in some composite controls that handles keyboard navigation by themselves.
+				 *
+				 * @protected
+				 * @since 1.38
+				 */
+				keyboardNavigationMode: { type: "sap.m.SelectListKeyboardNavigationMode", group: "Behavior", defaultValue: sap.m.SelectListKeyboardNavigationMode.Delimited }
 			},
 			defaultAggregation: "items",
 			aggregations: {
@@ -244,6 +255,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			// track coordinates of the touch point
 			this._fStartX = 0;
 			this._fStartY = 0;
+
+			this._oItemNavigation = null;
+			this._$ItemPressed = null;
 		};
 
 		SelectList.prototype.onBeforeRendering = function() {
@@ -251,17 +265,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		};
 
 		SelectList.prototype.onAfterRendering = function() {
-			this.createItemNavigation();
+			if (this.getKeyboardNavigationMode() === sap.m.SelectListKeyboardNavigationMode.None) {
+				this.destroyItemNavigation();
+			} else {
+				this.createItemNavigation();
+			}
 		};
 
 		SelectList.prototype.exit = function() {
-
-			if (this._oItemNavigation) {
-				this.removeDelegate(this._oItemNavigation);
-				this._oItemNavigation.destroy();
-				this._oItemNavigation = null;
-			}
-
+			this.destroyItemNavigation();
 			this._$ItemPressed = null;
 		};
 
@@ -663,6 +675,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			// set the page size
 			this._oItemNavigation.setPageSize(10);
+		};
+
+		SelectList.prototype.destroyItemNavigation = function() {
+			if (this._oItemNavigation) {
+				this.removeEventDelegate(this._oItemNavigation);
+				this._oItemNavigation.destroy();
+				this._oItemNavigation = null;
+			}
+		};
+
+		SelectList.prototype.getItemNavigation = function() {
+			return this._oItemNavigation;
 		};
 
 		/* ----------------------------------------------------------- */

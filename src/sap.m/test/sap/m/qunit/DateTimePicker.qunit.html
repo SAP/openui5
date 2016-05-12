@@ -52,7 +52,7 @@
 
 			var oDTP3 = new sap.m.DateTimePicker("DTP3", {
 				dateValue: new Date("2016", "01", "17", "10", "11", "12"),
-				displayFormat: "long",
+				displayFormat: "short",
 				change: handleChange
 				}).placeAt("uiArea3");
 
@@ -107,7 +107,7 @@
 			test("date format", function() {
 				ok(!jQuery("#DTP1").children("input").val(), "DTP1: empty date");
 				equal(jQuery("#DTP2").children("input").val(), "17+02+2016:10+11", "DTP2: defined output format used");
-				equal(jQuery("#DTP3").children("input").val(), "February 17, 2016 at 10:11:12 AM GMT+01:00", "DTP3: defined output format used");
+				equal(jQuery("#DTP3").children("input").val(), "2/17/16, 10:11 AM", "DTP3: defined output format used");
 				equal(jQuery("#DTP4").children("input").val(), "Feb 17, 2016, 10:11:12 AM", "DTP4: defined output format from binding used");
 			});
 
@@ -115,7 +115,7 @@
 				if(sap.ui.Device.support.input.placeholder) {
 					equal(jQuery("#DTP1").children("input").attr("placeholder"), "MMM d, y, h:mm:ss a" , "DTP1: placeholder");
 					equal(jQuery("#DTP2").children("input").attr("placeholder"), "dd+MM+yyyy:HH+mm", "DTP2: placeholder");
-					equal(jQuery("#DTP3").children("input").attr("placeholder"), "MMMM d, y 'at' h:mm:ss a z", "DTP3: placeholder");
+					equal(jQuery("#DTP3").children("input").attr("placeholder"), "M/d/yy, h:mm a", "DTP3: placeholder");
 					equal(jQuery("#DTP4").children("input").attr("placeholder"), "MMM d, y, h:mm:ss a", "DTP4: placeholder from binding used");
 				} else {
 					ok(!jQuery("#DTP1").children("input").attr("placeholder"), "No placeholder attribute");
@@ -171,7 +171,7 @@
 					ok(jQuery("#DTP3-Sliders")[0], "Slider rendered");
 					ok(jQuery("#DTP3-Sliders").is(":visible"), "Slider is visible");
 					var oSliders = sap.ui.getCore().byId("DTP3-Sliders");
-					equal(oSliders.getAggregation("_columns").length, 4 , "DTP3: number of rendered sliders");
+					equal(oSliders.getAggregation("_columns").length, 3 , "DTP3: number of rendered sliders");
 
 					var aDays = jQuery("#DTP3-cal--Month0-days").find(".sapUiCalItem");
 					var oDay;
@@ -210,12 +210,49 @@
 						equal(sId, "DTP3", "Change event fired");
 						equal(sValue, "2/10/16, 11:11 AM", "Value in internal format priovided");
 						equal(oDTP3.getValue(), "2/10/16, 11:11 AM", "Value in internal format set");
-						equal(oDTP3.getDateValue().getTime(), new Date("2016", "01", "10", "11", "11", "12").getTime(), "DateValue set");
+						equal(oDTP3.getDateValue().getTime(), new Date("2016", "01", "10", "11", "11").getTime(), "DateValue set");
 						start();
 					}, 300);
 				}, 200);
 			});
 
+			module("Accessibility");
+
+			test("getAccessibilityInfo", function() {
+				var oInput = new sap.m.DateTimePicker({
+					value: "Value",
+					tooltip: "Tooltip",
+					placeholder: "Placeholder"
+				});
+				ok(!!oInput.getAccessibilityInfo, "DateTimePicker has a getAccessibilityInfo function");
+				var oInfo = oInput.getAccessibilityInfo();
+				ok(!!oInfo, "getAccessibilityInfo returns a info object");
+				strictEqual(oInfo.role, oInput.getRenderer().getAriaRole(), "AriaRole");
+				strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATETIMEINPUT"), "Type");
+				strictEqual(oInfo.description, "Value Placeholder Date and Time Tooltip", "Description");
+				strictEqual(oInfo.focusable, true, "Focusable");
+				strictEqual(oInfo.enabled, true, "Enabled");
+				strictEqual(oInfo.editable, true, "Editable");
+				oInput.setValue("");
+				oInput.setEnabled(false);
+				oInfo = oInput.getAccessibilityInfo();
+				strictEqual(oInfo.description, "Placeholder Date and Time Tooltip", "Description");
+				strictEqual(oInfo.focusable, false, "Focusable");
+				strictEqual(oInfo.enabled, false, "Enabled");
+				strictEqual(oInfo.editable, false, "Editable");
+				oInput.setEnabled(true);
+				oInput.setEditable(false);
+				oInfo = oInput.getAccessibilityInfo();
+				strictEqual(oInfo.focusable, true, "Focusable");
+				strictEqual(oInfo.enabled, true, "Enabled");
+				strictEqual(oInfo.editable, false, "Editable");
+				oInput.setValueFormat("yyyy.MM.dd.HH.mm.ss");
+				oInput.setDisplayFormat("yyyy-MM-dd-HH-mm-ss");
+				oInput.setValue("2014.03.26.10.32.30");
+				oInfo = oInput.getAccessibilityInfo();
+				strictEqual(oInfo.description, "2014-03-26-10-32-30 Placeholder Date and Time Tooltip", "Description");
+				oInput.destroy();
+			});
 		</script>
 
 	</head>

@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
-	function(jQuery, ValueStateSupport) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueState', 'sap/ui/core/ValueStateSupport'],
+	function(jQuery, ValueState, ValueStateSupport) {
 	"use strict";
 
 
@@ -26,9 +26,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 		var sId = oCheckBox.getId(),
 			bEnabled = oCheckBox.getEnabled(),
 			bEditable = oCheckBox.getEditable(),
-			oCbLabel = oCheckBox._oLabel,
-			bInErrorState = sap.ui.core.ValueState.Error == oCheckBox.getValueState(),
-			bInWarningState = sap.ui.core.ValueState.Warning == oCheckBox.getValueState();
+			oCbLabel = oCheckBox.getAggregation("_label"),
+			bInErrorState = ValueState.Error === oCheckBox.getValueState(),
+			bInWarningState = ValueState.Warning === oCheckBox.getValueState();
 
 		// CheckBox wrapper
 		oRm.write("<div");
@@ -48,7 +48,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 			oRm.addClass("sapMCbWarn");
 		}
 
-		if (oCbLabel) {
+		if (oCheckBox.getText()) {
 			oRm.addClass("sapMCbHasLabel");
 		}
 

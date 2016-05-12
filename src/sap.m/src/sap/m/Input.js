@@ -45,6 +45,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 			/**
 			 * Maximum number of characters. Value '0' means the feature is switched off.
+			 * This parameter is not compatible with the input type <code>sap.m.InputType.Number</code>.
+			 * If the input type is set to <code>Number</code>, the <code>maxLength</code> value is ignored.
 			 */
 			maxLength : {type : "int", group : "Behavior", defaultValue : 0},
 
@@ -558,19 +560,36 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		return this;
 	};
 
-	Input.prototype._scrollToItem = function(iIndex, sDir) {
+	Input.prototype._scrollToItem = function(iIndex) {
 		var oPopup = this._oSuggestionPopup,
-			oList = this._oList;
+			oList = this._oList,
+			oScrollDelegate,
+			oPopupRect,
+			oItemRect,
+			iTop,
+			iBottom;
 
 		if (!(oPopup instanceof Popover) || !oList) {
 			return;
 		}
-
+		oScrollDelegate = oPopup.getScrollDelegate();
+		if (!oScrollDelegate) {
+			return;
+		}
 		var oListItem = oList.getItems()[iIndex],
-			oListItemDom = oListItem && oListItem.$()[0];
+			oListItemDom = oListItem && oListItem.getDomRef();
+		if (!oListItemDom) {
+			return;
+		}
+		oPopupRect = oPopup.getDomRef("cont").getBoundingClientRect();
+		oItemRect = oListItemDom.getBoundingClientRect();
 
-		if (oListItemDom) {
-			oListItemDom.scrollIntoView(sDir === "up");
+		iTop = oPopupRect.top - oItemRect.top;
+		iBottom = oItemRect.bottom - oPopupRect.bottom;
+		if (iTop > 0) {
+			oScrollDelegate.scrollTo(oScrollDelegate._scrollX, Math.max(oScrollDelegate._scrollY - iTop, 0));
+		} else if (iBottom > 0) {
+			oScrollDelegate.scrollTo(oScrollDelegate._scrollX, oScrollDelegate._scrollY + iBottom);
 		}
 	};
 
@@ -681,7 +700,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		}
 
 		if (sap.ui.Device.system.desktop) {
-			this._scrollToItem(iSelectedIndex, sDir);
+			this._scrollToItem(iSelectedIndex);
 		}
 
 		// make sure the value doesn't exceed the maxLength
@@ -742,14 +761,24 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	};
 
 	Input.prototype.onsapescape = function(oEvent) {
+		var lastValue;
+
 		if (this._oSuggestionPopup && this._oSuggestionPopup.isOpen()) {
 			// mark the event as already handled
 			oEvent.originalEvent._sapui_handledByControl = true;
 			this._iPopupListSelectedIndex = -1;
 			this._closeSuggestionPopup();
 
-			// if popup is open, simply returns from here to prevent from setting the input to the last known value.
-			return;
+			// restore the initial value that was there before suggestion dialog
+			if (this._sBeforeSuggest !== undefined) {
+				if (this._sBeforeSuggest !== this.getValue()) {
+					lastValue = this._lastValue;
+					this.setValue(this._sBeforeSuggest);
+					this._lastValue = lastValue; // override InputBase.onsapescape()
+				}
+				this._sBeforeSuggest = undefined;
+			}
+			return; // override InputBase.onsapescape()
 		}
 
 		if (InputBase.prototype.onsapescape) {
@@ -970,9 +999,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 			var value = this._$input.val();
 
-			// add maxlength support for all types
+			// add maxlength support for all types except for the type Number
 			// TODO: type number add min and max properties
-			if (this.getMaxLength() > 0 && value.length > this.getMaxLength()) {
+			if (this.getMaxLength() > 0 && this.getType() !== sap.m.InputType.Number && value.length > this.getMaxLength()) {
 				value = value.substring(0, this.getMaxLength());
 				this._$input.val(value);
 			}
@@ -1159,6 +1188,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					} else {
 						oInput._oList.destroyItems();
 					}
+				}).attachBeforeOpen(function() {
+					oInput._sBeforeSuggest = oInput.getValue();
 				}))
 			:
 				(new Dialog(oInput.getId() + "-popup", {
@@ -1770,6 +1801,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		this._iSetCount++;
 		InputBase.prototype.setValue.call(this, sValue);
 		return this;
+	};
+
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	Input.prototype.getAccessibilityInfo = function() {
+		var oInfo = InputBase.prototype.getAccessibilityInfo.apply(this, arguments);
+		oInfo.description = ((oInfo.description || "") + " " + this.getDescription()).trim();
+		return oInfo;
 	};
 
 	/**

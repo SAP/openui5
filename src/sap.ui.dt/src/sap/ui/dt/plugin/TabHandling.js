@@ -38,7 +38,7 @@ sap.ui.define([
 
 	TabHandling.prototype.registerElementOverlay = function(oOverlay) {
 		if (oOverlay.isRoot()) {
-			this._adjustTabIndexInDOM();
+			this._removeTabIndex();
 		}
 	};
 
@@ -51,7 +51,6 @@ sap.ui.define([
 	TabHandling.prototype.deregisterElementOverlay = function(oOverlay) {
 		if (oOverlay.isRoot()) {
 			this._restoreTabIndex();
-			this._adjustTabIndexInDOM();
 		}
 	};
 
@@ -75,8 +74,9 @@ sap.ui.define([
 	 * @param {sap.ui.core.Element} oRootDom object of the root DOM element
 	 * @private
 	 */
-	TabHandling.prototype._removeTabIndex = function(oRootDom) {
-		jQuery(oRootDom).find(":focusable:not([tabIndex=-1])").each(function(iIndex, oNode) {
+	TabHandling.prototype._removeTabIndex = function() {
+		//exclude our top and bottom bar buttons and all overlays
+		jQuery(document).find(":focusable:not([tabIndex=-1], #overlay-container *, .sapUiRTAToolBarTop Button, .sapUiRTAToolBarBottom Button)").each(function(iIndex, oNode) {
 			oNode.setAttribute("data-sap-ui-dt-tabindex", oNode.tabIndex);
 			oNode.setAttribute("tabIndex", -1);
 		});
@@ -95,27 +95,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adjust the tab indices of all elements of the DOM tree
-	 *
-	 * @private
-	 */
-	TabHandling.prototype._adjustTabIndexInDOM = function() {
-		var aRootControls = [];
-		var aRootElements = this.getDesignTime().getRootElements();
-		for (var i = 0; i < aRootElements.length; i++) {
-			aRootControls[i] = sap.ui.getCore().byId(aRootElements[i]);
-			var oRootDom = aRootControls[i].getDomRef();
-			if (oRootDom) {
-				this._removeTabIndex(oRootDom);
-			}
-		}
-	};
-
-	/**
 	 * @private
 	 */
 	TabHandling.prototype._onDomChanged = function() {
-		this._adjustTabIndexInDOM();
+		this._removeTabIndex();
 	};
 
 	return TabHandling;

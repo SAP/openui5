@@ -26,9 +26,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 	 */
 	StandardListItemRenderer.renderLIAttributes = function(rm, oLI) {
 		rm.addClass("sapMSLI");
-		if (oLI._showSeparators  == sap.m.ListSeparators.None && !oLI.getIconInset()) {
-			rm.addClass("sapMSLIShowSeparatorNone");
-		}
 		if (oLI.getIcon()) {
 			rm.addClass("sapMSLIIcon");
 		}
@@ -69,7 +66,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			}
 		}
 
-		var isDescription = oLI.getTitle() && (oLI.getDescription() || !oLI.getAdaptTitleSize())  || (oLI._showSeparators  == sap.m.ListSeparators.None && !oLI.getIconInset());
+		var isDescription = oLI.getTitle() && (oLI.getDescription() || !oLI.getAdaptTitleSize());
 		var isInfo = oLI.getInfo();
 
 		if (isDescription) {
@@ -109,7 +106,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		rm.write("</div>");
 
 		//info div top when @sapUiInfoTop: true;
-		if (isInfo && (sap.ui.core.theming.Parameters.get("sapUiInfoTop") == "true" || !isDescription)) {
+		if (isInfo && !isDescription) {
 			rm.write("<div");
 			rm.writeAttribute("id", oLI.getId() + "-info");
 			rm.addClass("sapMSLIInfo");
@@ -148,15 +145,11 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			rm.write("</div>");
 		}
 
-		if (isInfo && sap.ui.core.theming.Parameters.get("sapUiInfoTop") == "false" && isDescription) {
+		if (isInfo && isDescription) {
 			rm.write("<div");
 			rm.writeAttribute("id", oLI.getId() + "-info");
 			rm.addClass("sapMSLIInfo");
-			if (oLI._showSeparators == sap.m.ListSeparators.None && oLI.getInfoState() == sap.ui.core.ValueState.None) {
-				rm.addClass("sapMSLIInfo" + oLI.getInfoState() + "ShowSeparatorNone");
-			} else {
-				rm.addClass("sapMSLIInfo" + oLI.getInfoState());
-			}
+			rm.addClass("sapMSLIInfo" + oLI.getInfoState());
 			rm.writeClasses();
 			if (sInfoDir !== sap.ui.core.TextDirection.Inherit) {
 				rm.writeAttribute("dir", sInfoDir.toLowerCase());

@@ -56,6 +56,12 @@ function(jQuery, DesignTimeMetadata) {
 			},
 			customData : {
 				ignore : true
+			},
+			layoutData : {
+				ignore : true
+			},
+			tooltip: {
+				ignore : true
 			}
 		};
 
