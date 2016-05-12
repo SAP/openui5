@@ -631,6 +631,28 @@ sap.ui.define([
 	};
 
 	/**
+	 * Resets all property changes associated with the given application group ID which have not
+	 * yet been submitted via {@link #submitBatch}.
+	 *
+	 * @param {string} [sGroupId]
+	 *   The application group ID, which is a non-empty string consisting of alphanumeric
+	 *   characters from the basic Latin alphabet, including the underscore. If it is
+	 *   <code>undefined</code>, the model's <code>updateGroupId</code> is used. Note that the
+	 *   default <code>updateGroupId</code> is "$auto", which is invalid here.
+	 * @throws {Error}
+	 *   If the given group ID is not an application group ID
+	 *
+	 * @public
+	 * @since 1.39.0
+	 */
+	ODataModel.prototype.resetChanges = function (sGroupId) {
+		sGroupId = sGroupId || this.sUpdateGroupId;
+		_ODataHelper.checkGroupId(sGroupId, true);
+
+		this.oRequestor.cancelPatch(sGroupId);
+	};
+
+	/**
 	 * Method not supported
 	 *
 	 * @throws {Error}

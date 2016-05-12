@@ -66,6 +66,40 @@ sap.ui.define([
 	}
 
 	/**
+	 * Cancels all PATCH requests for a given group.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID to be canceled
+	 *
+	 * @private
+	 */
+	Requestor.prototype.cancelPatch = function (sGroupId) {
+		var aBatchQueue = this.mBatchQueue[sGroupId],
+			oError = new Error("Group '" + sGroupId + "' canceled"),
+			aChangeSet,
+			i;
+
+		if (!aBatchQueue) {
+			return;
+		}
+		oError.canceled = true;
+		aChangeSet = aBatchQueue[0];
+		aBatchQueue[0] = [];
+		for (i = aChangeSet.length - 1; i >= 0; i--) {
+			if (aChangeSet[i].method === "PATCH") {
+				aChangeSet[i].$reject(oError);
+			} else {
+				// all other methods stay in the change set
+				aBatchQueue[0].push(aChangeSet[i]);
+			}
+		}
+		// if the queue contains only the empty change set, remove it so that no empty batch is sent
+		if (aBatchQueue[0].length === 0 && aBatchQueue.length === 1) {
+			delete this.mBatchQueue[sGroupId];
+		}
+	};
+
+	/**
 	 * Returns this requestor's service URL.
 	 *
 	 * @returns {string}
@@ -156,8 +190,7 @@ sap.ui.define([
 
 			if (sGroupId !== "$direct") {
 				oPromise = new Promise(function (fnResolve, fnReject) {
-					var oLastChange,
-						aRequests = that.mBatchQueue[sGroupId];
+					var aRequests = that.mBatchQueue[sGroupId];
 
 					if (!aRequests) {
 						aRequests = that.mBatchQueue[sGroupId] = [[/*empty change set*/]];
@@ -173,20 +206,8 @@ sap.ui.define([
 					};
 					if (sMethod === "GET") { // push behind change set
 						aRequests.push(oRequest);
-					} else {
-						oLastChange = aRequests[0].length && aRequests[0][aRequests[0].length - 1];
-						if (oLastChange
-							&& oLastChange.method === "PATCH"
-							&& oRequest.method === "PATCH"
-							&& oLastChange.url === oRequest.url
-							&& jQuery.sap.equal(oLastChange.headers, oRequest.headers)) {
-							// merge related PATCH requests
-							oLastChange.body = JSON.stringify(
-								jQuery.extend(JSON.parse(oLastChange.body), oPayload));
-							fnResolve(oLastChange.$promise);
-						} else { // push into change set
-							aRequests[0].push(oRequest);
-						}
+					} else { // push into change set
+						aRequests[0].push(oRequest);
 					}
 				});
 				oRequest.$promise = oPromise;
@@ -236,7 +257,9 @@ sap.ui.define([
 	 *   rejected with an error if the batch request itself fails
 	 */
 	Requestor.prototype.submitBatch = function (sGroupId) {
-		var aRequests = this.mBatchQueue[sGroupId];
+		var aChangeSet = [],
+			oPreviousChange,
+			aRequests = this.mBatchQueue[sGroupId];
 
 		/*
 		 * Visits the given request/response pairs, rejecting or resolving the corresponding
@@ -276,10 +299,29 @@ sap.ui.define([
 		}
 		delete this.mBatchQueue[sGroupId];
 
-		if (aRequests[0].length === 0) {
+		// iterate over the change set and merge related PATCH requests
+		aRequests[0].forEach(function (oChange) {
+			if (oPreviousChange
+					&& oPreviousChange.method === "PATCH"
+					&& oChange.method === "PATCH"
+					&& oPreviousChange.url === oChange.url
+					&& jQuery.sap.equal(oPreviousChange.headers, oChange.headers)) {
+				// merge related PATCH requests
+				oPreviousChange.body = JSON.stringify(
+					jQuery.extend(JSON.parse(oPreviousChange.body), JSON.parse(oChange.body)));
+				oChange.$resolve(oPreviousChange.$promise);
+			} else { // push into change set
+				aChangeSet.push(oChange);
+				oPreviousChange = oChange;
+			}
+		});
+
+		if (aChangeSet.length === 0) {
 			aRequests.splice(0, 1); // delete empty change set
-		} else if (aRequests[0].length === 1) {
-			aRequests[0] = aRequests[0][0]; // unwrap change set
+		} else if (aChangeSet.length === 1) {
+			aRequests[0] = aChangeSet[0]; // unwrap change set
+		} else {
+			aRequests[0] = aChangeSet;
 		}
 
 		return this.request("POST", "$batch", undefined, undefined, aRequests)

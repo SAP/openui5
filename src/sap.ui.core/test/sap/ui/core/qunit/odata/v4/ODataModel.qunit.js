@@ -563,6 +563,42 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("resetChanges with group ID", function (assert) {
+		var oModel = createModel();
+
+		this.mock(_ODataHelper).expects("checkGroupId").withExactArgs("groupId", true);
+		this.mock(oModel.oRequestor).expects("cancelPatch").withExactArgs("groupId");
+
+		// code under test
+		oModel.resetChanges("groupId");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resetChanges w/o group ID", function (assert) {
+		var oModel = createModel("", {updateGroupId : "updateGroupId"});
+
+		this.mock(_ODataHelper).expects("checkGroupId").withExactArgs("updateGroupId", true);
+		this.mock(oModel.oRequestor).expects("cancelPatch").withExactArgs("updateGroupId");
+
+		// code under test
+		oModel.resetChanges();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resetChanges, invalid group ID", function (assert) {
+		var oError = new Error(),
+			oModel = createModel();
+
+		this.mock(_ODataHelper).expects("checkGroupId").withExactArgs("$auto", true)
+			.throws(oError);
+		this.mock(oModel.oRequestor).expects("cancelPatch").never();
+
+		assert.throws(function () {
+			oModel.resetChanges();
+		}, oError);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("forbidden", function (assert) {
 		var aFilters = [],
 			oModel = createModel(),
