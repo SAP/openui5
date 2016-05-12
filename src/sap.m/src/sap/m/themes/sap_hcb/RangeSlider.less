@@ -1,0 +1,54 @@
+/* ============================================= */
+/* CSS for sap.m.RangeSlider control             */
+/* High Contrast Black theme                     */
+/* ============================================= */
+
+
+/* pressed */
+
+div.sapMSliderInner > span[id*='handle'][class*='sapMSliderHandlePressed'] {
+	background: @sapHCHighlightBG;
+	border: 0.125rem solid @sapHCStandardFG;
+}
+
+/* overlap */
+span.sapMSliderHandleOverlap {
+	background: @sapHCStandardFG;
+}
+
+.sapMSliderLabels {
+	height: 1rem;
+}
+
+.sapMSliderLabel {
+	font-size: 0.75rem;
+	color: @sapUiContentLabelColor;
+}
+
+.sapMSliderHandleTooltip {
+	/*top: -3rem;*/
+	border: 0.625rem solid @sapHCStandardFG;
+	background: @sapHCStandardBG;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+	height: 1.5rem;
+	line-height: 1.5rem;
+	font-size: 0.75rem;
+	text-align: center;
+	visibility: hidden;
+	box-shadow: 0 0.25rem 1.875rem 0.125rem rgba(255, 255, 255, 0.8);
+	position: relative;
+	flex-shrink: 0;
+}
+
+.sapMSliderHandleTooltipShow {
+	visibility: visible;
+}
+
+.sapMSlider {
+	&:hover {
+		.sapMSliderHandleTooltip {
+			visibility: visible;
+		}
+	}
+}

@@ -853,6 +853,14 @@
 		  ]
 		},
 		{
+			  "id": "sap.m.RangeSlider",
+			  "name": "RangeSlider",
+			  "category": "User Input",
+			  "since": "1.40",
+			  "formFactors": "L",
+			  "samples": ["sap.m.sample.RangeSlider"]
+		},
+		{
 		  "id": "sap.m.SelectDialog",
 		  "name": "Select Dialog",
 		  "category": "Popup",
@@ -1744,6 +1752,11 @@
 		  "name": "Tokenizer",
 		  "description": "Tokenizer displays multiple tokens."
 		},
+		{
+			"id": "sap.m.sample.RangeSlider",
+			"name": "RangeSlider",
+			"description": "With the RangeSlider a user can specify range from a numerical interval."
+	  	},
 		{
 		  "id": "sap.m.sample.Slider",
 		  "name": "Slider",
