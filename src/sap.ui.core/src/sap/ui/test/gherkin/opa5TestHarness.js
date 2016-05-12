@@ -13,7 +13,7 @@ jQuery.sap.require("sap.ui.qunit.qunit-junit");
 sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', "sap/ui/test/opaQunit", "sap/ui/test/Opa5",
   "sap/ui/test/gherkin/GherkinTestGenerator", "sap/ui/test/gherkin/dataTableUtils",
   "sap/ui/test/gherkin/StepDefinitions", "sap/ui/qunit/qunit-coverage"],
-  function($, UI5Object, opaTest, Opa5, GherkinTestGenerator, dataTableUtils, StepDefinitions) {
+function($, UI5Object, opaTest, Opa5, GherkinTestGenerator, dataTableUtils, StepDefinitions) {
   'use strict';
 
   /**
@@ -34,9 +34,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', "sap/ui/test/opaQunit"
     /**
      * Dynamically generates Opa5 tests
      *
-     * For when generateMissingSteps is true the Gherkin step will be converted into Opa Page Object code and
-     * executed. The text will be converted to camelCase and have any non-alphanumeric character removed. Here are two
-     * pertinent examples:
+     * If a test step is missing and args.generateMissingSteps is true then the  Gherkin step will be converted into Opa
+     * Page Object code and executed. The text will be converted to camelCase and have any non-alphanumeric character
+     * removed. Here are two pertinent examples:
      *
      * (1) The simple step "Given I start my app" will be converted into the call "Given.iStartMyApp();"
      *
@@ -47,9 +47,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', "sap/ui/test/opaQunit"
      *
      * @param {object} args - the arguments to the function
      * @param {string} args.featurePath - the path to the Gherkin feature file to parse
-     * @param {function} [args.steps] - the constructor function of type sap.ui.test.gherkin.StepDefinitions.
-     * @param {boolean} [args.generateMissingSteps] - defaults to false. When true: if a Gherkin step cannot be matched to a
-     *                                                step definition then it will be assumed that the author wants to
+     * @param {function} [args.steps] - the constructor function of type sap.ui.test.gherkin.StepDefinitions. If this
+     *                                  parameter is ommitted then args.generateMissingSteps must be explicitly set
+     *                                  to true
+     * @param {boolean} [args.generateMissingSteps] - defaults to false. When true: if a Gherkin step cannot be matched
+     *                                                to a step definition then it will be assumed that the user wants to
      *                                                convert the step into an Opa Page Object call.
      * @public
      */
@@ -67,8 +69,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', "sap/ui/test/opaQunit"
         throw new Error("opa5TestHarness.test: if specified, parameter 'steps' must be a valid StepDefinitions constructor");
       }
 
-      if (!args.steps && (args.generateMissingSteps === false)) {
-        throw new Error("opa5TestHarness.test: if parameter 'generateMissingSteps' is false then parameter 'steps' must be a valid StepDefinitions constructor");
+      if (!args.steps && (args.generateMissingSteps !== true)) {
+        throw new Error("opa5TestHarness.test: if parameter 'generateMissingSteps' is not true then parameter 'steps' must be a valid StepDefinitions constructor");
       }
 
       if (args.generateMissingSteps && ($.type(args.generateMissingSteps) !== "boolean")) {
@@ -99,10 +101,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', "sap/ui/test/opaQunit"
         };
       };
 
-      // if the user does not input a Steps Definition
+      // if the user did not input a StepDefinitions constructor
       if (!args.steps) {
-        // then we assume that they want to generate test steps from Opa Page Objects
-        args.generateMissingSteps = true;
+        // then use a default StepDefinitions constructor
         args.steps = StepDefinitions;
       }
       var fnTestStepGenerator = (args.generateMissingSteps) ? fnAlternateTestStepGenerator : null;
