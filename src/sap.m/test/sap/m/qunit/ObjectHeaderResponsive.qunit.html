@@ -203,6 +203,7 @@
 					var $objectHeader = oObjectHeader.$("titlediv");
 
 					ok($objectHeader.hasClass("sapMOHRTitleDivFull"), "title occupies the whole available space");
+					equal($objectHeader.width(), oObjectHeader.$("titlenumdiv").width(), "title div width is equal to titleNumber div");
 
 					// Clean up
 					oObjectHeader.destroy();
