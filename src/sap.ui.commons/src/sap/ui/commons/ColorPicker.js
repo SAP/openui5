@@ -306,10 +306,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this.oSlider = new sap.ui.commons.Slider({
 			id: inpID,
 			max: 360,
-			value: (parseInt(this.oHueField.getValue(), 10),10),
 			smallStepWidth: 1,
 			tooltip: oRb.getText("COLORPICKER_HUE")
 		});
+
+		this.oSlider.setValue(parseInt(this.oHueField.getValue(), 10),10);
 		this.oSlider.addStyleClass("sapUiColorPicker-ColorPickerSlider");
 
 		// alpha slider
