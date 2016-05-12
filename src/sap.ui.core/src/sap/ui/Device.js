@@ -278,7 +278,7 @@ if (typeof window.sap.ui !== "object") {
 	 * Windows Phone operating system name.
 	 *
 	 * @see sap.ui.Device.os#name
-	 * @alias sap.ui.Device.os.OS#WINDOWS_PHONE
+	 * @name sap.ui.Device.os.OS#WINDOWS_PHONE
 	 * @public
 	 */
 
@@ -591,7 +591,7 @@ if (typeof window.sap.ui !== "object") {
 	 * Android stock browser name.
 	 *
 	 * @see sap.ui.Device.browser#name
-	 * @alias sap.ui.Device.browser.BROWSER#ANDROID
+	 * @name sap.ui.Device.browser.BROWSER#ANDROID
 	 * @public
 	 */
 
@@ -1497,7 +1497,7 @@ if (typeof window.sap.ui !== "object") {
 	 * <b>Note:</b> This property is mainly for Microsoft Windows 8 (and following) devices where the mouse and touch event may be supported
 	 * natively by the browser being used. This property is set to <code>true</code> only when both mouse and touch event are natively supported.
 	 *
-	 * @alias sap.ui.Device.system#combi
+	 * @name sap.ui.Device.system#combi
 	 * @type boolean
 	 * @public
 	 */

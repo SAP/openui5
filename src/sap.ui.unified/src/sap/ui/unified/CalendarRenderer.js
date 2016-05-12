@@ -57,6 +57,10 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.writeStyles();
 		}
 
+		if (oCal._getSecondaryCalendarType()) {
+			oRm.addClass("sapUiCalSecType");
+		}
+
 		if (this.addAttributes) {
 			// additional stuff by inherited controls
 			this.addAttributes(oRm, oCal);

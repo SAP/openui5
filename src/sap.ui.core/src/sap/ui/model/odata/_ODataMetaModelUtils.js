@@ -9,13 +9,13 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 
 	var oBoolFalse = { "Bool" : "false" },
 		oBoolTrue = { "Bool" : "true" },
-		// maps v2 filter-restriction value to corresponding v4 FilterExpressionType enum value
+		// maps V2 filter-restriction value to corresponding V4 FilterExpressionType enum value
 		mFilterRestrictions = {
 			"interval" : "SingleInterval",
 			"multi-value" : "MultiValue",
 			"single-value" : "SingleValue"
 		},
-		// maps v2 sap semantics annotations to a v4 annotations relative to
+		// maps V2 sap semantics annotations to a V4 annotations relative to
 		// com.sap.vocabularies.Communication.v1.
 		mSemanticsToV4AnnotationPath = {
 			// contact annotations
@@ -88,7 +88,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 				v4PropertyAnnotation : "com.sap.vocabularies.Communication.v1.IsPhoneNumber"
 			}
 		},
-		// map from v2 to v4 for NON-DEFAULT cases only
+		// map from V2 to V4 for NON-DEFAULT cases only
 		mV2ToV4 = {
 			creatable : {
 				"Org.OData.Capabilities.V1.InsertRestrictions" : { "Insertable" : oBoolFalse }
@@ -110,7 +110,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 				"Org.OData.Capabilities.V1.UpdateRestrictions" : { "Updatable" : oBoolFalse }
 			}
 		},
-		// only if v4 name is different from v2 name
+		// only if V4 name is different from V2 name
 		mV2ToV4Attribute = {
 			"city" : "locality",
 			"email" : "address",
@@ -125,7 +125,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 			"tel" : "uri",
 			"zip" : "code"
 		},
-		// map from v2 annotation to an array of an annotation term and a name in that annotation
+		// map from V2 annotation to an array of an annotation term and a name in that annotation
 		// that holds a collection of property references
 		mV2ToV4PropertyCollection = {
 			"sap:filterable" : [ "Org.OData.Capabilities.V1.FilterRestrictions",
@@ -146,13 +146,13 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 	Utils = {
 
 		/**
-		 * Adds EntitySet v4 annotation for current extension if extension value is equal to
+		 * Adds EntitySet V4 annotation for current extension if extension value is equal to
 		 * the given non-default value. Depending on bDeepCopy the annotation will be merged
 		 * with deep copy.
 		 * @param {object} o
 		 *   any object
 		 * @param {object} oExtension
-		 *   the SAP Annotation (OData Version 2.0) for which a v4 annotation needs to be added
+		 *   the SAP Annotation (OData Version 2.0) for which a V4 annotation needs to be added
 		 * @param {string} sTypeClass
 		 *   the type class of the given object; supported type classes are "Property" and
 		 *   "EntitySet"
@@ -175,13 +175,13 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		},
 
 		/**
-		 * Adds corresponding v4 annotation for v2 <code>sap:filter-restriction</code> to the given
+		 * Adds corresponding V4 annotation for V2 <code>sap:filter-restriction</code> to the given
 		 * entity set.
 		 *
 		 * @param {object} oProperty
 		 *   the property of the entity
 		 * @param {object} oEntitySet
-		 *   the entity set to which the corresponding v4 annotations needs to be added
+		 *   the entity set to which the corresponding V4 annotations needs to be added
 		 */
 		addFilterRestriction : function (oProperty, oEntitySet) {
 			var aFilterRestrictions,
@@ -212,10 +212,10 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		},
 
 		/**
-		 * Adds current property to the property collection for given v2 annotation.
+		 * Adds current property to the property collection for given V2 annotation.
 		 *
 		 * @param {string} sV2AnnotationName
-		 *   v2 annotation name (key in map mV2ToV4PropertyCollection)
+		 *   V2 annotation name (key in map mV2ToV4PropertyCollection)
 		 * @param {object} oEntitySet
 		 *   the entity set
 		 * @param {object} oProperty
@@ -302,7 +302,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 					}
 
 					// Additional annotation at the property with sap:semantics "tel" or "email";
-					// ensure not to overwrite existing v4 annotations
+					// ensure not to overwrite existing V4 annotations
 					if (oV4TypeInfo) {
 						oProperty[oV4TypeInfo.v4PropertyAnnotation] =
 							oProperty[oV4TypeInfo.v4PropertyAnnotation] || oBoolTrue;
@@ -314,7 +314,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		/**
 		 * Adds corresponding unit annotation (Org.OData.Measures.V1.Unit or
 		 * Org.OData.Measures.V1.ISOCurrency)  to the given property based on the
-		 * sap:semantics v2 annotation of the referenced unit property.
+		 * sap:semantics V2 annotation of the referenced unit property.
 		 *
 		 * @param {object} oValueProperty
 		 *   the value property for which the unit annotation needs to be determined
@@ -339,13 +339,13 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		},
 
 		/**
-		 * Adds the corresponding v4 annotation to the given object based on the given SAP
+		 * Adds the corresponding V4 annotation to the given object based on the given SAP
 		 * extension.
 		 *
 		 * @param {object} o
 		 *   any object
 		 * @param {object} oExtension
-		 *   the SAP Annotation (OData Version 2.0) for which a v4 annotation needs to be added
+		 *   the SAP Annotation (OData Version 2.0) for which a V4 annotation needs to be added
 		 * @param {string} sTypeClass
 		 *   the type class of the given object; supported type classes are "Property" and
 		 *   "EntitySet"
@@ -362,27 +362,27 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 					break;
 				case "pageable":
 				case "topable":
-					// true is the default in v4 so add annotation only in case of false
+					// true is the default in V4 so add annotation only in case of false
 					Utils.addEntitySetAnnotation(o, oExtension, sTypeClass, "false", false);
 					break;
 				case "creatable":
 				case "deletable":
 				case "updatable":
-					// true is the default in v4 so add annotation only in case of false
+					// true is the default in V4 so add annotation only in case of false
 					Utils.addEntitySetAnnotation(o, oExtension, sTypeClass, "false", true);
 					break;
 				case "deletable-path":
-					sTerm = "Org.OData.Core.V1.DeleteRestrictions";
+					sTerm = "Org.OData.Capabilities.V1.DeleteRestrictions";
 					o[sTerm] = o[sTerm] || {};
 					o[sTerm].Deletable = { "Path" : oExtension.value };
 					break;
 				case "updatable-path":
-					sTerm = "Org.OData.Core.V1.UpdateRestrictions";
+					sTerm = "Org.OData.Capabilities.V1.UpdateRestrictions";
 					o[sTerm] = o[sTerm] || {};
 					o[sTerm].Updatable = { "Path" : oExtension.value };
 					break;
 				case "requires-filter":
-					// false is the default in v4 so add annotation only in case of true
+					// false is the default in V4 so add annotation only in case of true
 					Utils.addEntitySetAnnotation(o, oExtension, sTypeClass, "true", true);
 					break;
 				case "field-control":
@@ -413,7 +413,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 					}
 					break;
 				default:
-					// no transformation for v2 annotation supported or necessary
+					// no transformation for V2 annotation supported or necessary
 			}
 		},
 
@@ -606,20 +606,22 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 			var oSchema = null,
 				aSchemas = Array.isArray(vModel)
 					? vModel
-					: (vModel.getObject("/dataServices/schema") || []);
+					: vModel.getObject("/dataServices/schema");
 
-			aSchemas.forEach(function (o) {
-				if (o.namespace === sNamespace) {
-					oSchema = o;
-					return false; // break
-				}
-			});
+			if (aSchemas) {
+				aSchemas.forEach(function (o) {
+					if (o.namespace === sNamespace) {
+						oSchema = o;
+						return false; // break
+					}
+				});
+			}
 
 			return oSchema;
 		},
 
 		/**
-		 * Compute a space-separated list of v4 annotation enumeration values for the given
+		 * Compute a space-separated list of V4 annotation enumeration values for the given
 		 * sap:semantics "tel" and "email".
 		 * E.g. for <code>sap:semantics="tel;type=fax"</code> this function returns
 		 * "com.sap.vocabularies.Communication.v1.PhoneType/fax".
@@ -633,7 +635,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * @param {object} oType
 		 *   the type
 		 * @returns {string}
-		 *   the corresponding space-separated list of v4 annotation enumeration values;
+		 *   the corresponding space-separated list of V4 annotation enumeration values;
 		 *   returns an empty string if the sap:semantics value is not supported; unsupported types
 		 *   are logged and skipped;
 		 */
@@ -699,8 +701,8 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 					Utils.addV4Annotation(o, oExtension, sTypeClass);
 				}
 			});
-			// after all SAP v2 annotations are lifted up add v4 annotations that are calculated
-			// by multiple v2 annotations or that have a different default value
+			// after all SAP V2 annotations are lifted up add V4 annotations that are calculated
+			// by multiple V2 annotations or that have a different default value
 			switch (sTypeClass) {
 				case "Property":
 					if (o["sap:updatable"] === "false") {
@@ -732,7 +734,11 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 *   meta data "JSON"
 		 */
 		merge : function (oAnnotations, oData) {
-			var aSchemas = oData.dataServices.schema || [];
+			var aSchemas = oData.dataServices.schema;
+
+			if (!aSchemas) {
+				return;
+			}
 			aSchemas.forEach(function (oSchema, i) {
 				// remove datajs artefact for inline annotations in $metadata
 				delete oSchema.annotations;
@@ -752,9 +758,9 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 						Utils.addSapSemantics(oComplexType);
 					});
 
-				// visit all entity types before visiting the entity sets to ensure that v2
+				// visit all entity types before visiting the entity sets to ensure that V2
 				// annotations are already lifted up and can be used for calculating entity
-				// set annotations which are based on v2 annotations on entity properties
+				// set annotations which are based on V2 annotations on entity properties
 				Utils.visitParents(oSchema, oAnnotations, "entityType", Utils.visitEntityType);
 
 				Utils.visitParents(oSchema, oAnnotations, "entityContainer",
@@ -771,7 +777,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 
 		/**
 		 * Visits all children inside the given array, lifts "SAPData" extensions and
-		 * inlines OData v4 annotations for each child.
+		 * inlines OData V4 annotations for each child.
 		 *
 		 * @param {object[]} aChildren
 		 *   any array of children
@@ -805,7 +811,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 				if (sTypeClass === "Property" && oChild["sap:unit"]) {
 					Utils.addUnitAnnotation(oChild, aChildren);
 				} else if (sTypeClass === "EntitySet") {
-					// calculated entity set annotations need to be added before v4
+					// calculated entity set annotations need to be added before V4
 					// annotations are merged
 					oEntityType = Utils.getObject(aSchemas, "entityType", oChild.entityType);
 					Utils.calculateEntitySetAnnotations(oChild, oEntityType);
@@ -814,7 +820,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 				if (fnCallback) {
 					fnCallback(oChild);
 				}
-				// merge v4 annotations after child annotations are processed
+				// merge V4 annotations after child annotations are processed
 				jQuery.extend(oChild, mChildAnnotations[oChild.name || oChild.role]);
 			});
 		},
@@ -843,7 +849,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * @param {object} oEntityContainer
 		 *   the entity container
 		 * @param {object} oFunctionImport
-		 *   a function import's v2 meta data object
+		 *   a function import's V2 meta data object
 		 */
 		visitParameters : function (oAnnotations, oSchema, oEntityContainer, oFunctionImport) {
 			var mAnnotations;
@@ -864,7 +870,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 
 		/**
 		 * Visits all parents (or a single parent) inside the current schema's array of given name,
-		 * lifts "SAPData" extensions, inlines OData v4 annotations, and adds <code>$path</code>
+		 * lifts "SAPData" extensions, inlines OData V4 annotations, and adds <code>$path</code>
 		 * for each parent.
 		 *
 		 * @param {object} oSchema
@@ -892,7 +898,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 				oParent.$path = oSchema.$path + "/" + sArrayName + "/" + j;
 
 				fnCallback(oParent, mChildAnnotations);
-				// merge v4 annotations after child annotations are processed
+				// merge V4 annotations after child annotations are processed
 				jQuery.extend(oParent, oAnnotations[sQualifiedName]);
 			}
 

@@ -1145,47 +1145,58 @@ sap.ui.define([
 	/**
 	 * Restore reference entries of navigation properties created in importData function
 	 * @param {object} oData entry which references should be restored
+	 * @param {object} [mVisitedEntries] map of entries which already have been visited and included
 	 * @returns {object} oData entry
 	 * @private
 	 */
-	ODataModel.prototype._restoreReferences = function(oData){
+	ODataModel.prototype._restoreReferences = function(oData, mVisitedEntries){
 		var that = this,
-		aList,
-		aResults = [];
-		if (oData.results) {
-			aList = [];
-			jQuery.each(oData.results, function(i, entry) {
-				aList.push(that._restoreReferences(entry));
-			});
-			return aList;
-		} else {
-			jQuery.each(oData, function(sPropName, oCurrentEntry) {
-				if (oCurrentEntry && oCurrentEntry["__ref"]) {
-					var oChildEntry = that._getObject("/" + oCurrentEntry["__ref"]);
-					jQuery.sap.assert(oChildEntry, "ODataModel inconsistent: " + oCurrentEntry["__ref"] + " not found!");
+		sKey,
+		oChildEntry,
+		aResults;
+
+		function getEntry(sKey) {
+			var oChildEntry = mVisitedEntries[sKey];
+			if (!oChildEntry) {
+				oChildEntry = that._getObject("/" + sKey);
+				jQuery.sap.assert(oChildEntry, "ODataModel inconsistent: " + sKey + " not found!");
+				if (oChildEntry) {
+					oChildEntry = jQuery.sap.extend(true, {}, oChildEntry);
+					mVisitedEntries[sKey] = oChildEntry;
+					// check recursively for found child entries
+					that._restoreReferences(oChildEntry, mVisitedEntries);
+				}
+			}
+			return oChildEntry;
+		}
+
+		if (!mVisitedEntries) {
+			mVisitedEntries = {};
+		}
+
+		jQuery.each(oData, function(sPropName, oCurrentEntry) {
+			if (oCurrentEntry) {
+				if (oCurrentEntry.__ref) {
+					sKey = oCurrentEntry.__ref;
+					oChildEntry = getEntry(sKey);
 					if (oChildEntry) {
-						delete oCurrentEntry["__ref"];
 						oData[sPropName] = oChildEntry;
-						// check recursively for found child entries
-						that._restoreReferences(oChildEntry);
 					}
-				} else if (oCurrentEntry && oCurrentEntry["__list"]) {
-					jQuery.each(oCurrentEntry["__list"], function(j, sEntry) {
-						var oChildEntry = that._getObject("/" + oCurrentEntry["__list"][j]);
-						jQuery.sap.assert(oChildEntry, "ODataModel inconsistent: " +  oCurrentEntry["__list"][j] + " not found!");
+					delete oCurrentEntry.__ref;
+				} else if (oCurrentEntry.__list) {
+					aResults = [];
+					jQuery.each(oCurrentEntry.__list, function(i, sKey) {
+						oChildEntry = getEntry(sKey);
 						if (oChildEntry) {
 							aResults.push(oChildEntry);
-							// check recursively for found child entries
-							that._restoreReferences(oChildEntry);
 						}
 					});
-					delete oCurrentEntry["__list"];
+					delete oCurrentEntry.__list;
 					oCurrentEntry.results = aResults;
-					aResults = [];
 				}
-			});
-			return oData;
-		}
+			}
+		});
+		return oData;
 	};
 
 	/**
@@ -1217,7 +1228,7 @@ sap.ui.define([
 	 * @param {boolean} [bForceUpdate=false] Force update of controls
 	 * @param {boolean} [bRemoveData=false] If set to true then the model data will be removed/cleared.
 	 * 					Please note that the data might not be there when calling e.g. getProperty too early before the refresh call returned.
-	 * @param {string} [sGroupId] The GroupId
+	 * @param {string} [sGroupId] The groupId. Requests belonging to the same groupId will be bundled in one batch request.
 	 *
 	 * @public
 	 */
@@ -1237,7 +1248,7 @@ sap.ui.define([
 
 	/**
 	 * @param {boolean} [bForceUpdate=false] Force update of controls
-	 * @param {string} [sGroupId] The GroupId
+	 * @param {string} [sGroupId] The groupId. Requests belonging to the same groupId will be bundled in one batch request.
 	 * @param {map} mChangedEntities map of changed entities
 	 * @param {map} mEntityTypes map of changed entityTypes
 	 * @private
@@ -2033,7 +2044,7 @@ sap.ui.define([
 			// token needs to be set directly on request headers, as request is already created
 			_readyForRequest(oRequest).then(function(sToken) {
 				// Check bTokenHandling again, as updating the token might disable token handling
-				if (that.bTokenHandling) {
+				if (that.bTokenHandling && oRequest.method !== "GET") {
 					oRequest.headers["x-csrf-token"] = sToken;
 				}
 				_submit();
@@ -2340,7 +2351,7 @@ sap.ui.define([
 	 * push request to internal request queue
 	 *
 	 * @param {map} mRequests Request queue
-	 * @param {string} sGroupId The group Id
+	 * @param {string} sGroupId The group Id. Requests belonging to the same groupId will be bundled in one batch request.
 	 * @param {string} [sChangeSetId] The changeSet Id
 	 * @param {oRequest} oRequest The request
 	 * @param {function} fnSuccess The success callback function
@@ -2363,6 +2374,7 @@ sap.ui.define([
 			if (oRequest.key && oRequestGroup.map && oRequest.key in oRequestGroup.map) {
 				var oChangeRequest = oRequestGroup.map[oRequest.key];
 				oChangeRequest.method = oRequest.method;
+				oChangeRequest.headers = oRequest.headers;
 				if (oRequest.method === "PUT") {
 					// if stored request was a MERGE before (created by setProperty) but is now sent via PUT
 					// (by submitChanges) the merge header must be removed
@@ -2460,7 +2472,7 @@ sap.ui.define([
 	 * Request queue processing
 	 *
 	 * @param {map} mRequests Request queue
-	 * @param {string} sGroupId The GroupId
+	 * @param {string} sGroupId The groupId. Requests belonging to the same groupId will be bundled in one batch request.
 	 * @param {function} fnSuccess Success callback function
 	 * @param {function} fnError Erro callback function
 	 * @returns {object|array} oRequestHandle The request handle: array if multiple request will be sent
@@ -2811,7 +2823,7 @@ sap.ui.define([
 		// remove metadata, navigation properties to reduce payload
 		if (oPayload && oPayload.__metadata) {
 			for (var n in oPayload.__metadata) {
-				if (n !== 'type' && n !== 'uri' && n !== 'etag') {
+				if (n !== 'type' && n !== 'uri' && n !== 'etag' && n !== 'content_type' && n !== 'media_src') {
 					delete oPayload.__metadata[n];
 				}
 			}
@@ -3184,8 +3196,8 @@ sap.ui.define([
 	 * 		the request was completed before continuing to work with the data.
 	 * @param {map} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
 	 * @param {map} [mParameters.headers] A map of headers for this request
-	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead: batchGroupId for this request
-	 * @param {string} [mParameters.groupId] groupId for this request
+	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead
+	 * @param {string} [mParameters.groupId] groupId for this request. Requests belonging to the same groupId will be bundled in one batch request.
 	 * @param {string} [mParameters.changeSetId] changeSetId for this request
 	 *
 	 * @return {object} an object which has an <code>abort</code> function to abort the current request.
@@ -3245,13 +3257,14 @@ sap.ui.define([
 	 * @param {object} [mParameters.context] If specified the sPath has to be relative to the path given with the context.
 	 * @param {function} [mParameters.success] a callback function which is called when the data has
 	 *		been successfully retrieved. The handler can have the
-	 *		following parameters: oData and response.
+	 *		following parameters: oData and response. The <code>oData</code> parameter contains the data of the newly created entry if it is provided by the backend.
+	 *		The <code>response</code> parameter contains information about the response of the request.
 	 * @param {function} [mParameters.error] a callback function which is called when the request failed.
 	 *		The handler can have the parameter <code>oError</code> which contains additional error information.
 	 * @param {map} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
 	 * @param {map} [mParameters.headers] A map of headers for this request
-	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead: batchGroupId for this request
-	 * @param {string} [mParameters.groupId] groupId for this request
+	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead
+	 * @param {string} [mParameters.groupId] groupId for this request. Requests belonging to the same groupId will be bundled in one batch request.
 	 * @param {string} [mParameters.changeSetId] changeSetId for this request
 	 * @return {object} an object which has an <code>abort</code> function to abort the current request.
 	 *
@@ -3313,8 +3326,8 @@ sap.ui.define([
 	 *		The handler can have the parameter: <code>oError</code> which contains additional error information.
 	 * @param {string} [mParameters.eTag] If specified, the If-Match-Header will be set to this Etag.
 	 * @param {map} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
-	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead: batchGroupId for this request
-	 * @param {string} [mParameters.groupId] groupId for this request
+	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead
+	 * @param {string} [mParameters.groupId] groupId for this request. Requests belonging to the same groupId will be bundled in one batch request.
 	 * @param {string} [mParameters.changeSetId] changeSetId for this request
 	 *
 	 * @return {object} an object which has an <code>abort</code> function to abort the current request.
@@ -3388,12 +3401,14 @@ sap.ui.define([
 	 *        the following parameters: <code>oData<code> and <code>response</code>.
 	 * @param {function} [mParameters.error] a callback function which is called when the request failed.
 	 *		The handler can have the parameter: <code>oError</code> which contains additional error information.
-	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead: batchGroupId for this request
-	 * @param {string} [mParameters.groupId] groupId for this request
+	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead
+	 * @param {string} [mParameters.groupId] groupId for this request. Requests belonging to the same groupId will be bundled in one batch request.
 	 * @param {string} [mParameters.eTag] If the functionImport changes an entity, the eTag for this entity could be passed with this parameter
 	 * @param {string} [mParameters.changeSetId] changeSetId for this request
 	 *
-	 * @return {object} oRequestHandle An object which has an <code>abort</code> function to abort the current request.
+	 * @return {object} oRequestHandle An object which has a <code>contextCreated</code> function that returns a <code>Promise</code>.
+	 *         This resolves with the created {@link sap.ui.model.Context}.
+	 *         In addition it has an <code>abort</code> function to abort the current request.
 	 *
 	 * @public
 	 *
@@ -3407,7 +3422,6 @@ sap.ui.define([
 			fnSuccess, fnError,
 			sMethod = "GET",
 			aUrlParams,
-			mInputParams = {},
 			sGroupId,
 			sChangeSetId,
 			mHeaders,
@@ -3425,8 +3439,8 @@ sap.ui.define([
 			sGroupId 		= mParameters.groupId || mParameters.batchGroupId;
 			sChangeSetId 	= mParameters.changeSetId;
 			sMethod			= mParameters.method ? mParameters.method : sMethod;
-			mUrlParams		= mParameters.urlParameters;
-			sETag				= mParameters.eTag;
+			mUrlParams		= jQuery.extend({},mParameters.urlParameters);
+			sETag			= mParameters.eTag;
 			fnSuccess		= mParameters.success;
 			fnError			= mParameters.error;
 			mHeaders		= mParameters.headers;
@@ -3467,12 +3481,9 @@ sap.ui.define([
 					oData[oParam.name] = that._createPropertyValue(oParam.type);
 					if (mUrlParams && mUrlParams[oParam.name] !== undefined) {
 						oData[oParam.name] = mUrlParams[oParam.name];
-						mInputParams[oParam.name] = ODataUtils.formatValue(mUrlParams[oParam.name], oParam.type);
-					}
-				});
-				jQuery.each(mUrlParams, function (sParameterName) {
-					if (mInputParams[sParameterName] === undefined) {
-						jQuery.sap.log.warning(that + " - Parameter '" + sParameterName + "' is not defined for function call '" + sFunctionName + "'!");
+						mUrlParams[oParam.name] = ODataUtils.formatValue(mUrlParams[oParam.name], oParam.type);
+					} else {
+						jQuery.sap.log.warning(that + " - No value for parameter '" + oParam.name + "' found!'");
 					}
 				});
 			}
@@ -3495,7 +3506,7 @@ sap.ui.define([
 			oContext = that.getContext("/" + sKey);
 			fnResolve(oContext);
 
-			aUrlParams = ODataUtils._createUrlParamsArray(mInputParams);
+			aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
 
 			sUrl = that._createRequestUrl(sFunctionName, null, aUrlParams, that.bUseBatch);
 			oRequest = that._createRequest(sUrl, sMethod, mHeaders, undefined);
@@ -3552,11 +3563,12 @@ sap.ui.define([
 	 * @param {array} [mParameters.sorters] an array of sap.ui.model.Sorter to be included in the request URL
 	 * @param {function} [mParameters.success] a callback function which is called when the data has
 	 *		been successfully retrieved. The handler can have the
-	 *		following parameters: oData and response.
+	 *		following parameters: oData and response. The <code>oData</code> parameter contains the data of the retrieved data.
+	 *		The <code>response</code> parameter contains further information about the response of the request.
 	 * @param {function} [mParameters.error] a callback function which is called when the request
 	 * 		failed. The handler can have the parameter: oError which contains additional error information.
-	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead: batchGroupId for this request
-	 * @param {string} [mParameters.groupId] groupId for this request
+	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead
+	 * @param {string} [mParameters.groupId] groupId for this request. Requests belonging to the same groupId will be bundled in one batch request.
 	 *
 	 * @return {object} an object which has an <code>abort</code> function to abort the current request.
 	 *
@@ -3793,10 +3805,14 @@ sap.ui.define([
 	 * Important: The success/error handler will only be called if batch support is enabled. If multiple batchGroups are submitted the handlers will be called for every batchGroup.
 	 *
 	 * @param {object} [mParameters] a map which contains the following parameter properties:
-	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead: defines the batchGroup that should be submitted. If not specified all deferred groups will be submitted
-	 * @param {string} [mParameters.groupId] defines the group that should be submitted. If not specified all deferred groups will be submitted
-	 * @param {function} [mParameters.success] a callback function which is called when the data has been successfully updated. The handler can have the following parameters: oData
-	 * @param {function} [mParameters.error] a callback function which is called when the request failed. The handler can have the parameter: oError which contains additional error information
+	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead
+	 * @param {string} [mParameters.groupId] defines the group that should be submitted. If not specified all deferred groups will be submitted. Requests belonging to the same groupId will be bundled in one batch request.
+	 * @param {function} [mParameters.success] a callback function which is called when the data has been successfully updated. The handler can have the following parameters: <code>oData</code>. <code>oData</code> contains the
+	 * parsed response data as a Javascript object. The batch response is in the <code>__batchResponses</code> property which may contain further <code>__changeResponses</code> in an array depending on the amount of changes
+	 * and changesets of the actual batch request which was sent to the backend.
+	 * The changeResponses contain the actual response of that changeset in the <code>response</code> property.
+	 * For each changeset there is also a <code>__changeResponse</code> property.
+	 * @param {function} [mParameters.error] a callback function which is called when the request failed. The handler can have the parameter: <code>oError</code> which contains additional error information
 	 * @param {string} [mParameters.eTag] an ETag which can be used for concurrency control. If it is specified, it will be used in an If-Match-Header in the request to the server for this entry
 	 * @return {object} an object which has an <code>abort</code> function to abort the current request or requests
 	 *
@@ -4280,8 +4296,8 @@ sap.ui.define([
 	 * @param {String} sPath Name of the path to the EntitySet
 	 * @param {map} mParameters A map of the following parameters:
 	 * @param {array|object} [mParameters.properties] An array that specifies a set of properties or the entry
-	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead: The batchGroupId
-	 * @param {string} [mParameters.groupId] The GroupId
+	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead
+	 * @param {string} [mParameters.groupId] The groupId. Requests belonging to the same groupId will be bundled in one batch request.
 	 * @param {string} [mParameters.changeSetId] The changeSetId
 	 * @param {sap.ui.model.Context} [mParameters.context] The binding context
 	 * @param {function} [mParameters.success] The success callback function
@@ -4599,7 +4615,7 @@ sap.ui.define([
 	 * via a submitChanges call.
 	 *
 	 * @param {array} aGroupIds Array of batchGroupIds that should be set as deferred
-	 * @deprecated Since 1.32 use
+	 * @deprecated Since 1.32 use setDeferredGroups instead
 	 * @public
 	 */
 	ODataModel.prototype.setDeferredBatchGroups = function(aGroupIds) {
@@ -4625,7 +4641,7 @@ sap.ui.define([
 	 * Returns the array of batchGroupIds that are set as deferred
 	 *
 	 * @returns {array} aGroupIds The array of deferred batchGroupIds
-	 * @deprecated Since 1.32 use
+	 * @deprecated Since 1.32 use getDeferredGroups instead
 	 * @public
 	 */
 	ODataModel.prototype.getDeferredBatchGroups = function() {
@@ -4662,7 +4678,7 @@ sap.ui.define([
 	 * bacthGroupId: Defines the bacthGroup for changes of the defined EntityTypeName
 	 * changeSetId: Defines a changeSetId wich bundles the changes for the EntityType.
 	 * single: Defines if every change will get an own changeSet (true)
-	 * @deprecated Since 1.32 use
+	 * @deprecated Since 1.32 use setChangesGroups instead
 	 * @public
 	 */
 	ODataModel.prototype.setChangeBatchGroups = function(mGroups) {
@@ -4673,7 +4689,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Definition of batchGroups per EntityType for "TwoWay" changes
+	 * Definition of groups per EntityType for "TwoWay" changes
 	 *
 	 * @param {map} mGroups A map containing the definition of bacthGroups for TwoWay changes. The Map has the
 	 * following format:
@@ -4696,6 +4712,7 @@ sap.ui.define([
 	/**
 	 * Returns the definition of batchGroups per EntityType for TwoWay changes
 	 * @returns {map} mChangeBatchGroups Definition of bactchGRoups for "TwoWay" changes
+	 * @deprecated Since 1.36 use getChangeGroups instead
 	 * @public
 	 */
 	ODataModel.prototype.getChangeBatchGroups = function() {
@@ -4757,9 +4774,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns an instance of an OData meta model which offers a unified access to both OData v2
-	 * meta data and v4 annotations. It uses the existing {@link sap.ui.model.odata.ODataMetadata}
-	 * as a foundation and merges v4 annotations from the existing
+	 * Returns an instance of an OData meta model which offers a unified access to both OData V2
+	 * meta data and V4 annotations. It uses the existing {@link sap.ui.model.odata.ODataMetadata}
+	 * as a foundation and merges V4 annotations from the existing
 	 * {@link sap.ui.model.odata.v2.ODataAnnotations} directly into the corresponding model element.
 	 *
 	 * <b>BEWARE:</b> Access to this OData meta model will fail before the promise returned by

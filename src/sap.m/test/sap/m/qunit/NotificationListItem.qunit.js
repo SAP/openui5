@@ -571,12 +571,102 @@
 
 		var headerClassList = this.NotificationListItem.getDomRef().querySelector('.sapMNLI-Header').classList;
 		var textClassList = this.NotificationListItem.getDomRef().querySelector('.sapMNLI-TextWrapper').classList;
-		//debugger;
 
 		// assert
 		assert.strictEqual(fnEventSpy.callCount, 1, 'The _registerResize() method should be called.');
 		assert.strictEqual(headerClassList.contains('sapMNLI-TitleWrapper--is-expanded'), false, 'The title should be truncated.');
 		assert.strictEqual(textClassList.contains('sapMNLI-TextWrapper--is-expanded'), false, 'The text should be truncated.');
+	});
+
+	QUnit.test('If the hideShowMoreButton is set to true no button the "Show More" button should be hidden', function(assert) {
+		// arrange
+		this.NotificationListItem.setTitle('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi id lorem at ' +
+			'magna laoreet lobortis quis id tortor. Cras in tellus a nibh cursus porttitor et vel purus. Nulla neque ' +
+			'lacus, eleifend sed quam eget, facilisis luctus nulla. Vestibulum ut mollis sem, ac sollicitudin massa. ' +
+			'Mauris vehicula posuere tortor ac vulputate.');
+
+		this.NotificationListItem.setDescription('Donec felis sem, tincidunt vitae gravida eget, egestas sit amet dolor. ' +
+			'Duis mauris erat, eleifend sit amet dapibus vel, cursus quis ante. Pellentesque erat dui, aliquet id ' +
+			'fringilla eget, aliquam at odio. Interdum et malesuada fames ac ante ipsum primis in faucibus. ' +
+			'Donec tincidunt semper mattis. Nunc id convallis ex. Sed bibendum volutpat urna, vitae eleifend nisi ' +
+			'maximus id. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. ' +
+			'Nunc suscipit nulla ligula, ut faucibus ex pellentesque vel. Suspendisse id aliquet mauris. ');
+
+		this.NotificationListItem.setAuthorPicture('sap-icon://group');
+
+		sap.ui.getCore().applyChanges();
+
+		var fnEventSpy = sinon.spy(this.NotificationListItem, '_showHideTruncateButton');
+		this.NotificationListItem._deregisterResize();
+
+		// arrange
+		this.list.setWidth('50%');
+		sap.ui.getCore().applyChanges();
+		/** @type {DOMTokenList[]}
+         */
+		var buttonClassList = this.NotificationListItem.getDomRef('expandCollapseButton').classList;
+
+		// assert
+		assert.strictEqual(fnEventSpy.callCount, 1, 'The _showHideTruncateButton() method should be called.');
+		assert.strictEqual(buttonClassList.contains('sapMNLI-CollapseButtonHide'), false, 'The "Show More" button should be shown by default.');
+
+		// arrange
+		this.NotificationListItem.setHideShowMoreButton(true);
+		sap.ui.getCore().applyChanges();
+		buttonClassList = this.NotificationListItem.getDomRef('expandCollapseButton').classList;
+
+		// assert
+		assert.strictEqual(fnEventSpy.callCount, 2, 'The _showHideTruncateButton() method should be called again.');
+		assert.strictEqual(buttonClassList.contains('sapMNLI-CollapseButtonHide'), true, 'The "Show More" button should be hidden.');
+	});
+
+	QUnit.test('Notifications on L size (bigger than 640px) should position footer differently', function(assert) {
+	    // arrange
+		var lSizeClass = 'sapMNLI-LSize';
+
+	    // act
+		this.list.setWidth('648px'); // 8px over the threshold go for margins
+		sap.ui.getCore().applyChanges();
+		this.NotificationListItem._resizeNotification(); // Manually triggering resizing
+
+	    // assert
+	    assert.strictEqual(this.NotificationListItem.getDomRef().classList.contains(lSizeClass), true, 'NotificationListItem should have class "sapMNLI-LSize"');
+
+		// act
+		this.list.setWidth('340px');
+		sap.ui.getCore().applyChanges();
+		this.NotificationListItem._resizeNotification();
+
+		// assert
+		assert.strictEqual(this.NotificationListItem.getDomRef().classList.contains(lSizeClass), false, 'NotificationListItem should no longer have class "sapMNLI-LSize"');
+	});
+
+	QUnit.test('Test if _registerResize is called', function(assert) {
+		// arrange
+		this.NotificationListItem.setTitle('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi id lorem at ' +
+		'magna laoreet lobortis quis id tortor. Cras in tellus a nibh cursus porttitor et vel purus. Nulla neque ' +
+		'lacus, eleifend sed quam eget, facilisis luctus nulla. Vestibulum ut mollis sem, ac sollicitudin massa. ' +
+		'Mauris vehicula posuere tortor ac vulputate.');
+
+		this.NotificationListItem.setDescription('Donec felis sem, tincidunt vitae gravida eget, egestas sit amet dolor. ' +
+		'Duis mauris erat, eleifend sit amet dapibus vel, cursus quis ante. Pellentesque erat dui, aliquet id ' +
+		'fringilla eget, aliquam at odio. Interdum et malesuada fames ac ante ipsum primis in faucibus. ' +
+		'Donec tincidunt semper mattis. Nunc id convallis ex. Sed bibendum volutpat urna, vitae eleifend nisi ' +
+		'maximus id. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. ' +
+		'Nunc suscipit nulla ligula, ut faucibus ex pellentesque vel. Suspendisse id aliquet mauris. ');
+
+		this.NotificationListItem.setAuthorPicture('sap-icon://group');
+
+		sap.ui.getCore().applyChanges();
+
+		var fnEventSpy = sinon.spy(this.NotificationListItem, '_registerResize');
+
+		// arrange
+		this.list.setWidth('50%');
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(fnEventSpy.callCount, 1, 'The _registerResize() method should be called on resize.');
 	});
 
 	//================================================================================

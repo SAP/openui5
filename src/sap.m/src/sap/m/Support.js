@@ -158,7 +158,7 @@ sap.ui.define(['jquery.sap.global'],
 				});
 
 				line(html, true, true, "Loaded Modules", function (buffer) {
-					buffer.push("<div class='sapUiSupportDiv sapUiSelectable' id='" + buildControlId(controlIDs.dvLoadedModules) + "' />");
+					buffer.push("<div class='sapUiSupportDiv sapUiSelectable' id='" + buildControlId(controlIDs.dvLoadedModules) + "'></div>");
 				});
 
 				html.push("</tbody></table>");

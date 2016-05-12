@@ -50,7 +50,7 @@
 	border: none;
 }
 /* focus in IE (outline-offset is ignored in IE) */
-[data-sap-ui-browser^="ie"] .sapMList .sapMLIB.sapMALI:focus .sapMLIBContent {
+html[data-sap-ui-browser^="ie"] .sapMList .sapMLIB.sapMALI:focus .sapMLIBContent {
 	outline: none;
 	border-width: 0.125rem;
 	border-style: dotted;
@@ -58,7 +58,7 @@
 }
 
 /* hover */
-.sap-desktop .sapMList .sapMLIB.sapMALI:hover .sapMLIBContent {
+html.sap-desktop .sapMList .sapMLIB.sapMALI:hover .sapMLIBContent {
 	background: @sapHCHighlightBG;
 }
 

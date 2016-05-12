@@ -95,6 +95,24 @@
 					oObjectHeader.destroy();
 				});
 
+				test("Title text div is not rendered when there is no text for the title", function () {
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						title: ""
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					// Assert
+					var $sTitle = oObjectHeader.$("txt");
+					ok(!$sTitle.attr("href"), "No title text div is rendered");
+
+					// Clean up
+					oObjectHeader.destroy();
+				});
+
 				test("Icon should be rendered", function () {
 					// Arrange
 					var oObjectHeader = createObjectHeader({
@@ -165,6 +183,26 @@
 					var $objectHeader = oObjectHeader.$("titlediv");
 
 					ok(!$objectHeader.hasClass("sapMOHRTitleIcon"), "Object doesn't have class \"sapMOHRTitleIcon\".");
+
+					// Clean up
+					oObjectHeader.destroy();
+				});
+
+				test("Title occupies the whole available space when no number", function() {
+					// arrange
+					var oObjectHeader = new sap.m.ObjectHeader({
+						title: "Full title test",
+						responsive: true
+					});
+	
+					// system under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+	
+					// Assert
+					var $objectHeader = oObjectHeader.$("titlediv");
+
+					ok($objectHeader.hasClass("sapMOHRTitleDivFull"), "title occupies the whole available space");
 
 					// Clean up
 					oObjectHeader.destroy();
@@ -275,7 +313,26 @@
 
 					// Assert
 					var $sTitle = oObjectHeader.$("txt");
-					equal($sTitle.attr("href"), "#", "Title attribute href is not a link.");
+					equal($sTitle.attr("href"), "javascript:void(0);", "Title attribute href is not a link.");
+
+					// Clean up
+					oObjectHeader.destroy();
+				});
+
+				test("titleActive is set to true but no Title is provided", function () {
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						title: "",
+						titleActive: true
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					// Assert
+					var $objectHeader = oObjectHeader.$("title");
+					ok(!$objectHeader.hasClass("sapMOHRTitleActive"), "Title div doesn't have the active class \"sapMOHRTitleActive\".");
 
 					// Clean up
 					oObjectHeader.destroy();
@@ -326,6 +383,22 @@
 					qutils.triggerEvent("tap", oObjectHeader.$("txt").children(0));
 					equal(domRef.id, oObjectHeader.$("txt").attr("id"), "When clicking inner span element of the \"a\" element event should return \"a\" element id as source");
 					domRef = null;
+
+					// Clean up
+					oObjectHeader.destroy();
+				});
+
+				test("Active title getFocusDomRef", function() {
+					var oObjectHeader = createObjectHeader({
+						title: "OH title",
+						titleActive: true
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					equal(oObjectHeader.getFocusDomRef().attr("id"), oObjectHeader.$("txt").attr("id"), "Focus domRef is correct");
 
 					// Clean up
 					oObjectHeader.destroy();
@@ -966,6 +1039,72 @@
 					var $sImg = oObjectHeader.$("img");
 					ok($sImg.attr("aria-label"), "image has attribute aria-label");
 				});
+
+				test("Title has level H1", function(){
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						title: "OH title"
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					// Assert
+					var $sTitle = oObjectHeader.$("title");
+					ok($sTitle.find( "h1" ), "Title has the default titleLevel H1");
+				});
+
+				test("Title has level H3", function(){
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						title: "OH title",
+						titleLevel: sap.ui.core.TitleLevel.H3
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					// Assert
+					var $sTitle = oObjectHeader.$("title");
+					ok($sTitle.find( "h3" ), "Title has titleLevel H13");
+				});
+
+				test("Title level is set correctly", function(){
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						title: "OH title"
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					oObjectHeader.setTitleLevel("H4");
+					oCore.applyChanges();
+
+					// Assert
+					var $sTitle = oObjectHeader.$("title");
+					ok($sTitle.find( "h4" ), "Title has titleLevel H4");
+				});
+
+				test("When set to Auto title has level H1", function(){
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						title: "OH title",
+						titleLevel: sap.ui.core.TitleLevel.Auto
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					// Assert
+					var $sTitle = oObjectHeader.$("title");
+					ok($sTitle.find( "h1" ), "Title has titleLevel H1");
+				});
+
 
 		</script>
 

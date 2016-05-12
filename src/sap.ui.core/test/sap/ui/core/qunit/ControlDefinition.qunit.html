@@ -229,7 +229,7 @@
 			equal(associations.assi.type, "sap.ui.commons.Button", "the 'assi' association should be of type Button");
 
 			var events = md.getAllEvents();
-			equal(keys(events).length, 6, "there should be 6 public events");
+			equal(keys(events).length, 7, "there should be 7 public events");
 			ok(events.somethingHappened, "there should be a 'somethingHappened' event");
 		});
 
@@ -509,7 +509,7 @@
 			equal(associations.assi.multiple, false, "'assi' should have cardinality 'single'");
 
 			var events = md.getAllEvents();
-			equal(keys(events).length, 7, "there should be 7 public events");
+			equal(keys(events).length, 8, "there should be 8 public events");
 			equal(typeof events.somethingHappened, "object", "there should be a 'somethingHappened' event info object");
 			equal(events.somethingHappened.name, "somethingHappened", "'somethingHappened' should have name 'somethingHappened'");
 			equal(events.somethingHappened.allowPreventDefault, false, "'somethingHappened' should not allow to preventDefault");

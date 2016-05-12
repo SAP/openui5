@@ -18,11 +18,10 @@ function runODataMessagesTests() {
 	var oInput2 = new sap.m.Input({value:"{xml>/Products(1)/ProductName}"});
 	oInput2.placeAt("content");
 
-
-
 	var sServiceURI = "fakeservice://testdata/odata/northwind/";
 	// var sServiceURI = "/testsuite/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/";
 	var mModelOptions = {
+		defaultBindingMode: sap.ui.model.BindingMode.TwoWay,
 		async: true,
 		useBatch: false
 	};
@@ -138,7 +137,6 @@ function runODataMessagesTests() {
 				url: "/EditProduct",
 				parameters: {
 					"ProductUUID": "00000000-0000-0000-0000-000000000001",
-					"foo": "bar"
 				},
 
 				numMessages: 1,
@@ -150,7 +148,6 @@ function runODataMessagesTests() {
 				url: "/EditProduct",
 				parameters: {
 					"ProductUUID": "00000000-0000-0000-0000-000000000002",
-					"foo": "bar"
 				},
 
 				numMessages: 2,
@@ -162,7 +159,6 @@ function runODataMessagesTests() {
 				url: "/EditProduct",
 				parameters: {
 					"ProductUUID": "30000000-0000-0000-0000-000000000003",
-					"foo": "bar"
 				},
 
 				numMessages: 3,
@@ -644,7 +640,6 @@ function runODataMessagesTests() {
 				url: "/ActionForFunction",
 				parameters: {
 					"SupplierUUID": "00000000-0000-0000-0000-000000000001",
-					"foo": "bar"
 				},
 
 				numMessages: 1,
@@ -656,7 +651,6 @@ function runODataMessagesTests() {
 				url: "/ActionForFunction",
 				parameters: {
 					"SupplierUUID": "00000000-0000-0000-0000-000000000002",
-					"foo": "bar"
 				},
 
 				numMessages: 2,
@@ -668,7 +662,6 @@ function runODataMessagesTests() {
 				url: "/ActionForFunction",
 				parameters: {
 					"SupplierUUID": "00000000-0000-0000-0000-000000000002",
-					"foo": "bar"
 				},
 
 				numMessages: 2,
@@ -980,4 +973,85 @@ function runODataMessagesTests() {
 
 	asyncTest("Messages with 'invalid' targets",  fnTestFunctionImportWithInvalidTarget);
 
+	var fnTestRemoveMessagesWithBinding = function() {
+		expect(11);
+
+		var oInput3 = new sap.m.Input({
+			value: {
+				path: "/Products(1)/ProductName",
+				type: new sap.ui.model.type.String(null, {
+					maxLength: 3
+				})
+			}
+		});
+
+		var wait = function() {
+			return new Promise(function(resolve) {
+				oInput3.getBinding("value").attachAggregatedDataStateChange(resolve);
+			});
+		};
+
+		var read = function(sPath) {
+			return new Promise(function(resolve) {
+				oModel.read(sPath, { success: resolve });
+			});
+		}
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
+		sap.ui.getCore().setModel(oModel);
+
+		oInput3.placeAt("content");
+		sap.ui.getCore().getMessageManager().registerObject(oInput3, true);
+
+		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+
+		equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
+
+		read("/Products(1)").then(function() {
+			oInput3.setValue("123");
+
+			return wait();
+		}).then(function() {
+			equal(oMessageModel.getProperty("/").length, 2, "Two messages from the OData service with a correct value set");
+			equal(oInput3.getBinding("value").getDataState().getControlMessages().length, 0, "No validation errors");
+
+			oInput3.setValue("1234");
+
+			return wait();
+		}).then(function() {
+			equal(oMessageModel.getProperty("/").length, 3, "Two messages from the OData service and one from validation");
+			equal(oInput3.getBinding("value").getDataState().getControlMessages().length, 1, "One validation error");
+
+			oInput3.bindProperty("value",  {
+				path: "ProductName",
+				type: new sap.ui.model.type.String(null, {
+					maxLength: 3
+				})
+			});
+
+		}).then(function() {
+			equal(oMessageModel.getProperty("/").length, 2, "Two messages from the OData service after rebinding");
+			equal(oInput3.getBinding("value").getDataState().getControlMessages().length, 0, "No validation errors");
+
+			oInput3.setValue("1234");
+
+			return wait();
+		}).then(function() {
+			equal(oMessageModel.getProperty("/").length, 3, "Two messages from the OData service and one from validation");
+			equal(oInput3.getBinding("value").getDataState().getControlMessages().length, 1, "One validation error");
+
+			oInput3.setBindingContext(oModel.createBindingContext("/Products(1)"))
+
+			return wait();
+		}).then(function() {
+			equal(oMessageModel.getProperty("/").length, 2, "Two messages from the OData service after changing the binding context");
+			equal(oInput3.getBinding("value").getDataState().getControlMessages().length, 0, "No validation errors");
+
+			oInput3.destroy();
+			oModel.destroy();
+			start();
+		});
+	};
+
+	asyncTest("Delete control messages when the binding is destroyed and on rebinding",  fnTestRemoveMessagesWithBinding);
 }

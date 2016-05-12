@@ -3,8 +3,10 @@
  */
 
 // Provides control sap.t.SideNavigation.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', 'sap/ui/core/Icon', './NavigationList'],
-    function (jQuery, library, Control, ResizeHandler, Icon) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler',
+        'sap/ui/core/Icon', 'sap/ui/core/delegate/ScrollEnablement'],
+    function (jQuery, library, Control, ResizeHandler,
+              Icon, ScrollEnablement) {
         'use strict';
 
         /**
@@ -79,6 +81,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
         });
 
         SideNavigation.prototype.init = function () {
+
+            this._scroller = new ScrollEnablement(this, this.getId() + "-Flexible-Content", {
+                horizontal: false,
+                vertical: true
+            });
+
             // Define group for F6 handling
             this.data('sap-ui-fastnavgroup', 'true', true);
         };
@@ -91,29 +99,92 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
             return sap.ui.base.ManagedObject.prototype.setAggregation.apply(this, arguments);
         };
 
+        /**
+         * Sets if the control is in expanded or collapsed mode.
+         */
         SideNavigation.prototype.setExpanded = function (isExpanded) {
 
             if (this.getExpanded() === isExpanded) {
                 return this;
             }
 
-            if (this.getAggregation('item')) {
-                this.getAggregation('item').setExpanded(isExpanded);
-            }
-
-            if (this.getAggregation('fixedItem')) {
-                this.getAggregation('fixedItem').setExpanded(isExpanded);
-            }
-
-            if (this.getDomRef()) {
-                this.getDomRef().classList.toggle('sapTntSideNavigationNotExpanded');
-            }
-
             this.setProperty('expanded', isExpanded, true);
 
-            this._toggleArrows();
+            if (!this.getDomRef()) {
+                return this;
+            }
+
+            var that = this,
+                $this = this.$(),
+                width;
+
+            if (that._hasActiveAnimation) {
+                that._finishAnimation(!isExpanded);
+                $this.stop();
+            }
+
+            if (isExpanded) {
+                that.$().toggleClass('sapTntSideNavigationNotExpanded', !isExpanded);
+
+                if (that.getAggregation('item')) {
+                    that.getAggregation('item').setExpanded(isExpanded);
+                }
+
+                if (that.getAggregation('fixedItem')) {
+                    that.getAggregation('fixedItem').setExpanded(isExpanded);
+                }
+            }
+
+            that._hasActiveAnimation = true;
+
+            var isCompact = $this.parents('.sapUiSizeCompact').length > 0;
+
+            if (isCompact) {
+                width = isExpanded ? '15rem' : '2rem';
+            } else {
+                width = isExpanded ? '15rem' : '3rem';
+            }
+
+            $this.animate({
+                    width: width
+                },
+                {
+                    duration: 300,
+                    complete: function () {
+                        var isExpanded = that.getExpanded();
+                        that._finishAnimation(isExpanded);
+                    }
+                });
 
             return this;
+        };
+
+        /**
+         * @private
+         */
+        SideNavigation.prototype._finishAnimation = function (isExpanded) {
+            if (!this._hasActiveAnimation || !this.getDomRef()) {
+                return;
+            }
+
+            this.$().toggleClass('sapTntSideNavigationNotExpandedWidth', !isExpanded);
+
+            if (!isExpanded) {
+                this.$().toggleClass('sapTntSideNavigationNotExpanded', !isExpanded);
+
+                if (this.getAggregation('item')) {
+                    this.getAggregation('item').setExpanded(isExpanded);
+                }
+
+                if (this.getAggregation('fixedItem')) {
+                    this.getAggregation('fixedItem').setExpanded(isExpanded);
+                }
+            }
+
+            this.$().css('width', '');
+            this._hasActiveAnimation = false;
+
+            this._toggleArrows();
         };
 
         /**
@@ -135,6 +206,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
          * @private
          */
         SideNavigation.prototype.exit = function () {
+
+            if (this._scroller) {
+                this._scroller.destroy();
+                this._scroller = null;
+            }
+
             this._deregisterControl();
         };
 
@@ -169,15 +246,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
                 ResizeHandler.deregister(this._ResizeHandler);
                 this._ResizeHandler = null;
             }
-        };
-
-        /**
-         * @private
-         * @param {Object} event
-         */
-        SideNavigation.prototype.ontouchmove = function (event) {
-            // mark the event for components that needs to know if the event was handled
-            event.setMarked();
         };
 
         /**
@@ -237,6 +305,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
             var scrollContainerWrapper = this.$('Flexible')[0];
             var scrollContainerContent = this.$('Flexible-Content')[0];
             var isAsideExpanded = this.getExpanded();
+
+            if (this._hasActiveAnimation) {
+                domRef.querySelector('.sapTntSideNavigationScrollIconUp').style.display = 'none';
+                domRef.querySelector('.sapTntSideNavigationScrollIconDown').style.display = 'none';
+                return;
+            }
 
             if ((scrollContainerContent.offsetHeight > scrollContainerWrapper.offsetHeight) && !isAsideExpanded) {
                 domRef.querySelector('.sapTntSideNavigationScrollIconUp').style.display = 'block';

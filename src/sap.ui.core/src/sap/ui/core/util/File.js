@@ -82,12 +82,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 
 						$link.remove();
 					} else {
-						// remove utf-8 byte-order-mark (BOM) again to prevent an exception when using btoa
-						if (sData && sCharset === 'utf-8' && sFileExtension === 'csv') {
-							sData = sData.substr(1);
-						}
+						// Make sure to encode the data to be used in data-uri
+						sData = encodeURI(sData);
+
 						// Safari (user has to save the file manually)
-						var oWindow = window.open(sType + ";base64," + window.btoa(sData));
+						var oWindow = window.open(sType + ";" + sData);
 						if (!oWindow) {
 							throw new Error("Could not download file. A popup blocker might be active.");
 						}

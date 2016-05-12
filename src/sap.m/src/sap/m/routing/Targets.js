@@ -244,7 +244,7 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 		 * So a parent will always be created before the target referencing it.
 		 *
 		 *
-		 * @param {integer} [oOptions.targets.anyName.viewLevel]
+		 * @param {int} [oOptions.targets.anyName.viewLevel]
 		 * If you are having an application that has a logical order of views (eg: a create account process, first provide user data, then review and confirm them).
 		 * You always want to always show a backwards transition if a navigation from the confirm to the userData page takes place.
 		 * Therefore you may use the viewLevel. The viewLevel has to be an integer. The user data page should have a lower number than the confirm page.
@@ -361,6 +361,25 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 
 			_constructTarget : function (oOptions, oParent) {
 				return new Target(oOptions, this._oViews, oParent, this._oTargetHandler);
+			},
+
+			/**
+			 * Traverse up from the given target through the parent chain to find out the first target with a defined view level.
+			 * @param {sap.m.routing.Target} oTarget the target from which the traverse starts to find the first defined view level
+			 * @return {number} The view level
+			 * @private
+			 */
+			_getViewLevel : function (oTarget) {
+				var iViewLevel;
+				do {
+					iViewLevel = oTarget._oOptions.viewLevel;
+					if (iViewLevel !== undefined) {
+						return iViewLevel;
+					}
+					oTarget = oTarget._oParent;
+				} while (oTarget);
+
+				return iViewLevel;
 			}
 		});
 

@@ -1,0 +1,94 @@
+<mvc:View controllerName="sap.m.sample.MenuButton.MB"
+          height="100%"
+          xmlns:mvc="sap.ui.core.mvc"
+          xmlns="sap.m">
+
+    <VBox class="sapUiSmallMargin">
+        <Label text = "With a complex menu"/>
+        <MenuButton icon="sap-icon://simulate" text="Calculator" buttonMode="Split" useDefaultActionOnly="true">
+            <menu>
+                <Menu itemSelected="onMenuAction">
+                    <items>
+                        <MenuItem text="basic" icon="sap-icon://chalkboard">
+                            <items>
+                                <MenuItem text="add" icon="sap-icon://add" />
+                                <MenuItem text="subtract" icon="sap-icon://less" />
+                                <MenuItem text="multiply" icon="sap-icon://decline" />
+                            </items>
+                        </MenuItem>
+                        <MenuItem text="complex" icon="sap-icon://display">
+                            <items>
+                                <MenuItem text="square" icon="sap-icon://status-completed" />
+                            </items>
+                        </MenuItem>
+                    </items>
+                </Menu>
+            </menu>
+        </MenuButton>
+
+        <Label text = "Regular mode button"/>
+        <MenuButton text="File" icon="sap-icon://open-folder">
+            <menu>
+                <Menu itemSelected="onMenuAction">
+                    <items>
+                        <MenuItem text="Edit" icon="sap-icon://edit" />
+                        <MenuItem text="Save" icon="sap-icon://save" />
+                        <MenuItem text="Open" icon="sap-icon://open-folder" />
+                    </items>
+                </Menu>
+            </menu>
+        </MenuButton>
+
+        <Label text = "Split mode button with associated last action"/>
+        <MenuButton text="File Menu" buttonMode="Split" defaultAction="onDefaultAction">
+            <menu>
+                <Menu itemSelected="onMenuAction">
+                    <items>
+                        <MenuItem text="Edit" icon="sap-icon://edit" />
+                        <MenuItem text="Save" icon="sap-icon://save" />
+                        <MenuItem text="Open" icon="sap-icon://open-folder" />
+                    </items>
+                </Menu>
+            </menu>
+        </MenuButton>
+
+        <Label text = "Split mode button with associated last action with initial icon"/>
+        <MenuButton text="File Menu" buttonMode="Split" defaultAction="onDefaultAction" icon="sap-icon://nurse">
+            <menu>
+                <Menu itemSelected="onMenuAction">
+                    <items>
+                        <MenuItem text="Edit" icon="sap-icon://edit" />
+                        <MenuItem text="Save" icon="sap-icon://save" />
+                        <MenuItem text="Open" icon="sap-icon://open-folder" />
+                    </items>
+                </Menu>
+            </menu>
+        </MenuButton>
+
+        <Label text = "Split mode button with default action only"/>
+        <MenuButton text="File Menu" buttonMode="Split" defaultAction="onDefaultAction" useDefaultActionOnly="true">
+            <menu>
+                <Menu itemSelected="onMenuAction">
+                    <items>
+                        <MenuItem text="Edit" icon="sap-icon://edit" />
+                        <MenuItem text="Save" icon="sap-icon://save" />
+                        <MenuItem text="Open" icon="sap-icon://open-folder" />
+                    </items>
+                </Menu>
+            </menu>
+        </MenuButton>
+
+        <Label text = "Split mode with type Accept and constant default action"/>
+        <MenuButton icon="sap-icon://accept" text="Accept" buttonMode="Split" type="Accept" defaultAction="onDefaultActionAccept" useDefaultActionOnly="true">
+            <menu>
+                <Menu itemSelected="onMenuAction">
+                    <items>
+                        <MenuItem text="Send the response now" icon="sap-icon://response" />
+                        <MenuItem text="Edit the response before sending" icon="sap-icon://edit-outside" />
+                        <MenuItem text="Do not send a response" icon="sap-icon://action" />
+                    </items>
+                </Menu>
+            </menu>
+        </MenuButton>
+    </VBox>
+</mvc:View>

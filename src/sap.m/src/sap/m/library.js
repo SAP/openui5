@@ -45,6 +45,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.FlexJustifyContent",
 			"sap.m.FlexRendertype",
 			"sap.m.FrameType",
+			"sap.m.GenericTileMode",
 			"sap.m.HeaderLevel",
 			"sap.m.IBarHTMLTag",
 			"sap.m.IconTabFilterDesign",
@@ -54,10 +55,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.InputType",
 			"sap.m.LabelDesign",
 			"sap.m.ListHeaderDesign",
+			"sap.m.ListKeyboardMode",
 			"sap.m.ListMode",
 			"sap.m.ListSeparators",
 			"sap.m.ListType",
 			"sap.m.LoadState",
+			"sap.m.MenuButtonMode",
 			"sap.m.OverflowToolbarPriority",
 			"sap.m.P13nPanelType",
 			"sap.m.PageBackgroundDesign",
@@ -66,6 +69,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.QuickViewGroupElementType",
 			"sap.m.RatingIndicatorVisualMode",
 			"sap.m.ScreenSize",
+			"sap.m.SelectListKeyboardNavigationMode",
 			"sap.m.SelectType",
 			"sap.m.SplitAppMode",
 			"sap.m.StandardTileType",
@@ -77,6 +81,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		interfaces: [
 			"sap.m.IBar",
 			"sap.m.IconTab",
+			"sap.m.ISnappable",
 			"sap.m.semantic.IGroup",
 			"sap.m.semantic.IFilter",
 			"sap.m.semantic.ISort",
@@ -88,6 +93,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.ActionSheet",
 			"sap.m.App",
 			"sap.m.Bar",
+			"sap.m.DynamicPage",
+			"sap.m.DynamicPageHeader",
+			"sap.m.DynamicPageTitle",
 			"sap.m.BusyDialog",
 			"sap.m.BusyIndicator",
 			"sap.m.Button",
@@ -114,6 +122,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.FeedInput",
 			"sap.m.FeedListItem",
 			"sap.m.FlexBox",
+			"sap.m.FormattedText",
+			"sap.m.FlexibleColumnLayout",
 			"sap.m.GenericTile",
 			"sap.m.GroupHeaderListItem",
 			"sap.m.GrowingList",
@@ -121,6 +131,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.IconTabBar",
 			"sap.m.IconTabHeader",
 			"sap.m.Image",
+			"sap.m.ImageContent",
 			"sap.m.Input",
 			"sap.m.InputBase",
 			"sap.m.InputListItem",
@@ -130,6 +141,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.ListBase",
 			"sap.m.ListItemBase",
 			"sap.m.MaskInput",
+			"sap.m.Menu",
+			"sap.m.MenuButton",
 			"sap.m.MessagePage",
 			"sap.m.MessagePopover",
 			"sap.m.MessageStrip",
@@ -145,6 +158,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.ObjectHeader",
 			"sap.m.ObjectIdentifier",
 			"sap.m.ObjectListItem",
+			"sap.m.ObjectMarker",
 			"sap.m.ObjectNumber",
 			"sap.m.ObjectStatus",
 			"sap.m.OverflowToolbar",
@@ -171,6 +185,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.QuickViewGroupElement",
 			"sap.m.RadioButton",
 			"sap.m.RadioButtonGroup",
+			"sap.m.RangeSlider",
 			"sap.m.RatingIndicator",
 			"sap.m.ResponsivePopover",
 			"sap.m.ScrollContainer",
@@ -182,6 +197,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.Shell",
 			"sap.m.Slider",
 			"sap.m.SlideTile",
+			"sap.m.StepInput",
 			"sap.m.SplitApp",
 			"sap.m.SplitContainer",
 			"sap.m.StandardListItem",
@@ -211,6 +227,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.UploadCollectionToolbarPlaceholder",
 			"sap.m.VBox",
 			"sap.m.ViewSettingsDialog",
+			"sap.m.ViewSettingsPopover",
 			"sap.m.semantic.DetailPage",
 			"sap.m.semantic.FullscreenPage",
 			"sap.m.semantic.MasterPage",
@@ -224,6 +241,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.IconTabSeparator",
 			"sap.m.OverflowToolbarLayoutData",
 			"sap.m.MaskInputRule",
+			"sap.m.MenuItem",
 			"sap.m.MessagePopoverItem",
 			"sap.m.PageAccessibleLandmarkInfo",
 			"sap.m.P13nFilterItem",
@@ -905,6 +923,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 	};
 
+	/**
+	 * Defines the mode of GenericTile.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.38.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.GenericTileMode = {
+
+		/**
+		 * Default mode (Two lines for the header and one line for the subtitle).
+		 * @public
+		 */
+		ContentMode : "ContentMode",
+
+		/**
+		 * Header mode (Four lines for the header and one line for the subtitle).
+		 * @public
+		 */
+		HeaderMode : "HeaderMode"
+	};
 
 	/**
 	 * Different levels for headers
@@ -967,6 +1007,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
+	/**
+	 *
+	 *   Interface for controls which are suitable as a Header in sap.m.DynamicPage.
+	 *   If the control wants to get have the pin/unpin functionality, it must fire the pinUnpinPress event
+	 *
+	 * @since 1.38
+	 * @name sap.m.ISnappable
+	 * @interface
+	 * @public
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
 
 	/**
 	 * Allowed tags for the implementation of the IBar interface.
@@ -1388,6 +1439,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 	};
 
+	/**
+	 * Defines the keyboard handling behavior of the <code>sap.m.List</code> or <code>sap.m.Table</code>.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.38.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.ListKeyboardMode = {
+
+		/**
+		 * This default mode is suitable if the number of items is unlimited or if there is no editable field within the item.
+		 * While the last/first interactive element within an item has the focus, pressing tab/shift+tab moves the focus to the next/previous element in the tab chain after/before the <code>sap.m.List</code> or <code>sap.m.Table</code>.
+		 * @public
+		 */
+		Navigation : "Navigation",
+
+		/**
+		 * This mode is suitable if the number of items is limited and if there are editable fields within the item.
+		 * While the last/first interactive element within an item has the focus, pressing tab/shift+tab moves the focus to the next/previous element in the tab chain after/before the item </code>.
+		 * @public
+		 */
+		Edit : "Edit"
+
+	};
 
 	/**
 	 * Defines which separator style will be applied for the items.
@@ -1464,6 +1540,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	};
 
 	/**
+	 * Defines the keyboard navigation mode.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.38
+	 * @ui5-metamodel This enumeration will also be described in the UI5 (legacy) design time meta model.
+	 */
+	sap.m.SelectListKeyboardNavigationMode = {
+
+		/**
+		 * Keyboard navigation is disabled.
+		 * @public
+		 */
+		None: "None",
+
+		/**
+		 * Keyboard navigation is delimited at the last item or first item of the list.
+		 * @public
+		 */
+		Delimited: "Delimited"
+	};
+
+	/**
 	 * Enumeration of possible load statuses.
 	 *
 	 * @enum {string}
@@ -1496,6 +1595,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 * @public
 		 */
 		Disabled : "Disabled"
+	};
+
+	/**
+	 * Different mode for a MenuButton (predefined types)
+	 *
+	 * @enum {string}
+	 * @since 1.38.0
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.MenuButtonMode = {
+
+		/**
+		 * Default regular type (Menu button appears as a regular button, pressing opens a menu)
+		 * @public
+		 */
+		Regular: "Regular",
+
+		/**
+		 * Split type (Menu button appears as a split button, pressing fires the default action a menu,
+		 * pressing the arrow part opens a menu)
+		 * @public
+		 */
+		Split: "Split"
 	};
 
 	/**
@@ -2071,6 +2194,78 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 
 	/**
+	 * Predefined types for ObjectMarker.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.ObjectMarkerType = {
+
+		/**
+		 * Flagged type
+		 * @public
+		 */
+		Flagged : "Flagged",
+
+		/**
+		 * Favorite type
+		 * @public
+		 */
+		Favorite : "Favorite",
+
+		/**
+		 * Draft type
+		 * @public
+		 */
+		Draft : "Draft",
+
+		/**
+		 * Locked type
+		 * @public
+		 */
+		Locked : "Locked",
+
+		/**
+		 * Unsaved type
+		 * @public
+		 */
+		Unsaved : "Unsaved"
+
+	};
+
+
+	/**
+	 * Predefined visibility for ObjectMarker.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.ObjectMarkerVisibility = {
+
+		/**
+		 * Shows only icon
+		 * @public
+		 */
+		IconOnly : "IconOnly",
+
+		/**
+		 * Shows only text
+		 * @public
+		 */
+		TextOnly : "TextOnly",
+
+		/**
+		 * Shows icon and text
+		 * @public
+		 */
+		IconAndText : "IconAndText"
+
+	};
+
+
+	/**
 	 * Directions for swipe event.
 	 *
 	 * @enum {string}
@@ -2123,6 +2318,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 	};
 
+	/**
+	 * Types of three-column layout for the sap.m.FlexibleColumnLayout control
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.38
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.ThreeColumnLayoutType = {
+
+		/**
+		 * Emphasized last column (endColumn) - column layout 25/25/50
+		 * @public
+		 */
+		EndColumnEmphasized : "EndColumnEmphasized",
+
+		/**
+		 * Emphasized middle column (midColumn) - column layout 25/50/25
+		 * @public
+		 */
+		MidColumnEmphasized : "MidColumnEmphasized"
+	};
 
 	/**
 	 * Types of the Toolbar Design.

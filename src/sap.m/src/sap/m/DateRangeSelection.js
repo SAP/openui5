@@ -130,7 +130,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 				sPlaceholder = "medium";
 			}
 
-			if (sPlaceholder === "short" || sPlaceholder === "medium" || sPlaceholder === "long") {
+			if (this._checkStyle(sPlaceholder)) {
 				var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
 				var oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale);
 				sPlaceholder = oLocaleData.getDatePattern(sPlaceholder);
@@ -560,13 +560,13 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 				this._$input.val(sValue);
 				this._curpos = this._$input.cursorPos();
 			}
+			this._lastValue = sValue;
 			this.setProperty("value", sValue, true);
 			if (this._bValid) {
 				this.setProperty("dateValue", aDates[0], true);
 				this.setProperty("secondDateValue", aDates[1], true);
 			}
 			this._setLabelVisibility();
-			this._lastValue = sValue;
 
 			if (this._oPopup && this._oPopup.isOpen()) {
 
@@ -715,6 +715,24 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 		}
 	};
 
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	DateRangeSelection.prototype.getAccessibilityInfo = function() {
+		var oRenderer = this.getRenderer();
+		var oInfo = DatePicker.prototype.getAccessibilityInfo.apply(this, arguments);
+		var sValue = this.getValue() || "";
+		if (this._bValid) {
+			var oDate = this.getDateValue();
+			if (oDate) {
+				sValue = this._formatValue(oDate, this.getSecondDateValue());
+			}
+		}
+		oInfo.description = [sValue, oRenderer.getLabelledByAnnouncement(this), oRenderer.getDescribedByAnnouncement(this)].join(" ").trim();
+		return oInfo;
+	};
+
 	function _fireChange(bValid) {
 
 		this.fireChangeEvent(this.getValue(), {
@@ -782,7 +800,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 		if (sPattern == this._sUsedDisplayPattern && sCalendarType == this._sUsedDisplayCalendarType) {
 			oFormat = this._oDisplayFormat;
 		} else {
-			if (sPattern === "short" || sPattern === "medium" || sPattern === "long") {
+			if (this._checkStyle(sPattern)) {
 				oFormat = sap.ui.core.format.DateFormat.getInstance({style: sPattern, strictParsing: true, calendarType: sCalendarType});
 			} else {
 				oFormat = sap.ui.core.format.DateFormat.getInstance({pattern: sPattern, strictParsing: true, calendarType: sCalendarType});

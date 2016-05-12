@@ -6,15 +6,17 @@
    Variables and mixins
    ========================================================================== */
 
-@sapTntToolPageAsideWidth : 20rem;
+@sapTntToolPageAsideWidth : 15rem;
 @sapTntToolPageAsideWidthOnTablet : 3rem;
 @sapTntToolPageHeaderHeight : 3rem;
 @sapTntToolPageFooterHeight : 3rem;
 
-@sapTntToolPageCompactAsideWidth : 16rem;
+@sapTntToolPageCompactAsideWidth : 15rem;
 @sapTntToolPageCompactAsideWidthOnTablet : 2rem;
 @sapTntToolPageCompactHeaderHeight : 2rem;
 @sapTntToolPageCompactFooterHeight : 2rem;
+
+@sapTntToolPageAnimationDuration : 0.3s;
 
 .display-flex() {
   display: -webkit-box;
@@ -92,6 +94,16 @@
 .sapTntToolPageAsideFooter {
   height: @sapTntToolPageFooterHeight;
   overflow: hidden;
+}
+
+html:not([data-sap-ui-animation='off']) .sapTntToolPageMain {
+  -webkit-transition: padding-left @sapTntToolPageAnimationDuration, -webkit-transform @sapTntToolPageAnimationDuration; /* Safari */
+  transition: padding-left @sapTntToolPageAnimationDuration, transform @sapTntToolPageAnimationDuration;
+}
+
+html:not([data-sap-ui-animation='off']) .sapTntToolPageAside {
+  -webkit-transition: -webkit-transform @sapTntToolPageAnimationDuration; /* Safari */
+  transition: transform @sapTntToolPageAnimationDuration;
 }
 
 .sap-desktop,

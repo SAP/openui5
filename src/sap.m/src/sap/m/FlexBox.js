@@ -270,6 +270,24 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 		return this;
 	};
 
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	FlexBox.prototype.getAccessibilityInfo = function() {
+		var aContent = this.getItems();
+		var aChildren = [];
+		for (var i = 0; i < aContent.length; i++) {
+			if (aContent[i].getAccessibilityInfo) {
+				var oInfo = aContent[i].getAccessibilityInfo();
+				if (oInfo) {
+					aChildren.push(oInfo);
+				}
+			}
+		}
+		return {children: aChildren};
+	};
+
 	return FlexBox;
 
 }, /* bExport= */ true);

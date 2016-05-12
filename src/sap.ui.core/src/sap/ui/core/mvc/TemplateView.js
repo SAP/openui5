@@ -8,6 +8,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 	"use strict";
 
 
+	// shortcut for enum(s)
+	var ViewType = library.mvc.ViewType;
 
 	/**
 	 * Constructor for a new mvc/TemplateView.
@@ -57,7 +59,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 		 * @return {sap.ui.core.mvc.TemplateView | undefined} the created TemplateView instance in the creation case, otherwise undefined
 		 */
 		sap.ui.templateview = function(sId, vView) {
-			return sap.ui.view(sId, vView, sap.ui.core.mvc.ViewType.Template);
+			return sap.ui.view(sId, vView, ViewType.Template);
 		};
 
 		/**
@@ -66,7 +68,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 		 * view type.
 		 * @private
 		 */
-		TemplateView._sType = sap.ui.core.mvc.ViewType.Template;
+		TemplateView._sType = ViewType.Template;
 
 		/**
 		 * Abstract method implementation. Returns the name of the controller.

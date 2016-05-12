@@ -4,10 +4,20 @@
 /* Footer CSS */
 .sapMTileCntFtrTxt {
 	font-family: @sapUiFontFamily;
-	font-size: @sapMFontMediumSize;
 	color: @sapUiLightText;
+}
+
+.sapMTileCntFtrTxt {
+	font-size: @sapMFontMediumSize;
 }
 
 .sapMTileCnt.News {
 	background-color: fade(@sapUiLightestBG, 60);
+}
+
+/* BREAKPOINT FOR SMALL PHONES */
+@media screen and (max-width: 374px) {
+	.sapMTileCntFtrTxt {
+		font-size: @sapMFontSmallSize;
+	}
 }

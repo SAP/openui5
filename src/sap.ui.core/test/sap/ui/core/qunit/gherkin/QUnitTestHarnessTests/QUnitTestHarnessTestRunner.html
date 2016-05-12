@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>QUnit Test Harness Test Runner</title>
+</head>
+<body>
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+
+  <script
+    id="sap-ui-bootstrap" src="../../../../../../../resources/sap-ui-core.js"
+    data-sap-ui-resourceroots='{"sap.ui.test.gherkin.test": "./"}'>
+  </script>
+
+	<script>
+    (function($){
+    'use strict';
+
+    // Load the Test Harness first so that code coverage will be calculated for all modules loaded afterward
+    $.sap.require("sap.ui.test.gherkin.qUnitTestHarness");
+    $.sap.require("sap.ui.test.gherkin.test.QUnitTestHarnessSteps");
+
+    $.sap.log.setLevel($.sap.log.LogLevel.INFO);
+
+    var testHarness = sap.ui.test.gherkin.qUnitTestHarness;
+    testHarness.test({featurePath: 'sap.ui.test.gherkin.test.QUnitTestHarness', steps: sap.ui.test.gherkin.test.QUnitTestHarnessSteps});
+    testHarness.test({featurePath: 'sap.ui.test.gherkin.test.QUnitTestHarness2', steps: sap.ui.test.gherkin.test.QUnitTestHarnessSteps});
+    testHarness.test({featurePath: 'sap.ui.test.gherkin.test.QUnitTestHarness3', steps: sap.ui.test.gherkin.test.QUnitTestHarnessSteps});
+
+    }(jQuery))
+  </script>
+
+</body>
+</html>
+
+
+

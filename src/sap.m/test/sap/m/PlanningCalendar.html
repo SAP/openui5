@@ -223,6 +223,68 @@
 			}
 		});
 
+		var oDialog2;
+		var oButtonMinMax = new sap.m.Button("B_MinMax", {
+			icon: "sap-icon://group-2",
+			type: sap.m.ButtonType.Transparent,
+			press: function(oEvent) {
+				if (!oDialog2) {
+					sap.ui.getCore().loadLibrary("sap.ui.layout");
+					jQuery.sap.require("sap.ui.layout.library");
+					var oForm = new sap.ui.layout.form.SimpleForm("SimpleForm1",{
+						layout: sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout,
+						content: [ new sap.ui.core.Title({text: "valid interval"}),
+						           new sap.m.Label({text: "min. date"}),
+						           new sap.m.DateTimePicker("DTP-Min", {
+						          	change: function(oEvent) {
+						          		var oDTP = oEvent.oSource;
+						          		if(oEvent.getParameter("valid")) {
+						          			oDTP.setValueState(sap.ui.core.ValueState.None);
+						          		} else {
+						          			oDTP.setValueState(sap.ui.core.ValueState.Error);
+						          		}
+						          	}
+						           }),
+						           new sap.m.Label({text: "max. date"}),
+						           new sap.m.DateTimePicker("DTP-Max", {
+						          	change: function(oEvent) {
+						          		var oDTP = oEvent.oSource;
+						          		if(oEvent.getParameter("valid")) {
+						          			oDTP.setValueState(sap.ui.core.ValueState.None);
+						          		} else {
+						          			oDTP.setValueState(sap.ui.core.ValueState.Error);
+						          		}
+						          	}
+						           })
+						          ]
+					});
+
+					oDialog2 = new sap.m.Dialog("D2", {
+						title: "Date interval",
+						content: [oForm],
+						beginButton: new sap.m.Button({
+							text: "OK",
+							press: function (oEvent) {
+								var oPC = sap.ui.getCore().byId("PC1");
+								var oDTP1 = sap.ui.getCore().byId("DTP-Min");
+								var oDTP2 = sap.ui.getCore().byId("DTP-Max");
+								oPC.setMinDate(oDTP1.getDateValue());
+								oPC.setMaxDate(oDTP2.getDateValue());
+								oDialog2.close();
+							}
+						}),
+						endButton: new sap.m.Button({
+							text: "Close",
+							press: function (oEvent) {
+								oDialog2.close();
+							}
+						})
+					});
+				}
+				oDialog2.open();
+			}
+		});
+
 		var oTitle = new sap.m.Title("Title1", {
 			text: "Title"
 		});
@@ -359,7 +421,8 @@
 			                 oButtonShowIntervalHeaders,
 			                 oButtonShowRowHeaders,
 			                 oButtonLegend,
-			                 oButtonReducedHeight],
+			                 oButtonReducedHeight,
+			                 oButtonMinMax],
 			appointmentSelect: handleAppointmentSelect,
 			intervalSelect: handleAddAppointment
 		});

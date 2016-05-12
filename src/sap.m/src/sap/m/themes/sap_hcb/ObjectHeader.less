@@ -35,32 +35,68 @@
 		}
 	}
 
+	.sapMOHTitle h6 .sapMText,
+	.sapMOHTitle h5 .sapMText,
+	.sapMOHTitle h4 .sapMText,
+	.sapMOHTitle h3 .sapMText,
+	.sapMOHTitle h2 .sapMText,
 	.sapMOHTitle h1 .sapMText {
 		color: @sapHCStandardFG;
 	}
 
+	.sap-phone .sapMOHTitle h6 > .sapMText,
+	.sap-phone .sapMOHTitle h5 > .sapMText,
+	.sap-phone .sapMOHTitle h4 > .sapMText,
+	.sap-phone .sapMOHTitle h3 > .sapMText,
+	.sap-phone .sapMOHTitle h2 > .sapMText,
 	.sap-phone .sapMOHTitle h1 > .sapMText {
 		font-size: @sapMFontHeader4Size;
 	}
 
+	.sapMOHTitle.sapMOHTitleActive > h6 .sapMText,
+	.sapMOHTitle.sapMOHTitleActive > h5 .sapMText,
+	.sapMOHTitle.sapMOHTitleActive > h4 .sapMText,
+	.sapMOHTitle.sapMOHTitleActive > h3 .sapMText,
+	.sapMOHTitle.sapMOHTitleActive > h2 .sapMText,
 	.sapMOHTitle.sapMOHTitleActive > h1 .sapMText {
 		text-decoration: underline;
 		cursor: pointer;
 	}
 
-	a.sapMOHTitle.sapMOHTitleActive:hover > h1 .sapMText{
+	a.sapMOHTitle.sapMOHTitleActive:hover > h6 .sapMText,
+	a.sapMOHTitle.sapMOHTitleActive:hover > h5 .sapMText,
+	a.sapMOHTitle.sapMOHTitleActive:hover > h4 .sapMText,
+	a.sapMOHTitle.sapMOHTitleActive:hover > h3 .sapMText,
+	a.sapMOHTitle.sapMOHTitleActive:hover > h2 .sapMText,
+	a.sapMOHTitle.sapMOHTitleActive:hover > h1 .sapMText {
 		text-decoration: none;
 	}
+
+	.sapMOHTitle.sapMOHTitleActive:focus > h6 .sapMText,
+	.sapMOHTitle.sapMOHTitleActive:focus > h5 .sapMText,
+	.sapMOHTitle.sapMOHTitleActive:focus > h4 .sapMText,
+	.sapMOHTitle.sapMOHTitleActive:focus > h3 .sapMText,
+	.sapMOHTitle.sapMOHTitleActive:focus > h2 .sapMText,
 	.sapMOHTitle.sapMOHTitleActive:focus > h1 .sapMText {
 		text-decoration: none;
 	}
 
+	.sapMOHTitle.sapMOHTitleActive:focus > h6 span,
+	.sapMOHTitle.sapMOHTitleActive:focus > h5 span,
+	.sapMOHTitle.sapMOHTitleActive:focus > h4 span,
+	.sapMOHTitle.sapMOHTitleActive:focus > h3 span,
+	.sapMOHTitle.sapMOHTitleActive:focus > h2 span,
 	.sapMOHTitle.sapMOHTitleActive:focus > h1 span {
 		outline: 0.125rem dotted @sapHCStandardFG;
 		outline-offset: -0.125rem;
 		text-decoration: none;
 	}
 
+	.sapMOHTitle.sapMOHTitleActive > h6 .sapMText:hover,
+	.sapMOHTitle.sapMOHTitleActive > h5 .sapMText:hover,
+	.sapMOHTitle.sapMOHTitleActive > h4 .sapMText:hover,
+	.sapMOHTitle.sapMOHTitleActive > h3 .sapMText:hover,
+	.sapMOHTitle.sapMOHTitleActive > h2 .sapMText:hover,
 	.sapMOHTitle.sapMOHTitleActive > h1 .sapMText:hover {
 		text-decoration: none;
 	}
@@ -136,6 +172,11 @@ html[data-sap-ui-browser^="ie"] {
 		a.sapMOHTitleActive:focus {
 			border: 1px solid transparent;
 		}
+		a.sapMOHTitleActive:focus ~ .sapMOHTitle > h6 > span,
+		a.sapMOHTitleActive:focus ~ .sapMOHTitle > h5 > span,
+		a.sapMOHTitleActive:focus ~ .sapMOHTitle > h4 > span,
+		a.sapMOHTitleActive:focus ~ .sapMOHTitle > h3 > span,
+		a.sapMOHTitleActive:focus ~ .sapMOHTitle > h2 > span,
 		a.sapMOHTitleActive:focus ~ .sapMOHTitle > h1 > span {
 			outline: none;
 			border: 0.125rem dotted @sapHCStandardFG;
@@ -187,6 +228,11 @@ html[data-sap-ui-browser^="ie"] {
 		}
 	}
 
+	.sapMOHRTitle h6,
+	.sapMOHRTitle h5,
+	.sapMOHRTitle h4,
+	.sapMOHRTitle h3,
+	.sapMOHRTitle h2,
 	.sapMOHRTitle h1 {
 		font-size: 1.375rem;
 		font-weight: @sapUiFontHeaderWeight;
@@ -232,8 +278,18 @@ html[data-sap-ui-browser^="ie"] {
 	}
 }
 
-.sap-phone .sapMOHRTitle h1,
-.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTitle h1 {
+html.sap-phone .sapMOHRTitle h6,
+html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTitle h6,
+html.sap-phone .sapMOHRTitle h5,
+html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTitle h5,
+html.sap-phone .sapMOHRTitle h4,
+html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTitle h4,
+html.sap-phone .sapMOHRTitle h3,
+html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTitle h3,
+html.sap-phone .sapMOHRTitle h2,
+html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTitle h2,
+html.sap-phone .sapMOHRTitle h1,
+html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTitle h1 {
 	font-size: @sapMFontHeader4Size;
 }
 
@@ -278,6 +334,9 @@ html[data-sap-ui-browser^="ie"] {
 		}
 		.sapMLnk {
 			padding-right: 0.125rem;
+		}
+		.sapMObjectAttributeActive {
+			padding: 0.125rem;
 		}
 	}
 }

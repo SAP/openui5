@@ -1,0 +1,124 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+	<title>sap.m.ObjectMarker</title>
+	<script id="sap-ui-bootstrap"
+			src="../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+	</script>
+	<style>
+		#standalone-panel .sapMObjectMarker {
+			margin-right: 0.5rem;
+		}
+	</style>
+	<script>
+		var oApp = new sap.m.App({  initialPage: "page" });
+
+		var aData = [
+			{ lastName: "Dente", name: "Al", type: "Locked" },
+			{ lastName: "Friese", name: "Andy", type: "Draft" },
+			{ lastName: "Mann", name: "Anita", type: "Unsaved" },
+			{ lastName: "Schutt", name: "Doris", type: "Favorite" },
+			{ lastName: "Open", name: "Doris", type: "Flagged" }
+		];
+
+		var oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData({ modelData: aData });
+
+		var oTable = new sap.m.Table({
+			columns : [
+				new sap.m.Column({
+					header : new sap.m.Label({
+						text : "LastName"
+					})
+				}),
+				new sap.m.Column({
+					header : new sap.m.Label({
+						text : "FirstName"
+					})
+				}),
+				new sap.m.Column({
+					header : new sap.m.Label({
+						text : "Object Marker"
+					})
+				}),
+				new sap.m.Column({
+					header : new sap.m.Label({
+						text : "Object Marker (active)"
+					})
+				})
+			]
+		});
+
+		oTable.setModel(oModel);
+		oTable.bindItems("/modelData", new sap.m.ColumnListItem({
+			vAlign: "Middle",
+			cells : [
+				new sap.m.Text({
+					text : "{lastName}",
+					wrapping : false
+				}),
+				new sap.m.Text({
+					text : "{name}",
+					wrapping : false
+				}),
+				new sap.m.ObjectMarker({
+					type: "{type}"
+				}),
+				new sap.m.ObjectMarker({
+					type: "{type}",
+					press: function(oEvent) {
+						sap.m.MessageToast.show(oEvent.getParameter("type") + " marker pressed!");
+					}
+				})
+			]
+		}));
+
+		var oTablePanel = new sap.m.Panel({
+			headerText: "In a table usecase",
+			content: oTable
+		});
+
+		var oStandalonePanel = new sap.m.Panel("standalone-panel", {
+			headerText: "Standalone usecase",
+			content: [
+				new sap.m.ObjectMarker({
+				}).setType(sap.m.ObjectMarkerType.Locked),
+				new sap.m.ObjectMarker({
+					type: "Flagged"
+				}),
+				new sap.m.ObjectMarker({
+					type: sap.m.ObjectMarkerType.Favorite
+				}),
+				new sap.m.ObjectMarker({
+					type: "Locked"
+				}),
+				new sap.m.ObjectMarker({
+					type: "Draft",
+					press: function(oEvent) {
+						sap.m.MessageToast.show(oEvent.getParameter("type") + " marker pressed!");
+					}
+				}),
+				new sap.m.ObjectMarker({
+					type: sap.m.ObjectMarkerType.Unsaved
+				})
+			]
+		});
+
+		var oPage = new sap.m.Page("page", {
+			title:"Object Marker",
+			content: [
+				oStandalonePanel,
+				oTablePanel
+			]
+		});
+
+		oApp.addPage(oPage).placeAt("body");
+	</script>
+</head>
+<body id="body" class="sapUiBody" role="application">
+</body>
+</html>

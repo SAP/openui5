@@ -131,6 +131,14 @@ sap.ui.define(["sap/m/semantic/SemanticConfiguration", "sap/ui/base/ManagedObjec
 		return oClone;
 	};
 
+	SemanticControl.prototype.destroy = function () {
+		var vResult = Element.prototype.destroy.apply(this, arguments);
+		if (this.getAggregation("_control")) {
+			this.getAggregation("_control").destroy();
+		}
+		return vResult;
+	};
+
 	/**
 	 * Implementation of a commonly used function that adapts sap.ui.core.Element
 	 * to provide dom reference for opening popovers

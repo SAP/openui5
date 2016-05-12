@@ -94,8 +94,8 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.encoder'],
 		/************************************************************************************
 		 * Render the forward link, forward arrow and last page link when necessary
 		 *************************************************************************************/
-		linkClass = (iCurrentPage == oPaginator.getNumberOfPages()) ? "sapUiLnkDsbl" : "sapUiLnk";
-		linkAcc = (iCurrentPage == 1) ? " aria-disabled='true'" : "";
+		linkClass = (iCurrentPage === oPaginator.getNumberOfPages()) ? "sapUiLnkDsbl" : "sapUiLnk";
+		linkAcc = (iCurrentPage === oPaginator.getNumberOfPages()) ? " aria-disabled='true'" : "";
 
 		oRm.write("<a id='" + paginatorId + "--forwardLink' href='javascript:void(0);' title='");
 		oRm.writeEscaped(rb.getText("NEXT_PAGE"));

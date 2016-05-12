@@ -14,18 +14,24 @@
 	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.ui.commons,sap.ui.ux3,sap.m"
 	data-sap-ui-resourceroots='{"sap.ui.testlib":"testdata/uilib/", "example.mvc": "testdata/mvc/", "qunit.routing":".", "qunit.view":"../../testdata/routing"}'>
-
 </script>
 
+<link rel="stylesheet" href="../../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+<script type="text/javascript" src="../../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript" src="../../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript" src="../../../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script type="text/javascript" src="../../../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+<script type="text/javascript" src="../../../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
 <script>
+	// This variable is used for creating custom component classes to avoid the
+	// error "introducing global variables" when this test file is executed with
+	// url-parameter noglobals=true
+	var namespace = {};
+
 	(function () {
 		"use strict";
-		jQuery.sap.require("sap.ui.qunit.qunit-css");
-		jQuery.sap.require("sap.ui.thirdparty.qunit");
-		jQuery.sap.require("sap.ui.qunit.qunit-junit");
-		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-		jQuery.sap.require("sap.ui.thirdparty.sinon");
-		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 		sinon.config.useFakeTimers = false;
 
 		sap.ui.require(["sap/ui/core/routing/Router", "qunit/routing/AsyncViewModuleHook"], function(Router, ModuleHook) {
@@ -1539,7 +1545,7 @@
 						this._router.initialize();
 					}
 
-					var ParentComponent = sap.ui.core.UIComponent.extend("parent.component", {
+					var ParentComponent = sap.ui.core.UIComponent.extend("namespace.ParentComponent", {
 						metadata : {
 							routing:  {
 								config: {
@@ -1562,7 +1568,7 @@
 						init : that.fnInitRouter
 					});
 
-					var ChildComponent = sap.ui.core.UIComponent.extend("child.component", {
+					var ChildComponent = sap.ui.core.UIComponent.extend("namespace.ChildComponent", {
 						metadata : {
 							routing:  {
 								config: {
@@ -1572,7 +1578,7 @@
 									{
 										pattern: "product/{id}",
 										name: "product",
-										parent: "parent.component:category"
+										parent: "namespace.ParentComponent:category"
 									}
 								]
 							}
@@ -1603,7 +1609,8 @@
 					oParentRoute = this.oParentComponent.getRouter().getRoute("category"),
 					oChildRoute = this.oChildComponent.getRouter().getRoute("product"),
 					oParentRouteMatchedSpy = sinon.spy(oParentRoute, "_routeMatched"),
-					oChildRouteMatchedSpy = sinon.spy(oChildRoute, "_routeMatched");
+					oChildRouteMatchedSpy = sinon.spy(oChildRoute, "_routeMatched"),
+					namespace = {};
 
 				oParentRoute.attachMatched(oParentRouteMatchedEventSpy);
 				oParentRoute.attachPatternMatched(oParentRoutePatternMatchedEventSpy);
@@ -1633,6 +1640,7 @@
 
 				// Arrange
 				var that = this,
+					namespace = {},
 					iNumberOfComponents = 3,
 					aComponents = [],
 					aComponentInstances = [],
@@ -1645,7 +1653,7 @@
 					fnDeclareComponents = function(iDepth) {
 						for (var i = 0; i < iDepth; i++) {
 							(function(i) {
-								var Component = sap.ui.core.UIComponent.extend("component" + i, {
+								var Component = sap.ui.core.UIComponent.extend("namespace.Component" + i, {
 									metadata : {
 										routing:  {
 											config: {
@@ -1656,7 +1664,7 @@
 													pattern: "route" + i + "/{id}",
 													name: "route" + i,
 													// set no parent for the (root-) route
-													parent: (i != 0) ? "component" + (( i - 1 ) + ":route" + ( i - 1 )) : undefined
+													parent: (i != 0) ? "namespace.Component" + (( i - 1 ) + ":route" + ( i - 1 )) : undefined
 												}
 											]
 										}

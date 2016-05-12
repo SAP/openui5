@@ -81,7 +81,7 @@ sap.ui.define([
 		 * @returns {Error}
 		 *   An <code>Error</code> instance with the following properties:
 		 *   <ul>
-		 *     <li><code>error</code>: The "error" value from the OData v4 error response JSON
+		 *     <li><code>error</code>: The "error" value from the OData V4 error response JSON
 		 *     object (if available)
 		 *     <li><code>isConcurrentModification</code>: <code>true</code> In case of a
 		 *     concurrent modification detected via ETags (i.e. HTTP status code 412)
@@ -95,12 +95,18 @@ sap.ui.define([
 		 */
 		createError : function (jqXHR) {
 			var sBody = jqXHR.responseText,
-				sContentType = jqXHR.getResponseHeader("Content-Type").split(";")[0],
+				sContentType = jqXHR.getResponseHeader("Content-Type"),
 				oResult = new Error(jqXHR.status + " " + jqXHR.statusText);
 
 			oResult.status = jqXHR.status;
 			oResult.statusText = jqXHR.statusText;
-
+			if (jqXHR.status === 0) {
+				oResult.message = "Network error";
+				return oResult;
+			}
+			if (sContentType) {
+				sContentType = sContentType.split(";")[0];
+			}
 			if (jqXHR.status === 412) {
 				oResult.isConcurrentModification = true;
 			}
@@ -219,7 +225,7 @@ sap.ui.define([
 			// The safe integers consist of all integers from -(2^53 - 1) inclusive to 2^53 - 1
 			// inclusive.
 			// 2^53 - 1 = 9007199254740991
-			return iNumber <= 9007199254740991 && Math.floor(iNumber) == iNumber;
+			return iNumber <= 9007199254740991 && Math.floor(iNumber) === iNumber;
 		}
 	};
 

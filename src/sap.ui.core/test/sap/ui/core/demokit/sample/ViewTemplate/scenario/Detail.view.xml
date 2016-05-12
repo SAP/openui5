@@ -3,9 +3,9 @@
 	template:require="sap.ui.core.sample.ViewTemplate.scenario.Helper"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
-	xmlns:form="sap.ui.layout.form"
 	xmlns:layout="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:scenario="sap.ui.core.sample.ViewTemplate.scenario"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
 	<layout:VerticalLayout>
 		<!-- Note: "meta>" MUST point to an entity set! -->
@@ -29,10 +29,7 @@
 
 				<!-- expression binding just to test dynamic name -->
 				<core:ExtensionPoint name="{:= 'HeaderInfo' }">
-					<form:SimpleForm layout="ResponsiveGridLayout">
-						<form:title>
-							<core:Title text="HeaderInfo"/>
-						</form:title>
+					<scenario:Form title="HeaderInfo">
 						<template:with path="entityType>com.sap.vocabularies.UI.v1.HeaderInfo">
 							<!-- Note: composite bindings instead of separate labels for testing only! -->
 							<Text text="[Type Name] {path: 'entityType>TypeName', formatter: '.AH.format'}"/>
@@ -42,42 +39,33 @@
 								<Text text="[{path: 'entityType>Description/Label', formatter: '.AH.format'}] {path: 'entityType>Description/Value', formatter: '.AH.format'}"/>
 							</template:if>
 						</template:with>
-					</form:SimpleForm>
+					</scenario:Form>
 				</core:ExtensionPoint>
 
 				<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Identification" type="XML"/>
 
 				<template:repeat list="{path:'entityType>', filters: {path: '@sapui.name', operator: 'StartsWith', value1: 'com.sap.vocabularies.UI.v1.FieldGroup'}}" var="fieldGroup">
-					<form:SimpleForm layout="ResponsiveGridLayout">
-						<form:title>
-							<core:Title text="{path: 'fieldGroup>Label', formatter: '.AH.format'}"/>
-						</form:title>
+					<scenario:Form title="{path: 'fieldGroup>Label', formatter: '.AH.format'}">
 						<template:repeat list="{fieldGroup>Data}" var="field">
 							<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.LabeledField" type="XML"/>
 						</template:repeat>
-					</form:SimpleForm>
+					</scenario:Form>
 				</template:repeat>
 
-				<form:SimpleForm layout="ResponsiveGridLayout">
-					<form:title>
-						<core:Title text="Facets"/>
-					</form:title>
+				<scenario:Form title="Facets">
 					<template:with path="entityType>com.sap.vocabularies.UI.v1.Facets" var="facets">
 						<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Facets" type="XML"/>
 					</template:with>
-				</form:SimpleForm>
+				</scenario:Form>
 			</template:with>
 
 			<template:with path="meta>com.sap.vocabularies.UI.v1.DataPoint" var="dataPoint">
 				<template:if test="{dataPoint>}">
-					<form:SimpleForm layout="ResponsiveGridLayout">
-						<form:title>
-							<core:Title text="DataPoint@EntitySet - {path: 'dataPoint>Title', formatter: '.AH.format'}"/>
-						</form:title>
+					<scenario:Form title="DataPoint@EntitySet - {path: 'dataPoint>Title', formatter: '.AH.format'}">
 						<Label labelFor="dataPoint"
 							text="{path: 'dataPoint>Description', formatter: '.AH.format'}"/>
 						<Text id="dataPoint" text="{path: 'dataPoint>Value', formatter: '.AH.format'}"/>
-					</form:SimpleForm>
+					</scenario:Form>
 				</template:if>
 			</template:with>
 			</template:with>

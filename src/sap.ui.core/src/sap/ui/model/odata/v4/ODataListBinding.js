@@ -8,10 +8,10 @@ sap.ui.define([
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ListBinding",
-	"./_Context",
 	"./_ODataHelper",
+	"./Context",
 	"./lib/_Cache"
-], function (jQuery, Binding, ChangeReason, ListBinding, _Context, _ODataHelper, _Cache) {
+], function (jQuery, Binding, ChangeReason, ListBinding, _ODataHelper, Context, _Cache) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataListBinding",
@@ -27,27 +27,41 @@ sap.ui.define([
 	 * but rather use {@link sap.ui.model.odata.v4.ODataModel#bindList bindList} instead!
 	 *
 	 * @param {sap.ui.model.odata.v4.ODataModel} oModel
-	 *   The OData v4 model
+	 *   The OData V4 model
 	 * @param {string} sPath
 	 *   The binding path in the model; must not be empty or end with a slash
-	 * @param {sap.ui.model.Context} [oContext]
+	 * @param {sap.ui.model.odata.v4.Context} [oContext]
 	 *   The parent context which is required as base for a relative path
 	 * @param {object} [mParameters]
-	 *   Map of OData query options as specified in "OData Version 4.0 Part 2: URL Conventions".
-	 *   The following query options are allowed:
+	 *   Map of binding parameters which can be OData query options as specified in
+	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameters "$$groupId"
+	 *   and "$$updateGroupId".
+	 *   Note: Binding parameters may only be provided for absolute binding paths as only those
+	 *   lead to a data service request.
+	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
-	 *   <li> The $expand and $select "5.1 System Query Options"
+	 *   <li> The $expand, $filter, $orderby and $select "5.1 System Query Options"
 	 *   </ul>
 	 *   All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
-	 *   Note: Query options may only be provided for absolute binding paths as only those
-	 *   lead to a data service request.
-	 * @throws {Error} When disallowed OData query options are provided
+	 * @param {string} [mParameters.$$groupId]
+	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
+	 *   specified, the model's group ID is used, see
+	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor}.
+	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
+	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
+	 * @param {string} [mParameters.$$updateGroupId]
+	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
+	 *   if not specified, the model's update group ID is used,
+	 *   see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
+	 *   For valid values, see parameter "$$groupId".
+	 * @throws {Error}
+	 *   If disallowed binding parameters are provided
 	 *
 	 * @alias sap.ui.model.odata.v4.ODataListBinding
 	 * @author SAP SE
-	 * @class List binding for an OData v4 model.
+	 * @class List binding for an OData V4 model.
 	 *   An event handler can only be attached to this binding for the following events: 'change',
 	 *   'dataReceived', 'dataRequested', and 'refresh'.
 	 *   For other events, an error is thrown.
@@ -57,19 +71,30 @@ sap.ui.define([
 	 */
 	var ODataListBinding = ListBinding.extend("sap.ui.model.odata.v4.ODataListBinding", {
 			constructor : function (oModel, sPath, oContext, mParameters) {
+				var oBindingParameters;
+
 				ListBinding.call(this, oModel, sPath, oContext);
 
 				if (!sPath || sPath.slice(-1) === "/") {
 					throw new Error("Invalid path: " + sPath);
 				}
+
 				this.oCache = undefined;
-				if (!this.isRelative()) {
+				this.sGroupId = undefined;
+				this.sRefreshGroupId = undefined;
+				this.sUpdateGroupId = undefined;
+
+				if (!this.bRelative) {
 					this.oCache = _Cache.create(oModel.oRequestor, sPath.slice(1),
 						_ODataHelper.buildQueryOptions(oModel.mUriParameters, mParameters,
-							["$expand", "$select"]));
+							["$expand", "$filter", "$orderby", "$select"]));
+					oBindingParameters = _ODataHelper.buildBindingParameters(mParameters);
+					this.sGroupId = oBindingParameters.$$groupId;
+					this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
 				} else if (mParameters) {
 					throw new Error("Bindings with a relative path do not support parameters");
 				}
+
 				this.aContexts = [];
 				// upper boundary for server-side list length (based on observations so far)
 				this.iMaxLength = Infinity;
@@ -166,7 +191,7 @@ sap.ui.define([
 	 * determined by the given start index <code>iStart</code> and <code>iLength</code>.
 	 * If at least one of the entities in the given range has not yet been loaded, fires a
 	 * {@link sap.ui.model.Binding#attachChange 'change'} event on this list binding once these
-	 * entities have been loaded <em>asynchronously</em>. A further call to this method in the
+	 * entities have been loaded <b>asynchronously</b>. A further call to this method in the
 	 * 'change' event handler with the same index range then yields the updated array of contexts.
 	 *
 	 * @param {number} [iStart=0]
@@ -176,11 +201,11 @@ sap.ui.define([
 	 *   size limit, see {@link sap.ui.model.Model#setSizeLimit}
 	 * @param {number} [iThreshold]
 	 *   The parameter <code>iThreshold</code> is not supported.
-	 * @returns {sap.ui.model.Context[]}
+	 * @returns {sap.ui.model.odata.v4.Context[]}
 	 *   The array of already created contexts with the first entry containing the context for
 	 *   <code>iStart</code>
 	 * @throws {Error}
-	 *   When <code>iThreshold</code> is given
+	 *   If <code>iThreshold</code> is given
 	 *
 	 * @protected
 	 * @see sap.ui.model.ListBinding#getContexts
@@ -189,7 +214,7 @@ sap.ui.define([
 	ODataListBinding.prototype.getContexts = function (iStart, iLength, iThreshold) {
 		var oContext = this.oContext,
 			bDataRequested = false,
-			sGroupId = this.oModel.getGroupId(),
+			sGroupId,
 			oModel = this.oModel,
 			oPromise,
 			sResolvedPath = oModel.resolve(this.sPath, oContext),
@@ -230,7 +255,7 @@ sap.ui.define([
 			for (i = iStart; i < n; i += 1) {
 				if (that.aContexts[i] === undefined) {
 					bChanged = true;
-					that.aContexts[i] = _Context.create(oModel, that, sResolvedPath + "/" + i, i);
+					that.aContexts[i] = Context.create(oModel, that, sResolvedPath + "/" + i, i);
 				}
 			}
 			if (that.aContexts.length > that.iMaxLength) {
@@ -276,17 +301,18 @@ sap.ui.define([
 		}
 
 		if (!isRangeInContext(iStart, iLength)) {
-			oPromise = this.oCache
-				? this.oCache.read(iStart, iLength, sGroupId, undefined,
-					function () {
-						bDataRequested = true;
-						that.oModel.dataRequested(sGroupId,
-							that.fireDataRequested.bind(that));
-					}
-				)
-				: oContext.requestValue(this.sPath);
+			if (this.oCache) {
+				sGroupId = this.sRefreshGroupId || this.getGroupId();
+				this.sRefreshGroupId = undefined;
+				oPromise = this.oCache.read(iStart, iLength, sGroupId, undefined, function () {
+					bDataRequested = true;
+					that.oModel.addedRequestToGroup(sGroupId, that.fireDataRequested.bind(that));
+				});
+			} else {
+				oPromise = oContext.fetchValue(this.sPath);
+			}
 			oPromise.then(function (vResult) {
-				createContexts(vResult);
+				createContexts(vResult || []);
 				//fire dataReceived after change event fired in createContexts()
 				if (bDataRequested) {
 					that.fireDataReceived(); // no try catch needed: uncaught in promise
@@ -297,13 +323,15 @@ sap.ui.define([
 					if (oError.canceled) {
 						that.fireDataReceived();
 					} else {
-						jQuery.sap.log.error("Failed to get contexts for "
+						oModel.reportError("Failed to get contexts for "
 								+ oModel.sServiceUrl + sResolvedPath.slice(1)
 								+ " with start index " + iStart + " and length " + iLength,
-							oError, sClassName);
+							sClassName, oError);
 						that.fireDataReceived({error : oError});
 					}
 				}
+			})["catch"](function (oError) {
+				jQuery.sap.log.error(oError.message, oError.stack, sClassName);
 			});
 		}
 		return this.aContexts.slice(iStart, iStart + iLength);
@@ -338,6 +366,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the group ID of the binding that is used for read requests.
+	 *
+	 * @returns {string}
+	 *   The group ID
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.getGroupId = function() {
+		return this.sGroupId || this.oModel.getGroupId();
+	};
+
+	/**
 	 * Returns the number of entries in the list. As long as the client does not know the size on
 	 * the server an estimated length is returned.
 	 *
@@ -351,6 +391,18 @@ sap.ui.define([
 	 // @override
 	ODataListBinding.prototype.getLength = function() {
 		return this.bLengthFinal ? this.aContexts.length : this.aContexts.length + 10;
+	};
+
+	/**
+	 * Returns the group ID of the binding that is used for update requests.
+	 *
+	 * @returns {string}
+	 *   The update group ID
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.getUpdateGroupId = function() {
+		return this.sUpdateGroupId || this.oModel.getUpdateGroupId();
 	};
 
 	/**
@@ -399,35 +451,36 @@ sap.ui.define([
 	};
 
 	/**
-	 * Refreshes the binding. Prompts the model to retrieve data from the server and notifies the
-	 * control that new data is available. <code>bForceUpdate</code> has to be <code>true</code>.
-	 * If <code>bForceUpdate</code> is not given or <code>false</code>, an error is thrown.
+	 * Refreshes the binding. Prompts the model to retrieve data from the server using the given
+	 * group ID and notifies the control that new data is available.
 	 * Refresh is supported for absolute bindings.
 	 *
-	 * @param {boolean} bForceUpdate
-	 *   The parameter <code>bForceUpdate</code> has to be <code>true</code>.
+	 * Note: When calling refresh multiple times, the result of the request triggered by the last
+	 * call determines the binding's data; it is <b>independent</b>
+	 * of the order of calls to {@link sap.ui.model.odata.v4.ODataModel#submitBatch} with the given
+	 * group ID.
+	 *
 	 * @param {string} [sGroupId]
-	 *   The parameter <code>sGroupId</code> is not supported.
-	 * @throws {Error} When <code>bForceUpdate</code> is not <code>true</code> or
-	 *   <code>sGroupId</code> is set or refresh on this binding is not supported.
+	 *   The group ID to be used for refresh; if not specified, the group ID for this binding is
+	 *   used, see {@link sap.ui.model.odata.v4.ODataListBinding#constructor}.
+	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
+	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
+	 * @throws {Error}
+	 *   If the given group ID is invalid or refresh on this binding is not supported.
 	 *
 	 * @public
 	 * @see sap.ui.model.Binding#refresh
 	 * @since 1.37.0
 	 */
 	// @override
-	ODataListBinding.prototype.refresh = function (bForceUpdate, sGroupId) {
-		if (bForceUpdate !== true) {
-			throw new Error("Unsupported operation: v4.ODataListBinding#refresh, "
-				+ "bForceUpdate must be true");
-		}
-		if (sGroupId !== undefined) {
-			throw new Error("Unsupported operation: v4.ODataListBinding#refresh, "
-				+ "sGroupId parameter must not be set");
-		}
+	ODataListBinding.prototype.refresh = function (sGroupId) {
 		if (!this.oCache) {
 			throw new Error("Refresh on this binding is not supported");
 		}
+
+		_ODataHelper.checkGroupId(sGroupId);
+
+		this.sRefreshGroupId = sGroupId;
 		this.oCache.refresh();
 		this.aContexts = [];
 		this.iMaxLength = Infinity;
@@ -441,17 +494,17 @@ sap.ui.define([
 	 *
 	 * @param {string} [sPath]
 	 *   Some relative path
-	 * @param {number} [iIndex]
+	 * @param {number} iIndex
 	 *   Index corresponding to some current context of this binding
-	 * @returns {Promise}
+	 * @returns {SyncPromise}
 	 *   A promise on the outcome of the cache's <code>read</code> call
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.requestValue = function (sPath, iIndex) {
+	ODataListBinding.prototype.fetchValue = function (sPath, iIndex) {
 		return this.oCache
 			? this.oCache.read(iIndex, /*iLength*/1, undefined, sPath)
-			: this.oContext.requestValue(this.sPath + "/" + iIndex
+			: this.oContext.fetchValue(this.sPath + "/" + iIndex
 				+ (sPath ? "/" + sPath : ""));
 	};
 
@@ -472,7 +525,7 @@ sap.ui.define([
 	/**
 	 * Sets the context and resets the cached contexts of the list items.
 	 *
-	 * @param {sap.ui.model.Context} oContext
+	 * @param {sap.ui.model.odata.v4.Context} oContext
 	 *   The context object
 	 *
 	 * @private
@@ -481,8 +534,14 @@ sap.ui.define([
 	// @override
 	ODataListBinding.prototype.setContext = function (oContext) {
 		if (this.oContext !== oContext) {
-			this.aContexts = [];
-			Binding.prototype.setContext.call(this, oContext);
+			if (this.bRelative) {
+				this.aContexts = [];
+				// call Binding#setContext because of data state etc.; fires "change"
+				Binding.prototype.setContext.call(this, oContext);
+			} else {
+				// remember context even if no "change" fired
+				this.oContext = oContext;
+			}
 		}
 	};
 
@@ -513,6 +572,52 @@ sap.ui.define([
 		throw new Error("Unsupported operation: v4.ODataListBinding#suspend");
 	};
 
-	return ODataListBinding;
+	/**
+	 * Returns a string representation of this object including the binding path. If the binding is
+	 * relative, the parent path is also given, separated by a '|'.
+	 *
+	 * @return {string} A string description of this binding
+	 * @public
+	 * @since 1.37.0
+	 */
+	ODataListBinding.prototype.toString = function () {
+		return sClassName + ": " + (this.bRelative  ? this.oContext + "|" : "") + this.sPath;
+	};
 
+	/**
+	 * Updates the value for the given property name inside the entity with the given relative path;
+	 * the value is updated in this binding's cache or in its parent context in case it has no
+	 * cache.
+	 *
+	 * @param {string} [sGroupId=getUpdateGroupId()]
+	 *   The group ID to be used for this update call.
+	 * @param {string} sPropertyName
+	 *   Name of property to update
+	 * @param {any} vValue
+	 *   The new value
+	 * @param {string} sEditUrl
+	 *   The edit URL for the entity which is updated
+	 * @param {string} sPath
+	 *   Some relative path
+	 * @returns {Promise}
+	 *   A promise on the outcome of the cache's <code>update</code> call
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.updateValue = function (sGroupId, sPropertyName, vValue, sEditUrl,
+		sPath) {
+		var oPromise;
+
+		if (this.oCache) {
+			sGroupId = sGroupId || this.getUpdateGroupId();
+			oPromise = this.oCache.update(sGroupId, sPropertyName, vValue, sEditUrl, sPath);
+			this.oModel.addedRequestToGroup(sGroupId);
+			return oPromise;
+		}
+
+		return this.oContext.updateValue(sGroupId, sPropertyName, vValue, sEditUrl,
+			this.sPath + "/" + sPath);
+	};
+
+	return ODataListBinding;
 }, /* bExport= */ true);

@@ -416,7 +416,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
         /**
          * Checks is a sap.ui.core.URI parameter is a icon src or not.
          * @param {string} source The source to be checked.
-         * @returns {bool} The result of the check
+         * @returns {boolean} The result of the check
          * @protected
          */
         function isIcon(source) {

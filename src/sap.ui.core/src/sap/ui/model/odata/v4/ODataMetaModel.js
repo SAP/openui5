@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/ui/model/MetaModel",
 	"sap/ui/model/PropertyBinding",
 	"./_ODataHelper",
-	"./_SyncPromise"
+	"./lib/_SyncPromise"
 ], function (jQuery, BindingMode, ContextBinding, Context, FilterProcessor, JSONListBinding,
 		MetaModel, PropertyBinding, _ODataHelper, _SyncPromise) {
 	"use strict";
@@ -25,14 +25,23 @@ sap.ui.define([
 		ODataMetaPropertyBinding,
 		// rest of segment after opening ( and segments that consist only of digits
 		rNotMetaContext = /\([^/]*|\/\d+/g,
+		rNumber = /^\d+$/,
 		mUi5TypeForEdmType = {
 			"Edm.Boolean" : {type : "sap.ui.model.odata.type.Boolean"},
 			"Edm.Byte" : {type : "sap.ui.model.odata.type.Byte"},
 			"Edm.Date" : {type : "sap.ui.model.odata.type.Date"},
-//			"Edm.DateTimeOffset" : {type : "sap.ui.model.odata.type.DateTimeOffset"},
+			"Edm.DateTimeOffset" : {
+				constraints : {
+					"$Precision" : "precision"
+				},
+				type : "sap.ui.model.odata.type.DateTimeOffset"
+			},
 			"Edm.Decimal" : {
-				type : "sap.ui.model.odata.type.Decimal",
-				constraints : {"$Precision" : "precision", "$Scale" : "scale"}
+				constraints : {
+					"$Precision" : "precision",
+					"$Scale" : "scale"
+				},
+				type : "sap.ui.model.odata.type.Decimal"
 			},
 			"Edm.Double" : {type : "sap.ui.model.odata.type.Double"},
 			"Edm.Guid" : {type : "sap.ui.model.odata.type.Guid"},
@@ -42,8 +51,17 @@ sap.ui.define([
 			"Edm.SByte" : {type : "sap.ui.model.odata.type.SByte"},
 			"Edm.Single" : {type : "sap.ui.model.odata.type.Single"},
 			"Edm.String" : {
-				type : "sap.ui.model.odata.type.String",
-				constraints : {"$MaxLength" : "maxLength"}
+				constraints : {
+					"@com.sap.vocabularies.Common.v1.IsDigitSequence" : "isDigitSequence",
+					"$MaxLength" : "maxLength"
+				},
+				type : "sap.ui.model.odata.type.String"
+			},
+			"Edm.TimeOfDay" : {
+				constraints : {
+					"$Precision" : "precision"
+				},
+				type : "sap.ui.model.odata.type.TimeOfDay"
 			}
 		},
 		mSupportedEvents = {
@@ -158,11 +176,9 @@ sap.ui.define([
 	 *
 	 * @alias sap.ui.model.odata.v4.ODataMetaModel
 	 * @author SAP SE
-	 * @class Implementation of an OData meta data model which offers access to OData v4 meta data.
-	 *   An event handler can only be attached to this meta model for the following event:
-	 *   'messageChange', see {@link sap.ui.core.messages.MessageProcessor#messageChange
-	 *   messageChange}.
-	 *   For other events, an error is thrown.
+	 * @class Implementation of an OData meta data model which offers access to OData V4 meta data.
+	 *   The meta model does not support any public events; attaching an event handler leads to an
+	 *   error.
 	 *
 	 *   This model is read-only.
 	 *
@@ -385,12 +401,14 @@ sap.ui.define([
 			 *
 			 * @param {string} sQualifiedName
 			 *   A qualified name
+			 * @param {string} [sPropertyName]
+			 *   Where the qualified name was found
 			 * @returns {boolean}
 			 *   Whether to continue after scope lookup
 			 */
-			function scopeLookup(sQualifiedName) {
+			function scopeLookup(sQualifiedName, sPropertyName) {
 				if (!(sQualifiedName in mScope)) {
-					vLocation = vLocation || sTarget && sTarget + "/$Type";
+					vLocation = vLocation || sTarget && sTarget + "/" + sPropertyName;
 					return log(WARNING, "Unknown qualified name '", sQualifiedName, "'");
 				}
 				sTarget = sName = sSchemaChildName = sQualifiedName;
@@ -442,18 +460,28 @@ sap.ui.define([
 				}
 
 				if (bODataMode) {
-					if (sSegment[0] === "$") {
+					if (sSegment[0] === "$" || rNumber.test(sSegment)) {
 						bODataMode = false; // technical property, switch to pure "JSON" drill-down
 					} else if (!bSplitSegment) {
 						if (sSegment[0] !== "@" && sSegment.indexOf(".") > 0) {
 							// "17.3 QualifiedName": scope lookup
 							return scopeLookup(sSegment);
-						} else if ("$Type" in vResult) {
+						} else if (vResult && "$Type" in vResult) {
 							// implicit $Type insertion, e.g. at (navigation) property
-							if (!scopeLookup(vResult.$Type)) {
+							if (!scopeLookup(vResult.$Type, "$Type")) {
 								return false;
 							}
-						} else {
+						} else if (vResult && "$Action" in vResult) {
+							// implicit $Action insertion at action import
+							if (!scopeLookup(vResult.$Action, "$Action")) {
+								return false;
+							}
+						} else if (vResult && "$Function" in vResult) {
+							// implicit $Function insertion at function import
+							if (!scopeLookup(vResult.$Function, "$Function")) {
+								return false;
+							}
+						} else if (i === 0) {
 							// "17.2 SimpleIdentifier" (or placeholder):
 							// lookup inside schema child (which is determined lazily)
 							sTarget = sName = sSchemaChildName
@@ -463,6 +491,24 @@ sap.ui.define([
 								&& !(sSegment in oSchemaChild)) {
 								return log(WARNING, "Unknown child '", sSegment,
 									"' of '", sSchemaChildName, "'");
+							}
+						}
+						if (Array.isArray(vResult)) { // overloads of Action or Function
+							if (vResult.length !== 1) {
+								return log(WARNING, "Unsupported overloads");
+							}
+							vResult = vResult[0].$ReturnType;
+							sTarget = sTarget + "/0/$ReturnType";
+							if (vResult) {
+								if (sSegment === "value"
+									&& !(mScope[vResult.$Type] && mScope[vResult.$Type].value)) {
+									// symbolic name "value" points to primitive return type
+									sName = undefined; // block "@sapui.name"
+									return true;
+								}
+								if (!scopeLookup(vResult.$Type, "$Type")) {
+									return false;
+								}
 							}
 						}
 					}
@@ -546,27 +592,23 @@ sap.ui.define([
 	 *   An absolute path to an OData property within the OData data model
 	 * @returns {SyncPromise}
 	 *   A promise that gets resolved with the corresponding UI5 type from
-	 *   <code>sap.ui.model.odata.type</code>; if no type can be determined, the promise is
-	 *   rejected with the corresponding error
+	 *   <code>sap.ui.model.odata.type</code> or rejected with an error; if no specific type can be
+	 *   determined, a warning is logged and <code>sap.ui.model.odata.type.Raw</code> is used
 	 *
 	 * @private
 	 * @see #requestUI5Type
 	 */
 	ODataMetaModel.prototype.fetchUI5Type = function (sPath) {
-		var that = this;
+		var oMetaContext = this.getMetaContext(sPath),
+			that = this;
 
-		/**
-		 * Determines the type and constraints for the given JSON metadata.
-		 *
-		 * @param {object} oMetadata
-		 *   The JSON metadata for which the type is requested. This can be either a Property or an
-		 *   array of Action/Function (for which the $ReturnType is chosen).
-		 * @returns {sap.ui.model.odata.type.ODataType}
-		 *   The type
-		 * @throws {Error} If there is no UI5 type for the referenced EDM type
-		 */
-		function getType(oMetadata) {
-			var mConstraints, sName, oProperty, oType, oTypeInfo;
+		// Note: undefined is more efficient than "" here
+		return this.fetchObject(undefined, oMetaContext).then(function (oProperty) {
+			var mConstraints,
+				sName,
+				oType = oProperty["$ui5.type"],
+				oTypeInfo,
+				sTypeName = "sap.ui.model.odata.type.Raw";
 
 			function setConstraint(sKey, vValue) {
 				if (vValue !== undefined) {
@@ -575,43 +617,35 @@ sap.ui.define([
 				}
 			}
 
-			oProperty = Array.isArray(oMetadata) && oMetadata[0].$ReturnType
-				? oMetadata[0].$ReturnType
-				: oMetadata;
-
-			oType = oProperty["$ui5.type"];
 			if (oType) {
 				return oType;
 			}
 
 			if (oProperty.$isCollection) {
-				throw new Error("Unsupported collection type at " + sPath);
+				jQuery.sap.log.warning("Unsupported collection type, using " + sTypeName,
+					sPath, sODataMetaModel);
+			} else {
+				oTypeInfo = mUi5TypeForEdmType[oProperty.$Type];
+				if (oTypeInfo) {
+					sTypeName = oTypeInfo.type;
+					for (sName in oTypeInfo.constraints) {
+						setConstraint(oTypeInfo.constraints[sName], sName[0] === "@"
+							? that.getObject(sName, oMetaContext)
+							: oProperty[sName]);
+					}
+					if (oProperty.$Nullable === false) {
+						setConstraint("nullable", false);
+					}
+				} else {
+					jQuery.sap.log.warning("Unsupported type '" + oProperty.$Type + "', using "
+						+ sTypeName, sPath, sODataMetaModel);
+				}
 			}
 
-			oTypeInfo = mUi5TypeForEdmType[oProperty.$Type];
-			if (!oTypeInfo) {
-				throw new Error("Unsupported EDM type '" + oProperty.$Type + "' at " + sPath);
-			}
-
-			for (sName in oTypeInfo.constraints) {
-				setConstraint(oTypeInfo.constraints[sName], oProperty[sName]);
-			}
-			if (oProperty.$Nullable === false) {
-				setConstraint("nullable", false);
-			}
-			oType = new (jQuery.sap.getObject(oTypeInfo.type, 0))({}, mConstraints);
+			oType = new (jQuery.sap.getObject(sTypeName, 0))(undefined, mConstraints);
 			oProperty["$ui5.type"] = oType;
 
 			return oType;
-		}
-
-		// Note: undefined is more efficient than "" here
-		return this.fetchObject(undefined, this.getMetaContext(sPath)).then(function (oMetadata) {
-			if (oMetadata.$kind === "FunctionImport") {
-				return that.fetchObject(undefined, that.getMetaContext("/" + oMetadata.$Function))
-					.then(getType);
-			}
-			return getType(oMetadata);
 		});
 	};
 
@@ -685,7 +719,8 @@ sap.ui.define([
 	 *   An absolute path to an OData property within the OData data model
 	 * @returns {sap.ui.model.odata.type.ODataType}
 	 *   The corresponding UI5 type from <code>sap.ui.model.odata.type</code>, if all required meta
-	 *   data to calculate this type is already available
+	 *   data to calculate this type is already available; if no specific type can be determined, a
+	 *   warning is logged and <code>sap.ui.model.odata.type.Raw</code> is used
 	 * @throws {Error}
 	 *   If the UI5 type cannot be determined synchronously (due to a pending meta data request) or
 	 *   cannot be determined at all (due to a wrong data path)
@@ -733,8 +768,8 @@ sap.ui.define([
 	 * @param {string} sPath
 	 *   An absolute data binding path pointing to an entity, for example
 	 *   "/TEAMS/0/TEAM_2_EMPLOYEES/0"
-	 * @param {sap.ui.model.Context} oContext
-	 *   OData v4 context object which provides access to data via <code>requestValue()</code>
+	 * @param {sap.ui.model.odata.v4.Context} oContext
+	 *   OData V4 context object which provides access to data via <code>fetchValue()</code>
 	 * @returns {Promise}
 	 *   A promise which is resolved with the canonical URL (for example
 	 *   "/<service root URL>/EMPLOYEES(ID='1')") in case of success, or rejected with an instance
@@ -747,7 +782,7 @@ sap.ui.define([
 			aSegments = sMetaPath.slice(1).split("/");
 
 		return Promise.all([
-			oContext.requestValue(""),
+			oContext.fetchValue(""),
 			this.fetchEntityContainer()
 		]).then(function (aValues) {
 			var oEntityInstance = aValues[0],
@@ -813,8 +848,8 @@ sap.ui.define([
 	 * <li> "/EMPLOYEES/@com.sap.vocabularies.Common.v1.Label@sapui.name" results in
 	 * "@com.sap.vocabularies.Common.v1.Label" and a slash does not make any difference as long as
 	 * the annotation does not have a "$Type" property.
-	 * <li> A technical property (that is, a segment starting with a "$") immediately before
-	 * "@sapui.name" is invalid, for example "/$EntityContainer/@sapui.name".
+	 * <li> A technical property (that is, a numerical segment or one starting with a "$")
+	 * immediately before "@sapui.name" is invalid, for example "/$EntityContainer@sapui.name".
 	 * </ul>
 	 * The path must not continue after "@sapui.name".
 	 *
@@ -872,20 +907,29 @@ sap.ui.define([
 	 * A segment which represents an OData simple identifier needs special preparations. The same
 	 * applies to the empty segment after a trailing slash.
 	 * <ol>
-	 * <li> If the current object has a "$Type" property, it is used for scope lookup first. This
-	 *    way, "/EMPLOYEES/ENTRYDATE" addresses the same object as "/EMPLOYEES/$Type/ENTRYDATE",
-	 *    namely the "ENTRYDATE" child of the entity type corresponding to the "EMPLOYEES" child of
-	 *    the entity container.
-	 * <li> Else, the last schema child addressed via scope lookup is used instead of the current
-	 *    object. This normally happens indirectly as in
-	 *    "/TEAMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/..." where the schema child is the
+	 * <li> If the current object has a "$Action", "$Function" or "$Type" property, it is used for
+	 *    scope lookup first. This way, "/EMPLOYEES/ENTRYDATE" addresses the same object as
+	 *    "/EMPLOYEES/$Type/ENTRYDATE", namely the "ENTRYDATE" child of the entity type
+	 *    corresponding to the "EMPLOYEES" child of the entity container. The other cases jump from
+	 *    an action or function import to the corresponding action or function overloads.
+	 * <li> Else if the segment is the first one within its path, the last schema child addressed
+	 *    via scope lookup is used instead of the current object. This can only happen indirectly as
+	 *    in "/TEAMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/..." where the schema child is the
 	 *    entity container and the navigation property binding can contain the simple identifier of
 	 *    another entity set within the same container.
 	 *
-	 *    If the segment is the first one, "$EntityContainer" is inserted into the path implicitly.
-	 *    In other words, the entity container is used as the initial schema child. This way,
-	 *    "/EMPLOYEES" addresses the same object as "/$EntityContainer/EMPLOYEES", namely the
-	 *    "EMPLOYEES" child of the entity container.
+	 *    If the segment is the first one overall, "$EntityContainer" is inserted into the path
+	 *    implicitly. In other words, the entity container is used as the initial schema child.
+	 *    This way, "/EMPLOYEES" addresses the same object as "/$EntityContainer/EMPLOYEES", namely
+	 *    the "EMPLOYEES" child of the entity container.
+	 * <li> Afterwards, if the current object is an array, it represents overloads for an action or
+	 *    function. Multiple overloads are invalid. The overload's "$ReturnType/$Type" is used for
+	 *    scope lookup. This way, "/GetOldestWorker/AGE" addresses the same object as
+	 *    "/GetOldestWorker/0/$ReturnType/$Type/AGE". For primitive return types, the special
+	 *    segment "value" can be used to refer to the return type itself (see
+	 *    {@link sap.ui.model.odata.v4.ODataContextBinding#execute}). This way,
+	 *    "/GetOldestAge/value" addresses the same object as "/GetOldestAge/0/$ReturnType" (which
+	 *    is needed for automatic type determination, see {@link #requestUI5Type}).
 	 * </ol>
 	 *
 	 * A trailing slash can be used to continue a path and thus force scope lookup or OData simple
@@ -925,8 +969,8 @@ sap.ui.define([
 	 *   An absolute path to an OData property within the OData data model
 	 * @returns {Promise}
 	 *   A promise that gets resolved with the corresponding UI5 type from
-	 *   <code>sap.ui.model.odata.type</code>; if no type can be determined, the promise is
-	 *   rejected with the corresponding error
+	 *   <code>sap.ui.model.odata.type</code> or rejected with an error; if no specific type can be
+	 *   determined, a warning is logged and <code>sap.ui.model.odata.type.Raw</code> is used
 	 *
 	 * @function
 	 * @public
@@ -960,7 +1004,8 @@ sap.ui.define([
 	 *   The context to be used as a starting point in case of a relative path
 	 * @returns {string}
 	 *   Resolved path or <code>undefined</code>
-	 * @throws Error if relative path starts with a dot which is not followed by a forward slash
+	 * @throws {Error}
+	 *   If relative path starts with a dot which is not followed by a forward slash
 	 *
 	 * @private
 	 * @see sap.ui.model.Model#resolve
@@ -1004,6 +1049,18 @@ sap.ui.define([
 	// @override
 	ODataMetaModel.prototype.setLegacySyntax = function () {
 		throw new Error("Unsupported operation: v4.ODataMetaModel#setLegacySyntax");
+	};
+
+	/**
+	 * Returns a string representation of this object including the URL to the $metadata document of
+	 * the service.
+	 *
+	 * @return {string} A string description of this model
+	 * @public
+	 * @since 1.37.0
+	 */
+	ODataMetaModel.prototype.toString = function () {
+		return sODataMetaModel + ": " + this.sUrl;
 	};
 
 	return ODataMetaModel;

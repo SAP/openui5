@@ -111,9 +111,10 @@ sap.ui.require([
 		return repeatAsyncTest(10, function () {
 			var iStart = Date.now();
 
-			return new ODataModelV4(
-					"/testsuite/test-resources/sap/ui/core/qunit/odata/v4/lib/data/v4/"
-			).getMetaModel().requestObject("/").then(function () {
+			return new ODataModelV4({
+				serviceUrl : "/testsuite/test-resources/sap/ui/core/qunit/odata/v4/lib/data/v4/",
+				synchronizationMode : "None"
+			}).getMetaModel().requestObject("/").then(function () {
 				return {time: Date.now() - iStart};
 			});
 		}).then(function (oResult) {

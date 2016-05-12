@@ -19,7 +19,6 @@ sap.ui.define([],
 	 * @param {sap.m.FeedContent} oControl the control to be rendered
 	 */
 	FeedContentRenderer.render = function(oRm, oControl) {
-		var sSize = oControl.getSize();
 		var sSubheader = oControl.getSubheader();
 		var sValue = oControl.getValue();
 		var sTooltip = oControl.getTooltip_AsString();
@@ -39,7 +38,6 @@ sap.ui.define([],
 			oRm.writeAttributeEscaped("aria-label", oControl.getAltText().replace(/\s/g, " ") + " " + sTooltip );
 		}
 
-		oRm.addClass(sSize);
 		oRm.addClass("sapMFC");
 		if (oControl.hasListeners("press")) {
 			oRm.writeAttribute("tabindex", "0");
@@ -48,30 +46,29 @@ sap.ui.define([],
 		oRm.writeClasses();
 		oRm.write(">");
 
-		oRm.write("<div");
-		oRm.writeAttribute("id", oControl.getId() + "-value");
-		oRm.addClass("sapMFCValue");
-		oRm.addClass(sSize);
-		oRm.addClass(oControl.getValueColor());
-		oRm.writeClasses();
-		oRm.write(">");
-		var iChar = oControl.getTruncateValueTo();
-		//Control shows only iChar characters. If the last shown character is decimal separator -
-		//show only first N-1 characters. So "144.5" is shown like "144" and not like "144.".
-		if (sValue.length >= iChar && (sValue[iChar - 1] === "." || sValue[iChar - 1] === ",")) {
-			oRm.writeEscaped(sValue.substring(0, iChar - 1));
-		} else {
-			if (sValue) {
+		if (sValue) {
+			oRm.write("<div");
+			oRm.writeAttribute("id", oControl.getId() + "-value");
+			oRm.addClass("sapMFCValue");
+			oRm.addClass(oControl.getValueColor());
+			oRm.writeClasses();
+			oRm.write(">");
+
+			var iChar = oControl.getTruncateValueTo();
+			//Control shows only iChar characters. If the last shown character is decimal separator -
+			//show only first N-1 characters. So "144.5" is shown like "144" and not like "144.".
+			if (sValue.length >= iChar && (sValue[iChar - 1] === "." || sValue[iChar - 1] === ",")) {
+				oRm.writeEscaped(sValue.substring(0, iChar - 1));
+			} else if (sValue) {
 				oRm.writeEscaped(sValue.substring(0, iChar));
 			} else {
 				oRm.writeEscaped("");
 			}
+			oRm.write("</div>");
 		}
-		oRm.write("</div>");
 
 		oRm.write("<div");
 		oRm.addClass("sapMFCCTxt");
-		oRm.addClass(sSize);
 		oRm.writeClasses();
 		oRm.write(">");
 		oRm.renderControl(oControl._oContentText);
@@ -80,12 +77,12 @@ sap.ui.define([],
 		oRm.write("<div");
 		oRm.writeAttribute("id", oControl.getId() + "-subheader");
 		oRm.addClass("sapMFCSbh");
-		oRm.addClass(sSize);
 		oRm.writeClasses();
 		oRm.write(">");
 		oRm.writeEscaped(sSubheader);
 		oRm.write("</div>");
-		oRm.write("</div>");
+
+		oRm.write("</div>"); /* sapMFC */
 	};
 
 	return FeedContentRenderer;

@@ -1,194 +1,165 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-
-<!--
-  JSUNIT:
-    Tested module: jquery.sap.global.js
-    Author:
- -->
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<title>Test Page for SAPUI5 Global functionality (from Global.js)</title>
+		<meta charset="utf-8">
+		<title>Test Page for SAPUI5 jQuery.sap.global functionality</title>
 		<script id="sap-ui-bootstrap"
 				data-sap-ui-theme="sap_bluecrystal"
-				type="text/javascript"
 				data-sap-ui-noConflict="true"
 				data-sap-ui-libs="sap.ui.core"
 				src="../../../../../resources/sap-ui-core.js">
 		</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-		<link rel="stylesheet" id="sap-ui-theme-sap.ui.layout" href="../../../../../resources/sap/ui/layout/themes/sap_bluecrystal/library.css" type="text/css" data-marker="42">
-		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-		<!--[if IE 9]>
-			<script>
-				// If this flag is set to `false` sinon will only fake `XDomainRequest` but not `XMLHttpRequest`
-				// GH Issues:
-				// - https://github.com/cjohansen/Sinon.JS/issues/715
-				// - https://github.com/cjohansen/Sinon.JS/issues/732
-				// TODO: remove once this has been fixed!!!
-				sinon.xhr.supportsCORS = true;
-			</script>
-		<![endif]-->
-		<!--[if IE]>
-			<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
-		<![endif]-->
-		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-		<script type="text/javascript">
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" media="screen">
+		<link rel="stylesheet" id="sap-ui-theme-sap.ui.layout" href="../../../../../resources/sap/ui/layout/themes/sap_bluecrystal/library.css" data-marker="42">
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script>
 
 			/* !!! MOVE TO HEAD - DUE TO SAFARI ISSUES DURING TEST SETUP !!! */
 			jQuery.sap.includeScript("testdata/sapjsunittestvalueincrementor.js", "jsunitIncludeScriptTestScript");
 			jQuery.sap.includeStyleSheet("testdata/testA.css", "jsunitIncludeStyleSheetTest");
 
-			module("Basic", {
-				setup : function() {
+			QUnit.module("Basic", {
+				beforeEach: function(assert) {
 					window.saptest = {};
 					window.saptest.JUST_FOR_TESTING = "Just for testing";
 
-					document.getElementById("uiArea1").innerHTML = window.saptest.JUST_FOR_TESTING;
-
-					notStrictEqual(window.sap.jsunittestvalue, undefined, "setup precondition");
-					notStrictEqual(window.sap.jsunittestvalue, null, "setup precondition");
+					assert.notStrictEqual(window.sap.jsunittestvalue, undefined, "setup precondition");
+					assert.notStrictEqual(window.sap.jsunittestvalue, null, "setup precondition");
 				},
-				tearDown : function() {
+				afterEach: function() {
 					window.saptest = null;
 				}
 			});
 
-			test("GlobalSetupDone", function() {
+			QUnit.test("GlobalSetupDone", function(assert) {
 
+				assert.notStrictEqual(sap, undefined, "package sap must be defined");
+				assert.notStrictEqual(sap.ui, undefined, "package sap.ui must be defined");
 
-				notStrictEqual(sap, undefined, "package sap must be defined");
-				notStrictEqual(sap.ui, undefined, "package sap.ui must be defined");
-
-				ok(typeof(jQuery.sap.domById) == "function", "function jQuery.sap.domById must be defined");
-				notStrictEqual(jQuery.sap.domById("uiArea1"), null, "function jQuery.sap.domById must deliver some dom reference");
-				strictEqual(jQuery.sap.domById("uiArea1").innerHTML, window.saptest.JUST_FOR_TESTING, "function jQuery.sap.domById must deliver the right dom reference");
 			});
 
+			QUnit.test("NewObject", function(assert) {
 
-			test("NewObject", function() {
+				temp = {};
 
+				temp.ClassA = function() {
+					this.fieldA_1 = true;
+					this.fieldA_2 = 'string';
+				};
+				temp.ClassA.prototype.methodA_1 = function() { return "ClassA.methodA_1"; };
+				temp.ClassA.prototype.methodA_2 = function() { return "ClassA.methodA_2"; };
 
-					temp = {};
+				var oA1 = new temp.ClassA();
+				ok(typeof oA1.methodA_1 == "function" && oA1.methodA_1() == "ClassA.methodA_1", "instance oA1 inherits from prototype");
+				ok(typeof oA1.methodA_2 == "function" && oA1.methodA_2() == "ClassA.methodA_2", "instance oA1 inherits from prototype");
+				for(var key in temp.ClassA.prototype) {
+					assert.ok(typeof temp.ClassA.prototype[key] == "function", "prototype of A only contains functions");
+				};
 
-					temp.ClassA = function() {
-						this.fieldA_1 = true;
-						this.fieldA_2 = 'string';
-					};
-					temp.ClassA.prototype.methodA_1 = function() { return "ClassA.methodA_1"; };
-					temp.ClassA.prototype.methodA_2 = function() { return "ClassA.methodA_2"; };
+				var oA2 = new temp.ClassA();
+				ok(typeof oA2.methodA_2 == "function" && oA2.methodA_2() == "ClassA.methodA_2", "instance oA2 inherits from prototype");
+				oA2.methodA_2 = function() { return "oA2.methodA_2"; };
+				ok(typeof oA2.methodA_2 == "function" && oA2.methodA_2() == "oA2.methodA_2", "instance oA2 overrides methodA_2");
+				ok(typeof oA1.methodA_2 == "function" && oA1.methodA_2() == "ClassA.methodA_2", "instance oA1 still inherits from prototype");
 
-					var oA1 = new temp.ClassA();
-					ok(typeof oA1.methodA_1 == "function" && oA1.methodA_1() == "ClassA.methodA_1", "instance oA1 inherits from prototype");
-					ok(typeof oA1.methodA_2 == "function" && oA1.methodA_2() == "ClassA.methodA_2", "instance oA1 inherits from prototype");
-					for(var key in temp.ClassA.prototype) {
-						ok(typeof temp.ClassA.prototype[key] == "function", "prototype of A only contains functions");
-					};
+				temp.ClassB = function() {
+					temp.ClassA.apply(this);
+				};
+				temp.ClassB.prototype = jQuery.sap.newObject(temp.ClassA.prototype);
+				temp.ClassB.prototype.methodA_2 = function() { return "ClassB.methodA_2"; };
+				temp.ClassB.prototype.methodB_3 = function() { return "ClassB.methodB_3"; };
+				temp.ClassB.prototype.methodB_4 = function() { return "ClassB.methodB_4"; };
 
-					var oA2 = new temp.ClassA();
-					ok(typeof oA2.methodA_2 == "function" && oA2.methodA_2() == "ClassA.methodA_2", "instance oA2 inherits from prototype");
-					oA2.methodA_2 = function() { return "oA2.methodA_2"; };
-					ok(typeof oA2.methodA_2 == "function" && oA2.methodA_2() == "oA2.methodA_2", "instance oA2 overrides methodA_2");
-					ok(typeof oA1.methodA_2 == "function" && oA1.methodA_2() == "ClassA.methodA_2", "instance oA1 still inherits from prototype");
+				var oB1 = new temp.ClassB();
 
-					temp.ClassB = function() {
-						temp.ClassA.apply(this);
-					};
-					temp.ClassB.prototype = jQuery.sap.newObject(temp.ClassA.prototype);
-					temp.ClassB.prototype.methodA_2 = function() { return "ClassB.methodA_2"; };
-					temp.ClassB.prototype.methodB_3 = function() { return "ClassB.methodB_3"; };
-					temp.ClassB.prototype.methodB_4 = function() { return "ClassB.methodB_4"; };
+				assert.ok(typeof temp.ClassB.prototype.methodA_1 == "function" && temp.ClassB.prototype.methodA_1() == "ClassA.methodA_1", "prototype of B inherits from A");
+				assert.ok(typeof temp.ClassB.prototype.fieldA_1 == "undefined", "prototype of B does not contain instance fields from A");
+				assert.ok(typeof temp.ClassB.prototype.fieldA_2 == "undefined", "prototype of B does not contain instance fields from A");
+				for(var key in temp.ClassB.prototype) {
+					assert.ok(typeof temp.ClassB.prototype[key] == "function", "prototype of B only contains functions");
+				}
+				assert.strictEqual(oB1.methodA_1(), "ClassA.methodA_1", "B inherits methodA_1");
+				assert.strictEqual(oB1.methodA_2(), "ClassB.methodA_2", "B overrides methodA_2");
+			});
 
-					var oB1 = new temp.ClassB();
-
-					ok(typeof temp.ClassB.prototype.methodA_1 == "function" && temp.ClassB.prototype.methodA_1() == "ClassA.methodA_1", "prototype of B inherits from A");
-					ok(typeof temp.ClassB.prototype.fieldA_1 == "undefined", "prototype of B does not contain instance fields from A");
-					ok(typeof temp.ClassB.prototype.fieldA_2 == "undefined", "prototype of B does not contain instance fields from A");
-					for(var key in temp.ClassB.prototype) {
-						ok(typeof temp.ClassB.prototype[key] == "function", "prototype of B only contains functions");
-					}
-					strictEqual(oB1.methodA_1(), "ClassA.methodA_1", "B inherits methodA_1");
-					strictEqual(oB1.methodA_2(), "ClassB.methodA_2", "B overrides methodA_2");
-				});
 
 			//****************************************************
 			// includeScript tests
 			//****************************************************
 
-			test("includeScript", function() {
+			QUnit.module("includeScript ");
+
+			QUnit.test("basic", function(assert) {
 				var iBefore = sap.jsunittestvalue;
 				var iScriptCnt = document.getElementsByTagName("SCRIPT").length;
+				var done = assert.async();
 				jQuery.sap.includeScript("testdata/sapjsunittestvalueincrementor.js", "jsunitIncludeScriptTestScript", function() {
-					strictEqual(iBefore + 1, sap.jsunittestvalue, "testvalue should have been incremented");
-					strictEqual(iScriptCnt, document.getElementsByTagName("SCRIPT").length, "no new script element should have been created");
-					start();
+					assert.strictEqual(iBefore + 1, sap.jsunittestvalue, "testvalue should have been incremented");
+					assert.strictEqual(iScriptCnt, document.getElementsByTagName("SCRIPT").length, "no new script element should have been created");
+					done();
 				});
-				stop();
 			});
 
-			test("includeScript (Promise)", function() {
+			QUnit.test("basic (Promise)", function(assert) {
 				var iBefore = sap.jsunittestvalue;
 				var iScriptCnt = document.getElementsByTagName("SCRIPT").length;
-				jQuery.sap.includeScript({
+				return jQuery.sap.includeScript({
 					url: "testdata/sapjsunittestvalueincrementor.js",
 					id: "jsunitIncludeScriptTestScript",
 					promisify: true
 				}).then(function() {
-					strictEqual(iBefore + 1, sap.jsunittestvalue, "testvalue should have been incremented");
-					strictEqual(iScriptCnt, document.getElementsByTagName("SCRIPT").length, "no new script element should have been created");
-					start();
+					assert.strictEqual(iBefore + 1, sap.jsunittestvalue, "testvalue should have been incremented");
+					assert.strictEqual(iScriptCnt, document.getElementsByTagName("SCRIPT").length, "no new script element should have been created");
 				});
-				stop();
 			});
+
 
 			//****************************************************
 			// includeStylesheet tests
 			//****************************************************
 
-			module("includeStyleSheet");
+			QUnit.module("includeStyleSheet");
 
-			test("basic", function(){
+			QUnit.test("basic", function(assert){
 				var oTestArea = jQuery.sap.domById("includeStyleSheetTest");
 				var sBefore = jQuery(oTestArea).css("backgroundColor");
 				var iLinkCnt = document.getElementsByTagName("LINK").length;
+				var done = assert.async();
 				jQuery.sap.includeStyleSheet("testdata/testB.css", "jsunitIncludeStyleSheetTest", function() {
-					notStrictEqual(jQuery(oTestArea).css("backgroundColor"), sBefore, "background-color should have changed");
-					strictEqual(document.getElementsByTagName("LINK").length, iLinkCnt, "no new link element should have been created");
-					start();
+					assert.notStrictEqual(jQuery(oTestArea).css("backgroundColor"), sBefore, "background-color should have changed");
+					assert.strictEqual(document.getElementsByTagName("LINK").length, iLinkCnt, "no new link element should have been created");
+					done();
 				});
-				stop();
 			});
 
-			test("basic (Promise)", function(){
+			QUnit.test("basic (Promise)", function(assert){
 				var oTestArea = jQuery.sap.domById("includeStyleSheetTest");
 				var sBefore = jQuery(oTestArea).css("backgroundColor");
 				var iLinkCnt = document.getElementsByTagName("LINK").length;
-				jQuery.sap.includeStyleSheet({
+				return jQuery.sap.includeStyleSheet({
 					url: "testdata/testC.css",
 					id: "jsunitIncludeStyleSheetTest",
 					promisify: true
 				}).then(function() {
 					notStrictEqual(jQuery(oTestArea).css("backgroundColor"), sBefore, "background-color should have changed");
 					strictEqual(document.getElementsByTagName("LINK").length, iLinkCnt, "no new link element should have been created");
-					start();
 				});
-				stop();
 			});
 
-			test("don't load twice", function(){
+			QUnit.test("don't load twice", function(assert){
 				var sStyleSheetUrl = "../../../../../resources/sap/ui/layout/themes/sap_bluecrystal/library.css";
 				var $link = jQuery.sap.byId("sap-ui-theme-sap.ui.layout");
-				equal($link.length, 1, "initially, there should be exactly one matching link)");
-				equal($link.attr("data-marker"), "42", "initially, the link object should be the declarative one");
+				assert.equal($link.length, 1, "initially, there should be exactly one matching link)");
+				assert.equal($link.attr("data-marker"), "42", "initially, the link object should be the declarative one");
 
 				jQuery.sap.includeStyleSheet(sStyleSheetUrl, "sap-ui-theme-sap.ui.layout");
 
 				var $link = jQuery.sap.byId("sap-ui-theme-sap.ui.layout");
-				equal($link.length, 1, "after includeStylesheet, there still should be exactly one matching link");
-				equal($link.attr("data-marker"), "42", "after includeStylesheet, the link object still should be the old one");
+				assert.equal($link.length, 1, "after includeStylesheet, there still should be exactly one matching link");
+				assert.equal($link.attr("data-marker"), "42", "after includeStylesheet, the link object still should be the old one");
 
 				// use link node to make URL absolute
 				var oLink = document.createElement('link');
@@ -198,17 +169,17 @@
 				jQuery.sap.includeStyleSheet(sAbsoluteStylesheetUrl, "sap-ui-theme-sap.ui.layout");
 
 				var $link = jQuery.sap.byId("sap-ui-theme-sap.ui.layout");
-				equal($link.length, 1, "after includeStylesheet with absolute URL, there still should be exactly one matching link");
-				equal($link.attr("data-marker"), "42", "after includeStylesheet with absolute URL, the link object still should be the old one");
+				assert.equal($link.length, 1, "after includeStylesheet with absolute URL, there still should be exactly one matching link");
+				assert.equal($link.attr("data-marker"), "42", "after includeStylesheet with absolute URL, the link object still should be the old one");
 
 				sap.ui.getCore().loadLibrary("sap.ui.layout");
 
 				var $link = jQuery.sap.byId("sap-ui-theme-sap.ui.layout");
-				equal($link.length, 1, "after loadLibrary, there should be exactly one matching link");
-				equal($link.attr("data-marker"), "42", "after loadLibrary, the link object still should be the old one");
+				assert.equal($link.length, 1, "after loadLibrary, there should be exactly one matching link");
+				assert.equal($link.attr("data-marker"), "42", "after loadLibrary, the link object still should be the old one");
 			});
 
-			asyncTest("stylesheet count", function() {
+			QUnit.test("stylesheet count", function(assert) {
 
 				function getStyleId(i) {
 					return "style" + (i + 1);
@@ -254,8 +225,8 @@
 				}
 
 				// wait until all stylesheets are loaded
-				Promise.all(aPromises).then(function() {
-					equal(document.styleSheets.length, iExpectedStylesheets, "Overall stylesheet count should be like expected");
+				return Promise.all(aPromises).then(function() {
+					assert.equal(document.styleSheets.length, iExpectedStylesheets, "Overall stylesheet count should be like expected");
 
 					// remove all added stylesheets again
 					for (i = 0; i < iNewStylesheets; i++) {
@@ -264,217 +235,17 @@
 						oLink.remove();
 					}
 
-					start();
-
 				}, function(e) {
-					ok(false, e);
-					start();
+					assert.ok(false, e);
 				});
 
-			});
-
-			//****************************************************
-			// module loading (require/declare/define)
-			//****************************************************
-
-			module("sap.ui.require");
-
-			test("basic functionality", 3, function () {
-
-				var server = sinon.fakeServer.create();
-				server.respondWith(/first/, 'sap.ui.define([], function () {' +
-						'return {my : "firstmodule"}' +
-						'}, /* bExport= */ true);');
-				server.respondWith(/second/, 'sap.ui.define([], function () {' +
-						'return {my : "secondmodule"}' +
-						'}, /* bExport= */ true);');
-				server.autoRespond = true;
-
-				stop();
-				var calledBack = false;
-				sap.ui.require(["my/first/module", "my/second/module"], function (firstModule, secondModule) {
-					strictEqual(firstModule.my, "firstmodule");
-					strictEqual(secondModule.my, "secondmodule");
-					calledBack = true;
-					start();
-				});
-				equal(calledBack, false, "callback must not have been called synchronously");
-
-				server.restore();
-			});
-
-
-			//****************************************************
-			// loadResource tests
-			//****************************************************
-
-			module("loadResource");
-
-			test("synchronous - basic", function(){
-				var sText = jQuery.sap.loadResource({
-					url: "testdata/test.properties",
-					dataType: 'text',
-					failOnError: false
-				});
-				ok(sText && sText.length > 0, "Resource loaded successfully");
-			});
-
-			test("synchronous - no fail on error", function(){
-				var sText = jQuery.sap.loadResource({
-					url: "testdata/testDoesNotExist.properties",
-					dataType: 'text',
-					failOnError: false
-				});
-				ok(!sText, "Resource cannot be found but no error occured");
-			});
-
-			test("synchronous - fail on error", function(){
-				try {
-					var sText = jQuery.sap.loadResource({
-						url: "testdata/testDoesNotExist.properties",
-						dataType: 'text',
-						failOnError: true
-					});
-					ok(false, "Resource cannot be found but no error occured");
-				}catch(e){
-					ok(true, "Resource cannot be found and an error occured");
-				}
-			});
-
-			asyncTest("asynchronous - basic", function(){
-				jQuery.sap.loadResource({
-					url: "testdata/test.properties",
-					dataType: 'text',
-					failOnError: false,
-					async: true
-				}).then(function(sText){
-					ok(sText && sText.length > 0, "Promise.done: Resource loaded successfully");
-					start();
-				}, function(oError){
-					ok(false, "Promise.catch should not be called");
-					start();
-				});
-			});
-
-			asyncTest("asynchronous - no fail on error", function(){
-				jQuery.sap.loadResource({
-					url: "testdata/testDoesNotExist.properties",
-					dataType: 'text',
-					failOnError: false,
-					async: true
-				}).then(function(sText){
-					ok(!sText, "Promise.done: Resource cannot be found but no error occured");
-					start();
-				}, function(oError){
-					ok(false, "Promise.catch should not be called");
-					start();
-				});
-			});
-
-			asyncTest("asynchronous - fail on error", function(){
-				jQuery.sap.loadResource({
-					url: "testdata/testDoesNotExist.properties",
-					dataType: 'text',
-					failOnError: true,
-					async: true
-				}).then(function(sText){
-					ok(false, "Promise.done should not be called");
-					start();
-				}, function(oError){
-					ok(oError instanceof Error, "Promise.catch: Resource cannot be found and an error occured");
-					start();
-				});
-			});
-
-
-			//****************************************************
-			// registerModule tests
-			//****************************************************
-
-			module("registerModule");
-
-			test("w/o final flag (legacy variant)", function(){
-
-				var sPathInput = "/qunit/test/path";
-				var sPathOutput;
-
-				//first, set path to anything (should be overwritten then...)
-				jQuery.sap.registerModulePath("qunit.test.path1", "/this/is/the/wrong/path/");
-
-				jQuery.sap.registerModulePath("qunit.test.path1", sPathInput);
-				sPathOutput = jQuery.sap.getModulePath("qunit.test.path1");
-
-				ok(sPathOutput == sPathInput, "Not-existing final flag was handled successfully.");
-			});
-
-			test("set final=false", function(){
-				var sPathInput = "/qunit/test/path";
-				var sPathOutput;
-
-				//first, set path to anything (should be overwritten then...)
-				jQuery.sap.registerModulePath("qunit.test.path2", "/this/is/the/wrong/path/");
-
-				jQuery.sap.registerModulePath("qunit.test.path2", {'url': sPathInput, 'final': false});
-				sPathOutput = jQuery.sap.getModulePath("qunit.test.path2");
-
-				ok(sPathOutput == sPathInput, "False final flag was handled successfully.");
-			});
-
-			test("set final=true", function(){
-				var sPathInput = "/qunit/test/path";
-				var sPathOutput;
-
-				//first, set path to the value it should be and stay (should NOT be overwritten then...)
-				jQuery.sap.registerModulePath("qunit.test.path3", {'url': sPathInput, 'final': true});
-
-				jQuery.sap.registerModulePath("qunit.test.path3", "/this/is/the/wrong/path/");
-				sPathOutput = jQuery.sap.getModulePath("qunit.test.path3");
-
-				ok(sPathOutput == sPathInput, "Active final flag was handled successfully.");
-			});
-
-			test("no empty Module URLs allowed", function(){
-				jQuery.sap.registerModulePath("qunit.test.path4", "");
-				var sPathOutput = jQuery.sap.getModulePath("qunit.test.path4");
-
-				ok(sPathOutput == ".", "Setting empty URL avoided successfully.");
-			});
-
-			test("query parameters should be stripped off", function() {
-				var sExpected = "/qunit/test/path/with/query";
-				jQuery.sap.registerModulePath("qunit.test.path5", sExpected + "?foo=bar&x=y");
-
-				var sActual = jQuery.sap.getModulePath("qunit.test.path5");
-				equal(sActual, sExpected, "Query parameters should be stripped correctly.");
-			});
-
-			test("hash should be stripped off", function() {
-				var sExpected = "/qunit/test/path/with/hash";
-				jQuery.sap.registerModulePath("qunit.test.path6", sExpected + "#foo?bar=baz");
-
-				var sActual = jQuery.sap.getModulePath("qunit.test.path6");
-				equal(sActual, sExpected, "Hash should be stripped correctly.");
-			});
-
-			test("query parameters + hash should be stripped off", function() {
-				var sExpected = "/qunit/test/path/with/query/and/hash";
-				jQuery.sap.registerModulePath("qunit.test.path7", sExpected + "?foo=bar&x=y#foo?bar=baz");
-
-				var sActual = jQuery.sap.getModulePath("qunit.test.path7");
-				equal(sActual, sExpected, "Query parameters + hash should be stripped correctly.");
 			});
 
 		</script>
 
 	</head>
 	<body>
-		<h1 id="qunit-header">QUnit page for jquery.sap.global</h1>
-		<h2 id="qunit-banner"></h2>
-	 	<h2 id="qunit-userAgent"></h2>
-		<div id="qunit-testrunner-toolbar"></div>
-		<ol id="qunit-tests"></ol>
-		<br>
-		<div id="uiArea1"></div>
+		<div id="qunit"></div>
 		<div id="includeStyleSheetTest" class="sap-jsunitIncludeStyleSheetTest" style="width:100px;height:100px">
 		Test area for includeStyleSheet
 		</div>

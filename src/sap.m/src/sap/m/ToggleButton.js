@@ -78,6 +78,28 @@ sap.ui.define(['jquery.sap.global', './Button', './library', 'sap/ui/core/Enable
 		}
 	};
 
+	/**
+	 * Override the keyup event handler of Button.js.
+	 */
+	ToggleButton.prototype.onkeyup = function(oEvent) {
+		if (oEvent.which === jQuery.sap.KeyCodes.SPACE || oEvent.which === jQuery.sap.KeyCodes.ENTER) {
+			oEvent.setMarked();
+		}
+	};
+
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	ToggleButton.prototype.getAccessibilityInfo = function() {
+		var oInfo = Button.prototype.getAccessibilityInfo.apply(this, arguments);
+		if (this.getPressed()) {
+			oInfo.description = ((oInfo.description || "") + " " +
+				sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_PRESSED")).trim();
+		}
+		return oInfo;
+	};
+
 
 	return ToggleButton;
 

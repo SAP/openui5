@@ -475,6 +475,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 					// ResponsiveFlowLayout already created
 					oRFLayout = mRFLayouts[sElementId][0];
 					iLastIndex = oContainerLayout.indexOfContent(oRFLayout);
+					if (iLastIndex != iVisibleElements) {
+						// order has changed -> move it
+						oContainerLayout.removeContent(oRFLayout);
+						oContainerLayout.insertContent(oRFLayout, iVisibleElements);
+						iLastIndex == iVisibleElements;
+					}
 				} else {
 					oRFLayout = _createResponsiveFlowLayout(oLayout, oContainer, oElement);
 					oRFLayout.addStyleClass("sapUiRLElement");
@@ -623,7 +629,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 			oRFLayout._getAccessibleRole = function() {
 
 				var oContainer = sap.ui.getCore().byId(this.__myParentContainerId);
-				if (!oContainer.getToolbar() && !oContainer.getTitle() && !oContainer.getExpandable()) {
+				var oLayout = this.__myParentLayout;
+				if (oLayout._mainRFLayout && !oContainer.getToolbar() && !oContainer.getTitle() && !oContainer.getExpandable()) {
 					return "form";
 				}
 

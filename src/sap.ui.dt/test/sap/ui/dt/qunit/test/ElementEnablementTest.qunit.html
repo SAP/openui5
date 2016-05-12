@@ -1,0 +1,113 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Test Page for sap.ui.dt.test.ElementEnablementTest</title>
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				type="text/javascript"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-libs="sap.ui.dt,sap.ui.layout,sap.m"
+				src="../../../../../../resources/sap-ui-core.js">
+		</script>
+		<style>
+			.minSize {
+				min-width : 100px;
+				min-height: 100px;
+			}
+		</style>
+		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript">
+
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			jQuery.sap.require("sap.ui.thirdparty.sinon");
+			jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
+			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+
+			jQuery.sap.require("sap.m.Button");
+
+			jQuery.sap.require("sap.ui.dt.test.ElementEnablementTest");
+			var ElementEnablementTest = sap.ui.dt.test.ElementEnablementTest;
+
+			QUnit.module("Given that a sap.m.Button is tested", {
+				beforeEach : function(assert) {
+					this.oElementEnablementTest = new ElementEnablementTest({
+						type : "sap.m.Button"
+					});
+				},
+				afterEach : function() {
+					this.oElementEnablementTest.destroy();
+				}
+			});
+
+			QUnit.test("when the test is started", function(assert) {
+				var done = assert.async();
+				this.oElementEnablementTest.run().then(function(oResult) {
+					assert.ok(oResult, "A result is returned");
+					fnTestInterface(oResult);
+					done();
+				});
+			});
+
+
+			QUnit.module("Given that a sap.m.Button with an create function is tested", {
+				beforeEach : function(assert) {
+
+					function fnCreate() {
+						return new sap.m.Button();
+					}
+
+					this.fnSpyCreate = sinon.spy(fnCreate);
+
+					this.oElementEnablementTest = new ElementEnablementTest({
+						type : "sap.m.Button",
+						create: this.fnSpyCreate
+					});
+				},
+				afterEach : function() {
+					sinon.restore(this.fnSpyCreate);
+					this.oElementEnablementTest.destroy();
+				}
+			});
+
+			QUnit.test("when the test is started", function(assert) {
+				var done = assert.async();
+				var that = this;
+				this.oElementEnablementTest.run().then(function(oResult) {
+					assert.ok(oResult, "A result is returned");
+					assert.equal(that.fnSpyCreate.callCount, 1, "and the create function was called once");
+					fnTestInterface(oResult);
+					done();
+				});
+			});
+
+			var fnTestInterface = function(oEntry) {
+				assert.ok(true, "... then '" + oEntry.name  + " Entry' : Test Interface");
+				assert.ok(oEntry.hasOwnProperty("status"), "and an entry has a property 'status'");
+				assert.ok(oEntry.hasOwnProperty("type"), "and an entry has a property 'type'");
+				assert.ok(oEntry.hasOwnProperty("message"), "and an entry has a property 'message'");
+				assert.ok(oEntry.hasOwnProperty("name"), "and an entry has a property 'name'");
+				assert.ok(oEntry.hasOwnProperty("result"), "and an entry has a property 'result'");
+				assert.ok(oEntry.hasOwnProperty("children"), "and an entry has a property 'children'");
+				assert.ok(oEntry.hasOwnProperty("statistic"), "and an entry has a property 'statistic'");
+
+				oEntry.children.forEach(function(oChild) {
+					fnTestInterface(oChild);
+				});
+			}
+
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit page for sap.ui.dt.test.ElementEnablementTest</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>

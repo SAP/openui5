@@ -6,7 +6,7 @@
 	<title>sap.m.TabContainer</title>
 	<script id="sap-ui-bootstrap"
 			src="../../../resources/sap-ui-core.js"
-			data-sap-ui-libs="sap.m"
+			data-sap-ui-libs="sap.m, sap.uxap, sap.ui.layout"
 			data-sap-ui-theme="sap_bluecrystal">
 	</script>
 	<script>
@@ -69,11 +69,32 @@
 		var oTemplate = new sap.m.TabContainerItem({
 			name: "{Name}",
 			modified: "{modified}",
-			content: [
-				new sap.m.Text({ text: "{Description}" }),
-				new sap.m.Slider(),
-				new sap.m.Link({ text: "{SupplierName}" })
-			]
+			content: new sap.uxap.ObjectPageLayout({
+				headerTitle: new sap.uxap.ObjectPageHeader({
+					objectTitle:"{Name}",
+					objectSubtitle: "{SupplierName}"
+				}),
+				sections: [
+					new sap.uxap.ObjectPageSection({
+						title:"Description",
+						subSections: new sap.uxap.ObjectPageSubSection({
+							blocks: new sap.m.Label({text: "{Description}" })
+						})
+					}),
+					new sap.uxap.ObjectPageSection({
+						title:"Supplier",
+						subSections: new sap.uxap.ObjectPageSubSection({
+							blocks: new sap.m.Label({text: "{SupplierName}" })
+						})
+					}),
+					new sap.uxap.ObjectPageSection({
+						title:"Category",
+						subSections: new sap.uxap.ObjectPageSubSection({
+							blocks: new sap.m.Label({text: "{Category}" })
+						})
+					})
+				]
+			})
 		});
 
 		var fnOnAddButtonClick = function() {

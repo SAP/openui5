@@ -39,6 +39,13 @@
 				beforeEach : function() {
 					this.oButton = new sap.m.Button({text : "Button"});
 
+					this.oIconTabFilter = new sap.m.IconTabFilter({
+						text : "Orders"
+					});
+
+					this.oIconTabBar = new sap.m.IconTabBar({
+					});
+
 					this.oHorizontalLayoutChild = new sap.ui.layout.HorizontalLayout({
 						content : [
 							new sap.m.Button({text : "Button"}),
@@ -65,6 +72,18 @@
 				}
 			});
 
+			QUnit.test("when the hasInterface is called with a valid interface", function(assert) {
+				assert.equal(ElementUtil.hasInterface(this.oIconTabFilter, "sap.m.IconTab"), true, 'then the static method "hasInterface" returns true, if control implements this interface');
+				assert.equal(ElementUtil.hasInterface(this.oButton, "sap.m.IconTab"), false, 'then the static method "hasInterface" returns true, if control does not implements this interface');
+			});
+
+			QUnit.test("when the hasInterface is called with an invalid interface", function(assert) {
+				assert.equal(ElementUtil.hasInterface(this.oIconTabFilter, "sap.m.IconTabBar"), false, 'then the static method "hasInterface" returns true');
+			});
+
+			QUnit.test("when the hasInterface is called with an invalid interface", function(assert) {
+				assert.equal(ElementUtil.hasInterface(this.oIconTabFilter, "sap.m.IconTabBar"), false, 'then the static method "hasInterface" returns true');
+			});
 
 			QUnit.test("when the type of the instance is checked based on the control type", function(assert) {
 				assert.equal(ElementUtil.isInstanceOf(this.oVerticalLayout, "sap.ui.layout.VerticalLayout"), true, 'then the static method "isInstanceOf" returns true');
@@ -134,7 +153,8 @@
 					"get":"getContent",
 					"add":"addContent",
 					"remove":"removeContent",
-					"insert":"insertContent"
+					"insert":"insertContent",
+					"removeAll": "removeAllContent"
 				}, 'then the static method "getAggregationAccessors" returns all accessors of an aggregation');
 
 				var aFoundAggregations = [];
@@ -217,6 +237,10 @@
 
 			QUnit.test("when an element is checked if it is valid for an aggregation of one of its children", function(assert) {
 				assert.equal(ElementUtil.isValidForAggregation(this.oHorizontalLayoutChild, "content", this.oVerticalLayout), false, 'then the static method "isValidForAggregation" returns false');
+			});
+
+			QUnit.test("when an element is checked if it is valid for an aggregation, which type is an interface", function(assert) {
+				assert.equal(ElementUtil.isValidForAggregation(this.oIconTabBar, "items", this.oIconTabFilter), true, 'then the static method "isValidForAggregation" returns true');
 			});
 
 			QUnit.test("when a button is moved from an inner horizontal layout to an outer vertical layout", function(assert) {

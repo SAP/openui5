@@ -18,8 +18,11 @@ sap.ui.require([
 	}
 
 	opaTest("Find view elements", function (Given, When, Then) {
-		var sUrl = "../../../common/index.html?component=odata.v4.SalesOrders&realOData="
-				+ encodeURIComponent(jQuery.sap.getUriParameters().get("realOData"));
+		var vRealOData = jQuery.sap.getUriParameters().get("realOData"),
+			sUrl = "../../../common/index.html?component=odata.v4.SalesOrders"
+				// just to add some URL parameter to each real OData request
+				+ (/direct|proxy|true/.test(vRealOData) ? "&sap-server=test" : "")
+				+ "&realOData=" + encodeURIComponent(vRealOData);
 
 		Given.iStartMyAppInAFrame(sUrl);
 

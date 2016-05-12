@@ -2,8 +2,8 @@
  * ${copyright}
  */
 // Provides a pseudo control for index pages within the Demokit
-sap.ui.define(['jquery.sap.global', './DemokitApp'],
-	function(jQuery, DemokitApp) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/commons/RichTooltip', './DemokitApp', './HexagonButton', './HexagonButtonGroup'],
+	function(jQuery, RichTooltip, DemokitApp, HexagonButton, HexagonButtonGroup) {
 	"use strict";
 
 
@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './DemokitApp'],
 		this.sPathToRoot = suffix("../../../../../../../", iHierarchyLevel);
 		this.sRootUrl = window.location.pathname.split('/').slice(-iHierarchyLevel - 1, -1).join('/') + '/';
 		this.sColor = "Blue";
-		this.oHexGroup = new sap.ui.demokit.HexagonButtonGroup({colspan: (iCols || 5)});
+		this.oHexGroup = new HexagonButtonGroup({colspan: (iCols || 5)});
 		if ( sCategory && oDemokit ) {
 			var aPages = oDemokit.getPagesForCategory(sCategory);
 			for (var i = 0;i < aPages.length; i++) {
@@ -56,10 +56,10 @@ sap.ui.define(['jquery.sap.global', './DemokitApp'],
 			}
 		}
 
-		oButton = new sap.ui.demokit.HexagonButton({
+		oButton = new HexagonButton({
 			enabled: bEnabled,
 			color: "Gray",//this.sColor,
-			tooltip : new sap.ui.commons.RichTooltip({
+			tooltip : new RichTooltip({
 				title : sControl, // TODO + " - " + sLibrary,
 				imageSrc : sIcon || (bEnabled ? "" : this.sPathToRoot + "theme/img/Under-construction.png"),
 				text : sTooltip

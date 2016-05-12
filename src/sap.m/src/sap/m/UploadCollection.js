@@ -719,7 +719,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @param {sap.m.UploadCollectionItem} item The item to update with a new version. This parameter is mandatory.
 	 * @returns {sap.m.UploadCollection} To ensure method chaining, return the UploadCollection.
 	 * @since 1.38.0
-	 * @experimental
 	 * @public
 	 */
 	UploadCollection.prototype.openFileDialog = function(item) {
@@ -2255,6 +2254,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			this._iFUCounter = this._iFUCounter + 1; // counter for FileUploader instances
 			this._oFileUploader = new sap.ui.unified.FileUploader(this.getId() + "-" + this._iFUCounter + "-uploader",{
 				buttonOnly : true,
+				buttonText: " ", // Suppresses title of the button in FileUploader
+				tooltip: this.getInstantUpload() ? this._oRb.getText("UPLOADCOLLECTION_UPLOAD") : this._oRb.getText("UPLOADCOLLECTION_ADD"),
 				iconOnly : true,
 				enabled : this.getUploadEnabled(),
 				fileType : this.getFileType(),
@@ -2298,10 +2299,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 					that._onUploadStart(oEvent);
 				}
 			});
-			var sTooltip = this._oFileUploader.getTooltip();
-			if (!sTooltip && !sap.ui.Device.browser.msie) {
-				this._oFileUploader.setTooltip(" ");
-			}
 		}
 		return this._oFileUploader;
 	};

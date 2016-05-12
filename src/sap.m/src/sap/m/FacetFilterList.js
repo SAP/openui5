@@ -551,22 +551,23 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	/**
 	 * Updates the select all checkbox according to the state of selections in the list and the list active state(this has no effect for lists not in MultiSelect mode).
 	 *
-	 * @param bItemSelected
 	 *          The selection state of the item currently being selected or deselected
 	 * @private
 	 */
-	FacetFilterList.prototype._updateSelectAllCheckBox = function(bItemSelected) {
+	FacetFilterList.prototype._updateSelectAllCheckBox = function() {
+		var iItemsCount = this.getItems().length,
+			oCheckbox, bAtLeastOneItemIsSelected, bSelectAllSelected;
+
+		function isSelected(oItem) {
+			return oItem.getSelected();
+		}
 
 		if (this.getMultiSelect()) {
-			var oCheckbox = sap.ui.getCore().byId(this.getAssociation("allcheckbox"));
+			oCheckbox = sap.ui.getCore().byId(this.getAssociation("allcheckbox"));
+			bAtLeastOneItemIsSelected = iItemsCount > 0 && iItemsCount === this.getItems().filter(isSelected).length;
+			bSelectAllSelected = this.getActive() && bAtLeastOneItemIsSelected;
 
-			  if (bItemSelected) {
-				oCheckbox && oCheckbox.setSelected(false);
-			} else {
-
-				// Checkbox may not be defined if an item is selected and the list is not displayed
-				oCheckbox && oCheckbox.setSelected(Object.getOwnPropertyNames(this._oSelectedKeys).length === 0 && this.getActive());
-			}
+			oCheckbox && oCheckbox.setSelected(bSelectAllSelected);
 		}
 	};
 
@@ -577,7 +578,6 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	 * @param sText
 	 */
 	FacetFilterList.prototype._addSelectedKey = function(sKey, sText){
-
 		if (!sKey && !sText) {
 			jQuery.sap.log.error("Both sKey and sText are not defined. At least one must be defined.");
 			return;
@@ -647,7 +647,6 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	 * @param {boolean} bSelect <code>true</code> if selected
 	 */
 	FacetFilterList.prototype.onItemSelectedChange = function(oItem, bSelect) {
-
 		if (bSelect) {
 			this._addSelectedKey(oItem.getKey(), oItem.getText());
 		} else {
@@ -655,9 +654,13 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 		}
 		sap.m.ListBase.prototype.onItemSelectedChange.apply(this, arguments);
 
-		this._updateSelectAllCheckBox(bSelect);
+
 		this.setActive(this.getActive() || bSelect);
 		!this.getDomRef() && this.getParent() && this.getParent().getDomRef() && this.getParent().invalidate();
+
+		// Postpone the _updateSelectAllCheckBox, as the oItem(type ListItemBase) has not yet set it's 'selected' property
+		// See ListItemBase.prototype.setSelected
+		jQuery.sap.delayedCall(0, this, this._updateSelectAllCheckBox);
 	};
 
 
@@ -678,6 +681,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	  this._selectItemsByKeys();
 	  }
 	};
+
 
 	return FacetFilterList;
 

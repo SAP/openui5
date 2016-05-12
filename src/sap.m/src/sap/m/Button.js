@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.Button.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/core/theming/Parameters'],
-	function(jQuery, library, Control, EnabledPropagator, IconPool, Parameters) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool'],
+	function(jQuery, library, Control, EnabledPropagator, IconPool) {
 	"use strict";
 
 	/**
@@ -526,6 +526,28 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		return this;
 
+	};
+
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	Button.prototype.getAccessibilityInfo = function() {
+		var sDesc = this.getText() || this.getTooltip_AsString();
+		if (!sDesc && this.getIcon()) {
+			var oIconInfo = sap.ui.core.IconPool.getIconInfo(this.getIcon());
+			if (oIconInfo) {
+				sDesc = oIconInfo.text || oIconInfo.name;
+			}
+		}
+
+		return {
+			role: "button",
+			type: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"),
+			description: sDesc,
+			focusable: this.getEnabled(),
+			enabled: this.getEnabled()
+		};
 	};
 
 	return Button;

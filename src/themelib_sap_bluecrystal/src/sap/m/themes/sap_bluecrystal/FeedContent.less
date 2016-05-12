@@ -1,19 +1,24 @@
 /* ======================================== */
 /* CSS for control sap.m/FeedContent.control */
 /* ======================================== */
-.sapUiMedia-Std-Desktop .sapMFCCTxt.Auto > .sapMText,
-.sapUiMedia-Std-Tablet .sapMFCCTxt.Auto > .sapMText,
-.sapMFCCTxt.L > .sapMText, .sapMFCCTxt.M > .sapMText,
-.sapUiMedia-Std-Desktop .sapMFCSbh.Auto,
-.sapUiMedia-Std-Tablet .sapMFCSbh.Auto,
-.sapMFCSbh.L, .sapMFCSbh.M {
-	font-size: @sapMFontMediumSize;
+
+.sapMFCCTxt {
+	font-family: @sapUiFontFamily;
+	font-weight: normal;
+	color: @sapUiTileTextColor;
+
+	.sapMText {
+		font-size: @sapMFontSmallSize;
+	}
 }
 
-.sapMFCValue {
-	font-family: @sapUiFontHeaderFamily;
-	font-weight: @sapUiFontHeaderWeight;
+.sapMFCSbh {
+	color: lighten(@sapUiTileTextColor, 20);
+	font-family: @sapUiFontFamily;
+	font-weight: normal;
+	font-size: @sapMFontSmallSize;
 }
+
 
 .sapMFCValue.Neutral {
 	color: @sapUiChartNeutral;
@@ -31,8 +36,6 @@
 	color: @sapUiChartBad;
 }
 
-.sap-desktop .sapMFC:focus {
-	outline-color: @sapUiFocus;
-	outline-style: dotted;
-	outline-width: 1px; /* Usage of px as aligned with designers. */
+html.sap-desktop .sapMFC:focus {
+	outline: 1px dotted @sapUiFocus; /* Usage of px as aligned with designers. */
 }

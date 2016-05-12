@@ -18,7 +18,7 @@
       },
       {
         "id": "f884a156e1d83d5c09984593675ada65d67063fc",
-        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "author": "Cahit Guerguec \u003ccahit.guerguec@sap.com\u003e",
         "type": "FEATURE",
         "text": "sap.m.DateTimeInput: Deprecated.",
         "references": []
@@ -302,6 +302,138 @@
         "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
         "type": "FIX",
         "text": "sap.m.Token: adjust the icon position to be aligned in the middle",
+        "references": []
+      }
+    ]
+  },
+  "1.36.5": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "13553975970ad68bdc19028c171e2a89cc8004d4",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Fixed nav arrows on combi devices",
+        "references": []
+      },
+      {
+        "id": "d6ee0382379f4cd006b06fd52e6fd8c37ea98e2d",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Focus improved in CSS",
+        "references": []
+      },
+      {
+        "id": "19390f6708a78e4de07430b29a5e135c8bcfa539",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTaBar: scroll arrows in Text-only mode are aligned with the text now",
+        "references": []
+      },
+      {
+        "id": "38552c9488c143c2160027c836a87ea31fef1594",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.ResponsiveLayout: Labels wrong aligned in Edge",
+        "references": []
+      }
+    ]
+  },
+  "1.36.6": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "5f0abc9db1e38472a647ff17fe809aec3239b1d6",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: Calendar on phone in landscape design issues",
+        "references": []
+      },
+      {
+        "id": "c54aac10bbd3dcea1a764b32ddab64c8f77339dd",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTaBar: count in RTL is right aligned",
+        "references": []
+      },
+      {
+        "id": "8a0608259ad526269bd443559fc7302e014199ae",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: padding on phone fixed",
+        "references": []
+      },
+      {
+        "id": "e605f137ae8153ce0a5ff05751d912935eea7df3",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m: selectable elements should still be selectable on combi device",
+        "references": []
+      },
+      {
+        "id": "67733be6001f221fcc4ab8d11cfe75746b27c651",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: too much padding if only 1 container",
+        "references": []
+      },
+      {
+        "id": "19d4ec67b6954d9b94b6e68e59fe2ddebf1facf4",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixed overlapping group header",
+        "references": []
+      }
+    ]
+  },
+  "1.36.7": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "6ed98ad23673c3a8d29d6282d2d05863702171b0",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.IconTabBar: windows 10 rules added",
+        "references": []
+      },
+      {
+        "id": "fa7f7bdb202e998789e7ae5143cd9c91dfb3d747",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton - width recalculation is more effective now.",
+        "references": []
+      },
+      {
+        "id": "8ff20e7cab228bd50d78e6c711149a1992b23012",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.GridLayout: labels not aligned in Firefox",
+        "references": []
+      }
+    ]
+  },
+  "1.36.9": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "30fe729f418aeea6f4dd4f48e28ceccb0b230fa7",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ActionListItem: Legacy outline offset fix for IE.",
+        "references": []
+      },
+      {
+        "id": "1f39dc50271dd8381954a00687ec31dedb770680",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: The underlying elements below the focus overlay can be clicked",
+        "references": []
+      },
+      {
+        "id": "676c11d61b678b56ad6c204563a39a1c6b4d25a8",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: Active attribute focus outline fixed",
         "references": []
       }
     ]

@@ -240,5 +240,76 @@
         "references": []
       }
     ]
+  },
+  "1.36.6": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "dc6677bfc246b1430e01df924fe8d0584afd0597",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: column freeze for columns outside visible area",
+        "references": []
+      },
+      {
+        "id": "19d4ec67b6954d9b94b6e68e59fe2ddebf1facf4",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixed overlapping group header",
+        "references": []
+      }
+    ]
+  },
+  "1.36.7": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "e82034c821e22b09b1ff8d47ccbfcb7fd71afe1a",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "ClientTreeBindingAdapter - Fixed Issue with groupID calculation",
+        "references": []
+      },
+      {
+        "id": "616bb87f475dc0269d8b3697f1fa70d49397363a",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "ClientTreeBindingAdapter - Reset Cache",
+        "references": []
+      },
+      {
+        "id": "a1fd488f331837c6b82ebb15476a03ecaf659233",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: getFocusDomRef to return focused DOM ref from ItemNavigation",
+        "references": []
+      },
+      {
+        "id": "8a688287b7ea8116562ae831c7d5c57dced09583",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: mark rowSelectionChange event when fired by user interaction",
+        "references": []
+      },
+      {
+        "id": "2f73d5d3d8732134b50336a18b985b551834f39a",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: prevent rowSelectionChange event on implicit row selection change",
+        "references": []
+      }
+    ]
+  },
+  "1.36.9": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "bc5d2491918010b411c3eabaf65b79d1f77a840e",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.table.Table: Column header menu on touch devices",
+        "references": []
+      }
+    ]
   }
 }

@@ -57,6 +57,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 			0x1133E, 0x11357, 0x114B0, 0x114BA, 0x114BD, 0x115AF
 		];
 
+		// convert the reference list into a map containing all charcodes or ranges
 		for (var i = 0; i < NFC_QC.length; i++) {
 			if (typeof NFC_QC[i] == "number") {
 				mData[NFC_QC[i]] = true;
@@ -102,27 +103,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 
 	// quickcheck implementations
 	function nfcQuickCheck(s) {
-		var lastCanonicalClass = 0;
-		for (var i = 0; i < s.length; ++i) {
-			var cp = s.charCodeAt(i);
-			// check for supplementary characters, complex, as charCodeAt returns only charcodes smaller than 0xFFFF,
-			// which is the Basic Multilingual Plane (BMP), but for normalizations also characters of the Supplementary
-			// Multilingual Plane (SMP) have to be considered
-			if (isHighSurrogate(cp)) {
-				// check the next character
-				var ncp = s.charCodeAt(i + 1);
-				if (isLowSurrogate(ncp)) {
-					// calculate the according char code in SMP and skip further tests for the next character (ncp)
-					cp = (cp - 0xD800) * 0x400 + (ncp - 0xDC00) + 0x10000;
-					++i;
+		// check for only ascii characters first to avoid unnecessary processing
+		if (!/^[\u0001-\u00ff]*$/.test(s)) {
+			var lastCanonicalClass = 0;
+			for (var i = 0; i < s.length; ++i) {
+				var cp = s.charCodeAt(i);
+				// check for supplementary characters, complex, as charCodeAt returns only charcodes smaller than 0xFFFF,
+				// which is the Basic Multilingual Plane (BMP), but for normalizations also characters of the Supplementary
+				// Multilingual Plane (SMP) have to be considered
+				if (isHighSurrogate(cp)) {
+					// check the next character
+					var ncp = s.charCodeAt(i + 1);
+					if (isLowSurrogate(ncp)) {
+						// calculate the according char code in SMP and skip further tests for the next character (ncp)
+						cp = (cp - 0xD800) * 0x400 + (ncp - 0xDC00) + 0x10000;
+						++i;
+					}
 				}
+				var canonicalClass = getCanonicalClass(cp);
+				// check canonical class or reference list
+				if (lastCanonicalClass > canonicalClass && canonicalClass !== 0 || isNotAllowed(cp)) {
+					return false;
+				}
+				lastCanonicalClass = canonicalClass;
 			}
-			var canonicalClass = getCanonicalClass(cp);
-			// check canonical class or reference list
-			if (lastCanonicalClass > canonicalClass && canonicalClass !== 0 || isNotAllowed(cp)) {
-				return false;
-			}
-			lastCanonicalClass = canonicalClass;
 		}
 		// nothing has been found
 		return true;

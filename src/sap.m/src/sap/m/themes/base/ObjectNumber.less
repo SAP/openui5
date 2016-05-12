@@ -10,7 +10,7 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	word-wrap: normal;
-	color: @sapUiDarkText;
+	color: @sapUiGroupTitleTextColor;
 }
 
 .sapMObjectNumberText {
@@ -34,4 +34,11 @@
 	max-width: 100%;
 	vertical-align: middle;
 	padding-top: 0.125rem;
+}
+
+// Android fix
+html[data-sap-ui-os^="Android"] {
+	.sapMObjectNumberUnit {
+		padding-top: 0;
+	}
 }

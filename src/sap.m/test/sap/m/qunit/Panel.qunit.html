@@ -116,6 +116,14 @@
 		assert.notStrictEqual(this.oPanel.oIconCollapsed, undefined, "should create an icon");
 	});
 
+	QUnit.test("Call to setExpanded() with null value", function (assert) {
+		this.oPanel.setExpandable(true);
+		this.oPanel.setExpanded(null);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oPanel.getExpanded(), false, "should set the expanded property to false");
+	});
+
 	QUnit.test("Default Panel backgroundDesign", function (assert) {
 		assert.strictEqual(this.oPanel.getBackgroundDesign(), sap.m.BackgroundDesign.Translucent, "should be sap.m.BackgroundDesign.Translucent");
 	});

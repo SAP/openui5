@@ -283,6 +283,7 @@
 				</EntitySet>
 			</EntityContainer>
 			<Annotations Target="SAP__self.BusinessPartner/BusinessPartnerID">
+				<Annotation Term="Common.IsDigitSequence" Bool="true"/>
 				<Annotation Term="Common.Label" String="Characterfeld der Länge 10" />
 			</Annotations>
 			<Annotations Target="SAP__self.BusinessPartner/BusinessPartnerRole">

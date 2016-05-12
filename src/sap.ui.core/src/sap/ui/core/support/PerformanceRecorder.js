@@ -65,7 +65,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Core'],
 
 			sap.ui.getCore().attachEvent(Core.M_EVENTS.UIUpdated, function() {
 				// Start timer for interaction step if it's the first measuring step
-				if (sap.ui.core.support.stepPointer == 0) {
+				if (PerformanceRecorder.stepPointer == 0) {
 					jQuery.sap.measure.start(currentInteraction.id, currentInteraction.description);
 				}
 
@@ -246,7 +246,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Core'],
 	PerformanceRecorder.getAllMeasurementsAsHAR = function() {
 		var origMeasurements = jQuery.sap.measure.getAllMeasurements();
 		var aMeasurements = [];
-		var oFormat = sap.ui.core.format.DateFormat.getDateTimeInstance({
+		var DateFormat = sap.ui.requireSync("sap/ui/core/format/DateFormat");
+		var oFormat = DateFormat.getDateTimeInstance({
 			pattern: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
 		});
 

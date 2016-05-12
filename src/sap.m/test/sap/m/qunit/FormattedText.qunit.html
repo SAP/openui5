@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>qUnit test for the sap.m.FormattedText control</title>
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-libs="sap.m"
+				src="../../../../resources/sap-ui-core.js">
+		</script>
+		<script>
+		jQuery.sap.require("sap.ui.core.util.MockServer");
+		</script>
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script>
+
+		//
+		// Test for the sap.m.FormattedText control.
+		//
+		sinon.config.useFakeTimers = true;
+		QUnit.config.autostart = false;
+		sap.ui.test.qunit.delayTestStart();
+
+		var sFT = "FormattedText";
+		var oFT = new sap.m.FormattedText(sFT).placeAt("content");
+
+		function setText(sHtml) {
+			oFT.setHtmlText(sHtml);
+			sap.ui.getCore().applyChanges();
+		}
+
+		module("Test the basic functions");
+
+		test("parameters", function() {
+			oFT.setWidth("100%").setHeight("auto");
+			setText("formatted text example");
+			strictEqual(oFT.getDomRef().style.width, "100%", "Width of the control is correct");
+			strictEqual(oFT.getDomRef().style.height, "auto", "Height of the control is correct");
+			oFT.setWidth("").setHeight("");
+			sap.ui.getCore().applyChanges();
+			ok(!oFT.getDomRef().style.width, "The width css is cleared");
+			ok(!oFT.getDomRef().style.height, "The height css is cleared");
+		});
+
+		test("tags", function() {
+			setText("<h1>" + sFT + "</h1>");
+			strictEqual(oFT.$().find("h1").text(), sFT, "The text of the h1 element is correct");
+			setText("<h3>" + sFT + "</h3>");
+			strictEqual(oFT.$().find("h3").text(), sFT, "The text of the h3 element is correct");
+			setText("<div>" + sFT + "</div>");
+			ok(!oFT.$().find("div").length, "The div element is not rendered");
+			setText("<a href=\"//www.sap.com\">" + sFT + "</a>");
+			strictEqual(oFT.$().find("a").text(), sFT, "The text of the a element is correct");
+			setText("<ul><li>1</li><li>2</li><li>3</li></ul>");
+			strictEqual(oFT.$().find("ul").length, 1, "One ul element is rendered");
+			strictEqual(oFT.$().find("li").length, 3, "There are 3 li elements");
+		});
+
+		test("attributes", function() {
+			var $a;
+			setText('<a id="AAA" class="aaa" style="color:red;" href="' +  sFT + '" target="_top">"' + sFT + '</a>');
+			$a = oFT.$().find("a");
+			ok(!$a.attr("id"), "id is not rendered");
+			strictEqual($a.attr("href"), sFT, "a::href is rendered");
+			strictEqual($a[0].style.color, "red", "a::style is rendered");
+			strictEqual($a.attr("target"), "_top", "a::target attribute _top");
+			setText('<a href="' +  sFT + '"' + sFT + '</a>');
+			$a = oFT.$().find("a");
+			strictEqual($a.attr("target"), "_blank", "default a::target attribute is _blank");
+			setText('<span id="AAA" class="aaa" style="color:red;" href="' +  sFT + '" target="_top">"' + sFT + '</span>');
+			$a = oFT.$().find("span");
+			ok(!$a.attr("id"), "id is not rendered");
+			ok(!$a.attr("href"), "span::href is not rendered");
+			strictEqual($a.attr("class"), "aaa", "a::class is rendered");
+			strictEqual($a[0].style.color, "red", "a::style is rendered");
+			ok(!$a.attr("target"), "span::target is not rendered");
+		});
+
+		test("css classes", function() {
+			var $a;
+			setText("<h1>" + sFT + "</h1>");
+			$a = oFT.$().find("h1");
+			strictEqual($a.attr("class"), "sapMTitle sapMTitleStyleH1", "h1::class is rendered correctly");
+
+			setText("<h6 class='abc'>" + sFT + "</h6>");
+			$a = oFT.$().find("h6");
+			strictEqual($a.attr("class"), "sapMTitle sapMTitleStyleH6 abc", "h6::class is rendered correctly");
+
+			setText('<a id="AAA" class="abc" style="color:red;" href="' +  sFT + '" target="_top">"' + sFT + '</a>');
+			$a = oFT.$().find("a");
+			strictEqual($a.attr("class"), "sapMLink abc", "a::class is rendered correctly");
+		});
+
+		module("Clean up");
+		test("cleanup", function(){
+			oFT.destroy();
+			this.clock.tick(1000);
+			ok(!oFT.getDomRef(), "The control is removed");
+		});
+
+	</script>
+	</head>
+	<body id="body" class="sapUiBody">
+		<div id="content" class="content"></div>
+		<h1 id="qunit-header">qUnit tests: sap.m.FormattedText</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+	</body>
+</html>

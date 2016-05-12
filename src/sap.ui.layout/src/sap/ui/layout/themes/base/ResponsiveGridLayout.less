@@ -67,7 +67,7 @@
 /* ================= */
 /*   SMALL DEVICES   */
 /* ================= */
-.sap-phone .sapUiFormResGridCont{
+html.sap-phone .sapUiFormResGridCont{
 	/* on real phones use smaller space between containers */
 	padding-bottom: 1rem;
 }
@@ -158,6 +158,7 @@ html[data-sap-ui-browser^="ff"].sapUiSizeCompact .sapUiFormEdit.sapUiFormM .sapU
 }
 
 /* on last row no padding-bottom on container content */
+.sapUiFormM > .sapUiFormResGrid > .sapUiRGLContainer > .sapUiRGLContainerCont > .sapUiFormResGridCont, /* only one container(panel) */
 .sapUiRespGridMedia-Std-Phone > .sapUiFormResGridLastRowM:last-child .sapUiFormResGridCont,
 .sapUiRespGridMedia-Std-Tablet > .sapUiFormResGridLastRowM .sapUiFormResGridCont,
 .sapUiRespGridMedia-Std-Desktop > .sapUiFormResGridLastRowL .sapUiFormResGridCont,
@@ -177,6 +178,12 @@ html[data-sap-ui-browser^="ff"].sapUiSizeCompact .sapUiFormEdit.sapUiFormM .sapU
 	margin-top: -0.5rem;
 }
 
+/* only one container - reduce top padding*/
+.sapUiFormM > .sapUiFormResGrid > .sapUiFormContainerTitle,
+.sapUiFormM > .sapUiFormResGrid > .sapUiFormContainerToolbar{
+	padding-top: 0.5rem;
+}
+
 .sapUiSizeCompact .sapUiRespGridMedia-Std-Phone > .sapUiFormResGridFirstRowM:first-child > .sapUiFormContainerTitle,
 .sapUiSizeCompact .sapUiRespGridMedia-Std-Phone > .sapUiFormResGridFirstRowM:first-child > .sapUiFormContainerToolbar,
 .sapUiSizeCompact .sapUiRespGridMedia-Std-Tablet > .sapUiFormResGridFirstRowM > .sapUiFormContainerTitle,
@@ -186,6 +193,11 @@ html[data-sap-ui-browser^="ff"].sapUiSizeCompact .sapUiFormEdit.sapUiFormM .sapU
 .sapUiSizeCompact .sapUiRespGridMedia-Std-LargeDesktop > .sapUiFormResGridFirstRowXL > .sapUiFormContainerTitle,
 .sapUiSizeCompact .sapUiRespGridMedia-Std-LargeDesktop > .sapUiFormResGridFirstRowXL > .sapUiFormContainerToolbar{
 	margin-top: 0;
+}
+
+.sapUiSizeCompact .sapUiFormM > .sapUiFormResGrid > .sapUiFormContainerTitle,
+.sapUiSizeCompact .sapUiFormM > .sapUiFormResGrid > .sapUiFormContainerToolbar{
+	padding-top: 1rem;
 }
 
 /* ============================ */

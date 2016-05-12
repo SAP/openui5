@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.demokit.UI5EntityCueCard.
-sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Link', 'sap/ui/core/Control', './EntityInfo', './library'],
-	function(jQuery, Link, Control, EntityInfo, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/commons/Link', './EntityInfo', './library'],
+	function(jQuery, Control, Link, EntityInfo, library) {
 	"use strict";
 
 
@@ -29,7 +29,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Link', 'sap/ui/core/Control'
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.demokit.UI5EntityCueCard
+	 * @alias sap.ui.demokit.UI5EntityCueCard
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var UI5EntityCueCard = Control.extend("sap.ui.demokit.UI5EntityCueCard", /** @lends sap.ui.demokit.UI5EntityCueCard.prototype */ { metadata : {
@@ -141,61 +141,78 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Link', 'sap/ui/core/Control'
 	};
 
 	UI5EntityCueCard.createDialog = function() {
-		jQuery.sap.require("sap.ui.commons.Button");
-		jQuery.sap.require("sap.ui.commons.Dialog");
-		jQuery.sap.require("sap.ui.commons.Toolbar");
 
-		var oCueCard = new UI5EntityCueCard({
-			collapsible : false,
-			expanded : true,
-			navigable: true
-		});
-		var oDialog = new sap.ui.commons.Dialog({
-			title : "Cue Card",
-			minWidth : "200px",
-			minHeight : "200px",
-			maxWidth : "75%",
-			maxHeight : "75%",
-			content : [
-				new sap.ui.commons.Toolbar({
-					standalone : false,
-					items : [
-						new sap.ui.commons.Button({
-							text : "Back",
-							press : function() {
-								oCueCard.back();
-							}
+		return new Promise(function(resolve, reject) {
+
+			sap.ui.require(['sap/ui/commons/Button', 'sap/ui/commons/Dialog', 'sap/ui/commons/Toolbar'], function(Button, Dialog, Toolbar) {
+
+				var oCueCard = new UI5EntityCueCard({
+					collapsible : false,
+					expanded : true,
+					navigable: true
+				});
+
+				var oDialog = new Dialog({
+					title : "Cue Card",
+					minWidth : "200px",
+					minHeight : "200px",
+					maxWidth : "75%",
+					maxHeight : "75%",
+					content : [
+						new Toolbar({
+							standalone : false,
+							items : [
+								new Button({
+									text : "Back",
+									press : function() {
+										oCueCard.back();
+									}
+								}),
+								new Button({
+									text : "Fwd",
+									press : function() {
+										oCueCard.forward();
+									}
+								})
+							]
 						}),
-						new sap.ui.commons.Button({
-							text : "Fwd",
-							press : function() {
-								oCueCard.forward();
-							}
-						})
+						oCueCard
 					]
-				}),
-				oCueCard
-			]
+				});
+
+				oDialog.openForClass = function(sClassName) {
+					oCueCard.setEntityName(sClassName);
+					this.rerender();
+					this.open();
+				};
+
+				resolve(oDialog);
+			});
+
 		});
-		oDialog.openForClass = function(sClassName) {
-			oCueCard.setEntityName(sClassName);
-			this.rerender();
-			this.open();
-		};
-		return oDialog;
+
 	};
 
 	UI5EntityCueCard.attachToContextMenu = function(oNode) {
 		var oDialog;
+
+		function dialogCreated() {
+			return oDialog ? Promise.resolve(oDialog) : UI5EntityCueCard.createDialog().then(function(oResult) {
+				oDialog = oResult;
+				return oResult;
+			});
+		}
+
 		jQuery(oNode || window.document).bind("contextmenu.sapDkCueCd", function(e) {
 			if ( e.shiftKey && e.ctrlKey )  {
 				var oCtrl = jQuery(e.target).control(0);
 				// if there is a control and if the control is not part of the cue card dialog
 				if ( oCtrl && (!oDialog || !oDialog.getDomRef() || (oDialog.getDomRef() !== e.target && !jQuery.contains(oDialog.getDomRef(), e.target)) ) ) {
-					oDialog = oDialog || UI5EntityCueCard.createDialog();
-					oDialog.openForClass(oCtrl.getMetadata().getName());
-					e.preventDefault();
-					e.stopPropagation();
+					dialogCreated().then(function(oDialog) {
+						oDialog.openForClass(oCtrl.getMetadata().getName());
+						e.preventDefault();
+						e.stopPropagation();
+					});
 				}
 			}
 		});
@@ -218,4 +235,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Link', 'sap/ui/core/Control'
 
 	return UI5EntityCueCard;
 
-}, /* bExport= */ true);
+});

@@ -2,10 +2,11 @@
  * ${copyright}
  */
 sap.ui.require([
+	"jquery.sap.global",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/URI"
-], function (_Helper, TestUtils, URI) {
+], function (jQuery, _Helper, TestUtils, URI) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0 */
 	"use strict";
@@ -13,14 +14,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._Helper", {
 		beforeEach : function () {
-			this.oSandbox = sinon.sandbox.create();
-			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
+			this.oLogMock = sinon.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		},
 
 		afterEach : function () {
-			this.oSandbox.verifyAndRestore();
+			this.oLogMock.verify();
 		}
 	});
 
@@ -47,7 +47,7 @@ sap.ui.require([
 			"statusText" : "Unauthorized"
 		}
 	}, {
-		// OData v4 error response body as JSON
+		// OData V4 error response body as JSON
 		// "The error response MUST be a single JSON object. This object MUST have a
 		// single name/value pair named error. The value must be a JSON object."
 		body : {
@@ -102,6 +102,20 @@ sap.ui.require([
 			"status" : 403,
 			"statusText" : "Forbidden",
 			"responseText" : "ignore this!"
+		}
+	}, {
+		message : "Network error",
+		"response" : {
+			"headers" : {},
+			"status" : 0,
+			"statusText" : "error"
+		}
+	}, {
+		message : "404 Not Found",
+		"response" : {
+			"headers" : {},
+			"status" : 404,
+			"statusText" : "Not Found"
 		}
 	}].forEach(function (oFixture) {
 		QUnit.test("createError: " + oFixture.message, function (assert) {
@@ -245,7 +259,7 @@ sap.ui.require([
 		{t : "Edm.String", v : "string with 'quote'", e : "'string with ''quote'''"},
 		{t : "Edm.String", v : null, e : "null"},
 		{t : "Edm.TimeOfDay", v : "18:59:59.999", e : "18:59:59.999"}
-	].forEach(function(oFixture) {
+	].forEach(function (oFixture) {
 		QUnit.test("formatLiteral: " + oFixture.t + " " +  oFixture.v, function (assert) {
 			assert.strictEqual(
 				_Helper.formatLiteral(oFixture.v, oFixture.t), oFixture.e);

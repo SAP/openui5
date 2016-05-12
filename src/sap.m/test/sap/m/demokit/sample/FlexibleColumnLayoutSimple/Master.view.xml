@@ -1,0 +1,143 @@
+<View xmlns="sap.m" xmlns:l="sap.ui.layout" displayBlock="true" controllerName="sap.m.sample.FlexibleColumnLayoutSimple.Master" height="100%">
+	<Page id="masterPage" title="Master page">
+		<Table>
+			<columns>
+				<Column><Label text="Master List" /></Column>
+			</columns>
+			<items>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+					<cells>
+						<Text text="Open mid column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+					<cells>
+						<Text text="Open mid column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+					<cells>
+						<Text text="Open mid column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+					<cells>
+						<Text text="Open mid column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+					<cells>
+						<Text text="Open mid column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+					<cells>
+						<Text text="Open mid column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+					<cells>
+						<Text text="Open mid column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+					<cells>
+						<Text text="Open mid column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+					<cells>
+						<Text text="Open mid column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+					<cells>
+						<Text text="Open mid column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+					<cells>
+						<Text text="Open mid column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+					<cells>
+						<Text text="Open mid column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+					<cells>
+						<Text text="Open mid column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+					<cells>
+						<Text text="Open mid column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+					<cells>
+						<Text text="Open mid column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+					<cells>
+						<Text text="Open mid column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+					<cells>
+						<Text text="Open mid column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+					<cells>
+						<Text text="Open mid column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+					<cells>
+						<Text text="Open mid column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+					<cells>
+						<Text text="Open mid column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+					<cells>
+						<Text text="Open mid column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+					<cells>
+						<Text text="Open mid column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+					<cells>
+						<Text text="Open mid column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+					<cells>
+						<Text text="Open mid column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+					<cells>
+						<Text text="Open mid column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleMasterPress">
+					<cells>
+						<Text text="Open mid column"/>
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+	</Page>
+</View>
+
+

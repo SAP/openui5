@@ -1,0 +1,50 @@
+/* ================================================================= */
+/* CSS for control sap.m/ViewSettingsPopover BlueCrystal theme              */
+/* ================================================================= */
+
+.sapMVSPopover .sapMPopoverHeader .sapMSegBBtn, .sapMPopoverHeader .sapMSegBBtn:last-child,
+.sapMPopoverHeader .sapMSegBBtn.sapMSegBBtnFocusable.sapMSegBBtnSel {
+	border-color: @sapUiLightestBG;
+}
+
+/* Custom focus outline: */
+html.sap-desktop {
+	.sapMSegBBtnFocusable:focus + .sapMSegBBtn {
+		outline: none;
+		border-left: 1px dotted transparent;
+	}
+
+	.sapMSegBBtnFocusable.sapMSegBBtnSel {
+		&:focus + .sapMSegBBtn {
+			outline: none;
+			border-left: 1px solid transparent;
+		}
+		// Fixes focus on shared border on the left that's why there is a negative margin
+		+ .sapMSegBBtn:not(.sapMSegBBtnDis):focus {
+			border-left: 1px dotted transparent;
+		}
+	}
+
+	.sapMSegBBtnFocusable:last-child:focus {
+		border-right: 1px dotted transparent;
+	}
+}
+
+.sapMVSPopover .sapMPopoverHeader .sapMSegBBtn, .sapMVSPopover .sapMDialogTitle .sapMSegBBtn {
+	margin-right: 5px;
+	border-radius: 3px;
+	border: 1px solid @sapUiLightestBG;
+}
+
+.sapMVSPopover.sapMPopup-CTX .sapMIBar.sapMHeader-CTX {
+	background: @sapUiLightestBG;
+}
+
+html.sap-phone, html.sap-tablet:not(.sap-desktop) {
+  .sapMVSPopover {
+	.sapMLIBSelectM > .sapMCb:focus,
+	.sapMBarChild.sapMCb:focus {
+	  outline: none;
+	}
+  }
+}

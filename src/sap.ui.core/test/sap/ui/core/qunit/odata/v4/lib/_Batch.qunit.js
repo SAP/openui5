@@ -2,9 +2,10 @@
  * ${copyright}
  */
 sap.ui.require([
+	"jquery.sap.global",
 	"sap/ui/model/odata/v4/lib/_Batch",
 	"sap/ui/test/TestUtils"
-], function (_Batch, TestUtils) {
+], function (jQuery, _Batch, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0 */
 	"use strict";
@@ -226,14 +227,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._Batch", {
 		beforeEach : function () {
-			this.oSandbox = sinon.sandbox.create();
-			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
+			this.oLogMock = sinon.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		},
 
 		afterEach : function () {
-			this.oSandbox.verifyAndRestore();
+			this.oLogMock.verify();
 		}
 	});
 
@@ -597,7 +597,7 @@ sap.ui.require([
 	}].forEach(function (oFixture) {
 			QUnit.test("serializeBatchRequest: " + oFixture.testTitle, function (assert) {
 				var oBatchRequest,
-					oMock = this.oSandbox.mock(jQuery.sap);
+					oMock = this.mock(jQuery.sap);
 
 				if (oFixture.expectedBoundaryIDs) {
 					oFixture.expectedBoundaryIDs.forEach(function (oValue) {

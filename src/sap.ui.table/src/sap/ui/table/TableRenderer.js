@@ -45,7 +45,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		}
 
 		rm.addClass("sapUiTableSelMode" + oTable.getSelectionMode()); // row selection mode
-		if (oTable.getNavigationMode() === sap.ui.table.NavigationMode.Scrollbar) {
+		if (oTable._isVSbRequired()) {
 			rm.addClass("sapUiTableVScr"); // show vertical scrollbar
 		}
 		if (oTable.getEditable()) {
@@ -89,6 +89,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		rm.writeAttribute("id", oTable.getId() + "-sapUiTableCnt");
 		rm.addClass("sapUiTableCnt");
 		rm.writeClasses();
+
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "CONTENT");
 
 		// Define group for F6 handling
 		rm.writeAttribute("data-sap-ui-fastnavgroup", "true");
@@ -134,9 +136,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		rm.write("<div");
 		rm.addClass("sapUiTableHdr");
 		rm.writeClasses();
-		if (oTable._bAccMode) {
-			rm.writeAttribute("role", "heading");
-		}
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TABLEHEADER");
 		rm.write(">");
 
 		rm.renderControl(oTitle);
@@ -242,11 +242,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		if (oTable.getColumnHeaderHeight() > 0) {
 			rm.addStyle("height", (oTable.getColumnHeaderHeight() * oTable._getHeaderRowCount()) + "px");
 		}
-		if (oTable._bAccMode &&
-			 (oTable.getSelectionMode() === sap.ui.table.SelectionMode.None ||
-					 oTable.getSelectionBehavior() === sap.ui.table.SelectionBehavior.RowOnly)) {
-			rm.writeAttribute("role", "row");
-		}
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "COLUMNHEADER_ROW");
 		rm.writeStyles();
 		rm.write(">");
 
@@ -348,25 +344,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 
 		rm.write("</div>");
 
-	};
-
-	/**
-	 * This function renders aria attributes if bAccMode is true.
-	 * @param {sap.ui.core.RenderManager} rm Instance of the RenderManager
-	 * @param {Map} mAriaAttributes Map of aria attributes. The Key of the maps equals the attribute name
-	 * @param {Boolean} bAccMode Flag if Acc Mode is turned on
-	 */
-	TableRenderer.renderAriaAttributes = function(rm, mAriaAttributes, bAccMode) {
-		if (bAccMode) {
-			for (var sKey in mAriaAttributes) {
-				var mAriaAttribute = mAriaAttributes[sKey];
-				if (mAriaAttribute.escaped) {
-					rm.writeAttributeEscaped(sKey, mAriaAttribute.value);
-				} else {
-					rm.writeAttribute(sKey, mAriaAttribute.value);
-				}
-			}
-		}
 	};
 
 	TableRenderer.renderColRowHdr = function(rm, oTable) {
@@ -545,7 +522,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		if (oRow._bHidden) {
 			rm.addClass("sapUiTableRowHidden");
 		} else {
-			if (oTable.isIndexSelected(iRowIndex)) {
+			if (oTable.isIndexSelected(oTable._getAbsoluteRowIndex(iRowIndex))) {
 				rm.addClass("sapUiTableRowSel");
 				bRowSelected = true;
 			}
@@ -567,7 +544,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 
 		rm.writeStyles();
 		rm.write(">");
-		rm.write(this.getRowSelectorContent(rm, oTable, oRow, iRowIndex));
+		this.writeRowSelectorContent(rm, oTable, oRow, iRowIndex);
 		rm.write("</div>");
 	};
 
@@ -746,6 +723,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 					rm.writeAttribute("id", oTable.getId() + "_col" + col);
 				}
 				rm.writeAttribute("data-sap-ui-headcolindex", col);
+				rm.writeAttribute("data-sap-ui-colid", oColumn.getId());
 				rm.write(">");
 				if (iStartRow == 0 && oTable._getHeaderRowCount() == 0) {
 					if (oColumn.getMultiLabels().length > 0) {
@@ -797,8 +775,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		return;
 	};
 
-	TableRenderer.getRowSelectorContent = function(rm, oTable, oRow, iRowIndex) {
-		return oTable._getAccRenderExtension().getAccRowSelectorText(oTable, oRow, iRowIndex);
+	TableRenderer.writeRowSelectorContent = function(rm, oTable, oRow, iRowIndex) {
+		oTable._getAccRenderExtension().writeAccRowSelectorText(rm, oTable, oRow, iRowIndex);
 	};
 
 	TableRenderer.renderTableRow = function(rm, oTable, oRow, iRowIndex, bFixedTable, iStartColumn, iEndColumn, bFixedRow, aVisibleColumns, bHasOnlyFixedColumns, mTooltipTexts, bSelectOnCellsAllowed) {
@@ -815,7 +793,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		if (oRow._bHidden) {
 			rm.addClass("sapUiTableRowHidden");
 		} else {
-			if (oTable.isIndexSelected(iRowIndex)) {
+			if (oTable.isIndexSelected(oTable._getAbsoluteRowIndex(iRowIndex))) {
 				rm.addClass("sapUiTableRowSel");
 			}
 
@@ -848,7 +826,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			aCells.length === 0) {
 			rm.write("<td");
 			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "ROWHEADER_TD", {
-				rowSelected: !oRow._bHidden && oTable.isIndexSelected(iRowIndex), //see TableRenderer.renderRowHdrRow
+				rowSelected: !oRow._bHidden && oTable.isIndexSelected(oTable._getAbsoluteRowIndex(iRowIndex)), //see TableRenderer.renderRowHdrRow
 				index: iRowIndex
 			});
 			rm.write("></td>");
@@ -867,20 +845,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		rm.write("</tr>");
 	};
 
-	TableRenderer.getAriaAttributesForCell = function(oTable, bFixedTable, oRow, oColumn, iColIndex, oCell) {
-		var mAriaAttributes = {
-			"headers" : {value: oTable.getId() + "_col" + iColIndex},
-			"role" : {value: "gridcell"},
-			"aria-labelledby" : {value: oTable._getAccRenderExtension().getCellLabels(oTable, oColumn, bFixedTable, true)}
-		};
-
-		if (oTable.getSelectionMode() !== sap.ui.table.SelectionMode.None) {
-			mAriaAttributes["aria-selected"] = {value: "false"};
-		}
-
-		return mAriaAttributes;
-	};
-
 	TableRenderer.renderTableCell = function(rm, oTable, oRow, oCell, iCellIndex, bFixedTable, iStartColumn, iEndColumn, aVisibleColumns) {
 		var iColIndex = oCell.data("sap-ui-colindex");
 		var oColumn = oTable.getColumns()[iColIndex];
@@ -890,22 +854,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			rm.writeAttribute("id", sId);
 			rm.writeAttribute("tabindex", "-1");
 
-			var mAriaAttributes = this.getAriaAttributesForCell(oTable, bFixedTable, oRow, oColumn, iColIndex, oCell);
-			this.renderAriaAttributes(rm, mAriaAttributes, oTable._bAccMode);
+			var bIsFirstColumn = aVisibleColumns.length > 0 && aVisibleColumns[0] === oColumn;
+
+			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "DATACELL", {
+				index: iColIndex,
+				column: oColumn,
+				row: oRow,
+				fixed: bFixedTable,
+				firstCol: bIsFirstColumn
+			});
 
 			var sHAlign = this.getHAlign(oColumn.getHAlign(), oTable._bRtlMode);
 			if (sHAlign) {
 				rm.addStyle("text-align", sHAlign);
 			}
 			rm.writeStyles();
-			if (aVisibleColumns.length > 0 && aVisibleColumns[0] === oColumn) {
+			rm.addClass("sapUiTableTd");
+			if (bIsFirstColumn) {
 				rm.addClass("sapUiTableTdFirst");
-				var oAttributes = oTable._getFirstColumnAttributes(oRow);
-				for (var sAttributeName in oAttributes) {
-					if (oAttributes[sAttributeName] != "") {
-						rm.writeAttribute(sAttributeName, oAttributes[sAttributeName]);
-					}
-				}
 			}
 			// grouping support to show/hide values of grouped columns
 			if (oColumn.getGrouped()) {

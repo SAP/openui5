@@ -515,6 +515,27 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		};
 
 
+		/**
+		 * Fiori 2.0 adaptation
+		 */
+		Page.prototype.setCustomHeader = function(oHeader) {
+
+			this.setAggregation("customHeader", oHeader);
+
+			if (oHeader && this.mEventRegistry["_adaptableContentChange"] ) {
+				this.fireEvent("_adaptableContentChange", {
+					"parent": this,
+					"adaptableContent": oHeader
+				});
+			}
+
+			return this;
+		};
+
+		Page.prototype._getAdaptableContent = function () {
+			return this._getAnyHeader();
+		};
+
 		return Page;
 
 	}, /* bExport= */ true);

@@ -30,10 +30,13 @@ sap.ui.define([], function() {
 			oRm.writeAttributeEscaped("title", sTooltipText);
 		}
 		oRm.addClass("sapMGT");
-		oRm.addClass(oControl.getSize());
 		oRm.addClass(oControl.getFrameType());
 
-		oRm.writeAttribute("role", "presentation");
+		if (oControl.hasListeners("press")) {
+			oRm.writeAttribute("role", "button");
+		} else {
+			oRm.writeAttribute("role", "presentation");
+		}
 		oRm.writeAttributeEscaped("aria-label", sAriaText);
 
 		if (oControl.hasListeners("press") && oControl.getState() != sap.m.LoadState.Disabled) {
@@ -47,6 +50,11 @@ sap.ui.define([], function() {
 			oRm.write(");'");
 			oRm.addClass("sapMGTBackgroundImage");
 		}
+
+		if (oControl.getMode() === sap.m.GenericTileMode.HeaderMode) {
+			oRm.addClass("sapMGTHeaderMode");
+		}
+
 		oRm.writeClasses();
 		oRm.write(">");
 		var sState = oControl.getState();
@@ -97,7 +105,6 @@ sap.ui.define([], function() {
 
 		oRm.write("<div");
 		oRm.addClass("sapMGTHdrContent");
-		oRm.addClass(oControl.getSize());
 		oRm.addClass(oControl.getFrameType());
 		if (sTooltipText) {
 			oRm.writeAttributeEscaped("title", sTooltipText);
@@ -109,19 +116,24 @@ sap.ui.define([], function() {
 		}
 
 		this._renderHeader(oRm, oControl);
-		this._renderSubheader(oRm, oControl);
+		if (oControl.getSubheader()) {
+			this._renderSubheader(oRm, oControl);
+		}
 
 		oRm.write("</div>");
 
 		oRm.write("<div");
 		oRm.addClass("sapMGTContent");
-		oRm.addClass(oControl.getSize());
 		oRm.writeClasses();
 		oRm.writeAttribute("id", oControl.getId() + "-content");
 		oRm.write(">");
-		var iLength = oControl.getTileContent().length;
+		var aTileContent = oControl.getTileContent();
+		var iLength = aTileContent.length;
 		for (var i = 0; i < iLength; i++) {
-			oRm.renderControl(oControl.getTileContent()[i]);
+			if (oControl.getMode() === sap.m.GenericTileMode.HeaderMode) {
+				aTileContent[i].removeAllAggregation("content", true);
+			}
+			oRm.renderControl(aTileContent[i]);
 		}
 		oRm.write("</div>");
 		oRm.write("<div");
@@ -143,7 +155,6 @@ sap.ui.define([], function() {
 	GenericTileRenderer._renderHeader = function(oRm, oControl) {
 		oRm.write("<div");
 		oRm.addClass("sapMGTHdrTxt");
-		oRm.addClass(oControl.getSize());
 		oRm.writeClasses();
 		oRm.writeAttribute("id", oControl.getId() + "-hdr-text");
 		oRm.write(">");
@@ -161,7 +172,6 @@ sap.ui.define([], function() {
 	GenericTileRenderer._renderSubheader = function(oRm, oControl) {
 		oRm.write("<div");
 		oRm.addClass("sapMGTSubHdrTxt");
-		oRm.addClass(oControl.getSize());
 		oRm.writeClasses();
 		oRm.writeAttribute("id", oControl.getId() + "-subHdr-text");
 		oRm.write(">");

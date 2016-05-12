@@ -8,6 +8,9 @@ sap.ui.define(['./Element', './library'],
 	"use strict";
 
 
+	// shortcut for enum(s)
+	var TitleLevel = library.TitleLevel;
+
 
 	/**
 	 * Constructor for a new Title.
@@ -48,7 +51,7 @@ sap.ui.define(['./Element', './library'],
 			 *
 			 * Currently not all controls using the Title.control supporting this property.
 			 */
-			level : {type : "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : sap.ui.core.TitleLevel.Auto},
+			level : {type : "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : TitleLevel.Auto},
 
 			/**
 			 * If set the title is displayed emphasized.

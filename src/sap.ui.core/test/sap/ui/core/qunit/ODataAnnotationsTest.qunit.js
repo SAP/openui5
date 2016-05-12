@@ -13,6 +13,11 @@
 function deepContains(oValue, oExpected, sMessage) {
 	for (var sKey in oExpected) {
 
+		if (!(sKey in oValue)) {
+			ok(false, "Expected property " + sMessage + "/" + sKey + + " does not exist");
+			continue;
+		}
+
 		if (Array.isArray(oExpected[sKey]) === Array.isArray(oValue[sKey])) {
 			equals(typeof oValue[sKey], typeof oExpected[sKey], sMessage + "/" + sKey + " have same type");
 		} else {
@@ -24,9 +29,13 @@ function deepContains(oValue, oExpected, sMessage) {
 			equal(oValue[sKey].length, oExpected[sKey].length, sMessage + "/" + sKey + " length matches (" + oExpected[sKey].length + ")");
 		}
 
-		if (oExpected[sKey] !== null && typeof oExpected[sKey] === "object" && typeof oValue[sKey] === "object") {
+		if (oExpected[sKey] !== null && oExpected[sKey] !== undefined && typeof oExpected[sKey] === "object" && typeof oValue[sKey] === "object") {
 			// Go deeper
-			deepContains(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey);
+			if (oValue[sKey] === null) {
+				ok(false, "Property " + sMessage + "/" + sKey + " is null");
+			} else {
+				deepContains(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey);
+			}
 		} else {
 			// Compare directly
 			equal(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey + " match (" + oExpected[sKey] + ")");
@@ -68,88 +77,88 @@ function runODataAnnotationTests() {
 "use strict";
 
 	var aServices = [{
-		name             : "Northwind",
-		service          : "fakeService://testdata/odata/northwind/",
-		annotations      : "fakeService://testdata/odata/northwind-annotations-normal.xml",
-		serviceValid     : true,
+		name			 : "Northwind",
+		service		  : "fakeService://testdata/odata/northwind/",
+		annotations	  : "fakeService://testdata/odata/northwind-annotations-normal.xml",
+		serviceValid	 : true,
 		annotationsValid : "all"
 	}, {
-		name             : "Northwind",
-		service          : "fakeService://testdata/odata/northwind/",
-		annotations      : "fakeService://testdata/odata/northwind-annotations-malformed.xml",
-		serviceValid     : true,
+		name			 : "Northwind",
+		service		  : "fakeService://testdata/odata/northwind/",
+		annotations	  : "fakeService://testdata/odata/northwind-annotations-malformed.xml",
+		serviceValid	 : true,
 		annotationsValid : "none"
 	}, {
-		name             : "Northwind",
-		service          : "fakeService://testdata/odata/northwind/",
-		annotations      : "fakeService://testdata/odata/NOT_EXISTANT",
-		serviceValid     : true,
+		name			 : "Northwind",
+		service		  : "fakeService://testdata/odata/northwind/",
+		annotations	  : "fakeService://testdata/odata/NOT_EXISTANT",
+		serviceValid	 : true,
 		annotationsValid : "none"
 	},{
-		name             : "Invalid",
-		service          : "fakeService://testdata/odata/NOT_EXISTANT/",
-		annotations      : "fakeService://testdata/odata/NOT_EXISTANT",
-		serviceValid     : false,
+		name			 : "Invalid",
+		service		  : "fakeService://testdata/odata/NOT_EXISTANT/",
+		annotations	  : "fakeService://testdata/odata/NOT_EXISTANT",
+		serviceValid	 : false,
 		annotationsValid : "none"
 	},{
-		name             : "Complex EPM",
-		service          : "fakeService://testdata/odata/northwind/",
-		annotations      : "fakeService://testdata/odata/epm-annotations-complex.xml",
-		serviceValid     : true,
+		name			 : "Complex EPM",
+		service		  : "fakeService://testdata/odata/northwind/",
+		annotations	  : "fakeService://testdata/odata/epm-annotations-complex.xml",
+		serviceValid	 : true,
 		annotationsValid : "all"
 	},{
-		name             : "Northwind",
-		service          : "fakeService://testdata/odata/northwind/",
-		annotations      : "fakeService://testdata/odata/northwind-annotations-normal.xml",
-		serviceValid     : true,
+		name			 : "Northwind",
+		service		  : "fakeService://testdata/odata/northwind/",
+		annotations	  : "fakeService://testdata/odata/northwind-annotations-normal.xml",
+		serviceValid	 : true,
 		annotationsValid : "all",
 		sharedMetadata   : true
 	}, {
-		name             : "Northwind",
-		service          : "fakeService://testdata/odata/northwind/",
-		annotations      : "fakeService://testdata/odata/northwind-annotations-malformed.xml",
-		serviceValid     : true,
+		name			 : "Northwind",
+		service		  : "fakeService://testdata/odata/northwind/",
+		annotations	  : "fakeService://testdata/odata/northwind-annotations-malformed.xml",
+		serviceValid	 : true,
 		annotationsValid : "none",
 		sharedMetadata   : true
 	}, {
-		name             : "Northwind",
-		service          : "fakeService://testdata/odata/northwind/",
-		annotations      : "fakeService://testdata/odata/NOT_EXISTANT",
-		serviceValid     : true,
+		name			 : "Northwind",
+		service		  : "fakeService://testdata/odata/northwind/",
+		annotations	  : "fakeService://testdata/odata/NOT_EXISTANT",
+		serviceValid	 : true,
 		annotationsValid : "none",
 		sharedMetadata   : true
 	},{
-		name             : "Invalid",
-		service          : "fakeService://testdata/odata/NOT_EXISTANT/",
-		annotations      : "fakeService://testdata/odata/NOT_EXISTANT",
-		serviceValid     : false,
+		name			 : "Invalid",
+		service		  : "fakeService://testdata/odata/NOT_EXISTANT/",
+		annotations	  : "fakeService://testdata/odata/NOT_EXISTANT",
+		serviceValid	 : false,
 		annotationsValid : "none",
 		sharedMetadata   : true
 	},{
-		name             : "Northwind with annotated metadata",
-		service          : "fakeService://testdata/odata/northwind-annotated/",
-		annotations      : "fakeService://testdata/odata/northwind-annotated/$metadata",
-		serviceValid     : true,
+		name			 : "Northwind with annotated metadata",
+		service		  : "fakeService://testdata/odata/northwind-annotated/",
+		annotations	  : "fakeService://testdata/odata/northwind-annotated/$metadata",
+		serviceValid	 : true,
 		annotationsValid : "all",
 		sharedMetadata   : true
 	},{
-		name             : "Northwind with annotated metadata + annotations",
-		service          : "fakeService://testdata/odata/northwind-annotated/",
-		annotations      : [
+		name			 : "Northwind with annotated metadata + annotations",
+		service		  : "fakeService://testdata/odata/northwind-annotated/",
+		annotations	  : [
 			"fakeService://testdata/odata/northwind-annotated/$metadata",
 			"fakeService://testdata/odata/northwind-annotations-normal.xml"
 		],
-		serviceValid     : true,
+		serviceValid	 : true,
 		annotationsValid : "some",
 		sharedMetadata   : true
 	},{
-		name             : "Northwind with annotated metadata + annotations",
-		service          : "fakeService://testdata/odata/northwind-annotated/",
-		annotations      : [
+		name			 : "Northwind with annotated metadata + annotations",
+		service		  : "fakeService://testdata/odata/northwind-annotated/",
+		annotations	  : [
 			"fakeService://testdata/odata/northwind-annotated/$metadata",
 			"fakeService://testdata/odata/northwind-annotations-malformed.xml"
 		],
-		serviceValid     : true,
+		serviceValid	 : true,
 		annotationsValid : "some",
 		sharedMetadata   : true
 	}];
@@ -158,185 +167,193 @@ function runODataAnnotationTests() {
 	// of the test is not added as property of the test but as key in the map
 	var mAdditionalTestsServices = {
 		"Default Annotated Service": {
-			service          : "fakeService://testdata/odata/northwind/",
-			annotations      : "fakeService://testdata/odata/northwind-annotations-normal.xml",
-			serviceValid     : true,
+			service		  : "fakeService://testdata/odata/northwind/",
+			annotations	  : "fakeService://testdata/odata/northwind-annotations-normal.xml",
+			serviceValid	 : true,
 			annotationsValid : "all"
 		},
-		"Test 2014-12-08": {
-			service          : "fakeService://testdata/odata/northwind/",
-			annotations      : "fakeService://testdata/odata/2014-12-08-test.xml",
-			serviceValid     : true,
+		"Apply Function": {
+			service		  : "fakeService://testdata/odata/northwind/",
+			annotations	  : "fakeService://testdata/odata/apply-function-test.xml",
+			serviceValid	 : true,
 			annotationsValid : "all"
 		},
 		"Multiple Property Annotations": {
-			service          : "fakeService://testdata/odata/northwind/",
-			annotations      : "fakeService://testdata/odata/multiple-property-annotations.xml",
-			serviceValid     : true,
+			service		  : "fakeService://testdata/odata/northwind/",
+			annotations	  : "fakeService://testdata/odata/multiple-property-annotations.xml",
+			serviceValid	 : true,
 			annotationsValid : "all"
 		},
 		"Property Annotation Qualifiers": {
-			service          : "fakeService://testdata/odata/northwind/",
-			annotations      : "fakeService://testdata/odata/property-annotation-qualifiers.xml",
-			serviceValid     : true,
+			service		  : "fakeService://testdata/odata/northwind/",
+			annotations	  : "fakeService://testdata/odata/property-annotation-qualifiers.xml",
+			serviceValid	 : true,
 			annotationsValid : "all"
 		},
 		"Other Property Values": {
-			service          : "fakeService://testdata/odata/northwind/",
-			annotations      : "fakeService://testdata/odata/other-property-values.xml",
-			serviceValid     : true,
+			service		  : "fakeService://testdata/odata/northwind/",
+			annotations	  : "fakeService://testdata/odata/other-property-values.xml",
+			serviceValid	 : true,
 			annotationsValid : "all"
 		},
 		"Aliases in Namespaces": {
-			service          : "fakeService://testdata/odata/northwind/",
-			annotations      : "fakeService://testdata/odata/namespaces-aliases.xml",
-			serviceValid     : true,
+			service		  : "fakeService://testdata/odata/northwind/",
+			annotations	  : "fakeService://testdata/odata/namespaces-aliases.xml",
+			serviceValid	 : true,
 			annotationsValid : "all"
 		},
 		"Namespaces in Other Property Values": {
-			service          : "fakeService://testdata/odata/northwind/",
-			annotations      : "fakeService://testdata/odata/other-property-value-aliases.xml",
-			serviceValid     : true,
+			service		  : "fakeService://testdata/odata/northwind/",
+			annotations	  : "fakeService://testdata/odata/other-property-value-aliases.xml",
+			serviceValid	 : true,
 			annotationsValid : "all"
 		},
 		"Text Properties" : {
-			service          : "fakeService://testdata/odata/northwind/",
-			annotations      : "fakeService://testdata/odata/other-property-textproperties.xml",
-			serviceValid     : true,
+			service		  : "fakeService://testdata/odata/northwind/",
+			annotations	  : "fakeService://testdata/odata/other-property-textproperties.xml",
+			serviceValid	 : true,
 			annotationsValid : "all"
 		},
 		"Entity Containers": {
-			service          : "fakeService://testdata/odata/sapdata01/",
-			annotations      : "fakeService://testdata/odata/sapdata01/$metadata",
-			serviceValid     : true,
+			service		  : "fakeService://testdata/odata/sapdata01/",
+			annotations	  : "fakeService://testdata/odata/sapdata01/$metadata",
+			serviceValid	 : true,
 			annotationsValid : "all"
 		},
 		"Simple Values": {
-			service          : "fakeService://testdata/odata/sapdata01/",
-			annotations      : "fakeService://testdata/odata/simple-values.xml",
-			serviceValid     : true,
+			service		  : "fakeService://testdata/odata/sapdata01/",
+			annotations	  : "fakeService://testdata/odata/simple-values.xml",
+			serviceValid	 : true,
 			annotationsValid : "all"
 		},
 		"Collection with Namespace": {
-			service          : "fakeService://testdata/odata/sapdata01/",
-			annotations      : "fakeService://testdata/odata/collection-with-namespace.xml",
-			serviceValid     : true,
+			service		  : "fakeService://testdata/odata/sapdata01/",
+			annotations	  : "fakeService://testdata/odata/collection-with-namespace.xml",
+			serviceValid	 : true,
 			annotationsValid : "all"
 		},
 		"UrlRef": {
-			service          : "fakeService://testdata/odata/sapdata01/",
-			annotations      : "fakeService://testdata/odata/UrlRef.xml",
-			serviceValid     : true,
+			service		  : "fakeService://testdata/odata/sapdata01/",
+			annotations	  : "fakeService://testdata/odata/UrlRef.xml",
+			serviceValid	 : true,
 			annotationsValid : "all"
 		},
 		"Delayed Loading": {
-			service          : "fakeService://testdata/odata/sapdata01/",
-			annotations      : [
+			service		  : "fakeService://testdata/odata/sapdata01/",
+			annotations	  : [
 				"fakeService://testdata/odata/multiple-annotations-01.xml",
 				"fakeService://testdata/odata/multiple-annotations-02.xml",
 				"fakeService://testdata/odata/multiple-annotations-03.xml"
 			],
-			serviceValid     : true,
+			serviceValid	 : true,
 			annotationsValid : "all"
 		},
 		"Alias Replacement": {
-			service          : "fakeService://testdata/odata/sapdata01/",
-			annotations      : "fakeService://testdata/odata/Aliases.xml",
-			serviceValid     : true,
+			service		  : "fakeService://testdata/odata/sapdata01/",
+			annotations	  : "fakeService://testdata/odata/Aliases.xml",
+			serviceValid	 : true,
 			annotationsValid : "all"
 		},
 		"DynamicExpressions": {
-			service          : "fakeService://testdata/odata/sapdata01/",
-			annotations      : "fakeService://testdata/odata/DynamicExpressions.xml",
-			serviceValid     : true,
+			service		  : "fakeService://testdata/odata/sapdata01/",
+			annotations	  : "fakeService://testdata/odata/DynamicExpressions.xml",
+			serviceValid	 : true,
 			annotationsValid : "all"
 		},
 		"DynamicExpressions2": {
-			service          : "fakeService://testdata/odata/sapdata01/",
-			annotations      : "fakeService://testdata/odata/DynamicExpressions2.xml",
-			serviceValid     : true,
+			service		  : "fakeService://testdata/odata/sapdata01/",
+			annotations	  : "fakeService://testdata/odata/DynamicExpressions2.xml",
+			serviceValid	 : true,
 			annotationsValid : "all"
 		},
 		"CollectionsWithSimpleValues": {
-			service          : "fakeService://testdata/odata/sapdata01/",
-			annotations      : "fakeService://testdata/odata/collections-with-simple-values.xml",
-			serviceValid     : true,
+			service		  : "fakeService://testdata/odata/sapdata01/",
+			annotations	  : "fakeService://testdata/odata/collections-with-simple-values.xml",
+			serviceValid	 : true,
 			annotationsValid : "all"
 		},
 		"Simple Values 2": {
-			service          : "fakeService://testdata/odata/sapdata01/",
-			annotations      : "fakeService://testdata/odata/simple-values-2.xml",
-			serviceValid     : true,
+			service		  : "fakeService://testdata/odata/sapdata01/",
+			annotations	  : "fakeService://testdata/odata/simple-values-2.xml",
+			serviceValid	 : true,
 			annotationsValid : "all"
 		},
 		"If in Apply": {
-			service          : "fakeService://testdata/odata/sapdata01/",
-			annotations      : "fakeService://testdata/odata/if-in-apply.xml",
-			serviceValid     : true,
+			service		  : "fakeService://testdata/odata/sapdata01/",
+			annotations	  : "fakeService://testdata/odata/if-in-apply.xml",
+			serviceValid	 : true,
 			annotationsValid : "all"
 		},
 		"Other Elements in LabeledElement": {
-			service          : "fakeService://testdata/odata/sapdata01/",
-			annotations      : "fakeService://testdata/odata/labeledelement-other-values.xml",
-			serviceValid     : true,
+			service		  : "fakeService://testdata/odata/sapdata01/",
+			annotations	  : "fakeService://testdata/odata/labeledelement-other-values.xml",
+			serviceValid	 : true,
 			annotationsValid : "all"
 		},
 		"Annotated Metadata": {
-			service          : "fakeService://testdata/odata/northwind-annotated/",
-			annotations      : null,
-			serviceValid     : true,
+			service		  : "fakeService://testdata/odata/northwind-annotated/",
+			annotations	  : null,
+			serviceValid	 : true,
 			annotationsValid : "metadata"
 		},
 		"Apply in If": {
-			service          : "fakeService://testdata/odata/northwind/",
-			annotations      : "fakeService://testdata/odata/apply-in-if.xml",
-			serviceValid     : true,
+			service		  : "fakeService://testdata/odata/northwind/",
+			annotations	  : "fakeService://testdata/odata/apply-in-if.xml",
+			serviceValid	 : true,
 			annotationsValid : "all"
 		},
 		"Joined Loading with automated $metadata parsing": {
-			service          : "fakeService://testdata/odata/northwind-annotated/",
-			annotations      : [
+			service		  : "fakeService://testdata/odata/northwind-annotated/",
+			annotations	  : [
 				"fakeService://testdata/odata/northwind-annotations-normal.xml",
 				"fakeService://testdata/odata/multiple-annotations-01.xml",
 				"fakeService://testdata/odata/multiple-annotations-02.xml",
 				"fakeService://testdata/odata/multiple-annotations-03.xml"
 			],
-			serviceValid     : true,
+			serviceValid	 : true,
 			annotationsValid : "all"
 		},
 		"Empty collection": {
-			service          : "fakeService://testdata/odata/northwind/",
-			annotations      : "fakeService://testdata/odata/empty-collection.xml",
-			serviceValid     : true,
+			service		  : "fakeService://testdata/odata/northwind/",
+			annotations	  : "fakeService://testdata/odata/empty-collection.xml",
+			serviceValid	 : true,
 			annotationsValid : "all"
 		},
 		"Multiple Enums": {
-			service          : "fakeService://testdata/odata/northwind/",
-			annotations      : "fakeService://testdata/odata/multiple-enums.xml",
-			serviceValid     : true,
+			service		  : "fakeService://testdata/odata/northwind/",
+			annotations	  : "fakeService://testdata/odata/multiple-enums.xml",
+			serviceValid	 : true,
 			annotationsValid : "all"
 		},
 		"Cached Value Lists": {
-			service          : "fakeService://testdata/odata/valuelists/",
-			annotations      : null,
-			serviceValid     : true,
+			service		  : "fakeService://testdata/odata/valuelists/",
+			annotations	  : null,
+			serviceValid	 : true,
 			annotationsValid : "metadata"
 		},
 		"Overwrite on Term Level": {
-			service          : "fakeService://testdata/odata/valuelists/",
-			annotations      : [
+			service		  : "fakeService://testdata/odata/valuelists/",
+			annotations	  : [
 				"fakeService://testdata/odata/overwrite-on-term-level-1",
 				"fakeService://testdata/odata/overwrite-on-term-level-2"
 			],
-			serviceValid     : true,
+			serviceValid	 : true,
 			annotationsValid : "all"
 		},
 		"EDMType for NavigationProperties": {
-			service          : "fakeService://testdata/odata/northwind/",
-			annotations      : [
+			service		  : "fakeService://testdata/odata/northwind/",
+			annotations	  : [
 				"fakeService://testdata/odata/edmtype-for-navigationproperties"
 			],
-			serviceValid     : true,
+			serviceValid	 : true,
+			annotationsValid : "all"
+		},
+		"Nested Annotations": {
+			service		  : "fakeService://testdata/odata/northwind/",
+			annotations	  : [
+				"fakeService://testdata/odata/nested-annotations"
+			],
+			serviceValid	 : true,
 			annotationsValid : "all"
 		}
 
@@ -393,7 +410,7 @@ function runODataAnnotationTests() {
 			annotationURI : aServices[i].annotations,
 			json : true
 		};
-		bServiceValid     = aServices[i].serviceValid;
+		bServiceValid	 = aServices[i].serviceValid;
 		sAnnotationsValid = aServices[i].annotationsValid;
 		bAnnotationsValid = sAnnotationsValid === "all" || sAnnotationsValid === "some";
 		bSharedMetadata = aServices[i].sharedMetadata;
@@ -533,7 +550,7 @@ function runODataAnnotationTests() {
 			annotationURI : mService.annotations,
 			json : true
 		};
-		bServiceValid     = mService.serviceValid;
+		bServiceValid	 = mService.serviceValid;
 		sAnnotationsValid = aServices[i].annotationsValid;
 		bAnnotationsValid = sAnnotationsValid === "all" || sAnnotationsValid === "some";
 		bSharedMetadata = mService.sharedMetadata;
@@ -679,7 +696,7 @@ function runODataAnnotationTests() {
 			skipMetadataAnnotationParsing: true,
 			json : true
 		};
-		bServiceValid     = mService.serviceValid;
+		bServiceValid	 = mService.serviceValid;
 		sAnnotationsValid = aServices[i].annotationsValid;
 		bAnnotationsValid = sAnnotationsValid === "all" || sAnnotationsValid === "some";
 		bSharedMetadata = mService.sharedMetadata;
@@ -833,7 +850,7 @@ function runODataAnnotationTests() {
 			annotationURI : mService.annotations,
 			json : true
 		};
-		bServiceValid     = mService.serviceValid;
+		bServiceValid	 = mService.serviceValid;
 		sAnnotationsValid = aServices[i].annotationsValid;
 		bAnnotationsValid = sAnnotationsValid === "all" || sAnnotationsValid === "some";
 		bSharedMetadata = mService.sharedMetadata;
@@ -989,7 +1006,7 @@ function runODataAnnotationTests() {
 			skipMetadataAnnotationParsing: true,
 			json : true
 		};
-		bServiceValid     = mService.serviceValid;
+		bServiceValid	 = mService.serviceValid;
 		sAnnotationsValid = aServices[i].annotationsValid;
 		bAnnotationsValid = sAnnotationsValid === "all" || sAnnotationsValid === "some";
 		bSharedMetadata = mService.sharedMetadata;
@@ -1250,10 +1267,10 @@ function runODataAnnotationTests() {
 	module("Additional tests for fixed bugs");
 
 
-	test("Test 2014-12-08", function() {
+	test("Apply Function", function() {
 		expect(12);
 
-		var mTest = mAdditionalTestsServices["Test 2014-12-08"];
+		var mTest = mAdditionalTestsServices["Apply Function"];
 		var sServiceURI = mTest.service;
 		var mModelOptions = {
 			annotationURI : mTest.annotations,
@@ -1343,10 +1360,10 @@ function runODataAnnotationTests() {
 		oModel.destroy();
 	});
 
-	asyncTest("V2: Test 2014-12-08", function() {
+	asyncTest("V2: Apply Function", function() {
 		expect(12);
 
-		var mTest = mAdditionalTestsServices["Test 2014-12-08"];
+		var mTest = mAdditionalTestsServices["Apply Function"];
 		var sServiceURI = mTest.service;
 		var mModelOptions = {
 			annotationURI : mTest.annotations,
@@ -3916,8 +3933,8 @@ function runODataAnnotationTests() {
 
 		var mTestsDone = {
 			"annotations": false,
-			"metadata":    false,
-			// "both":        false,
+			"metadata":	false,
+			// "both":		false,
 			"metamodel":   false
 		};
 		var fnAsyncStart = function(sWhat) {
@@ -3948,9 +3965,9 @@ function runODataAnnotationTests() {
 			ok(!!oAnnotations, "Annotations are available.");
 
 			ok(oAnnotations["UnitTest"], "Annotation namespace available");
-			ok(oAnnotations["UnitTest"]["Test.From" + sSource],                                    "Annotation from correct source - " + sSource + " (2/5)");
-			ok(oAnnotations["UnitTest"]["Test.From" + sSource][0],                                 "Annotation from correct source - " + sSource + " (3/5)");
-			ok(oAnnotations["UnitTest"]["Test.From" + sSource][0]["Value"],                        "Annotation from correct source - " + sSource + " (4/5)");
+			ok(oAnnotations["UnitTest"]["Test.From" + sSource],									"Annotation from correct source - " + sSource + " (2/5)");
+			ok(oAnnotations["UnitTest"]["Test.From" + sSource][0],								 "Annotation from correct source - " + sSource + " (3/5)");
+			ok(oAnnotations["UnitTest"]["Test.From" + sSource][0]["Value"],						"Annotation from correct source - " + sSource + " (4/5)");
 			ok(oAnnotations["UnitTest"]["Test.From" + sSource][0]["Value"]["Path"] === sSource, "Annotation from correct source - " + sSource + " (5/5)");
 
 			fnAsyncStart(sTestType);
@@ -4008,14 +4025,14 @@ function runODataAnnotationTests() {
 		});
 
 		// TODO: Currently the loaded event is fired twice in this case, so it first has the data from Metadata and only
-		//       later the data from the annotations file is added. This test should be activated as soon as this
-		//       problem is solved.
-		//       Don't forget to change mTestsDone and expect as well
+		//	   later the data from the annotations file is added. This test should be activated as soon as this
+		//	   problem is solved.
+		//	   Don't forget to change mTestsDone and expect as well
 		//oModel4.attachAnnotationsLoaded(fnTestAnnotations.bind(window, "both", oModel4, "Annotations"));
 
 		// Check availability of data in ODataMetaModel
 		Promise.all([oModel.getMetaModel().loaded(), oModel2.getMetaModel().loaded(), oModel3.getMetaModel().loaded(), oModel4.getMetaModel().loaded()]).then(function() {
-			fnTestMetaModel(oModel, true, "Metadata");     // Annotations only from metadata document
+			fnTestMetaModel(oModel, true, "Metadata");	 // Annotations only from metadata document
 			fnTestMetaModel(oModel2, true, "Annotations"); // Annotations only from separate annotation file
 			fnTestMetaModel(oModel3, false);               // No annotations
 			fnTestMetaModel(oModel4, true, "Annotations"); // Anotations from metadata and annotation file
@@ -5091,4 +5108,167 @@ function runODataAnnotationTests() {
 
 	asyncTest("V1: EDMType for NavigationProperties", fnTestEdmTypeForNavigationProperties.bind(this, 1));
 	asyncTest("V2: EDMType for NavigationProperties", fnTestEdmTypeForNavigationProperties.bind(this, 2));
+
+
+	var fnTestNestedAnnotations = function(iModelVersion) {
+		expect(150);
+
+		cleanOdataCache();
+		var mTest = mAdditionalTestsServices["Nested Annotations"];
+		var oModel = fnCreateModel(iModelVersion, mTest.service);
+
+		oModel.attachMetadataLoaded(function() {
+			var oAnnotations = oModel.getServiceAnnotations();
+
+			equals(oAnnotations["NorthwindModel.Supplier"], undefined, "Annotations not loaded from service metadata");
+
+			oModel.addAnnotationUrl(mTest.annotations[0]).then(function() {
+				var oAnnotations = oModel.getServiceAnnotations();
+
+				deepContains(oAnnotations["NorthwindModel.Product"], {
+					"com.sap.vocabularies.UI.v1.LineItem" : [{
+						"Label" : {
+							"String" : "Business Partner"
+						},
+						"Value" : {
+							"Path" : "BusinessPartnerID"
+						},
+						"RecordType" : "com.sap.vocabularies.UI.v1.DataField",
+						"com.sap.vocabularies.UI.v1.Importance" : {
+							"EnumMember" : "com.sap.vocabularies.UI.v1.ImportanceType/High"
+						}
+					}],
+					"com.sap.vocabularies.Common.v1.Text": {
+						"Term": {
+							"Name": "TextArrangement",
+							"Type": "com.sap.vocabularies.UI.v1.TextArrangementType",
+							"AppliesTo": "Annotation EntityType",
+
+							"Core.Description1": {
+								"String": "Describes the arrangement of the property values and its text"
+							},
+							"Core.Description2": {
+								"String": "If used for a single property the Common.Text annotation is annotated"
+							},
+						},
+						"Path": "CategoryName",
+					},
+					"com.sap.vocabularies.Common.v1.Text2": {
+						"Path": "CategoryName",
+						"com.sap.vocabularies.UI.v1.TextArrangement": {
+							"EnumMember": "com.sap.vocabularies.UI.v1.TextArrangementType/TextLast"
+						}
+					},
+					"unittest.ui5.parentAnnotation": {
+						"unittest.ui5.constantExpressions": {
+							"String": "Rosinenbroetchen",
+							"Binary": "1100101",
+							"Bool": "almost true",
+							"Date": "2016-04-14",
+							"DateTimeOffset": "2016-04-14T16:19:00.000-02:00",
+							"Decimal": "3.14159",
+							"Duration": "P11D23H59M59.999999999999S",
+							"EnumMember": "unittest.ui5.enum/test1",
+							"Float": "6.28318",
+							"Guid": "21EC2020-3AEA-1069-A2DD-08002B30309D",
+							"Int": "23",
+							"TimeOfDay": "23:42:58"
+						},
+						"unittest.ui5.dynamicExpression1": {
+							"Apply": {
+								"Name": "odata.concat",
+								"Parameters": [
+									{
+										"Type": "String",
+										"Value": "***"
+									},
+									{
+										"Type": "String",
+										"Value": ", "
+									},
+									{
+										"Type": "String",
+										"Value": "Drugs "
+									},
+									{
+										"Type": "String",
+										"Value": " and "
+									},
+									{
+										"Type": "String",
+										"Value": "Rock 'n Roll"
+									}
+								]
+							}
+						},
+						"unittest.ui5.dynamicExpression2": [
+							{
+								"String": "One"
+							},
+							{
+								"String": "Two"
+							},
+							{
+								"String": "Five"
+							}
+						],
+						"unittest.ui5.dynamicExpression3": {
+							"If": [
+								{
+									"Path": "IsFemale"
+								},
+								{
+									"String": "Iron Man"
+								},
+								{
+									"String": "Someone else"
+								}
+							]
+						},
+						"unittest.ui5.dynamicExpression4": {
+							"Null": null
+						},
+						"unittest.ui5.dynamicExpression5": {
+							"GivenName": {
+								"Path": "FirstName"
+							},
+							"Surname": {
+								"Path": "LastName"
+							},
+							"Manager": {
+								"Path": "DirectSupervisor"
+							},
+							"CostCenter": {
+								"UrlRef": {
+									"Apply": {
+										"Name": "odata.fillUriTemplate",
+										"Parameters": [
+											{
+												"Type": "String",
+												"Value": "http://host/anotherservice/CostCenters('{ccid}')"
+											},
+											{
+												"Type": "LabeledElement",
+												"Value": {
+													"Path": "CostCenterID"
+												},
+												"Name": "ccid"
+											}
+										]
+									}
+								}
+							}
+						}
+					}
+				}, "NorthwindModel.Product");
+
+
+
+				start();
+			});
+		});
+	};
+
+	asyncTest("V1: Nested Annotations", fnTestNestedAnnotations.bind(this, 1));
+	asyncTest("V2: Nested Annotations", fnTestNestedAnnotations.bind(this, 2));
 }

@@ -103,6 +103,13 @@ sap.ui.define([
 		this._aControlSizes = {}; // A map of control id -> control *optimal* size in pixels; the optimal size is outerWidth for most controls and min-width for spacers
 	};
 
+	OverflowToolbar.prototype.exit = function () {
+		var oPopover = this.getAggregation("_popover");
+		if (oPopover) {
+			oPopover.destroy();
+		}
+	};
+
 	/**
 	 * Called after the control is rendered
 	 */
@@ -302,7 +309,7 @@ sap.ui.define([
 
 					if (iControlGroup) {
 						sControlPriority = OverflowToolbar._getControlPriority(oControl);
-						iControlIndex = OverflowToolbar._getControlIndex(oControl);
+						iControlIndex = this._getControlIndex(oControl);
 
 						oGroups[iControlGroup] = oGroups[iControlGroup] || [];
 						aGroup = oGroups[iControlGroup];
@@ -319,7 +326,7 @@ sap.ui.define([
 					} else {
 						aAggregatedControls.push(oControl);
 					}
-				});
+				}, this);
 
 				// combine not grouped elements with group arrays
 				Object.keys(oGroups).forEach(function (key) {
@@ -350,7 +357,7 @@ sap.ui.define([
 				if (iPriorityCompare !== 0) {
 					return iPriorityCompare;
 				} else {
-					return OverflowToolbar._getControlIndex(vControlB) - OverflowToolbar._getControlIndex(vControlA);
+					return this._getControlIndex(vControlB) - this._getControlIndex(vControlA);
 				}
 			},
 			fnAddToActionSheetArrAndUpdateContentSize = function (oControl) {
@@ -396,10 +403,10 @@ sap.ui.define([
 
 			// There is at least one button that will go to the action sheet - add the overflow button, but only if it wasn't added already
 			iContentSize = fnAddOverflowButton.call(this, iContentSize);
-			aAggregatedMovableControls = fnAggregateMovableControls(this._aMovableControls);
+			aAggregatedMovableControls = fnAggregateMovableControls.call(this, this._aMovableControls);
 
 			// Define the overflow order, depending on items` priority and index.
-			aAggregatedMovableControls.sort(fnSortByPriorityAndIndex);
+			aAggregatedMovableControls.sort(fnSortByPriorityAndIndex.bind(this));
 
 			// Hide controls or groups while iContentSize <= iToolbarSize/
 			aAggregatedMovableControls.some(fnExtractControlsToMoveToOverflow, this);
@@ -737,8 +744,8 @@ sap.ui.define([
 			return;
 		}
 
-		var sSourceControlClass = oEvent.getSource().getMetadata().getName();
-		var oControlConfig = OverflowToolbarAssociativePopoverControls.getControlConfig(sSourceControlClass);
+		var oSourceControl = oEvent.getSource();
+		var oControlConfig = OverflowToolbarAssociativePopoverControls.getControlConfig(oSourceControl);
 		var sParameterName = oEvent.getParameter("name");
 
 		// Do nothing if the changed property is in the blacklist above
@@ -830,6 +837,15 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Returns the control index in the OverflowToolbar content aggregation or the index of a group, which is defined by the rightmost item in the group.
+	 * @param vControl array of controls or single control
+	 * @private
+	 */
+	OverflowToolbar.prototype._getControlIndex = function (vControl) {
+		return vControl.length ? vControl._index : this.indexOfContent(vControl);
+	};
+
 	/************************************************** STATIC ***************************************************/
 
 
@@ -848,7 +864,7 @@ sap.ui.define([
 			iOptimalWidth = parseInt(oControl.$().css('min-width'), 10) || 0 + oControl.$().outerWidth(true) - oControl.$().outerWidth();
 			// For other elements, get the outer width
 		} else {
-			iOptimalWidth = oControl.$().outerWidth(true);
+			iOptimalWidth = oControl.getVisible() ? oControl.$().outerWidth(true) : 0;
 		}
 
 		if (iOptimalWidth === null) {
@@ -885,16 +901,6 @@ sap.ui.define([
 		}
 
 		return OverflowToolbarPriority.High;
-	};
-
-	/**
-	 * Returns the control index in the OverflowToolbar content aggregation or the index of a group, which is defined by the rightmost item in the group.
-	 * @static
-	 * @param vControl array of controls or single control
-	 * @private
-	 */
-	OverflowToolbar._getControlIndex = function (vControl) {
-		return vControl.length ? vControl._index : vControl.getParent().indexOfContent(vControl);
 	};
 
 	/**

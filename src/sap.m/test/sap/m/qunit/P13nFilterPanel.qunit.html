@@ -25,6 +25,10 @@
 	src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <script type="text/javascript">
+	if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	} 		
+
 	(function() {
 		jQuery.sap.require("sap.m.P13nFilterPanel");
 

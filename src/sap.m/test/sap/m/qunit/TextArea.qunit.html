@@ -398,8 +398,8 @@
 		sap.ui.getCore().applyChanges();
 
 		var $TA = jQuery(oTA.getFocusDomRef());
-		strictEqual($TA.attr("role"), "textbox", "Control role set correctly");
-		strictEqual($TA.attr("aria-multiline"), "true", "Multiline is set for textarea");
+		strictEqual($TA.attr("role"), undefined, "Control role is not set. It causes issues with Jaws");
+		strictEqual($TA.attr("aria-multiline"), undefined, "Multiline is not for textarea. It causes issues with Jaws");
 
 		oTA.destroy();
 	});

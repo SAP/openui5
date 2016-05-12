@@ -552,6 +552,28 @@
 			}
 		}
 	});
+
+	module("Accessibility");
+
+	test("getAccessibilityInfo", function() {
+		var oControl = new sap.m.RatingIndicator({value: 5, maxValue: 10});
+		ok(!!oControl.getAccessibilityInfo, "RatingIndicator has a getAccessibilityInfo function");
+		var oInfo = oControl.getAccessibilityInfo();
+		ok(!!oInfo, "getAccessibilityInfo returns a info object");
+		strictEqual(oInfo.role, "slider", "AriaRole");
+		strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_RATING"), "Type");
+		strictEqual(oInfo.description, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_RATING", [5, 10]), "Description");
+		strictEqual(oInfo.focusable, true, "Focusable");
+		strictEqual(oInfo.enabled, true, "Enabled");
+		ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
+		oControl.setValue(0);
+		oControl.setEnabled(false);
+		oInfo = oControl.getAccessibilityInfo();
+		strictEqual(oInfo.description, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_RATING", [0, 10]), "Description");
+		strictEqual(oInfo.focusable, false, "Focusable");
+		strictEqual(oInfo.enabled, false, "Enabled");
+		oControl.destroy();
+	});
 </script>
 
 </head>

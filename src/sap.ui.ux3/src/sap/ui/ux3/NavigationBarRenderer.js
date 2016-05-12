@@ -43,8 +43,8 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write(">");
 		NavigationBarRenderer.renderItems(rm, oControl);
 		rm.write("</ul>");
-		rm.write("<a id='" + sId + "-ofb' role='presentation' class='sapUiUx3NavBarBack' href='javascript:void(0)'>");
-		rm.write("<a id='" + sId + "-off' role='presentation' class='sapUiUx3NavBarForward' href='javascript:void(0)'>");
+		rm.write("<a id='" + sId + "-ofb' role='presentation' class='sapUiUx3NavBarBack' href='javascript:void(0)'></a>");
+		rm.write("<a id='" + sId + "-off' role='presentation' class='sapUiUx3NavBarForward' href='javascript:void(0)'></a>");
 		rm.write("<a id='" + sId + "-ofl' role='presentation' class='sapUiUx3NavBarOverflowBtn' href='javascript:void(0)'>");
 		rm.writeIcon("sap-icon://overflow", [], { id : sId + "-oflt" });
 		rm.write("</a>");

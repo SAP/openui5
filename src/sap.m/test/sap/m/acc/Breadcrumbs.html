@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>sap.m.Breadcrumbs</title>
+	<script src="../../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap" data-sap-ui-libs="sap.m,sap.ui.layout" data-sap-ui-theme="sap_bluecrystal">
+	</script>
+</head>
+<body id="body" class="sapUiBody">
+<script>
+	(function (jQuery, App, Page, Link, Breadcrumbs, MessageToast, Input, Label, Button, VerticalLayout, Slider, Panel) {
+		var fnLinkPressHandler = function (oEvent) {
+				MessageToast.show(oEvent.getSource().getText() + " has been activated");
+			},
+			fnGetLink = function (sLinkText) {
+				return new Link({
+					text: sLinkText,
+					press: fnLinkPressHandler
+				});
+			},
+			fnLinkGenerator = function (iNumberOfLinks, sLinkText) {
+				var aListOfLinks = [];
+				sLinkText = sLinkText || "Link";
+
+				for (var i = 1; i <= iNumberOfLinks; i++) {
+					aListOfLinks.push(fnGetLink(sLinkText + i));
+				}
+
+				return aListOfLinks;
+			},
+			fnUpdateBreadcrumbsWidth = function () {
+				oBreadcrumbs.$().css("width", sBreadcrumbWidth);
+			},
+			oTestDataModel = new sap.ui.model.json.JSONModel({
+				currentLocationText: "Current location",
+				indexOfLinkToRemove: 0
+			}),
+			sBreadcrumbWidth = "auto",
+			oBreadcrumbs = new Breadcrumbs({
+				currentLocationText: "currentLocationText",
+				links: fnLinkGenerator(10, "NormalLink")
+			}).addEventDelegate({onAfterRendering: fnUpdateBreadcrumbsWidth}),
+			oBreadcrumbsWithSelect = new Breadcrumbs("breadCrumbWithSelect", {
+				currentLocationText: "currentLocationText",
+				links: fnLinkGenerator(10, "NormalLink")
+			}).addEventDelegate({
+				onAfterRendering: function () {
+					oBreadcrumbsWithSelect.$().css("width", "200px");
+				}
+			}),
+			oApp = new App();
+
+
+		oApp.addPage(new Page({
+			title: "Breadcrumbs",
+			content: [new Panel({
+				content: [oBreadcrumbs, oBreadcrumbsWithSelect]
+			})]
+		})).placeAt("content");
+
+	}(jQuery, sap.m.App, sap.m.Page, sap.m.Link, sap.m.Breadcrumbs, sap.m.MessageToast,
+			sap.m.Input, sap.m.Label, sap.m.Button, sap.ui.layout.VerticalLayout, sap.m.Slider, sap.m.Panel))
+</script>
+<div id="content"></div>
+</body>
+</html>

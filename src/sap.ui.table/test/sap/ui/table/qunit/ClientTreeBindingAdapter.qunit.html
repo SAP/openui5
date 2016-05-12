@@ -568,6 +568,7 @@
 				equal(oEvent.mParameters.leadIndex, oBinding.getLength() - 1, "Event: leadIndex should be Binding length - 1");
 				equal(oEvent.mParameters.oldIndex, -1, "Event: oldIndex should be -1");
 				equal(oEvent.mParameters.rowIndices.length, 13, "Event: length of changedIndices should be 13");
+				equal(oEvent.mParameters.selectAll, true, "Event: selectAll set");
 			};
 
 			var fnSelectionChangeHandler2 = function(oEvent) {
@@ -575,6 +576,7 @@
 				equal(oEvent.mParameters.leadIndex, - 1, "Event: leadIndex should be - 1");
 				equal(oEvent.mParameters.oldIndex, oBinding.getLength() - 1, "Event: oldIndex should be Binding length -1");
 				equal(oEvent.mParameters.rowIndices.length, 5, "Event: length of changedIndices should be 5");
+				ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
 			};
 
 
@@ -631,6 +633,7 @@
 				equal(oEvent.mParameters.oldIndex, -1, "Event: oldIndex should be -1");
 				equal(oEvent.mParameters.rowIndices.length, 1, "Event: length of changedIndices should be 1");
 				equal(oEvent.mParameters.rowIndices[0], 1, "Event: changedIndices[0] should be 1");
+				ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
 			};
 
 			var fnSelectionChangeHandler2 = function(oEvent) {
@@ -640,6 +643,7 @@
 				equal(oEvent.mParameters.rowIndices.length, 2, "Event: changedIndices should be 2");
 				equal(oEvent.mParameters.rowIndices[0], 1, "Event: changedIndices[0] should be 1");
 				equal(oEvent.mParameters.rowIndices[0], 1, "Event: changedIndices[1] should be 4");
+				ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
 			};
 
 			var fnSelectionChangeHandler3 = function(oEvent) {
@@ -647,6 +651,7 @@
 				equal(oEvent.mParameters.leadIndex, 4, "Event: leadIndex should be 4");
 				equal(oEvent.mParameters.oldIndex, 4, "Event: oldIndex should be 4");
 				equal(oEvent.mParameters.rowIndices.length, 0, "Event: changedIndices should be undefined");
+				ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
 			};
 
 			oBinding.attachSelectionChanged(fnSelectionChangeHandler1);
@@ -701,6 +706,7 @@
 				equal(oEvent.mParameters.rowIndices.length, 5, "Event: length of changedIndices should be 5");
 				equal(oEvent.mParameters.rowIndices[0], 3, "Event: first changedIndices[0] should be 3");
 				equal(oEvent.mParameters.rowIndices[4], 7, "Event: last changedIndices[4] should be 7");
+				ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
 			};
 
 			var fnSelectionChangeHandler2 = function(oEvent) {
@@ -710,6 +716,7 @@
 				equal(oEvent.mParameters.rowIndices.length, 3, "Event: length of changedIndices should be 3");
 				equal(oEvent.mParameters.rowIndices[0], 9, "Event: first changedIndices[0] should be 9");
 				equal(oEvent.mParameters.rowIndices[2], 11, "Event: last changedIndices[2] should be 11");
+				ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
 			};
 
 			var fnSelectionChangeHandler3 = function(oEvent) {
@@ -719,6 +726,7 @@
 				equal(oEvent.mParameters.rowIndices.length, 2, "Event: length of changedIndices should be 2");
 				equal(oEvent.mParameters.rowIndices[0], 8, "Event: first changedIndices[0] should be 7");
 				equal(oEvent.mParameters.rowIndices[1], 12, "Event: last changedIndices[1] should be 12");
+				ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
 			};
 
 			oBinding.attachSelectionChanged(fnSelectionChangeHandler1);
@@ -755,6 +763,7 @@
 				equal(oEvent.mParameters.rowIndices.length, 6, "Event: length of changedIndices should be 6");
 
 				deepEqual(oEvent.mParameters.rowIndices, [3, 4, 8, 9, 10, 11], "Changed indices after setSelectionInterval is correct");
+				ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
 			};
 
 			var fnSelectionChangeHandler2 = function(oEvent) {
@@ -764,6 +773,7 @@
 				equal(oEvent.mParameters.rowIndices.length, 5, "Event: length of changedIndices should be 5");
 
 				deepEqual(oEvent.mParameters.rowIndices, [0, 5, 6, 7, 8], "Changed indices after setSelectedIndex is correct");
+				ok(!oEvent.mParameters.selectAll, "Event: selectAll not set");
 			};
 
 			oBinding.addSelectionInterval(3, 7);
@@ -787,6 +797,38 @@
 
 			equal(oBinding.findNode(5).selected, undefined, "Index 1 should not be selected anymore.");
 
+			start();
+		});
+
+		asyncTest("setSelectedIndex and getSelectedIndex", function(){
+			createTreeBindingAdapter("/bing/root", [], null, {
+				collapseRecursive: false,
+				displayRootNode: false,
+				numberOfExpandedLevels: 1
+			});
+
+			oBinding.getContexts(0, 100);
+
+			//invalidate tree
+			oBinding._fireChange();
+
+			oBinding.getLength();
+
+			oBinding.setSelectedIndex(1);
+
+			equal(oBinding.isIndexSelected(1), true, "isIndexSelected(1) works");
+
+			var aSelectedIndices = oBinding.getSelectedIndices();
+			deepEqual(aSelectedIndices, [1], "Selected indices array is correct, after selecting additional indices");
+
+			oBinding.setSelectedIndex(3);
+
+			equal(oBinding.isIndexSelected(1), false, "isIndexSelected(1) works");
+
+			equal(oBinding.isIndexSelected(3), true, "isIndexSelected(3) works");
+
+			var aSelectedIndices = oBinding.getSelectedIndices();
+			deepEqual(aSelectedIndices, [3], "Selected indices array is correct, after selecting additional indices");
 			start();
 		});
 
@@ -816,6 +858,71 @@
 			oBinding.attachChange(fnRefreshHandler);
 			//sort descending
 			oBinding.sort(new sap.ui.model.Sorter("name", true));
+		});
+
+
+		var oData2 = {
+			root: [{
+				name: "node_0",
+				root: [
+					{
+						name: "node_1",
+						root: [{name: "node_1a"}, {name: "node_1b"}]
+					},
+					{
+						name: "node_2",
+						root: [{name: "node_2a"}, {name: "node_2b"}]
+					}
+				]
+			}]
+		};
+
+		module("ClientBindingAdapter - Model Data 2", {
+			setup: function() {
+				oModel = new sap.ui.model.json.JSONModel();
+				oModel.setData(jQuery.extend({}, oData2));
+			},
+			teardown: function() {
+				oModel = undefined;
+			}
+		});
+
+
+		asyncTest("Expand with arrayNames == bindingPath", function(){
+
+			createTreeBindingAdapter("/root", null,null, {
+				numberOfExpandedLevels: 1,
+				displayRootNode: false,
+				arrayNames: ["root"]
+			});
+
+			oBinding.getContexts(0, 100);
+
+			// tree-state expectation
+			// node_0
+			//    node_1
+			//    node_2
+			equal(oBinding.getLength(), 3, "initial length is OK");
+
+			// epxand node_1
+			oBinding.attachChange(handler1);
+			oBinding.expand(1);
+			oBinding.getContexts(0, 100);
+
+			function handler1 () {
+				oBinding.detachChange(handler1);
+
+				// tree-state expectation
+				// node_0
+				//    node_1
+				//       node_1a
+				//       node_1b
+				//    node_2
+				equal(oBinding.getLength(), 5, "length after expand is ok");
+
+				start();
+			}
+			
 		});
 
 	</script>

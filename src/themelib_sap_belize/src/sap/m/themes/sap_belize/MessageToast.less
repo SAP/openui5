@@ -1,18 +1,18 @@
-/* ================================== */
-/* CSS for control sap.m/MessageTost  */
-/* Belize theme                       */
-/* ================================== */
+/* =================================== */
+/* CSS for control sap.m/MessageToast  */
+/* Belize theme                        */
+/* =================================== */
 
 .sapMMessageToast {
 	font-size: @sapMFontMediumSize;
 	padding: 1rem;
 	background: @sapUiPageFooterBackground;
-	text-shadow: 0 0.0625rem @sapUiContentShadowColor;
-	color: @sapUiContentContrastTextColor;
+	text-shadow: 0 0.0625rem contrast(@sapUiPageFooterTextColor, fade(@sapUiContentShadowColor, 50), fade(@sapUiContentContrastShadowColor, 50), @sapUiContentContrastTextThreshold);
+	color: @sapUiPageFooterTextColor;
 	box-shadow: 0 0.125rem 2.750rem 0.125rem fade(@sapUiContentShadowColor, 50), 0 0.250rem 0.250rem 0 fade(@sapUiContentShadowColor, 15);
 	border-radius: 0.14285rem;
 }
 
-.sap-desktop .sapMMessageToast {
+html.sap-desktop .sapMMessageToast {
 	background: @sapUiPageFooterBackground;
 }

@@ -2,6 +2,16 @@ var fs = require('fs');
 
 module.exports = function(grunt, config) {
 
+	// determine the testsuite name and lookup the sap.ui.core library
+	// to be a bit more dynamic for the livereload middleware
+	var testsuiteName = config.testsuite && config.testsuite.name || testsuiteName;
+	var sapUiCoreBasePath = 'src/sap.ui.core';
+	config.allLibraries.forEach(function(oLib, i) {
+		if (oLib.name === 'sap.ui.core') {
+			sapUiCoreBasePath = oLib.path;
+		}
+	});
+
 	// set default option
 	if (typeof grunt.option('hostname') !== 'string') {
 		grunt.option('hostname', '*');
@@ -34,8 +44,8 @@ module.exports = function(grunt, config) {
 				middleware: function(connect, options, middlewares) {
 					// make sure to put the middleware after "cors"
 					// if "watch" is enabled, there will be another livereload middleware in between
-					middlewares.splice(grunt.option('watch') ? 3 : 2, 0, [ '/testsuite/resources/sap/ui/Global.js', function(req, res, next) {
-						fs.readFile('src/sap.ui.core/src/sap/ui/Global.js', { encoding: 'utf-8' } , function(err, data) {
+					middlewares.splice(grunt.option('watch') ? 3 : 2, 0, [ '/' + testsuiteName + '/resources/sap/ui/Global.js', function(req, res, next) {
+						fs.readFile(sapUiCoreBasePath + '/src/sap/ui/Global.js', { encoding: 'utf-8' } , function(err, data) {
 							if (err) {
 								res.writeHead(404);
 								res.end();

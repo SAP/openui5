@@ -3,9 +3,12 @@
  */
 
 // Provides class sap.ui.core.ComponentMetadata
-sap.ui.define(['jquery.sap.global', './ComponentMetadata'],
-	function(jQuery, ComponentMetadata) {
+sap.ui.define(['jquery.sap.global', './ComponentMetadata', './library'],
+	function(jQuery, ComponentMetadata, library) {
 	"use strict";
+
+	// shortcut for enum(s)
+	var ViewType = library.mvc.ViewType;
 
 
 	/**
@@ -128,7 +131,7 @@ sap.ui.define(['jquery.sap.global', './ComponentMetadata'],
 		if (oUI5Manifest["rootView"] && typeof oUI5Manifest["rootView"] === "string") {
 			oUI5Manifest["rootView"] = {
 				viewName: oUI5Manifest["rootView"],
-				type: sap.ui.core.mvc.ViewType.XML
+				type: ViewType.XML
 			};
 		}
 

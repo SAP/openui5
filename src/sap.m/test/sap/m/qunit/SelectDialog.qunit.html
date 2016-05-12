@@ -161,6 +161,31 @@
 					assert.strictEqual(that.oSelectDialog._oList.getInfoToolbar().$().attr("aria-live"), "polite", "The aria-live attribute is set to polite");
 				});
 
+				QUnit.test("No InfoToolbar should be shown in single select mode even if there is a selected option", function (assert) {
+					var that = this;
+					bindItems(this.oSelectDialog, { oData: {
+						items : [
+							{
+								Title : "Title1",
+								Description: "Description1",
+								Selected: false
+							}, {
+								Title : "Title2",
+								Description: "Description2",
+								Selected: false
+							}, {
+								Title : "Title3",
+								Description: "Description3",
+								Selected: true
+							}
+						]
+					}, path: "/items", template: createTemplateListItem() });
+
+					this.oSelectDialog.open();
+					sap.ui.getCore().applyChanges();
+					assert.strictEqual(that.oSelectDialog._oList.getInfoToolbar().getVisible(), false, "The should be no toolbar shown");
+				});
+
 				QUnit.module("XML Rendering", {
 					setup: function() {
 						this.oSelectDialog = null;

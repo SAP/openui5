@@ -1,0 +1,24 @@
+/* ===================================== */
+/* CSS for control sap.uxap/BreadCrumbs  */
+/* Belize theme                          */
+/* ===================================== */
+
+.sapUxAPBreadCrumbs {
+
+	.sapMText:focus {
+		outline: 0.0625rem dotted @sapUiContentFocusColor;
+		outline-offset: 0.2rem;
+	}
+
+	.sapMSlt {
+		background-color: transparent;
+
+		.sapMSltLabel {
+			color: @sapUiContentLabelColor;
+		}
+	}
+
+	.sapMSltPressed > .sapMSltArrow::before {
+		color: @sapUiContentIconColor;
+	}
+}

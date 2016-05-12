@@ -213,16 +213,6 @@
 				}, "Async: URL with misplaced file extension should raise an exception");
 			});
 
-			QUnit.test("enhancement", function(assert){
-				var oBundle = new jQuery.sap.resources({ url : "testdata/messages.properties" });
-				assert.equal(oBundle.getText("TEST_TEXT"), "A text en", "text TEST_TEXT of original model is correct");
-				assert.equal(oBundle.getText("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
-				var oCustomBundle = new jQuery.sap.resources({ url : "testdata/messages_custom.properties" });
-				oBundle._enhance(oCustomBundle);
-				assert.equal(oBundle.getText("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
-				assert.equal(oBundle.getText("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
-			});
-
 			QUnit.module("fallback");
 
 			QUnit.test("check expected sequences", function(assert) {
@@ -285,6 +275,25 @@
 				// special case BCP47 tag with variant for 1Q/sappsd, must always map to en-US and variant sappsd
 				checkSequence("es-ES-sappsd", ["_en_US_sappsd", "_en_US", "_en", ""]);
 			});
+
+			QUnit.module("other");
+
+			QUnit.test("enhancement", function(assert){
+				var oBundle = new jQuery.sap.resources({ url : "testdata/messages.properties" });
+				assert.equal(oBundle.getText("TEST_TEXT"), "A text en", "text TEST_TEXT of original model is correct");
+				assert.equal(oBundle.getText("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
+				var oCustomBundle = new jQuery.sap.resources({ url : "testdata/messages_custom.properties" });
+				oBundle._enhance(oCustomBundle);
+				assert.equal(oBundle.getText("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
+				assert.equal(oBundle.getText("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
+			});
+
+			QUnit.test("hasText", function(assert) {
+				var oBundle = new jQuery.sap.resources({ url : "testdata/messages.properties" });
+				assert.ok(oBundle.hasText("TEST_TEXT"), "TEST_TEXT is part of the messages.properties");
+				assert.notOk(oBundle.hasText("TEST_TEXT_NOT_AVAILABLE"), "TEST_TEXT_NOT_AVAILABLE is not part of the messages.properties");
+			});
+
 		</script>
 	</head>
 	<body>

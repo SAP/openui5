@@ -1,6 +1,11 @@
 /* ============================================= */
 /* CSS for control sap.m/ObjectHeaderItem.control */
 /* ============================================= */
+.sapMOH h6, .sapMOHR h6,
+.sapMOH h5, .sapMOHR h5,
+.sapMOH h4, .sapMOHR h4,
+.sapMOH h3, .sapMOHR h3,
+.sapMOH h2, .sapMOHR h2,
 .sapMOH h1, .sapMOHR h1 {
 	margin: 0;
 	font-weight: normal;
@@ -11,7 +16,7 @@
 	padding: 1rem;
 }
 
-.sap-phone .sapMOH {
+html.sap-phone .sapMOH {
 	padding: 1rem 0;
 }
 
@@ -29,7 +34,7 @@
 	padding: 1.125rem 2rem 1rem 2rem;
 }
 
-.sap-phone .sapMOH.sapMOHC {
+html.sap-phone .sapMOH.sapMOHC {
 	margin: 0;
 	padding: 1.125rem 1rem 1rem 1rem;
 }
@@ -53,9 +58,19 @@
 }
 
 .sapMOHIntroActive > a:active,
-.sap-desktop .sapMOHIntroActive > a:hover,
+html.sap-desktop .sapMOHIntroActive > a:hover,
+.sapMOHTitleActive h6 .sapMText:active,
+html.sap-desktop .sapMOHTitleActive h6 .sapMText:hover,
+.sapMOHTitleActive h5 .sapMText:active,
+html.sap-desktop .sapMOHTitleActive h5 .sapMText:hover,
+.sapMOHTitleActive h4 .sapMText:active,
+html.sap-desktop .sapMOHTitleActive h4 .sapMText:hover,
+.sapMOHTitleActive h3 .sapMText:active,
+html.sap-desktop .sapMOHTitleActive h3 .sapMText:hover,
+.sapMOHTitleActive h2 .sapMText:active,
+html.sap-desktop .sapMOHTitleActive h2 .sapMText:hover,
 .sapMOHTitleActive h1 .sapMText:active,
-.sap-desktop .sapMOHTitleActive h1 .sapMText:hover {
+html.sap-desktop .sapMOHTitleActive h1 .sapMText:hover {
 	text-decoration: underline;
 }
 
@@ -79,11 +94,11 @@
 	max-height: 4.2rem;
 }
 
-.sap-phone .sapMOHTitleDiv {
+html.sap-phone .sapMOHTitleDiv {
 	max-height: 5rem;
 }
 
-.sap-phone .sapMOHTitleDiv.sapMOHNumberWrap {
+html.sap-phone .sapMOHTitleDiv.sapMOHNumberWrap {
 	max-height: 3.4rem;
 }
 
@@ -107,10 +122,20 @@
 	position: relative;
 }
 
+.sapMOHTitle h6 .sapMText,
+.sapMOHTitle h5 .sapMText,
+.sapMOHTitle h4 .sapMText,
+.sapMOHTitle h3 .sapMText,
+.sapMOHTitle h2 .sapMText,
 .sapMOHTitle h1 .sapMText {
 	font-size: 1.375rem;
 }
 
+.sapMListTbl .sapMOHTitle h6 .sapMText,
+.sapMListTbl .sapMOHTitle h5 .sapMText,
+.sapMListTbl .sapMOHTitle h4 .sapMText,
+.sapMListTbl .sapMOHTitle h3 .sapMText,
+.sapMListTbl .sapMOHTitle h2 .sapMText,
 .sapMListTbl .sapMOHTitle h1 .sapMText {
 	font-size: 0.875rem;
 }
@@ -133,11 +158,11 @@
 	min-height: 3rem;
 }
 
-.sap-phone .sapMOHTitleIcon {
+html.sap-phone .sapMOHTitleIcon {
 	min-height: 2.5rem;
 }
 
-.sap-phone .sapMText.sapMOHTitle {
+html.sap-phone .sapMText.sapMOHTitle {
 	font-size: 1.188rem;
 }
 
@@ -167,8 +192,8 @@
 	padding: 0.4rem 0.5rem 0.4rem 0.5rem;
 }
 
-.sap-desktop.sapUiMedia-Std-Phone .sapMOHTitleArrow .sapUiIcon,
-.sap-phone .sapMOHTitleArrow .sapUiIcon {
+html.sap-desktop.sapUiMedia-Std-Phone .sapMOHTitleArrow .sapUiIcon,
+html.sap-phone .sapMOHTitleArrow .sapUiIcon {
 	padding: 0.3rem 0.4rem 0.3rem 0.4rem;
 }
 
@@ -189,8 +214,18 @@
 	padding-left: 0.5rem;
 }
 
+.sapMOHC .sapMOHTitle h6 >.sapMText,
+html.sap-phone .sapMOHC .sapMOHTitle h6 >.sapMText,
+.sapMOHC .sapMOHTitle h5 >.sapMText,
+html.sap-phone .sapMOHC .sapMOHTitle h5 >.sapMText,
+.sapMOHC .sapMOHTitle h4 >.sapMText,
+html.sap-phone .sapMOHC .sapMOHTitle h4 >.sapMText,
+.sapMOHC .sapMOHTitle h3 >.sapMText,
+html.sap-phone .sapMOHC .sapMOHTitle h3 >.sapMText,
+.sapMOHC .sapMOHTitle h2 >.sapMText,
+html.sap-phone .sapMOHC .sapMOHTitle h2 >.sapMText,
 .sapMOHC .sapMOHTitle h1 >.sapMText,
-.sap-phone .sapMOHC .sapMOHTitle h1 >.sapMText {
+html.sap-phone .sapMOHC .sapMOHTitle h1 >.sapMText {
 	line-height: 1.8rem;
 	font-size: 1.125rem;
 }
@@ -209,7 +244,7 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapMOHNumberDiv {
 	width: 100%;
 }
 
-.sap-phone .sapMOHNumberWrap {
+html.sap-phone .sapMOHNumberWrap {
 	margin-top: 0.25rem;
 }
 
@@ -293,6 +328,39 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapMOHAttr {
 	clear: both;
 }
 
+.additionalOHNumberDiv.sapMOHNumberDiv {
+	padding-right: 1em;
+}
+
+html.sapUiMedia-Std-Phone .additionalOHNumberSeparatorDiv,
+html.sapUiMedia-Std-Tablet .additionalOHNumberSeparatorDiv,
+html.sapUiMedia-Std-Phone .additionalOHNumberDiv.sapMOHNumberDiv,
+html.sapUiMedia-Std-Tablet .additionalOHNumberDiv.sapMOHNumberDiv {
+	display: none;
+}
+
+.additionalOHNumberDiv.sapMOHNumberDiv .sapMObjectNumber:not(.sapMObjectNumberStatusError):not(.sapMObjectNumberStatusWarning):not(.sapMObjectNumberStatusSuccess) {
+	color: @sapUiLightText;
+}
+
+.additionalOHNumberDiv.sapMOHNumberDiv .sapMObjectNumber .sapMObjectNumberText {
+	font-weight: normal;
+}
+
+.additionalOHNumberSeparatorDiv {
+	margin-top: 0.375rem;
+	margin-right: 0.5rem;
+	display: inline-block;
+	float: right;
+	white-space: nowrap;
+	width: 1px;
+	background: @sapUiLightText;
+	height: 1.375rem;
+}
+
+.additionalOHNumberDiv.sapMOHNumberDiv.sapMOHOnlyANumber {
+	padding-right: 0.5em;
+}
 /*
  * Do NOT clear if ObjectHeader is placed in a responsive grid layout.
  * The layout will clear after the ObjectHeader by itself. This caused problems
@@ -331,8 +399,8 @@ html[data-sap-ui-browser^=ie] .sapMOH .sapMObjectAttributeActive {
 	box-sizing: border-box;
 }
 
-.sap-desktop.sapUiMedia-Std-Phone .sapMOHR,
-.sap-phone .sapMOHR {
+html.sap-desktop.sapUiMedia-Std-Phone .sapMOHR,
+html.sap-phone .sapMOHR {
 	padding: 0.625rem 1rem 0 1rem;
 }
 
@@ -340,8 +408,8 @@ div[class*='sapMOHRBg']:only-child {
 	padding-bottom: 1.5rem;
 }
 
-.sap-desktop.sapUiMedia-Std-Phone div[class*='sapMOHRBg']:only-child,
-.sap-phone div[class*='sapMOHRBg']:only-child {
+html.sap-desktop.sapUiMedia-Std-Phone div[class*='sapMOHRBg']:only-child,
+html.sap-phone div[class*='sapMOHRBg']:only-child {
 	padding-bottom: 1rem;
 }
 
@@ -356,7 +424,7 @@ div[class*='sapMOHRBg']:only-child {
 	max-width: 95rem; // set max width in order the content not to be stretched too much on a very wide screen
 }
 
-.sap-desktop .sapMOHRStatesOneOrThree .sapMOHRTitleNumberDiv {
+html.sap-desktop .sapMOHRStatesOneOrThree .sapMOHRTitleNumberDiv {
 	width: 70%;
 	max-width: none;
 }
@@ -452,15 +520,15 @@ html[dir=rtl] .sapMObjStatusMarker > .sapUiIcon.sapUiIconMirrorInRTL {
 	margin-top: 0;
 }
 
-.sap-desktop.sapUiMedia-Std-Phone .sapMOHRIntroMargin,
-.sap-phone .sapMOHRIntroMargin {
+html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRIntroMargin,
+html.sap-phone .sapMOHRIntroMargin {
 	margin-top: -0.3rem;
 }
 
 .sapMOHRIntroActive > a:active,
-.sap-desktop .sapMOHRIntroActive > a:hover,
+html.sap-desktop .sapMOHRIntroActive > a:hover,
 .sapMOHRTitleActive .sapMOHRTitleText:active,
-.sap-desktop .sapMOHRTitleActive .sapMOHRTitleText:hover {
+html.sap-desktop .sapMOHRTitleActive .sapMOHRTitleText:hover {
 	text-decoration: underline;
 }
 
@@ -478,8 +546,8 @@ html[dir=rtl] .sapMObjStatusMarker > .sapUiIcon.sapUiIconMirrorInRTL {
 	padding: 0.4rem 0.5rem 0.4rem 0.5rem;
 }
 
-.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTitleArrow .sapUiIcon,
-.sap-phone .sapMOHRTitleArrow .sapUiIcon {
+html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTitleArrow .sapUiIcon,
+html.sap-phone .sapMOHRTitleArrow .sapUiIcon {
 	padding: 0.3rem 0.4rem 0.3rem 0.4rem;
 }
 
@@ -498,7 +566,7 @@ html[dir=rtl] .sapMObjStatusMarker > .sapUiIcon.sapUiIconMirrorInRTL {
 	max-width: 95rem; // set max width in order the content not to be stretched too much on a very wide screen
 }
 
-.sap-desktop .sapMOHRStatesOneOrThree > .sapMOHRStates {
+html.sap-desktop .sapMOHRStatesOneOrThree > .sapMOHRStates {
 	width: 30%;
 	box-sizing: border-box;
 	padding: 0.85rem 0 0 1rem;
@@ -515,7 +583,7 @@ html[dir=rtl][data-sap-ui-browser^=ed].sap-desktop .sapMOHRStatesOneOrThree > .s
 	text-align: left;
 }
 
-.sap-desktop .sapMOHRStatesOneOrThree > .sapMOHRStates .sapMObjectAttributeDiv > span[class*='sapMObjectAttribute'] {
+html.sap-desktop .sapMOHRStatesOneOrThree > .sapMOHRStates .sapMObjectAttributeDiv > span[class*='sapMObjectAttribute'] {
 	float: none;
 }
 
@@ -528,55 +596,62 @@ html[dir=rtl][data-sap-ui-browser^=ed].sap-desktop .sapMOHRStatesOneOrThree > .s
 	padding-top: 0.4375rem;
 }
 
-.sap-desktop .sapMOHR .sapMObjectNumber {
+// Android fix
+html[data-sap-ui-os^="Android"] {
+	.sapMOHR .sapMObjectNumberUnit {
+		padding-top: 0.25rem;
+	}
+}
+
+html.sap-desktop .sapMOHR .sapMObjectNumber {
 	width: 30%;
 	box-sizing: border-box;
 }
 
-.sap-desktop.sapUiMedia-Std-Tablet .sapMOHR .sapMObjectNumber,
-.sap-tablet .sapMOHR .sapMObjectNumber {
+html.sap-desktop.sapUiMedia-Std-Tablet .sapMOHR .sapMObjectNumber,
+html.sap-tablet .sapMOHR .sapMObjectNumber {
 	width: 35%;
 	box-sizing: border-box;
 }
 
-.sap-desktop.sapUiMedia-Std-Phone .sapMOHR .sapMObjectNumber,
-.sap-phone .sapMOHR .sapMObjectNumber {
+html.sap-desktop.sapUiMedia-Std-Phone .sapMOHR .sapMObjectNumber,
+html.sap-phone .sapMOHR .sapMObjectNumber {
 	box-sizing: border-box;
 	float: right;
 }
 
-.sap-desktop.sapUiMedia-Std-Phone .sapMOHR .sapMObjectNumber.sapMObjectNumberBelowTitle,
-.sap-phone .sapMOHR .sapMObjectNumber.sapMObjectNumberBelowTitle {
+html.sap-desktop.sapUiMedia-Std-Phone .sapMOHR .sapMObjectNumber.sapMObjectNumberBelowTitle,
+html.sap-phone .sapMOHR .sapMObjectNumber.sapMObjectNumberBelowTitle {
 	width: 100%;
 	padding: 0.5rem 0 0 0;
 }
 
-.sap-desktop.sapUiMedia-Std-Phone .sapMOHRNumberWrap,
-.sap-phone .sapMOHRNumberWrap {
+html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRNumberWrap,
+html.sap-phone .sapMOHRNumberWrap {
 	width: 100%;
 	text-align: left;
 	margin-left: 0;
 }
 
-.sap-desktop .sapMOHRTitleDiv,
-.sap-desktop .sapMOHRStatesOneOrThree > .sapMOHRTitleNumberDiv > .sapMOHRTitleDiv {
+html.sap-desktop .sapMOHRTitleDiv,
+html.sap-desktop .sapMOHRStatesOneOrThree > .sapMOHRTitleNumberDiv > .sapMOHRTitleDiv {
 	width: 70%;
 }
 
-.sap-desktop.sapUiMedia-Std-Tablet .sapMOHRTitleDiv,
-.sap-desktop.sapUiMedia-Std-Tablet .sapMOHRStatesOneOrThree > .sapMOHRTitleNumberDiv > .sapMOHRTitleDiv,
-.sap-tablet .sapMOHRTitleDiv,
-.sap-tablet .sapMOHRStatesOneOrThree > .sapMOHRTitleNumberDiv > .sapMOHRTitleDiv {
+html.sap-desktop.sapUiMedia-Std-Tablet .sapMOHRTitleDiv,
+html.sap-desktop.sapUiMedia-Std-Tablet .sapMOHRStatesOneOrThree > .sapMOHRTitleNumberDiv > .sapMOHRTitleDiv,
+html.sap-tablet .sapMOHRTitleDiv,
+html.sap-tablet .sapMOHRStatesOneOrThree > .sapMOHRTitleNumberDiv > .sapMOHRTitleDiv {
 	width: 65%;
 }
 
-.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTitleDiv,
-.sap-phone .sapMOHRTitleDiv {
+html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTitleDiv,
+html.sap-phone .sapMOHRTitleDiv {
 	width: 60%;
 }
 
-.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTitleDivFull.sapMOHRTitleDiv,
-.sap-phone .sapMOHRTitleDivFull.sapMOHRTitleDiv,
+html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTitleDivFull.sapMOHRTitleDiv,
+html.sap-phone .sapMOHRTitleDivFull.sapMOHRTitleDiv,
 .sapMOHRTitleDivFull.sapMOHRTitleDiv {
 	width: 100%;
 }
@@ -671,42 +746,38 @@ div[class*='sapMOHRStatesCont'] > div:last-child {
 	margin-right: -2rem;
 }
 
-.sap-phone .sapMOHRTabs .sapMITH,
-.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITH {
+html.sap-phone .sapMOHRTabs .sapMITH,
+html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITH {
 	position: relative;
 	margin-left: -1rem;
 	margin-right: -1rem;
 }
 
-.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITBHead {
-	margin: 1rem 1rem 0 1rem;
-}
-
-html[data-sap-ui-os=win8].sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITBHead {
+html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITBHead {
 	margin: 1rem 0 0;
 }
 
-.sap-phone .sapMOHRTabs .sapMITBScrollContainer,
-.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITBScrollContainer {
+html.sap-phone .sapMOHRTabs .sapMITBScrollContainer,
+html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITBScrollContainer {
 	margin: 0 1rem;
 }
 
-.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITBArrowScrollLeft {
+html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITBArrowScrollLeft {
 	left: 0.25rem;
 	padding: 1rem 0;
 }
 
-.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITBArrowScrollRight {
+html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITBArrowScrollRight {
 	padding: 1rem 0;
 	right: 0.25rem;
 }
 
-.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITBArrowScrollLeftTextOnly {
+html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITBArrowScrollLeftTextOnly {
 	left: 0.25rem;
 	padding: 1.25rem 0 0.75rem;
 }
 
-.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITBArrowScrollRightTextOnly {
+html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITBArrowScrollRightTextOnly {
 	padding: 1.25rem 0 0.75rem;
 	right: 0.25rem;
 }
@@ -716,14 +787,14 @@ html[data-sap-ui-os=win8].sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITB
 	padding-top: 0;
 }
 
-.sap-phone .sapMOHRTabs,
-.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs {
+html.sap-phone .sapMOHRTabs,
+html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs {
 	margin: 0 0 0 0;
 	padding-left: 0;
 	padding-right: 0;
 }
 
-.sap-phone .sapMOHRTabs .sapMITBTextOnly > .sapMITBFilter > .sapMITBText + .sapMITBContentArrow {
+html.sap-phone .sapMOHRTabs .sapMITBTextOnly > .sapMITBFilter > .sapMITBText + .sapMITBContentArrow {
 	height: 0.75rem;
 }
 
@@ -734,11 +805,12 @@ html[data-sap-ui-os=win8].sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITB
 }
 
 .sapMOHR .sapMITBHead {
-	display: block;
 	font-size: 0.75rem;
 	overflow: hidden;
-	position: relative;
-	white-space: nowrap;
+}
+
+html.sap-phone .sapMOHR .sapMITBHead {
+	margin: 1rem 0 0;
 }
 
 .sapMOHR .sapMPI {

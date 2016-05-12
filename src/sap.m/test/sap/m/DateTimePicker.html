@@ -94,7 +94,7 @@
 				new sap.m.Label({text: "initial DateTimePicker", labelFor: "DTP1"}),
 				new sap.m.DateTimePicker("DTP1", { fieldGroupIds: ["group1"], change: handleChange, validateFieldGroup: handleFieldGroupValidation }),
 				new sap.m.Label({text: "DateTimePicker with given Value and Formatter", labelFor: "DTP2"}),
-				new sap.m.DateTimePicker("DTP2", { value: "2016-02-16,12-50-30", valueFormat: "yyyy-MM-dd,HH-mm-ss", displayFormat: "long", fieldGroupIds: ["group1"], change: handleChange, validateFieldGroup: handleFieldGroupValidation }),
+				new sap.m.DateTimePicker("DTP2", { value: "2016-02-16,12-50-30", valueFormat: "yyyy-MM-dd,HH-mm-ss", displayFormat: "long/short", fieldGroupIds: ["group1"], change: handleChange, validateFieldGroup: handleFieldGroupValidation }),
 				new sap.m.Label({text: "DateTimePicker with given DateValue and Formatter", labelFor: "DTP3"}),
 				new sap.m.DateTimePicker("DTP3", { dateValue: new Date(2016, 1, 16, 12, 50, 30), displayFormat: "short", change: handleChange }),
 				new sap.m.Label({text: "readonly DateTimePicker with given DateValue and Formatter", labelFor: "DTP4"}),

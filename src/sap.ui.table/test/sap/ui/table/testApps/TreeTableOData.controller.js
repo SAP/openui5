@@ -1,13 +1,14 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
+	"sap/m/MessageToast",
 	"sap/ui/model/json/JSONModel"
-], function (Controller, JSONModel) {
+], function (Controller, MessageToast, JSONModel) {
 	"use strict";
 	return Controller.extend("sap.ui.table.testApps.TreeTableOData", {
 
 		onInit: function () {
 			var oFormData = {
-				serviceURL: "",
+				serviceURL: "odataFake",
 				collection: "orgHierarchy",
 				selectProperties: "HIERARCHY_NODE,DESCRIPTION,LEVEL,DRILLDOWN_STATE,MAGNITUDE",
 				initialLevel: 2,
@@ -25,7 +26,7 @@ sap.ui.define([
 				hierarchyNodeFor: "HIERARCHY_NODE",
 				hierarchyDrillStateFor: "DRILLDOWN_STATE",
 				hierarchyDescendantCountFor: "MAGNITUDE",
-				visibleRowCount: 10,
+				visibleRowCount: 20,
 				visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Fixed,
 				overall: 0,
 				onBeforeRendering: 0,
@@ -44,35 +45,42 @@ sap.ui.define([
 			this.aRenderResults = [];
 			this.aFunctionResults = [];
 			this.aVisibleRow = [];
+
+			this.nIdForNewNode = 3000;
 		},
 
+		/**
+		 * Rebinds/Creates the TreeTable
+		 */
 		onCreateTableClick: function () {
 			var oView = this.getView(),
-			oDataModel = oView.getModel();
+			oViewModel = oView.getModel();
 
-			var sServiceUrl = oDataModel.getProperty("/serviceURL");
+			var sServiceUrl = oViewModel.getProperty("/serviceURL");
 			sServiceUrl = "../../../../../proxy/" + sServiceUrl.replace("://", "/");
 
 			if (sServiceUrl.indexOf("odataFake") >= 0) {
 				jQuery.sap.require("sap.ui.core.util.MockServer");
 				sServiceUrl = "/odataFake/";
-				//Mock server for use with navigation properties
-				var oMockServer = new sap.ui.core.util.MockServer({
-					rootUri: sServiceUrl
-				});
-				oMockServer.simulate("../../core/qunit/model/metadata_orgHierarchy.xml", "../../core/qunit/model/orgHierarchy/");
-				oMockServer.start();
+				if (!this.oMockServer) {
+					//Mock server for use with navigation properties
+					this.oMockServer = new sap.ui.core.util.MockServer({
+						rootUri: sServiceUrl
+					});
+					this.oMockServer.simulate("../../core/qunit/model/metadata_orgHierarchy.xml", "../../core/qunit/model/orgHierarchy/");
+					this.oMockServer.start();
+				}
 			}
 
-			var sCollection = oDataModel.getProperty("/collection");
-			var sSelectProperties = oDataModel.getProperty("/selectProperties");
-			var sCountMode = oDataModel.getProperty("/countMode");
-			var sOperationMode = oDataModel.getProperty("/operationMode");
+			var sCollection = oViewModel.getProperty("/collection");
+			var sSelectProperties = oViewModel.getProperty("/selectProperties");
+			var sCountMode = oViewModel.getProperty("/countMode");
+			var sOperationMode = oViewModel.getProperty("/operationMode");
 
 			// threshold for OperationMode.Auto
-			var sBindingThreshold = oDataModel.getProperty("/bindingThreshold");
+			var sBindingThreshold = oViewModel.getProperty("/bindingThreshold");
 			var iBindingThreshold = parseInt(oView.byId("bindingThreshold").getValue(), 10);
-			
+
 			// table threshold
 			var iTableThreshold = parseInt(oView.byId("tableThreshold").getValue(), 10);
 
@@ -83,9 +91,9 @@ sap.ui.define([
 			var iInitialLevel = parseInt(oView.byId("initialLevel").getValue(), 10);
 
 			// application filter values
-			var sFilterProperty = oDataModel.getProperty("/filterProperty");
-			var sFilterOperator = oDataModel.getProperty("/filterOperator");
-			var sFilterValue = oDataModel.getProperty("/filterValue");
+			var sFilterProperty = oViewModel.getProperty("/filterProperty");
+			var sFilterOperator = oViewModel.getProperty("/filterOperator");
+			var sFilterValue = oViewModel.getProperty("/filterValue");
 			var oApplicationFilter = sFilterProperty && sFilterOperator && sFilterValue ? new sap.ui.model.Filter(sFilterProperty, sFilterOperator, sFilterValue) : [];
 
 			// hierarchy properties
@@ -97,8 +105,8 @@ sap.ui.define([
 			var sHierarchyDescendantCountFor = oView.byId("hierarchyDescendantCountFor").getValue();
 
 			// table propertis
-			var iVisibleRowCount = oDataModel.getProperty("/visibleRowCount");
-			var sVisibleRowCountMode = oDataModel.getProperty("/visibleRowCountMode");
+			var iVisibleRowCount = oViewModel.getProperty("/visibleRowCount");
+			var sVisibleRowCountMode = oViewModel.getProperty("/visibleRowCountMode");
 
 			var oVisibleRow = {
 					VisibleRowCount: iVisibleRowCount,
@@ -106,6 +114,7 @@ sap.ui.define([
 				};
 
 			this.aVisibleRow.push(oVisibleRow);
+
 			/**
 			 * Clear the Table and rebind it
 			 */
@@ -115,21 +124,71 @@ sap.ui.define([
 
 			//clean up
 			if (oTable) {
-				oTableContainer.removeContent(oTable);
 				oTable.unbindRows();
 				oTable.destroyColumns();
-				oTable.destroy();
 			}
 
 			jQuery.sap.measure.start("createTable");
 
-			oTable = new sap.ui.table.TreeTable({
+			oTable = oView.byId("tableOData") || new sap.ui.table.TreeTable({
 				rootLevel: iRootLevel,
-				threshold: iTableThreshold
+				threshold: iTableThreshold,
+				visibleRowCount: iVisibleRowCount
 			});
 
-			oTableContainer.addContent(oTable);
+			this.attachPerformanceTools(oTable);
 
+			// recreate the columns
+			var aProperties = sSelectProperties.split(",");
+			jQuery.each(aProperties, function(iIndex, sProperty) {
+				oTable.addColumn(new sap.ui.table.Column({
+					label: sProperty,
+					template: "odata>" + sProperty,
+					sortProperty: sProperty,
+					filterProperty: sProperty
+				}));
+			});
+
+			// clean up model & create new one
+			if (this.oODataModel) {
+				this.oODataModel.destroy();
+			}
+			this.oODataModel = new sap.ui.model.odata.v2.ODataModel(sServiceUrl, true);
+			this.oODataModel.setUseBatch(false);
+			this.oODataModel.setDefaultCountMode("Inline");
+
+			oTable.setModel(this.oODataModel, "odata");
+			oTable.bindRows({
+				path: "odata>/" + sCollection,
+				filters: oApplicationFilter,
+				parameters: {
+					threshold: iBindingThreshold,
+					countMode: sCountMode,
+					operationMode: sOperationMode,
+					numberOfExpandedLevels: iInitialLevel == "" ?  0 : iInitialLevel,
+					//navigation: {orgHierarchyRoot: "toChildren", orgHierarchy: "toChildren"}
+					treeAnnotationProperties: bUseLocalMetadata ? {
+						hierarchyLevelFor: sHierarchyLevelFor,
+						hierarchyParentNodeFor: sHierarchyParentNodeFor,
+						hierarchyNodeFor: sHierarchyNodeFor,
+						hierarchyDrillStateFor: sHierarchyDrillStateFor,
+						hierarchyNodeDescendantCountFor: sHierarchyDescendantCountFor
+					} : undefined
+				}
+			});
+
+			oTable._setLargeDataScrolling(true);
+
+			this.setupCutAndPaste();
+
+			//for easier table dbg
+			window.oTable = oTable;
+		},
+
+		/**
+		 * Performance Tools
+		 */
+		attachPerformanceTools: function (oTable) {
 			oTable.addDelegate({
 				onBeforeRendering: function () {
 					jQuery.sap.measure.start("onBeforeRendering","",["Render"]);
@@ -152,7 +211,7 @@ sap.ui.define([
 
 			var that =this;
 			var fnRowsUpdated = function() {
-				var oDataModel = that.getView().getModel();
+				var oViewModel = that.getView().getModel();
 				oTable.detachEvent("_rowsUpdated", fnRowsUpdated);
 
 				var iOverall = Math.round(jQuery.sap.measure.end("createTable").duration * 1) / 1;
@@ -163,12 +222,12 @@ sap.ui.define([
 				var iTableCreate = Math.round((iOverall - iRendering) * 1) / 1;
 				var iFactor = Math.round(iAfterRendering / iRendering * 100);
 
-				oDataModel.setProperty("/overall",iOverall);
-				oDataModel.setProperty("/onBeforeRendering",iBeforeRendering);
-				oDataModel.setProperty("/rendering",iRendering);
-				oDataModel.setProperty("/onAfterRendering",iAfterRendering);
-				oDataModel.setProperty("/tableCreate",iTableCreate);
-				oDataModel.setProperty("/factor",iFactor);
+				oViewModel.setProperty("/overall",iOverall);
+				oViewModel.setProperty("/onBeforeRendering",iBeforeRendering);
+				oViewModel.setProperty("/rendering",iRendering);
+				oViewModel.setProperty("/onAfterRendering",iAfterRendering);
+				oViewModel.setProperty("/tableCreate",iTableCreate);
+				oViewModel.setProperty("/factor",iFactor);
 
 				var oRenderResult = {
 						overall: iOverall,
@@ -183,47 +242,13 @@ sap.ui.define([
 			};
 
 			oTable.attachEvent("_rowsUpdated", fnRowsUpdated);
+		},
 
-			// recreate the columns
-			var aProperties = sSelectProperties.split(",");
-			jQuery.each(aProperties, function(iIndex, sProperty) {
-				oTable.addColumn(new sap.ui.table.Column({
-					label: sProperty,
-					template: sProperty,
-					sortProperty: sProperty,
-					filterProperty: sProperty
-				}));
-			});
-
-			var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceUrl, true);
-			oModel.setUseBatch(false);
-			oModel.setDefaultCountMode("Inline");
-
-			oTable.setModel(oModel);
-			oTable.bindRows({
-				path: "/" + sCollection,
-				filters: oApplicationFilter,
-				parameters: {
-					threshold: iBindingThreshold,
-					countMode: sCountMode,
-					operationMode: sOperationMode,
-					numberOfExpandedLevels: iInitialLevel == "" ?  0 : iInitialLevel,
-					//navigation: {orgHierarchyRoot: "toChildren", orgHierarchy: "toChildren"}
-					treeAnnotationProperties: bUseLocalMetadata ? {
-						hierarchyLevelFor: sHierarchyLevelFor,
-						hierarchyParentNodeFor: sHierarchyParentNodeFor,
-						hierarchyNodeFor: sHierarchyNodeFor,
-						hierarchyDrillStateFor: sHierarchyDrillStateFor,
-						hierarchyNodeDescendantCountFor: sHierarchyDescendantCountFor
-					} : undefined
-				}
-			});
-
-			oTable._setLargeDataScrolling(true);
-
-			//for easier table dbg
-			window.oTable = oTable;
-
+		/**
+		 * jQuery Measure Tools
+		 */
+		attachMeasurementTools: function () {
+			var oViewModel = that.getView().getModel();
 			var aJSMeasure = jQuery.sap.measure.filterMeasurements(function(oMeasurement) {
 				return oMeasurement.categories.indexOf("JS") > -1? oMeasurement : null;
 			});
@@ -245,10 +270,10 @@ sap.ui.define([
 			var iUpdateRowHeader = Math.round(getValue("duration", aJSMeasure[2]) * 1) / 1;
 			var iSyncColumnHeaders = Math.round(getValue("duration", aJSMeasure[3]) * 1) / 1;
 
-			oDataModel.setProperty("/createRows",iCreateRows);
-			oDataModel.setProperty("/updateTableContent", iUpdateTableContent);
-			oDataModel.setProperty("/updateRowHeader", iUpdateRowHeader);
-			oDataModel.setProperty("/syncColumnHeaders", iSyncColumnHeaders);
+			oViewModel.setProperty("/createRows",iCreateRows);
+			oViewModel.setProperty("/updateTableContent", iUpdateTableContent);
+			oViewModel.setProperty("/updateRowHeader", iUpdateRowHeader);
+			oViewModel.setProperty("/syncColumnHeaders", iSyncColumnHeaders);
 
 			var oFunctionResult = {
 				createRows: iCreateRows,
@@ -260,8 +285,135 @@ sap.ui.define([
 			this.aFunctionResults.push(oFunctionResult);
 		},
 
-		onDownload: function() {
+		/**
+		 * Set up the Cut and Paste Model
+		 */
+		setupCutAndPaste: function () {
+			if (this._oClipboardModel) {
+				this._oClipboardModel.destroy();
+			}
+			this._oClipboardModel = new JSONModel();
+			this._oClipboardModelData = {
+				nodes: []
+			};
+			this._oClipboardModel.setData(this._oClipboardModelData);
+		},
 
+		/**
+		 * Create new node
+		 */
+		onCreate: function() {
+			var oTable = this.getView().byId("tableOData");
+			var iSelectedIndex = oTable.getSelectedIndex();
+			var oModel = this.getView().getModel();
+
+			if (iSelectedIndex !== -1) {
+				var oBinding = oTable.getBinding();
+				var oTableModel = oTable.getModel("odata");
+				var oContext = oTableModel.createEntry(oModel.getProperty("/collection"));
+				oTableModel.setProperty("DESCRIPTION", "New Node - " + this.nIdForNewNode, oContext);
+				oTableModel.setProperty("DRILLDOWN_STATE", "leaf", oContext);
+				oTableModel.setProperty("HIERARCHY_NODE", "" + this.nIdForNewNode, oContext);
+				oTableModel.setProperty("MAGNITUDE", 0, oContext);
+				this.nIdForNewNode++;
+
+				oBinding.addContexts(oTable.getContextByIndex(iSelectedIndex), [oContext]);
+			} else {
+				MessageToast.show("Select a parent node first.");
+			}
+		},
+
+		/**
+		 * Cut out logic
+		 */
+		onCut: function () {
+			var iSelectedIndex = oTable.getSelectedIndex();
+			var oBinding = oTable.getBinding();
+
+			// keep track of the removed handle
+			var oTreeHandle = oBinding.removeContext(oTable.getContextByIndex(iSelectedIndex));
+			this._oLastTreeHandle = oTreeHandle;
+
+			// only for demo: get the odata-key
+			var sKey = oTreeHandle._oSubtreeRoot.key;
+			this._mTreeHandles = this._mTreeHandles || {};
+			this._mTreeHandles[sKey] = oTreeHandle;
+
+			this._oClipboardModelData.nodes.push({
+				key: sKey
+			});
+
+			this._oClipboardModel.setData(this._oClipboardModelData);
+		},
+
+		/**
+		 * Paste logic
+		 */
+		onPaste: function () {
+			var oTable = this.getView().byId("tableOData")
+			var iSelectedIndex = oTable.getSelectedIndex();
+			if (this._oClipboardModel && iSelectedIndex != -1) {
+				this.openClipboard();
+			} else {
+				MessageToast.show("Select a new parent node first.\nOh and maybe cut out some nodes first ;)");
+			}
+		},
+
+		/**
+		 * Opens the Clipboard for cut out contexts
+		 */
+		openClipboard: function () {
+			if (!this._oDialog) {
+				this._oDialog = sap.ui.xmlfragment("sap.ui.table.testApps.TreeTableODataClipboard", this);
+			}
+
+			this._oDialog.setModel(this._oClipboardModel);
+
+			this._oDialog.setMultiSelect(false);
+
+			this._oDialog.setRememberSelections(false);
+
+			jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this._oDialog);
+
+			this._oDialog.open();
+		},
+
+		/**
+		 * Paste Action after closing the clipboard
+		 */
+		closeClipboard: function(oEvent) {
+			var aContexts = oEvent.getParameter("selectedContexts");
+
+			if (aContexts.length >= 0) {
+				var oCtx = aContexts[0];
+				var oData = oCtx.getProperty();
+				var sKey = oData.key;
+				var oTreeHandle = this._mTreeHandles[sKey];
+
+				// insert in currently selected index
+				var iSelectedIndex = oTable.getSelectedIndex();
+				if (iSelectedIndex != -1 && oTreeHandle) {
+					var oBinding = oTable.getBinding();
+					var oNewParentContext = oTable.getContextByIndex(iSelectedIndex);
+					if (oNewParentContext) {
+						oBinding.addContexts(oNewParentContext, oTreeHandle);
+					}
+
+					// remove the re-inserted node from the clipboard
+					this._oClipboardModelData.nodes = this._oClipboardModelData.nodes.filter(function(o) {
+						return o.key != sKey;
+					});
+					this._oClipboardModel.setData(this._oClipboardModelData);
+				}
+
+				MessageToast.show("Node '" + oData.key + "' was re-inserted.");
+			}
+		},
+
+		/**
+		 * Performance Measure download
+		 */
+		onDownload: function() {
 			var overallAve = 0,
 			onBeforeRenderingAve = 0,
 			renderingAve = 0,

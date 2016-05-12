@@ -17,12 +17,13 @@
 			height: 100%;
 			padding: 0;
 			margin: 0;
+			overflow: hidden;
 		}
 	</style>
 
 	<script>
 	var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr.";
-	
+
 	var createPanel = function (headerText) {
 		var panel = new sap.m.Panel({
 			headerText: headerText,
@@ -100,7 +101,10 @@
 							headerText: "header 1000",
 							content: new sap.m.Text({text: lorem + lorem})
 						}),
-						requiredParentWidth: 1000
+						requiredParentWidth: 1000,
+						layoutData: new sap.ui.layout.SplitterLayoutData({
+							size: "30%"
+						})
 					}),
 					new sap.ui.layout.PaneContainer({
 						orientation: "Vertical",

@@ -3,13 +3,13 @@
 /* Belize theme                       */
 /* ================================== */
 
-.sapUiMedia-Std-Desktop .sapMFCCTxt.Auto > .sapMText,
-.sapUiMedia-Std-Tablet .sapMFCCTxt.Auto > .sapMText,
-.sapMFCCTxt.L > .sapMText, .sapMFCCTxt.M > .sapMText,
-.sapUiMedia-Std-Desktop .sapMFCSbh.Auto,
-.sapUiMedia-Std-Tablet .sapMFCSbh.Auto,
-.sapMFCSbh.L, .sapMFCSbh.M {
-	font-size: @sapMFontMediumSize;
+.sapMFCCTxt .sapMText {
+	font-size: @sapMFontSmallSize;
+}
+
+.sapMFCSbh {
+	color: lighten(@sapUiTileTextColor, 20);
+	font-size: @sapMFontSmallSize;
 }
 
 .sapMFCValue {
@@ -33,8 +33,6 @@
 	color: @sapUiNegativeElement;
 }
 
-.sap-desktop .sapMFC:focus {
-	outline-color: @sapUiContentFocusColor;
-	outline-style: dotted;
-	outline-width: 1px; /* Usage of px as aligned with designers. */
+html.sap-desktop .sapMFC:focus {
+	outline: 1px dotted @sapUiContentFocusColor; /* Usage of px as aligned with designers. */
 }

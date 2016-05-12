@@ -7,11 +7,10 @@
 	overflow: hidden;
 	display: inline-block;
 	font-size: 0;
-	box-shadow: 0rem 0rem 0.5rem rgba(0, 0, 0, 0.5);
-	border-radius: 0.25rem;
+	box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.5);
+	border-radius: 0.125rem;
 	outline: none;
 	border: 1px transparent dotted; /* Usage of px as aligned with designers. */
-	box-sizing: border-box;
 }
 
 .sapMSTWrapper {
@@ -20,38 +19,35 @@
 }
 
 .sapMSTWrapper>.sapMGT,
-.sapMSTWrapper>.sapMGT:hover {
+html.sap-desktop .sapMSTWrapper>.sapMGT:hover,
+html.sap-phone .sapMGTHvrOutln:active,
+html.sap-tablet .sapMGTHvrOutln:active {
 	box-shadow: none;
 }
 
-.sapUiMedia-Std-Phone .sapMST.Auto.OneByOne,
-.sapMST.S.OneByOne {
-	width: 9.25rem;
-	height: 9rem;
-}
-
-.sapUiMedia-Std-Phone .sapMST.Auto.TwoByOne,
-.sapMST.S.TwoByOne {
-	width: 19rem;
-	height: 9rem;
-}
-
-.sapUiMedia-Std-Desktop .sapMST.Auto.OneByOne,
-.sapMST.L.OneByOne,
-.sapUiMedia-Std-Tablet .sapMST.Auto.OneByOne,
-.sapMST.M.OneByOne {
-	width: 11.5rem;
+.sapMST.OneByOne {
+	width: 11rem;
 	height: 11rem;
 }
 
-.sapUiMedia-Std-Desktop .sapMST.Auto.TwoByOne,
-.sapMST.L.TwoByOne,
-.sapUiMedia-Std-Tablet .sapMST.Auto.TwoByOne,
-.sapMST.M.TwoByOne {
-	width: 23.5rem;
+.sapMST.TwoByOne {
+	width: 22.5rem;
 	height: 11rem;
 }
 
 .sapMST .sapMGT {
-	border: 0rem;
+	border: none;
+}
+
+/* BREAKPOINT FOR SMALL PHONES */
+@media screen and (max-width: 374px) {
+	.sapMST.OneByOne {
+		width: 9.25rem;
+		height: 9.25rem;
+	}
+
+	.sapMST.TwoByOne {
+		width: 19rem;
+		height: 9.25rem;
+	}
 }

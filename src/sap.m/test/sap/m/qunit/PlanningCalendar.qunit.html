@@ -470,6 +470,44 @@
 				sap.ui.getCore().applyChanges();
 			});
 
+			test("minDate/maxDate", function() {
+				ok(!oPC1.getMinDate(), "no minDate set by default");
+				ok(!sap.ui.getCore().byId("PC1-TimeInt").getMinDate(), "CalendarTimeInterval no minDate set by default");
+				ok(!sap.ui.getCore().byId("PC1-DateInt").getMinDate(), "CalendarDateInterval no minDate set by default");
+				ok(!sap.ui.getCore().byId("PC1-MonthInt").getMinDate(), "CalendarMonthInterval no minDate set by default");
+
+				ok(!oPC1.getMaxDate(), "no maxDate set by default");
+				ok(!sap.ui.getCore().byId("PC1-TimeInt").getMaxDate(), "CalendarTimeInterval no maxDate set by default");
+				ok(!sap.ui.getCore().byId("PC1-DateInt").getMaxDate(), "CalendarDateInterval no maxDate set by default");
+				ok(!sap.ui.getCore().byId("PC1-MonthInt").getMaxDate(), "CalendarMonthInterval no maxDate set by default");
+
+				var oMinDate = new Date(2000, 0 , 1, 0, 0, 0);
+				oPC1.setMinDate(oMinDate);
+				ok(jQuery.sap.equal(oMinDate, oPC1.getMinDate()), "no minDate set");
+				ok(jQuery.sap.equal(oMinDate, sap.ui.getCore().byId("PC1-TimeInt").getMinDate()), "CalendarTimeInterval minDate set");
+				ok(jQuery.sap.equal(oMinDate, sap.ui.getCore().byId("PC1-DateInt").getMinDate()), "CalendarDateInterval minDate set");
+				ok(jQuery.sap.equal(oMinDate, sap.ui.getCore().byId("PC1-MonthInt").getMinDate()), "CalendarMonthInterval minDate set");
+
+				var oMaxDate = new Date(2050, 11 , 31, 23, 59, 59);
+				oPC1.setMaxDate(oMaxDate);
+				ok(jQuery.sap.equal(oMaxDate, oPC1.getMaxDate()), "no minDate set");
+				ok(jQuery.sap.equal(oMaxDate, sap.ui.getCore().byId("PC1-TimeInt").getMaxDate()), "CalendarTimeInterval maxDate set");
+				ok(jQuery.sap.equal(oMaxDate, sap.ui.getCore().byId("PC1-DateInt").getMaxDate()), "CalendarDateInterval maxDate set");
+				ok(jQuery.sap.equal(oMaxDate, sap.ui.getCore().byId("PC1-MonthInt").getMaxDate()), "CalendarMonthInterval maxDate set");
+
+				oPC1.setMinDate();
+				ok(!oPC1.getMinDate(), "no minDate set");
+				ok(!sap.ui.getCore().byId("PC1-TimeInt").getMinDate(), "CalendarTimeInterval no minDate");
+				ok(!sap.ui.getCore().byId("PC1-DateInt").getMinDate(), "CalendarDateInterval no minDate");
+				ok(!sap.ui.getCore().byId("PC1-MonthInt").getMinDate(), "CalendarMonthInterval no minDate");
+
+				oPC1.setMaxDate();
+				ok(!oPC1.getMaxDate(), "no maxDate");
+				ok(!sap.ui.getCore().byId("PC1-TimeInt").getMaxDate(), "CalendarTimeInterval no maxDate");
+				ok(!sap.ui.getCore().byId("PC1-DateInt").getMaxDate(), "CalendarDateInterval no maxDate");
+				ok(!sap.ui.getCore().byId("PC1-MonthInt").getMaxDate(), "CalendarMonthInterval no maxDate");
+			});
+
 			test("rows", function() {
 				var oTable = sap.ui.getCore().byId("PC1-Table");
 				equal(oPC1.getRows().length, 2, "PlanningCalendarRows assigned");

@@ -6,14 +6,14 @@
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="UTF-8">
 
 		<title>Test Page for the SAPUI5 Core Object [sap.ui.core.Core]</title>
 
-		<script type="text/javascript">
+		<script>
 		window["sap-ui-config"] = {
 			themeRoots : {
 				"my_preconfigured_theme" : "http://preconfig.com/ui5-themes",
-
 				"my_second_preconfigured_theme" : {
 					"sap.ui.commons" : "http://commons.preconfig.com/ui5-themes",
 					"" : "http://preconfig.com/ui5-themes",
@@ -24,39 +24,49 @@
 		</script>
 
 		<script id="sap-ui-bootstrap"
-			type="text/javascript"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="test_theme"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-theme-roots='{"my_third_preconfigured_theme" : "http://third.preconfig.com/ui5-themes"}'>
 		</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" media="screen">
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<!--[if IE]>
+			<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+		<![endif]-->
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 
-		<script type="text/javascript">
+		<script>
 
-			function _providesPublicMethods(/**sap.ui.base.Object*/oObject, /** function */ fnClass, /**boolean*/ bFailEarly) {
-				var aMethodNames=fnClass.getMetadata().getAllPublicMethods(),
-				  result = true,
-					sMethod;
-				for(var i in aMethodNames) {
-					sMethod = aMethodNames[i];
-					result = result && oObject[sMethod] != undefined;
-					if(result) continue;
-					if(bFailEarly && !result) break;
-				}
-				return result;
+		sap.ui.test.qunit.delayTestStart();
+
+		function _providesPublicMethods(/**sap.ui.base.Object*/oObject, /** function */ fnClass, /**boolean*/ bFailEarly) {
+			var aMethodNames=fnClass.getMetadata().getAllPublicMethods(),
+				result = true,
+				sMethod;
+
+			for(var i in aMethodNames) {
+				sMethod = aMethodNames[i];
+				result = result && oObject[sMethod] != undefined;
+				if(result) continue;
+				if(bFailEarly && !result) break;
 			}
+			return result;
+		}
 
-			function equalControls(actual, expected, message) {
-				ok(actual === expected, message);
-			}
-
-		qutils.delayTestStart();
-
-
+		// custom assertion
+		QUnit.assert.equalControls = function(actual, expected, message) {
+			this.ok(actual === expected, message);
+		};
+		QUnit.assert.isLibLoaded = function(libName) {
+			this.ok(jQuery.sap.getObject(libName), "namespace for " + libName + " should exist");
+			this.ok(sap.ui.getCore().getLoadedLibraries()[libName], "Core should know and list " + libName + " as 'loaded'");
+		};
+		
 		// used to get access to the non-public core parts
 		var oRealCore;
 		var TestCorePlugin = function() {};
@@ -66,169 +76,173 @@
 		sap.ui.getCore().registerPlugin(new TestCorePlugin());
 
 
-		module("Basic");
+		// ---------------------------------------------------------------------------
+		// Basic functionality
+		// ---------------------------------------------------------------------------
 
-		test("loadLibrary", function() {
-			equal(typeof sap.ui.getCore().loadLibrary, "function", "Core has method loadLibrary");
-			ok(!jQuery.sap.isDeclared("sap.ui.testlib.library"), "testlib lib has not been loaded yet");
-			ok(!jQuery.sap.getObject("sap.ui.testlib"), "testlib namespace doesn't exists");
-			ok(jQuery("head > link[id='sap-ui-theme-sap.ui.testlib']").length === 0, "style sheet doesn't exist");
+		QUnit.module("Basic");
+
+		QUnit.test("loadLibrary", function(assert) {
+			assert.equal(typeof sap.ui.getCore().loadLibrary, "function", "Core has method loadLibrary");
+			assert.ok(!jQuery.sap.isDeclared("sap.ui.testlib.library"), "testlib lib has not been loaded yet");
+			assert.ok(!jQuery.sap.getObject("sap.ui.testlib"), "testlib namespace doesn't exists");
+			assert.ok(jQuery("head > link[id='sap-ui-theme-sap.ui.testlib']").length === 0, "style sheet doesn't exist");
 			sap.ui.getCore().loadLibrary("sap.ui.testlib", "./testdata/uilib");
-			ok(jQuery.sap.isDeclared("sap.ui.testlib.library"), "testlib lib has been loaded");
-			ok(jQuery.sap.getObject("sap.ui.testlib"), "testlib namespace exists");
-			ok(jQuery("head > link[id='sap-ui-theme-sap.ui.testlib']").length === 1, "style sheets have been added");
+			assert.ok(jQuery.sap.isDeclared("sap.ui.testlib.library"), "testlib lib has been loaded");
+			assert.ok(jQuery.sap.getObject("sap.ui.testlib"), "testlib namespace exists");
+			assert.ok(jQuery("head > link[id='sap-ui-theme-sap.ui.testlib']").length === 1, "style sheets have been added");
 		});
 
 		/**
 		 * Tests creation of an UIArea instance and afterwards checks whether it can be found via getUIAreaMethod
 		 */
-		test("testCreateUIArea", function() {
+		QUnit.test("testCreateUIArea", function(assert) {
 			var oUIArea = sap.ui.getCore().createUIArea("uiArea1");
-			ok(!!oUIArea, "UIArea must be created and returned");
-			ok(_providesPublicMethods(oUIArea, sap.ui.core.UIArea), "Expected instance of sap.ui.core.UIArea");
+			assert.ok(!!oUIArea, "UIArea must be created and returned");
+			assert.ok(_providesPublicMethods(oUIArea, sap.ui.core.UIArea), "Expected instance of sap.ui.core.UIArea");
 			var oUIAreaCheck = sap.ui.getCore().getUIArea("uiArea1");
-			ok(!!oUIAreaCheck, "UIArea must be returned");
-			ok(_providesPublicMethods(oUIAreaCheck, sap.ui.core.UIArea), "Expected instance of sap.ui.core.UIArea");
-			equal(oUIAreaCheck, oUIArea, "Returned UIArea must be the same as the one created before");
+			assert.ok(!!oUIAreaCheck, "UIArea must be returned");
+			assert.ok(_providesPublicMethods(oUIAreaCheck, sap.ui.core.UIArea), "Expected instance of sap.ui.core.UIArea");
+			assert.equal(oUIAreaCheck, oUIArea, "Returned UIArea must be the same as the one created before");
 		});
 
-		test("testSetRoot", function() {
+		QUnit.test("testSetRoot", function(assert) {
 			var oButton = new sap.ui.testlib.TestButton("test2Button", {text:"Hallo JSUnit"});
 			sap.ui.getCore().setRoot("uiArea2", oButton);
 			var oUIAreaCheck = sap.ui.getCore().getUIArea("uiArea2");
-			ok(oUIAreaCheck, "UIArea must be returned");
-			ok(_providesPublicMethods(oUIAreaCheck, sap.ui.core.UIArea), "Expected instance of sap.ui.core.UIArea");
+			assert.ok(oUIAreaCheck, "UIArea must be returned");
+			assert.ok(_providesPublicMethods(oUIAreaCheck, sap.ui.core.UIArea), "Expected instance of sap.ui.core.UIArea");
 		});
 
-		test("testGetElementById", function() {
+		QUnit.test("testGetElementById", function(assert) {
 			var oButton = new sap.ui.testlib.TestButton("test3Button", {text:"Hallo JSUnit"});
 			sap.ui.getCore().setRoot("uiArea3", oButton);
 			var oButtonCheck = sap.ui.getCore().getElementById("test3Button");
-			ok(oButtonCheck, "Button must be returned");
-			equalControls(oButtonCheck, oButton, "Returned Button must be the same as the one created before");
+			assert.ok(oButtonCheck, "Button must be returned");
+			assert.equalControls(oButtonCheck, oButton, "Returned Button must be the same as the one created before");
 		});
 
-		test("testGetControl", function() {
+		QUnit.test("testGetControl", function(assert) {
 			var oButton = new sap.ui.testlib.TestButton("test4Button", {text:"Hallo JSUnit"});
 			sap.ui.getCore().setRoot("uiArea4", oButton);
 			var oButtonCheck = sap.ui.getCore().getControl("test4Button");
-			ok(oButtonCheck, "Button must be returned");
-			equalControls(oButtonCheck, oButton, "Returned Button must be the same as the one created before");
+			assert.ok(oButtonCheck, "Button must be returned");
+			assert.equalControls(oButtonCheck, oButton, "Returned Button must be the same as the one created before");
 		});
 
-		test("testGetLibraryResourceBundle", function() {
-			equal(typeof sap.ui.getCore().getLibraryResourceBundle, "function", "Core has method getLibraryResourceBundle");
+		QUnit.test("testGetLibraryResourceBundle", function(assert) {
+			assert.equal(typeof sap.ui.getCore().getLibraryResourceBundle, "function", "Core has method getLibraryResourceBundle");
 			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core", "de");
-			ok(oBundle, "bundle could be retrieved");
-			equal(oBundle.getText("SAPUI5_FRIDAY"), "Friday", "bundle can resolve texts");
-			equal(oBundle.getText("SAPUI5_GM_ZSTEP"), "Zoom step {0}", "bundle can resolve texts");
+			assert.ok(oBundle, "bundle could be retrieved");
+			assert.equal(oBundle.getText("SAPUI5_FRIDAY"), "Friday", "bundle can resolve texts");
+			assert.equal(oBundle.getText("SAPUI5_GM_ZSTEP"), "Zoom step {0}", "bundle can resolve texts");
 		});
 
-		test("testSetThemeRoot", function() {
+		QUnit.test("testSetThemeRoot", function(assert) {
 			sap.ui.getCore().setThemeRoot("my_theme", ["sap.ui.core"], "http://core.something.corp");
-		    sap.ui.getCore().setThemeRoot("my_theme", "http://custom.something.corp");
-		    sap.ui.getCore().setThemeRoot("my_theme", ["sap.ui.commons"], "http://commons.something.corp");
+			sap.ui.getCore().setThemeRoot("my_theme", "http://custom.something.corp");
+			sap.ui.getCore().setThemeRoot("my_theme", ["sap.ui.commons"], "http://commons.something.corp");
 
-		    var corePath = oRealCore._getThemePath("sap.ui.core", "my_theme");
-		    var commonsPath = oRealCore._getThemePath("sap.ui.commons", "my_theme");
+			var corePath = oRealCore._getThemePath("sap.ui.core", "my_theme");
+			var commonsPath = oRealCore._getThemePath("sap.ui.commons", "my_theme");
 			var otherPath = oRealCore._getThemePath("sap.ui.other", "my_theme");
 
-			equal(corePath, "http://core.something.corp/sap/ui/core/themes/my_theme/", "path should be as configured");
-			equal(commonsPath, "http://commons.something.corp/sap/ui/commons/themes/my_theme/", "path should be as configured");
-			equal(otherPath, "http://custom.something.corp/sap/ui/other/themes/my_theme/", "path should be as configured");
+			assert.equal(corePath, "http://core.something.corp/sap/ui/core/themes/my_theme/", "path should be as configured");
+			assert.equal(commonsPath, "http://commons.something.corp/sap/ui/commons/themes/my_theme/", "path should be as configured");
+			assert.equal(otherPath, "http://custom.something.corp/sap/ui/other/themes/my_theme/", "path should be as configured");
 
 			corePath = jQuery.sap.getModulePath("sap.ui.core.themes.my_theme", "/");
 			commonsPath = jQuery.sap.getModulePath("sap.ui.commons.themes.my_theme", "/");
 			otherPath = jQuery.sap.getModulePath("sap.ui.other.themes.my_theme", "/");
 
-			equal(corePath, "http://core.something.corp/sap/ui/core/themes/my_theme/", "path should be as configured");
-			equal(commonsPath, "http://commons.something.corp/sap/ui/commons/themes/my_theme/", "path should be as configured");
-			equal(otherPath, "http://custom.something.corp/sap/ui/other/themes/my_theme/", "path should be as configured");
+			assert.equal(corePath, "http://core.something.corp/sap/ui/core/themes/my_theme/", "path should be as configured");
+			assert.equal(commonsPath, "http://commons.something.corp/sap/ui/commons/themes/my_theme/", "path should be as configured");
+			assert.equal(otherPath, "http://custom.something.corp/sap/ui/other/themes/my_theme/", "path should be as configured");
 
 			corePath = sap.ui.resource("sap.ui.core", "themes/my_theme/img/x.png");
 			commonsPath = sap.ui.resource("sap.ui.commons", "themes/my_theme/img/x.png");
 			otherPath = sap.ui.resource("sap.ui.other", "themes/my_theme/img/x.png");
 
-			equal(corePath, "http://core.something.corp/sap/ui/core/themes/my_theme/img/x.png", "path should be as configured");
-			equal(commonsPath, "http://commons.something.corp/sap/ui/commons/themes/my_theme/img/x.png", "path should be as configured");
-			equal(otherPath, "http://custom.something.corp/sap/ui/other/themes/my_theme/img/x.png", "path should be as configured");
+			assert.equal(corePath, "http://core.something.corp/sap/ui/core/themes/my_theme/img/x.png", "path should be as configured");
+			assert.equal(commonsPath, "http://commons.something.corp/sap/ui/commons/themes/my_theme/img/x.png", "path should be as configured");
+			assert.equal(otherPath, "http://custom.something.corp/sap/ui/other/themes/my_theme/img/x.png", "path should be as configured");
 		});
 
 		// now check the location of the preconfigured themes
-		test("themeRoot configuration", function() {
+		QUnit.test("themeRoot configuration", function(assert) {
 			var corePath = oRealCore._getThemePath("sap.ui.core", "my_preconfigured_theme");
 			var commonsPath = oRealCore._getThemePath("sap.ui.commons", "my_preconfigured_theme");
 			var otherPath = oRealCore._getThemePath("sap.ui.other", "my_preconfigured_theme");
 
-			equal(corePath, "http://preconfig.com/ui5-themes/sap/ui/core/themes/my_preconfigured_theme/", "path should be as configured");
-			equal(commonsPath, "http://preconfig.com/ui5-themes/sap/ui/commons/themes/my_preconfigured_theme/", "path should be as configured");
-			equal(otherPath, "http://preconfig.com/ui5-themes/sap/ui/other/themes/my_preconfigured_theme/", "path should be as configured");
+			assert.equal(corePath, "http://preconfig.com/ui5-themes/sap/ui/core/themes/my_preconfigured_theme/", "path should be as configured");
+			assert.equal(commonsPath, "http://preconfig.com/ui5-themes/sap/ui/commons/themes/my_preconfigured_theme/", "path should be as configured");
+			assert.equal(otherPath, "http://preconfig.com/ui5-themes/sap/ui/other/themes/my_preconfigured_theme/", "path should be as configured");
 
 			corePath = oRealCore._getThemePath("sap.ui.core", "my_second_preconfigured_theme");
 			commonsPath = oRealCore._getThemePath("sap.ui.commons", "my_second_preconfigured_theme");
 			otherPath = oRealCore._getThemePath("sap.ui.other", "my_second_preconfigured_theme");
 
-			equal(corePath, "http://core.preconfig.com/ui5-themes/sap/ui/core/themes/my_second_preconfigured_theme/", "path should be as configured");
-			equal(commonsPath, "http://commons.preconfig.com/ui5-themes/sap/ui/commons/themes/my_second_preconfigured_theme/", "path should be as configured");
-			equal(otherPath, "http://preconfig.com/ui5-themes/sap/ui/other/themes/my_second_preconfigured_theme/", "path should be as configured");
+			assert.equal(corePath, "http://core.preconfig.com/ui5-themes/sap/ui/core/themes/my_second_preconfigured_theme/", "path should be as configured");
+			assert.equal(commonsPath, "http://commons.preconfig.com/ui5-themes/sap/ui/commons/themes/my_second_preconfigured_theme/", "path should be as configured");
+			assert.equal(otherPath, "http://preconfig.com/ui5-themes/sap/ui/other/themes/my_second_preconfigured_theme/", "path should be as configured");
 
 			// read from script tag
 			corePath = oRealCore._getThemePath("sap.ui.core", "my_third_preconfigured_theme");
-			equal(corePath, "http://third.preconfig.com/ui5-themes/sap/ui/core/themes/my_third_preconfigured_theme/", "path should be as configured");
+			assert.equal(corePath, "http://third.preconfig.com/ui5-themes/sap/ui/core/themes/my_third_preconfigured_theme/", "path should be as configured");
 		});
 
-		test("Browser Version Test", 4, function() {
+		QUnit.test("Browser Version Test", 4, function(assert) {
 			var browser = sap.ui.Device.browser;
 			var ua = navigator.userAgent;
 			var value = jQuery("html").attr("data-sap-ui-browser");
-			ok(typeof value === "string" && value, "Data attribute is set and is not empty");
+			assert.ok(typeof value === "string" && value, "Data attribute is set and is not empty");
 
 			var version = browser.version;
-			ok(typeof version === "number", "Browser version is set");
+			assert.ok(typeof version === "number", "Browser version is set");
 
 			if (browser.firefox) {
-				ok(value.indexOf("ff") === 0, "Browser is Firefox and data attribute is set right");
+				assert.ok(value.indexOf("ff") === 0, "Browser is Firefox and data attribute is set right");
 			} else if (browser.webkit) {
 				if (browser.chrome) {
-					ok(value.indexOf("cr") === 0, "Browser is Chrome and data attribute is set right");
+					assert.ok(value.indexOf("cr") === 0, "Browser is Chrome and data attribute is set right");
 				}
 				// Those tests should not be called anymore
 				if (browser.safari && browser.mobile) {
-					ok(value.indexOf("msf") === 0, "Browser is Mobile Safari and data attribute is set right");
+					assert.ok(value.indexOf("msf") === 0, "Browser is Mobile Safari and data attribute is set right");
 				} else if (browser.safari) {
-					ok(value.indexOf("sf") === 0, "Browser is Safari and data attribute is set right");
+					assert.ok(value.indexOf("sf") === 0, "Browser is Safari and data attribute is set right");
 				}
 			} else if (browser.internet_explorer) {
-				ok(value.indexOf("ie") === 0, "Browser is IE and data attribute is set right");
+				assert.ok(value.indexOf("ie") === 0, "Browser is IE and data attribute is set right");
 			} else if (browser.edge) {
-				ok(value.indexOf("ed") === 0, "Browser is Edge and data attribute is set right");
+				assert.ok(value.indexOf("ed") === 0, "Browser is Edge and data attribute is set right");
 			}
 
 			if (!browser.safari || (!browser.fullscreen && !browser.webview)) {
-				ok(value.indexOf(Math.floor(version)) != -1, "Version is set right in data attribute");
+				assert.ok(value.indexOf(Math.floor(version)) != -1, "Version is set right in data attribute");
 			} else {
-				ok(!/[0-9]+$/.test(value), "unknown browser versions shouldn't be added to the data attribute");
+				assert.ok(!/[0-9]+$/.test(value), "unknown browser versions shouldn't be added to the data attribute");
 			}
 
 		});
 
 		// now check the locale configuration to be applied as lang attribute
-		test("Locale configuration", function() {
+		QUnit.test("Locale configuration", function(assert) {
 
 			var $html = jQuery("html");
 			var oConfig = sap.ui.getCore().getConfiguration();
 			var oLocale = oConfig.getLocale();
 			var sLocale = oLocale && oLocale.toString();
 
-			equal($html.attr("lang"), sLocale, "lang attribute matches locale");
+			assert.equal($html.attr("lang"), sLocale, "lang attribute matches locale");
 
 			sLocale = "de";
 			oConfig.setLanguage(sLocale);
-			equal($html.attr("lang"), sLocale, "lang attribute matches locale");
+			assert.equal($html.attr("lang"), sLocale, "lang attribute matches locale");
 
 		});
 
-		test("prerendering tasks", function (assert) {
+		QUnit.test("prerendering tasks", function (assert) {
 			var done = assert.async(),
 				bCalled = false,
 				oCore = sap.ui.getCore();
@@ -242,15 +256,168 @@
 			assert.ok(!bCalled, "not called synchronously");
 		});
 
+
+
+		// ---------------------------------------------------------------------------
+		// loadLibraries
+		// ---------------------------------------------------------------------------
+
+		function makeLib(name) {
+			return "" +
+				"sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/library'], function(Core, coreLib) {" +
+				"  sap.ui.getCore().initLibrary({" +
+				"    name: '" + name + "'," +
+				"    noLibraryCSS: true" +
+				"  });" +
+				"  return " + name + ";" +
+				"});";
+		}
+
+		function makeLibPreloadJSON(name) {
+			var preloadJSON = {
+				"version":"2.0",
+				"name": name + ".library-preload",
+				"modules": {}
+			}
+			preloadJSON.modules[name.replace(/\./g, "/") + "/library.js"] = makeLib(name);
+			return JSON.stringify(preloadJSON);
+		}
+
+		QUnit.module("loadLibraries", {
+			beforeEach: function(assert) {
+				this.server = sinon.fakeServer.create();
+				this.server.autoRespond = true;
+				this.oldCfgPreload = oRealCore.oConfiguration.preload;
+			},
+			afterEach: function(assert) {
+				oRealCore.oConfiguration.preload = this.oldCfgPreload;
+				this.server.restore();
+				delete window.my;
+			}
+		});
+
+		QUnit.test("multiple libraries (async, preloads are active)", function(assert) {
+
+			this.server.respondWith(/my\/lib1\/library-preload\.json/, makeLibPreloadJSON('my.lib1'));
+			this.server.respondWith(/my\/lib2\/library-preload\.json/, makeLibPreloadJSON('my.lib2'));
+
+			oRealCore.oConfiguration.preload = 'sync';
+			var vResult = sap.ui.getCore().loadLibraries(['my.lib1', 'my.lib2']);
+			assert.ok(vResult instanceof Promise, "async call to loadLibraries should return a promise");
+
+			return vResult.then(function() {
+				assert.isLibLoaded('my.lib1');
+				assert.isLibLoaded('my.lib2');
+			});
+		});
+
+		QUnit.test("multiple libraries (async, preloads are deactivated)", function(assert) {
+
+			this.server.respondWith(/my\/lib3\/library\.js/, makeLib('my.lib3'));
+			this.server.respondWith(/my\/lib4\/library\.js/, makeLib('my.lib4'));
+
+			oRealCore.oConfiguration.preload = 'off';
+			var vResult = sap.ui.getCore().loadLibraries(['my.lib3', 'my.lib4']);
+			assert.ok(vResult instanceof Promise, "async call to loadLibraries should return a promise");
+
+			return vResult.then(function() {
+				assert.isLibLoaded('my.lib3');
+				assert.isLibLoaded('my.lib4');
+			});
+		});
+
+		QUnit.test("multiple libraries, one missing (async, preloads are activate)", function(assert) {
+
+			this.server.respondWith(/my\/lib5\/library-preload\.json/, makeLibPreloadJSON('my.lib5'));
+
+			oRealCore.oConfiguration.preload = 'sync';
+			var vResult = sap.ui.getCore().loadLibraries(['my.non.existing.lib', 'my.lib5']);
+			assert.ok(vResult instanceof Promise, "async call to loadLibraries should return a promise");
+
+			return vResult.then(function() {
+				assert.ok(false, "Promise for missing lib should not resolve");
+			}, function(e) {
+				assert.ok(true, "Promise for missing library should be rejected");
+				assert.ok(typeof e === 'object' && /failed to/.test(e.message), "rejected Promise should report an error");
+			});
+		});
+
+		QUnit.test("multiple libraries, one missing (async, preloads are deactivated)", function(assert) {
+
+			this.server.respondWith(/my\/lib6\/library\.js/, makeLib('my.lib6'));
+
+			oRealCore.oConfiguration.preload = 'off';
+			var vResult = sap.ui.getCore().loadLibraries(['my.lib6', 'my.non.existing.lib']);
+			assert.ok(vResult instanceof Promise, "async call to loadLibraries should return a promise");
+
+			return vResult.then(function() {
+				assert.ok(false, "Promise for missing lib should not resolve");
+			}, function(e) {
+				assert.ok(true, "Promise for missing library should be rejected");
+				assert.ok(typeof e === 'object' && /failed to/.test(e.message), "rejected Promise should report an error");
+			});
+		});
+
+		QUnit.test("multiple libraries (sync, existing, preload on)", function(assert) {
+
+			this.server.respondWith(/my\/lib7\/library-preload\.json/, makeLibPreloadJSON('my.lib7'));
+			this.server.respondWith(/my\/lib8\/library-preload\.json/, makeLibPreloadJSON('my.lib8'));
+
+			oRealCore.oConfiguration.preload = 'sync';
+			var vResult = sap.ui.getCore().loadLibraries(['my.lib7', 'my.lib8'], { async: false });
+			assert.ok(vResult == null, "sync call to loadLibraries must not return a value");
+			assert.isLibLoaded('my.lib7');
+			assert.isLibLoaded('my.lib8');
+		});
+
+		QUnit.test("multiple libraries (sync, existing, preload off)", function(assert) {
+
+			this.server.respondWith(/my\/lib9\/library\.js/, makeLib('my.lib9'));
+			this.server.respondWith(/my\/lib10\/library\.js/, makeLib('my.lib10'));
+
+			oRealCore.oConfiguration.preload = 'off';
+			var vResult = sap.ui.getCore().loadLibraries(['my.lib9', 'my.lib10'], { async: false });
+			assert.ok(vResult == null, "sync call to loadLibraries must not return a value");
+			assert.isLibLoaded('my.lib9');
+			assert.isLibLoaded('my.lib10');
+		});
+
+		QUnit.test("multiple libraries, one missing (sync, non-existing)", function(assert) {
+
+			this.server.respondWith(/my\/lib11\/library\.js/, makeLib('my.lib11'));
+
+			oRealCore.oConfiguration.preload = 'off';
+			try {
+				var vResult = sap.ui.getCore().loadLibraries(['my.non.existing.lib2', 'my.lib11'], { async: false });
+				assert.ok(false, "sync loadLibraries for missing lib must not succeed");
+			} catch (e) {
+				assert.ok(true, "sync loadLibraries should throw an exception");
+				assert.ok(typeof e === 'object' && /failed to/.test(e.message), "exception should report an error");
+			}
+		});
+
+		QUnit.test("multiple libraries (async, preloads are active, preloadOnly)", function(assert) {
+
+			this.server.respondWith(/my\/lib12\/library-preload\.json/, makeLibPreloadJSON('my.lib12'));
+			this.server.respondWith(/my\/lib13\/library-preload\.json/, makeLibPreloadJSON('my.lib13'));
+
+			oRealCore.oConfiguration.preload = 'sync';
+			var vResult = sap.ui.getCore().loadLibraries(['my.lib12', 'my.lib13'], { preloadOnly: true });
+			assert.ok(vResult instanceof Promise, "async call to loadLibraries should return a promise");
+
+			return vResult.then(function() {
+				assert.ok(!jQuery.sap.getObject('my.lib12'), "lib12 should not have been loaded");
+				assert.ok(!sap.ui.getCore().getLoadedLibraries()['my.lib12'], "Core should not know or report lib12 as 'loaded'");
+				assert.ok(!jQuery.sap.getObject('my.lib13'), "lib13 should not have been loaded");
+				assert.ok(!sap.ui.getCore().getLoadedLibraries()['my.lib13'], "Core should not know or report lib13 as 'loaded'");
+			});
+		});
+
+
 		</script>
 	</head>
 	<body>
-		<h1 id="qunit-header">QUnit tests: sap.ui.core.Core</h1>
-		<h2 id="qunit-banner"></h2>
-	 	<h2 id="qunit-userAgent"></h2>
-		<div id="qunit-testrunner-toolbar"></div>
-		<ol id="qunit-tests"></ol>
-		<br>
+		<div id="qunit"></div>
 		<div id="uiArea1"></div>
 		<div id="uiArea2"></div>
 		<div id="uiArea3"></div>

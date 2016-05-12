@@ -495,7 +495,7 @@
 
 			// act
 			oRadioButton.attachSelect(oSelectSpy);
-			oRadioButton.ontap();
+			oRadioButton.ontap(new jQuery.Event());
 
 			// assertions
 			strictEqual(oSelectSpy.callCount, 0, "The select event was not fired yet");
@@ -553,7 +553,7 @@
 			});
 
 			// act
-			oRadioButton.ontap();
+			oRadioButton.ontap(new jQuery.Event());
 
 			// trigger timeout
 			this.clock.tick(1);
@@ -710,6 +710,28 @@
 			oRadioButton2.destroy();
 			oRadioButton3.destroy();
 		});
+
+		QUnit.module("Aria");
+
+		QUnit.test("AriaLabelledBy and AriaDescribedBy", function(assert) {
+			var oLabel = new sap.m.Label("label", { text: "label text" }),
+				oRadioButton = new sap.m.RadioButton({ text: "test" }),
+				aAriaLabelledBy;
+
+			oRadioButton.addAriaLabelledBy(oLabel.getId());
+			oRadioButton.addAriaDescribedBy(oLabel.getId());
+			oRadioButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			aAriaLabelledBy = oRadioButton.$().attr("aria-labelledby").split(" ");
+
+			assert.strictEqual(aAriaLabelledBy.length, 2, "should append to the existing label's ID");
+			assert.strictEqual(oRadioButton.$().attr("aria-describedby").split(" ").length, 1, "should have 1 id describedby");
+			assert.strictEqual(aAriaLabelledBy[1], oRadioButton.getId() + "-" + oLabel.getId(), "should be set as attributes");
+
+			oLabel.destroy();
+			oRadioButton.destroy();
+		});
+
 		</script>
 	</head>
 	<body>

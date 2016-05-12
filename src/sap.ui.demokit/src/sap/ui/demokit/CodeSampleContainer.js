@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.demokit.CodeSampleContainer.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', './library'],
-	function(jQuery, Control, ResizeHandler, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/commons/Link', './library', './CodeViewer', './UIAreaSubstitute'],
+	function(jQuery, Control, Link, library, CodeViewer, UIAreaSubstitute) {
 	"use strict";
 
 
@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.demokit.CodeSampleContainer
+	 * @alias sap.ui.demokit.CodeSampleContainer
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CodeSampleContainer = Control.extend("sap.ui.demokit.CodeSampleContainer", /** @lends sap.ui.demokit.CodeSampleContainer.prototype */ { metadata : {
@@ -84,18 +84,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 	CodeSampleContainer.prototype.init = function(){
 
-		this._oUIArea = new sap.ui.demokit.UIAreaSubstitute(this.getUiAreaId());
+		this._oUIArea = new UIAreaSubstitute(this.getUiAreaId());
 		this.setAggregation("_uiarea", this._oUIArea);
-		this._oCodeViewer = new sap.ui.demokit.CodeViewer({
+		this._oCodeViewer = new CodeViewer({
 			visible : false,
 			source : "",
 			press : [this._setCodeEditable, this],
 			save : [this._saveAndApplyCode, this]
 		});
 		this._oCodeViewer.setParent(this); //TODO provide sAggregationName?
-		this._oShowCodeLink = new sap.ui.commons.Link({	text : "Show Source", press : [this._toggleCodeDisplay, this]});
+		this._oShowCodeLink = new Link({	text : "Show Source", press : [this._toggleCodeDisplay, this]});
 		this._oShowCodeLink.setParent(this); //TODO provide sAggregationName?
-		this._oApplyCodeLink = new sap.ui.commons.Link({ visible: false, text : 'Apply', press : [this._saveAndApplyCode, this]});
+		this._oApplyCodeLink = new Link({ visible: false, text : 'Apply', press : [this._saveAndApplyCode, this]});
 		this._oApplyCodeLink.setParent(this); //TODO provide sAggregationName?
 
 	};
@@ -114,7 +114,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			aContent = this._oUIArea.removeAllContent();
 			this._oUIArea.destroy();
 		}
-		this._oUIArea = new sap.ui.demokit.UIAreaSubstitute(this.getUiAreaId());
+		this._oUIArea = new UIAreaSubstitute(this.getUiAreaId());
 		this.setAggregation("_uiarea", this._oUIArea);
 		if ( aContent ) {
 			for (var i = 0; i < aContent.length; i++) {
@@ -177,4 +177,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 	return CodeSampleContainer;
 
-}, /* bExport= */ true);
+});

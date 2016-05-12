@@ -3,9 +3,12 @@
  */
 
 sap.ui.define([
+	"jquery.sap.global",
+	"sap/ui/Device",
 	"sap/ui/core/mvc/Controller",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/demokit/icex/model/Config"
-], function (Controller, Config) {
+	], function (jQuery, Device, Controller, JSONModel, Config) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demokit.icex.view.Group", {
@@ -13,15 +16,15 @@ sap.ui.define([
 		onInit : function() {
 
 			// set ui model
-			var oModel = new sap.ui.model.json.JSONModel({
-				listMode : (sap.ui.Device.system.phone) ? "None" : "SingleSelectMaster",
-				listItemType : (sap.ui.Device.system.phone) ? "Active" : "Inactive",
+			var oModel = new JSONModel({
+				listMode : (Device.system.phone) ? "None" : "SingleSelectMaster",
+				listItemType : (Device.system.phone) ? "Active" : "Inactive",
 				listPageSize : Config.getPageSize()
 			});
 			this.getView().setModel(oModel, "ui");
 
 			// remove footer on phone
-			if (sap.ui.Device.system.phone) {
+			if (Device.system.phone) {
 				this.getView().byId("page").destroyFooter();
 			}
 

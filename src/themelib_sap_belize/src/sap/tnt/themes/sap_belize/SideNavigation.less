@@ -1,0 +1,44 @@
+/* ======================================= */
+/* CSS for control sap.tnt/SideNavigation  */
+/* Belize theme                            */
+/* ======================================= */
+
+.sapTntSideNavigation {
+  background: @sapUiListBackground;
+}
+
+.sapTntSideNavigationSeparator {
+  background-color: @sapUiBrand;
+}
+
+/* Styles for layout with arrows
+   ========================================================================== */
+.sapTntSideNavigationScrollIconUp {
+  border-bottom: 1px solid @sapUiListBorderColor;
+}
+
+.sapTntSideNavigationScrollIconDown {
+  border-top: 1px solid @sapUiListBorderColor;
+}
+
+.sapTntSideNavigationScrollIcon {
+  color: @sapUiContentIconColor;
+}
+
+.sapTntSideNavigationScrollIcon:not(.sapTntSideNavigationScrollIconDisabled):hover {
+  background-color: @sapUiListHoverBackground;
+  color: @sapUiListTextColor;
+
+  & > .sapUiIcon {
+    color: @sapUiContentIconColor;
+  }
+}
+
+.sapTntSideNavigationScrollIcon:not(.sapTntSideNavigationScrollIconDisabled):active {
+  background-color: @sapUiListHighlightColor;
+  color: @sapUiContentContrastTextColor;
+
+  & > .sapUiIcon {
+    color: @sapUiContentContrastIconColor;
+  }
+}

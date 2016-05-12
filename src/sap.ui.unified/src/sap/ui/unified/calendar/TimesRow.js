@@ -671,6 +671,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
+	/*
+	 * Checks if a time is enabled
+	 * the min. and max. date of the CalendarTimeInterval are used
+	 * @return {boolean} Flag if enabled
+	 * @private
+	 */
+	TimesRow.prototype._checkTimeEnabled = function(oDate){
+
+		if (!(oDate instanceof UniversalDate)) {
+			throw new Error("Date must be a UniversalDate object " + this);
+		}
+
+		var oTimeStamp = oDate.getTime();
+		var oParent = this.getParent();
+
+		if (oParent && oParent._oMinDate && oParent._oMaxDate) {
+			if (oTimeStamp < oParent._oMinDate.getTime() || oTimeStamp > oParent._oMaxDate.getTime()) {
+				return false;
+			}
+		}
+
+		return true;
+
+	};
+
 	TimesRow.prototype._handleMouseMove = function(oEvent){
 
 		if (!this.$().is(":visible")) {
@@ -1105,6 +1130,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	}
 
 	function _selectTime(oDate, bMove){
+
+		if (!this._checkTimeEnabled(oDate)) {
+			// date is disabled -> do not select it
+			return false;
+		}
 
 		var aSelectedDates = this.getSelectedDates();
 		var oDateRange;

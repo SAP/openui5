@@ -127,7 +127,7 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	/**
 	 * Constructor for an OData primitive type <code>Edm.Time</code>.
 	 *
-	 * @class This class represents the OData primitive type <a
+	 * @class This class represents the OData V2 primitive type <a
 	 * href="http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem">
 	 * <code>Edm.Time</code></a>.
 	 *

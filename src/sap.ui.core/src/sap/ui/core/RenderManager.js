@@ -185,13 +185,14 @@ sap.ui.define([
 	 * If the given control is undefined or null, then nothing is rendered.
 	 *
 	 * @param {sap.ui.core.Control} oControl the control that should be rendered
+	 * @returns {sap.ui.core.RenderManager} this render manager instance to allow chaining
 	 * @public
 	 */
 	RenderManager.prototype.renderControl = function(oControl) {
 		jQuery.sap.assert(!oControl || oControl instanceof sap.ui.core.Control, "oControl must be a sap.ui.core.Control or empty");
 		// don't render a NOTHING
 		if (!oControl) {
-			return;
+			return this;
 		}
 
 		// create stack to determine rendered parent
@@ -299,6 +300,7 @@ sap.ui.define([
 		} else if (oControl.getParent() && oControl.getParent().getMetadata().getName() == "sap.ui.core.UIArea") {
 			jQuery.sap.measure.resume(oControl.getParent().getId() + "---rerender");
 		}
+		return this;
 	};
 
 	/**
@@ -511,13 +513,9 @@ sap.ui.define([
 				if (oControl && oTargetDomNode) {
 
 					var oldDomNode = oControl.getDomRef();
-					if ( RenderManager.isPreservedContent(oldDomNode) ) {
-						// use placeholder instead
-						oldDomNode = jQuery.sap.byId(sap.ui.core.RenderPrefixes.Dummy + oControl.getId())[0] || oldDomNode;
-					}
-					if (!oldDomNode) {
-						// In case no old DOM node was found, search for the invisible placeholder
-						oldDomNode = jQuery.sap.domById(sap.ui.core.RenderPrefixes.Invisible + oControl.getId());
+					if ( !oldDomNode || RenderManager.isPreservedContent(oldDomNode) ) {
+						// In case no old DOM node was found or only preserved DOM, search for a placeholder (invisible or preserved DOM placeholder)
+						oldDomNode = jQuery.sap.domById(sap.ui.core.RenderPrefixes.Invisible + oControl.getId()) || jQuery.sap.domById(sap.ui.core.RenderPrefixes.Dummy + oControl.getId());
 					}
 
 					var bNewTarget = oldDomNode && oldDomNode.parentNode != oTargetDomNode;
@@ -1164,12 +1162,12 @@ sap.ui.define([
 				if (oAssoc && oAssoc.multiple) {
 					var aIds = oElement[oAssoc._sGetter]();
 					if (sElemAssoc == "ariaLabelledBy") {
-						var aLabelIds = sap.ui.core.LabelEnablement.getReferencingLabels(oElement);
+						var aLabelIds = LabelEnablement.getReferencingLabels(oElement);
 						var iLen = aLabelIds.length;
 						if (iLen) {
 							var aFilteredLabelIds = [];
 							for (var i = 0; i < iLen; i++) {
-								if (jQuery.inArray(aLabelIds[i], aIds) < 0) {
+								if ( aIds.indexOf(aLabelIds[i]) < 0) {
 									aFilteredLabelIds.push(aLabelIds[i]);
 								}
 							}
@@ -1186,7 +1184,7 @@ sap.ui.define([
 			addACCForProp("editable", "readonly", false);
 			addACCForProp("enabled", "disabled", false);
 			addACCForProp("visible", "hidden", false);
-			if (sap.ui.core.LabelEnablement.isRequired(oElement)) {
+			if (LabelEnablement.isRequired(oElement)) {
 				mAriaProps["required"] = "true";
 			}
 			addACCForProp("selected", "selected", true);
@@ -1252,9 +1250,9 @@ sap.ui.define([
 	 * @returns {sap.ui.core.RenderManager} this render manager instance to allow chaining
 	 */
 	RenderManager.prototype.writeIcon = function(sURI, aClasses, mAttributes){
-		jQuery.sap.require("sap.ui.core.IconPool");
+		var IconPool = sap.ui.requireSync("sap/ui/core/IconPool");
 
-		var bIconURI = sap.ui.core.IconPool.isIconURI(sURI),
+		var bIconURI = IconPool.isIconURI(sURI),
 			sStartTag = bIconURI ? "<span " : "<img ",
 			sClasses, sProp, oIconInfo, mDefaultAttributes;
 
@@ -1263,7 +1261,7 @@ sap.ui.define([
 		}
 
 		if (bIconURI) {
-			oIconInfo = sap.ui.core.IconPool.getIconInfo(sURI);
+			oIconInfo = IconPool.getIconInfo(sURI);
 
 			if (!oIconInfo) {
 				jQuery.sap.log.error("An unregistered icon: " + sURI + " is used in sap.ui.core.RenderManager's writeIcon method.");
@@ -1281,7 +1279,7 @@ sap.ui.define([
 
 		this.write(sStartTag);
 
-		if (jQuery.isArray(aClasses) && aClasses.length) {
+		if (Array.isArray(aClasses) && aClasses.length) {
 			sClasses = aClasses.join(" ");
 			this.write("class=\"" + sClasses + "\" ");
 		}

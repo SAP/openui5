@@ -1,41 +1,41 @@
 sap.ui.define(["sap/ui/model/json/JSONModel", "sap/ui/core/mvc/Controller"], function (JSONModel, Controller) {
 	"use strict";
-	var sCurrentBreakpoint;
+	var sCurrentBreakpoint, oDynamicSideView, oOPSideContentBtn;
 	var DynamicSideContentBtn = Controller.extend("sap.uxap.sample.ObjectPageDynamicSideContentBtn.ObjectPageDynamicSideContentBtn", {
 		
 		onInit: function () {
 			var oJsonModel = new JSONModel("./test-resources/sap/uxap/demokit/sample/ObjectPageDynamicSideContentBtn/employee.json");
 			this.getView().setModel(oJsonModel, "ObjectPageModel");
-			
+			oDynamicSideView = this.getView().byId("DynamicSideContent");
+			oOPSideContentBtn = this.getView().byId("headerForTest").getSideContentButton();
 		},
 		onAfterRendering: function() {
-			sCurrentBreakpoint=this.getView().byId("DynamicSideContent").getCurrentBreakpoint();
+			sCurrentBreakpoint=oDynamicSideView.getCurrentBreakpoint();
 		},
 		handleSideContentHide: function () {
 			if (sCurrentBreakpoint === "S") {
-				this.getView().byId("DynamicSideContent").toggle();
+				oDynamicSideView.toggle();
 			} else {
-				this.getView().byId("DynamicSideContent").setShowSideContent(false);
+				oDynamicSideView.setShowSideContent(false);
 			}
-			this.getView().byId("headerForTest").setShowSideContentButton(true);
+			oOPSideContentBtn.setVisible(true);
 		},
 		handleSCBtnPress: function (oEvent) {
 			if (sCurrentBreakpoint === "S") {
-				this.getView().byId("DynamicSideContent").toggle();
+				oDynamicSideView.toggle();
 			} else {
-				this.getView().byId("DynamicSideContent").setShowSideContent(true);
+				oDynamicSideView.setShowSideContent(true);
 			}
-			this.getView().byId("headerForTest").setShowSideContentButton(false);
+			oOPSideContentBtn.setVisible(false);
 		},
 		updateToggleButtonState: function (oEvent) {
 			sCurrentBreakpoint = oEvent.getParameter("currentBreakpoint");
 
-			if (sCurrentBreakpoint === "S" && !this.getView().byId("DynamicSideContent").getShowSideContent()) {
-				this.getView().byId("headerForTest").setShowSideContentButton(true);
+			if (sCurrentBreakpoint === "S" || !oDynamicSideView.getShowSideContent()) {
+				oOPSideContentBtn.setVisible(true);
 			} else {
-				this.getView().byId("headerForTest").setShowSideContentButton(false);
+				oOPSideContentBtn.setVisible(false);
 			}
-
 		},
 	});
 

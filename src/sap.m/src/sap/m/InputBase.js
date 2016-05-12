@@ -174,7 +174,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * TODO: write two different functions for two different behaviour
 	 */
 	InputBase.prototype._getInputValue = function(sValue) {
-		sValue = (sValue === undefined) ? this.$("inner").val() : sValue.toString();
+		sValue = (sValue === undefined) ? this.$("inner").val() || "" : sValue.toString();
 
 		if (this.getMaxLength && this.getMaxLength() > 0) {
 			sValue = sValue.substring(0, this.getMaxLength());
@@ -583,8 +583,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Selects the text within the input field between the specified start and end positions.
 	 * Only supported for input control's type of Text, Url, Tel and Password.
 	 *
-	 * @param {integer} iSelectionStart The index into the text at which the first selected character is located.
-	 * @param {integer} iSelectionEnd The index into the text at which the last selected character is located.
+	 * @param {int} iSelectionStart The index into the text at which the first selected character is located.
+	 * @param {int} iSelectionEnd The index into the text at which the last selected character is located.
 	 * @returns {sap.m.InputBase} <code>this</code> to allow method chaining.
 	 * @protected
 	 * @since 1.22.1
@@ -1026,6 +1026,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (oDataState.getChanges().messages) {
 			this.propagateMessages(sName, oDataState.getMessages());
 		}
+	};
+
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	InputBase.prototype.getAccessibilityInfo = function() {
+		var oRenderer = this.getRenderer();
+		return {
+			role: oRenderer.getAriaRole(this),
+			type: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_INPUT"),
+			description: [this.getValue() || "", oRenderer.getLabelledByAnnouncement(this), oRenderer.getDescribedByAnnouncement(this)].join(" ").trim(),
+			focusable: this.getEnabled(),
+			enabled: this.getEnabled(),
+			editable: this.getEnabled() && this.getEditable()
+		};
 	};
 
 	// do not cache jQuery object and define _$input for compatibility reasons

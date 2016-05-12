@@ -10,14 +10,14 @@ sap.ui.define([
 ], function (jQuery, _Batch, _Helper) {
 	"use strict";
 
-	var mFinalHeaders = { // final (cannot be overridden) request headers for OData v4
-			"Content-Type" : "application/json;charset=UTF-8"
+	var mFinalHeaders = { // final (cannot be overridden) request headers for OData V4
+			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
 		},
 		mPredefinedPartHeaders = { // predefined request headers in $batch parts
-			"Accept" : "application/json;odata.metadata=minimal"
+			"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true"
 		},
 		mPredefinedRequestHeaders = { // predefined request headers for all requests
-			"Accept" : "application/json;odata.metadata=minimal",
+			"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
 			"OData-MaxVersion" : "4.0",
 			"OData-Version" : "4.0",
 			"X-CSRF-Token" : "Fetch"
@@ -51,18 +51,18 @@ sap.ui.define([
 	 *   relative resource paths (see {@link #request})
 	 * @param {object} mHeaders
 	 *   Map of default headers; may be overridden with request-specific headers; certain
-	 *   predefined OData v4 headers are added by default, but may be overridden
+	 *   predefined OData V4 headers are added by default, but may be overridden
 	 * @param {object} mQueryParams
 	 *   A map of query parameters as described in {@link _Helper.buildQuery}; used only to
 	 *   request the CSRF token
 	 * @private
 	 */
 	function Requestor(sServiceUrl, mHeaders, mQueryParams) {
-		this.sServiceUrl = sServiceUrl;
+		this.mBatchQueue = {};
 		this.mHeaders = mHeaders || {};
 		this.sQueryParams = _Helper.buildQuery(mQueryParams); // Used for $batch and CSRF token only
 		this.oSecurityTokenPromise = null; // be nice to Chrome v8
-		this.mBatchQueue = {};
+		this.sServiceUrl = sServiceUrl;
 	}
 
 	/**
@@ -111,20 +111,22 @@ sap.ui.define([
 
 	/**
 	 * Sends an HTTP request using the given method to the given relative URL, using the given
-	 * request-specific headers in addition to the mandatory OData v4 headers and the default
-	 * headers given to the factory. Takes care of CSRF token handling.
+	 * request-specific headers in addition to the mandatory OData V4 headers and the default
+	 * headers given to the factory. Takes care of CSRF token handling. Non-GET requests are bundled
+	 * into a change set, GET requests are placed after that change set. Related PATCH requests are
+	 * merged.
 	 *
 	 * @param {string} sMethod
 	 *   HTTP method, e.g. "GET"
 	 * @param {string} sResourcePath
 	 *   A resource path relative to the service URL for which this requestor has been created;
 	 *   use "$batch" to send a batch request
-	 * @param {string} [sGroupId]
-	 *   Identifier of the batch group to associate the request with; if <code>undefined</code> the
-	 *   request is sent immediately; if provided, use {@link #submitBatch} to send all requests in
-	 *   that group
+	 * @param {string} [sGroupId="$direct"]
+	 *   Identifier of the group to associate the request with; if '$direct', the request is
+	 *   sent immediately; for all other group ID values, the request is added to the given group
+	 *   and you can use {@link #submitBatch} to send all requests in that group.
 	 * @param {object} [mHeaders]
-	 *   Map of request-specific headers, overriding both the mandatory OData v4 headers and the
+	 *   Map of request-specific headers, overriding both the mandatory OData V4 headers and the
 	 *   default headers given to the factory. This map of headers must not contain
 	 *   "X-CSRF-Token" header.
 	 * @param {object} [oPayload]
@@ -141,37 +143,61 @@ sap.ui.define([
 		var that = this,
 			oBatchRequest,
 			bIsBatch = sResourcePath === "$batch",
-			sPayload;
+			sPayload,
+			oPromise,
+			oRequest;
 
+		sGroupId = sGroupId || "$direct";
 		if (bIsBatch) {
 			oBatchRequest = _Batch.serializeBatchRequest(oPayload);
 			sPayload = oBatchRequest.body;
-			// This would have been the responsibility of submitBatch. But doing it here makes the
-			// $batch recognition easier.
-			sResourcePath += this.sQueryParams;
 		} else {
 			sPayload = JSON.stringify(oPayload);
 
-			if (sGroupId !== undefined) {
-				return new Promise(function (fnResolve, fnReject) {
-					if (!that.mBatchQueue[sGroupId]) {
-						that.mBatchQueue[sGroupId] = [];
+			if (sGroupId !== "$direct") {
+				oPromise = new Promise(function (fnResolve, fnReject) {
+					var oLastChange,
+						aRequests = that.mBatchQueue[sGroupId];
+
+					if (!aRequests) {
+						aRequests = that.mBatchQueue[sGroupId] = [[/*empty change set*/]];
 					}
-					that.mBatchQueue[sGroupId].push({
-						method: sMethod,
-						url: sResourcePath,
-						headers: jQuery.extend({}, mPredefinedPartHeaders, that.mHeaders, mHeaders,
+					oRequest = {
+						method : sMethod,
+						url : sResourcePath,
+						headers : jQuery.extend({}, mPredefinedPartHeaders, that.mHeaders, mHeaders,
 							mFinalHeaders),
-						body: sPayload,
-						$reject: fnReject,
-						$resolve: fnResolve
-					});
+						body : sPayload,
+						$reject : fnReject,
+						$resolve : fnResolve
+					};
+					if (sMethod === "GET") { // push behind change set
+						aRequests.push(oRequest);
+					} else {
+						oLastChange = aRequests[0].length && aRequests[0][aRequests[0].length - 1];
+						if (oLastChange
+							&& oLastChange.method === "PATCH"
+							&& oRequest.method === "PATCH"
+							&& oLastChange.url === oRequest.url
+							&& jQuery.sap.equal(oLastChange.headers, oRequest.headers)) {
+							// merge related PATCH requests
+							oLastChange.body = JSON.stringify(
+								jQuery.extend(JSON.parse(oLastChange.body), oPayload));
+							fnResolve(oLastChange.$promise);
+						} else { // push into change set
+							aRequests[0].push(oRequest);
+						}
+					}
 				});
+				oRequest.$promise = oPromise;
+				return oPromise;
 			}
 		}
 
 		return new Promise(function (fnResolve, fnReject) {
-			jQuery.ajax(that.sServiceUrl + sResourcePath, {
+			// Adding query parameters could have been the responsibility of submitBatch, but doing
+			// it here makes the $batch recognition easier.
+			jQuery.ajax(that.sServiceUrl + sResourcePath + (bIsBatch ? that.sQueryParams : ""), {
 				data : sPayload,
 				headers : jQuery.extend({}, mPredefinedRequestHeaders, that.mHeaders, mHeaders,
 					bIsBatch ? oBatchRequest.headers : mFinalHeaders),
@@ -201,10 +227,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sends an OData batch request containing all requests referenced by batch group id.
+	 * Sends an OData batch request containing all requests referenced by the given group ID.
 	 *
 	 * @param {string} sGroupId
-	 *   ID of the batch group which should be sent as an OData batch request
+	 *   ID of the group which should be sent as an OData batch request
 	 * @returns {Promise}
 	 *   A promise on the outcome of the HTTP request resolving with <code>undefined</code>; it is
 	 *   rejected with an error if the batch request itself fails
@@ -212,43 +238,72 @@ sap.ui.define([
 	Requestor.prototype.submitBatch = function (sGroupId) {
 		var aRequests = this.mBatchQueue[sGroupId];
 
+		/*
+		 * Visits the given request/response pairs, rejecting or resolving the corresponding
+		 * promises accordingly.
+		 *
+		 * @param {object[]} aRequests
+		 * @param {object[]} aResponses
+		 */
+		function visit(aRequests, aResponses) {
+			var oCause;
+
+			aRequests.forEach(function (vRequest, index) {
+				var oError,
+					vResponse = aResponses[index];
+
+				if (Array.isArray(vRequest)) {
+					visit(vRequest, vResponse);
+				} else if (vResponse) {
+					if (vResponse.status >= 400) {
+						vResponse.getResponseHeader = getResponseHeader;
+						oCause = _Helper.createError(vResponse);
+						vRequest.$reject(oCause);
+					} else {
+						vRequest.$resolve(JSON.parse(vResponse.responseText));
+					}
+				} else {
+					oError = new Error(
+						"HTTP request was not processed because the previous request failed");
+					oError.cause = oCause;
+					vRequest.$reject(oError);
+				}
+			});
+		}
+
 		if (!aRequests) {
 			return Promise.resolve();
 		}
-
 		delete this.mBatchQueue[sGroupId];
 
+		if (aRequests[0].length === 0) {
+			aRequests.splice(0, 1); // delete empty change set
+		} else if (aRequests[0].length === 1) {
+			aRequests[0] = aRequests[0][0]; // unwrap change set
+		}
+
 		return this.request("POST", "$batch", undefined, undefined, aRequests)
-			.then(function (aResponses) {
-				var oCause;
-
-				aRequests.forEach(function (oRequest, index) {
-					var oError,
-						oResponse = aResponses[index];
-
-					if (oResponse) {
-						if (oResponse.status >= 400) {
-							oResponse.getResponseHeader = getResponseHeader;
-							oCause = _Helper.createError(oResponse);
-							oRequest.$reject(oCause);
-						} else {
-							oRequest.$resolve(JSON.parse(oResponse.responseText));
-						}
-					} else {
-						oError = new Error(
-							"HTTP request was not processed because the previous request failed");
-						oError.cause = oCause;
-						oRequest.$reject(oError);
-					}
-				});
-			})["catch"](function (oError) {
+			.then(visit.bind(null, aRequests)).catch(function (oError) {
 				var oRequestError = new Error(
 					"HTTP request was not processed because $batch failed");
 
+				/*
+				 * Rejects all given requests (recursively) with <code>oRequestError</code>.
+				 *
+				 * @param {object[]} aRequests
+				 */
+				function rejectAll(aRequests) {
+					aRequests.forEach(function (vRequest) {
+						if (Array.isArray(vRequest)) {
+							rejectAll(vRequest);
+						} else {
+							vRequest.$reject(oRequestError);
+						}
+					});
+				}
+
 				oRequestError.cause = oError;
-				aRequests.forEach(function (oRequest) {
-					oRequest.$reject(oRequestError);
-				});
+				rejectAll(aRequests);
 				throw oError;
 			});
 	};
@@ -268,16 +323,16 @@ sap.ui.define([
 		 *   relative resource paths (see {@link #request})
 		 * @param {object} mHeaders
 		 *   Map of default headers; may be overridden with request-specific headers; certain
-		 *   OData v4 headers are predefined, but may be overridden by the default or
+		 *   OData V4 headers are predefined, but may be overridden by the default or
 		 *   request-specific headers:
 		 *   <pre>{
-		 *     "Accept" : "application/json;odata.metadata=minimal",
+		 *     "Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
 		 *     "OData-MaxVersion" : "4.0",
 		 *     "OData-Version" : "4.0"
 		 *   }</pre>
 		 *   The map of the default headers must not contain "X-CSRF-Token" header. The created
 		 *   <code>_Requestor<code> always sets the "Content-Type" header to
-		 *   "application/json;charset=UTF-8" value.
+		 *   "application/json;charset=UTF-8;IEEE754Compatible=true" value.
 		 * @param {object} mQueryParams
 		 *   A map of query parameters as described in {@link _Helper.buildQuery}; used only to
 		 *   request the CSRF token

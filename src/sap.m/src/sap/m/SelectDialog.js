@@ -722,7 +722,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	};
 
 	SelectDialog.prototype.getBindingContext = function (sModelName) {
-		return this._oList.getBindingContext(sModelName);
+		return this._oList && this._oList.getBindingContext(sModelName);
 	};
 
 	/*
@@ -974,7 +974,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 			oInfoBar = this._oList.getInfoToolbar();
 
 		// update the selection label
-		oInfoBar.setVisible(!!iSelectedContexts);
+		oInfoBar.setVisible(!!iSelectedContexts && this.getMultiSelect());
 		oInfoBar.getContent()[0].setText(this._oRb.getText("TABLESELECTDIALOG_SELECTEDITEMS", [iSelectedContexts]));
 	};
 

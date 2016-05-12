@@ -28,6 +28,8 @@
 	QUnit.test('SetExpanded ', function (assert) {
 		this.sideNavigation.setExpanded(true);
 
+		this.clock.tick(1000);
+
 		assert.strictEqual(this.sideNavigation.getDomRef().classList.contains('sapTntSideNavigationNotExpanded'), false, 'should not has "sapTntSideNavigationNotExpanded" class');
 		assert.strictEqual(this.sideNavigation.getAggregation('item').getExpanded(), true, 'should not collapse the NavigationList in item aggregation');
 		assert.strictEqual(this.sideNavigation.getAggregation('fixedItem').getExpanded(), true, 'should not collapse the NavigationList in fixedItem aggregation');
@@ -35,6 +37,8 @@
 
 	QUnit.test('SetExpanded ', function (assert) {
 		this.sideNavigation.setExpanded(false);
+
+		this.clock.tick(1000);
 
 		assert.strictEqual(this.sideNavigation.getDomRef().classList.contains('sapTntSideNavigationNotExpanded'), true, 'should has "sapTntSideNavigationNotExpanded" class');
 		assert.strictEqual(this.sideNavigation.getAggregation('item').getExpanded(), false, 'should collapse the NavigationList in item aggregation');

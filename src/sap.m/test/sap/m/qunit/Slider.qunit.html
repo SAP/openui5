@@ -53,8 +53,8 @@
 				}
 
 				// assert
-				test("method: get" + sProperty + "()", function() {
-					strictEqual(mOptions.control["get" + sProperty](), mOptions.output, mOptions.description + " on " + mOptions.control);
+				QUnit.test("method: get" + sProperty + "()", function(assert) {
+					assert.strictEqual(mOptions.control["get" + sProperty](), mOptions.output, mOptions.description + " on " + mOptions.control);
 				});
 
 				// cleanup
@@ -65,13 +65,13 @@
 			/* HTML module                                                 */
 			/* =========================================================== */
 
-			module("HTML");
+			QUnit.module("HTML");
 
 			/* ------------------------------ */
 			/* rendering                      */
 			/* ------------------------------ */
 
-			test("rendering", function() {
+			QUnit.test("rendering", function(assert) {
 				var oSlider0 = new sap.m.Slider();
 
 				var oSlider1 = new sap.m.Slider({
@@ -186,47 +186,47 @@
 
 					if (oSlider.getEnabled()) {
 
-						ok(oSlider.getDomRef(), "The slider HTML DIV element container exist");
-						ok(oSlider.getDomRef("inner"), "The slider HTML DIV element exist");
+						assert.ok(oSlider.getDomRef(), "The slider HTML DIV element container exist");
+						assert.ok(oSlider.getDomRef("inner"), "The slider HTML DIV element exist");
 
 						if (oSlider.getProgress()) {
-							ok(oSlider.getDomRef("progress"), "The slider progress indicator HTML DIV element exist");
+							assert.ok(oSlider.getDomRef("progress"), "The slider progress indicator HTML DIV element exist");
 						}
 
-						ok(oSlider.getDomRef("handle"), "The slider handle HTML Span element exist");
+						assert.ok(oSlider.getDomRef("handle"), "The slider handle HTML Span element exist");
 
 						if (oSlider.getName()) {
-							ok(oSlider.getDomRef("input"), "The slider HTML input element exist");
+							assert.ok(oSlider.getDomRef("input"), "The slider HTML input element exist");
 						} else {
-							ok(!oSlider.getDomRef("input"), "The slider HTML input element does not exist");
+							assert.ok(!oSlider.getDomRef("input"), "The slider HTML input element does not exist");
 						}
 
-						ok(oSlider.$().hasClass(CSS_CLASS), 'The slider root HTML Div element "must have" the CSS class "' + CSS_CLASS + '"');
-						ok(oSlider.$("inner").hasClass(CSS_CLASS + "Inner"), 'The slider first-child HTML Div element "must have" the CSS class "' + CSS_CLASS + 'Inner"');
+						assert.ok(oSlider.$().hasClass(CSS_CLASS), 'The slider root HTML Div element "must have" the CSS class "' + CSS_CLASS + '"');
+						assert.ok(oSlider.$("inner").hasClass(CSS_CLASS + "Inner"), 'The slider first-child HTML Div element "must have" the CSS class "' + CSS_CLASS + 'Inner"');
 
 						if (oSlider.getProgress()) {
-							ok(oSlider.$("progress").hasClass(CSS_CLASS + "Progress"), 'The slider progress indicator HTML Div element "must have" the CSS class "' + CSS_CLASS + 'Progress"');
+							assert.ok(oSlider.$("progress").hasClass(CSS_CLASS + "Progress"), 'The slider progress indicator HTML Div element "must have" the CSS class "' + CSS_CLASS + 'Progress"');
 						}
 
-						ok(oSlider.$("handle").hasClass(CSS_CLASS + "Handle"), 'The slider handle HTML Span element "must have" the CSS class "' + CSS_CLASS + 'Handle"');
+						assert.ok(oSlider.$("handle").hasClass(CSS_CLASS + "Handle"), 'The slider handle HTML Span element "must have" the CSS class "' + CSS_CLASS + 'Handle"');
 
 						if (oSlider.getName()) {
-							ok(oSlider.$("input").hasClass(CSS_CLASS + "Input"), 'The slider HTML Input element "must have" the CSS class "' + CSS_CLASS + 'Input"');
+							assert.ok(oSlider.$("input").hasClass(CSS_CLASS + "Input"), 'The slider HTML Input element "must have" the CSS class "' + CSS_CLASS + 'Input"');
 						}
 
-						strictEqual(jQuery(oSlider.getFocusDomRef()).attr("aria-disabled"), undefined, 'The "aria-disabled" attribute is not set');
+						assert.strictEqual(jQuery(oSlider.getFocusDomRef()).attr("aria-disabled"), undefined, 'The "aria-disabled" attribute is not set');
 					} else {
-						strictEqual(jQuery(oSlider.getFocusDomRef()).attr("aria-disabled"), "true", 'The "aria-disabled" attribute is set');
-						ok(oSlider.$().hasClass(CSS_CLASS + "Disabled"), 'The slider HTML DIV element container must have the CSS class "' + CSS_CLASS + 'Disabled"');
+						assert.strictEqual(jQuery(oSlider.getFocusDomRef()).attr("aria-disabled"), "true", 'The "aria-disabled" attribute is set');
+						assert.ok(oSlider.$().hasClass(CSS_CLASS + "Disabled"), 'The slider HTML DIV element container must have the CSS class "' + CSS_CLASS + 'Disabled"');
 					}
 
-					strictEqual(jQuery.trim(oSlider.getDomRef().style.width), oSlider.getWidth(), 'Check if the style attribute has the correct value');
-					ok(oSlider.getDomRef("progress"), 'The slider div element "must have" the css class "' + CSS_CLASS + 'Progress"');
-					ok(oSlider.getDomRef("handle"), 'The slider span thumb element "must have" the css class "' + CSS_CLASS + 'Handle"');
+					assert.strictEqual(jQuery.trim(oSlider.getDomRef().style.width), oSlider.getWidth(), 'Check if the style attribute has the correct value');
+					assert.ok(oSlider.getDomRef("progress"), 'The slider div element "must have" the css class "' + CSS_CLASS + 'Progress"');
+					assert.ok(oSlider.getDomRef("handle"), 'The slider span thumb element "must have" the css class "' + CSS_CLASS + 'Handle"');
 
 					if (oSlider.getName()) {
-						strictEqual(oSlider.getValue(), +oSlider.$("input").attr("value"), 'The "value" attribute of the INPUT is 0');
-						strictEqual(oSlider.getValue(), +oSlider.$("input").prop("value"), 'The "value" property of the INPUT is 0');
+						assert.strictEqual(oSlider.getValue(), +oSlider.$("input").attr("value"), 'The "value" attribute of the INPUT is 0');
+						assert.strictEqual(oSlider.getValue(), +oSlider.$("input").prop("value"), 'The "value" property of the INPUT is 0');
 					}
 
 					// cleanup
@@ -234,7 +234,7 @@
 				}
 			});
 
-			test("it should render two handles", function() {
+			QUnit.test("it should render two handles", function(assert) {
 
 				// system under test
 				sap.m.Slider.extend("sap.m.RangeSlider", {
@@ -257,8 +257,8 @@
 				sap.ui.getCore().applyChanges();
 
 				// assert
-				ok(oRangeSlider.getDomRef("handle1"));
-				ok(oRangeSlider.getDomRef("handle2"));
+				assert.ok(oRangeSlider.getDomRef("handle1"));
+				assert.ok(oRangeSlider.getDomRef("handle2"));
 
 				// cleanup
 				oRangeSlider.destroy();
@@ -268,13 +268,13 @@
 			/* API module                                                  */
 			/* =========================================================== */
 
-			module("API");
+			QUnit.module("API");
 
 			/* ------------------------------ */
 			/* default Values                 */
 			/* ------------------------------ */
 
-			test("default Values", function() {
+			QUnit.test("default Values", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider();
@@ -284,22 +284,22 @@
 				sap.ui.getCore().applyChanges();
 
 				// assert
-				strictEqual(oSlider.getWidth(), "100%", "Default slider width");
-				strictEqual(oSlider.getEnabled(), true, "By default the slider is enabled");
-				strictEqual(oSlider.getVisible(), true, "By default the slider is visible");
-				strictEqual(oSlider.getName(), "", 'By default the slider name is ""');
-				strictEqual(oSlider.getMin(), 0, "By default the slider min is 0");
-				strictEqual(oSlider.getMax(), 100, "By default the slider max is 100");
-				strictEqual(oSlider.getStep(), 1, "By default the slider step is 1");
-				strictEqual(oSlider.getProgress(), true, "By default the slider progress is true");
-				strictEqual(oSlider.getValue(), 0, "By default the slider value is 0");
-				strictEqual(oSlider.getFocusDomRef().getAttribute("role"), "slider", "The role slider is set");
-				strictEqual(oSlider.getFocusDomRef().getAttribute("aria-orientation"), "horizontal", 'The "aria-orientation" attribute is set to "horizontal"');
-				strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemin"), "0", 'The "aria-valuemin" attribute is set to its default value');
-				strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemax"), "100", 'The "aria-valuemax" attribute is set to its default value');
-				strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuenow"), "0", 'The "aria-valuenow" attribute is set to its default value');
-				strictEqual(jQuery(oSlider.getFocusDomRef()).attr("aria-disabled"), undefined, 'The "aria-disabled" attribute is set not set by default');
-				strictEqual(oSlider.getDomRef("progress").getAttribute("aria-hidden"), "true");
+				assert.strictEqual(oSlider.getWidth(), "100%", "Default slider width");
+				assert.strictEqual(oSlider.getEnabled(), true, "By default the slider is enabled");
+				assert.strictEqual(oSlider.getVisible(), true, "By default the slider is visible");
+				assert.strictEqual(oSlider.getName(), "", 'By default the slider name is ""');
+				assert.strictEqual(oSlider.getMin(), 0, "By default the slider min is 0");
+				assert.strictEqual(oSlider.getMax(), 100, "By default the slider max is 100");
+				assert.strictEqual(oSlider.getStep(), 1, "By default the slider step is 1");
+				assert.strictEqual(oSlider.getProgress(), true, "By default the slider progress is true");
+				assert.strictEqual(oSlider.getValue(), 0, "By default the slider value is 0");
+				assert.strictEqual(oSlider.getFocusDomRef().getAttribute("role"), "slider", "The role slider is set");
+				assert.strictEqual(oSlider.getFocusDomRef().getAttribute("aria-orientation"), "horizontal", 'The "aria-orientation" attribute is set to "horizontal"');
+				assert.strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemin"), "0", 'The "aria-valuemin" attribute is set to its default value');
+				assert.strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemax"), "100", 'The "aria-valuemax" attribute is set to its default value');
+				assert.strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuenow"), "0", 'The "aria-valuenow" attribute is set to its default value');
+				assert.strictEqual(jQuery(oSlider.getFocusDomRef()).attr("aria-disabled"), undefined, 'The "aria-disabled" attribute is set not set by default');
+				assert.strictEqual(oSlider.getDomRef("progress").getAttribute("aria-hidden"), "true");
 
 				// cleanup
 				oSlider.destroy();
@@ -455,7 +455,7 @@
 			/* setWidth()                     */
 			/* ------------------------------ */
 
-			test("method: setWidth()", function() {
+			QUnit.test("method: setWidth()", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -467,7 +467,7 @@
 				sap.ui.getCore().applyChanges();
 
 				// assert
-				strictEqual(oSlider.$().outerWidth() + "px", "100px", "Check the slider width after rendering");
+				assert.strictEqual(oSlider.$().outerWidth() + "px", "100px", "Check the slider width after rendering");
 
 				// cleanup
 				oSlider.destroy();
@@ -477,7 +477,7 @@
 			/* setName()                      */
 			/* ------------------------------ */
 
-			test("method: setName()", function() {
+			QUnit.test("method: setName()", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -489,8 +489,8 @@
 				sap.ui.getCore().applyChanges();
 
 				// assert
-				strictEqual(oSlider.getValue(), +oSlider.$("input").attr("value"), 'Check the "value" attribute of the native input');
-				strictEqual(oSlider.$("input").attr("name"), "mySlider", 'Check the "value" attribute of the native input');
+				assert.strictEqual(oSlider.getValue(), +oSlider.$("input").attr("value"), 'Check the "value" attribute of the native input');
+				assert.strictEqual(oSlider.$("input").attr("name"), "mySlider", 'Check the "value" attribute of the native input');
 
 				// cleanup
 				oSlider.destroy();
@@ -500,7 +500,7 @@
 			/* setValue()                     */
 			/* ------------------------------ */
 
-			test("method: setValue() the value must not be bigger than the minimum", function() {
+			QUnit.test("method: setValue() the value must not be bigger than the minimum", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider();
@@ -514,14 +514,14 @@
 				sap.ui.getCore().applyChanges();
 
 				// assert
-				strictEqual(oSlider.getValue(), 50);
-				strictEqual(vReturnedValue, oSlider);
+				assert.strictEqual(oSlider.getValue(), 50);
+				assert.strictEqual(vReturnedValue, oSlider);
 
 				// cleanup
 				oSlider.destroy();
 			});
 
-			test("method: setValue() the value must not be bigger than the maximum", function() {
+			QUnit.test("method: setValue() the value must not be bigger than the maximum", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -536,13 +536,13 @@
 				sap.ui.getCore().applyChanges();
 
 				// assert
-				strictEqual(oSlider.getValue(), 100);
+				assert.strictEqual(oSlider.getValue(), 100);
 
 				// cleanup
 				oSlider.destroy();
 			});
 
-			test("method: setValue() the value has to be in a valid step", function() {
+			QUnit.test("method: setValue() the value has to be in a valid step", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -557,13 +557,13 @@
 				sap.ui.getCore().applyChanges();
 
 				// assert
-				strictEqual(oSlider.getValue(), 95);
+				assert.strictEqual(oSlider.getValue(), 95);
 
 				// cleanup
 				oSlider.destroy();
 			});
 
-			test("method: setValue() the value has to be in a valid step", function() {
+			QUnit.test("method: setValue() the value has to be in a valid step", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -578,13 +578,13 @@
 				sap.ui.getCore().applyChanges();
 
 				// assert
-				strictEqual(oSlider.getValue(), 90);
+				assert.strictEqual(oSlider.getValue(), 90);
 
 				// cleanup
 				oSlider.destroy();
 			});
 
-			test("method: setValue()", function() {
+			QUnit.test("method: setValue()", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -605,15 +605,15 @@
 				oSlider.setValue(-1e+309);	// infinite negative number
 
 				// assert
-				strictEqual(fnErrorSpy.callCount, 5, "jQuery.sap.log.error() method was called");
-				strictEqual(oSlider.getValue(), 90);
-				equal(oReturnedValue, oSlider);
+				assert.strictEqual(fnErrorSpy.callCount, 5, "jQuery.sap.log.error() method was called");
+				assert.strictEqual(oSlider.getValue(), 90);
+				assert.equal(oReturnedValue, oSlider);
 
 				// cleanup
 				oSlider.destroy();
 			});
 
-			test('method: setValue() the attribute "aria-valuenow" is updated accordingly (initial rendering)', function() {
+			QUnit.test('method: setValue() the attribute "aria-valuenow" is updated accordingly (initial rendering)', function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -625,13 +625,13 @@
 				sap.ui.getCore().applyChanges();
 
 				// assert
-				strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuenow"), "50");
+				assert.strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuenow"), "50");
 
 				// cleanup
 				oSlider.destroy();
 			});
 
-			test('method: setValue() the attribute "aria-valuenow" is updated accordingly', function() {
+			QUnit.test('method: setValue() the attribute "aria-valuenow" is updated accordingly', function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider();
@@ -644,13 +644,13 @@
 				oSlider.setValue(50);
 
 				// assert
-				strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuenow"), "50");
+				assert.strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuenow"), "50");
 
 				// cleanup
 				oSlider.destroy();
 			});
 
-			test("it should not round the value", function() {
+			QUnit.test("it should not round the value", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -663,13 +663,13 @@
 				sap.ui.getCore().applyChanges();
 
 				// assert
-				strictEqual(oSlider.getValue(), 0.5555555555);
+				assert.strictEqual(oSlider.getValue(), 0.5555555555);
 
 				// cleanup
 				oSlider.destroy();
 			});
 
-			test("it should corretly render the progress bar and handle elements", function() {
+			QUnit.test("it should corretly render the progress bar and handle elements", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -684,14 +684,14 @@
 				sap.ui.getCore().applyChanges();
 
 				// assert
-				strictEqual(oSlider.getDomRef("progress").style.width, "0%");
-				strictEqual(oSlider.getDomRef("handle").style.left, "0%");
+				assert.strictEqual(oSlider.getDomRef("progress").style.width, "0%");
+				assert.strictEqual(oSlider.getDomRef("handle").style.left, "0%");
 
 				// cleanup
 				oSlider.destroy();
 			});
 
-			test("it should corretly render the progress bar and handle elements", function() {
+			QUnit.test("it should corretly render the progress bar and handle elements", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -708,14 +708,14 @@
 				oSlider.setValue(50);
 
 				// assert
-				strictEqual(oSlider.getDomRef("progress").style.width, "100%");
-				strictEqual(oSlider.getDomRef("handle").style.left, "100%");
+				assert.strictEqual(oSlider.getDomRef("progress").style.width, "100%");
+				assert.strictEqual(oSlider.getDomRef("handle").style.left, "100%");
 
 				// cleanup
 				oSlider.destroy();
 			});
 
-			test("it should correctly round the value to the nearest step", function() {
+			QUnit.test("it should correctly round the value to the nearest step", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -730,14 +730,14 @@
 				sap.ui.getCore().applyChanges();
 
 				// assert
-				strictEqual(oSlider.getValue(), 13);
+				assert.strictEqual(oSlider.getValue(), 13);
 
 				// cleanup
 				oSlider.destroy();
 			});
 
 			// BCP: 1580215885
-			test("it should not throw an exception when the id has a dot", function() {
+			QUnit.test("it should not throw an exception when the id has a dot", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -752,13 +752,13 @@
 				oSlider.setValue(50);
 
 				// assert
-				strictEqual(oSlider.getValue(), 50);
+				assert.strictEqual(oSlider.getValue(), 50);
 
 				// cleanup
 				oSlider.destroy();
 			});
 
-			test("it should display values using the fixed-point notation instead of the e-notation (initial rendering)", function() {
+			QUnit.test("it should display values using the fixed-point notation instead of the e-notation (initial rendering)", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -775,17 +775,17 @@
 				var oHandleDomRef = oSlider.getDomRef("handle");
 
 				// assert
-				strictEqual(oHandleDomRef.title, "0.0000005");
-				strictEqual(oHandleDomRef.getAttribute("aria-valuenow"), "0.0000005");
-				strictEqual(oSlider.getDomRef("input").value, "0.0000005");
-				strictEqual(oHandleDomRef.getAttribute("aria-valuemin"), "0.0000001");
-				strictEqual(oHandleDomRef.getAttribute("aria-valuemax"), "0.0000005");
+				assert.strictEqual(oHandleDomRef.title, "0.0000005");
+				assert.strictEqual(oHandleDomRef.getAttribute("aria-valuenow"), "0.0000005");
+				assert.strictEqual(oSlider.getDomRef("input").value, "0.0000005");
+				assert.strictEqual(oHandleDomRef.getAttribute("aria-valuemin"), "0.0000001");
+				assert.strictEqual(oHandleDomRef.getAttribute("aria-valuemax"), "0.0000005");
 
 				// cleanup
 				oSlider.destroy();
 			});
 
-			test("it should display values using the fixed-point notation instead of the e-notation", function() {
+			QUnit.test("it should display values using the fixed-point notation instead of the e-notation", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -804,11 +804,11 @@
 				oSlider.setValue(5e-7);
 
 				// assert
-				strictEqual(oHandleDomRef.title, "0.0000005");
-				strictEqual(oHandleDomRef.getAttribute("aria-valuenow"), "0.0000005");
-				strictEqual(oSlider.getDomRef("input").value, "0.0000005");
-				strictEqual(oHandleDomRef.getAttribute("aria-valuemin"), "0.0000001");
-				strictEqual(oHandleDomRef.getAttribute("aria-valuemax"), "0.0000005");
+				assert.strictEqual(oHandleDomRef.title, "0.0000005");
+				assert.strictEqual(oHandleDomRef.getAttribute("aria-valuenow"), "0.0000005");
+				assert.strictEqual(oSlider.getDomRef("input").value, "0.0000005");
+				assert.strictEqual(oHandleDomRef.getAttribute("aria-valuemin"), "0.0000001");
+				assert.strictEqual(oHandleDomRef.getAttribute("aria-valuemax"), "0.0000005");
 
 				// cleanup
 				oSlider.destroy();
@@ -818,7 +818,7 @@
 			/* setMin()                       */
 			/* ------------------------------ */
 
-			test("method: setMin() the minimum must not be bigger than the maximum", function() {
+			QUnit.test("method: setMin() the minimum must not be bigger than the maximum", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -833,13 +833,13 @@
 				sap.ui.getCore().applyChanges();
 
 				// assert
-				strictEqual(fnWarningSpy.callCount, 1, "jQuery.sap.log.warning() method was called");
+				assert.strictEqual(fnWarningSpy.callCount, 1, "jQuery.sap.log.warning() method was called");
 
 				// cleanup
 				oSlider.destroy();
 			});
 
-			test('method: setMin() the attribute "aria-valuemin" is updated accordingly (initial rendering)', function() {
+			QUnit.test('method: setMin() the attribute "aria-valuemin" is updated accordingly (initial rendering)', function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -851,13 +851,13 @@
 				sap.ui.getCore().applyChanges();
 
 				// assert
-				strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemin"), "5");
+				assert.strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemin"), "5");
 
 				// cleanup
 				oSlider.destroy();
 			});
 
-			test('it should display the "aria-valuemin" attribute using the fixed-point notation', function() {
+			QUnit.test('it should display the "aria-valuemin" attribute using the fixed-point notation', function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -870,7 +870,7 @@
 				sap.ui.getCore().applyChanges();
 
 				// assert
-				strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemin"), "10000000");
+				assert.strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemin"), "10000000");
 
 				// cleanup
 				oSlider.destroy();
@@ -880,7 +880,7 @@
 			/* setMax()                       */
 			/* ------------------------------ */
 
-			test('method: setMax() the attribute "aria-valuemax" is updated accordingly (initial rendering)', function() {
+			QUnit.test('method: setMax() the attribute "aria-valuemax" is updated accordingly (initial rendering)', function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -892,13 +892,13 @@
 				sap.ui.getCore().applyChanges();
 
 				// assert
-				strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemax"), "200");
+				assert.strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemax"), "200");
 
 				// cleanup
 				oSlider.destroy();
 			});
 
-			test('it should display the "aria-valuemax" attribute using the fixed-point notation', function() {
+			QUnit.test('it should display the "aria-valuemax" attribute using the fixed-point notation', function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -911,7 +911,7 @@
 				sap.ui.getCore().applyChanges();
 
 				// assert
-				strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemax"), "10000000");
+				assert.strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemax"), "10000000");
 
 				// cleanup
 				oSlider.destroy();
@@ -921,7 +921,7 @@
 			/* setProgress()                  */
 			/* ------------------------------ */
 
-			test("method: setProgress()", function() {
+			QUnit.test("method: setProgress()", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -933,8 +933,8 @@
 				sap.ui.getCore().applyChanges();
 
 				// assert
-				ok(oSlider.getDomRef("progress"), "The progress indicator HTMLDivElement is in DOM");
-				ok(oSlider.$("progress").hasClass(sap.m.SliderRenderer.CSS_CLASS + "Progress"), 'Check if the slider has the CSS class "' + sap.m.SliderRenderer.CSS_CLASS + 'Progress"');
+				assert.ok(oSlider.getDomRef("progress"), "The progress indicator HTMLDivElement is in DOM");
+				assert.ok(oSlider.$("progress").hasClass(sap.m.SliderRenderer.CSS_CLASS + "Progress"), 'Check if the slider has the CSS class "' + sap.m.SliderRenderer.CSS_CLASS + 'Progress"');
 
 				// cleanup
 				oSlider.destroy();
@@ -944,7 +944,7 @@
 			/* stepUp()                       */
 			/* ------------------------------ */
 
-			test("method: stepUp()", function() {
+			QUnit.test("method: stepUp()", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -957,13 +957,13 @@
 				oSlider.stepUp(2);
 
 				// assert
-				strictEqual(oSlider.getValue(), 10);
+				assert.strictEqual(oSlider.getValue(), 10);
 
 				// cleanup
 				oSlider.destroy();
 			});
 
-			test("method: stepUp()", function() {
+			QUnit.test("method: stepUp()", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -976,14 +976,14 @@
 				oSlider.stepUp(20);
 
 				// assert
-				strictEqual(oSlider.getValue(), 100);
+				assert.strictEqual(oSlider.getValue(), 100);
 
 				// cleanup
 				oSlider.destroy();
 			});
 
 			// BCP: 1580185288
-			test("it should not snap the value", function() {
+			QUnit.test("it should not snap the value", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -995,7 +995,7 @@
 				oSlider.stepUp(1);
 
 				// assert
-				strictEqual(oSlider.getValue(), 13);
+				assert.strictEqual(oSlider.getValue(), 13);
 
 				// cleanup
 				oSlider.destroy();
@@ -1005,7 +1005,7 @@
 			/* stepDown()                     */
 			/* ------------------------------ */
 
-			test("method: stepDown()", function() {
+			QUnit.test("method: stepDown()", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -1019,13 +1019,13 @@
 				oSlider.stepDown(2);
 
 				// assert
-				strictEqual(oSlider.getValue(), 40);
+				assert.strictEqual(oSlider.getValue(), 40);
 
 				// cleanup
 				oSlider.destroy();
 			});
 
-			test("method: stepDown()", function() {
+			QUnit.test("method: stepDown()", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -1039,14 +1039,14 @@
 				oSlider.stepDown(20);
 
 				// assert
-				strictEqual(oSlider.getValue(), 0);
+				assert.strictEqual(oSlider.getValue(), 0);
 
 				// cleanup
 				oSlider.destroy();
 			});
 
 			// BCP: 1580185288
-			test("it should not snap the value", function() {
+			QUnit.test("it should not snap the value", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -1058,7 +1058,7 @@
 				oSlider.stepDown(1);
 
 				// assert
-				strictEqual(oSlider.getValue(), 7);
+				assert.strictEqual(oSlider.getValue(), 7);
 
 				// cleanup
 				oSlider.destroy();
@@ -1068,7 +1068,7 @@
 			/* setStep()                      */
 			/* ------------------------------ */
 
-			test("method: setStep() should give a warning when called with faulty parameter", function() {
+			QUnit.test("method: setStep() should give a warning when called with faulty parameter", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -1079,14 +1079,16 @@
 				// arrange
 				oPage.addContent(oSlider);
 				sap.ui.getCore().applyChanges();
+				var fnLogWarning = this.spy(jQuery.sap.log, "warning");
 
 				// act
-				oSlider.setStep(-1);	// if the step is negative or 0, set to 1 and log a warning
+				oSlider.setStep(-1);
 				sap.ui.getCore().applyChanges();
 
 				// assert
-				strictEqual(oSlider.getStep(), 1);
-				strictEqual(oSlider.getValue(), 50);
+				assert.strictEqual(oSlider.getStep(), -1);
+				assert.strictEqual(oSlider.getValue(), 50);
+				assert.strictEqual(fnLogWarning.callCount, 1);
 
 				// cleanup
 				oSlider.destroy();
@@ -1096,22 +1098,22 @@
 			/* getPrecisionOfNumber()         */
 			/* ------------------------------ */
 
-			test("it should return the precision of the number", function() {
-				strictEqual(sap.m.Slider.prototype.getDecimalPrecisionOfNumber(1), 0);
-				strictEqual(sap.m.Slider.prototype.getDecimalPrecisionOfNumber(3.125e7), 0);
-				strictEqual(sap.m.Slider.prototype.getDecimalPrecisionOfNumber(1.2), 1);
-				strictEqual(sap.m.Slider.prototype.getDecimalPrecisionOfNumber(1.12345), 5);
-				strictEqual(sap.m.Slider.prototype.getDecimalPrecisionOfNumber(0.437456030974558), 15);
-				strictEqual(sap.m.Slider.prototype.getDecimalPrecisionOfNumber(0.000000000000001), 15);
-				strictEqual(sap.m.Slider.prototype.getDecimalPrecisionOfNumber(1e-19), 19);
-				strictEqual(sap.m.Slider.prototype.getDecimalPrecisionOfNumber(1.666e-7), 10);
+			QUnit.test("it should return the precision of the number", function(assert) {
+				assert.strictEqual(sap.m.Slider.prototype.getDecimalPrecisionOfNumber(1), 0);
+				assert.strictEqual(sap.m.Slider.prototype.getDecimalPrecisionOfNumber(3.125e7), 0);
+				assert.strictEqual(sap.m.Slider.prototype.getDecimalPrecisionOfNumber(1.2), 1);
+				assert.strictEqual(sap.m.Slider.prototype.getDecimalPrecisionOfNumber(1.12345), 5);
+				assert.strictEqual(sap.m.Slider.prototype.getDecimalPrecisionOfNumber(0.437456030974558), 15);
+				assert.strictEqual(sap.m.Slider.prototype.getDecimalPrecisionOfNumber(0.000000000000001), 15);
+				assert.strictEqual(sap.m.Slider.prototype.getDecimalPrecisionOfNumber(1e-19), 19);
+				assert.strictEqual(sap.m.Slider.prototype.getDecimalPrecisionOfNumber(1.666e-7), 10);
 			});
 
 			/* ------------------------------ */
 			/* handle tooltip                 */
 			/* ------------------------------ */
 
-			test("it should render the handle tooltip (test case 1)", function() {
+			QUnit.test("it should render the handle tooltip (test case 1)", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -1123,13 +1125,13 @@
 				sap.ui.getCore().applyChanges();
 
 				// assert
-				ok(oSlider.getDomRef("handle").hasAttribute("title"));
+				assert.ok(oSlider.getDomRef("handle").hasAttribute("title"));
 
 				// cleanup
 				oSlider.destroy();
 			});
 
-			test("it should render the handle tooltip (test case 2)", function() {
+			QUnit.test("it should render the handle tooltip (test case 2)", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider();
@@ -1142,13 +1144,13 @@
 				oSlider.setValue(5);
 
 				// assert
-				ok(oSlider.getDomRef("handle").hasAttribute("title"));
+				assert.ok(oSlider.getDomRef("handle").hasAttribute("title"));
 
 				// cleanup
 				oSlider.destroy();
 			});
 
-			test("it should not render the handle tooltip (test case 1)", function() {
+			QUnit.test("it should not render the handle tooltip (test case 1)", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -1160,13 +1162,13 @@
 				sap.ui.getCore().applyChanges();
 
 				// assert
-				strictEqual(oSlider.getDomRef("handle").hasAttribute("title"), false);
+				assert.strictEqual(oSlider.getDomRef("handle").hasAttribute("title"), false);
 
 				// cleanup
 				oSlider.destroy();
 			});
 
-			test("it should not render the handle tooltip (test case 2)", function() {
+			QUnit.test("it should not render the handle tooltip (test case 2)", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -1181,7 +1183,7 @@
 				oSlider.setValue(5);
 
 				// assert
-				strictEqual(oSlider.getDomRef("handle").hasAttribute("title"), false);
+				assert.strictEqual(oSlider.getDomRef("handle").hasAttribute("title"), false);
 
 				// cleanup
 				oSlider.destroy();
@@ -1191,13 +1193,13 @@
 			/* Events module                                               */
 			/* =========================================================== */
 
-			module("Events");
+			QUnit.module("Events");
 
 			/* ------------------------------ */
 			/* touchstart                     */
 			/* ------------------------------ */
 
-			test("Firing events: touchstart", function() {
+			QUnit.test("Firing events: touchstart", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -1230,9 +1232,9 @@
 				this.clock.tick(1);
 
 				// assert
-				ok(oSlider.$("inner").hasClass(sap.m.SliderRenderer.CSS_CLASS + "Pressed"), 'On touchstart event the slider innner div muss have the CSS class “' + sap.m.SliderRenderer.CSS_CLASS + 'Pressed”');
-				ok(jQuery(oSlider.getFocusDomRef()).hasClass(sap.m.SliderRenderer.CSS_CLASS + "Handle"), "The focus should be in the slider handle");
-				strictEqual(fnFocus.callCount, 1);
+				assert.ok(oSlider.$("inner").hasClass(sap.m.SliderRenderer.CSS_CLASS + "Pressed"), 'On touchstart event the slider innner div muss have the CSS class “' + sap.m.SliderRenderer.CSS_CLASS + 'Pressed”');
+				assert.ok(jQuery(oSlider.getFocusDomRef()).hasClass(sap.m.SliderRenderer.CSS_CLASS + "Handle"), "The focus should be in the slider handle");
+				assert.strictEqual(fnFocus.callCount, 1);
 
 				// cleanup
 				oSlider.destroy();
@@ -1242,7 +1244,7 @@
 			/* touchmove                           */
 			/* ----------------------------------- */
 
-			test("Firing events: touchmove", function() {
+			QUnit.test("Firing events: touchmove", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -1279,7 +1281,7 @@
 					}, '_on');
 
 					// assert
-					strictEqual(oSlider.getValue(), i);
+					assert.strictEqual(oSlider.getValue(), i);
 				}
 
 				sap.ui.test.qunit.triggerTouchEvent("touchend", oSlider.getDomRef(), {
@@ -1287,7 +1289,7 @@
 				}, '_on');
 
 				// assert
-				strictEqual(oSlider.getValue(), 100);
+				assert.strictEqual(oSlider.getValue(), 100);
 
 				// cleanup
 				oSlider.destroy();
@@ -1298,7 +1300,7 @@
 			/* ----------------------------------- */
 
 			function fnTapTestCase(iPageX) {
-				test("Firing events: tap", function() {
+				QUnit.test("Firing events: tap", function(assert) {
 
 					// system under test
 					var oSlider = new sap.m.Slider({
@@ -1342,11 +1344,11 @@
 					}, '_on');
 
 					// assert
-					strictEqual(oSlider.getValue(), iPageX);
-					ok(!oSlider.$("inner").hasClass(sap.m.SliderRenderer.CSS_CLASS + "Pressed"), 'On touchend the slider muss not have the CSS class “' + sap.m.SliderRenderer.CSS_CLASS + 'Pressed”');
-					strictEqual(fnHasEventListeners(document, "touchend"), false);
-					strictEqual(fnHasEventListeners(document, "touchcancel"), false);
-					strictEqual(fnHasEventListeners(document, "mouseup"), false);
+					assert.strictEqual(oSlider.getValue(), iPageX);
+					assert.ok(!oSlider.$("inner").hasClass(sap.m.SliderRenderer.CSS_CLASS + "Pressed"), 'On touchend the slider muss not have the CSS class “' + sap.m.SliderRenderer.CSS_CLASS + 'Pressed”');
+					assert.strictEqual(fnHasEventListeners(document, "touchend"), false);
+					assert.strictEqual(fnHasEventListeners(document, "touchcancel"), false);
+					assert.strictEqual(fnHasEventListeners(document, "mouseup"), false);
 
 					// cleanup
 					oSlider.destroy();
@@ -1361,7 +1363,7 @@
 			/* change and liveChange          */
 			/* ------------------------------ */
 
-			test("Firing events: change and liveChange", function() {
+			QUnit.test("Firing events: change and liveChange", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider().addStyleClass("sapMSliderWithoutPadding");
@@ -1392,8 +1394,8 @@
 				}, '_on');
 
 				// assert
-				strictEqual(fnFireLiveChangeSpy.callCount, 1, 'The "livechange" event handler must be fired exactly once');
-				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event handler must be fired exactly once');
+				assert.strictEqual(fnFireLiveChangeSpy.callCount, 1, 'The "livechange" event handler must be fired exactly once');
+				assert.strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event handler must be fired exactly once');
 
 				// cleanup
 				oSlider.destroy();
@@ -1403,7 +1405,7 @@
 			/* onsapincrease                  */
 			/* ------------------------------ */
 
-			test("Firing events: onsapincrease", function() {
+			QUnit.test("Firing events: onsapincrease", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -1423,10 +1425,10 @@
 				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT);
 
 				// assert
-				strictEqual(oSlider.getValue(), 100, "The slider value must be increased to 100");
-				strictEqual(fnIncreaseSpy.callCount, 2);
-				strictEqual(fnFireChangeSpy.callCount, 1);
-				strictEqual(fnFireLiveChangeSpy.callCount, 1);
+				assert.strictEqual(oSlider.getValue(), 100, "The slider value must be increased to 100");
+				assert.strictEqual(fnIncreaseSpy.callCount, 2);
+				assert.strictEqual(fnFireChangeSpy.callCount, 1);
+				assert.strictEqual(fnFireLiveChangeSpy.callCount, 1);
 
 				// cleanup
 				oSlider.destroy();
@@ -1437,7 +1439,7 @@
 			/* ------------------------------ */
 
 			function fnOnIncreaseModifiersTestCase(mOptions) {
-				test("Firing events: onsapincreasemodifiers", function() {
+				QUnit.test("Firing events: onsapincreasemodifiers", function(assert) {
 
 					// system under test
 					var oSlider = mOptions.control;
@@ -1454,9 +1456,9 @@
 					sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, /* Ctrl key */ true);
 
 					// assert
-					strictEqual(oSlider.getValue(), mOptions.expectedValue, "The slider value must be increased to " + mOptions.expectedValue);
-					strictEqual(fnFireChangeSpy.callCount, 1);
-					strictEqual(fnFireLiveChangeSpy.callCount, 1);
+					assert.strictEqual(oSlider.getValue(), mOptions.expectedValue, "The slider value must be increased to " + mOptions.expectedValue);
+					assert.strictEqual(fnFireChangeSpy.callCount, 1);
+					assert.strictEqual(fnFireLiveChangeSpy.callCount, 1);
 
 					// cleanup
 					oSlider.destroy();
@@ -1500,7 +1502,7 @@
 			/* onsapdecrease                  */
 			/* ------------------------------ */
 
-			test("Firing events: onsapdecrease", function() {
+			QUnit.test("Firing events: onsapdecrease", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -1520,10 +1522,10 @@
 				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.ARROW_LEFT);
 
 				// assert
-				strictEqual(oSlider.getValue(), 0, "The slider value must be decreased to 0");
-				strictEqual(fnDecreaseSpy.callCount, 2);
-				strictEqual(fnFireChangeSpy.callCount, 1);
-				strictEqual(fnFireLiveChangeSpy.callCount, 1);
+				assert.strictEqual(oSlider.getValue(), 0, "The slider value must be decreased to 0");
+				assert.strictEqual(fnDecreaseSpy.callCount, 2);
+				assert.strictEqual(fnFireChangeSpy.callCount, 1);
+				assert.strictEqual(fnFireLiveChangeSpy.callCount, 1);
 
 				// cleanup
 				oSlider.destroy();
@@ -1534,7 +1536,7 @@
 			/* ------------------------------ */
 
 			function fnOnDecreaseModifiersTestCase(mOptions) {
-				test("Firing events: onsapdecreasemodifiers", function() {
+				QUnit.test("Firing events: onsapdecreasemodifiers", function(assert) {
 
 					// system under test
 					var oSlider = mOptions.control;
@@ -1551,10 +1553,10 @@
 					sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.ARROW_LEFT, false, false, /* Ctrl key */ true);
 
 					// assert
-					strictEqual(oSlider.getValue(), mOptions.expectedValue, "The slider value must be decreased to " + mOptions.expectedValue);
-					strictEqual(fnDecreaseModifiersSpy.callCount, 1);
-					strictEqual(fnFireChangeSpy.callCount, 1);
-					strictEqual(fnFireLiveChangeSpy.callCount, 1);
+					assert.strictEqual(oSlider.getValue(), mOptions.expectedValue, "The slider value must be decreased to " + mOptions.expectedValue);
+					assert.strictEqual(fnDecreaseModifiersSpy.callCount, 1);
+					assert.strictEqual(fnFireChangeSpy.callCount, 1);
+					assert.strictEqual(fnFireLiveChangeSpy.callCount, 1);
 
 					// cleanup
 					oSlider.destroy();
@@ -1598,7 +1600,7 @@
 			/* onsappageup                    */
 			/* ------------------------------ */
 
-			test("Firing events: onsappageup", function() {
+			QUnit.test("Firing events: onsappageup", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -1617,10 +1619,10 @@
 				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
 
 				// assert
-				strictEqual(oSlider.getValue(), 100, "The slider value must be increased to 100");
-				strictEqual(fnPageUpSpy.callCount, 1);
-				strictEqual(fnFireChangeSpy.callCount, 1);
-				strictEqual(fnFireLiveChangeSpy.callCount, 1);
+				assert.strictEqual(oSlider.getValue(), 100, "The slider value must be increased to 100");
+				assert.strictEqual(fnPageUpSpy.callCount, 1);
+				assert.strictEqual(fnFireChangeSpy.callCount, 1);
+				assert.strictEqual(fnFireLiveChangeSpy.callCount, 1);
 
 				// cleanup
 				oSlider.destroy();
@@ -1630,7 +1632,7 @@
 			/* onsappagedown                  */
 			/* ------------------------------ */
 
-			test("Firing events: onsappagedown", function() {
+			QUnit.test("Firing events: onsappagedown", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -1649,10 +1651,10 @@
 				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN);
 
 				// assert
-				strictEqual(oSlider.getValue(), 0, "The slider value must be increased to 0");
-				strictEqual(fnPageDownSpy.callCount, 1);
-				strictEqual(fnFireChangeSpy.callCount, 1);
-				strictEqual(fnFireLiveChangeSpy.callCount, 1);
+				assert.strictEqual(oSlider.getValue(), 0, "The slider value must be increased to 0");
+				assert.strictEqual(fnPageDownSpy.callCount, 1);
+				assert.strictEqual(fnFireChangeSpy.callCount, 1);
+				assert.strictEqual(fnFireLiveChangeSpy.callCount, 1);
 
 				// cleanup
 				oSlider.destroy();
@@ -1662,7 +1664,7 @@
 			/* onsaphome                      */
 			/* ------------------------------ */
 
-			test("Firing events: onsaphome", function() {
+			QUnit.test("Firing events: onsaphome", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -1682,10 +1684,10 @@
 				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.HOME);
 
 				// assert
-				strictEqual(oSlider.getValue(), 0);
-				strictEqual(fnHomeSpy.callCount, 2);
-				strictEqual(fnFireChangeSpy.callCount, 1);
-				strictEqual(fnFireLiveChangeSpy.callCount, 1);
+				assert.strictEqual(oSlider.getValue(), 0);
+				assert.strictEqual(fnHomeSpy.callCount, 2);
+				assert.strictEqual(fnFireChangeSpy.callCount, 1);
+				assert.strictEqual(fnFireLiveChangeSpy.callCount, 1);
 
 				// cleanup
 				oSlider.destroy();
@@ -1695,7 +1697,7 @@
 			/* onsapend                       */
 			/* ------------------------------ */
 
-			test("Firing events: onsapend", function() {
+			QUnit.test("Firing events: onsapend", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider();
@@ -1713,10 +1715,10 @@
 				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.END);
 
 				// assert
-				strictEqual(oSlider.getValue(), 100);
-				strictEqual(fnEndSpy.callCount, 2);
-				strictEqual(fnFireChangeSpy.callCount, 1);
-				strictEqual(fnFireLiveChangeSpy.callCount, 1);
+				assert.strictEqual(oSlider.getValue(), 100);
+				assert.strictEqual(fnEndSpy.callCount, 2);
+				assert.strictEqual(fnFireChangeSpy.callCount, 1);
+				assert.strictEqual(fnFireLiveChangeSpy.callCount, 1);
 
 				// cleanup
 				oSlider.destroy();
@@ -1726,7 +1728,7 @@
 			/* onsaptabnext                   */
 			/* ------------------------------ */
 
-			test("Firing events: onsaptabnext When the slider loses the focus via tab", function() {
+			QUnit.test("Firing events: onsaptabnext When the slider loses the focus via tab", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider();
@@ -1759,8 +1761,8 @@
 				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.TAB);
 
 				// assert
-				strictEqual(fnTabNextSpy.callCount, 1);
-				strictEqual(oSlider._fInitialFocusValue, fValue, "The _fInitialFocusValue property should be updated with the actual value of the slider");
+				assert.strictEqual(fnTabNextSpy.callCount, 1);
+				assert.strictEqual(oSlider._fInitialFocusValue, fValue, "The _fInitialFocusValue property should be updated with the actual value of the slider");
 
 				// cleanup
 				oSlider.destroy();
@@ -1770,7 +1772,7 @@
 			/* onsaptabprevious               */
 			/* ------------------------------ */
 
-			test("Firing events: onsaptabprevious When the slider loses the focus via shift + tab", function() {
+			QUnit.test("Firing events: onsaptabprevious When the slider loses the focus via shift + tab", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -1806,8 +1808,8 @@
 				oSlider.onsaptabprevious();
 
 				// assert
-				strictEqual(fnTabPreviousSpy.callCount, 1);
-				strictEqual(oSlider._fInitialFocusValue, fValue, "The _fInitialFocusValue property should be updated with the actual value of the slider");
+				assert.strictEqual(fnTabPreviousSpy.callCount, 1);
+				assert.strictEqual(oSlider._fInitialFocusValue, fValue, "The _fInitialFocusValue property should be updated with the actual value of the slider");
 
 				// cleanup
 				oSlider.destroy();
@@ -1817,7 +1819,7 @@
 			/* onsapescape                    */
 			/* ------------------------------ */
 
-			test("Firing events: onsapescape reset the slider back to the value which it had before getting the focus", function() {
+			QUnit.test("Firing events: onsapescape reset the slider back to the value which it had before getting the focus", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -1848,20 +1850,20 @@
 				}, '_on');
 
 				// post-assert
-				strictEqual(oSlider.getValue(), 80);
+				assert.strictEqual(oSlider.getValue(), 80);
 
 				// act
 				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
 
 				// assert
-				strictEqual(fnOnEscapeSpy.callCount, 1);
-				strictEqual(oSlider.getValue(), 50);
+				assert.strictEqual(fnOnEscapeSpy.callCount, 1);
+				assert.strictEqual(oSlider.getValue(), 50);
 
 				// cleanup
 				oSlider.destroy();
 			});
 
-			test("Firing events: onsapescape reset the slider back to the value which it had before the click event", function() {
+			QUnit.test("Firing events: onsapescape reset the slider back to the value which it had before the click event", function(assert) {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -1893,14 +1895,14 @@
 				}, '_on');
 
 				// pre-assert
-				strictEqual(oSlider.getValue(), 80);
+				assert.strictEqual(oSlider.getValue(), 80);
 
 				// act
 				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
 
 				// assert
-				strictEqual(fnOnEscapeSpy.callCount, 1);
-				strictEqual(oSlider.getValue(), 10);
+				assert.strictEqual(fnOnEscapeSpy.callCount, 1);
+				assert.strictEqual(oSlider.getValue(), 10);
 
 				// cleanup
 				oSlider.destroy();

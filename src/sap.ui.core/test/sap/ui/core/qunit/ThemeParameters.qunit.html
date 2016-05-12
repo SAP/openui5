@@ -13,7 +13,8 @@
 		<script>
 			window["sap-ui-config"] = {
 				resourceRoots : {
-					"sap.ui.testlib" : "./testdata/uilib/"
+					"sap.ui.testlib" : "./testdata/uilib/",
+					"sap.ui.legacy.testlib" : "./testdata/legacy-uilib/"
 				}
 			};
 		</script>
@@ -21,11 +22,13 @@
 			type="text/javascript"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_hcb"
+			data-sap-ui-libs="sap.ui.legacy.testlib"
 			data-sap-ui-noConflict="true" >
 		</script>
 
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 
 
@@ -48,6 +51,10 @@
    		 */
    		equal(sap.ui.core.theming.Parameters.get("sapUiText"), "#ffffff", "sapUiText must be defined as 'white - #ffffff'");
    		equal(sap.ui.core.theming.Parameters.get("sapUiExtraLightBG"), "#000000", "sapUiExtraLightBG must be defined as 'black - #000000'");
+
+   		// Read parameters of legacy library-parameters.json format
+   		equal(sap.ui.core.theming.Parameters.get("sapUiLegacyTstTextColor"), "#fafafa", "sapUiLegacyTstTextColor must be defined as '#fafafa'");
+   		equal(sap.ui.core.theming.Parameters.get("sapUiLegacyText"), "#ffffff", "sapUiLegacyText must be defined as '#ffffff'");
    	});
 
    	test("Undefined parameter", function() {
@@ -64,6 +71,7 @@
 
    		var count = 0;
    		for (var property in mAllParams) {
+   			equal(typeof mAllParams[property], "string", "Parameter '" + property + "' should be a string");
    			count++;
    		}
    		ok(count > 10, "The map of parameters should have quite some entries");
@@ -112,6 +120,52 @@
 			sap.ui.getCore().loadLibrary("sap.ui.testlib");
    		equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor"), "#fafafa", "parameter for newly loaded library should be known now");
    	});
+
+		test("Read scoped parameters (from sap.ui.testlib)", function() {
+			var oControl = new sap.ui.core.Control();
+
+			equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor", oControl), "#fafafa",
+				"No scope set - default value should get returned");
+
+			oControl.addStyleClass("sapTestScope");
+
+			equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor", oControl), "#000000",
+				"Scope set directly on control - scoped param should be returned");
+			equal(sap.ui.core.theming.Parameters.get("sapUiText", oControl), "#ffffff",
+				"Scope set directly on control but no scoped value defined - default value should get returned");
+
+			oControl.removeStyleClass("sapTestScope");
+			var oParent = new sap.ui.core.Control();
+			oParent.addStyleClass("sapTestScope");
+			oControl.setParent(oParent);
+
+			equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor", oControl), "#000000",
+				"Scope set on parent control - scoped param should be returned");
+			equal(sap.ui.core.theming.Parameters.get("sapUiText", oControl), "#ffffff",
+				"Scope set on parent control but no scoped value defined - default value should get returned");
+
+		});
+
+		test("Read scoped parameters (error handling)", function() {
+			var oElement = new sap.ui.core.Element();
+
+			equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor", oElement), "#fafafa",
+				"No scope set - default value should get returned");
+
+			equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor", null), "#fafafa",
+				"'null' value provided as 'oControl' - default value should get returned");
+
+			equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor", {}), "#fafafa",
+				"'{}' value provided as 'oControl' - default value should get returned");
+
+			var oParent = new sap.ui.core.Control();
+			oParent.addStyleClass("sapTestScope");
+			oElement.setParent(oParent);
+
+			equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor", oElement), "#000000",
+				"Scope set on parent control - scoped param should be returned");
+
+		});
 
     </script>
 	</head>

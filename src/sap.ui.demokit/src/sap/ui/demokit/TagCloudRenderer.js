@@ -3,16 +3,16 @@
  */
 
 // Provides default renderer for control sap.ui.demokit.TagCloud
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(function() {
 	"use strict";
 
 
 	/**
-	 * @class TagCloud renderer.
-	 * @static
+	 * TagCloud renderer.
+	 * @namespace
+	 * @alias sap.ui.demokit.TagCloudRenderer
 	 */
-	var TagCloudRenderer = function() {
+	var TagCloudRenderer = {
 	};
 
 
@@ -48,21 +48,21 @@ sap.ui.define(['jquery.sap.global'],
 
 		// render each tag.
 		for (var i = 0;i < tags.length;i++) {
-		  var tag = tags[i];
-		  rm.write("<span");
-		  rm.writeElementData(tag);
-		  rm.writeAttribute("class","sapUiTagCloudTextNormal");
-		  if (tag.getTooltip_AsString()) {
-			  rm.writeAttributeEscaped("title",tag.getTooltip_AsString());
-		  }
-		  //Compute font size relative to weight
-		  rm.writeAttribute("style","font-size:" + fontsize(tag.getWeight()) + "px;");
-		  rm.write(">"); // span element
-		  rm.writeEscaped(tag.getText());
-		  rm.write("</span>"); // span element
+			var tag = tags[i];
+			rm.write("<span");
+			rm.writeElementData(tag);
+			rm.writeAttribute("class","sapUiTagCloudTextNormal");
+			if (tag.getTooltip_AsString()) {
+				rm.writeAttributeEscaped("title",tag.getTooltip_AsString());
+			}
+			//Compute font size relative to weight
+			rm.writeAttribute("style","font-size:" + fontsize(tag.getWeight()) + "px;");
+			rm.write(">"); // span element
+			rm.writeEscaped(tag.getText());
+			rm.write("</span>");
 		}
 
-		rm.write("</div>"); // div element
+		rm.write("</div>");
 	};
 
 	TagCloudRenderer.computeWeightRange = function(tags){
@@ -74,7 +74,6 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		return {min:min, max:max};
 	};
-
 
 
 	return TagCloudRenderer;

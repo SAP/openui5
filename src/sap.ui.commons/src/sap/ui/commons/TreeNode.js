@@ -21,6 +21,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 	 *
 	 * @constructor
 	 * @public
+	 * @deprecated Since version 1.38.
 	 * @alias sap.ui.commons.TreeNode
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -585,7 +586,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 			if (iNewScrollLeft !== undefined) {
 				mScrollPos.scrollLeft = iNewScrollLeft;
 			}
-			$TreeCont.animate(mScrollPos);
+			// Clear animation queue, so that only the last selected item gets animated
+			$TreeCont.stop(true, true).animate(mScrollPos);
 		}
 	};
 

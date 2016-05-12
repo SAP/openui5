@@ -861,6 +861,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	/**
 	 * @classdesc A string type representing an Id or a name.
 	 *
+	 * Allowed is a sequence of characters (capital/lowercase), digits, underscores, dashes, points and/or colons.
+	 * It may start with a character, number or underscore only.
+	 *
 	 * @final
 	 * @namespace
 	 * @public
@@ -1620,26 +1623,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	lazy("sap.ui.core.BusyIndicator", "show hide attachOpen detachOpen attachClose detachClose");
 	lazy("sap.ui.core.tmpl.Template", "registerType unregisterType");
 	lazy("sap.ui.core.Fragment", "registerType");
+	lazy("sap.ui.core.service.ServiceFactoryRegistry", "register unregister get");
 
 	lazy("sap.ui.model.odata.AnnotationHelper", "createPropertySetting format getNavigationPath"
 		+ " gotoEntitySet gotoEntityType gotoFunctionImport isMultiple resolvePath simplePath");
-	sap.ui.model.odata.AnnotationHelper.format.requiresIContext = true;
-	sap.ui.model.odata.AnnotationHelper.getNavigationPath.requiresIContext = true;
-	sap.ui.model.odata.AnnotationHelper.isMultiple.requiresIContext = true;
-	sap.ui.model.odata.AnnotationHelper.simplePath.requiresIContext = true;
-
+	if ( sap.ui.model && sap.ui.model.odata && sap.ui.model.odata.AnnotationHelper ) { // ensure that lazy stub exists before enriching it
+		sap.ui.model.odata.AnnotationHelper.format.requiresIContext = true;
+		sap.ui.model.odata.AnnotationHelper.getNavigationPath.requiresIContext = true;
+		sap.ui.model.odata.AnnotationHelper.isMultiple.requiresIContext = true;
+		sap.ui.model.odata.AnnotationHelper.simplePath.requiresIContext = true;
+	}
 	lazy("sap.ui", "xmlfragment", "sap.ui.core.Fragment"); // cannot use "each" as it assumes a module to exist for each function name
 	lazy("sap.ui", "jsfragment", "sap.ui.core.Fragment");
 	lazy("sap.ui", "htmlfragment", "sap.ui.core.Fragment");
 
 	each("sap.ui.model.", ["Filter","Sorter","json.JSONModel","resource.ResourceModel","odata.ODataModel","odata.v2.ODataModel","odata.v4.ODataModel","xml.XMLModel"]);
 	each("sap.ui.model.type.", ["Boolean","Integer","Float","String","Date","Time","DateTime","FileSize", "Currency"]);
-	each("sap.ui.model.odata.type.", ["Boolean","Byte","Date","DateTime","DateTimeOffset","Double","Decimal","Guid","Int16","Int32","Int64","SByte","Single","String","Time"]);
+	each("sap.ui.model.odata.type.", ["Boolean","Byte","Date","DateTime","DateTimeOffset","Double","Decimal","Guid","Int16","Int32","Int64","Raw","SByte","Single","String","Time","TimeOfDay"]);
 	each("sap.ui.core.", ["Locale","LocaleData","mvc.Controller"]);
 	each("sap.ui.core.mvc.", ["Controller", "View", "JSView", "JSONView", "XMLView", "HTMLView", "TemplateView"], "sap.ui");
 	each("sap.ui.core.", ["Component"], "sap.ui");
 	each("sap.ui.core.tmpl.", ["Template"], "sap.ui");
 	each("sap.ui.core.routing.", ["HashChanger", "History", "Route", "Router", "Target", "Targets", "Views"]);
+	each("sap.ui.core.service.", ["ServiceFactory", "Service"]);
 
 	return sap.ui.core;
 

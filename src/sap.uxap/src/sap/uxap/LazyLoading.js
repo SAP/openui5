@@ -141,7 +141,7 @@ sap.ui.define(["jquery.sap.global",	"sap/ui/Device", "sap/ui/base/Metadata", "./
 			//only consider subsections not yet loaded
 			jQuery.each(oSectionInfo, jQuery.proxy(function (sId, oInfo) {
 				// on desktop/tablet, find a section, not a subsection
-				if (!oInfo.isSection && !oInfo.loaded && oInfo.sectionReference.getParent().getVisible()) {
+				if (!oInfo.isSection && !oInfo.loaded && oInfo.sectionReference.getParent() && oInfo.sectionReference.getParent().getVisible()) {
 					// 1D segment intersection between visible page and current sub section
 					// C <= B and A <= D -> intersection
 					//    A-----B

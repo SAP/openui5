@@ -31,6 +31,7 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/T
 
 				/**
 				 * Updates the size of the chart. If not set then the default size is applied based on the device tile.
+				 * @deprecated Since version 1.38.0. The FeedContent control has now a fixed size, depending on the used media (desktop, tablet or phone).
 				 */
 				"size" : {type : "sap.m.Size", group : "Misc", defaultValue : sap.m.Size.Auto},
 
@@ -82,7 +83,7 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/T
 	 */
 	FeedContent.prototype.init = function() {
 		this._oContentText = new sap.m.Text(this.getId() + "-content-text", {
-			maxLines : 3
+			maxLines : 2
 		});
 		this._oContentText.cacheLineHeight = false;
 		this.setAggregation("contentTextAgr", this._oContentText);

@@ -61,6 +61,8 @@
 				startDateChange: handleStartDateChange,
 				width: "1500px",
 				startDate: new Date("2015", "7", "4"),
+				minDate: new Date("2000", "1", "1"),
+				maxDate: new Date("2050", "7", "31"),
 				months: 18,
 				intervalSelection: true,
 				pickerPopup: true,
@@ -261,6 +263,34 @@
 				qutils.triggerEvent("click", "Cal1--Head-B2");
 
 				oCal1.focusDate(new Date(2013, 1, 1));
+
+				oCal2.setStartDate(new Date(2000, 2, 1));
+				ok(!jQuery("#Cal2--Head-prev").hasClass("sapUiCalDsbl"), "Calendar2: Previous Button enabled");
+				ok(!jQuery("#Cal2--Head-next").hasClass("sapUiCalDsbl"), "Calendar2: Next Button enabled");
+				qutils.triggerEvent("click", "Cal2--Head-B2");
+				var $YearPicker = sap.ui.getCore().byId("Cal2").getAggregation("yearPicker").$();
+				var aYears = $YearPicker.find(".sapUiCalItem");
+				equal(jQuery(aYears[0]).text(), "2000", "Calendar2: first displayed year");
+				ok(jQuery("#Cal2--Head-prev").hasClass("sapUiCalDsbl"), "Calendar2: Previous Button disabled");
+				ok(!jQuery("#Cal2--Head-next").hasClass("sapUiCalDsbl"), "Calendar2: Next Button enabled");
+				qutils.triggerEvent("click", "Cal2--Head-B2");
+				qutils.triggerEvent("click", "Cal2--Head-prev");
+				ok(jQuery("#Cal2--Head-prev").hasClass("sapUiCalDsbl"), "Calendar2: Previous Button disabled");
+
+				oCal2.setStartDate(new Date(2049, 0, 1));
+				ok(!jQuery("#Cal2--Head-prev").hasClass("sapUiCalDsbl"), "Calendar2: Previous Button enabled");
+				ok(!jQuery("#Cal2--Head-next").hasClass("sapUiCalDsbl"), "Calendar2: Next Button enabled");
+				qutils.triggerEvent("click", "Cal2--Head-B2");
+				$YearPicker = sap.ui.getCore().byId("Cal2").getAggregation("yearPicker").$();
+				aYears = $YearPicker.find(".sapUiCalItem");
+				equal(jQuery(aYears[19]).text(), "2050", "Calendar2: last displayed year");
+				ok(!jQuery("#Cal2--Head-prev").hasClass("sapUiCalDsbl"), "Calendar2: Previous Button enabled");
+				ok(jQuery("#Cal2--Head-next").hasClass("sapUiCalDsbl"), "Calendar2: Next Button disabled");
+				qutils.triggerEvent("click", "Cal2--Head-B2");
+				qutils.triggerEvent("click", "Cal2--Head-next");
+				ok(jQuery("#Cal2--Head-next").hasClass("sapUiCalDsbl"), "Calendar2: Next Button disabled");
+
+				oCal2.setStartDate(new Date(2015, 7, 4));
 			});
 
 			test("select event", function() {

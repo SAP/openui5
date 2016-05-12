@@ -513,5 +513,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.31": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "a776757cbc8149b5f3cf78d7db8bf223a54411e4",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: Resore focus when click outside the menu",
+        "references": []
+      }
+    ]
   }
 }

@@ -5,24 +5,33 @@
 
 .sapMSegB {
 	height: 2.5rem;
-	padding: 0.250rem 0;
+	vertical-align: top;
 	position: relative;
-}
+	.sapMSegBBtn {
+		font-size: 0.875rem;
+		height: 2.5rem;
+		line-height: 2.375rem;
+		padding-left: 1rem;
+		padding-right: 1rem;
+		text-align: center;
+		text-shadow: none;
+		color: @sapUiSegmentedButtonTextColor;
+		border-top: 1px solid @sapUiSegmentedButtonBorderColor;
+		border-left: 1px solid @sapUiSegmentedButtonBorderColor;
+		border-bottom: 1px solid @sapUiSegmentedButtonBorderColor;
+		border-right: 1px solid transparent;
+		background-color: @sapUiSegmentedButtonBackground;
+		&:not(.sapMSegBBtnMixed) .sapMImg {
+			padding-left: 1rem;
+			padding-right: 1rem;
+		}
+	}
 
-.sapMSegBBtn {
-	font-size: 0.875rem;
-	height: 2.375rem;
-	line-height: 2.375rem;
-	padding-left: 1rem;
-	padding-right: 1rem;
-	text-align: center;
-	text-shadow: none;
-	color: @sapUiSegmentedButtonTextColor;
-	border: 1px solid @sapUiSegmentedButtonBorderColor;
-	border-right: 0;
-	background-color: @sapUiSegmentedButtonBackground;
 }
-
+// Adding margin to be displayed correct in sap.m.Bar
+.sapMBar .sapMSegB {
+	margin: 0.250rem 0;
+}
 html.sap-desktop .sapMSegBBtnFocusable:hover {
 	background: @sapUiSegmentedButtonHoverBackground;
 }
@@ -32,7 +41,7 @@ html.sap-desktop .sapMSegBBtnFocusable:hover {
 }
 
 /* Custom focus outline: */
-.sap-desktop{
+html.sap-desktop {
 	.sapMSegBBtnFocusable:focus {
 		outline: none;
 		border:  1px dotted @sapUiFocus;
@@ -45,18 +54,17 @@ html.sap-desktop .sapMSegBBtnFocusable:hover {
 
 	.sapMSegBBtnFocusable:focus + .sapMSegBBtn{
 		outline: none;
-		border-left:  none;
+		border-left: 1px dotted @sapUiFocus;
 	}
 
 	.sapMSegBBtnFocusable.sapMSegBBtnSel {
 		&:focus  + .sapMSegBBtn {
 			outline: none;
-			border-left: none;
+			border-left: 1px solid transparent;
 		}
 		// Fixes focus on shared border on the left that's why there is a negative margin
-		+ .sapMSegBBtn:focus {
+		+ .sapMSegBBtn:not(.sapMSegBBtnDis):focus {
 			border-left: 1px dotted @sapUiFocus;
-			margin-left: -1px;
 		}
 	}
 
@@ -78,11 +86,15 @@ html.sap-desktop .sapMSegBBtnFocusable:hover {
 	}
 }
 
-.sapMSegBIcons .sapMSegBBtn {
-	padding: 0;
-}
-.sapMSegBIcons .sapMSegBBtn img {
-	padding: 0 .5rem;
+.sapMSegB.sapMSegBIcons {
+	.sapMSegBBtn:not(.sapMSegBBtnMixed) {
+		padding: 0;
+	}
+	.sapMSegBBtn.sapMSegBBtnMixed .sapMImg,
+	.sapMSegBBtn.sapMSegBBtnMixed .sapUiIcon {
+		padding-left: 0;
+		padding-right: 0.5rem;
+	}
 }
 
 .sapMSegBBtn.sapMSegBBtnSel {
@@ -110,7 +122,7 @@ html.sap-desktop .sapMSegBBtnFocusable:hover {
 	border-right: 1px solid @sapUiSegmentedButtonSelectedHoverBorderColor;
 	// Hide next button left border
 	+ .sapMSegBBtn {
-		border-left: none;
+		border-left: 1px solid transparent;
 	}
 }
 
@@ -155,11 +167,10 @@ html.sap-desktop .sapMSegBBtnFocusable:hover {
 .sapUiSizeCompact {
 	.sapMSegB {
 		height: 1.625rem;
-		padding: 0.1875rem 0;
 	}
 
 	.sapMSegBBtn {
-		height: 1.5rem;
+		height: 1.625rem;
 		line-height: 1.5rem;
 		padding-left: 0.4375rem;
 		padding-right: 0.4375rem;
@@ -175,10 +186,6 @@ html.sap-desktop .sapMSegBBtnFocusable:hover {
 		border-bottom-right-radius: 0.125rem;
 	}
 
-	.sapMSegBIcons .sapMSegBBtn img {
-		padding: 0 .5rem;
-	}
-
 	.sapMSegB img {
 		line-height: 1.5rem;
 		height: 1.3rem;
@@ -192,16 +199,28 @@ html.sap-desktop .sapMSegBBtnFocusable:hover {
 		vertical-align: top;
 	}
 	.sapMSegB {
-		&.sapMSegBIcons:not(.sapMBarChild) .sapMSegBBtn {
-			padding-left: 0;
-			padding-right: 0;
-		}
 		.sapMBtnIconLeft {
 			margin-left: 0;
 		}
 		&.sapMSegBIcons .sapMSegBBtnMixed {
 			img {
 				padding: 0;
+			}
+		}
+	}
+	.sapMSegBIcons:not(.sapMSegBBtnMixed) {
+		.sapMImg,
+		.sapUiIcon {
+			padding-left: 0.4375rem;
+			padding-right: 0.4375rem;
+		}
+	}
+	.sapMSegBIcons {
+		.sapMSegBBtn.sapMSegBBtnMixed {
+			.sapMImg,
+			.sapUiIcon {
+				padding-left: 0;
+				padding-right: 0;
 			}
 		}
 	}

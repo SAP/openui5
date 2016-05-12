@@ -66,7 +66,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 			"sap.ui.layout.PaneContainer",
 			"sap.ui.layout.SplitPane",
 			"sap.ui.layout.form.GridElementData"
-		]
+		],
+		extensions: {
+			flChangeHandlers: {
+				"sap.ui.layout.form.SimpleForm": {
+					"renameLabel": "sap/ui/layout/changeHandler/RenameForm",
+					"renameTitle": "sap/ui/layout/changeHandler/RenameForm"
+				}
+			}
+		}
 	});
 
 	/**

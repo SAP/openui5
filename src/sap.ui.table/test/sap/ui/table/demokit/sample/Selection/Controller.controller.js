@@ -17,10 +17,7 @@ sap.ui.define([
 
 			var aSelectionModes = [];
 			jQuery.each(sap.ui.table.SelectionMode, function(k, v){
-				if (k !== sap.ui.table.SelectionMode.All) {
-					// selectionMode:All is deprecated but must remain in the enum for deprecated sap.ui.table.DataTable
-					aSelectionModes.push({key: k, text: v});
-				}
+				aSelectionModes.push({key: k, text: v});
 			});
 
 			var aSelectionBehaviors = [];

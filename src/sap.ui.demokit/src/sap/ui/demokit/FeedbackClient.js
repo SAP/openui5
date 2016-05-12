@@ -2,9 +2,20 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function (jQuery) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/library',
+		'sap/ui/layout/HorizontalLayout', 'sap/ui/layout/VerticalLayout', 'sap/ui/layout/form/SimpleForm', 'sap/ui/layout/form/SimpleFormLayout',
+		'sap/ui/commons/Button', 'sap/ui/commons/CheckBox', 'sap/ui/commons/FormattedTextView', 'sap/ui/commons/Label', 'sap/ui/commons/Link',
+		'sap/ui/commons/SegmentedButton', 'sap/ui/commons/TextArea', 'sap/ui/commons/TextView',
+		'sap/ui/ux3/ToolPopup'],
+	function (jQuery, IconPool, coreLibrary,
+			HorizontalLayout, VerticalLayout, SimpleForm, SimpleFormLayout,
+			Button, CheckBox, FormattedTextView, Label, Link,
+			SegmentedButton, TextArea, TextView,
+			ToolPopup) {
+
 		"use strict";
+
+		var ValueState = coreLibrary.ValueState;
 
 		var FeedbackClient = function () {
 			this._oFeedbackContextText;
@@ -43,8 +54,8 @@ sap.ui.define(['jquery.sap.global'],
 		};
 
 		FeedbackClient.prototype.createFeedbackPopup = function () {
-			this._oFeedbackContextText = new sap.ui.commons.TextView("oFeedbackContextText");
-			this._oIncludeFeedbackContextCB = new sap.ui.commons.CheckBox("includePageCB");
+			this._oFeedbackContextText = new TextView("oFeedbackContextText");
+			this._oIncludeFeedbackContextCB = new CheckBox("includePageCB");
 
 			var that = this;
 
@@ -65,7 +76,7 @@ sap.ui.define(['jquery.sap.global'],
 			function setFeedbackPopupBusyState() {
 				oFeedbackPopup.setBusyIndicatorDelay(0);
 				oFeedbackPopup.setBusy(true);
-				oFeedbackInput.setValueState(sap.ui.core.ValueState.None);
+				oFeedbackInput.setValueState(ValueState.None);
 				oFeedbackInput.setPlaceholder(FEEDBACK_INPUT_PLACEHOLDER);
 			}
 
@@ -83,27 +94,27 @@ sap.ui.define(['jquery.sap.global'],
 			}
 
 			function registerFeedbackRatingIcons() {
-				sap.ui.core.IconPool.addIcon("icon-face-very-bad", "FeedbackRatingFaces", {
+				IconPool.addIcon("icon-face-very-bad", "FeedbackRatingFaces", {
 					fontFamily: "FeedbackRatingFaces",
 					content: "E086",
 					suppressMirroring: true
 				});
-				sap.ui.core.IconPool.addIcon("icon-face-bad", "FeedbackRatingFaces", {
+				IconPool.addIcon("icon-face-bad", "FeedbackRatingFaces", {
 					fontFamily: "FeedbackRatingFaces",
 					content: "E087",
 					suppressMirroring: true
 				});
-				sap.ui.core.IconPool.addIcon("icon-face-neutral", "FeedbackRatingFaces", {
+				IconPool.addIcon("icon-face-neutral", "FeedbackRatingFaces", {
 					fontFamily: "FeedbackRatingFaces",
 					content: "E089",
 					suppressMirroring: true
 				});
-				sap.ui.core.IconPool.addIcon("icon-face-happy", "FeedbackRatingFaces", {
+				IconPool.addIcon("icon-face-happy", "FeedbackRatingFaces", {
 					fontFamily: "FeedbackRatingFaces",
 					content: "E08B",
 					suppressMirroring: true
 				});
-				sap.ui.core.IconPool.addIcon("icon-face-very-happy", "FeedbackRatingFaces", {
+				IconPool.addIcon("icon-face-very-happy", "FeedbackRatingFaces", {
 					fontFamily: "FeedbackRatingFaces",
 					content: "E08C",
 					suppressMirroring: true
@@ -111,18 +122,18 @@ sap.ui.define(['jquery.sap.global'],
 			}
 
 			function createFeedbackRatingHeader() {
-				var oRateYourExperienceLabel = new sap.ui.commons.FormattedTextView("feedbackRateYourExperienceLabel");
+				var oRateYourExperienceLabel = new FormattedTextView("feedbackRateYourExperienceLabel");
 				oRateYourExperienceLabel.setHtmlText("<span class='feedbackAsterisk'>*</span>Rate your experience:");
-				oFeedbackRatingLabel = new sap.ui.commons.Label("feedbackRatingLabel", {});
+				oFeedbackRatingLabel = new Label("feedbackRatingLabel", {});
 
-				return new sap.ui.layout.HorizontalLayout('feedbackRatingHeader', { content:[
+				return new HorizontalLayout('feedbackRatingHeader', { content:[
 							  oRateYourExperienceLabel, oFeedbackRatingLabel]});
 			}
 
 			function createFeedbackRatingSegmentedButton() {
 				registerFeedbackRatingIcons();
 
-				oFeedbackRatingButton = new sap.ui.commons.SegmentedButton({id: "feedbackRatingButton", buttons:[
+				oFeedbackRatingButton = new SegmentedButton({id: "feedbackRatingButton", buttons:[
 					createFeedbackRatingButton("icon-face-very-bad", "Very Poor", 1),
 					createFeedbackRatingButton("icon-face-bad", "Poor", 2),
 					createFeedbackRatingButton("icon-face-neutral", "Average", 3),
@@ -132,7 +143,7 @@ sap.ui.define(['jquery.sap.global'],
 
 				function createFeedbackRatingButton(sIcon, sLabel, iValue) {
 					var sIconFullName = "sap-icon://FeedbackRatingFaces/" + sIcon;
-					return new sap.ui.commons.Button({icon: sIconFullName, width: "20%", press: feedbackRatingButtonAction.bind(this, sLabel, iValue)});
+					return new Button({icon: sIconFullName, width: "20%", press: feedbackRatingButtonAction.bind(this, sLabel, iValue)});
 				}
 
 				function feedbackRatingButtonAction(sLabel, iValue) {
@@ -145,7 +156,7 @@ sap.ui.define(['jquery.sap.global'],
 			}
 
 			function createFeedbackInput() {
-				oFeedbackInput = new sap.ui.commons.TextArea("demokitFeedbackInput", {rows: 13});
+				oFeedbackInput = new TextArea("demokitFeedbackInput", {rows: 13});
 				oFeedbackInput.setPlaceholder(FEEDBACK_INPUT_PLACEHOLDER);
 				return oFeedbackInput;
 			}
@@ -154,7 +165,7 @@ sap.ui.define(['jquery.sap.global'],
 				that._oIncludeFeedbackContextCB.setText('Feedback is related to the current page');
 				that._oIncludeFeedbackContextCB.attachChange(that.updateFeedbackContextText.bind(that));
 
-				oContextDataLink = new sap.ui.commons.Link("feedbackContextDataLink",{
+				oContextDataLink = new Link("feedbackContextDataLink",{
 					wrapping: "false",
 					text: "Show context data",
 					tooltip: "Show context data",
@@ -171,7 +182,7 @@ sap.ui.define(['jquery.sap.global'],
 					}
 				});
 
-				return new sap.ui.layout.HorizontalLayout("feedbackContextButtons", { content:[
+				return new HorizontalLayout("feedbackContextButtons", { content:[
 					that._oIncludeFeedbackContextCB, oContextDataLink]});
 			}
 
@@ -183,28 +194,28 @@ sap.ui.define(['jquery.sap.global'],
 			}
 
 			function createLicenseLinks() {
-				var oLicenseLinkPrivacy = new sap.ui.commons.Link({
+				var oLicenseLinkPrivacy = new Link({
 					text: "Privacy",
 					tooltip: "Privacy",
 					target: "_blank",
 					href: "https://help.hana.ondemand.com/privacy.htm"
 				});
 
-				var oLicenseLinkTerms = new sap.ui.commons.Link({
+				var oLicenseLinkTerms = new Link({
 					text: "Terms of Use",
 					tooltip: "Terms of Use",
 					target: "_blank",
 					href: "https://help.hana.ondemand.com/terms_of_use.html"
 				});
 
-				var oLegalAgreement = new sap.ui.commons.Link({
+				var oLegalAgreement = new Link({
 					text: "Legal Agreement",
 					tooltip: "Legal Agreement",
 					target: "_blank",
 					href: "./legal_agreement_with_privacy.html"
 				});
 
-				var oFeedbackLicenseLinks = new sap.ui.commons.FormattedTextView();
+				var oFeedbackLicenseLinks = new FormattedTextView();
 				var sFeedbackLicenseLinksText = 'Your feedback is anonymous, we do not collect any personal data. For more information see <embed data-index=\"0\">, <embed data-index=\"1\"> & <embed data-index=\"2\">.';
 				oFeedbackLicenseLinks.addStyleClass("feedbackLicenseText");
 				oFeedbackLicenseLinks.setHtmlText(sFeedbackLicenseLinksText);
@@ -216,7 +227,7 @@ sap.ui.define(['jquery.sap.global'],
 			}
 
 			function createFooterButtons() {
-				var oCancelFeedbackButton = new sap.ui.commons.Button({
+				var oCancelFeedbackButton = new Button({
 					text:"Cancel",
 					tooltip:"Cancel",
 					press: function() {
@@ -225,7 +236,7 @@ sap.ui.define(['jquery.sap.global'],
 					}
 				});
 
-				oCloseFeedbackButton = new sap.ui.commons.Button('closeBtn', {
+				oCloseFeedbackButton = new Button('closeBtn', {
 					text:"Close",
 					tooltip:"Close",
 					press: function() {
@@ -233,7 +244,7 @@ sap.ui.define(['jquery.sap.global'],
 					}
 				});
 
-				oSendFeedbackButton = new sap.ui.commons.Button('sendBtn', {text:"Send", tooltip:"Send feedback", enabled: false,
+				oSendFeedbackButton = new Button('sendBtn', {text:"Send", tooltip:"Send feedback", enabled: false,
 					press : function() {
 						var data = {};
 						if (that._oIncludeFeedbackContextCB.getChecked()) {
@@ -279,25 +290,25 @@ sap.ui.define(['jquery.sap.global'],
 					}
 				});
 
-				var feedbackSubmitSuccessLayout = new sap.ui.layout.VerticalLayout({
-					content:[new sap.ui.commons.FormattedTextView('successMsg', {htmlText: '<h4>Your feedback was sent successfully.</h4>'})]
+				var feedbackSubmitSuccessLayout = new VerticalLayout({
+					content:[new FormattedTextView('successMsg', {htmlText: '<h4>Your feedback was sent successfully.</h4>'})]
 				});
 
-				var feedbackSubmitErrorLayout = new sap.ui.layout.VerticalLayout({
-					content:[new sap.ui.commons.FormattedTextView('errorMsg', {htmlText: '<h4>Your feedback was not sent.</h4>'})]
+				var feedbackSubmitErrorLayout = new VerticalLayout({
+					content:[new FormattedTextView('errorMsg', {htmlText: '<h4>Your feedback was not sent.</h4>'})]
 				});
 
-				return new sap.ui.layout.HorizontalLayout('feedbackButtons', { content:[
+				return new HorizontalLayout('feedbackButtons', { content:[
 								 oSendFeedbackButton, oCancelFeedbackButton]});
 			}
 
-			var oFeedbackForm = new sap.ui.layout.form.SimpleForm({
+			var oFeedbackForm = new SimpleForm({
 				maxContainerCols: 1,
 				width: '400px',
 				editable: true,
-				layout: sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout,
+				layout: SimpleFormLayout.ResponsiveGridLayout,
 				content: [
-					new sap.ui.commons.Label({text: 'Send us your feedback!'}),
+					new Label({text: 'Send us your feedback!'}),
 					createFeedbackRatingHeader(),
 					createFeedbackRatingSegmentedButton(),
 					createFeedbackInput(),
@@ -309,7 +320,7 @@ sap.ui.define(['jquery.sap.global'],
 			});
 
 			var sIconPrefix = "theme/img/themeswitch_";
-			var oFeedbackPopup = new sap.ui.ux3.ToolPopup('feedBackPopup', {
+			var oFeedbackPopup = new ToolPopup('feedBackPopup', {
 				icon: 'sap-icon://comment',
 				iconHover: sIconPrefix + 'hover.png',
 				iconSelected: sIconPrefix + 'selected.png',
@@ -325,4 +336,5 @@ sap.ui.define(['jquery.sap.global'],
 		};
 
 		return FeedbackClient;
-	}, /* bExport= */ true);
+
+	});

@@ -6,7 +6,11 @@
 .sapMNLI {
   padding: @containerPadding;
   position: relative;
-  margin-bottom: @bottomMargin;
+  margin: 0 0.25rem @bottomMargin;
+}
+
+.sapMNLI:first-of-type {
+  margin-top: 0.125rem;
 }
 
 // Priority styles =====================================================================================================
@@ -149,4 +153,35 @@ html[data-sap-ui-browser*='ie'] .sapMNLI-Footer .sapMBtnInner {
   .sapMTextLineClamp {
     -webkit-line-clamp: initial !important;
   }
+}
+
+// L Size Notification styles
+.sapMNLI-LSize .sapMNLI-Header .sapMText {
+  box-sizing: border-box;
+  max-width: 60%;
+}
+
+.sapMNLI-LSize .sapMNLI-Header.sapMNLI-No-Footer .sapMText {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.sapMNLI-LSize .sapMNLI-Body {
+  box-sizing: border-box;
+  width: 60%;
+}
+
+.sapMNLI-LSize .sapMNLI-Body.sapMNLI-No-Footer {
+  width: 100%;
+}
+
+.sapMNLI-LSize .sapMNLI-Footer {
+  box-sizing: border-box;
+  width: 40%;
+  padding-right: @containerPadding;
+  display: inline-block;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin-bottom: 1rem;
 }

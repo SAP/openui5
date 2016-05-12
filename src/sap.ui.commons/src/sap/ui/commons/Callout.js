@@ -24,6 +24,7 @@ sap.ui.define(['jquery.sap.global', './CalloutBase', './library'],
 	 *
 	 * @constructor
 	 * @public
+	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.Popover</code> control.
 	 * @alias sap.ui.commons.Callout
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */

@@ -46,6 +46,7 @@ sap.ui.define(function () {
 			oRm.write("<div");
 			if (bHasTitle) {
 				oRm.writeAttribute("role", "heading");
+				oRm.writeAttribute("aria-level", "4");
 			}
 			oRm.addClass('sapUxAPObjectPageSubSectionHeaderTitle');
 			if (oControl.getTitleUppercase()) {

@@ -283,7 +283,7 @@ sap.ui.define(["./ObjectPageLayout", "sap/ui/core/Icon"], function (ObjectPageLa
 	};
 
 	/**
-	 * Renders the showSideContentButton button.
+	 * Renders the sideContentButton button.
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRm the RenderManager that can be used for writing to the render output buffer
@@ -293,8 +293,10 @@ sap.ui.define(["./ObjectPageLayout", "sap/ui/core/Icon"], function (ObjectPageLa
 	 * @private
 	 */
 	ObjectPageHeaderRenderer._renderSideContentBtn = function (oRm, oControl) {
-		if (oControl.getShowSideContentButton()) { // render sideContent button
-			oRm.write("<span"); // Start title arrow container
+		var oSideBtn = oControl.getSideContentButton();
+
+		if (oSideBtn) { // render sideContent button and separator
+			oRm.write("<span"); // Start button and separator container
 			oRm.addClass("sapUxAPObjectPageHeaderSideContentBtn");
 			oRm.writeClasses();
 			oRm.write(">");
@@ -302,8 +304,8 @@ sap.ui.define(["./ObjectPageLayout", "sap/ui/core/Icon"], function (ObjectPageLa
 			oRm.addClass("sapUxAPObjectPageHeaderSeparator");
 			oRm.writeClasses();
 			oRm.write("></span>");
-			oRm.renderControl(oControl._oSideContentBtn);
-			oRm.write("</span>"); // end title arrow container
+			oRm.renderControl(oSideBtn);
+			oRm.write("</span>"); // end container
 		}
 	};
 

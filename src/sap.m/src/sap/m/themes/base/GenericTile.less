@@ -5,14 +5,23 @@
 	display: inline-block;
 	overflow: hidden;
 	background: @sapUiWhite;
-	border-radius: 0.25rem;
+	border-radius: 0.125rem;
+	border: 1px solid transparent;
 	position: relative;
-	box-sizing: border-box;
-	border: 1px transparent dotted; /* Usage of px as aligned with designers. */
-	outline : none;
+	outline: none;
 }
 
-.sapMGTHdrTxt>.sapMGTTitle,
+.sapMGT.OneByOne {
+	width: 11rem;
+	height: 11rem;
+}
+
+.sapMGT.TwoByOne {
+	width: 22.5rem;
+	height: 11rem;
+}
+
+.sapMGTHdrTxt > .sapMGTTitle,
 .sapMGTSubHdrTxt,
 .sapMGT .sapMGTContent {
 	-webkit-user-select: none;
@@ -20,7 +29,7 @@
 	-ms-user-select: none;
 }
 
-.sapMGTHdrTxt>.sapMGTTitle,
+.sapMGTHdrTxt > .sapMGTTitle,
 .sapMGenericTileFtrFldTxt>.sapMGTFailed {
 	cursor: inherit;
 }
@@ -41,62 +50,24 @@
 
 .sapMGTHdrTxt {
 	overflow: hidden;
-}
 
+	.sapMText {
+		display: inline;
+		line-height: 1.25rem;
+	}
+}
 .sapMGTSubHdrTxt {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space:nowrap;
-	margin-top: 3px; /* Usage of px as aligned with designers. */
-}
-
-.sapUiMedia-Std-Phone .sapMGT.Auto.OneByOne,
-.sapMGT.S.OneByOne {
-	width: 9.125rem;
-	height: 8.875rem;
-}
-
-.sapUiMedia-Std-Phone .sapMGT.Auto.TwoByOne,
-.sapMGT.S.TwoByOne {
-	width: 18.875rem;
-	height: 8.875rem;
-}
-
-.sapUiMedia-Std-Desktop .sapMGT.Auto.OneByOne,
-.sapMGT.L.OneByOne,
-.sapUiMedia-Std-Tablet .sapMGT.Auto.OneByOne,
-.sapMGT.M.OneByOne {
-	width: 11.375rem;
-	height: 10.875rem;
-}
-
-.sapUiMedia-Std-Desktop .sapMGT.Auto.TwoByOne,
-.sapMGT.L.TwoByOne,
-.sapUiMedia-Std-Tablet .sapMGT.Auto.TwoByOne,
-.sapMGT.M.TwoByOne {
-	width: 23.375rem;
-	height: 10.875rem;
+	line-height: 1.25rem;
 }
 
 .sapMGTHdrContent {
-	margin-right: 0.5rem;
-	margin-left: 0.5rem;
-	margin-top: 0.5rem;
-}
-
-.sapUiMedia-Std-Phone .sapMGTHdrContent.Auto,
-.sapMGTHdrContent.S {
-	height: 3.125rem;
-	margin-top: 0.5rem;
-}
-
-.sapMGTHdrContent.L.TwoByOne,
-.sapUiMedia-Std-Desktop .sapMGTHdrContent.Auto,
-.sapMGTHdrContent.L.OneByOne,
-.sapUiMedia-Std-Tablet .sapMGTHdrContent.Auto,
-.sapMGTHdrContent.M {
-	height: 3.5rem;
-	margin-top: 0.5rem;
+	height: 3.625rem;
+	margin-top: 1rem;
+	margin-left: 1rem;
+	margin-right: 1rem;
 }
 
 .sapMGTHdrIconImage {
@@ -108,12 +79,23 @@
 
 .sapMGTOverlay {
 	position: absolute !important;
+	pointer-events: none;
 	opacity: 0.8;
 	z-index: 1;
-	top: 0rem;
-	right: 0rem;
-	left: 0rem;
-	bottom: 0rem;
+	top: 0;
+	right: 0;
+	left: 0;
+	bottom: 0;
+}
+
+.sapMGTFocusDiv {
+	position: absolute;
+	pointer-events: none;
+	left: 1px;
+	top: 1px;
+	right: 1px;
+	bottom: 1px;
+	border-radius: 0.25rem;
 }
 
 .sapMGenericTileLoading {
@@ -147,4 +129,77 @@ html[dir=rtl] .sapMGenericTileFtrFldTxt {
 
 .sapMGenericTileFtrFldIcn>.sapMGTFtrFldIcnMrk {
 	vertical-align: bottom;
+}
+
+/* the following is needed for non-webkit browsers that don't support line-clamping */
+
+/* some places should be left for subheader when the subheader exists*/
+.sapMGT.sapMGTHeaderMode .sapMGTHdrTxt:nth-last-of-type(2) {
+	max-height: 5rem;
+}
+
+.sapMGT:not(.sapMGTHeaderMode) .sapMGTHdrTxt:nth-last-of-type(2) {
+	max-height: 2.5rem;
+}
+
+/* the max-height is calculated the same as webkit-line-clamping and supported to work when
+the screen size changes between small and large (e.g. mobile devices auto rotation) without rerendering*/
+html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ed'], html[data-sap-ui-browser*='ff'] {
+	.sapMGT.sapMGTHeaderMode .sapMGTHdrContent .sapMTextMaxLine {
+		max-height: 6.25rem !important;
+	}
+}
+
+html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ed'], html[data-sap-ui-browser*='ff'] {
+	.sapMGT:not(.sapMGTHeaderMode) .sapMGTHdrContent .sapMTextMaxLine {
+		max-height: 3.75rem !important;
+	}
+}
+
+
+/* BREAKPOINT FOR SMALL PHONES */
+@media screen and (max-width: 374px) {
+	.sapMGTHdrTxt .sapMText {
+		line-height: 1.063rem;
+	}
+
+	.sapMGTSubHdrTxt {
+		line-height: 1.063rem;
+	}
+
+	.sapMGT.sapMGTHeaderMode .sapMGTHdrTxt:nth-last-of-type(2) {
+		max-height: 4.25rem;
+	}
+
+	.sapMGT:not(.sapMGTHeaderMode) .sapMGTHdrTxt:nth-last-of-type(2) {
+		max-height: 2.125rem;
+	}
+
+	html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ed'], html[data-sap-ui-browser*='ff'] {
+		.sapMGT.sapMGTHeaderMode > .sapMGTHdrContent .sapMTextMaxLine {
+			max-height: 5.3rem !important;
+		}
+	}
+
+	html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ed'], html[data-sap-ui-browser*='ff'] {
+		.sapMGT:not(.sapMGTHeaderMode) > .sapMGTHdrContent .sapMTextMaxLine {
+			max-height: 3.125rem !important;
+		}
+	}
+
+	.sapMGT.OneByOne {
+		width: 9.25rem;
+		height: 9.25rem;
+	}
+	.sapMGT.TwoByOne {
+		width: 19rem;
+		height: 9.25rem;
+	}
+
+	.sapMGTHdrContent {
+		height: 3.125rem;
+		margin-top: 0.625rem;
+		margin-left: 0.625rem;
+		margin-right: 0.625rem;
+	}
 }

@@ -100,8 +100,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 * to allow touching.
 			 * @since 1.38.0
 			 */
-			appointmentsReducedHeight : {type : "boolean", group : "Appearance", defaultValue : false}
+			appointmentsReducedHeight : {type : "boolean", group : "Appearance", defaultValue : false},
 
+			/**
+			 * Minimum date that can be shown and selected in the <code>PlanningCalendar</code>. This must be a JavaScript date object.
+			 *
+			 * <b>Note:</b> If the <code>minDate</code> is set to be after the <code>maxDate</code>,
+			 * the <code>maxDate</code> is set to the end of the month of the <code>minDate</code>.
+			 * @since 1.38.0
+			 */
+			minDate : {type : "object", group : "Misc", defaultValue : null},
+
+			/**
+			 * Maximum date that can be shown and selected in the <code>PlanningCalendar</code>. This must be a JavaScript date object.
+			 *
+			 * <b>Note:</b> If the <code>maxDate</code> is set to be before the <code>minDate</code>,
+			 * the <code>minDate</code> is set to the begin of the month of the <code>maxDate</code>.
+			 * @since 1.38.0
+			 */
+			maxDate : {type : "object", group : "Misc", defaultValue : null}
 		},
 		aggregations : {
 
@@ -408,6 +425,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			oStartDate = new Date();
 		}
 
+		if (jQuery.sap.equal(oStartDate, this.getStartDate())) {
+			return this;
+		}
+
 		if (!(oStartDate instanceof Date)) {
 			throw new Error("Date must be a JavaScript date object; " + this);
 		}
@@ -415,6 +436,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		var iYear = oStartDate.getFullYear();
 		if (iYear < 1 || iYear > 9999) {
 			throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + this);
+		}
+
+		var oMinDate = this.getMinDate();
+		if (oMinDate && oMinDate.getTime() > oStartDate.getTime()) {
+			jQuery.sap.log.warning("StartDate < minDate -> StartDate set to minDate", this);
+			oStartDate = new Date(oMinDate.getTime());
+		} else {
+			var oMaxDate = this.getMaxDate();
+			if (oMaxDate && oMaxDate.getTime() < oStartDate.getTime()) {
+				jQuery.sap.log.warning("StartDate > maxDate -> StartDate set to minDate", this);
+				if (oMinDate) {
+					oStartDate = new Date(oMinDate.getTime());
+				} else {
+					oStartDate = new Date(1, 0, 1);
+					oStartDate.setFullYear(1);
+				}
+			}
 		}
 
 		this.setProperty("startDate", oStartDate, true);
@@ -446,6 +484,167 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
+	PlanningCalendar.prototype.setMinDate = function(oDate){
+
+		if (jQuery.sap.equal(oDate, this.getMinDate())) {
+			return this;
+		}
+
+		var oMaxDate = this.getMaxDate();
+
+		if (oDate) {
+			if (!(oDate instanceof Date)) {
+				throw new Error("Date must be a JavaScript date object; " + this);
+			}
+
+			var iYear = oDate.getFullYear();
+			if (iYear < 1 || iYear > 9999) {
+				throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + this);
+			}
+
+			this.setProperty("minDate", oDate, true);
+			this._bNoStartDateChange = true; // set the start date after all calendars are updated
+
+			if (this._oTimeInterval) {
+				this._oTimeInterval.setMinDate(new Date(oDate.getTime())); // use new date object
+			}
+
+			if (this._oDateInterval) {
+				this._oDateInterval.setMinDate(new Date(oDate.getTime())); // use new date object
+			}
+
+			if (this._oMonthInterval) {
+				this._oMonthInterval.setMinDate(new Date(oDate.getTime())); // use new date object
+			}
+
+			if (oMaxDate && oMaxDate.getTime() < oDate.getTime()) {
+				jQuery.sap.log.warning("minDate > maxDate -> maxDate set to end of the month", this);
+				oMaxDate = new Date(oDate.getTime());
+				oMaxDate.setMonth(oMaxDate.getMonth() + 1, 0);
+				oMaxDate.setHours(23);
+				oMaxDate.setMinutes(59);
+				oMaxDate.setSeconds(59);
+				oMaxDate.setMilliseconds(0);
+				this.setMaxDate(oMaxDate);
+			}
+
+			this._bNoStartDateChange = undefined;
+			var oStartDate = this.getStartDate();
+			if (oStartDate && oStartDate.getTime() < oDate.getTime()) {
+				jQuery.sap.log.warning("StartDate < minDate -> StartDate set to minDate", this);
+				oStartDate = new Date(oDate.getTime());
+				this.setStartDate(oStartDate);
+			}
+		} else {
+			this.setProperty("minDate", undefined, true);
+
+			if (this._oTimeInterval) {
+				this._oTimeInterval.setMinDate();
+			}
+
+			if (this._oDateInterval) {
+				this._oDateInterval.setMinDate();
+			}
+
+			if (this._oMonthInterval) {
+				this._oMonthInterval.setMinDate();
+			}
+		}
+
+		var oToday = new Date();
+		if (oDate && oToday.getTime() < oDate.getTime()) {
+			this._oTodayButton.setVisible(false);
+		} else if (!oMaxDate || oToday.getTime() < oMaxDate.getTime()) {
+				this._oTodayButton.setVisible(true);
+		}
+
+		return this;
+
+	};
+
+	PlanningCalendar.prototype.setMaxDate = function(oDate){
+
+		if (jQuery.sap.equal(oDate, this.getMaxDate())) {
+			return this;
+		}
+
+		var oMinDate = this.getMinDate();
+
+		if (oDate) {
+			if (!(oDate instanceof Date)) {
+				throw new Error("Date must be a JavaScript date object; " + this);
+			}
+
+			var iYear = oDate.getFullYear();
+			if (iYear < 1 || iYear > 9999) {
+				throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + this);
+			}
+
+			this.setProperty("maxDate", oDate, true);
+			this._bNoStartDateChange = true; // set the start date after all calendars are updated
+
+			if (this._oTimeInterval) {
+				this._oTimeInterval.setMaxDate(new Date(oDate.getTime())); // use new date object
+			}
+
+			if (this._oDateInterval) {
+				this._oDateInterval.setMaxDate(new Date(oDate.getTime())); // use new date object
+			}
+
+			if (this._oMonthInterval) {
+				this._oMonthInterval.setMaxDate(new Date(oDate.getTime())); // use new date object
+			}
+
+			if (oMinDate && oMinDate.getTime() > oDate.getTime()) {
+				jQuery.sap.log.warning("maxDate < minDate -> maxDate set to begin of the month", this);
+				oMinDate = new Date(oDate.getTime());
+				oMinDate.setUTCDate(1);
+				oMinDate.setHours(0);
+				oMinDate.setMinutes(0);
+				oMinDate.setSeconds(0);
+				oMinDate.setMilliseconds(0);
+				this.setMinDate(oMinDate);
+			}
+
+			this._bNoStartDateChange = undefined;
+			var oStartDate = this.getStartDate();
+			if (oStartDate && oStartDate.getTime() > oDate.getTime()) {
+				jQuery.sap.log.warning("StartDate > maxDate -> StartDate set to minDate", this);
+				if (oMinDate) {
+					oStartDate = new Date(oMinDate.getTime());
+				} else {
+					oStartDate = new Date(1, 0, 1);
+					oStartDate.setFullYear(1);
+				}
+				this.setStartDate(oStartDate);
+			}
+		} else {
+			this.setProperty("maxDate", undefined, true);
+
+			if (this._oTimeInterval) {
+				this._oTimeInterval.setMaxDate();
+			}
+
+			if (this._oDateInterval) {
+				this._oDateInterval.setMaxDate();
+			}
+
+			if (this._oMonthInterval) {
+				this._oMonthInterval.setMaxDate();
+			}
+		}
+
+		var oToday = new Date();
+		if (oDate && oToday.getTime() > oDate.getTime()) {
+			this._oTodayButton.setVisible(false);
+		} else if (!oMinDate || oToday.getTime() > oMinDate.getTime()) {
+				this._oTodayButton.setVisible(true);
+		}
+
+		return this;
+
+	};
+
 	PlanningCalendar.prototype.setViewKey = function(sKey){
 
 		this.setProperty("viewKey", sKey, true);
@@ -457,6 +656,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		}
 
 		var oStartDate = this.getStartDate();
+		var oMinDate = this.getMinDate();
+		var oMaxDate = this.getMaxDate();
 		var oView = _getView.call(this, sKey, !this._bBeforeRendering);
 
 		if (!oView) {
@@ -480,6 +681,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					this._oTimeInterval.getSpecialDates = function(){
 						return this._oPlanningCalendar.getSpecialDates();
 					};
+					if (oMinDate) {
+						this._oTimeInterval.setMinDate(new Date(oMinDate.getTime()));
+					}
+					if (oMaxDate) {
+						this._oTimeInterval.setMaxDate(new Date(oMaxDate.getTime()));
+					}
 				}else if (this._oTimeInterval.getItems() != iIntervals) {
 					this._oTimeInterval.setItems(iIntervals);
 				}
@@ -500,6 +707,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					this._oDateInterval.getSpecialDates = function(){
 						return this._oPlanningCalendar.getSpecialDates();
 					};
+					if (oMinDate) {
+						this._oDateInterval.setMinDate(new Date(oMinDate.getTime()));
+					}
+					if (oMaxDate) {
+						this._oDateInterval.setMaxDate(new Date(oMaxDate.getTime()));
+					}
 				}else if (this._oDateInterval.getDays() != iIntervals) {
 					this._oDateInterval.setDays(iIntervals);
 				}
@@ -519,6 +732,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					this._oMonthInterval.getSpecialDates = function(){
 						return this._oPlanningCalendar.getSpecialDates();
 					};
+					if (oMinDate) {
+						this._oMonthInterval.setMinDate(new Date(oMinDate.getTime()));
+					}
+					if (oMaxDate) {
+						this._oMonthInterval.setMaxDate(new Date(oMaxDate.getTime()));
+					}
 				}else if (this._oMonthInterval.setMonths() != iIntervals) {
 					this._oMonthInterval.setMonths(iIntervals);
 				}
@@ -984,6 +1203,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	}
 
 	function _handleStartDateChange(oEvent){
+
+		if (this._bNoStartDateChange) {
+			return;
+		}
 
 		var oStartDate = oEvent.oSource.getStartDate();
 

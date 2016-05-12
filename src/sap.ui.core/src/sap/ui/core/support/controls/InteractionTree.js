@@ -3,12 +3,14 @@
  */
 
 sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/IconPool',
-       'sap/m/Popover', 'sap/m/Text', 'sap/ui/layout/form/SimpleForm', 'sap/m/Label', 'sap/m/Link',
+    'sap/m/library', 'sap/m/Popover', 'sap/m/Text', 'sap/ui/layout/form/SimpleForm', 'sap/m/Button', 'sap/m/Label', 'sap/m/Link',
     'sap/ui/core/HTML', 'sap/ui/core/Title'],
     function (jQuery, ManagedObject, IconPool,
-              Popover, Text, SimpleForm, Label, Link,
+              mobileLibrary, Popover, Text, SimpleForm, Button, Label, Link,
               HTML, Title) {
        'use strict';
+
+       var PlacementType = mobileLibrary.PlacementType;
 
        var InteractionTree = ManagedObject.extend("sap.ui.core.support.controls.InteractionTree", {
           constructor: function () {
@@ -650,7 +652,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
           function createEmptyPopOver() {
              var oPopover = new Popover({
-                placement: sap.m.PlacementType.Auto,
+                placement: PlacementType.Auto,
                 contentWidth: "400px",
                 showHeader: false,
                 showArrow: true,
@@ -671,7 +673,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           function createPopOverContent() {
              clientVsServerTitle = new HTML();
              progressBar = new HTML();
-             closeButton = new sap.m.Button({
+             closeButton = new Button({
                 icon : IconPool.getIconURI("decline"),
                 type: "Transparent",
                 press : function() {
@@ -744,14 +746,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
        InteractionTree.prototype.attachInteractionDetailsPopover = function () {
           var simpleForm,
               closeButton,
-              e2eDurationText,
+              durationText,
               processingText,
               requestTimeText,
               roundtripText,
               bytesReceivedText,
               requestNumberText,
-              startTimeText,
-              endTimeText;
+              startTimeText;
 
           var that = this;
           var interactionsDivElements = jQuery('.sapUiInteractionItemDiv.sapUiInteractionTreeItem .sapUiInteractionTreeItemRight');
@@ -781,9 +782,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
                 return;
              }
 
-             var e2eDuration = interaction.end - interaction.start;
-             e2eDurationText.setText(that.formatDuration(e2eDuration));
-             processingText.setText(that.formatDuration(e2eDuration - interaction.roundtrip));
+             durationText.setText(that.formatDuration(interaction.duration));
+             processingText.setText(that.formatDuration(interaction.duration - interaction.roundtrip));
              requestTimeText.setText(that.formatDuration(interaction.requestTime));
              roundtripText.setText(that.formatDuration(interaction.roundtrip));
 
@@ -791,12 +791,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
              requestNumberText.setText(interaction.requests.length);
 
              startTimeText.setText(that.formatTime(interaction.start));
-             endTimeText.setText(that.formatTime(interaction.end));
           }
 
           function createEmptyPopOver() {
              var oPopover = new Popover({
-                placement: sap.m.PlacementType.Auto,
+                placement: PlacementType.Auto,
                 contentWidth: "350px",
                 showHeader: false,
                 showArrow: true,
@@ -814,7 +813,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           }
 
           function createPopOverContent() {
-             closeButton = new sap.m.Button({
+             closeButton = new Button({
                 icon : IconPool.getIconURI("decline"),
                 type: "Transparent",
                 press : function() {
@@ -822,14 +821,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
                 }
              }).addStyleClass("sapUiSupportIntPopoverCloseButton");
              closeButton.setTooltip("Close");
-             e2eDurationText = new Text().addStyleClass("sapUiSupportIntRequestText");
+             durationText = new Text().addStyleClass("sapUiSupportIntRequestText");
              processingText = new Text().addStyleClass("sapUiSupportIntRequestText");
              requestTimeText = new Text().addStyleClass("sapUiSupportIntRequestText");
              roundtripText = new Text().addStyleClass("sapUiSupportIntRequestText");
              bytesReceivedText = new Text().addStyleClass("sapUiSupportIntRequestText");
              requestNumberText = new Text().addStyleClass("sapUiSupportIntRequestText");
              startTimeText = new Text().addStyleClass("sapUiSupportIntRequestText");
-             endTimeText = new Text().addStyleClass("sapUiSupportIntRequestText");
 
              simpleForm = new SimpleForm({
                 maxContainerCols: 2,
@@ -843,8 +841,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
                 breakpointM: 0,
                 content:[
                    new Title({text:"INTERACTION DATA"}),
-                   new Label({text: "E2E Duration"}).addStyleClass("sapUiSupportIntRequestLabel"),
-                   e2eDurationText,
+                   new Label({text: "Duration"}).addStyleClass("sapUiSupportIntRequestLabel"),
+                   durationText,
                    new Label({text: "Client Processing Duration"}).addStyleClass("sapUiSupportIntRequestLabel"),
                    processingText,
                    new Label({text: "Total Requests Duration"}).addStyleClass("sapUiSupportIntRequestLabel"),
@@ -856,9 +854,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
                    new Label({text:"Request Count"}).addStyleClass("sapUiSupportIntRequestLabel"),
                    requestNumberText,
                    new Label({text:"Start Time"}).addStyleClass("sapUiSupportIntRequestLabel"),
-                   startTimeText,
-                   new Label({text:"End Time"}).addStyleClass("sapUiSupportIntRequestLabel"),
-                   endTimeText
+                   startTimeText
                 ]
              }).addStyleClass("sapUiSupportIntPopoverForm");
              return [closeButton, simpleForm];

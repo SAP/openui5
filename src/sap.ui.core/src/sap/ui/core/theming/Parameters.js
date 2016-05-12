@@ -8,8 +8,8 @@
  * @public
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
-	function(jQuery, URI) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
+	function(jQuery, URI, Element) {
 	"use strict";
 
 		/**
@@ -33,10 +33,45 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 			mParameters = null;
 		}
 
+		function mergeParameterSet(mCurrent, mNew) {
+			for (var sParam in mNew) {
+				if (typeof mCurrent[sParam] === "undefined") {
+					mCurrent[sParam] = mNew[sParam];
+				}
+			}
+			return mCurrent;
+		}
+
 		function mergeParameters(mNewParameters) {
-			for (var sParam in mNewParameters) {
-				if (typeof mParameters[sParam] == "undefined") {
-					mParameters[sParam] = mNewParameters[sParam];
+
+			// check for old format:
+			// {
+			//   "param1": "value1",
+			//   "param2": "value2"
+			// }
+			if (typeof mNewParameters["default"] !== "object") {
+				// migrate to new format
+				mNewParameters = {
+					"default": mNewParameters,
+					"scopes": {}
+				};
+			}
+
+			// ensure parameters objects
+			mParameters = mParameters || {};
+			mParameters["default"] = mParameters["default"] || {};
+			mParameters["scopes"] = mParameters["scopes"] || {};
+
+			// merge default parameters
+			mergeParameterSet(mParameters["default"], mNewParameters["default"]);
+
+			// merge scopes
+			if (typeof mNewParameters["scopes"] === "object") {
+				for (var sScopeName in mNewParameters["scopes"]) {
+					// ensure scope object
+					mParameters["scopes"][sScopeName] = mParameters["scopes"][sScopeName] || {};
+					// merge scope set
+					mergeParameterSet(mParameters["scopes"][sScopeName], mNewParameters["scopes"][sScopeName]);
 				}
 			}
 		}
@@ -89,7 +124,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 				var aParams = /\(["']data:text\/plain;utf-8,(.*)["']\)$/i.exec(sDataUri);
 				if (aParams && aParams.length >= 2) {
 					var sParams = aParams[1];
-
 					// decode only if necessary
 					if (sParams.charAt(0) !== "{" && sParams.charAt(sParams.length - 1) !== "}") {
 						try {
@@ -122,8 +156,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 			// load and evaluate parameter file
 			oResponse = jQuery.sap.sjax({url:sUrl,dataType:'json'});
 			if (oResponse.success) {
+				oResult = oResponse.data;
 
-				oResult = (typeof oResponse.data == "string") ? jQuery.parseJSON(oResponse.data) : oResponse.data; // FIXME jQuery1.7.1 always parses JSON, so why is it checked here?
 				if ( jQuery.isArray(oResult) ) {
 					// in the sap-ui-merged use case, multiple JSON files are merged into and transfered as a single JSON array
 					for (var j = 0; j < oResult.length; j++) {
@@ -182,43 +216,111 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 		};
 
 		/**
+		 * Returns parameter value from given map and handles legacy parameter names
+		 *
+		 * @param {object} mOptions options map
+		 * @param {string} mOptions.parameterName Parameter name / key
+		 * @param {string} mOptions.scopeName Scope name
+		 * @param {boolean} mOptions.loadPendingParameters If set to "true" and no parameter value is found,
+		 *                                                 all pending parameters will be loaded (see Parameters._addLibraryTheme)
+		 * @returns {string} parameter value or undefined
+		 * @private
+		 */
+		function getParam(mOptions) {
+			var oParams = getParameters();
+			if (mOptions.scopeName) {
+				oParams = oParams["scopes"][mOptions.scopeName];
+			} else {
+				oParams = oParams["default"];
+			}
+
+			var sParam = oParams[mOptions.parameterName];
+
+			if (typeof sParam === "undefined" && typeof mOptions.parameterName === "string") {
+				// compatibility for theming parameters with colon
+				var iIndex = mOptions.parameterName.indexOf(":");
+				if (iIndex !== -1) {
+					mOptions.parameterName = mOptions.parameterName.substr(iIndex + 1);
+				}
+				sParam = oParams[mOptions.parameterName];
+			}
+
+			if (mOptions.loadPendingParameters && typeof sParam === "undefined") {
+				loadPendingLibraryParameters();
+				sParam = getParam({
+					parameterName: mOptions.parameterName,
+					scopeName: mOptions.scopeName,
+					loadPendingParameters: false // prevent recursion
+				});
+			}
+
+			return sParam;
+		}
+
+		/**
 		 * Returns the current value for the given CSS parameter.
 		 * If no parameter is given, a map containing all parameters is returned. This map is a copy, so changing values in the map does not have any effect.
 		 * For any other input or an undefined parameter name, the result is undefined.
 		 *
 		 * @param {string} sName the CSS parameter name
+		 * @param {object} [oControl] optional the control instance
 		 * @returns {any} the CSS parameter value
 		 *
 		 * @public
 		 */
-		Parameters.get = function(sName) {
+		Parameters.get = function(sName, oControl) {
+			var sParam, oParams;
 
-			if (arguments.length == 1) {
-				var oParams = getParameters();
-				var sParam = oParams[sName];
-
-				if (typeof sParam === "undefined" && typeof sName === "string") {
-					// compatibility for theming parameters with colon
-					var iIndex = sName.indexOf(":");
-					if (iIndex !== -1) {
-						sName = sName.substr(iIndex + 1);
-					}
-					sParam = oParams[sName];
-				}
-
-				if (typeof sParam === "undefined") {
-					loadPendingLibraryParameters();
-					oParams = getParameters();
-					sParam = oParams[sName];
-				}
-
-				return sParam;
-			} else if (arguments.length == 0) {
+			// Parameters.get() without arugments returns
+			// copy of complete default parameter set
+			if (arguments.length === 0) {
 				loadPendingLibraryParameters();
-				return jQuery.extend({}, getParameters());
-			} else {
-				return undefined;
+				oParams = getParameters();
+				return jQuery.extend({}, oParams["default"]);
 			}
+
+			if (typeof sName === "string") {
+
+				if (oControl instanceof Element) {
+					// make sure to first load all pending parameters
+					// doing it later (lazy) might change the behavior in case a scope is initially not defined
+					loadPendingLibraryParameters();
+
+					// check for scopes and try to find the classes in Control Tree
+					oParams = getParameters();
+					var aScopes = Object.keys(oParams["scopes"]);
+
+					var fnControlHasStyleClass = function(sScopeName) {
+						return typeof oControl.hasStyleClass === "function" && oControl.hasStyleClass(sScopeName);
+					};
+
+					while (oControl) {
+						var aFoundScopeClasses = aScopes.filter(fnControlHasStyleClass);
+						if (aFoundScopeClasses.length > 0) {
+							for (var i = 0; i < aFoundScopeClasses.length; i++) {
+								var sFoundScopeClass = aFoundScopeClasses[i];
+								sParam = getParam({
+									parameterName: sName,
+									scopeName: sFoundScopeClass
+								});
+								if (sParam) {
+									// return first matching scoped parameter
+									return sParam;
+								}
+							}
+						}
+						oControl = typeof oControl.getParent === "function" && oControl.getParent();
+					}
+
+					// if no matching scope was found return the default parameter (see below)
+				}
+
+				return getParam({
+					parameterName: sName,
+					loadPendingParameters: true
+				});
+			}
+
 		};
 
 		/**
@@ -230,13 +332,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 		 * @private
 		 */
 		Parameters._setOrLoadParameters = function(mLibraryParameters) {
-			mParameters = {}; // don't use this.reset(), as it will set the variable to null
+
+			// don't use this.reset(), as it will set the variable to null
+			mParameters = {
+				"default": {},
+				"scopes": {}
+			};
 			sTheme = sap.ui.getCore().getConfiguration().getTheme();
 			forEachStyleSheet(function(sId, sHref) {
 				var sLibname = sId.substr(13); // length of sap-ui-theme-
 				if (mLibraryParameters[sLibname]) {
 					// if parameters are already provided for this lib, use them (e.g. from LessSupport)
-					jQuery.extend(mParameters, mLibraryParameters[sLibname]);
+					jQuery.extend(mParameters["default"], mLibraryParameters[sLibname]);
 				} else {
 					// otherwise use inline-parameters or library-parameters.json
 					loadParameters(sId, sHref);
@@ -267,7 +374,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 		 */
 		Parameters._getThemeImage = function(sParamName, bForce) {
 			sParamName = sParamName || "sapUiGlobalLogo";
-			var logo = sap.ui.core.theming.Parameters.get(sParamName);
+			var logo = Parameters.get(sParamName);
 			if (logo) {
 				var match = /url[\s]*\('?"?([^\'")]*)'?"?\)/.exec(logo);
 				if (match) {

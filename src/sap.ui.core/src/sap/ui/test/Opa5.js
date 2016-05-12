@@ -19,7 +19,7 @@ sap.ui.define([
 		'./pipelines/MatcherPipeline',
 		'./pipelines/ActionPipeline'
 	],
-	function($,
+	function(jQuery,
 			 Opa,
 			 OpaPlugin,
 			 PageObjectFactory,
@@ -36,11 +36,11 @@ sap.ui.define([
 			 ActionPipeline) {
 		"use strict";
 
-		var oPlugin = new OpaPlugin(iFrameLauncher._sLogPrefix),
+		var $ = jQuery,
+			oPlugin = new OpaPlugin(iFrameLauncher._sLogPrefix),
 			oMatcherPipeline = new MatcherPipeline(),
 			oActionPipeline = new ActionPipeline(),
-			sFrameId = "OpaFrame",
-			bComponentLoaded = false;
+			sFrameId = "OpaFrame";
 
 		/**
 		 * Helps you when writing tests for UI5 applications.
@@ -77,16 +77,13 @@ sap.ui.define([
 				}
 			});
 
-			return this.waitFor({
-				// make sure no controls are searched by the defaults
-				viewName: null,
-				controlType: null,
-				id: null,
-				searchOpenDialogs: false,
-				check : iFrameLauncher.hasLaunched,
-				timeout : iTimeout || 80,
-				errorMessage : "unable to load the iframe with the url: " + sSource
-			});
+			var oOptions = createWaitForObjectWithoutDefaults();
+
+			oOptions.check = iFrameLauncher.hasLaunched;
+			oOptions.timeout = iTimeout || 80;
+			oOptions.errorMessage = "unable to load the IFrame with the url: " + sSource;
+
+			return this.waitFor(oOptions);
 		}
 
 		/**
@@ -101,6 +98,7 @@ sap.ui.define([
 		 * @function
 		 */
 		Opa5.prototype.iStartMyUIComponent = function iStartMyUIComponent (oOptions){
+			var bComponentLoaded = false;
 			oOptions = oOptions || {};
 
 			// wait for starting of component launcher
@@ -122,16 +120,10 @@ sap.ui.define([
 				}
 			});
 
-			var oPropertiesForWaitFor = {
-				// make sure no controls are searched by the defaults
-				viewName: null,
-				controlType: null,
-				id: null,
-				searchOpenDialogs: false,
-				check: function () {
-					return bComponentLoaded;
-				},
-				errorMessage: "Unable to load the component with the name: " + oOptions.name
+			var oPropertiesForWaitFor = createWaitForObjectWithoutDefaults();
+			oPropertiesForWaitFor.errorMessage = "Unable to load the component with the name: " + oOptions.name;
+			oPropertiesForWaitFor.check = function () {
+				return bComponentLoaded;
 			};
 
 			// add timeout to object for waitFor when timeout is specified
@@ -154,10 +146,34 @@ sap.ui.define([
 			return this.waitFor({
 				success : function () {
 					componentLauncher.teardown();
-					bComponentLoaded = false;
 				}
 			});
 
+		};
+
+		/**
+		 * Tears down an IFrame or a component, launched by
+		 * @link{sap.ui.test.Opa5#iStartMyAppInAFrame} or @link{sap.ui.test.Opa5#iStartMyUIComponent}.
+		 * This function desinged for making your test's teardown independent of the startup.
+		 * If nothing has been started, this function will throw an error.
+		 * @returns {jQuery.promise|*|{result, arguments}}
+		 */
+		Opa5.prototype.iTeardownMyApp = function () {
+			var oOptions = createWaitForObjectWithoutDefaults();
+			oOptions.success = function () {
+				if (iFrameLauncher.hasLaunched()) {
+					this.iTeardownMyAppFrame();
+				} else if (componentLauncher.hasLaunched()) {
+					this.iTeardownMyUIComponent();
+				} else {
+					var sErrorMessage = "A teardown was called but there was nothing to tear down use iStartMyComponent or iStartMyAppInAFrame";
+					$.sap.log.error(sErrorMessage, "Opa");
+					throw new Error(sErrorMessage);
+				}
+			}.bind(this);
+
+
+			return this.waitFor(oOptions);
 		};
 
 		/**
@@ -173,7 +189,7 @@ sap.ui.define([
 		/**
 		 * Starts an app in an IFrame. Only works reliably if running on the same server.
 		 * @param {string} sSource The source of the IFrame
-		 * @param {integer} [iTimeout=80] The timeout for loading the IFrame in seconds - default is 80
+		 * @param {int} [iTimeout=80] The timeout for loading the IFrame in seconds - default is 80
 		 * @returns {jQuery.promise} A promise that gets resolved on success
 		 * @public
 		 * @function
@@ -248,9 +264,9 @@ sap.ui.define([
 		 * @param {string} [oOptions.controlType] For example <code>"sap.m.Button"</code> will search for all buttons inside of a container. If an id ID given, this is ignored.
 		 * @param {boolean} [oOptions.searchOpenDialogs=false] If set to true, Opa5 will only look in open dialogs. All the other values except control type will be ignored
 		 * @param {boolean} [oOptions.visible=true] If set to false, Opa5 will also look for unrendered and invisible controls.
-		 * @param {integer} [oOptions.timeout=15] (seconds) Specifies how long the waitFor function polls before it fails.
+		 * @param {int} [oOptions.timeout=15] (seconds) Specifies how long the waitFor function polls before it fails.
 		 * Timeout will increased to 5 minutes if running in debug mode e.g. with URL parameter sap-ui-debug=true.
-		 * @param {integer} [oOptions.pollingInterval=400] (milliseconds) Specifies how often the waitFor function polls.
+		 * @param {int} [oOptions.pollingInterval=400] (milliseconds) Specifies how often the waitFor function polls.
 		 * @param {function} [oOptions.check] Will get invoked in every polling interval. If it returns true, the check is successful and the polling will stop.
 		 * The first parameter passed into the function is the same value that gets passed to the success function.
 		 * Returning something other than boolean in check will not change the first parameter of success.
@@ -501,6 +517,17 @@ sap.ui.define([
 		Opa5.emptyQueue = Opa.emptyQueue;
 
 		/**
+		 * Clears the queue and stops running tests so that new tests can be run.
+		 * This means all waitFor statements registered by {@link sap.ui.test.Opa5#waitFor} will not be invoked anymore and
+		 * the promise returned by {@link sap.ui.test.Opa5#.emptyQueue} will be rejected.
+		 * When its called inside of a check in {@link sap.ui.test.Opa5#waitFor}
+		 * the success function of this waitFor will not be called.
+		 * @public
+		 * @function
+		 */
+		Opa5.stopQueue = Opa.stopQueue;
+
+		/**
 		 * Gives access to a singleton object you can save values in.
 		 * See {@link sap.ui.test.Opa#.getContext} for the description
 		 * @since 1.29.0
@@ -600,6 +627,16 @@ sap.ui.define([
 				source: sSource
 			});
 
+		}
+
+		function createWaitForObjectWithoutDefaults () {
+			return {
+				// make sure no controls are searched by the defaults
+				viewName: null,
+				controlType: null,
+				id: null,
+				searchOpenDialogs: false
+			};
 		}
 
 		$(function () {

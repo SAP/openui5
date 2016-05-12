@@ -134,6 +134,68 @@
 				ok(!jQuery.sap.domById("dialog"), "Dialog is not rendered before it's ever opened.");
 			});
 
+			module("Content preservation");
+
+			asyncTest("Preserve Dialog Content", function() {
+				this.clock.restore();
+
+				var bRendered = false;
+				var oDialog = new sap.m.Dialog();
+				var oHtml = new sap.ui.core.HTML({
+					content: "<div id='htmlControl'>test</div>",
+					preferDOM : true,
+					afterRendering : function(oEvent) {
+						if (!bRendered) {
+							document.querySelector("#htmlControl").setAttribute("data-some-attribute", "some-value");
+							bRendered = true;
+						}
+					}
+				});
+				oDialog.addContent(oHtml);
+
+				var fnOpened2 = function() {
+					oDialog.detachAfterOpen(fnOpened2);
+
+					ok(oDialog.isOpen(), "Dialog is open");
+					ok(!!document.querySelector("#htmlControl"), "HTML control rendered");
+					equals(document.querySelector("#htmlControl").getAttribute("data-some-attribute"), "some-value", "DOM attribute value set correctly");
+
+					oDialog.attachAfterClose(start);
+
+					oDialog.close();
+				}.bind(this);
+
+				var fnClosed1 = function() {
+					oDialog.detachAfterClose(fnClosed1);
+
+					ok(!oDialog.isOpen(), "Dialog is closed");
+					equals(document.querySelector("#htmlControl").parentElement.id, "sap-ui-preserve", "HTML control rendered (preserved)");
+
+					oDialog.attachAfterOpen(fnOpened2);
+
+					oDialog.open();
+				}.bind(this);
+
+
+				var fnOpened1 = function() {
+					oDialog.detachAfterOpen(fnOpened1);
+
+					ok(oDialog.isOpen(), "Dialog is open");
+					ok(!!document.querySelector("#htmlControl"), "HTML control rendered");
+					equals(document.querySelector("#htmlControl").getAttribute("data-some-attribute"), "some-value", "DOM attribute value set correctly");
+
+					oDialog.attachAfterClose(fnClosed1);
+
+					oDialog.close();
+				}.bind(this);
+
+
+				equals(document.querySelector("#htmlControl"), null, "HTML control not rendered");
+
+				oDialog.attachAfterOpen(fnOpened1);
+				oDialog.open();
+			});
+
 			module("Open and Close");
 
 			test("Open Dialog", function () {
@@ -250,7 +312,7 @@
 				//System under Test
 						sut = new sap.m.Dialog({
 							contentWidth: contentWidth,
-							content: new sap.ui.core.HTML({content: "<p style='width: 700px'></p>"})
+							content: new sap.ui.core.HTML({content: "<div style='width: 700px'></div>"})
 						});
 
 				//Act
@@ -669,6 +731,14 @@
 				var oDialog = new sap.m.Dialog({
 					title: "Qunit test",
 					content: [oText],
+					subHeader: new sap.m.Bar({
+						contentMiddle: [
+							new sap.m.SearchField({
+								placeholder: "Search ...",
+								width: "100%"
+							})
+						]
+					}),
 					ariaLabelledBy: [TEXT_ID]
 				});
 
@@ -678,11 +748,14 @@
 
 				// Assert
 				var dialogHeaderId = oDialog.getDomRef('header').getAttribute('id');
+				var subHeaderId = oDialog.$().find('.sapMDialogSubHeader').attr('id');
 				var dialogAriaLabelledBy = oDialog.getAriaLabelledBy();
-				strictEqual(oDialog.getDomRef().getAttribute('aria-labelledby'), dialogHeaderId + ' ' + TEXT_ID);
-				strictEqual(dialogAriaLabelledBy.length, 2)
+				strictEqual(oDialog.getDomRef().getAttribute('aria-labelledby'), dialogHeaderId + ' ' + subHeaderId +
+						' ' + TEXT_ID);
+				strictEqual(dialogAriaLabelledBy.length, 3);
 				strictEqual(dialogAriaLabelledBy.indexOf(dialogHeaderId), 0);
-				strictEqual(dialogAriaLabelledBy.indexOf(TEXT_ID), 1);
+				strictEqual(dialogAriaLabelledBy.indexOf(subHeaderId), 1);
+				strictEqual(dialogAriaLabelledBy.indexOf(TEXT_ID), 2);
 
 				// Clean up
 				oDialog.destroy();
@@ -955,62 +1028,6 @@
 				oDialog.destroy();
 			});
 
-			asyncTest("Preserve Dialog Content", function() {
-				var bRendered = false;
-				var oDialog = new sap.m.Dialog();
-				var oHtml = new sap.ui.core.HTML({
-					content: "<div id='htmlControl'>test</div>",
-					preferDOM : true,
-					afterRendering : function(oEvent) {
-						if (!bRendered) {
-							document.querySelector("#htmlControl").setAttribute("data-some-attribute", "some-value");
-							bRendered = true;
-						}
-					}
-				});
-				oDialog.addContent(oHtml);
-
-				var fnOpened2 = function() {
-					oDialog.detachAfterOpen(fnOpened2);
-
-					ok(!!document.querySelector("#htmlControl"), "HTML control rendered");
-					equals(document.querySelector("#htmlControl").getAttribute("data-some-attribute"), "some-value", "DOM attribute value set correctly");
-
-					oDialog.attachAfterClose(start);
-
-					oDialog.close();
-					this.clock.tick(300);
-				}.bind(this);
-
-				var fnClosed1 = function() {
-					oDialog.detachAfterClose(fnClosed1);
-
-					equals(document.querySelector("#htmlControl").parentElement.id, "sap-ui-preserve", "HTML control rendered (preserved)");
-
-					oDialog.attachAfterOpen(fnOpened2);
-					oDialog.open();
-					this.clock.tick(300);
-				}.bind(this);
-
-
-				var fnOpened1 = function() {
-					oDialog.detachAfterOpen(fnOpened1);
-
-					ok(!!document.querySelector("#htmlControl"), "HTML control rendered");
-					equals(document.querySelector("#htmlControl").getAttribute("data-some-attribute"), "some-value", "DOM attribute value set correctly");
-
-					oDialog.attachAfterClose(fnClosed1);
-					oDialog.close();
-					this.clock.tick(300);
-				}.bind(this);
-
-
-				equals(document.querySelector("#htmlControl"), null, "HTML control not rendered");
-
-				oDialog.attachAfterOpen(fnOpened1);
-				oDialog.open();
-				this.clock.tick(300);
-			});
 
 			setTimeout(function () {
 				jQuery('html').css('overflow', 'auto');

@@ -24,15 +24,6 @@
 	border-bottom: 3px solid @sapHCStandardFG;
 }
 
-.sapUiTableColHdrCnt > .sapUiTableSelAllEnabled,
-.sapUiTableCell > .sapUiTv,
-.sapUiTableCell .sapUiTfComboIcon,
-.sapUiTableCell > .sapUiTfStd,
-.sapUiTableTr .sapUiTableCell {
-	outline-width: 0px;
-}
-
-
 /*******************************************************************************
  * TABLE CONTROL
  ******************************************************************************/
@@ -55,17 +46,13 @@
 }
 
 .sapUiTableRowHdr.sapUiTableGroupHeader,
-.sapUiTableCtrl tr.sapUiTableGroupHeader > td {
+.sapUiTableCtrl tr.sapUiTableGroupHeader > td:nth-last-child(n+2) {
 	border-right: none;
 }
 
 .sapUiTableTr > td,
 .sapUiTableRowHdr {
 	border-bottom: 0.0625rem solid @sapHCReducedAltFG;
-}
-
-.sapUiTableRowHdrScr > .sapUiTableRowHdr {
-	outline-width: 0px;
 }
 
 .sapUiTableColRowHdr:hover,
@@ -300,7 +287,6 @@
 	border: none;
 }
 
-
 /* Table Column */
 .sapUiTableCol {
 	padding-top: 7px;
@@ -354,10 +340,33 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 	color: @sapHCStandardFG;
 }
 
-.sapUiTableTr > td:focus, .sapUiTableRowHdrScr > .sapUiTableRowHdr:focus, .sapUiTableColHdr *:focus, .sapUiTableColRowHdr:focus {
-	outline: 0.125rem dotted @sapHCStandardFG;
-	outline-offset: -0.125rem;
+/*
+ * Focus Outline for Table Cells
+ *
+ * IE, Edge : use native outline rendering. It has correct contrast and offset.
+ * Any attempt to specify another outline in CSS breaks it.
+ *
+ * Other browsers see below:
+ */
+
+/* WebKit */
+.sapUiTableTr > td:focus:not(*:root),
+.sapUiTableCol:focus:not(*:root),
+.sapUiTableRowHdr:focus:not(*:root),
+.sapUiTableColRowHdr:focus:not(*:root) {
+	outline-offset: -3px;
+	outline: 2px dotted @sapHCStandardFG;
 }
+
+/* Firefox */
+@supports (-moz-appearance:meterbar) {
+.sapUiTableTr > td:focus,
+.sapUiTableCol:focus,
+.sapUiTableRowHdr:focus,
+.sapUiTableColRowHdr:focus {
+	outline-offset: -3px;
+	outline: 2px dotted @sapHCStandardFG;
+}}
 
 .sapUiTableRSel .sapUiTableCtrlScr,
 .sapUiTableRSel .sapUiTableCtrlScrFixed {
@@ -528,3 +537,30 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 		background-color: @sapHCStandardBG;
 	}
 }
+
+// Scrollbar adjustments
+
+html.sap-desktop .sapUiTableVSb::-webkit-scrollbar-thumb {
+	border-right: 4px solid @sapHCStandardBG;
+	border-top: 2px solid @sapHCStandardBG;
+	border-bottom: 2px solid @sapHCStandardBG;
+	box-shadow: none;
+}
+
+html.sap-desktop .sapUiTableHSb::-webkit-scrollbar-thumb {
+	border-bottom: 4px solid @sapHCStandardBG;
+	box-shadow: none;
+}
+
+html.sap-desktop .sapUiTableHSb::-webkit-scrollbar,
+html.sap-desktop .sapUiTableHSb::-webkit-scrollbar-thumb,
+html.sap-desktop .sapUiTableVSb::-webkit-scrollbar,
+html.sap-desktop .sapUiTableVSb::-webkit-scrollbar-thumb {
+	border-left: none;
+}
+
+.sapUiTableVSbContent {
+	background: @sapHCStandardFG;
+}
+
+// --------

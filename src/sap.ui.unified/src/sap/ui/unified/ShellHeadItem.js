@@ -185,7 +185,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/IconPool
 		} else {
 			var $Image = this.$("img-inner");
 			if ($Image.length == 0 || $Image.attr("src") != sIco) {
-				$Ico.css("style", "").attr("aria-label", null).html("<img role='presentation' id='" + this.getId() + "-img-inner' src='" + jQuery.sap.encodeHTML(sIco) + "'></img>");
+				$Ico.css("style", "").attr("aria-label", null).html("<img role='presentation' id='" + this.getId() + "-img-inner' src='" + jQuery.sap.encodeHTML(sIco) + "'/>");
 			}
 		}
 	};

@@ -29,13 +29,13 @@
 	background: @sapUiInfobarActiveBackground;
 }
 
-.sap-desktop .sapMTBActive:focus {
+html.sap-desktop .sapMTBActive:focus {
 	outline: 1px dotted @sapUiInvertedFocus;
 	outline-offset: -0.125rem;
 }
 
 /* IE ignores outline-offset. Use an overlay: */
-.sap-desktop[data-sap-ui-browser^="ie"] {
+html[data-sap-ui-browser^="ie"].sap-desktop {
 	.sapMTBActive:focus {
 		outline: none;
 		position: relative;
@@ -53,7 +53,7 @@
 	}
 }
 
-.sap-desktop .sapMTB-Info-CTX.sapMTBActive:focus {
+html.sap-desktop .sapMTB-Info-CTX.sapMTBActive:focus {
 	outline-color: @sapUiInvertedFocus;
 }
 

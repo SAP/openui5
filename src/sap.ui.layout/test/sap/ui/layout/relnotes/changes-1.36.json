@@ -95,5 +95,36 @@
         "references": []
       }
     ]
+  },
+  "1.36.5": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "38552c9488c143c2160027c836a87ea31fef1594",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.ResponsiveLayout: Labels wrong aligned in Edge",
+        "references": []
+      }
+    ]
+  },
+  "1.36.6": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "1e451b43fd13a76a3917ea1b8e52ee1fea7a1035",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: double role \"form\" if only one container",
+        "references": []
+      },
+      {
+        "id": "67733be6001f221fcc4ab8d11cfe75746b27c651",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: too much padding if only 1 container",
+        "references": []
+      }
+    ]
   }
 }

@@ -1,0 +1,259 @@
+{
+  "1.38.0": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "51d02d5319df2d70d029494cfeeb31c860d26bbf",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Control less Files for sap_belize Change 1",
+        "references": []
+      },
+      {
+        "id": "2146206287875aff39d47f6bdf1686dc1fae3ce5",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Control less Files for sap_belize Change 2",
+        "references": []
+      },
+      {
+        "id": "86466dbf21f6c640dadf1289f7596c3578db523e",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Control less Files for sap_belize Change 3",
+        "references": []
+      },
+      {
+        "id": "e3408cb5f62cb8c5e3ca304639fc7ae0d396e6fc",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Control less Files for sap_belize Change 4",
+        "references": []
+      },
+      {
+        "id": "0e424ed502be441300944b10e46ea31dbefcfc19",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Control less Files for sap_belize Change 5",
+        "references": []
+      },
+      {
+        "id": "920668f4e39598c197693ba8052641d98735435f",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Control less Files for sap_belize Change 6",
+        "references": []
+      },
+      {
+        "id": "3bc16807f77570e1b4bd97363269412a6cc476e3",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Layout less Files for sap_belize Change 8",
+        "references": []
+      },
+      {
+        "id": "048613f2ea00bd1f1314f121e9147e4e022994c5",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "New Theme Library: sap_belize",
+        "references": []
+      },
+      {
+        "id": "5c12096d50367e6fcb7e629a8d20889c5a2a608e",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "New Theme: sap_belize_plus",
+        "references": []
+      },
+      {
+        "id": "ced262e69e4c1e89a42181684b8780bf35b94388",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Table less Files for sap_belize Change 7",
+        "references": []
+      },
+      {
+        "id": "310f7698bd017958388d94552243e457d0cf0d36",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Unified less Files for sap_belize Change 9",
+        "references": []
+      },
+      {
+        "id": "1b7304f6f92a0c4b3a7ca29bb9c490b1a6915daa",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "dt less Files for sap_belize Change 12",
+        "references": []
+      },
+      {
+        "id": "ab6fdc54d2e97122285401accdfeee2521579c3f",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.ComboBox: redesign for mobile devices",
+        "references": []
+      },
+      {
+        "id": "4e79347aa014699bf930ae4a30ffa6ad300ff9a4",
+        "author": "Dimo Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.DynamicPage - new control implemented",
+        "references": []
+      },
+      {
+        "id": "e706b356dc3c50c208f3e63d352782cf07ecc01d",
+        "author": "Dominic Holzwarth \u003cdominic.holzwarth@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.GenericTile: Tile and font size adapted, size property set to deprecated",
+        "references": []
+      },
+      {
+        "id": "7163a4f261ea5e8539d92ea4bcdce680c6dd2298",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.ImageContent: New control ImageContent added",
+        "references": []
+      },
+      {
+        "id": "64b5d943036a9f462f6dc74daa2978a35fd605f8",
+        "author": "Teodor Todorov \u003cteodor.todorov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.ObjectMarker: New control implementation",
+        "references": []
+      },
+      {
+        "id": "ca6b8697002e0545f40f64f400233fee143fb885",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.PlanningCalendar: new focus visualization",
+        "references": []
+      },
+      {
+        "id": "abb22af2036393ea061181d325800642f38a2e69",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.Calendar: focus vizualisation for header",
+        "references": []
+      },
+      {
+        "id": "d7f15563587f3c374cc56f25bf872b9a1ef2f185",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "shared.less for sap_belize Change 10",
+        "references": []
+      },
+      {
+        "id": "2bacfd3d8dd4d4b0ff9fb86f309066d9d7e6dd5a",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "suite less Files for sap_belize Change 13",
+        "references": []
+      },
+      {
+        "id": "e85c3130ce62f865fbffa991575abd454eb6857f",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "tnt less Files for sap_belize Change 11",
+        "references": []
+      },
+      {
+        "id": "ede5108b657efeefeaf8d8cba35af8e7e1bad861",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "uxap less Files for sap_belize Change 14",
+        "references": []
+      },
+      {
+        "id": "7f0ced4ea50122649fe94664abf9c7daa74e4e99",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "uxap less Files for sap_belize Change 15",
+        "references": []
+      },
+      {
+        "id": "8dc6bb289b85e1ad790da023cdca2797330ac523",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "@sapShell_TextColor fixed for sap_belize",
+        "references": []
+      },
+      {
+        "id": "92cb81a9be48c3991e6f963f8b30322c27b6c785",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FIX",
+        "text": "Fix reference to core/base.less in belize plus theme of sap.tnt",
+        "references": []
+      },
+      {
+        "id": "203bf7029ff102941d7643ab8468bdd44013e696",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "Less Parameter @sapUiFieldRequiredColor contrast issue",
+        "references": []
+      },
+      {
+        "id": "c40f68462e1eb53161b02141bbbccad6cbb5c583",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.IconTabBar: windows 10 rules added",
+        "references": []
+      },
+      {
+        "id": "2f41ee778bf2781aec17d266a6e755798afd093e",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Fixed nav arrows on combi devices",
+        "references": []
+      },
+      {
+        "id": "373a5366152f8d953904fe1f3f470854ed7211d6",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTaBar: count in RTL is right aligned",
+        "references": []
+      },
+      {
+        "id": "913fdf09e73a97ec42b34f3e58606a57603c5632",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTaBar: scroll arrows in Text-only mode are aligned with the text now",
+        "references": []
+      },
+      {
+        "id": "535dc6a0f3e09290fa419d23325e94f7e69bb71f",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: padding on phone fixed",
+        "references": []
+      },
+      {
+        "id": "7ccce7518757ee7585d539bb7c296d30395731af",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessageToast: Text contrast fixed",
+        "references": []
+      },
+      {
+        "id": "f76262a53aafdd0114ff571943fc2dc380deb1fd",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NotificationListItem: Text contrast fixed",
+        "references": []
+      },
+      {
+        "id": "47123cd5e9f74c2be76122de39a839d7af67939f",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.GridLayout: labels not aligned in Firefox",
+        "references": []
+      },
+      {
+        "id": "945b5767ff55d0f431578de210b14f1dd0510a4a",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Aligned Belize with latest CSS performance changes",
+        "references": []
+      }
+    ]
+  }
+}

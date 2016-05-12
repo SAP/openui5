@@ -2,13 +2,13 @@
 /* CSS for control sap.m.QuickView */
 /* ================================================= */
 
-.sap-desktop .sapMQuickViewPage.sapMPage > header,
-.sap-tablet .sapMQuickViewPage.sapMPage > header {
+html.sap-desktop .sapMQuickViewPage.sapMPage > header,
+html.sap-tablet .sapMQuickViewPage.sapMPage > header {
 	font-size: @sapMFontHeader5Size;
 }
 
-.sap-desktop .sapUiSizeCompact .sapMQuickViewTitle,
-.sap-tablet .sapUiSizeCompact .sapMQuickViewTitle {
+html.sap-desktop .sapUiSizeCompact .sapMQuickViewTitle,
+html.sap-tablet .sapUiSizeCompact .sapMQuickViewTitle {
 	font-size: @sapMFontHeader6Size;
 }
 
@@ -42,12 +42,12 @@
 }
 
 .sapMQuickViewPage .sapUiIcon:focus,
-.sap-phone .sapMQuickViewPage .sapMLnk:focus,
-.sap-tablet .sapMQuickViewPage .sapMLnk:focus{
+html.sap-phone .sapMQuickViewPage .sapMLnk:focus,
+html.sap-tablet .sapMQuickViewPage .sapMLnk:focus{
   outline: none;
 }
 
-.sap-desktop .sapMQuickViewPage .sapUiIcon:focus {
+html.sap-desktop .sapMQuickViewPage .sapUiIcon:focus {
 	outline: 0.125rem dotted @sapHCStandardFG;
 	outline-offset: -0.125rem;
 }

@@ -194,7 +194,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 	/**
 	 * Inserts new plugin to use with the DesignTime at a defined position
 	 * @param {sap.ui.dt.Plugin} oPlugin to insert
-	 * @param {integer} iIndex a position to insert the plugin at
+	 * @param {int} iIndex a position to insert the plugin at
 	 * @return {sap.ui.dt.DesignTime} this
 	 * @protected
 	 */
@@ -362,7 +362,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 
 		oElement = ElementUtil.fixComponentContainerElement(oElement);
 		var oElementOverlay = OverlayRegistry.getOverlay(oElement);
-		if (oElement && !oElementOverlay) {
+		if (oElement && !oElement.bIsDestroyed && !oElementOverlay) {
 			if (this._iOverlaysPending === 0) {
 				this.fireSyncing();
 			}
@@ -487,7 +487,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 
 		var oParams = oEvent.getParameters();
 		if (oParams.type === "addOrSetAggregation" || oParams.type === "insertAggregation") {
-			this._onElementOverlayAddAggregation(oParams.value);
+			this._onElementOverlayAddAggregation(oParams.value, oParams.target, oParams.name);
 		} else if (oParams.type === "setParent") {
 			// timeout is needed because UI5 controls & apps can temporary "dettach" controls from control tree
 			// and add them again later, so the check if the control is dettached from root element's tree is delayed
@@ -503,13 +503,13 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 	 * @param {sap.ui.core.Element} oElement which was added
 	 * @private
 	 */
-	DesignTime.prototype._onElementOverlayAddAggregation = function(oChild) {
+	DesignTime.prototype._onElementOverlayAddAggregation = function(oChild, oParent, sAggregationName) {
 		// oElement can be of an alternative type (setLabel(sText) for example)
 		if (oChild instanceof sap.ui.core.Element) {
 			var oChildElementOverlay = OverlayRegistry.getOverlay(oChild);
-			// TODO what if it was moved between hidden/public tree? can this happen?
 			if (!oChildElementOverlay) {
-				this._createElementOverlay(oChild);
+				var bIsInHiddenTree = OverlayRegistry.getOverlay(oParent).getAggregationOverlay(sAggregationName).isInHiddenTree();
+				this._createElementOverlay(oChild, bIsInHiddenTree);
 			}
 		}
 	};

@@ -177,6 +177,36 @@
 		ok(oToggleButton.$("inner").hasClass("sapMToggleBtnPressed"), "still has the pressed class")
 		strictEqual(oTapSpy.callCount, 1, "tap was fired");
 	});
+
+	module("Accessibility");
+
+	test("getAccessibilityInfo", function() {
+		var oButton = new sap.m.ToggleButton({tooltip: "Tooltip"});
+		ok(!!oButton.getAccessibilityInfo, "ToggleButton has a getAccessibilityInfo function");
+		var oInfo = oButton.getAccessibilityInfo();
+		ok(!!oInfo, "getAccessibilityInfo returns a info object");
+		strictEqual(oInfo.role, "button", "AriaRole");
+		strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
+		strictEqual(oInfo.description, "Tooltip", "Description");
+		strictEqual(oInfo.focusable, true, "Focusable");
+		strictEqual(oInfo.enabled, true, "Enabled");
+		ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
+		oButton.setText("Text");
+		oButton.setEnabled(false);
+		oInfo = oButton.getAccessibilityInfo();
+		strictEqual(oInfo.description, "Text", "Description");
+		strictEqual(oInfo.focusable, false, "Focusable");
+		strictEqual(oInfo.enabled, false, "Enabled");
+		oButton.setText(null);
+		oButton.setTooltip(null);
+		oButton.setIcon("sap-icon://search");
+		oInfo = oButton.getAccessibilityInfo();
+		strictEqual(oInfo.description, "Search", "Description");
+		oButton.setPressed(true);
+		oInfo = oButton.getAccessibilityInfo();
+		strictEqual(oInfo.description, "Search " + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_PRESSED"), "Description");
+		oButton.destroy();
+	});
 </script>
 
 </head>

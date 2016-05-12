@@ -57,7 +57,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			introActive : {type : "boolean", group : "Misc", defaultValue : null},
 
 			/**
-			 * Indicates that the title is clickable
+			 * Indicates that the title is clickable and is set only if a title is provided
 			 */
 			titleActive : {type : "boolean", group : "Misc", defaultValue : null},
 
@@ -117,8 +117,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			numberState : {type : "sap.ui.core.ValueState", group : "Misc", defaultValue : sap.ui.core.ValueState.None},
 
 			/**
-			 * NOTE: Only applied if you set "responsive=false".
-			 * Displays the condensed object header with title, one attribute, number and number unit.
+			 * <code>ObjectHeader</code> with title, one attribute, number, and number unit.<br>
+			 * <b>Note:</b> Only applied if the <code>responsive</code> property is set to <code>false</code>.
 			 */
 			condensed : {type : "boolean", group : "Appearance", defaultValue : false},
 
@@ -139,9 +139,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			responsive : {type : "boolean", group : "Behavior", defaultValue : false},
 
 			/**
-			 * NOTE: Only applied if you set "responsive=true".
-			 * If this property is set to true, the control occupies the available screen area so that the contents are arranged in a different way to fit in that area.
-			 * If it is set to false, the control is optimized for the master detail view.
+			 * Optimizes the display of the elements of the <code>ObjectHeader</code>.<br>
+			 * <b>Note</b>: Only applied if the <code>responsive</code> property is set to <code>true</code>.
+			 *
+			 * If set to <code>false</code>, the attributes and statuses are being positioned below the Title/Number of the <code>ObjectHeader</code> in 2 or 3 columns depending on their number:
+			 * <ul>
+			 *                <li>On desktop, 1-4 attributes/statuses - 2 columns</li>
+			 *                <li>On desktop, 5+ attributes/statuses - 3 columns</li>
+			 *                <li>On tablet, always in 2 columns</li>
+			 * </ul>
+			 * If set to <code>true</code>, the following situations apply:
+			 * <ul>
+			 *                 <li>On desktop, 1-3 attributes/statuses - positioned as a third block on the right side of the Title/Number group</li>
+			 *                 <li>On desktop, 4+ attributes/statuses - 4 columns below the Title/Number</li>
+			 *                 <li>On tablet (portrait mode), always in 2 columns below the Title/Number</li>
+			 *                 <li>On tablet (landscape mode), 1-2 attributes/statuses - 2 columns below the Title/Number</li>
+			 *                 <li>On tablet (landscape mode), 3+ attributes/statuses - 3 columns below the Title/Number</li>
+			 *
+			 * On phone, the attributes and statuses are always positioned in 1 column below the Title/Number of the <code>ObjectHeader</code>.
+			 *
 			 * @since 1.28
 			 */
 			fullScreenOptimized : {type : "boolean", group : "Appearance", defaultValue : false},
@@ -192,7 +208,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Sets custom text for the tooltip of the select title arrow. If not set, a default text of the tooltip will be displayed.
 			 * @since 1.30.0
 			 */
-			titleSelectorTooltip : {type : "string", group : "Misc", defaultValue : "Options"}
+			titleSelectorTooltip : {type : "string", group : "Misc", defaultValue : "Options"},
+
+			/**
+			 * Defines the semantic level of the title.
+			 * This information is e.g. used by assistive technologies like screenreaders to create a hierarchical site map for faster navigation.
+			 * Depending on this setting a HTML h1-h6 element is used.
+			 */
+			titleLevel : {type : "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : sap.ui.core.TitleLevel.H1}
 
 		},
 		defaultAggregation : "attributes",
@@ -229,6 +252,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * The object number and unit are managed in this aggregation
 			 */
 			_objectNumber : {type : "sap.m.ObjectNumber", multiple : false, visibility : "hidden"},
+
+			/**
+			 * NOTE: Only applied if you set "responsive=false".
+			 * Additional object numbers and units are managed in this aggregation.
+			 * The numbers are hidden on tablet and phone size screens.
+			 * When only one number is provided, it is rendered with additional separator from the main ObjectHeader number.
+			 * @since 1.38.0
+			 */
+			additionalNumbers : {type : "sap.m.ObjectNumber", multiple : true, singularName : "additionalNumber"},
 
 			/**
 			 * This aggregation takes only effect when you set "responsive" to true.
@@ -524,6 +556,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return oControl;
 	};
 
+	/**
+	 * Gets the correct focus domRef.
+	 * @override
+	 * @returns {Object} the domRef of the ObjectHeader title
+	 */
+	ObjectHeader.prototype.getFocusDomRef = function() {
+		if (this.getResponsive()) {
+			return this.$("txt");
+		} else {
+			return this.$("title");
+		}
+	};
+
 	ObjectHeader.prototype.ontap = function(oEvent) {
 		var sSourceId = oEvent.target.id;
 		if (this.getIntroActive() && sSourceId === this.getId() + "-intro") {
@@ -572,6 +617,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	ObjectHeader.prototype._handleSpaceOrEnter = function(oEvent) {
 		var sSourceId = oEvent.target.id;
 
+		// mark the event that it is handled by the control
+		oEvent.setMarked();
+
 		if (!this.getResponsive() && this.getTitleActive() && ( sSourceId === this.getId() + "-title" ||
 				jQuery(oEvent.target).parent().attr('id') === this.getId() + "-title" || // check if the parent of the "h" tag is the "title"
 				sSourceId === this.getId() + "-titleText-inner" )) {
@@ -595,7 +643,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				oEvent.preventDefault();
 			}
 			// The sourceId should be always the id of the "a", even if we click on the inside span element
-			sSourceId = jQuery(oEvent.target).parent().attr('id');
+			sSourceId = this.getId() + "-txt";
 
 			if (!this.getTitleHref()) {
 				oEvent.preventDefault();
@@ -628,6 +676,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			this.fireIconPress({
 				domRef : iconOrImg
+			});
+		} else if (sSourceId === this.getId() + "-titleArrow") {
+			if (oEvent.type === "sapspace") {
+				oEvent.preventDefault();
+			}
+			this.fireTitleSelectorPress({
+				domRef : jQuery.sap.domById(sSourceId)
 			});
 		}
 	};
@@ -846,8 +901,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				sap.ui.Device.media.attachHandler(this._rerenderOHR, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
 			}
 		} else {
+			var sTextAlign = bPageRTL ? sap.ui.core.TextAlign.Left : sap.ui.core.TextAlign.Right;
 			if (oObjectNumber && oObjectNumber.getNumber()) { // adjust alignment according the design specification
-				oObjectNumber.setTextAlign(bPageRTL ? sap.ui.core.TextAlign.Left : sap.ui.core.TextAlign.Right);
+				oObjectNumber.setTextAlign(sTextAlign);
+			}
+			if (this.getAdditionalNumbers()) { // do the same for the additional numbers
+				this._setTextAlignANum(sTextAlign);
 			}
 		}
 	};
@@ -1012,6 +1071,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return this.getBackgroundDesign();
 		}
 
+	};
+
+	/**
+	 * Sets the text alignment for all additional numbers inside the AdditionalNumbers aggregation
+	 *
+	 * @private
+	 */
+	ObjectHeader.prototype._setTextAlignANum = function(sTextAlign) {
+		var numbers = this.getAdditionalNumbers();
+		for (var i = 0; i < numbers.length; i++) {
+			numbers[i].setTextAlign(sTextAlign);
+		}
 	};
 
 	return ObjectHeader;

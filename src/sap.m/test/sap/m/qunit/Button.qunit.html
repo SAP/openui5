@@ -5,14 +5,14 @@
 
 <title>Test Page for sap.m.Button</title>
 <script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
-	type="text/javascript" data-sap-ui-noConflict="true"
+	type="text/javascript" data-sap-ui-noConflict="true" data-sap-ui-language="en"
 	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
 </script>
 
 <link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 <script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
@@ -155,22 +155,22 @@
 	qutils.delayTestStart();
 
 	module("Basic", {
-		setup : function() {
-			b1 = sap.ui.getCore().getControl("b1");
-			b2 = sap.ui.getCore().getControl("b2");
-			b4 = sap.ui.getCore().getControl("b4");
-			b5 = sap.ui.getCore().getControl("b5");
-			b6 = sap.ui.getCore().getControl("b6");
-			b7 = sap.ui.getCore().getControl("b7");
-			b8 = sap.ui.getCore().getControl("b8");
-			b9 = sap.ui.getCore().getControl("b9");
-			b10 = sap.ui.getCore().getControl("b10");
-			b11 = sap.ui.getCore().getControl("b11");
-			b12 = sap.ui.getCore().getControl("b12");
-			b13 = sap.ui.getCore().getControl("b13");
-			b14 = sap.ui.getCore().getControl("b14");
+		beforeEach : function() {
+			b1 = sap.ui.getCore().byId("b1");
+			b2 = sap.ui.getCore().byId("b2");
+			b4 = sap.ui.getCore().byId("b4");
+			b5 = sap.ui.getCore().byId("b5");
+			b6 = sap.ui.getCore().byId("b6");
+			b7 = sap.ui.getCore().byId("b7");
+			b8 = sap.ui.getCore().byId("b8");
+			b9 = sap.ui.getCore().byId("b9");
+			b10 = sap.ui.getCore().byId("b10");
+			b11 = sap.ui.getCore().byId("b11");
+			b12 = sap.ui.getCore().byId("b12");
+			b13 = sap.ui.getCore().byId("b13");
+			b14 = sap.ui.getCore().byId("b14");
 		},
-		teardown : function() {
+		afterEach : function() {
 			b1 = null;
 			b2 = null;
 			b4 = null;
@@ -243,19 +243,19 @@
 		}
 		b2.firePress();
 		ok(msg == sPressMessage, "Button2 - Event was fired correctly!");
-		equals(msg, sPressMessage, "Button2 - Event was fired correctly!!")
+		equals(msg, sPressMessage, "Button2 - Event was fired correctly!!");
 		b4.firePress();
 		ok(msg == sPressMessage, "Button4 - Event was fired correctly!");
-		equals(msg, sPressMessage, "Button4 - Event was fired correctly!!")
+		equals(msg, sPressMessage, "Button4 - Event was fired correctly!!");
 		b5.firePress();
 		ok(msg == sPressMessage, "Button5 - Event was fired correctly!");
-		equals(msg, sPressMessage, "Button5 - Event was fired correctly!!")
+		equals(msg, sPressMessage, "Button5 - Event was fired correctly!!");
 		b6.firePress();
 		ok(msg == sPressMessage, "Button6 - Event was fired correctly!");
-		equals(msg, sPressMessage, "Button6 - Event was fired correctly!!")
+		equals(msg, sPressMessage, "Button6 - Event was fired correctly!!");
 		b7.firePress();
 		ok(msg == sPressMessage, "Button7 - Event was fired correctly!");
-		equals(msg, sPressMessage, "Button7 - Event was fired correctly!!")
+		equals(msg, sPressMessage, "Button7 - Event was fired correctly!!");
 	});
 
 	test("Visibility", function(){
@@ -267,7 +267,7 @@
 
 		// System under Test
 		var oButton = new sap.m.Button({
-			enabled : oTestDescription.enabled,
+			enabled : oTestDescription.enabled
 		});
 		oButton.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
@@ -316,11 +316,11 @@
 		});
 	});
 
-	test("Should not rerender the button if the text is changed", function() {
+	test("Should not re-render the button if the text is changed", function() {
 		// Arrange
 		var sTextToSet = "<script>alert(\"HAACKED\");<\/script>",
 			oRenderSpy,
-			oResult
+			oResult,
 			oConstructor = { text : "No empty text"};
 
 		// System under Test
@@ -335,7 +335,7 @@
 
 		// Assert
 		strictEqual(oResult, oButton, "Should be able to chain");
-		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
+		strictEqual(oRenderSpy.callCount, 0, "Did not re-render");
 		ok(!/.*<script>.*/.test(oButton.$("content").html()), "Did not contain a unescaped script tag");
 		strictEqual(oButton.getText(), sTextToSet, "Did set the non encoded string as value");
 
@@ -347,7 +347,6 @@
 	test("Check type conversation if text property is changed (non-string value)", function() {
 		// Arrange
 		var oRenderSpy,
-			oResult
 			oConstructor = { text : "Check type conversation (text)", enabled : true};
 
 		// System under Test
@@ -357,7 +356,7 @@
 		oRenderSpy = this.spy(oButton, "invalidate");
 
 		// Act
-		oResult = oButton.setText(2);
+		oButton.setText(2);
 		sap.ui.getCore().applyChanges();
 
 		// Assert
@@ -368,11 +367,10 @@
 	});
 
 
-	test("Should not rerender the button if icon property is changed", function() {
+	test("Should not re-render the button if icon property is changed", function() {
 		// Arrange
 		var oRenderSpy,
-			oResult
-			oConstructor = { text : "Rerender Check (icon)", enabled : true, icon : sap.ui.core.IconPool.getIconURI("employee") , iconFirst : true};
+			oConstructor = { text : "Re-render Check (icon)", enabled : true, icon : sap.ui.core.IconPool.getIconURI("employee") , iconFirst : true};
 
 		// System under Test
 		var oButton = new sap.m.Button(oConstructor).placeAt("qunit-fixture");
@@ -381,13 +379,69 @@
 		oRenderSpy = this.spy(oButton, "invalidate");
 
 		// Act
-		oResult = oButton.setIcon(sap.ui.core.IconPool.getIconURI("notes"));
+		oButton.setIcon(sap.ui.core.IconPool.getIconURI("notes"));
 		sap.ui.getCore().applyChanges();
 
 		// Assert
 		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
 
 		// Cleanup
+		oButton.destroy();
+	});
+
+
+	test("getAccessibilityInfo", function() {
+		var oButton = new sap.m.Button({tooltip: "Tooltip"});
+		ok(!!oButton.getAccessibilityInfo, "Button has a getAccessibilityInfo function");
+		var oInfo = oButton.getAccessibilityInfo();
+		ok(!!oInfo, "getAccessibilityInfo returns a info object");
+		strictEqual(oInfo.role, "button", "AriaRole");
+		strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
+		strictEqual(oInfo.description, "Tooltip", "Description");
+		strictEqual(oInfo.focusable, true, "Focusable");
+		strictEqual(oInfo.enabled, true, "Enabled");
+		ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
+		oButton.setText("Text");
+		oButton.setEnabled(false);
+		oInfo = oButton.getAccessibilityInfo();
+		strictEqual(oInfo.description, "Text", "Description");
+		strictEqual(oInfo.focusable, false, "Focusable");
+		strictEqual(oInfo.enabled, false, "Enabled");
+		oButton.setText(null);
+		oButton.setTooltip(null);
+		oButton.setIcon("sap-icon://search");
+		oInfo = oButton.getAccessibilityInfo();
+		strictEqual(oInfo.description, "Search", "Description");
+		oButton.destroy();
+	});
+
+	test("_activeButton _inactiveButton", function() {
+		//sut
+		var sIconURI = 'sap-icon://slim-arrow-down',
+			sActiveIconURI = 'sap-icon://slim-arrow-up',
+			oButton = new sap.m.Button({
+				icon: sIconURI,
+				activeIcon: sActiveIconURI
+			});
+
+		oButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//act
+		oButton._activeButton();
+
+		//assert
+		ok(oButton.$("inner").hasClass("sapMBtnActive"), 'button is styled as active');
+		equals(oButton._image.getSrc(), sActiveIconURI);
+
+		//act
+		oButton._inactiveButton();
+
+		//assert
+		ok(!oButton.$("inner").hasClass("sapMBtnActive"), 'button is styled as inactive');
+		equals(oButton._image.getSrc(), sIconURI);
+
+		//clean
 		oButton.destroy();
 	});
 

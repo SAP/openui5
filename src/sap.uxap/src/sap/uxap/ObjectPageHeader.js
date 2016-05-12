@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/CustomData",
+	"sap/ui/core/Icon",
 	"sap/ui/Device",
 	"sap/m/Breadcrumbs",
 	"./ObjectPageHeaderActionButton",
@@ -15,10 +16,9 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/ActionSheet",
 	"sap/m/Image",
-	"sap/ui/core/Icon",
 	"./library"
-], function (Control, IconPool, CustomData, Device, Breadcrumbs, ObjectPageHeaderActionButton,
-			 ResizeHandler, Text, Button, ActionSheet, Image, Icon, library) {
+], function (Control, IconPool, CustomData, Icon, Device, Breadcrumbs, ObjectPageHeaderActionButton,
+			 ResizeHandler, Text, Button, ActionSheet, Image, library) {
 	"use strict";
 
 	/**
@@ -143,14 +143,7 @@ sap.ui.define([
 				 * If both are set to true, only the locked state will be displayed.
 				 * @since 1.34.0
 				 */
-				markChanges: {type: "boolean", group: "Misc", defaultValue: false},
-
-				/**
-				 * Set to true if the objectPageHeader is inside DynamicSideContent control and you want to show a button
-				 * and use it for opening the Side Content.
-				 * @since 1.38.0
-				 */
-				showSideContentButton: {type: "boolean", group: "Misc", defaultValue: false}
+				markChanges: {type: "boolean", group: "Misc", defaultValue: false}
 			},
 			defaultAggregation: "actions",
 			aggregations: {
@@ -197,7 +190,7 @@ sap.ui.define([
 
 				/**
 				 *
-				 * An instance of sap.uxap.AnchorBar to be embedded in the header
+				 * An instance of sap.m.Bar to be embedded in the header
 				 */
 				navigationBar: {type: "sap.m.Bar", multiple: false},
 
@@ -207,7 +200,14 @@ sap.ui.define([
 				 * You can use ObjectPageHeaderActionButton controls to achieve a different visual representation of the action buttons in the action bar and the action sheet (overflow menu).
 				 * You can use ObjectPageHeaderLayoutData to display a visual separator.
 				 */
-				actions: {type: "sap.ui.core.Control", multiple: true, singularName: "action"}
+				actions: {type: "sap.ui.core.Control", multiple: true, singularName: "action"},
+
+				/**
+				 *
+				 * A button that is used for opening the side content of the page or some additional content.
+				 * @since 1.38.0
+				 */
+				sideContentButton: {type: "sap.m.Button", multiple: false}
 			},
 			events: {
 
@@ -249,20 +249,6 @@ sap.ui.define([
 						 */
 						domRef: {type: "string"}
 					}
-				},
-
-				/**
-				 * The event is fired when the unsaved changes button is pressed
-				 */
-				showSideContentButtonPress: {
-					parameters: {
-
-						/**
-						 * DOM reference of the changed item's icon to be used for positioning.
-						 * @since 1.38.0
-						 */
-						domRef: {type: "string"}
-					}
 				}
 			}
 		}
@@ -295,7 +281,6 @@ sap.ui.define([
 		this._oLockIconCont = this._getInternalAggregation("_lockIconCont").attachPress(this._handleLockPress, this);
 		this._oChangesIcon = this._getInternalAggregation("_changesIcon").attachPress(this._handleChangesPress, this);
 		this._oChangesIconCont = this._getInternalAggregation("_changesIconCont").attachPress(this._handleChangesPress, this);
-		this._oSideContentBtn = this._getInternalAggregation("_sideContentBtn").attachPress(this._handleShowSideContentButtonPress, this);
 	};
 
 	ObjectPageHeader.prototype._handleOverflowButtonPress = function (oEvent) {
@@ -316,12 +301,6 @@ sap.ui.define([
 
 	ObjectPageHeader.prototype._handleChangesPress = function (oEvent) {
 		this.fireMarkChangesPress({
-			domRef: oEvent.getSource().getDomRef()
-		});
-	};
-
-	ObjectPageHeader.prototype._handleShowSideContentButtonPress = function (oEvent) {
-		this.fireShowSideContentButtonPress({
 			domRef: oEvent.getSource().getDomRef()
 		});
 	};
@@ -388,9 +367,6 @@ sap.ui.define([
 		},
 		"_changesIcon": function (oParent) {
 			return this._getButton(oParent, "sap-icon://request", "changes", oParent.oLibraryResourceBundleOP.getText("TOOLTIP_OP_CHANGES_MARK_VALUE"));
-		},
-		"_sideContentBtn": function (oParent) {
-			return this._getButton(oParent, "sap-icon://detail-view", "sideContent", oParent.oLibraryResourceBundleOP.getText("TOOLTIP_OP_SHOW_SIDE_CONTENT"));
 		},
 		_getIcon: function (oParent, sIcon, sTooltip) {
 			return IconPool.createControlByURI({
@@ -491,15 +467,30 @@ sap.ui.define([
 	 * @param {string} sTitle title string
 	 * @return {*} this
 	 */
-	ObjectPageHeader.prototype.setObjectTitle = function (sTitle) {
-		return this._applyActionProperty("objectTitle", Array.prototype.slice.call(arguments));
+	ObjectPageHeader.prototype.setObjectTitle = function (sNewTitle) {
+
+		var sOldTitle = this.getProperty("objectTitle"),
+			bChanged = sOldTitle !== sNewTitle;
+
+		this._applyActionProperty("objectTitle", Array.prototype.slice.call(arguments));
+
+		if (bChanged && this.mEventRegistry["_titleChange"] ) {
+			this.fireEvent("_titleChange", {
+				"id": this.getId(),
+				"name": "objectTitle",
+				"oldValue": sOldTitle,
+				"newValue": sNewTitle
+			});
+		}
+
+		return this;
 	};
 
 	var aPropertiesToOverride = ["objectSubtitle", "showTitleSelector", "markLocked", "markFavorite", "markFlagged",
-			"showMarkers", "showPlaceholder", "markChanges", "showSideContentButton"],
+			"showMarkers", "showPlaceholder", "markChanges"],
 		aObjectImageProperties = ["objectImageURI", "objectImageAlt", "objectImageDensityAware", "objectImageShape"];
 
-	var fnGenerateSetter = function (sPropertyName) {
+	var fnGenerateSetterForAction = function (sPropertyName) {
 		var sConvertedSetterName = "set" + sPropertyName.charAt(0).toUpperCase() + sPropertyName.slice(1);
 
 		ObjectPageHeader.prototype[sConvertedSetterName] = function () {
@@ -517,7 +508,19 @@ sap.ui.define([
 		};
 	};
 
-	aPropertiesToOverride.forEach(fnGenerateSetter);
+	var fnGenerateSetterProxy = function (sPropertyName, oSourceObject, oTargetObject) {
+		var sConvertedSetterName = "set" + sPropertyName.charAt(0).toUpperCase() + sPropertyName.slice(1);
+
+		oSourceObject[sConvertedSetterName] = function () {
+			var aArgumentsPassedToTheProperty = Array.prototype.slice.call(arguments);
+			aArgumentsPassedToTheProperty.unshift(sPropertyName);
+
+			oTargetObject.setProperty.apply(oTargetObject, aArgumentsPassedToTheProperty);
+			return this.setProperty.apply(this, aArgumentsPassedToTheProperty);
+		};
+	};
+
+	aPropertiesToOverride.forEach(fnGenerateSetterForAction);
 	aObjectImageProperties.forEach(fnGenerateSetterForObjectImageProperties);
 
 	ObjectPageHeader.prototype.getBreadCrumbsLinks = function () {
@@ -566,6 +569,11 @@ sap.ui.define([
 			});
 		}
 
+		var oSideBtn = this.getSideContentButton();
+		if (oSideBtn && !oSideBtn.getTooltip()) {
+			oSideBtn.setTooltip(this.oLibraryResourceBundleOP.getText("TOOLTIP_OP_SHOW_SIDE_CONTENT"));
+		}
+
 		var aActions = this.getActions() || [];
 		this._oOverflowActionSheet.removeAllButtons();
 		this._oActionSheetButtonMap = {};
@@ -573,7 +581,7 @@ sap.ui.define([
 		//display overflow if there are more than 1 item or only 1 item and it is showing its text
 		if (aActions.length > 1 || this._hasOneButtonShowText(aActions)) {
 			//create responsive equivalents of the provided controls
-			jQuery.each(aActions, jQuery.proxy(function (iIndex, oAction) {
+			aActions.forEach(function(oAction) {
 				// Force the design of the button to transparent
 				if (oAction instanceof Button && oAction.getVisible()) {
 					if (oAction instanceof Button && (oAction.getType() === "Default" || oAction.getType() === "Unstyled")) {
@@ -583,15 +591,15 @@ sap.ui.define([
 					var oActionSheetButton = this._createActionSheetButton(oAction);
 
 					this._oActionSheetButtonMap[oAction.getId()] = oActionSheetButton; //store the originalId/reference for later use (adaptLayout)
-
 					this._oOverflowActionSheet.addButton(oActionSheetButton);
+					fnGenerateSetterProxy("text", oAction, oActionSheetButton);
+					fnGenerateSetterProxy("icon", oAction, oActionSheetButton);
 				}
-			}, this));
+			}, this);
 		}
 		this._oTitleArrowIcon.setVisible(this.getShowTitleSelector());
 		this._oFavIcon.setVisible(this.getMarkFavorite());
 		this._oFlagIcon.setVisible(this.getMarkFlagged());
-		this._oSideContentBtn.setVisible(this.getShowSideContentButton());
 		this._attachDetachActionButtonsHandler(false);
 	};
 
@@ -602,58 +610,16 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageHeader.prototype._createActionSheetButton = function (oButton) {
-
-		//copy binding if present
-		var oCopy = new Button({
+		return new Button({
 			press: jQuery.proxy(this._onSeeMoreContentSelect, this),
 			enabled: oButton.getEnabled(),
+			text: oButton.getText(),
+			icon: oButton.getIcon(),
 			customData: new CustomData({
 				key: "originalId",
 				value: oButton.getId()
 			})
 		});
-
-		//carry property & binding on text
-		var oTextBinding = oButton.getBindingInfo("text"),
-			oIconBinding = oButton.getBindingInfo("icon"),
-			sModelName;
-
-		if (oTextBinding && oTextBinding.parts && oTextBinding.parts.length > 0) {
-			sModelName = oTextBinding.parts[0].model;
-
-			//copy binding information
-			oCopy.bindProperty("text", {
-				path: oTextBinding.parts[0].path,
-				model: sModelName,
-				formatter: oTextBinding.formatter
-			});
-
-			//handle relative binding scenarios
-			oCopy.setBindingContext(oButton.getBindingContext(sModelName), sModelName);
-			oCopy.setModel(oButton.getModel(sModelName), sModelName);
-		} else {
-			oCopy.setText(oButton.getText());
-		}
-
-		//carry property & binding on icon
-		if (oIconBinding && oIconBinding.parts && oIconBinding.parts.length > 0) {
-			sModelName = oIconBinding.parts[0].model;
-
-			//copy binding information
-			oCopy.bindProperty("icon", {
-				path: oIconBinding.parts[0].path,
-				model: sModelName,
-				formatter: oIconBinding.formatter
-			});
-
-			//handle relative binding scenarios
-			oCopy.setBindingContext(oButton.getBindingContext(sModelName), sModelName);
-			oCopy.setModel(oButton.getModel(sModelName), sModelName);
-		} else {
-			oCopy.setIcon(oButton.getIcon());
-		}
-
-		return oCopy;
 	};
 
 	ObjectPageHeader.prototype.onAfterRendering = function () {
@@ -935,6 +901,29 @@ sap.ui.define([
 			ResizeHandler.deregister(this._iResizeId);
 		}
 	};
+
+
+	/**
+	 * Fiori 2.0 adaptation
+	 */
+	ObjectPageHeader.prototype.setNavigationBar = function(oBar) {
+
+		this.setAggregation("navigationBar", oBar);
+
+		if (oBar && this.mEventRegistry["_adaptableContentChange"] ) {
+			this.fireEvent("_adaptableContentChange", {
+				"parent": this,
+				"adaptableContent": oBar
+			});
+		}
+
+		return this;
+	};
+
+	ObjectPageHeader.prototype._getAdaptableContent = function() {
+		return this.getNavigationBar();
+	};
+
 
 	return ObjectPageHeader;
 });

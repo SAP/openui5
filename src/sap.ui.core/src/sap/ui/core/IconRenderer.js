@@ -1,8 +1,11 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global'], function(jQuery) {
+sap.ui.define(['jquery.sap.global', './IconPool', './library'], function(jQuery, IconPool, library) {
 	"use strict";
+
+	// shortcut for enum(s)
+	var IconColor = library.IconColor;
 
 	/**
 	 * Font-Icon renderer.
@@ -19,7 +22,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 	 */
 	IconRenderer.render = function(oRm, oControl) {
 		// write the HTML into the render manager
-		var oIconInfo = sap.ui.core.IconPool.getIconInfo(oControl.getSrc()),
+		var oIconInfo = IconPool.getIconInfo(oControl.getSrc()),
 			sWidth = oControl.getWidth(),
 			sHeight = oControl.getHeight(),
 			sColor = oControl.getColor(),
@@ -55,11 +58,11 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 			oRm.addStyle("line-height", sHeight);
 		}
 
-		if (!(sColor in sap.ui.core.IconColor)) {
+		if (!(sColor in IconColor)) {
 			oRm.addStyle("color", jQuery.sap.encodeHTML(sColor));
 		}
 
-		if (!(sBackgroundColor in sap.ui.core.IconColor)) {
+		if (!(sBackgroundColor in IconColor)) {
 			oRm.addStyle("background-color", jQuery.sap.encodeHTML(sBackgroundColor));
 		}
 

@@ -9,11 +9,16 @@
  */
 sap.ui.define([
 		'jquery.sap.global',
+		'sap/m/MessageBox',
+		'sap/m/Title',
 		'sap/m/VBox',
+		'sap/ui/core/TitleLevel',
 		'sap/ui/core/UIComponent',
-		'sap/ui/core/mvc/View',
+		'sap/ui/core/mvc/View', // sap.ui.view()
+		'sap/ui/core/mvc/ViewType',
 		'sap/ui/model/odata/v2/ODataModel'
-	], function(jQuery, VBox, UIComponent, View, ODataModel) {
+	], function(jQuery, MessageBox, Title, VBox, TitleLevel, UIComponent, View, ViewType,
+		ODataModel) {
 	"use strict";
 
 	var Component = UIComponent.extend("sap.ui.core.sample.ViewTemplate.tiny.Component", {
@@ -31,9 +36,9 @@ sap.ui.define([
 				sPath = "/ProductSet('HT-1021')/ToSupplier",
 				oViewContainer = new VBox({
 					items : [
-						new sap.m.Title({text : "This is meant to be a pure code sample. "
+						new Title({text : "This is meant to be a pure code sample. "
 							+ "(To run it, you would need a proxy which is configured properly.)",
-							titleStyle : sap.ui.core.TitleLevel.H3})
+							titleStyle : TitleLevel.H3})
 					]
 				});
 
@@ -49,7 +54,7 @@ sap.ui.define([
 								}
 							}
 						},
-						type : sap.ui.core.mvc.ViewType.XML,
+						type : ViewType.XML,
 						viewName : "sap.ui.core.sample.ViewTemplate.tiny.Template"
 					});
 
@@ -58,9 +63,8 @@ sap.ui.define([
 				oViewContainer.destroyItems();
 				oViewContainer.addItem(oTemplateView);
 			}, function (oError) {
-				jQuery.sap.require("sap.m.MessageBox");
-				sap.m.MessageBox.alert(oError.message, {
-					icon : sap.m.MessageBox.Icon.ERROR,
+				MessageBox.alert(oError.message, {
+					icon : MessageBox.Icon.ERROR,
 					title : "Missing Proxy?"});
 			});
 

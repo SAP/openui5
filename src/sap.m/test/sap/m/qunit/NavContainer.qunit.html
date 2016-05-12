@@ -1591,7 +1591,40 @@
 
 		beforeRenderingTestCase("Should pass to data to the page's onBeforeShow when called before rendering", "onBeforeShow");
 		beforeRenderingTestCase("Should pass to data to the page's onBeforeFirstShow when called before rendering", "onBeforeFirstShow");
-		beforeRenderingTestCase("Should pass to data to the page's onAfterShow when called before rendering", "onAfterShow");
+		beforeRenderingTestCase("Should pass to daa to the page's onAfterShow when called before rendering", "onAfterShow");
+
+		asyncTest("Event data on initial page", function() {
+			var oInitialPage = new sap.m.Page(),
+				oSecondPage = new sap.m.Page(),
+				oNavContainer = new sap.m.NavContainer({
+					pages: [
+						oInitialPage, oSecondPage
+					]
+				}),
+				oNavigationData = {
+					foo: "bar"
+				},
+				oBackData = {
+					back: true
+				};
+
+			// Act
+			oNavContainer.to(oInitialPage.getId(), "show", oNavigationData);
+			oNavContainer.to(oSecondPage.getId(), "show");
+			oNavContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			oInitialPage.addEventDelegate({
+				onBeforeShow: function(oEvent) {
+					strictEqual(oEvent.data, oNavigationData, "The forward navigation data is passed to the back navigation");
+					strictEqual(oEvent.backData, oBackData, "The back navigation data is passed");
+
+					oNavContainer.destroy();
+					start();
+				}
+			});
+			oNavContainer.backToPage(oInitialPage.getId(), oBackData);
+		});
 
 		module("Lifecycle");
 

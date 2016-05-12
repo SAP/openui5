@@ -290,6 +290,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
+	CalendarRow.prototype.onThemeChanged = function (oEvent) {
+
+		if (this.getDomRef()) {
+			// already rendered -> recalculate positions of appointments as size can change
+			for (var i = 0; i < this._aVisibleAppointments.length; i++) {
+				var oAppointment = this._aVisibleAppointments[i];
+				oAppointment.level = -1;
+			}
+			this.handleResize(oEvent);
+		}
+
+	};
+
 	CalendarRow.prototype.invalidate = function(oOrigin) {
 
 		if (oOrigin && oOrigin instanceof sap.ui.unified.CalendarAppointment) {
@@ -382,10 +395,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			// focus on appointment
 			_focusAppointment.call(this, oEvent.target.id);
 		} else {
-			// focus somewhere else -> focus appointment
-			var oAppointment = this.getFocusedAppointment();
-			if (oAppointment) {
-				oAppointment.focus();
+			// check if inside appointment
+			var aVisibleAppointments = this._getVisibleAppointments();
+			var bFound = false;
+			var oAppointment;
+
+			for (var i = 0; i < aVisibleAppointments.length; i++) {
+				oAppointment = aVisibleAppointments[i].appointment;
+				if (jQuery.sap.containsOrEquals(oAppointment.getDomRef(), oEvent.target)) {
+					bFound = true;
+					oAppointment.focus();
+					break;
+				}
+			}
+
+			if (!bFound) {
+				// focus somewhere else -> focus appointment
+				oAppointment = this.getFocusedAppointment();
+				if (oAppointment) {
+					oAppointment.focus();
+				}
 			}
 		}
 
@@ -1235,6 +1264,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		var $DummyApp = this.$("DummyApp");
 		var iHeight = $DummyApp.outerHeight(true);
+
+		if (iHeight <= 0) {
+			// if no size (theme seems not to be loaded) do nothing
+			return;
+		}
+
 		var iMinWidth = $DummyApp.outerWidth();
 		var iMinPercent =  iMinWidth / iRowWidth * 100;
 		var iMinPercentCeil =  Math.ceil(1000 * iMinPercent) / 1000;

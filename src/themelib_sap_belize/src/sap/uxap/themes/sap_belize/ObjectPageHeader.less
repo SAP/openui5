@@ -1,0 +1,65 @@
+/* ========================================== */
+/* CSS for control sap.uxap/ObjectPageHeader  */
+/* Belize theme                               */
+/* ========================================== */
+
+.sapUxAPObjectPageHeader .sapMBar {
+	background-color: @sapUiObjectHeaderBackground;
+	text-shadow: none;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+
+.sapUxAPObjectPageHeaderIdentifier {
+	background: @sapUiObjectHeaderBackground;
+	
+	.sapUxAPObjectPageHeaderIdentifierTitle {
+		color: @sapUiGroupTitleTextColor;
+	}
+
+	.sapUxAPObjectPageHeaderIdentifierDescription {
+		font-size: @sapMFontMediumSize;
+		color: @sapUiContentLabelColor;
+	}
+
+	.sapUxAPObjectPageHeaderIdentifierActions {
+		&.sapUxAPObjectPageHeaderIdentifierActionsForce, .sapUxAPObjectPageHeaderStickied & {
+			display: inline-block;
+		}
+	}
+}
+
+html.sapUiMedia-Std-Phone .sapUxAPObjectPageHeaderIdentifierTitle {
+	font-size: @sapMFontHeader4Size;
+}
+
+.sapUxAPObjectPageHeaderChangesBtn .sapMBtnTransparent > .sapMBtnIcon,
+.sapUxAPObjectPageHeaderLockBtn .sapMBtnTransparent > .sapMBtnIcon {
+	color:  fade(@sapUiContentIconColor, 5);
+}
+
+html.sapUiMedia-Std-Phone .sapUiSizeCompact.sapUxAPObjectPageHeaderChangesBtn .sapMBtn,
+html.sapUiMedia-Std-Phone .sapUiSizeCompact.sapUxAPObjectPageHeaderLockBtn .sapMBtn {
+	margin-top: -0.5rem;
+}
+
+.sapUiSizeCompact.sapUxAPObjectPageHeaderChangesBtn .sapMBtn,
+.sapUiSizeCompact.sapUxAPObjectPageHeaderLockBtn .sapMBtn {
+	margin-top: -0.25rem;
+}
+
+.sapUxAPObjectPageHeaderPlaceholder {
+	background-color: fade(@sapUiContentIconColor, 30);
+}
+
+.sapUxAPObjectPageHeaderPlaceholder > .sapUiIcon {
+	color: fade(@sapUiContentIconColor, 5);
+}
+
+.sapUxAPObjectPageHeaderObjectImageContainer .sapUiIcon {
+	color: @sapUiContentIconColor;
+}
+
+.sapUxAPObjectPageHeaderSeparator {
+	background-color: @sapUiToolbarSeparatorColor;
+}

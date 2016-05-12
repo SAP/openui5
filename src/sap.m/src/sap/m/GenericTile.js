@@ -29,6 +29,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			library : "sap.m",
 			properties : {
 				/**
+				 * The mode of the GenericTile.
+				 */
+				"mode" : {type: "sap.m.GenericTileMode", group : "Appearance", defaultValue : library.GenericTileMode.ContentMode},
+				/**
 				 * The header of the tile.
 				 */
 				"header" : {type : "string", group : "Appearance", defaultValue : null},
@@ -41,13 +45,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 				 */
 				"failedText" : {type : "string", group : "Appearance", defaultValue : null},
 				/**
-				 * The size of the tile. If not set, then the default size is applied based on the device tile.
+				 * The size of the tile. If not set, then the default size is applied based on the device.
+				 * @deprecated Since version 1.38.0. The GenericTile control has now a fixed size, depending on the used media (desktop, tablet or phone).
 				 */
 				"size" : {type : "sap.m.Size", group : "Misc", defaultValue : sap.m.Size.Auto},
 				/**
 				 * The frame type: 1x1 or 2x1.
 				 */
-				"frameType" : {type : "sap.m.FrameType", group : "Misc", defaultValue : sap.m.FrameType.OneByOne},
+				"frameType" : {type : "sap.m.FrameType", group : "Misc", defaultValue : library.FrameType.OneByOne},
 				/**
 				 * The URI of the background image.
 				 */
@@ -133,6 +138,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * Handler for beforerendering
 	 */
 	GenericTile.prototype.onBeforeRendering = function() {
+		var bSubheader = this.getSubheader() ? true : false;
+		if (this.getMode() === library.GenericTileMode.HeaderMode) {
+			this._applyHeaderMode(bSubheader);
+		} else {
+			this._applyContentMode(bSubheader);
+		}
 		var iTiles = this.getTileContent().length;
 
 		for (var i = 0; i < iTiles; i++) {
@@ -149,7 +160,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	GenericTile.prototype.onAfterRendering = function() {
 		this._checkFooter(this.getState());
 
-		if (this.getState() == sap.m.LoadState.Disabled) {
+		if (this.getState() === sap.m.LoadState.Disabled) {
 			this._oBusy.$().bind("tap", jQuery.proxy(this._handleOverlayClick, this));
 		} else {
 			this._oBusy.$().unbind("tap", this._handleOverlayClick);
@@ -315,13 +326,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @returns {sap.m.GenericTile} this to allow method chaining
 	 */
 	GenericTile.prototype.setHeader = function(title) {
-		// If present, Devanagari characters require additional vertical space to be displayed.
-		// Therefore, only one line containing such characters can be displayed in header of GenericTile.
-		if (/.*[\u0900-\u097F]+.*/.test(title)) {
-			this._oTitle.setMaxLines(1);
-		} else {
-			this._oTitle.setMaxLines(2);
-		}
 		this._oTitle.setText(title);
 		return this;
 	};
@@ -368,6 +372,45 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		}
 	};
 
+	/**
+	 * Sets the HeaderMode for GenericTile
+	 *
+	 * @param {boolean} bSubheader which indicates the existance of subheader
+	 */
+	GenericTile.prototype._applyHeaderMode = function(bSubheader) {
+		// Devanagari characters require additional vertical space to be displayed.
+		// Therefore, only the half number of lines containing such characters can be displayed in header of GenericTile.
+		if (/.*[\u0900-\u097F]+.*/.test(this._oTitle.getText())) {
+			this._oTitle.setMaxLines(2);
+			return;
+		}
+		// when subheader is available, the header can have maximal 4 lines and the subheader can have 1 line
+		// when subheader is unavailable, the header can have maximal 5 lines
+		if (bSubheader) {
+			this._oTitle.setMaxLines(4);
+		} else {
+			this._oTitle.setMaxLines(5);
+		}
+	};
+
+	/**
+	 * Sets the ContentMode for GenericTile
+	 *
+	 * @param {boolean} bSubheader which indicates the existance of subheader
+	 */
+	GenericTile.prototype._applyContentMode = function (bSubheader) {
+		if (/.*[\u0900-\u097F]+.*/.test(this._oTitle.getText())) {
+			this._oTitle.setMaxLines(1);
+			return;
+		}
+		// when subheader is available, the header can have maximal 2 lines and the subheader can have 1 line
+		// when subheader is unavailable, the header can have maximal 3 lines
+		if (bSubheader) {
+			this._oTitle.setMaxLines(2);
+		} else {
+			this._oTitle.setMaxLines(3);
+		}
+	};
 	/**
 	 * Returns a text for the tooltip and ARIA label of the header
 	 *

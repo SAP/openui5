@@ -81,7 +81,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBaseRenderer', 'sap/ui/core/Rende
 		ComboBoxBaseRenderer.closeInputTag.call(this, oRm, oControl);
 		oRm.write("</div>");
 		oRm.write("</div>");
-		oRm.write("<div class=\"sapMMultiComboBoxShadowDiv\"/>");
+		oRm.write("<div class=\"sapMMultiComboBoxShadowDiv\"></div>");
 	};
 
 	return MultiComboBoxRenderer;

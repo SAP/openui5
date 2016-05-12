@@ -714,8 +714,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	ListItemBase.prototype.onsapenter = function(oEvent) {
-		if (oEvent.isMarked() ||
-			oEvent.srcControl !== this) {
+		var oList = this.getList();
+		if (oEvent.isMarked() || !oList) {
+			return;
+		}
+
+		// exit from edit mode
+		var mKeyboardMode = sap.m.ListKeyboardMode;
+		if (oEvent.srcControl !== this && oList.getKeyboardMode() == mKeyboardMode.Edit) {
+			oList.setKeyboardMode(mKeyboardMode.Navigation);
+			this._switchFocus(oEvent);
+			return;
+		}
+
+		// handle only item events
+		if (oEvent.srcControl !== this) {
 			return;
 		}
 
@@ -743,7 +756,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		// let the parent know item is pressed
-		this.informList("Press", this);
+		oList.onItemPress(this, oEvent.srcControl);
 	};
 
 	ListItemBase.prototype.onsapdelete = function(oEvent) {
@@ -759,45 +772,57 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	ListItemBase.prototype._switchFocus = function(oEvent) {
-		var oParent = this.getParent();
-		var $Tabbables = this.getTabbables();
+		var oList = this.getList();
+		if (!oList) {
+			return;
+		}
 
+		var $Tabbables = this.getTabbables();
 		if (oEvent.srcControl !== this) {
-			oParent._iLastFocusPosOfItem = $Tabbables.index(oEvent.target);
+			oList._iLastFocusPosOfItem = $Tabbables.index(oEvent.target);
 			this.focus();
 		} else if ($Tabbables.length) {
-			var iFocusPos = oParent._iLastFocusPosOfItem || 0;
+			var iFocusPos = oList._iLastFocusPosOfItem || 0;
 			iFocusPos = $Tabbables[iFocusPos] ? iFocusPos : -1;
 			$Tabbables.eq(iFocusPos).focus();
 		}
+
+		oEvent.preventDefault();
+		oEvent.setMarked();
 	};
 
 	ListItemBase.prototype.onkeydown = function(oEvent) {
 		// check whether event is marked or not
-		var mKeyCodes = jQuery.sap.KeyCodes;
 		if (oEvent.isMarked()) {
 			return;
 		}
 
 		// switch focus to row and focused item with F7
+		var mKeyCodes = jQuery.sap.KeyCodes;
 		if (oEvent.which == mKeyCodes.F7) {
 			this._switchFocus(oEvent);
-			oEvent.preventDefault();
-			oEvent.setMarked();
 			return;
 		}
 
-		// handle only the events that are coming from ListItem
-		if (oEvent.srcControl !== this) {
-			return;
-		}
-
-		// F2 should fire detail event
-		if (oEvent.which == mKeyCodes.F2 && this.getType().indexOf("Detail") == 0) {
-			this.fireDetailTap();
-			this.fireDetailPress();
-			oEvent.preventDefault();
-			oEvent.setMarked();
+		// F2 fire detail event or switch keyboard mode
+		if (oEvent.which == mKeyCodes.F2) {
+			if (oEvent.srcControl === this &&
+				this.getType().indexOf("Detail") == 0 &&
+				this.hasListeners("detailPress") ||
+				this.hasListeners("detailTap")) {
+				this.fireDetailTap();
+				this.fireDetailPress();
+				oEvent.preventDefault();
+				oEvent.setMarked();
+			} else {
+				var oList = this.getList();
+				if (oList) {
+					this.$().prop("tabIndex", -1);
+					var mKeyboardMode = sap.m.ListKeyboardMode;
+					oList.setKeyboardMode(oList.getKeyboardMode() == mKeyboardMode.Edit ? mKeyboardMode.Navigation : mKeyboardMode.Edit);
+					this._switchFocus(oEvent);
+				}
+			}
 		}
 	};
 
@@ -816,7 +841,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	ListItemBase.prototype.onsaptabnext = function(oEvent) {
 		// check whether event is marked or not
 		var oList = this.getList();
-		if (!oList || oEvent.isMarked()) {
+		if (!oList || oEvent.isMarked() || oList.getKeyboardMode() == sap.m.ListKeyboardMode.Edit) {
 			return;
 		}
 
@@ -832,7 +857,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	// handle the SHIFT-TAB key
 	ListItemBase.prototype.onsaptabprevious = function(oEvent) {
 		var oList = this.getList();
-		if (!oList || oEvent.isMarked()) {
+		if (!oList || oEvent.isMarked() || oList.getKeyboardMode() == sap.m.ListKeyboardMode.Edit) {
 			return;
 		}
 
@@ -849,6 +874,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var oList = this.getList();
 		if (!oList ||
 			oEvent.isMarked() ||
+			oList.getKeyboardMode() == sap.m.ListKeyboardMode.Edit ||
 			oEvent.srcControl === this ||
 			!jQuery(oEvent.target).is(":sapFocusable")) {
 			return;
@@ -858,6 +884,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		jQuery.sap.delayedCall(0, oList, "setItemFocusable", [this]);
 		oEvent.setMarked();
 	};
+
+	// inform the list for the vertical navigation
+	ListItemBase.prototype.onsapup = function(oEvent) {
+		if (oEvent.isMarked() ||
+			oEvent.srcControl === this ||
+			this.getListProperty("keyboardMode") === sap.m.ListKeyboardMode.Navigation) {
+			return;
+		}
+
+		this.informList("ArrowUpDown", oEvent);
+	};
+
+	// inform the list for the vertical navigation
+	ListItemBase.prototype.onsapdown = ListItemBase.prototype.onsapup;
 
 	return ListItemBase;
 

@@ -95,10 +95,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	AnalyticalTable.prototype.init = function() {
 		Table.prototype.init.apply(this, arguments);
 
-		var oAccExtension = this._getAccExtension();
-		oAccExtension.setReadOnly(true);
-		oAccExtension.setTreeMode(true);
-
 		this.addStyleClass("sapUiAnalyticalTable");
 
 		this.attachBrowserEvent("contextmenu", this._onContextMenu);
@@ -109,6 +105,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		this.setEnableColumnFreeze(true);
 		this.setEnableCellFilter(true);
 		this._aGroupedColumns = [];
+		this._bSuspendUpdateAnalyticalInfo = false;
 	};
 
 	AnalyticalTable.prototype.setFixedRowCount = function() {
@@ -128,9 +125,10 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		return this;
 	};
 
-	AnalyticalTable.prototype.getModel = function(oModel, sName) {
+	AnalyticalTable.prototype.getModel = function(sName) {
 		var oModel = Table.prototype.getModel.apply(this, arguments);
-		if (oModel) {
+		var oRowBindingInfo = this.getBindingInfo("rows");
+		if (oModel && oRowBindingInfo && oRowBindingInfo.model == sName) {
 			sap.ui.model.analytics.ODataModelAdapter.apply(oModel);
 		}
 		return oModel;
@@ -351,22 +349,66 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		return aColumns;
 	};
 
+
+	AnalyticalTable.prototype._updateTableRowContent = function(oRow, bChildren, bExpanded, bHidden, bSum, iLevel, sGroupHeaderText) {
+		var $Row = oRow.$(),
+			$FixedRow = oRow.$("fixed"),
+			$RowHdr = this.$().find("div[data-sap-ui-rowindex=" + $Row.attr("data-sap-ui-rowindex") + "]"),
+			aRefs = [$Row, $FixedRow, $RowHdr];
+
+		this._getAccExtension().updateAriaForAnalyticalRow(oRow, $Row, $RowHdr, $FixedRow, bChildren, bExpanded, iLevel);
+
+		for (var i = 0; i < aRefs.length; i++) {
+			aRefs[i].attr({
+				"data-sap-ui-level" : iLevel
+			});
+
+			aRefs[i].data("sap-ui-level", iLevel);
+
+			aRefs[i].toggleClass("sapUiAnalyticalTableSum", !bChildren && bSum)
+				.toggleClass("sapUiAnalyticalTableDummy", false)
+				.toggleClass("sapUiTableGroupHeader", bChildren)
+				.toggleClass("sapUiTableRowHidden", bChildren && bHidden);
+		}
+
+		jQuery.sap.byId(oRow.getId() + "-groupHeader")
+			.toggleClass("sapUiTableGroupIconOpen", bChildren && bExpanded)
+			.toggleClass("sapUiTableGroupIconClosed", bChildren && !bExpanded)
+			.attr("title", sGroupHeaderText || null)
+			.text(sGroupHeaderText || "");
+
+		if ('ontouchstart' in document) {
+			var iScrollBarOffset = 0;
+			if (this.$().hasClass("sapUiTableVScr")) {
+				iScrollBarOffset += this.$().find('.sapUiTableVSb').width();
+			}
+			var $GroupHeaderMenuButton = $RowHdr.find(".sapUiTableGroupMenuButton");
+
+			if (this._bRtlMode) {
+				$GroupHeaderMenuButton.css("right", (this.$().width() - $GroupHeaderMenuButton.width() + $RowHdr.position().left - iScrollBarOffset) + "px");
+			} else {
+				$GroupHeaderMenuButton.css("left", (this.$().width() - $GroupHeaderMenuButton.width() - $RowHdr.position().left - iScrollBarOffset) + "px");
+			}
+		}
+	};
+
+
 	AnalyticalTable.prototype._updateTableContent = function() {
 		var oBinding = this.getBinding("rows"),
 			iFirstRow = this.getFirstVisibleRow(),
 			iFixedBottomRowCount = this.getFixedBottomRowCount(),
 			iCount = this.getVisibleRowCount(),
-			aCols = this.getColumns();
+			aCols = this.getColumns(),
+			that = this;
 
 		var fnRemoveClasses = function (oRow) {
 			var $row = oRow.getDomRefs(true);
 
 			$row.row.removeAttr("data-sap-ui-level");
 			$row.row.removeData("sap-ui-level");
-			$row.row.removeAttr('aria-level');
-			$row.row.removeAttr('aria-expanded');
 			$row.row.removeClass("sapUiTableGroupHeader sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
-			$row.rowSelector.html("");
+
+			that._getAccExtension().updateAriaForAnalyticalRow(oRow, $row.rowScrollPart, $row.rowSelector, $row.rowFixedPart, false, false, -1);
 		};
 
 		var aRows = this.getRows();
@@ -384,7 +426,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 				iRowIndex = bIsFixedRow ? (oBinding.getLength() - 1 - (iCount - 1 - iRow)) : iFirstRow + iRow,
 				oRow = aRows[iRow],
 				$row = oRow.$(),
-				$fixedRow = oRow.$("fixed"),
 				$rowHdr = this.$().find("div[data-sap-ui-rowindex=" + $row.attr("data-sap-ui-rowindex") + "]");
 
 			var oContextInfo;
@@ -401,111 +442,18 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 				if (oContextInfo && !oContextInfo.context) {
 					$row.addClass("sapUiAnalyticalTableDummy");
 					$rowHdr.addClass("sapUiAnalyticalTableDummy");
-					$rowHdr.html('<div class="sapUiAnalyticalTableLoading">' + this._oResBundle.getText("TBL_CELL_LOADING") + '</div>');
+					//TBD: $rowHdr.html('<div class="sapUiAnalyticalTableLoading">' + this._oResBundle.getText("TBL_CELL_LOADING") + '</div>');
 				}
 				continue;
 			}
 
-			var aAriaLabelledByParts = [this.getId() + "-rownumberofrows"];
-			var sAriaTextForSum = "";
-
 			if (oBinding.nodeHasChildren && oBinding.nodeHasChildren(oContextInfo)) {
-				// modify the rows
-				$row.addClass("sapUiTableGroupHeader");
-				$fixedRow.addClass("sapUiTableGroupHeader");
-
-				$rowHdr.attr("aria-haspopup", true);
-
-				var sGroupHeaderText = oBinding.getGroupName(oContextInfo.context, oContextInfo.level);
-
-				var sClass = oContextInfo.nodeState.expanded ? "sapUiTableGroupIconOpen" : "sapUiTableGroupIconClosed";
-
-				if (oContextInfo.nodeState.expanded && !this.getSumOnTop()) {
-					$row.addClass("sapUiTableRowHidden");
-					$fixedRow.addClass("sapUiTableRowHidden");
-					$rowHdr.addClass("sapUiTableRowHidden");
-				}
-
-				var sGroupHeaderMenuButton = "";
-				if ('ontouchstart' in document) {
-					sGroupHeaderMenuButton = "<div class='sapUiTableGroupMenuButton'></div>";
-				}
-				$rowHdr.html("<div id=\"" + oRow.getId() + "-groupHeader\" class=\"sapUiTableGroupIcon " + sClass + "\" tabindex=\"-1\" title=\"" + sGroupHeaderText + "\">" + sGroupHeaderText + "</div>" + sGroupHeaderMenuButton);
-				aAriaLabelledByParts.push(oRow.getId() + "-groupHeader");
-
-				$row.removeClass("sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
-				$fixedRow.removeClass("sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
-				$rowHdr.removeClass("sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
-				$rowHdr.addClass("sapUiTableGroupHeader").removeAttr("title").removeAttr("aria-label");
-
-				$row.attr('aria-expanded', oContextInfo.nodeState.expanded);
-				$fixedRow.attr('aria-expanded', oContextInfo.nodeState.expanded);
-				$rowHdr.attr('aria-expanded', oContextInfo.nodeState.expanded);
-
-				if (oContextInfo.level > 0) {
-					sAriaTextForSum = oBinding.getGroupName(oContextInfo.context, oContextInfo.level);
-				} else {
-					sAriaTextForSum = this._oResBundle.getText("TBL_GRAND_TOTAL_ROW");
-				}
+				this._updateTableRowContent(oRow, true, oContextInfo.nodeState.expanded,
+					oContextInfo.nodeState.expanded && !this.getSumOnTop(), false, iLevel,
+					oBinding.getGroupName(oContextInfo.context, oContextInfo.level));
 			} else {
-				$row.removeAttr('aria-expanded');
-				$rowHdr.removeAttr('aria-expanded');
-				$fixedRow.removeAttr('aria-expanded');
-				$rowHdr.attr("aria-haspopup", false);
-
-				$rowHdr.removeAttr('aria-describedby');
-
-				$row.removeClass("sapUiTableGroupHeader sapUiTableRowHidden sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
-
-				$fixedRow.removeClass("sapUiTableGroupHeader sapUiTableRowHidden sapUiAnalyticalTableSum");
-
-				$rowHdr.html("");
-				$rowHdr.removeClass("sapUiTableGroupHeader sapUiAnalyticalTableDummy sapUiAnalyticalTableSum");
-
-				// update aria description for row selection
-				if (!oContextInfo.nodeState.sum) {
-					aAriaLabelledByParts.push(this.getId() + "-rows-row" + $rowHdr.attr("data-sap-ui-rowindex") + "-rowselecttext");
-				}
-
-				if (oContextInfo.nodeState.sum && oContextInfo.context && oContextInfo.context.getObject()) {
-					$row.addClass("sapUiAnalyticalTableSum");
-					$fixedRow.addClass("sapUiAnalyticalTableSum");
-					$rowHdr.addClass("sapUiAnalyticalTableSum");
-
-					sAriaTextForSum;
-					if (oContextInfo.level > 0) {
-						sAriaTextForSum = this._oResBundle.getText("TBL_GROUP_TOTAL_ROW") + " " + oBinding.getGroupName(oContextInfo.context, oContextInfo.level);
-					} else {
-						sAriaTextForSum = this._oResBundle.getText("TBL_GRAND_TOTAL_ROW");
-					}
-				}
-			}
-
-			//set the level of the node on the DOM
-			$row.attr("data-sap-ui-level", iLevel);
-			$fixedRow.attr("data-sap-ui-level", iLevel);
-			$rowHdr.attr("data-sap-ui-level", iLevel);
-			$rowHdr.attr('aria-level', iLevel + 1);
-			$row.attr('aria-level', iLevel + 1);
-			$fixedRow.attr('aria-level', iLevel + 1);
-
-			//set the level of the node as a data-* attribute
-			$row.data("sap-ui-level", iLevel);
-			$fixedRow.data("sap-ui-level", iLevel);
-			$rowHdr.data("sap-ui-level", iLevel);
-
-			if ('ontouchstart' in document) {
-				var iScrollBarOffset = 0;
-				if (this.$().hasClass("sapUiTableVScr")) {
-					iScrollBarOffset += this.$().find('.sapUiTableVSb').width();
-				}
-				var $GroupHeaderMenuButton = $rowHdr.find(".sapUiTableGroupMenuButton");
-
-				if (this._bRtlMode) {
-					$GroupHeaderMenuButton.css("right", (this.$().width() - $GroupHeaderMenuButton.width() + $rowHdr.position().left - iScrollBarOffset) + "px");
-				} else {
-					$GroupHeaderMenuButton.css("left", (this.$().width() - $GroupHeaderMenuButton.width() - $rowHdr.position().left - iScrollBarOffset) + "px");
-				}
+				this._updateTableRowContent(oRow, false, false, false, oContextInfo.nodeState.sum, iLevel,
+					oContextInfo.nodeState.sum && oContextInfo.level > 0 ? oBinding.getGroupName(oContextInfo.context, oContextInfo.level) : null);
 			}
 
 			// show or hide the totals if not enabled - needs to be done by Table
@@ -513,46 +461,17 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			// be cleared in the model - and the binding has no control over the
 			// value mapping - this happens directly via the context!
 			var aCells = oRow.getCells();
-			var aMeasures = [];
 			for (var i = 0, lc = aCells.length; i < lc; i++) {
 				var iCol = aCells[i].data("sap-ui-colindex");
 				var oCol = aCols[iCol];
 				var $td = jQuery(aCells[i].$().closest("td"));
 				if (oBinding.isMeasure(oCol.getLeadingProperty())) {
 					$td.addClass("sapUiTableMeasureCell");
-					if (!oContextInfo.nodeState.sum || oCol.getSummed()) {
-						$td.removeClass("sapUiTableCellHidden");
-						aMeasures.push(oCol.getId());
-						aMeasures.push($td[0].id);
-					} else {
-						$td.addClass("sapUiTableCellHidden");
-					}
-
-					var sAriaTextForSumId = $td[0].id + "-ariaTextForSum";
-					var $AriaTextForSum = jQuery.sap.byId(sAriaTextForSumId);
-					if ($AriaTextForSum.length === 0) {
-						$td.append("<span id=\"" + sAriaTextForSumId + "\" class=\"sapUiHidden\"></span>");
-						$AriaTextForSum = jQuery.sap.byId(sAriaTextForSumId);
-					}
-
-					if (oContextInfo.nodeState.sum || $row.hasClass("sapUiTableGroupHeader")) {
-						$AriaTextForSum.text(sAriaTextForSum);
-						$td.attr("aria-labelledby", sAriaTextForSumId + " " + $td.attr("aria-labelledby"));
-					} else {
-						$AriaTextForSum.text("");
-						$td.removeAriaLabelledBy(sAriaTextForSumId);
-					}
+					$td.toggleClass("sapUiTableCellHidden", oContextInfo.nodeState.sum && !oCol.getSummed());
 				} else {
 					$td.removeClass("sapUiTableMeasureCell");
 				}
 			}
-
-			// connect measures with the group header
-			for (var k = 0; k < aMeasures.length; k++) {
-				aAriaLabelledByParts.push(aMeasures[k]);
-			}
-			// update aria description for row selection
-			$rowHdr.attr("aria-labelledby", aAriaLabelledByParts.join(" "));
 		}
 	};
 
@@ -571,28 +490,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		} else {
 			if (Table.prototype.onclick) {
 				Table.prototype.onclick.apply(this, arguments);
-			}
-		}
-	};
-
-	AnalyticalTable.prototype.onsapselect = function(oEvent) {
-		if (jQuery(oEvent.target).hasClass("sapUiTableGroupIcon")) {
-			this._onNodeSelect(oEvent);
-		} else if (jQuery(oEvent.target).hasClass("sapUiAnalyticalTableSum")) {
-			//Summs connot be selected
-			oEvent.preventDefault();
-			return;
-		} else {
-			var $Target = jQuery(oEvent.target),
-				$TargetDIV = $Target.closest('div.sapUiTableRowHdr');
-			if ($TargetDIV.hasClass('sapUiTableGroupHeader') && $TargetDIV.hasClass('sapUiTableRowHdr')) {
-				var iRowIndex = this.getFirstVisibleRow() + parseInt($TargetDIV.attr("data-sap-ui-rowindex"), 10);
-				var oBinding = this.getBinding("rows");
-				oBinding.toggleIndex(iRowIndex);
-				return;
-			}
-			if (Table.prototype.onsapselect) {
-				Table.prototype.onsapselect.apply(this, arguments);
 			}
 		}
 	};
@@ -715,8 +612,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 							that.insertColumn(oColumn, iLastGroupedIndex);
 						});
 					}
-					that._updateTableColumnDetails();
-					that.updateAnalyticalInfo();
+					that._updateColumns();
 					that._getRowContexts();
 				}
 			}));
@@ -735,8 +631,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 						aColumns[i]._bSkipUpdateAI = false;
 					}
 					that._bSupressRefresh = true;
-					that._updateTableColumnDetails();
-					that.updateAnalyticalInfo();
+					that._updateColumns();
 					that._getRowContexts();
 					that._bSupressRefresh = false;
 					that.fireGroup({column: undefined, groupedColumns: [], type: sap.ui.table.GroupEventType.ungroupAll});
@@ -907,6 +802,26 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		this.updateAnalyticalInfo(true, true);
 	};
 
+	/**
+	 * This function is used by some composite controls to avoid updating the AnalyticalInfo when several column are added to the table.
+	 * In order to finally update the AnalyticalInfo and request data, resumeUpdateAnalyticalInfo must be called.
+	 * @protected
+	 */
+	AnalyticalTable.prototype.suspendUpdateAnalyticalInfo = function() {
+		this._bSuspendUpdateAnalyticalInfo = true;
+	};
+
+	/**
+	 * This function is used by some composite controls to force updating the AnalyticalInfo
+	 * @param {boolean} bSuppressRefresh binding shall not refresh data
+	 * @param {boolean} bForceChange forces the binding to fire a change event
+	 * @protected
+	 */
+	AnalyticalTable.prototype.resumeUpdateAnalyticalInfo = function(bSupressRefresh, bForceChange) {
+		this._bSuspendUpdateAnalyticalInfo = false;
+		this._updateColumns(bSupressRefresh, bForceChange);
+	};
+
 	AnalyticalTable.prototype.addColumn = function(vColumn, bSuppressInvalidate) {
 		//@TODO: Implement addColumn(Column[] || oColumn)
 		var oColumn = this._getColumn(vColumn);
@@ -914,8 +829,8 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			this._addGroupedColumn(oColumn.getId());
 		}
 		Table.prototype.addColumn.call(this, oColumn, bSuppressInvalidate);
-		this._updateTableColumnDetails();
-		this.updateAnalyticalInfo(bSuppressInvalidate);
+
+		this._updateColumns(bSuppressInvalidate);
 		return this;
 	};
 
@@ -925,8 +840,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			this._addGroupedColumn(oColumn.getId());
 		}
 		Table.prototype.insertColumn.call(this, oColumn, iIndex, bSuppressInvalidate);
-		this._updateTableColumnDetails();
-		this.updateAnalyticalInfo(bSuppressInvalidate);
+		this._updateColumns(bSuppressInvalidate);
 		return this;
 	};
 
@@ -955,8 +869,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		this._aGroupedColumns = [];
 		var aResult = Table.prototype.removeAllColumns.apply(this, arguments);
 
-		this._updateTableColumnDetails();
-		this.updateAnalyticalInfo(bSuppressInvalidate);
+		this._updateColumns(bSuppressInvalidate);
 
 		return aResult;
 	};
@@ -976,12 +889,18 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		}
 	};
 
-	AnalyticalTable.prototype._updateColumns = function() {
-		this._updateTableColumnDetails();
-		this.updateAnalyticalInfo();
+	AnalyticalTable.prototype._updateColumns = function(bSupressRefresh, bForceChange) {
+		if (!this._bSuspendUpdateAnalyticalInfo) {
+			this._updateTableColumnDetails();
+			this.updateAnalyticalInfo(bSupressRefresh, bForceChange);
+		}
 	};
 
 	AnalyticalTable.prototype.updateAnalyticalInfo = function(bSupressRefresh, bForceChange) {
+		if (this._bSuspendUpdateAnalyticalInfo) {
+			return;
+		}
+
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
 			var aColumnInfo = this._getColumnInformation();
@@ -1012,6 +931,10 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	};
 
 	AnalyticalTable.prototype._updateTableColumnDetails = function() {
+		if (this._bSuspendUpdateAnalyticalInfo) {
+			return;
+		}
+
 		var oBinding = this.getBinding("rows"),
 			oResult = oBinding && oBinding.getAnalyticalQueryResult();
 
@@ -1147,8 +1070,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 				this._addGroupedColumn(aColumns[i].getId());
 			}
 		}
-		this._updateTableColumnDetails();
-		this.updateAnalyticalInfo();
+		this._updateColumns();
 	};
 
 	AnalyticalTable.prototype._addGroupedColumn = function(sColumn) {
@@ -1334,8 +1256,12 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			// if there is no binding the selection can't be handled, therefore the row is not selectable
 			return false;
 		}
-
 	};
+
+	/**
+	 * Inherit _getSelectedIndicesCount from TreeTable.
+	 */
+	AnalyticalTable.prototype._getSelectedIndicesCount = sap.ui.table.TreeTable.prototype._getSelectedIndicesCount;
 
 	return AnalyticalTable;
 

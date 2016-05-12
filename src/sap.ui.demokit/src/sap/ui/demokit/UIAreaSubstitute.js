@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.demokit.UIAreaSubstitute.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
-	function(jQuery, Element, library) {
+sap.ui.define(['sap/ui/core/Element', './library'],
+	function(Element, library) {
 	"use strict";
 
 	/**
@@ -20,13 +20,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.demokit.UIAreaSubstitute
+	 * @alias sap.ui.demokit.UIAreaSubstitute
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var UIAreaSubstitute = Element.extend("sap.ui.demokit.UIAreaSubstitute", /** @lends sap.ui.demokit.UIAreaSubstitute.prototype */ { metadata : {
 
 		library : "sap.ui.demokit",
-		aggregatingType : "sap.ui.demokit/CodeSampleContainer",
+		aggregatingType : "sap.ui.demokit.CodeSampleContainer",
 		aggregations : {
 
 			/**
@@ -38,4 +38,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 
 	return UIAreaSubstitute;
 
-}, /* bExport= */ true);
+});

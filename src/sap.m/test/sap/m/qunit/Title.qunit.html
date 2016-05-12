@@ -212,6 +212,26 @@
 			}
 		});
 
+		module("Accessibility");
+		
+		test("getAccessibilityInfo", function() {
+			var oTitle = new sap.m.Title({text: "Text"});
+			ok(!!oTitle.getAccessibilityInfo, "Title has a getAccessibilityInfo function");
+			var oInfo = oTitle.getAccessibilityInfo();
+			ok(!!oInfo, "getAccessibilityInfo returns a info object");
+			strictEqual(oInfo.role, "heading", "AriaRole");
+			strictEqual(oInfo.type, undefined, "Type");
+			strictEqual(oInfo.description, "Text", "Description");
+			strictEqual(oInfo.focusable, false, "Focusable");
+			strictEqual(oInfo.enabled, undefined, "Enabled");
+			strictEqual(oInfo.editable, undefined, "Editable");
+			oTitle.setTitle(new sap.ui.core.Title({
+				text: "Text2"
+			}))
+			oInfo = oTitle.getAccessibilityInfo();
+			strictEqual(oInfo.description, "Text2", "Description");
+			oTitle.destroy();
+		});
 		</script>
 
 	</head>

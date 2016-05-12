@@ -61,7 +61,7 @@ describe("sap.m.IconTabBar", function() {
 	it("should contain tabs without icons in upperCase in semantic colours and transparent background design", function() {
 		//next line is to move the view in the window
 		element(by.id("itb5")).click();
-		expect(takeScreenshot(itb5)).toLookAs("6_tabs_without_icons_upperCase_semantic_colours_transparent_background_design");
+		expect(takeScreenshot(itb5)).toLookAs("6_noIcons_upperCase_semantic_transp_bckg");
 	});
 
 	var itb6 = element(by.id('itb6'));
@@ -85,7 +85,7 @@ describe("sap.m.IconTabBar", function() {
 	it("should not have any parameters or items", function() {
 		//next line is to move the view in the window
 		element(by.id("itb10")).click();
-		expect(takeScreenshot(itb10)).toLookAs("9_no_parameters no_items");
+		expect(takeScreenshot(itb10)).toLookAs("9_no_parameters_no_items");
 	});
 
 	var itb11 = element(by.id('itb11'));
@@ -101,6 +101,6 @@ describe("sap.m.IconTabBar", function() {
 	it("should have images as items", function() {
 		//next line is to move the view in the window
 		element(by.id("itb12")).click();
-		expect(takeScreenshot(itb12)).toLookAs("11_property_stretchContentHeight_class_sapUiResponsiveContentPadding_arrows");
+		expect(takeScreenshot(itb12)).toLookAs("11_stretchContentHeight_ResponsivePaddin");
 	});
 });

@@ -3,9 +3,8 @@
  */
 
 // Provides class sap.ui.dt.plugin.ControlDragDrop.
-sap.ui.define([
-	'sap/ui/dt/plugin/DragDrop', 'sap/ui/dt/plugin/ElementMover', 'sap/ui/dt/ElementUtil'
-], function(DragDrop, ElementMover, ElementUtil) {
+sap.ui.define(['sap/ui/dt/plugin/DragDrop', 'sap/ui/dt/plugin/ElementMover', 'sap/ui/dt/ElementUtil'], function(
+		DragDrop, ElementMover, ElementUtil) {
 	"use strict";
 
 	/**
@@ -25,25 +24,23 @@ sap.ui.define([
 	 */
 	var ControlDragDrop = DragDrop.extend("sap.ui.dt.plugin.ControlDragDrop", /** @lends sap.ui.dt.plugin.ControlDragDrop.prototype */
 	{
-		metadata: {
+		metadata : {
 			// ---- object ----
 
 			// ---- control specific ----
-			library: "sap.ui.dt",
-			properties: {
-				draggableTypes: {
-					type: "string[]",
-					defaultValue: [
-						"sap.ui.core.Element"
-					]
+			library : "sap.ui.dt",
+			properties : {
+				draggableTypes : {
+					type : "string[]",
+					defaultValue : ["sap.ui.core.Element"]
 				},
-				elementMover: {
-					type: "sap.ui.dt.plugin.ElementMover"
+				elementMover : {
+					type : "sap.ui.dt.plugin.ElementMover"
 				}
 			},
-			associations: {},
-			events: {
-				elementMoved: {}
+			associations : {},
+			events : {
+				elementMoved : {}
 			}
 		}
 	});
@@ -141,7 +138,8 @@ sap.ui.define([
 	 */
 	ControlDragDrop.prototype.onDragEnter = function(oTargetOverlay, oEvent) {
 		var oDraggedOverlay = this.getDraggedOverlay();
-		if (oTargetOverlay.getElementInstance() !== oDraggedOverlay.getElementInstance() && oTargetOverlay !== this._oPreviousTarget) {
+		if (oTargetOverlay.getElementInstance() !== oDraggedOverlay.getElementInstance()
+				&& oTargetOverlay !== this._oPreviousTarget) {
 			this.getElementMover().repositionOn(oDraggedOverlay, oTargetOverlay);
 		}
 		this._oPreviousTarget = oTargetOverlay;

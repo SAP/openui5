@@ -69,20 +69,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * @public
 	 */
 
-	/**
-	 * The 'dataReceived' event is fired, when data was received from a backend. This event may also be fired when an error occured.
-	 *
-	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
-	 *
-	 * @name sap.ui.model.Binding#dataReceived
-	 * @event
-	 * @param {sap.ui.base.Event} oEvent
-	 * @param {sap.ui.base.EventProvider} oEvent.getSource
-	 * @param {object} oEvent.getParameters
+	 /**
+ 	 * The 'dataReceived' event is fired, when data was received from a backend. This event may also be fired when an error occured.
+ 	 *
+ 	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
+ 	 *
+ 	 * @name sap.ui.model.Binding#dataReceived
+ 	 * @event
+ 	 * @param {sap.ui.base.Event} oEvent
+ 	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+ 	 * @param {object} oEvent.getParameters
 
-	 * @param {string} [oEvent.getParameters.data] The data received. In error cases it will be undefined.
-	 * @public
-	 */
+ 	 * @param {string} [oEvent.getParameters.data] The data received. In error cases it will be undefined.
+ 	 * @public
+ 	 */
+
+	 /**
+ 	 * The 'change' event is fired, when the data of the Binding is changed from the model. The reason parameter of the event provides a hint where the change came from.
+ 	 *
+ 	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
+ 	 *
+ 	 * @name sap.ui.model.Binding#change
+ 	 * @event
+ 	 * @param {sap.ui.base.Event} oEvent
+ 	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+ 	 * @param {object} oEvent.getParameters
+
+ 	 * @param {string} [oEvent.getParameters.reason] A string stating the reason for the data change. Can be any string and new values can be added in the future.
+ 	 * @public
+ 	 */
 
 	// Getter
 	/**
@@ -107,6 +122,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 */
 	Binding.prototype.setContext = function(oContext) {
 		if (this.oContext != oContext) {
+			sap.ui.getCore().getMessageManager().removeMessages(this.getDataState().getControlMessages(), true);
 			this.oContext = oContext;
 			this.oDataState = null;
 			this._fireChange({reason : ChangeReason.Context});
@@ -500,6 +516,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	Binding.prototype.resume = function() {
 		this.bSuspended = false;
 		this.checkUpdate();
+	};
+
+	/**
+	 * Removes all control messages for this binding from the MessageManager in addition to the standard clean-up tasks.
+	 * @see sap.ui.base.EventProvider#destroy
+	 *
+	 * @public
+	 */
+	sap.ui.model.Binding.prototype.destroy = function() {
+		sap.ui.getCore().getMessageManager().removeMessages(this.getDataState().getControlMessages(), true);
+		sap.ui.base.EventProvider.prototype.destroy.apply(this, arguments);
 	};
 
 	return Binding;

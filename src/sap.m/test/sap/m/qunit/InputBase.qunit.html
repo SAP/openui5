@@ -8,7 +8,6 @@
 				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-noConflict="true"
 				data-sap-ui-libs="sap.m"
-				data-sap-ui-language="en"
 				src="../../../../resources/sap-ui-core.js">
 		</script>
 		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
@@ -2002,6 +2001,33 @@
 
 				ok(document.activeElement === oInput.getFocusDomRef(), "input is focused when placeholder is tapped");
 
+				oInput.destroy();
+			});
+			
+			test("getAccessibilityInfo", function() {
+				var oInput = new sap.m.InputBase({value: "Value", tooltip: "Tooltip", placeholder: "Placeholder"});
+				ok(!!oInput.getAccessibilityInfo, "InputBase has a getAccessibilityInfo function");
+				var oInfo = oInput.getAccessibilityInfo();
+				ok(!!oInfo, "getAccessibilityInfo returns a info object");
+				strictEqual(oInfo.role, oInput.getRenderer().getAriaRole(), "AriaRole");
+				strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_INPUT"), "Type");
+				strictEqual(oInfo.description, "Value Placeholder Tooltip", "Description");
+				strictEqual(oInfo.focusable, true, "Focusable");
+				strictEqual(oInfo.enabled, true, "Enabled");
+				strictEqual(oInfo.editable, true, "Editable");
+				oInput.setValue("");
+				oInput.setEnabled(false);
+				oInfo = oInput.getAccessibilityInfo();
+				strictEqual(oInfo.description, "Placeholder Tooltip", "Description");
+				strictEqual(oInfo.focusable, false, "Focusable");
+				strictEqual(oInfo.enabled, false, "Enabled");
+				strictEqual(oInfo.editable, false, "Editable");
+				oInput.setEnabled(true);
+				oInput.setEditable(false);
+				oInfo = oInput.getAccessibilityInfo();
+				strictEqual(oInfo.focusable, true, "Focusable");
+				strictEqual(oInfo.enabled, true, "Enabled");
+				strictEqual(oInfo.editable, false, "Editable");
 				oInput.destroy();
 			});
 

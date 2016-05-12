@@ -194,10 +194,116 @@
 			this.oDialog.open();
 			this.oDialog.setTitle(sTitle);
 
-			// var oDialogTitle = new sap.ui.commons.Dialog();
-			// oDialogTitle.oPopup.attachOpened(fnOpened);
-			// oDialogTitle.open();
-			// oDialogTitle.setTitle(sTitle);
+		});
+
+		QUnit.test("Test resizeHandler registration", function(assert) {
+			var done = assert.async();
+			var that = this;
+			var sTitle = "Lorem Ipsum dolor sit amet",
+				popupPositionSpy = sinon.spy(this.oDialog.oPopup, 'setPosition'),
+				registerSpy = sinon.spy(sap.ui.core.ResizeHandler, 'register');
+
+			var fnOpened = function() {
+
+				assert.ok(popupPositionSpy.calledOnce, 'should call setPosition of the popup as setting Title after ' +
+						'Dialog opening triggers resize handler');
+				assert.ok(!!that.oDialog._sContentResizeListenerId, '_sContentResizeListenerId is not null as setting Title after ' +
+						'Dialog opening triggers resize handler');
+				assert.ok(registerSpy.callCount > 0, "setTitle triggers register method of sap.ui.core.ResizeHandler");
+
+				popupPositionSpy.restore();
+				registerSpy.restore();
+				done();
+			};
+
+			this.oDialog.destroyContent();
+			this.oDialog.destroyButtons();
+			this.oDialog.oPopup.attachOpened(fnOpened);
+			this.oDialog.open();
+			this.oDialog.setTitle(sTitle);
+
+		});
+
+		QUnit.test("Test resizeHandler deregistration as moving dialog deregisters the resize handler", function(assert) {
+			var that = this,
+					done = assert.async(),
+					mouseDownSpy = sinon.spy(this.oDialog, 'onmousedown'),
+					mouseMoveSpy = sinon.spy(this.oDialog, 'handleMove'),
+					mouseUpSpy = sinon.spy(this.oDialog, 'handleMouseUp'),
+					popupPositionSpy = sinon.spy(this.oDialog.oPopup, 'setPosition'),
+					deregisterSpy = sinon.spy(sap.ui.core.ResizeHandler, 'deregister');
+
+			function fnOpened() {
+				var sHeaderId = that.oDialog.getId() + '-hdr';
+				var headerDomRef = jQuery.sap.domById(sHeaderId);
+
+				sap.ui.test.qunit.triggerMouseEvent(headerDomRef, 'mousedown');
+				assert.strictEqual(mouseDownSpy.callCount, 1, 'should be called');
+				assert.strictEqual(that.oDialog.sDragMode, 'move','Move mode should be triggered');
+
+				sap.ui.test.qunit.triggerMouseEvent(headerDomRef, 'mousemove');
+				assert.strictEqual(mouseMoveSpy.callCount, 1,'The dialog should be moved');
+				assert.ok(popupPositionSpy.calledOnce, 'should call setPosition on the popup once as drag calls setPosition internally');
+				assert.strictEqual(mouseMoveSpy.returnValues[0], false, 'handleMove should return false');
+				assert.ok(deregisterSpy.callCount === 1, "move/resize dialog triggers deregister method of sap.ui.core.ResizeHandler");
+
+				sap.ui.test.qunit.triggerMouseEvent(headerDomRef, 'mouseup');
+				assert.strictEqual(mouseUpSpy.callCount, 1, 'handleUp should be called');
+
+				mouseDownSpy.restore();
+				mouseMoveSpy.restore();
+				mouseUpSpy.restore();
+				popupPositionSpy.restore();
+				deregisterSpy.restore();
+				done();
+			}
+
+
+			this.oDialog.oPopup.attachOpened(fnOpened);
+			this.oDialog.open();
+
+		});
+
+		QUnit.test("Test resizeHandler deregistration as resize dialog deregisters the resize handler", function(assert) {
+			var that = this,
+				done = assert.async(),
+				mouseDownSpy = sinon.spy(this.oDialog, 'onmousedown'),
+				mouseMoveSpy = sinon.spy(this.oDialog, 'handleMove'),
+				mouseUpSpy = sinon.spy(this.oDialog, 'handleMouseUp'),
+				setPropertySpy = sinon.spy(this.oDialog, 'setProperty'),
+				invalidateSpy = sinon.spy(this.oDialog, 'invalidate'),
+				popupPositionSpy = sinon.spy(this.oDialog.oPopup, 'setPosition');
+
+
+			function fnOpened() {
+				var sGripId = that.oDialog.getId() + '-grip',
+						gripHandleRef = jQuery.sap.domById(sGripId);
+
+				sap.ui.test.qunit.triggerMouseEvent(gripHandleRef, 'mousedown');
+
+				assert.strictEqual(mouseDownSpy.callCount, 1, 'should call onmousedown handler');
+				assert.strictEqual(that.oDialog.sDragMode, 'resize', 'should be trigger resize mode');
+
+				sap.ui.test.qunit.triggerMouseEvent(gripHandleRef, 'mousemove');
+				assert.strictEqual(setPropertySpy.callCount, 4,'should set its the width and height once at the begining and once after resize is finished');
+				assert.strictEqual(invalidateSpy.callCount, 0, 'should not cause rerendering');
+				assert.strictEqual(popupPositionSpy.callCount, 0,'The popup setPosition is not called as handler is deregistered');
+
+
+				sap.ui.test.qunit.triggerMouseEvent(gripHandleRef, 'mouseup');
+
+				mouseDownSpy.restore();
+				mouseMoveSpy.restore();
+				mouseUpSpy.restore();
+				setPropertySpy.restore();
+				invalidateSpy.restore();
+				popupPositionSpy.restore();
+				done();
+			}
+
+			this.oDialog.oPopup.attachOpened(fnOpened);
+			this.oDialog.open();
+
 		});
 
 		QUnit.test('Close Dialog', function(assert) {

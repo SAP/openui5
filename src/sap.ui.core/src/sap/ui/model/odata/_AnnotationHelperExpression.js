@@ -843,7 +843,7 @@ sap.ui.define([
 			var oResult = Expression.parameter(oInterface, oPathValue, 0);
 
 			if (oResult.result === "constant") {
-				// convert v4 to v2 for sap.ui.model.odata.ODataUtils
+				// convert V4 to V2 for sap.ui.model.odata.ODataUtils
 				if (oResult.type === "Edm.Date") {
 					oResult.type = "Edm.DateTime";
 					// Note: ODataUtils.formatValue calls Date.parse() indirectly, use UTC to make

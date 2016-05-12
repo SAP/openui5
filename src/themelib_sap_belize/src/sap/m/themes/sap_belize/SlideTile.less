@@ -4,21 +4,13 @@
 /* ================================ */
 
 .sapMST {
-	box-shadow: 0rem 0rem 0.25rem fade(@sapUiContentShadowColor, 10);
+	box-shadow: 0 0 0.125rem 0 fade(@sapUiTileBorderColor, 30);
 }
 
-.sap-desktop .sapMST:hover,
-.sap-tablet .sapMSTHvr:hover,
-.sap-phone .sapMSTHvr:hover {
-	box-shadow: 0rem 0rem 0rem 0.125rem @sapUiContentContrastShadowColor;
-}
-
-.sap-desktop .sapMST:focus {
-	outline-color: @sapUiContentFocusColor;
-	outline-style: dotted;
-	outline-width: 1px; /* Usage of px as aligned with designers. */
-}
-
-.sapMSTIcon {
-	color: lighten(@sapUiContentIconColor, 34.1);
+html.sap-desktop .sapMST:hover,
+html.sap-tablet .sapMSTHvr:active,
+html.sap-phone .sapMSTHvr:active {
+	box-shadow:
+		0 0 0.125rem 0 fade(@sapUiTileBorderColor, 30),
+		0 0 0 0.25rem @sapUiTileBackground;
 }

@@ -255,7 +255,7 @@ sap.ui.define([
 	 *
 	 * @param {object} oCondition the new condition of type { "key": "007", "operation": sap.m.P13nConditionOperation.Ascending, "keyField":
 	 *        "keyFieldKey", "value1": "", "value2": ""};
-	 * @param {integer} index of the new condition
+	 * @param {int} index of the new condition
 	 * @public
 	 * @since 1.26.0
 	 */
@@ -348,7 +348,7 @@ sap.ui.define([
 						"operation": oCondition.operation,
 						"keyField": oCondition.keyField,
 						"value1": oCondition.value1,
-						"value2": oCondition.value2,
+						"value2": oCondition.operation === sap.m.P13nConditionOperation.BT ? oCondition.value2 : null,
 						"showIfGrouped": oCondition.showIfGrouped
 					});
 
@@ -605,6 +605,7 @@ sap.ui.define([
 		this._iConditions = 0;
 		this._sLayoutMode = "Desktop";
 		this._sConditionType = "Filter";
+		this._sAddRemoveIconTooltip = "FILTER";
 
 		this._iBreakPointTablet = sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD].points[0];
 		this._iBreakPointDesktop = sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD].points[1];
@@ -767,7 +768,7 @@ sap.ui.define([
 
 		this._oAddButton = new sap.m.Button({
 			icon: sap.ui.core.IconPool.getIconURI("add"),
-			tooltip: this._oRb.getText("CONDITIONPANEL_ADD_TOOLTIP"),
+			tooltip: this._oRb.getText("CONDITIONPANEL_ADD" + (this._sAddRemoveIconTooltipKey ? "_" + this._sAddRemoveIconTooltipKey : "") + "_TOOLTIP"),
 			visible: true,
 			press: function(oEvent) {
 				var oConditionGrid = that._createConditionRow(that._oConditionsGrid, undefined, null, 0);
@@ -908,7 +909,6 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nConditionPanel.prototype.exit = function() {
-
 		this._unregisterResizeHandler();
 
 		this._aConditionsFields = null;
@@ -1065,7 +1065,7 @@ sap.ui.define([
 	 * @param {grid} oTargetGrid the main grid in which the new condition grid will be added
 	 * @param {object} oConditionGridData the condition data for the new added condition grid controls
 	 * @param {string} sKey the key for the new added condition grid
-	 * @param {integer} iPos the index of the new condition in the targetGrid
+	 * @param {int} iPos the index of the new condition in the targetGrid
 	 */
 	P13nConditionPanel.prototype._createConditionRow = function(oTargetGrid, oConditionGridData, sKey, iPos) {
 		var oButtonContainer = null;
@@ -1108,18 +1108,7 @@ sap.ui.define([
 							that._changeField(oConditionGrid);
 						});
 
-						if (oConditionGridData) {
-							oControl.setSelected(oConditionGridData.showIfGrouped);
-						} else {
-							if (this.getUsePrevConditionSetting()) {
-								// select the value from the condition above
-								if (iPos > 0) {
-									oGrid = oTargetGrid.getContent()[iPos - 1];
-									oControl.setSelected(oGrid.showIfGrouped.getSelected());
-								}
-							}
-						}
-
+						oControl.setSelected(oConditionGridData ? oConditionGridData.showIfGrouped : true);
 					} else {
 						if (oConditionGridData) {
 							oControl.setSelected(true);
@@ -1205,6 +1194,11 @@ sap.ui.define([
 												oControl.setSelectedItem(oControl.getItems()[index]);
 											}
 										}, this);
+
+										// if no item is selected, we have to select at least the first keyFieldItem
+										if (!oControl.getSelectedItem() && oControl.getItems().length > 0) {
+											oControl.setSelectedItem(oControl.getItems()[0]);
+										}
 									}
 								} else {
 									this._aKeyFields.forEach(function(oKeyField, index) {
@@ -1355,7 +1349,7 @@ sap.ui.define([
 		var oRemoveControl = new sap.m.Button({
 			type: sap.m.ButtonType.Transparent,
 			icon: sap.ui.core.IconPool.getIconURI("sys-cancel"),
-			tooltip: this._oRb.getText("CONDITIONPANEL_REMOVE_TOOLTIP"),
+			tooltip: this._oRb.getText("CONDITIONPANEL_REMOVE" + (this._sAddRemoveIconTooltipKey ? "_" + this._sAddRemoveIconTooltipKey : "") + "_TOOLTIP"),
 			press: function() {
 				that._handleRemoveCondition(this.oTargetGrid, oConditionGrid);
 			},
@@ -1373,7 +1367,7 @@ sap.ui.define([
 		var oAddControl = new sap.m.Button({
 			type: sap.m.ButtonType.Transparent,
 			icon: sap.ui.core.IconPool.getIconURI("add"),
-			tooltip: this._oRb.getText("CONDITIONPANEL_ADD_TOOLTIP"),
+			tooltip: this._oRb.getText("CONDITIONPANEL_ADD" + (this._sAddRemoveIconTooltipKey ? "_" + this._sAddRemoveIconTooltipKey : "") + "_TOOLTIP"),
 			press: function() {
 				that._handleAddCondition(this.oTargetGrid, oConditionGrid);
 			},
@@ -1584,6 +1578,16 @@ sap.ui.define([
 				oConditionGrid.oFormatter = null;
 				oControl = new sap.m.Input(params);
 
+				if (this._fSuggestCallback) {
+					var oCurrentKeyField = this._getCurrentKeyFieldItem(oConditionGrid.keyField);
+					if (oCurrentKeyField && oCurrentKeyField.key) {
+						var oSuggestProvider = this._fSuggestCallback(oControl, oCurrentKeyField.key);
+						if (oSuggestProvider) {
+							oControl._oSuggestProvider = oSuggestProvider;
+						}
+					}
+				}
+
 		}
 
 		if (sCtrlType !== "boolean" && sCtrlType !== "enum") {
@@ -1622,13 +1626,9 @@ sap.ui.define([
 										"operation": oOperation.getSelectedKey(),
 										"keyField": oKeyField.key,
 										"value1": aSeparatedText[i],
-										"value2": null //oOperation.getSelectedKey() === "BT" ? aSeparatedText[i + 1] : null
+										"value2": null
 									};
 									that._addCondition2Map(oCondition);
-
-//									if (oOperation.getSelectedKey() === "BT") {
-//										i++;
-//									}
 
 									that.fireDataChange({
 										key: oCondition.key,
@@ -1655,7 +1655,7 @@ sap.ui.define([
 			if (typeof oCurrentKeyField.maxLength === "number") {
 				l = oCurrentKeyField.maxLength;
 			}
-			if (l > 0) {
+			if (l > 0 && (!oControl.getShowSuggestion || !oControl.getShowSuggestion())) {
 				oControl.setMaxLength(l);
 			}
 		}
@@ -1788,12 +1788,18 @@ sap.ui.define([
 			var sOldValue = oCtrl.getValue ? oCtrl.getValue() : "";
 
 			var ctrlIndex = oConditionGrid.indexOfContent(oCtrl);
-			oConditionGrid.removeContent(oCtrl);
+			//oConditionGrid.removeContent(oCtrl);
+			oConditionGrid.removeAggregation("content", oCtrl, true);
+			if (oCtrl._oSuggestProvider) {
+				oCtrl._oSuggestProvider.destroy();
+				oCtrl._oSuggestProvider = null;
+			}
 			oCtrl.destroy();
 			var fieldInfo = this._aConditionsFields[index];
 			oCtrl = this._createValueField(oCurrentKeyField, fieldInfo, oConditionGrid);
 			oConditionGrid[fieldInfo["ID"]] = oCtrl;
-			oConditionGrid.insertContent(oCtrl, ctrlIndex);
+			//oConditionGrid.insertContent(oCtrl, ctrlIndex);
+			oConditionGrid.insertAggregation("content", oCtrl, ctrlIndex, true);
 
 			var oValue, sValue;
 			if (oConditionGrid.oFormatter && sOldValue) {
@@ -1971,7 +1977,7 @@ sap.ui.define([
 
 		if (sOperation === sap.m.P13nConditionOperation.BT) {
 			// for the "between" operation we enable both fields
-			if (oValue1.setPlaceholder) {
+			if (oValue1.setPlaceholder && oValue1.getPlaceholder() !== this._sFromLabelText) {
 				oValue1.setPlaceholder(this._sFromLabelText);
 			}
 			if (!oValue1.getVisible()) {
@@ -1980,7 +1986,7 @@ sap.ui.define([
 				oConditionGrid.insertContent(oValue1, oConditionGrid.getContent().length - 1);
 			}
 
-			if (oValue2.setPlaceholder) {
+			if (oValue2.setPlaceholder && oValue2.getPlaceholder() !== this._sToLabelText) {
 				oValue2.setPlaceholder(this._sToLabelText);
 			}
 			if (!oValue2.getVisible()) {
@@ -2024,7 +2030,7 @@ sap.ui.define([
 					oConditionGrid.removeContent(oShowIfGroupedvalue);
 				} else {
 					// for all other operations we enable only the Value1 fields
-					if (oValue1.setPlaceholder) {
+					if (oValue1.setPlaceholder && oValue1.getPlaceholder() !== this._sValueLabelText) {
 						oValue1.setPlaceholder(this._sValueLabelText);
 					}
 					if (!oValue1.getVisible()) {
@@ -2221,7 +2227,7 @@ sap.ui.define([
 			"operation": sOperation,
 			"keyField": sKeyField,
 			"value1": oValue1,
-			"value2": oValue2,
+			"value2": sOperation === sap.m.P13nConditionOperation.BT ? oValue2 : null,
 			"showIfGrouped": bShowIfGrouped
 		};
 		sKey = this._getKeyFromConditionGrid(oConditionGrid);

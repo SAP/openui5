@@ -1,0 +1,106 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+		<title>BusyDialog - sap.m</title>
+		<script src='../../../../resources/sap-ui-core.js'
+				type='text/javascript'
+				id='sap-ui-bootstrap'
+				data-sap-ui-libs='sap.m'
+				data-sap-ui-theme='sap_bluecrystal'
+				data-sap-ui-compatVersion='1.16'>
+		</script>
+		<script type='text/javascript'>
+
+			var app = new sap.m.App('myApp', {initialPage: 'initialPage'});
+			var _buttonWidth = '300px';
+
+			var invText = new sap.ui.core.InvisibleText("hiddenTxt", {text: "Additional descriptive text added"}).placeAt("content");
+			var defaultLightBusyDialog = new sap.m.BusyDialog('defaultLightBusyDialog');
+			var defaultLightBusyDialogARIA = new sap.m.BusyDialog('defaultLightBusyDialogARIA', {
+				ariaLabelledBy: "hiddenTxt"
+			});
+
+			var standartBusyDialog = new sap.m.BusyDialog('standaratBusyDialog', {
+				title: 'Dummy preloader',
+				text: '... this is just a demo, we are not waiting for anything.',
+				showCancelButton: true
+			});
+
+			var customCancelButtonTextBusyDialog = new sap.m.BusyDialog('customCancelButtonTextBusyDialog', {
+				tooltip: 'BusyDialog example with custom "cancel button text, custom icon and tooltip.',
+				cancelButtonText: 'Custom Close Text',
+				customIcon: '../images/synchronise_48.png',
+				customIconRotationSpeed: 5000
+			});
+
+			var standartNoHeaderBusyDialog = new sap.m.BusyDialog('standartNoHeaderBusyDialog', {
+				text: 'Sending data...',
+				showCancelButton: true
+			});
+
+			var standartNoHeaderAndFooterBusyDialog = new sap.m.BusyDialog('standartNoHeaderAndFooterBusyDialog', {
+				text: 'Loading data...'
+			});
+
+			var initialPage = new sap.m.Page('initialPage', {
+				title: 'Busy Dialog Control',
+				content: [
+					new sap.m.Button({
+						text: 'Default (light)',
+						width: _buttonWidth,
+						press: function () {
+							defaultLightBusyDialog.open();
+							jQuery.sap.delayedCall(20000, this, function () {
+								defaultLightBusyDialog.close();
+							});
+						}
+					}),
+					new sap.m.Button({
+						text: 'Default (light) - ARIA',
+						width: _buttonWidth,
+						press: function () {
+							defaultLightBusyDialogARIA.open();
+							jQuery.sap.delayedCall(20000, this, function () {
+								defaultLightBusyDialogARIA.close();
+							});
+						}
+					}),
+					new sap.m.Button({
+						text: 'Standart (static)',
+						width: _buttonWidth,
+						press: function () {
+							standartBusyDialog.open();
+						}
+					}),
+					new sap.ui.core.HTML({content: "<br>"}),
+					new sap.m.Button({
+						text: 'Standart - no header',
+						width: _buttonWidth,
+						press: function () {
+							standartNoHeaderBusyDialog.open();
+						}
+					}),
+					new sap.m.Button({
+						text: 'Standart without footer and header',
+						width: _buttonWidth,
+						press: function () {
+							standartNoHeaderAndFooterBusyDialog.open();
+
+							jQuery.sap.delayedCall(20000, this, function () {
+								standartNoHeaderAndFooterBusyDialog.close();
+							});
+						}
+					})
+				]
+			});
+
+			app.addPage(initialPage).placeAt('content');
+		</script>
+
+	</head>
+	<body id='body' class='sapUiBody' role='application'>
+		<div id='content'>
+		</div>
+	</body>
+</html>

@@ -290,5 +290,38 @@
         "references": []
       }
     ]
+  },
+  "1.34.11": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "aaee665f575ac60f9810e3b951ec42500da6137d",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.IconTabBar: windows 10 rules added",
+        "references": []
+      },
+      {
+        "id": "3faf95e8b7a308764fc8a19fa76eb51a731cceb6",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton - width recalculation is more effective now.",
+        "references": []
+      },
+      {
+        "id": "8b3a96e89c7ca75bdc465865a1c7048fcf76df59",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.GridLayout: labels not aligned in Firefox",
+        "references": []
+      },
+      {
+        "id": "b171f36c3de7e0dc808f1b1ff2598e7c0609de90",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.ResponsiveGridLayout: too much padding bottom",
+        "references": []
+      }
+    ]
   }
 }

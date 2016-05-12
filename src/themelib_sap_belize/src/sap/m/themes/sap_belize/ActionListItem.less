@@ -13,7 +13,7 @@
 	border-color: @sapUiPageFooterBorderColor;
 }
 
-.sap-desktop .sapMList .sapMLIB.sapMALI:not(.sapMLIBActive) {
+html.sap-desktop .sapMList .sapMLIB.sapMALI:not(.sapMLIBActive) {
 	background: @sapUiPageFooterBackground;
 	border-color: @sapUiPageFooterBorderColor;
 }
@@ -28,15 +28,15 @@
 }
 
 .sapMALIText {
-	color: @sapUiContentContrastTextColor;
+	color: @sapUiButtonFooterTextColor;
 	font-weight: normal;
 	line-height: 1.25rem;
 	font-size: 1.125rem;
 	margin: 0 0 0 0.5rem;
 }
 
-.sap-desktop .sapMList .sapMLIB.sapMALI:hover:not(.sapMLIBActive) {
-	background: lighten(@sapUiPageFooterBackground, 6);
+html.sap-desktop .sapMList .sapMLIB.sapMALI:hover:not(.sapMLIBActive) {
+	background: contrast(@sapUiPageFooterBackground, darken(@sapUiPageFooterBackground, 6), lighten(@sapUiPageFooterBackground, 6));
 }
 
 /* Compact size */

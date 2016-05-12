@@ -23,6 +23,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Menu', 'sap/ui/core/Control'
 	 *
 	 * @constructor
 	 * @public
+	 * @deprecated Since version 1.38.
 	 * @alias sap.ui.ux3.Shell
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -678,7 +679,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Menu', 'sap/ui/core/Control'
 	 * sap.ui.ux3.Shell.PANE_OVERFLOW_BUTTON_MAX_HEIGHT while the current height is saved in
 	 * sap.ui.ux3.Shell.PANE_OVERFLOW_BUTTON_HEIGHT
 	 *
-	 * @returns {bool} Returns whether a change to the button height has been made.
+	 * @returns {boolean} Returns whether a change to the button height has been made.
 	 */
 	Shell.prototype._adaptOverflowButtonHeight = function() {
 		var $Button = this.$("paneBarOverflowButton");
@@ -718,7 +719,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Menu', 'sap/ui/core/Control'
 	 * Changes the overflow button from the standard text to the currently active overflowing
 	 * item and back.
 	 *
-	 * @returns {bool} Returns whether a change to the button height has been made.
+	 * @returns {boolean} Returns whether a change to the button height has been made.
 	 */
 	Shell.prototype._changeOverflowButton = function() {
 		// Only if this._sOpenPaneId is not null, an overflow item could be active

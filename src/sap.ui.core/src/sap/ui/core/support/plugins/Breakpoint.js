@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.support.plugins.Breakpoint (Breakpoint support Plugin)
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/support/Plugin'],
-	function(jQuery, Device, Plugin) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/ElementMetadata', '../Plugin'],
+	function(jQuery, Device, ElementMetadata, Plugin) {
 	"use strict";
 
 	/*global alert */
@@ -285,7 +285,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/support/Plugin
 					}
 
 					if (typeof (oObj.getMetadata) === 'function' &&
-						oObj.getMetadata() instanceof sap.ui.core.ElementMetadata) {
+						oObj.getMetadata() instanceof ElementMetadata) {
 						aClasses.push(oObj.getMetadata().getName());
 					}
 				}

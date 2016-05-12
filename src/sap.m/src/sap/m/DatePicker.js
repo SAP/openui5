@@ -323,6 +323,9 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 	 *
 	 * If this property is used, the <code>dateValue</code> property should not be changed from the caller.
 	 *
+	 * If Data binding using a <code>sap.ui.model.type.Date</code> is used, please set the <code>formatOption</code> <code>stricktParsing</code> to <code>true</code>.
+	 * This prevents unwanted automatic corrections of wrong input.
+	 *
 	 * @param {string} sValue The new value of the input.
 	 * @return {sap.m.DatePicker} <code>this</code> to allow method chaining
 	 * @public
@@ -520,7 +523,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 		if (this._oWantedDate && this._oWantedDate.getTime() >= this._oMinDate.getTime() && this._oWantedDate.getTime() <= this._oMaxDate.getTime()) {
 			this.setDateValue(this._oWantedDate);
 		}
-
 	};
 
 	DatePicker.prototype.setValueFormat = function(sValueFormat) {
@@ -645,17 +647,22 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 
 		// compare with the old known value
 		if (sValue !== this._lastValue) {
-			this.setProperty("value", sValue, true); // no rerendering
-			if (this._bValid) {
-				this.setProperty("dateValue", oDate, true); // no rerendering
-			}
-
 			// remember the last value on change
 			this._lastValue = sValue;
 
-			this.fireChangeEvent(sValue, {valid: this._bValid});
+			this.setProperty("value", sValue, true); // no rerendering
+			var sNewValue = this.getValue(); // in databinding a formatter could change the value (including dateValue) directly
+
+			if (this._bValid && sValue == sNewValue) {
+				this.setProperty("dateValue", oDate, true); // no rerendering
+			}
+
+			sValue = sNewValue;
 
 			if (this._oPopup && this._oPopup.isOpen()) {
+				if (this._bValid) {
+					oDate = this.getDateValue(); // as in databinding a formatter could change the date
+				}
 				this._oCalendar.focusDate(oDate);
 				var oStartDate = this._oDateRange.getStartDate();
 				if ((!oStartDate && oDate) || (oStartDate && oDate && oStartDate.getTime() != oDate.getTime())) {
@@ -664,6 +671,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 					this._oDateRange.setStartDate(undefined);
 				}
 			}
+
+			this.fireChangeEvent(sValue, {valid: this._bValid});
 		}
 
 	};
@@ -747,7 +756,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 				sPlaceholder = "medium";
 			}
 
-			if (sPlaceholder == "short" || sPlaceholder == "medium" || sPlaceholder == "long") {
+			if (this._checkStyle(sPlaceholder)) {
 				var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
 				var oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale);
 				sPlaceholder = this._getPlaceholderPattern(oLocaleData, sPlaceholder);
@@ -787,7 +796,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 			this._oCalendar.setPrimaryCalendarType(sCalendarType);
 		}
 
-		var sValue = this._formatValue(this.getDateValue());
+		var sValue = this._bValid ? this._formatValue(this.getDateValue()) : this.getValue();
 		if (sValue != this._$input.val()) {
 			this.onChange(); // to check manually typed in text
 		}
@@ -888,6 +897,35 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 
 	};
 
+	DatePicker.prototype._checkStyle = function(sPattern){
+
+		if (sPattern == "short" || sPattern == "medium" || sPattern == "long" || sPattern == "full") {
+			return true;
+		} else {
+			return false;
+		}
+
+	};
+
+	/**
+	 * @see {sap.ui.core.Control#getAccessibilityInfo}
+	 * @protected
+	 */
+	DatePicker.prototype.getAccessibilityInfo = function() {
+		var oRenderer = this.getRenderer();
+		var oInfo = InputBase.prototype.getAccessibilityInfo.apply(this, arguments);
+		var sValue = this.getValue() || "";
+		if (this._bValid) {
+			var oDate = this.getDateValue();
+			if (oDate) {
+				sValue = this._formatValue(oDate);
+			}
+		}
+		oInfo.type = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATEINPUT");
+		oInfo.description = [sValue, oRenderer.getLabelledByAnnouncement(this), oRenderer.getDescribedByAnnouncement(this)].join(" ").trim();
+		return oInfo;
+	};
+
 	function _toggleOpen(){
 
 		if (this.getEditable() && this.getEnabled()) {
@@ -908,7 +946,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 
 		// do not use this.onChange() because output pattern will change date (e.g. only last 2 number of year -> 1966 -> 2066 )
 		if (!jQuery.sap.equal(oDate, oDateOld)) {
-			this.setDateValue(oDate);
+			this.setDateValue(new Date(oDate));
 			// compare Dates because value can be the same if only 2 digits for year
 			sValue = this.getValue();
 			this.fireChangeEvent(sValue, {valid: true});
@@ -1078,7 +1116,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 		}
 
 		if (!oFormat) {
-			if (sPattern == "short" || sPattern == "medium" || sPattern == "long") {
+			if (this._checkStyle(sPattern)) {
 				oFormat = this._getFormatInstance({style: sPattern, strictParsing: true, relative: bRelative, calendarType: sCalendarType}, bDisplayFormat);
 			} else {
 				oFormat = this._getFormatInstance({pattern: sPattern, strictParsing: true, relative: bRelative, calendarType: sCalendarType}, bDisplayFormat);

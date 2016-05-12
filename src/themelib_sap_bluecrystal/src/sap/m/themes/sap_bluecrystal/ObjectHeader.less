@@ -23,20 +23,40 @@
 	font-size: @sapMFontMediumSize;
 }
 
+.sapMOHTitle.sapMOHTitleActive > h6 .sapMText,
+.sapMOHTitle.sapMOHTitleActive > h5 .sapMText,
+.sapMOHTitle.sapMOHTitleActive > h4 .sapMText,
+.sapMOHTitle.sapMOHTitleActive > h3 .sapMText,
+.sapMOHTitle.sapMOHTitleActive > h2 .sapMText,
 .sapMOHTitle.sapMOHTitleActive > h1 .sapMText {
 	color: @sapUiLink;
 	cursor: pointer;
 }
 
+a.sapMOHTitle.sapMOHTitleActive:hover > h6 .sapMText,
+a.sapMOHTitle.sapMOHTitleActive:hover > h5 .sapMText,
+a.sapMOHTitle.sapMOHTitleActive:hover > h4 .sapMText,
+a.sapMOHTitle.sapMOHTitleActive:hover > h3 .sapMText,
+a.sapMOHTitle.sapMOHTitleActive:hover > h2 .sapMText,
 a.sapMOHTitle.sapMOHTitleActive:hover > h1 .sapMText {
 	text-decoration: underline;
 }
 
+.sapMOHTitle h6 .sapMText,
+.sapMOHTitle h5 .sapMText,
+.sapMOHTitle h4 .sapMText,
+.sapMOHTitle h3 .sapMText,
+.sapMOHTitle h2 .sapMText,
 .sapMOHTitle h1 .sapMText {
 	color: @sapUiGroupTitleTextColor;
 }
 
-.sap-phone .sapMOHTitle h1 > .sapMText {
+html.sap-phone .sapMOHTitle h6 > .sapMText,
+html.sap-phone .sapMOHTitle h5 > .sapMText,
+html.sap-phone .sapMOHTitle h4 > .sapMText,
+html.sap-phone .sapMOHTitle h3 > .sapMText,
+html.sap-phone .sapMOHTitle h2 > .sapMText,
+html.sap-phone .sapMOHTitle h1 > .sapMText {
 	font-size: @sapMFontHeader4Size;
 }
 
@@ -104,6 +124,11 @@ a.sapMOHTitle.sapMOHTitleActive:hover > h1 .sapMText {
 	outline: none;
 }
 
+.sapMOHTitle.sapMOHTitleActive:focus > h6 span,
+.sapMOHTitle.sapMOHTitleActive:focus > h5 span,
+.sapMOHTitle.sapMOHTitleActive:focus > h4 span,
+.sapMOHTitle.sapMOHTitleActive:focus > h3 span,
+.sapMOHTitle.sapMOHTitleActive:focus > h2 span,
 .sapMOHTitle.sapMOHTitleActive:focus > h1 span,
 .sapMOHTitleIcon > .sapMOHIcon:focus,
 .sapMOHTitleArrow .sapUiIcon:focus {
@@ -111,7 +136,7 @@ a.sapMOHTitle.sapMOHTitleActive:hover > h1 .sapMText {
 	outline-offset: -1px;
 }
 
-.sap-desktop .sapMOHTitleArrow .sapUiIcon:hover {
+html.sap-desktop .sapMOHTitleArrow .sapUiIcon:hover {
 	background-color: @sapUiButtonLiteHoverBackground;
 }
 
@@ -130,6 +155,11 @@ html[data-sap-ui-browser ^= "ie"] {
 			padding-left: 0.125rem;
 		}
 
+		a.sapMOHTitleActive:focus ~ .sapMOHTitle > h6 > span,
+		a.sapMOHTitleActive:focus ~ .sapMOHTitle > h5 > span,
+		a.sapMOHTitleActive:focus ~ .sapMOHTitle > h4 > span,
+		a.sapMOHTitleActive:focus ~ .sapMOHTitle > h3 > span,
+		a.sapMOHTitleActive:focus ~ .sapMOHTitle > h2 > span,
 		a.sapMOHTitleActive:focus ~ .sapMOHTitle > h1 > span {
 			outline: none;
 			border: 1px dotted @sapUiFocus;
@@ -167,6 +197,11 @@ html[data-sap-ui-browser ^= "ie"] {
 	border-bottom: 0.063rem @sapUiPageHeaderBorderColor;
 }
 
+.sapMOHRTitle h6,
+.sapMOHRTitle h5,
+.sapMOHRTitle h4,
+.sapMOHRTitle h3,
+.sapMOHRTitle h2,
 .sapMOHRTitle h1 {
 	font-family: @sapUiFontHeaderFamily;
 	font-size: 1.375rem;
@@ -174,8 +209,18 @@ html[data-sap-ui-browser ^= "ie"] {
 	color: @sapUiGroupTitleTextColor;
 }
 
-.sap-phone .sapMOHRTitle h1,
-.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTitle h1 {
+html.sap-phone .sapMOHRTitle h6,
+html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTitle h6,
+html.sap-phone .sapMOHRTitle h5,
+html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTitle h5,
+html.sap-phone .sapMOHRTitle h4,
+html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTitle h4,
+html.sap-phone .sapMOHRTitle h3,
+html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTitle h3,
+html.sap-phone .sapMOHRTitle h2,
+html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTitle h2,
+html.sap-phone .sapMOHRTitle h1,
+html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTitle h1 {
 	font-size: @sapMFontHeader4Size;
 }
 
@@ -190,7 +235,7 @@ html[data-sap-ui-browser ^= "ie"] {
 	color: @sapUiElement;
 }
 
-.sap-desktop .sapMOHRTitleArrow .sapUiIcon:hover {
+html.sap-desktop .sapMOHRTitleArrow .sapUiIcon:hover {
 	background-color: @sapUiButtonLiteHoverBackground;
 }
 
@@ -275,6 +320,10 @@ html[data-sap-ui-browser ^= "ie"] {
 
 		.sapMObjectAttributeDiv {
 			padding: 0.125rem 0.125rem 0 0.125rem;
+		}
+
+		.sapMObjectAttributeActive {
+			padding: 0.125rem;
 		}
 
 		.sapMOHRStatus {

@@ -465,6 +465,152 @@
 
 			ok (oTabStrip1.getTabs()[0].getText() !='First tab', 'First Tab is not "First Tab"');
 			ok (oTabStrip1.getSelectedIndex() == 2, 'Selected index is 1"');
+
+			oTabStrip1.destroy();
+			oTabStrip2.destroy();
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(1000);
+		});
+
+		var oTabStrip = new sap.ui.commons.TabStrip({
+			width: '700px',
+			height: '80px',
+			tabs: [
+				new sap.ui.commons.Tab({
+					title: new sap.ui.core.Title({
+						text: "Tab Title 1"
+					}),
+					content: new sap.ui.commons.TextView({
+						text: "Content"
+					})
+				}),
+				new sap.ui.commons.Tab({
+					title: new sap.ui.core.Title({
+						text: "Tab Title 2"
+					}),
+					content: new sap.ui.commons.TextView({
+						text: "Content"
+					})
+				}),
+				new sap.ui.commons.Tab({
+					title: new sap.ui.core.Title({
+						text: "Tab Title 3"
+					}),
+					content: new sap.ui.commons.TextView({
+						text: "Content"
+					})
+				}),
+				new sap.ui.commons.Tab({
+					title: new sap.ui.core.Title({
+						text: "Tab Title 4"
+					}),
+					content: new sap.ui.commons.TextView({
+						text: "Content"
+					})
+				}),
+				new sap.ui.commons.Tab({
+					title: new sap.ui.core.Title({
+						text: "Tab Title 5"
+					}),
+					content: new sap.ui.commons.TextView({
+						text: "Content"
+					})
+				}),
+				new sap.ui.commons.Tab({
+					title: new sap.ui.core.Title({
+						text: "Tab Title 6"
+					}),
+					content: new sap.ui.commons.TextView({
+						text: "Content"
+					})
+				})
+			]
+		});
+
+		oTabStrip.placeAt("uiArea3");
+
+		module("scrolling");
+
+		test("size changing", function() {
+
+			ok(oTabStrip.$().hasClass("sapUiTabStripScrollable") == false, "TabStrip is not scrollable");
+
+			oTabStrip.setWidth('300px');
+
+			// rerendering must be finished
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(1000);
+
+			ok(oTabStrip.$().hasClass("sapUiTabStripScrollable"), "TabStrip is scrollable");
+			ok(oTabStrip.$().hasClass("sapUiTabStripScrollForward"), "sapUiTabStripScrollForward class is set");
+			ok(oTabStrip.$().hasClass("sapUiTabStripScrollBack") == false, "sapUiTabStripScrollBack is not set");
+
+			oTabStrip.setWidth('700px');
+
+			// rerendering must be finished
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(1000);
+
+			ok(oTabStrip.$().hasClass("sapUiTabStripScrollable") == false, "TabStrip is not scrollable");
+		});
+
+		test("select item", function() {
+			this.clock.tick(1000);
+			oTabStrip.setWidth('300px');
+			oTabStrip.setSelectedIndex(4);
+
+			this.clock.tick(1000);
+			// forcing updating, because of the ScrollEnablement
+			oTabStrip._updateScrollingAppearance();
+
+			ok(oTabStrip.$().hasClass("sapUiTabStripScrollForward"), "sapUiTabStripScrollForward class is set");
+			ok(oTabStrip.$().hasClass("sapUiTabStripScrollBack"), "sapUiTabStripScrollBack is set");
+		});
+
+		test("keyboard navigation", function() {
+			var oTab = oTabStrip.getTabs()[4];
+			oTab.$().focus();
+			qutils.triggerKeyboardEvent(oTab.getId(), "HOME");
+
+			this.clock.tick(1000);
+			// forcing updating, because of the ScrollEnablement
+			oTabStrip._updateScrollingAppearance();
+
+			ok(oTabStrip.$().hasClass("sapUiTabStripScrollForward"), "sapUiTabStripScrollForward class is set");
+			ok(oTabStrip.$().hasClass("sapUiTabStripScrollBack") == false, "sapUiTabStripScrollBack is not set");
+
+			qutils.triggerKeyboardEvent(oTab.getId(), "END");
+
+			this.clock.tick(1000);
+			// forcing updating, because of the ScrollEnablement
+			oTabStrip._updateScrollingAppearance();
+
+			ok(oTabStrip.$().hasClass("sapUiTabStripScrollForward") == false, "sapUiTabStripScrollForward class not is set");
+			ok(oTabStrip.$().hasClass("sapUiTabStripScrollBack"), "sapUiTabStripScrollBack is set");
+		});
+
+		test("mouse click", function() {
+			var $leftArrow = oTabStrip.$().find('.sapUiTabStripLeftScrollIcon');
+			qutils.triggerMouseEvent($leftArrow, 'click');
+
+			this.clock.tick(1000);
+			// forcing updating, because of the ScrollEnablement
+			oTabStrip._updateScrollingAppearance();
+
+			ok(oTabStrip.$().hasClass("sapUiTabStripScrollForward"), "sapUiTabStripScrollForward class is set");
+			ok(oTabStrip.$().hasClass("sapUiTabStripScrollBack") == false, "sapUiTabStripScrollBack is not set");
+
+			var $rightArrow = oTabStrip.$().find('.sapUiTabStripRightScrollIcon');
+			qutils.triggerMouseEvent($rightArrow, 'click');
+
+			this.clock.tick(1000);
+			// forcing updating, because of the ScrollEnablement
+			oTabStrip._updateScrollingAppearance();
+
+			ok(oTabStrip.$().hasClass("sapUiTabStripScrollForward") == false, "sapUiTabStripScrollForward class not is set");
+			ok(oTabStrip.$().hasClass("sapUiTabStripScrollBack"), "sapUiTabStripScrollBack is set");
+
+			oTabStrip.destroy();
 		});
 
 	</script>
@@ -484,6 +630,8 @@
 	<div id="uiArea1"></div>
 	<br>
 	<div id="uiArea2"></div>
+	<br>
+	<div id="uiArea3"></div>
 
 </body>
 </html>

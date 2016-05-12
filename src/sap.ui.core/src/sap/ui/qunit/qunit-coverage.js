@@ -6,6 +6,8 @@
 (function() {
 	"use strict";
 
+	/*global jQuery */
+
 	if (typeof QUnit === "undefined") {
 		throw new Error("qunit-coverage.js: QUnit is not loaded yet!");
 	}
@@ -16,7 +18,7 @@
 	// client-side instrument filter options (data-attributes of qunit-coverage script tag)
 	var sFilterAttr, sAntiFilterAttr;
 
-	// extract base URL from script to attach the qunit-reporter-junit script
+	// extract base URL from script to attach the qunit-coverage script
 	var sDocumentLocation = document.location.href.replace(/\?.*|#.*/g, ""),
 			aScripts = document.getElementsByTagName("script"),
 			sBaseUrl = null,

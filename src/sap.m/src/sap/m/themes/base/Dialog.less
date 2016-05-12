@@ -6,6 +6,7 @@
 @SapDialogMarginHeight: 7%;
 @SapBarHeight: 3rem;
 @SapBarCompactHeight: 2.5rem;
+@SapDialogPadding: 1rem;
 
 .sapMDialog,
 .sapMMessageDialog .sapMDialogScrollCont,
@@ -33,6 +34,12 @@
 		-moz-filter: blur(0);
 		-ms-filter: blur(0);
 		filter: blur(0);
+	}
+}
+
+html[data-sap-ui-browser^="ie9"] .sapMDialog {
+  	&:not(.sapMDialogHighPixelDensity) {
+		filter: none;
 	}
 }
 
@@ -127,7 +134,7 @@
 	min-height: 0 !important; //this is for preventing the dialog to hold it's width in small screens
 }
 
-.sap-phone .sapMDialog {
+html.sap-phone .sapMDialog {
 	min-width: 18rem;
 	overflow: hidden;
 
@@ -154,8 +161,8 @@
 	}
 }
 
-.sap-tablet .sapMDialog,
-.sap-desktop .sapMDialog {
+html.sap-tablet .sapMDialog,
+html.sap-desktop .sapMDialog {
 	min-width: 25rem;
 }
 
@@ -171,7 +178,7 @@
 
 .sapMDialogScroll {
 	display: inline-block; /*this is for horizontal scrolling enablement */
-	min-height: 100%;
+	height: 100%;
 	width: 100%;
 	vertical-align: middle;
 }
@@ -215,17 +222,13 @@
 }
 
 .sapUiPopupWithPadding .sapMDialogScrollCont {
-	padding: 1rem;
+	padding: @SapDialogPadding;
 }
 
 /* messagedialog always has content padding */
 .sapMMessageDialog .sapMDialogScrollCont {
 	box-sizing: border-box;
 	padding: 1rem;
-}
-
-.sapMDialogScrollCont {
-	height: 100%;
 }
 
 .sapMDialogWithScrollCont .sapMDialogScroll {
@@ -249,9 +252,9 @@
 
 .sapMDialogOpen {
 	opacity: 1;
-	transform: translate3d(-50%, -50%, 0) scale(1);
-	-ms-transform: translate3d(-50%, -50%, 0) scale(1);
-	-webkit-transform: translate3d(-50%, -50%, 0) scale(1);
+	transform: translate(-50%, -50%) scale(1);
+	-ms-transform: translate(-50%, -50%) scale(1);
+	-webkit-transform: translate(-50%, -50%) scale(1);
 }
 
 .sapMDialogBlockLayerAnimation {
@@ -419,12 +422,12 @@
 }
 
 .sapMDialogResizeHandler {
-	bottom: -0.5rem;
+	bottom: 0;
 	cursor: se-resize;
-	height: 1rem;
+	height: .5rem;
 	position: absolute;
-	right: -0.5rem;
-	width: 1rem;
+	right: 0rem;
+	width: .5rem;
 	z-index: 2;
 
 	&:before {

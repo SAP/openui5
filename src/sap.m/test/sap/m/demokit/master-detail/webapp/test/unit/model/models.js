@@ -6,7 +6,7 @@ sap.ui.define([
 		"use strict";
 
 		QUnit.module("createDeviceModel", {
-			teardown : function () {
+			afterEach : function () {
 				this.oDeviceModel.destroy();
 			}
 		});
