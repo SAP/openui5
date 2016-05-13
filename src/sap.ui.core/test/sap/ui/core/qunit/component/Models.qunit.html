@@ -986,11 +986,19 @@
 
 				this.spyModels();
 
+				this.oLogErrorSpy = sinon.spy(jQuery.sap.log, "error");
+				this.oLogWarningSpy = sinon.spy(jQuery.sap.log, "warning");
+
 				jQuery.sap.registerModulePath("samples.components", "../../samples/components/");
 
 				// enable async preloading
 				this.oldCfgPreload = oRealCore.oConfiguration.preload;
 				oRealCore.oConfiguration.preload = "async";
+
+				// unload not existing module to prevent different logs
+				// depending on cached 404 response or not
+				// (see "class-not-loaded" model in manifest below)
+				jQuery.sap.unloadResources("sap/ui/sample/model/MyModel.js", false, true);
 
 				//setup fake server
 				var oManifest = this.oManifest = {
@@ -1038,7 +1046,7 @@
 								"uri": "./i18n.properties"
 							},
 
-							// This model should not get preloaded as the class is not declared.
+							// This model should not get preloaded as the class is not declared and a warning should get logged
 							// When creating the model on component init an error should get logged
 							// but all other models should still be created
 							"class-not-loaded": {
@@ -1076,6 +1084,8 @@
 			},
 			afterEach: function() {
 				this.restoreModels();
+				this.oLogErrorSpy.restore();
+				this.oLogWarningSpy.restore();
 				this.oServer.restore();
 				oRealCore.oConfiguration.preload = this.oldCfgPreload;
 			}
@@ -1130,6 +1140,12 @@
 				// Resource Model should be now created
 				// sap.ui.model.resource.ResourceModel
 				sinon.assert.callCount(this.modelSpy.resource, 2);
+
+				// check error log for "class-not-loaded" model
+				sinon.assert.calledWithExactly(this.oLogErrorSpy,
+					sinon.match("Component Manifest: Class \"sap.ui.sample.model.MyModel\" for model \"class-not-loaded\" could not be loaded."),
+					"[\"sap.ui5\"][\"models\"][\"class-not-loaded\"]",
+					this.oComponent.toString());
 
 				assert.ok(this.oComponent.getMetadata() instanceof sap.ui.core.UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
 				assert.ok(this.oComponent.getManifest(), "Manifest is available");
@@ -1196,9 +1212,23 @@
 			}).then(function(oComponent) {
 				this.oComponent = oComponent;
 
-				// Still only called once
+				// Should be called twice now (2nd model created)
 				// sap.ui.model.odata.v2.ODataModel
 				sinon.assert.callCount(this.modelSpy.odataV2, 2);
+
+				// Should be called twice now (2nd model created)
+				// sap.ui.model.json.JSONModel
+				sinon.assert.callCount(this.modelSpy.json, 2);
+
+				// Resource Model should be now created
+				// sap.ui.model.resource.ResourceModel
+				sinon.assert.callCount(this.modelSpy.resource, 2);
+
+				// check error log for "class-not-loaded" model
+				sinon.assert.calledWithExactly(this.oLogErrorSpy,
+					sinon.match("Component Manifest: Class \"sap.ui.sample.model.MyModel\" for model \"class-not-loaded\" could not be loaded."),
+					"[\"sap.ui5\"][\"models\"][\"class-not-loaded\"]",
+					this.oComponent.toString());
 
 				assert.ok(this.oComponent.getMetadata() instanceof sap.ui.core.UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
 				assert.ok(this.oComponent.getManifest(), "Manifest is available");
@@ -1206,7 +1236,11 @@
 
 				this.assertModelInstances({
 					"odata1": sap.ui.model.odata.v2.ODataModel,
-					"odata2": sap.ui.model.odata.v2.ODataModel
+					"odata2": sap.ui.model.odata.v2.ODataModel,
+					"json1": sap.ui.model.json.JSONModel,
+					"json2": sap.ui.model.json.JSONModel,
+					"i18n1": sap.ui.model.resource.ResourceModel,
+					"i18n2": sap.ui.model.resource.ResourceModel
 				});
 
 				// destroy the component
@@ -1285,6 +1319,12 @@
 				var oResourceModel = this.modelSpy.resource.getCall(0).returnValue;
 				assert.ok(oResourceModel.bDestroyed, "ResourceModel should have been destroyed.");
 
+				// check warning log for "class-not-loaded" model
+				sinon.assert.calledWithExactly(this.oLogWarningSpy,
+					"Can not preload model \"class-not-loaded\" as required class has not been loaded: \"sap.ui.sample.model.MyModel\"",
+					this.oManifest["sap.app"]["id"],
+					"sap.ui.core.Component");
+
 			}.bind(this));
 		});
 
@@ -1336,6 +1376,12 @@
 
 				var oResourceModel = this.modelSpy.resource.getCall(0).returnValue;
 				assert.ok(oResourceModel.bDestroyed, "ResourceModel should have been destroyed.");
+
+				// check warning log for "class-not-loaded" model
+				sinon.assert.calledWithExactly(this.oLogWarningSpy,
+					"Can not preload model \"class-not-loaded\" as required class has not been loaded: \"sap.ui.sample.model.MyModel\"",
+					this.oManifest["sap.app"]["id"],
+					"sap.ui.core.Component");
 
 			}.bind(this));
 		});
