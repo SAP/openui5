@@ -18,8 +18,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 				oAnchorBar = null,
 				bIsHeaderContentVisible = oControl.getHeaderContent() && oControl.getHeaderContent().length > 0 && oControl.getShowHeaderContent(),
 				bIsTitleInHeaderContent = oControl.getShowTitleInHeaderContent() && oControl.getShowHeaderContent(),
-				bRenderHeaderContent = 	bIsHeaderContentVisible || bIsTitleInHeaderContent,
-				bIsBelizePlusTheme = sap.ui.getCore().getConfiguration().getTheme() === "sap_belize_plus";
+				bRenderHeaderContent = 	bIsHeaderContentVisible || bIsTitleInHeaderContent;
 
 			if (oControl.getShowAnchorBar() && oControl._getInternalAnchorBarVisible()) {
 				oAnchorBar = oControl.getAggregation("_anchorBar");
@@ -41,9 +40,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 			oRm.writeAttribute("role", "header");
 			oRm.writeAttributeEscaped("id", oControl.getId() + "-headerTitle");
 			oRm.addClass("sapUxAPObjectPageHeaderTitle");
-			if (bIsBelizePlusTheme) {
-				oRm.addClass("sapContrastPlus");
-			}
+			oRm.addClass("sapContrastPlus");
 			oRm.writeClasses();
 			oRm.write(">");
 			if (oHeader) {
@@ -87,7 +84,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 
 			// Header Content
 			if (bRenderHeaderContent) {
-				this._renderHeaderContentDOM(oRm, oControl, !oControl._bHContentAlwaysExpanded, "-headerContent",  bIsBelizePlusTheme);
+				this._renderHeaderContentDOM(oRm, oControl, !oControl._bHContentAlwaysExpanded, "-headerContent",  true);
 			}
 
 			// Anchor Bar
@@ -96,9 +93,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 			// write ARIA role
 			oRm.writeAttribute("role", "navigaiton");
 			oRm.addClass("sapUxAPObjectPageNavigation");
-			if (bIsBelizePlusTheme) {
-				oRm.addClass("sapContrastPlus");
-			}
+			oRm.addClass("sapContrastPlus");
 			oRm.writeClasses();
 			oRm.write(">");
 
@@ -170,13 +165,13 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 		 * @param sId - the id of the div that should be rendered
 		 * @param bRenderAlways - shows if the DOM of the control should be rendered no matter if the control is rendered inside or not
 		 */
-		ObjectPageLayoutRenderer._renderHeaderContentDOM = function (oRm, oControl, bRender, sId, bIsBelizePlusTheme) {
+		ObjectPageLayoutRenderer._renderHeaderContentDOM = function (oRm, oControl, bRender, sId, bApplyBelizePlusClass) {
 			oRm.write("<header ");
 			oRm.writeAttributeEscaped("id", oControl.getId() + sId);
 			oRm.addClass("ui-helper-clearfix");
 			oRm.addClass("sapUxAPObjectPageHeaderDetails");
 			oRm.addClass("sapUxAPObjectPageHeaderDetailsDesign-" + oControl._getHeaderDesign());
-			if (bIsBelizePlusTheme) {
+			if (bApplyBelizePlusClass) {
 				oRm.addClass("sapContrastPlus");
 			}
 			oRm.writeClasses();
