@@ -200,11 +200,41 @@ var oModel = new sap.ui.model.json.JSONModel();
 oModel.setData({modelData: aData});
 oTable.setModel(oModel);
 oTable.bindRows("/modelData");
-
 oTable.placeAt("content");
 
-var oButtonAfterTable = new sap.m.Button({text: "Just a Button after the Table"});
-oButtonAfterTable.placeAt("content");
+var oCustom = new sap.m.Text("customNoData", {text: "Some custom no data control"});
+var iState = 0;
+var oNoDataSwitch = new sap.m.Button({
+	text: "Switch No Data State",
+	press: function() {
+		iState++;
+		switch (iState) {
+			case 1:
+				oModel.setData({modelData: []});
+				oTable.setShowNoData(true);
+				oTable.setNoData(null);
+				break;
+			case 2:
+				oModel.setData({modelData: []});
+				oTable.setShowNoData(true);
+				oTable.setNoData(oCustom);
+				break;
+			case 3:
+				oModel.setData({modelData: []});
+				oTable.setShowNoData(false);
+				oTable.setNoData(null);
+				break;
+			default:
+			case 0:
+				iState = 0;
+				oModel.setData({modelData: aData});
+				oTable.setShowNoData(true);
+				oTable.setNoData(null);
+				break;
+		}
+	}
+});
+oNoDataSwitch.placeAt("content");
 
 </script>
 </head>

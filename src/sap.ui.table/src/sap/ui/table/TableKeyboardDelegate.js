@@ -215,7 +215,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 		}
 
 		var $target = jQuery(oEvent.target);
-		var bNoData = this.$().hasClass("sapUiTableEmpty");
+		var bNoData = TableUtils.isNoDataVisible(this);
 		var bControlBefore = $target.hasClass("sapUiTableCtrlBefore");
 
 		if (bControlBefore || $target.hasClass("sapUiTableCtrlAfter")) {
@@ -229,7 +229,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 			} else {
 				if (bControlBefore) {
 					if (bNoData) {
-						this._getKeyboardExtension()._setSilentFocus(this.$().find(".sapUiTableCtrlEmpty"));
+						this._getKeyboardExtension()._setSilentFocus(this.$("noDataCnt"));
 					} else {
 						var oInfo = TableUtils.getFocusedItemInfo(this);
 						TableUtils.focusItem(this, oInfo.cellInRow, oEvent);
@@ -397,7 +397,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 			oEvent.preventDefault();
 		} else {
 			var oInfo = TableUtils.getFocusedItemInfo(this);
-			var bNoData = this.$().hasClass("sapUiTableEmpty");
+			var bNoData = TableUtils.isNoDataVisible(this);
 			var oSapUiTableCCnt = $this.find('.sapUiTableCCnt')[0];
 			var bFocusFromTableContent = jQuery.contains(oSapUiTableCCnt, oEvent.target);
 
@@ -436,7 +436,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 		} else {
 			var oInfo = TableUtils.getFocusedItemInfo(this);
 			var bContainsColHdrCnt = jQuery.contains($this.find('.sapUiTableColHdrCnt')[0], oEvent.target);
-			var bNoData = this.$().hasClass("sapUiTableEmpty");
+			var bNoData = TableUtils.isNoDataVisible(this);
 
 			if (bContainsColHdrCnt && !bNoData) {
 				TableKeyboardDelegate._restoreFocusOnLastFocusedDataCell(this, oEvent);
@@ -462,6 +462,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 			}
 		}
 		oEvent.preventDefault();
+
+		if (TableUtils.isNoDataVisible(this)) {
+			var oInfo = TableUtils.getCellInfo(oEvent.target);
+			if (oInfo && (oInfo.type === TableUtils.CELLTYPES.COLUMNHEADER || oInfo.type === TableUtils.CELLTYPES.COLUMNROWHEADER)) {
+				oInfo = TableUtils.getFocusedItemInfo(this);
+				if (oInfo.row - this._getHeaderRowCount() <= 1) { // We are in the last column header row
+					//Just prevent the navigation to the table content
+					oEvent.setMarked("sapUiTableSkipItemNavigation");
+				}
+			}
+		}
 	};
 
 	/*

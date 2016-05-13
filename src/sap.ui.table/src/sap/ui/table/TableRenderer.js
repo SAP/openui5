@@ -3,8 +3,8 @@
  */
 
 //Provides default renderer for control sap.ui.table.Table
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
-	function(jQuery, Parameters) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './TableUtils'],
+	function(jQuery, Parameters, TableUtils) {
 	"use strict";
 
 
@@ -51,10 +51,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		if (oTable.getEditable()) {
 			rm.addClass("sapUiTableEdt"); // editable (background color)
 		}
-		rm.addClass("sapUiTableShNoDa");
-		if (oTable.getShowNoData() && oTable._getRowCount() === 0) {
+
+		if (TableUtils.isNoDataVisible(oTable)) {
 			rm.addClass("sapUiTableEmpty"); // no data!
 		}
+
 		if (oTable.getEnableGrouping()) {
 			rm.addClass("sapUiTableGrouping");
 		}
@@ -606,21 +607,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		rm.addClass("sapUiTableCtrlEmpty");
 		rm.writeClasses();
 		rm.writeAttribute("tabindex", "0");
+		rm.writeAttribute("id", oTable.getId() + "-noDataCnt");
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "NODATA");
 		rm.write(">");
-		if (oTable.getNoData() && oTable.getNoData() instanceof sap.ui.core.Control) {
+		if (oTable.getNoData() instanceof sap.ui.core.Control) {
 			rm.renderControl(oTable.getNoData());
 		} else {
 			rm.write("<span");
+			rm.writeAttribute("id", oTable.getId() + "-noDataMsg");
 			rm.addClass("sapUiTableCtrlEmptyMsg");
 			rm.writeClasses();
 			rm.write(">");
-			if (typeof oTable.getNoData() === "string" || oTable.getNoData() instanceof String) {
-				rm.writeEscaped(oTable.getNoData());
-			} else if (oTable.getNoDataText()) {
-				rm.writeEscaped(oTable.getNoDataText());
-			} else {
-				rm.writeEscaped(oTable._oResBundle.getText("TBL_NO_DATA"));
-			}
+			rm.writeEscaped(TableUtils.getNoDataText(oTable));
 			rm.write("</span>");
 		}
 		rm.write("</div>");

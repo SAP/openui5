@@ -2408,9 +2408,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 * @private
 	 */
 	Table.prototype._updateNoData = function() {
-		// no data?
-		if (this.getShowNoData()) {
-			this.$().toggleClass("sapUiTableEmpty", !this._hasData());
+		if (!this.getDomRef()) {
+			return;
+		}
+
+		var bNoDataVisible = TableUtils.isNoDataVisible(this);
+		var bFocusWasOnNoData = jQuery.sap.containsOrEquals(this.getDomRef("noDataCnt"), document.activeElement);
+
+		this.$().toggleClass("sapUiTableEmpty", bNoDataVisible);
+
+		if (bNoDataVisible && jQuery.sap.containsOrEquals(this.getDomRef("tableCCnt"), document.activeElement)) {
+			this.$("noDataCnt").focus(); // Set focus on NoData Container
+		} else if (!bNoDataVisible && bFocusWasOnNoData) {
+			TableUtils.focusItem(this, 0); // Set focus on first focusable element
 		}
 	};
 
@@ -5645,12 +5655,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 */
 	Table.prototype.setShowNoData = function(bShowNoData) {
 		this.setProperty('showNoData', bShowNoData, true);
-		bShowNoData = this.getProperty('showNoData');
-		if (!bShowNoData) {
-			this.$().removeClass("sapUiTableEmpty");
-		} else {
-			this._updateNoData();
-		}
+		this._updateNoData();
 		return this;
 	};
 
@@ -5659,7 +5664,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 */
 	Table.prototype.setNoDataText = function(sText) {
 		this.setProperty("noDataText", sText, true);
-		this.$().find('.sapUiTableCtrlEmptyMsg').text(sText);
+		this.$("noDataMsg").text(TableUtils.getNoDataText(this) || "");
+		return this;
 	};
 
 	/**
