@@ -661,7 +661,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 						that._adjustTablePosition();
 					}
 
-					if (that._bBindingLengthChanged) {
+					if (that._bBindingLengthChanged || that._bVariableRowHeightEnabled) {
 						that._updateVSb(oTableSizes);
 					}
 				}
@@ -1347,9 +1347,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		var iDefaultRowHeight = this._getDefaultRowHeight();
 		var iRowHeightOffset = iScrollTop % iDefaultRowHeight;
 
-		var iRowCorrection = this._calculateRowCorrection(iDefaultRowHeight, iRowHeightOffset);
 		var oInnerScrollContainer = this.$().find(".sapUiTableCtrlRowScroll, .sapUiTableRowHdrScr");
-		oInnerScrollContainer.css({"transform": "translate3d(0px, " + (-iRowCorrection - iRowHeightOffset) + "px, 0px)"});
+		if (this.getVisibleRowCount() > this._iBindingLength) {
+			oInnerScrollContainer.css({"transform": "translate3d(0px, " + (-iScrollTop) + "px, 0px)"});
+		} else {
+			var iRowCorrection = this._calculateRowCorrection(iDefaultRowHeight, iRowHeightOffset);
+			oInnerScrollContainer.css({"transform": "translate3d(0px, " + (-iRowCorrection - iRowHeightOffset) + "px, 0px)"});
+		}
 	};
 
 	/**
@@ -1748,7 +1752,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		var iFirstVisibleRow = this.getFirstVisibleRow();
 		// calculate the boundaries (at least 0 - max the row count - visible row count)
 		iFirstVisibleRow = Math.max(iFirstVisibleRow, 0);
-		if (sNavigationMode === sap.ui.table.NavigationMode.Scrollbar && this._iBindingLength > 0) {
+		if (sNavigationMode === sap.ui.table.NavigationMode.Scrollbar && this._iBindingLength > 0 && !this._bVariableRowHeightEnabled) {
 			iFirstVisibleRow = Math.min(iFirstVisibleRow, Math.max(this._iBindingLength - iVisibleRowCount, 0));
 		} else if (sNavigationMode === sap.ui.table.NavigationMode.Paginator && this._oPaginator) {
 			var iNewPage = 1;
@@ -2240,9 +2244,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		}
 
 		var iDefaultRowHeight = this._getDefaultRowHeight();
-		this.getDomRef("vsb-content").style.height = (this._iBindingLength - iFixedRowCount - iFixedBottomRowCount) * iDefaultRowHeight + "px";
-		oVSb.scrollTop = this._getSanitizedFirstVisibleRow() * iDefaultRowHeight;
+		var iVSbHeight = (this._iBindingLength - iFixedRowCount - iFixedBottomRowCount) * iDefaultRowHeight;
+		if (this._bVariableRowHeightEnabled) {
+			var iCCntHeight = 0;
+			var oCCntDomRef = this.getDomRef().querySelector(".sapUiTableCCnt");
+			if (oCCntDomRef) {
+				iCCntHeight = oCCntDomRef.clientHeight;
+			}
 
+			var iCtrlScrHeight = 0;
+			var oCtrlScrDomRef = this.getDomRef().querySelector(".sapUiTableCtrlScr");
+			if (oCtrlScrDomRef) {
+				iCtrlScrHeight = oCtrlScrDomRef.clientHeight;
+			}
+
+			var iRowOverlap = iCtrlScrHeight - iCCntHeight;
+			if (this._iBindingLength < this.getVisibleRowCount()) {
+				var iRowHeightsDelta = iRowOverlap - iDefaultRowHeight + (this.getVisibleRowCount() * iDefaultRowHeight);
+				this._iRowHeightsDelta = iRowHeightsDelta;
+				iVSbHeight = iRowHeightsDelta;
+			} else {
+				this._iRowHeightsDelta = 0;
+			}
+
+			this._toggleVSb();
+		}
+		this.getDomRef("vsb-content").style.height = iVSbHeight + "px";
+
+		if (!this._bVariableRowHeightEnabled) {
+			oVSb.scrollTop = this._getSanitizedFirstVisibleRow() * iDefaultRowHeight;
+		}
 	};
 
 	/**
@@ -2287,7 +2318,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 * @returns {Boolean} true/false when Vertical Scroll Bar is required
 	 */
 	Table.prototype._isVSbRequired = function() {
-		return this.getNavigationMode() === sap.ui.table.NavigationMode.Scrollbar && this.getBinding("rows") && this._iBindingLength > this.getVisibleRowCount();
+		if (this.getNavigationMode() === sap.ui.table.NavigationMode.Scrollbar) {
+			if (this._bVariableRowHeightEnabled && this._iRowHeightsDelta > 0) {
+                return true;
+			}
+
+			if (this.getBinding("rows") && this._iBindingLength > this.getVisibleRowCount()) {
+				return true;
+			}
+		}
+
+		return false;
 	};
 
 	/**
@@ -2554,7 +2595,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		if (oVsb) {
 			iScrollTop = (typeof iScrollTop === "undefined") ? oVsb.scrollTop : iScrollTop;
 			if (this._bVariableRowHeightEnabled) {
-				return Math.floor(iScrollTop / this._getDefaultRowHeight());
+				if (this.getVisibleRowCount() > this._iBindingLength) {
+					return 0;
+				} else {
+					return Math.floor(iScrollTop / this._getDefaultRowHeight());
+				}
 			} else {
 				return Math.ceil(iScrollTop / this._getDefaultRowHeight());
 			}
