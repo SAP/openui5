@@ -478,6 +478,18 @@
 			assert.equal(this.oMessagePopover.getItems().length, 1, "The message should be one");
 		});
 
+		QUnit.test("Filtering after resize should not reset the height of the Popover", function(assert) {
+			this.oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+			var $Content = this.oMessagePopover.$("cont");
+			$Content.css("height", "10px");
+
+			this.oMessagePopover._expandMsgPopover();
+			this.clock.tick(500);
+
+			assert.strictEqual($Content.height(), 10, "height should be the same as before filtering");
+		});
+
 		QUnit.module("HTML representation", {
 			setup: function () {
 				this.oMessagePopover = new sap.m.MessagePopover();
@@ -789,6 +801,7 @@
 			oToolbar.destroy();
 			spySetShowArrow.restore();
 		});
+
 	</script>
 </head>
 <body id="body" class="sapUiBody">
