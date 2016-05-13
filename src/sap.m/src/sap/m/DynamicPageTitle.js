@@ -75,10 +75,6 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Overf
 	};
 
 	DynamicPageTitle.prototype.onBeforeRendering = function () {
-		if (sap.ui.getCore().getConfiguration().getTheme() === "sap_belize_plus") {
-			this.addStyleClass("sapContrastPlus");
-		}
-
 		this._getOverflowToolbar();
 	};
 
@@ -94,13 +90,6 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Overf
 		if (oEvent.srcControl === this || this.getAggregation("_overflowToolbar") === oEvent.srcControl) {
 			this.fireEvent("_titlePress");
 		}
-	};
-
-	/**
-	 * Handler for theme changing
-	 */
-	DynamicPageTitle.prototype.onThemeChanged = function (){
-		this.invalidate(); // triggers a re-rendering
 	};
 
 	/**
