@@ -36,6 +36,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		var aItems = oControl.getItems(),
 			bTextOnly = oControl._checkTextOnly(aItems),
 			bNoText = oControl._checkNoText(aItems),
+			bInLine = oControl._checkInLine(aItems),
 			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
 
 		var oIconTabBar = oControl.getParent();
@@ -82,6 +83,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 		if (bNoText) {
 			oRM.addClass("sapMITBNoText");
+		}
+
+		if (bInLine) {
+			oRM.addClass("sapMITBInLine");
 		}
 
 		oRM.writeClasses();
@@ -166,41 +171,45 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 				oRM.writeClasses();
 				oRM.write(">");
-				oRM.write("<div id='" + oItem.getId() + "-tab' class='sapMITBTab'>");
 
-				if (!oItem.getShowAll() || !oItem.getIcon()) {
-					if (bReadIconColor) {
-						oRM.write('<div id="' + oItem.getId() + '-iconColor" style="display: none;">' + oResourceBundle.getText('ICONTABBAR_ICONCOLOR_' + sIconColor.toUpperCase()) + '</div>');
+				if (!bInLine) {
+
+					oRM.write("<div id='" + oItem.getId() + "-tab' class='sapMITBTab'>");
+
+					if (!oItem.getShowAll() || !oItem.getIcon()) {
+						if (bReadIconColor) {
+							oRM.write('<div id="' + oItem.getId() + '-iconColor" style="display: none;">' + oResourceBundle.getText('ICONTABBAR_ICONCOLOR_' + sIconColor.toUpperCase()) + '</div>');
+						}
+
+						oRM.renderControl(oItem._getImageControl(['sapMITBFilterIcon', 'sapMITBFilter' + oItem.getIconColor()], oControl, IconTabHeaderRenderer._aAllIconColors));
 					}
 
-					oRM.renderControl(oItem._getImageControl(['sapMITBFilterIcon', 'sapMITBFilter' + oItem.getIconColor()], oControl, IconTabHeaderRenderer._aAllIconColors));
-				}
+					if (!oItem.getShowAll() && !oItem.getIcon() && !bTextOnly) {
+						oRM.write("<span class='sapMITBFilterNoIcon'> </span>");
+					}
 
-				if (!oItem.getShowAll() && !oItem.getIcon() && !bTextOnly)  {
-					oRM.write("<span class='sapMITBFilterNoIcon'> </span>");
-				}
+					if (oItem.getDesign() === sap.m.IconTabFilterDesign.Horizontal && !oItem.getShowAll()) {
+						oRM.write("</div>");
+						oRM.write("<div class='sapMITBHorizontalWrapper'>");
+					}
 
-				if (oItem.getDesign() === sap.m.IconTabFilterDesign.Horizontal && !oItem.getShowAll()) {
-					oRM.write("</div>");
-					oRM.write("<div class='sapMITBHorizontalWrapper'>");
-				}
+					oRM.write("<span id='" + oItem.getId() + "-count' ");
+					oRM.addClass("sapMITBCount");
+					oRM.writeClasses();
+					oRM.write(">");
 
-				oRM.write("<span id='" + oItem.getId() + "-count' ");
-				oRM.addClass("sapMITBCount");
-				oRM.writeClasses();
-				oRM.write(">");
+					if ((oItem.getCount() === "") && (oItem.getDesign() === sap.m.IconTabFilterDesign.Horizontal)) {
+						//this is needed for the correct placement of the text in the horizontal design
+						oRM.write("&nbsp;");
+					} else {
+						oRM.writeEscaped(oItem.getCount());
+					}
 
-				if ((oItem.getCount() === "") && (oItem.getDesign() === sap.m.IconTabFilterDesign.Horizontal)) {
-					//this is needed for the correct placement of the text in the horizontal design
-					oRM.write("&nbsp;");
-				} else {
-					oRM.writeEscaped(oItem.getCount());
-				}
+					oRM.write("</span>");
 
-				oRM.write("</span>");
-
-				if (oItem.getDesign() === sap.m.IconTabFilterDesign.Vertical) {
-					oRM.write("</div>");
+					if (oItem.getDesign() === sap.m.IconTabFilterDesign.Vertical) {
+						oRM.write("</div>");
+					}
 				}
 
 				if (oItem.getText().length) {
@@ -216,8 +225,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 					oRM.write("</div>");
 				}
 
-				if (oItem.getDesign() === sap.m.IconTabFilterDesign.Horizontal) {
-					oRM.write("</div>");
+				if (!bInLine) {
+					if (oItem.getDesign() === sap.m.IconTabFilterDesign.Horizontal) {
+						oRM.write("</div>");
+					}
 				}
 
 				oRM.write("<div class='sapMITBContentArrow'></div>");
