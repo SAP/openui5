@@ -40,7 +40,7 @@ sap.ui.define([
 
 		filterTable: function (aCurrentFilterValues) {
 			this.getTableItems().filter(this.getFilters(aCurrentFilterValues));
-			this.updateFilterCriterias(this.getFilterCriterias(aCurrentFilterValues));
+			this.updateFilterCriterias(this.getFilterCriteria(aCurrentFilterValues));
 		},
 
 		updateFilterCriterias : function (aFilterCriterias) {

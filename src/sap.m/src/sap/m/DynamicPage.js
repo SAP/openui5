@@ -122,6 +122,7 @@ sap.ui.define([
 	DynamicPage.prototype.init = function () {
 		this._bPinned = false;
 		this._bHeaderSnapped = false;
+		this._bHeaderInTitleArea = false;
 		this._bExpandingWithAClick = false;
 	};
 
@@ -199,19 +200,25 @@ sap.ui.define([
 		if (this._shouldSnap()) {
 			this._snapHeader(true);
 			this._updateHeaderARIAState(false);
+
 		} else if (this._shouldExpand()) {
+
 			this._expandHeader();
 			this._updateHeaderARIAState(true);
+
+		} else if (!this._bPinned && this._bHeaderInTitleArea){
+			this._moveHeaderToContentArea();
 		}
 	};
 
 	/**
 	 * Converts the header to snapped mode
+	 * @param {boolean} bAppendHeaderToContent
 	 * @private
 	 */
-	DynamicPage.prototype._snapHeader = function (bAppend) {
-		var oDynamicPageTitle = this.getTitle(),
-			oDynamicPageHeader = this.getHeader();
+
+	DynamicPage.prototype._snapHeader = function (bAppendHeaderToContent) {
+		var oDynamicPageTitle = this.getTitle();
 
 		if (this._bPinned) {
 			jQuery.sap.log.debug("DynamicPage :: aborted snapping, header is pinned", this);
@@ -230,8 +237,8 @@ sap.ui.define([
 				oDynamicPageTitle._setShowSnapContent(true);
 			}
 
-			if (bAppend && exists(oDynamicPageHeader)) {
-				oDynamicPageHeader.$().prependTo(this.$wrapper);
+			if (bAppendHeaderToContent) {
+				this._moveHeaderToContentArea();
 			}
 		}
 
@@ -240,11 +247,11 @@ sap.ui.define([
 
 	/**
 	 * Converts the header to expanded mode
+	 * @param {boolean} bAppendHeaderToTitle
 	 * @private
 	 */
-	DynamicPage.prototype._expandHeader = function (bShouldAppendToTitle) {
-		var oDynamicPageTitle = this.getTitle(),
-			oDynamicPageHeader = this.getHeader();
+	DynamicPage.prototype._expandHeader = function (bAppendHeaderToTitle) {
+		var oDynamicPageTitle = this.getTitle();
 
 		this._bHeaderSnapped = false;
 
@@ -258,8 +265,8 @@ sap.ui.define([
 				oDynamicPageTitle._setShowSnapContent(false);
 			}
 
-			if (bShouldAppendToTitle && exists(oDynamicPageHeader)) {
-				oDynamicPageHeader.$().appendTo(this.$titleArea);
+			if (bAppendHeaderToTitle) {
+				this._moveHeaderToTitleArea();
 			}
 		}
 
@@ -273,9 +280,43 @@ sap.ui.define([
 	 */
 	DynamicPage.prototype._toggleHeaderVisibility = function (bShow) {
 		var oDynamicPageHeader = this.getHeader();
-		if (exists(oDynamicPageHeader)){
+		if (exists(oDynamicPageHeader)) {
 			oDynamicPageHeader.$().toggleClass("sapMDynamicPageHeaderHidden", !bShow);
 		}
+	};
+
+	/**
+	 * Appends header to content area
+	 * @private
+	 */
+	DynamicPage.prototype._moveHeaderToContentArea = function () {
+		var oDynamicPageHeader = this.getHeader();
+		if (exists(oDynamicPageHeader)){
+			oDynamicPageHeader.$().prependTo(this.$wrapper);
+			this._bHeaderInTitleArea = false;
+		}
+	};
+
+	/**
+	 * Appends header to title area
+	 * @private
+	 */
+	DynamicPage.prototype._moveHeaderToTitleArea = function () {
+		var oDynamicPageHeader = this.getHeader();
+		if (exists(oDynamicPageHeader)){
+			oDynamicPageHeader.$().appendTo(this.$titleArea);
+			this._bHeaderInTitleArea = true;
+		}
+	};
+
+	/**
+	 * Scrolls the content to the snap point(header`s height + 1)
+	 * @private
+	 */
+	DynamicPage.prototype._scrollToSnapHeader = function () {
+		var iNewScrollPos = this._getSnappingHeight() + 1;
+		this.$wrapper && this.$wrapper.scrollTop(iNewScrollPos);
+		Device.system.desktop && this._getScrollBar().setScrollPosition(iNewScrollPos);
 	};
 
 	/**
@@ -344,6 +385,24 @@ sap.ui.define([
 	};
 
 	/**
+	 * Determines if the header is scrolled out completely
+	 * @returns {boolean}
+	 * @private
+	 */
+	DynamicPage.prototype._headerScrolledOut = function () {
+		return this._getScrollPosition() > this._getSnappingHeight();
+	};
+
+	/**
+	 * Determines if the header is allowed to snap,
+	 * it`s not pinned, not already snapped and snap on scroll is allowed
+	 * @returns {boolean}
+	 * @private
+	 */
+	DynamicPage.prototype._headerSnapAllowed = function () {
+		return this._allowScroll() && !this._bHeaderSnapped && !this._bPinned;
+	};
+	/**
 	 * Determines if it's possible for the header to snap
 	 * @returns {boolean}
 	 * @private
@@ -391,10 +450,11 @@ sap.ui.define([
 	DynamicPage.prototype._getEntireHeaderHeight = function () {
 		var iTitleHeight = 0,
 			iHeaderHeight = 0,
+			oDynamicPageTitle  = this.getTitle(),
 			oDynamicPageHeader = this.getHeader();
 
-		if (exists(this.$title)) {
-			iTitleHeight = this.$title.outerHeight();
+		if (exists(oDynamicPageTitle)) {
+			iTitleHeight = oDynamicPageTitle.$().outerHeight();
 		}
 
 		if (exists(oDynamicPageHeader)) {
@@ -695,7 +755,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._onWrapperScroll = function (oEvent) {
-		if (!this._bExpandingWithAClick) {
+		if (Device.system.phone || !this._bExpandingWithAClick) {
 			this._toggleHeader();
 		}
 
@@ -737,23 +797,34 @@ sap.ui.define([
 			return;
 		}
 
-		if (!this._allowScroll() || !this._needsVerticalScrollBar()) { // Header scrolling is not allowed, e.g headerAlwaysExpanded = true
-			if (this._bHeaderSnapped) { // or there is no enough content and no scrollbar
+		// Header scrolling is not allowed or there is no enough content scroll bar to appear
+		if (!this._allowScroll() || !this._needsVerticalScrollBar()) {
+
+			if (this._bHeaderSnapped) {
+				// Show header, pushing the content down
 				this._toggleHeaderVisibility(true);
 				this._expandHeader(false);
 			} else {
+				// Hide header, pulling the content up
 				this._toggleHeaderVisibility(false);
 				this._snapHeader(false);
 			}
 
-		} else if (!this._headerBiggerThanAllowedToPin()) { // Header scrolling is  allowed (by default)
-
-			if (this._bHeaderSnapped) {
+		} else if (this._bHeaderSnapped) {
+				// Header is already snapped, then expand
 				this._bExpandingWithAClick = true;
 				this._expandHeader(true);
-			} else if (this._shouldSnap()) {
+
+		} else if (this._headerSnapAllowed()) {
+
+			if (this._headerScrolledOut()) {
+				// Header is scrolled out completely, then snap
 				this._snapHeader(true);
+			} else {
+				// Header is not scrolled out completely, and there scroll to snap
+				this._scrollToSnapHeader();
 			}
+
 		}
 	};
 
