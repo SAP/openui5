@@ -132,21 +132,22 @@ sap.ui.define([
 	 */
 
 	/**
-	 * The 'dataReceived' event is fired after the back end data has been processed and the
+	 * The 'dataReceived' event is fired after the back-end data has been processed and the
 	 * registered 'change' event listeners have been notified. It is to be used by applications for
 	 * example to switch off a busy indicator or to process an error.
 	 *
-	 * If back end requests are successful, the event has no parameters. The response data is
-	 * available in the model. Note that controls bound to this data may not yet have been updated;
-	 * it is thus not safe for registered event handlers to access data via control APIs.
+	 * If back-end requests are successful, the event has no parameters. Use
+	 * {@link #getValue() oEvent.getSource().getValue()} to access the response data. Note that
+	 * controls bound to this data may not yet have been updated, meaning it is not safe for
+	 * registered event handlers to access data via control APIs.
 	 *
-	 * If a back end request fails, the 'dataReceived' event provides an <code>Error</code> in the
+	 * If a back-end request fails, the 'dataReceived' event provides an <code>Error</code> in the
 	 * 'error' event parameter.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {object} oEvent.getParameters
-	 * @param {Error} [oEvent.getParameters.error] The error object if a back end request failed.
-	 *   If there are multiple failed back end requests, the error of the first one is provided.
+	 * @param {Error} [oEvent.getParameters.error] The error object if a back-end request failed.
+	 *   If there are multiple failed back-end requests, the error of the first one is provided.
 	 *
 	 * @event
 	 * @name sap.ui.model.odata.v4.ODataPropertyBinding#dataReceived
