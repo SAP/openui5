@@ -535,6 +535,8 @@ sap.ui.define([
 				this.addAggregation(sAggregationName, oControl, true);
 			}, this);
 
+			oObject.removeAllContent();
+			oObject.destroy();
 			this.invalidate();
 			return this;
 		}
