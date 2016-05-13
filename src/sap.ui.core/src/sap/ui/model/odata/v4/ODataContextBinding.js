@@ -363,7 +363,7 @@ sap.ui.define([
 		}
 		return this._requestOperationMetadata().then(function (oOperationMetaData) {
 			if (that.bRelative) {
-				return that.oModel.requestCanonicalPath(that.getContext()).then(function (sPath) {
+				return that.getContext().requestCanonicalPath().then(function (sPath) {
 					return createCacheAndRequest(oOperationMetaData, sPath + "/");
 				});
 			}

@@ -167,7 +167,6 @@ sap.ui.define([
 
 		onSalesOrdersSelect : function (oEvent) {
 			var oSalesOrderContext = oEvent.getParameters().listItem.getBindingContext(),
-				oModel = oSalesOrderContext.getModel(),
 				that = this,
 				oView = this.getView();
 
@@ -175,7 +174,7 @@ sap.ui.define([
 			//  the control; this leads to a .setContext call on the binding.
 			//  This requires the binding to create a cache even for a relative path in case the
 			//  binding has parameters.
-			oModel.requestCanonicalPath(oSalesOrderContext).then(function (sCanonicalPath) {
+			oSalesOrderContext.requestCanonicalPath().then(function (sCanonicalPath) {
 				oView.byId("ObjectPage").bindElement({
 					events : {
 						dataReceived : that.onDataEvents.bind(that),

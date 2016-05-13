@@ -620,14 +620,15 @@ sap.ui.define([
 	 *   success, or rejected with an instance of <code>Error</code> in case of failure, e.g. when
 	 *   the given context does not point to an entity
 	 *
+	 * @deprecated since 1.39.0
+	 *   Use {@link sap.ui.model.odata.v4.Context#requestCanonicalPath} instead.
 	 * @public
 	 * @since 1.37.0
 	 */
 	ODataModel.prototype.requestCanonicalPath = function (oEntityContext) {
 		jQuery.sap.assert(oEntityContext.getModel() === this,
 				"oEntityContext must belong to this model");
-		return this.oMetaModel
-			.requestCanonicalUrl("/", oEntityContext.getPath(), oEntityContext);
+		return oEntityContext.requestCanonicalPath();
 	};
 
 	/**

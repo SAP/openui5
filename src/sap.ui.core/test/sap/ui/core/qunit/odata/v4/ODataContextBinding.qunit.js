@@ -867,9 +867,8 @@ sap.ui.require([
 		oSingleCacheMock.expects("refresh").never();
 		oContextBindingMock.expects("_requestOperationMetadata").twice()
 			.returns(Promise.resolve({$kind : "Action"}));
-		oModelMock.expects("requestCanonicalPath")
-			.withExactArgs(sinon.match.same(oParentBinding1.getBoundContext()))
-			.returns(Promise.resolve("/EntitySet(ID='1')/navigation1"));
+		this.mock(oParentBinding1.getBoundContext()).expects("requestCanonicalPath")
+			.withExactArgs().returns(Promise.resolve("/EntitySet(ID='1')/navigation1"));
 		oCacheMock.expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor),
 				"EntitySet(ID='1')/navigation1/navigation2/schema.Action", {"sap-client" : "111"},
@@ -891,9 +890,8 @@ sap.ui.require([
 			// code under test: setContext clears the cache
 			oContextBinding.setContext(oParentBinding2.getBoundContext());
 
-			oModelMock.expects("requestCanonicalPath")
-				.withExactArgs(sinon.match.same(oParentBinding2.getBoundContext()))
-				.returns(Promise.resolve("/EntitySet(ID='2')/navigation1"));
+			that.mock(oParentBinding2.getBoundContext()).expects("requestCanonicalPath")
+				.withExactArgs().returns(Promise.resolve("/EntitySet(ID='2')/navigation1"));
 			oCacheMock.expects("createSingle")
 				.withExactArgs(sinon.match.same(that.oModel.oRequestor),
 					"EntitySet(ID='2')/navigation1/navigation2/schema.Action",
