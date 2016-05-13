@@ -423,6 +423,10 @@ sap.ui.require([
 		oContextMock.expects("fetchValue").withExactArgs("navigation").returns(oPromise);
 
 		assert.strictEqual(oNestedBinding.fetchValue(""), oPromise);
+
+		assert.strictEqual(this.oModel.bindContext("navigation2").fetchValue("").getResult(),
+			undefined,
+			"Unresolved binding: fetchValue returns _SyncPromise resolved with result undefined");
 	});
 
 	//*********************************************************************************************

@@ -11,9 +11,10 @@ sap.ui.define([
 	"./_ODataHelper",
 	"./Context",
 	"./lib/_Cache",
-	"./lib/_Helper"
+	"./lib/_Helper",
+	"./lib/_SyncPromise"
 ], function (jQuery, Binding, ChangeReason, ContextBinding, _ODataHelper, Context, _Cache,
-		_Helper) {
+		_Helper, _SyncPromise) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataContextBinding",
@@ -512,7 +513,7 @@ sap.ui.define([
 		if (this.oContext) {
 			return this.oContext.fetchValue(this.sPath + (sPath ? "/" + sPath : ""));
 		}
-		return Promise.resolve();
+		return _SyncPromise.resolve();
 	};
 
 	/**
