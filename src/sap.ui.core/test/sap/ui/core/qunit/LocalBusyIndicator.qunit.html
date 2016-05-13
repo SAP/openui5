@@ -21,6 +21,7 @@
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
@@ -29,6 +30,9 @@
 
 		<script language="javascript">
 		sinon.config.useFakeTimers = false;
+
+		// load required modules
+		jQuery.sap.require("sap.ui.core.LocalBusyIndicatorSupport");
 
 		QUnit.module("Basic", {
 			beforeEach : function() {
@@ -387,6 +391,39 @@
 				this.oVBox.destroy();
 				done();
 			}.bind(this), 50);
+		});
+
+		QUnit.module("Legacy", {
+			beforeEach: function() {
+				this.oLogSpy = sinon.spy(jQuery.sap.log, "error");
+			},
+			afterEach: function() {
+				this.oLogSpy.restore();
+			}
+		});
+
+		QUnit.test("LocalBusyIndicatorSupport", function(assert) {
+
+			assert.equal(typeof sap.ui.core.Control.prototype.setDelay, "undefined", "Control#setDelay should not be available by default");
+
+			// apply deprecated LocalBusyIndicatorSupport to Control prototype to make "setDelay" method available
+			sap.ui.core.LocalBusyIndicatorSupport.apply(sap.ui.core.Control.prototype);
+
+			assert.equal(sap.ui.core.Control.prototype.setDelay, sap.ui.core.Control.prototype.setBusyIndicatorDelay,
+				"Control#setDelay should be available and a reference to #setBusyIndicatorDelay after applying legacy support");
+
+			sinon.assert.notCalled(this.oLogSpy, "No error should be logged");
+
+		});
+
+		QUnit.test("LocalBusyIndicatorSupport (error handling)", function(assert) {
+
+			// apply deprecated LocalBusyIndicatorSupport to a specific control
+			sap.ui.core.LocalBusyIndicatorSupport.apply(sap.ui.commons.Button.prototype);
+
+			// LocalBusyIndicatorSupport should log an error when applying on a specific control
+			sinon.assert.calledWithExactly(this.oLogSpy, "Only controls can use the LocalBusyIndicator", sap.ui.commons.Button.prototype);
+
 		});
 
     </script>

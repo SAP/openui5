@@ -23,15 +23,9 @@ sap.ui.define(['jquery.sap.global', './Control'],
 		// Ensure only Control prototype is enhanced
 		if (this === Control.prototype) {
 
-			/**
-			 * This function set the delay until the BusyIndicator is being shown
-			 *
-			 * @private
-			 * @param iDelay
-			 */
-			this.setDelay = function(iDelay) {
-				this.setBusyIndicatorDelay(iDelay);
-			};
+			// Provide "setDelay" method for compatibility reasons
+			// It has been renamed to "setBusyIndicatorDelay" and is deprecated
+			this.setDelay = this.setBusyIndicatorDelay;
 
 		} else {
 			jQuery.sap.log.error("Only controls can use the LocalBusyIndicator", this);
