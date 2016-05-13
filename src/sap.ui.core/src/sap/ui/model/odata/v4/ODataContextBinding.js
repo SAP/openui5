@@ -394,6 +394,24 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Deregisters the given change listener.
+	 *
+	 * @param {string} sPath
+	 *   The path
+	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} oListener
+	 *   The change listener
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype.deregisterChange = function (sPath, oListener) {
+		if (this.oCache) {
+			this.oCache.deregisterChange(sPath, oListener);
+		} else if (this.oContext) {
+			this.oContext.deregisterChange((this.sPath ? this.sPath + "/" : "") + sPath, oListener);
+		}
+	};
+
+	/**
 	 * Returns the group ID of the binding that is used for read requests.
 	 *
 	 * @returns {string}
@@ -497,12 +515,14 @@ sap.ui.define([
 	 *
 	 * @param {string} [sPath]
 	 *   Some relative path
+	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
+	 *   A property binding which registers itself as listener at the cache
 	 * @returns {SyncPromise}
 	 *   A promise on the outcome of the cache's <code>read</code> call
 	 *
 	 *  @private
 	 */
-	ODataContextBinding.prototype.fetchValue = function (sPath) {
+	ODataContextBinding.prototype.fetchValue = function (sPath, oListener) {
 		var bDataRequested = false,
 			sGroupId,
 			that = this;
@@ -513,7 +533,7 @@ sap.ui.define([
 			return this.oCache.read(sGroupId, sPath, function () {
 				bDataRequested = true;
 				that.oModel.addedRequestToGroup(sGroupId, that.fireDataRequested.bind(that));
-			}).then(function (vValue) {
+			}, oListener).then(function (vValue) {
 				if (bDataRequested) {
 					that.fireDataReceived();
 				}
@@ -533,7 +553,7 @@ sap.ui.define([
 			});
 		}
 		if (this.oContext) {
-			return this.oContext.fetchValue(this.sPath + (sPath ? "/" + sPath : ""));
+			return this.oContext.fetchValue(this.sPath + (sPath ? "/" + sPath : ""), oListener);
 		}
 		return _SyncPromise.resolve();
 	};

@@ -182,6 +182,26 @@ sap.ui.define([
 	};
 
 	/**
+	 * Deregisters the given change listener.
+	 *
+	 * @param {string} sPath
+	 *   The path
+	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} oListener
+	 *   The change listener
+	 * @param {number} iIndex
+	 *   Index corresponding to some current context of this binding
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.deregisterChange = function (sPath, oListener, iIndex) {
+		if (this.oCache) {
+			this.oCache.deregisterChange(iIndex, sPath, oListener);
+		} else if (this.oContext) {
+			this.oContext.deregisterChange(this.sPath + "/" + iIndex + "/" + sPath, oListener);
+		}
+	};
+
+	/**
 	 * Method not supported
 	 *
 	 * @throws {Error}
@@ -524,6 +544,8 @@ sap.ui.define([
 	 *
 	 * @param {string} [sPath]
 	 *   Some relative path
+	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
+	 *   A property binding which registers itself as listener at the cache
 	 * @param {number} iIndex
 	 *   Index corresponding to some current context of this binding
 	 * @returns {SyncPromise}
@@ -531,11 +553,11 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.fetchValue = function (sPath, iIndex) {
+	ODataListBinding.prototype.fetchValue = function (sPath, oListener, iIndex) {
 		return this.oCache
-			? this.oCache.read(iIndex, /*iLength*/1, undefined, sPath)
-			: this.oContext.fetchValue(this.sPath + "/" + iIndex
-				+ (sPath ? "/" + sPath : ""));
+			? this.oCache.read(iIndex, /*iLength*/1, undefined, sPath, undefined, oListener)
+			: this.oContext.fetchValue(this.sPath + "/" + iIndex + (sPath ? "/" + sPath : ""),
+				oListener);
 	};
 
 	/**

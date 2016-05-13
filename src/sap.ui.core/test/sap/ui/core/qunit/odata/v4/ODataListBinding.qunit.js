@@ -312,7 +312,7 @@ sap.ui.require([
 		this.mock(ODataListBinding.prototype).expects("getGroupId").never();
 		oControl.bindObject("/TEAMS('4711')");
 		that.mock(oControl.getObjectBinding()).expects("fetchValue")
-			.withExactArgs(sPath, undefined)
+			.withExactArgs(sPath, undefined, undefined)
 			.returns(oPromise);
 
 		// code under test
@@ -527,7 +527,7 @@ sap.ui.require([
 					//check delegation of fetchValue from context
 					oPromise = {}; // a fresh new object each turn around
 					oListBindingMock.expects("fetchValue")
-						.withExactArgs("foo/bar/" + i, iStart + i)
+						.withExactArgs("foo/bar/" + i, undefined, iStart + i)
 						.returns(oPromise);
 
 					assert.strictEqual(aContexts[i].fetchValue("foo/bar/" + i), oPromise);
@@ -1049,14 +1049,15 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("fetchValue: absolute binding", function (assert) {
 		var oListBinding = this.oModel.bindList("/EMPLOYEES"),
+			oListener = {},
 			oPromise,
 			oReadResult = {};
 
 		this.mock(oListBinding.oCache).expects("read")
-			.withExactArgs(42, 1, undefined, "bar")
+			.withExactArgs(42, 1, undefined, "bar", undefined, oListener)
 			.returns(_SyncPromise.resolve(oReadResult));
 
-		oPromise = oListBinding.fetchValue("bar", 42);
+		oPromise = oListBinding.fetchValue("bar", oListener, 42);
 		assert.ok(oPromise.isFulfilled());
 		return oPromise.then( function (oResult){
 			assert.strictEqual(oResult, oReadResult);
@@ -1072,19 +1073,20 @@ sap.ui.require([
 			},
 			oContextMock = this.mock(oContext),
 			oListBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext),
+			oListener = {},
 			oPromise = {};
 
 		oContextMock.expects("fetchValue")
-			.withExactArgs("TEAM_2_EMPLOYEES/42/bar")
+			.withExactArgs("TEAM_2_EMPLOYEES/42/bar", sinon.match.same(oListener))
 			.returns(oPromise);
 
-		assert.strictEqual(oListBinding.fetchValue("bar", 42), oPromise);
+		assert.strictEqual(oListBinding.fetchValue("bar", oListener, 42), oPromise);
 
 		oContextMock.expects("fetchValue")
-			.withExactArgs("TEAM_2_EMPLOYEES/42")
+			.withExactArgs("TEAM_2_EMPLOYEES/42", sinon.match.same(oListener))
 			.returns(oPromise);
 
-		assert.strictEqual(oListBinding.fetchValue("", 42), oPromise);
+		assert.strictEqual(oListBinding.fetchValue("", oListener, 42), oPromise);
 	});
 	//TODO provide iStart, iLength parameter to fetchValue to support paging on nested list
 
@@ -1131,6 +1133,37 @@ sap.ui.require([
 			.then(function (oResult0) {
 				assert.strictEqual(oResult0, oResult);
 			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("deregisterChange: absolute binding", function (assert) {
+		var oBinding = this.oModel.bindList("/SalesOrderList"),
+			oListener = {};
+
+		this.mock(oBinding.oCache).expects("deregisterChange")
+			.withExactArgs(1, "foo", sinon.match.same(oListener));
+
+		oBinding.deregisterChange("foo", oListener, 1);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("deregisterChange: relative binding resolved", function (assert) {
+		var oContext = {
+				deregisterChange : function () {}
+			},
+			oListBinding = this.oModel.bindList("SO_2_SOITEM", oContext),
+			oListener = {};
+
+		this.mock(oContext).expects("deregisterChange")
+			.withExactArgs("SO_2_SOITEM/1/foo", sinon.match.same(oListener));
+
+		oListBinding.deregisterChange("foo", oListener, 1);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("deregisterChange: relative binding unresolved", function (assert) {
+		this.oModel.bindList("SO_2_SOITEM")
+			.deregisterChange("foo", {}, 1); // nothing must happen
 	});
 
 	//*********************************************************************************************

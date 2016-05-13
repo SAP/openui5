@@ -192,11 +192,15 @@ sap.ui.define([
 		 * If there is no cache for the canonical path in the binding's
 		 * <code>mCacheByContext</code>, creates the cache by calling the given function
 		 * <code>fnCreateCache</code> with the canonical path.
+		 * If there is already a cache for the binding, <code>deregisterChange()</code> is called
+		 * to deregister all listening property bindings at the cache, because they are not able to
+		 * deregister themselves afterwards.
 		 *
 		 * @param {object} oBinding The relative binding
 		 * @param {object} oContext The context for the relative binding
 		 * @param {function} fnCreateCache The function to create the cache from the canonical path
 		 * @returns {object} The cache proxy with the following properties
+		 *   deregisterChange: method does nothing
 		 *   post: method throws an error as the cache proxy does not support write operations
 		 *   promise: promise fulfilled with the cache or rejected with the error of canonical path
 		 *     computation
@@ -208,6 +212,9 @@ sap.ui.define([
 			var oCache,
 				oPromise;
 
+			if (oBinding.oCache) {
+				oBinding.oCache.deregisterChange();
+			}
 			// use requestCanonicalPath, not fetchCanonicalPath to ensure consistent async behavior
 			oPromise = oContext.requestCanonicalPath().then(function (sCanonicalPath) {
 				oBinding.mCacheByContext = oBinding.mCacheByContext || {};
@@ -216,6 +223,7 @@ sap.ui.define([
 				return oCache;
 			});
 			return {
+				deregisterChange : function () {},
 				post : function () {
 					throw new Error("POST request not allowed");
 				},

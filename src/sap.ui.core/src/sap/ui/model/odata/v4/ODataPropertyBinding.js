@@ -228,14 +228,14 @@ sap.ui.define([
 			);
 		}
 		if (this.isRelative()) {
-			oReadPromise = this.oContext.fetchValue(this.sPath);
+			oReadPromise = this.oContext.fetchValue(this.sPath, this);
 		} else {
 			sGroupId = this.sRefreshGroupId || this.getGroupId();
 			this.sRefreshGroupId = undefined;
 			oReadPromise = this.oCache.read(sGroupId, /*sPath*/undefined, function () {
 				bDataRequested = true;
 				that.oModel.addedRequestToGroup(sGroupId, that.fireDataRequested.bind(that));
-			});
+			}, this);
 		}
 		aPromises.push(oReadPromise.then(function (vValue) {
 			if (vValue && typeof vValue === "object") {
@@ -269,6 +269,21 @@ sap.ui.define([
 				that.fireDataReceived(mParametersForDataReceived);
 			}
 		});
+	};
+
+	/**
+	 * Destroys the object. The object must not be used anymore after this function was called.
+	 *
+	 * @public
+	 * @since 1.39.0
+	 */
+	ODataPropertyBinding.prototype.destroy = function() {
+		if (this.oCache) {
+			this.oCache.deregisterChange(undefined, this);
+		} else if (this.oContext) {
+			this.oContext.deregisterChange(this.sPath, this);
+		}
+		return PropertyBinding.prototype.destroy.apply(this, arguments);
 	};
 
 	/**
@@ -321,6 +336,20 @@ sap.ui.define([
 	// @override
 	ODataPropertyBinding.prototype.isInitial = function () {
 		throw new Error("Unsupported operation: v4.ODataPropertyBinding#isInitial");
+	};
+
+	/**
+	 * Change handler for the cache. The cache calls this method when the value is changed via
+	 * two-way binding.
+	 *
+	 * @param {any} vValue
+	 *   The new value
+	 *
+	 * @private
+	 */
+	ODataPropertyBinding.prototype.onChange = function (vValue) {
+		this.vValue = vValue;
+		this._fireChange({reason : ChangeReason.Change});
 	};
 
 	/**
@@ -386,8 +415,11 @@ sap.ui.define([
 	// @override
 	ODataPropertyBinding.prototype.setContext = function (oContext) {
 		if (this.oContext !== oContext) {
+			if (this.oContext && this.bRelative) {
+				this.oContext.deregisterChange(this.sPath, this);
+			}
 			this.oContext = oContext;
-			if (this.isRelative()) {
+			if (this.bRelative) {
 				this.checkUpdate(false, ChangeReason.Context);
 			}
 		}
@@ -439,8 +471,7 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataPropertyBinding.prototype.setValue = function (vValue, sGroupId) {
-		var that = this,
-			vOldValue = this.vValue;
+		var that = this;
 
 		if (typeof vValue === "function" || typeof vValue === "object") {
 			throw new Error("Not a primitive value");
@@ -452,10 +483,7 @@ sap.ui.define([
 				if (this.oContext) {
 					this.oContext.updateValue(sGroupId, this.sPath, vValue)
 						["catch"](function (oError) {
-							if (oError.canceled) {
-								that.vValue = vOldValue;
-								that._fireChange({reason : ChangeReason.Change});
-							} else {
+							if (!oError.canceled) {
 								that.oModel.reportError("Failed to update path "
 										+ that.oModel.resolve(that.sPath, that.oContext),
 									sClassName, oError);
@@ -471,9 +499,6 @@ sap.ui.define([
 					sClassName);
 				return; // do not update this.vValue!
 			}
-
-			this.vValue = vValue;
-			this._fireChange({reason : ChangeReason.Change});
 		}
 	};
 

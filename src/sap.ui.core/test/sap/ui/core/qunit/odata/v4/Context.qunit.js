@@ -74,13 +74,30 @@ sap.ui.require([
 				fetchValue : function () {}
 			},
 			oContext = Context.create(null, oBinding, "/foo", 42),
+			oListener = {},
 			oResult = {},
 			sPath = "bar";
 
-		this.mock(oBinding).expects("fetchValue").withExactArgs(sPath, 42)
+		this.mock(oBinding).expects("fetchValue")
+			.withExactArgs(sPath, sinon.match.same(oListener), 42)
 			.returns(oResult);
 
-		assert.strictEqual(oContext.fetchValue(sPath), oResult);
+		assert.strictEqual(oContext.fetchValue(sPath, oListener), oResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("deregisterChange", function (assert) {
+		var oBinding = {
+				deregisterChange : function () {}
+			},
+			oContext = Context.create(null, oBinding, "/foo", 42),
+			oListener = {},
+			sPath = "bar";
+
+		this.mock(oBinding).expects("deregisterChange")
+			.withExactArgs(sPath, sinon.match.same(oListener), 42);
+
+		oContext.deregisterChange(sPath, oListener);
 	});
 
 	//*********************************************************************************************

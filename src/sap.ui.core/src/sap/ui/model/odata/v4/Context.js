@@ -90,6 +90,20 @@ sap.ui.define([
 		});
 
 	/**
+	 * Deregisters the given change listener.
+	 *
+	 * @param {string} sPath
+	 *   The path
+	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} oListener
+	 *   The change listener
+	 *
+	 * @private
+	 */
+	Context.prototype.deregisterChange = function (sPath, oListener) {
+		this.oBinding.deregisterChange(sPath, oListener, this.iIndex);
+	};
+
+	/**
 	 * Returns a promise for the "canonical path" of the entity for this context.
 	 *
 	 * @returns {SyncPromise}
@@ -109,13 +123,15 @@ sap.ui.define([
 	 *
 	 * @param {string} [sPath]
 	 *   A relative path within the JSON structure
+	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
+	 *   A property binding which registers itself as listener at the cache
 	 * @returns {SyncPromise}
 	 *   A promise on the outcome of the binding's <code>requestValue</code> call
 	 *
 	 * @private
 	 */
-	Context.prototype.fetchValue = function (sPath) {
-		return this.oBinding.fetchValue(sPath, this.iIndex);
+	Context.prototype.fetchValue = function (sPath, oListener) {
+		return this.oBinding.fetchValue(sPath, oListener, this.iIndex);
 	};
 
 	/**

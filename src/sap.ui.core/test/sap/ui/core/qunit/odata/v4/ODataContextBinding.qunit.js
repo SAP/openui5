@@ -399,18 +399,19 @@ sap.ui.require([
 	QUnit.test("fetchValue: absolute binding (read required)", function (assert) {
 		var oBinding = this.oModel.bindContext("/absolute", undefined, {$$groupId : "$direct"}),
 			oBindingMock = this.mock(oBinding),
+			oListener = {},
 			oPromise;
 
 		oBindingMock.expects("fireDataRequested").withExactArgs();
 		oBindingMock.expects("fireDataReceived").withExactArgs();
 		this.mock(oBinding.oCache).expects("read")
-			.withExactArgs("$direct", "bar", sinon.match.func)
+			.withExactArgs("$direct", "bar", sinon.match.func, sinon.match.same(oListener))
 			.callsArg(2)
 			.returns(_SyncPromise.resolve("value"));
 		this.mock(this.oModel).expects("addedRequestToGroup")
 			.withExactArgs("$direct", sinon.match.func).callsArg(1);
 
-		oPromise = oBinding.fetchValue("bar").then(function (vValue) {
+		oPromise = oBinding.fetchValue("bar", oListener).then(function (vValue) {
 			assert.strictEqual(vValue, "value");
 		});
 		assert.ok(oPromise.isFulfilled());
@@ -426,7 +427,7 @@ sap.ui.require([
 		oBindingMock.expects("fireDataRequested").withExactArgs();
 		oBindingMock.expects("fireDataReceived").withExactArgs();
 		this.mock(oBinding.oCache).expects("read")
-			.withExactArgs("myGroup", "bar", sinon.match.func)
+			.withExactArgs("myGroup", "bar", sinon.match.func, undefined)
 			.callsArg(2)
 			.returns(_SyncPromise.resolve("value"));
 		this.mock(this.oModel).expects("addedRequestToGroup")
@@ -449,7 +450,7 @@ sap.ui.require([
 		oBindingMock.expects("fireDataRequested").never();
 		oBindingMock.expects("fireDataReceived").never();
 		this.mock(oBinding.oCache).expects("read")
-			.withExactArgs("$direct", "bar", sinon.match.func)
+			.withExactArgs("$direct", "bar", sinon.match.func, undefined)
 			// no read required! .callsArg(2)
 			.returns(_SyncPromise.resolve("value"));
 
@@ -465,9 +466,9 @@ sap.ui.require([
 			oExpectedError = new Error("Expected read failure"),
 			oCachePromise = _SyncPromise.resolve(Promise.reject(oExpectedError));
 
-		oCacheMock.expects("read").withExactArgs("$direct", "foo", sinon.match.func)
+		oCacheMock.expects("read").withExactArgs("$direct", "foo", sinon.match.func, undefined)
 			.callsArg(2).returns(oCachePromise);
-		oCacheMock.expects("read").withExactArgs("$direct", "bar", sinon.match.func)
+		oCacheMock.expects("read").withExactArgs("$direct", "bar", sinon.match.func, undefined)
 			.returns(oCachePromise);
 		this.mock(oBinding).expects("fireDataReceived")
 			.withExactArgs({error : oExpectedError});
@@ -492,6 +493,7 @@ sap.ui.require([
 			oContext,
 			oContextMock,
 			oNestedBinding,
+			oListener = {},
 			oPromise = {};
 
 		this.mock(oBinding).expects("getGroupId").never();
@@ -500,13 +502,15 @@ sap.ui.require([
 		oContextMock = this.mock(oContext);
 		oNestedBinding = this.oModel.bindContext("navigation", oContext);
 
-		oContextMock.expects("fetchValue").withExactArgs("navigation/bar").returns(oPromise);
+		oContextMock.expects("fetchValue").withExactArgs("navigation/bar", oListener)
+			.returns(oPromise);
 
-		assert.strictEqual(oNestedBinding.fetchValue("bar"), oPromise);
+		assert.strictEqual(oNestedBinding.fetchValue("bar", oListener), oPromise);
 
-		oContextMock.expects("fetchValue").withExactArgs("navigation").returns(oPromise);
+		oContextMock.expects("fetchValue").withExactArgs("navigation", oListener)
+			.returns(oPromise);
 
-		assert.strictEqual(oNestedBinding.fetchValue(""), oPromise);
+		assert.strictEqual(oNestedBinding.fetchValue("", oListener), oPromise);
 
 		assert.strictEqual(this.oModel.bindContext("navigation2").fetchValue("").getResult(),
 			undefined,
@@ -565,6 +569,46 @@ sap.ui.require([
 					assert.strictEqual(oResult0, oResult);
 				});
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("deregisterChange: absolute binding", function (assert) {
+		var oBinding = this.oModel.bindContext("/absolute"),
+			oListener = {};
+
+		this.mock(oBinding.oCache).expects("deregisterChange")
+			.withExactArgs("foo", sinon.match.same(oListener));
+
+		oBinding.deregisterChange("foo", oListener);
+	});
+
+	//*********************************************************************************************
+	[
+		{bindingPath : "PRODUCT_2_BP", deregisterPath : "PRODUCT_2_BP/foo"},
+		{bindingPath : "", deregisterPath : "foo"}
+	].forEach(function (oFixture) {
+		QUnit.test("deregisterChange: relative binding resolved: " + oFixture.bindingPath,
+			function (assert) {
+				var oContext = {
+						deregisterChange : function () {},
+						getPath : function () {
+							return "/Products('1')";
+						}
+					},
+					oBinding = this.oModel.bindContext(oFixture.bindingPath, oContext),
+					oListener = {};
+
+				this.mock(oContext).expects("deregisterChange")
+					.withExactArgs(oFixture.deregisterPath, sinon.match.same(oListener));
+
+				oBinding.deregisterChange("foo", oListener);
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("deregisterChange: relative binding unresolved", function (assert) {
+		this.oModel.bindContext("PRODUCT_2_BP")
+			.deregisterChange("foo", {}); // nothing must happen
 	});
 
 	//*********************************************************************************************
@@ -649,14 +693,14 @@ sap.ui.require([
 			oReadPromise = _SyncPromise.resolve();
 
 		this.mock(oBinding.oCache).expects("read")
-			.withExactArgs("$direct", "foo", sinon.match.func)
+			.withExactArgs("$direct", "foo", sinon.match.func, undefined)
 			.callsArg(2)
 			.returns(oReadPromise);
 		oModelMock.expects("addedRequestToGroup")
 			.withExactArgs("$direct", sinon.match.func)
 			.callsArg(1);
 		this.mock(oBinding2.oCache).expects("read")
-			.withExactArgs("$auto", "bar", sinon.match.func)
+			.withExactArgs("$auto", "bar", sinon.match.func, undefined)
 			.callsArg(2)
 			.returns(oReadPromise);
 		oModelMock.expects("addedRequestToGroup")
