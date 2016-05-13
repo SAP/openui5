@@ -7,9 +7,26 @@
 	font-size: @sapMFontMediumSize;
 }
 
+.sapUxAPObjectPageHeaderContent .sapUxAPObjectPageHeaderObjectImage-Circle .sapUxAPObjectPageHeaderObjectImage {
+	border: 3px solid darken(@sapUiObjectHeaderBackground, 8%);
+}
+.sapUxAPObjectPageHeaderIdentifier .sapUxAPObjectPageHeaderObjectImageForce .sapUxAPObjectPageHeaderObjectImage,
+.sapUxAPObjectPageHeaderStickied .sapUxAPObjectPageHeaderIdentifier .sapUxAPObjectPageHeaderObjectImage {
+	border: 1px solid darken(@sapUiObjectHeaderBackground, 8%);
+	padding: 0;
+}
+
 html.sapUiMedia-Std-Desktop, html.sapUiMedia-Std-Tablet {
 	.sapUxAPObjectPageHeaderContent .sapUxAPObjectPageHeaderObjectImage-Circle .sapUxAPObjectPageHeaderObjectImage {
-		border-color: darken(@sapUiObjectHeaderBackground, 8);
+		border-width: 3px;
+		margin-right: 2rem;
+		margin-bottom: 1rem;
+		width: 5rem;
+		height: auto;
+	}
+	.sapUxAPObjectPageHeaderIdentifier .sapUxAPObjectPageHeaderObjectImageForce .sapUxAPObjectPageHeaderObjectImage,
+	.sapUxAPObjectPageHeaderStickied .sapUxAPObjectPageHeaderIdentifier .sapUxAPObjectPageHeaderObjectImage {
+		margin: 0.25rem 1rem 0.25rem 0;
 	}
 }
 

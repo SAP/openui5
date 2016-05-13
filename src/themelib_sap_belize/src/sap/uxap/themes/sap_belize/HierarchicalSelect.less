@@ -14,8 +14,9 @@
 			background: transparent;
 		}
 
-		&:not(.sapMSltPressed) > .sapMSltIcon:hover {
-			background: @sapUiButtonHoverBackground;
+		&:not(.sapMSltPressed):hover > .sapMSltIcon {
+			background-color: @sapUiButtonLiteHoverBackground;
+			border-color: @sapUiButtonLiteHoverBorderColor;
 		}
 	}
 
@@ -89,16 +90,24 @@
 
 /* styling needed to achieve underline of the select label on phone */
 html.sapUiMedia-Std-Phone, html.sap-phone {
+	.sapMSltPressed > .sapMSltArrow {
+		background: @sapUiFieldActiveBackground;
+	}
+
+	.sapMSltPressed > .sapMSltArrow::before {
+		color: @sapUiContentContrastIconColor;
+	}
+	
 	.sapUxAPHierarchicalSelect .sapMSltLabel {
-		border-bottom: 0.125rem solid darken(@sapUiContentForegroundBorderColor, 15);
+		border-bottom: 0.125rem solid @sapUiSelected;
 	}
 
 	.sapUxAPHierarchicalSelect .sapMSltArrow {
-		box-shadow: inset 0 -0.125rem lighten(@sapUiContentForegroundBorderColor, 21);
+		box-shadow: inset 0 -0.125rem darken(@sapUiObjectHeaderBackground, 8), @sapUiShadowHeader;
 	}
 
 	.sapMSlt.sapUxAPHierarchicalSelect {
-		box-shadow: inset 0 -0.125rem lighten(@sapUiContentForegroundBorderColor, 21);
+		box-shadow: inset 0 -0.125rem darken(@sapUiObjectHeaderBackground, 8), @sapUiShadowHeader;
 	}
 }
 
@@ -107,6 +116,6 @@ html.sapUiMedia-Std-Phone, html.sap-phone {
 html[data-sap-ui-browser^="cr4"].sapUiMedia-Std-Phone,
 html[data-sap-ui-browser^="cr4"].sap-phone {
 	.sapUxAPHierarchicalSelect .sapMSltLabel {
-		box-shadow: inset 0 -0.125rem darken(@sapUiObjectHeaderBackground, 8);
+		box-shadow: inset 0 -0.125rem @sapUiSelected;
 	}
 }

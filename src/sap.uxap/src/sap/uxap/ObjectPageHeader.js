@@ -441,7 +441,7 @@ sap.ui.define([
 			sStyleAttribute = sap.ui.getCore().getConfiguration().getRTL() ? "left" : "right",
 			$actions = this.$().find(".sapUxAPObjectPageHeaderIdentifierActions"),
 			bHasVerticalScroll = true,
-			iActionsOffset = this._iOffset;
+			iActionsOffset = parseInt($actions.css(sStyleAttribute), 10);
 
 		if (typeof oParent._hasVerticalScrollBar === "function") {
 			bHasVerticalScroll = oParent._hasVerticalScrollBar();
