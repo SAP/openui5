@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.SearchField.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/core/InvisibleText', 'sap/ui/core/theming/Parameters', './Suggest'],
-	function(jQuery, library, Control, EnabledPropagator, IconPool, InvisibleText, Parameters, Suggest) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/core/InvisibleText', './Suggest'],
+	function(jQuery, library, Control, EnabledPropagator, IconPool, InvisibleText, Suggest) {
 	"use strict";
 
 
@@ -281,9 +281,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		this.setValue(value);
 		updateSuggestions(this);
-		this.fireLiveChange({newValue: ""});
+		this.fireLiveChange({newValue: value});
 		this.fireSearch({
-			query: "",
+			query: value,
 			refreshButtonPressed: false,
 			clearButtonPressed: !!(oOptions && oOptions.clearButton)
 		});
@@ -440,6 +440,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	SearchField.prototype.onkeydown = function(event) {
+		var value;
+
 		if (event.which === jQuery.sap.KeyCodes.F5 || event.which === jQuery.sap.KeyCodes.ENTER) {
 
 			// show search button active state
@@ -450,17 +452,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			event.preventDefault();
 		}
 		if (event.which === jQuery.sap.KeyCodes.ESCAPE) {
+			// Escape button:
+			//   - close suggestions ||
+			//   - restore the original value ||
+			//   - clear the value ||
+			//   - close the parent dialog
 			if (suggestionsOn(this)) {
-				// close picker, do not reset the search field value
 				closeSuggestions(this);
+				event.setMarked(); // do not close the parent dialog
 			} else {
-				// clear value, fire liveChange and change events
+				value = this.getValue();
+				if (value === this._sOriginalValue) {
+					this._sOriginalValue = ""; // clear the field if the value was original
+				}
 				this.clear({ value: this._sOriginalValue });
+				if (value !== this.getValue()) {
+					event.setMarked(); // if changed, do not close the parent dialog because the user has not finished yet
+				}
 			}
-
 			// Chrome fires input event on escape,
 			// prevent it to avoid doubled change/liveChange:
-			event.stopPropagation();
 			event.preventDefault();
 		}
 	};
