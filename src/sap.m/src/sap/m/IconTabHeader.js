@@ -642,6 +642,32 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
+	 * Checks if all tabs are in line version.
+	 * @private
+	 * @returns True if all tabs are in line version, otherwise false
+	 */
+	IconTabHeader.prototype._checkInLine = function(aItems) {
+		var oItem;
+
+		if (aItems.length > 0) {
+			for (var i = 0; i < aItems.length; i++) {
+
+				oItem = aItems[i];
+
+				if (!(oItem instanceof sap.m.IconTabSeparator)) {
+					if (oItem.getIcon() || oItem.getCount()) {
+						this._bInLine = false;
+						return false;
+					}
+				}
+			}
+		}
+
+		this._bInLine = true;
+		return true;
+	};
+
+	/**
 	 * Checks if scrolling is needed.
 	 * @private
 	 * @returns True if scrolling is needed, otherwise false
@@ -676,15 +702,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @returns Icon of the requested arrow
 	 */
 	IconTabHeader.prototype._getScrollingArrow = function(sName) {
-		var src;
-
-		if (sap.ui.Device.system.desktop) {
-			// use navigation arrows on desktop and win8/win10 combi devices
-			src = IconPool.getIconURI("navigation-" + sName + "-arrow");
-		} else {
-			// use slim arrows on mobile devices
-			src = IconPool.getIconURI("slim-arrow-" + sName);
-		}
+		var src = IconPool.getIconURI("slim-arrow-" + sName);
 
 		var mProperties = {
 			src : src,
@@ -697,6 +715,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		var aCssClassesToAddLeft = ["sapMITBArrowScroll", sLeftArrowClass];
 		var aCssClassesToAddRight = ["sapMITBArrowScroll", sRightArrowClass];
+
+		if (this._bInLine) {
+			aCssClassesToAddLeft.push('sapMITBArrowScrollLeftInLine');
+			aCssClassesToAddRight.push('sapMITBArrowScrollRightInLine');
+		}
 
 		if (sName === "left") {
 			if (!this._oArrowLeft) {
