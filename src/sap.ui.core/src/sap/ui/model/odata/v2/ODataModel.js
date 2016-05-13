@@ -1421,6 +1421,34 @@ sap.ui.define([
 			return oNewContext;
 		}
 
+		function handleSuccess(oData) {
+			var sKey = oData ? that._getKey(oData) : undefined;
+			if (sKey && oContext && bIsRelative) {
+				var sContextPath = oContext.getPath();
+				// remove starting slash
+				sContextPath = sContextPath.substr(1);
+				// when model is refreshed, parent entity might not be available yet
+				if (that.oData[sContextPath]) {
+					that.oData[sContextPath][sPath] = {__ref: sKey};
+				}
+			}
+			oNewContext = that.getContext('/' + sKey);
+			fnCallBack(oNewContext);
+		}
+
+		function handleError(oError) {
+			if (oError.statusCode == '404' && oContext && bIsRelative) {
+				var sContextPath = oContext.getPath();
+				// remove starting slash
+				sContextPath = sContextPath.substr(1);
+				// when model is refreshed, parent entity might not be available yet
+				if (that.oData[sContextPath]) {
+					that.oData[sContextPath][sPath] = {__ref: null};
+				}
+			}
+			fnCallBack(null); // error - notify to recreate contexts
+		}
+
 		if (fnCallBack) {
 			var bIsRelative = !jQuery.sap.startsWith(sPath, "/");
 			if (sResolvedPath) {
@@ -1432,32 +1460,7 @@ sap.ui.define([
 				if (mParameters && (mParameters.batchGroupId || mParameters.groupId)) {
 					sGroupId = mParameters.groupId || mParameters.batchGroupId;
 				}
-				var handleSuccess = function(oData) {
-					var sKey = oData ? that._getKey(oData) : undefined;
-					if (sKey && oContext && bIsRelative) {
-						var sContextPath = oContext.getPath();
-						// remove starting slash
-						sContextPath = sContextPath.substr(1);
-						// when model is refreshed, parent entity might not be available yet
-						if (that.oData[sContextPath]) {
-							that.oData[sContextPath][sPath] = {__ref: sKey};
-						}
-					}
-					oNewContext = that.getContext('/' + sKey);
-					fnCallBack(oNewContext);
-				};
-				var handleError = function(oError) {
-					if (oError.statusCode == '404' && oContext && bIsRelative) {
-						var sContextPath = oContext.getPath();
-						// remove starting slash
-						sContextPath = sContextPath.substr(1);
-						// when model is refreshed, parent entity might not be available yet
-						if (that.oData[sContextPath]) {
-							that.oData[sContextPath][sPath] = {__ref: null};
-						}
-					}
-					fnCallBack(null); // error - notify to recreate contexts
-				};
+
 				this.read(sResolvedPath, {groupId: sGroupId, urlParameters: aParams, success: handleSuccess, error: handleError});
 			} else {
 				fnCallBack(null); // error - notify to recreate contexts
@@ -1937,7 +1940,7 @@ sap.ui.define([
 		};
 
 
-		function _handleSuccess(oData, oResponse) {
+		function handleSuccess(oData, oResponse) {
 			if (oResponse) {
 				sToken = that._getHeader("x-csrf-token", oResponse.headers);
 				that._setSessionContextIdHeader(that._getHeader("sap-contextid", oResponse.headers));
@@ -1959,7 +1962,7 @@ sap.ui.define([
 			}
 		}
 
-		function _handleGetError(oError) {
+		function handleGetError(oError) {
 			// Disable token handling, if token request returns an error
 			that.resetSecurityToken();
 			that.bTokenHandling = false;
@@ -1970,24 +1973,24 @@ sap.ui.define([
 			}
 		}
 
-		function _handleHeadError(oError) {
+		function handleHeadError(oError) {
 			// Disable token handling, if token request returns an error
-			mTokenRequest.request = requestToken("GET", _handleGetError);
+			mTokenRequest.request = requestToken("GET", handleGetError);
 		}
 
 		function requestToken(sRequestType, fnError) {
 			// trigger a read to the service url to fetch the token
 			var oRequest = that._createRequest(sUrl, sRequestType, that._getHeaders(), null, null, !!bAsync);
 			oRequest.headers["x-csrf-token"] = "Fetch";
-			return that._request(oRequest, _handleSuccess, fnError, undefined, undefined, that.getServiceMetadata());
+			return that._request(oRequest, handleSuccess, fnError, undefined, undefined, that.getServiceMetadata());
 		}
 
 
 		// Initially try method "HEAD", error handler falls back to "GET" unless the flag forbids HEAD request
 		if (this.bDisableHeadRequestForToken) {
-			mTokenRequest.request = requestToken("GET", _handleGetError);
+			mTokenRequest.request = requestToken("GET", handleGetError);
 		} else {
-			mTokenRequest.request = requestToken("HEAD", _handleHeadError);
+			mTokenRequest.request = requestToken("HEAD", handleHeadError);
 		}
 		return mTokenRequest;
 
@@ -2009,7 +2012,7 @@ sap.ui.define([
 			fnResolveCompleted = resolve;
 		});
 
-		function _handleSuccess(oData, oResponse) {
+		function handleSuccess(oData, oResponse) {
 			//if batch the responses are handled by the batch success handler
 			if (fnSuccess) {
 				fnSuccess(oData, oResponse);
@@ -2017,7 +2020,7 @@ sap.ui.define([
 			fnResolveCompleted();
 		}
 
-		function _handleError(oError) {
+		function handleError(oError) {
 
 			// If error is a 403 with XSRF token "Required" reset the token and retry sending request
 			if (that.bTokenHandling && oError.response) {
@@ -2025,7 +2028,7 @@ sap.ui.define([
 				if (!oRequest.bTokenReset && oError.response.statusCode == '403' && sToken && sToken.toLowerCase() === "required") {
 					that.resetSecurityToken();
 					oRequest.bTokenReset = true;
-					_submitWithToken();
+					submitWithToken();
 					return;
 				}
 			}
@@ -2036,28 +2039,28 @@ sap.ui.define([
 			fnResolveCompleted();
 		}
 
-		function _readyForRequest(oRequest) {
+		function readyForRequest(oRequest) {
 			if (that.bTokenHandling && oRequest.method !== "GET") {
 				that.pReadyForRequest = that.securityTokenAvailable();
 			}
 			return that.pReadyForRequest;
 		}
 
-		function _submitWithToken() {
+		function submitWithToken() {
 			// request token only if we have change operations or batch requests
 			// token needs to be set directly on request headers, as request is already created
-			_readyForRequest(oRequest).then(function(sToken) {
+			readyForRequest(oRequest).then(function(sToken) {
 				// Check bTokenHandling again, as updating the token might disable token handling
 				if (that.bTokenHandling && oRequest.method !== "GET") {
 					oRequest.headers["x-csrf-token"] = sToken;
 				}
-				_submit();
+				submit();
 			}, function() {
-				_submit();
+				submit();
 			});
 		}
 
-		var fireEvent = function(sType, oRequest, oError) {
+		function fireEvent(sType, oRequest, oError) {
 			var oEventInfo,
 				aRequests = oRequest.eventInfo.requests;
 			if (aRequests) {
@@ -2079,13 +2082,13 @@ sap.ui.define([
 				oEventInfo = that._createEventInfo(oRequest, oError, aRequests);
 				that["fireRequest" + sType](oEventInfo);
 			}
-		};
+		}
 
-		function _submit() {
+		function submit() {
 			if (that.sSessionContextId) {
 				oRequest.headers["sap-contextid"] = that.sSessionContextId;
 			}
-			oRequestHandle = that._request(oRequest, _handleSuccess, _handleError, oHandler, undefined, that.getServiceMetadata());
+			oRequestHandle = that._request(oRequest, handleSuccess, handleError, oHandler, undefined, that.getServiceMetadata());
 			if (oRequest.eventInfo) {
 				fireEvent("Sent", oRequest, null);
 				delete oRequest.eventInfo;
@@ -2101,11 +2104,11 @@ sap.ui.define([
 		// If requests are serialized, chain it to the current request, otherwise just submit
 		if (this.bSequentializeRequests) {
 			this.pSequentialRequestCompleted.then(function() {
-				_submitWithToken();
+				submitWithToken();
 			});
 			this.pSequentialRequestCompleted = pRequestCompleted;
 		} else {
-			_submitWithToken();
+			submitWithToken();
 		}
 
 		return {
@@ -2144,7 +2147,7 @@ sap.ui.define([
 			mGetEntities = {},
 			mEntityTypes = {};
 
-		var handleSuccess = function(oData, oResponse) {
+		function handleSuccess(oData, oResponse) {
 			// If there is a 200 response which does not contain valid data, this should be treated as an error.
 			// This may happen in case of SAML session expiration.
 			if (oData === undefined && oResponse.statusCode === 200) {
@@ -2155,27 +2158,30 @@ sap.ui.define([
 				return;
 			}
 
-			var fnSingleSuccess = function(oData, oResponse) {
+			function successWrapper(oData, oResponse) {
 				if (fnSuccess) {
 					fnSuccess(oData, oResponse);
 				}
 				if (oRequest.requestUri.indexOf("$count") === -1) {
 					that.checkUpdate(false, false, mGetEntities);
-					if (that._isRefreshNeeded(oRequest, oResponse)){
+					if (that.bRefreshAfterChange){
 						that._refresh(false, undefined, mChangeEntities, mEntityTypes);
 					}
 				}
-			};
-			that._processSuccess(oRequest, oResponse, fnSingleSuccess, mGetEntities, mChangeEntities, mEntityTypes);
+			}
+
+			that._processSuccess(oRequest, oResponse, successWrapper, mGetEntities, mChangeEntities, mEntityTypes);
 			that._setSessionContextIdHeader(that._getHeader("sap-contextid", oResponse.headers));
-		};
-		var handleError = function(oError) {
+		}
+
+		function handleError(oError) {
 			if (oError.message == "Request aborted") {
 				that._processAborted(oRequest, oError, fnError);
 			} else {
 				that._processError(oRequest, oError, fnError);
 			}
-		};
+		}
+
 		oRequest.eventInfo = {};
 		oRequestHandle =  this._submitRequest(oRequest, handleSuccess, handleError);
 
@@ -2193,9 +2199,25 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._submitBatchRequest = function(oBatchRequest, aRequests, fnSuccess, fnError) {
-		var that = this;
+		var that = this,
+			mChangeEntities = {},
+			mGetEntities = {},
+			mEntityTypes = {};
 
-		var handleSuccess = function(oData, oBatchResponse) {
+		function processResponse(oRequest, oResponse, bAborted) {
+			for (var i = 0; i < oRequest.parts.length; i++) {
+				var oPart = oRequest.parts[i];
+				if (bAborted || oPart.request._aborted) {
+					that._processAborted(oRequest.request, oResponse, oPart.fnError);
+				} else if (oResponse.message) {
+					that._processError(oRequest.request, oResponse, oPart.fnError);
+				} else {
+					that._processSuccess(oRequest.request, oResponse, oPart.fnSuccess, mGetEntities, mChangeEntities, mEntityTypes);
+				}
+			}
+		}
+
+		function handleSuccess(oData, oBatchResponse) {
 			// If there is a 200 response which does not contain valid data, this should be treated as an error.
 			// This may happen in case of SAML session expiration.
 			if (oData === undefined && oBatchResponse.statusCode === 200) {
@@ -2207,11 +2229,7 @@ sap.ui.define([
 			}
 
 			var oResponse, oRequestObject, aChangeResponses,
-				aBatchResponses = oData.__batchResponses,
-				oEventInfo,
-				mChangeEntities = {},
-				mGetEntities = {},
-				mEntityTypes = {};
+				aBatchResponses = oData.__batchResponses;
 
 			if (aBatchResponses) {
 				var i,j;
@@ -2223,12 +2241,7 @@ sap.ui.define([
 						if (oResponse.message) {
 							for (j = 0; j < aRequests[i].length; j++) {
 								oRequestObject = aRequests[i][j];
-
-								if (oRequestObject.request._aborted) {
-									that._processAborted(oRequestObject.request, oResponse, oRequestObject.fnError);
-								} else {
-									that._processError(oRequestObject.request, oResponse, oRequestObject.fnError);
-								}
+								processResponse(oRequestObject, oResponse);
 								oRequestObject.response = oResponse;
 							}
 						} else {
@@ -2236,71 +2249,43 @@ sap.ui.define([
 							for (j = 0; j < aChangeResponses.length; j++) {
 								var oChangeResponse = aChangeResponses[j];
 								oRequestObject = aRequests[i][j];
-								//check for error
-								if (oRequestObject.request._aborted) {
-									that._processAborted(oRequestObject.request, oChangeResponse, oRequestObject.fnError);
-								} else if (oChangeResponse.message) {
-									that._processError(oRequestObject.request, oChangeResponse, oRequestObject.fnError);
-								} else {
-									that._processSuccess(oRequestObject.request, oChangeResponse, oRequestObject.fnSuccess, mGetEntities, mChangeEntities, mEntityTypes);
-								}
+								processResponse(oRequestObject, oChangeResponse);
 								oRequestObject.response = oChangeResponse;
 							}
 						}
 					} else {
 						oRequestObject = aRequests[i];
-						if (oRequestObject.request._aborted) {
-							that._processAborted(oRequestObject.request, oResponse, oRequestObject.fnError);
-						} else if (oResponse.message) {
-							that._processError(oRequestObject.request, oResponse, oRequestObject.fnError);
-						} else {
-							that._processSuccess(oRequestObject.request, oResponse, oRequestObject.fnSuccess, mGetEntities, mChangeEntities, mEntityTypes);
-						}
+						processResponse(oRequestObject, oResponse);
 						oRequestObject.response = oResponse;
 					}
 				}
 				that.checkUpdate(false, false, mGetEntities);
 			}
-			if (fnSuccess) {
-				fnSuccess(oData);
-			}
-			oEventInfo = that._createEventInfo(oBatchRequest, oBatchResponse, aRequests);
-			that._setSessionContextIdHeader(that._getHeader("sap-contextid", oBatchResponse.headers));
-			that.fireBatchRequestCompleted(oEventInfo);
-		};
 
-		var handleError = function(oError) {
-			var oEventInfo,
-				bAborted = oRequestHandle && oRequestHandle.bAborted;
+			that._processSuccess(oBatchRequest, oBatchResponse, fnSuccess, mGetEntities, mChangeEntities, mEntityTypes, true, aRequests);
+			that._setSessionContextIdHeader(that._getHeader("sap-contextid", oBatchResponse.headers));
+		}
+
+		function handleError(oError) {
+			var bAborted = oError.message == "Request aborted";
+
 			// Call procesError for all contained requests first
 			jQuery.each(aRequests, function(i, oRequest) {
 				if (jQuery.isArray(oRequest)) {
 					jQuery.each(oRequest, function(i, oRequest) {
-						if (bAborted) {
-							that._processAborted(oRequest.request, oError, oRequest.fnError);
-						} else {
-							that._processError(oRequest.request, oError, oRequest.fnError);
-						}
+						processResponse(oRequest, oError, bAborted);
 					});
 				} else {
-					if (bAborted) {
-						that._processAborted(oRequest.request, oError, oRequest.fnError);
-					} else {
-						that._processError(oRequest.request, oError, oRequest.fnError);
-					}
+					processResponse(oRequest, oError, bAborted);
 				}
 			});
-			// Call callback and fire events for the batch request
-			if (fnError) {
-				fnError(oError);
+
+			if (bAborted) {
+				that._processAborted(oBatchRequest, oError, fnError, true);
+			} else {
+				that._processError(oBatchRequest, oError, fnError, true, aRequests);
 			}
-			oEventInfo = that._createEventInfo(oBatchRequest, oError, aRequests);
-			that.fireBatchRequestCompleted(oEventInfo);
-			// Don't fire RequestFailed for intentionally aborted requests; fire event if we have no (OData.read fails before handle creation)
-			if (!bAborted) {
-				that.fireBatchRequestFailed(oEventInfo);
-			}
-		};
+		}
 
 		oBatchRequest.eventInfo = {
 				requests: aRequests,
@@ -2352,6 +2337,27 @@ sap.ui.define([
 	};
 
 	/**
+	 * Abort internal requests such as created via TwoWay changes or created entries
+	 * @private
+	 */
+	ODataModel.prototype.abortInternalRequest = function(sKey, sGroupId) {
+		var mRequests = this.mRequests;
+
+		if (sGroupId in this.mDeferredGroups) {
+			mRequests = this.mDeferredRequests;
+		}
+
+		var oRequestGroup = mRequests[sGroupId];
+
+		if (oRequestGroup && sKey in oRequestGroup.map) {
+			var oRequest = oRequestGroup.map[sKey];
+			for (var i = 0; i < oRequest.parts.length; i++) {
+				oRequest.parts[i].requestHandle.abort();
+			}
+		}
+	};
+
+	/**
 	 * push request to internal request queue
 	 *
 	 * @param {map} mRequests Request queue
@@ -2362,83 +2368,77 @@ sap.ui.define([
 	 * @param {function} fnError The error callback function
 	 * @private
 	 */
-	ODataModel.prototype._pushToRequestQueue = function(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess, fnError) {
-		var oChangeGroup, oRequestGroup = mRequests[sGroupId];
+	ODataModel.prototype._pushToRequestQueue = function(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess, fnError, requestHandle) {
+		var oRequestGroup = mRequests[sGroupId],
+			sRequestKey = oRequest.key ? oRequest.key : oRequest.method + ":" + oRequest.requestUri;
 
+		//create request group if it does not exist
 		if (!oRequestGroup) {
 			oRequestGroup = {};
 			oRequestGroup.map = {};
 			oRequestGroup.requests = [];
 			mRequests[sGroupId] = oRequestGroup;
 		}
-		if (oRequest.method !== "GET" || oRequest.key) {
-			if (!oRequestGroup.changes) {
-				oRequestGroup.changes = {};
+
+		//'combine' only GET and internal create&change requests.
+		if (sRequestKey in oRequestGroup.map && (oRequest.key || oRequest.method === 'GET')) {
+			var oGroupEntry = oRequestGroup.map[sRequestKey];
+			var oStoredRequest = oGroupEntry.request;
+
+			if (!oRequest.key) {
+			oGroupEntry.parts.push({
+				request:	oRequest,
+				fnSuccess:	fnSuccess,
+				fnError:	fnError,
+				requestHandle:    requestHandle
+			});
 			}
-			if (oRequest.key && oRequestGroup.map && oRequest.key in oRequestGroup.map) {
-				var oChangeRequest = oRequestGroup.map[oRequest.key];
-				oChangeRequest.method = oRequest.method;
-				oChangeRequest.headers = oRequest.headers;
+
+			if (oRequest.method === "GET") {
+				//delete data if any. Could happen for GET Function imports
+				delete oStoredRequest.data;
+			} else {
+				oStoredRequest.method = oRequest.method;
+				oStoredRequest.headers = oRequest.headers;
+				oStoredRequest.data = oRequest.data;
+				// for POST function imports we also need to replace the URI
+				oStoredRequest.requestUri = oRequest.requestUri;
 				if (oRequest.method === "PUT") {
 					// if stored request was a MERGE before (created by setProperty) but is now sent via PUT
 					// (by submitChanges) the merge header must be removed
-					delete oChangeRequest.headers["x-http-method"];
+					delete oStoredRequest.headers["x-http-method"];
 				}
-
 				// if change is aborted (resetChanges) and a change happens before submit we should delete
 				// the aborted flag
-				if (oChangeRequest._aborted) {
-					delete oChangeRequest._aborted;
-					var oRequestHandle = {
-							abort: function() {
-								oChangeRequest._aborted = true;
-							}
-					};
-					this.mChangeHandles[oRequest.key] = oRequestHandle;
-				}
-
-				if (oRequest.method !== "GET") {
-					oChangeRequest.data = oRequest.data;
-					// for POST function imports we also need to replace the URI
-					oChangeRequest.requestUri = oRequest.requestUri;
-				} else {
-					// used for GET function imports which have no payload
-					// replace uri with new function import parameters
-					oChangeRequest.requestUri = oRequest.requestUri;
-					delete oChangeRequest.data;
-				}
-
-			} else {
-				if (oRequest.method !== "GET") {
-					oChangeGroup = oRequestGroup.changes[sChangeSetId];
-					if (!oChangeGroup) {
-						oChangeGroup = [];
-						oRequestGroup.changes[sChangeSetId] = oChangeGroup;
-					}
-					oRequest._changeSetId = sChangeSetId;
-					oChangeGroup.push({
-						request:	oRequest,
-						fnSuccess:	fnSuccess,
-						fnError:	fnError,
-						changeSetId: sChangeSetId
-					});
-				} else {
-					oRequestGroup.requests.push({
-						request:	oRequest,
-						fnSuccess:	fnSuccess,
-						fnError:	fnError
-					});
-				}
-				if (oRequest.key) {
-					oRequestGroup.map[oRequest.key] = oRequest;
+				if (oStoredRequest._aborted) {
+					delete oStoredRequest._aborted;
 				}
 			}
 		} else {
-			oRequestGroup.requests.push({
-				request:	oRequest,
-				fnSuccess:	fnSuccess,
-				fnError:	fnError
-			});
+			var oGroupEntry = {
+				request: oRequest,
+				parts: [{
+					request:	oRequest,
+					fnSuccess:	fnSuccess,
+					fnError:	fnError,
+					requestHandle: 	requestHandle
+				}]
+			};
+			if (oRequest.method === "GET") {
+				oRequestGroup.requests.push(oGroupEntry);
+			} else {
+				if (!oRequestGroup.changes) {
+					oRequestGroup.changes = {};
+				}
+				var oChangeGroup = oRequestGroup.changes[sChangeSetId];
+				if (!oChangeGroup) {
+					oChangeGroup = [];
+					oRequestGroup.changes[sChangeSetId] = oChangeGroup;
+				}
+				oGroupEntry.changeSetId = sChangeSetId;
+				oChangeGroup.push(oGroupEntry);
+			}
+			oRequestGroup.map[sRequestKey] = oGroupEntry;
 		}
 	};
 
@@ -2486,6 +2486,35 @@ sap.ui.define([
 		var that = this, sPath,
 			oRequestHandle = [];
 
+		function wrapHandler(aHandler) {
+			return function() {
+				for (var i = 0; i < aHandler.length; i++) {
+					if (aHandler[i]) {
+						aHandler[i].apply(this, arguments);
+					}
+				}
+			};
+		}
+
+		function checkAbort(oRequest) {
+			var aSuccessHandler = [], aErrorHandler = [];
+			for (var i = 0; i < oRequest.parts.length; i++) {
+				var oPart = oRequest.parts[i];
+				if (oPart.request._aborted) {
+					that._processAborted(oRequest.request, null, oPart.fnError);
+					oRequest.parts.splice(i,1);
+					i--;
+				} else {
+					aSuccessHandler.push(oPart.fnSuccess);
+					aErrorHandler.push(oPart.fnError);
+				}
+			}
+			return {
+				success : aSuccessHandler,
+				error 	: aErrorHandler
+			};
+		}
+
 		if (this.bUseBatch) {
 			//auto refresh for batch / for single requests we refresh after the request was successful
 			if (that.bRefreshAfterChange) {
@@ -2503,7 +2532,6 @@ sap.ui.define([
 			jQuery.each(mRequests, function(sRequestGroupId, oRequestGroup) {
 				if (sRequestGroupId === sGroupId || !sGroupId) {
 					var aReadRequests = [], aBatchGroup = [], /* aChangeRequests, */ oChangeSet, aChanges;
-
 					if (oRequestGroup.changes) {
 						jQuery.each(oRequestGroup.changes, function(sChangeSetId, aChangeSet){
 							oChangeSet = {__changeRequests:[]};
@@ -2512,16 +2540,14 @@ sap.ui.define([
 								//increase laundering
 								sPath = '/' + that.getKey(aChangeSet[i].request.data);
 								that.increaseLaundering(sPath, aChangeSet[i].request.data);
-								if (aChangeSet[i].request._aborted) {
-									that._processAborted(aChangeSet[i].request, null, aChangeSet[i].fnError);
-								} else {
+								checkAbort(aChangeSet[i]);
+								if (aChangeSet[i].parts.length > 0) {
 									//clear metadata.create
 									if (aChangeSet[i].request.data && aChangeSet[i].request.data.__metadata) {
 										delete aChangeSet[i].request.data.__metadata.created;
 									}
 									oChangeSet.__changeRequests.push(aChangeSet[i].request);
 									aChanges.push(aChangeSet[i]);
-									delete that.mChangeHandles[aChangeSet[i].request.key];
 								}
 							}
 							if (oChangeSet.__changeRequests && oChangeSet.__changeRequests.length > 0) {
@@ -2533,9 +2559,8 @@ sap.ui.define([
 					if (oRequestGroup.requests) {
 						var aRequests = oRequestGroup.requests;
 						for (var i = 0; i < aRequests.length; i++) {
-							if (aRequests[i].request._aborted) {
-								that._processAborted(aRequests[i].request, null, aRequests[i].fnError);
-							} else {
+							checkAbort(aRequests[i]);
+							if (aRequests[i].parts.length > 0) {
 								aReadRequests.push(aRequests[i].request);
 								aBatchGroup.push(aRequests[i]);
 							}
@@ -2557,11 +2582,9 @@ sap.ui.define([
 								//increase laundering
 								sPath = '/' + that.getKey(aChangeSet[i].request.data);
 								that.increaseLaundering(sPath, aChangeSet[i].request.data);
-								// store last request Handle. If no batch there will be only 1 and we cpould return it?
-								if (aChangeSet[i].request._aborted) {
-									that._processAborted(aChangeSet[i].request, null, aChangeSet[i].fnError);
-								} else {
-									aChangeSet[i].request._handle = that._submitSingleRequest(aChangeSet[i].request, aChangeSet[i].fnSuccess, aChangeSet[i].fnError);
+								var oHandler = checkAbort(aChangeSet[i]);
+								if (aChangeSet[i].parts.length > 0) {
+									aChangeSet[i].request._handle = that._submitSingleRequest(aChangeSet[i].request, wrapHandler(oHandler.success), wrapHandler(oHandler.error));
 									oRequestHandle.push(aChangeSet[i].request._handle);
 								}
 							}
@@ -2570,11 +2593,9 @@ sap.ui.define([
 					if (oRequestGroup.requests) {
 						var aRequests = oRequestGroup.requests;
 						for (var i = 0; i < aRequests.length; i++) {
-							// store last request Handle. If no batch there will be only 1 and we cpould return it?
-							if (aRequests[i].request._aborted) {
-								that._processAborted(aRequests[i].request, null, aRequests[i].fnError);
-							} else {
-								aRequests[i].request._handle = that._submitSingleRequest(aRequests[i].request, aRequests[i].fnSuccess, aRequests[i].fnError);
+							var oHandler = checkAbort(aRequests[i]);
+							if (aRequests[i].parts.length > 0) {
+								aRequests[i].request._handle = that._submitSingleRequest(aRequests[i].request, wrapHandler(oHandler.success), wrapHandler(oHandler.error));
 								oRequestHandle.push(aRequests[i].request._handle);
 							}
 						}
@@ -2613,116 +2634,125 @@ sap.ui.define([
 	 * @param {map} mGetEntities map of read entities
 	 * @param {map} mChangeEntities map of changed entities
 	 * @param {map} mEntityTypes map of changed entityTypes
+	 * @param {boolean} bBatch Process succes for single/batch request
+	 * @param {array} aRequests array of request; represents the order of requests in the batch
 	 * @returns {boolean} bSuccess Processed successfully
 	 * @private
 	 */
-	ODataModel.prototype._processSuccess = function(oRequest, oResponse, fnSuccess, mGetEntities, mChangeEntities, mEntityTypes) {
+	ODataModel.prototype._processSuccess = function(oRequest, oResponse, fnSuccess, mGetEntities, mChangeEntities, mEntityTypes, bBatch, aRequests) {
 		var oResultData = oResponse.data, oImportData, bContent, sUri, sPath, aParts,
 		oEntityMetadata, mLocalGetEntities = {}, mLocalChangeEntities = {}, that = this;
 
-		bContent = !(oResponse.statusCode === 204 || oResponse.statusCode === '204');
+		if (!bBatch) {
+			bContent = !(oResponse.statusCode === 204 || oResponse.statusCode === '204');
 
-		sUri = oRequest.requestUri;
-		sPath = sUri.replace(this.sServiceUrl,"");
-		//in batch requests all paths are relative
-		if (!jQuery.sap.startsWith(sPath,'/')) {
-			sPath = '/' + sPath;
-		}
-		sPath = this._normalizePath(sPath);
-		// decrease laundering
-		this.decreaseLaundering(sPath, oRequest.data);
-
-		// no data available
-		if (bContent && oResultData === undefined && oResponse) {
-			// Parse error messages from the back-end
-			this._parseResponse(oResponse, oRequest);
-
-			jQuery.sap.log.fatal(this + " - No data was retrieved by service: '" + oResponse.requestUri + "'");
-			that.fireRequestCompleted({url : oResponse.requestUri, type : "GET", async : oResponse.async,
-				info: "Accept headers:" + this.oHeaders["Accept"], infoObject : {acceptHeaders: this.oHeaders["Accept"]},  success: false});
-			return false;
-		}
-
-		// broken implementations need this
-		if (oResultData && oResultData.results && !jQuery.isArray(oResultData.results)) {
-			oResultData = oResultData.results;
-		}
-
-		// adding the result data to the data object
-		if (oResultData && (jQuery.isArray(oResultData) || typeof oResultData == 'object')) {
-			//need a deep data copy for import
-			oImportData = jQuery.sap.extend(true, {}, oResultData);
-			that._importData(oImportData, mLocalGetEntities);
-		}
-
-		if (mLocalGetEntities && this.oData[oRequest.key] && this.oData[oRequest.key].__metadata.created && this.oData[oRequest.key].__metadata.created.functionImport) {
-			var aResults = [];
-			var oResult = this.oData[oRequest.key]["$result"];
-			if (oResult && oResult.__list) {
-				jQuery.each(mLocalGetEntities, function(sKey) {
-					aResults.push(sKey);
-				});
-				oResult.__list = aResults;
-			} else if (oResult && oResult.__ref){
-				//there should be only 1 entity in mLocalGetEntities
-				jQuery.each(mLocalGetEntities, function(sKey) {
-					oResult.__ref = sKey;
-				});
+			sUri = oRequest.requestUri;
+			sPath = sUri.replace(this.sServiceUrl,"");
+			//in batch requests all paths are relative
+			if (!jQuery.sap.startsWith(sPath,'/')) {
+				sPath = '/' + sPath;
 			}
-		}
+			sPath = this._normalizePath(sPath);
+			// decrease laundering
+			this.decreaseLaundering(sPath, oRequest.data);
 
-		//get change entities for update/remove
-		if (!bContent) {
-			aParts = sPath.split("/");
-			if (aParts[1]) {
-				mLocalChangeEntities[aParts[1]] = oRequest;
-				//cleanup of this.mChangedEntities; use only the actual response key
-				var oMap = {};
-				oMap[aParts[1]] = oRequest.data;
-				this._updateChangedEntities(oMap);
+			// no data available
+			if (bContent && oResultData === undefined && oResponse) {
+				// Parse error messages from the back-end
+				this._parseResponse(oResponse, oRequest);
+
+				jQuery.sap.log.fatal(this + " - No data was retrieved by service: '" + oResponse.requestUri + "'");
+				that.fireRequestCompleted({url : oResponse.requestUri, type : "GET", async : oResponse.async,
+					info: "Accept headers:" + this.oHeaders["Accept"], infoObject : {acceptHeaders: this.oHeaders["Accept"]},  success: false});
+				return false;
 			}
-			//for delete requests delete data in model (exclude $links)
-			if (oRequest.method === "DELETE" && aParts[2] !== "$links") {
-				delete that.oData[aParts[1]];
-				delete that.mContexts["/" + aParts[1]]; // contexts are stored starting with /
-				delete that.mChangedEntities[aParts[1]];
+
+			// broken implementations need this
+			if (oResultData && oResultData.results && !jQuery.isArray(oResultData.results)) {
+				oResultData = oResultData.results;
 			}
-		}
-		//get entityType for creates
-		if (bContent && oRequest.method === "POST") {
-			oEntityMetadata = this.oMetadata._getEntityTypeByPath(sPath);
-			if (oEntityMetadata) {
-				mEntityTypes[oEntityMetadata.entityType] = true;
+
+			// adding the result data to the data object
+			if (!oResponse._imported && oResultData && (jQuery.isArray(oResultData) || typeof oResultData == 'object')) {
+				//need a deep data copy for import
+				oImportData = jQuery.sap.extend(true, {}, oResultData);
+				that._importData(oImportData, mLocalGetEntities);
+				oResponse._imported = true;
 			}
-			// for createEntry entities change context path to new one
-			if (oRequest.key) {
-				var sKey = this._getKey(oResultData);
-				delete this.mChangedEntities[oRequest.key];
-				delete this.oData[oRequest.key];
-				var oContext = this.getContext("/" + oRequest.key);
-				oContext.sPath = '/' + sKey;
-				//delete created flag after successfull creation
-				if (this.oData[sKey]) {
-					delete this.oData[sKey].__metadata.created;
+
+			if (mLocalGetEntities && this.oData[oRequest.key] && this.oData[oRequest.key].__metadata.created && this.oData[oRequest.key].__metadata.created.functionImport) {
+				var aResults = [];
+				var oResult = this.oData[oRequest.key]["$result"];
+				if (oResult && oResult.__list) {
+					jQuery.each(mLocalGetEntities, function(sKey) {
+						aResults.push(sKey);
+					});
+					oResult.__list = aResults;
+				} else if (oResult && oResult.__ref){
+					//there should be only 1 entity in mLocalGetEntities
+					jQuery.each(mLocalGetEntities, function(sKey) {
+						oResult.__ref = sKey;
+					});
 				}
 			}
+
+			//get change entities for update/remove
+			if (!bContent) {
+				aParts = sPath.split("/");
+				if (aParts[1]) {
+					mLocalChangeEntities[aParts[1]] = oRequest;
+					//cleanup of this.mChangedEntities; use only the actual response key
+					var oMap = {};
+					oMap[aParts[1]] = oRequest.data;
+					this._updateChangedEntities(oMap);
+				}
+				//for delete requests delete data in model (exclude $links)
+				if (oRequest.method === "DELETE" && aParts[2] !== "$links") {
+					delete that.oData[aParts[1]];
+					delete that.mContexts["/" + aParts[1]]; // contexts are stored starting with /
+					delete that.mChangedEntities[aParts[1]];
+				}
+			}
+			//get entityType for creates
+			if (bContent && oRequest.method === "POST") {
+				oEntityMetadata = this.oMetadata._getEntityTypeByPath(sPath);
+				if (oEntityMetadata) {
+					mEntityTypes[oEntityMetadata.entityType] = true;
+				}
+				// for createEntry entities change context path to new one
+				if (oRequest.key) {
+					var sKey = this._getKey(oResultData);
+					delete this.mChangedEntities[oRequest.key];
+					delete this.oData[oRequest.key];
+					var oContext = this.getContext("/" + oRequest.key);
+					oContext.sPath = '/' + sKey;
+					//delete created flag after successfull creation
+					if (this.oData[sKey]) {
+						delete this.oData[sKey].__metadata.created;
+					}
+				}
+			}
+
+			// Parse messages from the back-end
+			this._parseResponse(oResponse, oRequest, mLocalGetEntities, mLocalChangeEntities);
+
+			// Add the Get and Change entities from this request to the main ones (which differ in case of batch requests)
+			jQuery.extend(mGetEntities, mLocalGetEntities);
+			jQuery.extend(mChangeEntities, mLocalChangeEntities);
+
+			this._updateETag(oRequest, oResponse);
 		}
-
-		// Parse messages from the back-end
-		this._parseResponse(oResponse, oRequest, mLocalGetEntities, mLocalChangeEntities);
-
-		// Add the Get and Change entities from this request to the main ones (which differ in case of batch requests)
-		jQuery.extend(mGetEntities, mLocalGetEntities);
-		jQuery.extend(mChangeEntities, mLocalChangeEntities);
-
-		this._updateETag(oRequest, oResponse);
 
 		if (fnSuccess) {
 			fnSuccess(oResultData, oResponse);
 		}
 
-		var oEventInfo = this._createEventInfo(oRequest, oResponse);
-		this.fireRequestCompleted(oEventInfo);
+		var oEventInfo = this._createEventInfo(oRequest, oResponse, aRequests);
+		if (bBatch) {
+			this.fireBatchRequestCompleted(oEventInfo);
+		} else {
+			this.fireRequestCompleted(oEventInfo);
+		}
 
 		return true;
 	};
@@ -2733,21 +2763,31 @@ sap.ui.define([
 	 * @param {object} oRequest The request
 	 * @param {object} oResponse The response
 	 * @param {function} fnError The error callback function
+	 * @param {boolean} bBatch Process succes for single/batch request
+	 * @param {array} aRequests array of request; represents the order of requests in the batch
+	 * @param {boolean}
 	 * @private
 	 */
-	ODataModel.prototype._processError = function(oRequest, oResponse, fnError) {
+	ODataModel.prototype._processError = function(oRequest, oResponse, fnError, bBatch, aRequests) {
 		var sPath, oError = this._handleError(oResponse, oRequest);
-		// decrease laundering
-		sPath = '/' + this.getKey(oRequest.data);
-		this.decreaseLaundering(sPath, oRequest.data);
+		if (!bBatch) {
+			// decrease laundering
+			sPath = '/' + this.getKey(oRequest.data);
+			this.decreaseLaundering(sPath, oRequest.data);
+		}
 
 		if (fnError) {
 			fnError(oError);
 		}
 
-		var oEventInfo = this._createEventInfo(oRequest, oError);
-		this.fireRequestCompleted(oEventInfo);
-		this.fireRequestFailed(oEventInfo);
+		var oEventInfo = this._createEventInfo(oRequest, oError, aRequests);
+		if (bBatch) {
+			this.fireBatchRequestCompleted(oEventInfo);
+			this.fireBatchRequestFailed(oEventInfo);
+		} else {
+			this.fireRequestCompleted(oEventInfo);
+			this.fireRequestFailed(oEventInfo);
+		}
 
 	};
 
@@ -2757,9 +2797,10 @@ sap.ui.define([
 	 * @param {object} oRequest The request
 	 * @param {object} oResponse The response
 	 * @param {function} fnError The error callback function
+	 * @param {boolean} bBatch Process succes for single/batch request
 	 * @private
 	 */
-	ODataModel.prototype._processAborted = function(oRequest, oResponse, fnError) {
+	ODataModel.prototype._processAborted = function(oRequest, oResponse, fnError, bBatch) {
 		var sPath;
 		var oError = {
 			message: "Request aborted",
@@ -2768,9 +2809,11 @@ sap.ui.define([
 			headers: {},
 			responseText: ""
 		};
-		// decrease laundering
-		sPath = '/' + this.getKey(oRequest.data);
-		this.decreaseLaundering(sPath, oRequest.data);
+		if (!bBatch) {
+			// decrease laundering
+			sPath = '/' + this.getKey(oRequest.data);
+			this.decreaseLaundering(sPath, oRequest.data);
+		}
 		if (fnError) {
 			fnError(oError);
 		}
@@ -2779,7 +2822,11 @@ sap.ui.define([
 		if (oResponse) {
 			var oEventInfo = this._createEventInfo(oRequest, oError);
 			oEventInfo.success = false;
-			this.fireRequestCompleted(oEventInfo);
+			if (bBatch) {
+				this.fireBatchRequestCompleted(oEventInfo);
+			} else {
+				 this.fireRequestCompleted(oEventInfo);
+			}
 		}
 	};
 
@@ -3102,14 +3149,13 @@ sap.ui.define([
 			sMethod = "POST";
 		}
 
-
 		var oRequest = {
-				headers : mHeaders,
-				requestUri : sUrl,
-				method : sMethod,
-				user: this.sUser,
-				password: this.sPassword,
-				async: bAsync
+			headers : mHeaders,
+			requestUri : sUrl,
+			method : sMethod,
+			user: this.sUser,
+			password: this.sPassword,
+			async: bAsync
 		};
 
 		if (oData) {
@@ -3126,24 +3172,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks if a model refresh is needed, either because the the data provided by the sPath and oContext is stored
-	 * in the model or new data is added (POST). For batch requests all embedded requests are checked separately.
-	 *
-	 * @param {object} oRequest The request
-	 * @param {object} oResponse The response
-	 * @return {boolean} bRefresh Refresh needed
-	 * @private
-	 */
-	ODataModel.prototype._isRefreshNeeded = function(oRequest, oResponse) {
-		var bRefreshNeeded = false;
-
-		if (this.bRefreshAfterChange) {
-			bRefreshNeeded = true;
-		}
-		return bRefreshNeeded;
-	};
-
-	/**
 	 * Executes the passed process request method when the metadata is available and takes care
 	 * of properly wrapping the response handler and allow request abortion
 	 *
@@ -3155,8 +3183,21 @@ sap.ui.define([
 			bAborted = false,
 			that = this;
 
+		oRequestHandle = {
+				abort: function() {
+					bAborted = true;
+					if (oRequest) {
+						oRequest._aborted = true;
+						if (oRequest._handle) {
+							oRequest._handle.abort();
+						}
+					}
+				}
+		};
+
 		this.oMetadata.loaded().then(function() {
-			oRequest = fnProcessRequest();
+
+			oRequest = fnProcessRequest(oRequestHandle);
 
 			that._processRequestQueueAsync(that.mRequests);
 
@@ -3164,19 +3205,6 @@ sap.ui.define([
 				oRequestHandle.abort();
 			}
 		});
-
-		oRequestHandle = {
-			abort: function() {
-				bAborted = true;
-				if (oRequest) {
-					oRequest._aborted = true;
-					if (oRequest._handle) {
-						oRequest._handle.abort();
-					}
-				}
-			}
-		};
-
 		return oRequestHandle;
 	};
 
@@ -3296,7 +3324,7 @@ sap.ui.define([
 		mHeaders = this._getHeaders(mHeaders);
 		sMethod = "POST";
 
-		return this._processRequest(function() {
+		return this._processRequest(function(requestHandle) {
 			sUrl = that._createRequestUrl(sPath, oContext, aUrlParams, that.bUseBatch);
 			oRequest = that._createRequest(sUrl, sMethod, mHeaders, oData, sEtag);
 
@@ -3311,7 +3339,7 @@ sap.ui.define([
 			if (sGroupId in that.mDeferredGroups) {
 				mRequests = that.mDeferredRequests;
 			}
-			that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess, fnError);
+			that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess, fnError, requestHandle);
 
 			return oRequest;
 		});
@@ -3340,7 +3368,7 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.remove = function(sPath, mParameters) {
 		var oContext, sEntry, fnSuccess, fnError, oRequest, sUrl, sGroupId,
-		sChangeSetId, sETag, handleSuccess,
+		sChangeSetId, sETag,
 		mUrlParams, mHeaders, aUrlParams, sMethod, mRequests,
 		that = this;
 
@@ -3360,7 +3388,7 @@ sap.ui.define([
 		sMethod = "DELETE";
 		sETag = sETag || this._getETag(sPath, oContext);
 
-		handleSuccess = function(oData, oResponse) {
+		function handleSuccess(oData, oResponse) {
 			sEntry = sUrl.substr(sUrl.lastIndexOf('/') + 1);
 			//remove query params if any
 			if (sEntry.indexOf('?') !== -1) {
@@ -3372,9 +3400,9 @@ sap.ui.define([
 			if (fnSuccess) {
 				fnSuccess(oData, oResponse);
 			}
-		};
+		}
 
-		return this._processRequest(function() {
+		return this._processRequest(function(requestHandle) {
 			sUrl = that._createRequestUrl(sPath, oContext, aUrlParams, that.bUseBatch);
 			oRequest = that._createRequest(sUrl, sMethod, mHeaders, undefined, sETag);
 
@@ -3383,7 +3411,7 @@ sap.ui.define([
 				mRequests = that.mDeferredRequests;
 			}
 
-			that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, handleSuccess, fnError);
+			that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, handleSuccess, fnError, requestHandle);
 
 			return oRequest;
 		});
@@ -3609,7 +3637,15 @@ sap.ui.define([
 		sMethod = "GET";
 		sETag = this._getETag(sPath, oContext);
 
-		function createReadRequest() {
+		var oRequestHandle = {
+			abort: function() {
+				if (oRequest) {
+					oRequest._aborted = true;
+				}
+			}
+		};
+
+		function createReadRequest(requestHandle) {
 			// Add filter/sorter to URL parameters
 			sSorterParams = ODataUtils.createSortParams(aSorters);
 			if (sSorterParams) {
@@ -3631,13 +3667,14 @@ sap.ui.define([
 			}
 
 			sUrl = that._createRequestUrl(sPath, oContext, aUrlParams, that.bUseBatch);
+
 			oRequest = that._createRequest(sUrl, sMethod, mHeaders, null, sETag);
 
 			mRequests = that.mRequests;
 			if (sGroupId in that.mDeferredGroups) {
 				mRequests = that.mDeferredRequests;
 			}
-			that._pushToRequestQueue(mRequests, sGroupId, null, oRequest, fnSuccess, fnError);
+			that._pushToRequestQueue(mRequests, sGroupId, null, oRequest, fnSuccess, fnError, requestHandle);
 
 			return oRequest;
 		}
@@ -3645,14 +3682,8 @@ sap.ui.define([
 		// In case we are in batch mode and are processing refreshes before sending changes to the server,
 		// the request must be processed synchronously to be contained in the same batch as the changes
 		if (this.bUseBatch && this.bIncludeInCurrentBatch) {
-			oRequest = createReadRequest();
-			return {
-				abort: function() {
-					if (oRequest) {
-						oRequest._aborted = true;
-					}
-				}
-			};
+			oRequest = createReadRequest(oRequestHandle);
+			return oRequestHandle;
 		} else {
 			return this._processRequest(createReadRequest);
 		}
@@ -3853,8 +3884,13 @@ sap.ui.define([
 					oRequest.key = sKey;
 					//get params for created entries: could contain success/error handler
 					mParams = oData.__metadata && oData.__metadata.created ? oData.__metadata.created : {};
+					var oRequestHandle = {
+						abort: function() {
+							oRequest._aborted = true;
+						}
+					};
 					if (oGroupInfo.groupId in that.mDeferredGroups) {
-						that._pushToRequestQueue(that.mDeferredRequests, oGroupInfo.groupId, oGroupInfo.changeSetId, oRequest, mParams.success, mParams.error);
+						that._pushToRequestQueue(that.mDeferredRequests, oGroupInfo.groupId, oGroupInfo.changeSetId, oRequest, mParams.success, mParams.error, oRequestHandle);
 					}
 				}
 			});
@@ -3917,10 +3953,7 @@ sap.ui.define([
 
 				if (jQuery.isEmptyObject(oChangedEntry)) {
 					delete that.mChangedEntities[sKey];
-					if (that.mChangeHandles[sKey]) {
-						that.mChangeHandles[sKey].abort();
-						delete that.mChangeHandles[sKey];
-					}
+					that.abortInternalRequest(sKey, that._resolveGroup(sKey).groupId);
 				} else {
 					that.mChangedEntities[sKey] = oChangedEntry;
 					oChangedEntry.__metadata = {};
@@ -3966,8 +3999,7 @@ sap.ui.define([
 					delete that.mChangedEntities[sKey].__metadata;
 					if (jQuery.isEmptyObject(that.mChangedEntities[sKey]) || !oEntityInfo.propertyPath) {
 						that.oMetadata.loaded().then(function() {
-							that.mChangeHandles[sKey].abort();
-							delete that.mChangeHandles[sKey];
+							that.abortInternalRequest(sKey, that._resolveGroup(sKey).groupId);
 						});
 						delete that.mChangedEntities[sKey];
 					} else {
@@ -3980,8 +4012,7 @@ sap.ui.define([
 		} else {
 			jQuery.each(this.mChangedEntities, function(sKey, oObject) {
 				that.oMetadata.loaded().then(function() {
-					that.mChangeHandles[sKey].abort();
-					delete that.mChangeHandles[sKey];
+					that.abortInternalRequest(sKey, that._resolveGroup(sKey).groupId);
 				});
 				delete that.mChangedEntities[sKey];
 			});
@@ -4048,16 +4079,14 @@ sap.ui.define([
 			oEntityMetadata = this.mChangedEntities[sKey].__metadata;
 			delete this.mChangedEntities[sKey].__metadata;
 			if (jQuery.isEmptyObject(this.mChangedEntities[sKey])) {
-				that.oMetadata.loaded().then(function() {
-					//setProperty with no change does not create a request the first time so no handle exists
-					if (that.mChangeHandles[sKey]) {
-						that.mChangeHandles[sKey].abort();
-						delete that.mChangeHandles[sKey];
-					}
-				});
 				delete this.mChangedEntities[sKey];
 				mChangedEntities[sKey] = true;
 				this.checkUpdate(false, bAsyncUpdate, mChangedEntities);
+
+				that.oMetadata.loaded().then(function() {
+					//setProperty with no change does not create a request the first time so no handle exists
+					that.abortInternalRequest(sKey, that._resolveGroup(sKey).groupId);
+				});
 				return true;
 			}
 			this.mChangedEntities[sKey].__metadata = oEntityMetadata;
@@ -4080,15 +4109,12 @@ sap.ui.define([
 		mParams = oChangeObject.__metadata && oChangeObject.__metadata.created ? oChangeObject.__metadata.created : {};
 
 		this.oMetadata.loaded().then(function() {
-			if (!that.mChangeHandles[sKey]) {
-				oRequestHandle = {
-						abort: function() {
-							oRequest._aborted = true;
-						}
-				};
-				that.mChangeHandles[sKey] = oRequestHandle;
-			}
-			that._pushToRequestQueue(mRequests, oGroupInfo.groupId, oGroupInfo.changeSetId, oRequest, mParams.success, mParams.error);
+			oRequestHandle = {
+				abort: function() {
+					oRequest._aborted = true;
+				}
+			};
+			that._pushToRequestQueue(mRequests, oGroupInfo.groupId, oGroupInfo.changeSetId, oRequest, mParams.success, mParams.error, oRequestHandle);
 			that._processRequestQueueAsync(that.mRequests);
 		});
 
@@ -4257,7 +4283,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.deleteCreatedEntry = function(oContext) {
-		var that = this;
+		var that = this, sGroupId;
 		if (oContext) {
 			var sPath = oContext.getPath();
 			delete this.mContexts[sPath]; // contexts are stored starting with /
@@ -4265,9 +4291,9 @@ sap.ui.define([
 			if (jQuery.sap.startsWith(sPath, "/")) {
 				sPath = sPath.substr(1);
 			}
+			sGroupId = this._resolveGroup(sPath).groupId;
 			that.oMetadata.loaded().then(function() {
-				that.mChangeHandles[sPath].abort();
-				delete that.mChangeHandles[sPath];
+				that.abortInternalRequest(sPath, sGroupId);
 			});
 			delete this.mChangedEntities[sPath];
 			delete this.oData[sPath];
@@ -4314,7 +4340,7 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.createEntry = function(sPath, mParameters) {
 		var fnSuccess, fnError, oRequest, sUrl, sETag, oContext,
-			sKey, aUrlParams, sGroupId, sChangeSetId, oRequestHandle,
+			sKey, aUrlParams, sGroupId, sChangeSetId,
 			mUrlParams, mHeaders, mRequests, vProperties, oEntity = {},
 			fnCreated,
 			sMethod = "POST",
@@ -4336,6 +4362,14 @@ sap.ui.define([
 		sGroupId = sGroupId ? sGroupId : this.sDefaultChangeGroup;
 		aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
 		mHeaders = this._getHeaders(mHeaders);
+
+		var oRequestHandle = {
+			abort: function() {
+				if (oRequest) {
+					oRequest._aborted = true;
+				}
+			}
+		};
 
 		function create() {
 			var oCreatedContext;
@@ -4396,16 +4430,7 @@ sap.ui.define([
 			}
 
 			that.oMetadata.loaded().then(function() {
-				that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess, fnError, mParameters);
-
-				oRequestHandle = {
-						abort: function() {
-							oRequest._aborted = true;
-						}
-				};
-
-				that.mChangeHandles[sKey] = oRequestHandle;
-
+				that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess, fnError, oRequestHandle);
 				that._processRequestQueueAsync(that.mRequests);
 			});
 			return oCreatedContext;
