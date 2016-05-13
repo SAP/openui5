@@ -147,7 +147,7 @@ public class TestConversions {
     Properties contributorsVersions = new Properties();
     contributorsVersions.put("com.sap.ui5:core", "1.22.8");
     contributorsVersions.put("contributorsRange", "[1.22.0-SNAPSHOT, 1.23.0-SNAPSHOT)");
-    MyReleaseButton.updateVersion(new File(destPath), "1.22.9-SNAPSHOT", "1.22.9", contributorsVersions, null, "rel-1.22");
+    MyReleaseButton.updateVersion(new File(destPath), "1.22.9", "1.22.9-SNAPSHOT", contributorsVersions, null, "rel-1.22");
     compare(scenario, src);
   }
 

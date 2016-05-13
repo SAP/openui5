@@ -315,7 +315,7 @@ public class MyReleaseButton {
     //   2.) OSGi version as Project version: <version>_</version><!--OSGiVerion-->
     //       - Special case for OSGi distributions (Maven version should fit OSGi version)
     //       - In this case the .qualifier version needs to be converted to -SNAPSHOT
-    String fromSPattern = "(?<!osgi\\.version>|\\.version>\\[)" + Pattern.quote(oldMavenVersion);
+    String fromSPattern = "(?<!osgi\\.version>|\\.version>)" + Pattern.quote(oldMavenVersion);
     String fromQ_POMPattern = "(?<=osgi\\.version>)" + Pattern.quote(oldOSGiVersion);
 
     if (oldMavenVersion.endsWith("-SNAPSHOT") && newMavenVersion.endsWith("-SNAPSHOT")) {

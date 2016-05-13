@@ -16,7 +16,7 @@
 	<parent>
 		<groupId>com.sap.ui5.dist</groupId>
 		<artifactId>reactor</artifactId>
-		<version>1.22.9-SNAPSHOT</version>
+		<version>1.22.9</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -42,7 +42,7 @@
 	***************************************************************************-->
 
 	<properties>
-		<com.sap.suite.version>1.22.4</com.sap.suite.version>
+		<com.sap.suite.version>1.22.9</com.sap.suite.version>
 		<com.sap.portal.ui5.version>1.22.3</com.sap.portal.ui5.version>
 		<com.sap.ushell.version>1.22.6</com.sap.ushell.version>
 		<com.sap.ui5.vbm.version>1.22.6</com.sap.ui5.vbm.version>
