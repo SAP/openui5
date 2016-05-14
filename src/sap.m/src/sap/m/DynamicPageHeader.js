@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.DynamicPageHeader.
-sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/core/InvisibleText", "./ToggleButton"],
-	function (jQuery, library, Control, InvisibleText, ToggleButton) {
+sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/core/InvisibleText", "./ButtonType", "./ToggleButton"],
+	function (jQuery, library, Control, InvisibleText, ButtonType, ToggleButton) {
 		"use strict";
 
 		/**
@@ -202,6 +202,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 				var oPinButton = new ToggleButton({
 					id: this.getId() + "-pinBtn",
 					icon: "sap-icon://pushpin-off",
+					type: ButtonType.Transparent,
 					press: this._pinUnpinFireEvent.bind(this)
 				});
 				this.setAggregation("_pinButton", oPinButton, true);
