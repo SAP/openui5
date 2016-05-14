@@ -197,7 +197,7 @@ sap.ui.define([
 	 */
 	DynamicPage.prototype._toggleHeader = function () {
 		if (this._shouldSnap()) {
-			this._snapHeader();
+			this._snapHeader(true);
 			this._updateHeaderARIAState(false);
 		} else if (this._shouldExpand()) {
 			this._expandHeader();
@@ -209,7 +209,7 @@ sap.ui.define([
 	 * Converts the header to snapped mode
 	 * @private
 	 */
-	DynamicPage.prototype._snapHeader = function () {
+	DynamicPage.prototype._snapHeader = function (bAppend) {
 		var oDynamicPageTitle = this.getTitle(),
 			oDynamicPageHeader = this.getHeader();
 
@@ -230,7 +230,7 @@ sap.ui.define([
 				oDynamicPageTitle._setShowSnapContent(true);
 			}
 
-			if (exists(oDynamicPageHeader)) {
+			if (bAppend && exists(oDynamicPageHeader)) {
 				oDynamicPageHeader.$().prependTo(this.$wrapper);
 			}
 		}
@@ -264,6 +264,18 @@ sap.ui.define([
 		}
 
 		this.$titleArea.toggleClass("sapMDynamicPageTitleSnapped", this._bHeaderSnapped);
+	};
+
+	/**
+	 * Toggles the header visibility
+	 * @param {boolean} bShow
+	 * @private
+	 */
+	DynamicPage.prototype._toggleHeaderVisibility = function (bShow) {
+		var oDynamicPageHeader = this.getHeader();
+		if (exists(oDynamicPageHeader)){
+			oDynamicPageHeader.$().toggleClass("sapMDynamicPageHeaderHidden", !bShow);
+		}
 	};
 
 	/**
@@ -368,7 +380,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._getOwnHeight = function () {
-		return this._getHeight(this.$());
+		return this._getHeight(this);
 	};
 
 	/**
@@ -439,7 +451,7 @@ sap.ui.define([
 			return iHeight;
 		}
 
-		this._snapHeader();
+		this._snapHeader(true);
 
 		iHeight = this._getTitleHeight();
 
@@ -720,16 +732,27 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._onTitlePress = function () {
+
 		if (this._headerBiggerThanAllowedToExpandCollapseWithAClick()) {
 			return;
 		}
 
-		if (!this.getHeaderAlwaysExpanded() && !this._headerBiggerThanAllowedToPin()) {
+		if (!this._allowScroll() || !this._needsVerticalScrollBar()) { // Header scrolling is not allowed, e.g headerAlwaysExpanded = true
+			if (this._bHeaderSnapped) { // or there is no enough content and no scrollbar
+				this._toggleHeaderVisibility(true);
+				this._expandHeader(false);
+			} else {
+				this._toggleHeaderVisibility(false);
+				this._snapHeader(false);
+			}
+
+		} else if (!this._headerBiggerThanAllowedToPin()) { // Header scrolling is  allowed (by default)
+
 			if (this._bHeaderSnapped) {
 				this._bExpandingWithAClick = true;
 				this._expandHeader(true);
 			} else if (this._shouldSnap()) {
-				this._snapHeader();
+				this._snapHeader(true);
 			}
 		}
 	};
