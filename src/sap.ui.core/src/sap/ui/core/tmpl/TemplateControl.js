@@ -151,13 +151,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Declarat
 		this.destroyAggregation("controls");
 
 		// cleanup the bindings
-		if (this._aBindingInfos) {
-			var that = this;
-			jQuery.each(this._aBindingInfos, function(iIndex, oBindingInfo) {
-				that.getModel(oBindingInfo.model).removeBinding(oBindingInfo.binding);
-			});
-			this._aBindingInfos = [];
-		}
+		this._aBindingInfos.forEach(function(oBindingInfo) {
+			var oBinding = oBindingInfo.binding;
+			if ( oBinding ) {
+				oBinding.detachChange(oBindingInfo.changeHandler);
+				oBinding.destroy();
+			}
+		});
+
+		this._aBindingInfos = [];
 
 	};
 
@@ -239,22 +241,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Declarat
 			sPath = oPathInfo.path,
 			sModelFunc = sType ? "bind" + jQuery.sap.charToUpperCase(sType) : "bindProperty",
 			oBinding = oModel && oModel[sModelFunc](sPath),
-			that = this;
+			oBindingInfo = {
+				binding: oBinding,
+				path: oPathInfo.path,
+				model: oPathInfo.model
+			};
 
 		// attach a change handler (if the binding exists)
 		if (oBinding) {
-			oBinding.attachChange(function() {
-				jQuery.sap.log.debug("TemplateControl#" + that.getId() + ": " + sType + " binding changed for path \"" + sPath + "\"");
-				that.invalidate();
-			});
+			oBindingInfo.changeHandler = function() {
+				jQuery.sap.log.debug("TemplateControl#" + this.getId() + ": " + sType + " binding changed for path \"" + sPath + "\"");
+				this.invalidate();
+			}.bind(this);
+			oBinding.attachChange(oBindingInfo.changeHandler);
 		}
 
 		// store the binding info for later cleanup
-		this._aBindingInfos.push({
-			binding: oBinding,
-			path: oPathInfo.path,
-			model: oPathInfo.model
-		});
+		this._aBindingInfos.push(oBindingInfo);
 
 		// return the external formatted value for the property
 		return oBinding;
