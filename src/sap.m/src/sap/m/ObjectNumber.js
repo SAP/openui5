@@ -107,6 +107,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @override
 	 * @public
 	 * @param {sap.ui.core.TextAlign} sAlign The new value
+	 * @returns {sap.m.ObjectNumber} <code>this</code> pointer for chaining
 	 */
 	ObjectNumber.prototype.setTextAlign = function(sAlign) {
 		var sAlignVal = Renderer.getTextAlign(sAlign, this.getTextDirection());
@@ -116,6 +117,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		sAlignVal = sAlignVal || sAlign;
 		this.$().css("text-align", sAlign);
+		return this;
 	};
 
 	return ObjectNumber;
