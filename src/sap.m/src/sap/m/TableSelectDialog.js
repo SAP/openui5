@@ -214,6 +214,14 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 				}
 			}
 		});
+
+
+		this._oTable.getInfoToolbar().addEventDelegate({
+			onAfterRendering: function () {
+				that._oTable.getInfoToolbar().$().attr('aria-live', 'polite');
+			}
+		});
+
 		this._table = this._oTable; // for downward compatibility
 
 		// store a reference to the busyIndicator to display when data is currently loaded by a service
