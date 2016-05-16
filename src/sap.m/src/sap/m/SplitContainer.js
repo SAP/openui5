@@ -1489,7 +1489,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	SplitContainer.prototype.setMode = function(sMode) {
 		var sOldMode = this.getMode();
 		if (sOldMode === sMode) {
-			return;
+			return this;
 		}
 		this.setProperty("mode", sMode, true);
 		//the reposition of master and detail area only occurs in tablet and after it's rendered
