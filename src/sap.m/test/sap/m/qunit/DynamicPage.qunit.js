@@ -533,6 +533,31 @@
 		assert.ok(oPinPressSpy.calledOnce, "Title Pin Press Handler is called");
 	});
 
+	/* --------------------------- DynamicPage Private functions ---------------------------------- */
+	QUnit.module("DynamicPage On Title Press when Heade Always Expanded", {
+		beforeEach: function () {
+			this.oDynamicPage = oFactory.getDynamicPageWithHeaderAlwaysExpanded();
+		},
+		afterEach: function () {
+			this.oDynamicPage.destroy();
+			this.oDynamicPage = null;
+		}
+	});
+
+	QUnit.test("DynamicPage On Title Press", function (assert) {
+		var oTitle = this.oDynamicPage.getTitle(),
+			oHeader = this.oDynamicPage.getHeader() ;
+
+		oUtil.renderObject(this.oDynamicPage);
+
+		assert.ok(!oHeader.$().hasClass("sapMDynamicPageHeaderHidden"), "Header visible by default");
+
+		oTitle.fireEvent("_titlePress");
+		assert.ok(oHeader.$().hasClass("sapMDynamicPageHeaderHidden"), "Header snapped and hidden");
+
+		oTitle.fireEvent("_titlePress");
+		assert.ok(!oHeader.$().hasClass("sapMDynamicPageHeaderHidden"), "Header expanded and visible again");
+	});
 
 	/* --------------------------- DynamicPage Private functions ---------------------------------- */
 	QUnit.module("DynamicPage - Private functions", {
