@@ -1959,5 +1959,66 @@
         "references": []
       }
     ]
+  },
+  "1.36.10": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "f9c8e8deff78160ddcffb2d8878157d79f6979bd",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.StandardTile: getIcon documentation corrected",
+        "references": []
+      },
+      {
+        "id": "0b5566b0e350ac475f8489a90ef7c95f8d00b2cf",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: invalid input lost after rerendering",
+        "references": []
+      },
+      {
+        "id": "180e92c63a06e8511cee14308ce30b406e3bb226",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FacetFilter: remove facet icon is closed when mouse is really released over icon.",
+        "references": []
+      },
+      {
+        "id": "0bc10e415cee9ab7369771812a183754ad512e07",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NotificationListItem: Box shadow corrected",
+        "references": []
+      },
+      {
+        "id": "96b43198bb59a8982b56bac536eda63718864476",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: Update documantation of fullScreenOptimized and condensed property",
+        "references": []
+      },
+      {
+        "id": "0d2274cc18c1d9f584f2784962db9cf383b65921",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectListItem: Image preserves aspect ratio",
+        "references": []
+      },
+      {
+        "id": "c3489a20c25ef56608d71550663095b426d154ba",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SearchField: \"escape\" keyboard button",
+        "references": []
+      },
+      {
+        "id": "cc7db3019b0cf629d08b38f83121602f32cef68b",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ToggleButton: duplicated press event",
+        "references": []
+      }
+    ]
   }
 }

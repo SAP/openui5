@@ -1224,5 +1224,31 @@
         "references": []
       }
     ]
+  },
+  "1.36.10": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "fcd9a4faf0151fb0d34f84d6b3c0b903a6b7021d",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnalyticalBinding - Empty Results Handling",
+        "references": []
+      },
+      {
+        "id": "6939459d8f43c6dcd81274aa6be39bccca87effb",
+        "author": "D051856 \u003cmartin.wittmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "Opa does not select controls in static UI area without control type",
+        "references": []
+      },
+      {
+        "id": "b04c7eafd68a244cada253e9b2a064be5e1450ca",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "jQuery.sap.isMouseEventDelayed: Include iOS WebView",
+        "references": []
+      }
+    ]
   }
 }
