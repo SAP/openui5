@@ -1282,6 +1282,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				$this.toggleClass(Dialog._mStateClasses[sName], !!mFlags[sName]);
 			}
 			this.setIcon(Dialog._mIcons[sState], true);
+			return this;
 		};
 
 		Dialog.prototype.setIcon = function (sIcon, bInternal) {
