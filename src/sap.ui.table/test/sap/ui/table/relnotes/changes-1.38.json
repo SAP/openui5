@@ -465,5 +465,113 @@
         "references": []
       }
     ]
+  },
+  "1.38.1": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "52d6e72edb9d573c8ca6eeaa7b97b81b5b2fe145",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.table.Table: column header menu on touch devices",
+        "references": []
+      },
+      {
+        "id": "45f61f1aed44ea6d8d7db44249c858aa883f85a1",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Avoid double announcement of columnheaders in VPC screenreader mode",
+        "references": []
+      },
+      {
+        "id": "b22c76741b3247de117e3efb99539aa9a6475ced",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Fix Shift+TAB handling (move focus from content to header)",
+        "references": []
+      },
+      {
+        "id": "1baf81cb1a8e0fbcb4e64ec82b384d8499052712",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Fix exception in _onColumnMoved",
+        "references": []
+      },
+      {
+        "id": "32c27f994f66fd8619f759b6f69bc8ac78af0d0c",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: calculation of scrollbar length changed to consider fixed rows",
+        "references": []
+      },
+      {
+        "id": "667bba3039e5793e4492e4da43c9c9ef6624bdce",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: execute updateBindingContexts before rendering",
+        "references": []
+      },
+      {
+        "id": "c0785c269a474e891a1174548b09abf0f5cf8f16",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: prevent column wrapping",
+        "references": []
+      },
+      {
+        "id": "51c8623b571e231a6a537da52ccd7585caba2850",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: recreate rows before rendering when row template changed",
+        "references": []
+      },
+      {
+        "id": "361d73804b26e8ea9ab50e3d3e0c8ece0100f956",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: register resizeHandler synchronously if table has no size after rendering",
+        "references": []
+      },
+      {
+        "id": "35614961de0bb57d673b540cf7680972ce2a6be1",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: row selection rendering",
+        "references": []
+      }
+    ]
+  },
+  "1.38.2": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "75dd2680f5a896dc0f104df1fb822fe692f893cb",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: AutoBusyIndicator",
+        "references": []
+      },
+      {
+        "id": "6f64199b23caf6903df0cf247fe55a56d4ac5e43",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Table width expanded by Scroll Bar width",
+        "references": []
+      },
+      {
+        "id": "9b0cf79ff4681a2ec1ba11156a29704ac2defbee",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes paginator update on setFirstVisibleRow",
+        "references": []
+      },
+      {
+        "id": "2a0746975f39be8b5312c3833efe301fbd3b7697",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes scrollbar width/height for MS Edge",
+        "references": []
+      }
+    ]
   }
 }

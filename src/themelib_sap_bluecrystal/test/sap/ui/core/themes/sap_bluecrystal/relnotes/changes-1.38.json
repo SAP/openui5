@@ -444,5 +444,71 @@
         "references": []
       }
     ]
+  },
+  "1.38.1": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "3dad1b4ac7775dad43901da387378e04d6513083",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ActionListItem: Legacy outline offset fix for IE.",
+        "references": []
+      },
+      {
+        "id": "aa35b75ca0548a4a1f4f24cbb6ad6daa53595a8d",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Bar: Toolbar now has a consistent color across devices",
+        "references": []
+      },
+      {
+        "id": "b1b5d2b732e69e16909de4f24b8e92d4d55e9679",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: Active attribute focus outline fixed",
+        "references": []
+      },
+      {
+        "id": "94c88ed70a3958ca2fbdfcff788d5cc0327f7385",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsPopover: Checkbox outline is now removed in handheld devices",
+        "references": []
+      },
+      {
+        "id": "6f2a69a74e1f13c995b1a72da1584abf13ab7127",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsPopover: Filter list checkboxes outline on moblie is fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.38.2": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "56016de8caa5d4e00fe37efc8ba6ad1542d7c56a",
+        "author": "Hristo Petrov \u003ch.petrov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.RangeSlider New control",
+        "references": []
+      },
+      {
+        "id": "c116185f57e3b4a8d56c3959ee4f7615a9f75ee8",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Global Busy Indicator in HCB Theme",
+        "references": []
+      },
+      {
+        "id": "75d4e33e30dfa74f91e4d036db836a2439a0921a",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NotificationListItem: Box shadow corrected",
+        "references": []
+      }
+    ]
   }
 }
