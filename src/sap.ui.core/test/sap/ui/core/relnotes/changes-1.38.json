@@ -1212,5 +1212,80 @@
         "references": []
       }
     ]
+  },
+  "1.38.2": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "40aa44a085e9ed93ceafe0743e437b333ede47ed",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "jQuery: Remove Version 1.7.1",
+        "references": []
+      },
+      {
+        "id": "9bc9d58a2316095dbf5f2d68a9e7e46d841dc3f5",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnalyticalBinding - Empty Results Handling",
+        "references": []
+      },
+      {
+        "id": "58652b92df30db5d7a0973b18e89f9173da15b4b",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "Component: delegate runAsOwner using sap.ui.component async",
+        "references": []
+      },
+      {
+        "id": "c116185f57e3b4a8d56c3959ee4f7615a9f75ee8",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Global Busy Indicator in HCB Theme",
+        "references": []
+      },
+      {
+        "id": "0ee3585d4dc2fecb648dd4801d095532c355c5b3",
+        "author": "D051856 \u003cmartin.wittmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "Opa does not select controls in static UI area without control type",
+        "references": []
+      },
+      {
+        "id": "c1c82ba6fa726ea79efee640b14d80d6cc768f6b",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "jQuery.sap.isMouseEventDelayed: Include iOS WebView",
+        "references": []
+      },
+      {
+        "id": "d4f9318c3924065440ec590f74f588cc44ee06b8",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FIX",
+        "text": "jquery.sap.trace: fixed interaction step counter",
+        "references": []
+      },
+      {
+        "id": "a19274bc66a3f3e3858620b5274661ad2a94efbe",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FIX",
+        "text": "mvc/XMLView: update preprocessors result",
+        "references": []
+      },
+      {
+        "id": "707a037d7ca527d24acdd30474432065ee67e743",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.util.File: handle utf-8 content on Safari",
+        "references": []
+      },
+      {
+        "id": "d3dfff3c086995abda155300b68ccd7c2b14d6e9",
+        "author": "Stefan Scherer \u003cstefan.scherer@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.type.Raw: throw proper exceptions",
+        "references": []
+      }
+    ]
   }
 }

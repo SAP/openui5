@@ -57,5 +57,17 @@
         "references": []
       }
     ]
+  },
+  "1.38.2": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "d6147ffdb6e2e3d06d496cb0c70aedea2b1e7fc9",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.tnt.ToolPage: sideExpanded is fixed in IE",
+        "references": []
+      }
+    ]
   }
 }

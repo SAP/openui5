@@ -267,5 +267,24 @@
         "references": []
       }
     ]
+  },
+  "1.38.2": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "4a1d629efe39fb208cdb9ea26eb86fed8368b16e",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "Belize issues",
+        "references": []
+      },
+      {
+        "id": "75d4e33e30dfa74f91e4d036db836a2439a0921a",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NotificationListItem: Box shadow corrected",
+        "references": []
+      }
+    ]
   }
 }

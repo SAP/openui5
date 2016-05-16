@@ -94,5 +94,17 @@
         "references": []
       }
     ]
+  },
+  "1.38.2": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "7449e00f213d891354851d6859a9ffdf06d7648a",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.ResponsiveLayout: change order of FormElement",
+        "references": []
+      }
+    ]
   }
 }

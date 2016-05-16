@@ -484,5 +484,31 @@
         "references": []
       }
     ]
+  },
+  "1.38.2": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "56016de8caa5d4e00fe37efc8ba6ad1542d7c56a",
+        "author": "Hristo Petrov \u003ch.petrov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.RangeSlider New control",
+        "references": []
+      },
+      {
+        "id": "c116185f57e3b4a8d56c3959ee4f7615a9f75ee8",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Global Busy Indicator in HCB Theme",
+        "references": []
+      },
+      {
+        "id": "75d4e33e30dfa74f91e4d036db836a2439a0921a",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NotificationListItem: Box shadow corrected",
+        "references": []
+      }
+    ]
   }
 }

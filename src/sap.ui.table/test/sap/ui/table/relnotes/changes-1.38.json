@@ -540,5 +540,38 @@
         "references": []
       }
     ]
+  },
+  "1.38.2": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "75dd2680f5a896dc0f104df1fb822fe692f893cb",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: AutoBusyIndicator",
+        "references": []
+      },
+      {
+        "id": "6f64199b23caf6903df0cf247fe55a56d4ac5e43",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Table width expanded by Scroll Bar width",
+        "references": []
+      },
+      {
+        "id": "9b0cf79ff4681a2ec1ba11156a29704ac2defbee",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes paginator update on setFirstVisibleRow",
+        "references": []
+      },
+      {
+        "id": "2a0746975f39be8b5312c3833efe301fbd3b7697",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes scrollbar width/height for MS Edge",
+        "references": []
+      }
+    ]
   }
 }

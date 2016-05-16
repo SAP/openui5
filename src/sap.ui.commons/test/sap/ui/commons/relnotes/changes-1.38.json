@@ -246,5 +246,38 @@
         "references": []
       }
     ]
+  },
+  "1.38.2": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "956c8ff0143822cabdebeed55cdab13cc46f2bc6",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ColorPicker: Sets correct position of slider grip",
+        "references": []
+      },
+      {
+        "id": "1623886002d0359ff1f371146b030dbe65053d31",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ColorPicker: background applied correctly",
+        "references": []
+      },
+      {
+        "id": "49bf375e753502c5dfef093cdfcbeef50d12f720",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Dialog: Dialog position after opening is fixed",
+        "references": []
+      },
+      {
+        "id": "4bee561cdb4b41e3dd2302f76d3ac04bfa1788b3",
+        "author": "Shtiliyan Uzunov \u003cshtiliyan.uzunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ValueHelpField - replaced png file icons with icons from the sap font",
+        "references": []
+      }
+    ]
   }
 }

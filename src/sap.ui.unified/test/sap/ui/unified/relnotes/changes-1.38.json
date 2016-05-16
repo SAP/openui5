@@ -253,5 +253,17 @@
         "references": []
       }
     ]
+  },
+  "1.38.2": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "4d8846efc0111b0b1210c8477164a53c4aa68e68",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: changing minDate and maxDate brings error",
+        "references": []
+      }
+    ]
   }
 }
