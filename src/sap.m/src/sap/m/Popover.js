@@ -2302,7 +2302,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				bValue = false;
 			}
 
-			this.setProperty("resizable", bValue, true);
+			return this.setProperty("resizable", bValue, true);
 		};
 
 
