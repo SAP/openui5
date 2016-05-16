@@ -227,6 +227,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		/**
 		 * Defines the HTML text to be displayed.
 		 * @param {string} sText HTML text as a string
+		 * @return {sap.m.FormattedText} this for chaining
 		 * @public
 		 */
 		FormattedText.prototype.setHtmlText = function (sText) {
@@ -245,7 +246,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				uriRewriter: uriRewriter
 			});
 
-			this.setProperty("htmlText", sSanitizedText);
+			return this.setProperty("htmlText", sSanitizedText);
 		};
 
 		return FormattedText;
