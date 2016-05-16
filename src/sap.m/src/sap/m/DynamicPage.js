@@ -342,7 +342,7 @@ sap.ui.define([
 
 	/**
 	 * Determines the appropriate height at which the header can snap
-	 * @returns {boolean}
+	 * @returns {Number}
 	 * @private
 	 */
 	DynamicPage.prototype._getSnappingHeight = function () {
@@ -363,24 +363,23 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines if the header is bigger than what's allowed. If the header becomes more than 60% of the screen heigth,
-	 * it cannot be pinned. If it was already pinned, then unpin it.
-	 * @param {Number} iHeight
-	 * @returns {boolean}
+	 * Retrieves the height of the Dynamic Page control
+	 * @returns {Number}
 	 * @private
 	 */
-	DynamicPage.prototype._headerBiggerThanAllowed = function (iHeight) {
+	DynamicPage.prototype._getOwnHeight = function () {
+		return this._getHeight(this.$());
+	};
+
+	/**
+	 * Determines the combined height of the title and the header
+	 * @returns {Number} the combined height of the title and the header
+	 * @private
+	 */
+	DynamicPage.prototype._getEntireHeaderHeight = function () {
 		var iTitleHeight = 0,
 			iHeaderHeight = 0,
 			oDynamicPageHeader = this.getHeader();
-
-		if (!exists(oDynamicPageHeader)) {
-			return false;
-		}
-
-		if (!isNaN(parseInt(iHeight, 10))) {
-			iHeight = this.$().outerHeight();
-		}
 
 		if (exists(this.$title)) {
 			iTitleHeight = this.$title.outerHeight();
@@ -390,7 +389,32 @@ sap.ui.define([
 			iHeaderHeight = oDynamicPageHeader.$().outerHeight();
 		}
 
-		return iTitleHeight + iHeaderHeight > DynamicPage.HEADER_MAX_ALLOWED_PINNED_PERCENTAGE * iHeight;
+		return iTitleHeight + iHeaderHeight;
+	};
+
+	/**
+	 * Determines if the header is bigger than what's allowed for it to snap.
+	 * If the header becomes more than the screen height, it shouldn't be snapped while scrolling.
+	 * @returns {boolean}
+	 * @private
+	 */
+	DynamicPage.prototype._headerBiggerThanAllowedToExpandCollapseWithAClick = function () {
+		return this._getEntireHeaderHeight() > this._getOwnHeight();
+	};
+
+	/**
+	 * Determines if the header is bigger than what's allowed for it to be pinned.
+	 * If the header becomes more than 60% of the screen height it cannot be pinned.
+	 * @param {Number} iControlHeight
+	 * @returns {boolean}
+	 * @private
+	 */
+	DynamicPage.prototype._headerBiggerThanAllowedToPin = function (iControlHeight) {
+		if (!(typeof iControlHeight === "number" && !isNaN(parseInt(iControlHeight, 10)))) {
+			iControlHeight = this._getOwnHeight();
+		}
+
+		return this._getEntireHeaderHeight() > DynamicPage.HEADER_MAX_ALLOWED_PINNED_PERCENTAGE * iControlHeight;
 	};
 
 	/**
@@ -640,7 +664,7 @@ sap.ui.define([
 		var oDynamicPageHeader = this.getHeader();
 
 		if (!this.getHeaderAlwaysExpanded() && oDynamicPageHeader) {
-			if (this._headerBiggerThanAllowed(oEvent.size.height) || Device.system.phone) {
+			if (this._headerBiggerThanAllowedToPin(oEvent.size.height) || Device.system.phone) {
 				this._unPin();
 				oDynamicPageHeader._setShowPinBtn(false);
 				oDynamicPageHeader._togglePinButton(false);
@@ -696,7 +720,11 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._onTitlePress = function () {
-		if (!this.getHeaderAlwaysExpanded() && !this._headerBiggerThanAllowed()) {
+		if (this._headerBiggerThanAllowedToExpandCollapseWithAClick()) {
+			return;
+		}
+
+		if (!this.getHeaderAlwaysExpanded() && !this._headerBiggerThanAllowedToPin()) {
 			if (this._bHeaderSnapped) {
 				this._bExpandingWithAClick = true;
 				this._expandHeader(true);

@@ -547,7 +547,6 @@
 	});
 
 	QUnit.test("DynamicPage _expandHeader() should hide Snapped Content and show Expand Content", function (assert) {
-
 		var $titleSnap = this.oDynamicPage.getTitle().$("snapped-wrapper"),
 			$titleExpand = this.oDynamicPage.getTitle().$("expand-wrapper");
 
@@ -558,7 +557,6 @@
 	});
 
 	QUnit.test("DynamicPage _snapHeader() should show Snapped Content and hide Expand Content", function (assert) {
-
 		var $titleSnap = this.oDynamicPage.getTitle().$("snapped-wrapper"),
 			$titleExpand = this.oDynamicPage.getTitle().$("expand-wrapper");
 
@@ -622,13 +620,72 @@
 		oDynamicPageScrollBar.setScrollPosition(iExpectedScrollPosition);
 		core.applyChanges();
 
-		assert.equal(this.oDynamicPage._getScrollPosition(), iExpectedScrollPosition,
-			"DynamicPage Scroll position is correct");
+		assert.equal(this.oDynamicPage._getScrollPosition(), iExpectedScrollPosition, "DynamicPage Scroll position is correct");
 	});
 
-	QUnit.test("DynamicPage _headerBiggerThanAllowed() returns the correct value", function (assert) {
-		assert.equal(this.oDynamicPage._headerBiggerThanAllowed(), false,
+	QUnit.test("DynamicPage _headerBiggerThanAllowedToPin() returns the correct value", function (assert) {
+		var oDynamicPage = this.oDynamicPage,
+			oSandBox = sinon.sandbox.create(),
+			fnStubConfig = function (iHeaderHeight, iDynamicPageHeight) {
+				oSandBox.stub(oDynamicPage, "_getEntireHeaderHeight").returns(iHeaderHeight),
+				oSandBox.stub(oDynamicPage, "_getOwnHeight").returns(iDynamicPageHeight);
+			};
+
+		fnStubConfig(700, 999);
+
+		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToPin(), true,
+			"DynamicPage Header is bigger than allowed");
+
+		oSandBox.restore();
+
+		fnStubConfig(100, 999);
+
+		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToPin(), false,
 			"DynamicPage Header is not bigger than allowed");
+	});
+
+	QUnit.test("DynamicPage _headerBiggerThanAllowedToExpandCollapseWithAClick() returns the correct value", function (assert) {
+		var oDynamicPage = this.oDynamicPage,
+			oSandBox = sinon.sandbox.create(),
+			fnStubConfig = function (iHeaderHeight, iDynamicPageHeight) {
+				oSandBox.stub(oDynamicPage, "_getEntireHeaderHeight").returns(iHeaderHeight),
+				oSandBox.stub(oDynamicPage, "_getOwnHeight").returns(iDynamicPageHeight);
+			};
+
+		fnStubConfig(1000, 999);
+
+		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToExpandCollapseWithAClick(), true,
+			"DynamicPage Header is bigger than allowed");
+
+		oSandBox.restore();
+
+		fnStubConfig(100, 999);
+
+		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToExpandCollapseWithAClick(), false,
+			"DynamicPage Header is not bigger than allowed");
+	});
+
+	QUnit.test("DynamicPage _getEntireHeaderHeight() return correct values", function (assert){
+		var oDynamicPage = this.oDynamicPage,
+			$title = oDynamicPage.$title,
+			oHeader = oDynamicPage.getHeader();
+
+		assert.equal(oDynamicPage._getEntireHeaderHeight(),
+			oDynamicPage.$title.outerHeight() + oDynamicPage.getHeader().$().outerHeight(), "correct with both header and title");
+
+		oDynamicPage.$title = null;
+
+		assert.equal(oDynamicPage._getEntireHeaderHeight(), oDynamicPage.getHeader().$().outerHeight(), "correct with only header");
+
+		oDynamicPage.$title = $title;
+
+		oDynamicPage.getHeader = function () { return null };
+
+		assert.equal(oDynamicPage._getEntireHeaderHeight(), oDynamicPage.$title.outerHeight(), "correct with only title");
+
+		oDynamicPage.$title = null;
+
+		assert.equal(oDynamicPage._getEntireHeaderHeight(), 0, "correct with no header and no title");
 	});
 
 	/* --------------------------- DynamicPage ARIA ---------------------------------- */
