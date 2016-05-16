@@ -930,6 +930,10 @@ sap.ui.define([
 		return this.$().parents().hasClass('sapUiSizeCompact') ? 2 : 3;
 	};
 
+	OverflowToolbar.prototype.onThemeChanged = function() {
+		this._resetAndInvalidateToolbar();
+	};
+
 	return OverflowToolbar;
 
 }, /* bExport= */ true);
