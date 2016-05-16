@@ -146,6 +146,7 @@ sap.ui.define([
 		if (this.getButtons() && this.getButtons()[2]) {
 			this.getButtons()[2].setVisible(bShow);
 		}
+		return this;
 	};
 
 	P13nDialog.prototype.setShowResetEnabled = function(bEnabled) {
@@ -153,6 +154,7 @@ sap.ui.define([
 		if (this.getButtons() && this.getButtons()[2]) {
 			this.getButtons()[2].setEnabled(bEnabled);
 		}
+		return this;
 	};
 
 	P13nDialog.prototype.addPanel = function(oPanel) {
