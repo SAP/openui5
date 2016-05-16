@@ -145,12 +145,14 @@ sap.ui.define([
 		this.setProperty("containerQuery", b);
 
 		this._oSortPanel.setContainerQuery(b);
+		return this;
 	};
 
 	P13nSortPanel.prototype.setLayoutMode = function(sMode) {
 		this.setProperty("layoutMode", sMode);
 
 		this._oSortPanel.setLayoutMode(sMode);
+		return this;
 	};
 
 	/**
@@ -198,6 +200,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.26
 	 * @param {array} array of operations [sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ]
+	 * @returns {sap.m.P13nSortPanel} this for chaining
 	 */
 	P13nSortPanel.prototype.setOperations = function(aOperation) {
 		this._aOperations = aOperation;
@@ -205,6 +208,7 @@ sap.ui.define([
 		if (this._oSortPanel) {
 			this._oSortPanel.setOperations(this._aOperations);
 		}
+		return this;
 	};
 
 	/**
