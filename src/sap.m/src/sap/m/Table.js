@@ -115,12 +115,12 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 
 	Table.prototype.destroyItems = function() {
 		this._notifyColumns("ItemsRemoved");
-		return ListBase.prototype.destroyItems.call(this);
+		return ListBase.prototype.destroyItems.apply(this, arguments);
 	};
 
 	Table.prototype.removeAllItems = function() {
 		this._notifyColumns("ItemsRemoved");
-		return ListBase.prototype.removeAllItems.call(this);
+		return ListBase.prototype.removeAllItems.apply(this, arguments);
 	};
 
 	Table.prototype.removeSelections = function() {
@@ -475,6 +475,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		var oLastTabbableDomRef = $Row.find(":sapTabbable").get(-1) || $Row[0];
 		if (oEvent.target === oLastTabbableDomRef) {
 			this.forwardTab(true);
+			oEvent.setMarked();
 		}
 	};
 
