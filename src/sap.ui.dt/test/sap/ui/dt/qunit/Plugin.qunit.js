@@ -101,13 +101,15 @@
 
 	QUnit.module("Given a plugin with command factory", {
 		beforeEach : function(){
+			var that = this;
 			this.oButton = new sap.m.Button();
 
 			this.fakeMovePlugin = new sap.ui.dt.Plugin({
 				commandFactory : sap.ui.dt.command.CommandFactory
 			});
+			
 			this.fakeMovePlugin.triggerFakeAction = function(){
-				var cmd = this.getCommandFactory().getCommandFor(this.oButton, "Move");
+				var cmd = this.getCommandFactory().getCommandFor(that.oButton, "Move");
 				this.fireElementModified({ "command" : cmd});
 			}
 		},

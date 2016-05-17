@@ -10,8 +10,10 @@ sap.ui.define(['sap/ui/dt/plugin/DragDrop', 'sap/ui/dt/plugin/ElementMover', 'sa
 	/**
 	 * Constructor for a new ControlDragDrop.
 	 *
-	 * @param {string} [sId] id for the new object, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new object
+	 * @param {string}
+	 *          [sId] id for the new object, generated automatically if no id is given
+	 * @param {object}
+	 *          [mSettings] initial settings for the new object
 	 * @class The ControlDragDrop enables D&D functionality for the overlays based on aggregation types
 	 * @extends sap.ui.dt.plugin.DragDrop"
 	 * @author SAP SE
@@ -20,7 +22,8 @@ sap.ui.define(['sap/ui/dt/plugin/DragDrop', 'sap/ui/dt/plugin/ElementMover', 'sa
 	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.dt.plugin.ControlDragDrop
-	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
+	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be
+	 *               changed in future.
 	 */
 	var ControlDragDrop = DragDrop.extend("sap.ui.dt.plugin.ControlDragDrop", /** @lends sap.ui.dt.plugin.ControlDragDrop.prototype */
 	{
@@ -124,11 +127,11 @@ sap.ui.define(['sap/ui/dt/plugin/DragDrop', 'sap/ui/dt/plugin/ElementMover', 'sa
 	 * @override
 	 */
 	ControlDragDrop.prototype.onDragEnd = function(oOverlay) {
-		this.getElementMover().buildMoveEvent();
+		this.fireElementModified({
+			"command" : this.getElementMover().buildMoveEvent()
+		});
 		delete this._oPreviousTarget;
-
 		this.getElementMover().deactivateAllTargetZones(this.getDesignTime(), sDROP_ZONE_STYLE);
-
 		delete this._oDraggedOverlay;
 		this.getElementMover().setMovedOverlay(null);
 	};
