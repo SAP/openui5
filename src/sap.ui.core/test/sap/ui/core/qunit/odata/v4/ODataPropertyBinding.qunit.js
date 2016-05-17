@@ -1021,6 +1021,34 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("setValue (relative binding): canceled", function (assert) {
+		var oContext = {
+				getPath : function () { return "/ProductList('HT-1000')"; },
+				updateValue : function () {}
+			},
+			oError = new Error(),
+			oPromise = Promise.reject(oError),
+			oPropertyBinding = this.oModel.bindProperty("Name", oContext);
+
+		oError.canceled = true;
+
+		this.oSandbox.mock(oContext).expects("updateValue").withExactArgs(undefined, "Name", "foo")
+			.returns(oPromise);
+		this.oSandbox.mock(this.oModel).expects("reportError").never();
+		this.oSandbox.mock(oPropertyBinding).expects("_fireChange").twice()
+			.withExactArgs({reason: ChangeReason.Change});
+
+		// code under test
+		oPropertyBinding.setValue("foo");
+
+		assert.strictEqual(oPropertyBinding.getValue(), "foo", "keep user input");
+
+		return oPromise.catch(function () {
+			assert.strictEqual(oPropertyBinding.getValue(), undefined, "value reset");
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("setValue (relative binding w/o context) via control", function (assert) {
 		var oControl = new TestControl({
 				models : this.oModel,

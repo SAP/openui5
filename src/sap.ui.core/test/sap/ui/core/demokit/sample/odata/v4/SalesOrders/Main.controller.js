@@ -24,9 +24,17 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.SalesOrders.Main", {
 		onCancelSalesOrder : function (oEvent) {
+			this.getView().getModel().resetChanges("SalesOrderUpdateGroup");
+		},
+
+		onCancelSalesOrderCreate : function (oEvent) {
 			var oCreateSalesOrderDialog = this.getView().byId("createSalesOrderDialog");
 
 			oCreateSalesOrderDialog.close();
+		},
+
+		onCancelSalesOrderList : function (oEvent) {
+			this.getView().getModel().resetChanges("SalesOrderListUpdateGroup");
 		},
 
 		onCreateSalesOrderDialog : function (oEvent) {

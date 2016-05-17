@@ -688,6 +688,83 @@ sap.ui.require([
 	// TODO fnLog of drillDown in CollectionCache#update
 
 	//*********************************************************************************************
+	[false, true].forEach(function (bCancel) {
+		QUnit.test("update rejected: canceled=" + bCancel, function (assert) {
+			var sEditUrl = "SOLineItemList(SalesOrderID='0',ItemPosition='0')",
+				oError = new Error(),
+				sETag = 'W/"19700101000000.0000000"',
+				fnReject,
+				oPatchPromise = new Promise(function (resolve, reject) {
+					fnReject = reject;
+				}),
+				oProduct = {},
+				oPromise = Promise.resolve({
+					value : [{
+						SalesOrderID : "0",
+						SO_2_SOITEM : [{
+							"@odata.etag" : sETag,
+							Note : "Some Note",
+							SideEffect : "before",
+							SOITEM_2_PRODUCT : oProduct // let's assume we had expanded this
+						}]
+					}]
+				}),
+				oRequestor = _Requestor.create("/"),
+				oRequestorMock = this.mock(oRequestor),
+				sResourcePath = "/SalesOrderList(SalesOrderID='0')",
+				oCache = _Cache.create(oRequestor, sResourcePath, {
+					$expand : {SO_2_SOITEM : true},
+					føø : "bãr",
+					"sap-client" : "111"
+				});
+
+			oRequestorMock.expects("request")
+				.withExactArgs("GET", sResourcePath
+					+ "?$expand=SO_2_SOITEM&f%C3%B8%C3%B8=b%C3%A3r&sap-client=111&$skip=0&$top=1",
+					"groupId")
+				.returns(oPromise);
+			oCache.read(0, 1, "groupId"); // triggers GET
+			oRequestorMock.expects("request")
+				.withExactArgs("PATCH", sEditUrl + "?f%C3%B8%C3%B8=b%C3%A3r&sap-client=111",
+					"updateGroupId", {"If-Match" : sETag}, {Note : "foo"})
+				.returns(oPatchPromise);
+
+			return oPromise.then(function () {
+				var oUpdatePromise
+					// code under test
+					= oCache.update("updateGroupId", "Note", "foo", sEditUrl, "0/SO_2_SOITEM/0")
+						.then(function () {
+							assert.ok(false);
+						}, function (oError0) {
+							assert.strictEqual(oError0, oError);
+							return oCache.read(0, 1, undefined, "SO_2_SOITEM/0")
+								.then(function (oResult0) {
+									if (bCancel) {
+										assert.strictEqual(oResult0.Note, "Some Note",
+											"Note has been reset");
+									} else {
+										assert.strictEqual(oResult0.Note, "foo",
+											"Note remained unchanged");
+									}
+								});
+						});
+
+				oCache.read(0, 1, undefined, "SO_2_SOITEM/0").then(function (oResult0) {
+					assert.strictEqual(oResult0.Note, "foo",
+						"Note has been updated with user input");
+
+					// now it's time for the server's response
+					if (bCancel) {
+						oError.canceled = true;
+					}
+					fnReject(oError);
+				});
+				return oUpdatePromise;
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("SingleCache: post", function (assert) {
 		var fnDataRequested = sinon.spy(),
 			sGroupId = "group",
@@ -1018,5 +1095,109 @@ sap.ui.require([
 			return oUpdatePromise;
 		});
 	});
+
+	//*********************************************************************************************
+	[{
+		// absolute property binding
+		sEditUrl : "ProductList('HT-1000')",
+		oGetResult : {
+			// "value" is a fixed name here (see "11 Individual Property or Operation Response")
+			value : "MyName"
+		},
+		sResourcePath : "ProductList('HT-1000')/Name",
+		bSingleProperty : true
+	}, {
+		// relative property binding
+		sEditUrl : "ProductList('HT-1000')",
+		sETag : 'W/"19700101000000.0000000"',
+		oGetResult : {
+			"@odata.etag" : 'W/"19700101000000.0000000"',
+			HERE_2_THERE : {},
+			Name : "MyName",
+			SideEffect : "before"
+		},
+		sReadPath : "Name",
+		sResourcePath : "ProductList('HT-1000')"
+	}, {
+		// relative list binding (relative context binding is very similar!)
+		sEditUrl : "SOLineItemList(SalesOrderID='0',ItemPosition='0')",
+		sETag : 'W/"19700101000000.0000000"',
+		oGetResult : {
+			SalesOrderID : "0",
+			SO_2_SOITEM : [{
+				"@odata.etag" : 'W/"19700101000000.0000000"',
+				HERE_2_THERE : {},
+				Name : "MyName",
+				SideEffect : "before"
+			}]
+		},
+		sReadPath : "SO_2_SOITEM",
+		sResourcePath : "SalesOrderList(SalesOrderID='0')?$expand=SO_2_SOITEM",
+		sUpdatePath : "SO_2_SOITEM/0"
+	}].forEach(function (o) {
+		[false, true].forEach(function (bCancel) {
+			QUnit.test("SingleCache.update: " + o.sResourcePath + " " + bCancel, function (assert) {
+				var fnReject,
+					oPatchPromise = new Promise(function (resolve, reject) {
+						fnReject = reject;
+					}),
+					oRequestor = _Requestor.create("/"),
+					oRequestorMock = this.mock(oRequestor),
+					oCache = _Cache.createSingle(oRequestor, o.sResourcePath, {
+						$orderby: "Name", // whatever system query option might make sense...
+						føø : "bãr",
+						"sap-client" : "111"
+					}, o.bSingleProperty),
+					oError = new Error(),
+					oUpdatePromise;
+
+				oRequestorMock.expects("request")
+					.withExactArgs("GET",
+						o.sResourcePath + "?$orderby=Name&f%C3%B8%C3%B8=b%C3%A3r&sap-client=111",
+						"groupId")
+					.returns(Promise.resolve(JSON.parse(JSON.stringify(o.oGetResult))));
+				oCache.read("groupId", o.sReadPath); // triggers GET
+				oRequestorMock.expects("request")
+					.withExactArgs("PATCH", o.sEditUrl + "?f%C3%B8%C3%B8=b%C3%A3r&sap-client=111",
+						"up", {"If-Match" : o.sETag}, {Name : "foo"})
+					.returns(oPatchPromise);
+
+				// code under test
+				oUpdatePromise = oCache.update("up", "Name", "foo", o.sEditUrl, o.sUpdatePath)
+					.then(function () {
+						assert.ok(false);
+					}, function (oError0) {
+						var sName = bCancel ? "MyName" : "foo",
+							sComment = bCancel ? "has been reset" : "remains unchanged";
+
+						assert.strictEqual(oError0, oError);
+						oCache.read(undefined, o.sUpdatePath).then(function (vResult0) {
+							if (o.bSingleProperty) {
+								assert.strictEqual(vResult0, sName, "value " + sComment);
+							} else {
+								assert.strictEqual(vResult0.Name, sName, "Name " + sComment);
+							}
+						});
+					});
+				oCache.read(undefined, o.sUpdatePath).then(function (vResult0) {
+					if (o.bSingleProperty) {
+						assert.strictEqual(vResult0, "foo",
+							"value has been updated with user input");
+					} else {
+						assert.strictEqual(vResult0.Name, "foo",
+							"Name has been updated with user input");
+					}
+
+					// now it's time for the server's response
+					if (bCancel) {
+						oError.canceled = true;
+					}
+					fnReject(oError);
+				});
+				return oUpdatePromise;
+			});
+		});
+	});
+	// TODO Can we join the two update tests?
 	// TODO fnLog of drillDown in SingleCache#update
 });
