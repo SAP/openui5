@@ -155,4 +155,4 @@ sap.ui.define(['jquery.sap.global', './TableExtension'],
 
 	return AccRenderExtension;
 
-}, /* bExport= */ true);
+});

@@ -3,11 +3,14 @@
  */
 
 // Provides control sap.ui.table.AnalyticalColumn.
-sap.ui.define(['jquery.sap.global', './Column', './library'],
-	function(jQuery, Column, library) {
+sap.ui.define(['jquery.sap.global', './Column', './library', 'sap/ui/core/Element',
+		'sap/ui/model/type/Boolean', 'sap/ui/model/type/DateTime', 'sap/ui/model/type/Float', 'sap/ui/model/type/Integer', 'sap/ui/model/type/Time'
+	],
+	function(jQuery, Column, library, Element, BooleanType, DateTime, Float, Integer, Time) {
 	"use strict";
 
-
+	// lazy dependency to avoid cycle AnalyticalTable->AnalyticalTableColumn->AnalyticalTable
+	var AnalyticalTable;
 
 	/**
 	 * Constructor for a new AnalyticalColumn.
@@ -71,12 +74,19 @@ sap.ui.define(['jquery.sap.global', './Column', './library'],
 	 * @private
 	 */
 	AnalyticalColumn._DEFAULT_FILTERTYPES = {
-		"Time": new sap.ui.model.type.Time({UTC: true}),
-		"DateTime": new sap.ui.model.type.DateTime({UTC: true}),
-		"Float": new sap.ui.model.type.Float(),
-		"Integer": new sap.ui.model.type.Integer(),
-		"Boolean": new sap.ui.model.type.Boolean()
+		"Time": new Time({UTC: true}),
+		"DateTime": new DateTime({UTC: true}),
+		"Float": new Float(),
+		"Integer": new Integer(),
+		"Boolean": new Boolean()
 	};
+
+	function isInstanceOfAnalyticalTable(oControl) {
+		if ( !AnalyticalTable ) {
+			AnalyticalTable = sap.ui.require("sap/ui/table/AnalyticalTable");
+		}
+		return AnalyticalTable && (oControl instanceof AnalyticalTable);
+	}
 
 	/*
 	 * Factory method. Creates the column menu.
@@ -84,14 +94,14 @@ sap.ui.define(['jquery.sap.global', './Column', './library'],
 	 * @return {sap.ui.table.AnalyticalColumnMenu} The created column menu.
 	 */
 	AnalyticalColumn.prototype._createMenu = function() {
-		jQuery.sap.require("sap.ui.table.AnalyticalColumnMenu");
-		return new sap.ui.table.AnalyticalColumnMenu(this.getId() + "-menu");
+		var AnalyticalColumnMenu = sap.ui.requireSync("sap/ui/table/AnalyticalColumnMenu");
+		return new AnalyticalColumnMenu(this.getId() + "-menu");
 	};
 
 	AnalyticalColumn.prototype.setGrouped = function(bGrouped, bSuppressInvalidate) {
 		var oParent = this.getParent();
 		var that = this;
-		if (oParent && oParent instanceof sap.ui.table.AnalyticalTable) {
+		if (oParent && isInstanceOfAnalyticalTable(oParent)) {
 			if (bGrouped) {
 				oParent._addGroupedColumn(this.getId());
 			} else {
@@ -129,10 +139,10 @@ sap.ui.define(['jquery.sap.global', './Column', './library'],
 		if (!oLabel) {
 			if (!this._oBindingLabel) {
 				var oParent = this.getParent();
-				if (oParent && oParent instanceof sap.ui.table.AnalyticalTable) {
+				if (oParent && isInstanceOfAnalyticalTable(oParent)) {
 					var oBinding = oParent.getBinding("rows");
 					if (oBinding) {
-						this._oBindingLabel = sap.ui.table.TableHelper.createLabel();
+						this._oBindingLabel = library.TableHelper.createLabel();
 						var oModel = oBinding.getModel();
 						// if the metadata of the underlying odatamodel is not yet loaded -> the setting of the text of the label must be delayed
 						if (oModel.oMetadata && oModel.oMetadata.isLoaded()) {
@@ -158,7 +168,7 @@ sap.ui.define(['jquery.sap.global', './Column', './library'],
 		var sProperty = this.getProperty("filterProperty");
 		if (!sProperty) {
 			var oParent = this.getParent();
-			if (oParent && oParent instanceof sap.ui.table.AnalyticalTable) {
+			if (oParent && isInstanceOfAnalyticalTable(oParent)) {
 				var oBinding = oParent.getBinding("rows");
 				var sLeadingProperty = this.getLeadingProperty();
 				if (oBinding && jQuery.inArray(sLeadingProperty, oBinding.getFilterablePropertyNames()) > -1) {
@@ -176,7 +186,7 @@ sap.ui.define(['jquery.sap.global', './Column', './library'],
 		var sProperty = this.getProperty("sortProperty");
 		if (!sProperty) {
 			var oParent = this.getParent();
-			if (oParent && oParent instanceof sap.ui.table.AnalyticalTable) {
+			if (oParent && isInstanceOfAnalyticalTable(oParent)) {
 				var oBinding = oParent.getBinding("rows");
 				var sLeadingProperty = this.getLeadingProperty();
 				if (oBinding && jQuery.inArray(sLeadingProperty, oBinding.getSortablePropertyNames()) > -1) {
@@ -194,7 +204,7 @@ sap.ui.define(['jquery.sap.global', './Column', './library'],
 		var vFilterType = this.getProperty("filterType");
 		if (!vFilterType) {
 			var oParent = this.getParent();
-			if (oParent && oParent instanceof sap.ui.table.AnalyticalTable) {
+			if (oParent && isInstanceOfAnalyticalTable(oParent)) {
 				var oBinding = oParent.getBinding("rows");
 				var sLeadingProperty = this.getLeadingProperty(),
 				    oProperty = oBinding && oBinding.getProperty(sLeadingProperty);
@@ -238,7 +248,10 @@ sap.ui.define(['jquery.sap.global', './Column', './library'],
 		}
 
 		var oParent = this.getParent();
-		if (oParent && oParent instanceof sap.ui.table.AnalyticalTable) {
+		if ( !AnalyticalTable ) {
+			AnalyticalTable = sap.ui.require("sap/ui/table/AnalyticalTable");
+		}
+		if (oParent && AnalyticalTable && oParent instanceof AnalyticalTable) {
 			oParent._updateColumns(bSupressRefresh, bForceChange);
 		}
 	};
@@ -249,7 +262,7 @@ sap.ui.define(['jquery.sap.global', './Column', './library'],
 		}
 
 		var oParent = this.getParent();
-		if (oParent && oParent instanceof sap.ui.table.AnalyticalTable && !oParent._bSuspendUpdateAnalyticalInfo) {
+		if (oParent && isInstanceOfAnalyticalTable(oParent) && !oParent._bSuspendUpdateAnalyticalInfo) {
 			oParent.updateAnalyticalInfo(bSupressRefresh);
 		}
 	};
@@ -260,7 +273,7 @@ sap.ui.define(['jquery.sap.global', './Column', './library'],
 		}
 
 		var oParent = this.getParent();
-		if (oParent && oParent instanceof sap.ui.table.AnalyticalTable && !oParent._bSuspendUpdateAnalyticalInfo) {
+		if (oParent && isInstanceOfAnalyticalTable(oParent) && !oParent._bSuspendUpdateAnalyticalInfo) {
 			oParent._updateTableColumnDetails();
 		}
 	};
@@ -274,13 +287,13 @@ sap.ui.define(['jquery.sap.global', './Column', './library'],
 
 	AnalyticalColumn.prototype.getTooltip_AsString = function() {
 		var oParent = this.getParent();
-		if (oParent && oParent instanceof sap.ui.table.AnalyticalTable) {
+		if (oParent && isInstanceOfAnalyticalTable(oParent)) {
 			var oBinding = oParent.getBinding("rows");
 			if (oBinding && this.getLeadingProperty()) {
 				return oBinding.getPropertyQuickInfo(this.getLeadingProperty());
 			}
 		}
-		return sap.ui.core.Element.prototype.getTooltip_AsString.apply(this);
+		return Element.prototype.getTooltip_AsString.apply(this);
 	};
 
 	/**
@@ -322,7 +335,7 @@ sap.ui.define(['jquery.sap.global', './Column', './library'],
 		}
 
 		var oParent = this.getParent();
-		if (oParent && oParent instanceof sap.ui.table.AnalyticalTable) {
+		if (oParent && isInstanceOfAnalyticalTable(oParent)) {
 			var oBinding = oParent.getBinding("rows");
 			// metadata must be evaluated which can only be done when the collection is known and the metadata is loaded
 			// this is usually the case when a binding exists.
@@ -355,7 +368,7 @@ sap.ui.define(['jquery.sap.global', './Column', './library'],
 	 */
 	AnalyticalColumn.prototype.isGroupableByMenu = function() {
 		var oParent = this.getParent();
-		if (oParent && oParent instanceof sap.ui.table.AnalyticalTable) {
+		if (oParent && isInstanceOfAnalyticalTable(oParent)) {
 			var oBinding = oParent.getBinding("rows");
 			if (oBinding) {
 				var oResultSet = oBinding.getAnalyticalQueryResult();
@@ -372,4 +385,4 @@ sap.ui.define(['jquery.sap.global', './Column', './library'],
 
 	return AnalyticalColumn;
 
-}, /* bExport= */ true);
+});
