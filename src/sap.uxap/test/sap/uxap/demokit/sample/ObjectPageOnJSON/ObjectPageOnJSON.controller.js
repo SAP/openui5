@@ -45,6 +45,10 @@ sap.ui.define([
 			var msg = 'An edit box should appear when you click on the "Edit header" button',
 				msgToast = MessageToast;
 			msgToast.show(msg);
+		},
+		toggleFooter: function (oEvent) {
+			var oObjectPageLayout = this.getView().byId("ObjectPageLayout");
+			oObjectPageLayout.setShowFooter(!oObjectPageLayout.getShowFooter());
 		}
 	});
 }, true);

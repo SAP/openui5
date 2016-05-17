@@ -26,6 +26,7 @@
 				<actions>
 					<ObjectPageHeaderActionButton icon="sap-icon://pull-down" text="show section" type="Emphasized"/>
 					<ObjectPageHeaderActionButton icon="sap-icon://show" text="show state" type="Emphasized"/>
+					<ObjectPageHeaderActionButton text="Toggle Footer" hideIcon="true" hideText="false" type="Emphasized" press="toggleFooter"/>
 				</actions>
 				<breadCrumbsLinks>
 					<m:Link text="Page 1 a very long link" press="handleLink1Press"/>
@@ -138,5 +139,12 @@
 				</subSections>
 			</ObjectPageSection>
 		</sections>
+		<footer>
+			<m:OverflowToolbar>
+				<m:ToolbarSpacer />
+				<m:Button type="Accept" text="Accept"/>
+				<m:Button type="Reject" text="Reject"/>
+			</m:OverflowToolbar>
+		</footer>
 	</ObjectPageLayout>
 </core:View>

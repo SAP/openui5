@@ -18,7 +18,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 				oAnchorBar = null,
 				bIsHeaderContentVisible = oControl.getHeaderContent() && oControl.getHeaderContent().length > 0 && oControl.getShowHeaderContent(),
 				bIsTitleInHeaderContent = oControl.getShowTitleInHeaderContent() && oControl.getShowHeaderContent(),
-				bRenderHeaderContent = 	bIsHeaderContentVisible || bIsTitleInHeaderContent;
+				bRenderHeaderContent = bIsHeaderContentVisible || bIsTitleInHeaderContent;
 
 			if (oControl.getShowAnchorBar() && oControl._getInternalAnchorBarVisible()) {
 				oAnchorBar = oControl.getAggregation("_anchorBar");
@@ -84,7 +84,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 
 			// Header Content
 			if (bRenderHeaderContent) {
-				this._renderHeaderContentDOM(oRm, oControl, !oControl._bHContentAlwaysExpanded, "-headerContent",  true);
+				this._renderHeaderContentDOM(oRm, oControl, !oControl._bHContentAlwaysExpanded, "-headerContent", true);
 			}
 
 			// Anchor Bar
@@ -127,6 +127,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 			oRm.write("</div>");  // END scroll
 
 			oRm.write("</div>"); // END wrapper
+			this._renderFooterContentInternal(oRm, oControl);
 
 			oRm.write("</div>"); // END page
 		};
@@ -201,8 +202,36 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 		 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 		 */
 		ObjectPageLayoutRenderer.renderFooterContent = function (oRm, oControl) {
+
 		};
 
+		/**
+		 * This internal method is called to render objectpagelayout footer content
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
+		 * @param {sap.ui.core.Control} oObjectPageLayout an object representation of the control that should be rendered
+		 */
+		ObjectPageLayoutRenderer._renderFooterContentInternal = function (oRm, oObjectPageLayout) {
+			var oFooter = oObjectPageLayout.getFooter();
+
+			if (!oFooter) {
+				return;
+			}
+
+			oRm.write("<footer");
+			oRm.writeAttributeEscaped("id", oObjectPageLayout.getId() + "-footerWrapper");
+			oRm.addClass("sapUxAPObjectPageFooter sapMFooter-CTX sapContrast sapContrastPlus");
+
+			if (!oObjectPageLayout.getShowFooter()) {
+				oRm.addClass("sapUiHidden");
+			}
+
+			oRm.writeClasses();
+			oRm.write(">");
+			oFooter.addStyleClass("sapUxAPObjectPageFloatingFooter");
+			oRm.renderControl(oFooter);
+			oRm.write("</footer>");
+		};
 
 		/**
 		 * This method is called to rerender headerContent
