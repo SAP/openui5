@@ -140,14 +140,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			/**
 			 * Optimizes the display of the elements of the <code>ObjectHeader</code>.<br>
-			 * <b>Note</b>: Only applied if the <code>responsive</code> property is set to <code>true</code>.
+			 * Set this property to <code>true</code> if your application uses a full-screen layout (as opposed to a master-detail or other split-screen layout).<br>
+			 * <b>Note</b>: Only applied if the <code>responsive</code> property is also set to <code>true</code>.
 			 *
-			 * If set to <code>false</code>, the attributes and statuses are being positioned below the Title/Number of the <code>ObjectHeader</code> in 2 or 3 columns depending on their number:
-			 * <ul>
-			 *                <li>On desktop, 1-4 attributes/statuses - 2 columns</li>
-			 *                <li>On desktop, 5+ attributes/statuses - 3 columns</li>
-			 *                <li>On tablet, always in 2 columns</li>
-			 * </ul>
 			 * If set to <code>true</code>, the following situations apply:
 			 * <ul>
 			 *                 <li>On desktop, 1-3 attributes/statuses - positioned as a third block on the right side of the Title/Number group</li>
@@ -155,8 +150,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 *                 <li>On tablet (portrait mode), always in 2 columns below the Title/Number</li>
 			 *                 <li>On tablet (landscape mode), 1-2 attributes/statuses - 2 columns below the Title/Number</li>
 			 *                 <li>On tablet (landscape mode), 3+ attributes/statuses - 3 columns below the Title/Number</li>
+			 *</ul>
+			 * On phone, the attributes and statuses are always positioned in 1 column below the Title/Number of the <code>ObjectHeader</code>.<br>
 			 *
-			 * On phone, the attributes and statuses are always positioned in 1 column below the Title/Number of the <code>ObjectHeader</code>.
+			 * If set to <code>false</code>, the attributes and statuses are being positioned below the Title/Number of the <code>ObjectHeader</code> in 2 or 3 columns depending on their number:
+			 * <ul>
+			 *                <li>On desktop, 1-4 attributes/statuses - 2 columns</li>
+			 *                <li>On desktop, 5+ attributes/statuses - 3 columns</li>
+			 *                <li>On tablet, always in 2 columns</li>
+			 * </ul>
 			 *
 			 * @since 1.28
 			 */
