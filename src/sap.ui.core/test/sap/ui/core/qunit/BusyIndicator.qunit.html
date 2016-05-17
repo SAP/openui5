@@ -14,120 +14,170 @@
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 
 	<script language="javascript">
-		var iPopupDelay = 10; // delay in ms when opening or closing the popup (meant for opening without delay)
+		sinon.config.useFakeTimers = false;
 
 		QUnit.module("BusyIndicatorTests", {
 			beforeEach : function () {
-				window.oUriParams = jQuery.sap.getUriParameters();
-				window.sClass = ".sapUiLocalBusyIndicator";
-				if (oUriParams.get("sap-ui-theme") == "sap_goldreflection") {
-					sClass = ".sapUiBusy";
+				// ensures that private functions are available for sinon
+				jQuery.sap.require("sap.ui.core.BusyIndicator");
+
+				// delay in ms when opening or closing the popup (meant for opening without delay)
+				this.iPopupDelay = 10;
+
+				this.oSpyShow = sinon.spy(sap.ui.core.BusyIndicator, "show");
+				this.oSpyShowNowIfRequested = sinon.spy(sap.ui.core.BusyIndicator, "_showNowIfRequested");
+				this.oSpyOnOpen = sinon.spy(sap.ui.core.BusyIndicator, "_onOpen");
+
+				this.sClass = ".sapUiLocalBusyIndicator";
+				if (jQuery.sap.getUriParameters().get("sap-ui-theme") == "sap_goldreflection") {
+					this.sClass = ".sapUiBusy";
 				}
+			},
+
+			afterEach: function() {
+				sap.ui.core.BusyIndicator.hide();
+
+				this.oSpyShow.restore();
+				this.oSpyShowNowIfRequested.restore();
+				this.oSpyOnOpen.restore();
 			}
 		});
 
 		// make sure the BusyIndicator is not rendered initially
-		QUnit.test("InitialCheck", function(assert) {
+		QUnit.test("Check existance", function(assert) {
 			assert.equal(jQuery(".sapUiBusy").length, 0, "BusyIndicator should not exist initially");
+
+			sap.ui.core.BusyIndicator.show(0);
+			assert.equal(jQuery(".sapUiBusy").length, 1, "BusyIndicator should exist after show");
+		});
+
+		QUnit.test("Check DOM structure", function(assert) {
+			sap.ui.core.BusyIndicator.show(0);
+
+			assert.equal(sap.ui.core.BusyIndicator.oDomRef.children.length, 2, "DOM contains container and busy element");
+
+			var $Container = jQuery(sap.ui.core.BusyIndicator.oDomRef.children[0]);
+			assert.ok($Container.hasClass("sapUiBusy"), "DOM contains the busy container");
+
+			var oStatic = sap.ui.getCore().getStaticAreaRef();
+			oStatic = sap.ui.getCore().getUIArea(oStatic);
+			// first parent -> root node of BusyIndicator
+			// second parent -> UI-area
+			assert.equal(oStatic.getRootNode(), $Container.parent().parent().get(0), "Busy indicator attached to static UI-area");
+
+			var $BusyElement = jQuery(sap.ui.core.BusyIndicator.oDomRef.children[1]);
+			assert.ok($BusyElement.hasClass("sapUiLocalBusyIndicator"), "DOM contains the busy element");
+
+			var $AnimationContainer = jQuery($BusyElement.children());
+			assert.ok($AnimationContainer.hasClass("sapUiLocalBusyIndicatorAnimation"), "Animation container exists");
+			assert.equal($AnimationContainer.children().length, 3, "Elements for animation exist");
 		});
 
 		// make sure closing before opening does not crash
-		QUnit.test("CloseBeforeOpening", function(assert) {
+		QUnit.test("Close Before Opening", function(assert) {
 			sap.ui.core.BusyIndicator.hide();
 			var done = assert.async();
 
 			setTimeout(function() {
 				ok(true, "");
 				done();
-			}, iPopupDelay);
+			}, this.iPopupDelay);
 		});
 
 		// make sure it is visible when it should be (opening immediately)
-		QUnit.test("CheckBusyIndicatorOpened", function(assert) {
+		QUnit.test("Check BusyIndicator Opened", function(assert) {
 			sap.ui.core.BusyIndicator.show(0);
 			var done = assert.async();
 
 			setTimeout(function() {
 				//check if both busyindicators are present
-				assert.equal(jQuery(".sapUiBusy").length, 1, "'Line Sliding' BusyIndicator should exist after opening");
 				var $oLocalBI = jQuery(".sapUiLocalBusyIndicator");
 				assert.equal($oLocalBI.length, 1, "'Pulsating Circles' BusyIndicator should exist in DOM after opening");
 				assert.ok($oLocalBI.hasClass("sapUiLocalBusyIndicatorFade"), "'Pulsating Circles' BusyIndicator should be visible after opening");
 				assert.ok($oLocalBI.hasClass("sapUiLocalBusyIndicatorSizeBig"), "Big Animation should be shown");
 
-				//check line sliding busy indicator in goldreflection
-				var $Busy = jQuery(sClass);
+				//check line sliding busy indicator in goldreflection. Else the same
+				//DOM as above will be checked if it's visible
+				var $Busy = jQuery(this.sClass);
 				var bVisible = $Busy.is(":visible") && ($Busy.css("visibility") == "visible");
 				assert.ok(bVisible, "BusyIndicator should be visible after opening");
 				assert.ok($Busy.css("top") === "0px", "BusyIndicator is positioned at the top of the window");
 
-				sap.ui.core.BusyIndicator.hide();
 				done();
-			}, iPopupDelay);
+			}.bind(this), this.iPopupDelay);
 		});
 
 		// make sure it is visible when it should be - but not before! (opening with custom delay)
-		QUnit.test("CheckBusyIndicatorDelay", function(assert) {
+		QUnit.test("Check BusyIndicator Delay", function(assert) {
 			sap.ui.core.BusyIndicator.show(200);
 			var done = assert.async();
 
 			// should not be visible yet
 			setTimeout(function() {
 				assert.expect(2);
-				var hidden = jQuery(sClass).css("visibility") == "hidden";
-				assert.ok(hidden, "BusyIndicator should be still invisible directly after opening it with delay");
+				var bHidden = jQuery(this.sClass).css("visibility") == "hidden";
+				assert.ok(bHidden, "BusyIndicator should be still invisible directly after opening it with delay");
 
 				// ...but should be visible now
 				setTimeout(function() {
-					var visible = jQuery(sClass).is(":visible") && (jQuery(sClass).css("visibility") == "visible");
-					assert.ok(visible, "BusyIndicator should be visible 600ms after opening with delay=400ms");
-					sap.ui.core.BusyIndicator.hide();
-					done();
-				}, 300);
+					var bVisible = jQuery(this.sClass).is(":visible") && (jQuery(this.sClass).css("visibility") == "visible");
+					assert.ok(bVisible, "BusyIndicator should be visible 600ms after opening with delay=400ms");
 
-			}, 100);
+					done();
+				}.bind(this), 300);
+			}.bind(this), 100);
 		});
 
 		// make sure it is visible when it should be - but not before! (opening with default delay)
-		QUnit.test("CheckBusyIndicatorDefaultDelay", function(assert) {
+		QUnit.test("Check BusyIndicator DefaultDelay", function(assert) {
 			sap.ui.core.BusyIndicator.show();
 			var done = assert.async();
 
 			// should not be visible yet
 			setTimeout(function() {
 				assert.expect(2);
-				var hidden = jQuery(sClass).css("visibility") == "hidden";
-				assert.ok(hidden, "BusyIndicator should be still invisible directly after opening it with delay");
+				var bHidden = jQuery(this.sClass).css("visibility") == "hidden";
+				assert.ok(bHidden, "BusyIndicator should be still invisible directly after opening it with delay");
 
 				// ...but should be visible now
 				setTimeout(function() {
-					var visible = jQuery(sClass).is(":visible") && (jQuery(sClass).css("visibility") == "visible");
-					assert.ok(visible, "BusyIndicator should be visible 600ms after opening with delay=400ms");
-					sap.ui.core.BusyIndicator.hide();
-					done();
-				}, 1200);
+					var bVisible = jQuery(this.sClass).is(":visible") && (jQuery(this.sClass).css("visibility") == "visible");
+					assert.ok(bVisible, "BusyIndicator should be visible 600ms after opening with delay=400ms");
 
-			}, 800);
+					done();
+				}.bind(this), 1200);
+			}.bind(this), 800);
 		});
 
 		// make sure it is hidden again after closing
-		QUnit.test("CheckBusyIndicatorClosed", function(assert) {
-			sap.ui.core.BusyIndicator.hide();
+		QUnit.test("Check BusyIndicator Closed", function(assert) {
 			var done = assert.async();
 
-			setTimeout(function() {
-				assert.equal(jQuery(sClass).length, 1, "BusyIndicator should exist after first usage");
+			var fnOpened = function() {
+				sap.ui.core.BusyIndicator.detachOpen(fnOpened, this);
+				sap.ui.core.BusyIndicator.hide();
 
-				var hidden = jQuery(sClass).css("visibility") == "hidden";
-				assert.ok(hidden, "BusyIndicator should be invisible after closing");
-				done();
-			}, iPopupDelay);
+				setTimeout(function() {
+					assert.equal(jQuery(this.sClass).length, 1, "BusyIndicator should exist after first usage");
+
+					var bHidden = jQuery(this.sClass).css("visibility") == "hidden";
+					assert.ok(bHidden, "BusyIndicator should be invisible after closing");
+
+					done();
+				}.bind(this), this.iPopupDelay);
+			};
+
+			sap.ui.core.BusyIndicator.attachOpen(fnOpened, this);
+			sap.ui.core.BusyIndicator.show(0);
 		});
 
 		// make sure opening multiple times does not fail and does the same as opening once
-		QUnit.test("CheckOpeningIsIdempotent", function(assert) {
+		QUnit.test("Check Opening Is Idempotent", function(assert) {
 			assert.expect(2);
 			sap.ui.core.BusyIndicator.show(0);
 			var done = assert.async();
@@ -137,33 +187,36 @@
 				setTimeout(function() {
 					sap.ui.core.BusyIndicator.show(0);
 					setTimeout(function() {
-						assert.equal(jQuery(sClass).length, 1, "BusyIndicator should exist once even after opening multiple times");
-						var visible = jQuery(sClass).is(":visible") && (jQuery(sClass).css("visibility") == "visible");
-						assert.ok(visible, "BusyIndicator should be visible after opening (multiple times)");
+						assert.equal(jQuery(this.sClass).length, 1, "BusyIndicator should exist once even after opening multiple times");
+
+						var bVisible = jQuery(this.sClass).is(":visible") && (jQuery(this.sClass).css("visibility") == "visible");
+						assert.ok(bVisible, "BusyIndicator should be visible after opening (multiple times)");
+
 						done();
-					}, iPopupDelay);
-				}, iPopupDelay);
-			}, iPopupDelay);
+					}.bind(this), this.iPopupDelay);
+				}.bind(this), this.iPopupDelay);
+			}.bind(this), this.iPopupDelay);
 		});
 
 		// make sure it is hidden again after closing even when opened multiple times
-		QUnit.test("CheckBusyIndicatorClosedAfterOpenedMultipleTimes", function(assert) {
+		QUnit.test("Check BusyIndicator Closed After Opened Multiple Times", function(assert) {
 			assert.expect(2);
 			var done = assert.async();
 
 			sap.ui.core.BusyIndicator.hide();
 
 			setTimeout(function() {
-				assert.equal(jQuery(sClass).length, 1, "BusyIndicator should exist once after opening multiple times and closing once");
+				assert.equal(jQuery(this.sClass).length, 1, "BusyIndicator should exist once after opening multiple times and closing once");
 
-				var hidden = jQuery(sClass).css("visibility") == "hidden";
-				assert.ok(hidden, "BusyIndicator should be invisible after opening multiple times and closing once");
+				var bHidden = jQuery(this.sClass).css("visibility") == "hidden";
+				assert.ok(bHidden, "BusyIndicator should be invisible after opening multiple times and closing once");
+
 				done();
-			}, iPopupDelay);
+			}.bind(this), this.iPopupDelay);
 		});
 
 		// make sure closing the BusyIndicator when it was already closed works fine (does not crash)
-		QUnit.test("CheckClosingMultipleTimesWorks", function(assert) {
+		QUnit.test("Check Closing Multiple Times", function(assert) {
 			assert.expect(1);
 			var done = assert.async();
 
@@ -171,8 +224,9 @@
 
 			setTimeout(function() {
 				assert.ok(true); // make sure we arrive here without JS error
+
 				done();
-			}, iPopupDelay);
+			}, this.iPopupDelay);
 		});
 
 		/*
@@ -199,7 +253,6 @@
 				assert.ok(!bPopupOpened && bBusyOpened, "BusyIndicator open-event was fired first");
 
 				setTimeout(function() {
-					sap.ui.core.BusyIndicator.hide();
 					done();
 				}, 0);
 			};
@@ -214,6 +267,70 @@
 			// will be fired when the Popup has been opened
 			sap.ui.core.BusyIndicator.oPopup.attachOpened(fnPopupOpened);
 			sap.ui.core.BusyIndicator.attachOpen(fnBusyOpened);
+		});
+
+		QUnit.test("Check order of function during open", function(assert) {
+			var done = assert.async();
+
+			var fnOpened = function() {
+				sap.ui.core.BusyIndicator.detachOpen(fnOpened, this);
+
+				assert.ok(this.oSpyShow.calledOnce, "'show' was called'");
+				assert.ok(this.oSpyShowNowIfRequested.calledOnce, "'_showNowIfRequested' was called'");
+				assert.ok(this.oSpyOnOpen.calledOnce, "'_onOpen' was called'");
+
+				assert.ok(this.oSpyShow.calledBefore(this.oSpyShowNowIfRequested), "'show' was called before '_showNowIfRequested'");
+				assert.ok(this.oSpyShowNowIfRequested.calledBefore(this.oSpyOnOpen), "'_showNowIfRequested' was called before '_onOpen'");
+
+				done();
+			};
+
+			sap.ui.core.BusyIndicator.attachOpen(fnOpened, this);
+			sap.ui.core.BusyIndicator.show(0);
+		});
+
+		QUnit.module("IE animation", {
+			beforeEach: function() {
+				// delay in ms when opening or closing the popup (meant for opening without delay)
+				this.iPopupDelay = 10;
+
+				jQuery.sap.require("sap.ui.core.BusyIndicator");
+
+				this.oSpyOnOpen = sinon.spy(sap.ui.core.BusyIndicator, "_onOpen");
+				this.oSpyIEAnimation = sinon.spy(sap.ui.core.BusyIndicator, "_IEAnimation");
+			},
+
+			afterEach: function() {
+				sap.ui.core.BusyIndicator.hide();
+
+				this.oSpyOnOpen.restore();
+				this.oSpyIEAnimation.restore();
+			}
+		});
+
+		QUnit.test("Check special animation for IE9", function(assert) {
+			var done = assert.async();
+			sap.ui.Device.browser = {
+				internet_explorer: true,
+				msie: true,
+				name: "ie",
+				version: 9,
+				versionStr: "9"
+			};
+
+			var fnOpened = function(oEvent) {
+				sap.ui.core.BusyIndicator.detachOpen(fnOpened, this);
+
+				assert.ok(this.oSpyOnOpen.calledOnce, "'_onOpen' was called");
+				assert.ok(this.oSpyIEAnimation.calledOnce, "'_IEAnimation' was called");
+
+				assert.ok(this.oSpyOnOpen.calledBefore(this.oSpyIEAnimation), "'_onOpen' was called before '_IEAnimation'");
+
+				done();
+			}
+
+			sap.ui.core.BusyIndicator.attachOpen(fnOpened, this);
+			sap.ui.core.BusyIndicator.show(300);
 		});
 	</script>
 </head>
