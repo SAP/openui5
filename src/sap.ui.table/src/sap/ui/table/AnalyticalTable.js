@@ -160,8 +160,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 
 		var vReturn = this.bindAggregation("rows", oBindingInfoSanitized);
 
-		var aColumnInfo = this._getColumnInformation();
-		this._updateTotalRow(aColumnInfo, true);
+		this._updateTotalRow(true);
 
 		return vReturn;
 	};
@@ -910,15 +909,18 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			var aColumnInfo = this._getColumnInformation();
 			oBinding.updateAnalyticalInfo(aColumnInfo, bForceChange);
 
-			this._updateTotalRow(aColumnInfo, bSupressRefresh);
-			if (bSupressRefresh || this._bSupressRefresh) {
-				return;
-			}
-			this.refreshRows();
+			this._updateTotalRow(bSupressRefresh);
 		}
 	};
 
-	AnalyticalTable.prototype._updateTotalRow = function(aColumnInfo, bSuppressInvalidate) {
+	AnalyticalTable.prototype.refreshRows = function () {
+		sap.ui.table.Table.prototype.refreshRows.apply(this, arguments);
+		// make sure we have a sum row displayed if necessary
+		// check is performed after the metadata was loaded
+		this._updateTotalRow();
+	};
+
+	AnalyticalTable.prototype._updateTotalRow = function(bSuppressInvalidate) {
 		var oBinding = this.getBinding("rows");
 
 		var iFixedBottomRowCount = this.getFixedBottomRowCount();
