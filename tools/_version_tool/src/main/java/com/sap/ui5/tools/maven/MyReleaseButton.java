@@ -146,7 +146,7 @@ public class MyReleaseButton {
 
   public enum ProcessingTypes {
     RepositoryPaths, VersionWithSnapshot, VersionWithTimestamp, VersionWithQualifier_POM, VersionWithQualifier,
-    ContributorsVersions, Sapui5CoreVersion
+    ContributorsVersions, Sapui5CoreVersion, OnlyVersionWithSnapshot
   };
 
   public static class ProcessingFilter {
@@ -164,7 +164,7 @@ public class MyReleaseButton {
     public EnumSet<ProcessingTypes> processingTypes = EnumSet.allOf(ProcessingTypes.class);
   }
 
-  static Pattern fromS, fromT, fromQ_POM, fromQ, fromR;
+  static Pattern fromS, fromSVO, fromT, fromQ_POM, fromQ, fromR;
   static String toS, toT, toQ, toR;
   static Map<Pattern, String> contributorsPatterns = new HashMap<Pattern, String>();
   private static String coreVersion = null;
@@ -176,9 +176,7 @@ public class MyReleaseButton {
     String encoding = UTF8;
 
     EnumSet<ProcessingTypes> processingTypes = EnumSet.noneOf(ProcessingTypes.class);
-    if (applyContributors && path.contains("uilib-collection")) {
-      processingTypes.add(ProcessingTypes.ContributorsVersions);
-    }
+
     if (file.getName().matches("pom(-[a-zA-Z0-9-_.]*)?.xml")) {
       processingTypes.add(ProcessingTypes.VersionWithSnapshot);
       processingTypes.add(ProcessingTypes.VersionWithQualifier_POM);
@@ -212,7 +210,11 @@ public class MyReleaseButton {
     } else if ("sap-ui-version.json".equals(file.getName())) { // uxap release
         processingTypes.add(ProcessingTypes.VersionWithSnapshot);
     }
-
+    if (applyContributors && path.contains("uilib-collection")) {
+      processingTypes.add(ProcessingTypes.ContributorsVersions);
+      processingTypes.remove(ProcessingTypes.VersionWithSnapshot);
+      processingTypes.add(ProcessingTypes.OnlyVersionWithSnapshot);
+    }
 
     processingTypes.removeAll(EnumSet.complementOf(filter.processingTypes));
 
@@ -230,6 +232,9 @@ public class MyReleaseButton {
       }
       if (processingTypes.contains(ProcessingTypes.VersionWithSnapshot)) {
         s = fromS.matcher(s).replaceAll(toS);
+      }
+      if (processingTypes.contains(ProcessingTypes.OnlyVersionWithSnapshot)) {
+        s = fromSVO.matcher(s).replaceAll(toS);
       }
       if (processingTypes.contains(ProcessingTypes.VersionWithQualifier_POM)) {
         s = fromQ_POM.matcher(s).replaceAll(toQ);
@@ -316,6 +321,7 @@ public class MyReleaseButton {
     //       - Special case for OSGi distributions (Maven version should fit OSGi version)
     //       - In this case the .qualifier version needs to be converted to -SNAPSHOT
     String fromSPattern = "(?<!osgi\\.version>|\\.version>\\[)" + Pattern.quote(oldMavenVersion);
+    String fromSVersionOnlyPattern = "(?<=<version>)" + Pattern.quote(oldMavenVersion);
     String fromQ_POMPattern = "(?<=osgi\\.version>)" + Pattern.quote(oldOSGiVersion);
 
     if (oldMavenVersion.endsWith("-SNAPSHOT") && newMavenVersion.endsWith("-SNAPSHOT")) {
@@ -334,6 +340,7 @@ public class MyReleaseButton {
     }
 
     fromS = Pattern.compile(fromSPattern);
+    fromSVO = Pattern.compile(fromSVersionOnlyPattern);
     fromQ_POM = Pattern.compile(fromQ_POMPattern);
     fromQ = Pattern.compile(Pattern.quote(oldOSGiVersion));
     // must run before SNAPSHOT replacements

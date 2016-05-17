@@ -42,7 +42,7 @@
 	***************************************************************************-->
 
 	<properties>
-		<com.sap.suite.version>[1.22.8, 1.23.0-SNAPSHOT)</com.sap.suite.version>
+		<com.sap.suite.version>[1.22.9, 1.23.0-SNAPSHOT)</com.sap.suite.version>
 		<com.sap.portal.ui5.version>[1.22.3, 1.23.0-SNAPSHOT)</com.sap.portal.ui5.version>
 		<com.sap.ushell.version>[1.22.6, 1.23.0-SNAPSHOT)</com.sap.ushell.version>
 		<com.sap.ui5.vbm.version>[1.22.6, 1.23.0-SNAPSHOT)</com.sap.ui5.vbm.version>
