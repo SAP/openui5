@@ -41,6 +41,9 @@ sap.ui.define(["./Slider"],
             }
         });
 
+        // Defines threshold for entire range movement (px)
+        var RANGE_MOVEMENT_THRESHOLD = 32;
+
         RangeSlider.prototype.init = function () {
             var aRange;
             Slider.prototype.init.call(this, arguments);
@@ -351,55 +354,68 @@ sap.ui.define(["./Slider"],
          */
         RangeSlider.prototype.ontouchstart = function (oEvent) {
             var oTouch = oEvent.targetTouches[0],
-                oNearestHandle,
                 CSS_CLASS = this.getRenderer().CSS_CLASS,
                 sEventNamespace = "." + CSS_CLASS,
-                fValue,
-                aRange;
+                fValue, aHandles, aRange, iHandleIndex, fHandlesDistance, oFocusItem;
 
             if (!this.getEnabled()) {
                 return;
             }
 
+            // mark the event for components that needs to know if the event was handled
+            oEvent.setMarked();
+
             // we need to recalculate the styles since something may have changed
             // the screen size between touches.
             this._recalculateStyles();
 
-            // get the handle and its index
-            oNearestHandle = this.getClosestHandleDomRef(oTouch);
+            fValue = this._calculateHandlePosition(oTouch.pageX);
+            aRange = this.getRange();
+            aHandles = [this.getDomRef("handle1"), this.getDomRef("handle2")];
+            iHandleIndex = aRange.indexOf(fValue);
+            fHandlesDistance = aHandles.reduce(function (fAccumulation, oHandle) {
+                return Math.abs(fAccumulation - oHandle.offsetLeft);
+            }, 0);
 
-            jQuery.sap.delayedCall(0, oNearestHandle, "focus");
-
-            // mark the event for components that needs to know if the event was handled
-            oEvent.setMarked();
+            // if the click is outside the range or distance between handles is below the threshold - update the closest slider handle
+            if (fValue < Math.min.apply(Math, aRange) || fValue > Math.max.apply(Math, aRange) || fHandlesDistance <= RANGE_MOVEMENT_THRESHOLD) {
+                aHandles = [this.getClosestHandleDomRef(oTouch)];
+                this._updateHandle(aHandles[0], fValue);
+            } else if (iHandleIndex !== -1) { // Determine if the press event is on certain handle
+                aHandles = [this.getDomRef(iHandleIndex === 0 ? "handle1" : "handle2")];
+            }
 
             // registers event listeners
             jQuery(document)
-                .on("touchend" + sEventNamespace + " touchcancel" + sEventNamespace + " mouseup" + sEventNamespace, this._ontouchend.bind(this, oNearestHandle))
-                .on(oEvent.originalEvent.type === "touchstart" ? "touchmove" + sEventNamespace : "touchmove" + sEventNamespace + " mousemove" + sEventNamespace, this._ontouchmove.bind(this, oNearestHandle));
+                .on("touchend" + sEventNamespace + " touchcancel" + sEventNamespace + " mouseup" + sEventNamespace,
+                    this._ontouchend.bind(this, aHandles))
+                .on("touchmove" + sEventNamespace + (oEvent.originalEvent.type !== "touchstart" ? " mousemove" + sEventNamespace : ""),
+                    this._ontouchmove.bind(this, fValue, Array.prototype.slice.call(this.getRange()), aHandles));
 
             // adds pressed state
-            if (oNearestHandle.className.indexOf(CSS_CLASS + "HandlePressed") === -1) {
-                oNearestHandle.className += " " + CSS_CLASS + "HandlePressed";
-            }
+            aHandles.map(function (oHandle) {
+                if (oHandle.className.indexOf(CSS_CLASS + "HandlePressed") === -1) {
+                    oHandle.className += " " + CSS_CLASS + "HandlePressed";
+                }
+            });
 
-            fValue = this._calculateHandlePosition(oTouch.pageX);
-            aRange = this.getRange();
-
-            // if the click is outside the range - update the closest slider handle
-            if (fValue < Math.min.apply(Math, aRange) || fValue > Math.max.apply(Math, aRange)) {
-                this._updateHandle(oNearestHandle, fValue);
-            }
+            // TODO: Remove or uncomment the code bellow when there's a decision for KH & Accessibility
+            // oFocusItem = aHandles.length === 1 ? aHandles[0] : this.getDomRef("progress");
+            oFocusItem = aHandles[0];
+            jQuery.sap.delayedCall(0, oFocusItem, "focus");
         };
 
         /**
          * Handle the touchmove event happening on the slider.
-         * @param {HTMLElement} [oHandle] The handle that should be updated
+         * @param {Int} [fInitialPointerPosition] Mouse pointer's initial position
+         * @param {Int} [aInitialRange] Mouse pointer's initial position
+         * @param {HTMLElement} [aHandles] The handle that should be updated
          * @param {jQuery.Event} oEvent The event object.
          * @private
          */
-        RangeSlider.prototype._ontouchmove = function (oHandle, oEvent) {
-            var iPageX = oEvent.targetTouches ? oEvent.targetTouches[0].pageX : oEvent.pageX;
+        RangeSlider.prototype._ontouchmove = function (fInitialPointerPosition, aInitialRange, aHandles, oEvent) {
+            var fOffset, bInBoundaries, fMax, fMin,
+                iPageX = oEvent.targetTouches ? oEvent.targetTouches[0].pageX : oEvent.pageX;
 
             // note: prevent native document scrolling
             oEvent.preventDefault();
@@ -417,25 +433,42 @@ sap.ui.define(["./Slider"],
                 return;
             }
 
-            this._updateHandle(oHandle, this._calculateHandlePosition(iPageX));
+            // Check slider's boundaries
+            fMax = this.getMax();
+            fMin = this.getMin();
+            fOffset = this._calculateHandlePosition(iPageX) - fInitialPointerPosition;
+            bInBoundaries = aInitialRange.every(function (fRange) {
+                var fMovement = fRange + fOffset;
+                if (aHandles.length === 1) {
+                    return fMax >= fMovement || fMovement >= fMin;
+                } else {
+                    return fMax >= fMovement && fMovement >= fMin;
+                }
+            });
+
+            bInBoundaries && aHandles.map(function (oHandle) {
+                this._updateHandle(oHandle, aInitialRange[this._getIndexOfHandle(oHandle)] + fOffset);
+            }, this);
 
             this.fireLiveChange({range: this.getRange()});
         };
 
         /**
          * Handle the touchend event happening on the slider.
-         * @param {HTMLElement} oHandle The handle that should be updated
+         * @param {HTMLElement} aHandle The handle that should be updated
          * @param {jQuery.Event} oEvent The event object.
          * @private
          */
-        RangeSlider.prototype._ontouchend = function (oHandle, oEvent) {
+        RangeSlider.prototype._ontouchend = function (aHandle, oEvent) {
             var aNewRange = this.getRange(),
                 sCSSClass = this.getRenderer().CSS_CLASS;
 
             // mark the event for components that needs to know if the event was handled
             oEvent.setMarked();
 
-            oHandle.className = oHandle.className.replace(new RegExp(" ?" + sCSSClass + "HandlePressed", "gi"), "");
+            aHandle && aHandle.map(function (oHandle) {
+                oHandle.className = oHandle.className.replace(new RegExp(" ?" + sCSSClass + "HandlePressed", "gi"), "");
+            });
             jQuery(document).off("." + sCSSClass);
 
             this._recalculateRange();
