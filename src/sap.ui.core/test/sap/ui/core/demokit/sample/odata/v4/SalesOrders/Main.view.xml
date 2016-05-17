@@ -148,7 +148,35 @@
 				</ColumnListItem>
 			</items>
 		</Table>
-		<VBox id="ObjectPage">
+		<VBox id="ObjectPage" binding="{
+					events : {
+						dataReceived : '.onDataEvents',
+						dataRequested : '.onDataEvents'
+					},
+					path : '',
+					parameters : {
+						$expand : {
+							SO_2_SOITEM : {
+								$expand : {
+									SOITEM_2_PRODUCT : {
+										$expand : {
+											PRODUCT_2_BP : {
+												$expand : {
+													BP_2_CONTACT : true
+												}
+											}
+										}
+									}
+								}
+							},
+							SO_2_BP : {
+								$select : 'BusinessPartnerID,CompanyName,PhoneNumber'
+							}
+						},
+						$select : 'ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID',
+						$$updateGroupId : 'SalesOrderUpdateGroup'
+					}
+				}">
 			<Toolbar design="Transparent">
 				<content>
 					<Title level="H2" text="Sales Order Details" titleStyle="H2"/>

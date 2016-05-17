@@ -187,6 +187,59 @@ sap.ui.define([
 		},
 
 		/**
+		 * Creates a cache proxy acting as substitute for the given relative binding's cache while
+		 * the given context's canonical path is being computed.
+		 * If there is no cache for the canonical path in the binding's
+		 * <code>mCacheByContext</code>, creates the cache by calling the given function
+		 * <code>fnCreateCache</code> with the canonical path.
+		 *
+		 * @param {object} oBinding The relative binding
+		 * @param {object} oContext The context for the relative binding
+		 * @param {function} fnCreateCache The function to create the cache from the canonical path
+		 * @returns {object} The cache proxy with the following properties
+		 *   post: method throws an error as the cache proxy does not support write operations
+		 *   promise: promise fulfilled with the cache or rejected with the error of canonical path
+		 *     computation
+		 *   read: method delegates to the cache's read method
+		 *   refresh: method does nothing
+		 *   update: method throws an error as the cache proxy does not support write operations
+		 */
+		createCacheProxy : function (oBinding, oContext, fnCreateCache) {
+			var oCache,
+				oPromise;
+
+			// use requestCanonicalPath, not fetchCanonicalPath to ensure consistent async behavior
+			oPromise = oContext.requestCanonicalPath().then(function (sCanonicalPath) {
+				oBinding.mCacheByContext = oBinding.mCacheByContext || {};
+				oCache = oBinding.mCacheByContext[sCanonicalPath] =
+					oBinding.mCacheByContext[sCanonicalPath] || fnCreateCache(sCanonicalPath);
+				return oCache;
+			});
+			return {
+				post : function () {
+					throw new Error("POST request not allowed");
+				},
+				promise : oPromise,
+				read : function () {
+					var aReadArguments = arguments;
+
+					return oPromise.then(function (oCache) {
+						return oCache.read.apply(oCache, aReadArguments);
+					}).catch(function (oError) {
+						oBinding.oModel.reportError("Failed to delegate read to cache " + oCache
+								+ " with arguments "
+								+ JSON.stringify(Array.prototype.slice.call(aReadArguments)),
+							"sap.ui.model.odata.v4._ODataHelper", oError);
+					});
+				},
+				refresh : function () {},
+				update : function () {
+					throw new Error("PATCH request not allowed");
+				}
+			};
+		},
+
+		/**
 		 * Returns the key predicate (see "4.3.1 Canonical URL") for the given entity type meta
 		 * data and entity instance runtime data.
 		 *
