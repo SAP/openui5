@@ -244,6 +244,16 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/
 		var oAfterHook = this._findAfterHook('afterMove', oMovedOverlay, oSource);
 		if (oAfterHook) {
 			var oParentElement = oAfterHook.context.getElementInstance();
+
+			// oAfterHook.method.call(ParentElement, oMovedElement, oSource, oTarget))
+			// is equivalent to
+			// new sap.ui.dt.command.SimpleFormMove({
+			// 		elementId: oParentElement.getId(),
+			// 		movedElement: oMovedElementgetId(),
+			// 		source: oSource,
+			// 		target: oTarget
+			//	}).execute();
+
 			aActions = oAfterHook.method.call(oParentElement, oMovedElement, oSource, oTarget);
 			if (aActions && aActions.length > 0) {
 				ElementUtil.executeActions(aActions);

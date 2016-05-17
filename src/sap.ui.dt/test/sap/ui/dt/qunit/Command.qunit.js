@@ -39,4 +39,20 @@ jQuery.sap.require("sap.ui.dt.command.CommandFactory");
 		assert.strictEqual(oCmd.getElement(), this.oVisibleControl);
 	});
 
+	QUnit.test("when getting a SimpleFormMove command,", function(assert) {
+		var oCmd = new sap.ui.dt.command.SimpleFormMove({
+			elementId : 'id_of_SimpleForm',
+			movedElement : 'id_of_FormContainer_or_FormElement',
+			source : {
+				aggregation : 'formContainer_or_formElements',
+				index : 0
+			},
+			target : {
+				aggregation : 'formContainer_or_formElements',
+				index : 1
+			}
+		});
+		assert.ok(oCmd, "then command can be instantiated");
+	});
+
 })();
