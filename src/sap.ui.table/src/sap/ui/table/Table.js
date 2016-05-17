@@ -694,9 +694,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		// visible columns
 		this._aVisibleColumns = [];
 
-		// action mode flag (for keyboard navigation)
-		this._bActionMode = false;
-
 		// column index of the last fixed column (to prevent column reordering!)
 		this._iLastFixedColIndex = -1;
 
@@ -2980,7 +2977,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		// for interaction detection
 		jQuery.sap.interaction.notifyScrollEvent && jQuery.sap.interaction.notifyScrollEvent(oEvent);
 		// do not scroll in action mode!
-		this._leaveActionMode();
+		this._getKeyboardExtension().setActionMode(false);
 		if (this._bLargeDataScrolling && !this._bIsScrolledByWheel) {
 			window.clearTimeout(this._mTimeouts.scrollUpdateTimerId);
 			this._mTimeouts.scrollUpdateTimerId = window.setTimeout(function() {
@@ -3002,7 +2999,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		// for interaction detection
 		jQuery.sap.interaction.notifyScrollEvent && jQuery.sap.interaction.notifyScrollEvent(oEvent);
 		// do not scroll in action mode!
-		this._leaveActionMode();
+		this._getKeyboardExtension().setActionMode(false);
 
 		var iFirstVisibleRow = 0;
 		if (this.getNavigationMode() === sap.ui.table.NavigationMode.Paginator) {
@@ -3201,19 +3198,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	Table.prototype.onmouseup = function(oEvent) {
 		// clean up the timer
 		jQuery.sap.clearDelayedCall(this._mTimeouts.delayedActionTimer);
-
-		if (oEvent.isMarked()) {
-			// the event was already handled by some other handler, do nothing.
-			return;
-		}
-
-		if (this.$().find(".sapUiTableCtrl td :focus").length > 0) {
-			// when clicking into a focusable control we enter the action mode!
-			this._enterActionMode(this.$().find(".sapUiTableCtrl td :focus"));
-		} else {
-			// when clicking anywhere else in the table we leave the action mode!
-			this._leaveActionMode(oEvent);
-		}
 	};
 
 	/**
@@ -3397,50 +3381,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 * @private
 	 */
 	Table.prototype.onfocusin = function(oEvent) {
-		// check whether item navigation should be reapplied from scratch
-		if (!this._bIgnoreFocusIn) {
-			this._getKeyboardExtension().initItemNavigation();
-		}
-
-		var $target = jQuery(oEvent.target);
-		var bNoData = this.$().hasClass("sapUiTableEmpty");
-		var bControlBefore = $target.hasClass("sapUiTableCtrlBefore");
-
-		// KEYBOARD HANDLING (_bIgnoreFocusIn is set in onsaptabXXX)
-		if (!this._bIgnoreFocusIn && (bControlBefore || $target.hasClass("sapUiTableCtrlAfter"))) {
-			// when entering the before or after helper DOM elements we put the
-			// focus on the current focus element of the item navigation and we
-			// leave the action mode!
-			this._leaveActionMode();
-			if (jQuery.contains(this.$().find('.sapUiTableColHdrCnt')[0], oEvent.target)) {
-				var oIN = this._getItemNavigation();
-				jQuery(oIN.getFocusedDomRef() || oIN.getRootDomRef()).focus();
-			} else {
-				if (bControlBefore) {
-					if (bNoData) {
-						this._bIgnoreFocusIn = true;
-						this.$().find(".sapUiTableCtrlEmpty").focus();
-						this._bIgnoreFocusIn = false;
-					} else {
-						var oInfo = TableUtils.getFocusedItemInfo(this);
-						TableUtils.focusItem(this, oInfo.cellInRow, oEvent);
-					}
-				} else {
-					var oInfo = TableUtils.getFocusedItemInfo(this);
-					TableUtils.focusItem(this, oInfo.cellInRow + (oInfo.columnCount * this._iLastSelectedDataRow), oEvent);
-				}
-			}
-
-			if (!bNoData) {
-				oEvent.preventDefault();
-			}
-		} else if (jQuery.sap.endsWith(oEvent.target.id, "-rsz")) {
-			// prevent that the ItemNavigation grabs the focus!
-			// only for the column resizing
-			oEvent.preventDefault();
-			oEvent.stopPropagation();
-		}
-
 		var $ctrlScr;
 		var $FocusedDomRef = jQuery(oEvent.target);
 		if ($FocusedDomRef.parent('.sapUiTableTr').length > 0) {
@@ -4784,80 +4724,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	};
 
 	/**
-	 * enters the action mode. in the action mode the user can navigate through the
-	 * interactive controls of the table by using the TAB & SHIFT-TAB. this table is
-	 * aligned with the official WAI-ARIA 1.0.
-	 * @private
-	 */
-	Table.prototype._enterActionMode = function($Focusable) {
-		// only enter the action mode when not already in action mode and:
-		if ($Focusable.length > 0 && !this._bActionMode) {
-
-			//If cell has no tabbable element, we don't do anything
-			if ($Focusable.filter(":sapTabbable").length == 0) {
-				return;
-			}
-
-			// in the action mode we need no item navigation
-			this._bActionMode = true;
-			var oIN = this._getItemNavigation(); //TBD: Cleanup
-			this._getKeyboardExtension().suspendItemNavigation();
-
-			// remove the tab index from the item navigation
-			jQuery(oIN.getFocusedDomRef()).attr("tabindex", "-1");
-
-			// set the focus to the active control
-			$Focusable.filter(":sapTabbable").eq(0).focus();
-		}
-	};
-
-	/**
-	 * leaves the action mode and enters the navigation mode. in the navigation mode
-	 * the user can navigate through the cells of the table by using the arrow keys,
-	 * page up & down keys, home and end keys. this table is aligned with the
-	 * official WAI-ARIA 1.0.
-	 * @private
-	 */
-	Table.prototype._leaveActionMode = function(oEvent) {
-
-	 // TODO: update ItemNavigation position otherwise the position is strange!
-	 //        EDIT AN SCROLL!
-
-		if (this._bActionMode) {
-
-			// in the navigation mode we use the item navigation
-			this._bActionMode = false;
-			var oIN = this._getItemNavigation(); //TBD: Cleanup
-			this._getKeyboardExtension().resumeItemNavigation();
-
-			// reset the tabindex of the focused domref of the item navigation
-			jQuery(oIN.getFocusedDomRef()).attr("tabindex", "0");
-
-			// when we have an event which is responsible to leave the action mode
-			// we search for the closest
-			if (oEvent) {
-				if (jQuery(oEvent.target).closest("td[tabindex='-1']").length > 0) {
-					// triggered when clicking into a cell, then we focus the cell
-					var iIndex = jQuery(oIN.aItemDomRefs).index(jQuery(oEvent.target).closest("td[tabindex='-1']").get(0));
-					TableUtils.focusItem(this, iIndex, null);
-				} else {
-					// somewhere else means whe check if the click happend inside
-					// the container, then we focus the last focused element
-					// (DON'T KNOW IF THIS IS OK - but we don't know where the focus was!)
-					if (jQuery.sap.containsOrEquals(this.$().find(".sapUiTableCCnt").get(0), oEvent.target)) {
-						TableUtils.focusItem(this, oIN.getFocusedIndex(), null);
-					}
-				}
-			} else {
-				// when no event is given we just focus the last focused index
-				TableUtils.focusItem(this, oIN.getFocusedIndex(), null);
-			}
-
-		}
-
-	};
-
-	/**
 	 * Return the focused row index.
 	 * @return {int} the currently focused row index.
 	 * @private
@@ -6095,16 +5961,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 */
 	Table.prototype.setEnableBusyIndicator = function (bValue) {
 		this.setProperty("enableBusyIndicator", bValue, true);
-	};
-
-	/*
-	 * @see JSDoc generated by SAPUI5 control API generator
-	 */
-	Table.prototype.setColumnHeaderVisible = function(bColumnHeaderVisible) {
-		this.setProperty("columnHeaderVisible", bColumnHeaderVisible);
-		// Adapt the item navigation. Since the HeaderRowCount changed, also the lastSelectedDataRow changes.
-		this._iLastSelectedDataRow = this._getHeaderRowCount();
-
 	};
 
 	/**
