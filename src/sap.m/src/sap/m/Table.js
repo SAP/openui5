@@ -475,6 +475,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		var oLastTabbableDomRef = $Row.find(":sapTabbable").get(-1) || $Row[0];
 		if (oEvent.target === oLastTabbableDomRef) {
 			this.forwardTab(true);
+			oEvent.setMarked();
 		}
 	};
 
