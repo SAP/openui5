@@ -968,6 +968,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	ListBase.prototype._fireUpdateFinished = function(oInfo) {
 		this._hideBusyIndicator();
 		jQuery.sap.delayedCall(0, this, function() {
+			this._bItemNavigationInvalidated = true;
 			this.fireUpdateFinished({
 				reason : this._sUpdateReason,
 				actual : oInfo ? oInfo.actual : this.getItems(true).length,
@@ -1448,9 +1449,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			this._oItemNavigation.setCycling(false);
 			this.addEventDelegate(this._oItemNavigation);
 
-			// root element should still be tabbable
-			this._oItemNavigation.setTabIndex0();
-
 			// implicitly setting table mode with one column
 			// to disable up/down reaction on events of the cell
 			this._oItemNavigation.setTableMode(true, true).setColumns(1);
@@ -1535,13 +1533,14 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	 */
 	ListBase.prototype.forwardTab = function(bForward) {
 		this._bIgnoreFocusIn = true;
-		this.$(bForward ? "after" : "listUl").focus();
+		this.$(bForward ? "after" : "before").focus();
 	};
 
 	// move focus out of the table for nodata row
 	ListBase.prototype.onsaptabnext = function(oEvent) {
 		if (oEvent.target.id == this.getId("nodata")) {
 			this.forwardTab(true);
+			oEvent.setMarked();
 		}
 	};
 
@@ -1701,14 +1700,19 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			this._startItemNavigation();
 		}
 
-		// handle only for backward navigation
-		if (oEvent.isMarked() ||
-			!this._oItemNavigation ||
-			oEvent.target.id != this.getId("after")) {
+		// handle only forward/backward navigation
+		if (oEvent.isMarked() || !this._oItemNavigation) {
 			return;
 		}
 
-		this.focusPrevious();
+		// forward focus to the last known position
+		var sTarget = oEvent.target.id;
+		if (sTarget == this.getId("after")) {
+			this.focusPrevious();
+		} else if (sTarget == this.getId("before")) {
+			this.getNavigationRoot().focus();
+		}
+
 		oEvent.setMarked();
 	};
 

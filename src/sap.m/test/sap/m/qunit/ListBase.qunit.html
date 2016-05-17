@@ -3,7 +3,7 @@
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta charset="utf-8">
-		<title>Test Page for sap.m.select</title>
+		<title>Test Page for sap.m.ListBase</title>
 		<script id="sap-ui-bootstrap"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
@@ -496,7 +496,7 @@
 			ok($list.length, "The HTML div container element exists on " + oList.getId());
 			ok($listUl.length, "The HTML ul element exists on " + oList.getId());
 			strictEqual($listUl[0].getAttribute("id"), oList.getId() + "-listUl", 'The id of the HTML ul element is "' + oList.getId() + '"-listUl" on ' + oList);
-			strictEqual($listUl[0].getAttribute("tabindex"), "0", 'The tabindex is "0" for the HTML ul element on ' + oList);
+			strictEqual($listUl[0].getAttribute("tabindex"), "-1", 'The tabindex is "-1" for the HTML ul element on ' + oList);
 			strictEqual($listLi[0].getAttribute("id"), oList.getId() + "-nodata", 'The id of the HTML li no data element is "' + oList.getId() + '"-nodat" on ' + oList);
 
 			// CSS checks
@@ -1189,6 +1189,112 @@
 		});
 
 		module("KeyboardHandling");
+		test("Basics", function () {
+			var fnDetailPressSpy = this.spy(),
+				fnItemPressSpy = this.spy(),
+				fnDeleteSpy = this.spy(),
+				fnPressSpy = this.spy(),
+				fnSelectionChangeSpy = this.spy(),
+				oInput = new sap.m.Input(),
+				oListItem1 = new sap.m.CustomListItem({
+					content: oInput,
+					type: "Navigation",
+					press: fnPressSpy
+				}),
+				oListItem2 = new sap.m.StandardListItem({
+					type: "Detail",
+					detailPress: fnDetailPressSpy
+				}),
+				oList = new sap.m.List({
+					mode: "MultiSelect",
+					delete: fnDeleteSpy, 
+					itemPress: fnItemPressSpy,
+					selectionChange: fnSelectionChangeSpy
+				}).addItem(oListItem1).addItem(oListItem2);
+
+			oList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oList.focus();
+
+			strictEqual(oList.getDomRef("before").getAttribute("tabindex"), "0", "Before dummy element is at the tab chain");
+			strictEqual(oList.getNavigationRoot().getAttribute("tabindex"), "-1", "Navigation root is focusable");
+			strictEqual(oList.getDomRef("after").getAttribute("tabindex"), "0", "After dummy element is at the tab chain");
+
+			if (!document.hasFocus()) {
+				return;
+			}
+
+			strictEqual(document.activeElement, oListItem1.getFocusDomRef(), "Initial focus is at the first list item");
+
+			sap.ui.test.qunit.triggerKeydown(document.activeElement, "ARROW_LEFT");
+			strictEqual(document.activeElement, oListItem1.getFocusDomRef(), "Left arrow has no effect on focus");
+
+			sap.ui.test.qunit.triggerKeydown(document.activeElement, "ARROW_RIGHT");
+			strictEqual(document.activeElement, oListItem1.getFocusDomRef(), "Right arrow has no effect on focus");
+
+			sap.ui.test.qunit.triggerKeydown(document.activeElement, "ARROW_UP");
+			strictEqual(document.activeElement, oListItem1.getFocusDomRef(), "Focus is still at the first list item");
+
+			sap.ui.test.qunit.triggerKeydown(document.activeElement, "ARROW_DOWN");
+			strictEqual(document.activeElement, oListItem2.getFocusDomRef(), "Focus is moved down to the second list item");
+
+			sap.ui.test.qunit.triggerKeydown(document.activeElement, "ARROW_DOWN");
+			strictEqual(document.activeElement, oListItem2.getFocusDomRef(), "Focus is still at the second list item");
+
+			sap.ui.test.qunit.triggerKeydown(document.activeElement, "ARROW_UP");
+			strictEqual(document.activeElement, oListItem1.getFocusDomRef(), "Focus is now again at the first list item");
+
+			sap.ui.test.qunit.triggerKeydown(document.activeElement, "END");
+			strictEqual(document.activeElement, oListItem2.getFocusDomRef(), "Focus is at the second list item");
+
+			sap.ui.test.qunit.triggerKeydown(document.activeElement, "HOME");
+			strictEqual(document.activeElement, oListItem1.getFocusDomRef(), "Focus is at the first list item");
+
+			sap.ui.test.qunit.triggerKeydown(document.activeElement, "PAGE_DOWN");
+			strictEqual(document.activeElement, oListItem2.getFocusDomRef(), "Focus is at the second list item");
+
+			sap.ui.test.qunit.triggerKeydown(document.activeElement, "PAGE_UP");
+			strictEqual(document.activeElement, oListItem1.getFocusDomRef(), "Focus is at the first list item");
+
+			sap.ui.test.qunit.triggerKeydown(document.activeElement, "SPACE");
+			strictEqual(fnSelectionChangeSpy.callCount, 1, "SelectionChange event is fired when space is pressed while focus is at the item");
+			fnSelectionChangeSpy.reset();
+
+			sap.ui.test.qunit.triggerKeydown(document.activeElement, "ENTER");
+			this.clock.tick(0);
+			strictEqual(fnItemPressSpy.callCount, 1, "ItemPress event is fired async when enter is pressed while focus is at the item");
+			strictEqual(fnPressSpy.callCount, 1, "Press event is fired async when enter is pressed while focus is at the item");
+			fnItemPressSpy.reset();
+			fnPressSpy.reset();
+
+			sap.ui.test.qunit.triggerKeydown(document.activeElement, "F2");
+			strictEqual(fnDetailPressSpy.callCount, 0, "DetailPress event is not called since first item has not Edit type");
+
+			sap.ui.test.qunit.triggerKeydown(document.activeElement, "DELETE");
+			strictEqual(fnDeleteSpy.callCount, 0, "Delete event is not called since List is not in Delete mode");
+
+			oList.setMode("Delete");
+			sap.ui.getCore().applyChanges();
+			oList.focus();
+
+			sap.ui.test.qunit.triggerKeydown(document.activeElement, "DELETE");
+			strictEqual(fnDeleteSpy.callCount, 1, "Delete event is now called because List is in Delete mode");
+
+			oInput.focus();
+			sap.ui.test.qunit.triggerKeydown(document.activeElement, "SPACE");
+			strictEqual(fnSelectionChangeSpy.callCount, 0, "SelectionChange event is not fired when space is pressed while focus is not at the item");
+			
+			sap.ui.test.qunit.triggerKeydown(document.activeElement, "ENTER");
+			this.clock.tick(0);
+			strictEqual(fnItemPressSpy.callCount, 0, "ItemPress event is not fired when enter is pressed while focus is not at the item");
+			strictEqual(fnPressSpy.callCount, 0, "Press event is not fired when enter is pressed while focus is not at the item");
+
+			oListItem2.focus();
+			sap.ui.test.qunit.triggerKeydown(document.activeElement, "F2");
+			strictEqual(fnDetailPressSpy.callCount, 1, "DetailPress event is called since second item has type Edit");
+
+			oList.destroy();
+		});
 
 		test("Test Tab/ShiftTab/F6/ShiftF6 handling", function() {
 			var fnSpy = this.spy();

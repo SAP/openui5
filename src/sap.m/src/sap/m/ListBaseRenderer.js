@@ -100,6 +100,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './ListIte
 		var aItems = oControl.getItems(true);
 		var bRenderItems = oControl.shouldRenderItems() && aItems.length;
 
+		// dummy keyboard handling area
+		if (bRenderItems || oControl.getShowNoData()) {
+			this.renderDummyArea(rm, oControl, "before");
+		}
+
 		// run hook method to start building list
 		this.renderListStartAttributes(rm, oControl);
 
@@ -109,9 +114,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './ListIte
 		// list attributes
 		rm.addClass("sapMListUl");
 		rm.writeAttribute("id", oControl.getId("listUl"));
-		if (bRenderItems || oControl.getShowNoData()) {
-			rm.writeAttribute("tabindex", "0");
-		}
+		rm.writeAttribute("tabindex", "-1");
 
 		// separators
 		rm.addClass("sapMListShowSeparators" + oControl.getShowSeparators());
@@ -131,9 +134,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './ListIte
 		this.renderListHeadAttributes(rm, oControl);
 
 		// render child controls
-		bRenderItems && aItems.forEach(function(oItem) {
-			rm.renderControl(oItem);
-		});
+		if (bRenderItems) {
+			for (var i = 0; i < aItems.length; i++) {
+				rm.renderControl(aItems[i]);
+			}
+		}
 
 		// render no-data if needed
 		if (!bRenderItems && oControl.getShowNoData()) {
@@ -144,13 +149,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './ListIte
 		// run hook method to finish building list
 		this.renderListEndAttributes(rm, oControl);
 
-		// dummy after focusable area
-		rm.write("<div");
-		rm.writeAttribute("id", oControl.getId("after"));
+		// dummy keyboard handling area
 		if (bRenderItems || oControl.getShowNoData()) {
-			rm.writeAttribute("tabindex", "0");
+			this.renderDummyArea(rm, oControl, "after");
 		}
-		rm.write("></div>");
 
 		// render growing delegate if available
 		if (bRenderItems && oControl._oGrowingDelegate) {
@@ -302,6 +304,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './ListIte
 		rm.write("</div>");
 
 		rm.write("</li>");
+	};
+
+	ListBaseRenderer.renderDummyArea = function(rm, oControl, sAreaId) {
+		rm.write("<div");
+
+		if (sap.ui.Device.browser.msie) {
+			rm.addClass("sapMListDummyArea").writeClasses();
+		}
+
+		rm.writeAttribute("id", oControl.getId(sAreaId));
+		rm.writeAttribute("tabindex", 0);
+		rm.write("></div>");
 	};
 
 	return ListBaseRenderer;
