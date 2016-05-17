@@ -1485,7 +1485,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 
 		// init item navigation
 		if (!this._oItemNavigation) {
-			this._oItemNavigation = new ItemNavigation(null, [], true);
+			this._oItemNavigation = new ItemNavigation();
 			this._oItemNavigation.setCycling(false);
 			this.addEventDelegate(this._oItemNavigation);
 
