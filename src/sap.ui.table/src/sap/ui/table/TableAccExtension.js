@@ -158,7 +158,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtensi
 				var iColumnNumber = TableUtils.getColumnIndexOfFocusedCell(oTable) + 1; //+1 -> we want to announce a count and not the index
 				var iRowNumber = TableUtils.getRowIndexOfFocusedCell(oTable) + oTable.getFirstVisibleRow() + 1; //same here + take virtualization into account
 				var iColCount = TableUtils.getVisibleColumnCount(oTable);
-				var iRowCount = TableUtils.getTotalRowCount(oTable, true);
+				var iRowCount = TableUtils.isNoDataVisible(oTable) ? 0 : TableUtils.getTotalRowCount(oTable, true);
 
 				bIsRowChanged = oExtension._iLastRowNumber != iRowNumber || (oExtension._iLastRowNumber == iRowNumber && oExtension._iLastColumnNumber == iColumnNumber);
 				bIsColChanged = oExtension._iLastColumnNumber != iColumnNumber;
@@ -531,9 +531,9 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtensi
 
 				case TableAccExtension.ELEMENTTYPES.ROWHEADER_TD: //The "technical" row headers
 					mAttributes["role"] = "rowheader";
-					mAttributes["headers"] = oTable.getId() + "-colsel";
+					mAttributes["headers"] = sTableId + "-colsel";
 					if (mParams && typeof mParams.index === "number") {
-						mAttributes["aria-owns"] = oTable.getId() + "-rowsel" + mParams.index;
+						mAttributes["aria-owns"] = sTableId + "-rowsel" + mParams.index;
 					}
 					if (oTable.getSelectionMode() !== sap.ui.table.SelectionMode.None) {
 						var bSelected = mParams && mParams.rowSelected;
@@ -572,6 +572,11 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtensi
 							}
 						}
 					}
+					break;
+
+				case TableAccExtension.ELEMENTTYPES.NODATA: //The no data container
+					var oNoData = oTable.getNoData();
+					mAttributes["aria-labelledby"] = [oNoData instanceof sap.ui.core.Control ? oNoData.getId() : (sTableId + "-noDataMsg")];
 					break;
 			}
 
@@ -688,8 +693,8 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtensi
 	 * @public (Part of the API for Table control only!)
 	 */
 	TableAccExtension.ELEMENTTYPES = {
-		DATACELL : 			TableUtils.CELLTYPES.DATACELL, 		// @see TableUtils.CELLTYPES
-		COLUMNHEADER : 		TableUtils.CELLTYPES.COLUMNHEADER, 	// @see TableUtils.CELLTYPES
+		DATACELL : 			TableUtils.CELLTYPES.DATACELL, 			// @see TableUtils.CELLTYPES
+		COLUMNHEADER : 		TableUtils.CELLTYPES.COLUMNHEADER, 		// @see TableUtils.CELLTYPES
 		ROWHEADER : 		TableUtils.CELLTYPES.ROWHEADER, 		// @see TableUtils.CELLTYPES
 		COLUMNROWHEADER : 	TableUtils.CELLTYPES.COLUMNROWHEADER, 	// @see TableUtils.CELLTYPES
 		ROOT : 				"ROOT", 								// The tables root dom element
@@ -700,7 +705,8 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtensi
 		TH : 				"TH", 									// The "technical" column headers
 		ROWHEADER_TD : 		"ROWHEADER_TD", 						// The "technical" row headers
 		TR : 				"TR", 									// The rows
-		TREEICON : 			"TREEICON" 								// The expand/collapse icon in the TreeTable
+		TREEICON : 			"TREEICON", 							// The expand/collapse icon in the TreeTable
+		NODATA :			"NODATA"								// The no data container
 	};
 
 	/*

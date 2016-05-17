@@ -37,6 +37,31 @@ sap.ui.define(['jquery.sap.global'],
 		},
 
 		/*
+		 * Returns whether the no data text is currently shown or not
+		 * If true, also CSS class sapUiTableEmpty is set on the table root element.
+		 */
+		isNoDataVisible : function(oTable) {
+			return oTable.getShowNoData() && !oTable._getRowCount()/*!oTable._hasData()*/;
+		},
+
+		/*
+		 * Returns the text to be displayed as no data message.
+		 * If a custom noData control is set null is returned.
+		 */
+		getNoDataText : function(oTable) {
+			var oNoData = oTable.getNoData();
+			if (oNoData instanceof sap.ui.core.Control) {
+				return null;
+			} else {
+				if (typeof oNoData === "string" || oTable.getNoData() instanceof String) {
+					return oNoData;
+				} else {
+					return oTable.getNoDataText() || oTable._oResBundle.getText("TBL_NO_DATA");
+				}
+			}
+		},
+
+		/*
 		 * Returns the number of currently visible columns
 		 */
 		getVisibleColumnCount : function(oTable) {
