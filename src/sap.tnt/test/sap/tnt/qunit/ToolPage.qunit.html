@@ -558,6 +558,35 @@
 				this.toolPage = null;
 			}
 		});
+
+		QUnit.test("Media Query Handler - Tablet", function(assert) {
+			// Arrange
+			sap.ui.Device.system.tablet = true;
+
+			// Act
+			this.toolPage._mediaQueryHandler();
+
+			// Assert
+			assert.strictEqual(this.toolPage.getSideExpanded(), false, "ToolPage should be collapsed in Tablet mode");
+
+			sap.ui.Device.system.tablet = false;
+		});
+
+		QUnit.test("Media Query Handler - Phone", function(assert) {
+			// Arrange
+			sap.ui.Device.system.phone = true;
+
+			// Act
+			this.toolPage._mediaQueryHandler();
+
+			// Assert
+			assert.strictEqual(this.toolPage.getSideExpanded(), false, "ToolPage should be collapsed in Phone mode");
+			assert.strictEqual(this.toolPage.getAggregation('sideContent').getExpanded(), true, "SideContent should be expanded in Phone mode");
+
+			sap.ui.Device.system.phone = false;
+
+		});
+
 	</script>
 </head>
 <body class="sapUiBody">
