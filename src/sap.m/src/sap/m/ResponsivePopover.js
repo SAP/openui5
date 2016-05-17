@@ -583,7 +583,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 			return this[sPrivateName];
 		} else {
 			var sGetterName = "get" + this._firstLetterUpperCase(sPos) + "Button";
-			return this[sGetterName]();
+			return this._oControl[sGetterName]();
 		}
 	};
 
