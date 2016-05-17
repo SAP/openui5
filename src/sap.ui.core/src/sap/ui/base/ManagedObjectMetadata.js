@@ -943,11 +943,12 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * call but that are neither properties, aggregations, associations nor events.
 	 *
 	 * @param {string} sName name of the setting
+	 * @param {object} oInfo metadata for the setting
 	 * @private
 	 * @experimental since 1.35.0
 	 */
 	ManagedObjectMetadata.prototype.addSpecialSetting = function (sName, oInfo) {
-		var oSS = this._mProperties[sName] = new SpecialSetting(this, sName, oInfo);
+		var oSS = new SpecialSetting(this, sName, oInfo);
 		this._mSpecialSettings[sName] = oSS;
 		if (!this._mAllSpecialSettings[sName]) {
 			this._mAllSpecialSettings[sName] = oSS;
