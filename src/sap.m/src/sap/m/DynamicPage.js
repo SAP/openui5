@@ -135,16 +135,21 @@ sap.ui.define([
 	};
 
 	DynamicPage.prototype.onAfterRendering = function () {
-		if (this.getHeaderAlwaysExpanded() && exists(this.getHeader())) {
+		var bHeaderAlwaysExpanded = this.getHeaderAlwaysExpanded();
+
+		if (bHeaderAlwaysExpanded && exists(this.getHeader())) {
 			this.getHeader()._setShowPinBtn(false);
 		}
 
 		this._cacheDomElements();
-		this._attachScrollHandler();
-		this._updateScrollBar();
 		this._attachResizeHandlers();
-		this._attachPageChildrenAfterRenderingDelegates();
 		this._updateMedia(this._getHeight(this));
+
+		if (!bHeaderAlwaysExpanded) {
+			this._attachScrollHandler();
+			this._updateScrollBar();
+			this._attachPageChildrenAfterRenderingDelegates();
+		}
 	};
 
 	DynamicPage.prototype.exit = function () {
@@ -179,10 +184,10 @@ sap.ui.define([
 
 		if (bUseAnimations && !bShow) {
 			jQuery.sap.delayedCall(DynamicPage.FOOTER_ANIMATION_DURATION, this, function () {
-				this.$footerWrapper.toggleClass("sapUiHidden", !bShow);
+				this.$footerWrapper.toggleClass("sapUiHidden", !this.getShowFooter());
 			});
 		} else {
-			this.$footerWrapper.toggleClass("sapUiHidden", !bShow);
+			this.$footerWrapper.toggleClass("sapUiHidden", !this.getShowFooter());
 		}
 	};
 
@@ -350,7 +355,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._needsVerticalScrollBar = function () {
-		if (exists(this.$wrapper) && !this.getHeaderAlwaysExpanded()) {
+		if (exists(this.$wrapper) && this._allowScroll()) {
 			return this.$wrapper[0].scrollHeight > this.$wrapper.innerHeight();
 		} else {
 			return false;
@@ -423,7 +428,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Updates the position/heigth of the "fake" scrollbar
+	 * Updates the position/height of the "fake" scrollbar
 	 * @private
 	 */
 	DynamicPage.prototype._updateScrollBar = function () {
@@ -452,18 +457,6 @@ sap.ui.define([
 		this.$titleArea.css("padding-" + sStyleAttribute, iOffsetWidth);
 		if (exists(oFooter)) {
 			oFooter.$().css(sStyleAttribute, iOffsetWidth);
-		}
-	};
-
-	/**
-	 * Updates the content area height. This is only applicable in the cases that a control (like the sap.m.Wizard)
-	 * that manages its own content area (has it's own scrolling mechanism) and needs to occupy a 100% of the height
-	 * that's left when you takeout the header and title space.
-	 * @private
-	 */
-	DynamicPage.prototype._updateContentHeight = function () {
-		if (this.getHeaderAlwaysExpanded()) {
-			this.$("content").height((this._getHeight(this) - this._getTitleHeight() - this._getHeaderHeight()) + "px");
 		}
 	};
 
@@ -622,7 +615,6 @@ sap.ui.define([
 	DynamicPage.prototype._onChildControlsAfterRendering = function () {
 		this._updateSnappedExpandedContent();
 		jQuery.sap.delayedCall(0, this, this._updateScrollBar);
-		jQuery.sap.delayedCall(0, this, this._updateContentHeight);
 	};
 
 	/**
@@ -658,7 +650,6 @@ sap.ui.define([
 		}
 
 		this._updateScrollBar();
-		this._updateContentHeight();
 		this._updateMedia(oEvent.size.width);
 	};
 
