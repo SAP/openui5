@@ -395,6 +395,13 @@
 		  "samples": ["sap.m.sample.Image"]
 		},
 		{
+		  "id": "sap.m.ImageContent",
+		  "name": "ImageContent",
+		  "category": "Tile",
+		  "since": "1.38",
+		  "samples": ["sap.m.sample.ImageContent"]
+		},
+		{
 		  "id": "sap.m.Input",
 		  "name": "Input",
 		  "category": "User Input",
@@ -2354,6 +2361,11 @@
 		  "id": "sap.m.sample.PlanningCalendarMinMax",
 		  "name": "PlanningCalendar - with min. and max. date",
 		  "description": "PlanningCalendar with min. date 2000-01-01 and max. date 2050-12-31"
+		},
+		{
+		  "id": "sap.m.sample.ImageContent",
+		  "name": "ImageContent",
+		  "description": "Shows ImageContent that can include an icon, a profile image, or a logo with a tooltip."
 		}
 		]
 	}
