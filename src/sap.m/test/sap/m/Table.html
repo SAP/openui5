@@ -422,7 +422,11 @@
 	});
 
 	oTable.setModel(oModel);
-	oTable.bindItems("/modelData", oTemplate);
+	oTable.bindItems({
+		path: "/modelData",
+		template : oTemplate,
+		key: "id"
+	});
 
 	var oPage = new sap.m.Page({
 		enableScrolling : true,
