@@ -181,6 +181,38 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	};
 
 	/* --- Event Handling --- */
+	/**
+	 * Handler for touchstart event
+	 */
+	GenericTile.prototype.ontouchstart = function() {
+		if (this.$("hover-overlay").length > 0) {
+			this.$("hover-overlay").addClass("sapMGTPressActive");
+		}
+		if (sap.ui.Device.browser.internet_explorer && this.getState() !== sap.m.LoadState.Disabled) {
+			this.$().focus();
+		}
+	};
+
+	/**
+	 * Handler for touchcancel event
+	 */
+	GenericTile.prototype.ontouchcancel = function() {
+		if (this.$("hover-overlay").length > 0) {
+			this.$("hover-overlay").removeClass("sapMGTPressActive");
+		}
+	};
+
+	/**
+	 * Handler for touchend event
+	 */
+	GenericTile.prototype.ontouchend = function() {
+		if (this.$("hover-overlay").length > 0) {
+			this.$("hover-overlay").removeClass("sapMGTPressActive");
+		}
+		if (sap.ui.Device.browser.internet_explorer && this.getState() !== sap.m.LoadState.Disabled) {
+			this.$().focus();
+		}
+	};
 
 	/**
 	 * Handler for tap event
@@ -188,10 +220,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @param {sap.ui.base.Event} oEvent which was fired
 	 */
 	GenericTile.prototype.ontap = function(oEvent) {
-		if (sap.ui.Device.browser.internet_explorer) {
-			this.$().focus();
+		if (this.getState() !== sap.m.LoadState.Disabled) {
+			if (sap.ui.Device.browser.internet_explorer) {
+				this.$().focus();
+			}
+			this.firePress();
+			oEvent.preventDefault();
 		}
-		this.firePress();
 	};
 
 	/**
@@ -200,7 +235,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @param {sap.ui.base.Event} oEvent which was fired
 	 */
 	GenericTile.prototype.onkeydown = function(oEvent) {
-		if (oEvent.which === jQuery.sap.KeyCodes.SPACE) {
+		if (jQuery.sap.PseudoEvents.sapselect.fnCheck(oEvent) && this.getState() !== sap.m.LoadState.Disabled) {
+			if (this.$("hover-overlay").length > 0) {
+				this.$("hover-overlay").addClass("sapMGTPressActive");
+			}
 			oEvent.preventDefault();
 		}
 	};
@@ -211,101 +249,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @param {sap.ui.base.Event} oEvent which was fired
 	 */
 	GenericTile.prototype.onkeyup = function(oEvent) {
-		if (oEvent.which === jQuery.sap.KeyCodes.ENTER || oEvent.which === jQuery.sap.KeyCodes.SPACE) {
+		if (jQuery.sap.PseudoEvents.sapselect.fnCheck(oEvent) && this.getState() !== sap.m.LoadState.Disabled) {
+			if (this.$("hover-overlay").length > 0) {
+				this.$("hover-overlay").removeClass("sapMGTPressActive");
+			}
 			this.firePress();
 			oEvent.preventDefault();
 		}
-	};
-
-	/**
-	 * Handler for overlayclick
-	 *
-	 * @param {sap.ui.base.Event} oEvent which was fired
-	 */
-	GenericTile.prototype._handleOverlayClick = function(oEvent) {
-		oEvent.stopPropagation();
-	};
-
-	/**
-	 * Handler for touchstart
-	 *
-	 * @param {sap.ui.base.Event} oEvent which was fired
-	 */
-	GenericTile.prototype.ontouchstart = function (oEvent) {
-		if (this.getState() !== sap.m.LoadState.Disabled) {
-			if (this.getBackgroundImage()) {
-				this.addStyleClass("sapMGTBackgroundHvrOutln");
-			} else {
-				this.addStyleClass("sapMGTHvrOutln");
-			}
-		}
-	};
-
-	/**
-	 * Handler for touchcancel
-	 *
-	 * @param {sap.ui.base.Event} oEvent which was fired
-	 */
-	GenericTile.prototype.ontouchcancel = function(oEvent) {
-		if (this.getBackgroundImage()) {
-			this.removeStyleClass("sapMGTBackgroundHvrOutln");
-		} else {
-			this.removeStyleClass("sapMGTHvrOutln");
-		}
-	};
-
-	/**
-	 * Handler for touchend
-	 *
-	 * @param {sap.ui.base.Event} oEvent which was fired
-	 */
-	GenericTile.prototype.ontouchend = function(oEvent) {
-		if (this.getBackgroundImage()) {
-			this.removeStyleClass("sapMGTBackgroundHvrOutln");
-		} else {
-			this.removeStyleClass("sapMGTHvrOutln");
-		}
-	};
-
-	/**
-	 * Attaches an event handler to the event with the given identifier for the current control
-	 *
-	 * @param {string} eventId The identifier of the event to listen for
-	 * @param {object} [data] An object that will be passed to the handler along with the event object when the event is fired
-	 * @param {function} functionToCall The handler function to call when the event occurs.
-	 * This function will be called in the context of the oListener instance (if present) or on the event provider instance.
-	 * The event object (sap.ui.base.Event) is provided as first argument of the handler.
-	 * Handlers must not change the content of the event. The second argument is the specified oData instance (if present).
-	 * @param {object} [listener] The object that wants to be notified when the event occurs (this context within the handler function).
-	 * If it is not specified, the handler function is called in the context of the event provider.
-	 * @returns {sap.m.GenericTile} this to allow method chaining
-	 */
-	GenericTile.prototype.attachEvent = function(eventId, data, functionToCall, listener) {
-		Control.prototype.attachEvent.call(this, eventId, data, functionToCall, listener);
-
-		if (this.hasListeners("press") && this.getState() != sap.m.LoadState.Disabled) {
-			this.$().attr("tabindex", 0).addClass("sapMPointer");
-		}
-
-		return this;
-	};
-
-	/**
-	 * Removes a previously attached event handler from the event with the given identifier for the current control.
-	 * The passed parameters must match those used for registration with #attachEvent beforehand.
-	 *
-	 * @param {string} eventId The identifier of the event to detach from
-	 * @param {function} functionToCall The handler function to detach from the event
-	 * @param {object} [listener] The object that wanted to be notified when the event occurred
-	 * @returns {sap.m.GenericTile} this to allow method chaining
-	 */
-	GenericTile.prototype.detachEvent = function(eventId, functionToCall, listener) {
-		Control.prototype.detachEvent.call(this, eventId, functionToCall, listener);
-
-		if (!this.hasListeners("press")) {
-			this.$().removeAttr("tabindex").removeClass("sapMPointer");
-		}
-		return this;
 	};
 
 	/* --- Getters and Setters --- */
