@@ -1840,6 +1840,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 * @private
 	 */
 	Table.prototype.refreshRows = function(vEvent) {
+		var oBinding = this.getBinding("rows");
+		if (!oBinding) {
+			jQuery.sap.log.error("RefreshRows must not be called without a binding", this);
+			return;
+		}
+
 		var that = this;
 		var sReason = typeof (vEvent) === "object" ? vEvent.getParameter("reason") : vEvent;
 		if (sReason == sap.ui.model.ChangeReason.Refresh) {
@@ -5852,24 +5858,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			var oColumn = aColumns[i];
 			if (oColumn.getSorted()) {
 				aSorters.push(new sap.ui.model.Sorter(oColumn.getSortProperty(), oColumn.getSortOrder() === sap.ui.table.SortOrder.Descending));
-			/*
-			} else if (oColumn.getFiltered()) {
-				aFilters.push(oColumn._getFilter());
-			*/
 			}
 		}
 
-		if (aSorters.length > 0 && this.getBinding("rows")) {
-			this.getBinding("rows").sort(aSorters);
+		var oBinding = this.getBinding("rows");
+		if (oBinding) {
+			if (aSorters.length > 0) {
+				oBinding.sort(aSorters);
+			}
+			this.refreshRows();
 		}
-		/*
-		if (aFilters.length > 0 && this.getBinding("rows")) {
-			this.getBinding("rows").filter(aFilters);
-		}
-		*/
-
-		this.refreshRows();
-
 	};
 
 	/**
