@@ -17,5 +17,29 @@
         "references": []
       }
     ]
+  },
+  "1.38.1": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "4f6537be439d7f74c2c03aad740c6ddb2a7fd4b2",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "Explored app: Samples tab \u003ccode\u003e tag visualization corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.38.2": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "3aebba67ff602aca48df89a0755ef60bc876dd52",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Demokit Controls Section - commons and ux3 deprecation - openui5",
+        "references": []
+      }
+    ]
   }
 }

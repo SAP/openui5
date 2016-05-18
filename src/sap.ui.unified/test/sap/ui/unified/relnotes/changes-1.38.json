@@ -227,5 +227,43 @@
         "references": []
       }
     ]
+  },
+  "1.38.1": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "5981a9240dee86c7bd79f58a778926c4f46a6565",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarRow: appointments wrong position if theme applied late",
+        "references": []
+      },
+      {
+        "id": "592b6a4fd285a3266277d8b53e8c946585a0d6dc",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: Fix focus visualization",
+        "references": []
+      },
+      {
+        "id": "f24fa543ede37dd979c9d35283b103bd1472ef61",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": ": sap.ui.unified.Calendar: aria-selected missing on MonthPicker and YearPicker",
+        "references": []
+      }
+    ]
+  },
+  "1.38.2": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "4d8846efc0111b0b1210c8477164a53c4aa68e68",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: changing minDate and maxDate brings error",
+        "references": []
+      }
+    ]
   }
 }
