@@ -1996,6 +1996,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		$this.find(".sapUiTableCtrlScrFixed").scroll(jQuery.proxy(this._oncntscroll, this));
 
 		$this.find(".sapUiTableCtrlScrFixed, .sapUiTableColHdrFixed").on("scroll.sapUiTablePreventFixedAreaScroll", function(oEvent) {oEvent.target.scrollLeft = 0;});
+		if (this._bVariableRowHeightEnabled) {
+			$this.find(".sapUiTableCCnt").on("scroll.sapUiTablePreventCCntScroll", function(oEvent) {oEvent.target.scrollTop = 0;});
+		}
 
 		// sync row header > content (hover effect)
 		$this.find(".sapUiTableRowHdr").hover(function() {
@@ -2084,6 +2087,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		$this.find(".sapUiTableRowHdr").unbind();
 		$this.find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed, .sapUiTableColHdrScr, .sapUiTableColHdrFixed").unbind();
 		$this.find(".sapUiTableColRsz").unbind();
+		$this.find(".sapUiTableCtrlScrFixed, .sapUiTableColHdrFixed").unbind("scroll.sapUiTablePreventFixedAreaScroll");
+
+		if (this._bVariableRowHeightEnabled) {
+			$this.find(".sapUiTableCCnt").unbind("scroll.sapUiTablePreventCCntScroll");
+		}
 
 		var $vsb = jQuery(this.getDomRef(SharedDomRef.VerticalScrollBar));
 		$vsb.unbind("scroll.sapUiTableVScroll");
@@ -2092,8 +2100,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		var $hsb = jQuery(this.getDomRef(SharedDomRef.HorizontalScrollBar));
 		$hsb.unbind("scroll.sapUiTableHScroll");
 		$hsb.unbind("mousedown.sapUiTableHScroll");
-
-		$this.find(".sapUiTableCtrlScrFixed, .sapUiTableColHdrFixed").unbind("scroll.sapUiTablePreventFixedAreaScroll");
 
 		var $scrollTargets = this._getScrollTargets();
 		$scrollTargets.unbind("MozMousePixelScroll.sapUiTableMouseWheel");
