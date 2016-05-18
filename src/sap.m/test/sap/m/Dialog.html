@@ -28,6 +28,11 @@
 		<script type="text/javascript">
 			var app = new sap.m.App("myApp", {initialPage: "page1"});
 			var _buttonWidth = "300px";
+			var dynamicContentDialogData = {
+				isVisible : false
+			}
+
+			var model = new sap.ui.model.json.JSONModel(dynamicContentDialogData);
 
 			var oDialog1 = new sap.m.Dialog("dialog1", {
 				title: "World Domination",
@@ -1007,6 +1012,27 @@
 				]
 			});
 
+			var dynamicContentDialog = new sap.m.Dialog('dynamicContentDialog', {
+				title: 'Dialog with dynamic content',
+				content: [
+					new sap.m.MessageStrip({
+						text: "Strip1",
+						visible: '{/isVisible}'
+					}).setModel(model),
+					new sap.ui.layout.form.SimpleForm({
+						layout: "ResponsiveGridLayout",
+						content: [
+							new sap.m.Label({text: "some label"}),
+							new sap.m.TextArea({
+								cols: 20,
+								maxLength: 16000,
+								rows: 6
+							})
+						]
+					})
+				]
+			});
+
 
 			//Added as result of Internal Incident 1570901570
 			var oDialogWithOUTSettedWidthInRTL = new sap.m.Dialog({
@@ -1437,6 +1463,18 @@
 							resizableDialogWithOneHundredPercentHeightContent.open();
 						}
 					}),
+
+					new sap.m.Button({
+						text: "Dialog with dynamic content",
+						width: _buttonWidth,
+						press: function() {
+							dynamicContentDialog.open();
+							setTimeout(function() {
+								dynamicContentDialogData.isVisible = true;
+								model.setData(dynamicContentDialogData);
+							}, 1500);
+						}
+					})
 				]
 			});
 			app.addPage(page1).placeAt("content");
