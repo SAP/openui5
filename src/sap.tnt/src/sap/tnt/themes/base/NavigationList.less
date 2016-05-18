@@ -64,22 +64,38 @@
 	margin: 0 1rem 0 0;
 }
 
-.sapTntNavLI .sapTntNavLIGroupIcon {
+.sapTntNavLI {
+  span.sapTntNavLIGroupIcon {
 	min-width: 3rem;
 	padding: 0.6875rem 0;
 
 	outline: none;
-	-webkit-user-select: none;  /* Chrome all / Safari all */
-	-moz-user-select: none;     /* Firefox all */
-	-ms-user-select: none;      /* IE 10+ */
+	-webkit-user-select: none; /* Chrome all / Safari all */
+	-moz-user-select: none; /* Firefox all */
+	-ms-user-select: none; /* IE 10+ */
 	user-select: none;
+  }
+
+  img.sapTntNavLIGroupIcon {
+	height: 1.125rem;
+	width: 1.125rem;
+	padding: 0.6875rem 0.9375rem;
+  }
 }
 
-
-.sapTntNavLIPopup .sapTntNavLIGroupIcon {
+.sapTntNavLIPopup {
+  span.sapTntNavLIGroupIcon {
 	width: 1rem;
 	visibility: hidden;
-  	min-width: 0;
+	min-width: 0;
+  }
+
+  img.sapTntNavLIGroupIcon {
+	width: 1rem;
+	visibility: hidden;
+	min-width: 0;
+	padding: 0;
+  }
 }
 
 .sapTntNavLI .sapTntNavLIExpandIcon {
@@ -125,13 +141,16 @@
 		margin: 0 0.5rem 0 0;
 	}
 
-	.sapTntNavLI .sapTntNavLIGroupIcon {
+	.sapTntNavLI span.sapTntNavLIGroupIcon {
 		min-width: 2rem;
 		padding: 0.5rem 0;
 	}
 
+	.sapTntNavLI img.sapTntNavLIGroupIcon {
+	  padding: 0.5rem 0.4375rem;
+	}
 
-	.sapTntNavLIPopup .sapTntNavLIGroupIcon {
+	.sapTntNavLIPopup span.sapTntNavLIGroupIcon {
 		width: 0.5rem;
 	  	min-width: 0;
 	}
