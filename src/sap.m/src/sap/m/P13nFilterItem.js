@@ -82,13 +82,25 @@ sap.ui.define([
 	});
 
 
-//	P13nFilterItem.prototype.setOperation = function(sOperation) {
-//		return this.setProperty("operation", sOperation, true);
-//	};
-//
-//	P13nFilterItem.prototype.setColumnKey = function(sKey) {
-//		return this.setProperty("columnKey", sKey, true);
-//	};
+	P13nFilterItem.prototype.setOperation = function(sOperation) {
+		return this.setProperty("operation", sOperation, true);
+	};
+
+	P13nFilterItem.prototype.setColumnKey = function(sKey) {
+		return this.setProperty("columnKey", sKey, true);
+	};
+
+	P13nFilterItem.prototype.setValue1 = function(sKey) {
+		return this.setProperty("value1", sKey, true);
+	};
+
+	P13nFilterItem.prototype.setValue2 = function(sKey) {
+		return this.setProperty("value2", sKey, true);
+	};
+
+	P13nFilterItem.prototype.setExclude = function(sKey) {
+		return this.setProperty("exclude", sKey, true);
+	};
 
 	return P13nFilterItem;
 

@@ -106,6 +106,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 			this.setAggregation("_page", new sap.m.Page({
+				id: this.getId() + "-page",
 				showHeader : this.getShowHeader(),
 				navButtonPress : jQuery.proxy(function() {
 					this.fireNavButtonPress();
@@ -199,6 +200,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				this._oText = this.getAggregation("customText");
 			} else {
 				this._oText = new sap.m.Text({
+					id: this.getId() + "-customText",
 					text: this.getText(),
 					textAlign: sap.ui.core.TextAlign.Center,
 					textDirection: this.getTextDirection()
@@ -209,6 +211,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				this._oDescription = this.getAggregation("customDescription");
 			} else {
 				this._oDescription = new sap.m.Text({
+					id: this.getId() + "-customDescription",
 					text: this.getDescription(),
 					textAlign: sap.ui.core.TextAlign.Center,
 					textDirection: this.getTextDirection()

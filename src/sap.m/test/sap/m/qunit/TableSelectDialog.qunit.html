@@ -621,6 +621,16 @@
 
 		});
 
+		/********************************************************************************/
+		module("Accessibility");
+		/********************************************************************************/
+
+		test("Aria-live attribute of the InfoToolBar should be set to 'polite'", function() {
+			oButton1.firePress();
+			equals(oTableSelectDialog1._oTable.getInfoToolbar().$().attr("aria-live"), "polite", "The aria-live attribute is set to polite");
+			oTableSelectDialog1._oCancelButton.firePress()
+		});
+
 	</script>
 	</head>
 	<body id="body" class="sapUiBody">

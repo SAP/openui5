@@ -66,6 +66,8 @@ sap.ui.define(['jquery.sap.global'],
 			this.renderHandles(oRm, oSlider);
 			oRm.write("</div>");
 
+			this.renderLabels(oRm, oSlider);
+
 			if (oSlider.getName()) {
 				this.renderInput(oRm, oSlider);
 			}
@@ -83,6 +85,12 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.write(' aria-hidden="true"></div>');
 		};
 
+		/**
+		 * This hook method is reserved for derived classes to render more handles.
+		 *
+		 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the render output buffer.
+		 * @param {sap.ui.core.Control} oControl An object representation of the slider that should be rendered.
+		 */
 		SliderRenderer.renderHandles = function(oRm, oSlider) {
 			this.renderHandle(oRm, oSlider,  {
 				id: oSlider.getId() + "-handle"
@@ -201,6 +209,14 @@ sap.ui.define(['jquery.sap.global'],
 		SliderRenderer.addHandleClass = function(oRm, oSlider) {
 			oRm.addClass(SliderRenderer.CSS_CLASS + "Handle");
 		};
+
+		/**
+		 * This hook method is reserved for derived classes to render the labels.
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+		 * @param {sap.ui.core.Control} oSlider An object representation of the control that should be rendered.
+		 */
+		SliderRenderer.renderLabels = function (oRm, oSlider) {};
 
 		return SliderRenderer;
 

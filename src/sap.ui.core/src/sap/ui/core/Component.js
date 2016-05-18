@@ -241,7 +241,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				/*
 				 * Component data
 				 */
-				componentData: true
+				componentData: 'any'
 			},
 			version : "0.0",
 			/*enable/disable type validation by MessageManager

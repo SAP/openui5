@@ -1535,7 +1535,7 @@
 			oList.focus();
 
 			sap.ui.test.qunit.triggerKeydown(oListItem1.getFocusDomRef(), "TAB", true, false, false);
-			strictEqual(document.activeElement, oList.getItemsContainerDomRef(), "Focus is forwarded before the table");
+			strictEqual(document.activeElement, oList.getDomRef('before'), "Focus is forwarded before the table");
 
 			oInput1.focus();
 			sap.ui.test.qunit.triggerKeydown(document.activeElement, "TAB");

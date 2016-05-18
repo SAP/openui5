@@ -38,6 +38,8 @@
 			return Array.prototype.join.call(arguments);
 		},
 		formatter : function($) { return $; },
+		test: function(value) { return true; },
+		compare: function(a, b) { return 0; },
 		instancedType : new sap.ui.model.type.Date({
 			pattern : "yyyy-MM-dd"
 		}),
@@ -47,6 +49,8 @@
 	var oController = {
 		mytype : sap.ui.model.type.String,
 		myformatter : function($) { return $; },
+		mytest: function(value) { return true; },
+		mycompare: function(a, b) { return 0; },
 		myInstancedType : new sap.ui.model.type.Date({
 			pattern : "yyyy-MM-dd"
 		}),
@@ -75,8 +79,8 @@
 		equal(parse, sap.ui.base.BindingParser.complexParser, "configuration should have set the right binding parser");
 	});
 
-	test("Single Binding with formatter", function(){
-		var o= parse("{path:'something', formatter: 'Global.formatter'}");
+	test("Single Binding with global formatter", function(){
+		var o = parse("{path:'something', formatter: 'Global.formatter'}");
 		equal(typeof o, "object", "parse should return an object");
 		equal(o.parts, undefined, "binding info should not be a composite binding info");
 		equal(o.path, "something", "path should be as specified");
@@ -84,21 +88,47 @@
 		equal(o.formatter, Global.formatter, "parse should return the global formatter function");
 	});
 
-	test("Single Binding with type", function(){
+	test("Single Binding with local formatter", function(){
+		var o = parse("{path:'something', formatter: '.myformatter'}", oController);
+		equal(typeof o, "object", "parse should return an object");
+		equal(o.parts, undefined, "binding info should not be a composite binding info");
+		equal(o.path, "something", "path should be as specified");
+		equal(o.type, undefined, "parse should not return a type name");
+		equal(o.formatter.guid, oController.myformatter.guid, "parse should return the local formatter function");
+	});
+
+	test("Single Binding with global type", function(){
 		var o = parse("{path:'something', type: 'Global.type'}");
 		equal(typeof o, "object", "parse should return an object");
 		equal(o.parts, undefined, "binding info should not be a composite binding info");
 		equal(o.path, "something", "path should be as specified");
 		ok(o.type instanceof sap.ui.model.type.String, "parse should return the global type");
-		equal(o.formatter, undefined, "parse should return the name of the formatter function");
+		equal(o.formatter, undefined, "parse should return no formatter");
 	});
 
-	test("Single Binding with event", function(){
+	test("Single Binding with local type", function(){
+		var o = parse("{path:'something', type: '.mytype'}", oController);
+		equal(typeof o, "object", "parse should return an object");
+		equal(o.parts, undefined, "binding info should not be a composite binding info");
+		equal(o.path, "something", "path should be as specified");
+		ok(o.type instanceof sap.ui.model.type.String, "parse should return the global type");
+		equal(o.formatter, undefined, "parse should return no formatter");
+	});
+
+	test("Single Binding with global event", function(){
 		var o = parse("{path:'something', events: {event: 'Global.eventHandler'}}");
 		equal(typeof o, "object", "parse should return an object");
 		equal(o.parts, undefined, "binding info should not be a composite binding info");
 		equal(o.path, "something", "path should be as specified");
 		equal(o.events.event, Global.eventHandler, "parse should return the global event handler function");
+	});
+
+	test("Single Binding with local event", function(){
+		var o = parse("{path:'something', events: {event: '.myeventHandler'}}", oController);
+		equal(typeof o, "object", "parse should return an object");
+		equal(o.parts, undefined, "binding info should not be a composite binding info");
+		equal(o.path, "something", "path should be as specified");
+		equal(o.events.event.guid, oController.myeventHandler.guid, "parse should return the local event handler function");
 	});
 
 	test("Single Binding with $ in property name", function(){
@@ -141,6 +171,26 @@
 		equal(o.filters.sOperator, "EQ", "operator should be as defined");
 	});
 
+	test("Single Binding with filter and custom global test function", function(){
+		var o = parse("{path:'something', filters: {path:'someFilterPath', test:'Global.test'}}");
+		equal(typeof o, "object", "parse should return an object");
+		equal(o.parts, undefined, "binding info should not be a composite binding info");
+		equal(o.path, "something", "path should be as specified");
+		ok(o.filters instanceof sap.ui.model.Filter, "parse should return the specified filter");
+		equal(o.filters.sPath, "someFilterPath", "filter path should return the specified path");
+		equal(o.filters.fnTest, Global.test, "test function should be resolved");
+	});
+
+	test("Single Binding with filter and custom local test function", function(){
+		var o = parse("{path:'something', filters: {path:'someFilterPath', test:'.mytest'}}", oController);
+		equal(typeof o, "object", "parse should return an object");
+		equal(o.parts, undefined, "binding info should not be a composite binding info");
+		equal(o.path, "something", "path should be as specified");
+		ok(o.filters instanceof sap.ui.model.Filter, "parse should return the specified filter");
+		equal(o.filters.sPath, "someFilterPath", "filter path should return the specified path");
+		equal(o.filters.fnTest.guid, oController.mytest.guid, "test function should be resolved");
+	});
+
 	test("Single Binding with multiple filters", function(){
 		//TODO "Wrong parameters defined for filter."
 		var o = parse("{path:'something', filters: [{path:'someFilterPath', operator:'EQ', value1:'someCompareValue'},{path:'someFilterPath2', value1: 'someCompareValue', value2: 'someOtherCompareValue'}]}");
@@ -164,6 +214,26 @@
 		ok(o.sorter instanceof sap.ui.model.Sorter, "parse should return the specified sorter");
 		equal(o.sorter.sPath, "someSortPath", "sorter path should return the specified path");
 		equal(o.sorter.bDescending, false, "sort should not be descending");
+	});
+
+	test("Single Binding with sorter and custom global comparator function", function(){
+		var o = parse("{path:'something', sorter: {path:'someSortPath', comparator: 'Global.compare'}}");
+		equal(typeof o, "object", "parse should return an object");
+		equal(o.parts, undefined, "binding info should not be a composite binding info");
+		equal(o.path, "something", "path should be as specified");
+		ok(o.sorter instanceof sap.ui.model.Sorter, "parse should return the specified sorter");
+		equal(o.sorter.sPath, "someSortPath", "sorter path should return the specified path");
+		equal(o.sorter.fnCompare, Global.compare, "compare function should be resolved");
+	});
+
+	test("Single Binding with sorter and custom local comparator function", function(){
+		var o = parse("{path:'something', sorter: {path:'someSortPath', comparator: '.mycompare'}}", oController);
+		equal(typeof o, "object", "parse should return an object");
+		equal(o.parts, undefined, "binding info should not be a composite binding info");
+		equal(o.path, "something", "path should be as specified");
+		ok(o.sorter instanceof sap.ui.model.Sorter, "parse should return the specified sorter");
+		equal(o.sorter.sPath, "someSortPath", "sorter path should return the specified path");
+		equal(o.sorter.fnCompare.guid, oController.mycompare.guid, "compare function should be resolved");
 	});
 
 	test("Single Binding with multiple sorters", function(){

@@ -427,6 +427,8 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 
 			rm.write(">");
 
+			this._renderIcon(rm);
+
 			if (control.getExpanded()) {
 
 				var expandIconControl = this._getExpandIconControl();
@@ -434,11 +436,8 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 				expandIconControl.setSrc(this.getExpanded() ? NavigationListItem.collapseIcon : NavigationListItem.expandIcon);
 				expandIconControl.setTooltip(this._getExpandIconTooltip(!this.getExpanded()));
 
-				this._renderIcon(rm);
 				this._renderText(rm);
 				rm.renderControl(expandIconControl);
-			} else {
-				this._renderIcon(rm);
 			}
 
 			rm.write("</div>");
@@ -558,29 +557,19 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 		 * @private
 		 */
 		NavigationListItem.prototype._renderIcon =  function(rm) {
-			rm.write('<span');
-
-			rm.addClass("sapUiIcon");
-			rm.addClass("sapTntNavLIGroupIcon");
-
-			rm.writeAttribute("aria-hidden", true);
-
 			var icon = this.getIcon();
 			var iconInfo = IconPool.getIconInfo(icon);
+			var classes = ["sapUiIcon", "sapTntNavLIGroupIcon"];
 
 			if (iconInfo && !iconInfo.suppressMirroring) {
-				rm.addClass("sapUiIconMirrorInRTL");
+				classes.push("sapUiIconMirrorInRTL");
 			}
 
-			if (iconInfo) {
-				rm.writeAttribute("data-sap-ui-icon-content", iconInfo.content);
-				rm.addStyle("font-family", "'" + iconInfo.fontFamily + "'");
+			if (icon) {
+				rm.writeIcon(this.getIcon(), classes, { "aria-hidden" : true});
+			} else {
+				rm.write('<span class="sapUiIcon sapTntNavLIGroupIcon" aria-hidden="true"></span>');
 			}
-
-			rm.writeClasses();
-			rm.writeStyles();
-
-			rm.write("></span>");
 
 		};
 

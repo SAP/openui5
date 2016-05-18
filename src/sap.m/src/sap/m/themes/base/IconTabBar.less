@@ -27,6 +27,14 @@
 	cursor: pointer;
 }
 
+.sapMITBTextOnly .sapMITBFilter .sapMITBText {
+	line-height: 1rem;
+	margin: 0;
+	padding: 0;
+	text-align: left;
+	width: auto;
+}
+
 .sapMITBTextUpperCase .sapMITBText {
 	text-transform: uppercase;
 }
@@ -119,9 +127,21 @@ html.sap-phone .sapMITBScrollContainer {
 /* Arrow */
 
 .sapMITBContentArrow {
-	border-bottom: 0.25rem solid transparent;
+	border-bottom: 0.125rem solid transparent;
 	box-sizing: border-box;
 	height: 1rem;
+}
+
+.sapMITBTextOnly > .sapMITBVertical.sapMITBFilter > .sapMITBText + .sapMITBContentArrow {
+	height: 0.625rem;
+}
+
+.sapMITBInLine.sapMITBTextOnly > .sapMITBVertical.sapMITBFilter > .sapMITBText + .sapMITBContentArrow {
+	height: 0.75rem;
+}
+
+html.sap-phone :not(.sapMITBInLine).sapMITBTextOnly > .sapMITBVertical.sapMITBFilter > .sapMITBText + .sapMITBContentArrow {
+	height: 0.5rem;
 }
 
 .sapMITBNoText > .sapMITBFilter > .sapMITBContentArrow {
@@ -188,10 +208,13 @@ html.sap-phone .sapMITBContent {
 
 .sapMITBTextOnly .sapMITBTab {
 	height: 1rem;
-	margin-bottom: 0.1875rem;
-	padding: 0;
+	padding: 0.5rem 0 0.375rem 0;
 	text-align: left;
 	width: auto;
+}
+
+html.sap-phone .sapMITBTextOnly .sapMITBTab {
+	padding: 0.25rem 0 0.25rem 0;
 }
 
 html[dir=rtl] .sapMITBTextOnly .sapMITBTab {
@@ -290,8 +313,16 @@ html.sap-phone .sapMITBFilter:first-child {
 	height: 5rem;
 }
 
+.sapMITBTextOnly > .sapMITBVertical {
+	height: 3.5rem;
+}
+
+.sapMITBInLine.sapMITBTextOnly > .sapMITBVertical {
+	height: 3rem;
+}
+
 html.sap-phone .sapMITBTextOnly > .sapMITBVertical {
-	height: 2.9375rem;
+	height: 3rem;
 }
 
 .sapMITBNoText > .sapMITBVertical {
@@ -420,6 +451,12 @@ html.sap-phone .sapMITBAll .sapMITBText {
 	padding-right: 0.5rem;
 }
 
+/* Tab Filter In Line */
+
+.sapMITBInLine .sapMITBFilter > .sapMITBText {
+	margin: 1rem 0 0.1875rem 0;
+}
+
 .sapMITBFilter:last-child,
 .sapMITBNoText .sapMITBFilter:last-child {
 	padding-right: 1rem;
@@ -483,19 +520,12 @@ html.sap-phone .sapMITBSepLine {
 
 .sapMITBArrowScrollLeftTextOnly {
 	left: 0.25rem;
-	padding: 1.1rem 0.4rem;
+	padding: 1.0625rem 0.4rem;
 }
 
 .sapMITBArrowScrollRightTextOnly {
-	padding: 1.1rem 0.4rem;
+	padding: 1.0625rem 0.4rem;
 	right: 0.25rem;
-}
-
-.sapMITBStretch {
-	.sapMITBArrowScrollLeftTextOnly,
-	.sapMITBArrowScrollRightTextOnly {
-		padding: 2.1rem 0.4rem
-	}
 }
 
 html.sap-phone .sapMITBArrowScrollLeft {
@@ -510,19 +540,17 @@ html.sap-phone .sapMITBArrowScrollRight {
 
 html.sap-phone .sapMITBArrowScrollLeftTextOnly {
 	left: 0.25rem;
-	padding: 1.1rem 0 0.75rem;
+	padding: 0.75rem 0;
 }
 
 html.sap-phone .sapMITBArrowScrollRightTextOnly {
-	padding: 1.1rem 0 0.75rem;
+	padding: 0.75rem 0;
 	right: 0.25rem;
 }
 
-html.sap-phone .sapMITB.sapMITBStretch {
-	.sapMITBArrowScrollLeftTextOnly,
-	.sapMITBArrowScrollRightTextOnly {
-		padding: 1.1rem 0 0.75rem
-	}
+html.sap-phone .sapMITB .sapMITBArrowScrollLeftTextOnly.sapMITBArrowScrollLeftInLine,
+html.sap-phone .sapMITB .sapMITBArrowScrollRightTextOnly.sapMITBArrowScrollRightInLine {
+	padding: 0.875rem 0;
 }
 
 .sapMITBNotScrollable > .sapMITBArrowScroll {
@@ -567,19 +595,17 @@ html.sap-phone .sapMITB.sapMITBStretch {
 
 		.sapMITBArrowScrollLeftTextOnly {
 			left: 0.25rem;
-			padding: 1.1rem 0 0.75rem;
+			padding: 0.75rem 0;
 		}
 
 		.sapMITBArrowScrollRightTextOnly {
-			padding: 1.1rem 0 0.75rem;
+			padding: 0.75rem 0;
 			right: 0.25rem;
 		}
-	}
 
-	.sapMITB.sapMITBStretch {
-		.sapMITBArrowScrollLeftTextOnly,
-		.sapMITBArrowScrollRightTextOnly {
-			padding: 1.25rem 0 0.75rem
+		.sapMITBArrowScrollLeftTextOnly.sapMITBArrowScrollLeftInLine,
+		.sapMITBArrowScrollRightTextOnly.sapMITBArrowScrollRightInLine {
+			padding: 1.0625rem 0;
 		}
 	}
 }

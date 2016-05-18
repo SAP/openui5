@@ -22,86 +22,43 @@ sap.ui.define([], function() {
 		var sTooltipText = oControl._getTooltipText();
 		var sAriaText = oControl._getAriaText();
 		var sHeaderImage = oControl.getHeaderImage();
+		var bHasPress = oControl.hasListeners("press");
 
 		oRm.write("<div");
-
 		oRm.writeControlData(oControl);
 		if (sTooltipText) {
 			oRm.writeAttributeEscaped("title", sTooltipText);
 		}
 		oRm.addClass("sapMGT");
 		oRm.addClass(oControl.getFrameType());
-
-		if (oControl.hasListeners("press")) {
+		if (bHasPress) {
 			oRm.writeAttribute("role", "button");
 		} else {
 			oRm.writeAttribute("role", "presentation");
 		}
 		oRm.writeAttributeEscaped("aria-label", sAriaText);
-
-		if (oControl.hasListeners("press") && oControl.getState() != sap.m.LoadState.Disabled) {
+		if (oControl.getState() != sap.m.LoadState.Disabled) {
 			oRm.addClass("sapMPointer");
 			oRm.writeAttribute("tabindex", "0");
 		}
-
 		if (oControl.getBackgroundImage()) {
 			oRm.write(" style='background-image:url(");
 			oRm.writeEscaped(oControl.getBackgroundImage());
 			oRm.write(");'");
 			oRm.addClass("sapMGTBackgroundImage");
 		}
-
 		if (oControl.getMode() === sap.m.GenericTileMode.HeaderMode) {
 			oRm.addClass("sapMGTHeaderMode");
 		}
-
 		oRm.writeClasses();
 		oRm.write(">");
-		var sState = oControl.getState();
-		if (sState != sap.m.LoadState.Loaded) {
-			oRm.write("<div");
-			oRm.addClass("sapMGTOverlay");
-			oRm.writeClasses();
-			oRm.writeAttribute("id", oControl.getId() + "-overlay");
-			if (sTooltipText) {
-				oRm.writeAttributeEscaped("title", sTooltipText);
-			}
-			oRm.write(">");
-			switch (sState) {
-				case sap.m.LoadState.Disabled :
-				case sap.m.LoadState.Loading :
-					oControl._oBusy.setBusy(sState == sap.m.LoadState.Loading);
-					oRm.renderControl(oControl._oBusy);
-					break;
-				case sap.m.LoadState.Failed :
-					oRm.write("<div");
-					oRm.writeAttribute("id", oControl.getId() + "-failed-ftr");
-					oRm.addClass("sapMGenericTileFtrFld");
-					oRm.writeClasses();
-					oRm.write(">");
-					oRm.write("<div");
-					oRm.writeAttribute("id", oControl.getId() + "-failed-icon");
-					oRm.addClass("sapMGenericTileFtrFldIcn");
-					oRm.writeClasses();
-					oRm.write(">");
-					oRm.renderControl(oControl._oWarningIcon);
-					oRm.write("</div>");
 
-					oRm.write("<div");
-					oRm.writeAttribute("id", oControl.getId() + "-failed-text");
-					oRm.addClass("sapMGenericTileFtrFldTxt");
-					oRm.writeClasses();
-					oRm.write(">");
-					oRm.renderControl(oControl.getAggregation("_failedMessageText"));
-					oRm.write("</div>");
-
-					oRm.write("</div>");
-					break;
-				default :
-			}
-
-			oRm.write("</div>");
+		if (oControl.getState() !== sap.m.LoadState.Loaded) {
+			this._renderStateOverlay(oRm, oControl, sTooltipText);
+		} else {
+			this._renderHoverOverlay(oRm, oControl);
 		}
+		this._renderFocusDiv(oRm, oControl);
 
 		oRm.write("<div");
 		oRm.addClass("sapMGTHdrContent");
@@ -114,12 +71,10 @@ sap.ui.define([], function() {
 		if (sHeaderImage) {
 			oRm.renderControl(oControl._oImage);
 		}
-
 		this._renderHeader(oRm, oControl);
 		if (oControl.getSubheader()) {
 			this._renderSubheader(oRm, oControl);
 		}
-
 		oRm.write("</div>");
 
 		oRm.write("<div");
@@ -136,12 +91,72 @@ sap.ui.define([], function() {
 			oRm.renderControl(aTileContent[i]);
 		}
 		oRm.write("</div>");
+		oRm.write("</div>");
+	};
+
+	GenericTileRenderer._renderFocusDiv = function(oRm, oControl) {
 		oRm.write("<div");
 		oRm.addClass("sapMGTFocusDiv");
 		oRm.writeClasses();
 		oRm.writeAttribute("id", oControl.getId() + "-focus");
 		oRm.write(">");
 		oRm.write("</div>");
+	};
+
+	GenericTileRenderer._renderStateOverlay = function(oRm, oControl, sTooltipText) {
+		var sState = oControl.getState();
+		oRm.write("<div");
+		oRm.addClass("sapMGTOverlay");
+		oRm.writeClasses();
+		oRm.writeAttribute("id", oControl.getId() + "-overlay");
+		if (sTooltipText) {
+			oRm.writeAttributeEscaped("title", sTooltipText);
+		}
+		oRm.write(">");
+		switch (sState) {
+			case sap.m.LoadState.Loading :
+				oControl._oBusy.setBusy(sState == sap.m.LoadState.Loading);
+				oRm.renderControl(oControl._oBusy);
+				break;
+			case sap.m.LoadState.Failed :
+				oRm.write("<div");
+				oRm.writeAttribute("id", oControl.getId() + "-failed-ftr");
+				oRm.addClass("sapMGenericTileFtrFld");
+				oRm.writeClasses();
+				oRm.write(">");
+				oRm.write("<div");
+				oRm.writeAttribute("id", oControl.getId() + "-failed-icon");
+				oRm.addClass("sapMGenericTileFtrFldIcn");
+				oRm.writeClasses();
+				oRm.write(">");
+				oRm.renderControl(oControl._oWarningIcon);
+				oRm.write("</div>");
+
+				oRm.write("<div");
+				oRm.writeAttribute("id", oControl.getId() + "-failed-text");
+				oRm.addClass("sapMGenericTileFtrFldTxt");
+				oRm.writeClasses();
+				oRm.write(">");
+				oRm.renderControl(oControl.getAggregation("_failedMessageText"));
+				oRm.write("</div>");
+
+				oRm.write("</div>");
+				break;
+			default :
+		}
+		oRm.write("</div>");
+	};
+
+	GenericTileRenderer._renderHoverOverlay = function(oRm, oControl) {
+		oRm.write("<div");
+		if (oControl.getBackgroundImage()) {
+			oRm.addClass("sapMGTWithImageHoverOverlay");
+		} else {
+			oRm.addClass("sapMGTWithoutImageHoverOverlay");
+		}
+		oRm.writeClasses();
+		oRm.writeAttribute("id", oControl.getId() + "-hover-overlay");
+		oRm.write(">");
 		oRm.write("</div>");
 	};
 

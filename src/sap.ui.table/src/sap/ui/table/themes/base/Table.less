@@ -16,7 +16,6 @@
  * sapUiTableHScr   - display horizontal scrollbar
  * sapUiTableRSel   - display row selector column
  * sapUiTableCHdr   - display column header row
- * sapUiTableShNoDa - indicator to enable empty table message
  * sapUiTableEmpty  - display the empty table message
  */
 
@@ -212,11 +211,6 @@
 	white-space: nowrap;
 }
 
-// Reserve space for vertical scrollbar in header (needed for _syncColumnHeaders)
-.sapUiTableVScr .sapUiTableColHdrScr {
-	margin-right: 16px;
-}
-
 .sapUiTableColHdrFixed {
 	display: inline-block;
 	vertical-align: top;
@@ -224,6 +218,10 @@
 
 .sapUiTableVScr .sapUiTableCtrlScr {
 	margin-right: 16px;
+}
+
+html[data-sap-ui-browser^="ed"] .sapUiTableVScr .sapUiTableCtrlScr {
+	margin-right: 12px;
 }
 
 .sapUiTable:not(.sapUiTableVScr) .sapUiTableColHdr .sapUiTableCol:last-child {
@@ -416,7 +414,7 @@
 	white-space: pre-wrap;
 }
 
-.sapUiTableShNoDa.sapUiTableEmpty .sapUiTableCtrlEmpty {
+.sapUiTableEmpty .sapUiTableCtrlEmpty {
 	display: block;
 }
 
@@ -585,8 +583,8 @@ html[data-sap-ui-browser^="ie"] .sapUiTableHSb {
 	height: 18px;
 }
 
-.sapUiTableRSel .sapUiTableHSb {
-	padding-left: @sapUiTableRowHdrWidth;
+html[data-sap-ui-browser^="ed"] .sapUiTableHSb {
+	height: 12px;
 }
 
 .sapUiTableHScr .sapUiTableHSb {
@@ -597,7 +595,9 @@ html[data-sap-ui-browser^="ie"] .sapUiTableHSb {
 	margin-right: 16px; /* 17px */
 }
 
-
+html[data-sap-ui-browser^="ed"] .sapUiTableVScr .sapUiTableHSb {
+	margin-right: 12px;
+}
 /*******************************************************************************
  * CHILD CONTROL STYLES
  ******************************************************************************/

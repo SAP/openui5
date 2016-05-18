@@ -1,9 +1,40 @@
 <core:View controllerName="sap.m.sample.GenericTileStates.Page"
 	xmlns="sap.m" xmlns:core="sap.ui.core">
-	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Cumulative Totals"
-		subheader="Expenses" frameType="OneByOne" state="Loading">
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Status Loaded - no press event"
+		subheader="Subheader">
 		<tileContent>
-			<TileContent footer="Current Quarter" unit="EUR">
+			<TileContent unit="Unit" footer="Footer">
+				<content>
+					<ImageContent src="sap-icon://line-charts"/>
+				</content>
+			</TileContent>
+		</tileContent>
+	</GenericTile>
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Status Loaded - with press event"
+		subheader="Subheader" press="press">
+		<tileContent>
+			<TileContent unit="Unit" footer="Footer">
+				<content>
+					<ImageContent src="sap-icon://home-share"/>
+				</content>
+			</TileContent>
+		</tileContent>
+	</GenericTile>
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Status Loading - no press event"
+		subheader="Subheader" frameType="OneByOne" state="Loading">
+		<tileContent>
+			<TileContent unit="Unit" footer="Footer">
+				<content>
+					<NumericContent scale="M" value="2.1"
+						valueColor="Good" indicator="Up" />
+				</content>
+			</TileContent>
+		</tileContent>
+	</GenericTile>
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Status Loading - with press event"
+		subheader="Subheader" frameType="OneByOne" state="Loading" press="press">
+		<tileContent>
+			<TileContent unit="Unit" footer="Footer">
 				<content>
 					<NumericContent scale="M" value="1.96"
 						valueColor="Error" indicator="Down" />
@@ -11,14 +42,27 @@
 			</TileContent>
 		</tileContent>
 	</GenericTile>
-	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Comparative Annual Totals"
-		subheader="Expenses By Region" frameType="TwoByOne" state="Failed">
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Status Failed - no press event"
+		subheader="Subheader" frameType="TwoByOne" state="Failed">
 		<tileContent>
-			<TileContent footer="Actual and Target" unit="EUR">
+			<TileContent unit="Unit" footer="Footer">
 				<content>
 					<FeedContent
 						contentText="@@notify Great outcome of the Presentation today. The new functionality and the design was well received. Berlin, Tokyo, Rome, Budapest, New York, Munich, London"
-						subheader="about 1 minute ago in Computer Market" value="9">
+						subheader="Subheader" value="9">
+					</FeedContent>
+				</content>
+			</TileContent>
+		</tileContent>
+	</GenericTile>
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Status Failed - with press event"
+		subheader="Subheader" frameType="TwoByOne" state="Failed" press="press">
+		<tileContent>
+			<TileContent unit="Unit" footer="Footer">
+				<content>
+					<FeedContent
+						contentText="@@notify Great outcome of the Presentation today. The new functionality and the design was well received. Berlin, Tokyo, Rome, Budapest, New York, Munich, London"
+						subheader="Subheader" value="9">
 					</FeedContent>
 				</content>
 			</TileContent>
@@ -30,11 +74,11 @@
 				backgroundImage="test-resources/sap/m/demokit/sample/GenericTileAsFeedTile/images/NewsImage1.png"
 				frameType="TwoByOne" state="Loading">
 				<tileContent>
-					<TileContent footer="August 21, 2013">
+					<TileContent unit="Unit" footer="Footer">
 						<content>
 							<NewsContent
-								contentText="Wind Map: Monitoring Real-Time and Fore-casted Wind Conditions over the Globe"
-								subheader="Today, SAP News">
+								contentText="Status Loading"
+								subheader="Subheader">
 							</NewsContent>
 						</content>
 					</TileContent>
@@ -42,13 +86,13 @@
 			</GenericTile>
 			<GenericTile
 				backgroundImage="test-resources/sap/m/demokit/sample/GenericTileAsFeedTile/images/NewsImage2.png"
-				frameType="TwoByOne" state="Loaded">
+				frameType="TwoByOne" state="Loaded" press="press">
 				<tileContent>
-					<TileContent footer="August 21, 2013">
+					<TileContent unit="Unit" footer="Footer">
 						<content>
 							<NewsContent
-								contentText="Wind Map: Monitoring Real-Time and Fore-casted Wind Conditions over the Globe"
-								subheader="Today, SAP News">
+								contentText="Status Loaded"
+								subheader="Subheader">
 							</NewsContent>
 						</content>
 					</TileContent>
@@ -56,10 +100,10 @@
 			</GenericTile>
 		</tiles>
 	</SlideTile>
-	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Cumulative Totals"
-		subheader="Expenses" frameType="OneByOne" state="Disabled">
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Status Disabled"
+		subheader="Subheader" frameType="OneByOne" state="Disabled">
 		<tileContent>
-			<TileContent footer="Notification Text" unit="EUR">
+			<TileContent footer="Footer" unit="Unit">
 				<content>
 					<NumericContent value="3"
 						icon="sap-icon://travel-expense" />
@@ -67,4 +111,15 @@
 			</TileContent>
 		</tileContent>
 	</GenericTile>
-</core:View>
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Status Disabled - with press event"
+		subheader="Subheader" frameType="OneByOne" state="Disabled" press="press">
+		<tileContent>
+			<TileContent footer="Footer" unit="Unit">
+				<content>
+					<NumericContent value="3"
+						icon="sap-icon://travel-expense" />
+				</content>
+			</TileContent>
+		</tileContent>
+	</GenericTile>
+	</core:View>

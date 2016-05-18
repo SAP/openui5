@@ -44,6 +44,20 @@
 	-webkit-focus-ring-color: none;
 }
 
+.sapMCb.sapMCbWarn .sapMCbBg {
+	border-color: @sapUiFieldWarningColor;
+	&.sapMCbMarkChecked:before {
+		color: darken(@sapUiFieldWarningColor,100);
+	}
+}
+
+.sapMCb.sapMCbErr .sapMCbBg {
+	border-color: @sapUiFieldInvalidColor;
+	&.sapMCbMarkChecked:before {
+		color: @sapUiFieldInvalidColor;
+	}
+}
+
 .sapUiForm .sapMCbBg { /* In forms, align left with '0.0625rem' ( the focus width) */
 	left: 0.0625rem;
 }
@@ -153,12 +167,12 @@ html.sap-desktop {
 
 /* Read only */
 .sapMCbRo .sapMCbBg {
-	background-color: @sapUiBaseBG;
+	background-color: @sapUiFieldReadOnlyBackground;
 	border-color: @sapUiFieldBorderColor;
 }
 
 .sapMCbRo > .sapMCbBg.sapMCbMarkChecked:before {
-	color: @sapUiContentIconColor;
+	color: @sapUiContentNonInteractiveIconColor;
 }
 
 /* Compact size */

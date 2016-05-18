@@ -395,6 +395,13 @@
 		  "samples": ["sap.m.sample.Image"]
 		},
 		{
+		  "id": "sap.m.ImageContent",
+		  "name": "ImageContent",
+		  "category": "Tile",
+		  "since": "1.38",
+		  "samples": ["sap.m.sample.ImageContent"]
+		},
+		{
 		  "id": "sap.m.Input",
 		  "name": "Input",
 		  "category": "User Input",
@@ -853,6 +860,14 @@
 		  ]
 		},
 		{
+			  "id": "sap.m.RangeSlider",
+			  "name": "RangeSlider",
+			  "category": "User Input",
+			  "since": "1.40",
+			  "formFactors": "L",
+			  "samples": ["sap.m.sample.RangeSlider"]
+		},
+		{
 		  "id": "sap.m.SelectDialog",
 		  "name": "Select Dialog",
 		  "category": "Popup",
@@ -1220,6 +1235,11 @@
 		  "name": "Dynamic Page FIORI 2.0 List Report floor plan",
 		  "description": "The Dynamic Page is a FIORI 2.0 generation layout control. The sample shows how the List Report floor plan can be implemented."
 		},
+        {
+          "id": "sap.m.sample.DynamicPageAnalyticalTable",
+          "name": "Dynamic Page FIORI 2.0 Analytical Table floor plan",
+          "description": "The Dynamic Page is a FIORI 2.0 generation layout control. The sample shows how the AnalyticalTable works inside it."
+        },
 		{
 		  "id": "sap.m.sample.DateRangeSelection",
 		  "name": "Date Range Selection",
@@ -1739,6 +1759,11 @@
 		  "name": "Tokenizer",
 		  "description": "Tokenizer displays multiple tokens."
 		},
+		{
+			"id": "sap.m.sample.RangeSlider",
+			"name": "RangeSlider",
+			"description": "With the RangeSlider a user can specify range from a numerical interval."
+	  	},
 		{
 		  "id": "sap.m.sample.Slider",
 		  "name": "Slider",
@@ -2282,22 +2307,22 @@
 		{
 		  "id": "sap.m.sample.GenericTileAsLaunchTile",
 		  "name": "Launch Tile",
-		  "description": "Shows samples of Launch Tile, which can contain header, subheader, image content, and footer."
+		  "description": "Shows Launch Tile samples that can contain header, subheader, image content, unit, and a footer."
 		},
 		{
 		  "id": "sap.m.sample.GenericTileAsMonitorTile",
 		  "name": "Monitor Tile",
-		  "description": "Shows samples of Monitor Tile, which can contain header, subheader, icon, key value, unit, and footer."
+		  "description": "Shows Monitor Tile samples that can contain header, subheader, icon, key value, unit, and a footer."
 		},
 		{
 		  "id": "sap.m.sample.GenericTileAsKPITile",
 		  "name": "KPI Tile",
-		  "description": "Shows samples of KPI Tile, which can contain header, subheader, key value, trend, unit, and footer."
+		  "description": "Shows KPI Tile samples that can contain header, subheader, key value, trend, scale, unit, and a footer."
 		},
 		{
 		  "id": "sap.m.sample.GenericTileAsFeedTile",
-		  "name": "Feed Tile",
-		  "description": "Shows samples of Feed Tile and News Tile, which can contain feed content, news content, and footer."
+		  "name": "Feed and News Tile",
+		  "description": "Shows Feed Tile and News Tile samples that can contain feed content, news content, and a footer."
 		},
 		{
 		  "id": "sap.m.sample.TileContent",
@@ -2348,6 +2373,11 @@
 		  "id": "sap.m.sample.PlanningCalendarMinMax",
 		  "name": "PlanningCalendar - with min. and max. date",
 		  "description": "PlanningCalendar with min. date 2000-01-01 and max. date 2050-12-31"
+		},
+		{
+		  "id": "sap.m.sample.ImageContent",
+		  "name": "ImageContent",
+		  "description": "Shows ImageContent that can include an icon, a profile image, or a logo with a tooltip."
 		}
 		]
 	}

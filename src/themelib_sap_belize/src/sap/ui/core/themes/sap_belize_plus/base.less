@@ -4,6 +4,11 @@
 @sapTextColor: #fff;
 @sapLinkColor: lighten(#0070b1, 40);
 
+@sapErrorBackground:   darken(@sapNegativeColor, 60); // #550000
+@sapWarningBackground: darken(@sapCriticalColor, 50); // #5c3803
+@sapSuccessBackground: darken(@sapPositiveColor, 60); // #174417
+@sapNeutralBackground: darken(@sapNeutralColor, 60); // #393e41
+
 @sapNegativeColor: #ff8888;
 @sapCriticalColor: #fabd64;
 @sapPositiveColor: #abe2ab;
@@ -48,7 +53,7 @@
 @sapGroup_ContentBackground: @sapBaseColor;
 @sapGroup_ContentBorderColor: lighten(@sapGroup_ContentBackground, 10);
 
-@sapToolbar_SeparatorColor: lighten(@sapBaseColor, 8);
+@sapToolbar_SeparatorColor: fade(@sapPrimary3, 20);
 
 @sapList_HeaderBackground: darken(@sapBaseColor, 1.5);
 @sapList_BorderColor: lighten(@sapList_Background, 7);

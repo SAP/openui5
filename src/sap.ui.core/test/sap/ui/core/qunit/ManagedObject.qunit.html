@@ -326,6 +326,48 @@
 				oModel.setProperty("/value", "testvalue");
 			});
 
+			test("Bind property TwoWay with type", function() {
+				this.obj.bindProperty("value", {
+					path: "/value",
+					mode: "TwoWay",
+					type: new sap.ui.model.type.String()
+				});
+				equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+				equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
+				oModel.setProperty("/value", "newvalue");
+				equal(this.obj.getProperty("value"), "newvalue", "New model value must be reflected");
+				this.obj.setProperty("value", "othervalue");
+				equal(oModel.getProperty("/value"), "othervalue", "Control property change must update model");
+				equal(this.obj.getProperty("value"), "othervalue", "New property value must be kept");
+				oModel.setProperty("/value", "testvalue");
+			});
+
+			test("Bind property TwoWay with type as string", function() {
+				this.obj.bindProperty("value", {
+					path: "/value",
+					mode: "TwoWay",
+					type: "sap.ui.model.type.String"
+				});
+				equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+				equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
+				oModel.setProperty("/value", "newvalue");
+				equal(this.obj.getProperty("value"), "newvalue", "New model value must be reflected");
+				this.obj.setProperty("value", "othervalue");
+				equal(oModel.getProperty("/value"), "othervalue", "Control property change must update model");
+				equal(this.obj.getProperty("value"), "othervalue", "New property value must be kept");
+				oModel.setProperty("/value", "testvalue");
+			});
+
+			test("Bind property TwoWay with unkown type as string", function() {
+				raises(function() {
+					this.obj.bindProperty("value", {
+						path: "/value",
+						mode: "TwoWay",
+						type: "sap.unknown.Type"
+					});
+				}, "Raises unknown type error");
+			});
+
 			test("Bind property TwoWay with formatter & parts", function() {
 				this.obj.bindProperty("value", {
 					parts: [{
@@ -804,6 +846,112 @@
 				this.obj.bindAggregation("subObjects", "/list", this.template);
 				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
 				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+			});
+
+			test("Bind aggregation reuse templates on updates", function() {
+				var aOldObjects, aNewObjects;
+				oModel.setProperty("/changingList", [
+					{value: 1},
+					{value: 2},
+					{value: 3}
+				]);
+				this.obj.bindAggregation("subObjects", "/changingList", this.template);
+				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+				aOldObjects = this.obj.getAggregation("subObjects");
+				oModel.setProperty("/changingList", [
+					{value: 4},
+					{value: 5},
+					{value: 6},
+					{value: 7},
+					{value: 8}
+				]);
+				equal(this.obj.getAggregation("subObjects", []).length, 5, "Aggregation length should match model list length");
+				aNewObjects = this.obj.getAggregation("subObjects");
+				ok(aOldObjects[0] === aNewObjects[0], "First SubObject is reused after update");
+				ok(aOldObjects[1] === aNewObjects[1], "Second SubObject is reused after update");
+				ok(aOldObjects[2] === aNewObjects[2], "Third SubObject is reused after update");
+			});
+
+			test("Bind aggregation don't reuse factory objects on updates", function() {
+				var aOldObjects, aNewObjects;
+				oModel.setProperty("/changingList", [
+					{value: 1},
+					{value: 2},
+					{value: 3}
+				]);
+				this.obj.bindAggregation("subObjects", "/changingList", function(sIdSuffix, oContext) {
+					return this.template.clone(sIdSuffix)
+				}.bind(this));
+				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+				aOldObjects = this.obj.getAggregation("subObjects");
+				oModel.setProperty("/changingList", [
+					{value: 4},
+					{value: 5},
+					{value: 6},
+					{value: 7},
+					{value: 8}
+				]);
+				equal(this.obj.getAggregation("subObjects", []).length, 5, "Aggregation length should match model list length");
+				aNewObjects = this.obj.getAggregation("subObjects");
+				ok(aOldObjects[0] !== aNewObjects[0], "First SubObject is not reused after update");
+				ok(aOldObjects[1] !== aNewObjects[1], "Second SubObject is not reused after update");
+				ok(aOldObjects[2] !== aNewObjects[2], "Third SubObject is not reused after update");
+			});
+
+			test("Bind aggregation reuse templates on updates with extended change detection", function() {
+				var aOldObjects, aNewObjects;
+				oModel.setProperty("/changingList", [
+					{value: 1},
+					{value: 2},
+					{value: 3}
+				]);
+				this.obj.bUseExtendedChangeDetection = true;
+				this.obj.bindAggregation("subObjects", "/changingList", this.template);
+				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+				aOldObjects = this.obj.getAggregation("subObjects");
+				oModel.setProperty("/changingList", [
+					{value: 1},
+					{value: 2},
+					{value: 4},
+					{value: 5},
+					{value: 3}
+				]);
+				equal(this.obj.getAggregation("subObjects", []).length, 5, "Aggregation length should match model list length");
+				aNewObjects = this.obj.getAggregation("subObjects");
+				ok(aOldObjects[0] === aNewObjects[0], "First SubObject is reused after update");
+				ok(aOldObjects[1] === aNewObjects[1], "Second SubObject is reused after update");
+				ok(aOldObjects[2] === aNewObjects[4], "Third SubObject is reused after update");
+				this.obj.bUseExtendedChangeDetection = false;
+			});
+
+			test("Bind aggregation reuse factory objects on updates with extended change detection", function() {
+				var aOldObjects, aNewObjects;
+				oModel.setProperty("/changingList", [
+					{value: 1},
+					{value: 2},
+					{value: 3}
+				]);
+				this.obj.bUseExtendedChangeDetection = true;
+				this.obj.bindAggregation("subObjects", "/changingList", this.template);
+				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+				aOldObjects = this.obj.getAggregation("subObjects");
+				oModel.setProperty("/changingList", [
+					{value: 1},
+					{value: 2},
+					{value: 4},
+					{value: 5},
+					{value: 3}
+				]);
+				equal(this.obj.getAggregation("subObjects", []).length, 5, "Aggregation length should match model list length");
+				aNewObjects = this.obj.getAggregation("subObjects");
+				ok(aOldObjects[0] === aNewObjects[0], "First SubObject is reused after update");
+				ok(aOldObjects[1] === aNewObjects[1], "Second SubObject is reused after update");
+				ok(aOldObjects[2] === aNewObjects[4], "Third SubObject is reused after update");
+				this.obj.bUseExtendedChangeDetection = false;
 			});
 
 			test("Bind single aggregation", function() {

@@ -3,9 +3,13 @@
  */
 
 // Provides helper sap.ui.table.TableAccExtension.
-sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtension', './TableUtils'],
-	function(jQuery, TableExtension, TableAccRenderExtension, TableUtils) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './TableExtension', './TableAccRenderExtension', './TableUtils'],
+	function(jQuery, Control, library, TableExtension, TableAccRenderExtension, TableUtils) {
 	"use strict";
+
+	// shortcuts
+	var SelectionBehavior = library.SelectionBehavior,
+		SelectionMode = library.SelectionMode;
 
 	/*
 	 * Provides utility functions to handle acc info objects.
@@ -158,7 +162,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtensi
 				var iColumnNumber = TableUtils.getColumnIndexOfFocusedCell(oTable) + 1; //+1 -> we want to announce a count and not the index
 				var iRowNumber = TableUtils.getRowIndexOfFocusedCell(oTable) + oTable.getFirstVisibleRow() + 1; //same here + take virtualization into account
 				var iColCount = TableUtils.getVisibleColumnCount(oTable);
-				var iRowCount = TableUtils.getTotalRowCount(oTable, true);
+				var iRowCount = TableUtils.isNoDataVisible(oTable) ? 0 : TableUtils.getTotalRowCount(oTable, true);
 
 				bIsRowChanged = oExtension._iLastRowNumber != iRowNumber || (oExtension._iLastRowNumber == iRowNumber && oExtension._iLastColumnNumber == iColumnNumber);
 				bIsColChanged = oExtension._iLastColumnNumber != iColumnNumber;
@@ -395,7 +399,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtensi
 
 				case TableAccExtension.ELEMENTTYPES.ROWHEADER:
 					mAttributes["aria-labelledby"] = [sTableId + "-ariarowheaderlabel"];
-					if (oTable.getSelectionMode() !== sap.ui.table.SelectionMode.None) {
+					if (oTable.getSelectionMode() !== SelectionMode.None) {
 						var bSelected = mParams && mParams.rowSelected;
 						mAttributes["aria-selected"] = "" + bSelected;
 						var mTooltipTexts = oExtension.getAriaTextsForSelectionMode(true);
@@ -472,7 +476,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtensi
 
 					mAttributes["aria-labelledby"] = aLabels;
 
-					/*if (oTable.getSelectionMode() !== sap.ui.table.SelectionMode.None) {
+					/*if (oTable.getSelectionMode() !== SelectionMode.None) {
 						mAttributes["aria-selected"] = "false";
 					}*/
 
@@ -499,7 +503,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtensi
 					if (oTable.getTitle()) {
 						mAttributes["aria-labelledby"].push(oTable.getTitle().getId());
 					}
-					if (oTable.getSelectionMode() === sap.ui.table.SelectionMode.Multi || oTable.getSelectionMode() === sap.ui.table.SelectionMode.MultiToggle) {
+					if (oTable.getSelectionMode() === SelectionMode.Multi || oTable.getSelectionMode() === SelectionMode.MultiToggle) {
 						mAttributes["aria-multiselectable"] = "true";
 					}
 					break;
@@ -509,8 +513,8 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtensi
 					break;
 
 				case TableAccExtension.ELEMENTTYPES.COLUMNHEADER_ROW: //The area which contains the column headers (TableUtils.CELLTYPES.COLUMNHEADER)
-					if (oTable.getSelectionMode() === sap.ui.table.SelectionMode.None ||
-							 oTable.getSelectionBehavior() === sap.ui.table.SelectionBehavior.RowOnly) {
+					if (oTable.getSelectionMode() === SelectionMode.None ||
+							 oTable.getSelectionBehavior() === SelectionBehavior.RowOnly) {
 						mAttributes["role"] = "row";
 					}
 					break;
@@ -531,11 +535,11 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtensi
 
 				case TableAccExtension.ELEMENTTYPES.ROWHEADER_TD: //The "technical" row headers
 					mAttributes["role"] = "rowheader";
-					mAttributes["headers"] = oTable.getId() + "-colsel";
+					mAttributes["headers"] = sTableId + "-colsel";
 					if (mParams && typeof mParams.index === "number") {
-						mAttributes["aria-owns"] = oTable.getId() + "-rowsel" + mParams.index;
+						mAttributes["aria-owns"] = sTableId + "-rowsel" + mParams.index;
 					}
-					if (oTable.getSelectionMode() !== sap.ui.table.SelectionMode.None) {
+					if (oTable.getSelectionMode() !== SelectionMode.None) {
 						var bSelected = mParams && mParams.rowSelected;
 						mAttributes["aria-selected"] = "" + bSelected;
 					}
@@ -544,7 +548,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtensi
 				case TableAccExtension.ELEMENTTYPES.TR: //The rows
 					mAttributes["role"] = "row";
 					var bSelected = false;
-					if (mParams && typeof mParams.index === "number" && oTable.getSelectionMode() !== sap.ui.table.SelectionMode.None && oTable.isIndexSelected(mParams.index)) {
+					if (mParams && typeof mParams.index === "number" && oTable.getSelectionMode() !== SelectionMode.None && oTable.isIndexSelected(mParams.index)) {
 						mAttributes["aria-selected"] = "true";
 						bSelected = true;
 					}
@@ -572,6 +576,11 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtensi
 							}
 						}
 					}
+					break;
+
+				case TableAccExtension.ELEMENTTYPES.NODATA: //The no data container
+					var oNoData = oTable.getNoData();
+					mAttributes["aria-labelledby"] = [oNoData instanceof Control ? oNoData.getId() : (sTableId + "-noDataMsg")];
 					break;
 			}
 
@@ -688,8 +697,8 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtensi
 	 * @public (Part of the API for Table control only!)
 	 */
 	TableAccExtension.ELEMENTTYPES = {
-		DATACELL : 			TableUtils.CELLTYPES.DATACELL, 		// @see TableUtils.CELLTYPES
-		COLUMNHEADER : 		TableUtils.CELLTYPES.COLUMNHEADER, 	// @see TableUtils.CELLTYPES
+		DATACELL : 			TableUtils.CELLTYPES.DATACELL, 			// @see TableUtils.CELLTYPES
+		COLUMNHEADER : 		TableUtils.CELLTYPES.COLUMNHEADER, 		// @see TableUtils.CELLTYPES
 		ROWHEADER : 		TableUtils.CELLTYPES.ROWHEADER, 		// @see TableUtils.CELLTYPES
 		COLUMNROWHEADER : 	TableUtils.CELLTYPES.COLUMNROWHEADER, 	// @see TableUtils.CELLTYPES
 		ROOT : 				"ROOT", 								// The tables root dom element
@@ -700,7 +709,8 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtensi
 		TH : 				"TH", 									// The "technical" column headers
 		ROWHEADER_TD : 		"ROWHEADER_TD", 						// The "technical" row headers
 		TR : 				"TR", 									// The rows
-		TREEICON : 			"TREEICON" 								// The expand/collapse icon in the TreeTable
+		TREEICON : 			"TREEICON", 							// The expand/collapse icon in the TreeTable
+		NODATA :			"NODATA"								// The no data container
 	};
 
 	/*
@@ -892,12 +902,12 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtensi
 
 		var iSelectedIndicesCount = oTable._getSelectedIndicesCount();
 
-		if (sSelectionMode === sap.ui.table.SelectionMode.Single) {
+		if (sSelectionMode === SelectionMode.Single) {
 			mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT");
 			mTooltipTexts.mouse.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT");
 			mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_KEY");
 			mTooltipTexts.keyboard.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_KEY");
-		} else if (sSelectionMode === sap.ui.table.SelectionMode.Multi) {
+		} else if (sSelectionMode === SelectionMode.Multi) {
 			mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT_MULTI");
 			mTooltipTexts.mouse.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_MULTI");
 			mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_MULTI_KEY");
@@ -919,7 +929,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtensi
 				}
 			}
 
-		} else if (sSelectionMode === sap.ui.table.SelectionMode.MultiToggle) {
+		} else if (sSelectionMode === SelectionMode.MultiToggle) {
 			mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT_MULTI_TOGGLE");
 			// text for de-select is the same like for single selection
 			mTooltipTexts.mouse.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT");
@@ -939,4 +949,4 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableAccRenderExtensi
 
 	return TableAccExtension;
 
-}, /* bExport= */ true);
+});

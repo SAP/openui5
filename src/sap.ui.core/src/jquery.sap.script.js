@@ -421,26 +421,6 @@ sap.ui.define(['jquery.sap.global'],
 		}());
 
 	/**
-	 * This function generates a hash-code from a string
-	 * @param {string} sString The string to generate the hash-code from
-	 * @return {integer} The generated hash-code
-	 * @since 1.39
-	 * @public
-	 */
-	jQuery.sap.hashCode = function(sString) {
-		var iHash, iLength, iCharCode, i;
-		iHash = 0;
-		iLength = sString.length;
-
-		for (i = 0; i < iLength; i++) {
-			iCharCode = sString.charCodeAt(i);
-			iHash = (iHash << 5) - iHash + iCharCode;
-			iHash = iHash & iHash;
-		}
-		return iHash;
-	};
-
-	/**
 	 * Calculate delta of old list and new list
 	 * This implements the algorithm described in "A Technique for Isolating Differences Between Files"
 	 * (Commun. ACM, April 1978, Volume 21, Number 4, Pages 264-268)

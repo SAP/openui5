@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function ($, UI5Objec
    * @author Jonathan Benn
    * @alias sap.ui.test.gherkin.SimpleGherkinParser
    * @extends sap.ui.base.Object
-   * @since 1.38
+   * @since 1.40
    * @public
    */
   var oClass = UI5Object.extend('sap.ui.test.gherkin.SimpleGherkinParser', {});
