@@ -1289,14 +1289,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	};
 
 	/**
-	 * Callback handler which will be executed once the component is loaded. The
-	 * configuration object will be passed into the registered function but must not
-	 * be modified. Also a return value is not expected from the callback handler.
+	 * Callback handler which will be executed once the component is loaded. A copy of the
+	 * configuration object together with a copy of the manifest object will be passed into
+	 * the registered function.
+	 * Also a return value is not expected from the callback handler.
 	 * It will only be called for asynchronous manifest first scenarios.
 	 * <p>
 	 * Example usage:
 	 * <pre>
-	 * sap.ui.core.Component._fnLoadComponentCallback = function(oConfig) {
+	 * sap.ui.core.Component._fnLoadComponentCallback = function(oConfig, oManifest) {
 	 *   // do some logic with the config
 	 * }
 	 * </pre>
@@ -1502,13 +1503,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * @private
 	*/
 	function loadComponent(oConfig, mOptions) {
-
-		// if a callback is registered to the component load call it with the configuration
-		if (typeof Component._fnLoadComponentCallback === "function") {
-			// secure configuration from manipulation
-			var oConfigCopy = jQuery.extend(true, {}, oConfig);
-			Component._fnLoadComponentCallback(oConfigCopy);
-		}
 
 		var sName = oConfig.name,
 			sUrl = oConfig.url,
@@ -1830,6 +1824,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 					// preload the component
 					return preload(sComponentName, true);
 				}));
+
+				var fnCallLoadComponentCallback = function(oLoadedManifest) {
+					// if a callback is registered to the component load call it with the configuration
+					if (typeof Component._fnLoadComponentCallback === "function") {
+						// secure configuration and manifest from manipulation
+						var oConfigCopy = jQuery.extend(true, {}, oConfig);
+						var oManifestCopy = jQuery.extend(true, {}, oLoadedManifest);
+						// trigger the callback with a copy if its required data
+						Component._fnLoadComponentCallback(oConfigCopy, oManifestCopy);
+					}
+				};
+
+				oManifest.then(fnCallLoadComponentCallback);
 			}
 
 			// if a hint about "used" components is given, preload those components
