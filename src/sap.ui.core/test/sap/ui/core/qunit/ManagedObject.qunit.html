@@ -1210,6 +1210,23 @@
 				}.bind(this));
 			});
 
+			test("Bind aggregation with grouping, but without grouping function", function() {
+				var binding, elements;
+				this.obj.bindAggregation("elements", {
+					path: "/list",
+					template: new sap.ui.core.Element(),
+					sorter: new sap.ui.model.Sorter("value", false, true)
+				});
+				equal(this.obj.isBound("elements"), true, "isBound must return true for bound aggregations");
+				elements = this.obj.getAggregation("elements", []);
+				equal(elements.length, 3, "Aggregation length should match array length");
+
+				binding = this.obj.getBinding("elements");
+				binding.sort(); //ungroup
+				elements = this.obj.getAggregation("elements", []);
+				equal(elements.length, 3, "Aggregation length should match array length");
+			});
+
 			test("Bind aggregation with grouping and header factory", function() {
 				jQuery.each(["value", "intValue", "groupValue"], function(i, sGroupProperty) {
 					var binding, subobjects;
