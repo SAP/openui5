@@ -763,6 +763,52 @@
 			oToolbar.destroy();
 			spySetShowArrow.restore();
 		});
+
+		QUnit.module("Binding", {
+			setup: function () {
+				this.oButton2 = new sap.m.Button({text: "Press me"});
+
+				var oMessageTemplate = new sap.m.MessagePopoverItem({
+					title: '{message}'
+				});
+
+				this.oMessagepopover2 = new sap.m.MessagePopover({
+					items: {
+						path: '/',
+						template: oMessageTemplate
+					},
+					initiallyExpanded: true
+				});
+
+				this.oMessagepopover2.setModel(new sap.ui.model.json.JSONModel([{
+					"code": "APPL_MM_IV_MODEL/021",
+					"message": "One",
+					"severity": "error",
+					"target": "/Headers(NodeKey=guid'e41d2de5-37a0-1ee6-8784-60396f9b5305',State='01')/InvoicingParty"
+				}]));
+
+				this.oButton2.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			teardown: function () {
+				this.oMessagepopover2.destroy();
+				this.oMessagepopover2 = null;
+
+				this.oButton2.destroy();
+				this.oButton2 = null;
+			}
+		});
+
+		QUnit.test("Updating item's binding should update its property", function (assert) {
+			this.oMessagepopover2.openBy(this.oButton2);
+			this.clock.tick(500);
+
+			strictEqual(this.oMessagepopover2._oLists.error.getItems()[0].getTitle(), "One", "Title is properly set");
+
+			this.oMessagepopover2.getModel().setProperty("/0/message", "Two");
+			this.clock.tick(500);
+			strictEqual(this.oMessagepopover2._oLists.error.getItems()[0].getTitle(), "Two", "Title to be changed");
+		});
 	</script>
 </head>
 <body id="body" class="sapUiBody">
