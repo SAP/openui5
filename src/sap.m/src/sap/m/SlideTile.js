@@ -119,6 +119,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 		if (oEvent.which === jQuery.sap.KeyCodes.ENTER) {
 			this.getTiles()[this._iCurrentTile].firePress();
 		}
+		if (oEvent.which === jQuery.sap.KeyCodes.SPACE) {
+			this._toggleAnimation();
+		}
 	};
 
 	/**
@@ -147,6 +150,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 		this.addStyleClass("sapMSTHvr");
 	};
 
+	/**
+	 * Handles the focusout event.
+	 *
+	 * @private
+	 * @param {jQuery.Event} oEvent Event object
+	 */
+	SlideTile.prototype.onfocusout = function (oEvent) {
+		this._startAnimation();
+	};
+
 	/* --- Helpers --- */
 
 	/**
@@ -162,8 +175,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 				this._stopAnimation();
 			}
 		}
-
-		this._bAnimationPause = !this._bAnimationPause;
 	};
 
 	/**
@@ -182,6 +193,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 			var oWrapperFrom = jQuery.sap.byId(this.getId() + "-wrapper-" + this._iPreviousTile);
 			oWrapperFrom.stop();
 		}
+		if (this._iCurrAnimationTime > this.getDisplayTime()) {
+			this._scrollToNextTile(true); //Completes the animation and stops
+		}
+		this._bAnimationPause = true;
 	};
 
 	/**
@@ -197,6 +212,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 			that._scrollToNextTile();
 		}, iDisplayTime);
 		this._iStartTime = Date.now();
+		this._bAnimationPause = false;
 	};
 
 	/**
