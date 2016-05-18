@@ -50,7 +50,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 					 * The text control that holds the description text of the NotificationListItem.
 					 * @private
 					 */
-					_bodyText: {type: 'sap.m.Text', multiple: false, visibility: "hidden"}
+					_bodyText: {type: 'sap.m.Text', multiple: false, visibility: "hidden"},
+
+					/**
+					 * InvisibleText used to implement the ARIA specification.
+					 * @private
+					 */
+					_ariaDetailsText: {type: 'sap.ui.core.InvisibleText', multiple: false, visibility: "hidden"}
 				}
 			}
 		});
@@ -182,21 +188,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 		 */
 		NotificationListItem.prototype.exit = function () {
 			this._deregisterResize();
-
-			if (this._closeButton) {
-				this._closeButton.destroy();
-				this._closeButton = null;
-			}
-
-			if (this._collapseButton) {
-				this._collapseButton.destroy();
-				this._collapseButton = null;
-			}
-
-			if (this._ariaDetailsText) {
-				this._ariaDetailsText.destroy();
-				this._ariaDetailsText = null;
-			}
 		};
 
 		//================================================================================
