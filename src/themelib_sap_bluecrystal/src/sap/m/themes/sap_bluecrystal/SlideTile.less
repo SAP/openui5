@@ -10,3 +10,20 @@ html.sap-tablet .sapMSTHvr:active,
 html.sap-phone .sapMSTHvr:active {
 	box-shadow: 0rem 0rem 0rem 0.125rem @sapUiLightShadowTint;
 }
+
+html.sap-desktop .sapMST:focus .sapMSTFocusDiv {
+	border: 1px solid @sapUiLightShadowTint;
+}
+
+/* This part is used to achieve dotted white black interlace border*/
+html.sap-desktop .sapMST:focus .sapMSTFocusDiv:after {
+	content: "";
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	border-radius: 0.25rem;
+	margin: -1px;
+	border: 1px dotted @sapUiContentFocusColor;
+}
