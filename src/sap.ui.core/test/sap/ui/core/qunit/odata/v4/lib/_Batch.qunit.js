@@ -1198,7 +1198,35 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 					"Accept" : "application/json",
 					"Content-Type" : "application/json;charset=UTF-8"
 				},
-				body : '{"ENTRYDATE":"2015-10-01", "Name":"Egon", "AGE":17}'
+				// TODO:
+				// Nowadays for POST we have to provide all properties, hence we need a new employee
+				// with initial values for all properties as gateway strictly checks now that all
+				// properties are available
+				// -> we may reduce properties again if back-end provides defaulting
+				body : JSON.stringify({
+					"ID" : "7",
+					"Name" : "Egon",
+					"AGE" : 17,
+					"ENTRYDATE" : "2015-10-01",
+					"MANAGER_ID" : "",
+					"ROOM_ID" : "",
+					"TEAM_ID" : "",
+					"Is_Manager" : false,
+					"LAST_MODIFIED_AT" : "1970-01-01T00:00:00Z",
+					"LOCATION" : {
+						"COUNTRY" : "",
+						"City" : {
+							"POSTALCODE" : "",
+							"CITYNAME" : ""
+						}
+					},
+					"SALARY" : {
+						"MONTHLY_BASIC_SALARY_AMOUNT" : 0.00,
+						"BASIC_SALARY_CURR" : "",
+						"YEARLY_BONUS_AMOUNT" : 0.00,
+						"BONUS_CURR" : ""
+					}
+				})
 			}],
 			expectedResponses : [{
 				status : 200,
