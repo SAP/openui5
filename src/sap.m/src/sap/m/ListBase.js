@@ -1472,8 +1472,11 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			return;
 		}
 
-		// item navigation is not necessary if there is no item in edit mode
-		if (this.getKeyboardMode() == sap.m.ListKeyboardMode.Edit && !this.getItems(true).length) {
+		var sKeyboardMode = this.getKeyboardMode(),
+			mKeyboardMode = sap.m.ListKeyboardMode;
+
+		// ItemNavigation is not necessary if there is no item in edit mode
+		if (sKeyboardMode == mKeyboardMode.Edit && !this.getItems(true).length) {
 			return;
 		}
 
@@ -1489,7 +1492,11 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			this._oItemNavigation.setCycling(false);
 			this.addEventDelegate(this._oItemNavigation);
 
-			// implicitly setting table mode with one column
+			// set the tab index of active items
+			var iTabIndex = (sKeyboardMode == mKeyboardMode.Edit) ? -1 : 0;
+			this._setItemNavigationTabIndex(iTabIndex);
+
+			// explicitly setting table mode with one column
 			// to disable up/down reaction on events of the cell
 			this._oItemNavigation.setTableMode(true, true).setColumns(1);
 
@@ -1544,13 +1551,22 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		return this._oItemNavigation;
 	};
 
+	// sets the active elements tabindex of ItemNavigation
+	ListBase.prototype._setItemNavigationTabIndex = function(iTabIndex) {
+		if (this._oItemNavigation) {
+			this._oItemNavigation.iActiveTabIndex = iTabIndex;
+			this._oItemNavigation.iTabIndex = iTabIndex;
+		}
+	};
+
 	ListBase.prototype.setKeyboardMode = function(sKeyboardMode) {
 		this.setProperty("keyboardMode", sKeyboardMode, true);
 
 		if (this.isActive()) {
-			var iTabIndex = (this.getKeyboardMode() == sap.m.ListKeyboardMode.Edit) ? -1 : 0;
-			this.$("before").prop("tabIndex", iTabIndex);
+			var iTabIndex = (sKeyboardMode == sap.m.ListKeyboardMode.Edit) ? -1 : 0;
+			this.$("listUl").prop("tabIndex", iTabIndex);
 			this.$("after").prop("tabIndex", iTabIndex);
+			this._setItemNavigationTabIndex(iTabIndex);
 		}
 
 		return this;
@@ -1760,21 +1776,14 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			this._startItemNavigation();
 		}
 
-		// handle only forward/backward navigation
-		if (oEvent.isMarked() ||
-			!this._oItemNavigation ||
-			this.getKeyboardMode() == sap.m.ListKeyboardMode.Edit) {
+		// handle only for backward navigation
+		if (oEvent.isMarked() || !this._oItemNavigation ||
+			this.getKeyboardMode() == sap.m.ListKeyboardMode.Edit ||
+			oEvent.target.id != this.getId("after")) {
 			return;
 		}
 
-		// forward focus to the last known position
-		var sTarget = oEvent.target.id;
-		if (sTarget == this.getId("after")) {
-			this.focusPrevious();
-		} else if (sTarget == this.getId("before")) {
-			this.getNavigationRoot().focus();
-		}
-
+		this.focusPrevious();
 		oEvent.setMarked();
 	};
 
