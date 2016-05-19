@@ -109,6 +109,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 	}});
 
+	RadioButton.prototype.onAfterRendering = function(oEvent) {
+
+		// prevents firing click event twice
+		var $input = this.$('RB');
+		$input.click(function (event) {
+			event.preventDefault();
+			return false;
+		});
+	};
+
 	/**
 	 * Event handler called, when the RadioButton is clicked.
 	 *
