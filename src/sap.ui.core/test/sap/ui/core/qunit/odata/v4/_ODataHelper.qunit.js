@@ -6,8 +6,9 @@ sap.ui.require([
 	"sap/ui/model/Context",
 	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/lib/_Helper",
-	"sap/ui/model/odata/v4/lib/_Parser"
-], function (jQuery, Context, _ODataHelper, _Helper, _Parser) {
+	"sap/ui/model/odata/v4/lib/_Parser",
+	"sap/ui/model/Sorter"
+], function (jQuery, Context, _ODataHelper, _Helper, _Parser, Sorter) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -409,5 +410,54 @@ sap.ui.require([
 		return oCacheProxy.read("$auto", "foo").catch(function(oError0) {
 			assert.strictEqual(oError0, oError);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildOrderbyOption", function (assert) {
+		var sOrderby = "bar desc";
+
+		// empty sorters
+		assert.strictEqual(_ODataHelper.buildOrderbyOption([]), "");
+		// array of sorters
+		assert.strictEqual(_ODataHelper.buildOrderbyOption([new Sorter("foo")]), "foo",
+			"Sorter array, no query option");
+		assert.strictEqual(_ODataHelper.buildOrderbyOption([new Sorter("foo"),
+			new Sorter("bar", true)]), "foo,bar desc");
+
+		// with system query option $orderby
+		// empty sorters
+		assert.strictEqual(_ODataHelper.buildOrderbyOption([], sOrderby), sOrderby);
+		// array of sorters
+		assert.strictEqual(_ODataHelper.buildOrderbyOption([new Sorter("foo")], sOrderby),
+			"foo," + sOrderby, "Sorter array, with query option");
+		assert.strictEqual(_ODataHelper.buildOrderbyOption([new Sorter("foo"),
+			new Sorter("baz", true)], sOrderby), "foo,baz desc," + sOrderby);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildOrderbyOption - error", function (assert) {
+		// non Sorter instances throw error
+		assert.throws(function () {
+			_ODataHelper.buildOrderbyOption(["foo"]);
+		}, new Error("Unsupported sorter: 'foo' (string)"));
+		assert.throws(function () {
+			_ODataHelper.buildOrderbyOption([new Sorter("foo"), "", new Sorter("bar", true)]);
+		}, new Error("Unsupported sorter: '' (string)"));
+		assert.throws(function () {
+			_ODataHelper.buildOrderbyOption([new Sorter("foo"), 42, new Sorter("bar", true)]);
+		}, new Error("Unsupported sorter: '42' (number)"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("toArray", function (assert) {
+		var oSorter = new Sorter("foo", true),
+			aSorters = [oSorter];
+
+		assert.deepEqual(_ODataHelper.toArray(), []);
+		assert.deepEqual(_ODataHelper.toArray(null), []);
+		assert.deepEqual(_ODataHelper.toArray(""), [""]);
+		assert.deepEqual(_ODataHelper.toArray("foo"), ["foo"]);
+		assert.deepEqual(_ODataHelper.toArray(oSorter), aSorters);
+		assert.strictEqual(_ODataHelper.toArray(aSorters), aSorters);
 	});
 });

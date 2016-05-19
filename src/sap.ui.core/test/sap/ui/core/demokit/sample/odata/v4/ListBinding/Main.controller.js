@@ -5,8 +5,9 @@ sap.ui.define([
 		'sap/m/Dialog',
 		'sap/m/MessageBox',
 		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/json/JSONModel'
-	], function(Dialog, MessageBox, Controller, JSONModel) {
+		'sap/ui/model/json/JSONModel',
+		'sap/ui/model/Sorter'
+	], function(Dialog, MessageBox, Controller, JSONModel, Sorter) {
 	"use strict";
 
 //	function onRejected(oError) {
@@ -142,10 +143,31 @@ sap.ui.define([
 			this.getView().byId("EmployeeEquipments").setBindingContext(oContext);
 		},
 
+		onEquipmentsChanged : function (oEvent) {
+			var sReason = oEvent.getParameter('reason');
+
+			jQuery.sap.log.info("Change event on Equipment list binding received with reason: '"
+				+ sReason + "'", "sap.ui.core.sample.odata.v4.ListBinding.Main");
+		},
+
+		onEquipmentsRefresh : function (oEvent) {
+			this.getView().byId("Equipments").getBinding("items").refresh();
+		},
+
 		onInit : function () {
-			this.getView().setModel(new JSONModel({
+			var oView = this.getView();
+
+			oView.setModel(new JSONModel({
 				EmployeeID: null
 			}), "search");
+			// Initialize model for sorting equipments
+			oView.setModel(new JSONModel({
+				Category : { icon : "sap-icon://sort-ascending", desc : false },
+				ID : { icon : "", desc : undefined },
+				Name : { icon : "", desc : undefined },
+				EmployeeId : { icon : "", desc : undefined }
+			}), "sort");
+			this.aSorters = [new Sorter("Category", /*bDescending*/false, /*bGroup*/true)];
 		},
 
 		onSaveEmployee : function (oEvent) {
@@ -212,6 +234,42 @@ sap.ui.define([
 			oUiModel.setProperty("/ManagerID",
 				oView.byId("ManagerID").getBinding("text").getValue());
 			oView.byId("ChangeManagerOfTeamDialog").open();
+		},
+
+		// *********************************************************************************
+		// sort on absolute binding
+		// *********************************************************************************
+		onSort : function (oEvent) {
+			var sNewIcon,
+				// get the sorter path from custom data (there is only one at the buttons)
+				sProperty = oEvent.getSource().getCustomData()[0].getValue(),
+				oView = this.getView(),
+				oSortModel = oView.getModel('sort'),
+				bSortDesc = oSortModel.getProperty("/" + sProperty + "/desc");
+
+			// choose next sort order: no sort -> ascending -> descending -> no sort
+			if (bSortDesc === undefined) {
+				sNewIcon = "sap-icon://sort-ascending";
+				bSortDesc = false;
+			} else if (bSortDesc === false) {
+				sNewIcon = "sap-icon://sort-descending";
+				bSortDesc = true;
+			} else {
+				sNewIcon = "";
+				bSortDesc = undefined;
+			}
+			oSortModel.setProperty("/" + sProperty + "/desc", bSortDesc);
+			oSortModel.setProperty("/" + sProperty + "/icon", sNewIcon);
+
+			// remove sorter for same path
+			this.aSorters = this.aSorters.filter(function (oSorter) {
+				return oSorter.sPath !== sProperty;
+			});
+			// add sorter if necessary before all others
+			if (bSortDesc !== undefined) {
+				this.aSorters.unshift(new Sorter(sProperty, bSortDesc, true));
+			}
+			oView.byId("Equipments").getBinding("items").sort(this.aSorters);
 		}
 	});
 

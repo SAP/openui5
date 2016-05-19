@@ -8,11 +8,13 @@ sap.ui.define([
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ListBinding",
+	"sap/ui/model/odata/OperationMode",
 	"./_ODataHelper",
 	"./Context",
 	"./lib/_Cache",
 	"./lib/_Helper"
-], function (jQuery, Binding, ChangeReason, ListBinding, _ODataHelper, Context, _Cache, _Helper) {
+], function (jQuery, Binding, ChangeReason, ListBinding, OperationMode, _ODataHelper, Context,
+	_Cache, _Helper) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataListBinding",
@@ -33,6 +35,11 @@ sap.ui.define([
 	 *   The binding path in the model; must not be empty or end with a slash
 	 * @param {sap.ui.model.odata.v4.Context} [oContext]
 	 *   The parent context which is required as base for a relative path
+	 * @param {sap.ui.model.Sorter | sap.ui.model.Sorter[]} [vSorters]
+	 *   The dynamic sorters to be used initially; they can be replaced using the {@link #sort}
+	 *   method. Static sorters, as defined in the '$orderby' binding parameter, are always executed
+	 *   after the dynamic sorters.
+	 *   Supported since 1.39.0.
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters which can be OData query options as specified in
 	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameters "$$groupId"
@@ -46,6 +53,11 @@ sap.ui.define([
 	 *   </ul>
 	 *   All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
+	 * @param {sap.ui.model.odata.OperationMode} [mParameters.operationMode]
+	 *   The operation mode for sorting with the model's operation mode as default. Since 1.39.0,
+	 *   the operation mode {@link sap.ui.model.odata.OperationMode.Server} is supported. All other
+	 *   operation modes including <code>undefined</code> lead to an error if 'vSorters' are given
+	 *   or if {@link #sort} is called.
 	 * @param {string} [mParameters.$$groupId]
 	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
 	 *   specified, the model's group ID is used, see
@@ -58,7 +70,7 @@ sap.ui.define([
 	 *   see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
 	 *   For valid values, see parameter "$$groupId".
 	 * @throws {Error}
-	 *   If disallowed binding parameters are provided
+	 *   If disallowed binding parameters are provided or an unsupported operation mode is used
 	 *
 	 * @alias sap.ui.model.odata.v4.ODataListBinding
 	 * @author SAP SE
@@ -71,35 +83,54 @@ sap.ui.define([
 	 * @version ${version}
 	 */
 	var ODataListBinding = ListBinding.extend("sap.ui.model.odata.v4.ODataListBinding", {
-			constructor : function (oModel, sPath, oContext, mParameters) {
-				var oBindingParameters;
+			constructor : function (oModel, sPath, oContext, vSorters, mParameters) {
+				var oBindingParameters,
+					sOrderBy,
+					mQueryOptions,
+					bSortersGiven = vSorters !== undefined && vSorters !== null;
 
 				ListBinding.call(this, oModel, sPath);
 
 				if (!sPath || sPath.slice(-1) === "/") {
 					throw new Error("Invalid path: " + sPath);
 				}
+				this.sOperationMode = (mParameters && mParameters.operationMode)
+					|| oModel.sOperationMode;
+				if ((this.sOperationMode && this.sOperationMode !== OperationMode.Server)
+						|| (!this.sOperationMode && bSortersGiven)) {
+					throw new Error("Unsupported operation mode: " + this.sOperationMode);
+				}
 
 				this.oCache = undefined;
+				this.sChangeReason = undefined;
 				this.sGroupId = undefined;
 				this.mQueryOptions = undefined;
 				this.sRefreshGroupId = undefined;
+				this.aSorters = _ODataHelper.toArray(vSorters);
 				this.sUpdateGroupId = undefined;
 
 				if (mParameters) {
 					this.mQueryOptions = _ODataHelper.buildQueryOptions(oModel.mUriParameters,
-							mParameters, ["$expand", "$filter", "$orderby", "$select"]);
+						mParameters, ["$expand", "$filter", "$orderby", "$select"]);
 				}
 				if (!this.bRelative) {
+					mQueryOptions = this.mQueryOptions || {};
+					sOrderBy = _ODataHelper.buildOrderbyOption(this.aSorters,
+						mQueryOptions.$orderby);
+					if (sOrderBy && sOrderBy !== mQueryOptions.$orderby) {
+						mQueryOptions = JSON.parse(JSON.stringify(mQueryOptions));
+						mQueryOptions.$orderby = sOrderBy;
+					}
 					this.oCache = _Cache.create(oModel.oRequestor, sPath.slice(1),
-						this.mQueryOptions);
+						mQueryOptions);
 					oBindingParameters = _ODataHelper.buildBindingParameters(mParameters);
 					this.sGroupId = oBindingParameters.$$groupId;
 					this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
+				} else if (bSortersGiven) {
+					throw new Error("Only absolute bindings support 'vSorters' parameter");
 				}
 
 				this.reset();
-
 				this.setContext(oContext);
 			}
 		});
@@ -235,7 +266,8 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataListBinding.prototype.getContexts = function (iStart, iLength, iThreshold) {
-		var oContext = this.oContext,
+		var sChangeReason,
+			oContext = this.oContext,
 			bDataRequested = false,
 			sGroupId,
 			oModel = this.oModel,
@@ -304,7 +336,7 @@ sap.ui.define([
 			}
 
 			if (bChanged) {
-				that._fireChange({reason : ChangeReason.Change});
+				that._fireChange({reason : sChangeReason});
 				// no code below this line
 			}
 		}
@@ -313,6 +345,9 @@ sap.ui.define([
 			throw new Error("Unsupported operation: v4.ODataListBinding#getContexts, "
 				+ "iThreshold parameter must not be set");
 		}
+
+		sChangeReason = this.sChangeReason || ChangeReason.Change;
+		this.sChangeReason = undefined;
 
 		iStart = iStart || 0;
 		iLength = iLength || oModel.iSizeLimit;
@@ -620,16 +655,54 @@ sap.ui.define([
 	};
 
 	/**
-	 * Method not supported
+	 * Sort the entries represented by this list binding according to the given sorters.
+	 * Sorting is supported only for absolute bindings.
 	 *
+	 * @param {sap.ui.model.Sorter | sap.ui.model.Sorter[]} [vSorters]
+	 *   The dynamic sorters to be used; they replace the dynamic sorters given in
+	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList}.
+	 *   Static sorters, as defined in the '$orderby' binding parameter, are always executed after
+	 *   the dynamic sorters.
+	 *   Supported since 1.39.0.
+	 * @returns {sap.ui.model.odata.v4.ODataListBinding}
+	 *   <code>this</code> to facilitate method chaining
 	 * @throws {Error}
+	 *   If sort is called on a relative binding or an unsupported operation mode is used (see
+	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList}).
 	 *
 	 * @public
 	 * @see sap.ui.model.ListBinding#sort
-	 * @since 1.37.0
+	 * @since 1.39.0
 	 */
-	ODataListBinding.prototype.sort = function () {
-		throw new Error("Unsupported operation: v4.ODataListBinding#sort");
+	ODataListBinding.prototype.sort = function (vSorters) {
+		var sOrderBy,
+			mQueryOptions = this.mQueryOptions || {};
+
+		if (this.bRelative) {
+			throw new Error("Unsupported operation: v4.ODataListBinding#sort on relative bindings");
+		}
+		if (this.sOperationMode !== OperationMode.Server) {
+			throw new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server");
+		}
+		// update aSorters to enable grouping
+		this.aSorters = _ODataHelper.toArray(vSorters);
+
+		// append orderby value from constructor to the orderby value given by sorters
+		sOrderBy = _ODataHelper.buildOrderbyOption(this.aSorters, mQueryOptions.$orderby);
+		if (sOrderBy) {
+			mQueryOptions = JSON.parse(JSON.stringify(mQueryOptions));
+			mQueryOptions.$orderby = sOrderBy;
+		}
+
+		// replace cache and reset contexts and length properties
+		this.oCache = _Cache.create(this.oModel.oRequestor, this.sPath.slice(1), mQueryOptions);
+		this.reset();
+
+		// store change reason for next change event
+		this.sChangeReason = ChangeReason.Sort;
+		this._fireRefresh({reason : ChangeReason.Sort});
+
+		return this;
 	};
 
 	/**

@@ -8,6 +8,7 @@ sap.ui.require([
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/ODataUtils",
+	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
@@ -18,9 +19,9 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Message, BindingMode, Model, TypeString, ODataUtils, _ODataHelper, Context,
-		_MetadataRequestor, _Requestor, ODataContextBinding, ODataListBinding, ODataMetaModel,
-		ODataModel, ODataPropertyBinding, TestUtils) {
+], function (jQuery, Message, BindingMode, Model, TypeString, ODataUtils, OperationMode,
+		_ODataHelper, Context, _MetadataRequestor, _Requestor, ODataContextBinding,
+		ODataListBinding, ODataMetaModel, ODataModel, ODataPropertyBinding, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -109,6 +110,15 @@ sap.ui.require([
 		assert.throws(function () {
 			return new ODataModel({synchronizationMode : "None", useBatch : true});
 		}, new Error("Unsupported parameter: useBatch"));
+		assert.throws(function () {
+			return new ODataModel({operationMode : OperationMode.Auto, serviceUrl : "/foo/",
+				synchronizationMode : "None"});
+		}, new Error("Unsupported operation mode: Auto"), "Unsupported OperationMode");
+
+		// code under test: operation mode Server must not throw an error
+		oModel = createModel("", {operationMode : OperationMode.Server, serviceUrl : "/foo/",
+			synchronizationMode : "None"});
+		assert.strictEqual(oModel.sOperationMode, OperationMode.Server);
 
 		this.mock(_ODataHelper).expects("buildQueryOptions")
 			.withExactArgs(null, {}, null, true)
@@ -580,17 +590,12 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("forbidden", function (assert) {
 		var aFilters = [],
-			oModel = createModel(),
-			aSorters = [];
+			oModel = createModel();
 
 		assert.throws(function () { //TODO implement
 			oModel.bindList(undefined, undefined,  undefined, aFilters);
 		}, new Error("Unsupported operation: v4.ODataModel#bindList, "
 				+ "aFilters parameter must not be set"));
-		assert.throws(function () { //TODO implement
-			oModel.bindList(undefined, undefined,  aSorters);
-		}, new Error("Unsupported operation: v4.ODataModel#bindList, "
-				+ "aSorters parameter must not be set"));
 
 		assert.throws(function () { //TODO implement
 			oModel.bindTree();

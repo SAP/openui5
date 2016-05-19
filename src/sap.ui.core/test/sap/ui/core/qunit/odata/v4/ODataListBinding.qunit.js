@@ -7,6 +7,8 @@ sap.ui.require([
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ListBinding",
 	"sap/ui/model/Model",
+	"sap/ui/model/Sorter",
+	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_Helper",
@@ -14,8 +16,8 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataModel"
-], function (jQuery, ManagedObject, ChangeReason, ListBinding, Model, _ODataHelper, _Cache, _Helper,
-		_SyncPromise, Context, ODataListBinding, ODataModel) {
+], function (jQuery, ManagedObject, ChangeReason, ListBinding, Model, Sorter, OperationMode,
+		_ODataHelper, _Cache, _Helper, _SyncPromise, Context, ODataListBinding, ODataModel) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -171,8 +173,9 @@ sap.ui.require([
 			oContext = {},
 			oError = new Error("Unsupported ..."),
 			oHelperMock,
-			mParameters = {"$expand" : "foo", "$select" : "bar", "custom" : "baz"},
-			mQueryOptions = {};
+			mParameters = {"$expand" : "foo", "$orderby" : "bar", "$select" : "bar",
+				"custom" : "baz"},
+			mQueryOptions = {"$orderby" : "bar"};
 
 		oHelperMock = this.mock(_ODataHelper);
 		oHelperMock.expects("buildQueryOptions")
@@ -192,6 +195,8 @@ sap.ui.require([
 		assert.strictEqual(oBinding.getPath(), "/EMPLOYEES");
 		assert.strictEqual(oBinding.mParameters, undefined);
 		assert.ok(ODataListBinding.prototype.reset.calledWithExactly());
+		assert.strictEqual(oBinding.hasOwnProperty("sChangeReason"), true);
+		assert.strictEqual(oBinding.sChangeReason, undefined);
 
 		//no call to buildQueryOptions for binding with relative path and no parameters
 		oBinding = this.oModel.bindList("EMPLOYEE_2_TEAM");
@@ -200,6 +205,8 @@ sap.ui.require([
 		assert.strictEqual(oBinding.hasOwnProperty("sGroupId"), true);
 		assert.strictEqual(oBinding.sGroupId, undefined);
 		assert.ok(ODataListBinding.prototype.reset.calledWithExactly());
+		assert.strictEqual(oBinding.hasOwnProperty("sChangeReason"), true);
+		assert.strictEqual(oBinding.sChangeReason, undefined);
 
 		//error for invalid parameters
 		oHelperMock.expects("buildQueryOptions").throws(oError);
@@ -207,10 +214,89 @@ sap.ui.require([
 		assert.throws(function () {
 			this.oModel.bindList("/EMPLOYEES", null, undefined, undefined, mParameters);
 		}, oError);
-
-		//TODO parameter aSorters and aFilters
+		//TODO parameter aFilters
 	});
 
+	//*********************************************************************************************
+	[{
+		aSorters : [new Sorter("foo", true, true)],
+		buildQueryOptionResult : "foo desc",
+		createParameters : {$orderby : "foo desc", operationMode : OperationMode.Server},
+		grouped : true,
+		mParameters : {operationMode : OperationMode.Server}
+	}, {
+		aSorters : [new Sorter("foo", true, true)],
+		buildQueryOptionResult : "foo desc,bar",
+		createParameters : {$orderby : "foo desc,bar", operationMode : OperationMode.Server},
+		grouped : true,
+		mParameters : {operationMode : OperationMode.Server, $orderby : "bar"}
+	}, {
+		aSorters : undefined,
+		buildQueryOptionResult : "bar",
+		createParameters : {$orderby : "bar", operationMode : OperationMode.Server},
+		grouped : false,
+		mParameters : {operationMode : OperationMode.Server, $orderby : "bar"}
+	}, {
+		aSorters : [new Sorter("foo", true)],
+		buildQueryOptionResult : "foo desc",
+		createParameters : {$orderby : "foo desc"},
+		grouped : false,
+		oModel : new ODataModel({
+			operationMode : OperationMode.Server,
+			serviceUrl : "/service/?sap-client=111",
+			synchronizationMode : "None"
+		}),
+		mParameters : {}
+	}].forEach(function (oFixture) {
+		QUnit.test("bindList with sorters: " + oFixture.buildQueryOptionResult, function (assert) {
+			var oBinding,
+				oHelperMock = this.mock(_ODataHelper),
+				oModel = oFixture.oModel || this.oModel,
+				mParameters = JSON.parse(JSON.stringify(oFixture.mParameters)),
+				oSpyToArray = this.spy(_ODataHelper, "toArray");
+
+			oHelperMock.expects("buildQueryOptions")
+				.withExactArgs(sinon.match.same(oModel.mUriParameters),
+					sinon.match.same(mParameters), ["$expand", "$filter", "$orderby", "$select"])
+				.returns(mParameters);
+			oHelperMock.expects("buildOrderbyOption")
+				.withExactArgs(oFixture.aSorters ? sinon.match.same(oFixture.aSorters) : []
+					, mParameters.$orderby)
+				.returns(oFixture.buildQueryOptionResult);
+			this.mock(_Cache).expects("create")
+				.withExactArgs(sinon.match.same(oModel.oRequestor), "EMPLOYEES",
+					oFixture.createParameters);
+
+			// code under test
+			oBinding = oModel.bindList("/EMPLOYEES", undefined, oFixture.aSorters, undefined,
+				mParameters);
+			assert.deepEqual(oBinding.aSorters, oFixture.aSorters || [],
+				"Sorters are stored at the binding");
+			assert.strictEqual(oBinding.isGrouped(), oFixture.grouped, "grouping");
+			assert.deepEqual(oBinding.mQueryOptions,
+				oFixture.mParameters ? oFixture.mParameters : {},
+				"Query options are not modified by dynamic sorters");
+			assert.ok(oSpyToArray.calledWithExactly(oFixture.aSorters));
+		});
+	});
+
+	QUnit.test("bindList with sorters - error cases", function (assert) {
+		assert.throws(function () {
+			this.oModel.bindList("/EMPLOYEES", undefined, new Sorter("ID"), undefined, {
+				operationMode : OperationMode.Client});
+		}, new Error("Unsupported operation mode: Client"));
+		assert.throws(function () {
+			this.oModel.bindList("/EMPLOYEES", undefined, new Sorter("ID"), undefined, {
+				operationMode : OperationMode.Auto});
+		}, new Error("Unsupported operation mode: Auto"));
+		assert.throws(function () {
+			this.oModel.bindList("/EMPLOYEES", undefined, new Sorter("ID"));
+		}, new Error("Unsupported operation mode: undefined"));
+		assert.throws(function () {
+			this.oModel.bindList("EMPLOYEES", undefined, new Sorter("ID"), undefined, {
+				operationMode : OperationMode.Server});
+		}, new Error("Only absolute bindings support 'vSorters' parameter"));
+	});
 	//*********************************************************************************************
 	["", "/", "foo/"].forEach(function (sPath) {
 		QUnit.test("bindList: invalid path: " + sPath, function (assert) {
@@ -304,8 +390,7 @@ sap.ui.require([
 			oControl = new TestControl({models : this.oModel}),
 			sPath = "TEAM_2_EMPLOYEES",
 			oRange = {startIndex : 1, length : 3},
-			oPromise = createResult(oRange.length, 0, true),
-			that = this;
+			oPromise = createResult(oRange.length, 0, true);
 
 		// change event handler for initial read for list binding
 		function onChange() {
@@ -1213,7 +1298,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("forbidden", function (assert) {
-		var oListBinding = this.oModel.bindList("/EMPLOYEES");
+		var oListBinding = this.oModel.bindList("/EMPLOYEES"),
+			oRelativeListBinding = this.oModel.bindList("Equipments");
 
 		assert.throws(function () { //TODO implement
 			oListBinding.filter();
@@ -1237,8 +1323,8 @@ sap.ui.require([
 		}, new Error("Unsupported operation: v4.ODataListBinding#resume"));
 
 		assert.throws(function () { //TODO implement
-			oListBinding.sort();
-		}, new Error("Unsupported operation: v4.ODataListBinding#sort"));
+			oRelativeListBinding.sort();
+		}, new Error("Unsupported operation: v4.ODataListBinding#sort on relative bindings"));
 
 		assert.throws(function () { //TODO implement
 			oListBinding.suspend();
@@ -1393,6 +1479,96 @@ sap.ui.require([
 					oListBinding.aContexts.slice(0, 5));
 			});
 		});
+	});
+
+	//*********************************************************************************************
+	[
+		{
+			mParameters : {operationMode : OperationMode.Server},
+			queryOptions : {operationMode : OperationMode.Server, "sap-client" : "111"},
+			vSorters : undefined,
+			vSortersExpected : []
+		}, {
+			mParameters : {operationMode : OperationMode.Server},
+			queryOptions : {operationMode : OperationMode.Server, $orderby : "foo",
+				"sap-client" : "111"},
+			vSorters : new Sorter("foo"),
+			vSortersExpected : [new Sorter("foo")]
+		}, {
+			mParameters : {operationMode : OperationMode.Server, $orderby : "bar"},
+			queryOptions : {operationMode : OperationMode.Server, $orderby : "foo,bar",
+				"sap-client" : "111"},
+			vSorters : [new Sorter("foo")],
+			vSortersExpected : [new Sorter("foo")]
+		}, {
+			oModel : new ODataModel({
+				operationMode : OperationMode.Server,
+				serviceUrl : "/service/?sap-client=111",
+				synchronizationMode : "None"
+			}),
+			mParameters : {$orderby : "bar"},
+			queryOptions : {$orderby : "foo,bar", "sap-client" : "111"},
+			vSorters : [new Sorter("foo")],
+			vSortersExpected : [new Sorter("foo")]
+		}
+	].forEach(function (oFixture) {
+		QUnit.test("sort: vSorters = " + JSON.stringify(oFixture.vSorters) + " and mParameters = "
+				+ JSON.stringify(oFixture.mParameters), function (assert) {
+			var oCache = { read : function () {} },
+				done = assert.async(),
+				oListBinding,
+				oModel = oFixture.oModel || this.oModel;
+
+			oListBinding = oModel.bindList("/EMPLOYEES", undefined, undefined, undefined,
+				oFixture.mParameters);
+
+			this.oSandbox.mock(_Cache).expects("create").withExactArgs(
+				sinon.match.same(oModel.oRequestor), "EMPLOYEES", oFixture.queryOptions)
+				.returns(oCache);
+			this.oSandbox.mock(oCache).expects("read")
+				.withExactArgs(0, 10, "$auto", undefined, sinon.match.func)
+				.callsArg(4)
+				.returns(createResult(10));
+
+			this.spy(_ODataHelper, "buildOrderbyOption");
+			this.spy(_ODataHelper, "toArray");
+			this.spy(oListBinding, "reset");
+
+			oListBinding.attachRefresh(function (oEvent) {
+				assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Sort);
+				assert.strictEqual(oListBinding.sChangeReason, ChangeReason.Sort);
+				assert.ok(oListBinding.reset.calledWithExactly());
+
+				oListBinding.getContexts(0, 10);
+				// check that next change event gets change reason sort
+				oListBinding.attachChange(function (oEvent) {
+					assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Sort);
+					assert.strictEqual(oListBinding.sChangeReason, undefined);
+					done();
+				});
+			});
+
+			// Code under test
+			assert.strictEqual(oListBinding.sort(oFixture.vSorters), oListBinding, "chaining");
+			assert.deepEqual(oListBinding.aSorters, oFixture.vSortersExpected,
+				"aSorters is updated after calling sort");
+			assert.ok(_ODataHelper.toArray.calledWithExactly(oFixture.vSorters));
+			assert.ok(_ODataHelper.buildOrderbyOption.calledWithExactly(
+				_ODataHelper.toArray.returnValues[0],
+				oFixture.mParameters && oFixture.mParameters.$orderby));
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("sort - errors", function (assert) {
+		var oListBinding = this.oModel.bindList("/EMPLOYEES");
+
+		assert.throws(function () {
+			oListBinding.sort([]);
+		}, new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server"));
+		assert.throws(function () {
+			oListBinding.sort();
+		}, new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server"));
 	});
 });
 //TODO to avoid complete re-rendering of lists implement bUseExtendedChangeDetection support
