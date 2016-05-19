@@ -3,8 +3,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', 'sap/m/Message
 	"use strict";
 
 	var PageController = Controller.extend("sap.m.sample.SlideTile.Page", {
-		press : function(evt) {
-			MessageToast.show("The generic tile is pressed.");
+		pressOnTileOne : function(evt) {
+			MessageToast.show("The generic tile one pressed.");
+		},
+		pressOnTileTwo : function(evt) {
+			MessageToast.show("The generic tile two pressed.");
 		}
 	});
 
