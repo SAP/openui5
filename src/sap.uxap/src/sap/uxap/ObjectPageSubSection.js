@@ -538,13 +538,12 @@ sap.ui.define([
 	};
 
 	ObjectPageSubSection.prototype.removeAllAggregation = function (sAggregationName) {
-		var aInternalAggregation, aItems;
+		var aInternalAggregation;
 
 		if (this.hasProxy(sAggregationName)) {
 			aInternalAggregation = this._getAggregation(sAggregationName);
-			aItems = aInternalAggregation.slice(0, aInternalAggregation.length - 1);
 			this._setAggregation(sAggregationName, []);
-			return aItems;
+			return aInternalAggregation.slice();
 		}
 
 		return ObjectPageSectionBase.prototype.removeAllAggregation.apply(this, arguments);
