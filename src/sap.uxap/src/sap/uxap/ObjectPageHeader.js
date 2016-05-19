@@ -80,22 +80,22 @@ sap.ui.define([
 				},
 
 				/**
-				 * Determines whether the icon should always be visible or if it should be visible only when scrolling.
+				 * Determines whether the icon should always be visible or visible only when the header is snapped.
 				 */
 				isObjectIconAlwaysVisible: {type: "boolean", defaultValue: false},
 
 				/**
-				 * Determines whether the title should always be visible or if it should be visible only when scrolling.
+				 * Determines whether the title should always be visible or visible only when the header is snapped.
 				 */
 				isObjectTitleAlwaysVisible: {type: "boolean", defaultValue: true},
 
 				/**
-				 * Determines whether the subtitle should always be visible or if it should be visible only when scrolling.
+				 * Determines whether the subtitle should always be visible or visible only when the header is snapped.
 				 */
 				isObjectSubtitleAlwaysVisible: {type: "boolean", defaultValue: true},
 
 				/**
-				 * Determines whether the action buttons should always be visible or if they should be visible only when scrolling.
+				 * Determines whether the action buttons should always be visible or visible only when the header is snapped.
 				 */
 				isActionAreaAlwaysVisible: {type: "boolean", defaultValue: true},
 
