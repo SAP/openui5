@@ -818,7 +818,9 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	 */
 	AnalyticalTable.prototype.resumeUpdateAnalyticalInfo = function(bSupressRefresh, bForceChange) {
 		this._bSuspendUpdateAnalyticalInfo = false;
-		this._updateColumns(bSupressRefresh, bForceChange);
+		// the binding needs to fire a change event to force the table to request new contexts
+		// only if the callee explicitly don't request a change event, it can be omitted.
+		this._updateColumns(bSupressRefresh, (bForceChange === false ? false : true));
 	};
 
 	AnalyticalTable.prototype.addColumn = function(vColumn, bSuppressInvalidate) {
