@@ -799,7 +799,7 @@ sap.ui.define([
 			iSubtitleBottom,
 			iTitleBottom,
 			iActionsAndImageWidth = this.$("actions").width() + this.$().find(".sapUxAPObjectPageHeaderObjectImageContainer").width(),
-			iPixelTolerance = 3; // the tolerance of pixels from which we can tell that the title and subtitle are on the same row
+			iPixelTolerance = this.$().parents().hasClass('sapUiSizeCompact') ? 7 : 3;  // the tolerance of pixels from which we can tell that the title and subtitle are on the same row
 
 		if ($subtitle.length) {
 			if ($subtitle.hasClass("sapOPHSubtitleBlock")) {
