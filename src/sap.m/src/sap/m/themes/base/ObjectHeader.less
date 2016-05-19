@@ -361,6 +361,15 @@ html.sapUiMedia-Std-Tablet .additionalOHNumberDiv.sapMOHNumberDiv {
 .additionalOHNumberDiv.sapMOHNumberDiv.sapMOHOnlyANumber {
 	padding-right: 0.5em;
 }
+
+.sapMOH .sapMObjStatusMarker .sapMObjectMarkerIcon .sapUiIcon {
+	margin-left: 0.5rem;
+	font-size: 0.875rem;
+}
+
+.sapMOH .sapMObjStatusMarker .sapUiIcon:before {
+	vertical-align: top;
+}
 /*
  * Do NOT clear if ObjectHeader is placed in a responsive grid layout.
  * The layout will clear after the ObjectHeader by itself. This caused problems
@@ -486,14 +495,20 @@ html[data-sap-ui-browser ^= "ie"] {
 }
 
 .sapMOHR .sapMObjStatusMarker{
-	font-family: SAP-icons;
-	font-size: 1rem;
 	white-space: nowrap;
 }
 
 .sapMOHR .sapMObjStatusMarker .sapUiIcon {
 	display: inline;
 	margin-left: 0.5rem;
+}
+
+.sapMOHR .sapMObjStatusMarker .sapMObjectMarker,
+.sapMOHR .sapMObjStatusMarker .sapMObjectMarker .sapMText {
+	display: inline;
+}
+.sapMOHR .sapMObjStatusMarker .sapUiIcon:before {
+	vertical-align: inherit;
 }
 
 .sapMOHR .sapMObjStatusMarker.sapMObjStatusMarkerOpposite .sapUiIcon {
