@@ -381,6 +381,21 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	* Overwrite setBusy, because the busyIndicator does not cover the header title,
+	* because the header title has z-index: 2 in order to appear on top of the content
+	* @param {boolean} bBusy
+	* @public
+	*/
+	ObjectPageLayout.prototype.setBusy = function (bBusy) {
+		var $title = this.$("headerTitle"),
+			vResult = Control.prototype.setBusy.call(this, bBusy);
+
+		$title.length > 0 && $title.toggleClass("sapUxAPObjectPageHeaderTitleBusy", bBusy);
+
+		return vResult;
+	};
+
 	ObjectPageLayout.prototype._initializeScroller = function () {
 		if (this._oScroller) {
 			return;
