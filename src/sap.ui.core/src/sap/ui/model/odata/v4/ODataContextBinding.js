@@ -119,7 +119,6 @@ sap.ui.define([
 				this.oCache = undefined;
 				this.mCacheByContext = undefined;
 				this.sGroupId = undefined;
-				this.bHasParameters = !!mParameters;
 				this.oOperation = undefined;
 				this.mQueryOptions = undefined;
 				this.sRefreshGroupId = undefined;
@@ -577,7 +576,7 @@ sap.ui.define([
 				if (this.oOperation) {
 					// the binding parameter for a deferred operation binding has changed
 					this.oCache = undefined;
-				} else if (this.bHasParameters) {
+				} else if (this.mQueryOptions) {
 					this.oCache = _ODataHelper.createCacheProxy(this, oContext, function (sPath) {
 						return _Cache.createSingle(that.oModel.oRequestor,
 							sPath.slice(1) + (that.sPath ? "/" : "") + that.sPath,

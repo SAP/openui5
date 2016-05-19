@@ -5,16 +5,16 @@ sap.ui.require([
 	"jquery.sap.global",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/model/ChangeReason",
-	"sap/ui/model/Context",
 	"sap/ui/model/ListBinding",
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_SyncPromise",
+	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataModel"
-], function (jQuery, ManagedObject, ChangeReason, Context, ListBinding, Model, _ODataHelper, _Cache,
-		_SyncPromise, ODataListBinding, ODataModel) {
+], function (jQuery, ManagedObject, ChangeReason, ListBinding, Model, _ODataHelper, _Cache,
+		_SyncPromise, Context, ODataListBinding, ODataModel) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -188,11 +188,6 @@ sap.ui.require([
 		assert.throws(function () {
 			this.oModel.bindList("/EMPLOYEES", null, undefined, undefined, mParameters);
 		}, oError);
-
-		//error for relative paths
-		assert.throws(function () {
-			this.oModel.bindList("EMPLOYEE_2_EQUIPMENTS", null, undefined, undefined, mParameters);
-		}, new Error("Bindings with a relative path do not support parameters"));
 
 		//TODO parameter aSorters and aFilters
 	});
@@ -379,9 +374,6 @@ sap.ui.require([
 		var oContext = {},
 			oListBinding = this.oModel.bindList("foo", oContext);
 
-		this.mock(this.oModel).expects("resolve")
-			.withExactArgs("foo", sinon.match.same(oContext))
-			.returns("/absolute");
 		this.mock(oListBinding).expects("_fireChange")
 			.withExactArgs({reason : ChangeReason.Change});
 
@@ -392,8 +384,6 @@ sap.ui.require([
 	QUnit.test("initialize, unresolved path", function () {
 		var oListBinding = this.oModel.bindList("Suppliers");
 
-		this.mock(this.oModel).expects("resolve")
-			.returns(undefined /*relative path, no context*/);
 		this.mock(oListBinding).expects("_fireChange").never();
 
 		oListBinding.initialize();
@@ -408,6 +398,72 @@ sap.ui.require([
 			.withExactArgs({reason : ChangeReason.Context});
 
 		oListBinding.setContext(oContext);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setContext, relative path with parameters", function (assert) {
+		var oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", null, undefined, undefined,
+				{$select : "Name"}),
+			oCache = {},
+			sCanonicalPath = "/TEAMS(Team_Id='4711')",
+			oCacheProxy = {
+				promise : Promise.resolve(oCache)
+			},
+			oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS", 1);
+
+		this.mock(_Cache).expects("create")
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor),
+				sCanonicalPath.slice(1) + "/TEAM_2_EMPLOYEES", {
+					$select: ["Name"],
+					"sap-client" : "111"
+				})
+			.returns(oCache);
+		this.stub(_ODataHelper, "createCacheProxy",
+			function (oBinding0, oContext0, fnCreateCache) {
+				assert.strictEqual(oBinding0, oBinding);
+				assert.strictEqual(oContext0, oContext);
+				assert.strictEqual(fnCreateCache(sCanonicalPath), oCache);
+				return oCacheProxy;
+			});
+
+		//code under test
+		oBinding.setContext(oContext);
+
+		assert.strictEqual(oBinding.oCache, oCacheProxy);
+
+		return oCacheProxy.promise.then(function (oCache) {
+			assert.strictEqual(oBinding.oCache, oCache);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setContext, relative path w/ parameters, proxy promise rejects", function (assert) {
+		var oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", null, undefined, undefined,
+				{$select : "Name"}),
+			oError = new Error("Failed to compute canonical path..."),
+			oCacheProxy = {
+				promise : Promise.reject(oError)
+			},
+			oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS", 1);
+
+		this.mock(_Cache).expects("create").never();
+		this.mock(_ODataHelper).expects("createCacheProxy")
+			.withExactArgs(sinon.match.same(oBinding), sinon.match.same(oContext), sinon.match.func)
+			.returns(oCacheProxy);
+		this.mock(oBinding.oModel).expects("reportError")
+			.withExactArgs(
+				"Failed to create cache for binding " +
+					"sap.ui.model.odata.v4.ODataListBinding: /TEAMS[1]|TEAM_2_EMPLOYEES",
+				"sap.ui.model.odata.v4.ODataListBinding",
+				sinon.match.same(oError)
+			);
+
+		//code under test
+		oBinding.setContext(oContext);
+
+		return oCacheProxy.promise.catch(function (oError0) {
+			assert.strictEqual(oError0, oError);
+		});
 	});
 
 	//*********************************************************************************************
@@ -842,7 +898,31 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refresh on relative binding is not supported", function (assert) {
+	QUnit.test("refresh on relative binding with parameters", function (assert) {
+		var oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", null, undefined, undefined,
+				{$select : "Name"}),
+			oCache = {refresh : function () {}},
+			oCachePromise = Promise.resolve(oCache),
+			oCacheProxy = {promise : oCachePromise},
+			oContext = Context.create(this.oModel, null, "/TEAMS", 1),
+			oHelperMock = this.mock(_ODataHelper);
+
+		oHelperMock.expects("createCacheProxy")
+			.withExactArgs(sinon.match.same(oBinding), sinon.match.same(oContext), sinon.match.func)
+			.returns(oCacheProxy);
+		this.mock(oCache).expects("refresh");
+		oBinding.setContext(oContext);
+		oBinding.mCacheByContext = {"/TEAMS('1')" : oCache, "/TEAMS('42')" : {}};
+
+		return oCachePromise.then(function () {
+			//code under test
+			oBinding.refresh();
+			assert.deepEqual(oBinding.mCacheByContext, {"/TEAMS('1')" : oCache});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refresh on relative binding w/o parameters is not supported", function (assert) {
 		var oListBinding = this.oModel.bindList("EMPLOYEES"),
 			oListBindingMock = this.mock(oListBinding);
 
@@ -1262,11 +1342,6 @@ sap.ui.require([
 //array with information which entry has been inserted or deleted (see jQuery.sap.arrayDiff and
 //sap.m.GrowingEnablement)
 //TODO lists within lists for deferred navigation or structural properties
-
-//TODO setContext() must delete this.oCache when it has its own cache (e.g. scenario
-//  where listbinding is not nested but has a context. This is currently not possible but
-//  if you think on a relative binding "TEAMS" which becomes context "/" -> here the relative
-//  binding must create the it's own cache which has to be deleted with setContext()
 
 //TODO integration: 2 entity sets with same $expand, but different $select
 //TODO support suspend/resume

@@ -226,7 +226,6 @@ sap.ui.require([
 			assert.strictEqual(oBinding.sGroupId, undefined);
 			assert.strictEqual(oBinding.hasOwnProperty("sUpdateGroupId"), true);
 			assert.strictEqual(oBinding.sUpdateGroupId, undefined);
-			assert.strictEqual(oBinding.bHasParameters, false);
 			assert.strictEqual(oBinding.hasOwnProperty("mCacheByContext"), true);
 			assert.strictEqual(oBinding.mCacheByContext, undefined);
 		});
@@ -261,7 +260,6 @@ sap.ui.require([
 			assert.strictEqual(oBinding.mQueryOptions, mQueryOptions);
 			assert.strictEqual(oBinding.sGroupId, "group");
 			assert.strictEqual(oBinding.sUpdateGroupId, "updateGroup");
-			assert.strictEqual(oBinding.bHasParameters, true);
 		});
 	});
 

@@ -1,8 +1,8 @@
 {
-	"@odata.context" : "$metadata#SalesOrderList(ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID,SO_2_BP(BusinessPartnerID,CompanyName,PhoneNumber))/$entity",
-	"@odata.etag" : "W/\"20160419220000.0000000\"",
-	"ChangedAt" : "20160419220000.0000000 ",
-	"CreatedAt" : "20160419220000.0000000 ",
+	"@odata.context" : "$metadata#SalesOrderList(ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID,SO_2_SOITEM(SOITEM_2_PRODUCT(PRODUCT_2_BP(BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))),SO_2_BP(BusinessPartnerID,CompanyName,PhoneNumber))/$entity",
+	"@odata.etag" : "W/\"20160518220000.0000000\"",
+	"ChangedAt" : "20160518220000.0000000 ",
+	"CreatedAt" : "20160518220000.0000000 ",
 	"LifecycleStatusDesc" : "",
 	"Note" : "EPM DG: SO ID 0500000007 Deliver as fast as possible",
 	"SalesOrderID" : "0500000007",
@@ -16,7 +16,7 @@
 				"GrossAmount" : "547.40",
 				"NetAmount" : "460.00",
 				"TaxAmount" : "87.40",
-				"DeliveryDate" : "2016-04-26T22:00:00Z",
+				"DeliveryDate" : "2016-05-25T22:00:00Z",
 				"Quantity" : "2",
 				"QuantityUnit" : "EA",
 				"Product" : {
@@ -43,88 +43,14 @@
 					"Depth" : "12.000",
 					"Height" : "36.000",
 					"DimUnit" : "CM",
-					"CreatedAt" : "2016-04-20T14:39:45Z",
-					"ChangedAt" : "2016-04-20T14:39:45Z",
+					"CreatedAt" : "2016-04-20T05:46:40Z",
+					"ChangedAt" : "2016-04-20T05:46:40Z",
 					"PRODUCT_2_BP" : {
-						"@odata.etag" : "W/\"20160420143945.0000000\"",
+						"@odata.etag" : "W/\"20160420054640.0000000\"",
 						"BusinessPartnerID" : "0100000011",
-						"BusinessPartnerRole" : "01",
 						"CompanyName" : "Alpine Systems",
-						"WebAddress" : "http://www.alp-systems.at",
-						"EmailAddress" : "joseph_gschwandtner@alp-systems.at",
-						"PhoneNumber" : "6623612804",
-						"FaxNumber" : "6623612004",
 						"LegalForm" : "AG",
-						"CurrencyCode" : "EUR",
-						"CreatedAt" : "2016-04-20T14:39:45Z",
-						"ChangedAt" : "2016-04-20T14:39:45Z",
-						"Address" : {
-							"City" : "Salzburg",
-							"PostalCode" : "5020",
-							"Street" : "Aiglhofstraße",
-							"Building" : "20",
-							"Country" : "AT",
-							"AddressType" : "02",
-							"GeoLocation" : {
-								"Longitude" : "13.028652200000",
-								"Latitude" : "47.803414200000"
-							}
-						},
-						"BP_2_CONTACT" : [ {
-							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5dc035",
-							"BusinessPartnerID" : "0100000011",
-							"Title" : "",
-							"FirstName" : "Joseph",
-							"MiddleName" : "",
-							"LastName" : "Gschwandtner",
-							"Nickname" : "",
-							"Initials" : "",
-							"Sex" : "M",
-							"PhoneNumber" : "6623612804",
-							"FaxNumber" : "6623612004",
-							"EmailAddress" : "joseph_gschwandtner@alp-systems.at",
-							"Language" : "E",
-							"DateOfBirth" : null,
-							"Address" : {
-								"City" : "Salzburg",
-								"PostalCode" : "5020",
-								"Street" : "Müllner Hauptstraße",
-								"Building" : "7",
-								"Country" : "AT",
-								"AddressType" : "02",
-								"GeoLocation" : {
-									"Longitude" : "13.037048000000",
-									"Latitude" : "47.804405000000"
-								}
-							}
-						}, {
-							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5de035",
-							"BusinessPartnerID" : "0100000011",
-							"Title" : "",
-							"FirstName" : "Karolin",
-							"MiddleName" : "",
-							"LastName" : "Schröder",
-							"Nickname" : "",
-							"Initials" : "",
-							"Sex" : "F",
-							"PhoneNumber" : "6623612812",
-							"FaxNumber" : "6623612004",
-							"EmailAddress" : "karolin.schroeder@alp-systems.at",
-							"Language" : "E",
-							"DateOfBirth" : null,
-							"Address" : {
-								"City" : "Linz",
-								"PostalCode" : "4020",
-								"Street" : "Landstraße",
-								"Building" : "78",
-								"Country" : "AT",
-								"AddressType" : "02",
-								"GeoLocation" : {
-									"Longitude" : "14.291420000000",
-									"Latitude" : "48.297957000000"
-								}
-							}
-						} ]
+						"PhoneNumber" : "6623612804"
 					}
 				}
 			},
@@ -137,7 +63,7 @@
 				"GrossAmount" : "1017.45",
 				"NetAmount" : "855.00",
 				"TaxAmount" : "162.45",
-				"DeliveryDate" : "2016-04-26T22:00:00Z",
+				"DeliveryDate" : "2016-05-25T22:00:00Z",
 				"Quantity" : "3",
 				"QuantityUnit" : "EA",
 				"Product" : {
@@ -164,88 +90,14 @@
 					"Depth" : "19.000",
 					"Height" : "43.000",
 					"DimUnit" : "CM",
-					"CreatedAt" : "2016-04-20T14:39:45Z",
-					"ChangedAt" : "2016-04-20T14:39:45Z",
+					"CreatedAt" : "2016-04-20T05:46:40Z",
+					"ChangedAt" : "2016-04-20T05:46:40Z",
 					"PRODUCT_2_BP" : {
-						"@odata.etag" : "W/\"20160420143945.0000000\"",
+						"@odata.etag" : "W/\"20160502071224.7717390\"",
 						"BusinessPartnerID" : "0100000012",
-						"BusinessPartnerRole" : "01",
 						"CompanyName" : "New Line Design",
-						"WebAddress" : "http://www.newlinedesign.co.uk",
-						"EmailAddress" : "george_d_grant@newlinedesign.co.uk",
-						"PhoneNumber" : "2589436180",
-						"FaxNumber" : "2589436004",
 						"LegalForm" : "Ltd.",
-						"CurrencyCode" : "GBP",
-						"CreatedAt" : "2016-04-20T14:39:45Z",
-						"ChangedAt" : "2016-04-20T14:39:45Z",
-						"Address" : {
-							"City" : "Manchester",
-							"PostalCode" : "M11 3ER",
-							"Street" : "Edwin Road",
-							"Building" : "9",
-							"Country" : "GB",
-							"AddressType" : "02",
-							"GeoLocation" : {
-								"Longitude" : "-2.206997600000",
-								"Latitude" : "53.482612000000"
-							}
-						},
-						"BP_2_CONTACT" : [ {
-							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5e0035",
-							"BusinessPartnerID" : "0100000012",
-							"Title" : "",
-							"FirstName" : "George",
-							"MiddleName" : "David",
-							"LastName" : "Grant",
-							"Nickname" : "",
-							"Initials" : "",
-							"Sex" : "M",
-							"PhoneNumber" : "2589436180",
-							"FaxNumber" : "2589436004",
-							"EmailAddress" : "george_d_grant@newlinedesign.co.uk",
-							"Language" : "E",
-							"DateOfBirth" : null,
-							"Address" : {
-								"City" : "Ashton-under-Lyne",
-								"PostalCode" : "OL7 0AH",
-								"Street" : "Katherine St",
-								"Building" : "396",
-								"Country" : "GB",
-								"AddressType" : "02",
-								"GeoLocation" : {
-									"Longitude" : "-2.108374000000",
-									"Latitude" : "53.485814000000"
-								}
-							}
-						}, {
-							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5e2035",
-							"BusinessPartnerID" : "0100000012",
-							"Title" : "",
-							"FirstName" : "Brigida",
-							"MiddleName" : "Cara",
-							"LastName" : "Wright",
-							"Nickname" : "",
-							"Initials" : "",
-							"Sex" : "F",
-							"PhoneNumber" : "2089177317",
-							"FaxNumber" : "2589436004",
-							"EmailAddress" : "wright_brigida@newlinedesign.co.uk",
-							"Language" : "E",
-							"DateOfBirth" : null,
-							"Address" : {
-								"City" : "Manchester",
-								"PostalCode" : "M11 3ER",
-								"Street" : "Midland St",
-								"Building" : "16",
-								"Country" : "GB",
-								"AddressType" : "02",
-								"GeoLocation" : {
-									"Longitude" : "-2.215117000000",
-									"Latitude" : "53.473788000000"
-								}
-							}
-						} ]
+						"PhoneNumber" : "25894361802"
 					}
 				}
 			},
@@ -258,7 +110,7 @@
 				"GrossAmount" : "410.55",
 				"NetAmount" : "345.00",
 				"TaxAmount" : "65.55",
-				"DeliveryDate" : "2016-04-26T22:00:00Z",
+				"DeliveryDate" : "2016-05-25T22:00:00Z",
 				"Quantity" : "1",
 				"QuantityUnit" : "EA",
 				"Product" : {
@@ -285,88 +137,14 @@
 					"Depth" : "19.000",
 					"Height" : "43.000",
 					"DimUnit" : "CM",
-					"CreatedAt" : "2016-04-20T14:39:45Z",
-					"ChangedAt" : "2016-04-20T14:39:45Z",
+					"CreatedAt" : "2016-04-20T05:46:40Z",
+					"ChangedAt" : "2016-04-20T05:46:40Z",
 					"PRODUCT_2_BP" : {
-						"@odata.etag" : "W/\"20160420143945.0000000\"",
+						"@odata.etag" : "W/\"20160420054640.0000000\"",
 						"BusinessPartnerID" : "0100000013",
-						"BusinessPartnerRole" : "01",
 						"CompanyName" : "HEPA Tec",
-						"WebAddress" : "http://www.hepa-tec.de",
-						"EmailAddress" : "sarah.schwind@hepa-tec.de",
-						"PhoneNumber" : "4507867136",
-						"FaxNumber" : "4507867004",
 						"LegalForm" : "GmbH",
-						"CurrencyCode" : "EUR",
-						"CreatedAt" : "2016-04-20T14:39:45Z",
-						"ChangedAt" : "2016-04-20T14:39:45Z",
-						"Address" : {
-							"City" : "Bremen",
-							"PostalCode" : "28213",
-							"Street" : "Theodor-Heuss-Allee",
-							"Building" : "43",
-							"Country" : "DE",
-							"AddressType" : "02",
-							"GeoLocation" : {
-								"Longitude" : "8.815485500000",
-								"Latitude" : "53.084664600000"
-							}
-						},
-						"BP_2_CONTACT" : [ {
-							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5e4035",
-							"BusinessPartnerID" : "0100000013",
-							"Title" : "",
-							"FirstName" : "Sarah",
-							"MiddleName" : "",
-							"LastName" : "Schwind",
-							"Nickname" : "",
-							"Initials" : "",
-							"Sex" : "F",
-							"PhoneNumber" : "4507867136",
-							"FaxNumber" : "4507867004",
-							"EmailAddress" : "sarah.schwind@hepa-tec.de",
-							"Language" : "E",
-							"DateOfBirth" : null,
-							"Address" : {
-								"City" : "Bremen",
-								"PostalCode" : "28309",
-								"Street" : "Osterhop",
-								"Building" : "13",
-								"Country" : "DE",
-								"AddressType" : "02",
-								"GeoLocation" : {
-									"Longitude" : "8.901073600000",
-									"Latitude" : "53.051611400000"
-								}
-							}
-						}, {
-							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5e6035",
-							"BusinessPartnerID" : "0100000013",
-							"Title" : "",
-							"FirstName" : "Marko",
-							"MiddleName" : "",
-							"LastName" : "König",
-							"Nickname" : "",
-							"Initials" : "",
-							"Sex" : "M",
-							"PhoneNumber" : "0659410795031",
-							"FaxNumber" : "4507867004",
-							"EmailAddress" : "marko.koenig@hepa-tec.de",
-							"Language" : "E",
-							"DateOfBirth" : null,
-							"Address" : {
-								"City" : "Bremen",
-								"PostalCode" : "28195",
-								"Street" : "Marktstr",
-								"Building" : "12",
-								"Country" : "DE",
-								"AddressType" : "02",
-								"GeoLocation" : {
-									"Longitude" : "8.807380000000",
-									"Latitude" : "53.075630000000"
-								}
-							}
-						} ]
+						"PhoneNumber" : "4507867136"
 					}
 				}
 			},
@@ -379,7 +157,7 @@
 				"GrossAmount" : "949.62",
 				"NetAmount" : "798.00",
 				"TaxAmount" : "151.62",
-				"DeliveryDate" : "2016-04-26T22:00:00Z",
+				"DeliveryDate" : "2016-05-25T22:00:00Z",
 				"Quantity" : "2",
 				"QuantityUnit" : "EA",
 				"Product" : {
@@ -406,88 +184,14 @@
 					"Depth" : "20.000",
 					"Height" : "41.000",
 					"DimUnit" : "CM",
-					"CreatedAt" : "2016-04-20T14:39:45Z",
-					"ChangedAt" : "2016-04-20T14:39:45Z",
+					"CreatedAt" : "2016-04-20T05:46:40Z",
+					"ChangedAt" : "2016-04-20T05:46:40Z",
 					"PRODUCT_2_BP" : {
-						"@odata.etag" : "W/\"20160420143945.0000000\"",
+						"@odata.etag" : "W/\"20160429133938.4218920\"",
 						"BusinessPartnerID" : "0100000014",
-						"BusinessPartnerRole" : "01",
 						"CompanyName" : "Anav Ideon",
-						"WebAddress" : "http://www.anavideon.com",
-						"EmailAddress" : "theodor.monathy@anavideon.com",
-						"PhoneNumber" : "5850428367",
-						"FaxNumber" : "5850428004",
 						"LegalForm" : "Ltd.",
-						"CurrencyCode" : "USD",
-						"CreatedAt" : "2016-04-20T14:39:45Z",
-						"ChangedAt" : "2016-04-20T14:39:45Z",
-						"Address" : {
-							"City" : "Bismarck, North Dakota",
-							"PostalCode" : "58501",
-							"Street" : "Franklin Ave",
-							"Building" : "153",
-							"Country" : "US",
-							"AddressType" : "02",
-							"GeoLocation" : {
-								"Longitude" : "-100.735940000000",
-								"Latitude" : "46.839540000000"
-							}
-						},
-						"BP_2_CONTACT" : [ {
-							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5e8035",
-							"BusinessPartnerID" : "0100000014",
-							"Title" : "",
-							"FirstName" : "Theodor",
-							"MiddleName" : "",
-							"LastName" : "Monathy",
-							"Nickname" : "",
-							"Initials" : "",
-							"Sex" : "M",
-							"PhoneNumber" : "5850428367",
-							"FaxNumber" : "5850428004",
-							"EmailAddress" : "theodor.monathy@anavideon.com",
-							"Language" : "E",
-							"DateOfBirth" : null,
-							"Address" : {
-								"City" : "Jamestown, North Dakota",
-								"PostalCode" : "58401",
-								"Street" : "Frontage Rd",
-								"Building" : "1001",
-								"Country" : "US",
-								"AddressType" : "02",
-								"GeoLocation" : {
-									"Longitude" : "-98.725137000000",
-									"Latitude" : "46.891585000000"
-								}
-							}
-						}, {
-							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5ea035",
-							"BusinessPartnerID" : "0100000014",
-							"Title" : "",
-							"FirstName" : "Carlene",
-							"MiddleName" : "Sandra",
-							"LastName" : "McCutcheon",
-							"Nickname" : "",
-							"Initials" : "",
-							"Sex" : "F",
-							"PhoneNumber" : "90769766025",
-							"FaxNumber" : "5850428004",
-							"EmailAddress" : "mc.cutcheon.Carlene@anavideon.com",
-							"Language" : "E",
-							"DateOfBirth" : null,
-							"Address" : {
-								"City" : "Bismarck, North Dakota",
-								"PostalCode" : "58503",
-								"Street" : "Geteway Ave",
-								"Building" : "950",
-								"Country" : "US",
-								"AddressType" : "02",
-								"GeoLocation" : {
-									"Longitude" : "-100.776764000000",
-									"Latitude" : "46.834586000000"
-								}
-							}
-						} ]
+						"PhoneNumber" : "585333"
 					}
 				}
 			},
@@ -500,7 +204,7 @@
 				"GrossAmount" : "1023.40",
 				"NetAmount" : "860.00",
 				"TaxAmount" : "163.40",
-				"DeliveryDate" : "2016-04-26T22:00:00Z",
+				"DeliveryDate" : "2016-05-25T22:00:00Z",
 				"Quantity" : "2",
 				"QuantityUnit" : "EA",
 				"Product" : {
@@ -527,88 +231,14 @@
 					"Depth" : "26.000",
 					"Height" : "46.000",
 					"DimUnit" : "CM",
-					"CreatedAt" : "2016-04-20T14:39:45Z",
-					"ChangedAt" : "2016-04-20T14:39:45Z",
+					"CreatedAt" : "2016-04-20T05:46:40Z",
+					"ChangedAt" : "2016-04-20T05:46:40Z",
 					"PRODUCT_2_BP" : {
-						"@odata.etag" : "W/\"20160420143945.0000000\"",
+						"@odata.etag" : "W/\"20160420054640.0000000\"",
 						"BusinessPartnerID" : "0100000015",
-						"BusinessPartnerRole" : "01",
 						"CompanyName" : "Robert Brown Entertainment",
-						"WebAddress" : "http://www.rb-entertainment.ca",
-						"EmailAddress" : "robert_brown@rb-entertainment.ca",
-						"PhoneNumber" : "7609448173",
-						"FaxNumber" : "7609448004",
 						"LegalForm" : "Ltd.",
-						"CurrencyCode" : "CAD",
-						"CreatedAt" : "2016-04-20T14:39:45Z",
-						"ChangedAt" : "2016-04-20T14:39:45Z",
-						"Address" : {
-							"City" : "Quebec",
-							"PostalCode" : "G1K3X7",
-							"Street" : "Rue du Sault au Matelot",
-							"Building" : "65",
-							"Country" : "CA",
-							"AddressType" : "02",
-							"GeoLocation" : {
-								"Longitude" : "-71.203329100000",
-								"Latitude" : "46.814796000000"
-							}
-						},
-						"BP_2_CONTACT" : [ {
-							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5ec035",
-							"BusinessPartnerID" : "0100000015",
-							"Title" : "",
-							"FirstName" : "Robert",
-							"MiddleName" : "",
-							"LastName" : "Brown",
-							"Nickname" : "",
-							"Initials" : "",
-							"Sex" : "M",
-							"PhoneNumber" : "7609448173",
-							"FaxNumber" : "7609448004",
-							"EmailAddress" : "robert_brown@rb-entertainment.ca",
-							"Language" : "E",
-							"DateOfBirth" : null,
-							"Address" : {
-								"City" : "Montréal",
-								"PostalCode" : "QCH3C1N9",
-								"Street" : "Rue William",
-								"Building" : "665",
-								"Country" : "CA",
-								"AddressType" : "02",
-								"GeoLocation" : {
-									"Longitude" : "-73.557470000000",
-									"Latitude" : "45.498661000000"
-								}
-							}
-						}, {
-							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5ee035",
-							"BusinessPartnerID" : "0100000015",
-							"Title" : "",
-							"FirstName" : "Jesse",
-							"MiddleName" : "",
-							"LastName" : "Charley",
-							"Nickname" : "",
-							"Initials" : "",
-							"Sex" : "M",
-							"PhoneNumber" : "7609448673",
-							"FaxNumber" : "7609448004",
-							"EmailAddress" : "charley.jesse@rb-entertainment.ca",
-							"Language" : "E",
-							"DateOfBirth" : null,
-							"Address" : {
-								"City" : "Ottawa",
-								"PostalCode" : "ONK1R7T2",
-								"Street" : "Albert St",
-								"Building" : "383",
-								"Country" : "CA",
-								"AddressType" : "02",
-								"GeoLocation" : {
-									"Longitude" : "-75.705137000000",
-									"Latitude" : "45.417951000000"
-								}
-							}
-						} ]
+						"PhoneNumber" : "7609448173"
 					}
 				}
 			},
@@ -621,7 +251,7 @@
 				"GrossAmount" : "1463.70",
 				"NetAmount" : "1230.00",
 				"TaxAmount" : "233.70",
-				"DeliveryDate" : "2016-04-26T22:00:00Z",
+				"DeliveryDate" : "2016-05-25T22:00:00Z",
 				"Quantity" : "1",
 				"QuantityUnit" : "EA",
 				"Product" : {
@@ -648,88 +278,14 @@
 					"Depth" : "22.100",
 					"Height" : "39.100",
 					"DimUnit" : "CM",
-					"CreatedAt" : "2016-04-20T14:39:45Z",
-					"ChangedAt" : "2016-04-20T14:39:45Z",
+					"CreatedAt" : "2016-04-20T05:46:40Z",
+					"ChangedAt" : "2016-04-20T05:46:40Z",
 					"PRODUCT_2_BP" : {
-						"@odata.etag" : "W/\"20160420143945.0000000\"",
+						"@odata.etag" : "W/\"20160420054640.0000000\"",
 						"BusinessPartnerID" : "0100000016",
-						"BusinessPartnerRole" : "01",
 						"CompanyName" : "Mexican Oil Trading Company",
-						"WebAddress" : "http://www.motc.mx",
-						"EmailAddress" : "jorgemontalban@motc.mx",
-						"PhoneNumber" : "6879342945",
-						"FaxNumber" : "6879342004",
 						"LegalForm" : "S.A.",
-						"CurrencyCode" : "MXN",
-						"CreatedAt" : "2016-04-20T14:39:45Z",
-						"ChangedAt" : "2016-04-20T14:39:45Z",
-						"Address" : {
-							"City" : "Puebla",
-							"PostalCode" : "40615",
-							"Street" : "Av. Hermanos Serdan",
-							"Building" : "366",
-							"Country" : "MX",
-							"AddressType" : "02",
-							"GeoLocation" : {
-								"Longitude" : "-98.227681100000",
-								"Latitude" : "19.077357100000"
-							}
-						},
-						"BP_2_CONTACT" : [ {
-							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5f0035",
-							"BusinessPartnerID" : "0100000016",
-							"Title" : "",
-							"FirstName" : "Jorge",
-							"MiddleName" : "",
-							"LastName" : "Montalban",
-							"Nickname" : "",
-							"Initials" : "",
-							"Sex" : "M",
-							"PhoneNumber" : "6879342945",
-							"FaxNumber" : "6879342004",
-							"EmailAddress" : "jorgemontalban@motc.mx",
-							"Language" : "E",
-							"DateOfBirth" : null,
-							"Address" : {
-								"City" : "Puebla, La Paz",
-								"PostalCode" : "72160",
-								"Street" : "Cholula",
-								"Building" : "# 4506",
-								"Country" : "MX",
-								"AddressType" : "02",
-								"GeoLocation" : {
-									"Longitude" : "-98.226527000000",
-									"Latitude" : "19.053587000000"
-								}
-							}
-						}, {
-							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5f2035",
-							"BusinessPartnerID" : "0100000016",
-							"Title" : "",
-							"FirstName" : "Danilo",
-							"MiddleName" : "Leo",
-							"LastName" : "Ferreira",
-							"Nickname" : "",
-							"Initials" : "",
-							"Sex" : "M",
-							"PhoneNumber" : "1977971188",
-							"FaxNumber" : "6879342004",
-							"EmailAddress" : "ferreira.danilo@motc.mx",
-							"Language" : "E",
-							"DateOfBirth" : null,
-							"Address" : {
-								"City" : "México",
-								"PostalCode" : "14330",
-								"Street" : "Cafetales",
-								"Building" : "253",
-								"Country" : "MX",
-								"AddressType" : "02",
-								"GeoLocation" : {
-									"Longitude" : "-99.114880200000",
-									"Latitude" : "19.292574100000"
-								}
-							}
-						} ]
+						"PhoneNumber" : "6879342945"
 					}
 				}
 			},
@@ -742,7 +298,7 @@
 				"GrossAmount" : "3412.92",
 				"NetAmount" : "2868.00",
 				"TaxAmount" : "544.92",
-				"DeliveryDate" : "2016-04-26T22:00:00Z",
+				"DeliveryDate" : "2016-05-25T22:00:00Z",
 				"Quantity" : "3",
 				"QuantityUnit" : "EA",
 				"Product" : {
@@ -769,88 +325,14 @@
 					"Depth" : "18.000",
 					"Height" : "3.000",
 					"DimUnit" : "CM",
-					"CreatedAt" : "2016-04-20T14:39:45Z",
-					"ChangedAt" : "2016-04-20T14:39:45Z",
+					"CreatedAt" : "2016-04-20T05:46:40Z",
+					"ChangedAt" : "2016-04-20T05:46:40Z",
 					"PRODUCT_2_BP" : {
-						"@odata.etag" : "W/\"20160420143945.0000000\"",
+						"@odata.etag" : "W/\"20160519064400.6963720\"",
 						"BusinessPartnerID" : "0100000000",
-						"BusinessPartnerRole" : "01",
 						"CompanyName" : "SAP",
-						"WebAddress" : "http://www.sap.com",
-						"EmailAddress" : "do.not.reply@sap.com",
-						"PhoneNumber" : "0622734567",
-						"FaxNumber" : "0622734004",
 						"LegalForm" : "SE",
-						"CurrencyCode" : "EUR",
-						"CreatedAt" : "2016-04-20T14:39:45Z",
-						"ChangedAt" : "2016-04-20T14:39:45Z",
-						"Address" : {
-							"City" : "Walldorf",
-							"PostalCode" : "69190",
-							"Street" : "Dietmar-Hopp-Allee",
-							"Building" : "16",
-							"Country" : "DE",
-							"AddressType" : "02",
-							"GeoLocation" : {
-								"Longitude" : "8.641701933686",
-								"Latitude" : "49.293673600000"
-							}
-						},
-						"BP_2_CONTACT" : [ {
-							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5b0035",
-							"BusinessPartnerID" : "0100000000",
-							"Title" : "",
-							"FirstName" : "Karl",
-							"MiddleName" : "",
-							"LastName" : "Müller",
-							"Nickname" : "",
-							"Initials" : "",
-							"Sex" : "M",
-							"PhoneNumber" : "0622734567",
-							"FaxNumber" : "0622734004",
-							"EmailAddress" : "do.not.reply@sap.com",
-							"Language" : "E",
-							"DateOfBirth" : null,
-							"Address" : {
-								"City" : "Walldorf",
-								"PostalCode" : "69190",
-								"Street" : "Robert-Koch-Straße",
-								"Building" : "1",
-								"Country" : "DE",
-								"AddressType" : "02",
-								"GeoLocation" : {
-									"Longitude" : "8.642596900000",
-									"Latitude" : "49.303710800000"
-								}
-							}
-						}, {
-							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5b2035",
-							"BusinessPartnerID" : "0100000000",
-							"Title" : "",
-							"FirstName" : "Harald",
-							"MiddleName" : "Jens",
-							"LastName" : "Gahn",
-							"Nickname" : "",
-							"Initials" : "",
-							"Sex" : "M",
-							"PhoneNumber" : "0622746358",
-							"FaxNumber" : "0622734004",
-							"EmailAddress" : "hjg@sap.com",
-							"Language" : "E",
-							"DateOfBirth" : null,
-							"Address" : {
-								"City" : "St.-Leon Rot",
-								"PostalCode" : "68789",
-								"Street" : "Opelstraße",
-								"Building" : "6",
-								"Country" : "DE",
-								"AddressType" : "02",
-								"GeoLocation" : {
-									"Longitude" : "8.640115630000",
-									"Latitude" : "49.246162000000"
-								}
-							}
-						} ]
+						"PhoneNumber" : "0633314711"
 					}
 				}
 			},
@@ -863,21 +345,21 @@
 				"GrossAmount" : "1486.31",
 				"NetAmount" : "1249.00",
 				"TaxAmount" : "237.31",
-				"DeliveryDate" : "2016-04-26T22:00:00Z",
+				"DeliveryDate" : "2016-05-25T22:00:00Z",
 				"Quantity" : "1",
 				"QuantityUnit" : "EA",
 				"Product" : {
 					"ProductID" : "HT-1001",
-					"ProductName" : "Notebook Basic 17"
+					"ProductName" : "modified by QUnit test"
 				},
 				"SOITEM_2_PRODUCT" : {
 					"ProductID" : "HT-1001",
 					"TypeCode" : "PR",
 					"Category" : "Notebooks",
-					"Name" : "Notebook Basic 17",
-					"NameLanguage" : "EN",
+					"Name" : "modified by QUnit test",
+					"NameLanguage" : "DE",
 					"Description" : "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
-					"DescriptionLanguage" : "EN",
+					"DescriptionLanguage" : "DE",
 					"SupplierID" : "0100000001",
 					"SupplierName" : "Becker Berlin",
 					"TaxTarifCode" : 1,
@@ -890,93 +372,19 @@
 					"Depth" : "17.000",
 					"Height" : "3.100",
 					"DimUnit" : "CM",
-					"CreatedAt" : "2016-04-20T14:39:45Z",
-					"ChangedAt" : "2016-04-20T14:39:45Z",
+					"CreatedAt" : "2016-04-20T05:46:40Z",
+					"ChangedAt" : "2016-04-20T05:46:40Z",
 					"PRODUCT_2_BP" : {
-						"@odata.etag" : "W/\"20160420143945.0000000\"",
+						"@odata.etag" : "W/\"20160420054640.0000000\"",
 						"BusinessPartnerID" : "0100000001",
-						"BusinessPartnerRole" : "02",
 						"CompanyName" : "Becker Berlin",
-						"WebAddress" : "http://www.beckerberlin.de",
-						"EmailAddress" : "dagmar.schulze@beckerberlin.de",
-						"PhoneNumber" : "3088530",
-						"FaxNumber" : "3088004",
 						"LegalForm" : "GmbH",
-						"CurrencyCode" : "EUR",
-						"CreatedAt" : "2016-04-20T14:39:45Z",
-						"ChangedAt" : "2016-04-20T14:39:45Z",
-						"Address" : {
-							"City" : "Berlin",
-							"PostalCode" : "13467",
-							"Street" : "Calvinstraße",
-							"Building" : "36",
-							"Country" : "DE",
-							"AddressType" : "02",
-							"GeoLocation" : {
-								"Longitude" : "13.297683900000",
-								"Latitude" : "52.612914300000"
-							}
-						},
-						"BP_2_CONTACT" : [ {
-							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5b4035",
-							"BusinessPartnerID" : "0100000001",
-							"Title" : "",
-							"FirstName" : "Dagmar",
-							"MiddleName" : "",
-							"LastName" : "Schulze",
-							"Nickname" : "",
-							"Initials" : "",
-							"Sex" : "F",
-							"PhoneNumber" : "3088530",
-							"FaxNumber" : "3088004",
-							"EmailAddress" : "dagmar.schulze@beckerberlin.de",
-							"Language" : "E",
-							"DateOfBirth" : null,
-							"Address" : {
-								"City" : "Berlin",
-								"PostalCode" : "13467",
-								"Street" : "Schulzendorfer Straße",
-								"Building" : "101",
-								"Country" : "DE",
-								"AddressType" : "02",
-								"GeoLocation" : {
-									"Longitude" : "13.293667000000",
-									"Latitude" : "52.610199000000"
-								}
-							}
-						}, {
-							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5b6035",
-							"BusinessPartnerID" : "0100000001",
-							"Title" : "",
-							"FirstName" : "Ursula",
-							"MiddleName" : "Mariana",
-							"LastName" : "Wexler",
-							"Nickname" : "",
-							"Initials" : "",
-							"Sex" : "F",
-							"PhoneNumber" : "3088529",
-							"FaxNumber" : "3088004",
-							"EmailAddress" : "ursula.wexler@beckerberlin.de",
-							"Language" : "E",
-							"DateOfBirth" : null,
-							"Address" : {
-								"City" : "Berlin",
-								"PostalCode" : "13467",
-								"Street" : "Zabel-Krüger-Damm",
-								"Building" : "127",
-								"Country" : "DE",
-								"AddressType" : "02",
-								"GeoLocation" : {
-									"Longitude" : "13.344182000000",
-									"Latitude" : "52.613766000000"
-								}
-							}
-						} ]
+						"PhoneNumber" : "3088530"
 					}
 				}
-			} ],
+			}],
 	"SO_2_BP" : {
-		"@odata.etag" : "W/\"20160420143945.0000000\"",
+		"@odata.etag" : "W/\"20160420054640.0000000\"",
 		"BusinessPartnerID" : "0100000004",
 		"CompanyName" : "Panorama Studios",
 		"PhoneNumber" : "2244668800"
