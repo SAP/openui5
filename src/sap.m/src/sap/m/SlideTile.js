@@ -44,6 +44,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	}});
 
 	/* --- Lifecycle Handling --- */
+	/**
+	 * Init function for the control
+	 */
+	SlideTile.prototype.init = function() {
+		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	};
 
 	/**
 	 * Handler for beforerendering
@@ -268,7 +274,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	 * @private
 	 */
 	SlideTile.prototype._setAriaDescriptor = function() {
-		this.$().attr("aria-label", this.getTiles()[this._iCurrentTile]._getAriaText().replace(/\s/g, " "));
+		var sToggleSliding = this._oRb.getText("SLIDETILE_TOGGLE_SLIDING"),
+		sText = this.getTiles()[this._iCurrentTile]._getAriaText().replace(/\s/g, " "); //Tile's ARIA text
+		if (this.getTiles().length > 1) {
+			sText = sText + "\n" + sToggleSliding;
+		}
+		this.$().attr("aria-label", sText);
 	};
 
 	/**
@@ -299,6 +310,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	 *
 	 * @private
 	 * @param {int} tileIndex of the element in the tiles aggregation
+	 * @returns {int} Index of the next tile
 	 */
 	SlideTile.prototype._getNextTileIndex = function(tileIndex) {
 		if (tileIndex + 1 < this.getTiles().length) {
@@ -313,6 +325,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	 *
 	 * @private
 	 * @param {int} tileIndex of the element in the tiles aggregation
+	 * @returns {int} Index of the previous tile
 	 */
 	SlideTile.prototype._getPrevTileIndex = function(tileIndex) {
 		if (tileIndex - 1 >= 0) {
