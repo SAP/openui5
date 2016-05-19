@@ -98,6 +98,23 @@
 		}, 500);
 	});
 
+	QUnit.test("Test ARIA label for single content", function(assert) {
+		//Arrange
+		//Act
+		this.oSlideTile.removeTile(this.oSlideTile.getTiles()[1].getId());
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(this.oSlideTile.$().attr("aria-label"), "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2", "SlideTile contains expected ARIA-label attribute");
+	});
+
+	QUnit.test("Test ARIA label for multiple content", function(assert) {
+		//Arrange
+		//Act
+		//Assert
+		assert.equal(this.oSlideTile.$().attr("aria-label"), "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2\nElement with multiple content.\nTo toggle sliding press space bar.\nTo navigate press enter", "SlideTile contains expected ARIA-label attribute");
+	});
+
 	QUnit.test("Test mouse handlers", function(assert) {
 		//Arrange
 		var oEvent = {preventDefault: function(){}};
