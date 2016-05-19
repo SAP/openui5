@@ -507,7 +507,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 			var oTrigger = this._oTrigger,
 				oControl = this._oControl;
 
-			if (!oTrigger || !oControl.isBound("items")) {
+			if (!oTrigger || !oControl) {
+				return;
+			}
+
+			var oBinding = oControl.getBinding("items");
+			if (!oBinding) {
 				return;
 			}
 
@@ -519,8 +524,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 				oTrigger.setActive(false);
 				oControl.$("triggerList").css("display", "");
 			} else {
-				var oBinding = oControl.getBinding("items"),
-					iBindingLength = oBinding.getLength() || 0,
+				var iBindingLength = oBinding.getLength() || 0,
 					iItemsLength = oControl.getItems(true).length,
 					bLengthFinal = oBinding.isLengthFinal(),
 					bHasScrollToLoad = oControl.getGrowingScrollToLoad();

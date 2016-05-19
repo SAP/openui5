@@ -30,7 +30,7 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Select'], function (Sema
 		metadata: {
 
 			library: "sap.m",
-
+			"abstract" : true,
 			properties: {
 				/**
 				 * See {@link sap.m.Select#enabled}

@@ -2159,8 +2159,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				return;
 			}
 
+			var iEmptyResults = 0;
 			for (var k = 0; k < oData.__batchResponses.length; k++) {
 				if (oData.__batchResponses[k].data != undefined) {
+					//check for empty results
+					if (oData.__batchResponses[k].data.results.length == 0) {
+						iEmptyResults++;
+					}
 					switch (aExecutedRequestDetails[k].iRequestType) {
 						case AnalyticalBinding._requestType.groupMembersQuery:
 							that._processGroupMembersQueryResponse(aExecutedRequestDetails[k], oData.__batchResponses[k].data);
@@ -2181,6 +2186,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				}
 				that._deregisterCompletedRequest(aExecutedRequestDetails[k].sRequestId);
 				that._cleanupGroupingForCompletedRequest(aExecutedRequestDetails[k].sRequestId);
+			}
+
+			// if all results are empty and the request was an auto-expand request, the length has to be set to final and 0
+			if (that.mParameters && that.mParameters.numberOfExpandedLevels > 0) {
+				if (iEmptyResults == oData.__batchResponses.length) {
+					that.mLength["/"] = 0;
+					that.mFinalLength["/"] = true;
+				}
 			}
 
 			// determine the logical success status: true iff all operations succeeded

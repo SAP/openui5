@@ -28,6 +28,7 @@ sap.ui.define([], function () {
 		oRm.writeAccessibilityState({
 			role: "region"
 		});
+		oRm.addClass("sapContrastPlus");
 		oRm.addClass("sapMDynamicPageHeader");
 		oRm.writeClasses();
 		oRm.write(">");

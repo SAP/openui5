@@ -209,7 +209,7 @@
 						'Dialog opening triggers resize handler');
 				assert.ok(!!that.oDialog._sContentResizeListenerId, '_sContentResizeListenerId is not null as setting Title after ' +
 						'Dialog opening triggers resize handler');
-				assert.ok(registerSpy.calledOnce, "setTitle triggers register method of sap.ui.core.ResizeHandler");
+				assert.ok(registerSpy.callCount > 0, "setTitle triggers register method of sap.ui.core.ResizeHandler");
 
 				popupPositionSpy.restore();
 				registerSpy.restore();

@@ -3,7 +3,7 @@
 	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Cumulative Totals" subheader="Expenses" frameType="OneByOne"
 		press="press">
 		<tileContent>
-			<TileContent unit="Unit" footer="Notification Text">
+			<TileContent unit="Unit" footer="Footer Text">
 				<content>
 					<NumericContent value="1762" icon="sap-icon://line-charts"/>
 				</content>
@@ -14,7 +14,7 @@
 	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Cumulative Totals" subheader="Expenses" frameType="OneByOne"
 		press="press">
 		<tileContent>
-			<TileContent unit="Unit" footer="Notification Text">
+			<TileContent unit="Unit" footer="Footer Text">
 				<content>
 					<NumericContent value="12"/>
 				</content>

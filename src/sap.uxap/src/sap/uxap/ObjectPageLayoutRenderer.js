@@ -40,6 +40,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 			oRm.writeAttribute("role", "header");
 			oRm.writeAttributeEscaped("id", oControl.getId() + "-headerTitle");
 			oRm.addClass("sapUxAPObjectPageHeaderTitle");
+			oRm.addClass("sapContrastPlus");
 			oRm.writeClasses();
 			oRm.write(">");
 			if (oHeader) {
@@ -83,7 +84,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 
 			// Header Content
 			if (bRenderHeaderContent) {
-				this._renderHeaderContentDOM(oRm, oControl, !oControl._bHContentAlwaysExpanded, "-headerContent");
+				this._renderHeaderContentDOM(oRm, oControl, !oControl._bHContentAlwaysExpanded, "-headerContent",  true);
 			}
 
 			// Anchor Bar
@@ -92,6 +93,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 			// write ARIA role
 			oRm.writeAttribute("role", "navigaiton");
 			oRm.addClass("sapUxAPObjectPageNavigation");
+			oRm.addClass("sapContrastPlus");
 			oRm.writeClasses();
 			oRm.write(">");
 
@@ -163,12 +165,15 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 		 * @param sId - the id of the div that should be rendered
 		 * @param bRenderAlways - shows if the DOM of the control should be rendered no matter if the control is rendered inside or not
 		 */
-		ObjectPageLayoutRenderer._renderHeaderContentDOM = function (oRm, oControl, bRender, sId) {
+		ObjectPageLayoutRenderer._renderHeaderContentDOM = function (oRm, oControl, bRender, sId, bApplyBelizePlusClass) {
 			oRm.write("<header ");
 			oRm.writeAttributeEscaped("id", oControl.getId() + sId);
 			oRm.addClass("ui-helper-clearfix");
 			oRm.addClass("sapUxAPObjectPageHeaderDetails");
 			oRm.addClass("sapUxAPObjectPageHeaderDetailsDesign-" + oControl._getHeaderDesign());
+			if (bApplyBelizePlusClass) {
+				oRm.addClass("sapContrastPlus");
+			}
 			oRm.writeClasses();
 			oRm.writeAttribute("data-sap-ui-customfastnavgroup", true);
 			oRm.write(">");

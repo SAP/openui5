@@ -32,6 +32,7 @@ sap.ui.define([], function () {
 			role: "heading",
 			level: 2
 		});
+		oRm.addClass("sapContrastPlus");
 		oRm.addClass("sapMDynamicPageTitle");
 		oRm.writeClasses();
 		oRm.write(">");

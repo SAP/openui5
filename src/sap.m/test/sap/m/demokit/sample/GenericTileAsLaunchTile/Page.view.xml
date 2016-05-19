@@ -9,10 +9,9 @@
 				</content>
 			</TileContent>
 		</tileContent>
-		
 	</GenericTile>
 
-	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Manage Activity Type Master Data Lorem Ipsum Long Title"
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Manage Activity Master Data Type"
 		subheader="Subtitle" press="press">
 		<tileContent>
 			<TileContent>
@@ -23,14 +22,14 @@
 		</tileContent>
 	</GenericTile>
 
-	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Manage Activity Type Master Data Lorem Ipsum Long Title without Icon"
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Manage Activity Master Data Type With a Long Title Without an Icon"
 		subheader="Subtitle Launch Tile" mode="HeaderMode" press="press">
 		<tileContent>
 			<TileContent unit="EUR" footer="Current Quarter" />
 		</tileContent>
 	</GenericTile>
 
-	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Firstlongname Jessica D. Prince"
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Jessica D. Prince Senior Consultant"
 		subheader="Department" press="press">
 		<tileContent>
 			<TileContent>

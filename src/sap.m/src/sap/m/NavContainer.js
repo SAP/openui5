@@ -6,9 +6,8 @@
 sap.ui.define([
 	'jquery.sap.global',
 	'./library',
-	'sap/ui/core/Control',
-	'sap/ui/core/PopupSupport'
-], function (jQuery, library, Control, PopupSupport) {
+	'sap/ui/core/Control'
+], function (jQuery, library, Control) {
 	"use strict";
 
 

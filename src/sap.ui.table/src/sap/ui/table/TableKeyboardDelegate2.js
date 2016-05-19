@@ -37,4 +37,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 
 	return TableKeyboardDelegate;
 
-}, /* bExport= */ true);
+});

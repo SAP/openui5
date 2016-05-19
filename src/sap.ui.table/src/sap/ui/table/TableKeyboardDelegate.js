@@ -3,9 +3,13 @@
  */
 
 // Provides helper sap.ui.table.TableKeyboardDelegate.
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', './TableUtils'],
-	function(jQuery, BaseObject, TableExtension, TableUtils) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', './TableExtension', './TableUtils'],
+	function(jQuery, BaseObject, library, Row, TableExtension, TableUtils) {
 	"use strict";
+
+	// shortcuts
+	var NavigationMode = library.NavigationMode,
+		SelectionBehavior = library.SelectionBehavior;
 
 	/**
 	 * Delegate for keyboard events of sap.ui.table.Table controls.
@@ -215,7 +219,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 		}
 
 		var $target = jQuery(oEvent.target);
-		var bNoData = this.$().hasClass("sapUiTableEmpty");
+		var bNoData = TableUtils.isNoDataVisible(this);
 		var bControlBefore = $target.hasClass("sapUiTableCtrlBefore");
 
 		if (bControlBefore || $target.hasClass("sapUiTableCtrlAfter")) {
@@ -229,7 +233,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 			} else {
 				if (bControlBefore) {
 					if (bNoData) {
-						this._getKeyboardExtension()._setSilentFocus(this.$().find(".sapUiTableCtrlEmpty"));
+						this._getKeyboardExtension()._setSilentFocus(this.$("noDataCnt"));
 					} else {
 						var oInfo = TableUtils.getFocusedItemInfo(this);
 						TableUtils.focusItem(this, oInfo.cellInRow, oEvent);
@@ -295,7 +299,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 
 	TableKeyboardDelegate.prototype.onsapspace = function(oEvent) {
 		var $target = jQuery(oEvent.target);
-		if (((this.getSelectionBehavior() == sap.ui.table.SelectionBehavior.Row || this.getSelectionBehavior() == sap.ui.table.SelectionBehavior.RowOnly) && oEvent.srcControl instanceof sap.ui.table.Row) ||
+		if (((this.getSelectionBehavior() == SelectionBehavior.Row || this.getSelectionBehavior() == SelectionBehavior.RowOnly) && oEvent.srcControl instanceof Row) ||
 			$target.hasClass("sapUiTableRowHdr") || $target.hasClass("sapUiTableColRowHdr") || $target.hasClass("sapUiTableCol")) {
 			oEvent.preventDefault();
 		}
@@ -397,7 +401,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 			oEvent.preventDefault();
 		} else {
 			var oInfo = TableUtils.getFocusedItemInfo(this);
-			var bNoData = this.$().hasClass("sapUiTableEmpty");
+			var bNoData = TableUtils.isNoDataVisible(this);
 			var oSapUiTableCCnt = $this.find('.sapUiTableCCnt')[0];
 			var bFocusFromTableContent = jQuery.contains(oSapUiTableCCnt, oEvent.target);
 
@@ -436,7 +440,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 		} else {
 			var oInfo = TableUtils.getFocusedItemInfo(this);
 			var bContainsColHdrCnt = jQuery.contains($this.find('.sapUiTableColHdrCnt')[0], oEvent.target);
-			var bNoData = this.$().hasClass("sapUiTableEmpty");
+			var bNoData = TableUtils.isNoDataVisible(this);
 
 			if (bContainsColHdrCnt && !bNoData) {
 				TableKeyboardDelegate._restoreFocusOnLastFocusedDataCell(this, oEvent);
@@ -454,7 +458,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 		if (!this._getKeyboardExtension().isInActionMode() && this._isBottomRow(oEvent)) {
 			if (this.getFirstVisibleRow() != this._getRowCount() - this.getVisibleRowCount()) {
 				oEvent.stopImmediatePropagation(true);
-				if (this.getNavigationMode() === sap.ui.table.NavigationMode.Scrollbar) {
+				if (this.getNavigationMode() === NavigationMode.Scrollbar) {
 					this._scrollNext();
 				} else {
 					this._scrollPageDown();
@@ -462,6 +466,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 			}
 		}
 		oEvent.preventDefault();
+
+		if (TableUtils.isNoDataVisible(this)) {
+			var oInfo = TableUtils.getCellInfo(oEvent.target);
+			if (oInfo && (oInfo.type === TableUtils.CELLTYPES.COLUMNHEADER || oInfo.type === TableUtils.CELLTYPES.COLUMNROWHEADER)) {
+				oInfo = TableUtils.getFocusedItemInfo(this);
+				if (oInfo.row - this._getHeaderRowCount() <= 1) { // We are in the last column header row
+					//Just prevent the navigation to the table content
+					oEvent.setMarked("sapUiTableSkipItemNavigation");
+				}
+			}
+		}
 	};
 
 	/*
@@ -521,7 +536,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 			if (this.getFirstVisibleRow() != 0) {
 				oEvent.stopImmediatePropagation(true);
 			}
-			if (this.getNavigationMode() === sap.ui.table.NavigationMode.Scrollbar) {
+			if (this.getNavigationMode() === NavigationMode.Scrollbar) {
 				this._scrollPrevious();
 			} else {
 				this._scrollPageUp();
@@ -538,7 +553,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 			var $this = this.$();
 			var oInfo = TableUtils.getFocusedItemInfo(this);
 
-			var bRowHeader = (this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly);
+			var bRowHeader = (this.getSelectionBehavior() !== SelectionBehavior.RowOnly);
 			var iHeaderRows = $this.find(".sapUiTableColHdrScr>.sapUiTableColHdr").length;
 
 			// Check if focus is on header
@@ -587,7 +602,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 	TableKeyboardDelegate.prototype.onsappagedownmodifiers = function(oEvent) {
 		if (!this._getKeyboardExtension().isInActionMode() && oEvent.altKey) {
 			var oInfo = TableUtils.getFocusedItemInfo(this);
-			var bRowHeader = (this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly);
+			var bRowHeader = (this.getSelectionBehavior() !== SelectionBehavior.RowOnly);
 
 			var iCol = oInfo.columnCount;
 			var iNewCol;
@@ -619,7 +634,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 			var $this = this.$();
 			var oInfo = TableUtils.getFocusedItemInfo(this);
 
-			var bRowHeader = (this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly);
+			var bRowHeader = (this.getSelectionBehavior() !== SelectionBehavior.RowOnly);
 			var iHeaderRows = $this.find(".sapUiTableColHdrScr>.sapUiTableColHdr").length;
 			var iCol = oInfo.cellInRow;
 
@@ -661,7 +676,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 	TableKeyboardDelegate.prototype.onsappageupmodifiers = function(oEvent) {
 		if (!this._getKeyboardExtension().isInActionMode() && oEvent.altKey) {
 			var oInfo = TableUtils.getFocusedItemInfo(this);
-			var bRowHeader = (this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly);
+			var bRowHeader = (this.getSelectionBehavior() !== SelectionBehavior.RowOnly);
 
 			var iCol = oInfo.columnCount;
 			if (iCol > 0) {
@@ -695,7 +710,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 	 * Keyboard Handling regarding HOME key
 	 */
 	TableKeyboardDelegate.prototype.onsaphome = function(oEvent) {
-		var bIsRowOnly = (this.getSelectionBehavior() == sap.ui.table.SelectionBehavior.RowOnly);
+		var bIsRowOnly = (this.getSelectionBehavior() == SelectionBehavior.RowOnly);
 
 		// If focus is on a group header, do nothing.
 		var bIsGroupCell = jQuery(oEvent.target).parents(".sapUiTableGroupHeader").length > 0;
@@ -749,7 +764,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 		var iFocusedIndex = oInfo.cell;
 		var iSelectedCellInRow = oInfo.cellInRow;
 
-		var bIsRowOnly = (this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly);
+		var bIsRowOnly = (this.getSelectionBehavior() !== SelectionBehavior.RowOnly);
 		var offset = 0;
 		if (!bIsRowOnly) {
 			offset = 1;

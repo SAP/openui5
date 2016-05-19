@@ -45,8 +45,7 @@
 
             module("Fiori2 adaptation of page header", {
                 beforeEach: function () {
-                    this.oPage = new sap.m.Page("myPage", {title : "Test",
-                        showNavButton : true});
+                    this.oPage = new sap.m.Page("myPage");
                     this.oPage.placeAt("content");
                     sap.ui.getCore().applyChanges();
                 },
@@ -77,6 +76,7 @@
             QUnit.test("Back Button is not adapted when bHideBackButton=false", function(assert){
 
                 var oAdaptOptions = {bHideBackButton: false};
+                this.oPage.setShowNavButton(true);
 
                 Fiori20Adapter.traverse(this.oPage, oAdaptOptions);
                 sap.ui.getCore().applyChanges();
@@ -101,6 +101,7 @@
 
             QUnit.test("Back Button is adapted when bHideBackButton=true", function(assert){
                 var oAdaptOptions = {bHideBackButton: true};
+                this.oPage.setShowNavButton(true);
 
                 Fiori20Adapter.traverse(this.oPage, oAdaptOptions);
                 sap.ui.getCore().applyChanges();
@@ -111,6 +112,7 @@
 
             QUnit.test("Title is adapted when bMoveTitle=true", function(assert){
                 var oAdaptOptions = {bMoveTitle: true};
+                this.oPage.setTitle("Test");
 
                 Fiori20Adapter.traverse(this.oPage, oAdaptOptions);
 
@@ -122,6 +124,7 @@
 
             QUnit.test("Title is adapted when header is replaced", function(assert){
                 var oAdaptOptions = {bMoveTitle: true};
+                this.oPage.setTitle("Test");
 
                 //act
                 Fiori20Adapter.traverse(this.oPage, oAdaptOptions);
@@ -138,6 +141,8 @@
             QUnit.test("Header is collapsed", function(assert){
 
                 var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true};
+                this.oPage.setTitle("Test");
+                this.oPage.setShowNavButton(true);
 
                 Fiori20Adapter.traverse(this.oPage, oAdaptOptions);
 
@@ -147,6 +152,8 @@
 
             QUnit.test("Header is not collapsed if bCollapseHeader: false", function(assert){
                 var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: false};
+                this.oPage.setTitle("Test");
+                this.oPage.setShowNavButton(true);
 
                 Fiori20Adapter.traverse(this.oPage, oAdaptOptions);
 
@@ -157,11 +164,43 @@
             QUnit.test("Header is not collapsed if non-empty", function(assert){
                 this.oPage.addHeaderContent(new sap.m.Button({text:"HDRBTN"}));
                 var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true};
+                this.oPage.setTitle("Test");
+                this.oPage.setShowNavButton(true);
 
                 Fiori20Adapter.traverse(this.oPage, oAdaptOptions);
 
                 // Assert
                 ok(!this.oPage.hasStyleClass("sapF2CollapsedHeader"), "header is collapsed");
+            });
+
+            QUnit.test("Header is adapted if content is added at a later time", function(assert){
+                var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true};
+                Fiori20Adapter.traverse(this.oPage, oAdaptOptions);
+
+                var oInnerPage = new sap.m.Page();
+                oInnerPage.setTitle("Test");
+                oInnerPage.setShowNavButton(true);
+
+                // Act
+                this.oPage.addContent(oInnerPage);
+
+                // Assert
+                ok(oInnerPage.hasStyleClass("sapF2CollapsedHeader"), "header is collapsed");
+            });
+
+            QUnit.test("Header is adapted if content is insereted at a later time", function(assert){
+                var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true};
+                Fiori20Adapter.traverse(this.oPage, oAdaptOptions);
+
+                var oInnerPage = new sap.m.Page();
+                oInnerPage.setTitle("Test");
+                oInnerPage.setShowNavButton(true);
+
+                // Act
+                this.oPage.insertContent(oInnerPage, 0);
+
+                // Assert
+                ok(oInnerPage.hasStyleClass("sapF2CollapsedHeader"), "header is collapsed");
             });
 
             module("Fiori2 adaptation of navigable views", {

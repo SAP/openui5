@@ -1788,7 +1788,8 @@ sap.ui.define([
 			var sOldValue = oCtrl.getValue ? oCtrl.getValue() : "";
 
 			var ctrlIndex = oConditionGrid.indexOfContent(oCtrl);
-			oConditionGrid.removeContent(oCtrl);
+			//oConditionGrid.removeContent(oCtrl);
+			oConditionGrid.removeAggregation("content", oCtrl, true);
 			if (oCtrl._oSuggestProvider) {
 				oCtrl._oSuggestProvider.destroy();
 				oCtrl._oSuggestProvider = null;
@@ -1797,7 +1798,8 @@ sap.ui.define([
 			var fieldInfo = this._aConditionsFields[index];
 			oCtrl = this._createValueField(oCurrentKeyField, fieldInfo, oConditionGrid);
 			oConditionGrid[fieldInfo["ID"]] = oCtrl;
-			oConditionGrid.insertContent(oCtrl, ctrlIndex);
+			//oConditionGrid.insertContent(oCtrl, ctrlIndex);
+			oConditionGrid.insertAggregation("content", oCtrl, ctrlIndex, true);
 
 			var oValue, sValue;
 			if (oConditionGrid.oFormatter && sOldValue) {
@@ -1975,7 +1977,7 @@ sap.ui.define([
 
 		if (sOperation === sap.m.P13nConditionOperation.BT) {
 			// for the "between" operation we enable both fields
-			if (oValue1.setPlaceholder) {
+			if (oValue1.setPlaceholder && oValue1.getPlaceholder() !== this._sFromLabelText) {
 				oValue1.setPlaceholder(this._sFromLabelText);
 			}
 			if (!oValue1.getVisible()) {
@@ -1984,7 +1986,7 @@ sap.ui.define([
 				oConditionGrid.insertContent(oValue1, oConditionGrid.getContent().length - 1);
 			}
 
-			if (oValue2.setPlaceholder) {
+			if (oValue2.setPlaceholder && oValue2.getPlaceholder() !== this._sToLabelText) {
 				oValue2.setPlaceholder(this._sToLabelText);
 			}
 			if (!oValue2.getVisible()) {
@@ -2028,7 +2030,7 @@ sap.ui.define([
 					oConditionGrid.removeContent(oShowIfGroupedvalue);
 				} else {
 					// for all other operations we enable only the Value1 fields
-					if (oValue1.setPlaceholder) {
+					if (oValue1.setPlaceholder && oValue1.getPlaceholder() !== this._sValueLabelText) {
 						oValue1.setPlaceholder(this._sValueLabelText);
 					}
 					if (!oValue1.getVisible()) {

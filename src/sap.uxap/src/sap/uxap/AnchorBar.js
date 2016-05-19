@@ -456,7 +456,7 @@ sap.ui.define([
 
 			this.setAggregation('_select', new HierarchicalSelect({
 				width: "100%",
-				icon: "sap-icon://slim-arrow-down",
+				icon: "sap-icon://overflow",
 				change: jQuery.proxy(this._onSelectChange, this)
 			}));
 		}
