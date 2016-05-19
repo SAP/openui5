@@ -34,13 +34,10 @@ sap.ui.define([
 	 *
 	 * @param {Element} oForm
 	 *   The <sap.ui.core.sample.ViewTemplate.scenario:Form> element
-	 * @param {sap.ui.base.ManagedObject} oWithControl
-	 *   The current "with" control
-	 *   TODO how to call this, which type to expose (black-box object?), needed at all?
 	 * @param {object} oInterface
 	 *   Visitor callbacks
 	 */
-	XMLPreprocessor.plugIn(function (oForm, oWithControl, oInterface) {
+	XMLPreprocessor.plugIn(function (oForm, oInterface) {
 		var sBinding = oForm.getAttribute("binding"),
 			oChild,
 			oDocument = oForm.ownerDocument,
@@ -62,7 +59,7 @@ sap.ui.define([
 		oForm.parentNode.insertBefore(oSimpleForm, oForm);
 		oForm.parentNode.removeChild(oForm);
 
-		oInterface.visitNode(oSimpleForm, oWithControl);
+		oInterface.visitNode(oSimpleForm);
 	}, "sap.ui.core.sample.ViewTemplate.scenario", "Form");
 
 	var Component = BaseComponent.extend("sap.ui.core.sample.ViewTemplate.scenario.Component", {
