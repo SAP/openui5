@@ -3079,7 +3079,7 @@ sap.ui.define([
 		/* make sure to set content type header for POST/PUT requests when using JSON
 		 * format to prevent datajs to add "odata=verbose" to the content-type header
 		 * may be removed as later gateway versions support this */
-		if (sMethod !== "DELETE" && sMethod !== "GET") {
+		if (!mHeaders["Content-Type"] && sMethod !== "DELETE" && sMethod !== "GET") {
 			if (this.bJSON) {
 				mHeaders["Content-Type"] = "application/json";
 			} else {
