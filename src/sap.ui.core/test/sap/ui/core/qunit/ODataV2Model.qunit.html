@@ -1718,6 +1718,27 @@
 		});
 	});
 
+	QUnit.test("custom header content-type for media entities", function(){
+		var done = assert.async();
+		cleanServiceDataCache();
+		var spy = sinon.spy(OData.defaultHttpClient, "request");
+		var oModel = initModel(sURI, {json: true, tokenHandling: false});
+
+		oModel.metadataLoaded().then(function() {
+			oModel.create("/Categories", "some text", {
+				headers: {
+					"Content-Type": "text/plain"
+				},
+				success: function() {
+					equal(spy.args[1][0].headers['Accept'], "application/json", "spy check header");
+					equal(spy.args[1][0].headers['Content-Type'], "text/plain", "there should be a content type header for POST requests");
+					OData.defaultHttpClient.request.restore();
+					done();
+				}
+			});
+		});
+	});
+
 	asyncTest("async metadata request check", function(){
 		var oModel = initModel(sURI, {
 			json: true,
