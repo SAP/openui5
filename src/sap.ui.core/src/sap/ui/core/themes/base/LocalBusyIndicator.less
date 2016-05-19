@@ -151,16 +151,6 @@
 /**
  * Keyframe definitions
  */
-.mixin-standard-animation-frames {
-	0%, 80%, 100% {
-		-webkit-transform: scale(0.4);
-		transform: scale(0.4);
-	}
-	40% {
-		-webkit-transform: scale(1);
-		transform: scale(1);
-	}
-}
 .mixin-standard-background-animation-frames {
 	0%, 80%, 100% {
 		opacity: 1;
@@ -169,6 +159,7 @@
 		opacity: 0.1;
 	}
 }
+
 .mixin-standard-shadow-animation-frames {
 	0%, 80%, 100% {
 		opacity: 0;
@@ -178,16 +169,6 @@
 	}
 }
 
-.mixin-small-animation-frames {
-	0%, 100% {
-		-webkit-transform: scale(0.2);
-		transform: scale(0.2);
-	}
-	50% {
-		-webkit-transform: scale(1);
-		transform: scale(1);
-	}
-}
 .mixin-small-background-animation-frames {
 	0%, 100% {
 		opacity: 1;
@@ -196,6 +177,7 @@
 		opacity: 0.1;
 	}
 }
+
 .mixin-small-shadow-animation-frames {
 	0%, 100% {
 		opacity: 0;
@@ -208,32 +190,48 @@
 /**
  * Animations for different browser vendors
  */
-@keyframes sapUiBusyAnimationStandard { .mixin-standard-animation-frames; }
-@-webkit-keyframes sapUiBusyAnimationStandard { .mixin-standard-animation-frames; }
-@-moz-keyframes sapUiBusyAnimationStandard { .mixin-standard-animation-frames; }
-@-ms-keyframes sapUiBusyAnimationStandard { .mixin-standard-animation-frames; }
+@keyframes sapUiBusyAnimationStandard {
+	0%, 80%, 100% {
+		transform: scale(0.4);
+	}
+	40% {
+		transform: scale(1);
+	}
+}
+@-webkit-keyframes sapUiBusyAnimationStandard {
+	0%, 80%, 100% {
+		-webkit-transform: scale(0.4);
+	}
+	40% {
+		-webkit-transform: scale(1);
+	}
+}
 
 @keyframes sapUiBusyAnimationStandardBackground { .mixin-standard-background-animation-frames; }
 @-webkit-keyframes sapUiBusyAnimationStandardBackground { .mixin-standard-background-animation-frames; }
-@-moz-keyframes sapUiBusyAnimationStandardBackground { .mixin-standard-background-animation-frames; }
-@-ms-keyframes sapUiBusyAnimationStandardBackground { .mixin-standard-background-animation-frames; }
 
 @keyframes sapUiBusyAnimationStandardShadow { .mixin-standard-shadow-animation-frames; }
 @-webkit-keyframes sapUiBusyAnimationStandardShadow { .mixin-standard-shadow-animation-frames; }
-@-moz-keyframes sapUiBusyAnimationStandardShadow { .mixin-standard-shadow-animation-frames; }
-@-ms-keyframes sapUiBusyAnimationStandardShadow { .mixin-standard-shadow-animation-frames; }
 
-@keyframes sapUiBusyAnimationSmall { .mixin-small-animation-frames; }
-@-webkit-keyframes sapUiBusyAnimationSmall { .mixin-small-animation-frames; }
-@-moz-keyframes sapUiBusyAnimationSmall { .mixin-small-animation-frames; }
-@-ms-keyframes sapUiBusyAnimationSmall { .mixin-small-animation-frames; }
+@keyframes sapUiBusyAnimationSmall {
+	0%, 100% {
+		transform: scale(0.2);
+	}
+	50% {
+		transform: scale(1);
+	}
+}
+@-webkit-keyframes sapUiBusyAnimationSmall {
+	0%, 100% {
+		-webkit-transform: scale(0.2);
+	}
+	50% {
+		-webkit-transform: scale(1);
+	}
+}
 
 @keyframes sapUiBusyAnimationSmallBackground { .mixin-small-background-animation-frames; }
 @-webkit-keyframes sapUiBusyAnimationSmallBackground { .mixin-small-background-animation-frames; }
-@-moz-keyframes sapUiBusyAnimationSmallBackground { .mixin-small-background-animation-frames; }
-@-ms-keyframes sapUiBusyAnimationSmallBackground { .mixin-small-background-animation-frames; }
 
 @keyframes sapUiBusyAnimationSmallShadow { .mixin-small-shadow-animation-frames; }
 @-webkit-keyframes sapUiBusyAnimationSmallShadow { .mixin-small-shadow-animation-frames; }
-@-moz-keyframes sapUiBusyAnimationSmallShadow { .mixin-small-shadow-animation-frames; }
-@-ms-keyframes sapUiBusyAnimationSmallShadow { .mixin-small-shadow-animation-frames; }
