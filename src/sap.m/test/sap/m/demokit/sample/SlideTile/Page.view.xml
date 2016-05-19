@@ -4,7 +4,7 @@
 		<tiles>
 			<GenericTile
 				backgroundImage="test-resources/sap/m/demokit/sample/SlideTile/images/NewsImage2.png"
-				frameType="TwoByOne" press="press">
+				frameType="TwoByOne" press="pressOnTileOne">
 				<tileContent>
 					<TileContent footer="August 21, 2016">
 						<content>
@@ -18,7 +18,7 @@
 			</GenericTile>
 			<GenericTile
 				backgroundImage="test-resources/sap/m/demokit/sample/SlideTile/images/NewsImage1.png"
-				frameType="TwoByOne" press="press">
+				frameType="TwoByOne" press="pressOnTileTwo">
 				<tileContent>
 					<TileContent footer="August 21, 2016">
 						<content>
@@ -36,7 +36,7 @@
 		<tiles>
 			<GenericTile
 				backgroundImage="test-resources/sap/m/demokit/sample/SlideTile/images/NewsImage1.png"
-				frameType="TwoByOne" press="press">
+				frameType="TwoByOne" press="pressOnTileOne">
 				<tileContent>
 					<TileContent footer="August 21, 2016">
 						<content>
