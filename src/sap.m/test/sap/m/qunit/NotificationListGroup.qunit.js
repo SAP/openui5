@@ -246,7 +246,6 @@
 
         // assert
         assert.strictEqual(fnEventSpy.callCount, 1, 'Firing the event should call the close function');
-        assert.equal(this.NotificationListGroup.getDomRef(), null, 'Notification List Group should be destroyed');
     });
 
     QUnit.test('Pressing the close button', function(assert) {

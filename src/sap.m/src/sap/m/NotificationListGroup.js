@@ -117,7 +117,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 				 * The OverflowToolbar control that holds the footer buttons.
 				 * @private
 				 */
-				_overflowToolbar: {type: 'sap.m.OverflowToolbar', multiple: false, visibility: "hidden"}
+				_overflowToolbar: {type: 'sap.m.OverflowToolbar', multiple: false, visibility: "hidden"},
+
+				/**
+				 * The close button of the notification item/group.
+				 * @private
+				 */
+				_closeButton: {type: 'sap.m.Button', multiple: false, visibility: "hidden"},
+
+				/**
+				 * The collapse button of the notification item/group.
+				 * @private
+				 */
+				_collapseButton: {type: 'sap.m.Button', multiple: false, visibility: "hidden"}
 			},
 			events: {
 				/**
@@ -236,17 +248,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 		this.fireClose();
 		parent && parent instanceof sap.ui.core.Element && parent.focus();
 		this.destroy();
-	};
-
-	NotificationListGroup.prototype.exit = function () {
-		if (this._closeButton) {
-			this._closeButton.destroy();
-			this._closeButton = null;
-		}
-		if (this._collapseButton) {
-			this._collapseButton.destroy();
-			this._collapseButton = null;
-		}
 	};
 
 	/**
