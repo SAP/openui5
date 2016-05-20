@@ -1,0 +1,48 @@
+<mvc:View
+    xmlns="sap.ui.table"
+    xmlns:m="sap.m"
+    xmlns:mvc="sap.ui.core.mvc">
+
+    <TreeTable
+        id="treeTable"
+        selectionMode="Single"
+        enableColumnReordering="false"
+        expandFirstLevel="false"
+        rows="{
+            path : '/Nodes',
+            parameters : {
+                countMode: 'Inline'
+            }
+        }">
+
+        <columns>
+
+            <Column label="Description">
+                <template>
+                    <m:Text text="{Description}"/>
+                </template>
+            </Column>
+
+            <Column label="HierarchyLevel">
+                <template>
+                    <m:Text text="{HierarchyLevel}"/>
+                </template>
+            </Column>
+
+            <Column label="NodeID">
+                <template>
+                    <m:Text text="{NodeID}"/>
+                </template>
+            </Column>
+
+            <Column label="ParentNodeID">
+                <template>
+                    <m:Text text="{ParentNodeID}"/>
+                </template>
+            </Column>
+
+        </columns>
+
+    </TreeTable>
+
+</mvc:View>

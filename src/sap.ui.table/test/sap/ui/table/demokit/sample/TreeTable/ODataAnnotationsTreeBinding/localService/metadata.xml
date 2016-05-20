@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<edmx:Edmx Version="1.0"
+	xmlns="http://schemas.microsoft.com/ado/2008/09/edm"
+	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+	xmlns:edmanno="http://schemas.microsoft.com/ado/2009/02/edm/annotation"
+	xmlns:sap="http://www.sap.com/Protocols/SAPData">
+
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema Namespace="DemoModel" xml:lang="en" sap:schema-version="1">
+
+			<EntityType Name="Node">
+				<Key>
+					<PropertyRef Name="NodeID" />
+				</Key>
+				<Property Name="NodeID" Type="Edm.Int32" Nullable="false" edmanno:StoreGeneratedPattern="Identity" sap:hierarchy-node-for="NodeID"/>
+				<Property Name="HierarchyLevel" Type="Edm.Int32" Nullable="false" sap:hierarchy-level-for="NodeID"/>
+				<Property Name="Description" Type="Edm.String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
+				<Property Name="ParentNodeID" Type="Edm.Int32" Nullable="true" sap:hierarchy-parent-node-for="NodeID"/>
+				<Property Name="DrillState" Type="Edm.String" Nullable="false" MaxLength="10" Unicode="true" FixedLength="false" sap:hierarchy-drill-state-for="NodeID" />
+			</EntityType>
+
+			<EntityContainer Name="DemoEntities" edmanno:LazyLoadingEnabled="true" m:IsDefaultEntityContainer="true">
+				<EntitySet Name="Nodes" EntityType="DemoModel.Node" />
+			</EntityContainer>
+
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>
