@@ -2197,16 +2197,18 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		};
 
 		Popover.prototype.destroyAggregation = function (sAggregationName, bSuppressInvalidate) {
+			var oActiveControl = jQuery(document.activeElement).control(0);
 			if (sAggregationName === "beginButton" || sAggregationName === "endButton") {
 				var sButton = this["_" + sAggregationName];
 				if (sButton) {
 					sButton.destroy();
 					this["_" + sAggregationName] = null;
 				}
-				return this;
 			} else {
-				return Control.prototype.destroyAggregation.apply(this, arguments);
+				Control.prototype.destroyAggregation.apply(this, arguments);
 			}
+			oActiveControl && oActiveControl.getDomRef() ? oActiveControl.focus() : this.focus();
+			return this;
 		};
 
 		Popover.prototype.invalidate = function (oOrigin) {
