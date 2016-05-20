@@ -46,8 +46,12 @@ html[data-sap-ui-browser^="ie9"] .sapMDialog {
 //the rtl will change the transform-translate from (-50% -50%) to (50% -50%)
 [dir="rtl"] .sapMDialog {
 	left: 50%; //this will be changed 'right: 50%' from the rtl mode
-	right: auto !important; //this will be reverted 'left: auto' by the rtl mode
 }
+
+[dir="rtl"] .sapMDialog.sapMDialogTouched {
+  	left: auto;
+}
+
 
 // set max height and max width ========================================================================================
 
