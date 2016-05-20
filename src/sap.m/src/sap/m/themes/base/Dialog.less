@@ -222,6 +222,14 @@ html[data-sap-ui-browser^="ie9"] .sapMDialog {
 	padding: @SapDialogPadding;
 }
 
+.sapUiPopupWithPadding .sapMDialogScrollCont.sapMDialogStretchContent {
+  	height: calc(~"100% - 2 * " @SapDialogPadding);
+}
+
+.sapMDialogScrollCont.sapMDialogStretchContent {
+  	height: 100%;
+}
+
 /* messagedialog always has content padding */
 .sapMMessageDialog .sapMDialogScrollCont {
 	box-sizing: border-box;

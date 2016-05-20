@@ -373,6 +373,7 @@
 				ok(marginCompare(jQuery(window).width(), $Dialog.outerWidth()), "Stretched Dialog's width equals window's width");
 				ok(marginCompare(jQuery(window).height(), $Dialog.outerHeight()), "Stretched Dialog's height equals window's height");
 				ok(marginCompare($Dialog.width(), oDialog._$content.width()), "content should be as wide as dialog");
+				ok(oDialog.getDomRef('scrollCont').classList.contains('sapMDialogStretchContent'), "Stretched dialog should have class sapMDialogStretchContent");
 				oDialog.destroy();
 				jQuery("html").css("overflow", ""); // restore scrollbar after test
 			});
@@ -529,6 +530,7 @@
 				oDialog.open();
 				ok(marginCompare(oDialog._$content.width(), (jQuery(window).width() * 0.5)) || (oDialog._$content.width() === 398)), "Dialog content width " + oDialog._$content.width() + " is equal or less than part of window width " + jQuery(window).width() * 0.5;
 				ok(marginCompare(oDialog._$content.height(), jQuery(window).height() * 0.5), "Dialog content height " + oDialog._$content.height() + " is equal or less than part of window height " + jQuery(window).height() * 0.5);
+				ok(oDialog.getDomRef('scrollCont').classList.contains('sapMDialogStretchContent'), "Dialog with contentHeight set should have class sapMDialogStretchContent");
 
 				oDialog.destroy();
 			});
