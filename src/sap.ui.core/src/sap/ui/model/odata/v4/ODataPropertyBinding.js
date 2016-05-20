@@ -132,21 +132,22 @@ sap.ui.define([
 	 */
 
 	/**
-	 * The 'dataReceived' event is fired after the back end data has been processed and the
+	 * The 'dataReceived' event is fired after the back-end data has been processed and the
 	 * registered 'change' event listeners have been notified. It is to be used by applications for
 	 * example to switch off a busy indicator or to process an error.
 	 *
-	 * If back end requests are successful, the event has no parameters. The response data is
-	 * available in the model. Note that controls bound to this data may not yet have been updated;
-	 * it is thus not safe for registered event handlers to access data via control APIs.
+	 * If back-end requests are successful, the event has no parameters. Use
+	 * {@link #getValue() oEvent.getSource().getValue()} to access the response data. Note that
+	 * controls bound to this data may not yet have been updated, meaning it is not safe for
+	 * registered event handlers to access data via control APIs.
 	 *
-	 * If a back end request fails, the 'dataReceived' event provides an <code>Error</code> in the
+	 * If a back-end request fails, the 'dataReceived' event provides an <code>Error</code> in the
 	 * 'error' event parameter.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {object} oEvent.getParameters
-	 * @param {Error} [oEvent.getParameters.error] The error object if a back end request failed.
-	 *   If there are multiple failed back end requests, the error of the first one is provided.
+	 * @param {Error} [oEvent.getParameters.error] The error object if a back-end request failed.
+	 *   If there are multiple failed back-end requests, the error of the first one is provided.
 	 *
 	 * @event
 	 * @name sap.ui.model.odata.v4.ODataPropertyBinding#dataReceived
@@ -438,7 +439,8 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataPropertyBinding.prototype.setValue = function (vValue, sGroupId) {
-		var that = this;
+		var that = this,
+			vOldValue = this.vValue;
 
 		if (typeof vValue === "function" || typeof vValue === "object") {
 			throw new Error("Not a primitive value");
@@ -450,9 +452,14 @@ sap.ui.define([
 				if (this.oContext) {
 					this.oContext.updateValue(sGroupId, this.sPath, vValue)
 						["catch"](function (oError) {
-							that.oModel.reportError("Failed to update path "
-									+ that.oModel.resolve(that.sPath, that.oContext),
-								sClassName, oError);
+							if (oError.canceled) {
+								that.vValue = vOldValue;
+								that._fireChange({reason : ChangeReason.Change});
+							} else {
+								that.oModel.reportError("Failed to update path "
+										+ that.oModel.resolve(that.sPath, that.oContext),
+									sClassName, oError);
+							}
 						});
 				} else {
 					jQuery.sap.log.warning("Cannot set value on relative binding without context",

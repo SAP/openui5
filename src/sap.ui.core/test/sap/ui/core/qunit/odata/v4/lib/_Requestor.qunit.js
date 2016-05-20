@@ -797,6 +797,81 @@ sap.ui.require([
 			});
 	});
 
+	//*****************************************************************************************
+	QUnit.test("cancelPatch: various requests", function (assert) {
+		var iCount = 1,
+			oPromise,
+			oRequestor = _Requestor.create("/Service/", undefined, {"sap-client" : "123"});
+
+		function unexpected () {
+			assert.ok(false);
+		}
+
+		function rejected (iOrder, oError) {
+			assert.strictEqual(oError.canceled, true);
+			assert.strictEqual(oError.message, "Group 'groupId' canceled");
+			assert.strictEqual(iCount, iOrder);
+			iCount += 1;
+		}
+
+		oPromise = Promise.all([
+			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"})
+				.then(unexpected, rejected.bind(null, 3)),
+			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "bar"})
+				.then(unexpected, rejected.bind(null, 2)),
+			oRequestor.request("GET", "Employees", "groupId"),
+			oRequestor.request("POST", "LeaveRequests('42')/name.space.Submit", "groupId"),
+			oRequestor.request("PATCH", "Products('1')", "groupId", {}, {Name : "baz"})
+				.then(unexpected, rejected.bind(null, 1))
+		]);
+
+		this.mock(oRequestor).expects("request")
+			.withExactArgs("POST", "$batch", undefined, undefined, [
+				sinon.match({
+					method : "POST",
+					url : "LeaveRequests('42')/name.space.Submit"
+				}),
+				sinon.match({
+					method : "GET",
+					url : "Employees"
+				})
+			]).returns(Promise.resolve([
+				{responseText: "{}"},
+				{responseText : JSON.stringify({Name : "Name", Note : "Note"})}
+			]));
+
+		// code under test
+		oRequestor.cancelPatch("groupId");
+		oRequestor.submitBatch("groupId");
+
+		return oPromise;
+	});
+
+	//*****************************************************************************************
+	QUnit.test("cancelPatch: only PATCH", function (assert) {
+		var oPromise,
+			oRequestor = _Requestor.create("/Service/", undefined, {"sap-client" : "123"});
+
+		oPromise = Promise.all([
+			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"}),
+			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "bar"}),
+			oRequestor.request("PATCH", "Products('1')", "groupId", {}, {Name : "baz"})
+		]);
+
+		this.mock(oRequestor).expects("request").never();
+
+		// code under test
+		oRequestor.cancelPatch("groupId");
+		oRequestor.submitBatch("groupId");
+
+		return oPromise.catch(function () {});
+	});
+
+	//*****************************************************************************************
+	QUnit.test("cancelPatch: unused group", function (assert) {
+		_Requestor.create("/Service/").cancelPatch("unusedGroupId");
+	});
+
 	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
 		QUnit.test("request(...)/submitBatch (realOData) success", function (assert) {
@@ -871,10 +946,10 @@ sap.ui.require([
 						}),
 					oRequestor.submitBatch("group")
 				]);
-			}
-		);
+		});
 	}
 });
 // TODO: continue-on-error? -> flag on model
 // TODO: provide test that checks that .request() does not serialize twice in case of
 // 		 refreshSecurityToken and repeated request
+// TODO: cancelPatch: what about existing GET requests in deferred queue (delete or not)?

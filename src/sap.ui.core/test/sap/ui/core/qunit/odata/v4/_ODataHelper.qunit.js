@@ -250,4 +250,130 @@ sap.ui.require([
 			_ODataHelper.checkGroupId("$invalid", false, "Custom error message: ");
 		}, new Error("Custom error message: $invalid"));
 	});
+
+	//*********************************************************************************************
+	QUnit.test("createCacheProxy, cache creation", function (assert) {
+		var oBinding = {
+				oModel : {
+					requestCanonicalPath : function () {}
+				}
+			},
+			oCache = {},
+			oCache2 = {},
+			oCacheProxy,
+			oCacheProxy2,
+			oCacheProxy3,
+			oContext = {
+				requestCanonicalPath : function () {}
+			},
+			oContext2 = {
+				requestCanonicalPath : function () {}
+			},
+			oPathPromise = Promise.resolve("/canonical"),
+			oPathPromise2 = Promise.resolve("/canonical2");
+
+		this.mock(oContext).expects("requestCanonicalPath").withExactArgs().twice()
+			.returns(oPathPromise);
+		this.mock(oContext2).expects("requestCanonicalPath").withExactArgs().returns(oPathPromise2);
+
+		// code under test
+		oCacheProxy = _ODataHelper.createCacheProxy(oBinding, oContext, function (sCanonicalPath) {
+			assert.strictEqual(sCanonicalPath, "/canonical");
+			return oCache;
+		});
+		oCacheProxy2 = _ODataHelper.createCacheProxy(oBinding, oContext2,
+			function (sCanonicalPath) {
+				assert.strictEqual(sCanonicalPath, "/canonical2");
+				return oCache2;
+			});
+		oCacheProxy3 = _ODataHelper.createCacheProxy(oBinding, oContext, function () {
+			assert.ok(false, "must not recreate cache for context");
+		});
+
+		return Promise.all([oCacheProxy.promise, oCacheProxy2.promise, oCacheProxy3.promise])
+			.then(function (aCaches) {
+				assert.strictEqual(aCaches[0], oCache);
+				assert.strictEqual(aCaches[1], oCache2);
+				assert.strictEqual(aCaches[2], oCache);
+				assert.strictEqual(oBinding.mCacheByContext["/canonical"], oCache);
+				assert.strictEqual(oBinding.mCacheByContext["/canonical2"], oCache2);
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createCacheProxy, cache methods", function (assert) {
+		var oBinding = {
+				oModel : {
+					requestCanonicalPath : function () {}
+				}
+			},
+			oCache = {
+				read : function () {}
+			},
+			oCacheProxy,
+			oContext = {
+				requestCanonicalPath : function () {}
+			},
+			oPathPromise = Promise.resolve("/canonical"),
+			oReadResult = {},
+			oReadPromise = Promise.resolve(oReadResult);
+
+		this.mock(oContext).expects("requestCanonicalPath").withExactArgs().returns(oPathPromise);
+		this.mock(oCache).expects("read").withExactArgs("$auto", "foo")
+			.returns(oReadPromise);
+
+		// code under test
+		oCacheProxy = _ODataHelper.createCacheProxy(oBinding, oContext, function (sCanonicalPath) {
+			return oCache;
+		});
+		assert.strictEqual(typeof oCacheProxy.refresh, "function");
+		assert.throws(function () {
+			oCacheProxy.post();
+		}, "POST request not allowed");
+		assert.throws(function () {
+			oCacheProxy.update();
+		}, "PATCH request not allowed");
+		return oCacheProxy.read("$auto", "foo").then(function (oResult) {
+			assert.strictEqual(oResult, oReadResult);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createCacheProxy, cache read rejects or throws", function (assert) {
+		var oBinding = {
+				oModel : {
+					reportError : function () {},
+					requestCanonicalPath : function () {}
+				}
+			},
+			oCache = {
+				read : function () {},
+				toString : function () { return "~Cache~"; }
+			},
+			oCacheProxy,
+			oContext = {
+				requestCanonicalPath : function () {}
+			},
+			oError = {},
+			oPathPromise = Promise.resolve("/canonical"),
+			oReadPromise = Promise.reject(oError);
+
+		this.mock(oContext).expects("requestCanonicalPath").withExactArgs().returns(oPathPromise);
+		this.mock(oBinding.oModel).expects("reportError")
+			.withExactArgs(
+				"Failed to delegate read to cache ~Cache~ with arguments [\"$auto\",\"foo\"]",
+				"sap.ui.model.odata.v4._ODataHelper",
+				sinon.match.same(oError)
+			);
+		this.mock(oCache).expects("read").withExactArgs("$auto", "foo")
+			.returns(oReadPromise);
+
+		// code under test
+		oCacheProxy = _ODataHelper.createCacheProxy(oBinding, oContext, function (sCanonicalPath) {
+			return oCache;
+		});
+		return oCacheProxy.read("$auto", "foo").catch(function(oError0) {
+			assert.strictEqual(oError0, oError);
+		});
+	});
 });

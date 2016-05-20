@@ -996,12 +996,12 @@ sap.ui.require([
 		canonicalUrl : "/~/T%E2%82%ACAMS(...)",
 		entityType : "tea_busi.TEAM"
 	}].forEach(function (oFixture) {
-		QUnit.test("requestCanonicalUrl: " + oFixture.dataPath, function (assert) {
+		QUnit.test("fetchCanonicalUrl: " + oFixture.dataPath, function (assert) {
 			var oInstance = {},
 				oContext = {
 					fetchValue : function (sPath) {
 						assert.strictEqual(sPath, "");
-						return Promise.resolve(oInstance);
+						return SyncPromise.resolve(oInstance);
 					}
 				};
 
@@ -1015,12 +1015,9 @@ sap.ui.require([
 				}
 			);
 
-			return this.oMetaModel.requestCanonicalUrl("/~/", oFixture.dataPath, oContext)
-				.then(function (sCanonicalUrl) {
-					assert.strictEqual(sCanonicalUrl, oFixture.canonicalUrl);
-				}).catch(function (oError) {
-					assert.ok(false, oError.message + "@" + oError.stack);
-				});
+			assert.strictEqual(
+				this.oMetaModel.fetchCanonicalUrl("/~/", oFixture.dataPath, oContext).getResult(),
+				oFixture.canonicalUrl);
 		});
 	});
 	//TODO support non-navigation properties
@@ -1036,24 +1033,22 @@ sap.ui.require([
 		dataPath : "/T€AMS/0/TEAM_2_EMPLOYEES/0/ID",
 		message : "Not a navigation property: ID (/T€AMS/0/TEAM_2_EMPLOYEES/0/ID)"
 	}].forEach(function (oFixture) {
-		QUnit.test("requestCanonicalUrl: error for " + oFixture.dataPath, function (assert) {
+		QUnit.test("fetchCanonicalUrl: error for " + oFixture.dataPath, function (assert) {
 			var oContext = {
 					fetchValue : function (sPath) {
 						assert.strictEqual(sPath, "");
-						return Promise.resolve({});
+						return SyncPromise.resolve({});
 					}
-				};
+				},
+				oPromise;
 
 			this.mock(this.oMetaModel).expects("fetchEntityContainer")
 				.returns(SyncPromise.resolve(mScope));
 			this.mock(_ODataHelper).expects("getKeyPredicate").never();
 
-			return this.oMetaModel.requestCanonicalUrl("/~/", oFixture.dataPath, oContext)
-				.then(function (sCanonicalUrl) {
-					assert.ok(false, sCanonicalUrl);
-				}).catch(function (oError) {
-					assert.strictEqual(oError.message, oFixture.message);
-				});
+			oPromise = this.oMetaModel.fetchCanonicalUrl("/~/", oFixture.dataPath, oContext);
+			assert.ok(oPromise.isRejected());
+			assert.strictEqual(oPromise.getResult().message, oFixture.message);
 		});
 	});
 

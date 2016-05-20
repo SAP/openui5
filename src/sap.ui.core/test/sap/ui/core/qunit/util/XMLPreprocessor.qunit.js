@@ -66,7 +66,7 @@ sap.ui.require([
 	 *   mock for <code>jQuery.sap.log</code>
 	 * @param {string} sExpectedWarning
 	 *   expected warning message
-	 * @param {any} [vDetails=null]
+	 * @param {any} [vDetails]
 	 *   expected warning details
 	 * @returns {object}
 	 *   the resulting Sinon expectation
@@ -75,7 +75,7 @@ sap.ui.require([
 		return oLogMock.expects("warning")
 			// do not construct arguments in vain!
 			.exactly(jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING) ? 1 : 0)
-			.withExactArgs(_matchArg(sExpectedWarning), _matchArg(vDetails || null), sComponent);
+			.withExactArgs(_matchArg(sExpectedWarning), _matchArg(vDetails), sComponent);
 	}
 
 	/**
@@ -447,7 +447,7 @@ sap.ui.require([
 			jQuery.sap.log.setLevel(bWarn
 				? jQuery.sap.log.Level.WARNING
 				: jQuery.sap.log.Level.ERROR);
-			warn(this.oLogMock, "Warning(s) during processing of qux")
+			warn(this.oLogMock, "Warning(s) during processing of qux", null)
 				.exactly(bWarn ? 1 : 0);
 
 			this.check(assert, [
@@ -2041,7 +2041,7 @@ sap.ui.require([
 				];
 
 			if (!bDebug) {
-				warn(this.oLogMock, "Warning(s) during processing of qux");
+				warn(this.oLogMock, "Warning(s) during processing of qux", null);
 			}
 			warn(this.oLogMock, '[ 0] Binding not ready', aViewContent[19]);
 			this.mock(XMLTemplateProcessor).expects("loadTemplate")
@@ -2533,13 +2533,14 @@ sap.ui.require([
 			assert.strictEqual(fnVisitor.callCount, 1);
 			assert.ok(fnVisitor.alwaysCalledWithExactly(
 				oXml.firstChild,
-				sinon.match.instanceOf(ManagedObject),
 				{
+					getContext : sinon.match.func,
 					getResult : sinon.match.func,
 					insertFragment : sinon.match.func,
 					visitAttributes : sinon.match.func,
 					visitChildNodes : sinon.match.func,
-					visitNode : sinon.match.func
+					visitNode : sinon.match.func,
+					"with" : sinon.match.func
 				})); // does not work in IE: fnVisitor.printf("%C")
 		});
 	});
@@ -2615,19 +2616,19 @@ sap.ui.require([
 			that = this;
 
 		try {
-			XMLPreprocessor.plugIn(function (oElement, oWithControl, oInterface) {
-				assert.strictEqual(oInterface.getResult(oElement.getAttribute("test"),
-					oElement, oWithControl), 42, "returns {any} value");
-
-				assert.strictEqual(oInterface.getResult(oElement.getAttribute("value"),
-					oElement, oWithControl, false), "{}", "bMandatory must be hardcoded to true");
-				oInterface.getResult("", oElement, oWithControl, true, function () {
-					assert.ok(false, "fnCallIfConstant must be ignored");
-				});
+			XMLPreprocessor.plugIn(function (oElement, oInterface) {
+				assert.strictEqual(oInterface.getResult(oElement.getAttribute("test"), oElement),
+					42, "returns {any} value");
+				assert.strictEqual(oInterface.getResult(oElement.getAttribute("value"), oElement),
+					"{}", "bMandatory must be hardcoded to true");
 				assert.throws(function () {
 					warn(that.oLogMock, "[ 1] Binding not ready", aViewContent[1]);
-					oInterface.getResult("{missing>/}", oElement, oWithControl);
+					oInterface.getResult("{missing>/}", oElement);
 				}, new Error("Binding not ready: {missing>/}"));
+				assert.strictEqual(oInterface.getResult(""), "");
+				// Note: oInterface.getResult() throws
+				//       TypeError: Cannot read property 'length' of undefined
+				//           at Object.BindingParser.complexParser
 			}, "foo", "Bar");
 
 			process(xml(assert, aViewContent), {models: new JSONModel({answer: 42})});
@@ -2639,14 +2640,14 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("plugIn, visit*", function (assert) {
 		try {
-			XMLPreprocessor.plugIn(function (oElement, oWithControl, oInterface) {
+			XMLPreprocessor.plugIn(function (oElement, oInterface) {
 				var oChildNodes = oElement.childNodes;
 
-				oInterface.visitAttributes(oChildNodes.item(0), oWithControl);
-				oInterface.visitChildNodes(oChildNodes.item(1), oWithControl);
-				oInterface.visitNode(oChildNodes.item(2), oWithControl);
+				oInterface.visitAttributes(oChildNodes.item(0));
+				oInterface.visitChildNodes(oChildNodes.item(1));
+				oInterface.visitNode(oChildNodes.item(2));
 				// this is initially returned as old visitor, see above
-				XMLPreprocessor.visitNodeWrapper(oChildNodes.item(3), oWithControl, oInterface);
+				XMLPreprocessor.visitNodeWrapper(oChildNodes.item(3), oInterface);
 			}, "foo", "Bar");
 
 			this.check(assert, [
@@ -2696,8 +2697,8 @@ sap.ui.require([
 			.returns(xml(assert, ['<In xmlns="sap.ui.core"/>']));
 
 		try {
-			XMLPreprocessor.plugIn(function (oElement, oWithControl, oInterface) {
-				oInterface.insertFragment("fragmentName", oElement, oWithControl);
+			XMLPreprocessor.plugIn(function (oElement, oInterface) {
+				oInterface.insertFragment("fragmentName", oElement);
 			}, "foo", "Bar");
 
 			this.check(assert, [
@@ -2721,7 +2722,7 @@ sap.ui.require([
 			];
 
 		try {
-			XMLPreprocessor.plugIn(function (oElement, oWithControl, oInterface) {
+			XMLPreprocessor.plugIn(function (oElement, oInterface) {
 				return null; // something other than undefined
 			}, "foo", "Bar");
 
@@ -2731,6 +2732,116 @@ sap.ui.require([
 			XMLPreprocessor.plugIn(null, "foo", "Bar");
 		}
 	});
+
+	//*********************************************************************************************
+	QUnit.test("plugIn, getContext", function (assert) {
+		var oModel = new JSONModel({
+				hidden : {
+					answer : 42
+				}
+			}),
+			aViewContent = [
+				mvcView(),
+				'<f:Bar xmlns:f="foo" path="meta>answer"/>',
+				'</mvc:View>'
+			];
+
+		try {
+			XMLPreprocessor.plugIn(function (oElement, oInterface) {
+				var oContext = oInterface.getContext(oElement.getAttribute("path")),
+					oDefaultContext = oInterface.getContext(/*default model, empty path*/);
+
+				assert.strictEqual(oContext.getModel(), oModel);
+				assert.strictEqual(oContext.getPath(), "/hidden/answer");
+
+				assert.strictEqual(oDefaultContext.getModel(), oModel);
+				assert.strictEqual(oDefaultContext.getPath(), "/hidden/answer");
+
+				assert.throws(function () {
+					oInterface.getContext("{meta>answer}");
+				}, new Error("Must be a simple path, not a binding: {meta>answer}"));
+
+				assert.throws(function () {
+					oInterface.getContext("foo>");
+				}, new Error("Unknown model 'foo': foo>"));
+
+				assert.throws(function () {
+					oInterface.getContext("other>");
+				}, new Error("Cannot resolve path: other>"));
+			}, "foo", "Bar");
+
+			process(xml(assert, aViewContent), {
+				bindingContexts : {
+					"undefined" : oModel.createBindingContext("/hidden/answer"),
+					meta : oModel.createBindingContext("/hidden")
+				},
+				models : {
+					"undefined" : oModel,
+					meta : oModel,
+					other : oModel
+				}
+			});
+		} finally {
+			XMLPreprocessor.plugIn(null, "foo", "Bar");
+		}
+	});
+
+	//*********************************************************************************************
+	QUnit.test("plugIn, with", function (assert) {
+		var oModel = new JSONModel({
+				hidden : {
+					answer : 42
+				}
+			}),
+			aViewContent = [
+				mvcView(),
+				'<f:Bar xmlns:f="foo" path="meta>answer"/>',
+				'</mvc:View>'
+			],
+			that = this;
+
+		try {
+			XMLPreprocessor.plugIn(function (oElement, oInterface) {
+				var oContext = oInterface.getContext(oElement.getAttribute("path")),
+					oDerivedInterface = oInterface.with({a : oContext, b : oContext}),
+					oEmptyInterface = oInterface.with(null, /*bReplace*/true),
+					oNewInterface = oInterface.with({a : oContext, b : oContext}, /*bReplace*/true);
+
+				assert.strictEqual(oDerivedInterface.getResult("{a>}"), 42, "a is known");
+				assert.strictEqual(oDerivedInterface.getResult("{b>}"), 42, "b is known");
+				assert.strictEqual(oDerivedInterface.getResult("{meta>answer}"), 42,
+					"meta is inherited");
+
+				assert.throws(function () { // no inheritance here!
+					warn(that.oLogMock, "[ 1] Binding not ready");
+					oEmptyInterface.getResult("{meta>}");
+				}, new Error("Binding not ready: {meta>}"));
+
+				assert.strictEqual(oNewInterface.getResult("{a>}"), 42, "a is known");
+				assert.strictEqual(oNewInterface.getResult("{b>}"), 42, "b is known");
+				assert.throws(function () { // no inheritance here!
+					warn(that.oLogMock, "[ 1] Binding not ready");
+					oNewInterface.getResult("{meta>}");
+				}, new Error("Binding not ready: {meta>}"));
+
+				assert.strictEqual(oInterface.with(), oInterface, "no map");
+				assert.strictEqual(oInterface.with({}), oInterface, "empty map");
+			}, "foo", "Bar");
+
+			process(xml(assert, aViewContent), {
+				bindingContexts : {
+					meta : oModel.createBindingContext("/hidden")
+				},
+				models : {
+					meta : oModel
+				}
+			});
+		} finally {
+			XMLPreprocessor.plugIn(null, "foo", "Bar");
+		}
+	});
+	//TODO safety check for invalidated ICallback instances in each visit*() etc. call?
+	//     !bReplace && !oWithControl.getParent()
 });
 //TODO we have completely missed support for unique IDs in fragments via the "id" property!
 //TODO somehow trace ex.stack, but do not duplicate ex.message and take care of PhantomJS
