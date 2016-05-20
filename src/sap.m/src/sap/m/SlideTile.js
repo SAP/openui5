@@ -291,7 +291,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	 */
 	SlideTile.prototype._setAriaDescriptor = function() {
 		var sToggleSliding = this._oRb.getText("SLIDETILE_TOGGLE_SLIDING"),
-		sText = this.getTiles()[this._iCurrentTile]._getAriaText().replace(/\s/g, " "); //Tile's ARIA text
+			sText = this.getTiles()[this._iCurrentTile]._getAriaText().replace(/\s/g, " "); //Tile's ARIA text
 		if (this.getTiles().length > 1) {
 			sText = sText + "\n" + sToggleSliding;
 		}
