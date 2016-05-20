@@ -1865,6 +1865,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype.refreshRows = function(vEvent) {
+		var oBinding = this.getBinding("rows");
+		if (!oBinding) {
+			jQuery.sap.log.error("RefreshRows must not be called without a binding", this);
+			return;
+		}
+
 		var that = this;
 		var sReason = typeof (vEvent) === "object" ? vEvent.getParameter("reason") : vEvent;
 		if (sReason == ChangeReason.Refresh) {
@@ -1878,7 +1884,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			// visible row count mode is not Auto
 			var iRowsToDisplay = this._calculateRowsToDisplay();
 			if (this.bOutput) {
-				this.getBinding("rows").attachEventOnce("dataRequested", function() {
+				oBinding.attachEventOnce("dataRequested", function() {
 					// doing it in a timeout will allow the data request to be sent before the rows get created
 					if (that._mTimeouts.refreshRowsAdjustRows) {
 						window.clearTimeout(that._mTimeouts.refreshRowsAdjustRows);
@@ -5929,24 +5935,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			var oColumn = aColumns[i];
 			if (oColumn.getSorted()) {
 				aSorters.push(new Sorter(oColumn.getSortProperty(), oColumn.getSortOrder() === SortOrder.Descending));
-			/*
-			} else if (oColumn.getFiltered()) {
-				aFilters.push(oColumn._getFilter());
-			*/
 			}
 		}
 
-		if (aSorters.length > 0 && this.getBinding("rows")) {
-			this.getBinding("rows").sort(aSorters);
+		var oBinding = this.getBinding("rows");
+		if (oBinding) {
+			if (aSorters.length > 0) {
+				oBinding.sort(aSorters);
+			}
+			this.refreshRows();
 		}
-		/*
-		if (aFilters.length > 0 && this.getBinding("rows")) {
-			this.getBinding("rows").filter(aFilters);
-		}
-		*/
-
-		this.refreshRows();
-
 	};
 
 	/**
