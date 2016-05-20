@@ -496,7 +496,7 @@
 			ok($list.length, "The HTML div container element exists on " + oList.getId());
 			ok($listUl.length, "The HTML ul element exists on " + oList.getId());
 			strictEqual($listUl[0].getAttribute("id"), oList.getId() + "-listUl", 'The id of the HTML ul element is "' + oList.getId() + '"-listUl" on ' + oList);
-			strictEqual($listUl[0].getAttribute("tabindex"), "-1", 'The tabindex is "-1" for the HTML ul element on ' + oList);
+			strictEqual($listUl[0].getAttribute("tabindex"), "0", 'The tabindex is "0" for the HTML ul element on ' + oList);
 			strictEqual($listLi[0].getAttribute("id"), oList.getId() + "-nodata", 'The id of the HTML li no data element is "' + oList.getId() + '"-nodat" on ' + oList);
 
 			// CSS checks
@@ -1216,8 +1216,8 @@
 			sap.ui.getCore().applyChanges();
 			oList.focus();
 
-			strictEqual(oList.getDomRef("before").getAttribute("tabindex"), "0", "Before dummy element is at the tab chain");
-			strictEqual(oList.getNavigationRoot().getAttribute("tabindex"), "-1", "Navigation root is focusable");
+			strictEqual(oList.getDomRef("before").getAttribute("tabindex"), "-1", "Before dummy element is not at the tab chain");
+			strictEqual(oList.getNavigationRoot().getAttribute("tabindex"), "0", "Navigation root is at the tab chain");
 			strictEqual(oList.getDomRef("after").getAttribute("tabindex"), "0", "After dummy element is at the tab chain");
 
 			if (!document.hasFocus()) {
