@@ -14,6 +14,8 @@
 <!-- QUnit libraries -->
 <link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 <script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script type="text/javascript">
@@ -113,6 +115,36 @@
 		//Act
 		//Assert
 		assert.equal(this.oSlideTile.$().attr("aria-label"), "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2\nElement with multiple content.\nTo toggle sliding press space bar.\nTo navigate press enter", "SlideTile contains expected ARIA-label attribute");
+	});
+
+	QUnit.test("Test sliding active per default", function(assert) {
+		//Arrange
+		//Act
+		//Assert
+		assert.ok(!this.oSlideTile._bAnimationPause, "Animation is active");
+	});
+
+	QUnit.test("Test toggle sliding", function(assert) {
+		//Arrange
+		var spy = sinon.spy(this.oSlideTile, "_toggleAnimation");
+
+		//Act
+		this.oSlideTile.onkeydown({
+			which: jQuery.sap.KeyCodes.SPACE
+		});
+		//Assert
+		assert.ok(spy.calledOnce, "Function _toggleAnimation called once");
+	});
+
+	QUnit.test("Test sliding continues on focusout", function(assert) {
+		//Arrange
+		var spy = sinon.spy(this.oSlideTile, "_toggleAnimation");
+
+		//Act
+		this.oSlideTile.$().blur();
+
+		//Assert
+		assert.ok(!this.oSlideTile._bAnimationPause, "Animation continues on focusout");
 	});
 
 	QUnit.test("Test mouse handlers", function(assert) {
