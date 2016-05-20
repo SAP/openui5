@@ -140,17 +140,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 		this._collapseButton.setText(this.getCollapsed() ? expandText : collapseText);
 	};
 
-	NotificationListGroup.prototype.exit = function () {
-		if (this._closeButton) {
-			this._closeButton.destroy();
-			this._closeButton = null;
-		}
-		if (this._collapseButton) {
-			this._collapseButton.destroy();
-			this._collapseButton = null;
-		}
-	};
-
 	NotificationListGroup.prototype.clone = function () {
 		return NotificationListBase.prototype.clone.apply(this, arguments);
 	};
