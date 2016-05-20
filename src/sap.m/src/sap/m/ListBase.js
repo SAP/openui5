@@ -1449,7 +1449,10 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			this._oItemNavigation.setCycling(false);
 			this.addEventDelegate(this._oItemNavigation);
 
-			// implicitly setting table mode with one column
+			// root element should still be tabbable
+			this._oItemNavigation.setTabIndex0();
+
+			// explicitly setting table mode with one column
 			// to disable up/down reaction on events of the cell
 			this._oItemNavigation.setTableMode(true, true).setColumns(1);
 
@@ -1700,19 +1703,12 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			this._startItemNavigation();
 		}
 
-		// handle only forward/backward navigation
-		if (oEvent.isMarked() || !this._oItemNavigation) {
+		// handle only for backward navigation
+		if (oEvent.isMarked() || !this._oItemNavigation || oEvent.target.id != this.getId("after")) {
 			return;
 		}
 
-		// forward focus to the last known position
-		var sTarget = oEvent.target.id;
-		if (sTarget == this.getId("after")) {
-			this.focusPrevious();
-		} else if (sTarget == this.getId("before")) {
-			this.getNavigationRoot().focus();
-		}
-
+		this.focusPrevious();
 		oEvent.setMarked();
 	};
 
