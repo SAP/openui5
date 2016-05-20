@@ -517,42 +517,6 @@
 		oRating.destroy();
 	});
 
-	test("Icon Handling & Destroying", function() {
-		var destroyTest = function(oControl) {
-			var oFirstSelectedIcon = oControl.getAggregation("_iconsSelected")[0],
-				oFirstUnselectedIcon = oControl.getAggregation("_iconsUnselected")[0],
-				oFirstHoveredIcon = (oControl.getEnabled() ? oControl.getAggregation("_iconsHovered")[0] : null),
-				sFirstSelectedIconId = oFirstSelectedIcon.getId(),
-				sFirstUnselectedIconId = oFirstUnselectedIcon.getId(),
-				sFirstHoveredIconId = (oControl.getEnabled() ? oFirstHoveredIcon.getId() : "");
-
-			strictEqual(sFirstSelectedIconId.substr(sFirstSelectedIconId.length - 5), "icon0", "The id of the selected icon with id \"" + sFirstSelectedIconId + "\" ends with  icon0 on " + oControl);
-			strictEqual(sFirstUnselectedIconId.substr(sFirstUnselectedIconId.length - (5 + oControl.getMaxValue().toString().length - 1)), "icon" + oControl.getMaxValue(), "The id of the unselected icon with id \"" + sFirstUnselectedIconId + "\" ends with  icon5 on " + oControl);
-			if(oControl.getEnabled()) {
-				strictEqual(sFirstHoveredIconId.substr(sFirstHoveredIconId.length - (5 + (2 * oControl.getMaxValue()).toString().length - 1)), "icon" + (2 * oControl.getMaxValue()), "The id of the hovered icon with id \"" + sFirstHoveredIconId + "\" ends with  icon10 on " + oControl);
-			}
-
-			oControl.destroy();
-
-			strictEqual(oFirstSelectedIcon.bIsDestroyed, true, "The selected icon with id \"" + sFirstSelectedIconId + "\" was successfully destroyed on " + oControl);
-			strictEqual(oFirstUnselectedIcon.bIsDestroyed, true, "The unselected icon with id \"" + sFirstUnselectedIconId + "\" was successfully destroyed on " + oControl);
-			if(oControl.getEnabled()) {
-				strictEqual(oFirstHoveredIcon.bIsDestroyed, true, "The hovered icon with id \"" + sFirstHoveredIconId + "\" was successfully destroyed on " + oControl);
-			}
-			strictEqual(oControl.bIsDestroyed, true, "The rating control was successfully destroyed on " + oControl);
-		},
-		i = 0;
-
-		for (; i < aRatings.length; i++) {
-			if(aRatings[i].getVisible()) {
-				destroyTest(aRatings[i]);
-			} else {
-				aRatings[i].destroy();
-				strictEqual(aRatings[i].bIsDestroyed, true, "The rating control was successfully destroyed on " + aRatings[i]);
-			}
-		}
-	});
-
 	module("Accessibility");
 
 	test("getAccessibilityInfo", function() {
