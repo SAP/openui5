@@ -72,6 +72,10 @@ xhr.onCreate = function(request) {
 				[200, oXMLHeaders, sProducts3SelProductNameXML],
 			"Products(3)?$expand=Category":
 				[200, oXMLHeaders, sProducts3ExpCategoryXML],
+			"Products(3)?$expand=Supplier":
+				[200, oXMLHeaders, sProducts3ExpSupplierXML],
+			"Products(3)?$expand=Supplier%2fProducts":
+				[200, oXMLHeaders, sProducts3ExpSupplierProductsXML],
 			"Products(7)?$expand=Category":
 				[200, oXMLHeaders, sProducts7ExpCategoryXML],
 			"Products(3)?$select=ProductName%2cCategory&$expand=Category":
@@ -1824,6 +1828,219 @@ var sProducts3SelProductAndCategoryNameExpCategoryXML = '\
   </content>\
 </entry>\
 	';
+
+var sProducts3ExpSupplierXML = '\
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>\
+<entry xml:base="http://services.odata.org/V2/northwind/Northwind.svc/" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom">\
+  <id>http://services.odata.org/V2/northwind/Northwind.svc/Products(3)</id>\
+  <title type="text"></title>\
+  <updated>2016-05-20T13:51:58Z</updated>\
+  <author>\
+    <name />\
+  </author>\
+  <link rel="edit" title="Product" href="Products(3)" />\
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(3)/Category" />\
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(3)/Order_Details" />\
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(3)/Supplier">\
+    <m:inline>\
+      <entry>\
+        <id>http://services.odata.org/V2/northwind/Northwind.svc/Suppliers(1)</id>\
+        <title type="text"></title>\
+        <updated>2016-05-20T13:51:58Z</updated>\
+        <author>\
+          <name />\
+        </author>\
+        <link rel="edit" title="Supplier" href="Suppliers(1)" />\
+        <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Products" type="application/atom+xml;type=feed" title="Products" href="Suppliers(1)/Products" />\
+        <category term="NorthwindModel.Supplier" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />\
+        <content type="application/xml">\
+          <m:properties>\
+            <d:SupplierID m:type="Edm.Int32">1</d:SupplierID>\
+            <d:CompanyName m:type="Edm.String">Exotic Liquids</d:CompanyName>\
+            <d:ContactName m:type="Edm.String">Charlotte Cooper</d:ContactName>\
+            <d:ContactTitle m:type="Edm.String">Purchasing Manager</d:ContactTitle>\
+            <d:Address m:type="Edm.String">49 Gilbert St.</d:Address>\
+            <d:City m:type="Edm.String">London</d:City>\
+            <d:Region m:type="Edm.String" m:null="true" />\
+            <d:PostalCode m:type="Edm.String">EC1 4SD</d:PostalCode>\
+            <d:Country m:type="Edm.String">UK</d:Country>\
+            <d:Phone m:type="Edm.String">(171) 555-2222</d:Phone>\
+            <d:Fax m:type="Edm.String" m:null="true" />\
+            <d:HomePage m:type="Edm.String" m:null="true" />\
+          </m:properties>\
+        </content>\
+      </entry>\
+    </m:inline>\
+  </link>\
+  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />\
+  <content type="application/xml">\
+    <m:properties>\
+      <d:ProductID m:type="Edm.Int32">1</d:ProductID>\
+      <d:ProductName m:type="Edm.String">Chai</d:ProductName>\
+      <d:SupplierID m:type="Edm.Int32">1</d:SupplierID>\
+      <d:CategoryID m:type="Edm.Int32">1</d:CategoryID>\
+      <d:QuantityPerUnit m:type="Edm.String">10 boxes x 20 bags</d:QuantityPerUnit>\
+      <d:UnitPrice m:type="Edm.Decimal">18.0000</d:UnitPrice>\
+      <d:UnitsInStock m:type="Edm.Int16">39</d:UnitsInStock>\
+      <d:UnitsOnOrder m:type="Edm.Int16">0</d:UnitsOnOrder>\
+      <d:ReorderLevel m:type="Edm.Int16">10</d:ReorderLevel>\
+      <d:Discontinued m:type="Edm.Boolean">false</d:Discontinued>\
+    </m:properties>\
+  </content>\
+</entry>\
+	';
+
+var sProducts3ExpSupplierProductsXML = '\
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>\
+<entry xml:base="http://services.odata.org/V2/northwind/Northwind.svc/" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom">\
+  <id>http://services.odata.org/V2/northwind/Northwind.svc/Products(3)</id>\
+  <title type="text"></title>\
+  <updated>2016-05-20T13:51:28Z</updated>\
+  <author>\
+    <name />\
+  </author>\
+  <link rel="edit" title="Product" href="Products(3)" />\
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(3)/Category" />\
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(3)/Order_Details" />\
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(3)/Supplier">\
+    <m:inline>\
+      <entry>\
+        <id>http://services.odata.org/V2/northwind/Northwind.svc/Suppliers(1)</id>\
+        <title type="text"></title>\
+        <updated>2016-05-20T13:51:28Z</updated>\
+        <author>\
+          <name />\
+        </author>\
+        <link rel="edit" title="Supplier" href="Suppliers(1)" />\
+        <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Products" type="application/atom+xml;type=feed" title="Products" href="Suppliers(1)/Products">\
+          <m:inline>\
+            <feed>\
+              <title type="text">Products</title>\
+              <id>http://services.odata.org/V2/northwind/Northwind.svc/Suppliers(1)/Products</id>\
+              <updated>2016-05-20T13:51:28Z</updated>\
+              <link rel="self" title="Products" href="Suppliers(1)/Products" />\
+              <entry>\
+                <id>http://services.odata.org/V2/northwind/Northwind.svc/Products(3)</id>\
+                <title type="text"></title>\
+                <updated>2016-05-20T13:51:28Z</updated>\
+                <author>\
+                  <name />\
+                </author>\
+                <link rel="edit" title="Product" href="Products(1)" />\
+                <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(3)/Category" />\
+                <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(3)/Order_Details" />\
+                <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(3)/Supplier" />\
+                <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />\
+                <content type="application/xml">\
+                  <m:properties>\
+                    <d:ProductID m:type="Edm.Int32">1</d:ProductID>\
+                    <d:ProductName m:type="Edm.String">Chai</d:ProductName>\
+                    <d:SupplierID m:type="Edm.Int32">1</d:SupplierID>\
+                    <d:CategoryID m:type="Edm.Int32">1</d:CategoryID>\
+                    <d:QuantityPerUnit m:type="Edm.String">10 boxes x 20 bags</d:QuantityPerUnit>\
+                    <d:UnitPrice m:type="Edm.Decimal">18.0000</d:UnitPrice>\
+                    <d:UnitsInStock m:type="Edm.Int16">39</d:UnitsInStock>\
+                    <d:UnitsOnOrder m:type="Edm.Int16">0</d:UnitsOnOrder>\
+                    <d:ReorderLevel m:type="Edm.Int16">10</d:ReorderLevel>\
+                    <d:Discontinued m:type="Edm.Boolean">false</d:Discontinued>\
+                  </m:properties>\
+                </content>\
+              </entry>\
+              <entry>\
+                <id>http://services.odata.org/V2/northwind/Northwind.svc/Products(2)</id>\
+                <title type="text"></title>\
+                <updated>2016-05-20T13:51:28Z</updated>\
+                <author>\
+                  <name />\
+                </author>\
+                <link rel="edit" title="Product" href="Products(2)" />\
+                <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(2)/Category" />\
+                <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(2)/Order_Details" />\
+                <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(2)/Supplier" />\
+                <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />\
+                <content type="application/xml">\
+                  <m:properties>\
+                    <d:ProductID m:type="Edm.Int32">2</d:ProductID>\
+                    <d:ProductName m:type="Edm.String">Chang</d:ProductName>\
+                    <d:SupplierID m:type="Edm.Int32">1</d:SupplierID>\
+                    <d:CategoryID m:type="Edm.Int32">1</d:CategoryID>\
+                    <d:QuantityPerUnit m:type="Edm.String">24 - 12 oz bottles</d:QuantityPerUnit>\
+                    <d:UnitPrice m:type="Edm.Decimal">19.0000</d:UnitPrice>\
+                    <d:UnitsInStock m:type="Edm.Int16">17</d:UnitsInStock>\
+                    <d:UnitsOnOrder m:type="Edm.Int16">40</d:UnitsOnOrder>\
+                    <d:ReorderLevel m:type="Edm.Int16">25</d:ReorderLevel>\
+                    <d:Discontinued m:type="Edm.Boolean">false</d:Discontinued>\
+                  </m:properties>\
+                </content>\
+              </entry>\
+              <entry>\
+                <id>http://services.odata.org/V2/northwind/Northwind.svc/Products(3)</id>\
+                <title type="text"></title>\
+                <updated>2016-05-20T13:51:28Z</updated>\
+                <author>\
+                  <name />\
+                </author>\
+                <link rel="edit" title="Product" href="Products(3)" />\
+                <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(3)/Category" />\
+                <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(3)/Order_Details" />\
+                <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(3)/Supplier" />\
+                <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />\
+                <content type="application/xml">\
+                  <m:properties>\
+                    <d:ProductID m:type="Edm.Int32">3</d:ProductID>\
+                    <d:ProductName m:type="Edm.String">Aniseed Syrup</d:ProductName>\
+                    <d:SupplierID m:type="Edm.Int32">1</d:SupplierID>\
+                    <d:CategoryID m:type="Edm.Int32">2</d:CategoryID>\
+                    <d:QuantityPerUnit m:type="Edm.String">12 - 550 ml bottles</d:QuantityPerUnit>\
+                    <d:UnitPrice m:type="Edm.Decimal">10.0000</d:UnitPrice>\
+                    <d:UnitsInStock m:type="Edm.Int16">13</d:UnitsInStock>\
+                    <d:UnitsOnOrder m:type="Edm.Int16">70</d:UnitsOnOrder>\
+                    <d:ReorderLevel m:type="Edm.Int16">25</d:ReorderLevel>\
+                    <d:Discontinued m:type="Edm.Boolean">false</d:Discontinued>\
+                  </m:properties>\
+                </content>\
+              </entry>\
+            </feed>\
+          </m:inline>\
+        </link>\
+        <category term="NorthwindModel.Supplier" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />\
+        <content type="application/xml">\
+          <m:properties>\
+            <d:SupplierID m:type="Edm.Int32">1</d:SupplierID>\
+            <d:CompanyName m:type="Edm.String">Exotic Liquids</d:CompanyName>\
+            <d:ContactName m:type="Edm.String">Charlotte Cooper</d:ContactName>\
+            <d:ContactTitle m:type="Edm.String">Purchasing Manager</d:ContactTitle>\
+            <d:Address m:type="Edm.String">49 Gilbert St.</d:Address>\
+            <d:City m:type="Edm.String">London</d:City>\
+            <d:Region m:type="Edm.String" m:null="true" />\
+            <d:PostalCode m:type="Edm.String">EC1 4SD</d:PostalCode>\
+            <d:Country m:type="Edm.String">UK</d:Country>\
+            <d:Phone m:type="Edm.String">(171) 555-2222</d:Phone>\
+            <d:Fax m:type="Edm.String" m:null="true" />\
+            <d:HomePage m:type="Edm.String" m:null="true" />\
+          </m:properties>\
+        </content>\
+      </entry>\
+    </m:inline>\
+  </link>\
+  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />\
+  <content type="application/xml">\
+    <m:properties>\
+      <d:ProductID m:type="Edm.Int32">1</d:ProductID>\
+      <d:ProductName m:type="Edm.String">Chai</d:ProductName>\
+      <d:SupplierID m:type="Edm.Int32">1</d:SupplierID>\
+      <d:CategoryID m:type="Edm.Int32">1</d:CategoryID>\
+      <d:QuantityPerUnit m:type="Edm.String">10 boxes x 20 bags</d:QuantityPerUnit>\
+      <d:UnitPrice m:type="Edm.Decimal">18.0000</d:UnitPrice>\
+      <d:UnitsInStock m:type="Edm.Int16">39</d:UnitsInStock>\
+      <d:UnitsOnOrder m:type="Edm.Int16">0</d:UnitsOnOrder>\
+      <d:ReorderLevel m:type="Edm.Int16">10</d:ReorderLevel>\
+      <d:Discontinued m:type="Edm.Boolean">false</d:Discontinued>\
+    </m:properties>\
+  </content>\
+</entry>\
+	';
+
 
 var sCategoriesOrderDescXML = '\
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>\
