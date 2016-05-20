@@ -801,6 +801,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 			}
 		};
 
+		OverflowToolbar.prototype.onThemeChanged = function() {
+			this._resetAndInvalidateToolbar();
+		};
+
 		/************************************************** STATIC ***************************************************/
 
 
