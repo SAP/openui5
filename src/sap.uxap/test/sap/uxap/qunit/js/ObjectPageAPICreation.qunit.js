@@ -377,6 +377,23 @@
 		var oObjectPage = new sap.uxap.ObjectPageLayout(this.oView.createId("myObjectPage4"), {showAnchorBar: false});
 		assert.equal(oObjectPage.getShowAnchorBar(), false);
 	});
+
+	QUnit.test("test setBusy", function (assert) {
+		var oObjectPage = new sap.uxap.ObjectPageLayout(),
+		 $title;
+
+		helpers.renderObject(oObjectPage);
+		$title = oObjectPage.$("headerTitle");
+
+		oObjectPage.setBusy(true);
+		assert.ok(oObjectPage.getBusy(), "OPLayout is busy");
+		assert.ok($title.hasClass("sapUxAPObjectPageHeaderTitleBusy"), "Header title has the busy class");
+
+		oObjectPage.setBusy(false);
+		assert.ok(!oObjectPage.getBusy(), "OPLayout is not busy");
+		assert.ok(!$title.hasClass("sapUxAPObjectPageHeaderTitleBusy"), "Header title has not the busy class");
+	});
+
 	QUnit.test("test ShowAnchorBar APIs", function (assert) {
 		var oObjectPage = new sap.uxap.ObjectPageLayout(this.oView.createId("myObjectPage5"));
 		oObjectPage.setShowAnchorBar(false);
