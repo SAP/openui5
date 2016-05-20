@@ -17,6 +17,9 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 		 * The default position applies as long as the application does not do any position setting.
 		 * Position settings are "my", "at", "of" and "offset".
 		 *
+		 * If the configured message contains HTML code or script tags, those will be escaped.<br>
+		 * <b>Note: </b>Line breaks (\r\n, \n\r, \r, \n) will be visualized.
+		 *
 		 * Beware that only one message toast can be shown at a time in the same place.
 		 * If you want to have multiple message toasts visible at the same time, you need to position
 		 * the message toasts in different places.
