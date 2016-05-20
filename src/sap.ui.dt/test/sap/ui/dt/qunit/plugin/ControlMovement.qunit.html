@@ -32,6 +32,12 @@
 	src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script type="text/javascript">
 	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	if (window.blanket){
+		window.blanket.options("sap-ui-cover-only", "sap/ui/dt");
+	}
+
+	jQuery.sap.require("sap.ui.thirdparty.sinon");
+	jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 
 	jQuery.sap.require("sap.ui.dt.ElementOverlay");
 	jQuery.sap.require("sap.ui.dt.plugin.ControlDragDrop");
@@ -63,12 +69,14 @@
 			//			attributes
 			//				ObjectAttribute
 			//		Button
+			//		HereNotMovableButton
 
 			var aALL_MOVABLE_TYPES = [
 				"sap.m.Button", "sap.m.ObjectAttribute"
 			];
 
 			this.oButton = new sap.m.Button();
+			this.oNotMovableButton = new sap.m.Button();
 			this.oObjectAttribute = new sap.m.ObjectAttribute({
 				text: "Some attribute"
 			});
@@ -80,7 +88,7 @@
 			});
 			this.oLayout = new sap.ui.layout.VerticalLayout({
 				content: [
-					this.oObjectHeader, this.oButton
+					this.oObjectHeader, this.oButton, this.oNotMovableButton
 				]
 			});
 
@@ -95,6 +103,17 @@
 				movableTypes: aALL_MOVABLE_TYPES
 			});
 
+			var that = this;
+			var fnCheckMovable = function(oOverlay){
+				if (oOverlay.getElementInstance() === that.oNotMovableButton) {
+					return false;
+				} else {
+					return true;
+				}
+			};
+			this.checkMovableDragStub = sinon.stub(this.oControlDragDrop.getElementMover(),"checkMovable", fnCheckMovable);
+			this.checkMovableCutStub = sinon.stub(this.oCutPaste.getElementMover(),"checkMovable", fnCheckMovable);
+
 			this.oDesignTime = new sap.ui.dt.DesignTime({
 				rootElements: [
 					this.oLayout
@@ -104,20 +123,20 @@
 				]
 			});
 
-			this.oLayoutOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oLayout);
-			this.oLayoutAggregationOverlay = this.oLayoutOverlay.getAggregationOverlay("content");
-			this.oButtonOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oButton);
-			this.oObjectAttributeOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oObjectAttribute);
-			this.oObjectHeaderOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oObjectHeader);
-			this.oObjectHeaderAggregationOverlay = this.oObjectHeaderOverlay.getAggregationOverlay("attributes");
-
+			that.oLayoutOverlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oLayout);
+			that.oLayoutAggregationOverlay = that.oLayoutOverlay.getAggregationOverlay("content");
+			that.oButtonOverlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oButton);
+			that.oNotMovableButtonOverlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oNotMovableButton);
+			that.oObjectAttributeOverlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oObjectAttribute);
+			that.oObjectHeaderOverlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oObjectHeader);
+			that.oObjectHeaderAggregationOverlay = that.oObjectHeaderOverlay.getAggregationOverlay("attributes");
 			sap.ui.getCore().applyChanges();
-
 		},
 		afterEach: function() {
 			this.oDesignTime.destroy();
 			this.oLayout.destroy();
-			this.oControlDragDrop.destroy();
+			this.checkMovableDragStub.restore();
+			this.checkMovableCutStub.restore();
 		}
 	});
 
@@ -156,6 +175,15 @@
 		sap.ui.test.qunit.triggerKeydown(this.oObjectHeaderOverlay.getDomRef(), jQuery.sap.KeyCodes.X, false, false, true);
 
 		assert.ok(!this.oObjectHeaderOverlay.hasStyleClass("sapUiDtOverlayCutted"), "then the object header overlay is not marked with the cut style");
+		assert.ok(!this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation is not marked as target zone");
+
+	});
+
+	QUnit.test("when the cut is triggered on an in this situation non movable overlay" , function(assert) {
+
+		sap.ui.test.qunit.triggerKeydown(this.oNotMovableButtonOverlay.getDomRef(), jQuery.sap.KeyCodes.X, false, false, true);
+
+		assert.ok(!this.oNotMovableButtonOverlay.hasStyleClass("sapUiDtOverlayCutted"), "then the button overlay is not marked with the cut style");
 		assert.ok(!this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation is not marked as target zone");
 
 	});
@@ -219,7 +247,8 @@
 		assert.equal(this.oObjectHeader.getAttributes().length, 0, "object attribute is removed from the header");
 		assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header is still at 1. position");
 		assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "button is still at 2. position");
-		assert.equal(this.oLayout.getContent()[2].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 3. position");
+		assert.equal(this.oLayout.getContent()[2].getId(), this.oNotMovableButton.getId(), "not movable button is still at 3. position");
+		assert.equal(this.oLayout.getContent()[3].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 4. position");
 	});
 
 	QUnit.test("while dragging the object attribute on the layout content aggregation overlay  when dragend is triggered ,", function(assert) {
@@ -239,7 +268,7 @@
 				target: {
 					parent: that.oLayout,
 					aggregation: "content",
-					index: 2
+					index: 3
 				}
 			}, "element moved event is fired with the correct data");
 		});
@@ -249,7 +278,8 @@
 		assert.equal(this.oObjectHeader.getAttributes().length, 0, "object attribute is removed from the header");
 		assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header is still at 1. position");
 		assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "button is still at 2. position");
-		assert.equal(this.oLayout.getContent()[2].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 3. position");
+		assert.equal(this.oLayout.getContent()[2].getId(), this.oNotMovableButton.getId(), "not movable button is still at 3. position");
+		assert.equal(this.oLayout.getContent()[3].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 4. position");
 
 		assert.ok(!this.oControlDragDrop.getElementMover()._getSource(), "source information should be deleted after move has finished");
 	});
@@ -280,7 +310,8 @@
 		assert.equal(this.oObjectHeader.getAttributes().length, 0, "object attribute is removed from the header");
 		assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header is still at 1. position");
 		assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "button is still at 2. position");
-		assert.equal(this.oLayout.getContent()[2].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 3. position");
+		assert.equal(this.oLayout.getContent()[2].getId(), this.oNotMovableButton.getId(), "not movable button is still at 3. position");
+		assert.equal(this.oLayout.getContent()[3].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 4. position");
 
 		assert.ok(!this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation (layout) is not marked as target zone");
 		assert.ok(!this.oObjectHeaderAggregationOverlay.isTargetZone(), "the valid aggregation (objectHeader) is not marked as target zone");
