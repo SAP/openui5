@@ -96,6 +96,8 @@ sap.ui.define([
 				}
 
 				this.aContexts = [];
+				// the range for getCurrentContexts
+				this.iCurrentBegin = this.iCurrentEnd = 0;
 				// upper boundary for server-side list length (based on observations so far)
 				this.iMaxLength = Infinity;
 				// this.bLengthFinal = this.aContexts.length === this.iMaxLength
@@ -138,20 +140,22 @@ sap.ui.define([
 	 */
 
 	/**
-	 * The 'dataReceived' event is fired after the back end data has been processed and the
+	 * The 'dataReceived' event is fired after the back-end data has been processed and the
 	 * registered 'change' event listeners have been notified.
 	 * It is to be used by applications for example to switch off a busy indicator or to process an
 	 * error.
-	 * If back end requests are successful, the event has no parameters. The response data is
-	 * available in the model. Note that controls bound to this data may not yet have been updated;
-	 * it is thus not safe for registered event handlers to access data via control APIs.
-	 * If a back end request fails, the 'dataReceived' event provides an <code>Error</code> in the
+	 * If back-end requests are successful, the event has no parameters. Use the binding's contexts
+	 * via {@link #getCurrentContexts oEvent.getSource().getCurrentContexts()} to access the
+	 * response data. Note that controls bound to this data may not yet have been updated, meaning
+	 * it is not safe for registered event handlers to access data via control APIs.
+	 *
+	 * If a back-end request fails, the 'dataReceived' event provides an <code>Error</code> in the
 	 * 'error' event parameter.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {object} oEvent.getParameters
-	 * @param {Error} [oEvent.getParameters.error] The error object if a back end request failed.
-	 *   If there are multiple failed back end requests, the error of the first one is provided.
+	 * @param {Error} [oEvent.getParameters.error] The error object if a back-end request failed.
+	 *   If there are multiple failed back-end requests, the error of the first one is provided.
 	 *
 	 * @event
 	 * @name sap.ui.model.odata.v4.ODataListBinding#dataReceived
@@ -334,21 +338,33 @@ sap.ui.define([
 				jQuery.sap.log.error(oError.message, oError.stack, sClassName);
 			});
 		}
+		this.iCurrentBegin = iStart;
+		this.iCurrentEnd = iStart + iLength;
 		return this.aContexts.slice(iStart, iStart + iLength);
 	};
 
 	/**
-	 * Method not supported
+	 * Returns the contexts that were requested by a control last time. Does not trigger a
+	 * data request. In the time between the {@link #event:dataRequested dataRequested} event and
+	 * the {@link #event:dataReceived dataReceived} event, the resulting array contains
+	 * <code>undefined</code> at those indexes where the data is not yet available.
 	 *
-	 * @throws {Error}
+	 * @returns {sap.ui.model.odata.v4.Context[]}
+	 *   The contexts
 	 *
 	 * @public
 	 * @see sap.ui.model.ListBinding#getCurrentContexts
-	 * @since 1.37.0
+	 * @since 1.39.0
 	 */
 	// @override
 	ODataListBinding.prototype.getCurrentContexts = function () {
-		throw new Error("Unsupported operation: v4.ODataListBinding#getCurrentContexts");
+		var aContexts = this.aContexts.slice(this.iCurrentBegin, this.iCurrentEnd),
+			iLength = Math.min(this.iCurrentEnd, this.iMaxLength) - this.iCurrentBegin;
+
+		while (aContexts.length < iLength) {
+			aContexts.push(undefined);
+		}
+		return aContexts;
 	};
 
 	/**
@@ -483,6 +499,7 @@ sap.ui.define([
 		this.sRefreshGroupId = sGroupId;
 		this.oCache.refresh();
 		this.aContexts = [];
+		this.iCurrentBegin = this.iCurrentEnd = 0;
 		this.iMaxLength = Infinity;
 		this.bLengthFinal = false;
 		this._fireRefresh({reason : ChangeReason.Refresh});

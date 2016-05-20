@@ -239,8 +239,8 @@ sap.ui.define([
 	 *   Map of binding parameters which can be OData query options as specified in
 	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameters "$$groupId"
 	 *   and "$$updateGroupId".
-	 *   Note: Binding parameters may only be provided for absolute binding paths as only those
-	 *   lead to a data service request.
+	 *   Note: If parameters are provided for a relative binding path, the binding accesses data
+	 *   with its own service requests instead of using its parent binding.
 	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
@@ -620,14 +620,37 @@ sap.ui.define([
 	 *   success, or rejected with an instance of <code>Error</code> in case of failure, e.g. when
 	 *   the given context does not point to an entity
 	 *
+	 * @deprecated since 1.39.0
+	 *   Use {@link sap.ui.model.odata.v4.Context#requestCanonicalPath} instead.
 	 * @public
 	 * @since 1.37.0
 	 */
 	ODataModel.prototype.requestCanonicalPath = function (oEntityContext) {
 		jQuery.sap.assert(oEntityContext.getModel() === this,
 				"oEntityContext must belong to this model");
-		return this.oMetaModel
-			.requestCanonicalUrl("/", oEntityContext.getPath(), oEntityContext);
+		return oEntityContext.requestCanonicalPath();
+	};
+
+	/**
+	 * Resets all property changes associated with the given application group ID which have not
+	 * yet been submitted via {@link #submitBatch}.
+	 *
+	 * @param {string} [sGroupId]
+	 *   The application group ID, which is a non-empty string consisting of alphanumeric
+	 *   characters from the basic Latin alphabet, including the underscore. If it is
+	 *   <code>undefined</code>, the model's <code>updateGroupId</code> is used. Note that the
+	 *   default <code>updateGroupId</code> is "$auto", which is invalid here.
+	 * @throws {Error}
+	 *   If the given group ID is not an application group ID
+	 *
+	 * @public
+	 * @since 1.39.0
+	 */
+	ODataModel.prototype.resetChanges = function (sGroupId) {
+		sGroupId = sGroupId || this.sUpdateGroupId;
+		_ODataHelper.checkGroupId(sGroupId, true);
+
+		this.oRequestor.cancelPatch(sGroupId);
 	};
 
 	/**

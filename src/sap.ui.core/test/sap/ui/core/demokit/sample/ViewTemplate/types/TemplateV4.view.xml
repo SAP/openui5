@@ -1,0 +1,11 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
+	width="100%">
+	<template:repeat list="{meta>@com.sap.vocabularies.UI.v1.Identification}" var="field">
+		<Label text="{field>Label}"/>
+		<Input value="{= '{' + ${field>Value/$Path} + '}' }"/>
+	</template:repeat>
+</mvc:View>
+

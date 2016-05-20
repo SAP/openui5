@@ -90,6 +90,35 @@ sap.ui.define([
 		});
 
 	/**
+	 * Returns a promise for the "canonical path" of the entity for this context.
+	 *
+	 * @returns {SyncPromise}
+	 *   A promise which is resolved with the canonical path (e.g. "/EMPLOYEES(ID='1')") in case of
+	 *   success, or rejected with an instance of <code>Error</code> in case of failure, e.g. when
+	 *   the given context does not point to an entity
+	 *
+	 * @private
+	 */
+	Context.prototype.fetchCanonicalPath = function () {
+		return this.oModel.getMetaModel().fetchCanonicalUrl("/", this.getPath(), this);
+	};
+
+	/**
+	 * Delegates to the <code>fetchValue</code> method of this context's binding which requests
+	 * the value for the given path, relative to this context, as maintained by that binding.
+	 *
+	 * @param {string} [sPath]
+	 *   A relative path within the JSON structure
+	 * @returns {SyncPromise}
+	 *   A promise on the outcome of the binding's <code>requestValue</code> call
+	 *
+	 * @private
+	 */
+	Context.prototype.fetchValue = function (sPath) {
+		return this.oBinding.fetchValue(sPath, this.iIndex);
+	};
+
+	/**
 	 * Returns the binding this context belongs to.
 	 *
 	 * @returns {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding}
@@ -101,6 +130,25 @@ sap.ui.define([
 	Context.prototype.getBinding = function () {
 		return this.oBinding;
 	};
+
+	/**
+	 * Returns the "canonical path" of the entity for this context.
+	 * According to "4.3.1 Canonical URL" of the specification "OData Version 4.0 Part 2: URL
+	 * Conventions", this is the "name of the entity set associated with the entity followed by the
+	 * key predicate identifying the entity within the collection".
+	 * Use the canonical path in {@link sap.ui.core.Element#bindElement} to create an element
+	 * binding.
+	 *
+	 * @returns {string}
+	 *   The canonical path (e.g. "/EMPLOYEES(ID='1')")
+	 * @throws {Error}
+	 *   If the canonical path cannot be determined yet or in case of failure, e.g. when the given
+	 *   context does not point to an entity
+	 *
+	 * @public
+	 * @since 1.39.0
+	 */
+	Context.prototype.getCanonicalPath = _SyncPromise.createGetMethod("fetchCanonicalPath", true);
 
 	/**
 	 * Returns the context's index within the binding's collection.
@@ -182,19 +230,22 @@ sap.ui.define([
 	};
 
 	/**
-	 * Delegates to the <code>fetchValue</code> method of this context's binding which requests
-	 * the value for the given path, relative to this context, as maintained by that binding.
+	 * Returns a promise for the "canonical path" of the entity for this context.
+	 * According to "4.3.1 Canonical URL" of the specification "OData Version 4.0 Part 2: URL
+	 * Conventions", this is the "name of the entity set associated with the entity followed by the
+	 * key predicate identifying the entity within the collection".
+	 * Use the canonical path in {@link sap.ui.core.Element#bindElement} to create an element
+	 * binding.
 	 *
-	 * @param {string} [sPath]
-	 *   A relative path within the JSON structure
-	 * @returns {SyncPromise}
-	 *   A promise on the outcome of the binding's <code>requestValue</code> call
+	 * @returns {Promise}
+	 *   A promise which is resolved with the canonical path (e.g. "/EMPLOYEES(ID='1')") in case of
+	 *   success, or rejected with an instance of <code>Error</code> in case of failure, e.g. when
+	 *   the given context does not point to an entity
 	 *
-	 * @private
+	 * @public
+	 * @since 1.39.0
 	 */
-	Context.prototype.fetchValue = function (sPath) {
-		return this.oBinding.fetchValue(sPath, this.iIndex);
-	};
+	Context.prototype.requestCanonicalPath = _SyncPromise.createRequestMethod("fetchCanonicalPath");
 
 	/**
 	 * Returns a promise on the value for the given path relative to this context. The function

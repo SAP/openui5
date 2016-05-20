@@ -323,14 +323,11 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestCanonicalPath fulfills", function (assert) {
+	QUnit.test("requestCanonicalPath", function (assert) {
 		var oModel = createModel(),
-			oEntityContext = Context.create(oModel, null, "/EMPLOYEES/42"),
-			oMetaModel = oModel.getMetaModel(),
-			oMetaModelMock = this.mock(oMetaModel);
+			oEntityContext = Context.create(oModel, null, "/EMPLOYEES/42");
 
-		oMetaModelMock.expects("requestCanonicalUrl")
-			.withExactArgs("/", oEntityContext.getPath(), sinon.match.same(oEntityContext))
+		this.mock(oEntityContext).expects("requestCanonicalPath").withExactArgs()
 			.returns(Promise.resolve("/EMPLOYEES(ID='1')"));
 
 		return oModel.requestCanonicalPath(oEntityContext).then(function (sCanonicalPath) {
@@ -339,31 +336,13 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestCanonicalPath rejects", function (assert) {
-		var oError = new Error("Intentionally failed"),
-			oModel = createModel(),
-			oNotAnEntityContext = Context.create(oModel, null, "/EMPLOYEES/42/Name"),
-			oMetaModel = oModel.getMetaModel(),
-			oMetaModelMock = this.mock(oMetaModel);
-
-		oMetaModelMock.expects("requestCanonicalUrl")
-			.returns(Promise.reject(oError));
-
-		return oModel.requestCanonicalPath(oNotAnEntityContext).then(
-			function () { assert.ok(false, "Unexpected success"); },
-			function (oError0) { assert.strictEqual(oError0, oError); }
-		);
-	});
-
-	//*********************************************************************************************
 	QUnit.test("requestCanonicalPath, context from different model", function (assert) {
 		var oModel = createModel(),
 			oModel2 = createModel(),
-			oEntityContext = Context.create(oModel2, null, "/EMPLOYEES/42"),
-			oMetaModel = oModel.getMetaModel(),
-			oMetaModelMock = this.mock(oMetaModel);
+			oEntityContext = Context.create(oModel2, null, "/EMPLOYEES/42");
 
-		oMetaModelMock.expects("requestCanonicalUrl").returns(Promise.resolve(""));
+		this.mock(oEntityContext).expects("requestCanonicalPath").withExactArgs()
+			.returns(Promise.resolve("/EMPLOYEES(ID='1')"));
 		if (jQuery.sap.log.getLevel() > jQuery.sap.log.LogLevel.ERROR) { // not for minified code
 			this.mock(jQuery.sap).expects("assert")
 				.withExactArgs(false, "oEntityContext must belong to this model");
@@ -559,6 +538,42 @@ sap.ui.require([
 
 		assert.throws(function () {
 			oModel.submitBatch("$auto");
+		}, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resetChanges with group ID", function (assert) {
+		var oModel = createModel();
+
+		this.mock(_ODataHelper).expects("checkGroupId").withExactArgs("groupId", true);
+		this.mock(oModel.oRequestor).expects("cancelPatch").withExactArgs("groupId");
+
+		// code under test
+		oModel.resetChanges("groupId");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resetChanges w/o group ID", function (assert) {
+		var oModel = createModel("", {updateGroupId : "updateGroupId"});
+
+		this.mock(_ODataHelper).expects("checkGroupId").withExactArgs("updateGroupId", true);
+		this.mock(oModel.oRequestor).expects("cancelPatch").withExactArgs("updateGroupId");
+
+		// code under test
+		oModel.resetChanges();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resetChanges, invalid group ID", function (assert) {
+		var oError = new Error(),
+			oModel = createModel();
+
+		this.mock(_ODataHelper).expects("checkGroupId").withExactArgs("$auto", true)
+			.throws(oError);
+		this.mock(oModel.oRequestor).expects("cancelPatch").never();
+
+		assert.throws(function () {
+			oModel.resetChanges();
 		}, oError);
 	});
 

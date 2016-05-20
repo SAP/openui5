@@ -6,10 +6,11 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
 	width="100%">
-	<VBox binding="{/EdmTypesCollection(ID='1')}" width="100%">
+	<VBox width="100%">
 		<HBox>
-			<Button id="onSaveID" text="Save" press="onSave" visible="{ui>/realOData}"/>
-			<Button id="onResetID" text="Reset" press="onReset" visible="{ui>/realOData}" />
+			<Button id="saveButton" text="Save" press="onSave" visible="{ui>/realOData}"/>
+			<Button id="resetButton" binding="{v4>/ResetEdmTypes(...)}" text="Reset" press="onReset" visible="{ui>/realOData}"/>
+			<ToggleButton id="toggleV4" icon="sap-icon://switch-views" press="onV4" pressed="{ui>/v4}" text="V4"/>
 			<ToggleButton id="toggleSourceCode" icon="sap-icon://syntax" press="onSourceCode" text="Design-Time Source Code"/>
 		</HBox>
 		<Panel expandable="false" visible="{ui>/codeVisible}" headerText="Design-Time Source Code"
@@ -18,7 +19,7 @@
 				<core:HTML content="{ui>/code}" preferDOM="false"/>
 			</content>
 		</Panel>
-		<form:SimpleForm layout="ResponsiveGridLayout" labelSpanL="12" labelSpanM="12" columnsM="2" columnsL="3">
+		<form:SimpleForm id="simpleForm" layout="ResponsiveGridLayout" labelSpanL="12" labelSpanM="12" columnsM="2" columnsL="3">
 			<!--TODO: sap.ui.model.odata.type.Binary not yet available
 			<core:Title text="sap.ui.model.odata.type.Binary" />
 			<Image src="data:image/png;base64, {path: 'Binary'}" /> -->
@@ -31,29 +32,47 @@
 			<Label text="sap.ui.model.odata.type.Boolean CheckBox, true"/>
 			<CheckBox selected="{path: 'Boolean', type: 'sap.ui.model.odata.type.Boolean'}"/>
 
-			<core:Title text="DateTime variants" />
-			<Label text="DateTime"/>
-			<Input value="{path: 'DateTime', type: 'sap.ui.model.odata.type.DateTime'}"/>
-			<Label text="DateTime, nullable: false"/>
-			<Input value="{path: 'DateTime', type: 'sap.ui.model.odata.type.DateTime', constraints: {nullable: false}}"/>
-			<Label text="DateTime, style:  &quot;short&quot;"/>
-			<Input value="{path: 'DateTime', type: 'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'short'}}"/>
-			<Label text="DateTime, displayFormat: &quot;Date&quot;"/>
-			<Input value="{path: 'Date', type: 'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date'}}"/>
-			<Label text="DateTime, displayFormat: &quot;Date&quot;, nullable: false"/>
-			<Input value="{path: 'Date', type: 'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date', nullable: false}}"/>
+			<core:Title text="DateTime variants"/>
+			<Label text="Date" visible="{ui>/v4}"/>
+			<Input value="{path: 'v4>Date'}" visible="{ui>/v4}"/>
+			<Label text="Date, nullable: false" visible="{ui>/v4}"/>
+			<Input value="{path: 'v4>Date', type: 'sap.ui.model.odata.type.Date', constraints: {nullable: false}}" visible="{ui>/v4}"/>
+			<Label text="Date, style:  &quot;short&quot;" visible="{ui>/v4}"/>
+			<Input value="{path: 'v4>Date', type: 'sap.ui.model.odata.type.Date', formatOptions: {style: 'short'}}" visible="{ui>/v4}"/>
+			<Label text="Date, relative:  &quot;true&quot;" visible="{ui>/v4}"/>
+			<Input value="{path: 'v4>Date', type: 'sap.ui.model.odata.type.Date', formatOptions: {relative: 'true'}}" visible="{ui>/v4}"/>
+			<Label text="DateTime" visible="{ui>/v2}"/>
+			<Input value="{path: 'v2>DateTime', type: 'sap.ui.model.odata.type.DateTime'}" visible="{ui>/v2}"/>
+			<Label text="DateTime, nullable: false" visible="{ui>/v2}"/>
+			<Input value="{path: 'v2>DateTime', type: 'sap.ui.model.odata.type.DateTime', constraints: {nullable: false}}" visible="{ui>/v2}"/>
+			<Label text="DateTime, style:  &quot;short&quot;" visible="{ui>/v2}"/>
+			<Input value="{path: 'v2>DateTime', type: 'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'short'}}" visible="{ui>/v2}"/>
+			<Label text="DateTime, displayFormat: &quot;Date&quot;" visible="{ui>/v2}"/>
+			<Input value="{path: 'v2>Date', type: 'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date'}}" visible="{ui>/v2}"/>
+			<Label text="DateTime, displayFormat: &quot;Date&quot;, nullable: false" visible="{ui>/v2}"/>
+			<Input value="{path: 'v2>Date', type: 'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date', nullable: false}}" visible="{ui>/v2}"/>
 			<Label text="DateTimeOffset"/>
 			<Input value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset'}"/>
 			<Label text="DateTimeOffset, nullable: false"/>
 			<Input value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset', constraints: {nullable: false}}"/>
 			<Label text="DateTimeOffset, style:  &quot;short&quot;"/>
 			<Input value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset', formatOptions: {style: 'short'}}"/>
-			<Label text="Time"/>
-			<Input value="{path: 'Time', type: 'sap.ui.model.odata.type.Time'}"/>
-			<Label text="Time, nullable: false"/>
-			<Input value="{path: 'Time', type: 'sap.ui.model.odata.type.Time', constraints: {nullable: false}}"/>
-			<Label text="Time, style: &quot;short&quot;"/>
-			<Input value="{path: 'Time', type: 'sap.ui.model.odata.type.Time', formatOptions: {style: 'short'}}"/>
+			<Label text="Time" visible="{ui>/v2}"/>
+			<Input value="{path: 'v2>Time', type: 'sap.ui.model.odata.type.Time'}" visible="{ui>/v2}"/>
+			<Label text="Time, nullable: false" visible="{ui>/v2}"/>
+			<Input value="{path: 'v2>Time', type: 'sap.ui.model.odata.type.Time', constraints: {nullable: false}}" visible="{ui>/v2}"/>
+			<Label text="Time, style: &quot;short&quot;" visible="{ui>/v2}"/>
+			<Input value="{path: 'v2>Time', type: 'sap.ui.model.odata.type.Time', formatOptions: {style: 'short'}}" visible="{ui>/v2}"/>
+			<Label text="TimeOfDay" visible="{ui>/v4}"/>
+			<Input value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay'}" visible="{ui>/v4}"/>
+			<Label text="TimeOfDay, nullable: false, style:  &quot;medium&quot;" visible="{ui>/v4}"/>
+			<Input value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay', constraints: {nullable: false}, formatOptions: {style: 'medium'}}" visible="{ui>/v4}"/>
+			<Label text="TimeOfDay, style:  &quot;short&quot;" visible="{ui>/v4}"/>
+			<Input value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay', formatOptions: {style: 'short'}}" visible="{ui>/v4}"/>
+			<Label text="TimeOfDay, style:  &quot;long&quot;" visible="{ui>/v4}"/>
+			<Input value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay', formatOptions: {style: 'long'}}" visible="{ui>/v4}"/>
+			<Label text="TimeOfDay, relative:  &quot;true&quot;" visible="{ui>/v4}"/>
+			<Input value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay', formatOptions: {relative: 'true'}}" visible="{ui>/v4}"/>
 
 			<core:Title text="sap.ui.model.odata.type.Decimal" />
 			<Label text="scale: 3"/>
@@ -124,10 +143,7 @@
 			<Input value="{path: 'DigitSequence', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 7, isDigitSequence: true}}"/>
 
 			<core:Title text="com.sap.vocabularies.UI.v1.Identification"/>
-			<template:repeat list="{meta>com.sap.vocabularies.UI.v1.Identification}">
-				<Label text="{path: 'meta>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
-				<Input value="{path: 'meta>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
-			</template:repeat>
+			<HBox id="identificationBox"/>
 		</form:SimpleForm>
 	</VBox>
 </mvc:View>

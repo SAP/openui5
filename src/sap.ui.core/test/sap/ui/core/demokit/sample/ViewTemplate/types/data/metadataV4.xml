@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+	<edmx:Reference
+		Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_XJG',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1"
+			Alias="Z__UI" />
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1"
+			Alias="Z__COM" />
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema Namespace="com.sap.gateway.default.zui5_edm_types_v4.v0001"
+			Alias="SAP__self" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+			<EntityType Name="EdmTypes">
+				<Key>
+					<PropertyRef Name="ID" />
+				</Key>
+				<Property Name="ID" Type="Edm.String" Nullable="false"
+					MaxLength="1" />
+				<Property Name="Binary" Type="Edm.Binary" />
+				<Property Name="Boolean" Type="Edm.Boolean" />
+				<Property Name="Byte" Type="Edm.Byte" />
+				<Property Name="Date" Type="Edm.Date" />
+				<Property Name="DateTimeOffset" Type="Edm.DateTimeOffset" />
+				<Property Name="Decimal" Type="Edm.Decimal" Precision="31"
+					Scale="14" />
+				<Property Name="DigitSequence" Type="Edm.String" MaxLength="7" />
+				<Property Name="Double" Type="Edm.Double" />
+				<Property Name="Duration" Type="Edm.Duration" />
+				<Property Name="GlobalUID" Type="Edm.Guid" />
+				<Property Name="Int16" Type="Edm.Int16" />
+				<Property Name="Int32" Type="Edm.Int32" />
+				<Property Name="Int64" Type="Edm.Int64" />
+				<Property Name="SByte" Type="Edm.SByte" />
+				<Property Name="Single" Type="Edm.Single" />
+				<Property Name="String" Type="Edm.String" />
+				<Property Name="String40" Type="Edm.String" MaxLength="40" />
+				<Property Name="TimeOfDay" Type="Edm.TimeOfDay" />
+			</EntityType>
+			<Action Name="ResetEdmTypes">
+				<ReturnType
+					Type="com.sap.gateway.default.zui5_edm_types_v4.v0001.EdmTypes"
+					Nullable="false" />
+			</Action>
+			<EntityContainer Name="Container">
+				<EntitySet Name="EdmTypesCollection"
+					EntityType="com.sap.gateway.default.zui5_edm_types_v4.v0001.EdmTypes" />
+				<ActionImport Name="ResetEdmTypes"
+					Action="com.sap.gateway.default.zui5_edm_types_v4.v0001.ResetEdmTypes"
+					EntitySet="com.sap.gateway.default.zui5_edm_types_v4.v0001.Container/EdmTypesCollection" />
+			</EntityContainer>
+			<Annotations Target="SAP__self.EdmTypes/DigitSequence">
+				<Annotation Term="com.sap.vocabularies.Common.v1.IsDigitSequence" />
+			</Annotations>
+			<Annotations Target="SAP__self.EdmTypes">
+				<Annotation Term="com.sap.vocabularies.UI.v1.Identification">
+					<Collection>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="ID" />
+							<PropertyValue Property="Value" Path="ID" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Boolean" />
+							<PropertyValue Property="Value" Path="Boolean" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Byte" />
+							<PropertyValue Property="Value" Path="Byte" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Date" />
+							<PropertyValue Property="Value" Path="Date" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="DateTimeOffset" />
+							<PropertyValue Property="Value" Path="DateTimeOffset" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Decimal" />
+							<PropertyValue Property="Value" Path="Decimal" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="DigitSequence" />
+							<PropertyValue Property="Value" Path="DigitSequence" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Double" />
+							<PropertyValue Property="Value" Path="Double" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Duration" />
+							<PropertyValue Property="Value" Path="Duration" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="GlobalUID" />
+							<PropertyValue Property="Value" Path="GlobalUID" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Int16" />
+							<PropertyValue Property="Value" Path="Int16" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Int32" />
+							<PropertyValue Property="Value" Path="Int32" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Int64" />
+							<PropertyValue Property="Value" Path="Int64" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="SByte" />
+							<PropertyValue Property="Value" Path="SByte" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="Single" />
+							<PropertyValue Property="Value" Path="Single" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="String" />
+							<PropertyValue Property="Value" Path="String" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="String40" />
+							<PropertyValue Property="Value" Path="String40" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="TimeOfDay" />
+							<PropertyValue Property="Value" Path="TimeOfDay" />
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

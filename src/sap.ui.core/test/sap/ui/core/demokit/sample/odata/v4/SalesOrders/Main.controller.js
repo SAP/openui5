@@ -24,9 +24,17 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.SalesOrders.Main", {
 		onCancelSalesOrder : function (oEvent) {
+			this.getView().getModel().resetChanges("SalesOrderUpdateGroup");
+		},
+
+		onCancelSalesOrderCreate : function (oEvent) {
 			var oCreateSalesOrderDialog = this.getView().byId("createSalesOrderDialog");
 
 			oCreateSalesOrderDialog.close();
+		},
+
+		onCancelSalesOrderList : function (oEvent) {
+			this.getView().getModel().resetChanges("SalesOrderListUpdateGroup");
 		},
 
 		onCreateSalesOrderDialog : function (oEvent) {
@@ -59,10 +67,28 @@ sap.ui.define([
 		},
 
 		onDataEvents : function (oEvent) {
-			var oSource = oEvent.getSource();
+			var aSalesOrderIDs = [],
+				oSource = oEvent.getSource();
 
 			jQuery.sap.log.info(oEvent.getId() + " event processed for path " + oSource.getPath(),
 				oSource, "sap.ui.core.sample.odata.v4.SalesOrders.Main.controller");
+
+			if (oEvent.getId() === "dataReceived") {
+				if (oSource.getPath() === "/SalesOrderList") {
+					oSource.getCurrentContexts().forEach(function (oContext) {
+						aSalesOrderIDs.push(oContext.getProperty("SalesOrderID"));
+					});
+					jQuery.sap.log.info("Current SalesOrderIDs: " + aSalesOrderIDs.join(", "),
+						null, "sap.ui.core.sample.odata.v4.SalesOrders.Main.controller");
+				} else if (oSource.getPath() === "/ProductList('HT-1000')/Name") {
+					jQuery.sap.log.info("Favorite Product ID: " + oSource.getValue(),
+						null, "sap.ui.core.sample.odata.v4.SalesOrders.Main.controller");
+				} else if (/^\/SalesOrderList\(.*\)/.test(oSource.getPath())) {
+					jQuery.sap.log.info("Current Sales Order: "
+						+ oSource.getBoundContext().getProperty("SalesOrderID"),
+						null, "sap.ui.core.sample.odata.v4.SalesOrders.Main.controller");
+				}
+			}
 		},
 
 		onDeleteSalesOrder : function (oEvent) {
@@ -149,48 +175,11 @@ sap.ui.define([
 
 		onSalesOrdersSelect : function (oEvent) {
 			var oSalesOrderContext = oEvent.getParameters().listItem.getBindingContext(),
-				oModel = oSalesOrderContext.getModel(),
-				that = this,
 				oView = this.getView();
 
-			//TODO use path "" for bindElement and call setBindingContext(oSalesOrderContext) on
-			//  the control; this leads to a .setContext call on the binding.
-			//  This requires the binding to create a cache even for a relative path in case the
-			//  binding has parameters.
-			oModel.requestCanonicalPath(oSalesOrderContext).then(function (sCanonicalPath) {
-				oView.byId("ObjectPage").bindElement({
-					events : {
-						dataReceived : that.onDataEvents.bind(that),
-						dataRequested : that.onDataEvents.bind(that)
-					},
-					path : sCanonicalPath,
-					parameters : {
-						"$expand" : {
-							"SO_2_SOITEM" : {
-								"$expand" : {
-									"SOITEM_2_PRODUCT" : {
-										"$expand" : {
-											"PRODUCT_2_BP" : {
-												"$expand" : {
-													"BP_2_CONTACT" : true
-												}
-											}
-										}
-									}
-								}
-							},
-							"SO_2_BP" : {
-								"$select" : ["BusinessPartnerID", "CompanyName", "PhoneNumber"]
-							}
-						},
-						"$select" : ["ChangedAt", "CreatedAt" , "LifecycleStatusDesc", "Note",
-							"SalesOrderID"],
-						"$$updateGroupId" : "SalesOrderUpdateGroup"
-					}
-				});
-				oView.byId("SupplierDetailsForm").unbindObject();
-				oView.byId("SupplierContactData").setBindingContext(undefined);
-			});
+			oView.byId("ObjectPage").setBindingContext(oSalesOrderContext);
+			oView.byId("SupplierDetailsForm").unbindObject();
+			oView.byId("SupplierContactData").setBindingContext(undefined);
 		},
 
 		onSalesOrderLineItemSelect : function (oEvent) {

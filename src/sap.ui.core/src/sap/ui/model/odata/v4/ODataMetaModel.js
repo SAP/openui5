@@ -318,6 +318,56 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns a promise for the "4.3.1 Canonical URL" corresponding to the given service root URL
+	 * and absolute data binding path which must point to an entity.
+	 *
+	 * @param {string} sServiceUrl
+	 *   Root URL of the service
+	 * @param {string} sPath
+	 *   An absolute data binding path pointing to an entity, for example
+	 *   "/TEAMS/0/TEAM_2_EMPLOYEES/0"
+	 * @param {sap.ui.model.odata.v4.Context} oContext
+	 *   OData V4 context object which provides access to data via <code>fetchValue()</code>
+	 * @returns {SyncPromise}
+	 *   A promise which is resolved with the canonical URL (for example
+	 *   "/<service root URL>/EMPLOYEES(ID='1')") in case of success, or rejected with an instance
+	 *   of <code>Error</code> in case of failure
+	 *
+	 * @private
+	 */
+	ODataMetaModel.prototype.fetchCanonicalUrl = function (sServiceUrl, sPath, oContext) {
+		var sMetaPath = sPath.replace(rNotMetaContext, ""),
+			aSegments = sMetaPath.slice(1).split("/");
+
+		return _SyncPromise.all([
+			oContext.fetchValue(""),
+			this.fetchEntityContainer()
+		]).then(function (aValues) {
+			var oEntityInstance = aValues[0],
+				mScope = aValues[1],
+				oEntityContainer = mScope[mScope.$EntityContainer],
+				sEntitySetName = aSegments.shift(),
+				oEntitySet = oEntityContainer[sEntitySetName],
+				oEntityType = mScope[oEntitySet.$Type];
+
+			aSegments.forEach(function (sSegment) {
+				var oNavigationProperty = oEntityType[sSegment];
+
+				if (!oNavigationProperty || oNavigationProperty.$kind !== "NavigationProperty") {
+					throw new Error("Not a navigation property: " + sSegment + " (" + sPath + ")");
+				}
+
+				sEntitySetName = oEntitySet.$NavigationPropertyBinding[sSegment];
+				oEntitySet = oEntityContainer[sEntitySetName];
+				oEntityType = mScope[oNavigationProperty.$Type];
+			});
+
+			return sServiceUrl + encodeURIComponent(sEntitySetName)
+				+ _ODataHelper.getKeyPredicate(oEntityType, oEntityInstance);
+		});
+	};
+
+	/**
 	 * Requests the single entity container for this meta data model's service by reading the
 	 * $metadata document via the meta data requestor. The resulting $metadata JSON object is a map
 	 * of qualified names to their corresponding meta data, with the special key "$EntityContainer"
@@ -757,56 +807,6 @@ sap.ui.define([
 	// @override
 	ODataMetaModel.prototype.refresh = function () {
 		throw new Error("Unsupported operation: v4.ODataMetaModel#refresh");
-	};
-
-	/**
-	 * Returns a promise for the "4.3.1 Canonical URL" corresponding to the given service root URL
-	 * and absolute data binding path which must point to an entity.
-	 *
-	 * @param {string} sServiceUrl
-	 *   Root URL of the service
-	 * @param {string} sPath
-	 *   An absolute data binding path pointing to an entity, for example
-	 *   "/TEAMS/0/TEAM_2_EMPLOYEES/0"
-	 * @param {sap.ui.model.odata.v4.Context} oContext
-	 *   OData V4 context object which provides access to data via <code>fetchValue()</code>
-	 * @returns {Promise}
-	 *   A promise which is resolved with the canonical URL (for example
-	 *   "/<service root URL>/EMPLOYEES(ID='1')") in case of success, or rejected with an instance
-	 *   of <code>Error</code> in case of failure
-	 *
-	 * @private
-	 */
-	ODataMetaModel.prototype.requestCanonicalUrl = function (sServiceUrl, sPath, oContext) {
-		var sMetaPath = sPath.replace(rNotMetaContext, ""),
-			aSegments = sMetaPath.slice(1).split("/");
-
-		return Promise.all([
-			oContext.fetchValue(""),
-			this.fetchEntityContainer()
-		]).then(function (aValues) {
-			var oEntityInstance = aValues[0],
-				mScope = aValues[1],
-				oEntityContainer = mScope[mScope.$EntityContainer],
-				sEntitySetName = aSegments.shift(),
-				oEntitySet = oEntityContainer[sEntitySetName],
-				oEntityType = mScope[oEntitySet.$Type];
-
-			aSegments.forEach(function (sSegment) {
-				var oNavigationProperty = oEntityType[sSegment];
-
-				if (!oNavigationProperty || oNavigationProperty.$kind !== "NavigationProperty") {
-					throw new Error("Not a navigation property: " + sSegment + " (" + sPath + ")");
-				}
-
-				sEntitySetName = oEntitySet.$NavigationPropertyBinding[sSegment];
-				oEntitySet = oEntityContainer[sEntitySetName];
-				oEntityType = mScope[oNavigationProperty.$Type];
-			});
-
-			return sServiceUrl + encodeURIComponent(sEntitySetName)
-				+ _ODataHelper.getKeyPredicate(oEntityType, oEntityInstance);
-		});
 	};
 
 	/**

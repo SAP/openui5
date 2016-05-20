@@ -61,14 +61,16 @@
 							press="onRefreshSalesOrdersList"/>
 						<Button enabled="{ui>/bRealOData}" icon="sap-icon://save"
 							press="onSaveSalesOrderList" tooltip="Save sales orders"/>
+						<Button enabled="{ui>/bRealOData}" icon="sap-icon://sys-cancel-2"
+							press="onCancelSalesOrderList" tooltip="Cancel sales orders changes"/>
 					</content>
 					<dependents>
 						<Dialog id="createSalesOrderDialog" title="Create New Sales Order">
 							<buttons>
 								<Button icon="sap-icon://create" press="onCreateSalesOrder"
 									text="Create" type="Accept"/>
-								<Button icon="sap-icon://sys-cancel-2" press="onCancelSalesOrder"
-									text="Cancel" type="Reject"/>
+								<Button icon="sap-icon://sys-cancel-2"
+									press="onCancelSalesOrderCreate" text="Cancel" type="Reject"/>
 							</buttons>
 							<content>
 								<form:SimpleForm editable="true" layout="ResponsiveGridLayout">
@@ -146,7 +148,35 @@
 				</ColumnListItem>
 			</items>
 		</Table>
-		<VBox id="ObjectPage">
+		<VBox id="ObjectPage" binding="{
+					events : {
+						dataReceived : '.onDataEvents',
+						dataRequested : '.onDataEvents'
+					},
+					path : '',
+					parameters : {
+						$expand : {
+							SO_2_SOITEM : {
+								$expand : {
+									SOITEM_2_PRODUCT : {
+										$expand : {
+											PRODUCT_2_BP : {
+												$expand : {
+													BP_2_CONTACT : true
+												}
+											}
+										}
+									}
+								}
+							},
+							SO_2_BP : {
+								$select : 'BusinessPartnerID,CompanyName,PhoneNumber'
+							}
+						},
+						$select : 'ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID',
+						$$updateGroupId : 'SalesOrderUpdateGroup'
+					}
+				}">
 			<Toolbar design="Transparent">
 				<content>
 					<Title level="H2" text="Sales Order Details" titleStyle="H2"/>
@@ -154,6 +184,8 @@
 						press="onRefreshSalesOrderDetails"/>
 					<Button enabled="{ui>/bRealOData}" icon="sap-icon://save"
 						press="onSaveSalesOrder"/>
+					<Button enabled="{ui>/bRealOData}" icon="sap-icon://sys-cancel-2"
+						press="onCancelSalesOrder" tooltip="Cancel sales order changes"/>
 				</content>
 			</Toolbar>
 			<form:SimpleForm layout="ResponsiveGridLayout">

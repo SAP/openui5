@@ -299,10 +299,12 @@ sap.ui.define([
 	CollectionCache.prototype.update = function (sGroupId, sPropertyName, vValue, sEditUrl, sPath) {
 		var oBody = {},
 			mHeaders,
+			vOldValue,
 			oResult = drillDown(this.aElements, sPath);
 
 		sEditUrl += Cache.buildQueryString(this.mQueryOptions, true);
 		mHeaders = {"If-Match" : oResult["@odata.etag"]};
+		vOldValue = oResult[sPropertyName];
 		oBody[sPropertyName] = oResult[sPropertyName] = vValue;
 
 		return this.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders, oBody)
@@ -313,6 +315,11 @@ sap.ui.define([
 					}
 				}
 				return oPatchResult;
+			}, function (oError){
+				if (oError.canceled) {
+					oResult[sPropertyName] = vOldValue;
+				}
+				throw oError;
 			});
 	};
 
@@ -488,11 +495,13 @@ sap.ui.define([
 
 		return this.oPromise.then(function (oResult) {
 			var oBody = {},
-				mHeaders;
+				mHeaders,
+				vOldValue;
 
 			sEditUrl += Cache.buildQueryString(that.mQueryOptions, true);
 			oResult = drillDown(oResult, sPath);
 			mHeaders = {"If-Match" : oResult["@odata.etag"]};
+			vOldValue = oResult[that.bSingleProperty ? "value" : sPropertyName];
 			oBody[sPropertyName]
 				= oResult[that.bSingleProperty ? "value" : sPropertyName] = vValue;
 
@@ -508,6 +517,11 @@ sap.ui.define([
 						}
 					}
 					return oPatchResult;
+				}, function (oError) {
+					if (oError.canceled) {
+						oResult[that.bSingleProperty ? "value" : sPropertyName] = vOldValue;
+					}
+					throw oError;
 				});
 		});
 	};
