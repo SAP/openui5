@@ -122,7 +122,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 					 * The sap.m.Image or sap.ui.core.Control control that holds the author image or icon.
 					 * @private
 					 */
-					_authorImage: {type: 'sap.ui.core.Control', multiple: false, visibility: "hidden"}
+					_authorImage: {type: 'sap.ui.core.Control', multiple: false, visibility: "hidden"},
+
+					/**
+					 * The close button of the notification item/group.
+					 * @private
+					 */
+					_closeButton: {type: 'sap.m.Button', multiple: false, visibility: "hidden"},
+
+					/**
+					 * The collapse button of the notification item/group.
+					 * @private
+					 */
+					_collapseButton: {type: 'sap.m.Button', multiple: false, visibility: "hidden"},
+
+					/**
+					 * InvisibleText used to implement the ARIA specification.
+					 * @private
+					 */
+					_ariaDetailsText: {type: 'sap.ui.core.InvisibleText', multiple: false, visibility: "hidden"}
 				},
 				events: {
 					/**
@@ -394,8 +412,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 		NotificationListItem.prototype.close = function () {
 			var parent = this.getParent();
 			this.fireClose();
-			parent && parent instanceof sap.ui.core.Element && parent.focus();
-			this.destroy();
+
+			if (parent && parent instanceof sap.ui.core.Element) {
+				parent.focus();
+			}
 		};
 
 		/**
@@ -405,21 +425,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 		 */
 		NotificationListItem.prototype.exit = function () {
 			this._deregisterResize();
-
-			if (this._closeButton) {
-				this._closeButton.destroy();
-				this._closeButton = null;
-			}
-
-			if (this._collapseButton) {
-				this._collapseButton.destroy();
-				this._collapseButton = null;
-			}
-
-			if (this._ariaDetailsText) {
-				this._ariaDetailsText.destroy();
-				this._ariaDetailsText = null;
-			}
 		};
 
 		//================================================================================
