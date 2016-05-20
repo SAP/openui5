@@ -121,7 +121,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				aggregations: {
 
 					/**
-					 * The content inside the dialog.
+					 * The content inside the dialog.<br/><b>Note:</b> When the content of the <code>Dialog</code> is comprised of controls that use <code>position: absolute</code>, such as <code>SplitContainer</code>, the dialog has to have either <code>stretch: true</code> or <code>contentHeight</code> set.
 					 */
 					content: {type: "sap.ui.core.Control", multiple: true, singularName: "content"},
 
