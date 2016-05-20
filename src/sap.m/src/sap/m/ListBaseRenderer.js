@@ -97,12 +97,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './ListIte
 		}
 
 		// determine items rendering
-		var aItems = oControl.getItems(true);
-		var bRenderItems = oControl.shouldRenderItems() && aItems.length;
+		var aItems = oControl.getItems(true),
+			bShowNoData = oControl.getShowNoData(),
+			bRenderItems = oControl.shouldRenderItems() && aItems.length,
+			iTabIndex = oControl.getKeyboardMode() == sap.m.ListKeyboardMode.Edit ? -1 : 0;
 
 		// dummy keyboard handling area
-		if (bRenderItems || oControl.getShowNoData()) {
-			this.renderDummyArea(rm, oControl, "before");
+		if (bRenderItems || bShowNoData) {
+			this.renderDummyArea(rm, oControl, "before", -1);
 		}
 
 		// run hook method to start building list
@@ -114,7 +116,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './ListIte
 		// list attributes
 		rm.addClass("sapMListUl");
 		rm.writeAttribute("id", oControl.getId("listUl"));
-		rm.writeAttribute("tabindex", "-1");
+		if (bRenderItems || bShowNoData) {
+			rm.writeAttribute("tabindex", iTabIndex);
+		}
 
 		// separators
 		rm.addClass("sapMListShowSeparators" + oControl.getShowSeparators());
@@ -141,8 +145,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './ListIte
 		}
 
 		// render no-data if needed
-		if (!bRenderItems && oControl.getShowNoData()) {
-			// hook method to render no data
+		if (!bRenderItems && bShowNoData) {
 			this.renderNoData(rm, oControl);
 		}
 
@@ -150,8 +153,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './ListIte
 		this.renderListEndAttributes(rm, oControl);
 
 		// dummy keyboard handling area
-		if (bRenderItems || oControl.getShowNoData()) {
-			this.renderDummyArea(rm, oControl, "after");
+		if (bRenderItems || bShowNoData) {
+			this.renderDummyArea(rm, oControl, "after", iTabIndex);
 		}
 
 		// render growing
@@ -305,15 +308,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './ListIte
 	};
 
 
-	ListBaseRenderer.renderDummyArea = function(rm, oControl, sAreaId) {
+	ListBaseRenderer.renderDummyArea = function(rm, oControl, sAreaId, iTabIndex) {
 		rm.write("<div");
+		rm.writeAttribute("id", oControl.getId(sAreaId));
+		rm.writeAttribute("tabindex", iTabIndex);
 
 		if (sap.ui.Device.browser.msie) {
 			rm.addClass("sapMListDummyArea").writeClasses();
 		}
 
-		rm.writeAttribute("id", oControl.getId(sAreaId));
-		rm.writeAttribute("tabindex", oControl.getKeyboardMode() == sap.m.ListKeyboardMode.Edit ? -1 : 0);
 		rm.write("></div>");
 	};
 
