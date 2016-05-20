@@ -172,6 +172,11 @@ sap.ui.define([
 			return this;
 		}
 
+		if (aSubSections.length === 1) {
+			aSubSections[0]._setToFocusable(false);
+			return this;
+		}
+
 		aSubSections.forEach(function (oSubsection) {
 			if (sLastSelectedSubSectionId === oSubsection.sId) {
 				oSubsection._setToFocusable(true);
