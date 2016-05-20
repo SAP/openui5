@@ -60,7 +60,7 @@
 				}, {
 					type: "Success",
 					title: "Success message",
-					description: "<p>First Success message description</p>"
+					description: "<p>&First Success message description</p>"
 				}, {
 					type: "Error",
 					title: "Error",
@@ -126,8 +126,8 @@
 		});
 
 		QUnit.test("setDescription() property", function (assert) {
-			// A total of 7 assertions are expected
-			assert.expect(7);
+			// A total of 8 assertions are expected
+			assert.expect(8);
 
 			var doneLongtextLoaded = assert.async(),
 				doneUrlValidated = [assert.async(), assert.async()],
@@ -154,6 +154,7 @@
 				assert.strictEqual(this.oMessagePopover.getItems()[4].getDescription().indexOf("script"), -1, "There should be no script tag in the html");
 				assert.strictEqual(this.oMessagePopover.getItems()[4].getDescription().indexOf("embed"), -1, "There should be no embed tag in the html");
 				doneLongtextLoaded();
+				assert.ok(this.oMessagePopover.getItems()[2].getDescription().indexOf("&") >=0, "Item's description should not be sanitized");
 			}, this);
 
 			this.oMessagePopover.setAsyncURLHandler(function (config) {
