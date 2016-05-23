@@ -38,7 +38,11 @@
 				"name" : "HTML",
 				"category" : "Display",
 				"since" : "1.0",
-				"samples" : [ "sap.ui.core.sample.Html" ]
+				"samples" : [
+					"sap.ui.core.sample.Html",
+					"sap.ui.core.sample.Html.static",
+					"sap.ui.core.sample.Html.preserveDOM"
+				]
 			},
 			{
 				"id" : "sap.ui.core.Icon",
@@ -365,6 +369,16 @@
 				"id": "sap.ui.core.sample.Html",
 				"name": "HTML",
 				"description": "With the HTML controls you can easily embed any kind of HTML content into your UI5 mobile application."
+			},
+			{
+				"id": "sap.ui.core.sample.Html.static",
+				"name": "Static HTML Provided as a String",
+				"description": "This is the simple use case for the HTML control: Some - usually decorative - HTML fragment is specified as a string and set to the content property. Without further configuration, the HTML control will convert this string to DOM nodes whenever it has to render."
+			},
+			{
+				"id": "sap.ui.core.sample.Html.preserveDOM",
+				"name": "Static HTML Provided With Preserved DOM",
+				"description": "The second use case is similar to the first one: The HTML fragment is specified as a string. The difference is that after the first rendering, the HTML control tries to preserve the created DOM nodes as long as possible. Before each re-rendering step, the existing DOM is preserved in some hidden page area, and then the control and its relatives (parents, siblings) are rendered - this creates a new DOM node hierarchy. After the rendering, the preserved DOM content of the controls is integrated in the newly created DOM tree."
 			},
 			{
 				"id": "sap.ui.core.sample.Icon",

@@ -1,5 +1,5 @@
 src/*/target
-src/*/test
+#src/*/test
 
 # library specific excludes - need to be consistent with the library-local .eslintignore files
 src/sap.ui.core/src/sap/ui/thirdparty
