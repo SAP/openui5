@@ -1122,6 +1122,22 @@
 
 	});
 
+	QUnit.test("Canceling the edit mode of an item while another item is being uploaded", function(assert) {
+		//Arrange
+		oItem = new sap.m.UploadCollectionItem({
+			fileName: "File.jpg"
+		});
+		oItem._status = sap.m.UploadCollection._uploadingStatus;
+		this.oUploadCollection.aItems.unshift(oItem);
+		var sEditButtonId = this.oUploadCollection.aItems[1].sId + "-editButton";
+		sap.ui.getCore().byId(sEditButtonId).firePress();
+		sap.ui.getCore().applyChanges();
+		//Act
+		this.oUploadCollection._handleCancel(null, this.oUploadCollection, this.oUploadCollection.editModeItem);
+		//Assert
+		assert.equal(this.oUploadCollection.aItems[1]._status, sap.m.UploadCollection._displayStatus, "Cancelling the edit mode has been successfully executed");
+	});
+
 	QUnit.module("Tests starting with following scenario: open edit mode of list item, enter empty name, click ok", {
 		beforeEach : function() {
 			this.oUploadCollection = new sap.m.UploadCollection({
