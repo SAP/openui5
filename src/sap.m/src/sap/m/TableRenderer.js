@@ -41,13 +41,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 						!oColumn.getHeader().getVisible() ||
 						!oColumn.getVisible() ||
 						oColumn.isPopin() ||
-						oColumn.isNeverVisible() ||
 						oColumn.isHidden();
 			}),
 			hasOneHeader = (type == "Head") && aColumns.filter(function(oColumn) {
 				return	oColumn.getVisible() &&
 						!oColumn.isPopin() &&
-						!oColumn.isNeverVisible() &&
 						!oColumn.isHidden();
 			}).length == 1,
 			createBlankCell = function(cls, id, bAriaHidden) {
@@ -102,9 +100,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 			}
 			if (oColumn.isPopin()) {
 				hasPopin = true;
-				return;
-			}
-			if (oColumn.isNeverVisible()) {
 				return;
 			}
 			if (oColumn.isHidden()) {
