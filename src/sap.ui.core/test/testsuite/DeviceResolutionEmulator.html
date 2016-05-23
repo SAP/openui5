@@ -264,33 +264,7 @@
  		}
  	}
 
- 	function devAvailable() {
- 		// check the existence of sapui5-internal and register the sap.ui.dev library
-		bDevAvailable = jQuery.sap.syncHead("/sapui5-internal/resources/sap/ui/dev/");
-		if (bDevAvailable) {
- 			jQuery.sap.registerModulePath("sap.ui.dev", "/sapui5-internal/resources/sap/ui/dev/");
- 			sap.ui.getCore().loadLibrary("sap.ui.dev");
-		}
- 		return bDevAvailable;
- 	}
-
- 	function openInMobile() {
- 		var sWeinreId = jQuery.sap.uid();
-		var sWeinreClientUrl = sap.ui.getCore().getConfiguration().getWeinreServer() + "/client/#" + sWeinreId;
-
-		var oContainer = new sap.ui.layout.VerticalLayout();
-		//var href = (document.location.href.indexOf("#") > -1) ? document.location.href.split("#")[0] : document.location.href;
-		var oQRCode = new sap.ui.dev.qrcode.QRCode({data:url + "?sap-ui-weinreId=" + sWeinreId,sizeFactor:5});
-		var link = new sap.ui.commons.Link({text:"Remote Web Inspector (webkit only!)",href:sWeinreClientUrl,target:"_blank"});
-		jQuery.sap.require("sap.ui.core.Popup");
-		var oPopup = new sap.ui.core.Popup(oContainer, false, true, true).attachClosed(function(){
-			oContainer.destroy();
-		});
-		oContainer.addContent(oQRCode).addContent(link);
-		oPopup.open();
- 	}
-
- 	// UI initialization
+	// UI initialization
  	var url;
  	$(function() {
  		$frame = $("#theFrame");
@@ -328,10 +302,6 @@
  			}) ],
  			selectedIndex : (aDevices[0].landscapeDefault ? 1 : 0)
  		}).placeAt("configArea");
-
- 		if (devAvailable()) {
- 			new sap.ui.commons.Link({press:openInMobile,text:"Open in Mobile",tooltip:"Display the QRCode for the embedded page. The user-agent is not overridden anymore, then."}).placeAt("configArea");
- 		}
 
  		updateFrameUrl();
  		updateFrameConfig();

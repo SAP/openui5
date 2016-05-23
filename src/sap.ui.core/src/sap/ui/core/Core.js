@@ -273,8 +273,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 			this._setupAnimation($html);
 
-			this._setupWeinre();
-
 			// create accessor to the Core API early so that initLibrary and others can use it
 			/**
 			 * Retrieve the {@link sap.ui.core.Core SAPUI5 Core} instance for the current window.
@@ -617,25 +615,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		var bAnimation = this.oConfiguration.getAnimation();
 		$html.attr("data-sap-ui-animation", bAnimation ? "on" : "off");
 		jQuery.fx.off = !bAnimation;
-	};
-
-	/**
-	 * Injects the Weinre remote debugger script, if required
-	 * @private
-	 */
-	Core.prototype._setupWeinre = function() {
-		var log = jQuery.sap.log;
-
-		//if weinre id is set, load weinre target script
-		if (this.oConfiguration.getWeinreId()) {
-			log.info("Starting WEINRE Remote Web Inspector");
-			var sWeinreScript = "<script src=\"";
-			sWeinreScript += this.oConfiguration.getWeinreServer();
-			sWeinreScript += "/target/target-script-min.js#";
-			sWeinreScript += jQuery.sap.encodeURL(this.oConfiguration.getWeinreId());
-			sWeinreScript += "\"></script>";
-			document.write(sWeinreScript);
-		}
 	};
 
 	/**
