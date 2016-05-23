@@ -3225,7 +3225,7 @@ sap.ui.define([
 
 		if (oBinding instanceof ListBinding) {
 			aContexts = oBinding.getContexts(oBindingInfo.startIndex, oBindingInfo.length);
-			bGrouped = oBinding.isGrouped() && sGroupFunction;
+			bGrouped = oBinding.isGrouped() && that[sGroupFunction];
 			if (bGrouped || oBinding.bWasGrouped) {
 				// If grouping is enabled, destroy aggregation and use updateGroup as fnBefore to create groups
 				this[oAggregationInfo._sDestructor]();
