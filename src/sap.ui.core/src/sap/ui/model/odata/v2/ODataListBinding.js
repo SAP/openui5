@@ -62,7 +62,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			this.bLengthFinal = false;
 			this.iLastEndIndex = 0;
 			this.aLastContexts = null;
-			this.oLastContextData = null;
+			this.aLastContextData = null;
 			this.bInitial = true;
 			this.mRequestHandles = {};
 
@@ -182,7 +182,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 
 		var bLoadContexts = true,
 		aContexts = this._getContexts(iStartIndex, iLength),
-		oContextData = {},
+		aContextData = [],
 		oSection;
 
 		if (this.bClientOperation) {
@@ -216,25 +216,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			// Do not create context data and diff in case of refresh, only if real data has been received
 			// The current behaviour is wrong and makes diff detection useless for OData in case of refresh
 			for (var i = 0; i < aContexts.length; i++) {
-				oContextData[aContexts[i].getPath()] = aContexts[i].getObject();
+				aContextData.push(this.getContextData(aContexts[i]));
 			}
-
 			if (this.bUseExtendedChangeDetection) {
 				//Check diff
 				if (this.aLastContexts && iStartIndex < this.iLastEndIndex) {
-					var that = this;
-					var aDiff = jQuery.sap.arrayDiff(this.aLastContexts, aContexts, function(oOldContext, oNewContext) {
-						return jQuery.sap.equal(
-								oOldContext && that.oLastContextData && that.oLastContextData[oOldContext.getPath()],
-								oNewContext && oContextData && oContextData[oNewContext.getPath()]
-						);
-					}, true);
-					aContexts.diff = aDiff;
+					aContexts.diff = jQuery.sap.arraySymbolDiff(this.aLastContextData, aContextData);
 				}
 			}
 			this.iLastEndIndex = iStartIndex + iLength;
 			this.aLastContexts = aContexts.slice(0);
-			this.oLastContextData = jQuery.sap.extend(true, {}, oContextData);
+			this.aLastContextData = aContextData.slice(0);
 		}
 
 		return aContexts;
@@ -243,6 +235,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 	ODataListBinding.prototype.getCurrentContexts = function() {
 		return this.aLastContexts || [];
 	};
+
+	/**
+	 * Returns the context data as required for change detection/diff. This may not contain
+	 * all of the data, but just the key property
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.getContextData = function(oContext) {
+		// if no updates need to be detected and no custom key method was defined,
+		// just return the context path as unique key
+		if (!this.bDetectUpdates && !this.fnGetEntryKey) {
+			return oContext.getPath();
+		}
+
+		if (!this.bDetectUpdates) {
+			return this.fnGetEntryKey(oContext);
+		} else {
+			return JSON.stringify(oContext.getObject());
+		}
+	};
+
 
 	/**
 	 * Return contexts for the list
@@ -813,7 +826,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 	ODataListBinding.prototype.checkUpdate = function(bForceUpdate, mChangedEntities) {
 		var bChangeReason = this.sChangeReason ? this.sChangeReason : ChangeReason.Change,
 				bChangeDetected = false,
-				oLastData, oCurrentData,
+				oCurrentData,
 				that = this,
 				oRef,
 				bRefChanged;
@@ -858,11 +871,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 				if (this.aLastContexts.length !== aContexts.length) {
 					bChangeDetected = true;
 				} else {
-					jQuery.each(this.aLastContexts, function(iIndex, oContext) {
-						oLastData = that.oLastContextData[oContext.getPath()];
-						oCurrentData = aContexts[iIndex].getObject();
+					jQuery.each(this.aLastContextData, function(iIndex, oLastData) {
+						oCurrentData = that.getContextData(aContexts[iIndex]);
 						// Compare whether last data is completely contained in current data
-						if (!jQuery.sap.equal(oLastData, oCurrentData, true)) {
+						if (oLastData !== oCurrentData) {
 							bChangeDetected = true;
 							return false;
 						}
@@ -1189,11 +1201,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 	};
 
 	ODataListBinding.prototype.resume = function() {
-		this.bIgnoreSuspend = false;
-		ListBinding.prototype.resume.apply(this, arguments);
-		if (this.bPendingRefresh) {
-			this._refresh();
-		}
+        this.bIgnoreSuspend = false;
+        this.bSuspended = false;
+        if (this.bPendingRefresh) {
+            this._refresh();
+        } else {
+            this.checkUpdate();
+        }
 	};
 
 	return ODataListBinding;

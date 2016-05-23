@@ -568,6 +568,112 @@
 				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
 			});
 
+			test("Bind aggregation reuse templates on updates", function() {
+				var aOldObjects, aNewObjects;
+				oModel.setProperty("/changingList", [
+					{value: 1},
+					{value: 2},
+					{value: 3}
+				]);
+				this.obj.bindAggregation("subObjects", "/changingList", this.template);
+				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+				aOldObjects = this.obj.getAggregation("subObjects");
+				oModel.setProperty("/changingList", [
+					{value: 4},
+					{value: 5},
+					{value: 6},
+					{value: 7},
+					{value: 8}
+				]);
+				equal(this.obj.getAggregation("subObjects", []).length, 5, "Aggregation length should match model list length");
+				aNewObjects = this.obj.getAggregation("subObjects");
+				ok(aOldObjects[0] === aNewObjects[0], "First SubObject is reused after update");
+				ok(aOldObjects[1] === aNewObjects[1], "Second SubObject is reused after update");
+				ok(aOldObjects[2] === aNewObjects[2], "Third SubObject is reused after update");
+			});
+
+			test("Bind aggregation don't reuse factory objects on updates", function() {
+				var aOldObjects, aNewObjects;
+				oModel.setProperty("/changingList", [
+					{value: 1},
+					{value: 2},
+					{value: 3}
+				]);
+				this.obj.bindAggregation("subObjects", "/changingList", function(sIdSuffix, oContext) {
+					return this.template.clone(sIdSuffix)
+				}.bind(this));
+				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+				aOldObjects = this.obj.getAggregation("subObjects");
+				oModel.setProperty("/changingList", [
+					{value: 4},
+					{value: 5},
+					{value: 6},
+					{value: 7},
+					{value: 8}
+				]);
+				equal(this.obj.getAggregation("subObjects", []).length, 5, "Aggregation length should match model list length");
+				aNewObjects = this.obj.getAggregation("subObjects");
+				ok(aOldObjects[0] !== aNewObjects[0], "First SubObject is not reused after update");
+				ok(aOldObjects[1] !== aNewObjects[1], "Second SubObject is not reused after update");
+				ok(aOldObjects[2] !== aNewObjects[2], "Third SubObject is not reused after update");
+			});
+
+			test("Bind aggregation reuse templates on updates with extended change detection", function() {
+				var aOldObjects, aNewObjects;
+				oModel.setProperty("/changingList", [
+					{value: 1},
+					{value: 2},
+					{value: 3}
+				]);
+				this.obj.bUseExtendedChangeDetection = true;
+				this.obj.bindAggregation("subObjects", "/changingList", this.template);
+				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+				aOldObjects = this.obj.getAggregation("subObjects");
+				oModel.setProperty("/changingList", [
+					{value: 1},
+					{value: 2},
+					{value: 4},
+					{value: 5},
+					{value: 3}
+				]);
+				equal(this.obj.getAggregation("subObjects", []).length, 5, "Aggregation length should match model list length");
+				aNewObjects = this.obj.getAggregation("subObjects");
+				ok(aOldObjects[0] === aNewObjects[0], "First SubObject is reused after update");
+				ok(aOldObjects[1] === aNewObjects[1], "Second SubObject is reused after update");
+				ok(aOldObjects[2] === aNewObjects[4], "Third SubObject is reused after update");
+				this.obj.bUseExtendedChangeDetection = false;
+			});
+
+			test("Bind aggregation reuse factory objects on updates with extended change detection", function() {
+				var aOldObjects, aNewObjects;
+				oModel.setProperty("/changingList", [
+					{value: 1},
+					{value: 2},
+					{value: 3}
+				]);
+				this.obj.bUseExtendedChangeDetection = true;
+				this.obj.bindAggregation("subObjects", "/changingList", this.template);
+				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+				aOldObjects = this.obj.getAggregation("subObjects");
+				oModel.setProperty("/changingList", [
+					{value: 1},
+					{value: 2},
+					{value: 4},
+					{value: 5},
+					{value: 3}
+				]);
+				equal(this.obj.getAggregation("subObjects", []).length, 5, "Aggregation length should match model list length");
+				aNewObjects = this.obj.getAggregation("subObjects");
+				ok(aOldObjects[0] === aNewObjects[0], "First SubObject is reused after update");
+				ok(aOldObjects[1] === aNewObjects[1], "Second SubObject is reused after update");
+				ok(aOldObjects[2] === aNewObjects[4], "Third SubObject is reused after update");
+				this.obj.bUseExtendedChangeDetection = false;
+			});
+
 			test("Bind single aggregation", function() {
 				// This worked in the past so I add a test to not break it accidentally
 				this.obj.bindAggregation("singleAggr", "/list", this.template);
