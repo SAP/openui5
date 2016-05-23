@@ -36,8 +36,8 @@ sap.ui.define([
 	 *   Map of binding parameters which can be OData query options as specified in
 	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameters "$$groupId"
 	 *   and "$$updateGroupId".
-	 *   Note: Binding parameters may only be provided for absolute binding paths as only those
-	 *   lead to a data service request.
+	 *   Note: If parameters are provided for a relative binding path, the binding accesses data
+	 *   with its own service requests instead of using its parent binding.
 	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
@@ -73,7 +73,7 @@ sap.ui.define([
 			constructor : function (oModel, sPath, oContext, mParameters) {
 				var oBindingParameters;
 
-				ListBinding.call(this, oModel, sPath, oContext);
+				ListBinding.call(this, oModel, sPath);
 
 				if (!sPath || sPath.slice(-1) === "/") {
 					throw new Error("Invalid path: " + sPath);
@@ -81,18 +81,20 @@ sap.ui.define([
 
 				this.oCache = undefined;
 				this.sGroupId = undefined;
+				this.mQueryOptions = undefined;
 				this.sRefreshGroupId = undefined;
 				this.sUpdateGroupId = undefined;
 
+				if (mParameters) {
+					this.mQueryOptions = _ODataHelper.buildQueryOptions(oModel.mUriParameters,
+							mParameters, ["$expand", "$filter", "$orderby", "$select"]);
+				}
 				if (!this.bRelative) {
 					this.oCache = _Cache.create(oModel.oRequestor, sPath.slice(1),
-						_ODataHelper.buildQueryOptions(oModel.mUriParameters, mParameters,
-							["$expand", "$filter", "$orderby", "$select"]));
+						this.mQueryOptions);
 					oBindingParameters = _ODataHelper.buildBindingParameters(mParameters);
 					this.sGroupId = oBindingParameters.$$groupId;
 					this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
-				} else if (mParameters) {
-					throw new Error("Bindings with a relative path do not support parameters");
 				}
 
 				this.aContexts = [];
@@ -102,6 +104,8 @@ sap.ui.define([
 				this.iMaxLength = Infinity;
 				// this.bLengthFinal = this.aContexts.length === this.iMaxLength
 				this.bLengthFinal = false;
+
+				this.setContext(oContext);
 			}
 		});
 
@@ -431,7 +435,7 @@ sap.ui.define([
 	 */
 	// @override
 	ODataListBinding.prototype.initialize = function () {
-		if (this.oModel.resolve(this.sPath, this.oContext)) {
+		if (!this.bRelative || this.oContext) {
 			this._fireChange({reason : ChangeReason.Change});
 		}
 	};
@@ -469,7 +473,7 @@ sap.ui.define([
 	/**
 	 * Refreshes the binding. Prompts the model to retrieve data from the server using the given
 	 * group ID and notifies the control that new data is available.
-	 * Refresh is supported for absolute bindings.
+	 * Refresh is supported if the binding retrieves data with its own service request.
 	 *
 	 * Note: When calling refresh multiple times, the result of the request triggered by the last
 	 * call determines the binding's data; it is <b>independent</b>
@@ -490,6 +494,8 @@ sap.ui.define([
 	 */
 	// @override
 	ODataListBinding.prototype.refresh = function (sGroupId) {
+		var that = this;
+
 		if (!this.oCache) {
 			throw new Error("Refresh on this binding is not supported");
 		}
@@ -497,6 +503,13 @@ sap.ui.define([
 		_ODataHelper.checkGroupId(sGroupId);
 
 		this.sRefreshGroupId = sGroupId;
+		if (this.mCacheByContext) {
+			Object.keys(this.mCacheByContext).forEach(function (sCanonicalPath) {
+				if (that.oCache !== that.mCacheByContext[sCanonicalPath]) {
+					delete that.mCacheByContext[sCanonicalPath];
+				}
+			});
+		}
 		this.oCache.refresh();
 		this.aContexts = [];
 		this.iCurrentBegin = this.iCurrentEnd = 0;
@@ -550,9 +563,24 @@ sap.ui.define([
 	 */
 	// @override
 	ODataListBinding.prototype.setContext = function (oContext) {
+		var that = this;
+
 		if (this.oContext !== oContext) {
 			if (this.bRelative) {
 				this.aContexts = [];
+				if (this.mQueryOptions && oContext) {
+					this.oCache = _ODataHelper.createCacheProxy(this, oContext, function (sPath) {
+						return _Cache.create(that.oModel.oRequestor,
+							sPath.slice(1) + "/" + that.sPath,
+							that.mQueryOptions);
+					});
+					this.oCache.promise.then(function (oCache) {
+						that.oCache = oCache;
+					})["catch"](function (oError) {
+						that.oModel.reportError("Failed to create cache for binding " + that,
+							sClassName, oError);
+					});
+				}
 				// call Binding#setContext because of data state etc.; fires "change"
 				Binding.prototype.setContext.call(this, oContext);
 			} else {

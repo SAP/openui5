@@ -1,0 +1,16 @@
+{
+	"@odata.context" : "../../../$metadata#ContactList(DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber)",
+	"value" : [{
+		"DateOfBirth" : null,
+		"EmailAddress" : "do.not.reply@sap.com",
+		"FirstName" : "Karl",
+		"LastName" : "Müller",
+		"PhoneNumber" : "0622734567"
+	}, {
+		"DateOfBirth" : null,
+		"EmailAddress" : "hjg@sap.com",
+		"FirstName" : "Harald",
+		"LastName" : "Gahn",
+		"PhoneNumber" : "0622746358"
+	}]
+}
