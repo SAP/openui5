@@ -217,6 +217,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 		this.renderTableCtrl(rm, oTable);
 		this.renderRowHdr(rm, oTable);
 		this.renderVSb(rm, oTable);
+
+		rm.write("<div");
+		rm.addClass("sapUiTableCtrlAfter");
+		rm.writeClasses();
+		rm.writeAttribute("tabindex", "0");
+		rm.write("></div>");
+
+		rm.write("<div");
+		rm.addClass("sapUiTableCtrlEmpty");
+		rm.writeClasses();
+		rm.writeAttribute("tabindex", "0");
+		rm.writeAttribute("id", oTable.getId() + "-noDataCnt");
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "NODATA");
+		rm.write(">");
+		if (oTable.getNoData() instanceof Control) {
+			rm.renderControl(oTable.getNoData());
+		} else {
+			rm.write("<span");
+			rm.writeAttribute("id", oTable.getId() + "-noDataMsg");
+			rm.addClass("sapUiTableCtrlEmptyMsg");
+			rm.writeClasses();
+			rm.write(">");
+			rm.writeEscaped(TableUtils.getNoDataText(oTable));
+			rm.write("</span>");
+		}
+		rm.write("</div>");
 	};
 
 	TableRenderer.renderFooter = function(rm, oTable, oFooter) {
@@ -602,34 +628,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 
 		this.renderTableControl(rm, oTable, false);
 
-		rm.write("</div>");
-
-		rm.write("<div");
-		rm.addClass("sapUiTableCtrlAfter");
-		rm.writeClasses();
-		rm.writeAttribute("tabindex", "0");
-		rm.write("></div>");
-		rm.write("</div>");
-
-		rm.write("<div");
-		rm.addClass("sapUiTableCtrlEmpty");
-		rm.writeClasses();
-		rm.writeAttribute("tabindex", "0");
-		rm.writeAttribute("id", oTable.getId() + "-noDataCnt");
-		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "NODATA");
-		rm.write(">");
-		if (oTable.getNoData() instanceof Control) {
-			rm.renderControl(oTable.getNoData());
-		} else {
-			rm.write("<span");
-			rm.writeAttribute("id", oTable.getId() + "-noDataMsg");
-			rm.addClass("sapUiTableCtrlEmptyMsg");
-			rm.writeClasses();
-			rm.write(">");
-			rm.writeEscaped(TableUtils.getNoDataText(oTable));
-			rm.write("</span>");
-		}
-		rm.write("</div>");
+		rm.write("</div></div>");
 	};
 
 
