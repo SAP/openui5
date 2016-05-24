@@ -222,7 +222,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 					oModel._oResourceBundle = oBundle;
 					delete oModel._oPromise;
 					if (aCustomBundleUrls.length) {
-						oModel._reenhance(aCustomBundleUrls)
+						oModel._reenhance(aCustomBundleUrls);
 					}
 					oModel.checkUpdate(true);
 					oModel.fireRequestCompleted(oEventParam);
@@ -230,7 +230,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 			} else {
 				oModel._oResourceBundle = res;
 				if (aCustomBundleUrls.length) {
-					oModel._reenhance(aCustomBundleUrls)
+					oModel._reenhance(aCustomBundleUrls);
 				}
 				oModel.checkUpdate(true);
 			}
