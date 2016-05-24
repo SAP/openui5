@@ -40,59 +40,53 @@ sap.ui.require([
 	"use strict";
 
 
-	QUnit.module("getControlByGlobalId");
+	QUnit.module("getControlByGlobalId", {
+		beforeEach : function() {
+			this.fnLogSpy = sinon.spy(jQuery.sap.log, "debug");
+			this.oPlugin = new OpaPlugin();
+
+			this.sId = "myId";
+			this.oButton = new Button(this.sId);
+		},
+		afterEach : function() {
+			this.fnLogSpy.restore();
+			this.oButton.destroy();
+		}
+	});
 
 	QUnit.test("Should retrieve a control by a global id", function(assert) {
 		// Arrange
-		var sId = "myId",
-			oButton = new Button(sId);
-
-		oButton.placeAt("qunit-fixture");
+		this.oButton.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		// System under QUnit.test
-		var oPlugin = new OpaPlugin();
-
 		// Act
-		var oRetrievedButton = oPlugin.getMatchingControls({ id : sId });
+		var oRetrievedButton = this.oPlugin.getMatchingControls({ id : this.sId });
 
 		// Assert
-		assert.strictEqual(oRetrievedButton, oButton);
-
-		//Cleanup
-		oButton.destroy();
+		assert.strictEqual(oRetrievedButton, this.oButton);
 	});
 
 	QUnit.test("Should not retrieve a control by a global id - if control is not rendered", function(assert) {
-		// Arrange
-		var sId = "myId",
-			oButton = new Button(sId);
-
-		// System under Test
-		var oPlugin = new OpaPlugin();
-
 		// Act
-		var oRetrievedButton = oPlugin.getMatchingControls({ id : sId });
+		var oRetrievedButton = this.oPlugin.getMatchingControls({ id : this.sId });
 
 		// Assert
 		assert.strictEqual(oRetrievedButton, null);
-
-		//Cleanup
-		oButton.destroy();
 	});
 
+	QUnit.test("Should not retrieve a control by a global id - if control does not exist", function(assert) {
+		// Act
+		var oResult = this.oPlugin.getMatchingControls({ id : "nonexistingid" });
+
+		// Assert
+		assert.strictEqual(oResult, null);
+		sinon.assert.calledWith(this.fnLogSpy, "Found no control with the global id: 'nonexistingid'", "sap.ui.test.OpaPlugin");
+	});
 
 	QUnit.test("Should not retrieve a control by a global id - if control is destroyed", function(assert) {
-		// Arrange
-		var sId = "myId",
-			oButton = new Button(sId);
-
-		// System under Test
-		var oPlugin = new OpaPlugin();
-
 		// Act
-		oButton.destroy();
-		var oRetrievedButton = oPlugin.getMatchingControls({ id : sId });
+		this.oButton.destroy();
+		var oRetrievedButton = this.oPlugin.getMatchingControls({ id : this.sId });
 
 		// Assert
 		assert.strictEqual(oRetrievedButton, null);
@@ -100,24 +94,14 @@ sap.ui.require([
 
 
 	QUnit.test("Should retrieve a control by a global id - if visible is set to false", function(assert) {
-		// Arrange
-		var sId = "myId",
-			oButton = new Button(sId);
-
-		// System under Test
-		var oPlugin = new OpaPlugin();
-
 		// Act
-		var oRetrievedButton = oPlugin.getMatchingControls({
-			id : sId,
+		var oRetrievedButton = this.oPlugin.getMatchingControls({
+			id : this.sId,
 			visible : false
 		});
 
 		// Assert
-		assert.strictEqual(oButton, oRetrievedButton);
-
-		//Cleanup
-		oButton.destroy();
+		assert.strictEqual(oRetrievedButton, this.oButton);
 	});
 
 	QUnit.test("Should retrieve multiple controls by global id's", function(assert) {
@@ -186,7 +170,7 @@ sap.ui.require([
 		var oPlugin = new OpaPlugin();
 
 		// Act
-		var aRetrievedButtons = oPlugin.getControlByGlobalId({ id : ["myId" , "bar"] });
+		var aRetrievedButtons = oPlugin.getControlByGlobalId({ id : ["foo" , "bar"] });
 
 		// Assert
 		assert.strictEqual(aRetrievedButtons.length, 0, "did not contain buttons");
@@ -205,6 +189,8 @@ sap.ui.require([
 
 	QUnit.module("Controls with a control type and id", {
 		beforeEach : function() {
+			this.fnLogSpy = sinon.spy(jQuery.sap.log, "debug");
+			this.fnLogErrorSpy = sinon.spy(jQuery.sap.log, "error");
 			this.oPlugin = new OpaPlugin();
 
 			this.oButton = new Button("my_id1");
@@ -218,10 +204,37 @@ sap.ui.require([
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach : function() {
+			this.fnLogSpy.restore();
+			this.fnLogErrorSpy.restore();
 			this.oButton.destroy();
 			this.oButton2.destroy();
 			this.oCheckBox.destroy();
 		}
+	});
+
+	QUnit.test("Should retrieve a controls even if the control is a lazy stub", function(assert) {
+		assert.ok(sap.ui.lazyRequire._isStub("sap.ui.commons.ComboBox"), "Combo box is still a stub");
+
+		// Act - combo box is a lazy stub
+		var aRetrievedControls = this.oPlugin.getMatchingControls({
+			controlType : sap.ui.commons.ComboBox
+		});
+
+		// Assert
+		assert.strictEqual(aRetrievedControls.length, 0);
+		sinon.assert.calledWith(this.fnLogSpy, "The control type is currently a lazy stub", "sap.ui.test.OpaPlugin");
+	});
+
+	QUnit.test("Should retrieve a controls even if the control is a lazy stub", function(assert) {
+		assert.ok(sap.ui.lazyRequire._isStub("sap.m.Select"), "Select is still a stub");
+
+		// Act - combo box is a lazy stub
+		var aRetrievedControls = this.oPlugin.getMatchingControls({
+			controlType : "sap.m.Select"
+		});
+
+		// Assert
+		assert.strictEqual(aRetrievedControls.length, 0);
 	});
 
 	QUnit.test("Should return all controls", function (assert) {
@@ -232,6 +245,78 @@ sap.ui.require([
 		assert.ok(aAllControls.indexOf(this.oButton2) !== -1, "has button2");
 		assert.ok(aAllControls.indexOf(this.oCheckBox) !== -1, "has checkbox");
 		assert.strictEqual(aAllControls.length, 3, "got only 3 controls");
+	});
+
+	QUnit.test("Should retrieve all buttons by control type as string", function (assert) {
+		var aButtons = this.oPlugin.getMatchingControls({
+			controlType: "sap.ui.commons.Button"
+		});
+
+		assert.ok(aButtons.indexOf(this.oButton) !== -1, "has button");
+		assert.ok(aButtons.indexOf(this.oButton2) !== -1, "has button2");
+		assert.strictEqual(aButtons.length, 2, "got only 2 controls");
+	});
+
+	QUnit.test("Should log an error if the controlType does not match and a string id is given", function (assert) {
+		var oCheckBox = this.oPlugin.getMatchingControls({
+			id: "my_id3",
+			controlType: "sap.ui.commons.Button"
+		});
+
+		assert.strictEqual(oCheckBox, null, "got null");
+		sinon.assert.calledWithExactly(this.fnLogErrorSpy, "An id: 'my_id3' was passed together with the controlType " +
+				"'sap.ui.commons.Button' but the type does not match the id - null is returned",
+				"sap.ui.test.OpaPlugin");
+	});
+
+	QUnit.test("Should log an error if the controlType does not match and a string id is given", function (assert) {
+		var oCheckBox = this.oPlugin.getMatchingControls({
+			id: "my_id3",
+			controlType: "sap.ui.commons.CheckBox"
+		});
+
+		assert.strictEqual(oCheckBox, this.oCheckBox, "got null");
+		sinon.assert.notCalled(this.fnLogErrorSpy);
+	});
+
+	QUnit.test("Should retrieve all buttons by control type and ids as array", function (assert) {
+		var aButtons = this.oPlugin.getMatchingControls({
+			controlType: "sap.ui.commons.Button",
+			id: [this.oButton.getId(), this.oButton2.getId()]
+		});
+
+		assert.ok(aButtons.indexOf(this.oButton) !== -1, "has button");
+		assert.ok(aButtons.indexOf(this.oButton2) !== -1, "has button2");
+		assert.strictEqual(aButtons.length, 2, "got only 2 controls");
+	});
+
+	QUnit.test("Should retrieve one button by control type and id as array", function (assert) {
+		var aButtons = this.oPlugin.getMatchingControls({
+			controlType: "sap.ui.commons.Button",
+			id: [this.oButton2.getId()]
+		});
+
+		assert.ok(aButtons.indexOf(this.oButton2) !== -1, "has button2");
+		assert.strictEqual(aButtons.length, 1, "got only one controls");
+	});
+
+	QUnit.test("Should retrieve no control for some strange control type", function (assert) {
+		var aResult = this.oPlugin.getMatchingControls({
+			controlType: "foo.bar.foo"
+		});
+
+		assert.strictEqual(aResult.length, 0, "Result was empty");
+		sinon.assert.calledWith(this.fnLogSpy, "The control type foo.bar.foo is undefined.", "sap.ui.test.OpaPlugin");
+	});
+
+	QUnit.test("Should retrieve no control for some strange control type and an id", function (assert) {
+		var oResult = this.oPlugin.getMatchingControls({
+			controlType: "foo.bar.foo",
+			id: "foo"
+		});
+
+		assert.strictEqual(oResult, null, "Result was null");
+		sinon.assert.calledWith(this.fnLogSpy, "The control type foo.bar.foo is undefined.", "sap.ui.test.OpaPlugin");
 	});
 
 	QUnit.test("Should retrieve a control by a global id and control type", function(assert) {
@@ -279,18 +364,6 @@ sap.ui.require([
 		assert.strictEqual(aRetrievedControls.length, 0);
 	});
 
-	QUnit.test("Should retrieve a controls even if the control is a lazy stub", function(assert) {
-		assert.ok(sap.ui.lazyRequire._isStub("sap.ui.commons.ComboBox"), "Combo box is still a stub");
-
-		// Act - combo box is a lazy stub
-		var aRetrievedControls = this.oPlugin.getMatchingControls({
-			controlType : sap.ui.commons.ComboBox
-		});
-
-		// Assert
-		assert.strictEqual(aRetrievedControls.length, 0);
-	});
-
 	function createXmlView(sViewName) {
 		var sView = [
 			'<core:View xmlns:core="sap.ui.core" xmlns="sap.ui.commons">',
@@ -312,12 +385,14 @@ sap.ui.require([
 
 	QUnit.module("Controls in a view", {
 		beforeEach: function () {
+			this.fnLogSpy = sinon.spy(jQuery.sap.log, "debug");
 			this.oView = createXmlView("bar");
 
 			// System under Test
 			this.oPlugin = new OpaPlugin();
 		},
 		afterEach: function () {
+			this.fnLogSpy.restore();
 			this.oView.destroy();
 			this.oPlugin.destroy();
 		}
@@ -328,6 +403,7 @@ sap.ui.require([
 			viewName: "notexistingview"
 		});
 
+		sinon.assert.calledWith(this.fnLogSpy, "Found no view with the name: 'notexistingview'", "sap.ui.test.OpaPlugin");
 		assert.strictEqual(aAllControlsInTheView.length, 0);
 	});
 
@@ -337,6 +413,7 @@ sap.ui.require([
 			id: "foo"
 		});
 
+		sinon.assert.calledWith(this.fnLogSpy, "Found no view with the name: 'notexistingview'", "sap.ui.test.OpaPlugin");
 		assert.strictEqual(aAllControlsInTheView, null);
 	});
 
@@ -365,6 +442,22 @@ sap.ui.require([
 		assert.strictEqual(oRetrievedButton.getId(), this.oView.byId("foo").getId(), "did return the foo button as first element");
 	});
 
+
+	QUnit.test("Should log if a control with an id is not found in a view", function(assert) {
+		// Arrange
+		this.oView.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		var oResult = this.oPlugin.getMatchingControls({
+			viewName : "bar",
+			id : "notexistingcontrol"
+		});
+
+		// Assert
+		assert.strictEqual(oResult, null, "returned null");
+		sinon.assert.calledWith(this.fnLogSpy, "Found no control with the id: 'notexistingcontrol' in the view: 'bar'", "sap.ui.test.OpaPlugin");
+	});
 
 	QUnit.test("Should get multiple controls of a view", function(assert) {
 		// Arrange
