@@ -244,24 +244,37 @@
 
 		QUnit.test("Check if small Animation is used", function(assert) {
 			var done = assert.async();
-			var oIcon = new sap.ui.core.Icon({
-					src: "sap-icon://nutrition-activity",
-					size: "3rem",
-					color:"#DD0000"
-			}).placeAt("target1");
-			oIcon.setBusyIndicatorDelay(0);
-			sap.ui.getCore().applyChanges();
 
-			oIcon.setBusy(true);
+			this.oBtn = new sap.ui.commons.Button({
+				text : "Blub",
+				width : "45px",
+				busy : true,
+				busyIndicatorDelay : 0
+			}).placeAt("target1");
+
+			this.oDelegate = {
+				onAfterRendering : function(oEvent) {}
+			}
+			this.oBtn.addDelegate(this.oDelegate);
+			this.oSpy = sinon.spy(this.oDelegate, "onAfterRendering");
+
+			sap.ui.getCore().applyChanges();
 
 			setTimeout(function() {
 				var $oAnimation = jQuery(".sapUiLocalBusyIndicatorAnimation");
 				assert.ok($oAnimation.length, "Animation exists");
-				assert.ok($oAnimation.hasClass("sapUiLocalBusyIndicatorAnimSmall"));
+				assert.ok($oAnimation.hasClass("sapUiLocalBusyIndicatorAnimSmall"), "Correct CSS class set to DOM");
 
-				this.destroy();
+				assert.equal(this.oSpy.callCount, 1, "Icon should be rendered once");
+
+				this.oSpy.restore();
+				delete this.oSpy;
+				this.oBtn.removeDelegate(this.oDelegate);
+				delete this.oDelegate;
+				this.oBtn.destroy();
+
 				done();
-			}.bind(oIcon), 50);
+			}.bind(this), 50);
 		});
 
 		QUnit.module("Delay", {
