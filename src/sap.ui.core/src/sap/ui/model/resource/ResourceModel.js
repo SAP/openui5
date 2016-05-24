@@ -190,9 +190,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 		_load(this, false);
 	};
 
+	/**
+	 * reapplies all enhancments after localization changes
+	 * @param {string[]} aBundleUrls list of the old bundle urls
+	 * @private
+	 */
+	ResourceModel.prototype._reenhance = function(aBundleUrls) {
+		aBundleUrls.forEach(function(sBundleUrl) {
+			this.enhance({ bundleUrl: sBundleUrl });
+		}.bind(this));
+	};
+
 
 	function _load(oModel, bThrowError){
 		var oData = oModel.oData;
+
+		var aCustomBundleUrls = [];
+		if (oModel.getResourceBundle()) {
+			aCustomBundleUrls = oModel.getResourceBundle().aCustomBundles.map(function(oBundle) {
+				return oBundle.oUrlInfo.url;
+			});
+		}
 
 		if (oData && (oData.bundleUrl || oData.bundleName)) {
 			var res = oModel.loadResourceBundle(oData);
@@ -203,11 +221,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 				oModel._oPromise.then(function(oBundle){
 					oModel._oResourceBundle = oBundle;
 					delete oModel._oPromise;
+					if (aCustomBundleUrls.length) {
+						oModel._reenhance(aCustomBundleUrls)
+					}
 					oModel.checkUpdate(true);
 					oModel.fireRequestCompleted(oEventParam);
 				});
 			} else {
 				oModel._oResourceBundle = res;
+				if (aCustomBundleUrls.length) {
+					oModel._reenhance(aCustomBundleUrls)
+				}
 				oModel.checkUpdate(true);
 			}
 		} else if (bThrowError) {
