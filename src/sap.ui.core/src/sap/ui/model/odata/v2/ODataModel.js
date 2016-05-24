@@ -1490,8 +1490,11 @@ sap.ui.define([
 			aExpand = [], aSelect = [];
 
 		function filterOwn(aEntries) {
-			return aEntries.filter(function(sEntry) {
-				return sEntry.indexOf("/") === -1;
+			return aEntries.map(function(sEntry) {
+				var iSlash = sEntry.indexOf("/");
+				return iSlash === -1 ? sEntry : sEntry.substr(0, iSlash);
+			}).filter(function(sValue, iIndex, aEntries) {
+				return aEntries.indexOf(sValue) === iIndex;
 			});
 		}
 
@@ -1524,8 +1527,9 @@ sap.ui.define([
 
 			// check select properties
 			aOwnSelect = filterOwn(aSelect);
-			if (aOwnSelect.length === 0) {
-				// If no select options are defined, check all existing properties
+			if (aOwnSelect.length === 0 || aOwnSelect.indexOf("*") >= 0) {
+				// If no select options are defined or the star is contained,
+				// check all existing properties
 				aOwnSelect = oEntityType.property.map(function(oProperty) {
 					return oProperty.name;
 				});
