@@ -25,6 +25,10 @@
 
 	QUnit.module("Rendering - sap.m.SlideTile", {
 		beforeEach : function() {
+			this.fnPressHandler = function() {
+			};
+			this.fnSecondPressHandler = function() {
+			};
 			//Model
 			var oSlideTileData = {
 				tiles : [{
@@ -83,8 +87,12 @@
 			this.oSlideTile.setModel(oSlideTileModel);
 			this.oSlideTile.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
+			sinon.spy(this, "fnPressHandler");
+			sinon.spy(this, "fnSecondPressHandler");
 		},
 		afterEach : function () {
+			this.fnPressHandler.restore();
+			this.fnSecondPressHandler.restore();
 			this.oSlideTile.destroy();
 			this.oSlideTile = null;
 		}
@@ -127,11 +135,10 @@
 	QUnit.test("Test toggle sliding", function(assert) {
 		//Arrange
 		var spy = sinon.spy(this.oSlideTile, "_toggleAnimation");
-
+		var oEvent = jQuery.Event("keyup");
+		oEvent.keyCode = jQuery.sap.KeyCodes.SPACE;
 		//Act
-		this.oSlideTile.onkeydown({
-			which: jQuery.sap.KeyCodes.SPACE
-		});
+		this.oSlideTile.onkeyup(oEvent);
 		//Assert
 		assert.ok(spy.calledOnce, "Function _toggleAnimation called once");
 	});
@@ -139,28 +146,63 @@
 	QUnit.test("Test sliding continues on focusout", function(assert) {
 		//Arrange
 		var spy = sinon.spy(this.oSlideTile, "_toggleAnimation");
-
 		//Act
 		this.oSlideTile.$().blur();
-
 		//Assert
 		assert.ok(!this.oSlideTile._bAnimationPause, "Animation continues on focusout");
 	});
 
-	QUnit.test("Test mouse handlers", function(assert) {
+	QUnit.test("Focus stays on SlideTile", function(assert) {
+		//Assert
+		assert.ok(this.oSlideTile.$().attr("tabindex"), "Focus stays on SlideTile");
+		assert.notOk(this.oSlideTile.getTiles()[0].$().attr("tabindex"), "Focus is removed from first GenericTile");
+		assert.notOk(this.oSlideTile.getTiles()[1].$().attr("tabindex"), "Focus is removed from second GenericTile");
+	});
+
+	QUnit.test("SlideTile key down handler test", function(assert) {
+		//Arrange
+		var spy = sinon.spy(this.oSlideTile.getTiles()[0], "onkeydown");
+		var oEvent = jQuery.Event("keydown");
+		oEvent.keyCode = jQuery.sap.KeyCodes.ENTER;
+		//Act
+		this.oSlideTile.$().trigger(oEvent);
+		//Assert
+		assert.ok(spy.calledOnce, "Key down handler is triggered");
+	});
+
+	QUnit.test("SlideTile key up handler and press delegation on GenericTile test", function(assert) {
+		//Arrange
+		this.oSlideTile.getTiles()[0].attachEvent("press", this.fnPressHandler);
+		this.oSlideTile.getTiles()[1].attachEvent("press", this.fnSecondPressHandler);
+		var oEvent = jQuery.Event("keyup");
+		oEvent.keyCode = jQuery.sap.KeyCodes.ENTER;
+		//Act
+		this.oSlideTile.$().trigger(oEvent);
+		//Assert
+		assert.ok(this.fnPressHandler.calledOnce, "Press delegation on first GenericTile works");
+		assert.ok(this.fnSecondPressHandler.notCalled, "The second GenericTile press event is not triggered");
+	});
+
+	QUnit.test("SlideTile mouse down handler test", function(assert) {
 		//Arrange
 		var oEvent = {preventDefault: function(){}};
-		assert.equal(this.oSlideTile.$().hasClass("sapMSTHvr"), false, "Class not available");
 		//Act
-		this.oSlideTile.onmousedown({preventDefault: function(){}});
+		this.oSlideTile.onmousedown(oEvent);
 		//Assert
 		assert.equal(this.oSlideTile.$().hasClass("sapMSTHvr"), true, "Class available");
+	});
 
+	QUnit.test("SlideTile mouse up handler and click delegation on GenericTile test", function(assert) {
 		//Arrange
+		var oEvent = {preventDefault: function(){}};
+		this.oSlideTile.getTiles()[0].attachEvent("press", this.fnPressHandler);
+		this.oSlideTile.getTiles()[1].attachEvent("press", this.fnSecondPressHandler);
 		//Act
 		this.oSlideTile.onmouseup(oEvent);
 		//Assert
 		assert.equal(this.oSlideTile.$().hasClass("sapMSTHvr"), false, "Class not available");
+		assert.ok(this.fnPressHandler.calledOnce, "Tap delegation on first GenericTile works");
+		assert.ok(this.fnSecondPressHandler.notCalled, "The second GenericTile press event is not triggered");
 	});
 
 	QUnit.module("Rendering - EmptyTile", {
@@ -186,7 +228,6 @@
 	QUnit.test("Empty tile displaying", function(assert) {
 		assert.ok(jQuery.sap.byId("st-empty").length !== 0, "empty tile is shown");
 	});
-
 </script>
 </head>
 <body id="body" class="sapUiBody">

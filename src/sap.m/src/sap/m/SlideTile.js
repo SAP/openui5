@@ -65,6 +65,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	 */
 	SlideTile.prototype.onAfterRendering = function() {
 		var cTiles = this.getTiles().length;
+		this._removeGTFocus();
 		this._bAnimationPause = false;
 		this._iCurrAnimationTime = 0;
 
@@ -82,6 +83,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	};
 
 	/* --- Event Handling --- */
+	/**
+	 * Handler for tap
+	 *
+	 * @param {sap.ui.base.Event} oEvent which was fired
+	 */
+	SlideTile.prototype.ontap = function(oEvent) {
+		if (sap.ui.Device.browser.internet_explorer) {
+			this.$().focus();
+		}
+	};
 
 	/**
 	 * Handler for touchstart
@@ -116,10 +127,24 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	 * @param {sap.ui.base.Event} oEvent which was fired
 	 */
 	SlideTile.prototype.onkeydown = function(oEvent) {
-		if (oEvent.which === jQuery.sap.KeyCodes.ENTER) {
-			this.getTiles()[this._iCurrentTile].firePress();
+		if (jQuery.sap.PseudoEvents.sapenter.fnCheck(oEvent)) {
+			var oGenericTile = this.getTiles()[this._iCurrentTile];
+			oGenericTile.onkeydown(oEvent);
 		}
-		if (oEvent.which === jQuery.sap.KeyCodes.SPACE) {
+	};
+
+	/**
+	 * Handler for keyup event
+	 *
+	 * @param {sap.ui.base.Event} oEvent which was fired
+	 */
+	SlideTile.prototype.onkeyup = function(oEvent) {
+		if (jQuery.sap.PseudoEvents.sapenter.fnCheck(oEvent)) {
+			var oGenericTile = this.getTiles()[this._iCurrentTile];
+			oGenericTile.onkeyup(oEvent);
+			return;
+		}
+		if (jQuery.sap.PseudoEvents.sapspace.fnCheck(oEvent)) {
 			this._toggleAnimation();
 		}
 	};
@@ -132,11 +157,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	SlideTile.prototype.onmouseup = function(oEvent) {
 		this.removeStyleClass("sapMSTHvr");
 		if (sap.ui.Device.system.desktop) {
-			if (this._bPreventEndEvent) {
-				this._bPreventEndEvent = false;
-				oEvent.preventDefault();
-				return;
-			}
+			oEvent.preventDefault();
 			this.getTiles()[this._iCurrentTile].firePress();
 		}
 	};
@@ -161,6 +182,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	};
 
 	/* --- Helpers --- */
+	/**
+	 * Remove the focus of tiles in SlideTile
+	 *
+	 * @private
+	 */
+	SlideTile.prototype._removeGTFocus = function() {
+		for (var i = 0; i < this.getTiles().length; i++) {
+			this.getTiles()[i].$().removeAttr('tabindex');
+		}
+	};
 
 	/**
 	 * Toggles the animation
