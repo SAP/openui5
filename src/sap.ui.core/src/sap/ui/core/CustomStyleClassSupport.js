@@ -71,16 +71,30 @@ sap.ui.define(['jquery.sap.global', './Element'],
 			if (this.aCustomStyleClasses) {
 				oClone.aCustomStyleClasses = this.aCustomStyleClasses.slice();
 			}
+			//add the style class map of "this" to the clone
+			if (this.mCustomStyleClassMap) {
+				oClone.mCustomStyleClassMap = jQuery.extend({}, this.mCustomStyleClassMap);
+			}
+
 			return oClone;
 		};
 
+		var rNonWhiteSpace = /\S+/g;
 
 		this.addStyleClass = function(sStyleClass, bSuppressRerendering) { // bSuppressRerendering is experimental and hence undocumented
 			jQuery.sap.assert(typeof sStyleClass === "string", "sStyleClass must be a string");
 
+			var aClasses,
+				bModified = false;
+
 			if (!this.aCustomStyleClasses) {
 				this.aCustomStyleClasses = [];
 			}
+
+			if (!this.mCustomStyleClassMap) {
+				this.mCustomStyleClassMap = {};
+			}
+
 			if (sStyleClass && typeof sStyleClass === "string") {
 				// ensure the "class" attribute is not closed
 				if (sStyleClass.indexOf("\"") > -1) {
@@ -90,14 +104,20 @@ sap.ui.define(['jquery.sap.global', './Element'],
 					return this;
 				} // TODO: maybe check for quotes in different charsets or encodings
 
-				// multiple calls should not add the class multiple times
-				for (var i = this.aCustomStyleClasses.length - 1; i >= 0; i--) {
-					if (this.aCustomStyleClasses[i] == sStyleClass) {
-						return this;
+				aClasses = sStyleClass.match(rNonWhiteSpace) || [];
+				aClasses.forEach(function(sClass) {
+					if (!this.mCustomStyleClassMap[sClass]) {
+						this.mCustomStyleClassMap[sClass] = true;
+						this.aCustomStyleClasses.push(sClass);
+						bModified = true;
 					}
+				}.bind(this));
+
+				// if all classes exist already, it's not needed to change the DOM or trigger invalidate
+				if (!bModified) {
+					return this;
 				}
 
-				this.aCustomStyleClasses.push(sStyleClass);
 				var oRoot = this.getDomRef();
 				if (oRoot) { // non-rerendering shortcut
 					jQuery(oRoot).addClass(sStyleClass);
@@ -113,17 +133,30 @@ sap.ui.define(['jquery.sap.global', './Element'],
 		this.removeStyleClass = function(sStyleClass, bSuppressRerendering) { // bSuppressRerendering is experimental and hence undocumented
 			jQuery.sap.assert(typeof sStyleClass === "string", "sStyleClass must be a string");
 
-			if (sStyleClass && typeof sStyleClass === "string" && this.aCustomStyleClasses) {
-				for (var i = this.aCustomStyleClasses.length - 1; i >= 0; i--) {
-					if (this.aCustomStyleClasses[i] == sStyleClass) {
-						this.aCustomStyleClasses.splice(i, 1);
-						var oRoot = this.getDomRef();
-						if (oRoot) { // non-rerendering shortcut
-							jQuery(oRoot).removeClass(sStyleClass);
-						} else if (bSuppressRerendering === false) {
-							this.invalidate();
+			var aClasses,
+				bExist = false,
+				nIndex;
+
+			if (sStyleClass && typeof sStyleClass === "string" && this.aCustomStyleClasses && this.mCustomStyleClassMap) {
+				aClasses = sStyleClass.match(rNonWhiteSpace) || [];
+				aClasses.forEach(function(sClass) {
+					if (this.mCustomStyleClassMap[sClass]) {
+						bExist = true;
+						nIndex = this.aCustomStyleClasses.indexOf(sClass);
+						if (nIndex !== -1) {
+							this.aCustomStyleClasses.splice(nIndex, 1);
+							delete this.mCustomStyleClassMap[sClass];
 						}
 					}
+				}.bind(this));
+			}
+
+			if (bExist) {
+				var oRoot = this.getDomRef();
+				if (oRoot) { // non-rerendering shortcut
+					jQuery(oRoot).removeClass(sStyleClass);
+				} else if (bSuppressRerendering === false) {
+					this.invalidate();
 				}
 			}
 
@@ -153,12 +186,12 @@ sap.ui.define(['jquery.sap.global', './Element'],
 		this.hasStyleClass = function(sStyleClass) {
 			jQuery.sap.assert(typeof sStyleClass === "string", "sStyleClass must be a string");
 
-			if (sStyleClass && typeof sStyleClass === "string" && this.aCustomStyleClasses) {
-				for (var i = this.aCustomStyleClasses.length - 1; i >= 0; i--) {
-					if (this.aCustomStyleClasses[i] == sStyleClass) {
-						return true;
-					}
-				}
+			var aClasses;
+			if (sStyleClass && typeof sStyleClass === "string" && this.mCustomStyleClassMap) {
+				aClasses = sStyleClass.match(rNonWhiteSpace) || [];
+				return aClasses.length !== 0 && aClasses.every(function(sClass) {
+					return this.mCustomStyleClassMap[sClass];
+				}.bind(this));
 			}
 			return false;
 		};

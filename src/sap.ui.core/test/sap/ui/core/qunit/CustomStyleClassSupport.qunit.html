@@ -18,18 +18,14 @@
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 	<script>
-
-		var myControl;
-		var myClass = "abc";
-
 		function rendererCalled() {
 			ok(true, "Renderer was called");
 		}
 
-		test("Extend sap.ui.core.Control", function() {
-			expect(3); // includes rerendering
+		QUnit.test("Extend sap.ui.core.Control", function(assert) {
+			assert.expect(3); // includes rerendering
 
-			equal(window.my, undefined, "'my' should not be defined yet");
+			assert.equal(window.my, undefined, "'my' should not be defined yet");
 
 			// define control
 			var result = sap.ui.core.Control.extend("my.lib.MyControl", {
@@ -43,86 +39,235 @@
 				}
 			});
 
-			myControl = new my.lib.MyControl("myControl", {
+			var myControl = new my.lib.MyControl("myControl", {
 				text : "test"
 			});
 
 			myControl.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
-			equal(jQuery.sap.byId("myControl").length, 1, "The control should be rendered");
+			assert.equal(jQuery.sap.byId("myControl").length, 1, "The control should be rendered");
+			myControl.destroy();
 		});
 
+		QUnit.module("CustomStyleClassSupport", {
+			beforeEach: function() {
+				this.myControl = new my.lib.MyControl("myControl", {
+					text : "test"
+				});
 
-		test("hasStyleClass", function() {
-			expect(2);
-
-			equal(myControl.hasStyleClass(myClass), false, "control should not have the class");
-			equal(jQuery.sap.byId("myControl").hasClass(myClass), false, "class should not be in HTML");
+				this.myControl.placeAt("content");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function() {
+				this.myControl.destroy();
+			}
 		});
 
-		test("addStyleClass", function() {
-			expect(2); // this also verifies there is no rerendering
+		QUnit.test("call hasStyleClass before add any class", function(assert) {
+			var sMyClass = "abc";
 
-			myControl.addStyleClass(myClass);
+			assert.expect(3); // control shouldn't rerender itself
 
-			equal(myControl.hasStyleClass(myClass), true, "control should now have the class");
-			equal(jQuery.sap.byId("myControl").hasClass(myClass), true, "class should now be in HTML");
+			assert.equal(this.myControl.hasStyleClass(sMyClass), false, "control should not have the class");
+			assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass), false, "class should not be in HTML");
 		});
 
-		test("removeStyleClass", function() {
-			expect(2); // this also verifies there is no rerendering
-
-			myControl.removeStyleClass(myClass);
-
-			equal(myControl.hasStyleClass(myClass), false, "control should not have the class");
-			equal(jQuery.sap.byId("myControl").hasClass(myClass), false, "class should not be in HTML");
-
-			myControl.removeStyleClass(myClass); // should not cause an error or rendering
+		QUnit.test("call hasStyleClass with whitespace", function(assert) {
+			assert.equal(this.myControl.hasStyleClass(" "), false, "white space should be ignored");
 		});
 
-		test("toggleStyleClass (no bAdd)", function() {
-			expect(4); // this also verifies there is no rerendering
+		QUnit.test("call addStyleClass with whitespaces and check with hasStyleClass", function(assert) {
+			this.myControl.addStyleClass("\r \n \t \f  ");
 
-			myControl.toggleStyleClass(myClass);
-
-			equal(myControl.hasStyleClass(myClass), true, "control should now have the class");
-			equal(jQuery.sap.byId("myControl").hasClass(myClass), true, "class should now be in HTML");
-
-			myControl.toggleStyleClass(myClass);
-
-			equal(myControl.hasStyleClass(myClass), false, "control should not have the class");
-			equal(jQuery.sap.byId("myControl").hasClass(myClass), false, "class should not be in HTML");
+			assert.equal(jQuery.sap.byId("myControl")[0].className, "", "class in HTML shouldn't be changed");
+			assert.equal(this.myControl.hasStyleClass(" "), false, "White space(s) class name should be ignored");
+			assert.equal(this.myControl.hasStyleClass("\r"), false, "White space(s) class name should be ignored");
+			assert.equal(this.myControl.hasStyleClass("\n"), false, "White space(s) class name should be ignored");
+			assert.equal(this.myControl.hasStyleClass("\t"), false, "White space(s) class name should be ignored");
+			assert.equal(this.myControl.hasStyleClass("\f"), false, "White space(s) class name should be ignored");
+			assert.equal(this.myControl.hasStyleClass("\r \n \t \f  "), false, "White space(s) class name should be ignored");
 		});
 
-		test("toggleStyleClass (no bAdd)", function() {
-			expect(4); // this also verifies there is no rerendering
+		QUnit.test("add a single class", function(assert) {
+			var sMyClass = "abc";
 
-			myControl.toggleStyleClass(myClass, true);
+			assert.expect(4); // this also verifies there is no rerendering
 
-			equal(myControl.hasStyleClass(myClass), true, "control should now have the class");
-			equal(jQuery.sap.byId("myControl").hasClass(myClass), true, "class should now be in HTML");
+			this.myControl.addStyleClass(sMyClass);
 
-			myControl.toggleStyleClass(myClass, false);
-
-			equal(myControl.hasStyleClass(myClass), false, "control should not have the class");
-			equal(jQuery.sap.byId("myControl").hasClass(myClass), false, "class should not be in HTML");
+			assert.equal(this.myControl.hasStyleClass(sMyClass), true, "control should now have the class");
+			assert.equal(this.myControl.hasStyleClass(" "), false, "white space class should be ignored");
+			assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass), true, "class should now be in HTML");
 		});
 
-		test("addStyleClass, called twice", function() {
-			expect(3); // this also verifies there is no rerendering
+		QUnit.test("remove an added class", function(assert) {
+			var sMyClass = "abc";
 
-			myControl.addStyleClass(myClass);
-			myControl.addStyleClass(myClass);
+			this.myControl.addStyleClass(sMyClass);
 
-			equal(jQuery.sap.byId("myControl")[0].className, "abc", "class should be in HTML only once");
+			assert.expect(3); // this also verifies there is no rerendering
 
-			myControl.removeStyleClass(myClass);
+			this.myControl.removeStyleClass(sMyClass);
 
-			equal(myControl.hasStyleClass(myClass), false, "control should not have the class");
-			equal(jQuery.sap.byId("myControl").hasClass(myClass), false, "class should not be in HTML");
+			// remove white space class shouldn't have any effect
+			this.myControl.removeStyleClass(" ");
+
+			assert.equal(this.myControl.hasStyleClass(sMyClass), false, "control should not have the class");
+			assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass), false, "class should not be in HTML");
+
+			this.myControl.removeStyleClass(sMyClass); // should not cause an error or rendering
 		});
 
+		QUnit.test("toggle style class without bAdd", function() {
+			var sMyClass = "abc";
+
+			assert.expect(5); // this also verifies there is no rerendering
+
+			this.myControl.toggleStyleClass(sMyClass);
+
+			assert.equal(this.myControl.hasStyleClass(sMyClass), true, "control should now have the class");
+			assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass), true, "class should now be in HTML");
+
+			this.myControl.toggleStyleClass(sMyClass);
+
+			assert.equal(this.myControl.hasStyleClass(sMyClass), false, "control should not have the class");
+			assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass), false, "class should not be in HTML");
+		});
+
+		QUnit.test("toggle style class with bAdd", function(assert) {
+			var sMyClass = "abc";
+
+			assert.expect(5); // this also verifies there is no rerendering
+
+			this.myControl.toggleStyleClass(sMyClass, true);
+
+			assert.equal(this.myControl.hasStyleClass(sMyClass), true, "control should now have the class");
+			assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass), true, "class should now be in HTML");
+
+			this.myControl.toggleStyleClass(sMyClass, false);
+
+			assert.equal(this.myControl.hasStyleClass(sMyClass), false, "control should not have the class");
+			assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass), false, "class should not be in HTML");
+		});
+
+		QUnit.test("call addStyleClass twice with the same class", function(assert) {
+			var sMyClass = "abc";
+
+			assert.expect(4); // this also verifies there is no rerendering
+
+			this.myControl.addStyleClass(sMyClass);
+			this.myControl.addStyleClass(sMyClass);
+
+			assert.equal(jQuery.sap.byId("myControl")[0].className, "abc", "class should be in HTML only once");
+
+			this.myControl.removeStyleClass(sMyClass);
+
+			assert.equal(this.myControl.hasStyleClass(sMyClass), false, "control should not have the class");
+			assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass), false, "class should not be in HTML");
+		});
+
+		QUnit.test("add two classes within one addStyleClass call and then remove them together in one removeStyleClass call", function() {
+			var	sMyClass = "abc",
+			 	sMyClass1 = "bcd",
+				sCombinedClass = sMyClass + " " + sMyClass1;
+
+			this.myControl.addStyleClass(sCombinedClass);
+			this.myControl.removeStyleClass(""); // call with empty string shouldn't have any effect
+
+			assert.equal(this.myControl.hasStyleClass(sCombinedClass), true, "control should now have the combined class " + sCombinedClass);
+			assert.equal(jQuery.sap.byId("myControl").hasClass(sCombinedClass), true, "class should now be in HTML");
+
+			assert.equal(this.myControl.hasStyleClass(sMyClass), true, "control should now have the class " + sMyClass);
+			assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass), true, "class should now be in HTML");
+
+			assert.equal(this.myControl.hasStyleClass(sMyClass1), true, "control should now have the class " + sMyClass);
+			assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass1), true, "class should now be in HTML");
+
+
+			this.myControl.removeStyleClass(sCombinedClass + " unknownClass"); // remove unknown class shouldn't have any effect
+
+			assert.equal(this.myControl.hasStyleClass(sCombinedClass), false, "control should not have the combined class " + sCombinedClass);
+			assert.equal(jQuery.sap.byId("myControl").hasClass(sCombinedClass), false, "class should not be in HTML");
+
+			assert.equal(this.myControl.hasStyleClass(sMyClass), false, "control should not have the class " + sMyClass);
+			assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass), false, "class should not be in HTML");
+
+			assert.equal(this.myControl.hasStyleClass(sMyClass1), false, "control should not have the class " + sMyClass1);
+			assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass1), false, "class should not be in HTML");
+		});
+
+		QUnit.test("add two classes within one addStyleClass call and then remove them one by one", function(assert) {
+			var	sMyClass = "abc",
+				sMyClass1 = "bcd",
+				sCombinedClass = sMyClass + " " + sMyClass1;
+
+			this.myControl.addStyleClass(sCombinedClass);
+			this.myControl.removeStyleClass(""); // call with empty string shouldn't have any effect
+
+			assert.equal(this.myControl.hasStyleClass(sCombinedClass), true, "control should now have the combined class " + sCombinedClass);
+			assert.equal(jQuery.sap.byId("myControl").hasClass(sCombinedClass), true, "class should now be in HTML");
+
+			assert.equal(this.myControl.hasStyleClass(sMyClass), true, "control should now have the class " + sMyClass);
+			assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass), true, "class should now be in HTML");
+
+			assert.equal(this.myControl.hasStyleClass(sMyClass1), true, "control should now have the class " + sMyClass);
+			assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass1), true, "class should now be in HTML");
+
+
+			this.myControl.removeStyleClass(sMyClass1 + " unknownClass"); // remove unknown class shouldn't have any effect
+
+			assert.equal(this.myControl.hasStyleClass(sCombinedClass), false, "control should not have the combined class " + sCombinedClass);
+			assert.equal(jQuery.sap.byId("myControl").hasClass(sCombinedClass), false, "class should not be in HTML");
+
+			assert.equal(this.myControl.hasStyleClass(sMyClass), true, "control should still have the class " + sMyClass);
+			assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass), true, "class should still be in HTML");
+
+			assert.equal(this.myControl.hasStyleClass(sMyClass1), false, "control should not have the class " + sMyClass1);
+			assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass1), false, "class should not be in HTML");
+
+
+			this.myControl.removeStyleClass(sMyClass + " unknownClass"); // remove unknown class shouldn't have any effect
+
+			assert.equal(this.myControl.hasStyleClass(sCombinedClass), false, "control should not have the combined class " + sCombinedClass);
+			assert.equal(jQuery.sap.byId("myControl").hasClass(sCombinedClass), false, "class should not be in HTML");
+
+			assert.equal(this.myControl.hasStyleClass(sMyClass), false, "control should not have the class " + sMyClass);
+			assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass), false, "class should not be in HTML");
+
+			assert.equal(this.myControl.hasStyleClass(sMyClass1), false, "control should not have the class " + sMyClass1);
+			assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass1), false, "class should not be in HTML");
+		});
+
+		QUnit.test("Cloned Control should still have the added classes", function(assert) {
+			var	sMyClass = "abc",
+				sMyClass1 = "bcd",
+				sCombinedClass = sMyClass + " " + sMyClass1,
+				oClonedControl;
+
+			this.myControl.addStyleClass(sCombinedClass);
+			oClonedControl = this.myControl.clone();
+
+			assert.equal(oClonedControl.hasStyleClass(sMyClass), true, "the cloned control has the style class 'abc'");
+			assert.equal(oClonedControl.hasStyleClass(sMyClass1), true, "the cloned control has the style class 'bcd'");
+			assert.equal(oClonedControl.hasStyleClass(sCombinedClass), true, "the cloned control has the style class 'bcd'");
+
+			oClonedControl.destroy();
+		});
+
+		QUnit.test("Cloned Control and the original control should handle the style class separately", function(assert) {
+			var sMyClass = "abc",
+				sMyClass1 = "bcd",
+				oClonedControl = this.myControl.clone();
+
+			this.myControl.addStyleClass(sMyClass);
+			oClonedControl.addStyleClass(sMyClass1);
+
+			assert.equal(this.myControl.hasStyleClass(sMyClass1), false, "the original control shouldn't have the class which is added on the cloned one");
+			assert.equal(oClonedControl.hasStyleClass(sMyClass), false, "the cloned control shouldn't have the class which is added on the original one");
+
+			oClonedControl.destroy();
+		});
 	</script>
 </head>
 <body>
