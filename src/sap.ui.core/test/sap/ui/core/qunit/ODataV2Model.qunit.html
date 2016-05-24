@@ -813,6 +813,8 @@
 		oModel.attachMetadataLoaded(function(){
 			equal(oModel.createKey("Products", {ProductID: 1}), "Products(1)", "Created product key");
 			equal(oModel.createKey("Order_Details", {OrderID: 1, ProductID :2}), "Order_Details(OrderID=1,ProductID=2)", "Expanded entity key");
+			equal(oModel.createKey("Customers", {CustomerID: "abc123"}), "Customers('abc123')", "String entity key");
+			equal(oModel.createKey("Customers", {CustomerID: "abc:/123"}), "Customers('abc%3A%2F123')", "String entity key with encoding");
 			start();
 		});
 	});
