@@ -62,6 +62,7 @@
 
 	var oModes = new sap.m.Select({
 		tooltip: "Mode",
+		width: "10rem",
 		items: aModes,
 		change: function(oEvent) {
 			var sMode = oEvent.getParameter("selectedItem").getKey();
@@ -78,6 +79,7 @@
 
 	var oTypes = new sap.m.Select({
 		tooltip: "Item Type",
+		width: "10rem",
 		items: aTypes,
 		change: function(oEvent) {
 			var sType = oEvent.getParameter("selectedItem").getKey();
