@@ -254,6 +254,10 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 		var bSelected = oLI.getProperty("selected"),
 			bSelectable = oLI.isSelectable();
 
+		// remove existing popin first
+		oLI.removePopin();
+
+		// popin row
 		rm.write("<tr");
 		rm.addClass("sapMListTblSubRow");
 		rm.writeElementData(oLI.getPopin());
