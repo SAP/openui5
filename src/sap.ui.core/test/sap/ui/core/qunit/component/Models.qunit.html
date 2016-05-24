@@ -1386,7 +1386,76 @@
 			}.bind(this));
 		});
 
+		function createFakeMessageBundle(oServer, sName, sLocale, mMessages) {
+			var sLocalePrefix = "";
+			if(sLocale) {
+				sLocalePrefix = "_" + sLocale;
+			}
+			oServer.respondWith("GET", "/example/" + sName + sLocalePrefix + ".properties", [
+				200,
+				{ "Content-Type": "text/plain"  },
+				Object.keys(mMessages).map(function(sKey) {
+					return sKey + " = " + mMessages[sKey];
+				}).join("\n")
+			]);
+		}
+
+		QUnit.module("Resource Model enhancing", {
+			beforeEach: function() {
+				this.server = sinon.fakeServer.create();
+				this.server.autoRespond = true;
+				createFakeMessageBundle(this.server, "messagebundle", undefined, { "NoText": "NOT TRANSLATED" });
+				createFakeMessageBundle(this.server, "messagebundle", "de", { "NoText": "Kein Text" });
+				createFakeMessageBundle(this.server, "messagebundle", "en", { "NoText": "No Text" });
+				createFakeMessageBundle(this.server, "otherbundle", "de", { "NoText": "Kein weiterer Text", "Button": "Knopf" });
+				createFakeMessageBundle(this.server, "otherbundle", "en", { "Button": "A Button" });
+			},
+
+			afterEach: function() {
+				this.server.restore();
+			}
+		});
+
+		QUnit.test("can enhance a bundle", function(assert) {
+			var sOldLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+			sap.ui.getCore().getConfiguration().setLanguage("de");
+			var oBundle = new sap.ui.model.resource.ResourceModel({
+				bundleUrl: "/example/messagebundle.properties"
+			});
+
+			assert.equal(oBundle.getProperty("NoText"), "Kein Text");
+
+			oBundle.enhance({
+				bundleUrl: "/example/otherbundle.properties"
+			});
+
+			assert.equal(oBundle.getProperty("NoText"), "Kein weiterer Text");
+			sap.ui.getCore().getConfiguration().setLanguage(sOldLanguage);
+		});
+
+		QUnit.test("can change the language of an enhanced bundle", function(assert) {
+			var sOldLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+			sap.ui.getCore().getConfiguration().setLanguage("de");
+			var oBundle = new sap.ui.model.resource.ResourceModel({
+				bundleUrl: "/example/messagebundle.properties"
+			});
+			sap.ui.getCore().setModel(oBundle, "qunit-resource-model-test2");
+
+			oBundle.enhance({
+				bundleUrl: "/example/otherbundle.properties"
+			});
+
+			assert.equal(oBundle.getProperty("Button"), "Knopf");
+
+			sap.ui.getCore().getConfiguration().setLanguage("en");
+
+			assert.equal(oBundle.getProperty("Button"), "A Button");
+
+			sap.ui.getCore().getConfiguration().setLanguage(sOldLanguage);
+		});
+
 	});
+
 
 	</script>
 	</head>
