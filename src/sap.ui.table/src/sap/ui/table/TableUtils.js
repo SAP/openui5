@@ -3,9 +3,13 @@
  */
 
 // Provides helper sap.ui.table.TableUtils.
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
+	function(jQuery, Control, library) {
 	"use strict";
+
+	// shortcuts
+	var SelectionBehavior = library.SelectionBehavior,
+		SelectionMode = library.SelectionMode;
 
 	/**
 	 * Static collection of utility functions related to the sap.ui.table.Table, ...
@@ -32,8 +36,8 @@ sap.ui.define(['jquery.sap.global'],
 		 * Returns whether the table has a row header or not
 		 */
 		hasRowHeader : function(oTable) {
-			return oTable.getSelectionMode() !== sap.ui.table.SelectionMode.None
-					&& oTable.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly;
+			return oTable.getSelectionMode() !== SelectionMode.None
+					&& oTable.getSelectionBehavior() !== SelectionBehavior.RowOnly;
 		},
 
 		/*
@@ -50,7 +54,7 @@ sap.ui.define(['jquery.sap.global'],
 		 */
 		getNoDataText : function(oTable) {
 			var oNoData = oTable.getNoData();
-			if (oNoData instanceof sap.ui.core.Control) {
+			if (oNoData instanceof Control) {
 				return null;
 			} else {
 				if (typeof oNoData === "string" || oTable.getNoData() instanceof String) {
