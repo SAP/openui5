@@ -13,6 +13,28 @@ sap.ui.define([
 	var Cache;
 
 	/**
+	 * Adds an item to the given map by path.
+	 *
+	 * @param {object} mMap
+	 *   A map from path to a list of items
+	 * @param {string} sPath
+	 *   The path
+	 * @param {object} [oItem]
+	 *   The item; if it is <code>undefined</code>, nothing happens
+	 */
+	function addByPath(mMap, sPath, oItem) {
+		if (oItem) {
+			if (!mMap[sPath]) {
+				mMap[sPath] = [oItem];
+			} else if (mMap[sPath].indexOf(oItem) >= 0) {
+				return;
+			} else {
+				mMap[sPath].push(oItem);
+			}
+		}
+	}
+
+	/**
 	 * Converts the known OData system query options from map or array notation to a string. All
 	 * other parameters are simply passed through.
 	 *
@@ -49,28 +71,6 @@ sap.ui.define([
 			}
 			fnResultHandler(sKey, vValue);
 		});
-	}
-
-	/**
-	 * Deregisters a change listener in the given list.
-	 *
-	 * @param {object} mChangeListeners
-	 *   A map from path to a list of change listeners.
-	 * @param {string} sPath
-	 *   The path
-	 * @param {object} oListener
-	 *   The listener
-	 */
-	function deregisterChange(mChangeListeners, sPath, oListener) {
-		var aListeners = mChangeListeners[sPath],
-			iIndex;
-
-		if (aListeners) {
-			iIndex = aListeners.indexOf(oListener);
-			if (iIndex >= 0) {
-				aListeners.splice(iIndex, 1);
-			}
-		}
 	}
 
 	/**
@@ -166,23 +166,45 @@ sap.ui.define([
 	}
 
 	/**
-	 * Registers a change listener in the given list.
+	 * Removes an item from the given map by path.
 	 *
-	 * @param {object} mChangeListeners
-	 *   A map from path to a list of change listeners.
+	 * @param {object} mMap
+	 *   A map from path to a list of items
 	 * @param {string} sPath
 	 *   The path
-	 * @param {object} [oListener]
-	 *   The listener; if it is <code>undefined</code>, nothing happens
+	 * @param {object} oItem
+	 *   The item
 	 */
-	function registerChange(mChangeListeners, sPath, oListener) {
-		if (oListener) {
-			if (!mChangeListeners[sPath]) {
-				mChangeListeners[sPath] = [oListener];
-			} else if (mChangeListeners[sPath].indexOf(oListener) >= 0) {
-				return;
-			} else {
-				mChangeListeners[sPath].push(oListener);
+	function removeByPath(mMap, sPath, oItem) {
+		var aItems = mMap[sPath],
+			iIndex;
+
+		if (aItems) {
+			iIndex = aItems.indexOf(oItem);
+			if (iIndex >= 0) {
+				if (aItems.length === 1) {
+					delete mMap[sPath];
+				} else {
+					aItems.splice(iIndex, 1);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Removes all pending PATCH requests.
+	 *
+	 * @param {_Cache} oCache The cache
+	 */
+	function removePatchRequests(oCache) {
+		var i,
+			sPath,
+			aPromises;
+
+		for (sPath in oCache.mPatchRequests) {
+			aPromises = oCache.mPatchRequests[sPath];
+			for (i = 0; i < aPromises.length; i++ ) {
+				oCache.oRequestor.removePatch(aPromises[i]);
 			}
 		}
 	}
@@ -254,6 +276,7 @@ sap.ui.define([
 		this.aElements = [];        // the available elements
 		this.iMaxElements = -1;     // the max. number of elements if known, -1 otherwise
 		this.mChangeListeners = {};
+		this.mPatchRequests = {};
 		this.mQueryOptions = mQueryOptions;
 		this.oRequestor = oRequestor;
 		this.sResourcePath = sResourcePath + sQuery + (sQuery.length ? "&" : "?");
@@ -272,7 +295,7 @@ sap.ui.define([
 	 */
 	CollectionCache.prototype.deregisterChange = function (iIndex, sPath, oListener) {
 		if (arguments.length) {
-			deregisterChange(this.mChangeListeners, iIndex + "/" + sPath, oListener);
+			removeByPath(this.mChangeListeners, iIndex + "/" + sPath, oListener);
 		} else {
 			this.mChangeListeners = {};
 		}
@@ -354,7 +377,7 @@ sap.ui.define([
 			var oResult;
 
 			if (sPath !== undefined) {
-				registerChange(that.mChangeListeners, iIndex + "/" + sPath, oListener);
+				addByPath(that.mChangeListeners, iIndex + "/" + sPath, oListener);
 				oResult = that.aElements[iIndex];
 				return drillDown(oResult, sPath, function (sSegment) {
 					jQuery.sap.log.error("Failed to drill-down into " + that.sResourcePath
@@ -371,12 +394,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Clears the cache and cancels all pending {@link #read} requests.
+	 * Clears the cache and cancels all pending requests from {@link #read} and {@link #update}.
 	 */
 	CollectionCache.prototype.refresh = function () {
 		this.sContext = undefined;
 		this.iMaxElements = -1;
 		this.aElements = [];
+		removePatchRequests(this);
 	};
 
 	/**
@@ -411,31 +435,37 @@ sap.ui.define([
 			mChangeListeners = this.mChangeListeners,
 			mHeaders,
 			vOldValue,
-			oResult = drillDown(this.aElements, sPath);
+			sPropertyPath = sPath + "/" + sPropertyName,
+			oResult = drillDown(this.aElements, sPath),
+			oUpdatePromise,
+			that = this;
 
 		sEditUrl += Cache.buildQueryString(this.mQueryOptions, true);
 		mHeaders = {"If-Match" : oResult["@odata.etag"]};
 		vOldValue = oResult[sPropertyName];
 		oBody[sPropertyName] = oResult[sPropertyName] = vValue;
-		fireChange(mChangeListeners, sPath + "/" + sPropertyName, vOldValue, vValue);
+		fireChange(mChangeListeners, sPropertyPath, vOldValue, vValue);
 
-		return this.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders, oBody)
-			.then(function (oPatchResult) {
-				fireChange(mChangeListeners, sPath, oResult, oPatchResult);
-				for (sPropertyName in oResult) {
-					if (sPropertyName in oPatchResult) {
-						oResult[sPropertyName] = oPatchResult[sPropertyName];
-					}
+		oUpdatePromise = this.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders, oBody);
+		addByPath(this.mPatchRequests, sPropertyPath, oUpdatePromise);
+		return oUpdatePromise.then(function (oPatchResult) {
+			removeByPath(that.mPatchRequests, sPropertyPath, oUpdatePromise);
+			fireChange(mChangeListeners, sPath, oResult, oPatchResult);
+			for (sPropertyName in oResult) {
+				if (sPropertyName in oPatchResult) {
+					oResult[sPropertyName] = oPatchResult[sPropertyName];
 				}
-				return oPatchResult;
-			}, function (oError){
-				if (oError.canceled) {
-					fireChange(mChangeListeners, sPath + "/" + sPropertyName,
-						oResult[sPropertyName], vOldValue);
-					oResult[sPropertyName] = vOldValue;
-				}
-				throw oError;
-			});
+			}
+			return oPatchResult;
+		}, function (oError){
+			removeByPath(that.mPatchRequests, sPropertyPath, oUpdatePromise);
+			if (oError.canceled) {
+				fireChange(mChangeListeners, sPropertyPath,
+					oResult[sPropertyName], vOldValue);
+				oResult[sPropertyName] = vOldValue;
+			}
+			throw oError;
+		});
 	};
 
 	/**
@@ -457,6 +487,7 @@ sap.ui.define([
 	 */
 	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bSingleProperty, bPost) {
 		this.mChangeListeners = {};
+		this.mPatchRequests = {};
 		this.bPost = bPost;
 		this.bPosting = false;
 		this.oPromise = null;
@@ -477,8 +508,7 @@ sap.ui.define([
 	 */
 	SingleCache.prototype.deregisterChange = function (sPath, oListener) {
 		if (arguments.length) {
-			deregisterChange(this.mChangeListeners, this.bSingleProperty ? "value" : sPath,
-				oListener);
+			removeByPath(this.mChangeListeners, this.bSingleProperty ? "value" : sPath, oListener);
 		} else {
 			this.mChangeListeners = {};
 		}
@@ -577,7 +607,7 @@ sap.ui.define([
 				// 204 No Content: map undefined to null
 				oResult = oResult ? oResult.value : null;
 			}
-			registerChange(that.mChangeListeners, that.bSingleProperty ? "value" : sPath, oListener);
+			addByPath(that.mChangeListeners, that.bSingleProperty ? "value" : sPath, oListener);
 			if (sPath) {
 				return drillDown(oResult, sPath, function (sSegment) {
 					jQuery.sap.log.error("Failed to drill-down into " + sResourcePath + "/"
@@ -590,7 +620,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Clears the cache and cancels a pending {@link #read} request.
+	 * Clears the cache and cancels all pending requests from {@link #read} and {@link #update}.
 	 *
 	 * @throws {Error}
 	 *   If the cache is using POST requests
@@ -600,6 +630,7 @@ sap.ui.define([
 			throw new Error("Refresh not allowed when using POST");
 		}
 		this.oPromise = undefined;
+		removePatchRequests(this);
 	};
 
 	/**
@@ -636,38 +667,41 @@ sap.ui.define([
 			var oBody = {},
 				mHeaders,
 				vOldValue,
-				sResultPropertyName = that.bSingleProperty ? "value" : sPropertyName;
+				sResultPropertyName = that.bSingleProperty ? "value" : sPropertyName,
+				sUpdatePath = _Helper.buildPath(sPath, sResultPropertyName),
+				oUpdatePromise;
 
 			sEditUrl += Cache.buildQueryString(that.mQueryOptions, true);
 			oResult = drillDown(oResult, sPath);
 			mHeaders = {"If-Match" : oResult["@odata.etag"]};
 			vOldValue = oResult[sResultPropertyName];
-			fireChange(that.mChangeListeners, _Helper.buildPath(sPath, sResultPropertyName),
-				vOldValue, vValue);
+			fireChange(that.mChangeListeners, sUpdatePath, vOldValue, vValue);
 			oBody[sPropertyName] = oResult[sResultPropertyName] = vValue;
 
-			return that.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders, oBody)
-				.then(function (oPatchResult) {
-					if (that.bSingleProperty) {
-						oResult.value = oPatchResult[sPropertyName];
-					} else {
-						fireChange(that.mChangeListeners, sPath, oResult, oPatchResult);
-						for (sPropertyName in oResult) {
-							if (sPropertyName in oPatchResult) {
-								oResult[sPropertyName] = oPatchResult[sPropertyName];
-							}
+			oUpdatePromise = that.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders, oBody);
+			addByPath(that.mPatchRequests, sUpdatePath, oUpdatePromise);
+			return oUpdatePromise.then(function (oPatchResult) {
+				removeByPath(that.mPatchRequests, sUpdatePath, oUpdatePromise);
+				if (that.bSingleProperty) {
+					oResult.value = oPatchResult[sPropertyName];
+				} else {
+					fireChange(that.mChangeListeners, sPath, oResult, oPatchResult);
+					for (sPropertyName in oResult) {
+						if (sPropertyName in oPatchResult) {
+							oResult[sPropertyName] = oPatchResult[sPropertyName];
 						}
 					}
-					return oPatchResult;
-				}, function (oError) {
-					if (oError.canceled) {
-						fireChange(that.mChangeListeners,
-							_Helper.buildPath(sPath, sResultPropertyName),
-							oResult[sResultPropertyName], vOldValue);
-						oResult[sResultPropertyName] = vOldValue;
-					}
-					throw oError;
-				});
+				}
+				return oPatchResult;
+			}, function (oError) {
+				removeByPath(that.mPatchRequests, sUpdatePath, oUpdatePromise);
+				if (oError.canceled) {
+					fireChange(that.mChangeListeners, sUpdatePath,
+						oResult[sResultPropertyName], vOldValue);
+					oResult[sResultPropertyName] = vOldValue;
+				}
+				throw oError;
+			});
 		});
 	};
 

@@ -872,6 +872,71 @@ sap.ui.require([
 		_Requestor.create("/Service/").cancelPatch("unusedGroupId");
 	});
 
+	//*****************************************************************************************
+	QUnit.test("removePatch", function (assert) {
+		var oPromise,
+			oRequestor = _Requestor.create("/Service/");
+
+		oPromise = oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"});
+
+		// code under test
+		oRequestor.removePatch(oPromise);
+
+		this.mock(oRequestor).expects("request").never();
+		oRequestor.submitBatch("groupId");
+		return oPromise.then(function () {
+			assert.ok(false);
+		}, function (oError) {
+			assert.strictEqual(oError.canceled, true);
+		});
+	});
+
+	//*****************************************************************************************
+	QUnit.test("removePatch: various requests", function (assert) {
+		var oPromise,
+			aPromises,
+			oRequestor = _Requestor.create("/Service/");
+
+		function unexpected () {
+			assert.ok(false);
+		}
+
+		function rejected(oError) {
+			assert.strictEqual(oError.canceled, true);
+		}
+
+		oPromise = oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"});
+
+		aPromises = [
+			oPromise.then(unexpected, rejected),
+			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "bar"}),
+			oRequestor.request("GET", "Employees", "groupId")
+		];
+
+
+		this.mock(oRequestor).expects("request")
+			.withExactArgs("POST", "$batch", undefined, undefined, [
+				sinon.match({
+					method : "PATCH",
+					url : "Products('0')",
+					body: JSON.stringify({Name : "bar"})
+				}),
+				sinon.match({
+					method : "GET",
+					url : "Employees"
+				})
+			]).returns(Promise.resolve([
+				{responseText : "{}"},
+				{responseText : "{}"}
+			]));
+
+		// code under test
+		oRequestor.removePatch(oPromise);
+		oRequestor.submitBatch("groupId");
+
+		return Promise.all(aPromises);
+	});
+
 	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
 		QUnit.test("request(...)/submitBatch (realOData) success", function (assert) {

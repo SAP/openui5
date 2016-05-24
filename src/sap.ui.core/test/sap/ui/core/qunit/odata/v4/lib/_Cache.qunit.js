@@ -834,6 +834,129 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("update: mPatchRequests", function (assert) {
+		var sEditUrl = "SOLineItemList(SalesOrderID='0',ItemPosition='0')",
+			oError = new Error(),
+			sETag = 'W/"19700101000000.0000000"',
+			oPatchPromise1 = Promise.resolve({
+				"@odata.etag" : 'W/"19700101000000.9999999"',
+				Note : "Some Note"
+			}),
+			oPatchPromise2 = Promise.reject(oError),
+			oReadPromise = Promise.resolve({
+				value : [{
+					SO_2_SOITEM : [{
+						"@odata.etag" : sETag,
+						Note : "Some Note"
+					}]
+				}]
+			}),
+			oRequestor = _Requestor.create("/"),
+			oRequestorMock = this.mock(oRequestor),
+			sResourcePath = "/SalesOrderList(SalesOrderID='0')",
+			oCache = _Cache.create(oRequestor, sResourcePath);
+
+		oRequestorMock.expects("request")
+			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=1", "groupId")
+			.returns(oReadPromise);
+		// fill the cache
+		return oCache.read(0, 1, "groupId").then(function () {
+			var oUpdatePromise;
+
+			oRequestorMock.expects("request")
+				.withExactArgs("PATCH", sEditUrl, "updateGroupId", {"If-Match" : sETag},
+					{Note : "foo"})
+				.returns(oPatchPromise1);
+			oRequestorMock.expects("request")
+				.withExactArgs("PATCH", sEditUrl, "updateGroupId", {"If-Match" : sETag},
+					{Note : "bar"})
+				.returns(oPatchPromise2);
+
+			// code under test
+			oUpdatePromise = Promise.all([
+				oCache.update("updateGroupId", "Note", "foo", sEditUrl, "0/SO_2_SOITEM/0"),
+				oCache.update("updateGroupId", "Note", "bar", sEditUrl, "0/SO_2_SOITEM/0")
+					.then(function () {
+						assert.ok(false);
+					}, function (oError0) {
+						assert.strictEqual(oError0, oError);
+					})
+			]).then(function () {
+				assert.deepEqual(oCache.mPatchRequests, {},
+					"mPatchRequests empty when both patch requests are finished");
+			});
+			assert.deepEqual(oCache.mPatchRequests, {
+				"0/SO_2_SOITEM/0/Note" : [oPatchPromise1, oPatchPromise2]
+			}, "mPatchRequests remembers both pending requests");
+			return oUpdatePromise;
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("update and refresh", function (assert) {
+		var sEditUrl = "SOLineItemList(SalesOrderID='0',ItemPosition='0')",
+			oError = new Error(),
+			sETag = 'W/"19700101000000.0000000"',
+			oPatchPromise1 = Promise.reject(oError),
+			oPatchPromise2 = Promise.reject(oError),
+			oPromise = Promise.resolve({
+				value : [{
+					SalesOrderID : "0",
+					SO_2_SOITEM : [{
+						"@odata.etag" : sETag,
+						Note : "Some Note",
+						Foo : "Bar"
+					}]
+				}]
+			}),
+			oRequestor = _Requestor.create("/"),
+			oRequestorMock = this.mock(oRequestor),
+			sResourcePath = "/SalesOrderList(SalesOrderID='0')",
+			oCache = _Cache.create(oRequestor, sResourcePath);
+
+		function unexpected () {
+			assert.ok(false);
+		}
+
+		function rejected(oError) {
+			assert.strictEqual(oError.canceled, true);
+		}
+
+		oError.canceled = true;
+		oRequestorMock.expects("request")
+			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=1", "groupId")
+			.returns(oPromise);
+		// fill the cache
+		return oCache.read(0, 1, "groupId", "SO_2_SOITEM/0/Note").then(function () {
+			var aUpdatePromises;
+
+			oRequestorMock.expects("request")
+				.withExactArgs("PATCH", sEditUrl, "updateGroupId", {"If-Match" : sETag},
+					{Note : "foo"})
+				.returns(oPatchPromise1);
+			oRequestorMock.expects("request")
+				.withExactArgs("PATCH", sEditUrl, "updateGroupId", {"If-Match" : sETag},
+					{Foo : "baz"})
+				.returns(oPatchPromise2);
+			oRequestorMock.expects("removePatch").withExactArgs(oPatchPromise1);
+			oRequestorMock.expects("removePatch").withExactArgs(oPatchPromise2);
+
+			// code under test
+			aUpdatePromises = [
+				oCache.update("updateGroupId", "Note", "foo", sEditUrl, "0/SO_2_SOITEM/0")
+					.then(unexpected, rejected),
+				oCache.update("updateGroupId", "Foo", "baz", sEditUrl, "0/SO_2_SOITEM/0")
+					.then(unexpected, rejected)
+			];
+			oCache.refresh();
+
+			return Promise.all(aUpdatePromises).then(function () {
+				assert.deepEqual(oCache.mPatchRequests, {});
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("SingleCache: post", function (assert) {
 		var fnDataRequested = sinon.spy(),
 			sGroupId = "group",
@@ -1295,8 +1418,120 @@ sap.ui.require([
 			});
 		});
 	});
-	// TODO Can we join the two update tests?
 	// TODO fnLog of drillDown in SingleCache#update
+
+	//*********************************************************************************************
+	QUnit.test("SingleCache: mPatchRequests", function (assert) {
+		var oError = new Error(),
+			sETag = 'W/"19700101000000.0000000"',
+			oPatchPromise1 = Promise.resolve({
+				"@odata.etag" : 'W/"19700101000000.9999999"',
+				Note : "Some Note"
+			}),
+			oPatchPromise2 = Promise.reject(oError),
+			oPromise = Promise.resolve({
+				"@odata.etag" : sETag,
+				Note : "Some Note"
+			}),
+			oRequestor = _Requestor.create("/"),
+			oRequestorMock = this.mock(oRequestor),
+			sResourcePath = "SOLineItemList(SalesOrderID='0',ItemPosition='0')",
+			oCache = _Cache.createSingle(oRequestor, sResourcePath);
+
+		oRequestorMock.expects("request")
+			.withExactArgs("GET", sResourcePath, "groupId")
+			.returns(oPromise);
+		// fill the cache
+		return oCache.read("groupId").then(function () {
+			var oUpdatePromise;
+
+			oRequestorMock.expects("request")
+				.withExactArgs("PATCH", sResourcePath, "updateGroupId", {"If-Match" : sETag},
+					{Note : "foo"})
+				.returns(oPatchPromise1);
+			oRequestorMock.expects("request")
+				.withExactArgs("PATCH", sResourcePath, "updateGroupId", {"If-Match" : sETag},
+					{Note : "bar"})
+				.returns(oPatchPromise2);
+
+			// code under test
+			oUpdatePromise = Promise.all([
+				oCache.update("updateGroupId", "Note", "foo", sResourcePath),
+				oCache.update("updateGroupId", "Note", "bar", sResourcePath)
+					.then(function () {
+						assert.ok(false);
+					}, function (oError0) {
+						assert.strictEqual(oError0, oError);
+					})
+			]).then(function () {
+				assert.deepEqual(oCache.mPatchRequests, {},
+					"mPatchRequests empty when both patch requests are finished");
+			});
+			assert.deepEqual(oCache.mPatchRequests, {
+				"Note" : [oPatchPromise1, oPatchPromise2]
+			}, "mPatchRequests remembers both pending requests");
+
+			return oUpdatePromise;
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("SingleCache: update and refresh", function (assert) {
+		var oError = new Error(),
+			sETag = 'W/"19700101000000.0000000"',
+			oPatchPromise1 = Promise.reject(oError),
+			oPatchPromise2 = Promise.reject(oError),
+			oPromise = Promise.resolve({
+				"@odata.etag" : sETag,
+				Note : "Some Note",
+				Foo : "Bar"
+			}),
+			oRequestor = _Requestor.create("/"),
+			oRequestorMock = this.mock(oRequestor),
+			sResourcePath = "SOLineItemList(SalesOrderID='0',ItemPosition='0')",
+			oCache = _Cache.createSingle(oRequestor, sResourcePath);
+
+		function unexpected () {
+			assert.ok(false);
+		}
+
+		function rejected(oError) {
+			assert.strictEqual(oError.canceled, true);
+		}
+
+		oError.canceled = true;
+		oRequestorMock.expects("request")
+			.withExactArgs("GET", sResourcePath, "groupId")
+			.returns(oPromise);
+		// fill the cache and register a listener
+		return oCache.read("groupId", "Note").then(function () {
+			var aUpdatePromises;
+
+			oRequestorMock.expects("request")
+				.withExactArgs("PATCH", sResourcePath, "updateGroupId", {"If-Match" : sETag},
+					{Note : "foo"})
+				.returns(oPatchPromise1);
+			oRequestorMock.expects("request")
+				.withExactArgs("PATCH", sResourcePath, "updateGroupId", {"If-Match" : sETag},
+					{Foo : "baz"})
+				.returns(oPatchPromise2);
+			oRequestorMock.expects("removePatch").withExactArgs(oPatchPromise1);
+			oRequestorMock.expects("removePatch").withExactArgs(oPatchPromise2);
+
+			// code under test
+			aUpdatePromises = [
+				oCache.update("updateGroupId", "Note", "foo", sResourcePath)
+					.then(unexpected, rejected),
+				oCache.update("updateGroupId", "Foo", "baz", sResourcePath)
+					.then(unexpected, rejected)
+			];
+			oCache.refresh();
+
+			return Promise.all(aUpdatePromises).then(function () {
+				assert.deepEqual(oCache.mPatchRequests, {});
+			});
+		});
+	});
 
 	//*********************************************************************************************
 	QUnit.test("CollectionCache:deregisterChange", function (assert) {
