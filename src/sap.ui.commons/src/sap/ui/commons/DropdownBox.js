@@ -1095,7 +1095,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 	 * @private
 	 */
 	DropdownBox.prototype._prepareOpen = function(oListBox, oPopup){
-		this._oValueBeforeOpen = this.$().val();
+		this._oValueBeforeOpen = jQuery(this.getInputDomRef()).val();
 
 		// remember we opening the popup (needed in applyFocusInfo called after rerendering of ListBox)
 		this._Opening = true;
@@ -1109,6 +1109,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 				iItemIndex = this.indexOfItem(sap.ui.getCore().byId(this.getSelectedItemId()));
 			}
 			this._doTypeAhead("", jQuery(this.getInputDomRef()).val(), true, iItemIndex);
+			this._doSelect(); // select all to have the same behaviour like by navigatin in open list and closing list
 		}
 		return this;
 	};
