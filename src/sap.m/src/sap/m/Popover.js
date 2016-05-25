@@ -1076,7 +1076,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			}
 
 			var bRtl = sap.ui.getCore().getConfiguration().getRTL();
-			return iFlipOffset + this.getOffsetX() * (bRtl ? -1 : 1);
+			return iFlipOffset * (bRtl ? -1 : 1) + this.getOffsetX() * (bRtl ? -1 : 1);
 		};
 
 		/**
@@ -1462,7 +1462,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			switch (sCalculatedPlacement) {
 				case sap.m.PlacementType.Left:
 					if (bRtl) {
-						oPosParams._fMarginLeft = oPosParams._$parent.offset().left + Popover.outerWidth(oPosParams._$parent[0], false) + this._arrowOffset + oPosParams._fOffsetX;
+						oPosParams._fMarginLeft = oPosParams._$parent.offset().left + Popover.outerWidth(oPosParams._$parent[0], false) + this._arrowOffset - oPosParams._fOffsetX;
 					} else {
 						oPosParams._fMarginRight = oPosParams._fDocumentWidth - oPosParams._$parent.offset().left + this._arrowOffset - oPosParams._fOffsetX;
 					}
