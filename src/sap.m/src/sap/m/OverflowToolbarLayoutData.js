@@ -59,7 +59,15 @@ sap.ui.define(['sap/m/ToolbarLayoutData', 'sap/m/OverflowToolbarPriority'],
 			 * @public
 			 * @since 1.32
 			 */
-			group: {type: "int", group: "Behavior", defaultValue: 0}
+			group: {type: "int", group: "Behavior", defaultValue: 0},
+
+			/**
+			 * Defines whether the overflow area is automatically closed when interacting with a control in it
+			 *
+			 * @public
+			 * @since 1.40
+			 */
+			closeOverflowOnInteraction: {type: "boolean", group: "Behavior", defaultValue: true}
 		}
 	}});
 

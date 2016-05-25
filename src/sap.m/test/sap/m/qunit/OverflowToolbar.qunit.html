@@ -518,7 +518,7 @@
 				"The button with Chaged Priority is visible whithin the toolbar");
 
 			oOverflowTB.destroy();
-		})
+		});
 
 		test("Changing priority from High to Low should move the button to the overflow", function () {
 
@@ -1570,6 +1570,39 @@
 			var iInvalidationCountAfter = spy.callCount;
 
 			strictEqual(iInvalidationCountAfter - iInvalidationCountBefore, 0, "Changing the value of the sliderLayout does not trigger recalculation (_resetAndInvalidateToolbar not called)");
+
+			oOverflowTB.destroy();
+		});
+
+		test("Buttons with closeOverflowOnInteraction=false do not close the popover", function () {
+			var aContent = getDefaultContent(),
+					oOverflowTB,
+					oBtn = new sap.m.Button({
+						text: "Do not close",
+						width: "200px",
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.AlwaysOverflow,
+							closeOverflowOnInteraction: false
+						})
+					});
+
+			aContent.push(oBtn);
+
+			oOverflowTB = createOverflowToolbar({width: 'auto'}, aContent);
+			this.clock.tick(1000);
+
+			// Click the overflow button
+			var oOverflowButton = oOverflowTB._getOverflowButton();
+			oOverflowButton.firePress();
+			this.clock.tick(1000);
+
+			// Click the special button
+			oBtn.firePress();
+			this.clock.tick(1000);
+
+			// The overflow area should still be visible
+			var oPopover = oOverflowTB._getPopover();
+			strictEqual(oPopover.$().is(":visible"), true, "Even though the button was clicked, the overflow area is visible");
 
 			oOverflowTB.destroy();
 		});
