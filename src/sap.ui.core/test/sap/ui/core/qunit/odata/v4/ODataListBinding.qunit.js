@@ -146,6 +146,26 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("reset", function (assert) {
+		var oBinding = this.oModel.bindList("/EMPLOYEES");
+
+		// set members which should be reset to arbitrary values
+		oBinding.aContexts = [{}];
+		oBinding.iCurrentBegin = 10; oBinding.iCurrentEnd = 19;
+		oBinding.iMaxLength = 42;
+		oBinding.bLengthFinal = true;
+
+		// code under test
+		oBinding.reset();
+
+		assert.deepEqual(oBinding.aContexts, []);
+		assert.strictEqual(oBinding.iMaxLength, Infinity);
+		assert.strictEqual(oBinding.iCurrentBegin, 0);
+		assert.strictEqual(oBinding.iCurrentEnd, 0);
+		assert.strictEqual(oBinding.isLengthFinal(), false);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("bindList with OData query options", function (assert) {
 		var oBinding,
 			oContext = {},
@@ -162,6 +182,7 @@ sap.ui.require([
 		this.mock(_Cache).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
 				sinon.match.same(mQueryOptions));
+		this.spy(ODataListBinding.prototype, "reset");
 
 		oBinding = this.oModel.bindList("/EMPLOYEES", oContext, undefined, undefined, mParameters);
 
@@ -169,12 +190,8 @@ sap.ui.require([
 		assert.strictEqual(oBinding.getModel(), this.oModel);
 		assert.strictEqual(oBinding.getContext(), oContext);
 		assert.strictEqual(oBinding.getPath(), "/EMPLOYEES");
-		assert.deepEqual(oBinding.aContexts, []);
-		assert.strictEqual(oBinding.iMaxLength, Infinity);
-		assert.strictEqual(oBinding.iCurrentBegin, 0);
-		assert.strictEqual(oBinding.iCurrentEnd, 0);
-		assert.strictEqual(oBinding.isLengthFinal(), false);
 		assert.strictEqual(oBinding.mParameters, undefined);
+		assert.ok(ODataListBinding.prototype.reset.calledWithExactly());
 
 		//no call to buildQueryOptions for binding with relative path and no parameters
 		oBinding = this.oModel.bindList("EMPLOYEE_2_TEAM");
@@ -182,6 +199,7 @@ sap.ui.require([
 		assert.strictEqual(oBinding.oCache, undefined, "oCache property is undefined");
 		assert.strictEqual(oBinding.hasOwnProperty("sGroupId"), true);
 		assert.strictEqual(oBinding.sGroupId, undefined);
+		assert.ok(ODataListBinding.prototype.reset.calledWithExactly());
 
 		//error for invalid parameters
 		oHelperMock.expects("buildQueryOptions").throws(oError);
@@ -303,18 +321,22 @@ sap.ui.require([
 
 			// code under test
 			oBinding.setContext(oBinding.getContext());
+
 			assert.strictEqual(oBinding.aContexts, aOriginalContexts);
+			assert.ok(ODataListBinding.prototype.reset.calledWithExactly());
 
 			// code under test
 			oBinding.setContext();
-			assert.strictEqual(oBinding.aContexts.length, 0, "reset context");
+
+			assert.ok(ODataListBinding.prototype.reset.calledWithExactly());
 		}
 
 		this.mock(ODataListBinding.prototype).expects("getGroupId").never();
 		oControl.bindObject("/TEAMS('4711')");
-		that.mock(oControl.getObjectBinding()).expects("fetchValue")
+		this.mock(oControl.getObjectBinding()).expects("fetchValue")
 			.withExactArgs(sPath, undefined, undefined)
 			.returns(oPromise);
+		this.spy(ODataListBinding.prototype, "reset");
 
 		// code under test
 		oControl.bindAggregation("items", jQuery.extend({
@@ -843,7 +865,8 @@ sap.ui.require([
 		var oCacheMock = this.getCacheMock(),
 			oListBinding = this.oModel.bindList("/EMPLOYEES"),
 			oListBindingMock = this.mock(oListBinding),
-			oReadPromise = createResult(9);
+			oReadPromise = createResult(9),
+			that = this;
 
 		// change event during getContexts
 		oListBindingMock.expects("_fireChange")
@@ -861,17 +884,15 @@ sap.ui.require([
 
 		return oReadPromise.then(function () {
 			var oCache = oListBinding.oCache;
+
 			assert.strictEqual(oListBinding.iMaxLength, 9);
 			assert.strictEqual(oListBinding.isLengthFinal(), true);
+			that.mock(oListBinding).expects("reset").withExactArgs();
 
 			//code under test
 			oListBinding.refresh();
 
 			assert.strictEqual(oListBinding.oCache, oCache);
-			assert.deepEqual(oListBinding.aContexts, []);
-			assert.strictEqual(oListBinding.iMaxLength, Infinity);
-			assert.strictEqual(oListBinding.isLengthFinal(), false);
-			assert.deepEqual(oListBinding.getCurrentContexts(), []);
 		});
 	});
 	//*********************************************************************************************
