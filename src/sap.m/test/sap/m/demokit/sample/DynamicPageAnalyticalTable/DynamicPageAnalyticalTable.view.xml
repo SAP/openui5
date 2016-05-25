@@ -8,16 +8,19 @@
 		xmlns:layout="sap.ui.layout"
 		height="100%">
 	<App>
-		<DynamicPage id="dynamicPageId" headerAlwaysExpanded="true">
+		<DynamicPage id="dynamicPageId" headerScrollable="false" headerExpanded="{/headerExpanded}">
 			<!-- DynamicPage Title -->
 			<title>
 				<DynamicPageTitle>
 					<heading>
 						<Title text="My Products"/>
 					</heading>
-
 					<actions>
 						<ToolbarSpacer/>
+						<ToggleButton
+								pressed="{/headerExpanded}"
+								text="{path:'/headerExpanded', formatter:'.formatToggleButtonText'}"
+								type="Transparent"/>
 						<OverflowToolbarButton
 								icon="sap-icon://add"
 								text="Add"
