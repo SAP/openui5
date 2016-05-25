@@ -147,6 +147,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 		if (jQuery.sap.PseudoEvents.sapspace.fnCheck(oEvent)) {
 			this._toggleAnimation();
 		}
+		if (oEvent.which === jQuery.sap.KeyCodes.B && this._bAnimationPause) {
+			this._scrollToPreviousTile(true);
+		}
+		if (oEvent.which === jQuery.sap.KeyCodes.F && this._bAnimationPause) {
+			this._scrollToNextTile(true);
+		}
 	};
 
 	/**
@@ -178,12 +184,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	 * @param {jQuery.Event} oEvent Event object
 	 */
 	SlideTile.prototype.onfocusout = function (oEvent) {
-		this._startAnimation();
+		if (this.getTiles().length > 1) {
+			this._startAnimation();
+		}
 	};
 
 	/* --- Helpers --- */
 	/**
-	 * Remove the focus of tiles in SlideTile
+	 * Removes the focus of tiles in SlideTile
 	 *
 	 * @private
 	 */
@@ -247,10 +255,79 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	};
 
 	/**
+	 * Scrolls to the previous tile
+	 *
+	 * @private
+	 * @param {Boolean} pause Triggers if the animation gets paused or not
+	 */
+	SlideTile.prototype._scrollToPreviousTile = function(pause) {
+		var iTransitionTime = this._iCurrAnimationTime - this.getDisplayTime();
+		iTransitionTime = this.getTransitionTime() - (iTransitionTime > 0 ? iTransitionTime : 0);
+		var bFirstAnimation = iTransitionTime === this.getTransitionTime();
+
+		if (bFirstAnimation) {
+			var iPrevTile = this._getPreviousTileIndex(this._iCurrentTile);
+			this._iNextTile = this._iCurrentTile;
+			this._iCurrentTile = iPrevTile;
+		}
+
+		var oWrapperTo = this.$("wrapper-" + this._iCurrentTile);
+		var sDir = sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left";
+
+		if (jQuery.isNumeric(this._iNextTile)) {
+			var oWrapperFrom = this.$("wrapper-" + this._iNextTile);
+			var sWidthFrom = oWrapperFrom.css("width");
+			var fWidthTo = parseFloat(oWrapperTo.css("width"));
+			var fWidthFrom = parseFloat(sWidthFrom);
+
+			if (fWidthFrom < fWidthTo) {
+				this._changeSizeTo(this._iCurrentTile);
+			}
+
+			if (bFirstAnimation) {
+				oWrapperTo.css(sDir, sWidthFrom);
+			}
+
+			var oDir = {};
+			oDir[sDir] = sWidthFrom;
+
+			var that = this;
+			oWrapperFrom.animate(oDir, {
+				duration : iTransitionTime,
+				done : function() {
+					if (fWidthFrom >= fWidthTo) {
+						that._changeSizeTo(that._iCurrentTile);
+					}
+					oWrapperFrom.css(sDir, "");
+				}
+			});
+			oDir[sDir] = "-" + sWidthFrom;
+			oWrapperTo.animate(oDir, 0);
+
+			oDir[sDir] = "0rem";
+			oWrapperTo.animate(oDir, {
+				duration : iTransitionTime,
+				done : function() {
+					that._iCurrAnimationTime = 0;
+					if (!pause) {
+						that._startAnimation();
+					}
+				}
+			});
+		} else {
+			this._changeSizeTo(this._iCurrentTile);
+			oWrapperTo.css(sDir, "0rem");
+		}
+		if (this.getTiles()[this._iCurrentTile]) {
+			this._setAriaDescriptor();
+		}
+	};
+
+	/**
 	 * Scrolls to the next tile
 	 *
 	 * @private
-	 * @param {Boolean} pause triggers if the animations gets paused or not
+	 * @param {Boolean} pause Triggers if the animation gets paused or not
 	 */
 	SlideTile.prototype._scrollToNextTile = function(pause) {
 		var iTransitionTime = this._iCurrAnimationTime - this.getDisplayTime();
@@ -264,10 +341,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 		}
 
 		var oWrapperTo = jQuery.sap.byId(this.getId() + "-wrapper-" + this._iCurrentTile);
-		var bDoAnimate = this._iPreviousTile !== undefined;
 		var sDir = sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left";
 
-		if (bDoAnimate) {
+		if (jQuery.isNumeric(this._iPreviousTile)) {
 			var oWrapperFrom = jQuery.sap.byId(this.getId() + "-wrapper-" + this._iPreviousTile);
 			var sWidthFrom = oWrapperFrom.css("width");
 			var fWidthTo = parseFloat(oWrapperTo.css("width"));
@@ -350,6 +426,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 		this.$().addClass(oTile.getFrameType()).addClass(oTile.getSize());
 		this._sFrameType = oTile.getFrameType();
 		this._sSize = oTile.getSize();
+	};
+
+	/**
+	 * Returns the index of the previous tile based on the current index
+	 *
+	 * @private
+	 * @param {int} tileIndex of the element in the tiles aggregation
+	 * @returns {int} Index of the previous tile
+	 */
+	SlideTile.prototype._getPreviousTileIndex = function(tileIndex) {
+		if (tileIndex > 0) {
+			return tileIndex - 1;
+		} else {
+			return this.getTiles().length - 1;
+		}
 	};
 
 	/**
