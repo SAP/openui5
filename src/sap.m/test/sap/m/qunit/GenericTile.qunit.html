@@ -510,14 +510,10 @@
 	QUnit.test("Internal method _getTooltipText", function(assert) {
 		//Arrange
 		var sTooltipText;
-		// stub GenericTile's function _getAriaText
-		this.oGenericTile._getAriaText = function() {
-			return "ARIA-text";
-		};
 		//Act
 		sTooltipText = this.oGenericTile._getTooltipText();
 		//Assert
-		assert.equal(sTooltipText, "ARIA-text", "Expected text for tooltip generated if no tooltip set");
+		assert.equal(sTooltipText, null, "No tooltip generated if no tooltip set");
 		//Act
 		this.oGenericTile.setTooltip(" ");
 		sTooltipText = this.oGenericTile._getTooltipText();
@@ -634,18 +630,18 @@
 		}
 	});
 
-	QUnit.test("GenericTile with consistent tooltip provided by the control", function(assert) {
+	QUnit.test("GenericTile no tooltip provided by the control", function(assert) {
 		//Arrange
-		var sConsistentTooltip = "header text of GenericTile\nsubheader text of GenericTile\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
+		var sAriaLabel = "header text of GenericTile\nsubheader text of GenericTile\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
 		//Act
 		var sGenericTileTooltip = jQuery.sap.byId("generic-tile")[0].getAttribute("title");
 		var sGenericTileAriaLabel = jQuery.sap.byId("generic-tile")[0].getAttribute("aria-label");
 		//Assert
-		assert.equal(sGenericTileTooltip, sConsistentTooltip, "Tooltip of GenericTile is consistent");
-		assert.equal(sGenericTileTooltip, sGenericTileAriaLabel, "Tooltip of GenericTile is identical with ARIA-label");
+		assert.equal(sGenericTileTooltip, null, "Tooltip of GenericTile is consistent");
+		assert.equal(sGenericTileAriaLabel, sAriaLabel, "Tooltip of GenericTile is identical with ARIA-label");
 	});
 
-	QUnit.test("GenericTile with an explicite tooltip", function(assert) {
+	QUnit.test("GenericTile with an explicit tooltip set by user", function(assert) {
 		//Arrange
 		this.oGenericTile.setTooltip("tooltip");
 		sap.ui.getCore().applyChanges();
@@ -653,11 +649,11 @@
 		var sGenericTileTooltip = jQuery.sap.byId("generic-tile")[0].getAttribute("title");
 		var sGenericTileAriaLabel = jQuery.sap.byId("generic-tile")[0].getAttribute("aria-label");
 		//Assert
-		assert.equal(sGenericTileTooltip, "tooltip", "Explicite tooltip of GenericTile is consistent");
-		assert.equal(sGenericTileAriaLabel, sGenericTileTooltip, "Explicite tooltip of GenericTile is identical with ARIA-label");
+		assert.equal(sGenericTileTooltip, "tooltip", "Explicit tooltip of GenericTile is consistent");
+		assert.equal(sGenericTileAriaLabel, sGenericTileTooltip, "Explicit tooltip of GenericTile is identical with ARIA-label");
 	});
 
-	QUnit.test("GenericTile without tooltip", function(assert) {
+	QUnit.test("GenericTile with space tooltip set by user", function(assert) {
 		//Arrange
 		this.oGenericTile.setTooltip(" ");
 		sap.ui.getCore().applyChanges();
@@ -668,6 +664,76 @@
 		//Assert
 		assert.equal(sGenericTileTooltip, null, "GenericTile rendered without tooltip");
 		assert.equal(sGenericTileAriaLabel, sConsistentTooltip, "GenericTile has correct ARIA-label");
+	});
+
+	QUnit.test("Tooltip for GenericTile with short header text", function(assert) {
+		//Arrange
+		var $Tile = this.oGenericTile.$();
+		$Tile.trigger("mouseenter");
+		sap.ui.getCore().applyChanges();
+		//Act
+		var sGenericTileTooltip = jQuery.sap.byId("generic-tile")[0].getAttribute("title");
+		//Assert
+		assert.equal(sGenericTileTooltip, null, "No truncated text, no tooltip");
+	});
+
+	QUnit.test("Tooltip set by user for GenericTile with short header text", function(assert) {
+		//Arrange
+		var $Tile = this.oGenericTile.$();
+		this.oGenericTile.setTooltip("tooltip");
+		$Tile.trigger("mouseenter");
+		sap.ui.getCore().applyChanges();
+		//Act
+		sGenericTileTooltip = jQuery.sap.byId("generic-tile")[0].getAttribute("title");
+		//Assert
+		assert.equal(sGenericTileTooltip, "tooltip", "Explicit tooltip set by user is applied");
+	});
+
+	QUnit.test("Tooltip for GenericTile with long(truncated) header text", function(assert) {
+		//Arrange
+		var $Tile = this.oGenericTile.$();
+		this.oGenericTile.setHeader("A long long long long long long long long long long");
+		$Tile.trigger("mouseenter");
+		sap.ui.getCore().applyChanges();
+		//Act
+		var sGenericTileTooltip = jQuery.sap.byId("generic-tile")[0].getAttribute("title");
+		//Assert
+		assert.equal(sGenericTileTooltip, "A long long long long long long long long long long", "Truncated text has tooltip");
+	});
+
+	QUnit.test("Tooltip set by user for GenericTile with long(truncated) header text", function(assert) {
+		//Arrange
+		var $Tile = this.oGenericTile.$();
+		this.oGenericTile.setHeader("A long long long long long long long long long long");
+		this.oGenericTile.setTooltip("tooltip");
+		$Tile.trigger("mouseenter");
+		sap.ui.getCore().applyChanges();
+		//Act
+		sGenericTileTooltip = jQuery.sap.byId("generic-tile")[0].getAttribute("title");
+		//Assert
+		assert.equal(this.oGenericTile.getHeader(), "A long long long long long long long long long long", "GenericTile has truncated header");
+		assert.equal(sGenericTileTooltip, "tooltip", "User tooltip overwrites the header text");
+	});
+
+	QUnit.test("Truncated header text tooltip is removed when mouse leaves the GenericTile", function(assert) {
+		//Arrange
+		var $Tile = this.oGenericTile.$();
+		this.oGenericTile.setHeader("A long long long long long long long long long long");
+		$Tile.trigger("mouseenter");
+		$Tile.trigger("mouseleave");
+		sap.ui.getCore().applyChanges();
+		//Act
+		sGenericTileTooltip = jQuery.sap.byId("generic-tile")[0].getAttribute("title");
+		//Assert
+		assert.equal(sGenericTileTooltip, null, "Truncated text tooltip is removed");
+	});
+
+	QUnit.test("Test to make sure get dom element with suffix 'inner' from sap.m.Text does not return null (for safety)", function(assert) {
+		//Arrange
+		var oDom = this.oGenericTile.getAggregation("_titleText").getDomRef("inner");
+		//Act
+		//Assert
+		assert.ok(oDom, "The span with suffix 'inner' exists");
 	});
 
 	QUnit.module("Tooltip handling on content elements", {
@@ -746,10 +812,8 @@
 		var $Tile = this.oGenericTile.$();
 		//Act
 		var sAriaLabelOfGenericTile = $Tile.attr("aria-label");
-		var sTitleOfGenericTile = $Tile.attr("title");
 		//Assert
 		assert.equal(sAriaLabelOfGenericTile, "header text of GenericTile\nsubheader text of GenericTile\n111\nNeutral","GenericTile has correct ARIA-label attribute before content changed");
-		assert.equal(sTitleOfGenericTile, "header text of GenericTile\nsubheader text of GenericTile\n111\nNeutral","GenericTile has correct title attribute before content changed");
 
 		//Arrange
 		this.oGenericTile.getTileContent()[0].getContent().setValue("999");
