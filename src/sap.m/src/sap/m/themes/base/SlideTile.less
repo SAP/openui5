@@ -67,6 +67,66 @@ html.sap-tablet .sapMGTHvrOutln:active {
 	border-radius: 50%;
 }
 
+.sapMST .sapMSTIconClickTapArea {
+	position: absolute;
+	right: 0.75rem;
+	top: 0.75rem;
+	height: 2rem;
+	width: 2rem;
+	z-index: 3;
+	background-color: transparent;
+	border-radius: 50%;
+	cursor: pointer;
+}
+
+.sapMST .sapMSTIconDisplayArea {
+	position: absolute;
+	right: 0.75rem;
+	top: 0.75rem;
+	height: 2rem;
+	width: 2rem;
+	z-index: 1;
+	opacity: 0.3;
+	overflow: hidden;
+	border-radius: 50%;
+}
+
+html.sap-desktop .sapMST .sapMSTIconClickTapArea:hover ~.sapMSTIconDisplayArea {
+	opacity: 0.6;
+}
+
+.sapMST.sapMSTIconPressed .sapMSTIconClickTapArea:hover ~.sapMSTIconDisplayArea {
+	opacity: 1.0;
+}
+
+.sapMST .sapMSTIconNestedArea {
+	position: absolute;
+	left: 34%;
+	top: 11%;
+	outline: none;
+}
+
+.sapMST.sapMSTPauseIcon .sapMSTIconNestedArea {
+	left: 38%;
+}
+
+.sapMSTIconNestedArea :active {
+	outline: none;
+}
+
+html.sap-phone .sapMST .sapMSTIconClickTapArea,
+html.sap-tablet .sapMST .sapMSTIconClickTapArea {
+	right: 0.25rem;
+	top: 0.25rem;
+	height: 3rem;
+	width: 3rem;
+}
+
+html.sap-desktop .sapMST:not(:hover) .sapMSTIconDisplayArea,
+html.sap-desktop .sapMST:not(:hover) .sapMSTBulleted {
+	visibility: hidden;
+}
+
 /* BREAKPOINT FOR SMALL PHONES */
 @media screen and (max-width: 374px) {
 	.sapMST.OneByOne {

@@ -23,12 +23,7 @@
 		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 	}
 
-	QUnit.module("Rendering - sap.m.SlideTile", {
-		beforeEach : function() {
-			this.fnPressHandler = function() {
-			};
-			this.fnSecondPressHandler = function() {
-			};
+	function fnCreateSlideTile() {
 			//Model
 			var oSlideTileData = {
 				tiles : [{
@@ -96,6 +91,15 @@
 
 			var oSlideTileModel = new sap.ui.model.json.JSONModel(oSlideTileData);
 			this.oSlideTile.setModel(oSlideTileModel);
+	};
+
+	QUnit.module("Rendering - sap.m.SlideTile", {
+		beforeEach : function() {
+			this.fnPressHandler = function() {
+			};
+			this.fnSecondPressHandler = function() {
+			};
+			fnCreateSlideTile.call(this);
 			this.oSlideTile.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 			sinon.spy(this, "fnPressHandler");
@@ -120,6 +124,7 @@
 	});
 
 	QUnit.test("Test ARIA label for single content", function(assert) {
+		//Arrange
 		//Act
 		this.oSlideTile.removeTile(this.oSlideTile.getTiles()[2].getId());
 		this.oSlideTile.removeTile(this.oSlideTile.getTiles()[1].getId());
@@ -130,11 +135,15 @@
 	});
 
 	QUnit.test("Test ARIA label for multiple content", function(assert) {
+		//Arrange
+		//Act
 		//Assert
 		assert.equal(this.oSlideTile.$().attr("aria-label"), "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2\nElement with multiple content.\nTo toggle sliding press space bar.\nTo navigate press enter", "SlideTile contains expected ARIA-label attribute");
 	});
 
 	QUnit.test("Test sliding active per default", function(assert) {
+		//Arrange
+		//Act
 		//Assert
 		assert.ok(!this.oSlideTile._bAnimationPause, "Animation is active");
 	});
@@ -192,11 +201,13 @@
 
 	QUnit.test("SlideTile mouse down handler test", function(assert) {
 		//Arrange
-		var oEvent = {preventDefault: function(){}};
+		var $Dom = this.oSlideTile.$().find(".sapMSTIconClickTapArea")[0];
+		var oEvent = jQuery.Event("mousedown");
+		oEvent.target = $Dom;
 		//Act
-		this.oSlideTile.onmousedown(oEvent);
+		this.oSlideTile.$().trigger(oEvent);
 		//Assert
-		assert.equal(this.oSlideTile.$().hasClass("sapMSTHvr"), true, "Class available");
+		assert.equal(this.oSlideTile.$().hasClass("sapMSTIconPressed"), true, "Class available");
 	});
 
 	QUnit.test("SlideTile mouse up handler and click delegation on GenericTile test", function(assert) {
@@ -207,7 +218,6 @@
 		//Act
 		this.oSlideTile.onmouseup(oEvent);
 		//Assert
-		assert.equal(this.oSlideTile.$().hasClass("sapMSTHvr"), false, "Class not available");
 		assert.ok(this.fnPressHandler.calledOnce, "Tap delegation on first GenericTile works");
 		assert.ok(this.fnSecondPressHandler.notCalled, "The second GenericTile press event is not triggered");
 	});
@@ -356,7 +366,36 @@
 	});
 
 	QUnit.test("Empty tile displaying", function(assert) {
-		assert.ok(jQuery.sap.byId("st-empty").length !== 0, "empty tile is shown");
+		assert.ok(jQuery.sap.byId("st-empty").length !== 0, "Empty tile is shown");
+	});
+
+	QUnit.module("Play/pause button", {
+		beforeEach : function() {
+			fnCreateSlideTile.call(this);
+			this.oSlideTile.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oSlideTile.destroy();
+			this.oSlideTile = null;
+		}
+	});
+
+	QUnit.test("The pause icon is set initially", function(assert) {
+		// Arrange
+		// Act
+		// Assert
+		assert.ok(this.oSlideTile.$().hasClass("sapMSTPauseIcon"), "The pause icon is set");
+	});
+
+	QUnit.test("The pause/play icons are switched after a click on the icon", function(assert) {
+		// Arrange
+		// Act
+		this.oSlideTile.$().find(".sapMSTIconClickTapArea").trigger("mousedown");
+		this.oSlideTile.$().trigger("mouseup");
+		// Assert
+		assert.ok(this.oSlideTile._bAnimationPause === true, "The animation is stopped");
+		assert.ok(!this.oSlideTile.$().hasClass("sapMSTPauseIcon"), "The play icon is set");
 	});
 </script>
 </head>

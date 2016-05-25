@@ -33,3 +33,11 @@ html.sap-desktop .sapMST:focus:not([tabindex]) {
 .sapMSTBulleted > span.sapMSTActive {
 	background-color: @sapHCStandardFG;
 }
+
+.sapMST .sapMSTIconDisplayArea {
+	background-color: darken(@sapUiHighlight, 18);
+}
+
+.sapMST .sapMSTIconClickTapArea:hover ~.sapMSTIconDisplayArea {
+	background-color: @sapUiHighlight;
+}

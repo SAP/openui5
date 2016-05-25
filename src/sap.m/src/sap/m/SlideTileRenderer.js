@@ -24,6 +24,9 @@ sap.ui.define([], function() {
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMST");
+		if (!this._bAnimationPause) {
+			oRm.addClass("sapMSTPauseIcon");
+		}
 		oRm.writeClasses();
 		if (sTooltip) {
 			oRm.writeAttributeEscaped("title", sTooltip);
@@ -31,6 +34,7 @@ sap.ui.define([], function() {
 		oRm.writeAttribute("tabindex", "0");
 		oRm.writeAttribute("role", "presentation");
 		oRm.write(">");
+		this._renderPausePlayIcon(oRm, oControl);
 		iLength = oControl.getTiles().length;
 		if (iLength > 1) {
 			this._renderTilesIndicator(oRm, oControl);
@@ -69,6 +73,28 @@ sap.ui.define([], function() {
 		}
 		oRm.write("</div>");
 	};
+
+	SlideTileRenderer._renderPausePlayIcon = function(oRm, oControl) {
+		if (oControl.getTiles().length > 1) {
+			oRm.write("<div");
+			oRm.addClass("sapMSTIconClickTapArea");
+			oRm.writeClasses();
+			oRm.write(">");
+			oRm.write("</div>");
+			oRm.write("<div");
+			oRm.addClass("sapMSTIconDisplayArea");
+			oRm.writeClasses();
+			oRm.write(">");
+			oRm.write("<div");
+			oRm.addClass("sapMSTIconNestedArea");
+			oRm.writeClasses();
+			oRm.write(">");
+			oRm.renderControl(oControl.getAggregation("_pausePlayIcon"));
+			oRm.write("</div>");
+			oRm.write("</div>");
+		}
+	};
+
 
 	return SlideTileRenderer;
 

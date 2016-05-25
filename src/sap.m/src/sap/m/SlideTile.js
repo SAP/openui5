@@ -39,7 +39,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 			/**
 			 * The set of Generic Tiles to be shown in the control.
 			 */
-			"tiles" : {type : "sap.m.GenericTile", multiple : true, singularName : "tile"}
+			"tiles" : {type : "sap.m.GenericTile", multiple : true, singularName : "tile"},
+			/**
+			 * The pause/play icon that is being used to display the pause/play state of the control.
+			 */
+			"_pausePlayIcon" : {type : "sap.ui.core.Icon", multiple : false, visibility: "hidden"}
 		}
 	}});
 
@@ -49,6 +53,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	 */
 	SlideTile.prototype.init = function() {
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this.setAggregation("_pausePlayIcon", new sap.ui.core.Icon({
+			id: this.getId() + "-pause-play-icon",
+			src: "sap-icon://media-pause",
+			color: "#ffffff",
+			size: "1.3rem",
+			noTabStop: true
+		}), true);
 	};
 
 	/**
@@ -66,9 +77,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	SlideTile.prototype.onAfterRendering = function() {
 		var cTiles = this.getTiles().length;
 		this._removeGTFocus();
-		this._bAnimationPause = false;
 		this._iCurrAnimationTime = 0;
-
+		this._bAnimationPause = false;
 		this._scrollToNextTile();
 		if (cTiles > 1) {
 			this._startAnimation();
@@ -100,7 +110,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	 * @param {sap.ui.base.Event} oEvent which was fired
 	 */
 	SlideTile.prototype.ontouchstart = function(oEvent) {
-		this.addStyleClass("sapMSTHvr");
+		// hover of SlideTile should not be triggered when user only touch the Play/Pause button on mobile devices
+		if (jQuery(oEvent.target).hasClass("sapMSTIconClickTapArea")) {
+			this.addStyleClass("sapMSTIconPressed");
+		} else {
+			this.addStyleClass("sapMSTHvr");
+		}
 	};
 
 	/**
@@ -118,7 +133,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	 * @param {sap.ui.base.Event} oEvent which was fired
 	 */
 	SlideTile.prototype.ontouchcancel = function(oEvent) {
-		this.removeStyleClass("sapMSTHvr");
+		if (this.hasStyleClass("sapMSTIconPressed")) {
+			this.removeStyleClass("sapMSTIconPressed");
+		} else {
+			this.removeStyleClass("sapMSTHvr");
+		}
 	};
 
 	/**
@@ -161,8 +180,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	 * @param {sap.ui.base.Event} oEvent which was fired
 	 */
 	SlideTile.prototype.onmouseup = function(oEvent) {
-		this.removeStyleClass("sapMSTHvr");
-		if (sap.ui.Device.system.desktop) {
+		if (this.hasStyleClass("sapMSTIconPressed")) {
+			this._toggleAnimation();
+			this.removeStyleClass("sapMSTIconPressed");
+		} else if (sap.ui.Device.system.desktop) {
 			oEvent.preventDefault();
 			this.getTiles()[this._iCurrentTile].firePress();
 		}
@@ -174,7 +195,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	 * @param {sap.ui.base.Event} oEvent which was fired
 	 */
 	SlideTile.prototype.onmousedown = function(oEvent) {
-		this.addStyleClass("sapMSTHvr");
+		if (jQuery(oEvent.target).hasClass("sapMSTIconClickTapArea")) {
+			this.addStyleClass("sapMSTIconPressed");
+		}
 	};
 
 	/**
@@ -184,12 +207,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	 * @param {jQuery.Event} oEvent Event object
 	 */
 	SlideTile.prototype.onfocusout = function (oEvent) {
-		if (this.getTiles().length > 1) {
+		if (this.getTiles().length > 1 && !this._isFocusInsideST()) {
 			this._startAnimation();
+			this._updatePausePlayIcon();
 		}
 	};
 
 	/* --- Helpers --- */
+	/**
+	 * Checks if the focus is inside of SlideTile
+	 *
+	 * @private
+	 */
+	SlideTile.prototype._isFocusInsideST = function() {
+		return this.$()[0] === document.activeElement || this.$().find(document.activeElement).length;
+	};
+
 	/**
 	 * Removes the focus of tiles in SlideTile
 	 *
@@ -197,7 +230,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	 */
 	SlideTile.prototype._removeGTFocus = function() {
 		for (var i = 0; i < this.getTiles().length; i++) {
-			this.getTiles()[i].$().removeAttr('tabindex');
+			this.getTiles()[i].$().removeAttr("tabindex");
 		}
 	};
 
@@ -214,6 +247,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 				this._stopAnimation();
 			}
 		}
+		this._updatePausePlayIcon();
 	};
 
 	/**
@@ -421,6 +455,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 			} else {
 				$currentBullet.removeClass("sapMSTActive");
 			}
+		}
+	};
+
+	/**
+	 * Sets information about the animation state on the icon
+	 *
+	 * @private
+	 */
+	SlideTile.prototype._updatePausePlayIcon = function() {
+		if (this._bAnimationPause) {
+			this.getAggregation("_pausePlayIcon").setSrc("sap-icon://media-play");
+			this.$().removeClass("sapMSTPauseIcon");
+		} else {
+			this.getAggregation("_pausePlayIcon").setSrc("sap-icon://media-pause");
+			this.$().addClass("sapMSTPauseIcon");
 		}
 	};
 
