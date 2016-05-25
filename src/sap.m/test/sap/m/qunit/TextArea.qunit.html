@@ -114,39 +114,6 @@
 		sut.destroy();
 	});
 
-	test("Should Have/Fire LiveChange Event", function() {
-		expect(2);
-		var val = "test",
-			maxlen = 1,
-			sut = new sap.m.TextArea(),
-			event = $.Event("input"),
-			spy = this.spy(sut, "fireLiveChange");
-
-		// set listener and maxlength
-		sut.setMaxLength(maxlen);
-		sut.attachLiveChange(function(oEvent) {
-			strictEqual(oEvent.getParameter("newValue"), val.substring(0, maxlen), "TextArea input event is catched");
-		});
-		sut.placeAt("qunit-fixture");
-		core.applyChanges();
-		sut.focus();
-
-		// should have input event
-		var $textarea = $("textarea");
-
-		// trigger input event manually
-		$textarea.val(val);
-		$textarea.trigger(event);
-
-		// trigger input again
-		$textarea.val(val);
-		$textarea.trigger(event);
-		ok(spy.calledOnce, "Maxlength is reached should not fire liveChange event");
-
-		//Cleanup
-		sut.destroy();
-	});
-
 	test("Should react on touchstart/move for INSIDE_SCROLLABLE_WITHOUT_FOCUS behaviour", function() {
 		// turn on touch support during this test
 		this.stub(sap.ui.Device.support, "touch", true);
