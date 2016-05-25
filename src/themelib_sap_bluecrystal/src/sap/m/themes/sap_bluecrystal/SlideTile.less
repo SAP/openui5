@@ -38,3 +38,11 @@ html.sap-desktop .sapMST:focus .sapMSTFocusDiv:after {
 	background-color: @sapUiElement;
 	box-shadow: 0 0 0.25rem fade(@sapUiLightShadowTint, 30);
 }
+
+.sapMST .sapMSTIconDisplayArea {
+	background-color: darken(@sapUiHighlight, 18);
+}
+
+.sapMST.sapMSTIconPressed .sapMSTIconClickTapArea:hover ~.sapMSTIconDisplayArea {
+	background-color: @sapUiHighlight;
+}
