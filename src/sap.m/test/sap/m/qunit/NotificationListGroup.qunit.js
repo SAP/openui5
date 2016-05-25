@@ -161,7 +161,7 @@
         sap.ui.getCore().applyChanges();
 
         // act
-        this.NotificationListGroup._collapseButton.firePress();
+        this.NotificationListGroup.getAggregation('_collapseButton').firePress();
         sap.ui.getCore().applyChanges();
 
         // assert
@@ -359,7 +359,7 @@
         var fnEventSpy = sinon.spy(this.NotificationListGroup, 'fireClose');
 
         // act
-        this.NotificationListGroup._closeButton.firePress();
+        this.NotificationListGroup.getAggregation('_closeButton').firePress();
 
         // assert
         assert.strictEqual(fnEventSpy.callCount, 1, 'Pressing the close button should fire the  close event');

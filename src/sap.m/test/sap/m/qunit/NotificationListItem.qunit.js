@@ -533,7 +533,7 @@
 		assert.strictEqual(this.NotificationListItem.getTruncate(), true, 'Notification should be truncated.');
 
 		// act
-		this.NotificationListItem._collapseButton.firePress();
+		this.NotificationListItem.getAggregation('_collapseButton').firePress();
 		sap.ui.getCore().applyChanges();
 		this.clock.tick(500);
 
@@ -706,7 +706,7 @@
 		var fnEventSpy = sinon.spy(this.NotificationListItem, 'fireClose');
 
 		// act
-		this.NotificationListItem._closeButton.firePress();
+		this.NotificationListItem.getAggregation('_closeButton').firePress();
 
 		// assert
 		assert.strictEqual(fnEventSpy.callCount, 1, 'Pressing the close button should fire the  close event');
