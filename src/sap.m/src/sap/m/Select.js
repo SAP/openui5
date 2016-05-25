@@ -147,6 +147,17 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 					},
 
 					/**
+					 * Visualizes the validation state of the control, e.g. <code>Error</code>, <code>Warning</code>,
+					 * <code>Success</code>.
+					 * @since 1.40
+					 */
+					valueState: {
+						type: "sap.ui.core.ValueState",
+						group: "Appearance",
+						defaultValue: sap.ui.core.ValueState.None
+					},
+
+					/**
 					 * Indicates whether the text values of the <code>additionalText</code> property of a
 					 * {@link sap.ui.core.ListItem} are shown.
 					 * @since 1.40
@@ -1673,6 +1684,34 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			return oSelectClone;
 		};
 
+		Select.prototype.updateValueStateClasses = function(sValueState, sOldValueState) {
+			var $This = this.$(),
+				$Label = this.$("label"),
+				$Arrow = this.$("arrow"),
+				mValueState = sap.ui.core.ValueState,
+				CSS_CLASS = this.getRenderer().CSS_CLASS;
+
+			if (sOldValueState !== mValueState.None) {
+				$This.removeClass(CSS_CLASS + "State");
+				$This.removeClass(CSS_CLASS + sOldValueState);
+
+				$Label.removeClass(CSS_CLASS + "LabelState");
+				$Label.removeClass(CSS_CLASS + "Label" + sOldValueState);
+
+				$Arrow.removeClass(CSS_CLASS + "ArrowState");
+			}
+
+			if (sValueState !== mValueState.None) {
+				$This.addClass(CSS_CLASS + "State");
+				$This.addClass(CSS_CLASS + sValueState);
+
+				$Label.addClass(CSS_CLASS + "LabelState");
+				$Label.addClass(CSS_CLASS + "Label" + sValueState);
+
+				$Arrow.addClass(CSS_CLASS + "ArrowState");
+			}
+		};
+
 		/* ----------------------------------------------------------- */
 		/* public methods                                              */
 		/* ----------------------------------------------------------- */
@@ -1850,6 +1889,34 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			}
 
 			return this.setProperty("selectedKey", sKey);
+		};
+
+		Select.prototype.setValueState = function(sValueState) {
+			var sOldValueState = this.getValueState();
+
+			this.setProperty("valueState", sValueState, true);
+			sValueState = this.getValueState();
+
+			if (sValueState === sOldValueState) {
+				return this;
+			}
+
+			var oDomRef = this.getDomRefForValueState();
+
+			if (!oDomRef) {
+				return this;
+			}
+
+			var mValueState = sap.ui.core.ValueState;
+
+			if (sValueState === mValueState.Error) {
+				oDomRef.setAttribute("aria-invalid", true);
+			} else {
+				oDomRef.removeAttribute("aria-invalid");
+			}
+
+			this.updateValueStateClasses(sValueState, sOldValueState);
+			return this;
 		};
 
 		/**
@@ -2031,6 +2098,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			}
 
 			return this;
+		};
+
+		/*
+		 * Gets the DOM reference for the value state.
+		 *
+		 * @protected
+		 * @return {object}
+		 */
+		Select.prototype.getDomRefForValueState = function() {
+			return this.getDomRef();
 		};
 
 		/**
