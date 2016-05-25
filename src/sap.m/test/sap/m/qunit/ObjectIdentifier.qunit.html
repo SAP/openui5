@@ -496,7 +496,7 @@
 
 				// act
 			var fnFireSelectSpy = this.spy(oObjectIdentifier, "fireTitlePress");
-			sap.ui.test.qunit.triggerKeydown(oObjectIdentifier.$('title').children(0), oOptions.keyCode);
+			sap.ui.test.qunit.triggerKeydown(oObjectIdentifier.$('title').children()[0], oOptions.keyCode);
 			this.clock.tick(1);
 
 			// assertions
@@ -534,8 +534,8 @@
 		// act
 		var fnFireSelectSpy1 = this.spy(oObjectIdentifier1, "fireTitlePress");
 		var fnFireSelectSpy2 = this.spy(oObjectIdentifier2, "fireTitlePress");
-		sap.ui.test.qunit.triggerKeydown(oObjectIdentifier1.$('title').children(0), jQuery.sap.KeyCodes.ENTER);
-		sap.ui.test.qunit.triggerKeydown(oObjectIdentifier2.$('title').children(0), jQuery.sap.KeyCodes.ENTER);
+		sap.ui.test.qunit.triggerKeydown(oObjectIdentifier1.$('title').children()[0], jQuery.sap.KeyCodes.ENTER);
+		sap.ui.test.qunit.triggerKeydown(oObjectIdentifier2.$('title').children()[0], jQuery.sap.KeyCodes.ENTER);
 		this.clock.tick(1);
 
 		// assertions
