@@ -191,15 +191,12 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 			var V2ODataTreeBinding = sap.ui.require("sap/ui/model/odata/v2/ODataTreeBinding");
 			var ClientTreeBinding = sap.ui.require("sap/ui/model/ClientTreeBinding");
 			if (ODataTreeBinding && oBinding instanceof ODataTreeBinding) {
-
 				// use legacy tree binding adapter
 				TreeBindingCompatibilityAdapter(oBinding, this);
 			} else if (V2ODataTreeBinding && oBinding instanceof V2ODataTreeBinding) {
-				//ODataTreeBindingAdapter.apply(oBinding);
-				oBinding.applyAdapter();
+				oBinding.applyAdapterInterface();
 			} else if (ClientTreeBinding && oBinding instanceof ClientTreeBinding) {
 				ClientTreeBindingAdapter.apply(oBinding);
-				//TreeBindingCompatibilityAdapter(oBinding, this);
 			} else {
 				jQuery.sap.log.error("Binding not supported by sap.ui.table.TreeTable");
 			}
