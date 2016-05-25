@@ -8,7 +8,9 @@ sap.ui.define([
 	var oMessageTemplate = new MessagePopoverItem({
 		type: '{type}',
 		title: '{title}',
-		description: '{description}'
+		description: '{description}',
+		subtitle: '{subtitle}',
+		counter: '{counter}'
 	});
 
 	var oMessagePopover1 = new MessagePopover({
@@ -40,7 +42,9 @@ sap.ui.define([
 			var aMockMessages = [{
 				type: 'Error',
 				title: '1 Error message',
-				description: 'First Error message description'
+				description: 'First Error message description',
+				subtitle: 'Example of subtitle',
+				counter: 1
 			}, {
 				type: 'Warning',
 				title: '1 Warning without description',
@@ -48,15 +52,19 @@ sap.ui.define([
 			}, {
 				type: 'Success',
 				title: '1 Success message',
-				description: 'First Success message description'
+				description: 'First Success message description',
+				subtitle: 'Example of subtitle',
+				counter: 1
 			}, {
 				type: 'Error',
 				title: '2 Error message',
-				description: 'Second Error message description'
+				description: 'Second Error message description',
+				subtitle: 'Example of subtitle'
 			}, {
 				type: 'Information',
 				title: '1 Information message',
-				description: 'First Information message description'
+				description: 'First Information message description',
+				subtitle: 'Example of subtitle'
 			}];
 
 			var oModel = new JSONModel();
