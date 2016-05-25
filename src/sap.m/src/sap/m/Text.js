@@ -14,7 +14,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The Text control can be used for embedding longer text paragraphs, that need text wrapping, into your application.
+	 * The <code>Text</code> control can be used for embedding longer text paragraphs, that need text wrapping, into your app.
+	 * If the configured text value contains HTML code or script tags, those will be escaped.<br>
+	 * <b>Note: </b>Line breaks (\r\n, \n\r, \r, \n) will always be visualized except when the <code>wrapping</code> property is set to <code>false</code>.
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.IShrinkable
 	 *
