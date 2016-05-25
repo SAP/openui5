@@ -159,7 +159,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 				bRenderCell = true,
 				oCell = aCells[oColumn.getInitialOrder()];
 
-			if (!oCell || !oColumn.getVisible() || oColumn.isNeverVisible(true) || oColumn.isPopin()) {
+			if (!oCell || !oColumn.getVisible() || oColumn.isPopin()) {
 				// update the visible index of the column
 				oColumn.setIndex(-1);
 				return;
