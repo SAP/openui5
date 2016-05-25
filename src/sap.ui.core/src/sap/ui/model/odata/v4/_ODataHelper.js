@@ -191,7 +191,10 @@ sap.ui.define([
 		 * the given context's canonical path is being computed.
 		 * If there is no cache for the canonical path in the binding's
 		 * <code>mCacheByContext</code>, creates the cache by calling the given function
-		 * <code>fnCreateCache</code> with the canonical path.
+		 * <code>fnCreateCache</code> with the canonical path and resolves the proxy's promise with
+		 * this cache. If the binding's cache is not the cache proxy, the promise resolves with
+		 * the binding's cache in order to ensure a cache proxy associated with a binding is only
+		 * replaced by the corresponding cache.
 		 * If there is already a cache for the binding, <code>deregisterChange()</code> is called
 		 * to deregister all listening property bindings at the cache, because they are not able to
 		 * deregister themselves afterwards.
@@ -210,6 +213,7 @@ sap.ui.define([
 		 */
 		createCacheProxy : function (oBinding, oContext, fnCreateCache) {
 			var oCache,
+				oCacheProxy,
 				oPromise;
 
 			if (oBinding.oCache) {
@@ -217,12 +221,15 @@ sap.ui.define([
 			}
 			// use requestCanonicalPath, not fetchCanonicalPath to ensure consistent async behavior
 			oPromise = oContext.requestCanonicalPath().then(function (sCanonicalPath) {
+				if (oBinding.oCache !== oCacheProxy) {
+					return oBinding.oCache;
+				}
 				oBinding.mCacheByContext = oBinding.mCacheByContext || {};
 				oCache = oBinding.mCacheByContext[sCanonicalPath] =
 					oBinding.mCacheByContext[sCanonicalPath] || fnCreateCache(sCanonicalPath);
 				return oCache;
 			});
-			return {
+			oCacheProxy = {
 				deregisterChange : function () {},
 				post : function () {
 					throw new Error("POST request not allowed");
@@ -245,6 +252,7 @@ sap.ui.define([
 					throw new Error("PATCH request not allowed");
 				}
 			};
+			return oCacheProxy;
 		},
 
 		/**
