@@ -12,7 +12,11 @@ sap.ui.define([
 	return Controller.extend("sap.ui.demokit.explored.view.entity", {
 
 		descriptionText: function (text) {
-			return "<span>" + text + "</span>";
+			var html;
+			if (text) {
+				html = "<span>" + text + "</span>";
+			}
+			return html;
 		},
 
 		// ====== event handling ====================================================================
