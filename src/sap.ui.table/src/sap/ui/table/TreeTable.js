@@ -189,8 +189,7 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 				// use legacy tree binding adapter
 				TreeBindingCompatibilityAdapter(oBinding, this);
 			} else if (sap.ui.model.odata.v2.ODataTreeBinding && oBinding instanceof sap.ui.model.odata.v2.ODataTreeBinding) {
-				//ODataTreeBindingAdapter.apply(oBinding);
-				oBinding.applyAdapter();
+				oBinding.applyAdapterInterface();
 			} else if (sap.ui.model.ClientTreeBinding && oBinding instanceof sap.ui.model.ClientTreeBinding) {
 				ClientTreeBindingAdapter.apply(oBinding);
 				//TreeBindingCompatibilityAdapter(oBinding, this);
