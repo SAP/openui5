@@ -1710,12 +1710,10 @@ sap.ui.define(['jquery.sap.global',
 			this.bHasTreeAnnotations = this._hasTreeAnnotations();
 			this.oEntityType = this._getEntityType();
 
-			if (this._bShouldBeAdapted) {
-				this._applyAdapter();
-			}
-
 			// build up the $select, based on the given select-properties and the known/necessary annotated properties
 			this._processSelectParameters();
+
+			this._applyAdapter();
 
 			this._fireRefresh({reason: ChangeReason.Refresh});
 		}
@@ -1727,12 +1725,7 @@ sap.ui.define(['jquery.sap.global',
 	 * The real adapter will be applied after the initialize.
 	 * @private
 	 */
-	ODataTreeBinding.prototype.applyAdapter = function () {
-		if (this.oModel.oMetadata && this.oModel.oMetadata.isLoaded() && !this.bInitial) {
-			this._applyAdapter();
-			return this;
-		}
-
+	ODataTreeBinding.prototype.applyAdapterInterface = function () {
 		/**
 		 * Data Interface.
 		 * Documentation, see the corresponding Adapter classes.
@@ -1741,8 +1734,8 @@ sap.ui.define(['jquery.sap.global',
 			return [];
 		};
 		this.getNodes = this.getNodes || function () {
-				return [];
-			};
+			return [];
+		};
 		this.getLength = this.getLength || function () {
 			return 0;
 		};
@@ -1756,24 +1749,28 @@ sap.ui.define(['jquery.sap.global',
 		 * Event Interface.
 		 * Documentation, see the corresponding Adapter classes.
 		 */
-		this.attachSelectionChanged = function(oData, fnFunction, oListener) {
+		this.attachSelectionChanged = this.attachSelectionChanged || function(oData, fnFunction, oListener) {
 			this.attachEvent("selectionChanged", oData, fnFunction, oListener);
 			return this;
 		};
-		this.detachSelectionChanged = function(fnFunction, oListener) {
+		this.detachSelectionChanged = this.detachSelectionChanged || function(fnFunction, oListener) {
 			this.detachEvent("selectionChanged", fnFunction, oListener);
 			return this;
 		};
-		this.fireSelectionChanged = function(mArguments) {
+		this.fireSelectionChanged = this.fireSelectionChanged || function(mArguments) {
 			this.fireEvent("selectionChanged", mArguments);
 			return this;
 		};
 
-		this._bShouldBeAdapted = true;
-
 		return this;
 	};
 
+	/**
+	 * Applies a TreeBindingAdapter, depending on the metadata.
+	 * Either a hierarchical paging adapter (nav-props & annotations) or a
+	 * flat paging adapter (magnitude) is applied.
+	 * @private
+	 */
 	ODataTreeBinding.prototype._applyAdapter = function () {
 		var sMagnitudeAnnotation = "hierarchy-node-descendant-count-for";
 
@@ -1814,14 +1811,23 @@ sap.ui.define(['jquery.sap.global',
 					this.mParameters.select += ("," + this.oTreeProperties[sMagnitudeAnnotation]);
 					this.sCustomParams = this.oModel.createCustomParams(this.mParameters);
 				}
+				// apply flat paging adapter
 				jQuery.sap.require("sap.ui.model.odata.ODataTreeBindingFlat");
 				var ODataTreeBindingFlat = sap.ui.model.odata.ODataTreeBindingFlat;
 				ODataTreeBindingFlat.apply(this);
 			} else {
+				// apply hierarchical paging adapter
 				jQuery.sap.require("sap.ui.model.odata.ODataTreeBindingAdapter");
 				var ODataTreeBindingAdapter = sap.ui.model.odata.ODataTreeBindingAdapter;
 				ODataTreeBindingAdapter.apply(this);
 			}
+		} else if (this.oNavigationPaths) {
+			// apply hierarchical paging adapter
+			jQuery.sap.require("sap.ui.model.odata.ODataTreeBindingAdapter");
+			var ODataTreeBindingAdapter = sap.ui.model.odata.ODataTreeBindingAdapter;
+			ODataTreeBindingAdapter.apply(this);
+		} else {
+			jQuery.sap.log.error("Neither hierarchy annotations, nor navigation properties are specified to build the tree.", this);
 		}
 	};
 
@@ -1868,14 +1874,6 @@ sap.ui.define(['jquery.sap.global',
 			}
 
 			this.sCustomParams = this.oModel.createCustomParams(this.mParameters);
-		}
-
-		// Apply Adapter for Navigation Properties only if no annotations were found.
-		if (this._bShouldBeAdapted && this.oNavigationPaths && !this.bHasTreeAnnotations) {
-			// classic TreeBindingAdapter, no accelerated auto-expand
-			jQuery.sap.require("sap.ui.model.odata.ODataTreeBindingAdapter");
-			var ODataTreeBindingAdapter = sap.ui.model.odata.ODataTreeBindingAdapter;
-			ODataTreeBindingAdapter.apply(this);
 		}
 
 		//after parameter processing:
