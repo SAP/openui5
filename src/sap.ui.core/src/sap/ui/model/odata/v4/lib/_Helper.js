@@ -17,6 +17,36 @@ sap.ui.define([
 
 	Helper = {
 		/**
+		 * Builds a relative path from the given arguments. Iterates over the arguments and appends
+		 * them to the path if defined and non-empty. The arguments are expected to be strings or
+		 * integers, but this is not checked.
+		 *
+		 * Examples:
+		 * buildPath() --> ""
+		 * buildPath("base", "relative") --> "base/relative"
+		 * buildPath("base", "") --> "base"
+		 * buildPath("", "relative") --> "relative"
+		 * buildPath("base", undefined, "relative") --> "base/relative"
+		 * buildPath("base", 42, "relative") --> "base/42/relative"
+		 * buildPath("base", 0, "relative") --> "base/0/relative"
+		 *
+		 * @returns {string} a composite path built from all arguments
+		 */
+		buildPath : function () {
+			var i,
+				aPath = [],
+				sSegment;
+
+			for (i = 0; i < arguments.length; i++) {
+				sSegment = arguments[i];
+				if (sSegment || sSegment === 0) {
+					aPath.push(sSegment);
+				}
+			}
+			return aPath.join("/");
+		},
+
+		/**
 		 * Builds a query string from the given parameter map. Takes care of encoding, but ensures
 		 * that the characters "$", "(", ")", ";" and "=" are not encoded, so that OData queries
 		 * remain readable.

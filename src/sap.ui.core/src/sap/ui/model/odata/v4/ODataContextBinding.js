@@ -407,7 +407,7 @@ sap.ui.define([
 		if (this.oCache) {
 			this.oCache.deregisterChange(sPath, oListener);
 		} else if (this.oContext) {
-			this.oContext.deregisterChange((this.sPath ? this.sPath + "/" : "") + sPath, oListener);
+			this.oContext.deregisterChange(_Helper.buildPath(this.sPath, sPath), oListener);
 		}
 	};
 
@@ -553,7 +553,7 @@ sap.ui.define([
 			});
 		}
 		if (this.oContext) {
-			return this.oContext.fetchValue(this.sPath + (sPath ? "/" + sPath : ""), oListener);
+			return this.oContext.fetchValue(_Helper.buildPath(this.sPath, sPath), oListener);
 		}
 		return _SyncPromise.resolve();
 	};
@@ -599,8 +599,7 @@ sap.ui.define([
 				} else if (this.mQueryOptions) {
 					this.oCache = _ODataHelper.createCacheProxy(this, oContext, function (sPath) {
 						return _Cache.createSingle(that.oModel.oRequestor,
-							sPath.slice(1) + (that.sPath ? "/" : "") + that.sPath,
-							that.mQueryOptions);
+							_Helper.buildPath(sPath.slice(1), that.sPath), that.mQueryOptions);
 					});
 					this.oCache.promise.then(function (oCache) {
 						that.oCache = oCache;
@@ -702,7 +701,7 @@ sap.ui.define([
 		}
 
 		return this.oContext.updateValue(sGroupId, sPropertyName, vValue, sEditUrl,
-			this.sPath + (sPath ? "/" + sPath : ""));
+			_Helper.buildPath(this.sPath, sPath));
 	};
 
 	return ODataContextBinding;

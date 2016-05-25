@@ -120,39 +120,38 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	["TEAM_2_MANAGER", ""].forEach(function (sPath) {
-		QUnit.test("setContext, relative path '" + sPath + "' with parameters", function (assert) {
-			var oBinding = this.oModel.bindContext(sPath, null, {$select : "Name"}),
-				oCache = {},
-				sCanonicalPath = "/TEAMS(Team_Id='4711')",
-				oCacheProxy = {
-					promise : Promise.resolve(oCache)
-				},
-				oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS", 1);
+	QUnit.test("setContext, relative path with parameters", function (assert) {
+		var oBinding = this.oModel.bindContext("TEAM_2_MANAGER", null, {$select : "Name"}),
+			oCache = {},
+			sCanonicalPath = "/TEAMS(Team_Id='4711')",
+			oCacheProxy = {
+				promise : Promise.resolve(oCache)
+			},
+			oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS", 1);
 
-			this.mock(_Cache).expects("createSingle")
-				.withExactArgs(sinon.match.same(this.oModel.oRequestor),
-					sCanonicalPath.slice(1) + (sPath ? "/" : "") + sPath, {
-						$select: ["Name"],
-						"sap-client" : "111"
-					})
-				.returns(oCache);
-			this.stub(_ODataHelper, "createCacheProxy",
-				function (oBinding0, oContext0, fnCreateCache) {
-					assert.strictEqual(oBinding0, oBinding);
-					assert.strictEqual(oContext0, oContext);
-					assert.strictEqual(fnCreateCache(sCanonicalPath), oCache);
-					return oCacheProxy;
-				});
-
-			//code under test
-			oBinding.setContext(oContext);
-
-			assert.strictEqual(oBinding.oCache, oCacheProxy);
-
-			return oCacheProxy.promise.then(function (oCache) {
-				assert.strictEqual(oBinding.oCache, oCache);
+		this.mock(_Helper).expects("buildPath")
+			.withExactArgs(sCanonicalPath.slice(1), "TEAM_2_MANAGER").returns("~");
+		this.mock(_Cache).expects("createSingle")
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "~", {
+					$select: ["Name"],
+					"sap-client" : "111"
+				})
+			.returns(oCache);
+		this.stub(_ODataHelper, "createCacheProxy",
+			function (oBinding0, oContext0, fnCreateCache) {
+				assert.strictEqual(oBinding0, oBinding);
+				assert.strictEqual(oContext0, oContext);
+				assert.strictEqual(fnCreateCache(sCanonicalPath), oCache);
+				return oCacheProxy;
 			});
+
+		//code under test
+		oBinding.setContext(oContext);
+
+		assert.strictEqual(oBinding.oCache, oCacheProxy);
+
+		return oCacheProxy.promise.then(function (oCache) {
+			assert.strictEqual(oBinding.oCache, oCache);
 		});
 	});
 
@@ -492,6 +491,7 @@ sap.ui.require([
 		var oBinding = this.oModel.bindContext("/absolute"),
 			oContext,
 			oContextMock,
+			oHelperMock = this.mock(_Helper),
 			oNestedBinding,
 			oListener = {},
 			oPromise = {};
@@ -502,15 +502,11 @@ sap.ui.require([
 		oContextMock = this.mock(oContext);
 		oNestedBinding = this.oModel.bindContext("navigation", oContext);
 
-		oContextMock.expects("fetchValue").withExactArgs("navigation/bar", oListener)
+		oHelperMock.expects("buildPath").withExactArgs("navigation", "bar").returns("~bar~");
+		oContextMock.expects("fetchValue").withExactArgs("~bar~", oListener)
 			.returns(oPromise);
 
 		assert.strictEqual(oNestedBinding.fetchValue("bar", oListener), oPromise);
-
-		oContextMock.expects("fetchValue").withExactArgs("navigation", oListener)
-			.returns(oPromise);
-
-		assert.strictEqual(oNestedBinding.fetchValue("", oListener), oPromise);
 
 		assert.strictEqual(this.oModel.bindContext("navigation2").fetchValue("").getResult(),
 			undefined,
@@ -541,34 +537,33 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[undefined, "BP_2_XYZ/42"].forEach(function (sPath) {
-		QUnit.test("updateValue: relative binding, path " + sPath, function (assert) {
-			var oBinding,
-				oContext = {
-					getPath : function () {},
-					updateValue : function () {}
-				},
-				oContextMock = this.mock(oContext),
-				oResult = {};
+	QUnit.test("updateValue: relative binding", function (assert) {
+		var oBinding,
+			oContext = {
+				getPath : function () {},
+				updateValue : function () {}
+			},
+			oContextMock = this.mock(oContext),
+			oResult = {};
 
-			oContextMock.expects("getPath").returns("/ProductList/0");
-			oContextMock.expects("updateValue")
-				.withExactArgs("up", "bar", Math.PI, "edit('URL')",
-					sPath ? "PRODUCT_2_BP/" + sPath : "PRODUCT_2_BP")
-				.returns(Promise.resolve(oResult));
-			this.mock(this.oModel).expects("addedRequestToGroup").never();
+		oContextMock.expects("getPath").returns("/ProductList/0"); // called in bindContext
+		this.mock(_Helper).expects("buildPath").withExactArgs("PRODUCT_2_BP", "BP_2_XYZ/42")
+			.returns("~BP_2_XYZ/42~");
+		oContextMock.expects("updateValue")
+			.withExactArgs("up", "bar", Math.PI, "edit('URL')", "~BP_2_XYZ/42~")
+			.returns(Promise.resolve(oResult));
+		this.mock(this.oModel).expects("addedRequestToGroup").never();
 
-			oBinding = this.oModel.bindContext("PRODUCT_2_BP", oContext);
+		oBinding = this.oModel.bindContext("PRODUCT_2_BP", oContext);
 
-			this.mock(oBinding).expects("fireEvent").never();
-			this.mock(oBinding).expects("getGroupId").never();
+		this.mock(oBinding).expects("fireEvent").never();
+		this.mock(oBinding).expects("getGroupId").never();
 
-			// code under test
-			return oBinding.updateValue("up", "bar", Math.PI, "edit('URL')", sPath)
-				.then(function (oResult0) {
-					assert.strictEqual(oResult0, oResult);
-				});
-		});
+		// code under test
+		return oBinding.updateValue("up", "bar", Math.PI, "edit('URL')", "BP_2_XYZ/42")
+			.then(function (oResult0) {
+				assert.strictEqual(oResult0, oResult);
+			});
 	});
 
 	//*********************************************************************************************
@@ -583,26 +578,22 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[
-		{bindingPath : "PRODUCT_2_BP", deregisterPath : "PRODUCT_2_BP/foo"},
-		{bindingPath : "", deregisterPath : "foo"}
-	].forEach(function (oFixture) {
-		QUnit.test("deregisterChange: relative binding resolved: " + oFixture.bindingPath,
-			function (assert) {
-				var oContext = {
-						deregisterChange : function () {},
-						getPath : function () {
-							return "/Products('1')";
-						}
-					},
-					oBinding = this.oModel.bindContext(oFixture.bindingPath, oContext),
-					oListener = {};
+	QUnit.test("deregisterChange: relative binding resolved", function (assert) {
+		var oContext = {
+				deregisterChange : function () {},
+				getPath : function () {
+					return "/Products('1')";
+				}
+			},
+			oBinding = this.oModel.bindContext("PRODUCT_2_BP", oContext),
+			oListener = {};
 
-				this.mock(oContext).expects("deregisterChange")
-					.withExactArgs(oFixture.deregisterPath, sinon.match.same(oListener));
+		this.mock(_Helper).expects("buildPath").withExactArgs("PRODUCT_2_BP", "foo")
+			.returns("~foo~");
+		this.mock(oContext).expects("deregisterChange")
+			.withExactArgs("~foo~", sinon.match.same(oListener));
 
-				oBinding.deregisterChange("foo", oListener);
-			});
+		oBinding.deregisterChange("foo", oListener);
 	});
 
 	//*********************************************************************************************

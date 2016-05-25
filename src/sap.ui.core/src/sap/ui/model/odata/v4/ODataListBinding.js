@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/ui/model/ListBinding",
 	"./_ODataHelper",
 	"./Context",
-	"./lib/_Cache"
-], function (jQuery, Binding, ChangeReason, ListBinding, _ODataHelper, Context, _Cache) {
+	"./lib/_Cache",
+	"./lib/_Helper"
+], function (jQuery, Binding, ChangeReason, ListBinding, _ODataHelper, Context, _Cache, _Helper) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataListBinding",
@@ -197,7 +198,7 @@ sap.ui.define([
 		if (this.oCache) {
 			this.oCache.deregisterChange(iIndex, sPath, oListener);
 		} else if (this.oContext) {
-			this.oContext.deregisterChange(this.sPath + "/" + iIndex + "/" + sPath, oListener);
+			this.oContext.deregisterChange(_Helper.buildPath(this.sPath, iIndex, sPath), oListener);
 		}
 	};
 
@@ -556,8 +557,7 @@ sap.ui.define([
 	ODataListBinding.prototype.fetchValue = function (sPath, oListener, iIndex) {
 		return this.oCache
 			? this.oCache.read(iIndex, /*iLength*/1, undefined, sPath, undefined, oListener)
-			: this.oContext.fetchValue(this.sPath + "/" + iIndex + (sPath ? "/" + sPath : ""),
-				oListener);
+			: this.oContext.fetchValue(_Helper.buildPath(this.sPath, iIndex, sPath), oListener);
 	};
 
 	/**
@@ -593,7 +593,7 @@ sap.ui.define([
 				if (this.mQueryOptions && oContext) {
 					this.oCache = _ODataHelper.createCacheProxy(this, oContext, function (sPath) {
 						return _Cache.create(that.oModel.oRequestor,
-							sPath.slice(1) + "/" + that.sPath,
+							_Helper.buildPath(sPath.slice(1), that.sPath),
 							that.mQueryOptions);
 					});
 					this.oCache.promise.then(function (oCache) {
@@ -683,7 +683,7 @@ sap.ui.define([
 		}
 
 		return this.oContext.updateValue(sGroupId, sPropertyName, vValue, sEditUrl,
-			this.sPath + "/" + sPath);
+			_Helper.buildPath(this.sPath, sPath));
 	};
 
 	return ODataListBinding;

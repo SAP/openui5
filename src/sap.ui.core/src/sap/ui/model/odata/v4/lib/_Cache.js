@@ -139,21 +139,19 @@ sap.ui.define([
 	 *   The new value
 	 */
 	function fireChange(mChangeListeners, sPath, vOldValue, vNewValue) {
-		var aListeners, sPathPrefix, sProperty;
+		var aListeners, sProperty;
 
 		if (vNewValue && typeof vNewValue === "object") {
-			sPathPrefix = sPath ? sPath + "/" : "";
 			for (sProperty in vNewValue) {
-				fireChange(mChangeListeners, sPathPrefix + sProperty,
+				fireChange(mChangeListeners, _Helper.buildPath(sPath, sProperty),
 					vOldValue && vOldValue[sProperty], vNewValue[sProperty]);
 			}
 		} else if (vOldValue && typeof vOldValue === "object") {
 			// vNewValue should be an object, too, but it isn't. So we can safely assume that all
 			// properties below are nonexistent now. Fire change events for all existing properties
 			// in the old value setting them to undefined.
-			sPathPrefix = sPath ? sPath + "/" : "";
 			for (sProperty in vOldValue) {
-				fireChange(mChangeListeners, sPathPrefix + sProperty,
+				fireChange(mChangeListeners, _Helper.buildPath(sPath, sProperty),
 					vOldValue[sProperty], undefined);
 			}
 		} else {
@@ -638,14 +636,14 @@ sap.ui.define([
 			var oBody = {},
 				mHeaders,
 				vOldValue,
-				sPathPrefix = sPath ? sPath + "/" : "",
 				sResultPropertyName = that.bSingleProperty ? "value" : sPropertyName;
 
 			sEditUrl += Cache.buildQueryString(that.mQueryOptions, true);
 			oResult = drillDown(oResult, sPath);
 			mHeaders = {"If-Match" : oResult["@odata.etag"]};
 			vOldValue = oResult[sResultPropertyName];
-			fireChange(that.mChangeListeners, sPathPrefix + sResultPropertyName, vOldValue, vValue);
+			fireChange(that.mChangeListeners, _Helper.buildPath(sPath, sResultPropertyName),
+				vOldValue, vValue);
 			oBody[sPropertyName] = oResult[sResultPropertyName] = vValue;
 
 			return that.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders, oBody)
@@ -663,7 +661,8 @@ sap.ui.define([
 					return oPatchResult;
 				}, function (oError) {
 					if (oError.canceled) {
-						fireChange(that.mChangeListeners, sPathPrefix + sResultPropertyName,
+						fireChange(that.mChangeListeners,
+							_Helper.buildPath(sPath, sResultPropertyName),
 							oResult[sResultPropertyName], vOldValue);
 						oResult[sResultPropertyName] = vOldValue;
 					}

@@ -4,8 +4,9 @@
 
 sap.ui.define([
 	"sap/ui/model/Context",
+	"./lib/_Helper",
 	"./lib/_SyncPromise"
-], function (BaseContext, _SyncPromise) {
+], function (BaseContext, _Helper, _SyncPromise) {
 	"use strict";
 
 	/*
@@ -327,9 +328,7 @@ sap.ui.define([
 	Context.prototype.updateValue = function (sGroupId, sPropertyName, vValue, sEditUrl, sPath) {
 		var that = this;
 
-		if (this.iIndex !== undefined) {
-			sPath = this.iIndex + (sPath ? "/" + sPath : "");
-		}
+		sPath = _Helper.buildPath(this.iIndex, sPath);
 
 		if (sEditUrl) {
 			return this.oBinding.updateValue(sGroupId, sPropertyName, vValue, sEditUrl, sPath);

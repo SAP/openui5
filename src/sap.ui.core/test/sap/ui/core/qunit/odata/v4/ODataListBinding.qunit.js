@@ -9,11 +9,12 @@ sap.ui.require([
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/lib/_Cache",
+	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_SyncPromise",
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataModel"
-], function (jQuery, ManagedObject, ChangeReason, ListBinding, Model, _ODataHelper, _Cache,
+], function (jQuery, ManagedObject, ChangeReason, ListBinding, Model, _ODataHelper, _Cache, _Helper,
 		_SyncPromise, Context, ODataListBinding, ODataModel) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
@@ -411,9 +412,10 @@ sap.ui.require([
 			},
 			oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS", 1);
 
+		this.mock(_Helper).expects("buildPath")
+			.withExactArgs(sCanonicalPath.slice(1), "TEAM_2_EMPLOYEES").returns("~");
 		this.mock(_Cache).expects("create")
-			.withExactArgs(sinon.match.same(this.oModel.oRequestor),
-				sCanonicalPath.slice(1) + "/TEAM_2_EMPLOYEES", {
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "~", {
 					$select: ["Name"],
 					"sap-client" : "111"
 				})
@@ -1123,8 +1125,9 @@ sap.ui.require([
 
 		this.mock(oListBinding).expects("fireEvent").never();
 		this.mock(oListBinding).expects("getGroupId").never();
+		this.mock(_Helper).expects("buildPath").withExactArgs("SO_2_SOITEM", "42").returns("~42~");
 		this.mock(oContext).expects("updateValue")
-			.withExactArgs("up", "bar", Math.PI, "edit('URL')", "SO_2_SOITEM/42")
+			.withExactArgs("up", "bar", Math.PI, "edit('URL')", "~42~")
 			.returns(Promise.resolve(oResult));
 		this.mock(this.oModel).expects("addedRequestToGroup").never();
 
@@ -1154,8 +1157,9 @@ sap.ui.require([
 			oListBinding = this.oModel.bindList("SO_2_SOITEM", oContext),
 			oListener = {};
 
+		this.mock(_Helper).expects("buildPath").withExactArgs("SO_2_SOITEM", 1, "foo").returns("~");
 		this.mock(oContext).expects("deregisterChange")
-			.withExactArgs("SO_2_SOITEM/1/foo", sinon.match.same(oListener));
+			.withExactArgs("~", sinon.match.same(oListener));
 
 		oListBinding.deregisterChange("foo", oListener, 1);
 	});

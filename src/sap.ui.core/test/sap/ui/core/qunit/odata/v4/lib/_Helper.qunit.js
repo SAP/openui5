@@ -275,6 +275,18 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("buildPath", function (assert) {
+		assert.strictEqual(_Helper.buildPath(), "");
+		assert.strictEqual(_Helper.buildPath("base"), "base");
+		assert.strictEqual(_Helper.buildPath("base", "relative"), "base/relative");
+		assert.strictEqual(_Helper.buildPath("base", ""), "base");
+		assert.strictEqual(_Helper.buildPath("", "relative"), "relative");
+		assert.strictEqual(_Helper.buildPath("base", undefined, "relative"), "base/relative");
+		assert.strictEqual(_Helper.buildPath("base", 42, "relative"), "base/42/relative");
+		assert.strictEqual(_Helper.buildPath("base", 0, "relative"), "base/0/relative");
+	});
+
+	//*********************************************************************************************
 	// Integration Tests with real backend
 	if (TestUtils.isRealOData()) {
 		QUnit.test("Integration test for formatLiteral", function (assert) {
