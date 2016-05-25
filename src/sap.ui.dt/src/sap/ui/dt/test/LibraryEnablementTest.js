@@ -71,8 +71,19 @@ function(jQuery, Test, ElementEnablementTest) {
 
 				if (oElementTestData !== false) {
 					oElementTestData.type = sType;
-					var oElementEnablementTest = new ElementEnablementTest(oElementTestData);
-					aElementEnablementTest.push(oElementEnablementTest);
+
+					var oElementTestDataWithoutCreate = null;
+					if (oElementTestData.create) {
+						oElementTestDataWithoutCreate = jQuery.extend({}, oElementTestData);
+						delete oElementTestDataWithoutCreate.create;
+						oElementTestData.groupPostfix = "with create method";
+					}
+
+					aElementEnablementTest.push(new ElementEnablementTest(oElementTestData));
+
+					if (oElementTestDataWithoutCreate) {
+						aElementEnablementTest.push(new ElementEnablementTest(oElementTestDataWithoutCreate));
+					}
 				}
 			});
 		}
@@ -98,7 +109,14 @@ function(jQuery, Test, ElementEnablementTest) {
 			var mResult = that.createSuite("Library Enablement Test");
 
 			aResults.forEach(function(mElementTestResult) {
-				mResult.children.push(mElementTestResult.children[0]);
+				var mChild = mElementTestResult.children[0];
+				var mPreviousChild = mResult.children[mResult.children.length - 1];
+
+				if (mPreviousChild && mChild.name == mPreviousChild.name) {
+					mPreviousChild.children = mPreviousChild.children.concat(mChild.children);
+				} else {
+					mResult.children.push(mChild);
+				}
 			});
 
 			mResult = that.aggregate(mResult);

@@ -109,10 +109,10 @@ function(jQuery, ManagedObject) {
 	 *
 	 * @protected
 	 */
-	Test.prototype.addGroup = function(aParentChildren, sName, sMessage) {
+	Test.prototype.addGroup = function(aParentChildren, sName, sMessage, sNamePostfix) {
 		return this.add(aParentChildren,
 			true,
-			sName,
+			sName + (sNamePostfix ? (" (" + sNamePostfix + ")") : ""),
 			sMessage,
 			null,
 			Test.TYPE.GROUP
