@@ -78,6 +78,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 		if (oDynamicPageToolbar) {
 			oRm.write("<footer");
 			oRm.writeAttributeEscaped("id", oDynamicPage.getId() + '-footerWrapper');
+			oRm.addClass("sapContrast");
+			oRm.addClass("sapContrastPlus");
 			oRm.addClass("sapMDynamicPageFooter");
 			if (!oDynamicPage.getShowFooter()) {
 				oRm.addClass("sapUiHidden");
