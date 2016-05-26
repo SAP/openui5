@@ -33,9 +33,9 @@ describe("sap.m.ActionSheet", function () {
     });
 
     // verify actionsheet opens and contains the correct items
-    it("should open ActionSheet with no title and no cancel", function () {
+    it("should open ActionSheet without icons", function () {
         element(by.id("withoutIcons")).click();
-        expect(takeScreenshot(element(by.id("actionSheet3")))).toLookAs("actionsheet-without-buttons");
+        expect(takeScreenshot(element(by.id("actionSheet3")))).toLookAs("actionsheet-without-icons");
         element(by.id("actionSheetWithoutIconsButton")).click();
     });
 
