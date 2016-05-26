@@ -3391,6 +3391,28 @@
 			destroyFF(oFF);
 		});
 
+		test("'All' checkbox initial state", function() {
+			var oFF = new sap.m.FacetFilter(),
+				oFFL = new sap.m.FacetFilterList({
+					multiSelect: true
+				}),
+				//sut
+				oAllCheckbox;
+			oFF.addList(oFFL);
+
+			//act
+			oFF._createSelectAllCheckboxBar(oFFL);
+
+			oAllCheckbox = sap.ui.getCore().byId(oFFL.getAssociation("allcheckbox"));
+
+			//assert
+			ok(oAllCheckbox, "all checkbox is created");
+			ok(!oAllCheckbox.getSelected(), "all checkbox is initially unchecked when created for a list with no items");
+
+			//clean
+			oFF.destroy();
+		});
+
 		test("The selected keys are cleared when the list is made inactive", function() {
 			var oFF = oSCHelper.createFFWithModel();
 			var oFFL = oFF.getLists()[0];
