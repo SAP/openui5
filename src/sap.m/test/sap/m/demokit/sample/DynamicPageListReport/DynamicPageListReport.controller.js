@@ -24,6 +24,10 @@ sap.ui.define([
 			this.oModel = null;
 		},
 
+		formatToggleButtonText: function (bValue){
+			return bValue ? "Collapse Header" : "Expand Header";
+		},
+
 		onToggleFooter : function () {
 			this.getPage().setShowFooter(!this.getPage().getShowFooter());
 		},

@@ -2,7 +2,6 @@
 	"use strict";
 
 	sinon.config.useFakeTimers = false;
-
 	$.sap.require("sap.m.DynamicPage");
 	$.sap.require("sap.m.DynamicPageHeader");
 
@@ -30,9 +29,9 @@
 					footer: this.getFooter()
 				});
 			},
-			getDynamicPageWithHeaderAlwaysExpanded: function () {
+			getDynamicPageWithNonScrollableHeader: function () {
 				return new DynamicPage({
-					headerAlwaysExpanded: true,
+					headerScrollable: false,
 					title: this.getDynamicPageTitle(),
 					header: this.getDynamicPageHeader(),
 					content: this.getContent(100)
@@ -329,6 +328,58 @@
 			"The DynamicPage Header Pin Button is visible");
 	});
 
+	QUnit.test("DynamicPage Header - expanding/collapsing through the API", function (assert) {
+		var oDynamicPage = this.oDynamicPage,
+			sSnappedClass = "sapMDynamicPageTitleSnapped",
+			oSetPropertySpy = this.spy(oDynamicPage, "setProperty");
+
+		this.stub(this.oDynamicPage, "_headerBiggerThanAllowedToExpandWithACommand").returns(false);
+		this.stub(this.oDynamicPage, "_headerScrolledOut").returns(true);
+
+		assert.ok(oDynamicPage.getHeaderExpanded(), "initial value for the headerExpanded prop is true");
+		assert.ok(!oDynamicPage.$titleArea.hasClass(sSnappedClass));
+
+		oDynamicPage.setHeaderExpanded(false);
+		assert.equal(oDynamicPage.getHeaderExpanded(), false, "setting it to false under regular conditions works");
+		assert.ok(oDynamicPage.$titleArea.hasClass(sSnappedClass));
+		assert.ok(oSetPropertySpy.calledWith("headerExpanded", false, true));
+
+		oSetPropertySpy.reset();
+
+		oDynamicPage.setHeaderExpanded(true);
+		assert.ok(oDynamicPage.getHeaderExpanded(), "header converted to expanded");
+		assert.ok(!oDynamicPage.$titleArea.hasClass(sSnappedClass));
+		assert.ok(oSetPropertySpy.calledWith("headerExpanded", true, true));
+
+		oSetPropertySpy.reset();
+
+		oDynamicPage._snapHeader();
+		assert.equal(oDynamicPage.getHeaderExpanded(), false, "setting it to false via user interaction");
+		assert.ok(oDynamicPage.$titleArea.hasClass(sSnappedClass));
+		assert.ok(oSetPropertySpy.calledWith("headerExpanded", false, true));
+	});
+
+	QUnit.test("DynamicPage Header - expanding/collapsing through the API when not allowed because of header size", function (assert) {
+		var oDynamicPage = this.oDynamicPage,
+			sSnappedClass = "sapMDynamicPageTitleSnapped",
+			oSetPropertySpy = this.spy(oDynamicPage, "setProperty");
+
+		this.stub(this.oDynamicPage, "_headerBiggerThanAllowedToExpandWithACommand").returns(true);
+		this.stub(this.oDynamicPage, "_headerScrolledOut").returns(true);
+
+		assert.ok(oDynamicPage.getHeaderExpanded(), "initial value for the headerExpanded prop is true");
+		assert.ok(!oDynamicPage.$titleArea.hasClass(sSnappedClass));
+
+		oDynamicPage.setHeaderExpanded(false);
+		assert.equal(oDynamicPage.getHeaderExpanded(), true, "collapsing it when no space for the entire header fails");
+		assert.ok(!oDynamicPage.$titleArea.hasClass(sSnappedClass));
+		assert.ok(oSetPropertySpy.neverCalledWith("headerExpanded", false, true));
+
+		oDynamicPage.setHeaderExpanded(true);
+		assert.ok(oSetPropertySpy.neverCalledWith("headerExpanded", true, true));
+		assert.equal(oDynamicPage.getHeaderExpanded(), true, "setting it to true again does nothing");
+	});
+
 	/* --------------------------- DynamicPage Rendering ---------------------------------- */
 	QUnit.module("DynamicPage - Rendering", {
 		beforeEach: function () {
@@ -372,32 +423,32 @@
 	});
 
 
-	QUnit.module("DynamicPage - Rendering - Header Always Expanded", {
+	QUnit.module("DynamicPage - Rendering - Header not Scrollable", {
 		beforeEach: function () {
-			this.oDynamicPageWithHeaderAlwaysExpanded = oFactory.getDynamicPageWithHeaderAlwaysExpanded();
-			oUtil.renderObject(this.oDynamicPageWithHeaderAlwaysExpanded);
+			this.oDynamicPageWithNonScrollableHeader = oFactory.getDynamicPageWithNonScrollableHeader();
+			oUtil.renderObject(this.oDynamicPageWithNonScrollableHeader);
 		},
 		afterEach: function () {
-			this.oDynamicPageWithHeaderAlwaysExpanded.destroy();
-			this.oDynamicPageWithHeaderAlwaysExpanded = null;
+			this.oDynamicPageWithNonScrollableHeader.destroy();
+			this.oDynamicPageWithNonScrollableHeader = null;
 		}
 	});
 
 	QUnit.test("DynamicPage Header rendered within Header Wrapper", function (assert) {
-		var $headerWrapper = this.oDynamicPageWithHeaderAlwaysExpanded.$("header"),
-			sHeaderId = this.oDynamicPageWithHeaderAlwaysExpanded.getHeader().getId();
+		var $headerWrapper = this.oDynamicPageWithNonScrollableHeader.$("header"),
+			sHeaderId = this.oDynamicPageWithNonScrollableHeader.getHeader().getId();
 
 		assert.equal($headerWrapper.find("#" + sHeaderId).length, 1, "The Header is in the Header Wrapper");
 	});
 
 	QUnit.test("DynamicPage Pin button is hidden", function (assert) {
-		var $pinButton = this.oDynamicPageWithHeaderAlwaysExpanded.getHeader().getAggregation("_pinButton").$();
+		var $pinButton = this.oDynamicPageWithNonScrollableHeader.getHeader().getAggregation("_pinButton").$();
 
 		assert.ok($pinButton.hasClass("sapUiHidden"), "The DynamicPage Header Pin Button not rendered");
 	});
 
 	QUnit.test("DynamicPage ScrollBar not rendered", function (assert) {
-		assert.ok(!this.oDynamicPageWithHeaderAlwaysExpanded.$("vertSB")[0], "DynamicPage ScrollBar not rendered");
+		assert.ok(!this.oDynamicPageWithNonScrollableHeader.$("vertSB")[0], "DynamicPage ScrollBar not rendered");
 	});
 
 
@@ -523,7 +574,7 @@
 	});
 
 	QUnit.test("DynamicPage On Title Press: title press handler should be called", function (assert) {
-		var oTitlePressSpy = this.spy(sap.m.DynamicPage.prototype, "_onTitlePress"),
+		var oTitlePressSpy = this.spy(sap.m.DynamicPage.prototype, "_titleExpandCollapseWhenAllowed"),
 			oTitle = this.oDynamicPage.getTitle();
 
 		oUtil.renderObject(this.oDynamicPage);
@@ -556,7 +607,7 @@
 	/* --------------------------- DynamicPage Private functions ---------------------------------- */
 	QUnit.module("DynamicPage On Title Press when Header Always Expanded", {
 		beforeEach: function () {
-			this.oDynamicPage = oFactory.getDynamicPageWithHeaderAlwaysExpanded();
+			this.oDynamicPage = oFactory.getDynamicPageWithNonScrollableHeader();
 		},
 		afterEach: function () {
 			this.oDynamicPage.destroy();
@@ -566,7 +617,7 @@
 
 	QUnit.test("DynamicPage On Title Press", function (assert) {
 		var oTitle = this.oDynamicPage.getTitle(),
-			oHeader = this.oDynamicPage.getHeader() ;
+			oHeader = this.oDynamicPage.getHeader();
 
 		oUtil.renderObject(this.oDynamicPage);
 
@@ -725,11 +776,11 @@
 		oDynamicPage._unPin();
 		assert.ok(oDynamicPage._headerSnapAllowed(), "Header snapping allowed after unpinning");
 
-		oDynamicPage.setHeaderAlwaysExpanded(true);
-		assert.ok(!oDynamicPage._headerSnapAllowed(), "Header snapping not allowed because headerAlwaysExpanded is true");
+		oDynamicPage.setHeaderScrollable(false);
+		assert.ok(!oDynamicPage._headerSnapAllowed(), "Header snapping not allowed because headerScrollable is false");
 
-		oDynamicPage.setHeaderAlwaysExpanded(false);
-		assert.ok(oDynamicPage._headerSnapAllowed(), "Header snapping allowed because headerAlwaysExpanded is false");
+		oDynamicPage.setHeaderScrollable(true);
+		assert.ok(oDynamicPage._headerSnapAllowed(), "Header snapping allowed because headerScrollable is true");
 
 		oDynamicPage._snapHeader(true);
 		assert.ok(!oDynamicPage._headerSnapAllowed(), "Header snapping not allowed because header is snapped already");
@@ -757,7 +808,7 @@
 		var oDynamicPage = this.oDynamicPage,
 			oSandBox = sinon.sandbox.create(),
 			fnStubConfig = function (iHeaderHeight, iDynamicPageHeight) {
-				oSandBox.stub(oDynamicPage, "_getEntireHeaderHeight").returns(iHeaderHeight),
+				oSandBox.stub(oDynamicPage, "_getEntireHeaderHeight").returns(iHeaderHeight);
 				oSandBox.stub(oDynamicPage, "_getOwnHeight").returns(iDynamicPageHeight);
 			};
 
@@ -774,28 +825,28 @@
 			"DynamicPage Header is not bigger than allowed");
 	});
 
-	QUnit.test("DynamicPage _headerBiggerThanAllowedToExpandCollapseWithAClick() returns the correct value", function (assert) {
+	QUnit.test("DynamicPage _headerBiggerThanAllowedToExpandWithACommand() returns the correct value", function (assert) {
 		var oDynamicPage = this.oDynamicPage,
 			oSandBox = sinon.sandbox.create(),
 			fnStubConfig = function (iHeaderHeight, iDynamicPageHeight) {
 				oSandBox.stub(oDynamicPage, "_getEntireHeaderHeight").returns(iHeaderHeight),
-				oSandBox.stub(oDynamicPage, "_getOwnHeight").returns(iDynamicPageHeight);
+					oSandBox.stub(oDynamicPage, "_getOwnHeight").returns(iDynamicPageHeight);
 			};
 
 		fnStubConfig(1000, 999);
 
-		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToExpandCollapseWithAClick(), true,
+		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToExpandWithACommand(), true,
 			"DynamicPage Header is bigger than allowed");
 
 		oSandBox.restore();
 
 		fnStubConfig(100, 999);
 
-		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToExpandCollapseWithAClick(), false,
+		assert.strictEqual(this.oDynamicPage._headerBiggerThanAllowedToExpandWithACommand(), false,
 			"DynamicPage Header is not bigger than allowed");
 	});
 
-	QUnit.test("DynamicPage _getEntireHeaderHeight() return correct values", function (assert){
+	QUnit.test("DynamicPage _getEntireHeaderHeight() return correct values", function (assert) {
 		var oDynamicPage = this.oDynamicPage,
 			oTitle = oDynamicPage.getTitle(),
 			oHeader = oDynamicPage.getHeader();
@@ -842,10 +893,10 @@
 		var $header = this.oDynamicPage.getHeader().$(),
 			sRole = "region",
 			sAriaExpandedValue = "true",
-			sAriaLabelValue = oFactory.getResourceBundle().getText("EXPANDED_HEADER"),
-			stub = this.stub(this.oDynamicPage, "_shouldSnap", function () {
-				return true;
-			});
+			sAriaLabelValue = oFactory.getResourceBundle().getText("EXPANDED_HEADER");
+		this.stub(this.oDynamicPage, "_shouldSnap", function () {
+			return true;
+		});
 
 		assert.equal($header.attr("role"), sRole,
 			"DynamicPage Header role 'region'");
