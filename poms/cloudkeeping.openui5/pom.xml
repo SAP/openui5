@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+
+	<!--**************************************************************************
+	* POM SECTION: Maven Model Version Settings
+	***************************************************************************-->
+
+	<modelVersion>4.0.0</modelVersion>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Parent POM Settings
+	***************************************************************************-->
+
+	<parent>
+		<groupId>com.sap.ui5</groupId>
+		<artifactId>parent</artifactId>
+		<version>1.0.5</version>
+	</parent>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Maven Settings
+	***************************************************************************-->
+
+	<artifactId>ui5-cloudkeeping.openui5</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Project Settings
+	***************************************************************************-->
+
+	<name>SAPUI5 - Automated HANA Cloud Deployment</name>
+	<description>SAPUI5 - Automated HANA Cloud Deployment</description>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Properties Settings
+	***************************************************************************-->
+
+	<properties>
+
+		<!-- deploytool infos -->
+		<command>status</command>
+		<landscape>https://hana.ondemand.com/</landscape>
+		<application>openui5nightly</application>
+		<applicationURL>${application}</applicationURL>
+		<user></user> <!-- SDN User -->
+		<password></password> <!-- SDN Password -->
+
+	</properties>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Build Settings
+	***************************************************************************-->
+
+	<build>
+
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>com.sap.ui5.tools.maven</groupId>
+					<artifactId>nwcloud-maven-plugin</artifactId>
+					<version>1.0.0-SNAPSHOT</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
+		<plugins>
+
+			<plugin>
+				<groupId>com.sap.ui5.tools.maven</groupId>
+				<artifactId>nwcloud-maven-plugin</artifactId>
+				<configuration>
+					<commands>${command}</commands>
+					<properties>
+						<application>${application}</application>
+						<account>sapui5</account>
+						<applicationURL>${applicationURL}</applicationURL>
+						<severity>info</severity>
+						<landscape>${landscape}</landscape>
+						<user>${user}</user>
+						<password>${password}</password>
+					</properties>
+					<deployables>
+						<deployable>
+							<groupId>com.sap.openui5.dist</groupId>
+							<artifactId>hana-cloud-sdk</artifactId>
+							<version>${sapui5.version}</version>
+							<classifier>hcp</classifier>
+							<type>war</type>
+						</deployable>
+					</deployables>
+					<httpProxyHost>proxy</httpProxyHost>
+					<httpProxyPort>8080</httpProxyPort>
+					<httpNonProxyHosts>localhost|*sap.corp</httpNonProxyHosts>
+					<httpsProxyHost>proxy</httpsProxyHost>
+					<httpsProxyPort>8080</httpsProxyPort>
+					<httpsNonProxyHosts>localhost|*sap.corp</httpsNonProxyHosts>
+				</configuration>
+			</plugin>
+
+		</plugins>
+
+	</build>
+
+</project>
