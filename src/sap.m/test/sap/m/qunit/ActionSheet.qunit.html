@@ -542,7 +542,7 @@
 
 				setTimeout(function(){
 					var oButton1 = sap.ui.getCore().byId('asButton1'),
-						sInvisibleText = sap.ui.getCore().byId('asButton1').getAriaLabelledBy()[1],
+						sInvisibleText = oButton1.getAriaLabelledBy()[1],
 						oInvisibleTextObj = sap.ui.getCore().byId(sInvisibleText);
 
 					strictEqual(oButton1.getAriaLabelledBy().length, 2 , "Button should be labelled by itself and a hidden text");
@@ -553,7 +553,45 @@
 					oActionSheet.close();
 					oButton.destroy();
 					oActionSheet.destroy();
-				}, 500)
+				}, 500);
+			});
+
+			asyncTest('Invisible buttons should not be counted', function() {
+				var oButton = new sap.m.Button({
+					text : "Open ActionSheet",
+					press : function() {
+						oActionSheet.openBy(this);
+					}
+				});
+
+				var button1 = new sap.m.Button({ text: "Button1", id: "asButton1" });
+				var button2 = new sap.m.Button({ text: "Button2", id: "asButton2", visible: false });
+				var oActionSheet = new sap.m.ActionSheet({
+					cancelButtonText: "Cancel",
+					title: "Title",
+					buttons: [
+						button1,
+						button2
+					]
+				});
+
+				page.addContent(oButton);
+				sap.ui.getCore().applyChanges();
+				oButton.firePress();
+
+				setTimeout(function(){
+					var oButton1 = sap.ui.getCore().byId('asButton1'),
+						sInvisibleText = sap.ui.getCore().byId('asButton1').getAriaLabelledBy()[1],
+						oInvisibleTextObj = sap.ui.getCore().byId(sInvisibleText);
+
+					strictEqual(oInvisibleTextObj.getText(), "1 of 1", "Total amount of buttons should be 1");
+
+					start();
+					oActionSheet.close();
+					oButton.destroy();
+					oActionSheet.destroy();
+				}, 500);
+
 			});
 
 			QUnit.done(function() {
