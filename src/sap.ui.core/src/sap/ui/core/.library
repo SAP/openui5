@@ -120,18 +120,19 @@
         <exclude name="sap/ui/test/**" />
         <exclude name="testsuite/**" />
         <!-- Ignore substitutes for moved third party libs -->
+        <exclude name="jquery.sap.logger" />
         <exclude name="jquery-ui-core.js" />
         <exclude name="jquery-ui-datepicker.js" />
         <exclude name="jquery-ui-position.js" />
         <exclude name="sap/ui/model/odata/datajs.js" />
         <!-- Third party libs which should NOT be part of the all-in-one file -->
         <exclude name="sap/ui/thirdparty/blanket.js" />
-        <exclude name="sap/ui/thirdparty/crossroads.js" />
+        <!-- <exclude name="sap/ui/thirdparty/crossroads.js" /> -->
         <exclude name="sap/ui/thirdparty/d3.js" />
         <exclude name="sap/ui/thirdparty/datajs.js" />
         <exclude name="sap/ui/thirdparty/flexie.js" />
         <exclude name="sap/ui/thirdparty/handlebars.js" />
-        <exclude name="sap/ui/thirdparty/hasher.js" />
+        <!-- <exclude name="sap/ui/thirdparty/hasher.js" /> -->
         <exclude name="sap/ui/thirdparty/IPv6.js" />
         <exclude name="sap/ui/thirdparty/iscroll.js" />
         <exclude name="sap/ui/thirdparty/iscroll-lite.js" />
@@ -169,7 +170,8 @@
         <exclude name="sap/ui/thirdparty/qunit-composite.js" />
         <exclude name="sap/ui/thirdparty/qunit-reporter-junit.js" />
         <exclude name="sap/ui/thirdparty/require.js" />
-        <exclude name="sap/ui/thirdparty/signals.js" />
+        <exclude name="sap/ui/thirdparty/SecondLevelDomains.js" />
+        <!-- <exclude name="sap/ui/thirdparty/signals.js" /> -->
         <exclude name="sap/ui/thirdparty/sinon.js" />
         <exclude name="sap/ui/thirdparty/sinon-ie.js" />
         <exclude name="sap/ui/thirdparty/sinon-server.js" />
