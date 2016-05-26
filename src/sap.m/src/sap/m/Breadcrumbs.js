@@ -87,6 +87,10 @@ sap.ui.define([
 		this._configureKeyboardHandling();
 	};
 
+	Breadcrumbs.prototype.onThemeChanged = function () {
+		this._resetControl();
+	};
+
 	Breadcrumbs.prototype.exit = function () {
 		this._resetControl();
 		this._destroyItemNavigation();
