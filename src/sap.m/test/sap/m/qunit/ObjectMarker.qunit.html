@@ -219,7 +219,10 @@
 			var oModel = new sap.ui.model.json.JSONModel();
 			oModel.setData({ modelData: { type: sap.m.ObjectMarkerType.Locked }});
 
-			var oMarker = new sap.m.ObjectMarker();
+			var oMarker = new sap.m.ObjectMarker({
+				type: sap.m.ObjectMarkerType.Draft,
+				visibility: sap.m.ObjectMarkerVisibility.TextOnly
+			});
 			oMarker.setModel(oModel);
 
 			// Act
@@ -231,6 +234,14 @@
 
 			// Assert
 			strictEqual(oMarker.getType(), sap.m.ObjectMarkerType.Locked, "Control type is set to 'Locked' via binding");
+
+			// Act
+			oModel.setData({ modelData: { type: sap.m.ObjectMarkerType.Favorite }});
+			oMarker.setModel(oModel);
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			strictEqual(oMarker.$("text").text(), sap.m.ObjectMarkerType.Favorite, "Control type is displayed as 'Favorite' after re-binding");
 
 			// Cleanup
 			oMarker.destroy();
