@@ -33,8 +33,8 @@
 	* POM SECTION: Project Settings
 	***************************************************************************-->
 
-	<name>SAPUI5 - Automated HANA Cloud Deployment</name>
-	<description>SAPUI5 - Automated HANA Cloud Deployment</description>
+	<name>OpenUI5 - Automated HANA Cloud Deployment</name>
+	<description>OpenUI5 - Automated HANA Cloud Deployment</description>
 
 
 	<!--**************************************************************************
@@ -79,7 +79,7 @@
 					<commands>${command}</commands>
 					<properties>
 						<application>${application}</application>
-						<account>sapui5</account>
+						<account>openui5</account>
 						<applicationURL>${applicationURL}</applicationURL>
 						<severity>info</severity>
 						<landscape>${landscape}</landscape>
@@ -90,7 +90,7 @@
 						<deployable>
 							<groupId>com.sap.openui5.dist</groupId>
 							<artifactId>hana-cloud-sdk</artifactId>
-							<version>${sapui5.version}</version>
+							<version>${openui5.version}</version>
 							<classifier>hcp</classifier>
 							<type>war</type>
 						</deployable>
