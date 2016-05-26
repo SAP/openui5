@@ -91,7 +91,6 @@
 							<groupId>com.sap.openui5.dist</groupId>
 							<artifactId>hana-cloud-sdk</artifactId>
 							<version>${openui5.version}</version>
-							<classifier>hcp</classifier>
 							<type>war</type>
 						</deployable>
 					</deployables>
