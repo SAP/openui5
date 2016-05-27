@@ -183,9 +183,13 @@ function(jQuery, Test, DesignTime, ElementTest) {
 					});
 					that._oDesignTime.attachEventOnce("synced", function() {
 						sap.ui.getCore().applyChanges();
-						that._iTimeout = window.setTimeout(function() {
+						if (that.getTimeout()) {
+							that._iTimeout = window.setTimeout(function() {
+								fnResolve();
+							}, that.getTimeout());
+						} else {
 							fnResolve();
-						}, that.getTimeout());
+						}
 
 					}, that);
 				} else {
