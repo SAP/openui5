@@ -265,6 +265,20 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 	};
 
 	/**
+	 * Intercepts <code>setType</code> in order to adjust some control properties.
+	 *
+	 * @override
+	 * @param sType value of the <code>sap.m.ObjectMarkerType</code> enumeration
+	 * @returns {sap.m.ObjectMarker} <code>this</code> pointer for chaining
+	 */
+	ObjectMarker.prototype.setType = function(sType) {
+		this.setProperty("type", sType);
+		this._adjustControl();
+
+		return this;
+	};
+
+	/**
 	 * Cleans up the control.
 	 *
 	 * @private

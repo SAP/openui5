@@ -45,6 +45,13 @@ function(jQuery, Test, DesignTime, ElementTest) {
 				},
 				create : {
 					type : "function"
+				},
+				timeout : {
+					type : "integer",
+					defaultValue : 0
+				},
+				groupPostfix : {
+					type : "string"
 				}
 			}
 		}
@@ -68,9 +75,10 @@ function(jQuery, Test, DesignTime, ElementTest) {
 	 * @protected
 	 */
 	ElementEnablementTest.prototype.exit = function() {
-		if (!this._bNoRenderer && !this._bErrorDuringRendering) {
+		if (this._oDesignTime) {
 			this._oDesignTime.destroy();
 		}
+		window.clearTimeout(this._iTimeout);
 		this._oElement.destroy();
 		if (this._$TestAreaDomRef) {
 			this._$TestAreaDomRef.remove();
@@ -133,7 +141,10 @@ function(jQuery, Test, DesignTime, ElementTest) {
 	 */
 	ElementEnablementTest.prototype._getTestArea = function() {
 		if (!this._$TestAreaDomRef) {
-			this._$TestAreaDomRef =  jQuery("<div id='" + this.getId() + "--testArea" + "'></div>").appendTo("body");
+			this._$TestAreaDomRef =  jQuery("<div id='" + this.getId() + "--testArea" + "'></div>").css({
+				height : "500px",
+				width: "1000px"// test area needs a height, so that some controls render correctly
+			}).appendTo("body");
 		}
 		return this._$TestAreaDomRef;
 	};
@@ -144,11 +155,13 @@ function(jQuery, Test, DesignTime, ElementTest) {
 	 */
 	ElementEnablementTest.prototype._setup = function() {
 		var that = this;
+
+		window.clearTimeout(this._iTimeout);
+		this._bNoRenderer = false;
+		this._bErrorDuringRendering = false;
+
 		return new Promise(function(fnResolve, fnReject) {
 			that._oElement = that._createElement();
-
-			that._bNoRenderer = false;
-			that._bErrorDuringRendering = false;
 
 			try {
 				that._oElement.getRenderer();
@@ -168,10 +181,12 @@ function(jQuery, Test, DesignTime, ElementTest) {
 					that._oDesignTime = new DesignTime({
 						rootElements : [that._oElement]
 					});
-
 					that._oDesignTime.attachEventOnce("synced", function() {
 						sap.ui.getCore().applyChanges();
-						fnResolve();
+						that._iTimeout = window.setTimeout(function() {
+							fnResolve();
+						}, that.getTimeout());
+
 					}, that);
 				} else {
 					fnResolve();
@@ -191,7 +206,8 @@ function(jQuery, Test, DesignTime, ElementTest) {
 		var mAggregationsTests = this.addGroup(
 			aTests,
 			"Aggregations",
-			"Each aggregation needs to be ignored or has a visible domRef maintained in the metadata"
+			"Each aggregation needs to be ignored or has a visible domRef maintained in the metadata",
+			this.getGroupPostfix()
 		);
 
 
@@ -234,13 +250,13 @@ function(jQuery, Test, DesignTime, ElementTest) {
 						this.addTest(mAggregationTest.children,
 							mAggregationTestInfo.domRefDeclared,
 							"Dom Ref Declared",
-							"Declared DomRef found"
+							"DomRef is declared in design time metadata"
 						);
 
 						this.addTest(mAggregationTest.children,
 							mAggregationTestInfo.domRefFound,
 							"Dom Ref Found",
-							"Declared DomRef is found"
+							"Declared DomRef is found in DOM"
 						);
 
 						this.addTest(mAggregationTest.children,
@@ -271,7 +287,7 @@ function(jQuery, Test, DesignTime, ElementTest) {
 					}
 					if (mAggregationTestInfo.overlayTooSmall) {
 						this.addTest(mAggregationTest.children,
-							true,
+							false,
 							"Overlay too small",
 							"Aggregation Overlay is too small to be accessible",
 							Test.STATUS.PARTIAL_SUPPORTED

@@ -18,13 +18,11 @@
 
 			sap.ui.getCore().attachInit(function () {
 				sap.ui.require([
-					"sap/ui/dt/test/Element",
-					'sap/ui/dt/DesignTime',
 					'sap/ui/dt/test/report/Table',
 					'sap/ui/dt/test/report/Statistic',
 					'sap/ui/dt/test/ElementEnablementTest',
 					'sap/ui/dt/test/LibraryEnablementTest'
-				], function (TestElement, DesignTime, Table, Statistic, ElementEnablementTest, LibraryEnablementTest) {
+				], function (Table, Statistic, ElementEnablementTest, LibraryEnablementTest) {
 
 
 					var oLibraryEnablementTest = new LibraryEnablementTest({

@@ -1483,8 +1483,11 @@ sap.ui.define([
 			aExpand = [], aSelect = [];
 
 		function filterOwn(aEntries) {
-			return aEntries.filter(function(sEntry) {
-				return sEntry.indexOf("/") === -1;
+			return aEntries.map(function(sEntry) {
+				var iSlash = sEntry.indexOf("/");
+				return iSlash === -1 ? sEntry : sEntry.substr(0, iSlash);
+			}).filter(function(sValue, iIndex, aEntries) {
+				return aEntries.indexOf(sValue) === iIndex;
 			});
 		}
 
@@ -1517,8 +1520,9 @@ sap.ui.define([
 
 			// check select properties
 			aOwnSelect = filterOwn(aSelect);
-			if (aOwnSelect.length === 0) {
-				// If no select options are defined, check all existing properties
+			if (aOwnSelect.length === 0 || aOwnSelect.indexOf("*") >= 0) {
+				// If no select options are defined or the star is contained,
+				// check all existing properties
 				aOwnSelect = oEntityType.property.map(function(oProperty) {
 					return oProperty.name;
 				});
@@ -1709,7 +1713,7 @@ sap.ui.define([
 			sName = oEntityType.key.propertyRef[0].name;
 			jQuery.sap.assert(sName in oKeyProperties, "Key property \"" + sName + "\" is missing in object!");
 			oProperty = this.oMetadata._getPropertyMetadata(oEntityType, sName);
-			sKey += ODataUtils.formatValue(oKeyProperties[sName], oProperty.type);
+			sKey += encodeURIComponent(ODataUtils.formatValue(oKeyProperties[sName], oProperty.type));
 		} else {
 			jQuery.each(oEntityType.key.propertyRef, function(i, oPropertyRef) {
 				if (i > 0) {
@@ -1720,7 +1724,7 @@ sap.ui.define([
 				oProperty = that.oMetadata._getPropertyMetadata(oEntityType, sName);
 				sKey += sName;
 				sKey += "=";
-				sKey += ODataUtils.formatValue(oKeyProperties[sName], oProperty.type);
+				sKey += encodeURIComponent(ODataUtils.formatValue(oKeyProperties[sName], oProperty.type));
 			});
 		}
 		sKey += ")";

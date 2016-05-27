@@ -5,7 +5,7 @@
 <title>sap.m.OverflowToolbar</title>
 
 <script src="../../../resources/sap-ui-core.js"
-	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal">
+	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m, sap.ui.layout" data-sap-ui-theme="sap_bluecrystal">
 </script>
 
 <style type="text/css"></style>
@@ -36,6 +36,45 @@
 	var sRequestIconURI = sap.ui.core.IconPool.getIconURI("request");
 	var sReceiptIconURI = sap.ui.core.IconPool.getIconURI("receipt");
 
+	var oActionSheet = new sap.m.ActionSheet("actionSheet1", {
+		buttons: [
+			new sap.m.Button({
+				icon: "sap-icon://accept",
+				text: "Close",
+				press: function () {
+					sap.ui.getCore().byId("otb0").closeOverflow();
+				}
+			}),
+			new sap.m.Button({
+				icon: "sap-icon://decline",
+				text: "Do not close"
+			})
+		]
+	});
+
+	var oPopover = new sap.m.ResponsivePopover("popover1", {
+		placement: sap.m.PlacementType.Horizontal,
+		title: "Popover",
+		showHeader: true,
+		content: [
+			new sap.ui.layout.VerticalLayout({
+				content: [
+					new sap.m.Button({
+						icon: "sap-icon://accept",
+						text: "Close",
+						press: function () {
+							sap.ui.getCore().byId("otb0").closeOverflow();
+						}
+					}),
+					new sap.m.Button({
+						icon: "sap-icon://decline",
+						text: "Do not close"
+					})
+				]
+			})
+		]
+	});
+
 	var toolbarContent0 = [
 		new sap.m.Label({
 			text : "Group Toolbar"
@@ -43,13 +82,19 @@
 		new sap.m.ToolbarSpacer(),
 		new sap.m.Button({
 			text : "Always 1",
-			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.AlwaysOverflow}),
-			width: "125px"
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.AlwaysOverflow, closeOverflowOnInteraction: false}),
+			width: "125px",
+			press: function () {
+				oActionSheet.openBy(this);
+			}
 		}),
 		new sap.m.Button({
 			text : "Always 2",
-			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.AlwaysOverflow}),
-			width: "125px"
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.AlwaysOverflow, closeOverflowOnInteraction: false}),
+			width: "125px",
+			press: function () {
+				oPopover.openBy(this);
+			}
 		}),
 		new sap.m.Button({
 			text : "G1 High",

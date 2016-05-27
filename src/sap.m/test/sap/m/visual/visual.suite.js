@@ -1,5 +1,6 @@
 module.exports = [
 	"ActionSelect.spec.js",
+	"ActionSheet.spec.js",
 	"App.spec.js",
 	"AppWithBackground.spec.js",
 	"Breadcrumbs.spec.js",
