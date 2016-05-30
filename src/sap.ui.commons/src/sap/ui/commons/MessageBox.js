@@ -278,7 +278,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/ElementM
 			oDialog = new Dialog({
 				id: sDialogId,
 				applyContentPadding: false,
-				title: sTitle,
 				accessibleRole: AccessibleRole.AlertDialog,
 				resizable: false,
 				modal: true,
@@ -286,7 +285,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/ElementM
 				content: oContent,
 				defaultButton: oDefaultButton,
 				closed: onclose
-			});
+			}).setTitle(sTitle);
 
 			oDialog.open();
 
