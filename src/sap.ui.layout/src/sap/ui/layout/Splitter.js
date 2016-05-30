@@ -128,12 +128,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 
 		// Create bound listener functions for keyboard event handling
 		this._keyListeners = {
-			increase     : this._onKeyboardResize.bind(this, "inc"),
-			decrease     : this._onKeyboardResize.bind(this, "dec"),
-			increaseMore : this._onKeyboardResize.bind(this, "incMore"),
-			decreaseMore : this._onKeyboardResize.bind(this, "decMore"),
-			max          : this._onKeyboardResize.bind(this, "max"),
-			min          : this._onKeyboardResize.bind(this, "min")
+			increase     : this._onKeyboardResize.bind(this, "inc", 20),
+			decrease     : this._onKeyboardResize.bind(this, "dec", 20),
+			increaseMore : this._onKeyboardResize.bind(this, "incMore", 20),
+			decreaseMore : this._onKeyboardResize.bind(this, "decMore", 20),
+			max          : this._onKeyboardResize.bind(this, "max", 20),
+			min          : this._onKeyboardResize.bind(this, "min", 20)
 		};
 		this._enableKeyboardListeners();
 
@@ -929,13 +929,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 * @param {string} [sType] The type of resize step ("inc", "dec", "max", "min")
 	 * @param {jQuery.Event} [oEvent] The original keyboard event
 	 */
-	Splitter.prototype._onKeyboardResize = function(sType, oEvent) {
+	Splitter.prototype._onKeyboardResize = function(sType, iStepSize, oEvent) {
 		var sBarId = this.getId() + "-splitbar-";
 		if (!oEvent || !oEvent.target || !oEvent.target.id || oEvent.target.id.indexOf(sBarId) !== 0) {
 			return;
 		}
 
-		var iStepSize = 20;
+		var iStepSize = iStepSize;
 		var iBigStep  = 999999;
 
 		var iBar = parseInt(oEvent.target.id.substr(sBarId.length), 10);
