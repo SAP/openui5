@@ -142,6 +142,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 
 		//Making sure the Expand/Collapse link text is set correctly
 		this.getAggregation('_collapseButton').setText(this.getCollapsed() ? expandText : collapseText);
+
+		// disable buttons when visible items are just 1
+		var bSingleItem = (this._getVisibleItemsCount() === 1);
+		var buttons = this.getButtons();
+		buttons.forEach( function(button) {
+			button.setEnabled(!bSingleItem);
+		});
+
 	};
 
 	NotificationListGroup.prototype.clone = function () {
@@ -228,6 +236,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 
 		return firstPriority;
 	}
+		NotificationListGroup.prototype._getVisibleItemsCount = function() {
+		var aItems = this.getItems(),
+			result = 0;
+		aItems.forEach(function (item) {
+			if (item.getVisible()) {
+				result++;
+			}
+		});
+
+		return result;
+
+	};
 
 	return NotificationListGroup;
 }, /* bExport= */ true);

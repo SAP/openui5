@@ -38,31 +38,35 @@ sap.ui.define([], function () {
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 	 */
 	NotificationListItemRenderer.render = function (oRm, oControl) {
-		var id = oControl.getId();
+		if (oControl.getVisible()) {
+			var id = oControl.getId();
 
-		oRm.write('<li');
-		oRm.addClass(classNameItem);
-		oRm.addClass(classNameBase);
-		oRm.addClass(classNameListBaseItem);
-		oRm.writeControlData(oControl);
-		oRm.writeAttribute('tabindex', '0');
+			oRm.write('<li');
+			oRm.addClass(classNameItem);
+			oRm.addClass(classNameBase);
+			oRm.addClass(classNameListBaseItem);
+			oRm.writeControlData(oControl);
+			oRm.writeAttribute('tabindex', '0');
 
-		// ARIA
-		oRm.writeAccessibilityState(oControl, {
-			role: "listitem",
-			labelledby: id + '-title',
-			describedby: (id + '-body') + ' ' + (id + '-info')
-		});
+			// ARIA
+			oRm.writeAccessibilityState(oControl, {
+				role: "listitem",
+				labelledby: id + '-title',
+				describedby: (id + '-body') + ' ' + (id + '-info')
+			});
 
-		oRm.writeClasses();
-		oRm.write('>');
+			oRm.writeClasses();
+			oRm.write('>');
 
-		this.renderPriorityArea(oRm, oControl);
-		this.renderHeader(oRm, oControl);
-		this.renderBody(oRm, oControl);
-		this.renderFooter(oRm, oControl);
+			this.renderPriorityArea(oRm, oControl);
+			this.renderHeader(oRm, oControl);
+			this.renderBody(oRm, oControl);
+			this.renderFooter(oRm, oControl);
 
-		oRm.write('</li>');
+			oRm.write('</li>');
+		} else {
+			this.renderInvisibleItem(oRm, oControl);
+		}
 	};
 
 	//================================================================================
@@ -308,6 +312,19 @@ sap.ui.define([], function () {
 	};
 
 	/**
+	* Renders the invisible item when the visible property is false.
+	*
+	* @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+	* @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
+	*/
+	NotificationListItemRenderer.renderInvisibleItem = function(oRm, oControl) {
+		oRm.write("<li");
+		oRm.writeInvisiblePlaceholderData(oControl);
+		oRm.write(">");
+		oRm.write("</li>");
+	};
+
+	/**
 	 * Checks if the body width should be 100%
 	 * @param {sap.m.NotificationListItem} oControl The NotificationListItem to be checked
 	 * @returns {boolean} If all the buttons are hidden
@@ -315,6 +332,7 @@ sap.ui.define([], function () {
 	function buttonsShouldBeRendered(oControl) {
 		return oControl.getHideShowMoreButton() && (!oControl.getShowButtons() || !oControl.getButtons());
 	}
+
 
 	return NotificationListItemRenderer;
 
