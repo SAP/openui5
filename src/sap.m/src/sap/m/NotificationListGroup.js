@@ -61,7 +61,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 		 * @type {sap.m.Button}
 		 * @private
 		 */
-		this._closeButton = new sap.m.Button(this.getId() + '-closeButton', {
+		var _closeButton = new sap.m.Button(this.getId() + '-closeButton', {
 			type: sap.m.ButtonType.Transparent,
 			icon: sap.ui.core.IconPool.getIconURI('decline'),
 			tooltip: this._closeText,
@@ -70,16 +70,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 			}.bind(this)
 		});
 
+		this.setAggregation("_closeButton", _closeButton, true);
+
 		/**
 		 * @type {sap.m.Button}
 		 * @private
 		 */
-		this._collapseButton = new sap.m.Button({
+		var _collapseButton = new sap.m.Button({
 			type: sap.m.ButtonType.Transparent,
 			press: function () {
 				this.setCollapsed(!this.getCollapsed());
 			}.bind(this)
 		});
+
+		this.setAggregation("_collapseButton", _collapseButton, true);
 	};
 
 	//================================================================================
@@ -137,7 +141,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 		var collapseText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_COLLAPSE');
 
 		//Making sure the Expand/Collapse link text is set correctly
-		this._collapseButton.setText(this.getCollapsed() ? expandText : collapseText);
+		this.getAggregation('_collapseButton').setText(this.getCollapsed() ? expandText : collapseText);
 	};
 
 	NotificationListGroup.prototype.clone = function () {
@@ -193,7 +197,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 		var expandText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_EXPAND');
 		var collapseText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_COLLAPSE');
 
-		this._collapseButton.setText(newCollapsedState ? expandText : collapseText, true);
+		this.getAggregation('_collapseButton').setText(newCollapsedState ? expandText : collapseText, true);
 
 		this.$().toggleClass('sapMNLG-Collapsed', newCollapsedState);
 	};
