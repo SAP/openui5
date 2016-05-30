@@ -979,8 +979,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 								break;
 							} else if (aUploadedFiles[i] === oContext.aItems[j].getFileName() && oContext.aItems[j]._status === UploadCollection._uploadingStatus) {
 								oContext.aItems[j]._status = UploadCollection._toBeDeletedStatus;
-								oContext.aItems.splice(j, 1);
 								oContext.removeItem(oContext.aItems[j]);
+								oContext.aItems.splice(j, 1);
 								break;
 							}
 						}
