@@ -98,13 +98,7 @@ sap.ui.define([
 					this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
 				}
 
-				this.aContexts = [];
-				// the range for getCurrentContexts
-				this.iCurrentBegin = this.iCurrentEnd = 0;
-				// upper boundary for server-side list length (based on observations so far)
-				this.iMaxLength = Infinity;
-				// this.bLengthFinal = this.aContexts.length === this.iMaxLength
-				this.bLengthFinal = false;
+				this.reset();
 
 				this.setContext(oContext);
 			}
@@ -532,10 +526,7 @@ sap.ui.define([
 			});
 		}
 		this.oCache.refresh();
-		this.aContexts = [];
-		this.iCurrentBegin = this.iCurrentEnd = 0;
-		this.iMaxLength = Infinity;
-		this.bLengthFinal = false;
+		this.reset();
 		this._fireRefresh({reason : ChangeReason.Refresh});
 	};
 
@@ -558,6 +549,22 @@ sap.ui.define([
 		return this.oCache
 			? this.oCache.read(iIndex, /*iLength*/1, undefined, sPath, undefined, oListener)
 			: this.oContext.fetchValue(_Helper.buildPath(this.sPath, iIndex, sPath), oListener);
+	};
+
+	/**
+	 * Resets the binding's contexts array and its members related to current contexts and length
+	 * calculation.
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.reset = function () {
+		this.aContexts = [];
+		// the range for getCurrentContexts
+		this.iCurrentBegin = this.iCurrentEnd = 0;
+		// upper boundary for server-side list length (based on observations so far)
+		this.iMaxLength = Infinity;
+		// this.bLengthFinal = this.aContexts.length === this.iMaxLength
+		this.bLengthFinal = false;
 	};
 
 	/**
@@ -589,7 +596,7 @@ sap.ui.define([
 
 		if (this.oContext !== oContext) {
 			if (this.bRelative) {
-				this.aContexts = [];
+				this.reset();
 				if (this.mQueryOptions && oContext) {
 					this.oCache = _ODataHelper.createCacheProxy(this, oContext, function (sPath) {
 						return _Cache.create(that.oModel.oRequestor,
