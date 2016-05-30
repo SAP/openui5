@@ -97,8 +97,8 @@
 
 	QUnit.test("Rendering of two demand panes", function (assert) {
 		assert.strictEqual(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginator").css("height"), "0px", "Paginator's height should be 0");
-		assert.strictEqual(this.oResponsiveSplitter._currentInterval.pages.length, 1, "Current interval's pages should be 1");
-		assert.strictEqual(Array.isArray(this.oResponsiveSplitter._currentInterval.pages[0]), true, "First page should be an Array of two pages");
+		assert.strictEqual(this.oResponsiveSplitter._currentInterval.aPages.length, 1, "Current interval's aPages should be 1");
+		assert.strictEqual(Array.isArray(this.oResponsiveSplitter._currentInterval.aPages[0]), true, "First page should be an Array of two pages");
 		assert.strictEqual(this.oResponsiveSplitter.getRootPaneContainer()._oSplitter.getAssociatedContentAreas().length, 2, "The internal Splitter should have 2 contentAreas");
 	});
 
@@ -134,7 +134,8 @@
 		sap.ui.getCore().applyChanges();
 
 		assert.strictEqual(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginator").css("height"), "0px", "Paginator's height should be 0");
-		assert.strictEqual(this.oResponsiveSplitter.getRootPaneContainer()._oSplitter.getAssociatedContentAreas().length, 1, "There should be one content area");
+		assert.strictEqual(this.oResponsiveSplitter.getAggregation("_pages")[0].getVisible(), true, "The first page sohuld be visible");
+		assert.strictEqual(this.oResponsiveSplitter.getAggregation("_pages")[0].getContent(), this.oButton2, "The first page's content should be button from the defaultPane");
 		assert.ok(this.oButton2.getDomRef(), "Second button should be visible");
 		assert.ok(!this.oButton1.getDomRef(), "First button should be visible");
 	});

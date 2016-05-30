@@ -8,7 +8,7 @@
 
 	<l:ResponsiveSplitter defaultPane="default">
 		<l:PaneContainer>
-			<l:SplitPane requiredParentWidth="0" id="default">
+			<l:SplitPane requiredParentWidth="400" id="default">
 				<m:Panel headerText="Minimum parent width 400" height="100%">
 					<m:List headerText="Products" items="{ path: '/ProductCollection' }">
 						<m:StandardListItem title="{Name}" counter="{Quantity}"/>
