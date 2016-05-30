@@ -257,7 +257,8 @@ sap.ui.require([
 			var oBinding = {},
 				oCache = {},
 				oCache2 = {},
-				oCacheProxy,
+				oCacheProxy1,
+				oCacheProxy1a,
 				oCacheProxy2,
 				oCacheProxy3,
 				oContext = {
@@ -266,8 +267,12 @@ sap.ui.require([
 				oContext2 = {
 					requestCanonicalPath : function () {}
 				},
+				oContext3 = {
+					requestCanonicalPath : function () {}
+				},
 				oPathPromise = Promise.resolve("/canonical"),
-				oPathPromise2 = Promise.resolve("/canonical2");
+				oPathPromise2 = Promise.resolve("/canonical2"),
+				oPathPromise3 = Promise.resolve("/canonical3");
 
 			if (bHasCache) {
 				oBinding.oCache = {
@@ -279,37 +284,51 @@ sap.ui.require([
 				.returns(oPathPromise);
 			this.mock(oContext2).expects("requestCanonicalPath").withExactArgs()
 				.returns(oPathPromise2);
+			this.mock(oContext3).expects("requestCanonicalPath").withExactArgs()
+				.returns(oPathPromise3);
 
 			// code under test
-			oCacheProxy = _ODataHelper.createCacheProxy(oBinding, oContext,
-				function (sCanonicalPath) {
+			oBinding.oCache = oCacheProxy1 =
+				_ODataHelper.createCacheProxy(oBinding, oContext, function (sCanonicalPath) {
 					assert.strictEqual(sCanonicalPath, "/canonical");
 					return oCache;
 				});
-			oBinding.oCache = oCacheProxy;
-			oCacheProxy2 = _ODataHelper.createCacheProxy(oBinding, oContext2,
-				function (sCanonicalPath) {
-					assert.strictEqual(sCanonicalPath, "/canonical2");
-					return oCache2;
-				});
-			oBinding.oCache = oCacheProxy2;
-			oCacheProxy3 = _ODataHelper.createCacheProxy(oBinding, oContext, function () {
-				assert.ok(false, "must not recreate cache for context");
-			});
-			oBinding.oCache = oCacheProxy3;
 
-			return Promise.all([oCacheProxy.promise, oCacheProxy2.promise, oCacheProxy3.promise])
-				.then(function (aCaches) {
-					assert.strictEqual(aCaches[0], oCache);
-					assert.strictEqual(aCaches[1], oCache2);
-					assert.strictEqual(aCaches[2], oCache);
-					assert.strictEqual(oBinding.mCacheByContext["/canonical"], oCache);
-					assert.strictEqual(oBinding.mCacheByContext["/canonical2"], oCache2);
+			return oCacheProxy1.promise.then(function (oC1) {
+				assert.strictEqual(oC1, oCache);
+
+				// code under test
+				oBinding.oCache = oCacheProxy2 =
+					_ODataHelper.createCacheProxy(oBinding, oContext2, function (sCanonicalPath) {
+						assert.strictEqual(sCanonicalPath, "/canonical2");
+						return oCache2;
+					});
+				return oCacheProxy2.promise.then(function (oC2) {
+					assert.strictEqual(oC2, oCache2);
+
+					// code under test: two calls to createCacheProxy; the last sets binding's cache
+					oCacheProxy3 = _ODataHelper.createCacheProxy(oBinding, oContext3, function () {
+						assert.ok(false, "binding cache !== cache proxy: must not create cache");
+					});
+					oBinding.oCache = oCacheProxy1a =
+						_ODataHelper.createCacheProxy(oBinding, oContext, function () {
+							assert.ok(false, "must not recreate cache for context");
+						});
+
+					oCacheProxy3.promise.then(function (oC3) {
+						assert.strictEqual(oC3, oBinding.oCache);
+					});
+					oCacheProxy1a.promise.then(function (oC1a) {
+						assert.strictEqual(oC1a, oCache);
+						assert.strictEqual(oBinding.mCacheByContext["/canonical"], oCache);
+						assert.strictEqual(oBinding.mCacheByContext["/canonical2"], oCache2);
+						oBinding.oCache = oC1a;
+					});
+					return Promise.all([oCacheProxy1a.promise, oCacheProxy3.promise]);
 				});
+			});
 		});
 	});
-	// TODO if the promise for "/canonical2" takes longer than the one for "/canonical", the binding
-	//      will finally have the cache for "/canonical2".
 
 	//*********************************************************************************************
 	QUnit.test("createCacheProxy, cache methods", function (assert) {
@@ -334,9 +353,11 @@ sap.ui.require([
 			.returns(oReadPromise);
 
 		// code under test
-		oCacheProxy = _ODataHelper.createCacheProxy(oBinding, oContext, function (sCanonicalPath) {
-			return oCache;
-		});
+		oBinding.oCache = oCacheProxy =
+			_ODataHelper.createCacheProxy(oBinding, oContext, function (sCanonicalPath) {
+				return oCache;
+			});
+
 		assert.strictEqual(typeof oCacheProxy.deregisterChange, "function");
 		assert.strictEqual(typeof oCacheProxy.refresh, "function");
 		assert.throws(function () {
@@ -381,9 +402,10 @@ sap.ui.require([
 			.returns(oReadPromise);
 
 		// code under test
-		oCacheProxy = _ODataHelper.createCacheProxy(oBinding, oContext, function (sCanonicalPath) {
-			return oCache;
-		});
+		oBinding.oCache = oCacheProxy =
+			_ODataHelper.createCacheProxy(oBinding, oContext, function (sCanonicalPath) {
+				return oCache;
+			});
 		return oCacheProxy.read("$auto", "foo").catch(function(oError0) {
 			assert.strictEqual(oError0, oError);
 		});
