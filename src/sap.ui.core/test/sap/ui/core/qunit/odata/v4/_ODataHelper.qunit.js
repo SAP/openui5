@@ -338,6 +338,7 @@ sap.ui.require([
 			return oCache;
 		});
 		assert.strictEqual(typeof oCacheProxy.deregisterChange, "function");
+		assert.strictEqual(oCacheProxy.hasPendingChanges(), false);
 		assert.strictEqual(typeof oCacheProxy.refresh, "function");
 		assert.throws(function () {
 			oCacheProxy.post();

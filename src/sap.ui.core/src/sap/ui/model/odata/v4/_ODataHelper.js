@@ -201,6 +201,7 @@ sap.ui.define([
 		 * @param {function} fnCreateCache The function to create the cache from the canonical path
 		 * @returns {object} The cache proxy with the following properties
 		 *   deregisterChange: method does nothing
+		 *   hasPendingChanges: method returning false
 		 *   post: method throws an error as the cache proxy does not support write operations
 		 *   promise: promise fulfilled with the cache or rejected with the error of canonical path
 		 *     computation
@@ -224,6 +225,9 @@ sap.ui.define([
 			});
 			return {
 				deregisterChange : function () {},
+				hasPendingChanges : function () {
+					return false;
+				},
 				post : function () {
 					throw new Error("POST request not allowed");
 				},

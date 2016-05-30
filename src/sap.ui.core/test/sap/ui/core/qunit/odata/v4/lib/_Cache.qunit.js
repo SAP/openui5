@@ -893,7 +893,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("update and refresh", function (assert) {
+	QUnit.test("update, hasPendingChanges and refresh", function (assert) {
 		var sEditUrl = "SOLineItemList(SalesOrderID='0',ItemPosition='0')",
 			oError = new Error(),
 			sETag = 'W/"19700101000000.0000000"',
@@ -902,7 +902,7 @@ sap.ui.require([
 			oPromise = Promise.resolve({
 				value : [{
 					SalesOrderID : "0",
-					SO_2_SOITEM : [{
+					SO_2_SOITEM : [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {
 						"@odata.etag" : sETag,
 						Note : "Some Note",
 						Foo : "Bar"
@@ -927,9 +927,10 @@ sap.ui.require([
 			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=1", "groupId")
 			.returns(oPromise);
 		// fill the cache
-		return oCache.read(0, 1, "groupId", "SO_2_SOITEM/0/Note").then(function () {
+		return oCache.read(0, 1, "groupId", "SO_2_SOITEM/10/Note").then(function () {
 			var aUpdatePromises;
 
+			assert.strictEqual(oCache.hasPendingChanges(""), false);
 			oRequestorMock.expects("request")
 				.withExactArgs("PATCH", sEditUrl, "updateGroupId", {"If-Match" : sETag},
 					{Note : "foo"})
@@ -943,11 +944,20 @@ sap.ui.require([
 
 			// code under test
 			aUpdatePromises = [
-				oCache.update("updateGroupId", "Note", "foo", sEditUrl, "0/SO_2_SOITEM/0")
+				oCache.update("updateGroupId", "Note", "foo", sEditUrl, "0/SO_2_SOITEM/10")
 					.then(unexpected, rejected),
-				oCache.update("updateGroupId", "Foo", "baz", sEditUrl, "0/SO_2_SOITEM/0")
+				oCache.update("updateGroupId", "Foo", "baz", sEditUrl, "0/SO_2_SOITEM/10")
 					.then(unexpected, rejected)
 			];
+
+			assert.strictEqual(oCache.hasPendingChanges(""), true);
+			assert.strictEqual(oCache.hasPendingChanges("0/SO_2_SOITEM/10"), true);
+			assert.strictEqual(oCache.hasPendingChanges("0/SO_2_SOITEM/10/Note"), true);
+			assert.strictEqual(oCache.hasPendingChanges("0/SO_2_SOITEM/11"), false);
+			assert.strictEqual(oCache.hasPendingChanges("SO_2_SOITEM"), false);
+			assert.strictEqual(oCache.hasPendingChanges("0/SO_2_SOITEM/1"), false);
+
+			// code under test
 			oCache.refresh();
 
 			return Promise.all(aUpdatePromises).then(function () {
@@ -1476,7 +1486,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("SingleCache: update and refresh", function (assert) {
+	QUnit.test("SingleCache: update, hasPendingChanges and refresh", function (assert) {
 		var oError = new Error(),
 			sETag = 'W/"19700101000000.0000000"',
 			oPatchPromise1 = Promise.reject(oError),
@@ -1507,6 +1517,7 @@ sap.ui.require([
 		return oCache.read("groupId", "Note").then(function () {
 			var aUpdatePromises;
 
+			assert.strictEqual(oCache.hasPendingChanges(""), false);
 			oRequestorMock.expects("request")
 				.withExactArgs("PATCH", sResourcePath, "updateGroupId", {"If-Match" : sETag},
 					{Note : "foo"})
@@ -1525,6 +1536,12 @@ sap.ui.require([
 				oCache.update("updateGroupId", "Foo", "baz", sResourcePath)
 					.then(unexpected, rejected)
 			];
+
+			assert.strictEqual(oCache.hasPendingChanges(""), true);
+			assert.strictEqual(oCache.hasPendingChanges("Note"), true);
+			assert.strictEqual(oCache.hasPendingChanges("bar"), false);
+
+			// code under test
 			oCache.refresh();
 
 			return Promise.all(aUpdatePromises).then(function () {

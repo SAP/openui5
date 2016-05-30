@@ -1171,6 +1171,64 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("hasPendingChanges: with and without cache", function (assert) {
+		var oBinding = this.oModel.bindList("SO_2_SOITEM", undefined, undefined, undefined, {}),
+			oBindingMock = this.mock(oBinding),
+			oCacheProxy = {
+				promise: Promise.resolve()
+			},
+			oContext = {
+				getPath : function () {
+					return "/Products('1')";
+				}
+			},
+			oResult = {};
+
+		oBindingMock.expects("_hasPendingChanges").withExactArgs("SO_2_SOITEM")
+			.returns(oResult);
+
+		// code under test
+		assert.strictEqual(oBinding.hasPendingChanges(), oResult);
+
+		this.mock(_ODataHelper).expects("createCacheProxy").returns(oCacheProxy);
+		oBinding.setContext(oContext);
+		oBindingMock.expects("_hasPendingChanges").withExactArgs("").returns(oResult);
+
+		// code under test
+		assert.strictEqual(oBinding.hasPendingChanges(), oResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_hasPendingChanges: absolute binding", function (assert) {
+		var oBinding = this.oModel.bindList("/SalesOrderList"),
+			oResult = {};
+
+		this.mock(oBinding.oCache).expects("hasPendingChanges").withExactArgs("1/foo")
+			.returns(oResult);
+
+		assert.strictEqual(oBinding._hasPendingChanges("1/foo"), oResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("hasPendingChanges: relative binding resolved", function (assert) {
+		var oContext = {
+				hasPendingChanges : function () {}
+			},
+			oListBinding = this.oModel.bindList("SO_2_SOITEM", oContext),
+			oResult = {};
+
+		this.mock(_Helper).expects("buildPath").withExactArgs("SO_2_SOITEM", "1/foo").returns("~");
+		this.mock(oContext).expects("hasPendingChanges").withExactArgs("~").returns(oResult);
+
+		assert.strictEqual(oListBinding._hasPendingChanges("1/foo"), oResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("hasPendingChanges: relative binding unresolved", function (assert) {
+		assert.strictEqual(this.oModel.bindList("SO_2_SOITEM")._hasPendingChanges("foo"), false);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getContexts calls addedRequestToGroup", function (assert) {
 		var oListBinding;
 

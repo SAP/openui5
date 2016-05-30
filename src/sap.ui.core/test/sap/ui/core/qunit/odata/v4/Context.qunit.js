@@ -102,6 +102,21 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("hasPendingChanges", function (assert) {
+		var oBinding = {
+				hasPendingChanges : function () {}
+			},
+			oContext = Context.create(null, oBinding, "/foo", 42),
+			oResult = {},
+			sPath = "bar";
+
+		this.mock(_Helper).expects("buildPath").withExactArgs(42, sPath).returns("~bar~");
+		this.mock(oBinding).expects("hasPendingChanges").withExactArgs("~bar~").returns(oResult);
+
+		assert.strictEqual(oContext.hasPendingChanges(sPath), oResult);
+	});
+
+	//*********************************************************************************************
 	[{value : 42}, undefined].forEach(function (oData) {
 		QUnit.test("requestObject " + JSON.stringify(oData), function (assert) {
 			var oContext = Context.create(null, null, "/foo"),
