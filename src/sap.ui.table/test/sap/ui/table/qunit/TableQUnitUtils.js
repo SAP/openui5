@@ -77,6 +77,7 @@ function createTables() {
 				oTable.addColumn(new sap.ui.table.Column({
 					label: aFields[j] + "_TITLE",
 					width: "100px",
+					tooltip: j == 2 ? aFields[j] + "_TOOLTIP" : null,
 					template: new TestControl({
 						text: "{" + aFields[j] + "}",
 						index: j,
