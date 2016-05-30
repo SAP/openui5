@@ -287,7 +287,7 @@ sap.ui.define([
 
 	//
 	ODataModel.M_EVENTS = {
-			RejectChange: "rejectChange",
+
 			/**
 			 * Event is fired if the metadata document was successfully loaded
 			 */
@@ -330,6 +330,71 @@ sap.ui.define([
 			 */
 			BatchRequestCompleted : "batchRequestCompleted"
 	};
+
+	/**
+	 * The 'metadataLoaded' event is fired, when the metadata document was successfully loaded.
+	 *
+	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
+	 *
+	 * @name sap.ui.model.odata.v2.ODataModel#metadataLoaded
+	 * @event
+	 * @param {sap.ui.base.Event} oControlEvent
+	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+	 * @param {object} oControlEvent.getParameters
+
+	 * @param {string} oControlEvent.getParameters.metadata The parsed metadata
+	 * @public
+	 */
+
+	/**
+	 * The 'metadataFailed' event is fired, when the metadata document has failed to load.
+	 *
+	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
+	 *
+	 * @name sap.ui.model.odata.v2.ODataModel#metadataFailed
+	 * @event
+	 * @param {sap.ui.base.Event} oControlEvent
+	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+	 * @param {object} oControlEvent.getParameters
+
+	 * @param {string} oControlEvent.getParameters.metadata The parsed metadata
+	 * @param {string} oControlEvent.getParameters.message A text that describes the failure.
+	 * @param {string} oControlEvent.getParameters.statusCode HTTP status code returned by the request (if available)
+	 * @param {string} oControlEvent.getParameters.statusText The status as a text, details not specified, intended only for diagnosis output
+	 * @param {string} oControlEvent.getParameters.responseText Response that has been received for the request, as a text string
+	 * @param {object} oControlEvent.getParameters.response The response object - empty object if no response
+	 * @public
+	 */
+
+	/**
+	 * The 'annotationsLoaded' event is fired, when the annotations document was successfully loaded.
+	 *
+	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
+	 *
+	 * @name sap.ui.model.odata.v2.ODataModel#annotationsLoaded
+	 * @event
+	 * @param {sap.ui.base.Event} oControlEvent
+	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+	 * @param {object} oControlEvent.getParameters
+
+	 * @param {sap.ui.model.odata.v2.ODataAnnotations~Source[]} oControlEvent.getParameters.result One or several annotation source(s)
+	 * @public
+	 */
+
+	/**
+	 * The 'annotationsFailed' event is fired, when the annotations document was successfully loaded.
+	 *
+	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
+	 *
+	 * @name sap.ui.model.odata.v2.ODataModel#annotationsFailed
+	 * @event
+	 * @param {sap.ui.base.Event} oControlEvent
+	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+	 * @param {object} oControlEvent.getParameters
+
+	 * @param {Error[]} oControlEvent.getParameters.result An array of Errors
+	 * @public
+	 */
 
 	// document event again, as parameters differ from sap.ui.model.Model#event:requestFailed
 	/**
@@ -636,21 +701,6 @@ sap.ui.define([
 	// Keep a map of service specific data, which can be shared across different model instances
 	// on the same OData service
 	ODataModel.mServiceData = {
-	};
-
-	ODataModel.prototype.fireRejectChange = function(mArguments) {
-		this.fireEvent("rejectChange", mArguments);
-		return this;
-	};
-
-	ODataModel.prototype.attachRejectChange = function(oData, fnFunction, oListener) {
-		this.attachEvent("rejectChange", oData, fnFunction, oListener);
-		return this;
-	};
-
-	ODataModel.prototype.detachRejectChange = function(fnFunction, oListener) {
-		this.detachEvent("rejectChange", fnFunction, oListener);
-		return this;
 	};
 
 	/**
