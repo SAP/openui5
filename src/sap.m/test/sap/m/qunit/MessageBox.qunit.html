@@ -48,6 +48,15 @@
 
 		var sClassName = "sapUiSizeCompact";
 
+		var mMessageBoxTypeClasses = {
+			"INFORMATION": "sapMMessageBoxInfo",
+			"WARNING": "sapMMessageBoxWarning",
+			"ERROR": "sapMMessageBoxError",
+			"SUCCESS": "sapMMessageBoxSuccess",
+			"QUESTION": "sapMMessageBoxQuestion",
+			"STANDARD": "sapMMessageBoxStandard"
+		};
+
 		jQuery.sap.require("sap.m.MessageBox");
 		jQuery.sap.require("sap.ui.layout.VerticalLayout");
 		jQuery.sap.require("sap.m.InputListItem");
@@ -67,6 +76,7 @@
 			equal(oMessageBox.getButtons().length, 3, "All three buttons are added to dialog");
 			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 			ok(oMessageBox.$().hasClass(sClassName));
+			ok(oMessageBox.$().hasClass(mMessageBoxTypeClasses.STANDARD), "The show method should open message box with standard style class.");
 			oMessageBox.destroy();
 		});
 
@@ -116,6 +126,7 @@
 			equal(oMessageBox.getButtons().length, 1, "One button is added to the dialog");
 			equal(oMessageBox.getButtons()[0].mProperties.text, oResourceBundle.getText("MSGBOX_CLOSE") , "Default action Cancel is set");
 			equal(oMessageBox.getTitle(), oResourceBundle.getText("MSGBOX_TITLE_ERROR"), "The title should be Error");
+			ok(oMessageBox.$().hasClass(mMessageBoxTypeClasses.ERROR), "The error method should open message box with error style class.");
 			oMessageBox.destroy();
 		});
 
@@ -131,6 +142,7 @@
 			equal(oMessageBox.getButtons().length, 1, "One button is added to the dialog");
 			equal(oMessageBox.getButtons()[0].mProperties.text, oResourceBundle.getText("MSGBOX_OK") , "Default action OK is set");
 			equal(oMessageBox.getTitle(), oResourceBundle.getText("MSGBOX_TITLE_INFO"), "The title should be Info");
+			ok(oMessageBox.$().hasClass(mMessageBoxTypeClasses.INFORMATION), "The information method should open message box with information style class.");
 			oMessageBox.destroy();
 		});
 
@@ -146,6 +158,7 @@
 			equal(oMessageBox.getButtons().length, 1, "One button is added to the dialog");
 			equal(oMessageBox.getButtons()[0].mProperties.text, oResourceBundle.getText("MSGBOX_OK") , "Default action OK is set");
 			equal(oMessageBox.getTitle(), oResourceBundle.getText("MSGBOX_TITLE_WARNING"), "The title should be Warning");
+			ok(oMessageBox.$().hasClass(mMessageBoxTypeClasses.WARNING), "The warning method should open message box with warning style class.");
 			oMessageBox.destroy();
 		});
 
@@ -161,6 +174,7 @@
 			equal(oMessageBox.getButtons().length, 1, "One button is added to the dialog");
 			equal(oMessageBox.getButtons()[0].mProperties.text, oResourceBundle.getText("MSGBOX_OK") , "Default action OK is set");
 			equal(oMessageBox.getTitle(), oResourceBundle.getText("MSGBOX_TITLE_SUCCESS"), "The title should be Success");
+			ok(oMessageBox.$().hasClass(mMessageBoxTypeClasses.SUCCESS), "The success method should open message box with success style class.");
 			oMessageBox.destroy();
 		});
 
@@ -319,6 +333,7 @@
 			ok(oMessageBox.getButtons().length, "Only one button in alert.");
 			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 			ok(oMessageBox.$().hasClass(sClassName));
+			ok(oMessageBox.$().hasClass(mMessageBoxTypeClasses.STANDARD), "The alert method should open message box with standard style class.");
 			oMessageBox.destroy();
 		});
 
@@ -336,6 +351,7 @@
 			ok(oMessageBox.getButtons().length === 2, "Two buttons are created");
 			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 			ok(oMessageBox.$().hasClass(sClassName));
+			ok(oMessageBox.$().hasClass(mMessageBoxTypeClasses.QUESTION), "The confirm method should open message box with question style class.");
 			oMessageBox.destroy();
 		});
 
@@ -643,16 +659,17 @@
 			oMessageBox.destroy();
 		});
 
-        test("Language change", function () {
-            sap.ui.getCore().getConfiguration().setLanguage("de");
-            notEqual(sap.ui.getCore().getLibraryResourceBundle("sap.m"), sap.m.MessageBox._rb, "The MessageBox should have a different resource bundle before opening");
-            sap.m.MessageBox.show(sMessageText, {
-                title: sMessageTitle,
-                details: "Some details",
-                id: "messagebox8"
-            });
-            equal(sap.ui.getCore().getLibraryResourceBundle("sap.m"), sap.m.MessageBox._rb, "The ResourceBundle should be the same.");
-        });
+		test("Language change", function () {
+			sap.ui.getCore().getConfiguration().setLanguage("de");
+			notEqual(sap.ui.getCore().getLibraryResourceBundle("sap.m"), sap.m.MessageBox._rb, "The MessageBox should have a different resource bundle before opening");
+			sap.m.MessageBox.show(sMessageText, {
+				title: sMessageTitle,
+				details: "Some details",
+				id: "messagebox9"
+			});
+			equal(sap.ui.getCore().getLibraryResourceBundle("sap.m"), sap.m.MessageBox._rb, "The ResourceBundle should be the same.");
+			sap.ui.getCore().byId("messagebox9").destroy();
+		});
 
 	</script>
 </head>
