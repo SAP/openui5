@@ -523,8 +523,8 @@
 		"sux": "šumeru",
 		"sv": "zviedru",
 		"sw": "svahili",
+		"sw_CD": "Kongo svahili",
 		"swb": "komoru",
-		"swc": "Kongo svahili",
 		"syc": "klasiskā sīriešu",
 		"syr": "sīriešu",
 		"szl": "szl",
@@ -621,6 +621,7 @@
 		"zza": "zazaki"
 	},
 	"scripts": {
+		"Adlm": "Adlm",
 		"Aghb": "Aghb",
 		"Ahom": "Ahom",
 		"Arab": "arābu",
@@ -633,6 +634,7 @@
 		"Bass": "Bass",
 		"Batk": "Batk",
 		"Beng": "bengāļu",
+		"Bhks": "Bhks",
 		"Bopo": "bopomofo",
 		"Brah": "brahmi",
 		"Brai": "Braila raksts",
@@ -662,6 +664,7 @@
 		"Grek": "grieķu",
 		"Gujr": "gudžaratu",
 		"Guru": "pandžabu",
+		"Hanb": "Hanb",
 		"Hang": "hangila",
 		"Hani": "ķīniešu",
 		"Hano": "Hano",
@@ -677,6 +680,7 @@
 		"Hrkt": "katakana vai hiragana",
 		"Hung": "senungāru",
 		"Ital": "vecitāļu",
+		"Jamo": "Jamo",
 		"Java": "javiešu",
 		"Jpan": "japāņu",
 		"Kali": "Kali",
@@ -700,6 +704,7 @@
 		"Mahj": "Mahj",
 		"Mand": "Mand",
 		"Mani": "Mani",
+		"Marc": "Marc",
 		"Maya": "maiju",
 		"Mend": "Mend",
 		"Merc": "Merc",
@@ -714,11 +719,13 @@
 		"Mymr": "birmiešu",
 		"Narb": "Narb",
 		"Nbat": "Nbat",
+		"Newa": "Newa",
 		"Nkoo": "Nkoo",
 		"Ogam": "ogamiskais raksts",
 		"Olck": "Olck",
 		"Orkh": "Orkh",
 		"Orya": "oriju",
+		"Osge": "Osge",
 		"Osma": "osmaņu turku",
 		"Palm": "Palm",
 		"Pauc": "Pauc",
@@ -801,6 +808,7 @@
 		"Tale": "Tale",
 		"Talu": "Talu",
 		"Taml": "tamilu",
+		"Tang": "Tang",
 		"Tavt": "Tavt",
 		"Telu": "telugu",
 		"Tfng": "Tfng",
@@ -817,6 +825,7 @@
 		"Yiii": "ji",
 		"Zinh": "mantotā",
 		"Zmth": "matemātiskais pieraksts",
+		"Zsye": "Zsye",
 		"Zsym": "simboli",
 		"Zxxx": "bez rakstības",
 		"Zyyy": "vispārējā",
@@ -861,7 +870,6 @@
 		"AI": "Angilja",
 		"AL": "Albānija",
 		"AM": "Armēnija",
-		"AN": "Nīderlandes Antiļas",
 		"AO": "Angola",
 		"AQ": "Antarktika",
 		"AR": "Argentīna",
@@ -1509,8 +1517,8 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"AM",
-					"PM"
+					"priekšp.",
+					"pēcp."
 				],
 				"narrow": [
 					"priekšp.",
@@ -1928,8 +1936,8 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"AM",
-					"PM"
+					"priekšp.",
+					"pēcp."
 				],
 				"narrow": [
 					"priekšp.",
@@ -2344,8 +2352,8 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"AM",
-					"PM"
+					"priekšp.",
+					"pēcp."
 				],
 				"narrow": [
 					"priekšp.",
@@ -2918,13 +2926,13 @@
 		"CLP": 0,
 		"COP": 0,
 		"CRC": 0,
-		"CZK": 2,
+		"CZK": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
 		"ESP": 0,
 		"GNF": 0,
 		"GYD": 0,
-		"HUF": 2,
+		"HUF": 0,
 		"IDR": 0,
 		"IQD": 0,
 		"IRR": 0,
@@ -2958,7 +2966,7 @@
 		"TMM": 0,
 		"TND": 3,
 		"TRL": 0,
-		"TWD": 2,
+		"TWD": 0,
 		"TZS": 0,
 		"UGX": 0,
 		"UYI": 0,
@@ -2977,7 +2985,7 @@
 	"weekData-weekendStart": 6,
 	"weekData-weekendEnd": 0,
 	"timeData": {
-		"_allowed": "H h",
+		"_allowed": "H hB hb h",
 		"_preferred": "H"
 	},
 	"eras-gregorian": {
