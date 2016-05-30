@@ -449,5 +449,24 @@
         "references": []
       }
     ]
+  },
+  "1.36.11": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "3b2a7ee90304242074122a1fc38f602a45c43402",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: SegmentedButton in the header is not rendered correctly",
+        "references": []
+      },
+      {
+        "id": "20a439f0f031a774f2fd0c05fbe49fc7599f3cfa",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: remove the margin inside the table cell",
+        "references": []
+      }
+    ]
   }
 }

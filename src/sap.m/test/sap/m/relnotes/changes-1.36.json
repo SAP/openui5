@@ -2020,5 +2020,122 @@
         "references": []
       }
     ]
+  },
+  "1.36.11": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "8d249fe6179b86df64819ef0eff6e6ce3ad55fd3",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ActionSheet: Invisible buttons should not be counted by assistive technologies",
+        "references": []
+      },
+      {
+        "id": "6ff302da9efe046d14f6e17f4ba86a4c87484ead",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: Dialog content size issue",
+        "references": []
+      },
+      {
+        "id": "5141154f3a27e0d5759ad23f0abe7ccbe5b0eeaa",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: Dragging issue in RTL solved",
+        "references": []
+      },
+      {
+        "id": "cfa2e4fbc6204eedb4b89fdc56263fc8a8dcce74",
+        "author": "Pia Kinkel \u003cpia.kinkel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedInput: Disable Button when FeedInput is disabled",
+        "references": []
+      },
+      {
+        "id": "7934ee2221dbe58322dc93639748b8c06f451aa3",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ListItemBase: Active state of the ListItem should be announced.",
+        "references": []
+      },
+      {
+        "id": "5df6a90c403ae5ce8198e8414731e430f667b53c",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: MessagePopoverItems\u0027 binding is properly updated",
+        "references": []
+      },
+      {
+        "id": "3b2a7ee90304242074122a1fc38f602a45c43402",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: SegmentedButton in the header is not rendered correctly",
+        "references": []
+      },
+      {
+        "id": "76ec676ca9bdba5f55cf8fe53d49911e3219cd63",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NotificationListItem: Control is no longer destroyed on close",
+        "references": []
+      },
+      {
+        "id": "1cfb93c1e4e59317e2f075974646dca2afc374fe",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: Popover is closed after destroyContent is called",
+        "references": []
+      },
+      {
+        "id": "81adf1cfe7c648e24a3593e9a0e702130aebebee",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: addStyleClass(sapUiSizeCompact) does not render the Popover in compact mode",
+        "references": []
+      },
+      {
+        "id": "445fe096d106fe1c892ce2858d68a4c8d46ed142",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ResponsivePopover: calling getBegin/EndButton causes endless recursion",
+        "references": []
+      },
+      {
+        "id": "20a439f0f031a774f2fd0c05fbe49fc7599f3cfa",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: remove the margin inside the table cell",
+        "references": []
+      },
+      {
+        "id": "87ca3922ef8358daca4787f9a7503432714a1895",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Table ACC demo: fix sap.m.Select tooltip reading issue",
+        "references": []
+      },
+      {
+        "id": "a4fe0e0bf3fe4cc01a11a362f3671271196a9b16",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Table: Zoom factor fixes for responsive column.",
+        "references": []
+      },
+      {
+        "id": "4828687f30790e3407d72dfa3934aba3258b914e",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.routing: viewLevel should be taken from ancestor if current target doesn\u0027t have",
+        "references": []
+      },
+      {
+        "id": "91210545e6b0a9323f309c3336dbfd1cc516e42d",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ColumnListItem: Multiple popin rendering issue is fixed.",
+        "references": []
+      }
+    ]
   }
 }
