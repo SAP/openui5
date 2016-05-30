@@ -446,6 +446,7 @@ sap.ui.define([
 		this._$headerContent = jQuery.sap.byId(this.getId() + "-headerContent");
 		this._$stickyHeaderContent = jQuery.sap.byId(this.getId() + "-stickyHeaderContent");
 		this._$contentContainer = jQuery.sap.byId(this.getId() + "-scroll");
+		this._bDomElementsCached = true;
 	};
 
 	/**
@@ -878,10 +879,12 @@ sap.ui.define([
 				this._$contentContainer.parent().stop(true, false);
 			}
 
-			this._iCurrentScrollTimeout = jQuery.sap.delayedCall(iDuration, this, function () {
-				this._sCurrentScrollId = undefined;
-				this._iCurrentScrollTimeout = undefined;
-			});
+			if (this._bDomElementsCached) {
+				this._iCurrentScrollTimeout = jQuery.sap.delayedCall(iDuration, this, function () {
+					this._sCurrentScrollId = undefined;
+					this._iCurrentScrollTimeout = undefined;
+				});
+			}
 
 			this._preloadSectionsOnScroll(oSection);
 
