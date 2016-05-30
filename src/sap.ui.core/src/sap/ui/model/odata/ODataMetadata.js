@@ -483,7 +483,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 			// first part must be the entityType
 			oEntityType = this._getEntityTypeByName(aMetaParts[0]);
 
-			jQuery.sap.assert(oEntityType, aMetaParts[0] + " is not a valid EnityType");
+			jQuery.sap.assert(oEntityType, aMetaParts[0] + " is not a valid EntityType");
 
 			if (!oEntityType) {
 				return;
