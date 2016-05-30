@@ -522,8 +522,8 @@
 		"sux": "Sumerisch",
 		"sv": "Schwedisch",
 		"sw": "Suaheli",
+		"sw_CD": "Kongo-Suaheli",
 		"swb": "Komorisch",
-		"swc": "Kongo-Suaheli",
 		"syc": "Altsyrisch",
 		"syr": "Syrisch",
 		"szl": "Schlesisch (Polen)",
@@ -620,6 +620,7 @@
 		"zza": "Zaza"
 	},
 	"scripts": {
+		"Adlm": "Adlm",
 		"Afak": "Afaka",
 		"Aghb": "Kaukasisch-Albanisch",
 		"Ahom": "Ahom",
@@ -633,6 +634,7 @@
 		"Bass": "Bassa",
 		"Batk": "Battakisch",
 		"Beng": "Bengalisch",
+		"Bhks": "Bhks",
 		"Blis": "Bliss-Symbole",
 		"Bopo": "Bopomofo",
 		"Brah": "Brahmi",
@@ -665,6 +667,7 @@
 		"Grek": "Griechisch",
 		"Gujr": "Gujarati",
 		"Guru": "Gurmukhi",
+		"Hanb": "Hanb",
 		"Hang": "Hangul",
 		"Hani": "Chinesisch",
 		"Hano": "Hanunoo",
@@ -681,6 +684,7 @@
 		"Hung": "Altungarisch",
 		"Inds": "Indus-Schrift",
 		"Ital": "Altitalisch",
+		"Jamo": "Jamo",
 		"Java": "Javanesisch",
 		"Jpan": "Japanisch",
 		"Jurc": "Jurchen",
@@ -709,6 +713,7 @@
 		"Mahj": "Mahajani",
 		"Mand": "Mandäisch",
 		"Mani": "Manichäisch",
+		"Marc": "Marc",
 		"Maya": "Maya-Hieroglyphen",
 		"Mend": "Mende",
 		"Merc": "Meroitisch kursiv",
@@ -723,6 +728,7 @@
 		"Mymr": "Birmanisch",
 		"Narb": "Altnordarabisch",
 		"Nbat": "Nabatäisch",
+		"Newa": "Newa",
 		"Nkgb": "Geba",
 		"Nkoo": "N’Ko",
 		"Nshu": "Frauenschrift",
@@ -730,6 +736,7 @@
 		"Olck": "Ol Chiki",
 		"Orkh": "Orchon-Runen",
 		"Orya": "Oriya",
+		"Osge": "Osge",
 		"Osma": "Osmanisch",
 		"Palm": "Palmyrenisch",
 		"Pauc": "Pau Cin Hau",
@@ -835,6 +842,7 @@
 		"Yiii": "Yi",
 		"Zinh": "Geerbter Schriftwert",
 		"Zmth": "Mathematische Notation",
+		"Zsye": "Zsye",
 		"Zsym": "Symbole",
 		"Zxxx": "Schriftlos",
 		"Zyyy": "Unbestimmt",
@@ -879,7 +887,6 @@
 		"AI": "Anguilla",
 		"AL": "Albanien",
 		"AM": "Armenien",
-		"AN": "Niederländische Antillen",
 		"AO": "Angola",
 		"AQ": "Antarktis",
 		"AR": "Argentinien",
@@ -1537,7 +1544,7 @@
 					"nachm."
 				],
 				"narrow": [
-					"vorm.",
+					"vm.",
 					"nm."
 				],
 				"wide": [
@@ -1958,7 +1965,7 @@
 					"nachm."
 				],
 				"narrow": [
-					"vorm.",
+					"vm.",
 					"nm."
 				],
 				"wide": [
@@ -2376,7 +2383,7 @@
 					"nachm."
 				],
 				"narrow": [
-					"vorm.",
+					"vm.",
 					"nm."
 				],
 				"wide": [
@@ -2876,13 +2883,13 @@
 		"CLP": 0,
 		"COP": 0,
 		"CRC": 0,
-		"CZK": 2,
+		"CZK": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
 		"ESP": 0,
 		"GNF": 0,
 		"GYD": 0,
-		"HUF": 2,
+		"HUF": 0,
 		"IDR": 0,
 		"IQD": 0,
 		"IRR": 0,
@@ -2916,7 +2923,7 @@
 		"TMM": 0,
 		"TND": 3,
 		"TRL": 0,
-		"TWD": 2,
+		"TWD": 0,
 		"TZS": 0,
 		"UGX": 0,
 		"UYI": 0,
@@ -2935,7 +2942,7 @@
 	"weekData-weekendStart": 6,
 	"weekData-weekendEnd": 0,
 	"timeData": {
-		"_allowed": "H h",
+		"_allowed": "H hB h",
 		"_preferred": "H"
 	},
 	"eras-gregorian": {
