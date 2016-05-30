@@ -86,7 +86,7 @@ sap.ui.define([
 				this.sRefreshGroupId = undefined;
 				this.sUpdateGroupId = undefined;
 
-				if (mParameters) {
+				if (!this.bRelative || mParameters) {
 					this.mQueryOptions = _ODataHelper.buildQueryOptions(oModel.mUriParameters,
 							mParameters, ["$expand", "$filter", "$orderby", "$select"]);
 				}

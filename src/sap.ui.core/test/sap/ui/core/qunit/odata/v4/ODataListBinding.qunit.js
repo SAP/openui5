@@ -212,6 +212,23 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("bindList without OData query options", function (assert) {
+		var oContext = {},
+			mQueryOptions = {};
+
+		this.mock(_ODataHelper).expects("buildQueryOptions")
+			.withExactArgs(sinon.match.same(this.oModel.mUriParameters),
+				undefined, ["$expand", "$filter", "$orderby", "$select"])
+			.returns(mQueryOptions);
+		this.mock(_Cache).expects("create")
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
+				sinon.match.same(mQueryOptions));
+
+		// code under test
+		this.oModel.bindList("/EMPLOYEES", oContext);
+	});
+
+	//*********************************************************************************************
 	["", "/", "foo/"].forEach(function (sPath) {
 		QUnit.test("bindList: invalid path: " + sPath, function (assert) {
 			assert.throws(function () {
@@ -304,8 +321,7 @@ sap.ui.require([
 			oControl = new TestControl({models : this.oModel}),
 			sPath = "TEAM_2_EMPLOYEES",
 			oRange = {startIndex : 1, length : 3},
-			oPromise = createResult(oRange.length, 0, true),
-			that = this;
+			oPromise = createResult(oRange.length, 0, true);
 
 		// change event handler for initial read for list binding
 		function onChange() {
@@ -413,12 +429,13 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("setContext, change event", function (assert) {
+	QUnit.test("setContext, relative path without parameters", function (assert) {
 		var oContext = {},
 			oListBinding = this.oModel.bindList("Suppliers");
 
 		this.mock(oListBinding).expects("_fireChange")
 			.withExactArgs({reason : ChangeReason.Context});
+		this.mock(_ODataHelper).expects("createCacheProxy").never();
 
 		oListBinding.setContext(oContext);
 	});
