@@ -7,7 +7,6 @@ sap.ui.define(['jquery.sap.global', './Element'],
 	function(jQuery, Element) {
 	"use strict";
 
-
 	/**
 	 * Applies the support for custom style classes on the prototype of a <code>sap.ui.core.Element</code>.
 	 *
@@ -87,6 +86,8 @@ sap.ui.define(['jquery.sap.global', './Element'],
 			var aClasses,
 				bModified = false;
 
+			var aScopes = getScopes();
+
 			if (!this.aCustomStyleClasses) {
 				this.aCustomStyleClasses = [];
 			}
@@ -124,8 +125,11 @@ sap.ui.define(['jquery.sap.global', './Element'],
 				} else if (bSuppressRerendering === false) {
 					this.invalidate();
 				}
+				if (aScopes && aScopes.indexOf(sStyleClass) > -1) {
+					// scope has been added
+					fireThemeScopingChangedEvent(this, sStyleClass, true);
+				}
 			}
-
 			return this;
 		};
 
@@ -137,6 +141,8 @@ sap.ui.define(['jquery.sap.global', './Element'],
 				bExist = false,
 				nIndex;
 
+			var aScopes = getScopes();
+
 			if (sStyleClass && typeof sStyleClass === "string" && this.aCustomStyleClasses && this.mCustomStyleClassMap) {
 				aClasses = sStyleClass.match(rNonWhiteSpace) || [];
 				aClasses.forEach(function(sClass) {
@@ -146,6 +152,10 @@ sap.ui.define(['jquery.sap.global', './Element'],
 						if (nIndex !== -1) {
 							this.aCustomStyleClasses.splice(nIndex, 1);
 							delete this.mCustomStyleClassMap[sClass];
+						}
+						if (aScopes && aScopes.indexOf(sStyleClass) > -1) {
+							// scope has been removed
+							fireThemeScopingChangedEvent(this, sStyleClass, false);
 						}
 					}
 				}.bind(this));
@@ -182,7 +192,6 @@ sap.ui.define(['jquery.sap.global', './Element'],
 			return this; // we could (depending on bAdd) return either this or the boolean result of removeStyleClass, but at least in the bAdd===undefined case the caller wouldn't even know which return type to expect...
 		};
 
-
 		this.hasStyleClass = function(sStyleClass) {
 			jQuery.sap.assert(typeof sStyleClass === "string", "sStyleClass must be a string");
 
@@ -200,8 +209,25 @@ sap.ui.define(['jquery.sap.global', './Element'],
 
 	};
 
-	// moved here to fix the cyclic dependency CustomStyleClassSupport, Element, Core, Control
+	var Parameters;
 
+	function getScopes() {
+		if (!Parameters) {
+			Parameters = sap.ui.require("sap/ui/core/theming/Parameters");
+		}
+
+		if (Parameters) {
+			return Parameters._getScopes();
+		}
+	}
+
+	function fireThemeScopingChangedEvent(oElement, sStyleClass, bIsAdded) {
+		sap.ui.getCore().fireThemeScopingChanged({
+			scope: sStyleClass,
+			added: bIsAdded,
+			element: oElement
+		});
+	}
 
 	return CustomStyleClassSupport;
 
