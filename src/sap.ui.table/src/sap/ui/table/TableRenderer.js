@@ -3,8 +3,8 @@
  */
 
 //Provides default renderer for control sap.ui.table.Table
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './TableUtils'],
-	function(jQuery, Parameters, TableUtils) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library', 'sap/ui/core/theming/Parameters', 'sap/ui/Device', './library', './TableUtils', 'sap/ui/core/Renderer'],
+	function(jQuery, Control, coreLibrary, Parameters, Device, library, TableUtils, Renderer) {
 	"use strict";
 
 
@@ -460,7 +460,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './TableUt
 		rm.write("><div");
 		rm.addClass("sapUiTableColCell");
 		rm.writeClasses();
-		var sHAlign = this.getHAlign(oColumn.getHAlign(), oTable._bRtlMode);
+		var sHAlign = this.getHAlign(oColumn.getHAlign(), oLabel && oLabel.getTextDirection && oLabel.getTextDirection());
 		if (sHAlign) {
 			rm.addStyle("text-align", sHAlign);
 		}
@@ -861,7 +861,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './TableUt
 				firstCol: bIsFirstColumn
 			});
 
-			var sHAlign = this.getHAlign(oColumn.getHAlign(), oTable._bRtlMode);
+			var sHAlign = this.getHAlign(oColumn.getHAlign(), oCell && oCell.getTextDirection && oCell.getTextDirection());
 			if (sHAlign) {
 				rm.addStyle("text-align", sHAlign);
 			}
@@ -942,21 +942,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './TableUt
 	 * Returns the value for the HTML "align" attribute according to the given
 	 * horizontal alignment and RTL mode, or NULL if the HTML default is fine.
 	 *
-	 * @param {sap.ui.core.HorizontalAlign} oHAlign
-	 * @param {boolean} bRTL
-	 * @type string
+	 * @param {sap.ui.core.HorizontalAlign} sHorizontalAlign the text alignment of the Control
+	 * @param {sap.ui.core.TextDirection} sTextDirection the text direction of the Control
+	 * @returns {string} the actual text alignment that must be set for this environment
+	 * @private
 	 */
-	TableRenderer.getHAlign = function(oHAlign, bRTL) {
-	  switch (oHAlign) {
-		case sap.ui.core.HorizontalAlign.Center:
-		  return "center";
-		case sap.ui.core.HorizontalAlign.End:
-		case sap.ui.core.HorizontalAlign.Right:
-		  return bRTL ? "left" : "right";
-	  }
-	  // case sap.ui.core.HorizontalAlign.Left:
-	  // case sap.ui.core.HorizontalAlign.Begin:
-	  return bRTL ? "right" : "left";
+	TableRenderer.getHAlign = function(sHorizontalAlign, sTextDirection) {
+		// the enum values of sap.ui.core.TextAlign are a superset of sap.ui.core.HorizontalAlign
+		// the logic to be implemented is basically the same, therefore route the call to getTextAlign implementation
+		// of the Renderer
+		var sTextAlign = Renderer.getTextAlign(sHorizontalAlign, sTextDirection);
+		if (!sTextAlign) {
+			sTextAlign = (sHorizontalAlign == coreLibrary.HorizontalAlign.Left ? "left" : "right");
+		}
+		return sTextAlign;
 	};
 
 
