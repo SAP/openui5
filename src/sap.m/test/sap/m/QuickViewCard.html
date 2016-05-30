@@ -38,7 +38,7 @@
 							elements: [
 								{
 									label: "Company address",
-									value: "Sofia, Boris III, 136A"
+									value: "Sofia, Boris III, 136A Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id."
 								},
 								{
 									label: "Company",
@@ -205,7 +205,7 @@
 		var app = new sap.m.App("myApp", {initialPage:"quickViewPage"});
 		app.placeAt("body");
 
-		var oQuickViewCard = new sap.m.QuickViewCard({
+		var oQuickViewCard = new sap.m.QuickViewCard("QVC", {
 			afterNavigate : function (oEvent) {
 				if (oButton) {
 					oButton.setEnabled(!oEvent.getParameter('isTopPage'));
@@ -238,7 +238,73 @@
 			}
 		});
 
-		var oButton = new sap.m.Button({
+		var oQuickViewCard2 = new sap.m.QuickViewCard("QVC2", {
+			afterNavigate : function (oEvent) {
+				if (oButton) {
+					oButton.setEnabled(!oEvent.getParameter('isTopPage'));
+				}
+			},
+			pages : {
+				path : '/pages',
+				template : new sap.m.QuickViewPage({
+					pageId : "{pageId}",
+					icon: "http://www.iconshock.com/img_jpg/SUNNYDAY/general/jpg/128/toy_icon.jpg",
+					title: "Title - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.",
+					description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.",
+					groups : {
+						path : 'groups',
+						template : new sap.m.QuickViewGroup({
+							heading : 'Heading - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.',
+							elements : {
+								path : 'elements',
+								template : new sap.m.QuickViewGroupElement({
+									label: "{label}",
+									value: "{value}",
+									url: "{url}",
+									type: "{elementType}",
+									pageLinkId: "{pageLinkId}"
+								})
+							}
+						})
+					}
+				})
+			}
+		});
+
+
+		var oQuickViewCard3 = new sap.m.QuickViewCard("QVC3", {
+			afterNavigate : function (oEvent) {
+				if (oButton) {
+					oButton.setEnabled(!oEvent.getParameter('isTopPage'));
+				}
+			},
+			pages : {
+				path : '/pages',
+				template : new sap.m.QuickViewPage({
+					pageId : "{pageId}",
+					icon: "",
+					title: "Title - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.",
+					description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.",
+					groups : {
+						path : 'groups',
+						template : new sap.m.QuickViewGroup({
+							heading : 'Heading - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.',
+							elements : {
+								path : 'elements',
+								template : new sap.m.QuickViewGroupElement({
+									label: "{label}",
+									value: "{value}",
+									url: "{url}",
+									type: "{elementType}",
+									pageLinkId: "{pageLinkId}"
+								})
+							}
+						})
+					}
+				})
+			}
+		});
+		var oButton = new sap.m.Button("BackBtn", {
 			text : 'Back',
 			enabled : false,
 			press : function () {
@@ -246,17 +312,24 @@
 			}
 		});
 
-		var oHideScrollButton = new sap.m.Button({
+		var oHideScrollButton = new sap.m.Button("HideBtn", {
 			text : 'Hide ScrollBar',
 			press : function () {
 				oQuickViewCard.setShowVerticalScrollBar(false);
 			}
 		});
 
-		var oShowScrollButton = new sap.m.Button({
+		var oShowScrollButton = new sap.m.Button("ShowBtn", {
 			text : 'Show ScrollBar',
 			press : function () {
 				oQuickViewCard.setShowVerticalScrollBar(true);
+			}
+		});
+
+		var oShowFullHeightButton = new sap.m.Button("FullHeightBtn", {
+			text : 'Show full height',
+			press : function () {
+				oPanel.setHeight("490px");
 			}
 		});
 
@@ -269,6 +342,24 @@
 			]
 		});
 
+		var oPanel2 = new sap.m.Panel('quickViewCardPanel2', {
+			width : '320px',
+			height : '292px',
+			headerText : 'Store 2 - Test long texts and Icon',
+			content : [
+				oQuickViewCard2
+			]
+		});
+
+		var oPanel3 = new sap.m.Panel('quickViewCardPanel3', {
+			width : '320px',
+			height : '292px',
+			headerText : 'Store 3 - Test long texts',
+			content : [
+				oQuickViewCard3
+			]
+		});
+
 		// create and add a page
 		var page = new sap.m.Page("quickViewPage", {
 			title : "Quick View Card",
@@ -276,7 +367,10 @@
 				oButton,
 				oHideScrollButton,
 				oShowScrollButton,
-				oPanel
+				oShowFullHeightButton,
+				oPanel,
+				oPanel2,
+				oPanel3
 			]
 		});
 		app.addPage(page);

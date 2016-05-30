@@ -28,8 +28,8 @@
 	left: -100%;
 }
 
-.sap-desktop .sapMQuickViewPage .sapUiFormResGrid > div,
-.sap-tablet .sapMQuickViewPage .sapUiFormResGrid > div {
+html.sap-desktop .sapMQuickViewPage .sapUiFormResGrid > div,
+html.sap-tablet .sapMQuickViewPage .sapUiFormResGrid > div {
 	padding: 0;
 	margin: 0;
 }
@@ -47,12 +47,12 @@
 	padding-top: 2.5rem;
 }
 
-.sap-phone .sapMQuickViewPage.sapMNavItem.sapMPage {
+html.sap-phone .sapMQuickViewPage.sapMNavItem.sapMPage {
 	position: relative;
 }
 
-.sap-desktop .sapMQuickViewPage.sapMPage > header,
-.sap-tablet .sapMQuickViewPage.sapMPage > header {
+html.sap-desktop .sapMQuickViewPage.sapMPage > header,
+html.sap-tablet .sapMQuickViewPage.sapMPage > header {
 	position: absolute;
 	height: 3rem;
 	top: 0;
@@ -69,8 +69,8 @@
 	font-size: 1rem;
 }
 
-.sap-desktop .sapMQuickViewPage > section,
-.sap-tablet .sapMQuickViewPage > section {
+html.sap-desktop .sapMQuickViewPage > section,
+html.sap-tablet .sapMQuickViewPage > section {
 	position: static;
 	height: 100%;
 	padding: 1rem;
@@ -95,7 +95,7 @@
 	font-weight: normal;
 }
 
-.sapMQuickViewPage .sapUiFormResGrid > div {
+.sapMQuickViewPage .sapUiFormResGrid.sapUiFormBackgrTranslucent > div {
 	background-color : transparent;
 }
 
@@ -130,12 +130,15 @@
 }
 
 .sapMQuickViewCard .sapUiHLayout,
-.sapMQuickViewCard .sapUiHLayoutChildWrapper,
 .sapMQuickViewCard .sapUiVlt {
 	display: block;
 }
 
-.sap-phone .sapMQuickViewPage .sapUiHLayout {
+.sapMQuickViewCard .sapUiHLayoutChildWrapper:only-child {
+  width: 100%;
+}
+
+html.sap-phone .sapMQuickViewPage .sapUiHLayout {
 	margin: 1rem 0 0 0.75rem;
 }
 
