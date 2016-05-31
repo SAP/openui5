@@ -147,10 +147,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 
 	PlanningCalendarRow.prototype.init = function(){
 
-		var oCalendarRowHeader = new CalenderRowHeader(this.getId() + "-Head", {parentRow: this});
-		var oCalendarRow = new sap.ui.unified.CalendarRow(this.getId() + "-CalRow", {
+		var sId = this.getId();
+		var oCalendarRowHeader = new CalenderRowHeader(sId + "-Head", {parentRow: this});
+		var oCalendarRow = new sap.ui.unified.CalendarRow(sId + "-CalRow", {
 			checkResize: false,
-			updateCurrentTime: false
+			updateCurrentTime: false,
+			ariaLabelledBy: sId + "-Head"
 		});
 		oCalendarRow._oPlanningCalendarRow = this;
 

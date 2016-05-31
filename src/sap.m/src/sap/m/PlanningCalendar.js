@@ -152,6 +152,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			table : {type : "sap.m.Table", multiple : false, visibility : "hidden"}
 
 		},
+		associations: {
+
+			/**
+			 * Association to controls / IDs which label this control (see WAI-ARIA attribute aria-labelledby).
+			 * @since 1.40.0
+			 */
+			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" },
+
+			/**
+			 * Association to the <code>CalendarLegend</code> explaining the colors of the <code>Appointments</code>.
+			 *
+			 * <b>Note</b> The legend does not have to be rendered but must exist, and all required types must be assigned.
+			 * @since 1.40.0
+			 */
+			legend: { type: "sap.ui.unified.CalendarLegend", multiple: false}
+		},
 		events : {
 
 			/**
@@ -283,43 +299,45 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		this._oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
-		this._oIntervalTypeSelect = new sap.m.Select(this.getId() + "-IntType", {maxWidth: "15rem"});
+		var sId = this.getId();
+		this._oIntervalTypeSelect = new sap.m.Select(sId + "-IntType", {maxWidth: "15rem", ariaLabelledBy: sId + "-SelDescr"});
 		this._oIntervalTypeSelect.attachEvent("change", _changeIntervalType, this);
 
-		this._oTodayButton = new sap.m.Button(this.getId() + "-Today", {
+		this._oTodayButton = new sap.m.Button(sId + "-Today", {
 			text: this._oRB.getText("PLANNINGCALENDAR_TODAY"),
 			type: sap.m.ButtonType.Transparent
 		});
 		this._oTodayButton.attachEvent("press", _handleTodayPress, this);
 
-		this._oHeaderToolbar = new sap.m.Toolbar(this.getId() + "-HeaderToolbar", {
+		this._oHeaderToolbar = new sap.m.Toolbar(sId + "-HeaderToolbar", {
 			design: sap.m.ToolbarDesign.Transparent,
 			content: [this._oIntervalTypeSelect, this._oTodayButton]
 		});
 
-		this._oCalendarHeader = new CalendarHeader(this.getId() + "-CalHead", {
+		this._oCalendarHeader = new CalendarHeader(sId + "-CalHead", {
 			toolbar: this._oHeaderToolbar
 		});
 
-		this._oInfoToolbar = new sap.m.Toolbar(this.getId() + "-InfoToolbar", {
+		this._oInfoToolbar = new sap.m.Toolbar(sId + "-InfoToolbar", {
 			height: "auto",
 			design: sap.m.ToolbarDesign.Transparent,
 			content: [this._oCalendarHeader, this._oTimeInterval]
 		});
 
-		var oTable = new sap.m.Table(this.getId() + "-Table", {
+		var oTable = new sap.m.Table(sId + "-Table", {
 			infoToolbar: this._oInfoToolbar,
 			mode: sap.m.ListMode.SingleSelectMaster,
 			columns: [ new sap.m.Column({
-				styleClass: "sapMPlanCalRowHead"
-			}),
-			new sap.m.Column({
-				width: "80%",
-				styleClass: "sapMPlanCalAppRow",
-				minScreenWidth: sap.m.ScreenSize.Desktop,
-				demandPopin: true
-			})
-			]
+					styleClass: "sapMPlanCalRowHead"
+				}),
+				new sap.m.Column({
+					width: "80%",
+					styleClass: "sapMPlanCalAppRow",
+					minScreenWidth: sap.m.ScreenSize.Desktop,
+					demandPopin: true
+				})
+			],
+			ariaLabelledBy: sId + "-Descr"
 		});
 		oTable.attachEvent("selectionChange", _handleTableSelectionChange, this);
 
@@ -841,6 +859,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		oCalendarRow.setShowIntervalHeaders(this.getShowIntervalHeaders());
 		oCalendarRow.setShowEmptyIntervalHeaders(this.getShowEmptyIntervalHeaders());
 		oCalendarRow.setAppointmentsReducedHeight(this.getAppointmentsReducedHeight());
+		oCalendarRow.setLegend(this.getLegend());
 		oCalendarRow.attachEvent("select", _handleAppointmentSelect, this);
 		oCalendarRow.attachEvent("startDateChange", _handleStartDateChange, this);
 		oCalendarRow.attachEvent("leaveRow", _handleLeaveRow, this);
@@ -878,6 +897,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		oCalendarRow.setShowIntervalHeaders(this.getShowIntervalHeaders());
 		oCalendarRow.setShowEmptyIntervalHeaders(this.getShowEmptyIntervalHeaders());
 		oCalendarRow.setAppointmentsReducedHeight(this.getAppointmentsReducedHeight());
+		oCalendarRow.setLegend(this.getLegend());
 		oCalendarRow.attachEvent("select", _handleAppointmentSelect, this);
 		oCalendarRow.attachEvent("startDateChange", _handleStartDateChange, this);
 		oCalendarRow.attachEvent("leaveRow", _handleLeaveRow, this);
@@ -1047,6 +1067,54 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		var oTable = this.getAggregation("table");
 		oTable.setNoDataText(sNoDataText);
+
+		return this;
+
+	};
+
+	PlanningCalendar.prototype.setLegend = function(sLegendId){
+
+		this.setAssociation("legend", sLegendId, true);
+
+		var aRows = this.getRows();
+		for (var i = 0; i < aRows.length; i++) {
+			var oRow = aRows[i];
+			oRow.getCalendarRow().setLegend(sLegendId);
+		}
+
+		return this;
+
+	};
+
+	PlanningCalendar.prototype.addAriaLabelledBy = function(sId) {
+
+		this.addAssociation("ariaLabelledBy", sId, true);
+
+		var oTable = this.getAggregation("table");
+		oTable.addAriaLabelledBy(sId);
+
+		return this;
+
+	};
+
+	PlanningCalendar.prototype.removeAriaLabelledBy = function(vObject) {
+
+		this.removeAssociation("ariaLabelledBy", vObject, true);
+
+		var oTable = this.getAggregation("table");
+		oTable.removeAriaLabelledBy(vObject);
+
+		return this;
+
+	};
+
+	PlanningCalendar.prototype.removeAllAriaLabelledBy = function() {
+
+		this.removeAllAssociation("ariaLabelledBy", true);
+
+		var oTable = this.getAggregation("table");
+		oTable.removeAllAriaLabelledBy();
+		oTable.addAriaLabelledBy(this.getId() + "-Descr");
 
 		return this;
 

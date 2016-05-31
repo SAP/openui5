@@ -136,7 +136,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	TimesRow.prototype.init = function(){
 
 		this._oFormatYyyyMMddHHmm = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMddHHmm", calendarType: sap.ui.core.CalendarType.Gregorian});
-		this._oFormatLong = sap.ui.core.format.DateFormat.getDateTimeInstance({style: "long"});
+		this._oFormatLong = sap.ui.core.format.DateFormat.getDateTimeInstance({style: "long/short"});
 		this._oFormatDate = sap.ui.core.format.DateFormat.getDateInstance({style: "medium"});
 
 		this._mouseMoveProxy = jQuery.proxy(this._handleMouseMove, this);
@@ -382,7 +382,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		if (this._oFormatLong.oLocale.toString() != sLocale) {
 			var oLocale = new sap.ui.core.Locale(sLocale);
-			this._oFormatLong = sap.ui.core.format.DateFormat.getInstance({style: "long"}, oLocale);
+			this._oFormatLong = sap.ui.core.format.DateFormat.getInstance({style: "long/short"}, oLocale);
 		}
 
 		return this._oFormatLong;
