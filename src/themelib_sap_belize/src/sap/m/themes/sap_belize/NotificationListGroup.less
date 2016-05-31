@@ -5,7 +5,7 @@
 
 .sapMNLG {
   background-color: @sapUiListBackground;
-  box-shadow: 0 0.125rem 0.5rem fade(@sapUiContentShadowColor, 50);
+  box-shadow: @sapUiShadowLevel0;
 }
 
 .sapMNLG.sapMLIB {
@@ -18,6 +18,7 @@
 
 .sapMNLG-Header > .sapMText {
   color: @sapUiListTextColor;
+  font-size: @sapMFontLargeSize;
 }
 
 .sapMNLG-None {
@@ -38,12 +39,12 @@
 
 .sapMNLG .sapMNLI {
   margin-top: 0;
-  background-color:  darken(@sapUiListBackground, 2);
+  background-color: darken(@sapUiListBackground, 2);
   border-top: 1px solid @sapUiListBorderColor;
 }
 
 .sapMNLG-Header .sapMNLG-Details {
-  color:  @sapUiContentLabelColor;
+  color: @sapUiContentLabelColor;
 }
 
 .sapUiSizeCompact .sapMNLG-CloseButton .sapMBtnInner {
@@ -62,7 +63,7 @@ html.sap-desktop .sapMLIB.sapMNLG:focus {
   content: " ";
   top: 1px;
   right: 1px;
-  bottom: 0.5625rem;
+  bottom: 1px;
   left: 1px;
   z-index: 2;
   pointer-events: none;
