@@ -32,6 +32,7 @@
 
 	jQuery.sap.require("sap.ui.core.util.MockServer");
 
+	var that = this;
 	var sServiceUri = "/SalesOrderSrv/";
 	var sDataRootPath =  "testdata/SalesOrder/";
 	var oModel, spy;
@@ -4292,7 +4293,7 @@
 		}
 	});
 
-	asyncTest("test abort of batch request", function() {
+	asyncTest("test abort of batch request before Sending", function() {
 		var bSuccess = false;
 		var oAbort = {};
 		oModel.read("/ProductSet('HT-1001')", {
@@ -4327,6 +4328,44 @@
 			start();
 		});
 	});
+
+	asyncTest("test abort of batch request after Sending", function() {
+		var bSuccess = false;
+		var oAbort = {};
+		oModel.read("/ProductSet('HT-1001')", {
+			success : function() {
+				bSuccess = true;
+			},
+			error : function(oError) {
+				ok(true, "error callback of aborted request is called");
+				ok(oError.statusCode === 0, "status code 0");
+				ok(oError.statusText === 'abort', "status text 'abort'");
+			},
+			batchGroupId: "changes"
+		});
+		oModel.read("/ProductSet('AD-1000')", {
+			success : function() {
+				bSuccess = true;
+			},
+			error : function(oError) {
+				ok(true, "error callback of aborted request is called");
+				ok(oError.statusCode === 0, "status code 0");
+				ok(oError.statusText === 'abort', "status text 'abort'");
+			},
+			batchGroupId: "changes"
+		});
+		oAbort = oModel.submitChanges();
+		oModel.attachBatchRequestSent(this, function(oEvent){
+			oAbort.abort();
+		});
+		oModel.attachBatchRequestCompleted(this, function(oEvent) {
+			ok(oEvent.getParameter('response').statusCode === 0, "status code 0");
+			ok(oEvent.getParameter('response').statusText === 'abort', "status text 'abort'");
+			ok(!bSuccess, "Success handler should not be called");
+			start();
+		});
+	});
+
 	asyncTest("test abort of batch request: equal requests", function() {
 		var bSuccess = false;
 		var iAbort = 0;
@@ -4409,6 +4448,256 @@
 		});
 	});
 
+	asyncTest("test abort of all requests in batch request", function() {
+		expect(4);
+		oModel.attachBatchRequestCompleted(this, function(oEvent) {
+			ok(oEvent.getParameter('response').statusCode === 0, "status code 0");
+			ok(oEvent.getParameter('response').statusText === 'abort', "status text 'abort'");
+			start();
+		});
+
+		oModel.attachBatchRequestSent(this, function(oEvent) {
+			setTimeout(function() {
+				oAbort1.abort();
+  			oAbort2.abort();
+			}, 0);
+		});
+
+		var oAbort1 = oModel.read("/ProductSet('HT-1001')", {
+			success: function() {
+				ok(false, "Successhandler was called");
+			},
+			batchGroupId: "myId1",
+			error: function(){
+				ok(true, "Errorhandler was called");
+			}
+		});
+
+		var oAbort2 = oModel.read("/ProductSet('AD-1000')", {
+			success: function() {
+				ok(false, "Successhandler was called");
+			},
+			batchGroupId: "myId1",
+			error: function(){
+				ok(true, "Errorhandler was called");
+			}
+		});
+	});
+
+	asyncTest("test abort of all requests in batch request of one group", function() {
+		expect(8);
+		var iCounterBatch = 0;
+		oModel.attachBatchRequestCompleted(this, function(oEvent) {
+			iCounterBatch++;
+			if(iCounterBatch === 1){
+				ok(oEvent.getParameter('response').statusCode === 0, "status code 0");
+				ok(oEvent.getParameter('response').statusText === 'abort', "status text 'abort'");
+			} else {
+				ok(oEvent.getParameter('response').statusCode !== 0, "status code not 0");
+				ok(oEvent.getParameter('response').statusText !== 'abort', "status text not 'abort'");
+				start();
+			}
+		});
+		var iCounter = 0;
+		oModel.attachBatchRequestSent(this, function(oEvent) {
+			iCounter++;
+			if(iCounter === 2){
+				bFirstTime = true;
+				setTimeout(function() {
+					oAbort1.abort();
+	  			oAbort2.abort();
+				}, 0);
+			}
+		});
+
+		var oAbort1 = oModel.read("/ProductSet('HT-1001')", {
+			success: function() {
+				ok(false, "Successhandler was called");
+			},
+			batchGroupId: "myId1",
+			error: function(){
+				ok(true, "Errorhandler was called");
+			}
+		});
+
+		var oAbort2 = oModel.read("/ProductSet('AD-1000')", {
+			success: function() {
+				ok(false, "Successhandler was called");
+			},
+			batchGroupId: "myId1",
+			error: function(){
+				ok(true, "Errorhandler was called");
+			}
+		});
+
+		var oAbort3 = oModel.read("/ProductSet('HT-1001')", {
+			success: function() {
+				ok(true, "Successhandler was called");
+			},
+			batchGroupId: "myId2",
+			error: function(){
+				ok(false, "Errorhandler was called");
+			}
+		});
+
+		var oAbort4 = oModel.read("/ProductSet('AD-1000')", {
+			success: function() {
+				ok(true, "Successhandler was called");
+			},
+			batchGroupId: "myId2",
+			error: function(){
+				ok(false, "Errorhandler was called");
+			}
+		});
+	});
+
+	asyncTest("test abort of all requests in batch request of all groups", function() {
+		expect(8);
+		var iCounterBatch = 0;
+		oModel.attachBatchRequestCompleted(this, function(oEvent) {
+			iCounterBatch++;
+			ok(oEvent.getParameter('response').statusCode === 0, "status code 0");
+			ok(oEvent.getParameter('response').statusText === 'abort', "status text 'abort'");
+			if(iCounterBatch === 2){
+				start();
+			}
+		});
+		var iCounter = 0;
+		oModel.attachBatchRequestSent(this, function(oEvent) {
+			iCounter++;
+			if(iCounter === 2){
+				bFirstTime = true;
+				setTimeout(function() {
+					oAbort1.abort();
+	  			oAbort2.abort();
+	  			oAbort3.abort();
+					oAbort4.abort();
+				}, 0);
+			}
+		});
+
+		var oAbort1 = oModel.read("/ProductSet('HT-1001')", {
+			success: function() {
+				ok(false, "Successhandler was called");
+			},
+			batchGroupId: "myId1",
+			error: function(){
+				ok(true, "Errorhandler was called");
+			}
+		});
+
+		var oAbort2 = oModel.update("/ProductSet('AD-1000')", {
+			success: function() {
+				ok(false, "Successhandler was called");
+			},
+			batchGroupId: "myId1",
+			error: function(){
+				ok(true, "Errorhandler was called");
+			}
+		});
+
+		var oAbort3 = oModel.read("/ProductSet('HT-1001')", {
+			success: function() {
+				ok(false, "Successhandler was called");
+			},
+			batchGroupId: "myId2",
+			error: function(){
+				ok(true, "Errorhandler was called");
+			}
+		});
+
+		var oAbort4 = oModel.update("/ProductSet('AD-1000')", {
+			success: function() {
+				ok(false, "Successhandler was called");
+			},
+			batchGroupId: "myId2",
+			error: function(){
+				ok(true, "Errorhandler was called");
+			}
+		});
+	});
+
+	asyncTest("test abort of requests in batch request with mixed groups and changesets", function() {
+		expect(9);
+		var iCounterBatch = 0;
+		oModel.attachBatchRequestCompleted(this, function(oEvent) {
+			iCounterBatch++;
+			if(iCounterBatch===1){
+				ok(oEvent.getParameter('response').statusCode === 0, "status code 0");
+				ok(oEvent.getParameter('response').statusText === 'abort', "status text 'abort'");
+			}
+			if(iCounterBatch === 2){
+				ok(oEvent.getParameter('response').statusCode !== 0, "status code not 0");
+				ok(oEvent.getParameter('response').statusText !== 'abort', "status text not 'abort'");
+				start();
+			}
+		});
+
+		var oAbort1 = oModel.read("/ProductSet('HT-1001')", {
+			success: function() {
+				ok(false, "Successhandler was called");
+			},
+			batchGroupId: "myId1",
+			sChangeSetId: "myId3",
+			error: function(){
+				ok(true, "Errorhandler was called");
+			}
+		});
+
+		var oAbort2 = oModel.read("/ProductSet('AD-1000')", {
+			success: function() {
+				ok(false, "Successhandler was called");
+			},
+			batchGroupId: "myId1",
+		  sChangeSetId: "myId3",
+			error: function(){
+				ok(true, "Errorhandler was called");
+			}
+		});
+
+		var oAbort3 = oModel.read("/ProductSet('HT-1001')", {
+			success: function() {
+				ok(false, "Successhandler was called");
+			},
+			batchGroupId: "myId1",
+			sChangeSetId: "myId4",
+			error: function(){
+				ok(true, "Errorhandler was called");
+			}
+		});
+
+		var oAbort4 = oModel.read("/ProductSet('HT-1000')", {
+			success: function() {
+				ok(false, "Successhandler was called");
+			},
+			batchGroupId: "myId2",
+			sChangeSetId: "myId5",
+			error: function(){
+				ok(true, "Errorhandler was called");
+			}
+		});
+
+		var oAbort5 = oModel.read("/ProductSet('HT-1001')", {
+			success: function() {
+				ok(true, "Successhandler was called");
+			},
+			batchGroupId: "myId2",
+			sChangeSetId: "myId4",
+			error: function(){
+				ok(false, "Errorhandler was called");
+			}
+		});
+
+
+
+		setTimeout(function() {
+			oAbort1.abort();
+			oAbort2.abort();
+			oAbort3.abort();
+			oAbort4.abort();
+		}, 0);
+	});
+
 	asyncTest("test abort of request in batch request: equal requests", function() {
 		var iSuccess = 0;
 		var iAbort = 0;
@@ -4452,7 +4741,6 @@
 			}
 		});
 	});
-
 
 	asyncTest("test abort of deferred batch request", function() {
 		var bSuccess = false;
@@ -4620,6 +4908,67 @@
 				start();
 			}
 		});
+	});
+
+
+
+	asyncTest("XMLHttpRequest abort of batch requests with ODataModel internal", function() {
+		expect(3);
+		var that = this;
+		var iEventCounter = 0;
+		var bSuccess1 = false,
+			bSuccess2 = false,
+			bSuccess3 = false;
+		var oAbort = {};
+		var oModel = initModel({
+			"useBatch": true
+		});
+		this.aRequests = [];
+
+		oModel.attachRequestCompleted(this, function(oEvent) {
+			iEventCounter++;
+			if (iEventCounter === 2) {
+				ok(!bSuccess1, "RequestHandle 1 was flagged aborted in the ODataModel");
+				ok(!bSuccess2, "RequestHandle 2 was flagged aborted in the ODataModel");
+				ok(!bSuccess3, "RequestHandle 3 was flagged aborted in the ODataModel");
+		//		ok(that.aRequests[2].status === 0, "XHR was aborted");
+				start();
+			}
+		});
+
+		var bFirstTime = true;
+		oModel.attachRequestSent(this, function(oEvent) {
+			if (bFirstTime) {
+				bFirstTime = false;
+				setTimeout(function() {
+					oAbort1.abort();
+					oAbort2.abort();
+					oAbort3.abort();
+				}, 0);
+			}
+		});
+
+		var oAbort1 = oModel.read("/Products", {
+			success: function() {
+				bSuccess1 = true;
+			},
+			sChangeSetId: "myId1"
+		});
+
+		var oAbort2 = oModel.update("/Products", {
+			success: function() {
+				bSuccess2 = true;
+			},
+			sChangeSetId: "myId1"
+		});
+
+		var oAbort3 = oModel.read("/Products", {
+			success: function() {
+				bSuccess3 = true;
+			},
+			sChangeSetId: "myId1"
+		});
+
 	});
 
 	asyncTest("test oDataModel checkupdate/dataReceived event order", function() {
