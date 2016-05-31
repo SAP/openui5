@@ -397,12 +397,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 
 		// include the mobile library to re-use the sap.m.TablePersoDialog
 		sap.ui.getCore().loadLibrary("sap.m");
-		jQuery.sap.require("sap.m.TablePersoDialog");
+		var TablePersoDialog = sap.ui.requireSync("sap/m/TablePersoDialog");
 
 		// create and open the dialog
 		if (!this._oDialog) {
 			var that = this;
-			this._oDialog = new sap.m.TablePersoDialog({
+			this._oDialog = new TablePersoDialog({
 				persoService: this.getPersoService(),
 				showSelectAll: true,
 				showResetAll: true,
@@ -431,4 +431,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 
 	return TablePersoController;
 
-}, /* bExport= */ true);
+});

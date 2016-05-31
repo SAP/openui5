@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.table.TreeTable.
-sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBindingAdapter', 'sap/ui/model/ClientTreeBindingAdapter', 'sap/ui/model/TreeBindingCompatibilityAdapter', './library'],
-	function(jQuery, Table, ODataTreeBindingAdapter, ClientTreeBindingAdapter, TreeBindingCompatibilityAdapter, library) {
+sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBindingAdapter', 'sap/ui/model/ClientTreeBindingAdapter', 'sap/ui/model/TreeBindingCompatibilityAdapter', './library', 'sap/ui/core/Element'],
+	function(jQuery, Table, ODataTreeBindingAdapter, ClientTreeBindingAdapter, TreeBindingCompatibilityAdapter, library, Element) {
 	"use strict";
 
 	/**
@@ -177,20 +177,26 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 		if (sName === "rows") {
 			return true;
 		}
-		return sap.ui.core.Element.prototype.isTreeBinding.apply(this, arguments);
+		return Element.prototype.isTreeBinding.apply(this, arguments);
 	};
 
 	TreeTable.prototype.getBinding = function(sName) {
 		sName = sName || "rows";
-		var oBinding = sap.ui.core.Element.prototype.getBinding.call(this, sName);
+		var oBinding = Element.prototype.getBinding.call(this, sName);
 
 		if (oBinding && sName === "rows" && !oBinding.getLength) {
-			if (sap.ui.model.odata.ODataTreeBinding && oBinding instanceof sap.ui.model.odata.ODataTreeBinding) {
+			// try to resolve optional dependencies
+			// TODO this doesn't help anything as the adapters are not loaded lazily and they reference the corresponding bindings directly
+			var ODataTreeBinding = sap.ui.require("sap/ui/model/odata/ODataTreeBinding");
+			var V2ODataTreeBinding = sap.ui.require("sap/ui/model/odata/v2/ODataTreeBinding");
+			var ClientTreeBinding = sap.ui.require("sap/ui/model/ClientTreeBinding");
+			if (ODataTreeBinding && oBinding instanceof ODataTreeBinding) {
+
 				// use legacy tree binding adapter
 				TreeBindingCompatibilityAdapter(oBinding, this);
-			} else if (sap.ui.model.odata.v2.ODataTreeBinding && oBinding instanceof sap.ui.model.odata.v2.ODataTreeBinding) {
+			} else if (V2ODataTreeBinding && oBinding instanceof V2ODataTreeBinding) {
 				oBinding.applyAdapterInterface();
-			} else if (sap.ui.model.ClientTreeBinding && oBinding instanceof sap.ui.model.ClientTreeBinding) {
+			} else if (ClientTreeBinding && oBinding instanceof ClientTreeBinding) {
 				ClientTreeBindingAdapter.apply(oBinding);
 				//TreeBindingCompatibilityAdapter(oBinding, this);
 			} else {
@@ -727,4 +733,4 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 
 	return TreeTable;
 
-}, /* bExport= */ true);
+});
