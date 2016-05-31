@@ -5,14 +5,15 @@
 	xmlns:core="sap.ui.core"
 	xmlns:form="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 	>
 	<Toolbar>
 		<Title text="Teams" titleStyle="H4"/>
 		<ToolbarSpacer width="1em"/>
 		<Select id="TeamSelect" change="onTeamSelect" autoAdjustWidth="true"
 			items="{path: '/TEAMS',
-				parameters: {'$expand':
-					{'TEAM_2_EMPLOYEES': {'$expand': {'EMPLOYEE_2_EQUIPMENTS': true}},
+				parameters: {$expand:
+					{'TEAM_2_EMPLOYEES': {$expand: {'EMPLOYEE_2_EQUIPMENTS': true}},
 					'TEAM_2_MANAGER': true}}}" >
 			<core:Item key="{Team_Id}" text="{Name}"/>
 		</Select>
@@ -249,5 +250,72 @@
 			<Label text="Entry Date"/>
 			<Text text="{ENTRYDATE}"/>
 		</form:SimpleForm>
+	</VBox>
+	<VBox>
+		<Table growing="true" growingThreshold="100" id="Equipments"
+			items="{
+					events : {
+						change : '.onEquipmentsChanged'
+					},
+					path : '/Equipments',
+					parameters : {
+						operationMode : 'Server',
+						$orderby : 'Name',
+						$select : 'Category,ID,Name,EmployeeId'
+					},
+					sorter : {
+						path : 'Category',
+						group : true
+					}
+				}">
+			<headerToolbar>
+				<Toolbar>
+					<content>
+						<Title text="Sort Equipments" titleStyle="H4">
+							<layoutData>
+								<ToolbarLayoutData shrinkable="false" />
+							</layoutData>
+						</Title>
+						<ToolbarSpacer width="1em"/>
+						<Button enabled="{ui>/bRealOData}" icon="sap-icon://refresh" text="Refresh"
+							press="onEquipmentsRefresh" />
+					</content>
+				</Toolbar>
+			</headerToolbar>
+			<columns>
+				<Column>
+					<Button app:sorterPath="Category" enabled="{ui>/bRealOData}"
+						icon="{sort>/Category/icon}" press="onSort" text="Category" />
+				</Column>
+				<Column>
+					<Button app:sorterPath="ID" enabled="{ui>/bRealOData}" icon="{sort>/ID/icon}"
+						press="onSort" text="ID" />
+				</Column>
+				<Column>
+					<Button app:sorterPath="Name" enabled="{ui>/bRealOData}"
+						icon="{sort>/Name/icon}" press="onSort" text="Name" />
+				</Column>
+				<Column>
+					<Button app:sorterPath="EmployeeId" enabled="{ui>/bRealOData}"
+						icon="{sort>/EmployeeId/icon}" press="onSort" text="EmployeeId" />
+				</Column>
+			</columns>
+			<items>
+				<ColumnListItem>
+					<cells>
+						<Text text="{Category}"/>
+					</cells>
+					<cells>
+						<Text text="{ID}"/>
+					</cells>
+					<cells>
+						<Text text="{Name}"/>
+					</cells>
+					<cells>
+						<Text text="{EmployeeId}"/>
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
 	</VBox>
 </mvc:View>

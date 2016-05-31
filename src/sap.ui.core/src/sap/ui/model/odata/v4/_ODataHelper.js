@@ -4,8 +4,9 @@
 
 sap.ui.define([
 	"./lib/_Helper",
-	"./lib/_Parser"
-], function (_Helper, _Parser) {
+	"./lib/_Parser",
+	"sap/ui/model/Sorter"
+], function (_Helper, _Parser, Sorter) {
 	"use strict";
 
 	var ODataHelper,
@@ -74,6 +75,38 @@ sap.ui.define([
 				});
 			}
 			return mResult;
+		},
+
+		/**
+		 * Build the value for the OData V4 '$orderby' system query option from the given sorters
+		 * and the optional static '$orderby' value which is appended to the sorters.
+		 *
+		 * @param {sap.ui.model.Sorter[]} [aSorters]
+		 *   An array of <code>Sorter</code> objects to be converted into corresponding '$orderby'
+		 *   string.
+		 * @param {string} [sOrderbyQueryOption]
+		 *   The static '$orderby' system query option which is appended to the converted 'aSorters'
+		 *   parameter.
+		 * @returns {string}
+		 *   The concatenated orderby-string
+		 * @throws {Error}
+		 *   If 'aSorters' contains elements, which are not {@link sap.ui.model.Sorter} instances.
+		 */
+		buildOrderbyOption : function (aSorters, sOrderbyQueryOption) {
+			var aOrderbyOptions = [];
+
+			aSorters.forEach(function (oSorter) {
+				if (oSorter instanceof Sorter) {
+					aOrderbyOptions.push(oSorter.sPath + (oSorter.bDescending ? " desc" : ""));
+				} else {
+					throw new Error("Unsupported sorter: '" + oSorter + "' ("
+						+ typeof oSorter + ")");
+				}
+			});
+			if (sOrderbyQueryOption) {
+				aOrderbyOptions.push(sOrderbyQueryOption);
+			}
+			return aOrderbyOptions.join(',');
 		},
 
 		/**
@@ -282,6 +315,26 @@ sap.ui.define([
 			});
 
 			return "(" + aKeyValuePairs.join(",") + ")";
+		},
+
+		/**
+		 * Converts given value to an array.
+		 * <code>null</code> and <code>undefined</code> are converted to the empty array, a
+		 * non-array value is wrapped with an array and an array is returned as it is.
+		 *
+		 * @param {any} [vElement]
+		 *   The element to be converted into an array.
+		 * @returns {Array}
+		 *   The array for the given element.
+		 */
+		toArray : function (vElement) {
+			if (vElement === undefined || vElement === null) {
+				return [];
+			}
+			if (Array.isArray(vElement)) {
+				return vElement;
+			}
+			return [vElement];
 		}
 	};
 
