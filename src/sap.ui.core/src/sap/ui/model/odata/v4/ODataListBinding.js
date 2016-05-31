@@ -26,6 +26,31 @@ sap.ui.define([
 		};
 
 	/**
+	 * Creates a cache proxy and attaches it to the given binding.
+	 *
+	 * @param {sap.ui.model.odata.v4.ODataListBinding} oBinding
+	 *   The OData list binding instance
+	 * @param {sap.ui.model.odata.v4.Context} oContext
+	 *   The context instance to be used
+	 */
+	function createCacheProxy(oBinding, oContext) {
+		function createCache(sPath) {
+			return _Cache.create(oBinding.oModel.oRequestor,
+				_Helper.buildPath(sPath.slice(1), oBinding.sPath),
+				_ODataHelper.mergeQueryOptions(oBinding.mQueryOptions, oBinding.sOrderby));
+		}
+
+		oBinding.oCache = _ODataHelper.createCacheProxy(oBinding, createCache,
+			oContext.requestCanonicalPath());
+		oBinding.oCache.promise.then(function (oCache) {
+			oBinding.oCache = oCache;
+		})["catch"](function (oError) {
+			oBinding.oModel.reportError("Failed to create cache for binding " + oBinding,
+				sClassName, oError);
+		});
+	}
+
+	/**
 	 * DO NOT CALL this private constructor for a new <code>ODataListBinding</code>,
 	 * but rather use {@link sap.ui.model.odata.v4.ODataModel#bindList bindList} instead!
 	 *
@@ -85,8 +110,6 @@ sap.ui.define([
 	var ODataListBinding = ListBinding.extend("sap.ui.model.odata.v4.ODataListBinding", {
 			constructor : function (oModel, sPath, oContext, vSorters, mParameters) {
 				var oBindingParameters,
-					sOrderBy,
-					mQueryOptions,
 					bSortersGiven = vSorters !== undefined && vSorters !== null;
 
 				ListBinding.call(this, oModel, sPath);
@@ -114,18 +137,11 @@ sap.ui.define([
 					this.mQueryOptions = _ODataHelper.buildQueryOptions(oModel.mUriParameters,
 						mParameters, ["$expand", "$filter", "$orderby", "$select"]);
 				}
+				this.sOrderby = _ODataHelper.buildOrderbyOption(this.aSorters,
+					this.mQueryOptions && this.mQueryOptions.$orderby);
 				if (!this.bRelative) {
-					mQueryOptions = this.mQueryOptions || {};
-					sOrderBy = _ODataHelper.buildOrderbyOption(this.aSorters,
-						mQueryOptions.$orderby);
-					if (sOrderBy && sOrderBy !== mQueryOptions.$orderby) {
-						mQueryOptions = JSON.parse(JSON.stringify(mQueryOptions));
-						mQueryOptions.$orderby = sOrderBy;
-					}
 					this.oCache = _Cache.create(oModel.oRequestor, sPath.slice(1),
-						mQueryOptions);
-				} else if (bSortersGiven) {
-					throw new Error("Only absolute bindings support 'vSorters' parameter");
+						_ODataHelper.mergeQueryOptions(this.mQueryOptions, this.sOrderby));
 				}
 
 				this.reset();
@@ -659,14 +675,6 @@ sap.ui.define([
 	 */
 	// @override
 	ODataListBinding.prototype.setContext = function (oContext) {
-		var that = this;
-
-		function createCache(sPath) {
-			return _Cache.create(that.oModel.oRequestor,
-				_Helper.buildPath(sPath.slice(1), that.sPath),
-				that.mQueryOptions);
-		}
-
 		if (this.oContext !== oContext) {
 			if (this.bRelative) {
 				this.reset();
@@ -675,14 +683,7 @@ sap.ui.define([
 					this.oCache = undefined;
 				}
 				if (this.mQueryOptions && oContext) {
-					this.oCache = _ODataHelper.createCacheProxy(this, createCache,
-						oContext.requestCanonicalPath());
-					this.oCache.promise.then(function (oCache) {
-						that.oCache = oCache;
-					})["catch"](function (oError) {
-						that.oModel.reportError("Failed to create cache for binding " + that,
-							sClassName, oError);
-					});
+					createCacheProxy(this, oContext);
 				}
 				// call Binding#setContext because of data state etc.; fires "change"
 				Binding.prototype.setContext.call(this, oContext);
@@ -695,7 +696,8 @@ sap.ui.define([
 
 	/**
 	 * Sort the entries represented by this list binding according to the given sorters.
-	 * Sorting is supported only for absolute bindings.
+	 * The sorters are stored at this list binding and they are used for each following data
+	 * request.
 	 *
 	 * If there are pending changes an error is thrown. Use {@link #hasPendingChanges} to check if
 	 * there are pending changes. If there are changes, call
@@ -708,24 +710,17 @@ sap.ui.define([
 	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList}.
 	 *   Static sorters, as defined in the '$orderby' binding parameter, are always executed after
 	 *   the dynamic sorters.
-	 *   Supported since 1.39.0.
 	 * @returns {sap.ui.model.odata.v4.ODataListBinding}
 	 *   <code>this</code> to facilitate method chaining
 	 * @throws {Error}
-	 *   If sort is called on a relative binding, if there are pending changes or if an unsupported
-	 *   operation mode is used (see {@link sap.ui.model.odata.v4.ODataModel#bindList}).
+	 *   If there are pending changes or if an unsupported operation mode is used (see
+	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList}).
 	 *
 	 * @public
 	 * @see sap.ui.model.ListBinding#sort
 	 * @since 1.39.0
 	 */
 	ODataListBinding.prototype.sort = function (vSorters) {
-		var sOrderBy,
-			mQueryOptions = this.mQueryOptions || {};
-
-		if (this.bRelative) {
-			throw new Error("Unsupported operation: v4.ODataListBinding#sort on relative bindings");
-		}
 		if (this.sOperationMode !== OperationMode.Server) {
 			throw new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server");
 		}
@@ -736,14 +731,20 @@ sap.ui.define([
 		this.aSorters = _ODataHelper.toArray(vSorters);
 
 		// append orderby value from constructor to the orderby value given by sorters
-		sOrderBy = _ODataHelper.buildOrderbyOption(this.aSorters, mQueryOptions.$orderby);
-		if (sOrderBy) {
-			mQueryOptions = JSON.parse(JSON.stringify(mQueryOptions));
-			mQueryOptions.$orderby = sOrderBy;
-		}
+		this.sOrderby = _ODataHelper.buildOrderbyOption(this.aSorters,
+			this.mQueryOptions && this.mQueryOptions.$orderby);
 
 		// replace cache and reset contexts and length properties
-		this.oCache = _Cache.create(this.oModel.oRequestor, this.sPath.slice(1), mQueryOptions);
+		if (this.bRelative) {
+			this.mCacheByContext = undefined;
+			if (!this.oContext) {
+				return this; //postpone cache creation
+			}
+			createCacheProxy(this, this.oContext);
+		} else {
+			this.oCache = _Cache.create(this.oModel.oRequestor, this.sPath.slice(1),
+				_ODataHelper.mergeQueryOptions(this.mQueryOptions, this.sOrderby));
+		}
 		this.reset();
 
 		// store change reason for next change event

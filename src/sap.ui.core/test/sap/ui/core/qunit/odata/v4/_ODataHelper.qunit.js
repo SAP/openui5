@@ -500,4 +500,25 @@ sap.ui.require([
 		assert.deepEqual(_ODataHelper.toArray(oSorter), aSorters);
 		assert.strictEqual(_ODataHelper.toArray(aSorters), aSorters);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("mergeQueryOptions", function (assert) {
+		var oQueryOptions = {$orderby : "bar", $select : "Name"};
+
+		assert.strictEqual(_ODataHelper.mergeQueryOptions(undefined, undefined), undefined);
+
+		assert.strictEqual(_ODataHelper.mergeQueryOptions(oQueryOptions, undefined), oQueryOptions);
+
+		assert.deepEqual(_ODataHelper.mergeQueryOptions(undefined, "foo"), {
+			$orderby : "foo"
+		});
+
+		assert.deepEqual(_ODataHelper.mergeQueryOptions(oQueryOptions, "foo,bar"), {
+			$orderby : "foo,bar",
+			$select : "Name"
+		});
+		assert.strictEqual(oQueryOptions.$orderby, "bar");
+
+		assert.strictEqual(_ODataHelper.mergeQueryOptions(oQueryOptions, "bar"), oQueryOptions);
+	});
 });
