@@ -358,16 +358,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		 */
 		modifyAccOfCOLUMNHEADER : function($Cell, bOnCellFocus) {
 			var oTable = this.getTable(),
+				oColumn = sap.ui.getCore().byId($Cell.attr("data-sap-ui-colid")),
 				mAttributes = ExtensionHelper.getAriaAttributesFor(this, TableAccExtension.ELEMENTTYPES.COLUMNHEADER, {
 					headerId: $Cell.attr("id"),
-					column: sap.ui.getCore().byId($Cell.attr("data-sap-ui-colid")),
+					column: oColumn,
 					index: $Cell.attr("data-sap-ui-colindex")
 				}),
+				sText = null,
 				aLabels = [oTable.getId() + "-colnumberofcols"].concat(mAttributes["aria-labelledby"]);
+
+			if (oColumn && oColumn.getTooltip_AsString()) {
+				sText = oColumn.getTooltip_AsString();
+				aLabels.push(oTable.getId() + "-cellacc");
+			}
 
 			//TBD: Improve handling for multiple headers
 			ExtensionHelper.performCellModifications(this, $Cell, mAttributes["aria-labelledby"], mAttributes["aria-describedby"],
-				aLabels, mAttributes["aria-describedby"], null);
+				aLabels, mAttributes["aria-describedby"], sText);
 		},
 
 		/*
