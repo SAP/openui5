@@ -203,17 +203,22 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 		 */
 		destroy : function() {
 			// Deregister the delegates
-			this.getTable().removeEventDelegate(ExtensionDelegate);
-			this.getTable().removeEventDelegate(this._delegate);
-			this.getTable().removeEventDelegate(ItemNavigationDelegate);
+			var oTable = this.getTable();
+			if (oTable) {
+				oTable.removeEventDelegate(ExtensionDelegate);
+				oTable.removeEventDelegate(this._delegate);
+				oTable.removeEventDelegate(ItemNavigationDelegate);
+			}
 
 			if (this._itemNavigation) {
 				this._itemNavigation.destroy();
 				this._itemNavigation = null;
 			}
 
-			this._delegate.destroy();
-			this._delegate = null;
+			if (this._delegate) {
+				this._delegate.destroy();
+				this._delegate = null;
+			}
 
 			TableExtension.prototype.destroy.apply(this, arguments);
 		}
