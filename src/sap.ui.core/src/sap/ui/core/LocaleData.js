@@ -703,11 +703,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 					iDigits = oCurrencyDigits["DEFAULT"];
 				}
 			}
-			// Temporary workaround for HUF digit mismatch between CLDR data and backend systems
-			// TODO: Remove when customizing of currency digits is possible in format settings
-			if (sCurrency === "HUF") {
-				iDigits = 0;
-			}
 			return iDigits;
 		},
 
