@@ -523,8 +523,8 @@
 		"sux": "שומרית",
 		"sv": "שוודית",
 		"sw": "סווהילית",
+		"sw_CD": "סווהילי קונגולטזית",
 		"swb": "swb",
-		"swc": "סווהילי קונגולטזית",
 		"syc": "סירית קלאסית",
 		"syr": "סורית",
 		"szl": "szl",
@@ -622,6 +622,7 @@
 		"zza": "זאזא"
 	},
 	"scripts": {
+		"Adlm": "Adlm",
 		"Aghb": "Aghb",
 		"Ahom": "Ahom",
 		"Arab": "ערבי",
@@ -634,6 +635,7 @@
 		"Bass": "Bass",
 		"Batk": "Batk",
 		"Beng": "בנגלי",
+		"Bhks": "Bhks",
 		"Bopo": "בופומופו",
 		"Brah": "Brah",
 		"Brai": "ברייל",
@@ -661,6 +663,7 @@
 		"Grek": "יווני",
 		"Gujr": "גוג׳רטי",
 		"Guru": "גורמוקי",
+		"Hanb": "Hanb",
 		"Hang": "האנגול",
 		"Hani": "האן",
 		"Hano": "Hano",
@@ -677,6 +680,7 @@
 		"Hung": "הונגרי עתיק",
 		"Inds": "אינדוס",
 		"Ital": "איטלקי עתיק",
+		"Jamo": "Jamo",
 		"Java": "ג׳אוונזי",
 		"Jpan": "יפני",
 		"Kali": "Kali",
@@ -701,6 +705,7 @@
 		"Mahj": "Mahj",
 		"Mand": "Mand",
 		"Mani": "Mani",
+		"Marc": "Marc",
 		"Maya": "מאיה",
 		"Mend": "Mend",
 		"Merc": "Merc",
@@ -714,11 +719,13 @@
 		"Mymr": "מיאנמר",
 		"Narb": "Narb",
 		"Nbat": "Nbat",
+		"Newa": "Newa",
 		"Nkoo": "Nkoo",
 		"Ogam": "Ogam",
 		"Olck": "Olck",
 		"Orkh": "Orkh",
 		"Orya": "אורייה",
+		"Osge": "Osge",
 		"Osma": "Osma",
 		"Palm": "Palm",
 		"Pauc": "Pauc",
@@ -800,6 +807,7 @@
 		"Tale": "Tale",
 		"Talu": "Talu",
 		"Taml": "טמיל",
+		"Tang": "Tang",
 		"Tavt": "Tavt",
 		"Telu": "טלוגו",
 		"Tfng": "Tfng",
@@ -816,6 +824,7 @@
 		"Yiii": "Yiii",
 		"Zinh": "מורש",
 		"Zmth": "סימון מתמטי",
+		"Zsye": "Zsye",
 		"Zsym": "סימנים",
 		"Zxxx": "לא כתוב",
 		"Zyyy": "רגיל",
@@ -860,7 +869,6 @@
 		"AI": "אנגילה",
 		"AL": "אלבניה",
 		"AM": "ארמניה",
-		"AN": "אנטילים הולנדיים",
 		"AO": "אנגולה",
 		"AQ": "אנטארקטיקה",
 		"AR": "ארגנטינה",
@@ -1171,7 +1179,7 @@
 				"MMM": "LLL",
 				"MMMd": "d בMMM",
 				"MMMEd": "E, d בMMM",
-				"MMMMd": "MMMM d",
+				"MMMMd": "d בMMMM",
 				"ms": "mm:ss",
 				"y": "y",
 				"yM": "M.y",
@@ -1510,12 +1518,12 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"AM",
-					"PM"
+					"לפנה״צ",
+					"אחה״צ"
 				],
 				"narrow": [
-					"AM",
-					"PM"
+					"לפנה״צ",
+					"אחה״צ"
 				],
 				"wide": [
 					"לפנה״צ",
@@ -1524,16 +1532,16 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"AM",
-					"PM"
+					"לפנה״צ",
+					"אחה״צ"
 				],
 				"narrow": [
-					"AM",
-					"PM"
+					"לפנה״צ",
+					"אחה״צ"
 				],
 				"wide": [
-					"AM",
-					"PM"
+					"לפנה״צ",
+					"אחה״צ"
 				]
 			}
 		},
@@ -1592,7 +1600,7 @@
 				"MMM": "LLL",
 				"MMMd": "d בMMM",
 				"MMMEd": "E, d בMMM",
-				"MMMMd": "MMMM d",
+				"MMMMd": "d בMMMM",
 				"ms": "mm:ss",
 				"y": "y G",
 				"yyyy": "y G",
@@ -1932,12 +1940,12 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"AM",
-					"PM"
+					"לפנה״צ",
+					"אחה״צ"
 				],
 				"narrow": [
-					"AM",
-					"PM"
+					"לפנה״צ",
+					"אחה״צ"
 				],
 				"wide": [
 					"לפנה״צ",
@@ -1946,16 +1954,16 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"AM",
-					"PM"
+					"לפנה״צ",
+					"אחה״צ"
 				],
 				"narrow": [
-					"AM",
-					"PM"
+					"לפנה״צ",
+					"אחה״צ"
 				],
 				"wide": [
-					"AM",
-					"PM"
+					"לפנה״צ",
+					"אחה״צ"
 				]
 			}
 		},
@@ -2351,12 +2359,12 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"AM",
-					"PM"
+					"לפנה״צ",
+					"אחה״צ"
 				],
 				"narrow": [
-					"AM",
-					"PM"
+					"לפנה״צ",
+					"אחה״צ"
 				],
 				"wide": [
 					"לפנה״צ",
@@ -2365,16 +2373,16 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"AM",
-					"PM"
+					"לפנה״צ",
+					"אחה״צ"
 				],
 				"narrow": [
-					"AM",
-					"PM"
+					"לפנה״צ",
+					"אחה״צ"
 				],
 				"wide": [
-					"AM",
-					"PM"
+					"לפנה״צ",
+					"אחה״צ"
 				]
 			}
 		},
@@ -2997,13 +3005,13 @@
 		"CLP": 0,
 		"COP": 0,
 		"CRC": 0,
-		"CZK": 2,
+		"CZK": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
 		"ESP": 0,
 		"GNF": 0,
 		"GYD": 0,
-		"HUF": 2,
+		"HUF": 0,
 		"IDR": 0,
 		"IQD": 0,
 		"IRR": 0,
@@ -3037,7 +3045,7 @@
 		"TMM": 0,
 		"TND": 3,
 		"TRL": 0,
-		"TWD": 2,
+		"TWD": 0,
 		"TZS": 0,
 		"UGX": 0,
 		"UYI": 0,
@@ -3056,7 +3064,7 @@
 	"weekData-weekendStart": 5,
 	"weekData-weekendEnd": 6,
 	"timeData": {
-		"_allowed": "H",
+		"_allowed": "H hB",
 		"_preferred": "H"
 	},
 	"eras-gregorian": {
