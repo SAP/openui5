@@ -396,6 +396,18 @@
 		equal(oLocaleData.getWeekendEnd(), 0, "weekend end");
 	}
 
+	test("Currency digits", function() {
+		var oLocaleData = sap.ui.core.LocaleData.getInstance(new sap.ui.core.Locale("en_US"));
+		equal(oLocaleData.getCurrencyDigits("USD"), 2, "2 digits fuer USD");
+		equal(oLocaleData.getCurrencyDigits("EUR"), 2, "2 digits fuer EUR");
+		equal(oLocaleData.getCurrencyDigits("JPY"), 0, "0 digits fuer JPY");
+		equal(oLocaleData.getCurrencyDigits("BHD"), 3, "3 digits fuer BHD");
+		// Cash digits
+		equal(oLocaleData.getCurrencyDigits("HUF"), 0, "0 digits fuer HUF");
+		equal(oLocaleData.getCurrencyDigits("CZK"), 0, "0 digits fuer CZK");
+		equal(oLocaleData.getCurrencyDigits("TWD"), 0, "0 digits fuer TWD");
+	});
+
 	test("Calendar type should use the value set in configuration when getting calendar related values", function() {
 		sap.ui.getCore().getConfiguration().setCalendarType(sap.ui.core.CalendarType.Islamic);
 
