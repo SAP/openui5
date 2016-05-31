@@ -528,6 +528,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns <code>true</code> if there are pending changes that would be reset by
+	 * {@link #refresh}.
+	 *
+	 * @returns {boolean}
+	 *   <code>true</code> if there are pending changes
+	 *
+	 * @public
+	 * @since 1.39.0
+	 */
+	ODataModel.prototype.hasPendingChanges = function () {
+		return this.oRequestor.hasPendingChanges();
+	};
+
+	/**
 	 * Method not supported
 	 *
 	 * @throws {Error}

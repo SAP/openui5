@@ -157,6 +157,26 @@ sap.ui.define([
 		});
 
 	/**
+	 * Returns <code>true</code> if the binding has pending changes below the given path.
+	 *
+	 * @param {string} sPath
+	 *   The path
+	 * @returns {boolean}
+	 *   <code>true</code> if the binding has pending changes
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype._hasPendingChanges = function (sPath) {
+		if (this.oCache) {
+			return this.oCache.hasPendingChanges(sPath);
+		}
+		if (this.oContext) {
+			return this.oContext.hasPendingChanges(_Helper.buildPath(this.sPath, sPath));
+		}
+		return false;
+	};
+
+	/**
 	 * Requests the metadata for this operation binding. Caches the result.
 	 *
 	 * @returns {Promise}
@@ -433,6 +453,20 @@ sap.ui.define([
 	 */
 	ODataContextBinding.prototype.getUpdateGroupId = function() {
 		return this.sUpdateGroupId || this.oModel.getUpdateGroupId();
+	};
+
+	/**
+	 * Returns <code>true</code> if the binding has pending changes, that is updates via two-way
+	 * binding that have not yet been sent to the server.
+	 *
+	 * @returns {boolean}
+	 *   <code>true</code> if the binding has pending changes
+	 *
+	 * @public
+	 * @since 1.39.0
+	 */
+	ODataContextBinding.prototype.hasPendingChanges = function () {
+		return this._hasPendingChanges(this.oCache ? "" : this.sPath);
 	};
 
 	/**

@@ -814,6 +814,8 @@ sap.ui.require([
 			iCount += 1;
 		}
 
+		assert.strictEqual(oRequestor.hasPendingChanges(), false);
+
 		oPromise = Promise.all([
 			oRequestor.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"})
 				.then(unexpected, rejected.bind(null, 3)),
@@ -824,6 +826,8 @@ sap.ui.require([
 			oRequestor.request("PATCH", "Products('1')", "groupId", {}, {Name : "baz"})
 				.then(unexpected, rejected.bind(null, 1))
 		]);
+
+		assert.strictEqual(oRequestor.hasPendingChanges(), true);
 
 		this.mock(oRequestor).expects("request")
 			.withExactArgs("POST", "$batch", undefined, undefined, [
@@ -844,7 +848,9 @@ sap.ui.require([
 		oRequestor.cancelPatch("groupId");
 		oRequestor.submitBatch("groupId");
 
-		return oPromise;
+		return oPromise.then(function () {
+			assert.strictEqual(oRequestor.hasPendingChanges(), false);
+		});
 	});
 
 	//*****************************************************************************************

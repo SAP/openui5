@@ -123,6 +123,26 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns <code>true</code> if there are pending changes.
+	 *
+	 * @returns {boolean} <code>true</code> if there are pending changes
+	 */
+	Requestor.prototype.hasPendingChanges = function () {
+		var aBatchQueue, aChangeSet, sGroupId, i;
+
+		for (sGroupId in this.mBatchQueue) {
+			aBatchQueue = this.mBatchQueue[sGroupId];
+			aChangeSet = aBatchQueue[0];
+			for (i = 0; i < aChangeSet.length; i++) {
+				if (aChangeSet[i].method === "PATCH") {
+					return true;
+				}
+			}
+		}
+		return false;
+	};
+
+	/**
 	 * Returns a promise that will be resolved once the CSRF token has been refreshed, or rejected
 	 * if that fails. Makes sure that only one HEAD request is underway at any given time and
 	 * shares the promise accordingly.

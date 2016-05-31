@@ -1143,6 +1143,36 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("hasPendingChanges: absolute binding", function (assert) {
+		var oPropertyBinding = this.oModel.bindProperty("/absolute"),
+			oResult = {};
+
+		this.oSandbox.mock(oPropertyBinding.oCache).expects("hasPendingChanges")
+			.withExactArgs("").returns(oResult);
+
+		assert.strictEqual(oPropertyBinding.hasPendingChanges(), oResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("hasPendingChanges: relative binding resolved", function (assert) {
+		var oContext = {
+				hasPendingChanges : function () {}
+			},
+			oPropertyBinding = this.oModel.bindProperty("Name", oContext),
+			oResult = {};
+
+		this.oSandbox.mock(oContext).expects("hasPendingChanges").withExactArgs("Name")
+			.returns(oResult);
+
+		assert.strictEqual(oPropertyBinding.hasPendingChanges(), oResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("hasPendingChanges: relative binding unresolved", function (assert) {
+		assert.strictEqual(this.oModel.bindProperty("PRODUCT_2_BP").hasPendingChanges(), false);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("destroy: absolute binding", function (assert) {
 		var oPropertyBinding = this.oModel.bindProperty("/absolute");
 

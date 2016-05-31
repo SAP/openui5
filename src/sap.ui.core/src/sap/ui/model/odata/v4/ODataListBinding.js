@@ -105,6 +105,26 @@ sap.ui.define([
 		});
 
 	/**
+	 * Returns <code>true</code> if the binding has pending changes below the given path.
+	 *
+	 * @param {string} sPath
+	 *   The path
+	 * @returns {boolean}
+	 *   <code>true</code> if the binding has pending changes
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype._hasPendingChanges = function (sPath) {
+		if (this.oCache) {
+			return this.oCache.hasPendingChanges(sPath);
+		}
+		if (this.oContext) {
+			return this.oContext.hasPendingChanges(_Helper.buildPath(this.sPath, sPath));
+		}
+		return false;
+	};
+
+	/**
 	 * The 'change' event is fired when the binding is initialized or new contexts are created or
 	 * its parent context is changed. It is to be used by controls to get notified about changes to
 	 * the binding contexts of this list binding. Registered event handlers are called with the
@@ -438,6 +458,20 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.getUpdateGroupId = function() {
 		return this.sUpdateGroupId || this.oModel.getUpdateGroupId();
+	};
+
+	/**
+	 * Returns <code>true</code> if the binding has pending changes, that is updates via two-way
+	 * binding that have not yet been sent to the server.
+	 *
+	 * @returns {boolean}
+	 *   <code>true</code> if the binding has pending changes
+	 *
+	 * @public
+	 * @since 1.39.0
+	 */
+	ODataListBinding.prototype.hasPendingChanges = function () {
+		return this._hasPendingChanges(this.oCache ? "" : this.sPath);
 	};
 
 	/**

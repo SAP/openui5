@@ -325,6 +325,26 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns <code>true</code> if the binding has pending changes, that is updates via two-way
+	 * binding that have not yet been sent to the server.
+	 *
+	 * @returns {boolean}
+	 *   <code>true</code> if the binding has pending changes
+	 *
+	 * @public
+	 * @since 1.39.0
+	 */
+	ODataPropertyBinding.prototype.hasPendingChanges = function () {
+		if (this.oCache) {
+			return this.oCache.hasPendingChanges("");
+		}
+		if (this.oContext) {
+			return this.oContext.hasPendingChanges(this.sPath);
+		}
+		return false;
+	};
+
+	/**
 	 * Method not supported
 	 *
 	 * @throws {Error}

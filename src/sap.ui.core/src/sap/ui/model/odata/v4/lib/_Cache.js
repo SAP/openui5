@@ -166,6 +166,27 @@ sap.ui.define([
 	}
 
 	/**
+	 * Returns <code>true</code> if there are pending changes below the given path.
+	 *
+	 * @param {object} mPatchRequests Map of PATCH requests
+	 * @param {string} sPath
+	 *   The relative path of a binding; must not end with '/'
+	 * @returns {boolean}
+	 *   <code>true</code> if there are pending changes
+	 */
+	function hasPendingChanges(mPatchRequests, sPath) {
+		var sPathPrefix = sPath + "/",
+			sRequestPath;
+
+		for (sRequestPath in mPatchRequests) {
+			if (sPath === "" || sRequestPath === sPath || sRequestPath.indexOf(sPathPrefix) === 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Removes an item from the given map by path.
 	 *
 	 * @param {object} mMap
@@ -299,6 +320,18 @@ sap.ui.define([
 		} else {
 			this.mChangeListeners = {};
 		}
+	};
+
+	/**
+	 * Returns <code>true</code> if there are pending changes below the given path.
+	 *
+	 * @param {string} sPath
+	 *   The relative path of a binding; must not end with '/'
+	 * @returns {boolean}
+	 *   <code>true</code> if there are pending changes
+	 */
+	CollectionCache.prototype.hasPendingChanges = function (sPath) {
+		return hasPendingChanges(this.mPatchRequests, sPath);
 	};
 
 	/**
@@ -512,6 +545,18 @@ sap.ui.define([
 		} else {
 			this.mChangeListeners = {};
 		}
+	};
+
+	/**
+	 * Returns <code>true</code> if there are pending changes below the given path.
+	 *
+	 * @param {string} sPath
+	 *   The relative path of a binding; must not end with '/'
+	 * @returns {boolean}
+	 *   <code>true</code> if there are pending changes
+	 */
+	SingleCache.prototype.hasPendingChanges = function (sPath) {
+		return hasPendingChanges(this.mPatchRequests, sPath);
 	};
 
 	/**

@@ -700,6 +700,17 @@ sap.ui.require([
 		//code under test
 		assert.strictEqual(oModel.destroy(1, 2, 3), "foo");
 	});
+
+	//*********************************************************************************************
+	QUnit.test("hasPendingChanges", function (assert) {
+		var oModel = createModel(),
+			oResult = {};
+
+		this.mock(oModel.oRequestor).expects("hasPendingChanges").withExactArgs().returns(oResult);
+
+		//code under test
+		assert.strictEqual(oModel.hasPendingChanges(), oResult);
+	});
 });
 // TODO constructor: test that the service root URL is absolute?
 // TODO read: support the mParameters context, urlParameters, filters, sorters, batchGroupId

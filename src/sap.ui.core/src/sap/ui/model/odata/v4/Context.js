@@ -247,6 +247,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns <code>true</code> if there are pending changes below the given path.
+	 *
+	 * @param {string} sPath
+	 *   The relative path of a binding; must not end with '/'
+	 * @returns {boolean}
+	 *   <code>true</code> if there are pending changes
+	 *
+	 * @private
+	 */
+	Context.prototype.hasPendingChanges = function (sPath) {
+		return this.oBinding.hasPendingChanges(_Helper.buildPath(this.iIndex, sPath));
+	};
+
+	/**
 	 * Returns a promise for the "canonical path" of the entity for this context.
 	 * According to "4.3.1 Canonical URL" of the specification "OData Version 4.0 Part 2: URL
 	 * Conventions", this is the "name of the entity set associated with the entity followed by the

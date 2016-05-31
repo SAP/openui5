@@ -154,23 +154,36 @@ sap.ui.define([
 			});
 		},
 
-		onRefreshAll : function () {
-			var oModel = this.getView().getModel();
+		onRefresh : function (oRefreshable, sMessage) {
+			if (oRefreshable.hasPendingChanges()) {
+				MessageBox.confirm(sMessage, function onConfirm(sCode) {
+					if (sCode === "OK") {
+						oRefreshable.refresh();
+					}
+				}, "Refresh");
+			} else {
+				oRefreshable.refresh();
+			}
+		},
 
-			oModel.refresh("RefreshAll");
-			oModel.submitBatch("RefreshAll");
+		onRefreshAll : function () {
+			this.onRefresh(this.getView().getModel(),
+				"There are pending changes. Do you really want to refresh everything?");
 		},
 
 		onRefreshFavoriteProduct : function (oEvent) {
-			this.getView().byId("FavoriteProduct").getBinding("value").refresh();
+			this.onRefresh(this.getView().byId("FavoriteProduct").getBinding("value"),
+				"There are pending changes. Do you really want to refresh the favorite product?");
 		},
 
 		onRefreshSalesOrderDetails : function (oEvent) {
-			this.getView().byId("ObjectPage").getElementBinding().refresh();
+			this.onRefresh(this.getView().byId("ObjectPage").getElementBinding(),
+				"There are pending changes. Do you really want to refresh the sales order?");
 		},
 
 		onRefreshSalesOrdersList : function (oEvent) {
-			this.getView().byId("SalesOrders").getBinding("items").refresh();
+			this.onRefresh(this.getView().byId("SalesOrders").getBinding("items"),
+				"There are pending changes. Do you really want to refresh all sales orders?");
 		},
 
 		onSalesOrdersSelect : function (oEvent) {
