@@ -52,6 +52,7 @@
 					messages: [{
 					type: "Error",
 					title: "Error message",
+					subtitle: "Subtitle",
 					description: "<p>First Error message description</p>"
 				}, {
 					type: "Warning",
@@ -87,6 +88,8 @@
 				this.oMessageTemplate = new sap.m.MessagePopoverItem({
 					type: "{type}",
 					title: "{title}",
+					subtitle: "{subtitle}",
+					counter: 1,
 					description: "{description}",
 					longtextUrl: "{longtextUrl}",
 					markupDescription: true
@@ -177,6 +180,44 @@
 			this.oMessagePopover.openBy(this.oButton);
 			this.clock.tick(500);
 			this.server.restore();
+		});
+
+		QUnit.test("setSubtitle() property", function (assert) {
+			var sInterlListItemDescription, sMessagePopoverItemSubtitle;
+
+			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
+			this.oButton.addDependent(this.oMessagePopover);
+			this.oMessagePopover.openBy(this.oButton);
+
+			sInterlListItemDescription = this.oMessagePopover._oLists.all.getItems()[0].getDescription();
+			sMessagePopoverItemSubtitle = this.oMessagePopover.getItems()[0].getSubtitle();
+
+			assert.strictEqual(sInterlListItemDescription, "Subtitle", "Description of the interal listItem should be binded with the subtitle of the MessagePopoverItem");
+			assert.strictEqual(sInterlListItemDescription, sMessagePopoverItemSubtitle, "Setting a subtitle to MessagePopoverItem should set the description of the internal StandardListItem");
+		});
+
+		QUnit.test("setCounter() property", function (assert) {
+			var iMPItemCounter, iInterListItemCounter;
+
+			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
+			this.oButton.addDependent(this.oMessagePopover);
+			this.oMessagePopover.openBy(this.oButton);
+
+			iMPItemCounter = this.oMessagePopover.getItems()[0].getCounter();
+			iInterListItemCounter = this.oMessagePopover._oLists.all.getItems()[0].getCounter();
+
+			assert.strictEqual(iInterListItemCounter, 1, "Internal listItem's counter should be set to 1");
+			assert.strictEqual(iInterListItemCounter, iMPItemCounter, "Internal listItem's counter should be the same as MessagePopoverItems's counter");
+		});
+
+		QUnit.test("No Navaigation arrow should be shown if there is no description", function () {
+			var oStandardListItem;
+			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
+			this.oButton.addDependent(this.oMessagePopover);
+			this.oMessagePopover.openBy(this.oButton);
+			oStandardListItem = this.oMessagePopover._oLists.all.getItems()[1];
+
+			assert.strictEqual(oStandardListItem.getType(), "Inactive", "The type of the ListItem should be Inactive");
 		});
 
 		QUnit.test("Busy indicator should be shown", function (assert) {

@@ -41,6 +41,12 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item"],
 						title: { type: "string", group: "Appearance", defaultValue: "" },
 
 						/**
+						 * Specifies the subtitle of the message
+						 * <b>Note:</b> This is only visible when the <code>title</code> property is not empty.
+						 */
+						subtitle : {type : "string", group : "Misc", defaultValue : null},
+
+						/**
 						 * Specifies detailed description of the message
 						 */
 						description: { type: "string", group: "Appearance", defaultValue: "" },
@@ -53,7 +59,12 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item"],
 						/**
 						 * Specifies long text description location URL
 						 */
-						longtextUrl: { type: "sap.ui.core.URI", group: "Behavior", defaultValue: null }
+						longtextUrl: { type: "sap.ui.core.URI", group: "Behavior", defaultValue: null },
+
+						/**
+						 * Defines the number of messages for a given message.
+						 */
+						counter: { type: "int", group: "Misc", defaultValue: null }
 					}
 				}
 			});

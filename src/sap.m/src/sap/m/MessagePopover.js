@@ -598,8 +598,10 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			var sType = oMessagePopoverItem.getType(),
 				oListItem = new StandardListItem({
 					title: oMessagePopoverItem.getTitle(),
+					description: oMessagePopoverItem.getSubtitle(),
+					counter: oMessagePopoverItem.getCounter(),
 					icon: this._mapIcon(sType),
-					type: sap.m.ListType.Navigation
+					type:  oMessagePopoverItem.getDescription() ? sap.m.ListType.Navigation : sap.m.ListType.Inactive
 				}).addStyleClass(CSS_CLASS + "Item").addStyleClass(CSS_CLASS + "Item" + sType);
 
 			oListItem._oMessagePopoverItem = oMessagePopoverItem;
