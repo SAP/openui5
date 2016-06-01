@@ -119,11 +119,15 @@
 				"uploadedDate" : "Date: 2014-07-30",
 				"attributes" : [{
 					"title" : "Co-author",
-					"text" : "Martin Silver"
+					"text" : "Martin Silver",
+					"active" : true
 				}],
 				"statuses" : [{
 					"title" : "First status' title",
 					"text" : "First status' text"
+				}],
+				"markers" : [{
+					"type" : "Locked"
 				}]
 			}, {
 				// item w/o aggregation statuses
@@ -143,6 +147,9 @@
 				}, {
 					"title" : "Second attribute",
 					"text" : "Second attribute's text"
+				}],
+				"markers" : [{
+					"type" : "Locked"
 				}]
 			}, {
 				// item w/o aggregation attributes
@@ -163,6 +170,13 @@
 				}, {
 					"title" : "Second status' title",
 					"text" : "Second status' text"
+				}],
+				"markers" : [{
+					"type" : "Favorite"
+				}, {
+					"type" : "Locked"
+				}, {
+					"type" : "Draft"
 				}]
 			}, {
 				// item w/o deprecated properties
@@ -176,13 +190,17 @@
 				"url" : "demokit/sample/UploadCollection/LinkedDocuments/Third Quarter Results.ppt",
 				"attributes" : [{
 					"title" : "Uploaded",
-					"text" : "2014-07-29"
+					"text" : "2014-07-29",
+					"active" : true
 				}, {
 					"title" : "Contributor",
 					"text" : "Sean O'Connel"
 				}, {
 					"title" : "File size",
 					"text" : "30kB"
+				}],
+				"markers" : [{
+					"type" : "Locked"
 				}]
 			}, {
 				// item with a long attribute's text
@@ -202,19 +220,27 @@
 				}, {
 					"title" : "Third attribute with a very long text",
 					"text" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+				}],
+				"markers" : [{
+					"type" : "Favorite"
+				}, {
+					"type" : "Locked"
+				}, {
+					"type" : "Draft"
 				}]
 			}, {
 				// item with a long attribute's title and aggregation statuses
 				"documentId" : "bcc27c4d-a8ce-3ab6-e807-ec05119685a5",
 				"enableEdit" : true,
 				"enableDelete" : true,
-				"fileName" : "Business Plan Topics of 2015",
+				"fileName" : "Business Plan Topics Plan Topics of 2015 Business Plan Topics of 2015 Business Plan Topics of 2015 Business Plan Topics of 2015 Business Plan Topics of 2015 Business Plan Topics of 2015 Business Plan Topics of 2015",
 				"mimeType" : "application/msexcel",
 				"thumbnailUrl" : "",
 				"url" : "demokit/sample/UploadCollection/LinkedDocuments/Business Plan Topics.xls",
 				"attributes" : [{
 					"title" : "Uploaded",
-					"text" : "2014-07-27"
+					"text" : "2014-07-27",
+					"active" : true
 				}, {
 					"title" : "Contributor",
 					"text" : "John Blacksmith Henderson"
@@ -226,6 +252,15 @@
 					"title" : "Status",
 					"text" : "Success",
 					"state" : sap.ui.core.ValueState.Success
+				}],
+				"markers" : [{
+					"type" : "Locked"
+				}, {
+					"type" : "Draft"
+				}, {
+					"type" : "Favorite"
+				}, {
+					"type" : "Unsaved"
 				}]
 			}, {
 				// item with aggregation statuses
@@ -494,6 +529,14 @@
 		sap.m.MessageToast.show("TypeMissmatch event triggered.");
 	};
 
+	var onAttributePress = function(oEvent) {
+		sap.m.MessageToast.show("Attribute press event - " + oEvent.getSource().getTitle() + ": " + oEvent.getSource().getText());
+	};
+
+	var onMarkerPress = function(oEvent) {
+		sap.m.MessageToast.show("Marker press event - " + oEvent.getSource().getType());
+	};
+
 	var fnUploadComplete = function(oEvent) {
 		if (oBackendErrorCheckBox.getSelected() === false) {
 			var oData = oUploadCollection.getModel().getData();
@@ -546,7 +589,9 @@
 	var oAttributeTemplate = new sap.m.ObjectAttribute({
 		title : "{title}",
 		text : "{text}",
-		textDirection : "{textDirection}"
+		textDirection : "{textDirection}",
+		active : "{active}",
+		press: onAttributePress
 	});
 
 	var oStatusTemplate = new sap.m.ObjectStatus({
@@ -556,6 +601,12 @@
 		icon : "{icon}",
 		iconDensityAware : "{iconDensityAware}",
 		textDirection : "{textDirection}"
+	});
+
+	var oMarkerTemplate = new sap.m.ObjectMarker({
+		type : "{type}",
+		visibility : "{visibility}",
+		press : onMarkerPress
 	});
 
 	var oItemTemplate = new sap.m.UploadCollectionItem({
@@ -579,6 +630,10 @@
 		statuses : {
 			path : "statuses",
 			template : oStatusTemplate
+		},
+		markers : {
+			path : "markers",
+			template : oMarkerTemplate
 		}
 	});
 
