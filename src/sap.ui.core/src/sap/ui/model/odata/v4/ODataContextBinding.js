@@ -127,7 +127,8 @@ sap.ui.define([
 				if (!this.bRelative || bDeferred || mParameters) {
 					this.mQueryOptions = _ODataHelper.buildQueryOptions(oModel.mUriParameters,
 						mParameters, ["$expand", "$filter", "$orderby", "$select"]);
-					oBindingParameters = _ODataHelper.buildBindingParameters(mParameters);
+					oBindingParameters = _ODataHelper.buildBindingParameters(mParameters,
+						["$$groupId", "$$updateGroupId"]);
 					this.sGroupId = oBindingParameters.$$groupId;
 					this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
 					if (bDeferred) {

@@ -220,25 +220,29 @@ sap.ui.require([
 	//*********************************************************************************************
 	[{
 		aSorters : [new Sorter("foo", true, true)],
-		buildQueryOptionResult : "foo desc",
-		createParameters : {$orderby : "foo desc", operationMode : OperationMode.Server},
+		buildOrderbyResult : "foo desc",
+		buildQueryOptionResult : {},
+		createParameters : {$orderby : "foo desc"},
 		grouped : true,
-		mParameters : {operationMode : OperationMode.Server}
+		mParameters : {$$operationMode : OperationMode.Server}
 	}, {
 		aSorters : [new Sorter("foo", true, true)],
-		buildQueryOptionResult : "foo desc,bar",
-		createParameters : {$orderby : "foo desc,bar", operationMode : OperationMode.Server},
+		buildOrderbyResult : "foo desc,bar",
+		buildQueryOptionResult : {$orderby : "bar"},
+		createParameters : {$orderby : "foo desc,bar"},
 		grouped : true,
-		mParameters : {operationMode : OperationMode.Server, $orderby : "bar"}
+		mParameters : {$$operationMode : OperationMode.Server, $orderby : "bar"}
 	}, {
 		aSorters : undefined,
-		buildQueryOptionResult : "bar",
-		createParameters : {$orderby : "bar", operationMode : OperationMode.Server},
+		buildOrderbyResult : "bar",
+		buildQueryOptionResult : {$orderby : "bar"},
+		createParameters : {$orderby : "bar"},
 		grouped : false,
-		mParameters : {operationMode : OperationMode.Server, $orderby : "bar"}
+		mParameters : {$$operationMode : OperationMode.Server, $orderby : "bar"}
 	}, {
 		aSorters : [new Sorter("foo", true)],
-		buildQueryOptionResult : "foo desc",
+		buildOrderbyResult : "foo desc",
+		buildQueryOptionResult : {},
 		createParameters : {$orderby : "foo desc"},
 		grouped : false,
 		oModel : new ODataModel({
@@ -248,53 +252,53 @@ sap.ui.require([
 		}),
 		mParameters : {}
 	}].forEach(function (oFixture) {
-		QUnit.test("bindList with sorters: " + oFixture.buildQueryOptionResult, function (assert) {
+		QUnit.test("bindList with sorters: " + oFixture.buildOrderbyResult, function (assert) {
 			var oBinding,
+				mExpectedQueryOptions = JSON.parse(JSON.stringify(oFixture.buildQueryOptionResult)),
 				oHelperMock = this.mock(_ODataHelper),
-				oModel = oFixture.oModel || this.oModel,
-				mParameters = JSON.parse(JSON.stringify(oFixture.mParameters)),
-				oSpyToArray = this.spy(_ODataHelper, "toArray");
+				oModel = oFixture.oModel || this.oModel;
 
+			this.spy(_ODataHelper, "toArray");
 			oHelperMock.expects("buildQueryOptions")
 				.withExactArgs(sinon.match.same(oModel.mUriParameters),
-					sinon.match.same(mParameters), ["$expand", "$filter", "$orderby", "$select"])
-				.returns(mParameters);
-			oHelperMock.expects("buildOrderbyOption")
-				.withExactArgs(oFixture.aSorters ? sinon.match.same(oFixture.aSorters) : []
-					, mParameters.$orderby)
+					sinon.match.same(oFixture.mParameters),
+					["$expand", "$filter", "$orderby", "$select"])
 				.returns(oFixture.buildQueryOptionResult);
+			oHelperMock.expects("buildOrderbyOption")
+				.withExactArgs(oFixture.aSorters ? sinon.match.same(oFixture.aSorters) : [],
+					oFixture.mParameters.$orderby)
+				.returns(oFixture.buildOrderbyResult);
 			this.mock(_Cache).expects("create")
 				.withExactArgs(sinon.match.same(oModel.oRequestor), "EMPLOYEES",
 					oFixture.createParameters);
 
 			// code under test
 			oBinding = oModel.bindList("/EMPLOYEES", undefined, oFixture.aSorters, undefined,
-				mParameters);
-			assert.deepEqual(oBinding.aSorters, oFixture.aSorters || [],
-				"Sorters are stored at the binding");
+				oFixture.mParameters);
+
+			assert.deepEqual(oBinding.aSorters, oFixture.aSorters || [], "Sorters are updated");
 			assert.strictEqual(oBinding.isGrouped(), oFixture.grouped, "grouping");
-			assert.deepEqual(oBinding.mQueryOptions,
-				oFixture.mParameters ? oFixture.mParameters : {},
+			assert.deepEqual(oBinding.mQueryOptions, mExpectedQueryOptions,
 				"Query options are not modified by dynamic sorters");
-			assert.ok(oSpyToArray.calledWithExactly(oFixture.aSorters));
+			assert.ok(_ODataHelper.toArray.calledWithExactly(oFixture.aSorters));
 		});
 	});
 
 	QUnit.test("bindList with sorters - error cases", function (assert) {
 		assert.throws(function () {
 			this.oModel.bindList("/EMPLOYEES", undefined, new Sorter("ID"), undefined, {
-				operationMode : OperationMode.Client});
+				$$operationMode : OperationMode.Client});
 		}, new Error("Unsupported operation mode: Client"));
 		assert.throws(function () {
 			this.oModel.bindList("/EMPLOYEES", undefined, new Sorter("ID"), undefined, {
-				operationMode : OperationMode.Auto});
+				$$operationMode : OperationMode.Auto});
 		}, new Error("Unsupported operation mode: Auto"));
 		assert.throws(function () {
 			this.oModel.bindList("/EMPLOYEES", undefined, new Sorter("ID"));
 		}, new Error("Unsupported operation mode: undefined"));
 		assert.throws(function () {
 			this.oModel.bindList("EMPLOYEES", undefined, new Sorter("ID"), undefined, {
-				operationMode : OperationMode.Server});
+				$$operationMode : OperationMode.Server});
 		}, new Error("Only absolute bindings support 'vSorters' parameter"));
 	});
 	//*********************************************************************************************
@@ -1431,8 +1435,9 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("$$groupId, $$updateGroupId", function (assert) {
-		var oBinding,
+	QUnit.test("$$groupId, $$updateGroupId, $$operationMode", function (assert) {
+		var aAllowed = ["$$groupId", "$$operationMode", "$$updateGroupId"],
+			oBinding,
 			oHelperMock = this.mock(_ODataHelper),
 			oModelMock = this.mock(this.oModel),
 			mParameters = {};
@@ -1440,29 +1445,42 @@ sap.ui.require([
 		oModelMock.expects("getGroupId").withExactArgs().returns("baz");
 		oModelMock.expects("getUpdateGroupId").twice().withExactArgs().returns("fromModel");
 
-		oHelperMock.expects("buildBindingParameters").withExactArgs(mParameters)
-			.returns({$$groupId : "foo", $$updateGroupId : "bar"});
+		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters),
+				aAllowed)
+			.returns({$$groupId : "foo", $$operationMode : "Server", $$updateGroupId : "bar"});
 		// code under test
 		oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined, mParameters);
 		assert.strictEqual(oBinding.getGroupId(), "foo");
+		assert.strictEqual(oBinding.sOperationMode, "Server");
 		assert.strictEqual(oBinding.getUpdateGroupId(), "bar");
 
-		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters))
+		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters),
+				aAllowed)
 			.returns({$$groupId : "foo"});
 		// code under test
 		oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined, mParameters);
 		assert.strictEqual(oBinding.getGroupId(), "foo");
+		assert.strictEqual(oBinding.sOperationMode, undefined);
 		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
 
-		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters))
+		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters),
+				aAllowed)
 			.returns({});
 		// code under test
 		oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined, mParameters);
 		assert.strictEqual(oBinding.getGroupId(), "baz");
 		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
 
-		// buildBindingParameters not called for relative binding
-		oBinding = this.oModel.bindList("EMPLOYEE_2_EQUIPMENTS");
+		// buildBindingParameters also called for relative binding
+		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters),
+				aAllowed)
+			.returns({$$groupId : "foo", $$operationMode : "Server", $$updateGroupId : "bar"});
+		// code under test
+		oBinding = this.oModel.bindList("EMPLOYEE_2_EQUIPMENTS", undefined, undefined, undefined,
+			mParameters);
+		assert.strictEqual(oBinding.getGroupId(), "foo");
+		assert.strictEqual(oBinding.sOperationMode, "Server");
+		assert.strictEqual(oBinding.getUpdateGroupId(), "bar");
 	});
 
 	//*********************************************************************************************
@@ -1560,20 +1578,18 @@ sap.ui.require([
 	//*********************************************************************************************
 	[
 		{
-			mParameters : {operationMode : OperationMode.Server},
-			queryOptions : {operationMode : OperationMode.Server, "sap-client" : "111"},
+			mParameters : {$$operationMode : OperationMode.Server},
+			queryOptions : {"sap-client" : "111"},
 			vSorters : undefined,
 			vSortersExpected : []
 		}, {
-			mParameters : {operationMode : OperationMode.Server},
-			queryOptions : {operationMode : OperationMode.Server, $orderby : "foo",
-				"sap-client" : "111"},
+			mParameters : {$$operationMode : OperationMode.Server},
+			queryOptions : {$orderby : "foo", "sap-client" : "111"},
 			vSorters : new Sorter("foo"),
 			vSortersExpected : [new Sorter("foo")]
 		}, {
-			mParameters : {operationMode : OperationMode.Server, $orderby : "bar"},
-			queryOptions : {operationMode : OperationMode.Server, $orderby : "foo,bar",
-				"sap-client" : "111"},
+			mParameters : {$$operationMode : OperationMode.Server, $orderby : "bar"},
+			queryOptions : {$orderby : "foo,bar", "sap-client" : "111"},
 			vSorters : [new Sorter("foo")],
 			vSortersExpected : [new Sorter("foo")]
 		}, {
@@ -1645,6 +1661,15 @@ sap.ui.require([
 		assert.throws(function () {
 			oListBinding.sort();
 		}, new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server"));
+
+		oListBinding = this.oModel.bindList("/EMPLOYEES", null, null, null,
+			{$$operationMode : OperationMode.Server});
+		this.mock(oListBinding).expects("hasPendingChanges").withExactArgs().returns(true);
+
+		// code under test
+		assert.throws(function () {
+			oListBinding.sort();
+		}, new Error("Cannot sort due to pending changes"));
 	});
 });
 //TODO to avoid complete re-rendering of lists implement bUseExtendedChangeDetection support

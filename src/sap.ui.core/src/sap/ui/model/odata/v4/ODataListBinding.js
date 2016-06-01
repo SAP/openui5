@@ -53,7 +53,7 @@ sap.ui.define([
 	 *   </ul>
 	 *   All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
-	 * @param {sap.ui.model.odata.OperationMode} [mParameters.operationMode]
+	 * @param {sap.ui.model.odata.OperationMode} [mParameters.$$operationMode]
 	 *   The operation mode for sorting with the model's operation mode as default. Since 1.39.0,
 	 *   the operation mode {@link sap.ui.model.odata.OperationMode.Server} is supported. All other
 	 *   operation modes including <code>undefined</code> lead to an error if 'vSorters' are given
@@ -94,20 +94,21 @@ sap.ui.define([
 				if (!sPath || sPath.slice(-1) === "/") {
 					throw new Error("Invalid path: " + sPath);
 				}
-				this.sOperationMode = (mParameters && mParameters.operationMode)
-					|| oModel.sOperationMode;
-				if ((this.sOperationMode && this.sOperationMode !== OperationMode.Server)
-						|| (!this.sOperationMode && bSortersGiven)) {
+				oBindingParameters = _ODataHelper.buildBindingParameters(mParameters,
+					["$$groupId", "$$operationMode", "$$updateGroupId"]);
+				this.sGroupId = oBindingParameters.$$groupId;
+				this.sOperationMode = oBindingParameters.$$operationMode || oModel.sOperationMode;
+				this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
+
+				if (!this.sOperationMode && bSortersGiven) {
 					throw new Error("Unsupported operation mode: " + this.sOperationMode);
 				}
 
 				this.oCache = undefined;
 				this.sChangeReason = undefined;
-				this.sGroupId = undefined;
 				this.mQueryOptions = undefined;
 				this.sRefreshGroupId = undefined;
 				this.aSorters = _ODataHelper.toArray(vSorters);
-				this.sUpdateGroupId = undefined;
 
 				if (!this.bRelative || mParameters) {
 					this.mQueryOptions = _ODataHelper.buildQueryOptions(oModel.mUriParameters,
@@ -123,9 +124,6 @@ sap.ui.define([
 					}
 					this.oCache = _Cache.create(oModel.oRequestor, sPath.slice(1),
 						mQueryOptions);
-					oBindingParameters = _ODataHelper.buildBindingParameters(mParameters);
-					this.sGroupId = oBindingParameters.$$groupId;
-					this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
 				} else if (bSortersGiven) {
 					throw new Error("Only absolute bindings support 'vSorters' parameter");
 				}
@@ -692,6 +690,12 @@ sap.ui.define([
 	 * Sort the entries represented by this list binding according to the given sorters.
 	 * Sorting is supported only for absolute bindings.
 	 *
+	 * If there are pending changes an error is thrown. Use {@link #hasPendingChanges} to check if
+	 * there are pending changes. If there are changes, call
+	 * {@link sap.ui.model.odata.v4.ODataModel#submitBatch) to submit the changes or
+	 * {@link sap.ui.model.odata.v4.ODataModel#resetChanges} to reset the changes before calling
+	 * 'sort'.
+	 *
 	 * @param {sap.ui.model.Sorter | sap.ui.model.Sorter[]} [vSorters]
 	 *   The dynamic sorters to be used; they replace the dynamic sorters given in
 	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList}.
@@ -701,8 +705,8 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.ODataListBinding}
 	 *   <code>this</code> to facilitate method chaining
 	 * @throws {Error}
-	 *   If sort is called on a relative binding or an unsupported operation mode is used (see
-	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList}).
+	 *   If sort is called on a relative binding, if there are pending changes or if an unsupported
+	 *   operation mode is used (see {@link sap.ui.model.odata.v4.ODataModel#bindList}).
 	 *
 	 * @public
 	 * @see sap.ui.model.ListBinding#sort
@@ -717,6 +721,9 @@ sap.ui.define([
 		}
 		if (this.sOperationMode !== OperationMode.Server) {
 			throw new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server");
+		}
+		if (this.hasPendingChanges()) {
+			throw new Error("Cannot sort due to pending changes");
 		}
 		// update aSorters to enable grouping
 		this.aSorters = _ODataHelper.toArray(vSorters);

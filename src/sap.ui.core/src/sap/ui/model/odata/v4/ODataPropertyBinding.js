@@ -80,7 +80,8 @@ sap.ui.define([
 				if (!this.bRelative) {
 					this.oCache = _Cache.createSingle(oModel.oRequestor, sPath.slice(1),
 						_ODataHelper.buildQueryOptions(oModel.mUriParameters, mParameters), true);
-					oBindingParameters = _ODataHelper.buildBindingParameters(mParameters);
+					oBindingParameters = _ODataHelper.buildBindingParameters(mParameters,
+						["$$groupId", "$$updateGroupId"]);
 					this.sGroupId = oBindingParameters.$$groupId;
 					this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
 				} else if (mParameters) {

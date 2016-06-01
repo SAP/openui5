@@ -23,7 +23,8 @@ sap.ui.require([
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
-	var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
+	var aAllowedBindingParameters = ["$$groupId", "$$updateGroupId"],
+		sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
 		sServiceUrl = "/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/",
 		TestControl = ManagedObject.extend("test.sap.ui.model.odata.v4.ODataPropertyBinding", {
 			metadata : {
@@ -809,21 +810,24 @@ sap.ui.require([
 		oModelMock.expects("getGroupId").withExactArgs().returns("baz");
 		oModelMock.expects("getUpdateGroupId").twice().withExactArgs().returns("fromModel");
 
-		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters))
+		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters),
+				aAllowedBindingParameters)
 			.returns({$$groupId : "foo", $$updateGroupId : "bar"});
 		// code under test
 		oBinding = oModel.bindProperty("/absolute", undefined, mParameters);
 		assert.strictEqual(oBinding.getGroupId(), "foo");
 		assert.strictEqual(oBinding.getUpdateGroupId(), "bar");
 
-		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters))
+		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters),
+				aAllowedBindingParameters)
 			.returns({$$groupId : "foo"});
 		// code under test
 		oBinding = oModel.bindProperty("/absolute", undefined, mParameters);
 		assert.strictEqual(oBinding.getGroupId(), "foo");
 		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
 
-		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters))
+		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters),
+				aAllowedBindingParameters)
 			.returns({});
 		// code under test
 		oBinding = oModel.bindProperty("/absolute", undefined, mParameters);

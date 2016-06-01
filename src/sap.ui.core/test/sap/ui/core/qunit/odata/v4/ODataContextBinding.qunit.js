@@ -21,7 +21,8 @@ sap.ui.require([
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
-	var sClassName = "sap.ui.model.odata.v4.ODataContextBinding";
+	var aAllowedBindingParameters = ["$$groupId", "$$updateGroupId"],
+		sClassName = "sap.ui.model.odata.v4.ODataContextBinding";
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataContextBinding", {
@@ -245,7 +246,7 @@ sap.ui.require([
 					["$expand", "$filter", "$orderby", "$select"])
 				.returns(mQueryOptions);
 			oHelperMock.expects("buildBindingParameters")
-				.withExactArgs(sinon.match.same(mParameters))
+				.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
 				.returns({$$groupId : "group", $$updateGroupId : "updateGroup"});
 			this.mock(_Cache).expects("createSingle")
 				.exactly((sPath[0] === "/") ? 1 : 0)
@@ -713,7 +714,8 @@ sap.ui.require([
 		oModelMock.expects("getGroupId").withExactArgs().returns("baz");
 		oModelMock.expects("getUpdateGroupId").twice().withExactArgs().returns("fromModel");
 
-		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters))
+		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters),
+				aAllowedBindingParameters)
 			.returns({$$groupId : "foo", $$updateGroupId : "bar"});
 
 		// code under test
@@ -721,7 +723,8 @@ sap.ui.require([
 		assert.strictEqual(oBinding.getGroupId(), "foo");
 		assert.strictEqual(oBinding.getUpdateGroupId(), "bar");
 
-		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters))
+		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters),
+				aAllowedBindingParameters)
 			.returns({$$groupId : "foo"});
 		// code under test
 		oBinding = this.oModel.bindContext("/EMPLOYEES('4711')", undefined, mParameters);
@@ -729,14 +732,19 @@ sap.ui.require([
 		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
 
 		oHelperMock.expects("buildBindingParameters")
-			.withExactArgs(sinon.match.same(mParameters)).returns({});
+			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters).returns({});
 		// code under test
 		oBinding = this.oModel.bindContext("/EMPLOYEES('4711')", undefined, mParameters);
 		assert.strictEqual(oBinding.getGroupId(), "baz");
 		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
 
-		// buildBindingParameters not called for relative binding
-		oBinding = this.oModel.bindContext("EMPLOYEE_2_TEAM");
+		// buildBindingParameters also called for relative binding
+		oHelperMock.expects("buildBindingParameters").withExactArgs(sinon.match.same(mParameters),
+				aAllowedBindingParameters)
+			.returns({$$groupId : "foo", $$updateGroupId : "bar"});
+		oBinding = this.oModel.bindContext("EMPLOYEE_2_TEAM", undefined, mParameters);
+		assert.strictEqual(oBinding.getGroupId(), "foo");
+		assert.strictEqual(oBinding.getUpdateGroupId(), "bar");
 	});
 
 	//*********************************************************************************************
