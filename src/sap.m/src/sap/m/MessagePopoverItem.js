@@ -27,47 +27,55 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item"],
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var MessagePopoverItem = Item.extend("sap.m.MessagePopoverItem", /** @lends sap.m.MessagePopoverItem.prototype */ {
-				metadata: {
-					library: "sap.m",
-					properties: {
-						/**
-						 * Specifies the type of the message
-						 */
-						type: { type: "sap.ui.core.MessageType", group: "Appearance", defaultValue: sap.ui.core.MessageType.Error },
+			metadata: {
+				library: "sap.m",
+				properties: {
+					/**
+					 * Specifies the type of the message
+					 */
+					type: { type: "sap.ui.core.MessageType", group: "Appearance", defaultValue: sap.ui.core.MessageType.Error },
 
-						/**
-						 * Specifies the title of the message
-						 */
-						title: { type: "string", group: "Appearance", defaultValue: "" },
+					/**
+					 * Specifies the title of the message
+					 */
+					title: { type: "string", group: "Appearance", defaultValue: "" },
 
-						/**
-						 * Specifies the subtitle of the message
-						 * <b>Note:</b> This is only visible when the <code>title</code> property is not empty.
-						 */
-						subtitle : {type : "string", group : "Misc", defaultValue : null},
+					/**
+					 * Specifies the subtitle of the message
+					 * <b>Note:</b> This is only visible when the <code>title</code> property is not empty.
+					 */
+					subtitle : {type : "string", group : "Misc", defaultValue : null},
 
-						/**
-						 * Specifies detailed description of the message
-						 */
-						description: { type: "string", group: "Appearance", defaultValue: "" },
+					/**
+					 * Specifies detailed description of the message
+					 */
+					description: { type: "string", group: "Appearance", defaultValue: "" },
 
-						/**
-						 * Specifies if description should be interpreted as markup
-						 */
-						markupDescription: { type: "boolean", group: "Appearance", defaultValue: false },
+					/**
+					 * Specifies if description should be interpreted as markup
+					 */
+					markupDescription: { type: "boolean", group: "Appearance", defaultValue: false },
 
-						/**
-						 * Specifies long text description location URL
-						 */
-						longtextUrl: { type: "sap.ui.core.URI", group: "Behavior", defaultValue: null },
+					/**
+					 * Specifies long text description location URL
+					 */
+					longtextUrl: { type: "sap.ui.core.URI", group: "Behavior", defaultValue: null },
 
-						/**
-						 * Defines the number of messages for a given message.
-						 */
-						counter: { type: "int", group: "Misc", defaultValue: null }
-					}
+					/**
+					 * Defines the number of messages for a given message.
+					 */
+					counter: { type: "int", group: "Misc", defaultValue: null }
+				},
+				defaultAggregation: "link",
+				aggregations: {
+
+					/**
+					 * Adds a sap.m.Link control which will be displayed at the end of the description of a message.
+					 */
+					link: { type: "sap.m.Link", multiple: false, singularName: "link" }
 				}
-			});
+			}
+		});
 
 		MessagePopoverItem.prototype.setProperty = function (sPropertyName, oValue, bSuppressInvalidate) {
 			// BCP: 1670235674
