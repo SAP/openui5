@@ -1889,8 +1889,8 @@ sap.ui.define([
 				iIndex++;
 			}
 		}
-		//if we have a changed Entity we need to extend it with the backend data
-		if (jQuery.isPlainObject(oChangedNode) && this._getKey(oChangedNode)) {
+		//if we have a changed Entity/complext type we need to extend it with the backend data
+		if (jQuery.isPlainObject(oChangedNode)) {
 			oNode =  bOriginalValue ? oOrigNode : jQuery.sap.extend(true, {}, oOrigNode, oChangedNode);
 		}
 		return oNode;
