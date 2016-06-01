@@ -4,10 +4,10 @@
 	<VBox>
 			<items>
 			<Label text="MultiInput in MultiLine Display Mode"/>
-			<MultiInput id="multiInput1" width="100%" enableMultiLineMode="true"/>
+			<MultiInput id="multiInput1" width="100%" enableMultiLineMode="true" showValueHelp="false"/>
 
 			<Label text="MultiInput with asynchronously validation in MultiLine Display Mode"/>
-			<MultiInput id="multiInput3" width="100%" enableMultiLineMode="true" placeholder= "tokens get validated asynchronously after 500ms"/>
+			<MultiInput id="multiInput3" width="100%" enableMultiLineMode="true" placeholder= "tokens get validated asynchronously after 500ms" showValueHelp="false"/>
 
 			<Label text="MultiInput with suggestion table in MultiLine Mode Display"/>
 			<MultiInput
@@ -16,6 +16,7 @@
 				enableMultiLineMode="true"
 				placeholder="Enter Product ..."
 				showSuggestion="true"
+				showValueHelp="false"
 				suggestionRows="{/ProductCollection}">
 				<suggestionColumns>
 					<Column
@@ -65,6 +66,7 @@
 			<MultiInput id="multiInput4"
 				width="100%"
 				enableMultiLineMode="true"
+				showValueHelp="false"
 				suggestionItems="{
 					path: '/ProductCollection',
 					sorter: { path: 'Name' }
