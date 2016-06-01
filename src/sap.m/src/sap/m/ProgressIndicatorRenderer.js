@@ -39,6 +39,10 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.addClass("sapMPIValueGreaterHalf");
 		}
 
+		if (fWidthBar === 100) {
+			oRm.addClass("sapMPIValueMax");
+		}
+
 		if (iHeightControl) {
 			oRm.addStyle("height", iHeightControl);
 		}
