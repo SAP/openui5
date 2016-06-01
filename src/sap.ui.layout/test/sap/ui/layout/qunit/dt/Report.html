@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Test Page for sap.ui.dt.DesignTimeEnablement</title>
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				type="text/javascript"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-xx-bindingSyntax="complex"
+				data-sap-ui-preload="async"
+				data-sap-ui-compatVersion="edge"
+				data-sap-ui-libs="sap.ui.dt,sap.m"
+				data-sap-ui-resourceroots='{"dt": "./"}'
+				src="../../../../../../resources/sap-ui-core.js">
+		</script>
+		<script type="text/javascript">
+
+			sap.ui.getCore().attachInit(function () {
+				sap.ui.require([
+					"sap/ui/dt/test/Element",
+					'sap/ui/dt/DesignTime',
+					'sap/ui/dt/test/report/Table',
+					'sap/ui/dt/test/report/Statistic',
+					'sap/ui/dt/test/ElementEnablementTest',
+					'sap/ui/dt/test/LibraryEnablementTest',
+					'dt/HorizontalLayout',
+					'dt/VerticalLayout'
+				], function (TestElement, DesignTime, Table, Statistic, ElementEnablementTest, LibraryEnablementTest, HorizontalLayout, VerticalLayout) {
+
+
+					var oLibraryEnablementTest = new LibraryEnablementTest({
+						libraryName : "sap.ui.layout",
+						testData : {
+							"sap.ui.layout.VerticalLayout" : VerticalLayout,
+							"sap.ui.layout.HorizontalLayout" : HorizontalLayout
+						}
+					});
+
+					oLibraryEnablementTest.run().then(function(oData) {
+						oStatisticReport = new Statistic({
+							data: oData
+						});
+						oStatisticReport.placeAt("content");
+
+						var oReport = new Table({
+							data: oData
+						});
+						oReport.placeAt("content");
+					});
+				});
+		});
+
+		</script>
+	</head>
+	<body class="sapUiBody">
+		<h1>DesignTime Test Report</h1>
+		<div id="content"></div>
+	</body>
+</html>
