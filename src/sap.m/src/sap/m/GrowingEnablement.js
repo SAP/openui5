@@ -71,7 +71,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 			oRm.write("<ul");
 			oRm.addClass("sapMListUl");
 			oRm.addClass("sapMGrowingList");
-			oRm.writeAttribute("role", "presentation");
 			oRm.writeAttribute("id", this._oControl.getId() + "-triggerList");
 			oRm.addStyle("display", "none");
 			oRm.writeClasses();
@@ -82,11 +81,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 		},
 
 		onAfterRendering : function() {
-			if (this._oControl.getGrowingScrollToLoad()) {
-				var oScrollDelegate = sap.m.getScrollDelegate(this._oControl);
+			var oControl = this._oControl;
+			if (oControl.getGrowingScrollToLoad()) {
+				var oScrollDelegate = sap.m.getScrollDelegate(oControl);
 				if (oScrollDelegate) {
 					this._oScrollDelegate = oScrollDelegate;
-					oScrollDelegate.setGrowingList(this._oControl, this.requestNewPage.bind(this));
+					oScrollDelegate.setGrowingList(this.onScrollToLoad.bind(this), oControl.getGrowingDirection());
 				}
 			} else if (this._oScrollDelegate) {
 				this._oScrollDelegate.setGrowingList(null);
@@ -123,8 +123,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 			};
 		},
 
+		onScrollToLoad: function() {
+			if (this._oControl.getGrowingDirection() == sap.m.ListGrowingDirection.Upwards) {
+				this._iLastScrolledIndex = this._oControl.getItems(true).length;
+			}
+
+			this.requestNewPage();
+		},
+
 		// call to request new page
-		requestNewPage : function(oEvent) {
+		requestNewPage : function() {
 			if (!this._oControl || this._bLoading) {
 				return;
 			}
@@ -182,7 +190,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 					oEvent.preventDefault();
 				},
 				onsapspace : function(oEvent) {
-					this.requestNewPage(oEvent);
+					this.requestNewPage();
 					oEvent.preventDefault();
 				},
 				onAfterRendering : function(oEvent) {
@@ -249,28 +257,51 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 		// appends single list item to the list
 		addListItem : function(oContext, oBindingInfo, bSuppressInvalidate) {
 
-			var oBinding = oBindingInfo.binding;
-			var oItem = this.createListItem(oContext, oBindingInfo);
+			var oControl = this._oControl,
+				oBinding = oBindingInfo.binding,
+				oItem = this.createListItem(oContext, oBindingInfo);
 
 			if (oBinding.isGrouped()) {
 				// creates group header if need
-				var aItems = this._oControl.getItems(true),
+				var aItems = oControl.getItems(true),
 					oLastItem = aItems[aItems.length - 1],
 					sModelName = oBindingInfo.model,
 					oGroupInfo = oBinding.getGroup(oItem.getBindingContext(sModelName));
 
+				if (oLastItem && oLastItem.isGroupHeader()) {
+					oControl.removeAggregation("items", oLastItem, true);
+					this._fnAppendGroupItem = this.appendGroupItem.bind(this, oGroupInfo, oLastItem, bSuppressInvalidate);
+					oLastItem = aItems[aItems.length - 1];
+				}
+
 				if (!oLastItem || oGroupInfo.key !== oBinding.getGroup(oLastItem.getBindingContext(sModelName)).key) {
 					var oGroupHeader = (oBindingInfo.groupHeaderFactory) ? oBindingInfo.groupHeaderFactory(oGroupInfo) : null;
-					oGroupHeader = this._oControl.addItemGroup(oGroupInfo, oGroupHeader, bSuppressInvalidate);
-					if (bSuppressInvalidate) {
-						this._aChunk.push(oGroupHeader);
+					if (oControl.getGrowingDirection() == sap.m.ListGrowingDirection.Upwards) {
+						this.applyPendingGroupItem();
+						this._fnAppendGroupItem = this.appendGroupItem.bind(this, oGroupInfo, oGroupHeader, bSuppressInvalidate);
+					} else {
+						this.appendGroupItem(oGroupInfo, oGroupHeader, bSuppressInvalidate);
 					}
 				}
 			}
 
-			this._oControl.addAggregation("items", oItem, bSuppressInvalidate);
+			oControl.addAggregation("items", oItem, bSuppressInvalidate);
 			if (bSuppressInvalidate) {
 				this._aChunk.push(oItem);
+			}
+		},
+
+		applyPendingGroupItem: function() {
+			if (this._fnAppendGroupItem) {
+				this._fnAppendGroupItem();
+				this._fnAppendGroupItem = undefined;
+			}
+		},
+
+		appendGroupItem: function(oGroupInfo, oGroupHeader, bSuppressInvalidate) {
+			oGroupHeader = this._oControl.addItemGroup(oGroupInfo, oGroupHeader, bSuppressInvalidate);
+			if (bSuppressInvalidate) {
+				this._aChunk.push(oGroupHeader);
 			}
 		},
 
@@ -283,19 +314,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 
 		// update context on all items except group headers
 		updateItemsBindingContext :  function(aContexts, oModel) {
+			if (!aContexts.length) {
+				return;
+			}
+
 			var aItems = this._oControl.getItems(true);
-			for (var i = 0, l = 0; i < aContexts.length; i++) {
-				aItems[i] instanceof sap.m.GroupHeaderListItem && l++;
-				aItems[i + l].setBindingContext(aContexts[i], oModel);
+			for (var i = 0, c = 0, oItem; i < aItems.length; i++) {
+				oItem = aItems[i];
+
+				// group headers are not in binding context
+				if (!oItem.isGroupHeader()) {
+					oItem.setBindingContext(aContexts[c++], oModel);
+				}
 			}
 		},
 
 		// render all the collected items in the chunk and flush them into the DOM
 		// vInsert whether to append (true) or replace (falsy) or to insert at a certain position (int)
 		applyChunk : function(vInsert, oDomRef) {
+			this.applyPendingGroupItem();
+
 			var iLength = this._aChunk.length;
 			if (!iLength) {
 				return;
+			}
+
+			if (this._oControl.getGrowingDirection() == sap.m.ListGrowingDirection.Upwards) {
+				this._aChunk.reverse();
+				if (vInsert === true) {
+					vInsert = 0;
+				} else if (typeof vInsert == "number") {
+					vInsert = this._iRenderedDataItems - iLength - vInsert;
+				}
 			}
 
 			oDomRef = oDomRef || this._oContainerDomRef;
@@ -322,6 +372,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 			this.addListItems(aContexts, oBindingInfo, bSuppressInvalidate);
 			if (bSuppressInvalidate) {
 				this.applyChunk(false);
+			} else {
+				this.applyPendingGroupItem();
 			}
 		},
 
@@ -401,40 +453,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 				bFromScratch = false,
 				vInsertIndex;
 
-			// process diff
+			// process the diff
 			if (!aContexts.length) {
 				// no context, destroy only if items exists
 				aItems.length && this.destroyListItems();
 			} else if (!this._oContainerDomRef) {
-				// no dom ref
+				// no dom ref for compatibility reason start from scratch
 				this.rebuildListItems(aContexts, oBindingInfo);
 			} else if (!aDiff || !aItems.length && aDiff.length) {
 				// new records need to be applied from scratch
 				this.rebuildListItems(aContexts, oBindingInfo, true);
 			} else if (oBinding.isGrouped() || oControl.checkGrowingFromScratch()) {
 
-				if (!aDiff.length &&
-					this._sGroupingPath &&
-					this._sGroupingPath != this._getGroupingPath(oBinding)) {
-					// no diff but grouping is changed we do need to rebuild the list
+				if (this._sGroupingPath && this._sGroupingPath != this._getGroupingPath(oBinding)) {
+					// grouping is changed so we need to rebuild the list for the group headers
 					bFromScratch = true;
-				}
+				} else {
+					// append items if possible
+					for (var i = 0; i < aDiff.length; i++) {
+						var oDiff = aDiff[i],
+							oContext = aContexts[oDiff.index];
 
-				for (var i = 0; i < aDiff.length; i++) {
-					var oDiff = aDiff[i],
-						oContext = aContexts[oDiff.index];
-
-					if (oDiff.type == "delete") {
-						// group header may need to be deleted as well
-						bFromScratch = true;
-						break;
-					} else if (oDiff.index != this._iRenderedDataItems) {
-						// this item is not appended
-						bFromScratch = true;
-						break;
-					} else {
-						this.addListItem(oContext, oBindingInfo, true);
-						vInsertIndex = true;
+						if (oDiff.type == "delete") {
+							// group header may need to be deleted as well
+							bFromScratch = true;
+							break;
+						} else if (oDiff.index != this._iRenderedDataItems) {
+							// this item is not appended
+							bFromScratch = true;
+							break;
+						} else {
+							this.addListItem(oContext, oBindingInfo, true);
+							vInsertIndex = true;
+						}
 					}
 				}
 
@@ -479,7 +530,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 
 			if (bFromScratch) {
 				this.rebuildListItems(aContexts, oBindingInfo, true);
-			} else {
+			} else if (this._oContainerDomRef) {
 				// set the binding context of items inserting/deleting entries shifts the index of all following items
 				this.updateItemsBindingContext(aContexts, oBindingInfo.model);
 				this.applyChunk(vInsertIndex);
@@ -524,8 +575,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 				oTrigger.setActive(false);
 				oControl.$("triggerList").css("display", "");
 			} else {
-				var iBindingLength = oBinding.getLength() || 0,
-					iItemsLength = oControl.getItems(true).length,
+				var aItems = oControl.getItems(true),
+					iItemsLength = aItems.length,
+					iBindingLength = oBinding.getLength() || 0,
 					bLengthFinal = oBinding.isLengthFinal(),
 					bHasScrollToLoad = oControl.getGrowingScrollToLoad();
 
@@ -544,6 +596,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 
 					oTrigger.$().removeClass("sapMGrowingListBusyIndicatorVisible");
 					oControl.$("triggerList").css("display", "");
+				}
+
+				// at the beginning we should scroll to last item
+				if (bHasScrollToLoad && this._iLastScrolledIndex == undefined &&
+					this._oControl.getGrowingDirection() == sap.m.ListGrowingDirection.Upwards) {
+					this._iLastScrolledIndex = 1;
+				}
+
+				// scroll to item
+				if (iItemsLength > 0 && this._iLastScrolledIndex > 0) {
+					var oLastScrolledItem = aItems[this._iLastScrolledIndex - 1];
+					this._iLastScrolledIndex = 0;
+					if (oLastScrolledItem) {
+						this._oScrollDelegate.scrollToElement(oLastScrolledItem.getDomRef());
+					}
 				}
 			}
 		}
