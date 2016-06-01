@@ -95,7 +95,7 @@ html.sap-tablet .sapMQuickViewPage > section {
 	font-weight: normal;
 }
 
-.sapMQuickViewPage .sapUiFormResGrid > div {
+.sapMQuickViewPage .sapUiFormResGrid.sapUiFormBackgrTranslucent > div {
 	background-color : transparent;
 }
 
@@ -130,9 +130,12 @@ html.sap-tablet .sapMQuickViewPage > section {
 }
 
 .sapMQuickViewCard .sapUiHLayout,
-.sapMQuickViewCard .sapUiHLayoutChildWrapper,
 .sapMQuickViewCard .sapUiVlt {
 	display: block;
+}
+
+.sapMQuickViewCard .sapUiHLayoutChildWrapper:only-child {
+  width: 100%;
 }
 
 html.sap-phone .sapMQuickViewPage .sapUiHLayout {
