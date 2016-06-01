@@ -111,6 +111,21 @@
 		ok(bTest, "Buttons put in separate rows with correct IDs");
 	});
 
+	test("_getElementRect", function () {
+		//prepare
+		jQuery("#qunit-fixture").append("<div id='myDiv' style='width:25.1412399px;height:30.321564px'/>");
+
+		//act
+		var oReal = oRFL._getElementRect(jQuery("#myDiv"));
+
+		//check
+		equal(oReal.height, "30.3", "Height check");
+		equal(oReal.width, "25.1", "Width check");
+
+		//act and check
+		ok(!oRFL._getElementRect(null), "When null is passed, null should be returned");
+	});
+
 	module("Resize", {
 		setup : function() {
 			oBtn1.getLayoutData().setLinebreak(false);

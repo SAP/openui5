@@ -522,7 +522,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 
 						// if the width/height changed so the sizes need to be
 						// recalculated
-						var oRowRect = $Row.rect();
+						var oRowRect = this._getElementRect($Row);
 						var oPrevRect = this._rows[i].oRect;
 
 						if (oRowRect && oPrevRect) {
@@ -551,7 +551,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 						this.oRm.flush(this._oDomRef);
 
 						for (var i = 0; i < this._rows.length; i++) {
-							var oTmpRect = jQuery.sap.byId(sId + "-row" + i).rect();
+							var oTmpRect = this._getElementRect(jQuery.sap.byId(sId + "-row" + i));
 							this._rows[i].oRect = oTmpRect;
 						}
 					}
@@ -719,6 +719,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 
 			return null;
 
+		};
+
+		/**
+		 * Returns a rectangle describing the current visual positioning of 1st DOM in the collection.
+		 * The difference with the function rect() in jQuery.sap.dom.js is that the height and width are cut to the
+		 * 1st digit after the decimal separator and this is consistent across all browsers.
+		 * @param oElement the jQuery collection to check
+		 * @returns {{top, left, width, height}} or null if no such element
+		 * @private
+		 */
+		ResponsiveFlowLayout.prototype._getElementRect = function (oElement) {
+			var oRect = oElement && oElement.rect();
+
+			if (oRect) {
+				oRect.height = oRect.height.toFixed(1);
+				oRect.width = oRect.width.toFixed(1);
+			}
+			return oRect;
 		};
 
 	}());
