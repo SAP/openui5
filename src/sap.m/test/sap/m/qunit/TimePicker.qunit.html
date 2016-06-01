@@ -2097,6 +2097,33 @@
 			strictEqual(this.oTp._getPicker().$().css('display'), 'none', "The picker css display property is none");
 		});
 
+		test("tap on the input icon on Tablet opens the picker", function() {
+			// releated to BCP: 1670338556
+			var tp = new sap.m.TimePicker();
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			tp._openPicker();
+			var icon = tp.$().find(".sapUiIcon");
+			var oEvent = {
+				target: icon
+			}
+
+			tp.onfocusin(oEvent);
+			this.clock.tick(1000);
+
+			strictEqual(jQuery(".sapMPopover").is(":visible"), true, "When tapped on the button the picker stays opened");
+
+			oEvent.target = tp.getDomRef();
+
+			tp.onfocusin(oEvent);
+			this.clock.tick(1000);
+
+			strictEqual(jQuery(".sapMPopover").is(":visible"), false, "When focus on the field the picker is closed");
+
+			tp.destroy();
+		});
+
 		test("upon focusout, change event fires only once", function() {
 			//system under test
 			var	oTp2 = new sap.m.TimePicker({
