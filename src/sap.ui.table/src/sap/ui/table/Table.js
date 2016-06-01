@@ -1373,8 +1373,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (this._iBindingLength <= this.getVisibleRowCount()) {
 			oInnerScrollContainer.css({"transform": "translate3d(0px, " + (-iScrollTop) + "px, 0px)"});
 		} else {
-			var iRowCorrection = this._calculateRowCorrection(iDefaultRowHeight, iRowHeightOffset);
-			oInnerScrollContainer.css({"transform": "translate3d(0px, " + (-iRowCorrection - iRowHeightOffset) + "px, 0px)"});
+			var iRowCorrection = this._calculateRowCorrection(iDefaultRowHeight, iRowHeightOffset, iScrollTop);
+			oInnerScrollContainer.css({"transform": "translate3d(0px, " + (-iRowCorrection ) + "px, 0px)"});
 		}
 	};
 
@@ -1386,24 +1386,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @returns {number} the amount of pixels the scrolling areas have to be shifted vertically
 	 * @private
 	 */
-	Table.prototype._calculateRowCorrection = function(iDefaultRowHeight, iRowHeightOffset) {
+	Table.prototype._calculateRowCorrection = function(iDefaultRowHeight, iRowHeightOffset, iScrollTop) {
 		var iRowIndex = this.getFirstVisibleRow();
 		var iMaxRowIndex = this._iBindingLength - this.getVisibleRowCount();
-		var oInnerTable = this.getDomRef("table");
-		var oInnerScrollContainer = this.$().find(".sapUiTableCtrlScr, .sapUiTableRowHdrScr");
-		var oOuterScrollContainer = this.getDomRef("tableCCnt");
-		var oFirstTr = oInnerScrollContainer.find("tbody tr:first-child");
 
-		var iTableVariableRowHeightDelta = oInnerTable.clientHeight - oOuterScrollContainer.clientHeight;
-		if (iRowIndex < iMaxRowIndex - 1) {
+		if (iRowIndex < iMaxRowIndex) {
+			var oInnerScrollContainer = this.$().find(".sapUiTableCtrlScr, .sapUiTableRowHdrScr");
+			var oFirstTr = oInnerScrollContainer.find("tbody tr:first-child");
 			var iFirstRowHeightDelta = oFirstTr.height() - iDefaultRowHeight;
-			return Math.floor(iRowHeightOffset * (iFirstRowHeightDelta / iDefaultRowHeight));
-		} else if (iRowIndex == iMaxRowIndex - 1) {
-			return Math.ceil((iRowHeightOffset / iDefaultRowHeight) * iTableVariableRowHeightDelta) - iRowHeightOffset;
+			return Math.floor(iRowHeightOffset * (iFirstRowHeightDelta / iDefaultRowHeight)) + iRowHeightOffset;
 		} else if (iRowIndex == iMaxRowIndex) {
-			return iTableVariableRowHeightDelta - iRowHeightOffset - iDefaultRowHeight;
-		} else {
-			return 0;
+			return iScrollTop - (this._iBindingLength * iDefaultRowHeight) + this.getDomRef("tableCCnt").clientHeight;
 		}
 	};
 
@@ -2320,12 +2313,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				iCtrlScrHeight = oCtrlScrDomRef.clientHeight;
 			}
 
+			this._iRowHeightsDelta = iCtrlScrHeight - iCCntHeight - iDefaultRowHeight;
 			if (this._iBindingLength <= this.getVisibleRowCount()) {
-				this._iRowHeightsDelta = iCtrlScrHeight - iCCntHeight - iDefaultRowHeight;
 				iVSbHeight = this._iRowHeightsDelta + (this.getVisibleRowCount() * iDefaultRowHeight);
 			} else {
-				this._iRowHeightsDelta = 0;
-			}
+				iVSbHeight = this._iRowHeightsDelta + iVSbHeight;
+            }
 
 			this._toggleVSb();
 		}
@@ -2668,7 +2661,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				if (this.getVisibleRowCount() >= this._iBindingLength) {
 					return 0;
 				} else {
-					return Math.floor(iScrollTop / this._getDefaultRowHeight());
+					return Math.min(this._iBindingLength - this.getVisibleRowCount(), Math.floor(iScrollTop / this._getDefaultRowHeight()));
 				}
 			} else {
 				return Math.ceil(iScrollTop / this._getDefaultRowHeight());
