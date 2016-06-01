@@ -89,6 +89,7 @@
 }
 
 .sapMNLI-Footer > .sapMBtn {
+  margin-left: 0.25rem;
   padding: 0;
   float: left;
 }
@@ -110,17 +111,22 @@ html[data-sap-ui-browser*='ie'] .sapMNLI-Footer .sapMBtnInner {
 // Compact mode ========================================================================================================
 
 .sapUiSizeCompact .sapMNLI-Footer {
-  margin-bottom: -0.75rem;
+  margin-bottom: -1rem;
   box-sizing: border-box;
   max-height: 2.5rem;
   min-height: 0.75rem;
   line-height: 2.5rem;
   padding-top: 0.25rem;
+  height: 2.5rem;
 }
 
 .sapUiSizeCompact .sapMNLI-Footer .sapMTB > .sapMBtn {
   margin-left: 0.25rem;
   padding: 0;
+}
+
+.sapUiSizeCompact .sapMNLI-Footer > .sapMBtn {
+  margin-left: 0.75rem;
 }
 
 // Styles for calculating text size ====================================================================================
@@ -177,7 +183,6 @@ html[data-sap-ui-browser*='ie'] .sapMNLI-Footer .sapMBtnInner {
 .sapMNLI-LSize .sapMNLI-Footer {
   box-sizing: border-box;
   width: 40%;
-  padding-right: @containerPadding;
   display: inline-block;
   position: absolute;
   bottom: 0;
