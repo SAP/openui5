@@ -61,19 +61,20 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item"],
 		MessagePopoverItem.prototype.setProperty = function (sPropertyName, oValue, bSuppressInvalidate) {
 			// BCP: 1670235674
 			// MessagePopoverItem acts as a proxy to StandardListItem
-			// So, we should ensure if something is changed in MessagePopoverItem, it would be propagated to the StandartListItem
+			// So, we should ensure if something is changed in MessagePopoverItem, it would be propagated to the StandardListItem
 			var oParent = this.getParent(),
 				sType = this.getType().toLowerCase(),
+				// Blacklist properties. Some properties have already been set and shouldn't be changed in the StandardListItem
+				aPropertiesNotToUpdateInList = ["description"],
 				fnUpdateProperty = function (sName, oItem) {
-					// Most of the properties have 1:1 mapping. However there are some exceptions, for example
-					// "subtitle" from MessagePopoverItem would become "description" in StandardListItem
-					var mMPItemToSLItem = {"subtitle": "description"};
-
-					if (oItem._oMessagePopoverItem.getId() === this.getId() && oItem.getMetadata().getProperty(mMPItemToSLItem[sName] || sName)) {
+					if (oItem._oMessagePopoverItem.getId() === this.getId() && oItem.getMetadata().getProperty(sName)) {
 						oItem.setProperty(sName, oValue);
 					}
 				};
-			if (oParent && ("_bItemsChanged" in oParent) && !oParent._bItemsChanged) {
+
+			if (aPropertiesNotToUpdateInList.indexOf(sPropertyName) === -1 &&
+				oParent && ("_bItemsChanged" in oParent) && !oParent._bItemsChanged) {
+
 				oParent._oLists && oParent._oLists.all && oParent._oLists.all.getItems && oParent._oLists.all.getItems().forEach(fnUpdateProperty.bind(this, sPropertyName));
 				oParent._oLists && oParent._oLists[sType] && oParent._oLists[sType].getItems && oParent._oLists[sType].getItems().forEach(fnUpdateProperty.bind(this, sPropertyName));
 			}
