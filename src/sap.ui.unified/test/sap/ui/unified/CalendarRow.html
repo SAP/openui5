@@ -250,8 +250,8 @@
 			oApp = new sap.ui.unified.CalendarAppointment("IntervalHead0", {
 				startDate: oStartDate,
 				endDate: oEndDate,
-				type: sap.ui.unified.CalendarDayType.None,
-				title: "Interval Header 0",
+				type: sap.ui.unified.CalendarDayType.Type01,
+				title: "Interval Header 0 - span over 2 Intervals",
 				tooltip: "Test",
 				text: "IntervalHeader of 2 hours, 1 hour in future",
 				key: "I0"
@@ -269,7 +269,7 @@
 			oApp = new sap.ui.unified.CalendarAppointment("IntervalHead1", {
 				startDate: oStartDate,
 				endDate: oEndDate,
-				type: sap.ui.unified.CalendarDayType.Type01,
+				type: sap.ui.unified.CalendarDayType.None,
 				title: "Ñagçyfox 1",
 				tooltip: "Test",
 				text: "IntervalHeader of 1 day, 2 days in future",
@@ -440,6 +440,18 @@
 				press: function(oEvent){
 					var bPressed = oEvent.getParameter("pressed");
 					oRow1.setAppointmentsReducedHeight(bPressed);
+				}
+			}).placeAt("event1");
+
+			var oDropdownBox = new sap.ui.commons.DropdownBox("DB-Vis", {
+				selectedKey: sap.ui.unified.CalendarAppointmentVisualization.Standard,
+				items: [
+								new sap.ui.core.ListItem("I-1",{text:"Standard", key: sap.ui.unified.CalendarAppointmentVisualization.Standard}),
+								new sap.ui.core.ListItem("I-2",{text:"Filled", key: sap.ui.unified.CalendarAppointmentVisualization.Filled})
+								],
+				change: function(oEvent){
+					var sKey = oEvent.getParameter("selectedItem").getKey();
+					oRow1.setAppointmentsVisualization(sKey);
 				}
 			}).placeAt("event1");
 

@@ -135,7 +135,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 * to allow touching.
 			 * @since 1.38.0
 			 */
-			appointmentsReducedHeight : {type : "boolean", group : "Appearance", defaultValue : false}
+			appointmentsReducedHeight : {type : "boolean", group : "Appearance", defaultValue : false},
+
+			/**
+			 * Defines the visualization of the <code>CalendarAppoinment</code>
+			 *
+			 * <b>Note:</b> The real visualization depends on the used theme.
+			 * @since 1.40.0
+			 */
+			appointmentsVisualization : {type : "sap.ui.unified.CalendarAppointmentVisualization", group : "Appearance", defaultValue : sap.ui.unified.CalendarAppointmentVisualization.Standard}
 		},
 		aggregations : {
 
@@ -1221,6 +1229,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					var oIntervalEndDate = new UniversalDate(oStartDate.getTime());
 					oIntervalEndDate.setUTCMinutes(oIntervalEndDate.getUTCMinutes() - 1);
 					var iFirstInterval = -1;
+					var iLastInterval = -1;
 
 					for (j = 0; j < iIntervals; j++) {
 
@@ -1259,8 +1268,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 							if (iFirstInterval < 0) {
 								iFirstInterval = j;
 							}
-							aVisibleIntervalHeaders.push({interval: j, appointment: oAppointment, first: iFirstInterval == j});
+							iLastInterval = j;
 						}
+					}
+					if (iFirstInterval >= 0) {
+						aVisibleIntervalHeaders.push({interval: iFirstInterval, appointment: oAppointment, last: iLastInterval});
 					}
 				}
 			}

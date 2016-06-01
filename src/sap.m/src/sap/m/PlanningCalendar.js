@@ -102,6 +102,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 */
 			appointmentsReducedHeight : {type : "boolean", group : "Appearance", defaultValue : false},
 
+
+			/**
+			 * Defines the visualization of the <code>CalendarAppoinment</code>
+			 *
+			 * <b>Note:</b> The real visualization depends on the used theme.
+			 * @since 1.40.0
+			 */
+			appointmentsVisualization : {type : "sap.ui.unified.CalendarAppointmentVisualization", group : "Appearance", defaultValue : sap.ui.unified.CalendarAppointmentVisualization.Standard},
+
 			/**
 			 * Minimum date that can be shown and selected in the <code>PlanningCalendar</code>. This must be a JavaScript date object.
 			 *
@@ -827,6 +836,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
+	PlanningCalendar.prototype.setAppointmentsVisualization = function(sAppointmentsVisualization){
+
+		this.setProperty("appointmentsVisualization", sAppointmentsVisualization, true);
+
+		var aRows = this.getRows();
+		for (var i = 0; i < aRows.length; i++) {
+			var oRow = aRows[i];
+			oRow.getCalendarRow().setAppointmentsVisualization(sAppointmentsVisualization);
+		}
+
+		return this;
+
+	};
+
 	PlanningCalendar.prototype.setShowRowHeaders = function(bShowRowHeaders){
 
 		// set header column to invisible as each row is a ColumnListItem with two columns
@@ -860,6 +883,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		oCalendarRow.setShowEmptyIntervalHeaders(this.getShowEmptyIntervalHeaders());
 		oCalendarRow.setAppointmentsReducedHeight(this.getAppointmentsReducedHeight());
 		oCalendarRow.setLegend(this.getLegend());
+		oCalendarRow.setAppointmentsVisualization(this.getAppointmentsVisualization());
 		oCalendarRow.attachEvent("select", _handleAppointmentSelect, this);
 		oCalendarRow.attachEvent("startDateChange", _handleStartDateChange, this);
 		oCalendarRow.attachEvent("leaveRow", _handleLeaveRow, this);
@@ -898,6 +922,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		oCalendarRow.setShowEmptyIntervalHeaders(this.getShowEmptyIntervalHeaders());
 		oCalendarRow.setAppointmentsReducedHeight(this.getAppointmentsReducedHeight());
 		oCalendarRow.setLegend(this.getLegend());
+		oCalendarRow.setAppointmentsVisualization(this.getAppointmentsVisualization());
 		oCalendarRow.attachEvent("select", _handleAppointmentSelect, this);
 		oCalendarRow.attachEvent("startDateChange", _handleStartDateChange, this);
 		oCalendarRow.attachEvent("leaveRow", _handleLeaveRow, this);

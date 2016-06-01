@@ -388,23 +388,20 @@
 				ok(oHead, "Interval0: Head area rendered");
 				equal(jQuery(oHead).children().length, 0, "Interval0: Head has no content");
 
-				oHead = jQuery("#Row1-AppsInt1").children(".sapUiCalendarRowAppsIntHead")[0];
-				ok(oHead, "Interval1: Head area rendered");
-				equal(jQuery(oHead).children().length, 0, "Interval1: Head has no content");
+				var $Head = jQuery("#IHead1");
+				ok($Head.get(0), "Interval2: Header appointment rendered");
+				equal($Head.attr("title"), "Tooltip 1", "Interval2: Header appointment has tooltip rendered");
+				ok($Head.children().length > 0, "Interval2: Header appointment has content");
+				equal(jQuery($Head.children(".sapUiCalendarRowAppsIntHeadTitle")[0]).text(), "Head 1", "Interval2: Head has title rendered");
+				equal(jQuery($Head.children(".sapUiCalendarRowAppsIntHeadText")[0]).text(), "Head of one hour", "Interval2: Head has text rendered");
+				ok(Math.abs(Math.floor($Head.offset().left - jQuery("#Row1-AppsInt2").offset().left)) <= 1, "Intervalhead has same start rendered as Interval 2"); // maybe it varias 1px because of rounding
+				ok(Math.abs(Math.floor(($Head.offset().left + $Head.outerWidth()) - (jQuery("#Row1-AppsInt2").offset().left + jQuery("#Row1-AppsInt2").outerWidth()))) <= 1, "Intervalhead has same end rendered as Interval 2"); // maybe it varias 1px because of rounding
 
 				oHead = jQuery("#Row1-AppsInt2").children(".sapUiCalendarRowAppsIntHead")[0];
 				ok(oHead, "Interval2: Head area rendered");
-				equal(jQuery(oHead).attr("title"), "Tooltip 1", "Interval2: Head has tooltip rendered");
-				ok(jQuery(oHead).children().length > 0, "Interval2: Head has content");
-				equal(jQuery(jQuery(oHead).children(".sapUiCalendarRowAppsIntHeadTitle")[0]).text(), "Head 1", "Interval2: Head has title rendered");
-				equal(jQuery(jQuery(oHead).children(".sapUiCalendarRowAppsIntHeadText")[0]).text(), "Head of one hour", "Interval2: Head has text rendered");
+				equal(jQuery(oHead).children().length, 0, "Interval2: Head has no content");
 
-				oHead = jQuery("#Row1-AppsInt3").children(".sapUiCalendarRowAppsIntHead")[0];
-				ok(oHead, "Interval3: Head area rendered");
-				ok(!jQuery(oHead).attr("title"), "Interval3: Head has no tooltip rendered");
-				equal(jQuery(oHead).children().length, 0, "Interval3: Head has no content");
-
-				var oHead = jQuery("#Row2-AppsInt0").children(".sapUiCalendarRowAppsIntHead")[0];
+				oHead = jQuery("#Row2-AppsInt0").children(".sapUiCalendarRowAppsIntHead")[0];
 				ok(!oHead, "Row2: Interval0: no head area rendered");
 			});
 
@@ -542,35 +539,14 @@
 				ok(oHead, "Interval0: Head area rendered");
 				equal(jQuery(oHead).children().length, 0, "Interval0: Head has no content");
 
-				oHead = jQuery("#Row1-AppsInt1").children(".sapUiCalendarRowAppsIntHead")[0];
-				ok(oHead, "Interval1: Head area rendered");
-				equal(jQuery(oHead).children().length, 0, "Interval1: Head has no content");
-
-				oHead = jQuery("#Row1-AppsInt2").children(".sapUiCalendarRowAppsIntHead")[0];
-				ok(oHead, "Interval2: Head area rendered");
-				equal(jQuery(oHead).children().length, 0, "Interval2: Head has no content");
-				ok(!jQuery(oHead).attr("title"), "Interval2: Head has no tooltip rendered");
-				ok(!jQuery(oHead).hasClass("sapUiCalendarRowAppsIntHeadType01"), "Interval2: Head has no type rendered");
-
-				oHead = jQuery("#Row1-AppsInt3").children(".sapUiCalendarRowAppsIntHead")[0];
-				ok(oHead, "Interval3: Head area rendered");
-				ok(jQuery(oHead).children().length > 0, "Interval3: Head has content");
-				equal(jQuery(oHead).attr("title"), "Tooltip 2", "Interval3: Head has tooltip rendered");
-				equal(jQuery(jQuery(oHead).children(".sapUiCalendarRowAppsIntHeadTitle")[0]).text(), "Head 2", "Interval3: Head has title rendered");
-				equal(jQuery(jQuery(oHead).children(".sapUiCalendarRowAppsIntHeadText")[0]).text(), "Head of 2 days", "Interval3: Head has text rendered");
-				ok(jQuery(oHead).hasClass("sapUiCalendarRowAppsIntHeadType01"), "Interval3: Head has type rendered");
-
-				oHead = jQuery("#Row1-AppsInt4").children(".sapUiCalendarRowAppsIntHead")[0];
-				ok(oHead, "Interval4: Head area rendered");
-				equal(jQuery(oHead).children().length, 0, "Interval4: Head has no content");
-				equal(jQuery(oHead).attr("title"), "Tooltip 2", "Interval4: Head has tooltip rendered");
-				ok(jQuery(oHead).hasClass("sapUiCalendarRowAppsIntHeadType01"), "Interval4: Head has type rendered");
-
-				oHead = jQuery("#Row1-AppsInt5").children(".sapUiCalendarRowAppsIntHead")[0];
-				ok(oHead, "Interval5: Head area rendered");
-				equal(jQuery(oHead).children().length, 0, "Interval5: Head has no content");
-				ok(!jQuery(oHead).attr("title"), "Interval5: Head has no tooltip rendered");
-				ok(!jQuery(oHead).hasClass("sapUiCalendarRowAppsIntHeadType01"), "Interval5: Head has no type rendered");
+				var $Head = jQuery("#IHead2");
+				ok($Head.get(0), "Interval3: Header appointment rendered");
+				equal($Head.attr("title"), "Tooltip 2", "Interval3: Header appointment has tooltip rendered");
+				ok($Head.children().length > 0, "Interval3: Header appointment has content");
+				equal(jQuery($Head.children(".sapUiCalendarRowAppsIntHeadTitle")[0]).text(), "Head 2", "Interval3: Head has title rendered");
+				equal(jQuery($Head.children(".sapUiCalendarRowAppsIntHeadText")[0]).text(), "Head of 2 days", "Interval3: Head has text rendered");
+				ok(Math.abs(Math.floor($Head.offset().left - jQuery("#Row1-AppsInt3").offset().left)) <= 1, "Intervalhead has same start rendered as Interval 3"); // maybe it varias 1px because of rounding
+				ok(Math.abs(Math.floor(($Head.offset().left + $Head.outerWidth()) - (jQuery("#Row1-AppsInt4").offset().left + jQuery("#Row1-AppsInt4").outerWidth()))) <= 1, "Intervalhead has same end rendered as Interval 4"); // maybe it varias 1px because of rounding
 
 				ok(jQuery("#Row1-AppsInt0").hasClass("sapUiCalendarRowAppsIntLast"), "Interval0 is last of month");
 				ok(jQuery("#Row1-AppsInt1").hasClass("sapUiCalendarRowAppsIntFirst"), "Interval1 is first of month");
@@ -632,23 +608,14 @@
 				ok(oHead, "Interval0: Head area rendered");
 				equal(jQuery(oHead).children().length, 0, "Interval0: Head has no content");
 
-				oHead = jQuery("#Row1-AppsInt1").children(".sapUiCalendarRowAppsIntHead")[0];
-				ok(oHead, "Interval1: Head area rendered");
-				equal(jQuery(oHead).children().length, 0, "Interval1: Head has no content");
-
-				oHead = jQuery("#Row1-AppsInt2").children(".sapUiCalendarRowAppsIntHead")[0];
-				ok(oHead, "Interval2: Head area rendered");
-				ok(jQuery(oHead).children().length > 0, "Interval2: Head has content");
-				equal(jQuery(oHead).attr("title"), "Tooltip 3", "Interval2: Head has tooltip rendered");
-				equal(jQuery(jQuery(oHead).children(".sapUiCalendarRowAppsIntHeadTitle")[0]).text(), "Head 3", "Interval2: Head has title rendered");
-				equal(jQuery(jQuery(oHead).children(".sapUiCalendarRowAppsIntHeadText")[0]).text(), "Head of 1 month", "Interval2: Head has text rendered");
-				ok(jQuery(oHead).hasClass("sapUiCalendarRowAppsIntHeadType02"), "Interval2: Head has type rendered");
-
-				oHead = jQuery("#Row1-AppsInt3").children(".sapUiCalendarRowAppsIntHead")[0];
-				ok(oHead, "Interval3: Head area rendered");
-				equal(jQuery(oHead).children().length, 0, "Interval3: Head has no content");
-				ok(!jQuery(oHead).attr("title"), "Interval3: Head has no tooltip rendered");
-				ok(!jQuery(oHead).hasClass("sapUiCalendarRowAppsIntHeadType02"), "Interval3: Head has no type rendered");
+				var $Head = jQuery("#IHead3");
+				ok($Head.get(0), "Interval2: Header appointment rendered");
+				equal($Head.attr("title"), "Tooltip 3", "Interval2: Header appointment has tooltip rendered");
+				ok($Head.children().length > 0, "Interval2: Header appointment has content");
+				equal(jQuery($Head.children(".sapUiCalendarRowAppsIntHeadTitle")[0]).text(), "Head 3", "Interval3: Head has title rendered");
+				equal(jQuery($Head.children(".sapUiCalendarRowAppsIntHeadText")[0]).text(), "Head of 1 month", "Interval3: Head has text rendered");
+				ok(Math.abs(Math.floor($Head.offset().left - jQuery("#Row1-AppsInt2").offset().left)) <= 1, "Intervalhead has same start rendered as Interval 2"); // maybe it varias 1px because of rounding
+				ok(Math.abs(Math.floor(($Head.offset().left + $Head.outerWidth()) - (jQuery("#Row1-AppsInt2").offset().left + jQuery("#Row1-AppsInt2").outerWidth()))) <= 1, "Intervalhead has same end rendered as Interval 2"); // maybe it varias 1px because of rounding
 			});
 
 			test("Subintervals - months view", function() {
