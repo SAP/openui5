@@ -1,4 +1,5 @@
 describe("sap.m.AppWithBackground", function () {
+	browser.testrunner.currentSuite.meta.controlName = 'sap.m.App';
 
 	var fnClickThenCompare = function (sId, sImageName, sTestMessage) {
 		it(sTestMessage, function () {
