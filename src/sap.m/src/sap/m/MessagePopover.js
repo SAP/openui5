@@ -6,10 +6,10 @@
 sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolbar", "./ToolbarSpacer", "./Bar", "./List",
 		"./StandardListItem", "./library", "sap/ui/core/Control", "./PlacementType", "sap/ui/core/IconPool",
 		"sap/ui/core/HTML", "./Text", "sap/ui/core/Icon", "./SegmentedButton", "./Page", "./NavContainer",
-		"./semantic/SemanticPage", "./Popover", "./MessagePopoverItem", "jquery.sap.dom"],
+		"./semantic/SemanticPage", "./Link" ,"./Popover", "./MessagePopoverItem", "jquery.sap.dom"],
 	function (jQuery, ResponsivePopover, Button, Toolbar, ToolbarSpacer, Bar, List,
 			  StandardListItem, library, Control, PlacementType, IconPool,
-			  HTML, Text, Icon, SegmentedButton, Page, NavContainer, SemanticPage, Popover, MessagePopoverItem) {
+			  HTML, Text, Icon, SegmentedButton, Page, NavContainer, SemanticPage, Link, Popover, MessagePopoverItem) {
 		"use strict";
 
 		/**
@@ -443,6 +443,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 				content: "<span id=\"" + sCloseBtnDescrId + "\" style=\"display: none;\">" + sCloseBtnDescr + "</span>"
 			});
 
+			var sBackBtnTooltipDescr = this._oResourceBundle.getText("MESSAGEPOPOVER_ARIA_BACK_BUTTON_TOOLTIP");
 			var sBackBtnDescr = this._oResourceBundle.getText("MESSAGEPOPOVER_ARIA_BACK_BUTTON");
 			var sBackBtnDescrId = this.getId() + "-BackBtnDetDescr";
 			var oBackBtnARIAHiddenDescr = new HTML(sBackBtnDescrId, {
@@ -461,7 +462,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 				icon: ICONS["back"],
 				press: this._fnHandleBackPress.bind(this),
 				ariaLabelledBy: oBackBtnARIAHiddenDescr,
-				tooltip: sBackBtnDescr
+				tooltip: sBackBtnTooltipDescr
 			});
 
 			this._oDetailsHeader = new Toolbar({
@@ -707,6 +708,8 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 * @private
 		 */
 		MessagePopover.prototype._setDescription = function (oMessagePopoverItem) {
+			var oLink = oMessagePopoverItem.getLink();
+			this._oLastSelectedItem = oMessagePopoverItem;
 			if (oMessagePopoverItem.getMarkupDescription()) {
 				// description is sanitized in MessagePopoverItem.setDescription()
 				this._oMessageDescriptionText = new HTML(this.getId() + 'MarkupDescription', {
@@ -719,6 +722,10 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			}
 
 			this._detailsPage.addContent(this._oMessageDescriptionText);
+			if (oLink) {
+				this._detailsPage.addContent(oLink);
+				oLink.addStyleClass("sapMMsgPopoverDescriptionLink");
+			}
 		};
 
 		MessagePopover.prototype._iNextValidationTaskId = 0;
@@ -887,7 +894,8 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 */
 		MessagePopover.prototype._fnHandleItemPress = function (oEvent) {
 			var oListItem = oEvent.getParameter("listItem"),
-				oMessagePopoverItem = oListItem._oMessagePopoverItem;
+				oMessagePopoverItem = oListItem._oMessagePopoverItem,
+				aDetailsPageContent = this._detailsPage.getContent() || [];
 
 			var asyncDescHandler = this.getAsyncDescriptionHandler();
 
@@ -909,7 +917,15 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 				messageTypeFilter: this._getCurrentMessageTypeFilter()
 			});
 
-			this._detailsPage.destroyContent();
+			aDetailsPageContent.forEach(function(oControl) {
+				if (oControl instanceof Link) {
+					// Move the Link back to the MessagePopoverItem
+					this._oLastSelectedItem.setLink(oControl);
+					oControl.removeAllAriaLabelledBy();
+				} else {
+					oControl.destroy();
+				}
+			}, this);
 
 			if (typeof asyncDescHandler === "function" && !!oMessagePopoverItem.getLongtextUrl()) {
 				// Set markupDescription to true as markup description should be processed as markup
