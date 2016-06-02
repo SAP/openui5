@@ -121,7 +121,12 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 			/**
 			 * Fired when the Reset button is pressed to inform that all FacetFilterLists need to be reset.
 			 */
-			reset : {}
+			reset : {},
+
+			/**
+			 * Fired when the user confirms filter selection.
+			 */
+			confirm: {}
 		}
 	}});
 
@@ -880,6 +885,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 */
 	FacetFilter.prototype._handlePopoverAfterClose = function (oList) {
 		var oIcon = this._getFacetRemoveIcon(oList);
+
 		if (oIcon && oIcon.sapTouchStarted) {
 			//do not react on popover close if the "remove facet" button was touched, but not released (i.e. no 'press' event)
 			return;
@@ -887,6 +893,9 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 
 		this._displayRemoveIcon(false, oList);
 		oList._fireListCloseEvent();
+
+		this._fireConfirmEvent();
+
 		// Destroy the popover aggregation, otherwise if the list is then moved to the dialog filter items page, it will still think it's DOM element parent
 		// is the popover causing facet filter item checkbox selection to not display the check mark when the item is selected.
 		this.destroyAggregation("popover");
@@ -896,6 +905,14 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 				this._oOpenPopoverDeferred = undefined;
 			});
 		}
+	};
+
+	/**
+	 * Fires the <code>confirm</code> event.
+	 * @private
+	 */
+	FacetFilter.prototype._fireConfirmEvent = function () {
+		this.fireEvent('confirm');
 	};
 
 	/**
@@ -1351,6 +1368,7 @@ oPopover.setContentWidth("30%");
 
 		if (oDialog && oDialog.isOpen()) {
 			oDialog.close();
+			this._fireConfirmEvent();
 		}
 	};
 

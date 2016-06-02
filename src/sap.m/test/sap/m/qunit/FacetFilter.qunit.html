@@ -1692,10 +1692,62 @@
 
 
 
-		module("Events");
+		module("Events", {
+			beforeEach: function () {
+				//Arrange
+				this.oFacetFilter = new sap.m.FacetFilter({
+					lists: [
+						new sap.m.FacetFilterList({
+							title: "List 1",
+							items: [
+								new sap.m.FacetFilterItem({
+									key: "one",
+									text: "One",
+									selected: true
+								}),
+								new sap.m.FacetFilterItem({
+									key: "two",
+									text: "Two",
+									selected: false
+								}),
+								new sap.m.FacetFilterItem({
+									key: "three",
+									text: "Three",
+									selected: false
+								})
+							]
+						}),
+						new sap.m.FacetFilterList({
+							title: "List 2",
+							items: [
+								new sap.m.FacetFilterItem({
+									key: "one",
+									text: "One",
+									selected: true
+								}),
+								new sap.m.FacetFilterItem({
+									key: "two",
+									text: "Two",
+									selected: false
+								}),
+								new sap.m.FacetFilterItem({
+									key: "three",
+									text: "Three",
+									selected: false
+								})
+							]
+						})
+					]
+				});
+				this.oFacetFilter.placeAt("content");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.oFacetFilter.destroy();
+			}
+		});
 
 		asyncTest("FacetFilterList.listOpen", function() {
-
 			var oListOpenEvent = null;
 			var oFF = new sap.m.FacetFilter();
 			var oFFL = new sap.m.FacetFilterList({
@@ -1975,6 +2027,90 @@
 			ok(oFFL.getItems().length === iInitialItems, "Items filtering is being reset properly");
 
 			destroyFF(oFF);
+		});
+
+		test("FacetFilter CONFIRM event - popover close", function () {
+			//Arrange
+			var fnConfirmSpy = sinon.spy(),
+				fnListOpenSpy = sinon.spy(),
+				fnListCloseSpy = sinon.spy(),
+				oTargetList = this.oFacetFilter.getLists()[0],
+				oButtonOpener = this.oFacetFilter._getButtonForList(oTargetList),
+				oPopover = this.oFacetFilter._getPopover();
+
+			this.oFacetFilter.attachEvent("confirm", null, fnConfirmSpy, this);
+			this.oFacetFilter.getLists().forEach(function (oList) {
+				if (oList) {
+					oList.attachEvent("listOpen", null, fnListOpenSpy, this);
+					oList.attachEvent("listClose", null, fnListCloseSpy, this);
+				}
+			});
+
+			this.oFacetFilter._openPopover(oPopover, oButtonOpener);
+			sap.ui.getCore().applyChanges();
+			this.oFacetFilter._handlePopoverAfterClose(oTargetList);
+			sap.ui.getCore().applyChanges();
+			//Assert
+			strictEqual(fnListOpenSpy.callCount, 1, "ListOpen is called once");
+			strictEqual(fnListCloseSpy.callCount, 1, "ListClose is called once");
+			strictEqual(fnConfirmSpy.callCount, 1, "Confirm event was fired");
+		});
+
+		asyncTest("FacetFilter CONFIRM event - popover close (with OK button)", function () {
+			//Arrange
+			var fnConfirmSpy = sinon.spy(),
+				fnListOpenSpy = sinon.spy(),
+				fnListCloseSpy = sinon.spy(),
+				oTargetList = this.oFacetFilter.getLists()[0],
+				oButtonOpener = this.oFacetFilter._getButtonForList(oTargetList),
+				oPopover = this.oFacetFilter._getPopover(),
+				oPopoverOKButton;
+
+			this.oFacetFilter.setShowPopoverOKButton(true);
+			oPopoverOKButton = this.oFacetFilter._addOKButtonToPopover(oPopover);
+			this.oFacetFilter.attachEvent("confirm", null, fnConfirmSpy, this);
+			this.oFacetFilter.getLists().forEach(function (oList) {
+				if (oList) {
+					oList.attachEvent("listOpen", null, fnListOpenSpy, this);
+					oList.attachEvent("listClose", null, fnListCloseSpy, this);
+				}
+			});
+
+			this.oFacetFilter._openPopover(oPopover, oButtonOpener);
+			sap.ui.getCore().applyChanges();
+			strictEqual(fnListOpenSpy.callCount, 1, "ListOpen is called once");
+			oPopoverOKButton.firePress({});
+			sap.ui.getCore().applyChanges();
+			setTimeout(function() {
+				start();
+				//Assert
+				strictEqual(fnListCloseSpy.callCount, 1, "ListClose is called once");
+				strictEqual(fnConfirmSpy.callCount, 1, "Confirm event was fired");
+			},500);
+		});
+
+		test("FacetFilter OK event - dialog close", function () {
+			//Arrange
+			var fnConfirmSpy = sinon.spy(),
+					fnListOpenSpy = sinon.spy(),
+					fnListCloseSpy = sinon.spy(),
+					oDialog = this.oFacetFilter._getFacetDialog(),
+					oDialogOkButton = oDialog.getButtons()[0];
+
+			this.oFacetFilter.attachEvent("confirm", null, fnConfirmSpy, this);
+			this.oFacetFilter.getLists().forEach(function (oList) {
+				if (oList) {
+					oList.attachEvent("listOpen", null, fnListOpenSpy, this);
+					oList.attachEvent("listClose", null, fnListCloseSpy, this);
+				}
+			});
+
+			this.oFacetFilter.openFilterDialog();
+			sap.ui.getCore().applyChanges();
+			oDialogOkButton.firePress({});
+			sap.ui.getCore().applyChanges();
+			//Assert
+			strictEqual(fnConfirmSpy.callCount, 1, "Confirm event was fired");
 		});
 
 		module("List Container Rendering");
