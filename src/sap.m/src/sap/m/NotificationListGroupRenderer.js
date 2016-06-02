@@ -26,6 +26,7 @@ sap.ui.define([], function () {
 	var classNameBullet = 'sapMNLB-Bullet';
 	var classNameDescription = 'sapMNLG-Description';
 	var classNameCollapsed = 'sapMNLG-Collapsed';
+	var classNameSingleItemGroup = 'sapMNLGNoHdrFooter';
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -34,26 +35,37 @@ sap.ui.define([], function () {
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 	 */
 	NotificationListGroupRenderer.render = function (oRm, oControl) {
-		oRm.write('<li');
-		oRm.addClass(classNameItem);
-		oRm.addClass(classNameBase);
-		oRm.addClass(classNameListBaseItem);
+		if (oControl.getVisible()) {
+			var _bShowGroupHdrFooter = (oControl._getVisibleItemsCount() > 0);
+			oRm.write('<li');
+			oRm.addClass(classNameItem);
+			oRm.addClass(classNameBase);
+			oRm.addClass(classNameListBaseItem);
+			if (!_bShowGroupHdrFooter) {
+				oRm.addClass(classNameSingleItemGroup);
+			}
 
-		if (oControl.getCollapsed()) {
-			oRm.addClass(classNameCollapsed);
+			if (oControl.getCollapsed()) {
+				oRm.addClass(classNameCollapsed);
+			}
+
+			oRm.writeClasses();
+			oRm.writeControlData(oControl);
+			oRm.writeAttribute('tabindex', '0');
+			oRm.writeAccessibilityState(oControl, {
+				labelledby : oControl._getHeaderTitle().getId()
+			});
+			oRm.write('>');
+			if (_bShowGroupHdrFooter) {
+				this.renderHeader(oRm, oControl);
+				this.renderBody(oRm, oControl);
+				this.renderFooter(oRm, oControl);
+			}
+			oRm.write('</li>');
+		} else {
+			this.renderInvisibleItem(oRm, oControl);
 		}
 
-		oRm.writeClasses();
-		oRm.writeControlData(oControl);
-		oRm.writeAttribute('tabindex', '0');
-		oRm.writeAccessibilityState(oControl, {
-			labelledby : oControl._getHeaderTitle().getId()
-		});
-		oRm.write('>');
-			this.renderHeader(oRm, oControl);
-			this.renderBody(oRm, oControl);
-			this.renderFooter(oRm, oControl);
-		oRm.write('</li>');
 	};
 
 	//================================================================================
@@ -274,6 +286,20 @@ sap.ui.define([], function () {
 	NotificationListGroupRenderer.renderCollapseGroupButton = function (oRm, oControl) {
 		oRm.renderControl(oControl.getAggregation('_collapseButton'));
 	};
+
+	/**
+	 * Renders the invisible item when the visible property is false.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
+	 */
+	NotificationListGroupRenderer.renderInvisibleItem = function(oRm, oControl) {
+		oRm.write("<li");
+		oRm.writeInvisiblePlaceholderData(oControl);
+		oRm.write(">");
+		oRm.write("</li>");
+	};
+
 
 	return NotificationListGroupRenderer;
 

@@ -22,7 +22,7 @@
 		jQuery.sap.require('sap.m.MessageToast');
 
 		var listItem = new sap.m.NotificationListItem('firstNotification', {
-			title: 'Notification List Title',
+			title: 'Notification List Title1',
 			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
 			showCloseButton: false,
 			authorPicture: 'sap-icon://car-rental',
@@ -32,7 +32,7 @@
 		});
 
 		var listItem2 = new sap.m.NotificationListItem({
-			title: 'Notification List Title',
+			title: 'Notification List Title2',
 			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
 			datetime: '2 hours',
 			unread: true,
@@ -56,7 +56,7 @@
 		});
 
 		var listItem3 = new sap.m.NotificationListItem({
-			title: 'Notification List Title',
+			title: 'Notification List Title3',
 			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
 			datetime: '2 hours',
 			unread: true,
@@ -106,9 +106,108 @@
 			]
 		});
 
+		var singleItemGroup = new sap.m.NotificationListGroup({
+			id: 'notificationGroup2',
+			title: 'Single Notification List Item Group',
+			datetime: 'More than 15 minutes',
+			authorPicture: 'images/SAPLogo.jpg',
+			authorName: 'Lorem Ipsum',
+			visible: true,
+			buttons: [
+				new sap.m.Button({
+					text: 'Accept All',
+					type: sap.m.ButtonType.Accept,
+					tap: function () {
+						sap.m.MessageToast.show('Accept all button pressed');
+					}
+				}),
+				new sap.m.Button({
+					text: 'Cancel All',
+					type: sap.m.ButtonType.Reject
+				})
+			],
+			items: [
+				new sap.m.NotificationListItem({
+					title: 'Single Item Notification',
+					description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
+					datetime: '2 hours',
+					unread: true,
+					visible: true,
+					showCloseButton: false,
+					priority: sap.ui.core.Priority.High,
+					buttons: [
+						new sap.m.Button({
+							text: 'Accept',
+							type: sap.m.ButtonType.Accept,
+							tap: function () {
+								sap.m.MessageToast.show('Accept button pressed');
+							}
+						}),
+						new sap.m.Button({
+							text: 'Cancel',
+							type: sap.m.ButtonType.Reject,
+							tap: function () {
+								sap.m.MessageToast.show('Cancel button pressed');
+							}
+						})
+					]
+				}),
+				new sap.m.NotificationListItem({
+					title: 'Hidden Item Notification',
+					description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
+					datetime: '3 hours',
+					unread: true,
+					visible: false,
+					showCloseButton: true,
+					priority: sap.ui.core.Priority.Medium,
+					buttons: [
+						new sap.m.Button({
+							text: 'Accept',
+							type: sap.m.ButtonType.Accept,
+							tap: function () {
+								sap.m.MessageToast.show('Accept button pressed');
+							}
+						}),
+						new sap.m.Button({
+							text: 'Cancel',
+							type: sap.m.ButtonType.Reject,
+							tap: function () {
+								sap.m.MessageToast.show('Cancel button pressed');
+							}
+						})
+					]
+				})
+			]
+		});
+
+		var noItemsGroup = new sap.m.NotificationListGroup({
+			id: 'notificationGroup3',
+			title: 'Notification List With 0 Items',
+			datetime: 'More than 25 minutes',
+			authorPicture: 'images/SAPLogo.jpg',
+			authorName: 'Lorem Ipsum',
+			buttons: [
+				new sap.m.Button({
+					text: 'Accept All',
+					type: sap.m.ButtonType.Accept,
+					tap: function () {
+						sap.m.MessageToast.show('Accept all button pressed');
+					}
+				}),
+				new sap.m.Button({
+					text: 'Cancel All',
+					type: sap.m.ButtonType.Reject
+				})
+			],
+			items: [
+			]
+		});
+
 		var list = new sap.m.List({
 			items: [
-				listGroup
+				listGroup,
+				singleItemGroup,
+				noItemsGroup
 			]
 		});
 
