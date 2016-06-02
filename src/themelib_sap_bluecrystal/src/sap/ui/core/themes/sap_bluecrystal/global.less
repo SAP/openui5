@@ -55,6 +55,18 @@
 // [Tags "Content", "Color"]
 @sapUiGlobalBackgroundGradientEndColor: extract(@sapUiHighlight @sapContent_BackgroundGradientEndColor, @sapUiGlobalBackgroundVariant);
 
+@sapUiContentMarkerIconColor: @sapContent_MarkerIconColor;
+
+// [Label "Image Placeholder Background Color"]
+// [Description "The background color of Image Placeholders."]
+// [Tags "Base", "Content", "Color"]
+@sapUiContentImagePlaceholderBackground: @sapUiExtraLightBG;
+
+// [Label "Image Placeholder Foreground Color"]
+// [Description "The foreground color of Image Placeholders."]
+// [Tags "Base", "Content", "Color"]
+@sapUiContentImagePlaceholderForegroundColor: darken(@sapUiExtraLightBG ,20);
+
 @sapUiContentLabelColor: @sapContent_LabelColor;
 @sapUiContentDisabledTextColor: @sapContent_DisabledTextColor;
 @sapUiContentDisabledOpacity: @sapContent_DisabledOpacity;
