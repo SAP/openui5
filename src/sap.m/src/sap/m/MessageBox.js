@@ -150,7 +150,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './TextAre
 							"WARNING": "sapMMessageBoxWarning",
 							"ERROR": "sapMMessageBoxError",
 							"SUCCESS": "sapMMessageBoxSuccess",
-							"QUESTION": "sapMMessageBoxQuestion"
+							"QUESTION": "sapMMessageBoxQuestion",
+							"STANDARD":  "sapMMessageBoxStandard"
 						},
 						mIcons = {
 							"INFORMATION": IconPool.getIconURI("message-information"),
@@ -399,6 +400,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './TextAre
 
 					if (mClasses[mOptions.icon]) {
 						oDialog.addStyleClass(mClasses[mOptions.icon]);
+					} else {
+						oDialog.addStyleClass(mClasses.STANDARD);
 					}
 
 					if (mOptions.styleClass) {
