@@ -860,6 +860,29 @@
 			oBinding.sort(new sap.ui.model.Sorter("name", true));
 		});
 
+		asyncTest("Synchronous Expand", function(){
+
+			createTreeBindingAdapter("/bing/root", null,null, {
+				numberOfExpandedLevels: 0,
+				displayRootNode: false
+			});
+
+			var aContexts = oBinding.getContexts(0, 100);
+
+			equal(aContexts.length, 4);
+			equal(oBinding.getLength(), 4);
+			
+			// synchronous expands
+			oBinding.expand(0);
+			oBinding.expand(5); // this synchronous call was not working before
+
+			aContexts = oBinding.getContexts(0, 100);
+			
+			// synchronous tree update works
+			equal(oBinding.getLength(), 9, "Length is correctly calculated synchronously");
+
+			start();
+		});
 
 		var oData2 = {
 			root: [{
@@ -924,7 +947,6 @@
 			}
 			
 		});
-
 	</script>
 
 </head>
