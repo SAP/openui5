@@ -39,6 +39,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './mvc/View', '
 			return xmlNode.localName || xmlNode.baseName || xmlNode.nodeName;
 		}
 
+		var rNonWhiteSpace = /\S+/g;
+
 		/**
 		 * The XMLTemplateProcessor class is used to load and process Control trees in XML-declarative notation.
 		 *
@@ -91,7 +93,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './mvc/View', '
 				} else if (attr.name === 'resourceBundleAlias') {
 					oView._resourceBundleAlias =  attr.value;
 				} else if (attr.name === 'class') {
-					oView.addStyleClass(attr.value);
+					if (attr.value) {
+						attr.value.match(rNonWhiteSpace).forEach(oView.addStyleClass.bind(oView));
+					}
 				} else if (!mSettings[attr.name] && mAllProperties[attr.name]) {
 					mSettings[attr.name] = parseScalarType(mAllProperties[attr.name].type, attr.value, attr.name, oView._oContainingView.oController);
 				}
@@ -512,7 +516,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './mvc/View', '
 
 				if (sStyleClasses && vNewControlInstance.addStyleClass) {
 					// Elements do not have a style class!
-					vNewControlInstance.addStyleClass(sStyleClasses);
+					sStyleClasses.match(rNonWhiteSpace).forEach(vNewControlInstance.addStyleClass.bind(vNewControlInstance));
 				}
 
 				if (!vNewControlInstance) {
