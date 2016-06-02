@@ -131,6 +131,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		};
 
 		/**
+		 * Expand function.
+		 * Due to the tree invalidation mechanism the tree has to be rebuilt before an expand operation.
+		 * Calling buildTree is performance-safe, as the tree is invalid anyway.
+		 * @override
+		 */
+		ClientTreeBindingAdapter.prototype.expand = function() {
+			this._buildTree();
+			TreeBindingAdapter.prototype.expand.apply(this, arguments);
+		};
+
+		/**
+		 * Collapse function.
+		 * Due to the tree invalidation mechanism the tree has to be rebuilt before a collapse operation.
+		 * Calling buildTree is performance-safe, as the tree is invalid anyway.
+		 * @override
+		 */
+		ClientTreeBindingAdapter.prototype.collapse = function() {
+			this._buildTree();
+			TreeBindingAdapter.prototype.collapse.apply(this, arguments);
+		};
+
+		/**
 		 * Builds the tree from start index with the specified number of nodes
 		 * @param {int} iStartIndex Index from which the tree shall be built
 		 * @param {int} iLength Number of Nodes
