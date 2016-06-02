@@ -71,6 +71,14 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 			}
 			var oUtils = this.getUtils();
 
+			var bWasFocused = $ActionDomRef.is(":focus");
+			if (!bWasFocused) {
+				$.sap.log.warning("Control " + oControl + " could not be focused - maybe you are debugging?", this._sLogPrefix);
+				// focus did not succeed so at least fire the corresponding events
+				oUtils.triggerEvent("focusin", oActionDomRef);
+				oUtils.triggerEvent("focus", oActionDomRef);
+			}
+
 			if (this.getClearTextFirst()) {
 				oUtils.triggerKeydown(oActionDomRef, $.sap.KeyCodes.DELETE);
 				oUtils.triggerKeyup(oActionDomRef, $.sap.KeyCodes.DELETE);
@@ -85,14 +93,16 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 				oUtils.triggerEvent("input", oActionDomRef);
 			});
 
-			// trigger change by pressing enter - the dom should be updated by the events above
-
-			// Input change will fire here
-			oUtils.triggerKeydown(oActionDomRef, "ENTER");
-			// Seachfield will fire here
-			oUtils.triggerKeyup(oActionDomRef, "ENTER");
-			// To make extra sure - textarea only works with blur
-			oUtils.triggerEvent("blur", oActionDomRef);
+			if (bWasFocused) {
+				// try to invoke the dom blur method
+				$ActionDomRef.blur();
+			} else {
+				// simulate the blur since we could not focus the element
+				oUtils.triggerEvent("focusout", oActionDomRef);
+				oUtils.triggerEvent("blur", oActionDomRef);
+			}
+			// always trigger search since searchfield does not react to loosing the focus
+			oUtils.triggerEvent("search", oActionDomRef);
 		}
 	});
 
