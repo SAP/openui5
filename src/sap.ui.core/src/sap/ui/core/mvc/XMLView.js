@@ -273,13 +273,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 				var aChildren = this.getAggregation("content");
 				if ( aChildren ) {
 					for (var i = 0; i < aChildren.length; i++) {
-						if (aChildren[i].getDomRef() === null) {
-							// Do not replace if there is no dom to replace it with...
-							continue;
-						}
-						var $childDOM = aChildren[i].$();
-						// jQuery.sap.log.debug("replacing placeholder for " + aChildren[i] + " with content");
-						jQuery.sap.byId(RenderPrefixes.Dummy + aChildren[i].getId(), this._$oldContent).replaceWith($childDOM);
+
+						// get DOM or invisible placeholder for child
+						var oChildDOM = aChildren[i].getDomRef() ||
+										jQuery.sap.domById(RenderPrefixes.Invisible + aChildren[i].getId());
+
+						// if DOM exists, replace the preservation dummy with it
+						if ( oChildDOM ) {
+							jQuery.sap.byId(RenderPrefixes.Dummy + aChildren[i].getId(), this._$oldContent).replaceWith(oChildDOM);
+						} // otherwise keep the dummy placeholder
 					}
 				}
 				// move preserved DOM into place
