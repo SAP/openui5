@@ -305,3 +305,91 @@ asyncTest("Paging when collapsing nodes", function(){
 		oBinding.getContexts(0, 10, 100);
 	});
 });
+
+asyncTest("Application Filters are sent", function(){
+	oModel.attachMetadataLoaded(function() {
+		createTreeBinding("/orgHierarchy", null,
+			[new sap.ui.model.Filter("DESCRIPTION", "Contains", "x")],
+			{
+				threshold: 10,
+				countMode: "Inline",
+				operationMode: "Server",
+				numberOfExpandedLevels: 2
+			}
+		);
+
+		function changeHandler1 (oEvent) {
+			oBinding.detachChange(changeHandler1);
+
+			// contexts should be now loaded
+			var aContexts = oBinding.getContexts(0, 20, 0);
+
+			equal(oBinding.getLength(), 345, "Length is ok -> filtered tree 1st time");
+
+			equal(aContexts[2].getProperty("HIERARCHY_NODE"), "1005", "Node Test is ok");
+			equal(aContexts[5].getProperty("HIERARCHY_NODE"), "1010", "Node Test is ok");
+
+			// expand node 1005
+			oBinding.expand(2);
+
+			oBinding.attachChange(changeHandler2);
+			oBinding.getContexts(0, 20, 0);
+		}
+
+		function changeHandler2 () {
+			oBinding.detachChange(changeHandler2);
+
+			var aContexts = oBinding.getContexts(0, 20, 0);
+
+			equal(oBinding.getLength(), 350, "Length after expand is ok -> filtered tree 1nd time");
+
+			equal(aContexts[5].getProperty("HIERARCHY_NODE"), "1634", "Expanded child node is correct (1634)");
+			equal(aContexts[7].getProperty("HIERARCHY_NODE"), "1636", "Expanded child node is correct (1636)");
+
+			// refilter the tree binding --> leads to a refresh
+			oBinding.attachRefresh(refreshHandler);
+			oBinding.filter(new sap.ui.model.Filter("DESCRIPTION", "Contains", "w"), "Application");
+		}
+
+		function refreshHandler (oEvent) {
+			// refresh event --> trigger data loading
+			oBinding.detachRefresh(refreshHandler);
+			oBinding.attachChange(changeHandler3);
+			var aContexts = oBinding.getContexts(0, 20, 0);
+		}
+
+		function changeHandler3 () {
+			oBinding.detachChange(changeHandler3);
+			// newly filtered tree should be reloaded
+			var aContexts = oBinding.getContexts(0, 20, 0);
+
+			equal(oBinding.getLength(), 331, "Length is ok -> filtered tree 2nd time");
+
+			equal(aContexts[2].getProperty("HIERARCHY_NODE"), "1004", "Node Test is ok - 2nd time filtered");
+			equal(aContexts[5].getProperty("HIERARCHY_NODE"), "1009", "Node Test is ok - 2nd time filtered");
+
+			// after filtering index 2 should be a different node
+			oBinding.expand(2);
+
+			oBinding.attachChange(changeHandler4);
+			oBinding.getContexts(0, 20, 10);
+		}
+
+		function changeHandler4 () {
+			oBinding.detachChange(changeHandler4);
+
+			var aContexts = oBinding.getContexts(0, 20, 0);
+
+			equal(oBinding.getLength(), 393, "Length after expand is ok -> filtered tree 2nd time");
+
+			// data on index 5 and 7 should be different now
+			equal(aContexts[5].getProperty("HIERARCHY_NODE"), "2000", "Node Test is ok - 2nd time filtered");
+			equal(aContexts[7].getProperty("HIERARCHY_NODE"), "2002", "Node Test is ok - 2nd time filtered");
+
+			start();
+		}
+
+		oBinding.attachChange(changeHandler1);
+		oBinding.getContexts(0, 20, 10);
+	});
+});
