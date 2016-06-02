@@ -30,7 +30,7 @@ sap.ui.define(['jquery.sap.global'],
 	function _onDeactivate(){
 		_deactivatetimer = null;
 
-		if (_activityDetected) {
+		if (_activityDetected && document.hidden !== true) {
 			_onActivate();
 			return;
 		}
