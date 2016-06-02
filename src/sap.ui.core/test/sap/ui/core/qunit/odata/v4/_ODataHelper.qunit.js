@@ -28,8 +28,17 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{
-		sKeyPredicate : "(ID='42')",
+		sKeyPredicate : "('42')",
 		oEntityInstance : {"ID" : "42"},
+		oEntityType : {
+			"$Key" : ["ID"],
+			"ID" : {
+				"$Type" : "Edm.String"
+			}
+		}
+	}, {
+		sKeyPredicate : "('Walter%22s%20Win''s')",
+		oEntityInstance : {"ID" : "Walter\"s Win's"},
 		oEntityType : {
 			"$Key" : ["ID"],
 			"ID" : {
@@ -87,6 +96,41 @@ sap.ui.require([
 		});
 	});
 	//TODO handle keys with aliases!
+
+	//*********************************************************************************************
+	[{
+		sDescription : "one key property",
+		oEntityInstance : {},
+		oEntityType : {
+			"$Key" : ["ID"],
+			"ID" : {
+				"$Type" : "Edm.String"
+			}
+		}
+	}, {
+		sDescription : "multiple key properties",
+		oEntityInstance : {"Sector" : "DevOps"},
+		oEntityType : {
+			"$Key" : ["Sector", "ID"],
+			"Sector" : {
+				"$Type" : "Edm.String"
+			},
+			"ID" : {
+				"$Type" : "Edm.String"
+			}
+		}
+	}].forEach(function (oFixture) {
+		QUnit.test("getKeyPredicate: missing key, " + oFixture.sDescription, function (assert) {
+			var sError = "Missing value for key property 'ID'";
+
+			this.oLogMock.expects("error").withExactArgs(sError, null,
+				"sap.ui.model.odata.v4._ODataHelper");
+
+			assert.throws(function () {
+				_ODataHelper.getKeyPredicate(oFixture.oEntityType, oFixture.oEntityInstance);
+			}, new Error(sError));
+		});
+	});
 
 	//*********************************************************************************************
 	[{
