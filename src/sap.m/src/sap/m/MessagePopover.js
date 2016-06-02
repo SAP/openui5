@@ -867,12 +867,15 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		MessagePopover.prototype._sanitizeDescription = function (oMessagePopoverItem) {
 			jQuery.sap.require("jquery.sap.encoder");
 			jQuery.sap.require("sap.ui.thirdparty.caja-html-sanitizer");
+			var sDescription = oMessagePopoverItem.getDescription();
 
-			var tagPolicy = this._getTagPolicy();
-			/*global html*/
-			var sanitized = html.sanitizeWithPolicy(oMessagePopoverItem.getDescription(), tagPolicy);
+			if (oMessagePopoverItem.getMarkupDescription()) {
+				var tagPolicy = this._getTagPolicy();
+				/*global html*/
+				sDescription = html.sanitizeWithPolicy(sDescription, tagPolicy);
+			}
 
-			oMessagePopoverItem.setDescription(sanitized);
+			oMessagePopoverItem.setDescription(sDescription);
 			this._setDescription(oMessagePopoverItem);
 		};
 
