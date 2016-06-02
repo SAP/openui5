@@ -3,8 +3,8 @@
  */
 
 //Provides default renderer for control sap.ui.table.Table
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library', 'sap/ui/core/theming/Parameters', 'sap/ui/Device', './library', './TableUtils'],
-	function(jQuery, Control, coreLibrary, Parameters, Device, library, TableUtils) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library', 'sap/ui/core/theming/Parameters', 'sap/ui/Device', './library', './TableUtils', 'sap/ui/core/Renderer'],
+	function(jQuery, Control, coreLibrary, Parameters, Device, library, TableUtils, Renderer) {
 	"use strict";
 
 
@@ -217,6 +217,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 		this.renderTableCtrl(rm, oTable);
 		this.renderRowHdr(rm, oTable);
 		this.renderVSb(rm, oTable);
+
+		rm.write("<div");
+		rm.addClass("sapUiTableCtrlAfter");
+		rm.writeClasses();
+		rm.writeAttribute("tabindex", "0");
+		rm.write("></div>");
+
+		rm.write("<div");
+		rm.addClass("sapUiTableCtrlEmpty");
+		rm.writeClasses();
+		rm.writeAttribute("tabindex", "0");
+		rm.writeAttribute("id", oTable.getId() + "-noDataCnt");
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "NODATA");
+		rm.write(">");
+		if (oTable.getNoData() instanceof Control) {
+			rm.renderControl(oTable.getNoData());
+		} else {
+			rm.write("<span");
+			rm.writeAttribute("id", oTable.getId() + "-noDataMsg");
+			rm.addClass("sapUiTableCtrlEmptyMsg");
+			rm.writeClasses();
+			rm.write(">");
+			rm.writeEscaped(TableUtils.getNoDataText(oTable));
+			rm.write("</span>");
+		}
+		rm.write("</div>");
 	};
 
 	TableRenderer.renderFooter = function(rm, oTable, oFooter) {
@@ -442,7 +468,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 		rm.write("><div");
 		rm.addClass("sapUiTableColCell");
 		rm.writeClasses();
-		var sHAlign = this.getHAlign(oColumn.getHAlign(), oTable._bRtlMode);
+		var sHAlign = this.getHAlign(oColumn.getHAlign(), oLabel && oLabel.getTextDirection && oLabel.getTextDirection());
 		if (sHAlign) {
 			rm.addStyle("text-align", sHAlign);
 		}
@@ -602,34 +628,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 
 		this.renderTableControl(rm, oTable, false);
 
-		rm.write("</div>");
-
-		rm.write("<div");
-		rm.addClass("sapUiTableCtrlAfter");
-		rm.writeClasses();
-		rm.writeAttribute("tabindex", "0");
-		rm.write("></div>");
-		rm.write("</div>");
-
-		rm.write("<div");
-		rm.addClass("sapUiTableCtrlEmpty");
-		rm.writeClasses();
-		rm.writeAttribute("tabindex", "0");
-		rm.writeAttribute("id", oTable.getId() + "-noDataCnt");
-		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "NODATA");
-		rm.write(">");
-		if (oTable.getNoData() instanceof Control) {
-			rm.renderControl(oTable.getNoData());
-		} else {
-			rm.write("<span");
-			rm.writeAttribute("id", oTable.getId() + "-noDataMsg");
-			rm.addClass("sapUiTableCtrlEmptyMsg");
-			rm.writeClasses();
-			rm.write(">");
-			rm.writeEscaped(TableUtils.getNoDataText(oTable));
-			rm.write("</span>");
-		}
-		rm.write("</div>");
+		rm.write("</div></div>");
 	};
 
 
@@ -870,7 +869,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 				firstCol: bIsFirstColumn
 			});
 
-			var sHAlign = this.getHAlign(oColumn.getHAlign(), oTable._bRtlMode);
+			var sHAlign = this.getHAlign(oColumn.getHAlign(), oCell && oCell.getTextDirection && oCell.getTextDirection());
 			if (sHAlign) {
 				rm.addStyle("text-align", sHAlign);
 			}
@@ -951,23 +950,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 	 * Returns the value for the HTML "align" attribute according to the given
 	 * horizontal alignment and RTL mode, or NULL if the HTML default is fine.
 	 *
-	 * @param {sap.ui.core.HorizontalAlign} oHAlign
-	 * @param {boolean} bRTL
-	 * @type string
+	 * @param {sap.ui.core.HorizontalAlign} sHorizontalAlign the text alignment of the Control
+	 * @param {sap.ui.core.TextDirection} sTextDirection the text direction of the Control
+	 * @returns {string} the actual text alignment that must be set for this environment
+	 * @private
 	 */
-	TableRenderer.getHAlign = function(oHAlign, bRTL) {
-	  switch (oHAlign) {
-		case HorizontalAlign.Center:
-		  return "center";
-		case HorizontalAlign.End:
-		case HorizontalAlign.Right:
-		  return bRTL ? "left" : "right";
-	  }
-	  // case HorizontalAlign.Left:
-	  // case HorizontalAlign.Begin:
-	  return bRTL ? "right" : "left";
+	TableRenderer.getHAlign = function(sHorizontalAlign, sTextDirection) {
+		// the enum values of sap.ui.core.TextAlign are a superset of sap.ui.core.HorizontalAlign
+		// the logic to be implemented is basically the same, therefore route the call to getTextAlign implementation
+		// of the Renderer
+		var sTextAlign = Renderer.getTextAlign(sHorizontalAlign, sTextDirection);
+		if (!sTextAlign) {
+			sTextAlign = (sHorizontalAlign == HorizontalAlign.Left ? "left" : "right");
+		}
+		return sTextAlign;
 	};
-
 
 	return TableRenderer;
 

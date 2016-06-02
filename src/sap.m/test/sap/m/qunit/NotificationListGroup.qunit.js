@@ -161,7 +161,7 @@
         sap.ui.getCore().applyChanges();
 
         // act
-        this.NotificationListGroup._collapseButton.firePress();
+        this.NotificationListGroup.getAggregation('_collapseButton').firePress();
         sap.ui.getCore().applyChanges();
 
         // assert
@@ -352,7 +352,6 @@
 
         // assert
         assert.strictEqual(fnEventSpy.callCount, 1, 'Firing the event should call the close function');
-        assert.equal(this.NotificationListGroup.getDomRef(), null, 'Notification List Group should be destroyed');
     });
 
     QUnit.test('Pressing the close button', function(assert) {
@@ -360,7 +359,7 @@
         var fnEventSpy = sinon.spy(this.NotificationListGroup, 'fireClose');
 
         // act
-        this.NotificationListGroup._closeButton.firePress();
+        this.NotificationListGroup.getAggregation('_closeButton').firePress();
 
         // assert
         assert.strictEqual(fnEventSpy.callCount, 1, 'Pressing the close button should fire the  close event');

@@ -136,6 +136,21 @@
             });
             oRangeSlider8.placeAt("content1");
             oRangeSlider8.setRange([-100000,100000]);
+
+            new sap.m.RangeSlider({
+                width: "50%",
+                min: -100,
+                max: 100,
+                range: [-35, 40],
+                liveChange: function(oControlEvent) {
+                    jQuery.sap.log.info("Event fired: 'liveChange' range property to " + oControlEvent.getParameter("range") + " on " + this);
+                },
+                change : function(oControlEvent) {
+                    jQuery.sap.log.info("Event fired: 'change' range property to " + oControlEvent.getParameter("range") + " on " + this);
+                },
+                showHandleTooltip: false,
+                name: "RangeSlider9"
+            }).placeAt("content1");
         </script>
     </head>
     <body class="sapUiBody">

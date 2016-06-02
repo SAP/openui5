@@ -381,6 +381,21 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	* Overwrite setBusy, because the busyIndicator does not cover the header title,
+	* because the header title has z-index: 2 in order to appear on top of the content
+	* @param {boolean} bBusy
+	* @public
+	*/
+	ObjectPageLayout.prototype.setBusy = function (bBusy) {
+		var $title = this.$("headerTitle"),
+			vResult = Control.prototype.setBusy.call(this, bBusy);
+
+		$title.length > 0 && $title.toggleClass("sapUxAPObjectPageHeaderTitleBusy", bBusy);
+
+		return vResult;
+	};
+
 	ObjectPageLayout.prototype._initializeScroller = function () {
 		if (this._oScroller) {
 			return;
@@ -431,6 +446,7 @@ sap.ui.define([
 		this._$headerContent = jQuery.sap.byId(this.getId() + "-headerContent");
 		this._$stickyHeaderContent = jQuery.sap.byId(this.getId() + "-stickyHeaderContent");
 		this._$contentContainer = jQuery.sap.byId(this.getId() + "-scroll");
+		this._bDomElementsCached = true;
 	};
 
 	/**
@@ -863,10 +879,12 @@ sap.ui.define([
 				this._$contentContainer.parent().stop(true, false);
 			}
 
-			this._iCurrentScrollTimeout = jQuery.sap.delayedCall(iDuration, this, function () {
-				this._sCurrentScrollId = undefined;
-				this._iCurrentScrollTimeout = undefined;
-			});
+			if (this._bDomElementsCached) {
+				this._iCurrentScrollTimeout = jQuery.sap.delayedCall(iDuration, this, function () {
+					this._sCurrentScrollId = undefined;
+					this._iCurrentScrollTimeout = undefined;
+				});
+			}
 
 			this._preloadSectionsOnScroll(oSection);
 

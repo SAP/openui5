@@ -2202,12 +2202,12 @@
 		{
 		  "id": "sap.m.sample.StandardMarginsSingleSided",
 		  "name": "Single-Sided Margins",
-		  "description": "Clear the space to the left, right, top or bottom of your control. Choose a size ('Tiny', 'Small', 'Medium' or 'Large', which stands for 8px (0.5rem), 16px (1rem), 32px (2rem) or 48px (3rem) respectively) and a direction ('Begin', 'End', 'Top' or 'Bottom', where 'Begin' is left and 'End' is right and vice versa in right-to-left mode). If you would like to clear a 32px space to the left (resp. right in rtl mode), you would add class 'sapUiMediumBegin'. You may also add several classes which have to point to different directions though, for example you would add classes 'sapUiLargeEnd sapUiLargeBottom' to clear a 48px space to the bottom and to the right (resp. to the left in rtl mode)."
+		  "description": "Clear the space to the left, right, top or bottom of your control. Choose a size ('Tiny', 'Small', 'Medium' or 'Large', which stands for 8px (0.5rem), 16px (1rem), 32px (2rem) or 48px (3rem) respectively) and a direction ('Begin', 'End', 'Top' or 'Bottom', where 'Begin' is left and 'End' is right and vice versa in right-to-left mode). If you would like to clear a 32px space to the left (resp. right in rtl mode), you would add class 'sapUiMediumMarginBegin'. You may also add several classes which have to point to different directions though, for example you would add classes 'sapUiLargeMarginEnd sapUiLargeMarginBottom' to clear a 48px space to the bottom and to the right (resp. to the left in rtl mode)."
 		},
 		{
 		  "id": "sap.m.sample.StandardMarginsTwoSided",
 		  "name": "Two-Sided Margins",
-		  "description": "Clear the space to the left and right, top and bottom of your control. Choose a size ('Tiny', 'Small', 'Medium' or 'Large', which stands for 8px (0.5rem), 16px (1rem), 32px (2rem) or 48px (3rem) respectively) and an orientation ('BeginEnd', 'TopBottom'). If you would like to clear a 32px space to the left and right, you would add class 'sapUiMediumBeginEnd'."
+		  "description": "Clear the space to the left and right, top and bottom of your control. Choose a size ('Tiny', 'Small', 'Medium' or 'Large', which stands for 8px (0.5rem), 16px (1rem), 32px (2rem) or 48px (3rem) respectively) and an orientation ('BeginEnd', 'TopBottom'). If you would like to clear a 32px space to the left and right, you would add class 'sapUiMediumMarginBeginEnd'."
 		},
 		{
 		  "id": "sap.m.sample.StandardMarginsEnforceWidthAuto",

@@ -73,23 +73,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 */
 			visualMode : {type : "sap.m.RatingIndicatorVisualMode", group : "Behavior", defaultValue : sap.m.RatingIndicatorVisualMode.Half}
 		},
-		aggregations : {
-
-			/**
-			 * The internal selected rating icons are managed in this aggregation
-			 */
-			_iconsSelected : {type : "sap.ui.core.Control", multiple : true, singularName : "_iconsSelected", visibility : "hidden"},
-
-			/**
-			 * The internal unselected rating icons are managed in this aggregation
-			 */
-			_iconsUnselected : {type : "sap.ui.core.Control", multiple : true, singularName : "_iconsUnselected", visibility : "hidden"},
-
-			/**
-			 * The internal hovered rating icons are managed in this aggregation
-			 */
-			_iconsHovered : {type : "sap.ui.core.Control", multiple : true, singularName : "_iconsHovered", visibility : "hidden"}
-		},
 		associations : {
 			/**
 			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
@@ -224,93 +207,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Sets the selected icon without rerendering the control.
-	 *
-	 * @param {sap.ui.core.URI} sURI
-	 * @returns {sap.m.RatingIndicator} Returns <code>this</code> to facilitate method chaining.
-	 * @override
-	 * @public
-	 */
-	RatingIndicator.prototype.setIconSelected = function (sURI) {
-		if (sap.ui.getCore().getConfiguration().getTheme() === "sap_hcb") {
-			this.setProperty("iconSelected", sURI, true);
-			return;
-		}
-
-		var oItems = this.getAggregation("_iconsSelected"),
-			i = 0;
-
-		if (oItems) {
-			for (; i < oItems.length; i++) {
-				oItems[i].setSrc(sURI);
-			}
-		}
-
-		this.setProperty("iconSelected", sURI, true);
-		return this;
-	};
-
-	/**
 	 * Handler for theme changing
 	 *
 	 * @param oEvent {jQuery.Event} oEvent The event object passed to the event handler.
 	 */
 	RatingIndicator.prototype.onThemeChanged = function (oEvent){
 		this.invalidate(); // triggers a re-rendering
-	};
-
-	/**
-	 * Sets the unselected icon without rerendering the control.
-	 *
-	 * @param {sap.ui.core.URI} sURI
-	 * @returns {sap.m.RatingIndicator} Returns <code>this</code> to facilitate method chaining.
-	 * @override
-	 * @public
-	 */
-	RatingIndicator.prototype.setIconUnselected = function (sURI) {
-		if (sap.ui.getCore().getConfiguration().getTheme() === "sap_hcb") {
-			this.setProperty("iconUnselected", sURI, true);
-			return;
-		}
-
-		var oItems = this.getAggregation("_iconsUnselected"),
-			i = 0;
-
-		if (oItems) {
-			for (; i < oItems.length; i++) {
-				oItems[i].setSrc(sURI);
-			}
-		}
-
-		this.setProperty("iconUnselected", sURI, true);
-		return this;
-	};
-
-	/**
-	 * Sets the hovered icon without rerendering the control.
-	 *
-	 * @param {sap.ui.core.URI} sURI
-	 * @returns {sap.m.RatingIndicator} Returns <code>this</code> to facilitate method chaining.
-	 * @override
-	 * @public
-	 */
-	RatingIndicator.prototype.setIconHovered = function (sURI) {
-		if (sap.ui.getCore().getConfiguration().getTheme() === "sap_hcb") {
-			this.setProperty("iconHovered", sURI, true);
-			return;
-		}
-
-		var oItems = this.getAggregation("_iconsHovered"),
-			i = 0;
-
-		if (oItems) {
-			for (; i < oItems.length; i++) {
-				oItems[i].setSrc(sURI);
-			}
-		}
-
-		this.setProperty("iconHovered", sURI, true);
-		return this;
 	};
 
 	/**
@@ -349,13 +251,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	RatingIndicator.prototype.exit = function () {
-		delete this._iIconCounter;
-		delete this._fStartValue;
-		delete this._iPxIconSize;
-		delete this._iPxPaddingSize;
-		delete this._fHoverValue;
+		this._iIconCounter = null;
+		this._fStartValue = null;
+		this._iPxIconSize = null;
+		this._iPxPaddingSize = null;
+		this._fHoverValue = null;
 
-		delete this._oResourceBundle;
+		this._oResourceBundle = null;
 	};
 
 	/* =========================================================== */
@@ -368,7 +270,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	RatingIndicator.prototype._toPx = function (cssSize) {
 		cssSize = cssSize || 0;
-		var  scopeVal = RatingIndicator._pxCalculations[cssSize],
+		var scopeVal = RatingIndicator._pxCalculations[cssSize],
 			scopeTest;
 
 		if (scopeVal === undefined) {
@@ -376,7 +278,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				scopeTest = jQuery('<div style="display: none; width: ' + cssSize + '; margin: 0; padding:0; height: auto; line-height: 1; font-size: 1; border:0; overflow: hidden">&nbsp;</div>').appendTo(sap.ui.getCore().getStaticAreaRef());
 				scopeVal = scopeTest.width();
 			} else {
-				scopeTest = jQuery('<div class="sapMRIIcon">&nbsp;</div>').appendTo(sap.ui.getCore().getStaticAreaRef());
+				scopeTest = jQuery('<div style="height: 1.375rem; overflow: hidden;">&nbsp;</div>').appendTo(sap.ui.getCore().getStaticAreaRef());
 				scopeVal = scopeTest.height();
 			}
 			scopeTest.remove();
@@ -459,76 +361,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		var sValueText = this._oResourceBundle.getText("RATING_VALUEARIATEXT", [fValue, fMaxValue]);
 		$this.attr("aria-valuetext", sValueText);
-	};
-
-	/**
-	 * Load the icons/images of the rating for the different rating states.
-	 *
-	 * @param {int} iState The icon to be returned (0 = {@link #getIconSelected iconSelected},  1 = {@link #getIconUnselected  iconUnselected}, 2 = {@link #getIconHovered iconHovered}
-	 * @returns {object} either an sap.m.Image or an sap.m.Icon depending on the URI of the control parameters
-	 * @private
-	 */
-	RatingIndicator.prototype._getIcon = function (iState) {
-
-		// single initialization
-		var oImage = null,
-			sURI = null;
-
-		if (sap.ui.getCore().getConfiguration().getTheme() !== "sap_hcb") {
-			// preset the variables based on the state requested
-			switch (iState) {
-				case 1: // unselected
-					sURI = this.getIconUnselected() || IconPool.getIconURI("favorite");
-					break;
-				case 2: // Hovered
-					sURI = this.getIconHovered() || IconPool.getIconURI("favorite");
-					break;
-				case 0: // Selected
-					sURI = this.getIconSelected() || IconPool.getIconURI("favorite");
-					break;
-			}
-		} else {
-			// preset the variables based on the state requested
-			switch (iState) {
-				case 1: // unselected
-					if (this.getEnabled() === false) {
-						sURI = IconPool.getIconURI("favorite");
-					} else {
-						sURI = IconPool.getIconURI("unfavorite");
-					}
-					break;
-				case 2: // Hovered
-					sURI = IconPool.getIconURI("favorite");
-					break;
-				case 0: // Selected
-					sURI = IconPool.getIconURI("favorite");
-					break;
-			}
-		}
-
-
-		if (sURI) {
-			oImage = IconPool.createControlByURI({
-				id: this.getId() + "__icon" + this._iIconCounter++,
-				src: sURI,
-				useIconTooltip: false
-			}, sap.m.Image);
-
-			// store the icons in the corresponding internal aggregation
-			switch (iState) {
-			case 1: // unselected
-				this.addAggregation("_iconsUnselected", oImage, true);
-				break;
-			case 2: // Hovered
-				this.addAggregation("_iconsHovered", oImage, true);
-				break;
-			case 0: // Selected
-				this.addAggregation("_iconsSelected", oImage, true);
-				break;
-			}
-		}
-
-		return oImage;
 	};
 
 	/**
@@ -648,8 +480,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			// here also bound to the mouseup mousemove event to enable it working in
 			// desktop browsers
-			jQuery(document).on("touchend touchcancel mouseup", this._touchEndProxy);
-			jQuery(document).on("touchmove mousemove", this._touchMoveProxy);
+			jQuery(document).on("touchend.sapMRI touchcancel.sapMRI mouseup.sapMRI", this._touchEndProxy);
+			jQuery(document).on("touchmove.sapMRI mousemove.sapMRI", this._touchMoveProxy);
 
 			this._fStartValue = this.getValue();
 			var fValue = this._calculateSelectedValue(oEvent);
@@ -714,8 +546,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				this.fireChange({ value: fValue });
 			}
 
-			jQuery(document).off("touchend touchcancel mouseup", this._touchEndProxy);
-			jQuery(document).off("touchmove mousemove", this._touchMoveProxy);
+			jQuery(document).off("touchend.sapMRI touchcancel.sapMRI mouseup.sapMRI", this._touchEndProxy);
+			jQuery(document).off("touchmove.sapMRI mousemove.sapMRI", this._touchMoveProxy);
 
 			// remove unused properties
 			delete this._fStartValue;
@@ -917,36 +749,48 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return false;
 		}
 
-		if (oEvent.which === jQuery.sap.KeyCodes.DIGIT_0 || oEvent.which === jQuery.sap.KeyCodes.NUMPAD_0) {
-			this.setValue(0);
-		}
-		if (oEvent.which === jQuery.sap.KeyCodes.DIGIT_1 || oEvent.which === jQuery.sap.KeyCodes.NUMPAD_1) {
-			this.setValue(1);
-		}
-		if (oEvent.which === jQuery.sap.KeyCodes.DIGIT_2 || oEvent.which === jQuery.sap.KeyCodes.NUMPAD_2) {
-			this.setValue(Math.min(2, iMaxValue));
-		}
-		if (oEvent.which === jQuery.sap.KeyCodes.DIGIT_3 || oEvent.which === jQuery.sap.KeyCodes.NUMPAD_3) {
-			this.setValue(Math.min(3, iMaxValue));
-		}
-		if (oEvent.which === jQuery.sap.KeyCodes.DIGIT_4 || oEvent.which === jQuery.sap.KeyCodes.NUMPAD_4) {
-			this.setValue(Math.min(4, iMaxValue));
-		}
-		if (oEvent.which === jQuery.sap.KeyCodes.DIGIT_5 || oEvent.which === jQuery.sap.KeyCodes.NUMPAD_5) {
-			this.setValue(Math.min(5, iMaxValue));
-		}
-		if (oEvent.which === jQuery.sap.KeyCodes.DIGIT_6 || oEvent.which === jQuery.sap.KeyCodes.NUMPAD_6) {
-			this.setValue(Math.min(6, iMaxValue));
-		}
-		if (oEvent.which === jQuery.sap.KeyCodes.DIGIT_7 || oEvent.which === jQuery.sap.KeyCodes.NUMPAD_7) {
-			this.setValue(Math.min(7, iMaxValue));
-		}
-		if (oEvent.which === jQuery.sap.KeyCodes.DIGIT_8 || oEvent.which === jQuery.sap.KeyCodes.NUMPAD_8) {
-			this.setValue(Math.min(8, iMaxValue));
-		}
-		if (oEvent.which === jQuery.sap.KeyCodes.DIGIT_9 || oEvent.which === jQuery.sap.KeyCodes.NUMPAD_9) {
-			this.setValue(Math.min(9, iMaxValue));
-		}
+        switch (oEvent.which) {
+            case jQuery.sap.KeyCodes.DIGIT_0:
+            case jQuery.sap.KeyCodes.NUMPAD_0:
+                this.setValue(0);
+                break;
+            case jQuery.sap.KeyCodes.DIGIT_1:
+            case jQuery.sap.KeyCodes.NUMPAD_1:
+                this.setValue(1);
+                break;
+            case jQuery.sap.KeyCodes.DIGIT_2:
+            case jQuery.sap.KeyCodes.NUMPAD_2:
+                this.setValue(Math.min(2, iMaxValue));
+                break;
+            case jQuery.sap.KeyCodes.DIGIT_3:
+            case jQuery.sap.KeyCodes.NUMPAD_3:
+                this.setValue(Math.min(3, iMaxValue));
+                break;
+            case jQuery.sap.KeyCodes.DIGIT_4:
+            case jQuery.sap.KeyCodes.NUMPAD_4:
+                this.setValue(Math.min(4, iMaxValue));
+                break;
+            case jQuery.sap.KeyCodes.DIGIT_5:
+            case jQuery.sap.KeyCodes.NUMPAD_5:
+                this.setValue(Math.min(5, iMaxValue));
+                break;
+            case jQuery.sap.KeyCodes.DIGIT_6:
+            case jQuery.sap.KeyCodes.NUMPAD_6:
+                this.setValue(Math.min(6, iMaxValue));
+                break;
+            case jQuery.sap.KeyCodes.DIGIT_7:
+            case jQuery.sap.KeyCodes.NUMPAD_7:
+                this.setValue(Math.min(7, iMaxValue));
+                break;
+            case jQuery.sap.KeyCodes.DIGIT_8:
+            case jQuery.sap.KeyCodes.NUMPAD_8:
+                this.setValue(Math.min(8, iMaxValue));
+                break;
+            case jQuery.sap.KeyCodes.DIGIT_9:
+            case jQuery.sap.KeyCodes.NUMPAD_9:
+                this.setValue(Math.min(9, iMaxValue));
+                break;
+        }
 	};
 
 	/* =========================================================== */

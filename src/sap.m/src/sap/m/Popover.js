@@ -306,9 +306,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			this._offsets = ["0 -18", "18 0", "0 18", "-18 0"];
 
 			this._arrowOffset = 18;
-			if (sap.m._bSizeCompact || !!document.querySelector('body.sapUiSizeCompact')) {
-				this._arrowOffset = 9;
-			}
 
 			this._followOfTolerance = 32;
 
@@ -606,6 +603,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				sFocusId = this._getInitialFocusId(),
 				oParentDomRef, iPlacePos;
 
+			// Determines if the Popover will be rendered in a compact mode
+			this._bSizeCompact = sap.m._bSizeCompact || !!document.querySelector('body.sapUiSizeCompact') || this.hasStyleClass("sapUiSizeCompact");
+
 			this._adaptPositionParams();
 
 			if (ePopupState === sap.ui.core.OpenState.OPEN || ePopupState === sap.ui.core.OpenState.OPENING) {
@@ -653,9 +653,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 					jQuery.sap.log.error("sap.m.Popover id = " + this.getId() + ": is opened by a control which isn't rendered yet.");
 					return this;
 				}
-
-				// Set compact style class if the referenced DOM element is compact too
-				this.toggleStyleClass("sapUiSizeCompact", sap.m._bSizeCompact || !!document.querySelector('body.sapUiSizeCompact'));
 
 				oPopup.setAutoCloseAreas([oParentDomRef]);
 				oPopup.setContent(this);
@@ -1079,7 +1076,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			}
 
 			var bRtl = sap.ui.getCore().getConfiguration().getRTL();
-			return iFlipOffset + this.getOffsetX() * (bRtl ? -1 : 1);
+			return iFlipOffset * (bRtl ? -1 : 1) + this.getOffsetX() * (bRtl ? -1 : 1);
 		};
 
 		/**
@@ -1465,7 +1462,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			switch (sCalculatedPlacement) {
 				case sap.m.PlacementType.Left:
 					if (bRtl) {
-						oPosParams._fMarginLeft = oPosParams._$parent.offset().left + Popover.outerWidth(oPosParams._$parent[0], false) + this._arrowOffset + oPosParams._fOffsetX;
+						oPosParams._fMarginLeft = oPosParams._$parent.offset().left + Popover.outerWidth(oPosParams._$parent[0], false) + this._arrowOffset - oPosParams._fOffsetX;
 					} else {
 						oPosParams._fMarginRight = oPosParams._fDocumentWidth - oPosParams._$parent.offset().left + this._arrowOffset - oPosParams._fOffsetX;
 					}
@@ -1800,7 +1797,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				this._arrowOffset = 18;
 				this._offsets = ["0 -18", "18 0", "0 18", "-18 0"];
 
-				if (sap.m._bSizeCompact || !!document.querySelector('body.sapUiSizeCompact')) {
+				if (this._bSizeCompact) {
 					this._arrowOffset = 9;
 					this._offsets = ["0 -9", "9 0", "0 9", "-9 0"];
 				}
@@ -2341,16 +2338,18 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		};
 
 		Popover.prototype.destroyAggregation = function (sAggregationName, bSuppressInvalidate) {
+			var oActiveControl = jQuery(document.activeElement).control(0);
 			if (sAggregationName === "beginButton" || sAggregationName === "endButton") {
 				var sButton = this["_" + sAggregationName];
 				if (sButton) {
 					sButton.destroy();
 					this["_" + sAggregationName] = null;
 				}
-				return this;
 			} else {
-				return Control.prototype.destroyAggregation.apply(this, arguments);
+				Control.prototype.destroyAggregation.apply(this, arguments);
 			}
+			oActiveControl && oActiveControl.getDomRef() ? oActiveControl.focus() : this.focus();
+			return this;
 		};
 
 		Popover.prototype.invalidate = function (oOrigin) {

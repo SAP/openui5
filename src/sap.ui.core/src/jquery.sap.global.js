@@ -4899,10 +4899,10 @@
 		if (document.readyState == "complete") {
 			var lockDiv = document.createElement("div");
 			lockDiv.style.position = "absolute";
-			lockDiv.style.top = "0px";
-			lockDiv.style.bottom = "0px";
-			lockDiv.style.left = "0px";
-			lockDiv.style.right = "0px";
+			lockDiv.style.top = "-1000px";
+			lockDiv.style.bottom = "-1000px";
+			lockDiv.style.left = "-1000px";
+			lockDiv.style.right = "-1000px";
 			lockDiv.style.opacity = "0";
 			lockDiv.style.backgroundColor = "white";
 			lockDiv.style.zIndex = 2147483647; // Max value of signed integer (32bit)

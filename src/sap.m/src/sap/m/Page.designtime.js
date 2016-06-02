@@ -9,8 +9,23 @@ sap.ui.define([],
 
 	return {
 		aggregations : {
+			headerContent : {
+				domRef : ":sap-domref .sapMBarRight"
+			},
+			subHeader : {
+				domRef : ":sap-domref .sapMPageSubHeader"
+			},
+			customHeader : {
+				domRef : ":sap-domref .sapMPageHeader"
+			},
 			content : {
 				domRef : ":sap-domref > section"
+			},
+			footer : {
+				domRef : ":sap-domref .sapMPageFooter"
+			},
+			landmarkInfo : {
+				ignore : true
 			}
 		}
 	};

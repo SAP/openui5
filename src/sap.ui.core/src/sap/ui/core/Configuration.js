@@ -93,8 +93,6 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 					"onInit"                : { type : "code",     defaultValue : undefined, noUrl:true },
 					"uidPrefix"             : { type : "string",   defaultValue : "__",      noUrl:true },
 					"ignoreUrlParams"       : { type : "boolean",  defaultValue : false,     noUrl:true },
-					"weinreServer"          : { type : "string",   defaultValue : "",        noUrl:true },
-					"weinreId"              : { type : "string",   defaultValue : "" },
 					"preload"               : { type : "string",   defaultValue : "auto" },
 					"rootComponent"         : { type : "string",   defaultValue : "",        noUrl:true },
 					"preloadLibCss"         : { type : "string[]", defaultValue : [] },
@@ -992,33 +990,6 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 */
 		getControllerCodeDeactivated : function() {
 			return this.getDesignMode() && !this.getSuppressDeactivationOfControllerCode();
-		},
-
-		/**
-		 * WEINRE server URL
-		 *
-		 * @returns {string} the base URL of the WEINRE server
-		 * @public
-		 */
-		getWeinreServer : function() {
-			var sWeinreServer = this.weinreServer;
-			if (!sWeinreServer) {
-				// if not weinre server is configured - we expect that the weinre server
-				// is installed on the same machine with port no of the app + 1
-				sWeinreServer = window.location.protocol + "//" + window.location.hostname + ":";
-				sWeinreServer += (parseInt(window.location.port, 10) || 8080) + 1;
-			}
-			return sWeinreServer;
-		},
-
-		/**
-		 * WEINRE session ID
-		 *
-		 * @returns {string} the ID to use for the WEINRE server
-		 * @public
-		 */
-		getWeinreId : function() {
-			return this.weinreId;
 		},
 
 		/**

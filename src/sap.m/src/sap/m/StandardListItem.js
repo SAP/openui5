@@ -94,67 +94,66 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 		}
 	}});
 
-
 	StandardListItem.prototype.exit = function() {
-		if (this._image) {
-			this._image.destroy();
+		if (this._oImage) {
+			this._oImage.destroy("KeepDom");
 		}
 
 		ListItemBase.prototype.exit.apply(this, arguments);
 	};
 
+	StandardListItem.prototype.setIcon = function(sIcon) {
+		var sOldIcon = this.getIcon();
+		this.setProperty("icon", sIcon);
+
+		// destroy the internal control if it is changed from Icon to Image or Image to Icon
+		if (this._oImage && (!sIcon || IconPool.isIconURI(sIcon) != IconPool.isIconURI(sOldIcon))) {
+			this._oImage.destroy("KeepDom");
+			this._oImage = undefined;
+		}
+
+		return this;
+	};
 
 	/**
 	 * @private
 	 */
-	StandardListItem.prototype._getImage = function(sImgId, sImgStyle, sSrc, bIconDensityAware) {
-		var oImage = this._image;
+	StandardListItem.prototype._getImage = function() {
+		var oImage = this._oImage;
 
 		if (oImage) {
-			oImage.setSrc(sSrc);
+			oImage.setSrc(this.getIcon());
 			if (oImage instanceof sap.m.Image) {
-				oImage.setDensityAware(bIconDensityAware);
+				oImage.setDensityAware(this.getIconDensityAware());
 			}
 		} else {
 			oImage = IconPool.createControlByURI({
-				id: sImgId,
-				src : sSrc,
-				densityAware : bIconDensityAware,
+				id : this.getId() + "-img",
+				src : this.getIcon(),
+				densityAware : this.getIconDensityAware(),
 				useIconTooltip : false
 			}, sap.m.Image).setParent(this, null, true);
 		}
 
-		if (oImage instanceof sap.m.Image) {
-			oImage.addStyleClass(sImgStyle, true);
-		} else {
-			oImage.addStyleClass(sImgStyle + "Icon", true);
-		}
+		var sImgStyle = this.getIconInset() ? "sapMSLIImg" : "sapMSLIImgThumb";
+		oImage.addStyleClass(oImage instanceof sap.m.Image ? sImgStyle : sImgStyle + "Icon", true);
 
-		this._image = oImage;
-		return this._image;
+		this._oImage = oImage;
+		return this._oImage;
 	};
 
 	// overwrite base method to hook into the active handling
 	StandardListItem.prototype._activeHandlingInheritor = function() {
-		var oImage = sap.ui.getCore().byId(this.getId() + "-img");
-		if (oImage instanceof sap.ui.core.Icon) {
-			oImage.$().toggleClass("sapMSLIIconActive", this._active);
-		}
-
-		if (oImage && this.getActiveIcon()) {
-			oImage.setSrc(this.getActiveIcon());
+		if (this._oImage) {
+			var sActiveIcon = this.getActiveIcon();
+			sActiveIcon && this._oImage.setSrc(sActiveIcon);
 		}
 	};
 
 	// overwrite base method to hook into the inactive handling
 	StandardListItem.prototype._inactiveHandlingInheritor = function() {
-		var oImage = sap.ui.getCore().byId(this.getId() + "-img");
-		if (oImage instanceof sap.ui.core.Icon) {
-			oImage.$().toggleClass("sapMSLIIconActive", this._active);
-		}
-
-		if (oImage) {
-			oImage.setSrc(this.getIcon());
+		if (this._oImage) {
+			this._oImage.setSrc(this.getIcon());
 		}
 	};
 

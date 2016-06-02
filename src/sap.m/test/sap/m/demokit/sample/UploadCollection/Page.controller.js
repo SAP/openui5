@@ -298,7 +298,11 @@ sap.ui.define([
 		},
 
 		onAttributePress: function(oEvent) {
-			MessageToast.show(oEvent.getSource().getTitle() + ": " + oEvent.getSource().getText());
+			MessageToast.show("Attribute press event - " + oEvent.getSource().getTitle() + ": " + oEvent.getSource().getText());
+		},
+
+		onMarkerPress: function(oEvent) {
+			MessageToast.show("Marker press event - " + oEvent.getSource().getType());
 		}
 	});
 

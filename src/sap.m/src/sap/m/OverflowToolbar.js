@@ -940,6 +940,17 @@ sap.ui.define([
 		this._resetAndInvalidateToolbar();
 	};
 
+	/**
+	 * Closes the overflow area.
+	 * Useful to manually close the overflow after having suppressed automatic closing with "closeOverflowOnInteraction=false".
+	 *
+	 * @public
+	 * @since 1.40
+	 */
+	OverflowToolbar.prototype.closeOverflow = function () {
+		this._getPopover().close();
+	};
+
 	return OverflowToolbar;
 
 }, /* bExport= */ true);

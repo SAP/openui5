@@ -1480,5 +1480,232 @@
         "references": []
       }
     ]
+  },
+  "1.38.1": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "3adb380e8a74ad6ba18755e287de493ef3b6a15e",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.DateTimePicker: allow combined styles for date and time",
+        "references": []
+      },
+      {
+        "id": "009bf4710e777b2643002356eef2659dcbfaafff",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FacetFilter - enable screen readers to read the filter list position.",
+        "references": []
+      },
+      {
+        "id": "9cd615340b40ddc95e6467a86ea13cfa4b5f1055",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedListItem: Screen reader support improved",
+        "references": []
+      },
+      {
+        "id": "87dc6c54733e38c169d446dd17d6614c11a2515a",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: The underlying elements below the focus overlay can be clicked",
+        "references": []
+      },
+      {
+        "id": "2a09cbd128b7d221b7dd935340f5fbd05a1af9ec",
+        "author": "Shtiliyan Uzunov \u003cshtiliyan.uzunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessageBox - If the developer changes the language, the MessageBox does not change the dialog labels.",
+        "references": []
+      },
+      {
+        "id": "6b25afbb0589fac04a5cf80a1b9346ac0233bace",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: fix overlay issue of MultiInput in layout control",
+        "references": []
+      },
+      {
+        "id": "3da6b4621939bcc6f9fd27646f32c6cbb84adbba",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NumericContent: Number from Right-to-Left language displayed properly",
+        "references": []
+      },
+      {
+        "id": "b1b5d2b732e69e16909de4f24b8e92d4d55e9679",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: Active attribute focus outline fixed",
+        "references": []
+      },
+      {
+        "id": "cb522ccd08b3daa64e1b9c90e6e2dae38e605cbb",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: Active title link fixed",
+        "references": []
+      },
+      {
+        "id": "b167f76c541f516ba2ceb53de62e0351377cda7a",
+        "author": "Eugen Resch \u003ceugen.resch@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.P13nDialog - show only one message of many equal messages",
+        "references": []
+      },
+      {
+        "id": "accdba883dac8de82a34b763e4b137a2c637d98f",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.QuickViewCard: texts truncation",
+        "references": []
+      },
+      {
+        "id": "2fded298780552a156d784e3cc1032867172227f",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.StandardListItem: Info state should be rendered correctly independent from the theme parameters.",
+        "references": []
+      },
+      {
+        "id": "dff73c1563876958de0f98c0ef7886f7a6931b3b",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Table: ItemNavigation should include only direct children.",
+        "references": []
+      },
+      {
+        "id": "36376ced307feef309b5d5dbe8069fd78783c216",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog: Focus is now preserved on list items re-render",
+        "references": []
+      },
+      {
+        "id": "977980b115731cc7377ceec37d146b21a7ec106b",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog: Group\u0027s \"None\" button now returns undefined",
+        "references": []
+      },
+      {
+        "id": "d8a6533fa245cff02c6d4dc8f0849ae16c9d5a92",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsPopover: Popover\u0027s width is now properly adjusted",
+        "references": []
+      },
+      {
+        "id": "e9ad9470c5943db2aa68ae407a75d57571f41011",
+        "author": "Shtiliyan Uzunov \u003cshtiliyan.uzunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Wizard - rendering issue in IE caused by transform: translateZ",
+        "references": []
+      }
+    ]
+  },
+  "1.38.2": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "56016de8caa5d4e00fe37efc8ba6ad1542d7c56a",
+        "author": "Hristo Petrov \u003ch.petrov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.RangeSlider New control",
+        "references": []
+      },
+      {
+        "id": "4a1d629efe39fb208cdb9ea26eb86fed8368b16e",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "Belize issues",
+        "references": []
+      },
+      {
+        "id": "64117929e266d31f702759d4c47fd52b1e16e9d7",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.StandardTile: getIcon documentation corrected",
+        "references": []
+      },
+      {
+        "id": "c3786a6c4cb3f725c0548ee553d4399b31150c3a",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: invalid input lost after rerendering",
+        "references": []
+      },
+      {
+        "id": "ec29955ea493b157bc5ea99cfa884e4b4c64a4bc",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DateTimePicker: Popup zu small for large month",
+        "references": []
+      },
+      {
+        "id": "861823117edde74fb33d42d2fad278b71df80967",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FacetFilter: remove facet icon is closed when mouse is really released over icon.",
+        "references": []
+      },
+      {
+        "id": "75d4e33e30dfa74f91e4d036db836a2439a0921a",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NotificationListItem: Box shadow corrected",
+        "references": []
+      },
+      {
+        "id": "8b33d5fa09780d4eddd55fb15f8e6b6761de65be",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: Title occupies the whole space when no number",
+        "references": []
+      },
+      {
+        "id": "485f7cc9b66c13a1ad9e356d1216b15803d5eaa2",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: Update documantation of fullScreenOptimized and condensed property",
+        "references": []
+      },
+      {
+        "id": "c559919c76a284799d5d122dde299c77430b59b3",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectListItem: Image preserves aspect ratio",
+        "references": []
+      },
+      {
+        "id": "982c058b084661778724f8b23b234551bca617fd",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectMarker:when inside a table icon is aligned to the text.",
+        "references": []
+      },
+      {
+        "id": "4d8846efc0111b0b1210c8477164a53c4aa68e68",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: changing minDate and maxDate brings error",
+        "references": []
+      },
+      {
+        "id": "cfd04ea6f9f44913f3f95d2e30d8b77e17b6c05d",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SearchField: \"escape\" keyboard button",
+        "references": []
+      },
+      {
+        "id": "e617dd17d5fdaf001dce67dce5a03d334b494a75",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ToggleButton: duplicated press event",
+        "references": []
+      }
+    ]
   }
 }

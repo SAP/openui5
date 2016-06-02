@@ -174,7 +174,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library'],
 	 * @param {sap.ui.core.TextAlign} oTextAlign the text alignment of the Control
 	 * @param {sap.ui.core.TextDirection} oTextDirection the text direction of the Control
 	 * @returns {string} the actual text alignment that must be set for this environment
-	 * @private
+	 * @protected
 	 */
 	Renderer.getTextAlign = function(oTextAlign, oTextDirection) {
 		var sTextAlign = "",

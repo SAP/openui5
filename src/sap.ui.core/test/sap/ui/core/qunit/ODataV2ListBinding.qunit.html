@@ -637,6 +637,36 @@
 		oBinding.filter([oFilter]);
 	});
 
+	asyncTest("ListBinding sort after filter", function(){
+		var handler = function(oEvent){
+			// contexts should be now loaded
+			var aContexts = oEvent.oSource.getContexts(0, 1);
+			equal(aContexts.length, 1, "EQ context length");
+			equal(oBinding.getLength(), 8, "EQ $count length");
+			equal(oBinding.isLengthFinal(), true, "length is final");
+			equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "EQ unfiltered content");
+
+			oBinding.detachChange(handler);
+			start();
+		};
+		var oBinding = oModel.bindList("/Categories", null, null, null, {countMode: "Request"});
+		oBinding.initialize();
+		//check EQ
+		var oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Beverages"),
+			oSorter = new sap.ui.model.Sorter("CategoryName");
+		oBinding.attachRefresh(function() {
+			oBinding.getContexts(0, 1);
+		});
+		oBinding.attachChange(handler);
+		var fnSent = function() {
+			oModel.detachRequestSent(fnSent);
+			oBinding.filter();
+			oBinding.sort(oSorter);
+		};
+		oModel.attachRequestSent(fnSent);
+		oBinding.filter([oFilter]);
+	});
+
 	asyncTest("ListBinding filter multiple times", function(){
 		var count = 0;
 		var handler = function(oEvent){

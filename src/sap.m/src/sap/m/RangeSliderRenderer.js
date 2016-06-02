@@ -158,5 +158,19 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer"], function (Renderer, 
         oRM.write("</div>");
     };
 
+    RangeSliderRenderer.renderProgressIndicator = function(oRm, oSlider) {
+        oRm.write("<div");
+        oRm.writeAttribute("id", oSlider.getId() + "-progress");
+        // TODO: Remove or uncomment the code bellow when there's a decision for KH & Accessibility
+        // if (oSlider.getEnabled()) {
+        //     oRm.writeAttribute("tabindex", "0");
+        // }
+        this.addProgressIndicatorClass(oRm, oSlider);
+        oRm.addStyle("width", oSlider._sProgressValue);
+        oRm.writeClasses();
+        oRm.writeStyles();
+        oRm.write(' aria-hidden="true"></div>');
+    };
+
     return RangeSliderRenderer;
 }, /* bExport= */ true);

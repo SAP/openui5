@@ -389,6 +389,10 @@ function testAriaLabelsForColumnHeader($Cell, iCol, assert, mParams) {
 		aLabels.push(oTable.getId() + "-ariacolfiltered");
 	}
 
+	if (bFocus && iCol == 2) {
+		aLabels.push(oTable.getId() + "-cellacc"); // Column 2 has tooltip see TableQUnitUtils.js
+	}
+
 	assert.strictEqual(
 		($Cell.attr("aria-labelledby") || "").trim(),
 		aLabels.join(" "),

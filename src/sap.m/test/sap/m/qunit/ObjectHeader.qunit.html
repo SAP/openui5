@@ -16,8 +16,8 @@
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 <script type="text/javascript">
- 	jQuery.sap.require("sap.ui.core.IconPool");
- 	jQuery.sap.require("sap.ui.thirdparty.sinon");
+	jQuery.sap.require("sap.ui.core.IconPool");
+	jQuery.sap.require("sap.ui.thirdparty.sinon");
 	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
 	var domRef = null;
@@ -264,22 +264,24 @@
 
 	test("FavoriteRendered", function() {
 
+		ok(ohFlagFav.getAggregation("_markerFavorite"), "Internal aggregation for the favorite marker is created");
 		notEqual(jQuery.sap.domById(ohFlagFavId + "-favorite"), null, "Favorite marker should be rendered.");
-		equal(jQuery.sap.byId(ohFlagFavId + "-favorite").attr("data-sap-ui-icon-content").charCodeAt(0), 57445, "Favorite on icon should be rendered.");
+		ok(jQuery.sap.byId(ohFlagFavId + "-favorite").hasClass("sapMObjectMarker"), "Favorite is sapMObjectMarker.");
 
 		equal(jQuery.sap.domById(ohFlagFavId2 + "-favorite"), null, "Favorite marker should not be rendered.");
 	});
 
 	test("FlagRendered", function() {
 
+		ok(ohFlagFav.getAggregation("_markerFlagged"), "Internal aggregation for the flag marker is created");
 		notEqual(jQuery.sap.domById(ohFlagFavId + "-flag"), null, "Flag marker should be rendered.");
-		equal(jQuery.sap.byId(ohFlagFavId + "-flag").attr("data-sap-ui-icon-content").charCodeAt(0), 57514, "Flag on icon should be rendered.");
+		ok(jQuery.sap.byId(ohFlagFavId + "-flag").hasClass("sapMObjectMarker"), "Flag is sapMObjectMarker.");
 
 		equal(jQuery.sap.domById(ohFlagFavId2 + "-flag"), null, "Flag marker should not be rendered.");
 
 		// test flag rendering with one attribute
 		notEqual(jQuery.sap.byId(ohAttributeAndFlagId2 + "-flag"), null, "Flag marker should be rendered.");
-		equal(jQuery.sap.byId(ohAttributeAndFlagId2 + "-flag").attr("data-sap-ui-icon-content").charCodeAt(0), 57514, "Flag on icon should be rendered.");
+		ok(jQuery.sap.byId(ohAttributeAndFlagId2 + "-flag").hasClass("sapMObjectMarker"), "Flag is sapMObjectMarker.");
 
 	});
 
@@ -559,14 +561,6 @@
 		}) ]
 	});
 
-	var ohFlagAndFavoriteMarker = new sap.m.ObjectHeader(ohFlagAndFavoriteMarkerId, {
-		title : "Test dynamic marker states",
-		number : "3.628.000",
-		numberUnit : "EUR",
-		showMarkers : true
-	});
-	ohFlagAndFavoriteMarker.placeAt("flagAndFavorite-oh");
-
 	var ohOnlyProgressIndicator = new sap.m.ObjectHeader(ohOnlyProgressIndicatorId, {
 		title : "Test dynamic marker states",
 		number : "3.628.000",
@@ -646,75 +640,119 @@
 		oObjectHeader.destroy();
 	});
 
-	asyncTest("FlagMarkerSet", function() {
+	test("FlagMarkerSet", function() {
+		var ohFlagAndFavoriteMarker = new sap.m.ObjectHeader(ohFlagAndFavoriteMarkerId, {
+			title : "Test dynamic marker states",
+			number : "3.628.000",
+			numberUnit : "EUR",
+			showMarkers : true
+		});
+		ohFlagAndFavoriteMarker.placeAt("flagAndFavorite-oh");
+		sap.ui.getCore().applyChanges();
+
+		ok(!ohFlagAndFavoriteMarker.getAggregation("_markerFlagged"), "Internal aggregation for the flag marker doesn't exist");
 
 		ohFlagAndFavoriteMarker.setMarkFlagged(true);
-		ohFlagAndFavoriteMarker.setMarkFavorite(false);
+		sap.ui.getCore().applyChanges();
 
-		setTimeout(function() {
+		ok(ohFlagAndFavoriteMarker.getAggregation("_markerFlagged"), "Internal aggregation for the flag marker is created");
+		equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 1, "Only one marker should be rendered");
+		ok(jQuery.sap.byId(ohFlagAndFavoriteMarkerId + "-flag").hasClass("sapMObjectMarker"), "Flag is sapMObjectMarker");
 
-			start();
-			equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 2, "Only one marker should be rendered");
-			equal(jQuery.sap.byId(ohFlagAndFavoriteMarkerId + "-flag").attr("data-sap-ui-icon-content").charCodeAt(0), 57514, "Flag on icon should be rendered.");
-		}, 100);
-
+		// cleanup
+		ohFlagAndFavoriteMarker.destroy();
 	});
 
-	asyncTest("FlagMarkerUnset", function() {
+	test("FlagMarkerUnset", function() {
+		var ohFlagAndFavoriteMarker = new sap.m.ObjectHeader(ohFlagAndFavoriteMarkerId, {
+			title : "Test dynamic marker states",
+			number : "3.628.000",
+			numberUnit : "EUR",
+			showMarkers : true
+		});
+		ohFlagAndFavoriteMarker.placeAt("flagAndFavorite-oh");
+		sap.ui.getCore().applyChanges();
 
 		ohFlagAndFavoriteMarker.setMarkFlagged(false);
 		ohFlagAndFavoriteMarker.setMarkFavorite(false);
+		sap.ui.getCore().applyChanges();
 
-		setTimeout(function() {
+		equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 0, "No markers should be rendered");
+		ok(!ohFlagAndFavoriteMarker.getAggregation("_markerFlagged"), "Internal aggregation for the flag marker doesn't exist");
+		ok(!ohFlagAndFavoriteMarker.getAggregation("_markerFavorite"), "Internal aggregation for the favorite marker doesn't exist");
 
-			start();
-			equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 1, "No markers should be rendered");
-		}, 100);
-
+		// cleanup
+		ohFlagAndFavoriteMarker.destroy();
 	});
 
-	asyncTest("FavoriteMarkerSet", function() {
+	test("FavoriteMarkerSet", function() {
+		var ohFlagAndFavoriteMarker = new sap.m.ObjectHeader(ohFlagAndFavoriteMarkerId, {
+			title : "Test dynamic marker states",
+			number : "3.628.000",
+			numberUnit : "EUR",
+			showMarkers : true
+		});
+		ohFlagAndFavoriteMarker.placeAt("flagAndFavorite-oh");
+		sap.ui.getCore().applyChanges();
 
 		ohFlagAndFavoriteMarker.setMarkFlagged(false);
 		ohFlagAndFavoriteMarker.setMarkFavorite(true);
+		sap.ui.getCore().applyChanges();
 
-		setTimeout(function() {
+		equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 1, "Only one marker should be rendered");
+		ok(jQuery.sap.byId(ohFlagAndFavoriteMarkerId + "-favorite").hasClass("sapMObjectMarker"), "Favorite is sapMObjectMarker.");
+		ok(!ohFlagAndFavoriteMarker.getAggregation("_markerFlagged"), "Internal aggregation for the flag marker doesn't exist");
+		ok(ohFlagAndFavoriteMarker.getAggregation("_markerFavorite"), "Internal aggregation for the favorite marker is created");
 
-			start();
-			equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 2, "Only one marker should be rendered");
-			equal(jQuery.sap.byId(ohFlagAndFavoriteMarkerId + "-favorite").attr("data-sap-ui-icon-content").charCodeAt(0), 57445, "Favorite on icon should be rendered.");
-		}, 100);
-
+		// cleanup
+		ohFlagAndFavoriteMarker.destroy();
 	});
 
-	asyncTest("FavoriteMarkerNotSet", function() {
+	test("FavoriteMarkerNotSet", function() {
+		var ohFlagAndFavoriteMarker = new sap.m.ObjectHeader(ohFlagAndFavoriteMarkerId, {
+			title : "Test dynamic marker states",
+			number : "3.628.000",
+			numberUnit : "EUR",
+			showMarkers : true
+		});
+		ohFlagAndFavoriteMarker.placeAt("flagAndFavorite-oh");
+		sap.ui.getCore().applyChanges();
 
 		ohFlagAndFavoriteMarker.setMarkFlagged(false);
 		ohFlagAndFavoriteMarker.setMarkFavorite(false);
+		sap.ui.getCore().applyChanges();
 
-		setTimeout(function() {
+		equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 0, "No markers should be rendered");
+		ok(!ohFlagAndFavoriteMarker.getAggregation("_markerFlagged"), "Internal aggregation for the flag marker doesn't exist");
+		ok(!ohFlagAndFavoriteMarker.getAggregation("_markerFavorite"), "Internal aggregation for the favorite marker doesn't exist");
 
-			start();
-			equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 1, "No markers should be rendered");
-
-		}, 100);
-
+		// cleanup
+		ohFlagAndFavoriteMarker.destroy();
 	});
 
-	asyncTest("AttributeWithoutSupportMarker", function() {
+	test("AttributeWithoutSupportMarker", function() {
+		var ohFlagAndFavoriteMarker = new sap.m.ObjectHeader(ohFlagAndFavoriteMarkerId, {
+			title : "Test dynamic marker states",
+			number : "3.628.000",
+			numberUnit : "EUR",
+			showMarkers : true
+		});
+		ohFlagAndFavoriteMarker.placeAt("flagAndFavorite-oh");
+		sap.ui.getCore().applyChanges();
 
 		ohFlagAndFavoriteMarker.setShowMarkers(false);
 		ohFlagAndFavoriteMarker.addAttribute(new sap.m.ObjectAttribute("ohefafm1", {
 			text : "My Test Attribute",
 		}));
+		sap.ui.getCore().applyChanges();
 
-		setTimeout(function() {
+		equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 0, "No markers should be rendered");
+		ok(!ohFlagAndFavoriteMarker.getAggregation("_markerFlagged"), "Internal aggregation for the flag marker doesn't exist");
+		ok(!ohFlagAndFavoriteMarker.getAggregation("_markerFavorite"), "Internal aggregation for the favorite marker doesn't exist");
+		notEqual(jQuery.sap.domById("ohefafm1"), null, "Attribute should be rendered.");
 
-			start();
-			equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 0, "No markers should be rendered");
-			notEqual(jQuery.sap.domById("ohefafm1"), null, "Attribute should be rendered.");
-		}, 100);
-
+		// cleanup
+		ohFlagAndFavoriteMarker.destroy();
 	});
 
 	/******************************************************************/
@@ -1002,11 +1040,9 @@
 
 		ok(!(iconOH === null), "iconOH is not null");
 		ok(sap.ui.getCore().byId("iconOH"), "Icon is found in UI5 Core");
-		ok(sap.ui.getCore().byId("iconOH-placeholder"), "Placeholder icon is found in UI5 Core");
 		ok(sap.ui.getCore().byId("iconOH-flag"), "Flag icon is found in UI5 Core");
 		ok(sap.ui.getCore().byId("iconOH-favorite"), "Favorite icon is found in UI5 Core");
 		iconOH.destroy();
-		ok(!sap.ui.getCore().byId("iconOH-placeholder"), "Placeholder icon removed from  UI5 Core");
 		ok(!sap.ui.getCore().byId("iconOH-flag"), "Flag icon is found in UI5 Core");
 		ok(!sap.ui.getCore().byId("iconOH-favorite"), "Favorite icon is found in UI5 Core");
 	});

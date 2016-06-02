@@ -162,6 +162,7 @@
 
 	var oModes = new sap.m.Select({
 		tooltip: "Mode",
+		width: "11rem",
 		items: aModes,
 		change: function(oEvent) {
 			var sMode = oEvent.getParameter("selectedItem").getKey();
@@ -178,6 +179,7 @@
 
 	var oTypes = new sap.m.Select({
 		tooltip: "Item Type",
+		width: "11rem",
 		items: aTypes,
 		change: function(oEvent) {
 			var sType = oEvent.getParameter("selectedItem").getKey();
@@ -422,7 +424,11 @@
 	});
 
 	oTable.setModel(oModel);
-	oTable.bindItems("/modelData", oTemplate);
+	oTable.bindItems({
+		path: "/modelData",
+		template : oTemplate,
+		key: "id"
+	});
 
 	var oPage = new sap.m.Page({
 		enableScrolling : true,

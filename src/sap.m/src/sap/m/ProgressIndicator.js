@@ -98,6 +98,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this.getPercentValue() !== fPercentValue) {
 			// animation without rerendering
 			this.setProperty("percentValue", fPercentValue, true);
+			// needed for the rounded shape at the end
+			if (fPercentValue === 100) {
+				this.$().addClass("sapMPIValueMax");
+			} else {
+				this.$().removeClass("sapMPIValueMax");
+			}
+
 			this.$().addClass("sapMPIAnimate")
 					.attr("aria-valuenow", fPercentValue)
 					.attr("aria-valuetext", this._getAriaValueText({fPercent: fPercentValue}));

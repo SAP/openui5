@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["./library", "sap/ui/core/Control", "sap/ui/core/ResizeHandler", "sap/ui/core/delegate/ItemNavigation", "jquery.sap.global"],
-function (library, Control, ResizeHandler, ItemNavigation, jQuery) {
+sap.ui.define(["./library", "sap/ui/core/Control", "sap/ui/core/ResizeHandler", "sap/ui/core/delegate/ItemNavigation", "sap/ui/Device", "jquery.sap.global"],
+function (library, Control, ResizeHandler, ItemNavigation, Device, jQuery) {
 	"use strict";
 
 	/**
@@ -154,7 +154,8 @@ function (library, Control, ResizeHandler, ItemNavigation, jQuery) {
 
 
 	WizardProgressNavigator.prototype.onAfterRendering = function () {
-		var zeroBasedActiveStep = this._activeStep - 1,
+		var $ProgressNavStep,
+			zeroBasedActiveStep = this._activeStep - 1,
 			zeroBasedCurrentStep = this._currentStep - 1;
 
 		this._cacheDOMElements();
@@ -169,6 +170,14 @@ function (library, Control, ResizeHandler, ItemNavigation, jQuery) {
 
 		this._updateOpenSteps();
 		ResizeHandler.register(this.getDomRef(), this._updateOpenSteps.bind(this));
+
+
+		// iOS is not able to render/calculate properly the table-cell property
+		// Moving to flexbox is not suitable as we should ensure backwards compatibility with IE9
+		if (Device.os.name === Device.os.OS.IOS) {
+			$ProgressNavStep = this.$().find(".sapMWizardProgressNavStep").css("display", "block");
+			jQuery.sap.delayedCall(0, $ProgressNavStep, "css", ["display", ""]);
+		}
 	};
 
 	/**

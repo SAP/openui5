@@ -1,8 +1,8 @@
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/core/mvc/Controller',
-	'sap/ui/model/Filter',
-	'sap/ui/model/json/JSONModel',
+	"jquery.sap.global",
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/model/Filter",
+	"sap/ui/model/json/JSONModel"
 ], function (jQuery, Controller, Filter, JSONModel) {
 	"use strict";
 
@@ -24,6 +24,9 @@ sap.ui.define([
 		},
 		onToggleFooter: function () {
 			this.getPage().setShowFooter(!this.getPage().getShowFooter());
+		},
+		formatToggleButtonText: function (bValue){
+			return bValue ? "Collapse Header" : "Expand Header";
 		},
 		updateFilterCriteria: function (aFilterCriteria) {
 			if (aFilterCriteria.length > 0) { /* We can`t use a single label and change only the model data, */

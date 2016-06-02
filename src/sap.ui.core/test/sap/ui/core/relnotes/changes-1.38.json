@@ -1095,5 +1095,197 @@
         "references": []
       }
     ]
+  },
+  "1.38.1": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "014f3d505ce6a3e14413dc6637f51f935b26828a",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "DateFormat: Allow mixed styles for datetime format",
+        "references": []
+      },
+      {
+        "id": "4c31ebb1e2e5f5bfed667a5434d0e304f0c0827b",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "ManagedObject: new modelContextChange event",
+        "references": []
+      },
+      {
+        "id": "2e300500e4806c510166a7e157cce95638a42dc6",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "jQuery: Remove Version 1.8.1",
+        "references": []
+      },
+      {
+        "id": "36b64b19bb2cde4c69cf178db4e22c3bf56773a1",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "model.odata.AnnotationParser: Support Nested Annotations",
+        "references": []
+      },
+      {
+        "id": "904dcf5840e6d633dba612361b227da639873ab0",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.core.IconPool: New icons added and existing icons redesigned",
+        "references": []
+      },
+      {
+        "id": "01ca7b136d682567e3cc640484399e589f30d5bc",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "@sapUiListBorderColor color value fixed",
+        "references": []
+      },
+      {
+        "id": "b731c131df8a2efeb5c26d0ce21aeb685b76639c",
+        "author": "Martin Schaus \u003cmartin.schaus@sap.com\u003e",
+        "type": "FIX",
+        "text": "Fieldgroups might return undefined, leading to issues in UIArea",
+        "references": []
+      },
+      {
+        "id": "19517e4b72ba343b914231d1999eea9b15887faf",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "HCB Button Colors + Text Title Colors",
+        "references": []
+      },
+      {
+        "id": "5fd97a56768d8614ac53d3b9ea06414440dbd3fb",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "JSDoc: sap.ui.Device.system.combi not visible",
+        "references": []
+      },
+      {
+        "id": "b061bec5aded3bb7ec83db8bce2ff8db8a700779",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "ManagedObject: Propagate properties when setting parent to null",
+        "references": []
+      },
+      {
+        "id": "0d74a938fed07a191adc85233ebcd9c88f12dc5e",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "Popup: Order of Functions During Opening Fixed",
+        "references": []
+      },
+      {
+        "id": "c64402a432542397741fc7e3cd3f7c8b22787028",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FIX",
+        "text": "core/StashedControlSupport: unstash with owner component",
+        "references": []
+      },
+      {
+        "id": "243ec0b1f0852b8f7f1ecc2bcda8471542d9f4e9",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "don\u0027t fail when access to local storage is disallowed",
+        "references": []
+      },
+      {
+        "id": "8b48fba804497b100e7b17063a61cd3337d35ee5",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FIX",
+        "text": "mvc/XMLView: fixed rendering of invisible child controls",
+        "references": []
+      },
+      {
+        "id": "f08ab7719b249c47e8384364aa5cee2e9ca2e5ce",
+        "author": "Sven Bernhard \u003csven.bernhard@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.ODataMetaModel: fixed wrong vocabulary",
+        "references": []
+      },
+      {
+        "id": "7761d0bb73273db3f4f221711f48c5d9056bb44d",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataListBinding: Set length to final in InlineRepeat mode",
+        "references": []
+      }
+    ]
+  },
+  "1.38.2": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "40aa44a085e9ed93ceafe0743e437b333ede47ed",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "jQuery: Remove Version 1.7.1",
+        "references": []
+      },
+      {
+        "id": "9bc9d58a2316095dbf5f2d68a9e7e46d841dc3f5",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnalyticalBinding - Empty Results Handling",
+        "references": []
+      },
+      {
+        "id": "58652b92df30db5d7a0973b18e89f9173da15b4b",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "Component: delegate runAsOwner using sap.ui.component async",
+        "references": []
+      },
+      {
+        "id": "c116185f57e3b4a8d56c3959ee4f7615a9f75ee8",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Global Busy Indicator in HCB Theme",
+        "references": []
+      },
+      {
+        "id": "0ee3585d4dc2fecb648dd4801d095532c355c5b3",
+        "author": "D051856 \u003cmartin.wittmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "Opa does not select controls in static UI area without control type",
+        "references": []
+      },
+      {
+        "id": "c1c82ba6fa726ea79efee640b14d80d6cc768f6b",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "jQuery.sap.isMouseEventDelayed: Include iOS WebView",
+        "references": []
+      },
+      {
+        "id": "d4f9318c3924065440ec590f74f588cc44ee06b8",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FIX",
+        "text": "jquery.sap.trace: fixed interaction step counter",
+        "references": []
+      },
+      {
+        "id": "a19274bc66a3f3e3858620b5274661ad2a94efbe",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FIX",
+        "text": "mvc/XMLView: update preprocessors result",
+        "references": []
+      },
+      {
+        "id": "707a037d7ca527d24acdd30474432065ee67e743",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.util.File: handle utf-8 content on Safari",
+        "references": []
+      },
+      {
+        "id": "d3dfff3c086995abda155300b68ccd7c2b14d6e9",
+        "author": "Stefan Scherer \u003cstefan.scherer@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.type.Raw: throw proper exceptions",
+        "references": []
+      }
+    ]
   }
 }

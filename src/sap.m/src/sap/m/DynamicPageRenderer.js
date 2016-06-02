@@ -41,6 +41,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 		// Renders Dynamic Page Title.
 		oRm.write("<header");
 		oRm.writeAttributeEscaped("id", oDynamicPage.getId() + '-header');
+		oRm.addClass("sapContrastPlus");
 		oRm.addClass("sapMDynamicPageTitleWrapper");
 		oRm.writeClasses();
 		oRm.write(">");

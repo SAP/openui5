@@ -61,6 +61,7 @@
 				strictEqual($MessageToast.css("text-align"), "center", "The text is centered");
 				strictEqual($MessageToast.css("text-overflow"), "ellipsis", "ellipsis");
 				strictEqual($MessageToast.attr("role"), "alert", "The role is set");
+				strictEqual($MessageToast.css("white-space"), "pre-line", "The message has the correct white-space style for supporting line break");
 			});
 
 			/* =========================================================== */

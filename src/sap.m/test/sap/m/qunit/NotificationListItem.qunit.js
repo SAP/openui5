@@ -533,7 +533,7 @@
 		assert.strictEqual(this.NotificationListItem.getTruncate(), true, 'Notification should be truncated.');
 
 		// act
-		this.NotificationListItem._collapseButton.firePress();
+		this.NotificationListItem.getAggregation('_collapseButton').firePress();
 		sap.ui.getCore().applyChanges();
 		this.clock.tick(500);
 
@@ -699,7 +699,6 @@
 
 		// assert
 		assert.strictEqual(fnEventSpy.callCount, 1, 'Firing the event should call the close function');
-		assert.equal(document.getElementById(this.NotificationListItem.getId()), null, 'Notification List Item should be destroyed');
 	});
 
 	QUnit.test('Pressing the close button', function(assert) {
@@ -707,7 +706,7 @@
 		var fnEventSpy = sinon.spy(this.NotificationListItem, 'fireClose');
 
 		// act
-		this.NotificationListItem._closeButton.firePress();
+		this.NotificationListItem.getAggregation('_closeButton').firePress();
 
 		// assert
 		assert.strictEqual(fnEventSpy.callCount, 1, 'Pressing the close button should fire the  close event');
@@ -754,6 +753,55 @@
 		// assert
 		assert.strictEqual(fnActiveSpy.callCount, 2, '_activeHandling() method should be called for the second time when toggle NotificationListItem.active property');
 		assert.strictEqual(this.NotificationListItem.$().hasClass('sapMNLIActive'), false, 'Notification list item should have "sapMNLIActive" class');
+	});
+
+	//================================================================================
+	// Notification List Item Data Binding
+	//================================================================================
+
+	QUnit.module('Data Binding', {
+		setup: function() {
+			var model = new sap.ui.model.json.JSONModel();
+			var oItemTemplate = new sap.m.NotificationListItem({
+				close : function(oEvent) {
+					var item = oEvent.getSource();
+					model.setProperty(item.getBindingContext().getPath() + "/displayed", false);
+					sap.ui.getCore().byId("list").getBinding("items").filter([
+						new sap.ui.model.Filter("displayed", "EQ", true)
+					])
+				}
+			});
+			model.setData([
+				{lastName: "Dente", name: "Al", displayed: true, linkText: "www.sap.com", href: "http://www.sap.com", rating: 4},
+				{lastName: "Friese", name: "Andy", displayed: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", rating: 2},
+				{lastName: "Mann", name: "Anita", displayed: true, linkText: "www.kicker.de", href: "http://www.kicker.de", rating: 3}
+			]);
+
+			this.list = new sap.m.List("list", {
+				headerText : "Items",
+				items : {
+					path : "/",
+					template: oItemTemplate
+				}
+			}).setModel(model);
+
+			this.list.placeAt(RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
+		},
+		teardown: function() {
+			this.list.destroy();
+		}
+	});
+
+	QUnit.test('Closing the Notification from itself', function(assert) {
+		// arrange
+		var item = this.list.getItems()[2];
+
+		// act
+		item.close();
+
+		// assert
+		assert.strictEqual(this.list.getItems().length, 2, 'The list should have only 2 list items');
 	});
 
 	//================================================================================

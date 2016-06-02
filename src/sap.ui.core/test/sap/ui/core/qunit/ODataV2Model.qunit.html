@@ -520,17 +520,20 @@
 			oContext = oModel.createBindingContext("/Products(3)", null, {});
 			ok(oContext instanceof sap.ui.model.Context, "No reload needed for full entity");
 
+			oContext = oModel.createBindingContext("/Products(3)", null, {select: "*"});
+			ok(oContext instanceof sap.ui.model.Context, "No reload needed for all properties");
+
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName"});
 			ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Category"});
-			equal(oContext, null, "Reload needed for category expand");
+			ok(!oContext, "Reload needed for category expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName,Category", expand: "Category"});
-			equal(oContext, null, "Reload needed for property select and category expand");
+			ok(!oContext, "Reload needed for property select and category expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName,Category/CategoryName", expand: "Category"});
-			equal(oContext, null, "Reload needed for property, expand property select and category expand");
+			ok(!oContext, "Reload needed for property, expand property select and category expand");
 
 			OData.defaultHttpClient.request.restore();
 			start();
@@ -548,19 +551,22 @@
 			equal(spy.callCount, 1, "get request should be send");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {});
-			equal(oContext, null, "Reload needed for full entity");
+			ok(!oContext, "Reload needed for full entity");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {select: "*"});
+			ok(!oContext, "Reload needed for all properties");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName"});
 			ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Category"});
-			equal(oContext, null, "Reload needed for category expand");
+			ok(!oContext, "Reload needed for category expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName,Category", expand: "Category"});
-			equal(oContext, null, "Reload needed for property select and category expand");
+			ok(!oContext, "Reload needed for property select and category expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName,Category/CategoryName", expand: "Category"});
-			equal(oContext, null, "Reload needed for property, expand property select and category expand");
+			ok(!oContext, "Reload needed for property, expand property select and category expand");
 
 			OData.defaultHttpClient.request.restore();
 			start();
@@ -579,6 +585,9 @@
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {});
 			ok(oContext instanceof sap.ui.model.Context, "No reload needed for full entity");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {select: "*"});
+			ok(oContext instanceof sap.ui.model.Context, "No reload needed for all properties");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName"});
 			ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
@@ -608,13 +617,16 @@
 			equal(spy.callCount, 1, "get request should be send");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {});
-			equal(oContext, null, "Reload needed for full entity");
+			ok(!oContext, "Reload needed for full entity");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {select: "*"});
+			ok(!oContext, "Reload needed for all properties");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName"});
 			ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Category"});
-			equal(oContext, null, "Reload needed for category expand");
+			ok(!oContext, "Reload needed for category expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName,Category", expand: "Category"});
 			ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select and category expand");
@@ -638,16 +650,19 @@
 			equal(spy.callCount, 1, "get request should be send");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {});
-			equal(oContext, null, "Reload needed for full entity");
+			ok(!oContext, "Reload needed for full entity");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {select: "*"});
+			ok(!oContext, "Reload needed for all properties");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName"});
 			ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Category"});
-			equal(oContext, null, "Reload needed for category expand");
+			ok(!oContext, "Reload needed for category expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName,Category", expand: "Category"});
-			equal(oContext, null, "Reload needed for property select and category expand");
+			ok(!oContext, "Reload needed for property select and category expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName,Category/CategoryName", expand: "Category"});
 			ok(oContext instanceof sap.ui.model.Context, "No reload needed for property, expand property select and category expand");
@@ -687,6 +702,66 @@
 		});
 	});
 
+	asyncTest("test isreloadneeded - supplier expanded", function(){
+		cleanServiceDataCache();
+		var oModel = initModel(sURI, {json: false});
+		var spy = sinon.spy(OData.defaultHttpClient, "request");
+		sap.ui.getCore().setModel(oModel);
+
+		var oBinding = oModel.bindContext("/Products(3)", null, {expand: "Supplier"});
+		oBinding.attachChange(function(oContext) {
+			equal(spy.callCount, 1, "get request should be send");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {});
+			ok(oContext instanceof sap.ui.model.Context, "No reload needed for full entity");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {select: "*"});
+			ok(oContext instanceof sap.ui.model.Context, "No reload needed for all properties");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName"});
+			ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier"});
+			ok(oContext instanceof sap.ui.model.Context, "No reload needed for supplier expand");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier/Products"});
+			ok(!oContext, "Reload needed for supplier/products expand");
+
+			OData.defaultHttpClient.request.restore();
+			start();
+		});
+	});
+
+	asyncTest("test isreloadneeded - supplier/products expanded", function(){
+		cleanServiceDataCache();
+		var oModel = initModel(sURI, {json: false});
+		var spy = sinon.spy(OData.defaultHttpClient, "request");
+		sap.ui.getCore().setModel(oModel);
+
+		var oBinding = oModel.bindContext("/Products(3)", null, {expand: "Supplier/Products"});
+		oBinding.attachChange(function(oContext) {
+			equal(spy.callCount, 1, "get request should be send");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {});
+			ok(oContext instanceof sap.ui.model.Context, "No reload needed for full entity");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {select: "*"});
+			ok(oContext instanceof sap.ui.model.Context, "No reload needed for all properties");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName"});
+			ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier"});
+			ok(oContext instanceof sap.ui.model.Context, "No reload needed for supplier expand");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier/Products"});
+			ok(oContext instanceof sap.ui.model.Context, "No reload needed for supplier/products expand");
+
+			OData.defaultHttpClient.request.restore();
+			start();
+		});
+	});
+	
 	asyncTest("test getProperty on label", function(){
 		oLabel.setText("testText");
 		var oModel = initModel(sURI, {json:false});
@@ -1090,6 +1165,8 @@
 		oModel.attachMetadataLoaded(function(){
 			equal(oModel.createKey("Products", {ProductID: 1}), "Products(1)", "Created product key");
 			equal(oModel.createKey("Order_Details", {OrderID: 1, ProductID :2}), "Order_Details(OrderID=1,ProductID=2)", "Expanded entity key");
+			equal(oModel.createKey("Customers", {CustomerID: "abc123"}), "Customers('abc123')", "String entity key");
+			equal(oModel.createKey("Customers", {CustomerID: "abc:/123"}), "Customers('abc%3A%2F123')", "String entity key with encoding");
 			start();
 		});
 	});
@@ -1472,6 +1549,46 @@
 			start();
 		});
 	});
+	asyncTest("test setProperty/getProperty on complex Types (internal)",function(){
+		var oModel = initModel(sURI, {useBatch : true});
+		oModel.attachMetadataLoaded(function(){
+			// create dummy testdata
+			oModel.oData = { "Suppliers(0)" : {
+					Name : "xy",
+					Address : {
+						City: "Boston",
+						Street: "140th",
+						Plz : "88888"
+					},
+					Products : {
+						__deferred: "Uri"
+					},
+					"__metadata":{
+						uri : "http://test:8080/services.odata.org/V3/OData/OData.svc/Suppliers(0)",
+						type : "ODataDemo.Supplier"
+					}
+				},
+				"Products(0)" : {
+					Name :"Beef",
+					Supplier : {
+						__ref: "Suppliers(0)"
+					},
+					"__metadata":{
+						uri : "http://test:8080/services.odata.org/V3/OData/OData.svc/Products(0)",
+						type : "ODataDemo.Product"
+					}
+				}
+			};
+			oModel.setProperty("/Suppliers(0)/Address/Street", "150th");
+			equal(oModel.getProperty("/Suppliers(0)/Address/Street"), "150th", "set Property modify complex type property check");
+			var oComplextType = oModel.getProperty("/Suppliers(0)/Address");
+			ok(jQuery.isPlainObject(oComplextType), "get complext as object");
+			equal(oComplextType.City, "Boston", "complex obj type property check");
+			equal(oComplextType.Street, "150th", "complex obj type property check");
+			equal(oComplextType.Plz, "88888", "complex obj type property check");
+			start();
+		});
+	});
 
 	asyncTest("createEntry with complex types wich have namespace with . characters", function() {
 		var oModel = initModel(sURI, {metadataUrlParams : {test: "complex"}});
@@ -1711,6 +1828,27 @@
 				success: function() {
 					equal(spy.args[1][0].headers['Accept'], "application/atom+xml,application/atomsvc+xml,application/xml", "spy check header");
 					equal(spy.args[1][0].headers['Content-Type'], "application/atom+xml", "there should be a content type header for POST requests");
+					OData.defaultHttpClient.request.restore();
+					done();
+				}
+			});
+		});
+	});
+
+	QUnit.test("custom header content-type for media entities", function(){
+		var done = assert.async();
+		cleanServiceDataCache();
+		var spy = sinon.spy(OData.defaultHttpClient, "request");
+		var oModel = initModel(sURI, {json: true, tokenHandling: false});
+
+		oModel.metadataLoaded().then(function() {
+			oModel.create("/Categories", "some text", {
+				headers: {
+					"Content-Type": "text/plain"
+				},
+				success: function() {
+					equal(spy.args[1][0].headers['Accept'], "application/json", "spy check header");
+					equal(spy.args[1][0].headers['Content-Type'], "text/plain", "there should be a content type header for POST requests");
 					OData.defaultHttpClient.request.restore();
 					done();
 				}

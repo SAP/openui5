@@ -66,6 +66,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 		}
 	};
 
+	SplitPane.prototype._isInInterval = function (iFrom) {
+		return this.getRequiredParentWidth() <= iFrom;
+	};
+
 	return SplitPane;
 
 }, /* bExport= */ true);

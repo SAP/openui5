@@ -91,7 +91,7 @@
 			var oActionSheet = new sap.m.ActionSheet("actionSheet1", {
 				showCancelButton: false,
 				buttons: [
-					new sap.m.Button({
+					new sap.m.Button('actionSheetButton',{
 						icon: "sap-icon://accept",
 						text: "Accept Action"
 					}),
@@ -112,7 +112,7 @@
 			var oActionSheetWithManyButtons = new sap.m.ActionSheet("actionSheet2", {
 				showCancelButton: false,
 				buttons: [
-					new sap.m.Button({
+					new sap.m.Button('actionSheetWithManyButtonsButton',{
 						icon: "sap-icon://accept",
 						text: "Accept Action"
 					}),
@@ -207,14 +207,14 @@
 				}
 			});
 
-			var oActionSheetWithoutIcons = new sap.m.ActionSheet({
+			var oActionSheetWithoutIcons = new sap.m.ActionSheet('actionSheet3',{
 				buttons: [
 					new sap.m.Button("specialButton",{
 						icon: "sap-icon://decline",
 						visible: false,
 						text: "First button"
 					}),
-					new sap.m.Button({
+					new sap.m.Button("actionSheetWithoutIconsButton",{
 						text: "Second button"
 					}),
 					new sap.m.Button({
@@ -229,7 +229,7 @@
 			var page1 = new sap.m.Page("page1", {
 				title: "Mobile ActionSheet Control",
 				content: [
-					new sap.m.Button({
+					new sap.m.Button('noTitleNoCancel',{
 						text: "No Title, No Cancel",
 						press: function () {
 							oActionSheet.setTitle(null);
@@ -237,7 +237,7 @@
 							oActionSheet.openBy(this);
 						}
 					}).addStyleClass("newButton"),
-					new sap.m.Button({
+					new sap.m.Button('noTitleWithCancel',{
 						text: "No Title, With Cancel",
 						press: function () {
 							oActionSheet.setTitle(null);
@@ -245,7 +245,7 @@
 							oActionSheet.openBy(this);
 						}
 					}).addStyleClass("newButton"),
-					new sap.m.Button({
+					new sap.m.Button('withTitleAndCancel',{
 						text: "With Title and Cancel",
 						press: function () {
 							oActionSheet.setTitle("Please choose one action");
@@ -253,7 +253,7 @@
 							oActionSheet.openBy(this);
 						}
 					}).addStyleClass("newButton"),
-					new sap.m.Button({
+					new sap.m.Button('withManyButtons',{
 						text: "With Many Buttons",
 						press: function () {
 							oActionSheetWithManyButtons.setTitle("Please choose one action");
@@ -261,7 +261,7 @@
 							oActionSheetWithManyButtons.openBy(this);
 						}
 					}).addStyleClass("newButton"),
-					new sap.m.Button({
+					new sap.m.Button('withoutIcons',{
 						text: "Without icons",
 						press: function () {
 							oActionSheetWithoutIcons.openBy(this);

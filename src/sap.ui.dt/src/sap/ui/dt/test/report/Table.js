@@ -127,7 +127,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/model/json/JS
 			rows : "{path:'/', parameters: {arrayNames:['children']}}",
 			columns : [
 				this._createTextColumn("name", "Name", "{name}"),
-				this._createRatingIndicatorColumn("value", "Status Values", "{status/value}"),
+				this._createRatingIndicatorColumn("value", "Status Values", "{status/value}", "{status/text} ({status/value})"),
 				this._createTextColumn("status", "Status", "{status/text}"),
 				this._createTextColumn("message", "Message", "{message}")
 			]
@@ -189,11 +189,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/model/json/JS
 	/**
 	 * @private
 	 */
-	_createRatingIndicatorColumn : function(sId, sColumnText, sRowText) {
+	_createRatingIndicatorColumn : function(sId, sColumnText, sRowText, sTooltip) {
 		return this._createColumn(sId, sColumnText,
 			new RatingIndicator({
 				maxValue : 3,
-				value : sRowText
+				value : sRowText,
+				enabled : false,
+				tooltip : sTooltip
 			})
 		);
 	},

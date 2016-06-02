@@ -421,7 +421,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 				press: this.close.bind(this)
 			}).addStyleClass(CSS_CLASS + "CloseBtn");
 
-			this._oSegmentedButton = new SegmentedButton(this.getId() + "-segmented", {});
+			this._oSegmentedButton = new SegmentedButton(this.getId() + "-segmented", {}).addStyleClass("sapMSegmentedButtonNoAutoWidth");
 
 			this._oListHeader = new Toolbar({
 				content: [this._oSegmentedButton, new ToolbarSpacer(), oCloseBtn, oCloseBtnARIAHiddenDescr, oHeadingARIAHiddenDescr]
@@ -598,8 +598,10 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			var sType = oMessagePopoverItem.getType(),
 				oListItem = new StandardListItem({
 					title: oMessagePopoverItem.getTitle(),
+					description: oMessagePopoverItem.getSubtitle(),
+					counter: oMessagePopoverItem.getCounter(),
 					icon: this._mapIcon(sType),
-					type: sap.m.ListType.Navigation
+					type:  oMessagePopoverItem.getDescription() ? sap.m.ListType.Navigation : sap.m.ListType.Inactive
 				}).addStyleClass(CSS_CLASS + "Item").addStyleClass(CSS_CLASS + "Item" + sType);
 
 			oListItem._oMessagePopoverItem = oMessagePopoverItem;
@@ -1067,8 +1069,10 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 * @private
 		 */
 		MessagePopover.prototype._expandMsgPopover = function () {
+			var sHeight = this._oPopover.$("cont").css("height") || this._oPopover.getContentWidth();
+
 			this._oPopover
-				.setContentHeight(this._oPopover.getContentWidth())
+				.setContentHeight(sHeight)
 				.removeStyleClass(CSS_CLASS + "-init");
 		};
 

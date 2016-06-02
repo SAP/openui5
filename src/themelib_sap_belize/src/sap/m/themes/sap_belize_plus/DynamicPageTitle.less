@@ -1,11 +1,9 @@
-.sapContrastPlus .sapMDynamicPageTitle,
-.sapContrastPlus.sapMDynamicPageTitle {
+.sapMDynamicPageTitle {
 	background: fade(@sapUiObjectHeaderBackground, 60);
-	border-bottom: 0.125rem solid lighten(@sapUiObjectHeaderBackground, 8);
+	border-bottom: 0.125rem solid transparent; // dummy border to occupy the space for the snapped title border
 }
 
-.sapContrastPlus.sapMDynamicPageTitleWrapper.sapMDynamicPageTitleSnapped > .sapMDynamicPageTitle,
-.sapContrastPlus .sapMDynamicPageTitleWrapper.sapMDynamicPageTitleSnapped > .sapMDynamicPageTitle {
+.sapMDynamicPageTitleWrapper.sapMDynamicPageTitleSnapped > .sapMDynamicPageTitle {
 	border-bottom: 0.125rem solid lighten(@sapUiObjectHeaderBackground, 8);
 	box-shadow: @sapUiShadowHeader;
 }

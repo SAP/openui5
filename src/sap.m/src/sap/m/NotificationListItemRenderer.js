@@ -130,7 +130,7 @@ sap.ui.define([], function () {
 	 */
 	NotificationListItemRenderer.renderCloseButton = function (oRm, oControl) {
 		if (oControl.getShowCloseButton()) {
-			oRm.renderControl(oControl._closeButton.addStyleClass(classNameCloseButton));
+			oRm.renderControl(oControl.getAggregation('_closeButton').addStyleClass(classNameCloseButton));
 		}
 	};
 
@@ -141,7 +141,7 @@ sap.ui.define([], function () {
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 	 */
 	NotificationListItemRenderer.renderCollapseButton = function (oRm, oControl) {
-		oRm.renderControl(oControl._collapseButton.addStyleClass(classNameCollapseButton));
+		oRm.renderControl(oControl.getAggregation('_collapseButton').addStyleClass(classNameCollapseButton));
 	};
 
 	//================================================================================

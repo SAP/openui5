@@ -5,18 +5,20 @@
 
 /* MessagePage general styles */
 .sapMMessagePage {
-	background: fade(@sapUiGroupContentBackground, 70);
+	background: @sapUiGlobalBackgroundColor;
 }
 
 /* MessagePage inner controls styles*/
 .sapMMessagePage .sapMText.sapMMessagePageMainText {
 	color: @sapUiGroupTitleTextColor;
+	font-size: @sapMFontHeader2Size;
 }
 
 .sapMMessagePage .sapMText.sapMMessagePageDescription {
-	color: @sapUiFieldPlaceholderTextColor;
+	color: @sapUiContentLabelColor;
+	font-size: @sapMFontHeader5Size;
 }
 
 .sapMMessagePage > .sapMPage > section > .sapUiIcon::before {
-	color: fade(@sapUiContentIconColor, 20);
+	color: fade(@sapUiContentNonInteractiveIconColor, 50);
 }

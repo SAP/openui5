@@ -52,6 +52,7 @@
 					messages: [{
 					type: "Error",
 					title: "Error message",
+					subtitle: "Subtitle",
 					description: "<p>First Error message description</p>"
 				}, {
 					type: "Warning",
@@ -87,6 +88,8 @@
 				this.oMessageTemplate = new sap.m.MessagePopoverItem({
 					type: "{type}",
 					title: "{title}",
+					subtitle: "{subtitle}",
+					counter: 1,
 					description: "{description}",
 					longtextUrl: "{longtextUrl}",
 					markupDescription: true
@@ -177,6 +180,44 @@
 			this.oMessagePopover.openBy(this.oButton);
 			this.clock.tick(500);
 			this.server.restore();
+		});
+
+		QUnit.test("setSubtitle() property", function (assert) {
+			var sInterlListItemDescription, sMessagePopoverItemSubtitle;
+
+			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
+			this.oButton.addDependent(this.oMessagePopover);
+			this.oMessagePopover.openBy(this.oButton);
+
+			sInterlListItemDescription = this.oMessagePopover._oLists.all.getItems()[0].getDescription();
+			sMessagePopoverItemSubtitle = this.oMessagePopover.getItems()[0].getSubtitle();
+
+			assert.strictEqual(sInterlListItemDescription, "Subtitle", "Description of the interal listItem should be binded with the subtitle of the MessagePopoverItem");
+			assert.strictEqual(sInterlListItemDescription, sMessagePopoverItemSubtitle, "Setting a subtitle to MessagePopoverItem should set the description of the internal StandardListItem");
+		});
+
+		QUnit.test("setCounter() property", function (assert) {
+			var iMPItemCounter, iInterListItemCounter;
+
+			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
+			this.oButton.addDependent(this.oMessagePopover);
+			this.oMessagePopover.openBy(this.oButton);
+
+			iMPItemCounter = this.oMessagePopover.getItems()[0].getCounter();
+			iInterListItemCounter = this.oMessagePopover._oLists.all.getItems()[0].getCounter();
+
+			assert.strictEqual(iInterListItemCounter, 1, "Internal listItem's counter should be set to 1");
+			assert.strictEqual(iInterListItemCounter, iMPItemCounter, "Internal listItem's counter should be the same as MessagePopoverItems's counter");
+		});
+
+		QUnit.test("No Navaigation arrow should be shown if there is no description", function () {
+			var oStandardListItem;
+			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
+			this.oButton.addDependent(this.oMessagePopover);
+			this.oMessagePopover.openBy(this.oButton);
+			oStandardListItem = this.oMessagePopover._oLists.all.getItems()[1];
+
+			assert.strictEqual(oStandardListItem.getType(), "Inactive", "The type of the ListItem should be Inactive");
 		});
 
 		QUnit.test("Busy indicator should be shown", function (assert) {
@@ -476,6 +517,18 @@
 
 			this.clock.tick(500);
 			assert.equal(this.oMessagePopover.getItems().length, 1, "The message should be one");
+		});
+
+		QUnit.test("Filtering after resize should not reset the height of the Popover", function(assert) {
+			this.oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+			var $Content = this.oMessagePopover.$("cont");
+			$Content.css("height", "10px");
+
+			this.oMessagePopover._expandMsgPopover();
+			this.clock.tick(500);
+
+			assert.strictEqual($Content.height(), 10, "height should be the same as before filtering");
 		});
 
 		QUnit.module("HTML representation", {
@@ -788,6 +841,52 @@
 			oMessagePopover.destroy();
 			oToolbar.destroy();
 			spySetShowArrow.restore();
+		});
+
+		QUnit.module("Binding", {
+			setup: function () {
+				this.oButton2 = new sap.m.Button({text: "Press me"});
+
+				var oMessageTemplate = new sap.m.MessagePopoverItem({
+					title: '{message}'
+				});
+
+				this.oMessagepopover2 = new sap.m.MessagePopover({
+					items: {
+						path: '/',
+						template: oMessageTemplate
+					},
+					initiallyExpanded: true
+				});
+
+				this.oMessagepopover2.setModel(new sap.ui.model.json.JSONModel([{
+					"code": "APPL_MM_IV_MODEL/021",
+					"message": "One",
+					"severity": "error",
+					"target": "/Headers(NodeKey=guid'e41d2de5-37a0-1ee6-8784-60396f9b5305',State='01')/InvoicingParty"
+				}]));
+
+				this.oButton2.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			teardown: function () {
+				this.oMessagepopover2.destroy();
+				this.oMessagepopover2 = null;
+
+				this.oButton2.destroy();
+				this.oButton2 = null;
+			}
+		});
+
+		QUnit.test("Updating item's binding should update its property", function (assert) {
+			this.oMessagepopover2.openBy(this.oButton2);
+			this.clock.tick(500);
+
+			strictEqual(this.oMessagepopover2._oLists.error.getItems()[0].getTitle(), "One", "Title is properly set");
+
+			this.oMessagepopover2.getModel().setProperty("/0/message", "Two");
+			this.clock.tick(500);
+			strictEqual(this.oMessagepopover2._oLists.error.getItems()[0].getTitle(), "Two", "Title to be changed");
 		});
 	</script>
 </head>

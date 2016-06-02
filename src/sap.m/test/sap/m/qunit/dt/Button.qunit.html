@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>qUnit Page for sap.m.Button design time</title>
+
+<script id="sap-ui-bootstrap" type="text/javascript" src="../../../../../resources/sap-ui-core.js" data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.m,sap.ui.dt">
+
+</script>
+
+<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<script>
+
+sap.ui.require([
+	'sap/ui/dt/test/report/QUnit',
+	'sap/ui/dt/test/ElementEnablementTest'
+], function (QUnit, ElementEnablementTest) {
+
+	var oElementEnablementTest = new ElementEnablementTest({
+		type: "sap.m.Button"
+	});
+	oElementEnablementTest.run().then(function(oData) {
+		var oReport = new QUnit({
+			data: oData
+		});
+	});
+
+});
+
+</script>
+
+</head>
+<body id="body" class="sapUiBody">
+	<h1 id="qunit-header">qUnit Page for sap.m.Button</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="content"></div>
+	<div id="qunit-fixture"></div>
+</body>
+</html>

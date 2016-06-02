@@ -353,6 +353,19 @@
 			ok(!oPopover.isOpen(), "Popover is already closed");
 		});
 
+		QUnit.test("Popover should stay open after destroyContent", function() {
+			this.oPopover.addContent(new sap.m.List({
+				items: [new sap.m.StandardListItem({ title: 'Test'})]
+			}));
+
+			this.oPopover.openBy(this.oButton);
+			this.clock.tick(1000);  // wait 1s after the open animation is completed
+
+			this.oPopover.destroyContent();
+
+			assert.strictEqual(document.activeElement, this.oPopover.getFocusDomRef(), "Focus should be on the Popover");
+		});
+
 		QUnit.test('it should set the width of the content to "450px"', function(assert) {
 
 			// act
