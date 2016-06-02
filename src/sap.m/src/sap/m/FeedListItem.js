@@ -143,7 +143,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 *
 	 * @private
 	 */
-	FeedListItem.prototype.exit = function(oEvent) {
+	FeedListItem.prototype.exit = function() {
 		// destroy link control if initialized
 		if (this._oLinkControl) {
 			this._oLinkControl.destroy();
@@ -163,6 +163,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 * not on active elements of FeedListItem (i.e. image, sender link, expand/collapse link)
 	 *
 	 * @private
+	 * @param {jQuery.Event} oEvent - The touch event.
 	 */
 	FeedListItem.prototype.ontap = function(oEvent) {
 		if (oEvent.srcControl) {
@@ -180,6 +181,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 * Lazy load feed icon image.
 	 *
 	 * @private
+	 * @returns {sap.m.Image} Image control based on the provided 'icon' control property
 	 */
 	FeedListItem.prototype._getImageControl = function() {
 
@@ -212,7 +214,8 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 * Returns a link control with sender text firing a 'senderPress' event. Does not take care of the 'senderActive' flag,
 	 * though
 	 *
-	 * @returns link control with current sender text which fires a 'senderPress' event.
+	 * @param {boolean} withColon if true a ":" is added to the text. If false no colon is added.
+	 * @returns {sap.m.Link} link control with current sender text which fires a 'senderPress' event.
 	 * @private
 	 */
 	FeedListItem.prototype._getLinkSender = function(withColon) {
@@ -243,25 +246,22 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 
 	/**
 	 * Overwrite base method to hook into list item's active handling
-	 *
 	 * @private
 	 */
 	FeedListItem.prototype._activeHandlingInheritor = function() {
 		var sActiveSrc = this.getActiveIcon();
-
-		if (!!this._oImageControl && !!sActiveSrc) {
+		if (this._oImageControl && sActiveSrc) {
 			this._oImageControl.setSrc(sActiveSrc);
 		}
 	};
 
 	/**
 	 * Overwrite base method to hook into list item's inactive handling
-	 *
 	 * @private
 	 */
 	FeedListItem.prototype._inactiveHandlingInheritor = function() {
 		var sSrc = this.getIcon() ? this.getIcon() : sap.ui.core.IconPool.getIconURI("person-placeholder");
-		if (!!this._oImageControl) {
+		if (this._oImageControl) {
 			this._oImageControl.setSrc(sSrc);
 		}
 	};
@@ -269,8 +269,8 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	/**
 	 * The first this._nMaxCollapsedLength characters of the text are shown in the collapsed form, the text string ends up
 	 * with a complete word, the text string contains at least one word
-	 *
 	 * @private
+	 * @returns {String} Collapsed string based on the "maxCaharater" property
 	 */
 	FeedListItem.prototype._getCollapsedText = function() {
 		var sShortText = this._sFullText.substring(0, this._nMaxCollapsedLength);
@@ -286,7 +286,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	/**
 	 * Expands or collapses the text of the FeedListItem expanded state: this._sFullText + ' ' + 'LESS' collapsed state:
 	 * this._sShortText + '...' + 'MORE'
-	 *
 	 * @private
 	 */
 	FeedListItem.prototype._toggleTextExpanded = function() {
@@ -310,6 +309,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 * Gets the link for expanding/collapsing the text
 	 *
 	 * @private
+	 * @returns {sap.m.Link} Link control for expanded function ("MORE" or "LESS")
 	 */
 	FeedListItem.prototype._getLinkExpandCollapse = function() {
 		if (!this._oLinkExpandCollapse) {
@@ -333,6 +333,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 * this value, the text of the FeedListItem is collapsed once the text reaches this limit.
 	 *
 	 * @private
+	 * @returns {boolean} true if the text is already expanded. Otherwise returns false.
 	 */
 	FeedListItem.prototype._checkTextIsExpandable = function() {
 		this._nMaxCollapsedLength = this.getMaxCharacters();
@@ -354,7 +355,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	/**
 	 * Redefinition of sap.m.ListItemBase.setType: type = "sap.m.ListType.Navigation" behaves like type = "sap.m.ListType.Active" for a FeedListItem
 	 * @public
-	 * @param {sap.m.ListType} type	new value for property type
+	 * @param {sap.m.ListType} type new value for property type
 	 * @returns {sap.m.FeedListItem} this allows method chaining
 	 */
 	sap.m.FeedListItem.prototype.setType = function(type) {
@@ -369,9 +370,10 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	/**
 	 * Redefinition of sap.m.ListItemBase.setUnread: Unread is not supported for FeedListItem
 	 * @public
-	 * @param {boolean} new value for property unread is ignored
+	 * @param {boolean} value new value for property unread is ignored
+	 * @returns {sap.m.FeedListItem} this allows method chaining
 	 */
-	FeedListItem.prototype.setUnread = function(bValue) {
+	FeedListItem.prototype.setUnread = function(value) {
 		this.setProperty("unread", false);
 		return this;
 	};
