@@ -395,12 +395,33 @@ html[data-sap-ui-browser^="ed"] .sapUiTableVScr .sapUiTableCtrlScr {
 	bottom: 0;
 	text-align: center;
 	background-color: @sapUiExtraLightBG;
-	padding-right: @sapUiTableRowHdrWidth; /* text will be aligned in real center of the table*/
 	/* z-index: 1; */
 }
 
-.sapUiTableSelModeNone .sapUiTableCtrlEmpty {
-	padding-right: 0;
+.sapUiTableCtrlEmpty:focus {
+	outline-width: 1px;
+	outline-style: dotted;
+	outline-offset: -3px;
+	outline-color: @sapUiContentFocusColor;
+}
+
+html[data-sap-ui-browser^="ie"] .sapUiTableCtrlEmpty:focus,
+html[data-sap-ui-browser^="ed"] .sapUiTableCtrlEmpty:focus {
+	outline-width: 0px;
+}
+
+html[data-sap-ui-browser^="ie"] .sapUiTableCtrlEmpty:focus:before,
+html[data-sap-ui-browser^="ed"] .sapUiTableCtrlEmpty:focus:before {
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	right: 2px;
+	bottom: 2px;
+	border-width: 1px;
+	border-style: dotted;
+	border-color: @sapUiContentFocusColor;
+	content: "";
+	pointer-events: none;
 }
 
 .sapUiTableCtrlEmptyMsg {
@@ -420,10 +441,6 @@ html[data-sap-ui-browser^="ed"] .sapUiTableVScr .sapUiTableCtrlScr {
 
 .sapUiTableEmpty .sapUiTableRowHdr {
 	opacity: 0;
-}
-
-.sapUiTableRSel .sapUiTableCtrlEmpty {
-	left: @sapUiTableRowHdrWidth;
 }
 
 .sapUiTablePaginator {

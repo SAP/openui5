@@ -463,6 +463,15 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 	background-color: @sapHCStandardBG;
 }
 
+.sapUiTableCtrlEmpty:focus {
+	outline-width: 2px;
+}
+
+html[data-sap-ui-browser^="ie"] .sapUiTableCtrlEmpty:focus:before,
+html[data-sap-ui-browser^="ed"] .sapUiTableCtrlEmpty:focus:before {
+	border-width: 2px;
+}
+
 .sapUiSizeCompact .sapUiTableTreeIcon:focus {
 	outline: 0.125rem dotted @sapHCStandardFG;
 }
