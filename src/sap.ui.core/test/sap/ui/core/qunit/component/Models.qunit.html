@@ -1386,6 +1386,22 @@
 			}.bind(this));
 		});
 
+		QUnit.module("JSONModel", { });
+
+		QUnit.test("setProperty creates missing structure", function(assert) {
+			var oModel = new sap.ui.model.json.JSONModel({
+				data: {}
+			});
+
+			oModel.setProperty("/something/missing", "test");
+			assert.equal(oModel.getProperty("/something/missing"), "test");
+
+			oModel.setProperty("/data/missing/property", 42);
+			assert.equal(oModel.getProperty("/data/missing/property"), 42);
+
+			oModel.setProperty("/data/missing/level/property", 42);
+			assert.equal(oModel.getProperty("/data/missing/level/property"), 42);
+		});
 	});
 
 	</script>

@@ -301,7 +301,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 		sObjectPath = sResolvedPath.substring(0, iLastSlash || 1);
 		sProperty = sResolvedPath.substr(iLastSlash + 1);
 
-		var oObject = this._getObject(sObjectPath);
+		var oObject = this._getObject(sObjectPath, undefined, true);
 		if (oObject) {
 			oObject[sProperty] = oValue;
 			this.checkUpdate(false, bAsyncUpdate);
@@ -327,9 +327,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 	/**
 	 * @param {string} sPath
 	 * @param {object} [oContext]
-	 * @returns {any} the node of the specified path/context
+	 * @param {boolean} [bCreateMissing] Flag to decide if missing levels should get created. Defaults to "false"
+ 	 * @returns {any} the node of the specified path/context
 	 */
-	JSONModel.prototype._getObject = function (sPath, oContext) {
+	JSONModel.prototype._getObject = function (sPath, oContext, bCreateMissing) {
 		var oNode = this.isLegacySyntax() ? this.oData : null;
 		if (oContext instanceof Context) {
 			oNode = this._getObject(oContext.getPath());
@@ -346,10 +347,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 			oNode = this.oData;
 			iIndex++;
 		}
+
+		var oLastNode;
 		while (oNode && aParts[iIndex]) {
+			oLastNode = oNode;
 			oNode = oNode[aParts[iIndex]];
 			iIndex++;
 		}
+
+		if (bCreateMissing && oNode === undefined) {
+			if (!(typeof oLastNode === "object")) {
+				jQuery.sap.log.warning("Can't access '" + sPath + "' because '" + aParts.slice(0, iIndex - 1).join('/') + "' is of type" + (typeof oLastNode));
+				return oNode;
+			}
+
+			oNode = oLastNode;
+			var aToCreate = aParts.slice(iIndex - 1);
+			for (var iCreateIdx = 0; iCreateIdx < aToCreate.length; iCreateIdx++) {
+				oNode[aToCreate[iCreateIdx]] = {};
+				oNode = oNode[aToCreate[iCreateIdx]];
+			}
+		}
+
 		return oNode;
 	};
 
