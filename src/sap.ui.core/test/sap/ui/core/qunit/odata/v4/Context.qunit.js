@@ -87,6 +87,20 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("fetchAbsoluteValue", function (assert) {
+		var oBinding = {
+				fetchAbsoluteValue : function () {}
+			},
+			oContext = Context.create(null, oBinding, "/foo", 42),
+			oResult = {},
+			sPath = "bar";
+
+		this.mock(oBinding).expects("fetchAbsoluteValue").withExactArgs(sPath).returns(oResult);
+
+		assert.strictEqual(oContext.fetchAbsoluteValue(sPath), oResult);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("deregisterChange", function (assert) {
 		var oBinding = {
 				deregisterChange : function () {}
@@ -382,7 +396,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("fetchCanonicalPath", function (assert) {
 		var oMetaModel = {
-				fetchCanonicalUrl : function () {}
+				fetchCanonicalPath : function () {}
 			},
 			oModel = {
 				getMetaModel : function () {
@@ -392,8 +406,8 @@ sap.ui.require([
 			oContext = Context.create(oModel, null, "/EMPLOYEES/42"),
 			oPromise = {};
 
-		this.mock(oMetaModel).expects("fetchCanonicalUrl")
-			.withExactArgs("/", oContext.getPath(), sinon.match.same(oContext))
+		this.mock(oMetaModel).expects("fetchCanonicalPath")
+			.withExactArgs(sinon.match.same(oContext))
 			.returns(oPromise);
 
 		// code under test

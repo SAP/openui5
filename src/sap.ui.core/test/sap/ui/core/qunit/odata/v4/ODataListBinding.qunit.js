@@ -1230,28 +1230,114 @@ sap.ui.require([
 	//     common implementation used by fetchValue and getContexts?
 
 	//*********************************************************************************************
-	QUnit.test("fetchValue: relative binding", function (assert) {
+	[{
+		abs : "/EMPLOYEES/42/bar/baz",
+		rel : "bar/baz"
+	}, {
+		abs : "/EMPLOYEES/42",
+		rel : ""
+	}].forEach(function (oFixture) {
+		QUnit.test("fetchAbsoluteValue: absolute binding: " + oFixture.abs, function (assert) {
+			var oBinding = this.oModel.bindList("/EMPLOYEES"),
+				oResult = {};
+
+			this.mock(oBinding).expects("fetchValue")
+				.withExactArgs(oFixture.rel, undefined, 42).returns(oResult);
+
+			assert.strictEqual(oBinding.fetchAbsoluteValue(oFixture.abs), oResult);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchValue: relative binding, relative path", function (assert) {
 		var oContext = {
 				fetchValue : function () {}
 			},
-			oContextMock = this.mock(oContext),
 			oListBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext),
 			oListener = {},
 			oPromise = {};
 
-		oContextMock.expects("fetchValue")
-			.withExactArgs("TEAM_2_EMPLOYEES/42/bar", sinon.match.same(oListener))
+		this.mock(_Helper).expects("buildPath").withExactArgs("TEAM_2_EMPLOYEES", 42, "bar")
+			.returns("~");
+		this.mock(oContext).expects("fetchValue").withExactArgs("~", sinon.match.same(oListener))
 			.returns(oPromise);
 
 		assert.strictEqual(oListBinding.fetchValue("bar", oListener, 42), oPromise);
-
-		oContextMock.expects("fetchValue")
-			.withExactArgs("TEAM_2_EMPLOYEES/42", sinon.match.same(oListener))
-			.returns(oPromise);
-
-		assert.strictEqual(oListBinding.fetchValue("", oListener, 42), oPromise);
 	});
 	//TODO provide iStart, iLength parameter to fetchValue to support paging on nested list
+
+	//*********************************************************************************************
+	["/TEAMS/1", "/TEAMS/1/TEAM_2_EMPLOYEES/2"].forEach(function (sPath) {
+		QUnit.test("fetchAbsoluteValue: relative binding: " + sPath, function (assert) {
+			var oContext = Context.create(this.oModel, undefined, "/TEAMS/1"),
+				oListBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext),
+				oPromise = {};
+
+			this.mock(oContext).expects("fetchAbsoluteValue")
+				.withExactArgs(sPath).returns(oPromise);
+
+			assert.strictEqual(oListBinding.fetchAbsoluteValue(sPath), oPromise);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchValue: relative binding, unresolved", function (assert) {
+		this.oModel.bindList("TEAM_2_EMPLOYEES").fetchValue("bar", {}, 42).then(function (oResult) {
+			assert.strictEqual(oResult, undefined);
+		});
+	});
+
+	//*********************************************************************************************
+	[
+		"/SalesOrderList('1')",
+		"/SalesOrderList('1')/SO_2_SOITEM", // not from cache, because no index
+		"/SalesOrderList('1')/SO_2_SOITEM_DIFF/bar"
+	].forEach(function (sPath) {
+		QUnit.test("fetchAbsoluteValue: relative binding w/ cache: " + sPath, function (assert) {
+			var oBinding = this.oModel.bindList("SO_2_SOITEM", undefined, undefined, undefined, {}),
+				oCacheProxy = {
+					promise: Promise.resolve(),
+					read : function () {}
+				},
+				oContext = Context.create(this.oModel, undefined, "/SalesOrderList('1')"),
+				oResult = {};
+
+			this.mock(oBinding).expects("fetchValue").never();
+
+			// code under test
+			assert.strictEqual(oBinding.fetchAbsoluteValue(sPath).getResult(), undefined);
+
+			this.mock(_ODataHelper).expects("createCacheProxy").returns(oCacheProxy);
+			oBinding.setContext(oContext);
+
+			this.mock(oContext).expects("fetchAbsoluteValue")
+				.withExactArgs(sPath).returns(oResult);
+
+			// code under test
+			assert.strictEqual(oBinding.fetchAbsoluteValue(sPath), oResult);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchAbsoluteValue: relative binding w/ cache, absolute path", function (assert) {
+		var oBinding = this.oModel.bindList("SO_2_SOITEM", undefined, undefined, undefined, {}),
+			oCacheProxy = {
+				promise: Promise.resolve(),
+				read : function () {}
+			},
+			oContext = Context.create(this.oModel, undefined, "/SalesOrderList('1')"),
+			oResult = {};
+
+		this.mock(_ODataHelper).expects("createCacheProxy").returns(oCacheProxy);
+		oBinding.setContext(oContext);
+
+		this.mock(oBinding).expects("fetchValue")
+			.withExactArgs("bar", undefined, 2).returns(oResult);
+
+		// code under test
+		assert.strictEqual(oBinding.fetchAbsoluteValue("/SalesOrderList('1')/SO_2_SOITEM/2/bar"),
+			oResult);
+	});
 
 	//*********************************************************************************************
 	[undefined, "up"].forEach(function (sGroupId) {

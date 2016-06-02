@@ -432,6 +432,35 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	[{
+		abs : "/absolute/bar",
+		rel : "bar"
+	}, {
+		abs : "/absolute",
+		rel : ""
+	}].forEach(function (oFixture) {
+		QUnit.test("fetchAbsoluteValue: absolute binding: " + oFixture.abs, function (assert) {
+			var oBinding = this.oModel.bindContext("/absolute"),
+				oResult = {};
+
+			this.mock(oBinding).expects("fetchValue").withExactArgs(oFixture.rel).returns(oResult);
+
+			assert.strictEqual(oBinding.fetchAbsoluteValue(oFixture.abs), oResult);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchAbsoluteValue: absolute binding, mismatch", function (assert) {
+		var oBinding = this.oModel.bindContext("/absolute");
+
+		this.mock(oBinding).expects("fetchValue").never();
+
+		return oBinding.fetchAbsoluteValue("/other/path").then(function (oResult) {
+			assert.strictEqual(oResult, undefined);
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("fetchValue: absolute binding (read required), with refresh", function (assert) {
 		var oBinding = this.oModel.bindContext("/absolute", undefined, {$$groupId : "$direct"}),
 			oBindingMock = this.mock(oBinding),
@@ -525,6 +554,84 @@ sap.ui.require([
 		assert.strictEqual(this.oModel.bindContext("navigation2").fetchValue("").getResult(),
 			undefined,
 			"Unresolved binding: fetchValue returns _SyncPromise resolved with result undefined");
+	});
+
+	//*********************************************************************************************
+	["/TEAMS/0", "/TEAMS/0/TEAM_2_MANAGER/bar"].forEach(function (sPath) {
+		QUnit.test("fetchAbsoluteValue: relative binding:" + sPath, function (assert) {
+			var oBinding = this.oModel.bindContext("TEAM_2_MANAGER"),
+				oContext = Context.create(this.oModel, undefined, "/TEAMS/0"),
+				oPromise,
+				oResult = {};
+
+			this.mock(oBinding).expects("fetchValue").never();
+
+			// code under test, binding unresolved
+			oPromise = oBinding.fetchAbsoluteValue(sPath);
+
+			assert.strictEqual(oPromise.isFulfilled(), true);
+			assert.strictEqual(oPromise.getResult(), undefined);
+
+			oBinding.setContext(oContext);
+			this.mock(oContext).expects("fetchAbsoluteValue")
+				.withExactArgs(sPath).returns(oResult);
+
+			// code under test, binding resolved
+			assert.strictEqual(oBinding.fetchAbsoluteValue(sPath), oResult);
+		});
+	});
+
+	//*********************************************************************************************
+	["/SalesOrderList/1", "/SalesOrderList/1/SO_2_SCHDL_DIFF/bar"].forEach(function (sPath) {
+		QUnit.test("fetchAbsoluteValue: relative binding w/ cache: " + sPath, function (assert) {
+			var oBinding = this.oModel.bindContext("SO_2_SCHDL", undefined, {}),
+				oCache = {
+					promise : Promise.resolve(),
+					read : function () {}
+				},
+				oContext = Context.create(this.oModel, undefined, "/SalesOrderList/1"),
+				oContextMock = this.mock(oContext),
+				oResult = {};
+
+			this.mock(_ODataHelper).expects("createCacheProxy").returns(oCache);
+			oBinding.setContext(oContext);
+
+			oContextMock.expects("fetchAbsoluteValue").withExactArgs(sPath).returns(oResult);
+
+			// code under test
+			assert.strictEqual(oBinding.fetchAbsoluteValue(sPath), oResult);
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		abs : "/SalesOrderList/1/SO_2_SCHDL/bar",
+		rel : "bar"
+	}, {
+		abs : "/SalesOrderList/1/SO_2_SCHDL",
+		rel : ""
+	}].forEach(function (oFixture) {
+		QUnit.test("fetchAbsoluteValue: relative binding w/ cache: " + oFixture.abs,
+			function (assert) {
+				var oBinding = this.oModel.bindContext("SO_2_SCHDL", undefined, {}),
+					oCache = {
+						promise : Promise.resolve(),
+						read : function () {}
+					},
+					oContext = Context.create(this.oModel, undefined, "/SalesOrderList/1"),
+					oResult = {};
+
+				this.mock(_ODataHelper).expects("createCacheProxy").returns(oCache);
+				oBinding.setContext(oContext);
+
+				this.mock(oCache).expects("read").withArgs("$auto", oFixture.rel)
+					.returns(_SyncPromise.resolve(oResult));
+
+				// code under test
+				return oBinding.fetchAbsoluteValue(oFixture.abs).then(function (oResult0) {
+					assert.strictEqual(oResult0, oResult);
+				});
+			});
 	});
 
 	//*********************************************************************************************
