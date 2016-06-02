@@ -4,9 +4,7 @@
 		   xmlns:layout="sap.ui.layout"
 		   height="100%"
 		>
-
 	<ObjectPageLayout id="objectPage162" title="">
-
 		<headerTitle id="header162">
 			<ObjectPageHeader
 					objectTitle="Denise Smith"
@@ -53,5 +51,12 @@
 				</subSections>
 			</ObjectPageSection>
 		</sections>
+		<footer>
+			<m:OverflowToolbar>
+				<m:ToolbarSpacer />
+				<m:Button type="Accept" text="Accept"/>
+				<m:Button type="Reject" text="Reject"/>
+			</m:OverflowToolbar>
+		</footer>
 	</ObjectPageLayout>
 </core:View>
