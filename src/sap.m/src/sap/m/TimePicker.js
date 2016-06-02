@@ -212,10 +212,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 */
 		TimePicker.prototype.onfocusin = function (oEvent) {
 			var oPicker = this._getPicker();
+			var bIconClicked = jQuery(oEvent.target).hasClass("sapUiIcon");
 
 			MaskInput.prototype.onfocusin.apply(this, arguments);
 
-			if (oPicker && oPicker.isOpen()) {
+			if (oPicker && oPicker.isOpen() && !bIconClicked) {
 				this._closePicker();
 			}
 		};
