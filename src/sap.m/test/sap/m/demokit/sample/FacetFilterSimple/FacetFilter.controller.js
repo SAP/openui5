@@ -3,11 +3,12 @@ sap.ui.define([
 		'sap/m/ObjectIdentifier',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/Filter',
-		'sap/ui/model/json/JSONModel'
-	], function(jQuery, ObjectIdentifier, Controller, Filter, JSONModel) {
+		'sap/ui/model/json/JSONModel',
+		'sap/m/MessageToast'
+	], function(jQuery, ObjectIdentifier, Controller, Filter, JSONModel, MessageToast) {
 	"use strict";
 
-	Controller.extend("sap.m.sample.FacetFilterLight.FacetFilter", {
+	var FacetFilterController = Controller.extend("sap.m.sample.FacetFilterSimple.FacetFilter", {
 
 		onInit: function() {
 
@@ -51,23 +52,37 @@ sap.ui.define([
 		handleListClose: function(oEvent) {
 			// Get the Facet Filter lists and construct a (nested) filter for the binding
 			var oFacetFilter = oEvent.getSource().getParent();
+			this._filterModel(oFacetFilter);
+		},
+
+		handleConfirm: function (oEvent) {
+			// Get the Facet Filter lists and construct a (nested) filter for the binding
+			var oFacetFilter = oEvent.getSource();
+			this._filterModel(oFacetFilter);
+			MessageToast.show("confirm event fired");
+		},
+
+		_filterModel: function(oFacetFilter) {
 			var mFacetFilterLists = oFacetFilter.getLists().filter(function(oList) {
-					return oList.getActive() && oList.getSelectedItems().length;
-				});
+				return oList.getSelectedItems().length;
+			});
 
-
-			// Build the nested filter with ORs between the values of each group and
-			// ANDs between each group
-			var oFilter = new Filter(mFacetFilterLists.map(function(oList) {
-				return new Filter(oList.getSelectedItems().map(function(oItem) {
-					return new Filter(oList.getTitle(), "EQ", oItem.getText());
-				}), false);
-			}), true);
-
-			this._applyFilter(oFilter);
+			if(mFacetFilterLists.length) {
+				// Build the nested filter with ORs between the values of each group and
+				// ANDs between each group
+				var oFilter = new Filter(mFacetFilterLists.map(function(oList) {
+					return new Filter(oList.getSelectedItems().map(function(oItem) {
+						return new Filter(oList.getTitle(), "EQ", oItem.getText());
+					}), false);
+				}), true);
+				this._applyFilter(oFilter);
+			} else {
+				this._applyFilter([]);
+			}
 		}
 
 	});
 
+	return FacetFilterController;
 
 }, /* bExport= */ true);

@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.m.sample.FacetFilterLight.FacetFilter"
+	controllerName="sap.m.sample.FacetFilterSimple.FacetFilter"
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
@@ -18,7 +18,7 @@
 					<FacetFilterList
 						title="{type}"
 						key="{key}"
-						multiselect="true"
+						mode="MultiSelect"
 						listClose="handleListClose"
 						items="{values}" >
 						<items>
