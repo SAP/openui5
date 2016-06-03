@@ -205,6 +205,46 @@
 		assert.ok(this.fnSecondPressHandler.notCalled, "The second GenericTile press event is not triggered");
 	});
 
+	QUnit.test("Method _getPreviousTileIndex", function(assert) {
+		//Arrange
+		var iPreviousTileIndex,
+			iCurrentTileIndex = 0;
+		//Act
+		iPreviousTileIndex = this.oSlideTile._getPreviousTileIndex(iCurrentTileIndex);
+		//Assert
+		assert.equal(iPreviousTileIndex, 1, "Expected previous tile index to the first one returned");
+	});
+
+	QUnit.test("Method _getPreviousTileIndex", function(assert) {
+		//Arrange
+		var iPreviousTileIndex,
+			iCurrentTileIndex = 1;
+		//Act
+		iPreviousTileIndex = this.oSlideTile._getPreviousTileIndex(iCurrentTileIndex);
+		//Assert
+		assert.equal(iPreviousTileIndex, 0, "Expected previous tile index to the last one returned");
+	});
+
+	QUnit.test("Method _getNextTileIndex", function(assert) {
+		//Arrange
+		var iNextTileIndex,
+			iCurrentTileIndex = 0;
+		//Act
+		iNextTileIndex = this.oSlideTile._getNextTileIndex(iCurrentTileIndex);
+		//Assert
+		assert.equal(iNextTileIndex, 1, "Expected next tile index to the first one returned");
+	});
+
+	QUnit.test("Method _getNextTileIndex", function(assert) {
+		//Arrange
+		var iNextTileIndex,
+			iCurrentTileIndex = 1;
+		//Act
+		iNextTileIndex = this.oSlideTile._getNextTileIndex(iCurrentTileIndex);
+		//Assert
+		assert.equal(iNextTileIndex, 0, "Expected next tile index to the last one returned");
+	});
+
 	QUnit.module("Rendering - EmptyTile", {
 		beforeEach : function() {
 
