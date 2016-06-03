@@ -283,10 +283,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 
 		// update context on all items except group headers
 		updateItemsBindingContext :  function(aContexts, oModel) {
+			if (!aContexts.length) {
+				return;
+			}
+
 			var aItems = this._oControl.getItems(true);
-			for (var i = 0, l = 0; i < aContexts.length; i++) {
-				aItems[i] instanceof sap.m.GroupHeaderListItem && l++;
-				aItems[i + l].setBindingContext(aContexts[i], oModel);
+			for (var i = 0, c = 0, oItem; i < aItems.length; i++) {
+				oItem = aItems[i];
+
+				// group headers are not in binding context
+				if (!oItem.isGroupHeader()) {
+					oItem.setBindingContext(aContexts[c++], oModel);
+				}
 			}
 		},
 
@@ -479,7 +487,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 
 			if (bFromScratch) {
 				this.rebuildListItems(aContexts, oBindingInfo, true);
-			} else {
+			} else if (this._oContainerDomRef) {
 				// set the binding context of items inserting/deleting entries shifts the index of all following items
 				this.updateItemsBindingContext(aContexts, oBindingInfo.model);
 				this.applyChunk(vInsertIndex);

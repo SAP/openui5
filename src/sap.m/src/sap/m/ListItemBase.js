@@ -104,6 +104,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	// internal active state of the listitem
 	ListItemBase.prototype.init = function() {
 		this._active = false;
+		this._bGroupHeader = false;
 	};
 
 	ListItemBase.prototype.onAfterRendering = function() {
@@ -504,6 +505,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	ListItemBase.prototype.setParent = function(oParent) {
 		Control.prototype.setParent.apply(this, arguments);
 		if (!oParent) {
+			this._bGroupHeader = false;
 			return;
 		}
 
@@ -512,9 +514,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	ListItemBase.prototype.setBindingContext = function() {
+		if (!this.isBound("selected")) {
+			this.setSelected(false, true);
+		}
+
 		Control.prototype.setBindingContext.apply(this, arguments);
 		this.informList("BindingContextSet");
 		return this;
+	};
+
+	/**
+	 * Determines whether group header item or not.
+	 *
+	 * @return {Boolean}
+	 */
+	ListItemBase.prototype.isGroupHeader = function() {
+		return this._bGroupHeader;
 	};
 
 	/**
