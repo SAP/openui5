@@ -135,7 +135,7 @@
 
 
 		var fnOpenPopup = function(oControlEvent) {
-			oPopover.openBy(oControlEvent.getParameters().domRef);
+			oPopover.openBy(oControlEvent.getParameter("getDomRef")());
 		};
 
 
