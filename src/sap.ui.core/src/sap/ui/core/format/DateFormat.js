@@ -270,16 +270,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 
 		this.aMonthsAbbrev = this.oLocaleData.getMonths("abbreviated", sCalendarType);
 		this.aMonthsWide = this.oLocaleData.getMonths("wide", sCalendarType);
+		this.aMonthsNarrow = this.oLocaleData.getMonths("narrow", sCalendarType);
 		this.aMonthsAbbrevSt = this.oLocaleData.getMonthsStandAlone("abbreviated", sCalendarType);
 		this.aMonthsWideSt = this.oLocaleData.getMonthsStandAlone("wide", sCalendarType);
+		this.aMonthsNarrowSt = this.oLocaleData.getMonthsStandAlone("narrow", sCalendarType);
 		this.aDaysAbbrev = this.oLocaleData.getDays("abbreviated", sCalendarType);
 		this.aDaysWide = this.oLocaleData.getDays("wide", sCalendarType);
+		this.aDaysNarrow = this.oLocaleData.getDays("narrow", sCalendarType);
+		this.aDaysShort = this.oLocaleData.getDays("short", sCalendarType);
 		this.aDaysAbbrevSt = this.oLocaleData.getDaysStandAlone("abbreviated", sCalendarType);
 		this.aDaysWideSt = this.oLocaleData.getDaysStandAlone("wide", sCalendarType);
+		this.aDaysNarrowSt = this.oLocaleData.getDaysStandAlone("narrow", sCalendarType);
+		this.aDaysShortSt = this.oLocaleData.getDaysStandAlone("short", sCalendarType);
 		this.aQuartersAbbrev = this.oLocaleData.getQuarters("abbreviated", sCalendarType);
 		this.aQuartersWide = this.oLocaleData.getQuarters("wide", sCalendarType);
+		this.aQuartersNarrow = this.oLocaleData.getQuarters("narrow", sCalendarType);
 		this.aQuartersAbbrevSt = this.oLocaleData.getQuartersStandAlone("abbreviated", sCalendarType);
 		this.aQuartersWideSt = this.oLocaleData.getQuartersStandAlone("wide", sCalendarType);
+		this.aQuartersNarrowSt = this.oLocaleData.getQuartersStandAlone("narrow", sCalendarType);
 		this.aErasNarrow = this.oLocaleData.getEras("narrow", sCalendarType);
 		this.aErasAbbrev = this.oLocaleData.getEras("abbreviated", sCalendarType);
 		this.aErasWide = this.oLocaleData.getEras("wide", sCalendarType);
@@ -382,15 +390,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 				case "dayNameInWeek":
 					if (oPart.digits < 4) {
 						aBuffer.push(this.aDaysAbbrev[iDay]);
-					} else if (oPart.digits >= 4) {
+					} else if (oPart.digits == 4) {
 						aBuffer.push(this.aDaysWide[iDay]);
+					} else if (oPart.digits == 5) {
+						aBuffer.push(this.aDaysNarrow[iDay]);
+					} else {
+						aBuffer.push(this.aDaysShort[iDay]);
 					}
 					break;
 				case "dayNameInWeekStandalone":
 					if (oPart.digits < 4) {
 						aBuffer.push(this.aDaysAbbrevSt[iDay]);
-					} else if (oPart.digits >= 4) {
+					} else if (oPart.digits == 4) {
 						aBuffer.push(this.aDaysWideSt[iDay]);
+					} else if (oPart.digits == 5) {
+						aBuffer.push(this.aDaysNarrowSt[iDay]);
+					} else {
+						aBuffer.push(this.aDaysShortSt[iDay]);
 					}
 					break;
 				case "dayNumberOfWeek":
@@ -399,8 +415,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 				case "month":
 					if (oPart.digits == 3) {
 						aBuffer.push(this.aMonthsAbbrev[iMonth]);
-					} else if (oPart.digits >= 4) {
+					} else if (oPart.digits == 4) {
 						aBuffer.push(this.aMonthsWide[iMonth]);
+					} else if (oPart.digits > 4) {
+						aBuffer.push(this.aMonthsNarrow[iMonth]);
 					} else {
 						aBuffer.push(jQuery.sap.padLeft(String(iMonth + 1), "0", oPart.digits));
 					}
@@ -408,8 +426,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 				case "monthStandalone":
 					if (oPart.digits == 3) {
 						aBuffer.push(this.aMonthsAbbrevSt[iMonth]);
-					} else if (oPart.digits >= 4) {
+					} else if (oPart.digits == 4) {
 						aBuffer.push(this.aMonthsWideSt[iMonth]);
+					} else if (oPart.digits > 4) {
+						aBuffer.push(this.aMonthsNarrowSt[iMonth]);
 					} else {
 						aBuffer.push(jQuery.sap.padLeft(String(iMonth + 1), "0", oPart.digits));
 					}
@@ -417,8 +437,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 				case "quarter":
 					if (oPart.digits == 3) {
 						aBuffer.push(this.aQuartersAbbrev[iQuarter]);
-					} else if (oPart.digits >= 4) {
+					} else if (oPart.digits == 4) {
 						aBuffer.push(this.aQuartersWide[iQuarter]);
+					} else if (oPart.digits > 4) {
+						aBuffer.push(this.aQuartersNarrow[iQuarter]);
 					} else {
 						aBuffer.push(jQuery.sap.padLeft(String(iQuarter + 1), "0", oPart.digits));
 					}
@@ -426,8 +448,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 				case "quarterStandalone":
 					if (oPart.digits == 3) {
 						aBuffer.push(this.aQuartersAbbrevSt[iQuarter]);
-					} else if (oPart.digits >= 4) {
+					} else if (oPart.digits == 4) {
 						aBuffer.push(this.aQuartersWideSt[iQuarter]);
+					} else if (oPart.digits > 4) {
+						aBuffer.push(this.aQuartersNarrowSt[iQuarter]);
 					} else {
 						aBuffer.push(jQuery.sap.padLeft(String(iQuarter + 1), "0", oPart.digits));
 					}
@@ -595,9 +619,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 			iCurrentEra = this.aErasWide.length - 1,
 			oRequiredParts = this.oRequiredParts,
 			sCalendarType = this.oFormatOptions.calendarType,
-			aDaysVariants = [this.aDaysWide, this.aDaysWideSt, this.aDaysAbbrev, this.aDaysAbbrevSt],
-			aMonthsVariants = [this.aMonthsWide, this.aMonthsWideSt, this.aMonthsAbbrev, this.aMonthsAbbrevSt],
-			aQuartersVariants = [this.aQuartersWide, this.aQuartersWideSt, this.aQuartersAbbrev, this.aQuartersAbbrevSt],
+			aDaysVariants = [this.aDaysWide, this.aDaysWideSt, this.aDaysAbbrev, this.aDaysAbbrevSt, this.aDaysShort, this.aDaysShortSt, this.aDaysNarrow, this.aDaysNarrowSt],
+			aMonthsVariants = [this.aMonthsWide, this.aMonthsWideSt, this.aMonthsAbbrev, this.aMonthsAbbrevSt, this.aMonthsNarrow, this.aMonthsNarrowSt],
+			aQuartersVariants = [this.aQuartersWide, this.aQuartersWideSt, this.aQuartersAbbrev, this.aQuartersAbbrevSt, this.aQuartersNarrow, this.aQuartersNarrowSt],
 			aErasVariants = [this.aErasWide, this.aErasAbbrev, this.aErasNarrow];
 
 		function isNumber(iCharCode) {
