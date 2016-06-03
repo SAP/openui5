@@ -157,6 +157,92 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 	});
 
 
+	QUnit.module("Overlay and NoData", {
+		setup: function() {
+			createTables();
+		},
+		teardown: function () {
+			destroyTables();
+		}
+	});
+
+	QUnit.test("Overlay - forward", function(assert) {
+		oTable.setShowOverlay(true);
+		oTable.$().find(".sapUiTableOuterBefore").focus();
+		var $Focus = checkFocus(oTable.getDomRef("overlay"), assert);
+		qutils.triggerKeydown($Focus, "TAB", false, false, false);
+		checkFocus(oTable.$().find(".sapUiTableOuterAfter"), assert);
+	});
+
+	QUnit.test("Overlay - backward", function(assert) {
+		oTable.setShowOverlay(true);
+		oTable.$().find(".sapUiTableOuterAfter").focus();
+		var $Focus = checkFocus(oTable.getDomRef("overlay"), assert);
+		qutils.triggerKeydown($Focus, "TAB", true, false, false);
+		checkFocus(oTable.$().find(".sapUiTableOuterBefore"), assert);
+	});
+
+	QUnit.asyncTest("NoData - forward", function(assert) {
+		function doAfterNoDataDisplayed(){
+			oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+			oTable.$().find(".sapUiTableCtrlBefore").focus();
+			var $Focus = checkFocus(oTable.getDomRef("noDataCnt"), assert);
+			//Default behavior of the browser can not tested here
+			//qutils.triggerKeydown($Focus, "TAB", false, false, false);
+			//checkFocus(oTable.$().find(".sapUiTableCtrlAfter"), assert);
+			QUnit.start();
+		}
+
+		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+		oTable.setModel(new sap.ui.model.json.JSONModel());
+	});
+
+	//Default behavior of the browser can not tested here
+	/*QUnit.asyncTest("NoData - backward", function(assert) {
+		function doAfterNoDataDisplayed(){
+			oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+			oTable.$().find(".sapUiTableCtrlAfter").focus();
+			var $Focus = checkFocus(oTable.getDomRef("noDataCnt"), assert);
+			//qutils.triggerKeydown($Focus, "TAB", true, false, false);
+			//checkFocus(oTable.$().find(".sapUiTableCtrlBefore"), assert);
+			QUnit.start();
+		}
+
+		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+		oTable.setModel(new sap.ui.model.json.JSONModel());
+	});*/
+
+	QUnit.asyncTest("NoData and Overlay - forward", function(assert) {
+		function doAfterNoDataDisplayed(){
+			oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+			oTable.$().find(".sapUiTableOuterBefore").focus();
+			var $Focus = checkFocus(oTable.getDomRef("overlay"), assert);
+			qutils.triggerKeydown($Focus, "TAB", false, false, false);
+			checkFocus(oTable.$().find(".sapUiTableOuterAfter"), assert);
+			QUnit.start();
+		}
+
+		oTable.setShowOverlay(true);
+		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+		oTable.setModel(new sap.ui.model.json.JSONModel());
+	});
+
+	QUnit.asyncTest("NoData and Overlay - backward", function(assert) {
+		function doAfterNoDataDisplayed(){
+			oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+			oTable.$().find(".sapUiTableOuterAfter").focus();
+			var $Focus = checkFocus(oTable.getDomRef("overlay"), assert);
+			qutils.triggerKeydown($Focus, "TAB", true, false, false);
+			checkFocus(oTable.$().find(".sapUiTableOuterBefore"), assert);
+			QUnit.start();
+		}
+
+		oTable.setShowOverlay(true);
+		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+		oTable.setModel(new sap.ui.model.json.JSONModel());
+	});
+
+
 } else if (checkDelegateType("sap.ui.table.TableKeyboardDelegate2")) {
 
 //************************************************************************
