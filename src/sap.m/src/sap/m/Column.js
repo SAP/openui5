@@ -136,6 +136,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	// default media value
 	Column.prototype._media = null;
 
+	Column.prototype.exit = function() {
+		this._clearMedia();
+	};
+
 	Column.prototype._clearMedia = function() {
 		if (this._media && this._minWidth) {
 			sap.ui.Device.media.removeRangeSet(this.getId());
@@ -564,16 +568,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	 */
 	Column.prototype.onItemsRemoved = function() {
 		this.clearLastValue();
-	};
-
-	/**
-	 * Determines whether the given width is relative or not
-	 *
-	 * @private
-	 * @returns {boolean}
-	 */
-	Column.prototype.isRelativeWidth = function() {
-		return /^(|auto|[-+]?\d+\.?\d*%|inherit)$/i.test(this.getWidth());
 	};
 
 	return Column;
