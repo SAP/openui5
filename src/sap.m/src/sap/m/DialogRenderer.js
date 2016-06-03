@@ -143,7 +143,7 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 			if (sap.ui.Device.system.desktop) {
 
 				if (bResizable && !bStretch) {
-					oRm.write('<div class="sapMDialogResizeHandler"></div>');
+					oRm.writeIcon("sap-icon://resize-corner", ["sapMDialogResizeHandler"], { "title" : ""});
 				}
 
 				// Invisible element which is used to determine when desktop keyboard navigation
