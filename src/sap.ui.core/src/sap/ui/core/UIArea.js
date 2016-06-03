@@ -488,6 +488,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 			that.bNeedsRerendering = false;
 		}
 
+		// at least IE9 can fail with a runtime error when accessing activeElement from within an iframe
+		function activeElement() {
+			try {
+				return document.activeElement;
+			} catch (err) {
+				// return undefined; -- also satisfies eslint check for empty block
+			}
+		}
+
 		if (force) {
 			this.bNeedsRerendering = true;
 		}
@@ -533,7 +542,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 					return len;
 				};
 
-				var oFocusRef_Initial = document.activeElement;
+				var oFocusRef_Initial = activeElement();
 				var oStoredFocusInfo = this.oCore.oFocusHandler.getControlFocusInfo();
 
 				//First remove the old Dom nodes and then render the controls again
@@ -542,7 +551,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 				var aContent = this.getContent();
 				var len = cleanUpDom(aContent, true);
 
-				var oFocusRef_AfterCleanup = document.activeElement;
+				var oFocusRef_AfterCleanup = activeElement();
 
 				for (var i = 0; i < len; i++) {
 					if (aContent[i] && aContent[i].getParent() === this) {
@@ -552,7 +561,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 				bUpdated = true;
 
 				/* Try restoring focus when focus ref is changed due to cleanup operations and not changed anymore by the rendering logic */
-				if (oFocusRef_Initial != oFocusRef_AfterCleanup && oFocusRef_AfterCleanup === document.activeElement) {
+				if (oFocusRef_Initial && oFocusRef_Initial != oFocusRef_AfterCleanup && oFocusRef_AfterCleanup === activeElement()) {
 					try {
 						this.oCore.oFocusHandler.restoreFocus(oStoredFocusInfo);
 					} catch (e) {
