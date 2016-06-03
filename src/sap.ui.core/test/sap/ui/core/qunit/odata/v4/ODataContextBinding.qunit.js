@@ -131,23 +131,23 @@ sap.ui.require([
 				promise : Promise.resolve(oCache)
 			},
 			oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS", 1),
+			oPathPromise = Promise.resolve(sCanonicalPath),
 			that = this;
 
 		this.mock(_Helper).expects("buildPath")
-			.withExactArgs(sCanonicalPath.slice(1), "TEAM_2_MANAGER").returns("~");
+			.withExactArgs(sCanonicalPath.slice(1), "TEAM_2_MANAGER").returns("~path~");
 		this.mock(_Cache).expects("createSingle")
-			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "~", {
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "~path~", {
 					$select: ["Name"],
 					"sap-client" : "111"
 				})
 			.returns(oCache);
-		this.stub(_ODataHelper, "createCacheProxy",
-			function (oBinding0, oContext0, fnCreateCache) {
-				assert.strictEqual(oBinding0, oBinding);
-				assert.strictEqual(oContext0, oContext);
-				assert.strictEqual(fnCreateCache(sCanonicalPath), oCache);
-				return oCacheProxy;
-			});
+		this.mock(oContext).expects("requestCanonicalPath").withExactArgs().returns(oPathPromise);
+		this.mock(_ODataHelper).expects("createCacheProxy")
+			.withExactArgs(sinon.match.same(oBinding), sinon.match.func,
+				sinon.match.same(oPathPromise))
+			.callsArgWith(1, sCanonicalPath)
+			.returns(oCacheProxy);
 
 		//code under test
 		oBinding.setContext(oContext);
@@ -176,11 +176,14 @@ sap.ui.require([
 			oCacheProxy = {
 				promise : Promise.reject(oError)
 			},
-			oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS", 1);
+			oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS", 1),
+			oPathPromise = Promise.reject(oError);
 
 		this.mock(_Cache).expects("createSingle").never();
+		this.mock(oContext).expects("requestCanonicalPath").withExactArgs().returns(oPathPromise);
 		this.mock(_ODataHelper).expects("createCacheProxy")
-			.withExactArgs(sinon.match.same(oBinding), sinon.match.same(oContext), sinon.match.func)
+			.withExactArgs(sinon.match.same(oBinding), sinon.match.func,
+				sinon.match.same(oPathPromise))
 			.returns(oCacheProxy);
 		this.mock(oBinding.oModel).expects("reportError")
 			.withExactArgs(
@@ -352,10 +355,14 @@ sap.ui.require([
 			oCachePromise = Promise.resolve(oCache),
 			oCacheProxy = {promise : oCachePromise},
 			oContext = Context.create(this.oModel, null, "/TEAMS", 1),
-			oHelperMock = this.mock(_ODataHelper);
+			oHelperMock = this.mock(_ODataHelper),
+			oPathPromise = Promise.resolve("/canonical");
 
+		this.mock(_Cache).expects("createSingle").never();
+		this.mock(oContext).expects("requestCanonicalPath").withExactArgs().returns(oPathPromise);
 		oHelperMock.expects("createCacheProxy")
-			.withExactArgs(sinon.match.same(oBinding), sinon.match.same(oContext), sinon.match.func)
+			.withExactArgs(sinon.match.same(oBinding), sinon.match.func,
+				sinon.match.same(oPathPromise))
 			.returns(oCacheProxy);
 		this.mock(oCache).expects("refresh");
 		oBinding.setContext(oContext);
@@ -623,11 +630,8 @@ sap.ui.require([
 			oCacheProxy = {
 				promise: Promise.resolve()
 			},
-			oContext = {
-				getPath : function () {
-					return "/Products('1')";
-				}
-			},
+			oContext = Context.create(this.oModel, null, "/Products('1')"),
+			oPathPromise = Promise.resolve("/canonical"),
 			oResult = {};
 
 		oBindingMock.expects("_hasPendingChanges").withExactArgs("PRODUCT_2_BP")
@@ -636,7 +640,11 @@ sap.ui.require([
 		// code under test
 		assert.strictEqual(oBinding.hasPendingChanges(), oResult);
 
-		this.mock(_ODataHelper).expects("createCacheProxy").returns(oCacheProxy);
+		this.mock(oContext).expects("requestCanonicalPath").withExactArgs().returns(oPathPromise);
+		this.mock(_ODataHelper).expects("createCacheProxy")
+			.withExactArgs(sinon.match.same(oBinding), sinon.match.func,
+				sinon.match.same(oPathPromise))
+			.returns(oCacheProxy);
 		oBinding.setContext(oContext);
 		oBindingMock.expects("_hasPendingChanges").withExactArgs("").returns(oResult);
 

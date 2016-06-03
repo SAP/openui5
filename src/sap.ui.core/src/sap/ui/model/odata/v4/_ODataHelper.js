@@ -230,49 +230,41 @@ sap.ui.define([
 		},
 
 		/**
-		 * Creates a cache proxy acting as substitute for the given relative binding's cache while
-		 * the given context's canonical path is being computed.
+		 * Creates a cache proxy acting as substitute for a cache while it waits for the
+		 * resolution of the given promise which resolves with a canonical path; it then creates the
+		 * "real" cache using the given function.
+		 *
 		 * If there is no cache for the canonical path in the binding's
 		 * <code>mCacheByContext</code>, creates the cache by calling the given function
-		 * <code>fnCreateCache</code> with the canonical path and resolves the proxy's promise with
-		 * this cache. If the binding's cache is not the cache proxy, the promise resolves with
-		 * the binding's cache in order to ensure a cache proxy associated with a binding is only
-		 * replaced by the corresponding cache.
+		 * <code>fnCreateCache</code> with the canonical path. If the binding's cache is not the
+		 * cache proxy, the promise resolves with the binding's cache in order to ensure a cache
+		 * proxy associated with a binding is only replaced by the corresponding cache.
+		 *
 		 * If there is already a cache for the binding, <code>deregisterChange()</code> is called
 		 * to deregister all listening property bindings at the cache, because they are not able to
 		 * deregister themselves afterwards.
 		 *
-		 * @param {object} oBinding The relative binding
-		 * @param {object} oContext The context for the relative binding
-		 * @param {function} fnCreateCache The function to create the cache from the canonical path
+		 * @param {sap.ui.model.odata.v4.ODataListBinding|sap.ui.model.odata.v4.ODataContextBinding}
+		 *   oBinding The relative binding
+		 * @param {function} fnCreateCache Function to create the cache which is called with the
+		 *   canonical path as parameter and returns the cache.
+		 * @param {Promise} oPathPromise Promise which resolves with a canonical path for the cache
 		 * @returns {object} The cache proxy with the following properties
 		 *   deregisterChange: method does nothing
 		 *   hasPendingChanges: method returning false
 		 *   post: method throws an error as the cache proxy does not support write operations
-		 *   promise: promise fulfilled with the cache or rejected with the error of canonical path
-		 *     computation
+		 *   promise: promise fulfilled with the cache or rejected with the error on requesting the
+		 *     canonical path or creating the cache
 		 *   read: method delegates to the cache's read method
 		 *   refresh: method does nothing
 		 *   update: method throws an error as the cache proxy does not support write operations
 		 */
-		createCacheProxy : function (oBinding, oContext, fnCreateCache) {
-			var oCache,
-				oCacheProxy,
-				oPromise;
+		createCacheProxy : function (oBinding, fnCreateCache, oPathPromise) {
+			var oCacheProxy;
 
 			if (oBinding.oCache) {
 				oBinding.oCache.deregisterChange();
 			}
-			// use requestCanonicalPath, not fetchCanonicalPath to ensure consistent async behavior
-			oPromise = oContext.requestCanonicalPath().then(function (sCanonicalPath) {
-				if (oBinding.oCache !== oCacheProxy) {
-					return oBinding.oCache;
-				}
-				oBinding.mCacheByContext = oBinding.mCacheByContext || {};
-				oCache = oBinding.mCacheByContext[sCanonicalPath] =
-					oBinding.mCacheByContext[sCanonicalPath] || fnCreateCache(sCanonicalPath);
-				return oCache;
-			});
 			oCacheProxy = {
 				deregisterChange : function () {},
 				hasPendingChanges : function () {
@@ -281,17 +273,14 @@ sap.ui.define([
 				post : function () {
 					throw new Error("POST request not allowed");
 				},
-				promise : oPromise,
 				read : function () {
 					var aReadArguments = arguments;
 
-					return oPromise.then(function (oCache) {
+					return this.promise.then(function (oCache) {
 						return oCache.read.apply(oCache, aReadArguments);
-					}).catch(function (oError) {
-						oBinding.oModel.reportError("Failed to delegate read to cache " + oCache
-								+ " with arguments "
-								+ JSON.stringify(Array.prototype.slice.call(aReadArguments)),
-							"sap.ui.model.odata.v4._ODataHelper", oError);
+					}, function (oError) {
+						throw new Error("Cannot read from cache, cache creation failed: "
+							+ oError);
 					});
 				},
 				refresh : function () {},
@@ -299,6 +288,20 @@ sap.ui.define([
 					throw new Error("PATCH request not allowed");
 				}
 			};
+
+			oCacheProxy.promise = Promise.all([oPathPromise])
+				.then(function (aResult) {
+					var oCache, sCanonicalPath = aResult[0];
+
+					if (oBinding.oCache !== oCacheProxy) {
+						return oBinding.oCache;
+					}
+					oBinding.mCacheByContext = oBinding.mCacheByContext || {};
+					oCache = oBinding.mCacheByContext[sCanonicalPath] =
+						oBinding.mCacheByContext[sCanonicalPath] || fnCreateCache(sCanonicalPath);
+					return oCache;
+				});
+
 			return oCacheProxy;
 		},
 

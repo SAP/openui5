@@ -661,6 +661,12 @@ sap.ui.define([
 	ODataListBinding.prototype.setContext = function (oContext) {
 		var that = this;
 
+		function createCache(sPath) {
+			return _Cache.create(that.oModel.oRequestor,
+				_Helper.buildPath(sPath.slice(1), that.sPath),
+				that.mQueryOptions);
+		}
+
 		if (this.oContext !== oContext) {
 			if (this.bRelative) {
 				this.reset();
@@ -669,11 +675,8 @@ sap.ui.define([
 					this.oCache = undefined;
 				}
 				if (this.mQueryOptions && oContext) {
-					this.oCache = _ODataHelper.createCacheProxy(this, oContext, function (sPath) {
-						return _Cache.create(that.oModel.oRequestor,
-							_Helper.buildPath(sPath.slice(1), that.sPath),
-							that.mQueryOptions);
-					});
+					this.oCache = _ODataHelper.createCacheProxy(this, createCache,
+						oContext.requestCanonicalPath());
 					this.oCache.promise.then(function (oCache) {
 						that.oCache = oCache;
 					})["catch"](function (oError) {

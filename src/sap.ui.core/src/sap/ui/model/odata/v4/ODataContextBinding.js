@@ -621,6 +621,11 @@ sap.ui.define([
 	ODataContextBinding.prototype.setContext = function (oContext) {
 		var that = this;
 
+		function createCache(sPath) {
+			return _Cache.createSingle(that.oModel.oRequestor,
+				_Helper.buildPath(sPath.slice(1), that.sPath), that.mQueryOptions);
+		}
+
 		if (this.oContext !== oContext) {
 			if (this.bRelative && this.oCache) {
 				this.oCache.deregisterChange();
@@ -633,10 +638,8 @@ sap.ui.define([
 					? Context.create(this.oModel, this, this.oModel.resolve(this.sPath, oContext))
 					: null;
 				if (oContext && !this.oOperation && this.mQueryOptions) {
-					this.oCache = _ODataHelper.createCacheProxy(this, oContext, function (sPath) {
-						return _Cache.createSingle(that.oModel.oRequestor,
-							_Helper.buildPath(sPath.slice(1), that.sPath), that.mQueryOptions);
-					});
+					this.oCache = _ODataHelper.createCacheProxy(this, createCache,
+						oContext.requestCanonicalPath());
 					this.oCache.promise.then(function (oCache) {
 						that.oCache = oCache;
 					})["catch"](function (oError) {

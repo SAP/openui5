@@ -325,163 +325,130 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function (bHasCache) {
-		QUnit.test("createCacheProxy, cache creation, bHasCache=" + bHasCache, function (assert) {
+	[
+		"/canonical",
+		undefined
+	].forEach(function (sPath) {
+		QUnit.test("createCacheProxy: proxy interface, path " + sPath,
+		function (assert) {
 			var oBinding = {},
-				oCache = {},
-				oCache2 = {},
-				oCacheProxy1,
-				oCacheProxy1a,
-				oCacheProxy2,
-				oCacheProxy3,
-				oContext = {
-					requestCanonicalPath : function () {}
+				oPathPromise = sPath ? Promise.resolve(sPath) : undefined,
+				oCache = {
+					read : function () {}
 				},
-				oContext2 = {
-					requestCanonicalPath : function () {}
-				},
-				oContext3 = {
-					requestCanonicalPath : function () {}
-				},
-				oPathPromise = Promise.resolve("/canonical"),
-				oPathPromise2 = Promise.resolve("/canonical2"),
-				oPathPromise3 = Promise.resolve("/canonical3");
+				oCacheProxy,
+				oReadResult = {},
+				oReadPromise = Promise.resolve(oReadResult);
 
-			if (bHasCache) {
-				oBinding.oCache = {
-					deregisterChange : function () {}
-				};
-				this.mock(oBinding.oCache).expects("deregisterChange").withExactArgs();
+			function createCache(sPath0) {
+				assert.strictEqual(sPath0, sPath);
+				return oCache;
 			}
-			this.mock(oContext).expects("requestCanonicalPath").withExactArgs().twice()
-				.returns(oPathPromise);
-			this.mock(oContext2).expects("requestCanonicalPath").withExactArgs()
-				.returns(oPathPromise2);
-			this.mock(oContext3).expects("requestCanonicalPath").withExactArgs()
-				.returns(oPathPromise3);
+
+			this.mock(oCache).expects("read").withExactArgs("$auto", "foo").returns(oReadPromise);
 
 			// code under test
-			oBinding.oCache = oCacheProxy1 =
-				_ODataHelper.createCacheProxy(oBinding, oContext, function (sCanonicalPath) {
-					assert.strictEqual(sCanonicalPath, "/canonical");
-					return oCache;
-				});
+			oCacheProxy = _ODataHelper.createCacheProxy(oBinding, createCache, oPathPromise);
 
-			return oCacheProxy1.promise.then(function (oC1) {
-				assert.strictEqual(oC1, oCache);
+			oBinding.oCache = oCacheProxy;
+			assert.strictEqual(typeof oCacheProxy.deregisterChange, "function");
+			assert.strictEqual(oCacheProxy.hasPendingChanges(), false);
+			assert.strictEqual(typeof oCacheProxy.refresh, "function");
+			assert.throws(function () {
+				oCacheProxy.post();
+			}, "POST request not allowed");
+			assert.throws(function () {
+				oCacheProxy.update();
+			}, "PATCH request not allowed");
 
-				// code under test
-				oBinding.oCache = oCacheProxy2 =
-					_ODataHelper.createCacheProxy(oBinding, oContext2, function (sCanonicalPath) {
-						assert.strictEqual(sCanonicalPath, "/canonical2");
-						return oCache2;
-					});
-				return oCacheProxy2.promise.then(function (oC2) {
-					assert.strictEqual(oC2, oCache2);
-
-					// code under test: two calls to createCacheProxy; the last sets binding's cache
-					oCacheProxy3 = _ODataHelper.createCacheProxy(oBinding, oContext3, function () {
-						assert.ok(false, "binding cache !== cache proxy: must not create cache");
-					});
-					oBinding.oCache = oCacheProxy1a =
-						_ODataHelper.createCacheProxy(oBinding, oContext, function () {
-							assert.ok(false, "must not recreate cache for context");
-						});
-
-					oCacheProxy3.promise.then(function (oC3) {
-						assert.strictEqual(oC3, oBinding.oCache);
-					});
-					oCacheProxy1a.promise.then(function (oC1a) {
-						assert.strictEqual(oC1a, oCache);
-						assert.strictEqual(oBinding.mCacheByContext["/canonical"], oCache);
-						assert.strictEqual(oBinding.mCacheByContext["/canonical2"], oCache2);
-						oBinding.oCache = oC1a;
-					});
-					return Promise.all([oCacheProxy1a.promise, oCacheProxy3.promise]);
-				});
+			return Promise.all([oCacheProxy.promise, oCacheProxy.read("$auto", "foo")])
+				.then(function (aResult) {
+					assert.strictEqual(aResult[0], oCache);
+					assert.strictEqual(aResult[1], oReadResult);
 			});
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("createCacheProxy, cache methods", function (assert) {
-		var oBinding = {
-				oModel : {
-					requestCanonicalPath : function () {}
-				}
-			},
-			oCache = {
-				read : function () {}
-			},
-			oCacheProxy,
-			oContext = {
-				requestCanonicalPath : function () {}
-			},
-			oPathPromise = Promise.resolve("/canonical"),
-			oReadResult = {},
-			oReadPromise = Promise.resolve(oReadResult);
-
-		this.mock(oContext).expects("requestCanonicalPath").withExactArgs().returns(oPathPromise);
-		this.mock(oCache).expects("read").withExactArgs("$auto", "foo")
-			.returns(oReadPromise);
+	QUnit.test("createCacheProxy: deregister change listeners", function (assert) {
+		var oBinding = {};
 
 		// code under test
-		oBinding.oCache = oCacheProxy =
-			_ODataHelper.createCacheProxy(oBinding, oContext, function (sCanonicalPath) {
-				return oCache;
-			});
+		_ODataHelper.createCacheProxy(oBinding, function () {});
 
-		assert.strictEqual(typeof oCacheProxy.deregisterChange, "function");
-		assert.strictEqual(oCacheProxy.hasPendingChanges(), false);
-		assert.strictEqual(typeof oCacheProxy.refresh, "function");
-		assert.throws(function () {
-			oCacheProxy.post();
-		}, "POST request not allowed");
-		assert.throws(function () {
-			oCacheProxy.update();
-		}, "PATCH request not allowed");
-		return oCacheProxy.read("$auto", "foo").then(function (oResult) {
-			assert.strictEqual(oResult, oReadResult);
+		oBinding.oCache = { deregisterChange : function () {} };
+		this.mock(oBinding.oCache).expects("deregisterChange").withExactArgs();
+
+		// code under test
+		_ODataHelper.createCacheProxy(oBinding, function () {});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createCacheProxy: use same cache for same canonical path", function (assert) {
+		var oBinding = {},
+			oCache = {},
+			oCacheProxy1,
+			oCacheProxy2,
+			createCache = this.spy(function () { return oCache; });
+
+		// code under test
+		oCacheProxy1 = _ODataHelper.createCacheProxy(oBinding, createCache, Promise.resolve("p"));
+
+		oBinding.oCache = oCacheProxy1;
+		return oCacheProxy1.promise.then(function (oCache1) {
+			assert.strictEqual(oCache1, oCache);
+			assert.strictEqual(createCache.callCount, 1);
+
+			// code under test
+			oCacheProxy2 = _ODataHelper.createCacheProxy(oBinding, createCache,
+				Promise.resolve("p"));
+
+			oBinding.oCache = oCacheProxy2;
+			return oCacheProxy2.promise.then(function (oCache2) {
+				assert.strictEqual(oCache2, oCache);
+				assert.strictEqual(createCache.callCount, 1, "not called again");
+			});
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("createCacheProxy, cache read rejects or throws", function (assert) {
-		var oBinding = {
-				oModel : {
-					reportError : function () {},
-					requestCanonicalPath : function () {}
-				}
-			},
-			oCache = {
-				read : function () {},
-				toString : function () { return "~Cache~"; }
-			},
-			oCacheProxy,
-			oContext = {
-				requestCanonicalPath : function () {}
-			},
-			oError = {},
-			oPathPromise = Promise.resolve("/canonical"),
-			oReadPromise = Promise.reject(oError);
+	QUnit.test("createCacheProxy: cache proxy !== binding's cache", function (assert) {
+		var oBinding = {};
 
-		this.mock(oContext).expects("requestCanonicalPath").withExactArgs().returns(oPathPromise);
-		this.mock(oBinding.oModel).expects("reportError")
-			.withExactArgs(
-				"Failed to delegate read to cache ~Cache~ with arguments [\"$auto\",\"foo\"]",
-				"sap.ui.model.odata.v4._ODataHelper",
-				sinon.match.same(oError)
-			);
-		this.mock(oCache).expects("read").withExactArgs("$auto", "foo")
-			.returns(oReadPromise);
+		oBinding.oCache = { deregisterChange : function () {} };
 
 		// code under test
-		oBinding.oCache = oCacheProxy =
-			_ODataHelper.createCacheProxy(oBinding, oContext, function (sCanonicalPath) {
-				return oCache;
-			});
-		return oCacheProxy.read("$auto", "foo").catch(function(oError0) {
+		return _ODataHelper.createCacheProxy(
+			oBinding,
+			function () {
+				assert.ok(false, "unexpected call to fnCreateCache");
+			}
+		).promise.then(function (oCache0) {
+			assert.strictEqual(oCache0, oBinding.oCache);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createCacheProxy: cache creation fails", function (assert) {
+		var oBinding = {},
+			oError = new Error("canonical path failure"),
+			oCacheProxy;
+
+		function unexpected () {
+			assert.ok(false, "unexpected call");
+		}
+
+		// code under test
+		oCacheProxy =  _ODataHelper.createCacheProxy(oBinding, unexpected, Promise.reject(oError));
+
+		oCacheProxy.promise.then(unexpected, function (oError0) {
 			assert.strictEqual(oError0, oError);
+		});
+
+		// code under test
+		return oCacheProxy.read("$auto", "foo").catch(function (oError0) {
+			assert.strictEqual(oError0.message,
+				"Cannot read from cache, cache creation failed: " + oError);
 		});
 	});
 
