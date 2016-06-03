@@ -1732,6 +1732,11 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 							oContext.invalidate();
 						}
 					}
+				} else {
+					// exiting error state after an attempt to save a file with an empty filename in case same filenames are allowed
+					oContext.aItems[iSourceLine].errorState = null;
+					oContext.sErrorState = null;
+					oContext.editModeItem = null;
 				}
 				if (bTriggerOk) {
 					oContext._oItemForRename = oContext.aItems[iSourceLine];
