@@ -808,7 +808,10 @@
 		  "name": "Select",
 		  "category": "User Input",
 		  "since": "1.10",
-		  "samples": ["sap.m.sample.Select"]
+		  "samples": [
+            "sap.m.sample.Select",
+            "sap.m.sample.Select2Columns"
+          ]
 		},
 		{
 		  "id": "sap.m.SelectList",
@@ -1664,6 +1667,11 @@
 		  "name": "Select",
 		  "description": "Illustrates the usage of a Select in header, footer and content of a page. Note the different display options."
 		},
+        {
+          "id": "sap.m.sample.Select2Columns",
+          "name": "Select - Two columns layout",
+          "description": "Use the select dropdown list with two columns layout if you need to display additional information to your options, like e.g. currencies to countries or abbreviations to systems."
+        },
 		{
 		  "id": "sap.m.sample.SelectList",
 		  "name": "SelectList",

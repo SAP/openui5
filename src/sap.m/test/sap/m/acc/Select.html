@@ -386,9 +386,10 @@
 		oModel.setData(mData);
 		sap.ui.getCore().setModel(oModel);
 
-		var oItemTemplate = new sap.ui.core.Item({
+		var oItemTemplate = new sap.ui.core.ListItem({
 			key: "{key}",
-			text: "{text}"
+			text: "{text}",
+			additionalText: "{key}"
 		});
 
 		var oSelect = new sap.m.Select({
@@ -403,6 +404,14 @@
 				if (oSelectedItem) {
 					jQuery.sap.log.info("Event fired: 'change' value to " + oSelectedItem.getText() + " on " + this);
 				}
+			}
+		});
+
+		var oSelectTwoColumn = new sap.m.Select({
+			showSecondaryValues: true,
+			items: {
+				path: "/items",
+				template: oItemTemplate
 			}
 		});
 
@@ -457,6 +466,10 @@
 			content: [
 				new sap.ui.core.HTML({ content: "<h3>Default</h3>" }),
 				oSelect,
+				new sap.ui.core.HTML({ content: "<hr>" }),
+
+				new sap.ui.core.HTML({ content: "<h3>Two column layout</h3>" }),
+				oSelectTwoColumn,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
 				new sap.ui.core.HTML({ content: "<h3>Labeled</h3>" }),

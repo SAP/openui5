@@ -2227,6 +2227,55 @@ QUnit.test("setEnabled()", function(assert) {
 	oSelect.destroy();
 });
 
+QUnit.module("two column layout");
+
+QUnit.test("it should forward the value of the showSecondaryValues to the list", function(assert) {
+
+	// system under test
+	var oSelect = new sap.m.Select({
+		showSecondaryValues: true,
+		items: [
+			new sap.ui.core.ListItem({
+				key: "lorem",
+				text: "lorem ipsum",
+				additionalText: "lorem"
+			})
+		]
+	});
+
+	// assert
+	assert.ok(oSelect.getList().getShowSecondaryValues());
+
+	// cleanup
+	oSelect.destroy();
+});
+
+QUnit.test("it should returns the this reference to allow method chaining", function(assert) {
+
+	// system under test
+	var oSelect = new sap.m.Select({
+		items: [
+			new sap.ui.core.ListItem({
+				key: "lorem",
+				text: "lorem ipsum",
+				additionalText: "lorem"
+			})
+		]
+	});
+
+	// arrange
+	var fnSetShowSecondaryValuesSpy = this.spy(oSelect, "setShowSecondaryValues");
+
+	// act
+	oSelect.setShowSecondaryValues(true);
+
+	// assert
+	assert.ok(fnSetShowSecondaryValuesSpy.returned(oSelect));
+
+	// cleanup
+	oSelect.destroy();
+});
+
 QUnit.module("addItem()");
 
 QUnit.test("addItem()", function(assert) {

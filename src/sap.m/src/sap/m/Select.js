@@ -147,6 +147,17 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 					},
 
 					/**
+					 * Indicates whether the text values of the <code>additionalText</code> property of a
+					 * {@link sap.ui.core.ListItem} are shown.
+					 * @since 1.40
+					 */
+					showSecondaryValues: {
+						type: "boolean",
+						group: "Misc",
+						defaultValue: false
+					},
+
+					/**
 					 * Indicates whether the selection is restricted to one of the items in the list.
 					 * <b>Note:</b> We strongly recommend that you always set this property to <code>false</code> and bind
 					 * the <code>selectedKey</code> property to the desired value for better interoperability with data binding.
@@ -1352,7 +1363,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			this._oList = new SelectList({
 				width: "100%",
 				keyboardNavigationMode: sKeyboardNavigationMode
-			}).addEventDelegate({
+			}).addStyleClass(this.getRenderer().CSS_CLASS + "List-CTX")
+			.addEventDelegate({
 				ontap: function(oEvent) {
 					this.close();
 				}
@@ -1664,6 +1676,18 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		/* ----------------------------------------------------------- */
 		/* public methods                                              */
 		/* ----------------------------------------------------------- */
+
+		Select.prototype.setShowSecondaryValues = function(bAdditionalText) {
+			this.setProperty("showSecondaryValues", bAdditionalText, true);
+
+			var oList = this.getList();
+
+			if (oList) {
+				oList.setShowSecondaryValues(bAdditionalText);
+			}
+
+			return this;
+		};
 
 		/**
 		 * Adds an item to the aggregation named <code>items</code>.
