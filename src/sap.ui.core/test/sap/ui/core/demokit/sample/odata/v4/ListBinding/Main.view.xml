@@ -258,7 +258,7 @@
 					},
 					path : '/Equipments',
 					parameters : {
-						operationMode : 'Server',
+						$$operationMode : 'Server',
 						$orderby : 'Name',
 						$select : 'Category,ID,Name,EmployeeId'
 					},

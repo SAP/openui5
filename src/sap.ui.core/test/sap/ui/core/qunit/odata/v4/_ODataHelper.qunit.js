@@ -188,38 +188,66 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("buildBindingParameters, $$groupId", function (assert) {
+		var aAllowedParams = ["$$groupId"];
+
 		assert.deepEqual(_ODataHelper.buildBindingParameters(undefined), {});
 		assert.deepEqual(_ODataHelper.buildBindingParameters({}), {});
-		assert.deepEqual(_ODataHelper.buildBindingParameters({$$groupId : "$auto"}),
+		assert.deepEqual(_ODataHelper.buildBindingParameters({$$groupId : "$auto"}, aAllowedParams),
 			{$$groupId : "$auto"});
 		assert.deepEqual(_ODataHelper.buildBindingParameters(
-			{$$groupId : "$direct", custom : "foo"}), {$$groupId : "$direct"});
+			{$$groupId : "$direct", custom : "foo"}, aAllowedParams), {$$groupId : "$direct"});
 
 		assert.throws(function () {
 			_ODataHelper.buildBindingParameters({$$unsupported : "foo"});
 		}, new Error("Unsupported binding parameter: $$unsupported"));
 
 		assert.throws(function () {
-			_ODataHelper.buildBindingParameters({$$groupId : ""});
+			_ODataHelper.buildBindingParameters({$$groupId : ""}, aAllowedParams);
 		}, new Error("Unsupported value '' for binding parameter '$$groupId'"));
 		assert.throws(function () {
-			_ODataHelper.buildBindingParameters({$$groupId : "~invalid"});
+			_ODataHelper.buildBindingParameters({$$groupId : "~invalid"}, aAllowedParams);
 		}, new Error("Unsupported value '~invalid' for binding parameter '$$groupId'"));
+		assert.throws(function () {
+			_ODataHelper.buildBindingParameters({$$groupId : "$auto"});
+		}, new Error("Unsupported binding parameter: $$groupId"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildBindingParameters, $$operationMode", function (assert) {
+		var aAllowedParams = ["$$operationMode"];
+
+		assert.throws(function () {
+			_ODataHelper.buildBindingParameters({$$operationMode : "Client"}, aAllowedParams);
+		}, new Error("Unsupported operation mode: Client"));
+		assert.throws(function () {
+			_ODataHelper.buildBindingParameters({$$operationMode : "Auto"}, aAllowedParams);
+		}, new Error("Unsupported operation mode: Auto"));
+		assert.throws(function () {
+			_ODataHelper.buildBindingParameters({$$operationMode : "any"}, aAllowedParams);
+		}, new Error("Unsupported operation mode: any"));
+
+		assert.deepEqual(_ODataHelper.buildBindingParameters({$$operationMode : "Server"},
+				aAllowedParams),
+			{$$operationMode : "Server"});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("buildBindingParameters, $$updateGroupId", function (assert) {
-		assert.deepEqual(_ODataHelper.buildBindingParameters({$$updateGroupId : "myGroup"}),
-				{$$updateGroupId : "myGroup"});
+		var aAllowedParams = ["$$updateGroupId"];
+
+		assert.deepEqual(_ODataHelper.buildBindingParameters({$$updateGroupId : "myGroup"},
+				aAllowedParams),
+			{$$updateGroupId : "myGroup"});
 		assert.deepEqual(_ODataHelper.buildBindingParameters(
-				{$$updateGroupId : "$direct", custom : "foo"}), {$$updateGroupId : "$direct"});
+			{$$updateGroupId : "$direct", custom : "foo"}, aAllowedParams),
+			{$$updateGroupId : "$direct"});
 
 		assert.throws(function () {
-			_ODataHelper.buildBindingParameters({$$unsupported : "foo"});
+			_ODataHelper.buildBindingParameters({$$unsupported : "foo"}, aAllowedParams);
 		}, new Error("Unsupported binding parameter: $$unsupported"));
 
 		assert.throws(function () {
-			_ODataHelper.buildBindingParameters({$$updateGroupId : "~invalid"});
+			_ODataHelper.buildBindingParameters({$$updateGroupId : "~invalid"}, aAllowedParams);
 		}, new Error("Unsupported value '~invalid' for binding parameter '$$updateGroupId'"));
 	});
 

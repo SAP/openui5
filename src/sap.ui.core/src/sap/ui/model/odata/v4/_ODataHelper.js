@@ -5,8 +5,9 @@
 sap.ui.define([
 	"./lib/_Helper",
 	"./lib/_Parser",
+	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/Sorter"
-], function (_Helper, _Parser, Sorter) {
+], function (_Helper, _Parser, OperationMode, Sorter) {
 	"use strict";
 
 	var ODataHelper,
@@ -39,20 +40,23 @@ sap.ui.define([
 		 * Returns the map of binding-specific parameters from the given map. "Binding-specific"
 		 * parameters are those with a key starting with '$$', i.e. OData query options provided as
 		 * binding parameters are not contained in the map. The following parameters and parameter
-		 * values are supported:
+		 * values are supported, if the parameter is contained in the given 'aAllowed' parameter:
 		 * <ul>
 		 * <li> '$$groupId' with allowed values as specified in {@link #checkGroupId}
 		 * <li> '$$updateGroupId' with allowed values as specified in {@link #checkGroupId}
+		 * <li> '$$operationMode' with value {@link sap.ui.model.odata.OperationMode.Server}
 		 * </ul>
 		 *
 		 * @param {object} mParameters
 		 *   The map of binding parameters
+		 * @param {string[]} aAllowed
+		 *   The array of allowed binding parameters
 		 * @returns {object}
 		 *   The map of binding-specific parameters
 		 * @throws {Error}
 		 *   For unsupported parameters or parameter values
 		 */
-		buildBindingParameters : function (mParameters) {
+		buildBindingParameters : function (mParameters, aAllowed) {
 			var mResult = {};
 
 			if (mParameters) {
@@ -62,15 +66,21 @@ sap.ui.define([
 					if (sKey.indexOf("$$") !== 0) {
 						return;
 					}
-
-					if (sKey !== "$$groupId" && sKey !== "$$updateGroupId") {
+					if (!aAllowed || aAllowed.indexOf(sKey) < 0) {
 						throw new Error("Unsupported binding parameter: " + sKey);
 					}
 
-					if (!isValidGroupId(sValue)) {
-						throw new Error("Unsupported value '" + sValue
-							+ "' for binding parameter '" + sKey + "'");
+					if (sKey === "$$groupId" || sKey === "$$updateGroupId") {
+						if (!isValidGroupId(sValue)) {
+							throw new Error("Unsupported value '" + sValue
+									+ "' for binding parameter '" + sKey + "'");
+						}
+					} else if (sKey === "$$operationMode") {
+						if (sValue !== OperationMode.Server) {
+							throw new Error("Unsupported operation mode: " + sValue);
+						}
 					}
+
 					mResult[sKey] = sValue;
 				});
 			}
