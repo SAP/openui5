@@ -1,18 +1,18 @@
 //************************************************************************
-// Preparation Code
-//************************************************************************
-
-createTables();
-
-
-//************************************************************************
 // Test Code
 //************************************************************************
 
 sap.ui.test.qunit.delayTestStart(500);
 
 
-QUnit.module("Initialization");
+QUnit.module("Initialization", {
+	setup: function() {
+		createTables();
+	},
+	teardown: function () {
+		destroyTables();
+	}
+});
 
 QUnit.test("init()", function(assert) {
 	var oExtension = oTable._getKeyboardExtension();
@@ -33,7 +33,14 @@ QUnit.test("init()", function(assert) {
 });
 
 
-QUnit.module("Item Navigation");
+QUnit.module("Item Navigation", {
+	setup: function() {
+		createTables();
+	},
+	teardown: function () {
+		destroyTables();
+	}
+});
 
 
 QUnit.test("init() / destroy()", function(assert) {
@@ -47,11 +54,11 @@ QUnit.test("init() / destroy()", function(assert) {
 
 QUnit.test("invalidation", function(assert) {
 	var oExtension = oTable._getKeyboardExtension();
-	assert.ok(!oExtension._itemNavigationInvalidated, "Item Navigation not invalid");
-	oExtension.invalidateItemNavigation();
-	assert.ok(oExtension._itemNavigationInvalidated, "Item Navigation invalid");
+	assert.ok(oExtension._itemNavigationInvalidated, "Item Navigation invalid due to intial rendering");
 	oExtension.initItemNavigation();
-	assert.ok(!oExtension._itemNavigationInvalidated, "Item Navigation not invalid");
+	assert.ok(!oExtension._itemNavigationInvalidated, "Item Navigation not invalid after initItemNavigation");
+	oExtension.invalidateItemNavigation();
+	assert.ok(oExtension._itemNavigationInvalidated, "Item Navigation invalid after invalidateItemNavigation");
 });
 
 var aEvents = ["focusin", "sapfocusleave", "mousedown", "sapnext", "sapnextmodifiers", "sapprevious", "sappreviousmodifiers",
@@ -120,6 +127,7 @@ QUnit.test("Marked Event", function(assert) {
 QUnit.test("Stored Focus Position", function(assert) {
 	var oExtension = oTable._getKeyboardExtension();
 	oExtension._oLastFocusedCellInfo = null;
+	oExtension.initItemNavigation();
 
 	var oInfo = oExtension._getLastFocusedCellInfo();
 	assert.strictEqual(oInfo.cell, iNumberOfCols + 2 /* 2* row header*/, "cell");
@@ -145,7 +153,14 @@ QUnit.test("Stored Focus Position", function(assert) {
 });
 
 
-QUnit.module("Misc");
+QUnit.module("Misc", {
+	setup: function() {
+		createTables();
+	},
+	teardown: function () {
+		destroyTables();
+	}
+});
 
 
 QUnit.test("Silent Focus", function(assert) {
@@ -242,7 +257,49 @@ QUnit.test("Table Type", function(assert) {
 });
 
 
-QUnit.module("Destruction");
+QUnit.asyncTest("Overly / NoData focus handling", function(assert) {
+	function containsOrHasFocus(sIdSuffix) {
+		return jQuery.sap.containsOrEquals(oTable.getDomRef(sIdSuffix), document.activeElement);
+	}
+
+	function doAfterNoDataDisplayed(){
+		oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+
+		assert.ok(containsOrHasFocus("overlay"), "focus is still on overlay after no data is displayed");
+		oTable.setShowOverlay(false);
+		assert.ok(containsOrHasFocus("noDataCnt"), "focus is on noData container after overlay dissappeared");
+
+		oTable.attachEvent("_rowsUpdated", doAfterNoDataIsHidden);
+		oTable.setModel(oModel);
+	}
+
+	function doAfterNoDataIsHidden(){
+		oTable.detachEvent("_rowsUpdated", doAfterNoDataIsHidden);
+		var oElem = getColumnHeader(0);
+		assert.ok(oElem.length && oElem.get(0) === document.activeElement, "focus is on first column header after no Data dissappeared");
+		QUnit.start();
+	}
+
+	assert.ok(!containsOrHasFocus(), "focus is not on the table before setShowOverlay");
+	oTable.setShowOverlay(true);
+	assert.ok(!containsOrHasFocus(), "focus is not on the table after setShowOverlay");
+	oTable.focus();
+	assert.ok(containsOrHasFocus("overlay"), "focus is on overlay after focus");
+	oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+	oTable.setModel(new sap.ui.model.json.JSONModel());
+});
+
+
+QUnit.module("Destruction", {
+	setup: function() {
+		createTables();
+	},
+	teardown: function () {
+		oTable = null;
+		oTreeTable.destroy();
+		oTreeTable = null;
+	}
+});
 
 
 QUnit.test("destroy()", function(assert) {
