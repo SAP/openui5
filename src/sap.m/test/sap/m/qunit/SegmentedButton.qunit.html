@@ -1768,6 +1768,10 @@
 				sap.ui.core.IconPool.getIconInfo("sap-icon://attachment").name,
 				"Attribute aria-label on the second button should contain only the icon generic name");
 
+		strictEqual(aButtons[1].$().attr("title"),
+				sap.ui.core.IconPool.getIconInfo("sap-icon://attachment").name,
+				"Tooltip on the second button should contain only the icon generic name");
+
 		strictEqual(aButtons[2].$().attr("aria-label"), undefined,
 				"If we don't have a SAP Icon we don't need the aria-label attribute");
 
