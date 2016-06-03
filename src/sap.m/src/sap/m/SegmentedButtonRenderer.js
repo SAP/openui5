@@ -131,6 +131,9 @@ sap.ui.define(['jquery.sap.global'],
 				// If there is text inside the button add it in the aria-label
 				if (sButtonText !== "") {
 					sIconAriaLabel += " " + sButtonText;
+				} else {
+					// if we have no text for the button set tooltip the name of the Icon
+					oRM.writeAttributeEscaped("title", sIconAriaLabel);
 				}
 				oRM.writeAttributeEscaped("aria-label", sIconAriaLabel);
 			}
