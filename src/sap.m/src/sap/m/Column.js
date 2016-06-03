@@ -136,6 +136,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	// default media value
 	Column.prototype._media = null;
 
+	Column.prototype.exit = function() {
+		this._clearMedia();
+	};
+
 	Column.prototype._clearMedia = function() {
 		if (this._media && this._minWidth) {
 			sap.ui.Device.media.removeRangeSet(this.getId());
