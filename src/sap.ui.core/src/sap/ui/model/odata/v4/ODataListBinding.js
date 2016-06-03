@@ -664,6 +664,10 @@ sap.ui.define([
 		if (this.oContext !== oContext) {
 			if (this.bRelative) {
 				this.reset();
+				if (this.oCache) {
+					this.oCache.deregisterChange();
+					this.oCache = undefined;
+				}
 				if (this.mQueryOptions && oContext) {
 					this.oCache = _ODataHelper.createCacheProxy(this, oContext, function (sPath) {
 						return _Cache.create(that.oModel.oRequestor,
