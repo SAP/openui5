@@ -96,7 +96,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/test/gherkin/d
    * @since 1.40
    * @public
    */
-  return UI5Object.extend("sap.ui.test.gherkin.GherkinTestGenerator",
+  var GherkinTestGenerator = UI5Object.extend("sap.ui.test.gherkin.GherkinTestGenerator",
     /** @lends sap.ui.test.gherkin.GherkinTestGenerator.prototype */ {
 
     constructor : function(vFeature, fnStepDefsConstructor, fnAlternateTestStepGenerator) {
@@ -366,4 +366,5 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/test/gherkin/d
 
   });
 
-});
+  return GherkinTestGenerator;
+}, /* bExport= */ true);

@@ -5,7 +5,7 @@
 /* global jQuery */
 /* eslint-disable quotes,no-loop-func */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function ($, UI5Object) {
+sap.ui.define(['jquery.sap.global'], function ($) {
   'use strict';
 
   /**
@@ -18,10 +18,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function ($, UI5Objec
    * @extends sap.ui.base.Object
    * @since 1.40
    * @public
+   * @static
    */
-  var oClass = UI5Object.extend('sap.ui.test.gherkin.SimpleGherkinParser', {});
-
-  $.extend(sap.ui.test.gherkin.SimpleGherkinParser, /** @lends sap.ui.test.gherkin.SimpleGherkinParser.prototype */ {
+  var SimpleGherkinParser = {
 
     /**
      * Parses correctly formed Gherkin. The parsed return object (a Gherkin feature!) looks like this:
@@ -53,6 +52,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function ($, UI5Objec
      * @param {string} sText - Gherkin text to parse
      * @returns {object} parsed representation of the Gherkin feature
      * @public
+     * @function
+     * @static
      */
     parse: function(sText) {
 
@@ -144,6 +145,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function ($, UI5Objec
      * @returns {object} the parsed Gherkin feature object
      * @see {@link #parse}
      * @public
+     * @function
+     * @static
      */
     parseFile: function(sPath) {
 
@@ -165,7 +168,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function ($, UI5Objec
 
       return this.parse(oResult.data);
     }
-  });
+  };
 
-  return oClass;
-});
+  return SimpleGherkinParser;
+}, /* bExport= */ true);
