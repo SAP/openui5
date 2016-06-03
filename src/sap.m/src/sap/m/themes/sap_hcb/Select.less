@@ -7,18 +7,17 @@
 /* ------------------------------ */
 
 .sapMSlt > .sapMSltLabel,
-.sapMSltNative {
+.sapMSlt .sapMSelectListItemBase {
 	padding: 0 0.625rem;
 }
 
 .sapMSltWithArrow > .sapMSltLabel,
-.sapMSltWithArrow > .sapMSltNative {
+.sapMSltWithArrow .sapMSelectListItemBase {
 	padding: 0 3rem 0 0.625rem;
 }
 
 .sapMSlt > .sapMSltLabel,
-.sapMSltArrow,
-.sapMSltNative {
+.sapMSltArrow {
 	height: 100%;
 }
 
@@ -210,15 +209,6 @@ html.sap-desktop .sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
 	border-left: 0.0625rem solid @sapHCStandardFG;
 }
 
-/* ------------------------------ */
-/* Native HTML select element     */
-/* ------------------------------ */
-
-.sapMSltNative {
-	visibility: hidden;
-	font-size: 0.9375rem;
-}
-
 /* ====================================================== */
 /* Select inside a Bar: all contexts                      */
 /* ====================================================== */
@@ -381,9 +371,9 @@ div.sapMSltPicker .sapMDialogScrollCont {
 /* ------------------------------ */
 
 .sapUiSizeCompact .sapMSltLabel,
-.sapUiSizeCompact .sapMSltNative,
+.sapUiSizeCompact .sapMSlt .sapMSelectListItemBase,
 .sapUiSizeCondensed .sapUiTableCell .sapMSltLabel,
-.sapUiSizeCondensed .sapUiTableCell .sapMSltNative {
+.sapUiSizeCondensed .sapUiTableCell .sapMSlt .sapMSelectListItemBase {
 	padding-right: 2.5rem;
 	padding-left: 0.5rem;
 }

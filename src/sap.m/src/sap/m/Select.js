@@ -384,12 +384,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		};
 
 		/**
-		 * Whether the native HTML Select Element is required.
+		 * Whether a shadow list should be render inside the HTML content of the select's field, to
+		 * automatically size it to fit its content.
 		 *
 		 * @returns {boolean}
 		 * @private
 		 */
-		Select.prototype._isRequiredSelectElement = function() {
+		Select.prototype._isShadowListRequired = function() {
 			if (this.getAutoAdjustWidth()) {
 				return false;
 			} else if (this.getWidth() === "auto") {
@@ -1946,8 +1947,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 
 			this.setValue("");
 
-			if (this._isRequiredSelectElement()) {
-				this.$("select").children().remove();
+			if (this._isShadowListRequired()) {
+				this.$().children(".sapMSelectListItemBase").remove();
 			}
 
 			for (var i = 0; i < aItems.length; i++) {
@@ -1972,8 +1973,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 
 			this.setValue("");
 
-			if (this._isRequiredSelectElement()) {
-				this.$("select").children().remove();
+			if (this._isShadowListRequired()) {
+				this.$().children(".sapMSelectListItemBase").remove();
 			}
 
 			return this;

@@ -7,15 +7,9 @@
 /* ------------------------------ */
 
 .sapMSlt,
-.sapMSltNative,
 .sapMSlt > .sapMSltLabel,
 .sapMSltPicker-CTX .sapMIBar {
 	box-sizing: border-box;
-}
-
-.sapMSltNative,
-.sapMSltNative > option {
-	font: inherit;
 }
 
 .sapMSlt,
@@ -88,17 +82,15 @@
 /* Native HTML select element     */
 /* ------------------------------ */
 
-.sapMSltNative {
-	-webkit-appearance: none;
+.sapMSlt > .sapMSelectList {
+	visibility: hidden;
 	position: relative;
 	cursor: inherit;
 	border: none;
 	margin: 0;
 	padding: 0;
-	width: auto;
-	opacity: 0;
+	min-width: 6rem;
 }
-
 /* ------------------------------ */
 /* table context                  */
 /* ------------------------------ */
