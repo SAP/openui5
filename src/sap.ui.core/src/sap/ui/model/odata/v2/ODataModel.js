@@ -4331,7 +4331,7 @@ sap.ui.define([
 	 *
 	 * For each created entry a request is created and stored in a request queue.
 	 * The request queue can be submitted by calling submitChanges. To delete a created
-	 * entry from the request queue call deleteCreateEntry.
+	 * entry from the request queue call deleteCreatedEntry.
 	 *
 	 * The optional properties parameter can be used as follows:
 	 *
