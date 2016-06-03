@@ -532,6 +532,19 @@
 			assert.strictEqual($Content.height(), 10, "height should be the same as before filtering");
 		});
 
+		QUnit.test("Initially collapsed popover should be able to expand", function(assert) {
+			var $Content;
+			this.oMessagePopover.setInitiallyExpanded(false);
+			sap.ui.getCore().applyChanges();
+			this.oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+			this.oMessagePopover._expandMsgPopover();
+			this.clock.tick(500);
+			$Content = this.oMessagePopover.$("cont");
+
+			assert.strictEqual($Content.height(), 440, "height should be 440px");
+		});
+
 		QUnit.module("HTML representation", {
 			setup: function () {
 				this.oMessagePopover = new sap.m.MessagePopover();
