@@ -12,8 +12,8 @@
 			<Toolbar>
 				<ToolbarSpacer/>
 				<Select
-                    forceSelection="false"
-                    selectedKey="1239102"
+					forceSelection="false"
+					selectedKey="{/ProductCollection/0/ProductId}"
 					items="{
 						path: '/ProductCollection',
 						sorter: { path: 'Name' }
@@ -25,8 +25,8 @@
 		<content>
 			<VBox>
 				<Select
-                    forceSelection="false"
-                    selectedKey="2212-121-828"
+					forceSelection="false"
+					selectedKey="{/ProductCollection/1/ProductId}"
 					items="{
 						path: '/ProductCollection',
 						sorter: { path: 'Name' }
@@ -39,8 +39,8 @@
 			<Toolbar>
 				<ToolbarSpacer/>
 				<Select
-                    forceSelection="false"
-                    selectedKey="K47322.1"
+					forceSelection="false"
+					selectedKey="{/ProductCollection/2/ProductId}"
 					type="IconOnly"
 					icon="sap-icon://filter"
 					autoAdjustWidth="true"
