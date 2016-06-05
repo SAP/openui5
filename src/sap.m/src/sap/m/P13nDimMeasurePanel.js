@@ -206,8 +206,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * *
-	 *
 	 * @param {string} sSearchText Table items are filtered by this text. <b>Note:</b> " " is a valid value. The table will be set back if
 	 *        sSearchText="".
 	 * @private
@@ -1205,10 +1203,14 @@ sap.ui.define([
 			})
 		});
 
+		var oInvisibleChartTypeText = new sap.ui.core.InvisibleText({
+			text: that._oRb.getText('COLUMNSPANEL_CHARTTYPE')
+		});
 		var oChartTypeComboBox = new sap.m.ComboBox({
 			selectedKey: {
 				path: '/selectedChartTypeKey'
 			},
+			ariaLabelledBy: oInvisibleChartTypeText,
 			items: {
 				path: '/availableChartTypes',
 				template: new sap.ui.core.Item({
@@ -1226,7 +1228,7 @@ sap.ui.define([
 		var oToolbar = new sap.m.OverflowToolbar(this.getId() + "-toolbar", {
 			design: sap.m.ToolbarDesign.Solid, // Transparent,
 			content: [
-				oChartTypeComboBox, new sap.m.ToolbarSpacer(), oSearchField, oShowSelectedButton, oMoveToTopButton, oMoveUpButton, oMoveDownButton, oMoveToBottomButton
+				oInvisibleChartTypeText, oChartTypeComboBox, new sap.m.ToolbarSpacer(), oSearchField, oShowSelectedButton, oMoveToTopButton, oMoveUpButton, oMoveDownButton, oMoveToBottomButton
 			]
 		});
 		this.addAggregation("content", oToolbar);
