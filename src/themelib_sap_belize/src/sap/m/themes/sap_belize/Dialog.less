@@ -4,10 +4,24 @@
 /* ============================= */
 
 .sapMDialog {
-	background: darken(@sapUiGroupContentBackground, 2);
-	border: solid 1px @sapUiContentForegroundBorderColor;
-	border-radius: 2px;
-	box-shadow: 0 0 30px 2px fade(@sapUiContentShadowColor, 15);
+	background: @sapUiGroupContentBackground;
+	border: none;
+	border-radius: 0.25rem;
+	box-shadow: @sapUiShadowLevel3;
+}
+
+.sapMDialog header.sapMHeader-CTX {
+	background-color: @sapUiGroupContentBackground;
+	box-shadow: inset 0 -1px darken(@sapUiGroupContentBackground, 8);
+}
+
+.sapMDialog.sapMDialogWithSubHeader header.sapMHeader-CTX {
+	box-shadow: none;
+}
+
+.sapMDialog header.sapMDialogSubHeader {
+	background-color: @sapUiGroupContentBackground;
+	box-shadow: inset 0 -1px darken(@sapUiGroupContentBackground, 8);
 }
 
 .sapMMessageDialog.sapMPopup-CTX > header.sapMDialogTitle {
@@ -53,11 +67,17 @@ html.sap-desktop .sapMDialog > footer.sapMDialogActions {
 }
 
 .sapMDialogResizeHandler {
-	&:before {
-		border-color: transparent transparent darken(@sapUiContentForegroundBorderColor, 15) transparent;
+  	bottom: 0.5rem;
+
+  	&:before {
+		border-style: initial;
+		border-width: initial;
+		content: attr(data-sap-ui-icon-content);
+		color: @sapUiButtonEmphasizedBackground;
 	}
 
 	&:hover:before {
 		border-color: transparent transparent @sapUiContentForegroundBorderColor transparent;
+	  	color: @sapUiButtonEmphasizedHoverBackground;
 	}
 }
