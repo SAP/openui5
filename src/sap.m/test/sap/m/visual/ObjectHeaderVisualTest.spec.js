@@ -1,4 +1,5 @@
 describe("sap.m.ObjectHeaderVisualTest", function() {
+	browser.testrunner.currentSuite.meta.controlName = 'sap.m.ObjectHeader';
 
 	it("OH with 2 states and property fullScreenOptimized set to true",function() {
 		expect(takeScreenshot()).toLookAs("2states-next-to-Title");
