@@ -149,9 +149,9 @@ html.sap-desktop .sapMSlt:not(.sapMSltDisabled):focus {
 
 /* focus: in the footer all of the selects should get the outline */
 
-html.sap-desktop .sapMHeader-CTX .sapMSltIconOnly:focus,
-html.sap-desktop .sapMSubHeader-CTX .sapMSltIconOnly:focus,
-html.sap-desktop .sapMFooter-CTX .sapMSlt:focus {
+html.sap-desktop .sapMHeader-CTX .sapMSltIconOnly:not(.sapMSltPressed):focus,
+html.sap-desktop .sapMSubHeader-CTX .sapMSltIconOnly:not(.sapMSltPressed):focus,
+html.sap-desktop .sapMFooter-CTX .sapMSlt:not(.sapMSltPressed):focus {
 	outline: 0.0625rem dotted;
 	outline-offset: -0.0625rem;
 }
@@ -199,10 +199,6 @@ html.sap-desktop .sapMFooter-CTX .sapMSlt:focus {
 /* ====================================================== */
 /* Select inside a Bar: footer context                    */
 /* ====================================================== */
-
-.sapMFooter-CTX .sapMSlt {
-	border-color: @sapUiPageFooterBackground;
-}
 
 .sapMFooter-CTX .sapMSltIconOnly.sapMSltHoverable:not(.sapMSltPressed):hover {
 	background: @sapUiButtonFooterHoverBackground;
