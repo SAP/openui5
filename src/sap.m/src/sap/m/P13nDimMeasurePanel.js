@@ -1305,6 +1305,40 @@ sap.ui.define([
 		}
 	};
 
+	P13nDimMeasurePanel.prototype.onBeforeNavigationFrom = function() {
+		// Check if chart type fits selected dimensions and measures
+		var aDimensionItems = [];
+		var aMeasureItems = [];
+		this.getDimMeasureItems().forEach(function(oDimMeasureItem) {
+			var oModelItem = this._getModelItemByColumnKey(oDimMeasureItem.getColumnKey());
+			if (!oModelItem) {
+				return;
+			}
+			if (oModelItem.aggregationRole === "Dimension") {
+				aDimensionItems.push(oDimMeasureItem);
+			} else if (oModelItem.aggregationRole === "Measure") {
+				aMeasureItems.push(oDimMeasureItem);
+			}
+		}, this);
+
+		aDimensionItems = aDimensionItems.filter(function(oItem) {
+			return oItem.getVisible();
+		}).map(function(oItem) {
+			return {
+				name: oItem.getColumnKey()
+			};
+		});
+		aMeasureItems = aMeasureItems.filter(function(oItem) {
+			return oItem.getVisible();
+		}).map(function(oItem) {
+			return {
+				name: oItem.getColumnKey()
+			};
+		});
+		var oResult = sap.chart.api.getChartTypeLayout(this.getChartTypeKey(), aDimensionItems, aMeasureItems);
+		return oResult.errors.length === 0;
+	};
+
 	return P13nDimMeasurePanel;
 
 }, /* bExport= */true);

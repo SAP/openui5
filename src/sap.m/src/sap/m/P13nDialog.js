@@ -4,8 +4,8 @@
 
 // Provides control sap.m.P13nDialog.
 sap.ui.define([
-	'jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter', './library', 'sap/ui/core/EnabledPropagator', 'sap/m/ButtonType', 'sap/m/DialogRenderer'
-], function(jQuery, Dialog, IconTabBar, IconTabFilter, library, EnabledPropagator, ButtonType, DialogRenderer) {
+	'jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter', './library', 'sap/ui/core/EnabledPropagator', 'sap/m/ButtonType', 'sap/m/DialogRenderer', 'sap/ui/core/MessageType'
+], function(jQuery, Dialog, IconTabBar, IconTabFilter, library, EnabledPropagator, ButtonType, DialogRenderer, MessageType) {
 	"use strict";
 
 	/**
@@ -314,47 +314,100 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	P13nDialog.prototype.showValidationDialog = function(fCallbackIgnore, aFailedPanelTypes, aValidationResult) {
+	P13nDialog.prototype._showValidationDialog = function(fCallbackIgnore, aFailedPanelTypes, aValidationResult) {
+		var aWarningMessages = [];
+		var aErrorMessages = [];
+		this._prepareMessages(aFailedPanelTypes, aValidationResult, aWarningMessages, aErrorMessages);
+
+		jQuery.sap.require("sap.m.MessageBox");
+		var sMessageText = "";
+		if (aErrorMessages.length) {
+			aErrorMessages.forEach(function(oMessage, iIndex, aMessages) {
+				sMessageText = (aMessages.length > 1 ? "• " : "") + oMessage.messageText + "\n" + sMessageText;
+			});
+			sap.m.MessageBox.show(sMessageText, {
+				icon: sap.m.MessageBox.Icon.ERROR,
+				title: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_TITLE_ERROR"),
+				actions: [
+					sap.m.MessageBox.Action.CLOSE
+				],
+				styleClass: !!this.$().closest(".sapUiSizeCompact").length ? "sapUiSizeCompact" : ""
+			});
+		} else if (aWarningMessages.length) {
+			aWarningMessages.forEach(function(oMessage, iIndex, aMessages) {
+				sMessageText = (aMessages.length > 1 ? "• " : "") + oMessage.messageText + "\n" + sMessageText;
+			});
+			sMessageText = sMessageText + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_MESSAGE_QUESTION");
+
+			sap.m.MessageBox.show(sMessageText, {
+				icon: sap.m.MessageBox.Icon.WARNING,
+				title: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_TITLE"),
+				actions: [
+					sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_FIX"), sap.m.MessageBox.Action.IGNORE
+				],
+				onClose: function(oAction) {
+					// Fix: Stay on the current panel. There is incorrect entry and user decided to correct this.
+					// Ignore: Go to the chosen panel. Though the current panel has incorrect entry the user decided to
+					// leave the current panel. Delete incorrect condition set.
+					if (oAction === sap.m.MessageBox.Action.IGNORE) {
+						fCallbackIgnore();
+					}
+				},
+				styleClass: !!this.$().closest(".sapUiSizeCompact").length ? "sapUiSizeCompact" : ""
+			});
+		}
+	};
+
+	/**
+	 * When more messages have the same 'messageText', the last one will be take over.
+	 * @private
+	 */
+	P13nDialog.prototype._prepareMessages = function(aFailedPanelTypes, aValidationResult, aWarningMessages, aErrorMessages) {
 		if (!aFailedPanelTypes.length && !aValidationResult.length) {
 			return;
 		}
-		var aMessagedReduced = [];
-		aValidationResult.forEach(function(oResult) {
-			if (oResult.messageText && aMessagedReduced.indexOf(oResult.messageText) < 0) {
-				aMessagedReduced.push(oResult.messageText);
-			}
-		});
-		var bWithBulletPoint = (aFailedPanelTypes.length + aMessagedReduced.length) > 1;
-		var sMessageText = "";
+
+		// Transfer messages coming from panels into messages coming from controller
 		aFailedPanelTypes.forEach(function(sPanelType) {
 			switch (sPanelType) {
 				case sap.m.P13nPanelType.filter:
-					sMessageText = (bWithBulletPoint ? "• " : "") + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_MESSAGE") + "\n" + sMessageText;
+					aValidationResult.push({
+						messageType: MessageType.Warning,
+						messageText: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_MESSAGE")
+					});
 					break;
 				case sap.m.P13nPanelType.columns:
-					sMessageText = (bWithBulletPoint ? "• " : "") + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VISIBLE_ITEMS_THRESHOLD_MESSAGE") + "\n" + sMessageText;
+					aValidationResult.push({
+						messageType: MessageType.Warning,
+						messageText: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VISIBLE_ITEMS_THRESHOLD_MESSAGE")
+					});
+					break;
+				case sap.m.P13nPanelType.dimeasure:
+					aValidationResult.push({
+						messageType: MessageType.Error,
+						messageText: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_CHARTTYPE")
+					});
 					break;
 			}
 		});
-		for ( var sType in aMessagedReduced) {
-			sMessageText = (bWithBulletPoint ? "• " : "") + aMessagedReduced[sType] + "\n" + sMessageText;
-		}
-		jQuery.sap.require("sap.m.MessageBox");
-		sap.m.MessageBox.show(sMessageText, {
-			icon: sap.m.MessageBox.Icon.WARNING,
-			title: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_TITLE"),
-			actions: [
-				sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_FIX"), sap.m.MessageBox.Action.IGNORE
-			],
-			onClose: function(oAction) {
-				// Fix: Stay on the current panel. There is incorrect entry and user decided to correct this.
-				// Ignore: Go to the chosen panel. Though the current panel has incorrect entry the user decided to
-				// leave the current panel. Delete incorrect condition set.
-				if (oAction === sap.m.MessageBox.Action.IGNORE) {
-					fCallbackIgnore();
+
+		// Reduce messages removing duplicated
+		var aUniqueMessages = aValidationResult.filter(function(oMessage, iIndex, aMessages) {
+			for (var i = ++iIndex; i < aMessages.length; i++){
+				if (oMessage.messageText === aMessages[i].messageText){
+					return false;
 				}
-			},
-			styleClass: !!this.$().closest(".sapUiSizeCompact").length ? "sapUiSizeCompact" : ""
+			}
+			return true;
+		});
+
+		// Divide messages into warning and error messages
+		aUniqueMessages.forEach(function(oMessage) {
+			if (oMessage.messageType === MessageType.Warning) {
+				aWarningMessages.push(oMessage);
+			} else if (oMessage.messageType === MessageType.Error) {
+				aErrorMessages.push(oMessage);
+			}
 		});
 	};
 
@@ -723,7 +776,7 @@ sap.ui.define([
 				});
 				// In case of invalid panels show the dialog
 				if (aFailedPanelTypes.length || aValidationResult.length) {
-					that.showValidationDialog(fCallbackIgnore, aFailedPanelTypes, aValidationResult);
+					that._showValidationDialog(fCallbackIgnore, aFailedPanelTypes, aValidationResult);
 				} else {
 					fFireOK();
 				}
