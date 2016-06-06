@@ -2137,5 +2137,73 @@
         "references": []
       }
     ]
+  },
+  "1.36.12": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "7d5e0f99863f37ceed6746c9600a496be18caa4f",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.FacetFilter: Checkbox \u0027All\u0027 is initially not checked when the list has no items",
+        "references": []
+      },
+      {
+        "id": "ffa7a8612a1d3fb1a0b8fd058c884a1bd22e1206",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ActionSheet: Dialog\u0027s \"Cancel\" button is now positioned correctly on IE",
+        "references": []
+      },
+      {
+        "id": "d6afa24a79aa66c5a1df23e11729755fda239d23",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Correct page is displayed after carousel become visible in an IconTabBar",
+        "references": []
+      },
+      {
+        "id": "edbecbecfb274d5087bf3ae18b7df0055e7ce57c",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedListItem: JSDoc syntax corrected",
+        "references": []
+      },
+      {
+        "id": "579d53017153ac1cb588add2043d68681edfc7c7",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: Wrong description mapping is now set properly",
+        "references": []
+      },
+      {
+        "id": "4dc4746c54ef964bdaed1b58c51c3e9c646f9ff1",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.QuickViewCard: Truncation of long texts enhanced",
+        "references": []
+      },
+      {
+        "id": "b5cbd8f0d2f5b35aabe5f3f220d1acbaec290f32",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton: Button with icon have tooltip",
+        "references": []
+      },
+      {
+        "id": "711109451d02aefacef11dff1d8b547be9345c63",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.WizardProgressNavigator: Breaking of layout under iOS is now fixed",
+        "references": []
+      },
+      {
+        "id": "432348b68d782ec81e493848df7c4ab6300c43bb",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Column: Media event should be cleared on destroy.",
+        "references": []
+      }
+    ]
   }
 }

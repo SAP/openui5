@@ -164,5 +164,17 @@
         "references": []
       }
     ]
+  },
+  "1.36.12": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "8f9d8d36e87fe4b3eb22ce1a3e45b366af8b423c",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.ResponsiveFlowLayout: when used in SimpleForm items\u0027 height is calculated consistent for all browsers.",
+        "references": []
+      }
+    ]
   }
 }

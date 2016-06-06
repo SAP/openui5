@@ -1346,5 +1346,52 @@
         "references": []
       }
     ]
+  },
+  "1.36.12": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "996502f579adb2e6247b4bd27fd92dfa16284e7b",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "LocaleData: For currency digits use cashDigits if available",
+        "references": []
+      },
+      {
+        "id": "7fef67324a1abb38272728eae442facf4f83a3f5",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "UIArea: shield access to document.activeElement with try/catch",
+        "references": []
+      },
+      {
+        "id": "adad946e05846bfca0a2608753e6c15e943b4954",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "jQuery.sap.act: Fix disabling in case of document.hidden \u003d\u003d\u003d false",
+        "references": []
+      },
+      {
+        "id": "f25494227d877c479c9e18bfe82ad42c57b2ebe8",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.XMLTemplateProcessor: add multiple style classes separately",
+        "references": []
+      },
+      {
+        "id": "b16598a62a01b27b750b3748473789a4b8afc53d",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Don\u0027t try to recursively loop cyclic structures",
+        "references": []
+      },
+      {
+        "id": "7216581c08af6d6efb170450816fead7b3d6dc13",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: _getObject must return complex types as obj",
+        "references": []
+      }
+    ]
   }
 }

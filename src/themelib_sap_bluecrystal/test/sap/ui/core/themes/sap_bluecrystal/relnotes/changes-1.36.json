@@ -468,5 +468,17 @@
         "references": []
       }
     ]
+  },
+  "1.36.12": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "ffa7a8612a1d3fb1a0b8fd058c884a1bd22e1206",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ActionSheet: Dialog\u0027s \"Cancel\" button is now positioned correctly on IE",
+        "references": []
+      }
+    ]
   }
 }

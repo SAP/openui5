@@ -284,5 +284,17 @@
         "references": []
       }
     ]
+  },
+  "1.36.12": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "4d6a0e4893948281fd63526f0ffe85bf8b4e0991",
+        "author": "Nikolay Vankov \u003cnikolay.vankov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.MessageBox: Setting title issue fixed.",
+        "references": []
+      }
+    ]
   }
 }
