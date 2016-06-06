@@ -641,28 +641,64 @@
 		equal(oDeleteButton1.getEnabled(), true, "Delete button is enabled");
 	});
 
-	test("Delete the file name in edit", function() {
-		var sEditButtonId = this.oUploadCollection.aItems[1].sId + "-editButton";
-		sap.ui.getCore().byId(sEditButtonId).firePress();
-		sap.ui.getCore().applyChanges();
-		this.oUploadCollection.aItems[1].setFileName("");
-		var oInputField4 = jQuery.sap.byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName-inner");
-		sap.ui.getCore().applyChanges();
-		var oObj = {};
-		oObj.target = {};
-		oObj.oSource = {};
-		oObj.oSource.getId = function() {
-			return this.sId;
+	QUnit.module("Tests starting with following scenario: open edit mode of list item, enter empty name, click ok", {
+		setup : function() {
+			this.oUploadCollection = new sap.m.UploadCollection({
+				maximumFilenameLength : 35,
+				items : {
+					path : "/items",
+					template : oItemTemplate
+				},
+			});
+			this.oUploadCollection.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			var sEditButtonId = this.oUploadCollection.aItems[1].sId + "-editButton";
+			sap.ui.getCore().byId(sEditButtonId).firePress();
+			sap.ui.getCore().applyChanges();
+
+			this.oUploadCollection.aItems[1].setFileName("");
+			sap.ui.getCore().applyChanges();
+
+			this.oObj = {
+				oSource : {
+					sId : this.oUploadCollection.aItems[1].sId,
+					getId : function() {
+						return this.sId;
+					}
+				},
+				target : {
+					id:this.oUploadCollection.aItems[1].sId + "-okButton"
+				}
+			};
+			this.oUploadCollection._handleClick(this.oObj, this.oUploadCollection, this.oUploadCollection.aItems[1].sId);
+		},
+		teardown : function() {
+			this.oUploadCollection.destroy();
+			this.oUploadCollection = null;
 		}
-		oObj.target.id =  this.oUploadCollection.aItems[1].sId + "-okButton";
-		oObj.oSource.sId = this.oUploadCollection.aItems[1].sId;
-		this.oUploadCollection._handleClick(oObj, this.oUploadCollection, this.oUploadCollection.aItems[1].sId);
+	});
+
+	QUnit.test("Delete the file name in edit", function(assert) {
 		sap.ui.getCore().applyChanges();
 		var bShowValueStateMessage = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName").getShowValueStateMessage();
 		var sValueState = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName").getValueState();
-		equal(bShowValueStateMessage, true, "Error message has to be shown, because no file name entered");
-		equal(sValueState, "Error", "Error value state set");
-		equal(this.oUploadCollection.sErrorState, "Error", "Error state is set on UploadCOllection control");
+
+		assert.equal(bShowValueStateMessage, true, "Error message has to be shown, because no file name entered");
+		assert.equal(sValueState, "Error", "Error value state set");
+		assert.equal(this.oUploadCollection.sErrorState, "Error", "Error state is set on UploadCOllection control");
+	});
+
+	QUnit.test("Exiting edit mode after an attemt to save an empty file in case same file names are allowed", function(assert) {
+		//Arrange
+		this.oUploadCollection.setSameFilenameAllowed(true);
+		jQuery.sap.byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName-inner")[0].value = "Nonempty name";
+		//Act
+		this.oUploadCollection._handleClick(this.oObj, this.oUploadCollection, this.oUploadCollection.aItems[1].sId);
+		//Assert
+		assert.equal(this.oUploadCollection.sErrorState, null, "Error state has been removed");
+		assert.equal(this.oUploadCollection.editModeItem, null, "Edit mode successfully exited");
+		assert.equal(this.oUploadCollection.aItems[1].errorState, null, "Error value state has been removed from the item as well");
+
 	});
 
 	module("Display tests", {
