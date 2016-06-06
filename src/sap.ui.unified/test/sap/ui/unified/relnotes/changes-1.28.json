@@ -525,5 +525,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.35": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "c2f8457ad94726f09ec7bf5b8c82994124f78b48",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: clear() function fixed.",
+        "references": []
+      }
+    ]
   }
 }
