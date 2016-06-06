@@ -69,8 +69,7 @@
 				type : "{type}"
 			});
 
-			function bindListData(data, itemTemplate, list)
-			{
+			function bindListData(data, itemTemplate, list) {
 				var oModel = new sap.ui.model.json.JSONModel();
 				// set the data for the model
 				oModel.setData(data);
@@ -107,7 +106,6 @@
 				contentRight: []
 			});
 
-
 			var oPopover = new sap.m.Popover({
 				placement: sap.m.PlacementType.Auto,
 				title: "Popover",
@@ -132,26 +130,19 @@
 				]
 			});
 
-
-
-
 			var oFeedList = new sap.m.List("oFeedItemList", {
 			    mode: "SingleSelectMaster"
 			});
 
-
 			var fnOpenPopup = function(oControlEvent) {
 				if (oControlEvent.getSource().getSender() == "Jack Jones") {
-					if (window.console) { // console object is only exposed when Developer Tools are open for the particular tab (which is usually not the case when unit test is run)
-						console.log("senderPress called");
-					}
+					jQuery.sap.log.info("senderPress called");
 					oControlEvent.getSource().setSender("Event was fired");
 				}
 				else {
-					oPopover.openBy(oControlEvent.getParameters().domRef);
+					oPopover.openBy(oControlEvent.getParameter("getDomRef")());
 				}
 			};
-
 
 			var oFeedListItemTemplate = new sap.m.FeedListItem({
 				type: sap.m.ListType.Active,
@@ -169,8 +160,7 @@
 				iconPress : fnOpenPopup,
 			});
 
-			function bindFeedListData(data, itemTemplate, list)
-			{
+			function bindFeedListData(data, itemTemplate, list) {
 				var oModel = new sap.ui.model.json.JSONModel();
 				// set the data for the model
 				oModel.setData(data);
@@ -183,8 +173,6 @@
 
 			jQuery.sap.require("sap.ui.core.IconPool");
 			var sURI = sap.ui.core.IconPool.getIconURI("personnel-view");
-
-
 
 			var feedData = {
 					chunks : [ {
@@ -273,17 +261,11 @@
 				{title: "Feed List Item Test Page"}
 			);
 
-
 			feedListPage.addContent(oFeedList);
 			appFeedList.addPage(feedListPage);
 			appFeedList.placeAt("content");
 
-
-			module("Properties", {
-					setup : function() {
-					//Does nothing yet
-				}
-			});
+			module("Properties");
 
 			test("ImagePool Icon", function() {
 				ok($('#__item1-oFeedItemList-1 .sapMFeedListItemImage.sapUiIcon').length === 1, "Image pool icon displayed");
@@ -359,26 +341,40 @@
 				ok(oFeedList.getItems()[10]._sShortText.length === 20, "the length of collapsed text without spaces equals to the property maxCharacters ");
 			});
 
-			module("Events", {
-					setup : function() {
-					//Does nothing yet
-				}
-			});
+			module("Events");
 
 			test("Press Icon", function() {
-				qutils.triggerEvent("tap", oFeedList.getItems()[0]._oImageControl.getId());
-				ok($('.sapMPopoverCont').length === 1, "Popover is displayed");
-				if (oPopover) {
-					oPopover.close();
-				}
+				// Arrange
+				var oFeedListItem = oFeedList.getItems()[0];
+				oFeedListItem.detachIconPress(fnOpenPopup);
+				oFeedListItem.attachIconPress(function (oEvent) {
+					// Assert
+					// Deprecated event parameter
+					ok(oEvent.getParameter("domRef"));
+					deepEqual(oEvent.getParameter("domRef"), oFeedListItem._oImageControl.getDomRef());
+					// New parameter
+					ok(jQuery.isFunction(oEvent.getParameter("getDomRef")));
+					deepEqual(oEvent.getParameter("getDomRef")(), oFeedListItem._oImageControl.getDomRef());
+				});
+				// Act
+				qutils.triggerEvent("tap", oFeedListItem._oImageControl.getId());
 			});
 
-			test("Press Sender", function() {
-				qutils.triggerEvent("tap", $('#__item1-oFeedItemList-0 .sapMFeedListItemTextText .sapMLnk')[0].id);
-				ok($('.sapMPopoverCont').length === 1, "Popover is displayed");
-				if (oPopover) {
-					oPopover.close();
-				}
+			test("Press Sender", function(assert) {
+				// Arrange
+				var oFeedListItem = oFeedList.getItems()[0];
+				oFeedListItem.detachSenderPress(fnOpenPopup);
+				oFeedListItem.attachSenderPress(function (oEvent) {
+					// Assert
+					// Deprecated event parameter
+					ok(oEvent.getParameter("domRef"));
+					deepEqual(oEvent.getParameter("domRef"), oFeedListItem._oLinkControl.getDomRef());
+					// New parameter
+					ok(jQuery.isFunction(oEvent.getParameter("getDomRef")));
+					deepEqual(oEvent.getParameter("getDomRef")(), oFeedListItem._oLinkControl.getDomRef());
+				});
+				// Act
+				oFeedListItem._oLinkControl.firePress();
 			});
 
 			test("Press SPACE Key on Sender", function() {
@@ -404,11 +400,7 @@
 				assert.notEqual(oFeedList.getItems()[9].getSender(), "Hello", "Sender Press event was not fired");
 			});
 
-			module("Rendering behavior", {
-				setup : function() {
-					//Does nothing yet
-				}
-			});
+			module("Rendering behavior");
 
 			test("Expanded text should be appear also after rerendering.", function() {
 				oFeedList.getItems()[10]._toggleTextExpanded();
