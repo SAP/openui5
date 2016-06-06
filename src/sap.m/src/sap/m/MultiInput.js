@@ -1407,6 +1407,11 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		return this._tokenizer.destroyTokens();
 	};
 
+	MultiInput.prototype.updateTokens = function() {
+		this.destroyTokens();
+		return this.updateAggregation("tokens");
+	};
+
 	/**
 	 * Function overwrites clone function to add tokens to MultiInput
 	 *
