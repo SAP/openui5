@@ -99,12 +99,16 @@
 			oCustomDatePatterns = {
 				"yyyy.MM.dd G 'at' HH:mm:ss z": "2001.07.04 AD at 12:08:56 PDT",
 				"EEE, MMM d, ''yy": "Wed, Jul 4, '01",
+				"EEEE, MMM d, ''yy": "Wednesday, Jul 4, '01",
+				"EEEEE, MMM d, ''yy": "W, Jul 4, '01",
+				"EEEEEE, MMM d, ''yy": "We, Jul 4, '01",
 				"h:mm a": "12:08 PM",
 				"hh 'o''clock' a, zzzz": "12 o'clock PM, Pacific Daylight Time",
 				"K:mm a, z": "0:08 PM, PDT",
-				"yyyyy.MMMMM.dd GGG hh:mm aaa": "02001.July.04 AD 12:08 PM",
-				"yyyy.MMMMM.dd GGGG hh:mm aaa": "2001.July.04 Anno Domini 12:08 PM",
-				"yyyy.MMMMM.dd GGGGG hh:mm:ss aaa": "2001.July.04 A 12:08:56 PM",
+				"yyyyy.MMMM.dd GGG hh:mm aaa": "02001.July.04 AD 12:08 PM",
+				"yyyy.MMMM.dd GGGG hh:mm aaa": "2001.July.04 Anno Domini 12:08 PM",
+				"yyyy.MMMM.dd GGGGG hh:mm:ss aaa": "2001.July.04 A 12:08:56 PM",
+				"yyyy.MMMMM.dd GGGGG hh:mm:ss aaa": "2001.J.04 A 12:08:56 PM",
 				"EEE, d MMM yyyy HH:mm:ss Z": "Wed, 4 Jul 2001 12:08:56 +0700",
 				"yyMMddHHmmssZ": "010704120856+0700",
 				"yyyy-MM-dd'T'HH:mm:ss.SSSZ": "2001-07-04T12:08:56.235+0700",
@@ -397,11 +401,15 @@
 			oQuarter1 = sap.ui.core.format.DateFormat.getDateInstance({pattern: "qq"}),
 			oQuarter2 = sap.ui.core.format.DateFormat.getDateInstance({pattern: "qqq"}),
 			oQuarter3 = sap.ui.core.format.DateFormat.getDateInstance({pattern: "qqqq"}),
+			oQuarter4 = sap.ui.core.format.DateFormat.getDateInstance({pattern: "qqqqq"}),
+			oQuarter5 = sap.ui.core.format.DateFormat.getDateInstance({pattern: "QQQQQ"})
 			oQuarterCombined = sap.ui.core.format.DateFormat.getDateInstance({pattern: "EEE, MMM d yyyy, QQQ"});
 
 		equal(oQuarter1.format(oDate), "03", "03");
 		equal(oQuarter2.format(oDate), "Q3", "Q3");
 		equal(oQuarter3.format(oDate), "3rd quarter", "3rd quarter");
+		equal(oQuarter4.format(oDate), "3", "3");
+		equal(oQuarter5.format(oDate), "3", "3");
 		equal(oQuarterCombined.format(oDate), "Wed, Jul 4 2001, Q3", "Wed, Jul 4 2001, Q3");
 		equal(oQuarterCombined.parse("Wed, Jul 4 2001, Q3").valueOf(), oDate.valueOf(), "Wed, Jul 4 2001, Q3")
 	});
