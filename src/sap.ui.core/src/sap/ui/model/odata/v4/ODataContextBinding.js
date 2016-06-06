@@ -622,16 +622,17 @@ sap.ui.define([
 		var that = this;
 
 		if (this.oContext !== oContext) {
+			if (this.bRelative && this.oCache) {
+				this.oCache.deregisterChange();
+				this.oCache = undefined;
+			}
 			if (this.bRelative && (this.oElementContext || oContext)) {
 				// fire "change" iff. this.oElementContext changes
 				// do not call Model#resolve in vain
 				this.oElementContext = oContext
 					? Context.create(this.oModel, this, this.oModel.resolve(this.sPath, oContext))
 					: null;
-				if (this.oOperation) {
-					// the binding parameter for a deferred operation binding has changed
-					this.oCache = undefined;
-				} else if (this.mQueryOptions) {
+				if (oContext && !this.oOperation && this.mQueryOptions) {
 					this.oCache = _ODataHelper.createCacheProxy(this, oContext, function (sPath) {
 						return _Cache.createSingle(that.oModel.oRequestor,
 							_Helper.buildPath(sPath.slice(1), that.sPath), that.mQueryOptions);

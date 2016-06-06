@@ -419,22 +419,25 @@ sap.ui.require([
 				aOriginalContexts = oBinding.aContexts,
 				i;
 
+			assert.strictEqual(oBinding.oCache, undefined, "no own cache");
 			assert.strictEqual(aChildControls.length, 3, "# child controls");
 			for (i = 0; i < 3; i += 1) {
 				assert.strictEqual(aChildControls[i].getBindingContext().getPath(),
 					"/TEAMS('4711')/" + sPath + "/" + (i + oRange.startIndex));
 			}
 
-			// code under test
+			// code under test (same context)
 			oBinding.setContext(oBinding.getContext());
 
 			assert.strictEqual(oBinding.aContexts, aOriginalContexts);
-			assert.ok(ODataListBinding.prototype.reset.calledWithExactly());
+			assert.strictEqual(ODataListBinding.prototype.reset.callCount, 2, "no more reset");
 
-			// code under test
+			// code under test (clear context)
 			oBinding.setContext();
+			assert.strictEqual(ODataListBinding.prototype.reset.callCount, 3,
+				"reset after changing the context");
 
-			assert.ok(ODataListBinding.prototype.reset.calledWithExactly());
+			assert.ok(ODataListBinding.prototype.reset.alwaysCalledWithExactly());
 		}
 
 		this.mock(ODataListBinding.prototype).expects("getGroupId").never();
@@ -452,8 +455,38 @@ sap.ui.require([
 
 		oBinding = oControl.getBinding("items");
 		oBinding.attachEventOnce("change", onChange);
+		assert.strictEqual(ODataListBinding.prototype.reset.callCount, 2,
+			"2x reset constructor and setContext");
 
 		return oPromise;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("reset context for nested list binding with its own cache", function (assert) {
+		var oBinding,
+			oCache = {
+				deregisterChange : function () {}
+			},
+			oCacheProxy = {
+				promise : Promise.resolve(oCache)
+			},
+			oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS", 1),
+			that = this;
+
+		this.mock(_ODataHelper).expects("createCacheProxy").returns(oCacheProxy);
+
+		oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext, undefined, undefined,
+			{$select : "ID"});
+
+		return oCacheProxy.promise.then(function () {
+			that.mock(oCache).expects("deregisterChange").withExactArgs();
+
+			// code under test
+			oBinding.setContext();
+
+			assert.strictEqual(oBinding.oCache, undefined, "cache member reset");
+		});
+
 	});
 
 	//*********************************************************************************************

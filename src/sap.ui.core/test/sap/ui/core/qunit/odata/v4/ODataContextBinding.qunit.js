@@ -123,12 +123,15 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("setContext, relative path with parameters", function (assert) {
 		var oBinding = this.oModel.bindContext("TEAM_2_MANAGER", null, {$select : "Name"}),
-			oCache = {},
+			oCache = {
+				deregisterChange : function () {}
+			},
 			sCanonicalPath = "/TEAMS(Team_Id='4711')",
 			oCacheProxy = {
 				promise : Promise.resolve(oCache)
 			},
-			oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS", 1);
+			oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS", 1),
+			that = this;
 
 		this.mock(_Helper).expects("buildPath")
 			.withExactArgs(sCanonicalPath.slice(1), "TEAM_2_MANAGER").returns("~");
@@ -153,6 +156,16 @@ sap.ui.require([
 
 		return oCacheProxy.promise.then(function (oCache) {
 			assert.strictEqual(oBinding.oCache, oCache);
+
+			_ODataHelper.createCacheProxy.restore();
+			that.mock(_ODataHelper).expects("createCacheProxy").never();
+			that.mock(oCache).expects("deregisterChange").withExactArgs();
+
+			// code under test
+			oBinding.setContext();
+
+			assert.strictEqual(oBinding.oCache, undefined,
+				"cache must not be created because context is undefined");
 		});
 	});
 
@@ -1047,6 +1060,7 @@ sap.ui.require([
 			oParentBinding2 = this.oModel.bindContext("/EntitySet(ID='2')/navigation1"),
 			oPostResult = {},
 			oSingleCache = {
+				deregisterChange : function () {},
 				post : function () {},
 				read : function () {},
 				refresh : function () {}
