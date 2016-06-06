@@ -106,5 +106,31 @@
         "references": []
       }
     ]
+  },
+  "1.38.3": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "62b62d9a62bd3f82a00ce6ce120c81d95189a7de",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.ResponsiveSplitter: Aria support added",
+        "references": []
+      },
+      {
+        "id": "4c89a451937e389bb79df25c8ac55a7a081621ff",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.ResponsiveSplitter: Keyboard and focus handling",
+        "references": []
+      },
+      {
+        "id": "ae3f17cae2e431fdf5a35559b1c68de6757810e6",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.ResponsiveFlowLayout: when used in SimpleForm items\u0027 height is calculated consistent for all browsers.",
+        "references": []
+      }
+    ]
   }
 }

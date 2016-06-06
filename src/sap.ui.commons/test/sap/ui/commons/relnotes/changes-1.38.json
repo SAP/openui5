@@ -279,5 +279,24 @@
         "references": []
       }
     ]
+  },
+  "1.38.3": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "f0ed73901043be76d2366e82f571e1b02b7a9471",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commond.DropdownBox: select text by opening",
+        "references": []
+      },
+      {
+        "id": "f0acc7ed1af7462c5db73e703d45baffd559c4f3",
+        "author": "Nikolay Vankov \u003cnikolay.vankov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.MessageBox: Setting title issue fixed.",
+        "references": []
+      }
+    ]
   }
 }

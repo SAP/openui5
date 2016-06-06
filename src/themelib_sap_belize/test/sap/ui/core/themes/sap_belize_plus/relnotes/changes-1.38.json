@@ -286,5 +286,31 @@
         "references": []
       }
     ]
+  },
+  "1.38.3": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "50e2efa8167bd09bdc499b4ae8de16c40f0ebbc9",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ActionSheet: Dialog\u0027s \"Cancel\" button is now positioned correctly on IE",
+        "references": []
+      },
+      {
+        "id": "68dbe8bd92f13439357ed781d3aa7587409ac829",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: remove the margin inside the table cell",
+        "references": []
+      },
+      {
+        "id": "59bb51406ec357f92c5fbd94dec1136d5a157189",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.StandardListItem: Update Icon correctly.",
+        "references": []
+      }
+    ]
   }
 }

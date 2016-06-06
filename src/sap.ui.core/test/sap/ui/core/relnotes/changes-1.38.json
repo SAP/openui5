@@ -1287,5 +1287,157 @@
         "references": []
       }
     ]
+  },
+  "1.38.3": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "09ed5f56372865789ffc8aa1aa2f00db17960412",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "New diff algorithm and diff processing in ManagedObject",
+        "references": []
+      },
+      {
+        "id": "e64e48c996d31a843d5bd931036b77bbf842b527",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "ClientTreeBindingAdapter - Expand was broken",
+        "references": []
+      },
+      {
+        "id": "e75b96ce5d17a252164430f988ea9a46802c32ca",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Core: add commonly used 3rdparty to sap.ui.core preload bundle",
+        "references": []
+      },
+      {
+        "id": "b39e3f6c593da4b48fe7412d4530f185b7fd44b7",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "LocaleData: For currency digits use cashDigits if available",
+        "references": []
+      },
+      {
+        "id": "1ca18929879cd7b10c6fcc6473c738d2499ed478",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "ManagedObject: Disable grouping, if no grouping function exists",
+        "references": []
+      },
+      {
+        "id": "ac327b1ca7726ac747f01e61d7fcbabf29f842aa",
+        "author": "Alex Avizov \u003calex.avizov@sap.com\u003e",
+        "type": "FIX",
+        "text": "MockServer: Unhandled Error is occurs in simulate function when call MockServerAnnotationsHandler without metadata",
+        "references": []
+      },
+      {
+        "id": "46b3605f06c11745cec26401ea6fd263f19f6967",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModelV2: document missing events",
+        "references": []
+      },
+      {
+        "id": "315dda5a6f0f5010215242824d866b71ca8ef4f7",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "UIArea: shield access to document.activeElement with try/catch",
+        "references": []
+      },
+      {
+        "id": "ef49525640a493b52f3bbae05c8dcab97056585c",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.BusyIndicator: Removed Vendor-Prefixes for Animations",
+        "references": []
+      },
+      {
+        "id": "30ec2f14c066a3168ae9960a65faae46392115be",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "jQuery.sap.act: Fix disabling in case of document.hidden \u003d\u003d\u003d false",
+        "references": []
+      },
+      {
+        "id": "468e3eb19d275f529d5e455b1118387252ee578b",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GrowingEnablement: Reduce unnecessary re-renderings for extended change detections.",
+        "references": []
+      },
+      {
+        "id": "47a0c5620099de554798e45c3bfc6f02aec37f5d",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.IconPool: icon \u0027multi-select\u0027 shouldn\u0027t be mirrored in RTL",
+        "references": []
+      },
+      {
+        "id": "0cd8e41807de69d1cc8520cc4933a15d9049c2f0",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.delegate.ScrollEnablement: Scrollbars are not shown is iOS and BB and  when nonTouchScrolling is used",
+        "references": []
+      },
+      {
+        "id": "b26bf3d2044863b4ccb7e4805d441728977b0c1c",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.format.NumberFormat: Formatted Number is wrongly parsed with \u0027short\u0027 style in zh_CN locale",
+        "references": []
+      },
+      {
+        "id": "587bdcd8a1e75d346537e8db62963d858c4f68b7",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.v2.ODataTreeBinding: fixes timing issue with navigation properties",
+        "references": []
+      },
+      {
+        "id": "da1a235ca08aee0dae2ac71abb28794d47c1a311",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: hAlign Right in RTL mode",
+        "references": []
+      },
+      {
+        "id": "35fcf2d77f18a05b4b12a0fa8ca5d656502becfc",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "thirdparty/es6-promise: Support Loading of require.js before core",
+        "references": []
+      },
+      {
+        "id": "3556219f639f7ad45f2598a3ba4ca98b3080e3c9",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Allow custom Content-Type header for media entities",
+        "references": []
+      },
+      {
+        "id": "9e9f46d9df0ec394a5219f3d0fb3060f90d238c5",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Fix issue with deep expands in element bindings",
+        "references": []
+      },
+      {
+        "id": "1bf4a0e442b637b0b802e25b5559fa9dcbc3ecc9",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: _getObject must return complex types as obj",
+        "references": []
+      },
+      {
+        "id": "d94174781bf87d6ee842e7ef52a5690a14485cb8",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: createKey must URI encode property values",
+        "references": []
+      }
+    ]
   }
 }

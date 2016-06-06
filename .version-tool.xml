@@ -17,13 +17,13 @@
           "src/themelib_sap_belize/pom.xml": "1",
           "src/sap.tnt/pom.xml": "1",
           "src/sap.ui.suite/pom.xml": "1",
-          "src/testsuite/pom.xml": "1",
-          "src/themelib_sap_goldreflection/pom.xml": "1",
           "pom.xml": "2",
-          "src/sap.ui.commons/pom.xml": "1"
+          "src/testsuite/pom.xml": "1",
+          "src/sap.ui.commons/pom.xml": "1",
+          "src/themelib_sap_goldreflection/pom.xml": "1"
         }
       },
-      "lastCommitId": "4bee561cdb4b41e3dd2302f76d3ac04bfa1788b3"
+      "lastCommitId": "a69477ac8823c1a2a33eae22bc3aae46a222712f"
     }
   }
 }

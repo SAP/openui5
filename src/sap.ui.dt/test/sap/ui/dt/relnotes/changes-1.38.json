@@ -10,5 +10,17 @@
         "references": []
       }
     ]
+  },
+  "1.38.3": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "3b98f5ab155448d4e8342b377c5723e03f06caff",
+        "author": "Sebastian Wennemers \u003csebastian.wennemers@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.dt prevent cut for not movable overlays",
+        "references": []
+      }
+    ]
   }
 }

@@ -69,5 +69,24 @@
         "references": []
       }
     ]
+  },
+  "1.38.3": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "026f3ecb41d431c8a55a4cd939c415f9797d0bee",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.tnt.NavigationList: Icon rendering issue solved",
+        "references": []
+      },
+      {
+        "id": "08c6f4375124a83f72e762a7ca624bdf18911948",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.tnt.ToolPage: sideExpanded is fixed for Phone use case",
+        "references": []
+      }
+    ]
   }
 }
