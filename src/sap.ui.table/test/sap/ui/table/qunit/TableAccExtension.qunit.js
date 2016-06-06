@@ -613,6 +613,7 @@ QUnit.asyncTest("Sum Row", function(assert) {
 
 QUnit.test("Other ARIA Attributes of Row Header", function(assert) {
 	var $Elem = oTable.$("rowsel0");
+	assert.strictEqual($Elem.attr("role"), "rowheader" , "role");
 	assert.strictEqual($Elem.attr("aria-selected"), "true" , "aria-selected");
 	$Elem = oTable.$("rowsel1");
 	assert.strictEqual($Elem.attr("aria-selected"), "false" , "aria-selected");

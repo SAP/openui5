@@ -399,6 +399,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 			switch (sType) {
 				case TableAccExtension.ELEMENTTYPES.COLUMNROWHEADER:
 					mAttributes["aria-labelledby"] = [sTableId + "-ariacolrowheaderlabel"];
+					mAttributes["role"] = ["columnheader"];
 					if (mParams && mParams.enabled) {
 						mAttributes["aria-labelledby"].push(sTableId + "-ariaselectall");
 					}
@@ -406,6 +407,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 
 				case TableAccExtension.ELEMENTTYPES.ROWHEADER:
 					mAttributes["aria-labelledby"] = [sTableId + "-ariarowheaderlabel"];
+					mAttributes["role"] = ["rowheader"];
 					if (oTable.getSelectionMode() !== SelectionMode.None) {
 						var bSelected = mParams && mParams.rowSelected;
 						mAttributes["aria-selected"] = "" + bSelected;
@@ -542,6 +544,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 
 				case TableAccExtension.ELEMENTTYPES.ROWHEADER_TD: //The "technical" row headers
 					mAttributes["role"] = "rowheader";
+					mAttributes["aria-labelledby"] = [sTableId + "-ariarowheaderlabel"];
 					mAttributes["headers"] = sTableId + "-colsel";
 					if (mParams && typeof mParams.index === "number") {
 						mAttributes["aria-owns"] = sTableId + "-rowsel" + mParams.index;
