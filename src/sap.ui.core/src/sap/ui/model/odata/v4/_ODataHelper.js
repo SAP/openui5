@@ -311,20 +311,28 @@ sap.ui.define([
 		 * @param {object} oEntityInstance
 		 *   Entity instance runtime data
 		 * @returns {string}
-		 *   The key predicate, e.g. "(Sector='DevOps',ID='42')"
+		 *   The key predicate, e.g. "(Sector='DevOps',ID='42')" or "('42')"
 		 */
 		getKeyPredicate : function (oEntityType, oEntityInstance) {
-			var aKeyValuePairs = [];
+			var aKeyProperties = [],
+				bSingleKey = oEntityType.$Key.length === 1;
 
 			oEntityType.$Key.forEach(function (sName) {
-				var sType = oEntityType[sName].$Type,
-					sValue = _Helper.formatLiteral(oEntityInstance[sName], sType);
+				var sError,
+					vValue = oEntityInstance[sName];
 
-				aKeyValuePairs.push(
-					encodeURIComponent(sName) + "=" + encodeURIComponent(sValue));
+				if (vValue === undefined) {
+					sError = "Missing value for key property '" + sName + "'";
+					jQuery.sap.log.error(sError, null, "sap.ui.model.odata.v4._ODataHelper");
+					throw new Error(sError);
+				}
+				vValue = encodeURIComponent(
+					_Helper.formatLiteral(vValue, oEntityType[sName].$Type)
+				);
+				aKeyProperties.push(bSingleKey ? vValue : encodeURIComponent(sName) + "=" + vValue);
 			});
 
-			return "(" + aKeyValuePairs.join(",") + ")";
+			return "(" + aKeyProperties.join(",") + ")";
 		},
 
 		/**
