@@ -2393,6 +2393,7 @@ sap.ui.define([
 	 * to resolve bound properties or aggregations of the object itself and all of its children
 	 * relatively to the given path.
 	 * If a relative binding path is used, this will be applied whenever the parent context changes.
+	 * There is no difference between {@link sap.ui.core.Element#bindElement} and {@link sap.ui.base.ManagedObject#bindObject}.
 	 * @param {string|object} vPath the binding path or an object with more detailed binding options
 	 * @param {string} vPath.path the binding path
 	 * @param {object} [vPath.parameters] map of additional parameters for this binding

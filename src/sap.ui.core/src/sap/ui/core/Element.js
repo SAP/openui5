@@ -1068,14 +1068,16 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * to resolve bound properties or aggregations of the object itself and all of its children
 	 * relatively to the given path.
 	 * If a relative binding path is used, this will be applied whenever the parent context changes.
+	 * There is no difference between {@link sap.ui.core.Element#bindElement} and {@link sap.ui.base.ManagedObject#bindObject}.
 	 * @param {string|object} vPath the binding path or an object with more detailed binding options
 	 * @param {string} vPath.path the binding path
 	 * @param {object} [vPath.parameters] map of additional parameters for this binding
 	 * @param {string} [vPath.model] name of the model
 	 * @param {object} [vPath.events] map of event listeners for the binding events
 	 * @param {object} [mParameters] map of additional parameters for this binding (only taken into account when vPath is a string in that case the properties described for vPath above are valid here).
+	 * The supported parameters are listed in the corresponding model-specific implementation of <code>sap.ui.model.ContextBinding</code>.
 	 *
-	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
+	 * @return {sap.ui.core.Element} reference to the instance itself
 	 * @public
 	 */
 	Element.prototype.bindElement = function(sPath, mParameters) {
