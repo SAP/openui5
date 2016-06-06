@@ -1614,10 +1614,10 @@ sap.ui.require([
 			oListBinding = oModel.bindList("/EMPLOYEES", undefined, undefined, undefined,
 				oFixture.mParameters);
 
-			this.oSandbox.mock(_Cache).expects("create").withExactArgs(
+			this.mock(_Cache).expects("create").withExactArgs(
 				sinon.match.same(oModel.oRequestor), "EMPLOYEES", oFixture.queryOptions)
 				.returns(oCache);
-			this.oSandbox.mock(oCache).expects("read")
+			this.mock(oCache).expects("read")
 				.withExactArgs(0, 10, "$auto", undefined, sinon.match.func)
 				.callsArg(4)
 				.returns(createResult(10));
