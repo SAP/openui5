@@ -1,4 +1,5 @@
 describe("sap.m.SemanticPage", function() {
+	browser.testrunner.currentSuite.meta.controlName = 'sap.m.semantic.SemanticPage';
 
 	var fnClickThenCompare = function (sId, sImageName, sTestMessage, bEnsureOverflowVisible) {
 		it(sTestMessage, function () {
