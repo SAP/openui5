@@ -9,75 +9,96 @@
 	position: relative;
 	outline: none;
 
-	.sapMStepInputBtnWrapper {
-		margin: 0 0.0625rem;
-		outline: none;
-		position: absolute;
-		z-index: 1;
-		top: 0;
+	.sapMStepInputBtn {
+	outline: none; //needed for IE specially
+	position: absolute;
+	z-index: 1;
+	color: @sapUiButtonIconColor;
 
-	&.sapMStepInputBtnDecrease {
-		left: 0;
+		&.sapMStepInputBtnDecrease {
+			left: 0;
+		}
+
+		&.sapMStepInputBtnIncrease {
+			right: 0;
+		}
 	}
-	&.sapMStepInputBtnIncrease {
-		right: 0;
-	}
-  }
 }
-
 .sapMStepInput-CTX {
 	.sapMInput {
 		.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner) {
 			-webkit-box-sizing: border-box;
+			-moz-box-sizing: border-box;
 			box-sizing: border-box;
 			padding: 0 2.75rem;
 		}
 	}
 
-	.sapMInputBaseWidthPadding {
-		padding: 0;
+	.sapUiIcon {
+		height: 2.375rem;
+		width: 2.375rem;
+		line-height: 2.375rem;
+		margin-top: 0.3125rem;
+
+		&:hover {
+			background-color: @sapUiButtonLiteHoverBackground;
+		}
+		&:active {
+			background-color: @sapUiButtonLiteActiveBackground;
+			color: @sapUiButtonActiveTextColor;
+		}
 	}
 
-	.sapMBtn {
-		padding: 0;
-		height: 100%;
-
-		.sapMBtnInner {
-		min-width: 0;
-		border-radius: 0;
-		width: 2.375rem;
-
-			.sapMBtnIcon {
-				font-size: 1rem;
-			}
-		}
+	.sapMStepInputIconDisabled {
+		opacity: 0.5;
+		pointer-events: none;
 	}
 
 	&.sapMStepInputError, &.sapMStepInputWarning {
 		.sapMInput .sapMInputBaseInner {
 			padding: 0 2.5rem;
 		}
-		.sapMBtn .sapMBtnInner {
+
+		.sapUiIcon {
 			width: 2.25rem;
 		}
 	}
+
+	&:focus {
+		.sapMInputDivWrapper:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):not(.sapMStepInputReadOnly) {
+			&::before {
+				content: "";
+				position: absolute;
+				top: 2px;
+				left: 2px;
+				right: 2px;
+				bottom: 2px;
+				border: 1px dotted @sapUiContentFocusColor;
+				pointer-events: none;
+			}
+		}
+	}
+
 }
 
 .sapUiSizeCompact .sapMStepInput-CTX {
 	.sapMInput .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner) {
-		padding: 0 1.75rem;
-  }
+		padding: 0 1.875rem;
+	}
 
-	.sapMInputBaseWidthPadding {
-		padding: 0;
-  }
-
-	.sapMBtn .sapMBtnInner {
+	.sapUiIcon.sapMStepInputBtn {
+		height: 1.5rem;
 		width: 1.5rem;
-
-	.sapMBtnIcon {
-		margin: 0;
+		line-height: 1.5rem;
+		margin-top: 0.25rem;
 		font-size: 0.875rem;
+
+	&:hover {
+		background-color: @sapUiButtonLiteHoverBackground;
+	}
+	&:active {
+		background-color: @sapUiButtonLiteActiveBackground;
+		color: @sapUiButtonActiveTextColor;
 	}
   }
 
@@ -85,8 +106,7 @@
 		.sapMInput .sapMInputBaseInner {
 			padding: 0 1.625rem;
 		}
-
-		.sapMBtn .sapMBtnInner {
+		.sapUiIcon {
 			width: 1.375rem;
 		}
 	}
