@@ -5,8 +5,9 @@ sap.ui.require([
 	"jquery.sap.global",
 	"sap/ui/model/Context",
 	"sap/ui/model/odata/v4/Context",
+	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_SyncPromise"
-], function (jQuery, BaseContext, Context, _SyncPromise) {
+], function (jQuery, BaseContext, Context, _Helper, _SyncPromise) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -74,13 +75,45 @@ sap.ui.require([
 				fetchValue : function () {}
 			},
 			oContext = Context.create(null, oBinding, "/foo", 42),
+			oListener = {},
 			oResult = {},
 			sPath = "bar";
 
-		this.mock(oBinding).expects("fetchValue").withExactArgs(sPath, 42)
+		this.mock(oBinding).expects("fetchValue")
+			.withExactArgs(sPath, sinon.match.same(oListener), 42)
 			.returns(oResult);
 
-		assert.strictEqual(oContext.fetchValue(sPath), oResult);
+		assert.strictEqual(oContext.fetchValue(sPath, oListener), oResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("deregisterChange", function (assert) {
+		var oBinding = {
+				deregisterChange : function () {}
+			},
+			oContext = Context.create(null, oBinding, "/foo", 42),
+			oListener = {},
+			sPath = "bar";
+
+		this.mock(oBinding).expects("deregisterChange")
+			.withExactArgs(sPath, sinon.match.same(oListener), 42);
+
+		oContext.deregisterChange(sPath, oListener);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("hasPendingChanges", function (assert) {
+		var oBinding = {
+				hasPendingChanges : function () {}
+			},
+			oContext = Context.create(null, oBinding, "/foo", 42),
+			oResult = {},
+			sPath = "bar";
+
+		this.mock(_Helper).expects("buildPath").withExactArgs(42, sPath).returns("~bar~");
+		this.mock(oBinding).expects("hasPendingChanges").withExactArgs("~bar~").returns(oResult);
+
+		assert.strictEqual(oContext.hasPendingChanges(sPath), oResult);
 	});
 
 	//*********************************************************************************************
@@ -293,31 +326,33 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[undefined, 0, 42].forEach(function (iIndex) {
-		QUnit.test("updateValue (PropertyBinding -> "
-			+ (iIndex === undefined ? "Context" : "List") + "Binding)", function (assert) {
+	[undefined, "edit('URL')"].forEach(function (sEditUrl) {
+		QUnit.test("updateValue, editUrl=" + sEditUrl, function (assert) {
 			var oBinding = {
 					updateValue : function () {}
 				},
 				oModel = {
 					requestCanonicalPath : function () {}
 				},
-				oContext = Context.create(oModel, oBinding, "/foo", iIndex),
+				oContext = Context.create(oModel, oBinding, "/foo", 42),
 				oResult = {},
 				sPropertyName = "bar",
 				vValue = Math.PI;
 
+			this.mock(_Helper).expects("buildPath").withExactArgs(42, "SO_2_SOITEM/42")
+				.returns("~");
 			this.mock(oModel).expects("requestCanonicalPath")
+				.exactly(sEditUrl ? 0 : 1)
 				.withExactArgs(sinon.match.same(oContext))
 				.returns(Promise.resolve("/edit('URL')"));
 			this.mock(oBinding).expects("updateValue")
-				.withExactArgs("up", sPropertyName, vValue, "edit('URL')",
-					iIndex === undefined ? undefined : "" + iIndex)
+				.withExactArgs("up", sPropertyName, vValue, "edit('URL')", "~")
 				.returns(Promise.resolve(oResult));
 
-			return oContext.updateValue("up", sPropertyName, vValue).then(function (oResult0) {
-				assert.strictEqual(oResult0, oResult);
-			});
+			return oContext.updateValue("up", sPropertyName, vValue, sEditUrl, "SO_2_SOITEM/42")
+				.then(function (oResult0) {
+					assert.strictEqual(oResult0, oResult);
+				});
 		});
 	});
 
@@ -342,44 +377,6 @@ sap.ui.require([
 		}, function (oError0) {
 			assert.strictEqual(oError0, oError);
 		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("updateValue (Context/ListBinding -> ContextBinding)", function (assert) {
-		var oBinding = {
-				updateValue : function () {}
-			},
-			oContext = Context.create(null, oBinding, "/foo"),
-			oResult = {},
-			sPropertyName = "bar",
-			vValue = Math.PI;
-
-		this.mock(oBinding).expects("updateValue")
-			.withExactArgs("up", sPropertyName, vValue, "edit('URL')", "SO_2_SOITEM/42")
-			.returns(oResult);
-
-		assert.strictEqual(
-			oContext.updateValue("up", sPropertyName, vValue, "edit('URL')", "SO_2_SOITEM/42"),
-			oResult);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("updateValue (Context/ListBinding -> ListBinding)", function (assert) {
-		var oBinding = {
-				updateValue : function () {}
-			},
-			oContext = Context.create(null, oBinding, "/foo", 0),
-			oResult = {},
-			sPropertyName = "bar",
-			vValue = Math.PI;
-
-		this.mock(oBinding).expects("updateValue")
-			.withExactArgs("up", sPropertyName, vValue, "edit('URL')", "0/SO_2_SOITEM/42")
-			.returns(oResult);
-
-		assert.strictEqual(
-			oContext.updateValue("up", sPropertyName, vValue, "edit('URL')", "SO_2_SOITEM/42"),
-			oResult);
 	});
 
 	//*********************************************************************************************

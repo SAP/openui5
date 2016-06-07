@@ -6,8 +6,9 @@ sap.ui.require([
 	"sap/ui/model/Context",
 	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/lib/_Helper",
-	"sap/ui/model/odata/v4/lib/_Parser"
-], function (jQuery, Context, _ODataHelper, _Helper, _Parser) {
+	"sap/ui/model/odata/v4/lib/_Parser",
+	"sap/ui/model/Sorter"
+], function (jQuery, Context, _ODataHelper, _Helper, _Parser, Sorter) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -27,8 +28,17 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{
-		sKeyPredicate : "(ID='42')",
+		sKeyPredicate : "('42')",
 		oEntityInstance : {"ID" : "42"},
+		oEntityType : {
+			"$Key" : ["ID"],
+			"ID" : {
+				"$Type" : "Edm.String"
+			}
+		}
+	}, {
+		sKeyPredicate : "('Walter%22s%20Win''s')",
+		oEntityInstance : {"ID" : "Walter\"s Win's"},
 		oEntityType : {
 			"$Key" : ["ID"],
 			"ID" : {
@@ -86,6 +96,41 @@ sap.ui.require([
 		});
 	});
 	//TODO handle keys with aliases!
+
+	//*********************************************************************************************
+	[{
+		sDescription : "one key property",
+		oEntityInstance : {},
+		oEntityType : {
+			"$Key" : ["ID"],
+			"ID" : {
+				"$Type" : "Edm.String"
+			}
+		}
+	}, {
+		sDescription : "multiple key properties",
+		oEntityInstance : {"Sector" : "DevOps"},
+		oEntityType : {
+			"$Key" : ["Sector", "ID"],
+			"Sector" : {
+				"$Type" : "Edm.String"
+			},
+			"ID" : {
+				"$Type" : "Edm.String"
+			}
+		}
+	}].forEach(function (oFixture) {
+		QUnit.test("getKeyPredicate: missing key, " + oFixture.sDescription, function (assert) {
+			var sError = "Missing value for key property 'ID'";
+
+			this.oLogMock.expects("error").withExactArgs(sError, null,
+				"sap.ui.model.odata.v4._ODataHelper");
+
+			assert.throws(function () {
+				_ODataHelper.getKeyPredicate(oFixture.oEntityType, oFixture.oEntityInstance);
+			}, new Error(sError));
+		});
+	});
 
 	//*********************************************************************************************
 	[{
@@ -187,38 +232,66 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("buildBindingParameters, $$groupId", function (assert) {
+		var aAllowedParams = ["$$groupId"];
+
 		assert.deepEqual(_ODataHelper.buildBindingParameters(undefined), {});
 		assert.deepEqual(_ODataHelper.buildBindingParameters({}), {});
-		assert.deepEqual(_ODataHelper.buildBindingParameters({$$groupId : "$auto"}),
+		assert.deepEqual(_ODataHelper.buildBindingParameters({$$groupId : "$auto"}, aAllowedParams),
 			{$$groupId : "$auto"});
 		assert.deepEqual(_ODataHelper.buildBindingParameters(
-			{$$groupId : "$direct", custom : "foo"}), {$$groupId : "$direct"});
+			{$$groupId : "$direct", custom : "foo"}, aAllowedParams), {$$groupId : "$direct"});
 
 		assert.throws(function () {
 			_ODataHelper.buildBindingParameters({$$unsupported : "foo"});
 		}, new Error("Unsupported binding parameter: $$unsupported"));
 
 		assert.throws(function () {
-			_ODataHelper.buildBindingParameters({$$groupId : ""});
+			_ODataHelper.buildBindingParameters({$$groupId : ""}, aAllowedParams);
 		}, new Error("Unsupported value '' for binding parameter '$$groupId'"));
 		assert.throws(function () {
-			_ODataHelper.buildBindingParameters({$$groupId : "~invalid"});
+			_ODataHelper.buildBindingParameters({$$groupId : "~invalid"}, aAllowedParams);
 		}, new Error("Unsupported value '~invalid' for binding parameter '$$groupId'"));
+		assert.throws(function () {
+			_ODataHelper.buildBindingParameters({$$groupId : "$auto"});
+		}, new Error("Unsupported binding parameter: $$groupId"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildBindingParameters, $$operationMode", function (assert) {
+		var aAllowedParams = ["$$operationMode"];
+
+		assert.throws(function () {
+			_ODataHelper.buildBindingParameters({$$operationMode : "Client"}, aAllowedParams);
+		}, new Error("Unsupported operation mode: Client"));
+		assert.throws(function () {
+			_ODataHelper.buildBindingParameters({$$operationMode : "Auto"}, aAllowedParams);
+		}, new Error("Unsupported operation mode: Auto"));
+		assert.throws(function () {
+			_ODataHelper.buildBindingParameters({$$operationMode : "any"}, aAllowedParams);
+		}, new Error("Unsupported operation mode: any"));
+
+		assert.deepEqual(_ODataHelper.buildBindingParameters({$$operationMode : "Server"},
+				aAllowedParams),
+			{$$operationMode : "Server"});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("buildBindingParameters, $$updateGroupId", function (assert) {
-		assert.deepEqual(_ODataHelper.buildBindingParameters({$$updateGroupId : "myGroup"}),
-				{$$updateGroupId : "myGroup"});
+		var aAllowedParams = ["$$updateGroupId"];
+
+		assert.deepEqual(_ODataHelper.buildBindingParameters({$$updateGroupId : "myGroup"},
+				aAllowedParams),
+			{$$updateGroupId : "myGroup"});
 		assert.deepEqual(_ODataHelper.buildBindingParameters(
-				{$$updateGroupId : "$direct", custom : "foo"}), {$$updateGroupId : "$direct"});
+			{$$updateGroupId : "$direct", custom : "foo"}, aAllowedParams),
+			{$$updateGroupId : "$direct"});
 
 		assert.throws(function () {
-			_ODataHelper.buildBindingParameters({$$unsupported : "foo"});
+			_ODataHelper.buildBindingParameters({$$unsupported : "foo"}, aAllowedParams);
 		}, new Error("Unsupported binding parameter: $$unsupported"));
 
 		assert.throws(function () {
-			_ODataHelper.buildBindingParameters({$$updateGroupId : "~invalid"});
+			_ODataHelper.buildBindingParameters({$$updateGroupId : "~invalid"}, aAllowedParams);
 		}, new Error("Unsupported value '~invalid' for binding parameter '$$updateGroupId'"));
 	});
 
@@ -252,52 +325,82 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("createCacheProxy, cache creation", function (assert) {
-		var oBinding = {
-				oModel : {
+	[false, true].forEach(function (bHasCache) {
+		QUnit.test("createCacheProxy, cache creation, bHasCache=" + bHasCache, function (assert) {
+			var oBinding = {},
+				oCache = {},
+				oCache2 = {},
+				oCacheProxy1,
+				oCacheProxy1a,
+				oCacheProxy2,
+				oCacheProxy3,
+				oContext = {
 					requestCanonicalPath : function () {}
-				}
-			},
-			oCache = {},
-			oCache2 = {},
-			oCacheProxy,
-			oCacheProxy2,
-			oCacheProxy3,
-			oContext = {
-				requestCanonicalPath : function () {}
-			},
-			oContext2 = {
-				requestCanonicalPath : function () {}
-			},
-			oPathPromise = Promise.resolve("/canonical"),
-			oPathPromise2 = Promise.resolve("/canonical2");
+				},
+				oContext2 = {
+					requestCanonicalPath : function () {}
+				},
+				oContext3 = {
+					requestCanonicalPath : function () {}
+				},
+				oPathPromise = Promise.resolve("/canonical"),
+				oPathPromise2 = Promise.resolve("/canonical2"),
+				oPathPromise3 = Promise.resolve("/canonical3");
 
-		this.mock(oContext).expects("requestCanonicalPath").withExactArgs().twice()
-			.returns(oPathPromise);
-		this.mock(oContext2).expects("requestCanonicalPath").withExactArgs().returns(oPathPromise2);
+			if (bHasCache) {
+				oBinding.oCache = {
+					deregisterChange : function () {}
+				};
+				this.mock(oBinding.oCache).expects("deregisterChange").withExactArgs();
+			}
+			this.mock(oContext).expects("requestCanonicalPath").withExactArgs().twice()
+				.returns(oPathPromise);
+			this.mock(oContext2).expects("requestCanonicalPath").withExactArgs()
+				.returns(oPathPromise2);
+			this.mock(oContext3).expects("requestCanonicalPath").withExactArgs()
+				.returns(oPathPromise3);
 
-		// code under test
-		oCacheProxy = _ODataHelper.createCacheProxy(oBinding, oContext, function (sCanonicalPath) {
-			assert.strictEqual(sCanonicalPath, "/canonical");
-			return oCache;
-		});
-		oCacheProxy2 = _ODataHelper.createCacheProxy(oBinding, oContext2,
-			function (sCanonicalPath) {
-				assert.strictEqual(sCanonicalPath, "/canonical2");
-				return oCache2;
+			// code under test
+			oBinding.oCache = oCacheProxy1 =
+				_ODataHelper.createCacheProxy(oBinding, oContext, function (sCanonicalPath) {
+					assert.strictEqual(sCanonicalPath, "/canonical");
+					return oCache;
+				});
+
+			return oCacheProxy1.promise.then(function (oC1) {
+				assert.strictEqual(oC1, oCache);
+
+				// code under test
+				oBinding.oCache = oCacheProxy2 =
+					_ODataHelper.createCacheProxy(oBinding, oContext2, function (sCanonicalPath) {
+						assert.strictEqual(sCanonicalPath, "/canonical2");
+						return oCache2;
+					});
+				return oCacheProxy2.promise.then(function (oC2) {
+					assert.strictEqual(oC2, oCache2);
+
+					// code under test: two calls to createCacheProxy; the last sets binding's cache
+					oCacheProxy3 = _ODataHelper.createCacheProxy(oBinding, oContext3, function () {
+						assert.ok(false, "binding cache !== cache proxy: must not create cache");
+					});
+					oBinding.oCache = oCacheProxy1a =
+						_ODataHelper.createCacheProxy(oBinding, oContext, function () {
+							assert.ok(false, "must not recreate cache for context");
+						});
+
+					oCacheProxy3.promise.then(function (oC3) {
+						assert.strictEqual(oC3, oBinding.oCache);
+					});
+					oCacheProxy1a.promise.then(function (oC1a) {
+						assert.strictEqual(oC1a, oCache);
+						assert.strictEqual(oBinding.mCacheByContext["/canonical"], oCache);
+						assert.strictEqual(oBinding.mCacheByContext["/canonical2"], oCache2);
+						oBinding.oCache = oC1a;
+					});
+					return Promise.all([oCacheProxy1a.promise, oCacheProxy3.promise]);
+				});
 			});
-		oCacheProxy3 = _ODataHelper.createCacheProxy(oBinding, oContext, function () {
-			assert.ok(false, "must not recreate cache for context");
 		});
-
-		return Promise.all([oCacheProxy.promise, oCacheProxy2.promise, oCacheProxy3.promise])
-			.then(function (aCaches) {
-				assert.strictEqual(aCaches[0], oCache);
-				assert.strictEqual(aCaches[1], oCache2);
-				assert.strictEqual(aCaches[2], oCache);
-				assert.strictEqual(oBinding.mCacheByContext["/canonical"], oCache);
-				assert.strictEqual(oBinding.mCacheByContext["/canonical2"], oCache2);
-			});
 	});
 
 	//*********************************************************************************************
@@ -323,9 +426,13 @@ sap.ui.require([
 			.returns(oReadPromise);
 
 		// code under test
-		oCacheProxy = _ODataHelper.createCacheProxy(oBinding, oContext, function (sCanonicalPath) {
-			return oCache;
-		});
+		oBinding.oCache = oCacheProxy =
+			_ODataHelper.createCacheProxy(oBinding, oContext, function (sCanonicalPath) {
+				return oCache;
+			});
+
+		assert.strictEqual(typeof oCacheProxy.deregisterChange, "function");
+		assert.strictEqual(oCacheProxy.hasPendingChanges(), false);
 		assert.strictEqual(typeof oCacheProxy.refresh, "function");
 		assert.throws(function () {
 			oCacheProxy.post();
@@ -369,11 +476,61 @@ sap.ui.require([
 			.returns(oReadPromise);
 
 		// code under test
-		oCacheProxy = _ODataHelper.createCacheProxy(oBinding, oContext, function (sCanonicalPath) {
-			return oCache;
-		});
+		oBinding.oCache = oCacheProxy =
+			_ODataHelper.createCacheProxy(oBinding, oContext, function (sCanonicalPath) {
+				return oCache;
+			});
 		return oCacheProxy.read("$auto", "foo").catch(function(oError0) {
 			assert.strictEqual(oError0, oError);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildOrderbyOption", function (assert) {
+		var sOrderby = "bar desc";
+
+		// empty sorters
+		assert.strictEqual(_ODataHelper.buildOrderbyOption([]), "");
+		// array of sorters
+		assert.strictEqual(_ODataHelper.buildOrderbyOption([new Sorter("foo")]), "foo",
+			"Sorter array, no query option");
+		assert.strictEqual(_ODataHelper.buildOrderbyOption([new Sorter("foo"),
+			new Sorter("bar", true)]), "foo,bar desc");
+
+		// with system query option $orderby
+		// empty sorters
+		assert.strictEqual(_ODataHelper.buildOrderbyOption([], sOrderby), sOrderby);
+		// array of sorters
+		assert.strictEqual(_ODataHelper.buildOrderbyOption([new Sorter("foo")], sOrderby),
+			"foo," + sOrderby, "Sorter array, with query option");
+		assert.strictEqual(_ODataHelper.buildOrderbyOption([new Sorter("foo"),
+			new Sorter("baz", true)], sOrderby), "foo,baz desc," + sOrderby);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildOrderbyOption - error", function (assert) {
+		// non Sorter instances throw error
+		assert.throws(function () {
+			_ODataHelper.buildOrderbyOption(["foo"]);
+		}, new Error("Unsupported sorter: 'foo' (string)"));
+		assert.throws(function () {
+			_ODataHelper.buildOrderbyOption([new Sorter("foo"), "", new Sorter("bar", true)]);
+		}, new Error("Unsupported sorter: '' (string)"));
+		assert.throws(function () {
+			_ODataHelper.buildOrderbyOption([new Sorter("foo"), 42, new Sorter("bar", true)]);
+		}, new Error("Unsupported sorter: '42' (number)"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("toArray", function (assert) {
+		var oSorter = new Sorter("foo", true),
+			aSorters = [oSorter];
+
+		assert.deepEqual(_ODataHelper.toArray(), []);
+		assert.deepEqual(_ODataHelper.toArray(null), []);
+		assert.deepEqual(_ODataHelper.toArray(""), [""]);
+		assert.deepEqual(_ODataHelper.toArray("foo"), ["foo"]);
+		assert.deepEqual(_ODataHelper.toArray(oSorter), aSorters);
+		assert.strictEqual(_ODataHelper.toArray(aSorters), aSorters);
 	});
 });

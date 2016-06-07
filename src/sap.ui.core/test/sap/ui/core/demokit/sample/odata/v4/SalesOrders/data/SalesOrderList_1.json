@@ -1,8 +1,8 @@
 {
-	"@odata.context" : "$metadata#SalesOrderList(ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID,SO_2_BP(BusinessPartnerID,CompanyName,PhoneNumber))/$entity",
-	"@odata.etag" : "W/\"20160419220000.0000000\"",
-	"ChangedAt" : "20160419220000.0000000 ",
-	"CreatedAt" : "20160419220000.0000000 ",
+	"@odata.context" : "$metadata#SalesOrderList(ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID,SO_2_SOITEM(SOITEM_2_PRODUCT(PRODUCT_2_BP(BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))),SO_2_BP(BusinessPartnerID,CompanyName,PhoneNumber))/$entity",
+	"@odata.etag" : "W/\"20160518220000.0000000\"",
+	"ChangedAt" : "20160518220000.0000000 ",
+	"CreatedAt" : "20160518220000.0000000 ",
 	"LifecycleStatusDesc" : "",
 	"Note" : "EPM DG: SO ID 0500000002 Deliver as fast as possible",
 	"SalesOrderID" : "0500000002",
@@ -16,7 +16,7 @@
 				"GrossAmount" : "2963.10",
 				"NetAmount" : "2490.00",
 				"TaxAmount" : "473.10",
-				"DeliveryDate" : "2016-04-26T22:00:00Z",
+				"DeliveryDate" : "2016-05-25T22:00:00Z",
 				"Quantity" : "3",
 				"QuantityUnit" : "EA",
 				"Product" : {
@@ -43,88 +43,14 @@
 					"Depth" : "46.000",
 					"Height" : "30.000",
 					"DimUnit" : "CM",
-					"CreatedAt" : "2016-04-20T14:39:45Z",
-					"ChangedAt" : "2016-04-20T14:39:45Z",
+					"CreatedAt" : "2016-04-20T05:46:40Z",
+					"ChangedAt" : "2016-04-20T05:46:40Z",
 					"PRODUCT_2_BP" : {
-						"@odata.etag" : "W/\"20160420143945.0000000\"",
+						"@odata.etag" : "W/\"20160420054640.0000000\"",
 						"BusinessPartnerID" : "0100000017",
-						"BusinessPartnerRole" : "01",
 						"CompanyName" : "Meliva",
-						"WebAddress" : "http://www.meliva.de",
-						"EmailAddress" : "johanna.esther@meliva.de",
-						"PhoneNumber" : "2208791738",
-						"FaxNumber" : "2208791004",
 						"LegalForm" : "AG",
-						"CurrencyCode" : "EUR",
-						"CreatedAt" : "2016-04-20T14:39:45Z",
-						"ChangedAt" : "2016-04-20T14:39:45Z",
-						"Address" : {
-							"City" : "Köln",
-							"PostalCode" : "50827",
-							"Street" : "Robert-Koch-Straße",
-							"Building" : "14",
-							"Country" : "DE",
-							"AddressType" : "02",
-							"GeoLocation" : {
-								"Longitude" : "6.923813100000",
-								"Latitude" : "50.923705400000"
-							}
-						},
-						"BP_2_CONTACT" : [ {
-							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5f4035",
-							"BusinessPartnerID" : "0100000017",
-							"Title" : "",
-							"FirstName" : "Johanna",
-							"MiddleName" : "",
-							"LastName" : "Esther",
-							"Nickname" : "",
-							"Initials" : "",
-							"Sex" : "F",
-							"PhoneNumber" : "2208791738",
-							"FaxNumber" : "2208791004",
-							"EmailAddress" : "johanna.esther@meliva.de",
-							"Language" : "E",
-							"DateOfBirth" : null,
-							"Address" : {
-								"City" : "Köln",
-								"PostalCode" : "50667",
-								"Street" : "Marspfortengasse",
-								"Building" : "6",
-								"Country" : "DE",
-								"AddressType" : "02",
-								"GeoLocation" : {
-									"Longitude" : "6.956905300000",
-									"Latitude" : "50.938005900000"
-								}
-							}
-						}, {
-							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5f6035",
-							"BusinessPartnerID" : "0100000017",
-							"Title" : "",
-							"FirstName" : "Kevin",
-							"MiddleName" : "",
-							"LastName" : "Schroeder",
-							"Nickname" : "",
-							"Initials" : "",
-							"Sex" : "M",
-							"PhoneNumber" : "2208791951",
-							"FaxNumber" : "2208791004",
-							"EmailAddress" : "kevin.schroeder@meliva.de",
-							"Language" : "E",
-							"DateOfBirth" : null,
-							"Address" : {
-								"City" : "Köln",
-								"PostalCode" : "50825",
-								"Street" : "Hospeltstrasse",
-								"Building" : "39",
-								"Country" : "DE",
-								"AddressType" : "02",
-								"GeoLocation" : {
-									"Longitude" : "6.905992700000",
-									"Latitude" : "50.953791100000"
-								}
-							}
-						} ]
+						"PhoneNumber" : "2208791738"
 					}
 				}
 			},
@@ -137,7 +63,7 @@
 				"GrossAmount" : "583.10",
 				"NetAmount" : "490.00",
 				"TaxAmount" : "93.10",
-				"DeliveryDate" : "2016-04-26T22:00:00Z",
+				"DeliveryDate" : "2016-05-25T22:00:00Z",
 				"Quantity" : "1",
 				"QuantityUnit" : "EA",
 				"Product" : {
@@ -164,88 +90,14 @@
 					"Depth" : "42.000",
 					"Height" : "26.000",
 					"DimUnit" : "CM",
-					"CreatedAt" : "2016-04-20T14:39:45Z",
-					"ChangedAt" : "2016-04-20T14:39:45Z",
+					"CreatedAt" : "2016-04-20T05:46:40Z",
+					"ChangedAt" : "2016-04-20T05:46:40Z",
 					"PRODUCT_2_BP" : {
-						"@odata.etag" : "W/\"20160420143945.0000000\"",
+						"@odata.etag" : "W/\"20160420054640.0000000\"",
 						"BusinessPartnerID" : "0100000018",
-						"BusinessPartnerRole" : "01",
 						"CompanyName" : "Compostela",
-						"WebAddress" : "http://www.compostela.ar",
-						"EmailAddress" : "miguel.luengo@compostela.ar",
-						"PhoneNumber" : "4440238917",
-						"FaxNumber" : "4440238004",
 						"LegalForm" : "S.A.",
-						"CurrencyCode" : "ARS",
-						"CreatedAt" : "2016-04-20T14:39:45Z",
-						"ChangedAt" : "2016-04-20T14:39:45Z",
-						"Address" : {
-							"City" : "Mendoza",
-							"PostalCode" : "M5500",
-							"Street" : "Avenida De Julio",
-							"Building" : "53",
-							"Country" : "AR",
-							"AddressType" : "02",
-							"GeoLocation" : {
-								"Longitude" : "-68.844836300000",
-								"Latitude" : "-32.889648800000"
-							}
-						},
-						"BP_2_CONTACT" : [ {
-							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5f8035",
-							"BusinessPartnerID" : "0100000018",
-							"Title" : "",
-							"FirstName" : "Miguel",
-							"MiddleName" : "",
-							"LastName" : "Luengo",
-							"Nickname" : "",
-							"Initials" : "",
-							"Sex" : "M",
-							"PhoneNumber" : "4440238917",
-							"FaxNumber" : "4440238004",
-							"EmailAddress" : "miguel.luengo@compostela.ar",
-							"Language" : "E",
-							"DateOfBirth" : null,
-							"Address" : {
-								"City" : "Munro, Buenos Aires",
-								"PostalCode" : "B1605BGE",
-								"Street" : "Pres. Santiago Derqui",
-								"Building" : "4985",
-								"Country" : "AR",
-								"AddressType" : "02",
-								"GeoLocation" : {
-									"Longitude" : "-58.529170000000",
-									"Latitude" : "-34.519958000000"
-								}
-							}
-						}, {
-							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5fa035",
-							"BusinessPartnerID" : "0100000018",
-							"Title" : "",
-							"FirstName" : "Carla",
-							"MiddleName" : "",
-							"LastName" : "Cardoso",
-							"Nickname" : "",
-							"Initials" : "",
-							"Sex" : "F",
-							"PhoneNumber" : "1651009847",
-							"FaxNumber" : "4440238004",
-							"EmailAddress" : "carla.cardoso@compostela.ar",
-							"Language" : "E",
-							"DateOfBirth" : null,
-							"Address" : {
-								"City" : "Mendoza",
-								"PostalCode" : "M5519",
-								"Street" : "Av. Bandera de los Andes",
-								"Building" : "352",
-								"Country" : "AR",
-								"AddressType" : "02",
-								"GeoLocation" : {
-									"Longitude" : "-68.827264000000",
-									"Latitude" : "-32.893951000000"
-								}
-							}
-						} ]
+						"PhoneNumber" : "4440238917"
 					}
 				}
 			},
@@ -258,7 +110,7 @@
 				"GrossAmount" : "830.62",
 				"NetAmount" : "698.00",
 				"TaxAmount" : "132.62",
-				"DeliveryDate" : "2016-04-26T22:00:00Z",
+				"DeliveryDate" : "2016-05-25T22:00:00Z",
 				"Quantity" : "2",
 				"QuantityUnit" : "EA",
 				"Product" : {
@@ -285,88 +137,14 @@
 					"Depth" : "50.000",
 					"Height" : "65.000",
 					"DimUnit" : "CM",
-					"CreatedAt" : "2016-04-20T14:39:45Z",
-					"ChangedAt" : "2016-04-20T14:39:45Z",
+					"CreatedAt" : "2016-04-20T05:46:40Z",
+					"ChangedAt" : "2016-04-20T05:46:40Z",
 					"PRODUCT_2_BP" : {
-						"@odata.etag" : "W/\"20160420143945.0000000\"",
+						"@odata.etag" : "W/\"20160420054640.0000000\"",
 						"BusinessPartnerID" : "0100000019",
-						"BusinessPartnerRole" : "01",
 						"CompanyName" : "Pateu",
-						"WebAddress" : "http://www.pateu.fr",
-						"EmailAddress" : "isabel.nemours@pateu.fr",
-						"PhoneNumber" : "6328490087",
-						"FaxNumber" : "6328490004",
 						"LegalForm" : "S.A.R.L.",
-						"CurrencyCode" : "EUR",
-						"CreatedAt" : "2016-04-20T14:39:45Z",
-						"ChangedAt" : "2016-04-20T14:39:45Z",
-						"Address" : {
-							"City" : "Lyon",
-							"PostalCode" : "69007",
-							"Street" : "Quai de Pierre Scize",
-							"Building" : "81",
-							"Country" : "FR",
-							"AddressType" : "02",
-							"GeoLocation" : {
-								"Longitude" : "4.832323900000",
-								"Latitude" : "45.757595800000"
-							}
-						},
-						"BP_2_CONTACT" : [ {
-							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5fc035",
-							"BusinessPartnerID" : "0100000019",
-							"Title" : "",
-							"FirstName" : "Isabel",
-							"MiddleName" : "",
-							"LastName" : "Nemours",
-							"Nickname" : "",
-							"Initials" : "",
-							"Sex" : "F",
-							"PhoneNumber" : "6328490087",
-							"FaxNumber" : "6328490004",
-							"EmailAddress" : "isabel.nemours@pateu.fr",
-							"Language" : "E",
-							"DateOfBirth" : null,
-							"Address" : {
-								"City" : "Lyon",
-								"PostalCode" : "69326",
-								"Street" : "Rue Servient",
-								"Building" : "131",
-								"Country" : "FR",
-								"AddressType" : "02",
-								"GeoLocation" : {
-									"Longitude" : "4.854537000000",
-									"Latitude" : "45.760667000000"
-								}
-							}
-						}, {
-							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd5fe035",
-							"BusinessPartnerID" : "0100000019",
-							"Title" : "",
-							"FirstName" : "Dominique",
-							"MiddleName" : "Robert",
-							"LastName" : "Sorain",
-							"Nickname" : "",
-							"Initials" : "",
-							"Sex" : "M",
-							"PhoneNumber" : "6328490082",
-							"FaxNumber" : "6328490004",
-							"EmailAddress" : "dominique.sorain@pateu.fr",
-							"Language" : "E",
-							"DateOfBirth" : null,
-							"Address" : {
-								"City" : "St Pierre de Bressieux",
-								"PostalCode" : "38870",
-								"Street" : "rte de Rossieres",
-								"Building" : "17",
-								"Country" : "FR",
-								"AddressType" : "02",
-								"GeoLocation" : {
-									"Longitude" : "5.287400000000",
-									"Latitude" : "45.312650000000"
-								}
-							}
-						} ]
+						"PhoneNumber" : "6328490087"
 					}
 				}
 			},
@@ -379,7 +157,7 @@
 				"GrossAmount" : "330.82",
 				"NetAmount" : "278.00",
 				"TaxAmount" : "52.82",
-				"DeliveryDate" : "2016-04-26T22:00:00Z",
+				"DeliveryDate" : "2016-05-25T22:00:00Z",
 				"Quantity" : "2",
 				"QuantityUnit" : "EA",
 				"Product" : {
@@ -406,88 +184,14 @@
 					"Depth" : "41.000",
 					"Height" : "28.000",
 					"DimUnit" : "CM",
-					"CreatedAt" : "2016-04-20T14:39:45Z",
-					"ChangedAt" : "2016-04-20T14:39:45Z",
+					"CreatedAt" : "2016-04-20T05:46:40Z",
+					"ChangedAt" : "2016-04-20T05:46:40Z",
 					"PRODUCT_2_BP" : {
-						"@odata.etag" : "W/\"20160420143945.0000000\"",
+						"@odata.etag" : "W/\"20160420054640.0000000\"",
 						"BusinessPartnerID" : "0100000020",
-						"BusinessPartnerRole" : "02",
 						"CompanyName" : "Russian Electronic Trading Company",
-						"WebAddress" : "http://www.retc.ru",
-						"EmailAddress" : "igor.tarassow@retc.ru",
-						"PhoneNumber" : "4050378468",
-						"FaxNumber" : "4050378004",
 						"LegalForm" : "z.a.o.",
-						"CurrencyCode" : "RUB",
-						"CreatedAt" : "2016-04-20T14:39:45Z",
-						"ChangedAt" : "2016-04-20T14:39:45Z",
-						"Address" : {
-							"City" : "Moscow",
-							"PostalCode" : "125719",
-							"Street" : "Elektrozavodskaya ulitsa",
-							"Building" : "21",
-							"Country" : "RU",
-							"AddressType" : "02",
-							"GeoLocation" : {
-								"Longitude" : "37.618701200000",
-								"Latitude" : "55.751614700000"
-							}
-						},
-						"BP_2_CONTACT" : [ {
-							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd600035",
-							"BusinessPartnerID" : "0100000020",
-							"Title" : "",
-							"FirstName" : "Igor",
-							"MiddleName" : "",
-							"LastName" : "Tarassow",
-							"Nickname" : "",
-							"Initials" : "",
-							"Sex" : "M",
-							"PhoneNumber" : "4050378468",
-							"FaxNumber" : "4050378004",
-							"EmailAddress" : "igor.tarassow@retc.ru",
-							"Language" : "E",
-							"DateOfBirth" : null,
-							"Address" : {
-								"City" : "Moscow",
-								"PostalCode" : "123242",
-								"Street" : "Malyy Predtechenskiy per.",
-								"Building" : "4",
-								"Country" : "RU",
-								"AddressType" : "02",
-								"GeoLocation" : {
-									"Longitude" : "37.571380000000",
-									"Latitude" : "55.758531000000"
-								}
-							}
-						}, {
-							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd602035",
-							"BusinessPartnerID" : "0100000020",
-							"Title" : "",
-							"FirstName" : "Swetlana",
-							"MiddleName" : "",
-							"LastName" : "Karaseva",
-							"Nickname" : "",
-							"Initials" : "",
-							"Sex" : "F",
-							"PhoneNumber" : "4050378412",
-							"FaxNumber" : "4050378004",
-							"EmailAddress" : "swet.karaseva@retc.ru",
-							"Language" : "E",
-							"DateOfBirth" : null,
-							"Address" : {
-								"City" : "Sankt-Peterburg",
-								"PostalCode" : "190008",
-								"Street" : "Elektrozavodskaya ulitsa",
-								"Building" : "38",
-								"Country" : "RU",
-								"AddressType" : "02",
-								"GeoLocation" : {
-									"Longitude" : "30.277460000000",
-									"Latitude" : "59.918204000000"
-								}
-							}
-						} ]
+						"PhoneNumber" : "4050378468"
 					}
 				}
 			},
@@ -500,7 +204,7 @@
 				"GrossAmount" : "117.81",
 				"NetAmount" : "99.00",
 				"TaxAmount" : "18.81",
-				"DeliveryDate" : "2016-04-26T22:00:00Z",
+				"DeliveryDate" : "2016-05-25T22:00:00Z",
 				"Quantity" : "1",
 				"QuantityUnit" : "EA",
 				"Product" : {
@@ -527,88 +231,14 @@
 					"Depth" : "32.000",
 					"Height" : "25.000",
 					"DimUnit" : "CM",
-					"CreatedAt" : "2016-04-20T14:39:45Z",
-					"ChangedAt" : "2016-04-20T14:39:45Z",
+					"CreatedAt" : "2016-04-20T05:46:40Z",
+					"ChangedAt" : "2016-04-20T05:46:40Z",
 					"PRODUCT_2_BP" : {
-						"@odata.etag" : "W/\"20160420143945.0000000\"",
+						"@odata.etag" : "W/\"20160420054640.0000000\"",
 						"BusinessPartnerID" : "0100000021",
-						"BusinessPartnerRole" : "01",
 						"CompanyName" : "Florida Holiday Company",
-						"WebAddress" : "http://www.flor-hc.com",
-						"EmailAddress" : "alexis.harper@flor-hc.com",
-						"PhoneNumber" : "6065470312",
-						"FaxNumber" : "6065470004",
 						"LegalForm" : "Inc.",
-						"CurrencyCode" : "USD",
-						"CreatedAt" : "2016-04-20T14:39:45Z",
-						"ChangedAt" : "2016-04-20T14:39:45Z",
-						"Address" : {
-							"City" : "Jacksonville, Florida",
-							"PostalCode" : "32229",
-							"Street" : "Marshall Street",
-							"Building" : "77",
-							"Country" : "US",
-							"AddressType" : "02",
-							"GeoLocation" : {
-								"Longitude" : "-81.634114000000",
-								"Latitude" : "30.331544000000"
-							}
-						},
-						"BP_2_CONTACT" : [ {
-							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd604035",
-							"BusinessPartnerID" : "0100000021",
-							"Title" : "",
-							"FirstName" : "Alexis",
-							"MiddleName" : "",
-							"LastName" : "Harper",
-							"Nickname" : "",
-							"Initials" : "",
-							"Sex" : "F",
-							"PhoneNumber" : "6065470312",
-							"FaxNumber" : "6065470004",
-							"EmailAddress" : "alexis.harper@flor-hc.com",
-							"Language" : "E",
-							"DateOfBirth" : null,
-							"Address" : {
-								"City" : "Jacksonville, Florida",
-								"PostalCode" : "32204",
-								"Street" : "Water Street",
-								"Building" : "700",
-								"Country" : "US",
-								"AddressType" : "02",
-								"GeoLocation" : {
-									"Longitude" : "-81.666780000000",
-									"Latitude" : "30.326740000000"
-								}
-							}
-						}, {
-							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd606035",
-							"BusinessPartnerID" : "0100000021",
-							"Title" : "",
-							"FirstName" : "Carolyn",
-							"MiddleName" : "Lee",
-							"LastName" : "Yale",
-							"Nickname" : "",
-							"Initials" : "",
-							"Sex" : "F",
-							"PhoneNumber" : "33432584290",
-							"FaxNumber" : "6065470004",
-							"EmailAddress" : "yale.carolyn@flor-hc.com",
-							"Language" : "E",
-							"DateOfBirth" : null,
-							"Address" : {
-								"City" : "Boca Raton, Florida",
-								"PostalCode" : "33486",
-								"Street" : "Deerhurst Crescent Cir",
-								"Building" : "5147",
-								"Country" : "US",
-								"AddressType" : "02",
-								"GeoLocation" : {
-									"Longitude" : "-80.123996000000",
-									"Latitude" : "26.331327000000"
-								}
-							}
-						} ]
+						"PhoneNumber" : "6065470312"
 					}
 				}
 			},
@@ -621,7 +251,7 @@
 				"GrossAmount" : "404.60",
 				"NetAmount" : "340.00",
 				"TaxAmount" : "64.60",
-				"DeliveryDate" : "2016-04-26T22:00:00Z",
+				"DeliveryDate" : "2016-05-25T22:00:00Z",
 				"Quantity" : "2",
 				"QuantityUnit" : "EA",
 				"Product" : {
@@ -648,88 +278,14 @@
 					"Depth" : "41.000",
 					"Height" : "28.000",
 					"DimUnit" : "CM",
-					"CreatedAt" : "2016-04-20T14:39:45Z",
-					"ChangedAt" : "2016-04-20T14:39:45Z",
+					"CreatedAt" : "2016-04-20T05:46:40Z",
+					"ChangedAt" : "2016-04-20T05:46:40Z",
 					"PRODUCT_2_BP" : {
-						"@odata.etag" : "W/\"20160420143945.0000000\"",
+						"@odata.etag" : "W/\"20160420054640.0000000\"",
 						"BusinessPartnerID" : "0100000022",
-						"BusinessPartnerRole" : "01",
 						"CompanyName" : "Quimica Madrilenos",
-						"WebAddress" : "http://www.quimica-madrilenos.es",
-						"EmailAddress" : "c.alfaro@quimica-madrilenos.es",
-						"PhoneNumber" : "7980023486",
-						"FaxNumber" : "7980023004",
 						"LegalForm" : "S.A.",
-						"CurrencyCode" : "EUR",
-						"CreatedAt" : "2016-04-20T14:39:45Z",
-						"ChangedAt" : "2016-04-20T14:39:45Z",
-						"Address" : {
-							"City" : "Madrid",
-							"PostalCode" : "28100",
-							"Street" : "Calle de la Marquesa Viuda de Aldama",
-							"Building" : "35",
-							"Country" : "ES",
-							"AddressType" : "02",
-							"GeoLocation" : {
-								"Longitude" : "-3.633585500000",
-								"Latitude" : "40.541071700000"
-							}
-						},
-						"BP_2_CONTACT" : [ {
-							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd608035",
-							"BusinessPartnerID" : "0100000022",
-							"Title" : "",
-							"FirstName" : "Cristal",
-							"MiddleName" : "",
-							"LastName" : "Alfaro",
-							"Nickname" : "",
-							"Initials" : "",
-							"Sex" : "F",
-							"PhoneNumber" : "7980023486",
-							"FaxNumber" : "7980023004",
-							"EmailAddress" : "c.alfaro@quimica-madrilenos.es",
-							"Language" : "E",
-							"DateOfBirth" : null,
-							"Address" : {
-								"City" : "Madrid",
-								"PostalCode" : "28100",
-								"Street" : "Calle del Marqués de la Valdavia",
-								"Building" : "4",
-								"Country" : "ES",
-								"AddressType" : "02",
-								"GeoLocation" : {
-									"Longitude" : "-3.636249000000",
-									"Latitude" : "40.540425000000"
-								}
-							}
-						}, {
-							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd60a035",
-							"BusinessPartnerID" : "0100000022",
-							"Title" : "",
-							"FirstName" : "Manuela",
-							"MiddleName" : "",
-							"LastName" : "Carmena",
-							"Nickname" : "",
-							"Initials" : "",
-							"Sex" : "F",
-							"PhoneNumber" : "7980023532",
-							"FaxNumber" : "7980023004",
-							"EmailAddress" : "manuela_carmena@quimica-madrilenos.es",
-							"Language" : "E",
-							"DateOfBirth" : null,
-							"Address" : {
-								"City" : "Madrid",
-								"PostalCode" : "28043",
-								"Street" : "Calle de Emilio Vargas",
-								"Building" : "5-7",
-								"Country" : "ES",
-								"AddressType" : "02",
-								"GeoLocation" : {
-									"Longitude" : "-3.655426000000",
-									"Latitude" : "40.447554000000"
-								}
-							}
-						} ]
+						"PhoneNumber" : "7980023486"
 					}
 				}
 			},
@@ -742,7 +298,7 @@
 				"GrossAmount" : "117.81",
 				"NetAmount" : "99.00",
 				"TaxAmount" : "18.81",
-				"DeliveryDate" : "2016-04-26T22:00:00Z",
+				"DeliveryDate" : "2016-05-25T22:00:00Z",
 				"Quantity" : "1",
 				"QuantityUnit" : "EA",
 				"Product" : {
@@ -769,88 +325,14 @@
 					"Depth" : "45.000",
 					"Height" : "29.000",
 					"DimUnit" : "CM",
-					"CreatedAt" : "2016-04-20T14:39:45Z",
-					"ChangedAt" : "2016-04-20T14:39:45Z",
+					"CreatedAt" : "2016-04-20T05:46:40Z",
+					"ChangedAt" : "2016-04-20T05:46:40Z",
 					"PRODUCT_2_BP" : {
-						"@odata.etag" : "W/\"20160420143945.0000000\"",
+						"@odata.etag" : "W/\"20160420054640.0000000\"",
 						"BusinessPartnerID" : "0100000023",
-						"BusinessPartnerRole" : "01",
 						"CompanyName" : "Getränkegroßhandel Janssen",
-						"WebAddress" : "http://www.getraenke-janssen.de",
-						"EmailAddress" : "sven.j@getraenke-janssen.de",
-						"PhoneNumber" : "3629731486",
-						"FaxNumber" : "3629731004",
 						"LegalForm" : "GmbH",
-						"CurrencyCode" : "EUR",
-						"CreatedAt" : "2016-04-20T14:39:45Z",
-						"ChangedAt" : "2016-04-20T14:39:45Z",
-						"Address" : {
-							"City" : "München",
-							"PostalCode" : "80935",
-							"Street" : "Albert-Schweitzer-Straße",
-							"Building" : "16",
-							"Country" : "DE",
-							"AddressType" : "02",
-							"GeoLocation" : {
-								"Longitude" : "11.562391391838",
-								"Latitude" : "48.193873400000"
-							}
-						},
-						"BP_2_CONTACT" : [ {
-							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd60c035",
-							"BusinessPartnerID" : "0100000023",
-							"Title" : "",
-							"FirstName" : "Sven",
-							"MiddleName" : "",
-							"LastName" : "Janssen",
-							"Nickname" : "",
-							"Initials" : "",
-							"Sex" : "M",
-							"PhoneNumber" : "3629731486",
-							"FaxNumber" : "3629731004",
-							"EmailAddress" : "sven.j@getraenke-janssen.de",
-							"Language" : "E",
-							"DateOfBirth" : null,
-							"Address" : {
-								"City" : "München",
-								"PostalCode" : "80336",
-								"Street" : "Schillerstraße",
-								"Building" : "37",
-								"Country" : "DE",
-								"AddressType" : "02",
-								"GeoLocation" : {
-									"Longitude" : "11.560929300000",
-									"Latitude" : "48.135385200000"
-								}
-							}
-						}, {
-							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd60e035",
-							"BusinessPartnerID" : "0100000023",
-							"Title" : "",
-							"FirstName" : "Leah",
-							"MiddleName" : "",
-							"LastName" : "Aachen",
-							"Nickname" : "",
-							"Initials" : "",
-							"Sex" : "F",
-							"PhoneNumber" : "08942946478",
-							"FaxNumber" : "3629731004",
-							"EmailAddress" : "leah.aachen@getraenke-janssen.de",
-							"Language" : "E",
-							"DateOfBirth" : null,
-							"Address" : {
-								"City" : "München",
-								"PostalCode" : "80335",
-								"Street" : "Nymphenburger Str",
-								"Building" : "51",
-								"Country" : "DE",
-								"AddressType" : "02",
-								"GeoLocation" : {
-									"Longitude" : "11.548930000000",
-									"Latitude" : "48.149340000000"
-								}
-							}
-						} ]
+						"PhoneNumber" : "3629731486"
 					}
 				}
 			},
@@ -863,7 +345,7 @@
 				"GrossAmount" : "28322",
 				"NetAmount" : "23800",
 				"TaxAmount" : "4522",
-				"DeliveryDate" : "2016-04-26T22:00:00Z",
+				"DeliveryDate" : "2016-05-25T22:00:00Z",
 				"Quantity" : "2",
 				"QuantityUnit" : "EA",
 				"Product" : {
@@ -890,93 +372,19 @@
 					"Depth" : "41.300",
 					"Height" : "22.000",
 					"DimUnit" : "CM",
-					"CreatedAt" : "2016-04-20T14:39:45Z",
-					"ChangedAt" : "2016-04-20T14:39:45Z",
+					"CreatedAt" : "2016-04-20T05:46:40Z",
+					"ChangedAt" : "2016-04-20T05:46:40Z",
 					"PRODUCT_2_BP" : {
-						"@odata.etag" : "W/\"20160420143945.0000000\"",
+						"@odata.etag" : "W/\"20160420054640.0000000\"",
 						"BusinessPartnerID" : "0100000024",
-						"BusinessPartnerRole" : "01",
 						"CompanyName" : "JaTeCo",
-						"WebAddress" : "http://www.jateco.jp",
-						"EmailAddress" : "yoshiko.kakuji@jateco.jp",
-						"PhoneNumber" : "3206580974",
-						"FaxNumber" : "3206580004",
 						"LegalForm" : "Inc.",
-						"CurrencyCode" : "JPY",
-						"CreatedAt" : "2016-04-20T14:39:45Z",
-						"ChangedAt" : "2016-04-20T14:39:45Z",
-						"Address" : {
-							"City" : "Sapporo-shi",
-							"PostalCode" : "0600007",
-							"Street" : "Chome-1 Kita 7 Jonishi",
-							"Building" : "7",
-							"Country" : "JP",
-							"AddressType" : "02",
-							"GeoLocation" : {
-								"Longitude" : "141.354456900000",
-								"Latitude" : "43.062048100000"
-							}
-						},
-						"BP_2_CONTACT" : [ {
-							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd610035",
-							"BusinessPartnerID" : "0100000024",
-							"Title" : "",
-							"FirstName" : "Yoshiko",
-							"MiddleName" : "",
-							"LastName" : "Kakuji",
-							"Nickname" : "",
-							"Initials" : "",
-							"Sex" : "F",
-							"PhoneNumber" : "3206580974",
-							"FaxNumber" : "3206580004",
-							"EmailAddress" : "yoshiko.kakuji@jateco.jp",
-							"Language" : "E",
-							"DateOfBirth" : null,
-							"Address" : {
-								"City" : "SapHirosaki",
-								"PostalCode" : "036-8356",
-								"Street" : "Shimoshiroganecho",
-								"Building" : "19-4",
-								"Country" : "JP",
-								"AddressType" : "02",
-								"GeoLocation" : {
-									"Longitude" : "140.469301400000",
-									"Latitude" : "40.606988100000"
-								}
-							}
-						}, {
-							"ContactGUID" : "005056b4-24bc-1ed6-81e0-b734dd612035",
-							"BusinessPartnerID" : "0100000024",
-							"Title" : "",
-							"FirstName" : "Kazuo",
-							"MiddleName" : "",
-							"LastName" : "Koike",
-							"Nickname" : "",
-							"Initials" : "",
-							"Sex" : "M",
-							"PhoneNumber" : "3206580531",
-							"FaxNumber" : "3206580004",
-							"EmailAddress" : "kazuo.koike@jateco.jp",
-							"Language" : "E",
-							"DateOfBirth" : null,
-							"Address" : {
-								"City" : "Chūō",
-								"PostalCode" : "104-0045",
-								"Street" : "Tsukiji, 3 Chome−5−4",
-								"Building" : "3",
-								"Country" : "JP",
-								"AddressType" : "02",
-								"GeoLocation" : {
-									"Longitude" : "139.774353500000",
-									"Latitude" : "35.668384300000"
-								}
-							}
-						} ]
+						"PhoneNumber" : "3206580974"
 					}
 				}
-			} ],
+			}],
 	"SO_2_BP" : {
-		"@odata.etag" : "W/\"20160420143945.0000000\"",
+		"@odata.etag" : "W/\"20160420054640.0000000\"",
 		"BusinessPartnerID" : "0100000005",
 		"CompanyName" : "TECUM",
 		"PhoneNumber" : "2511415"

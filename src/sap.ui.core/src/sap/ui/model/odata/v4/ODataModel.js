@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/ui/core/message/Message",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Model",
+	"sap/ui/model/odata/OperationMode",
 	"sap/ui/thirdparty/URI",
 	"./_ODataHelper",
 	"./lib/_MetadataRequestor",
@@ -24,8 +25,9 @@ sap.ui.define([
 	"./ODataListBinding",
 	"./ODataMetaModel",
 	"./ODataPropertyBinding"
-], function(jQuery, Message, BindingMode, Model, URI, _ODataHelper, _MetadataRequestor, _Requestor,
-		ODataContextBinding, ODataListBinding, ODataMetaModel, ODataPropertyBinding) {
+], function(jQuery, Message, BindingMode, Model, OperationMode, URI, _ODataHelper,
+		_MetadataRequestor, _Requestor, ODataContextBinding, ODataListBinding, ODataMetaModel,
+		ODataPropertyBinding) {
 
 	"use strict";
 
@@ -35,6 +37,7 @@ sap.ui.define([
 		},
 		mSupportedParameters = {
 			groupId : true,
+			operationMode : true,
 			serviceUrl : true,
 			synchronizationMode : true,
 			updateGroupId : true
@@ -49,6 +52,9 @@ sap.ui.define([
 	 *   Controls the model's use of batch requests: '$auto' bundles requests from the model in a
 	 *   batch request which is sent automatically before rendering; '$direct' sends requests
 	 *   directly without batch; other values result in an error
+	 * @param {sap.ui.model.odata.OperationMode} [mParameters.operationMode]
+	 *   The default operation mode for sorting. Only
+	 *   {@link sap.ui.model.odata.OperationMode.Server} is supported since 1.39.0.
 	 * @param {string} mParameters.serviceUrl
 	 *   Root URL of the service to request data from. The path part of the URL must end with a
 	 *   forward slash according to OData V4 specification ABNF, rule "serviceRoot". You may append
@@ -68,7 +74,7 @@ sap.ui.define([
 	 * @throws {Error} If an unsupported synchronization mode is given, if the given service root
 	 *   URL does not end with a forward slash, if an unsupported parameter is given, if OData
 	 *   system query options or parameter aliases are specified as parameters, if an invalid group
-	 *   ID or update group ID is given.
+	 *   ID or update group ID is given, if the given operation mode is not supported.
 	 *
 	 * @alias sap.ui.model.odata.v4.ODataModel
 	 * @author SAP SE
@@ -118,6 +124,12 @@ sap.ui.define([
 					if (oUri.path()[oUri.path().length - 1] !== "/") {
 						throw new Error("Service root URL must end with '/'");
 					}
+					if (mParameters.operationMode
+							&& mParameters.operationMode !== OperationMode.Server) {
+						throw new Error("Unsupported operation mode: "
+							+ mParameters.operationMode);
+					}
+					this.sOperationMode = mParameters.operationMode;
 					this._sQuery = oUri.search(); //return query part with leading "?"
 					// Note: strict checking for model's URI parameters, but "sap-*" is allowed
 					this.mUriParameters
@@ -283,16 +295,19 @@ sap.ui.define([
 	 *   The binding path in the model; must not be empty or end with a slash
 	 * @param {sap.ui.model.odata.v4.Context} [oContext]
 	 *   The context which is required as base for a relative path
-	 * @param {sap.ui.model.Sorter[]} [aSorters]
-	 *   The parameter <code>aSorters</code> is not supported and must be <code>undefined</code>
+	 * @param {sap.ui.model.Sorter | sap.ui.model.Sorter[]} [vSorters]
+	 *   The dynamic sorters to be used initially; they can be replaced by the sorters given in the
+	 *   {@link sap.ui.model.odata.v4.ODataListBinding#sort} method. Static sorters, as defined in
+	 *   the '$orderby' binding parameter, are always executed after the dynamic sorters.
+	 *   Supported since 1.39.0.
 	 * @param {sap.ui.model.Filter[]} [aFilters]
 	 *   The parameter <code>aFilters</code> is not supported and must be <code>undefined</code>
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters which can be OData query options as specified in
 	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameters "$$groupId"
 	 *   and "$$updateGroupId".
-	 *   Note: Binding parameters may only be provided for absolute binding paths as only those
-	 *   lead to a data service request.
+	 *   Note: If parameters are provided for a relative binding path, the binding accesses data
+	 *   with its own service requests instead of using its parent binding.
 	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
@@ -300,6 +315,11 @@ sap.ui.define([
 	 *   </ul>
 	 *   All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
+	 * @param {sap.ui.model.odata.OperationMode} [mParameters.operationMode]
+	 *   The operation mode for sorting. Since 1.39.0, the operation mode
+	 *   {@link sap.ui.model.odata.OperationMode.Server} is supported. All other operation modes
+	 *   including <code>undefined</code> lead to an error if 'vSorters' are given or if
+	 *   {@link sap.ui.model.odata.v4.ODataListBinding#sort} is called.
 	 * @param {string} [mParameters.$$groupId]
 	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
 	 *   specified, the model's group ID is used, see
@@ -315,22 +335,18 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.ODataListBinding}
 	 *   The list binding
 	 * @throws {Error}
-	 *   If disallowed binding parameters are provided
+	 *   If disallowed binding parameters are provided or an unsupported operation mode is used
 	 *
 	 * @public
 	 * @see sap.ui.model.Model#bindList
 	 * @since 1.37.0
 	 */
-	ODataModel.prototype.bindList = function (sPath, oContext, aSorters, aFilters, mParameters) {
+	ODataModel.prototype.bindList = function (sPath, oContext, vSorters, aFilters, mParameters) {
 		if (aFilters) {
 			throw new Error("Unsupported operation: v4.ODataModel#bindList, "
 					+ "aFilters parameter must not be set");
 		}
-		if (aSorters) {
-			throw new Error("Unsupported operation: v4.ODataModel#bindList, "
-				+ "aSorters parameter must not be set");
-		}
-		return new ODataListBinding(this, sPath, oContext, mParameters);
+		return new ODataListBinding(this, sPath, oContext, vSorters, mParameters);
 	};
 
 	/**
@@ -525,6 +541,20 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.getUpdateGroupId = function () {
 		return this.sUpdateGroupId;
+	};
+
+	/**
+	 * Returns <code>true</code> if there are pending changes that would be reset by
+	 * {@link #refresh}.
+	 *
+	 * @returns {boolean}
+	 *   <code>true</code> if there are pending changes
+	 *
+	 * @public
+	 * @since 1.39.0
+	 */
+	ODataModel.prototype.hasPendingChanges = function () {
+		return this.oRequestor.hasPendingChanges();
 	};
 
 	/**

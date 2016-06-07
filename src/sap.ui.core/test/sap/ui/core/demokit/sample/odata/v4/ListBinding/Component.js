@@ -57,6 +57,9 @@ sap.ui.define([
 					"TEAMS?$expand=TEAM_2_EMPLOYEES($expand=EMPLOYEE_2_EQUIPMENTS),TEAM_2_MANAGER&$skip=0&$top=100" : {
 						source : "TEAMS.json"
 					},
+					"Equipments?$orderby=Category,Name&$select=Category,ID,Name,EmployeeId&$skip=0&$top=100" : {
+						source : "equipments.json"
+					},
 					"GetEmployeeMaxAge()" : {
 						source : "GetEmployeeMaxAge.json"
 					},
