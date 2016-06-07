@@ -432,14 +432,18 @@ sap.ui.define([
 	};
 
 	ObjectPageHeader.prototype._shiftHeaderTitle = function () {
-		var oShiftOffsetParams,
-			oParent = this.getParent(),
-			$actions = this.$().find(".sapUxAPObjectPageHeaderIdentifierActions"),
+
+		var oParent = this.getParent(),
+			oShiftOffsetParams,
+			$actions,
 			iActionsOffset;
 
-		if (typeof oParent._calculateShiftOffset === "function"){
-			oShiftOffsetParams = oParent._calculateShiftOffset();
+		if (!oParent || (typeof oParent._calculateShiftOffset !== "function")){
+			return;
 		}
+
+		oShiftOffsetParams = oParent._calculateShiftOffset();
+		$actions = this.$().find(".sapUxAPObjectPageHeaderIdentifierActions");
 		iActionsOffset = parseInt($actions.css(oShiftOffsetParams.sStyleAttribute), 10);
 
 		$actions.css(oShiftOffsetParams.sStyleAttribute, iActionsOffset + "px");
