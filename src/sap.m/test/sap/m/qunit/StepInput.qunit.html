@@ -40,54 +40,170 @@
 		QUnit.test("DOM", function (assert) {
 			//assert
 			var $stepInput = this.stepInput.$();
-			assert.ok($stepInput.length > 0, "The control was successfully rendered");
-			assert.equal($stepInput.attr("tabindex"), "-1", "tabindex attribute should be negative");
+			ok($stepInput.length > 0, "The control was successfully rendered");
+			equals($stepInput.attr("tabindex"), "-1", "tabindex attribute should be negative");
 		});
 
 		QUnit.test("incrementButton", function (assert) {
+			//prepare
 			var oIncrementButton = this.stepInput.getAggregation("_incrementButton");
 
 			//assert
-			assert.equal(oIncrementButton._bExcludeFromTabChain, true, "the button should not be part of tabchain")
-			assert.strictEqual(oIncrementButton.getMetadata().getName(), "sap.m.Button",
-					"the picker aggregation holds an instance of a button");
+			equal(oIncrementButton.getNoTabStop(), true, "the button should not be part of tabchain")
+			strictEqual(oIncrementButton.getMetadata().getName(), "sap.ui.core.Icon",
+					"the picker aggregation holds an instance of an icon");
 
 			assert.equal(oIncrementButton.getTooltip(), sap.m.StepInput.STEP_INPUT_INCREASE_BTN_TOOLTIP, "The tooltip is correct");
 
+			//act
 			oIncrementButton.firePress();
 			this.clock.tick(1000);
 
 			//assert
-			assert.strictEqual(this.stepInput.getValue(), 1,
+			strictEqual(this.stepInput.getValue(), 1,
 					"The increment button successfully incremented the value");
 		});
 
 		QUnit.test("decrementButton", function (assert) {
+			//prepare
 			var oDecrementButton = this.stepInput.getAggregation("_decrementButton");
 
 			//assert
-			assert.equal(oDecrementButton._bExcludeFromTabChain, true, "the button should not be part of tabchain")
-			assert.strictEqual(oDecrementButton.getMetadata().getName(), "sap.m.Button",
-					"the step input _decrementButton aggregation holds an instance of a button");
+			equal(oDecrementButton.getNoTabStop(), true, "the button should not be part of tabchain")
+			strictEqual(oDecrementButton.getMetadata().getName(), "sap.ui.core.Icon",
+					"the step input _decrementButton aggregation holds an instance of an icon");
 
 			assert.equal(oDecrementButton.getTooltip(), sap.m.StepInput.STEP_INPUT_DECREASE_BTN_TOOLTIP, "The tooltip is correct");
 
+			//act
 			oDecrementButton.firePress();
 			this.clock.tick(1000);
 
 			//assert
-			assert.strictEqual(this.stepInput.getValue(), -1,
+			strictEqual(this.stepInput.getValue(), -1,
 					"The decrement button successfully decremented the value");
 		});
 
+		QUnit.test("increase and decrease buttons are created only when actually needed", function() {
+			//Prepare and Act
+			var oSI = new sap.m.StepInput({editable: false});
+			oSI.placeAt('qunit-fixture');
+			oCore.applyChanges();
+			//Assert
+			equal(oSI.getAggregation("_decrementButton"), null,
+					"No decrement button since the StepInput is not editable");
+			equal(oSI.getAggregation("_incrementButton"), null,
+					"No increment button since the StepInput is not editable");
+
+			//Act
+			oSI.setEditable(true);
+			//Assert
+			ok(oSI.getAggregation("_decrementButton"),
+					"Decrement button is available once StepInput is editable");
+			ok(oSI.getAggregation("_incrementButton"),
+					"Increment button is available once StepInput is editable");
+
+			//destroy
+			oSI.destroy();
+		});
+
+
 		QUnit.test("input", function (assert) {
-			assert.strictEqual(this.stepInput._getInput().getMetadata().getName(), "sap.m.Input",
-					"the picker aggregation holds an instance of an input");
-			assert.strictEqual(this.stepInput.getValue(), 0, "The default value is correctly set in the input");
+			//assert
+			strictEqual(this.stepInput._getInput().getMetadata().getName(), "NumericInput",
+					"the picker aggregation holds an instance of a numeric input");
+			strictEqual(this.stepInput.getValue(), 0, "The default value is correctly set in the input");
 
+			//act
 			this.stepInput._getInput().setValue("random string");
-			assert.strictEqual(this.stepInput.getValue(), 0, "The value is successfully set in the input");
+			//assert
+			strictEqual(this.stepInput.getValue(), 0, "The value is successfully set in the input");
 
+		});
+
+
+		QUnit.test("textAlign", function () {
+			//assert
+			strictEqual(this.stepInput._getInput().getTextAlign(), "End",
+					"Text align is 'End'");
+
+			//act
+			this.stepInput.setEditable(false);
+			//assert
+			strictEqual(this.stepInput._getInput().getTextAlign(), "End",
+					"Text align is 'End' also when is set to read-only");
+
+			//act
+			this.stepInput.setEditable(true);
+			this.stepInput.setEnabled(false);
+			//assert
+			strictEqual(this.stepInput._getInput().getTextAlign(), "End",
+					"Text align is 'End' also when the control is disabled");
+		});
+
+		QUnit.test("setMin", function () {
+			//prepare & act
+			var oSpyDisableButtons,
+				oSpyVerifyValue;
+			this.stepInput.setMin(undefined);
+			//assert
+			strictEqual(this.stepInput.getMin(), undefined,
+					"Value of undefined is set");
+
+			//act
+			this.stepInput.setMin("string");
+			//assert
+			strictEqual(this.stepInput.getMin(), undefined,
+					"Value of 'min' is not changed");
+
+			//prepare
+			oSpyDisableButtons = sinon.spy(this.stepInput, "_disableButtons");
+			//act
+			this.stepInput.setMin(9);
+			//assert
+			equal(oSpyDisableButtons.callCount, 1, "setMin always calls _disableButtons so the buttons state is reflected");
+			strictEqual(oSpyDisableButtons.getCall(0).args[2], 9,
+					"_disableButtons is called and argument 2 is 'min'");
+
+			//prepare
+			oSpyVerifyValue = sinon.spy(this.stepInput, "_verifyValue");
+			//act
+			this.stepInput.setMin(8);
+			//assert
+			equal(oSpyVerifyValue.callCount, 1, "setMin always calls _verifyValue so the valueState is addressed");
+		});
+
+		QUnit.test("setMax", function () {
+			var oSpyDisableButtons,
+					oSpyVerifyValue;
+			//prepare
+			this.stepInput.setMax(undefined);
+			//assert
+			strictEqual(this.stepInput.getMax(), undefined,
+					"Value of undefined is set to the 'max'");
+
+			//prepare
+			this.stepInput.setMax("string");
+			//assert
+			strictEqual(this.stepInput.getMax(), undefined,
+					"Value of 'max' is not changed");
+
+			//prepare
+			oSpyDisableButtons = sinon.spy(this.stepInput, "_disableButtons");
+			//Act
+			this.stepInput.setMax(20);
+			// Assert
+			equal(oSpyDisableButtons.callCount, 1,
+					"setMax always calls _disableButtons so the buttons state is reflected");
+			strictEqual(oSpyDisableButtons.getCall(0).args[1], 20,
+					"_disableButtons is called and argument 1 is 'max'");
+
+			//prepare
+			oSpyVerifyValue = sinon.spy(this.stepInput, "_verifyValue");
+			//Act
+			this.stepInput.setMax(21);
+			// Assert
+			equal(oSpyVerifyValue.callCount, 1, "setMax always calls _verifyValue so the valueState is addressed");
 		});
 
 		QUnit.module("Operations", {
@@ -108,48 +224,60 @@
 
 		QUnit.test("Disable button based on the value", function (assert) {
 			//assert
-			assert.strictEqual(this.stepInput._getIncrementButton().getEnabled(), true,
-					"The increment button is enabled as it should be");
-			assert.strictEqual(this.stepInput._getDecrementButton().getEnabled(), true,
-					"The decrement button is enabled as it should be");
+			strictEqual(this.stepInput._getIncrementButton().$().hasClass("sapMStepInputIconDisabled"), false,
+					"The increment button is enabled because the value fits to limits");
+			strictEqual(this.stepInput._getDecrementButton().$().hasClass("sapMStepInputIconDisabled"), false,
+					"The decrement button is enabled because the value fits to limits");
 
+			//act
 			this.stepInput.setMin(3);
 			this.stepInput.onfocusout();
+			//assert
+			strictEqual(this.stepInput._getDecrementButton().$().hasClass("sapMStepInputIconDisabled"), true,
+					"The decrement button is disabled because there's min and min = value");
 
-			assert.strictEqual(this.stepInput._getDecrementButton().getEnabled(), false,
-					"The decrement button is disabled as it should be");
+			//act
 			this.stepInput.setValue(2);
+			//assert
+			strictEqual(this.stepInput._getDecrementButton().$().hasClass("sapMStepInputIconDisabled"), true,
+					"The decrement button is disabled because value < min");
 
-			assert.strictEqual(this.stepInput._getDecrementButton().getEnabled(), false,
-					"The decrement button is disabled as it should be because the min is 3 and the value is 2");
-
+			//act
 			this.stepInput.setValue(4);
-			this.stepInput.onfocusout()
-
-			assert.strictEqual(this.stepInput._getDecrementButton().getEnabled(), true,
-					"The decrement button is enabled as it should be because the value is 1 bigger than the min");
+			this.stepInput.onfocusout();
+			//assert
+			strictEqual(this.stepInput._getDecrementButton().$().hasClass("sapMStepInputIconDisabled"), false,
+					"The decrement button is enabled because the value > min");
 		});
 
 
 		QUnit.test("Increment button enabled/disabled state", function (assert) {
+			//act
 			this.stepInput._getInput().setValue(11);
 			this.stepInput.onfocusout();
-			assert.strictEqual(this.stepInput._getIncrementButton().getEnabled(), false,
-					"The increment button is disabled as it should be because the value is 1 bigger than the max");
+			//assert
+			strictEqual(this.stepInput._getIncrementButton().$().hasClass("sapMStepInputIconDisabled"),
+					true,
+					"The increment button is disabled because value > max");
 		});
 
 		QUnit.test("Error state when setting values out of the limit", function (assert) {
+			//act
 			this.stepInput.setMin(3);
 			this.stepInput.setValue(2);
 			this.stepInput.onfocusout();
-			assert.strictEqual(this.stepInput._getInput().getValueState(), "Error",
+
+			//assert
+			strictEqual(this.stepInput._getInput().getValueState(), "Error",
 					"The value state is Error as it should be because the value is under the limit");
 
+			//act
 			//value becomes 3
 			this.stepInput._getIncrementButton().firePress();
-
 			this.stepInput.onfocusout();
-			assert.strictEqual(this.stepInput._getInput().getValueState(), "None",
+
+			//assert
+			strictEqual(this.stepInput._getInput().getValueState(), "None",
 					"The value state is None as it should be because the value is equal to the min");
 		});
 
@@ -171,27 +299,39 @@
 		});
 
 		QUnit.test("working with floating point", function (assert) {
-			var oIncrementButton = this.stepInput.getAggregation("_incrementButton");
-			var oDecrementButton = this.stepInput.getAggregation("_decrementButton");
-
+			//prepare & act
+			var oIncrementButton = this.stepInput.getAggregation("_incrementButton"),
+			oDecrementButton = this.stepInput.getAggregation("_decrementButton");
 			oIncrementButton.firePress();
-			assert.strictEqual(this.stepInput.getValue(), 1.1,
-					"The value is successfuly incremented");
+
+			//assert
+			strictEqual(this.stepInput.getValue(), 1.1, "The value is successfuly incremented");
 			oDecrementButton.firePress();
-			assert.strictEqual(this.stepInput.getValue(), 0,
+			strictEqual(this.stepInput.getValue(), 0,
 					"The value is successfuly decremented");
 
+			//act
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
 			this.clock.tick(1000);
-			assert.strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1.1",
+
+			//assert
+			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1.1",
 					"The input's value is successfully incremented");
+
+			//act
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
 			this.clock.tick(1000);
-			assert.strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "0.0",
+
+			//assert
+			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "0.0",
 					"The value is successfully decremented");
+
+			//act
 			oIncrementButton.firePress();
 			oIncrementButton.firePress();
-			assert.strictEqual(this.stepInput.getValue(), 2,
+
+			//assert
+			strictEqual(this.stepInput.getValue(), 2,
 					"The value is successfully decremented");
 		});
 
@@ -202,23 +342,24 @@
 			this.stepInput.setMax(440.00);
 			this.stepInput.setStep(0.05);
 			oCore.applyChanges();
-			var oIncrementButton = this.stepInput.getAggregation("_incrementButton");
-			var oDecrementButton = this.stepInput.getAggregation("_decrementButton");
+
+			var oIncrementButton = this.stepInput.getAggregation("_incrementButton"),
+				oDecrementButton = this.stepInput.getAggregation("_decrementButton");
 
 			oIncrementButton.firePress();
-			assert.strictEqual(this.stepInput.getValue(), 431.2,
+			strictEqual(this.stepInput.getValue(), 431.2,
 					"The value is successfuly incremented");
 			oDecrementButton.firePress();
-			assert.strictEqual(this.stepInput.getValue(), 431.15,
+			strictEqual(this.stepInput.getValue(), 431.15,
 					"The value is successfuly decremented");
 
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
 			this.clock.tick(1000);
-			assert.strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "431.20",
+			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "431.20",
 					"The input's value is successfully incremented");
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
 			this.clock.tick(1000);
-			assert.strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "431.15",
+			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "431.15",
 					"The input's value is successfully decremented");
 		});
 
@@ -230,8 +371,8 @@
 			var oIncrementButton = this.stepInput.getAggregation("_incrementButton");
 
 			oIncrementButton.firePress();
-			assert.strictEqual(this.stepInput.getValue(), 0.07, "The value is successfuly incremented");
-			assert.strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "0.07000000000000000000", "The input's value is successfully incremented");
+			strictEqual(this.stepInput.getValue(), 0.07, "The value is successfuly incremented");
+			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "0.07000000000000000000", "The input's value is successfully incremented");
 		});
 
 		QUnit.test("working with floating point value precision set to 17", function (assert) {
@@ -242,29 +383,29 @@
 			var oIncrementButton = this.stepInput.getAggregation("_incrementButton");
 
 			oIncrementButton.firePress();
-			assert.strictEqual(this.stepInput.getValue(), 0.03, "The value is successfuly incremented");
-			assert.strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "0.03000000000000000", "The input's value is successfully incremented");
+			strictEqual(this.stepInput.getValue(), 0.03, "The value is successfuly incremented");
+			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "0.03000000000000000", "The input's value is successfully incremented");
 		});
 
 		QUnit.test("setting default displayValuePrecision when it is not correct", function (assert) {
 			this.stepInput.setDisplayValuePrecision(25);
 			oCore.applyChanges();
 
-			assert.strictEqual(this.stepInput.getDisplayValuePrecision(), 0, "The displayValuePrecision is set to 0");
+			strictEqual(this.stepInput.getDisplayValuePrecision(), 0, "The displayValuePrecision is set to 0");
 		});
 
 		QUnit.test("setting default displayValuePrecision when it is not correct and can't be converted to int", function (assert) {
 			this.stepInput.setDisplayValuePrecision("test");
 			oCore.applyChanges();
 
-			assert.strictEqual(this.stepInput.getDisplayValuePrecision(), 0, "The displayValuePrecision is set to 0");
+			strictEqual(this.stepInput.getDisplayValuePrecision(), 0, "The displayValuePrecision is set to 0");
 		});
 
 		QUnit.test("setting default displayValuePrecision when it is undefined", function (assert) {
 			this.stepInput.setDisplayValuePrecision();
 			oCore.applyChanges();
 
-			assert.strictEqual(this.stepInput.getDisplayValuePrecision(), 0, "The displayValuePrecision is set to 0");
+			strictEqual(this.stepInput.getDisplayValuePrecision(), 0, "The displayValuePrecision is set to 0");
 		});
 
 		QUnit.test("displayValuePrecision formating when digits after the dot are more then the value precision", function (assert) {
@@ -272,8 +413,8 @@
 			this.stepInput.setValue(1.104);
 			oCore.applyChanges();
 
-			assert.strictEqual(this.stepInput.getValue(), 1.104, "The value is formated correctly");
-			assert.strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1.10", "The input value is correctly formatted");
+			strictEqual(this.stepInput.getValue(), 1.104, "The value is formated correctly");
+			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1.10", "The input value is correctly formatted");
 		});
 
 		QUnit.test("displayValuePrecision formating when digits after the dot are less then the value precision", function (assert) {
@@ -281,8 +422,8 @@
 			this.stepInput.setValue(1.104);
 			oCore.applyChanges();
 
-			assert.strictEqual(this.stepInput.getValue(), 1.104, "The value is formated correctly");
-			assert.strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1.10400", "The input value is correctly formatted");
+			strictEqual(this.stepInput.getValue(), 1.104, "The value is formated correctly");
+			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1.10400", "The input value is correctly formatted");
 		});
 
 		QUnit.test("displayValuePrecision formating when there are no digits after the dot and the value precision is bigger than 0", function (assert) {
@@ -290,8 +431,8 @@
 			this.stepInput.setValue(0);
 			oCore.applyChanges();
 
-			assert.strictEqual(this.stepInput.getValue(), 0, "The value is formated correctly");
-			assert.strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "0.00000", "The input value is correctly formatted");
+			strictEqual(this.stepInput.getValue(), 0, "The value is formated correctly");
+			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "0.00000", "The input value is correctly formatted");
 		});
 
 		QUnit.test("displayValuePrecision formating when there are digits after the dot and the value precision is 0", function (assert) {
@@ -299,8 +440,8 @@
 			this.stepInput.setValue(1.325);
 			oCore.applyChanges();
 
-			assert.strictEqual(this.stepInput.getValue(), 1.325, "The value is formated correctly");
-			assert.strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1", "The input value is correctly formatted");
+			strictEqual(this.stepInput.getValue(), 1.325, "The value is formated correctly");
+			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1", "The input value is correctly formatted");
 		});
 
 		QUnit.test("Formating when displayValuePrecision is equal to the step precision", function (assert) {
@@ -313,8 +454,8 @@
 
 			oIncrementButton.firePress();
 
-			assert.strictEqual(this.stepInput.getValue(), 1.3285, "The value is formated correctly");
-			assert.strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1.3285", "The input value is correctly formatted");
+			strictEqual(this.stepInput.getValue(), 1.3285, "The value is formated correctly");
+			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1.3285", "The input value is correctly formatted");
 		});
 
 		QUnit.test("Formating when displayValuePrecision is smaller than the step precision", function (assert) {
@@ -327,8 +468,8 @@
 
 			oIncrementButton.firePress();
 
-			assert.strictEqual(this.stepInput.getValue(), 1.3285, "The value is formated correctly");
-			assert.strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1.33", "The input value is correctly formatted");
+			strictEqual(this.stepInput.getValue(), 1.3285, "The value is formated correctly");
+			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1.33", "The input value is correctly formatted");
 		});
 
 		QUnit.test("Formating when displayValuePrecision is bigger than the step precision", function (assert) {
@@ -341,8 +482,8 @@
 
 			oIncrementButton.firePress();
 
-			assert.strictEqual(this.stepInput.getValue(), 1.3285, "The value is formated correctly");
-			assert.strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1.328500", "The input value is correctly formatted");
+			strictEqual(this.stepInput.getValue(), 1.3285, "The value is formated correctly");
+			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1.328500", "The input value is correctly formatted");
 		});
 
 		QUnit.test("Formating when displayValuePrecision is equal to the step precision, but the given value is with smaller precision than the displayValuePrecision", function (assert) {
@@ -357,49 +498,49 @@
 			oSI.placeAt('qunit-fixture');
 			oCore.applyChanges();
 
-			assert.strictEqual(oSI.getValue(), 431.5, "The value is formated correctly");
-			assert.strictEqual(oSI.getAggregation("_input")._getInputValue(), "431.50", "The input value is correctly formatted");
+			strictEqual(oSI.getValue(), 431.5, "The value is formated correctly");
+			strictEqual(oSI.getAggregation("_input")._getInputValue(), "431.50", "The input value is correctly formatted");
 
 			oSI.destroy();
 		});
 
-		QUnit.test("Formating when we have two different controls with values with different precision, but which will be resolved to one and the same display value", function (assert) {
+		QUnit.test("Formatting when we have two different controls with values with different precision, but which will be resolved to one and the same display value", function (assert) {
 			var oSI = new sap.m.StepInput({
 				value: 1.3267,
 				step: 0.004999,
 				displayValuePrecision: 3
-			});
-
-			var oIncBtn = oSI.getAggregation("_incrementButton");
-
-			var oSI2 = new sap.m.StepInput({
+			}),
+			oIncBtn = oSI.getAggregation("_incrementButton"),
+			oSI2 = new sap.m.StepInput({
 				value: 1.3266999999999999999,
 				step: 0.00499999999999,
 				displayValuePrecision: 3
-			});
-
-			var oIncBtn2 = oSI2.getAggregation("_incrementButton");
+			}),
+			oIncBtn2 = oSI2.getAggregation("_incrementButton");
 
 			oSI.placeAt('qunit-fixture');
 			oSI2.placeAt('qunit-fixture');
 			oCore.applyChanges();
 
-			assert.strictEqual(oSI.getValue(), 1.3267, "The value is formated correctly");
-			assert.strictEqual(oSI.getAggregation("_input")._getInputValue(), "1.327", "The input value is rounded to the given displayValuePrecision");
-
-			assert.strictEqual(oSI2.getValue(), 1.3266999999999999999, "The value is formated correctly");
-			assert.strictEqual(oSI2.getAggregation("_input")._getInputValue(), "1.327", "The input value is rounded to the given displayValuePrecision");
+			strictEqual(oSI.getValue(), 1.3267, "The value is formatted correctly");
+			strictEqual(oSI.getAggregation("_input")._getInputValue(), "1.327", "The input value is rounded to the given displayValuePrecision");
 
 			oIncBtn.firePress();
+
+			strictEqual(oSI.getValue(), 1.331699, "The value is formatted correctly");
+			strictEqual(oSI.getAggregation("_input")._getInputValue(), "1.332", "The input value is correctly formatted");
+
+			//second test
+			strictEqual(oSI2.getValue(), 1.3266999999999999999, "The value is formated correctly");
+			strictEqual(oSI2.getAggregation("_input")._getInputValue(), "1.327", "The input value is rounded to the given displayValuePrecision");
+
 			oIncBtn2.firePress();
 
-			assert.strictEqual(oSI.getValue(), 1.331699, "The value is formated correctly");
-			assert.strictEqual(oSI.getAggregation("_input")._getInputValue(), "1.332", "The input value is correctly formatted");
-
-			assert.strictEqual(oSI2.getValue(), 1.3316999999999899999, "The value is formated correctly");
-			assert.strictEqual(oSI2.getAggregation("_input")._getInputValue(), "1.332", "The input value is correctly formatted");
+			strictEqual(oSI2.getValue(), 1.3316999999999899999, "The value is formated correctly");
+			strictEqual(oSI2.getAggregation("_input")._getInputValue(), "1.332", "The input value is correctly formatted");
 
 			oSI.destroy();
+			oSI2.destroy();
 		});
 
 		QUnit.module("Keyboard Handling", {
@@ -430,16 +571,16 @@
 			oInput.$("inner").val(7);
 
 			//assert
-			assert.strictEqual(this.stepInput.getValue(), 4, "Value should not be changed because ENTER is not pressed yet");
-			assert.equal(this.oChangeSpy.callCount, 0, "Change Event should not be called");
+			strictEqual(this.stepInput.getValue(), 4, "Value should not be changed because ENTER is not pressed yet");
+			equal(this.oChangeSpy.callCount, 0, "Change Event should not be called");
 
 			//act
 			qutils.triggerKeydown(oInput.getDomRef(), jQuery.sap.KeyCodes.ENTER);
 
 			//assert
-			assert.equal(this.stepInput.getValue(), 7, "Value should be changed due to ENTER pressed");
+			equal(this.stepInput.getValue(), 7, "Value should be changed due to ENTER pressed");
 			this.clock.tick(1000); //needed because the change event is fired inside a timeout callback
-			assert.equal(this.oChangeSpy.callCount, 1, "Change Event should be called once");
+			equal(this.oChangeSpy.callCount, 1, "Change Event should be called once");
 		});
 
 		QUnit.test("Change event is fired only once when element is focused, changed and then + button is clicked", function(assert) {
@@ -448,19 +589,19 @@
 			oIncrementBtn = this.stepInput.getAggregation("_incrementButton");
 
 			//assert
-			assert.strictEqual(this.stepInput.getValue(), 4, "Value should not be changed because ENTER is not pressed yet"); //value not changed
-			assert.equal(this.oChangeSpy.callCount, 0, "Change Event should not be called");
+			strictEqual(this.stepInput.getValue(), 4, "Value should not be changed because ENTER is not pressed yet"); //value not changed
+			equal(this.oChangeSpy.callCount, 0, "Change Event should not be called");
 
 			//act
 			oInput.$("inner").val(7);
 			//No way to simulate real click on the “+” button, so make sure the same event handlers are called in the same order
 			this.stepInput.onfocusout();
 			oInput.onChange();
-			jQuery(oIncrementBtn).tap();
+			oIncrementBtn.firePress();
 
 			//assert
-			assert.equal(this.stepInput.getValue(), 8, "Value should be changed from 7 to 8 due to increment button pressed");
-			assert.equal(this.oChangeSpy.callCount, 1, "Change Event should be called once");
+			equal(this.stepInput.getValue(), 8, "Value should be changed from 7 to 8 due to increment button pressed");
+			equal(this.oChangeSpy.callCount, 1, "Change Event should be called once");
 		});
 
 		QUnit.test("Change Event is fired when  +/- buttons are clicked", function(assert) {
@@ -473,96 +614,134 @@
 			oIncrementBtn.firePress();
 
 			//assert
-			assert.equal(this.stepInput.getValue(), 5, "Value should be changed 5 due to increment button pressed");
-			assert.equal(this.oChangeSpy.callCount, 1, "Change Event should be called once");
+			equal(this.stepInput.getValue(), 5, "Value should be changed 5 due to increment button pressed");
+			equal(this.oChangeSpy.callCount, 1, "Change Event should be called once");
 			this.oChangeSpy.reset();
 
 			//act
 			oDecrementBtn.firePress();
 
 			//assert
-			assert.equal(this.stepInput.getValue(), 4, "Value should be changed 4 due to decrement button pressed");
-			assert.equal(this.oChangeSpy.callCount, 1, "Change Event should be called once");
+			equal(this.stepInput.getValue(), 4, "Value should be changed 4 due to decrement button pressed");
+			equal(this.oChangeSpy.callCount, 1, "Change Event should be called once");
 		});
 
 		QUnit.test("up/down increases/decreases the value", function (assert) {
+			//act
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
 			this.clock.tick(1000);
-			assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), 5,
+
+			//assert
+			equal(this.stepInput.getAggregation("_input")._getInputValue(), 5,
 					"The input's value is increasing with 1 after arrow up");
 
+			//act
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
 			this.clock.tick(1000);
-			assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), 4,
+
+			//assert
+			equal(this.stepInput.getAggregation("_input")._getInputValue(), 4,
 					"The input's value is decreasing with 1 after arrow down");
 
+			//act
 			this.stepInput.setStep(5);
 			this.clock.tick(1000);
-
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
 			this.clock.tick(1000);
-			assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), 9,
+
+			//assert
+			equal(this.stepInput.getAggregation("_input")._getInputValue(), 9,
 					"The input's value is decreasing with 5 after arrow up");
 		});
 
 		QUnit.test("pageup and pagedown increases/decreases the value with a larger step", function (assert) {
+			//act
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
 			this.clock.tick(1000);
-			assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), 6, "The input's value is increasing with step=step*2 after pageup");
 
+			//assert
+			equal(this.stepInput.getAggregation("_input")._getInputValue(), 6, "The input's value is increasing with step=step*2 after pageup");
+
+			//act
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN);
 			this.clock.tick(1000);
-			assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), 4,
+
+			//assert
+			equal(this.stepInput.getAggregation("_input")._getInputValue(), 4,
 					"The input's value is decreasing with step=step*2 after pagedown");
 
+			//act
 			this.stepInput.setStep(5);
 			this.clock.tick(1000);
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
 			this.clock.tick(1000);
-			assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), 14,
+
+			//assert
+			equal(Number(this.stepInput.getAggregation("_input")._getInputValue()) + this.stepInput.getValue(), 14,
 					"The input's value is decreasing with step=step*2 after pageup");
 		});
 
 		QUnit.test("shift+up/down increases/decreases the value with a larger step if specified", function (assert) {
+			//act
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP, true, false, false);
 			this.clock.tick(1000);
-			assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), 6,
+
+			//assert
+			equal(this.stepInput.getAggregation("_input")._getInputValue(), 6,
 					"The input's value is increasing with step=2*step after arrow up");
 
+			//act
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, true, false, false);
 			this.clock.tick(1000);
-			assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), 4,
+
+			//assert
+			equal(this.stepInput.getAggregation("_input")._getInputValue(), 4,
 					"The input's value is decreasing with step=1 after arrow down");
 
+			//act
 			this.stepInput.setStep(5);
 			this.clock.tick(1000);
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP, true, false, false);
 			this.clock.tick(1000);
-			assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), 14,
+
+			//assert
+			equal(Number(this.stepInput.getAggregation("_input")._getInputValue()) + this.stepInput.getValue(), 14,
 					"The input's value is decreasing with step=2*step after arrow up");
 		});
 
 		QUnit.test("shift+pageup/pagedown sets value to max/min", function (assert) {
+			//act
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP, true, false, false);
 			this.clock.tick(1000);
-			assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), 10,
+
+			//assert
+			equal(this.stepInput.getAggregation("_input")._getInputValue(), 10,
 					"The input's value is set to max after page up");
 
+			//act
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN, true, false, false);
 			this.clock.tick(1000);
-			assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), -4,
+
+			//asser
+			equal(this.stepInput.getAggregation("_input")._getInputValue(), -4,
 					"The input's value is set to min after page down");
 		});
 
 		QUnit.test("ctrl+shift+up/down sets value to max/min", function (assert) {
+			//act
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP, true, false, true);
 			this.clock.tick(1000);
-			assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), 10,
+
+			//assert
+			equal(this.stepInput.getAggregation("_input")._getInputValue(), 10,
 					"The input's value is set to max after page up");
 
+			//act
 			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, true, false, true);
 			this.clock.tick(1000);
-			assert.equal(this.stepInput.getAggregation("_input")._getInputValue(),-4,
+
+			//assert
+			equal(this.stepInput.getAggregation("_input")._getInputValue(),-4,
 					"The input's  value is set to min after page down");
 		});
 
@@ -572,7 +751,8 @@
 					value: 4,
 					max: 10,
 					min: -4,
-					ariaLabelledBy: "__text0"
+					ariaLabelledBy: "__text0",
+					ariaDescribedBy: "__text0"
 				});
 
 				this.stepInput.placeAt('qunit-fixture');
@@ -584,39 +764,55 @@
 		});
 
 		QUnit.test("Spinner specific aria attributes", function (assert) {
-			var $input = this.stepInput.$("input-inner");
+			//prepare
+			var $input = this.stepInput._getInput().$(NumericInputRenderer.getInnerSuffix());
 
-			assert.strictEqual($input.attr("role"), "spinbutton", "To have a proper role");
-			assert.ok($input.attr("aria-valuenow"), "To have set a value");
-			assert.ok($input.attr("aria-valuemin"), "To have set a min value");
-			assert.ok($input.attr("aria-valuemax"), "To have set a max value");
-			assert.strictEqual($input.attr("aria-labelledby"), "__text0", "To have a label");
+			//assert
+			strictEqual($input.attr("role"), "spinbutton", "To have a proper role");
+			ok($input.attr("aria-valuenow"), "To have set a value");
+			ok($input.attr("aria-valuemin"), "To have set a min value");
+			ok($input.attr("aria-valuemax"), "To have set a max value");
+			strictEqual($input.attr("aria-labelledby"), "__text0", "To have a label");
+			strictEqual($input.attr("aria-describedby"), "__text0", "To have a desribedby");
 		});
 
-		QUnit.test("Spinner alter aria attributes", function (assert) {
-			assert.strictEqual(this.stepInput.$("input-inner").attr("aria-valuenow"), "4", "To have set value on init");
+		QUnit.test("Spinner alter aria attributes", function () {
+			//prepare & act
+			var $input = this.stepInput._getInput().$(NumericInputRenderer.getInnerSuffix());
+			//assert
+			strictEqual($input.attr("aria-valuenow"), "4", "To have set value on init");
 
+			//act
 			this.stepInput.setValue(9);
-			sap.ui.getCore().applyChanges();
-			assert.strictEqual(this.stepInput.$("input-inner").attr("aria-valuenow"), "9", "To have properly changed the value");
+			strictEqual($input.attr("aria-valuenow"), "9", "To have properly changed the value");
 
+			//act
 			this.stepInput.setEditable(false);
 			sap.ui.getCore().applyChanges();
-			assert.strictEqual(this.stepInput.$("input-inner").attr("aria-readonly"), "true", "To set state to read only");
+
+			//assert
+			strictEqual(this.stepInput._getInput().$(NumericInputRenderer.getInnerSuffix()).attr("aria-readonly"), "true",
+					"To set state to read only");
 
 			this.stepInput.setEditable(true);
 			sap.ui.getCore().applyChanges();
-			assert.strictEqual(this.stepInput.$("input-inner").attr("aria-readonly"), undefined, "To set it as editable");
+			strictEqual(this.stepInput._getInput().$(NumericInputRenderer.getInnerSuffix()).attr("aria-readonly"),
+					undefined,
+					"To set it as editable");
 
+			//act
 			this.stepInput.setEnabled(false);
 			sap.ui.getCore().applyChanges();
-			assert.strictEqual(this.stepInput.$("input-inner").attr("aria-disabled"), "true", "To set state to disabled");
+			//assert
+			strictEqual(this.stepInput._getInput().$(NumericInputRenderer.getInnerSuffix()).attr("aria-disabled"), "true",
+					"To set state to disabled");
 
+			//act
 			this.stepInput.setEnabled(true);
 			sap.ui.getCore().applyChanges();
-			assert.strictEqual(this.stepInput.$("input-inner").attr("aria-disabled"), undefined, "To set it as editable");
+			strictEqual(this.stepInput._getInput().$(NumericInputRenderer.getInnerSuffix()).attr("aria-disabled"), undefined,
+					"To set it as editable");
 		});
-
 	QUnit.module("binding", {
 		beforeEach: function () {
 			this.stepInput = new sap.m.StepInput({
@@ -649,8 +845,8 @@
 			this.stepInput.setModel(this.oModel);
 			oCore.applyChanges();
 
-			assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), 0, "The input is set correctly");
-			assert.strictEqual(this.stepInput.getValue(), 0, "Value is set to the default one if it was undefined");
+			equal(this.stepInput.getAggregation("_input")._getInputValue(), 0, "The input is set correctly");
+			strictEqual(this.stepInput.getValue(), 0, "Value is set to the default one if it was undefined");
 		});
 
 		QUnit.test("value set via binding", function (assert) {
@@ -660,8 +856,8 @@
 			this.stepInput.setModel(this.oModel);
 			oCore.applyChanges();
 
-			assert.strictEqual(this.stepInput.getValue(), 6, "Value is set correctly");
-			assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), "6", "The input is set correctly");
+			strictEqual(this.stepInput.getValue(), 6, "Value is set correctly");
+			equal(this.stepInput.getAggregation("_input")._getInputValue(), "6", "The input is set correctly");
 		});
 
 		QUnit.test("value set via binding and has precision", function (assert) {
@@ -672,9 +868,9 @@
 			this.stepInput.setModel(this.oModel);
 			oCore.applyChanges();
 
-			assert.strictEqual(this.stepInput.getValue(), 6, "Value is set correctly");
-			assert.strictEqual(this.stepInput.getDisplayValuePrecision(), 3, "Value precision is set correctly");
-			assert.strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "6.000", "The input is set and formated correctly");
+			strictEqual(this.stepInput.getValue(), 6, "Value is set correctly");
+			strictEqual(this.stepInput.getDisplayValuePrecision(), 3, "Value precision is set correctly");
+			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "6.000", "The input is set and formated correctly");
 		});
 
 		QUnit.test("less then Min value set via binding", function (assert) {
@@ -685,8 +881,8 @@
 			this.stepInput.setModel(this.oModel);
 			oCore.applyChanges();
 
-			assert.strictEqual(this.stepInput.getValue(), 5, "Value is set correctly");
-			assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), "5", "The input is set correctly");
+			strictEqual(this.stepInput.getValue(), 5, "Value is set correctly");
+			equal(this.stepInput.getAggregation("_input")._getInputValue(), "5", "The input is set correctly");
 		});
 
 		QUnit.test("value 0 Min value set via binding", function (assert) {
@@ -697,8 +893,8 @@
 			this.stepInput.setModel(this.oModel);
 			oCore.applyChanges();
 
-			assert.strictEqual(this.stepInput.getValue(), 5, "Value is set correctly");
-			assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), "5", "The input is set correctly");
+			strictEqual(this.stepInput.getValue(), 5, "Value is set correctly");
+			equal(this.stepInput.getAggregation("_input")._getInputValue(), "5", "The input is set correctly");
 		});
 
 
@@ -715,11 +911,182 @@
 		});
 
 		QUnit.test("Adding additional zeros to reach the precision value", function (assert) {
-			assert.strictEqual(this.stepInput._calcDecimals("34", 5), "34000", "returns '34000'");
+			strictEqual(this.stepInput._padZeroesRight("34", 5), "34000", "returns '34000'");
 		});
 
 		QUnit.test("Adding zeros equal to precision value", function (assert) {
-			assert.strictEqual(this.stepInput._calcDecimals("0", 5), "00000", "returns '00000'");
+			strictEqual(this.stepInput._padZeroesRight("0", 5), "00000", "returns '00000'");
+		});
+
+		module("onfocusout() and onsapescape()", {
+			beforeEach: function () {
+				this.stepInput = new sap.m.StepInput({
+				});
+
+				this.stepInput.placeAt('qunit-fixture');
+				oCore.applyChanges();
+			},
+			afterEach: function () {
+				this.stepInput.destroy();
+			}
+		});
+
+		QUnit.test("onfocusout()", function () {
+			//act
+			this.stepInput.getDomRef().focus();
+			this.stepInput._getInput().setValue("");
+			this.stepInput.onfocusout();
+
+			//assert
+			strictEqual(this.stepInput.getValue(), 0, "The value is set to 0 because there's no min or max set");
+
+			//act
+			this.stepInput._getInput().setValue("");
+			this.stepInput.getDomRef().focus();
+			this.stepInput.setMax(-2);
+			this.stepInput.onfocusout();
+			//assert
+			strictEqual(this.stepInput.getValue(), -2, "The value is set to the max because it's smaller than 0 and there's no min");
+
+			//act
+			this.stepInput._getInput().setValue("");
+			this.stepInput.getDomRef().focus();
+			this.stepInput.setMin(5);
+			this.stepInput.onfocusout();
+			//assert
+			strictEqual(this.stepInput.getValue(), 5, "The value is set to the min because it's bigger than 0");
+
+		});
+
+		QUnit.test("onsapescape()", function () {
+			//prepare & act
+			var oSpy = sinon.spy(this.stepInput._getInput(), "onsapescape");
+			this.stepInput.onsapescape();
+			// Assert
+			equal(oSpy.callCount, 1, "onsapescape() of the input is called once");
+		});
+
+		module("Private API", {
+			beforeEach: function () {
+				this.stepInput = new sap.m.StepInput({
+
+				});
+
+				this.stepInput.placeAt('qunit-fixture');
+				oCore.applyChanges();
+			},
+			afterEach: function () {
+				this.stepInput.destroy();
+			}
+		});
+
+		QUnit.test("_calculateValue() with positive numbers", function () {
+			//assert
+			strictEqual(this.stepInput._calculateNewValue(1, true).displayValue, 1, "The value of 0 is increased by 1");
+
+			//act
+			this.stepInput.setMin(-1);
+			//assert
+			strictEqual(this.stepInput._calculateNewValue(2, false).displayValue, this.stepInput.getMin(),
+					"The value of 0 is decreased by 2 but min > 2, so it returns min");
+
+			//act
+			this.stepInput.setMax(5);
+			//assert
+			strictEqual(this.stepInput._calculateNewValue(6, true).displayValue, this.stepInput.getMax(),
+					"The value of 0 is increased by 6 but max < 6, so it returns max");
+
+			//act
+			this.stepInput.setMax(6);
+			this.stepInput.setValue(3);
+
+			//assert
+			strictEqual(this.stepInput._calculateNewValue(2, true).displayValue,
+					5,
+					"The value of 3 is increased by 2 * 1(default step) and max is not returned");
+			strictEqual(this.stepInput._calculateNewValue(5, true).displayValue,
+					this.stepInput.getMax(),
+					"The value of 3 is increased by 5 * 1 and the max is returned");
+		});
+
+		QUnit.test("_calculateNewValue() with negative numbers", function () {
+			//assert
+			strictEqual(this.stepInput._calculateNewValue(-1, true).displayValue, 1, "The value of 0 is increased by 1");
+
+			//act
+			this.stepInput.setMin(-1);
+			//assert
+			strictEqual(this.stepInput._calculateNewValue(-2, false).displayValue, this.stepInput.getMin(),
+					"The value of 0 is decreased by 2 but min > 2, so it returns min");
+
+			//act
+			this.stepInput.setMax(5);
+			//assert
+			strictEqual(this.stepInput._calculateNewValue(-6, true).displayValue, this.stepInput.getMax(),
+					"The value of 0 is increased by 6 but max < 6, so it returns max");
+
+			//act
+			this.stepInput.setMax(6);
+			this.stepInput.setValue(3);
+			//assert
+			strictEqual(this.stepInput._calculateNewValue(-2, true).displayValue,
+					5,
+					"The value of 3 is increased by 2 * 1(default step) and max is not returned");
+			strictEqual(this.stepInput._calculateNewValue(-5, true).displayValue,
+					this.stepInput.getMax(),
+					"The value of 3 is increased by 5 * 1 and the max is returned");
+		});
+
+		QUnit.test("_isNumericLike()", function () {
+			//assert
+			strictEqual(this.stepInput._isNumericLike(0), true, "The value of 0 is a number");
+			strictEqual(this.stepInput._isNumericLike("not a number"), false,
+					"The value of 'not a number' is not a number");
+			strictEqual(this.stepInput._isNumericLike(null), false,
+					"The value of null is not a number");
+			strictEqual(this.stepInput._isNumericLike(undefined), false,
+					"The value of undefined is not a number");
+			strictEqual(this.stepInput._isNumericLike("5"), true,
+					"The value '5' is a number");
+			strictEqual(this.stepInput._isNumericLike(""), false,
+					"Empty string is not a number");
+		});
+
+		QUnit.test("_applyValue()", function () {
+			// Prepare & act
+			var oSpy = sinon.spy(this.stepInput, "setValue");
+			this.stepInput.setEnabled(false);
+			this.stepInput._applyValue(7);
+			// Assert
+			equal(oSpy.callCount, 0, "setValue() is not called after setEnabled(false)");
+			strictEqual(this.stepInput.getValue(), 0, "'value' still holds the old value");
+
+			// Act
+			this.stepInput.setEnabled(true);
+			this.stepInput.setEditable(false);
+			this.stepInput._applyValue(8);
+			// Assert
+			equal(oSpy.callCount, 0, "setValue() is not called after setEditable(false)");
+			strictEqual(this.stepInput.getValue(), 0, "'value' still holds the old value");
+		});
+
+		QUnit.test("_inputLiveChangeHandler()", function () {
+			//prepare & act
+			var oSpy = sinon.spy(this.stepInput, "setProperty"),
+					oEvent = {};
+			oEvent.getParameter = function() {
+				return 63;
+			};
+			this.stepInput._inputLiveChangeHandler(oEvent);
+			//assert
+			equal(oSpy.callCount, 1,
+					"_inputLiveChangeHandler always calls setProperty()");
+			strictEqual(oSpy.getCall(0).args[0], "value",
+					"setProperty is called and it's first parameter is 'value'");
+			strictEqual(oSpy.getCall(0).args[1], 63,
+					"setProperty is called and it's second parameter is 63");
+			strictEqual(oSpy.getCall(0).args[2], true,
+					"setProperty is called and it's third parameter is 'true'");
 		});
 
 	</script>
