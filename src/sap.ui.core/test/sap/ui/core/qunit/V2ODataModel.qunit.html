@@ -1695,6 +1695,31 @@
 			}
 		});
 	});
+	
+	asyncTest("test oDataModel setProperty: resetChanges - request should be aborted", function() {
+		var oSpy;
+		oModel.read("/ProductSet('HT-1000')");
+		oModel.read("/ProductSet('AD-1000')", {
+			success: function() {
+				oModel.setProperty("/ProductSet('AD-1000')/Name", "NewName");
+				oModel.setProperty("/ProductSet('HT-1000')/Name", "NewName");
+				ok(oModel.hasPendingChanges(), "model has pending changes");
+				oModel.resetChanges(["/ProductSet('AD-1000')","/ProductSet('HT-1000')"]);
+				ok(!oModel.hasPendingChanges(), "model should not have pending changes");
+				oSpy = sinon.spy(oModel, "_submitBatchRequest");
+				oModel.submitChanges();
+				jQuery.sap.delayedCall(0,this, function() {
+					ok(oSpy.callCount == 0, "No request sent");
+					oSpy.restore();
+					start()
+				});
+			},
+			error: function() {
+				ok(false, "reqauest failed");
+				start();
+			}
+		});
+	});
 
 	asyncTest("test oDataModel setProperty : resetChanges twice - request should be aborted", function() {
 		var oSpy;
