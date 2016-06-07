@@ -336,6 +336,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 		if (this.getTiles()[this._iCurrentTile]) {
 			this._setAriaDescriptor();
 		}
+		this._updateTilesIndicator();
 	};
 
 	/**
@@ -406,17 +407,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	};
 
 	/**
-	 * Returns the index of the previous tile based on the current index
+	 * Updates multiple tiles indicator
 	 *
 	 * @private
-	 * @param {int} tileIndex of the element in the tiles aggregation
-	 * @returns {int} Index of the previous tile
 	 */
-	SlideTile.prototype._getPrevTileIndex = function(tileIndex) {
-		if (tileIndex - 1 >= 0) {
-			return tileIndex - 1;
-		} else {
-			return this.getTiles().length - 1;
+	SlideTile.prototype._updateTilesIndicator = function() {
+		var $currentBullet;
+
+		for (var i = 0; i < this.getTiles().length; i++) {
+			$currentBullet =  this.$("tileIndicator-" + i);
+			if (i === this._iCurrentTile) {
+				$currentBullet.addClass("sapMSTActive");
+			} else {
+				$currentBullet.removeClass("sapMSTActive");
+			}
 		}
 	};
 
