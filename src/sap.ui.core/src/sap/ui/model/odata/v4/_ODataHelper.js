@@ -4,8 +4,10 @@
 
 sap.ui.define([
 	"./lib/_Helper",
-	"./lib/_Parser"
-], function (_Helper, _Parser) {
+	"./lib/_Parser",
+	"sap/ui/model/odata/OperationMode",
+	"sap/ui/model/Sorter"
+], function (_Helper, _Parser, OperationMode, Sorter) {
 	"use strict";
 
 	var ODataHelper,
@@ -38,20 +40,23 @@ sap.ui.define([
 		 * Returns the map of binding-specific parameters from the given map. "Binding-specific"
 		 * parameters are those with a key starting with '$$', i.e. OData query options provided as
 		 * binding parameters are not contained in the map. The following parameters and parameter
-		 * values are supported:
+		 * values are supported, if the parameter is contained in the given 'aAllowed' parameter:
 		 * <ul>
 		 * <li> '$$groupId' with allowed values as specified in {@link #checkGroupId}
 		 * <li> '$$updateGroupId' with allowed values as specified in {@link #checkGroupId}
+		 * <li> '$$operationMode' with value {@link sap.ui.model.odata.OperationMode.Server}
 		 * </ul>
 		 *
 		 * @param {object} mParameters
 		 *   The map of binding parameters
+		 * @param {string[]} aAllowed
+		 *   The array of allowed binding parameters
 		 * @returns {object}
 		 *   The map of binding-specific parameters
 		 * @throws {Error}
 		 *   For unsupported parameters or parameter values
 		 */
-		buildBindingParameters : function (mParameters) {
+		buildBindingParameters : function (mParameters, aAllowed) {
 			var mResult = {};
 
 			if (mParameters) {
@@ -61,19 +66,57 @@ sap.ui.define([
 					if (sKey.indexOf("$$") !== 0) {
 						return;
 					}
-
-					if (sKey !== "$$groupId" && sKey !== "$$updateGroupId") {
+					if (!aAllowed || aAllowed.indexOf(sKey) < 0) {
 						throw new Error("Unsupported binding parameter: " + sKey);
 					}
 
-					if (!isValidGroupId(sValue)) {
-						throw new Error("Unsupported value '" + sValue
-							+ "' for binding parameter '" + sKey + "'");
+					if (sKey === "$$groupId" || sKey === "$$updateGroupId") {
+						if (!isValidGroupId(sValue)) {
+							throw new Error("Unsupported value '" + sValue
+									+ "' for binding parameter '" + sKey + "'");
+						}
+					} else if (sKey === "$$operationMode") {
+						if (sValue !== OperationMode.Server) {
+							throw new Error("Unsupported operation mode: " + sValue);
+						}
 					}
+
 					mResult[sKey] = sValue;
 				});
 			}
 			return mResult;
+		},
+
+		/**
+		 * Build the value for the OData V4 '$orderby' system query option from the given sorters
+		 * and the optional static '$orderby' value which is appended to the sorters.
+		 *
+		 * @param {sap.ui.model.Sorter[]} [aSorters]
+		 *   An array of <code>Sorter</code> objects to be converted into corresponding '$orderby'
+		 *   string.
+		 * @param {string} [sOrderbyQueryOption]
+		 *   The static '$orderby' system query option which is appended to the converted 'aSorters'
+		 *   parameter.
+		 * @returns {string}
+		 *   The concatenated orderby-string
+		 * @throws {Error}
+		 *   If 'aSorters' contains elements, which are not {@link sap.ui.model.Sorter} instances.
+		 */
+		buildOrderbyOption : function (aSorters, sOrderbyQueryOption) {
+			var aOrderbyOptions = [];
+
+			aSorters.forEach(function (oSorter) {
+				if (oSorter instanceof Sorter) {
+					aOrderbyOptions.push(oSorter.sPath + (oSorter.bDescending ? " desc" : ""));
+				} else {
+					throw new Error("Unsupported sorter: '" + oSorter + "' ("
+						+ typeof oSorter + ")");
+				}
+			});
+			if (sOrderbyQueryOption) {
+				aOrderbyOptions.push(sOrderbyQueryOption);
+			}
+			return aOrderbyOptions.join(',');
 		},
 
 		/**
@@ -191,12 +234,20 @@ sap.ui.define([
 		 * the given context's canonical path is being computed.
 		 * If there is no cache for the canonical path in the binding's
 		 * <code>mCacheByContext</code>, creates the cache by calling the given function
-		 * <code>fnCreateCache</code> with the canonical path.
+		 * <code>fnCreateCache</code> with the canonical path and resolves the proxy's promise with
+		 * this cache. If the binding's cache is not the cache proxy, the promise resolves with
+		 * the binding's cache in order to ensure a cache proxy associated with a binding is only
+		 * replaced by the corresponding cache.
+		 * If there is already a cache for the binding, <code>deregisterChange()</code> is called
+		 * to deregister all listening property bindings at the cache, because they are not able to
+		 * deregister themselves afterwards.
 		 *
 		 * @param {object} oBinding The relative binding
 		 * @param {object} oContext The context for the relative binding
 		 * @param {function} fnCreateCache The function to create the cache from the canonical path
 		 * @returns {object} The cache proxy with the following properties
+		 *   deregisterChange: method does nothing
+		 *   hasPendingChanges: method returning false
 		 *   post: method throws an error as the cache proxy does not support write operations
 		 *   promise: promise fulfilled with the cache or rejected with the error of canonical path
 		 *     computation
@@ -206,16 +257,27 @@ sap.ui.define([
 		 */
 		createCacheProxy : function (oBinding, oContext, fnCreateCache) {
 			var oCache,
+				oCacheProxy,
 				oPromise;
 
+			if (oBinding.oCache) {
+				oBinding.oCache.deregisterChange();
+			}
 			// use requestCanonicalPath, not fetchCanonicalPath to ensure consistent async behavior
 			oPromise = oContext.requestCanonicalPath().then(function (sCanonicalPath) {
+				if (oBinding.oCache !== oCacheProxy) {
+					return oBinding.oCache;
+				}
 				oBinding.mCacheByContext = oBinding.mCacheByContext || {};
 				oCache = oBinding.mCacheByContext[sCanonicalPath] =
 					oBinding.mCacheByContext[sCanonicalPath] || fnCreateCache(sCanonicalPath);
 				return oCache;
 			});
-			return {
+			oCacheProxy = {
+				deregisterChange : function () {},
+				hasPendingChanges : function () {
+					return false;
+				},
 				post : function () {
 					throw new Error("POST request not allowed");
 				},
@@ -237,6 +299,7 @@ sap.ui.define([
 					throw new Error("PATCH request not allowed");
 				}
 			};
+			return oCacheProxy;
 		},
 
 		/**
@@ -248,20 +311,48 @@ sap.ui.define([
 		 * @param {object} oEntityInstance
 		 *   Entity instance runtime data
 		 * @returns {string}
-		 *   The key predicate, e.g. "(Sector='DevOps',ID='42')"
+		 *   The key predicate, e.g. "(Sector='DevOps',ID='42')" or "('42')"
 		 */
 		getKeyPredicate : function (oEntityType, oEntityInstance) {
-			var aKeyValuePairs = [];
+			var aKeyProperties = [],
+				bSingleKey = oEntityType.$Key.length === 1;
 
 			oEntityType.$Key.forEach(function (sName) {
-				var sType = oEntityType[sName].$Type,
-					sValue = _Helper.formatLiteral(oEntityInstance[sName], sType);
+				var sError,
+					vValue = oEntityInstance[sName];
 
-				aKeyValuePairs.push(
-					encodeURIComponent(sName) + "=" + encodeURIComponent(sValue));
+				if (vValue === undefined) {
+					sError = "Missing value for key property '" + sName + "'";
+					jQuery.sap.log.error(sError, null, "sap.ui.model.odata.v4._ODataHelper");
+					throw new Error(sError);
+				}
+				vValue = encodeURIComponent(
+					_Helper.formatLiteral(vValue, oEntityType[sName].$Type)
+				);
+				aKeyProperties.push(bSingleKey ? vValue : encodeURIComponent(sName) + "=" + vValue);
 			});
 
-			return "(" + aKeyValuePairs.join(",") + ")";
+			return "(" + aKeyProperties.join(",") + ")";
+		},
+
+		/**
+		 * Converts given value to an array.
+		 * <code>null</code> and <code>undefined</code> are converted to the empty array, a
+		 * non-array value is wrapped with an array and an array is returned as it is.
+		 *
+		 * @param {any} [vElement]
+		 *   The element to be converted into an array.
+		 * @returns {Array}
+		 *   The array for the given element.
+		 */
+		toArray : function (vElement) {
+			if (vElement === undefined || vElement === null) {
+				return [];
+			}
+			if (Array.isArray(vElement)) {
+				return vElement;
+			}
+			return [vElement];
 		}
 	};
 

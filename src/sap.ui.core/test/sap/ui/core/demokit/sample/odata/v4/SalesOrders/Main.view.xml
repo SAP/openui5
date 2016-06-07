@@ -161,9 +161,7 @@
 									SOITEM_2_PRODUCT : {
 										$expand : {
 											PRODUCT_2_BP : {
-												$expand : {
-													BP_2_CONTACT : true
-												}
+												$select : 'BusinessPartnerID,CompanyName,LegalForm,PhoneNumber'
 											}
 										}
 									}
@@ -278,7 +276,12 @@
 			</form:SimpleForm>
 		</VBox>
 		<List headerText="Supplier Contact Information" id="SupplierContactData"
-			items="{SOITEM_2_PRODUCT/PRODUCT_2_BP/BP_2_CONTACT}">
+			items="{
+				path : 'SOITEM_2_PRODUCT/PRODUCT_2_BP/BP_2_CONTACT',
+				parameters : {
+					$select : 'DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber'
+				}
+			}">
 			<StandardListItem description="{PhoneNumber}" info="{EmailAddress}"
 				title="{FirstName} {LastName} {DateOfBirth}"/>
 		</List>

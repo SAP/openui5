@@ -119,7 +119,6 @@ sap.ui.define([
 				this.oCache = undefined;
 				this.mCacheByContext = undefined;
 				this.sGroupId = undefined;
-				this.bHasParameters = !!mParameters;
 				this.oOperation = undefined;
 				this.mQueryOptions = undefined;
 				this.sRefreshGroupId = undefined;
@@ -128,7 +127,8 @@ sap.ui.define([
 				if (!this.bRelative || bDeferred || mParameters) {
 					this.mQueryOptions = _ODataHelper.buildQueryOptions(oModel.mUriParameters,
 						mParameters, ["$expand", "$filter", "$orderby", "$select"]);
-					oBindingParameters = _ODataHelper.buildBindingParameters(mParameters);
+					oBindingParameters = _ODataHelper.buildBindingParameters(mParameters,
+						["$$groupId", "$$updateGroupId"]);
 					this.sGroupId = oBindingParameters.$$groupId;
 					this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
 					if (bDeferred) {
@@ -156,6 +156,26 @@ sap.ui.define([
 				publicMethods : []
 			}
 		});
+
+	/**
+	 * Returns <code>true</code> if the binding has pending changes below the given path.
+	 *
+	 * @param {string} sPath
+	 *   The path
+	 * @returns {boolean}
+	 *   <code>true</code> if the binding has pending changes
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype._hasPendingChanges = function (sPath) {
+		if (this.oCache) {
+			return this.oCache.hasPendingChanges(sPath);
+		}
+		if (this.oContext) {
+			return this.oContext.hasPendingChanges(_Helper.buildPath(this.sPath, sPath));
+		}
+		return false;
+	};
 
 	/**
 	 * Requests the metadata for this operation binding. Caches the result.
@@ -395,6 +415,24 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Deregisters the given change listener.
+	 *
+	 * @param {string} sPath
+	 *   The path
+	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} oListener
+	 *   The change listener
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype.deregisterChange = function (sPath, oListener) {
+		if (this.oCache) {
+			this.oCache.deregisterChange(sPath, oListener);
+		} else if (this.oContext) {
+			this.oContext.deregisterChange(_Helper.buildPath(this.sPath, sPath), oListener);
+		}
+	};
+
+	/**
 	 * Returns the group ID of the binding that is used for read requests.
 	 *
 	 * @returns {string}
@@ -416,6 +454,20 @@ sap.ui.define([
 	 */
 	ODataContextBinding.prototype.getUpdateGroupId = function() {
 		return this.sUpdateGroupId || this.oModel.getUpdateGroupId();
+	};
+
+	/**
+	 * Returns <code>true</code> if the binding has pending changes, that is updates via two-way
+	 * binding that have not yet been sent to the server.
+	 *
+	 * @returns {boolean}
+	 *   <code>true</code> if the binding has pending changes
+	 *
+	 * @public
+	 * @since 1.39.0
+	 */
+	ODataContextBinding.prototype.hasPendingChanges = function () {
+		return this._hasPendingChanges(this.oCache ? "" : this.sPath);
 	};
 
 	/**
@@ -498,12 +550,14 @@ sap.ui.define([
 	 *
 	 * @param {string} [sPath]
 	 *   Some relative path
+	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
+	 *   A property binding which registers itself as listener at the cache
 	 * @returns {SyncPromise}
 	 *   A promise on the outcome of the cache's <code>read</code> call
 	 *
 	 *  @private
 	 */
-	ODataContextBinding.prototype.fetchValue = function (sPath) {
+	ODataContextBinding.prototype.fetchValue = function (sPath, oListener) {
 		var bDataRequested = false,
 			sGroupId,
 			that = this;
@@ -514,7 +568,7 @@ sap.ui.define([
 			return this.oCache.read(sGroupId, sPath, function () {
 				bDataRequested = true;
 				that.oModel.addedRequestToGroup(sGroupId, that.fireDataRequested.bind(that));
-			}).then(function (vValue) {
+			}, oListener).then(function (vValue) {
 				if (bDataRequested) {
 					that.fireDataReceived();
 				}
@@ -534,7 +588,7 @@ sap.ui.define([
 			});
 		}
 		if (this.oContext) {
-			return this.oContext.fetchValue(this.sPath + (sPath ? "/" + sPath : ""));
+			return this.oContext.fetchValue(_Helper.buildPath(this.sPath, sPath), oListener);
 		}
 		return _SyncPromise.resolve();
 	};
@@ -568,20 +622,20 @@ sap.ui.define([
 		var that = this;
 
 		if (this.oContext !== oContext) {
+			if (this.bRelative && this.oCache) {
+				this.oCache.deregisterChange();
+				this.oCache = undefined;
+			}
 			if (this.bRelative && (this.oElementContext || oContext)) {
 				// fire "change" iff. this.oElementContext changes
 				// do not call Model#resolve in vain
 				this.oElementContext = oContext
 					? Context.create(this.oModel, this, this.oModel.resolve(this.sPath, oContext))
 					: null;
-				if (this.oOperation) {
-					// the binding parameter for a deferred operation binding has changed
-					this.oCache = undefined;
-				} else if (this.bHasParameters) {
+				if (oContext && !this.oOperation && this.mQueryOptions) {
 					this.oCache = _ODataHelper.createCacheProxy(this, oContext, function (sPath) {
 						return _Cache.createSingle(that.oModel.oRequestor,
-							sPath.slice(1) + (that.sPath ? "/" : "") + that.sPath,
-							that.mQueryOptions);
+							_Helper.buildPath(sPath.slice(1), that.sPath), that.mQueryOptions);
 					});
 					this.oCache.promise.then(function (oCache) {
 						that.oCache = oCache;
@@ -683,7 +737,7 @@ sap.ui.define([
 		}
 
 		return this.oContext.updateValue(sGroupId, sPropertyName, vValue, sEditUrl,
-			this.sPath + (sPath ? "/" + sPath : ""));
+			_Helper.buildPath(this.sPath, sPath));
 	};
 
 	return ODataContextBinding;

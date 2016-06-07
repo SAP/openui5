@@ -13,6 +13,28 @@ sap.ui.define([
 	var Cache;
 
 	/**
+	 * Adds an item to the given map by path.
+	 *
+	 * @param {object} mMap
+	 *   A map from path to a list of items
+	 * @param {string} sPath
+	 *   The path
+	 * @param {object} [oItem]
+	 *   The item; if it is <code>undefined</code>, nothing happens
+	 */
+	function addByPath(mMap, sPath, oItem) {
+		if (oItem) {
+			if (!mMap[sPath]) {
+				mMap[sPath] = [oItem];
+			} else if (mMap[sPath].indexOf(oItem) >= 0) {
+				return;
+			} else {
+				mMap[sPath].push(oItem);
+			}
+		}
+	}
+
+	/**
 	 * Converts the known OData system query options from map or array notation to a string. All
 	 * other parameters are simply passed through.
 	 *
@@ -104,6 +126,111 @@ sap.ui.define([
 	}
 
 	/**
+	 * Fires a change with the new value for the given path if the value changed. Recursively
+	 * iterates over object values to find primitive properties.
+	 *
+	 * @param {object} mChangeListeners
+	 *   A map from path to change listener.
+	 * @param {string} sPath
+	 *   The path
+	 * @param {any} vOldValue
+	 *   The old value
+	 * @param {any} vNewValue
+	 *   The new value
+	 */
+	function fireChange(mChangeListeners, sPath, vOldValue, vNewValue) {
+		var aListeners, sProperty;
+
+		if (vNewValue && typeof vNewValue === "object") {
+			for (sProperty in vNewValue) {
+				fireChange(mChangeListeners, _Helper.buildPath(sPath, sProperty),
+					vOldValue && vOldValue[sProperty], vNewValue[sProperty]);
+			}
+		} else if (vOldValue && typeof vOldValue === "object") {
+			// vNewValue should be an object, too, but it isn't. So we can safely assume that all
+			// properties below are nonexistent now. Fire change events for all existing properties
+			// in the old value setting them to undefined.
+			for (sProperty in vOldValue) {
+				fireChange(mChangeListeners, _Helper.buildPath(sPath, sProperty),
+					vOldValue[sProperty], undefined);
+			}
+		} else {
+			aListeners = mChangeListeners[sPath];
+
+			if (aListeners && vOldValue !== vNewValue) {
+				aListeners.forEach(function (oListener) {
+					oListener.onChange(vNewValue);
+				});
+			}
+		}
+	}
+
+	/**
+	 * Returns <code>true</code> if there are pending changes below the given path.
+	 *
+	 * @param {object} mPatchRequests Map of PATCH requests
+	 * @param {string} sPath
+	 *   The relative path of a binding; must not end with '/'
+	 * @returns {boolean}
+	 *   <code>true</code> if there are pending changes
+	 */
+	function hasPendingChanges(mPatchRequests, sPath) {
+		var sPathPrefix = sPath + "/",
+			sRequestPath;
+
+		for (sRequestPath in mPatchRequests) {
+			if (sPath === "" || sRequestPath === sPath || sRequestPath.indexOf(sPathPrefix) === 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Removes an item from the given map by path.
+	 *
+	 * @param {object} mMap
+	 *   A map from path to a list of items
+	 * @param {string} sPath
+	 *   The path
+	 * @param {object} oItem
+	 *   The item
+	 */
+	function removeByPath(mMap, sPath, oItem) {
+		var aItems = mMap[sPath],
+			iIndex;
+
+		if (aItems) {
+			iIndex = aItems.indexOf(oItem);
+			if (iIndex >= 0) {
+				if (aItems.length === 1) {
+					delete mMap[sPath];
+				} else {
+					aItems.splice(iIndex, 1);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Removes all pending PATCH requests.
+	 *
+	 * @param {_Cache} oCache The cache
+	 */
+	function removePatchRequests(oCache) {
+		var i,
+			sPath,
+			aPromises;
+
+		for (sPath in oCache.mPatchRequests) {
+			aPromises = oCache.mPatchRequests[sPath];
+			for (i = 0; i < aPromises.length; i++ ) {
+				oCache.oRequestor.removePatch(aPromises[i]);
+			}
+		}
+	}
+
+	/**
 	 * Requests the elements in the given range and places them into the aElements list. While the
 	 * request is running, all indexes in this range contain the Promise.
 	 * A refresh cancels all pending requests. Their promises are rejected with an error that has a
@@ -169,10 +296,43 @@ sap.ui.define([
 		this.sContext = undefined;  // the "@odata.context" from the responses
 		this.aElements = [];        // the available elements
 		this.iMaxElements = -1;     // the max. number of elements if known, -1 otherwise
+		this.mChangeListeners = {};
+		this.mPatchRequests = {};
 		this.mQueryOptions = mQueryOptions;
 		this.oRequestor = oRequestor;
 		this.sResourcePath = sResourcePath + sQuery + (sQuery.length ? "&" : "?");
 	}
+
+	/**
+	 * Deregisters the given change listener. If no arguments are given, <i>all</i> change listeners
+	 * are deregistered.
+	 *
+	 * @param {number} [iIndex]
+	 *   The collection index
+	 * @param {string} [sPath]
+	 *   The path
+	 * @param {object} [oListener]
+	 *   The change listener
+	 */
+	CollectionCache.prototype.deregisterChange = function (iIndex, sPath, oListener) {
+		if (arguments.length) {
+			removeByPath(this.mChangeListeners, iIndex + "/" + sPath, oListener);
+		} else {
+			this.mChangeListeners = {};
+		}
+	};
+
+	/**
+	 * Returns <code>true</code> if there are pending changes below the given path.
+	 *
+	 * @param {string} sPath
+	 *   The relative path of a binding; must not end with '/'
+	 * @returns {boolean}
+	 *   <code>true</code> if there are pending changes
+	 */
+	CollectionCache.prototype.hasPendingChanges = function (sPath) {
+		return hasPendingChanges(this.mPatchRequests, sPath);
+	};
 
 	/**
 	 * Returns a promise to be resolved with an OData object for a range of the requested data.
@@ -190,6 +350,10 @@ sap.ui.define([
 	 * @param {function} [fnDataRequested]
 	 *   The function is called directly after all back end requests have been triggered.
 	 *   If no back end request is needed, the function is not called.
+	 * @param {object} [oListener]
+	 *   An optional change listener that is added for the given path. Its method
+	 *   <code>onChange</code>will be called with the new value if the property at that path is
+	 *   modified via {@link #update} later.
 	 * @returns {SyncPromise}
 	 *   A promise to be resolved with the requested range given as an OData response object (with
 	 *   "@odata.context" and the rows as an array in the property <code>value</code>) or a single
@@ -201,7 +365,8 @@ sap.ui.define([
 	 * @throws {Error} If given index or length is less than 0
 	 * @see sap.ui.model.odata.v4.lib._Requestor#request
 	 */
-	CollectionCache.prototype.read = function (iIndex, iLength, sGroupId, sPath, fnDataRequested) {
+	CollectionCache.prototype.read = function (iIndex, iLength, sGroupId, sPath, fnDataRequested,
+			oListener) {
 		var i,
 			iEnd = iIndex + iLength,
 			iGapStart = -1,
@@ -245,6 +410,7 @@ sap.ui.define([
 			var oResult;
 
 			if (sPath !== undefined) {
+				addByPath(that.mChangeListeners, iIndex + "/" + sPath, oListener);
 				oResult = that.aElements[iIndex];
 				return drillDown(oResult, sPath, function (sSegment) {
 					jQuery.sap.log.error("Failed to drill-down into " + that.sResourcePath
@@ -261,12 +427,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Clears the cache and cancels all pending {@link #read} requests.
+	 * Clears the cache and cancels all pending requests from {@link #read} and {@link #update}.
 	 */
 	CollectionCache.prototype.refresh = function () {
 		this.sContext = undefined;
 		this.iMaxElements = -1;
 		this.aElements = [];
+		removePatchRequests(this);
 	};
 
 	/**
@@ -298,29 +465,40 @@ sap.ui.define([
 	 */
 	CollectionCache.prototype.update = function (sGroupId, sPropertyName, vValue, sEditUrl, sPath) {
 		var oBody = {},
+			mChangeListeners = this.mChangeListeners,
 			mHeaders,
 			vOldValue,
-			oResult = drillDown(this.aElements, sPath);
+			sPropertyPath = sPath + "/" + sPropertyName,
+			oResult = drillDown(this.aElements, sPath),
+			oUpdatePromise,
+			that = this;
 
 		sEditUrl += Cache.buildQueryString(this.mQueryOptions, true);
 		mHeaders = {"If-Match" : oResult["@odata.etag"]};
 		vOldValue = oResult[sPropertyName];
 		oBody[sPropertyName] = oResult[sPropertyName] = vValue;
+		fireChange(mChangeListeners, sPropertyPath, vOldValue, vValue);
 
-		return this.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders, oBody)
-			.then(function (oPatchResult) {
-				for (sPropertyName in oResult) {
-					if (sPropertyName in oPatchResult) {
-						oResult[sPropertyName] = oPatchResult[sPropertyName];
-					}
+		oUpdatePromise = this.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders, oBody);
+		addByPath(this.mPatchRequests, sPropertyPath, oUpdatePromise);
+		return oUpdatePromise.then(function (oPatchResult) {
+			removeByPath(that.mPatchRequests, sPropertyPath, oUpdatePromise);
+			fireChange(mChangeListeners, sPath, oResult, oPatchResult);
+			for (sPropertyName in oResult) {
+				if (sPropertyName in oPatchResult) {
+					oResult[sPropertyName] = oPatchResult[sPropertyName];
 				}
-				return oPatchResult;
-			}, function (oError){
-				if (oError.canceled) {
-					oResult[sPropertyName] = vOldValue;
-				}
-				throw oError;
-			});
+			}
+			return oPatchResult;
+		}, function (oError){
+			removeByPath(that.mPatchRequests, sPropertyPath, oUpdatePromise);
+			if (oError.canceled) {
+				fireChange(mChangeListeners, sPropertyPath,
+					oResult[sPropertyName], vOldValue);
+				oResult[sPropertyName] = vOldValue;
+			}
+			throw oError;
+		});
 	};
 
 	/**
@@ -341,6 +519,8 @@ sap.ui.define([
 	 *   error.
 	 */
 	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bSingleProperty, bPost) {
+		this.mChangeListeners = {};
+		this.mPatchRequests = {};
 		this.bPost = bPost;
 		this.bPosting = false;
 		this.oPromise = null;
@@ -349,6 +529,35 @@ sap.ui.define([
 		this.sResourcePath = sResourcePath + Cache.buildQueryString(mQueryOptions);
 		this.bSingleProperty = bSingleProperty;
 	}
+
+	/**
+	 * Deregisters the given change listener. If no arguments are given, <i>all</i> change listeners
+	 * are deregistered.
+	 *
+	 * @param {string} [sPath]
+	 *   The path
+	 * @param {object} [oListener]
+	 *   The change listener
+	 */
+	SingleCache.prototype.deregisterChange = function (sPath, oListener) {
+		if (arguments.length) {
+			removeByPath(this.mChangeListeners, this.bSingleProperty ? "value" : sPath, oListener);
+		} else {
+			this.mChangeListeners = {};
+		}
+	};
+
+	/**
+	 * Returns <code>true</code> if there are pending changes below the given path.
+	 *
+	 * @param {string} sPath
+	 *   The relative path of a binding; must not end with '/'
+	 * @returns {boolean}
+	 *   <code>true</code> if there are pending changes
+	 */
+	SingleCache.prototype.hasPendingChanges = function (sPath) {
+		return hasPendingChanges(this.mPatchRequests, sPath);
+	};
 
 	/**
 	 * Returns a promise to be resolved with an OData object for a POST request with the given data.
@@ -400,6 +609,10 @@ sap.ui.define([
 	 * @param {function()} [fnDataRequested]
 	 *   The function is called directly after the back end request has been triggered.
 	 *   If no back end request is needed, the function is not called.
+	 * @param {object} [oListener]
+	 *   An optional change listener that is added for the given path. Its method
+	 *   <code>onChange</code>is called with the new value if the property at that path is modified
+	 *   via {@link #update} later.
 	 * @returns {SyncPromise}
 	 *   A promise to be resolved with the element.
 	 *
@@ -408,7 +621,7 @@ sap.ui.define([
 	 * @throws {Error}
 	 *   If the cache is using POST but no POST request has been sent yet
 	 */
-	SingleCache.prototype.read = function (sGroupId, sPath, fnDataRequested) {
+	SingleCache.prototype.read = function (sGroupId, sPath, fnDataRequested, oListener) {
 		var that = this,
 			oPromise,
 			sResourcePath = this.sResourcePath;
@@ -439,6 +652,7 @@ sap.ui.define([
 				// 204 No Content: map undefined to null
 				oResult = oResult ? oResult.value : null;
 			}
+			addByPath(that.mChangeListeners, that.bSingleProperty ? "value" : sPath, oListener);
 			if (sPath) {
 				return drillDown(oResult, sPath, function (sSegment) {
 					jQuery.sap.log.error("Failed to drill-down into " + sResourcePath + "/"
@@ -451,7 +665,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Clears the cache and cancels a pending {@link #read} request.
+	 * Clears the cache and cancels all pending requests from {@link #read} and {@link #update}.
 	 *
 	 * @throws {Error}
 	 *   If the cache is using POST requests
@@ -461,6 +675,7 @@ sap.ui.define([
 			throw new Error("Refresh not allowed when using POST");
 		}
 		this.oPromise = undefined;
+		removePatchRequests(this);
 	};
 
 	/**
@@ -496,33 +711,42 @@ sap.ui.define([
 		return this.oPromise.then(function (oResult) {
 			var oBody = {},
 				mHeaders,
-				vOldValue;
+				vOldValue,
+				sResultPropertyName = that.bSingleProperty ? "value" : sPropertyName,
+				sUpdatePath = _Helper.buildPath(sPath, sResultPropertyName),
+				oUpdatePromise;
 
 			sEditUrl += Cache.buildQueryString(that.mQueryOptions, true);
 			oResult = drillDown(oResult, sPath);
 			mHeaders = {"If-Match" : oResult["@odata.etag"]};
-			vOldValue = oResult[that.bSingleProperty ? "value" : sPropertyName];
-			oBody[sPropertyName]
-				= oResult[that.bSingleProperty ? "value" : sPropertyName] = vValue;
+			vOldValue = oResult[sResultPropertyName];
+			fireChange(that.mChangeListeners, sUpdatePath, vOldValue, vValue);
+			oBody[sPropertyName] = oResult[sResultPropertyName] = vValue;
 
-			return that.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders, oBody)
-				.then(function (oPatchResult) {
-					if (that.bSingleProperty) {
-						oResult.value = oPatchResult[sPropertyName];
-					} else {
-						for (sPropertyName in oResult) {
-							if (sPropertyName in oPatchResult) {
-								oResult[sPropertyName] = oPatchResult[sPropertyName];
-							}
+			oUpdatePromise = that.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders, oBody);
+			addByPath(that.mPatchRequests, sUpdatePath, oUpdatePromise);
+			return oUpdatePromise.then(function (oPatchResult) {
+				removeByPath(that.mPatchRequests, sUpdatePath, oUpdatePromise);
+				if (that.bSingleProperty) {
+					oResult.value = oPatchResult[sPropertyName];
+				} else {
+					fireChange(that.mChangeListeners, sPath, oResult, oPatchResult);
+					for (sPropertyName in oResult) {
+						if (sPropertyName in oPatchResult) {
+							oResult[sPropertyName] = oPatchResult[sPropertyName];
 						}
 					}
-					return oPatchResult;
-				}, function (oError) {
-					if (oError.canceled) {
-						oResult[that.bSingleProperty ? "value" : sPropertyName] = vOldValue;
-					}
-					throw oError;
-				});
+				}
+				return oPatchResult;
+			}, function (oError) {
+				removeByPath(that.mPatchRequests, sUpdatePath, oUpdatePromise);
+				if (oError.canceled) {
+					fireChange(that.mChangeListeners, sUpdatePath,
+						oResult[sResultPropertyName], vOldValue);
+					oResult[sResultPropertyName] = vOldValue;
+				}
+				throw oError;
+			});
 		});
 	};
 

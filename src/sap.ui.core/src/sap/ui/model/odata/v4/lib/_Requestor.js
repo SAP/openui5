@@ -24,6 +24,21 @@ sap.ui.define([
 		};
 
 	/**
+	 * Deletes the queue for the given group ID if it contains only the empty change set, so that
+	 * no empty batch is sent.
+	 *
+	 * @param {Requestor} oRequestor The requestor
+	 * @param {string} sGroupId The group ID
+	 */
+	function deleteEmptyGroup(oRequestor, sGroupId) {
+		var aBatchQueue = oRequestor.mBatchQueue[sGroupId];
+
+		if (aBatchQueue[0].length === 0 && aBatchQueue.length === 1) {
+			delete oRequestor.mBatchQueue[sGroupId];
+		}
+	}
+
+	/**
 	 * The getResponseHeader() method imitates the jqXHR.getResponseHeader() method for a $batch
 	 * error response.
 	 *
@@ -67,6 +82,7 @@ sap.ui.define([
 
 	/**
 	 * Cancels all PATCH requests for a given group.
+	 * All pending requests are rejected with an error with property <code>canceled = true</code>.
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID to be canceled
@@ -93,10 +109,7 @@ sap.ui.define([
 				aBatchQueue[0].push(aChangeSet[i]);
 			}
 		}
-		// if the queue contains only the empty change set, remove it so that no empty batch is sent
-		if (aBatchQueue[0].length === 0 && aBatchQueue.length === 1) {
-			delete this.mBatchQueue[sGroupId];
-		}
+		deleteEmptyGroup(this, sGroupId);
 	};
 
 	/**
@@ -107,6 +120,26 @@ sap.ui.define([
 	 */
 	Requestor.prototype.getServiceUrl = function () {
 		return this.sServiceUrl;
+	};
+
+	/**
+	 * Returns <code>true</code> if there are pending changes.
+	 *
+	 * @returns {boolean} <code>true</code> if there are pending changes
+	 */
+	Requestor.prototype.hasPendingChanges = function () {
+		var aBatchQueue, aChangeSet, sGroupId, i;
+
+		for (sGroupId in this.mBatchQueue) {
+			aBatchQueue = this.mBatchQueue[sGroupId];
+			aChangeSet = aBatchQueue[0];
+			for (i = 0; i < aChangeSet.length; i++) {
+				if (aChangeSet[i].method === "PATCH") {
+					return true;
+				}
+			}
+		}
+		return false;
 	};
 
 	/**
@@ -141,6 +174,34 @@ sap.ui.define([
 		}
 
 		return this.oSecurityTokenPromise;
+	};
+
+	/**
+	 * Removes the pending PATCH request for the given promise from its group.
+	 *
+	 * @param {Promise} oPromise
+	 *   A promise that has been returned for a PATCH request. It will be rejected with an error
+	 *   with property <code>canceled = true</code>.
+	 *
+	 * @private
+	 */
+	Requestor.prototype.removePatch = function (oPromise) {
+		var aBatchQueue, aChangeSet, oError, sGroupId, i;
+
+		for (sGroupId in this.mBatchQueue) {
+			aBatchQueue = this.mBatchQueue[sGroupId];
+			aChangeSet = aBatchQueue[0];
+			for (i = 0; i < aChangeSet.length; i++) {
+				if (aChangeSet[i].$promise === oPromise) {
+					oError = new Error();
+					oError.canceled = true;
+					aChangeSet[i].$reject(oError);
+					aChangeSet.splice(i, 1);
+					deleteEmptyGroup(this, sGroupId);
+					return;
+				}
+			}
+		}
 	};
 
 	/**

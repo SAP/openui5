@@ -69,7 +69,6 @@ sap.ui.define([
 					.then(function () {
 						var oModel = oView.getModel();
 
-						oModel.resetChanges();
 						//TODO: refresh needed as long there is no synchronisation
 						oModel.refresh();
 						showSuccessMessage("reset");
@@ -95,12 +94,10 @@ sap.ui.define([
 				oModel.submitChanges();
 			} else {
 				oModel.submitBatch("EDMTypes").then(function () {
-					//TODO: refresh needed as long there is no synchronisation
-					oModel.refresh();
 					showSuccessMessage("saved");
-					},
-					function () {
-						that.showErrorPopover("saveButton");
+				},
+				function () {
+					that.showErrorPopover("saveButton");
 				});
 			}
 		},
