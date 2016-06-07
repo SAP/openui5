@@ -1075,7 +1075,7 @@
 		oModel.metadataLoaded().then(function() {
 			oLabel.getElementBinding().refresh();
 			setTimeout(function() {
-				ok(oModel.mDeferredRequests['test'].requests.length === 2, "request deferred");
+				ok(oModel.mDeferredRequests['test'].requests.length === 1, "request deferred");
 				oModel.submitChanges("test");
 			}, 0);
 		});
@@ -1392,7 +1392,7 @@
 			});
 			var oBinding = oInput.getBinding("value");
 			ok(oBinding !== undefined, "binding check");
-			// should not trigger event 
+			// should not trigger event
 			oModel.setProperty(oBinding.getPath(), "blubb2", oBinding.getContext());
 			// should trigger event
 			oInput.setValue("blubb");
@@ -1425,7 +1425,7 @@
 			oInput.bindObject("/Categories(2)");
 			var oBinding = oInput.getBinding("value");
 			ok(oBinding !== undefined, "binding check");
-			// should not trigger event 
+			// should not trigger event
 			oModel.setProperty(oBinding.getPath(), "blubb2", oBinding.getContext());
 			// should trigger event
 			oInput.setValue("blubb");
@@ -1455,7 +1455,7 @@
 					equal(oValue, "blubb", "property value check!");
 					equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
 					oInput.setValue("Condiments");
-					
+
 				} else if (iCount === 2) {
 					equal(sPath, "/Categories(2)/CategoryName", "path check!");
 					equal(oContext, undefined, "context check!");
@@ -1741,7 +1741,7 @@
 
 			// override headers
 			oModel.setHeaders({"myCustomHeader1" : "666", "TesT": "new Header", "MyCustomHeader2" : "blubb"});
-			oModel.read("/Categories", {
+			oModel.read("/Categories(1)", {
 				success: function() {
 					equal(spy.args[2][0].headers['myCustomHeader1'], "666", "spy check custom header");
 					equal(spy.args[2][0].headers['MyCustomHeader2'], "blubb", "spy check custom header");
@@ -2078,7 +2078,7 @@
 			iParallelCount--;
 		}
 		oModel.read("/Categories(1)");
-		oModel.read("/Categories(1)");
+		oModel.read("/Categories(3)");
 		oModel.read("/Categories(9999)");
 		oModel.attachRequestCompleted(function() {
 			iCount++;
@@ -2118,8 +2118,8 @@
 		oModel.setDeferredBatchGroups(["1", "2"]);
 		oModel.read("/Categories(1)", {groupId: "1"});
 		oModel.read("/Categories(9999)", {groupId: "1"});
-		oModel.read("/Categories(1)", {groupId: "2"});
-		oModel.read("/Categories(9999)", {groupId: "2"});
+		oModel.read("/Categories(3)", {groupId: "2"});
+		oModel.read("/Products(2)", {groupId: "2"});
 		oModel.submitChanges({groupId: "1"});
 		oModel.submitChanges({groupId: "2"});
 
@@ -2152,7 +2152,7 @@
 		function fnSuccess() { oInfo.success++; }
 		function fnError() { oInfo.error++; }
 		oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
-		oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
+		oModel.read("/Categories(3)", {success: fnSuccess, error: fnError});
 		oModel.read("/Categories(9999)", {success: fnSuccess, error: fnError});
 		oModel.attachRequestCompleted(function() {
 			iCount++;
@@ -2185,7 +2185,7 @@
 		function fnSuccess() { oInfo.success++; }
 		function fnError() { oInfo.error++; }
 		oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
-		oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
+		oModel.read("/Categories(3)", {success: fnSuccess, error: fnError});
 		oModel.read("/Categories(9999)", {success: fnSuccess, error: fnError});
 		oModel.attachBatchRequestCompleted(function() {
 			_setTimeout(function() {
@@ -2216,8 +2216,8 @@
 		function fnSuccess() { oInfo.success++; }
 		function fnError() { oInfo.error++; }
 		oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
-		oModel.remove("/Categories(1)", {success: fnSuccess, error: fnError});
-		oModel.remove("/Categories(2)", {success: fnSuccess, error: fnError});
+		oModel.remove("/Categories(3)", {success: fnSuccess, error: fnError});
+		oModel.remove("/Products(2)", {success: fnSuccess, error: fnError});
 		oModel.attachBatchRequestCompleted(function() {
 			_setTimeout(function() {
 				equal(oInfo.requestSent, 3, "Three requests sent");
@@ -2246,10 +2246,10 @@
 		function fnSuccess() { oInfo.success++; }
 		function fnError() { oInfo.error++; }
 		oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
-		oModel.remove("/Categories(1)", {changeSetId: 1, success: fnSuccess, error: fnError});
-		oModel.remove("/Categories(2)", {changeSetId: 1, success: fnSuccess, error: fnError});
-		oModel.remove("/Categories(1)", {changeSetId: 2, success: fnSuccess, error: fnError});
-		oModel.remove("/Categories(2)", {changeSetId: 2, success: fnSuccess, error: fnError});
+		oModel.remove("/Categories(3)", {changeSetId: 1, success: fnSuccess, error: fnError});
+		oModel.remove("/Categories(4)", {changeSetId: 1, success: fnSuccess, error: fnError});
+		oModel.remove("/Products(2)", {changeSetId: 2, success: fnSuccess, error: fnError});
+		oModel.remove("/Products(3)", {changeSetId: 2, success: fnSuccess, error: fnError});
 		oModel.attachBatchRequestCompleted(function() {
 			_setTimeout(function() {
 				equal(oInfo.requestSent, 5, "Five requests sent");
@@ -2278,9 +2278,9 @@
 		function fnSuccess() { oInfo.success++; }
 		function fnError() { oInfo.error++; }
 		oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
-		oModel.remove("/Categories(1)", {changeSetId: 1, success: fnSuccess, error: fnError});
-		oModel.remove("/Categories(2)", {changeSetId: 1, success: fnSuccess, error: fnError});
-		oModel.remove("/Categories(1)", {changeSetId: 2, success: fnSuccess, error: fnError});
+		oModel.remove("/Categories(3)", {changeSetId: 1, success: fnSuccess, error: fnError});
+		oModel.remove("/Categories(4)", {changeSetId: 1, success: fnSuccess, error: fnError});
+		oModel.remove("/Products(2)", {changeSetId: 2, success: fnSuccess, error: fnError});
 		oModel.remove("/Fail500(2)", {changeSetId: 2, success: fnSuccess, error: fnError});
 		oModel.attachBatchRequestCompleted(function() {
 			_setTimeout(function() {
@@ -2310,7 +2310,7 @@
 		function fnSuccess() { oInfo.success++; }
 		function fnError() { oInfo.error++; }
 		oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
-		oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
+		oModel.read("/Categories(3)", {success: fnSuccess, error: fnError});
 		oModel.read("/Batch500(9999)", {success: fnSuccess, error: fnError});
 		oModel.attachBatchRequestCompleted(function() {
 			_setTimeout(function() {
@@ -2344,8 +2344,8 @@
 		function fnError() { oInfo.error++; }
 		oModel.attachMetadataLoaded(function() {
 			oRequest1 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
-			oRequest2 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
-			oRequest3 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
+			oRequest2 = oModel.read("/Categories(3)", {success: fnSuccess, error: fnError});
+			oRequest3 = oModel.read("/Categories(4)", {success: fnSuccess, error: fnError});
 			oRequest1.abort();
 			oRequest2.abort();
 			oModel.attachRequestCompleted(function() {
@@ -2383,8 +2383,8 @@
 		function fnError() { oInfo.error++; }
 		oModel.attachMetadataLoaded(function() {
 			oRequest1 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
-			oRequest2 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
-			oRequest3 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError});
+			oRequest2 = oModel.read("/Categories(3)", {success: fnSuccess, error: fnError});
+			oRequest3 = oModel.read("/Categories(4)", {success: fnSuccess, error: fnError});
 			oModel.attachRequestSent(function() {
 				iCount++;
 				if (iCount == 3) {
