@@ -5,22 +5,28 @@
 
 	<title>StepInput - sap.m</title>
 
+	<script src="shared-config.js"></script>
 	<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m"
-			data-sap-ui-theme="sap_bluecrystal">
+			data-sap-ui-libs="sap.m">
 	</script>
 
-	<script type="text/javascript">
-		jQuery.sap.require("sap.m.StepInput");
-
+	<script>
 		var app = new sap.m.App("myApp", {initialPage: "page1"});
+		var oLabel9 = new sap.m.Label({
+			text: "value = 1.32567, displayValuePrecision = 3, input will show 1.326"
+		});
+		var oLabel8 = new sap.m.Label({
+			text: "value = 1.32, displayValuePrecision = 0, input will show 1"
+		});
+		var oLabel7 = new sap.m.Label({
+			text: "value = 1.32, displayValuePrecision = 3, step = 0.05, input will show 1.320"
+		});
 		var oLabelStep1Val6Min6Max15 = new sap.m.Label({
 			text: "Step = 1 (default behavior); value = 6, min = 5, max = 15"
 		});
 		var oLabelVal5Min6 = new sap.m.Label({
-			text: "value = 5, min = 6, it sets the min because the value is lower"
+			text: "value = 5, min = 6, it sets 6 because the value is below the min"
 		});
 		var oLabelStep5 = new sap.m.Label({
 			text: "Step = 5 (customized scenario), no value, min and max limitations"
@@ -61,6 +67,28 @@
 			title: "Input Types",
 			content: [new sap.m.VBox({
 				items: [
+					oLabel9,
+					new sap.m.StepInput({
+						value: 1.32567,
+						displayValuePrecision: 3,
+						width: "75%",
+						ariaLabelledBy: oLabel9
+					}),
+					oLabel8,
+					new sap.m.StepInput({
+						value: 1.32,
+						displayValuePrecision: 0,
+						width: "75%",
+						ariaLabelledBy: oLabel8
+					}),
+					oLabel7,
+					new sap.m.StepInput({
+						value: 1.32,
+						displayValuePrecision: 3,
+						step: 0.05,
+						width: "75%",
+						ariaLabelledBy: oLabel7
+					}),
 					oLabelStep1Val6Min6Max15,
 					new sap.m.StepInput("boundSI", {
 						min: 5,
