@@ -761,7 +761,6 @@ sap.ui.require([
 			return oUpdatePromise;
 		});
 	});
-	// TODO fnLog of drillDown in CollectionCache#update
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bCancel) {
@@ -962,6 +961,33 @@ sap.ui.require([
 
 			return Promise.all(aUpdatePromises).then(function () {
 				assert.deepEqual(oCache.mPatchRequests, {});
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("update: invalid path", function (assert) {
+		var sEditUrl = "SOLineItemList(SalesOrderID='0',ItemPosition='0')",
+			oRequestor = _Requestor.create("/"),
+			oRequestorMock = this.mock(oRequestor),
+			sResourcePath = "/SalesOrderList",
+			oCache = _Cache.create(oRequestor, sResourcePath);
+
+		oRequestorMock.expects("request")
+			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=1", "groupId")
+			.returns(Promise.resolve({
+				value: []
+			}));
+		this.oLogMock.expects("error").withExactArgs("Failed to drill-down into "
+			+ "/SalesOrderList?$skip=0&$top=1 via invalid/path, invalid segment: invalid",
+			null, "sap.ui.model.odata.v4.lib._Cache");
+
+		return oCache.read(0, 1, "groupId", "").then(function () {
+			oCache.update("groupId", "foo", "bar", sEditUrl, "0/invalid/path").then(function () {
+				assert.ok(false);
+			}, function (oError) {
+				assert.strictEqual(oError.message,
+					"Cannot update 'foo': '0/invalid/path' does not exist");
 			});
 		});
 	});
@@ -1428,7 +1454,8 @@ sap.ui.require([
 			});
 		});
 	});
-	// TODO fnLog of drillDown in SingleCache#update
+	// TODO we cannot update a single property with value null, because the read delivers "204 No
+	//      Content" and no oResult. Hence we do not have the ETag et al.
 
 	//*********************************************************************************************
 	QUnit.test("SingleCache: mPatchRequests", function (assert) {
@@ -1546,6 +1573,31 @@ sap.ui.require([
 
 			return Promise.all(aUpdatePromises).then(function () {
 				assert.deepEqual(oCache.mPatchRequests, {});
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("SingleCache update: invalid path", function (assert) {
+		var sEditUrl = "SOLineItemList(SalesOrderID='0',ItemPosition='0')",
+			oRequestor = _Requestor.create("/"),
+			oRequestorMock = this.mock(oRequestor),
+			sResourcePath = "/SalesOrderList(SalesOrderID='0')",
+			oCache = _Cache.createSingle(oRequestor, sResourcePath);
+
+		oRequestorMock.expects("request")
+			.withExactArgs("GET", sResourcePath, "groupId")
+			.returns(Promise.resolve({}));
+		this.oLogMock.expects("error").withExactArgs("Failed to drill-down into "
+			+ "/SalesOrderList(SalesOrderID='0')/invalid/path, "
+			+ "invalid segment: invalid", null, "sap.ui.model.odata.v4.lib._Cache");
+
+		return oCache.read("groupId", "").then(function () {
+			oCache.update("groupId", "foo", "bar", sEditUrl, "invalid/path").then(function () {
+				assert.ok(false);
+			}, function (oError) {
+				assert.strictEqual(oError.message,
+					"Cannot update 'foo': 'invalid/path' does not exist");
 			});
 		});
 	});
