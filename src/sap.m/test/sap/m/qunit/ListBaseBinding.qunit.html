@@ -522,6 +522,51 @@
 		});
 	});
 
+	module("Upwards Growing Direction");
+	testOData("Should fetch the data and render in reverse order", function() {
+		var iThreshold = 5,
+			oDeferred = jQuery.Deferred(),
+			oMockServer = startMockServer(),
+			oList = createList({
+				growing : true,
+				growingThreshold : iThreshold,
+				growingDirection : "Upwards",
+				updateFinished : function(oEvent) {
+					var oNavigationRoot = oList.getNavigationRoot(),
+						$GrowingButton = oList.$("trigger");
+
+					ok($GrowingButton.parent().next().get(0) === oList.getDomRef("before"), "Growing button is inserted before the first item.");
+					ok(oList.getItems().pop().getDomRef() === oNavigationRoot.children[0], "Last aggregation DOM is the first child of the list");
+
+					if (document.hasFocus()) {
+						oList.focus();
+						ok(document.activeElement === oNavigationRoot.children[iThreshold - 1], "First focus jumps to last item");
+					}
+
+					// act: request new page
+					$GrowingButton.focus().trigger("tap");
+
+					oList.attachUpdateFinished(function(oEvent) {
+						oNavigationRoot = oList.getNavigationRoot(),
+						ok(oList.getItems().pop().getDomRef() === oNavigationRoot.children[0], "Last aggregation DOM is the first child of the list");
+
+						if (document.hasFocus()) {
+							ok(document.activeElement === $GrowingButton.get(0), "Focus is not changed after growing");
+						}
+
+						oDeferred.resolve();
+					});
+				}
+			});
+
+		// when test is completed
+		jQuery.when(oDeferred).done(function () {
+			oMockServer.stop();
+			oList.destroy();
+			start();
+		});
+	});
+
 </script>
 
 </head>

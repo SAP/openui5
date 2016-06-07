@@ -54,6 +54,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.ValueColor",
 			"sap.m.InputType",
 			"sap.m.LabelDesign",
+			"sap.m.ListGrowingDirection",
 			"sap.m.ListHeaderDesign",
 			"sap.m.ListKeyboardMode",
 			"sap.m.ListMode",
@@ -1469,6 +1470,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 * @public
 		 */
 		Edit : "Edit"
+
+	};
+
+	/**
+	 * Defines the growing directionality of the <code>sap.m.List</code> or <code>sap.m.Table</code>.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.40.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.ListGrowingDirection = {
+
+		/**
+		 * User needs to scroll down to load more items or growing button is displayed at the bottom.
+		 * @public
+		 */
+		Downwards : "Downwards",
+
+		/**
+		 * User needs to scroll up to load more items or growing button is displayed at the top.
+		 * <b>Note:</b> When this option is active, there should not be any other control than <code>sap.m.List</code> inside its container.
+		 * @public
+		 */
+		Upwards : "Upwards"
 
 	};
 
