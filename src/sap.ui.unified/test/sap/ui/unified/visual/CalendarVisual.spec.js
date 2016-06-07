@@ -1,4 +1,5 @@
 describe("sap.ui.unified.CalendarVisual", function() {
+	browser.testrunner.currentSuite.meta.controlName = 'sap.ui.unified.Calendar';
 
 	var sCalId = "Cal1";
 	var oCal = element(by.id(sCalId));
