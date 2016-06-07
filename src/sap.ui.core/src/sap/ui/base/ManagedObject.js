@@ -1009,7 +1009,8 @@ sap.ui.define([
 	 * marks this object as changed.
 	 *
 	 * If the value is not valid with regard to the declared data type of the property,
-	 * an Error is thrown (see {@link #validateProperty}. If the validated and normalized
+	 * an Error is thrown. In case <code>null</code> or <code>undefined</code> is passed,
+	 * the default value for this property is used (see {@link #validateProperty}. If the validated and normalized
 	 * <code>oValue</code> equals the current value of the property, the internal state of
 	 * this object is not changed. If the value changes, it is stored internally and
 	 * the {@link #invalidate} method is called on this object. In the case of TwoWay
@@ -1028,6 +1029,7 @@ sap.ui.define([
 	 * @param {any}     oValue value to set the property to
 	 * @param {boolean} [bSuppressInvalidate] if true, the managed object is not marked as changed
 	 * @returns {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+	 *
 	 * @protected
 	 */
 	ManagedObject.prototype.setProperty = function(sPropertyName, oValue, bSuppressInvalidate) {
