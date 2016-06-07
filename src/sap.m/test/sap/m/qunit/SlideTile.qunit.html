@@ -286,6 +286,55 @@
 		assert.equal(sAriaLabel, sAriaLabelExpected, "Expected forward animation done");
 	});
 
+	QUnit.test("Tests if multiple tiles indicator displayed when there are more tiles", function(assert) {
+		//Act
+		var $indicator = this.oSlideTile.$("tilesIndicator");
+		//Assert
+		assert.ok($indicator.length > 0, "Multiple tiles indicator displayed when there are more tiles");
+	});
+
+	QUnit.test("Tests if multiple tiles indicator not displayed when there is only one tile", function(assert) {
+		//Arrange
+		this.oSlideTile.removeTile(this.oSlideTile.getTiles()[2].getId());
+		this.oSlideTile.removeTile(this.oSlideTile.getTiles()[1].getId());
+		sap.ui.getCore().applyChanges();
+		//Act
+		var $indicator = this.oSlideTile.$("tilesIndicator");
+		//Assert
+		assert.ok($indicator.length === 0, "Multiple tiles indicator not displayed when there is only one tile");
+	});
+
+	QUnit.test("Tests if the number of dots is correct", function(assert) {
+		//Act
+		var $indicator = this.oSlideTile.$("tilesIndicator");
+		var iTilesCount = this.oSlideTile.getTiles().length;
+		//Assert
+		assert.equal($indicator.children().length, iTilesCount, "The number of indicator dots is same as the number of tiles");
+	});
+
+	QUnit.test("Tests if the active dot displayed correctly", function(assert) {
+		//Act
+		var $indicator = this.oSlideTile.$("tilesIndicator");
+		//Assert
+		assert.ok($($indicator[0].children[0]).hasClass("sapMSTActive"), "The first dot is displayed as active");
+	});
+
+	QUnit.test("Tests if the active dot displayed properly after click forward button", function(assert) {
+		//Act
+		var $indicator = this.oSlideTile.$("tilesIndicator");
+		this.oSlideTile._scrollToNextTile(true, false);
+		//Assert
+		assert.ok($($indicator[0].children[1]).hasClass("sapMSTActive"), "The second dot displayed as active");
+	});
+
+	QUnit.test("Tests if the active dot displayed properly after click backward button", function(assert) {
+		//Act
+		var $indicator = this.oSlideTile.$("tilesIndicator");
+		this.oSlideTile._scrollToNextTile(true, true);
+		//Assert
+		assert.ok($($indicator[0].children[2]).hasClass("sapMSTActive"),"The third dot displayed as active");
+	});
+
 	QUnit.module("Rendering - EmptyTile", {
 		beforeEach : function() {
 
