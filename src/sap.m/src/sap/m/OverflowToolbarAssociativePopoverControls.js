@@ -119,6 +119,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', './OverflowToolbarBu
 		OverflowToolbarAssociativePopoverControls.prototype._postProcessSapMSelect = function(oControl) {
 			var oPrevState = this._mControlsCache[oControl.getId()];
 
+
 			if (oControl.getType() !== oPrevState.selectType) {
 				oControl.setProperty("type", oPrevState.selectType, true);
 			}
@@ -208,6 +209,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', './OverflowToolbarBu
 				canOverflow: false,
 				listenForEvents: [],
 				noInvalidationProps: ["enabled", "value"]
+			},
+			"sap.ui.comp.smartfield.SmartField": {
+				canOverflow: true,
+				listenForEvents: ["change"],
+				noInvalidationProps: ["enabled", "value", "valueState", "showValueHelp", "contextEditable",
+					"clientSideMandatoryCheck", "mandatory", "name", "placeholder", "showSuggestion", "tooltipLabel"]
+			},
+			"sap.ui.comp.smartfield.SmartLabel": {
+				canOverflow: true,
+				listenForEvents: [],
+				noInvalidationProps: ["enabled"]
 			}
 		};
 
