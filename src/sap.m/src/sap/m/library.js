@@ -1105,6 +1105,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
+	/**
+	 * Specifies <code>IconTabBar</code> header mode.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.IconTabHeaderMode = {
+
+		/**
+		 * Standard. In this mode when the <code>count</code> and the <code>text</code> are set, they are displayed in two separate lines.
+		 */
+		Standard : "Standard",
+
+		/**
+		 * Inline. In this mode when the <code>count</code> and the <code>text</code> are set, they are displayed in one line.
+		 */
+		Inline : "Inline"
+	};
 
 		/**
 	 * Available Filter Item Design.

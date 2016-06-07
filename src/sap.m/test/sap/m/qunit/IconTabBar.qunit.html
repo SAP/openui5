@@ -1133,6 +1133,60 @@
 				oIconTabBar.destroy();
 			});
 
+			test("Inline Mode", function() {
+
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter({
+							text: "Text 1",
+							count: "10",
+							content: [
+								new sap.m.Label({
+									text: "info info info"
+								})
+							]
+						}),
+						new sap.m.IconTabFilter({
+							text: "Text 2",
+							count: "20",
+							content: [
+								new sap.m.Label({
+									text: "info info info"
+								})
+							]
+						}),
+						new sap.m.IconTabFilter({
+							text: "Text 3",
+							count: "30",
+							content: [
+								new sap.m.Label({
+									text: "info info info"
+								})
+							]
+						})
+					]
+				});
+
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				ok(oIconTabBar.$().find(".sapMITBCount").length == 3, '3 "counts" texts are displayed');
+				ok(jQuery(oIconTabBar.$().find(".sapMITBText")[0]).text() == "Text 1", "The text is correct");
+
+				oIconTabBar.setHeaderMode(sap.m.IconTabHeaderMode.Inline);
+
+				sap.ui.getCore().applyChanges();
+
+				ok(oIconTabBar.$().find(".sapMITBCount").length == 0, '"counts" texts are not displayed');
+				ok(jQuery(oIconTabBar.$().find(".sapMITBText")[0]).text() == "Text 1 (10)", "The count is attached to the text");
+
+				// Clean up
+				oIconTabBar.destroy();
+			});
+
 			test("stretchContentHeight", function () {
 
 				// Arrange
