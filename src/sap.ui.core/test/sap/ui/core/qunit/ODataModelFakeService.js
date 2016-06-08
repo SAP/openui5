@@ -560,8 +560,11 @@ var oNodataHeaders = 	{
 	};
 var oXMLHeaders = 	{
 		"Content-Type": "application/atom+xml;charset=utf-8",
-		"DataServiceVersion": "2.0"
+		"DataServiceVersion": "2.0",
+		"Age": "oh so very old",
+		"Invalid": "invalid"
 	};
+
 var oJSONHeaders = 	{
 		"Content-Type": "application/json;charset=utf-8",
 		"DataServiceVersion": "2.0"
@@ -4696,34 +4699,34 @@ var sProducts1ExpandCategoryXML = '\
 	';
 
 var sProducts1XML = '\
-	<?xml version="1.0" encoding="utf-8" standalone="yes"?>\
-	<entry xml:base="http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom">\
-	  <id>http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Products(1)</id>\
-	  <title type="text"></title>\
-	  <updated>2013-02-01T11:36:35Z</updated>\
-	  <author>\
-	    <name />\
-	  </author>\
-	  <link rel="edit" title="Product" href="Products(1)" />\
-	  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(1)/Order_Details" />\
-	  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(1)/Supplier" />\
-	  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />\
-	  <content type="application/xml">\
-	    <m:properties>\
-	      <d:ProductID m:type="Edm.Int32">1</d:ProductID>\
-	      <d:ProductName m:type="Edm.String">Chai</d:ProductName>\
-	      <d:SupplierID m:type="Edm.Int32">1</d:SupplierID>\
-	      <d:CategoryID m:type="Edm.Int32">1</d:CategoryID>\
-	      <d:QuantityPerUnit m:type="Edm.String">10 boxes x 20 bags</d:QuantityPerUnit>\
-	      <d:UnitPrice m:type="Edm.Decimal">18.0000</d:UnitPrice>\
-	      <d:UnitsInStock m:type="Edm.Int16">39</d:UnitsInStock>\
-	      <d:UnitsOnOrder m:type="Edm.Int16">0</d:UnitsOnOrder>\
-	      <d:ReorderLevel m:type="Edm.Int16">10</d:ReorderLevel>\
-	      <d:Discontinued m:type="Edm.Boolean">false</d:Discontinued>\
-	    </m:properties>\
-	  </content>\
-	</entry>\
-		';
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>\
+<entry xml:base="http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom">\
+  <id>http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Products(1)</id>\
+  <title type="text"></title>\
+  <updated>2013-02-01T11:36:35Z</updated>\
+  <author>\
+    <name />\
+  </author>\
+  <link rel="edit" title="Product" href="Products(1)" />\
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(1)/Order_Details" />\
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(1)/Supplier" />\
+  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />\
+  <content type="application/xml">\
+    <m:properties>\
+      <d:ProductID m:type="Edm.Int32">1</d:ProductID>\
+      <d:ProductName m:type="Edm.String">Chai</d:ProductName>\
+      <d:SupplierID m:type="Edm.Int32">1</d:SupplierID>\
+      <d:CategoryID m:type="Edm.Int32">1</d:CategoryID>\
+      <d:QuantityPerUnit m:type="Edm.String">10 boxes x 20 bags</d:QuantityPerUnit>\
+      <d:UnitPrice m:type="Edm.Decimal">18.0000</d:UnitPrice>\
+      <d:UnitsInStock m:type="Edm.Int16">39</d:UnitsInStock>\
+      <d:UnitsOnOrder m:type="Edm.Int16">0</d:UnitsOnOrder>\
+      <d:ReorderLevel m:type="Edm.Int16">10</d:ReorderLevel>\
+      <d:Discontinued m:type="Edm.Boolean">false</d:Discontinued>\
+    </m:properties>\
+  </content>\
+</entry>\
+';
 
 var sCategoriesFilter1XML = '\
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>\
