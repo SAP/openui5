@@ -18,11 +18,13 @@ sap.ui.define([], function() {
 	 * @param {sap.ui.core.Control} oControl the control to be rendered
 	 */
 	SlideTileRenderer.render = function(oRm, oControl) {
+		var sTooltip = oControl.getTooltip_AsString(),
+			iLength;
+
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMST");
 		oRm.writeClasses();
-		var sTooltip = oControl.getTooltip_AsString();
 		if (sTooltip) {
 			oRm.writeAttributeEscaped("title", sTooltip);
 		}
@@ -30,7 +32,7 @@ sap.ui.define([], function() {
 		oRm.writeAttribute("role", "presentation");
 		oRm.write(">");
 
-		var iLength = oControl.getTiles().length;
+		iLength = oControl.getTiles().length;
 		for (var i = 0; i < iLength; i++) {
 			oRm.write("<div");
 			oRm.writeAttribute("id", oControl.getId() + "-wrapper-" + i);
