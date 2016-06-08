@@ -140,8 +140,8 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			growingScrollToLoad : {type : "boolean", group : "Behavior", defaultValue : false},
 
 			/**
-			 * If set to true, this control remembers the selections after a binding update has been performed (e.g. sorting, filtering).
-			 * <b>Note:</b> If <code>items</code> aggregation is not bound then this property is ignored.
+			 * If set to true, this control remembers and retains the selection of the items after a binding update has been performed (e.g. sorting, filtering).
+			 * <b>Note:</b> This feature works only if two-way binding for the <code>selected</code> property of the item is not used and needs to be turned off if the binding context of the item does not always point to the same entry in the model, for example, if the order of the data in the <code>JSONModel</code> is changed.
 			 * @since 1.16.6
 			 */
 			rememberSelections : {type : "boolean", group : "Behavior", defaultValue : true}
@@ -1102,7 +1102,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 
 	// insert or remove given item's path from selection array
 	ListBase.prototype._updateSelectedPaths = function(oItem, bSelect) {
-		if (!this.getRememberSelections() || !this.isBound("items")) {
+		if (!this.getRememberSelections() || !this.isBound("items") || oItem.isSelectedBoundTwoWay()) {
 			return;
 		}
 
@@ -1413,6 +1413,11 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		// use binding length if list is in scroll to load growing mode
 		if (this.getGrowing() && this.getGrowingScrollToLoad() && oBinding && oBinding.isLengthFinal()) {
 			iSetSize = oBinding.getLength();
+			if (oBinding.isGrouped()) {
+				iSetSize += this.getItems(true).filter(function(oItem) {
+					return oItem.isGroupHeader() && oItem.getVisible();
+				}).length;
+			}
 		}
 
 		this.getNavigationRoot().setAttribute("aria-activedescendant", oItemDomRef.id);
