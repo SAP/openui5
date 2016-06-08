@@ -5,9 +5,10 @@
 sap.ui.define([
 	"./lib/_Helper",
 	"./lib/_Parser",
+	"sap/ui/model/FilterOperator",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/Sorter"
-], function (_Helper, _Parser, OperationMode, Sorter) {
+], function (_Helper, _Parser, FilterOperator, OperationMode, Sorter) {
 	"use strict";
 
 	var ODataHelper,
@@ -247,8 +248,11 @@ sap.ui.define([
 		 * @param {sap.ui.model.odata.v4.ODataListBinding|sap.ui.model.odata.v4.ODataContextBinding}
 		 *   oBinding The relative binding
 		 * @param {function} fnCreateCache Function to create the cache which is called with the
-		 *   canonical path as parameter and returns the cache.
-		 * @param {Promise} oPathPromise Promise which resolves with a canonical path for the cache
+		 *   canonical path and the $filter value as parameter and returns the cache.
+		 * @param {Promise} [oPathPromise] Promise which resolves with a canonical path for the
+		 *   cache
+		 * @param {Promise} [oFilterPromise] Promise which resolves with a value for the $filter
+		 *   query option to be used when creating the cache
 		 * @returns {object} The cache proxy with the following properties
 		 *   deregisterChange: method does nothing
 		 *   hasPendingChanges: method returning false
@@ -259,7 +263,7 @@ sap.ui.define([
 		 *   refresh: method does nothing
 		 *   update: method throws an error as the cache proxy does not support write operations
 		 */
-		createCacheProxy : function (oBinding, fnCreateCache, oPathPromise) {
+		createCacheProxy : function (oBinding, fnCreateCache, oPathPromise, oFilterPromise) {
 			var oCacheProxy;
 
 			if (oBinding.oCache) {
@@ -289,16 +293,20 @@ sap.ui.define([
 				}
 			};
 
-			oCacheProxy.promise = Promise.all([oPathPromise])
+			oCacheProxy.promise = Promise.all([oPathPromise, oFilterPromise])
 				.then(function (aResult) {
-					var oCache, sCanonicalPath = aResult[0];
+					var oCache,
+						sCanonicalPath = aResult[0];
 
 					if (oBinding.oCache !== oCacheProxy) {
 						return oBinding.oCache;
 					}
 					oBinding.mCacheByContext = oBinding.mCacheByContext || {};
-					oCache = oBinding.mCacheByContext[sCanonicalPath] =
-						oBinding.mCacheByContext[sCanonicalPath] || fnCreateCache(sCanonicalPath);
+					oCache = sCanonicalPath
+						? oBinding.mCacheByContext[sCanonicalPath] =
+							oBinding.mCacheByContext[sCanonicalPath]
+							|| fnCreateCache(sCanonicalPath, aResult[1])
+						: fnCreateCache(sCanonicalPath, aResult[1]);
 					return oCache;
 				});
 
@@ -362,6 +370,165 @@ sap.ui.define([
 			}
 			return jQuery.extend({}, mQueryOptions, {
 				$orderby : sOrderby
+			});
+		},
+
+		/**
+		 * Requests a $filter query option value for the given list binding; the value is computed
+		 * from the given arrays of dynamic application and control filters and the given static
+		 * filter.
+		 *
+		 * @param {sap.ui.model.odata.v4.ODataListBinding} oBinding
+		 *   The list binding
+		 * @param {sap.ui.model.Filter[]} aApplicationFilters
+		 *   The application filters
+		 * @param {sap.ui.model.Filter[]} aControlFilters
+		 *   The control filters
+		 * @param {string} sStaticFilter
+		 *   The static filter value
+		 * @returns {Promise} A promise which resolves with the $filter value or "" if the filter
+		 *   arrays are empty and the static filter parameter is not given. It rejects with an error
+		 *   if a filter has an unknown operator or an invalid path.
+		 */
+		requestFilter : function (oBinding, aApplicationFilters, aControlFilters, sStaticFilter) {
+			var aNonEmptyFilters = [];
+
+			/**
+			 * Concatenates the given $filter values using the given separator; the resulting
+			 * value is enclosed in parentheses if more than one filter value is given.
+			 *
+			 * @param {string[]} aFilterValues The filter values
+			 * @param {string} sSeparator The separator
+			 * @returns {string} The combined filter value
+			 */
+			function combineFilterValues(aFilterValues, sSeparator) {
+				var sFilterValue = aFilterValues.join(sSeparator);
+
+				return aFilterValues.length > 1 ? "(" + sFilterValue + ")" : sFilterValue;
+			}
+
+			/**
+			 * Returns the $filter value for the given single filter using the given Edm type to
+			 * format the filter's operand(s).
+			 *
+			 * @param {sap.ui.model.Filter} oFilter The filter
+			 * @param {string} sEdmType The Edm type
+			 * @returns {string} The $filter value
+			 */
+			function getSingleFilterValue(oFilter, sEdmType) {
+				var sFilter,
+					sValue = _Helper.formatLiteral(oFilter.oValue1, sEdmType),
+					sFilterPath = decodeURIComponent(oFilter.sPath);
+
+				switch (oFilter.sOperator) {
+					case FilterOperator.BT :
+						sFilter = sFilterPath + " ge " + sValue + " and "
+							+ sFilterPath + " le "
+							+ _Helper.formatLiteral(oFilter.oValue2, sEdmType);
+						break;
+					case FilterOperator.EQ :
+					case FilterOperator.GE :
+					case FilterOperator.GT :
+					case FilterOperator.LE :
+					case FilterOperator.LT :
+					case FilterOperator.NE :
+						sFilter = sFilterPath + " " + oFilter.sOperator.toLowerCase() + " "
+							+ sValue;
+						break;
+					case FilterOperator.Contains :
+					case FilterOperator.EndsWith :
+					case FilterOperator.StartsWith :
+						sFilter = oFilter.sOperator.toLowerCase() + "(" + sFilterPath + ","
+							+ sValue + ")";
+						break;
+					default :
+						throw new Error("Unsupported operator: " + oFilter.sOperator);
+				}
+				return sFilter;
+			}
+
+			/**
+			 * Requests the $filter value for an array of filters; filters with the same path are
+			 * grouped with a logical 'or'.
+			 *
+			 * @param {sap.ui.model.Filter[]} aFilters The non-empty array of filters
+			 * @param {boolean} [bAnd] Whether the filters are combined with 'and'; combined with
+			 *   'or' if not given
+			 * @returns {Promise} A promise which resolves with the $filter value
+			 */
+			function requestArrayFilter(aFilters, bAnd) {
+				var aFilterPromises = [],
+					mFiltersByPath = {};
+
+				aFilters.forEach(function (oFilter) {
+					mFiltersByPath[oFilter.sPath] = mFiltersByPath[oFilter.sPath] || [];
+					mFiltersByPath[oFilter.sPath].push(oFilter);
+				});
+				aFilters.forEach(function (oFilter) {
+					var aFiltersForPath;
+
+					if (oFilter.aFilters) { // array filter
+						aFilterPromises.push(requestArrayFilter(oFilter.aFilters, oFilter.bAnd)
+							.then(function (sArrayFilter) {
+								return "(" + sArrayFilter + ")";
+							})
+						);
+						return;
+					}
+					// single filter
+					aFiltersForPath = mFiltersByPath[oFilter.sPath];
+					if (!aFiltersForPath) { // filter group for path of oFilter already processed
+						return;
+					}
+					delete mFiltersByPath[oFilter.sPath];
+					aFilterPromises.push(requestGroupFilter(aFiltersForPath));
+				});
+
+				return Promise.all(aFilterPromises).then(function (aFilterValues) {
+					return aFilterValues.join(bAnd ? " and " : " or ");
+				});
+			}
+
+			/**
+			 * Requests the $filter value for the given group of filters which all have the same
+			 * path and thus refer to the same Edm type; the resulting filter value is
+			 * the $filter values for the single filters in the group combined with a logical 'or'.
+			 *
+			 * @param {sap.ui.model.Filter[]} aGroupFilters The non-empty array of filters
+			 * @returns {Promise} A promise which resolves with the $filter value or rejects with an
+			 *   error if the filter value uses an unknown operator
+			 */
+			function requestGroupFilter(aGroupFilters) {
+				var oMetaModel = oBinding.oModel.oMetaModel,
+					oMetaContext = oMetaModel.getMetaContext(
+						_Helper.buildPath(oBinding.sPath, aGroupFilters[0].sPath)),
+					oPropertyPromise = oMetaModel.requestObject(undefined, oMetaContext);
+
+				return oPropertyPromise.then(function (oPropertyMetadata) {
+					var aGroupFilterValues;
+
+					if (!oPropertyMetadata) {
+						throw new Error("Type cannot be determined, no metadata for path: "
+							+ oMetaContext.getPath());
+					}
+
+					aGroupFilterValues = aGroupFilters.map(function (oGroupFilter) {
+							return getSingleFilterValue(oGroupFilter, oPropertyMetadata.$Type);
+						});
+
+					return combineFilterValues(aGroupFilterValues, " or ");
+				});
+			}
+
+			return Promise.all([
+				requestArrayFilter(aApplicationFilters, /*bAnd*/true),
+				requestArrayFilter(aControlFilters, /*bAnd*/true)
+			]).then(function (aFilterValues) {
+				if (aFilterValues[0]) { aNonEmptyFilters.push(aFilterValues[0]); }
+				if (aFilterValues[1]) { aNonEmptyFilters.push(aFilterValues[1]); }
+				if (sStaticFilter) { aNonEmptyFilters.push(sStaticFilter); }
+
+				return combineFilterValues(aNonEmptyFilters, ") and (");
 			});
 		},
 

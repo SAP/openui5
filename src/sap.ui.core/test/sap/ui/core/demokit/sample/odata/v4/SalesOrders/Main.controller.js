@@ -23,6 +23,17 @@ sap.ui.define([
 //	}
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.SalesOrders.Main", {
+		_setSalesOrderBindingContext : function (oSalesOrderContext) {
+			var oView = this.getView();
+
+			oView.byId("ObjectPage").setBindingContext(oSalesOrderContext);
+			oView.byId("SupplierContactData").setBindingContext(undefined);
+			oView.byId("SupplierDetailsForm").setBindingContext(undefined);
+			if (!oSalesOrderContext) {
+				oView.byId("SalesOrders").removeSelections();
+			}
+		},
+
 		onCancelSalesOrder : function (oEvent) {
 			this.getView().getModel().resetChanges("SalesOrderUpdateGroup");
 		},
@@ -120,6 +131,22 @@ sap.ui.define([
 			MessageBox.confirm(sMessage, onConfirm, "Sales Order Deletion");
 		},
 
+		onFilter : function (oEvent) {
+			var oView = this.getView(),
+				oBinding = oView.byId("SalesOrders").getBinding("items"),
+				sQuery = oView.getModel("ui").getProperty("/filterValue"); // TODO validation
+
+			if (oBinding.hasPendingChanges()) {
+				MessageBox.error("Cannot filter due to unsaved changes"
+					+ "; save or reset changes before filtering");
+				return;
+			}
+			oBinding.filter(sQuery
+				? new Filter("GrossAmount", FilterOperator.GT, sQuery)
+				: null);
+			this._setSalesOrderBindingContext();
+		},
+
 		onInit : function () {
 			var bMessageOpen = false,
 				oMessageManager = sap.ui.getCore().getMessageManager(),
@@ -195,12 +222,7 @@ sap.ui.define([
 		},
 
 		onSalesOrdersSelect : function (oEvent) {
-			var oSalesOrderContext = oEvent.getParameters().listItem.getBindingContext(),
-				oView = this.getView();
-
-			oView.byId("ObjectPage").setBindingContext(oSalesOrderContext);
-			oView.byId("SupplierContactData").setBindingContext(undefined);
-			oView.byId("SupplierDetailsForm").setBindingContext(undefined);
+			this._setSalesOrderBindingContext(oEvent.getParameters().listItem.getBindingContext());
 		},
 
 		onSalesOrderLineItemSelect : function (oEvent) {
