@@ -421,28 +421,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 				this.rebuildListItems(aContexts, oBindingInfo, true);
 			} else if (oBinding.isGrouped() || oControl.checkGrowingFromScratch()) {
 
-				if (!aDiff.length &&
-					this._sGroupingPath &&
-					this._sGroupingPath != this._getGroupingPath(oBinding)) {
-					// no diff but grouping is changed we do need to rebuild the list
+				if (this._sGroupingPath && this._sGroupingPath != this._getGroupingPath(oBinding)) {
+					// grouping is changed so we need to rebuild the list for the group headers
 					bFromScratch = true;
-				}
+				} else {
+					// append items if possible
+					for (var i = 0; i < aDiff.length; i++) {
+						var oDiff = aDiff[i],
+							oContext = aContexts[oDiff.index];
 
-				for (var i = 0; i < aDiff.length; i++) {
-					var oDiff = aDiff[i],
-						oContext = aContexts[oDiff.index];
-
-					if (oDiff.type == "delete") {
-						// group header may need to be deleted as well
-						bFromScratch = true;
-						break;
-					} else if (oDiff.index != this._iRenderedDataItems) {
-						// this item is not appended
-						bFromScratch = true;
-						break;
-					} else {
-						this.addListItem(oContext, oBindingInfo, true);
-						vInsertIndex = true;
+						if (oDiff.type == "delete") {
+							// group header may need to be deleted as well
+							bFromScratch = true;
+							break;
+						} else if (oDiff.index != this._iRenderedDataItems) {
+							// this item is not appended
+							bFromScratch = true;
+							break;
+						} else {
+							this.addListItem(oContext, oBindingInfo, true);
+							vInsertIndex = true;
+						}
 					}
 				}
 
@@ -487,7 +486,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 
 			if (bFromScratch) {
 				this.rebuildListItems(aContexts, oBindingInfo, true);
-			} else if (this._oContainerDomRef) {
+			} else if (this._oContainerDomRef && aDiff && aDiff.length) {
 				// set the binding context of items inserting/deleting entries shifts the index of all following items
 				this.updateItemsBindingContext(aContexts, oBindingInfo.model);
 				this.applyChunk(vInsertIndex);

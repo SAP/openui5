@@ -514,10 +514,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	ListItemBase.prototype.setBindingContext = function() {
-		if (!this.isBound("selected")) {
-			this.setSelected(false, true);
-		}
-
 		Control.prototype.setBindingContext.apply(this, arguments);
 		this.informList("BindingContextSet");
 		return this;
