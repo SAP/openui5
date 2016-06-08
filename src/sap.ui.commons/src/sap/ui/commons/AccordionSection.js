@@ -148,6 +148,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 		var cont	  = this.oScrollDomRef;
 		var root	  = this.getDomRef();
 		var accordion = this.getParent().getDomRef();
+		var oDomLabel = this.getDomRef("lbl");
+
 		// if only height is set, the content area's height needs to be adapted  (should be a rare use-case)
 		if (!AccordionSection._isSizeSet(this.getParent().getWidth()) && AccordionSection._isSizeSet(this.getMaxHeight())) {
 			if (cont) {
@@ -163,13 +165,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 
 		}
 
-		var leftBorder	= jQuery(accordion).css("border-left-width");
-		var rightBorder = jQuery(accordion).css("border-right-width");
-
-
-		var borderTotal = parseFloat(leftBorder.substring(0, leftBorder.indexOf("px") )) + parseFloat(rightBorder.substring(0, rightBorder.indexOf("px") ));
-		var oDomLabel = this.getDomRef("lbl");
-		root.style.width = accordion.offsetWidth - borderTotal + "px";
 		oDomLabel.style.width = accordion.offsetWidth - 30 + "px";
 
 		//Bind the scroll event (does not bubble)
