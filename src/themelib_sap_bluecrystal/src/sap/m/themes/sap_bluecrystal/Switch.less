@@ -234,22 +234,6 @@ html[dir=rtl] .sapMSwtTrans > .sapMSwtInner {
 	border-color: @sapUiNegativeElement;
 }
 
-/*  Workaround for a WebKit bug that causes a rendering issue. @link https://bugs.webkit.org/show_bug.cgi?id=21819
-
-	Affected platforms:
-	BlackBerry 10 Z30 device. */
-
-.sapMSwtAcceptReject .sapMSwtWebKit537-35.sapMSwtHandle {
-	border: none;
-}
-
-.sapMSwtAcceptReject.sapMSwtOn .sapMSwtWebKit537-35.sapMSwtHandle {
-	box-shadow: inset 0 0 0 0.125rem @sapUiPositiveElement;
-}
-
-.sapMSwtAcceptReject.sapMSwtOff .sapMSwtWebKit537-35.sapMSwtHandle {
-	box-shadow: inset 0 0 0 0.125rem @sapUiNegativeElement;
-}
 
 /* =================================================================== */
 /* CSS for control sap.m/Switch.control BlueCrystal theme compact size */
