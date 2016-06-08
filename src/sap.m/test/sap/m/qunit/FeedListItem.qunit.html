@@ -412,6 +412,28 @@
 				assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), sap.m.FeedListItem._sTextShowMore);
 			});
 
+			QUnit.test("Item with a clickable icon is rendered", function(assert) {
+				//Arrange
+				var oItem = oFeedList.getItems()[0];
+				//Act
+				var $Image = jQuery.sap.domById(oItem.getId() + "-icon");
+				var sStyleClass = $Image.className;
+				//Assert
+				assert.ok(sStyleClass.indexOf("sapMFeedListItemImage") >= 0, "Css class 'sapMFeedListItemImage' is present");
+			});
+
+			QUnit.test("Item with a non clickable icon is rendered", function(assert) {
+				//Arrange
+				var oItem = oFeedList.getItems()[0];
+				//Act
+				oItem.setIconActive(false);
+				oFeedList.rerender();
+				var $Image = jQuery.sap.domById(oItem.getId() + "-icon");
+				var sStyleClass = $Image.className;
+				//Assert
+				assert.ok(sStyleClass.indexOf("sapMFeedListItemImageInactive") >= 0, "Css class 'sapMFeedListItemImageInactive' is present");
+			});
+
 			QUnit.module("Check property combination", {
 				beforeEach : function() {
 					this.oFeedListItem = new sap.m.FeedListItem({
