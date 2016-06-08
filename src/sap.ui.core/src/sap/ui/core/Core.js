@@ -412,6 +412,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 							 "getCurrentFocusedControlId", "getControl", "getComponent", "getTemplate", "lock", "unlock","isLocked",
 							 "attachEvent","detachEvent","applyChanges", "getEventBus",
 							 "applyTheme","setThemeRoot","attachThemeChanged","detachThemeChanged","getStaticAreaRef",
+							 "attachThemeScopingChanged","detachThemeScopingChanged","fireThemeScopingChanged",
 							 "registerPlugin","unregisterPlugin","getLibraryResourceBundle", "byId",
 							 "getLoadedLibraries", "loadLibrary", "loadLibraries", "initLibrary",
 							 "includeLibraryTheme", "setModel", "getModel", "hasModel", "isMobile",
@@ -433,7 +434,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * Map of event names and ids, that are provided by this class
 	 * @private
 	 */
-	Core.M_EVENTS = {ControlEvent: "ControlEvent", UIUpdated: "UIUpdated", ThemeChanged: "ThemeChanged", LocalizationChanged: "localizationChanged",
+	Core.M_EVENTS = {ControlEvent: "ControlEvent", UIUpdated: "UIUpdated", ThemeChanged: "ThemeChanged", ThemeScopingChanged: "themeScopingChanged", LocalizationChanged: "localizationChanged",
 			LibraryChanged : "libraryChanged",
 			ValidationError : "validationError", ParseError : "parseError", FormatError : "formatError", ValidationSuccess : "validationSuccess"};
 
@@ -2143,6 +2144,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		// notify the listeners via a control event
 		_oEventProvider.fireEvent(sEventId, mParameters);
+	};
+
+	/**
+	 * Fired when a scope class has been added or removed on a control/element
+	 * by using the custom style class API <code>addStyleClass</code>,
+	 * <code>removeStyleClass</code> or <code>toggleStyleClass</code>.
+	 *
+	 * Scope classes are defined by the library theme parameters coming from the
+	 * current theme.
+	 *
+	 * <b>Note:</b> The event will only be fired after the
+	 * <code>sap.ui.core.theming.Parameters</code> module has been loaded.
+	 * By default this is not the case.
+	 *
+	 * @name sap.ui.core.Core#ThemeScopingChanged
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+	 * @param {object} oEvent.getParameters
+	 * @param {string} oEvent.getParameters.scope Name of the CSS scope class
+	 * @param {boolean} oEvent.getParameters.added Whether the class has been added or removed
+	 * @param {sap.ui.core.Element} oEvent.getParameters.element Element instance on which the scope change happened
+	 */
+
+	Core.prototype.attachThemeScopingChanged = function(fnFunction, oListener) {
+		_oEventProvider.attachEvent(Core.M_EVENTS.ThemeScopingChanged, fnFunction, oListener);
+	};
+
+	Core.prototype.detachThemeScopingChanged = function(fnFunction, oListener) {
+		_oEventProvider.detachEvent(Core.M_EVENTS.ThemeScopingChanged, fnFunction, oListener);
+	};
+
+	Core.prototype.fireThemeScopingChanged = function(mParameters) {
+		_oEventProvider.fireEvent(Core.M_EVENTS.ThemeScopingChanged, mParameters);
 	};
 
 	/**
