@@ -341,9 +341,9 @@ sap.ui.require([
 
 			this.mock(_Helper).expects("buildPath").withExactArgs(42, "SO_2_SOITEM/42")
 				.returns("~");
-			this.mock(oModel).expects("requestCanonicalPath")
+			this.mock(oContext).expects("requestCanonicalPath")
 				.exactly(sEditUrl ? 0 : 1)
-				.withExactArgs(sinon.match.same(oContext))
+				.withExactArgs()
 				.returns(Promise.resolve("/edit('URL')"));
 			this.mock(oBinding).expects("updateValue")
 				.withExactArgs("up", sPropertyName, vValue, "edit('URL')", "~")
@@ -367,8 +367,8 @@ sap.ui.require([
 			oContext = Context.create(oModel, oBinding, "/foo", 0),
 			oError = new Error();
 
-		this.mock(oModel).expects("requestCanonicalPath")
-			.withExactArgs(sinon.match.same(oContext))
+		this.mock(oContext).expects("requestCanonicalPath")
+			.withExactArgs()
 			.returns(Promise.reject(oError)); // rejected!
 		this.mock(oBinding).expects("updateValue").never();
 
