@@ -35,14 +35,14 @@
 
 			function pressCB(oEvent) {
 				var oCB = oEvent.oSource;
-	    	var iNum = parseInt( oCB.getId().slice( 3 ));
+				var iNum = parseInt( oCB.getId().slice( 3 ));
 				var oTF = oCore.getControl("TF-"+iNum);
 				oTF.setEditable(!oCB.getChecked());
 			}
 
 			function moveSlider(oEvent) {
 				var oSli = oEvent.oSource;
-	    	var iNum = parseInt( oSli.getId().slice( 3 ));
+				var iNum = parseInt( oSli.getId().slice( 3 ));
 				var oTV = oCore.getControl("TV-"+iNum);
 				oTV.setText('Slider Value: '+oSli.getValue());
 			}
@@ -94,7 +94,7 @@
 			}
 
 			oCore.attachInitEvent(
-			  function () {
+				function () {
 					var logger = jQuery.sap.domById("sap-ui-TraceWindowRoot");
 					if (logger) logger.style.display = "none";
 
@@ -108,47 +108,47 @@
 							sap.ui.commons.layout.BackgroundDesign.Transparent
 						];
 					var hAligns = [
- 							sap.ui.commons.layout.HAlign.Begin,
- 							sap.ui.commons.layout.HAlign.Center,
- 							sap.ui.commons.layout.HAlign.End,
- 							sap.ui.commons.layout.HAlign.Left,
- 							sap.ui.commons.layout.HAlign.Right
- 						];
+							sap.ui.commons.layout.HAlign.Begin,
+							sap.ui.commons.layout.HAlign.Center,
+							sap.ui.commons.layout.HAlign.End,
+							sap.ui.commons.layout.HAlign.Left,
+							sap.ui.commons.layout.HAlign.Right
+						];
 					var paddings = [
- 							sap.ui.commons.layout.Padding.None,
- 							sap.ui.commons.layout.Padding.Begin,
- 							sap.ui.commons.layout.Padding.End,
- 							sap.ui.commons.layout.Padding.Both,
- 							sap.ui.commons.layout.Padding.Neither
- 						];
+							sap.ui.commons.layout.Padding.None,
+							sap.ui.commons.layout.Padding.Begin,
+							sap.ui.commons.layout.Padding.End,
+							sap.ui.commons.layout.Padding.Both,
+							sap.ui.commons.layout.Padding.Neither
+						];
 					var separations = [
- 							sap.ui.commons.layout.Separation.None,
- 							sap.ui.commons.layout.Separation.Small,
- 							sap.ui.commons.layout.Separation.SmallWithLine,
- 							sap.ui.commons.layout.Separation.Medium,
- 							sap.ui.commons.layout.Separation.MediumWithLine,
- 							sap.ui.commons.layout.Separation.Large,
- 							sap.ui.commons.layout.Separation.LargeWithLine
- 						];
+							sap.ui.commons.layout.Separation.None,
+							sap.ui.commons.layout.Separation.Small,
+							sap.ui.commons.layout.Separation.SmallWithLine,
+							sap.ui.commons.layout.Separation.Medium,
+							sap.ui.commons.layout.Separation.MediumWithLine,
+							sap.ui.commons.layout.Separation.Large,
+							sap.ui.commons.layout.Separation.LargeWithLine
+						];
 					var vAligns = [
- 							sap.ui.commons.layout.VAlign.Bottom,
- 							sap.ui.commons.layout.VAlign.Middle,
- 							sap.ui.commons.layout.VAlign.Top
- 						];
+							sap.ui.commons.layout.VAlign.Bottom,
+							sap.ui.commons.layout.VAlign.Middle,
+							sap.ui.commons.layout.VAlign.Top
+						];
 
 					var ValueStates = [
-					 					sap.ui.core.ValueState.None,
-					 					sap.ui.core.ValueState.Warning,
-					 					sap.ui.core.ValueState.Error,
-					 					sap.ui.core.ValueState.Success
-					 	];
+										sap.ui.core.ValueState.None,
+										sap.ui.core.ValueState.Warning,
+										sap.ui.core.ValueState.Error,
+										sap.ui.core.ValueState.Success
+						];
 
 					var TextColors = [
 							sap.ui.commons.TextViewColor.Default,
 							sap.ui.commons.TextViewColor.Positive,
 							sap.ui.commons.TextViewColor.Critical,
 							sap.ui.commons.TextViewColor.Negative
-		 				];
+						];
 
 					var TVDesigns = [
 							sap.ui.commons.TextViewDesign.Standard,
@@ -167,19 +167,16 @@
 					oML.setLayoutFixed(false);
 					//oML.setVisible(false);
 					for (var i = 0; i < 8; ++i) {
-						var oMLR = new sap.ui.commons.layout.MatrixLayoutRow("monaLisa_" + i); //TODO omit ID?!
+						var oMLR = new sap.ui.commons.layout.MatrixLayoutRow("monaLisa_" + i);
 						oMLR.setHeight((22 + 2 * i) + "px"); // Note: 22px seems to be minimum
 						oML.addRow(oMLR);
 						for (var j = 0; j < 8; ++j) {
-							var oMLC = new sap.ui.commons.layout.MatrixLayoutCell("monaLisa_" + i + "_" + j); //TODO omit ID?!
+							var oMLC = new sap.ui.commons.layout.MatrixLayoutCell("monaLisa_" + i + "_" + j);
 							oMLR.addCell(oMLC);
 							oMLC.setBackgroundDesign(backgroundDesigns[i % backgroundDesigns.length]);
-							oMLC.setHAlign(hAligns[j % hAligns.length]); //TODO interferes with Width!
+							oMLC.setHAlign(hAligns[j % hAligns.length]);
 							oMLC.setPadding(paddings[j % paddings.length]);
 							oMLC.setSeparation(separations[j % separations.length]);
-							//oMLC.setVAlign(vAligns[i % vAligns.length]); //TODO does not work!
-							//oMLC.setWidth((120 + 5 * j) + "px");
-							//TODO ColSpan, RowSpan
 
 							var oTF = new sap.ui.commons.TextField("textField_" + i + "_" + j);
 							oMLC.addContent(oTF);
@@ -205,8 +202,8 @@
 					oMLC.addContent(oTV);
 					oML2.createRow(oMLC);
 
-			    var oLabel = new sap.ui.commons.Label("L-Name");
-			    oLabel.setText("Name");
+					var oLabel = new sap.ui.commons.Label("L-Name");
+					oLabel.setText("Name");
 					var oTF = new sap.ui.commons.TextField("TF-Name");
 					oLabel.setLabelFor(oTF);
 					oTF.setTooltip("Name");
@@ -224,8 +221,8 @@
 					oImg.setHeight("200px");
 					oML2.createRow(oLabel, oTF, oMLC, oMLC1);
 
-			    oLabel = new sap.ui.commons.Label("L-F-Name");
-			    oLabel.setText("First Name");
+					oLabel = new sap.ui.commons.Label("L-F-Name");
+					oLabel.setText("First Name");
 					oTF = new sap.ui.commons.TextField("TF-F-Name");
 					oLabel.setLabelFor(oTF);
 					oTF.setTooltip("First Name");
@@ -234,8 +231,8 @@
 					oTF.setWidth("200px");
 					oML2.createRow(oLabel, oTF);
 
-			    oLabel = new sap.ui.commons.Label("L-Street");
-			    oLabel.setText("Street, HouseNumber");
+					oLabel = new sap.ui.commons.Label("L-Street");
+					oLabel.setText("Street, HouseNumber");
 					oTF = new sap.ui.commons.TextField("TF-Street");
 					oLabel.setLabelFor(oTF);
 					oTF.setTooltip("Street");
@@ -254,8 +251,8 @@
 					oMLC.addContent(oTF2);
 					oML2.createRow(oLabel, oMLC);
 
-			    oLabel = new sap.ui.commons.Label("L-City");
-			    oLabel.setText("City");
+					oLabel = new sap.ui.commons.Label("L-City");
+					oLabel.setText("City");
 					oTF = new sap.ui.commons.TextField("TF-City");
 					oLabel.setLabelFor(oTF);
 					oTF.setTooltip("City");
@@ -264,8 +261,8 @@
 					oTF.setWidth("200px");
 					oML2.createRow(oLabel, oTF);
 
-				  oLabel = new sap.ui.commons.Label("L-Country");
-				  oLabel.setText("Country");
+					oLabel = new sap.ui.commons.Label("L-Country");
+					oLabel.setText("Country");
 					oCB = new sap.ui.commons.ComboBox("TF-Country");
 					oLabel.setLabelFor(oCB);
 					oCB.setTooltip("Country");
@@ -286,35 +283,35 @@
 					oCB.addItem(oItem);
 					oML2.createRow(oLabel, oCB);
 
-			    oLabel = new sap.ui.commons.Label("L-Date");
-			    oLabel.setText("Date of birth");
+					oLabel = new sap.ui.commons.Label("L-Date");
+					oLabel.setText("Date of birth");
 					oDP = new sap.ui.commons.DatePicker("DP-Date");
 					oLabel.setLabelFor(oDP);
 					oDP.setTooltip("Date of Birth");
 					oDP.setEditable(false);
 					oDP.setYyyymmdd(19990909);
 					oMLC = new sap.ui.commons.layout.MatrixLayoutCell();
-				  oLabel2 = new sap.ui.commons.Label("L-URL");
-				  oLabel2.setText("URL for picture");
+					oLabel2 = new sap.ui.commons.Label("L-URL");
+					oLabel2.setText("URL for picture");
 					oLabel2.setVisible(false);
 					oML2.createRow(oLabel, oDP, oMLC, oLabel2);
 
-			    oLabel = new sap.ui.commons.Label("L-Gender");
-			    oLabel.setText("Gender");
-			    var oRBG = new sap.ui.commons.RadioButtonGroup("RBG-Gender");
-			    oRBG.setTooltip('Gender');
-			    oRBG.setColumns(2);
+					oLabel = new sap.ui.commons.Label("L-Gender");
+					oLabel.setText("Gender");
+					var oRBG = new sap.ui.commons.RadioButtonGroup("RBG-Gender");
+					oRBG.setTooltip('Gender');
+					oRBG.setColumns(2);
 					oRBG.setEditable(false);
 					var oItem = new sap.ui.core.Item("RB-Male");
-			    oItem.setText("Male");
-			    oItem.setTooltip("Gender: male");
-			    oItem.setKey("male");
-			    oRBG.addItem(oItem);
+					oItem.setText("Male");
+					oItem.setTooltip("Gender: male");
+					oItem.setKey("male");
+					oRBG.addItem(oItem);
 					oItem = new sap.ui.core.Item("RB-Female");
-			    oItem.setText("Female");
-			    oItem.setTooltip("Gender: female");
-			    oItem.setKey("female");
-			    oRBG.addItem(oItem);
+					oItem.setText("Female");
+					oItem.setTooltip("Gender: female");
+					oItem.setKey("female");
+					oRBG.addItem(oItem);
 					oMLC = new sap.ui.commons.layout.MatrixLayoutCell();
 
 					oTF = new sap.ui.commons.TextField("TF-URL");
@@ -327,7 +324,7 @@
 					oML2.createRow(oLabel, oRBG, oMLC, oTF);
 
 					oLabel = new sap.ui.commons.Label("L-Text");
-			    oLabel.setText("Remarks");
+					oLabel.setText("Remarks");
 					oMLC = new sap.ui.commons.layout.MatrixLayoutCell();
 					oTA = new sap.ui.commons.TextArea("TA-Text");
 					oLabel.setLabelFor(oTA);
@@ -335,7 +332,7 @@
 					oMLC.addContent(oTA);
 					oMLC.setColSpan(4);
 					oTA.setEditable(false);
-	      	oTA.setWrapping(sap.ui.core.Wrapping.Off);
+					oTA.setWrapping(sap.ui.core.Wrapping.Off);
 					oTA.setValue("Max Mustermann is a very nice guy. He is very well known.\nEverybody loves him.\nYou can be lucky if you meet him.");
 					oTA.setWidth("100%");
 					oTA.setHeight("100px");
@@ -358,7 +355,7 @@
 					var oButton2 = new sap.ui.commons.Button("B-Save");
 					oButton2.setText("Save");
 					oButton2.setTooltip("Save Values");
-       		oButton2.setIcon("../images/save-icon.png");
+					oButton2.setIcon("../images/save-icon.png");
 					oButton2.setEnabled(false);
 					oButton2.setTooltip(oRtt);
 					oButton2.attachPress(pressSaveButton);
@@ -375,9 +372,9 @@
 					oML3.placeAt("uiArea3");
 					for (var i = 0; i < 6; ++i) {
 						oMLR = new sap.ui.commons.layout.MatrixLayoutRow();
-	  	     	if(i % 2 == 1){
+						if(i % 2 == 1){
 							oMLR.setHeight((15 + 5 * i) + "px");
-  	 				}
+						}
 						oML3.addRow(oMLR);
 
 						for (var j = 0; j < 6; ++j) {
@@ -396,41 +393,41 @@
 								break;
 							case(1):
 								// RadioButton
-			   				var oCont = new sap.ui.commons.RadioButton("RB-"+i);
-	    	    		oCont.setText("Disabled " + i);
-	      	  		if(i == 5){
-	        				oCont.setSelected(true);
-	        			}else{
-	        				oCont.setSelected(false);
-		        		}
-		      			oCont.setGroupName("RB");
-	  	      		oCont.attachSelect(pressRB);
+								var oCont = new sap.ui.commons.RadioButton("RB-"+i);
+								oCont.setText("Disabled " + i);
+								if(i == 5){
+									oCont.setSelected(true);
+								}else{
+									oCont.setSelected(false);
+								}
+								oCont.setGroupName("RB");
+								oCont.attachSelect(pressRB);
 
 								break;
 							case(2):
 								// Checkbox
 								var oCont = new sap.ui.commons.CheckBox("CB-"+i);
-			        	oCont.setText("Read only " + i);
-			        	if(i == 4){
-			        		oCont.setChecked(true);
-				        }else{
-			  	      	oCont.setChecked(false);
-			    	    }
-      	  			oCont.attachChange(pressCB);
+								oCont.setText("Read only " + i);
+								if(i == 4){
+									oCont.setChecked(true);
+								}else{
+									oCont.setChecked(false);
+								}
+								oCont.attachChange(pressCB);
 
 								break;
 							case(3):
 								// Slider
 								var oCont = new sap.ui.commons.Slider("Sl-"+i);
-        				oCont.attachChange(moveSlider);
-        				oCont.setValue(10*i);
-        				oCont.setSmallStepWidth(2*i);
-        				oCont.setTotalUnits(i);
-	        			if(i % 2 == 0){
-  	      				oCont.setStepLabels(false);
-    	    			}else{
-      	  				oCont.setStepLabels(true);
-        				}
+								oCont.attachChange(moveSlider);
+								oCont.setValue(10*i);
+								oCont.setSmallStepWidth(2*i);
+								oCont.setTotalUnits(i);
+								if(i % 2 == 0){
+									oCont.setStepLabels(false);
+								}else{
+									oCont.setStepLabels(true);
+								}
 
 								break;
 							case(4):
@@ -450,11 +447,11 @@
 								// TextView
 								var oCont = new sap.ui.commons.TextView('TV-'+i);
 								oCont.setText('TextView ' + i);
-	        			if(i % 2 == 0){
-  	      				oCont.setTextDirection('RTL');
-    	    			}else{
-      	  				oCont.setTextDirection('LTR');
-        				}
+								if(i % 2 == 0){
+									oCont.setTextDirection('RTL');
+								}else{
+									oCont.setTextDirection('LTR');
+								}
 
 								oCont.setDesign(TVDesigns[i % TVDesigns.length]);
 
@@ -569,7 +566,7 @@
 
 					oML4.createRow({height: "25px"},oMLC1);
 
-			  }
+				}
 			);
 		</script>
 </head>
