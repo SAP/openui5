@@ -91,7 +91,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		this.openInputTag(oRm, oControl);
 
 		// inner attributes
-		oRm.writeAttribute("id", oControl.getId() + "-inner");
+		this.writeInnerId(oRm, oControl);
 
 		// write the name of input
 		if (oControl.getName()) {
@@ -476,6 +476,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	InputBaseRenderer.addValueStateClasses = function(oRm, oControl) {
 		oRm.addClass("sapMInputBaseState");
 		oRm.addClass("sapMInputBase" + oControl.getValueState());
+	};
+
+	/**
+	 * Write the id of the inner input
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+	 */
+	InputBaseRenderer.writeInnerId = function(oRm, oControl) {
+		oRm.writeAttribute("id", oControl.getId() + "-inner");
 	};
 
 	return InputBaseRenderer;
