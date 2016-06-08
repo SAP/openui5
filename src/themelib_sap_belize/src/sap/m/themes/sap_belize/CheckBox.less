@@ -45,6 +45,7 @@
 }
 
 .sapMCb.sapMCbWarn .sapMCbBg {
+	background-color: @sapUiFieldWarningBackground;
 	border-color: @sapUiFieldWarningColor;
 	&.sapMCbMarkChecked:before {
 		color: darken(@sapUiFieldWarningColor,100);
@@ -52,6 +53,7 @@
 }
 
 .sapMCb.sapMCbErr .sapMCbBg {
+	background-color: @sapUiFieldInvalidBackground;
 	border-color: @sapUiFieldInvalidColor;
 	&.sapMCbMarkChecked:before {
 		color: @sapUiFieldInvalidColor;
@@ -133,7 +135,7 @@ html.sap-desktop {
 }
 
 .sapMCbHoverable:hover{
-	border-color: @sapUiSelected;
+	border-color: @sapUiFieldHoverBorderColor;
 	background: @sapUiFieldHoverBackground
 }
 
