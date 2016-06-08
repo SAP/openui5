@@ -79,22 +79,20 @@
 		});
 
 		test("FlagRendered", function() {
-
 			ok(jQuery.sap.domById(listItemId + "-flag"), "Flag marker should be rendered.");
-			equal(jQuery.sap.byId(listItemId + "-flag").attr("data-sap-ui-icon-content").charCodeAt(0), 57514, "Flag font should be rendered.");
+			ok(jQuery.sap.byId(listItemId + "-flag").hasClass("sapMObjectMarker"), "Flag is sapMObjectMarker.");
 		});
 
 		test("FavoriteRendered", function() {
-
 			ok(jQuery.sap.domById(listItemId + "-favorite"), "Favorite marker should be rendered.");
-			equal(jQuery.sap.byId(listItemId + "-favorite").attr("data-sap-ui-icon-content").charCodeAt(0), 57445, "Favorite font should be rendered.");
+			ok(jQuery.sap.byId(listItemId + "-favorite").hasClass("sapMObjectMarker"), "Favorite is sapMObjectMarker.");
 		});
 
 		test("MarkersOrder", function() {
 
 			var markers = $("#" + listItemId + " .sapUiIcon");
-			equal(markers.eq(1).attr("data-sap-ui-icon-content").charCodeAt(0), 57445, "Favorite marker should be rendered first");
-			equal(markers.eq(2).attr("data-sap-ui-icon-content").charCodeAt(0), 57514, "Flag marker should be rendered second");
+			equal(markers.eq(0).attr("data-sap-ui-icon-content").charCodeAt(0), 57445, "Favorite marker should be rendered first");
+			equal(markers.eq(1).attr("data-sap-ui-icon-content").charCodeAt(0), 57514, "Flag marker should be rendered second");
 		});
 
 		test("FirstStatusRendered", function() {
@@ -123,38 +121,25 @@
 
 		});
 
-		test("EmptyMarkerRowRendered", function() {
+		test("RenderLockedIcon", function() {
+			var lockedOlI = new sap.m.ObjectListItem({
+				icon : "../images/action.png",
+				intro : "On behalf of John Smith",
+				title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
+				number : "3.624",
+				numberUnit : "EUR",
+				showMarkers: true,
+				markLocked: true
+			});
 
-			var $rows = $("#showMarkers .sapMObjLAttrRow");
-			ok($rows.length === 3, "There should be three status rows");
+			list.addItem(lockedOlI);
+			sap.ui.getCore().applyChanges();
 
-			// Make sure the first status is the markers status
-			var $firstRow = $rows.first();
-			ok($firstRow, "First status row should be rendered");
+			ok(jQuery.sap.domById(lockedOlI.getId() + "-lock"), "Locked marker should be rendered.");
+			ok(jQuery.sap.byId(lockedOlI.getId() + "-lock").hasClass("sapMObjectMarker"), "Locked is sapMObjectMarker.");
 
-			var $markersStatus = $firstRow.children(".sapMObjStatusMarker");
-			ok($markersStatus, "The markers status should be rendered");
-			ok($markersStatus.val().length === 0, "The markers status should be empty");
+			lockedOlI.destroy();
 		});
-
-        test("RenderLockedIcon", function() {
-            var lockedOlI = new sap.m.ObjectListItem({
-                icon : "../images/action.png",
-                intro : "On behalf of John Smith",
-                title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
-                number : "3.624",
-                numberUnit : "EUR",
-                markLocked: true
-            });
-
-            list.addItem(lockedOlI);
-            sap.ui.getCore().applyChanges();
-
-            ok(jQuery.sap.domById(lockedOlI.getId() + "-lock"), "Locked marker should be rendered.");
-            equal(jQuery.sap.byId(lockedOlI.getId() + "-lock").attr("data-sap-ui-icon-content").charCodeAt(0), 57544, "Locked font should be rendered.");
-
-            lockedOlI.destroy();
-        });
 
 		/************* ARIA Rendering *******************/
 
@@ -187,65 +172,17 @@
 			ok(sAriaLabelledByValue.indexOf(sListItemId + "-number") !== -1, "ObjectListItem numberId: '" + sListItemId + "-number" + "' is added to 'aria-labelledby' attribute");
 			ok(sAriaLabelledByValue.indexOf(sListItemId + "-titleText") !== -1, "ObjectListItem titleId: '" + sListItemId + "-numberUnit" + "' is added to 'aria-labelledby' attribute");
 			ok(sAriaLabelledByValue.indexOf(sListItemId + "-numberUnit") !== -1, "ObjectListItem numberUnitId: '" + sListItemId + "-titleText" + "' is added to 'aria-labelledby' attribute");
-			ok(sAriaLabelledByValue.indexOf(sListItemId + "-aria") !== -1, "ObjectListItem ARIA description nodeId: '" + sListItemId + "-aria" + "' is added to 'aria-labelledby' attribute");
 			ok(sAriaLabelledByValue.indexOf(sFirstStatusId) !== -1, "ObjectListItem firstStatusId: '" + sFirstStatusId + "' is added to 'aria-labelledby' attribute");
 			ok(sAriaLabelledByValue.indexOf(sSecondStatusId) !== -1, "ObjectListItem secondStatusId: '" + sSecondStatusId + "' is added to 'aria-labelledby' attribute");
+			ok(sAriaLabelledByValue.indexOf(sListItemId + "-flag-text") !== -1, "ObjectListItem flagId: '" + sListItemId + "-flag-text" + "' is added to aria-labelledby attribute");
 
 			oAttrsAndStatuseListItem.getAttributes().forEach(function(attribute) {
 				ok(sAriaLabelledByValue.indexOf(attribute.getId()) !== -1, "ObjectListItem attributeId: '" + attribute.getId() + "' is added to 'aria-labelledby' attribute");
 			});
 
 			// destroy ObjectListItem
-	        oAttrsAndStatuseListItem.destroy();
-        });
-
-		test("ARIA description node should render", function() {
-			// create ObjectListItem with flag, favorite or lock marks
-			var oMarkersListItem = new sap.m.ObjectListItem({
-				id: 'oMarkersListItemId',
-				showMarkers: true,
-				markFlagged: true,
-				markFavorite: true,
-				markedLocked: true
-			});
-			list.addItem(oMarkersListItem);
-
-			sap.ui.getCore().applyChanges();
-
-			// Assert ARIA description node is rendered
-			var oAriaDesciptionNode = $('#' + oMarkersListItem.getId() + "-aria");
-			ok(oAriaDesciptionNode.length > 0, "ARIA description node is rendered");
-
-			// Assert ARIA description node has the proper class: 'sapUiHidden'
-			equal(oAriaDesciptionNode.attr("class"), "sapUiHidden", "ARIA description node has class: " + oAriaDesciptionNode.attr("class"));
-
-			// Assert ARIA description node has the aria attribute 'aria-hidden' and its value is: 'true'
-			equal(oAriaDesciptionNode.attr("aria-hidden"), "true", "ARIA description node has attribute aria-hidden: " + oAriaDesciptionNode.attr("aria-hidden"));
-
-			// destroy ObjectListItem
-	        oMarkersListItem.destroy();
-        });
-
-		test("ARIA description node should not render", function() {
-			// create ObjectListItem without flag, favorite or lock marks
-			var oNoMarkersListItem = new sap.m.ObjectListItem({
-				id: "oNoMarkersListItemId",
-				showMarkers: true,
-				markFlagged: false,
-				markFavorite: false,
-				markLocked: false
-			});
-			list.addItem(oNoMarkersListItem);
-
-			sap.ui.getCore().applyChanges();
-
-			// Assert ARIA description node is rendered
-			var oAriaDesciptionNode = $('#' + oNoMarkersListItem.getId() + "-aria");
-			ok(oAriaDesciptionNode.length === 0, "ARIA description node is not rendered");
-
-			// destroy ObjectListItem
-	        oNoMarkersListItem.destroy();
-        });
+			oAttrsAndStatuseListItem.destroy();
+		});
 
 		/*********************************************/
 
@@ -278,7 +215,80 @@
         });
 
 		/******************************************************************/
+	module("Rendering Markers aggregation");
 
+		test("Render Draft and Favorite", function() {
+			var markersOlI = new sap.m.ObjectListItem({
+				id: "markersOlI",
+				title : "Markers agregation",
+				number : "3.624",
+				numberUnit : "EUR",
+				markers: [
+						new sap.m.ObjectMarker({id: "draft", type: sap.m.ObjectMarkerType.Draft}),
+						new sap.m.ObjectMarker({id: "favorite", type: sap.m.ObjectMarkerType.Favorite})
+						]
+			});
+
+			list.addItem(markersOlI);
+			sap.ui.getCore().applyChanges();
+
+			ok(jQuery.sap.domById("draft"), "marker draft should be rendered.");
+			ok(jQuery.sap.domById("favorite"), "marker favorite should be rendered.");
+
+			markersOlI.destroy();
+		});
+
+		test("Render marker by setting the markers aggregation", function() {
+			var markersOlI = new sap.m.ObjectListItem({
+				id: "markersOlI",
+				title : "Markers agregation",
+				number : "3.624",
+				numberUnit : "EUR",
+			});
+			var marker = new sap.m.ObjectMarker({id: "draft", type: sap.m.ObjectMarkerType.Draft});
+
+			list.addItem(markersOlI);
+			sap.ui.getCore().applyChanges();
+
+			var $allRows = $("#markersOlI .sapMObjStatusMarker");
+			ok($allRows.length === 0, "There are no markers");
+
+			markersOlI.insertMarker(marker, 0);
+			sap.ui.getCore().applyChanges();
+
+			ok(jQuery.sap.domById("draft"), "marker draft should be rendered.");
+
+			markersOlI.destroy();
+		});
+
+		module("Rendering Markers aggregation");
+
+		test("Removing marker", function() {
+			var markersOlI = new sap.m.ObjectListItem({
+				id: "markersOlI",
+				title : "Markers agregation",
+				number : "3.624",
+				numberUnit : "EUR",
+				markers: [
+						new sap.m.ObjectMarker({id: "flag", type: sap.m.ObjectMarkerType.Flagged})
+						]
+			});
+
+			list.addItem(markersOlI);
+			sap.ui.getCore().applyChanges();
+
+			ok(jQuery.sap.domById("flag"), "marker flag should be rendered.");
+
+			markersOlI.removeAllMarkers();
+			sap.ui.getCore().applyChanges();
+
+			var $allRows = $("#markersOlI .sapMObjStatusMarker");
+			ok($allRows.length === 0, "There are no markers");
+
+			markersOlI.destroy();
+		});
+
+		/******************************************************************/
 		var imageOLI1 = new sap.m.ObjectListItem("imageOLI1", {
 			type: "Active",
 			icon : "../images/action.png",
@@ -436,8 +446,8 @@
 			markerOli.setMarkFavorite(false);
 			markerOli.setMarkFlagged(true);
 			setTimeout(function() {
-				equal($("#" + markerId + " .sapUiIcon").length, 2, "Only one marker should be rendered");
-				equal(jQuery.sap.byId(markerId + "-flag").attr("data-sap-ui-icon-content").charCodeAt(0), 57514, "Flag marker should be rendered.");
+				equal($("#" + markerId + " .sapUiIcon").length, 1, "Only one marker should be rendered");
+				ok(jQuery.sap.byId(markerId + "-flag"), "Flag marker should be rendered.");
 				start();
 			}, 100);
 		});
@@ -447,7 +457,7 @@
 			markerOli.setMarkFavorite(false);
 			markerOli.setMarkFlagged(false);
 			setTimeout(function() {
-				equal($("#" + markerId + " .sapUiIcon").length, 1, "No markers should be rendered");
+				equal($("#" + markerId + " .sapUiIcon").length, 0, "No markers should be rendered");
 				start();
 			}, 100);
 		});
@@ -457,8 +467,8 @@
 			markerOli.setMarkFavorite(true);
 			markerOli.setMarkFlagged(false);
 			setTimeout(function() {
-				equal($("#" + markerId + " .sapUiIcon").length, 2, "Only one marker should be rendered");
-				equal(jQuery.sap.byId(markerId + "-favorite").attr("data-sap-ui-icon-content").charCodeAt(0), 57445, "Favorite marker should be rendered.");
+				equal($("#" + markerId + " .sapUiIcon").length, 1, "Only one marker should be rendered");
+				ok(jQuery.sap.byId(markerId + "-favorite"), "Favorite marker should be rendered.");
 				start();
 			}, 100);
 		});
@@ -468,7 +478,7 @@
 			markerOli.setMarkFavorite(false);
 			markerOli.setMarkFlagged(false);
 			setTimeout(function() {
-				equal($("#" + markerId + " .sapUiIcon").length, 1, "No markers should be rendered");
+				equal($("#" + markerId + " .sapUiIcon").length, 0, "No markers should be rendered");
 				start();
 			}, 100);
 		});
@@ -505,12 +515,10 @@
 
 			ok(!(iconOLI === null), "iconOLI is not null");
 			ok(sap.ui.getCore().byId("iconOLI"), "Icon is found in UI5 Core");
-			ok(sap.ui.getCore().byId("iconOLI-placeholder"), "Placeholder icon is found in UI5 Core");
 			ok(sap.ui.getCore().byId("iconOLI-flag"), "Flag icon is found in UI5 Core");
 			ok(sap.ui.getCore().byId("iconOLI-favorite"), "Favorite icon is found in UI5 Core");
 			ok(sap.ui.getCore().byId("iconOLI-lock"), "Locked icon is found in UI5 Core");
 			iconOLI.destroy();
-			ok(!sap.ui.getCore().byId("iconOLI-placeholder"), "Placeholder icon removed from UI5 Core");
 			ok(!sap.ui.getCore().byId("iconOLI-flag"), "Flag icon removed from UI5 Core");
 			ok(!sap.ui.getCore().byId("iconOLI-favorite"), "Favorite icon removed from UI5 Core");
 			ok(!sap.ui.getCore().byId("iconOLI-lock"), "Locked icon removed from UI5 Core");

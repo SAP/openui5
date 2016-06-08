@@ -69,20 +69,29 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 				iconDensityAware : {type : "boolean", group : "Misc", defaultValue : true},
 
 				/**
-				 * Sets the favorite state for the ObjectListItem.
+				 * Sets the favorite state for the ObjectListItem.<br><br>
+				 * <b>Note:</b> As this property is deprecated, we recommend you use the <code>markers</code> aggregation - add <code>sap.m.ObjectMarker</code> with type <code>sap.m.ObjectMarkerType.Favorite</code>.
+				 * You should use either this property or the <code>markers</code> aggregation, using both may lead to unpredicted behavior.<br><br>
 				 * @since 1.16.0
+				 * @deprecated Since version 1.42.0.
 				 */
 				markFavorite : {type : "boolean", group : "Misc", defaultValue : null},
 
 				/**
-				 * Sets the flagged state for the ObjectListItem.
+				 * Sets the flagged state for the ObjectListItem.<br><br>
+				 * <b>Note:</b> As this property is deprecated, we recommend you use the <code>markers</code> aggregation - add <code>sap.m.ObjectMarker</code> with type <code>sap.m.ObjectMarkerType.Flagged</code>.
+				 * You should use either this property or the <code>markers</code> aggregation, using both may lead to unpredicted behavior.<br><br>
 				 * @since 1.16.0
+				 * @deprecated Since version 1.42.0.
 				 */
 				markFlagged : {type : "boolean", group : "Misc", defaultValue : null},
 
 				/**
-				 * If set to true, the ObjectListItem can be marked with icons such as favorite and flag.
+				 * If set to true, the ObjectListItem can be marked with icons such as favorite and flag.<br><br>
+				 * <b>Note:</b> This property is valid only if you are using the already deprecated properties - <code>markFlagged</code>, <code>markFavorite</code>, and <code>markLocked</code>.
+				 * If you are using the <code>markers</code> aggregation, the visibility of the markers depends on what is set in the aggregation itself.<br><br>
 				 * @since 1.16.0
+				 * @deprecated Since version 1.42.0.
 				 */
 				showMarkers : {type : "boolean", group : "Misc", defaultValue : null},
 
@@ -114,8 +123,11 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 				numberTextDirection: {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
 
 				/**
-				 * Sets the locked state of the ObjectListItem.
+				 * Sets the locked state of the ObjectListItem.<br><br>
+				 * <b>Note:</b> As this property is deprecated, we recommend you use the <code>markers</code> aggregation - add <code>sap.m.ObjectMarker</code> with type <code>sap.m.ObjectMarkerType.Locked</code>.
+				 * You should use either this property or the <code>markers</code> aggregation, using both may lead to unpredicted behavior.<br><br>
 				 * @since 1.28
+				 * @deprecated Since version 1.42.0.
 				 */
 				markLocked : {type : "boolean", group : "Misc", defaultValue : false}
 			},
@@ -135,13 +147,16 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 				/**
 				 * Second status text field displayed on the right side of the attributes.
 				 */
-				secondStatus : {type : "sap.m.ObjectStatus", multiple : false}
+				secondStatus : {type : "sap.m.ObjectStatus", multiple : false},
+
+				/**
+				 * List of markers (icon and/or text) that can be displayed for the <code>ObjectListItems</code>, such as favorite and flagged.<br><br>
+				 * <b>Note:</b> You should use either this aggregation or the already deprecated properties - <code>markFlagged</code>, <code>markFavorite</code>, and <code>markLocked</code>. Using both can lead to unexpected results.
+				 */
+				markers : {type : "sap.m.ObjectMarker", multiple : true, singularName : "marker"}
 			},
 			designTime: true
 		}});
-
-		// get resource translation bundle;
-		var oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		/**
 		 * @private
@@ -150,26 +165,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 			// image or icon if initialized
 			if (this._oImageControl) {
 				this._oImageControl.destroy();
-			}
-
-			if (this._oPlaceholderIcon) {
-				this._oPlaceholderIcon.destroy();
-				this._oPlaceholderIcon = undefined;
-			}
-
-			if (this._oFavIcon) {
-				this._oFavIcon.destroy();
-				this._oFavIcon = undefined;
-			}
-
-			if (this._oFlagIcon) {
-				this._oFlagIcon.destroy();
-				this._oFlagIcon = undefined;
-			}
-
-			if (this._oLockIcon) {
-				this._oLockIcon.destroy();
-				this._oLockIcon = undefined;
 			}
 
 			if (this._oTitleText) {
@@ -211,7 +206,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 		 */
 		ObjectListItem.prototype._hasBottomContent = function() {
 
-			return (this._hasAttributes() || this._hasStatus() || this.getShowMarkers() || this.getMarkLocked());
+			return (this._hasAttributes() || this._hasStatus() || this.getShowMarkers() || this.getMarkLocked() || this._getVisibleMarkers().length > 0);
 		};
 
 		/**
@@ -230,6 +225,24 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 			}
 
 			return aVisibleAttributes;
+		};
+
+		/**
+		 * @private
+		 * @returns {Array}
+		 */
+		ObjectListItem.prototype._getVisibleMarkers = function() {
+
+			var aAllMarkers = this.getMarkers();
+			var aVisibleMarkers = [];
+
+			for (var i = 0; i < aAllMarkers.length; i++) {
+				if (aAllMarkers[i].getVisible()) {
+					aVisibleMarkers.push(aAllMarkers[i]);
+				}
+			}
+
+			return aVisibleMarkers;
 		};
 
 		/**
@@ -292,78 +305,105 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 		};
 
 		/**
-		 * @private
-		 * @returns Flag icon control
+		 * Sets the visibility value of the Favorite marker.
+		 * @override
+		 * @public
+		 * @param {boolean} bMarked the new value
+		 * @returns {sap.m.ObjectListItem} this pointer for chaining
 		 */
-			//TODO Remove placeholder when Safari iconFont issue is addressed.
-		ObjectListItem.prototype._getPlaceholderIcon = function() {
+		ObjectListItem.prototype.setMarkFavorite = function (bMarked) {
+			return this._setOldMarkers(sap.m.ObjectMarkerType.Favorite, bMarked);
+		};
 
-			if (!this._oPlaceholderIcon) {
+		/**
+		 * Sets the visibility value of the Flagged marker.
+		 * @override
+		 * @public
+		 * @param {boolean} bMarked the new value
+		 * @returns {sap.m.ObjectListItem} this pointer for chaining
+		 */
+		ObjectListItem.prototype.setMarkFlagged = function (bMarked) {
+			return this._setOldMarkers(sap.m.ObjectMarkerType.Flagged, bMarked);
+		};
 
-				var oPlaceholderIconUri = IconPool.getIconURI("fridge");
-				this._oPlaceholderIcon = IconPool.createControlByURI({
-					id: this.getId() + "-placeholder",
-					useIconTooltip : false,
-					src: oPlaceholderIconUri
-				});
+		/**
+		 * Sets the visibility value of the Favorite marker.
+		 * @override
+		 * @public
+		 * @param {boolean} bMarked the new value
+		 * @returns {sap.m.ObjectListItem} this pointer for chaining
+		 */
+		ObjectListItem.prototype.setMarkLocked = function (bMarked) {
+			return this._setOldMarkers(sap.m.ObjectMarkerType.Locked, bMarked);
+		};
 
-				this._oPlaceholderIcon.addStyleClass("sapMObjStatusMarkerInvisible");
+		/**
+		 * Sets the visibility value of the Flagged and Favorite markers.
+		 * @override
+		 * @public
+		 * @param {boolean} bMarked the new value
+		 * @returns {sap.m.ObjectListItem} this pointer for chaining
+		 */
+		ObjectListItem.prototype.setShowMarkers = function (bMarked) {
+			var sMarkerType;
+			var aAllMarkers = this.getMarkers();
+
+			this.setProperty("showMarkers", bMarked, false);
+
+			for (var i = 0; i < aAllMarkers.length; i++) {
+				sMarkerType = aAllMarkers[i].getType();
+
+				if ((sMarkerType === sap.m.ObjectMarkerType.Flagged && this.getMarkFlagged()) ||
+					(sMarkerType === sap.m.ObjectMarkerType.Favorite && this.getMarkFavorite()) ||
+					(sMarkerType === sap.m.ObjectMarkerType.Locked && this.getMarkLocked())) {
+						aAllMarkers[i].setVisible(bMarked);
+				}
 			}
-			return this._oPlaceholderIcon;
+
+			return this;
 		};
 
 		/**
 		 * @private
-		 * @returns Flag icon control
+		 * @param {string} markerType the type of the marker which should be created to updated
+		 * @param {boolean} bMarked the new value
+		 * @returns {sap.m.ObjectListItem} this pointer for chaining
 		 */
-		ObjectListItem.prototype._getFlagIcon = function() {
+		ObjectListItem.prototype._setOldMarkers = function (markerType, bMarked) {
+			var aAllMarkers = this.getMarkers();
+			var bHasMarker = false;
+			var oIds = {
+				Flagged : "-flag",
+				Favorite : "-favorite",
+				Locked : "-lock"
+			};
 
-			if (!this._oFlagIcon) {
+			this.setProperty("mark" + markerType, bMarked, false);
 
-				var oFlagIconUri = IconPool.getIconURI("flag");
-				this._oFlagIcon = IconPool.createControlByURI({
-					id: this.getId() + "-flag",
-					tooltip: oLibraryResourceBundle.getText("TOOLTIP_OLI_FLAG_MARK_VALUE"),
-					src: oFlagIconUri
-				});
+			if (!this.getShowMarkers()) {
+				bMarked = false;
 			}
-			return this._oFlagIcon;
+
+			for (var i = 0; i < aAllMarkers.length; i++) {
+				if (aAllMarkers[i].getType() === markerType) {
+					bHasMarker = true;
+					aAllMarkers[i].setVisible(bMarked);
+
+					break;
+				}
+			}
+
+			if (!bHasMarker) {
+				this.insertAggregation("markers", new sap.m.ObjectMarker({
+					id: this.getId() + oIds[markerType],
+					type: markerType,
+					visible: bMarked
+				}));
+			}
+
+			return this;
 		};
 
-		/**
-		 * @private
-		 * @returns Lock icon control
-		 */
-		ObjectListItem.prototype._getLockIcon = function() {
-
-			if (!this._oLockIcon) {
-				var oLockIconUri = IconPool.getIconURI("private");
-				this._oLockIcon = IconPool.createControlByURI({
-					id: this.getId() + "-lock",
-					tooltip: oLibraryResourceBundle.getText("TOOLTIP_OLI_LOCK_MARK_VALUE"),
-					src: oLockIconUri
-				}).addStyleClass("sapMObjStatusMarkerLocked");
-			}
-			return this._oLockIcon;
-		};
-
-		/**
-		 * @private
-		 * @returns Favorite icon control
-		 */
-		ObjectListItem.prototype._getFavoriteIcon = function() {
-
-			if (!this._oFavIcon) {
-
-				var oFavIconUri = IconPool.getIconURI("favorite");
-				this._oFavIcon = IconPool.createControlByURI({
-					id: this.getId() + "-favorite",
-					tooltip: oLibraryResourceBundle.getText("TOOLTIP_OLI_FAVORITE_MARK_VALUE"),
-					src: oFavIconUri
-				});
-			}
-			return this._oFavIcon;
-		};
 
 		/**
 		 * @private

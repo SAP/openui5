@@ -20,6 +20,24 @@
 		headerText: "Object List Items"
 	});
 
+    var newMarkers = new sap.m.ObjectListItem({
+        title: "New markers aggregation",
+        number: "802",
+        numberUnit: "Euro",
+        numberState : sap.ui.core.ValueState.Success,
+        attributes: [
+            new sap.m.ObjectAttribute({text: "First Attribute."}),
+            new sap.m.ObjectAttribute({text: "Second Attribute"})
+        ],
+        firstStatus: new sap.m.ObjectStatus({text: "Critical Status", state: "Error"}),
+        markers: [
+                     new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Favorite}),
+                     new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Flagged}),
+                     new sap.m.ObjectMarker({type: sap.m.ObjectMarkerType.Draft})
+                 ]
+    });
+    list.addItem(newMarkers);
+
     var lockedItem = new sap.m.ObjectListItem({
         intro: "Optional Intro Text",
         title: "Sed ut perspiciatis, unde omnis iste natus",
