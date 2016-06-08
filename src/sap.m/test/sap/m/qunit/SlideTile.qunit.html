@@ -53,6 +53,17 @@
 						footer : "Footer 4",
 						value : 40
 					}]
+				}, {
+					header : "Tile 3",
+					frameType : "OneByOne",
+					size : "M",
+					tileContent : [{
+						footer : "Footer 5",
+						value : 50
+					}, {
+						footer : "Footer 6",
+						value : 60
+					}]
 				}]
 			};
 
@@ -109,8 +120,8 @@
 	});
 
 	QUnit.test("Test ARIA label for single content", function(assert) {
-		//Arrange
 		//Act
+		this.oSlideTile.removeTile(this.oSlideTile.getTiles()[2].getId());
 		this.oSlideTile.removeTile(this.oSlideTile.getTiles()[1].getId());
 		sap.ui.getCore().applyChanges();
 
@@ -119,23 +130,19 @@
 	});
 
 	QUnit.test("Test ARIA label for multiple content", function(assert) {
-		//Arrange
-		//Act
 		//Assert
 		assert.equal(this.oSlideTile.$().attr("aria-label"), "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2\nElement with multiple content.\nTo toggle sliding press space bar.\nTo navigate press enter", "SlideTile contains expected ARIA-label attribute");
 	});
 
 	QUnit.test("Test sliding active per default", function(assert) {
-		//Arrange
-		//Act
 		//Assert
 		assert.ok(!this.oSlideTile._bAnimationPause, "Animation is active");
 	});
 
 	QUnit.test("Test toggle sliding", function(assert) {
 		//Arrange
-		var spy = sinon.spy(this.oSlideTile, "_toggleAnimation");
-		var oEvent = jQuery.Event("keyup");
+		var spy = sinon.spy(this.oSlideTile, "_toggleAnimation"),
+			oEvent = jQuery.Event("keyup");
 		oEvent.keyCode = jQuery.sap.KeyCodes.SPACE;
 		//Act
 		this.oSlideTile.onkeyup(oEvent);
@@ -161,8 +168,8 @@
 
 	QUnit.test("SlideTile key down handler test", function(assert) {
 		//Arrange
-		var spy = sinon.spy(this.oSlideTile.getTiles()[0], "onkeydown");
-		var oEvent = jQuery.Event("keydown");
+		var spy = sinon.spy(this.oSlideTile.getTiles()[0], "onkeydown"),
+			oEvent = jQuery.Event("keydown");
 		oEvent.keyCode = jQuery.sap.KeyCodes.ENTER;
 		//Act
 		this.oSlideTile.$().trigger(oEvent);
@@ -172,9 +179,9 @@
 
 	QUnit.test("SlideTile key up handler and press delegation on GenericTile test", function(assert) {
 		//Arrange
+		var oEvent = jQuery.Event("keyup");
 		this.oSlideTile.getTiles()[0].attachEvent("press", this.fnPressHandler);
 		this.oSlideTile.getTiles()[1].attachEvent("press", this.fnSecondPressHandler);
-		var oEvent = jQuery.Event("keyup");
 		oEvent.keyCode = jQuery.sap.KeyCodes.ENTER;
 		//Act
 		this.oSlideTile.$().trigger(oEvent);
@@ -212,17 +219,17 @@
 		//Act
 		iPreviousTileIndex = this.oSlideTile._getPreviousTileIndex(iCurrentTileIndex);
 		//Assert
-		assert.equal(iPreviousTileIndex, 1, "Expected previous tile index to the first one returned");
+		assert.equal(iPreviousTileIndex, 2, "Expected previous tile index to the first one returned");
 	});
 
 	QUnit.test("Method _getPreviousTileIndex", function(assert) {
 		//Arrange
 		var iPreviousTileIndex,
-			iCurrentTileIndex = 1;
+			iCurrentTileIndex = 2;
 		//Act
 		iPreviousTileIndex = this.oSlideTile._getPreviousTileIndex(iCurrentTileIndex);
 		//Assert
-		assert.equal(iPreviousTileIndex, 0, "Expected previous tile index to the last one returned");
+		assert.equal(iPreviousTileIndex, 1, "Expected previous tile index to the last one returned");
 	});
 
 	QUnit.test("Method _getNextTileIndex", function(assert) {
@@ -242,7 +249,41 @@
 		//Act
 		iNextTileIndex = this.oSlideTile._getNextTileIndex(iCurrentTileIndex);
 		//Assert
-		assert.equal(iNextTileIndex, 0, "Expected next tile index to the last one returned");
+		assert.equal(iNextTileIndex, 2, "Expected next tile index to the last one returned");
+	});
+
+	QUnit.test("Method _scrollToNextTile - option: scroll backward and stop the animation", function(assert) {
+		//Arrange
+		var sAriaLabel, $NextTile, $NextTileExpected,
+			sAriaLabelExpected = "Tile 3 50 Neutral Footer 5 60 Neutral Footer 6\nElement with multiple content.\nTo toggle sliding press space bar.\nTo navigate press enter";
+		//Act
+		this.oSlideTile._scrollToNextTile(true, true);
+		sAriaLabel = this.oSlideTile.$().attr("aria-label")
+		//Assert
+		assert.equal(sAriaLabel, sAriaLabelExpected, "Expected backward animation done");
+	});
+
+	QUnit.test("Method _scrollToNextTile - option: scroll forward and stop the animation", function(assert) {
+		//Arrange
+		var sAriaLabel, $NextTile, $NextTileExpected,
+			sAriaLabelExpected = "Tile 2 30 Neutral Footer 3 40 Neutral Footer 4\nElement with multiple content.\nTo toggle sliding press space bar.\nTo navigate press enter";
+		//Act
+		this.oSlideTile._scrollToNextTile(true, false);
+		sAriaLabel = this.oSlideTile.$().attr("aria-label")
+		//Assert
+		assert.equal(sAriaLabel, sAriaLabelExpected, "Expected forward animation done");
+	});
+
+	QUnit.test("Method _scrollToNextTile - option: scroll forward twice and stop the animation", function(assert) {
+		//Arrange
+		var sAriaLabel, $NextTile, $NextTileExpected,
+			sAriaLabelExpected = "Tile 3 50 Neutral Footer 5 60 Neutral Footer 6\nElement with multiple content.\nTo toggle sliding press space bar.\nTo navigate press enter";
+		//Act
+		this.oSlideTile._scrollToNextTile(true, false);
+		this.oSlideTile._scrollToNextTile(true, false);
+		sAriaLabel = this.oSlideTile.$().attr("aria-label")
+		//Assert
+		assert.equal(sAriaLabel, sAriaLabelExpected, "Expected forward animation done");
 	});
 
 	QUnit.module("Rendering - EmptyTile", {
