@@ -32,6 +32,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	var mLoadedLibraries = {};
 
 	/**
+	 * Bookkeeping for the preloading of libraries.
+	 *
+	 * Might contain an object for each library (keyed by the library name).
+	 * While the preload is pending for a library, the object has a property preload = true.
+	 * In any case, the object contains a promise that fulfills / rejects when the preload
+	 * fulfills / rejects.
+	 * @private
+	 */
+	var mLibraryPreloadBundles = {};
+
+	/**
 	 * EventProvider instance, EventProvider is no longer extended
 	 * @private
 	 */
@@ -361,13 +372,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 			if ( sPreloadMode === "sync" || sPreloadMode === "async" ) {
 				var bAsyncPreload = sPreloadMode !== "sync";
-				jQuery.each(aModules, function(i,sModule) {
-					if ( sModule.match(/\.library$/) ) {
-						// Note: in async mode, all preloads together contribute to oSyncPoint2.
-						// Only after that SP2 has been reached, library modules will be required by the Core.
-						jQuery.sap.preloadModules(sModule + "-preload", bAsyncPreload, oSyncPoint2);
+				// determine set of libraries
+				var aLibs = aModules.reduce(function(aResult, sModule) {
+					var iPos = sModule.search(/\.library$/);
+					if ( iPos >= 0 ) {
+						aResult.push(sModule.slice(0, iPos));
 					}
+					return aResult;
+				}, []);
+
+				var preloaded = this.loadLibraries(aLibs, {
+					async: bAsyncPreload,
+					preloadOnly: true
 				});
+				if ( bAsyncPreload ) {
+					var iPreloadLibrariesTask = oSyncPoint2.startTask("preload bootstrap libraries");
+					preloaded.then(function() {
+						oSyncPoint2.finishTask(iPreloadLibrariesTask);
+					}, function() {
+						oSyncPoint2.finishTask(iPreloadLibrariesTask, false);
+					});
+				}
 			}
 
 			// initializes the application cachebuster mechanism if configured
@@ -1179,6 +1204,224 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
+	 * Preloads a library asynchronously.
+	 *
+	 * @param {string|object} lib Name of the library to preload or settings object describing library.
+	 * @param {string} [lib.name] Name of the library to preload
+	 * @param {boolean|undefined} [lib.json] Whether library supports only json (<code>true<true>) or only JS (<code>false<code>)
+	 *                               or whether both should be tried (undefined)
+	 * @returns {Promise} A promise to be fulfilled when the lib has been preloaded
+	 * @private
+	 */
+	function preloadLibraryAsync(lib) {
+
+		jQuery.sap.assert(typeof lib === 'string' && lib || typeof lib === 'object' && typeof lib.name === 'string' && lib.name, "lib must be a non-empty string or an object with at least a non-empty name property" );
+
+		var libModule = lib.replace(/\./g, '/') + '/library.js';
+		if ( jQuery.sap.isResourceLoaded(libModule) ) {
+			return Promise.resolve(true);
+		}
+
+		var json;
+		if ( typeof lib !== 'string' ) {
+			json = lib.json;
+			lib = lib.name;
+		}
+
+		var libInfo = mLibraryPreloadBundles[lib] || (mLibraryPreloadBundles[lib] = { });
+
+		// return any existing promise (either lib is currently loading or has been loaded)
+		if ( libInfo.promise ) {
+			return libInfo.promise;
+		}
+
+		// otherwise mark as pending
+		libInfo.pending = true;
+		libInfo.async = true;
+
+		// first preload code, resolves with list of dependencies (or undefined)
+		var p;
+		if ( json !== true /* not forced to JSON */ ) {
+			var sPreloadModule = lib.replace(/\./g, '/') + '/library-preload.js';
+			p = jQuery.sap._loadJSResourceAsync(sPreloadModule).then(
+					function() {
+						return dependenciesFromManifest(lib);
+					},
+					function(e) {
+						// loading library-preload.js failed, might be an old style lib with a library-preload.json only.
+						// with json === false, this fallback can be suppressed
+						if ( json !== false ) {
+							jQuery.sap.log.error("failed to load '" + sPreloadModule + "' (" + (e && e.message || e) + "), falling back to library-preload.json");
+							return loadJSONAsync(lib);
+						}
+						// ignore other errors
+					}
+				);
+		} else {
+			p = loadJSONAsync(lib);
+		}
+
+		// load dependencies, if there are any
+		libInfo.promise = p.then(function(dependencies) {
+			if ( dependencies && dependencies.length ) {
+				return Promise.all(dependencies.map(preloadLibraryAsync)).then(function() {
+					libInfo.pending = false;
+				});
+			}
+			libInfo.pending = false;
+		});
+
+		// return resulting promise
+		return libInfo.promise;
+
+	}
+
+	function dependenciesFromManifest(lib) {
+
+		var manifestModule = lib.replace(/\./g, '/') + '/manifest.json';
+
+		if ( jQuery.sap.isResourceLoaded(manifestModule) ) {
+
+			var manifest = jQuery.sap.loadResource(manifestModule, {
+					dataType: 'json',
+					async: false, // always sync as we are sure to load from preload cache
+					failOnError: false
+				});
+
+			var libs = manifest && manifest["sap.ui5"] && manifest["sap.ui5"].dependencies && manifest["sap.ui5"].dependencies.libs;
+			if ( libs ) {
+				// convert manifest map to array, inject name
+				return Object.keys(libs).reduce(function(result, dep) {
+					if ( !libs[dep].lazy ) {
+						result.push(dep);
+					}
+					return result;
+				}, []);
+			}
+
+		}
+
+		// return undefined
+	}
+
+	function loadJSONAsync(lib) {
+		var sURL = jQuery.sap.getModulePath(lib + ".library-preload", ".json");
+
+		return Promise.resolve(jQuery.ajax({
+			dataType : "json",
+			url : sURL
+		})).then(
+			function(data) {
+				if ( data ) {
+					data.url = sURL;
+					jQuery.sap.registerPreloadedModules(data);
+					return data.dependencies;
+				}
+			},
+			function(xhr, textStatus, error) {
+				jQuery.sap.log.error("failed to load '" + sURL + "': " + (error || textStatus));
+			}
+		);
+
+	}
+
+
+	/**
+	 * Preloads a library synchronously.
+	 *
+	 * @param {string|object} lib Name of the library to preload or settings object describing library.
+	 * @param {string} [lib.name] Name of the library to preload
+	 * @param {boolean|undefined} [lib.json] Whether lib supports only json (<code>true<true>) or only JS (<code>false<code>)
+	 *                               or whether both should be tried (undefined)
+	 * @private
+	 */
+	function preloadLibrarySync(lib) {
+
+		jQuery.sap.assert(typeof lib === 'string' && lib || typeof lib === 'object' && typeof lib.name === 'string' && lib.name, "lib must be a non-empty string or an object with at least a non-empty name property" );
+
+		var libModule = lib.replace(/\./g, '/') + '/library.js';
+		if ( jQuery.sap.isResourceLoaded(libModule) ) {
+			return;
+		}
+
+		var json;
+		if ( typeof lib !== 'string' ) {
+			json = lib.json;
+			lib = lib.name;
+		}
+
+		var libInfo = mLibraryPreloadBundles[lib] || (mLibraryPreloadBundles[lib] = { });
+
+		// already preloaded?
+		if ( libInfo.pending === false ) {
+			return;
+		}
+
+		// currently loading
+		if ( libInfo.pending ) {
+			if ( libInfo.async ) {
+				throw new Error("request to load " + lib + " synchronously, but async loading is pending");
+			} else {
+				// sync cycle -> error (or return null like with modules?)
+				throw new Error("request to load " + lib + " synchronously, but sync loading is pending (cycle)");
+			}
+		}
+
+		libInfo.pending = true;
+		libInfo.async = false;
+
+		var resolve;
+		libInfo.promise = new Promise(function(_resolve, _reject) {
+			resolve = _resolve;
+		});
+
+		var dependencies;
+		if ( json !== true /* not forced to JSON */ ) {
+			try {
+				sap.ui.requireSync(lib.replace(/\./g, '/') + '/library-preload');
+				dependencies = dependenciesFromManifest(lib);
+			} catch (e) {
+				if ( e && e.loadError ) {
+					dependencies = loadJSONSync(lib);
+				} // ignore other errors (preload shouldn't fail)
+			}
+		} else {
+			dependencies = loadJSONSync(lib);
+		}
+
+		if ( dependencies && dependencies.length ) {
+			dependencies.forEach(preloadLibrarySync);
+		}
+
+		libInfo.pending = false;
+		resolve();
+
+	}
+
+	function loadJSONSync(lib) {
+		var sURL = jQuery.sap.getModulePath(lib + ".library-preload", ".json");
+		var dependencies;
+
+		jQuery.ajax({
+			dataType : "json",
+			async: false,
+			url : sURL,
+			success: function(data) {
+				if ( data ) {
+					data.url = sURL;
+					jQuery.sap.registerPreloadedModules(data);
+					dependencies = data.dependencies;
+				}
+			},
+			error: function(xhr, textStatus, error) {
+				jQuery.sap.log.error("failed to load '" + sURL + "': " + (error || textStatus));
+			}
+		});
+
+		return dependencies;
+	}
+
+	/**
 	 * Synchronously loads the given library and makes it available to the application.
 	 *
 	 * Loads the *.library module, which contains all preload modules (enums, types, content of a shared.js
@@ -1223,7 +1466,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				jQuery.sap.log.debug("load all-in-one file " + sAllInOneModule);
 				jQuery.sap.require(sAllInOneModule);
 			} else if ( this.oConfiguration.preload === 'sync' || this.oConfiguration.preload === 'async' ) {
-				jQuery.sap.preloadModules(sModule + "-preload", /* force sync */ false);
+				preloadLibrarySync(sLibrary);
 			}
 
 			// require the library module (which in turn will call initLibrary())
@@ -1279,14 +1522,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			bAsync = mOptions.async,
 			bRequire = !mOptions.preloadOnly;
 
-		function preloadLibs(oSyncPoint) {
-			if ( bPreload ) {
-				aLibraries.forEach(function(sLibraryName) {
-					jQuery.sap.preloadModules(sLibraryName + ".library-preload", !!oSyncPoint, oSyncPoint);
-				});
-			}
-		}
-
 		function requireLibs() {
 			if ( bRequire ) {
 				aLibraries.forEach(function(sLibraryName) {
@@ -1300,28 +1535,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		if ( bAsync ) {
 
-			return new Promise(function(resolve, reject) {
-
-				// TODO we urgently need to get rid of our syncPoints, but jQuery.sap.preloadModules still uses them
-				var oSyncPoint = jQuery.sap.syncPoint("Load Libraries", function(iOpenTasks, iFailures) {
-					if ( !iFailures ) {
-						requireLibs();
-						resolve();
-					} else {
-						reject(new Error("failed to preload libraries"));
-					}
-				});
-
-				// create an artifical task to trigger the callback if no other tasks have been created
-				var iTask = oSyncPoint.startTask("load libraries");
-				preloadLibs(oSyncPoint);
-				oSyncPoint.finishTask(iTask);
-
-			});
+			var preloaded = bPreload ? Promise.all(aLibraries.map(preloadLibraryAsync)) : Promise.resolve(true);
+			return preloaded.then(requireLibs);
 
 		} else {
 
-			preloadLibs(null);
+			if ( bPreload ) {
+				aLibraries.forEach(preloadLibrarySync);
+			}
 			requireLibs();
 
 		}
@@ -1494,7 +1715,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		for (var i = 0; i < oLibInfo.dependencies.length; i++) {
 			var sDepLib = oLibInfo.dependencies[i];
 			log.debug("resolve Dependencies to " + sDepLib, null, METHOD);
-			if ( !mLoadedLibraries[sDepLib] ) {
+			if ( mLoadedLibraries[sDepLib] !== true ) {
 				log.warning("Dependency from " + sLibName + " to " + sDepLib + " has not been resolved by library itself", null, METHOD);
 				this.loadLibrary(sDepLib);
 			}
