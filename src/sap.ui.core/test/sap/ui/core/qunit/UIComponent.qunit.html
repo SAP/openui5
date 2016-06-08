@@ -98,6 +98,28 @@
 
 	});
 
+	QUnit.test("UIComponent ID handling", function (assert) {
+
+		this.oServer.respondWithJSONContent(this.oManifest);
+
+		var oComponent = sap.ui.component({
+			id : "dummy",
+			manifestUrl : "/anylocation/manifest.json"
+		});
+
+		var sPrefixedId = oComponent.createId("anyid");
+		var sLocalId = oComponent.getLocalId(sPrefixedId);
+		var sOtherId = oComponent.getLocalId("anyview---anyid");
+		assert.equal(sPrefixedId, "dummy---anyid");
+		assert.equal(sLocalId, "anyid");
+		assert.equal(sOtherId, null);
+		assert.ok(oComponent.isPrefixedId(sPrefixedId));
+		assert.notOk(oComponent.isPrefixedId(sLocalId));
+
+		oComponent.destroy();
+
+	});
+
 	QUnit.test("UIComponent initialization callback hook", function(assert) {
 
 		this.oServer.respondWithJSONContent(this.oManifest);

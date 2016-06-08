@@ -321,10 +321,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	};
 
 	/**
-	 * Returns an Element by its id in the context of the View.
+	 * Returns an element by its ID in the context of the view.
 	 *
-	 * @param {string} sId view local Id of the Element
-	 * @return {sap.ui.core.Element} Element by its id or undefined
+	 * @param {string} sId View local ID of the element
+	 * @return {sap.ui.core.Element} element by its ID or <code>undefined</code>
 	 * @public
 	 */
 	View.prototype.byId = function(sId) {
@@ -332,10 +332,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	};
 
 	/**
-	 * Convert the given view local Element id to a globally unique id
-	 * by prefixing it with the view Id.
+	 * Convert the given view local element ID to a globally unique ID
+	 * by prefixing it with the view ID.
 	 *
-	 * @param {string} sId view local Id of the Element
+	 * @param {string} sId View local ID of the element
 	 * @return {string} prefixed id
 	 * @public
 	 */
@@ -348,24 +348,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	};
 
 	/**
-	* Checks whether the given ID is already prefixed with this View's ID
-	*
-	* @param {string} potentially prefixed id
-	* @return {boolean} whether the ID is already prefixed
-	*/
+	 * Returns the local ID of an element by removing the view ID prefix or
+	 * <code>null</code> if the ID does not contain a prefix.
+	 *
+	 * @param {string} sId Prefixed ID
+	 * @return {string} ID without prefix or <code>null</code>
+	 * @public
+	 * @since 1.39.0
+	 */
+	View.prototype.getLocalId = function(sId) {
+		var sPrefix = this.getId() + "--";
+		return (sId && sId.indexOf(sPrefix) === 0) ? sId.slice(sPrefix.length) : null;
+	};
+
+	/**
+	 * Checks whether the given ID already contains this view's ID prefix
+	 *
+	 * @param {string} sId ID that is checked for the prefix
+	 * @return {boolean} whether the ID is already prefixed
+	 */
 	View.prototype.isPrefixedId = function(sId) {
 		return !!(sId && sId.indexOf(this.getId() + "--") === 0);
 	};
 
 	/**
-	* Creates and connects the controller if the controller is not given in the
-	* mSettings
-	*
-	* @param {sap.ui.core.mvc.XMLView} the instance of the view that should be processed
-	* @param {object} [mSettings]
-	* @param {object.controller} [mSettings.controller] the controller of the view instance
-	* @private
-	*/
+	 * Creates and connects the controller if the controller is not given in the
+	 * mSettings
+	 *
+	 * @param {sap.ui.core.mvc.XMLView} the instance of the view that should be processed
+	 * @param {object} [mSettings]
+	 * @param {object.controller} [mSettings.controller] the controller of the view instance
+	 * @private
+	 */
 	var createAndConnectController = function(oThis, mSettings) {
 
 		if (!sap.ui.getCore().getConfiguration().getControllerCodeDeactivated()) {
