@@ -329,6 +329,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 			options._stack = createStack(1 + options._stackDropCount);
 			delete options._stackDropCount;
 
+			this._validateWaitFor(options);
+
 			deferred.promise(this);
 
 			queue.push({
@@ -386,7 +388,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 		 * @public
 		 * @function
 		 */
-		emptyQueue : Opa.emptyQueue
+		emptyQueue : Opa.emptyQueue,
+
+		_validateWaitFor: function (oParameters) {
+			if (oParameters.error && !$.isFunction(oParameters.error)) {
+				throw new Error("sap.ui.test.Opa#waitFor - the 'error' parameter needs to be a function but '"
+					+ oParameters.error + "' was passed");
+			}
+		}
 	};
 
 
