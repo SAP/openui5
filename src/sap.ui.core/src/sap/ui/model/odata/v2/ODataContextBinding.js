@@ -43,29 +43,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 	ODataContextBinding.prototype.initialize = function() {
 		var that = this,
 			sResolvedPath,
+			bCreatedRelative = this.isRelative() && this.oContext && this.oContext.bCreated,
 			bReloadNeeded;
 
 		// don't fire any requests if metadata is not loaded yet.
-		if (this.oModel.oMetadata.isLoaded() && this.bInitial) {
+		if (this.oModel.oMetadata.isLoaded() && this.bInitial && !bCreatedRelative) {
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
-			bReloadNeeded = this.oModel._isReloadNeeded(sResolvedPath, this.mParameters);
-			if (sResolvedPath && bReloadNeeded) {
-				this.fireDataRequested();
-			}
-			this.oModel.createBindingContext(this.sPath, this.oContext, this.mParameters, function(oContext) {
-				var oData;
-				that.oElementContext = oContext;
-				that._fireChange();
-				if (sResolvedPath && bReloadNeeded) {
-					if (that.oElementContext) {
-						oData = that.oElementContext.getObject();
-					}
-					//register datareceived call as  callAfterUpdate
-					that.oModel.callAfterUpdate(function() {
-						that.fireDataReceived({data: oData});
-					});
+			if (sResolvedPath) {
+				bReloadNeeded = this.oModel._isReloadNeeded(sResolvedPath, this.mParameters);
+				if (bReloadNeeded) {
+					this.fireDataRequested();
 				}
-			}, bReloadNeeded);
+				this.oModel.createBindingContext(this.sPath, this.oContext, this.mParameters, function(oContext) {
+					var oData;
+					that.oElementContext = oContext;
+					that._fireChange();
+					if (sResolvedPath && bReloadNeeded) {
+						if (that.oElementContext) {
+							oData = that.oElementContext.getObject();
+						}
+						//register datareceived call as  callAfterUpdate
+						that.oModel.callAfterUpdate(function() {
+							that.fireDataReceived({data: oData});
+						});
+					}
+				}, bReloadNeeded);
+			}
 			this.bInitial = false;
 		}
 
@@ -98,9 +101,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 	ODataContextBinding.prototype._refresh = function(bForceUpdate, mChangedEntities) {
 		var that = this, oData, sKey, oStoredEntry, bChangeDetected = false,
 			mParameters = this.mParameters,
+			bCreatedRelative = this.isRelative() && this.oContext && this.oContext.bCreated,
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
 
-		if (this.bInitial) {
+		if (this.bInitial || bCreatedRelative) {
 			return;
 		}
 
@@ -158,33 +162,48 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 			oData,
 			sResolvedPath,
 			oData,
+			bCreated = oContext && oContext.bCreated,
 			bReloadNeeded;
 
-		if (this.oContext !== oContext && this.isRelative()) {
+		if (this.oContext !== oContext) {
 			this.oContext = oContext;
+
+			// If binding is initial or not a relative binding, nothing to do here
+			if (this.bInitial || !this.isRelative()) {
+				return;
+			}
+
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+
+			// If path doesn't resolve or parent context is created, reset current context
+			if (!sResolvedPath || bCreated) {
+				if (this.oElementContext !== null) {
+					this.oElementContext = null;
+					this._fireChange();
+				}
+				return;
+			}
+
+			// Create new binding context and fire change
 			oData = this.oModel._getObject(this.sPath, this.oContext);
 			bReloadNeeded = this.oModel._isReloadNeeded(sResolvedPath, oData, this.mParameters);
 
-			// don't fire any requests if metadata is not loaded yet.
-			if (!this.bInitial) {
-				if (sResolvedPath && bReloadNeeded) {
-					this.fireDataRequested();
-				}
-				this.oModel.createBindingContext(this.sPath, this.oContext, this.mParameters, function(oContext) {
-					that.oElementContext = oContext;
-					that._fireChange();
-					if (sResolvedPath && bReloadNeeded) {
-						if (that.oElementContext) {
-							oData = that.oElementContext.getObject();
-						}
-						//register datareceived call as  callAfterUpdate
-						that.oModel.callAfterUpdate(function() {
-							that.fireDataReceived({data: oData});
-						});
-					}
-				}, bReloadNeeded);
+			if (bReloadNeeded) {
+				this.fireDataRequested();
 			}
+			this.oModel.createBindingContext(this.sPath, this.oContext, this.mParameters, function(oContext) {
+				that.oElementContext = oContext;
+				that._fireChange();
+				if (sResolvedPath && bReloadNeeded) {
+					if (that.oElementContext) {
+						oData = that.oElementContext.getObject();
+					}
+					//register datareceived call as  callAfterUpdate
+					that.oModel.callAfterUpdate(function() {
+						that.fireDataReceived({data: oData});
+					});
+				}
+			}, bReloadNeeded);
 		}
 	};
 

@@ -3840,6 +3840,112 @@
 		}.bind(this))
 	});
 
+	asyncTest("createEntry and relative bindings", function() {
+		assert.expect(0);
+		var that = this;
+		this.oModel.metadataLoaded().then(function() {
+			var fnSuccess = function() {
+				ok(false, "success handler must not be called");
+			}
+			var oCreatedContext = this.oModel.createEntry("/Products", {
+				properties: {Name: 'test'}, 
+				success: fnSuccess
+			});
+			var oContextBinding = this.oModel.bindContext("Supplier", oCreatedContext);
+			oContextBinding.attachChange(function(){
+				ok(false, "ContextBinding change most not be fired");
+			});
+			oContextBinding.initialize();
+			var oListBinding = this.oModel.bindList("Items", oCreatedContext);
+			oListBinding.attachChange(function(){
+				ok(false, "ListBinding change most not be fired");
+			});
+			oListBinding.attachRefresh(function(){
+				oListBinding.getContexts(0,10);
+				ok(false, "ListBinding refresh most not be fired");
+			});
+			oListBinding.initialize();
+			this.oModel.attachRequestSent(function() {
+				ok(false, "No requests must be sent");
+			});
+			setTimeout(function() {
+				start();
+			}, 0);
+		}.bind(this))
+	});
+
+	asyncTest("createEntry and relative bindings (setContext)", function() {
+		assert.expect(0);
+		var that = this;
+		this.oModel.metadataLoaded().then(function() {
+			var fnSuccess = function() {
+				ok(false, "success handler must not be called");
+			}
+			var oCreatedContext = this.oModel.createEntry("/Products", {
+				properties: {Name: 'test'}, 
+				success: fnSuccess
+			});
+			var oContextBinding = this.oModel.bindContext("Supplier");
+			oContextBinding.attachChange(function(){
+				ok(false, "ContextBinding change most not be fired");
+			});
+			oContextBinding.initialize();
+			oContextBinding.setContext(oCreatedContext);
+			var oListBinding = this.oModel.bindList("Items");
+			oListBinding.attachChange(function(){
+				ok(false, "ListBinding change most not be fired");
+			});
+			oListBinding.attachRefresh(function(){
+				oListBinding.getContexts(0,10);
+				ok(false, "ListBinding refresh most not be fired");
+			});
+			oListBinding.initialize();
+			oListBinding.setContext(oCreatedContext);
+			this.oModel.attachRequestSent(function() {
+				ok(false, "No requests must be sent");
+			});
+			setTimeout(function() {
+				start();
+			}, 0);
+		}.bind(this))
+	});
+
+	asyncTest("createEntry and absolute bindings", function() {
+		assert.expect(6);
+		var that = this;
+		this.oModel.metadataLoaded().then(function() {
+			var fnSuccess = function() {
+				ok(false, "success handler must not be called");
+			}
+			var oCreatedContext = this.oModel.createEntry("/Products", {
+				properties: {Name: 'test'}, 
+				success: fnSuccess
+			});
+			var oContextBinding = this.oModel.bindContext("/Suppliers(0)", oCreatedContext);
+			oContextBinding.attachChange(function(){
+				ok(true, "ContextBinding change most be fired");
+			});
+			oContextBinding.initialize();
+			var oListBinding = this.oModel.bindList("/Products", oCreatedContext);
+			oListBinding.attachChange(function(){
+				ok(true, "ListBinding change most be fired");
+			});
+			oListBinding.attachRefresh(function(){
+				oListBinding.getContexts(0,10);
+				ok(true, "ListBinding refresh most be fired");
+			});
+			oListBinding.initialize();
+			this.oModel.attachRequestSent(function() {
+				ok(true, "Requests must be triggered");
+			});
+			setTimeout(function() {
+				start();
+			}, 0);
+		}.bind(this))
+	});
+
+	module("Model: SAML");
+
 	asyncTest("SAML redirect - without batch", function(){
 
 		removeSharedServicedata(sURI);
@@ -3883,6 +3989,8 @@
 			}
 		});
 	});
+
+	module("Model: includeExpandEntries");
 
 	asyncTest("test getProperty with includeExpandEntries __ref", function(){
 		removeSharedServicedata(sURI);
