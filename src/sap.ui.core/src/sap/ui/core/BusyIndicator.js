@@ -102,9 +102,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', '../base/EventProvider', '.
 
 		this.oDomRef = oRootDomRef;
 
+		//TODO how could this be destroyed? Who can/will destroy this?
 		this.oPopup = new Popup(oRootDomRef);
 		this.oPopup.setModal(true, "sapUiBlyBusy");
 		this.oPopup.setShadow(false);
+		this.oPopup.attachOpened(function(oEvent) {
+			this._onOpen(oEvent);
+		}, this);
+	};
+
+	/**
+	 * This is the event listener that is called when the Popup of the BusyIndicator
+	 * has opened
+	 *
+	 * @param {jQuery.Event} oEvent is the event that is provided by the EventProvider
+	 * @private
+	 */
+	BusyIndicator._onOpen = function(oEvent) {
+		// Grab the focus once opened
+		var oDomRef = jQuery.sap.domById(BusyIndicator.sDOM_ID);
+		oDomRef.style.height = "100%";
+
+		// setting the BusyIndicator's DOM to visible is done by the Popup
+
+		var oAnimation = oDomRef.querySelector(".sapUiLocalBusyIndicator");
+		oAnimation.className += " sapUiLocalBusyIndicatorFade";
+		jQuery.sap.focus(oDomRef);
+
+		jQuery("body").attr("aria-busy", true);
 
 		// since IE <9 isn't able to use CSS animations a JS-animation is needed
 		if (Device.browser.msie &&  Device.browser.version <= 9) {
@@ -114,14 +139,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', '../base/EventProvider', '.
 			this._iBusyTimeStep = 50;
 			this._iBusyWidth = 500;
 
-			this.attachOpen(function () {
-				// Only wrap the DOM-node into a jQuery-object if needed. Before that
-				// every modification (adding classes and attributes) were done on a
-				// jQuery object unnecessarily
-				BusyIndicatorUtils.animateIE9.start(jQuery(oBusyElement));
-				this._IEAnimation(jQuery(oBusyContainer));
-			}, this);
+			/*
+			* Only wrap the DOM-node into a jQuery-object if needed. Before that
+			* every modification (adding classes and attributes) were done on a
+			* jQuery object unnecessarily
+			*/
+			var oBusyContainer = this.oDomRef.children[0];
+			var oBusyElement = this.oDomRef.children[1];
+			BusyIndicatorUtils.animateIE9.start(jQuery(oBusyElement));
+			this._IEAnimation(jQuery(oBusyContainer));
 		}
+
+		// allow an event handler to do something with the indicator
+		// and fire it after everything necessary happened
+		this.fireOpen({
+			$Busy: this.oPopup._$()
+		});
 	};
 
 	/**
@@ -182,6 +215,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', '../base/EventProvider', '.
 		if (jQuery.sap.fesr.getActive()) {
 			this._fDelayedStartTime = jQuery.sap.now() + iDelay;
 		}
+
+		// Initialize/create the BusyIndicator if this has not been done yet.
+		// This has to be done before calling '_showNowIfRequested' because within
+		// '_init' the BusyIndicator attaches itself to the Popup's open event and
+		// to keep the correct order of 'show -> _showNowIfRequested -> _onOpen ->
+		// -> _IEAnimation' the attaching has to happen earlier.
+		// Otherwise if an application attaches itself to the open event, this listener
+		// will be called before the BusyIndicator's open listener.
+		if (!this.oDomRef) {
+			this._init();
+		}
+
 		this.bOpenRequested = true;
 		if (iDelay === 0) { // avoid async call when there is no delay
 			this._showNowIfRequested();
@@ -189,7 +234,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', '../base/EventProvider', '.
 			jQuery.sap.delayedCall(iDelay, this, "_showNowIfRequested");
 		}
 	};
-
 
 	/**
 	 * Immediately displays the BusyIndicator if the application has not called
@@ -216,31 +260,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', '../base/EventProvider', '.
 
 		this.bOpenRequested = false; // opening request is handled
 
-		// Initialize/create the BusyIndicator if this has not been done yet
-		if (!this.oDomRef) {
-			this._init();
-		}
-
-		var that = this;
-		var fnOpened = function() {
-			that.oPopup.detachOpened(fnOpened);
-			// allow an event handler to do something with the indicator
-			that.fireOpen({
-				$Busy: that.oPopup._$()
-			});
-
-			// Grab the focus once opened
-			var oDomRef = jQuery.sap.domById(BusyIndicator.sDOM_ID);
-			oDomRef.style.height = "100%";
-			var oAnimation = oDomRef.querySelector(".sapUiLocalBusyIndicator");
-			oAnimation.className += " sapUiLocalBusyIndicatorFade";
-			jQuery.sap.focus(oDomRef);
-
-			jQuery("body").attr("aria-busy", true);
-		};
-
 		// Actually open the popup
-		this.oPopup.attachOpened(fnOpened);
 		this.oPopup.open(0, Popup.Dock.LeftTop, Popup.Dock.LeftTop, document);
 	};
 
@@ -267,8 +287,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', '../base/EventProvider', '.
 		if (bi.oDomRef) { // only if the BusyIndicator was shown before!
 			jQuery("body").removeAttr("aria-busy");
 
+			// setting the BusyIndicator's DOM to invisible is not
+			// necessary here - it will be done by the Popup in 'oPopup.close(0)'
+
+			var oAnimation = bi.oDomRef.querySelector(".sapUiLocalBusyIndicator");
+			jQuery(oAnimation).removeClass("sapUiLocalBusyIndicatorFade");
+
 			// allow an event handler to do something with the indicator
-			this.fireClose({$Busy: this.oPopup._$()});
+			this.fireClose({
+				$Busy: this.oPopup._$()
+			});
 
 			bi.oPopup.close(0);
 		}
