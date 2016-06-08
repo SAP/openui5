@@ -530,7 +530,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 
 			if (bFromScratch) {
 				this.rebuildListItems(aContexts, oBindingInfo, true);
-			} else if (this._oContainerDomRef) {
+			} else if (this._oContainerDomRef && aDiff && aDiff.length) {
 				// set the binding context of items inserting/deleting entries shifts the index of all following items
 				this.updateItemsBindingContext(aContexts, oBindingInfo.model);
 				this.applyChunk(vInsertIndex);
