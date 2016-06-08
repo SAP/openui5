@@ -325,6 +325,9 @@
 			// Restore spies
 			this.oLoadLibrariesSpy.restore();
 			this.oRegisterPreloadedModulesSpy.restore();
+
+			// remove registered callbacks
+			sap.ui.core.Component._fnLoadComponentCallback = undefined;
 		}
 	});
 
@@ -365,6 +368,46 @@
 		}.bind(this), function(oError) {
 			assert.ok(false, "Promise of Component hasn't been resolved correctly.");
 			done();
+		});
+	});
+
+	QUnit.test("load component callback", function(assert) {
+		var done = assert.async();
+
+		jQuery.getJSON("./testdata/components/async/manifestcomp/manifest.json", function(oLoadedManifest) {
+
+			var oConfig = {
+				manifestUrl : "./testdata/components/async/manifestcomp/manifest.json",
+				async: true,
+				asyncHints: {
+					libs: ["sap.ui.core"],
+					requests: [{ name: "sap.ui.fl.changes", reference: "componentName" }]
+				}
+			};
+
+			var oStorage = {};
+
+			// check after the component was loaded
+			var fnCheckForModification = function (oComponent) {
+				var oOriginalManifest = oComponent.getManifest();
+				assert.notDeepEqual(oOriginalManifest, this.manifestInCallback.getRawJson(), "the manifest was passed as a copy");
+				done();
+			};
+
+			// install a manifest load callback hook
+			sap.ui.core.Component._fnLoadComponentCallback = function(oConfig, oManifest, oPassedConfig, oPassedManifest) {
+				assert.ok(true, "sap.ui.core.Component._fnLoadComponentCallback called!");
+				assert.deepEqual(oConfig, oPassedConfig, "the config was passed");
+				assert.notEqual(oConfig, oPassedConfig, "the passed config is a copy");
+				assert.deepEqual(oManifest, oPassedManifest.getRawJson(), "the manifest was passed");
+				oPassedManifest.getRawJson().modification = "someModification";
+				this.manifestInCallback = oPassedManifest;
+			}.bind(oStorage, oConfig, oLoadedManifest);
+
+			// start test
+			var oComponentPromise = sap.ui.component(oConfig);
+
+			oComponentPromise.then(fnCheckForModification.bind(oStorage));
 		});
 	});
 
