@@ -17,7 +17,8 @@ sap.ui.define([
 		'./matchers/AggregationFilled',
 		'./matchers/PropertyStrictEquals',
 		'./pipelines/MatcherPipeline',
-		'./pipelines/ActionPipeline'
+		'./pipelines/ActionPipeline',
+		'./_ParameterValidator'
 	],
 	function(jQuery,
 			 Opa,
@@ -33,14 +34,18 @@ sap.ui.define([
 			 AggregationFilled,
 			 PropertyStrictEquals,
 			 MatcherPipeline,
-			 ActionPipeline) {
+			 ActionPipeline,
+			 ParameterValidator) {
 		"use strict";
 
 		var $ = jQuery,
 			oPlugin = new OpaPlugin(iFrameLauncher._sLogPrefix),
 			oMatcherPipeline = new MatcherPipeline(),
 			oActionPipeline = new ActionPipeline(),
-			sFrameId = "OpaFrame";
+			sFrameId = "OpaFrame",
+			oValidator = new ParameterValidator({
+				errorPrefix: "sap.ui.test.Opa5#waitFor"
+			});
 
 		/**
 		 * Helps you when writing tests for UI5 applications.
@@ -356,6 +361,12 @@ sap.ui.define([
 					Opa.config,
 					oOptions);
 
+			oValidator.validate({
+				validationInfo: Opa5._validationInfo,
+				inputToValidate: oOptions,
+				allowUnknownProperties: true
+			});
+
 			var fnOriginalCheck = oOptions.check,
 				vControl = null,
 				fnOriginalSuccess = oOptions.success,
@@ -662,6 +673,8 @@ sap.ui.define([
 			$("body").addClass("sapUiBody");
 			$("html").height("100%");
 		});
+
+		Opa5._validationInfo = $.extend({}, Opa._validationInfo);
 
 		return Opa5;
 }, /* export= */ true);

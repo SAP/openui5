@@ -531,6 +531,21 @@
 			start();
 		});
 	});
+
+	QUnit.module("Validation");
+
+	["error", "success", "check"].forEach(function (sParameter) {
+		QUnit.test("Should throw an error if the " + sParameter + " parameter is not a function", function (assert) {
+			assert.throws(function () {
+						var oWaitFor = {};
+						oWaitFor[sParameter] = "foo";
+						new Opa().waitFor(oWaitFor);
+					}.bind(this),
+					new Error("sap.ui.test.Opa#waitFor - the '" + sParameter + "' parameter needs to be a function but "
+							+ "'foo' was passed")
+					, "threw the error");
+		});
+	});
 })();
 
 

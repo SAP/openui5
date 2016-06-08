@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './_ParameterValidator'], function ($, Device, ParameterValidator) {
 	"use strict";
 
 	///////////////////////////////
@@ -11,7 +11,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 		context = {},
 		timeout = -1,
 		isStopped,
-		oDeferred;
+		oDeferred,
+		oValidator = new ParameterValidator({
+			errorPrefix: "sap.ui.test.Opa#waitFor"
+		});
 
 	function internalWait (fnCallback, oOptions, oDeferred) {
 
@@ -391,11 +394,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 		emptyQueue : Opa.emptyQueue,
 
 		_validateWaitFor: function (oParameters) {
-			if (oParameters.error && !$.isFunction(oParameters.error)) {
-				throw new Error("sap.ui.test.Opa#waitFor - the 'error' parameter needs to be a function but '"
-					+ oParameters.error + "' was passed");
-			}
+			oValidator.validate({
+				validationInfo: Opa._validationInfo,
+				inputToValidate: oParameters,
+				allowUnknownProperties: true
+			});
 		}
+	};
+
+	Opa._validationInfo = {
+		error: "func",
+		check: "func",
+		success: "func"
 	};
 
 

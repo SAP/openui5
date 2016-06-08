@@ -30,15 +30,17 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Should throw an error if the error parameter is not a function", function (assert) {
-		assert.throws(function () {
-			this.oOpa.waitFor({
-				error: "foo"
-			});
-		}.bind(this),
-			new Error("sap.ui.test.Opa#waitFor - the 'error' parameter needs to be a function but "
+	["error", "success", "check"].forEach(function (sParameter) {
+		QUnit.test("Should throw an error if the " + sParameter + " parameter is not a function", function (assert) {
+			assert.throws(function () {
+				var oWaitFor = {};
+				oWaitFor[sParameter] = "foo";
+				this.oOpa.waitFor(oWaitFor);
+			}.bind(this),
+			new Error("sap.ui.test.Opa5#waitFor - the '" + sParameter + "' parameter needs to be a function but "
 				+ "'foo' was passed")
 			, "threw the error");
+		});
 	});
 
 	QUnit.test("Should not throw an error if all valid parameters are given", function (assert) {
