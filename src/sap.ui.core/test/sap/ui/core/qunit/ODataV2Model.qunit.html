@@ -1883,6 +1883,46 @@
 		oBinding.attachRefresh(handler);
 	});
 
+	asyncTest("async test createEntity fail and deleteCreatedEntry", function(){
+		var oSpy;
+		var oModel = initModel(sURI, {
+			json: true,
+			loadMetadataAsync: true,
+			useBatch: true,
+			refreshAfterChange: false
+		}, true);
+
+		oModel.metadataLoaded().then(function(){
+		
+			oModel.setDeferredBatchGroups(["myId"]);
+			var oContext = oModel.createEntry("/Products",{properties:{ProductName:"Test"},
+					batchGroupId : "myId", urlParameters:{"Fail500" : true}});
+	
+			//oModel.deleteCreatedEntry(oContext);
+			oModel.submitChanges({
+				success : function(oData, oResponse) {
+					ok(true, "should land here");
+				},
+				error : function(oError) {
+					ok(true, "should not land here");
+				}
+			});
+			
+			oModel.attachRequestFailed(function(oError) {
+				//timeout because request handle will be aborted asynchronous
+				ok(oModel.hasPendingChanges(),"model should have pending changes");
+				ok(!jQuery.isEmptyObject(oModel.mChangeHandles),"model should have a change handle");
+				oModel.deleteCreatedEntry(oContext);
+				setTimeout(function() {
+					ok(!oModel.hasPendingChanges(),"model should not have pending changes");
+					ok(jQuery.isEmptyObject(oModel.mChangeHandles),"model should not have a change handle");
+					start();
+				},0);
+			});
+			
+		});
+	});
+
 	var aRequestEvents = [
 			"RequestSent", "RequestFailed", "RequestCompleted",
 			"BatchRequestSent", "BatchRequestFailed", "BatchRequestCompleted"
