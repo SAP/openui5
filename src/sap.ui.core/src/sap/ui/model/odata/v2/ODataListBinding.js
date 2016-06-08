@@ -681,7 +681,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			that.iLength = parseInt(oData, 10);
 			that.bLengthFinal = true;
 			that.bLengthRequested = true;
-			that.mCountHandle = null;
+			that.oCountHandle = null;
 
 			// in the OpertionMode.Auto, we check if the count is LE than the given threshold and set the client operation flag accordingly
 			if (that.sOperationMode == OperationMode.Auto) {
@@ -715,7 +715,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			sPath = sPath + "/$count";
 			//if load is triggered by a refresh we have to check the refreshGroup
 			sGroupId = this.sRefreshGroup ? this.sRefreshGroup : this.sGroupId;
-			this.mCountHandle = this.oModel.read(sPath,{withCredentials: this.oModel.bWithCredentials, groupId: sGroupId, urlParameters:aParams, success: _handleSuccess, error: _handleError});
+			this.oCountHandle = this.oModel.read(sPath, {
+				withCredentials: this.oModel.bWithCredentials,
+				groupId: sGroupId,
+				urlParameters:aParams,
+				success: _handleSuccess,
+				error: _handleError
+			});
 		}
 	};
 
