@@ -31,6 +31,26 @@ QUnit.test("isFixedColumn", function(assert) {
 	assert.ok(!TableUtils.isFixedColumn(oTable, 1), "Column 1 is not fixed");
 });
 
+QUnit.test("isVariableRowHeightEnabled", function(assert) {
+	assert.ok(!TableUtils.isVariableRowHeightEnabled(oTable), "VariableRowHeight is disabled by default.");
+	oTable._bVariableRowHeightEnabled = true;
+	assert.ok(TableUtils.isVariableRowHeightEnabled(oTable), "VariableRowHeight is enabled when bVariableRowHeight is true.");
+	oTable.setNavigationMode(sap.ui.table.NavigationMode.Paginator);
+	assert.ok(!TableUtils.isVariableRowHeightEnabled(oTable), "VariableRowHeight is not allowed when oTable has a Paginator.");
+});
+
+QUnit.test("getRowHeightByIndex", function(assert) {
+	assert.equal(TableUtils.getRowHeightByIndex(oTable, 0), 48, "First Row Height is 48");
+	assert.equal(TableUtils.getRowHeightByIndex(oTable, oTable.getRows().length - 1), 48, "Last Row Height is 48");
+	assert.equal(TableUtils.getRowHeightByIndex(oTable, 50), 0, "Invalid Row Height is 0");
+	assert.equal(TableUtils.getRowHeightByIndex(null, 0), 0, "No Table available returns 0px as row height");
+
+	oTable.setFixedColumnCount(0);
+	sap.ui.getCore().applyChanges();
+
+	assert.equal(TableUtils.getRowHeightByIndex(oTable, 0), 48, "First Row Height is 48, with Table with no fixed columns");
+});
+
 QUnit.test("getCellInfo", function(assert) {
 	var oCell = getCell(0, 0);
 	var oInfo = TableUtils.getCellInfo(oCell);
