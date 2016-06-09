@@ -31,7 +31,6 @@
 				beforeUploadStarts="onBeforeUploadStarts"
 				uploadTerminated="onUploadTerminated"
 				items="{path : '/items', templateShareable : 'true'}"
-				numberOfAttachmentsText="Uploaded (8)"
 				mode="MultiSelect">
 				<toolbar>
 					<OverflowToolbar id="myId" >
