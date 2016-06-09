@@ -32,9 +32,26 @@ sap.ui.core.mvc.Controller</title>
 <script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 <script>
 
-// FIXME: the following tests will fail with PhantomJS => check how to renable them
-
 	jQuery.sap.require("sap.ui.core.mvc.View");
+	jQuery.sap.require("sap.ui.core.mvc.XMLView");
+
+	// shortcut
+	function isPreserved(oDomRef) {
+		return sap.ui.core.RenderManager.isPreservedContent(oDomRef)
+	}
+
+	function isInPreservedArea(oDomRef) {
+		var oPreserveArea = sap.ui.core.RenderManager.getPreserveAreaRef();
+		return !!(oPreserveArea.compareDocumentPosition(oDomRef) & Node.DOCUMENT_POSITION_CONTAINED_BY);
+	}
+
+	function dummyPlaceholder(oControl) {
+		return jQuery.sap.byId(sap.ui.core.RenderPrefixes.Dummy + oControl.getId())[0];
+	}
+
+	function invisiblePlaceholder(oControl) {
+		return jQuery.sap.byId(sap.ui.core.RenderPrefixes.Invisible + oControl.getId())[0];
+	}
 
 	var oConfig = {
 		viewClassName : "sap.ui.core.mvc.XMLView",
@@ -142,29 +159,6 @@ sap.ui.core.mvc.Controller</title>
 				sap.ui.getCore().applyChanges();
 			});
 		});
-	});
-
-	QUnit.test("invisible control", function(assert) {
-		// load and place view, force rendering
-		var oView = sap.ui.xmlview('example.mvc.test').placeAt('content');
-		sap.ui.getCore().applyChanges();
-
-		assert.ok(oView.byId("myPanel").getDomRef(), "panel rendered");
-		oView.byId("myPanel").setVisible(false);
-		sap.ui.getCore().applyChanges();
-
-		assert.notOk(oView.byId("myPanel").getDomRef(), "panel hidden");
-		oView.setVisible(false);
-		sap.ui.getCore().applyChanges();
-		oView.setVisible(true);
-		// DO NOT sap.ui.getCore().applyChanges(); to create scenario circumstances
-
-		assert.ok(oView.getDomRef(), "view rendered");
-		assert.notOk(oView.byId("myPanel").getDomRef(), "panel not rendered");
-
-		oView.byId("myPanel").setVisible(true);
-		sap.ui.getCore().applyChanges();
-		assert.ok(oView.byId("myPanel").getDomRef(), "panel rendered");
 	});
 
 	QUnit.test("with custom RenderManager", function(assert) {
@@ -276,6 +270,69 @@ sap.ui.core.mvc.Controller</title>
 		oLayout.destroy();
 	});
 
+	QUnit.test("invisible child", function(assert) {
+
+		// load and place view, force rendering
+		var oView = sap.ui.xmlview('example.mvc.test').placeAt('content'),
+			oPanel = oView.byId("myPanel");
+		sap.ui.getCore().applyChanges();
+
+		// panel should be visible and have normal control DOM
+		assert.ok(oPanel.getDomRef() && !isInPreservedArea(oPanel.getDomRef()), "panel rendered (and not part of the preserve area())");
+
+		// make only the panel invisible, force rendering
+		oPanel.setVisible(false);
+		sap.ui.getCore().applyChanges();
+
+		// there should be no more DOM for the panel, but an invisible placeholder
+		assert.notOk(oPanel.getDomRef(), "panel should be hidden");
+		assert.ok(invisiblePlaceholder(oPanel), "invisible placeholder should exist for the panel");
+
+		// hide the view
+		oView.setVisible(false);
+		sap.ui.getCore().applyChanges();
+		
+		// this should move it to the preserve area with all child controls incl. the invisible placeholder
+		assert.ok(oView.getDomRef() && isPreserved(oView.getDomRef()), "view has DOM and DOM is in preserved area");
+		assert.ok(invisiblePlaceholder(oPanel), "invisible placeholder still should exist for panel");
+		assert.ok(isInPreservedArea(invisiblePlaceholder(oPanel)), "invisible placeholder should be part of the preserve area");
+
+		// restore both, view and child control
+		oView.setVisible(true);
+		oPanel.setVisible(true);
+		sap.ui.getCore().applyChanges();
+
+		// both view and child should have DOM, should not be in the preserve area and should have no placeholders
+		assert.ok(oView.getDomRef() && !isPreserved(oView.getDomRef()), "view has DOM and DOM is no longer in preserved area");
+		assert.notOk(dummyPlaceholder(oView), "view should have no more dummy placeholder");
+		assert.notOk(invisiblePlaceholder(oView), "view should have no more invisible placeholder");
+		assert.ok(oPanel.getDomRef() && !isInPreservedArea(oPanel.getDomRef()), "panel rendered after making it visible");
+		assert.notOk(dummyPlaceholder(oPanel), "panel should have no more dummy placeholder");
+		assert.notOk(invisiblePlaceholder(oPanel), "panel should have no more invisible placeholder");
+
+		// now make view and child visible in two different renderings 
+		oView.setVisible(false);
+		oPanel.setVisible(false);
+		sap.ui.getCore().applyChanges();
+		oView.setVisible(true);
+		sap.ui.getCore().applyChanges();
+
+		// invisible control should still be invisible and invisible placeholder still should exist
+		assert.ok(oView.getDomRef() && !isPreserved(oView.getDomRef()), "view has DOM and DOM is no longer in preserved area");
+		assert.notOk(oPanel.getDomRef(), "panel not rendered");
+		assert.ok(invisiblePlaceholder(oPanel), "invisible placeholder should exist for invisible panel");
+		assert.notOk(dummyPlaceholder(oPanel), "dummy placeholder must not exists for invisible panel");
+
+		// making the panel visible should also work
+		oPanel.setVisible(true);
+		sap.ui.getCore().applyChanges();
+		assert.ok(oPanel.getDomRef(), "panel rendered after making it visible");
+		assert.notOk(invisiblePlaceholder(oPanel), "invisible placeholder must not exist for visible panel");
+		assert.notOk(dummyPlaceholder(oPanel), "dummy placeholder must not exists for visible panel");
+
+		oView.destroy();
+		sap.ui.getCore().applyChanges();
+	});
 
 	QUnit.module("Additional tests:");
 
