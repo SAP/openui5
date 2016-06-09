@@ -42,6 +42,9 @@ sap.ui.require([
 				"$select" : ["BusinessPartnerID"]
 			}
 		}
+	}, {
+		s : "SO_2_BP($select=*)",
+		r : {"SO_2_BP" : {"$select" : ["*"]}}
 	}].forEach(function (oFixture) {
 		QUnit.test("_Parser: $expand=" + oFixture.s, function (assert) {
 			assert.deepEqual(_Parser.parseSystemQueryOption("$expand=" + oFixture.s),
@@ -81,10 +84,16 @@ sap.ui.require([
 		e : "Expected option but instead saw end of input"
 	}, {
 		s : "$expand=SO_2_BP;",
-		e : "Expected end of input but instead saw ';'"
+		e : "Expected end of input but instead saw ';' at 15"
 	}, {
 		s : "$expand=SO_2_BP$",
 		e : "Unknown character '$' at 15"
+	}, {
+		s : "$select=SalesOrderID,*",
+		e : "Expected 'PATH' but instead saw '*' at 21"
+	}, {
+		s : "*",
+		e : "Expected option but instead saw '*' at 0"
 	}].forEach(function (oFixture) {
 		QUnit.test("_Parser: =" + oFixture.s, function (assert) {
 			assert.throws(function () {
