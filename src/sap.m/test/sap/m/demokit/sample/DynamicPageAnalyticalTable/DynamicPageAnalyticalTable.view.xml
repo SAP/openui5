@@ -24,7 +24,8 @@
 						<OverflowToolbarButton
 								icon="sap-icon://add"
 								text="Add"
-								type="Transparent"/>
+								type="Transparent"
+								press="onAddMessage"/>
 						<OverflowToolbarButton
 								icon="sap-icon://edit"
 								text="Edit"
@@ -32,7 +33,8 @@
 						<OverflowToolbarButton
 								icon="sap-icon://delete"
 								text="Delete"
-								type="Transparent"/>
+								type="Transparent"
+								press="onDeleteMessages"/>
 						<Button
 								icon="sap-icon://post"
 								text="Toggle Footer"
@@ -120,6 +122,11 @@
 			<!-- DynamicPage Footer -->
 			<footer>
 				<OverflowToolbar>
+					<Button icon="sap-icon://message-popup"
+							text="{/messagesLength}"
+							type="Emphasized"
+							press="onMessageButtonPress"
+							visible="{= !!${/messagesLength}}"/>
 					<ToolbarSpacer/>
 					<Button type="Accept" text="Accept"/>
 					<Button type="Reject" text="Reject"/>
