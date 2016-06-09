@@ -461,6 +461,15 @@
 		  ]
 		},
 		{
+		  "id": "sap.m.LightBox",
+		  "name": "LightBox",
+		  "category": "Popup",
+		  "since": "1.42",
+		  "samples": [
+			"sap.m.sample.LightBox"
+		  ]
+		},
+		{
 		  "id": "sap.m.List",
 		  "name": "List",
 		  "category": "List",
@@ -1338,6 +1347,11 @@
 		  "id": "sap.m.sample.LinkEmphasized",
 		  "name": "Link - Emphasized",
 		  "description": "Usually you use an Object Identifier in the first column of a table. But if you need an active identifier you should use an 'emphasized' link instead."
+		},
+		{
+		  "id": "sap.m.sample.LightBox",
+		  "name": "LightBox",
+		  "description": "Displays several image thumbnails. Clicking on each of them will open a LightBox."
 		},
 		{
 		  "id": "sap.m.sample.UrlHelper",
