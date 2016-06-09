@@ -192,11 +192,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/core/Contro
 			this.oSendButton.setEnabled(true);
 		}
 
-		//Clean input so we avoid having invisible DOM content
-	//	if(!this.oInput.text()){
-	//		this.oInput.empty();
-	//	}
-
 	};
 
 	/**

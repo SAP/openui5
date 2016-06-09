@@ -55,7 +55,6 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		rm.writeAttributeEscaped('src', sThumbnail);
 
-	//	rm.writeAttributeEscaped('alt', oChunk.getSender());
 		rm.writeClasses();
 		rm.write('>');
 
