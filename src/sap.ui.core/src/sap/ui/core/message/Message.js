@@ -32,8 +32,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './MessageProcessor'],
 	 * @param {string} [mParameters.code] The message code
 	 * @param {sap.ui.core.message.Messageprocessor} [mParameters.processor]
 	 * @param {string} [mParameters.target] The message target: The syntax MessageProcessor dependent. Read the documentation of the respective MessageProcessor.
-	 * @param {boolean} [mParameters.persistent] Sets message persistent: If persistent is set <code>true</code> the message
-	 * lifecycle controlled by Application
+	 * @param {boolean} [mParameters.persistent] Sets message persistent: If persistent is set <code>true</code> the message lifecycle controlled by the application
+	 * @param {int} [mParameters.date=Date.now()] Sets message date which can be used to remove old messages. Number of milliseconds elapsed since 1 January 1970 00:00:00 UTC
 	 *
 	 * @public
 	 * @alias sap.ui.core.message.Message
@@ -55,7 +55,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './MessageProcessor'],
 			this.technical = mParameters.technical || false;
 			this.references = mParameters.references || {};
 			this.validation = !!mParameters.validation;
-
+			this.date = mParameters.date || Date.now();
 		}
 	});
 
@@ -268,6 +268,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './MessageProcessor'],
 				}
 			}
 		}
+	};
+
+	/**
+	 * Set the date of the message, this will automatically be set on message creation
+	 *
+	 * @param {int} iDate The message date in number of milliseconds elapsed since 1 January 1970 00:00:00 UTC. As returned by Date.now().
+	 */
+	Message.prototype.setDate = function(iDate) {
+		this.date = iDate;
+	};
+
+	/**
+	 * Set the date of the message
+	 *
+	 *  @returns {int} The message date in number of milliseconds elapsed since 1 January 1970 00:00:00 UTC. As returned by Date.now().
+	 */
+	Message.prototype.getDate = function() {
+		return this.date;
 	};
 
 	return Message;

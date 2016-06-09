@@ -274,7 +274,7 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestIn
 			sTarget = sTarget.substr(0, iPropertyPos + 1);
 		}
 
-		if (mAffectedTargets[sTarget]) {
+		if (mAffectedTargets[sTarget] && !this._lastMessages[i].getPersistent()) {
 			// Message belongs to targets handled/requested by this request
 			aRemovedMessages.push(this._lastMessages[i]);
 		} else {
@@ -314,6 +314,21 @@ ODataMessageParser.prototype._createMessage = function(oMessageObject, mRequestI
 
 	var sDescriptionUrl = oMessageObject.longtext_url ? oMessageObject.longtext_url : "";
 
+	var bPersistent = false;
+	if (oMessageObject.propertyref) {
+		oMessageObject.target = oMessageObject.propertyref;
+	}
+	if (typeof oMessageObject.target === "undefined") {
+		oMessageObject.target = "";
+	}
+
+	if (oMessageObject.target.indexOf("/#TRANSIENT#") === 0) {
+		bPersistent = true;
+		oMessageObject.target = oMessageObject.target.substr(12);
+	} else if (oMessageObject.transient) {
+		bPersistent = true;
+	}
+
 	var sTarget = this._createTarget(oMessageObject, mRequestInfo);
 
 	return new Message({
@@ -323,7 +338,8 @@ ODataMessageParser.prototype._createMessage = function(oMessageObject, mRequestI
 		descriptionUrl: sDescriptionUrl,
 		target:    sTarget,
 		processor: this._processor,
-		technical: bIsTechnical
+		technical: bIsTechnical,
+		persistent: bPersistent
 	});
 };
 
@@ -423,13 +439,7 @@ ODataMessageParser.prototype._getFunctionTarget = function(mFunctionInfo, mReque
  * @private
  */
 ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestInfo) {
-	var sTarget = "";
-
-	if (oMessageObject.target) {
-		sTarget = oMessageObject.target;
-	} else if (oMessageObject.propertyref) {
-		sTarget = oMessageObject.propertyref;
-	}
+	var sTarget = oMessageObject.target;
 
 	if (sTarget.substr(0, 1) !== "/") {
 		var sRequestTarget = "";
@@ -548,7 +558,6 @@ ODataMessageParser.prototype._parseBody = function(/* ref: */ aMessages, oRespon
 
 	// Messages from an error response should contain duplicate messages - the main error should be the
 	// same as the first errordetail error. If this is the case, remove the first one.
-	// TODO: Check if this is actually correct, and if so, check if the below check can be improved
 	if (aMessages.length > 1) {
 		if (
 			aMessages[0].getCode()    == aMessages[1].getCode()    &&

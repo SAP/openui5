@@ -250,6 +250,54 @@ var mPredefinedServiceResponses = {
 					sAnswer = "";
 					break;
 
+				// Special case that delivers transient messages
+				case "fakeservice://testdata/odata/northwind/TransientTest1":
+					var iDate = Date.now();
+					iStatus = 200;
+					mResponseHeaders = jQuery.extend({}, mHeaderTypes["json"]);
+					mResponseHeaders["sap-message"] = JSON.stringify({
+						"code":		iDate,
+						"message":	"This is a normal message.",
+						"severity":	"error",
+						"target": "/TransientTest1/SupplierID",
+						"details": [{
+							"code":		iDate + 1,
+							"message":	"This is a transient message using /#TRANSIENT# notation.",
+							"severity":	"error",
+							"target": "/#TRANSIENT#/TransientTest1/SupplierID",
+						}, {
+							"code":		iDate + 2,
+							"message":	"This is a transient message using transient flag.",
+							"severity":	"error",
+							"transient": true,
+							"target": "/TransientTest1/SupplierID",
+						}]
+					});
+					sAnswer = JSON.stringify({
+						"d": {
+							"results": [
+								{
+									"__metadata": {
+										"id": "fakeservice://testdata/odata/northwind/TransientTest1",
+										"uri": "fakeservice://testdata/odata/northwind/TransientTest1",
+										"type": "NorthwindModel.Product"
+									},
+									"ProductID": "transient-1",
+									"ProductName": "snoyweh",
+									"SupplierID": 0,
+									"CategoryID": 17,
+									"QuantityPerUnit": "ml",
+									"UnitPrice": 25.35128231184987,
+									"UnitsInStock": 12,
+									"UnitsOnOrder": 2,
+									"ReorderLevel": 75,
+									"Discontinued": false
+								}
+							]
+						}
+					});
+					break;
+
 				default:
 					if (sUrl.startsWith(mServiceData["serviceUrl"])) {
 						// This one's for us...
