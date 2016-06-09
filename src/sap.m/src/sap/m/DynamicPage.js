@@ -200,12 +200,18 @@ sap.ui.define([
 		oFooter.toggleStyleClass("sapMDynamicPageActualFooterControlHide", !bShow);
 		this.toggleStyleClass("sapMDynamicPageFooterSpacer", bShow);
 
-		if (bUseAnimations && !bShow) {
-			jQuery.sap.delayedCall(DynamicPage.FOOTER_ANIMATION_DURATION, this, function () {
+		if (bUseAnimations){
+			if (!bShow) {
+				jQuery.sap.delayedCall(DynamicPage.FOOTER_ANIMATION_DURATION, this, function () {
+					this.$footerWrapper.toggleClass("sapUiHidden", !this.getShowFooter());
+				});
+			} else {
 				this.$footerWrapper.toggleClass("sapUiHidden", !this.getShowFooter());
+			}
+
+			jQuery.sap.delayedCall(DynamicPage.FOOTER_ANIMATION_DURATION, this, function () {
+				oFooter.removeStyleClass("sapMDynamicPageActualFooterControlShow");
 			});
-		} else {
-			this.$footerWrapper.toggleClass("sapUiHidden", !this.getShowFooter());
 		}
 	};
 
