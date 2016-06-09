@@ -5,10 +5,11 @@
 
 .sapTntSideNavigation {
   background: @sapUiListBackground;
+  border-right: 1px solid @sapUiGroupContentBorderColor;
 }
 
 .sapTntSideNavigationSeparator {
-  background-color: @sapUiBrand;
+  background-color: @sapUiAccent6;
 }
 
 /* Styles for layout with arrows
@@ -27,18 +28,8 @@
 
 .sapTntSideNavigationScrollIcon:not(.sapTntSideNavigationScrollIconDisabled):hover {
   background-color: @sapUiListHoverBackground;
-  color: @sapUiListTextColor;
-
-  & > .sapUiIcon {
-    color: @sapUiContentIconColor;
-  }
 }
 
 .sapTntSideNavigationScrollIcon:not(.sapTntSideNavigationScrollIconDisabled):active {
   background-color: @sapUiListHighlightColor;
-  color: @sapUiContentContrastTextColor;
-
-  & > .sapUiIcon {
-    color: @sapUiContentContrastIconColor;
-  }
 }
