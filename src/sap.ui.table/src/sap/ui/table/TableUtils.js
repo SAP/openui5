@@ -9,6 +9,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 
 	// shortcuts
 	var SelectionBehavior = library.SelectionBehavior,
+		NavigationMode = library.NavigationMode,
 		SelectionMode = library.SelectionMode;
 
 	/**
@@ -70,6 +71,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		 */
 		getVisibleColumnCount : function(oTable) {
 			return oTable._getVisibleColumnCount();
+		},
+
+		/*
+		 * Returns the height of the defined row, identified by its row index.
+		 * @param {Object} oTable current table object
+		 * @param {int} iRowIndex the index of the row which height is needed
+		 */
+		getRowHeightByIndex : function(oTable, iRowIndex) {
+			var iRowHeight = 0;
+
+			if (oTable) {
+				var aRows = oTable.getRows();
+				if (aRows && aRows.length && iRowIndex > -1 && iRowIndex < aRows.length) {
+					var oDomRefs = aRows[iRowIndex].getDomRefs();
+					if (oDomRefs) {
+						if (oDomRefs.rowScrollPart && oDomRefs.rowFixedPart) {
+							iRowHeight = Math.max(oDomRefs.rowScrollPart.clientHeight, oDomRefs.rowFixedPart.clientHeight);
+						} else if (!oDomRefs.rowFixedPart) {
+							iRowHeight = oDomRefs.rowScrollPart.clientHeight;
+						}
+					}
+				}
+			}
+
+			return iRowHeight;
+		},
+
+		/*
+		 * Checks whether all conditions for pixel-based scrolling (Variable Row Height) are fulfilled.
+		 * @param {Object} oTable current table object
+		 * @returns {Boolean} true/false if fulfilled
+		 */
+		isVariableRowHeightEnabled : function(oTable) {
+			return oTable._bVariableRowHeightEnabled && oTable.getNavigationMode() === NavigationMode.Scrollbar;
 		},
 
 		/*
