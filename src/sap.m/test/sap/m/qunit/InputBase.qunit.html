@@ -348,7 +348,7 @@
 					sap.m.InputBase.prototype.getMaxLength = undefined;
 					this.stub(sap.m.InputBase.prototype, "getMaxLength", function() {
 						return mSettings.maxLength;
- 					});
+					});
 
 					// system under test
 					var oInput = new sap.m.InputBase(mSettings.control || {});
@@ -396,7 +396,7 @@
 					sap.m.InputBase.prototype.getMaxLength = undefined;
 					this.stub(sap.m.InputBase.prototype, "getMaxLength", function() {
 						return mSettings.maxLength;
- 					});
+					});
 
 					// system under test
 					var oInput = new sap.m.InputBase(mSettings.control || {});
@@ -1105,7 +1105,7 @@
 				oErrorInput.getFocusDomRef().blur();
 				ok(!jQuery.sap.domById("errorinput-message"), "error message popup is closed when focus is out");
 
- 				oWarningInput.focus();
+				oWarningInput.focus();
 				this.clock.tick(500);
 				ok(jQuery.sap.domById("warninginput-message"), "warning message popup is open when focusin");
 				equal(oWarningInput.getValueStateText(), "Warning Message", "warning message is correct");
@@ -1113,9 +1113,9 @@
 				oWarningInput.getFocusDomRef().blur()
 				ok(!jQuery.sap.domById("warninginput-message"), "warning message popup is closed when focus is out");
 
- 				oErrorInput.setShowValueStateMessage(false);
- 				sap.ui.getCore().applyChanges();
- 				oErrorInput.focus();
+				oErrorInput.setShowValueStateMessage(false);
+				sap.ui.getCore().applyChanges();
+				oErrorInput.focus();
 				this.clock.tick(500);
 				ok(!jQuery.sap.domById("errorinput-message"), "no error message popup if showValueStateMessage is set to false");
 
@@ -2003,7 +2003,7 @@
 
 				oInput.destroy();
 			});
-			
+
 			test("getAccessibilityInfo", function() {
 				var oInput = new sap.m.InputBase({value: "Value", tooltip: "Tooltip", placeholder: "Placeholder"});
 				ok(!!oInput.getAccessibilityInfo, "InputBase has a getAccessibilityInfo function");
@@ -2078,6 +2078,23 @@
 
 			// cleanup
 			oInput.destroy();
+		});
+
+		module("Renderer hooks");
+		test("writeInnerId() is called", function() {
+			var oInputBase = new sap.m.InputBase({}),
+				oRenderer = oInputBase.getRenderer();
+
+			//spy writeInnerId()
+			var fnOnInputBaseSpy = this.spy(oRenderer, "writeInnerId");
+
+			oInputBase.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			strictEqual(fnOnInputBaseSpy.callCount, 1, "writeInnerId() is called");
+
+			// cleanup
+			oInputBase.destroy();
 		});
 
 		</script>
