@@ -97,7 +97,7 @@ sap.ui.define(['./Splitter', './SplitterRenderer'],
 
 		//Remove duplicate IDs
 		for (var i = 0; i < content.length; i++) {
-			if (content[i] == id) {
+			if (content[i] === id) {
 				content.splice(i,1);
 			}
 		}
@@ -126,28 +126,6 @@ sap.ui.define(['./Splitter', './SplitterRenderer'],
 		return aContentAreas.concat(aValidAssContentAreas);
 	};
 
-	AssociativeSplitter.prototype.ondblclick = function (oEvent) {
-		// For some reason dblclick returns the whole Splitter not only the clicked splitbar
-		var sId = this.getId();
-		if (!this._oLastDOMclicked || this._oLastDOMclicked.id.indexOf(sId + "-splitbar") != 0) {
-			// The clicked element was not one of my splitter bars
-			return;
-		}
-
-		var iBar = parseInt(this._oLastDOMclicked.id.substr((sId + "-splitbar-").length), 10);
-		var oContentArea = this._getContentAreas()[iBar];
-
-		if (oContentArea._sOldLayoutData && oContentArea._sOldLayoutData !== "0px") {
-			oContentArea.setLayoutData(new sap.ui.layout.SplitterLayoutData({ size: oContentArea._sOldLayoutData }));
-			oContentArea._sOldLayoutData = undefined;
-		} else {
-			oContentArea._sOldLayoutData = oContentArea.getLayoutData().getSize();
-			oContentArea.setLayoutData(new sap.ui.layout.SplitterLayoutData({ size: "0px" }));
-		}
-
-		this._ensureAllSplittersCollapsed(iBar);
-	};
-
 	/**
 	 * Starts the resize of splitter contents (when the bar is moved by mouse)
 	 *
@@ -164,7 +142,7 @@ sap.ui.define(['./Splitter', './SplitterRenderer'],
 		}
 
 		var sId = this.getId();
-		if (!oJEv.target.id || oJEv.target.id.indexOf(sId + "-splitbar") != 0) {
+		if (!oJEv.target.id || oJEv.target.id.indexOf(sId + "-splitbar") !== 0) {
 			// The clicked element was not one of my splitter bars
 			return;
 		}
@@ -172,6 +150,28 @@ sap.ui.define(['./Splitter', './SplitterRenderer'],
 		this._ignoreTouch = true;
 		this._onBarMoveStart(oJEv);
 		this._oLastDOMclicked = oJEv.target;
+	};
+
+	AssociativeSplitter.prototype.ondblclick = function (oEvent) {
+		// For some reason dblclick returns the whole Splitter not only the clicked splitbar
+		var sId = this.getId(),
+			iBar, oContentArea;
+		if (!(oEvent.target.contains(this._oLastDOMclicked) && (this._oLastDOMclicked.id.indexOf(sId + "-splitbar") > -1))) {
+			// The clicked element was not one of my splitter bars
+			return;
+		}
+
+		iBar = parseInt(this._oLastDOMclicked.id.substr((sId + "-splitbar-").length), 10);
+		oContentArea = this._getContentAreas()[iBar];
+		oContentArea._currentPosition = this.getCalculatedSizes()[iBar];
+		oContentArea._lastPosition = oContentArea._lastPosition || oContentArea._currentPosition;
+
+		if (oContentArea._currentPosition === oContentArea._lastPosition) {
+			this._resizeContents(iBar, (this.getCalculatedSizes()[iBar]) * -1, true);
+		} else {
+			this._resizeContents(iBar, oContentArea._lastPosition, true);
+			oContentArea._lastPosition = null;
+		}
 	};
 
 	/**
@@ -190,7 +190,7 @@ sap.ui.define(['./Splitter', './SplitterRenderer'],
 		}
 
 		var sId = this.getId();
-		if (!oJEv.target.id || oJEv.target.id.indexOf(sId + "-splitbar") != 0) {
+		if (!oJEv.target.id || oJEv.target.id.indexOf(sId + "-splitbar") !== 0) {
 			// The clicked element was not one of my splitter bars
 			return;
 		}
@@ -268,13 +268,218 @@ sap.ui.define(['./Splitter', './SplitterRenderer'],
 		this._onBarMove(oJEv);
 	};
 
+	// Overriding sap.ui.layout.Splitter's calculation functions in order to make it responsive
+
+	/**
+	 * Resizes the contents after a bar has been moved
+	 *
+	 * @param {Number} [iLeftContent] Number of the first (left) content that is resized
+	 * @param {Number} [iPixels] Number of pixels to increase the first and decrease the second content
+	 * @param {boolean} [bFinal] Whether this is the final position (sets the size in the layoutData of the
+	 * content areas)
+	 */
+	AssociativeSplitter.prototype._resizeContents = function (iLeftContent, iPixels, bFinal) {
+		var aContentAreas, oLd1, oLd2, sSize1,
+			sSize2, $Cnt1, $Cnt2, iNewSize1, iNewSize2,
+			iMinSize1, iMinSize2, sOrientation, iSplitterSize,
+			sFinalSize1, sFinalSize2, iDiff;
+
+		if (isNaN(iPixels)) {
+			jQuery.sap.log.warning("Splitter: Received invalid resizing values - resize aborted.");
+			return;
+		}
+
+		aContentAreas = this._getContentAreas();
+		oLd1 = aContentAreas[iLeftContent].getLayoutData();
+		oLd2 = aContentAreas[iLeftContent + 1].getLayoutData();
+
+		sSize1 = oLd1.getSize();
+		sSize2 = oLd2.getSize();
+
+		$Cnt1 = this.$("content-" + iLeftContent);
+		$Cnt2 = this.$("content-" + (iLeftContent + 1));
+
+		iNewSize1 = this._move.c1Size + iPixels;
+		iNewSize2 = this._move.c2Size - iPixels;
+		iMinSize1 = parseInt(oLd1.getMinSize(), 10);
+		iMinSize2 = parseInt(oLd2.getMinSize(), 10);
+
+		sOrientation = this.getOrientation();
+		iSplitterSize = sOrientation === "Horizontal" ? this.$().width() : this.$().height();
+
+		// Adhere to size constraints
+		if (iNewSize1 < iMinSize1) {
+			iDiff = iMinSize1 - iNewSize1;
+			iPixels += iDiff;
+			iNewSize1 = iMinSize1;
+			iNewSize2 -= iDiff;
+		} else if (iNewSize2 < iMinSize2) {
+			iDiff = iMinSize2 - iNewSize2;
+			iPixels -= iDiff;
+			iNewSize2 = iMinSize2;
+			iNewSize1 -= iDiff;
+		}
+
+		if (bFinal) {
+			// Resize finished, set layout data in content areas
+			if (sSize1 === "auto" && sSize2 !== "auto") {
+				// First pane has auto size - only change size of second pane
+				sFinalSize2 = this._pxToPercent(iNewSize2, iSplitterSize);
+				oLd2.setSize(sFinalSize2);
+			} else if (sSize1 !== "auto" && sSize2 === "auto") {
+				// Second pane has auto size - only change size of first pane
+				sFinalSize1 = this._pxToPercent(iNewSize1, iSplitterSize);
+				oLd1.setSize(sFinalSize1);
+			} else {
+				sFinalSize1 = this._pxToPercent(iNewSize1, iSplitterSize);
+				sFinalSize2 = this._pxToPercent(iNewSize2, iSplitterSize);
+
+
+				oLd1.setSize(sFinalSize1);
+				oLd2.setSize(sFinalSize2);
+			}
+		} else {
+			// Live-Resize, resize contents in Dom
+			sFinalSize1 = this._pxToPercent(iNewSize1, iSplitterSize);
+			sFinalSize2 = this._pxToPercent(iNewSize2, iSplitterSize);
+
+			$Cnt1.css(this._sizeType, sFinalSize1);
+			$Cnt2.css(this._sizeType, sFinalSize2);
+		}
+	};
+
+	AssociativeSplitter.prototype._pxToPercent = function (iPx, iFullSize) {
+		return (iPx * 100) / iFullSize + "%";
+	};
+
+	/**
+	 * Recalculates the content sizes in three steps:
+	 *  1. Searches for all absolute values ("px") and deducts them from the available space.
+	 *  2. Searches for all percent values and interprets them as % of the available space after step 1
+	 *  3. Divides the rest of the space uniformly between all contents with "auto" size values
+	 *
+	 * @private
+	 */
+	AssociativeSplitter.prototype._recalculateSizes = function () {
+		// TODO: (?) Use maxSize value from layoutData
+		var i, sSize, oLayoutData, iColSize, idx, iSize;
+
+		// Read all content sizes from the layout data
+		var aSizes = [];
+		var aContentAreas = this._getContentAreas();
+		var sOrientation = this.getOrientation();
+		var iAvailableSize = this._calculateAvailableContentSize(aSizes);
+		var aAutosizeIdx = [];
+		var aAutoMinsizeIdx = [];
+		var aPercentsizeIdx = [];
+
+		for (i = 0; i < aContentAreas.length; ++i) {
+			oLayoutData = aContentAreas[i].getLayoutData();
+			sSize = oLayoutData ? oLayoutData.getSize() : "auto";
+
+			aSizes.push(sSize);
+		}
+
+		this._calculatedSizes = [];
+
+		// Remove fixed sizes from available size
+		for (i = 0; i < aSizes.length; ++i) {
+			sSize = aSizes[i];
+
+			if (sSize.indexOf("px") > -1) {
+				// Pixel based Value - deduct it from available size
+				iSize = parseInt(sSize, 10);
+				iAvailableSize -= iSize;
+				this._calculatedSizes[i] = iSize;
+			} else if (sSize.indexOf("%") > -1) {
+				aPercentsizeIdx.push(i);
+			} else if (sSize === "auto") {
+				oLayoutData = aContentAreas[i].getLayoutData();
+				if (oLayoutData && parseInt(oLayoutData.getMinSize(), 10) !== 0) {
+					aAutoMinsizeIdx.push(i);
+				} else {
+					aAutosizeIdx.push(i);
+				}
+			} else {
+				jQuery.sap.log.error("Illegal size value: " + aSizes[i]);
+			}
+		}
+
+		var bWarnSize = false; // Warn about sizes being too big for the available space
+
+		// If more than the available size if assigned to fixed width content, the rest will get no
+		// space at all
+		if (iAvailableSize < 0) { bWarnSize = true; iAvailableSize = 0; }
+
+		// Now calculate % of the available space
+		var iRest = iAvailableSize;
+		iAvailableSize = sOrientation === "Horizontal" ? this.$().width() : this.$().height();
+
+		var iPercentSizes = aPercentsizeIdx.length;
+		for (i = 0; i < iPercentSizes; ++i) {
+			idx = aPercentsizeIdx[i];
+			if (iPercentSizes === 1 && aContentAreas.length === 1) {
+				iColSize = iAvailableSize;
+			} else {
+				// Percent based Value - deduct it from available size
+				iColSize = parseFloat(aSizes[idx]) / 100 * iAvailableSize;
+			}
+			this._calculatedSizes[idx] = iColSize;
+			iRest -= iColSize;
+		}
+		iAvailableSize = iRest;
+
+		if (iAvailableSize < 0) { bWarnSize = true; iAvailableSize = 0; }
+
+		// Calculate auto sizes
+		iColSize = Math.floor(iAvailableSize / (aAutoMinsizeIdx.length + aAutosizeIdx.length), 0);
+
+		// First calculate auto-sizes with a minSize constraint
+		var iAutoMinSizes = aAutoMinsizeIdx.length;
+		for (i = 0; i < iAutoMinSizes; ++i) {
+			idx = aAutoMinsizeIdx[i];
+			var iMinSize = parseInt(aContentAreas[idx].getLayoutData().getMinSize(), 10);
+			if (iMinSize > iColSize) {
+				this._calculatedSizes[idx] = iMinSize;
+				iAvailableSize -= iMinSize;
+			} else {
+				this._calculatedSizes[idx] = iColSize;
+				iAvailableSize -= iColSize;
+			}
+		}
+
+		if (iAvailableSize < 0) { bWarnSize = true; iAvailableSize = 0; }
+
+		// Now calculate "auto"-sizes
+		iRest = iAvailableSize;
+		var iAutoSizes = aAutosizeIdx.length;
+		iColSize = Math.floor(iAvailableSize / iAutoSizes, 0);
+		for (i = 0; i < iAutoSizes; ++i) {
+			idx = aAutosizeIdx[i];
+			this._calculatedSizes[idx] = iColSize;
+			iRest -= iColSize;
+		}
+
+		if (bWarnSize) {
+			// TODO: Decide if the warning should be kept - might spam the console but on the other
+			//       hand it might make analyzing of splitter bugs easier, since we can just ask
+			//       developers if there was a [Splitter] output on the console if the splitter looks
+			//       weird in their application.
+			jQuery.sap.log.info(
+				"[Splitter] The set sizes and minimal sizes of the splitter contents are bigger " +
+				"than the available space in the UI."
+			);
+		}
+		this._calculatedSizes = this._calculatedSizes;
+	};
+
 	AssociativeSplitter.prototype._ensureAllSplittersCollapsed = function (iBar) {
 		var aAreas = this._getContentAreas();
 		var bAllCollapsed = false;
 		for (var i = 0; i < aAreas.length; i++) {
 			var sSize = aAreas[i].getLayoutData().getSize().slice(0, -2);
 
-			if (sSize == "0" || sSize == "au") {
+			if (sSize === "0" || sSize === "au") {
 				bAllCollapsed = true;
 				continue;
 			} else if (i === (aAreas.length - 1) && bAllCollapsed) {
