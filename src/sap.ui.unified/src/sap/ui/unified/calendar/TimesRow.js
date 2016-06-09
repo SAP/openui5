@@ -768,8 +768,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	TimesRow.prototype.onsapselect = function(oEvent){
 
 		// focused item must be selected
-		_selectTime.call(this, this._getDate());
-		_fireSelect.call(this);
+		var bSelected = _selectTime.call(this, this._getDate());
+		if (bSelected) {
+			_fireSelect.call(this);
+		}
 
 		//to prevent bubbling into input field if in DatePicker
 		oEvent.stopPropagation();
@@ -1017,8 +1019,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			return;
 		}
 
-		_selectTime.call(this, oFocusedDate);
-		this._bMousedownChange = true;
+		var bSelected = _selectTime.call(this, oFocusedDate);
+		if (bSelected) {
+			this._bMousedownChange = true;
+		}
 
 		if (this._bMouseMove) {
 			// a mouseup must be happened outside of control -> just end move
@@ -1232,6 +1236,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				}
 			}
 		}
+
+		return true;
 
 	}
 
