@@ -196,7 +196,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 			oDate = oMonth._getFocusedDate();
 		}
 
-		if (!oDate.getTime()) {
+		if (!oDate.getTime() && oDate.getTime() !== 0) {
 			// invalid date
 			throw new Error("Date is invalid " + oMonth);
 		}
