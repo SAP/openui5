@@ -1047,6 +1047,15 @@
 		  ]
 		},
 		{
+		  "id": "sap.m.Tree",
+		  "name": "Tree",
+		  "category": "Container",
+		  "since": "1.42",
+		  "samples": [
+			"sap.m.sample.Tree"
+		  ]
+		},
+		{
 		  "id": "sap.m.ViewSettingsDialog",
 		  "name": "View Settings Dialog",
 		  "category": "Popup",
@@ -1800,6 +1809,11 @@
 		  "id": "sap.m.sample.Tokenizer",
 		  "name": "Tokenizer",
 		  "description": "Tokenizer displays multiple tokens."
+		},
+		{
+		  "id": "sap.m.sample.Tree",
+		  "name": "Tree - Basic",
+		  "description": "Tree displays data in hierarchical structure."
 		},
 		{
 			"id": "sap.m.sample.RangeSlider",

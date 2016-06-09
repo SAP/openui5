@@ -1,0 +1,57 @@
+.sapMTreeItemBase {
+	min-height: 3rem;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	padding-left: 0;
+	color: @sapUiListTextColor;
+}
+
+.sapMTreeItemBaseExpander {
+	width: 3rem;
+	height: 3rem;
+	line-height: 3rem;
+	font-size: 1rem;
+	color: @sapUiContentIconColor;
+	flex-shrink: 0;
+}
+
+.sapMLIBActive .sapMTreeItemBaseExpander {
+	color: @sapUiListActiveTextColor;
+}
+
+.sapMTreeItemBase.sapMTreeItemBaseChildren {
+	background-color: darken(@sapUiListBackground,2);
+	border-bottom-color: transparent;
+}
+
+.sapMTIBWrapTitle {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.sapMTreeItemBase > .sapMLIBContent {
+	display: flex;
+	align-items: center;
+}
+
+.sapMSTIIcon {
+	margin: 0.5rem 0.75rem 0.5rem 0rem;
+	height: 2rem;
+	width: 2rem;
+}
+
+.sapUiSizeCompact .sapMTreeItemBase {
+	min-height: 2rem;
+}
+
+.sapUiSizeCompact .sapMTreeItemBaseWrapping {
+	min-height: 2rem;
+}
+
+.sapUiSizeCompact .sapMTreeItemBaseExpander {
+	font-size: 0.75rem;
+	width: 2rem;
+	height: 2rem;
+	line-height: 2rem;
+}
