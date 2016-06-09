@@ -370,6 +370,7 @@
 			"sap.m.sample.IconTabBar",
 			"sap.m.sample.IconTabBarMulti",
 			"sap.m.sample.IconTabBarFiori2",
+			"sap.m.sample.IconTabBarInlineMode",
 			"sap.m.sample.IconTabBarNoIcons",
 			"sap.m.sample.IconTabBarProcess",
 			"sap.m.sample.IconTabBarStretchContent",
@@ -1466,6 +1467,11 @@
 		  "id": "sap.m.sample.IconTabBarFiori2",
 		  "name": "Icon Tab Bar - Text and Count",
 		  "description": "In this example, the Icon Tab Bar tabs display text and corresponding count."
+		},
+		{
+		  "id": "sap.m.sample.IconTabBarInlineMode",
+		  "name": "Icon Tab Bar - Inline Mode",
+		  "description": "In this example, the Icon Tab Bar tabs display the text and the count in one line."
 		},
 		{
 		  "id": "sap.m.sample.IconTabBarProcess",

@@ -75,6 +75,11 @@
 			});
 			label5.addStyleClass("label");
 
+			var label5a = new sap.m.Label({
+				text: "IconTabBar inline mode"
+			});
+			label5a.addStyleClass("label");
+
 			var label6 = new sap.m.Label({
 				text: "Initially collapsed IconTabBar with no active item."
 			});
@@ -714,6 +719,43 @@
 								]
 							}),
 						],
+					}),
+					label5a,
+					new sap.m.IconTabBar("itb5a", {
+						headerMode: sap.m.IconTabHeaderMode.Inline,
+						upperCase: true,
+						items: [
+							new sap.m.IconTabFilter({
+								text: "Lorem",
+								count: "3",
+								key: "k1",
+								content: [
+									new sap.m.Label({
+										text: "info info info"
+									})
+								]
+							}),
+							new sap.m.IconTabFilter({
+								text: "Ipsum",
+								count: "3",
+								key: "key2",
+								content: [
+									new sap.m.Input({
+										placeholder: "input placeholder"
+									})
+								]
+							}),
+							new sap.m.IconTabFilter({
+								text: "Lorem Ipsum",
+								key: "key3",
+								count: "233",
+								content: [
+									new sap.m.RatingIndicator({
+										value: 3
+									})
+								]
+							})
+						]
 					}),
 					label6,
 					new sap.m.IconTabBar("itb6", {

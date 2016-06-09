@@ -53,7 +53,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Specifies whether the control is rendered.
 			 * @since 1.15.0
 			 */
-			visible : {type : "boolean", group : "Behavior", defaultValue : true}
+			visible : {type : "boolean", group : "Behavior", defaultValue : true},
+
+			/**
+			 * Specifies the header mode.
+			 *
+			 * @since 1.42
+			 */
+			mode : {type : "sap.m.IconTabHeaderMode", group : "Appearance", defaultValue : sap.m.IconTabHeaderMode.Standard}
 		},
 		aggregations : {
 
@@ -602,6 +609,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return Control.prototype.removeAllAggregation.apply(this, arguments);
 	};
 
+	/**
+	 * Returns the displayed text - text or text + (count)
+	 * @private
+	 */
+	IconTabHeader.prototype._getDisplayText = function (oItem) {
+		var sText = oItem.getText();
+
+		if (this.getMode() == sap.m.IconTabHeaderMode.Inline) {
+			var sCount = oItem.getCount();
+			if (sCount) {
+				sText += ' (' + sCount + ')';
+			}
+		}
+
+		return sText;
+	};
+
 
 	/**
 	 * Checks if all tabs are textOnly version.
@@ -647,6 +671,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @returns True if all tabs are in line version, otherwise false
 	 */
 	IconTabHeader.prototype._checkInLine = function(aItems) {
+
+		if (this.getMode() == sap.m.IconTabHeaderMode.Inline) {
+			return true;
+		}
+
 		var oItem;
 
 		if (aItems.length > 0) {
