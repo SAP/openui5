@@ -407,7 +407,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 
 				case TableAccExtension.ELEMENTTYPES.ROWHEADER:
 					mAttributes["aria-labelledby"] = [sTableId + "-ariarowheaderlabel"];
-					mAttributes["role"] = ["rowheader"];
+					if (!oExtension._treeMode) { // Otherwise there are strange announcements of the whole content in AnlyticalTable
+						mAttributes["role"] = ["rowheader"];
+					}
 					if (oTable.getSelectionMode() !== SelectionMode.None) {
 						var bSelected = mParams && mParams.rowSelected;
 						mAttributes["aria-selected"] = "" + bSelected;
@@ -832,7 +834,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 
 		var sTitle = null,
 			oTable = this.getTable(),
-			aRefs = [$Row, $RowHdr, $FixedRow];
+			aRefs = [$Row, $Row.children(), $RowHdr, $FixedRow];
 
 		if (!bGroup && $RowHdr) {
 			var iIndex = $RowHdr.attr("data-sap-ui-rowindex");
