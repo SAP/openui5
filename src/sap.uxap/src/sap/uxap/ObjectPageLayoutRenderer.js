@@ -91,7 +91,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 			oRm.write("<section ");
 			oRm.writeAttributeEscaped("id", oControl.getId() + "-anchorBar");
 			// write ARIA role
-			oRm.writeAttribute("role", "navigaiton");
+			oRm.writeAttribute("role", "navigation");
 			oRm.addClass("sapUxAPObjectPageNavigation");
 			oRm.addClass("sapContrastPlus");
 			oRm.writeClasses();
