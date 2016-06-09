@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Component - sap.ui.core</title>
+
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-xx-bindingSyntax="complex">
+
+</script>
+
+<script type="text/javascript">
+	sap.ui.localResources("samples");
+
+	var oComponent = sap.ui.component({
+		manifestUrl: "samples/components/sample/manifest.json"
+	});
+
+	var oContainer = new sap.ui.core.ComponentContainer({
+		component : oComponent
+	});
+	oContainer.placeAt("target");
+
+</script>
+
+</head>
+<body class="sapUiBody" role="application">
+	<h1>
+		Test Page for
+		<code>sap.ui.core.Component</code>
+	</h1>
+	<br>
+	<h2>Component Container</h2>
+	<div id="target"></div>
+
+</body>
+</html>
