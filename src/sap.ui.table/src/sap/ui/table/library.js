@@ -12,16 +12,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core',
 
 	"use strict";
 
-	/**
-	 * Table-like controls, mainly for desktop scenarios.
-	 *
-	 * @namespace
-	 * @name sap.ui.table
-	 * @author SAP SE
-	 * @version ${version}
-	 * @public
-	 */
-
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.table",
@@ -64,6 +54,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core',
 	});
 
 	/* eslint-disable no-undef */
+	/**
+	 * Table-like controls, mainly for desktop scenarios.
+	 *
+	 * @namespace
+	 * @alias sap.ui.table
+	 * @author SAP SE
+	 * @version ${version}
+	 * @public
+	 */
 	var thisLib = sap.ui.table;
 	/* eslint-enable no-undef */
 
