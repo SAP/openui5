@@ -271,6 +271,36 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 
 
 	/*
+	 * Sets the focus depending on the noData or overlay mode.
+	 * The previous focused element is given (potentially this is not anymore the active focused element,
+	 * e.g. see Table.setShowOverlay -> tue to CSS changes the focused element might be hidden which forces a focus change)
+	 * @public (Part of the API for Table control only!)
+	 */
+	TableKeyboardExtension.prototype.updateNoDataAndOverlayFocus = function(oPreviousFocusRef) {
+		var oTable = this.getTable();
+		if (!oTable || !oTable.getDomRef()) {
+			return;
+		}
+
+		if (oTable.getShowOverlay()) {
+			// The overlay is shown
+			if (jQuery.sap.containsOrEquals(oTable.getDomRef(), oPreviousFocusRef)) {
+				oTable.$("overlay").focus(); // Set focus on Overlay Container if it was somewhere in the table before
+			}
+		} else if (TableUtils.isNoDataVisible(oTable)) {
+			// The noData area is shown
+			if (jQuery.sap.containsOrEquals(oTable.getDomRef("sapUiTableCnt"), oPreviousFocusRef)) {
+				oTable.$("noDataCnt").focus(); // Set focus on NoData Container if it was on the content before
+			}
+		} else if (jQuery.sap.containsOrEquals(oTable.getDomRef("noDataCnt"), oPreviousFocusRef)
+				|| jQuery.sap.containsOrEquals(oTable.getDomRef("overlay"), oPreviousFocusRef)) {
+			// The overlay or noData area is not shown but was shown before
+			TableUtils.focusItem(oTable, ExtensionHelper.getInitialItemNavigationIndex(this)); // Set focus on first focusable element
+		}
+	};
+
+
+	/*
 	 * Suspends the event handling of the item navigation.
 	 * @protected (Only to be used by the keyboard delegate)
 	 */

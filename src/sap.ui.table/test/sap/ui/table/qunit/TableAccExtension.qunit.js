@@ -41,14 +41,17 @@ TestControl.prototype.getAccessibilityInfo = function() {
 	}
 };
 
-createTables();
 
-var oColumn = oTable.getColumns()[1];
-oColumn.setSortProperty(aFields[1]);
-oColumn.setFilterProperty(aFields[1]);
-oColumn.setSortOrder("Ascending");
-oColumn.setSorted(true);
-oColumn.setFiltered(true);
+function _modifyTables() {
+	var oColumn = oTable.getColumns()[1];
+	oColumn.setSortProperty(aFields[1]);
+	oColumn.setFilterProperty(aFields[1]);
+	oColumn.setSortOrder("Ascending");
+	oColumn.setSorted(true);
+	oColumn.setFiltered(true);
+	sap.ui.getCore().applyChanges();
+}
+
 
 
 //************************************************************************
@@ -59,7 +62,15 @@ sap.ui.test.qunit.delayTestStart(500);
 
 
 
-QUnit.module("Data Cells");
+QUnit.module("Data Cells", {
+	setup: function() {
+		createTables();
+		_modifyTables();
+	},
+	teardown: function () {
+		destroyTables();
+	}
+});
 
 function testAriaLabelsForFocusedDataCell($Cell, iRow, iCol, assert, mParams) {
 	var mParams = mParams || {};
@@ -357,7 +368,15 @@ QUnit.test("Other ARIA Attributes of Data Cell", function(assert) {
 
 
 
-QUnit.module("Column Header");
+QUnit.module("Column Header", {
+	setup: function() {
+		createTables();
+		_modifyTables();
+	},
+	teardown: function () {
+		destroyTables();
+	}
+});
 
 function testAriaLabelsForColumnHeader($Cell, iCol, assert, mParams) {
 	var mParams = mParams || {};
@@ -475,7 +494,15 @@ QUnit.test("Other ARIA Attributes of Column Header", function(assert) {
 
 
 
-QUnit.module("Row Header");
+QUnit.module("Row Header", {
+	setup: function() {
+		createTables();
+		_modifyTables();
+	},
+	teardown: function () {
+		destroyTables();
+	}
+});
 
 function testAriaLabelsForRowHeader($Cell, iRow, assert, mParams) {
 	var mParams = mParams || {};
@@ -621,7 +648,15 @@ QUnit.test("Other ARIA Attributes of Row Header", function(assert) {
 
 
 
-QUnit.module("SelectAll");
+QUnit.module("SelectAll", {
+	setup: function() {
+		createTables();
+		_modifyTables();
+	},
+	teardown: function () {
+		destroyTables();
+	}
+});
 
 QUnit.asyncTest("aria-labelledby with Focus", function(assert) {
 	var sId = oTable.getId();
@@ -664,7 +699,18 @@ QUnit.test("aria-describedby without Focus", function(assert) {
 
 
 
-QUnit.module("Misc");
+QUnit.module("Misc", {
+	setup: function() {
+		createTables();
+		_modifyTables();
+		oTable.addExtension(new TestControl({text: "Extension"}));
+		oTable.setFooter(new TestControl({text: "Footer"}));
+		sap.ui.getCore().applyChanges();
+	},
+	teardown: function () {
+		destroyTables();
+	}
+});
 
 QUnit.test("ARIA Attributes of Tree Table Expand Icon", function(assert) {
 	var $Elem = oTreeTable.$("rows-row0-col0").find(".sapUiTableTreeIcon");
@@ -733,10 +779,65 @@ QUnit.test("ARIA Attributes of Row Header TD Elements", function(assert) {
 	});
 });
 
+QUnit.test("ARIA for Overlay", function(assert) {
+	var $OverlayCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='overlay']");
+	//Heading + Extension + Footer + 2xTable + Row Selector + Column Headers + NoData Container = 8
+	assert.strictEqual($OverlayCoveredElements.length, 8 , "Number of potentionally covered elements");
+	$OverlayCoveredElements.each(function(){
+		assert.ok(!jQuery(this).attr("aria-hidden"), "No aria-hidden");
+	});
+	oTable.setShowOverlay(true);
+	$OverlayCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='overlay']");
+	$OverlayCoveredElements.each(function(){
+		assert.ok(jQuery(this).attr("aria-hidden") === "true", "aria-hidden");
+	});
+	oTable.rerender();
+	$OverlayCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='overlay']");
+	$OverlayCoveredElements.each(function(){
+		assert.ok(jQuery(this).attr("aria-hidden") === "true", "aria-hidden");
+	});
+	oTable.setShowOverlay(false);
+	$OverlayCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='overlay']");
+	$OverlayCoveredElements.each(function(){
+		assert.ok(!jQuery(this).attr("aria-hidden"), "No aria-hidden");
+	});
+});
+
+QUnit.asyncTest("ARIA for NoData", function(assert) {
+	var $NoDataCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='nodata']");
+	//2xTable + Row Selector = 3
+	assert.strictEqual($NoDataCoveredElements.length, 3 , "Number of potentionally covered elements");
+	$NoDataCoveredElements.each(function(){
+		assert.ok(!jQuery(this).attr("aria-hidden"), "No aria-hidden");
+	});
+
+	function onNewModelApplied(){
+		oTable.detachEvent("_rowsUpdated", onNewModelApplied);
+		$NoDataCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='nodata']");
+		$NoDataCoveredElements.each(function(){
+			assert.ok(jQuery(this).attr("aria-hidden") === "true", "aria-hidden");
+		});
+		oTable.rerender();
+		$NoDataCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='nodata']");
+		$NoDataCoveredElements.each(function(){
+			assert.ok(jQuery(this).attr("aria-hidden") === "true", "aria-hidden");
+		});
+		oTable.setShowNoData(false);
+		$NoDataCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='nodata']");
+		$NoDataCoveredElements.each(function(){
+			assert.ok(!jQuery(this).attr("aria-hidden"), "No aria-hidden");
+		});
+		QUnit.start();
+	}
+
+	oTable.attachEvent("_rowsUpdated", onNewModelApplied);
+	oTable.setModel(new sap.ui.model.json.JSONModel());
+});
+
 QUnit.test("HiddenTexts", function(assert) {
 	var aHiddenTexts = ["ariadesc", "ariacount", "toggleedit", "ariaselectall", "ariarowheaderlabel", "ariarowgrouplabel", "ariagrandtotallabel", "ariagrouptotallabel",
 		"ariacolrowheaderlabel", "rownumberofrows", "colnumberofcols", "cellacc", "ariarowselected", "ariacolmenu", "ariacolfiltered", "ariacolsortedasc", "ariacolsorteddes",
-		"ariafixedcolumn"];
+		"ariafixedcolumn", "ariainvalid"];
 	var $Elem = oTable.$().find(".sapUiTableHiddenTexts");
 	assert.strictEqual($Elem.length, 1, "Hidden Text Area available");
 	var $Elem = $Elem.children();
@@ -787,7 +888,15 @@ QUnit.asyncTest("Scrolling", function(assert) {
 
 
 
-QUnit.module("No Acc Mode");
+QUnit.module("No Acc Mode", {
+	setup: function() {
+		createTables();
+		_modifyTables();
+	},
+	teardown: function () {
+		destroyTables();
+	}
+});
 
 QUnit.test("No Acc Mode", function(assert) {
 	oTable._getAccExtension()._accMode = false;
@@ -816,7 +925,15 @@ QUnit.test("No Acc Mode", function(assert) {
 
 
 
-QUnit.module("Destruction");
+QUnit.module("Destruction", {
+	setup: function() {
+		createTables();
+	},
+	teardown: function () {
+		oTable = null;
+		oTreeTable = null;
+	}
+});
 
 QUnit.test("destroy()", function(assert) {
 	var oExtension = oTable._getAccExtension();

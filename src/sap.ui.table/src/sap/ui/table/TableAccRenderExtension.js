@@ -98,6 +98,8 @@ sap.ui.define(['jquery.sap.global', './TableExtension'],
 			_writeAccText(oRm, sTableId, "ariacolsortedasc", oBundle.getText("TBL_COL_DESC_SORTED_ASC"));
 			// aria description for a sorted column
 			_writeAccText(oRm, sTableId, "ariacolsorteddes", oBundle.getText("TBL_COL_DESC_SORTED_DES"));
+			// aria description for invalid table (table with overlay)
+			_writeAccText(oRm, sTableId, "ariainvalid", oBundle.getText("TBL_TABLE_INVALID"));
 
 			if (oTable.getFixedColumnCount() > 0) {
 				// aria description for fixed columns

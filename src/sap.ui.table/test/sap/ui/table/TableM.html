@@ -20,6 +20,11 @@
 
 <script type="text/javascript">
 
+var oButtonBefore = new sap.m.Button({
+	text: "Just a Button before"
+});
+oButtonBefore.placeAt("content");
+
 // TABLE TEST DATA
 var aData = [
 	{lastName: "Dente", name: "Alfred", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "images/Person.png", gender: "male", rating: 4, money: 5.67, birthday: "1968-05-06", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success"},
@@ -103,10 +108,16 @@ oTable.setSelectionMode(sap.ui.table.SelectionMode.MultiToggle);
 
 oTable.setToolbar(new sap.m.Toolbar({content: [
 	new sap.m.Button({
-		text: "First Toolbar Button"
+		text: "First Toolbar Button",
+		press: function() {
+			alert("Pressed");
+		}
 	}),
 	new sap.m.Button({
-		text: "Second Toolbar Button"
+		text: "Second Toolbar Button",
+		press: function() {
+			alert("Pressed");
+		}
 	})
 ]}));
 
@@ -235,6 +246,14 @@ var oNoDataSwitch = new sap.m.Button({
 	}
 });
 oNoDataSwitch.placeAt("content");
+
+var oOverlaySwitch = new sap.m.Button({
+	text: "Switch Overlay",
+	press: function() {
+		oTable.setShowOverlay(!oTable.getShowOverlay());
+	}
+});
+oOverlaySwitch.placeAt("content");
 
 </script>
 </head>
