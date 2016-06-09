@@ -3,8 +3,11 @@
  */
 
 // Provides control sap.m.Dialog.
-sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './AssociativeOverflowToolbar', './ToolbarSpacer', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/Popup', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/core/theming/Parameters', 'sap/ui/core/RenderManager'],
-	function (jQuery, Bar, InstanceManager, AssociativeOverflowToolbar, ToolbarSpacer, library, Control, IconPool, Popup, ScrollEnablement, Parameters, RenderManager) {
+sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './AssociativeOverflowToolbar', './ToolbarSpacer',
+	'./library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/Popup', 'sap/ui/core/delegate/ScrollEnablement',
+	'sap/ui/core/theming/Parameters', 'sap/ui/core/RenderManager', 'sap/ui/core/InvisibleText'],
+	function (jQuery, Bar, InstanceManager, AssociativeOverflowToolbar, ToolbarSpacer, library, Control, IconPool,
+			  Popup, ScrollEnablement, Parameters, RenderManager, InvisibleText) {
 		"use strict";
 
 
@@ -173,7 +176,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 					/**
 					 * The hidden aggregation for internal maintained toolbar instance
 					 */
-					_toolbar: {type: "sap.m.OverflowToolbar", multiple: false, visibility: "hidden"}
+					_toolbar: {type: "sap.m.OverflowToolbar", multiple: false, visibility: "hidden"},
+
+					/**
+					 * The hidden aggregation for the Dialog state
+					 */
+					_valueState: {type: "sap.ui.core.InvisibleText", multiple: false, visibility: "hidden"}
 				},
 				associations: {
 
@@ -355,6 +363,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			}
 
 			this._createToolbarButtons();
+
+			if (sap.ui.getCore().getConfiguration().getAccessibility() && this.getState() != ValueState.None) {
+				var oValueState = new InvisibleText({text: this.getValueStateString(this.getState())});
+
+				this.setAggregation("_valueState", oValueState);
+				this.addAriaLabelledBy(oValueState.getId());
+			}
 		};
 
 		Dialog.prototype.onAfterRendering = function () {
@@ -1155,6 +1170,27 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			}
 
 			return this._oToolbar;
+		};
+
+		/**
+		 * Returns the sap.ui.core.ValueState state according to the language settings
+		 * @param {sap.ui.core.ValueState|string} sValueState The dialog's value state
+		 * @returns {string} The translated text
+		 * @private
+		 */
+		Dialog.prototype.getValueStateString = function (sValueState) {
+			var rb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+			switch (sValueState) {
+				case (sap.ui.core.ValueState.Success):
+					return rb.getText("LIST_ITEM_STATE_SUCCESS");
+				case (sap.ui.core.ValueState.Warning):
+					return rb.getText("LIST_ITEM_STATE_WARNING");
+				case (sap.ui.core.ValueState.Error):
+					return rb.getText("LIST_ITEM_STATE_ERROR");
+				default:
+					return "";
+			}
 		};
 
 		/* =========================================================== */

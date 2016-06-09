@@ -32,7 +32,8 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 				bStretch = oControl.getStretch(),
 				bStretchOnPhone = oControl.getStretchOnPhone() && sap.ui.Device.system.phone,
 				bResizable = oControl.getResizable(),
-				bDraggable = oControl.getDraggable();
+				bDraggable = oControl.getDraggable(),
+				oValueStateText = oControl.getAggregation("_valueState");
 
 			if (oHeader) {
 				oHeader.applyTagAndContextClassFor("header");
@@ -158,6 +159,10 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 
 			if (oSubHeader) {
 				oRm.renderControl(oSubHeader.addStyleClass("sapMDialogSubHeader"));
+			}
+
+			if (oValueStateText) {
+				oRm.renderControl(oValueStateText);
 			}
 
 			oRm.write('<section id="' + id + '-cont" class="sapMDialogSection">');
