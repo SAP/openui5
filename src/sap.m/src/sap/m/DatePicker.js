@@ -553,7 +553,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 					this._oCalendar.focusDate(oDate);
 					var oStartDate = this._oDateRange.getStartDate();
 					if ((!oStartDate && oDate) || (oStartDate && oDate && oStartDate.getTime() != oDate.getTime())) {
-						this._oDateRange.setStartDate(new Date(oDate));
+						this._oDateRange.setStartDate(new Date(oDate.getTime()));
 					} else if (oStartDate && !oDate) {
 						this._oDateRange.setStartDate(undefined);
 					}
@@ -728,7 +728,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 			var oDate = this.getDateValue();
 
 			if (oDate) {
-				this._oCalendar.focusDate(new Date(oDate));
+				this._oCalendar.focusDate(new Date(oDate.getTime()));
 				if (!this._oDateRange.getStartDate() || this._oDateRange.getStartDate().getTime() != oDate.getTime()) {
 					this._oDateRange.setStartDate(new Date(oDate.getTime()));
 				}

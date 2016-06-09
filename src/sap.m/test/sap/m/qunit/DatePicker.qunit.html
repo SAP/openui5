@@ -325,6 +325,45 @@
 				equal(oDP7.getValue(), "2/11/1437 AH", "Value in binding format set");
 			});
 
+			test("special cases", function() {
+				var oDate = new Date(1, 0, 1);
+				oDate.setFullYear(1);
+				oDP3.setDateValue(oDate);
+				ok(jQuery.sap.equal(oDP3.getDateValue(), oDate), "DP3: 00010101 as valid date set");
+				equal(oDP3.getValue(), "1/1/01", "DP3: 00010101 displayed");
+				oDP3.focus();
+				qutils.triggerEvent("click", "DP3-icon");
+				ok(jQuery("#DP3-cal")[0], "calendar rendered");
+				ok(jQuery("#DP3-cal").is(":visible"), "calendar is visible");
+				ok(jQuery("#DP3-cal--Month0-00010101")[0], "00010101 rendered");
+				oDP3.focus();
+				qutils.triggerEvent("click", "DP3-icon");
+
+				oDate = new Date(1970, 0, 1);
+				oDP3.setDateValue(oDate);
+				ok(jQuery.sap.equal(oDP3.getDateValue(), oDate), "DP3: 19700101 as valid date set");
+				equal(oDP3.getValue(), "1/1/70", "DP3: 19700101 displayed");
+				oDP3.focus();
+				qutils.triggerEvent("click", "DP3-icon");
+				ok(jQuery("#DP3-cal")[0], "calendar rendered");
+				ok(jQuery("#DP3-cal").is(":visible"), "calendar is visible");
+				ok(jQuery("#DP3-cal--Month0-19700101")[0], "19700101 rendered");
+				oDP3.focus();
+				qutils.triggerEvent("click", "DP3-icon");
+
+				oDate = new Date(9999, 11, 31);
+				oDP3.setDateValue(oDate);
+				ok(jQuery.sap.equal(oDP3.getDateValue(), oDate), "DP3: 99991231 as valid date set");
+				equal(oDP3.getValue(), "12/31/99", "DP3: 99991231 displayed");
+				oDP3.focus();
+				qutils.triggerEvent("click", "DP3-icon");
+				ok(jQuery("#DP3-cal")[0], "calendar rendered");
+				ok(jQuery("#DP3-cal").is(":visible"), "calendar is visible");
+				ok(jQuery("#DP3-cal--Month0-99991231")[0], "99991231 rendered");
+				oDP3.focus();
+				qutils.triggerEvent("click", "DP3-icon");
+			});
+
 			module("ARIA");
 			test("Tooltip and date annoncement should be set correctly at the described by", function() {
 				var sTooltip = "tooltip";
