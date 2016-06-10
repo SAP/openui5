@@ -339,6 +339,26 @@ sap.ui.define([
 		},
 
 		/**
+		 * Merges the given orderby value into a copy of the given map of query options.
+		 * If no merge is needed the original map of query options is returned.
+		 *
+		 * @param {object} [mQueryOptions]
+		 *   The map of query options
+		 * @param {string} [sOrderby]
+		 *   The new value for $orderby query option
+		 * @returns {object}
+		 *   The merged map of query options
+		 */
+		mergeQueryOptions : function (mQueryOptions, sOrderby) {
+			if (!sOrderby || mQueryOptions && mQueryOptions.$orderby === sOrderby) {
+				return mQueryOptions;
+			}
+			return jQuery.extend({}, mQueryOptions, {
+				$orderby : sOrderby
+			});
+		},
+
+		/**
 		 * Converts given value to an array.
 		 * <code>null</code> and <code>undefined</code> are converted to the empty array, a
 		 * non-array value is wrapped with an array and an array is returned as it is.

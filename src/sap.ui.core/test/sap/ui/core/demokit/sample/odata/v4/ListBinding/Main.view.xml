@@ -11,9 +11,7 @@
 		<Label text="Teams" labelFor="TeamSelect"/>
 		<Select id="TeamSelect" change="onTeamSelect" autoAdjustWidth="true"
 			items="{path: '/TEAMS',
-				parameters: {$expand:
-					{'TEAM_2_EMPLOYEES': {$expand: {'EMPLOYEE_2_EQUIPMENTS': true}},
-					'TEAM_2_MANAGER': true}}}" >
+				parameters: {$expand: {'TEAM_2_MANAGER': true}}}" >
 			<core:Item key="{Team_Id}" text="{Name}"/>
 		</Select>
 		<Button enabled="{ui>/bRealOData}" icon="sap-icon://edit" press="openChangeTeamBudgetDialog"
@@ -83,8 +81,17 @@
 			</Dialog>
 		</form:dependents>
 	</form:SimpleForm>
-	<Table id="Employees" growing="true" growingThreshold="1" headerText="Team Members"
-		items="{TEAM_2_EMPLOYEES}" mode="SingleSelectMaster" selectionChange="onEmployeeSelect">
+	<Table id="Employees" growing="true" growingThreshold="5"
+		items="{
+			path: 'TEAM_2_EMPLOYEES',
+			parameters: {
+				$expand: {'EMPLOYEE_2_EQUIPMENTS': true},
+				$orderby: 'LOCATION/City/CITYNAME'
+			},
+			sorter : {
+				path : 'AGE'
+			}}"
+		mode="SingleSelectMaster" selectionChange="onEmployeeSelect">
 		<headerToolbar>
 			<Toolbar>
 				<content>
@@ -131,16 +138,21 @@
 		</headerToolbar>
 		<columns>
 			<Column>
-				<Text text="Employee Name"/>
+				<Button app:sorterPath="Name" app:sorterControlId="Employees"
+					enabled="{ui>/bRealOData}" icon="{sort>/Employees/Name/icon}" press="onSort"
+					text="Employee Name" />
 			</Column>
 			<Column>
 				<Text text="Employee ID"/>
 			</Column>
 			<Column>
-				<Text text="Age"/>
+				<Button app:sorterPath="AGE" app:sorterControlId="Employees"
+					enabled="{ui>/bRealOData}" icon="{sort>/Employees/AGE/icon}" press="onSort"
+					text="Age" />
 			</Column>
 			<Column>
-				<Text text="City"/>
+				<Button enabled="false" icon="sap-icon://sort-ascending" press="onSort"
+					text="City" />
 			</Column>
 			<Column>
 				<Text text="Entry Date"/>
@@ -251,7 +263,7 @@
 		</form:SimpleForm>
 	</VBox>
 	<VBox>
-		<Table growing="true" growingThreshold="100" id="Equipments"
+		<Table growing="true" growingThreshold="5" id="Equipments"
 			items="{
 					events : {
 						change : '.onEquipmentsChanged'
@@ -283,20 +295,24 @@
 			</headerToolbar>
 			<columns>
 				<Column>
-					<Button app:sorterPath="Category" enabled="{ui>/bRealOData}"
-						icon="{sort>/Category/icon}" press="onSort" text="Category" />
+					<Button app:sorterPath="Category" app:sorterControlId="Equipments"
+						enabled="{ui>/bRealOData}" icon="{sort>/Equipments/Category/icon}"
+						press="onSort" text="Category" />
 				</Column>
 				<Column>
-					<Button app:sorterPath="ID" enabled="{ui>/bRealOData}" icon="{sort>/ID/icon}"
+					<Button app:sorterPath="ID" app:sorterControlId="Equipments"
+						enabled="{ui>/bRealOData}" icon="{sort>/Equipments/ID/icon}"
 						press="onSort" text="ID" />
 				</Column>
 				<Column>
-					<Button app:sorterPath="Name" enabled="{ui>/bRealOData}"
-						icon="{sort>/Name/icon}" press="onSort" text="Name" />
+					<Button app:sorterPath="Name" app:sorterControlId="Equipments"
+						enabled="{ui>/bRealOData}" icon="{sort>/Equipments/Name/icon}"
+						press="onSort" text="Name" />
 				</Column>
 				<Column>
-					<Button app:sorterPath="EmployeeId" enabled="{ui>/bRealOData}"
-						icon="{sort>/EmployeeId/icon}" press="onSort" text="EmployeeId" />
+					<Button app:sorterPath="EmployeeId" app:sorterControlId="Equipments"
+						enabled="{ui>/bRealOData}" icon="{sort>/Equipments/EmployeeId/icon}"
+						press="onSort" text="EmployeeId" />
 				</Column>
 			</columns>
 			<items>
