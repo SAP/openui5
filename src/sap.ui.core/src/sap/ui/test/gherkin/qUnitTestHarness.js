@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', "sap/ui/test/gherkin/G
    *
    * @author Jonathan Benn
    * @alias sap.ui.test.gherkin.qUnitTestHarness
-   * @extends sap.ui.base.Object
+   * @namespace
    * @since 1.40
    * @public
    * @static
