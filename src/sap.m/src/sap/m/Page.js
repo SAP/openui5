@@ -125,7 +125,13 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 					 * Decides which area is covered by the local BusyIndicator when <code>page.setBusy()</code> is called. By default the entire page is covered, including headers and footer. When this property is set to "true", only the content area is covered (not header/sub header and footer), which is useful e.g. when there is a SearchField in the sub header and live search continuously updates the content area while the user is still able to type.
 					 * @since 1.29.0
 					 */
-					contentOnlyBusy: {type: "boolean", group: "Appearance", defaultValue: false}
+					contentOnlyBusy: {type: "boolean", group: "Appearance", defaultValue: false},
+
+					/**
+					 * Decides whether the floating footer behavior should be enabled.
+					 * When the floating footer behavior is used, the content is visible when it's underneath the footer.
+					 */
+					floatingFooter: {type: "boolean", group:"Appearance", defaultValue: false }
 				},
 				defaultAggregation: "content",
 				aggregations: {
@@ -188,6 +194,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 			}
 		});
 
+		Page.FOOTER_ANIMATION_DURATION = 350;
 
 		// Return true if scrolling is allowed
 		Page.prototype._hasScrolling = function () {
@@ -210,6 +217,10 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 				this._headerTitle.setLevel(this.getTitleLevel());
 			}
 		};
+
+        Page.prototype.onAfterRendering = function () {
+            jQuery.sap.delayedCall(10, this, this._adjustFooterWidth);
+        };
 
 		/**
 		 * Called when the control is destroyed.
@@ -305,6 +316,37 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 			return this;
 		};
 
+		Page.prototype.setShowFooter = function (bShowFooter) {
+			(bShowFooter) ? this.addStyleClass("sapMPageWithFooter", true) : this.removeStyleClass("sapMPageWithFooter", true);
+			var $footer = jQuery(this.getDomRef()).find(".sapMPageFooter").last(),
+			    useAnimation = sap.ui.getCore().getConfiguration().getAnimation();
+
+			if (!this.getFloatingFooter()) {
+				this.setProperty("showFooter", bShowFooter);
+				return this;
+			}
+
+			this.setProperty("showFooter", bShowFooter, true);
+
+			$footer.toggleClass("sapMPageFooterControlShow", bShowFooter);
+			$footer.toggleClass("sapMPageFooterControlHide", !bShowFooter);
+
+			if (bShowFooter) {
+				return this;
+			}
+
+			if (useAnimation) {
+				jQuery.sap.delayedCall(Page.FOOTER_ANIMATION_DURATION, this, function () {
+					$footer.toggleClass("sapUiHidden", bShowFooter);
+			});
+
+			} else {
+				$footer.toggleClass("sapUiHidden", bShowFooter);
+			}
+
+			return this;
+		};
+
 		Page.prototype.setNavButtonType = function (sNavButtonType) {
 			this._ensureNavButton(); // creates this._navBtn, if required
 			if (!sap.ui.Device.os.ios && sNavButtonType == sap.m.ButtonType.Back) {
@@ -337,6 +379,27 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 
 			this.setProperty("icon", sIconSrc, true);
 			return this;
+		};
+
+		Page.prototype._adjustFooterWidth = function () {
+			if (!this.getShowFooter() || !this.getFloatingFooter() || !this.getFooter()) {
+				return;
+			}
+
+			var $footer = jQuery(this.getDomRef()).find(".sapMPageFooter").last();
+
+			if (this._contentHasScroll()) {
+				$footer.css("right", jQuery.position.scrollbarWidth() + "px");
+				$footer.css("width", "initial");
+			} else {
+				$footer.css("right", 0);
+				$footer.css("width", "");
+			}
+		};
+
+		Page.prototype._contentHasScroll = function () {
+			var $section = jQuery(this.getDomRef()).find("#" + this.getId() + "-cont");
+			return $section[0].scrollHeight > $section.innerHeight();
 		};
 
 		/**
@@ -513,7 +576,6 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		Page.prototype.destroyHeaderContent = function () {
 			return this._getInternalHeader().destroyContentRight();
 		};
-
 
 		/**
 		 * Fiori 2.0 adaptation
