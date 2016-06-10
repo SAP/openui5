@@ -9,7 +9,7 @@ sap.ui.define([
 	return Controller.extend("sap.m.sample.DynamicPageAnalyticalTable.DynamicPageAnalyticalTable", {
 		onInit: function () {
 			this.oModel = new JSONModel();
-			this.oModel.loadData(jQuery.sap.getModulePath("sap.m.sample.DynamicPageListReport", "/model.json"));
+			this.oModel.loadData(jQuery.sap.getModulePath("sap.m.sample.DynamicPageListReport", "/model.json"), null, false);
 			this.getView().setModel(this.oModel);
 
 			this.aKeys = ["Name", "Category", "SupplierName"];
