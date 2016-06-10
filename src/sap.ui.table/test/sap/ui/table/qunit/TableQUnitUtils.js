@@ -10,6 +10,7 @@ sap.ui.core.Control.extend("TestControl", {
 			"src" : "sap.ui.core.URI",
 			"alt" : "string",
 			"visible" : "boolean",
+			"tabbable" : "boolean",
 			"index" : "int" //Results in different behavior of the control in different columns
 		}
 	},
@@ -18,6 +19,9 @@ sap.ui.core.Control.extend("TestControl", {
 		oRm.write("<span");
 		oRm.writeControlData(oControl);
 		oRm.writeClasses();
+		if (oControl.getTabbable()) {
+			oRm.writeAttribute("tabindex", "0");
+		}
 		oRm.write(">");
 		oRm.writeEscaped(oControl.getText() || oControl.getAlt() || "");
 		oRm.write("</span>");
@@ -43,7 +47,7 @@ var iNumberOfRows = 5;
 var iNumberOfCols = aFields.length;
 
 
-function createTables() {
+function createTables(bSkipPlaceAt) {
 	oTable = new sap.ui.table.Table({
 		rows: "{/rows}",
 		title: "TABLE_TITLE",
@@ -100,10 +104,12 @@ function createTables() {
 	oModel.setData(oData);
 	oTable.setModel(oModel);
 	oTable.setSelectedIndex(0);
-	oTable.placeAt("content");
 	oTreeTable.setModel(oModel);
-	oTreeTable.placeAt("content");
-	sap.ui.getCore().applyChanges();
+	if (!bSkipPlaceAt) {
+		oTable.placeAt("content");
+		oTreeTable.placeAt("content");
+		sap.ui.getCore().applyChanges();
+	}
 }
 
 function destroyTables() {
@@ -179,10 +185,12 @@ function getSelectAll(bFocus, assert) {
 	return jQuery(oCell);
 }
 
-function setFocusOutsideOfTable() {
-	var oOuterElement = jQuery.sap.domById("outerelement");
+function setFocusOutsideOfTable(sId) {
+	sId = sId || "outerelement";
+	var oOuterElement = jQuery.sap.domById(sId);
 	oOuterElement.focus();
-	assert.ok(oOuterElement === document.activeElement, "Outer element focused");
+	assert.ok(oOuterElement === document.activeElement, "Outer element with id '" + sId + "' focused");
+	return jQuery(oOuterElement);
 }
 
 function checkFocus(oCell, assert) {
