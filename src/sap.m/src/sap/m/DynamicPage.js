@@ -152,7 +152,7 @@ sap.ui.define([
 
 		this._cacheDomElements();
 		this._attachResizeHandlers();
-		this._updateMedia(this._getHeight(this));
+		this._updateMedia(this._getWidth(this));
 
 		if (bHeaderScrollable) {
 			this._attachScrollHandler();
@@ -650,6 +650,16 @@ sap.ui.define([
 	 */
 	DynamicPage.prototype._getHeight = function (oControl) {
 		return !(oControl instanceof Control) ? 0 : oControl.$().outerHeight() || 0;
+	};
+
+	/**
+	 * Determines the width of a control safely. If the control doesn't exist it returns 0,
+	 * so it doesn't confuse any calculations based on it. If it exists it just returns its dom element width.
+	 * @param  {sap.ui.core.Control} oControl
+	 * @return {Number} the width of the control
+	 */
+	DynamicPage.prototype._getWidth = function (oControl) {
+		return !(oControl instanceof Control) ? 0 : oControl.$().outerWidth() || 0;
 	};
 
 	/**
