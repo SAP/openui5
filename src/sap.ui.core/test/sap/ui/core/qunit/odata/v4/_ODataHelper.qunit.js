@@ -123,9 +123,6 @@ sap.ui.require([
 		QUnit.test("getKeyPredicate: missing key, " + oFixture.sDescription, function (assert) {
 			var sError = "Missing value for key property 'ID'";
 
-			this.oLogMock.expects("error").withExactArgs(sError, null,
-				"sap.ui.model.odata.v4._ODataHelper");
-
 			assert.throws(function () {
 				_ODataHelper.getKeyPredicate(oFixture.oEntityType, oFixture.oEntityInstance);
 			}, new Error(sError));
@@ -135,9 +132,6 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("getKeyPredicate: no instance", function (assert) {
 		var sError = "No instance to calculate key predicate";
-
-		this.oLogMock.expects("error").withExactArgs(sError, null,
-			"sap.ui.model.odata.v4._ODataHelper");
 
 		assert.throws(function () {
 			_ODataHelper.getKeyPredicate({

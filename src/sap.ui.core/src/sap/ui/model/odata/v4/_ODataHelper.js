@@ -316,22 +316,17 @@ sap.ui.define([
 		 *   If there is no entity instance or if one key property is undefined
 		 */
 		getKeyPredicate : function (oEntityType, oEntityInstance) {
-			var sError,
-				aKeyProperties = [],
+			var aKeyProperties = [],
 				bSingleKey = oEntityType.$Key.length === 1;
 
 			if (!oEntityInstance) {
-				sError = "No instance to calculate key predicate";
-				jQuery.sap.log.error(sError, null, "sap.ui.model.odata.v4._ODataHelper");
-				throw new Error(sError);
+				throw new Error("No instance to calculate key predicate");
 			}
 			oEntityType.$Key.forEach(function (sName) {
 				var vValue = oEntityInstance[sName];
 
 				if (vValue === undefined) {
-					sError = "Missing value for key property '" + sName + "'";
-					jQuery.sap.log.error(sError, null, "sap.ui.model.odata.v4._ODataHelper");
-					throw new Error(sError);
+					throw new Error("Missing value for key property '" + sName + "'");
 				}
 				vValue = encodeURIComponent(
 					_Helper.formatLiteral(vValue, oEntityType[sName].$Type)

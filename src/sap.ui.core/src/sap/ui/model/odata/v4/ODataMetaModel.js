@@ -341,6 +341,21 @@ sap.ui.define([
 				aSegments = oContext.getPath().split("/");
 
 			/*
+			 * Logs and throws an error.
+			 * @param {string} sMessage The message
+			 * @param {string} [sErrorPath] An optional path for error messages
+			 */
+			function error(sMessage, sErrorPath) {
+				var sPath = oContext.getPath();
+
+				if (sErrorPath && sErrorPath !== sPath) {
+					sMessage = sMessage + " at " + sErrorPath;
+				}
+				jQuery.sap.log.error(sMessage, sPath, sODataMetaModel);
+				throw new Error(sPath + ": " + sMessage);
+			}
+
+			/*
 			 * Fetches the canonical path of the containing entity
 			 * @param {number} iLength The path length
 			 * @returns {SyncPromise} A promise on the canonical path
@@ -349,19 +364,38 @@ sap.ui.define([
 				if (oEntitySet.$kind === "Singleton") {
 					return _SyncPromise.resolve(sEntitySetName);
 				}
-				return fetchPath(iLength).then(function (oContainingEntity) {
-					return sEntitySetName
-						+ _ODataHelper.getKeyPredicate(oEntityType, oContainingEntity);
+				return fetchKeyPredicate(iLength).then(function (sKeyPredicate) {
+					return sEntitySetName + sKeyPredicate;
 				});
 			}
 
 			/*
-			 * Fetches the absolute path from aSegments[0..iLength] using the context.
+			 * Fetches the key predicate for the absolute path from aSegments[0..iLength] using the
+			 * context.
 			 * @param {number} iLength The path length
-			 * @returns {SyncPromise} a Promise on the entity instance having that path
+			 * @returns {SyncPromise} a Promise on the key predicate for that path
 			 */
-			function fetchPath(iLength) {
-				return oContext.fetchAbsoluteValue(aSegments.slice(0, iLength).join("/"));
+			function fetchKeyPredicate(iLength) {
+				var sSubPath = aSegments.slice(0, iLength).join("/");
+
+				return oContext.fetchAbsoluteValue(sSubPath).then(function (oEntityInstance) {
+					return keyPredicate(oEntityInstance, sSubPath);
+				});
+			}
+
+			/*
+			 * Calculates the key predicate using oEntityType and the given entity instance. Logs
+			 * an error if calculating the key predicate failed.
+			 * @param {object} oEntityInstance the entity instance
+			 * @param {string} [sPath] An optional path for error messages
+			 * @returns {string} the key predicate
+			 */
+			function keyPredicate(oEntityInstance, sPath) {
+				try {
+					return _ODataHelper.getKeyPredicate(oEntityType, oEntityInstance);
+				} catch (e) {
+					error(e.message, sPath);
+				}
 			}
 
 			/*
@@ -383,8 +417,7 @@ sap.ui.define([
 						return "/" + sEntitySetName;
 					}
 					return oContext.fetchValue("").then(function (oEntityInstance) {
-						return "/" + sEntitySetName
-							+ _ODataHelper.getKeyPredicate(oEntityType, oEntityInstance);
+						return "/" + sEntitySetName + keyPredicate(oEntityInstance);
 					});
 				}
 
@@ -393,9 +426,8 @@ sap.ui.define([
 					// an index: if there is no entity set, it is a path to a contained entity;
 					// add the contained entity's key predicate
 					if (!oEntitySet) {
-						return fetchPath(i + 1).then(function (oContainedEntity) {
-							sCandidate +=
-								_ODataHelper.getKeyPredicate(oEntityType, oContainedEntity);
+						return fetchKeyPredicate(i + 1).then(function (sKeyPredicate) {
+							sCandidate += sKeyPredicate;
 							return processSegment(i + 1);
 						});
 					}
@@ -408,8 +440,7 @@ sap.ui.define([
 				);
 				oNavigationProperty = oEntityType[sNavigationPropertyName];
 				if (!oNavigationProperty || oNavigationProperty.$kind !== "NavigationProperty") {
-					throw new Error("Not a navigation property: " + sNavigationPropertyName
-						+ " (" + oContext.getPath() + ")");
+					error("Not a navigation property: " + sNavigationPropertyName);
 				}
 				if (!oEntitySet || (sCandidate && oNavigationProperty.$ContainsTarget)) {
 					// We're already processing contained entities or we start it and already have
