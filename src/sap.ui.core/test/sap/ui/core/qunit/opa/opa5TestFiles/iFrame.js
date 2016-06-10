@@ -1,6 +1,7 @@
 sap.ui.define([
-		"sap/ui/test/Opa5"
-	], function (Opa5) {
+		"sap/ui/test/Opa5",
+		"sap/ui/test/opaQunit"
+	], function (Opa5, opaTest) {
 		QUnit.module("IFrame getters");
 
 		QUnit.test("Should get the QUnit utils in an IFrame", function(assert) {
@@ -311,6 +312,36 @@ sap.ui.define([
 			return new Promise(function (fnResolve) {
 				Opa5.emptyQueue().done(fnResolve);
 			});
+		});
+
+
+		QUnit.module("ControlType", {
+			beforeEach: function () {
+				this.oOpa5 = new Opa5();
+				this.oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html");
+			},
+			afterEach: function () {
+			}
+		});
+
+
+		opaTest("Should wait for lazy stubs", function () {
+			this.oOpa5.waitFor({
+				success: function () {
+					setTimeout(function () {
+						new (Opa5.getWindow().sap.ui.commons.Button)().placeAt("body");
+					}, 1000);
+				}
+			});
+
+			this.oOpa5.waitFor({
+				controlType: "sap.ui.commons.Button",
+				success: function (aButtons) {
+					Opa5.assert.strictEqual(aButtons.length, 1, "Did find the button after a while");
+				}
+			});
+
+			this.oOpa5.iTeardownMyAppFrame();
 		});
 	}
 );
