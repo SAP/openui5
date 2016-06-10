@@ -891,5 +891,124 @@ sap.ui.require([
 			});
 	});
 
+	[
+		{mQueryOptions : undefined, sPath : "foo", sQueryPath : "delegate/to/context"},
+		{mQueryOptions : undefined, sPath : "foo", sQueryPath : undefined}
+	].forEach(function (oFixture, i) {
+		QUnit.test("getQueryOptions - delegating - " + i, function (assert) {
+			var oBinding = {
+					mQueryOptions : oFixture.mQueryOptions,
+					sPath : oFixture.sPath
+				},
+				oContext = {
+					getQueryOptions : function () {}
+				},
+				mResultingQueryOptions = {},
+				sResultPath = "any/path";
+
+			this.mock(_Helper).expects("buildPath")
+				.withExactArgs(oBinding.sPath, oFixture.sQueryPath).returns(sResultPath);
+			this.mock(oContext).expects("getQueryOptions")
+				.withExactArgs(sResultPath)
+				.returns(mResultingQueryOptions);
+
+			// code under test
+			assert.strictEqual(
+				_ODataHelper.getQueryOptions(oBinding, oFixture.sQueryPath, oContext),
+				mResultingQueryOptions, "sQueryPath:" + oFixture.sQueryPath);
+
+			// code under test
+			assert.strictEqual(
+				_ODataHelper.getQueryOptions(oBinding, oFixture.sQueryPath, undefined),
+				undefined, "no query options and no context");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getQueryOptions - query options and no path", function (assert) {
+		var oBinding = {
+				mQueryOptions : {}
+			},
+			oContext = {
+				getQueryOptions : function () {}
+			};
+
+		this.mock(_Helper).expects("buildPath").never();
+		this.mock(oContext).expects("getQueryOptions").never();
+
+		// code under test
+		assert.strictEqual(_ODataHelper.getQueryOptions(oBinding), oBinding.mQueryOptions,
+			oContext);
+		assert.strictEqual(_ODataHelper.getQueryOptions(oBinding, ""), oBinding.mQueryOptions,
+			oContext);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getQueryOptions - find in query options", function (assert) {
+		var mEmployee2EquipmentOptions = {
+				$orderby : "EquipmentId"
+			},
+			mTeam2EmployeeOptions = {
+				"$expand" : {
+					"Employee_2_Equipment" : mEmployee2EquipmentOptions
+				},
+				$orderby : "EmployeeId"
+			},
+			mParameters = {
+				"$expand" : {
+					"Team_2_Employees" : mTeam2EmployeeOptions,
+					"Team_2_Manager" : null,
+					"Team_2_Equipments" : true
+				},
+				"$orderby" : "TeamId",
+				"sap-client" : "111"
+			},
+			oBinding = {
+				oModel : {
+					mUriParameters : {"sap-client" : "111"}
+				},
+				mQueryOptions : mParameters,
+				sPath : "any/path"
+			},
+			oContext = {
+				getQueryOptions : function () {}
+			},
+			oODataHelperMock = this.mock(_ODataHelper),
+			mResultingQueryOptions = {}; // content not relevant
+
+		this.mock(_Helper).expects("buildPath").never();
+		this.mock(oContext).expects("getQueryOptions").never();
+
+		[
+			{sQueryPath : "foo", mResult : undefined},
+			{sQueryPath : "Team_2_Employees", mResult : mTeam2EmployeeOptions},
+			{
+				sQueryPath : "Team_2_Employees/Employee_2_Equipment",
+				mResult : mEmployee2EquipmentOptions
+			},
+			{sQueryPath : "Team_2_Employees/Employee_2_Equipment/foo", mResult : undefined},
+			{sQueryPath : "Team_2_Employees/foo/Employee_2_Equipment", mResult : undefined},
+			{sQueryPath : "Team_2_Manager", mResult : undefined},
+			{sQueryPath : "Team_2_Equipments", mResult : undefined},
+			{
+				sQueryPath : "Team_2_Employees(2)/Employee_2_Equipment('42')",
+				mResult : mEmployee2EquipmentOptions
+			},
+			{
+				sQueryPath : "15/Team_2_Employees/2/Employee_2_Equipment/42",
+				mResult : mEmployee2EquipmentOptions
+			}
+		].forEach(function (oFixture, i) {
+			oODataHelperMock.expects("buildQueryOptions")
+				.withExactArgs(sinon.match.same(oBinding.oModel.mUriParameters),
+					oFixture.mResult ? sinon.match.same(oFixture.mResult) : undefined,
+					sinon.match.same(_ODataHelper.aAllowedSystemQueryOptions))
+				.returns(mResultingQueryOptions);
+			// code under test
+			assert.strictEqual(_ODataHelper.getQueryOptions(oBinding, oFixture.sQueryPath),
+				mResultingQueryOptions, "sQueryPath:" + oFixture.sQueryPath);
+		});
+	});
+	// TODO handle encoding in getQueryOptions
 	//TODO dynamic app filters in ODLB constructor/ODataModel#bindList
 });

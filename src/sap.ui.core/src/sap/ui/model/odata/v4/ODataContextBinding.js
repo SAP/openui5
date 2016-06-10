@@ -126,7 +126,7 @@ sap.ui.define([
 
 				if (!this.bRelative || bDeferred || mParameters) {
 					this.mQueryOptions = _ODataHelper.buildQueryOptions(oModel.mUriParameters,
-						mParameters, ["$expand", "$filter", "$orderby", "$select"]);
+						mParameters, _ODataHelper.aAllowedSystemQueryOptions);
 					oBindingParameters = _ODataHelper.buildBindingParameters(mParameters,
 						["$$groupId", "$$updateGroupId"]);
 					this.sGroupId = oBindingParameters.$$groupId;
@@ -650,8 +650,10 @@ sap.ui.define([
 		var that = this;
 
 		function createCache(sPath) {
+			var mQueryOptions = _ODataHelper.getQueryOptions(that, "", oContext);
+
 			return _Cache.createSingle(that.oModel.oRequestor,
-				_Helper.buildPath(sPath.slice(1), that.sPath), that.mQueryOptions);
+				_Helper.buildPath(sPath.slice(1), that.sPath), mQueryOptions);
 		}
 
 		if (this.oContext !== oContext) {

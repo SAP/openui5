@@ -131,9 +131,13 @@ sap.ui.require([
 				promise : Promise.resolve(oCache)
 			},
 			oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS", 1),
+			oODataHelperMock = this.mock(_ODataHelper),
 			oPathPromise = Promise.resolve(sCanonicalPath),
 			that = this;
 
+		oODataHelperMock.expects("getQueryOptions")
+			.withExactArgs(sinon.match.same(oBinding), "", sinon.match.same(oContext))
+			.returns(oBinding.mQueryOptions);
 		this.mock(_Helper).expects("buildPath")
 			.withExactArgs(sCanonicalPath.slice(1), "TEAM_2_MANAGER").returns("~path~");
 		this.mock(_Cache).expects("createSingle")
@@ -143,7 +147,7 @@ sap.ui.require([
 				})
 			.returns(oCache);
 		this.mock(oContext).expects("requestCanonicalPath").withExactArgs().returns(oPathPromise);
-		this.mock(_ODataHelper).expects("createCacheProxy")
+		oODataHelperMock.expects("createCacheProxy")
 			.withExactArgs(sinon.match.same(oBinding), sinon.match.func,
 				sinon.match.same(oPathPromise))
 			.callsArgWith(1, sCanonicalPath)

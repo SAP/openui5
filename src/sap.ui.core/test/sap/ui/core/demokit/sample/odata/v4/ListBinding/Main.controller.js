@@ -162,7 +162,6 @@ sap.ui.define([
 			oView.setModel(new JSONModel({
 				EmployeeID: null
 			}), "search");
-			// Initialize model for sorting equipments
 			oView.setModel(new JSONModel({
 				Employees : {
 					AGE : { icon : "sap-icon://sort-ascending", desc : false },

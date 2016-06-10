@@ -11,7 +11,11 @@
 		<Label text="Teams" labelFor="TeamSelect"/>
 		<Select id="TeamSelect" change="onTeamSelect" autoAdjustWidth="true"
 			items="{path: '/TEAMS',
-				parameters: {$expand: {'TEAM_2_MANAGER': true}}}" >
+				parameters: {$expand:
+					{'TEAM_2_EMPLOYEES': {
+						$expand: {'EMPLOYEE_2_EQUIPMENTS': true},
+						$orderby: 'LOCATION/City/CITYNAME'
+					}, 'TEAM_2_MANAGER': true}}}" >
 			<core:Item key="{Team_Id}" text="{Name}"/>
 		</Select>
 		<Button enabled="{ui>/bRealOData}" icon="sap-icon://edit" press="openChangeTeamBudgetDialog"
@@ -84,10 +88,6 @@
 	<Table id="Employees" growing="true" growingThreshold="5"
 		items="{
 			path: 'TEAM_2_EMPLOYEES',
-			parameters: {
-				$expand: {'EMPLOYEE_2_EQUIPMENTS': true},
-				$orderby: 'LOCATION/City/CITYNAME'
-			},
 			sorter : {
 				path : 'AGE'
 			}}"
@@ -139,20 +139,20 @@
 		<columns>
 			<Column>
 				<Button app:sorterPath="Name" app:sorterControlId="Employees"
-					enabled="{ui>/bRealOData}" icon="{sort>/Employees/Name/icon}" press="onSort"
-					text="Employee Name" />
+					enabled="{ui>/bRealOData}" icon="{sort>/Employees/Name/icon}" iconFirst="false"
+					press="onSort" text="Employee Name" />
 			</Column>
 			<Column>
 				<Text text="Employee ID"/>
 			</Column>
 			<Column>
 				<Button app:sorterPath="AGE" app:sorterControlId="Employees"
-					enabled="{ui>/bRealOData}" icon="{sort>/Employees/AGE/icon}" press="onSort"
-					text="Age" />
+					enabled="{ui>/bRealOData}" icon="{sort>/Employees/AGE/icon}" iconFirst="false"
+					press="onSort" text="Age" />
 			</Column>
 			<Column>
-				<Button enabled="false" icon="sap-icon://sort-ascending" press="onSort"
-					text="City" />
+				<Button enabled="false" icon="sap-icon://sort-ascending" iconFirst="false"
+					press="onSort" text="City" />
 			</Column>
 			<Column>
 				<Text text="Entry Date"/>
@@ -297,22 +297,22 @@
 				<Column>
 					<Button app:sorterPath="Category" app:sorterControlId="Equipments"
 						enabled="{ui>/bRealOData}" icon="{sort>/Equipments/Category/icon}"
-						press="onSort" text="Category" />
+						iconFirst="false" press="onSort" text="Category" />
 				</Column>
 				<Column>
 					<Button app:sorterPath="ID" app:sorterControlId="Equipments"
 						enabled="{ui>/bRealOData}" icon="{sort>/Equipments/ID/icon}"
-						press="onSort" text="ID" />
+						iconFirst="false" press="onSort" text="ID" />
 				</Column>
 				<Column>
 					<Button app:sorterPath="Name" app:sorterControlId="Equipments"
 						enabled="{ui>/bRealOData}" icon="{sort>/Equipments/Name/icon}"
-						press="onSort" text="Name" />
+						iconFirst="false" press="onSort" text="Name" />
 				</Column>
 				<Column>
 					<Button app:sorterPath="EmployeeId" app:sorterControlId="Equipments"
 						enabled="{ui>/bRealOData}" icon="{sort>/Equipments/EmployeeId/icon}"
-						press="onSort" text="EmployeeId" />
+						iconFirst="false" press="onSort" text="EmployeeId" />
 				</Column>
 			</columns>
 			<items>

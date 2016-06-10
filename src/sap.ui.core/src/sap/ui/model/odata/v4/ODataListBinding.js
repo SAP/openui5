@@ -37,11 +37,19 @@ sap.ui.define([
 	 */
 	function createCacheProxy(oBinding, oContext) {
 		function createCache(sPath) {
+			var mQueryOptions = _ODataHelper.getQueryOptions(oBinding, "", oContext),
+				sOrderby = _ODataHelper.buildOrderbyOption(oBinding.aSorters,
+					mQueryOptions && mQueryOptions.$orderby);
+
 			return _Cache.create(oBinding.oModel.oRequestor,
 				_Helper.buildPath(sPath.slice(1), oBinding.sPath),
-				_ODataHelper.mergeQueryOptions(oBinding.mQueryOptions, oBinding.sOrderby));
+				_ODataHelper.mergeQueryOptions(mQueryOptions, sOrderby));
 		}
 
+		if (!oBinding.mQueryOptions && oBinding.aSorters.length === 0) {
+			// no need for an own cache
+			return;
+		}
 		oBinding.oCache = _ODataHelper.createCacheProxy(oBinding, createCache,
 			oContext.requestCanonicalPath());
 		oBinding.oCache.promise.then(function (oCache) {
@@ -112,7 +120,8 @@ sap.ui.define([
 	var ODataListBinding = ListBinding.extend("sap.ui.model.odata.v4.ODataListBinding", {
 			constructor : function (oModel, sPath, oContext, vSorters, mParameters) {
 				var oBindingParameters,
-					bSortersGiven = vSorters !== undefined && vSorters !== null;
+					bSortersGiven = vSorters !== undefined && vSorters !== null,
+					sOrderby;
 
 				ListBinding.call(this, oModel, sPath);
 
@@ -137,13 +146,13 @@ sap.ui.define([
 
 				if (!this.bRelative || mParameters) {
 					this.mQueryOptions = _ODataHelper.buildQueryOptions(oModel.mUriParameters,
-						mParameters, ["$expand", "$filter", "$orderby", "$select"]);
+						mParameters, _ODataHelper.aAllowedSystemQueryOptions);
 				}
-				this.sOrderby = _ODataHelper.buildOrderbyOption(this.aSorters,
-					this.mQueryOptions && this.mQueryOptions.$orderby);
 				if (!this.bRelative) {
+					sOrderby = _ODataHelper.buildOrderbyOption(this.aSorters,
+						this.mQueryOptions && this.mQueryOptions.$orderby);
 					this.oCache = _Cache.create(oModel.oRequestor, sPath.slice(1),
-						_ODataHelper.mergeQueryOptions(this.mQueryOptions, this.sOrderby));
+						_ODataHelper.mergeQueryOptions(this.mQueryOptions, sOrderby));
 				}
 
 				this.reset();
@@ -787,7 +796,7 @@ sap.ui.define([
 					this.oCache.deregisterChange();
 					this.oCache = undefined;
 				}
-				if (this.mQueryOptions && oContext) {
+				if (oContext) {
 					createCacheProxy(this, oContext);
 				}
 				// call Binding#setContext because of data state etc.; fires "change"
@@ -826,6 +835,8 @@ sap.ui.define([
 	 * @since 1.39.0
 	 */
 	ODataListBinding.prototype.sort = function (vSorters) {
+		var sOrderby;
+
 		if (this.sOperationMode !== OperationMode.Server) {
 			throw new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server");
 		}
@@ -835,10 +846,6 @@ sap.ui.define([
 		// update aSorters to enable grouping
 		this.aSorters = _ODataHelper.toArray(vSorters);
 
-		// append orderby value from constructor to the orderby value given by sorters
-		this.sOrderby = _ODataHelper.buildOrderbyOption(this.aSorters,
-			this.mQueryOptions && this.mQueryOptions.$orderby);
-
 		// replace cache and reset contexts and length properties
 		if (this.bRelative) {
 			this.mCacheByContext = undefined;
@@ -847,8 +854,10 @@ sap.ui.define([
 			}
 			createCacheProxy(this, this.oContext);
 		} else {
+			sOrderby = _ODataHelper.buildOrderbyOption(this.aSorters,
+				this.mQueryOptions && this.mQueryOptions.$orderby);
 			this.oCache = _Cache.create(this.oModel.oRequestor, this.sPath.slice(1),
-				_ODataHelper.mergeQueryOptions(this.mQueryOptions, this.sOrderby));
+				_ODataHelper.mergeQueryOptions(this.mQueryOptions, sOrderby));
 		}
 		this.reset();
 

@@ -12,7 +12,9 @@ sap.ui.define([
 	"use strict";
 
 	var ODataHelper,
-		rApplicationGroupID = /^\w+$/;
+		rApplicationGroupID = /^\w+$/,
+		// regular expression converting path to metadata path
+		rNotMetaContext = /\([^/]*|\/\d+|^\d+\//g;
 
 	/**
 	 * Returns whether the given group ID is valid, which means it is either undefined, '$auto',
@@ -37,6 +39,8 @@ sap.ui.define([
 	}
 
 	ODataHelper = {
+		aAllowedSystemQueryOptions : ["$expand", "$filter", "$orderby", "$select"],
+
 		/**
 		 * Returns the map of binding-specific parameters from the given map. "Binding-specific"
 		 * parameters are those with a key starting with '$$', i.e. OData query options provided as
@@ -346,6 +350,47 @@ sap.ui.define([
 			});
 
 			return "(" + aKeyProperties.join(",") + ")";
+		},
+
+		/**
+		 * Returns the query options for the given binding.
+		 *
+		 * @param {sap.ui.model.odata.v4.ODataListBinding|sap.ui.model.odata.v4.ODataContextBinding}
+		 *   oBinding The OData list or context binding which is used to get OData query options for
+		 *   the given path.
+		 * @param {string} sPath
+		 *   The path, relative to the given binding, for which the OData query options are
+		 *   requested
+		 * @param {sap.ui.model.odata.v4.Context} oContext
+		 *   The context to be used to to compute the inherited query options
+		 * @returns {object}
+		 *   The query options for the given path
+		 *
+		 * @private
+		 */
+		getQueryOptions : function (oBinding, sPath, oContext) {
+			var oResult = oBinding.mQueryOptions;
+
+			if (!oResult) {
+				return oContext
+					&& oContext.getQueryOptions(_Helper.buildPath(oBinding.sPath, sPath));
+			}
+			if (!sPath) {
+				return oResult;
+			}
+
+			// transform path to metadata path
+			sPath = sPath.replace(rNotMetaContext, "");
+			sPath.split("/").some(function (sSegment) {
+				oResult = oResult.$expand && oResult.$expand[sSegment];
+				if (!oResult || oResult === true) {
+					oResult = undefined;
+					return true;
+				}
+			});
+
+			return ODataHelper.buildQueryOptions(oBinding.oModel.mUriParameters, oResult,
+				ODataHelper.aAllowedSystemQueryOptions);
 		},
 
 		/**

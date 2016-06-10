@@ -4,9 +4,10 @@
 
 sap.ui.define([
 	"sap/ui/model/Context",
+	"sap/ui/model/odata/v4/_ODataHelper",
 	"./lib/_Helper",
 	"./lib/_SyncPromise"
-], function (BaseContext, _Helper, _SyncPromise) {
+], function (BaseContext, _ODataHelper, _Helper, _SyncPromise) {
 	"use strict";
 
 	/*
@@ -195,6 +196,20 @@ sap.ui.define([
 	 */
 	Context.prototype.getIndex = function () {
 		return this.iIndex;
+	};
+
+	/**
+	 * Returns the query options for the given path from the associated binding.
+	 *
+	 * @param {string} sPath
+	 *   The path for which the query options are requested
+	 * @returns {object}
+	 *   The query options from the associated binding for the given path
+	 *
+	 * @private
+	 */
+	Context.prototype.getQueryOptions = function (sPath) {
+		return _ODataHelper.getQueryOptions(this.oBinding, sPath);
 	};
 
 	/**

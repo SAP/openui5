@@ -4,10 +4,11 @@
 sap.ui.require([
 	"jquery.sap.global",
 	"sap/ui/model/Context",
+	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_SyncPromise"
-], function (jQuery, BaseContext, Context, _Helper, _SyncPromise) {
+], function (jQuery, BaseContext, _ODataHelper, Context, _Helper, _SyncPromise) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -468,5 +469,20 @@ sap.ui.require([
 		assert.throws(function () {
 			oContext.getCanonicalPath();
 		}, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getQueryOptions", function (assert) {
+		var oBinding = {},
+			oContext = Context.create(null, oBinding, "/EMPLOYEES/42"),
+			sPath = "foo/bar",
+			mResult = {};
+
+		this.mock(_ODataHelper).expects("getQueryOptions")
+			.withExactArgs(sinon.match.same(oBinding), sPath)
+			.returns(mResult);
+
+		// code under test
+		assert.strictEqual(oContext.getQueryOptions(sPath), mResult);
 	});
 });
