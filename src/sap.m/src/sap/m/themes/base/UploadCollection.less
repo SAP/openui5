@@ -126,7 +126,7 @@
 	font-family:		@sapUiFontFamily;
 	font-weight:		normal;
 	white-space:		nowrap;
-	padding-bottom: 	0.25rem;
+	padding-top:		0.25rem;
 	overflow:			hidden;
 	text-overflow:		ellipsis;
 	opacity:			100;
@@ -137,20 +137,13 @@
 	margin-left: 0.5rem;
 }
 
-.sapMUCObjectMarker .sapUiIcon:before {
-	vertical-align: top;
+.sapMUCObjectMarker.sapMObjectMarkerText:not(.sapMObjectMarkerIcon) {
+	padding-top: 0.25rem;
 }
 
-.sapMUCTitleContainer {
-	width: 100%;
-}
-
-.sapMUCFileNameContainer {
-	overflow: hidden;
-	text-overflow: ellipsis;
-	display: inline;
-	font-size: 1rem;
-	width: 100%;
+.sapMUCObjectMarker.sapMObjectMarkerText,
+.sapMUCObjectMarker.sapMObjectMarkerIcon.sapMObjectMarkerText .sapUiIcon {
+	vertical-align: bottom;
 }
 
 .sapMUCObjectMarkerContainer {

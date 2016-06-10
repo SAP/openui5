@@ -1133,15 +1133,11 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			oRm.write('sapMUCEditMode ');
 		}
 		oRm.write('" >');
+		oRm.renderControl(this._getFileNameControl(oItem, that));
 		// if status is uploading only the progress label is displayed under the Filename
 		if (sStatus === UploadCollection._uploadingStatus && !(Device.browser.msie && Device.browser.version <= 9)) {
-			oRm.renderControl(this._getFileNameControl(oItem, that));
 			oRm.renderControl(this._createProgressLabel(sItemId, sPercentUploaded));
 		} else {
-			oRm.write('<div class="sapMUCTitleContainer">');// begin of title (text and markers) container
-			oRm.write('<div class="sapMUCFileNameContainer">');// begin of title only text container
-			oRm.renderControl(this._getFileNameControl(oItem, that));
-			oRm.write('</div>');// end of title only text container
 			if (iMarkersCounter > 0) {
 				oRm.write('<div class="sapMUCObjectMarkerContainer">');// begin of markers container
 				for (i = 0; i < iMarkersCounter; i++ ) {
@@ -1149,7 +1145,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				}
 				oRm.write('</div>');// end of markers container
 			}
-			oRm.write('</div>');// end of title (text and markers) container
 			if (iAttrCounter > 0) {
 				oRm.write('<div class="sapMUCAttrContainer">'); // begin of attributes container
 				for (i = 0; i < iAttrCounter; i++ ) {
