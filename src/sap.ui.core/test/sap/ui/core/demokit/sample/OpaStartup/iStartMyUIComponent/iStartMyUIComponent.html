@@ -28,9 +28,10 @@
 			QUnit.config.autostart = false;
 
 			sap.ui.require([
+				'sap/ui/test/Opa5',
 				'sap/ui/test/opaQunit',
 				'sap/ui/test/matchers/AggregationFilled'
-			], function (opaTest, AggregationFilled) {
+			], function (Opa5, opaTest, AggregationFilled) {
 
 				QUnit.module("iStartMyUIComponent");
 
@@ -51,7 +52,7 @@
 						id: "productList",
 						matchers: new AggregationFilled({ name: "items" }),
 						success: function () {
-							assert.ok(true, "The component was removed");
+							Opa5.assert.ok(true, "The component was removed");
 						}
 					}).and
 						// Removes the component again

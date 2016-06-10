@@ -10,62 +10,64 @@
 			data-sap-ui-resourceroots='{"myApp.test": "./"}'>
 		</script>
 
-		<link rel="stylesheet" href="../../../../../../../resources/sap/ui/thirdparty/qunit.css" media="screen">
-
 		<script>
-			(function () {
-				jQuery.sap.require("sap.ui.thirdparty.qunit");
-				jQuery.sap.require("sap.ui.qunit.qunit-junit");
-				jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-				jQuery.sap.require("sap.ui.qunit.QUnitUtils");
-				jQuery.sap.require("sap.ui.test.Opa5");
-				jQuery.sap.require("sap.ui.test.opaQunit");
-				var Opa = sap.ui.test.Opa;
-				var Opa5 = sap.ui.test.Opa5;
+			jQuery.sap.require("sap.ui.qunit.qunit-css");
+			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.qunit.qunit-junit");
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			QUnit.config.autostart = false;
 
-				jQuery.sap.require("myApp.test.arrangements.Common");
+			sap.ui.require([
+				"sap/ui/test/Opa5",
+				"sap/ui/test/opaQunit",
+				"myApp/test/arrangements/Common"
+			], function (Opa5, opaTest, Common) {
+
 				//Ensure to add arrangements, action, assertions before loading the page objects,
 				//otherwise they would be overwritten.
 				Opa5.extendConfig({
 					viewName : "view.Main",
-					arrangements : new myApp.test.arrangement.Common()
+					arrangements : new Common()
 				});
 
 				//Load all page objects needed for this test
-				jQuery.sap.require("myApp.test.pageObjects.Intro");
-				jQuery.sap.require("myApp.test.pageObjects.Overview");
-				jQuery.sap.require("myApp.test.pageObjects.TestPage1");
-				jQuery.sap.require("myApp.test.pageObjects.TestPage2");
+				sap.ui.require([
+					"myApp/test/pageObjects/Intro",
+					"myApp/test/pageObjects/Overview",
+					"myApp/test/pageObjects/TestPage1",
+					"myApp/test/pageObjects/TestPage2"
+				], function () {
+					QUnit.module("Page 1 journey");
 
-				module("Page 1 journey");
+					opaTest("Should go to Page 1", function(Given, When, Then) {
 
-				opaTest("Should go to Page 1", function(Given, When, Then) {
+						Given.iStartMyApp();
+						Given.onTheIntro.iPressOnGoToOverview(); //can serve as arrangement and action (see below)
 
-					Given.iStartMyApp();
-					Given.onTheIntro.iPressOnGoToOverview(); //can serve as arrangement and action (see below)
+						When.onTheOverview.iPressOnGoToPage1();
 
-					When.onTheOverview.iPressOnGoToPage1();
-
-					Then.onPage1.iShouldSeeThePage1Text().
+						Then.onPage1.iShouldSeeThePage1Text().
 						and.iTeardownMyAppFrame();
 
-				});
+					});
 
-				module("Page 2 journey");
+					QUnit.module("Page 2 journey");
 
-				opaTest("Should go to Page 2", function(Given, When, Then) {
+					opaTest("Should go to Page 2", function(Given, When, Then) {
 
-					Given.iStartMyApp();
+						Given.iStartMyApp();
 
-					When.onTheIntro.iPressOnGoToOverview();
-					When.onTheOverview.iPressOnGoToPage2();
+						When.onTheIntro.iPressOnGoToOverview();
+						When.onTheOverview.iPressOnGoToPage2();
 
-					Then.onPage2.iShouldSeeThePage2Text().
+						Then.onPage2.iShouldSeeThePage2Text().
 						and.iTeardownMyAppFrame();
 
-				});
+					});
 
-			})();
+					QUnit.start();
+				});
+			});
 		</script>
 
 	</head>
