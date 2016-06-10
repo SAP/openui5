@@ -71,19 +71,19 @@ sap.ui.define([
 					"SalesOrderList?$expand=SO_2_BP&$filter=BuyerName%20ge%20'M'&$select=BuyerName,CurrencyCode,GrossAmount,Note,SalesOrderID&$skip=5&$top=5" : {
 						source : "SalesOrderListNoMoreData.json"
 					},
-					"SalesOrderList(SalesOrderID='0500000000')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber)&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
+					"SalesOrderList('0500000000')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber)&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
 						source : "SalesOrderList_0.json"
 					},
-					"SalesOrderList(SalesOrderID='0500000002')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber)&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
+					"SalesOrderList('0500000002')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber)&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
 						source : "SalesOrderList_1.json"
 					},
-					"SalesOrderList(SalesOrderID='0500000006')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber)&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
+					"SalesOrderList('0500000006')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber)&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
 						source : "SalesOrderList_2.json"
 					},
-					"SalesOrderList(SalesOrderID='0500000007')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber)&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
+					"SalesOrderList('0500000007')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber)&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
 						source : "SalesOrderList_3.json"
 					},
-					"SalesOrderList(SalesOrderID='0500000008')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber)&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
+					"SalesOrderList('0500000008')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber)&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
 						source : "SalesOrderList_4.json"
 					},
 					"SOLineItemList(SalesOrderID='0500000000',ItemPosition='0000000010')/SOITEM_2_PRODUCT/PRODUCT_2_BP/BP_2_CONTACT?$select=DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber&$skip=0&$top=100" : {

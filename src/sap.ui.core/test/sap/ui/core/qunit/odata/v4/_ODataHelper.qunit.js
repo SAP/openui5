@@ -133,6 +133,20 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getKeyPredicate: no instance", function (assert) {
+		var sError = "No instance to calculate key predicate";
+
+		this.oLogMock.expects("error").withExactArgs(sError, null,
+			"sap.ui.model.odata.v4._ODataHelper");
+
+		assert.throws(function () {
+			_ODataHelper.getKeyPredicate({
+				$Key : ["ID"]
+			}, undefined);
+		}, new Error(sError));
+	});
+
+	//*********************************************************************************************
 	[{
 		mModelOptions : {"sap-client" : "111"},
 		mOptions : {"$expand" : {"foo" : null}, "$select" : ["bar"], "custom" : "baz"},
