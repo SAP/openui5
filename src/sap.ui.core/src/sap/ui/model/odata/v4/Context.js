@@ -105,6 +105,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Delegates to the <code>fetchAbsoluteValue</code> method of this context's binding which
+	 * requests the value for the given absolute path including the query string as maintained by
+	 * that binding.
+	 *
+	 * @param {string} sPath
+	 *   An absolute path including a query string
+	 * @returns {SyncPromise}
+	 *   A promise on the outcome of the binding's <code>fetchAbsoluteValue</code> call
+	 *
+	 * @private
+	 */
+	Context.prototype.fetchAbsoluteValue = function (sPath) {
+		return this.oBinding.fetchAbsoluteValue(sPath);
+	};
+
+	/**
 	 * Returns a promise for the "canonical path" of the entity for this context.
 	 *
 	 * @returns {SyncPromise}
@@ -115,7 +131,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Context.prototype.fetchCanonicalPath = function () {
-		return this.oModel.getMetaModel().fetchCanonicalUrl("/", this.getPath(), this);
+		return this.oModel.getMetaModel().fetchCanonicalPath(this);
 	};
 
 	/**
@@ -127,7 +143,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
 	 *   A property binding which registers itself as listener at the cache
 	 * @returns {SyncPromise}
-	 *   A promise on the outcome of the binding's <code>requestValue</code> call
+	 *   A promise on the outcome of the binding's <code>fetchValue</code> call
 	 *
 	 * @private
 	 */

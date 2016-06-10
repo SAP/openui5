@@ -33,6 +33,10 @@ sap.ui.define([
 			oCreateSalesOrderDialog.close();
 		},
 
+		onCancelSalesOrderSchedules : function (oEvent) {
+			this.getView().byId("SalesOrderSchedulesDialog").close();
+		},
+
 		onCancelSalesOrderList : function (oEvent) {
 			this.getView().getModel().resetChanges("SalesOrderListUpdateGroup");
 		},
@@ -186,6 +190,10 @@ sap.ui.define([
 				"There are pending changes. Do you really want to refresh all sales orders?");
 		},
 
+		onSalesOrderSchedules : function (oEvent) {
+			this.getView().byId("SalesOrderSchedulesDialog").open();
+		},
+
 		onSalesOrdersSelect : function (oEvent) {
 			var oSalesOrderContext = oEvent.getParameters().listItem.getBindingContext(),
 				oView = this.getView();
@@ -205,6 +213,13 @@ sap.ui.define([
 
 		onSaveSalesOrder : function () {
 			this.getView().getModel().submitBatch("SalesOrderUpdateGroup");
+		},
+
+		onSaveSalesOrderSchedules : function () {
+			var oView = this.getView();
+
+			oView.getModel().submitBatch("SalesOrderUpdateGroup");
+			oView.byId("SalesOrderSchedulesDialog").close();
 		},
 
 		onSaveSalesOrderList : function () {

@@ -169,6 +169,9 @@
 							},
 							SO_2_BP : {
 								$select : 'BusinessPartnerID,CompanyName,PhoneNumber'
+							},
+							SO_2_SCHDL : {
+								$select : 'ScheduleKey,DeliveryDate'
 							}
 						},
 						$select : 'ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID',
@@ -178,6 +181,8 @@
 			<Toolbar design="Transparent">
 				<content>
 					<Title level="H2" text="Sales Order Details" titleStyle="H2"/>
+					<Button press="onSalesOrderSchedules" icon="sap-icon://calendar"
+						tooltip="Schedules"/>
 					<Button icon="sap-icon://refresh"
 						press="onRefreshSalesOrderDetails"/>
 					<Button enabled="{ui>/bRealOData}" icon="sap-icon://save"
@@ -185,6 +190,40 @@
 					<Button enabled="{ui>/bRealOData}" icon="sap-icon://sys-cancel-2"
 						press="onCancelSalesOrder" tooltip="Cancel sales order changes"/>
 				</content>
+				<dependents>
+					<Dialog class="sapUiSizeCompact"
+							id="SalesOrderSchedulesDialog" title="Sales Order Schedules">
+						<buttons>
+							<Button icon="sap-icon://save" press="onSaveSalesOrderSchedules"
+								text="Save" type="Accept"/>
+							<Button icon="sap-icon://sys-cancel-2"
+								press="onCancelSalesOrderSchedules" text="Cancel" type="Reject"/>
+						</buttons>
+						<content>
+							<Table items="{SO_2_SCHDL}" mode="SingleSelectMaster">
+								<columns>
+									<Column>
+										<Text text="Schedule Key"/>
+									</Column>
+									<Column>
+										<Text text="Delivery Date"/>
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem>
+										<cells>
+											<Text text="{ScheduleKey}"/>
+										</cells>
+										<cells>
+											<Input editable="{ui>/bRealOData}"
+												value="{DeliveryDate}"/>
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</content>
+					</Dialog>
+				</dependents>
 			</Toolbar>
 			<form:SimpleForm layout="ResponsiveGridLayout">
 				<form:SimpleForm backgroundDesign="Transparent" editable="true" labelSpanM="4"

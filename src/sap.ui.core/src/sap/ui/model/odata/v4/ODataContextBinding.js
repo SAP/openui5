@@ -545,6 +545,33 @@ sap.ui.define([
 	};
 
 	/**
+	 * Requests the value for the given absolute path; the value is requested from this binding's
+	 * cache or from its context in case it has no cache or the cache does not contain data for
+	 * this path.
+	 *
+	 * @param {string} sPath
+	 *   An absolute path including the binding path
+	 * @returns {SyncPromise}
+	 *   A promise on the outcome of the cache's <code>read</code> call
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype.fetchAbsoluteValue = function (sPath) {
+		var sResolvedPath;
+
+		if (this.oCache) {
+			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+			if (sPath === sResolvedPath || sPath.lastIndexOf(sResolvedPath + "/") === 0) {
+				return this.fetchValue(sPath.slice(sResolvedPath.length + 1));
+			}
+		}
+		if (this.oContext) {
+			return this.oContext.fetchAbsoluteValue(sPath);
+		}
+		return _SyncPromise.resolve();
+	};
+
+	/**
 	 * Requests the value for the given path; the value is requested from this binding's
 	 * cache or from its context in case it has no cache.
 	 *
@@ -555,7 +582,7 @@ sap.ui.define([
 	 * @returns {SyncPromise}
 	 *   A promise on the outcome of the cache's <code>read</code> call
 	 *
-	 *  @private
+	 * @private
 	 */
 	ODataContextBinding.prototype.fetchValue = function (sPath, oListener) {
 		var bDataRequested = false,
