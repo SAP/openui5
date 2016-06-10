@@ -137,6 +137,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	/**
 	 * Loads the appropriate type of FacetFilter according to device.
 	 * @param {object} oType Type of FacetFilter to render depending on device
+	 * @returns {sap.m.FacetFilter} this for chaining
 	 */
 	FacetFilter.prototype.setType = function(oType) {
 
@@ -161,11 +162,13 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 				this._removeResetFromSummary(oSummaryBar);
 			}
 		}
+		return this;
 	};
 
 	/**
 	 * Sets whether or not to display Reset button to reset values.
 	 * @param {boolean} bVal Boolean to set Reset button to true or false
+	 * @returns {sap.m.FacetFilter} this for chaining
 	 */
 	FacetFilter.prototype.setShowReset = function(bVal) {
 
@@ -185,11 +188,13 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 				this._removeResetFromSummary(oSummaryBar);
 			}
 		}
+		return this;
 	};
 
 	/**
 	 * Sets whether or not to display summary bar.
 	 * @param {boolean} bVal Boolean to set summary bar to <code>true</code> or <code>false</code>
+	 * @returns {sap.m.FacetFilter} this for chaining
 	 */
 	FacetFilter.prototype.setShowSummaryBar = function(bVal) {
 
@@ -208,6 +213,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 			}
 			oSummaryBar.setActive(this.getType() === sap.m.FacetFilterType.Light);
 		}
+		return this;
 	};
 
 	/**
