@@ -35,6 +35,11 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 			oRm.writeStyles();
 			oRm.write(">");
 
+            // custom scrollbar
+			if (sap.ui.Device.system.desktop) {
+				oRm.renderControl(oControl._getCustomScrollBar().addStyleClass("sapUxAPObjectPageCustomScroller"));
+			}
+
 			// Header
 			oRm.write("<header ");
 			oRm.writeAttribute("role", "header");
@@ -48,9 +53,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 			}
 
 			// Sticky Header Content
-			if (bRenderHeaderContent) {
-				this._renderHeaderContentDOM(oRm, oControl, oControl._bHContentAlwaysExpanded, "-stickyHeaderContent");
-			}
+			this._renderHeaderContentDOM(oRm, oControl, bRenderHeaderContent && oControl._bHContentAlwaysExpanded, "-stickyHeaderContent");
 
 			// Sticky anchorBar placeholder
 			oRm.write("<div ");
@@ -83,9 +86,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 			oRm.write(">");
 
 			// Header Content
-			if (bRenderHeaderContent) {
-				this._renderHeaderContentDOM(oRm, oControl, !oControl._bHContentAlwaysExpanded, "-headerContent", true);
-			}
+			this._renderHeaderContentDOM(oRm, oControl, bRenderHeaderContent && !oControl._bHContentAlwaysExpanded, "-headerContent",  true);
 
 			// Anchor Bar
 			oRm.write("<section ");
@@ -104,6 +105,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 			// Content section
 			oRm.write("<section");
 			oRm.addClass("sapUxAPObjectPageContainer");
+			oRm.addClass("ui-helper-clearfix");
 			if (!oAnchorBar) {
 				oRm.addClass("sapUxAPObjectPageContainerNoBar");
 			}
