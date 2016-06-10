@@ -49,6 +49,21 @@ html.sap-tablet .sapMGTHvrOutln:active {
 	border-radius: 0.25rem;
 }
 
+.sapMSTBulleted {
+	position: absolute;
+	text-align: center;
+	bottom: 0.25rem;
+	width: 100%;
+	z-index: 10;
+}
+
+.sapMSTBulleted > span {
+	display: inline-block;
+	padding: 0.25rem;
+	margin: 0 0.25rem;
+	border-radius: 50%;
+}
+
 /* BREAKPOINT FOR SMALL PHONES */
 @media screen and (max-width: 374px) {
 	.sapMST.OneByOne {
@@ -60,4 +75,8 @@ html.sap-tablet .sapMGTHvrOutln:active {
 		width: 19rem;
 		height: 9.25rem;
 	}
+
+	.sapMSTBulleted {
+		bottom: 0.188rem;
+}
 }
