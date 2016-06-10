@@ -463,10 +463,13 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 	background-color: @sapHCStandardBG;
 }
 
+.sapUiTableOverlayArea:focus,
 .sapUiTableCtrlEmpty:focus {
 	outline-width: 2px;
 }
 
+html[data-sap-ui-browser^="ie"] .sapUiTableOverlayArea:focus,
+html[data-sap-ui-browser^="ed"] .sapUiTableOverlayArea:focus,
 html[data-sap-ui-browser^="ie"] .sapUiTableCtrlEmpty:focus:before,
 html[data-sap-ui-browser^="ed"] .sapUiTableCtrlEmpty:focus:before {
 	border-width: 2px;

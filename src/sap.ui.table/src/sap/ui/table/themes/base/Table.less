@@ -49,6 +49,7 @@
 .sapUiTableTr > th,
 .sapUiTableTr > td,
 .sapUiTableCtrlEmpty,
+.sapUiTableOverlayArea,
 .sapUiTableCell,
 
 .sapUiTableVSb,
@@ -150,20 +151,12 @@
 	border-bottom: 1px solid @sapUiListHeaderBorderColor;
 }
 
-.sapUiTableOverlay {
-	pointer-events: none;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-}
-
 /* Since in visibleRowCountMode=Auto, the table has no height, the overlay must be applied to every child div
  of the table root div. Because they have some borders and margins applied, the strech the overlay by 2 pixels to top and
  bottom to be able to cover margins and borders*/
 .sapUiTable.sapUiTableOverlay > div:after {
 	content: '';
-	z-index: 10;
+	z-index: 9;
 	/* same as sapUiOverlay */
 	background-color: fade(@sapUiExtraLightBG, 80%);
 	position: absolute;
@@ -174,8 +167,29 @@
 	/* same as sapUiOverlay */
 }
 
+.sapUiTableOverlay .sapUiTableHdr,
+.sapUiTableOverlay .sapUiTableTbr,
+.sapUiTableOverlay .sapUiTableExt,
+.sapUiTableOverlay .sapUiTableFtr,
+.sapUiTableOverlay .sapUiTableColHdrCnt,
+.sapUiTableOverlay .sapUiTableColRsz,
+.sapUiTableOverlay .sapUiTableCCnt,
+.sapUiTableOverlay .sapUiTableHSb {
+	pointer-events: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
 .sapUiTable.sapUiTableOverlay > div {
 	position: relative;
+}
+
+.sapUiTableOverlay .sapUiTableOverlayArea,
+.sapUiTableOverlay .sapUiTableOuterBefore,
+.sapUiTableOverlay .sapUiTableOuterAfter {
+	display: block;
 }
 
 /* COL HEADER */
@@ -385,7 +399,8 @@ html[data-sap-ui-browser^="ed"] .sapUiTableVScr .sapUiTableCtrlScr {
 	padding-right: 38px;
 }
 
-.sapUiTableCtrlEmpty {
+.sapUiTableCtrlEmpty,
+.sapUiTableOverlayArea {
 	display: none;
 	position: absolute;
 	height: 100%;
@@ -394,10 +409,18 @@ html[data-sap-ui-browser^="ed"] .sapUiTableVScr .sapUiTableCtrlScr {
 	right: 0;
 	bottom: 0;
 	text-align: center;
-	background-color: @sapUiExtraLightBG;
-	/* z-index: 1; */
 }
 
+.sapUiTableCtrlEmpty {
+	background-color: @sapUiExtraLightBG;	
+}
+
+.sapUiTableOverlayArea {
+	background-color: transparent;
+	z-index: 10;
+}
+
+.sapUiTableOverlayArea:focus,
 .sapUiTableCtrlEmpty:focus {
 	outline-width: 1px;
 	outline-style: dotted;
@@ -405,11 +428,15 @@ html[data-sap-ui-browser^="ed"] .sapUiTableVScr .sapUiTableCtrlScr {
 	outline-color: @sapUiContentFocusColor;
 }
 
+html[data-sap-ui-browser^="ie"] .sapUiTableOverlayArea:focus,
+html[data-sap-ui-browser^="ed"] .sapUiTableOverlayArea:focus,
 html[data-sap-ui-browser^="ie"] .sapUiTableCtrlEmpty:focus,
 html[data-sap-ui-browser^="ed"] .sapUiTableCtrlEmpty:focus {
 	outline-width: 0px;
 }
 
+html[data-sap-ui-browser^="ie"] .sapUiTableOverlayArea:focus:before,
+html[data-sap-ui-browser^="ed"] .sapUiTableOverlayArea:focus:before,
 html[data-sap-ui-browser^="ie"] .sapUiTableCtrlEmpty:focus:before,
 html[data-sap-ui-browser^="ed"] .sapUiTableCtrlEmpty:focus:before {
 	position: absolute;
@@ -441,6 +468,11 @@ html[data-sap-ui-browser^="ed"] .sapUiTableCtrlEmpty:focus:before {
 
 .sapUiTableEmpty .sapUiTableRowHdr {
 	opacity: 0;
+}
+
+.sapUiTableOuterAfter,
+.sapUiTableOuterBefore {
+	display: none;
 }
 
 .sapUiTablePaginator {

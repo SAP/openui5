@@ -1234,11 +1234,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	Table.prototype.setShowOverlay = function(bShow) {
+		bShow = !!bShow;
+		this.setProperty("showOverlay", bShow, true);
+
 		if (this.getDomRef()) {
+			var oFocusRef = document.activeElement;
 			this.$().toggleClass("sapUiTableOverlay", bShow);
+			this._getAccExtension().updateAriaStateForOverlayAndNoData();
+			this._getKeyboardExtension().updateNoDataAndOverlayFocus(oFocusRef);
 		}
 
-		return this.setProperty("showOverlay", bShow, true);
+		return this;
 	};
 
 	/**
@@ -2479,18 +2485,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			return;
 		}
 
-		var bNoDataVisible = TableUtils.isNoDataVisible(this);
-		var bFocusWasOnNoData = jQuery.sap.containsOrEquals(this.getDomRef("noDataCnt"), document.activeElement);
-
-		this.$().toggleClass("sapUiTableEmpty", bNoDataVisible);
-
-		if (bNoDataVisible && jQuery.sap.containsOrEquals(this.getDomRef("tableCCnt"), document.activeElement)) {
-			this.$("noDataCnt").focus(); // Set focus on NoData Container
-		} else if (!bNoDataVisible && bFocusWasOnNoData) {
-			TableUtils.focusItem(this, 0); // Set focus on first focusable element
-		}
+		var oFocusRef = document.activeElement;
+		this.$().toggleClass("sapUiTableEmpty", TableUtils.isNoDataVisible(this));
+		this._getAccExtension().updateAriaStateForOverlayAndNoData();
+		this._getKeyboardExtension().updateNoDataAndOverlayFocus(oFocusRef);
 	};
-
 
 	/**
 	 * determines the currently visible columns (used for simply updating only the

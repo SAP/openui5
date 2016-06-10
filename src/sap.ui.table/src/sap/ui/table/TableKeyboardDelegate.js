@@ -219,6 +219,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 		}
 
 		var $target = jQuery(oEvent.target);
+
+		if ($target.hasClass("sapUiTableOuterBefore") || $target.hasClass("sapUiTableOuterAfter")
+				|| (oEvent.target != this.getDomRef("overlay") && this.getShowOverlay())) {
+			this._getKeyboardExtension().setActionMode(false);
+			this.$("overlay").focus();
+			return;
+		}
+
 		var bNoData = TableUtils.isNoDataVisible(this);
 		var bControlBefore = $target.hasClass("sapUiTableCtrlBefore");
 
@@ -400,6 +408,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 			this._getKeyboardExtension().setActionMode(false);
 			oEvent.preventDefault();
 		} else {
+			if (oEvent.target === this.getDomRef("overlay")) {
+				this._getKeyboardExtension()._setSilentFocus($this.find(".sapUiTableOuterBefore"));
+				return;
+			}
+
 			var oInfo = TableUtils.getFocusedItemInfo(this);
 			var bNoData = TableUtils.isNoDataVisible(this);
 			var oSapUiTableCCnt = $this.find('.sapUiTableCCnt')[0];
@@ -438,6 +451,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 			this._getKeyboardExtension().setActionMode(false);
 			oEvent.preventDefault();
 		} else {
+			if (oEvent.target === this.getDomRef("overlay")) {
+				this._getKeyboardExtension()._setSilentFocus($this.find(".sapUiTableOuterAfter"));
+				return;
+			}
+
 			var oInfo = TableUtils.getFocusedItemInfo(this);
 			var bContainsColHdrCnt = jQuery.contains($this.find('.sapUiTableColHdrCnt')[0], oEvent.target);
 			var bNoData = TableUtils.isNoDataVisible(this);
