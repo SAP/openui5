@@ -24,7 +24,7 @@
 <script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
-<script src="../../../../../test-resources/sap/ui/core/qunit/mvc/TestPreprocessor.js"></script>
+<script src="../../../../../test-resources/sap/ui/core/qunit/testdata/mvc/TestPreprocessor.js"></script>
 <script>
 
 	jQuery.sap.require("sap.ui.core.util.XMLPreprocessor");
@@ -43,7 +43,7 @@
 		equal(sOtherId, null);
 		ok(oView.isPrefixedId(sPrefixedId));
 		notOk(oView.isPrefixedId(sLocalId));
-
+		oView.destroy();
 	});
 
 	module("sap.ui.core.mvc.View#runPreprocessor(sync)", {
@@ -51,12 +51,14 @@
 			mock = sinon.mock(sap.ui.core.util.XMLPreprocessor);
 			expectProcess = mock.expects("process");
 			_mPreprocessors = jQuery.extend(true, {}, sap.ui.core.mvc.View._mPreprocessors);
+			sap.ui.core.mvc.View.PreprocessorType = {"Foo":"foo"};
 		},
 		teardown: function() {
 			// restore the sinon spy to original state
 			mock.restore();
 			// remove existing global preprocessors
 			sap.ui.core.mvc.View._mPreprocessors = _mPreprocessors;
+			delete sap.ui.core.mvc.View.PreprocessorType;
 		}
 	});
 
@@ -64,7 +66,7 @@
 		var oSource = {},
 			oView = new sap.ui.core.mvc.View({});
 
-		deepEqual(oView.mPreprocessors, undefined, "no preprocessors stored at view");
+		deepEqual(oView.mPreprocessors, {"foo":[]}, "no preprocessors stored at view");
 		sinon.assert.notCalled(expectProcess);
 		equal(oView.runPreprocessor("xml", oSource, true), oSource);
 	});
@@ -74,7 +76,7 @@
 				// Note: the type does matter, as it is describing the phase of view initialization in which the preprocessor is executed.
 				// These types can be different for several view types.
 				foo: {
-					preprocessor: undefined, // replace below once we have a mock in place!
+					preprocessor: jQuery.noop, // replace below once we have a mock in place!
 					bindingContexts: {},
 					models: {}
 				}
@@ -89,7 +91,9 @@
 		var oViewInfo = { name: oView.sViewName, id: oView.getId(), async: false, sCaller: oView + " (foo)"};
 		expectProcess.never();
 
-		oPreprocessors.foo.preprocessor = sap.ui.core.util.XMLPreprocessor.process;
+		oPreprocessors.foo.preprocessor = {
+			process: sap.ui.core.util.XMLPreprocessor.process
+		};
 
 		strictEqual(oView.mPreprocessors.foo[0], oPreprocessors.foo, "preprocessors stored at view");
 		expectProcess.verify();
@@ -113,7 +117,7 @@
 				preprocessors: oPreprocessors,
 				viewName: "foo"
 			}),
-			oSpy = this.spy(oPreprocessors.foo, "preprocessor");
+			oSpy = this.spy(oPreprocessors.foo.preprocessor, "process");
 
 		oView.runPreprocessor("foo", {}, true);
 
@@ -149,14 +153,15 @@
 		var oSource = {},
 			oView = new sap.ui.core.mvc.View({
 				preprocessors: {
-					xml: {
+					xml: [{
 						preprocessor: "sap.ui.core.util.XMLPreprocessor.process",
-					}
+						_syncSupport: true
+					}]
 				}
 			});
 
 		try {
-			oView.runPreprocessor("xml", oSource);
+			oView.runPreprocessor("xml", oSource, true);
 			ok(false);
 		} catch (ex) {
 			ok(true, ex); // TypeError: string is not a function
@@ -169,13 +174,15 @@
 			bCalled = false,
 			oView = new sap.ui.core.mvc.View({
 				preprocessors: {
-					xml: {
-						preprocessor: function(val) {
-							bCalled = true;
-							return val;
+					xml: [{
+						preprocessor: {
+							process: function(val) {
+								bCalled = true;
+								return val;
+							}
 						},
 						_syncSupport: true
-					}
+					}]
 				}
 			});
 
@@ -206,12 +213,12 @@
 			bCalled = false,
 			oView = new sap.ui.core.mvc.View({
 				preprocessors: {
-					xml: {
+					xml: [{
 						preprocessor: function(val) {
 							bCalled = true;
 							return val;
 						},
-					}
+					}]
 				}
 			}),
 			logSpy = this.spy(jQuery.sap.log, "debug");
@@ -231,12 +238,14 @@
 			mock = sinon.mock(sap.ui.core.util.XMLPreprocessor);
 			expectProcess = mock.expects("process");
 			_mPreprocessors = jQuery.extend(true, {}, sap.ui.core.mvc.View._mPreprocessors);
+			sap.ui.core.mvc.View.PreprocessorType = {"Foo":"foo"};
 		},
 		teardown: function() {
 			// restore the sinon spy to original state
 			mock.restore();
 			// remove existing global preprocessors
 			sap.ui.core.mvc.View._mPreprocessors = _mPreprocessors;
+			delete sap.ui.core.mvc.View.PreprocessorType;
 		}
 	});
 
@@ -244,7 +253,7 @@
 		var oSource = {},
 			oView = new sap.ui.core.mvc.View({});
 
-		deepEqual(oView.mPreprocessors, undefined, "empty preprocessors stored at view");
+		deepEqual(oView.mPreprocessors, {"foo":[]}, "empty preprocessors stored at view");
 		sinon.assert.notCalled(expectProcess);
 
 		oView.runPreprocessor("xml", oSource).then(function(vSource) {
@@ -258,7 +267,7 @@
 				// Note: the type does matter, as it is describing the phase of view initialization in which the preprocessor is executed.
 				// These types can be different for several view types.
 				foo: {
-					preprocessor: undefined, // replace below once we have a mock in place!
+					preprocessor: jQuery.noop, // replace below once we have a mock in place!
 					bindingContexts: {},
 					models: {}
 				}
@@ -279,11 +288,13 @@
 			id: oView.getId(),
 			name: oView.sViewName,
 			componentId: undefined,
-			sync: false
+			sync: true
 		};
 
 		// instruct the mock before view creation to not miss the important call
-		oPreprocessors.foo.preprocessor = sap.ui.core.util.XMLPreprocessor.process;
+		oPreprocessors.foo.preprocessor = {
+			process: sap.ui.core.util.XMLPreprocessor.process
+		}
 		expectProcess.returns(Promise.resolve(oResult));
 		expectProcess.once().withExactArgs(oSource, oViewInfo, oPreprocessors.foo._settings);
 
@@ -314,7 +325,7 @@
 				viewName: "foo",
 				async: true
 			}),
-			oSpy = this.spy(oPreprocessors.foo, "preprocessor");
+			oSpy = this.spy(oPreprocessors.foo.preprocessor, "process");
 
 		oView.runPreprocessor("foo", {}).then(function() {
 			oPreprocessors.foo.settings.foo = "bar";
@@ -352,47 +363,47 @@
 		var oSource = {},
 			oView = new sap.ui.core.mvc.View({
 				preprocessors: {
-					xml: {
+					xml: [{
 						preprocessor: "sap.ui.core.util.XMLPreprocessor.process",
-					}
+					}]
 				},
 				async: true
 			});
 
-		try {
-			oView.runPreprocessor("xml", oSource). then(function() {
-				ok(false);
-				start();
-			});
-		} catch (ex) {
+		oView.runPreprocessor("xml", oSource).then(function() {
+			ok(false);
+			start();
+		}, function(ex) {
 			ok(true, ex); // TypeError: string is not a function
 			sinon.assert.notCalled(expectProcess);
 			start();
-		}
+		});
 	});
 
-	asyncTest("runPreprocessor w/ valid preprocessor", 2, function () {
-		var oSource = {},
+	asyncTest("runPreprocessor w/ valid preprocessor", 1, function () {
+		var oSource = {}, bCalled = false;
 			oView = new sap.ui.core.mvc.View({
 				preprocessors: {
-					xml: {
-						preprocessor: "sap.ui.core.util.XMLPreprocessor"
-					},
+					xml: [{
+						preprocessor: {
+							process: function(val) {
+								bCalled = true;
+								return Promise.resolve(val);
+							}
+						}
+					}],
 				},
 				async: true
 			});
-
-		try {
-			oView.runPreprocessor("xml", oSource). then(function() {
-				ok(true);
-				sinon.assert.calledOnce(expectProcess);
+		oView.loaded().then(function() {
+			oView.runPreprocessor("xml", oSource).then(function() {
+				ok(bCalled, "preprocessor was called");
+				start();
+			},function(ex) {
+				ok(false, ex); // TypeError: string is not a function
 				start();
 			});
-		} catch (ex) {
-			ok(false, ex); // TypeError: string is not a function
-			start();
-		}
-
+		});
 	});
 
 	asyncTest("runPreprocessor w/o known preprocessor", 2, function () {
@@ -638,8 +649,28 @@
 		});
 	});
 
+	QUnit.test("sap.ui.core.mvc.View#getPreprocessorInfo", function(assert) {
+		var oView = new sap.ui.core.mvc.View("dummy", {}),
+			oPreprocessorInfo = {
+			  caller: "Element sap.ui.core.mvc.View#dummy (undefined)",
+			  componentId: undefined,
+			  id: "dummy",
+			  name: undefined,
+			  sync: false
+			};
+		assert.deepEqual(oView.getPreprocessorInfo(), oPreprocessorInfo);
+		oView.destroy();
+	});
+
+	QUnit.test("sap.ui.core.mvc.Preprocessor methods", function(assert) {
+		jQuery.sap.registerModulePath("sap.ui.core.qunit.mvc", "./testdata/mvc");
+		jQuery.sap.require("sap.ui.core.qunit.mvc.TestPreprocessor");
+		assert.ok(sap.ui.core.qunit.mvc.TestPreprocessor.process, "process method");
+		assert.ok(sap.ui.core.qunit.mvc.TestPreprocessor.getCacheKey, "getCacheKey method");
+	});
+
 	asyncTest("sap.ui.core.mvc.Preprocessor extending module", 2, function() {
-		jQuery.sap.registerModulePath("sap.ui.core.qunit.mvc", "./mvc");
+		jQuery.sap.registerModulePath("sap.ui.core.qunit.mvc", "./testdata/mvc");
 
 		mSettings = {
 			message: "TestPreprocessor executed",
