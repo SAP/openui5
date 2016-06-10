@@ -536,7 +536,6 @@
 		core.applyChanges();
 
 		assert.equal($footerWrapper.hasClass("sapUiHidden"), false, "Footer is visible again");
-		assert.equal($footer.hasClass("sapMDynamicPageActualFooterControlShow"), true, "Footer is visible again");
 	});
 
 	/* --------------------------- DynamicPage Mobile Rendering ---------------------------------- */
