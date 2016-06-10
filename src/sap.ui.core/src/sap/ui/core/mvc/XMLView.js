@@ -193,24 +193,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 				sManifest = oRootComponent ? JSON.stringify(oRootComponent.getManifest()) : null,
 				aFutureKeyParts = getCacheKeyPrefixes(oView, oRootComponent);
 
-			aFutureKeyParts.push(getVersionInfo());
-			aFutureKeyParts.push(getCacheKeys(mCacheSettings.keys));
+			aFutureKeyParts = aFutureKeyParts.concat(getVersionInfo(), getCacheKeyProviders(oView), mCacheSettings.keys);
 
-			return Promise.all(aFutureKeyParts).then(function(aKeyParts) {
+			return validateCacheKey(oView, aFutureKeyParts).then(function(sKey) {
 				return {
-					key: aKeyParts.join("_") +  "(" + jQuery.sap.hashCode(sManifest || "") + ")",
+					key: sKey +  "(" + jQuery.sap.hashCode(sManifest || "") + ")",
 					componentManifest: sManifest,
 					additionalData: mCacheSettings.additionalData
 				};
 			});
 		}
 
-		function getCacheKeys(aFutureKeys) {
-			return Promise.all(aFutureKeys).then(function(aKeys) {
-				if (aKeys.every(function(sKey){return sKey;})) {
+		function isValidKey(sKey) {
+			return sKey;
+		}
+
+		function validateCacheKey(oView, aFutureKeyParts) {
+			return Promise.all(aFutureKeyParts).then(function(aKeys) {
+				if (aKeys.every(isValidKey)) {
 					return aKeys.join('_');
 				} else {
-					throw new Error("Provided cache keys may not be undefined.");
+					var e = new Error("Provided cache keys may not be empty or undefined.");
+					oView.oAsyncState.complete(e);
+					throw e;
 				}
 			});
 		}
@@ -222,6 +227,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 					oView.getId(),
 					sap.ui.getCore().getConfiguration().getLanguageTag()
 				];
+		}
+
+		function getCacheKeyProviders(oView) {
+			var mPreprocessors = View._mPreprocessors["XML"],
+				oPreprocessorInfo = oView.getPreprocessorInfo(true),
+				aFutureCacheKeys = [];
+			function pushFutureKey(o) {
+				if (o.preprocessor.getCacheKey) {
+					aFutureCacheKeys.push(o.preprocessor.getCacheKey(oPreprocessorInfo));
+				}
+			}
+			for (var sType in mPreprocessors) {
+				mPreprocessors[sType].forEach(pushFutureKey);
+			}
+			return aFutureCacheKeys;
 		}
 
 		function getVersionInfo() {
