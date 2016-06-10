@@ -312,16 +312,21 @@ sap.ui.define(['jquery.sap.global', './Popover', './TabStripSelectList', './libr
 		 *
 		 * @override
 		 * @param {string} sValue
+		 * @return {sap.m.TabStripSelect} <code>this</code> for chaining
 		 * @private
 		 */
 		TabStripSelect.prototype.setValue = function(sValue) {
-			var $ModifiedDom = this.$().find(".sapMTabStripSelectListItemModified").eq(0);
+			var $ModifiedDom = this.$().find(".sapMTabStripSelectListItemModified").eq(0),
+				oSelectedItem;
+
 			Select.prototype.setValue.apply(this, arguments);
-			if (this.getSelectedItem().getProperty('modified')) {
+			oSelectedItem = this.getSelectedItem();
+			if (oSelectedItem && oSelectedItem.getProperty('modified')) {
 				$ModifiedDom.removeClass(TabStripItem.CSS_CLASS_STATE_INVISIBLE);
 			} else {
 				$ModifiedDom.addClass(TabStripItem.CSS_CLASS_STATE_INVISIBLE);
 			}
+			return this;
 		};
 
 
