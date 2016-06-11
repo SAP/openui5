@@ -9,7 +9,7 @@
 <!-- UI5 Bootstrap -->
 <script src="../../../resources/sap-ui-core.js"
 	type="text/javascript" id="sap-ui-bootstrap"
-	data-sap-ui-libs="sap.ui.layout, sap.m, sap.ui.commons"
+	data-sap-ui-libs="sap.ui.layout, sap.m"
 	data-sap-ui-theme="sap_bluecrystal"></script>
 
 <script type="text/javascript">
@@ -122,7 +122,7 @@
 	var buildTC = function(oContent) {
 		return new sap.m.FlexBox({
 			items : [ oContent ],
-			layoutData : new sap.ui.commons.layout.ResponsiveFlowLayoutData({
+			layoutData : new sap.ui.layout.ResponsiveFlowLayoutData({
 				minWidth : 400
 			}),
 			height : "150px"
