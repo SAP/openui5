@@ -25,6 +25,8 @@
 		<script type="text/javascript"
 				src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript"
+				src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+		<script type="text/javascript"
 				src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 
@@ -57,9 +59,6 @@
 
 		<!-- Test functions -->
 		<script type="text/javascript">
-			if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
-				jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-			}
 
 			module("Appearance");
 

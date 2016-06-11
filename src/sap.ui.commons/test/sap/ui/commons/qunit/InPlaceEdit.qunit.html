@@ -140,12 +140,7 @@
 
 		// link
 		equal(jQuery("#IPE6").get(0).offsetWidth, 200, "Link: Width of the control");
-		if(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version == 8) {
-			// in IE8 there is a strange character at the end
-			equal(jQuery("#IPE6").text().slice(0, sStartText.length), sStartText, "Link: Displayed text");
-		}else {
-			equal(jQuery("#IPE6").text(), sStartText, "Link: Displayed text");
-		}
+		equal(jQuery("#IPE6").text(), sStartText, "Link: Displayed text");
 		ok(jQuery("#IPE6").find("a").get(0), "Link: rendered as <a>");
 		ok(jQuery("#IPE6--Edit").get(0), "Link: Edit button rendered");
 		equal(jQuery("#IPE6--Edit").css("visibility"), "hidden", "Link: Edit button not visible");
@@ -265,12 +260,7 @@
 
 		setTimeout(function(){
 			ok(!jQuery.sap.domById("TF1"), "TextField1 not longer rendered")
-			if(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version == 8) {
-				// in IE8 there is a strange character at the end
-				equal(jQuery("#IPE1").find("span").text().slice(0, sStartText.length + 1), sStartText + "A", "Displayed text");
-			} else {
-				equal(jQuery("#IPE1").find("span").text(), sStartText + "A", "Displayed text");
-			}
+			equal(jQuery("#IPE1").find("span").text(), sStartText + "A", "Displayed text");
 			ok(jQuery("#IPE1").hasClass("sapUiIpeUndo"), "Undo CSS-class rendered");
 			ok(jQuery("#IPE1").find("button").get(0), "Undo Button rendered")
 			equal(oTextField1.getValue(), sStartText + "A", "Value of TextField1");
@@ -304,12 +294,7 @@
 		sap.ui.getCore().applyChanges();
 
 		setTimeout(function(){
-			if(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version == 8) {
-				// in IE8 there is a strange character at the end
-				equal(jQuery("#IPE1").find("span").text().slice(0, sStartText.length + 1), sStartText + "A", "Displayed text before clearOldText");
-			} else {
-				equal(jQuery("#IPE1").find("span").text(), sStartText + "A", "Displayed text before clearOldText");
-			}
+			equal(jQuery("#IPE1").find("span").text(), sStartText + "A", "Displayed text before clearOldText");
 			ok(jQuery("#IPE1").find("button").get(0), "Undo Button rendered before clearOldText")
 			oIPE1.clearOldText();
 			equal(jQuery("#IPE1").find("span").text(), sStartText + "A", "Displayed text after clearOldText");

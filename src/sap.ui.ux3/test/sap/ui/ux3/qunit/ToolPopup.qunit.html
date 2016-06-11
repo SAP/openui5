@@ -16,6 +16,7 @@
 	type="text/css" media="screen" />
 <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
@@ -38,10 +39,6 @@
 
 <script language="javascript">
 	sinon.config.useFakeTimers = false;
-	<!-- add the qunit-coverage.js to add client-side coverage to QUnit tests -->
-	if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
-		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-	}
 
 	var bTest = false;
 	var sBorderWidth = "";
@@ -63,8 +60,7 @@
 		"collision" : ""
 	};
 
-	var bIE8 = sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version === 8;
-	var iTimeout = bIE8 ? 1000 : 500;
+	var iTimeout = 500;
 
 	var oBtn1 = new sap.ui.commons.Button({
 		text : "open here",
@@ -244,26 +240,16 @@
 			bTest = oTP1.isOpen();
 			ok(bTest, "ToolPopup was opened");
 
-			// IE8 isn't able to position the ToolPopup properly though it has enough space left of the button...
-
-			if (bIE8) {
-				ok(true, "Internet Explorer 8 is too stupid to calculate the correct position");
-			} else {
-				if (bTest) {
-					bTest = oTPRect.left + oTPRect.width <= oBtnRect.left;
-				}
-				ok(bTest, "ToolPopup opened left from button");
+			if (bTest) {
+				bTest = oTPRect.left + oTPRect.width <= oBtnRect.left;
 			}
+			ok(bTest, "ToolPopup opened left from button");
 
-			if (bIE8) {
-				ok(true, "Internet Explorer 8 is too stupid to calculate the correct position if window is too small");
-			} else {
-				if (bTest) {
-					// -1 since arrow starts at next pixel
-					bTest = (oTPRect.left + oTPRect.width - iBorderWidth - 1 <= oArrowRect.left) && (oArrowRect.left + oTP1.iArrowWidth <= oBtnRect.left);
-				}
-				ok(bTest, "Arrow opened between button and ToolPopup");
+			if (bTest) {
+				// -1 since arrow starts at next pixel
+				bTest = (oTPRect.left + oTPRect.width - iBorderWidth - 1 <= oArrowRect.left) && (oArrowRect.left + oTP1.iArrowWidth <= oBtnRect.left);
 			}
+			ok(bTest, "Arrow opened between button and ToolPopup");
 		};
 
 		oTP1.attachClosed(fnClosed);
@@ -301,21 +287,13 @@
 			if (bTest) {
 				bTest = oTPRect.top + oTPRect.height <= oBtnRect.top;
 			}
-			if (bIE8) {
-				ok(true, "Internet Explorer 8 is too stupid to calculate the correct position if window is too small");
-			} else {
-				ok(bTest, "ToolPopup opened above button");
-			}
+			ok(bTest, "ToolPopup opened above button");
 
-			if (bIE8) {
-				ok(true, "Internet Explorer 8 is too stupid to calculate the correct position if window is too small");
-			} else {
-				if (bTest) {
-					bTest = (oTPRect.top + oTPRect.height - iBorderWidth <= oArrowRect.top + (oArrowRect.height - oTP1.iArrowWidth))
-							&& (oArrowRect.top - oArrowRect.height + oTP1.iArrowWidth <= oBtnRect.top);
-				}
-				ok(bTest, "Arrow opened between button and ToolPopup");
+			if (bTest) {
+				bTest = (oTPRect.top + oTPRect.height - iBorderWidth <= oArrowRect.top + (oArrowRect.height - oTP1.iArrowWidth))
+						&& (oArrowRect.top - oArrowRect.height + oTP1.iArrowWidth <= oBtnRect.top);
 			}
+			ok(bTest, "Arrow opened between button and ToolPopup");
 		};
 
 		oTP1.attachOpened(fnOpened);
@@ -756,8 +734,7 @@
 		// add Textfield (that is rendered outside of the ToolPopup) as focusable area
 		oTPFocus.addFocusableArea(oTF.getId());
 
-		// if IE8 init it with true else with false
-		var bCloseOnMyCommand = !!bIE8;
+		var bCloseOnMyCommand = false;
 
 		oBtn1.press = function() {
 			oTPFocus.open(sap.ui.core.Popup.Dock.BeginBottom, sap.ui.core.Popup.Dock.BeginTop);
@@ -882,11 +859,7 @@
 
 			oTPRect = oTPMaxHeight.$().rect();
 			bTest = Math.round(oTPRect.height) <= 200;
-			if (bIE8) {
-				ok(true, "Internet Explorer 8 is too stupid to calculate the correct height of the content");
-			} else {
-				ok(bTest, "ToolPopup not higher than 200px");
-			}
+			ok(bTest, "ToolPopup not higher than 200px");
 		};
 
 		oTPMaxHeight.setMaxHeight("200px");

@@ -24,6 +24,7 @@
 		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
@@ -31,11 +32,6 @@
 		<!-- use the sinon faketimers for this test -->
 		<script type="text/javascript">
 			sinon.config.useFakeTimers = true;
-
-			<!-- add the qunit-coverage.js to add client-side coverage to QUnit tests -->
-			if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
-				jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-			}
 		</script>
 
 		<script language="javascript">

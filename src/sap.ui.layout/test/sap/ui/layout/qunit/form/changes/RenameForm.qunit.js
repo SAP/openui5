@@ -1,7 +1,4 @@
 /*globals QUnit, sinon*/
-if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
-	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-}
 jQuery.sap.require("sap.ui.layout.changeHandler.RenameForm");
 jQuery.sap.require("sap.ui.layout.form.SimpleForm");
 jQuery.sap.require("sap.ui.layout.form.FormElement");
