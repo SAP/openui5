@@ -755,6 +755,7 @@
 		};
 		var fnRecievedHandler = function() {
 			equal(true, true, "Data received event was fired");
+			oLabel.unbindElement();
 			start();
 		};
 		oLabel.bindElement({
@@ -777,6 +778,7 @@
 		};
 		var fnRecievedHandler = function() {
 			equal(true, true, "Data received event was fired");
+			oLabel.unbindElement();
 			start();
 		};
 		oLabel.bindElement({
