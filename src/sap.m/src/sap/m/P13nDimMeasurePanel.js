@@ -1305,10 +1305,12 @@ sap.ui.define([
 		}
 	};
 
-	P13nDimMeasurePanel.prototype.onBeforeNavigationFrom = function() {
+	P13nDimMeasurePanel.prototype.onBeforeNavigationFromAsync = function() {
 		// Check if chart type fits selected dimensions and measures
+		var sChartType = this.getChartTypeKey();
 		var aDimensionItems = [];
 		var aMeasureItems = [];
+
 		this.getDimMeasureItems().forEach(function(oDimMeasureItem) {
 			var oModelItem = this._getModelItemByColumnKey(oDimMeasureItem.getColumnKey());
 			if (!oModelItem) {
@@ -1335,8 +1337,20 @@ sap.ui.define([
 				name: oItem.getColumnKey()
 			};
 		});
-		var oResult = sap.chart.api.getChartTypeLayout(this.getChartTypeKey(), aDimensionItems, aMeasureItems);
-		return oResult.errors.length === 0;
+
+		return new Promise(function(resolve) {
+			sap.ui.getCore().loadLibraries([
+				"sap.chart"
+			]).then(function() {
+				var oResult;
+				try {
+					oResult = sap.chart.api.getChartTypeLayout(sChartType, aDimensionItems, aMeasureItems);
+				} catch (oException) {
+					return resolve(false);
+				}
+				return resolve(oResult.errors.length === 0);
+			});
+		});
 	};
 
 	return P13nDimMeasurePanel;
