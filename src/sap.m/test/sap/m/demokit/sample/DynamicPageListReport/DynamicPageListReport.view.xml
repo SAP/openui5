@@ -1,12 +1,10 @@
 <mvc:View
 		controllerName="sap.m.sample.DynamicPageListReport.DynamicPageListReport"
-		height="95%"
+		height="100%"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:core="sap.ui.core"
 		xmlns:layout="sap.ui.layout"
 		xmlns="sap.m">
-
-	<App>
 		<DynamicPage id="dynamicPageId" headerExpanded="{/headerExpanded}">
 			<!-- DynamicPage Title -->
 			<title>
@@ -140,5 +138,4 @@
 				</OverflowToolbar>
 			</footer>
 		</DynamicPage>
-	</App>
 </mvc:View>
