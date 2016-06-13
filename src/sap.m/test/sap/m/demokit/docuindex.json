@@ -470,6 +470,7 @@
 			"sap.m.sample.ListFooter",
 			"sap.m.sample.ListGrouping",
 			"sap.m.sample.ListGrowing",
+			"sap.m.sample.ListGrowingUpwards",
 			"sap.m.sample.ListItemTypes",
 			"sap.m.sample.ListLoading",
 			"sap.m.sample.ListNavType",
@@ -1932,6 +1933,11 @@
 		  "id": "sap.m.sample.ListGrowing",
 		  "name": "List - Growing",
 		  "description": "The Growing feature helps if your content is too big to be loaded/shown at once. It paginates the content into smaller chunks - aka pages - which are loaded/shown one after another. Random access to pages (e.g jumping to the end) is not possible. Depending on the model the content is loaded on demand (OData) or shown on demand (JSON)."
+		},
+		{
+		  "id": "sap.m.sample.ListGrowingUpwards",
+		  "name": "List - Growing Upwards",
+		  "description": "The Upwards Growing"
 		},
 		{
 		  "id": "sap.m.sample.ListGrouping",

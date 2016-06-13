@@ -140,17 +140,16 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			growingScrollToLoad : {type : "boolean", group : "Behavior", defaultValue : false},
 
 			/**
-			 * Defines the directionality of the growing feature.
-			 * If set to <code>Downwards</code> user needs to scroll down to load more items or growing button is displayed at the bottom.
-			 * If set to <code>Upwards</code> user needs to scroll up to load more items or growing button is displayed at the top.
-			 * <b>Note:</b> This property inverse the DOM and <code>items</code> aggregation order.
+			 * Defines the direction of the growing feature.
+			 * If set to <code>Downwards</code> the user has to scroll down to load more items or the growing button is displayed at the bottom.
+			 * If set to <code>Upwards</code> the user has to scroll up to load more items or the growing button is displayed at the top.
 			 * @since 1.40.0
 			 */
 			growingDirection : {type : "sap.m.ListGrowingDirection", group : "Behavior", defaultValue : sap.m.ListGrowingDirection.Downwards},
 
 			/**
 			 * If set to true, this control remembers and retains the selection of the items after a binding update has been performed (e.g. sorting, filtering).
-			 * <b>Note:</b> This feature works only if two-way binding for the <code>selected</code> property of the item is not used and needs to be turned off if the binding context of the item does not always point to the same entry in the model, for example, if the order of the data in the <code>JSONModel</code> is changed.
+			 * <b>Note:</b> This feature works only if two-way data binding for the <code>selected</code> property of the item is not used. It also needs to be turned off if the binding context of the item does not always point to the same entry in the model, for example, if the order of the data in the <code>JSONModel</code> is changed.
 			 * @since 1.16.6
 			 */
 			rememberSelections : {type : "boolean", group : "Behavior", defaultValue : true},
