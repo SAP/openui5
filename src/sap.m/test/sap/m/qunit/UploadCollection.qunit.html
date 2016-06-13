@@ -15,15 +15,13 @@
 <script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script type="text/javascript" src="UploadCollectionForPendingUpload.qunit.js"></script>
 <script type="text/javascript" src="UploadCollectionToolbar.qunit.js"></script>
 <script type="text/javascript" src="UploadCollectionOpenFileDialog.qunit.js"></script>
 
 <script type="text/javascript">
-	if(!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 8)) {
-		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-	}
 
 	var oData = {
 			"items" : [{

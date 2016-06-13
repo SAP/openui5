@@ -6,69 +6,62 @@
 		<title>qUnit Page for duplicate ID checks</title>
 
 		<script id="sap-ui-bootstrap"
-			type="text/javascript"
 			src="../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="">
 		</script>
 
-		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-		<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-
-		<script language="javascript">
+		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" media="screen">
+		<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<!-- add the qunit-coverage.js to add client-side coverage to QUnit tests -->
-		if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
-			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-		}
+		<script src="../../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script>
 
 		var oListItem;
 		var oListItem2;
 
 		// check default settings
-		test("Default Settings", function() {
-			expect(1);
-			equal(sap.ui.getCore().getConfiguration().getNoDuplicateIds(), true, "default setting should be: allow no duplicate IDs");
+		QUnit.test("Default Settings", function(assert) {
+			assert.expect(1);
+			assert.equal(sap.ui.getCore().getConfiguration().getNoDuplicateIds(), true, "default setting should be: allow no duplicate IDs");
 		});
 
 		// make sure initially there is no error
-		test("First creation", function() {
-			expect(0);
+		QUnit.test("First creation", function(assert) {
+			assert.expect(0);
 			oListItem = new sap.ui.core.ListItem("L1");
 		});
 
-		test("Second, duplicate creation (with default settings)", function() {
-			expect(1);
+		QUnit.test("Second, duplicate creation (with default settings)", function(assert) {
+			assert.expect(1);
 			try {
 				oListItem2 = new sap.ui.core.ListItem("L1");
 			} catch (e) {
-				equal(1, 1, "Error should be thrown");
+				assert.equal(1, 1, "Error should be thrown");
 			}
 		});
 
-		test("Third, duplicate creation (after first element has been destroyed)", function() {
-			expect(0);
+		QUnit.test("Third, duplicate creation (after first element has been destroyed)", function(assert) {
+			assert.expect(0);
 			oListItem.destroy();
 			oListItem2 = new sap.ui.core.ListItem("L1");
 			oListItem2.destroy();
 		});
 
-		test("ID Generation", function() {
+		QUnit.test("ID Generation", function(assert) {
 			expect(1);
 			oListItem = new sap.ui.core.ListItem();
 			var oListItem2 = new sap.ui.core.ListItem();
-			ok (oListItem.getId() != oListItem2.getId(), "generated IDs should be different and there should have been no error");
+			assert.ok (oListItem.getId() != oListItem2.getId(), "generated IDs should be different and there should have been no error");
 		});
 
 	</script>
 	</head>
 	<body>
-	<h1 id="qunit-header">qUnit Page for duplicate ID checks</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<div id="qunit-testrunner-toolbar"></div>
-	<ol id="qunit-tests"></ol>
+		<div id="qunit"></div>
 	</body>
 </html>

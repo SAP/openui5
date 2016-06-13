@@ -34,11 +34,6 @@
 		strictEqual(oOpa.getContext(), oOpa2.getContext(), "Contexts are the same");
 	});
 
-	//Sinon does not work in IE8 -.-
-	if(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 8) {
-		return;
-	}
-
 	test("Should wait for something", function() {
 		// Arrange
 		var bFirstCheck = false,

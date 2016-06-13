@@ -19,13 +19,11 @@
 <script type="text/javascript"
 	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+<script type="text/javascript"
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 <script language="javascript">
-	<!-- add the qunit-coverage.js to add client-side coverage to QUnit tests -->
-	if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
-		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-	}
 
 	function openHandler(oEvent) {
 		var bShow = oEvent.getParameter("show");
