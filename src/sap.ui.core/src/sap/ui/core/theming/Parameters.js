@@ -180,7 +180,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
 			// Inital loading
 			if (!mParameters) {
 
-				mParameters = {};
+				mergeParameters({});
 				sTheme = sap.ui.getCore().getConfiguration().getTheme();
 
 				forEachStyleSheet(loadParameters);
@@ -262,9 +262,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
 		 *
 		 * @private
 		 * @sap-restricted sap.ui.core
+		 * @param {boolean} [bAvoidLoading] Whether loading of parameters should be avoided
 		 * @return {array} Scope names
 		 */
-		Parameters._getScopes = function() {
+		Parameters._getScopes = function(bAvoidLoading) {
+			if ( bAvoidLoading && !mParameters ) {
+				return;
+			}
 			var oParams = getParameters();
 			var aScopes = Object.keys(oParams["scopes"]);
 			return aScopes;
