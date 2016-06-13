@@ -180,10 +180,10 @@ sap.ui.define([
 				"There are pending changes. Do you really want to refresh the favorite product?");
 		},
 
-		onRefreshSalesOrderDetails : function (oEvent) {
-			this.onRefresh(this.getView().byId("ObjectPage").getElementBinding(),
-				"There are pending changes. Do you really want to refresh the sales order?");
-		},
+//		onRefreshSalesOrderDetails : function (oEvent) {
+//			this.onRefresh(this.getView().byId("ObjectPage").getElementBinding(),
+//				"There are pending changes. Do you really want to refresh the sales order?");
+//		},
 
 		onRefreshSalesOrdersList : function (oEvent) {
 			this.onRefresh(this.getView().byId("SalesOrders").getBinding("items"),

@@ -183,8 +183,8 @@
 					<Title level="H2" text="Sales Order Details" titleStyle="H2"/>
 					<Button press="onSalesOrderSchedules" icon="sap-icon://calendar"
 						tooltip="Schedules"/>
-					<Button icon="sap-icon://refresh"
-						press="onRefreshSalesOrderDetails"/>
+					<!--Button icon="sap-icon://refresh"
+						press="onRefreshSalesOrderDetails"/-->
 					<Button enabled="{ui>/bRealOData}" icon="sap-icon://save"
 						press="onSaveSalesOrder"/>
 					<Button enabled="{ui>/bRealOData}" icon="sap-icon://sys-cancel-2"

@@ -1099,14 +1099,15 @@ sap.ui.require([
 			.withExactArgs(sinon.match.same(oBinding), sinon.match.func,
 				sinon.match.same(oPathPromise))
 			.returns(oCacheProxy);
-		this.mock(oCache).expects("refresh");
+		this.mock(oCache).expects("refresh").never();
 		oBinding.setContext(oContext);
 		oBinding.mCacheByContext = {"/TEAMS('1')" : oCache, "/TEAMS('42')" : {}};
 
 		return oCachePromise.then(function () {
 			//code under test
-			oBinding.refresh();
-			assert.deepEqual(oBinding.mCacheByContext, {"/TEAMS('1')" : oCache});
+			assert.throws(function () {
+				oBinding.refresh();
+			}, new Error("Refresh on this binding is not supported"));
 		});
 	});
 
