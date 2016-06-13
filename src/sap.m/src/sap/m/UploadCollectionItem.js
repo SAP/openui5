@@ -103,6 +103,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 
 				/**
 				 * Specifies the URL where the file is located.
+				 * If the application doesn't provide a value for this property, the icon and the file name of the UploadCollectionItem are not clickable.
 				 */
 				url : {
 					type : "string",
