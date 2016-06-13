@@ -7,6 +7,7 @@
 
 .sapMITH {
 	box-shadow: inset 0 -0.25rem 0 -0.125rem darken(@sapUiObjectHeaderBackground, 8);
+  	background-color: @sapUiObjectHeaderBackground;
 }
 
 .sapMITBHead {
@@ -23,7 +24,7 @@
 /* Arrow */
 
 .sapMITBSelected > .sapMITBContentArrow {
-	border-bottom-color: @sapUiActive;
+	border-bottom-color: @sapUiSelected;
 }
 
 .sapMITBSelected.sapMITBFilterNeutral > .sapMITBContentArrow {
@@ -46,6 +47,7 @@
 
 .sapMITBContent {
 	background-color: @sapUiGroupContentBackground;
+  	border-bottom: 0.125rem solid darken(@sapUiObjectHeaderBackground, 8);
 }
 
 .sapMITBContainerContent {
@@ -62,7 +64,7 @@
 
 .sapMITBFilter .sapMITBText {
 	color: @sapUiContentLabelColor;
-	text-shadow: 0 0.0625rem 0 fade(@sapUiContentContrastShadowColor, 70);
+	text-shadow: 0 1px 0 fade(@sapUiDarkShadowTint, 50);
 }
 
 .sapMITBTextOnly .sapMITBText {
@@ -71,40 +73,38 @@
 
 .sapMITBTextOnly .sapMITBFilterDefault > .sapMITBText {
 	color: @sapUiGroupTitleTextColor;
-	text-shadow: 0 0.0625rem 0 fade(@sapUiContentContrastShadowColor, 70);
 }
 
 .sapMITBTextOnly .sapMITBFilterDefault.sapMITBSelected > .sapMITBText {
-	color: darken(@sapUiBrand, 10);
+	color: @sapUiSelected;
 }
 
 .sapMITBTextOnly .sapMITBFilterNeutral > .sapMITBText {
-	color: @sapUiNeutralElement;
+	color: @sapUiNeutralText;
 }
 
 .sapMITBTextOnly .sapMITBFilterPositive > .sapMITBText {
-	color: @sapUiPositiveElement;
+	color: @sapUiPositiveText;
 }
 
 .sapMITBTextOnly .sapMITBFilterNegative > .sapMITBText {
-	color: @sapUiNegativeElement;
+	color: @sapUiNegativeText;
 }
 
 .sapMITBTextOnly .sapMITBFilterCritical > .sapMITBText {
-	color: @sapUiCriticalElement;
+	color: @sapUiCriticalText;
 }
 
 .sapMITBFilter .sapMITBCount {
-	color: @sapUiBaseText;
+	color: @sapUiGroupTitleTextColor;
 	max-width: 2rem;
 	overflow: hidden;
 	position: absolute;
 	text-overflow: ellipsis;
-	text-shadow: 0 0.0625rem 0 fade(@sapUiContentContrastShadowColor, 70);
 }
 
 .sapMITBTextOnly .sapMITBFilter .sapMITBCount {
-	color: @sapUiGroupTitleTextColor;
+	color: @sapUiSelected;
 	font-size: @sapMFontMediumSize;
 	max-width: none;
 	overflow: hidden;
@@ -113,12 +113,11 @@
 }
 
 .sapMITBFilterIcon {
-	background: @sapUiGroupContentBackground;
-	border: 1px solid @sapUiBrand;
+	border: 1px solid @sapUiHighlight;
 }
 
 .sapMITBFilterDefault {
-	color: @sapUiBrand;
+	color: @sapUiHighlight;
 }
 
 .sapMITBFilterNeutral {
@@ -146,8 +145,8 @@
 }
 
 .sapMITBSelected .sapMITBFilterDefault {
-	background: @sapUiBrand;
-	color: @sapUiGroupContentBackground;
+	background: @sapUiSelected;
+	color: @sapUiContentContrastIconColor;
 }
 
 .sapMITBSelected .sapMITBFilterNeutral {
@@ -189,7 +188,11 @@
 }
 
 .sapMITBSepIcon {
-	color: @sapUiContentIconColor;
+	color: @sapUiContentNonInteractiveIconColor;
+}
+
+.sapMITBSepIcon::before {
+  text-shadow: 0 1px 0 fade(@sapUiContentContrastShadowColor, 70);
 }
 
 .sapMITBArrowScroll {
