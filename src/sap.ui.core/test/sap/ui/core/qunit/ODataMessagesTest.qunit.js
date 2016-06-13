@@ -1054,4 +1054,145 @@ function runODataMessagesTests() {
 	};
 
 	asyncTest("Delete control messages when the binding is destroyed and on rebinding",  fnTestRemoveMessagesWithBinding);
+
+
+	var fnTestTransientMessages = function() {
+		expect(19);
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, jQuery.extend({}, mModelOptions, { json: true }));
+		sap.ui.getCore().setModel(oModel);
+
+		var read = function(sPath) {
+			return new Promise(function(resolve) {
+				oModel.read(sPath, { success: resolve });
+			});
+		}
+
+		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+
+		equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
+
+		read("/TransientTest1").then(function() {
+			var aMessages = oMessageModel.getProperty("/");
+			equal(aMessages.length, 3, "Three messages from the back-end");
+			equal(aMessages[0].persistent, false, "First message should not be persistent");
+			equal(aMessages[0].target, "/TransientTest1/SupplierID", "Message has correct target");
+			equal(aMessages[1].persistent, true, "Second message should be persistent");
+			equal(aMessages[1].target, "/TransientTest1/SupplierID", "Message has correct target");
+			equal(aMessages[2].persistent, true, "Third message should be persistent");
+			equal(aMessages[2].target, "/TransientTest1/SupplierID", "Message has correct target");
+
+			return read("/TransientTest1");
+		}).then(function() {
+			var aMessages = oMessageModel.getProperty("/");
+			equal(aMessages.length, 5, "Five messages - 3 new ones from the back-end");
+
+			equal(aMessages[0].persistent, true, "First message should be persistent");
+			equal(aMessages[0].target, "/TransientTest1/SupplierID", "Message has correct target");
+			equal(aMessages[1].persistent, true, "Second message should be persistent");
+			equal(aMessages[1].target, "/TransientTest1/SupplierID", "Message has correct target");
+			equal(aMessages[2].persistent, false, "Third message should not be persistent");
+			equal(aMessages[2].target, "/TransientTest1/SupplierID", "Message has correct target");
+			equal(aMessages[3].persistent, true, "Fourth message should be persistent");
+			equal(aMessages[3].target, "/TransientTest1/SupplierID", "Message has correct target");
+			equal(aMessages[4].persistent, true, "Fifth message should be persistent");
+			equal(aMessages[4].target, "/TransientTest1/SupplierID", "Message has correct target");
+
+			oModel.destroy();
+			start();
+		});
+	};
+
+	asyncTest("Transient messages with /#TRANSIENT#-target or transient-flag", fnTestTransientMessages);
+
+	var fnTestTransientMessageRemoval = function() {
+		expect(35);
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, jQuery.extend({}, mModelOptions, { json: true }));
+		sap.ui.getCore().setModel(oModel);
+
+		var read = function(sPath) {
+			return new Promise(function(resolve) {
+				oModel.read(sPath, { success: resolve });
+			});
+		}
+
+		var oMessageManager = sap.ui.getCore().getMessageManager();
+		var oMessageModel = oMessageManager.getMessageModel();
+
+		equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
+
+		read("/TransientTest1").then(function() {
+			var aMessages = oMessageModel.getProperty("/");
+			equal(aMessages.length, 3, "Three messages from the back-end");
+			equal(aMessages[0].persistent, false, "First message should not be persistent");
+			equal(aMessages[0].target, "/TransientTest1/SupplierID", "Message has correct target");
+			equal(aMessages[1].persistent, true, "Second message should be persistent");
+			equal(aMessages[1].target, "/TransientTest1/SupplierID", "Message has correct target");
+			equal(aMessages[2].persistent, true, "Third message should be persistent");
+			equal(aMessages[2].target, "/TransientTest1/SupplierID", "Message has correct target");
+
+			oMessageManager.removeAllMessages();
+
+			equal(oMessageModel.getProperty("/").length, 0, "No messages are set after removal of all messages");
+
+
+			return read("/TransientTest1");
+		}).then(function() {
+
+			var aMessages = oMessageModel.getProperty("/");
+			equal(aMessages.length, 3, "Three messages from the back-end");
+			equal(aMessages[0].persistent, false, "First message should not be persistent");
+			equal(aMessages[0].target, "/TransientTest1/SupplierID", "Message has correct target");
+			equal(aMessages[1].persistent, true, "Second message should be persistent");
+			equal(aMessages[1].target, "/TransientTest1/SupplierID", "Message has correct target");
+			equal(aMessages[2].persistent, true, "Third message should be persistent");
+			equal(aMessages[2].target, "/TransientTest1/SupplierID", "Message has correct target");
+
+			oMessageManager.removeMessages(aMessages[0]);
+			oMessageManager.removeMessages(aMessages[2]);
+
+			aMessages = oMessageModel.getProperty("/");
+
+			equal(aMessages.length, 1, "One message left after removal of two messages");
+			equal(aMessages[0].persistent, true, "First message should not be persistent");
+			equal(aMessages[0].target, "/TransientTest1/SupplierID", "Message has correct target");
+
+			return read("/TransientTest1");
+		}).then(function() {
+
+			var aMessages = oMessageModel.getProperty("/");
+			equal(aMessages.length, 4, "Five messages - 3 new ones from the back-end");
+
+			equal(aMessages[0].persistent, true, "First message should be persistent");
+			equal(aMessages[0].target, "/TransientTest1/SupplierID", "Message has correct target");
+			equal(aMessages[1].persistent, false, "Second message should not be persistent");
+			equal(aMessages[1].target, "/TransientTest1/SupplierID", "Message has correct target");
+			equal(aMessages[2].persistent, true, "Third message should be persistent");
+			equal(aMessages[2].target, "/TransientTest1/SupplierID", "Message has correct target");
+			equal(aMessages[3].persistent, true, "Fourth message should be persistent");
+			equal(aMessages[3].target, "/TransientTest1/SupplierID", "Message has correct target");
+
+			aMessages[0].setPersistent(false);
+			aMessages[2].setPersistent(false);
+			aMessages[3].setPersistent(false);
+
+			return read("/TransientTest1");
+		}).then(function() {
+			var aMessages = oMessageModel.getProperty("/");
+			equal(aMessages.length, 3, "Three messages from the back-end, all previous messages removed after being set to non-persistent");
+			equal(aMessages[0].persistent, false, "First message should not be persistent");
+			equal(aMessages[0].target, "/TransientTest1/SupplierID", "Message has correct target");
+			equal(aMessages[1].persistent, true, "Second message should be persistent");
+			equal(aMessages[1].target, "/TransientTest1/SupplierID", "Message has correct target");
+			equal(aMessages[2].persistent, true, "Third message should be persistent");
+			equal(aMessages[2].target, "/TransientTest1/SupplierID", "Message has correct target");
+
+
+			oModel.destroy();
+			start();
+		});
+	};
+
+	asyncTest("Transient message removal from MessageManager", fnTestTransientMessageRemoval);
 }
