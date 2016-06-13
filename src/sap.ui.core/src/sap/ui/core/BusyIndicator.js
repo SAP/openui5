@@ -207,6 +207,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', '../base/EventProvider', '.
 		jQuery.sap.log.debug("sap.ui.core.BusyIndicator.show (delay: " + iDelay + ") at " + new Date().getTime());
 		jQuery.sap.assert(iDelay === undefined || (typeof iDelay == "number" && (iDelay % 1 == 0)), "iDelay must be empty or an integer");
 
+		// If body/Core are not available yet, give them some more time and open
+		// later if still required
+		if (!document.body || !sap.ui.getCore().isInitialized()) {
+			jQuery.sap.delayedCall(100, this, "show", arguments);
+			return;
+		}
+
 		if ((iDelay === undefined)
 				|| ((iDelay != 0) && (parseInt(iDelay, 10) == 0))
 				|| (parseInt(iDelay, 10) < 0)) {
@@ -248,13 +255,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', '../base/EventProvider', '.
 
 		// Do not open if the request has been canceled in the meantime
 		if (!this.bOpenRequested) {
-			return;
-		}
-
-		// If body/Core are not available yet, give them some more time and open
-		// later if still required
-		if (!document.body || !sap.ui.getCore().isInitialized()) {
-			jQuery.sap.delayedCall(100, this, "_showNowIfRequested");
 			return;
 		}
 
