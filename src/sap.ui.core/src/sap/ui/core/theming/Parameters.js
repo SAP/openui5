@@ -275,7 +275,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
 		};
 
 		/**
-		 * Returns the active scope(s) for a given control.
+		 * Returns the active scope(s) for a given control by looking up the hierarchy.
+		 *
+		 * The lookup navigates the DOM hierarchy if it's available. Otherwise if controls aren't rendered yet,
+		 * it navigates the control hierarchy. By navigating the control hierarchy, inner-html elements
+		 * with the respective scope classes can't get recognized as the Custom Style Class API does only for
+		 * root elements.
 		 *
 		 * @private
 		 * @sap-restricted sap.viz
@@ -286,6 +291,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
 			var aScopeChain = [];
 
 			if (oElement instanceof Element) {
+				var domRef = oElement.getDomRef();
 
 				// make sure to first load all pending parameters
 				// doing it later (lazy) might change the behavior in case a scope is initially not defined
@@ -294,20 +300,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
 				// check for scopes and try to find the classes in parent chain
 				var aScopes = this._getScopes();
 
-				var fnControlHasStyleClass = function(sScopeName) {
-					return typeof oElement.hasStyleClass === "function" && oElement.hasStyleClass(sScopeName);
-				};
+				if (domRef) {
+					var fnNodeHasStyleClass = function(sScopeName) {
+						var scopeList = domRef.classList;
+						return scopeList && scopeList.contains(sScopeName);
+					};
 
-				while (oElement) {
-					var aFoundScopeClasses = aScopes.filter(fnControlHasStyleClass);
-					if (aFoundScopeClasses.length > 0) {
-						aScopeChain.push(aFoundScopeClasses);
+					while (domRef) {
+						var aFoundScopeClasses = aScopes.filter(fnNodeHasStyleClass);
+						if (aFoundScopeClasses.length > 0) {
+							aScopeChain.push(aFoundScopeClasses);
+						}
+						domRef = domRef.parentNode;
 					}
-					oElement = typeof oElement.getParent === "function" && oElement.getParent();
+				} else {
+					var fnControlHasStyleClass = function(sScopeName) {
+						return typeof oElement.hasStyleClass === "function" && oElement.hasStyleClass(sScopeName);
+					};
+
+					while (oElement) {
+						var aFoundScopeClasses = aScopes.filter(fnControlHasStyleClass);
+						if (aFoundScopeClasses.length > 0) {
+							aScopeChain.push(aFoundScopeClasses);
+						}
+						oElement = typeof oElement.getParent === "function" && oElement.getParent();
+					}
 				}
-
 			}
-
 			return aScopeChain;
 		};
 
