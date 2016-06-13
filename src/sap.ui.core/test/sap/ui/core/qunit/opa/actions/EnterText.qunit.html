@@ -26,13 +26,11 @@
 		sap.ui.require([
 			"sap/ui/test/actions/EnterText",
 			"sap/m/Input",
-			"sap/m/MultiInput",
 			"sap/m/SearchField",
 			"sap/m/TextArea"
 		], function(
 				EnterText,
 				Input,
-				MultiInput,
 				SearchField,
 				TextArea)
 		{
@@ -54,12 +52,7 @@
 				changeEvent: "change",
 				liveChangeEventParameter: "value",
 				changeEventParameter: "value"
-			},{
-				Control: MultiInput,
-				changeEvent: "change",
-				liveChangeEventParameter: "value",
-				changeEventParameter: "value"
-			},{
+			}, {
 				Control: SearchField,
 				changeEvent: "search",
 				liveChangeEventParameter: "newValue",
@@ -142,7 +135,7 @@
 
 			test("Should log an error if a control is not rendered", function () {
 				// Arrange
-				this.oControl = new MultiInput();
+				this.oControl = new Input();
 
 
 				var oEnterText = new EnterText({
@@ -158,7 +151,7 @@
 			test("Should log a warning if a control cannot be focused", function () {
 				// Arrange
 				var oSpy = sinon.spy(jQuery.sap.log, "warning");
-				this.oControl = new MultiInput({
+				this.oControl = new Input({
 					enabled : false
 				});
 				this.oControl.placeAt("qunit-fixture");
