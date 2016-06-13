@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>qUnit Page for sap.ui.core.BusyIndicator BEFORE Core is Ready</title>
+
+	<script id="sap-ui-bootstrap" type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+	>
+
+	</script>
+
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"
+		data-sap-ui-cover-only="sap/ui/core/BusyIndicator.js"
+	></script>
+
+	<script language="javascript">
+		sinon.config.useFakeTimers = false;
+		var bInitialized = sap.ui.getCore().isInitialized();
+		jQuery.sap.require("sap.ui.core.BusyIndicator");
+
+		var oSpyShow = sinon.spy(sap.ui.core.BusyIndicator, "show");
+		var oSpyShowNowIfRequested = sinon.spy(sap.ui.core.BusyIndicator, "_showNowIfRequested");
+		var oSpyOnOpen = sinon.spy(sap.ui.core.BusyIndicator, "_onOpen");
+
+		sap.ui.core.BusyIndicator.show(0);
+
+		QUnit.module("BusyIndicator before DOM", {
+			beforeEach : function () {
+				this.sClass = ".sapUiLocalBusyIndicator";
+				if (jQuery.sap.getUriParameters().get("sap-ui-theme") == "sap_goldreflection") {
+					this.sClass = ".sapUiBusy";
+				}
+			},
+
+			afterEach: function() {
+				sap.ui.core.BusyIndicator.hide();
+			}
+		});
+
+		// make sure the BusyIndicator is not rendered initially
+		QUnit.test("Check if 'show' waits for DOM", function(assert) {
+			var done = assert.async();
+
+			setTimeout(function() {
+				assert.notOk(bInitialized, "Core wasn't ready when 'show' was called");
+				assert.ok(oSpyShow.callCount > 1, "'call' called more than once");
+
+				var bCalledWithDelay = false;
+				for (var i = 0; i < oSpyShow.args.length; i++) {
+					bCalledWithDelay = oSpyShow.args[i].length == 1 && oSpyShow.args[i][0] === 0;
+					if (!bCalledWithDelay) {
+						break;
+					}
+				}
+				assert.ok(bCalledWithDelay, "'show' was called with only with parameter 'iDelay:0' in all cases");
+
+				assert.ok(oSpyShow.calledBefore(oSpyShowNowIfRequested), "'show' was called before 'showNowIfRequested'");
+				assert.ok(oSpyShowNowIfRequested.calledBefore(oSpyOnOpen), "'_showNowIfRequested' was called before '_onOpen'");
+
+				//check if both busyindicators are present
+				var $oLocalBI = jQuery(".sapUiLocalBusyIndicator");
+				assert.equal($oLocalBI.length, 1, "'Pulsating Circles' BusyIndicator should exist in DOM after opening");
+				assert.ok($oLocalBI.hasClass("sapUiLocalBusyIndicatorFade"), "'Pulsating Circles' BusyIndicator should be visible after opening");
+				assert.ok($oLocalBI.hasClass("sapUiLocalBusyIndicatorSizeBig"), "Big Animation should be shown");
+
+				//check line sliding busy indicator in goldreflection. Else the same
+				//DOM as above will be checked if it's visible
+				var $Busy = jQuery(this.sClass);
+				var bVisible = $Busy.is(":visible") && ($Busy.css("visibility") == "visible");
+				assert.ok(bVisible, "BusyIndicator should be visible after opening");
+				assert.ok($Busy.css("top") === "0px", "BusyIndicator is positioned at the top of the window");
+
+				done();
+			}.bind(this), 1000);
+		});
+	</script>
+</head>
+
+<body>
+	<h1 id="qunit-header">qUnit Page for sap.ui.core.BusyIndicator</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+</body>
+</html>

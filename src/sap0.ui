@@ -18,10 +18,6 @@
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 
-	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"
-		data-sap-ui-cover-only="sap/ui/core/BusyIndicator.js"
-	></script>
-
 	<script language="javascript">
 		sinon.config.useFakeTimers = false;
 
