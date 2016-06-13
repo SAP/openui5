@@ -261,7 +261,38 @@ sap.ui.define([
 		 * If the previous output is a truthy value, the next matcher will receive this value as an input parameter.
 		 * If any matcher does not match an input (i.e. returns a falsy value), then the input is filtered out. Check will not be called if the matchers filtered out all controls/values.
 		 * Check/success will be called with all matching values as an input parameter. Matchers also can be define as an inline-functions.
-		 * @param {string} [oOptions.controlType] For example <code>"sap.m.Button"</code> will search for all buttons inside of a container. If an id ID given, this is ignored.
+		 * @param {string} [oOptions.controlType] Selects all control by their type.
+		 * It is usually combined with a viewName or searchOpenDialogs. If no control is matching the type, an empty
+		 * array will be returned. Here are some samples:
+		 * <code>
+		 *     <pre>
+		 *         this.waitFor({
+		 *             controlType: "sap.m.Button",
+		 *             success: function (aButtons) {
+		 *                 // aButtons is an array of all visible buttons
+		 *             }
+		 *         });
+		 *
+		 *         // control type will also return controls that extend the control type
+		 *         // this will return an array of visible sap.m.List and sap.m.Table since both extend List base
+		 *         this.waitFor({
+		 *             controlType: "sap.m.ListBase",
+		 *             success: function (aLists) {
+		 *                 // aLists is an array of all visible Tables and Lists
+		 *             }
+		 *         });
+		 *
+		 *         // control type is often combined with viewName - only controls that are inside of the view
+		 *         // and have the correct type will be returned
+		 *         this.waitFor({
+		 *             viewName: "my.View"
+		 *             controlType: "sap.m.Input",
+		 *             success: function (aInputs) {
+		 *                 // aInputs are all sap.m.Inputs inside of a view called 'my.View'
+		 *             }
+		 *         });
+		 *     </pre>
+		 * </code>
 		 * @param {boolean} [oOptions.searchOpenDialogs=false] If set to true, Opa5 will only look in open dialogs. All the other values except control type will be ignored
 		 * @param {boolean} [oOptions.visible=true] If set to false, Opa5 will also look for unrendered and invisible controls.
 		 * @param {int} [oOptions.timeout=15] (seconds) Specifies how long the waitFor function polls before it fails.
@@ -332,12 +363,6 @@ sap.ui.define([
 				bPluginLooksForControls;
 
 			oOptions.check = function () {
-				//retrieve the constructor instance
-				if (!this._modifyControlType(oOptions)) {
-					// skip - control type resulted in undefined or lazy stub
-					return false;
-				}
-
 				// Create a new options object for the plugin to keep the original one as is
 				var oPluginOptions = $.extend({}, oOptions, {
 						// only pass interactable if there are actions for backwards compatibility
@@ -353,7 +378,6 @@ sap.ui.define([
 
 				//We were searching for a control but we did not find it
 				if (typeof oOptions.id === "string" && !vControl) {
-					jQuery.sap.log.debug("found no control with the id " + oOptions.id, "", "Opa");
 					return false;
 				}
 
@@ -383,7 +407,7 @@ sap.ui.define([
 					return false;
 				}
 
-				if (oOptions.sOriginalControlType && !vControl.length) {
+				if (oOptions.controlType && !vControl.length) {
 					jQuery.sap.log.debug("found no controls with the type  " + oOptions.sOriginalControlType, "", "Opa");
 					return false;
 				}
@@ -587,29 +611,6 @@ sap.ui.define([
 		/*
 		 * Privates
 		 */
-
-		/**
-		 * logs and executes the check function
-		 * @private
-		 * @returns {boolean} true if check should continue false if it should not
-		 */
-		Opa5.prototype._modifyControlType = function (oOptions) {
-			var vControlType = oOptions.controlType;
-			//retrieve the constructor instance
-			if (typeof vControlType !== "string") {
-				return true;
-			}
-
-			var oControlConstructor = Opa5.getPlugin().getControlConstructor(vControlType);
-
-			if (!oControlConstructor) {
-				return false;
-			}
-
-			oOptions.sOriginalControlType = vControlType;
-			oOptions.controlType = oControlConstructor;
-			return true;
-		};
 
 		/**
 		 * logs and executes the check function

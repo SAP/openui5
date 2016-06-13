@@ -48,7 +48,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/test/Opa', 'sap/ui/test/Opa5'], func
 		this.check();
 
 		// Assert
-		sinon.assert.calledWith(this.debugSpy, sinon.match(/notExistingId in the view bar/), sLogPrefix);
+		sinon.assert.calledWith(this.debugSpy, "Found no control with the id: 'notExistingId' in the view: 'bar'", sLogPrefix);
 	});
 
 	QUnit.test("Should log if a view is not found", function() {
@@ -61,6 +61,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/test/Opa', 'sap/ui/test/Opa5'], func
 		this.check();
 
 		// Assert
-		sinon.assert.calledWith(this.debugSpy, sinon.match("Found no view with the name: notExistingView"), sLogPrefix);
+		sinon.assert.calledWith(this.debugSpy, "Found no view with the name: 'notExistingView'", sLogPrefix);
 	});
 });
