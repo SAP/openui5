@@ -1930,6 +1930,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// update busy indicator state
 		this._setBusy(sReason ? {changeReason: sReason} : false);
 
+		// if the binding length has changed due to filter or sorter, it may happened that the noData text was not updated in order
+		// to avoid flickering of the table.
+		// therefore we need to update the noData text here
+		if (this._bBindingLengthChanged) {
+			this._updateNoData();
+		}
+
 		// Rows should only be created/cloned when the number of rows can be determined. For the VisibleRowCountMode: Auto
 		// this can only happen after the table control was rendered one. At this point in time we know how much space is
 		// consumed by the table header, toolbar, footer... and we can calculate how much space is left for the table rows.
