@@ -480,5 +480,17 @@
         "references": []
       }
     ]
+  },
+  "1.36.13": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "59fb1abaa7bbcab2fc12c723cf4ae1893bc3659e",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageHeader: Breadcrumbs have correct color in Dark mode",
+        "references": []
+      }
+    ]
   }
 }

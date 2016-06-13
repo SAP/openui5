@@ -1393,5 +1393,38 @@
         "references": []
       }
     ]
+  },
+  "1.36.13": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "53f3946fc70a6e3a6aa72d7446c2236b8b60552c",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "XMLView: fix rendering of invisible children after preserve",
+        "references": []
+      },
+      {
+        "id": "f38cd282f8edce7d8365089e391d0bc0d4eba5a8",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.format.DateFormat: support date field pattern with 5 and 6 characters",
+        "references": []
+      },
+      {
+        "id": "8f37a588ba4d608a671c3cb230f5d99ac0c02cb7",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.test.actions.EnterText - enterText does not propagate its enter event anymore",
+        "references": []
+      },
+      {
+        "id": "4a2a8515eb25a310a3c4a4adb6e39c4739f25dda",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: resetChanges does only reset last change",
+        "references": []
+      }
+    ]
   }
 }

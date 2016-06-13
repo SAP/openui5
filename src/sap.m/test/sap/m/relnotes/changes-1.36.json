@@ -2205,5 +2205,31 @@
         "references": []
       }
     ]
+  },
+  "1.36.13": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "3371c9049f63b1bbb7ce629ace02f34e5a5b1a18",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedListItem: Improve consumer handling of senderPress and iconPress events",
+        "references": []
+      },
+      {
+        "id": "647d7687c5916badc0ac980e87385637991e97ba",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Table: aria-activedescendant should be set for the root element.",
+        "references": []
+      },
+      {
+        "id": "ab3edf8a0b461c08411bbcfc6f5fc90073957439",
+        "author": "Bohdan Pukalskyi \u003cbohdan.pukalskyi@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Exiting edit mode after an attemt to save an empty file in case same file names are allowed",
+        "references": []
+      }
+    ]
   }
 }
