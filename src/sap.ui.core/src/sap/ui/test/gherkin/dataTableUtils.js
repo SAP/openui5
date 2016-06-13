@@ -16,8 +16,8 @@ sap.ui.define(['jquery.sap.global'], function($) {
    * @author Rodrigo Jordao
    * @author Jonathan Benn
    * @alias sap.ui.test.gherkin.dataTableUtils
-   * @extends sap.ui.base.Object
    * @since 1.40
+   * @namespace
    * @static
    * @public
    */
@@ -28,11 +28,11 @@ sap.ui.define(['jquery.sap.global'], function($) {
      * particular strategy.
      *
      * @alias sap.ui.test.gherkin.dataTableUtils.normalization
-     * @function
+     * @namespace
      * @static
      * @public
      */
-    normalization: /** @lends sap.ui.test.gherkin.dataTableUtils.normalization */ {
+    normalization: {
 
       /**
        * e.g. "first name" -> "First Name"

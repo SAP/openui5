@@ -17,7 +17,7 @@ sap.ui.define(['jquery.sap.global'], function ($) {
    * @alias sap.ui.test.gherkin.SimpleGherkinParser
    * @extends sap.ui.base.Object
    * @since 1.40
-   * @public
+   * @private
    * @static
    */
   var SimpleGherkinParser = {

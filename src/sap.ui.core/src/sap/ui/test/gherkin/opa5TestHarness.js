@@ -23,8 +23,8 @@ function($, UI5Object, opaTest, Opa5, GherkinTestGenerator, dataTableUtils, Step
    *
    * @author Jonathan Benn
    * @alias sap.ui.test.gherkin.opa5TestHarness
+   * @namespace
    * @static
-   * @extends sap.ui.base.Object
    * @since 1.40
    * @public
    */

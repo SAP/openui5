@@ -94,7 +94,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/test/gherkin/d
    * @extends sap.ui.base.Object
    * @alias sap.ui.test.gherkin.GherkinTestGenerator
    * @since 1.40
-   * @public
+   * @private
    */
   var GherkinTestGenerator = UI5Object.extend("sap.ui.test.gherkin.GherkinTestGenerator",
     /** @lends sap.ui.test.gherkin.GherkinTestGenerator.prototype */ {
