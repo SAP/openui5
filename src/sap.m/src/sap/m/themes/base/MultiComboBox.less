@@ -7,3 +7,8 @@ li.sapMMultiComboBoxItem .sapMCbBg {
 	bottom: 0;
 	margin: auto;
 }
+
+/* Workaround for missing disabled state of sap.m.Tokenizer */
+.sapMMultiComboBox.sapMComboBoxBaseDisabled {
+	pointer-events: none;
+}
