@@ -352,7 +352,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 						path: "message>/",
 						template: new MessagePopoverItem({
 							type: "{message>type}",
-							title: "{message>title}",
+							title: "{message>message}",
 							description: "{message>description}",
 							longtextUrl: "{message>longtextUrl}"
 						})
