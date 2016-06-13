@@ -1906,23 +1906,13 @@ sap.ui.define([
 		return this;
 	};
 
-	/**
-	 * This method is executed before navigation, to provide validation result(s) for columnsPanel
-	 *
-	 * @returns {boolean} true if it is allowed to navigate away from this panel, false if it is not allowed
-	 * @public
-	 * @since 1.26.7
-	 */
-	P13nColumnsPanel.prototype.onBeforeNavigationFrom = function() {
-		var bResult = true;
+	P13nColumnsPanel.prototype.onBeforeNavigationFromAsync = function() {
 		var aSelectedItems = this._oTable.getSelectedItems();
 		var iVisibleItemsThreshold = this.getVisibleItemsThreshold();
 
-		if (aSelectedItems && iVisibleItemsThreshold !== -1 && aSelectedItems.length > iVisibleItemsThreshold) {
-			bResult = false;
-		}
-
-		return bResult;
+		return new Promise(function(resolve) {
+			return resolve(!(aSelectedItems && iVisibleItemsThreshold !== -1 && aSelectedItems.length > iVisibleItemsThreshold));
+		});
 	};
 
 	P13nColumnsPanel.prototype._notifyChange = function() {

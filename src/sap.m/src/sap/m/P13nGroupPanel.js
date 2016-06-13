@@ -200,8 +200,11 @@ sap.ui.define([
 		this._oGroupPanel.removeValidationErrors();
 	};
 
-	P13nGroupPanel.prototype.onBeforeNavigationFrom = function() {
-		return this.validateConditions();
+	P13nGroupPanel.prototype.onBeforeNavigationFromAsync = function() {
+		var that = this;
+		return new Promise(function(resolve) {
+			return resolve(that.validateConditions());
+		});
 	};
 
 	P13nGroupPanel.prototype.onAfterNavigationFrom = function() {
@@ -254,7 +257,6 @@ sap.ui.define([
 		});
 		this._oGroupPanel.setOperations(this._aOperations);
 		this._oGroupPanel._sAddRemoveIconTooltipKey = "GROUP";
-
 
 		this.addAggregation("content", this._oGroupPanel);
 	};

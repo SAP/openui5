@@ -7,7 +7,7 @@
 <script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
 	type="text/javascript" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
-
+	
 </script>
 
 <link rel="stylesheet"
@@ -27,7 +27,6 @@
 	src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <script type="text/javascript">
-
 	(function() {
 		jQuery.sap.require("sap.m.P13nColumnsPanel");
 		jQuery.sap.require("sap.m.P13nColumnsItem");
@@ -1466,32 +1465,50 @@
 
 		});
 
-		test("Shall check onBeforeNavigationFrom", function() {
-			ok(oP13nColumnsPanel.onBeforeNavigationFrom, "Method does not exist");
+		test("Shall check onBeforeNavigationFromAsync", function(assert) {
+			ok(oP13nColumnsPanel.onBeforeNavigationFromAsync, "Method does not exist");
 
 			// CUT -> method shall be executed -> threshold is not defined -> BeforeNavigationFrom shall result in true
-			var bValidationResult = oP13nColumnsPanel.onBeforeNavigationFrom();
-			strictEqual(bValidationResult, true, "navigation validation shall not be influenced");
-			strictEqual(oP13nColumnsPanel.getVisibleItemsThreshold(), -1, "Getter for visible items threshold shall return -1 = default value, which was not overwritten)");
+			var done = assert.async();
+			oP13nColumnsPanel.onBeforeNavigationFromAsync().then(function(bValidationResult) {
+				strictEqual(bValidationResult, true, "navigation validation shall not be influenced");
+				strictEqual(oP13nColumnsPanel.getVisibleItemsThreshold(), -1, "Getter for visible items threshold shall return -1 = default value, which was not overwritten)");
+
+				done();
+			});
+		});
+
+		test("Shall check onBeforeNavigationFromAsync", function(assert) {
 
 			// CUT -> method shall be executed -> threshold is defined -> BeforeNavigationFrom shall result in true as threshold is not reached
+			var done = assert.async();
 			oP13nColumnsPanel.setVisibleItemsThreshold(10);
 			oP13nColumnsPanel._oTable.getSelectedItems = sinon.stub().returns([
 				{}, {}, {}, {}, {}, {}, {}, {}, {}
 			]); // 9 table items are selected
 
-			bValidationResult = oP13nColumnsPanel.onBeforeNavigationFrom();
-			strictEqual(bValidationResult, true, "navigation validation shall not be influenced as threshold is not reached");
+			oP13nColumnsPanel.onBeforeNavigationFromAsync().then(function(bValidationResult) {
+				strictEqual(bValidationResult, true, "navigation validation shall not be influenced as threshold is not reached");
+
+				done();
+			});
+		});
+
+		test("Shall check onBeforeNavigationFromAsync", function(assert) {
 
 			// CUT -> method shall be executed -> threshold is defined -> BeforeNavigationFrom shall result in false as threshold is exceeded
+			var done = assert.async();
 			oP13nColumnsPanel.setVisibleItemsThreshold(10);
 			oP13nColumnsPanel._oTable.getSelectedItems = sinon.stub().returns([
 				{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
 			]); // 11 table items are selected
 
-			bValidationResult = oP13nColumnsPanel.onBeforeNavigationFrom();
-			strictEqual(bValidationResult, false, "navigation validation shall be influenced as threshold is exceeded");
-			strictEqual(oP13nColumnsPanel.getVisibleItemsThreshold(), 10, "Getter for visible items threshold shall return 10 (which was set before)");
+			oP13nColumnsPanel.onBeforeNavigationFromAsync().then(function(bValidationResult) {
+				strictEqual(bValidationResult, false, "navigation validation shall be influenced as threshold is exceeded");
+				strictEqual(oP13nColumnsPanel.getVisibleItemsThreshold(), 10, "Getter for visible items threshold shall return 10 (which was set before)");
+
+				done();
+			});
 		});
 
 		test("Shall check _extractExistingColumnsItems", function() {

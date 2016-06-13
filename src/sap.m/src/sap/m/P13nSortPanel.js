@@ -184,8 +184,11 @@ sap.ui.define([
 		this._oSortPanel.removeValidationErrors();
 	};
 
-	P13nSortPanel.prototype.onBeforeNavigationFrom = function() {
-		return this.validateConditions();
+	P13nSortPanel.prototype.onBeforeNavigationFromAsync = function() {
+		var that = this;
+		return new Promise(function(resolve) {
+			return resolve(that.validateConditions());
+		});
 	};
 
 	P13nSortPanel.prototype.onAfterNavigationFrom = function() {

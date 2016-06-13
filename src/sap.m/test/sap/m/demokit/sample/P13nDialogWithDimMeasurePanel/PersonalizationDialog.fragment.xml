@@ -5,7 +5,7 @@
 		reset="handleReset" initialVisiblePanelType="dimeasure">
 		<panels>
 			<P13nDimMeasurePanel title="{i18n>Title}"
-				visible="true"
+				visible="true" chartTypeKey="bar"
 				items="{
                     path: '/ColumnCollection'
                 }"
@@ -18,8 +18,8 @@
 						aggregationRole="{type}" />
 				</items>
 				<dimMeasureItems>
-					<P13nDimMeasureItem columnKey="{columnKey}" index="{index}"
-						visible="{visible}" />
+					<P13nDimMeasureItem columnKey="{columnKey}"
+						index="{index}" visible="{visible}" />
 				</dimMeasureItems>
 				<availableChartTypes>
 					<core:Item key="{key}" text="{text}" />

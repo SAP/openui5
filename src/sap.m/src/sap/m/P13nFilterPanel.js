@@ -242,8 +242,11 @@ sap.ui.define([
 		this._oExcludeFilterPanel.removeValidationErrors();
 	};
 
-	P13nFilterPanel.prototype.onBeforeNavigationFrom = function() {
-		return this.validateConditions();
+	P13nFilterPanel.prototype.onBeforeNavigationFromAsync = function() {
+		var that = this;
+		return new Promise(function(resolve) {
+			return resolve(that.validateConditions());
+		});
 	};
 
 	P13nFilterPanel.prototype.onAfterNavigationFrom = function() {
@@ -429,10 +432,9 @@ sap.ui.define([
 		}
 		if (!this._aIncludeOperations["boolean"]) {
 			this.setIncludeOperations([
-			    sap.m.P13nConditionOperation.EQ
+				sap.m.P13nConditionOperation.EQ
 			], "boolean");
 		}
-
 
 		this._aExcludeOperations = {};
 
@@ -541,11 +543,12 @@ sap.ui.define([
 					values: fGetValueOfProperty("values", oContext, oItem_)
 				});
 
-
 				// check if maxLength is 1 and remove contains, start and ends with operations
 				var n = aKeyFields.length;
 				if (aKeyFields[n - 1].maxLength === 1 || aKeyFields[n - 1].maxLength === "1") {
-					aKeyFields[n - 1].operations = [sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE, sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE];
+					aKeyFields[n - 1].operations = [
+						sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE, sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE
+					];
 				}
 			});
 			this.setKeyFields(aKeyFields);

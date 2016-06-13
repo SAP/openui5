@@ -360,6 +360,7 @@ sap.ui.define([
 
 	/**
 	 * When more messages have the same 'messageText', the last one will be take over.
+	 *
 	 * @private
 	 */
 	P13nDialog.prototype._prepareMessages = function(aFailedPanelTypes, aValidationResult, aWarningMessages, aErrorMessages) {
@@ -393,8 +394,8 @@ sap.ui.define([
 
 		// Reduce messages removing duplicated
 		var aUniqueMessages = aValidationResult.filter(function(oMessage, iIndex, aMessages) {
-			for (var i = ++iIndex; i < aMessages.length; i++){
-				if (oMessage.messageText === aMessages[i].messageText){
+			for (var i = ++iIndex; i < aMessages.length; i++) {
+				if (oMessage.messageText === aMessages[i].messageText) {
 					return false;
 				}
 			}
@@ -769,17 +770,25 @@ sap.ui.define([
 					aValidationResult = fValidate(oPayload);
 				}
 				// Execute validation of panels
-				that.getPanels().forEach(function(oPanel) {
-					if (!oPanel.onBeforeNavigationFrom()) {
-						aFailedPanelTypes.push(oPanel.getType());
-					}
+				var aPanels = that.getPanels();
+				var aPromises = aPanels.map(function(oPanel) {
+					return oPanel.onBeforeNavigationFromAsync();
 				});
-				// In case of invalid panels show the dialog
-				if (aFailedPanelTypes.length || aValidationResult.length) {
-					that._showValidationDialog(fCallbackIgnore, aFailedPanelTypes, aValidationResult);
-				} else {
+				Promise.all(aPromises).then(function(aResult) {
+					aResult.forEach(function(bResult, iIndex) {
+						if (!bResult) {
+							aFailedPanelTypes.push(aPanels[iIndex].getType());
+						}
+					});
+					// In case of invalid panels show the dialog
+					if (aFailedPanelTypes.length || aValidationResult.length) {
+						that._showValidationDialog(fCallbackIgnore, aFailedPanelTypes, aValidationResult);
+					} else {
+						fFireOK();
+					}
+				}, function() {
 					fFireOK();
-				}
+				});
 			}
 		});
 	};

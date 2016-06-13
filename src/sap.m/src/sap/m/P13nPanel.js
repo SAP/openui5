@@ -163,9 +163,25 @@ sap.ui.define([
 	 * This method can be overwritten by subclass in order to prevent navigation to another panel. This could be the case if some content on the panel
 	 * is considered 'invalid'.
 	 *
+	 * @returns {jQuery.Deferred.promise} A promise that resolves with <code>true</code> if it is allowed to navigate away from this panel and with
+	 *          <code>false</code> if it is not allowed
+	 * @public
+	 * @since 1.40.0
+	 */
+	P13nPanel.prototype.onBeforeNavigationFromAsync = function() {
+		return new Promise(function(resolve) {
+			return resolve(true);
+		});
+	};
+
+	/**
+	 * This method can be overwritten by subclass in order to prevent navigation to another panel. This could be the case if some content on the panel
+	 * is considered 'invalid'.
+	 *
 	 * @returns {boolean} true if it is allowed to navigate away from this panel, false if it is not allowed
 	 * @public
 	 * @since 1.28.0
+	 * @deprecated Since 1.40.0. The method is deprecated, use method <code>onBeforeNavigationFromAsync</code> instead
 	 */
 	P13nPanel.prototype.onBeforeNavigationFrom = function() {
 		return true;
