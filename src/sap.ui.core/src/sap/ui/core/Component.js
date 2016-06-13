@@ -3,8 +3,8 @@
  */
 
 // Provides base class sap.ui.core.Component for all components
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', './ComponentMetadata', './Core', 'sap/ui/thirdparty/URI'],
-	function(jQuery, ManagedObject, Manifest, ComponentMetadata, Core, URI) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', './ComponentMetadata', './Core', 'sap/ui/thirdparty/URI', 'jquery.sap.trace'],
+	function(jQuery, ManagedObject, Manifest, ComponentMetadata, Core, URI /*, jQuery*/) {
 	"use strict";
 
 	/*global Promise */
@@ -1512,6 +1512,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			oManifest,
 			mModels,
 			fnCallLoadComponentCallback;
+
+		// set the name of this newly loaded component at the interaction measurement,
+		// as otherwise this would be the outer component from where it was called,
+		// which is not true - this component causes the load
+		jQuery.sap.interaction.setStepComponent(sName);
 
 		// if we find a manifest URL in the configuration
 		// we will load the manifest from the specified URL (sync or async)

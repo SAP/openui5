@@ -237,6 +237,22 @@
 			// 		done();
 			// 	}, 200);
 			// });
+
+			QUnit.module("component integration");
+
+			QUnit.test("named component", function(assert) {
+				jQuery.sap.fesr.setActive(true);
+				jQuery.sap.interaction.notifyStepStart(null, true);
+				try {
+					// mock a component initialization
+					sap.ui.component({name:"foo"});
+				} catch(e) {/* we do not really want to load the component */}
+				jQuery.sap.interaction.notifyStepEnd(true);
+				jQuery.sap.interaction.notifyStepStart(null, true);
+				var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
+				assert.equal(oMeasurement.component, "foo");
+				jQuery.sap.fesr.setActive(false);
+			});
 		}
 	</script>
 
