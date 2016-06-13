@@ -605,6 +605,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		}else {
 			this._oList.setMode(mode);
 		}
+		return this;
 	};
 
 	UploadCollection.prototype.getMode = function() {
