@@ -2571,7 +2571,6 @@ sap.ui.define([
 									}
 									oChangeSet.__changeRequests.push(aChangeSet[i].request);
 									aChanges.push(aChangeSet[i]);
-									delete that.mChangeHandles[aChangeSet[i].request.key];
 								}
 							}
 							if (oChangeSet.__changeRequests && oChangeSet.__changeRequests.length > 0) {
