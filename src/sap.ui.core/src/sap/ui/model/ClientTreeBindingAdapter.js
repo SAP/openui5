@@ -34,6 +34,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 
 			this._invalidTree = true;
 
+			// TODO: Decide if the tree state feature should be available for ClientModels
+			//-> remove comments if yes
+
+			// restore old tree state if given
+			//if (this.mParameters.treeState) {
+			//	this.setTreeState(this.mParameters.treeState);
+			//}
+
 			//set the default auto expand mode
 			this.setNumberOfExpandedLevels(this.mParameters.numberOfExpandedLevels || 0);
 		};

@@ -76,7 +76,12 @@ sap.ui.define(['jquery.sap.global',
 	 * 													 including all inner nodes. To construct the hierarchy on the client, it is mandatory that all filter-matches include their complete
 	 * 													 parent chain up to the root level.
 	 * 													 OperationMode.Client will still request the complete collection without filters, since they will be applied clientside.
-	 *
+	 * @param {boolean} [mParameters.treeState] A tree state handle can be given to the ODataTreeBinding when two conditions are met:
+	 * 											 The binding is running in OperationMode.Client AND the sap.ui.table.TreeTable is used.
+	 * 											 The feature is only available when using the ODataTreeBindingAdapter, which is automatically applied when using the sap.ui.table.TreeTable.
+	 * 											 The tree state handle will contain all necessary information to expand the tree to the given state.
+	 * 											 This feature is not supported in OperationMode.Server and OperationMode.Auto.
+	 * 											 Please see also the getCurrentTreeState function in the class ODataTreeBindingAdapter.
 	 * @public
 	 * @alias sap.ui.model.odata.v2.ODataTreeBinding
 	 * @extends sap.ui.model.TreeBinding
