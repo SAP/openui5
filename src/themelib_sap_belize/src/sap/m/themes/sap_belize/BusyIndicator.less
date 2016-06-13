@@ -1,0 +1,14 @@
+/* ==================================== */
+/* CSS for control sap.m/BusyIndicator  */
+/* Belize theme                         */
+/* ==================================== */
+
+/* Background animation element */
+.sapUiLocalBusyIndicatorAnimation > div::before {
+  background: saturate(lighten(@sapUiAccent6,5),20);
+}
+
+/* Shadow animation element */
+.sapUiLocalBusyIndicatorAnimation > div::after {
+  box-shadow: inset 0px 0px 2px 1px saturate(lighten(@sapUiAccent6,5),20);
+}
