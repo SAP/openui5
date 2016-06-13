@@ -573,6 +573,27 @@ sap.ui.define([
 		if (aActions.length > 1 || this._hasOneButtonShowText(aActions)) {
 			//create responsive equivalents of the provided controls
 			aActions.forEach(function(oAction) {
+				// Set internal visibility for normal buttons like for ObjectPageHeaderActionButton
+				if (oAction instanceof Button && !(oAction instanceof ObjectPageHeaderActionButton)) {
+					oAction._getInternalVisible = function () {
+						return this._bInternalVisible;
+					};
+					oAction._setInternalVisible = function (bValue, bInvalidate) {
+						this.$().toggle(bValue);
+						if (bValue != this._bInternalVisible) {
+							this._bInternalVisible = bValue;
+							if (bInvalidate) {
+								this.invalidate();
+							}
+						}
+					};
+					oAction.onAfterRendering = function () {
+						if (!this._getInternalVisible()) {
+							this.$().hide();
+						}
+					};
+				}
+
 				// Force the design of the button to transparent
 				if (oAction instanceof Button && oAction.getVisible()) {
 					if (oAction instanceof Button && (oAction.getType() === "Default" || oAction.getType() === "Unstyled")) {
@@ -649,7 +670,7 @@ sap.ui.define([
 			return;
 		}
 		aActions.forEach(function (oAction) {
-			if (oAction instanceof ObjectPageHeaderActionButton) {
+			if (oAction instanceof Button) {
 				var oActionSheetButton = this._oActionSheetButtonMap[oAction.getId()];
 				if (bAttach) {
 					oAction.attachEvent("_change", this._adaptLayout, this);
