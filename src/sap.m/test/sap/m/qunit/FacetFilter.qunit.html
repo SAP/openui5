@@ -731,7 +731,7 @@
 		openPopover(oFF, 0);
 	});
 
-	asyncTest("FacetFilter._displayRemoveIcon should be visible until the user releases the mouse (saptouchend)", function() {
+	asyncTest("FacetFilter._displayRemoveIcon should be visible until the user releases the mouse (touchend)", function() {
 
 		var oFF = new sap.m.FacetFilter({
 			showPersonalization: true
@@ -746,25 +746,21 @@
 		oPopover.attachEventOnce("afterOpen", function(oEvent) {
 			var oIcon = getRemoveIconCtrl(oFF, 0);
 
-			function callDelegate(sEventName) {
-				oIcon.aBeforeDelegates[0].oDelegate[sEventName].call(oIcon, {});
-			}
-
 			equal(oIcon.aBeforeDelegates.length, 1, "There must be single delegate");
 
 			//touch start
-			callDelegate("onsaptouchstart");
-			ok(oIcon.sapTouchStarted, "A flag indicated mousedown on icon " + oIcon.getId() + " must present");
+			callIconDelegate("ontouchstart", oIcon);
+			ok(oIcon._bTouchStarted, "A flag indicated mousedown/touchstart on icon " + oIcon.getId() + " must present");
 			ok(oIcon.$().hasClass("sapMFFLVisibleRemoveIcon"),"The 'remove icon ' should be visible");
 
 			//touch end
-			callDelegate("onsaptouchend");
-			ok(oIcon.sapTouchStarted, "A flag indicated mousedown on icon " + oIcon.getId() + " must present");
+			callIconDelegate("ontouchend", oIcon);
+			strictEqual(false, oIcon._bTouchStarted, "A flag indicated mousedown/touchstart on icon " + oIcon.getId() + " must be reflected");
 			ok(oIcon.$().hasClass("sapMFFLHiddenRemoveIcon"),"The 'remove icon ' should not be visible");
 
 			//press
 			oIcon.firePress();
-			notOk(oIcon.sapTouchStarted, "A flag indicated mousedown on icon " + oIcon.getId() + " should be removed");
+			notOk(oIcon._bPress, "A flag indicated press on icon " + oIcon.getId() + " should exist");
 			ok(oIcon.$().hasClass("sapMFFLHiddenRemoveIcon"),"The 'remove icon ' should not be visible");
 			start();
 			destroyFF(oFF);
@@ -1857,6 +1853,90 @@
 			});
 			openPopover(oFF, 0);
 		});
+
+		/**
+		 * When the user clicks on the delete facet icon, the following event flows are possible:
+		 * a) quick click - icon touchstart, icon touchend, icon press, popover afterClose
+		 * b) click, hold & release delete icon - icon touchstart, popover afterClose, icon touchend, icon press
+		 * c) click, hold delete icon, but release elsewhere - icon touchstart, popover afterClose, elsewhere touchend
+		 **/
+
+		asyncTest("FacetFilterList.listClose - called only once(scenario a)", function () {
+			testListCloseCalledOnce.call(this, "Icon.touchstart->Icon.touchend->Icon.press->Popover.afterClose", "a");
+		});
+		asyncTest("FacetFilterList.listClose - called only once(scenario b)", function () {
+			testListCloseCalledOnce.call(this, "Icon.touchstart->Popover.afterClose->Icon.touchend->Icon.press", "b");
+		});
+
+		asyncTest("FacetFilterList.listClose - called only once(scenario c)", function () {
+			testListCloseCalledOnce.call(this, "Icon.touchstart->Popover.afterClose->Icon.touchend(outside the icon)-> no icon.press", "c");
+		});
+
+		function testListCloseCalledOnce(sSubtestName, sScenario) {
+			var oFF = new sap.m.FacetFilter({lists:[
+				new sap.m.FacetFilterList({
+					title: "List 1",
+					items: [
+						new sap.m.FacetFilterItem({
+							key: "one",
+							text: "One",
+							selected: true
+						}),
+						new sap.m.FacetFilterItem({
+							key: "two",
+							text: "Two",
+							selected: false
+						}),
+					]
+				})
+			]});
+			oFF.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			var oFFL = oFF.getLists()[0];
+
+			var listCloseListener = function(oEvent) {
+				this.parent = oEvent.getSource().getParent();
+			};
+			var oListCloseSpy = sinon.spy(listCloseListener.bind(this));
+
+			oFFL.attachEvent("listClose", oListCloseSpy);
+			var oPopover = oFF._getPopover();
+			oPopover.attachEventOnce("afterOpen", function () {
+				var oList = oFF._displayedList;
+				var oIcon = oFF._getFacetRemoveIcon(oList);
+				switch (sScenario) {
+					case "a":
+						callIconDelegate("ontouchstart", oIcon);
+						callIconDelegate("ontouchend", oIcon);
+						oIcon.firePress({});
+						oPopover.fireAfterClose({});
+						break;
+					case "b":
+						callIconDelegate("ontouchstart", oIcon);
+						oPopover.fireAfterClose({});
+						callIconDelegate("ontouchend", oIcon);
+						oIcon.firePress({});
+						break;
+					case "c":
+						callIconDelegate("ontouchstart", oIcon);
+						oPopover.fireAfterClose({});
+						callIconDelegate("ontouchend", oIcon);
+						break;
+					default:
+						ok(false, "Invalid parameter test scenario: " + sScenario);
+				}
+				setTimeout(function () {
+					start();
+					equal(oListCloseSpy.callCount, 1, sSubtestName + "# calls");
+					equal(this.parent.getId(), oFF.getId(), "listClose handler should be provided with the instance of FacetFilter as event's source parent");
+					equal(this.parent.getMetadata().getName(), oFF.getMetadata().getName(), "listClose handler should be provided with FacetFilter as event's source parent");
+					destroyFF(oFF);
+				}.bind(this), 500)
+			}.bind(this));
+
+			openPopover(oFF, 0);
+		}
 
 		asyncTest("FacetFilter.reset (no summary bar)", function() {
 
@@ -3413,7 +3493,7 @@
 			oFF.destroy();
 		});
 
-		test("The selected keys are cleared when the list is made inactive", function() {
+		asyncTest("The selected keys are cleared when the list is made inactive", function() {
 			var oFF = oSCHelper.createFFWithModel();
 			var oFFL = oFF.getLists()[0];
 			oFF.placeAt("content");
@@ -3423,14 +3503,17 @@
 				"4" : "Val4"
 			});
 			var oIcon = oFF.getAggregation("removeFacetIcons")[0];
-
+			callIconDelegate("ontouchstart", oIcon);
+			callIconDelegate("ontouchend", oIcon);
 			oIcon.firePress({
 				selected : true
 			});
-			ok(!Object.getOwnPropertyNames(oFFL.getSelectedKeys()).length,
-					"Selected keys should be cleared by making list inactive");
-
-			destroyFF(oFF);
+			setTimeout(function() {
+				start();
+				ok(!Object.getOwnPropertyNames(oFFL.getSelectedKeys()).length,
+						"Selected keys should be cleared by making list inactive");
+				destroyFF(oFF);
+			}, 500);
 		});
 
 		module('Overflow Arrows', {
@@ -3688,6 +3771,9 @@
 			oFF.destroy();
 		}
 
+		function callIconDelegate(sEventName, oIcon) {
+			oIcon.aBeforeDelegates[0].oDelegate[sEventName].call(oIcon, {});
+		}
 //	}
 </script>
 </head>
