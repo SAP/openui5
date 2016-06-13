@@ -7,7 +7,6 @@
 		xmlns:f="sap.ui.layout.form"
 		xmlns:layout="sap.ui.layout"
 		height="100%">
-	<App>
 		<DynamicPage id="dynamicPageId" headerScrollable="false" headerExpanded="{/headerExpanded}">
 			<!-- DynamicPage Title -->
 			<title>
@@ -126,5 +125,4 @@
 				</OverflowToolbar>
 			</footer>
 		</DynamicPage>
-	</App>
 </mvc:View>

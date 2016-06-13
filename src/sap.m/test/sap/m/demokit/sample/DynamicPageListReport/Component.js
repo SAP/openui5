@@ -14,6 +14,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 				},
 				config: {
 					sample: {
+						stretch : true,
 						files: [
 							"DynamicPageListReport.view.xml",
 							"DynamicPageListReport.controller.js"

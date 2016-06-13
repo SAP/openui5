@@ -15,13 +15,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 					]
 				},
 				config: {
-					config : {
-						sample : {
-							stretch : true,
-							files : [
-								"DynamicPageAnalyticalTable.view.xml"
-							]
-						}
+					sample : {
+						stretch : true,
+						files : [
+							"DynamicPageAnalyticalTable.view.xml"
+						]
 					}
 				}
 			}
