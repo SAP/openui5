@@ -217,7 +217,7 @@ sap.ui.define(['jquery.sap.global', './Element'],
 		}
 
 		if (Parameters) {
-			return Parameters._getScopes();
+			return Parameters._getScopes(/* avoidLoading= */ true);
 		}
 	}
 
