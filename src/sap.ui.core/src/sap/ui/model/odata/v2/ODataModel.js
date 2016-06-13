@@ -3986,13 +3986,13 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.resetChanges = function(aPath) {
-		var that = this, aParts, oEntityInfo = {}, oChangeObject, sKey, oEntityMetadata;
+		var that = this, aParts, oEntityInfo = {}, oChangeObject, oEntityMetadata;
 
 		if (aPath) {
 			jQuery.each(aPath, function(iIndex, sPath) {
 				that.getEntityByPath(sPath, null, oEntityInfo);
 				aParts = oEntityInfo.propertyPath.split("/");
-				sKey = oEntityInfo.key;
+				var sKey = oEntityInfo.key;
 				oChangeObject = that.mChangedEntities[sKey];
 				for (var i = 0; i < aParts.length - 1; i++) {
 					if (oChangeObject.hasOwnProperty(aParts[i])) {
