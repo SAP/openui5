@@ -26,7 +26,11 @@
 		jQuery.sap.require("samples.components.button.Component");
 		jQuery.sap.require("sap.ui.core.routing.HashChanger");
 
+		jQuery.sap.require("samples.components.button.Component");
+		jQuery.sap.require("sap.ui.core.routing.HashChanger");
 		sap.ui.require([
+			"sap/ui/test/Opa5",
+			"sap/ui/test/opaQunit",
 			//fast tests
 			'unitTests/actions',
 			'unitTests/basics',
@@ -36,7 +40,25 @@
 			//the slow ones
 			'unitTests/launchers',
 			'unitTests/iFrame'
-		], function () {
+		], function (Opa5, opaTest) {
+			QUnit.module("wait for basics", {
+				setup: function () {
+					this.oOpa5 = new Opa5();
+				}
+			});
+
+			opaTest("Should invoke check and success if nothing else is specified", function () {
+				this.oOpa5.waitFor({
+					check: function () {
+						Opa5.assert.strictEqual(arguments.length, 0);
+						return true
+					},
+					success: function () {
+						Opa5.assert.strictEqual(arguments.length, 0);
+					}
+				});
+			});
+
 			QUnit.start();
 		});
 

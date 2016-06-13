@@ -25,7 +25,13 @@ sap.ui.define([
 		function doesValueMatch (aMatchers, vValue) {
 			var vOriginalValue = vValue;
 			var bIsMatching = aMatchers.every(function (oMatcher) {
-				var vMatch = oMatcher.isMatching(vValue);
+				var vMatch;
+				if (vValue) {
+					vMatch = oMatcher.isMatching(vValue);
+				} else {
+					vMatch = oMatcher.isMatching();
+				}
+
 				if (vMatch) {
 					if (vMatch !== true) {
 						// Save truthy values, they will be the input for the next matcher

@@ -203,17 +203,6 @@ sap.ui.require([
 		assert.strictEqual(oRetrievedButtons, null, "did return null");
 	});
 
-	QUnit.test("Should get null when nothing is provided", function(assert) {
-		// System under Test
-		var oPlugin = new OpaPlugin();
-
-		// Act
-		var oRetrievedButtons = oPlugin.getMatchingControls({});
-
-		// Assert
-		assert.strictEqual(oRetrievedButtons, null, "did return null");
-	});
-
 	QUnit.module("Controls with a control type and id", {
 		beforeEach : function() {
 			this.oPlugin = new OpaPlugin();
@@ -233,6 +222,16 @@ sap.ui.require([
 			this.oButton2.destroy();
 			this.oCheckBox.destroy();
 		}
+	});
+
+	QUnit.test("Should return all controls", function (assert) {
+		var aAllControls = this.oPlugin.getMatchingControls();
+
+		// Assert
+		assert.ok(aAllControls.indexOf(this.oButton) !== -1, "has button");
+		assert.ok(aAllControls.indexOf(this.oButton2) !== -1, "has button2");
+		assert.ok(aAllControls.indexOf(this.oCheckBox) !== -1, "has checkbox");
+		assert.strictEqual(aAllControls.length, 3, "got only 3 controls");
 	});
 
 	QUnit.test("Should retrieve a control by a global id and control type", function(assert) {
@@ -292,22 +291,28 @@ sap.ui.require([
 		assert.strictEqual(aRetrievedControls.length, 0);
 	});
 
+	function createXmlView(sViewName) {
+		var sView = [
+			'<core:View xmlns:core="sap.ui.core" xmlns="sap.ui.commons">',
+			'<Button id="foo">',
+			'</Button>',
+			'<Button id="bar">',
+			'</Button>',
+			'<Button id="baz">',
+			'</Button>',
+			'<Image id="boo"></Image>',
+			'</core:View>'
+		].join('');
+		var oView;
+
+		oView = sap.ui.xmlview({id: "myViewWithAb", viewContent: sView});
+		oView.setViewName(sViewName);
+		return oView;
+	}
+
 	QUnit.module("Controls in a view", {
 		beforeEach: function () {
-			var sView = [
-				'<core:View xmlns:core="sap.ui.core" xmlns="sap.ui.commons">',
-					'<Button id="foo">',
-					'</Button>',
-					'<Button id="bar">',
-					'</Button>',
-					'<Button id="baz">',
-					'</Button>',
-					'<Image id="boo"></Image>',
-				'</core:View>'
-			].join('');
-
-			this.oView = sap.ui.xmlview({id: "myViewWithAb", viewContent : sView });
-			this.oView.setViewName("bar");
+			this.oView = createXmlView("bar");
 
 			// System under Test
 			this.oPlugin = new OpaPlugin();
@@ -316,6 +321,32 @@ sap.ui.require([
 			this.oView.destroy();
 			this.oPlugin.destroy();
 		}
+	});
+
+	QUnit.test("Should get an empty array if a wrong viewname is given", function (assert) {
+		var aAllControlsInTheView = this.oPlugin.getMatchingControls({
+			viewName: "notexistingview"
+		});
+
+		assert.strictEqual(aAllControlsInTheView.length, 0);
+	});
+
+	QUnit.test("Should get null if a wrong viewname and an id as string is given", function (assert) {
+		var aAllControlsInTheView = this.oPlugin.getMatchingControls({
+			viewName: "notexistingview",
+			id: "foo"
+		});
+
+		assert.strictEqual(aAllControlsInTheView, null);
+	});
+
+	QUnit.test("Should get all controls in a view", function (assert) {
+		var aAllControlsInTheView = this.oPlugin.getMatchingControls({
+			viewName: "bar",
+			visible: false
+		});
+
+		assert.strictEqual(aAllControlsInTheView.length, 4);
 	});
 
 	QUnit.test("Should get a single control of a view", function(assert) {
@@ -523,6 +554,64 @@ sap.ui.require([
 		// Assert
 		sinon.assert.calledOnce(fnInteractableSpy);
 		sinon.assert.calledOnce(fnVisibleSpy);
+	});
+
+	QUnit.module("Should know if it is looking for a Control", {
+		beforeEach: function () {
+			// System under Test
+			this.oPlugin = new OpaPlugin();
+		},
+		afterEach: function () {
+			this.oPlugin.destroy();
+		}
+	});
+
+	[{
+		value: "foo",
+		expected: true
+	},{
+		value: null,
+		expected: false
+	}, {
+		value: undefined,
+		expected: false
+	}].forEach(function (valueAndExpected) {
+		[{
+			options: { id : valueAndExpected.value },
+			testedProperty: "id"
+		},{
+			options: { viewName : valueAndExpected.value },
+			testedProperty: "viewName"
+		},{
+			options: { controlType : valueAndExpected.value },
+			testedProperty: "controlType"
+		},{
+			options: { searchOpenDialogs : valueAndExpected.value },
+			testedProperty: "searchOpenDialogs"
+		}].forEach(function (testDefinition) {
+
+			QUnit.test("Should return " + valueAndExpected.expected + " for a " + (valueAndExpected.value ? "defined" : "falsy") + " " + testDefinition.testedProperty , function (assert) {
+				var oOpaPlugin = new OpaPlugin();
+				var bResult = oOpaPlugin._isLookingForAControl(testDefinition.options);
+
+				assert.strictEqual(bResult, valueAndExpected.expected);
+				oOpaPlugin.destroy();
+			});
+
+		});
+	});
+
+	["foo", null, undefined, true, 0, 1].forEach(function (value) {
+
+		QUnit.test("Should return false for an unknown property with the value " + value , function (assert) {
+			var oOpaPlugin = new OpaPlugin();
+			var bResult = oOpaPlugin._isLookingForAControl({
+				foo: value
+			});
+
+			assert.ok(!bResult, "should never look for a control");
+			oOpaPlugin.destroy();
+		});
 	});
 
 	QUnit.start();

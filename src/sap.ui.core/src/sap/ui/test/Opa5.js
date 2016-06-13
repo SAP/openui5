@@ -347,17 +347,20 @@ sap.ui.define([
 
 				bPluginLooksForControls = oPlugin._isLookingForAControl(oPluginOptions);
 
-				vControl = oPlugin.getMatchingControls(oPluginOptions);
-
-				//Search for a controlType in a view or open dialog
-				if ((oOptions.viewName || oOptions.searchOpenDialogs) && !oOptions.id && !vControl || (vControl && vControl.length === 0)) {
-					jQuery.sap.log.debug("found no controls in view: " + oOptions.viewName + " with controlType " + oOptions.sOriginalControlType, "", "Opa");
-					return false;
+				if (bPluginLooksForControls) {
+					vControl = oPlugin.getMatchingControls(oPluginOptions);
 				}
 
 				//We were searching for a control but we did not find it
 				if (typeof oOptions.id === "string" && !vControl) {
 					jQuery.sap.log.debug("found no control with the id " + oOptions.id, "", "Opa");
+					return false;
+				}
+
+
+				//Search for a controlType in a view or open dialog
+				if (!oOptions.id && (oOptions.viewName || oOptions.searchOpenDialogs) && vControl.length === 0) {
+					jQuery.sap.log.debug("found no controls in view: " + oOptions.viewName + " with controlType " + oOptions.sOriginalControlType, "", "Opa");
 					return false;
 				}
 
@@ -385,7 +388,12 @@ sap.ui.define([
 					return false;
 				}
 
-				// If the plugin does not look for controls execute matchers even if vControl is falsy
+				/*
+				 * If the plugin does not look for controls execute matchers even if vControl is falsy
+				 * used when you smuggle in values to success through matchers:
+				 * matchers: function () {return "foo";},
+				 * success: function (sFoo) {}
+				 */
 				if ((vControl || !bPluginLooksForControls) && oOptions.matchers) {
 					vResult = oMatcherPipeline.process({
 						matchers: oOptions.matchers,
@@ -418,7 +426,10 @@ sap.ui.define([
 				}
 
 				if (fnOriginalSuccess) {
-					fnOriginalSuccess.call(this, vResult);
+					var aArgs = [];
+					vResult && aArgs.push(vResult);
+
+					fnOriginalSuccess.apply(this, aArgs);
 				}
 			};
 
@@ -595,6 +606,7 @@ sap.ui.define([
 				return false;
 			}
 
+			oOptions.sOriginalControlType = vControlType;
 			oOptions.controlType = oControlConstructor;
 			return true;
 		};
@@ -604,9 +616,11 @@ sap.ui.define([
 		 * @private
 		 */
 		Opa5.prototype._executeCheck = function (fnCheck, vControl) {
+			var aArgs = [];
+			vControl && aArgs.push(vControl);
 			jQuery.sap.log.debug("Opa is executing the check: " + fnCheck);
 
-			var bResult = fnCheck.call(this, vControl);
+			var bResult = fnCheck.apply(this, aArgs);
 			jQuery.sap.log.debug("Opa check was " + bResult);
 
 			return bResult;
