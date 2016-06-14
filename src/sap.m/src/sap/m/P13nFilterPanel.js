@@ -242,11 +242,8 @@ sap.ui.define([
 		this._oExcludeFilterPanel.removeValidationErrors();
 	};
 
-	P13nFilterPanel.prototype.onBeforeNavigationFromAsync = function() {
-		var that = this;
-		return new Promise(function(resolve) {
-			return resolve(that.validateConditions());
-		});
+	P13nFilterPanel.prototype.onBeforeNavigationFrom = function() {
+		return this.validateConditions();
 	};
 
 	P13nFilterPanel.prototype.onAfterNavigationFrom = function() {
