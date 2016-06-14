@@ -49,6 +49,9 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 			var oExtension = this._getKeyboardExtension();
 			if (!oExtension._bIgnoreFocusIn) {
 				oExtension.initItemNavigation();
+				if (ExtensionHelper.isItemNavigationInvalid(this)) {
+					oEvent.setMarked("sapUiTableInitItemNavigation");
+				}
 			} else {
 				oEvent.setMarked("sapUiTableIgnoreFocusIn");
 			}
@@ -159,6 +162,10 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 
 		getInitialItemNavigationIndex : function(oExtension) {
 			return TableUtils.hasRowHeader(oExtension.getTable()) ? 1 : 0;
+		},
+
+		isItemNavigationInvalid : function(oExtension) {
+			return !oExtension._itemNavigation || oExtension._itemNavigationInvalidated;
 		}
 	};
 
@@ -231,7 +238,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 	 * @public (Part of the API for Table control only!)
 	 */
 	TableKeyboardExtension.prototype.initItemNavigation = function() {
-		if (!this._itemNavigation || this._itemNavigationInvalidated) {
+		if (ExtensionHelper.isItemNavigationInvalid(this)) {
 			ExtensionHelper._initItemNavigation(this);
 		}
 	};
