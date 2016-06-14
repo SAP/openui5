@@ -867,7 +867,7 @@
 			  "id": "sap.m.RangeSlider",
 			  "name": "RangeSlider",
 			  "category": "User Input",
-			  "since": "1.40",
+			  "since": "1.38",
 			  "formFactors": "L",
 			  "samples": ["sap.m.sample.RangeSlider"]
 		},
