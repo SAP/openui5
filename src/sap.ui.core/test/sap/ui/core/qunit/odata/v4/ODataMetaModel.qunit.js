@@ -1229,20 +1229,46 @@ sap.ui.require([
 	}, {
 		dataPath : "/TEAMS/0/TEAM_2_EMPLOYEES/0/unknown",
 		message : "Not a navigation property: unknown"
+	}, {
+		dataPath : "/TEAMS/0/TEAM_2_EMPLOYEES/0",
+		instance : undefined,
+		message : "No instance to calculate key predicate"
+	}, {
+		dataPath : "/TEAMS/0/TEAM_2_EMPLOYEES/0",
+		instance : {},
+		message : "Missing value for key property 'ID'"
+	}, {
+		absolute : true,
+		dataPath : "/TEAMS/0/TEAM_2_CONTAINED_S",
+		instance : {},
+		message : "Missing value for key property 'Team_Id' at /TEAMS/0"
+	}, {
+		absolute : true,
+		dataPath : "/TEAMS('42')/TEAM_2_CONTAINED_C/0",
+		instance : {},
+		message : "Missing value for key property 'Id'"
 	}].forEach(function (oFixture) {
 		QUnit.test("fetchCanonicalUrl: error for " + oFixture.dataPath, function (assert) {
 			var oContext = Context.create(this.oModel, undefined, oFixture.dataPath),
 				oPromise;
 
+			this.oLogMock.expects("error").withExactArgs(oFixture.message, oFixture.dataPath,
+				"sap.ui.model.odata.v4.ODataMetaModel");
 			this.mock(this.oMetaModel).expects("fetchEntityContainer")
 				.returns(_SyncPromise.resolve(mScope));
-			this.mock(oContext).expects("fetchValue").never();
-			this.mock(_ODataHelper).expects("getKeyPredicate").never();
+			if ("instance" in oFixture) {
+				this.mock(oContext)
+					.expects(oFixture.absolute ? "fetchAbsoluteValue" : "fetchValue")
+					.returns(_SyncPromise.resolve(oFixture.instance));
+			} else {
+				this.mock(oContext).expects("fetchValue").never();
+				this.mock(_ODataHelper).expects("getKeyPredicate").never();
+			}
 
 			oPromise = this.oMetaModel.fetchCanonicalPath(oContext);
 			assert.ok(oPromise.isRejected());
-			assert.strictEqual(oPromise.getResult().message, oFixture.message
-				+ " (" + oFixture.dataPath + ")");
+			assert.strictEqual(oPromise.getResult().message,
+				oFixture.dataPath + ": " + oFixture.message);
 		});
 	});
 
