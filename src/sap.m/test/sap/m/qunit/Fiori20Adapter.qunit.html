@@ -328,16 +328,40 @@
                         oTitleInfo;
 
                 //setup
-                this.oSplitContainer.addMasterPage(new sap.m.Page("detailPage2", {title: "Detail2", showNavButton: true}));
+                this.oSplitContainer.addDetailPage(new sap.m.Page("detailPage2", {title: "Detail2", showNavButton: true}));
 
                 //act
                 Fiori20Adapter.traverse(this.oSplitContainer, oAdaptOptions);
-                this.oSplitContainer.toMaster("detailPage2");
+                this.oSplitContainer.toDetail("detailPage2");
 
                 //assert
                 ok(!jQuery.sap.byId("detailPage2-navButton").hasClass("sapF2AdaptedNavigation"), "detail2 back button is not adapted");
                 ok(!jQuery.sap.byId("detailPage2-title").hasClass("sapF2AdaptedTitle"), "detail2 title is not adapted");
                 ok(jQuery.sap.byId("detailPage2").hasClass("sapF2Adapted"), "detail2 page style is adapted");
+            });
+
+            QUnit.test("page of splitContainer is correctly adapted on secondary adaptation", function(assert){
+                var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bStylePage: true},
+                        oTitleInfo;
+
+                //setup step1: adapt once
+                this.oSplitContainer.addDetailPage(new sap.m.Page("detailPage2", {title: "Detail2", showNavButton: true}));
+                Fiori20Adapter.traverse(this.oSplitContainer, oAdaptOptions);
+                this.oSplitContainer.toDetail("detailPage2");
+                this.oSplitContainer.destroy();
+
+                //setup step2: re-init content reusing ids
+                this.oSplitContainer = new sap.m.SplitContainer("mySc");
+                this.oSplitContainer.addMasterPage(new sap.m.Page("masterPage1", {title: "Master1", showNavButton: true}));
+                this.oSplitContainer.placeAt("content");
+                sap.ui.getCore().applyChanges();
+
+                //act: re-trigger adaptation
+                Fiori20Adapter.traverse(this.oSplitContainer, oAdaptOptions);
+
+                //assert
+                ok(jQuery.sap.byId("masterPage1-navButton").hasClass("sapF2AdaptedNavigation"), "master back button is adapted");
+                ok(!jQuery.sap.byId("masterPage1-title").hasClass("sapF2AdaptedTitle"), "master title is not adapted");
             });
 
 		</script>
