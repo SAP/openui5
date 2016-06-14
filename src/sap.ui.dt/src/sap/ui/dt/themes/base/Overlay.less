@@ -3,6 +3,14 @@
 @sapUiDtSelectionColor : #35F;
 @sapUiDtCuttedColor : white;
 
+#overlay-container {
+	// to prevent overlay's height from expanding the body
+	position: absolute;
+	overflow: hidden;
+	// position is set in code to prevent RTL style conversion
+}
+
+
 .sapUiDtOverlay {
 	position: absolute;
 	outline: none;
@@ -70,12 +78,6 @@
 .sapUiDtOverlayCutted {
 	background-color: @sapUiDtCuttedColor !important;
 	opacity: 0.5;
-}
-
-#overlay-container {
-	// to prevent overlay's height from expanding the body
-	position: fixed;
-	// position is set in code to prevent RTL style conversion
 }
 
 .sapUiDtDragGhostWrapper {

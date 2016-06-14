@@ -138,7 +138,9 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 			if (!oOverlayContainer.length) {
 				oOverlayContainer = jQuery("<div id='" + sOverlayContainerId + "'></div>").css({
 					"top" : "0px",
-					"left" : "0px"
+					"left" : "0px",
+					"right" : "0px",
+					"bottom" : "0px"
 				}).appendTo("body");
 			}
 		}
