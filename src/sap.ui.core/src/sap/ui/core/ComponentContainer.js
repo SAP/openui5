@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.ComponentContainer.
-sap.ui.define(['jquery.sap.global', './Control', './library'],
-	function(jQuery, Control, library) {
+sap.ui.define(['jquery.sap.global', './Component', './Control', './library'],
+	function(jQuery, Component, Control, library) {
 	"use strict";
 
 
@@ -109,6 +109,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 			oComponent.setContainer(this);
 			this.propagateProperties();
 		}
+		return this;
 	};
 
 
@@ -127,13 +128,23 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 			// create the component / link to the container (if a name is given)
 			var sName = this.getName();
 			if (sName) {
-				oComponent = sap.ui.component({
-					name: sName,
-					url: this.getUrl(),
-					handleValidation: this.getHandleValidation(),
-					settings: this.getSettings()
-				});
-				this.setComponent(oComponent, true);
+				// helper to create and set a new component instance
+				var fnCreateAndSetComponent = function createAndSetComponent() {
+					oComponent = sap.ui.component({
+						name: sName,
+						url: this.getUrl(),
+						handleValidation: this.getHandleValidation(),
+						settings: this.getSettings()
+					});
+					this.setComponent(oComponent, true);
+				}.bind(this);
+				// delegate the owner component if available
+				var oOwnerComponent = Component.getOwnerComponentFor(this);
+				if (oOwnerComponent) {
+					return oOwnerComponent.runAsOwner(fnCreateAndSetComponent);
+				} else {
+					return fnCreateAndSetComponent();
+				}
 			}
 		}
 

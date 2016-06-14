@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>qUnit Page for sap.ui.core.ComponentContainer</title>
+
+	<script src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-resourceroots='{"qunit": "../../"}'>
+	</script>
+
+
+	<!-- Initialization -->
+	<script>
+		jQuery.sap.require("sap.ui.qunit.qunit-css");
+		jQuery.sap.require("sap.ui.thirdparty.qunit");
+		jQuery.sap.require("sap.ui.qunit.qunit-junit");
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+		jQuery.sap.require("sap.ui.thirdparty.sinon");
+		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+
+		jQuery.sap.registerModulePath("samples.components", "../../../../../test-resources/sap/ui/core/samples/components/");
+
+		jQuery.sap.require("sap.ui.core.Component");
+		jQuery.sap.require("sap.ui.core.ComponentContainer");
+
+		test("Should be able to chain setComponent", function () {
+
+			var oComponentContainer = new sap.ui.core.ComponentContainer();
+
+			var oComponent = sap.ui.component({
+				name: "samples.components.button"
+			});
+
+			oComponentContainer.setComponent(oComponent).setComponent(oComponent);
+
+			strictEqual(oComponent.getId(), oComponentContainer.getComponent(), "Was able to chain the setter");
+
+		});
+
+		test("Should delegate the owner component", function () {
+
+			var oOwnerComponent = new sap.ui.core.Component("owner");
+			var oComponentContainer;
+
+			oOwnerComponent.runAsOwner(function() {
+				oComponentContainer = new sap.ui.core.ComponentContainer({
+					name: "samples.components.button"
+				});
+			});
+
+			// simulate rendering
+			oComponentContainer.onBeforeRendering();
+
+			strictEqual(oOwnerComponent.getId(), sap.ui.core.Component.getOwnerComponentFor(oComponentContainer).getId(), "ComponentContainer created by owner Component");
+			strictEqual(oOwnerComponent.getId(), sap.ui.core.Component.getOwnerComponentFor(oComponentContainer.getComponentInstance()).getId(), "ComponentContainers Component created by owner Component");
+
+		});
+
+	</script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+	</body>
+</html>
