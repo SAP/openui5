@@ -1371,10 +1371,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 			onAfterRendering: this._onAfterRenderingTokenizer
 		}, this);
 
-		this.getRenderer().placeholderToBeShown = function(oRm, oControl) {
-			return (!oControl._oTokenizer.getTokens().length) && (oControl.getPlaceholder() ? true : false);
-		};
-
 		return oTokenizer;
 	};
 
