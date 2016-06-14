@@ -624,11 +624,11 @@ sap.ui.require([
 		var oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", null, undefined, undefined,
 				{$select : "Name"}),
 			oError = new Error("Failed to compute canonical path..."),
+			oPathPromise = Promise.reject(oError),
 			oCacheProxy = {
-				promise : Promise.reject(oError)
+				promise : Promise.resolve(oPathPromise)
 			},
-			oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS", 1),
-			oPathPromise = Promise.reject(oError);
+			oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS", 1);
 
 		this.mock(_Cache).expects("create").never();
 		this.mock(oContext).expects("requestCanonicalPath").withExactArgs().returns(oPathPromise);
@@ -1333,6 +1333,7 @@ sap.ui.require([
 			// code under test
 			assert.strictEqual(oBinding.fetchAbsoluteValue(sPath).getResult(), undefined);
 
+			this.mock(oContext).expects("fetchCanonicalPath").returns(_SyncPromise.resolve("~"));
 			this.mock(_ODataHelper).expects("createCacheProxy").returns(oCacheProxy);
 			oBinding.setContext(oContext);
 
@@ -1354,6 +1355,7 @@ sap.ui.require([
 			oContext = Context.create(this.oModel, undefined, "/SalesOrderList('1')"),
 			oResult = {};
 
+		this.mock(oContext).expects("fetchCanonicalPath").returns(_SyncPromise.resolve("~"));
 		this.mock(_ODataHelper).expects("createCacheProxy").returns(oCacheProxy);
 		oBinding.setContext(oContext);
 
