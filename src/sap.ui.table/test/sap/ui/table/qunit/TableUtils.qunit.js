@@ -105,11 +105,11 @@ QUnit.test("getTotalRowCount", function(assert) {
 	assert.equal(TableUtils.getTotalRowCount(oTable), iNumberOfRows, "Number of data rows (#data > #visiblerows)");
 	assert.equal(TableUtils.getTotalRowCount(oTable, true), iNumberOfRows, "Number of data rows (incl. empty) (#data > #visiblerows)");
 
-	oTable.setVisibleRowCount(7);
+	oTable.setVisibleRowCount(10);
 	sap.ui.getCore().applyChanges();
 
 	assert.equal(TableUtils.getTotalRowCount(oTable), iNumberOfRows, "Number of data rows (#data <= #visiblerows)");
-	assert.equal(TableUtils.getTotalRowCount(oTable, true), 7, "Number of data rows (incl. empty) (#data <= #visiblerows)");
+	assert.equal(TableUtils.getTotalRowCount(oTable, true), 10, "Number of data rows (incl. empty) (#data <= #visiblerows)");
 });
 
 QUnit.test("isInGroupingRow", function(assert) {

@@ -43,7 +43,7 @@ jQuery.sap.require("sap.ui.model.json.JSONModel");
 var oModel = new sap.ui.model.json.JSONModel();
 
 var aFields = ["A", "B", "C", "D", "E"];
-var iNumberOfRows = 5;
+var iNumberOfRows = 8;
 var iNumberOfCols = aFields.length;
 
 
