@@ -402,8 +402,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		} else {
 			this.fireChangeEvent(oNewSelectedItem.getText());
 			this.removeSelection(oParam);
-			this.setValue('');
 		}
+		this.setValue(this._sOldValue);
 
 		if (this.isOpen() && this.getPicker().oPopup.getOpenState() !== sap.ui.core.OpenState.CLOSING) {
 			// workaround: this is needed because the List fires the "selectionChange" event during the popover is closing.
@@ -679,6 +679,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 
 		// Show all items when the list will be opened next time
 		this.clearFilter();
+		this.setValue("");
+		this._sOldValue = "";
+
 		this.fireSelectionFinish({
 			selectedItems: this.getSelectedItems()
 		});
@@ -1130,7 +1133,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 				// suggest list the list
 				// with all entries should be opened
 				if (oEvent.which == jQuery.sap.KeyCodes.SPACE && this.isOpen() && this._isListInSuggestMode()) {
-					this.clearFilter();
 					this.open();
 					oItem = this._getLastSelectedItem();
 
