@@ -761,7 +761,7 @@
 			start();
 		});
 	});
-	
+
 	asyncTest("test getProperty on label", function(){
 		oLabel.setText("testText");
 		var oModel = initModel(sURI, {json:false});
@@ -4069,6 +4069,68 @@
 		}});
 	});
 
+	asyncTest("Bindable response headers in metadata", function() {
+		expect(2);
+
+
+		var batchDone = false, singleDone = false;
+		var fnEndTestIfDone = function() {
+			if (batchDone && singleDone) {
+				start();
+			}
+		}
+
+		var oModelBatch = initModel(sURI, {json:false, useBatch: true, bindableResponseHeaders: ["age", "cache-control"]});
+		oModelBatch.setUseBatch(true);
+
+		var oButton = new sap.m.Text({
+			text: {
+				path: "/Products(1)/__metadata/headers/age",
+			}
+		});
+		oButton.setModel(oModelBatch);
+
+
+		var oModelSingle = initModel(sURI, {json:false, useBatch: false, bindableResponseHeaders: ["age", "cache-control"]});
+		oModelSingle.setUseBatch(false);
+
+		var oButton2 = new sap.m.Button({
+			text: {
+				parts: [ { path: "__metadata/headers/age" }, { path: "__metadata/headers/invalid" } ],
+			}
+		});
+		oButton2.bindElement("/Products(1)")
+		oButton2.setModel(oModelSingle);
+
+		new Promise(function(fnResolve, fnReject) {
+
+			var singleDone = false, batchDone = false;
+			function checkDone(sWhich) {
+				if (sWhich === "batch") {
+					batchDone = true;
+				}
+				if (sWhich === "single") {
+					singleDone = true;
+				}
+
+				if (batchDone && singleDone) {
+					fnResolve();
+				}
+			}
+
+			oModelBatch.read("/Products(1)", {
+				success: checkDone.bind(this, "batch")
+			});
+			oModelSingle.read("/Products(1)", {
+				success: checkDone.bind(this, "single")
+			});
+		}).then(function() {
+			equals(oButton.getText(), "oh so very old", "Text correctly set from response header");
+			equals(oButton2.getText(), "oh so very old ", "Text correctly set from response header");
+			start();
+		});
+
+	});
 
 	</script>
 

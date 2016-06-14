@@ -54,6 +54,7 @@ sap.ui.define([
 	 * @param {boolean} [mParameters.disableHeadRequestForToken=false] Set this flag to true if your service does not support HEAD requests for fetching the service document (and thus the CSRF-token) to avoid sending a HEAD-request before falling back to GET
 	 * @param {boolean} [mParameters.sequentializeRequests=false] Whether to sequentialize all requests, needed in case the service cannot handle parallel requests
 	 * @param {boolean} [mParameters.disableSoftStateHeader=false] Set this flag to true if don´t want to start a new soft state session with context id (SID) through header mechanism. This useful if you want to share a SID between different browser windows.
+	 * @param {string[]} [mParameters.bindableResponseHeaders=null] Set this array to make custom response headers bindable via the entity's "__metadata/headers" property
 	 	 *
 	 * @class
 	 * Model implementation for oData format
@@ -79,7 +80,7 @@ sap.ui.define([
 			sDefaultCountMode, sDefaultBindingMode, sDefaultOperationMode, mMetadataNamespaces,
 			mServiceUrlParams, mMetadataUrlParams, aMetadataUrlParams, bJSON, oMessageParser,
 			bSkipMetadataAnnotationParsing, sDefaultUpdateMethod, bDisableHeadRequestForToken,
-			bSequentializeRequests, bDisableSoftStateHeader, that = this;
+			bSequentializeRequests, bDisableSoftStateHeader, aBindableResponseHeaders, that = this;
 
 			if (typeof (sServiceUrl) === "object") {
 				mParameters = sServiceUrl;
@@ -110,6 +111,7 @@ sap.ui.define([
 				bDisableHeadRequestForToken = mParameters.disableHeadRequestForToken;
 				bSequentializeRequests = mParameters.sequentializeRequests;
 				bDisableSoftStateHeader = mParameters.disableSoftStateHeader;
+				aBindableResponseHeaders = mParameters.bindableResponseHeaders;
 			}
 			this.mSupportedBindingModes = {"OneWay": true, "OneTime": true, "TwoWay":true};
 			this.sDefaultBindingMode = sDefaultBindingMode || BindingMode.OneWay;
@@ -142,6 +144,7 @@ sap.ui.define([
 			this.bDisableHeadRequestForToken = !!bDisableHeadRequestForToken;
 			this.bSequentializeRequests = !!bSequentializeRequests;
 			this.bDisableSoftStateHeader = !!bDisableSoftStateHeader;
+			this.aBindableResponseHeaders = aBindableResponseHeaders ? aBindableResponseHeaders : null;
 
 			if (oMessageParser) {
 				oMessageParser.setProcessor(this);
@@ -1119,13 +1122,13 @@ sap.ui.define([
 	 * @return {map} mChangedEntities
 	 * @private
 	 */
-	ODataModel.prototype._importData = function(oData, mChangedEntities) {
+	ODataModel.prototype._importData = function(oData, mChangedEntities, oResponse) {
 		var that = this,
 		aList, sKey, oResult, oEntry;
 		if (oData.results) {
 			aList = [];
 			jQuery.each(oData.results, function(i, entry) {
-				var sKey = that._importData(entry, mChangedEntities);
+				var sKey = that._importData(entry, mChangedEntities, oResponse);
 				if (sKey) {
 					aList.push(sKey);
 				}
@@ -1141,9 +1144,29 @@ sap.ui.define([
 				oEntry = oData;
 				this.oData[sKey] = oEntry;
 			}
+
+			// Add response headers to the metadata so they can be accessed via "__metadata/headers/" binding path
+			if (this.aBindableResponseHeaders) {
+				var mHeaders = {};
+
+				for (var sHeader in oResponse.headers) {
+					var sLowerKey = sHeader.toLowerCase();
+					if (this.aBindableResponseHeaders.indexOf(sLowerKey) > -1) {
+						mHeaders[sLowerKey] = oResponse.headers[sHeader];
+					}
+				}
+
+				if (!jQuery.isEmptyObject(mHeaders)) {
+					if (!oEntry.__metadata) {
+						oEntry.__metadata = {};
+					}
+					oEntry.__metadata.headers = mHeaders;
+				}
+			}
+
 			jQuery.each(oData, function(sName, oProperty) {
 				if (oProperty && (oProperty.__metadata && oProperty.__metadata.uri || oProperty.results) && !oProperty.__deferred) {
-					oResult = that._importData(oProperty, mChangedEntities);
+					oResult = that._importData(oProperty, mChangedEntities, oResponse);
 					if (jQuery.isArray(oResult)) {
 						oEntry[sName] = { __list: oResult };
 					} else {
@@ -2726,7 +2749,7 @@ sap.ui.define([
 			if (!oResponse._imported && oResultData && (jQuery.isArray(oResultData) || typeof oResultData == 'object')) {
 				//need a deep data copy for import
 				oImportData = jQuery.sap.extend(true, {}, oResultData);
-				that._importData(oImportData, mLocalGetEntities);
+				that._importData(oImportData, mLocalGetEntities, oResponse);
 				oResponse._imported = true;
 			}
 
