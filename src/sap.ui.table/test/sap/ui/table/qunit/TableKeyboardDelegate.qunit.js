@@ -71,7 +71,7 @@ function simulateTabEvent(oTarget, bBackward) {
 }
 
 function setupTest() {
-	createTables(true);
+	createTables(true, true);
 	var oFocus = new TestControl("Focus1", {text: "Focus1", tabbable: true});
 	oFocus.placeAt("content");
 	oTable.placeAt("content");
@@ -358,13 +358,13 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 
 			var oElem = setFocusOutsideOfTable("Focus2");
 			simulateTabEvent(oElem, true);
-			checkFocus(jQuery.sap.domById("Footer"), assert);
+			oElem = checkFocus(jQuery.sap.domById("Footer"), assert);
 			simulateTabEvent(oElem, true);
 			oElem = checkFocus(oTable.getDomRef("noDataCnt"), assert);
 			simulateTabEvent(oElem, true);
 			oElem = checkFocus(getColumnHeader(0), assert);
 			simulateTabEvent(oElem, true);
-			checkFocus(jQuery.sap.domById("Extension"), assert);
+			oElem = checkFocus(jQuery.sap.domById("Extension"), assert);
 			simulateTabEvent(oElem, true);
 			checkFocus(jQuery.sap.domById("Focus1"), assert);
 
@@ -442,17 +442,168 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 // Tests for sap.ui.table.TableKeyboardDelegate2 (new Keyboard Behavior)
 //************************************************************************
 
-	QUnit.module("Keyboard Support: Item Navigation", {
+	QUnit.module("Basics", {
+		setup: setupTest,
+		teardown: teardownTest
+	});
+
+	QUnit.test("getInterface", function(assert) {
+		var oDelegate = new sap.ui.table.TableKeyboardDelegate2();
+		assert.ok(oDelegate === oDelegate.getInterface(), "getInterface returns the obejct itself");
+	});
+
+
+
+	QUnit.module("Keyboard Support: Navigation", {
+		setup: setupTest,
+		teardown: teardownTest
+	});
+
+	QUnit.test("TAB - forward/backward", function(assert) {
+		var oElem = setFocusOutsideOfTable("Focus1");
+		simulateTabEvent(oElem, false);
+		oElem = checkFocus(getColumnHeader(0), assert);
+		qutils.triggerKeydown(oElem, "ARROW_RIGHT", false, false, false);
+		oElem = checkFocus(getColumnHeader(1), assert);
+		simulateTabEvent(oElem, false);
+		oElem = checkFocus(getCell(0, 1), assert);
+		qutils.triggerKeydown(oElem, "ARROW_DOWN", false, false, false);
+		oElem = checkFocus(getCell(1, 1), assert);
+		simulateTabEvent(oElem, false);
+		oElem = checkFocus(jQuery.sap.domById("Focus2"), assert);
+
+		simulateTabEvent(oElem, true);
+		oElem = checkFocus(getCell(1, 1), assert);
+
+		oElem = setFocusOutsideOfTable("Focus1");
+		simulateTabEvent(oElem, false);
+		oElem = checkFocus(getColumnHeader(1), assert);
+		simulateTabEvent(oElem, false);
+		oElem = checkFocus(getCell(1, 1), assert);
+
+		oElem = setFocusOutsideOfTable("Focus1");
+		simulateTabEvent(oElem, false);
+		oElem = checkFocus(getColumnHeader(1), assert);
+		qutils.triggerKeydown(oElem, "ARROW_RIGHT", false, false, false);
+		oElem = checkFocus(getColumnHeader(2), assert);
+		simulateTabEvent(oElem, false);
+		oElem = checkFocus(getCell(1, 2), assert);
+	});
+
+	QUnit.test("TAB - forward/backward (with extension and footer)", function(assert) {
+		oTable.addExtension(new TestControl("Extension", {text: "Extension", tabbable: true}));
+		oTable.setFooter(new TestControl("Footer", {text: "Footer", tabbable: true}));
+		sap.ui.getCore().applyChanges();
+
+		var oElem = setFocusOutsideOfTable("Focus2");
+		simulateTabEvent(oElem, true);
+		oElem = checkFocus(jQuery.sap.domById("Footer"), assert);
+		simulateTabEvent(oElem, true);
+		oElem = checkFocus(getCell(0, 0), assert);
+		qutils.triggerKeydown(oElem, "ARROW_LEFT", false, false, false);
+		oElem = checkFocus(getRowHeader(0), assert);
+		simulateTabEvent(oElem, true);
+		oElem = checkFocus(getSelectAll(0), assert);
+		simulateTabEvent(oElem, true);
+		oElem = checkFocus(jQuery.sap.domById("Extension"), assert);
+		simulateTabEvent(oElem, true);
+		oElem = checkFocus(jQuery.sap.domById("Focus1"), assert);
+		simulateTabEvent(oElem, false);
+		oElem = checkFocus(jQuery.sap.domById("Extension"), assert);
+		simulateTabEvent(oElem, false);
+		oElem = checkFocus(getSelectAll(0), assert);
+		simulateTabEvent(oElem, false);
+		oElem = checkFocus(getRowHeader(0), assert);
+		simulateTabEvent(oElem, false);
+		oElem = checkFocus(jQuery.sap.domById("Footer"), assert);
+		simulateTabEvent(oElem, false);
+		oElem = checkFocus(jQuery.sap.domById("Focus2"), assert);
+
+		oTable.setColumnHeaderVisible(false);
+		sap.ui.getCore().applyChanges();
+		oElem = getCell(1, 1, true);
+		simulateTabEvent(oElem, true);
+		oElem = checkFocus(jQuery.sap.domById("Extension"), assert);
+	});
+
+
+
+	QUnit.module("Keyboard Support: F6 Handling", {
 		setup: function() {
-			createTables();
+			setupTest();
+
+			// Enhance the Navigation Handler to use the test scope only (not the QUnit related DOM)
+			jQuery.sap.handleF6GroupNavigation_orig = jQuery.sap.handleF6GroupNavigation;
+			jQuery.sap.handleF6GroupNavigation = function(oEvent, oSettings){
+				oSettings = oSettings ? oSettings : {};
+				if(!oSettings.scope){
+					oSettings.scope = jQuery.sap.domById("content");
+				}
+				jQuery.sap.handleF6GroupNavigation_orig(oEvent, oSettings);
+			};
 		},
-		teardown: function () {
-			destroyTables();
+		teardown: function() {
+			teardownTest();
+
+			jQuery.sap.handleF6GroupNavigation = jQuery.sap.handleF6GroupNavigation_orig;
+			jQuery.sap.handleF6GroupNavigation_orig = null;
 		}
 	});
 
-	QUnit.test("TBD", function(assert) {
-		assert.ok(false, "Not yet implemented");
+	QUnit.test("F6 - forward (with extension and footer)", function(assert) {
+		oTable.addExtension(new TestControl("Extension", {text: "Extension", tabbable: true}));
+		oTable.setFooter(new TestControl("Footer", {text: "Footer", tabbable: true}));
+		sap.ui.getCore().applyChanges();
+
+		var oElem = setFocusOutsideOfTable("Focus1");
+		qutils.triggerKeydown(oElem, "F6", false, false, false);
+		oElem = checkFocus(getColumnHeader(0), assert);
+		qutils.triggerKeydown(oElem, "F6", false, false, false);
+		oElem = checkFocus(jQuery.sap.domById("Footer"), assert);
+
+		oElem = getCell(1, 1, true, assert);
+		qutils.triggerKeydown(oElem, "F6", false, false, false);
+		oElem = checkFocus(jQuery.sap.domById("Footer"), assert);
+
+		oElem = getRowHeader(1, true, assert);
+		qutils.triggerKeydown(oElem, "F6", false, false, false);
+		oElem = checkFocus(jQuery.sap.domById("Footer"), assert);
+
+		oElem = getSelectAll(true, assert);
+		qutils.triggerKeydown(oElem, "F6", false, false, false);
+		oElem = checkFocus(jQuery.sap.domById("Footer"), assert);
+
+		oElem = getColumnHeader(1, true, assert);
+		qutils.triggerKeydown(oElem, "F6", false, false, false);
+		oElem = checkFocus(jQuery.sap.domById("Footer"), assert);
+	});
+
+	QUnit.test("F6 - backward (with extension and footer)", function(assert) {
+		oTable.addExtension(new TestControl("Extension", {text: "Extension", tabbable: true}));
+		oTable.setFooter(new TestControl("Footer", {text: "Footer", tabbable: true}));
+		sap.ui.getCore().applyChanges();
+
+		var oElem = setFocusOutsideOfTable("Focus2");
+		qutils.triggerKeydown(oElem, "F6", true, false, false);
+		oElem = checkFocus(getColumnHeader(0), assert);
+		qutils.triggerKeydown(oElem, "F6", true, false, false);
+		oElem = checkFocus(jQuery.sap.domById("Focus1"), assert);
+
+		oElem = getCell(1, 1, true, assert);
+		qutils.triggerKeydown(oElem, "F6", true, false, false);
+		oElem = checkFocus(jQuery.sap.domById("Focus1"), assert);
+
+		oElem = getRowHeader(1, true, assert);
+		qutils.triggerKeydown(oElem, "F6", true, false, false);
+		oElem = checkFocus(jQuery.sap.domById("Focus1"), assert);
+
+		oElem = getSelectAll(true, assert);
+		qutils.triggerKeydown(oElem, "F6", true, false, false);
+		oElem = checkFocus(jQuery.sap.domById("Focus1"), assert);
+
+		oElem = getColumnHeader(1, true, assert);
+		qutils.triggerKeydown(oElem, "F6", true, false, false);
+		oElem = checkFocus(jQuery.sap.domById("Focus1"), assert);
 	});
 
 }
