@@ -320,6 +320,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				(sap.ui.Device.browser.version == 9 || sap.ui.Device.browser.version == 10);
 			var bIsRTLOn = sap.ui.getCore().getConfiguration().getRTL();
 
+			this.$().css("opacity", "");
+
 			var _minSize = this.getMinSize();
 			this._minWidth = _minSize.width;
 			this._minHeight = _minSize.height;
