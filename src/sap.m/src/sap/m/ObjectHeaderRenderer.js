@@ -787,6 +787,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 		oRM.write("<div");
 		oRM.addClass("sapMOHR");
+		if (bTabs) {
+			oRM.addClass("sapMOHRNoBorder");
+		}
 
 		oRM.addClass("sapMOHRBg" + oOH._getBackground());
 		oRM.writeClasses();
