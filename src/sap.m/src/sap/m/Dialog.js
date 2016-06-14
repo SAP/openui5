@@ -382,6 +382,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				//restore the focus after rendering when dialog is already open
 				this._setInitialFocus();
 			}
+
+			if (this.getType() === sap.m.DialogType.Message) {
+				this.$("footer").removeClass("sapContrast sapContrastPlus");
+			}
 		};
 
 		Dialog.prototype.exit = function () {
