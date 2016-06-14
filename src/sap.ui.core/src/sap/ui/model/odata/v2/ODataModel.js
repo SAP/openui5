@@ -2776,6 +2776,7 @@ sap.ui.define([
 					delete this.oData[oRequest.key];
 					var oContext = this.getContext("/" + oRequest.key);
 					oContext.sPath = '/' + sKey;
+					oContext.bCreated = false;
 					//delete created flag after successfull creation
 					if (this.oData[sKey]) {
 						delete this.oData[sKey].__metadata.created;
@@ -4472,6 +4473,8 @@ sap.ui.define([
 			oRequest = that._createRequest(sUrl, sMethod, mHeaders, oEntity, sETag);
 
 			oCreatedContext = that.getContext("/" + sKey); // context wants a path
+			oCreatedContext.bCreated = true;
+
 			oRequest.key = sKey;
 
 			mRequests = that.mRequests;
