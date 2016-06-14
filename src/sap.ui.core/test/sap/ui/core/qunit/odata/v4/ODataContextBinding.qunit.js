@@ -170,6 +170,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	//TODO Clarify why this causes Uncaught (in promise) Error: Failed to compute canonical path...
 	QUnit.test("setContext, relative path w/ parameters, proxy promise rejects", function (assert) {
 		var oBinding = this.oModel.bindContext("TEAM_2_MANAGER", null, {$select : "Name"}),
 			oError = new Error("Failed to compute canonical path..."),

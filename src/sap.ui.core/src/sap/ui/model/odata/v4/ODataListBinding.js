@@ -7,6 +7,7 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
+	"sap/ui/model/FilterType",
 	"sap/ui/model/ListBinding",
 	"sap/ui/model/odata/OperationMode",
 	"./_ODataHelper",
@@ -14,8 +15,8 @@ sap.ui.define([
 	"./lib/_Cache",
 	"./lib/_Helper",
 	"./lib/_SyncPromise"
-], function (jQuery, Binding, ChangeReason, ListBinding, OperationMode, _ODataHelper, Context,
-	_Cache, _Helper, _SyncPromise) {
+], function (jQuery, Binding, ChangeReason, FilterType, ListBinding, OperationMode, _ODataHelper,
+	Context, _Cache, _Helper, _SyncPromise) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataListBinding",
@@ -263,16 +264,83 @@ sap.ui.define([
 	};
 
 	/**
-	 * Method not supported
+	 * Filters the list with the given filters. Filtering is supported only for absolute bindings.
 	 *
+	 * If there are pending changes an error is thrown. Use {@link #hasPendingChanges} to check if
+	 * there are pending changes. If there are changes, call
+	 * {@link sap.ui.model.odata.v4.ODataModel#submitBatch} to submit the changes or
+	 * {@link sap.ui.model.odata.v4.ODataModel#resetChanges} to reset the changes before calling
+	 * 'filter'.
+
+	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [vFilters]
+	 *   The dynamic filters to be used; replaces the dynamic filters given in
+	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList}.
+	 *   The filter executed on the list is created from the following parts, which are combined
+	 *   with a logical 'and':
+	 *   <ul>
+	 *   <li> dynamic filters of type sap.ui.model.FilterType.Application
+	 *   <li> dynamic filters of type sap.ui.model.FilterType.Control
+	 *   <li> the static filters, as defined in the '$filter' binding parameter
+	 *   </ul>
+	 *
+	 * @param {sap.ui.model.FilterType} [sFilterType=sap.ui.model.FilterType.Application]
+	 *   The filter type to use
+	 * @returns {sap.ui.model.odata.v4.ODataListBinding}
+	 *   <code>this</code> to facilitate method chaining
 	 * @throws {Error}
+	 *   If filter is called on a relative binding, if there are pending changes or if an
+	 *   unsupported operation mode is used (see {@link sap.ui.model.odata.v4.ODataModel#bindList})
 	 *
 	 * @public
 	 * @see sap.ui.model.ListBinding#filter
-	 * @since 1.37.0
+	 * @since 1.39.0
 	 */
-	ODataListBinding.prototype.filter = function () {
-		throw new Error("Unsupported operation: v4.ODataListBinding#filter");
+	ODataListBinding.prototype.filter = function (vFilters, sFilterType) {
+		var that = this;
+
+		function createCache(sPath, sFilterValue) {
+			var mQueryOptions = that.mQueryOptions || {};
+
+			if (sFilterValue) {
+				mQueryOptions = JSON.parse(JSON.stringify(that.mQueryOptions));
+				mQueryOptions.$filter = sFilterValue;
+			}
+			return _Cache.create(that.oModel.oRequestor,
+					_Helper.buildPath(/*sPath.slice(1), */that.sPath.slice(1)),
+				mQueryOptions);
+		}
+
+		if (this.bRelative) {
+			throw new Error(
+				"Unsupported operation: v4.ODataListBinding#filter on relative bindings");
+		}
+		if (this.sOperationMode !== OperationMode.Server) {
+			throw new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server");
+		}
+		if (this.hasPendingChanges()) {
+			throw new Error("Cannot filter due to pending changes");
+		}
+
+		if  (sFilterType === FilterType.Control) {
+			this.aFilters = _ODataHelper.toArray(vFilters);
+		} else {
+			this.aApplicationFilters = _ODataHelper.toArray(vFilters);
+		}
+//		this.mCacheByContext = undefined;
+		this.oCache = _ODataHelper.createCacheProxy(this, createCache, /*oPathPromise*/undefined,
+			_ODataHelper.requestFilter(this, this.aApplicationFilters, this.aFilters,
+					this.mQueryOptions && this.mQueryOptions.$filter));
+		this.oCache.promise.then(function (oCache) {
+			that.oCache = oCache;
+		})["catch"](function (oError) {
+			that.oModel.reportError("Failed to create cache for binding " + that,
+				sClassName, oError);
+		});
+		this.sChangeReason = ChangeReason.Filter;
+		this.reset();
+		this._fireRefresh({reason : ChangeReason.Filter});
+
+		return this;
 	};
 
 	 /**

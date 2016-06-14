@@ -12,11 +12,13 @@ sap.ui.define([
 	"sap/ui/core/mvc/ViewType",
 	"sap/ui/core/sample/common/Component",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/URI"
-], function (View, ViewType, BaseComponent, JSONModel, ODataModel, TestUtils, sinon, URI) {
+], function (View, ViewType, BaseComponent, JSONModel, OperationMode, ODataModel, TestUtils, sinon,
+		URI) {
 	"use strict";
 
 	return BaseComponent.extend("sap.ui.core.sample.odata.v4.SalesOrders.Component", {
@@ -43,6 +45,7 @@ sap.ui.define([
 					groupId : jQuery.sap.getUriParameters().get("$direct")
 						? "$direct" // switch off batch
 						: undefined,
+					operationMode : OperationMode.Server,
 					serviceUrl : sServiceUrl + sQuery,
 					synchronizationMode : "None",
 					updateGroupId : jQuery.sap.getUriParameters().get("updateGroupId") || undefined

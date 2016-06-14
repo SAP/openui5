@@ -5,6 +5,9 @@ sap.ui.require([
 	"jquery.sap.global",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/model/ChangeReason",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/FilterType",
 	"sap/ui/model/ListBinding",
 	"sap/ui/model/Model",
 	"sap/ui/model/Sorter",
@@ -16,8 +19,9 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataModel"
-], function (jQuery, ManagedObject, ChangeReason, ListBinding, Model, Sorter, OperationMode,
-		_ODataHelper, _Cache, _Helper, _SyncPromise, Context, ODataListBinding, ODataModel) {
+], function (jQuery, ManagedObject, ChangeReason, Filter, FilterOperator, FilterType, ListBinding,
+		Model, Sorter, OperationMode, _ODataHelper, _Cache, _Helper, _SyncPromise, Context,
+		ODataListBinding, ODataModel) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -620,6 +624,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	//TODO Clarify why this causes Uncaught (in promise) Error: Failed to compute canonical path...
 	QUnit.test("setContext, relative path w/ parameters, proxy promise rejects", function (assert) {
 		var oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", null, undefined, undefined,
 				{$select : "Name"}),
@@ -1525,11 +1530,12 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("forbidden", function (assert) {
-		var oListBinding = this.oModel.bindList("/EMPLOYEES");
+		var oListBinding = this.oModel.bindList("/EMPLOYEES"),
+			oRelativeListBinding = this.oModel.bindList("Equipments");
 
 		assert.throws(function () { //TODO implement
-			oListBinding.filter();
-		}, new Error("Unsupported operation: v4.ODataListBinding#filter"));
+			oRelativeListBinding.filter();
+		}, new Error("Unsupported operation: v4.ODataListBinding#filter on relative bindings"));
 
 		assert.throws(function () { //TODO implement?
 			oListBinding.getContexts(0, 42, 0);
@@ -1974,6 +1980,173 @@ sap.ui.require([
 		return oCacheProxy.promise.catch(function (oError0) {
 			assert.strictEqual(oError0, oError);
 		});
+	});
+
+	//*********************************************************************************************
+	[
+		undefined,
+		FilterType.Application,
+		FilterType.Control
+	].forEach(function (sFilterType) {
+		QUnit.test("filter: FilterType=" + sFilterType, function (assert) {
+			var oBinding,
+				oCache = {},
+				oCacheProxy = {
+					promise : Promise.resolve(oCache)
+				},
+				oFilter = new Filter("Name", FilterOperator.Contains, "foo"),
+				aFilters = [oFilter],
+				oFilterPromise = {},
+				sFilterValue = "(contains(Name,'foo')) and (Age gt 18)",
+				mOriginalQueryOptions,
+				sStaticFilter = "Age gt 18";
+
+			oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined, {
+				$filter : sStaticFilter,
+				$$operationMode : OperationMode.Server
+			});
+
+			this.mock(_ODataHelper).expects("toArray").withExactArgs(oFilter).returns(aFilters);
+			this.mock(_ODataHelper).expects("requestFilter")
+				.withExactArgs(sinon.match.same(oBinding),
+					sinon.match.same(sFilterType === FilterType.Control
+						? oBinding.aApplicationFilters : aFilters),
+					sinon.match.same(sFilterType === FilterType.Control
+						? aFilters : oBinding.aFilters),
+					sinon.match.same(sStaticFilter))
+				.returns(oFilterPromise);
+			this.mock(_ODataHelper).expects("createCacheProxy")
+				.withExactArgs(oBinding, sinon.match.func, undefined, oFilterPromise)
+				.callsArgWith(1, undefined, sFilterValue)
+				.returns(oCacheProxy);
+			this.mock(_Cache).expects("create")
+				.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
+					{$filter : sFilterValue, "sap-client" : "111"});
+			this.mock(oBinding).expects("reset").withExactArgs();
+			this.mock(oBinding).expects("_fireRefresh")
+				.withExactArgs({reason : ChangeReason.Filter});
+			mOriginalQueryOptions = JSON.parse(JSON.stringify(oBinding.mQueryOptions));
+
+			// Code under test
+			assert.strictEqual(oBinding.filter(oFilter, sFilterType), oBinding, "chaining");
+
+			assert.strictEqual(oBinding.oCache, oCacheProxy);
+			if (sFilterType === FilterType.Control) {
+				assert.strictEqual(oBinding.aFilters, aFilters);
+				assert.deepEqual(oBinding.aApplicationFilters, []);
+			} else {
+				assert.strictEqual(oBinding.aApplicationFilters, aFilters);
+				assert.deepEqual(oBinding.aFilters, []);
+			}
+			return oCacheProxy.promise.then(function (oCache0) {
+				assert.strictEqual(oBinding.oCache, oCache0);
+				assert.deepEqual(oBinding.mQueryOptions, mOriginalQueryOptions);
+			});
+		});
+		//TODO combine dynamic filters and sorters (store sOrderby and sFilter at binding?) - own change?
+	});
+
+	//*********************************************************************************************
+	QUnit.test("filter: empty filter value", function (assert) {
+		var oBinding,
+			oCacheProxy = {
+				promise : Promise.resolve({})
+			},
+			oFilterPromise = {};
+
+		oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined, {
+			$$operationMode : OperationMode.Server
+		});
+
+		this.mock(_ODataHelper).expects("requestFilter")
+			.withExactArgs(sinon.match.same(oBinding), [], [], undefined)
+			.returns(oFilterPromise);
+		this.mock(_ODataHelper).expects("createCacheProxy")
+			.withExactArgs(oBinding, sinon.match.func, undefined, oFilterPromise)
+			.callsArgWith(1, undefined, "")
+			.returns(oCacheProxy);
+		this.mock(_Cache).expects("create")
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
+				{/*must not contain $filter : "",*/ "sap-client" : "111"});
+
+		// Code under test
+		oBinding.filter(/*no filter*/);
+	});
+
+	//*********************************************************************************************
+	//TODO add when supporting filter on relative bindings
+	QUnit.skip("filter: resets map of caches by context", function (assert) {
+		var oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined, {
+				$$operationMode : OperationMode.Server
+			}),
+			oCacheProxy = {
+				promise : Promise.resolve({})
+			},
+			oFilterPromise = {};
+
+		oBinding.mCacheByContext = {};
+
+		this.mock(_ODataHelper).expects("requestFilter")
+			.withExactArgs(sinon.match.same(oBinding), [], [], undefined)
+			.returns(oFilterPromise);
+		this.stub(_ODataHelper, "createCacheProxy", function () {
+			assert.strictEqual(oBinding.mCacheByContext, undefined);
+			return oCacheProxy;
+		});
+
+		// Code under test
+		oBinding.filter(/*no filter*/);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("filter: check errors", function (assert) {
+		var oBinding = this.oModel.bindList("/EMPLOYEES");
+
+		assert.throws(function () {
+			oBinding.filter();
+		}, new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server"));
+
+		oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined,
+			{ $$operationMode : OperationMode.Server });
+
+		this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(true);
+
+		// code under test
+		assert.throws(function () {
+			oBinding.filter();
+		}, new Error("Cannot filter due to pending changes"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("filter: requestFilter promise rejects", function (assert) {
+		var oBinding,
+			oError = new Error("requestFilter error"),
+			oCacheProxy = {
+				promise : Promise.reject(oError)
+			},
+			oFilterPromise = {};
+
+		oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined,
+			{ $$operationMode : OperationMode.Server });
+
+		this.mock(_ODataHelper).expects("requestFilter")
+			.withExactArgs(sinon.match.same(oBinding), [], [], undefined)
+			.returns(oFilterPromise);
+		this.mock(_ODataHelper).expects("createCacheProxy")
+			.withExactArgs(oBinding, sinon.match.func, undefined, sinon.match.same(oFilterPromise))
+			.returns(oCacheProxy);
+		this.mock(oBinding.oModel).expects("reportError")
+			.withExactArgs(
+				"Failed to create cache for binding " +
+					"sap.ui.model.odata.v4.ODataListBinding: /EMPLOYEES",
+				"sap.ui.model.odata.v4.ODataListBinding",
+				sinon.match.same(oError)
+			);
+
+		// Code under test
+		oBinding.filter(null, FilterType.Application);
+
+		return oCacheProxy.promise.catch(function () {});
 	});
 });
 //TODO to avoid complete re-rendering of lists implement bUseExtendedChangeDetection support
