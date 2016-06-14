@@ -609,7 +609,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 					that.bNeedsUpdate = true;
 					that.checkUpdate();
 					that.oModel.fireRequestCompleted({url: sUrl, method: "GET", async: true, success: true});
-					that.fireDataReceived();
+					that.fireDataReceived({data: {}});
 				}, 0);
 			} else {
 				// Execute the request and use the metadata if available
