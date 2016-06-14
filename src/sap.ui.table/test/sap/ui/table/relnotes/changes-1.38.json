@@ -573,5 +573,87 @@
         "references": []
       }
     ]
+  },
+  "1.38.3": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "033995ba48e30b34dfca24bc033d31c7a33c424e",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnalyticalTable - Total Row \u0026 Metadata Timing",
+        "references": []
+      },
+      {
+        "id": "e64e48c996d31a843d5bd931036b77bbf842b527",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "ClientTreeBindingAdapter - Expand was broken",
+        "references": []
+      },
+      {
+        "id": "587bdcd8a1e75d346537e8db62963d858c4f68b7",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.v2.ODataTreeBinding: fixes timing issue with navigation properties",
+        "references": []
+      },
+      {
+        "id": "82f22c9e2ad5bb9862ddc0ed70f65efe0098054c",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Fix \"noData\" behavior",
+        "references": []
+      },
+      {
+        "id": "2cd7fac508391d93d079f6c62ab928756476e80b",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: fixes issue with busy indicator after updateAnalyticalInfo",
+        "references": []
+      },
+      {
+        "id": "a90e8098424436f97bcccd731594d9847b1d1578",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: forces binding to fire change after updateAnalyticalInfo",
+        "references": []
+      },
+      {
+        "id": "04ef1d1128e188dc971d83ef1681e50bc02c214d",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Fix screenreader announcement of column header tooltips",
+        "references": []
+      },
+      {
+        "id": "296e84c490b6713d9012f43fb2ec327ba74d66dd",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Fix tabbing out from row header",
+        "references": []
+      },
+      {
+        "id": "da1a235ca08aee0dae2ac71abb28794d47c1a311",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: hAlign Right in RTL mode",
+        "references": []
+      },
+      {
+        "id": "97ee4cd3c22b2b9dcbdd0d469c8351e6e9c87239",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: refreshRows getting called without binding",
+        "references": []
+      },
+      {
+        "id": "60736a02b3c4b2bea6e549ed847633e46cc714cc",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.TableKeyboardExtension: fixes null ref issue in destroy",
+        "references": []
+      }
+    ]
   }
 }
