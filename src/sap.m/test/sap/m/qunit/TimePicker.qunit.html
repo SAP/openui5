@@ -2049,13 +2049,44 @@
 			tp.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			tp.fireChangeEvent("13 00");
-			tp.fireChangeEvent("13 00");
-			tp.fireChangeEvent("13 15");
-			tp.fireChangeEvent("13 15");
-			tp.fireChangeEvent("13 15");
+			tp._handleInputChange("13 00");
+			tp._handleInputChange("13 00");
+			tp._handleInputChange("13 15");
+			tp._handleInputChange("13 15");
+			tp._handleInputChange("13 15");
 
 			equals(spy.callCount, 2, "changed event fired only twice");
+
+			spy = null;
+			tp.destroy();
+		});
+
+		//BCP: 1670343229
+		test("change event fires on second change after the value is set in the change handler", function() {
+			//system under test
+			var tp = new sap.m.TimePicker({
+				valueFormat: "hh mm",
+				displayFormat: "hh mm",
+				value: "11 30"
+			}), spy = {
+				callCount: 0
+			};
+
+			tp.attachChange(function () {
+				spy.callCount++;
+				tp.setValue("11 30");
+			});
+
+			//arrange
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//act
+			tp._handleInputChange("11 28");
+			tp._handleInputChange("11 28");
+
+			//assert
+			equals(spy.callCount, 2, "changed event fired twice");
 
 			spy = null;
 			tp.destroy();
