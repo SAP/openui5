@@ -1510,7 +1510,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			bComponentPreload = /^(sync|async)$/.test(oConfiguration.getComponentPreload()),
 			bManifestFirst = typeof oConfig.manifestFirst !== "undefined" ? oConfig.manifestFirst : oConfiguration.getManifestFirst(),
 			oManifest,
-			mModels;
+			mModels,
+			fnCallLoadComponentCallback;
 
 		// if we find a manifest URL in the configuration
 		// we will load the manifest from the specified URL (sync or async)
@@ -1825,18 +1826,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 					return preload(sComponentName, true);
 				}));
 
-				var fnCallLoadComponentCallback = function(oLoadedManifest) {
+				fnCallLoadComponentCallback = function(oLoadedManifest) {
 					// if a callback is registered to the component load call it with the configuration
 					if (typeof Component._fnLoadComponentCallback === "function") {
 						// secure configuration and manifest from manipulation
 						var oConfigCopy = jQuery.extend(true, {}, oConfig);
 						var oManifestCopy = jQuery.extend(true, {}, oLoadedManifest);
 						// trigger the callback with a copy if its required data
-						Component._fnLoadComponentCallback(oConfigCopy, oManifestCopy);
+						// do not await any result from the callback nor stop component loading on an occurring error
+						try {
+							Component._fnLoadComponentCallback(oConfigCopy, oManifestCopy);
+						} catch (oError) {
+							jQuery.sap.log.error("Callback for loading the component \"" + oManifest.getComponentName() +
+								"\" run into an error. The callback was skipped and the component loading resumed.",
+								oError, "sap.ui.core.Component");
+						}
 					}
 				};
-
-				oManifest.then(fnCallLoadComponentCallback);
 			}
 
 			// if a hint about "used" components is given, preload those components
@@ -1849,7 +1855,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			}
 
 			// combine given promises
-			return Promise.all(promises).then(function(v) {
+			return Promise.all(promises).then(function (v) {
+				// after all promises including the loading of dependent libs have been resolved
+				// pass the manifest to the callback function in case the manifest is present and a callback was set
+				if (oManifest && fnCallLoadComponentCallback) {
+					oManifest.then(fnCallLoadComponentCallback);
+				}
+				return v;
+			}).then(function(v) {
 				jQuery.sap.log.debug("Component.load: all promises fulfilled, then " + v);
 				if (oManifest) {
 					return oManifest.then(function(oLoadedManifest) {
