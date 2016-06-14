@@ -31,12 +31,16 @@ sap.ui.require([
 	"sap/ui/test/matchers/Interactable",
 	"sap/ui/test/matchers/Visible",
 	"sap/ui/commons/Button",
-	"sap/ui/commons/CheckBox"
+	"sap/ui/commons/CheckBox",
+	"sap/m/Button",
+	"sap/m/Dialog"
 ], function (OpaPlugin,
 			 Interactable,
 			 Visible,
 			 Button,
-			 CheckBox) {
+			 CheckBox,
+			 MButton,
+			 Dialog) {
 	"use strict";
 
 
@@ -565,8 +569,8 @@ sap.ui.require([
 
 	QUnit.module("Controls in a dialog", {
 		beforeEach: function () {
-			this.oButtonInDialog = new sap.m.Button("buttonInDialog",{text: "OK"});
-			this.oDialog = new sap.m.Dialog({
+			this.oButtonInDialog = new MButton("buttonInDialog",{text: "OK"});
+			this.oDialog = new Dialog({
 				content: this.oButtonInDialog
 			});
 			// System under Test
@@ -586,7 +590,7 @@ sap.ui.require([
 		this.oDialog.attachAfterOpen(function () {
 			var aRetrievedControls = this.oPlugin.getMatchingControls({
 				searchOpenDialogs : true,
-				controlType: sap.m.Button,
+				controlType: MButton,
 				id : ["buttonInDialog"]
 			});
 
@@ -707,7 +711,11 @@ sap.ui.require([
 		});
 	});
 
-	QUnit.start();
+	$(function () {
+		// hack for IE - dialog introduces a global when opened so i open it before the test starts
+		new Dialog().open().destroy();
+		QUnit.start();
+	});
 });
 
 

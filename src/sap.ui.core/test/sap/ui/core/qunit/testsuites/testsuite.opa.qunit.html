@@ -15,7 +15,7 @@
 			var contextPath = "/" + window.location.pathname.split("/")[1];
 			var bIsIE9 = sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 9;
 
-			var sUrlParameters = "?noglobals=true";
+			var sUrlParameters = "?noglobals=true&sap-ui-animation=false";
 
 			function addTestPage(sUrl) {
 				suite.addTestPage(contextPath + sUrl + sUrlParameters);
