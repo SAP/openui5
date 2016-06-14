@@ -1000,6 +1000,7 @@
 		};
 		var fnRecievedHandler = function() {
 			equal(true, true, "Data received event was fired");
+			oLabel.unbindElement();
 			start();
 		};
 		oLabel.getElementBinding().attachDataRequested(fnRequestedHandler);
@@ -1020,6 +1021,7 @@
 		};
 		var fnRecievedHandler = function() {
 			equal(true, true, "Data received event was fired");
+			oLabel.unbindElement();
 			start();
 		};
 		oLabel.getElementBinding().attachDataRequested(fnRequestedHandler);
