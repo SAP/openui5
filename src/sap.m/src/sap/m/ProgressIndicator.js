@@ -77,40 +77,29 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	}});
 
-	ProgressIndicator.prototype.init = function () {
-		this._oEmptyText = (new sap.ui.core.InvisibleText(this.getId() + "-empty", {text: ""})).toStatic();
-	};
-
-	ProgressIndicator.prototype.exit = function () {
-		this._oEmptyText.destroy();
-	};
-
-
-	ProgressIndicator.prototype.onAfterRendering = function() {
-		//if the user sets a height, this wins against everything else, therefore the styles have to be calculated and set here
-		if (!!this.getHeight()) {
-			var lineHeightText = this.$().height();
-			this.$("textRight").css("line-height", lineHeightText + "px");
-			this.$("textLeft").css("line-height", lineHeightText + "px");
-		}
-	};
-
 	ProgressIndicator.prototype.setPercentValue = function(fPercentValue) {
 		var that = this;
 
 		// validation of fPercentValue
 		if (typeof (fPercentValue) !== "number" || fPercentValue < 0 || fPercentValue > 100) {
-			fPercentValue = 0;
 			jQuery.sap.log.warning(this + ": percentValue (" + fPercentValue + ") is not correct! Setting the default percentValue:0.");
+			fPercentValue = 0;
+			this.$().addClass("sapMPIValueMin");
 		}
 
 		if (this.getPercentValue() !== fPercentValue) {
 			// animation without rerendering
 			this.setProperty("percentValue", fPercentValue, true);
+
 			// needed for the rounded shape at the end
 			if (fPercentValue === 100) {
 				this.$().addClass("sapMPIValueMax");
+				this.$().removeClass("sapMPIValueMin");
+			} else if (fPercentValue === 0) {
+				this.$().addClass("sapMPIValueMin");
+				this.$().removeClass("sapMPIValueMax");
 			} else {
+				this.$().removeClass("sapMPIValueMin");
 				this.$().removeClass("sapMPIValueMax");
 			}
 

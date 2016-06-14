@@ -4,18 +4,51 @@
 /* ============================================= */
 
 .sapMPI {
+	display: -webkit-box;
+	display: -moz-box;
+	display: -ms-flexbox;
+	display: -webkit-flex;
+	display: flex;
+
+	-webkit-flex-direction: row;
+	-moz-flex-direction: row;
+	-ms-flex-direction: row;
+	flex-direction: row;
+
 	box-sizing: border-box;
 	border: 1px solid @sapUiFieldBorderColor;
 	padding: 1px;
 	margin: 0.25rem 0;
-	// setting minimum-width for the cases in responsive table
-	// BCP: 1670176815
 	min-width: 5rem;
+}
+
+.sapMPIBar,
+.sapMPIBarRemaining {
+	display: -webkit-box;
+	display: -moz-box;
+	display: -ms-flexbox;
+	display: -webkit-flex;
+	display: flex;
+
+	-webkit-align-items: center;
+	align-items: center;
 }
 
 .sapMPIBar {
 	height: 100%;
-	float: left;
+	-webkit-justify-content: flex-end;
+	justify-content: flex-end;
+}
+
+.sapMPIValueMax .sapMPIBarRemaining {
+	display: none;
+}
+
+.sapMPIBarRemaining {
+	-webkit-flex-grow: 1;
+	-moz-flex-grow: 1;
+	-ms-flex-grow: 1;
+	flex-grow: 1;
 }
 
 .sapMPIBarDisabled {
@@ -29,14 +62,11 @@
 
 .sapMPITextLeft {
 	color: @sapUiContentContrastTextColor;
-	display: none;
-	float: right;
 	padding-right: 0.5rem;
+	display: none;
 }
 
 .sapMPITextRight {
-	display:block;
-	float: left;
 	padding-left: 0.5rem;
 }
 
@@ -45,7 +75,7 @@
 }
 
 .sapMPIValueGreaterHalf .sapMPITextLeft {
-	display: block;
+	display: inline-block;
 }
 
 .sapMPIAnimate .sapMPIText {
