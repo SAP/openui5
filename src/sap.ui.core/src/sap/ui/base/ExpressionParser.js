@@ -35,21 +35,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 				"compare": function () {
 					var ODataUtils;
 
-					jQuery.sap.require("sap.ui.model.odata.ODataUtils");
-					ODataUtils = sap.ui.require("sap/ui/model/odata/ODataUtils");
+					ODataUtils = sap.ui.requireSync("sap/ui/model/odata/ODataUtils");
 					return ODataUtils.compare.apply(ODataUtils, arguments);
 				},
 				"fillUriTemplate": function () {
 					if (!URI.expand) {
-						jQuery.sap.require("sap.ui.thirdparty.URITemplate");
+						/* URI = */ sap.ui.requireSync("sap/ui/thirdparty/URITemplate");
 					}
 					return URI.expand.apply(URI, arguments).toString();
 				},
 				"uriEncode": function () {
 					var ODataUtils;
 
-					jQuery.sap.require("sap.ui.model.odata.ODataUtils");
-					ODataUtils = sap.ui.require("sap/ui/model/odata/ODataUtils");
+					ODataUtils = sap.ui.requireSync("sap/ui/model/odata/ODataUtils");
 					return ODataUtils.formatValue.apply(ODataUtils, arguments);
 				}
 			},

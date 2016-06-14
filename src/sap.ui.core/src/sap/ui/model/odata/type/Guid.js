@@ -2,9 +2,10 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataType',
-		'sap/ui/model/ParseException', 'sap/ui/model/ValidateException'],
-	function(FormatException, ODataType, ParseException, ValidateException) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/FormatException',
+		'sap/ui/model/odata/type/ODataType', 'sap/ui/model/ParseException',
+		'sap/ui/model/ValidateException'],
+	function(jQuery, FormatException, ODataType, ParseException, ValidateException) {
 	"use strict";
 
 	var rAllWhitespaceAndSeparators = /[-\s]/g, // whitespace and "-" separator, globally

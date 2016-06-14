@@ -1915,8 +1915,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			sQuery = "?version=" + oLibInfo.version;
 
 			// distribution version may not be available (will be loaded in Core constructor syncpoint2)
-			if (sap.ui.versioninfo) {
-				sQuery += "&sap-ui-dist-version=" + sap.ui.versioninfo.version;
+			if (Global.versioninfo) {
+				sQuery += "&sap-ui-dist-version=" + Global.versioninfo.version;
 			}
 		}
 		return sQuery;

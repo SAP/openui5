@@ -40,7 +40,7 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 
 		init: function () {
 			Action.prototype.init.apply(this, arguments);
-			this.controlAdapters = jQuery.extend(this.controlAdapters, Press.controlAdapters);
+			this.controlAdapters = $.extend(this.controlAdapters, Press.controlAdapters);
 		},
 
 		/**

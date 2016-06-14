@@ -2,7 +2,6 @@
  * ${copyright}
  */
 
-/* global jQuery */
 /* eslint-disable quotes,consistent-this */
 
 sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/test/gherkin/dataTableUtils',

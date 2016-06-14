@@ -61,7 +61,7 @@
 		ok(oTB.$().hasClass("sapMTB"), "Toolbar has correct class name");
 		oTB.setVisible(false);
 		sap.ui.getCore().applyChanges();
-		var $ToolbarPlaceHolder = jQuery.sap.byId(sap.ui.core.RenderPrefixes.Invisible + oTB.getId());
+		var $ToolbarPlaceHolder = jQuery.sap.byId(sap.ui.core.RenderManager.createInvisiblePlaceholderId(oTB));
 		strictEqual(oTB.$().length, 0, "Toolbar is no longer in DOM after setting it to invisible");
 		strictEqual($ToolbarPlaceHolder.length, 1, "Toolbar placeholder is in DOM after setting it to invisible");
 		strictEqual($ToolbarPlaceHolder.css("display"), "none", "Toolbar placeholder should have display none when invisible");

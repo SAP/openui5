@@ -2,7 +2,6 @@
  * ${copyright}
  */
 
-/* global jQuery */
 /* eslint-disable quotes,no-loop-func */
 
 sap.ui.define(['jquery.sap.global'], function ($) {

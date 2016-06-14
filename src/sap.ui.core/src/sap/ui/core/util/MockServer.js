@@ -1801,11 +1801,9 @@ sap.ui
 				}
 				// create mockserver annotations handler only when metadata exists
 				if (this._sMetadata) {
-					jQuery.sap.require("sap.ui.core.util.MockServerAnnotationsHandler");
-					var MockServerAnnotationsHandler = sap.ui.require("sap/ui/core/util/MockServerAnnotationsHandler");
+					var MockServerAnnotationsHandler = sap.ui.requireSync("sap/ui/core/util/MockServerAnnotationsHandler");
 					var oAnnotations = MockServerAnnotationsHandler.parse(this._oMetadata, this._sMetadata);
-					jQuery.sap.require("sap.ui.core.util.DraftEnabledMockServer");
-					var DraftEnabledMockServer = sap.ui.require("sap/ui/core/util/DraftEnabledMockServer");
+					var DraftEnabledMockServer = sap.ui.requireSync("sap/ui/core/util/DraftEnabledMockServer");
 					DraftEnabledMockServer.handleDraft(oAnnotations, this);
 				}
 				this._refreshData();
@@ -2293,11 +2291,11 @@ sap.ui
 								response: function(oXhr, sEntitySetName, sUrlParams) {
 									jQuery.sap.log.debug("MockServer: incoming request for url: " + oXhr.url);
 									//trigger the before callback funtion
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {
+									that.fireEvent(MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {
 										oXhr: oXhr,
 										sUrlParams: sUrlParams
 									});
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":before", {
+									that.fireEvent(MockServer.HTTPMETHOD.GET + ":before", {
 										oXhr: oXhr,
 										sUrlParams: sUrlParams
 									});
@@ -2326,11 +2324,11 @@ sap.ui
 											}
 
 											//trigger the after callback funtion
-											that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":after", {
+											that.fireEvent(MockServer.HTTPMETHOD.GET + sEntitySetName + ":after", {
 												oXhr: oXhr,
 												oFilteredData: oFilteredData
 											});
-											that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":after", {
+											that.fireEvent(MockServer.HTTPMETHOD.GET + ":after", {
 												oXhr: oXhr,
 												oFilteredData: oFilteredData
 											});
@@ -2366,11 +2364,11 @@ sap.ui
 										jQuery.sap.log.debug("MockServer: incoming request for url: " + oXhr.url);
 
 										//trigger the before callback funtion
-										that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {
+										that.fireEvent(MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {
 											oXhr: oXhr,
 											sUrlParams: sUrlParams
 										});
-										that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":before", {
+										that.fireEvent(MockServer.HTTPMETHOD.GET + ":before", {
 											oXhr: oXhr,
 											sUrlParams: sUrlParams
 										});
@@ -2400,11 +2398,11 @@ sap.ui
 												}
 
 												//trigger the after callback funtion
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":after", {
+												that.fireEvent(MockServer.HTTPMETHOD.GET + sEntitySetName + ":after", {
 													oXhr: oXhr,
 													oFilteredData: oFilteredData
 												});
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":after", {
+												that.fireEvent(MockServer.HTTPMETHOD.GET + ":after", {
 													oXhr: oXhr,
 													oFilteredData: oFilteredData
 												});
@@ -2439,12 +2437,12 @@ sap.ui
 										jQuery.sap.log.debug("MockServer: incoming request for url: " + oXhr.url);
 
 										//trigger the before callback funtion
-										that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {
+										that.fireEvent(MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {
 											oXhr: oXhr,
 											sKeys: sKeys,
 											sUrlParams: sUrlParams
 										});
-										that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":before", {
+										that.fireEvent(MockServer.HTTPMETHOD.GET + ":before", {
 											oXhr: oXhr,
 											sKeys: sKeys,
 											sUrlParams: sUrlParams
@@ -2472,11 +2470,11 @@ sap.ui
 												}
 
 												//trigger the after callback funtion
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":after", {
+												that.fireEvent(MockServer.HTTPMETHOD.GET + sEntitySetName + ":after", {
 													oXhr: oXhr,
 													oEntry: oEntry.entry
 												});
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":after", {
+												that.fireEvent(MockServer.HTTPMETHOD.GET + ":after", {
 													oXhr: oXhr,
 													oEntry: oEntry.entry
 												});
@@ -2514,13 +2512,13 @@ sap.ui
 												jQuery.sap.log.debug("MockServer: incoming request for url: " + oXhr.url);
 
 												//trigger the before callback funtion
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {
+												that.fireEvent(MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {
 													oXhr: oXhr,
 													sKeys: sKeys,
 													sNavProp: sNavProp,
 													sUrlParams: sUrlParams
 												});
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":before", {
+												that.fireEvent(MockServer.HTTPMETHOD.GET + ":before", {
 													oXhr: oXhr,
 													sKeys: sKeys,
 													sNavProp: sNavProp,
@@ -2588,11 +2586,11 @@ sap.ui
 														}
 
 														//trigger the after callback funtion
-														that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":after", {
+														that.fireEvent(MockServer.HTTPMETHOD.GET + sEntitySetName + ":after", {
 															oXhr: oXhr,
 															oFilteredData: oFilteredData
 														});
-														that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":after", {
+														that.fireEvent(MockServer.HTTPMETHOD.GET + ":after", {
 															oXhr: oXhr,
 															oFilteredData: oFilteredData
 														});
@@ -2632,13 +2630,13 @@ sap.ui
 														.debug("MockServer: incoming request for url: " + oXhr.url);
 
 													//trigger the before callback funtion
-													that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {
+													that.fireEvent(MockServer.HTTPMETHOD.GET + sEntitySetName + ":before", {
 														oXhr: oXhr,
 														sKeys: sKeys,
 														sNavProp: sNavProp,
 														sUrlParams: sUrlParams
 													});
-													that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":before", {
+													that.fireEvent(MockServer.HTTPMETHOD.GET + ":before", {
 														oXhr: oXhr,
 														sKeys: sKeys,
 														sNavProp: sNavProp,
@@ -2704,11 +2702,11 @@ sap.ui
 															}
 
 															//trigger the after callback funtion
-															that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + sEntitySetName + ":after", {
+															that.fireEvent(MockServer.HTTPMETHOD.GET + sEntitySetName + ":after", {
 																oXhr: oXhr,
 																oFilteredData: oFilteredData
 															});
-															that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.GET + ":after", {
+															that.fireEvent(MockServer.HTTPMETHOD.GET + ":after", {
 																oXhr: oXhr,
 																oFilteredData: oFilteredData
 															});
@@ -2755,12 +2753,12 @@ sap.ui
 									}
 									jQuery.sap.log.debug("MockServer: incoming create request for url: " + oXhr.url);
 									//trigger the before callback funtion
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.POST + sEntitySetName + ":before", {
+									that.fireEvent(MockServer.HTTPMETHOD.POST + sEntitySetName + ":before", {
 										oXhr: oXhr,
 										sKeys: sKeys,
 										sNavName: sNavName
 									});
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.POST + ":before", {
+									that.fireEvent(MockServer.HTTPMETHOD.POST + ":before", {
 										oXhr: oXhr,
 										sKeys: sKeys,
 										sNavName: sNavName
@@ -2782,11 +2780,11 @@ sap.ui
 												};
 
 												//trigger the after callback funtion
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.POST + sEntitySetName + ":after", {
+												that.fireEvent(MockServer.HTTPMETHOD.POST + sEntitySetName + ":after", {
 													oXhr: oXhr,
 													oEntity: oEntity
 												});
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.POST + ":after", {
+												that.fireEvent(MockServer.HTTPMETHOD.POST + ":after", {
 													oXhr: oXhr,
 													oEntity: oEntity
 												});
@@ -2841,12 +2839,12 @@ sap.ui
 									jQuery.sap.log.debug("MockServer: incoming update request for url: " + oXhr.url);
 
 									//trigger the before callback funtion
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.PUT + sEntitySetName + ":before", {
+									that.fireEvent(MockServer.HTTPMETHOD.PUT + sEntitySetName + ":before", {
 										oXhr: oXhr,
 										sKeys: sKeys,
 										sNavName: sNavName
 									});
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.PUT + ":before", {
+									that.fireEvent(MockServer.HTTPMETHOD.PUT + ":before", {
 										oXhr: oXhr,
 										sKeys: sKeys,
 										sNavName: sNavName
@@ -2864,11 +2862,11 @@ sap.ui
 													"Content-Type": "application/json;charset=utf-8"
 												};
 												//trigger the after callback funtion
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.PUT + sEntitySetName + ":after", {
+												that.fireEvent(MockServer.HTTPMETHOD.PUT + sEntitySetName + ":after", {
 													oXhr: oXhr,
 													oEntity: oEntity
 												});
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.PUT + ":after", {
+												that.fireEvent(MockServer.HTTPMETHOD.PUT + ":after", {
 													oXhr: oXhr,
 													oEntity: oEntity
 												});
@@ -2907,12 +2905,12 @@ sap.ui
 								response: function(oXhr, sEntitySetName, sKeys, sNavName) {
 									jQuery.sap.log.debug("MockServer: incoming merge update request for url: " + oXhr.url);
 									//trigger the before callback funtion
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.MERGE + sEntitySetName + ":before", {
+									that.fireEvent(MockServer.HTTPMETHOD.MERGE + sEntitySetName + ":before", {
 										oXhr: oXhr,
 										sKeys: sKeys,
 										sNavName: sNavName
 									});
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.MERGE + ":before", {
+									that.fireEvent(MockServer.HTTPMETHOD.MERGE + ":before", {
 										oXhr: oXhr,
 										sKeys: sKeys,
 										sNavName: sNavName
@@ -2930,11 +2928,11 @@ sap.ui
 													"Content-Type": "application/json;charset=utf-8"
 												};
 												//trigger the after callback funtion
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.MERGE + sEntitySetName + ":after", {
+												that.fireEvent(MockServer.HTTPMETHOD.MERGE + sEntitySetName + ":after", {
 													oXhr: oXhr,
 													oEntity: oEntity
 												});
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.MERGE + ":after", {
+												that.fireEvent(MockServer.HTTPMETHOD.MERGE + ":after", {
 													oXhr: oXhr,
 													oEntity: oEntity
 												});
@@ -2971,12 +2969,12 @@ sap.ui
 								response: function(oXhr, sEntitySetName, sKeys, sNavName) {
 									jQuery.sap.log.debug("MockServer: incoming patch update request for url: " + oXhr.url);
 									//trigger the before callback funtion
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.PATCH + sEntitySetName + ":before", {
+									that.fireEvent(MockServer.HTTPMETHOD.PATCH + sEntitySetName + ":before", {
 										oXhr: oXhr,
 										sKeys: sKeys,
 										sNavName: sNavName
 									});
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.PATCH + ":before", {
+									that.fireEvent(MockServer.HTTPMETHOD.PATCH + ":before", {
 										oXhr: oXhr,
 										sKeys: sKeys,
 										sNavName: sNavName
@@ -2994,11 +2992,11 @@ sap.ui
 													"Content-Type": "application/json;charset=utf-8"
 												};
 												//trigger the after callback funtion
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.PATCH + sEntitySetName + ":after", {
+												that.fireEvent(MockServer.HTTPMETHOD.PATCH + sEntitySetName + ":after", {
 													oXhr: oXhr,
 													oEntity: oEntity
 												});
-												that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.PATCH + ":after", {
+												that.fireEvent(MockServer.HTTPMETHOD.PATCH + ":after", {
 													oXhr: oXhr,
 													oEntity: oEntity
 												});
@@ -3037,10 +3035,10 @@ sap.ui
 								response: function(oXhr, sEntitySetName, sKeys, sUrlParams) {
 									jQuery.sap.log.debug("MockServer: incoming delete request for url: " + oXhr.url);
 									//trigger the before callback funtion
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.DELETE + sEntitySetName + ":before", {
+									that.fireEvent(MockServer.HTTPMETHOD.DELETE + sEntitySetName + ":before", {
 										oXhr: oXhr
 									});
-									that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.DELETE + ":before", {
+									that.fireEvent(MockServer.HTTPMETHOD.DELETE + ":before", {
 										oXhr: oXhr
 									});
 									var iResult = 204;
@@ -3053,10 +3051,10 @@ sap.ui
 										}
 
 										//trigger the after callback funtion
-										that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.DELETE + sEntitySetName + ":after", {
+										that.fireEvent(MockServer.HTTPMETHOD.DELETE + sEntitySetName + ":after", {
 											oXhr: oXhr
 										});
-										that.fireEvent(sap.ui.core.util.MockServer.HTTPMETHOD.DELETE + ":after", {
+										that.fireEvent(MockServer.HTTPMETHOD.DELETE + ":after", {
 											oXhr: oXhr
 										});
 										oXhr.respond(iResult, null, null);

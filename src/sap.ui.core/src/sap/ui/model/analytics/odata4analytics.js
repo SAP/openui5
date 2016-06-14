@@ -7,8 +7,8 @@
 /*eslint-disable camelcase, valid-jsdoc, no-warning-comments */
 
 // Provides API for analytical extensions in OData service metadata
-sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
-	function(jQuery, AnalyticalVersionInfo) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterOperator', 'sap/ui/model/Sorter', './AnalyticalVersionInfo'],
+	function(jQuery, Filter, FilterOperator, Sorter, AnalyticalVersionInfo) {
 	"use strict";
 
 	/**
@@ -232,12 +232,14 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 			} else {
 				// Check if the user wants a V2 model
 				if (mParameter && mParameter.modelVersion === AnalyticalVersionInfo.V2) {
-					this._oModel = new sap.ui.model.odata.v2.ODataModel(oModelReference.sServiceURI);
+					var V2ODataModel = sap.ui.requireSync("sap/ui/model/odata/v2/ODataModel");
+					this._oModel = new V2ODataModel(oModelReference.sServiceURI);
 					this._iVersion = AnalyticalVersionInfo.V2;
 					checkForMetadata();
 				} else {
 					//default is V1 Model
-					this._oModel = new sap.ui.model.odata.ODataModel(oModelReference.sServiceURI);
+					var ODataModel = sap.ui.requireSync("sap/ui/model/odata/ODataModel");
+					this._oModel = new ODataModel(oModelReference.sServiceURI);
 					this._iVersion = AnalyticalVersionInfo.V1;
 					checkForMetadata();
 				}
@@ -3063,7 +3065,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 					return;
 				}
 			}
-			this._aConditionUI5Filter.push(new sap.ui.model.Filter(sProperty, sOperator, oValue1, oValue2));
+			this._aConditionUI5Filter.push(new Filter(sProperty, sOperator, oValue1, oValue2));
 		},
 
 		/**
@@ -3162,7 +3164,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 				throw "Cannot add filter condition for not filterable property name " + sPropertyName; // TODO
 			}
 			for ( var i = -1, oValue; (oValue = aValues[++i]) !== undefined;) {
-				this._addCondition(sPropertyName, sap.ui.model.FilterOperator.EQ, oValue);
+				this._addCondition(sPropertyName, FilterOperator.EQ, oValue);
 			}
 			return this;
 		},
@@ -3282,20 +3284,20 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 
 			var sFilterExpression = null;
 			switch (oUI5Filter.sOperator) {
-			case sap.ui.model.FilterOperator.BT:
+			case FilterOperator.BT:
 				sFilterExpression = "(" + oUI5Filter.sPath + " "
-						+ sap.ui.model.FilterOperator.GE.toLowerCase() + " "
+						+ FilterOperator.GE.toLowerCase() + " "
 						+ this._renderPropertyFilterValue(oUI5Filter.oValue1, oProperty.type)
-						+ " and " + oUI5Filter.sPath + " " + sap.ui.model.FilterOperator.LE.toLowerCase() + " "
+						+ " and " + oUI5Filter.sPath + " " + FilterOperator.LE.toLowerCase() + " "
 						+ this._renderPropertyFilterValue(oUI5Filter.oValue2, oProperty.type)
 						+ ")";
 				break;
-			case sap.ui.model.FilterOperator.Contains:
+			case FilterOperator.Contains:
 				sFilterExpression = "substringof("
 								+ this._renderPropertyFilterValue(oUI5Filter.oValue1, "Edm.String") + "," +  oUI5Filter.sPath + ")";
 				break;
-			case sap.ui.model.FilterOperator.StartsWith:
-			case sap.ui.model.FilterOperator.EndsWith:
+			case FilterOperator.StartsWith:
+			case FilterOperator.EndsWith:
 				sFilterExpression = oUI5Filter.sOperator.toLowerCase() + "("
 						+ oUI5Filter.sPath + ","
 						+ this._renderPropertyFilterValue(oUI5Filter.oValue1, "Edm.String") + ")";
@@ -3378,7 +3380,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 					sPropertyName = oUI5Filter.sPath;
 					aNEFilter = [];
 				}
-				if (oUI5Filter.sOperator == sap.ui.model.FilterOperator.NE) {
+				if (oUI5Filter.sOperator == FilterOperator.NE) {
 					aNEFilter.push(oUI5Filter);
 					continue;
 				}
@@ -3455,7 +3457,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 							for (var j = 0; j < oPropertiesInFilterExpression[sPropertyName2].length; j++) {
 								// check if we have a value change, this means we got another value in one of the filters
 								if (oPropertiesInFilterExpression[sPropertyName2][j].oValue1 != vTheOnlyValue
-									|| oPropertiesInFilterExpression[sPropertyName2][j].sOperator != sap.ui.model.FilterOperator.EQ) {
+									|| oPropertiesInFilterExpression[sPropertyName2][j].sOperator != FilterOperator.EQ) {
 									throw "filter expression may use " + sPropertyName2 + " only with a single EQ condition";
 								}
 							}
@@ -3679,7 +3681,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 			var aSorterObjects = [];
 
 			for (var i = -1, oCondition; (oCondition = this._aSortCondition[++i]) !== undefined;) {
-				aSorterObjects.push(new sap.ui.model.Sorter(oCondition.property.name,
+				aSorterObjects.push(new Sorter(oCondition.property.name,
 						oCondition.order == odata4analytics.SortOrder.Descending));
 			}
 

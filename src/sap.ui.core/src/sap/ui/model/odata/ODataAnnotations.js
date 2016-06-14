@@ -248,7 +248,7 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 			vXML = null;
 		}
 
-		if (sap.ui.Device.browser.internet_explorer) {
+		if (Device.browser.msie) {
 			// IE creates an XML Document, but we cannot use it since it does not support the
 			// evaluate-method. So we have to create a new document from the XML string every time.
 			// This also leads to using a difference XPath implementation @see getXPath

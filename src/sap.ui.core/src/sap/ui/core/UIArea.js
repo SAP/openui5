@@ -7,6 +7,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 	function(jQuery, ManagedObject, Element, RenderManager /* , jQuerySap1, jQuerySap, jQuerySap2 */) {
 	"use strict";
 
+
 	//lazy dependency (to avoid cycle)
 	var Control;
 
@@ -668,7 +669,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 			oDomRef = oControl.getDomRef();
 			if (!oDomRef || RenderManager.isPreservedContent(oDomRef) ) {
 				// In case no old DOM node was found or only preserved DOM, search for an 'invisible' placeholder
-				oDomRef = jQuery.sap.domById(sap.ui.core.RenderPrefixes.Invisible + oControl.getId());
+				oDomRef = jQuery.sap.domById(RenderManager.RenderPrefixes.Invisible + oControl.getId());
 			}
 		}
 

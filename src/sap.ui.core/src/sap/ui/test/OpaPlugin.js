@@ -315,7 +315,7 @@ sap.ui.define(['jquery.sap.global',
 					}
 
 					if (!vControl) {
-						jQuery.sap.log.debug("Found no control with the global id: '" + vStringOrArrayOrRegex + "'", this._sLogPrefix);
+						$.sap.log.debug("Found no control with the global id: '" + vStringOrArrayOrRegex + "'", this._sLogPrefix);
 						return null;
 					}
 

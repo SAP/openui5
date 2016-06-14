@@ -5,12 +5,12 @@
 // Provides helper class sap.ui.core.Popup
 sap.ui.define([
 		'jquery.sap.global', 'sap/ui/Device',
-		'sap/ui/base/ManagedObject', 'sap/ui/base/Object',
+		'sap/ui/base/ManagedObject', 'sap/ui/base/Object', 'sap/ui/base/ObjectPool',
 		'./Control', './IntervalTrigger', './RenderManager', './ResizeHandler', './Element',
 		'jquery.sap.script'
 	], function(
 		jQuery, Device,
-		ManagedObject, BaseObject,
+		ManagedObject, BaseObject, ObjectPool,
 		Control, IntervalTrigger, RenderManager, ResizeHandler, Element
 		/* , jQuerySap */) {
 
@@ -438,7 +438,7 @@ sap.ui.define([
 	 * @type sap.ui.base.ObjectPool
 	 * @private
 	 */
-	Popup.prototype.oBlindLayerPool = new sap.ui.base.ObjectPool(Popup.BlindLayer);
+	Popup.prototype.oBlindLayerPool = new ObjectPool(Popup.BlindLayer);
 	// End of BlindLayer
 
 	//****************************************************
@@ -465,7 +465,7 @@ sap.ui.define([
 	* @type sap.ui.base.ObjectPool
 	* @private
 	*/
-	Popup.prototype.oShieldLayerPool = new sap.ui.base.ObjectPool(Popup.ShieldLayer);
+	Popup.prototype.oShieldLayerPool = new ObjectPool(Popup.ShieldLayer);
 	//End of ShieldLayer
 
 	// Begin of Popup-Stacking facilities

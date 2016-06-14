@@ -6,16 +6,19 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/library", "sap
 	function(jQuery, Device, coreLibrary, URI, MessageParser, Message) {
 	"use strict";
 
+// shortcuts for enums
+var MessageType = coreLibrary.MessageType;
+
 /**
  * This map is used to translate back-end response severity values to the values defined in the
  * enumeration sap.ui.core.MessageType
  * @see sap.ui.core.ValueState
  */
 var mSeverityMap = {
-	"error":   sap.ui.core.MessageType.Error,
-	"warning": sap.ui.core.MessageType.Warning,
-	"success": sap.ui.core.MessageType.Success,
-	"info":    sap.ui.core.MessageType.Information
+	"error":   MessageType.Error,
+	"warning": MessageType.Warning,
+	"success": MessageType.Success,
+	"info":    MessageType.Information
 };
 
 /**
@@ -589,7 +592,7 @@ ODataMessageParser.prototype._parseBodyXML = function(/* ref: */ aMessages, oRes
 
 			var oError = {};
 			// Manually set severity in case we get an error response
-			oError["severity"] = sap.ui.core.MessageType.Error;
+			oError["severity"] = MessageType.Error;
 
 			for (var n = 0; n < oNode.childNodes.length; ++n) {
 				var oChildNode = oNode.childNodes[n];
@@ -646,7 +649,7 @@ ODataMessageParser.prototype._parseBodyJSON = function(/* ref: */ aMessages, oRe
 		}
 
 		// Manually set severity in case we get an error response
-		oError["severity"] = sap.ui.core.MessageType.Error;
+		oError["severity"] = MessageType.Error;
 
 		aMessages.push(this._createMessage(oError, mRequestInfo, true));
 
@@ -717,20 +720,20 @@ ODataMessageParser.prototype._outputMesages = function(aMessages) {
 		var oMessage = aMessages[i];
 		var sOutput = "[OData Message] " + oMessage.getMessage() + " - " + oMessage.getDescription() + " (" + oMessage.getTarget() + ")";
 		switch (aMessages[i].getType()) {
-			case sap.ui.core.MessageType.Error:
+			case MessageType.Error:
 				jQuery.sap.log.error(sOutput);
 				break;
 
-			case sap.ui.core.MessageType.Warning:
+			case MessageType.Warning:
 				jQuery.sap.log.warning(sOutput);
 				break;
 
-			case sap.ui.core.MessageType.Success:
+			case MessageType.Success:
 				jQuery.sap.log.debug(sOutput);
 				break;
 
-			case sap.ui.core.MessageType.Information:
-			case sap.ui.core.MessageType.None:
+			case MessageType.Information:
+			case MessageType.None:
 			default:
 				jQuery.sap.log.info(sOutput);
 				break;

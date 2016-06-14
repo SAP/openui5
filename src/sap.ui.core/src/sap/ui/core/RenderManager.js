@@ -5,11 +5,17 @@
 // Provides the render manager sap.ui.core.RenderManager
 sap.ui.define([
 		'jquery.sap.global',
-		'../base/Interface', '../base/Object', 'sap/ui/core/LabelEnablement',
+		'../base/Interface', '../base/Object', './LabelEnablement',
 		'jquery.sap.act', 'jquery.sap.encoder', 'jquery.sap.dom', 'jquery.sap.trace'
 	], function(jQuery, Interface, BaseObject, LabelEnablement /* , jQuerySap1, jQuerySap */) {
 
 	"use strict";
+
+	function lazyInstanceof(o, sModule) {
+		var FNClass = sap.ui.require(sModule);
+		return typeof FNClass === 'function' && (o instanceof FNClass);
+	}
+
 
 	var aCommonMethods = ["renderControl", "write", "writeEscaped", "translate", "writeAcceleratorKey", "writeControlData", "writeInvisiblePlaceholderData",
 						  "writeElementData", "writeAttribute", "writeAttributeEscaped", "addClass", "writeClasses",
@@ -57,6 +63,32 @@ sap.ui.define([
 	});
 
 	/**
+	 * Prefixes to be used for rendering "unusual" DOM-Elements, like dummy elements, placeholders
+	 * for invisible controls, etc.
+	 *
+	 * @enum {string}
+	 * @private
+	 * @alias sap.ui.core.RenderManager.RenderPrefixes
+	 */
+	var RenderPrefixes = RenderManager.RenderPrefixes = {
+
+		/**
+		 * The control has not been rendered because it is invisible, the element rendered with this
+		 * prefix can be found by the RenderManager to avoid rerendering the parents
+		 * @private
+		 */
+		Invisible : "sap-ui-invisible-",
+
+		/**
+		 * A dummy element is rendered with the intention of replacing it with the real content
+		 * @private
+		 */
+		Dummy : "sap-ui-dummy-"
+
+	};
+
+
+	/**
 	 * Returns the public interface of the RenderManager which can be used by Renderers.
 	 *
 	 * @return {sap.ui.base.Interface} the interface
@@ -100,7 +132,7 @@ sap.ui.define([
 	 * @public
 	 */
 	RenderManager.prototype.getRenderer = function(oControl) {
-		jQuery.sap.assert(oControl && oControl instanceof sap.ui.core.Control, "oControl must be a sap.ui.core.Control");
+		jQuery.sap.assert(oControl && lazyInstanceof(oControl, 'sap/ui/core/Control'), "oControl must be a sap.ui.core.Control");
 		return RenderManager.getRenderer(oControl);
 	};
 
@@ -111,7 +143,7 @@ sap.ui.define([
 	 * @private
 	 */
 	RenderManager.prototype._setFocusHandler = function(oFocusHandler) {
-		jQuery.sap.assert(oFocusHandler && oFocusHandler instanceof sap.ui.core.FocusHandler, "oFocusHandler must be a sap.ui.core.FocusHandler");
+		jQuery.sap.assert(oFocusHandler && lazyInstanceof(oFocusHandler, 'sap/ui/core/FocusHandler'), "oFocusHandler must be a sap.ui.core.FocusHandler");
 		this.oFocusHandler = oFocusHandler;
 	};
 
@@ -167,7 +199,7 @@ sap.ui.define([
 	 * @since 1.22.9
 	 */
 	RenderManager.prototype.cleanupControlWithoutRendering = function(oControl) {
-		jQuery.sap.assert(!oControl || oControl instanceof sap.ui.core.Control, "oControl must be a sap.ui.core.Control or empty");
+		jQuery.sap.assert(!oControl || lazyInstanceof(oControl, 'sap/ui/core/Control'), "oControl must be a sap.ui.core.Control or empty");
 		if (!oControl || !oControl.getDomRef()) {
 			return;
 		}
@@ -189,7 +221,7 @@ sap.ui.define([
 	 * @public
 	 */
 	RenderManager.prototype.renderControl = function(oControl) {
-		jQuery.sap.assert(!oControl || oControl instanceof sap.ui.core.Control, "oControl must be a sap.ui.core.Control or empty");
+		jQuery.sap.assert(!oControl || lazyInstanceof(oControl, 'sap/ui/core/Control'), "oControl must be a sap.ui.core.Control or empty");
 		// don't render a NOTHING
 		if (!oControl) {
 			return this;
@@ -315,7 +347,7 @@ sap.ui.define([
 	 * @public
 	 */
 	RenderManager.prototype.getHTML = function(oControl) {
-		jQuery.sap.assert(oControl && oControl instanceof sap.ui.core.Control, "oControl must be a sap.ui.core.Control");
+		jQuery.sap.assert(oControl && lazyInstanceof(oControl, 'sap/ui/core/Control'), "oControl must be a sap.ui.core.Control");
 
 		var tmp = this.aBuffer;
 		var aResult = this.aBuffer = [];
@@ -486,7 +518,7 @@ sap.ui.define([
 		 * @public
 		 */
 		RenderManager.prototype.render = function(oControl, oTargetDomNode) {
-			jQuery.sap.assert(oControl && oControl instanceof sap.ui.core.Control, "oControl must be a control");
+			jQuery.sap.assert(oControl && lazyInstanceof(oControl, 'sap/ui/core/Control'), "oControl must be a control");
 			jQuery.sap.assert(typeof oTargetDomNode === "object" && oTargetDomNode.ownerDocument == document, "oTargetDomNode must be a DOM element");
 			if (this.bRendererMode) {
 				jQuery.sap.log.info("Render must not be called from control renderers. Call ignored.", null, this);
@@ -515,7 +547,7 @@ sap.ui.define([
 					var oldDomNode = oControl.getDomRef();
 					if ( !oldDomNode || RenderManager.isPreservedContent(oldDomNode) ) {
 						// In case no old DOM node was found or only preserved DOM, search for a placeholder (invisible or preserved DOM placeholder)
-						oldDomNode = jQuery.sap.domById(sap.ui.core.RenderPrefixes.Invisible + oControl.getId()) || jQuery.sap.domById(sap.ui.core.RenderPrefixes.Dummy + oControl.getId());
+						oldDomNode = jQuery.sap.domById(RenderPrefixes.Invisible + oControl.getId()) || jQuery.sap.domById(RenderPrefixes.Dummy + oControl.getId());
 					}
 
 					var bNewTarget = oldDomNode && oldDomNode.parentNode != oTargetDomNode;
@@ -600,7 +632,7 @@ sap.ui.define([
 	 * @public
 	 */
 	RenderManager.getRenderer = function(oControl) {
-		jQuery.sap.assert(oControl && oControl instanceof sap.ui.core.Control, "oControl must be a sap.ui.core.Control");
+		jQuery.sap.assert(oControl && lazyInstanceof(oControl, 'sap/ui/core/Control'), "oControl must be a sap.ui.core.Control");
 
 		return oControl.getMetadata().getRenderer();
 	};
@@ -639,7 +671,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	RenderManager.createInvisiblePlaceholderId = function(oElement) {
-		return sap.ui.core.RenderPrefixes.Invisible + oElement.getId();
+		return RenderPrefixes.Invisible + oElement.getId();
 	};
 
 
@@ -668,7 +700,7 @@ sap.ui.define([
 		 * Create a placeholder node for the given node (which must have an ID) and insert it before the node
 		 */
 		function makePlaceholder(node) {
-			jQuery("<DIV/>", { id: sap.ui.core.RenderPrefixes.Dummy + node.id}).addClass("sapUiHidden").insertBefore(node);
+			jQuery("<DIV/>", { id: RenderPrefixes.Dummy + node.id}).addClass("sapUiHidden").insertBefore(node);
 		}
 
 		/**
@@ -952,7 +984,7 @@ sap.ui.define([
 	 * @public
 	 */
 	RenderManager.prototype.writeClasses = function(oElement) {
-		jQuery.sap.assert(!oElement || typeof oElement === "boolean" || oElement instanceof sap.ui.core.Element, "oElement must be empty, a boolean, or a sap.ui.core.Element");
+		jQuery.sap.assert(!oElement || typeof oElement === "boolean" || lazyInstanceof(oElement, 'sap/ui/core/Element'), "oElement must be empty, a boolean, or a sap.ui.core.Element");
 		var oStyle = this.aStyleStack[this.aStyleStack.length - 1];
 
 		// Custom classes are added by default from the currently rendered control. If an oElement is given, this Element's custom style
@@ -990,7 +1022,7 @@ sap.ui.define([
 	 * @public
 	 */
 	RenderManager.prototype.writeControlData = function(oControl) {
-		jQuery.sap.assert(oControl && oControl instanceof sap.ui.core.Control, "oControl must be a sap.ui.core.Control");
+		jQuery.sap.assert(oControl && lazyInstanceof(oControl, 'sap/ui/core/Control'), "oControl must be a sap.ui.core.Control");
 		this.writeElementData(oControl);
 		return this;
 	};
@@ -1015,7 +1047,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	RenderManager.prototype.writeInvisiblePlaceholderData = function(oElement) {
-		jQuery.sap.assert(oElement instanceof sap.ui.core.Element, "oElement must be an instance of sap.ui.core.Element");
+		jQuery.sap.assert(lazyInstanceof(oElement, 'sap/ui/core/Element'), "oElement must be an instance of sap.ui.core.Element");
 
 		var sPlaceholderId = RenderManager.createInvisiblePlaceholderId(oElement),
 			sPlaceholderHtml = ' ' +
@@ -1037,7 +1069,7 @@ sap.ui.define([
 	 * @public
 	 */
 	RenderManager.prototype.writeElementData = function(oElement) {
-		jQuery.sap.assert(oElement && oElement instanceof sap.ui.core.Element, "oElement must be a sap.ui.core.Element");
+		jQuery.sap.assert(oElement && lazyInstanceof(oElement, 'sap/ui/core/Element'), "oElement must be a sap.ui.core.Element");
 		var sId = oElement.getId();
 		if (sId) {
 			this.writeAttribute("id", sId).writeAttribute("data-sap-ui", sId);
@@ -1140,7 +1172,7 @@ sap.ui.define([
 			return this;
 		}
 
-		if (arguments.length == 1 && !(oElement instanceof sap.ui.core.Element)) {
+		if (arguments.length == 1 && !(lazyInstanceof(oElement, 'sap/ui/core/Element'))) {
 			mProps = oElement;
 			oElement = null;
 		}
@@ -1220,7 +1252,7 @@ sap.ui.define([
 		}
 
 		// allow parent (e.g. FormElement) to overwrite or enhance aria attributes
-		if (oElement instanceof sap.ui.core.Element && oElement.getParent() && oElement.getParent().enhanceAccessibilityState) {
+		if (lazyInstanceof(oElement, 'sap/ui/core/Element') && oElement.getParent() && oElement.getParent().enhanceAccessibilityState) {
 			oElement.getParent().enhanceAccessibilityState(oElement, mAriaProps);
 		}
 
@@ -1250,9 +1282,8 @@ sap.ui.define([
 	 * @returns {sap.ui.core.RenderManager} this render manager instance to allow chaining
 	 */
 	RenderManager.prototype.writeIcon = function(sURI, aClasses, mAttributes){
-		var IconPool = sap.ui.requireSync("sap/ui/core/IconPool");
-
-		var bIconURI = IconPool.isIconURI(sURI),
+		var IconPool = sap.ui.requireSync("sap/ui/core/IconPool"),
+			bIconURI = IconPool.isIconURI(sURI),
 			sStartTag = bIconURI ? "<span " : "<img ",
 			sClasses, sProp, oIconInfo, mDefaultAttributes;
 
@@ -1349,7 +1380,6 @@ sap.ui.define([
 			oRm.write("></span>");
 		}
 	};
-
 
 	return RenderManager;
 

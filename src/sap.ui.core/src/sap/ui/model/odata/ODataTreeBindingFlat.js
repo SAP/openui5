@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.model.odata.ODataTreeBindingFlat
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/odata/v2/ODataTreeBinding', 'sap/ui/model/ChangeReason', 'sap/ui/model/TreeBindingUtils'],
-	function(jQuery, TreeBinding, ODataTreeBinding, ChangeReason, TreeBindingUtils) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBinding', 'sap/ui/model/odata/v2/ODataTreeBinding', 'sap/ui/model/ChangeReason', 'sap/ui/model/TreeBindingUtils'],
+	function(jQuery, Filter, TreeBinding, ODataTreeBinding, ChangeReason, TreeBindingUtils) {
 	"use strict";
 
 	/**
@@ -543,7 +543,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 		this.fireDataRequested();
 
 		// construct multi-filter for level filter and application filters
-		var oLevelFilter = new sap.ui.model.Filter(this.oTreeProperties["hierarchy-level-for"], "LE", this.getNumberOfExpandedLevels());
+		var oLevelFilter = new Filter(this.oTreeProperties["hierarchy-level-for"], "LE", this.getNumberOfExpandedLevels());
 		var aFilters = [oLevelFilter];
 		if (this.aApplicationFilters) {
 			aFilters = aFilters.concat(this.aApplicationFilters);
@@ -553,7 +553,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 		// Something like this: aFilters = [new sap.ui.model.Filter([hierarchyFilters].concat(this.aFilters))];
 		this.mRequestHandles[sRequestKey] = this.oModel.read(this.getPath(), {
 			urlParameters: aUrlParameters,
-			filters: [new sap.ui.model.Filter({
+			filters: [new Filter({
 				filters: aFilters,
 				and: true
 			})],
@@ -690,7 +690,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 		this.fireDataRequested();
 
 		// construct multi-filter for level filter and application filters
-		var oLevelFilter = new sap.ui.model.Filter(this.oTreeProperties["hierarchy-parent-node-for"], "EQ", oParentNode.context.getProperty(this.oTreeProperties["hierarchy-node-for"]));
+		var oLevelFilter = new Filter(this.oTreeProperties["hierarchy-parent-node-for"], "EQ", oParentNode.context.getProperty(this.oTreeProperties["hierarchy-node-for"]));
 		var aFilters = [oLevelFilter];
 		if (this.aApplicationFilters) {
 			aFilters = aFilters.concat(this.aApplicationFilters);
@@ -700,7 +700,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 		// Something like this: aFilters = [new sap.ui.model.Filter([hierarchyFilters].concat(this.aFilters))];
 		this.mRequestHandles[sRequestKey] = this.oModel.read(this.getPath(), {
 			urlParameters: aUrlParameters,
-			filters: [new sap.ui.model.Filter({
+			filters: [new Filter({
 				filters: aFilters,
 				and: true
 			})],

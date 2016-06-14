@@ -46,11 +46,11 @@ sap.ui.core.mvc.Controller</title>
 	}
 
 	function dummyPlaceholder(oControl) {
-		return jQuery.sap.byId(sap.ui.core.RenderPrefixes.Dummy + oControl.getId())[0];
+		return jQuery.sap.byId(sap.ui.core.RenderManager.RenderPrefixes.Dummy + oControl.getId())[0];
 	}
 
 	function invisiblePlaceholder(oControl) {
-		return jQuery.sap.byId(sap.ui.core.RenderPrefixes.Invisible + oControl.getId())[0];
+		return jQuery.sap.byId(sap.ui.core.RenderManager.RenderPrefixes.Invisible + oControl.getId())[0];
 	}
 
 	var oConfig = {

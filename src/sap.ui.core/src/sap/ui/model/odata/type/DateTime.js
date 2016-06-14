@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/model/odata/type/DateTimeBase'],
-	function(DateTimeBase) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/DateTimeBase'],
+	function(jQuery, DateTimeBase) {
 	"use strict";
 
 	/**

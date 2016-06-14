@@ -3,8 +3,8 @@
  */
 
 // Provides an abstraction for list bindings
-sap.ui.define(['./Binding'],
-	function(Binding) {
+sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
+	function(jQuery, Binding, Filter, Sorter) {
 	"use strict";
 
 
@@ -37,14 +37,14 @@ sap.ui.define(['./Binding'],
 			this.aFilters = [];
 
 			this.aSorters = aSorters;
-			if (!jQuery.isArray(this.aSorters) && this.aSorters instanceof sap.ui.model.Sorter) {
+			if (!jQuery.isArray(this.aSorters) && this.aSorters instanceof Sorter) {
 				this.aSorters = [this.aSorters];
 			} else if (!jQuery.isArray(this.aSorters)) {
 				this.aSorters = [];
 			}
 
 			this.aApplicationFilters = aFilters;
-			if (!jQuery.isArray(aFilters) && aFilters instanceof sap.ui.model.Filter) {
+			if (!jQuery.isArray(aFilters) && aFilters instanceof Filter) {
 				this.aApplicationFilters = [aFilters];
 			} else if (!jQuery.isArray(aFilters)) {
 				this.aApplicationFilters = [];

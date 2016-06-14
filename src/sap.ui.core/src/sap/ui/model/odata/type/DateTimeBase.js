@@ -3,12 +3,13 @@
  */
 
 sap.ui.define([
+	"jquery.sap.global",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException"
-], function (DateFormat, FormatException, ODataType, ParseException, ValidateException) {
+], function (jQuery, DateFormat, FormatException, ODataType, ParseException, ValidateException) {
 	"use strict";
 
 	var oDemoDate = new Date(2014, 10, 27, 13, 47, 26);

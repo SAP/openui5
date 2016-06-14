@@ -7,8 +7,8 @@
 /*eslint camelcase:0, valid-jsdoc:0, no-warning-comments:0 */
 
 // Provides class sap.ui.model.odata.ODataListBinding
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/ChangeReason', 'sap/ui/model/Sorter', 'sap/ui/model/FilterOperator', './odata4analytics', './BatchResponseCollector', './AnalyticalVersionInfo'],
-	function(jQuery, TreeBinding, ChangeReason, Sorter, FilterOperator, odata4analytics, BatchResponseCollector, AnalyticalVersionInfo) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/ChangeReason', 'sap/ui/model/Filter', 'sap/ui/model/FilterOperator', 'sap/ui/model/FilterType', 'sap/ui/model/Sorter', 'sap/ui/model/odata/CountMode', './odata4analytics', './BatchResponseCollector', './AnalyticalVersionInfo'],
+	function(jQuery, TreeBinding, ChangeReason, Filter, FilterOperator, FilterType, Sorter, CountMode, odata4analytics, BatchResponseCollector, AnalyticalVersionInfo) {
 	"use strict";
 
 	/**
@@ -110,13 +110,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			this.aBatchRequestQueue = [];
 
 			// considering different count mode settings
-			if (mParameters && mParameters.countMode == sap.ui.model.odata.CountMode.None) {
+			if (mParameters && mParameters.countMode == CountMode.None) {
 				jQuery.sap.log.fatal("requested count mode is ignored; OData requests will include $inlinecout options");
 			} else if (mParameters
-					&& (mParameters.countMode == sap.ui.model.odata.CountMode.Request
-						|| mParameters.countMode == sap.ui.model.odata.CountMode.Both)) {
+					&& (mParameters.countMode == CountMode.Request
+						|| mParameters.countMode == CountMode.Both)) {
 				jQuery.sap.log.warning("default count mode is ignored; OData requests will include $inlinecout options");
-			} else if (this.oModel.sDefaultCountMode == sap.ui.model.odata.CountMode.Request) {
+			} else if (this.oModel.sDefaultCountMode == CountMode.Request) {
 				jQuery.sap.log.warning("default count mode is ignored; OData requests will include $inlinecout options");
 			}
 
@@ -671,13 +671,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			aFilter = [];
 		}
 		// wrap filter argument in an array if it's a single instance
-		if (aFilter instanceof sap.ui.model.Filter) {
+		if (aFilter instanceof Filter) {
 			aFilter = [aFilter];
 		}
 
 		aFilter = this._convertDeprecatedFilterObjects(aFilter);
 
-		if (sFilterType == sap.ui.model.FilterType.Application) {
+		if (sFilterType == FilterType.Application) {
 			this.aApplicationFilter = aFilter;
 		} else {
 			this.aControlFilter = aFilter;
@@ -1535,7 +1535,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				var sGroupProperty = that.aAggregationLevel[i];
 				var sValue = aGroupIdComponents_Missing[i];
 				var sFilterOperator = that._getFilterOperatorMatchingPropertySortOrder(sGroupProperty);
-				aTemplateFilter[i] = new sap.ui.model.Filter(sGroupProperty, sFilterOperator, sValue);
+				aTemplateFilter[i] = new Filter(sGroupProperty, sFilterOperator, sValue);
 			}
 
 			// if first missing member start within a partially loaded group, an extra condition will be needed below
@@ -1547,7 +1547,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				var sFirstMissingMemberStartIndexAggregationLevel = that.aAggregationLevel[iGroupIdLevel_Missing];
 				var sFirstMissingMemberStartIndexLastKnownValue = oFirstMissingMemberStartIndexLastKnownObject
 					[sFirstMissingMemberStartIndexAggregationLevel];
-				oFirstMissingMemberStartIndexLastKnownFilterCondition = new sap.ui.model.Filter(sFirstMissingMemberStartIndexAggregationLevel,
+				oFirstMissingMemberStartIndexLastKnownFilterCondition = new Filter(sFirstMissingMemberStartIndexAggregationLevel,
 						that._getFilterOperatorMatchingPropertySortOrder(sFirstMissingMemberStartIndexAggregationLevel, false),
 						sFirstMissingMemberStartIndexLastKnownValue);
 			}
@@ -1564,26 +1564,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 						oGroupExpansionFirstMissingMember.startIndex_Missing > 0;
 					for (var iLevelCondition = 0; iLevelCondition < iNumberOfLevelConditions; iLevelCondition++) {
 						// create filter condition from template
-						var oFilterCondition = new sap.ui.model.Filter("x", sap.ui.model.FilterOperator.EQ, "x");
+						var oFilterCondition = new Filter("x", FilterOperator.EQ, "x");
 						oFilterCondition = jQuery.extend(true, oFilterCondition, aTemplateFilter[iLevelCondition]);
 
 						if (iNumberOfLevelConditions > 1 && iLevelCondition < iNumberOfLevelConditions - 1) {
-							oFilterCondition.sOperator = sap.ui.model.FilterOperator.EQ;
+							oFilterCondition.sOperator = FilterOperator.EQ;
 						}
 						if (iLevelCondition == iGroupIdLevel_Missing - 1
 							&& iLevel > iGroupIdLevel_Missing - 1
 							&& !bAddExtraConditionForFirstMissingMemberStartIndexLastKnown) { // rule (R1)
-							if (oFilterCondition.sOperator == sap.ui.model.FilterOperator.GT) {
-								oFilterCondition.sOperator = sap.ui.model.FilterOperator.GE;
+							if (oFilterCondition.sOperator == FilterOperator.GT) {
+								oFilterCondition.sOperator = FilterOperator.GE;
 							} else { // it must be LT
-								oFilterCondition.sOperator = sap.ui.model.FilterOperator.LE;
+								oFilterCondition.sOperator = FilterOperator.LE;
 							}
 						}
 						aIntermediateLevelFilterCondition.push(oFilterCondition);
 					}
 					// create the instance for ( P_1 = A and P_2 = B and .. P_(l-1) > W )
 					if (aIntermediateLevelFilterCondition.length > 0) {
-						aLevelFilterCondition.push(new sap.ui.model.Filter(aIntermediateLevelFilterCondition, true));
+						aLevelFilterCondition.push(new Filter(aIntermediateLevelFilterCondition, true));
 						// add an extra intermediate filter condition to reflect start position at oGroupExpansionFirstMissingMember.startIndex_Missing
 						if (iLevel > iGroupIdLevel_Missing - 1
 							&& iIntermediateLevel == iGroupIdLevel_Missing - 1
@@ -1591,21 +1591,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 							// create a copy of the constructed intermediate filter condition
 							var aStartIndexFilterCondition = [];
 							for (var j = 0; j < aIntermediateLevelFilterCondition.length; j++) {
-								var oConditionCopy = new sap.ui.model.Filter("x", sap.ui.model.FilterOperator.EQ, "x");
+								var oConditionCopy = new Filter("x", FilterOperator.EQ, "x");
 								oConditionCopy = jQuery.extend(true, oConditionCopy, aIntermediateLevelFilterCondition[j]);
 								aStartIndexFilterCondition.push(oConditionCopy);
 							}
-							aStartIndexFilterCondition[iGroupIdLevel_Missing - 1].sOperator = sap.ui.model.FilterOperator.EQ; // (R2.1)
+							aStartIndexFilterCondition[iGroupIdLevel_Missing - 1].sOperator = FilterOperator.EQ; // (R2.1)
 							aStartIndexFilterCondition.push(oFirstMissingMemberStartIndexLastKnownFilterCondition); // (R2.2)
 
-							aLevelFilterCondition.push(new sap.ui.model.Filter(aStartIndexFilterCondition, true));
+							aLevelFilterCondition.push(new Filter(aStartIndexFilterCondition, true));
 							break;
 						}
 					}
 				}
 				// create the entire filter expression
 				if (aLevelFilterCondition.length > 0) {
-					aFilterArray[iLevel] = new sap.ui.model.Filter(aLevelFilterCondition, false);
+					aFilterArray[iLevel] = new Filter(aLevelFilterCondition, false);
 				} else {
 					aFilterArray[iLevel] = null;
 				}
@@ -1881,7 +1881,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			// add conditions for aggregated dimension key
 		var aAggregationDimensionKeyFilter = [];
 		for (var i = 0; i < aAggregationLevel.length; i++) {
-			var oFilter = new sap.ui.model.Filter(aAggregationLevel[i], sap.ui.model.FilterOperator.EQ, oMultiUnitRepresentative.oEntry[aAggregationLevel[i]]);
+			var oFilter = new Filter(aAggregationLevel[i], FilterOperator.EQ, oMultiUnitRepresentative.oEntry[aAggregationLevel[i]]);
 			aAggregationDimensionKeyFilter.push(oFilter);
 		}
 		oFilterExpression.addUI5FilterConditions(aAggregationDimensionKeyFilter);
@@ -3219,21 +3219,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		switch (this._getEffectiveSortOrder(sPropertyName)) {
 			case odata4analytics.SortOrder.Ascending:
 				if (bWithEqual) {
-					sFilterOperator = sap.ui.model.FilterOperator.GE;
+					sFilterOperator = FilterOperator.GE;
 				} else {
-					sFilterOperator = sap.ui.model.FilterOperator.GT;
+					sFilterOperator = FilterOperator.GT;
 				}
 				break;
 			case odata4analytics.SortOrder.Descending:
 				if (bWithEqual) {
-					sFilterOperator = sap.ui.model.FilterOperator.LE;
+					sFilterOperator = FilterOperator.LE;
 				} else {
-					sFilterOperator = sap.ui.model.FilterOperator.LT;
+					sFilterOperator = FilterOperator.LT;
 				}
 				break;
 			default: // null
 				 // default if no sort order applied - matches the default ascending order set for grouped dimensions in prepare...QueryRequest()
-				sFilterOperator = sap.ui.model.FilterOperator.GT;
+				sFilterOperator = FilterOperator.GT;
 		}
 		return sFilterOperator;
 	};
@@ -3248,10 +3248,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 
 		// check if some filter object use the deprecated class sap.ui.model.odata.Filter;
 		// if so, convert them to sap.ui.model.Filter
-		for (var i = 0, l = aFilter.length; i < l; i++) {
-			if (sap.ui.model.odata && typeof sap.ui.model.odata.Filter === "function"
-				&& aFilter[i] instanceof sap.ui.model.odata.Filter) {
-				aFilter[i] = aFilter[i].convert();
+		var ODataFilter = sap.ui.require("sap/ui/model/odata/Filter");
+		if ( typeof ODataFilter === 'function' ) {
+			for (var i = 0, l = aFilter.length; i < l; i++) {
+				if (aFilter[i] instanceof ODataFilter) {
+					aFilter[i] = aFilter[i].convert();
+				}
 			}
 		}
 		return aFilter;

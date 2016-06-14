@@ -2,7 +2,6 @@
  * ${copyright}
  */
 
-/* global jQuery */
 /* eslint-disable quotes */
 
 sap.ui.define(['jquery.sap.global'], function($) {
@@ -44,7 +43,7 @@ sap.ui.define(['jquery.sap.global'], function($) {
        * @static
        */
       titleCase : function(sString) {
-        sap.ui.test.gherkin.dataTableUtils._testNormalizationInput(sString, 'titleCase');
+        dataTableUtils._testNormalizationInput(sString, 'titleCase');
         return sString
             .trim()
             .replace(/(?!\s)\W/g, '')
@@ -62,8 +61,8 @@ sap.ui.define(['jquery.sap.global'], function($) {
        * @static
        */
       pascalCase : function(sString) {
-        sap.ui.test.gherkin.dataTableUtils._testNormalizationInput(sString, 'pascalCase');
-        return sap.ui.test.gherkin.dataTableUtils.normalization.titleCase(sString).split(/\s/).join('');
+        dataTableUtils._testNormalizationInput(sString, 'pascalCase');
+        return dataTableUtils.normalization.titleCase(sString).split(/\s/).join('');
       },
 
       /**
@@ -76,8 +75,8 @@ sap.ui.define(['jquery.sap.global'], function($) {
        * @static
        */
       camelCase : function(sString) {
-        sap.ui.test.gherkin.dataTableUtils._testNormalizationInput(sString, 'camelCase');
-        return sap.ui.test.gherkin.dataTableUtils.normalization.pascalCase(sString)
+        dataTableUtils._testNormalizationInput(sString, 'camelCase');
+        return dataTableUtils.normalization.pascalCase(sString)
             .replace(/^(\w)/, function(s){return s.toLowerCase();});
       },
 
@@ -92,7 +91,7 @@ sap.ui.define(['jquery.sap.global'], function($) {
        * @static
        */
       hyphenated : function(sString) {
-        sap.ui.test.gherkin.dataTableUtils._testNormalizationInput(sString, 'hyphenated');
+        dataTableUtils._testNormalizationInput(sString, 'hyphenated');
         return sString.trim().replace(/(?!\s)\W/g, '').replace(/\s+/g, '-').toLowerCase();
       },
 
@@ -106,7 +105,7 @@ sap.ui.define(['jquery.sap.global'], function($) {
        * @static
        */
       none : function(sString) {
-        sap.ui.test.gherkin.dataTableUtils._testNormalizationInput(sString, 'none');
+        dataTableUtils._testNormalizationInput(sString, 'none');
         return sString;
       }
     },

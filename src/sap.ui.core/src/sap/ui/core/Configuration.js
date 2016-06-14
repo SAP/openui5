@@ -707,8 +707,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 				CalendarType = sap.ui.require("sap/ui/core/library").CalendarType;
 			}
 			if ( !LocaleData ) {
-				jQuery.sap.require("sap.ui.core.LocaleData");
-				LocaleData = sap.ui.require("sap/ui/core/LocaleData");
+				LocaleData = sap.ui.requireSync("sap/ui/core/LocaleData");
 			}
 
 			if (this.calendarType) {

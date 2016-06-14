@@ -3,10 +3,11 @@
  */
 
 sap.ui.define([
+	"jquery.sap.global",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/odata/type/DateTimeBase"
-], function (DateFormat, FormatException, DateTimeBase) {
+], function (jQuery, DateFormat, FormatException, DateTimeBase) {
 	"use strict";
 
 	/**

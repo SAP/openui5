@@ -3,12 +3,12 @@
  */
 
 // Provides class sap.ui.core.ThemeCheck
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI', 'jquery.sap.script'],
-	function(jQuery, Device, BaseObject, URI/* , jQuerySap */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI', 'jquery.sap.script'],
+	function(jQuery, Device, Global, BaseObject, URI/* , jQuerySap */) {
 	"use strict";
 
 
-	sap.ui._maxThemeCheckCycles = 100;
+	Global._maxThemeCheckCycles = 100;
 
 	/**
 	 * Creates a new ThemeCheck object.
@@ -43,7 +43,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 
 		fireThemeChangedEvent : function(bOnlyOnInitFail, bForceCheck) {
 			clear(this);
-			var bUseThemeCheck = sap.ui._maxThemeCheckCycles > 0; //Possibility to switch off theme check (except of force mode (for Core.applyTheme))
+			var bUseThemeCheck = Global._maxThemeCheckCycles > 0; //Possibility to switch off theme check (except of force mode (for Core.applyTheme))
 
 			if (bUseThemeCheck || bForceCheck) {
 				delayedCheckTheme.apply(this, [true]);
@@ -251,7 +251,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 	function delayedCheckTheme(bFirst) {
 		this._iCount++;
 
-		var bEmergencyExit = this._iCount > sap.ui._maxThemeCheckCycles;
+		var bEmergencyExit = this._iCount > Global._maxThemeCheckCycles;
 
 		if (!checkTheme(this) && !bEmergencyExit) {
 			this._sThemeCheckId = jQuery.sap.delayedCall(2, this, delayedCheckTheme);

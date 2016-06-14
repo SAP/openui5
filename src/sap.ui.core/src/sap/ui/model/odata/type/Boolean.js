@@ -2,10 +2,10 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/FormatException',
-		'sap/ui/model/odata/type/ODataType', 'sap/ui/model/ParseException',
-		'sap/ui/model/ValidateException'],
-	function(Core, FormatException, ODataType, ParseException, ValidateException) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core',
+		'sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataType',
+		'sap/ui/model/ParseException', 'sap/ui/model/ValidateException'],
+	function(jQuery, Core, FormatException, ODataType, ParseException, ValidateException) {
 	"use strict";
 
 	/**

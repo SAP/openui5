@@ -1158,8 +1158,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 						warn(oElement, 'Error in formatter:', ex);
 					}
 
-					if (vName !== oUNBOUND && sap.ui.core.CustomizingConfiguration) {
-						oViewExtension = sap.ui.core.CustomizingConfiguration.getViewExtension(
+					var CustomizingConfiguration = sap.ui.require("sap/ui/core/CustomizingConfiguration");
+					if (vName !== oUNBOUND && CustomizingConfiguration) {
+						oViewExtension = CustomizingConfiguration.getViewExtension(
 							sCurrentName, vName, oViewInfo.componentId);
 						if (oViewExtension && oViewExtension.className === "sap.ui.core.Fragment"
 								&& oViewExtension.type === "XML") {

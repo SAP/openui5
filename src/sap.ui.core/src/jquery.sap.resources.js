@@ -184,7 +184,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings
 	 */
 	function defaultLocale() {
 		var sLocale;
-		if (window.sap && sap.ui && sap.ui.getCore) {
+		if (window.sap && window.sap.ui && sap.ui.getCore) {
 			sLocale = sap.ui.getCore().getConfiguration().getLanguage();
 			sLocale = normalize(sLocale);
 		}
@@ -447,7 +447,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings
 	}
 
 	function shouldRequest(sLocale) {
-		var aLanguages = window.sap && sap.ui && sap.ui.getCore && sap.ui.getCore().getConfiguration().getSupportedLanguages();
+		var aLanguages = window.sap && window.sap.ui && sap.ui.getCore && sap.ui.getCore().getConfiguration().getSupportedLanguages();
 		if ( aLanguages && aLanguages.length > 0 ) {
 			return jQuery.inArray(sLocale, aLanguages) >= 0;
 		}

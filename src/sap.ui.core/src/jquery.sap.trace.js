@@ -13,11 +13,9 @@
  * All measurement activities get recorded by jquery.sap.measure, which is located in jquery.sap.global. As the initial
  * interaction is the app startup, we need the measuring capability already before this module is loaded.
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Global'],
-	function(jQuery, URI /*,jQuery*/) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Device', 'sap/ui/Global'],
+	function(jQuery, URI, Device /*,jQuery*/) {
 		"use strict";
-
-		(function() {
 
 			// activation by meta tag or url parameter as fallback
 			var bFesrActive = getInitialFESRState(),
@@ -27,8 +25,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Global'],
 				ROOT_ID = createGUID(), // static per session
 				CLIENT_ID = createGUID().substr(-8, 8) + ROOT_ID, // static per session
 				HOST = window.location.host, // static per session
-				CLIENT_OS = sap.ui.Device.os.name + "_" + sap.ui.Device.os.version,
-				CLIENT_MODEL = sap.ui.Device.browser.name + "_" + sap.ui.Device.browser.version,
+				CLIENT_OS = Device.os.name + "_" + Device.os.version,
+				CLIENT_MODEL = Device.browser.name + "_" + Device.browser.version,
 				sAppVersion = "", // shortened app version with fesr delimiter e.g. "@1.7.1"
 				sAppVersionFull = "", // full app version e.g. 1.7.1-SNAPSHOT
 				iE2eTraceLevel,
@@ -644,10 +642,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Global'],
 
 			// *********** Include E2E-Trace Scripts *************
 			if (/sap-ui-xx-e2e-trace=(true|x|X)/.test(location.search)) {
-				jQuery.sap.require("sap.ui.core.support.trace.E2eTraceLib");
+				sap.ui.requireSync("sap/ui/core/support/trace/E2eTraceLib");
 			}
-
-		}());
 
 		return jQuery;
 

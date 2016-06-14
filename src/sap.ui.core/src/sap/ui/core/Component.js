@@ -796,7 +796,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * @public
 	 * @since 1.37.0
 	 */
-	sap.ui.core.Component.prototype.getService = function(sLocalServiceAlias) {
+	Component.prototype.getService = function(sLocalServiceAlias) {
 
 		// require the Service Factory Registry on-demand
 		var ServiceFactoryRegistry = sap.ui.requireSync("sap/ui/core/service/ServiceFactoryRegistry");
@@ -871,7 +871,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * @name sap.ui.core.Component.prototype.init
 	 * @protected
 	 */
-	//sap.ui.core.Component.prototype.init = function() {};
+	//Component.prototype.init = function() {};
 
 	/**
 	 * Cleans up the Component instance before destruction.
@@ -886,7 +886,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * @name sap.ui.core.Component.prototype.exit
 	 * @protected
 	 */
-	//sap.ui.core.Component.prototype.exit = function() {};
+	//Component.prototype.exit = function() {};
 
 
 	/**

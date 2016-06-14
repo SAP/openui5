@@ -3,12 +3,12 @@
  */
 
 // A renderer for the HTML control
-sap.ui.define(['./library'], function(library) {
+sap.ui.define(['./RenderManager'], function(RenderManager) {
 	"use strict";
 
 
 	// local shortcut
-	var RenderPrefixes = library.RenderPrefixes;
+	var RenderPrefixes = RenderManager.RenderPrefixes;
 
 	var HTMLRenderer = {
 

@@ -7,6 +7,7 @@ sap.ui.define(['jquery.sap.global',
 				'sap/ui/model/TreeBinding',
 				'sap/ui/model/odata/CountMode',
 				'sap/ui/model/ChangeReason',
+				'sap/ui/model/Filter',
 				'sap/ui/model/Sorter',
 				'sap/ui/model/odata/ODataUtils',
 				'sap/ui/model/TreeBindingUtils',
@@ -14,7 +15,7 @@ sap.ui.define(['jquery.sap.global',
 				'sap/ui/model/SorterProcessor',
 				'sap/ui/model/FilterProcessor',
 				'sap/ui/model/FilterType'],
-	function(jQuery, TreeBinding, CountMode, ChangeReason, Sorter, ODataUtils, TreeBindingUtils, OperationMode, SorterProcessor, FilterProcessor, FilterType) {
+	function(jQuery, TreeBinding, CountMode, ChangeReason, Filter, Sorter, ODataUtils, TreeBindingUtils, OperationMode, SorterProcessor, FilterProcessor, FilterType) {
 	"use strict";
 
 
@@ -107,7 +108,7 @@ sap.ui.define(['jquery.sap.global',
 
 			// The ODataTreeBinding expects there to be only an array in this.aApplicationFilters later on.
 			// Wrap the given application filters inside an array if necessary
-			if (aApplicationFilters instanceof sap.ui.model.Filter) {
+			if (aApplicationFilters instanceof Filter) {
 				aApplicationFilters = [aApplicationFilters];
 			}
 			this.aApplicationFilters = aApplicationFilters;
@@ -188,7 +189,7 @@ sap.ui.define(['jquery.sap.global',
 	ODataTreeBinding.prototype._getNodeFilterParams = function (mParams) {
 		var sPropName = mParams.isRoot ? this.oTreeProperties["hierarchy-node-for"] : this.oTreeProperties["hierarchy-parent-node-for"];
 		var oEntityType = this._getEntityType();
-		return ODataUtils._createFilterParams([new sap.ui.model.Filter(sPropName, "EQ", mParams.id)], this.oModel.oMetadata, oEntityType);
+		return ODataUtils._createFilterParams([new Filter(sPropName, "EQ", mParams.id)], this.oModel.oMetadata, oEntityType);
 	};
 
 	/**
@@ -196,7 +197,7 @@ sap.ui.define(['jquery.sap.global',
 	 */
 	ODataTreeBinding.prototype._getLevelFilterParams = function (sOperator, iLevel) {
 		var oEntityType = this._getEntityType();
-		return ODataUtils._createFilterParams([new sap.ui.model.Filter(this.oTreeProperties["hierarchy-level-for"], sOperator, iLevel)], this.oModel.oMetadata, oEntityType);
+		return ODataUtils._createFilterParams([new Filter(this.oTreeProperties["hierarchy-level-for"], sOperator, iLevel)], this.oModel.oMetadata, oEntityType);
 	};
 
 	/**
@@ -1279,7 +1280,7 @@ sap.ui.define(['jquery.sap.global',
 		}
 
 		// accept single filter and arrays
-		if (aFilters instanceof sap.ui.model.Filter) {
+		if (aFilters instanceof Filter) {
 			aFilters = [aFilters];
 		}
 
@@ -1817,19 +1818,16 @@ sap.ui.define(['jquery.sap.global',
 					this.sCustomParams = this.oModel.createCustomParams(this.mParameters);
 				}
 				// apply flat paging adapter
-				jQuery.sap.require("sap.ui.model.odata.ODataTreeBindingFlat");
-				var ODataTreeBindingFlat = sap.ui.model.odata.ODataTreeBindingFlat;
+				var ODataTreeBindingFlat = sap.ui.requireSync("sap/ui/model/odata/ODataTreeBindingFlat");
 				ODataTreeBindingFlat.apply(this);
 			} else {
 				// apply hierarchical paging adapter
-				jQuery.sap.require("sap.ui.model.odata.ODataTreeBindingAdapter");
-				var ODataTreeBindingAdapter = sap.ui.model.odata.ODataTreeBindingAdapter;
+				var ODataTreeBindingAdapter = sap.ui.requireSync("sap/ui/model/odata/ODataTreeBindingAdapter");
 				ODataTreeBindingAdapter.apply(this);
 			}
 		} else if (this.oNavigationPaths) {
 			// apply hierarchical paging adapter
-			jQuery.sap.require("sap.ui.model.odata.ODataTreeBindingAdapter");
-			var ODataTreeBindingAdapter = sap.ui.model.odata.ODataTreeBindingAdapter;
+			var ODataTreeBindingAdapter = sap.ui.requireSync("sap/ui/model/odata/ODataTreeBindingAdapter");
 			ODataTreeBindingAdapter.apply(this);
 		} else {
 			jQuery.sap.log.error("Neither hierarchy annotations, nor navigation properties are specified to build the tree.", this);
@@ -1889,7 +1887,7 @@ sap.ui.define(['jquery.sap.global',
 		}
 	};
 
-  /**
+	/**
 	 * Get a download URL with the specified format considering the
 	 * sort/filter/custom parameters.
 	 *
