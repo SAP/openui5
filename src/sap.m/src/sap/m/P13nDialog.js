@@ -770,25 +770,17 @@ sap.ui.define([
 					aValidationResult = fValidate(oPayload);
 				}
 				// Execute validation of panels
-				var aPanels = that.getPanels();
-				var aPromises = aPanels.map(function(oPanel) {
-					return oPanel.onBeforeNavigationFromAsync();
-				});
-				Promise.all(aPromises).then(function(aResult) {
-					aResult.forEach(function(bResult, iIndex) {
-						if (!bResult) {
-							aFailedPanelTypes.push(aPanels[iIndex].getType());
-						}
-					});
-					// In case of invalid panels show the dialog
-					if (aFailedPanelTypes.length || aValidationResult.length) {
-						that._showValidationDialog(fCallbackIgnore, aFailedPanelTypes, aValidationResult);
-					} else {
-						fFireOK();
+				that.getPanels().forEach(function(oPanel) {
+					if (!oPanel.onBeforeNavigationFrom()) {
+						aFailedPanelTypes.push(oPanel.getType());
 					}
-				}, function() {
-					fFireOK();
 				});
+				// In case of invalid panels show the dialog
+				if (aFailedPanelTypes.length || aValidationResult.length) {
+					that._showValidationDialog(fCallbackIgnore, aFailedPanelTypes, aValidationResult);
+				} else {
+					fFireOK();
+				}
 			}
 		});
 	};

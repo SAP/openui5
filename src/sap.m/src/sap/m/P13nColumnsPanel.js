@@ -1906,13 +1906,10 @@ sap.ui.define([
 		return this;
 	};
 
-	P13nColumnsPanel.prototype.onBeforeNavigationFromAsync = function() {
+	P13nColumnsPanel.prototype.onBeforeNavigationFrom = function() {
 		var aSelectedItems = this._oTable.getSelectedItems();
 		var iVisibleItemsThreshold = this.getVisibleItemsThreshold();
-
-		return new Promise(function(resolve) {
-			return resolve(!(aSelectedItems && iVisibleItemsThreshold !== -1 && aSelectedItems.length > iVisibleItemsThreshold));
-		});
+		return !(aSelectedItems && iVisibleItemsThreshold !== -1 && aSelectedItems.length > iVisibleItemsThreshold);
 	};
 
 	P13nColumnsPanel.prototype._notifyChange = function() {

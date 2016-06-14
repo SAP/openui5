@@ -1305,7 +1305,7 @@ sap.ui.define([
 		}
 	};
 
-	P13nDimMeasurePanel.prototype.onBeforeNavigationFromAsync = function() {
+	P13nDimMeasurePanel.prototype.onBeforeNavigationFrom = function() {
 		// Check if chart type fits selected dimensions and measures
 		var sChartType = this.getChartTypeKey();
 		var aDimensionItems = [];
@@ -1338,19 +1338,14 @@ sap.ui.define([
 			};
 		});
 
-		return new Promise(function(resolve) {
-			sap.ui.getCore().loadLibraries([
-				"sap.chart"
-			]).then(function() {
-				var oResult;
-				try {
-					oResult = sap.chart.api.getChartTypeLayout(sChartType, aDimensionItems, aMeasureItems);
-				} catch (oException) {
-					return resolve(false);
-				}
-				return resolve(oResult.errors.length === 0);
-			});
-		});
+		sap.ui.getCore().loadLibrary("sap.chart");
+		var oResult;
+		try {
+			oResult = sap.chart.api.getChartTypeLayout(sChartType, aDimensionItems, aMeasureItems);
+		} catch (oException) {
+			return false;
+		}
+		return oResult.errors.length === 0;
 	};
 
 	return P13nDimMeasurePanel;
