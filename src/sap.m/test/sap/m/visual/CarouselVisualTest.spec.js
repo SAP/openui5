@@ -1,4 +1,6 @@
 describe("sap.m.CarouselVisualTest", function() {
+	browser.testrunner.currentSuite.meta.controlName = 'sap.m.Carousel';
+	
 	var myCarousel = element(by.id("myCarousel"));
 
 	// initial loading"
