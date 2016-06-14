@@ -1493,7 +1493,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	};
 
 	/**
-	 * Defines the growing directionality of the <code>sap.m.List</code> or <code>sap.m.Table</code>.
+	 * Defines the growing direction of the <code>sap.m.List</code> or <code>sap.m.Table</code>.
 	 *
 	 * @enum {string}
 	 * @public
@@ -1503,14 +1503,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	sap.m.ListGrowingDirection = {
 
 		/**
-		 * User needs to scroll down to load more items or growing button is displayed at the bottom.
+		 * User has to scroll down to load more items or the growing button is displayed at the bottom.
 		 * @public
 		 */
 		Downwards : "Downwards",
 
 		/**
-		 * User needs to scroll up to load more items or growing button is displayed at the top.
-		 * <b>Note:</b> When this option is active, there should not be any other control than <code>sap.m.List</code> inside its container.
+		 * User has to scroll up to load more items or the growing button is displayed at the top.
+		 * <b>Note:</b> If this option is active, there should not be any other control than <code>sap.m.List</code> inside its <code>ScollContainer</code>.
 		 * @public
 		 */
 		Upwards : "Upwards"

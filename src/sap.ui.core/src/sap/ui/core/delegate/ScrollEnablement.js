@@ -772,6 +772,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 				return this._scrollX || 0;
 			},
 
+			getScrollHeight : function() {
+				var $Container = this._$Container;
+				return ($Container && $Container[0]) ? $Container[0].scrollHeight : 0;
+			},
+
 			getMaxScrollTop : function() {
 				var $Container = this._$Container;
 				return ($Container && $Container[0]) ? $Container[0].scrollHeight - $Container[0].clientHeight : -1;

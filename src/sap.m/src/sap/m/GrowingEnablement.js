@@ -124,8 +124,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 		},
 
 		onScrollToLoad: function() {
-			if (this._oControl.getGrowingDirection() == sap.m.ListGrowingDirection.Upwards) {
-				this._iLastScrolledIndex = this._oControl.getItems(true).length;
+			if (!this._bLoading && this._oControl.getGrowingDirection() == sap.m.ListGrowingDirection.Upwards) {
+				var oScrollDelegate = this._oScrollDelegate;
+				this._oScrollPosition = {
+					left : oScrollDelegate.getScrollLeft(),
+					bottom : oScrollDelegate.getScrollHeight() - Math.max(oScrollDelegate.getScrollTop(), 0)
+				};
+
+
 			}
 
 			this.requestNewPage();
@@ -599,18 +605,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 				}
 
 				// at the beginning we should scroll to last item
-				if (bHasScrollToLoad && this._iLastScrolledIndex == undefined &&
-					this._oControl.getGrowingDirection() == sap.m.ListGrowingDirection.Upwards) {
-					this._iLastScrolledIndex = 1;
+				if (bHasScrollToLoad && !this._oScrollPosition  && oControl.getGrowingDirection() == sap.m.ListGrowingDirection.Upwards) {
+					this._oScrollPosition = {
+						left : 0,
+						bottom : 0
+					};
 				}
 
-				// scroll to item
-				if (iItemsLength > 0 && this._iLastScrolledIndex > 0) {
-					var oLastScrolledItem = aItems[this._iLastScrolledIndex - 1];
-					this._iLastScrolledIndex = 0;
-					if (oLastScrolledItem) {
-						this._oScrollDelegate.scrollToElement(oLastScrolledItem.getDomRef());
-					}
+				// scroll to last position
+				if (iItemsLength > 0 && this._oScrollPosition) {
+					var oScrollDelegate = this._oScrollDelegate,
+						oScrollPosition = this._oScrollPosition;
+
+					oScrollDelegate.scrollTo(oScrollPosition.left, oScrollDelegate.getScrollHeight() - oScrollPosition.bottom);
+					this._oScrollPosition = undefined;
 				}
 			}
 		}
