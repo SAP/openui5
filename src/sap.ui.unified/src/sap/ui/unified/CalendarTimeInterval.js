@@ -617,6 +617,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 
 			this._oMinDate = CalendarUtils._createUniversalUTCDate(oDate, undefined, true);
+			var oTimesRow = this.getAggregation("timesRow");
+			this._oMinDate = oTimesRow._getIntervalStart(this._oMinDate); // use start of the interval
 
 			var iYear = this._oMinDate.getUTCFullYear();
 			if (iYear < 1 || iYear > 9999) {
@@ -679,6 +681,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 
 			this._oMaxDate = CalendarUtils._createUniversalUTCDate(oDate, undefined, true);
+			var oTimesRow = this.getAggregation("timesRow");
+			this._oMaxDate = oTimesRow._getIntervalStart(this._oMaxDate); // use end of the interval
+			this._oMaxDate.setUTCMinutes(this._oMaxDate.getUTCMinutes() + this.getIntervalMinutes());
+			this._oMaxDate.setUTCMilliseconds(-1);
 
 			var iYear = this._oMaxDate.getUTCFullYear();
 			if (iYear < 1 || iYear > 9999) {
@@ -1041,7 +1047,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			oMaxDate.setUTCMinutes(oMaxDate.getUTCMinutes() + this.getIntervalMinutes() * (this._getItems() - 1));
 		}
 		if (oStartDate.getTime() < this._oMinDate.getTime()) {
-			oStartDate = this._oMinDate;
+			oStartDate = new UniversalDate(this._oMinDate.getTime());
 		}else if (oStartDate.getTime() > oMaxDate.getTime()){
 			oStartDate = oMaxDate;
 		}
