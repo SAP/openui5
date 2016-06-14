@@ -4,15 +4,17 @@
 /* =================================== */
 
 .sapMMessageToast {
+	max-width: 15rem;
 	font-size: @sapMFontMediumSize;
+	font-family: @sapUiFontFamily;
+	font-weight: normal;
 	padding: 1rem;
-	background: @sapUiPageFooterBackground;
-	text-shadow: 0 0.0625rem contrast(@sapUiPageFooterTextColor, fade(@sapUiContentShadowColor, 50), fade(@sapUiContentContrastShadowColor, 50), @sapUiContentContrastTextThreshold);
-	color: @sapUiPageFooterTextColor;
-	box-shadow: 0 0.125rem 2.750rem 0.125rem fade(@sapUiContentShadowColor, 50), 0 0.250rem 0.250rem 0 fade(@sapUiContentShadowColor, 15);
-	border-radius: 0.14285rem;
+	background: @sapUiListBackground;
+	color: @sapUiListTextColor;
+	box-shadow: @sapUiShadowLevel3;
+	border-radius: 0.25rem;
 }
 
 html.sap-desktop .sapMMessageToast {
-	background: @sapUiPageFooterBackground;
+	background: @sapUiListBackground;
 }
