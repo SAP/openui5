@@ -14,13 +14,13 @@ sap.ui.define(['jquery.sap.global'], function ($) {
    *
    * @author Rodrigo Jordao
    * @author Jonathan Benn
-   * @alias sap.ui.test.gherkin.SimpleGherkinParser
-   * @extends sap.ui.base.Object
+   * @alias sap.ui.test.gherkin.simpleGherkinParser2
+   * @namespace
+   * @static
    * @since 1.40
    * @private
-   * @static
    */
-  var SimpleGherkinParser = {
+  var simpleGherkinParser = {
 
     /**
      * Parses correctly formed Gherkin. The parsed return object (a Gherkin feature!) looks like this:
@@ -58,7 +58,7 @@ sap.ui.define(['jquery.sap.global'], function ($) {
     parse: function(sText) {
 
       if ($.type(sText) !== "string") {
-        throw new Error("SimpleGherkinParser.parse: parameter 'sText' must be a valid string");
+        throw new Error("simpleGherkinParser.parse: parameter 'sText' must be a valid string");
       }
 
       var aLines =
@@ -151,7 +151,7 @@ sap.ui.define(['jquery.sap.global'], function ($) {
     parseFile: function(sPath) {
 
       if ($.type(sPath) !== "string") {
-        throw new Error("SimpleGherkinParser.parseFile: parameter 'sPath' must be a valid string");
+        throw new Error("simpleGherkinParser.parseFile: parameter 'sPath' must be a valid string");
       }
 
       // Interpret the path as a standard SAPUI5 module path
@@ -163,12 +163,12 @@ sap.ui.define(['jquery.sap.global'], function ($) {
       });
 
       if (!oResult.success) {
-        throw new Error("SimpleGherkinParser.parseFile: error loading URL: " + sPath);
+        throw new Error("simpleGherkinParser.parseFile: error loading URL: " + sPath);
       }
 
       return this.parse(oResult.data);
     }
   };
 
-  return SimpleGherkinParser;
+  return simpleGherkinParser;
 }, /* bExport= */ true);
