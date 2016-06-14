@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 		 *     at: "center bottom",             // default
 		 *     of: window,                      // default
 		 *     offset: "0 0",                   // default
-		 *     collision: "fit fit"             // default
+		 *     collision: "fit fit",            // default
 		 *     onClose: null,                   // default
 		 *     autoClose: true,                 // default
 		 *     animationTimingFunction: "ease", // default
