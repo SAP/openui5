@@ -572,7 +572,7 @@ sap.ui.define([
 	/**
 	 * Refreshes the binding. Prompts the model to retrieve data from the server using the given
 	 * group ID and notifies the control that new data is available.
-	 * Refresh is supported if the binding retrieves data with its own service request.
+	 * Refresh is supported for absolute bindings.
 	 *
 	 * Note: When calling refresh multiple times, the result of the request triggered by the last
 	 * call determines the binding's data; it is <b>independent</b>
@@ -593,22 +593,22 @@ sap.ui.define([
 	 */
 	// @override
 	ODataListBinding.prototype.refresh = function (sGroupId) {
-		var that = this;
+//		var that = this;
 
-		if (!this.oCache) {
+		if (this.bRelative) {
 			throw new Error("Refresh on this binding is not supported");
 		}
 
 		_ODataHelper.checkGroupId(sGroupId);
 
 		this.sRefreshGroupId = sGroupId;
-		if (this.mCacheByContext) {
-			Object.keys(this.mCacheByContext).forEach(function (sCanonicalPath) {
-				if (that.oCache !== that.mCacheByContext[sCanonicalPath]) {
-					delete that.mCacheByContext[sCanonicalPath];
-				}
-			});
-		}
+//		if (this.mCacheByContext) {
+//			Object.keys(this.mCacheByContext).forEach(function (sCanonicalPath) {
+//				if (that.oCache !== that.mCacheByContext[sCanonicalPath]) {
+//					delete that.mCacheByContext[sCanonicalPath];
+//				}
+//			});
+//		}
 		this.oCache.refresh();
 		this.reset();
 		this._fireRefresh({reason : ChangeReason.Refresh});

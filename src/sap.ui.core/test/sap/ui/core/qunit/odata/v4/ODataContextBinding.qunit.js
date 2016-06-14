@@ -364,14 +364,15 @@ sap.ui.require([
 			.withExactArgs(sinon.match.same(oBinding), sinon.match.func,
 				sinon.match.same(oPathPromise))
 			.returns(oCacheProxy);
-		this.mock(oCache).expects("refresh");
+		this.mock(oCache).expects("refresh").never();
 		oBinding.setContext(oContext);
 		oBinding.mCacheByContext = {"/TEAMS('1')" : oCache, "/TEAMS('42')" : {}};
 
 		return oCachePromise.then(function () {
 			//code under test
-			oBinding.refresh();
-			assert.deepEqual(oBinding.mCacheByContext, {"/TEAMS('1')" : oCache});
+			assert.throws(function () {
+				oBinding.refresh();
+			}, new Error("Refresh on this binding is not supported"));
 		});
 	});
 
@@ -379,8 +380,6 @@ sap.ui.require([
 	QUnit.test("refresh on relative binding w/o parameters is not supported", function (assert) {
 		var oBinding,
 			oContext = Context.create(this.oModel, null, "/TEAMS('TEAM_01')");
-
-		this.mock(_Cache).expects("createSingle").never();
 
 		oBinding = this.oModel.bindContext("TEAM_2_EMPLOYEES(ID='1')", oContext);
 		this.mock(oBinding).expects("_fireChange").never();

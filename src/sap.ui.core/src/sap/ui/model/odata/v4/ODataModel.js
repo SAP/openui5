@@ -597,7 +597,7 @@ sap.ui.define([
 		_ODataHelper.checkGroupId(sGroupId);
 
 		this.aBindings.slice().forEach(function (oBinding) {
-			if (oBinding.oCache) { // relative bindings have no cache and cannot be refreshed
+			if (!oBinding.isRelative()) { // relative bindings cannot be refreshed
 				oBinding.refresh(sGroupId);
 			}
 		});
