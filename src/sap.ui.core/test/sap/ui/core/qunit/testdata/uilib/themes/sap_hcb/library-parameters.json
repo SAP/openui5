@@ -1,10 +1,12 @@
 {
 	"default": {
 		"sapUiTstTextColor": "#fafafa",
-		"sapUiText": "#ffffff"
+		"sapUiText": "#ffffff",
+		"sapUiColor": "#ffffff"
 	},
 	"scopes": {
 		"sapTestScope": {
+			"sapUiText": "#000000",
 			"sapUiTstTextColor": "#000000"
 		},
 		"sapTestScopePlus": {
