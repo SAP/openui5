@@ -638,6 +638,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				}
 			}
 
+			if (oStyles.width == 'auto') {
+				oStyles.width = undefined;
+			}
+
+			if (oStyles.height == 'auto') {
+				oStyles.height = undefined;
+			}
+
 			if ((bStretch && !bMessageType) || (bStretchOnPhone)) {
 				this.$().addClass('sapMDialogStretched');
 			}
@@ -694,14 +702,15 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 */
 		Dialog.prototype._onResize = function () {
 			var $dialog = this.$(),
-				$dialogContent = this.$('cont');
+				$dialogContent = this.$('cont'),
+				sContentHeight = this.getContentHeight();
 
 			//if height is set by manually resizing return;
 			if (this._oManuallySetSize) {
 				return;
 			}
 
-			if (!this.getContentHeight()) {
+			if (!sContentHeight || sContentHeight == 'auto') {
 				//reset the height so the dialog can grow
 				$dialogContent.css({
 					height: 'auto'
