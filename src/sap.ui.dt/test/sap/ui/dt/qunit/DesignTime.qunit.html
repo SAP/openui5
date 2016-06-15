@@ -125,7 +125,7 @@
 				sap.ui.getCore().applyChanges();
 			});
 
-			QUnit.test("when new control without overlay is added to a root control and an error happens in loadDesignTimeMetadata promise", function(assert) {
+			QUnit.test("when new control without overlay is added to a root control and a promise reject happens in loadDesignTimeMetadata promise", function(assert) {
 				var done = assert.async();
 
 				var oButton = new sap.m.Button();
@@ -133,7 +133,23 @@
 				this.stub(sap.ui.dt.ElementUtil, "loadDesignTimeMetadata").returns(Promise.reject("Error"));
 
 				this.oDesignTime.attachEventOnce("synced", function() {
-					assert.ok(true, "then synced is called also in an error case");
+					assert.ok(true, "then synced is called also in an pormise reject case");
+					done();
+				});
+
+				this.oOuterLayout.addContent(oButton);
+				sap.ui.getCore().applyChanges();
+			});
+
+			QUnit.test("when new control without overlay is added to a root control and an error happens within the loadDesignTimeMetadata promise chain", function(assert) {
+				var done = assert.async();
+
+				var oButton = new sap.m.Button();
+				var someError = new Error("some Error occured");
+				this.stub(sap.ui.dt.ElementUtil, "loadDesignTimeMetadata").returns(Promise.reject(someError));
+
+				this.oDesignTime.attachEventOnce("syncFailed", function() {
+					assert.ok(true, "then syncFailed is called in an error case");
 					done();
 				});
 

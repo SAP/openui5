@@ -109,7 +109,11 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 				/**
 				 * Event fired when DesignTime's overlays are in-sync with ControlTree of root elements
 				 */
-				synced : {}
+				synced : {},
+				/**
+				 * Event fired when DesignTime's overlays failed to sync with ControlTree of root elements
+				 */
+				syncFailed : {}
 			}
 		}
 	});
@@ -121,6 +125,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 	DesignTime.prototype.init = function() {
 		// number of element overlays waiting for their designTimeMetadata
 		this._iOverlaysPending = 0;
+		// array of errors while element overlays waiting for their designTimeMetadata
 		this._oSelection = this.createSelection();
 		this._oSelection.attachEvent("change", function(oEvent) {
 			this.fireSelectionChange({selection: oEvent.getParameter("selection")});
@@ -383,10 +388,12 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 				var oElementDesignTimeMetadata = new ElementDesignTimeMetadata({data : oMergedDesignTimeMetadata});
 
 				oElementOverlay.setDesignTimeMetadata(oElementDesignTimeMetadata);
-
 				that.fireElementOverlayCreated({elementOverlay : oElementOverlay});
 			}).catch(function(oError) {
 				jQuery.sap.log.error("exception occured in sap.ui.dt.DesignTime._createElementOverlay", oError);
+				if (oError instanceof Error) {
+					that.fireSyncFailed();
+				}
 			}).then(function() {
 				that._iOverlaysPending--;
 				if (that._iOverlaysPending === 0) {
