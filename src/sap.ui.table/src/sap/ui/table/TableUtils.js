@@ -61,7 +61,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 				if (typeof oNoData === "string" || oTable.getNoData() instanceof String) {
 					return oNoData;
 				} else {
-					return oTable.getNoDataText() || oTable._oResBundle.getText("TBL_NO_DATA");
+					return oTable._oResBundle.getText("TBL_NO_DATA");
 				}
 			}
 		},
