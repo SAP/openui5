@@ -829,7 +829,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 					that._addDelegateFlag = true;
 					that._closePopoverFlag = true;
 
-					var oList = that._restoreListFromDisplayContainer(this);
 
 					// The facet button will not be removed when the remove icon is pressed if we don't delay hiding the icon in ie 9.
 					//
@@ -837,11 +836,9 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 					//
 					// TODO: Remove when ie 9 is no longer supported
 					if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10) {
-						jQuery.sap.delayedCall(100, that, that._handlePopoverAfterClose, [oList]);
+						jQuery.sap.delayedCall(100, that, that._handlePopoverAfterClose);
 					} else {
-//fix remove icon press issue. click remove icon and can't remove facet, so delay the popover close
-						jQuery.sap.delayedCall(120, that, that._handlePopoverAfterClose, [oList]);
-						oPopover.destroySubHeader();
+						that._handlePopoverAfterClose();
 					}
 				},
 				horizontalScrolling: false
@@ -870,14 +867,14 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 				var oIcon = that._getFacetRemoveIcon(oList);
 
 				if (oIcon) {
-					oIcon.sapTouchStarted = false;
+					oIcon._bTouchStarted = false;
 				}
 			};
 		}
 
 		if (this.getShowPopoverOKButton()) {
 
-				this._addOKButtonToPopover(oPopover);
+			this._addOKButtonToPopover(oPopover);
 		} else {
 			oPopover.destroyAggregation("footer");
 		}
@@ -886,24 +883,49 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	};
 
 	/**
+	 * Handles closing of the popover with given filter list.
 	 *
+	 * We have 2 options for calling this method:
+	 * 1. Popover.afterClose handler.
+	 * 2. Delete Icon.touchend(2.1) & Icon.press handler(2.2) - fnProcessRemoveFacetAction
+	 *
+	 * When the user clicks on the delete facet icon, the following event flows are possible:
+	 * a) quick click - icon touchstart, icon touchend, icon press, popover afterClose
+	 * b) click, hold & release delete icon - icon touchstart, popover afterClose, icon touchend, icon press
+	 * c) click, hold delete icon, but release elsewhere - icon touchstart, popover afterClose, icon touchend
+	 *
+	 * Having in mind the above, the following corresponding actions are taken:
+	 * a) current method is called due to option#1 where "listClose" & "confirm" events are fired.
+	 * b) method call due to option #1 is skipped, the real work is posponed to the next call (due to option #2.2)
+	 * c) method call due to option #1 is skipped and as there is no press event, next the underlying method is called
+	 *    due to option #2.1
+	 *
+	 * If popover is destroyed any further calls of this method results in nothing as the work has already been done.
+	 *
+	 * (Re) opening popover restarts this functionality.
 	 * @private
 	 */
-	FacetFilter.prototype._handlePopoverAfterClose = function (oList) {
-		var oIcon = this._getFacetRemoveIcon(oList);
+	FacetFilter.prototype._handlePopoverAfterClose = function () {
+		var oPopover = this.getAggregation("popover"),
+			oList = this._displayedList;
 
-		if (oIcon && oIcon.sapTouchStarted) {
-			//do not react on popover close if the "remove facet" button was touched, but not released (i.e. no 'press' event)
+		if (!oPopover) { // make sure we skip redundant work
 			return;
 		}
 
+		var oIcon = this._getFacetRemoveIcon(oList);
+
+		if (oIcon && oIcon._bTouchStarted) {
+			//do not react on popover close if the "remove facet" button was touched, but not released (i.e. no 'press' event)
+			return;
+		}
+		this._restoreListFromDisplayContainer(oPopover);
 		this._displayRemoveIcon(false, oList);
 		oList._fireListCloseEvent();
-
 		this._fireConfirmEvent();
 
 		// Destroy the popover aggregation, otherwise if the list is then moved to the dialog filter items page, it will still think it's DOM element parent
-		// is the popover causing facet filter item checkbox selection to not display the check mark when the item is selected.
+		// is the popover causing facet filer item checkbox selection to not display the check mark when the item is selected.
 		this.destroyAggregation("popover");
 		if (this._oOpenPopoverDeferred) {
 			jQuery.sap.delayedCall(0, this, function () {
@@ -1090,26 +1112,42 @@ oPopover.setContentWidth("30%");
 			oIcon = new sap.ui.core.Icon({
 				src : IconPool.getIconURI("sys-cancel"),
 				tooltip:this._bundle.getText("FACETFILTER_REMOVE"),
-				press : function(oEvent) {
-					oList.removeSelections(true);
-					oList.setSelectedKeys();
-					oList.setProperty("active", false, true);
-					oIcon.sapTouchStarted = false;
-					that._handlePopoverAfterClose(oList);
+				press: function() {
+					oIcon._bPressed = true;
 				}
 			});
 
 			oIcon.addDelegate({
-				onsaptouchstart: function(oEvent){
+				ontouchstart: function() {
 					//Mark this icon as touch started
-					oIcon.sapTouchStarted = true;
+					oIcon._bTouchStarted = true;
+					oIcon._bPressed = false;
 				},
-				onsaptouchend: function(oEvent) {
-					// Not all saptouchend are followed by "press" event(e.g. touchstart over the icon, but the user touchends somwere else.
+
+				ontouchend: function() {
+					// Not all touchend are followed by "press" event(e.g. touchstart over the icon, but the user touchend-s somewhere else.
 					// So make sure the "remove icon" is always hidden
 					that._displayRemoveIcon(false, oList);
+					oIcon._bTouchStarted = false;
+					//Schedule actual processing so eventual "press" event is caught.
+					jQuery.sap.delayedCall(100, this,  fnProcessRemoveFacetAction);
 				}
 			}, true);
+
+			/**
+			 * Handles touch/click on "remove facet" icon depending on the received events.
+			 **/
+			var fnProcessRemoveFacetAction = function() {
+				if (oIcon._bPressed) {// touchstart, touchend, press
+					oList.removeSelections(true);
+					oList.setSelectedKeys();
+					oList.setProperty("active", false, true);
+				} //otherwise - touchstart, touchend, because the user released the mouse/touchend-ed outside the icon.
+
+				//In both cases popover closes and needs to be handled
+				that._handlePopoverAfterClose();
+			};
+
 			oIcon.setAssociation("list", oList.getId(), true);
 			oIcon.addStyleClass("sapMFFLRemoveIcon");
 			this._removeFacetIcons[oList.getId()] = oIcon;
