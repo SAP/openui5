@@ -1271,15 +1271,27 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			}).addStyleClass("sapMUCItemImage");
 		} else {
 			sThumbnail = sap.m.UploadCollection.prototype._getThumbnail(undefined, sFileNameLong);
+			var sStyleClass;
 			oItemIcon = new sap.ui.core.Icon(sItemId + "-ia_iconHL", {
 				src : sThumbnail,
 				decorative : false,
 				useIconTooltip : false,
 				alt: this._getAriaLabelForPicture(oItem)
-			}).addStyleClass("sapMUCItemIcon");
-			if (sThumbnail === UploadCollection._placeholderCamera) {
-				oItemIcon.addStyleClass("sapMUCItemPlaceholder");
+			});
+			//Sets the right style class depending on the icon/placeholder status (clickable or not)
+			if (this.sErrorState !== "Error" && jQuery.trim(oItem.getProperty("url"))) {
+				sStyleClass = "sapMUCItemIcon";
+			} else {
+				sStyleClass = "sapMUCItemIconInactive";
 			}
+			if (sThumbnail === UploadCollection._placeholderCamera) {
+				if (this.sErrorState !== "Error" && jQuery.trim(oItem.getProperty("url"))) {
+					sStyleClass = sStyleClass + " sapMUCItemPlaceholder";
+				} else {
+					sStyleClass = sStyleClass + " sapMUCItemPlaceholderInactive";
+				}
+			}
+			oItemIcon.addStyleClass(sStyleClass);
 		}
 		if (this.sErrorState !== "Error" && jQuery.trim(oItem.getProperty("url"))) {
 			oItemIcon.attachPress(function(oEvent) {

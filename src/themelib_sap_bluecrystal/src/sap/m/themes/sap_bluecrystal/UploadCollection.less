@@ -8,20 +8,21 @@
 .sapMLIB.sapMUCListFirstItem,
 .sapMLIB.sapMUCListLastItem,
 .sapMLIB.sapMUCListItem {
-	border-bottom-color:	@sapUiListBorderColor;
+	border-bottom-color: @sapUiListBorderColor;
 }
 
 /* Item Icon */
+.sapMUCItemIconInactive,
 .sapMUCItemIcon {
-	color:					@sapUiElement;
+	color: @sapUiElement;
 }
 
 /*if no image is provided a standard placeholder is displayed */
+.sapMUCItemPlaceholderInactive,
 .sapMUCItemPlaceholder {
 	background-color: darken(@sapUiGroupContentBackground, 5);
 	color: darken(@sapUiExtraLightBG, 20);
 }
-
 
 /*if no link is provided the file name is displayed as an disabled link */
 .sapMLnkDsbl.sapMUCFileName {
@@ -42,11 +43,11 @@
 @media(min-width: 30rem) {
 	.sapMUCButtonContainer >.sapMBtn >.sapMBtnInner {
 		background-image: none;
-  		background-color: @sapUiButtonLiteBackground;
-  		border-color: @sapUiButtonLiteBorderColor;
-  		color: @sapUiButtonLiteTextColor;
-  		text-shadow: none;
-  	}
+		background-color: @sapUiButtonLiteBackground;
+		border-color: @sapUiButtonLiteBorderColor;
+		color: @sapUiButtonLiteTextColor;
+		text-shadow: none;
+	}
 }
 
 /* an edit and delete button in a hover state; it should look like a transparent button in a hover state */
@@ -74,7 +75,7 @@
 
 /* Text: Filename */
 .sapMUCFileName.sapMLnk {
-	font-size: 			@sapMFontLargeSize; /* it cannot be moved to base as the LESS constant is not known there */
+	font-size: @sapMFontLargeSize; /* it cannot be moved to base as the LESS constant is not known there */
 }
 
 .sapMUCAttrContainer, .sapMUCStatusContainer {
