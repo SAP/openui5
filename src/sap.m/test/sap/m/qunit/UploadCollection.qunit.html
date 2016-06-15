@@ -27,11 +27,11 @@
 			"items" : [{
 				"contributor" : "Susan Baker",
 				"documentId" : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
-				"fileName" : "Screenshot.ico",
+				"fileName" : "Screenshot.jpg",
 				"fileSize" : 20,
+				"mimeType" : "image/jpg",
 				"thumbnailUrl" : "",
-				"uploadedDate" : "2014-07-30",
-				"url" : "",
+				"uploadedDate" : "Date: 2014-07-30",
 				"ariaLabelForPicture" : "textForIconOfItemSusanBaker",
 				"markers" : [{
 					"type" : "Locked",
@@ -171,6 +171,66 @@
 		//Assert
 		assert.ok(sMarkerFirstItemStyle.indexOf("display: none") >= 0, "First Item in edit mode: Marker not displayed");
 		assert.ok(!sMarkerSecondItemStyle || sMarkerSecondItemStyle.indexOf("display: none") === -1, "Second Item in normal mode: Marker is displayed");
+	});
+
+	QUnit.test("Item with a non clickable placeholder is rendered", function(assert) {
+		//Arrange
+		var oItem = this.oUploadCollection.getItems()[0];
+		//Act
+		var oListItem = this.oUploadCollection._getListItemById(oItem.getId() + "-cli");
+		var oIconItem = oListItem.getContent()[0];
+		var $IconItem = oIconItem.$();
+		//Assert
+		assert.ok($IconItem.hasClass("sapMUCItemIconInactive"), "Css class 'sapMUCItemIconInactive' is present");
+		assert.ok($IconItem.hasClass("sapMUCItemPlaceholderInactive"), "Css class 'sapMUCItemPlaceholderInactive' is present");
+	});
+
+ 	QUnit.test("Item with a clickable placeholder is rendered", function(assert) {
+		//Arrange
+		var oItem = this.oUploadCollection.getItems()[0];
+		//Act
+		oItem.setUrl("Screenshot.jpg");
+		this.oUploadCollection.rerender();
+		oItem.setUrl(""); // restore the url
+		var oListItem = this.oUploadCollection._getListItemById(oItem.getId() + "-cli");
+		var oIconItem = oListItem.getContent()[0];
+		var $IconItem = oIconItem.$();
+
+		//Assert
+		assert.ok($IconItem.hasClass("sapMUCItemIcon"), "Css class 'sapMUCItemIcon' is present");
+		assert.ok($IconItem.hasClass("sapMUCItemPlaceholder"), "Css class 'sapMUCItemPlaceholder' is present");
+	});
+
+	QUnit.test("Item with a clickable icon is rendered", function(assert) {
+		//Arrange
+		var oItem = this.oUploadCollection.getItems()[1];
+		//Act
+		var oListItem = this.oUploadCollection._getListItemById(oItem.getId() + "-cli");
+		var oIconItem = oListItem.getContent()[0];
+		var $IconItem = oIconItem.$();
+
+		//Assert
+		assert.ok($IconItem.hasClass("sapMUCItemIcon"), "Css class 'sapMUCItemIcon' is present");
+		assert.ok(!$IconItem.hasClass("sapMUCItemPlaceholder"), "Css class 'sapMUCItemPlaceholder' is not present");
+		assert.ok(!$IconItem.hasClass("sapMUCItemPlaceholderInactive"), "Css class 'sapMUCItemPlaceholderInactive' is not present");
+	});
+
+	QUnit.test("Item with a non clickable icon is rendered", function(assert) {
+		//Arrange
+		var oItem = this.oUploadCollection.getItems()[1];
+		var sUrl = oItem.getUrl();
+		//Act
+		oItem.setUrl("");
+		this.oUploadCollection.rerender();
+		oItem.setUrl(sUrl); // restore the url
+		var oListItem = this.oUploadCollection._getListItemById(oItem.getId() + "-cli");
+		var oIconItem = oListItem.getContent()[0];
+		var $IconItem = oIconItem.$();
+
+		//Assert
+		assert.ok($IconItem.hasClass("sapMUCItemIconInactive"), "Css class 'sapMUCItemIconInactive' is present");
+		assert.ok(!$IconItem.hasClass("sapMUCItemPlaceholder"), "Css class 'sapMUCItemPlaceholder' is not present");
+		assert.ok(!$IconItem.hasClass("sapMUCItemPlaceholderInactive"), "Css class 'sapMUCItemPlaceholderInactive' is not present");
 	});
 
 	/* --------------------------------------- */
