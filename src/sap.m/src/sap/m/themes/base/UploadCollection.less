@@ -86,19 +86,21 @@
 }
 
 /* Item icon */
+.sapMUCItemIconInactive,
 .sapMUCItemIcon {
-	font-size: 2rem;
+	font-size: 2.5rem;
 }
 
 .sapMImg.sapMUCItemImage{
 	background-size:	cover;
 }
 
+.sapMUCItemIconInactive,
 .sapMUCItemIcon,
 .sapMUCItemImage {
 	height:				3rem;
 	width:				3rem;
-	margin-right:		0.65rem; /* because of the keyboard frame it should be margin and not padding */
+	margin-right:		0.75rem; /* because of the keyboard frame it should be margin and not padding */
 	margin-top:			0.1rem; /* is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin */
 	margin-bottom:		0.1rem; /* is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin */
 	margin-left:		0.1rem; /* is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin */
@@ -111,12 +113,14 @@
 }
 
 /* fallback for IE9 as it does not support flex */
- html[data-sap-ui-browser="ie9"]  .sapMUCItemIcon,
- html[data-sap-ui-browser="ie9"]  .sapMUCItemImage {
+html[data-sap-ui-browser="ie9"] .sapMUCItemIconInactive,
+html[data-sap-ui-browser="ie9"]  .sapMUCItemIcon,
+html[data-sap-ui-browser="ie9"]  .sapMUCItemImage {
 	float: left;
 }
 
 /*if no image is provided a standard placeholder is displayed */
+.sapMUCItemPlaceholderInactive,
 .sapMUCItemPlaceholder {
 	line-height: 3rem;
 }
