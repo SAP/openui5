@@ -120,7 +120,7 @@ sap.ui.define(['jquery.sap.global'],
 	};
 
 	ProgressIndicatorRenderer._renderDisplayText = function(oRm, sTextDirectionLowerCase, sTextAlign, oControlId){
-		oRm.write("<span class='sapMPIText sapMPIText" + sTextAlign + "' id='" + oControlId + "-text" + sTextAlign + "'");
+		oRm.write("<span aria-hidden='true' role='presentation' aria-labelledby='" + oControlId + "-empty' class='sapMPIText sapMPIText" + sTextAlign + "' id='" + oControlId + "-text" + sTextAlign + "'");
 
 		if (sTextDirectionLowerCase !== "inherit") {
 			oRm.writeAttribute("dir", sTextDirectionLowerCase);

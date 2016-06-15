@@ -77,6 +77,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	}});
 
+	ProgressIndicator.prototype.init = function () {
+		this._oEmptyText = (new sap.ui.core.InvisibleText(this.getId() + "-empty", {text: ""})).toStatic();
+	};
+
+	ProgressIndicator.prototype.exit = function () {
+		this._oEmptyText.destroy();
+	};
+
+
 	ProgressIndicator.prototype.onAfterRendering = function() {
 		//if the user sets a height, this wins against everything else, therefore the styles have to be calculated and set here
 		if (!!this.getHeight()) {
