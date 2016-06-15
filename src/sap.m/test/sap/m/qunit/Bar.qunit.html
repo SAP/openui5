@@ -123,6 +123,26 @@
 				oBar.destroy();
 			});
 
+			test("Should get the correct contexts", function() {
+				// System under Test
+				var oBar = new sap.m.Bar().placeAt("qunit-fixture");
+
+				// Act
+				sap.ui.getCore().applyChanges();
+
+				var oExpectedContexts = oBar.getContext(oBar);
+
+				// Assert
+				equal(Object.keys(oExpectedContexts).length, 4, "There are four contexts");
+				ok(oExpectedContexts["header"], "returned contexts has 'header' context");
+				ok(oExpectedContexts["subheader"], "returned contexts has 'subheader' context");
+				ok(oExpectedContexts["footer"], "returned contexts has 'footer' context");
+				ok(oExpectedContexts["dialogFooter"], "returned contexts has 'dialogFooter' context");
+
+				//Cleanup
+				oBar.destroy();
+			});
+
 			test("tag property", function(){
 
 				renderingTest.call(this, function() {
