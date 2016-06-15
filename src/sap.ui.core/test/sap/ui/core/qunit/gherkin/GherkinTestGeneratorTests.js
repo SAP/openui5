@@ -6,7 +6,7 @@
 /* global QUnit */
 
 sap.ui.require([
-  "sap/ui/test/gherkin/simpleGherkinParser2",
+  "sap/ui/test/gherkin/simpleGherkinParser",
   "sap/ui/test/gherkin/StepDefinitions",
   "sap/ui/test/gherkin/GherkinTestGenerator"
 ], function(simpleGherkinParser, StepDefinitions, GherkinTestGenerator) {

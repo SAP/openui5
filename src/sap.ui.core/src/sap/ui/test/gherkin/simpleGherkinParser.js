@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global'], function ($) {
    *
    * @author Rodrigo Jordao
    * @author Jonathan Benn
-   * @alias sap.ui.test.gherkin.simpleGherkinParser2
+   * @alias sap.ui.test.gherkin.simpleGherkinParser
    * @namespace
    * @static
    * @since 1.40
