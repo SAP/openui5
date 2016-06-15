@@ -4,20 +4,38 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>CustomStyleClassSupport - sap.ui.core</title>
 
+	<script>
+		window["sap-ui-config"] = {
+			resourceRoots : {
+				"sap.ui.testlib" : "./testdata/uilib/",
+				"sap.ui.legacy.testlib" : "./testdata/legacy-uilib/"
+			}
+		};
+	</script>
 	<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../../resources/sap-ui-core.js"
-			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-theme="sap_hcb"
+			data-sap-ui-libs="sap.ui.testlib,sap.ui.legacy.testlib"
 			data-sap-ui-noConflict="true">
 	</script>
 
 	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 	<script>
+
+		// load Parameters API to test ThemeScopingChanged event
+		jQuery.sap.require("sap.ui.core.theming.Parameters");
+
+		// trigger parameter loading to enable event
+		// this should normally happen in the control which listens to the event
+		sap.ui.core.theming.Parameters.get();
+
 		function rendererCalled() {
 			ok(true, "Renderer was called");
 		}
@@ -51,7 +69,17 @@
 		});
 
 		QUnit.module("CustomStyleClassSupport", {
+			onThemeScopingChanged: function() {
+				var oDomRef = this.myControl.getDomRef();
+				this.aCurrentDOMClasses = oDomRef ? Array.prototype.slice.call(oDomRef.classList) : [];
+				this.aCurrentAPIClasses = this.myControl.aCustomStyleClasses;
+			},
 			beforeEach: function() {
+
+				sap.ui.getCore().attachThemeScopingChanged(this.onThemeScopingChanged, this);
+
+				this.fireThemeScopingChangedSpy = sinon.spy(sap.ui.getCore(), "fireThemeScopingChanged");
+
 				this.myControl = new my.lib.MyControl("myControl", {
 					text : "test"
 				});
@@ -60,6 +88,12 @@
 				sap.ui.getCore().applyChanges();
 			},
 			afterEach: function() {
+
+				sap.ui.getCore().detachThemeScopingChanged(this.onThemeScopingChanged, this);
+
+				this.fireThemeScopingChangedSpy.restore();
+				this.fireThemeScopingChangedSpy = null;
+
 				this.myControl.destroy();
 			}
 		});
@@ -67,14 +101,20 @@
 		QUnit.test("call hasStyleClass before add any class", function(assert) {
 			var sMyClass = "abc";
 
-			assert.expect(3); // control shouldn't rerender itself
+			assert.expect(4); // control shouldn't rerender itself
 
 			assert.equal(this.myControl.hasStyleClass(sMyClass), false, "control should not have the class");
 			assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass), false, "class should not be in HTML");
+
+			// ThemeScopingChanged Event should not be fired
+			sinon.assert.notCalled(this.fireThemeScopingChangedSpy);
 		});
 
 		QUnit.test("call hasStyleClass with whitespace", function(assert) {
 			assert.equal(this.myControl.hasStyleClass(" "), false, "white space should be ignored");
+
+			// ThemeScopingChanged Event should not be fired
+			sinon.assert.notCalled(this.fireThemeScopingChangedSpy);
 		});
 
 		QUnit.test("call addStyleClass with whitespaces and check with hasStyleClass", function(assert) {
@@ -87,18 +127,24 @@
 			assert.equal(this.myControl.hasStyleClass("\t"), false, "White space(s) class name should be ignored");
 			assert.equal(this.myControl.hasStyleClass("\f"), false, "White space(s) class name should be ignored");
 			assert.equal(this.myControl.hasStyleClass("\r \n \t \f  "), false, "White space(s) class name should be ignored");
+
+			// ThemeScopingChanged Event should not be fired
+			sinon.assert.notCalled(this.fireThemeScopingChangedSpy);
 		});
 
 		QUnit.test("add a single class", function(assert) {
 			var sMyClass = "abc";
 
-			assert.expect(4); // this also verifies there is no rerendering
+			assert.expect(5); // this also verifies there is no rerendering
 
 			this.myControl.addStyleClass(sMyClass);
 
 			assert.equal(this.myControl.hasStyleClass(sMyClass), true, "control should now have the class");
 			assert.equal(this.myControl.hasStyleClass(" "), false, "white space class should be ignored");
 			assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass), true, "class should now be in HTML");
+
+			// ThemeScopingChanged Event should not be fired
+			sinon.assert.notCalled(this.fireThemeScopingChangedSpy);
 		});
 
 		QUnit.test("remove an added class", function(assert) {
@@ -106,7 +152,7 @@
 
 			this.myControl.addStyleClass(sMyClass);
 
-			assert.expect(3); // this also verifies there is no rerendering
+			assert.expect(4); // this also verifies there is no rerendering
 
 			this.myControl.removeStyleClass(sMyClass);
 
@@ -117,12 +163,15 @@
 			assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass), false, "class should not be in HTML");
 
 			this.myControl.removeStyleClass(sMyClass); // should not cause an error or rendering
+
+			// ThemeScopingChanged Event should not be fired
+			sinon.assert.notCalled(this.fireThemeScopingChangedSpy);
 		});
 
 		QUnit.test("toggle style class without bAdd", function() {
 			var sMyClass = "abc";
 
-			assert.expect(5); // this also verifies there is no rerendering
+			assert.expect(6); // this also verifies there is no rerendering
 
 			this.myControl.toggleStyleClass(sMyClass);
 
@@ -133,12 +182,15 @@
 
 			assert.equal(this.myControl.hasStyleClass(sMyClass), false, "control should not have the class");
 			assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass), false, "class should not be in HTML");
+
+			// ThemeScopingChanged Event should not be fired
+			sinon.assert.notCalled(this.fireThemeScopingChangedSpy);
 		});
 
 		QUnit.test("toggle style class with bAdd", function(assert) {
 			var sMyClass = "abc";
 
-			assert.expect(5); // this also verifies there is no rerendering
+			assert.expect(6); // this also verifies there is no rerendering
 
 			this.myControl.toggleStyleClass(sMyClass, true);
 
@@ -149,12 +201,15 @@
 
 			assert.equal(this.myControl.hasStyleClass(sMyClass), false, "control should not have the class");
 			assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass), false, "class should not be in HTML");
+
+			// ThemeScopingChanged Event should not be fired
+			sinon.assert.notCalled(this.fireThemeScopingChangedSpy);
 		});
 
 		QUnit.test("call addStyleClass twice with the same class", function(assert) {
 			var sMyClass = "abc";
 
-			assert.expect(4); // this also verifies there is no rerendering
+			assert.expect(5); // this also verifies there is no rerendering
 
 			this.myControl.addStyleClass(sMyClass);
 			this.myControl.addStyleClass(sMyClass);
@@ -165,6 +220,9 @@
 
 			assert.equal(this.myControl.hasStyleClass(sMyClass), false, "control should not have the class");
 			assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass), false, "class should not be in HTML");
+
+			// ThemeScopingChanged Event should not be fired
+			sinon.assert.notCalled(this.fireThemeScopingChangedSpy);
 		});
 
 		QUnit.test("add two classes within one addStyleClass call and then remove them together in one removeStyleClass call", function() {
@@ -195,6 +253,9 @@
 
 			assert.equal(this.myControl.hasStyleClass(sMyClass1), false, "control should not have the class " + sMyClass1);
 			assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass1), false, "class should not be in HTML");
+
+			// ThemeScopingChanged Event should not be fired
+			sinon.assert.notCalled(this.fireThemeScopingChangedSpy);
 		});
 
 		QUnit.test("add two classes within one addStyleClass call and then remove them one by one", function(assert) {
@@ -237,6 +298,9 @@
 
 			assert.equal(this.myControl.hasStyleClass(sMyClass1), false, "control should not have the class " + sMyClass1);
 			assert.equal(jQuery.sap.byId("myControl").hasClass(sMyClass1), false, "class should not be in HTML");
+
+			// ThemeScopingChanged Event should not be fired
+			sinon.assert.notCalled(this.fireThemeScopingChangedSpy);
 		});
 
 		QUnit.test("Cloned Control should still have the added classes", function(assert) {
@@ -253,6 +317,9 @@
 			assert.equal(oClonedControl.hasStyleClass(sCombinedClass), true, "the cloned control has the style class 'bcd'");
 
 			oClonedControl.destroy();
+
+			// ThemeScopingChanged Event should not be fired
+			sinon.assert.notCalled(this.fireThemeScopingChangedSpy);
 		});
 
 		QUnit.test("Cloned Control and the original control should handle the style class separately", function(assert) {
@@ -267,7 +334,110 @@
 			assert.equal(oClonedControl.hasStyleClass(sMyClass), false, "the cloned control shouldn't have the class which is added on the original one");
 
 			oClonedControl.destroy();
+
+			// ThemeScopingChanged Event should not be fired
+			sinon.assert.notCalled(this.fireThemeScopingChangedSpy);
 		});
+
+		QUnit.test("add and remove a scope class", function(assert) {
+			var sMyClass = "sapTestScope";
+
+			assert.expect(8); // this also verifies there is no rerendering
+
+			this.myControl.addStyleClass(sMyClass);
+
+			assert.deepEqual(this.aCurrentDOMClasses, [ sMyClass ], "Class should have been applied to DOM before event has been fired");
+			assert.deepEqual(this.aCurrentAPIClasses, [ sMyClass ], "Class should have been applied to internal object before event has been fired");
+
+			this.myControl.removeStyleClass(sMyClass);
+
+			assert.deepEqual(this.aCurrentDOMClasses, [], "Class should have been removed from DOM before event has been fired");
+			assert.deepEqual(this.aCurrentAPIClasses, [], "Class should have been removed from internal object before event has been fired");
+
+			this.myControl.removeStyleClass(sMyClass); // should not cause an error or rendering
+
+			// ThemeScopingChanged Event should be be fired twice (added + removed)
+			sinon.assert.callCount(this.fireThemeScopingChangedSpy, 2);
+			sinon.assert.calledWith(this.fireThemeScopingChangedSpy, {
+				element: this.myControl,
+				scopes: ["sapTestScope"],
+				added: true
+			});
+			sinon.assert.calledWith(this.fireThemeScopingChangedSpy, {
+				element: this.myControl,
+				scopes: ["sapTestScope"],
+				added: false
+			});
+		});
+
+		QUnit.test("add and remove multiple scope and non-scope classes", function(assert) {
+
+			assert.expect(18); // this also verifies there is no rerendering
+
+			// add all-in-one
+			this.myControl.addStyleClass("sapTestScope abc sapTestScopePlus def");
+
+			assert.deepEqual(this.aCurrentDOMClasses, [ "sapTestScope", "abc", "sapTestScopePlus", "def" ], "Classes should have been applied to DOM before event has been fired");
+			assert.deepEqual(this.aCurrentAPIClasses, [ "sapTestScope", "abc", "sapTestScopePlus", "def" ], "Classes should have been applied to internal object before event has been fired");
+
+			// ThemeScopingChanged Event should be fired once
+			sinon.assert.callCount(this.fireThemeScopingChangedSpy, 1);
+			sinon.assert.calledWith(this.fireThemeScopingChangedSpy, {
+				element: this.myControl,
+				scopes: ["sapTestScope", "sapTestScopePlus"],
+				added: true
+			});
+
+			// remove abc
+			this.myControl.removeStyleClass("abc");
+
+			// ThemeScopingChanged Event should be still fired once
+			sinon.assert.callCount(this.fireThemeScopingChangedSpy, 1);
+
+			// remove sapTestScopePlus
+			this.myControl.removeStyleClass("sapTestScopePlus");
+
+			assert.deepEqual(this.aCurrentDOMClasses, [ "sapTestScope", "def" ], "Class should have been removed from DOM before event has been fired");
+			assert.deepEqual(this.aCurrentAPIClasses, [ "sapTestScope", "def" ], "Class should have been removed from internal object before event has been fired");
+
+			// ThemeScopingChanged Event should now be fired twice
+			sinon.assert.callCount(this.fireThemeScopingChangedSpy, 2);
+			sinon.assert.calledWith(this.fireThemeScopingChangedSpy, {
+				element: this.myControl,
+				scopes: ["sapTestScopePlus"],
+				added: false
+			});
+
+			// add both scopes again
+			this.myControl.addStyleClass("sapTestScope sapTestScopePlus");
+
+			assert.deepEqual(this.aCurrentDOMClasses, [ "sapTestScope", "def", "sapTestScopePlus" ], "Class should have been applied to DOM before event has been fired");
+			assert.deepEqual(this.aCurrentAPIClasses, [ "sapTestScope", "def", "sapTestScopePlus" ], "Class should have been applied to internal object before event has been fired");
+
+			// ThemeScopingChanged Event should be be fired 3 times
+			sinon.assert.callCount(this.fireThemeScopingChangedSpy, 3);
+			sinon.assert.calledWith(this.fireThemeScopingChangedSpy, {
+				element: this.myControl,
+				scopes: ["sapTestScopePlus"],
+				added: true
+			});
+
+			// remove both scopes again
+			this.myControl.removeStyleClass("sapTestScopePlus sapTestScope");
+
+			assert.deepEqual(this.aCurrentDOMClasses, [ "def" ], "Classes should have been removed from DOM before event has been fired");
+			assert.deepEqual(this.aCurrentAPIClasses, [ "def" ], "Classes should have been removed from internal object before event has been fired");
+
+			// ThemeScopingChanged Event should be be fired 3 times
+			sinon.assert.callCount(this.fireThemeScopingChangedSpy, 4);
+			sinon.assert.calledWith(this.fireThemeScopingChangedSpy, {
+				element: this.myControl,
+				scopes: ["sapTestScopePlus", "sapTestScope"],
+				added: false
+			});
+
+		});
+
 	</script>
 </head>
 <body>

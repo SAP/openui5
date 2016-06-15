@@ -2236,7 +2236,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {sap.ui.base.EventProvider} oEvent.getSource
 	 * @param {object} oEvent.getParameters
-	 * @param {string} oEvent.getParameters.scope Name of the CSS scope class
+	 * @param {string[]} oEvent.getParameters.scopes an array of the CSS scope classes
 	 * @param {boolean} oEvent.getParameters.added Whether the class has been added or removed
 	 * @param {sap.ui.core.Element} oEvent.getParameters.element Element instance on which the scope change happened
 	 */
