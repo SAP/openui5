@@ -6,7 +6,7 @@
 /* global QUnit */
 
 sap.ui.require([
-  "sap/ui/test/gherkin/simpleGherkinParser2",
+  "sap/ui/test/gherkin/simpleGherkinParser",
 ], function(simpleGherkinParser) {
   'use strict';
 
