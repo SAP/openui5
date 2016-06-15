@@ -47,7 +47,7 @@ var iNumberOfRows = 8;
 var iNumberOfCols = aFields.length;
 
 
-function createTables(bSkipPlaceAt) {
+function createTables(bSkipPlaceAt, bFocusableCellTemplates) {
 	oTable = new sap.ui.table.Table({
 		rows: "{/rows}",
 		title: "TABLE_TITLE",
@@ -85,7 +85,8 @@ function createTables(bSkipPlaceAt) {
 					template: new TestControl({
 						text: "{" + aFields[j] + "}",
 						index: j,
-						visible: j!=3
+						visible: j!=3,
+						tabbable: !!bFocusableCellTemplates
 					})
 				}));
 				oTreeTable.addColumn(new sap.ui.table.Column({
