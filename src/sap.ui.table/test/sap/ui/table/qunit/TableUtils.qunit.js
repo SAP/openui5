@@ -231,3 +231,15 @@ QUnit.test("getFocusedItemInfo", function(assert) {
 	assert.strictEqual(oInfo.cellCount, (iNumberOfCols + 1) * (3 /*visible rows*/ + 1), "cellCount");
 	assert.strictEqual(oInfo.domRef, oCell.get(0), "domRef");
 });
+
+QUnit.test("getNoDataText", function(assert) {
+	assert.equal(TableUtils.getNoDataText(oTable), oTable._oResBundle.getText("TBL_NO_DATA"));
+	oTable.setNoData("Foobar");
+	assert.equal(TableUtils.getNoDataText(oTable), "Foobar");
+	oTable.setNoData(new sap.ui.core.Control());
+	assert.strictEqual(TableUtils.getNoDataText(oTable), null);
+
+	var oString = new String("Some Text");
+	oTable.setNoData(oString);
+	assert.equal(TableUtils.getNoDataText(oTable), oString);
+});
