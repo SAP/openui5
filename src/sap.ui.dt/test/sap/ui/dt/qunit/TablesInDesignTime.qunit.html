@@ -22,7 +22,7 @@
 				type="text/javascript"
 				data-sap-ui-noConflict="true"
 				data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
-				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.commons,sap.ui.layout"
+				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout,sap.ui.table"
 				src="../../../../../resources/sap-ui-core.js">
 		</script>
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
@@ -51,24 +51,24 @@
 					});
 
 					this.oColumn = new sap.ui.table.Column({
-						label: new sap.ui.commons.Label({text: "Last Name"}),
+						label: new sap.m.Label({text: "Last Name"}),
 						width: "200px"
 					});
 
 					this.oTable.addColumn(this.oColumn);
 					this.oTable.addColumn(new sap.ui.table.Column({
-						label: new sap.ui.commons.Label({text: "First Name"}),
+						label: new sap.m.Label({text: "First Name"}),
 						width: "100px"
 					}));
 					this.oTable.addColumn(new sap.ui.table.Column({
-						label: new sap.ui.commons.Label({text: "Checked"}),
+						label: new sap.m.Label({text: "Checked"}),
 						width: "75px"
 					}));
 					this.oTable.addColumn(new sap.ui.table.Column({
-						label: new sap.ui.commons.Label({text: "Web Site"})
+						label: new sap.m.Label({text: "Web Site"})
 					}));
 					this.oTable.addColumn(new sap.ui.table.Column({
-						label: new sap.ui.commons.Label({text: "Image"}),
+						label: new sap.m.Label({text: "Image"}),
 						width: "75px"
 					}));
 
@@ -127,24 +127,24 @@
 					});
 
 					this.oColumn = new sap.ui.table.AnalyticalColumn({
-						label: new sap.ui.commons.Label({text: "Last Name"}),
+						label: new sap.m.Label({text: "Last Name"}),
 						width: "200px"
 					});
 
 					this.oTable.addColumn(this.oColumn);
 					this.oTable.addColumn(new sap.ui.table.AnalyticalColumn({
-						label: new sap.ui.commons.Label({text: "First Name"}),
+						label: new sap.m.Label({text: "First Name"}),
 						width: "100px"
 					}));
 					this.oTable.addColumn(new sap.ui.table.AnalyticalColumn({
-						label: new sap.ui.commons.Label({text: "Checked"}),
+						label: new sap.m.Label({text: "Checked"}),
 						width: "75px"
 					}));
 					this.oTable.addColumn(new sap.ui.table.AnalyticalColumn({
-						label: new sap.ui.commons.Label({text: "Web Site"})
+						label: new sap.m.Label({text: "Web Site"})
 					}));
 					this.oTable.addColumn(new sap.ui.table.AnalyticalColumn({
-						label: new sap.ui.commons.Label({text: "Image"}),
+						label: new sap.m.Label({text: "Image"}),
 						width: "75px"
 					}));
 
