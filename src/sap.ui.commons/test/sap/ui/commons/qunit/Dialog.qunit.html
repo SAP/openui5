@@ -150,6 +150,7 @@
 
 				assert.ok(that.oDialog.isOpen(), 'Dialog should be open after opening!');
 				assert.equal(jQuery('#Dialog').css('visibility'), 'visible', 'Dialog should be visible after opening');
+				assert.equal(jQuery('#Dialog').css('opacity'), 1, 'Dialog should be visible after opening');
 
 				var oDomRef = that.oDialog.getDomRef();
 				assert.strictEqual(oDomRef.offsetWidth, parseInt(that.oDialog.getWidth(), 10), 'Width of the Dialog should be equal to the set value.');
