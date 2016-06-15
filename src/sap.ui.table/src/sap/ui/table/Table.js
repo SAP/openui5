@@ -125,7 +125,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			editable : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
-			 * Flag whether to use the scroll mode or paging mode. If the Paginator mode is used it will require the sap.ui.commons library!
+			 * Determines whether a scrollbar or a paginator is used for navigation inside the table.
+			 * If the paginator mode is used, it requires the <code>sap.ui.commons</code> library.
+			 *
+			 * This renders a scrollbar as a navigation element. Data fetched from an OData service is still
+			 * loaded page-wise no matter which visual representation is used for navigation inside the table.
+			 * @deprecated As of version 1.38, there is no replacement, since <code>Scrollbar</code> is the only supported option
 			 */
 			navigationMode : {type : "sap.ui.table.NavigationMode", group : "Behavior", defaultValue : NavigationMode.Scrollbar},
 
@@ -1600,6 +1605,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype.setTooltip = function(vTooltip) {
 		jQuery.sap.log.warning("The aggregation tooltip is not supported for sap.ui.table.Table");
 		return this.setAggregation("tooltip", vTooltip, true);
+	};
+
+	Table.prototype.setNavigationMode = function() {
+		this.setProperty("navigationMode", NavigationMode.Scrollbar, true);
+		jQuery.sap.log.error("The navigationMode property is deprecated and must not be used anymore. Your setting was defaulted to 'Scrollbar'", this);
 	};
 
 	/**

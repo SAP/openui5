@@ -523,7 +523,17 @@
 	test("After initialization", function() {
 		this.clock.tick(1000);
 		var $table = oTable.$();
-		equal($table.find('#table-paginator').length, 1, 'The paginator exists');
+		equal($table.find('#table-paginator').length, 0, 'The paginator does not exist - OK, since it is deprecated');
+
+		equal(oTable.getNavigationMode(), sap.ui.table.NavigationMode.Scrollbar , "NavigationMode defaulted to Scrollbar");
+		oTable.setNavigationMode(sap.ui.table.NavigationMode.Paginator);
+		equal(oTable.getNavigationMode(), sap.ui.table.NavigationMode.Scrollbar , "NavigationMode defaulted to Scrollbar after explicitly setting it to Paginator");
+		oTable.setProperty("navigationMode", sap.ui.table.NavigationMode.Paginator);
+		equal(oTable.getNavigationMode(), sap.ui.table.NavigationMode.Paginator , "Set navigationMode via generic setProperty sill works");
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(1000);
+		$table = oTable.$();
+		equal($table.find('#table-paginator').length, 1, 'Paginator is getting rendered when navigationMode is set by setProperty');
 		oTable._oPaginator.getDomRef("-lastPageLink").click();
 		equal(oTable.getFirstVisibleRow(), 195 , "Navigation to last page OK");
 	});

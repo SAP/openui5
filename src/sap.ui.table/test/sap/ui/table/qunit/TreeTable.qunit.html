@@ -233,7 +233,7 @@
 		this.table.expand(2);
 		this.table.expand(0);
 
-		this.table.setNavigationMode(sap.ui.table.NavigationMode.Paginator);
+		this.table.setProperty("navigationMode", sap.ui.table.NavigationMode.Paginator);
 		this.table.setVisibleRowCount(4);
 		sap.ui.getCore().applyChanges();
 
