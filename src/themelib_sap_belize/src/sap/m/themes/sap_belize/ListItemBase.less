@@ -59,7 +59,7 @@
 
 .sapMLIBSelectD > .sapUiIcon {
 	font-size: 1.5rem;
-	color: @sapUiNegativeElement;
+	color: @sapUiButtonIconColor;
 	font-weight: normal;
 	width : 100%;
 }
@@ -136,7 +136,7 @@
 	height: 3rem;
 	line-height: 3rem;
 	font-size: 0.75rem;
-	color: lighten(@sapUiContentIconColor, 15);
+	color: @sapUiContentNonInteractiveIconColor;
 }
 
 .sapMLIBIconDet {
@@ -145,6 +145,7 @@
 	line-height: 3rem;
 	font-size: 1.375rem;
 	color: @sapUiButtonIconColor;
+	text-shadow: @sapUiShadowText;
 	margin-right: -1rem;
 	margin-left: 0.5rem;
 	-webkit-box-flex: 0;
@@ -158,14 +159,12 @@
 .sapMLIBActive .sapMLIBIconDel,
 .sapMLIBIconDet:active,
 .sapMLIBIconDel:active {
-	color: @sapUiButtonActiveTextColor;
+	color: @sapUiListActiveTextColor;
+	background: @sapUiListActiveBackground;
+	text-shadow: none;
 }
 
-.sapMLIBTypeDetailAndActive .sapMLIBIconDet:active,
-.sapMLIBTypeDetail .sapMLIBIconDet:active,
-.sapMLIBSelectD > .sapUiIcon:active{
-	background : @sapUiListActiveBackground;
-}
+
 
 html.sap-desktop .sapMLIBImgNav:focus,
 html.sap-desktop .sapMLIBIconDet:focus,
