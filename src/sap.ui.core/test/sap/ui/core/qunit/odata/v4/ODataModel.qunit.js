@@ -376,6 +376,7 @@ sap.ui.require([
 			oPropertyBinding = oModel.bindProperty("Name");
 
 		// cache proxy for oRelativeContextBinding
+		this.mock(oContext).expects("fetchCanonicalPath").returns("~");
 		this.mock(_ODataHelper).expects("createCacheProxy").returns(oCacheProxy);
 		oRelativeContextBinding.setContext(oContext);
 
