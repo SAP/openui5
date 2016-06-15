@@ -132,6 +132,7 @@
 
 			test("Initialization", function () {
 				ok(!jQuery.sap.domById("dialog"), "Dialog is not rendered before it's ever opened.");
+				equal(oDialog.oPopup._sF6NavMode, "SCOPE", "Dialog's popup navigation mode is set to SCOPE.")
 			});
 
 			module("Content preservation");
