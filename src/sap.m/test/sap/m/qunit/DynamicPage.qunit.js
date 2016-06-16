@@ -783,13 +783,13 @@
 			$contentWrapper = this.oDynamicPage.$("contentWrapper"),
 			sHeaderId = this.oDynamicPage.getHeader().getId();
 
-		assert.equal($contentWrapper.find("#" + sHeaderId).length, 1, "The header is in the Content wrapper, e.g unpinned");
+		assert.equal($contentWrapper.find("#" + sHeaderId).length, 1, "The header is in the Content wrapper initially");
 
 		this.oDynamicPage._pin();
-		assert.equal($headerWrapper.find("#" + sHeaderId).length, 1, "The header is in the Header wrapper, e.g. pinned");
+		assert.equal($headerWrapper.find("#" + sHeaderId).length, 1, "The header is in the Header wrapper when pinned");
 
 		this.oDynamicPage._unPin();
-		assert.equal($contentWrapper.find("#" + sHeaderId).length, 1, "The header is in the Content wrapper, e.g unpinned");
+		assert.equal($headerWrapper.find("#" + sHeaderId).length, 1, "The header remains in the header wrapper when unpinned until scroll");
 	});
 
 	QUnit.test("DynamicPage _canSnap() should return the correct value", function (assert) {
