@@ -5,23 +5,26 @@
 
 .sapMPI {
 	outline: none;
-	background: fade(@sapUiBlockLayerBackground, 10);
-	height: 2rem;
+	background: @sapUiFieldBackground;
+	height: 1.375rem;
+	width: 100%;
 	min-width: 6rem;
 	min-height: 1rem;
-	border: 0 none;
-	border-radius: 10rem;
+	padding: 0;
+	margin: 0.125rem 0;
+	border-radius: 0.5rem;
 	overflow: hidden;
 }
 
+/* Progress Indicator Bar */
 .sapMPIBar {
-	border-top-left-radius: 10rem;
-	border-bottom-left-radius: 10rem;
+	border-top-left-radius: 0.5rem;
+	border-bottom-left-radius: 0.5rem;
 }
 
 .sapMPIValueMax .sapMPIBar {
-	border-top-right-radius: 10rem;
-	border-bottom-right-radius: 10rem;
+	border-top-right-radius: 0.5rem;
+	border-bottom-right-radius: 0.5rem;
 }
 
 .sapMPIBarNeutral {
@@ -40,45 +43,56 @@
 	background: @sapUiCriticalElement;
 }
 
-
-.sapMPIText{
+/* Progress Indicator Value Text */
+.sapMPIText {
 	font-family: @sapUiFontFamily;
 	font-size: @sapMFontSmallSize;
 	font-weight: normal;
-	line-height: 1.85rem;
+	line-height: 1.35rem;
 	color: @sapUiContentForegroundTextColor;
 }
 
 .sapMPIBarNeutral .sapMPIText.sapMPITextLeft {
-	color: contrast(@sapUiNeutralElement, @sapUiContentForegroundTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold); 
+	color: contrast(@sapUiNeutralElement, @sapUiContentForegroundTextColor, @sapUiContentContrastTextColor, 0.5);
 }
 
 .sapMPIBarPositive .sapMPIText.sapMPITextLeft {
-	color: contrast(@sapUiPositiveElement, @sapUiContentForegroundTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold); 
+	color: contrast(@sapUiPositiveElement, @sapUiContentForegroundTextColor, @sapUiContentContrastTextColor, 0.5);
 }
 
 .sapMPIBarNegative .sapMPIText.sapMPITextLeft {
-	color: contrast(@sapUiNegativeElement, @sapUiContentForegroundTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold); 
+	color: contrast(@sapUiNegativeElement, @sapUiContentForegroundTextColor, @sapUiContentContrastTextColor, 0.5);
 }
 
 .sapMPIBarCritical .sapMPIText.sapMPITextLeft {
-	color: contrast(@sapUiCriticalElement, @sapUiContentForegroundTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold); 
+	color: contrast(@sapUiCriticalElement, @sapUiContentForegroundTextColor, @sapUiContentContrastTextColor, 0.5);
 }
 
-.sapUiSizeCompact .sapMPI {
-	height: 1.375rem;
-	margin: 0.125 0;
+/* Tablet and phone (Cozy)*/
+.sapUiSizeCozy .sapMPI,
+.sapMDynamicPage-Std-Tablet .sapMPI,
+.sapMDynamicPage-Std-Phone .sapMPI {
+	height: 2rem;
+	margin: 0.25rem 0;
+
+	.sapMPIText {
+		line-height: 2rem;
+	}
 }
 
-.sapUiSizeCompact .sapMPIText{
+/* Compact */
+.sapUiSizeCompact .sapMPIText {
 	line-height: 1.25rem;
 }
 
-.sapUiSizeCondensed .sapUiTableCell .sapMPI {
-	height: 1.5rem;
-	margin: 0;
-}
+/* Condensed */
+.sapUiSizeCondensed .sapUiTableCell {
+	.sapMPI {
+		height: 1.5rem;
+		margin: 0;
+	}
 
-.sapUiSizeCondensed .sapUiTableCell .sapMPIText{
-	line-height: 1.25rem;
+	.sapMPIText{
+		line-height: 1.25rem;
+	}
 }
