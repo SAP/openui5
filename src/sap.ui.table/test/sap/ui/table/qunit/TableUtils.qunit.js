@@ -246,6 +246,102 @@ QUnit.test("getNoDataText", function(assert) {
 	assert.equal(TableUtils.getNoDataText(oTable), oString);
 });
 
+QUnit.test("scroll", function(assert) {
+	var iVisibleRowCount = 5;
+	var iFixedTop = 2;
+	var iFixedBottom = 1;
+	var iNotVisibleRows = iNumberOfRows - iVisibleRowCount;
+	var iPageSize = iVisibleRowCount - iFixedTop - iFixedBottom;
+	var iPages = Math.ceil((iNumberOfRows - iFixedTop - iFixedBottom) / iPageSize);
+
+	oTable.setVisibleRowCount(iVisibleRowCount);
+	oTable.setFixedRowCount(iFixedTop);
+	oTable.setFixedBottomRowCount(iFixedBottom);
+	sap.ui.getCore().applyChanges();
+
+	var bScrolled = false;
+
+	for (var i = 0; i < iNotVisibleRows + 2; i++) {
+		if (i < iNotVisibleRows) {
+			assert.equal(oTable.getFirstVisibleRow(), i, "First visible row before scroll (forward, stepwise, " + i + ")");
+			bScrolled = TableUtils.scroll(oTable, true, false);
+			ok(bScrolled, "scroll function indicates that scrolling was performed");
+			assert.equal(oTable.getFirstVisibleRow(), i + 1, "First visible row after scroll");
+		} else {
+			assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows, "First visible row before scroll (forward, stepwise, " + i + ")");
+			bScrolled = TableUtils.scroll(oTable, true, false);
+			ok(!bScrolled, "scroll function indicates that no scrolling was performed");
+			assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows, "First visible row after scroll");
+		}
+	}
+
+	for (var i = 0; i < iNotVisibleRows + 2; i++) {
+		if (i < iNotVisibleRows) {
+			assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows - i, "First visible row before scroll (backward, stepwise, " + i + ")");
+			bScrolled = TableUtils.scroll(oTable, false, false);
+			ok(bScrolled, "scroll function indicates that scrolling was performed");
+			assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows - i - 1, "First visible row after scroll");
+		} else {
+			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scroll (backward, stepwise, " + i + ")");
+			bScrolled = TableUtils.scroll(oTable, false, false);
+			ok(!bScrolled, "scroll function indicates that no scrolling was performed");
+			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scroll");
+		}
+	}
+
+	var iPos = 0;
+	for (var i = 0; i < iPages + 2; i++) {
+		if (i < iPages - 1) {
+			assert.equal(oTable.getFirstVisibleRow(), iPos, "First visible row before scroll (forward, pagewise, " + i + ")");
+			bScrolled = TableUtils.scroll(oTable, true, true);
+			ok(bScrolled, "scroll function indicates that scrolling was performed");
+			iPos = iPos + iPageSize;
+			assert.equal(oTable.getFirstVisibleRow(), Math.min(iPos, iNotVisibleRows), "First visible row after scroll");
+		} else {
+			assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows, "First visible row before scroll (forward, pagewise, " + i + ")");
+			bScrolled = TableUtils.scroll(oTable, true, true);
+			ok(!bScrolled, "scroll function indicates that no scrolling was performed");
+			assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows, "First visible row after scroll");
+		}
+	}
+
+	iPos = iNotVisibleRows;
+	for (var i = 0; i < iPages + 2; i++) {
+		if (i < iPages - 1) {
+			assert.equal(oTable.getFirstVisibleRow(), iPos, "First visible row before scroll (backward, pagewise, " + i + ")");
+			bScrolled = TableUtils.scroll(oTable, false, true);
+			ok(bScrolled, "scroll function indicates that scrolling was performed");
+			iPos = iPos - iPageSize;
+			assert.equal(oTable.getFirstVisibleRow(), Math.max(iPos, 0), "First visible row after scroll");
+		} else {
+			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scroll (backward, pagewise, " + i + ")");
+			bScrolled = TableUtils.scroll(oTable, false, true);
+			ok(!bScrolled, "scroll function indicates that no scrolling was performed");
+			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scroll");
+		}
+	}
+});
+
+QUnit.test("isFirstScrollableRow / isLastScrollableRow", function(assert) {
+	var iVisibleRowCount = 6;
+	var iFixedTop = 2;
+	var iFixedBottom = 2;
+
+	oTable.setVisibleRowCount(iVisibleRowCount);
+	oTable.setFixedRowCount(iFixedTop);
+	oTable.setFixedBottomRowCount(iFixedBottom);
+	sap.ui.getCore().applyChanges();
+
+	for (var j = 0; j < 2; j++) {
+		for (var i = 0; i < iVisibleRowCount; i++) {
+			equal(TableUtils.isFirstScrollableRow(oTable, getCell(i, 0)), i == iFixedTop, "isFirstScrollableRow (" + i + ")");
+			equal(TableUtils.isLastScrollableRow(oTable, getCell(i, 0)), i == iVisibleRowCount - iFixedBottom - 1, "isLastScrollableRow (" + i + ")");
+		}
+		TableUtils.scroll(oTable, true, false);
+	}
+
+});
+
 QUnit.module("TableUtils", {
 	setup: function() {
 		jQuery("#content").append("<div id='__table-outer' style='height: 500px; width: 500px; overflow: hidden; background: red;'>" +
