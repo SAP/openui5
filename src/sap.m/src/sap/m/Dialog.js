@@ -383,7 +383,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				this._setInitialFocus();
 			}
 
-			if (this.getType() === sap.m.DialogType.Message) {
+			if (this.getType() === sap.m.DialogType.Message ||
+				(sap.ui.Device.system.phone && !this.getStretch())) {
 				this.$("footer").removeClass("sapContrast sapContrastPlus");
 			}
 		};
@@ -1547,7 +1548,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 					that._$dialog.css({
 						left: Math.min(Math.max(0, that._oManuallySetPosition.x), windowWidth - DIALOG_MIN_VISIBLE_SIZE),
 						top: Math.min(Math.max(0, that._oManuallySetPosition.y), windowHeight - DIALOG_MIN_VISIBLE_SIZE),
-						transform: "initial"
+						transform: "none"
 					});
 				}
 
@@ -1565,7 +1566,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 							that._$dialog.css({
 								left: Math.min(Math.max(0, that._oManuallySetPosition.x), windowWidth - DIALOG_MIN_VISIBLE_SIZE),
 								top: Math.min(Math.max(0, that._oManuallySetPosition.y), windowHeight - DIALOG_MIN_VISIBLE_SIZE),
-								transform: "initial"
+								transform: "none"
 							});
 						});
 					});
@@ -1588,7 +1589,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 							if (that._bRTL) {
 								styles.left = Math.min(Math.max(e.pageX, 0), maxLeftOffset);
-								styles.transform = "initial";
+								styles.transform = "none";
 								that._oManuallySetSize.width = initial.width + initial.x - Math.max(e.pageX, 0);
 							}
 
