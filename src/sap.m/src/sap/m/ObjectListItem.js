@@ -337,7 +337,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 		ObjectListItem.prototype._getLockIcon = function() {
 
 			if (!this._oLockIcon) {
-				var oLockIconUri = IconPool.getIconURI("locked");
+				var oLockIconUri = IconPool.getIconURI("private");
 				this._oLockIcon = IconPool.createControlByURI({
 					id: this.getId() + "-lock",
 					tooltip: oLibraryResourceBundle.getText("TOOLTIP_OLI_LOCK_MARK_VALUE"),
