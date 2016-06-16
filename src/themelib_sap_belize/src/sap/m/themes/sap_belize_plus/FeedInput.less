@@ -3,9 +3,13 @@
 /* Belize Plus theme                */
 /* ================================ */
 
-.sapMFeedInFigure{
-	border: 0.125rem;
+.sapMFeedInFigure {
+	border-width: 0rem;
 	background-color: lighten(@sapUiBaseColor, 20);
+}
+
+.sapMFeedInFigure.sapMFeedListItemIsDefaultIcon {
+	border-width: 0.125rem;
 }
 
 .sapMFeedInImage {
@@ -15,6 +19,11 @@
 	border-color: @sapUiFieldBackground; /* the background parameter is used for to ensure the border theme is aligned with the text area backgroud */
 	background-color: lighten(@sapUiBaseColor, 20);
 	color: lighten(@sapUiListBackground,5);
+}
+
+img.sapMFeedInImage {
+	width: 4rem;
+	line-height: 4rem;
 }
 
 .sapMFeedIn {
