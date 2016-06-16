@@ -45,8 +45,9 @@
 
 /* hover */
 
-html.sap-desktop .sapMSliderHandle:hover {
+.sapMSliderHandle:hover {
 	background: fade(darken(@sapUiFieldBackground, 15), 60);
+	border: 0.125rem solid darken(@sapUiFieldBorderColor, 15);
 }
 
 /* focus */
@@ -58,7 +59,7 @@ html.sap-desktop .sapMSliderHandle:focus {
 /* pressed */
 
 .sapMSliderPressed:not(.sapMSliderInnerDisabled) > .sapMSliderHandle {
-	background: fade(@sapUiFieldActiveBorderColor, 30);
+	background-color: fade(@sapUiFieldActiveBorderColor, 30);
 	border: 0.125rem solid @sapUiFieldActiveBorderColor;
 }
 

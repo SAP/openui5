@@ -1,0 +1,37 @@
+/* ====================================================== */
+/* CSS for sap.m.RangeSlider control's Belize theme */
+/* ====================================================== */
+/* pressed */
+
+.sapMSliderHandleTooltip {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  height: 1.5rem;
+  line-height: 1.5rem;
+  font-size: 0.75rem;
+  text-align: center;
+  visibility: hidden;
+  box-shadow: 0 0.0625rem 0.1875rem rgba(0, 0, 0, 0.5);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.sapMSliderHandleTooltipShow {
+  visibility: visible;
+}
+
+.sapMSlider {
+  &:hover {
+    .sapMSliderHandleTooltip {
+      visibility: visible;
+    }
+  }
+}
+
+.sapMSliderLabels {
+  height: 1rem;
+}
+
+.sapMSliderLabel {
+  font-size: 0.75rem;
+}
