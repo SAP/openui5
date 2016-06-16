@@ -6,12 +6,12 @@
 .sapMPI {
 	outline: none;
 	background: @sapUiFieldBackground;
-	height: 2rem;
 	width: 100%;
+	height: 2rem;
 	min-width: 6rem;
 	min-height: 1rem;
 	padding: 0;
-	margin: 0.125rem 0;
+	margin: 0.25rem 0;
 	border: none;
 	border-radius: 0.5rem;
 	overflow: hidden;
@@ -83,15 +83,10 @@
 	color: contrast(@sapUiCriticalElement, @sapUiContentForegroundTextColor, @sapUiContentContrastTextColor, 0.5);
 }
 
-/* Tablet and phone (Cozy)*/
-.sapUiSizeCozy .sapMPI,
-.sapMDynamicPage-Std-Tablet .sapMPI,
-.sapMDynamicPage-Std-Phone .sapMPI {
-	margin: 0.25rem 0;
-}
-
+/* Compact */
 .sapUiSizeCompact .sapMPI {
 	height: 1.375rem;
+	margin: 0.125rem 0;
 }
 
 /* Condensed */
