@@ -1603,25 +1603,91 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Initializes a library for an already loaded library module.
+	 * Provides the framework with information about a library.
 	 *
-	 * This method is intended to be called only from a library.js (e.g. generated code).
-	 * It includes the library specific stylesheet into the current page, and creates
-	 * lazy import stubs for all controls and elements in the library.
+	 * This method is intended to be called exactly once while the main module of a library
+	 * (its <code>library.js</code> module) is executing, typically at its begin. The single
+	 * parameter <code>oLibInfo</code> is an info object that describes the content of the library.
 	 *
-	 * As a result, consuming applications don't have to write import statements for the controls or for the enums.
+	 * When the <code>oLibInfo</code> has been processed, a normalized version of it will be kept
+	 * and will be returned as library information in later calls to {@link #getLoadedLibraries}.
+	 * Finally, <code>initLibrary</code> fires (the currently private) {@link #event:LibraryChanged}
+	 * event with operation 'add' for the newly loaded library.
 	 *
-	 * Synchronously loads any libraries that the given library depends on.
 	 *
-	 * @param {string|object} vLibInfo name of or info object for the library to import
+	 * <h3>Side Effects</h3>
+	 *
+	 * While analyzing the <code>oLibInfo</code>, the framework takes some additional actions:
+	 *
+	 * <ul>
+	 * <li>If the info object contains a list of <code>interfaces</code>, they will be registered
+	 * with the {@link sap.ui.base.DataType} class to make them available as aggregation types
+	 * in managed objects.</li>
+	 *
+	 * <li>If the object contains a list of <code>controls</code> or <code>elements</code>,
+	 * {@link sap.ui.lazyRequire lazy stubs} will be created for their constructor as well as for
+	 * their static <code>extend</code> and <code>getMetadata</code> methods.<br>
+	 * <b>Note:</b> Future versions might abandon the concept of lazy stubs as it requires synchronous
+	 * XMLHttpRequests which have been deprecated (see {@link http://xhr.spec.whatwg.org}). To be on the
+	 * safe side, productive applications should always require any modules that they directly depend on.</li>
+	 *
+	 * <li>With the <code>noLibraryCSS</code> property, the library can be marked as 'theming-free'.
+	 * Otherwise, the framework will add a &lt;link&gt; tag to the page's head, pointing to the library's
+	 * theme-specific stylesheet. The creation of such a &lt;link&gt; tag can be suppressed with the
+	 * {@link sap.ui.core.Configuration global configuration option} <code>preloadLibCss</code>.
+	 * It can contain a list of library names for which no stylesheet should be included.
+	 * This is e.g. useful when an application merges the CSS for multiple libraries and already
+	 * loaded the resulting stylesheet.</li>
+	 *
+	 * <li>If a list of library <code>dependencies</code> is specified in the info object, those
+	 * libraries will be loaded synchronously by <code>initLibrary</code>.<br>
+	 * <b>Note:</b> Dependencies between libraries don't have to be modeled as AMD dependencies.
+	 * Only when enums or types from an additional library are used in the coding of the
+	 * <code>library.js</code> module, the library should be additionally listed in the AMD dependencies.</li>
+	 * </ul>
+	 *
+	 * Last but not least, higher layer frameworks might want to include their own metadata for libraries.
+	 * The property <code>extensions</code> might contain such additional metadata. Its structure is not defined
+	 * by the framework, but it is strongly suggested that each extension only occupies a single property
+	 * in the <code>extensions</code> object and that the name of that property contains some namespace
+	 * information (e.g. library name that introduces the feature) to avoid conflicts with other extensions.
+	 * The framework won't touch the content of <code>extensions</code> but will make it available
+	 * in the library info objects returned by {@link #getLoadedLibraries}.
+	 *
+	 *
+	 * <h3>Relationship to Descriptor for Libraries (manifest.json)</h3>
+	 *
+	 * The information contained in <code>oLibInfo</code> is partially redundant to the content of the descriptor
+	 * for the same library (its <code>manifest.json</code> file). Future versions of UI5 might ignore the information
+	 * provided in <code>oLibInfo</code> and might evaluate the descriptor file instead. Library developers therefore
+	 * should keep the information in both files in sync.
+	 *
+	 * When the <code>manifest.json</code> is generated from the <code>.library</code> file (which is the default
+	 * for UI5 libraries built with Maven), then the content of the <code>.library</code> and <code>library.js</code>
+	 * files must be kept in sync.
+	 *
+	 * @param {object} oLibInfo Info object for the library
+	 * @param {string} [oLibInfo.name] Name of the library; when given it must match the name by which the library has been loaded
+	 * @param {string} oLibInfo.version Version of the library
+	 * @param {string[]} [oLibInfo.dependencies=[]] List of libraries that this library depends on; names are in dot notation (e.g ."sap.ui.core")
+	 * @param {string[]} [oLibInfo.types=[]] List of names of types that this library provides; names are in dot notation (e.g ."sap.ui.core.CSSSize")
+	 * @param {string[]} [oLibInfo.interfaces=[]] List of names of interface types that this library provides; names are in dot notation (e.g ."sap.ui.core.PopupInterface")
+	 * @param {string[]} [oLibInfo.controls=[]] Names of control types that this library provides; names are in dot notation (e.g ."sap.ui.core.ComponentContainer")
+	 * @param {string[]} [oLibInfo.elements=[]] Names of element types that this library provides (excluding controls); names are in dot notation (e.g ."sap.ui.core.Item")
+	 * @param {boolean} [oLibInfo.noLibraryCSS=false] Indicates whether the library doesn't provide / use theming.
+	 *                        When set to true, no library.css will be loaded for this library
+	 * @param {object} [oLibInfo.extensions] Potential extensions of the library metadata; structure not defined by the UI5 core framework.
 	 * @public
 	 */
-	Core.prototype.initLibrary = function(vLibInfo) {
-		jQuery.sap.assert(typeof vLibInfo === "string" || typeof vLibInfo === "object", "vLibInfo must be a string or object");
+	Core.prototype.initLibrary = function(oLibInfo) {
+		jQuery.sap.assert(typeof oLibInfo === 'string' || typeof oLibInfo === 'object', "oLibInfo must be a string or object");
 
-		var bLegacyMode = typeof vLibInfo === "string",
-			oLibInfo = bLegacyMode ? { name : vLibInfo } : vLibInfo,
-			sLibName = oLibInfo.name,
+		var bLegacyMode = typeof oLibInfo === 'string';
+		if ( bLegacyMode ) {
+			oLibInfo = { name : oLibInfo };
+		}
+
+		var sLibName = oLibInfo.name,
 			log = jQuery.sap.log,
 			METHOD =  "sap.ui.core.Core.initLibrary()";
 
@@ -1766,6 +1832,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		}
 
 		this.fireLibraryChanged({name : sLibName, stereotype : "library", operation: "add", metadata : oLibInfo});
+
 	};
 
 	/**
@@ -1843,18 +1910,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Returns a map which contains the names of the loaded libraries as keys
-	 * and some additional information about each library as values.
+	 * Returns a map of library info objects for all currently loaded libraries,
+	 * keyed by their names.
 	 *
-	 * @experimental The details of the 'values' in the returned map are not yet specified!
-	 * Their structure might change in future versions without notice. So applications
-	 * can only rely on the set of keys as well as the pure existance of a value.
+	 * The structure of the library info objects matches the structure of the info object
+	 * that the {@link #initLibrary} method expects. Only property names documented with
+	 * <code>initLibrary</code> should be accessed, any additional properties might change or
+	 * disappear in future. When a property does not exists, its default value (as documented
+	 * with <code>initLibrary</code>) should be assumed.
 	 *
-	 * @return {map} map of library names / controls
+	 * <b>Note:</b> The returned info objects must not be modified. They might be a living
+	 * copy of the internal data (for efficiency reasons) and the framework is not prepared
+	 * to handle modifications to these objects.
+	 *
+	 * @return {map} Map of library info objects keyed by the library names.
 	 * @public
 	 */
 	Core.prototype.getLoadedLibraries = function() {
-		return jQuery.extend({}, this.mLibraries); // TODO deep copy or real Library object?
+		return jQuery.extend({}, this.mLibraries);
 	};
 
 	/**
