@@ -2,14 +2,17 @@
  * ${copyright}
  */
 
-sap.ui.define([],
-	function() {
+sap.ui.define(["jquery.sap.encoder", "sap/ui/demokit/SimpleTreeNode"],
+	function(jQuery, SimpleTreeNode) {
 		"use strict";
 
 		var SimpleTreeRenderer = {};
 
 		SimpleTreeRenderer.render = function(oRenderManager, oTree) {
 			var rm = oRenderManager;
+
+			var oSelectedNode = _findSelectedNode(oTree.getNodes());
+			_expandParentNodes(oSelectedNode);
 
 			_startTree();
 			if (oTree.getTitle()) {
@@ -22,6 +25,31 @@ sap.ui.define([],
 			_writeTreeItems(oTree.getNodes());
 			_endTreeContent();
 			_endTree();
+
+			function _findSelectedNode(aNodes) {
+				if (!aNodes) {
+					return null;
+				}
+				for (var i = 0; i < aNodes.length; i++) {
+					if (aNodes[i].getIsSelected()) {
+						return aNodes[i];
+					}
+					var aChildNodes = aNodes[i].getNodes();
+					var selectedNode = _findSelectedNode(aChildNodes);
+					if (selectedNode) {
+						return selectedNode;
+					}
+				}
+				return null;
+			}
+
+			function _expandParentNodes(oNode) {
+				if (oNode instanceof SimpleTreeNode) {
+					oNode.setExpanded(true);
+					var oNodeParent = oNode.getParent();
+					_expandParentNodes(oNodeParent);
+				}
+			}
 
 			function _startTree() {
 				rm.write("<div");
@@ -74,7 +102,7 @@ sap.ui.define([],
 		};
 
 		SimpleTreeRenderer.renderNode = function(rm, oTreeNode, iRootLevelNodesNumber, iRootNodePosition) {
-			var BASE_NODE_OFFSET = 15;
+			var BASE_NODE_OFFSET = 7;
 			var NODE_STEP_OFFSET = 15;
 			var ROOT_NESTED_LEVEL = 0;
 
@@ -97,11 +125,13 @@ sap.ui.define([],
 			}
 
 			function _startNode(oNode, iNestedLevel, iSameLevelNodesNumber, iNodePosition) {
-				var bHasChildren = (oNode.getNodes() && oNode.getNodes().length > 0);
+				var nodes = oNode.getNodes(),
+					bHasChildren = (nodes && nodes.length > 0);
 
 				rm.write("<li");
 				rm.writeElementData(oNode);
 				rm.addClass("sapDkSimpleTreeNode");
+
 				if (iNestedLevel === 0) {
 					if (oNode.getExpanded()) {
 						rm.addClass("sapDkSimpleTreeNodeFirstLvlRootExp");
@@ -112,17 +142,22 @@ sap.ui.define([],
 				rm.writeClasses();
 				rm.write(">");
 
-				rm.write("<div");
+				rm.write("<a href=\"" + jQuery.sap.encodeHTML(oNode.getRef() || "") + "\"");
 				var bIsRTL = sap.ui.getCore().getConfiguration().getRTL();
 
 				rm.addStyle(bIsRTL ? "padding-right" : "padding-left", ((iNestedLevel * NODE_STEP_OFFSET) + BASE_NODE_OFFSET) + "px");
 				rm.writeStyles();
 				rm.writeAttribute("tabindex", "-1");
 
+				if (oNode.getIsSelected()) {
+					rm.addClass("sapDkSimpleTreeNodeSelected");
+				}
+
 				if (iNestedLevel === 0) {
 					rm.addClass("sapDkSimpleTreeNodeFirstLvl");
-					rm.writeClasses();
 				}
+
+				rm.writeClasses();
 
 				//ARIA
 				var mProps = {role: 'treeitem', level: iNestedLevel + 1, setsize: iSameLevelNodesNumber, posinset: iNodePosition + 1};
@@ -144,14 +179,15 @@ sap.ui.define([],
 					rm.write(">");
 					rm.write("</span>");
 				}
+
+
 				rm.write("<span");
 				rm.addClass("sapDkSimpleTreeNodeLabel");
 				rm.writeClasses();
 				rm.write(">");
 				rm.writeEscaped(oNode.getText());
 				rm.write("</span>");
-
-				rm.write("</div>");
+				rm.write("</a>");
 			}
 
 			function _endNode() {

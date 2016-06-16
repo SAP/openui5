@@ -18,7 +18,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 
 				height : {type : "sap.ui.core.CSSSize", defaultValue : 'auto'},
 
-				showFilter : {type : "boolean", defaultValue : true}
+				showFilter : {type : "boolean", defaultValue : true},
+
+				filterAttribute : {type : "string", defaultValue : 'text'}
 			},
 
 			defaultAggregation : "nodes",
@@ -58,7 +60,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		};
 
 		SimpleTree.prototype.onAfterRendering = function() {
+			var selectedNode = jQuery(this.getDomRef()).find('.sapDkSimpleTreeNodeSelected'),
+				nodeIndex = this._itemNavigation.getItemDomRefs().indexOf(selectedNode.parent()[0]);
 			this._initializeNodesFocusHandling();
+
+			this.sSelectedNodeId = selectedNode.parent().attr('id');
+			this._itemNavigation.setSelectedIndex(nodeIndex);
+			selectedNode.focus();
 		};
 
 		SimpleTree.prototype.exit = function () {
@@ -84,7 +92,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 
 			function _filterTreeContent(sFilterArgument) {
 				var aFilters = [];
-				var oNameFilter = new Filter("text", FilterOperator.Contains, sFilterArgument);
+				var oNameFilter = new Filter(this.getFilterAttribute(), FilterOperator.Contains, sFilterArgument);
 				aFilters.push(oNameFilter);
 				var oBinding = this.getBinding("nodes");
 				oBinding.filter(aFilters);
