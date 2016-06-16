@@ -122,17 +122,27 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 				iTotalColumnCount++;
 			}
 
-			// add the column items
+			// add the column headers and select all
 			if (oTable.getColumnHeaderVisible()) {
-				aItemDomRefs = $Table.find(".sapUiTableCol").get().concat(aItemDomRefs);
-			}
+				var aHeaderDomRefs = [];
 
-			// add the select all item
-			if (bHasRowHeader && oTable.getColumnHeaderVisible()) {
-				var aRowHdr = $Table.find(".sapUiTableColRowHdr").get();
-				for (var i = oTable._getHeaderRowCount() - 1; i >= 0; i--) {
-					aItemDomRefs.splice(i * iColumnCount, 0, aRowHdr[0]);
+				var $FixedHeaders = $Table.find(".sapUiTableColHdrFixed").children(); //returns the .sapUiTableColHdr elements
+				var $ScrollHeaders = $Table.find(".sapUiTableColHdrScr").children(); //returns the .sapUiTableColHdr elements
+
+				for (var i = 0; i < oTable._getHeaderRowCount(); i++) {
+					if (bHasRowHeader) {
+						aHeaderDomRefs.push(oTable.getDomRef("selall"));
+					}
+
+					if ($FixedHeaders.length) {
+						aHeaderDomRefs = aHeaderDomRefs.concat(jQuery($FixedHeaders.get(i)).find(".sapUiTableCol").get());
+					}
+					if ($ScrollHeaders.length) {
+						aHeaderDomRefs = aHeaderDomRefs.concat(jQuery($ScrollHeaders.get(i)).find(".sapUiTableCol").get());
+					}
 				}
+
+				aItemDomRefs = aHeaderDomRefs.concat(aItemDomRefs);
 			}
 
 			// initialization of item navigation for the Table control
