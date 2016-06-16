@@ -151,3 +151,129 @@ html[data-sap-ui-os^="iOS7"][data-sap-ui-browser^="msf"]:not(.sap-tablet){
   display: none;
 }
 
+/* page with footer */
+.sapMPageWithFooter > section {
+    bottom: 3rem;
+}
+
+.sapMPageFloatingFooter {
+    > footer {
+      border-radius: 0.25rem;
+      margin: 0.5rem;
+      width: ~"calc(100% - 1rem)";
+      opacity: 0.9;
+    }
+
+    > section {
+      bottom: 0rem;
+    }
+
+    > section > *:last-child {
+      margin-bottom: 4rem;
+    }
+}
+
+.sapUiSizeCompact .sapMPageFloatingFooter > section > *:last-child {
+    margin-bottom: 3.5rem;
+}
+
+html[data-sap-ui-animation='on'] .sapMPageFloatingFooter {
+  .sapMPageFooterControlShow {
+    -webkit-animation: bounceShow 0.35s forwards ease-in-out;
+    -moz-animation: bounceShow 0.35s forwards ease-in-out;
+    -o-animation: bounceShow 0.35s forwards ease-in-out;
+    animation: bounceShow 0.35s forwards ease-in-out;
+  }
+  .sapMPageFooterControlHide {
+    -webkit-animation: bounceHide 0.35s forwards ease-in-out;
+    -moz-animation: bounceHide 0.35s forwards ease-in-out;
+    -o-animation: bounceHide 0.35s forwards ease-in-out;
+    animation: bounceHide 0.35s forwards ease-in-out;
+  }
+
+  @-webkit-keyframes bounceShow {
+    0% {
+      -webkit-transform: translateY(100%);
+      -moz-transform: translateY(100%);
+      -o-transform: translateY(100%);
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    100% {
+      opacity: 0.9;
+    }
+  }
+  @-moz-keyframes bounceShow {
+    0% {
+      -webkit-transform: translateY(100%);
+      -moz-transform: translateY(100%);
+      -o-transform: translateY(100%);
+      transform: translateY(100%);
+      opacity: 0.9;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  @keyframes bounceShow {
+    0% {
+      -webkit-transform: translateY(100%);
+      -moz-transform: translateY(100%);
+      -o-transform: translateY(100%);
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    100% {
+      opacity: 0.9;
+    }
+  }
+  @-webkit-keyframes bounceHide {
+    0% {
+      -webkit-transform: translateY(-5%);
+      -moz-transform: translateY(-5%);
+      -o-transform: translateY(-5%);
+      transform: translateY(-5%);
+      opacity: 1;
+    }
+    100% {
+      -webkit-transform: translateY(100%);
+      -moz-transform: translateY(100%);
+      -o-transform: translateY(100%);
+      transform: translateY(100%);
+      opacity: 0;
+    }
+  }
+  @-moz-keyframes bounceHide {
+    0% {
+      -webkit-transform: translateY(-5%);
+      -moz-transform: translateY(-5%);
+      -o-transform: translateY(-5%);
+      transform: translateY(-5%);
+      opacity: 0.9;
+    }
+    100% {
+      -webkit-transform: translateY(100%);
+      -moz-transform: translateY(100%);
+      -o-transform: translateY(100%);
+      transform: translateY(100%);
+      opacity: 0.9;
+    }
+  }
+  @keyframes bounceHide {
+    0% {
+      -webkit-transform: translateY(-5%);
+      -moz-transform: translateY(-5%);
+      -o-transform: translateY(-5%);
+      transform: translateY(-5%);
+      opacity: 0.9;
+    }
+    100% {
+      -webkit-transform: translateY(100%);
+      -moz-transform: translateY(100%);
+      -o-transform: translateY(100%);
+      transform: translateY(100%);
+      opacity: 0;
+    }
+  }
+}
+

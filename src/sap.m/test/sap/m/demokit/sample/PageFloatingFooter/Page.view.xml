@@ -1,0 +1,18 @@
+<mvc:View
+	height="100%"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+    controllerName="sap.m.sample.PageFloatingFooter.Page">
+	<Page id="floatingFooterPage" title="Floating Footer Example" floatingFooter="true">
+		<Button text="Toggle floating footer" press="toggleFooter"/>
+		<Button text="Toggle footer visibility" press="toggleVisibility"/>
+		<Button text="Add Panel" press="addPanel"/>
+		<Button text="Remove Panel" press="removePanel"/>
+		<footer>
+			<Toolbar>
+				<Button text="Accept"/>
+				<Button text = "Decline"/>
+			</Toolbar>
+		</footer>
+	</Page>
+</mvc:View>

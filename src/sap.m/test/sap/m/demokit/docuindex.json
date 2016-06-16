@@ -691,7 +691,8 @@
 			"sap.m.sample.PageStandardClasses",
 			"sap.m.sample.PageSpacing",
 			"sap.m.sample.PageListReportIconTabBar",
-			"sap.m.sample.PageListReportToolbar"
+			"sap.m.sample.PageListReportToolbar",
+			"sap.m.sample.PageFloatingFooter"
 		  ]
 		},
 		{
@@ -1453,6 +1454,11 @@
 		  "id": "sap.m.sample.PageListReportToolbar",
 		  "name": "Fiori List Report Page - Toolbar ",
 		  "description": "This page shows the floorplan for a list report with a Toolbar. The upper part extends with its content, but doesn't react to viewport changes. The lower part reacts to the viewport size. The table inside takes the available space. If the minimum size of the table is reached, the page begins to scroll."
+		},
+		{
+		  "id": "sap.m.sample.PageFloatingFooter",
+		  "name": "Page Floating Footer",
+		  "description": "The floating Footer allows the user to see the underlying content."
 		},
 		{
 		  "id": "sap.m.sample.IconTabBar",

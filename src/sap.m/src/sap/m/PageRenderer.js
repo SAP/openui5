@@ -59,6 +59,11 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo'],
 			oRm.addClass("sapMPageBusyCoversAll");
 		}
 
+		var theme = sap.ui.getCore().getConfiguration().getTheme();
+		if (oPage.getFloatingFooter() && oPage.getShowFooter() && theme !== 'sap_hcb') {
+			oRm.addClass("sapMPageFloatingFooter");
+		}
+
 		oRm.writeClasses();
 
 		var sTooltip = oPage.getTooltip_AsString();
