@@ -280,6 +280,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 			this.oPopup = new Popup();
 			this.oPopup.setShadow(true);
+			this.oPopup.setNavigationMode("SCOPE");
 			if (jQuery.device.is.iphone && !this._bMessageType) {
 				this.oPopup.setModal(true, "sapMDialogTransparentBlk");
 			} else {
