@@ -18,20 +18,19 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
-	ProgressIndicatorRenderer.render = function(oRm, oC) {
-		var fWidthBar = oC.getPercentValue(),
-			iWidthControl = oC.getWidth(),
-			iHeightControl = oC.getHeight(),
-			sTextValue = oC.getDisplayValue(),
-			bShowText = oC.getShowValue(),
-			sState = oC.getState(),
-			sTextDirectionLowerCase = oC.getTextDirection().toLowerCase(),
-			sControlId = oC.getId();
+	ProgressIndicatorRenderer.render = function(oRm, oControl) {
+		var fWidthBar = oControl.getPercentValue(),
+			iWidthControl = oControl.getWidth(),
+			iHeightControl = oControl.getHeight(),
+			sTextValue = oControl.getDisplayValue(),
+			bShowText = oControl.getShowValue(),
+			sState = oControl.getState(),
+			sTextDirectionLowerCase = oControl.getTextDirection().toLowerCase(),
+			sControlId = oControl.getId();
 
-		// write the HTML into the render manager
-		// PI border
+		// PI container
 		oRm.write("<div");
-		oRm.writeControlData(oC);
+		oRm.writeControlData(oControl);
 		oRm.addClass("sapMPI");
 		oRm.addStyle("width", iWidthControl);
 
@@ -47,7 +46,7 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.addStyle("height", iHeightControl);
 		}
 
-		if (oC.getEnabled()) {
+		if (oControl.getEnabled()) {
 			oRm.writeAttribute('tabIndex', '-1');
 		} else {
 			oRm.addClass("sapMPIBarDisabled");
@@ -55,24 +54,24 @@ sap.ui.define(['jquery.sap.global'],
 
 		oRm.writeClasses();
 		oRm.writeStyles();
-		oRm.writeAccessibilityState(oC, {
+		oRm.writeAccessibilityState(oControl, {
 			role: "progressbar",
 			valuemin: 0,
 			valuenow: fWidthBar,
 			valuemax: 100,
-			valuetext: oC._getAriaValueText({
+			valuetext: oControl._getAriaValueText({
 				sText: sTextValue,
 				fPercent: fWidthBar
 			})
 		});
 
-		if (oC.getTooltip_AsString()) {
-			oRm.writeAttributeEscaped("title", oC.getTooltip_AsString());
+		if (oControl.getTooltip_AsString()) {
+			oRm.writeAttributeEscaped("title", oControl.getTooltip_AsString());
 		}
 
-		oRm.write(">"); // div element
+		oRm.write(">");
 
-		// PI bar
+		// PI progress bar
 		oRm.write("<div");
 		oRm.addClass("sapMPIBar");
 
@@ -94,12 +93,11 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.writeClasses();
 		oRm.writeAttribute("id", sControlId + "-bar");
 		oRm.writeAttribute("style", "width:" + fWidthBar + "%");
-		oRm.write(">"); // div element
+		oRm.write(">");
 
-		//PI textLeft
+		// PI text in progress bar
 		ProgressIndicatorRenderer._renderDisplayText(oRm, sTextDirectionLowerCase, "Left", sControlId);
 
-		//textvalue is only showed if showValue set
 		if (bShowText) {
 			oRm.writeEscaped(sTextValue);
 		}
@@ -107,20 +105,29 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.write("</span>");
 		oRm.write("</div>"); // div element pi bar
 
-		//PI textRight
+		// PI remaining bar div
+		oRm.write("<div");
+		oRm.addClass("sapMPIBarRemaining");
+
+		oRm.writeAttribute("id", sControlId + "-remainingBar");
+		oRm.writeClasses();
+		oRm.write(">");
+
+		// PI text in remaining bar
 		ProgressIndicatorRenderer._renderDisplayText(oRm, sTextDirectionLowerCase, "Right", sControlId);
 
-		//textvalue is only showed if showValue set
 		if (bShowText) {
 			oRm.writeEscaped(sTextValue);
 		}
 
 		oRm.write("</span>");
-		oRm.write("</div>"); //div element pi text
+		oRm.write("</div>"); // PI Remaining bar div end
+
+		oRm.write("</div>"); // PI container end
 	};
 
 	ProgressIndicatorRenderer._renderDisplayText = function(oRm, sTextDirectionLowerCase, sTextAlign, oControlId){
-		oRm.write("<span aria-hidden='true' role='presentation' aria-labelledby='" + oControlId + "-empty' class='sapMPIText sapMPIText" + sTextAlign + "' id='" + oControlId + "-text" + sTextAlign + "'");
+		oRm.write("<span class='sapMPIText sapMPIText" + sTextAlign + "' id='" + oControlId + "-text" + sTextAlign + "'");
 
 		if (sTextDirectionLowerCase !== "inherit") {
 			oRm.writeAttribute("dir", sTextDirectionLowerCase);

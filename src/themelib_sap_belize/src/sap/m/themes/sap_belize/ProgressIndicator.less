@@ -6,12 +6,13 @@
 .sapMPI {
 	outline: none;
 	background: @sapUiFieldBackground;
-	height: 1.375rem;
+	height: 2rem;
 	width: 100%;
 	min-width: 6rem;
 	min-height: 1rem;
 	padding: 0;
 	margin: 0.125rem 0;
+	border: none;
 	border-radius: 0.5rem;
 	overflow: hidden;
 }
@@ -43,12 +44,26 @@
 	background: @sapUiCriticalElement;
 }
 
+
+/* Progress Indicator Remaining Bar */
+.sapMPIValueMin .sapMPIBarRemaining {
+	border-radius: 0.5rem;
+	border: 1px solid @sapUiFieldBorderColor;
+}
+
+.sapMPIBarRemaining {
+	border-top-right-radius: 0.5rem;
+	border-bottom-right-radius: 0.5rem;
+	border-top: 1px solid @sapUiFieldBorderColor;
+	border-right: 1px solid @sapUiFieldBorderColor;
+	border-bottom: 1px solid @sapUiFieldBorderColor;
+}
+
 /* Progress Indicator Value Text */
 .sapMPIText {
 	font-family: @sapUiFontFamily;
 	font-size: @sapMFontSmallSize;
 	font-weight: normal;
-	line-height: 1.35rem;
 	color: @sapUiContentForegroundTextColor;
 }
 
@@ -72,27 +87,15 @@
 .sapUiSizeCozy .sapMPI,
 .sapMDynamicPage-Std-Tablet .sapMPI,
 .sapMDynamicPage-Std-Phone .sapMPI {
-	height: 2rem;
 	margin: 0.25rem 0;
-
-	.sapMPIText {
-		line-height: 2rem;
-	}
 }
 
-/* Compact */
-.sapUiSizeCompact .sapMPIText {
-	line-height: 1.25rem;
+.sapUiSizeCompact .sapMPI {
+	height: 1.375rem;
 }
 
 /* Condensed */
-.sapUiSizeCondensed .sapUiTableCell {
-	.sapMPI {
-		height: 1.5rem;
-		margin: 0;
-	}
-
-	.sapMPIText{
-		line-height: 1.25rem;
-	}
+.sapUiSizeCondensed .sapUiTableCell .sapMPI {
+	height: 1.5rem;
+	margin: 0;
 }

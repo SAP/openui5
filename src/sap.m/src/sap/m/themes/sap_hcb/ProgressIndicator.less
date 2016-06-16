@@ -24,25 +24,18 @@
 .sapMPIText {
 	font-family: @sapUiFontFamily;
 	font-weight: bold;
-	line-height: 2.25rem;
 }
 
 .sapUiSizeCompact .sapMPI {
 	height: 1.625rem;
 }
 
-.sapUiSizeCompact .sapMPIText{
-	line-height: 1.375rem;
-}
 
 .sapUiSizeCondensed .sapUiTableCell .sapMPI {
 	height: 1.5rem;
 	margin: 0;
 }
 
-.sapUiSizeCondensed .sapUiTableCell .sapMPIText {
-	line-height: 1.25rem;
-}
 
 /* HCB Additional Styles */
 .sapMPIText {
@@ -61,29 +54,29 @@
 }
 
 .sapMPIBarPositive > .sapMPITextLeft::before,
-.sapMPIBarPositive + .sapMPITextRight::before {
+.sapMPIBarPositive + .sapMPIBarRemaining > .sapMPITextRight::before {
 	content: '\e1ab';
 }
 
-.sapMPIBarPositive + .sapMPITextRight::before {
+.sapMPIBarPositive + .sapMPIBarRemaining > .sapMPITextRight::before {
 	color: @sapHCPositive;
 }
 
 .sapMPIBarNegative > .sapMPITextLeft::before,
-.sapMPIBarNegative + .sapMPITextRight::before {
+.sapMPIBarNegative + .sapMPIBarRemaining > .sapMPITextRight::before {
 	content: '\e1ac';
 }
 
-.sapMPIBarNegative + .sapMPITextRight::before {
+.sapMPIBarNegative + .sapMPIBarRemaining > .sapMPITextRight::before {
 	color: @sapHCNegative;
 }
 
 .sapMPIBarCritical > .sapMPITextLeft::before,
-.sapMPIBarCritical + .sapMPITextRight::before {
+.sapMPIBarCritical + .sapMPIBarRemaining > .sapMPITextRight::before {
 	content: '\e1ae';
 }
 
-.sapMPIBarCritical + .sapMPITextRight::before {
+.sapMPIBarCritical + .sapMPIBarRemaining > .sapMPITextRight::before {
 	color: @sapHCCritical;
 }
 
@@ -100,7 +93,7 @@
 	}
 
 	.sapMPITextRight,
-	.sapMPITextRight::before {
+	.sapMPIBarRemaining > .sapMPITextRight::before {
 		color: @sapHCReducedFG;
 	}
 
