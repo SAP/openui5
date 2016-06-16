@@ -1,20 +1,21 @@
-
 /* ================================================= */
 /* CSS for control sap.m/FeedListItem.control (base) */
 /* ================================================= */
 
-.sapMFeedListItem{
+.sapMFeedListItem {
 	display: block;
 }
 
-.sapMFeedListShowSeparatorsAll .sapMFeedListItem{
+.sapMFeedListItemImageInactive {
+	cursor: default;
+}
+
+.sapMFeedListShowSeparatorsAll .sapMFeedListItem {
 	padding-top: 1rem;
 	padding-bottom: 1rem;
 }
 
-/*
-	Makes sure that floating image is not displayed in next	list item.
-*/
+/* Makes sure that floating image is not displayed in the next list item. */
 .sapMFeedListItem:after {
 	content: " ";
 	display: block;
@@ -26,7 +27,7 @@
 
 .sapMFeedListItem .sapMFeedListItemTextText a,
 .sapMFeedListItem .sapMFeedListItemTextText span,
-.sapMFeedListItem .sapMFeedListItemTextName a{
+.sapMFeedListItem .sapMFeedListItemTextName a {
 	font-family: @sapUiFontFamily;
 	font-weight: bold;
 	line-height: 1.4;
@@ -40,7 +41,7 @@
 	border: 0rem;
 }
 
-.sapMFeedListItemText{
+.sapMFeedListItemText {
 	vertical-align: top;
 	margin: 0rem;
 }
@@ -50,18 +51,18 @@
 }
 
 html.sap-tablet .sapMFeedListItemHasFigure,
-html.sap-desktop .sapMFeedListItemHasFigure{
+html.sap-desktop .sapMFeedListItemHasFigure {
 	margin-left: 3.75rem;
 }
 
-.sapMFeedListItemTextText{
+.sapMFeedListItemTextText {
 	margin: 0rem;
 	line-height: 1.4;
 	font-family: @sapUiFontFamily;
 	text-overflow: ellipsis;
 }
 
-.sapMFeedListItemFigure{
+.sapMFeedListItemFigure {
 	float: left;
 	height: 3rem;
 	width: 3rem;
@@ -69,11 +70,12 @@ html.sap-desktop .sapMFeedListItemHasFigure{
 	margin: 0rem;
 }
 
-.sapMFeedListItemImage{
+.sapMFeedListItemImageInactive,
+.sapMFeedListItemImage {
 	width: 3rem;
 	height: 3rem;
 	line-height: 3rem;
-	font-size: 3rem;
+	font-size: 2.5rem;
 	margin-left: 0rem;
 	margin-right: 0rem;
 	overflow: hidden;
@@ -90,13 +92,13 @@ html.sap-desktop .sapMFeedListItemHasFigure{
 	text-overflow: ellipsis;
 }
 
-.sapMFeedListItemTextName{
+.sapMFeedListItemTextName {
 	line-height: 1.4;
 	font-family: @sapUiFontFamily;
 	font-weight: bold;
 }
 
-html[dir=rtl] .sapMFeedListItemTextName{
+html[dir=rtl] .sapMFeedListItemTextName {
 	/* 	In rtl mode, this will be converted to 'float: right;' which
 		is the correct value
 	*/
@@ -104,7 +106,7 @@ html[dir=rtl] .sapMFeedListItemTextName{
 	margin-right: 0.3rem;
 }
 
-html[dir=rtl].sap-phone .sapMFeedListItemTextName{
+html[dir=rtl].sap-phone .sapMFeedListItemTextName {
 	/* 	Overwrite rtl values for phones
 	*/
 	float: none;
@@ -155,9 +157,10 @@ html.sap-phone .sapMFeedListItemHeader.sapMFeedListItemHasFigure {
 	height: 3rem;
 }
 
+html.sap-phone .sapMFeedListItemImageInactive,
 html.sap-phone .sapMFeedListItemImage {
 	width: 3rem;
-	heigth: 3rem;
+	height: 3rem;
 	line-height: 3rem;
 	font-size: 2.5rem;
 }
@@ -193,7 +196,7 @@ html.sap-phone .sapMFeedListItemTimestamp {
 	text-overflow: ellipsis;
 }
 
-html.sap-phone .sapMFeedListItemText{
+html.sap-phone .sapMFeedListItemText {
 	clear: left;
 	line-height: 1.4;
 	margin-top: 0.75rem;

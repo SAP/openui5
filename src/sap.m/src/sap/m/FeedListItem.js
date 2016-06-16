@@ -7,8 +7,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	function(jQuery, ListItemBase, library) {
 	"use strict";
 
-
-
 	/**
 	 * Constructor for a new FeedListItem.
 	 *
@@ -183,9 +181,9 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 		if (oEvent.srcControl) {
 			if ((!this.getIconActive() && this._oImageControl && oEvent.srcControl.getId() === this._oImageControl.getId()) || // click on inactive image
 					(!this.getSenderActive() && this._oLinkControl && oEvent.srcControl.getId() === this._oLinkControl.getId()) || // click on inactive sender link
-					(!this._oImageControl || (oEvent.srcControl.getId() !== this._oImageControl.getId()) &&                        // not image clicked
-					(!this._oLinkControl || (oEvent.srcControl.getId() !== this._oLinkControl.getId())) &&                         // not sender link clicked
-					(!this._oLinkExpandCollapse || (oEvent.srcControl.getId() !== this._oLinkExpandCollapse.getId())))) {          // not expand/collapse link clicked
+					(!this._oImageControl || (oEvent.srcControl.getId() !== this._oImageControl.getId()) &&                        // no image clicked
+					(!this._oLinkControl || (oEvent.srcControl.getId() !== this._oLinkControl.getId())) &&                         // no sender link clicked
+					(!this._oLinkExpandCollapse || (oEvent.srcControl.getId() !== this._oLinkExpandCollapse.getId())))) {          // no expand/collapse link clicked
 				ListItemBase.prototype.ontap.apply(this, [oEvent]);
 			}
 		}
@@ -198,20 +196,25 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 * @returns {sap.m.Image} Image control based on the provided 'icon' control property
 	 */
 	FeedListItem.prototype._getImageControl = function() {
-
-		var sIconSrc = this.getIcon() ? this.getIcon() : sap.ui.core.IconPool.getIconURI("person-placeholder"), sImgId = this
-				.getId()
-				+ '-icon', mProperties = {
+		var sIcon = this.getIcon();
+		var sIconSrc = sIcon ? sIcon : sap.ui.core.IconPool.getIconURI("person-placeholder");
+		var sImgId = this.getId() + '-icon';
+		var mProperties = {
 			src : sIconSrc,
 			alt : this.getSender(),
 			densityAware : this.getIconDensityAware(),
 			decorative : false,
-			useIconTooltip : false
-		}, aCssClasses = ['sapMFeedListItemImage'];
+			useIconTooltip : false };
+
+		var aCssClasses;
+		if (this.getIconActive()) {
+			aCssClasses = ['sapMFeedListItemImage'];
+		} else {
+			aCssClasses = ['sapMFeedListItemImageInactive'];
+		}
 
 		var that = this;
 		this._oImageControl = sap.m.ImageHelper.getImageControl(sImgId, this._oImageControl, this, mProperties, aCssClasses);
-
 		if (this.getIconActive()) {
 			this._oImageControl.attachPress(function() {
 				that.fireIconPress({
