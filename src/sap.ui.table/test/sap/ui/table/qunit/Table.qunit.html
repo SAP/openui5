@@ -1114,10 +1114,18 @@
 
 		var fnHandler = function() {
 			var aSortedColumns = oTable.getSortedColumns();
+			var cell;
 
 			if (aSortedColumns.length === 2) {
-				ok(jQuery.sap.endsWith(aSortedColumns[0].$().find("img").attr("src"), "ico12_sort_asc.gif"), "Sort icon direction for first column OK");
-				ok(jQuery.sap.endsWith(aSortedColumns[1].$().find("img").attr("src"), "ico12_sort_desc.gif"), "Sort icon direction for second column OK");
+				cell = aSortedColumns[0].$().find(".sapUiTableColCell");
+				ok(cell.hasClass("sapUiTableColSF"), "Icons are shown");
+				ok(cell.hasClass("sapUiTableColSorted"), "Sort icon is shown");
+				ok(!cell.hasClass("sapUiTableColSortedD"), "sort icon is ascending");
+
+				cell = aSortedColumns[1].$().find(".sapUiTableColCell");
+				ok(cell.hasClass("sapUiTableColSF"), "Icons are shown");
+				ok(cell.hasClass("sapUiTableColSorted"), "Sort icon is shown");
+				ok(cell.hasClass("sapUiTableColSortedD"), "sort icon is descending");
 
 				oTable.detachEvent("_rowsUpdated", fnHandler);
 				start();
