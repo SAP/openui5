@@ -380,12 +380,46 @@ html[data-sap-ui-browser^="ed"] .sapUiTableVScr .sapUiTableCtrlScr {
 	overflow: hidden;
 }
 
-.sapUiTableColIcons {
+.sapUiTableColSF::after { /* sort and filter */
+	content : "";
 	position: absolute;
+	right: 0;
 	top: 0;
-	bottom: 0;
-	right: 8px;
-	padding-top: 4px;
+	font-family: SAP-Icons;
+	line-height: 1.75rem;
+	font-size: 0.75rem;
+	letter-spacing: 0.375rem;
+}
+
+.sapUiSizeCozy .sapUiTableColSF::after {
+	line-height: 3rem;
+}
+
+.sapUiSizeCompact .sapUiTableColSF::after,
+.sapUiSizeCondensed .sapUiTableColSF::after {
+	line-height: 2rem;
+}
+
+
+/* show different icon combinations */
+.sapUiTableColSorted::after {
+	content : "\e1fd";
+}
+
+.sapUiTableColSortedD::after {
+	content : "\e1fc";
+}
+
+.sapUiTableColFiltered::after {
+	content : "\e076";
+}
+
+.sapUiTableColFiltered.sapUiTableColSorted::after {
+	content : "\e076\e1fd";
+}
+
+.sapUiTableColFiltered.sapUiTableColSortedD::after {
+	content : "\e076\e1fc";
 }
 
 .sapUiTableColCell.sapUiTableColSorted,
@@ -593,12 +627,6 @@ html[data-sap-ui-browser^="ie"] .sapUiTableVSb {
 
 	.sapUiTableColRowHdrIco {
 		height:100%;
-	}
-
-	/* Cell Adjustments */
-
-	.sapUiTableColIcons {
-		padding-top: 0;
 	}
 
 	/* Group Header Adjustments */

@@ -484,9 +484,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 		rm.writeStyles();
 		rm.write(">");
 
-		// TODO: rework column sort / filter status integration
-		rm.write("<div id=\"" + oColumn.getId() + "-icons\" class=\"sapUiTableColIcons\"></div>");
-
 		if (oLabel) {
 			rm.renderControl(oLabel);
 		}
