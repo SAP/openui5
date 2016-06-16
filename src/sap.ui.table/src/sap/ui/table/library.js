@@ -145,6 +145,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core',
 		/**
 		 * Select multiple rows at a time.
 		 * @public
+		 * @deprecated As of version 1.38, replaced by {@link sap.ui.table.SelectionMode.MultiToggle}
 		 */
 		Multi : "Multi",
 

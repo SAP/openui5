@@ -222,7 +222,7 @@
 
 	test("SelectionMode", function() {
 		oTable.setSelectionMode(sap.ui.table.SelectionMode.Multi);
-		equals(oTable.getSelectionMode(), "Multi", "Selection mode is Multi!");
+		equals(oTable.getSelectionMode(), "MultiToggle", "Selection mode is MultiToggle although Multi was set!");
 
 		// check selection mode none without columns BCP: 1570822620
 		oTable.removeAllColumns();

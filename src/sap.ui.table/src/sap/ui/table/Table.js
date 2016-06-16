@@ -103,7 +103,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			 * Selection mode of the Table. This property controls whether single or multiple rows can be selected and
 			 * how the selection can be extended. It may also influence the visual appearance.
 			 */
-			selectionMode : {type : "sap.ui.table.SelectionMode", group : "Behavior", defaultValue : SelectionMode.Multi},
+			selectionMode : {type : "sap.ui.table.SelectionMode", group : "Behavior", defaultValue : SelectionMode.MultiToggle},
 
 			/**
 			 * Selection behavior of the Table. This property defines whether the row selector is displayed and whether the row, the row selector or both
@@ -1349,6 +1349,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			this._oSelection.setSelectionMode(SelectionModel.SINGLE_SELECTION);
 		} else {
 			this._oSelection.setSelectionMode(SelectionModel.MULTI_SELECTION);
+		}
+
+		if (sSelectionMode === SelectionMode.Multi) {
+			sSelectionMode = SelectionMode.MultiToggle;
+			jQuery.sap.log.warning("The selection mode 'Multi' is deprecated and must not be used anymore. Your setting was defaulted to selection mode 'MultiToggle'");
 		}
 
 		this.setProperty("selectionMode", sSelectionMode);
