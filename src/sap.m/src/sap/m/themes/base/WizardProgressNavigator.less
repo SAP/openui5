@@ -73,7 +73,7 @@
 
 		// negative values are needed for the right positioning - (2rem - 4rem) / 2 = -1
 		// bottom:0 positions it at the bottom of the list but we want it at the bottom of the nav
-		bottom: (@listHeight - @navHeight) / 2;
+		bottom: (@listHeight - @navHeight) / 2 - @stepUnderlineHeight;
 	}
 
 	// anchors in all steps after the current one are right aligned so that they dont overflow to the right

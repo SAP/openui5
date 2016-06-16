@@ -7,6 +7,7 @@
 	background: @sapUiObjectHeaderBackground;
 	font-size: @sapMFontMediumSize;
 	border-bottom: solid 0.125rem darken(@sapUiObjectHeaderBackground, 8);
+	box-shadow: @sapUiShadowHeader;
 }
 
 .sapMWizardProgressNavStep:hover .sapMWizardProgressNavAnchorCircle {
@@ -22,6 +23,11 @@
 	color: @sapUiHighlight;
 	background: @sapUiObjectHeaderBackground;
 	border-color: @sapUiHighlight;
+
+	font-size: @sapMFontMediumSize;
+	.sapUiIcon {
+		font-size: @sapMFontLargeSize;
+	}
 }
 
 .sapMWizardProgressNavAnchorIcon {
@@ -29,17 +35,27 @@
 }
 
 .sapMWizardProgressNavAnchorTitle {
+	font-size: @sapMFontMediumSize;
+	color: @sapUiGroupTitleTextColor;
 	background: @sapUiObjectHeaderBackground;
+}
+
+.sapMWizardProgressNavAnchorTitle:hover {
+	color: darken(@sapUiGroupTitleTextColor, 10);
 }
 
 .sapMWizardProgressNavStep::after {
 	border-bottom-color: @sapUiHighlight;
 }
 
+.sapMWizard .sapMWizardStepContainer {
+  background: @sapUiGroupContentBackground;
+}
+
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] {
 
 	& .sapMWizardProgressNavAnchor::after {
-		background: @sapUiSelected;
+		background: @sapUiHighlight;
 	}
 
 	& .sapMWizardProgressNavAnchorCircle {
@@ -50,14 +66,25 @@
 
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"] {
 
-	& ~ .sapMWizardProgressNavStep {
-		color: fade(@sapUiGroupTitleTextColor, 50);
+	.sapMWizardProgressNavAnchorTitle {
+		color: darken(@sapUiGroupTitleTextColor, 20);
 	}
 
+  & ~ .sapMWizardProgressNavStep {
+		color: fade(@sapUiGroupTitleTextColor, 50);
+	}
 	/* anchors in all steps after the active one have inactive style */
 	& ~ .sapMWizardProgressNavStep .sapMWizardProgressNavAnchorCircle {
 		border-color: fade(@sapUiHighlight, 50);
 		color: fade(@sapUiHighlight, 50);
+	}
+
+	& ~ .sapMWizardProgressNavStep .sapMWizardProgressNavAnchorTitle {
+		color: fade(@sapUiGroupTitleTextColor, 50);
+	}
+
+	& ~ .sapMWizardProgressNavStep:hover .sapMWizardProgressNavAnchorCircle {
+		background-color: inherit;
 	}
 
 	/* all separators after (and including) the active step have inactive style */
