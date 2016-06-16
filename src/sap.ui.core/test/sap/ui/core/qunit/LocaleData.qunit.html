@@ -108,6 +108,7 @@
 			equal(oLocaleData.getDays("narrow", aCalendarTypes[i]) && oLocaleData.getDays("narrow", aCalendarTypes[i]).length, 7, "getDays(\"narrow\", \"" + aCalendarTypes[i] + "\")");
 			equal(oLocaleData.getDays("abbreviated", aCalendarTypes[i]) && oLocaleData.getDays("abbreviated", aCalendarTypes[i]).length, 7, "getDays(\"abbreviated\", \"" + aCalendarTypes[i] + "\")");
 			equal(oLocaleData.getDays("wide", aCalendarTypes[i]) && oLocaleData.getDays("wide", aCalendarTypes[i]).length, 7, "getDays(\"wide\", \"" + aCalendarTypes[i] + "\")");
+			equal(oLocaleData.getDays("short", aCalendarTypes[i]) && oLocaleData.getDays("short", aCalendarTypes[i]).length, 7, "getDays(\"short\", \"" + aCalendarTypes[i] + "\")");
 			equal(oLocaleData.getQuarters("narrow", aCalendarTypes[i]) && oLocaleData.getQuarters("narrow", aCalendarTypes[i]).length, 4, "getQuarters(\"narrow\", \"" + aCalendarTypes[i] + "\")");
 			equal(oLocaleData.getQuarters("abbreviated", aCalendarTypes[i]) && oLocaleData.getQuarters("abbreviated", aCalendarTypes[i]).length, 4, "getQuarters(\"abbreviated\", \"" + aCalendarTypes[i] + "\")");
 			equal(oLocaleData.getQuarters("wide", aCalendarTypes[i]) && oLocaleData.getQuarters("wide", aCalendarTypes[i]).length, 4, "getQuarters(\"wide\", \"" + aCalendarTypes[i] + "\")");
@@ -212,6 +213,7 @@
 		equal(oLocaleData.getDays("wide")[0], "Sonntag", "1st day");
 		equal(oLocaleData.getDays("abbreviated")[0], "So.", "1st day abbreviated");
 		equal(oLocaleData.getDays("narrow")[0], "S", "1st day narrow");
+		equal(oLocaleData.getDays("short")[0], "So.", "1st day short");
 		equal(oLocaleData.getDatePattern("medium"), "dd.MM.y", "date pattern \"medium\"");
 		equal(oLocaleData.getTimePattern("medium"), "HH:mm:ss", "time pattern \"medium\"");
 		equal(oLocaleData.getDateTimePattern("long"), "{1} 'um' {0}", "datetime pattern \"long\"");
@@ -247,6 +249,7 @@
 		equal(oLocaleData.getDays("wide")[0], "Sonntag", "1st day");
 		equal(oLocaleData.getDays("abbreviated")[0], "So.", "1st day abbreviated");
 		equal(oLocaleData.getDays("narrow")[0], "S", "1st day narrow");
+		equal(oLocaleData.getDays("short")[0], "So.", "1st day short");
 		equal(oLocaleData.getDatePattern("medium"), "dd.MM.y", "date pattern \"medium\"");
 		equal(oLocaleData.getTimePattern("medium"), "HH:mm:ss", "time pattern \"medium\"");
 		equal(oLocaleData.getDateTimePattern("long"), "{1} 'um' {0}", "datetime pattern \"long\"");
@@ -265,6 +268,7 @@
 		equal(oLocaleData.getDays("wide")[0], "Sunday", "1st day");
 		equal(oLocaleData.getDays("abbreviated")[0], "Sun", "1st day abbreviated");
 		equal(oLocaleData.getDays("narrow")[0], "S", "1st day narrow");
+		equal(oLocaleData.getDays("short")[0], "Su", "1st day short");
 		equal(oLocaleData.getDatePattern("medium"), "d MMM y", "date pattern \"medium\"");
 		equal(oLocaleData.getTimePattern("medium"), "HH:mm:ss", "time pattern \"medium\"");
 		equal(oLocaleData.getDateTimePattern("long"), "{1} 'at' {0}", "datetime pattern \"long\"");
@@ -318,6 +322,7 @@
 		equal(oLocaleData.getDays("wide")[0], "dimanche", "1st day");
 		equal(oLocaleData.getDays("abbreviated")[0], "dim.", "1st day abbreviated");
 		equal(oLocaleData.getDays("narrow")[0], "D", "1st day narrow");
+		equal(oLocaleData.getDays("short")[0], "di", "1st day short");
 		equal(oLocaleData.getDatePattern("medium"), "d MMM y", "date pattern \"medium\"");
 		equal(oLocaleData.getTimePattern("medium"), "HH:mm:ss", "time pattern \"medium\"");
 		equal(oLocaleData.getDateTimePattern("long"), "{1} 'à' {0}", "datetime pattern \"long\"");
@@ -343,6 +348,7 @@
 		equal(oLocaleData.getDays("wide")[0], "日曜日", "1st day");
 		equal(oLocaleData.getDays("abbreviated")[0], "日", "1st day abbreviated");
 		equal(oLocaleData.getDays("narrow")[0], "日", "1st day narrow");
+		equal(oLocaleData.getDays("short")[0], "日", "1st day short");
 		equal(oLocaleData.getDatePattern("medium"), "y/MM/dd", "date pattern \"medium\"");
 		equal(oLocaleData.getTimePattern("medium"), "H:mm:ss", "time pattern \"medium\"");
 		equal(oLocaleData.getDateTimePattern("long"), "{1} {0}", "datetime pattern \"long\"");
@@ -370,6 +376,7 @@
 		equal(oLocaleData.getDays("wide")[0], "воскресенье", "1st day");
 		equal(oLocaleData.getDays("abbreviated")[0], "вс", "1st day abbreviated");
 		equal(oLocaleData.getDays("narrow")[0], "вс", "1st day narrow");
+		equal(oLocaleData.getDays("short")[0], "вс", "1st day short");
 		equal(oLocaleData.getDatePattern("medium"), "d MMM y 'г'.", "date pattern \"medium\"");
 		equal(oLocaleData.getTimePattern("medium"), "H:mm:ss", "time pattern \"medium\"");
 		equal(oLocaleData.getDateTimePattern("long"), "{1}, {0}", "datetime pattern \"long\"");
