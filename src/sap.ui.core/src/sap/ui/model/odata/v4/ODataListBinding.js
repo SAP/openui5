@@ -28,39 +28,6 @@ sap.ui.define([
 		};
 
 	/**
-	 * Creates a cache proxy and attaches it to the given binding.
-	 *
-	 * @param {sap.ui.model.odata.v4.ODataListBinding} oBinding
-	 *   The OData list binding instance
-	 * @param {sap.ui.model.odata.v4.Context} oContext
-	 *   The context instance to be used
-	 */
-	function createCacheProxy(oBinding, oContext) {
-		function createCache(sPath) {
-			var mQueryOptions = _ODataHelper.getQueryOptions(oBinding, "", oContext),
-				sOrderby = _ODataHelper.buildOrderbyOption(oBinding.aSorters,
-					mQueryOptions && mQueryOptions.$orderby);
-
-			return _Cache.create(oBinding.oModel.oRequestor,
-				_Helper.buildPath(sPath.slice(1), oBinding.sPath),
-				_ODataHelper.mergeQueryOptions(mQueryOptions, sOrderby));
-		}
-
-		if (!oBinding.mQueryOptions && oBinding.aSorters.length === 0) {
-			// no need for an own cache
-			return;
-		}
-		oBinding.oCache = _ODataHelper.createCacheProxy(oBinding, createCache,
-			oContext.requestCanonicalPath());
-		oBinding.oCache.promise.then(function (oCache) {
-			oBinding.oCache = oCache;
-		})["catch"](function (oError) {
-			oBinding.oModel.reportError("Failed to create cache for binding " + oBinding,
-				sClassName, oError);
-		});
-	}
-
-	/**
 	 * DO NOT CALL this private constructor for a new <code>ODataListBinding</code>,
 	 * but rather use {@link sap.ui.model.odata.v4.ODataModel#bindList bindList} instead!
 	 *
@@ -71,9 +38,14 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.Context} [oContext]
 	 *   The parent context which is required as base for a relative path
 	 * @param {sap.ui.model.Sorter | sap.ui.model.Sorter[]} [vSorters]
-	 *   The dynamic sorters to be used initially; they can be replaced using the {@link #sort}
-	 *   method. Static sorters, as defined in the '$orderby' binding parameter, are always executed
-	 *   after the dynamic sorters.
+	 *   The dynamic sorters to be used initially. Call {@link #sort} to replace them. Static
+	 *   sorters, as defined in the '$orderby' binding parameter, are always executed after the
+	 *   dynamic sorters.
+	 *   Supported since 1.39.0.
+	 * @param {sap.ui.model.Filter | sap.ui.model.Filter[]} [vFilters]
+	 *   The dynamic application filters to be used initially. Call {@link #filter} to replace them.
+	 *   Static filters, as defined in the '$filter' binding parameter, are always combined with the
+	 *   dynamic filters using a logical <code>AND</code>.
 	 *   Supported since 1.39.0.
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters which can be OData query options as specified in
@@ -118,9 +90,8 @@ sap.ui.define([
 	 * @version ${version}
 	 */
 	var ODataListBinding = ListBinding.extend("sap.ui.model.odata.v4.ODataListBinding", {
-			constructor : function (oModel, sPath, oContext, vSorters, mParameters) {
+			constructor : function (oModel, sPath, oContext, vSorters, vFilters, mParameters) {
 				var oBindingParameters,
-					bSortersGiven = vSorters !== undefined && vSorters !== null,
 					sOrderby;
 
 				ListBinding.call(this, oModel, sPath);
@@ -134,12 +105,14 @@ sap.ui.define([
 				this.sOperationMode = oBindingParameters.$$operationMode || oModel.sOperationMode;
 				this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
 
-				if (!this.sOperationMode && bSortersGiven) {
+				if (!this.sOperationMode && (vSorters || vFilters)) {
 					throw new Error("Unsupported operation mode: " + this.sOperationMode);
 				}
 
+				this.aApplicationFilters = _ODataHelper.toArray(vFilters);
 				this.oCache = undefined;
 				this.sChangeReason = undefined;
+				this.aFilters = [];
 				this.mQueryOptions = undefined;
 				this.sRefreshGroupId = undefined;
 				this.aSorters = _ODataHelper.toArray(vSorters);
@@ -149,10 +122,14 @@ sap.ui.define([
 						mParameters, _ODataHelper.aAllowedSystemQueryOptions);
 				}
 				if (!this.bRelative) {
-					sOrderby = _ODataHelper.buildOrderbyOption(this.aSorters,
-						this.mQueryOptions && this.mQueryOptions.$orderby);
-					this.oCache = _Cache.create(oModel.oRequestor, sPath.slice(1),
-						_ODataHelper.mergeQueryOptions(this.mQueryOptions, sOrderby));
+					if (this.aApplicationFilters.length > 0) {
+						this.oCache = _ODataHelper.createListCacheProxy(this);
+					} else {
+						sOrderby = _ODataHelper.buildOrderbyOption(this.aSorters,
+							this.mQueryOptions && this.mQueryOptions.$orderby);
+						this.oCache = _Cache.create(oModel.oRequestor, sPath.slice(1),
+							_ODataHelper.mergeQueryOptions(this.mQueryOptions, sOrderby));
+					}
 				}
 
 				this.reset();
@@ -280,7 +257,7 @@ sap.ui.define([
 	 * {@link sap.ui.model.odata.v4.ODataModel#submitBatch} to submit the changes or
 	 * {@link sap.ui.model.odata.v4.ODataModel#resetChanges} to reset the changes before calling
 	 * 'filter'.
-
+	 *
 	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [vFilters]
 	 *   The dynamic filters to be used; replaces the dynamic filters given in
 	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList}.
@@ -305,20 +282,6 @@ sap.ui.define([
 	 * @since 1.39.0
 	 */
 	ODataListBinding.prototype.filter = function (vFilters, sFilterType) {
-		var that = this;
-
-		function createCache(sPath, sFilterValue) {
-			var mQueryOptions = that.mQueryOptions || {};
-
-			if (sFilterValue) {
-				mQueryOptions = JSON.parse(JSON.stringify(that.mQueryOptions));
-				mQueryOptions.$filter = sFilterValue;
-			}
-			return _Cache.create(that.oModel.oRequestor,
-					_Helper.buildPath(/*sPath.slice(1), */that.sPath.slice(1)),
-				mQueryOptions);
-		}
-
 		if (this.bRelative) {
 			throw new Error(
 				"Unsupported operation: v4.ODataListBinding#filter on relative bindings");
@@ -330,21 +293,13 @@ sap.ui.define([
 			throw new Error("Cannot filter due to pending changes");
 		}
 
-		if  (sFilterType === FilterType.Control) {
+		if (sFilterType === FilterType.Control) {
 			this.aFilters = _ODataHelper.toArray(vFilters);
 		} else {
 			this.aApplicationFilters = _ODataHelper.toArray(vFilters);
 		}
 //		this.mCacheByContext = undefined;
-		this.oCache = _ODataHelper.createCacheProxy(this, createCache, /*oPathPromise*/undefined,
-			_ODataHelper.requestFilter(this, this.aApplicationFilters, this.aFilters,
-					this.mQueryOptions && this.mQueryOptions.$filter));
-		this.oCache.promise.then(function (oCache) {
-			that.oCache = oCache;
-		})["catch"](function (oError) {
-			that.oModel.reportError("Failed to create cache for binding " + that,
-				sClassName, oError);
-		});
+		this.oCache = _ODataHelper.createListCacheProxy(this, /*oContext*/undefined);
 		this.sChangeReason = ChangeReason.Filter;
 		this.reset();
 		this._fireRefresh({reason : ChangeReason.Filter});
@@ -797,7 +752,7 @@ sap.ui.define([
 					this.oCache = undefined;
 				}
 				if (oContext) {
-					createCacheProxy(this, oContext);
+					this.oCache = _ODataHelper.createListCacheProxy(this, oContext);
 				}
 				// call Binding#setContext because of data state etc.; fires "change"
 				Binding.prototype.setContext.call(this, oContext);
@@ -849,10 +804,7 @@ sap.ui.define([
 		// replace cache and reset contexts and length properties
 		if (this.bRelative) {
 			this.mCacheByContext = undefined;
-			if (!this.oContext) {
-				return this; //postpone cache creation
-			}
-			createCacheProxy(this, this.oContext);
+			this.oCache = _ODataHelper.createListCacheProxy(this, this.oContext);
 		} else {
 			sOrderby = _ODataHelper.buildOrderbyOption(this.aSorters,
 				this.mQueryOptions && this.mQueryOptions.$orderby);

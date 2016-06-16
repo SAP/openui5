@@ -602,13 +602,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("forbidden", function (assert) {
-		var aFilters = [],
-			oModel = createModel();
-
-		assert.throws(function () { //TODO implement
-			oModel.bindList(undefined, undefined,  undefined, aFilters);
-		}, new Error("Unsupported operation: v4.ODataModel#bindList, "
-				+ "aFilters parameter must not be set"));
+		var oModel = createModel();
 
 		assert.throws(function () { //TODO implement
 			oModel.bindTree();

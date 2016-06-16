@@ -65,13 +65,13 @@ sap.ui.define([
 					"ProductList('HT-1000')/Name" : {
 						source : "ProductList.json"
 					},
-					"SalesOrderList?$expand=SO_2_BP&$filter=BuyerName%20ge%20'M'&$select=BuyerName,CurrencyCode,GrossAmount,Note,SalesOrderID&$skip=0&$top=5" : {
+					"SalesOrderList?$expand=SO_2_BP&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerName,CurrencyCode,GrossAmount,Note,SalesOrderID&$skip=0&$top=5" : {
 						source : "SalesOrderList.json"
 					},
-					"SalesOrderList?$expand=SO_2_BP&$filter=BuyerName%20ge%20'M'&$select=BuyerName,CurrencyCode,GrossAmount,Note,SalesOrderID&$skip=0&$top=10" : {
+					"SalesOrderList?$expand=SO_2_BP&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerName,CurrencyCode,GrossAmount,Note,SalesOrderID&$skip=0&$top=10" : {
 						source : "SalesOrderList.json"
 					},
-					"SalesOrderList?$expand=SO_2_BP&$filter=BuyerName%20ge%20'M'&$select=BuyerName,CurrencyCode,GrossAmount,Note,SalesOrderID&$skip=5&$top=5" : {
+					"SalesOrderList?$expand=SO_2_BP&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerName,CurrencyCode,GrossAmount,Note,SalesOrderID&$skip=5&$top=5" : {
 						source : "SalesOrderListNoMoreData.json"
 					},
 					"SalesOrderList('0500000000')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber),SO_2_SCHDL($select=ScheduleKey,DeliveryDate)&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {

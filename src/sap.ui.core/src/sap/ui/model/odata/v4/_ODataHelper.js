@@ -3,12 +3,13 @@
  */
 
 sap.ui.define([
+	"./lib/_Cache",
 	"./lib/_Helper",
 	"./lib/_Parser",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/Sorter"
-], function (_Helper, _Parser, FilterOperator, OperationMode, Sorter) {
+], function (_Cache, _Helper, _Parser, FilterOperator, OperationMode, Sorter) {
 	"use strict";
 
 	var ODataHelper,
@@ -318,6 +319,58 @@ sap.ui.define([
 		},
 
 		/**
+		 * Creates a cache proxy for the given list binding using {@link #.createCacheProxy}. Takes
+		 * care of sort and filter parameters. Returns the proxy (allowing for easier testing)
+		 * which itself applies the final cache directly to the binding.
+		 *
+		 * This is meant to be a private method of ODataListBinding which is hidden here to prevent
+		 * accidental usage.
+		 *
+		 * Note that the context is given as a parameter and oBinding.oContext is unused because
+		 * the binding's setContext calls this method before calling the superclass to ensure that
+		 * the cache proxy is already created when the events are fired.
+		 *
+		 * @param {sap.ui.model.odata.v4.ODataListBinding} oBinding
+		 *   The OData list binding instance
+		 * @param {sap.ui.model.odata.v4.Context} [oContext]
+		 *   The context instance to be used, may be omitted for absolute bindings
+		 * @returns {object}
+		 *   The created cache proxy or undefined if none is required
+		 */
+		createListCacheProxy : function (oBinding, oContext) {
+			var oCacheProxy, oFilterPromise, oPathPromise, mQueryOptions;
+
+			function createCache(sPath, sFilter) {
+				var sOrderby = ODataHelper.buildOrderbyOption(oBinding.aSorters,
+						mQueryOptions && mQueryOptions.$orderby);
+
+				return _Cache.create(oBinding.oModel.oRequestor,
+					_Helper.buildPath(sPath, oBinding.sPath).slice(1),
+					ODataHelper.mergeQueryOptions(mQueryOptions, sOrderby, sFilter));
+			}
+
+			if (oBinding.bRelative) {
+				if (!oContext || (!oBinding.mQueryOptions && !oBinding.aSorters.length
+						&& !oBinding.aFilters.length && !oBinding.aApplicationFilters.length)) {
+					return undefined; // no need for an own cache
+				}
+			}
+			mQueryOptions = ODataHelper.getQueryOptions(oBinding, "", oContext);
+			oPathPromise = oContext && oContext.requestCanonicalPath();
+			oFilterPromise = ODataHelper.requestFilter(oBinding, oBinding.aApplicationFilters,
+				oBinding.aFilters, mQueryOptions && mQueryOptions.$filter);
+			oCacheProxy = ODataHelper.createCacheProxy(oBinding, createCache, oPathPromise,
+				oFilterPromise);
+			oCacheProxy.promise.then(function (oCache) {
+				oBinding.oCache = oCache;
+			})["catch"](function (oError) {
+				oBinding.oModel.reportError("Failed to create cache for binding " + oBinding,
+					"sap.ui.model.odata.v4._ODataHelper", oError);
+			});
+			return oCacheProxy;
+		},
+
+		/**
 		 * Returns the key predicate (see "4.3.1 Canonical URL") for the given entity type meta
 		 * data and entity instance runtime data.
 		 *
@@ -394,23 +447,33 @@ sap.ui.define([
 		},
 
 		/**
-		 * Merges the given orderby value into a copy of the given map of query options.
+		 * Merges the given orderby and filter values into a copy of the given map of query options.
 		 * If no merge is needed the original map of query options is returned.
 		 *
 		 * @param {object} [mQueryOptions]
 		 *   The map of query options
 		 * @param {string} [sOrderby]
-		 *   The new value for $orderby query option
+		 *   The new value for the query option "$orderby"
+		 * @param {string} [sFilter]
+		 *   The new value for the query option "$filter"
 		 * @returns {object}
 		 *   The merged map of query options
 		 */
-		mergeQueryOptions : function (mQueryOptions, sOrderby) {
-			if (!sOrderby || mQueryOptions && mQueryOptions.$orderby === sOrderby) {
-				return mQueryOptions;
+		mergeQueryOptions : function (mQueryOptions, sOrderby, sFilter) {
+			var mResult;
+
+			function set(sProperty, sValue) {
+				if (sValue && (!mQueryOptions || mQueryOptions[sProperty] !== sValue)) {
+					if (!mResult) {
+						mResult = mQueryOptions ? JSON.parse(JSON.stringify(mQueryOptions)) : {};
+					}
+					mResult[sProperty] = sValue;
+				}
 			}
-			return jQuery.extend({}, mQueryOptions, {
-				$orderby : sOrderby
-			});
+
+			set("$orderby", sOrderby);
+			set("$filter", sFilter);
+			return mResult || mQueryOptions;
 		},
 
 		/**
