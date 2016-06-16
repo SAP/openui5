@@ -403,7 +403,6 @@ QUnit.test("Should not throw an exception if the core is not defined", function(
 	//Act
 	this.oPlugin.getMatchingControls({ id : "foo" });
 	this.oPlugin.getMatchingControls({
-		controlType : "anything"
 	});
 
 	// Assert
@@ -417,7 +416,6 @@ QUnit.test("Should not throw an exception if the elements of core are not define
 	//Act
 	this.oPlugin.getMatchingControls({ id : "foo" });
 	this.oPlugin.getMatchingControls({
-		controlType : "anything"
 	});
 
 	// Assert
@@ -517,7 +515,11 @@ sap.ui.require([
 		sinon.assert.calledOnce(fnVisibleSpy);
 	});
 
-	QUnit.start();
+	$(function () {
+		// hack for IE - dialog introduces a global when opened so i open it before the test starts
+		new sap.m.Dialog().open().destroy();
+		QUnit.start();
+	});
 });
 
 
