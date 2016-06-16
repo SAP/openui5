@@ -115,7 +115,7 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	FilterProcessor._resolveMultiFilter = function(oMultiFilter, vRef, fnGetValue){
 		var that = this,
-			bMatched = false,
+			bMatched = oMultiFilter.bAnd,
 			aFilters = oMultiFilter.aFilters;
 
 		if (aFilters) {
@@ -131,13 +131,8 @@ sap.ui.define(['jquery.sap.global'],
 						bLocalMatch = true;
 					}
 				}
-				if (bLocalMatch && oMultiFilter.bAnd) {
-					bMatched = true;
-				} else if (!bLocalMatch && oMultiFilter.bAnd) {
-					bMatched = false;
-					return false;
-				} else if (bLocalMatch) {
-					bMatched = true;
+				if ((!bLocalMatch && oMultiFilter.bAnd) || (bLocalMatch && !oMultiFilter.bAnd)) {
+					bMatched = bLocalMatch;
 					return false;
 				}
 			});
