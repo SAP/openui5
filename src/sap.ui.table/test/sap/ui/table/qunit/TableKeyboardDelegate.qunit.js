@@ -526,6 +526,164 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 		oElem = checkFocus(jQuery.sap.domById("Extension"), assert);
 	});
 
+	function _testArrowKeys(assert) {
+		var oElem = setFocusOutsideOfTable("Focus1");
+		simulateTabEvent(oElem, false);
+		oElem = checkFocus(getColumnHeader(0), assert);
+		qutils.triggerKeydown(oElem, "ARROW_DOWN", false, false, false);
+		oElem = checkFocus(getCell(0, 0), assert);
+		qutils.triggerKeydown(oElem, "ARROW_LEFT", false, false, false);
+		oElem = checkFocus(getRowHeader(0), assert);
+		qutils.triggerKeydown(oElem, "ARROW_LEFT", false, false, false);
+		oElem = checkFocus(getRowHeader(0), assert);
+		qutils.triggerKeydown(oElem, "ARROW_UP", false, false, false);
+		oElem = checkFocus(getSelectAll(), assert);
+		qutils.triggerKeydown(oElem, "ARROW_LEFT", false, false, false);
+		oElem = checkFocus(getSelectAll(), assert);
+		qutils.triggerKeydown(oElem, "ARROW_UP", false, false, false);
+		oElem = checkFocus(getSelectAll(), assert);
+		var iColIdx;
+		for (var i = 0; i < iNumberOfCols; i++) {
+			iColIdx = i;
+			qutils.triggerKeydown(oElem, "ARROW_RIGHT", false, false, false);
+			oElem = checkFocus(getColumnHeader(iColIdx), assert);
+		}
+		qutils.triggerKeydown(oElem, "ARROW_RIGHT", false, false, false);
+		oElem = checkFocus(getColumnHeader(iColIdx), assert);
+		qutils.triggerKeydown(oElem, "ARROW_UP", false, false, false);
+		oElem = checkFocus(getColumnHeader(iColIdx), assert);
+
+		var oRow, iIdx;
+		var iVisibleRowCount = oTable.getVisibleRowCount();
+
+		for (var i = 0; i < iNumberOfRows; i++) {
+			qutils.triggerKeydown(oElem, "ARROW_DOWN", false, false, false);
+			iIdx = i;
+			if (i >= oTable.getVisibleRowCount() - oTable.getFixedBottomRowCount() && i < iNumberOfRows - oTable.getFixedBottomRowCount()) {
+				iIdx = oTable.getVisibleRowCount() - oTable.getFixedBottomRowCount() - 1;
+			} else if (i >= iNumberOfRows - oTable.getFixedBottomRowCount()) {
+				iIdx = i - (iNumberOfRows - oTable.getVisibleRowCount());
+			}
+			oRow = oTable.getRows()[iIdx];
+			oElem = checkFocus(getCell(iIdx, iColIdx), assert);
+			assert.equal(oRow.getIndex(), i, "Row index correct");
+		}
+
+		qutils.triggerKeydown(oElem, "ARROW_RIGHT", false, false, false);
+		oElem = checkFocus(getCell(iIdx, iColIdx), assert);
+		qutils.triggerKeydown(oElem, "ARROW_DOWN", false, false, false);
+		oElem = checkFocus(getCell(iIdx, iColIdx), assert);
+		assert.equal(oRow.getIndex(), iNumberOfRows - 1, "Row index correct");
+
+		for (var i = iNumberOfCols - 2; i >= 0; i--) {
+			iColIdx = i;
+			qutils.triggerKeydown(oElem, "ARROW_LEFT", false, false, false);
+			oElem = checkFocus(getCell(iIdx, iColIdx), assert);
+		}
+
+		qutils.triggerKeydown(oElem, "ARROW_LEFT", false, false, false);
+		oElem = checkFocus(getRowHeader(iIdx), assert);
+
+		for (var i = iNumberOfRows - 2; i >= 0; i--) {
+			qutils.triggerKeydown(oElem, "ARROW_UP", false, false, false);
+			iIdx = i;
+
+			if (i >= oTable.getFixedRowCount() && i < iNumberOfRows - oTable.getVisibleRowCount() + oTable.getFixedRowCount() + 1) {
+				iIdx = oTable.getFixedRowCount();
+			} else if (i >= iNumberOfRows - oTable.getVisibleRowCount() + oTable.getFixedRowCount() + 1) {
+				iIdx = i - (iNumberOfRows - oTable.getVisibleRowCount());
+			}
+			oRow = oTable.getRows()[iIdx];
+			oElem = checkFocus(getRowHeader(iIdx), assert);
+			assert.equal(oRow.getIndex(), i, "Row index correct");
+		}
+	}
+
+	QUnit.test("Arrow keys", function(assert) {
+		_testArrowKeys(assert);
+	});
+
+	QUnit.test("Arrow keys - Fixed Rows", function(assert) {
+		oTable.setVisibleRowCount(6);
+		oTable.setFixedRowCount(2);
+		oTable.setFixedBottomRowCount(2);
+		sap.ui.getCore().applyChanges();
+
+		_testArrowKeys(assert);
+	});
+
+	QUnit.test("Arrow keys - No Row Header", function(assert) {
+		oTable.setSelectionMode("None");
+		sap.ui.getCore().applyChanges();
+
+		var oElem = setFocusOutsideOfTable("Focus1");
+		simulateTabEvent(oElem, false);
+		oElem = checkFocus(getColumnHeader(0), assert);
+		qutils.triggerKeydown(oElem, "ARROW_LEFT", false, false, false);
+		oElem = checkFocus(getColumnHeader(0), assert);
+		qutils.triggerKeydown(oElem, "ARROW_DOWN", false, false, false);
+		oElem = checkFocus(getCell(0, 0), assert);
+		qutils.triggerKeydown(oElem, "ARROW_LEFT", false, false, false);
+		oElem = checkFocus(getCell(0, 0), assert);
+	});
+
+	QUnit.test("Arrow keys - No Column Header", function(assert) {
+		oTable.setColumnHeaderVisible(false);
+		sap.ui.getCore().applyChanges();
+
+		var oElem = setFocusOutsideOfTable("Focus1");
+		simulateTabEvent(oElem, false);
+		oElem = checkFocus(getCell(0, 0), assert);
+		qutils.triggerKeydown(oElem, "ARROW_UP", false, false, false);
+		oElem = checkFocus(getCell(0, 0), assert);
+		qutils.triggerKeydown(oElem, "ARROW_LEFT", false, false, false);
+		oElem = checkFocus(getRowHeader(0), assert);
+		qutils.triggerKeydown(oElem, "ARROW_UP", false, false, false);
+		oElem = checkFocus(getRowHeader(0), assert);
+	});
+
+	QUnit.test("Arrow keys - Multi Header", function(assert) {
+		oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b1"}));
+		oTable.getColumns()[1].setHeaderSpan([2,1]);
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "b"}));
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "b2"}));
+		oTable.getColumns()[3].addMultiLabel(new TestControl({text: "d"}));
+		oTable.getColumns()[3].addMultiLabel(new TestControl({text: "d1"}));
+		sap.ui.getCore().applyChanges();
+
+		var oElem = setFocusOutsideOfTable("Focus1");
+		simulateTabEvent(oElem, false);
+		oElem = checkFocus(getColumnHeader(0), assert);
+		qutils.triggerKeydown(oElem, "ARROW_DOWN", false, false, false);
+		oElem = checkFocus(jQuery.sap.domById(getColumnHeader(0).attr("id") + "_1"), assert);
+		qutils.triggerKeydown(oElem, "ARROW_RIGHT", false, false, false);
+		oElem = checkFocus(jQuery.sap.domById(getColumnHeader(1).attr("id") + "_1"), assert);
+		qutils.triggerKeydown(oElem, "ARROW_UP", false, false, false);
+		oElem = checkFocus(getColumnHeader(1), assert);
+		qutils.triggerKeydown(oElem, "ARROW_DOWN", false, false, false);
+		oElem = checkFocus(jQuery.sap.domById(getColumnHeader(1).attr("id") + "_1"), assert);
+		qutils.triggerKeydown(oElem, "ARROW_RIGHT", false, false, false);
+		oElem = checkFocus(jQuery.sap.domById(getColumnHeader(2).attr("id") + "_1"), assert);
+		qutils.triggerKeydown(oElem, "ARROW_UP", false, false, false);
+		oElem = checkFocus(getColumnHeader(1), assert);
+		qutils.triggerKeydown(oElem, "ARROW_RIGHT", false, false, false);
+		oElem = checkFocus(getColumnHeader(3), assert);
+		qutils.triggerKeydown(oElem, "ARROW_DOWN", false, false, false);
+		oElem = checkFocus(jQuery.sap.domById(getColumnHeader(3).attr("id") + "_1"), assert);
+		qutils.triggerKeydown(oElem, "ARROW_LEFT", false, false, false);
+		oElem = checkFocus(jQuery.sap.domById(getColumnHeader(2).attr("id") + "_1"), assert);
+		qutils.triggerKeydown(oElem, "ARROW_UP", false, false, false);
+		oElem = checkFocus(getColumnHeader(1), assert);
+		qutils.triggerKeydown(oElem, "ARROW_LEFT", false, false, false);
+		oElem = checkFocus(getColumnHeader(0), assert);
+		qutils.triggerKeydown(oElem, "ARROW_LEFT", false, false, false);
+		oElem = checkFocus(getSelectAll(), assert);
+		qutils.triggerKeydown(oElem, "ARROW_DOWN", false, false, false);
+		oElem = checkFocus(getRowHeader(0), assert);
+	});
+
 
 
 	QUnit.module("Keyboard Support: F6 Handling", {

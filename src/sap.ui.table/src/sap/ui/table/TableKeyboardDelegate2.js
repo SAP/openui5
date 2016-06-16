@@ -3,9 +3,12 @@
  */
 
 // Provides helper sap.ui.table.TableKeyboardDelegate2.
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', './TableUtils'],
-	function(jQuery, BaseObject, TableExtension, TableUtils) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableExtension', './TableUtils'],
+	function(jQuery, BaseObject, library, TableExtension, TableUtils) {
 	"use strict";
+
+	// shortcuts
+	var NavigationMode = library.NavigationMode;
 
 	/**
 	 * New Delegate for keyboard events of sap.ui.table.Table controls.
@@ -102,6 +105,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableExtension', '.
 				oEvent.preventDefault();
 			} else {
 				TableKeyboardDelegate._forwardFocusToTabDummy(this, "sapUiTableCtrlBefore");
+			}
+		}
+	};
+
+
+	TableKeyboardDelegate.prototype.onsapdown = function(oEvent) {
+		var oInfo = TableUtils.getCellInfo(oEvent.target) || {};
+
+		if (oInfo.type === TableUtils.CELLTYPES.DATACELL || oInfo.type === TableUtils.CELLTYPES.ROWHEADER) {
+			if (this._isBottomRow(oEvent) && this._getSanitizedFirstVisibleRow() + this.getVisibleRowCount() < this._getRowCount()) {
+				oEvent.setMarked("sapUiTableSkipItemNavigation");
+				if (this.getNavigationMode() === NavigationMode.Scrollbar) {
+					this._scrollNext();
+				} else {
+					this._scrollPageDown();
+				}
+			}
+		} else if (oInfo.type === TableUtils.CELLTYPES.COLUMNROWHEADER) {
+			if (this.getColumnHeaderVisible() && this._getHeaderRowCount() > 1) {
+				oEvent.setMarked("sapUiTableSkipItemNavigation");
+				//Focus the first row header
+				TableUtils.focusItem(this, this._getHeaderRowCount() * (TableUtils.getVisibleColumnCount(this) + 1/*Row Headers*/), oEvent);
+			}
+		}
+	};
+
+
+	TableKeyboardDelegate.prototype.onsapup = function(oEvent) {
+		var oInfo = TableUtils.getCellInfo(oEvent.target) || {};
+
+		if (oInfo.type === TableUtils.CELLTYPES.DATACELL || oInfo.type === TableUtils.CELLTYPES.ROWHEADER) {
+			if (this._isTopRow(oEvent) && this._getSanitizedFirstVisibleRow() > 0) {
+				oEvent.setMarked("sapUiTableSkipItemNavigation");
+				if (this.getNavigationMode() === NavigationMode.Scrollbar) {
+					this._scrollPrevious();
+				} else {
+					this._scrollPageUp();
+				}
 			}
 		}
 	};
