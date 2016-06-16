@@ -103,14 +103,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 		 * A translucent background depending on the opacity value of the theme.
 		 * @public
 		 */
-		Translucent : "Translucent",
+		Translucent : "Translucent"
 
-		/**
-		 * A second solid background color dependent on the theme.
-		 * @since 1.40.0
-		 * @public
-		 */
-		Solid2 : "Solid2"
 	};
 
 	/**
