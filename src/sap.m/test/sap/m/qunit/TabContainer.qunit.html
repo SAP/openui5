@@ -186,7 +186,6 @@
 			//sapMTabSelect
 			strictEqual(jQuery(this.oTabContainer.$()).children('.sapMTabStrip').length, 1, 'TabStrip is initially rendered.');
 			this.oTabContainer.destroyAggregation('_tabStrip');
-			this.clock.tick(1000);
 			strictEqual(jQuery(this.oTabContainer.$()).children('.sapMTabStrip').length, 0, 'TabStrip is not re-rendered upon TabContainer re-rendering after TabStrip was destroyed.');
 		});
 
