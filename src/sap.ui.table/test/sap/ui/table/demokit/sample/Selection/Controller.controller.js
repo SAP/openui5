@@ -17,7 +17,9 @@ sap.ui.define([
 
 			var aSelectionModes = [];
 			jQuery.each(sap.ui.table.SelectionMode, function(k, v){
-				aSelectionModes.push({key: k, text: v});
+				if (k != sap.ui.table.SelectionMode.Multi) {
+					aSelectionModes.push({key: k, text: v});
+				}
 			});
 
 			var aSelectionBehaviors = [];
