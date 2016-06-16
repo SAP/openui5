@@ -88,14 +88,13 @@ sap.ui.require(["jquery.sap.global", "sap/ui/core/cache/CacheManager", "sap/ui/c
 	if (Cache._isSupportedEnvironment()) {
 		Cache.reset().then(function() {
 
-			var sLocation = window.location.host + window.location.path;
+			var sLocation = window.location.host + window.location.pathname;
 
 			function getKeyParts(aKeys, sManifest) {
-				var oVersionInfo = sap.ui.getVersionInfo().version,
-					bHasBuildTimestamp = oVersionInfo.buildTimestamp && oVersionInfo.buildTimestamp.indexOf("{buildtimestamp}") == -1,
-					sBuildTimeStamp = (bHasBuildTimestamp ? oVersionInfo.buildTimestamp : sap.ui.version),
-					sLanguageTag = sap.ui.getCore().getConfiguration().getLanguageTag();
-				return "_" + sLanguageTag + "_" + sBuildTimeStamp + "_" + aKeys.join("_") + "(" + jQuery.sap.hashCode(sManifest || "") + ")";
+				var sBuildTimeStamp = sap.ui.getVersionInfo().buildTimestamp,
+					sLanguageTag = sap.ui.getCore().getConfiguration().getLanguageTag(),
+					sHashCode = jQuery.sap.hashCode(sManifest || "");
+				return "_" + sLanguageTag + "_" + sBuildTimeStamp + "_" + aKeys.join("_") + "(" + sHashCode + ")";
 			}
 
 			QUnit.module("Cache API", {

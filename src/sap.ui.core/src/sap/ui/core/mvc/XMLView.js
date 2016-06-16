@@ -216,8 +216,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		}
 
 		function getCacheKeyPrefixes(oView, oRootComponent) {
+				var sComponentName = oRootComponent && oRootComponent.getMetadata().getName();
 				return [
-					oRootComponent ? oRootComponent.getMetadata().getName() : window.location.host + window.location.path,
+					sComponentName || window.location.host + window.location.pathname,
 					oView.getId(),
 					sap.ui.getCore().getConfiguration().getLanguageTag()
 				];
@@ -225,8 +226,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 
 		function getVersionInfo() {
 			return sap.ui.getVersionInfo({async:true}).then(function(oInfo) {
-				var bUseTs = oInfo.buildTimestamp && oInfo.buildTimestamp.indexOf("${buildtimestamp}") == -1;
-				return bUseTs ? oInfo.buildTimestamp : sap.ui.version;
+				return oInfo.buildTimestamp;
 			});
 		}
 
