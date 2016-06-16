@@ -153,6 +153,7 @@ sap.ui.define(['jquery.sap.global', './Popover', './TabStripSelectList', './libr
 					}
 				}
 			}, oPicker);
+			oPicker.addStyleClass("sapContrastPlus");
 
 			this._decoratePopover(oPicker);
 			return oPicker;

@@ -5,7 +5,7 @@
 
 .sapMTabStrip {
 	background: @sapUiPageHeaderBackground;
-	border: 1px solid @sapUiPageHeaderBorderColor;
+	border-bottom: 0.125rem solid darken(@sapUiObjectHeaderBackground, 8);
 	.sapMTSLeftOverflowButtons {
 		background: linear-gradient(90deg, @sapUiPageHeaderBackground 0%, @sapUiPageHeaderBackground 75%, fade(@sapUiPageHeaderBackground, 0) 100%);
 	}
@@ -13,28 +13,21 @@
 		.sapMTSTabs {
 			.sapMTabStripItem {
 				background: @sapUiPageHeaderBackground;
-				border-right: 1px solid @sapUiPageHeaderBorderColor;
-				color: @sapUiPageHeaderTextColor;
+				color: @sapUiGroupTitleTextColor;
+				.sapMTSItemCloseBtnCnt {
+					visibility: hidden;
+				}
 				&.sapMTabStripItemSelected {
-					background: lighten(@sapUiPageHeaderBackground, 5);
-					border-right: 1px solid @sapUiPageHeaderBorderColor;
-					color: @sapUiPageHeaderTextColor;
+					border-bottom: solid 0.125rem @sapUiHighlight;
+					color: darken(@sapUiGroupTitleTextColor, 20);
+					.sapMTSItemCloseBtnCnt {
+						visibility: visible;
+					}
 				}
 				&:hover {
-					background: darken(@sapUiPageHeaderBackground, 5);
-					border-right: 1px solid @sapUiPageHeaderBorderColor;
-					color: @sapUiPageHeaderTextColor;
-				}
-				&:active {
-					background: @sapUiHighlight;
-					border-right: 1px solid @sapUiPageHeaderBorderColor;
-					color: @sapUiContentContrastTextColor;
+					color: darken(@sapUiGroupTitleTextColor, 10);
 					.sapMTSItemCloseBtnCnt {
-						.sapMBtn {
-							.sapMBtnIcon {
-								color: @sapUiContentContrastIconColor;
-							}
-						}
+						visibility: visible;
 					}
 				}
 				&:focus {
