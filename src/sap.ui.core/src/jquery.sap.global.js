@@ -24,7 +24,7 @@
 	"use strict";
 
 	if ( !jQuery ) {
-		throw new Error("SAPUI5 requires jQuery as a prerequisite (>= version 1.10)");
+		throw new Error("Loading of jQuery failed");
 	}
 
 	// ensure not to initialize twice
@@ -225,8 +225,10 @@
 	// -----------------------------------------------------------------------
 
 	var oJQVersion = Version(jQuery.fn.jquery);
-	if ( !oJQVersion.inRange("1.10.1", "2.2.4") ) {
-		_earlyLog("error", "SAPUI5 requires a jQuery version of 1.10 or higher, but lower than 2.2.4; current version is " + jQuery.fn.jquery);
+	if ( oJQVersion.compareTo("2.2.3") != 0 ) {
+		// if the loaded jQuery version isn't SAPUI5's default version -> notify
+		// the application
+		_earlyLog("warning", "SAPUI5's default jQeruy version is 2.2.3; current version is " + jQuery.fn.jquery + ". Please note that we only support version 2.2.3.");
 	}
 
 	// TODO move to a separate module? Only adds 385 bytes (compressed), but...
@@ -2410,21 +2412,6 @@
 					exports: 'iScroll'
 				},
 				'sap/ui/thirdparty/jquery.js': {
-					amd: true
-				},
-				'sap/ui/thirdparty/jquery/jquery-1.10.1.js': {
-					amd: true
-				},
-				'sap/ui/thirdparty/jquery/jquery-1.10.2.js': {
-					amd: true
-				},
-				'sap/ui/thirdparty/jquery/jquery-1.11.1.js': {
-					amd: true
-				},
-				'sap/ui/thirdparty/jquery/jquery-2.1.4.js': {
-					amd: true
-				},
-				'sap/ui/thirdparty/jquery/jquery-2.2.1.js': {
 					amd: true
 				},
 				'sap/ui/thirdparty/jquery-mobile-custom.js': {
