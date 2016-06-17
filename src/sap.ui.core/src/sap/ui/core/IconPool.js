@@ -5,16 +5,183 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 	function(jQuery, Device, core, URI) {
 	"use strict";
 
-		var aIconNames = ["accidental-leave","account","wrench","windows-doors","washing-machine","visits","video","travel-expense","temperature","task","synchronize","survey","settings","search","sales-document","retail-store","refresh","product","present","ppt-attachment","pool","pie-chart","picture","photo-voltaic","phone","pending","pdf-attachment","past","outgoing-call","opportunity","opportunities","notes","money-bills","map","log","line-charts","lightbulb","leads","lead","laptop","kpi-managing-my-area","kpi-corporate-performance","incoming-call","inbox","horizontal-bar-chart","history","heating-cooling","gantt-bars","future","fridge","fallback","expense-report","excel-attachment","energy-saving-lightbulb","employee","email","edit","duplicate","download","doc-attachment","dishwasher","delete","decline","complete","competitor","collections-management","chalkboard","cart","card","camera","calendar","begin","basket","bar-chart","attachment","arrow-top","arrow-right","arrow-left","arrow-bottom","approvals","appointment","alphabetical-order","along-stacked-chart","alert","addresses","address-book","add-filter","add-favorite","add","activities","action","accept","hint","group","check-availability","weather-proofing","payment-approval","batch-payments","bed","arobase","family-care","favorite","navigation-right-arrow","navigation-left-arrow","e-care","less","lateness","lab","internet-browser","instance","inspection","image-viewer","home","grid","goalseek","general-leave-request","create-leave-request","flight","filter","favorite-list","factory","endoscopy","employee-pane","employee-approvals","email-read","electrocardiogram","documents","decision","database","customer-history","customer","credit-card","create-entry-time","contacts","compare","clinical-order","chain-link","pull-down","cargo-train","car-rental","business-card","bar-code","folder-blank","passenger-train","question-mark","world","iphone","ipad","warning","sort","course-book","course-program","add-coursebook","print","save","play","pause","record","response","pushpin-on","pushpin-off","unfavorite","learning-assistant","timesheet","time-entry-request","list","action-settings","share","feed","role","flag","post","inspect","inspect-down","appointment-2","target-group","marketing-campaign","notification","message-error","comment","shipping-status","collaborate","shortcut","lead-outdated","tools-opportunity","permission","supplier","table-view","table-chart","switch-views","e-learning","manager","switch-classes","simple-payment","signature","sales-order-item","sales-order","request","receipt","puzzle","process","private","popup-window","person-placeholder","per-diem","paper-plane","paid-leave","pdf-reader","overview-chart","overlay","org-chart","number-sign","notification-2","my-sales-order","meal","loan","order-status","customer-order-entry","performance","menu","employee-lookup","education","customer-briefing","customer-and-contacts","my-view","accelerated","to-be-reviewed","warning2","feeder-arrow","quality-issue","workflow-tasks","create","home-share","globe","tags","work-history","x-ray","wounds-doc","web-cam","waiver","vertical-bar-chart","upstacked-chart","trip-report","microphone","unpaid-leave","tree","toaster-up","toaster-top","toaster-down","time-account","theater","taxi","subway-train","study-leave","stethoscope","step","sonography","soccor","physical-activity","pharmacy","official-service","offsite-work","nutrition-activity","newspaper","monitor-payments","map-2","machine","mri-scan","end-user-experience-monitoring","unwired","customer-financial-fact-sheet","retail-store-manager","Netweaver-business-client","electronic-medical-record","eam-work-order","customer-view","crm-service-manager","crm-sales","widgets","commission-check","collections-insight","clinical-tast-tracker","citizen-connect","cart-approval","capital-projects","bo-strategy-management","business-objects-mobile","business-objects-explorer","business-objects-experience","bbyd-dashboard","bbyd-active-sales","business-by-design","business-one","sap-box","manager-insight","accounting-document-verification","hr-approval","idea-wall","Chart-Tree-Map","cart-5","cart-4","wallet","vehicle-repair","upload","unlocked","umbrella","travel-request","travel-expense-report","travel-itinerary","time-overtime","thing-type","technical-object","tag","syringe","syntax","suitcase","simulate","shield","share-2","sales-quote","repost","provision","projector","add-product","pipeline-analysis","add-photo","palette","nurse","sales-notification","mileage","meeting-room","media-forward","media-play","media-pause","media-reverse","media-rewind","measurement-document","measuring-point","measure","map-3","locked","letter","journey-arrive","journey-change","journey-depart","it-system","it-instance","it-host","iphone-2","ipad-2","inventory","insurance-house","insurance-life","insurance-car","initiative","incident","group-2","goal","functional-location","full-screen","form","fob-watch","blank-tag","family-protection","folder","fax-machine","example","eraser","employee-rejections","drop-down-list","draw-rectangle","document","doctor","discussion-2","discussion","dimension","customer-and-supplier","crop","add-contact","compare-2","color-fill","collision","curriculum","chart-axis","full-stacked-chart","full-stacked-column-chart","vertical-bar-chart-2","horizontal-bar-chart-2","horizontal-stacked-chart","vertical-stacked-chart","choropleth-chart","geographic-bubble-chart","multiple-radar-chart","radar-chart","crossed-line-chart","multiple-line-chart","multiple-bar-chart","line-chart","line-chart-dual-axis","bubble-chart","scatter-chart","multiple-pie-chart","column-chart-dual-axis","tag-cloud-chart","area-chart","cause","cart-3","cart-2","bus-public-transport","burglary","building","border","bookmark","badge","attachment-audio","attachment-video","attachment-html","attachment-photo","attachment-e-pub","attachment-zip-file","attachment-text-file","add-equipment","add-activity","activity-individual","activity-2","add-activity-2","activity-items","activity-assigned-to-goal","status-completed","status-positive","status-error","status-negative","status-inactive","status-in-process","status-critical","blank-tag-2","cart-full","locate-me","paging","company-view","document-text","explorer","personnel-view","sorting-ranking","drill-down","drill-up","vds-file","sap-logo-shape","folder-full","system-exit","system-exit-2","close-command-field","open-command-field","sys-enter-2","sys-enter","sys-help-2","sys-help","sys-back","sys-back-2","sys-cancel","sys-cancel-2","open-folder","sys-find-next","sys-find","sys-monitor","sys-prev-page","sys-first-page","sys-next-page","sys-last-page","generate-shortcut","create-session","display-more","enter-more","zoom-in","zoom-out","header","detail-view","collapse","expand","positive","negative","display","menu2","redo","undo","navigation-up-arrow","navigation-down-arrow","down","up","shelf","background","resize","move","show","hide","nav-back","error","slim-arrow-right","slim-arrow-left","slim-arrow-down","slim-arrow-up","forward","overflow","value-help","multi-select","exit-full-screen","sys-add","sys-minus","dropdown","expand-group","collapse-group","vertical-grip","horizontal-grip","sort-descending","sort-ascending","arrow-down","legend","message-warning","message-information","message-success","restart","stop","add-process","cancel-maintenance","activate","resize-horizontal","resize-vertical","connected","disconnected","edit-outside","key","minimize","back-to-top","hello-world","outbox","donut-chart","heatmap-chart","horizontal-bullet-chart","vertical-bullet-chart","call","download-from-cloud","upload-to-cloud","jam","sap-ui5","message-popup","cloud","horizontal-waterfall-chart","vertical-waterfall-chart","broken-link","headset","thumb-up","thumb-down","multiselect-all","multiselect-none","scissors","sound","sound-loud","sound-off","date-time","user-settings","key-user-settings","developer-settings","text-formatting","bold-text","italic-text","underline-text","text-align-justified","text-align-left","text-align-center","text-align-right","bullet-text","numbered-text","co","ui-notifications","bell","cancel-share","write-new-document","write-new","cancel","screen-split-one","screen-split-two","screen-split-three","customize","user-edit","source-code","copy","paste","line-chart-time-axis","clear-filter","reset","trend-up","trend-down","cursor-arrow","add-document","create-form","resize-corner","chevron-phase","chevron-phase-2","rhombus-milestone","rhombus-milestone-2","circle-task","circle-task-2","project-definition-triangle","project-definition-triangle-2","master-task-triangle","master-task-triangle-2","program-triangles","program-triangles-2","mirrored-task-circle","mirrored-task-circle-2","checklist-item","checklist-item-2","checklist","checklist-2","chart-table-view"];
-		var aIconCodes = ["e000","e001","e002","e003","e004","e005","e006","e007","e008","e009","e00a","e00b","e00c","e00d","e00e","e00f","e010","e011","e012","e013","e014","e015","e016","e017","e018","e019","e01a","e01b","e01c","e01d","e01e","e01f","e020","e021","e022","e023","e024","e025","e026","e027","e028","e029","e02a","e02b","e02c","e02d","e02e","e02f","e030","e031","e032","e033","e034","e035","e036","e037","e038","e039","e03a","e03b","e03c","e03d","e03e","e03f","e040","e041","e042","e043","e044","e045","e046","e047","e048","e049","e04a","e04b","e04c","e04d","e04e","e04f","e050","e051","e052","e053","e054","e055","e056","e057","e058","e059","e05a","e05b","e05c","e05d","e05e","e05f","e060","e061","e062","e063","e064","e065","e066","e067","e068","e069","e06a","e06b","e06c","e06d","e06e","e06f","e070","e071","e072","e073","e074","e075","e076","e077","e078","e079","e07a","e07b","e07c","e07d","e07e","e07f","e080","e081","e082","e083","e084","e085","e086","e087","e088","e089","e08a","e08b","e08c","e08d","e08e","e08f","e090","e091","e092","e093","e094","e095","e096","e097","e098","e099","e09a","e09b","e09c","e09d","e09e","e09f","e0a0","e0a1","e0a2","e0a3","e0a4","e0a5","e0a6","e0a7","e0a8","e0a9","e0aa","e0ab","e0ac","e0ad","e0ae","e0af","e0b0","e0b1","e0b1","e0b2","e0b3","e0b4","e0b5","e0b6","e0b7","e0b8","e0b9","e0ba","e0bb","e0bc","e0bd","e0be","e0bf","e0c0","e0c1","e0c2","e0c3","e0c4","e0c5","e0c6","e0c7","e0c8","e0c9","e0ca","e0cb","e0cc","e0cd","e0ce","e0cf","e0d0","e0d1","e0d2","e0d3","e0d4","e0d5","e0d6","e0d7","e0d8","e0d9","e0da","e0db","e0dc","e0dd","e0de","e0df","e0e0","e0e1","e0e2","e0e3","e0e4","e0e5","e0e6","e0e7","e0e8","e0e9","e0ea","e0eb","e0ec","e0ed","e0ee","e0ef","e0f0","e0f1","e0f2","e0f3","e0f4","e0f5","e0f6","e0f7","e0f8","e0f9","e0fa","e0fb","e0fc","e0fd","e0fe","e0ff","e100","e101","e102","e103","e104","e105","e106","e107","e108","e109","e10a","e10b","e10c","e10d","e10e","e10f","e110","e111","e112","e113","e114","e115","e116","e117","e118","e119","e11a","e11b","e11c","e11d","e11e","e11f","e120","e121","e122","e123","e124","e125","e126","e127","e128","e129","e12a","e12b","e12c","e12d","e12e","e12f","e130","e131","e132","e133","e134","e135","e136","e137","e138","e139","e13a","e13b","e13c","e13d","e13e","e13f","e140","e141","e142","e143","e144","e145","e146","e147","e148","e149","e14a","e14b","e14c","e14d","e14e","e14f","e150","e151","e152","e153","e154","e155","e156","e157","e158","e159","e15a","e15b","e15c","e15d","e15e","e15f","e160","e161","e162","e163","e164","e165","e166","e167","e168","e169","e16a","e16b","e16c","e16d","e16e","e16f","e170","e171","e172","e173","e174","e175","e176","e177","e178","e179","e17a","e17b","e17c","e17d","e17e","e17f","e180","e181","e182","e183","e184","e185","e186","e187","e188","e189","e18a","e18b","e18c","e18d","e18e","e18f","e190","e191","e192","e193","e194","e195","e196","e197","e198","e199","e19a","e19b","e19c","e19d","e19e","e19f","e1a0","e1a1","e1a2","e1a3","e1a4","e1a5","e1a6","e1a7","e1a8","e1a9","e1aa","e1ab","e1ab","e1ac","e1ac","e1ad","e1ae","e1ae","e1af","e1b0","e1b1","e1b2","e1b3","e1b4","e1b5","e1b6","e1b7","e1b8","e1b9","e1ba","e1bb","e1bc","e1bd","e1be","e1bf","e1c0","e1c1","e1c2","e1c3","e1c4","e1c5","e1c6","e1c7","e1c8","e1c9","e1ca","e1cb","e1cc","e1cd","e1ce","e1cf","e1d0","e1d1","e1d2","e1d3","e1d4","e1d5","e1d6","e1d7","e1d8","e1d9","e1da","e1db","e1dc","e1dd","e1de","e1df","e1e0","e1e1","e1e2","e1e3","e1e4","e1e5","e1e6","e1e7","e1e8","e1e9","e1ea","e1eb","e1ec","e1ed","e1ee","e1ef","e1f0","e1f1","e1f2","e1f3","e1f4","e1f5","e1f6","e1f7","e1f8","e1f9","e200","e1fa","e1fb","e1fc","e1fd","e1fe","e1ff","e201","e202","e203","e204","e205","e206","e207","e208","e209","e20a","e20b","e20c","e20d","e20e","e20f","e210","e211","e212","e213","e214","e215","e216","e217","e218","e219","e21a","e21b","e21c","e21d","e21e","e21f","e220","e221","e222","e223","e224","e225","e226","e227","e228","e229","e22a","e22b","e22c","e22d","e22e","e22f","e230","e231","e232","e233","e234","e235","e236","e237","e238","e239","e23a","e23b","e23c","e23d","e23e","e23f","e240","e241","e242","e243","e244","e245","e246","e247","e248","e249","e24a","e24b","e24c","e24d","e24e","e24f","e250","e251","e252","e253","e254","e255","e256","e257","e258","e259","e25a","e25b","e25c","e25d","e25e","e25f","e260","e261","e262"];
-		var mIconSuppressMirroring = {"chalkboard": true, "calendar": true, "alphabetical-order": true, "address-book": true, "hint": true, "payment-approval": true, "batch-payments": true, "arobase": true, "question-mark": true, "lead": true, "lead-outdated": true, "simple-payment": true, "sales-order-item": true, "sales-order": true, "per-diem": true, "paid-leave": true, "pdf-reader": true, "my-sales-order": true, "loan": true, "globe": true, "waiver": true, "unpaid-leave": true, "customer-financial-fact-sheet": true, "crm-sales": true, "commission-check": true, "collections-insight": true, "capital-projects": true, "business-one": true, "travel-expense": true, "travel-expense-report": true, "travel-request": true, "time-overtime": true, "sales-quote": true, "sales-notification": true, "incident": true, "money-bills": true, "sales-document": true, "opportunities": true, "expense-report": true, "monitor-payments": true, "widgets": true, "sys-help-2": true, "sys-help": true, "accept": true, "accounting-document-verification": true, "activities": true, "activity-2": true, "add-activity": true, "add-activity-2": true, "approvals": true, "bbyd-active-sales": true, "business-by-design": true, "cart-approval": true, "complete": true, "customer-order-entry": true, "employee-approvals": true, "hr-approval": true, "kpi-corporate-performance": true, "kpi-managing-my-area": true, "survey": true, "sys-enter": true, "sys-enter-2": true, "task": true, "message-information": true, "past": true, "future": true, "check-availability": true, "order-status": true, "eam-work-order": true, "message-success": true, "choropleth-chart": true, "geographic-bubble-chart": true, "sap-logo-shape": true, "play": true, "media-play": true, "media-reverse": true, "media-rewind": true, "media-forward": true, "horizontal-waterfall-chart": true, "vertical-waterfall-chart": true, "thumb-up": true, "thumb-down": true, "multiselect-all": true, "multiselect-none": true, "sound": true, "sound-loud": true, "sound-off": true, "date-time": true, "text-formatting": true, "bold-text": true, "italic-text": true, "underline-text": true, "bullet-text": true, "numbered-text": true, "cancel": true, "line-chart-time-axis": true, "flag": true, "search": true, "multi-select": true};
-		// Keep this in sync with "sap/ui/core/messagebundle.properties". Only icons with a translation should be listed
-		var mIconI18nKey = {"activate": true, "add": true, "add-contact": true, "add-filter": true, "add-photo": true, "back-to-top": true, "collapse": true, "collapse-group": true, "crop": true, "decline": true, "delete": true, "display": true, "download": true, "drill-down": true, "drill-up": true, "error": true, "exit-full-screen": true, "expand": true, "expand-group": true, "filter": true, "flag": true, "forward": true, "full-screen": true, "generate-shortcut": true, "hide": true, "ipad": true, "ipad-2": true, "iphone": true, "iphone-2": true, "laptop": true, "message-error": true, "message-information": true, "message-success": true, "message-warning": true, "move": true, "multi-select": true, "nav-back": true, "overflow": true, "redo": true, "refresh": true, "resize": true, "resize-horizontal": true, "resize-vertical": true, "response": true, "save": true, "search": true, "settings": true, "show": true, "sort": true, "sort-ascending": true, "sort-descending": true, "synchronize": true, "undo": true, "upload": true, "zoom-in": true, "zoom-out": true, "group-2": true, "action-settings": true, "up": true, "down": true};
+		/**
+		 * CSS font family used for the icons provided by SAP.
+		 */
+		var SAP_ICON_FONT_FAMILY = 'SAP-icons';
 
-		var sapIconFamily = "SAP-icons";
-		var sProtocolName = "sap-icon";
+		/**
+		 * Protocol that is used to identify icon URIs.
+		 */
+		var ICON_PROTOCOL = 'sap-icon';
 
-		var mRegistry = {};
+		var mRegistry = {
+			/*
+			 * Raw data for built-in icons.
+			 *
+			 * Maps the name of each icon to a numeric value. The lower 16 bit of the value (0xFFFF) represent the char code
+			 * of the icon in the 'SAP-icons' font (multiple char codes are currently not needed).
+			 * If the 17th bit is set (0x10000), then the icon doesn't need mirroring in right-to-left (RTL) mode.
+			 *
+			 * On first access to an icon, the raw data will be converted to an icon info object, see getIconInfo.
+			 */
+			'undefined' : {
+				'accidental-leave': 0xe000, 'account': 0xe001, 'wrench': 0xe002, 'windows-doors': 0xe003,
+				'washing-machine': 0xe004, 'visits': 0xe005, 'video': 0xe006, 'travel-expense': 0x1e007,
+				'temperature': 0xe008, 'task': 0x1e009, 'synchronize': 0xe00a, 'survey': 0x1e00b,
+				'settings': 0xe00c, 'search': 0x1e00d, 'sales-document': 0x1e00e, 'retail-store': 0xe00f,
+				'refresh': 0xe010, 'product': 0xe011, 'present': 0xe012, 'ppt-attachment': 0xe013,
+				'pool': 0xe014, 'pie-chart': 0xe015, 'picture': 0xe016, 'photo-voltaic': 0xe017,
+				'phone': 0xe018, 'pending': 0xe019, 'pdf-attachment': 0xe01a, 'past': 0x1e01b,
+				'outgoing-call': 0xe01c, 'opportunity': 0xe01d, 'opportunities': 0x1e01e, 'notes': 0xe01f,
+				'money-bills': 0x1e020, 'map': 0xe021, 'log': 0xe022, 'line-charts': 0xe023,
+				'lightbulb': 0xe024, 'leads': 0xe025, 'lead': 0x1e026, 'laptop': 0xe027,
+				'kpi-managing-my-area': 0x1e028, 'kpi-corporate-performance': 0x1e029, 'incoming-call': 0xe02a, 'inbox': 0xe02b,
+				'horizontal-bar-chart': 0xe02c, 'history': 0xe02d, 'heating-cooling': 0xe02e, 'gantt-bars': 0xe02f,
+				'future': 0x1e030, 'fridge': 0xe031, 'fallback': 0xe032, 'expense-report': 0x1e033,
+				'excel-attachment': 0xe034, 'energy-saving-lightbulb': 0xe035, 'employee': 0xe036, 'email': 0xe037,
+				'edit': 0xe038, 'duplicate': 0xe039, 'download': 0xe03a, 'doc-attachment': 0xe03b,
+				'dishwasher': 0xe03c, 'delete': 0xe03d, 'decline': 0xe03e, 'complete': 0x1e03f,
+				'competitor': 0xe040, 'collections-management': 0xe041, 'chalkboard': 0x1e042, 'cart': 0xe043,
+				'card': 0xe044, 'camera': 0xe045, 'calendar': 0x1e046, 'begin': 0xe047,
+				'basket': 0xe048, 'bar-chart': 0xe049, 'attachment': 0xe04a, 'arrow-top': 0xe04b,
+				'arrow-right': 0xe04c, 'arrow-left': 0xe04d, 'arrow-bottom': 0xe04e, 'approvals': 0x1e04f,
+				'appointment': 0xe050, 'alphabetical-order': 0x1e051, 'along-stacked-chart': 0xe052, 'alert': 0xe053,
+				'addresses': 0xe054, 'address-book': 0x1e055, 'add-filter': 0xe056, 'add-favorite': 0xe057,
+				'add': 0xe058, 'activities': 0x1e059, 'action': 0xe05a, 'accept': 0x1e05b,
+				'hint': 0x1e05c, 'group': 0xe05d, 'check-availability': 0x1e05e, 'weather-proofing': 0xe05f,
+				'payment-approval': 0x1e060, 'batch-payments': 0x1e061, 'bed': 0xe062, 'arobase': 0x1e063,
+				'family-care': 0xe064, 'favorite': 0xe065, 'navigation-right-arrow': 0xe066, 'navigation-left-arrow': 0xe067,
+				'e-care': 0xe068, 'less': 0xe069, 'lateness': 0xe06a, 'lab': 0xe06b,
+				'internet-browser': 0xe06c, 'instance': 0xe06d, 'inspection': 0xe06e, 'image-viewer': 0xe06f,
+				'home': 0xe070, 'grid': 0xe071, 'goalseek': 0xe072, 'general-leave-request': 0xe073,
+				'create-leave-request': 0xe074, 'flight': 0xe075, 'filter': 0xe076, 'favorite-list': 0xe077,
+				'factory': 0xe078, 'endoscopy': 0xe079, 'employee-pane': 0xe07a, 'employee-approvals': 0x1e07b,
+				'email-read': 0xe07c, 'electrocardiogram': 0xe07d, 'documents': 0xe07e, 'decision': 0xe07f,
+				'database': 0xe080, 'customer-history': 0xe081, 'customer': 0xe082, 'credit-card': 0xe083,
+				'create-entry-time': 0xe084, 'contacts': 0xe085, 'compare': 0xe086, 'clinical-order': 0xe087,
+				'chain-link': 0xe088, 'pull-down': 0xe089, 'cargo-train': 0xe08a, 'car-rental': 0xe08b,
+				'business-card': 0xe08c, 'bar-code': 0xe08d, 'folder-blank': 0xe08e, 'passenger-train': 0xe08f,
+				'question-mark': 0x1e090, 'world': 0xe091, 'iphone': 0xe092, 'ipad': 0xe093,
+				'warning': 0xe094, 'sort': 0xe095, 'course-book': 0xe096, 'course-program': 0xe097,
+				'add-coursebook': 0xe098, 'print': 0xe099, 'save': 0xe09a, 'play': 0x1e09b,
+				'pause': 0xe09c, 'record': 0xe09d, 'response': 0xe09e, 'pushpin-on': 0xe09f,
+				'pushpin-off': 0xe0a0, 'unfavorite': 0xe0a1, 'learning-assistant': 0xe0a2, 'timesheet': 0xe0a3,
+				'time-entry-request': 0xe0a4, 'list': 0xe0a5, 'action-settings': 0xe0a6, 'share': 0xe0a7,
+				'feed': 0xe0a8, 'role': 0xe0a9, 'flag': 0x1e0aa, 'post': 0xe0ab,
+				'inspect': 0xe0ac, 'inspect-down': 0xe0ad, 'appointment-2': 0xe0ae, 'target-group': 0xe0af,
+				'marketing-campaign': 0xe0b0, 'notification': 0xe0b1, 'message-error': 0xe0b1, 'comment': 0xe0b2,
+				'shipping-status': 0xe0b3, 'collaborate': 0xe0b4, 'shortcut': 0xe0b5, 'lead-outdated': 0x1e0b6,
+				'tools-opportunity': 0xe0b7, 'permission': 0xe0b8, 'supplier': 0xe0b9, 'table-view': 0xe0ba,
+				'table-chart': 0xe0bb, 'switch-views': 0xe0bc, 'e-learning': 0xe0bd, 'manager': 0xe0be,
+				'switch-classes': 0xe0bf, 'simple-payment': 0x1e0c0, 'signature': 0xe0c1, 'sales-order-item': 0x1e0c2,
+				'sales-order': 0x1e0c3, 'request': 0xe0c4, 'receipt': 0xe0c5, 'puzzle': 0xe0c6,
+				'process': 0xe0c7, 'private': 0xe0c8, 'popup-window': 0xe0c9, 'person-placeholder': 0xe0ca,
+				'per-diem': 0x1e0cb, 'paper-plane': 0xe0cc, 'paid-leave': 0x1e0cd, 'pdf-reader': 0x1e0ce,
+				'overview-chart': 0xe0cf, 'overlay': 0xe0d0, 'org-chart': 0xe0d1, 'number-sign': 0xe0d2,
+				'notification-2': 0xe0d3, 'my-sales-order': 0x1e0d4, 'meal': 0xe0d5, 'loan': 0x1e0d6,
+				'order-status': 0x1e0d7, 'customer-order-entry': 0x1e0d8, 'performance': 0xe0d9, 'menu': 0xe0da,
+				'employee-lookup': 0xe0db, 'education': 0xe0dc, 'customer-briefing': 0xe0dd, 'customer-and-contacts': 0xe0de,
+				'my-view': 0xe0df, 'accelerated': 0xe0e0, 'to-be-reviewed': 0xe0e1, 'warning2': 0xe0e2,
+				'feeder-arrow': 0xe0e3, 'quality-issue': 0xe0e4, 'workflow-tasks': 0xe0e5, 'create': 0xe0e6,
+				'home-share': 0xe0e7, 'globe': 0x1e0e8, 'tags': 0xe0e9, 'work-history': 0xe0ea,
+				'x-ray': 0xe0eb, 'wounds-doc': 0xe0ec, 'web-cam': 0xe0ed, 'waiver': 0x1e0ee,
+				'vertical-bar-chart': 0xe0ef, 'upstacked-chart': 0xe0f0, 'trip-report': 0xe0f1, 'microphone': 0xe0f2,
+				'unpaid-leave': 0x1e0f3, 'tree': 0xe0f4, 'toaster-up': 0xe0f5, 'toaster-top': 0xe0f6,
+				'toaster-down': 0xe0f7, 'time-account': 0xe0f8, 'theater': 0xe0f9, 'taxi': 0xe0fa,
+				'subway-train': 0xe0fb, 'study-leave': 0xe0fc, 'stethoscope': 0xe0fd, 'step': 0xe0fe,
+				'sonography': 0xe0ff, 'soccor': 0xe100, 'physical-activity': 0xe101, 'pharmacy': 0xe102,
+				'official-service': 0xe103, 'offsite-work': 0xe104, 'nutrition-activity': 0xe105, 'newspaper': 0xe106,
+				'monitor-payments': 0x1e107, 'map-2': 0xe108, 'machine': 0xe109, 'mri-scan': 0xe10a,
+				'end-user-experience-monitoring': 0xe10b, 'unwired': 0xe10c, 'customer-financial-fact-sheet': 0x1e10d, 'retail-store-manager': 0xe10e,
+				'Netweaver-business-client': 0xe10f, 'electronic-medical-record': 0xe110, 'eam-work-order': 0x1e111, 'customer-view': 0xe112,
+				'crm-service-manager': 0xe113, 'crm-sales': 0x1e114, 'widgets': 0x1e115, 'commission-check': 0x1e116,
+				'collections-insight': 0x1e117, 'clinical-tast-tracker': 0xe118, 'citizen-connect': 0xe119, 'cart-approval': 0x1e11a,
+				'capital-projects': 0x1e11b, 'bo-strategy-management': 0xe11c, 'business-objects-mobile': 0xe11d, 'business-objects-explorer': 0xe11e,
+				'business-objects-experience': 0xe11f, 'bbyd-dashboard': 0xe120, 'bbyd-active-sales': 0x1e121, 'business-by-design': 0x1e122,
+				'business-one': 0x1e123, 'sap-box': 0xe124, 'manager-insight': 0xe125, 'accounting-document-verification': 0x1e126,
+				'hr-approval': 0x1e127, 'idea-wall': 0xe128, 'Chart-Tree-Map': 0xe129, 'cart-5': 0xe12a,
+				'cart-4': 0xe12b, 'wallet': 0xe12c, 'vehicle-repair': 0xe12d, 'upload': 0xe12e,
+				'unlocked': 0xe12f, 'umbrella': 0xe130, 'travel-request': 0x1e131, 'travel-expense-report': 0x1e132,
+				'travel-itinerary': 0xe133, 'time-overtime': 0x1e134, 'thing-type': 0xe135, 'technical-object': 0xe136,
+				'tag': 0xe137, 'syringe': 0xe138, 'syntax': 0xe139, 'suitcase': 0xe13a,
+				'simulate': 0xe13b, 'shield': 0xe13c, 'share-2': 0xe13d, 'sales-quote': 0x1e13e,
+				'repost': 0xe13f, 'provision': 0xe140, 'projector': 0xe141, 'add-product': 0xe142,
+				'pipeline-analysis': 0xe143, 'add-photo': 0xe144, 'palette': 0xe145, 'nurse': 0xe146,
+				'sales-notification': 0x1e147, 'mileage': 0xe148, 'meeting-room': 0xe149, 'media-forward': 0x1e14a,
+				'media-play': 0x1e14b, 'media-pause': 0xe14c, 'media-reverse': 0x1e14d, 'media-rewind': 0x1e14e,
+				'measurement-document': 0xe14f, 'measuring-point': 0xe150, 'measure': 0xe151, 'map-3': 0xe152,
+				'locked': 0xe153, 'letter': 0xe154, 'journey-arrive': 0xe155, 'journey-change': 0xe156,
+				'journey-depart': 0xe157, 'it-system': 0xe158, 'it-instance': 0xe159, 'it-host': 0xe15a,
+				'iphone-2': 0xe15b, 'ipad-2': 0xe15c, 'inventory': 0xe15d, 'insurance-house': 0xe15e,
+				'insurance-life': 0xe15f, 'insurance-car': 0xe160, 'initiative': 0xe161, 'incident': 0x1e162,
+				'group-2': 0xe163, 'goal': 0xe164, 'functional-location': 0xe165, 'full-screen': 0xe166,
+				'form': 0xe167, 'fob-watch': 0xe168, 'blank-tag': 0xe169, 'family-protection': 0xe16a,
+				'folder': 0xe16b, 'fax-machine': 0xe16c, 'example': 0xe16d, 'eraser': 0xe16e,
+				'employee-rejections': 0xe16f, 'drop-down-list': 0xe170, 'draw-rectangle': 0xe171, 'document': 0xe172,
+				'doctor': 0xe173, 'discussion-2': 0xe174, 'discussion': 0xe175, 'dimension': 0xe176,
+				'customer-and-supplier': 0xe177, 'crop': 0xe178, 'add-contact': 0xe179, 'compare-2': 0xe17a,
+				'color-fill': 0xe17b, 'collision': 0xe17c, 'curriculum': 0xe17d, 'chart-axis': 0xe17e,
+				'full-stacked-chart': 0xe17f, 'full-stacked-column-chart': 0xe180, 'vertical-bar-chart-2': 0xe181, 'horizontal-bar-chart-2': 0xe182,
+				'horizontal-stacked-chart': 0xe183, 'vertical-stacked-chart': 0xe184, 'choropleth-chart': 0x1e185, 'geographic-bubble-chart': 0x1e186,
+				'multiple-radar-chart': 0xe187, 'radar-chart': 0xe188, 'crossed-line-chart': 0xe189, 'multiple-line-chart': 0xe18a,
+				'multiple-bar-chart': 0xe18b, 'line-chart': 0xe18c, 'line-chart-dual-axis': 0xe18d, 'bubble-chart': 0xe18e,
+				'scatter-chart': 0xe18f, 'multiple-pie-chart': 0xe190, 'column-chart-dual-axis': 0xe191, 'tag-cloud-chart': 0xe192,
+				'area-chart': 0xe193, 'cause': 0xe194, 'cart-3': 0xe195, 'cart-2': 0xe196,
+				'bus-public-transport': 0xe197, 'burglary': 0xe198, 'building': 0xe199, 'border': 0xe19a,
+				'bookmark': 0xe19b, 'badge': 0xe19c, 'attachment-audio': 0xe19d, 'attachment-video': 0xe19e,
+				'attachment-html': 0xe19f, 'attachment-photo': 0xe1a0, 'attachment-e-pub': 0xe1a1, 'attachment-zip-file': 0xe1a2,
+				'attachment-text-file': 0xe1a3, 'add-equipment': 0xe1a4, 'add-activity': 0x1e1a5, 'activity-individual': 0xe1a6,
+				'activity-2': 0x1e1a7, 'add-activity-2': 0x1e1a8, 'activity-items': 0xe1a9, 'activity-assigned-to-goal': 0xe1aa,
+				'status-completed': 0xe1ab, 'status-positive': 0xe1ab, 'status-error': 0xe1ac, 'status-negative': 0xe1ac,
+				'status-inactive': 0xe1ad, 'status-in-process': 0xe1ae, 'status-critical': 0xe1ae, 'blank-tag-2': 0xe1af,
+				'cart-full': 0xe1b0, 'locate-me': 0xe1b1, 'paging': 0xe1b2, 'company-view': 0xe1b3,
+				'document-text': 0xe1b4, 'explorer': 0xe1b5, 'personnel-view': 0xe1b6, 'sorting-ranking': 0xe1b7,
+				'drill-down': 0xe1b8, 'drill-up': 0xe1b9, 'vds-file': 0xe1ba, 'sap-logo-shape': 0x1e1bb,
+				'folder-full': 0xe1bc, 'system-exit': 0xe1bd, 'system-exit-2': 0xe1be, 'close-command-field': 0xe1bf,
+				'open-command-field': 0xe1c0, 'sys-enter-2': 0x1e1c1, 'sys-enter': 0x1e1c2, 'sys-help-2': 0x1e1c3,
+				'sys-help': 0x1e1c4, 'sys-back': 0xe1c5, 'sys-back-2': 0xe1c6, 'sys-cancel': 0xe1c7,
+				'sys-cancel-2': 0xe1c8, 'open-folder': 0xe1c9, 'sys-find-next': 0xe1ca, 'sys-find': 0xe1cb,
+				'sys-monitor': 0xe1cc, 'sys-prev-page': 0xe1cd, 'sys-first-page': 0xe1ce, 'sys-next-page': 0xe1cf,
+				'sys-last-page': 0xe1d0, 'generate-shortcut': 0xe1d1, 'create-session': 0xe1d2, 'display-more': 0xe1d3,
+				'enter-more': 0xe1d4, 'zoom-in': 0xe1d5, 'zoom-out': 0xe1d6, 'header': 0xe1d7,
+				'detail-view': 0xe1d8, 'collapse': 0xe1d9, 'expand': 0xe1da, 'positive': 0xe1db,
+				'negative': 0xe1dc, 'display': 0xe1dd, 'menu2': 0xe1de, 'redo': 0xe1df,
+				'undo': 0xe1e0, 'navigation-up-arrow': 0xe1e1, 'navigation-down-arrow': 0xe1e2, 'down': 0xe1e3,
+				'up': 0xe1e4, 'shelf': 0xe1e5, 'background': 0xe1e6, 'resize': 0xe1e7,
+				'move': 0xe1e8, 'show': 0xe1e9, 'hide': 0xe1ea, 'nav-back': 0xe1eb,
+				'error': 0xe1ec, 'slim-arrow-right': 0xe1ed, 'slim-arrow-left': 0xe1ee, 'slim-arrow-down': 0xe1ef,
+				'slim-arrow-up': 0xe1f0, 'forward': 0xe1f1, 'overflow': 0xe1f2, 'value-help': 0xe1f3,
+				'multi-select': 0x1e1f4, 'exit-full-screen': 0xe1f5, 'sys-add': 0xe1f6, 'sys-minus': 0xe1f7,
+				'dropdown': 0xe1f8, 'expand-group': 0xe1f9, 'collapse-group': 0xe200, 'vertical-grip': 0xe1fa,
+				'horizontal-grip': 0xe1fb, 'sort-descending': 0xe1fc, 'sort-ascending': 0xe1fd, 'arrow-down': 0xe1fe,
+				'legend': 0xe1ff, 'message-warning': 0xe201, 'message-information': 0x1e202, 'message-success': 0x1e203,
+				'restart': 0xe204, 'stop': 0xe205, 'add-process': 0xe206, 'cancel-maintenance': 0xe207,
+				'activate': 0xe208, 'resize-horizontal': 0xe209, 'resize-vertical': 0xe20a, 'connected': 0xe20b,
+				'disconnected': 0xe20c, 'edit-outside': 0xe20d, 'key': 0xe20e, 'minimize': 0xe20f,
+				'back-to-top': 0xe210, 'hello-world': 0xe211, 'outbox': 0xe212, 'donut-chart': 0xe213,
+				'heatmap-chart': 0xe214, 'horizontal-bullet-chart': 0xe215, 'vertical-bullet-chart': 0xe216, 'call': 0xe217,
+				'download-from-cloud': 0xe218, 'upload-to-cloud': 0xe219, 'jam': 0xe21a, 'sap-ui5': 0xe21b,
+				'message-popup': 0xe21c, 'cloud': 0xe21d, 'horizontal-waterfall-chart': 0x1e21e, 'vertical-waterfall-chart': 0x1e21f,
+				'broken-link': 0xe220, 'headset': 0xe221, 'thumb-up': 0x1e222, 'thumb-down': 0x1e223,
+				'multiselect-all': 0x1e224, 'multiselect-none': 0x1e225, 'scissors': 0xe226, 'sound': 0x1e227,
+				'sound-loud': 0x1e228, 'sound-off': 0x1e229, 'date-time': 0x1e22a, 'user-settings': 0xe22b,
+				'key-user-settings': 0xe22c, 'developer-settings': 0xe22d, 'text-formatting': 0x1e22e, 'bold-text': 0x1e22f,
+				'italic-text': 0x1e230, 'underline-text': 0x1e231, 'text-align-justified': 0xe232, 'text-align-left': 0xe233,
+				'text-align-center': 0xe234, 'text-align-right': 0xe235, 'bullet-text': 0x1e236, 'numbered-text': 0x1e237,
+				'co': 0xe238, 'ui-notifications': 0xe239, 'bell': 0xe23a, 'cancel-share': 0xe23b,
+				'write-new-document': 0xe23c, 'write-new': 0xe23d, 'cancel': 0x1e23e, 'screen-split-one': 0xe23f,
+				'screen-split-two': 0xe240, 'screen-split-three': 0xe241, 'customize': 0xe242, 'user-edit': 0xe243,
+				'source-code': 0xe244, 'copy': 0xe245, 'paste': 0xe246, 'line-chart-time-axis': 0x1e247,
+				'clear-filter': 0xe248, 'reset': 0xe249, 'trend-up': 0xe24a, 'trend-down': 0xe24b,
+				'cursor-arrow': 0xe24c, 'add-document': 0xe24d, 'create-form': 0xe24e, 'resize-corner': 0xe24f,
+				'chevron-phase': 0xe250, 'chevron-phase-2': 0xe251, 'rhombus-milestone': 0xe252, 'rhombus-milestone-2': 0xe253,
+				'circle-task': 0xe254, 'circle-task-2': 0xe255, 'project-definition-triangle': 0xe256, 'project-definition-triangle-2': 0xe257,
+				'master-task-triangle': 0xe258, 'master-task-triangle-2': 0xe259, 'program-triangles': 0xe25a, 'program-triangles-2': 0xe25b,
+				'mirrored-task-circle': 0xe25c, 'mirrored-task-circle-2': 0xe25d, 'checklist-item': 0xe25e, 'checklist-item-2': 0xe25f,
+				'checklist': 0xe260, 'checklist-2': 0xe261, 'chart-table-view': 0xe262
+			}
+		};
 
 		var bFontFaceInserted = false;
 
@@ -24,33 +191,27 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 		var Icon;
 
 		/**
-		 * Constructor for IconPool - must not be used: all of the methods that are under
-		 * IconPool are static methods.
-		 *
-		 * @class
 		 * The IconPool is a static class for retrieving or registering icons.
 		 * It also provides helping methods for easier consumption of icons.
 		 * There are already icons registered in IconPool, please use the Demo App named
 		 * "Icon Explorer" to find the name of the icon.
 		 *
 		 * In order to use the icon inside an existing control, please call
-		 * sap.ui.core.IconPool.getIconURI and assign the URI to the control's property
+		 * {@link sap.ui.core.IconPool.getIconURI} and assign the URI to the control's property
 		 * which supports icons.
-		 * If you want to support icons and standard images in your own control, please use
-		 * the static method sap.ui.core.IconPool.createControlByURI to create an Icon in
+		 * If you want to support both, icons and standard images in your own control, please use
+		 * the static method {@link sap.ui.core.IconPool.createControlByURI} to either create an Icon in
 		 * case the first argument is an icon-URL or another control which you define by
 		 * providing it as the second argument.
 		 *
+		 * @namespace
 		 * @public
 		 * @alias sap.ui.core.IconPool
 		 */
-		var IconPool = function(){
-			// Do not use the constructor
-			throw new Error();
-		};
+		var IconPool = {};
 
 		/**
-		 * Creates an instance of sap.ui.core.Icon if the given URI is an icon URI, otherwise the given constructor is called.
+		 * Creates an instance of {@link sap.ui.core.Icon} if the given URI is an icon URI, otherwise the given constructor is called.
 		 * The given URI is set to the src property of the control.
 		 *
 		 * @param {string|object} setting contains the properties which will be used to instantiate the returned control. It should contain at least a property named src. If it's given with a string type, it will be taken as the value of src property.
@@ -116,109 +277,135 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 			}
 
 			var collection = mRegistry[collectionName],
-				icon, oldIcon = collection[iconName],
-				parts;
+				icon = collection[iconName],
+				parts, sContent, sText, sKey;
 
-			if (oldIcon && (collectionName === undefined || !iconInfo.overWrite)) {
+			if (icon && (collectionName === undefined || !iconInfo.overWrite)) {
 				jQuery.sap.log.warning("icon with the same iconName in the collection already exists, specify the last parameter to true in order to overwrite");
 				return;
 			}
 
 			parts = {
-				protocol: sProtocolName,
+				protocol: ICON_PROTOCOL,
 				hostname: collectionName || iconName,
 				path: collectionName ? iconName : undefined
 			};
 
-			if (!Array.isArray(iconInfo.content)) {
-				iconInfo.content = [ iconInfo.content ];
-			}
-			var sContent = "";
-			for (var i = 0; i < iconInfo.content.length; ++i) {
-				sContent += String.fromCharCode(parseInt(iconInfo.content[i], 16));
-			}
-
-			var sText;
-			if (jQuery.sap.resources.isBundle(iconInfo.resourceBundle)) {
-				var sKey = "Icon." + iconName;
-				sText = iconInfo.resourceBundle.getText(sKey);
+			if ( Array.isArray(iconInfo.content) ) {
+				sContent = iconInfo.content.map(makeChar).join('');
 			} else {
-				sText = "";
+				sContent = makeChar(iconInfo.content);
 			}
 
-			icon = {
+			if (jQuery.sap.resources.isBundle(iconInfo.resourceBundle)) {
+				sKey = "Icon." + iconName;
+				if (iconInfo.resourceBundle.hasText(sKey)) {
+					sText = iconInfo.resourceBundle.getText(sKey);
+				}
+			}
+
+			icon = collection[iconName] = {
 				name: iconName,
 				collection: collectionName,
-				uri: window.URI.build(parts),
+				uri: URI.build(parts),
 				fontFamily: iconInfo.fontFamily,
 				content: sContent,
-				text: sText,
+				text: sText || '',
 				suppressMirroring: iconInfo.suppressMirroring,
 				//keep compatibility with old name
 				skipMirroring: iconInfo.suppressMirroring
 			};
 
-			collection[iconName] = icon;
 			return icon;
 		};
 
 
 		/**
-		 * Returns the URI of the icon which has the same given iconName and collectionName.
+		 * Returns the URI of the icon in the pool which has the given <code>iconName</code> and <code>collectionName</code>.
 		 *
-		 * @param {string} iconName the name of the icon.
-		 * @param {string} collectionName the name of icon collection. The built in icons are with undefined collectionName, so if the built in icons need to be used, just ignore this parameter.
-		 * @return {string} the URI of the icon. if the icon can't be found in IconPool, undefined is returned.
+		 * @param {string} iconName Name of the icon, must not be empty
+		 * @param {string} [collectionName] Name of the icon collection; to access built-in icons, omit the collection name
+		 * @return {string} URI of the icon or <code>undefined</code> if the icon can't be found in the IconPool
 		 * @static
 		 * @public
 		 */
 		IconPool.getIconURI = function(iconName, collectionName){
-			var collection = mRegistry[collectionName];
-
-			if (collection && collection[iconName]) {
-				return collection[iconName].uri;
-			}
+			var icon = this.getIconInfo(iconName, collectionName);
+			return icon && icon.uri;
 		};
 
 		/**
-		 * Returns the info object of the icon which has the same given iconName and collectionName.
+		 * Returns an info object for the icon with the given <code>iconName</code> and <code>collectionName</code>.
 		 *
-		 * @param {string} iconName the name of the icon.
-		 * @param {string} collectionName the name of icon collection. The built in icons are with undefined collectionName, so if the built in icons need to be used, just ignore this parameter.
-		 * @return {object} the info object of the registered icon which has the uri, fontFamily and content properties.
+		 * Instead of giving name and collection, a complete icon-URI can be provided as <code>iconName</code>.
+		 * The method will determine name and collection from the URI, see {@link #.isIconURI IconPool.isIconURI}
+		 * for details.
+		 *
+		 * The returned info object has the following properties:
+		 * <ul>
+		 * <li><code>string: name</code> Name of the icon</li>
+		 * <li><code>string: collection</code> Name of the collection that contains the icon or <code>undefined</code> in case of the default collection</li>
+		 * <li><code>string: uri</code> Icon URI that identifies the icon</li>
+		 * <li><code>string: fontFamily</code> CSS font family to use for this icon</li>
+		 * <li><code>string: content</code> Character sequence that represents the icon in the icon font</li>
+		 * <li><code>string: text</code> Alternative text describing the icon (optional, might be empty)</li>
+		 * <li><code>boolean: suppressMirroring</code> Whether the icon needs no mirroring in right-to-left mode</li>
+		 * </ul>
+		 *
+		 * @param {string} iconName Name of the icon, must not be empty
+		 * @param {string} [collectionName] Name of the icon collection; to access built-in icons, omit the collection name
+		 * @return {object} Info object for the icon or <code>undefined</code> when the icon can't be found.
 		 * @static
 		 * @public
 		 */
 		IconPool.getIconInfo = function(iconName, collectionName){
 			IconPool.insertFontFaceStyle();
 
-			var sParsedIconName = iconName,
-				sParsedCollectionName = collectionName,
-				parts,
-				collection;
+			var parts,
+				collection,
+				info;
 
-			if (this.isIconURI(iconName)) {
-				parts = window.URI.parse(iconName);
+			if (IconPool.isIconURI(iconName)) {
+				parts = URI.parse(iconName);
 
 				if (parts.path.length === 1) {
-					sParsedIconName = parts.hostname;
-					sParsedCollectionName = undefined;
+					collectionName = undefined;
+					iconName = parts.hostname;
 				} else {
-					sParsedCollectionName = parts.hostname;
-					sParsedIconName = parts.path.substr(1, parts.path.length);
+					collectionName = parts.hostname;
+					iconName = parts.path.slice(1);
 				}
 			}
 
-			collection = mRegistry[sParsedCollectionName];
+			collection = mRegistry[collectionName];
+			info = collection && collection[iconName];
 
-			return collection && collection[sParsedIconName];
+			if ( typeof info === 'number' ) {
+				// still raw data: lazily create the icon info
+				collection[iconName] = undefined; // avoid duplicate icon warning
+				info = IconPool.addIcon(iconName, undefined, {
+					fontFamily: SAP_ICON_FONT_FAMILY,
+					content: info & 0xFFFF,
+					suppressMirroring: !!(info & 0x10000),
+					resourceBundle: oCoreResourceBundle
+				});
+			}
+
+			return info;
 		};
 
 		/**
-		 * Returns If the given uri is an icon URI.
+		 * Returns whether the given <code>uri</code> is an icon URI.
 		 *
-		 * @param {string} uri the icon uri which is in the format "sap-icon://collectionName/iconName"
-		 * @return {boolean} if the uri follows the icon uri format.
+		 * A string is an icon URI when it can be parsed as an URI and when it has one of the two forms
+		 * <ul>
+		 * <li>sap-icon://collectionName/iconName</li>
+		 * <li>sap-icon://iconName</li>
+		 * </ul>
+		 * where collectionName and iconName must be non-empty.
+		 *
+		 * @param {string} uri The URI to check
+		 * @return {boolean} Whether the URI matches the icon URI format
 		 * @static
 		 * @public
 		 */
@@ -226,9 +413,9 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 			if (!uri) {
 				return false;
 			}
-			var parts = window.URI.parse(uri);
+			var parts = URI.parse(uri);
 
-			return (parts.protocol === sProtocolName) && !!parts.hostname;
+			return (parts.protocol === ICON_PROTOCOL) && !!parts.hostname;
 		};
 
 		/**
@@ -239,11 +426,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 		 * @public
 		 */
 		IconPool.getIconCollectionNames = function(){
-			var aNames = [];
-			jQuery.map(mRegistry, function(value, key){
-				aNames.push(key);
-			});
-			return aNames;
+			return Object.keys(mRegistry);
 		};
 
 		/**
@@ -254,13 +437,8 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 		 * @public
 		 */
 		IconPool.getIconNames = function(collectionName){
-			var collection = mRegistry[collectionName],
-				aNames = [];
-			jQuery.map(collection, function(value, key){
-				aNames.push(key);
-			});
-
-			return aNames;
+			var collection = mRegistry[collectionName];
+			return collection ? Object.keys(collection) : [];
 		};
 
 
@@ -275,7 +453,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 			//which contains the iframe, not the iframe itself.
 			//http://support.microsoft.com/kb/937266
 			//A conversion from relative path to absolute path is needed.
-			if (!!Device.browser.internet_explorer && Device.browser.version < 10 && /*check if it's in a iFrame*/window.self !== window.top) {
+			if (Device.browser.msie && Device.browser.version < 10 && /*check if it's in a iFrame*/window.self !== window.top) {
 				sFontPath = IconPool._calcAbsPath(sFontPath, window.location.href);
 			}
 
@@ -295,31 +473,8 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 		};
 
 		IconPool._calcAbsPath = function(sRelative, sBase){
-			// remove the URL parameters for base URL
-			sBase = sBase && sBase.replace(/\?.*|#.*/g, "");
-
-			// make the URL absolute
-			var oUri = new window.URI(sRelative),
-				oAbsUri = oUri.absoluteTo(sBase);
-
-			// return the absolute URL (without URL parameters!!!)
-			return oAbsUri.href();
+			return URI(sRelative, URI(sBase).search("")).toString();
 		};
-
-		IconPool._isMirroringSkipped = function(iconName){
-			return !!mIconSuppressMirroring[iconName];
-		};
-
-		// register the built in icons
-		for (var i = 0; i < aIconNames.length; i++) {
-			var name = aIconNames[i];
-			IconPool.addIcon(name, undefined, {
-				fontFamily: sapIconFamily,
-				content: aIconCodes[i],
-				suppressMirroring: IconPool._isMirroringSkipped(name),
-				resourceBundle: mIconI18nKey[name] ? oCoreResourceBundle : undefined
-			});
-		}
 
 		var mIconForMimeType = {
 			"application/msword": "sap-icon://doc-attachment",
@@ -381,6 +536,10 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 			return mIconForMimeType[sMimeType] || "sap-icon://document";
 		};
 
+		// helper functions
+		function makeChar(code) {
+			return String.fromCharCode(typeof code === 'number' ? code : parseInt(code, 16));
+		}
 
 	return IconPool;
 
