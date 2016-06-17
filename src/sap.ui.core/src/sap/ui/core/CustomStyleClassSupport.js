@@ -86,7 +86,7 @@ sap.ui.define(['jquery.sap.global', './Element'],
 			var aClasses,
 				bModified = false;
 
-			var aScopes = getScopes();
+			var aChangedScopes = [], aScopes = getScopes();
 
 			if (!this.aCustomStyleClasses) {
 				this.aCustomStyleClasses = [];
@@ -110,6 +110,11 @@ sap.ui.define(['jquery.sap.global', './Element'],
 					if (!this.mCustomStyleClassMap[sClass]) {
 						this.mCustomStyleClassMap[sClass] = true;
 						this.aCustomStyleClasses.push(sClass);
+
+						if (aScopes && aScopes.indexOf(sClass) > -1){
+							aChangedScopes.push(sClass);
+						}
+
 						bModified = true;
 					}
 				}.bind(this));
@@ -125,9 +130,9 @@ sap.ui.define(['jquery.sap.global', './Element'],
 				} else if (bSuppressRerendering === false) {
 					this.invalidate();
 				}
-				if (aScopes && aScopes.indexOf(sStyleClass) > -1) {
+				if (aChangedScopes.length > 0) {
 					// scope has been added
-					fireThemeScopingChangedEvent(this, sStyleClass, true);
+					fireThemeScopingChangedEvent(this, aChangedScopes, true);
 				}
 			}
 			return this;
@@ -141,7 +146,7 @@ sap.ui.define(['jquery.sap.global', './Element'],
 				bExist = false,
 				nIndex;
 
-			var aScopes = getScopes();
+			var aChangedScopes = [], aScopes = getScopes();
 
 			if (sStyleClass && typeof sStyleClass === "string" && this.aCustomStyleClasses && this.mCustomStyleClassMap) {
 				aClasses = sStyleClass.match(rNonWhiteSpace) || [];
@@ -152,10 +157,10 @@ sap.ui.define(['jquery.sap.global', './Element'],
 						if (nIndex !== -1) {
 							this.aCustomStyleClasses.splice(nIndex, 1);
 							delete this.mCustomStyleClassMap[sClass];
-						}
-						if (aScopes && aScopes.indexOf(sStyleClass) > -1) {
-							// scope has been removed
-							fireThemeScopingChangedEvent(this, sStyleClass, false);
+
+							if (aScopes && aScopes.indexOf(sClass) > -1) {
+								aChangedScopes.push(sClass);
+							}
 						}
 					}
 				}.bind(this));
@@ -167,6 +172,10 @@ sap.ui.define(['jquery.sap.global', './Element'],
 					jQuery(oRoot).removeClass(sStyleClass);
 				} else if (bSuppressRerendering === false) {
 					this.invalidate();
+				}
+				if (aChangedScopes.length > 0) {
+					// scope has been removed
+					fireThemeScopingChangedEvent(this, aChangedScopes, false);
 				}
 			}
 
@@ -221,9 +230,9 @@ sap.ui.define(['jquery.sap.global', './Element'],
 		}
 	}
 
-	function fireThemeScopingChangedEvent(oElement, sStyleClass, bIsAdded) {
+	function fireThemeScopingChangedEvent(oElement, aScopeClasses, bIsAdded) {
 		sap.ui.getCore().fireThemeScopingChanged({
-			scope: sStyleClass,
+			scopes: aScopeClasses,
 			added: bIsAdded,
 			element: oElement
 		});

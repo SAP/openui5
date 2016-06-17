@@ -6,6 +6,9 @@
 	"scopes": {
 		"sapTestScope": {
 			"sapUiTstTextColor": "#000000"
+		},
+		"sapTestScopePlus": {
+			"sapUiText": "#333333"
 		}
 	}
 }
