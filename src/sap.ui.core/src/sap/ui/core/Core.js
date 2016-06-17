@@ -1316,7 +1316,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				if ( data ) {
 					data.url = sURL;
 					jQuery.sap.registerPreloadedModules(data);
-					return data.dependencies;
+					var dependencies = data.dependencies;
+					if ( Array.isArray(dependencies) ) {
+						// remove .library-preload suffix from dependencies
+						dependencies = dependencies.map(function(dep) {
+							return dep.replace(/\.library-preload$/, '');
+						});
+					}
+					return dependencies;
 				}
 			},
 			function(xhr, textStatus, error) {
@@ -1419,6 +1426,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			}
 		});
 
+		if ( Array.isArray(dependencies) ) {
+			// remove .library-preload suffix from dependencies
+			dependencies = dependencies.map(function(dep) {
+				return dep.replace(/\.library-preload$/, '');
+			});
+		}
 		return dependencies;
 	}
 
