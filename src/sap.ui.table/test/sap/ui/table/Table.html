@@ -122,10 +122,9 @@
 					oTable.setSelectionMode(oEvent.getParameter("selectedItem").getKey());
 				},
 				items: [
-				    new sap.ui.core.ListItem({key: "Multi", text: "Multi"}),
-				    new sap.ui.core.ListItem({key: "MultiToggle", text: "MultiToggle"}),
-				    new sap.ui.core.ListItem({key: "Single", text: "Single"}),
-				    new sap.ui.core.ListItem({key: "None", text: "None"})
+					new sap.ui.core.ListItem({key: "MultiToggle", text: "MultiToggle"}),
+					new sap.ui.core.ListItem({key: "Single", text: "Single"}),
+					new sap.ui.core.ListItem({key: "None", text: "None"})
 				]
 			})
 		);
@@ -282,7 +281,7 @@
 
 	oTable.setTitle("Title of the Table");
 	oTable.setFooter("Footer of the Table");
-	oTable.setSelectionMode(sap.ui.table.SelectionMode.Multi);
+	oTable.setSelectionMode(sap.ui.table.SelectionMode.MultiToggle);
 	oTable.setToolbar(new sap.ui.commons.Toolbar({items: [
 	    new sap.ui.commons.Button({
 	    	text: "Modify Table Properties...",

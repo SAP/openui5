@@ -46,7 +46,7 @@
 
 	var oTable = new sap.ui.table.Table("table");
 
-	oTable.setSelectionMode(sap.ui.table.SelectionMode.Multi);
+	oTable.setSelectionMode(sap.ui.table.SelectionMode.MultiToggle);
 
 	var oControl = new sap.ui.commons.TextView().bindProperty("text", "lastName");
 	var oColumn = new sap.ui.table.Column({multiLabels: [
