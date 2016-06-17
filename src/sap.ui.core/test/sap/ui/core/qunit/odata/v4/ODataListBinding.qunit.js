@@ -88,8 +88,8 @@ sap.ui.require([
 		if (iResultLength === undefined) {
 			iResultLength = iLength;
 		}
-		assert.strictEqual(aCurrentContexts.length, iResultLength);
-		assert.deepEqual(aCurrentContexts.slice(0, aContexts.length), aContexts);
+		assert.strictEqual(aCurrentContexts.length, iResultLength, "Current contexts length");
+		assert.deepEqual(aCurrentContexts.slice(0, aContexts.length), aContexts, "contexts");
 		for (i = aContexts.length; i < iResultLength; i++) {
 			assert.strictEqual(aCurrentContexts[i], undefined);
 		}
@@ -442,19 +442,11 @@ sap.ui.require([
 				}
 			}
 
-			if (iEntityCount < iLength) {
-				oCacheMock.expects("read")
-					.withExactArgs(iStartIndex, iLength, "$direct", undefined, sinon.match.func)
-					.callsArg(4)
-					// read is called twice because contexts are created asynchronously
-					.twice()
-					.returns(oPromise);
-			} else {
-				oCacheMock.expects("read")
-					.withExactArgs(iStartIndex, iLength, "$direct", undefined, sinon.match.func)
-					.callsArg(4)
-					.returns(oPromise);
-			}
+			oCacheMock.expects("read")
+				.withExactArgs(iStartIndex, iLength, "$direct", undefined, sinon.match.func)
+				.callsArg(4)
+				.returns(oPromise);
+
 			// spies to check and document calls to model and binding methods from ManagedObject
 			this.spy(this.oModel, "bindList");
 			this.spy(ODataListBinding.prototype, "initialize");
@@ -840,13 +832,67 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("threshold", function (assert) {
+		var oCacheMock = this.getCacheMock(),
+			oDataHelperMock = this.mock(_ODataHelper),
+			oListBinding,
+			oPromise,
+			iReadLength = 135,
+			iReadStart = 40;
+
+		oListBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined,
+			{$$groupId : "$direct"});
+
+
+		oDataHelperMock.expects("getReadRange")
+			.withExactArgs(sinon.match.same(oListBinding.aContexts), 100, 15, 60, Infinity)
+			.returns({start : iReadStart, length : iReadLength});
+
+		oPromise = createResult(iReadLength);
+		oCacheMock.expects("read")
+			.withExactArgs(iReadStart, iReadLength, "$direct", undefined, sinon.match.func)
+			.callsArg(4)
+			.returns(oPromise);
+
+		// code under test
+		oListBinding.getContexts(100, 15, 60);
+
+		return oPromise.then(function () {
+			var i,n;
+
+			// check that data is inserted at right place
+			for (i = 0; i < iReadStart; i++) {
+				assert.strictEqual(oListBinding.aContexts[i], undefined, "Expected context: " + i);
+			}
+			for (i = iReadStart, n = iReadStart + iReadLength; i < n; i++) {
+				assert.ok(oListBinding.aContexts[i] !== undefined, "Expected context: " + i);
+			}
+			assert.strictEqual(oListBinding.aContexts[n], undefined, "Expected context: " + n);
+
+			// default threshold to 0
+			oDataHelperMock.expects("getReadRange")
+				.withExactArgs(sinon.match.same(oListBinding.aContexts), 100, 15, 0, Infinity)
+				.returns();
+
+			// code under test
+			oListBinding.getContexts(100, 15);
+
+			// default negative threshold to 0
+			oDataHelperMock.expects("getReadRange")
+				.withExactArgs(sinon.match.same(oListBinding.aContexts), 100, 15, 0, Infinity)
+				.returns();
+
+			// code under test
+			oListBinding.getContexts(100, 15, -15);
+		});
+	});
+
+	//*********************************************************************************************
 	[
-		{start : 40, result : 5, isFinal : true, curr : 0, len : 45, text : "greater than before"},
-		{start : 20, result : 5, isFinal : true, curr : 15, len : 25, text : "less than before"},
+		{start : 15, result : 3, isFinal : true, curr : 20, len : 18, text : "less than before"},
 		{start : 0, result : 30, isFinal : true, curr : 30, len : 35, text : "full read before"},
-		{start : 20, result : 30, isFinal : false, curr : 15, len : 60, text : "full read after"},
-		{start : 15, result : 0, isFinal : true, curr : 20, len : 15, text : "empty read before"},
-		{start : 40, result : 0, isFinal : true, curr : 0, len : 35, text : "empty read after"}
+		{start : 18, result : 30, isFinal : false, curr : 17, len : 58, text : "full read after"},
+		{start : 10, result : 0, isFinal : true, curr : 25, len : 10, text : "empty read before"}
 	].forEach(function (oFixture) {
 		QUnit.test("paging: adjust final length: " + oFixture.text, function (assert) {
 			var oCacheMock = this.getCacheMock(),
@@ -934,101 +980,6 @@ sap.ui.require([
 		}).then(function () {
 			assert.strictEqual(oListBinding.isLengthFinal(), true, "now final");
 			assert.strictEqual(oListBinding.getLength(), 50, "length at boundary");
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("paging: lower boundary reset", function (assert) {
-		var oCacheMock = this.getCacheMock(),
-			oListBinding = this.oModel.bindList("/EMPLOYEES"),
-			oReadPromise1 = createResult(15),
-			oReadPromise2 = createResult(0),
-			oReadPromise3 = createResult(0);
-
-		// 1. read [20..50) and get [20..35) -> final length 35
-		oCacheMock.expects("read")
-			.withExactArgs(20, 30, "$auto", undefined, sinon.match.func)
-			.callsArg(4)
-			.returns(oReadPromise1);
-		// 2. read [30..60) and get no entries -> estimated length 10 (after lower boundary reset)
-		oCacheMock.expects("read")
-			.withExactArgs(30, 30, "$auto", undefined, sinon.match.func)
-			.callsArg(4)
-			.returns(oReadPromise2);
-		// 3. read [35..65) and get no entries -> estimated length still 10
-		oCacheMock.expects("read")
-			.withExactArgs(35, 30, "$auto", undefined, sinon.match.func)
-			.callsArg(4)
-			.returns(oReadPromise3);
-
-		oListBinding.getContexts(20, 30);
-
-		return oReadPromise1.then(function () {
-			assert.strictEqual(oListBinding.isLengthFinal(), true);
-			assert.strictEqual(oListBinding.getLength(), 35);
-			assert.strictEqual(oListBinding.aContexts.length, 35);
-
-			oListBinding.getContexts(30, 30);
-
-			return oReadPromise2;
-		}).then(function () {
-			assert.strictEqual(oListBinding.isLengthFinal(), true, "new lower boundary");
-			assert.strictEqual(oListBinding.getLength(), 30,
-				"length 10 (after lower boundary reset)");
-			assert.strictEqual(oListBinding.aContexts.length, 30, "contexts array reduced");
-
-			oListBinding.getContexts(35, 30);
-
-			return oReadPromise3;
-		}).then(function () {
-			assert.strictEqual(oListBinding.isLengthFinal(), true, "still estimated");
-			assert.strictEqual(oListBinding.getLength(), 30, "still 30");
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("paging: adjust max length got from server", function (assert) {
-		var oCacheMock = this.getCacheMock(),
-			oListBinding = this.oModel.bindList("/EMPLOYEES"),
-			oReadPromise1 = createResult(15),
-			oReadPromise2 = createResult(14),
-			oReadPromise3 = createResult(0);
-
-		// 1. read [20..50) and get [20..35) -> final length 35
-		oCacheMock.expects("read")
-			.withExactArgs(20, 30, "$auto", undefined, sinon.match.func)
-			.callsArg(4)
-			.returns(oReadPromise1);
-		// 2. read [20..50) and get [20..34) -> final length 34
-		oCacheMock.expects("read")
-			.withExactArgs(20, 30, "$auto", undefined, sinon.match.func)
-			.callsArg(4)
-			.returns(oReadPromise2);
-		// 3. read [35..65) and get no entries -> final length still 34
-		oCacheMock.expects("read")
-			.withExactArgs(35, 30, "$auto", undefined, sinon.match.func)
-			.callsArg(4)
-			.returns(oReadPromise3);
-
-		oListBinding.getContexts(20, 30);
-
-		return oReadPromise1.then(function () {
-			assert.strictEqual(oListBinding.isLengthFinal(), true);
-			assert.strictEqual(oListBinding.getLength(), 35);
-
-			oListBinding.getContexts(20, 30);
-
-			return oReadPromise2;
-		}).then(function () {
-			assert.strictEqual(oListBinding.isLengthFinal(), true, "final 34");
-			assert.strictEqual(oListBinding.getLength(), 34, "length 34");
-
-			oListBinding.getContexts(35, 30);
-
-			return oReadPromise3;
-		}).then(function () {
-			assert.strictEqual(oListBinding.isLengthFinal(), true, "still final");
-			assert.strictEqual(oListBinding.getLength(), 34, "length still 34");
 		});
 	});
 
@@ -1530,11 +1481,6 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("forbidden", function (assert) {
 		var oListBinding = this.oModel.bindList("/EMPLOYEES");
-
-		assert.throws(function () { //TODO implement?
-			oListBinding.getContexts(0, 42, 0);
-		}, new Error("Unsupported operation: v4.ODataListBinding#getContexts, "
-				+ "iThreshold parameter must not be set"));
 
 		assert.throws(function () {
 			oListBinding.getDistinctValues();
