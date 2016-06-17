@@ -4,22 +4,26 @@
 /* ============================================== */
 
 .sapMWizardProgressNav {
-  background: fade(@sapUiObjectHeaderBackground,60);
-  font-size: @sapMFontMediumSize;
-  border-bottom: solid 0.125rem lighten(@sapUiObjectHeaderBackground, 8);
+	background: fade(@sapUiObjectHeaderBackground,60);
+	border-bottom: solid 0.125rem lighten(@sapUiObjectHeaderBackground, 8);
 }
 
 .sapMWizardProgressNavStep:hover .sapMWizardProgressNavAnchorCircle {
-  background: darken(@sapUiObjectHeaderBackground, 5);
+	background: darken(@sapUiObjectHeaderBackground, 5);
 }
 
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] {
-  & .sapMWizardProgressNavAnchor::after {
-    background: @sapUiSelected;
-  }
+	& .sapMWizardProgressNavAnchor::after {
+		background: @sapUiSelected;
+	}
+}
 
-  & .sapMWizardProgressNavAnchorCircle {
-    background: @sapUiHighlight;
-    color: @sapUiContentIconColor;
-  }
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"] {
+	.sapMWizardProgressNavAnchorTitle {
+		color: lighten(@sapUiGroupTitleTextColor, 20);
+	}
+}
+
+.sapMWizardProgressNavAnchorTitle:hover {
+  color: lighten(@sapUiGroupTitleTextColor, 10);
 }
