@@ -131,7 +131,7 @@ function makeLibPreloadJSON(lib, dependencies) {
 				}
 				dep = dep.name;
 			}
-			preloadJSON.dependencies.push(makeName(dep));
+			preloadJSON.dependencies.push(makeName(dep) + ".library-preload");
 		}
 	}
 

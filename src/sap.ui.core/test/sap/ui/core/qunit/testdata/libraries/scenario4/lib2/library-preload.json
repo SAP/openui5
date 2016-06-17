@@ -2,7 +2,7 @@
 	"version": "2.0",
 	"name": "testlibs.scenario4.lib2.library-preload",
 	"dependencies": [
-		"testlibs.scenario4.lib1"
+		"testlibs.scenario4.lib1.library-preload"
 	],
 	"modules": {
 		"testlibs/scenario4/lib2/library.js": "sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/library'], function(Core, coreLib) {\n\tsap.ui.getCore().initLibrary({\n\t\tname: 'testlibs.scenario4.lib2',\n\t\tdependencies: [\n\t\t\t'testlibs.scenario4.lib1'\n\t\t],\n\t\tnoLibraryCSS: true\n\t});\n\treturn testlibs.scenario4.lib2;\n});",
