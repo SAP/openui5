@@ -2,8 +2,8 @@
 
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta name="sap-ui-fesr" content="true" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="sap-ui-fesr" content="true">
 	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
@@ -11,7 +11,7 @@
 		data-sap-ui-noConflict="true"
 		data-sap-ui-libs="sap.ui.core, sap.m">
 	</script>
-	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
@@ -215,9 +215,9 @@
 				assert.ok(iBusyDurationRequest+1 >= oMeasurement.busyDuration && iBusyDurationRequest-1 <= oMeasurement.busyDuration, "Request header contains global busy duration measurement");
 			});
 
-			// Check if global busy indicator measurement works with delay of 250 ms
+			// Check if global busy indicator measurement works with delay of 100 ms
 			QUnit.test("Busy indicator with delay", function(assert) {
-				sap.ui.core.BusyIndicator.show(250);
+				sap.ui.core.BusyIndicator.show(100);
 				var done = assert.async();
 				var spy = this.spy;
 				setTimeout(function() {
@@ -235,7 +235,7 @@
 					var iBusyDurationRequest = parseInt(spy.args[spy.thisValues.indexOf(oReq) + 1 ][1].split(",")[14]);
 					assert.ok(iBusyDurationRequest+1 >= oMeasurement.busyDuration && iBusyDurationRequest-1 <= oMeasurement.busyDuration, "Request header contains global busy duration measurement");
 					done();
-				}, 251);
+				}, 200);
 			});
 		}
 	</script>
