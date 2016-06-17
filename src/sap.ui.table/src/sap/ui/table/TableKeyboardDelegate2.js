@@ -7,9 +7,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 	function(jQuery, BaseObject, library, TableExtension, TableUtils) {
 	"use strict";
 
-	// shortcuts
-	var NavigationMode = library.NavigationMode;
-
 	/**
 	 * New Delegate for keyboard events of sap.ui.table.Table controls.
 	 *
@@ -114,12 +111,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 		var oInfo = TableUtils.getCellInfo(oEvent.target) || {};
 
 		if (oInfo.type === TableUtils.CELLTYPES.DATACELL || oInfo.type === TableUtils.CELLTYPES.ROWHEADER) {
-			if (this._isBottomRow(oEvent) && this._getSanitizedFirstVisibleRow() + this.getVisibleRowCount() < this._getRowCount()) {
-				oEvent.setMarked("sapUiTableSkipItemNavigation");
-				if (this.getNavigationMode() === NavigationMode.Scrollbar) {
-					this._scrollNext();
-				} else {
-					this._scrollPageDown();
+			if (TableUtils.isLastScrollableRow(this, oEvent.target)) {
+				var bScrolled = TableUtils.scroll(this, true, false);
+				if (bScrolled) {
+					oEvent.setMarked("sapUiTableSkipItemNavigation");
 				}
 			}
 		} else if (oInfo.type === TableUtils.CELLTYPES.COLUMNROWHEADER) {
@@ -136,12 +131,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 		var oInfo = TableUtils.getCellInfo(oEvent.target) || {};
 
 		if (oInfo.type === TableUtils.CELLTYPES.DATACELL || oInfo.type === TableUtils.CELLTYPES.ROWHEADER) {
-			if (this._isTopRow(oEvent) && this._getSanitizedFirstVisibleRow() > 0) {
-				oEvent.setMarked("sapUiTableSkipItemNavigation");
-				if (this.getNavigationMode() === NavigationMode.Scrollbar) {
-					this._scrollPrevious();
-				} else {
-					this._scrollPageUp();
+			if (TableUtils.isFirstScrollableRow(this, oEvent.target)) {
+				var bScrolled = TableUtils.scroll(this, false, false);
+				if (bScrolled) {
+					oEvent.setMarked("sapUiTableSkipItemNavigation");
 				}
 			}
 		}
