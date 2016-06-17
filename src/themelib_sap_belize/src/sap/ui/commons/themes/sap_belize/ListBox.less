@@ -76,7 +76,7 @@ no special style for focus!
 .sapUiLbxDis > ul > .sapUiLbxI:hover,
 .sapUiLbxDis > ul > .sapUiLbxI:focus {
 	color: @sapUiContentDisabledTextColor;
-	background-color: @sapUiFieldDisabledBackground;
+	background-color: mix(@sapUiFieldBackground, @sapUiBaseBG, (@sapUiContentDisabledOpacity * 100));
 }
 
 /* adjust end paddings where the scrollbar could overlap the items */
