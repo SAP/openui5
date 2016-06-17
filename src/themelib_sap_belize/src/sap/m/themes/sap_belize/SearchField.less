@@ -51,7 +51,7 @@
 }
 
 .sapMFocus>.sapMSFF{
-	border-color: @sapUiFieldFocusBorderColor;
+	//border-color: @sapUiFieldFocusBorderColor;
 }
 
 :not(.sapMSFDisabled) > .sapMSFF:hover{
@@ -59,8 +59,9 @@
 }
 
 .sapMSFI{
-	color: @sapUiContentIconColor;
+	color: @sapUiFieldTextColor;
 	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
 	background: transparent;
 	width: 100%;
 	height: 2.375rem;
@@ -175,19 +176,19 @@
 /*grouping is not allowed here*/
 .sapMSFI::-webkit-input-placeholder {
 	color:		   @sapUiFieldPlaceholderTextColor;
-	font-size:	   0.875rem;
+	font-size:	   @sapMFontMediumSize;
 	font-style:	   italic;
 }
 
 .sapMSFI:-ms-input-placeholder {
 	color:		   @sapUiFieldPlaceholderTextColor;
-	font-size:	   0.875rem;
+	font-size:	   @sapMFontMediumSize;
 	font-style:	   italic;
 }
 
 .sapMSFI::-moz-placeholder {
 	color:		   @sapUiFieldPlaceholderTextColor;
-	font-size:	   0.875rem;
+	font-size:	   @sapMFontMediumSize;
 	font-style:	   italic;
 }
 
@@ -195,7 +196,7 @@
 .sapMSF>.sapMSFF>.sapMSFPlaceholder {
 	display: block;
 	color: @sapUiFieldPlaceholderTextColor;
-	font-size: 0.875rem;
+	font-size: @sapMFontMediumSize;
 	font-style: italic;
 	position: absolute;
 	bottom: 0;
@@ -225,7 +226,7 @@
 	}
 
 	.sapMSFF.sapMSFNS{ /* no search button */
-		padding-right: 2rem;
+		padding-right: 2.38rem;
 	}
 
 	/* input */
