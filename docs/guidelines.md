@@ -19,6 +19,7 @@ When a file is consistently not following these rules and adhering to the rules 
     *  [Themes/CSS](#themescss)
         *  [General](#general-1)
         *  [Naming](#naming)
+        *  [Images](#images)
         *  [LESS Theme Parameters](#less-theme-parameters)
 1.  [Product Standards / Acceptance Criteria](#product-standards--acceptance-criteria)
 1.  [File Names and Encoding](#file-names-and-encoding)
@@ -207,7 +208,7 @@ UI5 Control Development Guidelines
 #### General
 
 -   Write semicolons even where optional
--   In general, use "rem" for dimensions; use "px" only for dimensions that do not depend on the font size (exception: controls still supporting IE8 cannot use rem)
+-   In general, use "rem" for dimensions; use "px" only for dimensions that do not depend on the font size
 -   The root element of a control should come without outer margins; add any required padding *inside*. Root margins are owned by the parent control
 -   Do not hard-code any colors, use LESS parameters and color calculations instead; also recommended for other significant theme aspects like fonts and background images
 -   Use other LESS features moderately (the more LESS processing happens, the less clear it is where the runtime CSS originates from)
@@ -231,6 +232,15 @@ UI5 Control Development Guidelines
     -   E.g. `sapUiBtn` for a Button control, or `sapMITB` for an IconTabBar in the sap.m library
     -   This class must be written to the HTML root element of the control
     -   All CSS classes within the HTML of this control must append a suffix to this class name, e.g. `sapUiBtnInner`, or `sapMITBHeader`
+
+#### Images
+
+-   Themes (including "base") should only refer to existing images inside that theme
+-   Images will be loaded relative to the theme where they are referenced (see LESS option "relativeUrls")
+  - If an image url defined in base stays active in another theme 'mytheme', derived from base, LESS will calculate a relative URL that points from the mytheme/library.css to the base/library.css.
+  - Similar path calculation is necessary when the URL is defined in another library (e.g. from sap/m/themes/mytheme/library.css to sap/ui/core/themes/base/image.png).
+  - Last but not least, these URL transformations assume a single repository for all sources. When resources for different themes / libs are located in different libraries, such relative URLs might not work.
+-   To override an image within the base theme an additional rule has to be added to the individual theme referencing the image. Otherwise the base image will be loaded.
 
 #### LESS Theme Parameters
 
