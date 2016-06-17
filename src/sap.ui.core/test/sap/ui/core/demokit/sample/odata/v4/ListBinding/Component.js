@@ -45,6 +45,7 @@ sap.ui.define([
 					groupId : jQuery.sap.getUriParameters().get("$direct")
 						? "$direct" // switch off batch
 						: undefined,
+					operationMode : oModel.sOperationMode,
 					serviceUrl : sServiceUrl + sQuery,
 					synchronizationMode : "None",
 					updateGroupId : jQuery.sap.getUriParameters().get("updateGroupId") || undefined
@@ -54,16 +55,28 @@ sap.ui.define([
 
 			if (!bHasOwnProxy) {
 				TestUtils.setupODataV4Server(this.oSandbox, {
-					"TEAMS?$expand=TEAM_2_EMPLOYEES($expand=EMPLOYEE_2_EQUIPMENTS),TEAM_2_MANAGER&$skip=0&$top=100" : {
-						source : "TEAMS.json"
-					},
-					"Equipments?$orderby=Category,Name&$select=Category,ID,Name,EmployeeId&$skip=0&$top=100" : {
+					"Equipments?$orderby=Category,Name&$select=Category,ID,Name,EmployeeId&$skip=0&$top=5" : {
 						source : "equipments.json"
+					},
+					"Equipments?$orderby=Category,Name&$select=Category,ID,Name,EmployeeId&$skip=5&$top=5" : {
+						source : "equipments2.json"
 					},
 					"GetEmployeeMaxAge()" : {
 						source : "GetEmployeeMaxAge.json"
 					},
-					"$metadata" : {source : "metadata.xml"}
+					"$metadata" : {source : "metadata.xml"},
+					"TEAMS?$expand=TEAM_2_EMPLOYEES($expand=EMPLOYEE_2_EQUIPMENTS;$orderby=LOCATION/City/CITYNAME),TEAM_2_MANAGER&$skip=0&$top=100" : {
+						source : "TEAMS.json"
+					},
+					"TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$expand=EMPLOYEE_2_EQUIPMENTS&$orderby=AGE,LOCATION/City/CITYNAME&$skip=0&$top=5" : {
+						source : "Team1.json"
+					},
+					"TEAMS('TEAM_02')/TEAM_2_EMPLOYEES?$expand=EMPLOYEE_2_EQUIPMENTS&$orderby=AGE,LOCATION/City/CITYNAME&$skip=0&$top=5" : {
+						source : "Team2.json"
+					},
+					"TEAMS('TEAM_03')/TEAM_2_EMPLOYEES?$expand=EMPLOYEE_2_EQUIPMENTS&$orderby=AGE,LOCATION/City/CITYNAME&$skip=0&$top=5" : {
+						source : "Team3.json"
+					}
 				}, "sap/ui/core/demokit/sample/odata/v4/ListBinding/data",
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/");
 			}

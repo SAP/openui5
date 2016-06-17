@@ -363,15 +363,26 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("refresh", function (assert) {
-		var oError = new Error(),
+		var oCacheProxy = {
+				promise : Promise.resolve({})
+			},
+			oError = new Error(),
 			oHelperMock = this.mock(_ODataHelper),
 			oModel = createModel(),
+			oContext = Context.create(oModel, undefined, "/TEAMS('42')"),
 			oListBinding = oModel.bindList("/TEAMS"),
 			oListBinding2 = oModel.bindList("/TEAMS"),
+			oRelativeContextBinding = oModel.bindContext("TEAM_2_MANAGER", undefined, {}),
 			oPropertyBinding = oModel.bindProperty("Name");
+
+		// cache proxy for oRelativeContextBinding
+		this.mock(oContext).expects("fetchCanonicalPath").returns("~");
+		this.mock(_ODataHelper).expects("createCacheProxy").returns(oCacheProxy);
+		oRelativeContextBinding.setContext(oContext);
 
 		oListBinding.attachChange(function () {});
 		oPropertyBinding.attachChange(function () {});
+		oRelativeContextBinding.attachChange(function () {});
 		this.mock(oListBinding).expects("refresh").withExactArgs("myGroup");
 		//check: only bindings with change event handler are refreshed
 		this.mock(oListBinding2).expects("refresh").never();
@@ -379,15 +390,17 @@ sap.ui.require([
 		this.mock(oPropertyBinding).expects("refresh").never();
 		oHelperMock.expects("checkGroupId").withExactArgs("myGroup");
 
-		// code under test
-		oModel.refresh("myGroup");
+		return oCacheProxy.promise.then(function () {
+			// code under test
+			oModel.refresh("myGroup");
 
-		oHelperMock.expects("checkGroupId").withExactArgs("$Invalid").throws(oError);
+			oHelperMock.expects("checkGroupId").withExactArgs("$Invalid").throws(oError);
 
-		// code under test
-		assert.throws(function () {
-			oModel.refresh("$Invalid");
-		}, oError);
+			// code under test
+			assert.throws(function () {
+				oModel.refresh("$Invalid");
+			}, oError);
+		});
 	});
 
 	//*********************************************************************************************
@@ -589,13 +602,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("forbidden", function (assert) {
-		var aFilters = [],
-			oModel = createModel();
-
-		assert.throws(function () { //TODO implement
-			oModel.bindList(undefined, undefined,  undefined, aFilters);
-		}, new Error("Unsupported operation: v4.ODataModel#bindList, "
-				+ "aFilters parameter must not be set"));
+		var oModel = createModel();
 
 		assert.throws(function () { //TODO implement
 			oModel.bindTree();

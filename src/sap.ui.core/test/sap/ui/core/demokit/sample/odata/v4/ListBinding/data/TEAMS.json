@@ -1,13 +1,13 @@
 {
 	"@odata.context" : "$metadata#TEAMS",
-	"value" : [{
+	"value" : [ {
 		"Team_Id" : "TEAM_01",
 		"Name" : "Business Suite",
 		"MEMBER_COUNT" : 2,
 		"MANAGER_ID" : "3",
 		"BudgetCurrency" : "USD",
-		"Budget" : 555.55,
-		"TEAM_2_EMPLOYEES" : [{
+		"Budget" : "555.55",
+		"TEAM_2_EMPLOYEES" : [ {
 			"@odata.etag" : "W/\"19770724000000.0000000\"",
 			"ID" : "1",
 			"Name" : "Walter\"s Win's",
@@ -26,12 +26,12 @@
 				}
 			},
 			"SALARY" : {
-				"MONTHLY_BASIC_SALARY_AMOUNT" : 5000.00,
+				"MONTHLY_BASIC_SALARY_AMOUNT" : "5000.00",
 				"BASIC_SALARY_CURR" : "EUR",
-				"YEARLY_BONUS_AMOUNT" : 5000.000,
+				"YEARLY_BONUS_AMOUNT" : "5000.000",
 				"BONUS_CURR" : "KWD"
 			},
-			"EMPLOYEE_2_EQUIPMENTS" : [{
+			"EMPLOYEE_2_EQUIPMENTS" : [ {
 				"Category" : "Electronics",
 				"ID" : 1,
 				"Name" : "Office PC",
@@ -41,7 +41,7 @@
 				"ID" : 2,
 				"Name" : "Tablet X",
 				"EmployeeId" : "0001"
-			}]
+			} ]
 		}, {
 			"@odata.etag" : "W/\"19770724000000.0000000\"",
 			"ID" : "3",
@@ -61,18 +61,18 @@
 				}
 			},
 			"SALARY" : {
-				"MONTHLY_BASIC_SALARY_AMOUNT" : 5100.33,
+				"MONTHLY_BASIC_SALARY_AMOUNT" : "5100.33",
 				"BASIC_SALARY_CURR" : "EUR",
-				"YEARLY_BONUS_AMOUNT" : 10000.00,
+				"YEARLY_BONUS_AMOUNT" : "10000.00",
 				"BONUS_CURR" : "EUR"
 			},
-			"EMPLOYEE_2_EQUIPMENTS" : [{
+			"EMPLOYEE_2_EQUIPMENTS" : [ {
 				"Category" : "Vehicle",
 				"ID" : 5,
 				"Name" : "VW Golf 2.0",
 				"EmployeeId" : "0003"
-			}]
-		}],
+			} ]
+		} ],
 		"TEAM_2_MANAGER" : {
 			"@odata.etag" : "W/\"0003\"",
 			"ID" : "3",
@@ -84,8 +84,8 @@
 		"MEMBER_COUNT" : 2,
 		"MANAGER_ID" : "5",
 		"BudgetCurrency" : "KWD",
-		"Budget" : 666.666,
-		"TEAM_2_EMPLOYEES" : [{
+		"Budget" : "666.666",
+		"TEAM_2_EMPLOYEES" : [ {
 			"@odata.etag" : "W/\"20040912000000.0000000\"",
 			"ID" : "4",
 			"Name" : "Peter Burke",
@@ -104,17 +104,17 @@
 				}
 			},
 			"SALARY" : {
-				"MONTHLY_BASIC_SALARY_AMOUNT" : 2689.44,
+				"MONTHLY_BASIC_SALARY_AMOUNT" : "2689.44",
 				"BASIC_SALARY_CURR" : "GBP",
-				"YEARLY_BONUS_AMOUNT" : 15000.00,
+				"YEARLY_BONUS_AMOUNT" : "15000.00",
 				"BONUS_CURR" : "USD"
 			},
-			"EMPLOYEE_2_EQUIPMENTS" : [{
+			"EMPLOYEE_2_EQUIPMENTS" : [ {
 				"Category" : "Vehicle",
 				"ID" : 6,
 				"Name" : "Audi A3 2.5",
 				"EmployeeId" : "0004"
-			}]
+			} ]
 		}, {
 			"@odata.etag" : "W/\"20010201000000.0000000\"",
 			"ID" : "5",
@@ -134,12 +134,12 @@
 				}
 			},
 			"SALARY" : {
-				"MONTHLY_BASIC_SALARY_AMOUNT" : 2689.44,
+				"MONTHLY_BASIC_SALARY_AMOUNT" : "2689.44",
 				"BASIC_SALARY_CURR" : "GBP",
-				"YEARLY_BONUS_AMOUNT" : 15000.00,
+				"YEARLY_BONUS_AMOUNT" : "15000.00",
 				"BONUS_CURR" : "USD"
 			},
-			"EMPLOYEE_2_EQUIPMENTS" : [{
+			"EMPLOYEE_2_EQUIPMENTS" : [ {
 				"Category" : "Electronics",
 				"ID" : 7,
 				"Name" : "Office PC",
@@ -149,8 +149,13 @@
 				"ID" : 8,
 				"Name" : "Mercedes B 3.0",
 				"EmployeeId" : "0005"
-			}]
-		}],
+			}, {
+				"Category" : "Vehicle",
+				"ID" : 9,
+				"Name" : "Tesla Model S",
+				"EmployeeId" : "0005"
+			} ]
+		} ],
 		"TEAM_2_MANAGER" : {
 			"@odata.etag" : "W/\"0004\"",
 			"ID" : "5",
@@ -162,8 +167,8 @@
 		"MEMBER_COUNT" : 2,
 		"MANAGER_ID" : "2",
 		"BudgetCurrency" : "JPY",
-		"Budget" : 4444,
-		"TEAM_2_EMPLOYEES" : [{
+		"Budget" : "4444",
+		"TEAM_2_EMPLOYEES" : [ {
 			"@odata.etag" : "W/\"20030701000000.0000000\"",
 			"ID" : "2",
 			"Name" : "Frederic Fall",
@@ -182,12 +187,12 @@
 				}
 			},
 			"SALARY" : {
-				"MONTHLY_BASIC_SALARY_AMOUNT" : 5100.33,
+				"MONTHLY_BASIC_SALARY_AMOUNT" : "5100.33",
 				"BASIC_SALARY_CURR" : "EUR",
-				"YEARLY_BONUS_AMOUNT" : 10000.00,
+				"YEARLY_BONUS_AMOUNT" : "10000.00",
 				"BONUS_CURR" : "EUR"
 			},
-			"EMPLOYEE_2_EQUIPMENTS" : [{
+			"EMPLOYEE_2_EQUIPMENTS" : [ {
 				"Category" : "Electronics",
 				"ID" : 3,
 				"Name" : "Smartphone X",
@@ -197,7 +202,7 @@
 				"ID" : 4,
 				"Name" : "Electric Table Model A1",
 				"EmployeeId" : "0002"
-			}]
+			} ]
 		}, {
 			"@odata.etag" : "W/\"20101201000000.0000000\"",
 			"ID" : "6",
@@ -217,17 +222,17 @@
 				}
 			},
 			"SALARY" : {
-				"MONTHLY_BASIC_SALARY_AMOUNT" : 2689.44,
+				"MONTHLY_BASIC_SALARY_AMOUNT" : "2689.44",
 				"BASIC_SALARY_CURR" : "GBP",
-				"YEARLY_BONUS_AMOUNT" : 15000.00,
+				"YEARLY_BONUS_AMOUNT" : "15000.00",
 				"BONUS_CURR" : "USD"
 			},
 			"EMPLOYEE_2_EQUIPMENTS" : []
-		}],
+		} ],
 		"TEAM_2_MANAGER" : {
 			"@odata.etag" : "W/\"0002\"",
 			"ID" : "2",
 			"TEAM_ID" : "TEAM_03"
 		}
-	}]
+	} ]
 }

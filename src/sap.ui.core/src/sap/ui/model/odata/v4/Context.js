@@ -4,9 +4,10 @@
 
 sap.ui.define([
 	"sap/ui/model/Context",
+	"sap/ui/model/odata/v4/_ODataHelper",
 	"./lib/_Helper",
 	"./lib/_SyncPromise"
-], function (BaseContext, _Helper, _SyncPromise) {
+], function (BaseContext, _ODataHelper, _Helper, _SyncPromise) {
 	"use strict";
 
 	/*
@@ -105,6 +106,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Delegates to the <code>fetchAbsoluteValue</code> method of this context's binding which
+	 * requests the value for the given absolute path including the query string as maintained by
+	 * that binding.
+	 *
+	 * @param {string} sPath
+	 *   An absolute path including a query string
+	 * @returns {SyncPromise}
+	 *   A promise on the outcome of the binding's <code>fetchAbsoluteValue</code> call
+	 *
+	 * @private
+	 */
+	Context.prototype.fetchAbsoluteValue = function (sPath) {
+		return this.oBinding.fetchAbsoluteValue(sPath);
+	};
+
+	/**
 	 * Returns a promise for the "canonical path" of the entity for this context.
 	 *
 	 * @returns {SyncPromise}
@@ -115,7 +132,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Context.prototype.fetchCanonicalPath = function () {
-		return this.oModel.getMetaModel().fetchCanonicalUrl("/", this.getPath(), this);
+		return this.oModel.getMetaModel().fetchCanonicalPath(this);
 	};
 
 	/**
@@ -127,7 +144,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
 	 *   A property binding which registers itself as listener at the cache
 	 * @returns {SyncPromise}
-	 *   A promise on the outcome of the binding's <code>requestValue</code> call
+	 *   A promise on the outcome of the binding's <code>fetchValue</code> call
 	 *
 	 * @private
 	 */
@@ -179,6 +196,20 @@ sap.ui.define([
 	 */
 	Context.prototype.getIndex = function () {
 		return this.iIndex;
+	};
+
+	/**
+	 * Returns the query options for the given path from the associated binding.
+	 *
+	 * @param {string} sPath
+	 *   The path for which the query options are requested
+	 * @returns {object}
+	 *   The query options from the associated binding for the given path
+	 *
+	 * @private
+	 */
+	Context.prototype.getQueryOptions = function (sPath) {
+		return _ODataHelper.getQueryOptions(this.oBinding, sPath);
 	};
 
 	/**
@@ -348,7 +379,7 @@ sap.ui.define([
 			return this.oBinding.updateValue(sGroupId, sPropertyName, vValue, sEditUrl, sPath);
 		}
 
-		return this.oModel.requestCanonicalPath(this).then(function (sEditUrl) {
+		return this.requestCanonicalPath().then(function (sEditUrl) {
 			return that.oBinding.updateValue(sGroupId, sPropertyName, vValue, sEditUrl.slice(1),
 				sPath);
 		});

@@ -296,12 +296,16 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 * @param {sap.ui.model.Sorter | sap.ui.model.Sorter[]} [vSorters]
-	 *   The dynamic sorters to be used initially; they can be replaced by the sorters given in the
-	 *   {@link sap.ui.model.odata.v4.ODataListBinding#sort} method. Static sorters, as defined in
-	 *   the '$orderby' binding parameter, are always executed after the dynamic sorters.
+	 *   The dynamic sorters to be used initially. Call
+	 *   {@link sap.ui.model.odata.v4.ODataListBinding#sort} to replace them. Static sorters, as
+	 *   defined in the '$orderby' binding parameter, are always executed after the dynamic sorters.
 	 *   Supported since 1.39.0.
-	 * @param {sap.ui.model.Filter[]} [aFilters]
-	 *   The parameter <code>aFilters</code> is not supported and must be <code>undefined</code>
+	 * @param {sap.ui.model.Filter | sap.ui.model.Filter[]} [vFilters]
+	 *   The dynamic application filters to be used initially. Call
+	 *   {@link sap.ui.model.odata.v4.ODataListBinding#filter} to replace them. Static filters,
+	 *   as defined in the '$filter' binding parameter, are always combined with the dynamic
+	 *   filters using a logical <code>AND</code>.
+	 *   Supported since 1.39.0.
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters which can be OData query options as specified in
 	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameters "$$groupId"
@@ -341,12 +345,8 @@ sap.ui.define([
 	 * @see sap.ui.model.Model#bindList
 	 * @since 1.37.0
 	 */
-	ODataModel.prototype.bindList = function (sPath, oContext, vSorters, aFilters, mParameters) {
-		if (aFilters) {
-			throw new Error("Unsupported operation: v4.ODataModel#bindList, "
-					+ "aFilters parameter must not be set");
-		}
-		return new ODataListBinding(this, sPath, oContext, vSorters, mParameters);
+	ODataModel.prototype.bindList = function (sPath, oContext, vSorters, vFilters, mParameters) {
+		return new ODataListBinding(this, sPath, oContext, vSorters, vFilters, mParameters);
 	};
 
 	/**
@@ -597,7 +597,7 @@ sap.ui.define([
 		_ODataHelper.checkGroupId(sGroupId);
 
 		this.aBindings.slice().forEach(function (oBinding) {
-			if (oBinding.oCache) { // relative bindings have no cache and cannot be refreshed
+			if (!oBinding.isRelative()) { // relative bindings cannot be refreshed
 				oBinding.refresh(sGroupId);
 			}
 		});

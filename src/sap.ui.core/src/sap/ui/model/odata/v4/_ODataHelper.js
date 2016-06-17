@@ -3,15 +3,19 @@
  */
 
 sap.ui.define([
+	"./lib/_Cache",
 	"./lib/_Helper",
 	"./lib/_Parser",
+	"sap/ui/model/FilterOperator",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/Sorter"
-], function (_Helper, _Parser, OperationMode, Sorter) {
+], function (_Cache, _Helper, _Parser, FilterOperator, OperationMode, Sorter) {
 	"use strict";
 
 	var ODataHelper,
-		rApplicationGroupID = /^\w+$/;
+		rApplicationGroupID = /^\w+$/,
+		// regular expression converting path to metadata path
+		rNotMetaContext = /\([^/]*|\/\d+|^\d+\//g;
 
 	/**
 	 * Returns whether the given group ID is valid, which means it is either undefined, '$auto',
@@ -36,6 +40,8 @@ sap.ui.define([
 	}
 
 	ODataHelper = {
+		aAllowedSystemQueryOptions : ["$expand", "$filter", "$orderby", "$select"],
+
 		/**
 		 * Returns the map of binding-specific parameters from the given map. "Binding-specific"
 		 * parameters are those with a key starting with '$$', i.e. OData query options provided as
@@ -230,49 +236,44 @@ sap.ui.define([
 		},
 
 		/**
-		 * Creates a cache proxy acting as substitute for the given relative binding's cache while
-		 * the given context's canonical path is being computed.
+		 * Creates a cache proxy acting as substitute for a cache while it waits for the
+		 * resolution of the given promise which resolves with a canonical path; it then creates the
+		 * "real" cache using the given function.
+		 *
 		 * If there is no cache for the canonical path in the binding's
 		 * <code>mCacheByContext</code>, creates the cache by calling the given function
-		 * <code>fnCreateCache</code> with the canonical path and resolves the proxy's promise with
-		 * this cache. If the binding's cache is not the cache proxy, the promise resolves with
-		 * the binding's cache in order to ensure a cache proxy associated with a binding is only
-		 * replaced by the corresponding cache.
+		 * <code>fnCreateCache</code> with the canonical path. If the binding's cache is not the
+		 * cache proxy, the promise resolves with the binding's cache in order to ensure a cache
+		 * proxy associated with a binding is only replaced by the corresponding cache.
+		 *
 		 * If there is already a cache for the binding, <code>deregisterChange()</code> is called
 		 * to deregister all listening property bindings at the cache, because they are not able to
 		 * deregister themselves afterwards.
 		 *
-		 * @param {object} oBinding The relative binding
-		 * @param {object} oContext The context for the relative binding
-		 * @param {function} fnCreateCache The function to create the cache from the canonical path
+		 * @param {sap.ui.model.odata.v4.ODataListBinding|sap.ui.model.odata.v4.ODataContextBinding}
+		 *   oBinding The relative binding
+		 * @param {function} fnCreateCache Function to create the cache which is called with the
+		 *   canonical path and the $filter value as parameter and returns the cache.
+		 * @param {Promise} [oPathPromise] Promise which resolves with a canonical path for the
+		 *   cache
+		 * @param {Promise} [oFilterPromise] Promise which resolves with a value for the $filter
+		 *   query option to be used when creating the cache
 		 * @returns {object} The cache proxy with the following properties
 		 *   deregisterChange: method does nothing
 		 *   hasPendingChanges: method returning false
 		 *   post: method throws an error as the cache proxy does not support write operations
-		 *   promise: promise fulfilled with the cache or rejected with the error of canonical path
-		 *     computation
+		 *   promise: promise fulfilled with the cache or rejected with the error on requesting the
+		 *     canonical path or creating the cache
 		 *   read: method delegates to the cache's read method
 		 *   refresh: method does nothing
 		 *   update: method throws an error as the cache proxy does not support write operations
 		 */
-		createCacheProxy : function (oBinding, oContext, fnCreateCache) {
-			var oCache,
-				oCacheProxy,
-				oPromise;
+		createCacheProxy : function (oBinding, fnCreateCache, oPathPromise, oFilterPromise) {
+			var oCacheProxy;
 
 			if (oBinding.oCache) {
 				oBinding.oCache.deregisterChange();
 			}
-			// use requestCanonicalPath, not fetchCanonicalPath to ensure consistent async behavior
-			oPromise = oContext.requestCanonicalPath().then(function (sCanonicalPath) {
-				if (oBinding.oCache !== oCacheProxy) {
-					return oBinding.oCache;
-				}
-				oBinding.mCacheByContext = oBinding.mCacheByContext || {};
-				oCache = oBinding.mCacheByContext[sCanonicalPath] =
-					oBinding.mCacheByContext[sCanonicalPath] || fnCreateCache(sCanonicalPath);
-				return oCache;
-			});
 			oCacheProxy = {
 				deregisterChange : function () {},
 				hasPendingChanges : function () {
@@ -281,17 +282,14 @@ sap.ui.define([
 				post : function () {
 					throw new Error("POST request not allowed");
 				},
-				promise : oPromise,
 				read : function () {
 					var aReadArguments = arguments;
 
-					return oPromise.then(function (oCache) {
+					return this.promise.then(function (oCache) {
 						return oCache.read.apply(oCache, aReadArguments);
-					}).catch(function (oError) {
-						oBinding.oModel.reportError("Failed to delegate read to cache " + oCache
-								+ " with arguments "
-								+ JSON.stringify(Array.prototype.slice.call(aReadArguments)),
-							"sap.ui.model.odata.v4._ODataHelper", oError);
+					}, function (oError) {
+						throw new Error("Cannot read from cache, cache creation failed: "
+							+ oError);
 					});
 				},
 				refresh : function () {},
@@ -299,6 +297,76 @@ sap.ui.define([
 					throw new Error("PATCH request not allowed");
 				}
 			};
+
+			oCacheProxy.promise = Promise.all([oPathPromise, oFilterPromise])
+				.then(function (aResult) {
+					var oCache,
+						sCanonicalPath = aResult[0];
+
+					if (oBinding.oCache !== oCacheProxy) {
+						return oBinding.oCache;
+					}
+					oBinding.mCacheByContext = oBinding.mCacheByContext || {};
+					oCache = sCanonicalPath
+						? oBinding.mCacheByContext[sCanonicalPath] =
+							oBinding.mCacheByContext[sCanonicalPath]
+							|| fnCreateCache(sCanonicalPath, aResult[1])
+						: fnCreateCache(sCanonicalPath, aResult[1]);
+					return oCache;
+				});
+
+			return oCacheProxy;
+		},
+
+		/**
+		 * Creates a cache proxy for the given list binding using {@link #.createCacheProxy}. Takes
+		 * care of sort and filter parameters. Returns the proxy (allowing for easier testing)
+		 * which itself applies the final cache directly to the binding.
+		 *
+		 * This is meant to be a private method of ODataListBinding which is hidden here to prevent
+		 * accidental usage.
+		 *
+		 * Note that the context is given as a parameter and oBinding.oContext is unused because
+		 * the binding's setContext calls this method before calling the superclass to ensure that
+		 * the cache proxy is already created when the events are fired.
+		 *
+		 * @param {sap.ui.model.odata.v4.ODataListBinding} oBinding
+		 *   The OData list binding instance
+		 * @param {sap.ui.model.odata.v4.Context} [oContext]
+		 *   The context instance to be used, may be omitted for absolute bindings
+		 * @returns {object}
+		 *   The created cache proxy or undefined if none is required
+		 */
+		createListCacheProxy : function (oBinding, oContext) {
+			var oCacheProxy, oFilterPromise, oPathPromise, mQueryOptions;
+
+			function createCache(sPath, sFilter) {
+				var sOrderby = ODataHelper.buildOrderbyOption(oBinding.aSorters,
+						mQueryOptions && mQueryOptions.$orderby);
+
+				return _Cache.create(oBinding.oModel.oRequestor,
+					_Helper.buildPath(sPath, oBinding.sPath).slice(1),
+					ODataHelper.mergeQueryOptions(mQueryOptions, sOrderby, sFilter));
+			}
+
+			if (oBinding.bRelative) {
+				if (!oContext || (!oBinding.mQueryOptions && !oBinding.aSorters.length
+						&& !oBinding.aFilters.length && !oBinding.aApplicationFilters.length)) {
+					return undefined; // no need for an own cache
+				}
+			}
+			mQueryOptions = ODataHelper.getQueryOptions(oBinding, "", oContext);
+			oPathPromise = oContext && oContext.requestCanonicalPath();
+			oFilterPromise = ODataHelper.requestFilter(oBinding, oBinding.aApplicationFilters,
+				oBinding.aFilters, mQueryOptions && mQueryOptions.$filter);
+			oCacheProxy = ODataHelper.createCacheProxy(oBinding, createCache, oPathPromise,
+				oFilterPromise);
+			oCacheProxy.promise.then(function (oCache) {
+				oBinding.oCache = oCache;
+			})["catch"](function (oError) {
+				oBinding.oModel.reportError("Failed to create cache for binding " + oBinding,
+					"sap.ui.model.odata.v4._ODataHelper", oError);
+			});
 			return oCacheProxy;
 		},
 
@@ -312,19 +380,21 @@ sap.ui.define([
 		 *   Entity instance runtime data
 		 * @returns {string}
 		 *   The key predicate, e.g. "(Sector='DevOps',ID='42')" or "('42')"
+		 * @throws {Error}
+		 *   If there is no entity instance or if one key property is undefined
 		 */
 		getKeyPredicate : function (oEntityType, oEntityInstance) {
 			var aKeyProperties = [],
 				bSingleKey = oEntityType.$Key.length === 1;
 
+			if (!oEntityInstance) {
+				throw new Error("No instance to calculate key predicate");
+			}
 			oEntityType.$Key.forEach(function (sName) {
-				var sError,
-					vValue = oEntityInstance[sName];
+				var vValue = oEntityInstance[sName];
 
 				if (vValue === undefined) {
-					sError = "Missing value for key property '" + sName + "'";
-					jQuery.sap.log.error(sError, null, "sap.ui.model.odata.v4._ODataHelper");
-					throw new Error(sError);
+					throw new Error("Missing value for key property '" + sName + "'");
 				}
 				vValue = encodeURIComponent(
 					_Helper.formatLiteral(vValue, oEntityType[sName].$Type)
@@ -333,6 +403,236 @@ sap.ui.define([
 			});
 
 			return "(" + aKeyProperties.join(",") + ")";
+		},
+
+		/**
+		 * Returns the query options for the given binding.
+		 *
+		 * @param {sap.ui.model.odata.v4.ODataListBinding|sap.ui.model.odata.v4.ODataContextBinding}
+		 *   oBinding The OData list or context binding which is used to get OData query options for
+		 *   the given path.
+		 * @param {string} sPath
+		 *   The path, relative to the given binding, for which the OData query options are
+		 *   requested
+		 * @param {sap.ui.model.odata.v4.Context} oContext
+		 *   The context to be used to to compute the inherited query options
+		 * @returns {object}
+		 *   The query options for the given path
+		 *
+		 * @private
+		 */
+		getQueryOptions : function (oBinding, sPath, oContext) {
+			var oResult = oBinding.mQueryOptions;
+
+			if (!oResult) {
+				return oContext
+					&& oContext.getQueryOptions(_Helper.buildPath(oBinding.sPath, sPath));
+			}
+			if (!sPath) {
+				return oResult;
+			}
+
+			// transform path to metadata path
+			sPath = sPath.replace(rNotMetaContext, "");
+			sPath.split("/").some(function (sSegment) {
+				oResult = oResult.$expand && oResult.$expand[sSegment];
+				if (!oResult || oResult === true) {
+					oResult = undefined;
+					return true;
+				}
+			});
+
+			return ODataHelper.buildQueryOptions(oBinding.oModel.mUriParameters, oResult,
+				ODataHelper.aAllowedSystemQueryOptions);
+		},
+
+		/**
+		 * Merges the given orderby and filter values into a copy of the given map of query options.
+		 * If no merge is needed the original map of query options is returned.
+		 *
+		 * @param {object} [mQueryOptions]
+		 *   The map of query options
+		 * @param {string} [sOrderby]
+		 *   The new value for the query option "$orderby"
+		 * @param {string} [sFilter]
+		 *   The new value for the query option "$filter"
+		 * @returns {object}
+		 *   The merged map of query options
+		 */
+		mergeQueryOptions : function (mQueryOptions, sOrderby, sFilter) {
+			var mResult;
+
+			function set(sProperty, sValue) {
+				if (sValue && (!mQueryOptions || mQueryOptions[sProperty] !== sValue)) {
+					if (!mResult) {
+						mResult = mQueryOptions ? JSON.parse(JSON.stringify(mQueryOptions)) : {};
+					}
+					mResult[sProperty] = sValue;
+				}
+			}
+
+			set("$orderby", sOrderby);
+			set("$filter", sFilter);
+			return mResult || mQueryOptions;
+		},
+
+		/**
+		 * Requests a $filter query option value for the given list binding; the value is computed
+		 * from the given arrays of dynamic application and control filters and the given static
+		 * filter.
+		 *
+		 * @param {sap.ui.model.odata.v4.ODataListBinding} oBinding
+		 *   The list binding
+		 * @param {sap.ui.model.Filter[]} aApplicationFilters
+		 *   The application filters
+		 * @param {sap.ui.model.Filter[]} aControlFilters
+		 *   The control filters
+		 * @param {string} sStaticFilter
+		 *   The static filter value
+		 * @returns {Promise} A promise which resolves with the $filter value or "" if the filter
+		 *   arrays are empty and the static filter parameter is not given. It rejects with an error
+		 *   if a filter has an unknown operator or an invalid path.
+		 */
+		requestFilter : function (oBinding, aApplicationFilters, aControlFilters, sStaticFilter) {
+			var aNonEmptyFilters = [];
+
+			/**
+			 * Concatenates the given $filter values using the given separator; the resulting
+			 * value is enclosed in parentheses if more than one filter value is given.
+			 *
+			 * @param {string[]} aFilterValues The filter values
+			 * @param {string} sSeparator The separator
+			 * @returns {string} The combined filter value
+			 */
+			function combineFilterValues(aFilterValues, sSeparator) {
+				var sFilterValue = aFilterValues.join(sSeparator);
+
+				return aFilterValues.length > 1 ? "(" + sFilterValue + ")" : sFilterValue;
+			}
+
+			/**
+			 * Returns the $filter value for the given single filter using the given Edm type to
+			 * format the filter's operand(s).
+			 *
+			 * @param {sap.ui.model.Filter} oFilter The filter
+			 * @param {string} sEdmType The Edm type
+			 * @returns {string} The $filter value
+			 */
+			function getSingleFilterValue(oFilter, sEdmType) {
+				var sFilter,
+					sValue = _Helper.formatLiteral(oFilter.oValue1, sEdmType),
+					sFilterPath = decodeURIComponent(oFilter.sPath);
+
+				switch (oFilter.sOperator) {
+					case FilterOperator.BT :
+						sFilter = sFilterPath + " ge " + sValue + " and "
+							+ sFilterPath + " le "
+							+ _Helper.formatLiteral(oFilter.oValue2, sEdmType);
+						break;
+					case FilterOperator.EQ :
+					case FilterOperator.GE :
+					case FilterOperator.GT :
+					case FilterOperator.LE :
+					case FilterOperator.LT :
+					case FilterOperator.NE :
+						sFilter = sFilterPath + " " + oFilter.sOperator.toLowerCase() + " "
+							+ sValue;
+						break;
+					case FilterOperator.Contains :
+					case FilterOperator.EndsWith :
+					case FilterOperator.StartsWith :
+						sFilter = oFilter.sOperator.toLowerCase() + "(" + sFilterPath + ","
+							+ sValue + ")";
+						break;
+					default :
+						throw new Error("Unsupported operator: " + oFilter.sOperator);
+				}
+				return sFilter;
+			}
+
+			/**
+			 * Requests the $filter value for an array of filters; filters with the same path are
+			 * grouped with a logical 'or'.
+			 *
+			 * @param {sap.ui.model.Filter[]} aFilters The non-empty array of filters
+			 * @param {boolean} [bAnd] Whether the filters are combined with 'and'; combined with
+			 *   'or' if not given
+			 * @returns {Promise} A promise which resolves with the $filter value
+			 */
+			function requestArrayFilter(aFilters, bAnd) {
+				var aFilterPromises = [],
+					mFiltersByPath = {};
+
+				aFilters.forEach(function (oFilter) {
+					mFiltersByPath[oFilter.sPath] = mFiltersByPath[oFilter.sPath] || [];
+					mFiltersByPath[oFilter.sPath].push(oFilter);
+				});
+				aFilters.forEach(function (oFilter) {
+					var aFiltersForPath;
+
+					if (oFilter.aFilters) { // array filter
+						aFilterPromises.push(requestArrayFilter(oFilter.aFilters, oFilter.bAnd)
+							.then(function (sArrayFilter) {
+								return "(" + sArrayFilter + ")";
+							})
+						);
+						return;
+					}
+					// single filter
+					aFiltersForPath = mFiltersByPath[oFilter.sPath];
+					if (!aFiltersForPath) { // filter group for path of oFilter already processed
+						return;
+					}
+					delete mFiltersByPath[oFilter.sPath];
+					aFilterPromises.push(requestGroupFilter(aFiltersForPath));
+				});
+
+				return Promise.all(aFilterPromises).then(function (aFilterValues) {
+					return aFilterValues.join(bAnd ? " and " : " or ");
+				});
+			}
+
+			/**
+			 * Requests the $filter value for the given group of filters which all have the same
+			 * path and thus refer to the same Edm type; the resulting filter value is
+			 * the $filter values for the single filters in the group combined with a logical 'or'.
+			 *
+			 * @param {sap.ui.model.Filter[]} aGroupFilters The non-empty array of filters
+			 * @returns {Promise} A promise which resolves with the $filter value or rejects with an
+			 *   error if the filter value uses an unknown operator
+			 */
+			function requestGroupFilter(aGroupFilters) {
+				var oMetaModel = oBinding.oModel.oMetaModel,
+					oMetaContext = oMetaModel.getMetaContext(
+						_Helper.buildPath(oBinding.sPath, aGroupFilters[0].sPath)),
+					oPropertyPromise = oMetaModel.requestObject(undefined, oMetaContext);
+
+				return oPropertyPromise.then(function (oPropertyMetadata) {
+					var aGroupFilterValues;
+
+					if (!oPropertyMetadata) {
+						throw new Error("Type cannot be determined, no metadata for path: "
+							+ oMetaContext.getPath());
+					}
+
+					aGroupFilterValues = aGroupFilters.map(function (oGroupFilter) {
+							return getSingleFilterValue(oGroupFilter, oPropertyMetadata.$Type);
+						});
+
+					return combineFilterValues(aGroupFilterValues, " or ");
+				});
+			}
+
+			return Promise.all([
+				requestArrayFilter(aApplicationFilters, /*bAnd*/true),
+				requestArrayFilter(aControlFilters, /*bAnd*/true)
+			]).then(function (aFilterValues) {
+				if (aFilterValues[0]) { aNonEmptyFilters.push(aFilterValues[0]); }
+				if (aFilterValues[1]) { aNonEmptyFilters.push(aFilterValues[1]); }
+				if (sStaticFilter) { aNonEmptyFilters.push(sStaticFilter); }
+
+				return combineFilterValues(aNonEmptyFilters, ") and (");
+			});
 		},
 
 		/**

@@ -464,40 +464,49 @@ sap.ui.define([
 	 *   A promise for the PATCH request
 	 */
 	CollectionCache.prototype.update = function (sGroupId, sPropertyName, vValue, sEditUrl, sPath) {
-		var oBody = {},
-			mChangeListeners = this.mChangeListeners,
-			mHeaders,
-			vOldValue,
-			sPropertyPath = sPath + "/" + sPropertyName,
-			oResult = drillDown(this.aElements, sPath),
-			oUpdatePromise,
+		var mChangeListeners = this.mChangeListeners,
+			aSegments = sPath.split("/"),
+			iIndex = parseInt(aSegments.shift(), 10),
 			that = this;
 
-		sEditUrl += Cache.buildQueryString(this.mQueryOptions, true);
-		mHeaders = {"If-Match" : oResult["@odata.etag"]};
-		vOldValue = oResult[sPropertyName];
-		oBody[sPropertyName] = oResult[sPropertyName] = vValue;
-		fireChange(mChangeListeners, sPropertyPath, vOldValue, vValue);
+		return this.read(iIndex, 1, sGroupId, aSegments.join("/")).then(function (oResult) {
+			var oBody = {},
+				mHeaders,
+				vOldValue,
+				sPropertyPath = sPath + "/" + sPropertyName,
+				oUpdatePromise;
 
-		oUpdatePromise = this.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders, oBody);
-		addByPath(this.mPatchRequests, sPropertyPath, oUpdatePromise);
-		return oUpdatePromise.then(function (oPatchResult) {
-			removeByPath(that.mPatchRequests, sPropertyPath, oUpdatePromise);
-			fireChange(mChangeListeners, sPath, oResult, oPatchResult);
-			for (sPropertyName in oResult) {
-				if (sPropertyName in oPatchResult) {
-					oResult[sPropertyName] = oPatchResult[sPropertyName];
+			if (!oResult) {
+				throw new Error("Cannot update '" + sPropertyName + "': '" + sPath
+					+ "' does not exist");
+			}
+			sEditUrl += Cache.buildQueryString(that.mQueryOptions, true);
+			mHeaders = {"If-Match" : oResult["@odata.etag"]};
+			vOldValue = oResult[sPropertyName];
+			oBody[sPropertyName] = oResult[sPropertyName] = vValue;
+			fireChange(mChangeListeners, sPropertyPath, vOldValue, vValue);
+
+			oUpdatePromise = that.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders,
+				oBody);
+			addByPath(that.mPatchRequests, sPropertyPath, oUpdatePromise);
+			return oUpdatePromise.then(function (oPatchResult) {
+				removeByPath(that.mPatchRequests, sPropertyPath, oUpdatePromise);
+				fireChange(mChangeListeners, sPath, oResult, oPatchResult);
+				for (sPropertyName in oResult) {
+					if (sPropertyName in oPatchResult) {
+						oResult[sPropertyName] = oPatchResult[sPropertyName];
+					}
 				}
-			}
-			return oPatchResult;
-		}, function (oError){
-			removeByPath(that.mPatchRequests, sPropertyPath, oUpdatePromise);
-			if (oError.canceled) {
-				fireChange(mChangeListeners, sPropertyPath,
-					oResult[sPropertyName], vOldValue);
-				oResult[sPropertyName] = vOldValue;
-			}
-			throw oError;
+				return oPatchResult;
+			}, function (oError) {
+				removeByPath(that.mPatchRequests, sPropertyPath, oUpdatePromise);
+				if (oError.canceled) {
+					fireChange(mChangeListeners, sPropertyPath,
+						oResult[sPropertyName], vOldValue);
+					oResult[sPropertyName] = vOldValue;
+				}
+				throw oError;
+			});
 		});
 	};
 
@@ -708,45 +717,50 @@ sap.ui.define([
 	SingleCache.prototype.update = function (sGroupId, sPropertyName, vValue, sEditUrl, sPath) {
 		var that = this;
 
-		return this.oPromise.then(function (oResult) {
-			var oBody = {},
-				mHeaders,
-				vOldValue,
-				sResultPropertyName = that.bSingleProperty ? "value" : sPropertyName,
-				sUpdatePath = _Helper.buildPath(sPath, sResultPropertyName),
-				oUpdatePromise;
+		return (this.bSingleProperty ? this.oPromise : this.read(sGroupId, sPath))
+			.then(function (oResult) {
+				var oBody = {},
+					mHeaders,
+					vOldValue,
+					sResultPropertyName = that.bSingleProperty ? "value" : sPropertyName,
+					sUpdatePath = _Helper.buildPath(sPath, sResultPropertyName),
+					oUpdatePromise;
 
-			sEditUrl += Cache.buildQueryString(that.mQueryOptions, true);
-			oResult = drillDown(oResult, sPath);
-			mHeaders = {"If-Match" : oResult["@odata.etag"]};
-			vOldValue = oResult[sResultPropertyName];
-			fireChange(that.mChangeListeners, sUpdatePath, vOldValue, vValue);
-			oBody[sPropertyName] = oResult[sResultPropertyName] = vValue;
+				if (!oResult) {
+					throw new Error("Cannot update '" + sPropertyName + "': '" + sPath
+						+ "' does not exist");
+				}
+				sEditUrl += Cache.buildQueryString(that.mQueryOptions, true);
+				mHeaders = {"If-Match" : oResult["@odata.etag"]};
+				vOldValue = oResult[sResultPropertyName];
+				fireChange(that.mChangeListeners, sUpdatePath, vOldValue, vValue);
+				oBody[sPropertyName] = oResult[sResultPropertyName] = vValue;
 
-			oUpdatePromise = that.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders, oBody);
-			addByPath(that.mPatchRequests, sUpdatePath, oUpdatePromise);
-			return oUpdatePromise.then(function (oPatchResult) {
-				removeByPath(that.mPatchRequests, sUpdatePath, oUpdatePromise);
-				if (that.bSingleProperty) {
-					oResult.value = oPatchResult[sPropertyName];
-				} else {
-					fireChange(that.mChangeListeners, sPath, oResult, oPatchResult);
-					for (sPropertyName in oResult) {
-						if (sPropertyName in oPatchResult) {
-							oResult[sPropertyName] = oPatchResult[sPropertyName];
+				oUpdatePromise = that.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders,
+					oBody);
+				addByPath(that.mPatchRequests, sUpdatePath, oUpdatePromise);
+				return oUpdatePromise.then(function (oPatchResult) {
+					removeByPath(that.mPatchRequests, sUpdatePath, oUpdatePromise);
+					if (that.bSingleProperty) {
+						oResult.value = oPatchResult[sPropertyName];
+					} else {
+						fireChange(that.mChangeListeners, sPath, oResult, oPatchResult);
+						for (sPropertyName in oResult) {
+							if (sPropertyName in oPatchResult) {
+								oResult[sPropertyName] = oPatchResult[sPropertyName];
+							}
 						}
 					}
-				}
-				return oPatchResult;
-			}, function (oError) {
-				removeByPath(that.mPatchRequests, sUpdatePath, oUpdatePromise);
-				if (oError.canceled) {
-					fireChange(that.mChangeListeners, sUpdatePath,
-						oResult[sResultPropertyName], vOldValue);
-					oResult[sResultPropertyName] = vOldValue;
-				}
-				throw oError;
-			});
+					return oPatchResult;
+				}, function (oError) {
+					removeByPath(that.mPatchRequests, sUpdatePath, oUpdatePromise);
+					if (oError.canceled) {
+						fireChange(that.mChangeListeners, sUpdatePath,
+							oResult[sResultPropertyName], vOldValue);
+						oResult[sResultPropertyName] = vOldValue;
+					}
+					throw oError;
+				});
 		});
 	};
 

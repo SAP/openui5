@@ -23,6 +23,17 @@ sap.ui.define([
 //	}
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.SalesOrders.Main", {
+		_setSalesOrderBindingContext : function (oSalesOrderContext) {
+			var oView = this.getView();
+
+			oView.byId("ObjectPage").setBindingContext(oSalesOrderContext);
+			oView.byId("SupplierContactData").setBindingContext(undefined);
+			oView.byId("SupplierDetailsForm").setBindingContext(undefined);
+			if (!oSalesOrderContext) {
+				oView.byId("SalesOrders").removeSelections();
+			}
+		},
+
 		onCancelSalesOrder : function (oEvent) {
 			this.getView().getModel().resetChanges("SalesOrderUpdateGroup");
 		},
@@ -31,6 +42,10 @@ sap.ui.define([
 			var oCreateSalesOrderDialog = this.getView().byId("createSalesOrderDialog");
 
 			oCreateSalesOrderDialog.close();
+		},
+
+		onCancelSalesOrderSchedules : function (oEvent) {
+			this.getView().byId("SalesOrderSchedulesDialog").close();
 		},
 
 		onCancelSalesOrderList : function (oEvent) {
@@ -116,6 +131,22 @@ sap.ui.define([
 			MessageBox.confirm(sMessage, onConfirm, "Sales Order Deletion");
 		},
 
+		onFilter : function (oEvent) {
+			var oView = this.getView(),
+				oBinding = oView.byId("SalesOrders").getBinding("items"),
+				sQuery = oView.getModel("ui").getProperty("/filterValue"); // TODO validation
+
+			if (oBinding.hasPendingChanges()) {
+				MessageBox.error("Cannot filter due to unsaved changes"
+					+ "; save or reset changes before filtering");
+				return;
+			}
+			oBinding.filter(sQuery
+				? new Filter("GrossAmount", FilterOperator.GT, sQuery)
+				: null);
+			this._setSalesOrderBindingContext();
+		},
+
 		onInit : function () {
 			var bMessageOpen = false,
 				oMessageManager = sap.ui.getCore().getMessageManager(),
@@ -176,46 +207,41 @@ sap.ui.define([
 				"There are pending changes. Do you really want to refresh the favorite product?");
 		},
 
-		onRefreshSalesOrderDetails : function (oEvent) {
-			this.onRefresh(this.getView().byId("ObjectPage").getElementBinding(),
-				"There are pending changes. Do you really want to refresh the sales order?");
-		},
+//		onRefreshSalesOrderDetails : function (oEvent) {
+//			this.onRefresh(this.getView().byId("ObjectPage").getElementBinding(),
+//				"There are pending changes. Do you really want to refresh the sales order?");
+//		},
 
 		onRefreshSalesOrdersList : function (oEvent) {
 			this.onRefresh(this.getView().byId("SalesOrders").getBinding("items"),
 				"There are pending changes. Do you really want to refresh all sales orders?");
 		},
 
-		onSalesOrdersSelect : function (oEvent) {
-			var oSalesOrderContext = oEvent.getParameters().listItem.getBindingContext(),
-				oView = this.getView();
+		onSalesOrderSchedules : function (oEvent) {
+			this.getView().byId("SalesOrderSchedulesDialog").open();
+		},
 
-			oView.byId("ObjectPage").setBindingContext(oSalesOrderContext);
-			oView.byId("SupplierDetailsForm").unbindObject();
-			oView.byId("SupplierContactData").setBindingContext(undefined);
+		onSalesOrdersSelect : function (oEvent) {
+			this._setSalesOrderBindingContext(oEvent.getParameters().listItem.getBindingContext());
 		},
 
 		onSalesOrderLineItemSelect : function (oEvent) {
 			var oView = this.getView(),
-				oSalesOrderLineItemContext = oEvent.getParameters().listItem.getBindingContext(),
-				oSupplierDetailsForm = this.getView().byId("SupplierDetailsForm");
+				oSalesOrderLineItemContext = oEvent.getParameters().listItem.getBindingContext();
 
 			oView.byId("SupplierContactData").setBindingContext(oSalesOrderLineItemContext);
-
-			//TODO the following does not work because requestCanonicalPath() fails later on, when
-			//     the PATCH request is sent, because ProductList has no NavigationPropertyBindings
-//			oSupplierDetailsForm.setBindingContext(oSalesOrderLineItemContext);
-
-			// workaround: manual computation of canonical URL for the time being
-			//TODO _Helper.formatLiteral
-			oSupplierDetailsForm.bindObject("/BusinessPartnerList('"
-				+ oSalesOrderLineItemContext.getProperty(
-					"SOITEM_2_PRODUCT/PRODUCT_2_BP/BusinessPartnerID")
-				+ "')");
+			oView.byId("SupplierDetailsForm").setBindingContext(oSalesOrderLineItemContext);
 		},
 
 		onSaveSalesOrder : function () {
 			this.getView().getModel().submitBatch("SalesOrderUpdateGroup");
+		},
+
+		onSaveSalesOrderSchedules : function () {
+			var oView = this.getView();
+
+			oView.getModel().submitBatch("SalesOrderUpdateGroup");
+			oView.byId("SalesOrderSchedulesDialog").close();
 		},
 
 		onSaveSalesOrderList : function () {

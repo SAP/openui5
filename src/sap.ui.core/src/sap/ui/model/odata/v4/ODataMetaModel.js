@@ -318,52 +318,177 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a promise for the "4.3.1 Canonical URL" corresponding to the given service root URL
-	 * and absolute data binding path which must point to an entity.
+	 * Returns a promise for an absolute data binding path of a "4.3.1 Canonical URL" for the given
+	 * context which must point to an entity.
 	 *
-	 * @param {string} sServiceUrl
-	 *   Root URL of the service
-	 * @param {string} sPath
-	 *   An absolute data binding path pointing to an entity, for example
-	 *   "/TEAMS/0/TEAM_2_EMPLOYEES/0"
 	 * @param {sap.ui.model.odata.v4.Context} oContext
-	 *   OData V4 context object which provides access to data via <code>fetchValue()</code>
+	 *   OData V4 context object for which the canonical path is requested
 	 * @returns {SyncPromise}
-	 *   A promise which is resolved with the canonical URL (for example
-	 *   "/<service root URL>/EMPLOYEES(ID='1')") in case of success, or rejected with an instance
-	 *   of <code>Error</code> in case of failure
+	 *   A promise which is resolved with the canonical path (for example "/EMPLOYEES('1')") in
+	 *   case of success, or rejected with an instance of <code>Error</code> in case of failure
 	 *
 	 * @private
 	 */
-	ODataMetaModel.prototype.fetchCanonicalUrl = function (sServiceUrl, sPath, oContext) {
-		var sMetaPath = sPath.replace(rNotMetaContext, ""),
-			aSegments = sMetaPath.slice(1).split("/");
+	ODataMetaModel.prototype.fetchCanonicalPath = function (oContext) {
 
-		return _SyncPromise.all([
-			oContext.fetchValue(""),
-			this.fetchEntityContainer()
-		]).then(function (aValues) {
-			var oEntityInstance = aValues[0],
-				mScope = aValues[1],
+		return this.fetchEntityContainer().then(function (mScope) {
+			var sCandidate, // the encoded candidate for the canonical path in case it's composed
 				oEntityContainer = mScope[mScope.$EntityContainer],
-				sEntitySetName = aSegments.shift(),
-				oEntitySet = oEntityContainer[sEntitySetName],
-				oEntityType = mScope[oEntitySet.$Type];
+				sEntitySetName, // the current encoded entity set name (only valid if not contained)
+				oEntitySet, // the current entity set of the instance (undefined if contained)
+				oEntityType, // the current entity type
+				iPredicateIndex,
+				aSegments = oContext.getPath().split("/");
 
-			aSegments.forEach(function (sSegment) {
-				var oNavigationProperty = oEntityType[sSegment];
+			/*
+			 * Logs and throws an error.
+			 * @param {string} sMessage The message
+			 * @param {string} [sErrorPath] An optional path for error messages
+			 */
+			function error(sMessage, sErrorPath) {
+				var sPath = oContext.getPath();
 
-				if (!oNavigationProperty || oNavigationProperty.$kind !== "NavigationProperty") {
-					throw new Error("Not a navigation property: " + sSegment + " (" + sPath + ")");
+				if (sErrorPath && sErrorPath !== sPath) {
+					sMessage = sMessage + " at " + sErrorPath;
+				}
+				jQuery.sap.log.error(sMessage, sPath, sODataMetaModel);
+				throw new Error(sPath + ": " + sMessage);
+			}
+
+			/*
+			 * Fetches the canonical path of the containing entity
+			 * @param {number} iLength The path length
+			 * @returns {SyncPromise} A promise on the canonical path
+			 */
+			function fetchCanonicalPathOfContainingEntity(iLength) {
+				if (oEntitySet.$kind === "Singleton") {
+					return _SyncPromise.resolve(sEntitySetName);
+				}
+				return fetchKeyPredicate(iLength).then(function (sKeyPredicate) {
+					return sEntitySetName + sKeyPredicate;
+				});
+			}
+
+			/*
+			 * Fetches the key predicate for the absolute path from aSegments[0..iLength] using the
+			 * context.
+			 * @param {number} iLength The path length
+			 * @returns {SyncPromise} a Promise on the key predicate for that path
+			 */
+			function fetchKeyPredicate(iLength) {
+				var sSubPath = aSegments.slice(0, iLength).join("/");
+
+				return oContext.fetchAbsoluteValue(sSubPath).then(function (oEntityInstance) {
+					return keyPredicate(oEntityInstance, sSubPath);
+				});
+			}
+
+			/*
+			 * Calculates the key predicate using oEntityType and the given entity instance. Logs
+			 * an error if calculating the key predicate failed.
+			 * @param {object} oEntityInstance the entity instance
+			 * @param {string} [sPath] An optional path for error messages
+			 * @returns {string} the key predicate
+			 */
+			function keyPredicate(oEntityInstance, sPath) {
+				try {
+					return _ODataHelper.getKeyPredicate(oEntityType, oEntityInstance);
+				} catch (e) {
+					error(e.message, sPath);
+				}
+			}
+
+			/*
+			 * Recursively processes the segments with navigation properties.
+			 * @param {number} i The segment to process next
+			 * @returns {String|SyncPromise} The canonical path or a promise on it
+			 */
+			function processSegment(i) {
+				var oNavigationProperty,
+					sNavigationPropertyName,
+					sSegment;
+
+				// recursion end
+				if (i === aSegments.length) {
+					if (sCandidate) {
+						return "/" + sCandidate;
+					}
+					if (oEntitySet.$kind === "Singleton") {
+						return "/" + sEntitySetName;
+					}
+					return oContext.fetchValue("").then(function (oEntityInstance) {
+						return "/" + sEntitySetName + keyPredicate(oEntityInstance);
+					});
 				}
 
-				sEntitySetName = oEntitySet.$NavigationPropertyBinding[sSegment];
+				sSegment = aSegments[i];
+				if (rNumber.test(sSegment)) {
+					// an index: if there is no entity set, it is a path to a contained entity;
+					// add the contained entity's key predicate
+					if (!oEntitySet) {
+						return fetchKeyPredicate(i + 1).then(function (sKeyPredicate) {
+							sCandidate += sKeyPredicate;
+							return processSegment(i + 1);
+						});
+					}
+					// ignore the index otherwise
+					return processSegment(i + 1);
+				}
+				iPredicateIndex = sSegment.indexOf("(");
+				sNavigationPropertyName = decodeURIComponent(
+					iPredicateIndex > 0 ? sSegment.slice(0, iPredicateIndex) : sSegment
+				);
+				oNavigationProperty = oEntityType[sNavigationPropertyName];
+				if (!oNavigationProperty || oNavigationProperty.$kind !== "NavigationProperty") {
+					error("Not a navigation property: " + sNavigationPropertyName);
+				}
+				if (!oEntitySet || (sCandidate && oNavigationProperty.$ContainsTarget)) {
+					// We're already processing contained entities or we start it and already have
+					// a candidate: simply append the segment
+					sCandidate += "/" + sSegment;
+					oEntityType = mScope[oNavigationProperty.$Type];
+					oEntitySet = undefined;
+					return processSegment(i + 1);
+				}
+				if (oNavigationProperty.$ContainsTarget) {
+					// a navigation property containing the target: calculate the canonical path of
+					// the containing entity, append the navigation property and remember it as
+					// candidate
+					return fetchCanonicalPathOfContainingEntity(i).then(function (sPath) {
+						sCandidate = sPath + "/" + sSegment;
+						oEntitySet = undefined;
+						oEntityType = mScope[oNavigationProperty.$Type];
+						return processSegment(i + 1);
+					});
+				}
+				// a navigation to an entity set
+				sEntitySetName = oEntitySet.$NavigationPropertyBinding[sNavigationPropertyName];
+				// remember the target's set name, set and type
 				oEntitySet = oEntityContainer[sEntitySetName];
 				oEntityType = mScope[oNavigationProperty.$Type];
-			});
+				sEntitySetName = encodeURIComponent(sEntitySetName);
+				// We have a candidate exactly if there is a predicate
+				sCandidate = iPredicateIndex > 0
+					? sEntitySetName + sSegment.slice(iPredicateIndex)
+					: undefined;
+				return processSegment(i + 1);
+			}
 
-			return sServiceUrl + encodeURIComponent(sEntitySetName)
-				+ _ODataHelper.getKeyPredicate(oEntityType, oEntityInstance);
+			// Here we start: aSegments[0] is empty, aSegments[1] is an entity set or an entity
+			// instance (with key predicate), the other segments are navigation properties (poss.
+			// with key predicate) or indexes
+			iPredicateIndex = aSegments[1].indexOf("(");
+			if (iPredicateIndex > 0) {
+				sCandidate = aSegments[1];
+				sEntitySetName = sCandidate.slice(0, iPredicateIndex);
+			} else {
+				sEntitySetName = aSegments[1];
+			}
+			oEntitySet = oEntityContainer[decodeURIComponent(sEntitySetName)];
+			oEntityType = mScope[oEntitySet.$Type];
+
+			// now iterate over the navigation segments
+			return processSegment(2);
 		});
 	};
 

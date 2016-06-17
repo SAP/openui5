@@ -60,6 +60,7 @@
 			"" : {
 				"dataSource" : "default",
 				"settings" : {
+					"operationMode" : "Server",
 					"synchronizationMode" : "None"
 				}
 			}
