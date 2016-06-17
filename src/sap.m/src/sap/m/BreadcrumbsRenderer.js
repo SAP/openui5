@@ -27,7 +27,7 @@ sap.ui.define(["sap/m/Breadcrumbs", "sap/m/Text"], function (Class, Text) {
 		oRm.addClass("sapMBreadcrumbs");
 		oRm.writeClasses();
 		oRm.writeAttribute("role", "navigation");
-		oRm.writeAttributeEscaped("aria-labelledby", Class._getResourceBundle().getText("BREADCRUMB_LABEL"));
+		oRm.writeAttributeEscaped("aria-label", Class._getResourceBundle().getText("BREADCRUMB_LABEL"));
 		oRm.write(">");
 
 		if (oSelect.getVisible()) {
