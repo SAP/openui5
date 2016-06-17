@@ -126,7 +126,7 @@ sap.ui.define([
 
 				if (!this.bRelative || bDeferred || mParameters) {
 					this.mQueryOptions = _ODataHelper.buildQueryOptions(oModel.mUriParameters,
-						mParameters, ["$expand", "$filter", "$orderby", "$select"]);
+						mParameters, _ODataHelper.aAllowedSystemQueryOptions);
 					oBindingParameters = _ODataHelper.buildBindingParameters(mParameters,
 						["$$groupId", "$$updateGroupId"]);
 					this.sGroupId = oBindingParameters.$$groupId;
@@ -502,7 +502,7 @@ sap.ui.define([
 	/**
 	 * Refreshes the binding. Prompts the model to retrieve data from the server using the given
 	 * group ID and notifies the control that new data is available.
-	 * Refresh is supported if the binding retrieves data with its own service request.
+	 * Refresh is supported for absolute bindings.
 	 *
 	 * Note: When calling refresh multiple times, the result of the request triggered by the last
 	 * call determines the binding's data; it is <b>independent</b>
@@ -523,25 +523,53 @@ sap.ui.define([
 	 */
 	// @override
 	ODataContextBinding.prototype.refresh = function (sGroupId) {
-		var that = this;
+//		var that = this;
 
+		if (this.bRelative) {
+			throw new Error("Refresh on this binding is not supported");
+		}
 		if (this.oCache) {
 			if (!this.oOperation || !this.oOperation.bAction) {
 				_ODataHelper.checkGroupId(sGroupId);
 				this.sRefreshGroupId = sGroupId;
-				if (this.mCacheByContext) {
-					Object.keys(this.mCacheByContext).forEach(function (sCanonicalPath) {
-						if (that.oCache !== that.mCacheByContext[sCanonicalPath]) {
-							delete that.mCacheByContext[sCanonicalPath];
-						}
-					});
-				}
+//				if (this.mCacheByContext) {
+//					Object.keys(this.mCacheByContext).forEach(function (sCanonicalPath) {
+//						if (that.oCache !== that.mCacheByContext[sCanonicalPath]) {
+//							delete that.mCacheByContext[sCanonicalPath];
+//						}
+//					});
+//				}
 				this.oCache.refresh();
 				this._fireChange({reason : ChangeReason.Refresh});
 			}
-		} else if (!this.oOperation) {
-			throw new Error("Refresh on this binding is not supported");
 		}
+	};
+
+	/**
+	 * Requests the value for the given absolute path; the value is requested from this binding's
+	 * cache or from its context in case it has no cache or the cache does not contain data for
+	 * this path.
+	 *
+	 * @param {string} sPath
+	 *   An absolute path including the binding path
+	 * @returns {SyncPromise}
+	 *   A promise on the outcome of the cache's <code>read</code> call
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype.fetchAbsoluteValue = function (sPath) {
+		var sResolvedPath;
+
+		if (this.oCache) {
+			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+			if (sPath === sResolvedPath || sPath.lastIndexOf(sResolvedPath + "/") === 0) {
+				return this.fetchValue(sPath.slice(sResolvedPath.length + 1));
+			}
+		}
+		if (this.oContext) {
+			return this.oContext.fetchAbsoluteValue(sPath);
+		}
+		return _SyncPromise.resolve();
 	};
 
 	/**
@@ -555,7 +583,7 @@ sap.ui.define([
 	 * @returns {SyncPromise}
 	 *   A promise on the outcome of the cache's <code>read</code> call
 	 *
-	 *  @private
+	 * @private
 	 */
 	ODataContextBinding.prototype.fetchValue = function (sPath, oListener) {
 		var bDataRequested = false,
@@ -621,6 +649,13 @@ sap.ui.define([
 	ODataContextBinding.prototype.setContext = function (oContext) {
 		var that = this;
 
+		function createCache(sPath) {
+			var mQueryOptions = _ODataHelper.getQueryOptions(that, "", oContext);
+
+			return _Cache.createSingle(that.oModel.oRequestor,
+				_Helper.buildPath(sPath.slice(1), that.sPath), mQueryOptions);
+		}
+
 		if (this.oContext !== oContext) {
 			if (this.bRelative && this.oCache) {
 				this.oCache.deregisterChange();
@@ -633,10 +668,8 @@ sap.ui.define([
 					? Context.create(this.oModel, this, this.oModel.resolve(this.sPath, oContext))
 					: null;
 				if (oContext && !this.oOperation && this.mQueryOptions) {
-					this.oCache = _ODataHelper.createCacheProxy(this, oContext, function (sPath) {
-						return _Cache.createSingle(that.oModel.oRequestor,
-							_Helper.buildPath(sPath.slice(1), that.sPath), that.mQueryOptions);
-					});
+					this.oCache = _ODataHelper.createCacheProxy(this, createCache,
+						oContext.requestCanonicalPath());
 					this.oCache.promise.then(function (oCache) {
 						that.oCache = oCache;
 					})["catch"](function (oError) {

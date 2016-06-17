@@ -4,10 +4,11 @@
 sap.ui.require([
 	"jquery.sap.global",
 	"sap/ui/model/Context",
+	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_SyncPromise"
-], function (jQuery, BaseContext, Context, _Helper, _SyncPromise) {
+], function (jQuery, BaseContext, _ODataHelper, Context, _Helper, _SyncPromise) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -84,6 +85,20 @@ sap.ui.require([
 			.returns(oResult);
 
 		assert.strictEqual(oContext.fetchValue(sPath, oListener), oResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchAbsoluteValue", function (assert) {
+		var oBinding = {
+				fetchAbsoluteValue : function () {}
+			},
+			oContext = Context.create(null, oBinding, "/foo", 42),
+			oResult = {},
+			sPath = "bar";
+
+		this.mock(oBinding).expects("fetchAbsoluteValue").withExactArgs(sPath).returns(oResult);
+
+		assert.strictEqual(oContext.fetchAbsoluteValue(sPath), oResult);
 	});
 
 	//*********************************************************************************************
@@ -341,9 +356,9 @@ sap.ui.require([
 
 			this.mock(_Helper).expects("buildPath").withExactArgs(42, "SO_2_SOITEM/42")
 				.returns("~");
-			this.mock(oModel).expects("requestCanonicalPath")
+			this.mock(oContext).expects("requestCanonicalPath")
 				.exactly(sEditUrl ? 0 : 1)
-				.withExactArgs(sinon.match.same(oContext))
+				.withExactArgs()
 				.returns(Promise.resolve("/edit('URL')"));
 			this.mock(oBinding).expects("updateValue")
 				.withExactArgs("up", sPropertyName, vValue, "edit('URL')", "~")
@@ -367,8 +382,8 @@ sap.ui.require([
 			oContext = Context.create(oModel, oBinding, "/foo", 0),
 			oError = new Error();
 
-		this.mock(oModel).expects("requestCanonicalPath")
-			.withExactArgs(sinon.match.same(oContext))
+		this.mock(oContext).expects("requestCanonicalPath")
+			.withExactArgs()
 			.returns(Promise.reject(oError)); // rejected!
 		this.mock(oBinding).expects("updateValue").never();
 
@@ -382,7 +397,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("fetchCanonicalPath", function (assert) {
 		var oMetaModel = {
-				fetchCanonicalUrl : function () {}
+				fetchCanonicalPath : function () {}
 			},
 			oModel = {
 				getMetaModel : function () {
@@ -392,8 +407,8 @@ sap.ui.require([
 			oContext = Context.create(oModel, null, "/EMPLOYEES/42"),
 			oPromise = {};
 
-		this.mock(oMetaModel).expects("fetchCanonicalUrl")
-			.withExactArgs("/", oContext.getPath(), sinon.match.same(oContext))
+		this.mock(oMetaModel).expects("fetchCanonicalPath")
+			.withExactArgs(sinon.match.same(oContext))
 			.returns(oPromise);
 
 		// code under test
@@ -454,5 +469,20 @@ sap.ui.require([
 		assert.throws(function () {
 			oContext.getCanonicalPath();
 		}, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getQueryOptions", function (assert) {
+		var oBinding = {},
+			oContext = Context.create(null, oBinding, "/EMPLOYEES/42"),
+			sPath = "foo/bar",
+			mResult = {};
+
+		this.mock(_ODataHelper).expects("getQueryOptions")
+			.withExactArgs(sinon.match.same(oBinding), sPath)
+			.returns(mResult);
+
+		// code under test
+		assert.strictEqual(oContext.getQueryOptions(sPath), mResult);
 	});
 });

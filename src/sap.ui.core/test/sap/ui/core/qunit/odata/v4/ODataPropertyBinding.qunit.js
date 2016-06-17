@@ -751,6 +751,10 @@ sap.ui.require([
 	QUnit.test("forbidden", function (assert) {
 		var oPropertyBinding = this.oModel.bindProperty("Name");
 
+		assert.throws(function () {
+			oPropertyBinding.refresh();
+		}, new Error("Refresh on this binding is not supported"));
+
 		assert.throws(function () { //TODO implement
 			oPropertyBinding.isInitial();
 		}, new Error("Unsupported operation: v4.ODataPropertyBinding#isInitial"));

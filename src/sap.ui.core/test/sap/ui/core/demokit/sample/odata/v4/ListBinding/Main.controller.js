@@ -94,7 +94,8 @@ sap.ui.define([
 
 			function setTeamContext() {
 				var oEmployees = oView.byId("Employees"),
-					oTeamContext = oView.byId("TeamSelect").getBinding("items").getContexts()[0];
+					oTeamContext = oView.byId("TeamSelect").getBinding("items")
+						.getCurrentContexts()[0];
 
 				oView.byId("TeamDetails").setBindingContext(oTeamContext);
 				oEmployees.getBinding("items").attachEventOnce("change", setEmployeeContext);
@@ -103,7 +104,8 @@ sap.ui.define([
 
 			function setEmployeeContext() {
 				var oEmployeesControl = oView.byId("Employees"),
-					oEmployeeContext = oEmployeesControl.getBinding("items").getContexts()[0];
+					oEmployeeContext = oEmployeesControl.getBinding("items")
+						.getCurrentContexts()[0];
 
 				oView.byId("EmployeeEquipments").setBindingContext(oEmployeeContext);
 				oEmployeesControl.setSelectedItem(oEmployeesControl.getItems()[0]);
@@ -160,14 +162,22 @@ sap.ui.define([
 			oView.setModel(new JSONModel({
 				EmployeeID: null
 			}), "search");
-			// Initialize model for sorting equipments
 			oView.setModel(new JSONModel({
-				Category : { icon : "sap-icon://sort-ascending", desc : false },
-				ID : { icon : "", desc : undefined },
-				Name : { icon : "", desc : undefined },
-				EmployeeId : { icon : "", desc : undefined }
+				Employees : {
+					AGE : { icon : "sap-icon://sort-ascending", desc : false },
+					Name : { icon : "", desc : undefined }
+				},
+				Equipments : {
+					Category : { icon : "sap-icon://sort-ascending", desc : false },
+					ID : { icon : "", desc : undefined },
+					Name : { icon : "", desc : undefined },
+					EmployeeId : { icon : "", desc : undefined }
+				}
 			}), "sort");
-			this.aSorters = [new Sorter("Category", /*bDescending*/false, /*bGroup*/true)];
+			this.mSorters = {
+				Employees : [new Sorter("AGE", /*bDescending*/false)],
+				Equipments : [new Sorter("Category", /*bDescending*/false, /*bGroup*/true)]
+			};
 		},
 
 		onSaveEmployee : function (oEvent) {
@@ -192,7 +202,7 @@ sap.ui.define([
 
 			function setEquipmentContext() {
 				var oEquipmentControl = oView.byId("EmployeeEquipments");
-				oEquipmentControl.setBindingContext(oEmployeesBinding.getContexts()[0]);
+				oEquipmentControl.setBindingContext(oEmployeesBinding.getCurrentContexts()[0]);
 				oEmployeesControl.setSelectedItem(oEmployeesControl.getItems()[0]);
 			}
 
@@ -240,13 +250,26 @@ sap.ui.define([
 		// sort on absolute binding
 		// *********************************************************************************
 		onSort : function (oEvent) {
-			var sNewIcon,
-				// get the sorter path from custom data (there is only one at the buttons)
-				sProperty = oEvent.getSource().getCustomData()[0].getValue(),
+			var oBinding,
+				mCustomData = {},
+				sId,
+				sNewIcon,
+				sProperty,
+				aSelectedContexts,
+				sSelectedId,
+				bSortDesc,
+				oTable,
 				oView = this.getView(),
-				oSortModel = oView.getModel('sort'),
-				bSortDesc = oSortModel.getProperty("/" + sProperty + "/desc");
+				oSortModel = oView.getModel('sort');
 
+			oEvent.getSource().getCustomData().forEach(function (oCustomData) {
+				mCustomData[oCustomData.getKey()] = oCustomData.getValue();
+			});
+			sId = mCustomData.sorterControlId;
+			sProperty = mCustomData.sorterPath;
+
+			// update sort model state
+			bSortDesc = oSortModel.getProperty("/" + sId + "/" + sProperty + "/desc");
 			// choose next sort order: no sort -> ascending -> descending -> no sort
 			if (bSortDesc === undefined) {
 				sNewIcon = "sap-icon://sort-ascending";
@@ -258,18 +281,38 @@ sap.ui.define([
 				sNewIcon = "";
 				bSortDesc = undefined;
 			}
-			oSortModel.setProperty("/" + sProperty + "/desc", bSortDesc);
-			oSortModel.setProperty("/" + sProperty + "/icon", sNewIcon);
+			oSortModel.setProperty("/" + sId + "/" + sProperty + "/desc", bSortDesc);
+			oSortModel.setProperty("/" + sId + "/" + sProperty + "/icon", sNewIcon);
 
 			// remove sorter for same path
-			this.aSorters = this.aSorters.filter(function (oSorter) {
+			this.mSorters[sId] = this.mSorters[sId].filter(function (oSorter) {
 				return oSorter.sPath !== sProperty;
 			});
 			// add sorter if necessary before all others
 			if (bSortDesc !== undefined) {
-				this.aSorters.unshift(new Sorter(sProperty, bSortDesc, true));
+				// do grouping only for equipments
+				this.mSorters[sId].unshift(new Sorter(sProperty, bSortDesc, sId === "Equipments"));
 			}
-			oView.byId("Equipments").getBinding("items").sort(this.aSorters);
+
+			oTable = oView.byId(sId);
+			aSelectedContexts = oTable.getSelectedContexts();
+			oBinding = oTable.getBinding("items");
+			// restore selection after sort
+			if (aSelectedContexts.length > 0) {
+				// same property for equipment and employee
+				sSelectedId = aSelectedContexts[0].getProperty("ID");
+			}
+			oBinding.attachEventOnce("change", function (oEvent) {
+				oTable.removeSelections(true);
+				oBinding.getCurrentContexts().some(function (oContext, i) {
+					if (oContext.getProperty("ID") === sSelectedId) {
+						oTable.setSelectedItem(oTable.getItems()[i]);
+						return true;
+					}
+				});
+			});
+
+			oBinding.sort(this.mSorters[sId]);
 		}
 	});
 

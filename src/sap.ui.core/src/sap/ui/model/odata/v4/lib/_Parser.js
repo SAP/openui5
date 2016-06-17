@@ -2,16 +2,16 @@
  * ${copyright}
  */
 
-//Provides class sap.ui.model.odata.v4.lib.Parser
+//Provides class sap.ui.model.odata.v4.lib._Parser
 sap.ui.define([
 ], function () {
 	"use strict";
 
 	var mSymbols,
-		// either '=', '(', ')', ',' or ';' or '$expand' or '$select' or a path (which will be
-		// listed in aMatches[1])
+		// either one of "=(),;*" or "$expand" or "$select" or a path (which will be listed in
+		// aMatches[1])
 		// skip path validation to keep it simple
-		rToken = /^(?:[=\(\),;]|\$expand|\$select|([a-zA-Z_\u0080-\uFFFF][/\w\u0080-\uFFFF]*))/,
+		rToken = /^(?:[=(),;*]|\$expand|\$select|([a-zA-Z_\u0080-\uFFFF][/\w\u0080-\uFFFF]*))/,
 		Parser;
 
 	mSymbols = { //symbol table
@@ -47,6 +47,9 @@ sap.ui.define([
 				var aSelect = [];
 
 				oParser.advance("=");
+				if (oParser.advanceIf("*")) {
+					return {"$select" : ["*"]};
+				}
 				do {
 					aSelect.push(oParser.advance("PATH").value);
 				} while (oParser.advanceIf(","));
@@ -55,6 +58,9 @@ sap.ui.define([
 			}
 		},
 		"PATH" : {
+			nud : expectOption
+		},
+		"*" : {
 			nud : expectOption
 		},
 		"=" : {
@@ -75,21 +81,36 @@ sap.ui.define([
 	};
 
 	/**
-	 * Throws an error for the unexpected token oToken.
+	 * Throws an error that the token was not as expected.
 	 *
-	 * @param {object} oToken The unexpected token
-	 * @throws An error for the unexpected token oToken
+	 * @param {string} sWhat A description what was expected
+	 * @param {object} [oToken] The unexpected token or undefined to indicate end of input
+	 * @throws {SyntaxError} An error that the token was not as expected
 	 */
-	function expectOption(oToken) {
-		throw new SyntaxError("Expected option but instead saw '" + oToken.value + "' at "
+	function expected(sWhat, oToken) {
+		if (!oToken) {
+			throw new SyntaxError("Expected " + sWhat + " but instead saw end of input");
+		}
+		throw new SyntaxError("Expected " + sWhat + " but instead saw '" + oToken.value + "' at "
 			+ oToken.at);
 	}
 
 	/**
-	 * Recursive parse function.
+	 * Throws an error for the unexpected token oToken.
+	 *
+	 * @param {object} oToken The unexpected token
+	 * @throws {SyntaxError} An error for the unexpected token oToken
+	 */
+	function expectOption(oToken) {
+		expected("option", oToken);
+	}
+
+	/**
+	 * Parses the system query options.
 	 *
 	 * @param {object[]} aTokens The tokens
 	 * @returns {object} The value for the part that has been parsed so far
+	 * @throws {SyntaxError} If there is a syntax error
 	 */
 	function parse(aTokens) {
 		var iCurrentToken = 0,
@@ -98,31 +119,24 @@ sap.ui.define([
 
 		/**
 		 * Returns the next token in the array of tokens and advances the index in this array.
-		 * Throws an error if the next token's ID is not equal to the optional
-		 * <code>sExpectedTokenId</code>.
 		 *
-		 * @param {string} [sExpectedTokenId] The expected ID of the next token
+		 * @param {string} [sExpectedTokenId] The expected ID of the next token or undefined to
+		 *   accept any token
 		 * @returns {object} The next token or undefined if all tokens have been read
+		 * @throws {SyntaxError} If the next token's ID is not as expected
 		 */
 		function advance(sExpectedTokenId) {
 			var oToken = aTokens[iCurrentToken];
 
-			if (sExpectedTokenId) {
-				if (!oToken) {
-					throw new SyntaxError("Expected '" + sExpectedTokenId
-						+ "' but instead saw end of input");
-				} else if (oToken.id !== sExpectedTokenId) {
-					throw new SyntaxError("Expected '" + sExpectedTokenId + "' but instead saw '"
-						+ oToken.value + "' at " + oToken.at);
-				}
+			if (sExpectedTokenId && (!oToken || oToken.id !== sExpectedTokenId)) {
+				expected("'" + sExpectedTokenId + "'", oToken);
 			}
 			iCurrentToken += 1;
 			return oToken;
 		}
 
 		/**
-		 * Returns the next token in the array of tokens and advances the index in this array if
-		 * this token has the expected ID.
+		 * Advances the index in in the array of tokens if this token has the expected ID.
 		 *
 		 * @param {string} sExpectedTokenId The expected id of the next token
 		 * @returns {boolean} True if the token is as expected and the parser has advanced
@@ -142,6 +156,7 @@ sap.ui.define([
 		 *
 		 * @param {number} rbp The right binding power (currently unused)
 		 * @returns {object} A map with one system query option
+		 * @throws {SyntaxError} If there is a syntax error
 		 * @example
 		 *   {"$expand" : {"SO_2_BP" : null}}
 		 */
@@ -175,8 +190,7 @@ sap.ui.define([
 
 		oResult = systemQueryOption(0);
 		if (iCurrentToken < aTokens.length) {
-			throw new SyntaxError("Expected end of input but instead saw '"
-				+ aTokens[iCurrentToken].value + "'");
+			expected("end of input", aTokens[iCurrentToken]);
 		}
 		return oResult;
 	}
@@ -225,7 +239,7 @@ sap.ui.define([
 		 *
 		 * <b>Example:</b>
 		 *
-		 * <code>$expand=SO_2_BP,SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP;$select=ID,Name))</code>
+		 * <code>$expand=SO_2_BP,SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP;$select=ID,Name);$select=*)</code>
 		 * is converted to
 		 * <pre>
 			{
@@ -239,7 +253,8 @@ sap.ui.define([
 								},
 								"$select" : ["ID", "Name"]
 							}
-						}
+						},
+						"$select" : ["*"]
 					}
 				}
 			}

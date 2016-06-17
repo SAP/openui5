@@ -131,23 +131,27 @@ sap.ui.require([
 				promise : Promise.resolve(oCache)
 			},
 			oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS", 1),
+			oODataHelperMock = this.mock(_ODataHelper),
+			oPathPromise = Promise.resolve(sCanonicalPath),
 			that = this;
 
+		oODataHelperMock.expects("getQueryOptions")
+			.withExactArgs(sinon.match.same(oBinding), "", sinon.match.same(oContext))
+			.returns(oBinding.mQueryOptions);
 		this.mock(_Helper).expects("buildPath")
-			.withExactArgs(sCanonicalPath.slice(1), "TEAM_2_MANAGER").returns("~");
+			.withExactArgs(sCanonicalPath.slice(1), "TEAM_2_MANAGER").returns("~path~");
 		this.mock(_Cache).expects("createSingle")
-			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "~", {
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "~path~", {
 					$select: ["Name"],
 					"sap-client" : "111"
 				})
 			.returns(oCache);
-		this.stub(_ODataHelper, "createCacheProxy",
-			function (oBinding0, oContext0, fnCreateCache) {
-				assert.strictEqual(oBinding0, oBinding);
-				assert.strictEqual(oContext0, oContext);
-				assert.strictEqual(fnCreateCache(sCanonicalPath), oCache);
-				return oCacheProxy;
-			});
+		this.mock(oContext).expects("requestCanonicalPath").withExactArgs().returns(oPathPromise);
+		oODataHelperMock.expects("createCacheProxy")
+			.withExactArgs(sinon.match.same(oBinding), sinon.match.func,
+				sinon.match.same(oPathPromise))
+			.callsArgWith(1, sCanonicalPath)
+			.returns(oCacheProxy);
 
 		//code under test
 		oBinding.setContext(oContext);
@@ -170,17 +174,21 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	//TODO Clarify why this causes Uncaught (in promise) Error: Failed to compute canonical path...
 	QUnit.test("setContext, relative path w/ parameters, proxy promise rejects", function (assert) {
 		var oBinding = this.oModel.bindContext("TEAM_2_MANAGER", null, {$select : "Name"}),
 			oError = new Error("Failed to compute canonical path..."),
+			oPathPromise = Promise.reject(oError),
 			oCacheProxy = {
-				promise : Promise.reject(oError)
+				promise : Promise.resolve(oPathPromise)
 			},
 			oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS", 1);
 
 		this.mock(_Cache).expects("createSingle").never();
+		this.mock(oContext).expects("requestCanonicalPath").withExactArgs().returns(oPathPromise);
 		this.mock(_ODataHelper).expects("createCacheProxy")
-			.withExactArgs(sinon.match.same(oBinding), sinon.match.same(oContext), sinon.match.func)
+			.withExactArgs(sinon.match.same(oBinding), sinon.match.func,
+				sinon.match.same(oPathPromise))
 			.returns(oCacheProxy);
 		this.mock(oBinding.oModel).expects("reportError")
 			.withExactArgs(
@@ -352,19 +360,24 @@ sap.ui.require([
 			oCachePromise = Promise.resolve(oCache),
 			oCacheProxy = {promise : oCachePromise},
 			oContext = Context.create(this.oModel, null, "/TEAMS", 1),
-			oHelperMock = this.mock(_ODataHelper);
+			oHelperMock = this.mock(_ODataHelper),
+			oPathPromise = Promise.resolve("/canonical");
 
+		this.mock(_Cache).expects("createSingle").never();
+		this.mock(oContext).expects("requestCanonicalPath").withExactArgs().returns(oPathPromise);
 		oHelperMock.expects("createCacheProxy")
-			.withExactArgs(sinon.match.same(oBinding), sinon.match.same(oContext), sinon.match.func)
+			.withExactArgs(sinon.match.same(oBinding), sinon.match.func,
+				sinon.match.same(oPathPromise))
 			.returns(oCacheProxy);
-		this.mock(oCache).expects("refresh");
+		this.mock(oCache).expects("refresh").never();
 		oBinding.setContext(oContext);
 		oBinding.mCacheByContext = {"/TEAMS('1')" : oCache, "/TEAMS('42')" : {}};
 
 		return oCachePromise.then(function () {
 			//code under test
-			oBinding.refresh();
-			assert.deepEqual(oBinding.mCacheByContext, {"/TEAMS('1')" : oCache});
+			assert.throws(function () {
+				oBinding.refresh();
+			}, new Error("Refresh on this binding is not supported"));
 		});
 	});
 
@@ -372,8 +385,6 @@ sap.ui.require([
 	QUnit.test("refresh on relative binding w/o parameters is not supported", function (assert) {
 		var oBinding,
 			oContext = Context.create(this.oModel, null, "/TEAMS('TEAM_01')");
-
-		this.mock(_Cache).expects("createSingle").never();
 
 		oBinding = this.oModel.bindContext("TEAM_2_EMPLOYEES(ID='1')", oContext);
 		this.mock(oBinding).expects("_fireChange").never();
@@ -429,6 +440,35 @@ sap.ui.require([
 		});
 		assert.ok(oPromise.isFulfilled());
 		return oPromise;
+	});
+
+	//*********************************************************************************************
+	[{
+		abs : "/absolute/bar",
+		rel : "bar"
+	}, {
+		abs : "/absolute",
+		rel : ""
+	}].forEach(function (oFixture) {
+		QUnit.test("fetchAbsoluteValue: absolute binding: " + oFixture.abs, function (assert) {
+			var oBinding = this.oModel.bindContext("/absolute"),
+				oResult = {};
+
+			this.mock(oBinding).expects("fetchValue").withExactArgs(oFixture.rel).returns(oResult);
+
+			assert.strictEqual(oBinding.fetchAbsoluteValue(oFixture.abs), oResult);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchAbsoluteValue: absolute binding, mismatch", function (assert) {
+		var oBinding = this.oModel.bindContext("/absolute");
+
+		this.mock(oBinding).expects("fetchValue").never();
+
+		return oBinding.fetchAbsoluteValue("/other/path").then(function (oResult) {
+			assert.strictEqual(oResult, undefined);
+		});
 	});
 
 	//*********************************************************************************************
@@ -528,6 +568,88 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	["/TEAMS/0", "/TEAMS/0/TEAM_2_MANAGER/bar"].forEach(function (sPath) {
+		QUnit.test("fetchAbsoluteValue: relative binding:" + sPath, function (assert) {
+			var oBinding = this.oModel.bindContext("TEAM_2_MANAGER"),
+				oContext = Context.create(this.oModel, undefined, "/TEAMS/0"),
+				oPromise,
+				oResult = {};
+
+			this.mock(oBinding).expects("fetchValue").never();
+
+			// code under test, binding unresolved
+			oPromise = oBinding.fetchAbsoluteValue(sPath);
+
+			assert.strictEqual(oPromise.isFulfilled(), true);
+			assert.strictEqual(oPromise.getResult(), undefined);
+
+			oBinding.setContext(oContext);
+			this.mock(oContext).expects("fetchAbsoluteValue")
+				.withExactArgs(sPath).returns(oResult);
+
+			// code under test, binding resolved
+			assert.strictEqual(oBinding.fetchAbsoluteValue(sPath), oResult);
+		});
+	});
+
+	//*********************************************************************************************
+	["/SalesOrderList/1", "/SalesOrderList/1/SO_2_SCHDL_DIFF/bar"].forEach(function (sPath) {
+		QUnit.test("fetchAbsoluteValue: relative binding w/ cache: " + sPath, function (assert) {
+			var oBinding = this.oModel.bindContext("SO_2_SCHDL", undefined, {}),
+				oCache = {
+					promise : Promise.resolve(),
+					read : function () {}
+				},
+				oContext = Context.create(this.oModel, undefined, "/SalesOrderList/1"),
+				oContextMock = this.mock(oContext),
+				oResult = {};
+
+			this.mock(oContext).expects("fetchCanonicalPath")
+				.returns(_SyncPromise.resolve("SalesOrderList('42')"));
+			this.mock(_ODataHelper).expects("createCacheProxy").returns(oCache);
+			oBinding.setContext(oContext);
+
+			oContextMock.expects("fetchAbsoluteValue").withExactArgs(sPath).returns(oResult);
+
+			// code under test
+			assert.strictEqual(oBinding.fetchAbsoluteValue(sPath), oResult);
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		abs : "/SalesOrderList/1/SO_2_SCHDL/bar",
+		rel : "bar"
+	}, {
+		abs : "/SalesOrderList/1/SO_2_SCHDL",
+		rel : ""
+	}].forEach(function (oFixture) {
+		QUnit.test("fetchAbsoluteValue: relative binding w/ cache: " + oFixture.abs,
+			function (assert) {
+				var oBinding = this.oModel.bindContext("SO_2_SCHDL", undefined, {}),
+					oCache = {
+						promise : Promise.resolve(),
+						read : function () {}
+					},
+					oContext = Context.create(this.oModel, undefined, "/SalesOrderList/1"),
+					oResult = {};
+
+				this.mock(oContext).expects("fetchCanonicalPath")
+					.returns(_SyncPromise.resolve("SalesOrderList('42')"));
+				this.mock(_ODataHelper).expects("createCacheProxy").returns(oCache);
+				oBinding.setContext(oContext);
+
+				this.mock(oCache).expects("read").withArgs("$auto", oFixture.rel)
+					.returns(_SyncPromise.resolve(oResult));
+
+				// code under test
+				return oBinding.fetchAbsoluteValue(oFixture.abs).then(function (oResult0) {
+					assert.strictEqual(oResult0, oResult);
+				});
+			});
+	});
+
+	//*********************************************************************************************
 	[undefined, "up"].forEach(function (sGroupId) {
 		QUnit.test("updateValue: absolute binding", function (assert) {
 			var oBinding = this.oModel.bindContext("/absolute", null,
@@ -623,11 +745,8 @@ sap.ui.require([
 			oCacheProxy = {
 				promise: Promise.resolve()
 			},
-			oContext = {
-				getPath : function () {
-					return "/Products('1')";
-				}
-			},
+			oContext = Context.create(this.oModel, null, "/Products('1')"),
+			oPathPromise = Promise.resolve("/canonical"),
 			oResult = {};
 
 		oBindingMock.expects("_hasPendingChanges").withExactArgs("PRODUCT_2_BP")
@@ -636,7 +755,11 @@ sap.ui.require([
 		// code under test
 		assert.strictEqual(oBinding.hasPendingChanges(), oResult);
 
-		this.mock(_ODataHelper).expects("createCacheProxy").returns(oCacheProxy);
+		this.mock(oContext).expects("requestCanonicalPath").withExactArgs().returns(oPathPromise);
+		this.mock(_ODataHelper).expects("createCacheProxy")
+			.withExactArgs(sinon.match.same(oBinding), sinon.match.func,
+				sinon.match.same(oPathPromise))
+			.returns(oCacheProxy);
 		oBinding.setContext(oContext);
 		oBindingMock.expects("_hasPendingChanges").withExactArgs("").returns(oResult);
 
