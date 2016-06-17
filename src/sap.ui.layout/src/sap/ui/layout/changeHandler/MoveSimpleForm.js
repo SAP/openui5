@@ -16,8 +16,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 			 */
 			var MoveSimpleForm = {};
 
-			MoveSimpleForm.CHANGE_TYPE_MOVE_FIELD = "simpleFormMoveField";
-			MoveSimpleForm.CHANGE_TYPE_MOVE_GROUP = "simpleFormMoveGroup";
+			MoveSimpleForm.CHANGE_TYPE_MOVE_FIELD = "moveField";
+			MoveSimpleForm.CHANGE_TYPE_MOVE_GROUP = "moveGroup";
 			MoveSimpleForm.sTypeTitle = "sap.ui.core.Title";
 			MoveSimpleForm.sTypeToolBar = "sap.m.Toolbar";
 			MoveSimpleForm.sTypeLabel = "sap.m.Label";
@@ -49,26 +49,26 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 
 					// Cut the moved field from the result array...
 					var aContentClone = aContent.slice();
-					//fnDebugOut("++++++++++++++++++Nach Kopie", aContentClone);
 
 					aContentClone.splice(iMovedFieldIndex, iMovedFieldLength);
-					//fnDebugOut("+++++++++++++++++Nach Ausschneiden", aContentClone);
 
 					// Compute the fields target index in the cut array
+					var oSourceGroup = oModifier.byId(mMovedElement.source.groupId);
 					var oTargetGroup = oModifier.byId(mMovedElement.target.groupId);
+					var iSourceGroupIndex = aContentClone.indexOf(oSourceGroup);
 					var iTargetGroupIndex = aContentClone.indexOf(oTargetGroup);
 
-					var iOffset = mMovedElement.source.fieldIndex < mMovedElement.target.fieldIndex ? -1 : 0;
+					var iOffset = (iSourceGroupIndex < iTargetGroupIndex) || (iSourceGroupIndex === iTargetGroupIndex)
+							&& (mMovedElement.source.fieldIndex < mMovedElement.target.fieldIndex) ? -1 : 0;
 					var iTargetFieldIndex = fnMapFieldIndexToContentAggregationIndex(oModifier, aContentClone, iTargetGroupIndex,
 							mMovedElement.target.fieldIndex + iOffset);
-					var iTargetFieldLength = fnMeasureLengthOfSequenceUntilStopToken(oModifier, iTargetFieldIndex, aContent,
+					var iTargetFieldLength = fnMeasureLengthOfSequenceUntilStopToken(oModifier, iTargetFieldIndex, aContentClone,
 							aStopFieldTokens);
 
 					iOffset = mMovedElement.source.fieldIndex < mMovedElement.target.fieldIndex ? iTargetFieldLength : 0;
 					// and insert it at the target index
 					aContentClone = fnArrayRangeCopy(aContent, iMovedFieldIndex, aContentClone, iTargetFieldIndex + iOffset,
 							iMovedFieldLength);
-					//fnDebugOut("++++++++++++++++++++Nach rangeCopy", aContentClone);
 
 					oModifier.removeAllAggregation(oSimpleForm, mMovedElement.target.aggregation);
 					for (var i = 0; i < aContentClone.length; ++i) {
@@ -112,18 +112,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 				return true;
 
 			};
-
-//			var fnDebugOut = function(message, aContent) {
-//				console.warn(">>>>>>> ");
-//				console.warn(">>>>>>> " + message);
-//				for (var i = 0; i < aContent.length; i++) {
-//					if (aContent[i].getText) {
-//						console.warn(">>>>>>> " + i + ": " + aContent[i].getText());
-//					} else {
-//						console.warn(">>>>>>> " + i + ": " + aContent[i].getMetadata().getName());
-//					}
-//				}
-//			}
 
 			/**
 			 * Completes the change by adding change handler specific content
