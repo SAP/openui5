@@ -1,6 +1,6 @@
 <core:View controllerName="sap.m.sample.SlideTile.Page"
 	xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout">
-	<l:VerticalLayout class="tileLayout">
+	<l:VerticalLayout class="slideTilesLayout">
 		<SlideTile class="sapUiTinyMarginTop">
 			<tiles>
 				<GenericTile
