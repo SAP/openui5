@@ -74,6 +74,8 @@
 		equal(oDomRefPI.style.width, "50%", "width should be the same");
 		var oDomRefPIBar = jQuery.sap.domById("pi1" + "-bar");
 		equal(oDomRefPIBar.style.width, "30%", "width should be the same");
+		var oDomRefPIRemainingBar = jQuery.sap.domById("pi1" + "-remainingBar");
+		ok(oDomRefPIRemainingBar, "the remaining bar  is rendered");
 	});
 
 	test("tooltip", function() {
@@ -109,6 +111,26 @@
 	});
 
 	//test of overwritten method setPercentValue()
+	test("setPercentValue min and max value", function() {
+		debugger;
+		var oProgIndicator = new sap.m.ProgressIndicator({
+			percentValue: 10
+		});
+
+		oProgIndicator.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oProgIndicator.setPercentValue(0);
+		strictEqual(oProgIndicator.$().hasClass("sapMPIValueMin"), true, "sapMPIValueMin class added");
+		strictEqual(oProgIndicator.$().hasClass("sapMPIValueMax"), false, "sapMPIValueMax not added");
+
+		oProgIndicator.setPercentValue(100);
+		strictEqual(oProgIndicator.$().hasClass("sapMPIValueMin"), false, "sapMPIValueMin removed");
+		strictEqual(oProgIndicator.$().hasClass("sapMPIValueMax"), true, "sapMPIValueMax added");
+
+		oProgIndicator.destroy();
+	});
+
 	test("setPercentValue wrong input (int out of range, too big)", function() {
 		var iPercentTest = 120;
 		oProgInd.setPercentValue(iPercentTest);

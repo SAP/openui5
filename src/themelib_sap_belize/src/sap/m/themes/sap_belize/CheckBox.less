@@ -17,8 +17,7 @@
 	overflow: hidden;
 	text-overflow:ellipsis;
 	white-space: nowrap;
-	/* If you put a CB in a form the with has to be 100% in rtl for text align */
-	width : 100%
+	width : 100% /* If you put a CB in a form the with has to be 100% in rtl for text align */
 }
 
 .sapMCbBg { /* check box itself */
@@ -45,6 +44,7 @@
 }
 
 .sapMCb.sapMCbWarn .sapMCbBg {
+	background-color: @sapUiFieldWarningBackground;
 	border-color: @sapUiFieldWarningColor;
 	&.sapMCbMarkChecked:before {
 		color: darken(@sapUiFieldWarningColor,100);
@@ -52,6 +52,7 @@
 }
 
 .sapMCb.sapMCbErr .sapMCbBg {
+	background-color: @sapUiFieldInvalidBackground;
 	border-color: @sapUiFieldInvalidColor;
 	&.sapMCbMarkChecked:before {
 		color: @sapUiFieldInvalidColor;
@@ -133,7 +134,8 @@ html.sap-desktop {
 }
 
 .sapMCbHoverable:hover{
-	border-color: @sapUiSelected;
+	border-color: @sapUiFieldHoverBorderColor;
+	background: @sapUiFieldHoverBackground
 }
 
 .sapMCbBgDis {
@@ -168,7 +170,7 @@ html.sap-desktop {
 /* Read only */
 .sapMCbRo .sapMCbBg {
 	background-color: @sapUiFieldReadOnlyBackground;
-	border-color: @sapUiFieldBorderColor;
+	border-color: @sapUiFieldReadOnlyBorderColor;
 }
 
 .sapMCbRo > .sapMCbBg.sapMCbMarkChecked:before {

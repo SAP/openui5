@@ -4,7 +4,8 @@
 
 // Provides class sap.ui.dt.plugin.ElementMover.
 sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/OverlayUtil',
-		'sap/ui/dt/OverlayRegistry'], function(ManagedObject, ElementUtil, OverlayUtil, OverlayRegistry) {
+		'sap/ui/dt/OverlayRegistry', 'sap/ui/dt/command/CommandFactory'], function(ManagedObject, ElementUtil, OverlayUtil,
+		OverlayRegistry, CommandFactory) {
 	"use strict";
 
 	/**
@@ -33,6 +34,10 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/
 			// ---- control specific ----
 			library : "sap.ui.dt",
 			properties : {
+				commandFactory : {
+					type : "object",
+					defaultValue : CommandFactory
+				},
 				movableTypes : {
 					type : "string[]",
 					defaultValue : ["sap.ui.core.Element"]
@@ -235,44 +240,33 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/
 
 		var oMovedOverlay = this.getMovedOverlay();
 		var oMovedElement = oMovedOverlay.getElementInstance();
-
 		var oSource = this._getSource();
 		var oTarget = OverlayUtil.getParentInformation(oMovedOverlay);
 
-		var aActions = [];
-
-		var oAfterHook = this._findAfterHook('afterMove', oMovedOverlay, oSource);
-		if (oAfterHook) {
-			var oParentElement = oAfterHook.context.getElementInstance();
-
-			// oAfterHook.method.call(ParentElement, oMovedElement, oSource, oTarget))
-			// is equivalent to
-			// new sap.ui.dt.command.SimpleFormMove({
-			// 		elementId: oParentElement.getId(),
-			// 		movedElement: oMovedElementgetId(),
-			// 		source: oSource,
-			// 		target: oTarget
-			//	}).execute();
-
-			aActions = oAfterHook.method.call(oParentElement, oMovedElement, oSource, oTarget);
-			if (aActions && aActions.length > 0) {
-				ElementUtil.executeActions(aActions);
-			}
-		} else {
-			aActions.push({
-				element : oMovedElement,
-				source : oSource,
-				target : oTarget
-			});
-		}
-
-		this.fireElementMoved({
-			data : aActions
+		var oMove = this.getCommandFactory().getCommandFor(oTarget.parent, "Move", {
+			movedElement : oMovedElement
 		});
+
+		if (oMove) {
+			oMove.setMovedElements([{
+				element : oMovedElement,
+				sourceIndex : oSource.index,
+				targetIndex : oTarget.index
+			}]);
+			oMove.setSource(oSource);
+			oMove.setTarget(oTarget);
+			if (oMove.getMetadata().getName() === "sap.ui.dt.command.SimpleFormMove") {
+				// in case this is a dt command, perform immediately to show 'livechange'
+				oMove.execute();
+			}
+		}
+		return oMove;
 
 	};
 
 	/**
+	 * TODO: use this algorithm to search beforeHook
+	 *
 	 * @private
 	 */
 	ElementMover.prototype._findAfterHook = function(sName, oMovedOverlay, oSource) {

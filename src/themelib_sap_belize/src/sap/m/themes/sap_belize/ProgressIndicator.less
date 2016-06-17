@@ -5,23 +5,27 @@
 
 .sapMPI {
 	outline: none;
-	background: fade(@sapUiBlockLayerBackground, 10);
+	background: @sapUiFieldBackground;
+	width: 100%;
 	height: 2rem;
 	min-width: 6rem;
 	min-height: 1rem;
-	border: 0 none;
-	border-radius: 10rem;
+	padding: 0;
+	margin: 0.25rem 0;
+	border: none;
+	border-radius: 0.5rem;
 	overflow: hidden;
 }
 
+/* Progress Indicator Bar */
 .sapMPIBar {
-	border-top-left-radius: 10rem;
-	border-bottom-left-radius: 10rem;
+	border-top-left-radius: 0.5rem;
+	border-bottom-left-radius: 0.5rem;
 }
 
 .sapMPIValueMax .sapMPIBar {
-	border-top-right-radius: 10rem;
-	border-bottom-right-radius: 10rem;
+	border-top-right-radius: 0.5rem;
+	border-bottom-right-radius: 0.5rem;
 }
 
 .sapMPIBarNeutral {
@@ -41,44 +45,52 @@
 }
 
 
-.sapMPIText{
+/* Progress Indicator Remaining Bar */
+.sapMPIValueMin .sapMPIBarRemaining {
+	border-radius: 0.5rem;
+	border: 1px solid @sapUiFieldBorderColor;
+}
+
+.sapMPIBarRemaining {
+	border-top-right-radius: 0.5rem;
+	border-bottom-right-radius: 0.5rem;
+	border-top: 1px solid @sapUiFieldBorderColor;
+	border-right: 1px solid @sapUiFieldBorderColor;
+	border-bottom: 1px solid @sapUiFieldBorderColor;
+}
+
+/* Progress Indicator Value Text */
+.sapMPIText {
 	font-family: @sapUiFontFamily;
 	font-size: @sapMFontSmallSize;
 	font-weight: normal;
-	line-height: 1.85rem;
 	color: @sapUiContentForegroundTextColor;
 }
 
 .sapMPIBarNeutral .sapMPIText.sapMPITextLeft {
-	color: contrast(@sapUiNeutralElement, @sapUiContentForegroundTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold); 
+	color: contrast(@sapUiNeutralElement, @sapUiContentForegroundTextColor, @sapUiContentContrastTextColor, 0.5);
 }
 
 .sapMPIBarPositive .sapMPIText.sapMPITextLeft {
-	color: contrast(@sapUiPositiveElement, @sapUiContentForegroundTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold); 
+	color: contrast(@sapUiPositiveElement, @sapUiContentForegroundTextColor, @sapUiContentContrastTextColor, 0.5);
 }
 
 .sapMPIBarNegative .sapMPIText.sapMPITextLeft {
-	color: contrast(@sapUiNegativeElement, @sapUiContentForegroundTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold); 
+	color: contrast(@sapUiNegativeElement, @sapUiContentForegroundTextColor, @sapUiContentContrastTextColor, 0.5);
 }
 
 .sapMPIBarCritical .sapMPIText.sapMPITextLeft {
-	color: contrast(@sapUiCriticalElement, @sapUiContentForegroundTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold); 
+	color: contrast(@sapUiCriticalElement, @sapUiContentForegroundTextColor, @sapUiContentContrastTextColor, 0.5);
 }
 
+/* Compact */
 .sapUiSizeCompact .sapMPI {
 	height: 1.375rem;
-	margin: 0.125 0;
+	margin: 0.125rem 0;
 }
 
-.sapUiSizeCompact .sapMPIText{
-	line-height: 1.25rem;
-}
-
+/* Condensed */
 .sapUiSizeCondensed .sapUiTableCell .sapMPI {
 	height: 1.5rem;
 	margin: 0;
-}
-
-.sapUiSizeCondensed .sapUiTableCell .sapMPIText{
-	line-height: 1.25rem;
 }

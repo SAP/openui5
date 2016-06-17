@@ -27,6 +27,14 @@
 	.sapMBarShadow(@sapUiPageHeaderBorderColor);
 }
 
+/* in Master page the bar should have different color */
+html .sapMSplitContainerMaster .sapMIBar.sapMHeader-CTX,
+.sapMSplitContainerMaster .sapMIBar .sapMHeader-CTX,
+html .sapMSplitContainerMaster .sapMIBar.sapMSubHeader-CTX,
+.sapMSplitContainerMaster .sapMIBar.sapMSubHeader-CTX {
+	background-color: @sapUiGroupContentBackground;
+}
+
 .sapMBar:active {
 	text-shadow: none;
 }

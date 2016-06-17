@@ -45,6 +45,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		// render wrapper div
 		oRM.write("<div role='tablist' ");
 		oRM.addClass("sapMITH");
+		oRM.addClass("sapContrastPlus");
 		if (oControl._scrollable) {
 			oRM.addClass("sapMITBScrollable");
 			if (oControl._bPreviousScrollForward) {
@@ -221,7 +222,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 					}
 					oRM.writeClasses();
 					oRM.write(">");
-					oRM.writeEscaped(oItem.getText());
+					oRM.writeEscaped(oControl._getDisplayText(oItem));
 					oRM.write("</div>");
 				}
 

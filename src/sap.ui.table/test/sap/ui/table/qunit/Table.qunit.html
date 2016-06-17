@@ -523,7 +523,17 @@
 	test("After initialization", function() {
 		this.clock.tick(1000);
 		var $table = oTable.$();
-		equal($table.find('#table-paginator').length, 1, 'The paginator exists');
+		equal($table.find('#table-paginator').length, 0, 'The paginator does not exist - OK, since it is deprecated');
+
+		equal(oTable.getNavigationMode(), sap.ui.table.NavigationMode.Scrollbar , "NavigationMode defaulted to Scrollbar");
+		oTable.setNavigationMode(sap.ui.table.NavigationMode.Paginator);
+		equal(oTable.getNavigationMode(), sap.ui.table.NavigationMode.Scrollbar , "NavigationMode defaulted to Scrollbar after explicitly setting it to Paginator");
+		oTable.setProperty("navigationMode", sap.ui.table.NavigationMode.Paginator);
+		equal(oTable.getNavigationMode(), sap.ui.table.NavigationMode.Paginator , "Set navigationMode via generic setProperty sill works");
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(1000);
+		$table = oTable.$();
+		equal($table.find('#table-paginator').length, 1, 'Paginator is getting rendered when navigationMode is set by setProperty');
 		oTable._oPaginator.getDomRef("-lastPageLink").click();
 		equal(oTable.getFirstVisibleRow(), 195 , "Navigation to last page OK");
 	});
@@ -1104,10 +1114,18 @@
 
 		var fnHandler = function() {
 			var aSortedColumns = oTable.getSortedColumns();
+			var cell;
 
 			if (aSortedColumns.length === 2) {
-				ok(jQuery.sap.endsWith(aSortedColumns[0].$().find("img").attr("src"), "ico12_sort_asc.gif"), "Sort icon direction for first column OK");
-				ok(jQuery.sap.endsWith(aSortedColumns[1].$().find("img").attr("src"), "ico12_sort_desc.gif"), "Sort icon direction for second column OK");
+				cell = aSortedColumns[0].$().find(".sapUiTableColCell");
+				ok(cell.hasClass("sapUiTableColSF"), "Icons are shown");
+				ok(cell.hasClass("sapUiTableColSorted"), "Sort icon is shown");
+				ok(!cell.hasClass("sapUiTableColSortedD"), "sort icon is ascending");
+
+				cell = aSortedColumns[1].$().find(".sapUiTableColCell");
+				ok(cell.hasClass("sapUiTableColSF"), "Icons are shown");
+				ok(cell.hasClass("sapUiTableColSorted"), "Sort icon is shown");
+				ok(cell.hasClass("sapUiTableColSortedD"), "sort icon is descending");
 
 				oTable.detachEvent("_rowsUpdated", fnHandler);
 				start();

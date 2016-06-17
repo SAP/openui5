@@ -28,6 +28,10 @@
   padding-bottom: 0.375rem;
 }
 
+.sapMNLG-Title {
+  padding-right: 1.75rem;
+}
+
 .sapMNLG-Header > .sapMNLGTitleUnread {
   font-weight: bold;
 }
@@ -98,10 +102,6 @@
   padding: 0;
 }
 
-.sapMNLG-Footer > .sapMBtn {
-  margin-left: 0;
-}
-
 .sapMNLG-Footer .sapMTB {
   height: 2.75rem;
   padding-top: 0.1875rem;
@@ -123,6 +123,10 @@ html[data-sap-ui-browser*='ie'] .sapMNLG-Footer .sapMBtnInner {
 
 // Compact mode ========================================================================================================
 
+.sapUiSizeCompact .sapMNLG-Title {
+  padding-right: 1.25rem;
+}
+
 .sapUiSizeCompact .sapMNLG-Footer {
   padding-top: 0.25rem;
   padding-left: 0.75rem;
@@ -134,4 +138,10 @@ html[data-sap-ui-browser*='ie'] .sapMNLG-Footer .sapMBtnInner {
 .sapUiSizeCompact .sapMNLG-Footer .sapMBtn {
   margin-left: 0.25rem;
   padding: 0;
+}
+
+// Single item mode ====================================================================================================
+
+.sapMNLGNoHdrFooter {
+  padding-top: 0 !important;
 }

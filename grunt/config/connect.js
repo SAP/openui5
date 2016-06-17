@@ -11,6 +11,8 @@ module.exports = function(grunt, config) {
 			sapUiCoreBasePath = oLib.path;
 		}
 	});
+	var sapUiTestsuiteBasePath = config.testsuite.path;
+	var sapUiBuildtime = config.buildtime;
 
 	// set default option
 	if (typeof grunt.option('hostname') !== 'string') {
@@ -51,7 +53,22 @@ module.exports = function(grunt, config) {
 								res.end();
 							} else {
 								res.writeHead(200, { 'Content-Type': 'application/javascript' });
-								res.write(data.replace(/(?:\$\{version\}|@version@)/g, grunt.config("package.version")));
+								data = data.replace(/(?:\$\{version\}|@version@)/g, grunt.config("package.version"));
+								data = data.replace(/(?:\$\{buildtime\}|@buildtime@)/g, sapUiBuildtime);
+								res.write(data);
+								res.end();
+							}
+						});
+					} ], [ '/' + testsuiteName + '/resources/sap-ui-version.json', function(req, res, next) {
+						fs.readFile(sapUiTestsuiteBasePath + '/src/main/webapp/resources/sap-ui-version.json', { encoding: 'utf-8' } , function(err, data) {
+							if (err) {
+								res.writeHead(404);
+								res.end();
+							} else {
+								res.writeHead(200, { 'Content-Type': 'application/json' });
+								data = data.replace(/(?:\$\{version\}|@version@)/g, grunt.config("package.version"));
+								data = data.replace(/(?:\$\{buildtimestamp\}|@buildtimestamp@)/g, sapUiBuildtime);
+								res.write(data);
 								res.end();
 							}
 						});

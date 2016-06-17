@@ -9,8 +9,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 
 
 	// shortcuts
-	var HorizontalAlign = coreLibrary.HorizontalAlign,
-		NavigationMode = library.NavigationMode,
+	var NavigationMode = library.NavigationMode,
 		SelectionBehavior = library.SelectionBehavior,
 		SelectionMode = library.SelectionMode,
 		VisibleRowCountMode = library.VisibleRowCountMode;
@@ -63,6 +62,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 			rm.addClass("sapUiTableEmpty"); // no data!
 		}
 
+		if (oTable.getShowOverlay()) {
+			rm.addClass("sapUiTableOverlay");
+		}
+
 		if (oTable.getEnableGrouping()) {
 			rm.addClass("sapUiTableGrouping");
 		}
@@ -81,6 +84,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 		rm.writeClasses();
 		rm.writeStyles();
 		rm.write(">");
+
+		this.renderTabElement(rm, "sapUiTableOuterBefore");
 
 		if (oTable.getTitle()) {
 			this.renderHeader(rm, oTable, oTable.getTitle());
@@ -110,6 +115,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 
 		oTable._getAccRenderExtension().writeHiddenAccTexts(rm, oTable);
 
+		rm.write("<div");
+		rm.addClass("sapUiTableOverlayArea");
+		rm.writeClasses();
+		rm.writeAttribute("tabindex", "0");
+		rm.writeAttribute("id", oTable.getId() + "-overlay");
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "OVERLAY");
+		rm.write("></div>");
+
 		rm.write("</div>");
 
 		if (oTable.getNavigationMode() === NavigationMode.Paginator) {
@@ -133,6 +146,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 		if (oTable.getVisibleRowCountMode() == VisibleRowCountMode.Interactive) {
 			this.renderVariableHeight(rm ,oTable);
 		}
+
+		this.renderTabElement(rm, "sapUiTableOuterAfter");
+
 		rm.write("</div>");
 	};
 
@@ -160,6 +176,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 			rm.addClass("sapUiTableMTbr");
 		}
 		rm.writeClasses();
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TABLESUBHEADER");
 		rm.write(">");
 
 		// toolbar has to be embedded (not standalone)!
@@ -188,6 +205,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 		rm.write("<div");
 		rm.addClass("sapUiTableExt");
 		rm.writeClasses();
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TABLESUBHEADER");
 		rm.write(">");
 
 		rm.renderControl(oExtension);
@@ -208,21 +226,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 	};
 
 	TableRenderer.renderTableCCnt = function(rm, oTable) {
-		rm.write("<div");
-		rm.addClass("sapUiTableCtrlBefore");
-		rm.writeClasses();
-		rm.writeAttribute("tabindex", "0");
-		rm.write("></div>");
-
+		this.renderTabElement(rm, "sapUiTableCtrlBefore");
 		this.renderTableCtrl(rm, oTable);
 		this.renderRowHdr(rm, oTable);
 		this.renderVSb(rm, oTable);
-
-		rm.write("<div");
-		rm.addClass("sapUiTableCtrlAfter");
-		rm.writeClasses();
-		rm.writeAttribute("tabindex", "0");
-		rm.write("></div>");
+		this.renderTabElement(rm, "sapUiTableCtrlAfter");
 
 		rm.write("<div");
 		rm.addClass("sapUiTableCtrlEmpty");
@@ -249,6 +257,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 		rm.write("<div");
 		rm.addClass("sapUiTableFtr");
 		rm.writeClasses();
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TABLEFOOTER");
 		rm.write(">");
 
 		rm.renderControl(oFooter);
@@ -468,15 +477,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 		rm.write("><div");
 		rm.addClass("sapUiTableColCell");
 		rm.writeClasses();
-		var sHAlign = this.getHAlign(oColumn.getHAlign(), oLabel && oLabel.getTextDirection && oLabel.getTextDirection());
+		var sHAlign = Renderer.getTextAlign(oColumn.getHAlign(), oLabel && oLabel.getTextDirection && oLabel.getTextDirection());
 		if (sHAlign) {
 			rm.addStyle("text-align", sHAlign);
 		}
 		rm.writeStyles();
 		rm.write(">");
-
-		// TODO: rework column sort / filter status integration
-		rm.write("<div id=\"" + oColumn.getId() + "-icons\" class=\"sapUiTableColIcons\"></div>");
 
 		if (oLabel) {
 			rm.renderControl(oLabel);
@@ -504,6 +510,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 		rm.addClass("sapUiTableRowHdrScr");
 		rm.addClass("sapUiTableNoOpacity");
 		rm.writeClasses();
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "ROWHEADER_COL");
 		rm.write(">");
 
 		// start with the first current top visible row
@@ -869,7 +876,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 				firstCol: bIsFirstColumn
 			});
 
-			var sHAlign = this.getHAlign(oColumn.getHAlign(), oCell && oCell.getTextDirection && oCell.getTextDirection());
+			var sHAlign = Renderer.getTextAlign(oColumn.getHAlign(), oCell && oCell.getTextDirection && oCell.getTextDirection());
 			if (sHAlign) {
 				rm.addStyle("text-align", sHAlign);
 			}
@@ -947,23 +954,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 	// =============================================================================
 
 	/**
-	 * Returns the value for the HTML "align" attribute according to the given
-	 * horizontal alignment and RTL mode, or NULL if the HTML default is fine.
-	 *
-	 * @param {sap.ui.core.HorizontalAlign} sHorizontalAlign the text alignment of the Control
-	 * @param {sap.ui.core.TextDirection} sTextDirection the text direction of the Control
-	 * @returns {string} the actual text alignment that must be set for this environment
+	 * Renders an empty area with tabindex=0 and the given class and id.
 	 * @private
 	 */
-	TableRenderer.getHAlign = function(sHorizontalAlign, sTextDirection) {
-		// the enum values of sap.ui.core.TextAlign are a superset of sap.ui.core.HorizontalAlign
-		// the logic to be implemented is basically the same, therefore route the call to getTextAlign implementation
-		// of the Renderer
-		var sTextAlign = Renderer.getTextAlign(sHorizontalAlign, sTextDirection);
-		if (!sTextAlign) {
-			sTextAlign = (sHorizontalAlign == HorizontalAlign.Left ? "left" : "right");
+	TableRenderer.renderTabElement = function(rm, sClass) {
+		rm.write("<div");
+		if (sClass) {
+			rm.addClass(sClass);
+			rm.writeClasses();
 		}
-		return sTextAlign;
+		rm.writeAttribute("tabindex", "0");
+		rm.write("></div>");
 	};
 
 	return TableRenderer;

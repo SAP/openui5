@@ -24,6 +24,7 @@
 		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
@@ -31,11 +32,6 @@
 		<!-- use the sinon faketimers for this test -->
 		<script type="text/javascript">
 			sinon.config.useFakeTimers = true;
-
-			<!-- add the qunit-coverage.js to add client-side coverage to QUnit tests -->
-			if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
-				jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-			}
 		</script>
 
 		<script language="javascript">
@@ -132,6 +128,7 @@
 
 			test("Initialization", function () {
 				ok(!jQuery.sap.domById("dialog"), "Dialog is not rendered before it's ever opened.");
+				equal(oDialog.oPopup._sF6NavMode, "SCOPE", "Dialog's popup navigation mode is set to SCOPE.")
 			});
 
 			module("Content preservation");
@@ -1034,6 +1031,67 @@
 			setTimeout(function () {
 				jQuery('html').css('overflow', 'auto');
 			}, 1000);
+
+			module("Accessibility");
+
+			test("Check if ValueState is present", function () {
+				// Arrange
+				var oDialogSuccess = new sap.m.Dialog({
+					state: sap.ui.core.ValueState.Success
+				});
+				var rb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+				var sValueState = rb.getText("LIST_ITEM_STATE_SUCCESS");
+
+				overwriteAnimationIE(oDialogSuccess);
+
+				// Act
+				oDialogSuccess.open();
+				this.clock.tick(1500);
+
+				var sInvisibleTextContent = oDialogSuccess.getAggregation("_valueState").getText();
+
+				// Assert
+				strictEqual(sInvisibleTextContent, sValueState, "Success state value should be the same.");
+
+				// Clean up
+				oDialogSuccess.destroy();
+
+				// Arrange
+				var oDialogWarning = new sap.m.Dialog({
+					state: sap.ui.core.ValueState.Warning
+				});
+				overwriteAnimationIE(oDialogWarning);
+				sValueState = rb.getText("LIST_ITEM_STATE_WARNING");
+
+				// Act
+				oDialogWarning.open();
+				this.clock.tick(500);
+				sInvisibleTextContent = oDialogWarning.getAggregation("_valueState").getText();
+
+				// Assert
+				strictEqual(sInvisibleTextContent, sValueState, "Warning state value should be the same.");
+
+				// Clean up
+				oDialogWarning.destroy();
+
+				// Arrange
+				var oDialogError = new sap.m.Dialog({
+					state: sap.ui.core.ValueState.Error
+				});
+				overwriteAnimationIE(oDialogError);
+				sValueState = rb.getText("LIST_ITEM_STATE_ERROR");
+
+				// Act
+				oDialogError.open();
+				this.clock.tick(500);
+				sInvisibleTextContent = oDialogError.getAggregation("_valueState").getText();
+
+				// Assert
+				strictEqual(sInvisibleTextContent, sValueState, "Error state value should be the same.");
+
+				// Clean up
+				oDialogError.destroy();
+			});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

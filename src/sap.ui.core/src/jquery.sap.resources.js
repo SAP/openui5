@@ -57,7 +57,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings
 	 * If text parameters are given, then any occurrences of the pattern "{<i>n</i>}" with <i>n</i> being an integer
 	 * are replaced by the parameter value with index <i>n</i>.  Note: This replacement is also applied if no text had been found (key).
 	 * For more details on this replacement mechanism refer also:
-	 * @see jQuery.sap#formatMessage
+	 * @see jQuery.sap.formatMessage
 	 *
 	 * @param {string} sKey
 	 * @param {string[]} [aArgs] List of parameters which should replace the place holders "{n}" (n is the index) in the found locale-specific string value.

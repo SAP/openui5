@@ -130,13 +130,21 @@ html.sapUiMedia-Std-Desktop .sapUiBLy {
 .sapUiBody {
 	background-color: transparent;
 	background-image: none;
+	background: none;
 }
 
 /********************************************************************************************************************************/
 
+.sapUiRootBackground,
+.sapMShellGlobalOuterBackground {
+	background: @sapUiShellBackgroundGradient;
+}
+
+.sapUshellShell .sapMShellGlobalOuterBackground {
+	background: transparent;
+}
 
 .sapUiGlobalBackgroundColor,
-.sapMShellGlobalOuterBackground,
 .sapMShellGlobalInnerBackground {
 	background-color: @sapUiGlobalBackgroundColor;
 }
@@ -203,8 +211,4 @@ html.sapUiMedia-Std-Desktop .sapUiBLy {
  */
 .sapUiBusy {
 	display: none;
-}
-
-.sapUiRootBackground {
-	background-color: @sapUiShellBackgroundGradient;
 }

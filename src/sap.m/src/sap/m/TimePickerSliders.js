@@ -111,6 +111,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		 * gives the display format.
 		 *
 		 * @param {string} sId The ID of the TimePicker control that owns this sliders
+		 * @returns {sap.m.TimePickerSliders} this instance, used for chaining
 		 */
 		TimePickerSliders.prototype.setInvokedBy = function(sId) {
 			var oLocale,
@@ -134,12 +135,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 
 				this._setupLists(this.getFormat());
 			}
+
+			return this;
 		};
 
 		/**
 		 * Sets the text for the picker label.
 		 *
 		 * @param {string} sLabelText A text for the label
+		 * @returns {sap.m.TimePickerSliders} this instance, used for chaining
 		 * @public
 		 */
 		TimePickerSliders.prototype.setLabelText = function(sLabelText) {
@@ -153,12 +157,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 					$ContainerLabel.html(sLabelText);
 				}
 			}
+
+			return this;
 		};
 
 		/**
 		 * Sets the time format.
 		 *
 		 * @param sFormat {string} New display format
+		 * @returns {sap.m.TimePickerSliders} this instance, used for chaining
 		 * @public
 		 */
 		TimePickerSliders.prototype.setFormat = function (sFormat) {
@@ -171,6 +178,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 			}
 
 			this._setupLists(sFormat);
+
+			return this;
 		};
 
 		/**
@@ -483,6 +492,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 				sLabelAMPM = oRb.getText("TIMEPICKER_LBL_AMPM"),
 				iMinutesStep = this.getMinutesStep(),
 				iSecondsStep = this.getSecondsStep();
+
+			if (sFormat === undefined) {
+				return;
+			}
 
 			var bHours = false, bHoursTrailingZero = false, iFrom, iTo;
 

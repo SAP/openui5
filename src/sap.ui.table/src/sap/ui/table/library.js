@@ -12,16 +12,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core',
 
 	"use strict";
 
-	/**
-	 * Table-like controls, mainly for desktop scenarios.
-	 *
-	 * @namespace
-	 * @name sap.ui.table
-	 * @author SAP SE
-	 * @version ${version}
-	 * @public
-	 */
-
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.table",
@@ -64,6 +54,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core',
 	});
 
 	/* eslint-disable no-undef */
+	/**
+	 * Table-like controls, mainly for desktop scenarios.
+	 *
+	 * @namespace
+	 * @alias sap.ui.table
+	 * @author SAP SE
+	 * @version ${version}
+	 * @public
+	 */
 	var thisLib = sap.ui.table;
 	/* eslint-enable no-undef */
 
@@ -85,7 +84,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core',
 
 		/**
 		 * Uses the paginator control.
+		 * This option must no longer be used. Using a scrollbar is the only navigation mode which is supported by
+		 * the <code>sap.ui.table</code> library. The <code>navigationMode</code> property has always been a visual representation. No matter which navigation mode
+		 * is used, data fetched from an OData service is loaded page-wise.
 		 * @public
+		 * @deprecated As of version 1.38, replaced by {@link sap.ui.table.NavigationMode.Scrollbar}
 		 */
 		Paginator : "Paginator"
 

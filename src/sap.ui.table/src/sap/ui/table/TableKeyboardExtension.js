@@ -49,6 +49,9 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 			var oExtension = this._getKeyboardExtension();
 			if (!oExtension._bIgnoreFocusIn) {
 				oExtension.initItemNavigation();
+				if (ExtensionHelper.isItemNavigationInvalid(this)) {
+					oEvent.setMarked("sapUiTableInitItemNavigation");
+				}
 			} else {
 				oEvent.setMarked("sapUiTableIgnoreFocusIn");
 			}
@@ -119,17 +122,27 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 				iTotalColumnCount++;
 			}
 
-			// add the column items
+			// add the column headers and select all
 			if (oTable.getColumnHeaderVisible()) {
-				aItemDomRefs = $Table.find(".sapUiTableCol").get().concat(aItemDomRefs);
-			}
+				var aHeaderDomRefs = [];
 
-			// add the select all item
-			if (bHasRowHeader && oTable.getColumnHeaderVisible()) {
-				var aRowHdr = $Table.find(".sapUiTableColRowHdr").get();
-				for (var i = oTable._getHeaderRowCount() - 1; i >= 0; i--) {
-					aItemDomRefs.splice(i * iColumnCount, 0, aRowHdr[0]);
+				var $FixedHeaders = $Table.find(".sapUiTableColHdrFixed").children(); //returns the .sapUiTableColHdr elements
+				var $ScrollHeaders = $Table.find(".sapUiTableColHdrScr").children(); //returns the .sapUiTableColHdr elements
+
+				for (var i = 0; i < oTable._getHeaderRowCount(); i++) {
+					if (bHasRowHeader) {
+						aHeaderDomRefs.push(oTable.getDomRef("selall"));
+					}
+
+					if ($FixedHeaders.length) {
+						aHeaderDomRefs = aHeaderDomRefs.concat(jQuery($FixedHeaders.get(i)).find(".sapUiTableCol").get());
+					}
+					if ($ScrollHeaders.length) {
+						aHeaderDomRefs = aHeaderDomRefs.concat(jQuery($ScrollHeaders.get(i)).find(".sapUiTableCol").get());
+					}
 				}
+
+				aItemDomRefs = aHeaderDomRefs.concat(aItemDomRefs);
 			}
 
 			// initialization of item navigation for the Table control
@@ -159,6 +172,10 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 
 		getInitialItemNavigationIndex : function(oExtension) {
 			return TableUtils.hasRowHeader(oExtension.getTable()) ? 1 : 0;
+		},
+
+		isItemNavigationInvalid : function(oExtension) {
+			return !oExtension._itemNavigation || oExtension._itemNavigationInvalidated;
 		}
 	};
 
@@ -231,7 +248,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 	 * @public (Part of the API for Table control only!)
 	 */
 	TableKeyboardExtension.prototype.initItemNavigation = function() {
-		if (!this._itemNavigation || this._itemNavigationInvalidated) {
+		if (ExtensionHelper.isItemNavigationInvalid(this)) {
 			ExtensionHelper._initItemNavigation(this);
 		}
 	};
@@ -267,6 +284,36 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 	 */
 	TableKeyboardExtension.prototype.isInActionMode = function() {
 		return this._actionMode;
+	};
+
+
+	/*
+	 * Sets the focus depending on the noData or overlay mode.
+	 * The previous focused element is given (potentially this is not anymore the active focused element,
+	 * e.g. see Table.setShowOverlay -> tue to CSS changes the focused element might be hidden which forces a focus change)
+	 * @public (Part of the API for Table control only!)
+	 */
+	TableKeyboardExtension.prototype.updateNoDataAndOverlayFocus = function(oPreviousFocusRef) {
+		var oTable = this.getTable();
+		if (!oTable || !oTable.getDomRef()) {
+			return;
+		}
+
+		if (oTable.getShowOverlay()) {
+			// The overlay is shown
+			if (jQuery.sap.containsOrEquals(oTable.getDomRef(), oPreviousFocusRef)) {
+				oTable.$("overlay").focus(); // Set focus on Overlay Container if it was somewhere in the table before
+			}
+		} else if (TableUtils.isNoDataVisible(oTable)) {
+			// The noData area is shown
+			if (jQuery.sap.containsOrEquals(oTable.getDomRef("sapUiTableCnt"), oPreviousFocusRef)) {
+				oTable.$("noDataCnt").focus(); // Set focus on NoData Container if it was on the content before
+			}
+		} else if (jQuery.sap.containsOrEquals(oTable.getDomRef("noDataCnt"), oPreviousFocusRef)
+				|| jQuery.sap.containsOrEquals(oTable.getDomRef("overlay"), oPreviousFocusRef)) {
+			// The overlay or noData area is not shown but was shown before
+			TableUtils.focusItem(oTable, ExtensionHelper.getInitialItemNavigationIndex(this)); // Set focus on first focusable element
+		}
 	};
 
 

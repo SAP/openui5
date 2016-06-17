@@ -174,12 +174,12 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 
 		ScrollContainer.prototype.setHorizontal = function (horizontal) {
 			this._oScroller.setHorizontal(horizontal);
-			this.setProperty("horizontal", horizontal, true);
+			return this.setProperty("horizontal", horizontal, true);
 		};
 
 		ScrollContainer.prototype.setVertical = function (vertical) {
 			this._oScroller.setVertical(vertical);
-			this.setProperty("vertical", vertical, true);
+			return this.setProperty("vertical", vertical, true);
 		};
 
 		return ScrollContainer;

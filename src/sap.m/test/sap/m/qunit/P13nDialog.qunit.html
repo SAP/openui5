@@ -19,6 +19,8 @@
 <script type="text/javascript"
 	src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script type="text/javascript"
+	src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+<script type="text/javascript"
 	src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script type="text/javascript"
 	src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
@@ -26,9 +28,6 @@
 	src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <script type="text/javascript">
-	if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
-		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-	}
 
 	(function() {
 		jQuery.sap.require("sap.m.P13nDialog");
@@ -399,7 +398,7 @@
 			oP13nDialog.destroy();
 		});
 
-		/*test("showValidationDialog: show bullet point for move then one messages", function() {
+		/*test("_showValidationDialog: show bullet point for move then one messages", function() {
 			// system under test
 			var oPanelC = new sap.m.P13nPanel({
 				title: "Columns",
@@ -420,7 +419,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// act
-			oP13nDialog.showValidationDialog(function() {
+			oP13nDialog._showValidationDialog(function() {
 			}, [], [
 				{
 					columnKey: "columnKey1",
@@ -450,19 +449,17 @@
 			oP13nDialog.destroy();
 		});*/
 
-		test("showValidationDialog: show no bullet point for one message", function() {
+		test("_showValidationDialog: show no bullet point for one message", function() {
 			// system under test
-			var oPanelC = new sap.m.P13nPanel({
-				title: "Columns",
-				type: sap.m.P13nPanelType.culumns
-			});
-			var oPanelG = new sap.m.P13nPanel({
-				title: "Group",
-				type: sap.m.P13nPanelType.group
-			});
 			var oP13nDialog = new sap.m.P13nDialog({
 				panels: [
-					oPanelC, oPanelG
+					new sap.m.P13nPanel({
+						title: "Columns",
+						type: sap.m.P13nPanelType.culumns
+					}), new sap.m.P13nPanel({
+						title: "Group",
+						type: sap.m.P13nPanelType.group
+					})
 				]
 			});
 
@@ -471,13 +468,10 @@
 			sap.ui.getCore().applyChanges();
 
 			// act
-			oP13nDialog.showValidationDialog(function() {
+			oP13nDialog._showValidationDialog(function() {
 			}, [], [
 				{
 					columnKey: "columnKey1",
-					panelTypes: [
-						"group", "columns"
-					],
 					messageType: "Warning",
 					messageText: "Dummy Warning..."
 				}
@@ -487,7 +481,7 @@
 
 			// assertions
 			ok(oDialog);
-			strictEqual(oDialog.getContent()[0].getText(), "Dummy Warning...\n");
+			strictEqual(oDialog.getContent()[0].getText(), "Dummy Warning..." + "\n" + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_MESSAGE_QUESTION"));
 
 			// cleanup
 			oDialog.destroy();
@@ -495,19 +489,17 @@
 		});
 
 		// BCP 1670188253
-		test("showValidationDialog: show only one message of many equal messages", function() {
+		test("_showValidationDialog: show only one message of many equal messages", function() {
 			// system under test
-			var oPanelC = new sap.m.P13nPanel({
-				title: "Columns",
-				type: sap.m.P13nPanelType.culumns
-			});
-			var oPanelG = new sap.m.P13nPanel({
-				title: "Group",
-				type: sap.m.P13nPanelType.group
-			});
 			var oP13nDialog = new sap.m.P13nDialog({
 				panels: [
-					oPanelC, oPanelG
+					new sap.m.P13nPanel({
+						title: "Columns",
+						type: sap.m.P13nPanelType.culumns
+					}), new sap.m.P13nPanel({
+						title: "Group",
+						type: sap.m.P13nPanelType.group
+					})
 				]
 			});
 
@@ -516,20 +508,14 @@
 			sap.ui.getCore().applyChanges();
 
 			// act
-			oP13nDialog.showValidationDialog(function() {
+			oP13nDialog._showValidationDialog(function() {
 			}, [], [
 				{
 					columnKey: "columnKey1",
-					panelTypes: [
-						"group", "columns"
-					],
 					messageType: "Warning",
 					messageText: "Dummy Warning..."
 				}, {
 					columnKey: "columnKey2",
-					panelTypes: [
-						"group", "columns"
-					],
 					messageType: "Warning",
 					messageText: "Dummy Warning..."
 				}
@@ -539,26 +525,24 @@
 
 			// assertions
 			ok(oDialog);
-			strictEqual(oDialog.getContent()[0].getText(), "Dummy Warning...\n");
+			strictEqual(oDialog.getContent()[0].getText(), "Dummy Warning..." + "\n" + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_MESSAGE_QUESTION"));
 
 			// cleanup
 			oDialog.destroy();
 			oP13nDialog.destroy();
 		});
 
-		test("showValidationDialog: show no dialog if no messages exist", function() {
+		test("_showValidationDialog: show no dialog if no messages exist", function() {
 			// system under test
-			var oPanelC = new sap.m.P13nPanel({
-				title: "Columns",
-				type: sap.m.P13nPanelType.culumns
-			});
-			var oPanelG = new sap.m.P13nPanel({
-				title: "Group",
-				type: sap.m.P13nPanelType.group
-			});
 			var oP13nDialog = new sap.m.P13nDialog({
 				panels: [
-					oPanelC, oPanelG
+					new sap.m.P13nPanel({
+						title: "Columns",
+						type: sap.m.P13nPanelType.culumns
+					}), new sap.m.P13nPanel({
+						title: "Group",
+						type: sap.m.P13nPanelType.group
+					})
 				]
 			});
 
@@ -567,14 +551,73 @@
 			sap.ui.getCore().applyChanges();
 
 			// act
-			oP13nDialog.showValidationDialog(function() {
+			oP13nDialog._showValidationDialog(function() {
 			}, [], []);
 			var $Dialog = jQuery.find(".sapMMessageBoxWarning");
 			var oDialog = jQuery($Dialog).control(0);
 
 			// assertions
 			ok(!oDialog);
-			//strictEqual(oDialog.getContent()[0].getText(), "Dummy Warning...\n");
+
+			// cleanup			
+			oP13nDialog.destroy();
+		});
+
+		test("_prepareMessages", function() {
+			// system under test
+			var oP13nDialog = new sap.m.P13nDialog({
+				panels: [
+					new sap.m.P13nPanel({
+						title: "Columns",
+						type: sap.m.P13nPanelType.culumns
+					}), new sap.m.P13nPanel({
+						title: "Group",
+						type: sap.m.P13nPanelType.group
+					})
+				]
+			});
+
+			// arrange
+			oP13nDialog.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			var aWarnings = [], aErrors = [];
+
+			// act
+			oP13nDialog._prepareMessages([], [
+				{
+					columnKey: "columnKey1",
+					messageType: "Error",
+					messageText: "A"
+				}, {
+					columnKey: "columnKey2",
+					messageType: "Warning",
+					messageText: "B"
+				}, {
+					columnKey: "columnKey3",
+					messageType: "Error",
+					messageText: "B"
+				}, {
+					columnKey: "columnKey4",
+					messageType: "Warning",
+					messageText: "A"
+				}
+			], aWarnings, aErrors);
+
+			// assertions
+			deepEqual(aWarnings, [
+				{
+					columnKey: "columnKey4",
+					messageType: "Warning",
+					messageText: "A"
+				}
+			]);
+			deepEqual(aErrors, [
+				{
+					columnKey: "columnKey3",
+					messageType: "Error",
+					messageText: "B"
+				}
+			]);
 
 			// cleanup			
 			oP13nDialog.destroy();

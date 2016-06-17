@@ -71,6 +71,12 @@
 
 		module("Test the suggest function");
 
+		// test properties
+		test("Properties", function() {
+			equal(oSF.getWidth(), '100%', "Default value of the property Width is 100%s");
+
+		});
+
 		test("call the suggest() function", function() {
 			// action
 			oSF.suggest();
@@ -173,6 +179,102 @@
 
 			ok(!oSF._oSuggest.isOpen(), "Picker is closed after ESCAPE");
 			strictEqual(oSF.getValue(), "ABCD", "Escape closes suggestions and keeps the value");
+		});
+
+		test("applyFocusInfo test", function () {
+			var 	oInput = oSF.getFocusDomRef(),
+					$SF = jQuery(oInput);
+
+			// act - get focus info and change cursor position of the dom element
+			var oFocusInfo = oSF.getFocusInfo();
+			oSF.setValue("SomethingThatIsNotSameWithTheInitialValue");
+			$SF.cursorPos(10);
+
+			// act - reapply last known focus info
+			oSF.applyFocusInfo(oFocusInfo);
+
+			// assertion
+			strictEqual($SF.cursorPos(), oFocusInfo.cursorPos, "Cursor position is set to the correct position after apply focus.");
+
+		});
+
+		test("Clear method test", function() {
+			// action
+			var toValue = 'ABCD';
+			var fnSpyFireLiveChange = this.spy(oSF, 'fireLiveChange');
+			var fnFireSearch = this.spy(oSF, 'fireSearch');
+
+			oSF.clear({value: toValue});
+
+			this.clock.tick(1000);
+
+			strictEqual(oSF.getValue(), toValue, "Escape closes suggestions and keeps the value");
+			strictEqual(fnFireSearch.callCount, 1, "Clear method fires fireSearch event");
+			strictEqual(fnSpyFireLiveChange.callCount, 1, "Clear method fires fireLiveChange event");
+
+			//call again with the same value - should be ignored
+			oSF.clear({value: toValue});
+
+			strictEqual(fnFireSearch.callCount, 1, "Clear method is not fired again as the value is the same");
+
+
+			fnSpyFireLiveChange.restore();
+			fnFireSearch.restore();
+		});
+
+		test("Background color on blur is restored", function() {
+			oSF.onBlur();
+			this.clock.tick(1000);
+
+			strictEqual(oSF.$().hasClass( "sapMFocus"), false, "Blur event processing restores the previous background color");
+		});
+
+		test("onInput test - when change or paste in the input", function() {
+			var 	oInput = oSF.getFocusDomRef();
+			var fnSpyFireLiveChange = this.spy(oSF, 'fireLiveChange');
+			var fnFireSuggest = this.spy(oSF, 'fireSuggest');
+
+			// act - set control value and triggers on input processing
+			oSF.setValue("SomethingThatIsNotSameWithTheInitialValue");
+			oInput.value = "abcd";
+			oSF.onInput();
+			this.clock.tick(1000);
+
+
+			// assertion
+			strictEqual(fnSpyFireLiveChange.callCount, 1, "LiveChange event is fired");
+			strictEqual(fnFireSuggest.callCount, 1, "FireSuggest event is fired");
+
+			fnSpyFireLiveChange.restore();
+			fnFireSuggest.restore();
+		});
+
+		test("onSearch test - event ", function() {
+			var 	oInput = oSF.getFocusDomRef();
+			var fnFireSearch = this.spy(oSF, 'fireSearch');
+			var toValue = 'abcd';
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				phone: false,
+				tablet: true
+			});
+
+			// act - triggers on Search processing
+			oInput.value = toValue;
+			oSF.onSearch();
+			this.clock.tick(1000);
+
+
+			// assertion
+			strictEqual(fnFireSearch.callCount, 1, "FireSearch event is fired");
+			strictEqual(oSF.getValue(), toValue, "Search event sets the control value");
+
+			fnFireSearch.restore();
+			this.stub(sap.ui.Device, "system", {
+				desktop: true,
+				phone: false,
+				tablet: false
+			});
 		});
 
 		module("Formatting");

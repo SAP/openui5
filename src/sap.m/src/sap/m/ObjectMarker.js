@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 	 * <li><code>Favorite</code>
 	 * <li><code>Draft</code>
 	 * <li><code>Locked</code>
-	 * <li><code>Unsaved Changes</code>
+	 * <li><code>Unsaved</code>
 	 * </ul>
 	 *
 	 * @extends sap.ui.core.Control
@@ -39,12 +39,25 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 			properties: {
 
 				/**
-				 * Sets one of the predefined types.
+				 * Sets one of the predefined types.<br>
+				 * <b>Note</b>: If the <code>visibility</code> property is not specified explicitly, every <code>type</code> comes with predefined one as follows:
+				 * <ul>
+				 *                 <li>For <code>Flagged</code> and <code>Favorite</code> the icon is visible and the text is not displayed</li>
+				 *                 <li>For <code>Draft</code> the text is visible and the icon is not displayed</li>
+				 *                 <li>For <code>Locked</code> and <code>Unsaved</code> - on screens larger than 600px both icon and text are visible, otherwise only the icon</li>
+				 *
+				 * </ul>
 				 */
 				type: {type: "sap.m.ObjectMarkerType", group: "Misc"},
 
 				/**
 				 * Sets one of the visibility states.
+				 * Visibility states are as follows:
+				 * <ul>
+				 *                 <li><code>IconOnly</code> - displays only icon, regardless of the screen size</li>
+				 *                 <li><code>TextOnly</code> - displays only text, regardless of the screen size</li>
+				 *                 <li><code>IconAndText</code> - displays both icon and text, regardless of the screen size</li>
+				 * </ul>
 				 */
 				visibility: {type: "sap.m.ObjectMarkerVisibility", group: "Misc"}
 			},
@@ -121,14 +134,14 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 			icon: {
 				src: "sap-icon://request",
 				visibility: {
-					small: true,
-					large: true
+					small: false,
+					large: false
 				}
 			},
 			text: {
 				value: oRB.getText("OM_DRAFT"),
 				visibility: {
-					small: false,
+					small: true,
 					large: true
 				}
 			}
@@ -153,14 +166,14 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 			icon: {
 				src: "sap-icon://user-edit",
 				visibility: {
-					small: false,
+					small: true,
 					large: true
 				}
 			},
 			text: {
 				value: oRB.getText("OM_UNSAVED"),
 				visibility: {
-					small: true,
+					small: false,
 					large: true
 				}
 			}

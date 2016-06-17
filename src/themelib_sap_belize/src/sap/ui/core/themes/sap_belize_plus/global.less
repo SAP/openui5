@@ -2,13 +2,16 @@
 // Global CSS for 'sap_belize_plus' theme
 // ======================================
 
-@sapUiChartLabelPressedColor: lighten(@sapUiButtonBackground, 8);  // #536b80
+@sapUiContentMarkerTextColor: lighten(saturate(@sapUiBaseColor, 24), 49.2);
+@sapUiContentImagePlaceholderBackground: lighten(@sapUiBaseColor, 20);
+
+@sapUiChartLabelPressedColor: darken(desaturate(@sapUiHighlight, 40), 30);  // #427cac
 @sapUiChartValueAxisLabelFontColor: @sapUiContentForegroundTextColor;  // #fafafa
-@sapUiChartCategoryAxisLineColor: lighten(@sapUiChartGridlineColor, 20);  // #cdcdcd
-@sapUiChartValueAxisLineColor: lighten(@sapUiChartGridlineColor, 20);  // #cdcdcd
-@sapUiChartCategoryAxisTickColor: lighten(@sapUiChartGridlineColor, 20);  // #cdcdcd
-@sapUiChartValueAxisTickColor: lighten(@sapUiChartGridlineColor, 20);   // #cdcdcd
-@sapUiChartGridlineColor: darken(desaturate(@sapUiContentForegroundBorderColor, 22), 1);  // #9a9a9a
+@sapUiChartCategoryAxisLineColor: lighten(@sapUiChartGridlineColor, 20);  // #cccccc
+@sapUiChartValueAxisLineColor: lighten(@sapUiChartGridlineColor, 20);  // #cccccc
+@sapUiChartCategoryAxisTickColor: lighten(@sapUiChartGridlineColor, 20);  // #cccccc
+@sapUiChartValueAxisTickColor: lighten(@sapUiChartGridlineColor, 20);   // #cccccc
+@sapUiChartGridlineColor: darken(desaturate(@sapUiContentForegroundBorderColor, 22), 1.5);  // #999999
 @sapUiChartReferenceLineColor: lighten(@sapUiChartGridlineColor, 40);   // #ffffff
 @sapUiChartLightText: @sapUiContentForegroundTextColor;             // #fafafa
 @sapUiChartZeroAxisColor: lighten(@sapUiChartGridlineColor, 40);    // #ffffff

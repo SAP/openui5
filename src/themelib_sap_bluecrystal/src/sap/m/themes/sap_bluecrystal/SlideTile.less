@@ -27,3 +27,14 @@ html.sap-desktop .sapMST:focus .sapMSTFocusDiv:after {
 	margin: -1px;
 	border: 1px dotted @sapUiContentFocusColor;
 }
+
+/* Bulleted indicator of multiple tiles*/
+.sapMSTBulleted > span {
+	background-color: lighten(@sapUiElement, 38);
+	box-shadow: 0 0 0.25rem fade(@sapUiLightShadowTint, 30);
+}
+
+.sapMSTBulleted > span.sapMSTActive {
+	background-color: @sapUiElement;
+	box-shadow: 0 0 0.25rem fade(@sapUiLightShadowTint, 30);
+}

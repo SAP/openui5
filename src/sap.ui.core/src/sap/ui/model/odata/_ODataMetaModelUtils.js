@@ -447,6 +447,13 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 					}
 				});
 			}
+			if (oEntityType.navigationProperty) {
+				oEntityType.navigationProperty.forEach(function (oNavProp) {
+					if (oNavProp["sap:filterable"] === "false") {
+						Utils.addPropertyToAnnotation("sap:filterable", oEntitySet, oNavProp);
+					}
+				});
+			}
 		},
 
 		/**

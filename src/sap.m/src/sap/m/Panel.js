@@ -164,6 +164,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this;
 	};
 
+	// Fixes BCP: 1680025907
+	Panel.prototype.onThemeChanged = function () {
+		this._setContentHeight();
+	};
+
 	/**
 	 * Sets the expandable property of the control.
 	 * @param {boolean} bExpandable Defines whether the control is expandable or not.

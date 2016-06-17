@@ -27,6 +27,7 @@ sap.ui.define(function () {
 		oRm.writeAttribute("role", "region");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapUxAPObjectPageSubSection");
+		oRm.addClass("ui-helper-clearfix");
 		oRm.writeClasses(oControl);
 		oRm.writeClasses();
 		oRm.write(">");

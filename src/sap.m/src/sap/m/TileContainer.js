@@ -124,10 +124,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		this.bAllowTextSelection = false;
 
-		//ugly but needed, initial timeout to wait until all elements are resized.
-		//TODO: Check whether this is needed in no less mode
-		this._iInitialResizeTimeout = 400; //needed
-
 		this._oDragSession = null;
 		this._oTouchSession = null;
 
@@ -435,9 +431,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.$().toggleClass("sapMTCEditable",this.getEditable() === true);
 		var that = this;
 
-		this._sInitialResizeTimeoutId = setTimeout(function() {
-			that._update(true);
-		}, this._iInitialResizeTimeout);
+		that._update(true);
 
 		if (sap.ui.Device.system.desktop || sap.ui.Device.system.combi) {
 			var aTiles = this.getAggregation("tiles");
@@ -557,11 +551,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		setTimeout(jQuery.proxy(function() {
 			this._update(true);
-			delete this._iInitialResizeTimeout;
 		},this),
-		this._iInitialResizeTimeout);
-
-		this._iInitialResizeTimeout = 0; //now we do not need to wait
+		0);
 	};
 
 	/**
@@ -574,10 +565,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this._sResizeListenerId) {
 			sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
 			this._sResizeListenerId = null;
-		}
-
-		if (this._sInitialResizeTimeoutId) {
-			clearTimeout(this._sInitialResizeTimeoutId);
 		}
 
 		if (sap.ui.Device.system.tablet || sap.ui.Device.system.phone) {

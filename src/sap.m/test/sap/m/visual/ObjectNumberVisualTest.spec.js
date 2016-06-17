@@ -1,4 +1,5 @@
 describe("sap.m.ObjectNumberVisualTest", function() {
+	browser.testrunner.currentSuite.meta.controlName = 'sap.m.ObjectNumber';
 
 	it("ObjectNumber",function() {
 		expect(takeScreenshot()).toLookAs("initial-rendering");

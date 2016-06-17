@@ -32,7 +32,8 @@ sap.ui.define([
 	 * The OverflowToolbar control is a container based on sap.m.Toolbar, that provides overflow when its content does not fit in the visible area.
 	 *
 	 * Note: It is recommended that you use OverflowToolbar over {@link sap.m.Toolbar}, unless you want to avoid overflow in favor of shrinking.
-	 * @extends sap.ui.core.Toolbar
+	 * @extends sap.m.Toolbar
+	 * @implements sap.ui.core.Toolbar,sap.m.IBar
 	 *
 	 * @author SAP SE
 	 * @version ${version}

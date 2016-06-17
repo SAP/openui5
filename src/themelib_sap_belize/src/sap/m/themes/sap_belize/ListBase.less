@@ -59,7 +59,6 @@ html.sap-phone .sapMListInsetBG > .sapMListSwp {
 	text-overflow: ellipsis;
 	font-size: @sapMFontHeader4Size;
 	font-family: @sapUiFontHeaderFamily;
-	text-shadow: 0 1px 0 @sapUiContentContrastShadowColor;
 	color: @sapUiGroupTitleTextColor;
 	height: 3rem;
 	line-height: 3rem;
@@ -122,20 +121,30 @@ html.sap-phone .sapMListInsetBG > .sapMListSwp {
 .sapMGrowingListTriggerText > .sapMSLITitle {
 	margin: 0.813rem 0;
 	padding-bottom: 0;
+	color: @sapUiButtonTextColor;
 }
+
+.sapMGrowingListDescription.sapMSLIDescription {
+	color: @sapUiButtonTextColor;
+}
+
 .sapMGrowingListDescription {
 	padding: 0.375rem 2rem 0.875rem 2rem;
 	text-align: center;
+}
+
+.sapMGrowingList > .sapMCLI.sapMLIB:not(.sapMLIBActive) {
+	background: darken(@sapUiListBackground, 3);
+	border-color: darken(@sapUiListBorderColor, 3);
+}
+.sapMGrowingList > .sapMCLI.sapMLIBHoverable:hover {
+	background: @sapUiListHoverBackground;
 }
 
 /* Compact size */
 .sapUiSizeCompact .sapMListNoData {
 	height: 2rem;
 	font-size: @sapMFontMediumSize;
-}
-
-.sapUiSizeCompact .sapMListFtr{
-	font-size: @sapMFontSmallSize;
 }
 
 .sapUiSizeCompact .sapMTB.sapMListHdrTBar {

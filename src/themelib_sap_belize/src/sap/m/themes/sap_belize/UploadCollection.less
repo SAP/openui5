@@ -7,18 +7,25 @@
 .sapMLIB.sapMUCListFirstItem,
 .sapMLIB.sapMUCListLastItem,
 .sapMLIB.sapMUCListItem {
-	border-bottom-color:	@sapUiListBorderColor;
+	border-bottom-color: @sapUiListBorderColor;
 }
 
 /* Item Icon */
 .sapMUCItemIcon {
+	color: @sapUiContentIconColor;
+}
+/* Item Icon Inactive */
+.sapMUCItemIconInactive {
 	color: @sapUiContentNonInteractiveIconColor;
 }
 
 /*if no image is provided a standard placeholder is displayed */
 .sapMUCItemPlaceholder {
-	background-color: darken(@sapUiBaseColor, 9);
-	color: @sapUiListBackground;
+	color: @sapUiContentIconColor;
+}
+
+.sapMUCItemPlaceholderInactive {
+	color: @sapUiContentNonInteractiveIconColor;
 }
 
 /*if no link is provided the file name is displayed as an disabled link */
@@ -35,11 +42,11 @@
 @media(min-width: 30rem) {
 	.sapMUCButtonContainer >.sapMBtn >.sapMBtnInner {
 		background-image: none;
-  		background-color: @sapUiButtonLiteBackground;
-  		border-color: @sapUiButtonLiteBorderColor;
-  		color: @sapUiButtonLiteTextColor;
-  		text-shadow: none;
-  	}
+		background-color: @sapUiButtonLiteBackground;
+		border-color: @sapUiButtonLiteBorderColor;
+		color: @sapUiButtonLiteTextColor;
+		text-shadow: none;
+	}
 }
 
 /* an edit and delete button in a hover state; it should look like a transparent button in a hover state */
@@ -50,14 +57,14 @@
 	}
 }
 
-/*an edit and delete button in a pressed state; it should look like a transparent button in a pressed state  */
+/*an edit and delete button in a pressed state; it should look like a transparent button in a pressed state */
 @media(min-width: 30rem) {
 	:not(.sapMBtnDisabled).sapMUCEditBtn > .sapMBtnActive,
 	:not(.sapMBtnDisabled).sapMUCEditBtn:hover > .sapMBtnActive,
 	:not(.sapMBtnDisabled).sapMUCDeleteBtn > .sapMBtnActive,
 	:not(.sapMBtnDisabled).sapMUCDeleteBtn:hover > .sapMBtnActive {
-	background-color: @sapUiButtonLiteActiveBackground;
-	border-color:     @sapUiButtonLiteActiveBorderColor;
+		background-color: @sapUiButtonLiteActiveBackground;
+		border-color: @sapUiButtonLiteActiveBorderColor;
 	}
 }
 
@@ -67,7 +74,7 @@
 
 /* Text: Filename */
 .sapMUCFileName.sapMLnk {
-	font-size: 			@sapMFontLargeSize; /* it cannot be moved to base as the LESS constant is not known there */
+	font-size: @sapMFontLargeSize; /* it cannot be moved to base as the LESS constant is not known there */
 }
 
 .sapMUCAttrContainer, .sapMUCStatusContainer {

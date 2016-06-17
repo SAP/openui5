@@ -206,8 +206,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * *
-	 *
 	 * @param {string} sSearchText Table items are filtered by this text. <b>Note:</b> " " is a valid value. The table will be set back if
 	 *        sSearchText="".
 	 * @private
@@ -1205,10 +1203,14 @@ sap.ui.define([
 			})
 		});
 
+		var oInvisibleChartTypeText = new sap.ui.core.InvisibleText({
+			text: that._oRb.getText('COLUMNSPANEL_CHARTTYPE')
+		});
 		var oChartTypeComboBox = new sap.m.ComboBox({
 			selectedKey: {
 				path: '/selectedChartTypeKey'
 			},
+			ariaLabelledBy: oInvisibleChartTypeText,
 			items: {
 				path: '/availableChartTypes',
 				template: new sap.ui.core.Item({
@@ -1226,7 +1228,7 @@ sap.ui.define([
 		var oToolbar = new sap.m.OverflowToolbar(this.getId() + "-toolbar", {
 			design: sap.m.ToolbarDesign.Solid, // Transparent,
 			content: [
-				oChartTypeComboBox, new sap.m.ToolbarSpacer(), oSearchField, oShowSelectedButton, oMoveToTopButton, oMoveUpButton, oMoveDownButton, oMoveToBottomButton
+				oInvisibleChartTypeText, oChartTypeComboBox, new sap.m.ToolbarSpacer(), oSearchField, oShowSelectedButton, oMoveToTopButton, oMoveUpButton, oMoveDownButton, oMoveToBottomButton
 			]
 		});
 		this.addAggregation("content", oToolbar);
@@ -1301,6 +1303,49 @@ sap.ui.define([
 			var oTableItem = aTableItems[i];
 			jQuery.sap.log.info(oModelItem.columnKey + ": " + oModelItem.visible + " " + oModelItem.tableIndex + " " + oModelItem.persistentSelected + "_" + oModelItem.persistentIndex + ";    " + oTableItem.getId() + " " + oTableItem.getCells()[0].getText() + ": " + oTableItem.getSelected() + " " + oTableItem.getCells()[1].getText());
 		}
+	};
+
+	P13nDimMeasurePanel.prototype.onBeforeNavigationFrom = function() {
+		// Check if chart type fits selected dimensions and measures
+		var sChartType = this.getChartTypeKey();
+		var aDimensionItems = [];
+		var aMeasureItems = [];
+
+		this.getDimMeasureItems().forEach(function(oDimMeasureItem) {
+			var oModelItem = this._getModelItemByColumnKey(oDimMeasureItem.getColumnKey());
+			if (!oModelItem) {
+				return;
+			}
+			if (oModelItem.aggregationRole === "Dimension") {
+				aDimensionItems.push(oDimMeasureItem);
+			} else if (oModelItem.aggregationRole === "Measure") {
+				aMeasureItems.push(oDimMeasureItem);
+			}
+		}, this);
+
+		aDimensionItems = aDimensionItems.filter(function(oItem) {
+			return oItem.getVisible();
+		}).map(function(oItem) {
+			return {
+				name: oItem.getColumnKey()
+			};
+		});
+		aMeasureItems = aMeasureItems.filter(function(oItem) {
+			return oItem.getVisible();
+		}).map(function(oItem) {
+			return {
+				name: oItem.getColumnKey()
+			};
+		});
+
+		sap.ui.getCore().loadLibrary("sap.chart");
+		var oResult;
+		try {
+			oResult = sap.chart.api.getChartTypeLayout(sChartType, aDimensionItems, aMeasureItems);
+		} catch (oException) {
+			return false;
+		}
+		return oResult.errors.length === 0;
 	};
 
 	return P13nDimMeasurePanel;

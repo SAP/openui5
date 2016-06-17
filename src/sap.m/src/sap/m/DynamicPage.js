@@ -43,6 +43,9 @@ sap.ui.define([
 
 				/**
 				 * Determines whether the header is scrollable.
+				 * <b>Note:</b> Based on internal rules, the value of the property is not always taken into account - for example
+				 * when the control is rendered with a screen size of tablet or mobile and dynamic page title and header
+				 * are with height bigger than given threshold.
 				 */
 				headerScrollable: {type: "boolean", group: "Behaviour", defaultValue: true},
 
@@ -106,6 +109,8 @@ sap.ui.define([
 	 */
 	DynamicPage.HEADER_MAX_ALLOWED_PINNED_PERCENTAGE = 0.6;
 
+	DynamicPage.HEADER_MAX_ALLOWED_NON_SROLLABLE_PERCENTAGE = 0.6;
+
 	DynamicPage.FOOTER_ANIMATION_DURATION = 350;
 
 	DynamicPage.BREAK_POINTS = {
@@ -132,10 +137,11 @@ sap.ui.define([
 		this._bPinned = false;
 		this._bHeaderInTitleArea = false;
 		this._bExpandingWithAClick = false;
+		this._headerBiggerThanAllowedHeight = false;
 	};
 
 	DynamicPage.prototype.onBeforeRendering = function () {
-		if (this.getHeaderScrollable()) {
+		if (this._allowScroll()) {
 			this._attachPinPressHandler();
 		}
 
@@ -144,7 +150,7 @@ sap.ui.define([
 	};
 
 	DynamicPage.prototype.onAfterRendering = function () {
-		var bHeaderScrollable = this.getHeaderScrollable();
+		var bHeaderScrollable = this._allowScroll();
 
 		if (!bHeaderScrollable && exists(this.getHeader())) {
 			this.getHeader()._setShowPinBtn(false);
@@ -152,12 +158,15 @@ sap.ui.define([
 
 		this._cacheDomElements();
 		this._attachResizeHandlers();
-		this._updateMedia(this._getHeight(this));
+		this._updateMedia(this._getWidth(this));
 
 		if (bHeaderScrollable) {
 			this._attachScrollHandler();
 			this._updateScrollBar();
 			this._attachPageChildrenAfterRenderingDelegates();
+		} else {
+			// Ensure that in this tick DP and it's aggregations are rendered
+			jQuery.sap.delayedCall(0, this, this._overrideHeaderNotScrollableRule);
 		}
 	};
 
@@ -185,6 +194,24 @@ sap.ui.define([
 	 */
 
 	/**
+	 * If the header is bigger than the allowed height the control will be invalidated and rendered with scrollable header
+	 * @private
+	 * @returns {boolean} is rule overridden
+	 */
+	DynamicPage.prototype._overrideHeaderNotScrollableRule = function () {
+		var bHeaderScrollable = this._allowScroll();
+
+		if (!Device.system.desktop && this._headerBiggerThanAllowedToBeFixed() && !bHeaderScrollable) {
+			this._headerBiggerThanAllowedHeight = true;
+			this.invalidate();
+			return true;
+		} else {
+			this._headerBiggerThanAllowedHeight = false;
+			return false;
+		}
+	};
+
+	/**
 	 * Hide/show the footer container
 	 * @param bShow
 	 * @private
@@ -200,12 +227,18 @@ sap.ui.define([
 		oFooter.toggleStyleClass("sapMDynamicPageActualFooterControlHide", !bShow);
 		this.toggleStyleClass("sapMDynamicPageFooterSpacer", bShow);
 
-		if (bUseAnimations && !bShow) {
-			jQuery.sap.delayedCall(DynamicPage.FOOTER_ANIMATION_DURATION, this, function () {
+		if (bUseAnimations){
+			if (!bShow) {
+				jQuery.sap.delayedCall(DynamicPage.FOOTER_ANIMATION_DURATION, this, function () {
+					this.$footerWrapper.toggleClass("sapUiHidden", !this.getShowFooter());
+				});
+			} else {
 				this.$footerWrapper.toggleClass("sapUiHidden", !this.getShowFooter());
+			}
+
+			jQuery.sap.delayedCall(DynamicPage.FOOTER_ANIMATION_DURATION, this, function () {
+				oFooter.removeStyleClass("sapMDynamicPageActualFooterControlShow");
 			});
-		} else {
-			this.$footerWrapper.toggleClass("sapUiHidden", !this.getShowFooter());
 		}
 	};
 
@@ -514,6 +547,17 @@ sap.ui.define([
 		return this._getEntireHeaderHeight() > DynamicPage.HEADER_MAX_ALLOWED_PINNED_PERCENTAGE * iControlHeight;
 	};
 
+	/*
+	 * Determines if the header is bigger than the allowed height
+	 * @returns {boolean}
+	 * @private
+	 */
+	DynamicPage.prototype._headerBiggerThanAllowedToBeFixed = function () {
+		var iControlHeight = this._getOwnHeight();
+
+		return this._getEntireHeaderHeight() > DynamicPage.HEADER_MAX_ALLOWED_NON_SROLLABLE_PERCENTAGE * iControlHeight;
+	};
+
 	/**
 	 * Determines the height that is needed to correctly offset the "fake" scrollbar
 	 * @returns {Number}
@@ -523,7 +567,7 @@ sap.ui.define([
 		var iHeight = 0,
 			bSnapped = !this.getHeaderExpanded();
 
-		if (!this.getHeaderScrollable() || this._bPinned) {
+		if (!this._allowScroll() || this._bPinned) {
 			iHeight = this._getTitleHeight() + this._getHeaderHeight();
 			jQuery.sap.log.debug("DynamicPage :: always show header :: title height + header height" + iHeight, this);
 			return iHeight;
@@ -647,6 +691,16 @@ sap.ui.define([
 	};
 
 	/**
+	 * Determines the width of a control safely. If the control doesn't exist it returns 0,
+	 * so it doesn't confuse any calculations based on it. If it exists it just returns its dom element width.
+	 * @param  {sap.ui.core.Control} oControl
+	 * @return {Number} the width of the control
+	 */
+	DynamicPage.prototype._getWidth = function (oControl) {
+		return !(oControl instanceof Control) ? 0 : oControl.$().outerWidth() || 0;
+	};
+
+	/**
 	 * Determines the height of the Title, if it's not present it returns 0
 	 * @returns {Number}
 	 * @private
@@ -670,7 +724,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._allowScroll = function () {
-		return this.getHeaderScrollable();
+		return this._headerBiggerThanAllowedHeight || this.getHeaderScrollable();
 	};
 
 	/**
@@ -759,7 +813,7 @@ sap.ui.define([
 	DynamicPage.prototype._onResize = function (oEvent) {
 		var oDynamicPageHeader = this.getHeader();
 
-		if (this.getHeaderScrollable() && oDynamicPageHeader) {
+		if (this._allowScroll() && oDynamicPageHeader) {
 			if (this._headerBiggerThanAllowedToPin(oEvent.size.height) || Device.system.phone) {
 				this._unPin();
 				oDynamicPageHeader._setShowPinBtn(false);

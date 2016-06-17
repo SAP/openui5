@@ -91,7 +91,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Defines the text directionality of the input field, e.g. <code>RTL</code>, <code>LTR</code>
 			 * @since 1.28.0
 			 */
-			textDirection: { type: "sap.ui.core.TextDirection", group: "Appearance", defaultValue: sap.ui.core.TextDirection.Inherit }
+			textDirection: { type: "sap.ui.core.TextDirection", group: "Appearance", defaultValue: sap.ui.core.TextDirection.Inherit },
+
+			/**
+			 * Indicates that user input is required. This property is only needed for accessibility purposes when a single relationship between
+			 * the field and a label (see aggregation <code>labelFor</code> of <code>sap.m.Label</code>) cannot be established
+			 * (e.g. one label should label multiple fields).
+			 * @since 1.38.4
+			 */
+			required : {type : "boolean", group : "Misc", defaultValue : false}
 		},
 		associations: {
 

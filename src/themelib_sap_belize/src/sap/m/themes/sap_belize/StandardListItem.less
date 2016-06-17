@@ -36,18 +36,23 @@ html[data-sap-ui-browser*='ie1'] .sapMSLIDiv{
 
 .sapMSLIImgIcon {
 	font-size: 1.375rem;
-	color: @sapUiContentIconColor;
+	color: @sapUiContentNonInteractiveIconColor;
 	margin-left: -1rem;
 }
 
 .sapMSLIImgThumbIcon {
 	font-size: 2.5rem;
-	color: @sapUiContentIconColor;
+	color: @sapUiContentNonInteractiveIconColor;
 	margin-right: 0.75rem;
 }
 
 .sapMSLIIconActive {
 	color: @sapUiContentContrastIconColor;
+}
+
+.sapMLIBActive .sapMSLIImgThumbIcon,
+.sapMLIBActive .sapMSLIImgIcon {
+	color: @sapUiListActiveTextColor;
 }
 
 .sapMSLITitle {
@@ -62,7 +67,7 @@ html[data-sap-ui-browser*='ie1'] .sapMSLIDiv{
 }
 
 .sapMSLITitleOnly {
-	font-size: 1.125rem;
+	font-size: 1rem;
 	color: @sapUiListTextColor;
 }
 
@@ -76,7 +81,7 @@ html[data-sap-ui-browser*='ie1'] .sapMSLIDiv{
 }
 
 .sapMSLIInfoNone{
-	color: @sapUiBaseText;
+	color: @sapUiNeutralText;
 }
 
 .sapMListShowSeparatorsNone .sapMSLIInfoNone{

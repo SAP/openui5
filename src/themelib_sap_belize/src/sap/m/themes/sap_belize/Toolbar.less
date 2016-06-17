@@ -25,7 +25,8 @@
 	height: 2rem;
 	padding: 0 .25rem 0 0.5rem;
 	background: @sapUiInfobarBackground;
-	border-bottom: 1px solid @sapUiListBorderColor;
+	color: contrast(@sapUiInfobarBackground, @sapUiListActiveTextColor, @sapUiListTextColor, @sapUiContentContrastTextThreshold);
+	border-bottom: none;
 }
 
 .sapMTB-Info-CTX.sapMTBActive:hover {

@@ -133,15 +133,23 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			growingTriggerText : {type : "string", group : "Appearance", defaultValue : null},
 
 			/**
-			 * If set to true, the user can scroll down to load more items. Otherwise a growing button is displayed at the bottom of the control.
+			 * If set to true, the user can scroll down/up to load more items. Otherwise a growing button is displayed at the bottom/top of the control.
 			 * <b>Note:</b> This property can only be used if the <code>growing</code> property is set to <code>true</code> and only if there is one instance of <code>sap.m.List</code> or <code>sap.m.Table</code> inside the scrollable scroll container (e.g <code>sap.m.Page</code>).
 			 * @since 1.16.0
 			 */
 			growingScrollToLoad : {type : "boolean", group : "Behavior", defaultValue : false},
 
 			/**
-			 * If set to true, this control remembers the selections after a binding update has been performed (e.g. sorting, filtering).
-			 * <b>Note:</b> If <code>items</code> aggregation is not bound then this property is ignored.
+			 * Defines the direction of the growing feature.
+			 * If set to <code>Downwards</code> the user has to scroll down to load more items or the growing button is displayed at the bottom.
+			 * If set to <code>Upwards</code> the user has to scroll up to load more items or the growing button is displayed at the top.
+			 * @since 1.40.0
+			 */
+			growingDirection : {type : "sap.m.ListGrowingDirection", group : "Behavior", defaultValue : sap.m.ListGrowingDirection.Downwards},
+
+			/**
+			 * If set to true, this control remembers and retains the selection of the items after a binding update has been performed (e.g. sorting, filtering).
+			 * <b>Note:</b> This feature works only if two-way data binding for the <code>selected</code> property of the item is not used. It also needs to be turned off if the binding context of the item does not always point to the same entry in the model, for example, if the order of the data in the <code>JSONModel</code> is changed.
 			 * @since 1.16.6
 			 */
 			rememberSelections : {type : "boolean", group : "Behavior", defaultValue : true},
@@ -1137,7 +1145,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 
 	// insert or remove given item's path from selection array
 	ListBase.prototype._updateSelectedPaths = function(oItem, bSelect) {
-		if (!this.getRememberSelections() || !this.isBound("items")) {
+		if (!this.getRememberSelections() || !this.isBound("items") || oItem.isSelectedBoundTwoWay()) {
 			return;
 		}
 
@@ -1417,13 +1425,14 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			title: oGroup.text || oGroup.key
 		});
 
+		oHeader._bGroupHeader = true;
 		this.addAggregation("items", oHeader, bSuppressInvalidate);
 		return oHeader;
 	};
 
 	ListBase.prototype.removeGroupHeaders = function(bSuppressInvalidate) {
 		this.getItems(true).forEach(function(oItem) {
-			if (oItem instanceof GroupHeaderListItem) {
+			if (oItem.isGroupHeader()) {
 				oItem.destroy(bSuppressInvalidate);
 			}
 		});
@@ -1448,6 +1457,11 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		// use binding length if list is in scroll to load growing mode
 		if (this.getGrowing() && this.getGrowingScrollToLoad() && oBinding && oBinding.isLengthFinal()) {
 			iSetSize = oBinding.getLength();
+			if (oBinding.isGrouped()) {
+				iSetSize += this.getItems(true).filter(function(oItem) {
+					return oItem.isGroupHeader() && oItem.getVisible();
+				}).length;
+			}
 		}
 
 		this.getNavigationRoot().setAttribute("aria-activedescendant", oItemDomRef.id);
@@ -1537,7 +1551,11 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		var aNavigationItems = jQuery(oNavigationRoot).children(".sapMLIB").get();
 		oItemNavigation.setItemDomRefs(aNavigationItems);
 		if (oItemNavigation.getFocusedIndex() == -1) {
-			oItemNavigation.setFocusedIndex(0);
+			if (this.getGrowing() && this.getGrowingDirection() == sap.m.ListGrowingDirection.Upwards) {
+				oItemNavigation.setFocusedIndex(aNavigationItems.length - 1);
+			} else {
+				oItemNavigation.setFocusedIndex(0);
+			}
 		}
 	};
 
@@ -1793,7 +1811,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			iIndex = aItems.indexOf(oListItem) + (oEvent.type == "sapup" ? -1 : 1),
 			oItem = aItems[iIndex];
 
-		if (oItem instanceof GroupHeaderListItem) {
+		if (oItem.isGroupHeader()) {
 			oItem = aItems[iIndex + (oEvent.type == "sapup" ? -1 : 1)];
 		}
 

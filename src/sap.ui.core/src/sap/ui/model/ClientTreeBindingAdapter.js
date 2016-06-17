@@ -34,6 +34,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 
 			this._invalidTree = true;
 
+			// TODO: Decide if the tree state feature should be available for ClientModels
+			//-> remove comments if yes
+
+			// restore old tree state if given
+			//if (this.mParameters.treeState) {
+			//	this.setTreeState(this.mParameters.treeState);
+			//}
+
 			//set the default auto expand mode
 			this.setNumberOfExpandedLevels(this.mParameters.numberOfExpandedLevels || 0);
 		};
@@ -128,6 +136,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 			}
 
 			return sGroupId;
+		};
+
+		/**
+		 * Expand function.
+		 * Due to the tree invalidation mechanism the tree has to be rebuilt before an expand operation.
+		 * Calling buildTree is performance-safe, as the tree is invalid anyway.
+		 * @override
+		 */
+		ClientTreeBindingAdapter.prototype.expand = function() {
+			this._buildTree();
+			TreeBindingAdapter.prototype.expand.apply(this, arguments);
+		};
+
+		/**
+		 * Collapse function.
+		 * Due to the tree invalidation mechanism the tree has to be rebuilt before a collapse operation.
+		 * Calling buildTree is performance-safe, as the tree is invalid anyway.
+		 * @override
+		 */
+		ClientTreeBindingAdapter.prototype.collapse = function() {
+			this._buildTree();
+			TreeBindingAdapter.prototype.collapse.apply(this, arguments);
 		};
 
 		/**

@@ -135,7 +135,7 @@
 
 
 		var fnOpenPopup = function(oControlEvent) {
-			oPopover.openBy(oControlEvent.getParameters().domRef);
+			oPopover.openBy(oControlEvent.getParameter("getDomRef")());
 		};
 
 
@@ -174,7 +174,7 @@
 
 		var feedData = {
 				chunks : [ {
-					icon: "images/male.jpg",
+					icon: "images/Woman_04.png",
 					text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque risus nulla, interdum eget posuere non, tincidunt eu felis. In hac habitasse platea dictumst. This is a very long URL: http://this.is.some.very.long.url.sap.com/lorem/ipsum/dolor/sit/amet/consectetur/adipiscing/elit/lorem/ipsum/dolor/sit/amet/consectetur/adipiscing/elit/lorem/ipsum/dolor/sit/amet/consectetur/adipiscing/elit/lorem/ipsum/dolor/sit/amet/consectetur/adipiscing/elit/lorem/ipsum/dolor/sit/amet/consectetur/adipiscing/elit#LoremIpsumDolorSitAmetConsecteturAdipiscingElitLoremIpsumDolorSitAmetConsecteturAdipiscingElitLoremIpsumDolorSitAmetConsecteturAdipiscingElit Quisque ut ipsum est.",
 					sender: "Jeremy Dash",
 					senderActive: true,
@@ -184,7 +184,7 @@
 					type: sap.m.ListType.Active,
 				}, {
 					icon: sURI,
-					text: "This FeedListItem displays an ImagePool image. Cras congue posuere metus sed tempus. Mauris euismod, dui sit amet molestie volutpat, ipsum est viverra velit, id ultricies ante dolor et ligula. ",
+					text: "This FeedListItem displays an ImagePool image and it is clickable. Cras congue posuere metus sed tempus. Mauris euismod, dui sit amet molestie volutpat, ipsum est viverra velit, id ultricies ante dolor et ligula. ",
 					sender: "Christopher Kent",
 					senderActive: true,
 					iconActive: true,
@@ -193,7 +193,7 @@
 					type: sap.m.ListType.Active,
 				}, {
 					icon: "images/female.jpg",
-					text: "This FeedListItem comes with senderActive = false and iconActive = false. In hac habitasse platea dictumst. Quisque ut ipsum est. Duis ipsum orci, interdum eget sollicitudin ac, blandit a ante.",
+					text: "This FeedListItem comes with senderActive = false and iconActive = false and it is not clickable. In hac habitasse platea dictumst. Quisque ut ipsum est. Duis ipsum orci, interdum eget sollicitudin ac, blandit a ante.",
 					sender: "Claire Jones",
 					senderActive: false,
 					iconActive: false,
@@ -201,24 +201,24 @@
 					info: "Waiting for Approval",
 					type: sap.m.ListType.Navigation,
 				}, {
-					text: "This FeedListItem comes without an image and has a very long info text",
+					text: "This FeedListItem comes without an image, it is not clickable and has a very long info text",
 					sender: "Christine Noah",
 					senderActive: true,
-					iconActive: true,
+					iconActive: false,
 					timestamp: "Nov 23, 2012",
 					info: "Waiting for Approval and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting",
 					type: sap.m.ListType.Navigation,
 				}, {
 					icon: "images/male.jpg",
 					activeIcon: "images/female.jpg",
-					text: "This one has no date",
+					text: "This one has no date and it is not clickable",
 					sender: "Frank Black",
 					senderActive: true,
-					iconActive: true,
+					iconActive: false,
 					info: "New",
 					type: sap.m.ListType.Active,
 				}, {
-					text: "This one shows the default image",
+					text: "This one shows the default image and it is clickable",
 					sender: "Frank Black",
 				}, {
 					text: "And this one does without info",

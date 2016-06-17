@@ -27,17 +27,13 @@
 		sap.ui.require([
 			"sap/ui/test/actions/EnterText",
 			"sap/m/Input",
-			"sap/m/MultiInput",
 			"sap/m/SearchField",
-			"sap/m/TextArea",
-			'sap/m/Token'
+			"sap/m/TextArea"
 		], function(
 				EnterText,
 				Input,
-				MultiInput,
 				SearchField,
-				TextArea,
-				Token)
+				TextArea)
 		{
 			"use strict";
 
@@ -57,12 +53,7 @@
 				changeEvent: "change",
 				liveChangeEventParameter: "value",
 				changeEventParameter: "value"
-			},{
-				Control: MultiInput,
-				changeEvent: "change",
-				liveChangeEventParameter: "value",
-				changeEventParameter: "value"
-			},{
+			}, {
 				Control: SearchField,
 				changeEvent: "search",
 				liveChangeEventParameter: "newValue",
@@ -168,46 +159,31 @@
 
 			});
 
-			QUnit.test("Should enter tokens to a multi input", function (assert) {
-				// Arrange
-				this.oControl = new MultiInput();
-				this.oControl.addValidator(function(args){
-					return new Token({key: args.text, text: args.text});
-				});
-				this.oControl.placeAt("qunit-fixture");
+			QUnit.test("Should not fire enter on a control", function (assert) {
+				this.oControl = new Input();
+				var fnEnterSpy = sinon.spy(this.oControl, "onsapenter");
 
-				//Make sure that the control is rendered
+				this.oControl.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
+				new EnterText({ text: "foo" }).executeOn(this.oControl);
 
-				// System under test
-				var oEnterFirstToken = new EnterText({
-					text: "foo"
-				});
-				var oEnterSecondToken = new EnterText({
-					text: "bar"
-				});
-
-				// Act
-				oEnterFirstToken.executeOn(this.oControl);
-				var aFirstTokens = this.oControl.getTokens();
-
-				oEnterSecondToken.executeOn(this.oControl);
-				var aSecondTokens = this.oControl.getTokens();
-
-				assert.strictEqual(aFirstTokens.length, 1, "Created one token");
-				assert.strictEqual(aFirstTokens[0].getText(), "foo", "First token is foo");
-
-
-				assert.strictEqual(aSecondTokens.length, 2, "Created two tokens");
-				assert.strictEqual(aSecondTokens[0].getText(), "foo", "First token is foo");
-				assert.strictEqual(aSecondTokens[1].getText(), "bar", "Second token is bar");
+				sinon.assert.notCalled(fnEnterSpy);
 			});
 
-			test("Should log an error if a control is not rendered", function () {
+			QUnit.module("Logging", {
+				beforeEach: function () {
+					this.fnErrorSpy = sinon.spy(jQuery.sap.log, "error");
+				},
+				afterEach: function () {
+					this.oControl.destroy();
+					this.fnErrorSpy.restore();
+				}
+			});
+
+			QUnit.test("Should log an error if a control is not rendered", function () {
 				// Arrange
-				var oSpy = this.spy(jQuery.sap.log, "error");
-				this.oControl = new MultiInput();
+				this.oControl = new Input();
 
 
 				var oEnterText = new EnterText({
@@ -217,18 +193,17 @@
 				// Act
 				oEnterText.executeOn(this.oControl);
 
-				sinon.assert.calledWith(oSpy,  sinon.match(/has no dom representation/), sinon.match(oEnterText._sLogPrefix));
+				sinon.assert.calledWith(this.fnErrorSpy,  sinon.match(/has no dom representation/), sinon.match(oEnterText._sLogPrefix));
 			});
 
-			test("Should log a warning if a control cannot be focused", function () {
+			QUnit.test("Should log a warning if a control cannot be focused", function () {
 				// Arrange
 				var oSpy = sinon.spy(jQuery.sap.log, "warning");
-				this.oControl = new MultiInput({
+				this.oControl = new Input({
 					enabled : false
 				});
 				this.oControl.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
-
 
 				var oEnterText = new EnterText({
 					text: "foo"
@@ -240,9 +215,8 @@
 				sinon.assert.calledWith(oSpy,  sinon.match(/could not be focused/),  sinon.match(oEnterText._sLogPrefix));
 			});
 
-			test("Should log an error if no text is passed to EnterText", function () {
+			QUnit.test("Should log an error if no text is passed to EnterText", function () {
 				// Arrange
-				var oSpy = this.spy(jQuery.sap.log, "error");
 				this.oControl = new Input();
 				this.oControl.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
@@ -253,13 +227,12 @@
 				// Act
 				oEnterText.executeOn(this.oControl);
 
-				sinon.assert.calledWith(oSpy,  sinon.match(/Please provide a text/), sinon.match(oEnterText._sLogPrefix));
+				sinon.assert.calledWith(this.fnErrorSpy,  sinon.match(/Please provide a text/), sinon.match(oEnterText._sLogPrefix));
 			});
 
 
-			test("Should log an error if an empty text is passed to EnterText and clearTextFirst is false", function () {
+			QUnit.test("Should log an error if an empty text is passed to EnterText and clearTextFirst is false", function () {
 				// Arrange
-				var oSpy = this.spy(jQuery.sap.log, "error");
 				this.oControl = new Input();
 				this.oControl.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
@@ -273,7 +246,7 @@
 				// Act
 				oEnterText.executeOn(this.oControl);
 
-				sinon.assert.calledWith(oSpy,  sinon.match(/Please provide a text/), sinon.match(oEnterText._sLogPrefix));
+				sinon.assert.calledWith(this.fnErrorSpy,  sinon.match(/Please provide a text/), sinon.match(oEnterText._sLogPrefix));
 			});
 
 

@@ -174,14 +174,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 			/**
 			 * Sets GrowingList control to scroll container
 			 *
-			 * @param {sap.m.GrowingList} GrowingList instance
+			 * @param {function} fnScrollLoadCallback Scrolling callback
+			 * @param {sap.m.ListGrowingDirection} sScrollLoadDirection Scrolling direction
 			 * This function is supported in iScroll and mouse delegates only.
 			 * @protected
 			 * @since 1.11.0
 			 */
-			setGrowingList : function(oGrowingList, fnScrollLoadCallback) {
-				this._oGrowingList = oGrowingList;
-				this._fnScrollLoadCallback = jQuery.proxy(fnScrollLoadCallback, oGrowingList);
+			setGrowingList : function(fnScrollLoadCallback, sScrollLoadDirection) {
+				this._fnScrollLoadCallback = fnScrollLoadCallback;
+				this._sScrollLoadDirection = sScrollLoadDirection;
 				return this;
 			},
 
@@ -552,7 +553,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 							that._oPullDown.doScrollEnd();
 						}
 
-						if (that._oGrowingList && that._fnScrollLoadCallback) {
+						if (that._fnScrollLoadCallback) {
 
 							// start loading if 75% of the scroll container is scrolled
 							var scrollThreshold = Math.floor(this.wrapperH / 4);
@@ -771,6 +772,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 				return this._scrollX || 0;
 			},
 
+			getScrollHeight : function() {
+				var $Container = this._$Container;
+				return ($Container && $Container[0]) ? $Container[0].scrollHeight : 0;
+			},
+
 			getMaxScrollTop : function() {
 				var $Container = this._$Container;
 				return ($Container && $Container[0]) ? $Container[0].scrollHeight - $Container[0].clientHeight : -1;
@@ -852,8 +858,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 				this._scrollY = fScrollTop;
 
 				// Growing List/Table
-				if (this._fnScrollLoadCallback && fVerticalMove > 0 && $Container[0].scrollHeight - fScrollTop - $Container[0].clientHeight < 100 ) {
-					this._fnScrollLoadCallback(); // close to the bottom
+				if (this._fnScrollLoadCallback) {
+					if (this._sScrollLoadDirection == "Upwards") {
+						if (fVerticalMove < 0 && fScrollTop < 100) {
+							this._fnScrollLoadCallback();
+						}
+					} else if (fVerticalMove > 0 && $Container[0].scrollHeight - fScrollTop - $Container[0].clientHeight < 100) {
+						this._fnScrollLoadCallback();
+					}
 				}
 
 				// IconTabHeader

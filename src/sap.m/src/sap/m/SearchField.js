@@ -310,6 +310,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			clearButtonPressed: !!(oOptions && oOptions.clearButton)
 		});
 	};
+	/**
+	 *  Destroys suggestion object if exists
+	 */
+	SearchField.prototype.exit = function () {
+		if (this._oSuggest) {
+			this._oSuggest.destroy(true);
+			this._oSuggest = null;
+		}
+	};
 
 	SearchField.prototype.onButtonPress = function(oEvent) {
 

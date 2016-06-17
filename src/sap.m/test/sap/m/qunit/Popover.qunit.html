@@ -1739,6 +1739,32 @@
 			oPopover.destroy();
 		});
 
+		test("In belize theme the Popover should use compact arrow and adjust offsets", function () {
+			var stubTheme = sinon.stub(sap.ui.getCore().getConfiguration(), "getTheme").returns("sap_belize"),
+				oPopover = new sap.m.Popover();
+
+			oPopover.openBy(oButton2);
+
+			equal(oPopover._arrowOffset, 9, "_arrowoffset should be 9");
+			deepEqual(oPopover._offsets, ["0 -9", "9 0", "0 9", "-9 0"], "offsets should be correct according the arrowOffset");
+
+			stubTheme.restore();
+			oPopover.destroy();
+		});
+
+		test("In belize plus theme the Popover should use compact arrow and adjust offsets", function () {
+			var stubTheme = sinon.stub(sap.ui.getCore().getConfiguration(), "getTheme").returns("sap_belize_plus"),
+				oPopover = new sap.m.Popover();
+
+			oPopover.openBy(oButton2);
+
+			equal(oPopover._arrowOffset, 9, "_arrowoffset should be 9");
+			deepEqual(oPopover._offsets, ["0 -9", "9 0", "0 9", "-9 0"], "offsets should be correct according the arrowOffset");
+
+			stubTheme.restore();
+			oPopover.destroy();
+		});
+
 		test("_afterAdjustPositionAndArrow is called once", function () {
 			var oButton = new sap.m.Button({
 				text: "Open Popover"

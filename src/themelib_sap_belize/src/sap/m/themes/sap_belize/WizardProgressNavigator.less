@@ -4,13 +4,14 @@
 /* ============================================== */
 
 .sapMWizardProgressNav {
-	background: @sapUiGroupContentBackground;
+	background: @sapUiObjectHeaderBackground;
 	font-size: @sapMFontMediumSize;
-	border-color: @sapUiGroupContentBorderColor;
+	border-bottom: solid 0.125rem darken(@sapUiObjectHeaderBackground, 8);
+	box-shadow: @sapUiShadowHeader;
 }
 
 .sapMWizardProgressNavStep:hover .sapMWizardProgressNavAnchorCircle {
-	background: @sapUiButtonHoverBackground;
+	background: lighten(@sapUiObjectHeaderBackground, 5);
 }
 
 .sapMWizardProgressNavAnchor:focus {
@@ -19,9 +20,14 @@
 }
 
 .sapMWizardProgressNavAnchorCircle {
-	color: @sapUiButtonTextColor;
-	background: @sapUiSegmentedButtonBackground;
-	border-color: @sapUiSegmentedButtonSelectedBackground;
+	color: @sapUiHighlight;
+	background: @sapUiObjectHeaderBackground;
+	border-color: @sapUiHighlight;
+
+	font-size: @sapMFontMediumSize;
+	.sapUiIcon {
+		font-size: @sapMFontLargeSize;
+	}
 }
 
 .sapMWizardProgressNavAnchorIcon {
@@ -29,37 +35,61 @@
 }
 
 .sapMWizardProgressNavAnchorTitle {
-	background: @sapUiGroupContentBackground;
+	font-size: @sapMFontMediumSize;
+	color: @sapUiGroupTitleTextColor;
+	background: @sapUiObjectHeaderBackground;
+}
+
+.sapMWizardProgressNavAnchorTitle:hover {
+	color: darken(@sapUiGroupTitleTextColor, 10);
 }
 
 .sapMWizardProgressNavStep::after {
-	border-bottom-color: @sapUiSelected;
+	border-bottom-color: @sapUiHighlight;
+}
+
+.sapMWizard .sapMWizardStepContainer {
+  background: @sapUiGroupContentBackground;
 }
 
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] {
+
 	& .sapMWizardProgressNavAnchor::after {
-		background: @sapUiSelected;
+		background: @sapUiHighlight;
 	}
 
 	& .sapMWizardProgressNavAnchorCircle {
-		color: @sapUiSegmentedButtonSelectedTextColor;
-		background: @sapUiSegmentedButtonSelectedBackground;
-		border: none;
+		background: @sapUiHighlight;
+		color: @sapUiContentContrastIconColor;
 	}
 }
 
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"] {
 
+	.sapMWizardProgressNavAnchorTitle {
+		color: darken(@sapUiGroupTitleTextColor, 20);
+	}
+
+  & ~ .sapMWizardProgressNavStep {
+		color: fade(@sapUiGroupTitleTextColor, 50);
+	}
 	/* anchors in all steps after the active one have inactive style */
 	& ~ .sapMWizardProgressNavStep .sapMWizardProgressNavAnchorCircle {
-		color: @sapUiSegmentedButtonIconColor;
-		background: @sapUiButtonBackground;
-		border-color: @sapUiSegmentedButtonBorderColor;
+		border-color: fade(@sapUiHighlight, 50);
+		color: fade(@sapUiHighlight, 50);
+	}
+
+	& ~ .sapMWizardProgressNavStep .sapMWizardProgressNavAnchorTitle {
+		color: fade(@sapUiGroupTitleTextColor, 50);
+	}
+
+	& ~ .sapMWizardProgressNavStep:hover .sapMWizardProgressNavAnchorCircle {
+		background-color: inherit;
 	}
 
 	/* all separators after (and including) the active step have inactive style */
 	&::after,
 	& ~ .sapMWizardProgressNavStep::after {
-		border-bottom-color: @sapUiSegmentedButtonBorderColor;
+		border-bottom-color: fade(@sapUiHighlight, 50);
 	}
 }

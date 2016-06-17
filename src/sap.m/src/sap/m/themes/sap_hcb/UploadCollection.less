@@ -4,11 +4,13 @@
 /* HCB Theme                                                                             */
 /* ===================================================================================== */
 /* Item Icon */
+.sapMUCItemIconInactive,
 .sapMUCItemIcon {
-	color:					@sapHCStandardFG;
+	color: @sapHCStandardFG;
 }
 
 /*if no image is provided a placeholder camera is displayed */
+.sapMUCItemPlaceholderInactive,
 .sapMUCItemPlaceholder {
 	background-color: @sapHCStandardBG;
 	box-sizing: border-box;
@@ -19,31 +21,32 @@
 }
 
 /*pictogram color for the placeholder */
+.sapMUCItemPlaceholderInactive.sapUiIcon::before,
 .sapMUCItemPlaceholder.sapUiIcon::before {
 	color: @sapHCReducedAltFG;
 }
 
 /*padding between buttons */
 .sapMBtn.sapMUCFirstButton {
-	padding-right:		0.5rem;
+	padding-right: 0.5rem;
 }
 
 
 /*padding between buttons */
 .sapUiSizeCompact .sapMBtn.sapMUCFirstButton {
-	padding-right:		0.5rem;
+	padding-right: 0.5rem;
 }
 
 
 /* Text: Description (Progress) */
 .sapMLabel.sapMUCProgress {
-	font-size:				@sapMFontMediumSize;
-	color:					@sapHCStandardFG;
+	font-size: @sapMFontMediumSize;
+	color: @sapHCStandardFG;
 }
 
 /* Text: Filename */
 .sapMUCFileName.sapMLnk {
-	font-size: 			@sapMFontLargeSize; /* it cannot be moved to base as the LESS constant is not known there */
+	font-size: @sapMFontLargeSize; /* it cannot be moved to base as the LESS constant is not known there */
 }
 
 .sapMUCAttrContainer, .sapMUCStatusContainer {
@@ -58,8 +61,9 @@
 /* ************************************************************************************* */
 /* local fixes: should be done by used simple controls
 /* ************************************************************************************* */
+.sapMUCItemIconInactive.sapUiIcon:focus,
 .sapMUCItemIcon.sapUiIcon:focus,
 .sapMUCItemImage:focus {
-	outline-width:			0.125rem;
-	outline-style:			dotted;
+	outline-width: 0.125rem;
+	outline-style: dotted;
 }

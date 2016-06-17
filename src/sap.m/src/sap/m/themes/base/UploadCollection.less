@@ -86,19 +86,21 @@
 }
 
 /* Item icon */
+.sapMUCItemIconInactive,
 .sapMUCItemIcon {
-	font-size: 2rem;
+	font-size: 2.5rem;
 }
 
 .sapMImg.sapMUCItemImage{
 	background-size:	cover;
 }
 
+.sapMUCItemIconInactive,
 .sapMUCItemIcon,
 .sapMUCItemImage {
 	height:				3rem;
 	width:				3rem;
-	margin-right:		0.65rem; /* because of the keyboard frame it should be margin and not padding */
+	margin-right:		0.75rem; /* because of the keyboard frame it should be margin and not padding */
 	margin-top:			0.1rem; /* is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin */
 	margin-bottom:		0.1rem; /* is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin */
 	margin-left:		0.1rem; /* is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin */
@@ -111,12 +113,14 @@
 }
 
 /* fallback for IE9 as it does not support flex */
- html[data-sap-ui-browser="ie9"]  .sapMUCItemIcon,
- html[data-sap-ui-browser="ie9"]  .sapMUCItemImage {
+html[data-sap-ui-browser="ie9"] .sapMUCItemIconInactive,
+html[data-sap-ui-browser="ie9"] .sapMUCItemIcon,
+html[data-sap-ui-browser="ie9"] .sapMUCItemImage {
 	float: left;
 }
 
 /*if no image is provided a standard placeholder is displayed */
+.sapMUCItemPlaceholderInactive,
 .sapMUCItemPlaceholder {
 	line-height: 3rem;
 }
@@ -126,7 +130,7 @@
 	font-family:		@sapUiFontFamily;
 	font-weight:		normal;
 	white-space:		nowrap;
-	padding-bottom: 	0.25rem;
+	padding-top:		0.25rem;
 	overflow:			hidden;
 	text-overflow:		ellipsis;
 	opacity:			100;
@@ -137,20 +141,13 @@
 	margin-left: 0.5rem;
 }
 
-.sapMUCObjectMarker .sapUiIcon:before {
-	vertical-align: top;
+.sapMUCObjectMarker.sapMObjectMarkerText:not(.sapMObjectMarkerIcon) {
+	padding-top: 0.25rem;
 }
 
-.sapMUCTitleContainer {
-	width: 100%;
-}
-
-.sapMUCFileNameContainer {
-	overflow: hidden;
-	text-overflow: ellipsis;
-	display: inline;
-	font-size: 1rem;
-	width: 100%;
+.sapMUCObjectMarker.sapMObjectMarkerText,
+.sapMUCObjectMarker.sapMObjectMarkerIcon.sapMObjectMarkerText .sapUiIcon {
+	vertical-align: bottom;
 }
 
 .sapMUCObjectMarkerContainer {
@@ -391,10 +388,6 @@ html[data-sap-ui-browser="ie9"] .sapMUCButtonContainer {
 	margin-top: -0.8125rem;
 	margin-left: -0.875rem;
 	margin-right: -0.125rem;
-}
-
-.sapMLIBContent>.sapMUCItemIcon, .sapMUCItemImage {
-	margin-top: 0;
 }
 
 .sapUiSizeCompact .sapMUCItem>.sapMLIBSelectM {

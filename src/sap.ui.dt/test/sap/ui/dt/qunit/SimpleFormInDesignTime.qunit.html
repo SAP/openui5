@@ -21,7 +21,7 @@
 				type="text/javascript"
 				data-sap-ui-noConflict="true"
 				data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
-				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.commons,sap.ui.layout"
+				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
 				src="../../../../../resources/sap-ui-core.js">
 		</script>
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
@@ -38,7 +38,7 @@
 
 			QUnit.module("Given that a DesignTime is created for a SimpleForm and designTimeMetadata for SimpleForm hidden form is provided", {
 				beforeEach : function() {
-					this.oLabel = new sap.ui.commons.Label({text:"Name"});
+					this.oLabel = new sap.m.Label({text:"Name"});
 
 					this.oSimpleForm = new sap.ui.layout.form.SimpleForm("Form1", {
 						maxContainerCols: 2,
@@ -46,11 +46,11 @@
 						content:[
 							new sap.ui.core.Title({text:"Person"}),
 							this.oLabel,
-							new sap.ui.commons.TextField({value:"Max"}),
-							new sap.ui.commons.TextField({value:"Mustermann"}),
-							new sap.ui.commons.Label({text:"Date of birth"}),
-							new sap.ui.commons.DatePicker({yyyymmdd:"19990909"}),
-							new sap.ui.commons.Label({text:"Gender"})
+							new sap.m.Input({value:"Max"}),
+							new sap.m.Input({value:"Mustermann"}),
+							new sap.m.Label({text:"Date of birth"}),
+							new sap.m.DatePicker({yyyymmdd:"19990909"}),
+							new sap.m.Label({text:"Gender"})
 						]
 					});
 

@@ -406,9 +406,7 @@ sap.ui.define([
 			this.oBindingContexts = {};
 			this.mElementBindingContexts = {};
 			this.mBindingInfos = {};
-			this.sBindingPath = null;
-			this.mBindingParameters = null;
-			this.mBoundObjects = {};
+			this.mObjectBindingInfos = {};
 
 			// apply the owner id if defined
 			this._sOwnerId = ManagedObject._sOwnerId;
@@ -2273,7 +2271,7 @@ sap.ui.define([
 			}
 		});
 
-		jQuery.each(this.mBoundObjects, function(sName, oBoundObject) {
+		jQuery.each(this.mObjectBindingInfos, function(sName, oBoundObject) {
 			that.unbindObject(sName, /* _bSkipUpdateBindingContext */ true);
 		});
 
@@ -2405,40 +2403,40 @@ sap.ui.define([
 	 * @public
 	 */
 	ManagedObject.prototype.bindObject = function(sPath, mParameters) {
-		var boundObject = {},
+		var oBindingInfo = {},
 			sModelName,
 			iSeparatorPos;
 		// support object notation
 		if (typeof sPath == "object") {
-			var oBindingInfo = sPath;
+			oBindingInfo = sPath;
 			sPath = oBindingInfo.path;
-			mParameters = oBindingInfo.parameters;
-			sModelName = oBindingInfo.model;
-			boundObject.events = oBindingInfo.events;
+		} else {
+			oBindingInfo.path = sPath;
+			oBindingInfo.parameters = mParameters;
 		}
 
 		// if a model separator is found in the path, extract model name and path
 		iSeparatorPos = sPath.indexOf(">");
-		boundObject.sBindingPath = sPath;
-		boundObject.mBindingParameters = mParameters;
 		if (iSeparatorPos > 0) {
-			sModelName = sPath.substr(0, iSeparatorPos);
-			boundObject.sBindingPath = sPath.substr(iSeparatorPos + 1);
+			oBindingInfo.model = sPath.substr(0, iSeparatorPos);
+			oBindingInfo.path = sPath.substr(iSeparatorPos + 1);
 		}
 
+		sModelName = oBindingInfo.model;
+
 		// if old binding exists, clean it up
-		if ( this.mBoundObjects[sModelName] ) {
+		if ( this.mObjectBindingInfos[sModelName] ) {
 			this.unbindObject(sModelName, /* _bSkipUpdateBindingContext */ true);
 			// We don't push down context changes here
 			// Either this will happen with the _bindObject call below or the model
 			// is not available yet and wasn't available before -> no change of contexts
 		}
 
-		this.mBoundObjects[sModelName] = boundObject;
+		this.mObjectBindingInfos[sModelName] = oBindingInfo;
 
 		// if the models are already available, create the binding
 		if (this.getModel(sModelName)) {
-			this._bindObject(sModelName, boundObject);
+			this._bindObject(oBindingInfo);
 		}
 
 		return this;
@@ -2449,9 +2447,10 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ManagedObject.prototype._bindObject = function(sModelName, oBoundObject) {
+	ManagedObject.prototype._bindObject = function(oBindingInfo) {
 		var oBinding,
 			oContext,
+			sModelName,
 			oModel,
 			that = this;
 
@@ -2464,16 +2463,17 @@ sap.ui.define([
 			that.setElementBindingContext(oBinding.getBoundContext(), sModelName);
 		};
 
+		sModelName = oBindingInfo.model;
 		oModel = this.getModel(sModelName);
 
 		oContext = this.getBindingContext(sModelName);
 
-		oBinding = oModel.bindContext(oBoundObject.sBindingPath, oContext, oBoundObject.mBindingParameters);
+		oBinding = oModel.bindContext(oBindingInfo.path, oContext, oBindingInfo.parameters);
 		oBinding.attachChange(fChangeHandler);
-		oBoundObject.binding = oBinding;
-		oBoundObject.fChangeHandler = fChangeHandler;
+		oBindingInfo.binding = oBinding;
+		oBindingInfo.modelChangeHandler = fChangeHandler;
 
-		oBinding.attachEvents(oBoundObject.events);
+		oBinding.attachEvents(oBindingInfo.events);
 
 		oBinding.initialize();
 	};
@@ -2514,14 +2514,14 @@ sap.ui.define([
 	 * @public
 	 */
 	ManagedObject.prototype.unbindObject = function(sModelName, /* internal use only */ _bSkipUpdateBindingContext) {
-		var oBoundObject = this.mBoundObjects[sModelName];
-		if (oBoundObject) {
-			if (oBoundObject.binding) {
-				oBoundObject.binding.detachChange(oBoundObject.fChangeHandler);
-				oBoundObject.binding.detachEvents(oBoundObject.events);
-				oBoundObject.binding.destroy();
+		var oBindingInfo = this.mObjectBindingInfos[sModelName];
+		if (oBindingInfo) {
+			if (oBindingInfo.binding) {
+				oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
+				oBindingInfo.binding.detachEvents(oBindingInfo.events);
+				oBindingInfo.binding.destroy();
 			}
-			delete this.mBoundObjects[sModelName];
+			delete this.mObjectBindingInfos[sModelName];
 			delete this.mElementBindingContexts[sModelName];
 			if ( !_bSkipUpdateBindingContext ) {
 				this.updateBindingContext(false, sModelName);
@@ -3330,21 +3330,22 @@ sap.ui.define([
 			var aParts = oBindingInfo.parts,
 				i;
 
-			if (aParts && aParts.length > 1) {
-				// composite binding: invalid when for any part the model has the same name (or updateall) and when the model instance for that part differs
-				for (i = 0; i < aParts.length; i++) {
-					if ( (bUpdateAll || aParts[i].model == sModelName) && !oBindingInfo.binding.aBindings[i].updateRequired(that.getModel(aParts[i].model)) ) {
-						return true;
+			if (aParts) {
+				if (aParts.length == 1) {
+					// simple property binding: invalid when the model has the same name (or updateall) and when the model instance differs
+					return (bUpdateAll || aParts[0].model == sModelName) && !oBindingInfo.binding.updateRequired(that.getModel(aParts[0].model));
+				} else {
+					// simple or composite binding: invalid when for any part the model has the same name (or updateall) and when the model instance for that part differs
+					for (i = 0; i < aParts.length; i++) {
+						if ( (bUpdateAll || aParts[i].model == sModelName) && !oBindingInfo.binding.aBindings[i].updateRequired(that.getModel(aParts[i].model)) ) {
+							return true;
+						}
 					}
 				}
-			} else if (oBindingInfo.factory) {
-				// list binding: invalid when  the model has the same name (or updateall) and when the model instance differs
-				return (bUpdateAll || oBindingInfo.model == sModelName) && !oBindingInfo.binding.updateRequired(that.getModel(oBindingInfo.model));
 			} else {
-				// simple property binding: invalid when the model has the same name (or updateall) and when the model instance differs
-				return (bUpdateAll || aParts[0].model == sModelName) && !oBindingInfo.binding.updateRequired(that.getModel(aParts[0].model));
+				// list or object binding: invalid when  the model has the same name (or updateall) and when the model instance differs
+				return (bUpdateAll || oBindingInfo.model == sModelName) && !oBindingInfo.binding.updateRequired(that.getModel(oBindingInfo.model));
 			}
-			return false;
 		}
 
 		/*
@@ -3363,11 +3364,31 @@ sap.ui.define([
 					}
 				}
 				return true;
-			} else if (oBindingInfo.factory) { // List binding check
+			} else { // List or object binding
 				return !!that.getModel(oBindingInfo.model);
 			}
-			// there should be no other cases
-			return false;
+		}
+
+		/*
+		 * Remove binding, detach all events and destroy binding object
+		 */
+		function removeBinding(oBindingInfo) {
+			// Also tell the Control that the messages have been removed (if any)
+			if (that.refreshDataState) {
+				that.refreshDataState(sName, oBindingInfo.binding.getDataState());
+			}
+
+			oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
+			if (oBindingInfo.modelRefreshHandler) { // only list bindings currently have a refresh handler attached
+				oBindingInfo.binding.detachRefresh(oBindingInfo.modelRefreshHandler);
+			}
+			oBindingInfo.binding.detachEvents(oBindingInfo.events);
+			oBindingInfo.binding.destroy();
+			// remove all binding related data from the binding info
+			delete oBindingInfo.binding;
+			delete oBindingInfo.modelChangeHandler;
+			delete oBindingInfo.dataStateChangeHandler;
+			delete oBindingInfo.modelRefreshHandler;
 		}
 
 		// create property and aggregation bindings if they don't exist yet
@@ -3377,22 +3398,7 @@ sap.ui.define([
 
 			// if there is a binding and if it became invalid through the current model change, then remove it
 			if ( oBindingInfo.binding && becameInvalid(oBindingInfo) ) {
-				// Also tell the Control that the messages have been removed (if any)
-				if (this.refreshDataState) {
-					this.refreshDataState(sName, oBindingInfo.binding.getDataState());
-				}
-
-				oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
-				if (oBindingInfo.modelRefreshHandler) { // only list bindings currently have a refresh handler attached
-					oBindingInfo.binding.detachRefresh(oBindingInfo.modelRefreshHandler);
-				}
-				oBindingInfo.binding.detachEvents(oBindingInfo.events);
-				oBindingInfo.binding.destroy();
-				// remove all binding related data from the binding info
-				delete oBindingInfo.binding;
-				delete oBindingInfo.modelChangeHandler;
-				delete oBindingInfo.dataStateChangeHandler;
-				delete oBindingInfo.modelRefreshHandler;
+				removeBinding(oBindingInfo);
 			}
 
 			// if there is no binding and if all required information is available, create a binding object
@@ -3405,6 +3411,22 @@ sap.ui.define([
 			}
 
 		}
+
+		// create object bindings if they don't exist yet
+		for ( sName in this.mObjectBindingInfos ) {
+			oBindingInfo = this.mObjectBindingInfos[sName];
+
+			// if there is a binding and if it became invalid through the current model change, then remove it
+			if ( oBindingInfo.binding && becameInvalid(oBindingInfo) ) {
+				removeBinding(oBindingInfo);
+			}
+
+			// if there is no binding and if all required information is available, create a binding object
+			if ( !oBindingInfo.binding && canCreate(oBindingInfo) ) {
+				this._bindObject(oBindingInfo);
+			}
+		}
+
 
 	};
 
@@ -3428,7 +3450,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ManagedObject.prototype.getObjectBinding = function(sModelName){
-		return this.mBoundObjects[sModelName] && this.mBoundObjects[sModelName].binding;
+		return this.mObjectBindingInfos[sModelName] && this.mObjectBindingInfos[sModelName].binding;
 	};
 
 	/**
@@ -3519,7 +3541,7 @@ sap.ui.define([
 			sModelName,
 			oContext,
 			sName,
-			oBoundObject,
+			oBindingInfo,
 			i;
 
 		// find models that need an context update
@@ -3542,15 +3564,15 @@ sap.ui.define([
 			if ( oModelNames.hasOwnProperty(sModelName) ) {
 				sModelName = sModelName === "undefined" ? undefined : sModelName;
 				oModel = this.getModel(sModelName);
-				oBoundObject = this.mBoundObjects[sModelName];
+				oBindingInfo = this.mObjectBindingInfos[sModelName];
 
-				if (oModel && oBoundObject && !bSkipLocal) {
-					if (!oBoundObject.binding) {
-						this._bindObject(sModelName, oBoundObject);
+				if (oModel && oBindingInfo && !bSkipLocal) {
+					if (!oBindingInfo.binding) {
+						this._bindObject(oBindingInfo);
 					} else {
 						oContext = this._getBindingContext(sModelName);
-						if (oContext !== oBoundObject.binding.getContext()) {
-							oBoundObject.binding.setContext(oContext);
+						if (oContext !== oBindingInfo.binding.getContext()) {
+							oBindingInfo.binding.setContext(oContext);
 						}
 					}
 					continue;
@@ -3605,7 +3627,7 @@ sap.ui.define([
 	 * Note: A ManagedObject inherits binding contexts from the Core only when it is a descendant of an UIArea.
 	 *
 	 * @param {string} [sModelName] the name of the model or <code>undefined</code>
-	 * @return {Object} the binding context of this object
+	 * @return {sap.ui.model.Context} oContext The binding context of this object
 	 * @public
 	 */
 	ManagedObject.prototype.getBindingContext = function(sModelName){
@@ -3947,8 +3969,8 @@ sap.ui.define([
 		 * Context will only be updated when adding the control to the control tree;
 		 * Maybe we have to call updateBindingcontext() here?
 		 */
-		for (sName in this.mBoundObjects) {
-			oClone.mBoundObjects[sName] = jQuery.extend({}, this.mBoundObjects[sName]);
+		for (sName in this.mObjectBindingInfos) {
+			oClone.mObjectBindingInfos[sName] = jQuery.extend({}, this.mObjectBindingInfos[sName]);
 		}
 
 		// Clone events

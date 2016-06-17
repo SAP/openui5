@@ -159,6 +159,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.26
 	 * @param {object[]} aConditions the complete list of conditions
+	 * @returns {sap.m.P13nFilterPanel} this for chaining
 	 */
 	P13nFilterPanel.prototype.setConditions = function(aConditions) {
 		var aIConditions = [];
@@ -180,6 +181,7 @@ sap.ui.define([
 		if (aEConditions.length > 0) {
 			this._oExcludePanel.setExpanded(true);
 		}
+		return this;
 	};
 
 	/**
@@ -200,6 +202,7 @@ sap.ui.define([
 
 		this._oIncludeFilterPanel.setContainerQuery(bContainerQuery);
 		this._oExcludeFilterPanel.setContainerQuery(bContainerQuery);
+		return this;
 	};
 
 	P13nFilterPanel.prototype.setLayoutMode = function(sMode) {
@@ -207,6 +210,7 @@ sap.ui.define([
 
 		this._oIncludeFilterPanel.setLayoutMode(sMode);
 		this._oExcludeFilterPanel.setLayoutMode(sMode);
+		return this;
 	};
 
 	/**
@@ -347,6 +351,7 @@ sap.ui.define([
 			this._oIncludeFilterPanel.setMaxConditions(sMax);
 		}
 		this._updatePanel();
+		return this;
 	};
 
 	P13nFilterPanel.prototype.setMaxExcludes = function(sMax) {
@@ -356,6 +361,7 @@ sap.ui.define([
 			this._oExcludeFilterPanel.setMaxConditions(sMax);
 		}
 		this._updatePanel();
+		return this;
 	};
 
 	P13nFilterPanel.prototype._updatePanel = function() {
@@ -429,10 +435,9 @@ sap.ui.define([
 		}
 		if (!this._aIncludeOperations["boolean"]) {
 			this.setIncludeOperations([
-			    sap.m.P13nConditionOperation.EQ
+				sap.m.P13nConditionOperation.EQ
 			], "boolean");
 		}
-
 
 		this._aExcludeOperations = {};
 
@@ -541,11 +546,12 @@ sap.ui.define([
 					values: fGetValueOfProperty("values", oContext, oItem_)
 				});
 
-
 				// check if maxLength is 1 and remove contains, start and ends with operations
 				var n = aKeyFields.length;
 				if (aKeyFields[n - 1].maxLength === 1 || aKeyFields[n - 1].maxLength === "1") {
-					aKeyFields[n - 1].operations = [sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE, sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE];
+					aKeyFields[n - 1].operations = [
+						sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE, sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE
+					];
 				}
 			});
 			this.setKeyFields(aKeyFields);

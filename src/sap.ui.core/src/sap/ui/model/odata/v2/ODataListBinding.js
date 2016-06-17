@@ -389,38 +389,57 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 	 * @param {Object} oContext the new context object
 	 */
 	ODataListBinding.prototype.setContext = function(oContext) {
+		var sResolvedPath,
+			bCreated = oContext && oContext.bCreated;
+
 		if (this.oContext !== oContext) {
 			this.oContext = oContext;
-			if (this.isRelative()) {
-				// get new entity type with new context and init filters now correctly
-				this._initSortersFilters();
 
-				if (!this.bInitial){
-					// if nested list is already available, use the data and don't send additional requests
-					// $expand loads all associated entities, no paging parameters possible, so we can safely assume all data is available
-					var oRef = this.oModel._getObject(this.sPath, this.oContext);
-					this.aExpandRefs = oRef;
-					// oRef needs to be an array, so that it is the list of expanded entries
-					if (jQuery.isArray(oRef)) {
-						this.aAllKeys = oRef;
-						this.iLength = oRef.length;
-						this.bLengthFinal = true;
-						// since $expand loads all associated entries, we can directly switch to client operations
-						this.bClientOperation = true;
-						this.applyFilter();
-						this.applySort();
-						this._fireChange();
-					} else if (!this.oModel.resolve(this.sPath, this.oContext) || oRef === null){
-						// if path does not resolve, or data is known to be null (e.g. expanded list)
-						this.aAllKeys = null;
-						this.aKeys = [];
-						this.iLength = 0;
-						this.bLengthFinal = true;
-						this._fireChange();
-					} else {
-						this._refresh();
-					}
+			// If binding is initial or not a relative binding, nothing to do here
+			if (this.bInitial || !this.isRelative()) {
+				return;
+			}
+
+			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+
+			// If path does not resolve or parent context is created, reset current list
+			if (!sResolvedPath || bCreated) {
+				if (this.aAllKeys || this.aKeys.length > 0 || this.iLength > 0) {
+					this.aAllKeys = null;
+					this.aKeys = [];
+					this.iLength = 0;
+					this.bLengthFinal = true;
+					this._fireChange();
 				}
+				return;
+			}
+
+			// get new entity type with new context and init filters now correctly
+			this._initSortersFilters();
+
+			// if nested list is already available, use the data and don't send additional requests
+			// $expand loads all associated entities, no paging parameters possible, so we can safely assume all data is available
+			var oRef = this.oModel._getObject(this.sPath, this.oContext);
+			this.aExpandRefs = oRef;
+			// oRef needs to be an array, so that it is the list of expanded entries
+			if (jQuery.isArray(oRef)) {
+				this.aAllKeys = oRef;
+				this.iLength = oRef.length;
+				this.bLengthFinal = true;
+				// since $expand loads all associated entries, we can directly switch to client operations
+				this.bClientOperation = true;
+				this.applyFilter();
+				this.applySort();
+				this._fireChange();
+			} else if (oRef === null){
+				// if data is known to be null (e.g. expanded list)
+				this.aAllKeys = null;
+				this.aKeys = [];
+				this.iLength = 0;
+				this.bLengthFinal = true;
+				this._fireChange();
+			} else {
+				this._refresh();
 			}
 		}
 	};
@@ -609,7 +628,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 					that.bNeedsUpdate = true;
 					that.checkUpdate();
 					that.oModel.fireRequestCompleted({url: sUrl, method: "GET", async: true, success: true});
-					that.fireDataReceived();
+					that.fireDataReceived({data: {}});
 				}, 0);
 			} else {
 				// Execute the request and use the metadata if available
@@ -681,7 +700,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			that.iLength = parseInt(oData, 10);
 			that.bLengthFinal = true;
 			that.bLengthRequested = true;
-			that.mCountHandle = null;
+			that.oCountHandle = null;
 
 			// in the OpertionMode.Auto, we check if the count is LE than the given threshold and set the client operation flag accordingly
 			if (that.sOperationMode == OperationMode.Auto) {
@@ -715,7 +734,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			sPath = sPath + "/$count";
 			//if load is triggered by a refresh we have to check the refreshGroup
 			sGroupId = this.sRefreshGroup ? this.sRefreshGroup : this.sGroupId;
-			this.mCountHandle = this.oModel.read(sPath,{withCredentials: this.oModel.bWithCredentials, groupId: sGroupId, urlParameters:aParams, success: _handleSuccess, error: _handleError});
+			this.oCountHandle = this.oModel.read(sPath, {
+				withCredentials: this.oModel.bWithCredentials,
+				groupId: sGroupId,
+				urlParameters:aParams,
+				success: _handleSuccess,
+				error: _handleError
+			});
 		}
 	};
 
@@ -744,7 +769,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 	 * @private
 	 */
 	ODataListBinding.prototype._refresh = function(bForceUpdate, mChangedEntities, mEntityTypes) {
-		var bChangeDetected = false;
+		var bChangeDetected = false,
+			bCreatedRelative = this.isRelative() && this.oContext && this.oContext.bCreated;
+
+		if (bCreatedRelative) {
+			return;
+		}
 
 		this.bPendingRefresh = false;
 
@@ -803,7 +833,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 	 * @public
 	 */
 	ODataListBinding.prototype.initialize = function() {
-		if (this.oModel.oMetadata && this.oModel.oMetadata.isLoaded() && this.bInitial) {
+		var bCreatedRelative = this.isRelative() && this.oContext && this.oContext.bCreated;
+		if (this.oModel.oMetadata && this.oModel.oMetadata.isLoaded() && this.bInitial && !bCreatedRelative) {
 			this.bInitial = false;
 			this._initSortersFilters();
 			if (!this.bSuspended) {

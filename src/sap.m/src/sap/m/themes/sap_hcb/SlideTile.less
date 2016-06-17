@@ -22,3 +22,14 @@ html.sap-desktop .sapMST:focus .sapMSTFocusDiv {
 html.sap-desktop .sapMST:focus:not([tabindex]) {
 	border-color: transparent;
 }
+
+/* Bulleted indicator of multiple tiles*/
+.sapMSTBulleted > span {
+	background-color: @sapHCStandardBG;
+	box-shadow: 0rem 0rem 0rem 1px #ffffff;
+	border-color: @sapHCStandardFG;
+}
+
+.sapMSTBulleted > span.sapMSTActive {
+	background-color: @sapHCStandardFG;
+}

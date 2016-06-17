@@ -162,10 +162,6 @@
 	padding-bottom: 5px;
 }
 
-.sapUiTableColIcons {
-	padding-top: 6px;
-}
-
 .sapUiTableRowHdr,
 .sapUiTableTr > td {
 	padding-top: 2px;
@@ -461,6 +457,18 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 .sapUiTableCCnt,
 .sapUiTableCtrlEmpty {
 	background-color: @sapHCStandardBG;
+}
+
+.sapUiTableOverlayArea:focus,
+.sapUiTableCtrlEmpty:focus {
+	outline-width: 2px;
+}
+
+html[data-sap-ui-browser^="ie"] .sapUiTableOverlayArea:focus,
+html[data-sap-ui-browser^="ed"] .sapUiTableOverlayArea:focus,
+html[data-sap-ui-browser^="ie"] .sapUiTableCtrlEmpty:focus:before,
+html[data-sap-ui-browser^="ed"] .sapUiTableCtrlEmpty:focus:before {
+	border-width: 2px;
 }
 
 .sapUiSizeCompact .sapUiTableTreeIcon:focus {

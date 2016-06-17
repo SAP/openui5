@@ -6,7 +6,7 @@
     <script src="../../../../resources/sap-ui-core.js"
             type="text/javascript"
             id="sap-ui-bootstrap"
-            data-sap-ui-libs="sap.ui.commons,sap.m"
+            data-sap-ui-libs="sap.m"
             data-sap-ui-xx-bindingSyntax="complex"
             data-sap-ui-theme="sap_bluecrystal">
     </script>
@@ -66,7 +66,25 @@
                 }),
                 ariaLabelledBy : ["contentText"]
             }),
-            oStateDialog = new sap.m.Dialog("dialogWithState", {
+            oSuccessStateDialog = new sap.m.Dialog("dialogWithSuccessState", {
+                title: "Set your goals",
+                icon: "sap-icon://employee",
+                ariaLabelledBy: "p1",
+                state: sap.ui.core.ValueState.Success,
+                content: [
+                    new sap.ui.core.HTML({content: '<p id="p1" style="margin:0; padding: 16px;">' +
+                    'One of the keys to success is creating realistic goals that can be achieved in a reasonable amount of time.</p>'})
+                ],
+                buttons: [
+                    new sap.m.Button({
+                        text: "OK",
+                        press: function () {
+                            oSuccessStateDialog.close();
+                        }
+                    })
+                ]
+            }),
+            oWarningStateDialog = new sap.m.Dialog("dialogWithWarningState", {
                 title: "World Domination",
                 icon: "sap-icon://employee",
                 ariaLabelledBy: "p1",
@@ -78,14 +96,32 @@
                     new sap.m.Button({
                         text: "Accept",
                         press: function () {
-                            oStateDialog.close();
+                            oWarningStateDialog.close();
                         }
                     }),
                     new sap.m.Button({
                         text: "Reject",
                         icon: "sap-icon://employee",
                         press: function () {
-                            oStateDialog.close();
+                            oWarningStateDialog.close();
+                        }
+                    })
+                ]
+            }),
+            oErrorStateDialog = new sap.m.Dialog("dialogWithErrorState", {
+                title: "Don't Give Up",
+                icon: "sap-icon://employee",
+                ariaLabelledBy: "p1",
+                state: sap.ui.core.ValueState.Error,
+                content: [
+                    new sap.ui.core.HTML({content: '<p id="p1" style="margin:0; padding: 16px;">' +
+                    'The only error you can make is not even trying.</p>'})
+                ],
+                buttons: [
+                    new sap.m.Button({
+                        text: "OK",
+                        press: function () {
+                            oErrorStateDialog.close();
                         }
                     })
                 ]
@@ -135,11 +171,27 @@
                     }
                 }),
                 new sap.ui.core.HTML({content: "<br>"}),
-                new sap.m.Button('dialogWithStateButton', {
-                    text: "Dialog With State",
+                new sap.m.Button('dialogWithSuccessStateButton', {
+                    text: "Dialog With Succes State",
                     width: _buttonWidth,
                     press: function () {
-                        oStateDialog.open();
+                        oSuccessStateDialog.open();
+                    }
+                }),
+                new sap.ui.core.HTML({content: "<br>"}),
+                new sap.m.Button('dialogWithWarningStateButton', {
+                    text: "Dialog With Warning State",
+                    width: _buttonWidth,
+                    press: function () {
+                        oWarningStateDialog.open();
+                    }
+                }),
+                new sap.ui.core.HTML({content: "<br>"}),
+                new sap.m.Button('dialogWithErrorStateButton', {
+                    text: "Dialog With Error State",
+                    width: _buttonWidth,
+                    press: function () {
+                        oErrorStateDialog.open();
                     }
                 }),
                 new sap.ui.core.HTML({content: "<br>"}),

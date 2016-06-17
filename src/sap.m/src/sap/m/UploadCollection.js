@@ -605,6 +605,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		}else {
 			this._oList.setMode(mode);
 		}
+		return this;
 	};
 
 	UploadCollection.prototype.getMode = function() {
@@ -1133,15 +1134,11 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			oRm.write('sapMUCEditMode ');
 		}
 		oRm.write('" >');
+		oRm.renderControl(this._getFileNameControl(oItem, that));
 		// if status is uploading only the progress label is displayed under the Filename
 		if (sStatus === UploadCollection._uploadingStatus && !(Device.browser.msie && Device.browser.version <= 9)) {
-			oRm.renderControl(this._getFileNameControl(oItem, that));
 			oRm.renderControl(this._createProgressLabel(sItemId, sPercentUploaded));
 		} else {
-			oRm.write('<div class="sapMUCTitleContainer">');// begin of title (text and markers) container
-			oRm.write('<div class="sapMUCFileNameContainer">');// begin of title only text container
-			oRm.renderControl(this._getFileNameControl(oItem, that));
-			oRm.write('</div>');// end of title only text container
 			if (iMarkersCounter > 0) {
 				oRm.write('<div class="sapMUCObjectMarkerContainer">');// begin of markers container
 				for (i = 0; i < iMarkersCounter; i++ ) {
@@ -1149,7 +1146,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				}
 				oRm.write('</div>');// end of markers container
 			}
-			oRm.write('</div>');// end of title (text and markers) container
 			if (iAttrCounter > 0) {
 				oRm.write('<div class="sapMUCAttrContainer">'); // begin of attributes container
 				for (i = 0; i < iAttrCounter; i++ ) {
@@ -1336,15 +1332,27 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			}).addStyleClass("sapMUCItemImage");
 		} else {
 			sThumbnail = sap.m.UploadCollection.prototype._getThumbnail(undefined, sFileNameLong);
+			var sStyleClass;
 			oItemIcon = new sap.ui.core.Icon(sItemId + "-ia_iconHL", {
 				src : sThumbnail,
 				decorative : false,
 				useIconTooltip : false,
 				alt: this._getAriaLabelForPicture(oItem)
-			}).addStyleClass("sapMUCItemIcon");
-			if (sThumbnail === UploadCollection._placeholderCamera) {
-				oItemIcon.addStyleClass("sapMUCItemPlaceholder");
+			});
+			//Sets the right style class depending on the icon/placeholder status (clickable or not)
+			if (this.sErrorState !== "Error" && jQuery.trim(oItem.getProperty("url"))) {
+				sStyleClass = "sapMUCItemIcon";
+			} else {
+				sStyleClass = "sapMUCItemIconInactive";
 			}
+			if (sThumbnail === UploadCollection._placeholderCamera) {
+				if (this.sErrorState !== "Error" && jQuery.trim(oItem.getProperty("url"))) {
+					sStyleClass = sStyleClass + " sapMUCItemPlaceholder";
+				} else {
+					sStyleClass = sStyleClass + " sapMUCItemPlaceholderInactive";
+				}
+			}
+			oItemIcon.addStyleClass(sStyleClass);
 		}
 		if (this.sErrorState !== "Error" && jQuery.trim(oItem.getProperty("url"))) {
 			oItemIcon.attachPress(function(oEvent) {
@@ -1831,6 +1839,11 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 							oContext.invalidate();
 						}
 					}
+				} else {
+					// exiting error state after an attempt to save a file with an empty filename in case same filenames are allowed
+					oContext.aItems[iSourceLine].errorState = null;
+					oContext.sErrorState = null;
+					oContext.editModeItem = null;
 				}
 				if (bTriggerOk) {
 					oContext._oItemForRename = oContext.aItems[iSourceLine];

@@ -433,7 +433,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/MenuButton', 'sap/ui/core/Co
 	FeedChunk.prototype.handleCommentFeederSubmit = function(oEvent){
 
 		var oDate = new Date();
-	//	var sDate = String(oDate.getFullYear()) + String(oDate.getMonth()) + String(oDate.getDate()) + String(oDate.getHours()) + String(oDate.getMinutes()) + String(oDate.getSeconds());
 		var sDate = String(oDate);
 
 		var oNewComment = new FeedChunk(this.getId() + '-new-' + this.getComments().length, {

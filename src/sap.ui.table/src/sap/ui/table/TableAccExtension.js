@@ -396,9 +396,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 				oTable = oExtension.getTable(),
 				sTableId = oTable.getId();
 
+			function addAriaForOverlayOrNoData(oTable, mAttr, bOverlay, bNoData) {
+				var sMarker = "";
+				if (bOverlay && bNoData) {
+					sMarker = "overlay,nodata";
+				} else if (bOverlay && !bNoData) {
+					sMarker = "overlay";
+				} else if (!bOverlay && bNoData) {
+					sMarker = "nodata";
+				}
+
+				var bHidden = false;
+				if (bOverlay && oTable.getShowOverlay() || bNoData && TableUtils.isNoDataVisible(oTable)) {
+					bHidden = true;
+				}
+
+				if (bHidden) {
+					mAttributes["aria-hidden"] = "true";
+				}
+				if (sMarker) {
+					mAttributes["data-sap-ui-table-acc-covered"] = sMarker;
+				}
+			}
+
 			switch (sType) {
 				case TableAccExtension.ELEMENTTYPES.COLUMNROWHEADER:
 					mAttributes["aria-labelledby"] = [sTableId + "-ariacolrowheaderlabel"];
+					mAttributes["role"] = ["columnheader"];
 					if (mParams && mParams.enabled) {
 						mAttributes["aria-labelledby"].push(sTableId + "-ariaselectall");
 					}
@@ -406,6 +430,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 
 				case TableAccExtension.ELEMENTTYPES.ROWHEADER:
 					mAttributes["aria-labelledby"] = [sTableId + "-ariarowheaderlabel"];
+					if (!oExtension._treeMode) { // Otherwise there are strange announcements of the whole content in AnlyticalTable
+						mAttributes["role"] = ["rowheader"];
+					}
 					if (oTable.getSelectionMode() !== SelectionMode.None) {
 						var bSelected = mParams && mParams.rowSelected;
 						mAttributes["aria-selected"] = "" + bSelected;
@@ -502,6 +529,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 
 				case TableAccExtension.ELEMENTTYPES.TABLE: //The "real" table element(s)
 					mAttributes["role"] = "presentation";//oExtension._treeMode ? "treegrid" : "grid";
+					addAriaForOverlayOrNoData(oTable, mAttributes, true, true);
 					break;
 
 				case TableAccExtension.ELEMENTTYPES.CONTENT: //The content area of the table which contains all the table elements, rowheaders, columnheaders, etc
@@ -517,6 +545,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 
 				case TableAccExtension.ELEMENTTYPES.TABLEHEADER: //The table header area
 					mAttributes["role"] = "heading";
+					addAriaForOverlayOrNoData(oTable, mAttributes, true, false);
 					break;
 
 				case TableAccExtension.ELEMENTTYPES.COLUMNHEADER_ROW: //The area which contains the column headers (TableUtils.CELLTYPES.COLUMNHEADER)
@@ -524,6 +553,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 							 oTable.getSelectionBehavior() === SelectionBehavior.RowOnly) {
 						mAttributes["role"] = "row";
 					}
+					addAriaForOverlayOrNoData(oTable, mAttributes, true, false);
+					break;
+
+				case TableAccExtension.ELEMENTTYPES.ROWHEADER_COL: //The area which contains the row headers (TableUtils.CELLTYPES.ROWHEADER)
+					addAriaForOverlayOrNoData(oTable, mAttributes, true, true);
 					break;
 
 				case TableAccExtension.ELEMENTTYPES.TH: //The "technical" column headers
@@ -533,7 +567,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 					if (bHasFixedColumns) {
 						if (mParams && mParams.column) {
 							mAttributes["aria-owns"] = mParams.column.getId();
-							mAttributes["aria-labelledby"] = mParams.column.getId();
+							mAttributes["aria-labelledby"] = [mParams.column.getId()];
 						}
 					} else {
 						mAttributes["aria-hidden"] = "true";
@@ -542,6 +576,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 
 				case TableAccExtension.ELEMENTTYPES.ROWHEADER_TD: //The "technical" row headers
 					mAttributes["role"] = "rowheader";
+					mAttributes["aria-labelledby"] = [sTableId + "-ariarowheaderlabel"];
 					mAttributes["headers"] = sTableId + "-colsel";
 					if (mParams && typeof mParams.index === "number") {
 						mAttributes["aria-owns"] = sTableId + "-rowsel" + mParams.index;
@@ -586,8 +621,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 					break;
 
 				case TableAccExtension.ELEMENTTYPES.NODATA: //The no data container
+					mAttributes["role"] = "gridcell";
 					var oNoData = oTable.getNoData();
 					mAttributes["aria-labelledby"] = [oNoData instanceof Control ? oNoData.getId() : (sTableId + "-noDataMsg")];
+					addAriaForOverlayOrNoData(oTable, mAttributes, true, false);
+					break;
+
+				case TableAccExtension.ELEMENTTYPES.OVERLAY: //The overlay container
+					mAttributes["role"] = "region";
+					mAttributes["aria-labelledby"] = [].concat(oTable.getAriaLabelledBy());
+					if (oTable.getTitle()) {
+						mAttributes["aria-labelledby"].push(oTable.getTitle().getId());
+					}
+					mAttributes["aria-labelledby"].push(sTableId + "-ariainvalid");
+					break;
+
+				case TableAccExtension.ELEMENTTYPES.TABLEFOOTER: //The table footer area
+				case TableAccExtension.ELEMENTTYPES.TABLESUBHEADER: //The table toolbar and extension areas
+					addAriaForOverlayOrNoData(oTable, mAttributes, true, false);
 					break;
 			}
 
@@ -712,12 +763,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		CONTENT: 			"CONTENT",								// The content area of the table which contains all the table elements, rowheaders, columnheaders, etc
 		TABLE : 			"TABLE", 								// The "real" table element(s)
 		TABLEHEADER : 		"TABLEHEADER", 							// The table header area
+		TABLEFOOTER : 		"TABLEFOOTER", 							// The table footer area
+		TABLESUBHEADER : 	"TABLESUBHEADER", 						// The table toolbar and extension areas
 		COLUMNHEADER_ROW : 	"COLUMNHEADER_ROW", 					// The area which contains the column headers (TableUtils.CELLTYPES.COLUMNHEADER)
+		ROWHEADER_COL : 	"ROWHEADER_COL", 						// The area which contains the row headers (TableUtils.CELLTYPES.ROWHEADER)
 		TH : 				"TH", 									// The "technical" column headers
 		ROWHEADER_TD : 		"ROWHEADER_TD", 						// The "technical" row headers
 		TR : 				"TR", 									// The rows
 		TREEICON : 			"TREEICON", 							// The expand/collapse icon in the TreeTable
-		NODATA :			"NODATA"								// The no data container
+		NODATA :			"NODATA",								// The no data container
+		OVERLAY :			"OVERLAY"								// The overlay container
 	};
 
 	/*
@@ -795,7 +850,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 
 		$Ref.attr({
 			"aria-sort" : mAttributes["aria-sort"] || null,
-			"aria-labelledby" : mAttributes["aria-labelledby"] || null
+			"aria-labelledby" : mAttributes["aria-labelledby"] ? mAttributes["aria-labelledby"].join(" ") : null
 		});
 	};
 
@@ -829,7 +884,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 
 		var sTitle = null,
 			oTable = this.getTable(),
-			aRefs = [$Row, $RowHdr, $FixedRow];
+			aRefs = [$Row, $Row.children(), $RowHdr, $FixedRow];
 
 		if (!bGroup && $RowHdr) {
 			var iIndex = $RowHdr.attr("data-sap-ui-rowindex");
@@ -879,7 +934,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		$Icon.attr(ExtensionHelper.getAriaAttributesFor(this, TableAccExtension.ELEMENTTYPES.TREEICON, {row: oRow}));
 	};
 
+	/*
+	 * Updates the relevant aria-properties in case of overlay or noData is set / reset.
+	 * @public (Part of the API for Table control only!)
+	 */
+	TableAccExtension.prototype.updateAriaStateForOverlayAndNoData = function() {
+		var oTable = this.getTable();
 
+		if (!oTable || !oTable.getDomRef() || !this._accMode) {
+			return;
+		}
+
+		if (oTable.getShowOverlay()) {
+			oTable.$().find("[data-sap-ui-table-acc-covered*='overlay']").attr("aria-hidden", "true");
+		} else {
+			oTable.$().find("[data-sap-ui-table-acc-covered*='overlay']").removeAttr("aria-hidden");
+			if (TableUtils.isNoDataVisible(oTable)) {
+				oTable.$().find("[data-sap-ui-table-acc-covered*='nodata']").attr("aria-hidden", "true");
+			} else {
+				oTable.$().find("[data-sap-ui-table-acc-covered*='nodata']").removeAttr("aria-hidden");
+			}
+		}
+	};
 
 	/*
 	 * Retrieve Aria descriptions from resource bundle for a certain selection mode

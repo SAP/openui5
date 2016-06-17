@@ -2,12 +2,13 @@
 /* CSS for control sap.uxap/ObjectPageLayout  */
 /* Belize theme                               */
 /* ========================================== */
-.sapUxAPObjectPageNavigation {
-	background: @sapUiObjectHeaderBackground;
-}
+/*
 
-.sapUxAPObjectPageLayout {
-	background: @sapUiGlobalBackgroundColor;
+/* background color for the sections of the page bellow the header: */
+.sapUxAPObjectPageContainer, /* (1) the sections container */
+.sapUxAPObjectPageContainer + div, /* (2) the spacer */
+.sapUxAPObjectPageHeaderDetailsHidden /* (3) the placeholder for the headerContent is also part of the page content bellow the header */ {
+  background-color: @sapUiGlobalBackgroundColor;
 }
 
 .sapUxAPObjectPageHeaderDetails {
@@ -49,4 +50,11 @@
 
 .sapUiSizeCompact .sapUxAPObjectPageNavigation .sapUxAPITBar.sapUxAPObjectChildPage {
 	height: 1.9375rem;
+}
+
+.sapUxAPObjectPageLayout .sapUxAPObjectPageFooter .sapUxAPObjectPageFloatingFooter {
+	background: fade(@sapUiPageFooterBackground, 90);
+	color: @sapUiPageFooterTextColor;
+	box-shadow: @sapUiShadowLevel1;
+	border-color: transparent;
 }

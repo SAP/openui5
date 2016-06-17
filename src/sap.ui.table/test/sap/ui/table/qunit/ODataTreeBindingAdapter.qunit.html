@@ -1509,6 +1509,59 @@
 			oBinding.getContexts(0, 10);
 		});
 	});
+	
+
+	asyncTest("Check Tree State Reset", function(){
+		
+		var oTreeState;
+		
+		function assertations () {
+			oBinding.getContexts(0, 100);
+			equal(oBinding.isExpanded(0), true, "Index 0 is expanded");
+			equal(oBinding.isExpanded(1), true, "Index 1 is expanded");
+			equal(oBinding.isExpanded(2), false, "Index 2 is collapsed");
+			
+			oBinding.collapse(9);
+			
+			oBinding.getContexts(0,100);
+			
+			equal(oBinding.isExpanded(9), false, "Index 9 is expanded");
+			equal(oBinding.isExpanded(10), true, "Index 10 is expanded");
+			
+			oTreeState = oBinding.getCurrentTreeState();
+			
+			equal(oTreeState._getExpandedList(), "/;/000001/;/000001/000002/;/000001/000682/;/000001/001073/;/000001/001131/;/000001/001136/;/000001/001153/;/000001/001179/;/000001/001180/", "Expanded List is correct");
+			equal(oTreeState._getCollapsedList(), "/000001/000362/", "Collapsed List is correct");
+
+			equal(oTreeState._isExpanded("/000001/000002/"), true, "_isExpanded function works");
+			equal(oTreeState._isCollapsed("/000001/000362/"), true, "_isCollapsed function works");
+		}
+		
+		prebuildTree(function () {
+			assertations();
+			
+			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+				operationMode: "Client",
+				rootLevel: 1,
+				numberOfExpandedLevels: 2,
+				treeState: oTreeState
+			});
+			
+			oBinding.attachChange(changeHandler);
+			oBinding.getContexts(0, 100);
+			
+			function changeHandler () {
+				oBinding.detachChange(changeHandler);
+				
+				// after resetting the tree state the previous assertations should still evaluate to true
+				assertations();
+				
+				start();
+			}
+			
+		});
+		
+	});
 
 	</script>
 

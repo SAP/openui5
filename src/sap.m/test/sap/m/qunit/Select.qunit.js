@@ -2140,14 +2140,15 @@ QUnit.test("it should not fire the change event after the selection has changed 
 
 QUnit.module("setName()");
 
-QUnit.test("setName()", function(assert) {
+QUnit.test("it should render an input field with the value of the selected key", function(assert) {
 
 	// system under test
 	var oSelect = new sap.m.Select({
+		name: "lorem ipsum",
 		items: [
 			new sap.ui.core.Item({
-				key: "0",
-				text: "item 0"
+				key: "lorem",
+				text: "lorem ipsum"
 			})
 		]
 	});
@@ -2161,9 +2162,8 @@ QUnit.test("setName()", function(assert) {
 	sap.ui.getCore().applyChanges();
 
 	// assert
-	if (oSelect._isRequiredSelectElement()) {
-		assert.strictEqual(oSelect.$().children("select").attr("name"), "select-name0", 'The attribute name is "select-name0"');
-	}
+	assert.strictEqual(oSelect.$("input").attr("name"), "select-name0", 'The attribute name is "select-name0"');
+	assert.strictEqual(oSelect.$("input").attr("value"), "lorem");
 
 	// cleanup
 	oSelect.destroy();
@@ -2222,6 +2222,55 @@ QUnit.test("setEnabled()", function(assert) {
 
 	// assert
 	assert.ok(oSelect.$().hasClass(sap.m.SelectRenderer.CSS_CLASS + "Disabled"), 'If the select control is disabled, it should have the CSS class "' + sap.m.SelectRenderer.CSS_CLASS + "Disabled");
+
+	// cleanup
+	oSelect.destroy();
+});
+
+QUnit.module("two column layout");
+
+QUnit.test("it should forward the value of the showSecondaryValues to the list", function(assert) {
+
+	// system under test
+	var oSelect = new sap.m.Select({
+		showSecondaryValues: true,
+		items: [
+			new sap.ui.core.ListItem({
+				key: "lorem",
+				text: "lorem ipsum",
+				additionalText: "lorem"
+			})
+		]
+	});
+
+	// assert
+	assert.ok(oSelect.getList().getShowSecondaryValues());
+
+	// cleanup
+	oSelect.destroy();
+});
+
+QUnit.test("it should returns the this reference to allow method chaining", function(assert) {
+
+	// system under test
+	var oSelect = new sap.m.Select({
+		items: [
+			new sap.ui.core.ListItem({
+				key: "lorem",
+				text: "lorem ipsum",
+				additionalText: "lorem"
+			})
+		]
+	});
+
+	// arrange
+	var fnSetShowSecondaryValuesSpy = this.spy(oSelect, "setShowSecondaryValues");
+
+	// act
+	oSelect.setShowSecondaryValues(true);
+
+	// assert
+	assert.ok(fnSetShowSecondaryValuesSpy.returned(oSelect));
 
 	// cleanup
 	oSelect.destroy();
@@ -3488,8 +3537,8 @@ QUnit.test("destroyItems()", function(assert) {
 	assert.ok(oSelect.getSelectedItem() === null);
 	assert.ok(oSelect.getList().getSelectedItem() === null);
 	assert.strictEqual(oSelect.$("label").text(), "");
-	assert.strictEqual(oSelect.$("select").length, 1);
-	assert.strictEqual(oSelect.$("select").children().length, 0);
+	assert.strictEqual(oSelect.$().children("." + oSelect.getList().getRenderer().CSS_CLASS).length, 1);
+	assert.strictEqual(oSelect.$().children("." + oSelect.getList().getRenderer().CSS_CLASS).children().length, 0);
 
 	for (var i = 0; i < aItems.length; i++) {
 		assert.strictEqual(aItems[i].hasListeners("_change"), false);
@@ -3532,24 +3581,18 @@ QUnit.test("open() on desktop", function(assert) {
 	// arrange
 	oSelect.placeAt("content");
 	sap.ui.getCore().applyChanges();
-	document.documentElement.style.overflow = "hidden"; // hide scrollbar during test
 
 	// act
 	oSelect.open();
 	this.clock.tick(1000);
 
 	// assert
-	assert.ok(oSelect.isOpen(), "Select is open");
+	assert.ok(oSelect.isOpen(), "the dropdown list is open");
 	assert.ok(oSelect.hasStyleClass(sap.m.SelectRenderer.CSS_CLASS + "Pressed"));
-	assert.strictEqual(document.activeElement, oSelect.getFocusDomRef(), "The Select should get the focus");
-	//TODO Test is currently failing in Chrome. Check and adapt
-	if(sap.ui.Device.browser.name !== "cr") {
-		assert.strictEqual(oSelect.$().outerWidth(), oSelect.getPicker().$().outerWidth(), "The width of the pop-up is strictEqual to the width of the input");
-	}
+	assert.strictEqual(document.activeElement, oSelect.getFocusDomRef(), "the text field should get the focus");
 
 	// cleanup
 	oSelect.destroy();
-	document.documentElement.style.overflow = ""; // restore scrollbar after the test is executed
 });
 
 QUnit.test("open() on phone", function(assert) {
@@ -3592,7 +3635,7 @@ QUnit.test("open() on phone", function(assert) {
 	// assert
 	assert.ok(oSelect.isOpen(), "Select is open");
 	assert.ok(oSelect.hasStyleClass(sap.m.SelectRenderer.CSS_CLASS + "Pressed"));
-	assert.strictEqual(oSelect.getPicker().$().width(), jQuery(window).width(), "The width of the pop-up is strictEqual to the width of the browser view port");
+	assert.strictEqual(oSelect.getPicker().$().width(), jQuery(window).width(), "The width of the popup is strictEqual to the width of the browser view port");
 
 	// cleanup
 	oSelect.destroy();
@@ -3630,24 +3673,18 @@ QUnit.test("open() on tablet", function(assert) {
 	// arrange
 	oSelect.placeAt("content");
 	sap.ui.getCore().applyChanges();
-	document.documentElement.style.overflow = "hidden"; // hide scrollbar during test
 
 	// act
 	oSelect.open();
 	this.clock.tick(1000);
 
 	// assert
-	assert.ok(oSelect.isOpen(), "Select is open");
+	assert.ok(oSelect.isOpen(), "the dropdown list is open");
 	assert.ok(oSelect.hasStyleClass(sap.m.SelectRenderer.CSS_CLASS + "Pressed"));
-	assert.strictEqual(document.activeElement, oSelect.getFocusDomRef(), "The Select should get the focus");
-	//TODO Test is currently failing in Chrome. Check and adapt
-	if(sap.ui.Device.browser.name !== "cr") {
-		assert.strictEqual(oSelect.$().outerWidth(), oSelect.getPicker().$().outerWidth(), "The width of the pop-up is strictEqual to the width of the input");
-	}
+	assert.strictEqual(document.activeElement, oSelect.getFocusDomRef(), "the text field should get the focus");
 
 	// cleanup
 	oSelect.destroy();
-	document.documentElement.style.overflow = ""; // restore scrollbar after test
 });
 
 QUnit.test("open() check whether the active state persist after re-rendering", function(assert) {
@@ -4529,7 +4566,7 @@ QUnit.test("destroy()", function(assert) {
 	oSelect.destroy();
 });
 
-QUnit.test("calling destroy() when the Select's picker pop-up is open", function(assert) {
+QUnit.test("calling destroy() when the Select's picker popup is open", function(assert) {
 
 	// system under test
 	var oSelect = new sap.m.Select({
@@ -5344,9 +5381,9 @@ QUnit.test("it should set the selection correctly after the control is cloned", 
 	oSelectClone.destroy();
 });
 
-QUnit.module("_isRequiredSelectElement()");
+QUnit.module("_isShadowListRequired()");
 
-QUnit.test("_isRequiredSelectElement() it should return true when the width property is set to auto", function(assert) {
+QUnit.test("_isShadowListRequired() it should return true when the width property is set to auto", function(assert) {
 
 	// system under test
 	var oSelect = new sap.m.Select({
@@ -5354,13 +5391,13 @@ QUnit.test("_isRequiredSelectElement() it should return true when the width prop
 	});
 
 	// assert
-	assert.strictEqual(oSelect._isRequiredSelectElement(), true);
+	assert.strictEqual(oSelect._isShadowListRequired(), true);
 
 	// cleanup
 	oSelect.destroy();
 });
 
-QUnit.test("_isRequiredSelectElement() it should return false when the autoAdjustWidth property is set to true", function(assert) {
+QUnit.test("_isShadowListRequired() it should return false when the autoAdjustWidth property is set to true", function(assert) {
 
 	// system under test
 	var oSelect = new sap.m.Select({
@@ -5368,13 +5405,13 @@ QUnit.test("_isRequiredSelectElement() it should return false when the autoAdjus
 	});
 
 	// assert
-	assert.strictEqual(oSelect._isRequiredSelectElement(), false);
+	assert.strictEqual(oSelect._isShadowListRequired(), false);
 
 	// cleanup
 	oSelect.destroy();
 });
 
-QUnit.test("_isRequiredSelectElement() it should return false", function(assert) {
+QUnit.test("_isShadowListRequired() it should return false", function(assert) {
 
 	// system under test
 	var oSelect = new sap.m.Select({
@@ -5382,7 +5419,7 @@ QUnit.test("_isRequiredSelectElement() it should return false", function(assert)
 	});
 
 	// assert
-	assert.strictEqual(oSelect._isRequiredSelectElement(), false);
+	assert.strictEqual(oSelect._isShadowListRequired(), false);
 
 	// cleanup
 	oSelect.destroy();
@@ -5790,9 +5827,8 @@ QUnit.test("rendering", function(assert) {
 			assert.ok(oSelect.$("icon").length, "The HTML span element for the icon exists");
 		}
 
-		if (oSelect._isRequiredSelectElement() && oSelect.getItems().length) {
-			assert.ok(oSelect.$("select").length, "The select html element exists");
-			assert.ok(oSelect.getDomRef("select").getAttribute("aria-hidden"), "true", "The shadow DOM is hidden to assistive technologies")
+		if (oSelect._isShadowListRequired() && oSelect.getItems().length) {
+			assert.ok(oSelect.$().children("." + oSelect.getList().getRenderer().CSS_CLASS).length, "The shadow list element exists");
 		}
 
 		if (oSelect.getType() === sap.m.SelectType.Default) {
@@ -6386,7 +6422,7 @@ QUnit.test("it should select Greece", function(assert) {
 
 QUnit.module("onsapshow");
 
-QUnit.test("onsapshow F4 - the picker pop-up", function(assert) {
+QUnit.test("onsapshow F4 - the picker popup", function(assert) {
 
 	// system under test
 	var oSelect = new sap.m.Select({
@@ -6415,14 +6451,14 @@ QUnit.test("onsapshow F4 - the picker pop-up", function(assert) {
 
 	// assert
 	assert.strictEqual(fnShowSpy.callCount, 1, "onsapshow() method was called exactly once");
-	assert.strictEqual(oSelect.getPicker().oPopup.getOpenState(), sOpenState, "Control's picker pop-up is opening");
-	assert.ok(oSelect.isOpen(), "Control's picker pop-up is open");
+	assert.strictEqual(oSelect.getPicker().oPopup.getOpenState(), sOpenState, "Control's picker popup is opening");
+	assert.ok(oSelect.isOpen(), "Control's picker popup is open");
 
 	// cleanup
 	oSelect.destroy();
 });
 
-QUnit.test("onsapshow Alt + DOWN - open control's picker the pop-up", function(assert) {
+QUnit.test("onsapshow Alt + DOWN - open control's picker the popup", function(assert) {
 
 	// system under test
 	var oSelect = new sap.m.Select({
@@ -6451,14 +6487,14 @@ QUnit.test("onsapshow Alt + DOWN - open control's picker the pop-up", function(a
 
 	// assert
 	assert.strictEqual(fnShowSpy.callCount, 1, "onsapshow() method was called exactly once");
-	assert.strictEqual(oSelect.getPicker().oPopup.getOpenState(), sOpenState, "Control's picker pop-up is opening");
-	assert.ok(oSelect.isOpen(), "Control's picker pop-up is open");
+	assert.strictEqual(oSelect.getPicker().oPopup.getOpenState(), sOpenState, "Control's picker popup is opening");
+	assert.ok(oSelect.isOpen(), "Control's picker popup is open");
 
 	// cleanup
 	oSelect.destroy();
 });
 
-QUnit.test("onsapshow F4 - close control's picker pop-up", function(assert) {
+QUnit.test("onsapshow F4 - close control's picker popup", function(assert) {
 
 	// system under test
 	var oSelect = new sap.m.Select({
@@ -6488,13 +6524,13 @@ QUnit.test("onsapshow F4 - close control's picker pop-up", function(assert) {
 
 	// assert
 	assert.strictEqual(fnShowSpy.callCount, 2, "onsapshow() method was called twice");
-	assert.strictEqual(oSelect.getPicker().oPopup.getOpenState(), sOpenState, "Control's picker pop-up is closing");
+	assert.strictEqual(oSelect.getPicker().oPopup.getOpenState(), sOpenState, "Control's picker popup is closing");
 
 	// cleanup
 	oSelect.destroy();
 });
 
-QUnit.test("onsapshow Alt + DOWN - close control's picker pop-up", function(assert) {
+QUnit.test("onsapshow Alt + DOWN - close control's picker popup", function(assert) {
 
 	// system under test
 	var oSelect = new sap.m.Select({
@@ -6524,7 +6560,7 @@ QUnit.test("onsapshow Alt + DOWN - close control's picker pop-up", function(asse
 
 	// assert
 	assert.strictEqual(fnShowSpy.callCount, 2, "onsapshow() method was called twice");
-	assert.strictEqual(oSelect.getPicker().oPopup.getOpenState(), sOpenState, "Control's picker pop-up is closing");
+	assert.strictEqual(oSelect.getPicker().oPopup.getOpenState(), sOpenState, "Control's picker popup is closing");
 
 	// cleanup
 	oSelect.destroy();
@@ -6532,7 +6568,7 @@ QUnit.test("onsapshow Alt + DOWN - close control's picker pop-up", function(asse
 
 QUnit.module("onsaphide");
 
-QUnit.test("onsaphide Alt + UP - open control's picker pop-up", function(assert) {
+QUnit.test("onsaphide Alt + UP - open control's picker popup", function(assert) {
 
 	// system under test
 	var oSelect = new sap.m.Select({
@@ -6561,14 +6597,14 @@ QUnit.test("onsaphide Alt + UP - open control's picker pop-up", function(assert)
 
 	// assert
 	assert.strictEqual(fnHideSpy.callCount, 1, "onsaphide() method was called exactly once");
-	assert.strictEqual(oSelect.getPicker().oPopup.getOpenState(), sOpenState, "Control's picker pop-up is opening");
-	assert.ok(oSelect.isOpen(), "Control's picker pop-up is open");
+	assert.strictEqual(oSelect.getPicker().oPopup.getOpenState(), sOpenState, "Control's picker popup is opening");
+	assert.ok(oSelect.isOpen(), "Control's picker popup is open");
 
 	// cleanup
 	oSelect.destroy();
 });
 
-QUnit.test("onsaphide Alt + UP - close control's picker pop-up", function(assert) {
+QUnit.test("onsaphide Alt + UP - close control's picker popup", function(assert) {
 
 	// system under test
 	var oSelect = new sap.m.Select({
@@ -6598,7 +6634,7 @@ QUnit.test("onsaphide Alt + UP - close control's picker pop-up", function(assert
 
 	// assert
 	assert.strictEqual(fnHideSpy.callCount, 2, "onsaphide() method was called twice");
-	assert.strictEqual(oSelect.getPicker().oPopup.getOpenState(), sOpenState, "Control's picker pop-up is closing");
+	assert.strictEqual(oSelect.getPicker().oPopup.getOpenState(), sOpenState, "Control's picker popup is closing");
 
 	// cleanup
 	oSelect.destroy();
@@ -6606,7 +6642,7 @@ QUnit.test("onsaphide Alt + UP - close control's picker pop-up", function(assert
 
 QUnit.module("onsapspace");
 
-QUnit.test("onsapspace the spacebar key is pressed and the picker pop-up is close", function(assert) {
+QUnit.test("onsapspace the spacebar key is pressed and the picker popup is close", function(assert) {
 
 	// system under test
 	var oSelect = new sap.m.Select({
@@ -6634,14 +6670,14 @@ QUnit.test("onsapspace the spacebar key is pressed and the picker pop-up is clos
 	this.clock.tick(1000);	// wait 1s after the open animation is completed
 
 	// assert
-	assert.ok(oSelect.isOpen(), "Control's picker pop-up is open");
+	assert.ok(oSelect.isOpen(), "Control's picker popup is open");
 	assert.strictEqual(fnFireChangeSpy.callCount, 0, "The change event should not be fired");
 
 	// cleanup
 	oSelect.destroy();
 });
 
-QUnit.test("onsapspace the spacebar key is pressed and the picker pop-up is open", function(assert) {
+QUnit.test("onsapspace the spacebar key is pressed and the picker popup is open", function(assert) {
 
 	// system under test
 	var oSelect = new sap.m.Select({
@@ -6670,7 +6706,7 @@ QUnit.test("onsapspace the spacebar key is pressed and the picker pop-up is open
 	this.clock.tick(1000);
 
 	// assert
-	assert.strictEqual(oSelect.isOpen(), false, "Control's picker pop-up is close");
+	assert.strictEqual(oSelect.isOpen(), false, "Control's picker popup is close");
 
 	// cleanup
 	oSelect.destroy();
@@ -6714,7 +6750,7 @@ QUnit.test("onsapspace when spacebar key is pressed and the selection has change
 
 QUnit.module("onsapescape");
 
-QUnit.test("onsapescape - close the picker pop-up if it is open", function(assert) {
+QUnit.test("onsapescape - close the picker popup if it is open", function(assert) {
 
 	// system under test
 	var oSelect = new sap.m.Select({
@@ -6749,7 +6785,7 @@ QUnit.test("onsapescape - close the picker pop-up if it is open", function(asser
 	oSelect.destroy();
 });
 
-QUnit.test("onsapescape - close the control's picker pop-up if it is open", function(assert) {
+QUnit.test("onsapescape - close the control's picker popup if it is open", function(assert) {
 
 	// system under test
 	var oSelect = new sap.m.Select({
@@ -7050,7 +7086,7 @@ QUnit.test("onsapdown", function(assert) {
 	oSelect.destroy();
 });
 
-QUnit.test('it should set the attribute "aria-activedescendant" after the picker pop-up is opened', function(assert) {
+QUnit.test('it should set the attribute "aria-activedescendant" after the picker popup is opened', function(assert) {
 
 	// system under test
 	var oExpectedItem;
@@ -7440,7 +7476,7 @@ QUnit.test("onsapup", function(assert) {
 	oSelect.destroy();
 });
 
-QUnit.test('it should set the attribute "aria-activedescendant" after the picker pop-up is opened', function(assert) {
+QUnit.test('it should set the attribute "aria-activedescendant" after the picker popup is opened', function(assert) {
 
 	// system under test
 	var oExpectedItem;
@@ -7670,7 +7706,7 @@ QUnit.test("onsaphome when the Home key is pressed", function(assert) {
 	oSelect.destroy();
 });
 
-QUnit.test('it should set the attribute "aria-activedescendant" after the picker pop-up is opened', function(assert) {
+QUnit.test('it should set the attribute "aria-activedescendant" after the picker popup is opened', function(assert) {
 
 	// system under test
 	var oExpectedItem;
@@ -7836,7 +7872,7 @@ QUnit.test("onsapend when the End key is pressed", function(assert) {
 	oSelect.destroy();
 });
 
-QUnit.test('it should set the attribute "aria-activedescendant" after the picker pop-up is opened', function(assert) {
+QUnit.test('it should set the attribute "aria-activedescendant" after the picker popup is opened', function(assert) {
 
 	// system under test
 	var oExpectedItem;
@@ -7899,7 +7935,7 @@ QUnit.test("onAfterOpen test case 1", function(assert) {
 	oSelect.destroy();
 });
 
-QUnit.test('it should set the attribute "aria-activedescendant" after the picker pop-up is opened', function(assert) {
+QUnit.test('it should set the attribute "aria-activedescendant" after the picker popup is opened', function(assert) {
 
 	// system under test
 	var oExpectedItem;

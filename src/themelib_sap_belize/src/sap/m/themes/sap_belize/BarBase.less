@@ -18,7 +18,7 @@
 .sapMIBar-CTX.sapMFooter-CTX {
 	color: @sapUiPageFooterTextColor;
 	/* 1px down black shadow with 50% opacity */
-	text-shadow: 0em 0.0625em 0em fade(@sapUiContentShadowColor, 50);
+	text-shadow: @sapUiShadowText;
 	background-color: @sapUiPageFooterBackground;
 	background-image: none;
 	border-top: 0.0625rem solid @sapUiPageFooterBorderColor;
@@ -50,7 +50,7 @@ html.sap-desktop .sapMIBar.sapMFooter-CTX {
 .sapMIBar.sapMHeader-CTX {
 	.sapMBarGradient(@sapUiPageHeaderBackground);
 	color: @sapUiPageHeaderTextColor;
-	background-color: lighten(@sapUiPageHeaderBackground, 5);
+	background-color: @sapUiPageHeaderBackground;
 	filter: none;
 	background-image: none;
 }

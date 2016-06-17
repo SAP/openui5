@@ -5,7 +5,7 @@
 /* global jQuery */
 /* eslint-disable quotes */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function($, UI5Object) {
+sap.ui.define(['jquery.sap.global'], function($) {
   'use strict';
 
   /**
@@ -16,22 +16,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function($, UI5Object
    * @author Rodrigo Jordao
    * @author Jonathan Benn
    * @alias sap.ui.test.gherkin.dataTableUtils
-   * @extends sap.ui.base.Object
    * @since 1.40
+   * @namespace
+   * @static
    * @public
    */
-  var oClass = UI5Object.extend('sap.ui.test.gherkin.dataTableUtils', {});
-
-  $.extend(sap.ui.test.gherkin.dataTableUtils, /** @lends sap.ui.test.gherkin.dataTableUtils */ {
+  var dataTableUtils = {
 
     /**
      * A simple object containing a series of normalization functions that change a string according to a
      * particular strategy.
      *
      * @alias sap.ui.test.gherkin.dataTableUtils.normalization
+     * @namespace
+     * @static
      * @public
      */
-    normalization: /** @lends sap.ui.test.gherkin.dataTableUtils.normalization */ {
+    normalization: {
 
       /**
        * e.g. "first name" -> "First Name"
@@ -39,14 +40,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function($, UI5Object
        * @param {string} sString - the string to normalize
        * @returns {string} the input string trimmed and with all words capitalized
        * @public
+       * @function
+       * @static
        */
       titleCase : function(sString) {
         sap.ui.test.gherkin.dataTableUtils._testNormalizationInput(sString, 'titleCase');
         return sString
-          .trim()
-          .replace(/(?!\s)\W/g, '')
-          .replace(/\s+/g, ' ')
-          .replace(/\w\S*/g, function(s){return s.charAt(0).toUpperCase() + s.substr(1).toLowerCase();});
+            .trim()
+            .replace(/(?!\s)\W/g, '')
+            .replace(/\s+/g, ' ')
+            .replace(/\w\S*/g, function(s){return s.charAt(0).toUpperCase() + s.substr(1).toLowerCase();});
       },
 
       /**
@@ -55,6 +58,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function($, UI5Object
        * @param {string} sString - the string to normalize
        * @returns {string} the input string with all words capitalized and all spaces removed
        * @public
+       * @function
+       * @static
        */
       pascalCase : function(sString) {
         sap.ui.test.gherkin.dataTableUtils._testNormalizationInput(sString, 'pascalCase');
@@ -67,11 +72,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function($, UI5Object
        * @param {string} sString - the string to normalize
        * @returns {string} the input string with all words after the first capitalized and all spaces removed
        * @public
+       * @function
+       * @static
        */
       camelCase : function(sString) {
         sap.ui.test.gherkin.dataTableUtils._testNormalizationInput(sString, 'camelCase');
         return sap.ui.test.gherkin.dataTableUtils.normalization.pascalCase(sString)
-          .replace(/^(\w)/, function(s){return s.toLowerCase();});
+            .replace(/^(\w)/, function(s){return s.toLowerCase();});
       },
 
       /**
@@ -81,6 +88,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function($, UI5Object
        * @returns {string} the input string trimmed, changed to lower case and with space between words
        *                   replaced by a hyphen ('-')
        * @public
+       * @function
+       * @static
        */
       hyphenated : function(sString) {
         sap.ui.test.gherkin.dataTableUtils._testNormalizationInput(sString, 'hyphenated');
@@ -93,6 +102,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function($, UI5Object
        * @param {string} sString - the string to normalize
        * @returns {string} the original unchanged input string
        * @public
+       * @function
+       * @static
        */
       none : function(sString) {
         sap.ui.test.gherkin.dataTableUtils._testNormalizationInput(sString, 'none');
@@ -127,6 +138,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function($, UI5Object
      *                                              'camelCase', 'hyphenated' or 'none'.
      * @returns {object[]} - a list of objects equivalent to the input data, with property names normalized
      * @public
+     * @function
+     * @static
      */
     toTable : function(aData, oNorm) {
 
@@ -174,29 +187,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function($, UI5Object
      *                                              'camelCase', 'hyphenated' or 'none'.
      * @returns {object} - an object equivalent to the input data, with property names normalized
      * @public
+     * @function
+     * @static
      */
     toObject : function(aData, oNorm) {
 
-        this._testArrayInput(aData, 'toObject');
-        oNorm = this._getNormalizationFunction(oNorm, 'toObject');
+      this._testArrayInput(aData, 'toObject');
+      oNorm = this._getNormalizationFunction(oNorm, 'toObject');
 
-        var oResult = {};
-        for (var i = 0; i < aData.length; ++i) {
-          var aRow = aData[i];
-          var sKey = aRow[0];
-          var sValue = aRow.slice(1);
-          if (sValue.length === 1) {
-            sValue = sValue[0];
-          } else {
-            sValue = this.toObject([sValue], oNorm); // recurse on array data
-          }
-          if (oResult[sKey]) {
-            $.extend(oResult[sKey], sValue);
-          } else {
-            oResult[sKey] = sValue;
-          }
+      var oResult = {};
+      for (var i = 0; i < aData.length; ++i) {
+        var aRow = aData[i];
+        var sKey = aRow[0];
+        var sValue = aRow.slice(1);
+        if (sValue.length === 1) {
+          sValue = sValue[0];
+        } else {
+          sValue = this.toObject([sValue], oNorm); // recurse on array data
         }
-        return this._normalizeKeys(oResult, oNorm);
+        if (oResult[sKey]) {
+          $.extend(oResult[sKey], sValue);
+        } else {
+          oResult[sKey] = sValue;
+        }
+      }
+      return this._normalizeKeys(oResult, oNorm);
     },
 
     /**
@@ -287,12 +302,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function($, UI5Object
       }
 
       if (!aArray.every(function(a) {
-        return ($.type(a) === "array") && (a.every(function(s){return ($.type(s) === "string");}));
-      })) {
+            return ($.type(a) === "array") && (a.every(function(s){return ($.type(s) === "string");}));
+          })) {
         throw new Error(sErrorMessage);
       }
     }
-  });
+  };
 
-  return oClass;
-});
+  return dataTableUtils;
+}, /* bExport= */ true);

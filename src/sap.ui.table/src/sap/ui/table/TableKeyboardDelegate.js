@@ -219,33 +219,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 		}
 
 		var $target = jQuery(oEvent.target);
-		var bNoData = TableUtils.isNoDataVisible(this);
-		var bControlBefore = $target.hasClass("sapUiTableCtrlBefore");
 
-		if (bControlBefore || $target.hasClass("sapUiTableCtrlAfter")) {
-			// when entering the before or after helper DOM elements we put the
-			// focus on the current focus element of the item navigation and we
-			// leave the action mode!
+		if ($target.hasClass("sapUiTableOuterBefore") || $target.hasClass("sapUiTableOuterAfter")
+				|| (oEvent.target != this.getDomRef("overlay") && this.getShowOverlay())) {
 			this._getKeyboardExtension().setActionMode(false);
-			if (jQuery.contains(this.$().find('.sapUiTableColHdrCnt')[0], oEvent.target)) {
-				var oIN = this._getItemNavigation();
-				jQuery(oIN.getFocusedDomRef() || oIN.getRootDomRef()).focus();
-			} else {
-				if (bControlBefore) {
-					if (bNoData) {
-						this._getKeyboardExtension()._setSilentFocus(this.$("noDataCnt"));
-					} else {
-						var oInfo = TableUtils.getFocusedItemInfo(this);
-						TableUtils.focusItem(this, oInfo.cellInRow, oEvent);
-					}
-				} else {
-					TableKeyboardDelegate._restoreFocusOnLastFocusedDataCell(this, oEvent);
-				}
+			this.$("overlay").focus();
+			return;
+		} else if ($target.hasClass("sapUiTableCtrlBefore")) {
+			this._getKeyboardExtension().setActionMode(false);
+			var bNoData = TableUtils.isNoDataVisible(this);
+
+			if (!bNoData || (bNoData && oEvent.isMarked("sapUiTableInitItemNavigation") && this.getColumnHeaderVisible())) {
+				// Special handling for nodata case when the item navigation is initialized with this focus events (also adds additional
+				// tabindex attributes) -> later with next entry into the table tabindices are already set up properly
+				var oInfo = TableUtils.getFocusedItemInfo(this);
+				TableUtils.focusItem(this, oInfo.cellInRow, oEvent);
+			} else if (bNoData) {
+				this._getKeyboardExtension()._setSilentFocus(this.$("noDataCnt"));
 			}
 
 			if (!bNoData) {
 				oEvent.preventDefault();
 			}
+		} else if ($target.hasClass("sapUiTableCtrlAfter")) {
+			this._getKeyboardExtension().setActionMode(false);
+			TableKeyboardDelegate._restoreFocusOnLastFocusedDataCell(this, oEvent);
 		}
 	};
 
@@ -400,6 +398,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 			this._getKeyboardExtension().setActionMode(false);
 			oEvent.preventDefault();
 		} else {
+			if (oEvent.target === this.getDomRef("overlay")) {
+				this._getKeyboardExtension()._setSilentFocus($this.find(".sapUiTableOuterBefore"));
+				return;
+			}
+
 			var oInfo = TableUtils.getFocusedItemInfo(this);
 			var bNoData = TableUtils.isNoDataVisible(this);
 			var oSapUiTableCCnt = $this.find('.sapUiTableCCnt')[0];
@@ -438,6 +441,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 			this._getKeyboardExtension().setActionMode(false);
 			oEvent.preventDefault();
 		} else {
+			if (oEvent.target === this.getDomRef("overlay")) {
+				this._getKeyboardExtension()._setSilentFocus($this.find(".sapUiTableOuterAfter"));
+				return;
+			}
+
 			var oInfo = TableUtils.getFocusedItemInfo(this);
 			var bContainsColHdrCnt = jQuery.contains($this.find('.sapUiTableColHdrCnt')[0], oEvent.target);
 			var bNoData = TableUtils.isNoDataVisible(this);

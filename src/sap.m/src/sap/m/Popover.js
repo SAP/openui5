@@ -601,10 +601,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			// initialFocus, beginButton, endButton, and popover itself.
 			// focus has to be inside/on popover otherwise autoclose() will not work
 				sFocusId = this._getInitialFocusId(),
-				oParentDomRef, iPlacePos;
+				sTheme = sap.ui.getCore().getConfiguration().getTheme(),
+				oParentDomRef, iPlacePos, bThemeBelize;
 
 			// Determines if the Popover will be rendered in a compact mode
+			bThemeBelize = sTheme === "sap_belize" || sTheme === "sap_belize_plus";
 			this._bSizeCompact = sap.m._bSizeCompact || !!document.querySelector('body.sapUiSizeCompact') || this.hasStyleClass("sapUiSizeCompact");
+			this._bUseCompactArrow = this._bSizeCompact || bThemeBelize;
 
 			this._adaptPositionParams();
 
@@ -1797,7 +1800,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				this._arrowOffset = 18;
 				this._offsets = ["0 -18", "18 0", "0 18", "-18 0"];
 
-				if (this._bSizeCompact) {
+				if (this._bUseCompactArrow) {
 					this._arrowOffset = 9;
 					this._offsets = ["0 -9", "9 0", "0 9", "-9 0"];
 				}
@@ -2299,7 +2302,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				bValue = false;
 			}
 
-			this.setProperty("resizable", bValue, true);
+			return this.setProperty("resizable", bValue, true);
 		};
 
 

@@ -23,73 +23,43 @@
 		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 		jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 		QUnit.config.autostart = false;
+		jQuery.sap.require("samples.components.button.Component");
+		jQuery.sap.require("sap.ui.core.routing.HashChanger");
 
+		jQuery.sap.require("samples.components.button.Component");
+		jQuery.sap.require("sap.ui.core.routing.HashChanger");
 		sap.ui.require([
 			"sap/ui/test/Opa5",
-			"sap/ui/test/Opa",
+			"sap/ui/test/opaQunit",
 			//fast tests
+			'unitTests/actions',
+			'unitTests/basics',
 			'unitTests/component',
 			'unitTests/logging',
-			'unitTests/actions',
 			'unitTests/matchers',
 			//the slow ones
 			'unitTests/launchers',
 			'unitTests/iFrame'
-		], function (Opa5, Opa) {
-			jQuery.sap.require("samples.components.button.Component");
-			jQuery.sap.require("sap.ui.core.routing.HashChanger");
-
-			sinon.config.useFakeTimers = false;
-
-
-			QUnit.module("ControlType", {
+		], function (Opa5, opaTest) {
+			QUnit.module("wait for basics", {
 				setup: function () {
 					this.oOpa5 = new Opa5();
-					this.oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html");
-				},
-				teardown: function () {
 				}
 			});
 
-			QUnit.asyncTest("Should wait for lazy stubs", function (assert) {
-
+			opaTest("Should invoke check and success if nothing else is specified", function () {
 				this.oOpa5.waitFor({
+					check: function () {
+						Opa5.assert.strictEqual(arguments.length, 0);
+						return true
+					},
 					success: function () {
-						setTimeout(function () {
-							new (Opa5.getWindow().sap.ui.commons.Button)().placeAt("body");
-						}, 1000);
+						Opa5.assert.strictEqual(arguments.length, 0);
 					}
 				});
-
-				this.oOpa5.waitFor({
-					controlType: "sap.ui.commons.Button",
-					success: function (aButtons) {
-						assert.strictEqual(aButtons.length, 1, "Did find the button after a while");
-					}
-				});
-
-				this.oOpa5.iTeardownMyAppFrame();
-				Opa5.emptyQueue().done(function () {
-					QUnit.start();
-				});
-			});
-
-			QUnit.module("Context");
-
-			QUnit.test("Should share a context in OPA and OPA5", function (assert) {
-				// Arrange
-				var oOpaContext = Opa.getContext();
-				var oOpaInstanceContext = new Opa().getContext();
-				var oOpa5Context = Opa5.getContext();
-				var oOpa5InstanceContext = new Opa5().getContext();
-
-				assert.strictEqual(oOpaContext, oOpaInstanceContext, "Opa and Opa instance share a context");
-				assert.strictEqual(oOpaContext, oOpa5Context, "Opa and Opa5 share a context");
-				assert.strictEqual(oOpaContext, oOpa5InstanceContext, "Opa and Opa5 instance share a context");
 			});
 
 			QUnit.start();
-
 		});
 
 		</script>

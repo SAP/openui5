@@ -6,14 +6,14 @@
 /* global QUnit */
 
 sap.ui.require([
-  "sap/ui/test/gherkin/SimpleGherkinParser",
-], function(SimpleGherkinParser) {
+  "sap/ui/test/gherkin/simpleGherkinParser",
+], function(simpleGherkinParser) {
   'use strict';
 
   QUnit.module("Simple Gherkin Parser Tests", {
 
     setup: function() {
-      this.parser = SimpleGherkinParser;
+      this.parser = simpleGherkinParser;
     }
 
   });
@@ -234,8 +234,8 @@ sap.ui.require([
   // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   QUnit.test("invalid parameters as function input", function() {
 
-    var badStringError = "SimpleGherkinParser.parse: parameter 'sText' must be a valid string";
-    var badFilenameError = "SimpleGherkinParser.parseFile: parameter 'sPath' must be a valid string";
+    var badStringError = "simpleGherkinParser.parse: parameter 'sText' must be a valid string";
+    var badFilenameError = "simpleGherkinParser.parseFile: parameter 'sPath' must be a valid string";
 
     throws( function(){
       this.parser.parse();
@@ -272,7 +272,7 @@ sap.ui.require([
     throws( function(){
       this.parser.parseFile("this file does not exist");
     }, function(error) {
-      return !!error.message.match(/^SimpleGherkinParser\.parseFile\: error loading URL\: /);
+      return !!error.message.match(/^simpleGherkinParser\.parseFile\: error loading URL\: /);
     },
       "'parseFile' called with invalid file name"
     );

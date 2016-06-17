@@ -75,7 +75,7 @@ sap.ui.define(['./Control'],
 
 		if (this.setEnabled === undefined) {
 			this.setEnabled = function(bEnabled) {
-				this.setProperty("enabled", bEnabled);
+				return this.setProperty("enabled", bEnabled);
 			};
 
 			this.getMetadata().addPublicMethods('setEnabled');

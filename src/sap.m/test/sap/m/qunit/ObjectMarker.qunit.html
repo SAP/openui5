@@ -90,6 +90,98 @@
 			oMarker.destroy();
 		});
 
+		module("Default rendering of different types");
+
+		test("Flagged", function () {
+			// Arrange
+			var oMarker = new sap.m.ObjectMarker({
+				type: sap.m.ObjectMarkerType.Flagged
+			});
+
+			oMarker.placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			ok(!oMarker.$().text().length, "Control text is not visible by default.");
+			ok((oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is visible by default.");
+
+			// Cleanup
+			oMarker.destroy();
+		});
+
+		test("Favorite", function () {
+			// Arrange
+			var oMarker = new sap.m.ObjectMarker({
+				type: sap.m.ObjectMarkerType.Favorite
+			});
+
+			oMarker.placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			ok(!oMarker.$().text().length, "Control text is not visible by default.");
+			ok((oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is visible by default.");
+
+			// Cleanup
+			oMarker.destroy();
+		});
+
+		test("Draft", function () {
+			// Arrange
+			var oMarker = new sap.m.ObjectMarker({
+				type: sap.m.ObjectMarkerType.Draft
+			});
+
+			oMarker.placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			ok(oMarker.$().text().length, "Control text is visible by default.");
+			ok(!(oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is not visible by default.");
+
+			// Cleanup
+			oMarker.destroy();
+		});
+
+		test("Locked", function () {
+			// Arrange
+			var oMarker = new sap.m.ObjectMarker({
+				type: sap.m.ObjectMarkerType.Locked
+			});
+
+			oMarker.placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			ok(oMarker.$().text().length, "Control text is visible by default.");
+			ok((oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is visible by default.");
+
+			// Cleanup
+			oMarker.destroy();
+		});
+
+		test("Unsaved", function () {
+			// Arrange
+			var oMarker = new sap.m.ObjectMarker({
+				type: sap.m.ObjectMarkerType.Unsaved
+			});
+
+			oMarker.placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			ok(oMarker.$().text().length, "Control text is visible by default.");
+			ok((oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is visible by default.");
+
+			// Cleanup
+			oMarker.destroy();
+		});
+
 		module("Visibility");
 
 		test("Resize control to change the device size", function() {
@@ -150,7 +242,7 @@
 
 			// Assert
 			ok(oMarker.$().text().length, "Control text is visible when visibility is set to TextOnly.");
-			//ok(!oMarker.$().find(".sapUiIcon").length, "Control icon is not visible when visibility is set to TextOnly.");
+			ok(!(oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content") && oMarker.$().find(".sapUiIcon").attr("data-sap-ui-icon-content").length), "Control icon is not visible when visibility is set to TextOnly.");
 
 			// Cleanup
 			oMarker.destroy();

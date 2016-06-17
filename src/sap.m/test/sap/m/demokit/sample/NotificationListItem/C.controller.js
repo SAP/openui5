@@ -20,6 +20,11 @@ sap.ui.define([
 		},
 
 		onItemClose: function (oEvent) {
+			var oItem = oEvent.getSource(),
+				oList = oItem.getParent();
+
+			oList.removeItem(oItem);
+
 			MessageToast.show('Item Closed: ' + oEvent.getSource().getTitle());
 		}
 	});

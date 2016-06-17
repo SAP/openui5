@@ -290,9 +290,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 
         NotificationListItem.prototype._registerResize = function () {
             var that = this;
+            var notificationDomRef = this.getDomRef();
+            if (!notificationDomRef) {
+                //exit for invisible items
+                return;
+            }
+
             that._resizeNotification();
 
-            this._sNotificationResizeHandler = sap.ui.core.ResizeHandler.register(this.getDomRef(), function () {
+            this._sNotificationResizeHandler = sap.ui.core.ResizeHandler.register(notificationDomRef, function () {
                 that._resizeNotification();
             });
         };

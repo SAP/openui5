@@ -440,6 +440,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * Override <code>showAddNewButton</code> property setter to proxy to the <code>TabStrip</code>.
 		 *
 		 * @param bShowButton {boolean} Whether to show the <code>addNewButton</code>
+		 * @returns {sap.m.TabContainer} <code>this</code> pointer for chaining
 		 * @override
 		 */
 		TabContainer.prototype.setShowAddNewButton = function (bShowButton) {
@@ -447,6 +448,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (oTabStrip) {
 				oTabStrip.setAddButton(bShowButton ? this._getAddNewTabButton() : null);
 			}
+			return this;
 		};
 
 		/**

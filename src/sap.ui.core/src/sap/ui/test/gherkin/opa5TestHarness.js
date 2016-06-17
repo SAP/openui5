@@ -23,13 +23,12 @@ function($, UI5Object, opaTest, Opa5, GherkinTestGenerator, dataTableUtils, Step
    *
    * @author Jonathan Benn
    * @alias sap.ui.test.gherkin.opa5TestHarness
-   * @extends sap.ui.base.Object
+   * @namespace
+   * @static
    * @since 1.40
    * @public
    */
-  var oClass = UI5Object.extend('sap.ui.test.gherkin.opa5TestHarness', {});
-
-  $.extend(sap.ui.test.gherkin.opa5TestHarness, /** @lends sap.ui.test.gherkin.opa5TestHarness */ {
+  var opa5TestHarness = {
 
     /**
      * Dynamically generates Opa5 tests
@@ -53,6 +52,8 @@ function($, UI5Object, opaTest, Opa5, GherkinTestGenerator, dataTableUtils, Step
      * @param {boolean} [args.generateMissingSteps] - defaults to false. When true: if a Gherkin step cannot be matched
      *                                                to a step definition then it will be assumed that the user wants to
      *                                                convert the step into an Opa Page Object call.
+     * @function
+     * @static
      * @public
      */
     test: function(args) {
@@ -121,8 +122,8 @@ function($, UI5Object, opaTest, Opa5, GherkinTestGenerator, dataTableUtils, Step
           // Add a link to the page to allow the user to close the frame
           if ($('#frame-close-link').length === 0) {
             $('#qunit-header').append('<input id="frame-close-link" type="button"' +
-              'onclick="sap.ui.test.Opa5.emptyQueue(); $(\'#frame-close-link\').remove();" style="float: right; ' +
-              'margin-right: 0.5em; margin-top: -0.4em;" value="Close &#13;&#10;Frame"></input>');
+                'onclick="sap.ui.test.Opa5.emptyQueue(); $(\'#frame-close-link\').remove();" style="float: right; ' +
+                'margin-right: 0.5em; margin-top: -0.4em;" value="Close &#13;&#10;Frame"></input>');
           }
           oTestGenerator.tearDown();
         }
@@ -152,7 +153,7 @@ function($, UI5Object, opaTest, Opa5, GherkinTestGenerator, dataTableUtils, Step
         });
       });
     }
-  });
+  };
 
-  return oClass;
-});
+  return opa5TestHarness;
+}, /* bExport= */ true);

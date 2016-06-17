@@ -22,13 +22,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', "sap/ui/test/gherkin/G
    *
    * @author Jonathan Benn
    * @alias sap.ui.test.gherkin.qUnitTestHarness
-   * @extends sap.ui.base.Object
+   * @namespace
    * @since 1.40
    * @public
+   * @static
    */
-  var oClass = UI5Object.extend('sap.ui.test.gherkin.qUnitTestHarness', {});
-
-  $.extend(sap.ui.test.gherkin.qUnitTestHarness, /** @lends sap.ui.test.gherkin.qUnitTestHarness */ {
+  var qUnitTestHarness = {
 
     /**
      * Dynamically generates and executes QUnit tests
@@ -37,6 +36,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', "sap/ui/test/gherkin/G
      * @param {string} args.featurePath - the path to the Gherkin feature file to parse
      * @param {function} args.steps - the constructor function of type sap.ui.test.gherkin.StepDefinitions
      * @public
+     * @throws {Error} for invalid parameters - parameter does not match the expected type
+     * @function
+     * @static
      */
     test: function(args) {
 
@@ -80,8 +82,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', "sap/ui/test/gherkin/G
         });
       });
     }
+  };
 
-  });
-
-  return oClass;
-});
+  return qUnitTestHarness;
+}, /* bExport= */ true);

@@ -8,18 +8,17 @@
 /* ------------------------------ */
 
 .sapMSlt > .sapMSltLabel,
-.sapMSltNative {
+.sapMSlt .sapMSelectListItemBase {
 	padding: 0 0.625rem;
 }
 
 .sapMSltWithArrow > .sapMSltLabel,
-.sapMSltWithArrow > .sapMSltNative {
+.sapMSltWithArrow .sapMSelectListItemBase {
 	padding: 0 3rem 0 0.625rem;
 }
 
 .sapMSlt > .sapMSltLabel,
-.sapMSltArrow,
-.sapMSltNative {
+.sapMSltArrow {
 	height: 100%;
 }
 
@@ -144,24 +143,15 @@ html.sap-desktop .sapMSlt:not(.sapMSltDisabled):focus {
 	color: @sapUiContentContrastIconColor;
 }
 
-/* ------------------------------ */
-/* Native HTML select element     */
-/* ------------------------------ */
-
-.sapMSltNative {
-	visibility: hidden;
-	font-size: 0.9375rem;
-}
-
 /* ====================================================== */
 /* Select inside a Bar: all contexts                      */
 /* ====================================================== */
 
 /* focus: in the footer all of the selects should get the outline */
 
-html.sap-desktop .sapMHeader-CTX .sapMSltIconOnly:focus,
-html.sap-desktop .sapMSubHeader-CTX .sapMSltIconOnly:focus,
-html.sap-desktop .sapMFooter-CTX .sapMSlt:focus {
+html.sap-desktop .sapMHeader-CTX .sapMSltIconOnly:not(.sapMSltPressed):focus,
+html.sap-desktop .sapMSubHeader-CTX .sapMSltIconOnly:not(.sapMSltPressed):focus,
+html.sap-desktop .sapMFooter-CTX .sapMSlt:not(.sapMSltPressed):focus {
 	outline: 0.0625rem dotted;
 	outline-offset: -0.0625rem;
 }
@@ -209,10 +199,6 @@ html.sap-desktop .sapMFooter-CTX .sapMSlt:focus {
 /* ====================================================== */
 /* Select inside a Bar: footer context                    */
 /* ====================================================== */
-
-.sapMFooter-CTX .sapMSlt {
-	border-color: @sapUiPageFooterBackground;
-}
 
 .sapMFooter-CTX .sapMSltIconOnly.sapMSltHoverable:not(.sapMSltPressed):hover {
 	background: @sapUiButtonFooterHoverBackground;
@@ -300,9 +286,9 @@ div.sapMSltPicker .sapMDialogScrollCont {
 /* ------------------------------ */
 
 .sapUiSizeCompact .sapMSltLabel,
-.sapUiSizeCompact .sapMSltNative,
+.sapUiSizeCompact .sapMSlt .sapMSelectListItemBase,
 .sapUiSizeCondensed .sapUiTableCell .sapMSltLabel,
-.sapUiSizeCondensed .sapUiTableCell .sapMSltNative {
+.sapUiSizeCondensed .sapUiTableCell .sapMSlt .sapMSelectListItemBase {
 	padding-right: 2.5rem;
 	padding-left: 0.5rem;
 }

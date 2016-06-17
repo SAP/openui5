@@ -17,7 +17,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Icon'],
 
 				expanded : {type : "boolean", defaultValue : false},
 
-				isSelected : {type : "boolean", defaultValue : false, visibility : "hidden"}
+				isSelected : {type : "boolean", defaultValue : false}
 			},
 
 			defaultAggregation : "nodes",
@@ -45,8 +45,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Icon'],
 		SimpleTreeNode.prototype.init = function() {
 			this._bIsRTL = sap.ui.getCore().getConfiguration().getRTL();
 
-			var oIcon = this.getAggregation("_iconControl");
-			oIcon = new Icon({useIconTooltip: false}).addStyleClass('sapDkSimpleTreeNodeIconCol');
+			var oIcon = new Icon({useIconTooltip: false}).addStyleClass('sapDkSimpleTreeNodeIconCol');
 			if (this._bIsRTL) {
 				oIcon.setSrc("sap-icon://navigation-left-arrow");
 			} else {
@@ -64,6 +63,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Icon'],
 			this._executeExpandCollapse(false, bCollapseChildren);
 		};
 
+		SimpleTreeNode.prototype.setExpanded = function(bExpanded) {
+			if (this.getExpanded() !== bExpanded) {
+				this.setProperty("expanded", bExpanded, false);
+
+				this._toggleNodeArrow(bExpanded);
+			}
+
+		};
 
 		//***********************************************************************************
 		//* PRIVATE METHODS
@@ -118,10 +125,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Icon'],
 				this._executeExpandCollapseAnimation(oListDomNode, bShouldExpand);
 			}
 			//ARIA
-			if (!bShouldExpand && oDomNode.children("div").last().attr("aria-expanded") === "true") {
-				oDomNode.children("div").last().attr("aria-expanded", "false");
+			if (!bShouldExpand && oDomNode.children("a").last().attr("aria-expanded") === "true") {
+				oDomNode.children("a").last().attr("aria-expanded", "false");
 			} else if (bShouldExpand && this.getNodes().length > 0) {
-				oDomNode.children("div").last().attr("aria-expanded", "true");
+				oDomNode.children("a").last().attr("aria-expanded", "true");
 			}
 
 		};
@@ -158,15 +165,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Icon'],
 		};
 
 		SimpleTreeNode.prototype._selectNode = function(bShouldExpand, oEvent) {
-			this.fireSelected();
+			if (!oEvent.target.classList.contains("sapUiIcon")) {
+				this.fireSelected();
 
-			this._refreshNodeSelection(this.$());
-			if (bShouldExpand) {
-				this.expand();
+				this._refreshNodeSelection(this.$());
 			} else {
-				this.collapse();
+				if (bShouldExpand) {
+					this.expand();
+				} else {
+					this.collapse();
+				}
 			}
 
+			oEvent.preventDefault();
 			oEvent.stopPropagation();
 		};
 
@@ -192,9 +203,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Icon'],
 			var oPreviouslySelectedNode = sap.ui.getCore().byId(oTree.sSelectedNodeId);
 			if (oPreviouslySelectedNode) {
 				oPreviouslySelectedNode.setProperty("isSelected", false, true);
-				oPreviouslySelectedNode.$().children("div").removeClass("sapDkSimpleTreeNodeSelected");
+				oPreviouslySelectedNode.$().children("a").removeClass("sapDkSimpleTreeNodeSelected");
 				//ARIA
-				oPreviouslySelectedNode.$().children("div").removeAttr("aria-selected");
+				oPreviouslySelectedNode.$().children("a").removeAttr("aria-selected");
 			}
 		};
 
@@ -202,9 +213,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Icon'],
 			this.setProperty("isSelected", true, true);
 
 			oTree.sSelectedNodeId = this.getId();
-			oDomNode.children("div").last().addClass("sapDkSimpleTreeNodeSelected");
+			oDomNode.children("a").last().addClass("sapDkSimpleTreeNodeSelected");
 			//ARIA
-			oDomNode.children("div").last().attr("aria-selected", "true");
+			oDomNode.children("a").last().attr("aria-selected", "true");
 		};
 
 		//***********************************************************************************
@@ -213,6 +224,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Icon'],
 
 		SimpleTreeNode.prototype.onclick = function(oEvent) {
 			this._selectNode(!this.getExpanded(), oEvent);
+		};
+
+		SimpleTreeNode.prototype.ontap = function(oEvent) {
+			oEvent.preventDefault();
 		};
 
 		SimpleTreeNode.prototype.onsapselect = function(oEvent) {
@@ -232,7 +247,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Icon'],
 		//***********************************************************************************
 
 		SimpleTreeNode.prototype._getDomRefs = function(aDomRefs) {
-			aDomRefs.push(this.$().children("div")[0]);
+			aDomRefs.push(this.$().children("a")[0]);
 			var aNodes = this.getNodes();
 			for (var i = 0; i < aNodes.length; i++) {
 				aNodes[i]._getDomRefs(aDomRefs);

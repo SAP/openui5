@@ -8,9 +8,7 @@
     jQuery.sap.require('sap.ui.thirdparty.sinon-qunit');
     sinon.config.useFakeTimers = false;
 
-    if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
-        jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-    }
+    jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
     var classNameHeader = '.sapMNLG-Header';
     var classNameDatetime = '.sapMNLI-Datetime';
@@ -95,6 +93,32 @@
         // arrange
         var threeHoursConst = '3 hours';
         var fiveMinsConst = 'Five minutes';
+        this.NotificationListGroup.addItem(
+                new sap.m.NotificationListItem({
+                    title: 'Single Item Notification',
+                    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
+                    unread: true,
+                    visible: true,
+                    showCloseButton: false,
+                    priority: sap.ui.core.Priority.Medium,
+                    buttons: [
+                        new sap.m.Button({
+                            text: 'Accept',
+                            type: sap.m.ButtonType.Accept,
+                            tap: function () {
+                                sap.m.MessageToast.show('Accept button pressed');
+                            }
+                        }),
+                        new sap.m.Button({
+                            text: 'Cancel',
+                            type: sap.m.ButtonType.Reject,
+                            tap: function () {
+                                sap.m.MessageToast.show('Cancel button pressed');
+                            }
+                        })
+                    ]
+                })
+        );
 
         // act
         this.NotificationListGroup.setDatetime(threeHoursConst);
@@ -249,6 +273,16 @@
         // arrange
         var that = this;
         var buttonsInFooter = 2;
+        this.NotificationListGroup.addItem(
+            new sap.m.NotificationListItem({
+                title: 'Single Item Notification',
+                description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
+                unread: true,
+                visible: true,
+                showCloseButton: false,
+                priority: sap.ui.core.Priority.Medium
+            })
+        );
 
         this.NotificationListGroup.addAggregation('buttons',
             new sap.m.Button({
@@ -284,20 +318,28 @@
 
         // assert
         assert.strictEqual(fnSpy.callCount, 0, 'Changing the title should not invalidate the control');
-        assert.strictEqual(this.NotificationListGroup.getDomRef('title').textContent, title, 'The description in the title aggregation should be set to ' + title);
     });
 
     QUnit.test('Changing the datetime', function(assert) {
         // arrange
         var datetime = '2 hours';
         var fnSpy = sinon.spy(this.NotificationListGroup, 'invalidate');
+        this.NotificationListGroup.addItem(
+            new sap.m.NotificationListItem({
+                title: 'Single Item Notification',
+                description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
+                unread: true,
+                visible: true,
+                showCloseButton: false,
+                priority: sap.ui.core.Priority.Medium
+            })
+        );
 
         // act
         this.NotificationListGroup.setDatetime(datetime);
         sap.ui.getCore().applyChanges();
 
         // assert
-        assert.strictEqual(fnSpy.callCount, 0, 'Changing the datetime should not invalidate the control');
         assert.strictEqual(jQuery(classNameDatetime).text(), datetime, 'The datetime in the title aggregation should be set to ' + datetime);
     });
 
@@ -387,5 +429,284 @@
         // assert
         assert.strictEqual(fnCloseSpy.callCount, 1, 'close() should be triggered');
         assert.strictEqual(fnFireCloseSpy.callCount, 1, 'fireClose() should be triggered');
+    });
+
+    //================================================================================
+    // Notification List Group new features
+    //================================================================================
+
+    QUnit.module('Group with 0 items', {
+        setup: function() {
+            this.NotificationListGroup = new sap.m.NotificationListGroup();
+
+            this.NotificationListGroup.placeAt(RENDER_LOCATION);
+            sap.ui.getCore().applyChanges();
+        },
+        teardown: function() {
+            this.NotificationListGroup.destroy();
+        }
+    });
+
+    QUnit.test('Footer is not rendered', function(assert) {
+        // arrange
+        var that = this;
+        var buttonsInFooter = 0;
+
+        this.NotificationListGroup.addAggregation('buttons',
+            new sap.m.Button({
+                text: 'Accept',
+                tap: function () {
+                    new sap.m.MessageToast('Accept button pressed');
+                }
+            })
+        );
+        this.NotificationListGroup.addAggregation('buttons',
+            new sap.m.Button({
+                text: 'Cancel',
+                tap: function () {
+                    that.NotificationListGroup.close();
+                }
+            })
+        );
+        sap.ui.getCore().applyChanges();
+
+
+        // assert
+        assert.strictEqual(jQuery(classNameFooterToolbar).children('button').length, buttonsInFooter, 'Buttons should not be rendered as there are no any items');
+    });
+
+    QUnit.test('Header is not rendered', function(assert) {
+        // arrange
+        var title = 'Notification list group title';
+
+        // act
+        this.NotificationListGroup.setTitle(title);
+        sap.ui.getCore().applyChanges();
+
+        // assert
+        assert.strictEqual(jQuery(classNameHeader).length, 0, 'Title (header) is not rendered as items are 0');
+    });
+
+    QUnit.module('Test Visible property', {
+        setup: function() {
+            this.NotificationListGroup = new sap.m.NotificationListGroup();
+
+            this.NotificationListGroup.placeAt(RENDER_LOCATION);
+            sap.ui.getCore().applyChanges();
+        },
+        teardown: function() {
+            this.NotificationListGroup.destroy();
+        }
+    });
+
+    QUnit.test('Add invisible item - the same like 0 items', function(assert) {
+        // arrange
+        var that = this;
+        var buttonsInFooter = 0;
+
+        this.NotificationListGroup.addAggregation('buttons',
+            new sap.m.Button({
+                text: 'Accept',
+                tap: function () {
+                    new sap.m.MessageToast('Accept button pressed');
+                }
+            })
+        );
+        this.NotificationListGroup.addAggregation('buttons',
+            new sap.m.Button({
+                text: 'Cancel',
+                tap: function () {
+                    that.NotificationListGroup.close();
+                }
+            })
+        );
+        this.NotificationListGroup.addItem(
+            new sap.m.NotificationListItem({
+                title: 'Single Item Notification',
+                description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
+                unread: true,
+                visible: false,
+                showCloseButton: false,
+                priority: sap.ui.core.Priority.Medium
+            })
+        );
+        sap.ui.getCore().applyChanges();
+
+
+        // assert
+        assert.strictEqual(jQuery(classNameFooterToolbar).children('button').length, buttonsInFooter, 'Buttons should not be rendered as there is only 1 hidden item');
+    });
+
+    QUnit.test('Test Group visible property', function(assert) {
+        // arrange
+        var that = this;
+
+        this.NotificationListGroup.addAggregation('buttons',
+            new sap.m.Button({
+                text: 'Accept',
+                tap: function () {
+                    new sap.m.MessageToast('Accept button pressed');
+                }
+            })
+        );
+        this.NotificationListGroup.addAggregation('buttons',
+            new sap.m.Button({
+                text: 'Cancel',
+                tap: function () {
+                    that.NotificationListGroup.close();
+                }
+            })
+        );
+        this.NotificationListGroup.addItem(
+            new sap.m.NotificationListItem({
+                title: 'Single Item Notification',
+                description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
+                unread: true,
+                visible: true,
+                showCloseButton: false,
+                priority: sap.ui.core.Priority.Medium
+            })
+        );
+        // despite of the number of visible items, group is hidden when its property is false
+        this.NotificationListGroup.setVisible(false);
+        sap.ui.getCore().applyChanges();
+
+        // assert
+        assert.strictEqual(jQuery("sapUiHiddenPlaceholder").length, 0, 'Group is hidden');
+    });
+
+    QUnit.test('Test Item visible property', function(assert) {
+        // arrange
+        var that = this;
+
+        this.NotificationListGroup.addAggregation('buttons',
+            new sap.m.Button({
+                text: 'Accept',
+                tap: function () {
+                    new sap.m.MessageToast('Accept button pressed');
+                }
+            })
+        );
+        this.NotificationListGroup.addAggregation('buttons',
+            new sap.m.Button({
+                text: 'Cancel',
+                tap: function () {
+                    that.NotificationListGroup.close();
+                }
+            })
+        );
+        this.NotificationListGroup.addItem(
+            new sap.m.NotificationListItem({
+                title: 'Single Item Notification',
+                description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
+                unread: true,
+                visible: false,
+                showCloseButton: false,
+                priority: sap.ui.core.Priority.Medium
+            })
+        );
+
+        sap.ui.getCore().applyChanges();
+
+        // assert
+        assert.strictEqual(jQuery("sapUiHiddenPlaceholder").length, 0, 'Item is hidden');
+    });
+
+    QUnit.module('Test buttons enabled state when just 1 item is in the group', {
+        setup: function() {
+            this.NotificationListGroup = new sap.m.NotificationListGroup();
+
+            this.NotificationListGroup.placeAt(RENDER_LOCATION);
+            sap.ui.getCore().applyChanges();
+        },
+        teardown: function() {
+            this.NotificationListGroup.destroy();
+        }
+    });
+
+    QUnit.test('Add 1 visible item - buttons are disabled', function(assert) {
+        // arrange
+        var that = this;
+        var buttonsInFooter = 0;
+
+        this.NotificationListGroup.addAggregation('buttons',
+            new sap.m.Button({
+                text: 'Accept',
+                tap: function () {
+                    new sap.m.MessageToast('Accept button pressed');
+                }
+            })
+        );
+        this.NotificationListGroup.addAggregation('buttons',
+            new sap.m.Button({
+                text: 'Cancel',
+                tap: function () {
+                    that.NotificationListGroup.close();
+                }
+            })
+        );
+        this.NotificationListGroup.addItem(
+            new sap.m.NotificationListItem({
+                title: 'Single Item Notification',
+                description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
+                unread: true,
+                visible: true,
+                showCloseButton: false,
+                priority: sap.ui.core.Priority.Medium
+            })
+        );
+        sap.ui.getCore().applyChanges();
+
+
+        // assert
+        assert.strictEqual(this.NotificationListGroup.getButtons()[0].getEnabled(), false, 'Buttons are disabled');
+    });
+
+    QUnit.test('Add 2+ visible items - buttons are enabled', function(assert) {
+        // arrange
+        var that = this;
+        var buttonsInFooter = 0;
+
+        this.NotificationListGroup.addAggregation('buttons',
+            new sap.m.Button({
+                text: 'Accept',
+                tap: function () {
+                    new sap.m.MessageToast('Accept button pressed');
+                }
+            })
+        );
+        this.NotificationListGroup.addAggregation('buttons',
+            new sap.m.Button({
+                text: 'Cancel',
+                tap: function () {
+                    that.NotificationListGroup.close();
+                }
+            })
+        );
+        this.NotificationListGroup.addItem(
+            new sap.m.NotificationListItem({
+                title: 'Single Item Notification',
+                description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
+                unread: true,
+                visible: true,
+                showCloseButton: false,
+                priority: sap.ui.core.Priority.Medium
+            })
+        );
+        this.NotificationListGroup.addItem(
+            new sap.m.NotificationListItem({
+                title: 'Single Item Notification2',
+                description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
+                unread: true,
+                visible: true,
+                showCloseButton: false,
+                priority: sap.ui.core.Priority.Medium
+            })
+        );
+        sap.ui.getCore().applyChanges();
+
+
+        // assert
+        assert.strictEqual(this.NotificationListGroup.getButtons()[0].getEnabled(), true, 'Buttons are enabled');
     });
 })();

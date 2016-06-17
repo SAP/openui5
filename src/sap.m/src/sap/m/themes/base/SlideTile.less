@@ -49,6 +49,24 @@ html.sap-tablet .sapMGTHvrOutln:active {
 	border-radius: 0.25rem;
 }
 
+/* Bulleted indicator of multiple tiles*/
+.sapMSTBulleted {
+	position: absolute;
+	text-align: center;
+	bottom: 0.25rem;
+	width: 100%;
+	z-index: 1;
+	cursor: pointer;
+}
+
+.sapMSTBulleted > span {
+	display: inline-block;
+	height: 0.375rem;
+	width: 0.375rem;
+	margin: 0 0.25rem;
+	border-radius: 50%;
+}
+
 /* BREAKPOINT FOR SMALL PHONES */
 @media screen and (max-width: 374px) {
 	.sapMST.OneByOne {
@@ -59,5 +77,9 @@ html.sap-tablet .sapMGTHvrOutln:active {
 	.sapMST.TwoByOne {
 		width: 19rem;
 		height: 9.25rem;
+	}
+
+	.sapMSTBulleted {
+		bottom: 0.188rem;
 	}
 }

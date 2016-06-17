@@ -42,7 +42,7 @@ sap.ui.require([
 					sap:updatable="false" />\
 				<Property Name="NonFilterable" Type="Edm.String" sap:filterable="false" \
 					sap:heading="No Filter" sap:quickinfo="No Filtering" />\
-				<NavigationProperty Name="ToFoo" Relationship="GWSAMPLE_BASIC.Assoc_Foo" FromRole="FromRole_Foo" ToRole="ToRole_Foo" sap:filterable="true"/>\
+				<NavigationProperty Name="ToFoo" Relationship="GWSAMPLE_BASIC.Assoc_Foo" FromRole="FromRole_Foo" ToRole="ToRole_Foo" sap:filterable="false"/>\
 			</EntityType>\
 			<EntityType Name="VH_Sex" sap:content-version="1">\
 				<Property Name="Sex" Type="Edm.String" Nullable="false" MaxLength="1" />\
@@ -1306,7 +1306,7 @@ sap.ui.require([
 					"GWSAMPLE_BASIC.BusinessPartner");
 				delete oFunctionImport["sap:action-for"];
 
-				assert.deepEqual(oNavigationProperty["sap:filterable"], "true");
+				assert.deepEqual(oNavigationProperty["sap:filterable"], "false");
 				delete oNavigationProperty["sap:filterable"];
 
 				assert.deepEqual(oVHSex["sap:content-version"], "1");
@@ -1563,7 +1563,8 @@ sap.ui.require([
 					i > 0 ? undefined :
 						[
 							{"PropertyPath" : "AnyProperty"},
-							{"PropertyPath" : "NonFilterable"}
+							{"PropertyPath" : "NonFilterable"},
+							{"PropertyPath" : "ToFoo"}
 						],
 					"BusinessPartnerSet not filterable");
 				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"]

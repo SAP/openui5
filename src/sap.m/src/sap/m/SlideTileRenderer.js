@@ -18,19 +18,23 @@ sap.ui.define([], function() {
 	 * @param {sap.ui.core.Control} oControl the control to be rendered
 	 */
 	SlideTileRenderer.render = function(oRm, oControl) {
+		var sTooltip = oControl.getTooltip_AsString(),
+			iLength;
+
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMST");
 		oRm.writeClasses();
-		var sTooltip = oControl.getTooltip_AsString();
 		if (sTooltip) {
 			oRm.writeAttributeEscaped("title", sTooltip);
 		}
 		oRm.writeAttribute("tabindex", "0");
 		oRm.writeAttribute("role", "presentation");
 		oRm.write(">");
-
-		var iLength = oControl.getTiles().length;
+		iLength = oControl.getTiles().length;
+		if (iLength > 1) {
+			this._renderTilesIndicator(oRm, oControl);
+		}
 		for (var i = 0; i < iLength; i++) {
 			oRm.write("<div");
 			oRm.writeAttribute("id", oControl.getId() + "-wrapper-" + i);
@@ -46,6 +50,23 @@ sap.ui.define([], function() {
 		oRm.writeAttribute("id", oControl.getId() + "-focus");
 		oRm.write(">");
 		oRm.write("</div>");
+		oRm.write("</div>");
+	};
+
+	SlideTileRenderer._renderTilesIndicator = function(oRm, oControl) {
+		var iPageCount = oControl.getTiles().length;
+
+		oRm.write("<div");
+		oRm.writeAttribute("id", oControl.getId() + "-tilesIndicator");
+		oRm.addClass("sapMSTBulleted");
+		oRm.writeClasses();
+		oRm.write(">");
+		for ( var i = 0; i < iPageCount; i++) {
+			oRm.write("<span");
+			oRm.writeAttribute("id", oControl.getId() + "-tileIndicator-" + i);
+			oRm.write(">");
+			oRm.write("</span>");
+		}
 		oRm.write("</div>");
 	};
 

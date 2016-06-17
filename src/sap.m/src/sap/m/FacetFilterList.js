@@ -415,24 +415,22 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	};
 
 	/**
+	 * Fires the <code>listClose</code> event.
 	 * @private
 	 */
 
 	FacetFilterList.prototype._fireListCloseEvent = function() {
+		var aSelectedItems = this.getSelectedItems();
+		var oSelectedKeys = this.getSelectedKeys();
+		var bAllSelected = aSelectedItems.length === 0;
 
-				  var aSelectedItems = this.getSelectedItems();
-		   var oSelectedKeys = this.getSelectedKeys();
+		this._firstTime = true;
 
-		   var bAllSelected = aSelectedItems.length === 0;
-
-		   this._firstTime = true;
-
-		   this.fireListClose({
-				  selectedItems : aSelectedItems,
-				  selectedKeys : oSelectedKeys,
-				  allSelected : bAllSelected
-		   });
-
+		this.fireListClose({
+			selectedItems: aSelectedItems,
+			selectedKeys: oSelectedKeys,
+			allSelected: bAllSelected
+		});
 	};
 
 

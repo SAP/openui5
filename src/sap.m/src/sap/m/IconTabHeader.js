@@ -53,7 +53,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Specifies whether the control is rendered.
 			 * @since 1.15.0
 			 */
-			visible : {type : "boolean", group : "Behavior", defaultValue : true}
+			visible : {type : "boolean", group : "Behavior", defaultValue : true},
+
+			/**
+			 * Specifies the header mode.
+			 *
+			 * @since 1.42
+			 */
+			mode : {type : "sap.m.IconTabHeaderMode", group : "Appearance", defaultValue : sap.m.IconTabHeaderMode.Standard}
 		},
 		aggregations : {
 
@@ -602,6 +609,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return Control.prototype.removeAllAggregation.apply(this, arguments);
 	};
 
+	/**
+	 * Returns the displayed text - text or text + (count)
+	 * @private
+	 */
+	IconTabHeader.prototype._getDisplayText = function (oItem) {
+		var sText = oItem.getText();
+
+		if (this.getMode() == sap.m.IconTabHeaderMode.Inline) {
+			var sCount = oItem.getCount();
+			if (sCount) {
+				sText += ' (' + sCount + ')';
+			}
+		}
+
+		return sText;
+	};
+
 
 	/**
 	 * Checks if all tabs are textOnly version.
@@ -647,6 +671,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @returns True if all tabs are in line version, otherwise false
 	 */
 	IconTabHeader.prototype._checkInLine = function(aItems) {
+
+		if (this.getMode() == sap.m.IconTabHeaderMode.Inline) {
+			this._bInLine = true;
+			return true;
+		}
+
 		var oItem;
 
 		if (aItems.length > 0) {
@@ -798,41 +828,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 				//on mobile devices click on arrows has no effect
 				if (sTargetId == sId + "-arrowScrollLeft" && sap.ui.Device.system.desktop) {
-					if (sap.ui.Device.os.windows) {
-						//combi devices with win8/win10 should also scroll on click on arrows
-						//need to use iscroll
-						var iScrollLeft = this._oScroller.getScrollLeft() - IconTabHeader.SCROLL_STEP;
-						if (iScrollLeft < 0) {
-							iScrollLeft = 0;
-						}
-						// execute manual scrolling with iScroll's scrollTo method (delayedCall 0 is needed for positioning glitch)
-						this._scrollPreparation();
-						jQuery.sap.delayedCall(0, this._oScroller, "scrollTo", [iScrollLeft, 0, 500]);
-						jQuery.sap.delayedCall(500, this, "_afterIscroll");
-					} else {
-						// scroll back/left button
-						this._scroll(-IconTabHeader.SCROLL_STEP, 500);
+					var iScrollLeft = this._oScroller.getScrollLeft() - IconTabHeader.SCROLL_STEP;
+					if (iScrollLeft < 0) {
+						iScrollLeft = 0;
 					}
+					// execute manual scrolling with iScroll's scrollTo method (delayedCall 0 is needed for positioning glitch)
+					this._scrollPreparation();
+					jQuery.sap.delayedCall(0, this._oScroller, "scrollTo", [iScrollLeft, 0, 500]);
+					jQuery.sap.delayedCall(500, this, "_afterIscroll");
 
 				} else if (sTargetId == sId + "-arrowScrollRight" && sap.ui.Device.system.desktop) {
-					if (sap.ui.Device.os.windows) {
-						//combi devices with win8/win10 should also scroll on click on arrows
-						//need to use iscroll
-						var iScrollLeft = this._oScroller.getScrollLeft() + IconTabHeader.SCROLL_STEP;
-						var iContainerWidth = this.$("scrollContainer").width();
-						var iHeadWidth = this.$("head").width();
-						if (iScrollLeft > (iHeadWidth - iContainerWidth)) {
-							iScrollLeft = iHeadWidth - iContainerWidth;
-						}
-						// execute manual scrolling with iScroll's scrollTo method (delayedCall 0 is needed for positioning glitch)
-						this._scrollPreparation();
-						jQuery.sap.delayedCall(0, this._oScroller, "scrollTo", [iScrollLeft, 0, 500]);
-						jQuery.sap.delayedCall(500, this, "_afterIscroll");
-					} else {
-						// scroll forward/right button
-						this._scroll(IconTabHeader.SCROLL_STEP, 500);
+					var iScrollLeft = this._oScroller.getScrollLeft() + IconTabHeader.SCROLL_STEP;
+					var iContainerWidth = this.$("scrollContainer").width();
+					var iHeadWidth = this.$("head").width();
+					if (iScrollLeft > (iHeadWidth - iContainerWidth)) {
+						iScrollLeft = iHeadWidth - iContainerWidth;
 					}
-
+					// execute manual scrolling with iScroll's scrollTo method (delayedCall 0 is needed for positioning glitch)
+					this._scrollPreparation();
+					jQuery.sap.delayedCall(0, this._oScroller, "scrollTo", [iScrollLeft, 0, 500]);
+					jQuery.sap.delayedCall(500, this, "_afterIscroll");
 				} else {
 
 					// should be one of the items - select it

@@ -85,15 +85,6 @@
 			]
 		});
 
-		var fnOnAddButtonClick = function() {
-			sap.m.MessageToast.show("Add button clicked!", {duration: 500});
-		};
-
-		var fnOnItemSelected = function(oEvent) {
-			sap.m.MessageToast.show("Item selected: " + oEvent.getParameter("item").getName(), {duration: 500});
-		};
-
-
 		var fnCloseItem = function(oEvent) {
 			var oItemToClose = oEvent.getParameter('item');
 			if (oItemToClose && this.oTabContainer && this.oTabContainer.removeItem) {
@@ -108,9 +99,7 @@
 						path: "/ProductCollection",
 						template: oTemplate
 					},
-					itemSelect: fnOnItemSelected,
-					showAddNewButton: true,
-					addNewButtonPress: fnOnAddButtonClick
+					showAddNewButton: true
 				});
 
 				this.oTabContainer.placeAt("qunit-fixture");
@@ -166,16 +155,13 @@
 			equal(jQuery( "span." + sap.m.TabStripItem.CSS_CLASS_LABEL + ":contains("+sName+")").length, 1, 'Element with name "'+sName+'" is in the DOM.');
 		});
 
-
 		module("Misc", {
 			beforeEach: function () {
 				this.oTabContainer = new sap.m.TabContainer({
 					items: {
 						path: "/ProductCollection",
 						template: oTemplate
-					},
-					itemSelect: fnOnItemSelected,
-					addNewButtonPress: fnOnAddButtonClick
+					}
 				});
 
 				this.oTabContainer.placeAt("qunit-fixture");
@@ -200,7 +186,6 @@
 			//sapMTabSelect
 			strictEqual(jQuery(this.oTabContainer.$()).children('.sapMTabStrip').length, 1, 'TabStrip is initially rendered.');
 			this.oTabContainer.destroyAggregation('_tabStrip');
-			this.clock.tick(1000);
 			strictEqual(jQuery(this.oTabContainer.$()).children('.sapMTabStrip').length, 0, 'TabStrip is not re-rendered upon TabContainer re-rendering after TabStrip was destroyed.');
 		});
 
@@ -347,8 +332,6 @@
 					"All items are removed");
 
 		});
-
-
 
 		module("Constructing with array of items", {
 			beforeEach: function () {

@@ -26,6 +26,7 @@
 				<actions>
 					<ObjectPageHeaderActionButton icon="sap-icon://pull-down" text="show section" type="Emphasized"/>
 					<ObjectPageHeaderActionButton icon="sap-icon://show" text="show state" type="Emphasized"/>
+					<ObjectPageHeaderActionButton text="Toggle Footer" hideIcon="true" hideText="false" type="Emphasized" press="toggleFooter"/>
 				</actions>
 				<breadCrumbsLinks>
 					<m:Link text="Page 1 a very long link" press="handleLink1Press"/>
@@ -63,9 +64,9 @@
 		</headerContent>
 
 		<sections>
-			<ObjectPageSection title="2014 Goals Plan">
+			<ObjectPageSection id="goalsSection" title="2014 Goals Plan">
 				<subSections>
-					<ObjectPageSubSection title=" ">
+					<ObjectPageSubSection id="goalsSectionSS1" title=" ">
 						<blocks>
 							<goals:GoalsBlock id="goalsblock"/>
 						</blocks>
@@ -73,9 +74,9 @@
 				</subSections>
 			</ObjectPageSection>
 
-			<ObjectPageSection title="Personal" importance="Medium">
+			<ObjectPageSection id="personalSection" title="Personal" importance="Medium">
 				<subSections>
-					<ObjectPageSubSection title="Connect">
+					<ObjectPageSubSection id="personalSectionSS1" title="Connect">
 						<blocks>
 							<personal:BlockPhoneNumber id="phone"/>
 							<personal:BlockSocial id="social"/>
@@ -84,7 +85,7 @@
 						</blocks>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection title="Payment information">
+					<ObjectPageSubSection id="personalSectionSS2" title="Payment information">
 						<blocks>
 							<personal:PersonalBlockPart1 id="part1" columnLayout="1"/>
 						</blocks>
@@ -95,17 +96,17 @@
 				</subSections>
 			</ObjectPageSection>
 
-			<ObjectPageSection title="Employment">
-				<subSections>
-					<ObjectPageSubSection title="Job information">
-						<blocks>
-							<employment:BlockJobInfoPart1 id="jobinfopart1"/>
-							<employment:BlockJobInfoPart2 id="jobinfopart2"/>
-							<employment:BlockJobInfoPart3 id="jobinfopart3"/>
-						</blocks>
-					</ObjectPageSubSection>
+            <ObjectPageSection id="employmentSection" title="Employment">
+                <subSections>
+                    <ObjectPageSubSection id="employmentSectionSS1" title="Job information">
+                        <blocks>
+                            <employment:BlockJobInfoPart1 id="jobinfopart1"/>
+                            <employment:BlockJobInfoPart2 id="jobinfopart2"/>
+                            <employment:BlockJobInfoPart3 id="jobinfopart3"/>
+                        </blocks>
+                    </ObjectPageSubSection>
 
-					<ObjectPageSubSection title="Employee Details" mode="Collapsed" importance="Medium">
+					<ObjectPageSubSection id="employmentSectionSS2" title="Employee Details" mode="Collapsed" importance="Medium">
 						<blocks>
 							<employment:BlockEmpDetailPart1 id="empdetailpart1" columnLayout="1"/>
 						</blocks>
@@ -115,7 +116,7 @@
 						</moreBlocks>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection title="Job Relationship" mode="Collapsed" importance="Low">
+					<ObjectPageSubSection id="employmentSectionSS3" title="Job Relationship" mode="Collapsed" importance="Low">
 						<blocks>
 							<employment:EmploymentBlockJob id="employmentblockjob" showSubSectionMore="true">
 								<employment:mappings>
@@ -135,8 +136,15 @@
 							</employment:EmploymentBlockJob>
 						</blocks>
 					</ObjectPageSubSection>
-				</subSections>
+			    </subSections>
 			</ObjectPageSection>
 		</sections>
+		<footer>
+			<m:OverflowToolbar>
+				<m:ToolbarSpacer />
+				<m:Button type="Accept" text="Accept"/>
+				<m:Button type="Reject" text="Reject"/>
+			</m:OverflowToolbar>
+		</footer>
 	</ObjectPageLayout>
 </core:View>

@@ -264,10 +264,6 @@ sap.ui.define([
 			this.oLibraryResourceBundleOP = library.i18nModel.getResourceBundle(); // get resource translation bundle
 		}
 
-		this._iREMSize = parseInt(jQuery("body").css("font-size"), 10);
-		this._iOffset = parseInt(0.25 * this._iREMSize, 10);
-		this._iScrollBarWidth = jQuery.position.scrollbarWidth();
-
 		// Overflow button
 		this._oOverflowActionSheet = this._getInternalAggregation("_overflowActionSheet");
 		this._oOverflowButton = this._getInternalAggregation("_overflowButton").attachPress(this._handleOverflowButtonPress, this);
@@ -334,7 +330,7 @@ sap.ui.define([
 			return new ActionSheet({placement: sap.m.PlacementType.Bottom});
 		},
 		"_lockIconCont": function (oParent) {
-			return this._getButton(oParent, "sap-icon://locked", "lock-cont");
+			return this._getButton(oParent, "sap-icon://private", "lock-cont");
 		},
 		"_breadCrumbs": function (oParent) {
 			return new Breadcrumbs({
@@ -342,7 +338,7 @@ sap.ui.define([
 			});
 		},
 		"_lockIcon": function (oParent) {
-			return this._getButton(oParent, "sap-icon://locked", "lock", oParent.oLibraryResourceBundleOP.getText("TOOLTIP_OP_LOCK_MARK_VALUE"));
+			return this._getButton(oParent, "sap-icon://private", "lock", oParent.oLibraryResourceBundleOP.getText("TOOLTIP_OP_LOCK_MARK_VALUE"));
 		},
 		"_titleArrowIconCont": function (oParent) {
 			return this._getButton(oParent, "sap-icon://arrow-down", "titleArrow-cont", oParent.oLibraryResourceBundleOP.getText("OP_SELECT_ARROW_TOOLTIP"));
@@ -363,10 +359,10 @@ sap.ui.define([
 			return this._getButton(oParent, "sap-icon://slim-arrow-down", "expand", oParent.oLibraryResourceBundleOP.getText("TOOLTIP_OP_EXPAND_HEADER_BTN"));
 		},
 		"_changesIconCont": function (oParent) {
-			return this._getButton(oParent, "sap-icon://request", "changes-cont", oParent.oLibraryResourceBundleOP.getText("TOOLTIP_OP_CHANGES_MARK_VALUE"));
+			return this._getButton(oParent, "sap-icon://user-edit", "changes-cont", oParent.oLibraryResourceBundleOP.getText("TOOLTIP_OP_CHANGES_MARK_VALUE"));
 		},
 		"_changesIcon": function (oParent) {
-			return this._getButton(oParent, "sap-icon://request", "changes", oParent.oLibraryResourceBundleOP.getText("TOOLTIP_OP_CHANGES_MARK_VALUE"));
+			return this._getButton(oParent, "sap-icon://user-edit", "changes", oParent.oLibraryResourceBundleOP.getText("TOOLTIP_OP_CHANGES_MARK_VALUE"));
 		},
 		_getIcon: function (oParent, sIcon, sTooltip) {
 			return IconPool.createControlByURI({
@@ -436,29 +432,24 @@ sap.ui.define([
 	};
 
 	ObjectPageHeader.prototype._shiftHeaderTitle = function () {
+
 		var oParent = this.getParent(),
-			iHeaderOffset = 0,
-			sStyleAttribute = sap.ui.getCore().getConfiguration().getRTL() ? "left" : "right",
-			$actions = this.$().find(".sapUxAPObjectPageHeaderIdentifierActions"),
-			bHasVerticalScroll = true,
-			iActionsOffset = parseInt($actions.css(sStyleAttribute), 10);
+			oShiftOffsetParams,
+			$actions,
+			iActionsOffset;
 
-		if (typeof oParent._hasVerticalScrollBar === "function") {
-			bHasVerticalScroll = oParent._hasVerticalScrollBar();
+		if (!oParent || (typeof oParent._calculateShiftOffset !== "function")){
+			return;
 		}
 
-		if (sap.ui.Device.system.desktop) {
-			iHeaderOffset = this._iScrollBarWidth;
-			if (!bHasVerticalScroll) {
-				iHeaderOffset = 0;
-				iActionsOffset += this._iScrollBarWidth;
-			}
-		}
+		oShiftOffsetParams = oParent._calculateShiftOffset();
+		$actions = this.$().find(".sapUxAPObjectPageHeaderIdentifierActions");
+		iActionsOffset = parseInt($actions.css(oShiftOffsetParams.sStyleAttribute), 10);
 
-		$actions.css(sStyleAttribute, iActionsOffset + "px");
+		$actions.css(oShiftOffsetParams.sStyleAttribute, iActionsOffset + "px");
 
 		if (typeof oParent._shiftHeader === "function"){
-			oParent._shiftHeader(sStyleAttribute, iHeaderOffset + "px");
+			oParent._shiftHeader(oShiftOffsetParams.sStyleAttribute, oShiftOffsetParams.iMarginalsOffset + "px");
 		}
 	};
 
@@ -582,6 +573,27 @@ sap.ui.define([
 		if (aActions.length > 1 || this._hasOneButtonShowText(aActions)) {
 			//create responsive equivalents of the provided controls
 			aActions.forEach(function(oAction) {
+				// Set internal visibility for normal buttons like for ObjectPageHeaderActionButton
+				if (oAction instanceof Button && !(oAction instanceof ObjectPageHeaderActionButton)) {
+					oAction._getInternalVisible = function () {
+						return this._bInternalVisible;
+					};
+					oAction._setInternalVisible = function (bValue, bInvalidate) {
+						this.$().toggle(bValue);
+						if (bValue != this._bInternalVisible) {
+							this._bInternalVisible = bValue;
+							if (bInvalidate) {
+								this.invalidate();
+							}
+						}
+					};
+					oAction.onAfterRendering = function () {
+						if (!this._getInternalVisible()) {
+							this.$().hide();
+						}
+					};
+				}
+
 				// Force the design of the button to transparent
 				if (oAction instanceof Button && oAction.getVisible()) {
 					if (oAction instanceof Button && (oAction.getType() === "Default" || oAction.getType() === "Unstyled")) {
@@ -658,7 +670,7 @@ sap.ui.define([
 			return;
 		}
 		aActions.forEach(function (oAction) {
-			if (oAction instanceof ObjectPageHeaderActionButton) {
+			if (oAction instanceof Button) {
 				var oActionSheetButton = this._oActionSheetButtonMap[oAction.getId()];
 				if (bAttach) {
 					oAction.attachEvent("_change", this._adaptLayout, this);

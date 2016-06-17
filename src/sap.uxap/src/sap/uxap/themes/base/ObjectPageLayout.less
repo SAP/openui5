@@ -2,6 +2,15 @@
 	width: 100%;
 	height: 100%;
 	position: relative;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-direction: column;
+    -moz-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
 }
 
 body > .sapUxAPObjectPageLayout,
@@ -10,11 +19,8 @@ body > .sapUxAPObjectPageLayout,
 }
 
 .sapUxAPObjectPageHeaderTitle {
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	z-index: 2;
+    flex-shrink: 0;
+    -webkit-flex-shrink: 0;
 }
 
 .sapUxAPObjectPageHeaderTitle.sapUxAPObjectPageHeaderTitleBusy {
@@ -26,14 +32,12 @@ body > .sapUxAPObjectPageLayout,
 }
 
 .sapUxAPObjectPageWrapper {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	min-height: 100%;
-	overflow: hidden;
-	box-sizing: border-box;
+    position:relative;
+    height:100%;
+    -webkit-flex-grow: 1;
+    -moz-flex-grow: 1;
+    -ms-flex-grow: 1;
+    flex-grow: 1;
 }
 
 .sapUxAPObjectPageWrapperTransform {
@@ -46,10 +50,6 @@ body > .sapUxAPObjectPageLayout,
 
 .sapUxAPObjectPageScroll {
 	position: relative;
-}
-
-.sapUxAPObjectPageContainer .sapUiForm {
-	line-height: 1.5;
 }
 
 .sapUxAPObjectPageContainerNoBar > .sapUxAPObjectPageSection:first-child {
@@ -108,17 +108,144 @@ body > .sapUxAPObjectPageLayout,
 	z-index: 3000;
 }
 
+.sapUxAPObjectPageLayout {
+	.sapUxAPObjectPageFooter {
+		position: absolute;
+		height: 3rem;
+		bottom: 0;
+		right: 0;
+		left: 0;
+		margin-left: 0.5rem;
+		margin-right: 0.5rem;
+		margin-bottom: 0.5rem;
+
+		.sapUxAPObjectPageFloatingFooter {
+			border: 1px solid;
+			border-radius: 0.25rem;
+		}
+	}
+}
+
+.sapUiSizeCompact .sapUxAPObjectPageLayout .sapUxAPObjectPageFooter .sapUxAPObjectPageFloatingFooter {
+	height: 2.5rem;
+}
+
+html[data-sap-ui-animation='on'] .sapUxAPObjectPageLayout {
+	.sapUxAPObjectPageFloatingFooterShow {
+		-webkit-animation: bounceShow 0.35s forwards ease-in-out;
+		-moz-animation: bounceShow 0.35s forwards ease-in-out;
+		-o-animation: bounceShow 0.35s forwards ease-in-out;
+		animation: bounceShow 0.35s forwards ease-in-out;
+	}
+	.sapUxAPObjectPageFloatingFooterHide {
+		-webkit-animation: bounceHide 0.35s forwards ease-in-out;
+		-moz-animation: bounceHide 0.35s forwards ease-in-out;
+		-o-animation: bounceHide 0.35s forwards ease-in-out;
+		animation: bounceHide 0.35s forwards ease-in-out;
+	}
+
+	@-webkit-keyframes bounceShow {
+		0% {
+			-webkit-transform: translateY(100%);
+			-moz-transform: translateY(100%);
+			-o-transform: translateY(100%);
+			transform: translateY(100%);
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+	@-moz-keyframes bounceShow {
+		0% {
+			-webkit-transform: translateY(100%);
+			-moz-transform: translateY(100%);
+			-o-transform: translateY(100%);
+			transform: translateY(100%);
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+	@keyframes bounceShow {
+		0% {
+			-webkit-transform: translateY(100%);
+			-moz-transform: translateY(100%);
+			-o-transform: translateY(100%);
+			transform: translateY(100%);
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+	@-webkit-keyframes bounceHide {
+		0% {
+			-webkit-transform: translateY(-5%);
+			-moz-transform: translateY(-5%);
+			-o-transform: translateY(-5%);
+			transform: translateY(-5%);
+			opacity: 1;
+		}
+		100% {
+			-webkit-transform: translateY(100%);
+			-moz-transform: translateY(100%);
+			-o-transform: translateY(100%);
+			transform: translateY(100%);
+			opacity: 0;
+		}
+	}
+	@-moz-keyframes bounceHide {
+		0% {
+			-webkit-transform: translateY(-5%);
+			-moz-transform: translateY(-5%);
+			-o-transform: translateY(-5%);
+			transform: translateY(-5%);
+			opacity: 1;
+		}
+		100% {
+			-webkit-transform: translateY(100%);
+			-moz-transform: translateY(100%);
+			-o-transform: translateY(100%);
+			transform: translateY(100%);
+			opacity: 0;
+		}
+	}
+	@keyframes bounceHide {
+		0% {
+			-webkit-transform: translateY(-5%);
+			-moz-transform: translateY(-5%);
+			-o-transform: translateY(-5%);
+			transform: translateY(-5%);
+			opacity: 1;
+		}
+		100% {
+			-webkit-transform: translateY(100%);
+			-moz-transform: translateY(100%);
+			-o-transform: translateY(100%);
+			transform: translateY(100%);
+			opacity: 0;
+		}
+	}
+}
 /* Only on Windows 8 with IE 11 there's some weird incompatibility between the usage of the transform property
  in the sapMShell and the one in the objectPageWrapper.
  Also the z-index causes the scroll bars of the table to show in the headerTitle.
  For more information see internal incident 1670194272. */
 html[data-sap-ui-browser^="ie"][data-sap-ui-os^="win8"] .sapMShell {
 
-	.sapUxAPObjectPageWrapperTransform {
-		transform: none;
-	}
+  .sapUxAPObjectPageWrapperTransform {
+    transform: none;
+  }
 
-	.sapUxAPObjectPageHeaderTitle {
-		z-index: 3;
-	}
+  .sapUxAPObjectPageHeaderTitle {
+    z-index: 3;
+  }
+}
+
+.sap-desktop .sapUxAPObjectPageCustomScroller {
+    right: 0px;
+    position: absolute;
+    z-index: 100;
 }

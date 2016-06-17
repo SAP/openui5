@@ -125,7 +125,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			editable : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
-			 * Flag whether to use the scroll mode or paging mode. If the Paginator mode is used it will require the sap.ui.commons library!
+			 * Determines whether a scrollbar or a paginator is used for navigation inside the table.
+			 * If the paginator mode is used, it requires the <code>sap.ui.commons</code> library.
+			 *
+			 * This renders a scrollbar as a navigation element. Data fetched from an OData service is still
+			 * loaded page-wise no matter which visual representation is used for navigation inside the table.
+			 * @deprecated As of version 1.38, there is no replacement, since <code>Scrollbar</code> is the only supported option
 			 */
 			navigationMode : {type : "sap.ui.table.NavigationMode", group : "Behavior", defaultValue : NavigationMode.Scrollbar},
 
@@ -235,22 +240,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			 * be used when the navigation mode is set to scrolling.
 			 * @since 1.27.0
 			 */
-			enableBusyIndicator : {type : "boolean", group : "Behavior", defaultValue : false},
-
-			/**
-			 * Flag to enable or disable column reordering
-			 * @deprecated Since version 1.5.2.
-			 * Use the property enableColumnReordering instead.
-			 */
-			allowColumnReordering : {type : "boolean", group : "Behavior", defaultValue : true, deprecated: true},
-
-			/**
-			 * This text is shown, in case there is no data available to be displayed in the Table and no custom noData control is set.
-			 * @since 1.21.0
-			 * @deprecated Since version 1.22.1.
-			 * The aggregation noData also supports string values now. Use noData instead.
-			 */
-			noDataText : {type : "string", group : "Appearance", defaultValue : null, deprecated: true}
+			enableBusyIndicator : {type : "boolean", group : "Behavior", defaultValue : false}
 		},
 		defaultAggregation : "columns",
 		aggregations : {
@@ -679,11 +669,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 					that._updateRowHeader(oTableSizes.tableRowHeights);
 					that._syncColumnHeaders(oTableSizes);
 
-					if (that._bVariableRowHeightEnabled) {
+					if (TableUtils.isVariableRowHeightEnabled(that)) {
 						that._adjustTablePosition();
 					}
 
-					if (that._bBindingLengthChanged || that._bVariableRowHeightEnabled) {
+					if (that._bBindingLengthChanged || TableUtils.isVariableRowHeightEnabled(that)) {
 						that._updateVSb(oTableSizes);
 					}
 				}
@@ -1041,6 +1031,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		var sVisibleRowCountMode = this.getVisibleRowCountMode();
 
+		if (TableUtils.isVariableRowHeightEnabled(this)) {
+			var oVSb = this.getDomRef(SharedDomRef.VerticalScrollBar);
+			if (oVSb) {
+				this._iOldScrollTop = oVSb.scrollTop;
+			}
+		}
+
 		var aRows = this.getRows();
 		if (sVisibleRowCountMode == VisibleRowCountMode.Interactive ||
 			sVisibleRowCountMode == VisibleRowCountMode.Fixed ||
@@ -1107,6 +1104,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			this._updateTableSizes();
 		}
 
+		if (TableUtils.isVariableRowHeightEnabled(this)) {
+			var oVSb = this.getDomRef(SharedDomRef.VerticalScrollBar);
+			if (oVSb) {
+				oVSb.scrollTop = Math.max(oVSb.scrollTop, this._iOldScrollTop);
+			}
+		}
+
 		this._updateGroupHeader();
 
 		// for TreeTable and AnalyticalTable
@@ -1162,10 +1166,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			}
 		}
 
-		if (this._sResizeHandlerId) {
-			ResizeHandler.deregister(this._sResizeHandlerId);
-			this._sResizeHandlerId = undefined;
-		}
+		TableUtils.deregisterResizeHandler(this, "");
 
 		// update Vertical Scrollbar before collection because it changes sizes
 		this._toggleVSb();
@@ -1180,9 +1181,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			// the table has no size at all. This may be due to one of the parents has display:none. In order to
 			// recognize when the parent size changes, the resize handler must be registered synchronously, otherwise
 			// the browser may finish painting before the resize handler is registered
-			if (oDomRef && oDomRef.parentNode) {
-				this._sResizeHandlerId = ResizeHandler.register(oDomRef.parentNode, this._onTableResize.bind(this));
-			}
+			TableUtils.registerResizeHandler(this, "", this._onTableResize.bind(this), true);
 
 			return;
 		}
@@ -1208,23 +1207,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			// size changes of the parent happen due to adaptations of the table sizes. In order to first let the
 			// browser finish painting, the resize handler is registered in a timeout. If this would be done synchronously,
 			// updateTableSizes would always run twice.
-			if (that._sResizeHandlerId) {
-				ResizeHandler.deregister(that._sResizeHandlerId);
-				that._sResizeHandlerId = undefined;
-			}
-
-			if (oDomRef && oDomRef.parentNode) {
-				that._sResizeHandlerId = ResizeHandler.register(oDomRef.parentNode, that._onTableResize.bind(that));
-			}
+			TableUtils.registerResizeHandler(that, "", that._onTableResize.bind(that), true);
 		}, 0);
 	};
 
 	Table.prototype.setShowOverlay = function(bShow) {
+		bShow = !!bShow;
+		this.setProperty("showOverlay", bShow, true);
+
 		if (this.getDomRef()) {
+			var oFocusRef = document.activeElement;
 			this.$().toggleClass("sapUiTableOverlay", bShow);
+			this._getAccExtension().updateAriaStateForOverlayAndNoData();
+			this._getKeyboardExtension().updateNoDataAndOverlayFocus(oFocusRef);
 		}
 
-		return this.setProperty("showOverlay", bShow, true);
+		return this;
 	};
 
 	/**
@@ -1373,37 +1371,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (this._iBindingLength <= this.getVisibleRowCount()) {
 			oInnerScrollContainer.css({"transform": "translate3d(0px, " + (-iScrollTop) + "px, 0px)"});
 		} else {
-			var iRowCorrection = this._calculateRowCorrection(iDefaultRowHeight, iRowHeightOffset);
-			oInnerScrollContainer.css({"transform": "translate3d(0px, " + (-iRowCorrection - iRowHeightOffset) + "px, 0px)"});
+			var iRowCorrection = this._calculateRowCorrection(iDefaultRowHeight, iRowHeightOffset, iScrollTop);
+			oInnerScrollContainer.css({"transform": "translate3d(0px, " + (-iRowCorrection ) + "px, 0px)"});
 		}
 	};
 
 	/**
 	 * Calculates the amount of pixels the scrolling areas have to be shifted vertically, when the actual row heights are
 	 * bigger than the estimated row heights.
-	 * @param iDefaultRowHeight the estimated row height
-	 * @param iRowHeightOffset the current offset for simulated pixel-based scrolling
+	 * @param {int} iDefaultRowHeight the estimated row height
+	 * @param {int} iRowHeightOffset the current offset for simulated pixel-based scrolling
 	 * @returns {number} the amount of pixels the scrolling areas have to be shifted vertically
 	 * @private
 	 */
-	Table.prototype._calculateRowCorrection = function(iDefaultRowHeight, iRowHeightOffset) {
+	Table.prototype._calculateRowCorrection = function(iDefaultRowHeight, iRowHeightOffset, iScrollTop) {
 		var iRowIndex = this.getFirstVisibleRow();
 		var iMaxRowIndex = this._iBindingLength - this.getVisibleRowCount();
-		var oInnerTable = this.getDomRef("table");
-		var oInnerScrollContainer = this.$().find(".sapUiTableCtrlScr, .sapUiTableRowHdrScr");
-		var oOuterScrollContainer = this.getDomRef("tableCCnt");
-		var oFirstTr = oInnerScrollContainer.find("tbody tr:first-child");
 
-		var iTableVariableRowHeightDelta = oInnerTable.clientHeight - oOuterScrollContainer.clientHeight;
-		if (iRowIndex < iMaxRowIndex - 1) {
-			var iFirstRowHeightDelta = oFirstTr.height() - iDefaultRowHeight;
-			return Math.floor(iRowHeightOffset * (iFirstRowHeightDelta / iDefaultRowHeight));
-		} else if (iRowIndex == iMaxRowIndex - 1) {
-			return Math.ceil((iRowHeightOffset / iDefaultRowHeight) * iTableVariableRowHeightDelta) - iRowHeightOffset;
+		if (iRowIndex < iMaxRowIndex) {
+			var iFirstRowHeightDelta = TableUtils.getRowHeightByIndex(this, 0) - iDefaultRowHeight;
+			return Math.floor(iRowHeightOffset * (iFirstRowHeightDelta / iDefaultRowHeight)) + iRowHeightOffset;
 		} else if (iRowIndex == iMaxRowIndex) {
-			return iTableVariableRowHeightDelta - iRowHeightOffset - iDefaultRowHeight;
-		} else {
-			return 0;
+			return iScrollTop - (this._iBindingLength * iDefaultRowHeight) + this.getDomRef("tableCCnt").clientHeight;
 		}
 	};
 
@@ -1430,7 +1419,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		this.setProperty("firstVisibleRow", iRowIndex, true);
 
-		if (this._bVariableRowHeightEnabled && this.getBinding("rows") && !this._bRefreshing && !bFirstVisibleRowChanged) {
+		if (TableUtils.isVariableRowHeightEnabled(this)
+			&& this.getBinding("rows") && !this._bRefreshing && !bFirstVisibleRowChanged) {
 			this._adjustTablePosition();
 		}
 
@@ -1453,22 +1443,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			this.fireFirstVisibleRowChanged({firstVisibleRow: iRowIndex});
 		}
 		return this;
-	};
-
-	/*
-	 * @see JSDoc generated by SAPUI5 control API generator
-	 */
-	Table.prototype.getAllowColumnReordering = function() {
-		jQuery.sap.log.warning("getAllowColumnReordering is deprecated - please use getEnableColumnReordering!");
-		return Table.prototype.getEnableColumnReordering.apply(this, arguments);
-	};
-
-	/*
-	 * @see JSDoc generated by SAPUI5 control API generator
-	 */
-	Table.prototype.setAllowColumnReordering = function() {
-		jQuery.sap.log.warning("setAllowColumnReordering is deprecated - please use setEnableColumnReordering!");
-		return Table.prototype.setEnableColumnReordering.apply(this, arguments);
 	};
 
 
@@ -1611,6 +1585,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype.setTooltip = function(vTooltip) {
 		jQuery.sap.log.warning("The aggregation tooltip is not supported for sap.ui.table.Table");
 		return this.setAggregation("tooltip", vTooltip, true);
+	};
+
+	Table.prototype.setNavigationMode = function() {
+		this.setProperty("navigationMode", NavigationMode.Scrollbar, true);
+		jQuery.sap.log.error("The navigationMode property is deprecated and must not be used anymore. Your setting was defaulted to 'Scrollbar'", this);
 	};
 
 	/**
@@ -1791,7 +1770,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		var iFirstVisibleRow = this.getFirstVisibleRow();
 		// calculate the boundaries (at least 0 - max the row count - visible row count)
 		iFirstVisibleRow = Math.max(iFirstVisibleRow, 0);
-		if (sNavigationMode === NavigationMode.Scrollbar && this._iBindingLength > 0 && !this._bVariableRowHeightEnabled) {
+		if (sNavigationMode === NavigationMode.Scrollbar && this._iBindingLength > 0 && !TableUtils.isVariableRowHeightEnabled(this)) {
 			iFirstVisibleRow = Math.min(iFirstVisibleRow, Math.max(this._iBindingLength - iVisibleRowCount, 0));
 		} else if (sNavigationMode === NavigationMode.Paginator && this._oPaginator) {
 			var iNewPage = this._paginatorCalculateTargetPage(iFirstVisibleRow, iVisibleRowCount);
@@ -1917,6 +1896,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// update busy indicator state
 		this._setBusy(sReason ? {changeReason: sReason} : false);
 
+		// if the binding length has changed due to filter or sorter, it may happened that the noData text was not updated in order
+		// to avoid flickering of the table.
+		// therefore we need to update the noData text here
+		if (this._bBindingLengthChanged) {
+			this._updateNoData();
+		}
+
 		// Rows should only be created/cloned when the number of rows can be determined. For the VisibleRowCountMode: Auto
 		// this can only happen after the table control was rendered one. At this point in time we know how much space is
 		// consumed by the table header, toolbar, footer... and we can calculate how much space is left for the table rows.
@@ -2030,7 +2016,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		$this.find(".sapUiTableCtrlScrFixed").scroll(jQuery.proxy(this._oncntscroll, this));
 
 		$this.find(".sapUiTableCtrlScrFixed, .sapUiTableColHdrFixed").on("scroll.sapUiTablePreventFixedAreaScroll", function(oEvent) {oEvent.target.scrollLeft = 0;});
-		if (this._bVariableRowHeightEnabled) {
+		if (TableUtils.isVariableRowHeightEnabled(this)) {
 			$this.find(".sapUiTableCCnt").on("scroll.sapUiTablePreventCCntScroll", function(oEvent) {oEvent.target.scrollTop = 0;});
 		}
 
@@ -2123,7 +2109,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		$this.find(".sapUiTableColRsz").unbind();
 		$this.find(".sapUiTableCtrlScrFixed, .sapUiTableColHdrFixed").unbind("scroll.sapUiTablePreventFixedAreaScroll");
 
-		if (this._bVariableRowHeightEnabled) {
+		if (TableUtils.isVariableRowHeightEnabled(this)) {
 			$this.find(".sapUiTableCCnt").unbind("scroll.sapUiTablePreventCCntScroll");
 		}
 
@@ -2142,10 +2128,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		var $body = jQuery(document.body);
 		$body.unbind('webkitTransitionEnd transitionend');
 
-		if (this._sResizeHandlerId) {
-			ResizeHandler.deregister(this._sResizeHandlerId);
-			this._sResizeHandlerId = undefined;
-		}
+		TableUtils.deregisterResizeHandler(this);
 	};
 
 	/**
@@ -2307,31 +2290,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		var iDefaultRowHeight = this._getDefaultRowHeight();
 		var iVSbHeight = (this._iBindingLength - iFixedRowCount - iFixedBottomRowCount) * iDefaultRowHeight;
-		if (this._bVariableRowHeightEnabled) {
+		if (TableUtils.isVariableRowHeightEnabled(this)) {
 			var iCCntHeight = 0;
-			var oCCntDomRef = this.getDomRef().querySelector(".sapUiTableCCnt");
+			var oCCntDomRef = this.getDomRef("tableCCnt");
 			if (oCCntDomRef) {
 				iCCntHeight = oCCntDomRef.clientHeight;
 			}
 
-			var iCtrlScrHeight = 0;
-			var oCtrlScrDomRef = this.getDomRef().querySelector(".sapUiTableCtrlScr");
-			if (oCtrlScrDomRef) {
-				iCtrlScrHeight = oCtrlScrDomRef.clientHeight;
+			var iTableHeight = 0;
+			var oTableDomRef = this.getDomRef("table");
+			if (oTableDomRef) {
+				iTableHeight = oTableDomRef.clientHeight;
 			}
 
+			this._iRowHeightsDelta = iTableHeight - iCCntHeight - TableUtils.getRowHeightByIndex(this, this.getRows().length - 1);
 			if (this._iBindingLength <= this.getVisibleRowCount()) {
-				this._iRowHeightsDelta = iCtrlScrHeight - iCCntHeight - iDefaultRowHeight;
 				iVSbHeight = this._iRowHeightsDelta + (this.getVisibleRowCount() * iDefaultRowHeight);
 			} else {
-				this._iRowHeightsDelta = 0;
-			}
+				iVSbHeight = this._iRowHeightsDelta + iVSbHeight;
+            }
 
 			this._toggleVSb();
 		}
 		this.getDomRef("vsb-content").style.height = iVSbHeight + "px";
 
-		if (!this._bVariableRowHeightEnabled) {
+		if (!TableUtils.isVariableRowHeightEnabled(this)) {
 			oVSb.scrollTop = this._getSanitizedFirstVisibleRow() * iDefaultRowHeight;
 		}
 	};
@@ -2379,7 +2362,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 */
 	Table.prototype._isVSbRequired = function() {
 		if (this.getNavigationMode() === NavigationMode.Scrollbar) {
-			if (this._bVariableRowHeightEnabled && this._iRowHeightsDelta > 0) {
+			if (TableUtils.isVariableRowHeightEnabled(this) && this._iRowHeightsDelta > 0) {
 				return true;
 			}
 
@@ -2472,18 +2455,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			return;
 		}
 
-		var bNoDataVisible = TableUtils.isNoDataVisible(this);
-		var bFocusWasOnNoData = jQuery.sap.containsOrEquals(this.getDomRef("noDataCnt"), document.activeElement);
-
-		this.$().toggleClass("sapUiTableEmpty", bNoDataVisible);
-
-		if (bNoDataVisible && jQuery.sap.containsOrEquals(this.getDomRef("tableCCnt"), document.activeElement)) {
-			this.$("noDataCnt").focus(); // Set focus on NoData Container
-		} else if (!bNoDataVisible && bFocusWasOnNoData) {
-			TableUtils.focusItem(this, 0); // Set focus on first focusable element
-		}
+		var oFocusRef = document.activeElement;
+		this.$().toggleClass("sapUiTableEmpty", TableUtils.isNoDataVisible(this));
+		this._getAccExtension().updateAriaStateForOverlayAndNoData();
+		this._getKeyboardExtension().updateNoDataAndOverlayFocus(oFocusRef);
 	};
-
 
 	/**
 	 * determines the currently visible columns (used for simply updating only the
@@ -2664,11 +2640,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		var oVsb = this.getDomRef(SharedDomRef.VerticalScrollBar);
 		if (oVsb) {
 			iScrollTop = (typeof iScrollTop === "undefined") ? oVsb.scrollTop : iScrollTop;
-			if (this._bVariableRowHeightEnabled) {
+			if (TableUtils.isVariableRowHeightEnabled(this)) {
 				if (this.getVisibleRowCount() >= this._iBindingLength) {
 					return 0;
 				} else {
-					return Math.floor(iScrollTop / this._getDefaultRowHeight());
+					return Math.min(this._iBindingLength - this.getVisibleRowCount(), Math.floor(iScrollTop / this._getDefaultRowHeight()));
 				}
 			} else {
 				return Math.ceil(iScrollTop / this._getDefaultRowHeight());
@@ -5447,7 +5423,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		// Create one additional row, for half-scrolled rows at the bottom.
-		if (this._bVariableRowHeightEnabled) {
+		if (TableUtils.isVariableRowHeightEnabled(this)) {
 			iNumberOfRows = iNumberOfRows + 1;
 		}
 
@@ -5467,7 +5443,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			this.removeAggregation("rows", i, true).destroy();
 		}
 
-		this.setProperty("visibleRowCount", this._bVariableRowHeightEnabled ? iNumberOfRows - 1 : iNumberOfRows, true);
+		if (TableUtils.isVariableRowHeightEnabled(this)) {
+			// One additional row was created for half-scrolled rows at the bottom.,
+			// this should not lead to a increase of the visibleRowCount defined by the user.
+			this.setProperty("visibleRowCount", iNumberOfRows - 1, true);
+		} else {
+			this.setProperty("visibleRowCount", iNumberOfRows, true);
+		}
 
 		// this call might cause the cell (controls) to invalidate theirself and therefore also the table. It should be
 		// avoided to rerender the complete table since rendering of the rows is handled here. All child controls get
@@ -5602,7 +5584,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._getDefaultRowHeight = function(aRowHeights) {
-		if (this._bVariableRowHeightEnabled) {
+		if (TableUtils.isVariableRowHeightEnabled(this)) {
 			this._iDefaultRowHeight = this.getRowHeight() || 28;
 		} else {
 			if (!this._iDefaultRowHeight && this.getDomRef()) {
@@ -5657,8 +5639,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			this._iTableRowContentHeight = undefined;
 		}
 
-		if (this._bVariableRowHeightEnabled) {
-			jQuery(this.getDomRef("tableCCnt")).css("height", this._iTableRowContentHeight + "px");
+		if (TableUtils.isVariableRowHeightEnabled(this)) {
+			var $tableCCnt = jQuery(this.getDomRef("tableCCnt"));
+			if (sVisibleRowCountMode == VisibleRowCountMode.Fixed || sVisibleRowCountMode == VisibleRowCountMode.Interactive) {
+				$tableCCnt.css("height", this._getDefaultRowHeight() * this.getVisibleRowCount() + "px");
+			} else if (sVisibleRowCountMode == VisibleRowCountMode.Auto) {
+				$tableCCnt.css("height", this._iTableRowContentHeight + "px");
+			}
 		} else {
 			if ((sVisibleRowCountMode == VisibleRowCountMode.Fixed || sVisibleRowCountMode == VisibleRowCountMode.Interactive) && this.getRows().length > 0) {
 				jQuery(this.getDomRef("tableCtrlCnt")).css("height", "auto");
@@ -5719,15 +5706,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype.setShowNoData = function(bShowNoData) {
 		this.setProperty('showNoData', bShowNoData, true);
 		this._updateNoData();
-		return this;
-	};
-
-	/*
-	 * @see JSDoc generated by SAPUI5 control API generator
-	 */
-	Table.prototype.setNoDataText = function(sText) {
-		this.setProperty("noDataText", sText, true);
-		this.$("noDataMsg").text(TableUtils.getNoDataText(this) || "");
 		return this;
 	};
 

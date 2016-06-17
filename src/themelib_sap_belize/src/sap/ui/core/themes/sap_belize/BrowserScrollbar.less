@@ -1,0 +1,33 @@
+/* ============================================= */
+/* CSS for control sap.ui.core/BrowserScrollbar  */
+/* Belize theme                                  */
+/* ============================================= */
+
+/****** IE ******/
+
+html[data-sap-ui-browser*="ie"] .sapUiBody {
+	scrollbar-face-color: @sapUiScrollBarFaceColor;
+	scrollbar-highlight-color: @sapUiScrollBarFaceColor;
+	scrollbar-shadow-color: @sapUiScrollBarFaceColor;
+	scrollbar-track-color: @sapUiScrollBarTrackColor;
+}
+
+/****** Safari + Chrome on Desktop ******/
+
+html.sap-desktop ::-webkit-scrollbar {
+	width: 16px;
+	height: 16px;
+	background-color: @sapUiScrollBarTrackColor;
+}
+
+html.sap-desktop ::-webkit-scrollbar-thumb {
+	background-color: @sapUiScrollBarFaceColor;
+}
+
+html.sap-desktop ::-webkit-scrollbar-thumb:hover {
+	background-color: @sapUiScrollBarHoverFaceColor;
+}
+
+html.sap-desktop ::-webkit-scrollbar-corner {
+	background-color: @sapUiScrollBarTrackColor;
+}

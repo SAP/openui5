@@ -56,6 +56,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	FileUploadIntrospector.prototype.init = function() {
 		this._aFiles = [];
 		this._iHash = 0;
+
+		jQuery.sap.act.attachActivate(this._activate, this);
+	};
+
+	FileUploadIntrospector.prototype.exit = function() {
+		jQuery.sap.act.detachActivate(this._activate, this);
+	};
+
+	FileUploadIntrospector.prototype._activate = function() {
+		// trigger the auto refresh once the user interacts again with the UI
+		// by reusing the setter functionality of the autoRefreshInterval property
+		this.setAutoRefreshInterval(this.getAutoRefreshInterval());
 	};
 
 	FileUploadIntrospector.prototype.setAutoRefreshInterval = function(iInterval) {
@@ -88,7 +100,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		this.refresh();
 		// TODO reinitialize timer only after response has been received (requires separate receive methods)
 		var iInterval = this.getAutoRefreshInterval();
-		if ( iInterval > 0 ) {
+		// only set timer again if activity is detected
+		if ( iInterval > 0  && jQuery.sap.act.isActive() ) {
 			this.oTimer = jQuery.sap.delayedCall(iInterval, this, "_autoRefresh");
 		}
 	};

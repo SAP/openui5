@@ -180,7 +180,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
 			// Inital loading
 			if (!mParameters) {
 
-				mParameters = {};
+				mergeParameters({});
 				sTheme = sap.ui.getCore().getConfiguration().getTheme();
 
 				forEachStyleSheet(loadParameters);
@@ -258,17 +258,90 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
 		}
 
 		/**
+		 * Returns the scopes from current theming parameters.
+		 *
+		 * @private
+		 * @sap-restricted sap.ui.core
+		 * @param {boolean} [bAvoidLoading] Whether loading of parameters should be avoided
+		 * @return {array} Scope names
+		 */
+		Parameters._getScopes = function(bAvoidLoading) {
+			if ( bAvoidLoading && !mParameters ) {
+				return;
+			}
+			var oParams = getParameters();
+			var aScopes = Object.keys(oParams["scopes"]);
+			return aScopes;
+		};
+
+		/**
+		 * Returns the active scope(s) for a given control by looking up the hierarchy.
+		 *
+		 * The lookup navigates the DOM hierarchy if it's available. Otherwise if controls aren't rendered yet,
+		 * it navigates the control hierarchy. By navigating the control hierarchy, inner-html elements
+		 * with the respective scope classes can't get recognized as the Custom Style Class API does only for
+		 * root elements.
+		 *
+		 * @private
+		 * @sap-restricted sap.viz
+		 * @param {object} oElement element/control instance
+		 * @return {array<array<string>>} Two dimensional array with scopes in bottom up order
+		 */
+		Parameters.getActiveScopesFor = function(oElement) {
+			var aScopeChain = [];
+
+			if (oElement instanceof Element) {
+				var domRef = oElement.getDomRef();
+
+				// make sure to first load all pending parameters
+				// doing it later (lazy) might change the behavior in case a scope is initially not defined
+				loadPendingLibraryParameters();
+
+				// check for scopes and try to find the classes in parent chain
+				var aScopes = this._getScopes();
+
+				if (domRef) {
+					var fnNodeHasStyleClass = function(sScopeName) {
+						var scopeList = domRef.classList;
+						return scopeList && scopeList.contains(sScopeName);
+					};
+
+					while (domRef) {
+						var aFoundScopeClasses = aScopes.filter(fnNodeHasStyleClass);
+						if (aFoundScopeClasses.length > 0) {
+							aScopeChain.push(aFoundScopeClasses);
+						}
+						domRef = domRef.parentNode;
+					}
+				} else {
+					var fnControlHasStyleClass = function(sScopeName) {
+						return typeof oElement.hasStyleClass === "function" && oElement.hasStyleClass(sScopeName);
+					};
+
+					while (oElement) {
+						var aFoundScopeClasses = aScopes.filter(fnControlHasStyleClass);
+						if (aFoundScopeClasses.length > 0) {
+							aScopeChain.push(aFoundScopeClasses);
+						}
+						oElement = typeof oElement.getParent === "function" && oElement.getParent();
+					}
+				}
+			}
+			return aScopeChain;
+		};
+
+		/**
 		 * Returns the current value for the given CSS parameter.
 		 * If no parameter is given, a map containing all parameters is returned. This map is a copy, so changing values in the map does not have any effect.
 		 * For any other input or an undefined parameter name, the result is undefined.
 		 *
 		 * @param {string} sName the CSS parameter name
-		 * @param {object} [oControl] optional the control instance
+		 * @param {object} [oElement] Element/control instance
 		 * @returns {any} the CSS parameter value
 		 *
 		 * @public
 		 */
-		Parameters.get = function(sName, oControl) {
+		Parameters.get = function(sName, oElement) {
 			var sParam, oParams;
 
 			// Parameters.get() without arugments returns
@@ -281,37 +354,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
 
 			if (typeof sName === "string") {
 
-				if (oControl instanceof Element) {
+				if (oElement instanceof Element) {
 					// make sure to first load all pending parameters
 					// doing it later (lazy) might change the behavior in case a scope is initially not defined
 					loadPendingLibraryParameters();
 
 					// check for scopes and try to find the classes in Control Tree
 					oParams = getParameters();
-					var aScopes = Object.keys(oParams["scopes"]);
 
-					var fnControlHasStyleClass = function(sScopeName) {
-						return typeof oControl.hasStyleClass === "function" && oControl.hasStyleClass(sScopeName);
-					};
+					var aScopeChain = this.getActiveScopesFor(oElement);
 
-					while (oControl) {
-						var aFoundScopeClasses = aScopes.filter(fnControlHasStyleClass);
-						if (aFoundScopeClasses.length > 0) {
-							for (var i = 0; i < aFoundScopeClasses.length; i++) {
-								var sFoundScopeClass = aFoundScopeClasses[i];
-								sParam = getParam({
-									parameterName: sName,
-									scopeName: sFoundScopeClass
-								});
-								if (sParam) {
-									// return first matching scoped parameter
-									return sParam;
-								}
+					for (var i = 0; i < aScopeChain.length; i++) {
+						var aCurrentScopes = aScopeChain[i];
+
+						for (var k = 0; k < aCurrentScopes.length; k++) {
+							var sScopeName = aCurrentScopes[k];
+
+							sParam = getParam({
+								parameterName: sName,
+								scopeName: sScopeName
+							});
+
+							if (sParam) {
+								return sParam;
 							}
 						}
-						oControl = typeof oControl.getParent === "function" && oControl.getParent();
 					}
-
 					// if no matching scope was found return the default parameter (see below)
 				}
 

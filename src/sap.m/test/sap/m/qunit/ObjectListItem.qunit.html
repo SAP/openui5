@@ -151,7 +151,7 @@
             sap.ui.getCore().applyChanges();
 
             ok(jQuery.sap.domById(lockedOlI.getId() + "-lock"), "Locked marker should be rendered.");
-            equal(jQuery.sap.byId(lockedOlI.getId() + "-lock").attr("data-sap-ui-icon-content").charCodeAt(0), 57683, "Locked font should be rendered.");
+            equal(jQuery.sap.byId(lockedOlI.getId() + "-lock").attr("data-sap-ui-icon-content").charCodeAt(0), 57544, "Locked font should be rendered.");
 
             lockedOlI.destroy();
         });

@@ -579,7 +579,7 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 					this.removeAggregation("_incrementButton");
 				}
 
-			StepInput.prototype.setProperty.apply(this, ["editable"].concat(args));
+			return StepInput.prototype.setProperty.apply(this, ["editable"].concat(args));
 		};
 
 		/**

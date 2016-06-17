@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.mvc.XMLView.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/core/library', './View', 'sap/ui/model/resource/ResourceModel', 'sap/ui/base/ManagedObject', 'sap/ui/core/Control', 'jquery.sap.xml'],
-	function(jQuery, XMLTemplateProcessor, library, View, ResourceModel, ManagedObject, Control/* , jQuerySap */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/core/library', './View', 'sap/ui/model/resource/ResourceModel', 'sap/ui/base/ManagedObject', 'sap/ui/core/Control', 'sap/ui/core/cache/CacheManager', 'jquery.sap.xml', 'jquery.sap.script'],
+	function(jQuery, XMLTemplateProcessor, library, View, ResourceModel, ManagedObject, Control, Cache/* , jQuerySap */) {
 	"use strict";
 
 	// shortcut for enum(s)
@@ -45,34 +45,48 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 			 * If an XMLView instance is used to represent a HTML subtree of another XMLView,
 			 * that subtree is provided with this setting.
 			 */
-			xmlNode : { type: 'Element', visibility: 'hidden' }
+			xmlNode : { type: 'Element', visibility: 'hidden' },
+
+			/**
+			 * Configuration for the XMLView caching.
+			 */
+			cache : 'Object'
 		},
 
 		designTime: true
 	}});
 
 		/**
-		 * Instantiates an XMLView of the given name and with the given id.
+		 * Instantiates an XMLView of the given name and with the given ID.
 		 *
 		 * The <code>viewName</code> must either correspond to an XML module that can be loaded
-		 * via the module system (viewName + suffix ".view.xml") and which defines the view or it must
+		 * via the module system (viewName + suffix ".view.xml") and which defines the view, or it must
 		 * be a configuration object for a view.
-		 * The configuration object can have a viewName, viewContent and a controller property. The viewName
-		 * behaves as described above. ViewContent is optional and can hold a view description as XML string or as
-		 * already parsed XML Document. If not given, the view content definition is loaded by the module system.
+		 * The configuration object can have a <code>viewName</code>, <code>viewContent</code> and a <code>controller
+		 * </code> property. The <code>viewName</code> behaves as described above. <code>viewContent</code> is optional
+		 * and can hold a view description as XML string or as already parsed XML Document. If not given, the view content
+		 *  definition is loaded by the module system.
 		 *
-		 * <strong>Note</strong>: if a Document is given, it might be modified during view construction.
+		 * <strong>Note</strong>: if a <code>Document</code> is given, it might be modified during view construction.
+		 *
+		 * <strong>Note</strong>: if you enable caching, you need to take care of the invalidation via keys. Automatic
+		 * invalidation takes only place if the UI5 version or the component descriptor (manifest.json) change.
 		 *
 		 * The controller property can hold an controller instance. If a controller instance is given,
 		 * it overrides the controller defined in the view.
 		 *
-		 * Like with any other control, id is optional and one will be created automatically.
+		 * Like with any other control, ID is optional and one will be created automatically.
 		 *
-		 * @param {string} [sId] id of the newly created view
-		 * @param {string | object} vView name of the view or a view configuration object as described above.
-		 * @param {string} [vView.viewName] name of the view resource in module name notation (without suffix)
-		 * @param {string|Document} [vView.viewContent] XML string or XML document that defines the view.
-		 * @param {boolean} [vView.async] defines how the view source is loaded and rendered later on
+		 * @param {string} [sId] ID of the newly created view
+		 * @param {string | object} vView Name of the view or a view configuration object as described above
+		 * @param {string} [vView.viewName] Name of the view resource in module name notation (without suffix)
+		 * @param {string|Document} [vView.viewContent] XML string or XML document that defines the view
+		 * @param {boolean} [vView.async] Defines how the view source is loaded and rendered later on
+		 * @param {object} [vView.cache] Cache configuration, only for <code>async</code> views; caching gets active
+		 * when this object is provided with vView.cache.keys array; keys are used to store data in the cache and for
+		 * invalidation of the cache
+		 * @param {(string|Promise)[]} [vView.cache.keys] Array with strings or Promises resolving with strings
+		 * @param {object} [vView.preprocessors] Preprocessors configuration, see {@link sap.ui.core.mvc.View}
 		 * @param {sap.ui.core.mvc.Controller} [vView.controller] Controller instance to be used for this view
 		 * @public
 		 * @static
@@ -113,22 +127,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		}
 
 		function validateViewSettings(oView, mSettings) {
-			var error;
 			if (!mSettings) {
-				error = new Error("mSettings must be given");
+				throw new Error("mSettings must be given");
 			} else if (mSettings.viewName && mSettings.viewContent) {
-				error = new Error("View name and view content are given. There is no point in doing this, so please decide.");
+				throw new Error("View name and view content are given. There is no point in doing this, so please decide.");
 			} else if ((mSettings.viewName || mSettings.viewContent) && mSettings.xmlNode) {
-				error = new Error("View name/content AND an XML node are given. There is no point in doing this, so please decide.");
+				throw new Error("View name/content AND an XML node are given. There is no point in doing this, so please decide.");
 			} else if (!(mSettings.viewName || mSettings.viewContent) && !mSettings.xmlNode) {
-				error = new Error("Neither view name/content nor an XML node is given. One of them is required.");
-			}
-			if (error) {
-				// error needs to be stored so that the view can reject with it
-				if (oView.oAsyncState) {
-						oView.oAsyncState.error = error;
-				}
-				throw error;
+				throw new Error("Neither view name/content nor an XML node is given. One of them is required.");
+			} else if (mSettings.cache && !(mSettings.cache.keys && mSettings.cache.keys.length)) {
+				throw new Error("No cache keys provided. At least one is required.");
 			}
 		}
 
@@ -141,6 +149,109 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 			return xContent.documentElement;
 		}
 
+		function setResourceModel(oView, mSettings) {
+			if ((oView._resourceBundleName || oView._resourceBundleUrl) && (!mSettings.models || !mSettings.models[oView._resourceBundleAlias])) {
+				var model = new ResourceModel({
+					bundleName: oView._resourceBundleName,
+					bundleUrl: oView._resourceBundleUrl,
+					bundleLocale: oView._resourceBundleLocale
+				});
+				oView.setModel(model, oView._resourceBundleAlias);
+			}
+		}
+
+		function setAfterRenderingNotifier(oView) {
+			// Delegate for after rendering notification before onAfterRendering of child controls
+			oView.oAfterRenderingNotifier = new XMLAfterRenderingNotifier();
+			oView.oAfterRenderingNotifier.addDelegate({
+				onAfterRendering: function() {
+					oView.onAfterRenderingBeforeChildren();
+				}
+			});
+		}
+
+		function getRootComponent(oSrcElement) {
+			var Component = sap.ui.require("sap/ui/core/Component"),
+				oComponent;
+
+			while (oSrcElement && Component) {
+				var oCandidateComponent = Component.getOwnerComponentFor(oSrcElement);
+				if (oCandidateComponent) {
+					oSrcElement = oComponent = oCandidateComponent;
+				} else {
+					if (oSrcElement instanceof Component) {
+						oComponent = oSrcElement;
+					}
+					oSrcElement = oSrcElement.getParent && oSrcElement.getParent();
+				}
+			}
+			return oComponent;
+		}
+
+		function getCacheInput(oView, mCacheSettings) {
+			var oRootComponent = getRootComponent(oView),
+				sManifest = oRootComponent ? JSON.stringify(oRootComponent.getManifest()) : null,
+				aFutureKeyParts = getCacheKeyPrefixes(oView, oRootComponent);
+
+			aFutureKeyParts.push(getVersionInfo());
+			aFutureKeyParts.push(getCacheKeys(mCacheSettings.keys));
+
+			return Promise.all(aFutureKeyParts).then(function(aKeyParts) {
+				return {
+					key: aKeyParts.join("_") +  "(" + jQuery.sap.hashCode(sManifest || "") + ")",
+					componentManifest: sManifest,
+					additionalData: mCacheSettings.additionalData
+				};
+			});
+		}
+
+		function getCacheKeys(aFutureKeys) {
+			return Promise.all(aFutureKeys).then(function(aKeys) {
+				if (aKeys.every(function(sKey){return sKey;})) {
+					return aKeys.join('_');
+				} else {
+					throw new Error("Provided cache keys may not be undefined.");
+				}
+			});
+		}
+
+		function getCacheKeyPrefixes(oView, oRootComponent) {
+				var sComponentName = oRootComponent && oRootComponent.getMetadata().getName();
+				return [
+					sComponentName || window.location.host + window.location.pathname,
+					oView.getId(),
+					sap.ui.getCore().getConfiguration().getLanguageTag()
+				];
+		}
+
+		function getVersionInfo() {
+			return sap.ui.getVersionInfo({async:true}).then(function(oInfo) {
+				return oInfo.buildTimestamp;
+			});
+		}
+
+		function writeCache(mCacheInput, xContent) {
+			// we don´t want to write the key into the cache
+			var sKey = mCacheInput.key;
+			delete mCacheInput.key;
+			mCacheInput.xml = jQuery.sap.serializeXML(xContent);
+			return Cache.set(sKey, mCacheInput);
+		}
+
+		function readCache(mCacheInput) {
+			return Cache.get(mCacheInput.key).then(function(mCacheOutput) {
+				// double check manifest to eliminate issues with hash collisions
+				if (mCacheOutput && mCacheOutput.componentManifest == mCacheInput.componentManifest) {
+					mCacheOutput.xml = jQuery.sap.parseXML(mCacheOutput.xml, "application/xml").documentElement;
+					if (mCacheOutput.additionalData) {
+						// extend the additionalData which was passed into cache configuration dynamically
+						jQuery.extend(true, mCacheInput.additionalData, mCacheOutput.additionalData);
+					}
+					return mCacheOutput;
+				}
+			});
+		}
+
 		/**
  		* This function initialized the view settings.
  		*
@@ -148,58 +259,56 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
  		* @return {Promise|null} [oMyPromise] will be returned if running in async mode
  		*/
 		XMLView.prototype.initViewSettings = function(mSettings) {
-			var that = this;
+			var that = this, _xContent;
 
-			function processView() {
+			function processView(xContent) {
+				that._xContent = xContent;
+
 				// extract the properties of the view from the XML element
 				if ( !that.isSubView() ) {
 					// for a real XMLView, we need to parse the attributes of the root node
-					XMLTemplateProcessor.parseViewAttributes(that._xContent, that, mSettings);
+					XMLTemplateProcessor.parseViewAttributes(xContent, that, mSettings);
 				} else {
 					// when used as fragment: prevent connection to controller, only top level XMLView must connect
 					delete mSettings.controller;
 				}
-
-				if ((that._resourceBundleName || that._resourceBundleUrl) && (!mSettings.models || !mSettings.models[that._resourceBundleAlias])) {
-					var model = new ResourceModel({
-						bundleName: that._resourceBundleName,
-						bundleUrl: that._resourceBundleUrl,
-						bundleLocale: that._resourceBundleLocale
-					});
-					that.setModel(model, that._resourceBundleAlias);
-				}
-
-				// Delegate for after rendering notification before onAfterRendering of child controls
-				that.oAfterRenderingNotifier = new XMLAfterRenderingNotifier();
-				that.oAfterRenderingNotifier.addDelegate({
-					onAfterRendering: function() {
-						that.onAfterRenderingBeforeChildren();
-					}
-				});
+				setResourceModel(that, mSettings);
+				setAfterRenderingNotifier(that);
 			}
 
-			function setxContent(xContent) {
-				that._xContent = xContent;
-			}
-
-			function runViewxmlPreprocessor(bAsync) {
+			function runViewxmlPreprocessor(xContent, bAsync) {
 				if (that.hasPreprocessor("viewxml")) {
 					// for the viewxml preprocessor fully qualified ids are provided on the xml source
-					XMLTemplateProcessor.enrichTemplateIds(that._xContent, that);
-					return that.runPreprocessor("viewxml", that._xContent, !bAsync);
+					XMLTemplateProcessor.enrichTemplateIds(xContent, that);
+					return that.runPreprocessor("viewxml", xContent, !bAsync);
 				}
-				return that._xContent;
+				return xContent;
 			}
 
-			function runPreprocessorsAsync() {
-				return that.runPreprocessor("xml", that._xContent).then(setxContent)
-					.then(runViewxmlPreprocessor.bind(that, true)).then(setxContent);
+			function runPreprocessorsAsync(xContent) {
+				return that.runPreprocessor("xml", xContent).then(function(xContent) {
+					return runViewxmlPreprocessor(xContent, /*bAsync=*/true);
+				});
 			}
 
 			function loadResourceAsync(sResourceName) {
 				return jQuery.sap.loadResource(sResourceName, {async: true}).then(function(oData) {
-					setxContent(oData.documentElement); // result is the document node
-					return that._xContent;
+					return oData.documentElement; // result is the document node
+				});
+			}
+
+			function processCache(sResourceName, mCacheSettings) {
+				return getCacheInput(that, mCacheSettings).then(function(mCacheInput) {
+					return readCache(mCacheInput).then(function(mCacheOutput) {
+						if (!mCacheOutput) {
+							return loadResourceAsync(sResourceName).then(runPreprocessorsAsync).then(function(xContent) {
+								writeCache(mCacheInput, xContent);
+								return xContent;
+							});
+						} else {
+							return mCacheOutput.xml;
+						}
+					});
 				});
 			}
 
@@ -216,23 +325,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 			if (mSettings.viewName) {
 				var sResourceName = jQuery.sap.getResourceName(mSettings.viewName, ".view.xml");
 				if (mSettings.async) {
-					// return here, as the left processing is taking place inside the promise chain
-					return loadResourceAsync(sResourceName).then(runPreprocessorsAsync).then(processView);
+					// in async mode we need to return here as processing takes place in Promise callbacks
+					if (mSettings.cache) {
+						return processCache(sResourceName, mSettings.cache).then(processView);
+					} else {
+						return loadResourceAsync(sResourceName).then(runPreprocessorsAsync).then(processView);
+					}
 				} else {
-					setxContent(jQuery.sap.loadResource(sResourceName).documentElement);
+					_xContent = jQuery.sap.loadResource(sResourceName).documentElement;
 				}
 			} else if (mSettings.viewContent) {
-				setxContent(getxContent(this, mSettings));
+				_xContent = getxContent(this, mSettings);
 			} else if (mSettings.xmlNode) {
-				setxContent(mSettings.xmlNode);
+				_xContent = mSettings.xmlNode;
 			}
 
 			if (mSettings.async) {
-				return runPreprocessorsAsync(this._xContent).then(processView);
+				return runPreprocessorsAsync(_xContent).then(processView);
 			} else {
-				setxContent(this.runPreprocessor("xml", this._xContent, true));
-				setxContent(runViewxmlPreprocessor());
-				processView();
+				_xContent = this.runPreprocessor("xml", _xContent, true);
+				_xContent = runViewxmlPreprocessor(_xContent);
+				processView(_xContent);
 			}
 		};
 
@@ -281,13 +394,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 				var aChildren = this.getAggregation("content");
 				if ( aChildren ) {
 					for (var i = 0; i < aChildren.length; i++) {
-						if (aChildren[i].getDomRef() === null) {
-							// Do not replace if there is no dom to replace it with...
-							continue;
-						}
-						var $childDOM = aChildren[i].$();
-						// jQuery.sap.log.debug("replacing placeholder for " + aChildren[i] + " with content");
-						jQuery.sap.byId(RenderPrefixes.Dummy + aChildren[i].getId(), this._$oldContent).replaceWith($childDOM);
+
+						// get DOM or invisible placeholder for child
+						var oChildDOM = aChildren[i].getDomRef() ||
+										jQuery.sap.domById(RenderPrefixes.Invisible + aChildren[i].getId());
+
+						// if DOM exists, replace the preservation dummy with it
+						if ( oChildDOM ) {
+							jQuery.sap.byId(RenderPrefixes.Dummy + aChildren[i].getId(), this._$oldContent).replaceWith(oChildDOM);
+						} // otherwise keep the dummy placeholder
 					}
 				}
 				// move preserved DOM into place

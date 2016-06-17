@@ -1,173 +1,233 @@
 /*
  * ! ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/dt/command/BaseCommand'],
-		function(jQuery, BaseCommand) {
-			"use strict";
+sap.ui
+		.define(
+				['jquery.sap.global', 'sap/ui/dt/command/BaseCommand', 'sap/ui/dt/ElementUtil'],
+				function(jQuery, BaseCommand, ElementUtil) {
+					"use strict";
 
-				var fnMapFormIndexToContentAggregationIndex = function(oType, aContent, inThInstance) {
-					var oResult;
-					var iCurrentGroupIndex = -1;
-					for (var i = 0; i < aContent.length; i++) {
-						if (aContent[i] instanceof oType) {
-							iCurrentGroupIndex++;
-							if (iCurrentGroupIndex === inThInstance) {
-								oResult = aContent[i];
-								break;
+					/**
+					 * Move Element from one place to another
+					 *
+					 * @class
+					 * @extends sap.ui.dt.command.BaseCommand
+					 * @author SAP SE
+					 * @version ${version}
+					 * @constructor
+					 * @private
+					 * @since 1.40
+					 * @alias sap.ui.dt.command.SimpleFormMove
+					 * @experimental Since 1.40. This class is experimental and provides only limited functionality. Also the API
+					 *               might be changed in future.
+					 */
+					var SimpleFormMove = BaseCommand.extend("sap.ui.dt.command.SimpleFormMove", {
+						metadata : {
+							properties : {
+								movedElements : {
+									type : "array"
+								},
+								target : {
+									type : "object"
+								},
+								source : {
+									type : "object"
+								},
+								changeType : {
+									type : "string",
+									defaultValue : "moveSimpleFormElement"
+								},
+								action : {
+									type : "object"
+								}
 							}
 						}
-					}
-					return aContent.indexOf(oResult);
-				};
+					});
 
-				var fnMeasureLengthOfFormContainer = function(oFormContainer) {
-					var aFormElements = oFormContainer.getFormElements();
-					var iMovedLength = aFormElements.reduce(function(previousValue, currentValue, currentIndex, array) {
-						previousValue += currentValue.getFields().length + 1;
-						return previousValue;
-					}, 1);
-					return iMovedLength;
-				};
+					SimpleFormMove.prototype._setReverseAction = function(oAction) {
+						this._reverseAction = oAction;
+					};
 
-				var fnExtractElementIds = function(aComponents) {
-					var aResult = [];
-					for (var i = 0; i < aComponents.length; i++) {
-						aResult.push(aComponents[i].getId());
-					}
-					return aResult;
-				};
+					SimpleFormMove.prototype._getReverseAction = function() {
+						return (this._reverseAction);
+					};
 
-				var fnArrayRangeCopy = function(aSource, iSourceIndex, aTarget, iTargetIndex, iMovedLength) {
-					var aResult = aTarget;
-					for (var i = 0; i < iMovedLength; i++) {
-						aResult.splice(iTargetIndex + i, 0, aSource[iSourceIndex + i]);
-					}
-					return aResult;
-				};
+					SimpleFormMove.prototype._executeWithElement = function(oElement) {
 
-				var fnCreateReorderAction = function(oParent, aElements) {
-					return {
-						changeType : 'reorder_aggregation',
-						source : {
-							elements : aElements
-						},
-						target : {
-							parent : oParent,
-							aggregation : 'content'
+						oElement = fnGetSimpleFormContainer(oElement);
+						var oAction = this.getAction();
+
+						if (!oAction) {
+							var oSimpleForm = oElement;
+							var aMovedElements = this.getMovedElements();
+							if (aMovedElements.length > 1) {
+								jQuery.sap.log.warning("Moving more than 1 Formelement is not yet supported.");
+							}
+							var oMovedElement = aMovedElements[0].element;
+							var oTarget = this.getTarget();
+
+							if (oMovedElement instanceof sap.ui.layout.form.FormContainer) {
+								oAction = fnMoveFormContainer(oSimpleForm, oMovedElement, oTarget);
+							} else if (oMovedElement instanceof sap.ui.layout.form.FormElement) {
+								oAction = fnMoveFormElement(oSimpleForm, oMovedElement, oTarget);
+							}
+							this.setAction(oAction);
+							var oReverseAction = jQuery.extend(true, {}, oAction);
+							oReverseAction.source.elements = fnGetAll(sap.ui.getCore().byId(oAction.target.parent), oAction);
+							this._setReverseAction(oReverseAction);
+						}
+
+						if (oAction) {
+							fnExChangeContent(oAction);
 						}
 					};
-				};
 
-				var fnMoveFormContainer = function(oSimpleForm, oMovedElement, oTarget){
-					var aContent = oSimpleForm.getContent();
-					var oMovedGroupTitle = oMovedElement.getTitle();
-					var iMovedGroupIndex = aContent.indexOf(oMovedGroupTitle);
+					SimpleFormMove.prototype._undoWithElement = function(oElement) {
+						fnSwapAction(this);
+						this._executeWithElement(oElement);
+					};
 
-					var iTargetIndex = fnMapFormIndexToContentAggregationIndex(sap.ui.core.Title, aContent, oTarget.index);
-					var iMovedLength = fnMeasureLengthOfFormContainer(oMovedElement);
-
-					var aContentClone = aContent.slice();
-					// Cut the moved group from the result array...
-					aContentClone.splice(iMovedGroupIndex, iMovedLength);
-					// and insert it at the target index
-					aContentClone = fnArrayRangeCopy(aContent, iMovedGroupIndex, aContentClone, iTargetIndex, iMovedLength);
-					return fnCreateReorderAction(oSimpleForm.getId(), fnExtractElementIds(aContentClone));
-				};
-
-				var fnMoveFormElement = function(oSimpleForm, oMovedElement, oTarget) {
-
-					oSimpleForm = oSimpleForm.getParent();
-					var aContent = oSimpleForm.getContent();
-					var aFormElementsWithinTargetContainer = oTarget.parent.getFormElements();
-
-					var iSourceIndex = aContent.indexOf(oMovedElement.getLabel());
-					var iSourceLength = aFormElementsWithinTargetContainer[oTarget.index].getFields().length + 1;
-
-					var iTargetIndex = aContent.indexOf(oTarget.parent.getTitle());
-					if (iTargetIndex > iSourceIndex) {
-						iTargetIndex = iTargetIndex - iSourceLength;
-					}
-					// measure length of all elements before insert point
-					var iOffset = 0;
-					for (var k = 0; k < oTarget.index; k++) {
-						iOffset = iOffset + aFormElementsWithinTargetContainer[k].getFields().length + 1;
-					}
-					iTargetIndex = iTargetIndex + iOffset + 1;
-
-					// Copy the content
-					var aContentClone = aContent.slice();
-					// Cut the moved group from the result array...
-					aContentClone.splice(iSourceIndex, iSourceLength);
-					// and insert it at the target index
-					aContentClone = fnArrayRangeCopy(aContent, iSourceIndex, aContentClone, iTargetIndex, iSourceLength);
-					return fnCreateReorderAction(oSimpleForm.getId(), fnExtractElementIds(aContentClone));
-				};
-
-			/**
-			 * Move Element from one place to another
-			 *
-			 * @class
-			 * @extends sap.ui.rta.command.FlexCommand
-			 * @author SAP SE
-			 * @version ${version}
-			 * @constructor
-			 * @private
-			 * @since 1.40
-			 * @alias sap.ui.dt.command.SimpleFormMove
-			 * @experimental Since 1.40. This class is experimental and provides only limited functionality. Also the API
-			 *               might be changed in future.
-			 */
-			var SimpleFormMove = BaseCommand.extend("sap.ui.dt.command.SimpleFormMove", {
-				metadata : {
-					properties : {
-						movedElement : {
-							type : "string"
-						},
-						target : {
-							type : "object"
-						},
-						source : {
-							type : "object"
-						},
-						changeType : {
-							type : "string",
-							defaultValue : "moveSimpleFormElement"
+					var fnGetSimpleFormContainer = function(oElement) {
+						if (ElementUtil.isInstanceOf(oElement, "sap.ui.layout.form.SimpleForm")) {
+							return oElement;
+						} else if (ElementUtil.isInstanceOf(oElement, "sap.ui.layout.form.Form")
+								|| ElementUtil.isInstanceOf(oElement, "sap.ui.layout.form.FormContainer")
+								|| ElementUtil.isInstanceOf(oElement, "sap.ui.layout.form.FormElement")) {
+							return fnGetSimpleFormContainer(oElement.getParent());
 						}
-					}
-				}
-		  });
+					};
 
-			BaseCommand.prototype._executeWithElement = function(oElement) {
-//sap.ui.dt.OverlayRegistry.getOverlay(oSource.parent).getPublicParentElementOverlay().getElement()
-					//var oSimpleForm = oElement.getParent().getParent();
-					var oAction = {};
-					var oSimpleForm = oElement;
-					var oMovedElement = this.getMovedElement();
-					var oTarget = this.getTarget();
+					var fnMapFormIndexToContentAggregationIndex = function(oType, aContent, inThInstance) {
+						var oResult;
+						var iCurrentGroupIndex = -1;
+						for (var i = 0; i < aContent.length; i++) {
+							if (aContent[i] instanceof oType) {
+								iCurrentGroupIndex++;
+								if (iCurrentGroupIndex === inThInstance) {
+									oResult = aContent[i];
+									break;
+								}
+							}
+						}
+						return aContent.indexOf(oResult);
+					};
 
-					if (oMovedElement instanceof sap.ui.layout.form.FormContainer) {
+					var fnMeasureLengthOfFormContainer = function(oFormContainer) {
+						var aFormElements = oFormContainer.getFormElements();
+						var iMovedLength = aFormElements.reduce(function(previousValue, currentValue, currentIndex, array) {
+							previousValue += currentValue.getFields().length + 1;
+							return previousValue;
+						}, 1);
+						return iMovedLength;
+					};
 
-						oAction = fnMoveFormContainer(oSimpleForm, oMovedElement, oTarget);
+					var fnExtractElementIds = function(aComponents) {
+						var aResult = [];
+						for (var i = 0; i < aComponents.length; i++) {
+							aResult.push(aComponents[i].getId());
+						}
+						return aResult;
+					};
 
-					} else if (oMovedElement instanceof sap.ui.layout.form.FormElement) {
+					var fnArrayRangeCopy = function(aSource, iSourceIndex, aTarget, iTargetIndex, iMovedLength) {
+						var aResult = aTarget;
+						for (var i = 0; i < iMovedLength; i++) {
+							aResult.splice(iTargetIndex + i, 0, aSource[iSourceIndex + i]);
+						}
+						return aResult;
+					};
 
-						oAction = fnMoveFormElement(oSimpleForm, oMovedElement, oTarget);
+					var fnCreateReorderAction = function(oParent, aElements) {
+						return {
+							changeType : 'reorder_aggregation',
+							source : {
+								elements : aElements
+							},
+							target : {
+								parent : oParent,
+								aggregation : 'content'
+							}
+						};
+					};
 
-					}
+					var fnMoveFormContainer = function(oSimpleForm, oMovedElement, oTarget) {
+						var aContent = oSimpleForm.getContent();
+						var oMovedGroupTitle = oMovedElement.getTitle();
+						var iMovedGroupIndex = aContent.indexOf(oMovedGroupTitle);
 
-					var oTargetParent = sap.ui.getCore().byId(oAction.target.parent);
-					var sAggregationRemoveAllMutator = this
-								.getAggregationAccessors(oTargetParent, oAction.target.aggregation).removeAll;
+						var iTargetIndex = fnMapFormIndexToContentAggregationIndex(sap.ui.core.Title, aContent, oTarget.index);
+						var iMovedLength = fnMeasureLengthOfFormContainer(oMovedElement);
+
+						var aContentClone = aContent.slice();
+						// Cut the moved group from the result array...
+						aContentClone.splice(iMovedGroupIndex, iMovedLength);
+						// and insert it at the target index
+						aContentClone = fnArrayRangeCopy(aContent, iMovedGroupIndex, aContentClone, iTargetIndex, iMovedLength);
+						return fnCreateReorderAction(oSimpleForm.getId(), fnExtractElementIds(aContentClone));
+					};
+
+					var fnMoveFormElement = function(oSimpleForm, oMovedElement, oTarget) {
+
+						var aContent = oSimpleForm.getContent();
+						var aFormElementsWithinTargetContainer = oTarget.parent.getFormElements();
+
+						var iSourceIndex = aContent.indexOf(oMovedElement.getLabel());
+						var iSourceLength = aFormElementsWithinTargetContainer[oTarget.index].getFields().length + 1;
+
+						var iTargetIndex = aContent.indexOf(oTarget.parent.getTitle());
+						if (iTargetIndex > iSourceIndex) {
+							iTargetIndex = iTargetIndex - iSourceLength;
+						}
+						// measure length of all elements before insert point
+						var iOffset = 0;
+						for (var k = 0; k < oTarget.index; k++) {
+							iOffset = iOffset + aFormElementsWithinTargetContainer[k].getFields().length + 1;
+						}
+						iTargetIndex = iTargetIndex + iOffset + 1;
+
+						// Copy the content
+						var aContentClone = aContent.slice();
+						// Cut the moved group from the result array...
+						aContentClone.splice(iSourceIndex, iSourceLength);
+						// and insert it at the target index
+						aContentClone = fnArrayRangeCopy(aContent, iSourceIndex, aContentClone, iTargetIndex, iSourceLength);
+						return fnCreateReorderAction(oSimpleForm.getId(), fnExtractElementIds(aContentClone));
+					};
+
+					var fnGetAll = function(oTargetParent, oAction) {
+						var sAggregationGetAllMutator = ElementUtil.getAggregationAccessors(oTargetParent,
+								oAction.target.aggregation).get;
+						return fnExtractElementIds(oTargetParent[sAggregationGetAllMutator]());
+					};
+
+					var fnRemoveAll = function(oTargetParent, oAction) {
+						var sAggregationRemoveAllMutator = ElementUtil.getAggregationAccessors(oTargetParent,
+								oAction.target.aggregation).removeAll;
 						oTargetParent[sAggregationRemoveAllMutator]();
-					var sAggregationAddMutator = this.getAggregationAccessors(oTargetParent, oAction.target.aggregation).add;
-					var oActElement;
-					for (var j = 0; j < oAction.source.elements.length; j++) {
-						oActElement = sap.ui.getCore().byId(oAction.source.elements[j]);
-						oTargetParent[sAggregationAddMutator](oActElement);
-					}
+					};
 
-			};
+					var fnAddAll = function(oTargetParent, oAction) {
+						var sAggregationAddMutator = ElementUtil.getAggregationAccessors(oTargetParent, oAction.target.aggregation).add;
+						var oActElement;
+						for (var j = 0; j < oAction.source.elements.length; j++) {
+							oActElement = sap.ui.getCore().byId(oAction.source.elements[j]);
+							oTargetParent[sAggregationAddMutator](oActElement);
+						}
+					};
 
-			return SimpleFormMove;
+					var fnExChangeContent = function(oAction) {
+						var oTargetParent = sap.ui.getCore().byId(oAction.target.parent);
+						fnRemoveAll(oTargetParent, oAction);
+						fnAddAll(oTargetParent, oAction);
+					};
 
-		}, /* bExport= */true);
+					// swap action with its reverse action, so a client can always get the actual action by calling 'getAction'
+					var fnSwapAction = function(oContext) {
+						var oTmp = oContext._getReverseAction();
+						oContext._setReverseAction(oContext.getAction());
+						oContext.setAction(oTmp);
+					};
+
+					return SimpleFormMove;
+
+				}, /* bExport= */true);

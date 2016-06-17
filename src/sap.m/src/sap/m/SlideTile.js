@@ -147,6 +147,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 		if (jQuery.sap.PseudoEvents.sapspace.fnCheck(oEvent)) {
 			this._toggleAnimation();
 		}
+		if (oEvent.which === jQuery.sap.KeyCodes.B && this._bAnimationPause) {
+			this._scrollToNextTile(true, true);
+		}
+		if (oEvent.which === jQuery.sap.KeyCodes.F && this._bAnimationPause) {
+			this._scrollToNextTile(true, false);
+		}
 	};
 
 	/**
@@ -178,12 +184,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	 * @param {jQuery.Event} oEvent Event object
 	 */
 	SlideTile.prototype.onfocusout = function (oEvent) {
-		this._startAnimation();
+		if (this.getTiles().length > 1) {
+			this._startAnimation();
+		}
 	};
 
 	/* --- Helpers --- */
 	/**
-	 * Remove the focus of tiles in SlideTile
+	 * Removes the focus of tiles in SlideTile
 	 *
 	 * @private
 	 */
@@ -217,11 +225,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 		this._iCurrAnimationTime += Date.now() - this._iStartTime;
 		clearTimeout(this._sTimerId);
 		if (this._iCurrentTile != undefined) {
-			var oWrapperTo = jQuery.sap.byId(this.getId() + "-wrapper-" + this._iCurrentTile);
+			var oWrapperTo = this.$("wrapper-" + this._iCurrentTile);
 			oWrapperTo.stop();
 		}
 		if (this._iPreviousTile != undefined) {
-			var oWrapperFrom = jQuery.sap.byId(this.getId() + "-wrapper-" + this._iPreviousTile);
+			var oWrapperFrom = this.$("wrapper-" + this._iPreviousTile);
 			oWrapperFrom.stop();
 		}
 		if (this._iCurrAnimationTime > this.getDisplayTime()) {
@@ -237,42 +245,48 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	 */
 	SlideTile.prototype._startAnimation = function() {
 		var iDisplayTime = this.getDisplayTime() - this._iCurrAnimationTime;
-		var that = this;
+
 		clearTimeout(this._sTimerId);
 		this._sTimerId = setTimeout(function() {
-			that._scrollToNextTile();
-		}, iDisplayTime);
+			this._scrollToNextTile();
+		}.bind(this), iDisplayTime);
 		this._iStartTime = Date.now();
 		this._bAnimationPause = false;
 	};
 
 	/**
-	 * Scrolls to the next tile
+	 * Scrolls to the next tile, forward or backward
 	 *
 	 * @private
-	 * @param {Boolean} pause triggers if the animations gets paused or not
+	 * @param {Boolean} pause Triggers if the animation gets paused or not
+	 * @param {Boolean} backward Sets the direction backward or forward
 	 */
-	SlideTile.prototype._scrollToNextTile = function(pause) {
-		var iTransitionTime = this._iCurrAnimationTime - this.getDisplayTime();
+	SlideTile.prototype._scrollToNextTile = function(pause, backward) {
+		var iTransitionTime = this._iCurrAnimationTime - this.getDisplayTime(),
+			bFirstAnimation, iNxtTile, oWrapperFrom, oWrapperTo, sWidthFrom, fWidthTo, fWidthFrom, bChangeSizeBefore, sDir, oDir;
+
 		iTransitionTime = this.getTransitionTime() - (iTransitionTime > 0 ? iTransitionTime : 0);
-		var bFirstAnimation = iTransitionTime === this.getTransitionTime();
+		bFirstAnimation = iTransitionTime === this.getTransitionTime();
 
 		if (bFirstAnimation) {
-			var iNxtTile = this._getNextTileIndex(this._iCurrentTile);
+			if (backward) {
+				iNxtTile = this._getPreviousTileIndex(this._iCurrentTile);
+			} else {
+				iNxtTile = this._getNextTileIndex(this._iCurrentTile);
+			}
 			this._iPreviousTile = this._iCurrentTile;
 			this._iCurrentTile = iNxtTile;
 		}
 
-		var oWrapperTo = jQuery.sap.byId(this.getId() + "-wrapper-" + this._iCurrentTile);
-		var bDoAnimate = this._iPreviousTile !== undefined;
-		var sDir = sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left";
+		oWrapperTo = this.$("wrapper-" + this._iCurrentTile);
+		sDir = sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left";
 
-		if (bDoAnimate) {
-			var oWrapperFrom = jQuery.sap.byId(this.getId() + "-wrapper-" + this._iPreviousTile);
-			var sWidthFrom = oWrapperFrom.css("width");
-			var fWidthTo = parseFloat(oWrapperTo.css("width"));
-			var fWidthFrom = parseFloat(sWidthFrom);
-			var bChangeSizeBefore = fWidthFrom < fWidthTo;
+		if (jQuery.isNumeric(this._iPreviousTile)) {
+			oWrapperFrom = this.$("wrapper-" + this._iPreviousTile);
+			sWidthFrom = oWrapperFrom.css("width");
+			fWidthTo = parseFloat(oWrapperTo.css("width"));
+			fWidthFrom = parseFloat(sWidthFrom);
+			bChangeSizeBefore = fWidthFrom < fWidthTo;
 
 			if (bChangeSizeBefore) {
 				this._changeSizeTo(this._iCurrentTile);
@@ -282,37 +296,47 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 				oWrapperTo.css(sDir, sWidthFrom);
 			}
 
-			var oDir = {};
-			oDir[sDir] = "-" + sWidthFrom;
+			oDir = {};
+			if (backward) {
+				oDir[sDir] = sWidthFrom;
+			} else {
+				oDir[sDir] = "-" + sWidthFrom;
+			}
 
-			var that = this;
 			oWrapperFrom.animate(oDir, {
 				duration : iTransitionTime,
 				done : function() {
 					if (!bChangeSizeBefore) {
-						that._changeSizeTo(that._iCurrentTile);
+						this._changeSizeTo(this._iCurrentTile);
 					}
 					oWrapperFrom.css(sDir, "");
-				}
+				}.bind(this)
 			});
+
+			if (backward) {
+				oDir[sDir] = "-" + sWidthFrom;
+				oWrapperTo.animate(oDir, 0);
+			}
 			oDir[sDir] = "0rem";
 
 			oWrapperTo.animate(oDir, {
 				duration : iTransitionTime,
 				done : function() {
-					that._iCurrAnimationTime = 0;
+					this._iCurrAnimationTime = 0;
 					if (!pause) {
-						that._startAnimation();
+						this._startAnimation();
 					}
-				}
+				}.bind(this)
 			});
 		} else {
 			this._changeSizeTo(this._iCurrentTile);
 			oWrapperTo.css(sDir, "0rem");
 		}
+
 		if (this.getTiles()[this._iCurrentTile]) {
 			this._setAriaDescriptor();
 		}
+		this._updateTilesIndicator();
 	};
 
 	/**
@@ -353,6 +377,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	};
 
 	/**
+	 * Returns the index of the previous tile based on the current index
+	 *
+	 * @private
+	 * @param {int} tileIndex of the element in the tiles aggregation
+	 * @returns {int} Index of the previous tile
+	 */
+	SlideTile.prototype._getPreviousTileIndex = function(tileIndex) {
+		if (tileIndex > 0) {
+			return tileIndex - 1;
+		} else {
+			return this.getTiles().length - 1;
+		}
+	};
+
+	/**
 	 * Returns the index of the next tile based on the current index
 	 *
 	 * @private
@@ -368,17 +407,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	};
 
 	/**
-	 * Returns the index of the previous tile based on the current index
+	 * Updates multiple tiles indicator
 	 *
 	 * @private
-	 * @param {int} tileIndex of the element in the tiles aggregation
-	 * @returns {int} Index of the previous tile
 	 */
-	SlideTile.prototype._getPrevTileIndex = function(tileIndex) {
-		if (tileIndex - 1 >= 0) {
-			return tileIndex - 1;
-		} else {
-			return this.getTiles().length - 1;
+	SlideTile.prototype._updateTilesIndicator = function() {
+		var $currentBullet;
+
+		for (var i = 0; i < this.getTiles().length; i++) {
+			$currentBullet =  this.$("tileIndicator-" + i);
+			if (i === this._iCurrentTile) {
+				$currentBullet.addClass("sapMSTActive");
+			} else {
+				$currentBullet.removeClass("sapMSTActive");
+			}
 		}
 	};
 

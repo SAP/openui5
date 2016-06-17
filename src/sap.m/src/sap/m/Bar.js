@@ -392,6 +392,48 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 	/////////////////
 	//Bar in page delegation
 	/////////////////
+
+	// Provides helper sap.m.BarInAnyContentEnabler
+	/**
+	 * @class Helper Class for implementing additional contexts of the Bar.
+	 * e.g. in sap.m.Dialog
+	 *
+	 * @version 1.40
+	 * @protected
+	 */
+	var BarInAnyContentEnabler = BarInPageEnabler.extend("sap.m.BarInAnyContentEnabler", /** @lends sap.m.BarInAnyContentEnabler.prototype */ {});
+
+	BarInAnyContentEnabler.mContexts = {
+		dialogFooter : {
+			contextClass : "sapMFooter-CTX",
+			tag : "Footer",
+			internalAriaLabel: "BAR_ARIA_DESCRIPTION_FOOTER"
+		}
+	};
+
+	/**
+	 * Gets the available Bar contexts from the BarInPageEnabler and adds the additional contexts from BarInAnyContentEnabler.
+	 *
+	 * @returns {Object} with all available contexts
+	 */
+	BarInAnyContentEnabler.prototype.getContext = function() {
+		var oParentContexts = BarInPageEnabler.prototype.getContext.call();
+
+		for (var key in BarInAnyContentEnabler.mContexts) {
+			oParentContexts[key] = BarInAnyContentEnabler.mContexts[key];
+		}
+
+		return oParentContexts;
+	};
+
+	/**
+	 * Gets the available Bar contexts.
+	 *
+	 * @returns {Object} with all available contexts
+	 * @protected
+	 */
+	Bar.prototype.getContext = BarInAnyContentEnabler.prototype.getContext;
+
 	/**
 	 * Determines whether the Bar is sensitive to the container context.
 	 *
@@ -399,7 +441,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 	 * @returns {boolean} isContextSensitive
 	 * @protected
 	 */
-	Bar.prototype.isContextSensitive = BarInPageEnabler.prototype.isContextSensitive;
+	Bar.prototype.isContextSensitive = BarInAnyContentEnabler.prototype.isContextSensitive;
 
 	/**
 	 * Sets the HTML tag of the root element.
@@ -407,20 +449,20 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 	 * @returns {sap.m.IBar} this for chaining
 	 * @protected
 	 */
-	Bar.prototype.setHTMLTag = BarInPageEnabler.prototype.setHTMLTag;
+	Bar.prototype.setHTMLTag = BarInAnyContentEnabler.prototype.setHTMLTag;
 	/**
 	 * Gets the HTML tag of the root element.
 	 * @returns {sap.m.IBarHTMLTag} The HTML-tag
 	 * @protected
 	 */
-	Bar.prototype.getHTMLTag  = BarInPageEnabler.prototype.getHTMLTag;
+	Bar.prototype.getHTMLTag  = BarInAnyContentEnabler.prototype.getHTMLTag;
 
 	/**
 	 * Sets classes and tag according to the context of the page. Possible contexts are header, footer and sub-header.
 	 * @returns {sap.m.IBar} this for chaining
 	 * @protected
 	 */
-	Bar.prototype.applyTagAndContextClassFor  = BarInPageEnabler.prototype.applyTagAndContextClassFor;
+	Bar.prototype.applyTagAndContextClassFor  = BarInAnyContentEnabler.prototype.applyTagAndContextClassFor;
 
 	/**
 	 * Sets landmarks members to the bar instance
@@ -429,14 +471,15 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 	 * @param sContext {string} context of the bar
 	 * @private
 	 */
-	Bar.prototype._setLandmarkInfo  = BarInPageEnabler.prototype._setLandmarkInfo;
+	Bar.prototype._setLandmarkInfo  = BarInAnyContentEnabler.prototype._setLandmarkInfo;
 
 	/**
 	 * Writes landmarks info to the bar
 	 *
 	 * @private
 	 */
-	Bar.prototype._writeLandmarkInfo  = BarInPageEnabler.prototype._writeLandmarkInfo;
+	Bar.prototype._writeLandmarkInfo  = BarInAnyContentEnabler.prototype._writeLandmarkInfo;
+
 
 	return Bar;
 

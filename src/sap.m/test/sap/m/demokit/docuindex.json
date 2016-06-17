@@ -370,6 +370,7 @@
 			"sap.m.sample.IconTabBar",
 			"sap.m.sample.IconTabBarMulti",
 			"sap.m.sample.IconTabBarFiori2",
+			"sap.m.sample.IconTabBarInlineMode",
 			"sap.m.sample.IconTabBarNoIcons",
 			"sap.m.sample.IconTabBarProcess",
 			"sap.m.sample.IconTabBarStretchContent",
@@ -469,6 +470,7 @@
 			"sap.m.sample.ListFooter",
 			"sap.m.sample.ListGrouping",
 			"sap.m.sample.ListGrowing",
+			"sap.m.sample.ListGrowingUpwards",
 			"sap.m.sample.ListItemTypes",
 			"sap.m.sample.ListLoading",
 			"sap.m.sample.ListNavType",
@@ -689,7 +691,8 @@
 			"sap.m.sample.PageStandardClasses",
 			"sap.m.sample.PageSpacing",
 			"sap.m.sample.PageListReportIconTabBar",
-			"sap.m.sample.PageListReportToolbar"
+			"sap.m.sample.PageListReportToolbar",
+			"sap.m.sample.PageFloatingFooter"
 		  ]
 		},
 		{
@@ -808,7 +811,10 @@
 		  "name": "Select",
 		  "category": "User Input",
 		  "since": "1.10",
-		  "samples": ["sap.m.sample.Select"]
+		  "samples": [
+            "sap.m.sample.Select",
+            "sap.m.sample.Select2Columns"
+          ]
 		},
 		{
 		  "id": "sap.m.SelectList",
@@ -863,7 +869,7 @@
 			  "id": "sap.m.RangeSlider",
 			  "name": "RangeSlider",
 			  "category": "User Input",
-			  "since": "1.40",
+			  "since": "1.38",
 			  "formFactors": "L",
 			  "samples": ["sap.m.sample.RangeSlider"]
 		},
@@ -1450,6 +1456,11 @@
 		  "description": "This page shows the floorplan for a list report with a Toolbar. The upper part extends with its content, but doesn't react to viewport changes. The lower part reacts to the viewport size. The table inside takes the available space. If the minimum size of the table is reached, the page begins to scroll."
 		},
 		{
+		  "id": "sap.m.sample.PageFloatingFooter",
+		  "name": "Page Floating Footer",
+		  "description": "The floating Footer allows the user to see the underlying content."
+		},
+		{
 		  "id": "sap.m.sample.IconTabBar",
 		  "name": "Icon Tab Bar - Filter",
 		  "description": "In this example, the Icon Tab Bar is used to apply filters on a table and display the count of the items for each view."
@@ -1463,6 +1474,11 @@
 		  "id": "sap.m.sample.IconTabBarFiori2",
 		  "name": "Icon Tab Bar - Text and Count",
 		  "description": "In this example, the Icon Tab Bar tabs display text and corresponding count."
+		},
+		{
+		  "id": "sap.m.sample.IconTabBarInlineMode",
+		  "name": "Icon Tab Bar - Inline Mode",
+		  "description": "In this example, the Icon Tab Bar tabs display the text and the count in one line."
 		},
 		{
 		  "id": "sap.m.sample.IconTabBarProcess",
@@ -1664,6 +1680,11 @@
 		  "name": "Select",
 		  "description": "Illustrates the usage of a Select in header, footer and content of a page. Note the different display options."
 		},
+        {
+          "id": "sap.m.sample.Select2Columns",
+          "name": "Select - Two columns layout",
+          "description": "Use the select dropdown list with two columns layout if you need to display additional information to your options, like e.g. currencies to countries or abbreviations to systems."
+        },
 		{
 		  "id": "sap.m.sample.SelectList",
 		  "name": "SelectList",
@@ -1918,6 +1939,11 @@
 		  "id": "sap.m.sample.ListGrowing",
 		  "name": "List - Growing",
 		  "description": "The Growing feature helps if your content is too big to be loaded/shown at once. It paginates the content into smaller chunks - aka pages - which are loaded/shown one after another. Random access to pages (e.g jumping to the end) is not possible. Depending on the model the content is loaded on demand (OData) or shown on demand (JSON)."
+		},
+		{
+		  "id": "sap.m.sample.ListGrowingUpwards",
+		  "name": "List - Growing Upwards",
+		  "description": "The Upwards Growing"
 		},
 		{
 		  "id": "sap.m.sample.ListGrouping",

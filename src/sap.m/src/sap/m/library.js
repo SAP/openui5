@@ -54,6 +54,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.ValueColor",
 			"sap.m.InputType",
 			"sap.m.LabelDesign",
+			"sap.m.ListGrowingDirection",
 			"sap.m.ListHeaderDesign",
 			"sap.m.ListKeyboardMode",
 			"sap.m.ListMode",
@@ -290,14 +291,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 * A translucent background depending on the opacity value of the theme.
 		 * @public
 		 */
-		Translucent : "Translucent",
-
-		/**
-		 * A second solid background color dependent on the theme.
-		 * @since 1.40.0
-		 * @public
-		 */
-		Solid2 : "Solid2"
+		Translucent : "Translucent"
 
 	};
 
@@ -1105,6 +1099,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
+	/**
+	 * Specifies <code>IconTabBar</code> header mode.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.IconTabHeaderMode = {
+
+		/**
+		 * Standard. In this mode when the <code>count</code> and the <code>text</code> are set, they are displayed in two separate lines.
+		 */
+		Standard : "Standard",
+
+		/**
+		 * Inline. In this mode when the <code>count</code> and the <code>text</code> are set, they are displayed in one line.
+		 */
+		Inline : "Inline"
+	};
 
 		/**
 	 * Available Filter Item Design.
@@ -1469,6 +1482,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 * @public
 		 */
 		Edit : "Edit"
+
+	};
+
+	/**
+	 * Defines the growing direction of the <code>sap.m.List</code> or <code>sap.m.Table</code>.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.40.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.ListGrowingDirection = {
+
+		/**
+		 * User has to scroll down to load more items or the growing button is displayed at the bottom.
+		 * @public
+		 */
+		Downwards : "Downwards",
+
+		/**
+		 * User has to scroll up to load more items or the growing button is displayed at the top.
+		 * <b>Note:</b> If this option is active, there should not be any other control than <code>sap.m.List</code> inside its <code>ScollContainer</code>.
+		 * @public
+		 */
+		Upwards : "Upwards"
 
 	};
 

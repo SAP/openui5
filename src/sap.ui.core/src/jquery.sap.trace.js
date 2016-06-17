@@ -19,13 +19,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Global'],
 
 		(function() {
 
-			var bFesrActive = /sap-ui-xx-fesr=(true|x|X)/.test(location.search), // experimental parameter
+			// activation by meta tag or url parameter as fallback
+			var bFesrActive = getInitialFESRState(),
 				bTraceActive,
 				bInteractionActive,
 				bMethodsOverridden, // indicates if the method overrides for fesr have already taken place
 				ROOT_ID = createGUID(), // static per session
 				CLIENT_ID = createGUID().substr(-8, 8) + ROOT_ID, // static per session
-				HOST = new URI(window.location).host(), // static per session
+				HOST = window.location.host, // static per session
 				CLIENT_OS = sap.ui.Device.os.name + "_" + sap.ui.Device.os.version,
 				CLIENT_MODEL = sap.ui.Device.browser.name + "_" + sap.ui.Device.browser.version,
 				sAppVersion = "", // shortened app version with fesr delimiter e.g. "@1.7.1"
@@ -41,14 +42,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Global'],
 				sFESRopt, // current header string
 				iScrollEventDelayId = 0;
 
+			function getInitialFESRState() {
+				var bActive = !!document.querySelector("meta[name=sap-ui-fesr][content=true]"),
+					aParamMatches = window.location.search.match(/[\?|&]sap-ui-(?:xx-)?fesr=(true|x|X|false)&?/);
+				if (aParamMatches) {
+					bActive = aParamMatches[1] && aParamMatches[1] != "false";
+				}
+				return bActive;
+			}
+
 			function activateDetectionMethods() {
+				// in case we do not have this API measurement is superfluous due to insufficient performance data
+				if (!(window.performance && window.performance.getEntries)) {
+					jQuery.sap.log.warning("Interaction tracking is not supported on browsers with insufficient performance API");
+				}
+
 				// only start this once to avoid multiple overrides of the xhr methods
 				if (!bMethodsOverridden) {
 					bMethodsOverridden = true;
-					// in case we do not have this API measurement is superfluous due to insufficient performance data
-					if (!(window.performance && window.performance.getEntries)) {
-						jQuery.sap.log.warning("Interaction tracking is not supported on browsers with insufficient performance API");
-					}
 
 					var fnXHRopen = window.XMLHttpRequest.prototype.open,
 						fnXHRsend = window.XMLHttpRequest.prototype.send,

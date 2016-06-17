@@ -240,7 +240,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 	Feed.prototype.handleFeederSubmit = function(oEvent){
 
 		var oDate = new Date();
-	//	var sDate = String(oDate.getFullYear()) + String(oDate.getMonth()) + String(oDate.getDate()) + String(oDate.getHours()) + String(oDate.getMinutes()) + String(oDate.getSeconds());
 		var sDate = String(oDate);
 
 		var oNewChunk = new sap.ui.ux3.FeedChunk(this.getId() + '-new-' + this.getChunks().length, {
@@ -256,19 +255,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 		this.insertChunk(oNewChunk, 0);
 		this.fireChunkAdded({chunk: oNewChunk});
 
-	};
-
-	/*
-	 * overwrite of setLive
-	 */
-	Feed.prototype.setLive = function(bLive) {
-		this.setProperty("live", bLive, true); //no re-rendering because only ToggleButton is changed
-
-		if (this.oLiveButton) {
-			// update ToggleButton
-			this.oLiveButton.setPressed(bLive);
-		}
-		return this;
 	};
 
 	/**

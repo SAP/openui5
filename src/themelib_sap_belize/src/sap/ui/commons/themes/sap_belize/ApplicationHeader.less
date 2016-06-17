@@ -1,0 +1,55 @@
+/* ================================================= */
+/* CSS for control sap.ui.commons/ApplicationHeader  */
+/* Belize theme                                      */
+/* ================================================= */
+
+.sapUiAppHdr {
+	font-family: @sapUiDesktopFontFamily;
+	font-size: @sapUiDesktopFontSize;
+	-moz-background-size: 100% 110px;
+	-moz-box-shadow: 0 0 8px @sapUiContentShadowColor; // @sapUiDarkShadowTint = #000000
+	background-image: -moz-linear-gradient(top center, darken(@sapUiContentForegroundColor, 46), darken(@sapUiContentForegroundColor, 70)); // @sapUiDarkAltBG = #707376, @sapUiExtraDarkBG = #333333
+	background-image: -webkit-gradient(linear, left top, left bottom, from(darken(@sapUiContentForegroundColor, 46)), to(darken(@sapUiContentForegroundColor, 70))); // @sapUiDarkAltBG = #707376, @sapUiExtraDarkBG = #333333
+	background-image: -webkit-linear-gradient(top center, darken(@sapUiContentForegroundColor, 46), darken(@sapUiContentForegroundColor, 70)); // @sapUiDarkAltBG = #707376, @sapUiExtraDarkBG = #333333
+	background-image: -ms-linear-gradient(darken(@sapUiContentForegroundColor, 46), darken(@sapUiContentForegroundColor, 70)); /* starting with IE10 this works in IE */ // @sapUiDarkAltBG = #707376, @sapUiExtraDarkBG = #333333
+	background-image: linear-gradient(top center, darken(@sapUiContentForegroundColor, 46), darken(@sapUiContentForegroundColor, 70)); // @sapUiDarkAltBG = #707376, @sapUiExtraDarkBG = #333333
+	background-position: left top;
+	background-size: 100% 110px;
+	text-shadow: 1px 1px 2px lighten(@sapUiContentShadowColor, 20); // @sapUiDarkText = #333333
+	color: @sapUiContentContrastTextColor; // @sapUiTextInverted = #ffffff
+	border: 0px solid @sapUiBrand;
+	border-top-width: 8px;
+}
+
+html[data-sap-ui-browser="ie9"] .sapUiAppHdr {
+	background-image: url(img/applicationheader/Header_bg.png);
+	background-size: auto; /* IE9 does understand background-size, but it is meant for the gradient which it does not understand... */
+}
+
+.sapUiAppHdr .sapUiTv {
+	font-size: 13px;
+}
+
+.sapUiAppHdr .sapUiBtn.sapUiBtnS.sapUiBtnLite{
+	color: @sapUiContentContrastTextColor; // @sapUiTextInverted = #ffffff
+}
+
+.sapUiAppHdr .sapUiBtn.sapUiBtnS.sapUiBtnLite:focus{
+	color: @sapUiContentContrastTextColor; // @sapUiTextInverted = #ffffff
+	background-color: transparent;
+	outline: 1px dotted @sapUiContentContrastFocusColor; // @sapUiTextInverted = #ffffff
+	outline-offset: -1px;
+}
+
+.sapUiAppHdrWelcomeLogoffArea > .sapUiBtn.sapUiBtnS.sapUiBtnLite.sapUiBtnAct{
+	background-color: @sapUiButtonHoverBackground;
+}
+
+.sapUiAppHdrWelcomeLogoffArea > .sapUiTbSeparator {
+	display: inline-block;
+	vertical-align: top;
+	height: 10px;
+	width: 1px;
+	background-color: darken(@sapUiContentForegroundBorderColor, 15); // @sapUiMediumLine = #999999
+	margin: 4px 6px 0 6px;
+}

@@ -43,6 +43,10 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Element', './Dec
 	var Fragment = ManagedObject.extend("sap.ui.core.Fragment", {
 		metadata: {
 			properties: {
+
+				/*
+				 * The Fragment type. Types "XML", "HTML" and JS" are built-in and always available.
+				 */
 				type: "string"
 			},
 			specialSettings: {

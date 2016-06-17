@@ -7,10 +7,13 @@
 /* Common styles        */
 /************************************/
 /* toggled without context */
+html.sap-desktop .sapMToggleBtnPressed,
 .sapMToggleBtnPressed,
 /* Bar context*/
+html.sap-desktop .sapMIBar-CTX .sapMToggleBtnPressed,
 .sapMIBar-CTX .sapMToggleBtnPressed,
 /* Toolbar transparent context */
+html.sap-desktop .sapMTB-Transparent-CTX .sapMBtnInner.sapMToggleBtnPressed
 .sapMTB-Transparent-CTX .sapMBtnInner.sapMToggleBtnPressed {
 	background-image: none;
 	background-color: @sapUiToggleButtonPressedBackground;
@@ -23,7 +26,7 @@
 .sapMBtn:hover .sapMBtnHoverable.sapMToggleBtnPressed, /*in Firefox the button receives the hover state, not it's inner child */
 .sapMBtn .sapMBtnHoverable.sapMToggleBtnPressed:hover,
 /* Toolbar transparent context*/
-.sapMTB-Transparent-CTX .sapMBtnHoverable.sapMToggleBtnPressed:hover  {
+.sapMTB-Transparent-CTX .sapMBtnHoverable.sapMToggleBtnPressed:hover {
 	background-image: none;
 	background-color: @sapUiToggleButtonPressedHoverBackground;
 }
@@ -31,7 +34,7 @@
 /* toggled - icon has to be adapted */
 .sapMToggleBtnPressed .sapMBtnIcon,
 .sapMToggleBtnPressed.sapMBtnTransparent > .sapMBtnIcon,
-html.sap-desktop .sapMToggleBtnPressed.sapMBtnTransparent > .sapMBtnIcon  {
+html.sap-desktop .sapMToggleBtnPressed.sapMBtnTransparent > .sapMBtnIcon {
 	color:            @sapUiContentContrastIconColor;
 }
 
@@ -50,7 +53,8 @@ html.sap-desktop .sapMToggleBtnPressed.sapMBtnTransparent > .sapMBtnIcon  {
 /************************************/
 
 /* hover and down on toggled button part 1*/
-
+.sapMFooter-CTX .sapMBtn:hover > .sapMBtnHoverable.sapMToggleBtnPressed:not(.sapMBtnActive),
+.sapMBarChild .sapMBtn  .sapMBtnHoverable.sapMToggleBtnPressed:hover,
 .sapMIBar-CTX .sapMBtn .sapMBtnHoverable.sapMToggleBtnPressed:hover {
 	background-color: @sapUiToggleButtonPressedHoverBackground;
 	border-color:     @sapUiToggleButtonPressedBorderColor;

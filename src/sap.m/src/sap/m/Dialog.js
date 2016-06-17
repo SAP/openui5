@@ -3,8 +3,11 @@
  */
 
 // Provides control sap.m.Dialog.
-sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './AssociativeOverflowToolbar', './ToolbarSpacer', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/Popup', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/core/theming/Parameters', 'sap/ui/core/RenderManager'],
-	function (jQuery, Bar, InstanceManager, AssociativeOverflowToolbar, ToolbarSpacer, library, Control, IconPool, Popup, ScrollEnablement, Parameters, RenderManager) {
+sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './AssociativeOverflowToolbar', './ToolbarSpacer',
+	'./library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/Popup', 'sap/ui/core/delegate/ScrollEnablement',
+	'sap/ui/core/theming/Parameters', 'sap/ui/core/RenderManager', 'sap/ui/core/InvisibleText'],
+	function (jQuery, Bar, InstanceManager, AssociativeOverflowToolbar, ToolbarSpacer, library, Control, IconPool,
+			  Popup, ScrollEnablement, Parameters, RenderManager, InvisibleText) {
 		"use strict";
 
 
@@ -173,7 +176,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 					/**
 					 * The hidden aggregation for internal maintained toolbar instance
 					 */
-					_toolbar: {type: "sap.m.OverflowToolbar", multiple: false, visibility: "hidden"}
+					_toolbar: {type: "sap.m.OverflowToolbar", multiple: false, visibility: "hidden"},
+
+					/**
+					 * The hidden aggregation for the Dialog state
+					 */
+					_valueState: {type: "sap.ui.core.InvisibleText", multiple: false, visibility: "hidden"}
 				},
 				associations: {
 
@@ -280,6 +288,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 			this.oPopup = new Popup();
 			this.oPopup.setShadow(true);
+			this.oPopup.setNavigationMode("SCOPE");
 			if (jQuery.device.is.iphone && !this._bMessageType) {
 				this.oPopup.setModal(true, "sapMDialogTransparentBlk");
 			} else {
@@ -355,6 +364,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			}
 
 			this._createToolbarButtons();
+
+			if (sap.ui.getCore().getConfiguration().getAccessibility() && this.getState() != ValueState.None) {
+				var oValueState = new InvisibleText({text: this.getValueStateString(this.getState())});
+
+				this.setAggregation("_valueState", oValueState);
+				this.addAriaLabelledBy(oValueState.getId());
+			}
 		};
 
 		Dialog.prototype.onAfterRendering = function () {
@@ -366,6 +382,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			if (this.isOpen()) {
 				//restore the focus after rendering when dialog is already open
 				this._setInitialFocus();
+			}
+
+			if (this.getType() === sap.m.DialogType.Message ||
+				(sap.ui.Device.system.phone && !this.getStretch())) {
+				this.$("footer").removeClass("sapContrast sapContrastPlus");
 			}
 		};
 
@@ -619,6 +640,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				}
 			}
 
+			if (oStyles.width == 'auto') {
+				oStyles.width = undefined;
+			}
+
+			if (oStyles.height == 'auto') {
+				oStyles.height = undefined;
+			}
+
 			if ((bStretch && !bMessageType) || (bStretchOnPhone)) {
 				this.$().addClass('sapMDialogStretched');
 			}
@@ -675,14 +704,15 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 */
 		Dialog.prototype._onResize = function () {
 			var $dialog = this.$(),
-				$dialogContent = this.$('cont');
+				$dialogContent = this.$('cont'),
+				sContentHeight = this.getContentHeight();
 
 			//if height is set by manually resizing return;
 			if (this._oManuallySetSize) {
 				return;
 			}
 
-			if (!this.getContentHeight()) {
+			if (!sContentHeight || sContentHeight == 'auto') {
 				//reset the height so the dialog can grow
 				$dialogContent.css({
 					height: 'auto'
@@ -1157,6 +1187,27 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			return this._oToolbar;
 		};
 
+		/**
+		 * Returns the sap.ui.core.ValueState state according to the language settings
+		 * @param {sap.ui.core.ValueState|string} sValueState The dialog's value state
+		 * @returns {string} The translated text
+		 * @private
+		 */
+		Dialog.prototype.getValueStateString = function (sValueState) {
+			var rb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+			switch (sValueState) {
+				case (sap.ui.core.ValueState.Success):
+					return rb.getText("LIST_ITEM_STATE_SUCCESS");
+				case (sap.ui.core.ValueState.Warning):
+					return rb.getText("LIST_ITEM_STATE_WARNING");
+				case (sap.ui.core.ValueState.Error):
+					return rb.getText("LIST_ITEM_STATE_ERROR");
+				default:
+					return "";
+			}
+		};
+
 		/* =========================================================== */
 		/*                      end: private functions                 */
 		/* =========================================================== */
@@ -1282,6 +1333,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				$this.toggleClass(Dialog._mStateClasses[sName], !!mFlags[sName]);
 			}
 			this.setIcon(Dialog._mIcons[sState], true);
+			return this;
 		};
 
 		Dialog.prototype.setIcon = function (sIcon, bInternal) {
@@ -1497,7 +1549,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 					that._$dialog.css({
 						left: Math.min(Math.max(0, that._oManuallySetPosition.x), windowWidth - DIALOG_MIN_VISIBLE_SIZE),
 						top: Math.min(Math.max(0, that._oManuallySetPosition.y), windowHeight - DIALOG_MIN_VISIBLE_SIZE),
-						transform: "initial"
+						transform: "none"
 					});
 				}
 
@@ -1515,7 +1567,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 							that._$dialog.css({
 								left: Math.min(Math.max(0, that._oManuallySetPosition.x), windowWidth - DIALOG_MIN_VISIBLE_SIZE),
 								top: Math.min(Math.max(0, that._oManuallySetPosition.y), windowHeight - DIALOG_MIN_VISIBLE_SIZE),
-								transform: "initial"
+								transform: "none"
 							});
 						});
 					});
@@ -1538,7 +1590,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 							if (that._bRTL) {
 								styles.left = Math.min(Math.max(e.pageX, 0), maxLeftOffset);
-								styles.transform = "initial";
+								styles.transform = "none";
 								that._oManuallySetSize.width = initial.width + initial.x - Math.max(e.pageX, 0);
 							}
 

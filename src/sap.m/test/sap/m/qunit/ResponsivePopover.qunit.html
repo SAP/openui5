@@ -134,13 +134,13 @@
 			},
 			teardown: function() {
 
-				if (this.oResponsivePopover.isOpen()) {
+				if (this.oResponsivePopover && this.oResponsivePopover.isOpen()) {
 					this.oResponsivePopover.close();
 				}
 
 				// Cleanup
-				this.oButton.destroy();
-				this.oResponsivePopover.destroy();
+				this.oButton && this.oButton.destroy();
+				this.oResponsivePopover && this.oResponsivePopover.destroy();
 			}
 		});
 
@@ -307,6 +307,21 @@
 				var domQueryLength = this.oResponsivePopover.getDomRef().querySelectorAll('.sapMPopoverResizeHandle').length;
 				assert.strictEqual(domQueryLength,  0, "Arrow not found in responsive popover");
 			}
+		});
+
+		QUnit.test("ResponsivePopover should be extensible", function (assert) {
+				var ResponsivePopoverExtended = sap.m.ResponsivePopover.extend("sap.m.ResponsivePopoverExtended", {
+					metadata: {
+						properties: {
+							customBooleanProperty: {type : "boolean", group : "Misc", defaultValue : true}
+						}
+					}
+				});
+
+				var oResponsivePopoverExtendedInstance = new ResponsivePopoverExtended();
+				oResponsivePopoverExtendedInstance.setCustomBooleanProperty(false);
+
+				assert.ok(true, "This is expected to pass because custom property is only set on ResponsivePopover itself and not on aggregated controls");
 		});
 
 		</script>

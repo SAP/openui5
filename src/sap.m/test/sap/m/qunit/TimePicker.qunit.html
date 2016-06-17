@@ -2049,13 +2049,44 @@
 			tp.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			tp.fireChangeEvent("13 00");
-			tp.fireChangeEvent("13 00");
-			tp.fireChangeEvent("13 15");
-			tp.fireChangeEvent("13 15");
-			tp.fireChangeEvent("13 15");
+			tp._handleInputChange("13 00");
+			tp._handleInputChange("13 00");
+			tp._handleInputChange("13 15");
+			tp._handleInputChange("13 15");
+			tp._handleInputChange("13 15");
 
 			equals(spy.callCount, 2, "changed event fired only twice");
+
+			spy = null;
+			tp.destroy();
+		});
+
+		//BCP: 1670343229
+		test("change event fires on second change after the value is set in the change handler", function() {
+			//system under test
+			var tp = new sap.m.TimePicker({
+				valueFormat: "hh mm",
+				displayFormat: "hh mm",
+				value: "11 30"
+			}), spy = {
+				callCount: 0
+			};
+
+			tp.attachChange(function () {
+				spy.callCount++;
+				tp.setValue("11 30");
+			});
+
+			//arrange
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//act
+			tp._handleInputChange("11 28");
+			tp._handleInputChange("11 28");
+
+			//assert
+			equals(spy.callCount, 2, "changed event fired twice");
 
 			spy = null;
 			tp.destroy();
@@ -2095,6 +2126,33 @@
 			ok(!this.oTp._getPicker().isOpen(), "The picker 'isOpen' state is false");
 			ok(!this.oTp._getPicker().$().is(":visible"), "jQuery.is(':visible') returned false");
 			strictEqual(this.oTp._getPicker().$().css('display'), 'none', "The picker css display property is none");
+		});
+
+		test("tap on the input icon on Tablet opens the picker", function() {
+			// releated to BCP: 1670338556
+			var tp = new sap.m.TimePicker();
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			tp._openPicker();
+			var icon = tp.$().find(".sapUiIcon");
+			var oEvent = {
+				target: icon
+			}
+
+			tp.onfocusin(oEvent);
+			this.clock.tick(1000);
+
+			strictEqual(jQuery(".sapMPopover").is(":visible"), true, "When tapped on the button the picker stays opened");
+
+			oEvent.target = tp.getDomRef();
+
+			tp.onfocusin(oEvent);
+			this.clock.tick(1000);
+
+			strictEqual(jQuery(".sapMPopover").is(":visible"), false, "When focus on the field the picker is closed");
+
+			tp.destroy();
 		});
 
 		test("upon focusout, change event fires only once", function() {

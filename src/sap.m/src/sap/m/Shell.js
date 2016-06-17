@@ -207,6 +207,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		Shell.prototype.setHomeIcon = function(oIcons) {
 			this.setProperty("homeIcon", oIcons, true); // no rerendering
 			jQuery.sap.setIcons(oIcons);
+			return this;
 		};
 
 		return Shell;

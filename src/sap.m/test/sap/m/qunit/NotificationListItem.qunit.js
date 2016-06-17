@@ -8,9 +8,7 @@
 	jQuery.sap.require('sap.ui.thirdparty.sinon-qunit');
 	sinon.config.useFakeTimers = true;
 
-	if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
-		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-	}
+	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
 	var classNameUnread = '.sapMNLI-Unread';
 	var classNameHeader = '.sapMNLI-Header';

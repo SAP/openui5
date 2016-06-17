@@ -32,7 +32,8 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 				bStretch = oControl.getStretch(),
 				bStretchOnPhone = oControl.getStretchOnPhone() && sap.ui.Device.system.phone,
 				bResizable = oControl.getResizable(),
-				bDraggable = oControl.getDraggable();
+				bDraggable = oControl.getDraggable(),
+				oValueStateText = oControl.getAggregation("_valueState");
 
 			if (oHeader) {
 				oHeader.applyTagAndContextClassFor("header");
@@ -45,8 +46,8 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 			// write the HTML into the render manager
 			// the initial size of the dialog have to be 0, because if there is a large dialog content the initial size can be larger then the html's height (scroller)
 			// The scroller will make the initial window width smaller and in the next recalculation the maxWidth will be larger.
-			var initialWidth = oControl.getContentWidth() ? ' width: ' + oControl.getContentWidth() + ';' : '';
-			var initialHeight = oControl.getContentHeight() ? ' height: ' + oControl.getContentHeight() + ';' : '';
+			var initialWidth = oControl.getContentWidth() && oControl.getContentWidth() != 'auto' ? ' width: ' + oControl.getContentWidth() + ';' : '';
+			var initialHeight = oControl.getContentHeight() && oControl.getContentHeight() != 'auto' ? ' height: ' + oControl.getContentHeight() + ';' : '';
 			var initialStyles = "style='" + initialWidth + initialHeight + "'";
 
 			oRm.write('<div ' + initialStyles);
@@ -143,7 +144,7 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 			if (sap.ui.Device.system.desktop) {
 
 				if (bResizable && !bStretch) {
-					oRm.write('<div class="sapMDialogResizeHandler"></div>');
+					oRm.writeIcon("sap-icon://resize-corner", ["sapMDialogResizeHandler"], { "title" : ""});
 				}
 
 				// Invisible element which is used to determine when desktop keyboard navigation
@@ -157,7 +158,13 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 			}
 
 			if (oSubHeader) {
-				oRm.renderControl(oSubHeader.addStyleClass("sapMDialogSubHeader"));
+				oSubHeader.addStyleClass("sapContrastPlus");
+				oSubHeader.addStyleClass("sapMDialogSubHeader");
+				oRm.renderControl(oSubHeader);
+			}
+
+			if (oValueStateText) {
+				oRm.renderControl(oValueStateText);
 			}
 
 			oRm.write('<section id="' + id + '-cont" class="sapMDialogSection">');

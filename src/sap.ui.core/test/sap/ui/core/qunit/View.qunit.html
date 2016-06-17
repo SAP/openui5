@@ -30,6 +30,22 @@
 	jQuery.sap.require("sap.ui.core.util.XMLPreprocessor");
 	jQuery.sap.require("sap.ui.core.mvc.XMLView");
 
+	module("sap.ui.core.mvc.View");
+
+	test("ID handling", 5, function () {
+
+		var oView = new sap.ui.core.mvc.View("dummy", {});
+		var sPrefixedId = oView.createId("anyid");
+		var sLocalId = oView.getLocalId(sPrefixedId);
+		var sOtherId = oView.getLocalId("anyview--anyid");
+		equal(sPrefixedId, "dummy--anyid");
+		equal(sLocalId, "anyid");
+		equal(sOtherId, null);
+		ok(oView.isPrefixedId(sPrefixedId));
+		notOk(oView.isPrefixedId(sLocalId));
+
+	});
+
 	module("sap.ui.core.mvc.View#runPreprocessor(sync)", {
 		setup: function() {
 			mock = sinon.mock(sap.ui.core.util.XMLPreprocessor);

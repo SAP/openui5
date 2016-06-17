@@ -2,7 +2,8 @@
 
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="sap-ui-fesr" content="true">
 	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
@@ -10,7 +11,7 @@
 		data-sap-ui-noConflict="true"
 		data-sap-ui-libs="sap.ui.core, sap.m">
 	</script>
-	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
@@ -25,21 +26,12 @@
 
 		QUnit.module("Activation");
 
-		QUnit.test("Passport", function() {
-			// setup
-			jQuery.sap.passport.setActive(true);
-			var spy = this.spy(window.XMLHttpRequest.prototype, "setRequestHeader");
-			var oReq = new XMLHttpRequest();
-			oReq.open("GET", "../../../../../resources/sap-ui-core.js?noCache=" + Date.now(), false);
-			oReq.send();
-			// assertions
-			sinon.assert.calledOn(spy, oReq);
-			sinon.assert.calledWith(spy, "SAP-PASSPORT");
-			jQuery.sap.passport.setActive(false);
-			spy.restore();
+		QUnit.test("FESR - meta tag", function(assert) {
+			assert.ok(jQuery.sap.fesr.getActive(), "Meta tag was recognized successfully");
+			jQuery.sap.fesr.setActive(false);
 		});
 
-		QUnit.test("FESR", function() {
+		QUnit.test("FESR", function(assert) {
 			var spy;
 			if (bPerformanceSupported) {
 				// setup
@@ -75,7 +67,21 @@
 			spy.restore();
 		});
 
-		QUnit.test("interaction", function() {
+		QUnit.test("Passport", function(assert) {
+			// setup
+			jQuery.sap.passport.setActive(true);
+			var spy = this.spy(window.XMLHttpRequest.prototype, "setRequestHeader");
+			var oReq = new XMLHttpRequest();
+			oReq.open("GET", "../../../../../resources/sap-ui-core.js?noCache=" + Date.now(), false);
+			oReq.send();
+			// assertions
+			sinon.assert.calledOn(spy, oReq);
+			sinon.assert.calledWith(spy, "SAP-PASSPORT");
+			jQuery.sap.passport.setActive(false);
+			spy.restore();
+		});
+
+		QUnit.test("interaction", function(assert) {
 			if (bPerformanceSupported) {
 				// setup
 				jQuery.sap.interaction.setActive(true);
@@ -104,7 +110,7 @@
 
 		QUnit.module("Passport Header");
 
-		QUnit.test("header length", function() {
+		QUnit.test("header length", function(assert) {
 			// setup
 			jQuery.sap.passport.setActive(true);
 			var spy = this.spy(window.XMLHttpRequest.prototype, "setRequestHeader");
@@ -142,7 +148,7 @@
 				}
 			});
 
-			QUnit.test("mandatory header properties", function() {
+			QUnit.test("mandatory header properties", function(assert) {
 				var sFESR = this.spy.args[this.spy.thisValues.indexOf(this.oReq)][1];
 				ok(sFESR, "mandatory header present");
 				var aFESR = sFESR.split(",");
@@ -165,7 +171,7 @@
 				assert.strictEqual(aFESR[10], "SAP_UI5", "client_type");
 			});
 
-			QUnit.test("optional header properties", function() {
+			QUnit.test("optional header properties", function(assert) {
 				var sFESRopt = this.spy.args[this.spy.thisValues.indexOf(this.oReq) + 1][1];
 				ok(sFESRopt, "optional header present");
 				var aFESRopt = sFESRopt.split(",");
@@ -191,8 +197,9 @@
 					this.spy.restore();
   			}
 			});
+
 			// Check if global busy indicator measurement works without delay
-			QUnit.test("Busy indicator without delay", function() {
+			QUnit.test("Busy indicator without delay", function(assert) {
 				sap.ui.core.BusyIndicator.show(0);
 				sap.ui.core.BusyIndicator.hide();
 				jQuery.sap.interaction.notifyStepEnd(true);
@@ -208,9 +215,9 @@
 				assert.ok(iBusyDurationRequest+1 >= oMeasurement.busyDuration && iBusyDurationRequest-1 <= oMeasurement.busyDuration, "Request header contains global busy duration measurement");
 			});
 
-			// Check if global busy indicator measurement works with delay of 250 ms
-			QUnit.test("Busy indicator with delay", function() {
-				sap.ui.core.BusyIndicator.show(250);
+			// Check if global busy indicator measurement works with delay of 100 ms
+			QUnit.test("Busy indicator with delay", function(assert) {
+				sap.ui.core.BusyIndicator.show(100);
 				var done = assert.async();
 				var spy = this.spy;
 				setTimeout(function() {
@@ -228,7 +235,7 @@
 					var iBusyDurationRequest = parseInt(spy.args[spy.thisValues.indexOf(oReq) + 1 ][1].split(",")[14]);
 					assert.ok(iBusyDurationRequest+1 >= oMeasurement.busyDuration && iBusyDurationRequest-1 <= oMeasurement.busyDuration, "Request header contains global busy duration measurement");
 					done();
-				}, 251);
+				}, 200);
 			});
 		}
 	</script>

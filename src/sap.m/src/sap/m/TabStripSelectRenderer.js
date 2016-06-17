@@ -74,9 +74,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/SelectRendere
 				this.renderIcon(oRm, oSelect);
 			}
 
+			var oList = oSelect.getList();
 
-			if (oSelect._isRequiredSelectElement()) {
-				this.renderSelectElement(oRm, oSelect);
+			if (oSelect._isShadowListRequired() && oList) {
+				oRm.renderControl(oList);
 			}
 
 			oRm.write("</div>");

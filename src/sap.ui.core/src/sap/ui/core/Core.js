@@ -32,6 +32,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	var mLoadedLibraries = {};
 
 	/**
+	 * Bookkeeping for the preloading of libraries.
+	 *
+	 * Might contain an object for each library (keyed by the library name).
+	 * While the preload is pending for a library, the object has a property preload = true.
+	 * In any case, the object contains a promise that fulfills / rejects when the preload
+	 * fulfills / rejects.
+	 * @private
+	 */
+	var mLibraryPreloadBundles = {};
+
+	/**
 	 * EventProvider instance, EventProvider is no longer extended
 	 * @private
 	 */
@@ -361,13 +372,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 			if ( sPreloadMode === "sync" || sPreloadMode === "async" ) {
 				var bAsyncPreload = sPreloadMode !== "sync";
-				jQuery.each(aModules, function(i,sModule) {
-					if ( sModule.match(/\.library$/) ) {
-						// Note: in async mode, all preloads together contribute to oSyncPoint2.
-						// Only after that SP2 has been reached, library modules will be required by the Core.
-						jQuery.sap.preloadModules(sModule + "-preload", bAsyncPreload, oSyncPoint2);
+				// determine set of libraries
+				var aLibs = aModules.reduce(function(aResult, sModule) {
+					var iPos = sModule.search(/\.library$/);
+					if ( iPos >= 0 ) {
+						aResult.push(sModule.slice(0, iPos));
 					}
+					return aResult;
+				}, []);
+
+				var preloaded = this.loadLibraries(aLibs, {
+					async: bAsyncPreload,
+					preloadOnly: true
 				});
+				if ( bAsyncPreload ) {
+					var iPreloadLibrariesTask = oSyncPoint2.startTask("preload bootstrap libraries");
+					preloaded.then(function() {
+						oSyncPoint2.finishTask(iPreloadLibrariesTask);
+					}, function() {
+						oSyncPoint2.finishTask(iPreloadLibrariesTask, false);
+					});
+				}
 			}
 
 			// initializes the application cachebuster mechanism if configured
@@ -387,6 +412,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 							 "getCurrentFocusedControlId", "getControl", "getComponent", "getTemplate", "lock", "unlock","isLocked",
 							 "attachEvent","detachEvent","applyChanges", "getEventBus",
 							 "applyTheme","setThemeRoot","attachThemeChanged","detachThemeChanged","getStaticAreaRef",
+							 "attachThemeScopingChanged","detachThemeScopingChanged","fireThemeScopingChanged",
 							 "registerPlugin","unregisterPlugin","getLibraryResourceBundle", "byId",
 							 "getLoadedLibraries", "loadLibrary", "loadLibraries", "initLibrary",
 							 "includeLibraryTheme", "setModel", "getModel", "hasModel", "isMobile",
@@ -408,7 +434,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * Map of event names and ids, that are provided by this class
 	 * @private
 	 */
-	Core.M_EVENTS = {ControlEvent: "ControlEvent", UIUpdated: "UIUpdated", ThemeChanged: "ThemeChanged", LocalizationChanged: "localizationChanged",
+	Core.M_EVENTS = {ControlEvent: "ControlEvent", UIUpdated: "UIUpdated", ThemeChanged: "ThemeChanged", ThemeScopingChanged: "themeScopingChanged", LocalizationChanged: "localizationChanged",
 			LibraryChanged : "libraryChanged",
 			ValidationError : "validationError", ParseError : "parseError", FormatError : "formatError", ValidationSuccess : "validationSuccess"};
 
@@ -1179,6 +1205,224 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
+	 * Preloads a library asynchronously.
+	 *
+	 * @param {string|object} lib Name of the library to preload or settings object describing library.
+	 * @param {string} [lib.name] Name of the library to preload
+	 * @param {boolean|undefined} [lib.json] Whether library supports only json (<code>true<true>) or only JS (<code>false<code>)
+	 *                               or whether both should be tried (undefined)
+	 * @returns {Promise} A promise to be fulfilled when the lib has been preloaded
+	 * @private
+	 */
+	function preloadLibraryAsync(lib) {
+
+		jQuery.sap.assert(typeof lib === 'string' && lib || typeof lib === 'object' && typeof lib.name === 'string' && lib.name, "lib must be a non-empty string or an object with at least a non-empty name property" );
+
+		var libModule = lib.replace(/\./g, '/') + '/library.js';
+		if ( jQuery.sap.isResourceLoaded(libModule) ) {
+			return Promise.resolve(true);
+		}
+
+		var json;
+		if ( typeof lib !== 'string' ) {
+			json = lib.json;
+			lib = lib.name;
+		}
+
+		var libInfo = mLibraryPreloadBundles[lib] || (mLibraryPreloadBundles[lib] = { });
+
+		// return any existing promise (either lib is currently loading or has been loaded)
+		if ( libInfo.promise ) {
+			return libInfo.promise;
+		}
+
+		// otherwise mark as pending
+		libInfo.pending = true;
+		libInfo.async = true;
+
+		// first preload code, resolves with list of dependencies (or undefined)
+		var p;
+		if ( json !== true /* not forced to JSON */ ) {
+			var sPreloadModule = lib.replace(/\./g, '/') + '/library-preload.js';
+			p = jQuery.sap._loadJSResourceAsync(sPreloadModule).then(
+					function() {
+						return dependenciesFromManifest(lib);
+					},
+					function(e) {
+						// loading library-preload.js failed, might be an old style lib with a library-preload.json only.
+						// with json === false, this fallback can be suppressed
+						if ( json !== false ) {
+							jQuery.sap.log.error("failed to load '" + sPreloadModule + "' (" + (e && e.message || e) + "), falling back to library-preload.json");
+							return loadJSONAsync(lib);
+						}
+						// ignore other errors
+					}
+				);
+		} else {
+			p = loadJSONAsync(lib);
+		}
+
+		// load dependencies, if there are any
+		libInfo.promise = p.then(function(dependencies) {
+			if ( dependencies && dependencies.length ) {
+				return Promise.all(dependencies.map(preloadLibraryAsync)).then(function() {
+					libInfo.pending = false;
+				});
+			}
+			libInfo.pending = false;
+		});
+
+		// return resulting promise
+		return libInfo.promise;
+
+	}
+
+	function dependenciesFromManifest(lib) {
+
+		var manifestModule = lib.replace(/\./g, '/') + '/manifest.json';
+
+		if ( jQuery.sap.isResourceLoaded(manifestModule) ) {
+
+			var manifest = jQuery.sap.loadResource(manifestModule, {
+					dataType: 'json',
+					async: false, // always sync as we are sure to load from preload cache
+					failOnError: false
+				});
+
+			var libs = manifest && manifest["sap.ui5"] && manifest["sap.ui5"].dependencies && manifest["sap.ui5"].dependencies.libs;
+			if ( libs ) {
+				// convert manifest map to array, inject name
+				return Object.keys(libs).reduce(function(result, dep) {
+					if ( !libs[dep].lazy ) {
+						result.push(dep);
+					}
+					return result;
+				}, []);
+			}
+
+		}
+
+		// return undefined
+	}
+
+	function loadJSONAsync(lib) {
+		var sURL = jQuery.sap.getModulePath(lib + ".library-preload", ".json");
+
+		return Promise.resolve(jQuery.ajax({
+			dataType : "json",
+			url : sURL
+		})).then(
+			function(data) {
+				if ( data ) {
+					data.url = sURL;
+					jQuery.sap.registerPreloadedModules(data);
+					return data.dependencies;
+				}
+			},
+			function(xhr, textStatus, error) {
+				jQuery.sap.log.error("failed to load '" + sURL + "': " + (error || textStatus));
+			}
+		);
+
+	}
+
+
+	/**
+	 * Preloads a library synchronously.
+	 *
+	 * @param {string|object} lib Name of the library to preload or settings object describing library.
+	 * @param {string} [lib.name] Name of the library to preload
+	 * @param {boolean|undefined} [lib.json] Whether lib supports only json (<code>true<true>) or only JS (<code>false<code>)
+	 *                               or whether both should be tried (undefined)
+	 * @private
+	 */
+	function preloadLibrarySync(lib) {
+
+		jQuery.sap.assert(typeof lib === 'string' && lib || typeof lib === 'object' && typeof lib.name === 'string' && lib.name, "lib must be a non-empty string or an object with at least a non-empty name property" );
+
+		var libModule = lib.replace(/\./g, '/') + '/library.js';
+		if ( jQuery.sap.isResourceLoaded(libModule) ) {
+			return;
+		}
+
+		var json;
+		if ( typeof lib !== 'string' ) {
+			json = lib.json;
+			lib = lib.name;
+		}
+
+		var libInfo = mLibraryPreloadBundles[lib] || (mLibraryPreloadBundles[lib] = { });
+
+		// already preloaded?
+		if ( libInfo.pending === false ) {
+			return;
+		}
+
+		// currently loading
+		if ( libInfo.pending ) {
+			if ( libInfo.async ) {
+				throw new Error("request to load " + lib + " synchronously, but async loading is pending");
+			} else {
+				// sync cycle -> error (or return null like with modules?)
+				throw new Error("request to load " + lib + " synchronously, but sync loading is pending (cycle)");
+			}
+		}
+
+		libInfo.pending = true;
+		libInfo.async = false;
+
+		var resolve;
+		libInfo.promise = new Promise(function(_resolve, _reject) {
+			resolve = _resolve;
+		});
+
+		var dependencies;
+		if ( json !== true /* not forced to JSON */ ) {
+			try {
+				sap.ui.requireSync(lib.replace(/\./g, '/') + '/library-preload');
+				dependencies = dependenciesFromManifest(lib);
+			} catch (e) {
+				if ( e && e.loadError ) {
+					dependencies = loadJSONSync(lib);
+				} // ignore other errors (preload shouldn't fail)
+			}
+		} else {
+			dependencies = loadJSONSync(lib);
+		}
+
+		if ( dependencies && dependencies.length ) {
+			dependencies.forEach(preloadLibrarySync);
+		}
+
+		libInfo.pending = false;
+		resolve();
+
+	}
+
+	function loadJSONSync(lib) {
+		var sURL = jQuery.sap.getModulePath(lib + ".library-preload", ".json");
+		var dependencies;
+
+		jQuery.ajax({
+			dataType : "json",
+			async: false,
+			url : sURL,
+			success: function(data) {
+				if ( data ) {
+					data.url = sURL;
+					jQuery.sap.registerPreloadedModules(data);
+					dependencies = data.dependencies;
+				}
+			},
+			error: function(xhr, textStatus, error) {
+				jQuery.sap.log.error("failed to load '" + sURL + "': " + (error || textStatus));
+			}
+		});
+
+		return dependencies;
+	}
+
+	/**
 	 * Synchronously loads the given library and makes it available to the application.
 	 *
 	 * Loads the *.library module, which contains all preload modules (enums, types, content of a shared.js
@@ -1223,7 +1467,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				jQuery.sap.log.debug("load all-in-one file " + sAllInOneModule);
 				jQuery.sap.require(sAllInOneModule);
 			} else if ( this.oConfiguration.preload === 'sync' || this.oConfiguration.preload === 'async' ) {
-				jQuery.sap.preloadModules(sModule + "-preload", /* force sync */ false);
+				preloadLibrarySync(sLibrary);
 			}
 
 			// require the library module (which in turn will call initLibrary())
@@ -1279,14 +1523,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			bAsync = mOptions.async,
 			bRequire = !mOptions.preloadOnly;
 
-		function preloadLibs(oSyncPoint) {
-			if ( bPreload ) {
-				aLibraries.forEach(function(sLibraryName) {
-					jQuery.sap.preloadModules(sLibraryName + ".library-preload", !!oSyncPoint, oSyncPoint);
-				});
-			}
-		}
-
 		function requireLibs() {
 			if ( bRequire ) {
 				aLibraries.forEach(function(sLibraryName) {
@@ -1300,28 +1536,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		if ( bAsync ) {
 
-			return new Promise(function(resolve, reject) {
-
-				// TODO we urgently need to get rid of our syncPoints, but jQuery.sap.preloadModules still uses them
-				var oSyncPoint = jQuery.sap.syncPoint("Load Libraries", function(iOpenTasks, iFailures) {
-					if ( !iFailures ) {
-						requireLibs();
-						resolve();
-					} else {
-						reject(new Error("failed to preload libraries"));
-					}
-				});
-
-				// create an artifical task to trigger the callback if no other tasks have been created
-				var iTask = oSyncPoint.startTask("load libraries");
-				preloadLibs(oSyncPoint);
-				oSyncPoint.finishTask(iTask);
-
-			});
+			var preloaded = bPreload ? Promise.all(aLibraries.map(preloadLibraryAsync)) : Promise.resolve(true);
+			return preloaded.then(requireLibs);
 
 		} else {
 
-			preloadLibs(null);
+			if ( bPreload ) {
+				aLibraries.forEach(preloadLibrarySync);
+			}
 			requireLibs();
 
 		}
@@ -1381,25 +1603,91 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Initializes a library for an already loaded library module.
+	 * Provides the framework with information about a library.
 	 *
-	 * This method is intended to be called only from a library.js (e.g. generated code).
-	 * It includes the library specific stylesheet into the current page, and creates
-	 * lazy import stubs for all controls and elements in the library.
+	 * This method is intended to be called exactly once while the main module of a library
+	 * (its <code>library.js</code> module) is executing, typically at its begin. The single
+	 * parameter <code>oLibInfo</code> is an info object that describes the content of the library.
 	 *
-	 * As a result, consuming applications don't have to write import statements for the controls or for the enums.
+	 * When the <code>oLibInfo</code> has been processed, a normalized version of it will be kept
+	 * and will be returned as library information in later calls to {@link #getLoadedLibraries}.
+	 * Finally, <code>initLibrary</code> fires (the currently private) {@link #event:LibraryChanged}
+	 * event with operation 'add' for the newly loaded library.
 	 *
-	 * Synchronously loads any libraries that the given library depends on.
 	 *
-	 * @param {string|object} vLibInfo name of or info object for the library to import
+	 * <h3>Side Effects</h3>
+	 *
+	 * While analyzing the <code>oLibInfo</code>, the framework takes some additional actions:
+	 *
+	 * <ul>
+	 * <li>If the info object contains a list of <code>interfaces</code>, they will be registered
+	 * with the {@link sap.ui.base.DataType} class to make them available as aggregation types
+	 * in managed objects.</li>
+	 *
+	 * <li>If the object contains a list of <code>controls</code> or <code>elements</code>,
+	 * {@link sap.ui.lazyRequire lazy stubs} will be created for their constructor as well as for
+	 * their static <code>extend</code> and <code>getMetadata</code> methods.<br>
+	 * <b>Note:</b> Future versions might abandon the concept of lazy stubs as it requires synchronous
+	 * XMLHttpRequests which have been deprecated (see {@link http://xhr.spec.whatwg.org}). To be on the
+	 * safe side, productive applications should always require any modules that they directly depend on.</li>
+	 *
+	 * <li>With the <code>noLibraryCSS</code> property, the library can be marked as 'theming-free'.
+	 * Otherwise, the framework will add a &lt;link&gt; tag to the page's head, pointing to the library's
+	 * theme-specific stylesheet. The creation of such a &lt;link&gt; tag can be suppressed with the
+	 * {@link sap.ui.core.Configuration global configuration option} <code>preloadLibCss</code>.
+	 * It can contain a list of library names for which no stylesheet should be included.
+	 * This is e.g. useful when an application merges the CSS for multiple libraries and already
+	 * loaded the resulting stylesheet.</li>
+	 *
+	 * <li>If a list of library <code>dependencies</code> is specified in the info object, those
+	 * libraries will be loaded synchronously by <code>initLibrary</code>.<br>
+	 * <b>Note:</b> Dependencies between libraries don't have to be modeled as AMD dependencies.
+	 * Only when enums or types from an additional library are used in the coding of the
+	 * <code>library.js</code> module, the library should be additionally listed in the AMD dependencies.</li>
+	 * </ul>
+	 *
+	 * Last but not least, higher layer frameworks might want to include their own metadata for libraries.
+	 * The property <code>extensions</code> might contain such additional metadata. Its structure is not defined
+	 * by the framework, but it is strongly suggested that each extension only occupies a single property
+	 * in the <code>extensions</code> object and that the name of that property contains some namespace
+	 * information (e.g. library name that introduces the feature) to avoid conflicts with other extensions.
+	 * The framework won't touch the content of <code>extensions</code> but will make it available
+	 * in the library info objects returned by {@link #getLoadedLibraries}.
+	 *
+	 *
+	 * <h3>Relationship to Descriptor for Libraries (manifest.json)</h3>
+	 *
+	 * The information contained in <code>oLibInfo</code> is partially redundant to the content of the descriptor
+	 * for the same library (its <code>manifest.json</code> file). Future versions of UI5 might ignore the information
+	 * provided in <code>oLibInfo</code> and might evaluate the descriptor file instead. Library developers therefore
+	 * should keep the information in both files in sync.
+	 *
+	 * When the <code>manifest.json</code> is generated from the <code>.library</code> file (which is the default
+	 * for UI5 libraries built with Maven), then the content of the <code>.library</code> and <code>library.js</code>
+	 * files must be kept in sync.
+	 *
+	 * @param {object} oLibInfo Info object for the library
+	 * @param {string} [oLibInfo.name] Name of the library; when given it must match the name by which the library has been loaded
+	 * @param {string} oLibInfo.version Version of the library
+	 * @param {string[]} [oLibInfo.dependencies=[]] List of libraries that this library depends on; names are in dot notation (e.g ."sap.ui.core")
+	 * @param {string[]} [oLibInfo.types=[]] List of names of types that this library provides; names are in dot notation (e.g ."sap.ui.core.CSSSize")
+	 * @param {string[]} [oLibInfo.interfaces=[]] List of names of interface types that this library provides; names are in dot notation (e.g ."sap.ui.core.PopupInterface")
+	 * @param {string[]} [oLibInfo.controls=[]] Names of control types that this library provides; names are in dot notation (e.g ."sap.ui.core.ComponentContainer")
+	 * @param {string[]} [oLibInfo.elements=[]] Names of element types that this library provides (excluding controls); names are in dot notation (e.g ."sap.ui.core.Item")
+	 * @param {boolean} [oLibInfo.noLibraryCSS=false] Indicates whether the library doesn't provide / use theming.
+	 *                        When set to true, no library.css will be loaded for this library
+	 * @param {object} [oLibInfo.extensions] Potential extensions of the library metadata; structure not defined by the UI5 core framework.
 	 * @public
 	 */
-	Core.prototype.initLibrary = function(vLibInfo) {
-		jQuery.sap.assert(typeof vLibInfo === "string" || typeof vLibInfo === "object", "vLibInfo must be a string or object");
+	Core.prototype.initLibrary = function(oLibInfo) {
+		jQuery.sap.assert(typeof oLibInfo === 'string' || typeof oLibInfo === 'object', "oLibInfo must be a string or object");
 
-		var bLegacyMode = typeof vLibInfo === "string",
-			oLibInfo = bLegacyMode ? { name : vLibInfo } : vLibInfo,
-			sLibName = oLibInfo.name,
+		var bLegacyMode = typeof oLibInfo === 'string';
+		if ( bLegacyMode ) {
+			oLibInfo = { name : oLibInfo };
+		}
+
+		var sLibName = oLibInfo.name,
 			log = jQuery.sap.log,
 			METHOD =  "sap.ui.core.Core.initLibrary()";
 
@@ -1494,7 +1782,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		for (var i = 0; i < oLibInfo.dependencies.length; i++) {
 			var sDepLib = oLibInfo.dependencies[i];
 			log.debug("resolve Dependencies to " + sDepLib, null, METHOD);
-			if ( !mLoadedLibraries[sDepLib] ) {
+			if ( mLoadedLibraries[sDepLib] !== true ) {
 				log.warning("Dependency from " + sLibName + " to " + sDepLib + " has not been resolved by library itself", null, METHOD);
 				this.loadLibrary(sDepLib);
 			}
@@ -1544,6 +1832,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		}
 
 		this.fireLibraryChanged({name : sLibName, stereotype : "library", operation: "add", metadata : oLibInfo});
+
 	};
 
 	/**
@@ -1621,18 +1910,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Returns a map which contains the names of the loaded libraries as keys
-	 * and some additional information about each library as values.
+	 * Returns a map of library info objects for all currently loaded libraries,
+	 * keyed by their names.
 	 *
-	 * @experimental The details of the 'values' in the returned map are not yet specified!
-	 * Their structure might change in future versions without notice. So applications
-	 * can only rely on the set of keys as well as the pure existance of a value.
+	 * The structure of the library info objects matches the structure of the info object
+	 * that the {@link #initLibrary} method expects. Only property names documented with
+	 * <code>initLibrary</code> should be accessed, any additional properties might change or
+	 * disappear in future. When a property does not exists, its default value (as documented
+	 * with <code>initLibrary</code>) should be assumed.
 	 *
-	 * @return {map} map of library names / controls
+	 * <b>Note:</b> The returned info objects must not be modified. They might be a living
+	 * copy of the internal data (for efficiency reasons) and the framework is not prepared
+	 * to handle modifications to these objects.
+	 *
+	 * @return {map} Map of library info objects keyed by the library names.
 	 * @public
 	 */
 	Core.prototype.getLoadedLibraries = function() {
-		return jQuery.extend({}, this.mLibraries); // TODO deep copy or real Library object?
+		return jQuery.extend({}, this.mLibraries);
 	};
 
 	/**
@@ -1922,6 +2217,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		// notify the listeners via a control event
 		_oEventProvider.fireEvent(sEventId, mParameters);
+	};
+
+	/**
+	 * Fired when a scope class has been added or removed on a control/element
+	 * by using the custom style class API <code>addStyleClass</code>,
+	 * <code>removeStyleClass</code> or <code>toggleStyleClass</code>.
+	 *
+	 * Scope classes are defined by the library theme parameters coming from the
+	 * current theme.
+	 *
+	 * <b>Note:</b> The event will only be fired after the
+	 * <code>sap.ui.core.theming.Parameters</code> module has been loaded.
+	 * By default this is not the case.
+	 *
+	 * @name sap.ui.core.Core#ThemeScopingChanged
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+	 * @param {object} oEvent.getParameters
+	 * @param {string} oEvent.getParameters.scope Name of the CSS scope class
+	 * @param {boolean} oEvent.getParameters.added Whether the class has been added or removed
+	 * @param {sap.ui.core.Element} oEvent.getParameters.element Element instance on which the scope change happened
+	 */
+
+	Core.prototype.attachThemeScopingChanged = function(fnFunction, oListener) {
+		_oEventProvider.attachEvent(Core.M_EVENTS.ThemeScopingChanged, fnFunction, oListener);
+	};
+
+	Core.prototype.detachThemeScopingChanged = function(fnFunction, oListener) {
+		_oEventProvider.detachEvent(Core.M_EVENTS.ThemeScopingChanged, fnFunction, oListener);
+	};
+
+	Core.prototype.fireThemeScopingChanged = function(mParameters) {
+		_oEventProvider.fireEvent(Core.M_EVENTS.ThemeScopingChanged, mParameters);
 	};
 
 	/**

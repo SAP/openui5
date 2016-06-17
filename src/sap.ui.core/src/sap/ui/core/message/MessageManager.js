@@ -278,7 +278,7 @@ sap.ui.define([
 		if (aMessages) {
 			for (var i = 0; i < aMessages.length; i++) {
 				var oMsg = aMessages[i];
-				if (jQuery.sap.equal(oMsg, oMessage) && !oMsg.getPersistent()) {
+				if (jQuery.sap.equal(oMsg, oMessage)) {
 					aMessages.splice(i,1);
 					--i; // Decrease counter as one element has been removed
 				}

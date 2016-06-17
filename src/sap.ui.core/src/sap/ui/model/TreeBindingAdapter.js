@@ -56,6 +56,73 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 			this._bIsAdapted = true;
 		};
 
+		/**
+		 * Returns a tree state handle to encapsulate the actual tree state.
+		 * TODO: Encode the list to avoid conflicts with delimiters in the flat expanded list? Re-Check this when back-end support is implemented.
+		 *
+		 * This function is exposed in the sub-classes/adapters (e.g. ODataTreeBindingAdapter) if necessary/possible.
+		 *
+		 * @private
+		 */
+		TreeBindingAdapter.prototype.getCurrentTreeState = function () {
+			var sDelimiter = ";";
+
+			//expanded
+			var mExpandedEntriesGroupIDs = {};
+			for (var sGroupID in this._mTreeState.expanded) {
+				mExpandedEntriesGroupIDs[sGroupID] = true;
+			}
+
+			//collapsed
+			var mCollapsedEntriesGroupIDs = {};
+			for (var sGroupID in this._mTreeState.collapsed) {
+				mCollapsedEntriesGroupIDs[sGroupID] = true;
+			}
+
+			//selected
+			var mSelectedEntriesGroupIDs = {};
+			for (var sGroupID in this._mTreeState.selected) {
+				mSelectedEntriesGroupIDs[sGroupID] = true;
+			}
+
+			return {
+				_getExpandedList: function () {
+					return Object.keys(mExpandedEntriesGroupIDs).join(sDelimiter);
+				},
+				_getCollapsedList: function () {
+					return Object.keys(mCollapsedEntriesGroupIDs).join(sDelimiter);
+				},
+				_getSelectedList: function () {
+					return Object.keys(mSelectedEntriesGroupIDs).join(sDelimiter);
+				},
+				_isExpanded: function (sGroupID) {
+					return !!mExpandedEntriesGroupIDs[sGroupID];
+				},
+				_isCollapsed: function (sGroupID) {
+					return !!mCollapsedEntriesGroupIDs[sGroupID];
+				},
+				_remove: function (sGroupID) {
+					delete mExpandedEntriesGroupIDs[sGroupID];
+					delete mCollapsedEntriesGroupIDs[sGroupID];
+					delete mSelectedEntriesGroupIDs[sGroupID];
+				}
+			};
+		};
+
+		/**
+		 * Sets the given as a start point for the tree.
+		 * Only in OperationMode.Client.
+		 * @param oTreeState Only valid tree states from the same binding are accepted
+		 * @private
+		 */
+		TreeBindingAdapter.prototype.setTreeState = function (oTreeState) {
+			this._oInitialTreeState = oTreeState;
+		};
+
+		/**
+		 * Sets the AutoExpand Mode for this Adapter. Default is "Bundled".
+		 * @param sAutoExpandMode
+		 */
 		TreeBindingAdapter.prototype.setAutoExpandMode = function (sAutoExpandMode) {
 			this._autoExpandMode = sAutoExpandMode;
 		};
@@ -186,14 +253,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 
 		TreeBindingAdapter.prototype._createNodeState = function (mParameters) {
 			jQuery.sap.assert(mParameters.groupID, "To create a node state a group ID is mandatory!");
+
+			// check if the tree has an initial expansion state for the given groupID
+			var bInitiallyExpanded;
+			var bInitiallyCollapsed;
+			if (this._oInitialTreeState) {
+				bInitiallyExpanded = this._oInitialTreeState._isExpanded(mParameters.groupID);
+				bInitiallyCollapsed = this._oInitialTreeState._isCollapsed(mParameters.groupID);
+
+				this._oInitialTreeState._remove(mParameters.groupID);
+			}
+
+			// check the expansion state which should be set
+			// the given values have precedence over the initially set values, false is the fallback
+			var bIsExpanded = mParameters.expanded || bInitiallyExpanded || false;
+			var bIsSelected = mParameters.selected || false;
+
 			var oNodeState = {
 				groupID: mParameters.groupID,
-				expanded: mParameters.expanded || false,
+				expanded: bIsExpanded,
 				//a fresh node state has to have a single page with the current pagesize
 				sections: mParameters.sections || [{startIndex: 0, length: this._iPageSize}],
 				sum: mParameters.sum || false,
-				selected: mParameters.selected || false
+				selected: bIsSelected
 			};
+
+			// track initally modified nodes in the global treeState
+			if (bInitiallyExpanded || bInitiallyCollapsed) {
+				this._updateTreeState({groupID: mParameters.groupID, fallbackNodeState: oNodeState, expanded: bInitiallyExpanded, collapsed: bInitiallyCollapsed});
+			}
+
 			return oNodeState;
 		};
 

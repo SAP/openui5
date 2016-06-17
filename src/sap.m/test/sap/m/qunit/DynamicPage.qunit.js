@@ -155,6 +155,14 @@
 				sap.ui.Device.system.tablet = false;
 				sap.ui.Device.system.phone = true;
 			},
+			toTabletMode: function () {
+				$("html").removeClass("sapUiMedia-Std-Desktop")
+					.removeClass("sapUiMedia-Std-Phone")
+					.addClass("sapUiMedia-Std-Tablet");
+				sap.ui.Device.system.desktop = false;
+				sap.ui.Device.system.phone = false;
+				sap.ui.Device.system.tablet = true;
+			},
 			toDesktopMode: function () {
 				$("html").addClass("sapUiMedia-Std-Desktop")
 					.removeClass("sapUiMedia-Std-Tablet")
@@ -536,17 +544,18 @@
 		core.applyChanges();
 
 		assert.equal($footerWrapper.hasClass("sapUiHidden"), false, "Footer is visible again");
-		assert.equal($footer.hasClass("sapMDynamicPageActualFooterControlShow"), true, "Footer is visible again");
 	});
 
 	/* --------------------------- DynamicPage Mobile Rendering ---------------------------------- */
 	QUnit.module("DynamicPage - Rendering - Mobile", {
 		beforeEach: function () {
+			sinon.config.useFakeTimers = true;
 			oUtil.toMobileMode();
 			this.oDynamicPage = oFactory.getDynamicPage();
 			oUtil.renderObject(this.oDynamicPage);
 		},
 		afterEach: function () {
+			sinon.config.useFakeTimers = false;
 			oUtil.toDesktopMode();
 			this.oDynamicPage.destroy();
 			this.oDynamicPage = null;
@@ -560,6 +569,68 @@
 
 	QUnit.test("DynamicPage ScrollBar not rendered on mobile", function (assert) {
 		assert.ok(!this.oDynamicPage.$("vertSB")[0], "DynamicPage ScrollBar not rendered");
+	});
+
+	QUnit.test("DynamicPage Header on tablet with header height bigger than 60% of DP height override 'headerScrollable' property", function (assert) {
+		var oDynamicPage = this.oDynamicPage;
+		oDynamicPage.setHeaderScrollable(false);
+
+		oUtil.renderObject(this.oDynamicPage);
+		sap.ui.getCore().applyChanges();
+		this.clock.tick();
+
+		oDynamicPage.$().height(1000);
+		oDynamicPage.getTitle().$().height(300);
+		oDynamicPage.getHeader().$().height(300);
+		oDynamicPage._headerBiggerThanAllowedHeight = false;
+
+		assert.ok(oDynamicPage._overrideHeaderNotScrollableRule(),"HeaderScrollable should be overridden with 60% or bigger height");
+
+		oDynamicPage.$().height(1000);
+		oDynamicPage.getTitle().$().height(200);
+		oDynamicPage.getHeader().$().height(200);
+		oDynamicPage._headerBiggerThanAllowedHeight = false;
+
+		assert.ok(!oDynamicPage._overrideHeaderNotScrollableRule(),"HeaderScrollable should NOT be overridden with less than 60% height");
+	});
+
+	/* --------------------------- DynamicPage Tablet Rendering ---------------------------------- */
+
+	QUnit.module("DynamicPage - Rendering - Tablet", {
+		beforeEach: function () {
+			sinon.config.useFakeTimers = true;
+			oUtil.toTabletMode();
+			this.oDynamicPage = oFactory.getDynamicPage();
+		},
+		afterEach: function () {
+			sinon.config.useFakeTimers = false;
+			oUtil.toDesktopMode();
+			this.oDynamicPage.destroy();
+			this.oDynamicPage = null;
+		}
+	});
+
+	QUnit.test("DynamicPage Header on tablet with header height bigger than 60% of DP height override 'headerScrollable' property", function (assert) {
+		var oDynamicPage = this.oDynamicPage;
+		oDynamicPage.setHeaderScrollable(false);
+
+		oUtil.renderObject(this.oDynamicPage);
+		sap.ui.getCore().applyChanges();
+		this.clock.tick();
+
+		oDynamicPage.$().height(1000);
+		oDynamicPage.getTitle().$().height(300);
+		oDynamicPage.getHeader().$().height(300);
+		oDynamicPage._headerBiggerThanAllowedHeight = false;
+
+		assert.ok(oDynamicPage._overrideHeaderNotScrollableRule(),"HeaderScrollable should be overridden with 60% or bigger height");
+
+		oDynamicPage.$().height(1000);
+		oDynamicPage.getTitle().$().height(200);
+		oDynamicPage.getHeader().$().height(200);
+		oDynamicPage._headerBiggerThanAllowedHeight = false;
+
+		assert.ok(!oDynamicPage._overrideHeaderNotScrollableRule(),"HeaderScrollable should NOT be overridden with less than 60% height");
 	});
 
 	/* --------------------------- DynamicPage Events and Handlers ---------------------------------- */

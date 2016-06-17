@@ -71,7 +71,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 			flChangeHandlers: {
 				"sap.ui.layout.form.SimpleForm": {
 					"renameLabel": "sap/ui/layout/changeHandler/RenameForm",
-					"renameTitle": "sap/ui/layout/changeHandler/RenameForm"
+					"renameTitle": "sap/ui/layout/changeHandler/RenameForm",
+					"moveField": "sap/ui/layout/changeHandler/MoveSimpleForm",
+					"moveGroup": "sap/ui/layout/changeHandler/MoveSimpleForm"
 				}
 			}
 		}
@@ -103,14 +105,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 		 * A translucent background depending on the opacity value of the theme.
 		 * @public
 		 */
-		Translucent : "Translucent",
+		Translucent : "Translucent"
 
-		/**
-		 * A second solid background color dependent on the theme.
-		 * @since 1.40.0
-		 * @public
-		 */
-		Solid2 : "Solid2"
 	};
 
 	/**

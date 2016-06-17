@@ -6,15 +6,15 @@
 /* global QUnit */
 
 sap.ui.require([
-  "sap/ui/test/gherkin/SimpleGherkinParser",
+  "sap/ui/test/gherkin/simpleGherkinParser",
   "sap/ui/test/gherkin/StepDefinitions",
   "sap/ui/test/gherkin/GherkinTestGenerator"
-], function(SimpleGherkinParser, StepDefinitions, GherkinTestGenerator) {
+], function(simpleGherkinParser, StepDefinitions, GherkinTestGenerator) {
   'use strict';
 
   QUnit.module("Gherkin Test Generator Tests", {
     setup : function() {
-      this.parser = SimpleGherkinParser;
+      this.parser = simpleGherkinParser;
 
       this.assertAllTestsAreMatchedAndSkipped = function(testScenario) {
         for (var i=0; i<testScenario.testSteps.length; ++i) {

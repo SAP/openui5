@@ -18,7 +18,7 @@
 				type="text/javascript"
 				data-sap-ui-noConflict="true"
 				data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
-				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.commons,sap.ui.layout"
+				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
 				src="../../../../../resources/sap-ui-core.js">
 		</script>
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
@@ -95,8 +95,8 @@
 				var done = assert.async();
 
 				this.oElement1 = new sap.ui.layout.form.FormElement({
-					label: new sap.ui.commons.Label({text:"Label0"}),
-					fields: [new sap.ui.commons.TextField({required:true})]
+					label: new sap.m.Label({text:"Label0"}),
+					fields: [new sap.m.Input({required:true})]
 				});
 
 				this.oFormContainer1 = new sap.ui.layout.form.FormContainer({
@@ -104,8 +104,8 @@
 					formElements: [
 						this.oElement1,
 						new sap.ui.layout.form.FormElement({
-							label: new sap.ui.commons.Label({text:"Label1"}),
-							fields: [new sap.ui.commons.TextField({required:true})]
+							label: new sap.m.Label({text:"Label1"}),
+							fields: [new sap.m.Input({required:true})]
 						})
 					]
 				});
@@ -115,26 +115,26 @@
 					formElements: [
 						new sap.ui.layout.form.FormElement({
 							label: "Label0",
-							fields: [new sap.ui.commons.TextField({required:true})]
+							fields: [new sap.m.Input({required:true})]
 						}),
 						new sap.ui.layout.form.FormElement({
-							label: new sap.ui.commons.Label({text:"Label1"}),
-							fields: [new sap.ui.commons.TextField( {required:true})]
+							label: new sap.m.Label({text:"Label1"}),
+							fields: [new sap.m.Input( {required:true})]
 						})
 					]
 				});
 
 				this.oFormContainer3 = new sap.ui.layout.form.FormContainer({
-					title: new sap.ui.commons.Title({text: "Container3", level: sap.ui.commons.TitleLevel.H3}),
+					title: new sap.ui.core.Title({text: "Container3", level: sap.ui.core.TitleLevel.H3}),
 					tooltip: "Container tooltip",
 					expandable: true,
 					formElements: [
 						new sap.ui.layout.form.FormElement({
-							fields: [new sap.ui.commons.CheckBox({text: 'one'}),
-							         new sap.ui.commons.CheckBox({text: 'two'})]
+							fields: [new sap.m.CheckBox({text: 'one'}),
+							         new sap.m.CheckBox({text: 'two'})]
 						}),
 						new sap.ui.layout.form.FormElement({
-							fields: [new sap.ui.commons.CheckBox({text: 'three'})]
+							fields: [new sap.m.CheckBox({text: 'three'})]
 						})
 					]
 				});

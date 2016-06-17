@@ -32,6 +32,7 @@
 
 	jQuery.sap.require("sap.ui.core.util.MockServer");
 
+	var that = this;
 	var sServiceUri = "/SalesOrderSrv/";
 	var sDataRootPath =  "testdata/SalesOrder/";
 	var oModel, spy;
@@ -1731,7 +1732,32 @@
 			}
 		});
 	});
-
+	
+	asyncTest("test oDataModel setProperty: resetChanges - request should be aborted", function() {
+		var oSpy;
+		oModel.read("/ProductSet('HT-1000')");
+		oModel.read("/ProductSet('AD-1000')", {
+			success: function() {
+				oModel.setProperty("/ProductSet('AD-1000')/Name", "NewName");
+				oModel.setProperty("/ProductSet('HT-1000')/Name", "NewName");
+				ok(oModel.hasPendingChanges(), "model has pending changes");
+				oModel.resetChanges(["/ProductSet('AD-1000')","/ProductSet('HT-1000')"]);
+				ok(!oModel.hasPendingChanges(), "model should not have pending changes");
+				oSpy = sinon.spy(oModel, "_submitBatchRequest");
+				oModel.submitChanges();
+				jQuery.sap.delayedCall(0,this, function() {
+					ok(oSpy.callCount == 0, "No request sent");
+					oSpy.restore();
+					start()
+				});
+			},
+			error: function() {
+				ok(false, "reqauest failed");
+				start();
+			}
+		});
+	});
+	
 	asyncTest("test oDataModel setProperty : resetChanges twice - request should be aborted", function() {
 		var oSpy;
 		oModel.read("/ProductSet('AD-1000')", {
@@ -1748,26 +1774,28 @@
 				oModel.metadataLoaded().then(function(){
 					ok(oModel.hasPendingChanges(), "model has pending changes");
 					equal(oModel.mChangedEntities["ProductSet('AD-1000')"].Name, "NewName", "check internal map");
-					equal(oModel.mDeferredRequests["myId"].map["ProductSet('AD-1000')"].method, "MERGE", "check internal map");
+					equal(oModel.mDeferredRequests["myId"].map["ProductSet('AD-1000')"].request.method, "MERGE", "check internal map");
 					oModel.resetChanges();
 					oModel.metadataLoaded().then(function(){
 						ok(!oModel.hasPendingChanges(), "model has pending changes");
-						ok(oModel.mDeferredRequests["myId"].map["ProductSet('AD-1000')"]._aborted, "check request should be marked as aborted");
+						ok(oModel.mDeferredRequests["myId"].map["ProductSet('AD-1000')"].parts.length == 1, "one request");
+						ok(oModel.mDeferredRequests["myId"].map["ProductSet('AD-1000')"].parts[0].request._aborted, "check request should be marked as aborted");
 						oModel.setProperty("/ProductSet('AD-1000')/Name", "NewName2");
 						oModel.metadataLoaded().then(function(){
 							ok(oModel.hasPendingChanges(), "model has pending changes");
-							equal(oModel.mDeferredRequests["myId"].map["ProductSet('AD-1000')"].data.Name, "NewName2", "check internal data map");
-							ok(!oModel.mDeferredRequests["myId"].map["ProductSet('AD-1000')"]._aborted, "check request should not be marked as aborted");
+							equal(oModel.mDeferredRequests["myId"].map["ProductSet('AD-1000')"].request.data.Name, "NewName2", "check internal data map");
+							ok(oModel.mDeferredRequests["myId"].map["ProductSet('AD-1000')"].parts.length == 1, "one request");
+							ok(!oModel.mDeferredRequests["myId"].map["ProductSet('AD-1000')"].parts[0].request._aborted, "check request should not be marked as aborted");
 							oModel.resetChanges();
 							oModel.metadataLoaded().then(function(){
 								ok(!oModel.hasPendingChanges(), "model has pending changes");
-								ok(oModel.mDeferredRequests["myId"].map["ProductSet('AD-1000')"]._aborted, "check request should be marked as aborted");
+								ok(oModel.mDeferredRequests["myId"].map["ProductSet('AD-1000')"].parts.length == 1, "one request");
+								ok(oModel.mDeferredRequests["myId"].map["ProductSet('AD-1000')"].parts[0].request._aborted, "check request should be marked as aborted");
 								start();
 							});
 						});
 					});
 				});
-				// check internas
 			},
 			error: function() {
 				ok(false, "request failed");
@@ -3097,6 +3125,83 @@
 		});
 	});
 
+	asyncTest("test eventing when using read with batch on: 2 equal requests", function() {
+		var iSuccess = 0;
+		var iReqComp = 0;
+		var iReqSent = 0;
+		var sReqId = null;
+
+		oModel.read("/ProductSet", {
+			success : function() {
+				iSuccess++;
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			}
+		});
+		oModel.read("/ProductSet", {
+			success : function() {
+				iSuccess++;
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			}
+		});
+
+		oModel.attachBatchRequestSent(this, function(oEvent) {
+			equal(oEvent.getId(), "batchRequestSent", "event id check");
+			ok(oEvent.getParameter('url'), "Param check: url");
+			ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
+			equal(oEvent.getParameter('method'), "POST" , "Param check: method");
+			equal(oEvent.getParameter('async'), true , "Param check: async");
+			equal(oEvent.getParameter('headers').Accept, "application/json", "Param check: headers");
+			ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
+			var aRequests = oEvent.getParameter('requests');
+			ok(aRequests.length == 1, "should contain only one request");
+			equal(aRequests[0].method, "GET", "internal request, Param Check: method");
+			equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
+			equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
+			equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+			sReqId = oEvent.getParameter('ID');
+			iReqSent++;
+		});
+
+		oModel.attachBatchRequestCompleted(this, function(oEvent) {
+			iReqComp++;
+			if (iReqComp === 1 && iReqSent === 1 && iSuccess === 2) {
+				ok(true, "eventing performed correctly");
+				equal(oEvent.getId(), "batchRequestCompleted", "event id check");
+				ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
+				ok(oEvent.getParameter('url'), "Param check: url");
+				ok(oEvent.getParameter('success'), "Param check: success");
+				equal(oEvent.getParameter('method'), "POST" , "Param check: method");
+				equal(oEvent.getParameter('async'), true , "Param check: async");
+				equal(oEvent.getParameter('headers').Accept, "application/json", true , "Param check: headers");
+				ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
+				var aRequests = oEvent.getParameter('requests');
+				ok(aRequests.length == 1, "should contain one request");
+				equal(aRequests[0].method, "GET", "internal request, Param Check: method");
+				equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
+				equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
+
+				//check response
+				var oResponse = oEvent.getParameter('response');
+				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
+				equal(oResponse.statusCode, 202, "oResponse Param check: statusCode");
+				equal(oResponse.statusText, "Accepted", "oResponse Param check: statusCode");
+
+				// check internal response
+				var aRequests = oEvent.getParameter('requests');
+				equal(aRequests[0].response.statusCode, "200", "internal response, Param Check: statusCode");
+				equal(aRequests[0].response.statusText, "OK", "internal response, Param Check: statusText");
+
+				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
+				equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
+				start();
+			}
+		});
+	});
+
 	asyncTest("test eventing when using read and internal error with batch on", function() {
 		var iReqComp = 0;
 		var iReqSent = 0;
@@ -3139,6 +3244,83 @@
 		oModel.attachBatchRequestCompleted(this, function(oEvent) {
 			iReqComp++;
 			if (iReqComp === 1 && iReqSent === 1 && iReqFailed == 0) {
+				ok(true, "eventing performed correctly");
+				ok(oEvent.getParameter('success'), "should be true for batch request itself!");
+				equal(oEvent.getParameter('method'), "POST" , "Param check: method");
+
+				//check response
+				var oResponse = oEvent.getParameter('response');
+				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
+				equal(oResponse.statusCode, 202, "oResponse Param check: statusCode");
+				equal(oResponse.statusText, "Accepted", "oResponse Param check: statusCode");
+
+				// check internal response
+				var aRequests = oEvent.getParameter('requests');
+				ok(aRequests.length == 1, "should contain one request");
+				equal(aRequests[0].method, "GET", "internal request, Param Check: method");
+				equal(aRequests[0].url, "ProductXYSet", "internal request, Param Check: url");
+				equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
+				equal(aRequests[0].response.statusCode, "404", "internal response, Param Check: statusCode");
+				equal(aRequests[0].response.statusText, "Not Found", "internal response, Param Check: statusText");
+
+				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
+				equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
+				start();
+			}
+		});
+	});
+	asyncTest("test eventing when using read and internal error with batch on: 2 equal requests", function() {
+		var iError = 0;
+		var iReqComp = 0;
+		var iReqSent = 0;
+		var iReqFailed = 0;
+		var sReqId = null;
+		oModel.read("/ProductXYSet", {
+			success : function(oData, oResponse) {
+				ok(false, "request succeeded...error expected");
+			},
+			error : function(oError) {
+				ok(oError.statusCode === "404", "error code");
+				ok(true, "request failed");
+				iError++;
+			}
+		});
+		oModel.read("/ProductXYSet", {
+			success : function(oData, oResponse) {
+				ok(false, "request succeeded...error expected");
+			},
+			error : function(oError) {
+				ok(oError.statusCode === "404", "error code");
+				ok(true, "request failed");
+				iError++;
+			}
+		});
+
+		oModel.attachBatchRequestFailed(this, function(oEvent) {
+			iReqFailed++;
+			ok(false, "batch request itself should have no errors");
+		});
+
+		oModel.attachBatchRequestSent(this, function(oEvent) {
+			iReqSent++;
+			equal(oEvent.getId(), "batchRequestSent", "event id check");
+			ok(oEvent.getParameter('url'), "Param check: url");
+			ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
+			equal(oEvent.getParameter('method'), "POST" , "Param check: method");
+			equal(oEvent.getParameter('async'), true , "Param check: async");
+			equal(oEvent.getParameter('headers').Accept, "application/json", "Param check: headers");
+			ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
+			var aRequests = oEvent.getParameter('requests');
+			ok(aRequests.length == 1, "should contain one request");
+			equal(aRequests[0].method, "GET", "internal request, Param Check: method");
+			equal(aRequests[0].url, "ProductXYSet", "internal request, Param Check: url");
+			equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
+			sReqId = oEvent.getParameter('ID');
+		});
+
+		oModel.attachBatchRequestCompleted(this, function(oEvent) {
+			iReqComp++;
+			if (iReqComp === 1 && iReqSent === 1 && iReqFailed == 0 && iError === 2) {
 				ok(true, "eventing performed correctly");
 				ok(oEvent.getParameter('success'), "should be true for batch request itself!");
 				equal(oEvent.getParameter('method'), "POST" , "Param check: method");
@@ -3246,6 +3428,98 @@
 		});
 	});
 
+	asyncTest("test eventing when using read and error with batch on: 2 equal requests", function() {
+		var iError = 0;
+		var iReqComp = 0;
+		var iReqSent = 0;
+		var iReqFailed = 0;
+		var sReqId = null;
+		oModel.setDeferredBatchGroups([ "myId1" ]);
+		oModel.read("/ProductSet", {
+			success : function(oData, oResponse) {
+				ok(false, "request succeeded...error expected");
+			},
+			error : function(oError) {
+				ok(true, "request failed");
+				iError++;
+			},
+			batchGroupId: "myId1"
+		});
+		oModel.read("/ProductSet", {
+			success : function(oData, oResponse) {
+				ok(false, "request succeeded...error expected");
+			},
+			error : function(oError) {
+				ok(true, "request failed");
+				iError++;
+			},
+			batchGroupId: "myId1"
+		});
+		// make internal batch request fail
+		oModel.sServiceUrl = "/notWorking";
+		oModel.submitChanges();
+
+		oModel.attachBatchRequestFailed(this, function(oEvent) {
+			equal(oEvent.getId(), "batchRequestFailed", "event id check");
+			iReqFailed++;
+			if (iReqFailed == 1 && iReqComp === 1 && iReqSent === 1 && iError === 2) {
+				ok(!oEvent.getParameter('success'), "should be false for batch request itself!");
+				//check response
+				var oResponse = oEvent.getParameter('response');
+				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
+
+				// check internal response
+				var aRequests = oEvent.getParameter('requests');
+				ok(aRequests.length == 1, "should contain one request");
+				equal(aRequests[0].method, "GET", "internal request, Param Check: method");
+				equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
+				equal(aRequests[0].response, undefined, "internal response not there");
+
+				start();
+			}
+		});
+
+		oModel.attachBatchRequestSent(this, function(oEvent) {
+			iReqSent++;
+			equal(oEvent.getId(), "batchRequestSent", "event id check");
+			ok(oEvent.getParameter('url'), "Param check: url");
+			ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
+			equal(oEvent.getParameter('method'), "POST" , "Param check: method");
+			equal(oEvent.getParameter('async'), true , "Param check: async");
+			equal(oEvent.getParameter('headers').Accept, "application/json", "Param check: headers");
+			var aRequests = oEvent.getParameter('requests');
+			ok(aRequests.length == 1, "should contain one request");
+			equal(aRequests[0].method, "GET", "internal request, Param Check: method");
+			equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
+			equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
+
+			sReqId = oEvent.getParameter('ID');
+		});
+
+		oModel.attachBatchRequestCompleted(this, function(oEvent) {
+			iReqComp++;
+			if (iReqComp === 1 && iReqSent === 1 && iReqFailed == 0) {
+				ok(true, "eventing performed correctly");
+				ok(!oEvent.getParameter('success'), "should be false for batch request itself!");
+				equal(oEvent.getParameter('method'), "POST" , "Param check: method");
+
+				//check response
+				var oResponse = oEvent.getParameter('response');
+				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
+
+				// check internal response
+				var aRequests = oEvent.getParameter('requests');
+				ok(aRequests.length == 1, "should contain one request");
+				equal(aRequests[0].method, "GET", "internal request, Param Check: method");
+				equal(aRequests[0].url, "ProductSet", "internal request, Param Check: url");
+				equal(aRequests[0].response, undefined, "internal response not there");
+
+				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
+				equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
+			}
+		});
+	});
+
 	asyncTest("test eventing when using read with batch off", function() {
 		var bSuccess = false;
 		var iReqComp = 0;
@@ -3299,16 +3573,100 @@
 		});
 	});
 
+	asyncTest("test eventing when using read with batch off: 2 equal requests", function() {
+		var iSuccess = 0;
+		var iReqComp = 0;
+		var iReqSent = 0;
+		var sReqId = null;
+		oModel.setUseBatch(false);
+		oModel.read("/ProductSet", {
+			success : function() {
+				iSuccess++;
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			}
+		});
+		oModel.read("/ProductSet", {
+			success : function() {
+				iSuccess++;
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			}
+		});
+		oModel.attachRequestSent(this, function(oEvent) {
+			equal(oEvent.getId(), "requestSent", "event id check");
+			ok(oEvent.getParameter('url'), "Param check: url");
+			ok(oEvent.getParameter('url').indexOf("ProductSet") !== -1, "Param check: url should be non batch");
+			equal(oEvent.getParameter('method'), "GET" , "Param check: method");
+			equal(oEvent.getParameter('async'), true , "Param check: async");
+			equal(oEvent.getParameter('headers').Accept, "application/json", true , "Param check: headers");
+
+			equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+			sReqId = oEvent.getParameter('ID');
+			iReqSent++;
+		});
+
+		oModel.attachRequestCompleted(this, function(oEvent) {
+			iReqComp++;
+			if (iReqComp === 1 && iReqSent === 1 && iSuccess === 2) {
+				ok(true, "eventing performed correctly");
+
+				equal(oEvent.getId(), "requestCompleted", "event id check");
+				ok(oEvent.getParameter('url'), "Param check: url");
+				ok(oEvent.getParameter('url').indexOf("ProductSet") !== -1, "Param check: url should be non batch");
+				ok(oEvent.getParameter('success'), "Param check: success");
+				equal(oEvent.getParameter('method'), "GET" , "Param check: method");
+				equal(oEvent.getParameter('async'), true , "Param check: async");
+				equal(oEvent.getParameter('headers').Accept, "application/json", true , "Param check: headers");
+
+				//check response
+				var oResponse = oEvent.getParameter('response');
+				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
+				equal(oResponse.statusCode, 200, "oResponse Param check: statusCode");
+				equal(oResponse.statusText, "OK", "oResponse Param check: statusCode");
+
+				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
+				equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
+				start();
+			}
+		});
+	});
+
 	asyncTest("test eventing when using read and error batch off", function() {
+		var iError = 0;
 		var iReqComp = 0;
 		var iReqSent = 0;
 		var iReqFailed = 0;
 		var sReqId = null;
+
 		oModel.setUseBatch(false);
+
+		oModel.read("/ProductXYSet", {
+			success : function(oData, oResponse) {
+				ok(false, "request succeeded...error expected");
+			},
+			error : function(oError) {
+				ok(oError.statusCode === 404, "error code");
+				ok(true, "request failed");
+				iError++;
+			}
+		});
+		oModel.read("/ProductXYSet", {
+			success : function(oData, oResponse) {
+				ok(false, "request succeeded...error expected");
+			},
+			error : function(oError) {
+				ok(oError.statusCode === 404, "error code");
+				ok(true, "request failed");
+				iError++;
+			}
+		});
 
 		oModel.attachRequestFailed(this, function(oEvent) {
 			iReqFailed++;
-			if (iReqSent === 1 && iReqFailed === 1 && iReqComp === 1) {
+			if (iReqSent === 1 && iReqFailed === 1 && iReqComp === 1 && iError === 2) {
 				equal(oEvent.getId(), "requestFailed", "event id check");
 				ok(true, "eventing performed correctly");
 				equal(oEvent.getParameter('method'), "GET" , "Param check: method");
@@ -3357,16 +3715,6 @@
 
 				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
 				equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
-			}
-		});
-
-		oModel.read("/ProductXYSet", {
-			success : function(oData, oResponse) {
-				ok(false, "request succeeded...error expected");
-			},
-			error : function(oError) {
-				ok(oError.statusCode === 404, "error code");
-				ok(true, "request failed");
 			}
 		});
 	});
@@ -3478,6 +3826,160 @@
 
 				equal(aRequests[2].response.statusCode, "200", "internal response, Param Check: statusCode");
 				equal(aRequests[2].response.statusText, "OK", "internal response, Param Check: statusText");
+
+
+				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
+				equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
+				start();
+			}
+		});
+	});
+
+	asyncTest("test eventing when using multiple requests with batch on: equal requests", function() {
+		var iSuccess = 0;
+		var iReqComp = 0;
+		var iReqSent = 0;
+		var sReqId = null;
+		oModel.read("/ProductSet('HT-1001')", {
+			success : function() {
+				bSuccess = true;
+				iSuccess++;
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			},
+			batchGroupId: "myId1"
+		});
+		oModel.read("/ProductSet('AD-1000')", {
+			success : function() {
+				bSuccess = true;
+				iSuccess++;
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			},
+			batchGroupId: "myId1"
+		});
+		oModel.update("/ProductSet('HT-1000')", {
+			Name : "Test"
+		    }, {
+			success : function(oData, oResponse) {
+				ok(true, "request succeeded");
+				iSuccess++;
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			},
+			merge: true,
+			eTag: "*",
+			batchGroupId: "myId1"
+		});
+		oModel.update("/ProductSet('HT-1000')", {
+			Name : "Test"
+		    }, {
+			success : function(oData, oResponse) {
+				iSuccess++;
+				ok(true, "request succeeded");
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			},
+			merge: true,
+			eTag: "*",
+			batchGroupId: "myId1"
+		});
+		oModel.read("/ProductSet('AD-1000')", {
+			success : function() {
+				iSuccess++;
+				ok(true, "request succeeded");
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			},
+			batchGroupId: "myId1"
+		});
+		oModel.attachBatchRequestSent(this, function(oEvent) {
+			equal(oEvent.getId(), "batchRequestSent", "event id check");
+			ok(oEvent.getParameter('url'), "Param check: url");
+			ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
+			equal(oEvent.getParameter('method'), "POST" , "Param check: method");
+			equal(oEvent.getParameter('async'), true , "Param check: async");
+
+			var aRequests = oEvent.getParameter('requests');
+			ok(aRequests.length == 4, "should contain 4 requests");
+			equal(aRequests[0].method, "MERGE", "internal request, Param Check: method");
+			equal(aRequests[0].url, "ProductSet('HT-1000')", "internal request, Param Check: url");
+			equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
+
+			equal(aRequests[1].method, "MERGE", "internal request, Param Check: method");
+			equal(aRequests[1].url, "ProductSet('HT-1000')", "internal request, Param Check: url");
+			equal(aRequests[1].headers.Accept, "application/json", "internal request Param check: headers");
+
+			equal(aRequests[2].method, "GET", "internal request, Param Check: method");
+			equal(aRequests[2].url, "ProductSet('HT-1001')", "internal request, Param Check: url");
+			equal(aRequests[2].headers.Accept, "application/json", "internal request Param check: headers");
+
+			equal(aRequests[3].method, "GET", "internal request, Param Check: method");
+			equal(aRequests[3].url, "ProductSet('AD-1000')", "internal request, Param Check: url");
+			equal(aRequests[3].headers.Accept, "application/json", "internal request Param check: headers");
+
+
+			equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+			sReqId = oEvent.getParameter('ID');
+			iReqSent++;
+		});
+
+		oModel.attachBatchRequestCompleted(this, function(oEvent) {
+			iReqComp++;
+			if (iReqComp === 1 && iReqSent === 1 && iSuccess === 5) {
+				ok(true, "eventing performed correctly");
+
+				equal(oEvent.getId(), "batchRequestCompleted", "event id check");
+				ok(oEvent.getParameter('url').indexOf("$batch") !== -1, "Param check: url should be batch");
+				ok(oEvent.getParameter('url'), "Param check: url");
+				ok(oEvent.getParameter('success'), "Param check: success");
+				equal(oEvent.getParameter('method'), "POST" , "Param check: method");
+				equal(oEvent.getParameter('async'), true , "Param check: async");
+				equal(oEvent.getParameter('headers').Accept, "application/json", true , "Param check: headers");
+				ok(oEvent.getParameter('headers')['x-csrf-token'], "Param check: token");
+				var aRequests = oEvent.getParameter('requests');
+
+				ok(aRequests.length == 4, "should contain 4 requests");
+
+				equal(aRequests[0].method, "MERGE", "internal request, Param Check: method");
+				equal(aRequests[0].url, "ProductSet('HT-1000')", "internal request, Param Check: url");
+				equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
+
+				equal(aRequests[1].method, "MERGE", "internal request, Param Check: method");
+				equal(aRequests[1].url, "ProductSet('HT-1000')", "internal request, Param Check: url");
+				equal(aRequests[1].headers.Accept, "application/json", "internal request Param check: headers");
+
+				equal(aRequests[2].method, "GET", "internal request, Param Check: method");
+				equal(aRequests[2].url, "ProductSet('HT-1001')", "internal request, Param Check: url");
+				equal(aRequests[2].headers.Accept, "application/json", "internal request Param check: headers");
+
+				equal(aRequests[3].method, "GET", "internal request, Param Check: method");
+				equal(aRequests[3].url, "ProductSet('AD-1000')", "internal request, Param Check: url");
+				equal(aRequests[3].headers.Accept, "application/json", "internal request Param check: headers");
+
+				//check response
+				var oResponse = oEvent.getParameter('response');
+				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
+				equal(oResponse.statusCode, 202, "oResponse Param check: statusCode");
+				equal(oResponse.statusText, "Accepted", "oResponse Param check: statusCode");
+
+				// check internal responses
+				equal(aRequests[0].response.statusCode, "204", "internal response, Param Check: statusCode");
+				equal(aRequests[0].response.statusText, "No Content", "internal response, Param Check: statusText");
+
+				equal(aRequests[1].response.statusCode, "204", "internal response, Param Check: statusCode");
+				equal(aRequests[1].response.statusText, "No Content", "internal response, Param Check: statusText");
+
+				equal(aRequests[2].response.statusCode, "200", "internal response, Param Check: statusCode");
+				equal(aRequests[2].response.statusText, "OK", "internal response, Param Check: statusText");
+
+				equal(aRequests[3].response.statusCode, "200", "internal response, Param Check: statusCode");
+				equal(aRequests[3].response.statusText, "OK", "internal response, Param Check: statusText");
 
 
 				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
@@ -3610,6 +4112,174 @@
 		});
 	});
 
+	asyncTest("test eventing when using multiple requests with batch off: equal requests", function() {
+		var iSuccess = 0;
+		var sReqId1 = null;
+		var sReqId2 = null;
+		var sReqId3 = null;
+		var sReqId4 = null;
+		var iCount1 = 0;
+		var iCount2 = 0;
+		var oSpy = sinon.spy(oModel, "_request");
+		oModel.setUseBatch(false);
+		oModel.setTokenHandlingEnabled(false);
+		oModel.read("/ProductSet('HT-1001')", {
+			success : function() {
+				ok(true, "request succeeded");
+				iSuccess++;
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			},
+			batchGroupId: "myId1"
+		});
+		oModel.read("/ProductSet('AD-1000')", {
+			success : function() {
+				ok(true, "request succeeded");
+				iSuccess++;
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			},
+			batchGroupId: "myId1"
+		});
+		oModel.update("/ProductSet('HT-1000')", {
+			Name : "Test"
+		    }, {
+			success : function(oData, oResponse) {
+				ok(true, "request succeeded");
+				iSuccess++;
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			},
+			merge: true,
+			eTag: "*",
+			batchGroupId: "myId1"
+		});
+		oModel.read("/ProductSet('AD-1000')", {
+			success : function() {
+				ok(true, "request succeeded");
+				iSuccess++;
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			},
+			batchGroupId: "myId1"
+		});
+		oModel.update("/ProductSet('HT-1000')", {
+			Name : "Test"
+		    }, {
+			success : function(oData, oResponse) {
+				ok(true, "request succeeded");
+				iSuccess++;
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			},
+			merge: true,
+			eTag: "*",
+			batchGroupId: "myId1"
+		});
+		oModel.attachRequestSent(this, function(oEvent) {
+			var oRequest = oSpy.args[iCount1][0];
+			iCount1++;
+			if (iCount1 == 1) {
+				ok(oEvent.getParameter('url').indexOf("HT-1000") !== -1, "Param check: url should be non batch");
+				equal(oEvent.getParameter('method'), "POST" , "Param check: method");
+				equal(oRequest.method, "POST" , "request check: method");
+				ok(oRequest.requestUri.indexOf("/ProductSet('HT-1000')") !== -1, "request URL - ok");
+				equal(oEvent.getParameter('headers')['x-http-method'], "MERGE" , "Param check: method");
+				equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+				sReqId1 = oEvent.getParameter('ID');
+			}
+			if (iCount1 == 2) {
+				ok(oEvent.getParameter('url').indexOf("HT-1000") !== -1, "Param check: url should be non batch");
+				equal(oEvent.getParameter('method'), "POST" , "Param check: method");
+				equal(oRequest.method, "POST" , "request check: method");
+				ok(oRequest.requestUri.indexOf("/ProductSet('HT-1000')") !== -1, "request URL - ok");
+				equal(oEvent.getParameter('headers')['x-http-method'], "MERGE" , "Param check: method");
+				equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+				sReqId2 = oEvent.getParameter('ID');
+			}
+			if (iCount1 == 3) {
+				ok(oEvent.getParameter('url').indexOf("HT-1001") !== -1, "Param check: url should be non batch");
+				equal(oEvent.getParameter('method'), "GET" , "Param check: method");
+				equal(oRequest.method, "GET" , "request check: method");
+				ok(oRequest.requestUri.indexOf("/ProductSet('HT-1001')") !== -1, "request URL - ok");
+				equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+				sReqId3 = oEvent.getParameter('ID');
+			}
+			if (iCount1 == 4) {
+				ok(oEvent.getParameter('url').indexOf("AD-1000") !== -1, "Param check: url should be non batch");
+				equal(oEvent.getParameter('method'), "GET" , "Param check: method");
+				equal(oRequest.method, "GET" , "request check: method");
+				ok(oRequest.requestUri.indexOf("/ProductSet('AD-1000')") !== -1, "request URL - ok");
+				equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
+				sReqId4 = oEvent.getParameter('ID');
+			}
+		});
+
+		oModel.attachRequestCompleted(this, function(oEvent) {
+
+			equal(oEvent.getId(), "requestCompleted", "event id check");
+
+			ok(oEvent.getParameter('success'), "Param check: success");
+
+			if (oEvent.getParameter('url').indexOf("HT-1001") !== -1) {
+				ok(oEvent.getParameter('url').indexOf("HT-1001") !== -1, "Param check: url should be non batch");
+				equal(oEvent.getParameter('method'), "GET" , "Param check: method");
+				var oResponse = oEvent.getParameter('response');
+				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
+				equal(oResponse.statusCode, 200, "oResponse Param check: statusCode");
+				equal(oResponse.statusText, "OK", "oResponse Param check: statusCode");
+				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
+				equal(oEvent.getParameter('ID'), sReqId3, "Check Request ID");
+				iCount2 ++;
+			}
+
+			if (oEvent.getParameter('url').indexOf("AD-1000") !== -1) {
+				ok(oEvent.getParameter('url').indexOf("AD-1000") !== -1, "Param check: url should be non batch");
+				equal(oEvent.getParameter('method'), "GET" , "Param check: method");
+				var oResponse = oEvent.getParameter('response');
+				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
+				equal(oResponse.statusCode, 200, "oResponse Param check: statusCode");
+				equal(oResponse.statusText, "OK", "oResponse Param check: statusCode");
+				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
+				equal(oEvent.getParameter('ID'), sReqId4, "Check Request ID");
+				iCount2 ++;
+			}
+
+			if (oEvent.getParameter('url').indexOf("HT-1000") !== -1 && oEvent.getParameter('ID') === sReqId1) {
+				equal(oEvent.getParameter('method'), "POST" , "Param check: method");
+				equal(oEvent.getParameter('headers')['x-http-method'], "MERGE" , "Param check: method");
+				var oResponse = oEvent.getParameter('response');
+				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
+				equal(oResponse.statusCode, 204, "oResponse Param check: statusCode");
+				equal(oResponse.statusText, "No Content", "oResponse Param check: statusCode");
+				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
+				equal(oEvent.getParameter('ID'), sReqId1, "Check Request ID");
+				iCount2 ++;
+			}
+			if (oEvent.getParameter('url').indexOf("HT-1000") !== -1 && oEvent.getParameter('ID') === sReqId2) {
+				equal(oEvent.getParameter('method'), "POST" , "Param check: method");
+				equal(oEvent.getParameter('headers')['x-http-method'], "MERGE" , "Param check: method");
+				var oResponse = oEvent.getParameter('response');
+				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
+				equal(oResponse.statusCode, 204, "oResponse Param check: statusCode");
+				equal(oResponse.statusText, "No Content", "oResponse Param check: statusCode");
+				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
+				equal(oEvent.getParameter('ID'), sReqId2, "Check Request ID");
+				iCount2 ++;
+			}
+
+			if (iCount2 == 4 && iSuccess === 5) {
+				start();
+				oSpy.restore();
+			}
+		});
+	});
+
 	module("ODataModelV2 abort requests", {
 		setup : function() {
 			initServer();
@@ -3621,6 +4291,131 @@
 			cleanServiceDataCache();
 			stopServer();
 		}
+	});
+
+	asyncTest("test abort of batch request before Sending", function() {
+		var bSuccess = false;
+		var oAbort = {};
+		oModel.read("/ProductSet('HT-1001')", {
+			success : function() {
+				bSuccess = true;
+			},
+			error : function(oError) {
+				ok(true, "error callback of aborted request is called");
+				ok(oError.statusCode === 0, "status code 0");
+				ok(oError.statusText === 'abort', "status text 'abort'");
+			},
+			batchGroupId: "changes"
+		});
+		oModel.read("/ProductSet('AD-1000')", {
+			success : function() {
+				bSuccess = true;
+			},
+			error : function(oError) {
+				ok(true, "error callback of aborted request is called");
+				ok(oError.statusCode === 0, "status code 0");
+				ok(oError.statusText === 'abort', "status text 'abort'");
+			},
+			batchGroupId: "changes"
+		});
+		oAbort = oModel.submitChanges();
+		oAbort.abort();
+
+		oModel.attachBatchRequestCompleted(this, function(oEvent) {
+			ok(oEvent.getParameter('response').statusCode === 0, "status code 0");
+			ok(oEvent.getParameter('response').statusText === 'abort', "status text 'abort'");
+			ok(!bSuccess, "Success handler should not be called");
+			start();
+		});
+	});
+
+	asyncTest("test abort of batch request after Sending", function() {
+		var bSuccess = false;
+		var oAbort = {};
+		oModel.read("/ProductSet('HT-1001')", {
+			success : function() {
+				bSuccess = true;
+			},
+			error : function(oError) {
+				ok(true, "error callback of aborted request is called");
+				ok(oError.statusCode === 0, "status code 0");
+				ok(oError.statusText === 'abort', "status text 'abort'");
+			},
+			batchGroupId: "changes"
+		});
+		oModel.read("/ProductSet('AD-1000')", {
+			success : function() {
+				bSuccess = true;
+			},
+			error : function(oError) {
+				ok(true, "error callback of aborted request is called");
+				ok(oError.statusCode === 0, "status code 0");
+				ok(oError.statusText === 'abort', "status text 'abort'");
+			},
+			batchGroupId: "changes"
+		});
+		oAbort = oModel.submitChanges();
+		oModel.attachBatchRequestSent(this, function(oEvent){
+			oAbort.abort();
+		});
+		oModel.attachBatchRequestCompleted(this, function(oEvent) {
+			ok(oEvent.getParameter('response').statusCode === 0, "status code 0");
+			ok(oEvent.getParameter('response').statusText === 'abort', "status text 'abort'");
+			ok(!bSuccess, "Success handler should not be called");
+			start();
+		});
+	});
+
+	asyncTest("test abort of batch request: equal requests", function() {
+		var bSuccess = false;
+		var iAbort = 0;
+		var oAbort = {};
+		oModel.read("/ProductSet('HT-1001')", {
+			success : function() {
+				bSuccess = true;
+			},
+			error : function(oError) {
+				ok(true, "error callback of aborted request is called");
+				ok(oError.statusCode === 0, "status code 0");
+				ok(oError.statusText === 'abort', "status text 'abort'");
+				iAbort++;
+			},
+			batchGroupId: "changes"
+		});
+		oModel.read("/ProductSet('AD-1000')", {
+			success : function() {
+				bSuccess = true;
+			},
+			error : function(oError) {
+				ok(true, "error callback of aborted request is called");
+				ok(oError.statusCode === 0, "status code 0");
+				ok(oError.statusText === 'abort', "status text 'abort'");
+				iAbort++;
+			},
+			batchGroupId: "changes"
+		});
+		oModel.read("/ProductSet('AD-1000')", {
+			success : function() {
+				bSuccess = true;
+			},
+			error : function(oError) {
+				ok(true, "error callback of aborted request is called");
+				ok(oError.statusCode === 0, "status code 0");
+				ok(oError.statusText === 'abort', "status text 'abort'");
+				iAbort++;
+			},
+			batchGroupId: "changes"
+		});
+		oAbort = oModel.submitChanges();
+		oAbort.abort();
+
+		oModel.attachBatchRequestCompleted(this, function(oEvent) {
+			ok(oEvent.getParameter('response').statusCode === 0, "status code 0");
+			ok(oEvent.getParameter('response').statusText === 'abort', "status text 'abort'");
+			ok(!bSuccess, "Success handler should not be called");
+			ok(iAbort === 3, "3 aborted inner requests");
+			start();
+		});
 	});
 
 	asyncTest("test abort of request in batch request", function() {
@@ -3650,6 +4445,300 @@
 			equal(oEvent.getParameter('requests').length, 1, "number of requests check");
 			equal(oEvent.getParameter('requests')[0].url, "ProductSet('HT-1001')" , "Param check: url");
 			start();
+		});
+	});
+
+	asyncTest("test abort of all requests in batch request", function() {
+		expect(4);
+		oModel.attachBatchRequestCompleted(this, function(oEvent) {
+			ok(oEvent.getParameter('response').statusCode === 0, "status code 0");
+			ok(oEvent.getParameter('response').statusText === 'abort', "status text 'abort'");
+			start();
+		});
+
+		oModel.attachBatchRequestSent(this, function(oEvent) {
+			setTimeout(function() {
+				oAbort1.abort();
+  			oAbort2.abort();
+			}, 0);
+		});
+
+		var oAbort1 = oModel.read("/ProductSet('HT-1001')", {
+			success: function() {
+				ok(false, "Successhandler was called");
+			},
+			batchGroupId: "myId1",
+			error: function(){
+				ok(true, "Errorhandler was called");
+			}
+		});
+
+		var oAbort2 = oModel.read("/ProductSet('AD-1000')", {
+			success: function() {
+				ok(false, "Successhandler was called");
+			},
+			batchGroupId: "myId1",
+			error: function(){
+				ok(true, "Errorhandler was called");
+			}
+		});
+	});
+
+	asyncTest("test abort of all requests in batch request of one group", function() {
+		expect(8);
+		var iCounterBatch = 0;
+		oModel.attachBatchRequestCompleted(this, function(oEvent) {
+			iCounterBatch++;
+			if(iCounterBatch === 1){
+				ok(oEvent.getParameter('response').statusCode === 0, "status code 0");
+				ok(oEvent.getParameter('response').statusText === 'abort', "status text 'abort'");
+			} else {
+				ok(oEvent.getParameter('response').statusCode !== 0, "status code not 0");
+				ok(oEvent.getParameter('response').statusText !== 'abort', "status text not 'abort'");
+				start();
+			}
+		});
+		var iCounter = 0;
+		oModel.attachBatchRequestSent(this, function(oEvent) {
+			iCounter++;
+			if(iCounter === 2){
+				bFirstTime = true;
+				setTimeout(function() {
+					oAbort1.abort();
+	  			oAbort2.abort();
+				}, 0);
+			}
+		});
+
+		var oAbort1 = oModel.read("/ProductSet('HT-1001')", {
+			success: function() {
+				ok(false, "Successhandler was called");
+			},
+			batchGroupId: "myId1",
+			error: function(){
+				ok(true, "Errorhandler was called");
+			}
+		});
+
+		var oAbort2 = oModel.read("/ProductSet('AD-1000')", {
+			success: function() {
+				ok(false, "Successhandler was called");
+			},
+			batchGroupId: "myId1",
+			error: function(){
+				ok(true, "Errorhandler was called");
+			}
+		});
+
+		var oAbort3 = oModel.read("/ProductSet('HT-1001')", {
+			success: function() {
+				ok(true, "Successhandler was called");
+			},
+			batchGroupId: "myId2",
+			error: function(){
+				ok(false, "Errorhandler was called");
+			}
+		});
+
+		var oAbort4 = oModel.read("/ProductSet('AD-1000')", {
+			success: function() {
+				ok(true, "Successhandler was called");
+			},
+			batchGroupId: "myId2",
+			error: function(){
+				ok(false, "Errorhandler was called");
+			}
+		});
+	});
+
+	asyncTest("test abort of all requests in batch request of all groups", function() {
+		expect(8);
+		var iCounterBatch = 0;
+		oModel.attachBatchRequestCompleted(this, function(oEvent) {
+			iCounterBatch++;
+			ok(oEvent.getParameter('response').statusCode === 0, "status code 0");
+			ok(oEvent.getParameter('response').statusText === 'abort', "status text 'abort'");
+			if(iCounterBatch === 2){
+				start();
+			}
+		});
+		var iCounter = 0;
+		oModel.attachBatchRequestSent(this, function(oEvent) {
+			iCounter++;
+			if(iCounter === 2){
+				bFirstTime = true;
+				setTimeout(function() {
+					oAbort1.abort();
+	  			oAbort2.abort();
+	  			oAbort3.abort();
+					oAbort4.abort();
+				}, 0);
+			}
+		});
+
+		var oAbort1 = oModel.read("/ProductSet('HT-1001')", {
+			success: function() {
+				ok(false, "Successhandler was called");
+			},
+			batchGroupId: "myId1",
+			error: function(){
+				ok(true, "Errorhandler was called");
+			}
+		});
+
+		var oAbort2 = oModel.update("/ProductSet('AD-1000')", {
+			success: function() {
+				ok(false, "Successhandler was called");
+			},
+			batchGroupId: "myId1",
+			error: function(){
+				ok(true, "Errorhandler was called");
+			}
+		});
+
+		var oAbort3 = oModel.read("/ProductSet('HT-1001')", {
+			success: function() {
+				ok(false, "Successhandler was called");
+			},
+			batchGroupId: "myId2",
+			error: function(){
+				ok(true, "Errorhandler was called");
+			}
+		});
+
+		var oAbort4 = oModel.update("/ProductSet('AD-1000')", {
+			success: function() {
+				ok(false, "Successhandler was called");
+			},
+			batchGroupId: "myId2",
+			error: function(){
+				ok(true, "Errorhandler was called");
+			}
+		});
+	});
+
+	asyncTest("test abort of requests in batch request with mixed groups and changesets", function() {
+		expect(9);
+		var iCounterBatch = 0;
+		oModel.attachBatchRequestCompleted(this, function(oEvent) {
+			iCounterBatch++;
+			if(iCounterBatch===1){
+				ok(oEvent.getParameter('response').statusCode === 0, "status code 0");
+				ok(oEvent.getParameter('response').statusText === 'abort', "status text 'abort'");
+			}
+			if(iCounterBatch === 2){
+				ok(oEvent.getParameter('response').statusCode !== 0, "status code not 0");
+				ok(oEvent.getParameter('response').statusText !== 'abort', "status text not 'abort'");
+				start();
+			}
+		});
+
+		var oAbort1 = oModel.read("/ProductSet('HT-1001')", {
+			success: function() {
+				ok(false, "Successhandler was called");
+			},
+			batchGroupId: "myId1",
+			sChangeSetId: "myId3",
+			error: function(){
+				ok(true, "Errorhandler was called");
+			}
+		});
+
+		var oAbort2 = oModel.read("/ProductSet('AD-1000')", {
+			success: function() {
+				ok(false, "Successhandler was called");
+			},
+			batchGroupId: "myId1",
+		  sChangeSetId: "myId3",
+			error: function(){
+				ok(true, "Errorhandler was called");
+			}
+		});
+
+		var oAbort3 = oModel.read("/ProductSet('HT-1001')", {
+			success: function() {
+				ok(false, "Successhandler was called");
+			},
+			batchGroupId: "myId1",
+			sChangeSetId: "myId4",
+			error: function(){
+				ok(true, "Errorhandler was called");
+			}
+		});
+
+		var oAbort4 = oModel.read("/ProductSet('HT-1000')", {
+			success: function() {
+				ok(false, "Successhandler was called");
+			},
+			batchGroupId: "myId2",
+			sChangeSetId: "myId5",
+			error: function(){
+				ok(true, "Errorhandler was called");
+			}
+		});
+
+		var oAbort5 = oModel.read("/ProductSet('HT-1001')", {
+			success: function() {
+				ok(true, "Successhandler was called");
+			},
+			batchGroupId: "myId2",
+			sChangeSetId: "myId4",
+			error: function(){
+				ok(false, "Errorhandler was called");
+			}
+		});
+
+
+
+		setTimeout(function() {
+			oAbort1.abort();
+			oAbort2.abort();
+			oAbort3.abort();
+			oAbort4.abort();
+		}, 0);
+	});
+
+	asyncTest("test abort of request in batch request: equal requests", function() {
+		var iSuccess = 0;
+		var iAbort = 0;
+		var oAbort = {};
+		oModel.read("/ProductSet('HT-1001')", {
+			success : function() {
+				iSuccess++;
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			},
+			batchGroupId: "myId1"
+		});
+		oModel.read("/ProductSet('AD-1000')", {
+			success : function() {
+				iSuccess++;
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+			},
+			batchGroupId: "myId1"
+		});
+		oAbort = oModel.read("/ProductSet('AD-1000')", {
+			success : function() {
+				iSuccess++;
+			},
+			error : function(oError) {
+				ok(true, "error callback of aborted request is called");
+				iAbort++;
+			},
+			batchGroupId: "myId1"
+		});
+		oAbort.abort();
+
+		oModel.attachBatchRequestCompleted(this, function(oEvent) {
+			equal(oEvent.getParameter('requests').length, 2, "number of requests check");
+			equal(oEvent.getParameter('requests')[0].url, "ProductSet('HT-1001')" , "Param check: url");
+			equal(oEvent.getParameter('requests')[1].url, "ProductSet('AD-1000')" , "Param check: url");
+			if (iAbort === 1 && iSuccess === 2) {
+				start();
+			}
 		});
 	});
 
@@ -3689,6 +4778,59 @@
 		});
 	});
 
+	asyncTest("test abort of deferred batch request: equal reqests", function() {
+		var iSuccess = 0;
+		var iAbort = 0;
+		var iBatchComp = 0;
+		var oAbort = {};
+		oModel.setDeferredBatchGroups([ "myId1" ]);
+		oModel.read("/ProductSet('HT-1001')", {
+			success : function() {
+				iSuccess++;
+			},
+			error : function(oError) {
+				ok(true, "error callback of aborted request is called");
+				iAbort++;
+			},
+			batchGroupId: "myId1"
+		});
+		oModel.read("/ProductSet('AD-1000')", {
+			success : function() {
+				iSuccess++;
+			},
+			error : function(oError) {
+				ok(true, "error callback of aborted request is called");
+				iAbort++;
+			},
+			batchGroupId: "myId1"
+		});
+		oModel.read("/ProductSet('HT-1001')", {
+			success : function() {
+				iSuccess++;
+			},
+			error : function(oError) {
+				ok(true, "error callback of aborted request is called");
+				iAbort++;
+			},
+			batchGroupId: "myId1"
+		});
+		oAbort = oModel.submitChanges({success: function(oParams){
+			ok(false, "SubmitChanges: request should be aborted");
+		}, error: function(oEvent){
+			ok(true, "SubmitChanges: request should be aborted");
+			iBatchComp++;
+		}});
+		oAbort.abort();
+
+		oModel.attachBatchRequestCompleted(this, function(oEvent) {
+			ok(true, "request should be aborted");
+			equal(oEvent.getParameter('success'), false, "request completed with success false");
+			if (iBatchComp === 1 && iAbort === 3 && iSuccess === 0) {
+				start();
+			}
+		});
+	});
+
 	asyncTest("test abort of request in non batch request", function() {
 		var bSuccess = false;
 		var oAbort = {};
@@ -3722,6 +4864,113 @@
 			}
 		});
 	});
+
+	asyncTest("test abort of request in non batch request: euqal requests", function() {
+		var iSuccess = 0;
+		var iAbort = 0;
+		var oAbort = {};
+		oModel.setUseBatch(false);
+		oModel.read("/ProductSet('HT-1001')", {
+			success : function() {
+				iSuccess++;
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+				iAbort++;
+			},
+		});
+		oModel.read("/ProductSet('AD-1000')", {
+			success : function() {
+				iSuccess++;
+			},
+			error : function(oError) {
+				ok(false, "request failed");
+				iAbort++;
+			},
+		});
+		oAbort = oModel.read("/ProductSet('HT-1001')", {
+			success : function() {
+				iSuccess++;
+			},
+			error : function(oError) {
+				ok(true, "error callback of aborted request is called");
+				iAbort++;
+			},
+		});
+		oAbort.abort();
+		oModel.attachRequestCompleted(this, function(oEvent) {
+			if (oEvent.getParameter('success')){
+				ok(true, "request sent");
+			} else {
+				ok(false, "aborted request should have never been sent");
+			}
+			if (iSuccess === 2 && iAbort === 1){
+				start();
+			}
+		});
+	});
+
+
+
+	asyncTest("XMLHttpRequest abort of batch requests with ODataModel internal", function() {
+		expect(3);
+		var that = this;
+		var iEventCounter = 0;
+		var bSuccess1 = false,
+			bSuccess2 = false,
+			bSuccess3 = false;
+		var oAbort = {};
+		var oModel = initModel({
+			"useBatch": true
+		});
+		this.aRequests = [];
+
+		oModel.attachRequestCompleted(this, function(oEvent) {
+			iEventCounter++;
+			if (iEventCounter === 2) {
+				ok(!bSuccess1, "RequestHandle 1 was flagged aborted in the ODataModel");
+				ok(!bSuccess2, "RequestHandle 2 was flagged aborted in the ODataModel");
+				ok(!bSuccess3, "RequestHandle 3 was flagged aborted in the ODataModel");
+		//		ok(that.aRequests[2].status === 0, "XHR was aborted");
+				start();
+			}
+		});
+
+		var bFirstTime = true;
+		oModel.attachRequestSent(this, function(oEvent) {
+			if (bFirstTime) {
+				bFirstTime = false;
+				setTimeout(function() {
+					oAbort1.abort();
+					oAbort2.abort();
+					oAbort3.abort();
+				}, 0);
+			}
+		});
+
+		var oAbort1 = oModel.read("/Products", {
+			success: function() {
+				bSuccess1 = true;
+			},
+			sChangeSetId: "myId1"
+		});
+
+		var oAbort2 = oModel.update("/Products", {
+			success: function() {
+				bSuccess2 = true;
+			},
+			sChangeSetId: "myId1"
+		});
+
+		var oAbort3 = oModel.read("/Products", {
+			success: function() {
+				bSuccess3 = true;
+			},
+			sChangeSetId: "myId1"
+		});
+
+	});
+
 	asyncTest("test oDataModel checkupdate/dataReceived event order", function() {
 		var iCount = 0;
 		var iChange = 0;
@@ -3755,6 +5004,48 @@
 				ok(true, "batch request completed");
 				oInput1.destroy();
 				oInput2.destroy();
+				start();
+			}
+		});
+	});
+
+	asyncTest("test oDataModel checkupdate/dataReceived event order: equal requests", function() {
+		var iCount = 0;
+		var iChange = 0;
+		var iReceived = 0;
+		var bRead1 = false;
+		var bRead2 = false;
+		var oInput1, oInput2;
+
+		oInput1 = new sap.m.Input();
+		oInput1.setModel(oModel);
+		oInput2 = new sap.m.Input();
+		oInput2.setModel(oModel);
+		oInput3 = new sap.m.Input();
+		oInput3.setModel(oModel);
+
+		var fnChange = function(oEvent) {
+			iChange++;
+		}
+		var fnDataReceived = function(oEvent) {
+			ok(iChange == 3, "checkupdate done");
+			iReceived++;
+			if (iReceived == 3) {
+				ok(true, "dataReceived after checkUpdate");
+			}
+		}
+
+		oInput1.bindElement({path:"/ProductSet('AD-1000')", batchGroupId:1, events:{change: fnChange, dataReceived: fnDataReceived}});
+		oInput2.bindElement({path:"/ProductSet('HT-1000')", batchGroupId:1, events:{change: fnChange, dataReceived: fnDataReceived}});
+		oInput3.bindElement({path:"/ProductSet('HT-1000')", batchGroupId:1, events:{change: fnChange, dataReceived: fnDataReceived}});
+
+		oModel.attachBatchRequestCompleted(this, function(test) {
+			iCount++;
+			if (iCount === 1 ) {
+				ok(true, "batch request completed");
+				oInput1.destroy();
+				oInput2.destroy();
+				oInput3.destroy();
 				start();
 			}
 		});
@@ -4047,7 +5338,7 @@
 			start();
 		});
 	});
-	
+
 	asyncTest("test oDataModel callFunction: additional parameters", function() {
 		var mUrlParams = {
 			"SalesOrderID": "test",
