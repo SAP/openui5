@@ -35,7 +35,9 @@ QUnit.test("isVariableRowHeightEnabled", function(assert) {
 	assert.ok(!TableUtils.isVariableRowHeightEnabled(oTable), "VariableRowHeight is disabled by default.");
 	oTable._bVariableRowHeightEnabled = true;
 	assert.ok(TableUtils.isVariableRowHeightEnabled(oTable), "VariableRowHeight is enabled when bVariableRowHeight is true.");
-	oTable.setNavigationMode(sap.ui.table.NavigationMode.Paginator);
+
+	// the setter for navigationMode would default to NavigationMode.Scrollbar, Therefore use the generic setter for this test
+	oTable.setProperty("navigationMode", sap.ui.table.NavigationMode.Paginator);
 	assert.ok(!TableUtils.isVariableRowHeightEnabled(oTable), "VariableRowHeight is not allowed when oTable has a Paginator.");
 });
 
