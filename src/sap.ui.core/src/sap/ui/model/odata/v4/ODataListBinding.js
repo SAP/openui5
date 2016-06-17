@@ -373,13 +373,13 @@ sap.ui.define([
 	 * @param {number} [iLength]
 	 *   The number of contexts to retrieve beginning from the start index; defaults to the model's
 	 *   size limit, see {@link sap.ui.model.Model#setSizeLimit}
-	 * @param {number} [iThreshold]
-	 *   The parameter <code>iThreshold</code> is not supported.
+	 * @param {number} [iThreshold=0]
+	 *   The number of contexts to read in addition to <code>iLength</code> when requesting data
+	 *   from the server; with this, controls can prefetch data that is likely to be needed soon,
+	 *   e.g. when scrolling down in a table. Negative values will be treated as 0.
 	 * @returns {sap.ui.model.odata.v4.Context[]}
 	 *   The array of already created contexts with the first entry containing the context for
 	 *   <code>iStart</code>
-	 * @throws {Error}
-	 *   If <code>iThreshold</code> is given
 	 *
 	 * @protected
 	 * @see sap.ui.model.ListBinding#getContexts
@@ -392,26 +392,9 @@ sap.ui.define([
 			sGroupId,
 			oModel = this.oModel,
 			oPromise,
+			oReadInfo,
 			sResolvedPath = oModel.resolve(this.sPath, oContext),
 			that = this;
-
-		/**
-		 * Checks, whether the contexts exist for the requested range.
-		 *
-		 * @returns {boolean}
-		 *   <code>true</code> if the contexts in the range exist
-		 */
-		function isRangeInContext() {
-			var i,
-				n = iStart + iLength;
-
-			for (i = iStart; i < n; i += 1) {
-				if (that.aContexts[i] === undefined) {
-					return false;
-				}
-			}
-			return true;
-		}
 
 		/**
 		 * Creates entries in aContexts for each value in oResult.
@@ -425,9 +408,9 @@ sap.ui.define([
 				i,
 				bNewLengthFinal,
 				iResultLength = Array.isArray(vResult) ? vResult.length : vResult.value.length,
-				n = iStart + iResultLength;
+				n = oReadInfo.start + iResultLength;
 
-			for (i = iStart; i < n; i += 1) {
+			for (i = oReadInfo.start; i < n; i += 1) {
 				if (that.aContexts[i] === undefined) {
 					bChanged = true;
 					that.aContexts[i] = Context.create(oModel, that, sResolvedPath + "/" + i, i);
@@ -437,9 +420,9 @@ sap.ui.define([
 				// upper boundary obsolete: reset it
 				that.iMaxLength = Infinity;
 			}
-			if (iResultLength < iLength) {
+			if (iResultLength < oReadInfo.length) {
 				// less data -> reduce upper boundary for list length and delete obsolete content
-				that.iMaxLength = Math.min(iStart + iResultLength, that.iMaxLength);
+				that.iMaxLength = Math.min(oReadInfo.start + iResultLength, that.iMaxLength);
 				if (that.aContexts.length > that.iMaxLength) {
 					// delete all contexts after iMaxLength
 					that.aContexts.splice(that.iMaxLength,
@@ -461,16 +444,14 @@ sap.ui.define([
 			}
 		}
 
-		if (iThreshold !== undefined) {
-			throw new Error("Unsupported operation: v4.ODataListBinding#getContexts, "
-				+ "iThreshold parameter must not be set");
-		}
-
 		sChangeReason = this.sChangeReason || ChangeReason.Change;
 		this.sChangeReason = undefined;
 
 		iStart = iStart || 0;
 		iLength = iLength || oModel.iSizeLimit;
+		if (!iThreshold || iThreshold < 0) {
+			iThreshold = 0;
+		}
 
 		if (!sResolvedPath) {
 			// oModel.resolve() called with relative path w/o context
@@ -478,13 +459,18 @@ sap.ui.define([
 			return [];
 		}
 
-		if (!isRangeInContext(iStart, iLength)) {
+		oReadInfo = _ODataHelper.getReadRange(this.aContexts, iStart, iLength, iThreshold,
+			this.iMaxLength);
+
+		if (oReadInfo) {
 			if (this.oCache) {
 				sGroupId = this.sRefreshGroupId || this.getGroupId();
 				this.sRefreshGroupId = undefined;
-				oPromise = this.oCache.read(iStart, iLength, sGroupId, undefined, function () {
-					bDataRequested = true;
-					that.oModel.addedRequestToGroup(sGroupId, that.fireDataRequested.bind(that));
+				oPromise = this.oCache.read(oReadInfo.start, oReadInfo.length, sGroupId, undefined,
+					function () {
+						bDataRequested = true;
+						that.oModel.addedRequestToGroup(sGroupId,
+							that.fireDataRequested.bind(that));
 				});
 			} else {
 				oPromise = oContext.fetchValue(this.sPath);

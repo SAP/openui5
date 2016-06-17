@@ -1282,6 +1282,126 @@ sap.ui.require([
 				mResultingQueryOptions, "sQueryPath:" + oFixture.sQueryPath);
 		});
 	});
+
+	//*********************************************************************************************
+	[
+		{ // no threshold
+			iStart : 0, iLength : 10, iThreshold : 0,
+			oExpected : {start : 0, length : 10}
+		}, {
+			iStart : 40, iLength : 10, iThreshold : 0,
+			oExpected : {start : 40, length : 10}
+		}, {
+			iStart : 40, iLength : 10, iThreshold : 0,
+			aPreread : [{iReadStart : 40, iReadLength : 10}]
+		}, {
+			iStart : 100, iLength : 20, iThreshold : 0,
+			aPreread : [{
+				iReadStart : 50, iReadLength : 60
+			}],
+			oExpected : {start : 100, length : 20}
+		}, { // with threshold
+			iStart : 0, iLength : 10, iThreshold : 100,
+			oExpected : {start : 0, length : 110}
+		}, {
+			iStart : 1, iLength : 10, iThreshold : 100,
+			aPreread : [{iReadStart : 0, iReadLength : 110}]
+		}, {
+			iStart : 50, iLength : 10, iThreshold : 100,
+			aPreread : [{iReadStart : 0, iReadLength : 110}]
+		}, {
+			iStart : 51, iLength : 10, iThreshold : 100,
+			aPreread : [{iReadStart : 0, iReadLength : 110}],
+			oExpected : {start : 110, length : 110}
+		}, {
+			iStart : 52, iLength : 10, iThreshold : 100,
+			aPreread : [{iReadStart : 0, iReadLength : 219}]
+		}, {
+			iStart : 430, iLength : 10, iThreshold : 100,
+			aPreread : [{iReadStart : 0, iReadLength : 219}],
+			oExpected : {start : 330, length : 210}
+		}, {
+			iStart : 431, iLength : 10, iThreshold : 100,
+			aPreread : [{
+				iReadStart : 0, iReadLength : 219
+			}, {
+				iReadStart : 330, iReadLength : 210
+			}]
+		}, {
+			iStart : 429, iLength : 10, iThreshold : 100,
+			aPreread : [{
+				iReadStart : 0, iReadLength : 219
+			}, {
+				iReadStart : 330, iReadLength : 210
+			}]
+		}, {
+			iStart : 380, iLength : 10, iThreshold : 100,
+			aPreread : [{
+				iReadStart : 0, iReadLength : 219
+			}, {
+				iReadStart : 330, iReadLength : 210
+			}]
+		}, {
+			iStart : 379, iLength : 10, iThreshold : 100,
+			aPreread : [{
+				iReadStart : 0, iReadLength : 219
+			}, {
+				iReadStart : 330, iReadLength : 210
+			}],
+			oExpected : {start : 220, length : 110}
+		}, {
+			iStart : 219, iLength : 10, iThreshold : 100,
+			aPreread : [{
+				iReadStart : 0, iReadLength : 219
+			}, {
+				iReadStart : 330, iReadLength : 210
+			}, {
+				iReadStart : 220, iReadLength : 110
+			}],
+			oExpected : {start : 219, length : 110}
+		}, { // all data read, no further call to fill prefetched data
+			iStart : 50, iLength : 10, iThreshold : 100, iMaxLength : 80,
+			aPreread : [{
+				iReadStart : 0, iReadLength : 80
+			}]
+		}, { // outside range
+			iStart : 910, iLength : 10, iThreshold : 100, iMaxLength : 800
+		}, { // start index after maxLength but missing data in front
+			iStart : 800, iLength : 10, iThreshold : 100, iMaxLength : 800,
+			oExpected : {start : 690, length : 110}
+		}, { // start index just before maxLength
+			iStart : 799, iLength : 10, iThreshold : 100, iMaxLength : 800,
+			oExpected : {start : 699, length : 210}
+		}, { // start index near 0 but greater than 0
+			iStart : 5, iLength : 10, iThreshold : 100,
+			oExpected : {start : 0, length : 210}
+		}
+	].forEach(function (oFixture) {
+		QUnit.test("threshold: iStart = " + oFixture.iStart, function (assert) {
+			var aContexts = [],
+				aPreread = oFixture.aPreread,
+				oResult;
+
+			// prepare contexts array
+			if (aPreread) {
+				aPreread.forEach(function (oInfo) {
+					var i = oInfo.iReadStart,
+						max = i + oInfo.iReadLength;
+
+					while (i < max) {
+						aContexts[i] = i;
+						i++;
+					}
+				});
+			}
+
+			oResult = _ODataHelper.getReadRange(aContexts, oFixture.iStart, oFixture.iLength,
+				oFixture.iThreshold, oFixture.iMaxLength || Infinity);
+
+			assert.deepEqual(oResult, oFixture.oExpected);
+		});
+	});
+
 	// TODO handle encoding in getQueryOptions
 	//TODO dynamic app filters in ODLB constructor/ODataModel#bindList
 });
