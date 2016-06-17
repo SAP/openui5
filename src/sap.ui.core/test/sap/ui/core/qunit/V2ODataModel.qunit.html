@@ -1732,7 +1732,7 @@
 			}
 		});
 	});
-	
+
 	asyncTest("test oDataModel setProperty: resetChanges - request should be aborted", function() {
 		var oSpy;
 		oModel.read("/ProductSet('HT-1000')");
@@ -1757,7 +1757,7 @@
 			}
 		});
 	});
-	
+
 	asyncTest("test oDataModel setProperty : resetChanges twice - request should be aborted", function() {
 		var oSpy;
 		oModel.read("/ProductSet('AD-1000')", {
@@ -4577,7 +4577,7 @@
 		});
 
 		var oAbort1 = oModel.read("/ProductSet('HT-1001')", {
-			success: function() {
+			success: function(){
 				ok(false, "Successhandler was called");
 			},
 			batchGroupId: "myId1",
@@ -4587,7 +4587,7 @@
 		});
 
 		var oAbort2 = oModel.update("/ProductSet('AD-1000')", {
-			success: function() {
+			success: function(){
 				ok(false, "Successhandler was called");
 			},
 			batchGroupId: "myId1",
@@ -4597,7 +4597,7 @@
 		});
 
 		var oAbort3 = oModel.read("/ProductSet('HT-1001')", {
-			success: function() {
+			success: function(){
 				ok(false, "Successhandler was called");
 			},
 			batchGroupId: "myId2",
@@ -4607,7 +4607,7 @@
 		});
 
 		var oAbort4 = oModel.update("/ProductSet('AD-1000')", {
-			success: function() {
+			success: function(){
 				ok(false, "Successhandler was called");
 			},
 			batchGroupId: "myId2",
@@ -4619,17 +4619,28 @@
 
 	asyncTest("test abort of requests in batch request with mixed groups and changesets", function() {
 		expect(9);
-		var iCounterBatch = 0;
+
+		var iBatchCompletedCount = 0;
 		oModel.attachBatchRequestCompleted(this, function(oEvent) {
-			iCounterBatch++;
-			if(iCounterBatch===1){
+			iBatchCompletedCount++;
+			if (iBatchCompletedCount === 1) {
 				ok(oEvent.getParameter('response').statusCode === 0, "status code 0");
 				ok(oEvent.getParameter('response').statusText === 'abort', "status text 'abort'");
-			}
-			if(iCounterBatch === 2){
+			} else if (iBatchCompletedCount === 2) {
 				ok(oEvent.getParameter('response').statusCode !== 0, "status code not 0");
 				ok(oEvent.getParameter('response').statusText !== 'abort', "status text not 'abort'");
 				start();
+			}
+		});
+		var iBatchSentCount = 0;
+		oModel.attachBatchRequestSent(this, function(oEvent) {
+			iBatchSentCount++;
+			if (iBatchSentCount === 1) {
+				oAbort1.abort();
+				oAbort2.abort();
+				oAbort3.abort();
+			} else if (iBatchSentCount === 2) {
+				oAbort4.abort();
 			}
 		});
 
@@ -4655,7 +4666,7 @@
 			}
 		});
 
-		var oAbort3 = oModel.read("/ProductSet('HT-1001')", {
+		var oAbort3 = oModel.read("/ProductSet('HT-1003')", {
 			success: function() {
 				ok(false, "Successhandler was called");
 			},
@@ -4672,7 +4683,7 @@
 			},
 			batchGroupId: "myId2",
 			sChangeSetId: "myId5",
-			error: function(){
+			error: function() {
 				ok(true, "Errorhandler was called");
 			}
 		});
@@ -4683,19 +4694,10 @@
 			},
 			batchGroupId: "myId2",
 			sChangeSetId: "myId4",
-			error: function(){
+			error: function() {
 				ok(false, "Errorhandler was called");
 			}
 		});
-
-
-
-		setTimeout(function() {
-			oAbort1.abort();
-			oAbort2.abort();
-			oAbort3.abort();
-			oAbort4.abort();
-		}, 0);
 	});
 
 	asyncTest("test abort of request in batch request: equal requests", function() {
