@@ -9,8 +9,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 
 
 	// shortcuts
-	var HorizontalAlign = coreLibrary.HorizontalAlign,
-		NavigationMode = library.NavigationMode,
+	var NavigationMode = library.NavigationMode,
 		SelectionBehavior = library.SelectionBehavior,
 		SelectionMode = library.SelectionMode,
 		VisibleRowCountMode = library.VisibleRowCountMode;
@@ -478,7 +477,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 		rm.write("><div");
 		rm.addClass("sapUiTableColCell");
 		rm.writeClasses();
-		var sHAlign = this.getHAlign(oColumn.getHAlign(), oLabel && oLabel.getTextDirection && oLabel.getTextDirection());
+		var sHAlign = Renderer.getTextAlign(oColumn.getHAlign(), oLabel && oLabel.getTextDirection && oLabel.getTextDirection());
 		if (sHAlign) {
 			rm.addStyle("text-align", sHAlign);
 		}
@@ -880,7 +879,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 				firstCol: bIsFirstColumn
 			});
 
-			var sHAlign = this.getHAlign(oColumn.getHAlign(), oCell && oCell.getTextDirection && oCell.getTextDirection());
+			var sHAlign = Renderer.getTextAlign(oColumn.getHAlign(), oCell && oCell.getTextDirection && oCell.getTextDirection());
 			if (sHAlign) {
 				rm.addStyle("text-align", sHAlign);
 			}
@@ -956,26 +955,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 	// =============================================================================
 	// HELPER FUNCTIONALITY
 	// =============================================================================
-
-	/**
-	 * Returns the value for the HTML "align" attribute according to the given
-	 * horizontal alignment and RTL mode, or NULL if the HTML default is fine.
-	 *
-	 * @param {sap.ui.core.HorizontalAlign} sHorizontalAlign the text alignment of the Control
-	 * @param {sap.ui.core.TextDirection} sTextDirection the text direction of the Control
-	 * @returns {string} the actual text alignment that must be set for this environment
-	 * @private
-	 */
-	TableRenderer.getHAlign = function(sHorizontalAlign, sTextDirection) {
-		// the enum values of sap.ui.core.TextAlign are a superset of sap.ui.core.HorizontalAlign
-		// the logic to be implemented is basically the same, therefore route the call to getTextAlign implementation
-		// of the Renderer
-		var sTextAlign = Renderer.getTextAlign(sHorizontalAlign, sTextDirection);
-		if (!sTextAlign) {
-			sTextAlign = (sHorizontalAlign == HorizontalAlign.Left ? "left" : "right");
-		}
-		return sTextAlign;
-	};
 
 	/**
 	 * Renders an empty area with tabindex=0 and the given class and id.
