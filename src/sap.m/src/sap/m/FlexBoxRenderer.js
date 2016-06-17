@@ -74,6 +74,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper'],
 		oRm.addClass("sapMFlexBoxAlignItems" + oControl.getAlignItems());
 		oRm.addClass("sapMFlexBoxWrap" + oControl.getWrap());
 		oRm.addClass("sapMFlexBoxAlignContent" + oControl.getAlignContent());
+		oRm.addClass("sapMFlexBoxBG" + oControl.getBackgroundDesign());
 		oRm.writeClasses();
 
 		// Add inline styles
@@ -141,6 +142,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper'],
 				}
 
 				oRm.addClass("sapMFlexItemAlign" + oLayoutData.getAlignSelf());
+				oRm.addClass("sapMFlexBoxBG" + oLayoutData.getBackgroundDesign());
 
 				// Set layout properties for flex item
 				FlexBoxStylingHelper.setFlexItemStyles(oRm, oLayoutData);
