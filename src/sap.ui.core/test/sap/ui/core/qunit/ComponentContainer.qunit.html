@@ -19,25 +19,57 @@
 		jQuery.sap.require("sap.ui.thirdparty.sinon");
 		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
-		QUnit.config.autostart = false;
 		jQuery.sap.registerModulePath("samples.components", "../../../../../test-resources/sap/ui/core/samples/components/");
 
-		sap.ui.require(["sap/ui/core/ComponentContainer"], function (ComponentContainer) {
+		QUnit.test("Should be able to chain setComponent", function (assert) {
 
-			QUnit.test("Should be able to chain setComponent", function (assert) {
-				var oComponentContainter = new ComponentContainer();
+			var done = assert.async();
+
+			sap.ui.require(["sap/ui/core/Component", "sap/ui/core/ComponentContainer"], function (Component, ComponentContainer) {
+
+				var oComponentContainer = new ComponentContainer();
 
 				var oComponent = sap.ui.component({
 					name: "samples.components.button"
 				});
 
-				oComponentContainter.setComponent(oComponent).setComponent(oComponent);
+				oComponentContainer.setComponent(oComponent).setComponent(oComponent);
 
-				assert.strictEqual(oComponent.getId(), oComponentContainter.getComponent(), "Was able to chain the setter");
+				assert.strictEqual(oComponent.getId(), oComponentContainer.getComponent(), "Was able to chain the setter");
+
+				done();
+
 			});
 
-			QUnit.start();
 		});
+
+		QUnit.test("Should delegate the owner component", function (assert) {
+
+			var done = assert.async();
+
+			sap.ui.require(["sap/ui/core/Component", "sap/ui/core/ComponentContainer"], function (Component, ComponentContainer) {
+
+				var oOwnerComponent = new Component("owner");
+				var oComponentContainer;
+
+				oOwnerComponent.runAsOwner(function() {
+					oComponentContainer = new ComponentContainer({
+						name: "samples.components.button"
+					});
+				});
+
+				// simulate rendering
+				oComponentContainer.onBeforeRendering();
+
+				assert.strictEqual(oOwnerComponent.getId(), Component.getOwnerComponentFor(oComponentContainer).getId(), "ComponentContainer created by owner Component");
+				assert.strictEqual(oOwnerComponent.getId(), Component.getOwnerComponentFor(oComponentContainer.getComponentInstance()).getId(), "ComponentContainers Component created by owner Component");
+
+				done();
+
+			});
+
+		});
+
 	</script>
 	</head>
 	<body>
