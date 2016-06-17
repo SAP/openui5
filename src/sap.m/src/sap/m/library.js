@@ -3153,6 +3153,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 * @param {int} iLength If iLength is provided only these number of entries will be requested.
 	 *
 	 * @name sap.m.InputODataSuggestProvider
+	 * @namespace
 	 * @since 1.21.2
 	 *
 	 * @public
