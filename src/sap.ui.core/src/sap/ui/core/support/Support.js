@@ -43,17 +43,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 					this._isOpen = false;
 					this.attachEvent(mEvents.TEAR_DOWN, function(oEvent){
 						that._isOpen = false;
-						if (!!Device.browser.internet_explorer) {
+						if ( Device.browser.msie ) {
 							jQuery.sap.byId(ID_SUPPORT_AREA + "-frame").remove();
 						} else {
 							close(that._oRemoteWindow);
 						}
 						that._oRemoteWindow = null;
-						exitPlugins(that, false);
+						Support.exitPlugins(that, false);
 					});
 					this.attachEvent(mEvents.SETUP, function(oEvent){
 						that._isOpen = true;
-						initPlugins(that, false);
+						Support.initPlugins(that, false);
 					});
 					break;
 				case mTypes.IFRAME:
@@ -69,11 +69,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 					this._sRemoteOrigin = jQuery.sap.getUriParameters().get("sap-ui-xx-support-origin");
 					jQuery(window).bind("unload", function(oEvent){
 						that.sendEvent(mEvents.TEAR_DOWN);
-						exitPlugins(that, true);
+						Support.exitPlugins(that, true);
 					});
 					jQuery(function(){
-						initPlugins(that, true);
-						that.sendEvent(mEvents.SETUP);
+						Support.initPlugins(that, true).then(function() {
+							that.sendEvent(mEvents.SETUP);
+						});
 					});
 					break;
 			}
@@ -189,7 +190,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 				that._oOpenedWindow.sap.ui.core.support.Support.getStub(mTypes.TOOL)._receiveEvent({source: window, data: oEvent.data, origin: that._sLocalOrigin});
 			}, 0);
 		} else {
-			var oData = window.JSON.parse(sData);
+			var oData = JSON.parse(sData);
 			var sEventId = oData.eventId;
 			var mParams = oData.params;
 			this.fireEvent(sEventId, mParams);
@@ -211,18 +212,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 
 		mParams = mParams ? mParams : {};
 
-		if (!!Device.browser.internet_explorer && this._sType === mTypes.TOOL) {
+		if ( Device.browser.msie && this._sType === mTypes.TOOL ) {
 			this._oRemoteWindow.sap.ui.core.support.Support.getStub(mTypes.IFRAME).sendEvent(sEventId, mParams);
 		} else {
 			var mParamsLocal = mParams;
-			if (!!Device.browser.internet_explorer) {
+			if ( Device.browser.msie ) {
 				//Attention mParams comes from an other window
 				//-> (mParams instanceof Object == false)!
 				mParamsLocal = {};
 				jQuery.extend(true, mParamsLocal, mParams);
 			}
 			var oData = {"eventId": sEventId, "params": mParamsLocal};
-			var sData = "SAPUI5SupportTool*" + window.JSON.stringify(oData);
+			var sData = "SAPUI5SupportTool*" + JSON.stringify(oData);
 			this._oRemoteWindow.postMessage(sData, this._sRemoteOrigin);
 		}
 	};
@@ -266,7 +267,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 
 		if (this._sType === mTypes.APPLICATION) {
 			if (!this._isOpen) {
-				if (!!Device.browser.internet_explorer) {
+				if ( Device.browser.msie ) {
 					var sIFrameUrl = jQuery.sap.getModulePath("sap.ui.core.support", "/msiebridge.html");
 					getSupportArea().html("").append("<iframe id=\"" + ID_SUPPORT_AREA + "-frame\" src=\"" + sIFrameUrl + sParams + "\" onload=\"sap.ui.core.support.Support._onSupportIFrameLoaded();\"></iframe>");
 					this._sRemoteOrigin = checkLocalUrl(sIFrameUrl) ? this._sLocalOrigin : sIFrameUrl;
@@ -371,39 +372,77 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 	}
 
 
-	function initPlugins(oStub, bTool) {
-		var aPlugins = bTool ? Support.TOOL_SIDE_PLUGINS : Support.APP_SIDE_PLUGINS;
+	/**
+	 * Loads and initializes all plugins on app or tool side depending on
+	 * the <code>bTool</code> parameter.
+	 *
+	 * @param {sap.ui.core.support.Support} oStub Support instance (app or tool side)
+	 * @param {boolean} bTool Whether tool or app side plugins should be handled
+	 * @return {Promise} Resolved once the plugins have been loaded and initialized
+	 * @private
+	 */
+	Support.initPlugins = function(oStub, bTool) {
 
-		for (var i = 0; i < aPlugins.length; i++) {
-			if (typeof (aPlugins[i]) === "string") {
-				jQuery.sap.require(aPlugins[i]);
-				var fPluginConstructor = jQuery.sap.getObject(aPlugins[i]);
-				aPlugins[i] = new fPluginConstructor(oStub);
-				if (oStub.getType() === mTypes.TOOL) {
-					wrapPlugin(aPlugins[i]);
+		return new Promise(function(resolve, reject) {
+
+			var aPlugins = bTool ? Support.TOOL_SIDE_PLUGINS : Support.APP_SIDE_PLUGINS;
+
+			// collect plugin modules
+			var aPluginModules = [],
+				aPluginModuleIndexes = [],
+				i;
+
+			for ( i = 0; i < aPlugins.length; i++ ) {
+				if ( typeof aPlugins[i] === "string" ) {
+					aPluginModules.push( jQuery.sap.getResourceName(aPlugins[i], '') );
+					aPluginModuleIndexes.push(i);
 				}
-				aPlugins[i].init(oStub);
-			} else if (aPlugins[i] instanceof Plugin) {
-				aPlugins[i].init(oStub);
 			}
-		}
 
-		if (bTool) {
-			Support.TOOL_SIDE_PLUGINS = aPlugins;
-		} else {
-			Support.APP_SIDE_PLUGINS = aPlugins;
-		}
-	}
+			sap.ui.require(aPluginModules, function() {
 
+				var i,j,FNPluginConstructor;
 
-	function exitPlugins(oStub, bTool) {
+				// instantiate loaded plugins
+				for ( var j = 0; j < arguments.length; j++ ) {
+					FNPluginConstructor = arguments[j];
+					i = aPluginModuleIndexes[j];
+					aPlugins[i] = new FNPluginConstructor(oStub);
+					if ( oStub.getType() === mTypes.TOOL ) {
+						wrapPlugin(aPlugins[i]);
+					}
+				}
+
+				for ( i = 0; i < aPlugins.length; i++ ) {
+					if ( aPlugins[i] instanceof Plugin ) {
+						aPlugins[i].init(oStub);
+					}
+				}
+
+				resolve();
+
+			});
+
+		});
+
+	};
+
+	/**
+	 * Unloads all plugins on app or tool side depending on
+	 * the <code>bTool</code> parameter.
+	 *
+	 * @param {sap.ui.core.support.Support} oStub Support instance (app or tool side)
+	 * @param {boolean} bTool Whether tool or app side plugins should be handled
+	 * @private
+	 */
+	Support.exitPlugins = function(oStub, bTool) {
 		var aPlugins = bTool ? Support.TOOL_SIDE_PLUGINS : Support.APP_SIDE_PLUGINS;
 		for (var i = 0; i < aPlugins.length; i++) {
 			if (aPlugins[i] instanceof Plugin) {
 				aPlugins[i].exit(oStub, bTool);
 			}
 		}
-	}
+	};
 
 
 	function wrapPlugin(oPlugin) {
