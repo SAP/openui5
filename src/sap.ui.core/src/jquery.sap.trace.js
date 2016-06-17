@@ -43,7 +43,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Global'],
 				iScrollEventDelayId = 0;
 
 			function getInitialFESRState() {
-				var bActive = !!document.querySelector("meta[name=sap-ui-fesr][value=true]"),
+				var bActive = !!document.querySelector("meta[name=sap-ui-fesr][content=true]"),
 					aParamMatches = window.location.search.match(/[\?|&]sap-ui-(?:xx-)?fesr=(true|x|X|false)&?/);
 				if (aParamMatches) {
 					bActive = aParamMatches[1] && aParamMatches[1] != "false";
