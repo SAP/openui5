@@ -437,5 +437,60 @@
         "references": []
       }
     ]
+  },
+  "1.36.10": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "0bc10e415cee9ab7369771812a183754ad512e07",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NotificationListItem: Box shadow corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.36.11": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "3b2a7ee90304242074122a1fc38f602a45c43402",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: SegmentedButton in the header is not rendered correctly",
+        "references": []
+      },
+      {
+        "id": "20a439f0f031a774f2fd0c05fbe49fc7599f3cfa",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: remove the margin inside the table cell",
+        "references": []
+      }
+    ]
+  },
+  "1.36.12": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "ffa7a8612a1d3fb1a0b8fd058c884a1bd22e1206",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ActionSheet: Dialog\u0027s \"Cancel\" button is now positioned correctly on IE",
+        "references": []
+      }
+    ]
+  },
+  "1.36.13": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "59fb1abaa7bbcab2fc12c723cf4ae1893bc3659e",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageHeader: Breadcrumbs have correct color in Dark mode",
+        "references": []
+      }
+    ]
   }
 }
