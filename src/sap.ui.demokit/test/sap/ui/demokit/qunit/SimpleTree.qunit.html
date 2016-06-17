@@ -101,6 +101,7 @@
 			function getTreeNodes() {
 				this.oBoundTree1 = sap.ui.getCore().byId(this.sBoundTree1Id);
 				this.oNode1 = this.oBoundTree1.getNodes()[0];
+				this.oNode1Icon = this.oNode1.$().find(".sapUiIcon")[0];
 				this.oNode12 = this.oNode1.getNodes()[1];
 				this.oNode4 = this.oBoundTree1.getNodes()[3];
 			}
@@ -205,31 +206,31 @@
 
 			QUnit.test("SimpleTree Node 1 right arrow", function (assert) {
 				assert.ok(!this.oNode1.getExpanded(), "Node 1 is not expanded");
-				qutils.triggerKeydown(this.oNode1.$(), this.iExpandArrow);
+				qutils.triggerKeydown(this.oNode1Icon, this.iExpandArrow);
 				assert.ok(this.oNode1.getExpanded(), "Node 1 is now expanded");
 			});
 
 			QUnit.test("SimpleTree Node 1 right arrow", function (assert) {
-				qutils.triggerKeydown(this.oNode1.$(), this.iExpandArrow);
-				qutils.triggerKeydown(this.oNode1.$(), this.iExpandArrow);
+				qutils.triggerKeydown(this.oNode1Icon, this.iExpandArrow);
+				qutils.triggerKeydown(this.oNode1Icon, this.iExpandArrow);
 				assert.ok(this.oNode1.getExpanded(), "Node 1 is still expanded");
 			});
 
 			QUnit.test("SimpleTree Node 1 left arrow", function (assert) {
-				qutils.triggerKeydown(this.oNode1.$(), this.iExpandArrow);
-				qutils.triggerKeydown(this.oNode1.$(), this.iCollapseArrow);
+				qutils.triggerKeydown(this.oNode1Icon, this.iExpandArrow);
+				qutils.triggerKeydown(this.oNode1Icon, this.iCollapseArrow);
 				assert.ok(!this.oNode1.getExpanded(), "Node 1 is not expanded");
 			});
 
 			QUnit.test("SimpleTree Node 1 enter", function (assert) {
-				qutils.triggerKeydown(this.oNode1.$(), jQuery.sap.KeyCodes.ENTER);
+				qutils.triggerKeydown(this.oNode1Icon, jQuery.sap.KeyCodes.ENTER);
 				assert.ok(this.oNode1.getExpanded(), "Node 1 is now expanded");
 
 			});
 
 			QUnit.test("SimpleTree Node 1 enter", function (assert) {
-				qutils.triggerKeydown(this.oNode1.$(), jQuery.sap.KeyCodes.ENTER);
-				qutils.triggerKeydown(this.oNode1.$(), jQuery.sap.KeyCodes.ENTER);
+				qutils.triggerKeydown(this.oNode1Icon, jQuery.sap.KeyCodes.ENTER);
+				qutils.triggerKeydown(this.oNode1Icon, jQuery.sap.KeyCodes.ENTER);
 				assert.ok(!this.oNode1.getExpanded(), "Node 1 is not expanded");
 			});
 
