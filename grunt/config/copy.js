@@ -3,6 +3,19 @@ module.exports = function(grunt, config) {
 
 	var copy = {};
 
+	copy['bundle'] = {
+		files: config.libraries.map(function(library) {
+			return {
+				expand: true,
+				dot: true,
+				cwd: 'target/openui5-' + library.name,
+				src: '**',
+				dest: 'target/openui5'
+			};
+		})
+	};
+
+
 	// do not copy testsuite resources when test-resources are not included
 	if (grunt.option('include-test-resources')) {
 		copy['test-target-' + config.testsuite.name] = {
