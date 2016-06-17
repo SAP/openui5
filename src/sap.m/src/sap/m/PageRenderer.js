@@ -23,7 +23,8 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo'],
 		var oHeader = null,
 			oFooter = null,
 			oSubHeader = null,
-			sEnableScrolling = oPage.getEnableScrolling() ? " sapMPageScrollEnabled" : "";
+			sEnableScrolling = oPage.getEnableScrolling() ? " sapMPageScrollEnabled" : "",
+			bMasterContext  = this._isMasterContext(oPage);
 
 		if (oPage.getShowHeader()) {
 			oHeader = oPage._getAnyHeader();
@@ -78,13 +79,13 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo'],
 
 		//render headers
 		this.renderBarControl(oRm, oPage, oHeader, {
-			context : "header",
-			styleClass : "sapMPageHeader"
+			context: "header",
+			styleClass: "sapMPageHeader" + (bMasterContext ? "" : " sapContrastPlus")
 		});
 
 		this.renderBarControl(oRm, oPage, oSubHeader, {
-			context : "subHeader",
-			styleClass : "sapMPageSubHeader"
+			context: "subHeader",
+			styleClass: "sapMPageSubHeader" + (bMasterContext ? "" : " sapContrastPlus")
 		});
 
 		// render child controls
@@ -137,6 +138,33 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo'],
 		oBarControl.addStyleClass(oOptions.styleClass);
 
 		oRm.renderControl(oBarControl);
+	};
+
+	/**
+	 *	Check whether THIS page is in the master aggregation of Master Details control
+	 *	Important for Belize styling
+	 *
+	 * @param oPage
+	 * @returns {boolean}
+	 * @private
+	 */
+	PageRenderer._isMasterContext = function (oPage) {
+		var oChild = oPage,
+			oParent = oPage.getParent();
+
+		// Loop back to the top to check if there's SplitContainer OR SplitApp and then check if child elem is
+		// sap.m.NavContainer and this Nav container is the master
+		while (oParent) {
+			if (oParent && ["sap.m.SplitApp", "sap.m.SplitContainer"].indexOf(oParent.getMetadata().getName()) > -1
+				&& oChild.getMetadata().getName() === "sap.m.NavContainer" && /\-Master$/.test(oChild.getId())) {
+				return true;
+			}
+
+			oChild = oParent;
+			oParent = oChild.getParent();
+		}
+
+		return false;
 	};
 
 	return PageRenderer;

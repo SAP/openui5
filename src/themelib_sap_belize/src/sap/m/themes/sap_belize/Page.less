@@ -13,7 +13,22 @@
 	padding: 1rem;
 }
 
-/* page with header and subHeader */
+.sapMPageWithSubHeader {
+	.sapMPageHeader,
+	.sapContrastPlus.sapMPageHeader,
+	.sapContrastPlus .sapMPageHeader,
+	.sapContrastPlus.sapMPageHeader.sapMBar,
+	.sapContrastPlus .sapMPageHeader.sapMBar {
+		border-bottom: none;
+		box-shadow: none;
+	}
+}
+
+.sapMPage > section {
+	background-color: @sapUiGlobalBackgroundColor;
+}
+
+	/* page with header and subHeader */
 .sapMPage > .sapMPageHeader + .sapMPageSubHeader + section {
 	top: 6rem;
 }
@@ -40,22 +55,6 @@
 .sapMPage .sapMScrollbarV > div {
 	background-color: @sapUiScrollBarFaceColor;
 	border-color: @sapUiScrollBarBorderColor;
-}
-
-/* Branding line, covers any content under it (approved by UX) */
-.sapMPageHeader::before {
-	content: "";
-	position: absolute;
-	width:100%;
-	top: 0;
-	border-top: 0.25rem solid @sapUiBrand;
-	/* I don't know why its 7 but i will definitely not change it because i fear i will break something */
-	z-index: 7;
-}
-
-/* don't show branding bars in popovers */
-.sapMPopover .sapMPageHeader::before {
-	display: none;
 }
 
 /* sap.m.Shell + Tiles Page specific style */
