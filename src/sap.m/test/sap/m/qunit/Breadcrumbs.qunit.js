@@ -36,7 +36,7 @@
 			});
 		},
 		getResourceBundle: function () {
-			return sap.uxap.i18nModel.getResourceBundle();
+			return sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		}
 	};
 
@@ -348,4 +348,24 @@
 		assert.ok(aControlDistrib.aControlsForBreadcrumbTrail.length === 2, "There are 2 items in the trail");
 		assert.ok(aControlDistrib.aControlsForSelect.length === 2, "There are 2 items in the breadcrumb");
 	});
+
+
+	/*------------------------------------------------------------------------------------*/
+	QUnit.module("Breadcrumbs - Accessibility", {
+		setup: function () {
+			this.oStandardBreadCrumbsControl = oFactory.getBreadCrumbControlWithLinks(4, oFactory.getText());
+		},
+		teardown: function () {
+			this.oStandardBreadCrumbsControl.destroy();
+		}
+	});
+
+	QUnit.test("Screen reader support", function (assert) {
+		var oStandardBreadCrumbsControl = this.oStandardBreadCrumbsControl,
+			sExpectedText = oFactory.getResourceBundle().getText("BREADCRUMB_LABEL");
+
+		helpers.renderObject(oStandardBreadCrumbsControl);
+		assert.strictEqual(oStandardBreadCrumbsControl.$().attr("aria-label"), sExpectedText, "has correct 'aria-label'");
+	});
+
 }(jQuery, QUnit, sinon, sap.m.Breadcrumbs));
