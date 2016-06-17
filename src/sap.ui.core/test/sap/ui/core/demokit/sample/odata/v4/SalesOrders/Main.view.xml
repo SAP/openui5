@@ -38,6 +38,7 @@
 		<Table growing="true" growingThreshold="5" headerText="Sales Orders" id="SalesOrders"
 			items="{
 					path : '/SalesOrderList',
+					filters: {path: 'SalesOrderID', operator: 'GE', value1: '0500000000'},
 					parameters : {
 						$expand : 'SO_2_BP',
 						$filter : 'BuyerName ge \'M\'',

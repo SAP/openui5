@@ -7,13 +7,25 @@ sap.ui.require([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/odata/v4/_ODataHelper",
+	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_Parser",
 	"sap/ui/model/Sorter"
-], function (jQuery, Context, Filter, FilterOperator, _ODataHelper, _Helper, _Parser, Sorter) {
+], function (jQuery, Context, Filter, FilterOperator, _ODataHelper, _Cache, _Helper, _Parser,
+		Sorter) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
+
+	/**
+	 * Clones the given object
+	 *
+	 * @param {any} v the object
+	 * @returns {any} the clone
+	 */
+	function clone(v) {
+		return v && JSON.parse(JSON.stringify(v));
+	}
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4._ODataHelper", {
@@ -163,9 +175,8 @@ sap.ui.require([
 	}].forEach(function (o) {
 		QUnit.test("buildQueryOptions success " + JSON.stringify(o), function (assert) {
 			var mOptions,
-				mOriginalModelOptions =
-					o.mModelOptions && JSON.parse(JSON.stringify(o.mModelOptions)),
-				mOriginalOptions = o.mOptions && JSON.parse(JSON.stringify(o.mOptions));
+				mOriginalModelOptions = clone(o.mModelOptions),
+				mOriginalOptions = clone(o.mOptions);
 
 			mOptions = _ODataHelper.buildQueryOptions(o.mModelOptions, o.mOptions, o.aAllowed,
 				o.bSapAllowed);
@@ -467,7 +478,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("createCacheProxy: cache creation fails", function (assert) {
+	QUnit.test("createCacheProxy: requestCanonicalPath fails", function (assert) {
 		var oBinding = {},
 			oError = new Error("canonical path failure"),
 			oCacheProxy;
@@ -488,6 +499,189 @@ sap.ui.require([
 			assert.strictEqual(oError0.message,
 				"Cannot read from cache, cache creation failed: " + oError);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createCacheProxy: requestFilter fails", function (assert) {
+		var oBinding = {},
+			oError = new Error("request filter failure"),
+			oCacheProxy;
+
+		function unexpected () {
+			assert.ok(false, "unexpected call");
+		}
+
+		// code under test
+		oCacheProxy =  _ODataHelper.createCacheProxy(oBinding, unexpected, undefined,
+			Promise.reject(oError));
+
+		oCacheProxy.promise.then(unexpected, function (oError0) {
+			assert.strictEqual(oError0, oError);
+		});
+
+		// code under test
+		return oCacheProxy.read("$auto", "foo").catch(function (oError0) {
+			assert.strictEqual(oError0.message,
+				"Cannot read from cache, cache creation failed: " + oError);
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		bRelative : true,
+		mQueryOptions : {$orderBy : "GrossAmount"}
+	}, {
+		bRelative : true,
+		mQueryOptions : {$orderBy : "GrossAmount"},
+		mInheritedQueryOptions : {$filter : "foo eq 'bar'", $orderBy : "GrossAmount"}
+	}, {
+		bRelative : true,
+		mQueryOptions : {$filter : "foo eq 'bar'"},
+		mInheritedQueryOptions : {$filter : "foo eq 'bar'", $orderBy : "GrossAmount"}
+	}, {
+		bRelative : true,
+		aSorters : [{}]
+	}, {
+		bRelative : true,
+		aApplicationFilters : [{}]
+	}, {
+		bRelative : true,
+		aFilters : [{}]
+	}, {
+		bRelative : false,
+		mQueryOptions : {$filter : "foo eq 'bar'"}
+	}, {
+		bRelative : false
+	}].forEach(function (oFixture){
+		QUnit.test("createListCacheProxy:" + JSON.stringify(oFixture), function (assert) {
+			var sCanonicalPath = "/SalesOrderList('1')",
+				sCachePath = sCanonicalPath.slice(1) + "/SO_2_SOITEMS",
+				oBinding = {
+					aApplicationFilters : oFixture.aApplicationFilters || [],
+					aFilters : oFixture.aFilters || [],
+					oModel : {oRequestor : {}},
+					sPath : oFixture.bRelative ? "SO_2_SOITEMS" : "/" + sCachePath,
+					mQueryOptions : oFixture.mQueryOptions,
+					bRelative : oFixture.bRelative,
+					aSorters : oFixture.aSorters || []
+				},
+				oContext,
+				oCache = {},
+				oCacheProxy = {
+					promise : Promise.resolve(oCache)
+				},
+				sFilter = "field eq 'value'",
+				oFilterPromise = Promise.resolve(sFilter),
+				mMergedQueryOptions = {},
+				sOrderBy = "BuyerName,GrossAmount",
+				mQueryOptions = oFixture.mInheritedQueryOptions || oFixture.mQueryOptions,
+				oPathPromise = oFixture.bRelative ? Promise.resolve(sCanonicalPath) : undefined;
+
+			if (oFixture.bRelative) {
+				oContext = {
+					requestCanonicalPath : function () {}
+				};
+				this.mock(oContext).expects("requestCanonicalPath").withExactArgs()
+					.returns(oPathPromise);
+			}
+			this.mock(_ODataHelper).expects("getQueryOptions")
+				.withExactArgs(sinon.match.same(oBinding), "", sinon.match.same(oContext))
+				.returns(mQueryOptions);
+			this.mock(_ODataHelper).expects("requestFilter")
+				.withExactArgs(sinon.match.same(oBinding),
+					sinon.match.same(oBinding.aApplicationFilters),
+					sinon.match.same(oBinding.aFilters),
+					mQueryOptions && mQueryOptions.$filter)
+				.returns(oFilterPromise);
+			this.mock(_ODataHelper).expects("createCacheProxy")
+				.withExactArgs(sinon.match.same(oBinding), sinon.match.func,
+					sinon.match.same(oPathPromise), sinon.match.same(oFilterPromise))
+				.callsArgWith(1, oContext ? sCanonicalPath : undefined, sFilter)
+				.returns(oCacheProxy);
+			this.mock(_ODataHelper).expects("buildOrderbyOption")
+				.withExactArgs(sinon.match.same(oBinding.aSorters),
+						mQueryOptions && mQueryOptions.$orderby)
+				.returns(sOrderBy);
+			this.mock(_ODataHelper).expects("mergeQueryOptions")
+				.withExactArgs(sinon.match.same(mQueryOptions), sOrderBy, sFilter)
+				.returns(mMergedQueryOptions);
+			this.mock(_Helper).expects("buildPath")
+				.withExactArgs(oContext ? sCanonicalPath : undefined, oBinding.sPath)
+				.returns("/" + sCachePath);
+			this.mock(_Cache).expects("create")
+				.withExactArgs(sinon.match.same(oBinding.oModel.oRequestor), sCachePath,
+					sinon.match.same(mMergedQueryOptions))
+				.returns(oCache);
+
+			// code under test
+			assert.strictEqual(_ODataHelper.createListCacheProxy(oBinding, oContext), oCacheProxy);
+
+			return oCacheProxy.promise.then(function () {
+				assert.strictEqual(oBinding.oCache, oCache);
+			});
+		});
+	});
+	// TODO extend createListCacheProxy to createCollectionCache to be called everywhere ODLB
+	// possibly needs a cache
+
+	//*********************************************************************************************
+	QUnit.test("createListCacheProxy: failure", function (assert) {
+		var oBinding = {
+				aApplicationFilters : [],
+				aFilters : [],
+				oModel : {
+					reportError : function () {}
+				},
+				sPath : "SO_2_SOITEMS",
+				aSorters : [{}],
+				toString : function () {return "MyBinding";}
+			},
+			sCanonicalPath = "/~path~",
+			oContext = {
+				requestCanonicalPath : function () {}
+			},
+			oError = new Error("could not create cache"),
+			oCacheProxy = {
+				promise : Promise.reject(oError)
+			},
+			oPathPromise = Promise.resolve(sCanonicalPath);
+
+		this.mock(_ODataHelper).expects("getQueryOptions").returns(undefined);
+		this.mock(oContext).expects("requestCanonicalPath").withExactArgs().returns(oPathPromise);
+		this.mock(_ODataHelper).expects("createCacheProxy").returns(oCacheProxy);
+		this.mock(oBinding.oModel).expects("reportError")
+			.withExactArgs("Failed to create cache for binding MyBinding",
+				"sap.ui.model.odata.v4._ODataHelper", sinon.match.same(oError));
+
+		// code under test
+		oCacheProxy = _ODataHelper.createListCacheProxy(oBinding, oContext);
+
+		return oCacheProxy.promise.catch(function () {});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createListCacheProxy, nothing to do", function (assert) {
+		var oBinding = {
+				aApplicationFilters : [{}],
+				aFilters : [{}],
+				bRelative : true,
+				aSorters : [{}]
+			},
+			oContext = {};
+
+		this.mock(_ODataHelper).expects("createCacheProxy").never();
+
+		// code under test
+		assert.strictEqual(_ODataHelper.createListCacheProxy(oBinding, undefined), undefined,
+			"unresolved relative binding");
+
+		oBinding.aSorters = [];
+		oBinding.aApplicationFilters = [];
+		oBinding.aFilters = [];
+
+		// code under test
+		assert.strictEqual(_ODataHelper.createListCacheProxy(oBinding, oContext), undefined,
+			"resolved relative binding, but no sorter");
 	});
 
 	//*********************************************************************************************
@@ -541,23 +735,64 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("mergeQueryOptions", function (assert) {
-		var oQueryOptions = {$orderby : "bar", $select : "Name"};
-
-		assert.strictEqual(_ODataHelper.mergeQueryOptions(undefined, undefined), undefined);
-
-		assert.strictEqual(_ODataHelper.mergeQueryOptions(oQueryOptions, undefined), oQueryOptions);
-
-		assert.deepEqual(_ODataHelper.mergeQueryOptions(undefined, "foo"), {
-			$orderby : "foo"
+		[{
+			mQueryOptions: undefined,
+			sOrderBy : undefined,
+			sFilter : undefined
+		}, {
+			mQueryOptions: {$orderby : "bar", $select : "Name"},
+			sOrderBy : undefined,
+			sFilter : undefined
+		}, {
+			mQueryOptions: undefined,
+			sOrderBy : "foo",
+			sFilter : undefined,
+			oResult : {$orderby : "foo"}
+		}, {
+			mQueryOptions: {$orderby : "bar", $select : "Name"},
+			sOrderBy : "foo,bar",
+			sFilter : undefined,
+			oResult : {$orderby : "foo,bar", $select : "Name"}
+		}, {
+			mQueryOptions: {$orderby : "bar", $select : "Name"},
+			sOrderBy : "bar",
+			sFilter : undefined
+		}, {
+			mQueryOptions: undefined,
+			sOrderBy : undefined,
+			sFilter : "foo",
+			oResult : {$filter : "foo"}
+		}, {
+			mQueryOptions: {$filter : "bar", $select : "Name"},
+			sOrderBy : undefined,
+			sFilter : "foo,bar",
+			oResult : {$filter : "foo,bar", $select : "Name"}
+		}, {
+			mQueryOptions: {$filter: "bar", $select : "Name"},
+			sOrderBy : undefined,
+			sFilter : "bar"
+		}, {
+			mQueryOptions: {$filter: "bar", $orderby : "foo", $select : "Name"},
+			sOrderBy : "foo",
+			sFilter : "bar"
+		}, {
+			mQueryOptions: {$filter: "foo", $orderby : "bar", $select : "Name"},
+			sOrderBy : "foo,bar",
+			sFilter : "bar,baz",
+			oResult : {$filter : "bar,baz", $orderby : "foo,bar", $select : "Name"}
+		}].forEach(function (oFixture, i) {
+			var oResult = _ODataHelper.mergeQueryOptions(oFixture.mQueryOptions,
+					oFixture.sOrderBy, oFixture.sFilter);
+			if ("oResult" in oFixture) {
+				assert.deepEqual(oResult, oFixture.oResult, i);
+			} else {
+				assert.strictEqual(oResult, oFixture.mQueryOptions, i);
+			}
+			if (oResult) {
+				assert.ok(oResult.$orderby || !("$orderby" in oResult), i + ": $orderby");
+				assert.ok(oResult.$filter || !("$filter" in oResult), i + ": $filter");
+			}
 		});
-
-		assert.deepEqual(_ODataHelper.mergeQueryOptions(oQueryOptions, "foo,bar"), {
-			$orderby : "foo,bar",
-			$select : "Name"
-		});
-		assert.strictEqual(oQueryOptions.$orderby, "bar");
-
-		assert.strictEqual(_ODataHelper.mergeQueryOptions(oQueryOptions, "bar"), oQueryOptions);
 	});
 
 	//*********************************************************************************************
