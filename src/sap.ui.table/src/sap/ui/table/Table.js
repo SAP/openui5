@@ -1166,10 +1166,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			}
 		}
 
-		if (this._sResizeHandlerId) {
-			ResizeHandler.deregister(this._sResizeHandlerId);
-			this._sResizeHandlerId = undefined;
-		}
+		TableUtils.deregisterResizeHandler(this, "");
 
 		// update Vertical Scrollbar before collection because it changes sizes
 		this._toggleVSb();
@@ -1184,9 +1181,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			// the table has no size at all. This may be due to one of the parents has display:none. In order to
 			// recognize when the parent size changes, the resize handler must be registered synchronously, otherwise
 			// the browser may finish painting before the resize handler is registered
-			if (oDomRef && oDomRef.parentNode) {
-				this._sResizeHandlerId = ResizeHandler.register(oDomRef.parentNode, this._onTableResize.bind(this));
-			}
+			TableUtils.registerResizeHandler(this, "", this._onTableResize.bind(this), true);
 
 			return;
 		}
@@ -1212,14 +1207,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			// size changes of the parent happen due to adaptations of the table sizes. In order to first let the
 			// browser finish painting, the resize handler is registered in a timeout. If this would be done synchronously,
 			// updateTableSizes would always run twice.
-			if (that._sResizeHandlerId) {
-				ResizeHandler.deregister(that._sResizeHandlerId);
-				that._sResizeHandlerId = undefined;
-			}
-
-			if (oDomRef && oDomRef.parentNode) {
-				that._sResizeHandlerId = ResizeHandler.register(oDomRef.parentNode, that._onTableResize.bind(that));
-			}
+			TableUtils.registerResizeHandler(that, "", that._onTableResize.bind(that), true);
 		}, 0);
 	};
 
@@ -2141,10 +2129,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		var $body = jQuery(document.body);
 		$body.unbind('webkitTransitionEnd transitionend');
 
-		if (this._sResizeHandlerId) {
-			ResizeHandler.deregister(this._sResizeHandlerId);
-			this._sResizeHandlerId = undefined;
-		}
+		TableUtils.deregisterResizeHandler(this);
 	};
 
 	/**

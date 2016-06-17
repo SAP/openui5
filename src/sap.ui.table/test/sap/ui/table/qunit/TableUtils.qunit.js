@@ -245,3 +245,103 @@ QUnit.test("getNoDataText", function(assert) {
 	oTable.setNoData(oString);
 	assert.equal(TableUtils.getNoDataText(oTable), oString);
 });
+
+QUnit.module("TableUtils", {
+	setup: function() {
+		jQuery("#content").append("<div id='__table-outer' style='height: 500px; width: 500px; overflow: hidden; background: red;'>" +
+				"<div id='__table-inner' style='height: 200px; width: 200px; background: blue;'>" +
+					"<div id='__table-center' style='height: 100px; width: 100px; background: green;'></div>" +
+				"</div>" +
+			"</div>");
+
+		this.oTable = {
+			id: "__table",
+			getId: function(sSuffix) {
+				if (sSuffix) {
+					return this.id + "-" + sSuffix;
+				} else {
+					return this.id;
+				}
+			},
+			getDomRef: function(sSuffix) {
+				return document.getElementById(this.getId(sSuffix));
+			},
+			getResizeHandlerIdKeys: function() {
+				var aKeys = []
+				for (var sKey in this._mResizeHandlerIds) {
+					if (this._mResizeHandlerIds[sKey] !== undefined && this._mResizeHandlerIds.hasOwnProperty(sKey)) {
+						aKeys.push(sKey);
+					}
+				}
+				return aKeys.sort();
+			}
+		}
+	},
+	teardown: function () {
+		jQuery("#content").empty();
+	}
+});
+
+
+QUnit.asyncTest("ResizeHandler", 17, function(assert) {
+	var sResizeHandlerId;
+	var fnTestOuter = function(oEvent) {
+		assert.equal(oEvent.currentTarget.getAttribute("id"), this.oTable.getId("outer"), "ResizeHandler triggered for 'outer' element");
+		jQuery("#" + this.oTable.getId("inner")).height("250px");
+	};
+
+	var fnTestCenterParent = function(oEvent) {
+		assert.equal(oEvent.currentTarget.getAttribute("id"), this.oTable.getId("inner"), "ResizeHandler triggered for parent of 'center', 'inner'");
+		// size change of center div should have no impact, as there is not ResizeHandler defined for it.
+		jQuery("#" + this.oTable.getId("center")).height("50px");
+
+		assert.deepEqual(this.oTable.getResizeHandlerIdKeys(), ["center", "outer"], "All ResizeHandler IDs correctly stored at table instance");
+		TableUtils.deregisterResizeHandler(this.oTable, "center");
+		assert.deepEqual(this.oTable.getResizeHandlerIdKeys(), ["outer"], "All ResizeHandler IDs correctly stored after remove 'center'");
+		// size change should not have any effect
+		jQuery("#" + this.oTable.getId("inner")).height("200px");
+
+		// register new handlers for further testings
+		TableUtils.registerResizeHandler(this.oTable, "inner", function(){});
+		TableUtils.registerResizeHandler(this.oTable, "center", function(){});
+
+		assert.deepEqual(this.oTable.getResizeHandlerIdKeys(), ["center", "inner", "outer"], "All ResizeHandler IDs correctly stored at table instance");
+
+		TableUtils.deregisterResizeHandler(this.oTable, ["center", "outer"]);
+		assert.deepEqual(this.oTable.getResizeHandlerIdKeys(), ["inner"], "All ResizeHandler IDs correctly stored after remove 'center', 'outer'");
+
+		// register new handlers for further testings
+		TableUtils.registerResizeHandler(this.oTable, "outer", function(){});
+		TableUtils.registerResizeHandler(this.oTable, "center", function(){});
+
+		TableUtils.deregisterResizeHandler(this.oTable);
+
+		assert.deepEqual(this.oTable.getResizeHandlerIdKeys(), [], "All ResizeHandler IDs correctly removed");
+
+		// test type errors
+		sResizeHandlerId = TableUtils.registerResizeHandler(this.oTable, {}, function(){});
+		assert.strictEqual(sResizeHandlerId, undefined, "No ResizeHandler ID returned because of wrong type for sIdSuffix");
+		sResizeHandlerId = TableUtils.registerResizeHandler(this.oTable, "", "");
+		assert.strictEqual(sResizeHandlerId, undefined, "No ResizeHandler ID returned because of wrong type for handler function");
+		assert.deepEqual(this.oTable.getResizeHandlerIdKeys(), [], "No ResizeHandler IDs stored at table instance");
+
+		QUnit.start();
+	};
+
+	assert.strictEqual(this.oTable._mResizeHandlerIds, undefined, "No ResizeHandler registered, therefore no ResizeHandlerIds map");
+	TableUtils.deregisterResizeHandler(this.oTable);
+	assert.strictEqual(this.oTable._mResizeHandlerIds, undefined, "Deregister does not create ResizeHandlerIds map");
+
+	sResizeHandlerId = TableUtils.registerResizeHandler(this.oTable, "outer", fnTestOuter.bind(this));
+	assert.notStrictEqual(sResizeHandlerId, undefined, "ResizeHandler ID was returned for 'outer': '" + sResizeHandlerId + "'");
+	assert.equal(this.oTable._mResizeHandlerIds.outer, sResizeHandlerId, "ResizeHandler ID correctly stored at table instance (outer)");
+
+	sResizeHandlerId = TableUtils.registerResizeHandler(this.oTable, "center", fnTestCenterParent.bind(this), true);
+	assert.notStrictEqual(sResizeHandlerId, undefined, "ResizeHandler ID was returned for 'inner', registered by parent of 'center': '" + sResizeHandlerId + "'");
+	assert.equal(this.oTable._mResizeHandlerIds.center, sResizeHandlerId, "ResizeHandler ID correctly stored at table instance (parent of center)");
+
+	sResizeHandlerId = TableUtils.registerResizeHandler(this.oTable, "doesNotExist", fnTestCenterParent.bind(this), true);
+	assert.strictEqual(sResizeHandlerId, undefined, "No ResizeHandler ID returned for unknown DOM");
+
+	jQuery("#" + this.oTable.getId("outer")).height("550px");
+});
