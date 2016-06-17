@@ -71,7 +71,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 			flChangeHandlers: {
 				"sap.ui.layout.form.SimpleForm": {
 					"renameLabel": "sap/ui/layout/changeHandler/RenameForm",
-					"renameTitle": "sap/ui/layout/changeHandler/RenameForm"
+					"renameTitle": "sap/ui/layout/changeHandler/RenameForm",
+					"moveField": "sap/ui/layout/changeHandler/MoveSimpleForm",
+					"moveGroup": "sap/ui/layout/changeHandler/MoveSimpleForm"
 				}
 			}
 		}

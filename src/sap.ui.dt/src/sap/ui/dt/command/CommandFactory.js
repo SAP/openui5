@@ -1,14 +1,22 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
+sap.ui.define(['sap/ui/base/Man			agedObject'], function(ManagedObject) {
 	"use strict";
 
 	var mCommands = {
 		"Move" : {
-			findClass : function(oElement){
-				jQuery.sap.require("sap.ui.dt.command.BaseCommand");
-				return sap.ui.dt.command.BaseCommand;
+			findClass : function(oElement, sCommand, mSettings) {
+				var oElementToBeAnalyzed = (mSettings && mSettings.movedElement) ? mSettings.movedElement : oElement;
+				var sType = oElementToBeAnalyzed.getMetadata().getName();
+				// TODO: this is too unspecific - could also be a 'normal' Form. The context (SImpleFOrm) shall be taken into account
+				if (sType === "sap.ui.layout.form.FormContainer" || sType === "sap.ui.layout.form.FormElement") {
+					jQuery.sap.require("sap.ui.dt.command.SimpleFormMove");
+					return sap.ui.dt.command.SimpleFormMove;
+				} else {
+					jQuery.sap.require("sap.ui.dt.command.Move");
+					return sap.ui.dt.command.Move;
+				}
 			}
 		}
 	};
@@ -40,13 +48,12 @@ sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
 
 	CommandFactory.getCommandFor = function(oElement, sCommand, mSettings) {
 		var mCommand = mCommands[sCommand];
+		var Command = mCommand.clazz;
+		if (!Command && mCommand.findClass) {
+			Command = mCommand.findClass(oElement, sCommand, mSettings);
+		}
 
-        var Command = mCommand.clazz;
-        if (!Command && mCommand.findClass){
-            Command = mCommand.findClass(oElement, sCommand, mSettings);
-        }
-
-		mSettings = jQuery.extend(mSettings, {
+		mSettings = jQuery.extend({}, {
 			element : oElement,
 			name : sCommand
 		});
