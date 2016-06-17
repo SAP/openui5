@@ -397,6 +397,63 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 					oTable._mResizeHandlerIds[sIdSuffix] = undefined;
 				}
 			}
+		},
+
+		/**
+		 * Scrolls the data in the table forward or backward by manipulating the property <code>firstVisibleRow</code>.
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @param {boolean} bDown Whether to scroll down or up
+		 * @param {boolean} bPage Whether scrolling should be page wise or a single step (only possibe with navigation mode <code>Scrollbar</code>)
+		 * @private
+		 */
+		scroll : function(oTable, bDown, bPage) {
+			var bPage = oTable.getNavigationMode() === NavigationMode.Scrollbar ? bPage : true;
+			var bScrolled = false;
+			var iRowCount = oTable._getRowCount();
+			var iVisibleRowCount = oTable.getVisibleRowCount();
+			var iScrollableRowCount = iVisibleRowCount - oTable.getFixedRowCount() - oTable.getFixedBottomRowCount();
+			var iFirstVisibleScrollableRow = oTable._getSanitizedFirstVisibleRow();
+			var iSize = bPage ? iScrollableRowCount : 1;
+
+			if (bDown) {
+				if (iFirstVisibleScrollableRow + iVisibleRowCount < iRowCount) {
+					oTable.setFirstVisibleRow(Math.min(iFirstVisibleScrollableRow + iSize, iRowCount - iVisibleRowCount));
+					bScrolled = true;
+				}
+			} else {
+				if (iFirstVisibleScrollableRow > 0) {
+					oTable.setFirstVisibleRow(Math.max(iFirstVisibleScrollableRow - iSize, 0));
+					bScrolled = true;
+				}
+			}
+
+			return bScrolled;
+		},
+
+		/**
+		 * Checks whether the cell of the geven DOM reference is in the first row (from DOM point of view) of the scrollable area.
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @param {Object} oRef Cell DOM Reference
+		 * @private
+		 */
+		isFirstScrollableRow : function(oTable, oRef) {
+			var $Ref = jQuery(oRef);
+			var iRowIndex = parseInt($Ref.add($Ref.parent()).filter("[data-sap-ui-rowindex]").attr("data-sap-ui-rowindex"), 10);
+			var iFixed = oTable.getFixedRowCount() || 0;
+			return iRowIndex == iFixed;
+		},
+
+		/**
+		 * Checks whether the cell of the geven DOM reference is in the last row (from DOM point of view) of the scrollable area.
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @param {Object} oRef Cell DOM Reference
+		 * @private
+		 */
+		isLastScrollableRow : function(oTable, oRef) {
+			var $Ref = jQuery(oRef);
+			var iRowIndex = parseInt($Ref.add($Ref.parent()).filter("[data-sap-ui-rowindex]").attr("data-sap-ui-rowindex"), 10);
+			var iFixed = oTable.getFixedBottomRowCount() || 0;
+			return iRowIndex == oTable.getVisibleRowCount() - iFixed - 1;
 		}
 	};
 
