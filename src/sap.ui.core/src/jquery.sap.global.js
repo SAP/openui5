@@ -4092,13 +4092,19 @@
 		/**
 		 * Converts a UI5 module name to a unified resource name.
 		 *
-		 * Used by View and Fragment APIs to convert a given module name into an URN.
+		 * Used by View and Fragment APIs to convert a given module name into a unified resource name.
+		 * When the <code>sSuffix</code> is not given, the suffix '.js' is added. This fits the most
+		 * common use case of converting a module name to the Javascript resource that contains the
+		 * module. Note that an empty <code>sSuffix</code> is not replaced by '.js'. This allows to
+		 * convert UI5 module names to requireJS module names with a call to this method.
 		 *
-		 * @experimental Since 1.16.0, not for public usage yet.
+		 * @param {string} sModuleName Module name as a dot separated name
+		 * @param {string} [sSuffix='.js'] Suffix to add to the final resource name
 		 * @private
+		 * @sap-restricted sap.ui.core
 		 */
 		jQuery.sap.getResourceName = function(sModuleName, sSuffix) {
-			return ui5ToRJS(sModuleName) + (sSuffix || ".js");
+			return ui5ToRJS(sModuleName) + (sSuffix == null ? ".js" : sSuffix);
 		};
 
 		/**
