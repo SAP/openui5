@@ -325,16 +325,13 @@
 
         <component>
             <name>CA-UI5-COR</name>
-            <patterns>
-                <pattern>jquery.sap.*</pattern>
-                <pattern>sap/ui/app/*</pattern>
-                <pattern>sap/ui/base/*</pattern>
-                <pattern>sap/ui/debug/*</pattern>
-                <pattern>sap/ui/model/*</pattern>
-                <pattern>sap/ui/qunit/*</pattern>
-                <pattern>sap/ui/test/*</pattern>
-            </patterns>
             <modules>
+                <module>jquery.sap.*</module>
+                <module>sap/ui/app/*</module>
+                <module>sap/ui/base/*</module>
+                <module>sap/ui/debug/*</module>
+                <module>sap/ui/model/*</module>
+                <module>sap/ui/qunit/*</module>
                 <module>sap/ui/Device</module>
                 <module>sap/ui/Global</module>
             </modules>
@@ -344,6 +341,13 @@
             <name>CA-UI5-CTR</name>
             <modules>
                 <module>sap/ui/core/InvisibleText</module>
+            </modules>
+        </component>
+
+        <component>
+            <name>CA-UI5-DOC</name>
+            <modules>
+                <module>sap/ui/test/*</module>
             </modules>
         </component>
 
