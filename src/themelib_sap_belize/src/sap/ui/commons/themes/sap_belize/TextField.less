@@ -53,7 +53,7 @@ html[data-sap-ui-browser^="cr"] .sapUiTfBrd > .sapUiTfInner{
 }
 
 .sapUiTfDsbl{
-	background-color: @sapUiFieldDisabledBackground;
+	background-color: mix(@sapUiFieldBackground, @sapUiBaseBG, (@sapUiContentDisabledOpacity * 100));
 }
 
 .sapUiTfRo{
