@@ -3,9 +3,12 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
+	"sap/ui/Device", "sap/ui/core/Component", "sap/ui/core/Fragment", "sap/ui/core/UIComponent", "sap/ui/core/mvc/Controller",
+	"sap/ui/model/Filter", "sap/ui/model/Sorter",
+	"sap/m/GroupHeaderListItem",
+	"../util/ToggleFullScreenHandler",
 	"jquery.sap.storage"
-], function (Controller, jQuery) {
+	], function (Device, Component, Fragment, UIComponent, Controller, Filter, Sorter, GroupHeaderListItem, ToggleFullScreenHandler, jQuery) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demokit.explored.view.master", {
@@ -49,11 +52,11 @@ sap.ui.define([
 
 		onInit : function () {
 			// subscribe to routing
-			this.router = sap.ui.core.UIComponent.getRouterFor(this);
+			this.router = UIComponent.getRouterFor(this);
 			this.router.attachRoutePatternMatched(this.onRouteMatched, this);
 
 			// subscribe to app events
-			this._component = sap.ui.core.Component.getOwnerComponentFor(this.getView());
+			this._component = Component.getOwnerComponentFor(this.getView());
 			this._component.getEventBus().subscribe("app", "selectEntity", this.onSelectEntity, this);
 
 			// set the group to the default used in the view
@@ -81,7 +84,7 @@ sap.ui.define([
 				if (oView) {
 					var oToggleFullScreenBtn = oView.byId("toggleFullScreenBtn");
 					if (oToggleFullScreenBtn) {
-						sap.ui.demokit.explored.util.ToggleFullScreenHandler.updateControl(oToggleFullScreenBtn, oView);
+						ToggleFullScreenHandler.updateControl(oToggleFullScreenBtn, oView);
 					}
 				}
 				return;
@@ -139,7 +142,8 @@ sap.ui.define([
 
 			if (!this._oBusyDialog) {
 				jQuery.sap.require("sap.m.BusyDialog");
-				this._oBusyDialog = new sap.m.BusyDialog();
+				var BusyDialog = sap.ui.require("sap/m/BusyDialog");
+				this._oBusyDialog = new BusyDialog();
 				this.getView().addDependent(this._oBusyDialog);
 			}
 			var bCompact = sap.ui.getCore().byId('CompactModeButtons').getState();
@@ -274,7 +278,7 @@ sap.ui.define([
 			var oItem = (oItemParam) ? oItemParam : oEvt.getSource();
 			var sPath = oItem.getBindingContext("entity").getPath();
 			var oEnt = this.getView().getModel("entity").getProperty(sPath);
-			var bReplace = !sap.ui.Device.system.phone;
+			var bReplace = !Device.system.phone;
 			this.router.navTo("entity", {
 				id: oEnt.id,
 				part: "samples"
@@ -355,16 +359,16 @@ sap.ui.define([
 			var sQuery = oSearchField.getValue().trim();
 
 			bFilterChanged = true;
-			aFilters.push(new sap.ui.model.Filter("searchTags", "Contains", sQuery));
+			aFilters.push(new Filter("searchTags", "Contains", sQuery));
 
 			// add filters for view settings
 			jQuery.each(this._oViewSettings.filter, function (sProperty, aValues) {
 				var aPropertyFilters = [];
 				jQuery.each(aValues, function (i, aValue) {
 					var sOperator = (sProperty === "formFactors") ? "Contains" : "EQ";
-					aPropertyFilters.push(new sap.ui.model.Filter(sProperty, sOperator, aValue));
+					aPropertyFilters.push(new Filter(sProperty, sOperator, aValue));
 				});
-				var oFilter = new sap.ui.model.Filter(aPropertyFilters, false); // second parameter stands for "or"
+				var oFilter = new Filter(aPropertyFilters, false); // second parameter stands for "or"
 				bFilterChanged = true;
 				aFilters.push(oFilter);
 			});
@@ -373,7 +377,7 @@ sap.ui.define([
 			if (bFilterChanged && aFilters.length === 0) {
 				oBinding.filter(aFilters, "Application");
 			} else if (bFilterChanged && aFilters.length > 0) {
-				var oFilter = new sap.ui.model.Filter(aFilters, true); // second parameter stands for "and"
+				var oFilter = new Filter(aFilters, true); // second parameter stands for "and"
 				oBinding.filter(oFilter, "Application");
 			}
 
@@ -385,12 +389,12 @@ sap.ui.define([
 
 			// group
 			if (bGroupChanged) {
-				var oSorter = new sap.ui.model.Sorter(
+				var oSorter = new Sorter(
 					this._oViewSettings.groupProperty,
 					this._oViewSettings.groupDescending,
 					this._mGroupFunctions[this._oViewSettings.groupProperty]);
 				aSorters.push(oSorter);
-				aSorters.push(new sap.ui.model.Sorter("name", false));
+				aSorters.push(new Sorter("name", false));
 				oBinding.sort(aSorters);
 			}
 
@@ -464,7 +468,8 @@ sap.ui.define([
 		_handleRTL: function (bSwitch) {
 
 			jQuery.sap.require("sap.ui.core.routing.HashChanger");
-			var oHashChanger = new sap.ui.core.routing.HashChanger();
+			var HashChanger = sap.ui.require("sap/ui/core/routing/HashChanger");
+			var oHashChanger = new HashChanger();
 			var sHash = oHashChanger.getHash();
 			var oUri = window.location;
 
@@ -486,7 +491,7 @@ sap.ui.define([
 		},
 
 		getGroupHeader: function (oGroup) {
-			return new sap.m.GroupHeaderListItem({
+			return new GroupHeaderListItem({
 				title: oGroup.key,
 				upperCase: false
 			});

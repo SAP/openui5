@@ -2,13 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/mvc/Controller"], function (Controller) {
+sap.ui.define(["sap/ui/core/mvc/Controller", "sap/ui/core/UIComponent"], function (Controller, UIComponent) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demokit.explored.view.notFound", {
 
 		onInit : function () {
-			this.router = sap.ui.core.UIComponent.getRouterFor(this);
+			this.router = UIComponent.getRouterFor(this);
 			this.router.attachRoutePatternMatched(this.onRouteMatched, this);
 			this.getView().addEventDelegate(this);
 		},

@@ -3,7 +3,12 @@
  */
 
 /*global JSZip, URI *///declare unusual global vars for JSLint/SAPUI5 validation
-sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/Device', 'sap/m/MessageToast'], function (Controller, Device, MessageToast) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
+	'sap/ui/core/Component', 'sap/ui/core/UIComponent', 'sap/ui/core/mvc/Controller',
+	'sap/ui/model/json/JSONModel',
+	'sap/m/MessageToast',
+	'../data'],
+	function (jQuery, Device, Component, UIComponent, Controller, JSONModel, MessageToast, data) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demokit.explored.view.code", {
@@ -11,7 +16,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/Device', 'sap/m/MessageToas
 		_aMockFiles : ["products.json", "supplier.json", "img.json"],
 
 		onInit : function () {
-			this.router = sap.ui.core.UIComponent.getRouterFor(this);
+			this.router = UIComponent.getRouterFor(this);
 			this.router.attachRoutePatternMatched(this.onRouteMatched, this);
 			this._viewData = sap.ui.getCore().byId("app").getViewData();
 			this._viewData.component.codeCache = {};
@@ -28,7 +33,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/Device', 'sap/m/MessageToas
 			var sFileName = decodeURIComponent(oEvt.getParameter("arguments").fileName);
 
 			// retrieve sample object
-			var oSample = sap.ui.demokit.explored.data.samples[this._sId];
+			var oSample = data.samples[this._sId];
 			if (!oSample) {
 				this.router.myNavToWithoutHash("sap.ui.demokit.explored.view.notFound", "XML", false, { path: this._sId });
 				return;
@@ -81,7 +86,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/Device', 'sap/m/MessageToas
 				this._oData.fileName = sFileName;
 			}
 			// set model
-			this.getView().setModel(new sap.ui.model.json.JSONModel(this._oData));
+			this.getView().setModel(new JSONModel(this._oData));
 
 			// scroll to top of page
 			var page = this.getView().byId("page");
@@ -169,7 +174,8 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/Device', 'sap/m/MessageToas
 
 		_openGeneratedFile : function (oContent) {
 			jQuery.sap.require("sap.ui.core.util.File");
-			sap.ui.core.util.File.save(oContent, this._sId, "zip", "application/zip");
+			var File = sap.ui.require("sap/ui/core/util/File");
+			File.save(oContent, this._sId, "zip", "application/zip");
 		},
 
 		createIndexFile : function(oData) {

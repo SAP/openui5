@@ -3,8 +3,8 @@
  */
 
 // Provides acustomized router class for the 'explored' app.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/routing/Router'],
-	function(jQuery, Router) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/routing/History', 'sap/ui/core/routing/Router', 'sap/ui/core/Core'],
+	function(jQuery, History, Router, Core) {
 	"use strict";
 
 
@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/routing/Router'],
 		 * mobile nav back handling
 		 */
 		myNavBack : function (sRoute, oData) {
-			var oHistory = sap.ui.core.routing.History.getInstance();
+			var oHistory = History.getInstance();
 			var oPrevHash = oHistory.getPreviousHash();
 			if (oPrevHash !== undefined) {
 				window.history.go(-1);
@@ -38,4 +38,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/routing/Router'],
 
 	return MyRouter;
 
-}, /* bExport= */ true);
+});

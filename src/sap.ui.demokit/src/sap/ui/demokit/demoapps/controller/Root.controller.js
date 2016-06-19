@@ -7,17 +7,18 @@ sap.ui.define([
 		"sap/ui/core/mvc/Controller",
 		"jquery.sap.global",
 		"sap/ui/demokit/demoapps/model/sourceFileDownloader",
+		"sap/m/library",
 		"sap/m/MessageBox",
 		"sap/ui/model/Filter",
 		"sap/ui/model/FilterOperator"
-	], function (Controller, $, sourceFileDownloader, MessageBox, Filter, FilterOperator) {
+	], function (Controller, $, sourceFileDownloader, mobileLibrary, MessageBox, Filter, FilterOperator) {
 		"use strict";
 
 		return Controller.extend("sap.ui.demokit.demoapps.controller.Root", {
 			onTilePress: function (oEvent) {
 				var sRef = oEvent.getSource().data("ref");
 				if (sRef !== "DOWNLOAD") {
-					sap.m.URLHelper.redirect(sRef, true);
+					mobileLibrary.URLHelper.redirect(sRef, true);
 				} else {
 					this._downloadTile = oEvent.getSource();
 					var oDownloadDialog = this.byId("downloadDialog");
