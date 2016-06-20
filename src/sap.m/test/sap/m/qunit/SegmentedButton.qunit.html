@@ -2516,6 +2516,55 @@
         oSegmentedButton.destroy();
     });
 
+    module("SegmentedButton in communicates changes in its aggregated items/buttons");
+
+    test("Changing the text property aggregated buttons", function () {
+        // Arrange
+        var oTestItem = new sap.m.Button({text: "Button 1"}),
+            oSegmentedButton = new sap.m.SegmentedButton({buttons: [oTestItem]}),
+            sNewText = "new Text",
+            bChangedHandlerCalled = false;
+
+        oSegmentedButton.placeAt("qunit-fixture");
+
+        oSegmentedButton.attachEvent("_change", function () {
+            bChangedHandlerCalled = true;
+        });
+
+        // Assert
+        ok(!bChangedHandlerCalled, "Initially the change event hasn't been fired");
+        oTestItem.setText(sNewText);
+        strictEqual(oTestItem.getText(), sNewText, "The internal button has changed its text");
+        ok(bChangedHandlerCalled, "The change event has been fired after the button's property has changed");
+
+        // Cleanup
+        oSegmentedButton.destroy();
+    });
+
+
+    test("Changing the text property aggregated items", function () {
+        // Arrange
+        var oTestItem = new sap.m.SegmentedButtonItem({text: "Button 1"}),
+            oSegmentedButton = new sap.m.SegmentedButton({items: [oTestItem]}),
+            sNewText = "new Text",
+            bChangedHandlerCalled = false;
+
+        oSegmentedButton.placeAt("qunit-fixture");
+        sap.ui.getCore().applyChanges();
+        oSegmentedButton.attachEvent("_change", function () {
+            bChangedHandlerCalled = true;
+        });
+
+        // Assert
+        ok(!bChangedHandlerCalled, "Initially the change event hasn't been fired");
+        oTestItem.setText(sNewText);
+        strictEqual(oTestItem.getText(), sNewText, "The internal button has changed its text");
+        ok(bChangedHandlerCalled, "The change event has been fired after the button's property has changed");
+
+        // Cleanup
+        oSegmentedButton.destroy();
+    });
+
 </script>
 </head>
 <body>
