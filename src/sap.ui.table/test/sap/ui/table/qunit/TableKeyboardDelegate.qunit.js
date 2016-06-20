@@ -33,7 +33,7 @@ function findTabbables(oRef, aScopes, bNext) {
 		$Tabbables = jQuery.merge($Ref.parents(':sapTabbable'), $All.find(':sapTabbable').addBack(':sapTabbable'));
 	}
 
-	var $Tabbables = jQuery.unique($Tabbables);
+	$Tabbables = jQuery.unique($Tabbables);
 	return $Tabbables.filter(function(){
 		return isContained(aScopes, this);
 	});
@@ -186,7 +186,7 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 		$Focus = checkFocus(getRowHeader(0, false), assert);
 
 		qutils.triggerKeydown($Focus, "END", false, false, true /*Ctrl*/);
-		$Focus = checkFocus(getRowHeader(iVisibleRowCount - 1), assert);
+		checkFocus(getRowHeader(iVisibleRowCount - 1), assert);
 		oRow = oTable.getRows()[iVisibleRowCount - 1];
 		assert.equal(oRow.getIndex(), iNumberOfRows - 1, "Row index correct");
 	});
@@ -204,7 +204,7 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 				assert.strictEqual(oArgs, oTestArgs, "Arguments forwarded as expected");
 			}
 			bHandlerCalled = true;
-		};
+		}
 
 		var oControl = new TestControl();
 		var oExtension = sap.ui.table.TableExtension.enrich(oControl, sap.ui.table.TableKeyboardExtension);
@@ -390,7 +390,7 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 			qutils.triggerKeydown(oElem, "ARROW_RIGHT", false, false, false);
 			oElem = checkFocus(getColumnHeader(1), assert);
 			qutils.triggerKeydown(oElem, "ARROW_LEFT", false, false, false);
-			oElem = checkFocus(getColumnHeader(0), assert);
+			checkFocus(getColumnHeader(0), assert);
 
 			QUnit.start();
 		}
@@ -449,7 +449,7 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 
 	QUnit.test("getInterface", function(assert) {
 		var oDelegate = new sap.ui.table.TableKeyboardDelegate2();
-		assert.ok(oDelegate === oDelegate.getInterface(), "getInterface returns the obejct itself");
+		assert.ok(oDelegate === oDelegate.getInterface(), "getInterface returns the object itself");
 	});
 
 
@@ -473,13 +473,13 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 		oElem = checkFocus(jQuery.sap.domById("Focus2"), assert);
 
 		simulateTabEvent(oElem, true);
-		oElem = checkFocus(getCell(1, 1), assert);
+		checkFocus(getCell(1, 1), assert);
 
 		oElem = setFocusOutsideOfTable("Focus1");
 		simulateTabEvent(oElem, false);
 		oElem = checkFocus(getColumnHeader(1), assert);
 		simulateTabEvent(oElem, false);
-		oElem = checkFocus(getCell(1, 1), assert);
+		checkFocus(getCell(1, 1), assert);
 
 		oElem = setFocusOutsideOfTable("Focus1");
 		simulateTabEvent(oElem, false);
@@ -487,7 +487,7 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 		qutils.triggerKeydown(oElem, "ARROW_RIGHT", false, false, false);
 		oElem = checkFocus(getColumnHeader(2), assert);
 		simulateTabEvent(oElem, false);
-		oElem = checkFocus(getCell(1, 2), assert);
+		checkFocus(getCell(1, 2), assert);
 	});
 
 	QUnit.test("TAB - forward/backward (with extension and footer)", function(assert) {
@@ -517,13 +517,13 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 		simulateTabEvent(oElem, false);
 		oElem = checkFocus(jQuery.sap.domById("Footer"), assert);
 		simulateTabEvent(oElem, false);
-		oElem = checkFocus(jQuery.sap.domById("Focus2"), assert);
+		checkFocus(jQuery.sap.domById("Focus2"), assert);
 
 		oTable.setColumnHeaderVisible(false);
 		sap.ui.getCore().applyChanges();
 		oElem = getCell(1, 1, true);
 		simulateTabEvent(oElem, true);
-		oElem = checkFocus(jQuery.sap.domById("Extension"), assert);
+		checkFocus(jQuery.sap.domById("Extension"), assert);
 	});
 
 	function _testArrowKeys(assert) {
@@ -542,8 +542,11 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 		oElem = checkFocus(getSelectAll(), assert);
 		qutils.triggerKeydown(oElem, "ARROW_UP", false, false, false);
 		oElem = checkFocus(getSelectAll(), assert);
+
 		var iColIdx;
-		for (var i = 0; i < iNumberOfCols; i++) {
+		var i;
+
+		for (i = 0; i < iNumberOfCols; i++) {
 			iColIdx = i;
 			qutils.triggerKeydown(oElem, "ARROW_RIGHT", false, false, false);
 			oElem = checkFocus(getColumnHeader(iColIdx), assert);
@@ -556,13 +559,13 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 		var oRow, iIdx;
 		var iVisibleRowCount = oTable.getVisibleRowCount();
 
-		for (var i = 0; i < iNumberOfRows; i++) {
+		for (i = 0; i < iNumberOfRows; i++) {
 			qutils.triggerKeydown(oElem, "ARROW_DOWN", false, false, false);
 			iIdx = i;
-			if (i >= oTable.getVisibleRowCount() - oTable.getFixedBottomRowCount() && i < iNumberOfRows - oTable.getFixedBottomRowCount()) {
-				iIdx = oTable.getVisibleRowCount() - oTable.getFixedBottomRowCount() - 1;
+			if (i >= iVisibleRowCount - oTable.getFixedBottomRowCount() && i < iNumberOfRows - oTable.getFixedBottomRowCount()) {
+				iIdx = iVisibleRowCount - oTable.getFixedBottomRowCount() - 1;
 			} else if (i >= iNumberOfRows - oTable.getFixedBottomRowCount()) {
-				iIdx = i - (iNumberOfRows - oTable.getVisibleRowCount());
+				iIdx = i - (iNumberOfRows - iVisibleRowCount);
 			}
 			oRow = oTable.getRows()[iIdx];
 			oElem = checkFocus(getCell(iIdx, iColIdx), assert);
@@ -575,7 +578,7 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 		oElem = checkFocus(getCell(iIdx, iColIdx), assert);
 		assert.equal(oRow.getIndex(), iNumberOfRows - 1, "Row index correct");
 
-		for (var i = iNumberOfCols - 2; i >= 0; i--) {
+		for (i = iNumberOfCols - 2; i >= 0; i--) {
 			iColIdx = i;
 			qutils.triggerKeydown(oElem, "ARROW_LEFT", false, false, false);
 			oElem = checkFocus(getCell(iIdx, iColIdx), assert);
@@ -584,7 +587,7 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 		qutils.triggerKeydown(oElem, "ARROW_LEFT", false, false, false);
 		oElem = checkFocus(getRowHeader(iIdx), assert);
 
-		for (var i = iNumberOfRows - 2; i >= 0; i--) {
+		for (i = iNumberOfRows - 2; i >= 0; i--) {
 			qutils.triggerKeydown(oElem, "ARROW_UP", false, false, false);
 			iIdx = i;
 
@@ -624,7 +627,7 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 		qutils.triggerKeydown(oElem, "ARROW_DOWN", false, false, false);
 		oElem = checkFocus(getCell(0, 0), assert);
 		qutils.triggerKeydown(oElem, "ARROW_LEFT", false, false, false);
-		oElem = checkFocus(getCell(0, 0), assert);
+		checkFocus(getCell(0, 0), assert);
 	});
 
 	QUnit.test("Arrow keys - No Column Header", function(assert) {
@@ -639,7 +642,7 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 		qutils.triggerKeydown(oElem, "ARROW_LEFT", false, false, false);
 		oElem = checkFocus(getRowHeader(0), assert);
 		qutils.triggerKeydown(oElem, "ARROW_UP", false, false, false);
-		oElem = checkFocus(getRowHeader(0), assert);
+		checkFocus(getRowHeader(0), assert);
 	});
 
 	QUnit.test("Arrow keys - Multi Header", function(assert) {
@@ -681,10 +684,463 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 		qutils.triggerKeydown(oElem, "ARROW_LEFT", false, false, false);
 		oElem = checkFocus(getSelectAll(), assert);
 		qutils.triggerKeydown(oElem, "ARROW_DOWN", false, false, false);
-		oElem = checkFocus(getRowHeader(0), assert);
+		checkFocus(getRowHeader(0), assert);
 	});
 
+	QUnit.test("Home/End", function(assert) {
+		oTable.setFixedColumnCount(0);
+		sap.ui.getCore().applyChanges();
 
+		/* Test on column header */
+
+		// First cell
+		var oElem = checkFocus(getColumnHeader(0, true), assert);
+
+		// *HOME* -> SelectAll
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		oElem = checkFocus(getSelectAll(), assert);
+
+		// *HOME* -> SelectAll
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		oElem = checkFocus(getSelectAll(), assert);
+
+		// *END* -> First cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(getColumnHeader(0), assert);
+
+		// *END* -> Last cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(getColumnHeader(iNumberOfCols - 1), assert);
+
+		// *END* -> Last cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(getColumnHeader(iNumberOfCols - 1), assert);
+
+		// *HOME* -> First cell
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		checkFocus(getColumnHeader(0), assert);
+
+		/* Test on first content row */
+
+		// First cell
+		oElem = checkFocus(getCell(0, 0, true), assert);
+
+		// *HOME* -> Selection cell
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		oElem = checkFocus(getRowHeader(0), assert);
+
+		// *HOME* -> Selection cell
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		oElem = checkFocus(getRowHeader(0), assert);
+
+		// *END* -> First cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(getCell(0, 0), assert);
+
+		// *END* -> Last cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(getCell(0, iNumberOfCols - 1), assert);
+
+		// *END* -> Last cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(getCell(0, iNumberOfCols - 1), assert);
+
+		// *HOME* -> First cell
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		checkFocus(getCell(0, 0), assert);
+	});
+
+	QUnit.test("Home/End - No Row Header", function(assert) {
+		oTable.setFixedColumnCount(0);
+		oTable.setSelectionMode("None");
+		sap.ui.getCore().applyChanges();
+
+		/* Test on column header */
+
+		// First cell
+		var oElem = checkFocus(getColumnHeader(0, true), assert);
+
+		// *HOME* -> First cell
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		oElem = checkFocus(getColumnHeader(0), assert);
+
+		// *END* -> Last cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(getColumnHeader(iNumberOfCols - 1), assert);
+
+		// *END* -> Last cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(getColumnHeader(iNumberOfCols - 1), assert);
+
+		// *HOME* -> First cell
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		checkFocus(getColumnHeader(0), assert);
+
+		/* Test on first content row */
+
+		// First cell
+		oElem = checkFocus(getCell(0, 0, true), assert);
+
+		// *HOME* -> First cell
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		oElem = checkFocus(getCell(0, 0), assert);
+
+		// *END* -> Last cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(getCell(0, iNumberOfCols - 1), assert);
+
+		// *END* -> Last cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(getCell(0, iNumberOfCols - 1), assert);
+
+		// *HOME* -> First cell
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		checkFocus(getCell(0, 0), assert);
+	});
+
+	QUnit.test("Home/End - Fixed Column", function(assert) {
+		sap.ui.getCore().applyChanges();
+
+		/**
+		 * 1 (of 5) Fixed Columns
+		 */
+
+		/* Test on column header */
+
+		// Fixed area - Single cell
+		var oElem = checkFocus(getColumnHeader(0, true), assert);
+
+		// *HOME* -> SelectAll
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		oElem = checkFocus(getSelectAll(), assert);
+
+		// *HOME* -> SelectAll
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		oElem = checkFocus(getSelectAll(), assert);
+
+		// *END* -> Fixed area - Single cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(getColumnHeader(0), assert);
+
+		// *END* -> Non-Fixed area - Last cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(getColumnHeader(iNumberOfCols - 1), assert);
+
+		// *END* -> Non-Fixed area - Last cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(getColumnHeader(iNumberOfCols - 1), assert);
+
+		// *HOME* -> Non-Fixed area - First cell
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		oElem = checkFocus(getColumnHeader(oTable.getFixedColumnCount()), assert);
+
+		// *HOME* -> Fixed area - Single cell
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		checkFocus(getColumnHeader(0), assert);
+
+		/* Test on first content row */
+
+		// Fixed area - Single cell
+		oElem = checkFocus(getCell(0, 0, true), assert);
+
+		// *HOME* -> Selection cell
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		oElem = checkFocus(getRowHeader(0), assert);
+
+		// *HOME* -> Selection cell
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		oElem = checkFocus(getRowHeader(0), assert);
+
+		// *END* -> Fixed area - Single cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(getCell(0, 0), assert);
+
+		// *END* -> Non-Fixed area - Last cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(getCell(0, iNumberOfCols - 1), assert);
+
+		// *END* -> Non-Fixed area - Last cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(getCell(0, iNumberOfCols - 1), assert);
+
+		// *HOME* -> Non-Fixed area - First cell
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		oElem = checkFocus(getCell(0, oTable.getFixedColumnCount()), assert);
+
+		// *HOME* -> Fixed area - Single cell
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		checkFocus(getCell(0, 0), assert);
+
+		/**
+		 * 2 (of 5) Fixed Columns
+		 */
+
+		oTable.setFixedColumnCount(2);
+		sap.ui.getCore().applyChanges();
+
+		/* Test on column header */
+
+		// Fixed area - First cell
+		oElem = checkFocus(getColumnHeader(0, true), assert);
+
+		// *HOME* -> SelectAll
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		oElem = checkFocus(getSelectAll(), assert);
+
+		// *HOME* -> SelectAll
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		oElem = checkFocus(getSelectAll(), assert);
+
+		// *END* -> Fixed area - First cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(getColumnHeader(0), assert);
+
+		// *END* -> Fixed area - Last cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(getColumnHeader(oTable.getFixedColumnCount() - 1), assert);
+
+		// *END* -> Non-Fixed area - Last cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(getColumnHeader(iNumberOfCols - 1), assert);
+
+		// *END* -> Non-Fixed area - Last cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(getColumnHeader(iNumberOfCols - 1), assert);
+
+		// *HOME* -> Non-Fixed area - First cell
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		oElem = checkFocus(getColumnHeader(oTable.getFixedColumnCount()), assert);
+
+		// *HOME* -> Fixed area - First cell
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		checkFocus(getColumnHeader(0), assert);
+
+		/* Test on first content row */
+
+		// Fixed area - First cell
+		oElem = checkFocus(getCell(0, 0, true), assert);
+
+		// *HOME* -> Selection cell
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		oElem = checkFocus(getRowHeader(0), assert);
+
+		// *HOME* -> Selection cell
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		oElem = checkFocus(getRowHeader(0), assert);
+
+		// *END* -> Fixed area - First cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(getCell(0, 0), assert);
+
+		// *END* -> Fixed area - Last cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(getCell(0, oTable.getFixedColumnCount() - 1), assert);
+
+		// *END* -> Non-Fixed area - Last cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(getCell(0, iNumberOfCols - 1), assert);
+
+		// *END* -> Non-Fixed area - Last cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(getCell(0, iNumberOfCols - 1), assert);
+
+		// *HOME* -> Non-Fixed area - First cell
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		oElem = checkFocus(getCell(0, oTable.getFixedColumnCount()), assert);
+
+		// *HOME* -> Fixed area - First cell
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		checkFocus(getCell(0, 0), assert);
+
+		/**
+		 * 4 (of 5) Fixed Columns
+		 */
+
+		oTable.setFixedColumnCount(4);
+		sap.ui.getCore().applyChanges();
+
+		/* Test on column header */
+
+		// Non-Fixed area - Last cell
+		oElem = checkFocus(getColumnHeader(iNumberOfCols - 1, true), assert);
+
+		// *HOME* -> Fixed area - First cell
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		oElem = checkFocus(getColumnHeader(0), assert);
+
+		// *END* -> Fixed area - Last cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(getColumnHeader(oTable.getFixedColumnCount() - 1), assert);
+
+		// *END* -> Non-Fixed area - Single cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		checkFocus(getColumnHeader(iNumberOfCols - 1), assert);
+
+		/* Test on first content row */
+
+		// Non-Fixed area - Single cell
+		oElem = checkFocus(getCell(0, iNumberOfCols - 1, true), assert);
+
+		// *HOME* -> Fixed area - First cell
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		oElem = checkFocus(getCell(0, 0), assert);
+
+		// *END* -> Fixed area - Last cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(getCell(0, oTable.getFixedColumnCount() - 1), assert);
+
+		// *END* -> Non-Fixed area - Single cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		checkFocus(getCell(0, iNumberOfCols - 1), assert);
+
+		/**
+		 * 5 (of 5) Fixed Columns
+		 */
+
+		oTable.setFixedColumnCount(5);
+		sap.ui.getCore().applyChanges();
+
+		/* Test on column header */
+
+		// Fixed area - Last cell
+		oElem = checkFocus(getColumnHeader(iNumberOfCols - 1, true), assert);
+
+		// *HOME* -> Fixed area - First cell
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		oElem = checkFocus(getColumnHeader(0), assert);
+
+		// *END* -> Fixed area - Last cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		checkFocus(getColumnHeader(oTable.getFixedColumnCount() - 1), assert);
+
+		/* Test on first content row */
+
+		// Fixed area - Last cell
+		oElem = checkFocus(getCell(0, iNumberOfCols - 1, true), assert);
+
+		// *HOME* -> Fixed area - First cell
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		oElem = checkFocus(getCell(0, 0), assert);
+
+		// *END* -> Fixed area - Last cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		checkFocus(getCell(0, oTable.getFixedColumnCount() - 1), assert);
+	});
+
+	QUnit.test("Home/End - Fixed Column with Column Span", function(assert) {
+		var iColSpan = 2;
+		oTable.setFixedColumnCount(4);
+		oTable.getColumns()[2].setHeaderSpan([iColSpan]);
+		sap.ui.getCore().applyChanges();
+
+		/* Test on column header */
+
+		// Fixed area - First cell
+		var oElem = checkFocus(getColumnHeader(0, true), assert);
+
+		// *END* -> Fixed area - Last cell (First cell of the span)
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(getColumnHeader(oTable.getFixedColumnCount() - iColSpan), assert);
+
+		// *END* -> Non-Fixed area - Single cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(getColumnHeader(iNumberOfCols - 1), assert);
+
+		// *HOME* -> Fixed area - First cell
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		checkFocus(getColumnHeader(0), assert);
+	});
+
+	QUnit.test("Home/End - Fixed Column with Multi Column", function(assert) {
+		var iColSpan = 2;
+		oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b1"}));
+		oTable.getColumns()[1].setHeaderSpan([iColSpan, 1]);
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "b"}));
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "b2"}));
+		oTable.getColumns()[3].addMultiLabel(new TestControl({text: "d"}));
+		oTable.getColumns()[3].addMultiLabel(new TestControl({text: "d1"}));
+		oTable.getColumns()[3].setHeaderSpan([iColSpan, 1]);
+		oTable.getColumns()[4].addMultiLabel(new TestControl({text: "d"}));
+		oTable.getColumns()[4].addMultiLabel(new TestControl({text: "d2"}));
+		oTable.setFixedColumnCount(3);
+		sap.ui.getCore().applyChanges();
+
+		/* Test on first column header row */
+
+		// Fixed area - First cell
+		var oElem = checkFocus(getColumnHeader(0, true), assert);
+
+		// *END* -> Fixed area - Last cell (First cell of the span)
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(getColumnHeader(oTable.getFixedColumnCount() - iColSpan), assert);
+
+		// *END* -> Non-Fixed area - Single cell (First cell of the span)
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(getColumnHeader(oTable.getFixedColumnCount()), assert);
+
+		// *END* -> Non-Fixed area - Single cell (First cell of the span)
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(getColumnHeader(oTable.getFixedColumnCount()), assert);
+
+		// *HOME* -> Fixed area - First cell
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		checkFocus(getColumnHeader(0), assert);
+
+		/* Test on second column header row */
+
+		// Fixed area - First cell
+		oElem = jQuery.sap.domById(getColumnHeader(0).attr("id") + "_1");
+		oElem.focus();
+		checkFocus(oElem, assert);
+
+		// *END* -> Fixed area - Last cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(jQuery.sap.domById(getColumnHeader(oTable.getFixedColumnCount() - 1).attr("id") + "_1"), assert);
+
+		// *END* -> Non-Fixed area - Last cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(jQuery.sap.domById(getColumnHeader(iNumberOfCols - 1).attr("id") + "_1"), assert);
+
+		// *END* -> Non-Fixed area - Last cell
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		oElem = checkFocus(jQuery.sap.domById(getColumnHeader(iNumberOfCols - 1).attr("id") + "_1"), assert);
+
+		// *HOME* -> Non-Fixed area - First cell
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		oElem = checkFocus(jQuery.sap.domById(getColumnHeader(oTable.getFixedColumnCount()).attr("id") + "_1"), assert);
+
+		// *HOME* -> Fixed area - First cell
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		checkFocus(jQuery.sap.domById(getColumnHeader(0).attr("id") + "_1"), assert);
+	});
+
+	QUnit.test("Home/End - Group row header", function(assert) {
+		fakeGroupRow(0);
+
+		// If the focus is on a group row header, the focus should not be changed by pressing Home or End.
+		var oElem = getCell(0, 0, true, assert);
+		qutils.triggerKeydown(oElem, "HOME", false, false, false);
+		checkFocus(oElem, assert);
+		qutils.triggerKeydown(oElem, "END", false, false, false);
+		checkFocus(oElem, assert);
+	});
+
+	QUnit.test("Focus on cell content", function(assert) {
+		var oElem = findTabbables(getCell(0,0).get(0),[getCell(0,0).get(0)],true);
+		oElem.focus();
+
+		// If the focus is on an element inside the cell,
+		// the focus should not be changed when pressing one the following keys.
+		var aKeys = ["HOME", "END", "ARROW_LEFT", "ARROW_UP", "ARROW_RIGHT", "ARROW_DOWN"];
+
+		checkFocus(oElem, assert);
+		for (var i = 0; i < aKeys.length; i++) {
+			qutils.triggerKeydown(oElem, aKeys[i], false, false, false);
+			checkFocus(oElem, assert);
+		}
+	});
 
 	QUnit.module("Keyboard Support: F6 Handling", {
 		setup: function() {
@@ -717,23 +1173,23 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 		qutils.triggerKeydown(oElem, "F6", false, false, false);
 		oElem = checkFocus(getColumnHeader(0), assert);
 		qutils.triggerKeydown(oElem, "F6", false, false, false);
-		oElem = checkFocus(jQuery.sap.domById("Footer"), assert);
+		checkFocus(jQuery.sap.domById("Footer"), assert);
 
 		oElem = getCell(1, 1, true, assert);
 		qutils.triggerKeydown(oElem, "F6", false, false, false);
-		oElem = checkFocus(jQuery.sap.domById("Footer"), assert);
+		checkFocus(jQuery.sap.domById("Footer"), assert);
 
 		oElem = getRowHeader(1, true, assert);
 		qutils.triggerKeydown(oElem, "F6", false, false, false);
-		oElem = checkFocus(jQuery.sap.domById("Footer"), assert);
+		checkFocus(jQuery.sap.domById("Footer"), assert);
 
 		oElem = getSelectAll(true, assert);
 		qutils.triggerKeydown(oElem, "F6", false, false, false);
-		oElem = checkFocus(jQuery.sap.domById("Footer"), assert);
+		checkFocus(jQuery.sap.domById("Footer"), assert);
 
 		oElem = getColumnHeader(1, true, assert);
 		qutils.triggerKeydown(oElem, "F6", false, false, false);
-		oElem = checkFocus(jQuery.sap.domById("Footer"), assert);
+		checkFocus(jQuery.sap.domById("Footer"), assert);
 	});
 
 	QUnit.test("F6 - backward (with extension and footer)", function(assert) {
@@ -745,23 +1201,22 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 		qutils.triggerKeydown(oElem, "F6", true, false, false);
 		oElem = checkFocus(getColumnHeader(0), assert);
 		qutils.triggerKeydown(oElem, "F6", true, false, false);
-		oElem = checkFocus(jQuery.sap.domById("Focus1"), assert);
+		checkFocus(jQuery.sap.domById("Focus1"), assert);
 
 		oElem = getCell(1, 1, true, assert);
 		qutils.triggerKeydown(oElem, "F6", true, false, false);
-		oElem = checkFocus(jQuery.sap.domById("Focus1"), assert);
+		checkFocus(jQuery.sap.domById("Focus1"), assert);
 
 		oElem = getRowHeader(1, true, assert);
 		qutils.triggerKeydown(oElem, "F6", true, false, false);
-		oElem = checkFocus(jQuery.sap.domById("Focus1"), assert);
+		checkFocus(jQuery.sap.domById("Focus1"), assert);
 
 		oElem = getSelectAll(true, assert);
 		qutils.triggerKeydown(oElem, "F6", true, false, false);
-		oElem = checkFocus(jQuery.sap.domById("Focus1"), assert);
+		checkFocus(jQuery.sap.domById("Focus1"), assert);
 
 		oElem = getColumnHeader(1, true, assert);
 		qutils.triggerKeydown(oElem, "F6", true, false, false);
-		oElem = checkFocus(jQuery.sap.domById("Focus1"), assert);
+		checkFocus(jQuery.sap.domById("Focus1"), assert);
 	});
-
 }

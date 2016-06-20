@@ -140,6 +140,88 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 		}
 	};
 
+	TableKeyboardDelegate.prototype.onsaphome = function(oEvent) {
+		// If focus is on a group header, do nothing.
+		if (TableUtils.isInGroupingRow(oEvent.target)) {
+			oEvent.setMarked("sapUiTableSkipItemNavigation");
+			return;
+		}
+
+		var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
+
+		if (oCellInfo.type === TableUtils.CELLTYPES.DATACELL ||
+			oCellInfo.type === TableUtils.CELLTYPES.ROWHEADER ||
+			oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER) {
+
+			var oFocusedItemInfo = TableUtils.getFocusedItemInfo(this);
+			var iFocusedIndex = oFocusedItemInfo.cell;
+			var iFocusedCellInRow = oFocusedItemInfo.cellInRow;
+
+			var bHasRowHeader = TableUtils.hasRowHeader(this);
+			var iRowHeaderOffset = bHasRowHeader ? 1 : 0;
+
+			if (TableUtils.hasFixedColumns(this) && iFocusedCellInRow > this.getFixedColumnCount() + iRowHeaderOffset) {
+				// If there is a fixed column area and the focus is to the right of the first cell in the non-fixed area,
+				// then set the focus to the first cell in the non-fixed area.
+				oEvent.setMarked("sapUiTableSkipItemNavigation");
+				TableUtils.focusItem(this, iFocusedIndex - iFocusedCellInRow + this.getFixedColumnCount() + iRowHeaderOffset, null);
+
+			} else if (bHasRowHeader && iFocusedCellInRow > 1) {
+				// If there is a row header column and the focus is after the first content column,
+				// then set the focus to the cell in the first content column.
+				oEvent.setMarked("sapUiTableSkipItemNavigation");
+				TableUtils.focusItem(this, iFocusedIndex - iFocusedCellInRow + iRowHeaderOffset, null);
+			}
+		}
+	};
+
+	TableKeyboardDelegate.prototype.onsapend = function(oEvent) {
+		// If focus is on a group header, do nothing.
+		if (TableUtils.isInGroupingRow(oEvent.target)) {
+			oEvent.setMarked("sapUiTableSkipItemNavigation");
+			return;
+		}
+
+		var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
+
+		if (oCellInfo.type === TableUtils.CELLTYPES.DATACELL ||
+			oCellInfo.type === TableUtils.CELLTYPES.ROWHEADER ||
+			oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER ||
+			oCellInfo.type === TableUtils.CELLTYPES.COLUMNROWHEADER) {
+
+			var oFocusedItemInfo = TableUtils.getFocusedItemInfo(this);
+			var iFocusedIndex = oFocusedItemInfo.cell;
+			var iFocusedCellInRow = oFocusedItemInfo.cellInRow;
+
+			var bHasRowHeader = TableUtils.hasRowHeader(this);
+			var iRowHeaderOffset = bHasRowHeader ? 1 : 0;
+			var bIsColSpanAtFixedAreaEnd = false;
+
+			// If the focused cell is a column span in the column header at the end of the fixed area,
+			// the selected cell index is the index of the first cell in the span.
+			// Treat this case like there is no span and the last cell of the fixed area is selected.
+			if (oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER && TableUtils.hasFixedColumns(this)) {
+				var iColSpan = oCellInfo.cell.data('sap-ui-colspan');
+				if (iColSpan > 1 && iFocusedCellInRow + iColSpan - iRowHeaderOffset === this.getFixedColumnCount()) {
+					bIsColSpanAtFixedAreaEnd = true;
+				}
+			}
+
+			if (bHasRowHeader && iFocusedCellInRow === 0) {
+				// If there is a row header and it has the focus,
+				// then set the focus to the cell in the next column.
+				oEvent.setMarked("sapUiTableSkipItemNavigation");
+				TableUtils.focusItem(this, iFocusedIndex + 1, null);
+
+			} else if (TableUtils.hasFixedColumns(this) && iFocusedCellInRow < this.getFixedColumnCount() - 1 + iRowHeaderOffset && !bIsColSpanAtFixedAreaEnd) {
+				// If there is a fixed column area and the focus is not on its last cell or column span,
+				// then set the focus to the last cell of the fixed column area.
+				oEvent.setMarked("sapUiTableSkipItemNavigation");
+				TableUtils.focusItem(this, iFocusedIndex + this.getFixedColumnCount() - iFocusedCellInRow, null);
+			}
+		}
+	};
+
 	return TableKeyboardDelegate;
 
 });
