@@ -840,7 +840,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 					})
 				],
 				contentHeight: TimePicker._PICKER_CONTENT_HEIGHT
-			});
+			}).addStyleClass("sapContrastPlus");
 
 			oPopover = oPicker.getAggregation("_popup");
 			// hide arrow in case of popover as dialog does not have an arrow
