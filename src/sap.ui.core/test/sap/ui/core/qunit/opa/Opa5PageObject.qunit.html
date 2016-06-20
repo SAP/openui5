@@ -23,6 +23,7 @@
 
 	jQuery.sap.require("sap.ui.test.Opa5");
 	var Opa5 = sap.ui.test.Opa5;
+	var Opa = sap.ui.test.Opa;
 
 	module("Page Objects", {
 		teardown : function () {
@@ -124,6 +125,23 @@
 		});
 		assertNamespaceClashErrorLogged(true);
 	});
+
+	QUnit.test("Should keep the page if you extend the Opa config", function (assert) {
+		Opa5.createPageObjects({
+			onMyTestPage: {
+				namespace: "myKeepThePage",
+				actions: {
+					iDoTheNeedful: $.noop
+				}
+			}
+		});
+		Opa5.extendConfig({
+			actions: new Opa5()
+		});
+
+		assert.strictEqual(Opa.config.actions.onMyTestPage.iDoTheNeedful, $.noop, "kept the page");
+	});
+
 	function assertPageObjectIsReturned(oPages){
 		ok(oPages,"Page Object is returned");
 		ok(oPages.onMyFirstPage.actions.iCanDoMagic, "Page Object has access to the actions it describes");
@@ -131,19 +149,18 @@
 	}
 
 	function assertStandardActionsRegisteredFor(sPageName){
-		ok(sap.ui.test.Opa.config.actions[sPageName], "Page Object is added to the actions");
-		ok(sap.ui.test.Opa.config.actions[sPageName].iCanDoMagic, "Page Object actions are added");
-		ok(sap.ui.test.Opa.config.actions[sPageName].iCanDoOtherThings, "Page Object actions are added");
-		ok(!sap.ui.test.Opa.config.actions[sPageName].iCanSeeIt, "Page Object assertions are not added to the actions");
+		ok(Opa.config.actions[sPageName], "Page Object is added to the actions");
+		ok(Opa.config.actions[sPageName].iCanDoMagic, "Page Object actions are added");
+		ok(Opa.config.actions[sPageName].iCanDoOtherThings, "Page Object actions are added");
+		ok(!Opa.config.actions[sPageName].iCanSeeIt, "Page Object assertions are not added to the actions");
 
-		deepEqual(sap.ui.test.Opa.config.arrangements[sPageName], sap.ui.test.Opa.config.actions[sPageName], "Page Object actions can be uses as Opa arrangements and actions");
+		deepEqual(Opa.config.arrangements[sPageName], Opa.config.actions[sPageName], "Page Object actions can be uses as Opa arrangements and actions");
 	}
-
 	function assertStandardAssertionsRegisteredFor(sPageName){
-		ok(sap.ui.test.Opa.config.assertions[sPageName], "Page Object is added to the assertions");
-		ok(sap.ui.test.Opa.config.assertions[sPageName].iCanSeeIt, "Page Object assertions are added");
-		ok(sap.ui.test.Opa.config.assertions[sPageName].iCanHearIt, "Page Object assertions are added");
-		ok(!sap.ui.test.Opa.config.assertions[sPageName].iCanDoMagic, "Page Object actions are not added to the assertions");
+		ok(Opa.config.assertions[sPageName], "Page Object is added to the assertions");
+		ok(Opa.config.assertions[sPageName].iCanSeeIt, "Page Object assertions are added");
+		ok(Opa.config.assertions[sPageName].iCanHearIt, "Page Object assertions are added");
+		ok(!Opa.config.assertions[sPageName].iCanDoMagic, "Page Object actions are not added to the assertions");
 	}
 
 	function assertPageObjectBase(oPages,fnOtherBase){
