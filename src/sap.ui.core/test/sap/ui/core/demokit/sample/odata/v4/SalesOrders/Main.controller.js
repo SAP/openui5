@@ -147,6 +147,21 @@ sap.ui.define([
 			this._setSalesOrderBindingContext();
 		},
 
+		onFilterItems : function (oEvent) {
+			var oView = this.getView(),
+				oBinding = oView.byId("SalesOrderLineItems").getBinding("items"),
+				sQuery = oView.getModel("ui").getProperty("/filterProductID");
+
+			if (oBinding.hasPendingChanges()) {
+				MessageBox.error("Cannot filter due to unsaved changes"
+					+ "; save or reset changes before filtering");
+				return;
+			}
+			oBinding.filter(sQuery
+				? new Filter("Product/ProductID", FilterOperator.EQ, sQuery)
+				: null);
+		},
+
 		onInit : function () {
 			var bMessageOpen = false,
 				oMessageManager = sap.ui.getCore().getMessageManager(),
@@ -222,7 +237,11 @@ sap.ui.define([
 		},
 
 		onSalesOrdersSelect : function (oEvent) {
+			var oUIModel = this.getView().getModel("ui");
 			this._setSalesOrderBindingContext(oEvent.getParameters().listItem.getBindingContext());
+			oUIModel.setProperty("/bSalesOrderSelected", true);
+			oUIModel.setProperty("/bLineItemSelected", false);
+
 		},
 
 		onSalesOrderLineItemSelect : function (oEvent) {
@@ -231,6 +250,7 @@ sap.ui.define([
 
 			oView.byId("SupplierContactData").setBindingContext(oSalesOrderLineItemContext);
 			oView.byId("SupplierDetailsForm").setBindingContext(oSalesOrderLineItemContext);
+			oView.getModel("ui").setProperty("/bLineItemSelected", true);
 		},
 
 		onSaveSalesOrder : function () {

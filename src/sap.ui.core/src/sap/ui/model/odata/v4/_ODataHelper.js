@@ -354,11 +354,14 @@ sap.ui.define([
 						&& !oBinding.aFilters.length && !oBinding.aApplicationFilters.length)) {
 					return undefined; // no need for an own cache
 				}
+			} else {
+				oContext = undefined; // must be ignored for absolute bindings
 			}
 			mQueryOptions = ODataHelper.getQueryOptions(oBinding, "", oContext);
 			oPathPromise = oContext && oContext.requestCanonicalPath();
-			oFilterPromise = ODataHelper.requestFilter(oBinding, oBinding.aApplicationFilters,
-				oBinding.aFilters, mQueryOptions && mQueryOptions.$filter);
+			oFilterPromise = ODataHelper.requestFilter(oBinding, oContext,
+				oBinding.aApplicationFilters, oBinding.aFilters,
+				mQueryOptions && mQueryOptions.$filter);
 			oCacheProxy = ODataHelper.createCacheProxy(oBinding, createCache, oPathPromise,
 				oFilterPromise);
 			oCacheProxy.promise.then(function (oCache) {
@@ -483,6 +486,11 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.model.odata.v4.ODataListBinding} oBinding
 		 *   The list binding
+		 * @param {sap.ui.model.odata.v4.Context} oContext
+		 *   The context instance to be used; it is given as a parameter and oBinding.oContext is
+		 *   unused because the binding's setContext calls this method (indirectly) before calling
+		 *   the superclass to ensure that the cache proxy is already created when the events are
+		 *   fired.
 		 * @param {sap.ui.model.Filter[]} aApplicationFilters
 		 *   The application filters
 		 * @param {sap.ui.model.Filter[]} aControlFilters
@@ -493,7 +501,8 @@ sap.ui.define([
 		 *   arrays are empty and the static filter parameter is not given. It rejects with an error
 		 *   if a filter has an unknown operator or an invalid path.
 		 */
-		requestFilter : function (oBinding, aApplicationFilters, aControlFilters, sStaticFilter) {
+		requestFilter : function (oBinding, oContext, aApplicationFilters, aControlFilters,
+				sStaticFilter) {
 			var aNonEmptyFilters = [];
 
 			/**
@@ -604,8 +613,9 @@ sap.ui.define([
 			function requestGroupFilter(aGroupFilters) {
 				var oMetaModel = oBinding.oModel.oMetaModel,
 					oMetaContext = oMetaModel.getMetaContext(
-						_Helper.buildPath(oBinding.sPath, aGroupFilters[0].sPath)),
-					oPropertyPromise = oMetaModel.requestObject(undefined, oMetaContext);
+						oBinding.oModel.resolve(oBinding.sPath, oContext)),
+					oPropertyPromise = oMetaModel.requestObject(aGroupFilters[0].sPath,
+						oMetaContext);
 
 				return oPropertyPromise.then(function (oPropertyMetadata) {
 					var aGroupFilterValues;
