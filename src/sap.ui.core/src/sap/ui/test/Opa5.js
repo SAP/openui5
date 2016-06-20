@@ -525,8 +525,89 @@ sap.ui.define([
 
 
 		/**
-		 * Extends the default config of Opa
-		 * See {@link sap.ui.test.Opa5#extendConfig}
+		 *
+		 * Extends and overwrites default values of the {@link sap.ui.test.Opa#.config}.
+		 * Most frequent usecase:
+		 * <pre>
+		 *     <code>
+		 *         // Every waitFor will append this namespace in front of your viewName
+		 *         Opa5.extendConfig({
+		 *            viewNamespace: "namespace.of.my.views."
+		 *         });
+		 *
+		 *         var oOpa = new Opa5();
+		 *
+		 *         // Looks for a control with the id "myButton" in a View with the name "namespace.of.my.views.Detail"
+		 *         oOpa.waitFor({
+		 *              id: "myButton",
+		 *              viewName: "Detail"
+		 *         });
+		 *
+		 *         // Looks for a control with the id "myList" in a View with the name "namespace.of.my.views.Master"
+		 *         oOpa.waitFor({
+		 *              id: "myList",
+		 *              viewName: "Master"
+		 *         });
+		 *     </code>
+		 * </pre>
+		 *
+		 * Sample usage:
+		 * <pre>
+		 *     <code>
+		 *         var oOpa = new Opa5();
+		 *
+		 *         // this statement will  will time out after 15 seconds and poll every 400ms.
+		 *         // those two values come from the defaults of {@link sap.ui.test.Opa#.config}.
+		 *         oOpa.waitFor({
+		 *         });
+		 *
+		 *         // All wait for statements added after this will take other defaults
+		 *         Opa5.extendConfig({
+		 *             timeout: 10,
+		 *             pollingInterval: 100
+		 *         });
+		 *
+		 *         // this statement will time out after 10 seconds and poll every 100 ms
+		 *         oOpa.waitFor({
+		 *         });
+		 *
+		 *         // this statement will time out after 20 seconds and poll every 100 ms
+		 *         oOpa.waitFor({
+		 *             timeout: 20;
+		*         });
+		 *     </code>
+		 * </pre>
+		 *
+		 * @since 1.40 The own properties of 'arrangements, actions and assertions' will be kept.
+		 * Here is an example:
+		 * <pre>
+		 *     <code>
+		 *         // An opa action with an own property 'clickMyButton'
+		 *         var myOpaAction = new Opa5();
+		 *         myOpaAction.clickMyButton = // function that clicks MyButton
+		 *         Opa.config.actions = myOpaAction;
+		 *
+		 *         var myExtension = new Opa5();
+		 *         Opa5.extendConfig({
+		 *             actions: myExtension
+		 *         });
+		 *
+		 *         // The clickMyButton function is still available - the function is logged out
+		 *         console.log(Opa.config.actions.clickMyButton);
+		 *
+		 *         // If
+		 *         var mySecondExtension = new Opa5();
+		 *         mySecondExtension.clickMyButton = // a different function than the initial one
+		 *         Opa.extendConfig({
+		 *             actions: mySecondExtension
+		 *         });
+		 *
+		 *         // Now clickMyButton function is the function of the second extension not the first one.
+		 *         console.log(Opa.config.actions.clickMyButton);
+		 *     </code>
+		 * </pre>
+		 *
+		 * @param {object} options The values to be added to the existing config
 		 * @public
 		 * @function
 		 */
