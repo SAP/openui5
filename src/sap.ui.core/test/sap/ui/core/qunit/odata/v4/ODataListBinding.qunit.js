@@ -645,9 +645,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("setContext: relative binding", function (assert) {
-		var oCacheProxy = {
-				promise : Promise.resolve()
-			},
+		var oCacheProxy = {},
 			oContext = Context.create(this.oModel, undefined, "/TEAM('42')"),
 			oListBinding = this.oModel.bindList("TEAM_2_EMPLOYEES");
 
@@ -1459,9 +1457,7 @@ sap.ui.require([
 	QUnit.test("hasPendingChanges: with and without cache", function (assert) {
 		var oBinding = this.oModel.bindList("SO_2_SOITEM", undefined, undefined, undefined, {}),
 			oBindingMock = this.mock(oBinding),
-			oCacheProxy = {
-				promise: Promise.resolve()
-			},
+			oCacheProxy = {},
 			oContext = Context.create(this.oModel, null, "/Products('1')"),
 			oResult = {};
 
@@ -1533,12 +1529,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("forbidden", function (assert) {
-		var oListBinding = this.oModel.bindList("/EMPLOYEES"),
-			oRelativeListBinding = this.oModel.bindList("Equipments");
-
-		assert.throws(function () { //TODO implement
-			oRelativeListBinding.filter();
-		}, new Error("Unsupported operation: v4.ODataListBinding#filter on relative bindings"));
+		var oListBinding = this.oModel.bindList("/EMPLOYEES");
 
 		assert.throws(function () { //TODO implement?
 			oListBinding.getContexts(0, 42, 0);
@@ -1875,70 +1866,73 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[
-		undefined,
-		FilterType.Application,
-		FilterType.Control
-	].forEach(function (sFilterType) {
-		QUnit.test("filter: FilterType=" + sFilterType, function (assert) {
-			var oBinding,
-				oCacheProxy = {},
-				oFilter = new Filter("Name", FilterOperator.Contains, "foo"),
-				aFilters = [oFilter],
-				sStaticFilter = "Age gt 18";
+	[false, true].forEach(function (bRelative) {
+		[undefined, FilterType.Application, FilterType.Control].forEach(function (sFilterType) {
+			QUnit.test("filter: FilterType=" + sFilterType + ", "
+					+ (bRelative ? "relative" : "absolute") + " binding", function (assert) {
+				var oBinding,
+					oCacheProxy = {
+						hasPendingChanges : function () {
+							return false;
+						}
+					},
+					oContext = Context.create(this.oModel, undefined, "/TEAMS"),
+					oFilter = new Filter("Name", FilterOperator.Contains, "foo"),
+					aFilters = [oFilter],
+					oHelperMock = this.mock(_ODataHelper),
+					sPath = bRelative ? "TEAM_2_EMPLOYEES" : "/EMPLOYEES",
+					sStaticFilter = "Age gt 18";
 
-			oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined, {
-				$filter : sStaticFilter,
-				$$operationMode : OperationMode.Server
+				oBinding = this.oModel.bindList(sPath, undefined, undefined, undefined, {
+					$filter : sStaticFilter,
+					$$operationMode : OperationMode.Server
+				});
+				if (bRelative) {
+					oHelperMock.expects("createListCacheProxy")
+						.withExactArgs(sinon.match.same(oBinding), sinon.match.same(oContext))
+						.returns(oCacheProxy);
+				}
+				oBinding.setContext(oContext);
+
+				oHelperMock.expects("toArray").withExactArgs(oFilter).returns(aFilters);
+				oHelperMock.expects("createListCacheProxy")
+					.withExactArgs(sinon.match.same(oBinding), sinon.match.same(oContext))
+					.returns(oCacheProxy);
+				this.mock(oBinding).expects("reset").withExactArgs();
+				this.mock(oBinding).expects("_fireRefresh")
+					.withExactArgs({reason : ChangeReason.Filter});
+
+				// Code under test
+				assert.strictEqual(oBinding.filter(oFilter, sFilterType), oBinding, "chaining");
+
+				assert.strictEqual(oBinding.oCache, oCacheProxy);
+				assert.strictEqual(oBinding.sChangeReason, ChangeReason.Filter);
+				if (sFilterType === FilterType.Control) {
+					assert.strictEqual(oBinding.aFilters, aFilters);
+					assert.deepEqual(oBinding.aApplicationFilters, []);
+				} else {
+					assert.strictEqual(oBinding.aApplicationFilters, aFilters);
+					assert.deepEqual(oBinding.aFilters, []);
+				}
 			});
-
-			this.mock(_ODataHelper).expects("toArray").withExactArgs(oFilter).returns(aFilters);
-			this.mock(_ODataHelper).expects("createListCacheProxy")
-				.withExactArgs(sinon.match.same(oBinding), undefined)
-				.returns(oCacheProxy);
-			this.mock(oBinding).expects("reset").withExactArgs();
-			this.mock(oBinding).expects("_fireRefresh")
-				.withExactArgs({reason : ChangeReason.Filter});
-
-			// Code under test
-			assert.strictEqual(oBinding.filter(oFilter, sFilterType), oBinding, "chaining");
-
-			assert.strictEqual(oBinding.oCache, oCacheProxy);
-			assert.strictEqual(oBinding.sChangeReason, ChangeReason.Filter);
-			if (sFilterType === FilterType.Control) {
-				assert.strictEqual(oBinding.aFilters, aFilters);
-				assert.deepEqual(oBinding.aApplicationFilters, []);
-			} else {
-				assert.strictEqual(oBinding.aApplicationFilters, aFilters);
-				assert.deepEqual(oBinding.aFilters, []);
-			}
 		});
-		//TODO combine dynamic filters and sorters (store sOrderby and sFilter at binding?) - own change?
 	});
 
 	//*********************************************************************************************
-	//TODO add when supporting filter on relative bindings
-	QUnit.skip("filter: resets map of caches by context", function (assert) {
+	QUnit.test("filter: resets map of caches by context", function (assert) {
 		var oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined, {
 				$$operationMode : OperationMode.Server
-			}),
-			oCacheProxy = {
-				promise : Promise.resolve({})
-			},
-			oFilterPromise = {};
+			});
 
 		oBinding.mCacheByContext = {};
 
-		this.mock(_ODataHelper).expects("requestFilter")
-			.withExactArgs(sinon.match.same(oBinding), [], [], undefined)
-			.returns(oFilterPromise);
-		this.stub(_ODataHelper, "createCacheProxy", function () {
-			assert.strictEqual(oBinding.mCacheByContext, undefined);
-			return oCacheProxy;
-		});
+		this.mock(_ODataHelper).expects("createListCacheProxy")
+			.withExactArgs(sinon.match.same(oBinding), undefined);
 
 		// Code under test
 		oBinding.filter(/*no filter*/);
+
+		assert.strictEqual(oBinding.mCacheByContext, undefined);
 	});
 
 	//*********************************************************************************************

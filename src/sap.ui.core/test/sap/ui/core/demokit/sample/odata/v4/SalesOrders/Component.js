@@ -77,20 +77,35 @@ sap.ui.define([
 					"SalesOrderList('0500000000')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber),SO_2_SCHDL($select=ScheduleKey,DeliveryDate)&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
 						source : "SalesOrderList_0.json"
 					},
+					"SalesOrderList('0500000000')/SO_2_SOITEM?$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))&$filter=ItemPosition%20gt%20'0000000000'&$skip=0&$top=100" : {
+						source : "SalesOrderItemsList_0.json"
+					},
 					"SalesOrderList('0500000002')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber),SO_2_SCHDL($select=ScheduleKey,DeliveryDate)&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
 						source : "SalesOrderList_1.json"
+					},
+					"SalesOrderList('0500000002')/SO_2_SOITEM?$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))&$filter=ItemPosition%20gt%20'0000000000'&$skip=0&$top=100" : {
+						source : "SalesOrderItemsList_1.json"
 					},
 					"SalesOrderList('0500000006')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber),SO_2_SCHDL($select=ScheduleKey,DeliveryDate)&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
 						source : "SalesOrderList_2.json"
 					},
+					"SalesOrderList('0500000006')/SO_2_SOITEM?$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))&$filter=ItemPosition%20gt%20'0000000000'&$skip=0&$top=100" : {
+						source : "SalesOrderItemsList_2.json"
+					},
 					"SalesOrderList('0500000007')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber),SO_2_SCHDL($select=ScheduleKey,DeliveryDate)&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
 						source : "SalesOrderList_3.json"
+					},
+					"SalesOrderList('0500000007')/SO_2_SOITEM?$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))&$filter=ItemPosition%20gt%20'0000000000'&$skip=0&$top=100" : {
+						source : "SalesOrderItemsList_3.json"
 					},
 					"SalesOrderList('0500000008')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber),SO_2_SCHDL($select=ScheduleKey,DeliveryDate)&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
 						source : "SalesOrderList_4.json"
 					},
 					"SOLineItemList(SalesOrderID='0500000000',ItemPosition='0000000010')/SOITEM_2_PRODUCT/PRODUCT_2_BP/BP_2_CONTACT?$select=DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber&$skip=0&$top=100" : {
 						source : "ContactList_0.json"
+					},
+					"SalesOrderList('0500000008')/SO_2_SOITEM?$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))&$filter=ItemPosition%20gt%20'0000000000'&$skip=0&$top=100" : {
+						source : "SalesOrderItemsList_4.json"
 					}
 				}, "sap/ui/core/demokit/sample/odata/v4/SalesOrders/data",
 				"/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/");
@@ -101,6 +116,8 @@ sap.ui.define([
 				models : { undefined : oModel,
 					ui : new JSONModel({
 						bRealOData : bRealOData,
+						bSalesOrderSelected : false,
+						bLineItemSelected : false,
 						icon : bRealOData ? "sap-icon://building" : "sap-icon://record",
 						iconTooltip : bRealOData ? "real OData service" : "mock OData service"}
 				)},
