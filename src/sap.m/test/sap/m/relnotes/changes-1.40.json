@@ -1,0 +1,4653 @@
+{
+  "1.40.0": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "426ca3d9500549414bc80e9c86caa30f87161e5c",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.BackgroundDesign: new type Solid2\"",
+        "references": []
+      },
+      {
+        "id": "b45077ff3afbd43bc0d9bf4f036ef4d6532586eb",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.core.AccInfo: Option for controls to provide information about their accessibility state\"",
+        "references": []
+      },
+      {
+        "id": "174c7adb0805373b0cdf0625e2fd5c4822fd32d8",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "ManagedObject: Propagate properties when setting parent to null\"",
+        "references": []
+      },
+      {
+        "id": "0848024a75b4c4d073a6e0047727f27ddb2494da",
+        "author": "Diana Mihaylova \u003cdiana.mihaylova@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectNumber: ValueStateSupport used to enrich the tooltip\"",
+        "references": []
+      },
+      {
+        "id": "1a200452c0f3f35e2079e35e8d839002e8e00625",
+        "author": "Jordan Dichev \u003cjordan.dichev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: Popover places itself with correct offset when Left\"",
+        "references": []
+      },
+      {
+        "id": "08e708de7075a5daf54876b7e0431317b9086683",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Text selection of text on tablet and mobile when maxLines used is enabled\"",
+        "references": []
+      },
+      {
+        "id": "267157721a849cded4d8a7fa5f7f3499100fe786",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Add the Worklist app (template result) to the demokit",
+        "references": []
+      },
+      {
+        "id": "23ce7f40a5f9414f1fc1603e80618e7b944773dd",
+        "author": "Thilo Seidel \u003cthilo.seidel@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Demo Application Added: Worklist",
+        "references": []
+      },
+      {
+        "id": "9fc815f5760521fd2e4833fd6f9f68617f379c72",
+        "author": "Thilo Seidel \u003cthilo.seidel@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Demo Applications: master-detail added again",
+        "references": []
+      },
+      {
+        "id": "9c45207ae3681ac31cbeb73d1db481fa8f4d6e6b",
+        "author": "Thilo Seidel \u003cthilo.seidel@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Demo Applications: master-detail registering in testsuite and demo-app section",
+        "references": []
+      },
+      {
+        "id": "063bc81c1bd5fbf692764bd5f40addd410b2952e",
+        "author": "Thilo Seidel \u003cthilo.seidel@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Demo Applications: worklist registered in testsuite",
+        "references": []
+      },
+      {
+        "id": "d6d2bedca7a364d8ea55b40e5c0b2d65f5b521b7",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Demo apps: add worklist tutorial and testing tutorial apps",
+        "references": []
+      },
+      {
+        "id": "0274752b92b5d392f7d975304e1a0fa26835fb48",
+        "author": "Dimo Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Disable expand with a click when header takes the entire screen",
+        "references": []
+      },
+      {
+        "id": "152a9e5b04820ad3b04d6ed0eb6c9103197072d2",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Fiori List Report Page Sample - Improved shrink behavior",
+        "references": []
+      },
+      {
+        "id": "d29bcf2d2420e9a84b3fbde32937b4b7eabcc0d9",
+        "author": "Eduard Klimenko \u003ceduard.klimenko@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "InfoTileSize, InfoTileTextColor, InfoTileValueColor and LoadState types moved to sap.m",
+        "references": []
+      },
+      {
+        "id": "b8676dbe6148175f2a7922fc6da8dc26b9c21954",
+        "author": "Peter Harbusch \u003cpeter.harbusch@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "P13nConditionPanel.js: for group conditions the default for ShowIfGrouped is changed to true",
+        "references": []
+      },
+      {
+        "id": "ae90b0736602d05ab2aaaed70247c8358af96015",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Walkthrough: load UI5 from openui5.hana, not openui5beta",
+        "references": []
+      },
+      {
+        "id": "b7df3a81d03d477101790894e1fc9f6a03bf0522",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "m.MenuButton: Implementation",
+        "references": []
+      },
+      {
+        "id": "b6e27ee4149f2eaa9eed40221e30c21ef90199e7",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "m.TimePicker: Typing a value in the focused slider selects that value",
+        "references": []
+      },
+      {
+        "id": "e43b7c000bb197b7e00cc5faa6797149434a6ba7",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "m.ViewSettingsDialog: Filter details page now implements search-while-you-type",
+        "references": []
+      },
+      {
+        "id": "72bae263ba69b795d49d05d3d20070dfaf60af92",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "m.ViewSettingsDialog: Filter search field added inside filter detail page",
+        "references": []
+      },
+      {
+        "id": "98601e96b99a422d7a564664d50af56ff8abecd9",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "m.ViewSettingsDialog: Select All checkbox added inside filter detail page",
+        "references": []
+      },
+      {
+        "id": "04fd2eb88ba1aa56f9ee01205f94f71cb3118c30",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "new sap.m.FormattedText control",
+        "references": []
+      },
+      {
+        "id": "9869e1e5d2c90baf500d8af68e1d59e8feac3868",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.BackgroundDesign: new type Solid2",
+        "references": []
+      },
+      {
+        "id": "e98ca58a6caada92938ebbb7e20fb2cc5857d4b4",
+        "author": "Petyo Kostakov \u003cpetyo.kostakov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.Breadcrumbs new control",
+        "references": []
+      },
+      {
+        "id": "0d119d43a643ffbe98edaa2be31f6de9994e8c87",
+        "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.BusyIndicator: Changed default animation",
+        "references": []
+      },
+      {
+        "id": "5ec3a5f222a6bd29eb8e62d8a0d9197efd4ef1be",
+        "author": "Mihail Yordanov \u003cmihail.yordanov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.CheckBox valueState support implemented",
+        "references": []
+      },
+      {
+        "id": "04cfbd62fc601a142d8bc6339dd37bf1e50a4f3c",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.CheckBox, Link, ProgressIndicator, RatingIndicator: Provide function getAccessibilityInfo",
+        "references": []
+      },
+      {
+        "id": "ab6fdc54d2e97122285401accdfeee2521579c3f",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.ComboBox: redesign for mobile devices",
+        "references": []
+      },
+      {
+        "id": "90da6118afabdd0f82f0ed9c9c3698ad00b01c99",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.ComboBox: two column layout feature added",
+        "references": []
+      },
+      {
+        "id": "44696a064842623f024f13e03d56ee0c50baf07f",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.ComboBoxBase: add \"loadItem\" event",
+        "references": []
+      },
+      {
+        "id": "b54d23e1d72b4e09478ee26b73e87d6232652f19",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.ComboBoxTextField: new control added",
+        "references": []
+      },
+      {
+        "id": "9575570fedca940aad7f8f0200fd1a5d36976b6a",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.DatePicker, TimePicker, DateTimePicker, DateTimeInput: Provide function getAccessibilityInfo",
+        "references": []
+      },
+      {
+        "id": "999d89ad7a6553ee4063af8622ba39af2f08d5ec",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.DatePicker: add min and max date",
+        "references": []
+      },
+      {
+        "id": "1ecd132bf31b550bc0b87fb44aafe8dd9ad7a642",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.DatePicker: display 2 calendar types in calendar",
+        "references": []
+      },
+      {
+        "id": "bd70134dad1a5a3a0968d7ef0815fe34be93d090",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.DatePicker: enable soft-keyboard on mobile devices",
+        "references": []
+      },
+      {
+        "id": "f884a156e1d83d5c09984593675ada65d67063fc",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.DateTimeInput: Deprecated.",
+        "references": []
+      },
+      {
+        "id": "ec9bafd5eccf9da8aebd75934301a03514f6c69f",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.DateTimePicker: allow combined styles for date and time",
+        "references": []
+      },
+      {
+        "id": "1a1d469e9e649f28197cdc9606e1209a7c40d126",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.DateTimePicker: new control",
+        "references": []
+      },
+      {
+        "id": "53c6336d17a9b3a8fe573a992bf8fcfbd7427f25",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.Dialog: ACC improvements",
+        "references": []
+      },
+      {
+        "id": "1dccc15922ed911dc3c384b11c46a74f75d26d54",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.Dialog: Added ariaLabelledBy association",
+        "references": []
+      },
+      {
+        "id": "2a652b87a85bd24082b581fb560cda0fd0ae92ad",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.Dialog: Users can now navigate in Dialog using F6",
+        "references": []
+      },
+      {
+        "id": "577b2b3c69a5a23177ac473c95fa686832e85486",
+        "author": "Pia Kinkel \u003cpia.kinkel@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.DynamicContainer: Renamed to sap.m.SlideTile",
+        "references": []
+      },
+      {
+        "id": "4e79347aa014699bf930ae4a30ffa6ad300ff9a4",
+        "author": "Dimo Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.DynamicPage - new control implemented",
+        "references": []
+      },
+      {
+        "id": "ffa445c542c2564827192cd78323f05541320c16",
+        "author": "Ilhan \u003cilhan.myumyun@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.DynamicPage: sap_belize enabled",
+        "references": []
+      },
+      {
+        "id": "f89e4d24287779316645bd478aad0f03950d8f9b",
+        "author": "Nikolay Cholakov \u003cnikolay.cholakov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.FacetFilter: Confirm event added",
+        "references": []
+      },
+      {
+        "id": "8ca0bbd80efa4bf265228ec568de166b3086dbc9",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.FlexBox, sap.ui.layout.Grid,",
+        "references": []
+      },
+      {
+        "id": "b815cd0bf615bc78794504026fa94138889d475f",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.FlexBox: Added background design",
+        "references": []
+      },
+      {
+        "id": "de62743ea0083538ec063ceaa2cea3e8e80ed9ac",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.FlexBox: Added support for responsive standard paddings",
+        "references": []
+      },
+      {
+        "id": "48d99e7243f94ed2baba48c0a763761c9aa83737",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.FlexBox: New options for wrapping and aligning content",
+        "references": []
+      },
+      {
+        "id": "fec45c227e4abdc91f49394587c1579c1e00f892",
+        "author": "Vladislav Tasev \u003cvladislav.tasev@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.FlexibleColumnLayout - new control",
+        "references": []
+      },
+      {
+        "id": "24b01b4829aeea9cbf21240289c5cda77733553d",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.GenericTile: Consistent tooltip handling implemented",
+        "references": []
+      },
+      {
+        "id": "9a2f5c04ad5f09952a09f22d476f1d162f5c4b28",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.GenericTile: GenericTile control with all related controls moved",
+        "references": []
+      },
+      {
+        "id": "2ffcce54582c66544de8560d2bb16475a859b619",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.GenericTile: Header mode added",
+        "references": []
+      },
+      {
+        "id": "7fe8c505ef2a057c70cde7ff54a92c6d0e9232ec",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.GenericTile: JSDoc updated",
+        "references": []
+      },
+      {
+        "id": "5388d292fed5f3647979b725815f31aca25568a4",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.GenericTile: JSDoc updated",
+        "references": []
+      },
+      {
+        "id": "a79de9826536f04fa6585de580ee82e0ff8ce9d9",
+        "author": "Pia Kinkel \u003cpia.kinkel@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.GenericTile: Property size deprecated",
+        "references": []
+      },
+      {
+        "id": "e706b356dc3c50c208f3e63d352782cf07ecc01d",
+        "author": "Dominic Holzwarth \u003cdominic.holzwarth@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.GenericTile: Tile and font size adapted, size property set to deprecated",
+        "references": []
+      },
+      {
+        "id": "eceb0a92097a6f81d575e5343a88039d68510cb9",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.IconTabBar: Inline mode implementation",
+        "references": []
+      },
+      {
+        "id": "be34a45927fe348d6b8d60dd5c13af1ba94e8c7f",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.Image, sap.ui.core.Icon: Provide function getAccessibilityInfo",
+        "references": []
+      },
+      {
+        "id": "7163a4f261ea5e8539d92ea4bcdce680c6dd2298",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.ImageContent: New control ImageContent added",
+        "references": []
+      },
+      {
+        "id": "50b99ceed394f9ae0a9a34f8c84b8c3c136b1349",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.Input: Provide submit event",
+        "references": []
+      },
+      {
+        "id": "f1ebb80c1f055371471630ca436a3dc2e9fe54f4",
+        "author": "Pia Kinkel \u003cpia.kinkel@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.JamContent: Renamed to sap.m.FeedContent",
+        "references": []
+      },
+      {
+        "id": "07352f4082192f5e7d63fc610df79964f4650cce",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.Label, Text: Provide function getAccessibilityInfo",
+        "references": []
+      },
+      {
+        "id": "7091f14e8543f63635f8f0d8b552b386ac56affb",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.ListBase: growingDirection property is added.",
+        "references": []
+      },
+      {
+        "id": "2972363ddb8837a7a7108329c834bbfc00122712",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.ListBase: keyboardMode property is added.",
+        "references": []
+      },
+      {
+        "id": "6deb694ada36b869d0fe70e114f01b1c79fc0fac",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.MaskInput - Escape character in mask input value",
+        "references": []
+      },
+      {
+        "id": "da10ebf65e39bf5b9baabdf0a6dcd30314242719",
+        "author": "Nikolay Cholakov \u003cnikolay.cholakov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.MaskInput: New control",
+        "references": []
+      },
+      {
+        "id": "81bd553a3db7bbda079ece0f54905c22d2ad00a8",
+        "author": "Jordan Dichev \u003cjordan.dichev@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.MessagePopover - Added new aggregation \u0027headerButton\u0027",
+        "references": []
+      },
+      {
+        "id": "3ddcb0c0c023d3724fe2526bd793c0649e4423ad",
+        "author": "Jordan Dichev \u003cjordan.dichev@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.MessagePopover - Resizing functionality",
+        "references": []
+      },
+      {
+        "id": "109e56b08723993088f40d02bb3310f33eb2f1dc",
+        "author": "Nikolay Kolarov \u003cnikolay.kolarov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.MessagePopover: Bind to default Message Model with default template when no items are bound",
+        "references": []
+      },
+      {
+        "id": "2ff638d80ba5ad65d30ae23a2d542f1a07f58f3e",
+        "author": "Nikolay Kolarov \u003cnikolay.kolarov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.MessagePopover: Property longtextUrl now used to auto-load description",
+        "references": []
+      },
+      {
+        "id": "dd9093482597b3bbef1341aaa470afdf35e16579",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.MessagePopoverItem: Link aggregation added",
+        "references": []
+      },
+      {
+        "id": "7ace5e8339dfe29d73fc4fb188a82907c512ed99",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.MessagePopoverItem: Subtitle and Counter properties added",
+        "references": []
+      },
+      {
+        "id": "72dc521f2a8587d3ce59d67337926306bb89870a",
+        "author": "Nikolay Kolarov \u003cnikolay.kolarov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.MessageToast: The lines in the message are now broken at newline characters",
+        "references": []
+      },
+      {
+        "id": "fd81b3dc929ee698aeaac00918920e5f9f7c9248",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.MultiInput: Properly select tokens on Ctrl+A when focus is on empty input",
+        "references": []
+      },
+      {
+        "id": "cd53f256d2d0e9570072d53879e6a4473d5f6a21",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.MultiInput: new API - maxTokens",
+        "references": []
+      },
+      {
+        "id": "07833cf51472ec34c1e68f47c923dea9a4f2fd73",
+        "author": "Nikolay Vankov \u003cnikolay.vankov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.NotificationListGroup: Initial implementation",
+        "references": []
+      },
+      {
+        "id": "6a15acb8e083e21da6356b8890b132600d8165de",
+        "author": "Nikolay Vankov \u003cnikolay.vankov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.NotificationListItem: Control enhancements",
+        "references": []
+      },
+      {
+        "id": "6a786ca15bf5ff58aca9082abd263a104375edf2",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.NotificationListItem: initial implementation",
+        "references": []
+      },
+      {
+        "id": "f670f7fa0656fba6e1a0b86fa849ecd8ae7db58f",
+        "author": "Nikolay Vankov \u003cnikolay.vankov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.NotificationListitem: New design on L size of control.",
+        "references": []
+      },
+      {
+        "id": "e766a6751811d7cade8feda70e64139d833cfb16",
+        "author": "Nikolay Vankov \u003cnikolay.vankov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.NotificatonListItem: Added property to enable text truncation",
+        "references": []
+      },
+      {
+        "id": "64b5d943036a9f462f6dc74daa2978a35fd605f8",
+        "author": "Teodor Todorov \u003cteodor.todorov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.ObjectMarker: New control implementation",
+        "references": []
+      },
+      {
+        "id": "9f995be68b2c02e48ce03239976de12ebe0524fa",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.ObjectStatus: Provide function getAccessibilityInfo",
+        "references": []
+      },
+      {
+        "id": "d80af902d172cb9bdf5b31731bfa6979ed85c334",
+        "author": "Vladislav Tasev \u003cvladislav.tasev@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.OverflowToolbar - layout data enahncements",
+        "references": []
+      },
+      {
+        "id": "6308bbcd1e6c88062b432ed06624e205299b619d",
+        "author": "Dimo Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.OverflowToolbar Visual Enhancements",
+        "references": []
+      },
+      {
+        "id": "84ced67b412a241cdd2d2a013a0e06c3e6381644",
+        "author": "Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.OverflowToolbar: enable smartfield to overflow",
+        "references": []
+      },
+      {
+        "id": "512820692c87e35ae699ee9a5e430e0b858276c3",
+        "author": "Shtiliyan Uzunov \u003cshtiliyan.uzunov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.Page - floating footer property added",
+        "references": []
+      },
+      {
+        "id": "f0db05bacc3451dfcc9db0f4af3d7f84e4cee104",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.Page: Add navButtonTooltip property",
+        "references": []
+      },
+      {
+        "id": "3bb3549f9e9de6dff152ce06959a8e92685bdffa",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.Page: add support for accessibility landmarks",
+        "references": []
+      },
+      {
+        "id": "e87907de502b2bfa9060035e522876da749f654a",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.PlanningCalendar new features",
+        "references": []
+      },
+      {
+        "id": "34b572cc8ec3c951cf90fb33f2c0736e0a310ed7",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.PlanningCalendar: add ARIA support",
+        "references": []
+      },
+      {
+        "id": "9a1bc88555bf7c9eeef46c8f22a1356b1ac2b330",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.PlanningCalendar: add explored samples",
+        "references": []
+      },
+      {
+        "id": "9e9d3fb06ee70c437a583e54f762f66e77f24f7d",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.PlanningCalendar: add min and max date",
+        "references": []
+      },
+      {
+        "id": "5645b4e7377d004964cfe2e83bd127447ed3f597",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.PlanningCalendar: explored example",
+        "references": []
+      },
+      {
+        "id": "ee2e6e11dbd54565752cd763fe265adeac99d926",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.PlanningCalendar: fire event if interval is selected",
+        "references": []
+      },
+      {
+        "id": "ba19e480f6daa701a87766fe065ca8cc5f94c75e",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.PlanningCalendar: new appointment design",
+        "references": []
+      },
+      {
+        "id": "4f390ced0ed0034d7d840c1cbab05f4ecd65f53a",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.Popover: Flip functionality added",
+        "references": []
+      },
+      {
+        "id": "eb3d8d689cd89ba55430c28700497fb8e53f9f66",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.Popover: new \"contentMinWidth\" property added",
+        "references": []
+      },
+      {
+        "id": "37826937fc600972796a858fa3802e8163e4fd96",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.RadioButton: Keyboard handling with arrows added",
+        "references": []
+      },
+      {
+        "id": "144edf5c6275ff0dd56648645e7aec4cec2859fb",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.RadioButtonGroup: Group can have 0 selected buttons",
+        "references": []
+      },
+      {
+        "id": "d484db445abb6fc125f435a7c9d8c59d7e67f460",
+        "author": "Hristo Petrov \u003ch.petrov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.RangeSlider New control",
+        "references": []
+      },
+      {
+        "id": "bcfaf89b4849b432329f36374c4d9780a19288b8",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.RangeSlider: Move entire range",
+        "references": []
+      },
+      {
+        "id": "e331168851d8edf92fe349710cd0157f5714d97d",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.SearchField suggestions",
+        "references": []
+      },
+      {
+        "id": "6644a005d69d33e2ea0755288059a1072ac8667d",
+        "author": "Jan Matthias Pilzer \u003cjan.matthias.pilzer@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.SegmentedButton: allow invisible button segments",
+        "references": []
+      },
+      {
+        "id": "2a93a3099eaa9196ea74ed1a48de93a42cc8612d",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.Select, sap.m.Switch: Provide function getAccessibilityInfo",
+        "references": []
+      },
+      {
+        "id": "131e567f99eb68bacd57fa8867b80ae40feec819",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.Select: add two column layout feature",
+        "references": []
+      },
+      {
+        "id": "b2191fd50e2115f8f9d2db7604a75fb50c57591f",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.Select: forceSelection property added",
+        "references": []
+      },
+      {
+        "id": "ec9eefe622ab01b8d6c238cf76794bf2f5a68c6f",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.Select: provide fast item navigation feature",
+        "references": []
+      },
+      {
+        "id": "b8fe8d86574e45cc5777b0a69dd03add0e7a7760",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.SelectList: new \"itemPress\" event added",
+        "references": []
+      },
+      {
+        "id": "fcad93e3ecff200195d7773ff2d7d82a5b113bf6",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.SlideTile: Keyboard navigation with forward and backward key enabled",
+        "references": []
+      },
+      {
+        "id": "5a02819f5f246c542aa9c075a959017120933d7c",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.SplitApp: Visual test is added",
+        "references": []
+      },
+      {
+        "id": "76ef41ecf9ba62c0b43809686de5b4a7a4800a10",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.SplitContainer: Popover mode is fixed",
+        "references": []
+      },
+      {
+        "id": "f130ad7e2b90965aefb805b5759b3b69f7cc552c",
+        "author": "Vesselin Petrunov \u003cvesselin.petrunov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.TabContainer: New control implemented",
+        "references": []
+      },
+      {
+        "id": "01c188f4ad53bf98258564964b46c3d9d6917de2",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.TeamCalendar: new control",
+        "references": []
+      },
+      {
+        "id": "648f50d3972a5c37abb59e25470a11f4976b6c5c",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.TextArea: \"growing\" and \"growingMaxLines\" properties are added.",
+        "references": []
+      },
+      {
+        "id": "d28b20d025a80fa9a5a5287bb47b1a9c64694f9a",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.TimePicker: Enable soft-keyboard on mobile devices",
+        "references": []
+      },
+      {
+        "id": "c1530cb687fb5fe671cd194a6c267df16ba97da2",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.TimePicker: Scroll time picker sliders with the mouse wheel implemented",
+        "references": []
+      },
+      {
+        "id": "078c8763f0eb3a1671d0e7b5bf5d4e403a06a061",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.Title: Avoid complete rendering when text property is changed",
+        "references": []
+      },
+      {
+        "id": "2066e6ed9a4b916aeb1a510e72cb2c545a440253",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.ToggleButton: Provide function getAccessibilityInfo",
+        "references": []
+      },
+      {
+        "id": "d08ffb3e79e8b9a74d7ec1ffa0de7706d9800f72",
+        "author": "Ruben Agullo Cordoba \u003cruben.agullo.cordoba@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.UploadCollection: Download methods on API level provided",
+        "references": []
+      },
+      {
+        "id": "0e10ee1c8d9d30740acf9a664427725afd918a13",
+        "author": "Markus Konrad \u003cmarkus.konrad@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.UploadCollection: Extensibility for action button implemented",
+        "references": []
+      },
+      {
+        "id": "5df225c622469caf219cd64bff2f20e1e9e90ea4",
+        "author": "D064730 \u003cbohdan.pukalskyi@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.UploadCollection: Multiple choice of files for Upload Pending scenario available",
+        "references": []
+      },
+      {
+        "id": "30982a0be37d6b5299e7708cea851db2bd7b436f",
+        "author": "Razvan Harsan \u003crazvan.harsan@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.UploadCollection: Provide the possibility to add markers",
+        "references": []
+      },
+      {
+        "id": "a3efed22220b423bb8cdfdb32d8779242b8364c8",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.UploadCollection: Provide the possibility to include attributes as links",
+        "references": []
+      },
+      {
+        "id": "b1f0e4d957e0e8d5758b69ab87fb5dcd3ddc4350",
+        "author": "Ruben Agullo Cordoba \u003cruben.agullo.cordoba@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.UploadCollection: Upload New Version method on API level provided",
+        "references": []
+      },
+      {
+        "id": "e8ec976556b92c114285bef7b58867e6c65c1561",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.ValueCSSColor: introduce new DataType as extention of sap.m.ValueColor",
+        "references": []
+      },
+      {
+        "id": "b90f8620a3ad181cda1555b22232f81f35846fc9",
+        "author": "Vesselin Petrunov \u003cvesselin.petrunov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.ViewSettingsDialog now fires \"filterDetailPageOpened\" event when the filter detail page is opened.",
+        "references": []
+      },
+      {
+        "id": "a7e4befafcd271b002d4903e3f1d311eda035f7c",
+        "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.Wizard: Show grouped steps in an ActionSheet",
+        "references": []
+      },
+      {
+        "id": "a1234c5564ce57bf2dd0cf61361004925f79a5cf",
+        "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.Wizard: Show titles in step navigator",
+        "references": []
+      },
+      {
+        "id": "ffc8ee36a5f62da9a0074ddfb5f3743bb1bab9b5",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.semantic.SemanticPage: Add landmarkInfo aggregation",
+        "references": []
+      },
+      {
+        "id": "1bde177a03008034e32e30719d6b6c84e75e8edd",
+        "author": "Michael Graf \u003cmi.graf@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.tutorial.testing real mock data and doc index update",
+        "references": []
+      },
+      {
+        "id": "9db94ba4174993ba914a1c6c4c85a5240e97b217",
+        "author": "Michael Graf \u003cmi.graf@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.tutorial.walkthrough refactoring step 9+10",
+        "references": []
+      },
+      {
+        "id": "8237fee6a255bf255f06b66f427c0026495e239b",
+        "author": "Aditya Sreekanteswar \u003caditya.sreekanteswar@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.tutorial.worklist Initial commit of worklist app tutorial",
+        "references": []
+      },
+      {
+        "id": "2c10ab9161fa0e85930d1b6ae1ef9caade53b9a6",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.core.AccInfo: Option for controls to provide information about their accessibility state",
+        "references": []
+      },
+      {
+        "id": "5d673fd2c5926688e3c873541b03df13cf2b47d0",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.core.Control: Introduce function getAccessibilityInfo",
+        "references": []
+      },
+      {
+        "id": "42f80426dad0e8e311fa96a4abb5c84b3279bcd9",
+        "author": "Shtiliyan Uzunov \u003cshtiliyan.uzunov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.BlockLayout: Control implemented",
+        "references": []
+      },
+      {
+        "id": "1664b1ab8269d14e0ffe11332b073ef579b3c4b1",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.form.Form: allow Toolbars as Title",
+        "references": []
+      },
+      {
+        "id": "5216182ccb56d9215c4071fb9392476b027d93ea",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.Calendar: add width property",
+        "references": []
+      },
+      {
+        "id": "8f844317d55715c065a6f91317d0dc5bc4a98810",
+        "author": "Svetozar Buzdumovic \u003csvetozar.buzdumovic@sap.com\u003e",
+        "type": "FEATURE",
+        "text": ": DT - Enable Simple Controls",
+        "references": []
+      },
+      {
+        "id": "f738d2cc3a6091a12a0b8c51b5c8d303385a5641",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "Belize issues",
+        "references": []
+      },
+      {
+        "id": "89d81122095506f5ab4a1b1fae541ed1714a01a8",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "BusyIndicator: Faster Adding of DOM",
+        "references": []
+      },
+      {
+        "id": "73ea2d15755a56c2a83fd6c98fa60d9e2151a1ce",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "Condensed mode CSS should only apply inside sap.ui.table tables",
+        "references": []
+      },
+      {
+        "id": "1398f29423f31829c3806b06a9ad67032e191d8d",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "DataState: Repair DataState Propagation",
+        "references": []
+      },
+      {
+        "id": "23950daa6187f4287f3422e8c01141891dc1ccd0",
+        "author": "Thilo Seidel \u003cthilo.seidel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Demo Applications: master-detail remove UShell dependency",
+        "references": []
+      },
+      {
+        "id": "9e86d4d75efa3b0df678312529df5fa347a5b8b0",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "Explored: Changed content of floorplans to avoid dependencies",
+        "references": []
+      },
+      {
+        "id": "25d92b149ebd6726967f662457fe601a2442a36b",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "Fieldgroup check is not done for sub-controls",
+        "references": []
+      },
+      {
+        "id": "f3016ab29e4630b9d79a664d65b6fa5695c4f6e8",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "Fiori List Report Page Samples - Fixed issue with duplicate IDs",
+        "references": []
+      },
+      {
+        "id": "767705d6df80fa39f16edb527390b4e24a77e6a2",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FIX",
+        "text": "Fix standard margin class names in Explored descriptions",
+        "references": []
+      },
+      {
+        "id": "0153d30f79b1f06bcdf16f2b80389ccfa786e93c",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "FlexBox - Fixed properties not being set in Internet Explorer 10",
+        "references": []
+      },
+      {
+        "id": "df518f8cb0638834e13d936997112be05cf51720",
+        "author": "Dimo Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "Flip animation now works in IE and it doesn\u0027t show the next page before navigating",
+        "references": []
+      },
+      {
+        "id": "dba8c236d064a3527569ea9e4968b5c6919bec64",
+        "author": "Nikolay Stoichkov \u003cnikolay.stoichkov@sap.com\u003e",
+        "type": "FIX",
+        "text": "IconTabHeader should ignore right click",
+        "references": []
+      },
+      {
+        "id": "815aac7018dd2ab889109f892821d1c07c71683f",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "ImageMap: Use Selector As Written In The Spec",
+        "references": []
+      },
+      {
+        "id": "8b249bce6de19699acf3121778139e05408d3f47",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "ManagedObject: Propagate properties when setting parent to null",
+        "references": []
+      },
+      {
+        "id": "f7abf482607079716bc222d8ca9ab8586c34c886",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "ManagedObject: Propagate properties when setting parent to null",
+        "references": []
+      },
+      {
+        "id": "1477fdebceacd4e369ad54f13375a2dcca8bf746",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "MessagePopover/ResponsivePopover: add implementation for busy and visible methods",
+        "references": []
+      },
+      {
+        "id": "28ffcb4d84f8f5a3c721c0a09d573faff421864a",
+        "author": "Dimo Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "NavContainer didn\u0027t get properly invalidated",
+        "references": []
+      },
+      {
+        "id": "aca67555bfe9978d4070fc0aba03377a688100a1",
+        "author": "Martin Schaus \u003cmartin.schaus@sap.com\u003e",
+        "type": "FIX",
+        "text": "Removed regression for error state handling without MessageManager - DataState implementation returns null for messages if no MessageManager",
+        "references": []
+      },
+      {
+        "id": "85903be25ce584952e1849dd75e76894b2b6cfbd",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "SAP Fiori Client for Windows Phone 10: hidden text area",
+        "references": []
+      },
+      {
+        "id": "ca4a698324e21848bde1e6c6658132de362601c8",
+        "author": "Dimo Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "Scrolled content in the Popover was visible in IE",
+        "references": []
+      },
+      {
+        "id": "91f3712e8b57565aedc4ff26a3ecd23a2cdff11b",
+        "author": "D034262 \u003cchristiane.kurz@sap.com\u003e",
+        "type": "FIX",
+        "text": "Step 29 in the Walkthrough contained a wrong path",
+        "references": []
+      },
+      {
+        "id": "ab805911a417df8696977f597b6ed0f92593d67d",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "Support Dialog: Fixed opening the support dialog on Windows Phone",
+        "references": []
+      },
+      {
+        "id": "7de742b8fba7266dd88f93ebfcdf982909b6a6dc",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "TextArea placement in Fiori Client Windows Phone",
+        "references": []
+      },
+      {
+        "id": "01417bcbe3777763c68173a05e9a712d8bd790aa",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FIX",
+        "text": "Update library description for sap.m",
+        "references": []
+      },
+      {
+        "id": "4e2ce3514825083c3dbccd3658f3cd8d0a07866f",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FIX",
+        "text": "Update the sap.m library description and make it consistent",
+        "references": []
+      },
+      {
+        "id": "dd8f8108aef2ea1478770ccd600bd288c4cc2a97",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FIX",
+        "text": "Walkthrough: remove unneeded height, fake ACH, correct hAlign",
+        "references": []
+      },
+      {
+        "id": "eef0ed73e920100ae882664e8b80d419b09c2485",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FIX",
+        "text": "Worklist tutorial app: fix filters",
+        "references": []
+      },
+      {
+        "id": "e512624be0b7d79f1b2f431b86d5d33c9ddd40e1",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FIX",
+        "text": "Worklist tutorial app: fix resetting the quick filter to \"all\"",
+        "references": []
+      },
+      {
+        "id": "2629b588f28d1b58e708fa96823308a84794225d",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "M/COMMONS",
+        "text": ".Dialog, ux3.ToolPopup: Preserve DOM only if rendered",
+        "references": []
+      },
+      {
+        "id": "a244562894ace416364be5ec20be40d442ac3df7",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "cursor position in sap.m.SearchField after re-rendering",
+        "references": []
+      },
+      {
+        "id": "9f87f95fdcc00818c7067e97d5e4db4b9f7ba874",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "explored app: fix sap.m.SelectList sample",
+        "references": []
+      },
+      {
+        "id": "522b7488b181f602384a7b785774da186f8fa0b4",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "focused TextArea is hidden in Fiori Client for Windows Phone",
+        "references": []
+      },
+      {
+        "id": "09d6cf19710b9b761839ba826cc040feee973181",
+        "author": "Dimo Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "invalidation of the NavContainer was causing the popover to close",
+        "references": []
+      },
+      {
+        "id": "d1a8781389ed93f2ef576f0fe86942931439152b",
+        "author": "Nikolay Stoichkov \u003cnikolay.stoichkov@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.Dialog with Subheader but without header issue",
+        "references": []
+      },
+      {
+        "id": "8bab239018250b75a084000a61851384e7a097d5",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.Dialog,commons.Dialog,ux3.ToolPopup: Preserve Content on Remove",
+        "references": []
+      },
+      {
+        "id": "327c39b33c688b9a33a9e905b903a0e4495c049e",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.FacetFilter: Checkbox \u0027All\u0027 is initially not checked when the list has no items",
+        "references": []
+      },
+      {
+        "id": "c40f68462e1eb53161b02141bbbccad6cbb5c583",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.IconTabBar: windows 10 rules added",
+        "references": []
+      },
+      {
+        "id": "6f0033cdd569c181d933c92ec553ce2ac0df3df8",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.Page: Start in qUnit Async-Test Moved",
+        "references": []
+      },
+      {
+        "id": "7f423f865132573318b2180e70989aaf4b4f97b6",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.SegmentedButton: In compact mode icons in buttons without text are now centered",
+        "references": []
+      },
+      {
+        "id": "3df844a79b32c97d2d0a044a7f65e9ff5fc98215",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.StandardTile: getIcon documentation corrected",
+        "references": []
+      },
+      {
+        "id": "c47e3c1ff8fa7aa835bee7e13bc9f252f274492f",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.TimePicker: Change event fires when the value is reset",
+        "references": []
+      },
+      {
+        "id": "e076ec618c62d7dbe7266e175d983cee91aa7c30",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.ViewSettingsCustomItem: customControl is cloned as expected",
+        "references": []
+      },
+      {
+        "id": "15c8c3b1ca4d3c289b2af4a33abc12052250b6a8",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.ViewSettingsDialog: Destroy of filter item does not throw errors",
+        "references": []
+      },
+      {
+        "id": "4d3df562384bc977e24e7f658b81ea9265a608af",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.ViewSettingsDialog: No console errors on cancel",
+        "references": []
+      },
+      {
+        "id": "bc43bf5ffd54f9d719d55491cf3bbef8af4ad87a",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.ViewSettingsDialog: Selection corrected on first click on Select All checkbox label",
+        "references": []
+      },
+      {
+        "id": "c0ae7613399ca246dbf797df20ce5af158e19de6",
+        "author": "Thomas Gauguin Houghton - Larsen \u003cthomas.houghton-larsen@sap.com\u003e",
+        "type": "FIX",
+        "text": "messagebundle.properties: localization",
+        "references": []
+      },
+      {
+        "id": "602f83b56ad3fadb6f853f0905855ed958697eb1",
+        "author": "Thomas Marz \u003cthomas.marz@sap.com\u003e",
+        "type": "FIX",
+        "text": "openUI5 templates app - generated after misc template changes",
+        "references": []
+      },
+      {
+        "id": "4803ca7485770ab364149b91e5cd4c57fff82f1f",
+        "author": "Thomas Marz \u003cthomas.marz@sap.com\u003e",
+        "type": "FIX",
+        "text": "openUI5 templates app - nav back fixes",
+        "references": []
+      },
+      {
+        "id": "38eca585c95cec068403d7a3fb215cdce78ce346",
+        "author": "Thomas Marz \u003cthomas.marz@sap.com\u003e",
+        "type": "FIX",
+        "text": "openUI5 templates app : fixed missing History in define + fixed Master-Detail phone journey",
+        "references": []
+      },
+      {
+        "id": "8ee3db1eaa8771c794b0b7e155f9c55aeb190b1b",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.MultiInput: validate text after suggestion item is selected",
+        "references": []
+      },
+      {
+        "id": "2a59af33389166790b9cc91656d322049b5469b9",
+        "author": "Mikhail Benderskiy \u003cmikhail.benderskiy@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m : ObjectHeader fix add and removeAttribute/Status",
+        "references": []
+      },
+      {
+        "id": "ec68574bdbf6f19fe26f66758c49066d8290401f",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m..Dialog: Origin parameter set is fixed",
+        "references": []
+      },
+      {
+        "id": "2388b1e559ee5cf4fd1efa8c192e80a3aaf28023",
+        "author": "Shtiliyan Uzunov \u003cshtiliyan.uzunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ActionSheet - buttons without icons have margin if there is an invinsible button with icon",
+        "references": []
+      },
+      {
+        "id": "3949a666d7488662c0800e669b0c5db21f2bd9b1",
+        "author": "Shtiliyan Uzunov \u003cshtiliyan.uzunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ActionSheet - invinsible buttons are not included in the navigation list group",
+        "references": []
+      },
+      {
+        "id": "7fe4a2fea662774101b689722acc891a95f06310",
+        "author": "Shtiliyan Uzunov \u003cshtiliyan.uzunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ActionSheet visual design bug fix",
+        "references": []
+      },
+      {
+        "id": "85c5a40a3fdf84ae92c1f27b7231aa88d44be3b1",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ActionSheet: Correctly shown on the Phone",
+        "references": []
+      },
+      {
+        "id": "bf0459db67030cee221ab2823e2e36137be3ba67",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ActionSheet: Dialog\u0027s \"Cancel\" button is now positioned correctly on IE",
+        "references": []
+      },
+      {
+        "id": "2eb3dc3189f7aaa19088b530fa2d015f9881cab3",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ActionSheet: Invisible buttons should not be counted by assistive technologies",
+        "references": []
+      },
+      {
+        "id": "5b8debaf665802dc575c5493a1c6ec9a03980556",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ActionSheet: ScreenReader support enhanced",
+        "references": []
+      },
+      {
+        "id": "3eeaa4a37e56849d648b02d116e6351386ac2ced",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ActionSheet: set correct height on phone when buttons are added after opening of the ActionSheet",
+        "references": []
+      },
+      {
+        "id": "f3286880d9875accb02955d8bf7f96ca485175cf",
+        "author": "Dimo Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.App - rerendering issue fixed",
+        "references": []
+      },
+      {
+        "id": "ffc5a5b2accdc5de98cef4c96e1db2352c3cd65f",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Bar: Size of the middle content is now correct",
+        "references": []
+      },
+      {
+        "id": "2140b4461ae26fb26636be3da28c80182297f65f",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Bar: sap.m.Label displayed correctly",
+        "references": []
+      },
+      {
+        "id": "d56aad3f629d2d3340bb0a2c83b5d6863896da93",
+        "author": "Dimo Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Breadcrumbs was incorrectly handling its aggregations",
+        "references": []
+      },
+      {
+        "id": "12cb4feb374ebfee9c6eb2076bd0fa24412b86c9",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.BusyDialog: $() now returns the dom element.",
+        "references": []
+      },
+      {
+        "id": "604628a9ef7599f0c721790f6aa975fe41fcbc7b",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.BusyDialog: adding a missing empty renderer obj",
+        "references": []
+      },
+      {
+        "id": "0b2ea930f3c1ad04280bf5253c11fa6d14500296",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.BusyDialog: can be opened right after the initialization.",
+        "references": []
+      },
+      {
+        "id": "93bad475530a52606502a19882ce00dc7b1b1055",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button has incorrect width in a popover",
+        "references": []
+      },
+      {
+        "id": "c1630b06a09c328381e0a4501e051ed9fa1ec711",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button: icon has incorrect cursor",
+        "references": []
+      },
+      {
+        "id": "db32349cb85d7343ccc5cabddbc40b970b1ec680",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button: icon is not centered",
+        "references": []
+      },
+      {
+        "id": "1e87491dfb64b1e7f4099fbf62fd40bda16e0010",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button: press event survives re-rendering",
+        "references": []
+      },
+      {
+        "id": "61367dd22b665cca4802f666f27cab202f0d5b29",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button: scroll bar is incorrectly shown in IE",
+        "references": []
+      },
+      {
+        "id": "e7a7ffc893bec620a1166e3fd19ac7f9a5f4c706",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Carousel - Content scrolling in IE and FF is now correct",
+        "references": []
+      },
+      {
+        "id": "a86641fe040aaae830f1edd5abdf9020e86ae187",
+        "author": "Krasimir Chariyski \u003ckrasimir.chariyski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Carousel - Fixed rendering issue with sap.zen.commons.layout.PositionContainer",
+        "references": []
+      },
+      {
+        "id": "a2c875746e4738bf01f369f42646c84d8aae5fce",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Control is now rendered correctly inside a dialog",
+        "references": []
+      },
+      {
+        "id": "d1ac9649eb3306a305541d1af2c532e9d047d23c",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Correct page is displayed after carousel become visible in an IconTabBar",
+        "references": []
+      },
+      {
+        "id": "4b72d1a9f5d117183a40f3349b6b32edbdcfbcb5",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Displaying large images is now fixed",
+        "references": []
+      },
+      {
+        "id": "2f41ee778bf2781aec17d266a6e755798afd093e",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Fixed nav arrows on combi devices",
+        "references": []
+      },
+      {
+        "id": "21ea330f80e331c924eb1f30114f8b2e31b89d26",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Keyboard handling in IE is correct now",
+        "references": []
+      },
+      {
+        "id": "b93ae92d80b2a64075b831283d9bf5fac27f8748",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Shift+F7 functionality is now correct",
+        "references": []
+      },
+      {
+        "id": "0c86e995ff47264c544fed23a306a30d95573617",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Carousel: TextArea inside a Carousel can accept \u0027-\u0027 and \u0027+\u0027 now",
+        "references": []
+      },
+      {
+        "id": "fc0412f09f5c4645fa7e32f12f5617ee2e1bca81",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Carousel: the arrows are now visible when the control is in focus",
+        "references": []
+      },
+      {
+        "id": "97ef610475cd3beb18ecb830b1d0b16011b520d9",
+        "author": "Mihail Yordanov \u003cmihail.yordanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Checkbox fixed position in form on compact size",
+        "references": []
+      },
+      {
+        "id": "c6fa35c029c2bc6f3bdcd6a7a6074f8a3bc38b03",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: binding for property selectedKey doesn\u0027t work",
+        "references": []
+      },
+      {
+        "id": "0ef4f703e61d4f057b97db9a399ce8cf6949fb88",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: exclude disable items from the auto-complete suggestion list",
+        "references": []
+      },
+      {
+        "id": "704a6b841cebae8296c04869127621bf188eb6db",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: fix dropdown button alignment issue",
+        "references": []
+      },
+      {
+        "id": "00e73784d8de86e799beebd798826aab50a15061",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: fix selection issue when the selectedKey property has the default value and the items\u0027 properties (models and bindingContext) are not propagated",
+        "references": []
+      },
+      {
+        "id": "9285182ac62714f4ca1955877f685a39548faf89",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: fix typeahead issue on Lumia 950 with Windows 10",
+        "references": []
+      },
+      {
+        "id": "606a5e166d76341dbbe99bc70e841df2b1d1db64",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: focus to the input when synthetic placeholder is pressed",
+        "references": []
+      },
+      {
+        "id": "825ecce2fc8ba691ace94914678c9b06b74f9f34",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: force the focus to stay in the input field after selecting an item on mobile",
+        "references": []
+      },
+      {
+        "id": "afde51a6f65517750dc5c5f61952bf61b111f04c",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: missing outline issue fixed (HCB theme + IE11)",
+        "references": []
+      },
+      {
+        "id": "d7483144da73a449c4039a97e1a2983119004a56",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: should correctly restore the selection of the text after re-rendering",
+        "references": []
+      },
+      {
+        "id": "5c46b9571f27fbf57938fa920edf8eb4bc4ce846",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: update the value of the input field when the selected item is pressed",
+        "references": []
+      },
+      {
+        "id": "cafeba7b26d46ab355f55b4319f217b25bf97f02",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.CustomListItem: Outline should be visible.",
+        "references": []
+      },
+      {
+        "id": "a3da3c362f70c0e3b82ecb51070c2e5732da3ce6",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: error messages stays after choosing date",
+        "references": []
+      },
+      {
+        "id": "b4508ae88dc23d5c85efce98ccadcb76480e9188",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: if date is deleted open calendar on today",
+        "references": []
+      },
+      {
+        "id": "30e8d79518497fd1d39b3d09138f093a52d0fc6c",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: invalid input lost after rerendering",
+        "references": []
+      },
+      {
+        "id": "da672d3693a56bb3c42b91fd54cc81d2966a4937",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: issues with date \u003e 99991231",
+        "references": []
+      },
+      {
+        "id": "de630e2800acd6e0af3e654a9d107c0fbcb3da4e",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: opens by scrolling on Win8 phone",
+        "references": []
+      },
+      {
+        "id": "7479074b39af9e31061a4bfdbb8a587688e8ac68",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: tooltip shows null and undefined",
+        "references": []
+      },
+      {
+        "id": "9d1c854f179649fa477de07f95ee289052cdb125",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DateTimeInput: Backspace should not trigger browsers back navigation.",
+        "references": []
+      },
+      {
+        "id": "8811fa3df520f2f1cae406eaea1ea6e993f72eb1",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DateTimeInput: Picker popup should inform opener popup.",
+        "references": []
+      },
+      {
+        "id": "6567ff403e27ab5182e53d0f4b803d2ce6484a24",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DateTimePicker: Popup zu small for large month",
+        "references": []
+      },
+      {
+        "id": "a8b822ba5e7dd84c5fd70d182d32054477526ce1",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog with width set on the content now looks same in RTL and LTR mode",
+        "references": []
+      },
+      {
+        "id": "6e5d282eb6ec6d7e27996b1fd33145d054c9d719",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: Dialog content size issue",
+        "references": []
+      },
+      {
+        "id": "84af1e822b02063b65fbb7949b03fb6a254818c1",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: Dialog issue with sap.m.Page content solved",
+        "references": []
+      },
+      {
+        "id": "14e0b13339fa9b78ce8168c36c6054afc2a0c6e4",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: Dialog repositioning is fixed",
+        "references": []
+      },
+      {
+        "id": "3d480ea8c7ae14d5d5bf319de050f01ca83f0033",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: Dragging issue in RTL solved",
+        "references": []
+      },
+      {
+        "id": "dcd3eb1e44e4fdd3846503dd02a96e79a9109e7d",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: Event issue in header controls solved",
+        "references": []
+      },
+      {
+        "id": "8602f04b7fecdb140266d1b7b60ba3b551c2d540",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: Focus issue solved",
+        "references": []
+      },
+      {
+        "id": "901b45c14dc68df681c6eb5b2739942c93f510b4",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: Layout issue with height: auto",
+        "references": []
+      },
+      {
+        "id": "553f74294be8be510e244dc445719aad59443395",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: Resizable dialog layout in chrome 49.0 corrected",
+        "references": []
+      },
+      {
+        "id": "5902b6d67b99db82ce3193b8c3c614bf6d3345d0",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: fix dom reference on \"close\"",
+        "references": []
+      },
+      {
+        "id": "7325f8321f2774a4c0f1ceb8e1a9220659c97996",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: getButtons returns buttons, beginButton and endButton",
+        "references": []
+      },
+      {
+        "id": "ab551f80d3bdc220060fdc4382f411766f245a12",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: notVisible subheaders will no longer have reserved space",
+        "references": []
+      },
+      {
+        "id": "5cd93aeb9c041723930ba1f72f741b933dfcbb3d",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: prevent blurred text",
+        "references": []
+      },
+      {
+        "id": "1d37af18a7ac6cbc64efbf16ecb95f9d1ec9e3c6",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: set content section height on windows and content resize",
+        "references": []
+      },
+      {
+        "id": "a5753104fc4f2ac2cec78b8d6bedffd5439a5401",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: setting inline style width: 100% will no longer break the behavior",
+        "references": []
+      },
+      {
+        "id": "b4490e9490ebc2e0ea584e0e44bde36ce079c107",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: setting the subheader incorect will no longer break the dialog",
+        "references": []
+      },
+      {
+        "id": "e133d2273792ca378399cd4906face5d8cd617fe",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: stretchOnPhone should not stretch when on Desktop",
+        "references": []
+      },
+      {
+        "id": "36990e51ef01e67dafb32bd7b24ed9cee9c09623",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: stretched Dialog will no longer have min-width and min-height",
+        "references": []
+      },
+      {
+        "id": "e2a452622a223f3f7d2987b255dded64baff4693",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: tap on header (draggable) and rerender will no longer break the postion",
+        "references": []
+      },
+      {
+        "id": "9331bd117bcb4fab2982dc777560945ee8a0cda1",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: the resize handler will be created for each rerender",
+        "references": []
+      },
+      {
+        "id": "91bfdcc27386dc05d75e4e399b62f158a6ecfd6d",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FacetFilter - click on delete button does not throw error anymore.",
+        "references": []
+      },
+      {
+        "id": "92b14c935a3157aeda0fe7d6479fbbd3ae5c3ea5",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FacetFilter - enable screen readers to read the filter list position.",
+        "references": []
+      },
+      {
+        "id": "407978b2583b8d8dc8efef2ba09bed834449710b",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FacetFilter: After reset, category items are now properly displayed",
+        "references": []
+      },
+      {
+        "id": "5048fca4054a2881e0eb6ca2db1aed0ed34e873d",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FacetFilter: remove facet icon is closed when mouse is really released over icon.",
+        "references": []
+      },
+      {
+        "id": "790f6d646b687cff985e8e284badfa091f2ba897",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FacetFilterList: enableCaseInsensitiveSearch works with V2 ODataModel.",
+        "references": []
+      },
+      {
+        "id": "ad6970b02f887196831e7d35947e3403349eae81",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FacetFilterList: set min content width",
+        "references": []
+      },
+      {
+        "id": "dd93845eaca6a18a18492c5726b0af4baa34eec9",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedInput: CSS focus offset on IE improved",
+        "references": []
+      },
+      {
+        "id": "3cebe8a2354c7fa4e4f41ab75233a21a3b74ea32",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedInput: Css class improved",
+        "references": []
+      },
+      {
+        "id": "22edd92eaab41631a73422767a2553ce5ccb126b",
+        "author": "Pia Kinkel \u003cpia.kinkel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedInput: Disable Button when FeedInput is disabled",
+        "references": []
+      },
+      {
+        "id": "7b717d2923b30765597eef7ab75ae40584a3920d",
+        "author": "Bohdan Pukalskyi \u003cbohdan.pukalskyi@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedInput: Setting focus before firing Post event to make",
+        "references": []
+      },
+      {
+        "id": "7e1ed79391d35d04031a90220d6fa1b6c458edf0",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedListItem: Improve consumer handling of senderPress and iconPress events",
+        "references": []
+      },
+      {
+        "id": "1e55bb41b6b747bc3830a6608e4f1ad7a9b9b0f9",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedListItem: JSDoc syntax corrected",
+        "references": []
+      },
+      {
+        "id": "12661eb056a2ce8a433b28028333980826cb4c1e",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedListItem: Screen reader support improved",
+        "references": []
+      },
+      {
+        "id": "0e2236d9f0a3a8e060765d8063df6cf20143d65e",
+        "author": "Pia Kinkel \u003cpia.kinkel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedListItem: Short text always updated before displaying",
+        "references": []
+      },
+      {
+        "id": "757c893e7adfff257f5b1298d898f80f87a1aca5",
+        "author": "Pia Kinkel \u003cpia.kinkel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedListItem: Unread property disabled",
+        "references": []
+      },
+      {
+        "id": "586992e5807916d4d1216a5d2e6a389168650e63",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedListItem: enhanced click handling for inactive senders",
+        "references": []
+      },
+      {
+        "id": "7b4a1d8863fa93b722bfdea3686f03b49282d9d6",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedListItem: prevent duplicate id",
+        "references": []
+      },
+      {
+        "id": "8544ec95d19dc9b4c03bcd9662a92de9711706d4",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedListItem: should expand to content width if used in Popover",
+        "references": []
+      },
+      {
+        "id": "5ec72bbcf209056cedfe4a4ab06f359db62b0fe0",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FlexBox: Corrected CSS property mapping for IE 10 and tests",
+        "references": []
+      },
+      {
+        "id": "8ce993725b2e71b73d9291fdbe75ef8ec0308b33",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FlexBox: Corrected width of VBoxes with explicit base size",
+        "references": []
+      },
+      {
+        "id": "16ebcc286dc943b27d3db836a68341a607dd6c69",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FlexBox: Hide wrapper if no layout data is set",
+        "references": []
+      },
+      {
+        "id": "8254c4e5c5119ff9fe790a107d21781db2d51cb6",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FlexBox: Initially invisible items now rendered correctly",
+        "references": []
+      },
+      {
+        "id": "ef6dd6633c433fe7b1f2a371136565080fca7304",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FlexBox: Invisible nested FlexBox rendered correctly",
+        "references": []
+      },
+      {
+        "id": "0d7f144d383066aba625b9dcad21af990c31b963",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FlexBox: Solved issues introduced with refactoring",
+        "references": []
+      },
+      {
+        "id": "890475f0745ba617cf40f79127337429a5644567",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FlexBox: column flex items set to align-items:center overflow their container.",
+        "references": []
+      },
+      {
+        "id": "546e529a1b632baf330015a2bbbdab1a25f4c2bf",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FlexBox: removeItem doesn\u0027t erroneously remove its parent if the item is a FlexBox itself",
+        "references": []
+      },
+      {
+        "id": "8385968f5bc23f5ed89a628168e586acca1ab18c",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Border, hover and focus changed in CSS",
+        "references": []
+      },
+      {
+        "id": "4742e195d4b53f9180f28f90e6bd9976b1194392",
+        "author": "D064730 \u003cbohdan.pukalskyi@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Decreased number of rows in title if displaying Devanagari characters.",
+        "references": []
+      },
+      {
+        "id": "f25876a0b4e4d1606f26a9c555401e7e1fded2eb",
+        "author": "Pia Kinkel \u003cpia.kinkel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Default value for frameType property added",
+        "references": []
+      },
+      {
+        "id": "f963522a3f0fa291dc2b57f428ba856338cd1dc0",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Focus improved in CSS",
+        "references": []
+      },
+      {
+        "id": "f750e36b3818d2508abe5e390960cb03b7334ca9",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Focus rendering improved",
+        "references": []
+      },
+      {
+        "id": "934d8897abbaf37a398995728b4d4f63ec6beea8",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Icon aggregation deprecated",
+        "references": []
+      },
+      {
+        "id": "179914373989bada3dc412b13610e0d65d89d370",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Rendering of samples improved",
+        "references": []
+      },
+      {
+        "id": "7eb61b59f6e9341cb18827b8af61a7d80f0379f2",
+        "author": "Dominic Holzwarth \u003cdominic.holzwarth@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Sizing issue when using HCB theme fixed",
+        "references": []
+      },
+      {
+        "id": "55b87ff0c04c1af194de0612e9ecf8bf1f9f21df",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: The underlying elements below the focus overlay can be clicked",
+        "references": []
+      },
+      {
+        "id": "c20e18bd35fc2cd2bc9d937e0e4d530a7abb42f5",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Tooltip behavior in IE improved",
+        "references": []
+      },
+      {
+        "id": "bc94db779afff67c19813c36b19d5daf66ebc207",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Tooltip display corrected",
+        "references": []
+      },
+      {
+        "id": "13c41ea2139854f17e14925ae40829a9baf5b090",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Tooltip handling updated",
+        "references": []
+      },
+      {
+        "id": "a0e102bed19c5b7f05535e6c6689830667939e87",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Tooltip rendering adapted",
+        "references": []
+      },
+      {
+        "id": "511fdf3a972f07f4ebacb234b92db86c69e0bb3c",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: accessibility for screen reader improved",
+        "references": []
+      },
+      {
+        "id": "b0bf13f35da263a97f5f6916be6aa331cd71527a",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GroupHeaderListItem: Counter property should not get truncated even for the long titles.",
+        "references": []
+      },
+      {
+        "id": "a85accd25c836be2dc5824f9775a276db1b7162a",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GroupHeaderListItem: Should respect the base outline settings.",
+        "references": []
+      },
+      {
+        "id": "de1b5e5e1c8cf270d2f5817423c19335f4567418",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GrowingEnablement: Grow button should be tabbable.",
+        "references": []
+      },
+      {
+        "id": "965714101c368d3f25f2f09947444f73066b744c",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GrowingEnablement: Growing loading animation is should respect the specification.",
+        "references": []
+      },
+      {
+        "id": "ff7918a5ed7c7ca10a0a9754adf35434f461e0a5",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GrowingEnablement: Reduce unnecessary re-renderings for extended change detections.",
+        "references": []
+      },
+      {
+        "id": "b9276d8cddaeb95abc4b52a42fa495f654e9f58e",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GrowingEnablement: fixes type error",
+        "references": []
+      },
+      {
+        "id": "373a5366152f8d953904fe1f3f470854ed7211d6",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTaBar: count in RTL is right aligned",
+        "references": []
+      },
+      {
+        "id": "913fdf09e73a97ec42b34f3e58606a57603c5632",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTaBar: scroll arrows in Text-only mode are aligned with the text now",
+        "references": []
+      },
+      {
+        "id": "ee76c989f5bf4078976ae30640f0c13b9ef9c8e9",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar scroll arrow shows correct on phone",
+        "references": []
+      },
+      {
+        "id": "d5b5c75601ac46b90638ff1f123165bb0d78b0f9",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Arrows position in Win8 is correct now",
+        "references": []
+      },
+      {
+        "id": "ed8524a1a0221db530bf7b4e48bd5839efb576cf",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Displaying is now fixed when the IconTabBar is in ObjectHeader and open on phone",
+        "references": []
+      },
+      {
+        "id": "08892d31ca7a670a506830dc039f4c53b298a8e8",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Fixed selecting new element when selected element is removed",
+        "references": []
+      },
+      {
+        "id": "893afbc076183034281e54807be4756549e6fc46",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: IconTabBar unexpected shrink issue is now fixed",
+        "references": []
+      },
+      {
+        "id": "28fefc56e6befee809c0e5ec7dfa2cbc2233ecbc",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: IconTabHeader is not invalidated when the same value is set to a property",
+        "references": []
+      },
+      {
+        "id": "f6f044174ad311caadfa8e01615d1caa5541a6b5",
+        "author": "Ivan Kazandzhiev \u003civan.kazandzhiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Setting selected key through API no longer triggers expand/collapse action",
+        "references": []
+      },
+      {
+        "id": "311ccc7b3e7bfc602803bee11c625f8978deadd4",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Tab selection in Chrome is now fixed",
+        "references": []
+      },
+      {
+        "id": "35d0403cd920ac5aee33576dfbdf51fea9828f62",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Tabs are not selected on mouse hover any more",
+        "references": []
+      },
+      {
+        "id": "5a44ac685e690e593485672966f44589bd5c92d4",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: When .setSelectedKey(\u0027\u0027) is used, the first filter is now selected.",
+        "references": []
+      },
+      {
+        "id": "535dc6a0f3e09290fa419d23325e94f7e69bb71f",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: padding on phone fixed",
+        "references": []
+      },
+      {
+        "id": "038169d676a96fa9258ed95d749b371ae04e6696",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: setSelectedItem method is working correctly now",
+        "references": []
+      },
+      {
+        "id": "cc7a2048363653f274933e6fa3f515118cb6c5b6",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabHeader: Selection is correct when IconTabHeader is used standalone",
+        "references": []
+      },
+      {
+        "id": "787378fcb32cd8183fafac029863d8bfad11055a",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Image: should return this in public methods",
+        "references": []
+      },
+      {
+        "id": "4af790088d47b5e50d62e276d9ab2280d7ba4ce2",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Image: the load or error event should also be fired when densityAware is false",
+        "references": []
+      },
+      {
+        "id": "83db27bff456e6f887da0ed5229c922752875225",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input - scrolling issue with suggestions",
+        "references": []
+      },
+      {
+        "id": "8438153f63e51d26b71a10dbeadbaa4ff8daa2f7",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input in a Table cell: no tabular suggestions",
+        "references": []
+      },
+      {
+        "id": "3e1e779d4756ee8120c6e9d0a2cdccaedca299ac",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input suggestions: avoid unneeded list refreshes",
+        "references": []
+      },
+      {
+        "id": "124fcdddfe8868f1ddc827fef9866370d35c762c",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input with type Number: entry is cleared unexpectedly",
+        "references": []
+      },
+      {
+        "id": "b85d413a80a1805a28dfe40d4a51eb1469cd558d",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input with value help: focus handling",
+        "references": []
+      },
+      {
+        "id": "3fb95a4615744144f125c2929027c16543663826",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input, sap.m.DatePicker: wrong value help icon",
+        "references": []
+      },
+      {
+        "id": "36066b5262d40821ce7c952a04418907c5bb0501",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input: adjust value help icon position",
+        "references": []
+      },
+      {
+        "id": "db9b468bdc9aa562d2fbd602905f28037cb99c4d",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input: binding exception of the setShowSuggestion property",
+        "references": []
+      },
+      {
+        "id": "71d0f8a21aba244b2cffc33ae4b89a92149f16cc",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input: do not close dialog in phone mode if the input is MultiInput",
+        "references": []
+      },
+      {
+        "id": "6c0abdb9f45e61092cda70ebcbf3201df0fbcb01",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input: documentation, suggestion item selection",
+        "references": []
+      },
+      {
+        "id": "4f647ad7101f68dcb81a9321b447bb7a8adcdf32",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input: fix JS error in setTimeout",
+        "references": []
+      },
+      {
+        "id": "41935250c029f30c1f3c1fedbd97715852e87359",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input: remove unneeded suggest events",
+        "references": []
+      },
+      {
+        "id": "4b53c4d8b7aba231256fbe773015c14d49f6d63a",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input: value state on Windows Phones not visible",
+        "references": []
+      },
+      {
+        "id": "d8f502d0ceaec664ef2e681ff75af61cf675c7c6",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: Close valueState message synchronously.",
+        "references": []
+      },
+      {
+        "id": "5a60875c9f9d49833d6971c37de73930a171dd94",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: DOM value should never be undefined but \"\"",
+        "references": []
+      },
+      {
+        "id": "1f90da6720cb1148f23636cd5f09a8e198b92e25",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: Do not cache jQuery object of the input.",
+        "references": []
+      },
+      {
+        "id": "dcaf2f90b287e56980302a2b7a99b147db994543",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: change duration to open message popup to zero",
+        "references": []
+      },
+      {
+        "id": "d9c282691e6c64f906ee2bdf22f2341c4988831c",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: fix border issue at zoom in \u003c 100% (hcb theme)",
+        "references": []
+      },
+      {
+        "id": "1c7fd3e56b0bafa149fb2edcf861ea28494c3cd5",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: remove max-width of value state message",
+        "references": []
+      },
+      {
+        "id": "c7ec2ef3d0ea7948ee2234907bb6b1c411483be2",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: support valuestate popup in LTR",
+        "references": []
+      },
+      {
+        "id": "f09510b50a55960d702d65fc334bc458e001e1dc",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: update the aria-describedby attribute after the initial rendering",
+        "references": []
+      },
+      {
+        "id": "7fc632413a0771c821ce4fc5557d949fdc1dd7fb",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.List/Table: No data line should be focusable.",
+        "references": []
+      },
+      {
+        "id": "c60d3cd3a20f4dc1e831fb463ee6d695226fcba2",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.List: More than one list item should not be active at the same time.",
+        "references": []
+      },
+      {
+        "id": "e7d5588b230f8dfb70c8effbad74ed08fb690bd5",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ListBase: overflow:hidden hides the scrollbars of List/Table when wrapped with ScrollContainer.",
+        "references": []
+      },
+      {
+        "id": "49893e544ab51a7b9b4ed2d1ac17abb35622d691",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ListItemBase: Focus outlines for items corrected for IE",
+        "references": []
+      },
+      {
+        "id": "becf8a2a7ea1ea36065181ebcd26b06f7d276c56",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ListItemBase: Restrict max content width.",
+        "references": []
+      },
+      {
+        "id": "2847c2602995a7f2624678b4c19f645874c74a4c",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ListItemBase: aria-setsize calculation should use children instead of find.",
+        "references": []
+      },
+      {
+        "id": "fdd6cef59a6b0652993aa7f9133337e746ff082c",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ListItemBase: change flex style to support CustomListItem in IE",
+        "references": []
+      },
+      {
+        "id": "2059124eb07400a94f675476efdf19a6f9511a5c",
+        "author": "Shtiliyan Uzunov \u003cshtiliyan.uzunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessageBox - If the developer changes the language, the MessageBox does not change the dialog labels.",
+        "references": []
+      },
+      {
+        "id": "8db5fbfaf2e6f4e25258b2b57291099279149433",
+        "author": "Nikolay Kolarov \u003cnikolay.kolarov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessageBox: A control provided as \u0027Message\u0027 is now handled correctly",
+        "references": []
+      },
+      {
+        "id": "4d47b4ab9691cadbc02dbcb15a224e506147c3bc",
+        "author": "Nikolay Kolarov \u003cnikolay.kolarov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessageBox: Dependency to sap.ui.layout package is now removed",
+        "references": []
+      },
+      {
+        "id": "466b5795efe0404445df635a45d3f8e4adb6d4b0",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessageBox: Fixed blur effect on large screens",
+        "references": []
+      },
+      {
+        "id": "24986752dd92a8cf304c8226bb382ce6e6fb2f4f",
+        "author": "Georgi Hristanov \u003cgeorgi.hristanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: Automatic binding template fixed",
+        "references": []
+      },
+      {
+        "id": "ca4a722bce188661f8ebadb221c84df3a2aaf60f",
+        "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: Clear segmented button selection on reopen",
+        "references": []
+      },
+      {
+        "id": "8f5360f66e802e2bd7fe7f849a3071ace1373c10",
+        "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: Correct heigh when initiallyExpanded false",
+        "references": []
+      },
+      {
+        "id": "533b9694d8e44cad3c753ca62b0f892324de2372",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: Filtering after resize rerenders with wrong height",
+        "references": []
+      },
+      {
+        "id": "7a83b9cc392f0e60a89f33d8aae9df4cfcd1bbef",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: Items\u0027 description should not be sanitized if markupDescription is set to false",
+        "references": []
+      },
+      {
+        "id": "bf4598fb57a99e5fc7b60aca258d10658b041fbb",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: MessagePopoverItems\u0027 binding is properly updated",
+        "references": []
+      },
+      {
+        "id": "6a6d5294bf43402b29fd62494a22587f38ade2d5",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: SegmentedButton in the header is not rendered correctly",
+        "references": []
+      },
+      {
+        "id": "d27ce5ed330289efd64d03eedcd905e8f1986313",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: Wrong description mapping is now set properly",
+        "references": []
+      },
+      {
+        "id": "f5b69729f7e9d5ed05f10ef58a542ce11a8d2035",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: move description on a new line when it is too small",
+        "references": []
+      },
+      {
+        "id": "093a4e7a7ddb07bb7e19b21912f2efa8d030623a",
+        "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessageStrip: Enable scrolling on mobile devices",
+        "references": []
+      },
+      {
+        "id": "f27423499b08e9c31b60638fac9b1def6dca31ec",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessageStrip: Focus opacity of the close button removed",
+        "references": []
+      },
+      {
+        "id": "f224fd2a87635dbc998ba4ea0d959e3e42133aa0",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessageStrip: Hover and active state added to the close button on Belize theme",
+        "references": []
+      },
+      {
+        "id": "3837827a236251daf1833eab8ec8e5081d498170",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessageStrip: JSDoc of the metadata updated",
+        "references": []
+      },
+      {
+        "id": "998fbfe6e4c47f4efc859266478799e0565e5cff",
+        "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessageStrip: Type icon is no longer set as customIcon",
+        "references": []
+      },
+      {
+        "id": "9b96f1019a0c4f46da81057a5be9f8a7d7570864",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessageToast: autoClose not called on mouseLeave",
+        "references": []
+      },
+      {
+        "id": "515e3683b02d1a06a8366d53d0d770419808788b",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessageToast: fix minor JSDoc bug in sample code",
+        "references": []
+      },
+      {
+        "id": "94826a138a769c5028c1061bcba79d097e0b43fd",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiComboBox: Select token on TAB event",
+        "references": []
+      },
+      {
+        "id": "261ca7104acaa19542a6b07ada0f8b9287efb61b",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiComboBox: _hasTokens() returns a number",
+        "references": []
+      },
+      {
+        "id": "c1217a4131ad2b62343aeae3b795ae343b85078f",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiComboBox: check for FocusDomRef before focus() call",
+        "references": []
+      },
+      {
+        "id": "1fd7e2dd1d7e27cdc4b39c67b559425386ff4464",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiComboBox: checkbox click filter issue",
+        "references": []
+      },
+      {
+        "id": "7c3480d77898127f0008608a56e34239bb97ad36",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiComboBox: dropdown list automatically size itself to fit its content",
+        "references": []
+      },
+      {
+        "id": "ed47219f504e06938785fbbbad56e26728834ada",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiComboBox: keep popover open on re-rendering",
+        "references": []
+      },
+      {
+        "id": "d151bf7811e02854d7cc264d63d49be36963b425",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiComboBox: removal of unnecessary function",
+        "references": []
+      },
+      {
+        "id": "be2d32333a311514fabd37003a1da6cc15011647",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiComboBox: workaround for disabled state",
+        "references": []
+      },
+      {
+        "id": "ac664a91af64ec94daa00dfaa1a49fd4919c3b55",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput",
+        "references": []
+      },
+      {
+        "id": "7243a9f56e45fc58621c3455ae635b1ec2611b56",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput/sap.m.Tokenizer: Adapt visual appearence in MultiInput multi-line mode, avoid unnecessary renderings",
+        "references": []
+      },
+      {
+        "id": "9c0025fc880710252ad40a82e1bdd2a65679f310",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: Reduce number of _setContainerSize calls",
+        "references": []
+      },
+      {
+        "id": "a61576be6489a86ba705586a5ce3e4ccf8b2d1dc",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: add new event validateOnPaste",
+        "references": []
+      },
+      {
+        "id": "827114dfef6427beda18912aba0d0436a10ebf32",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: adjust container sizes in phone mode",
+        "references": []
+      },
+      {
+        "id": "525b440adc6dbcacafa6d329dcecc30818fdea3b",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: avoid setting value in MultiInput in paste event",
+        "references": []
+      },
+      {
+        "id": "98ee2b10257537fde4a85e8326eeca2222642773",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: enhance inner input width calculation",
+        "references": []
+      },
+      {
+        "id": "630f4f30536e6670e933d1b427f38019a9521829",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: enhance multiinput in Grid layout",
+        "references": []
+      },
+      {
+        "id": "607ec1e260b3c3229be5712827927c71af742e31",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: enhance setContainerSize",
+        "references": []
+      },
+      {
+        "id": "ffd2786964ac271f04e265c02b60d90227137e66",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: enhance truncation condition to avoid null object error",
+        "references": []
+      },
+      {
+        "id": "827a8f405eb1234ab0a76955becc638560a5d34b",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: enhance updateToken to fix the duplicated ID issue",
+        "references": []
+      },
+      {
+        "id": "17b83eef418fc6f5488e67f23c66998312a7d117",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: fix overlay issue of MultiInput in layout control",
+        "references": []
+      },
+      {
+        "id": "0e9cccc7d36edc47fe4a47256664588abc6f8605",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: fix tokentruncation width calculation in compact mode",
+        "references": []
+      },
+      {
+        "id": "b37e7f3c900bd5967b10ef0cc64f6615c570cc61",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: fix value help icon in compact mode",
+        "references": []
+      },
+      {
+        "id": "eee97d0443df5ed5f93066341e1c2dea1bef3b2a",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: recaculate tokenizer width in edit mode",
+        "references": []
+      },
+      {
+        "id": "af4f16ec326c140c06250482badd127f5b7a23b0",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: remove old tokenizer indicator in phone mode",
+        "references": []
+      },
+      {
+        "id": "28375294183d15aea798bb5cf515befb1677e775",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: scroll to top after selection on phone",
+        "references": []
+      },
+      {
+        "id": "c4f6bc247f0e677a36cda4d9e10a7b1e1911151b",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: show token indicator when dialog is closed",
+        "references": []
+      },
+      {
+        "id": "6e5af4a657e1a8b346fb982b80d0c9b896c078d7",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: show token indicator when there is more than one token in multiinput",
+        "references": []
+      },
+      {
+        "id": "960f0c97101c0d62e858da80e46e93b44b039089",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: support paste list of values for smart controls",
+        "references": []
+      },
+      {
+        "id": "ac4536dd0421cc1589c8ed28c0ad9bb97dee4c3d",
+        "author": "Dimo Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NavContainer - add property to alter the default focusing behavior",
+        "references": []
+      },
+      {
+        "id": "f2f03f4de517568bfefb59ab354a0685f0f700fc",
+        "author": "Dimo Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NavContainer was closing the popover it\u0027s in during invalidation",
+        "references": []
+      },
+      {
+        "id": "82336a2d41a74cbdb67ba19554086a1862ff462d",
+        "author": "Dimo Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NavContainer would fail if the current page has been removed",
+        "references": []
+      },
+      {
+        "id": "456aeedcdc312ca5c7d1e592dc67dbdf418f0313",
+        "author": "Andreas Frische \u003candreasfrische@gmail.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NavContainer: Mark optional params as optional in JsDoc",
+        "references": []
+      },
+      {
+        "id": "5be2ad90db10a5097e74863d2a175f1a13aace18",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NavContainer: the data of \u0027to\u0027 navigation on initial page should be given back to the \u0027back\u0027 navigation",
+        "references": []
+      },
+      {
+        "id": "ef21a242710779a5d9c2144f95d367ff6790e827",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NotificationListItem/Group: sets focus to its parent when destroyed.",
+        "references": []
+      },
+      {
+        "id": "54e0380d58b69de1e7871fac3f9aec5bf6343b1e",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NotificationListItem: Box shadow corrected",
+        "references": []
+      },
+      {
+        "id": "ad1ffc422855ddeecec06e24709a5cc71ab2626b",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NotificationListItem: Control is no longer destroyed on close",
+        "references": []
+      },
+      {
+        "id": "fc58336c3e601da42ef321464cac9c83a1c266f8",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NotificationListItem: Fixed mouse events when item is focused",
+        "references": []
+      },
+      {
+        "id": "67cfdcef72124c02d20ddcb5e8994376a0bbfe66",
+        "author": "Nikolay Vankov \u003cnikolay.vankov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NotificationListItem: Footer buttons in HCB in IE not rendering correctly issue fixed",
+        "references": []
+      },
+      {
+        "id": "f98161178220e3ebf4bf1d61b0e892a09e48596b",
+        "author": "Nikolay Vankov \u003cnikolay.vankov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NotificationListItem: Footer buttons in IE not rendering correctly issue fixed",
+        "references": []
+      },
+      {
+        "id": "c8e219e7dfa16ec0be49d7864b53520c84281c34",
+        "author": "Nikolay Vankov \u003cnikolay.vankov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NotificationListItem: If no footer buttons are shown the text occupies all the width.",
+        "references": []
+      },
+      {
+        "id": "020de2af5df989de169b066173ee5e9aaad9cdb5",
+        "author": "Nikolay Vankov \u003cnikolay.vankov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NotificationListItem: Issue with title color in HCB fixed",
+        "references": []
+      },
+      {
+        "id": "8a831bcfe937e194597226dc19a0282e094c5a8c",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NumericContent: CSS for Icon display improved.",
+        "references": []
+      },
+      {
+        "id": "c4144827f75a9402344159e656e6b16dbed4c5cb",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NumericContent: Focus handling adapted",
+        "references": []
+      },
+      {
+        "id": "d19c3f441cad87172ae2aaaf183c9c3227b07b8f",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NumericContent: Number from Right-to-Left language displayed properly",
+        "references": []
+      },
+      {
+        "id": "5143c22a4db2a8d0681fa59518cda630fee9d4b0",
+        "author": "Sylvia Strack \u003csylvia.strack@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NumericContent: The icon size is corrected",
+        "references": []
+      },
+      {
+        "id": "013a960fe027842af81c7a9d0456cc38c1b84a44",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectAttribute: Click outside the text does not count as click",
+        "references": []
+      },
+      {
+        "id": "203f2b0ae1a9159d26bafecacda09365b2c209bc",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: Active ObjectAttribute works on IE",
+        "references": []
+      },
+      {
+        "id": "e468c586a87c5bac3b778a5a15a8e7aee14c4cfe",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: Active attribute focus outline fixed",
+        "references": []
+      },
+      {
+        "id": "1c43baa2800920d1cc4bbd0b7132812bfd1d8fca",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: Active title link fixed",
+        "references": []
+      },
+      {
+        "id": "59e0c46d4ad050c8d88743145535bbb602be5a35",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: Image preserves aspect ratio",
+        "references": []
+      },
+      {
+        "id": "3790fc70d4e8cddd1e571a5dd8e593267a854683",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: RemoveAllAggregations now works properly",
+        "references": []
+      },
+      {
+        "id": "f74c5aa05e2dd4ad64b8c3cf7df1d39782f4f7f5",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: Title occupies the whole space when no number",
+        "references": []
+      },
+      {
+        "id": "1e0e5d596f1b8b1e79d415113e893ba41aa005b6",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: Update documantation of fullScreenOptimized and condensed property",
+        "references": []
+      },
+      {
+        "id": "afe243cb4fd518b36bcac40bcef72ed2adf8b0e7",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: handle space and enter on title arrow",
+        "references": []
+      },
+      {
+        "id": "c4aba75ee4b68678d14262ac9394266d9382e078",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: qunit works on Edge",
+        "references": []
+      },
+      {
+        "id": "9757875310910224671e6bd14167000df7f00603",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectIdentifier - removed control invalidation on setting of internal aggregation _textControl",
+        "references": []
+      },
+      {
+        "id": "6df5fa6e4513bfabb414398e4a970ab651aabed5",
+        "author": "Nikolay Cholakov \u003cnikolay.cholakov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectIdentifier: Display of long text improved in IE9",
+        "references": []
+      },
+      {
+        "id": "8e7d48f601d07d70f067aa6c93172185b6dfc194",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectListItem: Attribute and Statuses columns take equal space",
+        "references": []
+      },
+      {
+        "id": "cf70eca07d3d051b28b5c79144c6ca903943a259",
+        "author": "I306504 \u003cdiana.mihaylova@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectListItem: Identical DOM element IDs",
+        "references": []
+      },
+      {
+        "id": "10d5947f93898c082c43489ea0e7a9ffe415d4b0",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectListItem: Image preserves aspect ratio",
+        "references": []
+      },
+      {
+        "id": "a96a378e2e6c262ab8466c4457e33098e5529e73",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectListItem: ObjectNumber inside has correct contrast ratio in high contrast black theme",
+        "references": []
+      },
+      {
+        "id": "5045a152fef6443a7a55e3fc06a89d3893609e11",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectMarker:when inside a table icon is aligned to the text.",
+        "references": []
+      },
+      {
+        "id": "25fc352b78bab9f1286fd0a69e928da8c9787a5f",
+        "author": "I306504 \u003cdiana.mihaylova@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectNumber: ARIA attribute refers to elements which are not in the DOM",
+        "references": []
+      },
+      {
+        "id": "aed0857269e159dcee50333adc08954d09d00517",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectNumber: ValueStateSupport used to enrich the tooltip",
+        "references": []
+      },
+      {
+        "id": "347d8827d611302d263417eb53bb650cc0f4af7e",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectStatus: Title textDirection support corrected",
+        "references": []
+      },
+      {
+        "id": "bffeff46936f742b20aab01c86cdc2c603b666a6",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectStatus: Vertical alignment inside forms corrected",
+        "references": []
+      },
+      {
+        "id": "2b229b82b6560d517f7c3f82d36e3844c6c3ed12",
+        "author": "Vladislav Tasev \u003cvladislav.tasev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.OverflowToolbar - changing child visibility triggers invalidation",
+        "references": []
+      },
+      {
+        "id": "15408e249775c7da781b917a5d5c12e368ee0d6f",
+        "author": "Vladislav Tasev \u003cvladislav.tasev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.OverflowToolbar - enabled sap.m.Slider to be used in the toolbar",
+        "references": []
+      },
+      {
+        "id": "4de9f4e5521e2e8a9632c64beedcc86159078edb",
+        "author": "Jan Pilzer \u003cjan.pilzer@gmx.de\u003e",
+        "type": "FIX",
+        "text": "sap.m.OverflowToolbar: Fix @extends information",
+        "references": []
+      },
+      {
+        "id": "1a48ba17ea66e346f891678f80dd4abdd21e56d3",
+        "author": "Eugen Resch \u003ceugen.resch@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.P13nColumnsPanel - support of i18n resource model for table item text",
+        "references": []
+      },
+      {
+        "id": "f97999b5e5752e0cda1083151a534e506e013f8f",
+        "author": "Thomas Gauguin Houghton - Larsen \u003cthomas.houghton-larsen@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.P13nConditionPanel : Date type handling",
+        "references": []
+      },
+      {
+        "id": "cdcaa23934243f644fe0ca82b092b0517c30f044",
+        "author": "Eugen Resch \u003ceugen.resch@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.P13nDialog - \u0027text\u0027 binding of navigationItem is cloned by \u0027title\u0027 binding of panel",
+        "references": []
+      },
+      {
+        "id": "4d3d6b8b1683189025dbde17020e8f814cd58554",
+        "author": "Thomas Gauguin Houghton - Larsen \u003cthomas.houghton-larsen@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.P13nDialog - V1: prevent default model propagation triggering by",
+        "references": []
+      },
+      {
+        "id": "5e9a15fa549d00e534bf74230c9d88f4ba811792",
+        "author": "Eugen Resch \u003ceugen.resch@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.P13nDialog - show only one message of many equal messages",
+        "references": []
+      },
+      {
+        "id": "096ea9e61ed8de3fe77e415ceb6534b5df96ce11",
+        "author": "Eugen Resch \u003ceugen.resch@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.P13nDialog - text in warning dialog changed",
+        "references": []
+      },
+      {
+        "id": "338175208c3af59b29113d211d3be8a087bfc144",
+        "author": "Eugen Resch \u003ceugen.resch@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.P13nSortPanel and sap.m.P13nGroupPanel - \u0027None\u0027 added to \u0027item\u0027 aggregation",
+        "references": []
+      },
+      {
+        "id": "255da732a1702e1315ae3f06c3b7614b38fceefd",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Page: Avoid rendering issue IE 11 when in RTL mode",
+        "references": []
+      },
+      {
+        "id": "82fe0881925034b2492d0890aff661b48f8ce53d",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Page: In FF setting a ToolBar as a headerContent does not strech",
+        "references": []
+      },
+      {
+        "id": "1d1ee07a79a84e719c1796a800f569ba0800bcbf",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Page: SubHeader overlaps the content",
+        "references": []
+      },
+      {
+        "id": "abccb0651a3e10322f6c1423a33a7ebc9f1948fd",
+        "author": "Jordan Dichev \u003cjordan.dichev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Panel - Fix for height property",
+        "references": []
+      },
+      {
+        "id": "714d4f5a993814dc0345b38a33fff93686b40fac",
+        "author": "Nikolay Kolarov \u003cnikolay.kolarov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Panel: The ariaLabelledBy association of the expand icon is correctly updated",
+        "references": []
+      },
+      {
+        "id": "a4a546115a1f318a28554f8ae7ff539e08290267",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Panel: Unsafe toString() called on a null value",
+        "references": []
+      },
+      {
+        "id": "1abe8305f6e50b630b2c944fe3121441c619a602",
+        "author": "Nikolay Kolarov \u003cnikolay.kolarov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Panel: aria-labelledby reference has been added which points to the title",
+        "references": []
+      },
+      {
+        "id": "6fd6263d43108acd83e816b923d6378262ff4932",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PlacementType: Preferred types with a typo deprecated and new added with correct names",
+        "references": []
+      },
+      {
+        "id": "34253f5de7ceb12b9ce12108f51d2ea70daf8158",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: Appointment wrong positioned",
+        "references": []
+      },
+      {
+        "id": "030c2911fff50ca02d163c8b39f2688e02cec429",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: appointments in new line if invisible",
+        "references": []
+      },
+      {
+        "id": "3b1296273613fe9dba05cc33b5808dfa5157ecbf",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: changing minDate and maxDate brings error",
+        "references": []
+      },
+      {
+        "id": "dfeae7318d02dc6cfb9c3d639f3951649358e843",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: don\u0027t select row if in 1 row mode",
+        "references": []
+      },
+      {
+        "id": "f18669d01d1ef8e08f45d677731e14b49ff4ff7d",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: several issues",
+        "references": []
+      },
+      {
+        "id": "d99ff7f05671c7faf1f61831a2f482266f91712c",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: wrong rendering if small area on desktop",
+        "references": []
+      },
+      {
+        "id": "d1a650b50f027b0814c6fd2800348ff9248f1530",
+        "author": "Jordan Dichev \u003cjordan.dichev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover - Fixed arrow, popover offsets when in compact mode",
+        "references": []
+      },
+      {
+        "id": "26720f79b7061ddfb2d2c7b45df423af1f1598a8",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: Clear old styles for the arrow positioning",
+        "references": []
+      },
+      {
+        "id": "79096f434e62f7a4a2e1fa5c50a4901c3b2be621",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: Popover is closed after destroyContent is called",
+        "references": []
+      },
+      {
+        "id": "c98ded151794cabf807efb37d33c3845334fdd2e",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: Popover places itself with correct offset when Left or Top placement is used.",
+        "references": []
+      },
+      {
+        "id": "a181dcb62623b19165b84646850a6fba95e5498b",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: Return 0 if openByDomRef is undefined",
+        "references": []
+      },
+      {
+        "id": "c722060636b4a9764a52c77ff9881fcdd8fda90e",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: Setting negative offset to the Popover in RTL does not work",
+        "references": []
+      },
+      {
+        "id": "9f35a292739b296e2270d9d169e8bd430d2b1744",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: Vertical preferred placement fixed",
+        "references": []
+      },
+      {
+        "id": "6e033940a093e875e8e7eaee37a4d1a4a9868b85",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: addStyleClass(sapUiSizeCompact) does not render the Popover in compact mode",
+        "references": []
+      },
+      {
+        "id": "696534d0bea0a0920caca51ff8d94bbdf73cf05d",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: beforeClose event is fired on touch devices",
+        "references": []
+      },
+      {
+        "id": "7220ac3b94950274c7b20f103c4e85cd772336c4",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: begin and end button keeps its semantic",
+        "references": []
+      },
+      {
+        "id": "0fff721cea650850d2cd475b7a592849d02f32b8",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: calc position now works correctly when a svg element is used for opener control.",
+        "references": []
+      },
+      {
+        "id": "0d6fad004e933373ce334bb3c226ae96952b3578",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: close virtual keyboard when popover closes",
+        "references": []
+      },
+      {
+        "id": "f356b15db13f2baabd95e842cb691c253941328b",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: correct placement when calcBest is used",
+        "references": []
+      },
+      {
+        "id": "1f40fbad645259c860090de1453206e779345ac1",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: fix unnecessary wrapping behavior of content",
+        "references": []
+      },
+      {
+        "id": "08d90404f8a1d967ee91aa8161cd267a799d883e",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: prevents setting negative value for bottom position",
+        "references": []
+      },
+      {
+        "id": "817f483bab946aecc76342c6ca573da6e9818031",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: role application set to the content of the Popover",
+        "references": []
+      },
+      {
+        "id": "e527e33bef99471454fe0e45df11cce9a447c4d0",
+        "author": "Vladislav Tasev \u003cvladislav.tasev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ProgressIndicator - internal spans excluded from reading",
+        "references": []
+      },
+      {
+        "id": "3e703e78eb280b576d6c8181f6adc99db4d1d225",
+        "author": "Borislav Yovchev \u003cborislav.yovchev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ProgressIndicator: tooltip is now rendered",
+        "references": []
+      },
+      {
+        "id": "f27591896f6e8af663a5f8aa274fc1b613d0f4e7",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PullToRefresh - encode description field",
+        "references": []
+      },
+      {
+        "id": "65d47c6c227a9436b505b8c648e5722a8ea71a9d",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PullToRefresh on combi devices",
+        "references": []
+      },
+      {
+        "id": "3620f870ead4950687ea19055a84e584a8484920",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PullToRefresh: busy indicator overlaps text",
+        "references": []
+      },
+      {
+        "id": "c16bea986e8db218f112d9d5cc09454d454271e0",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PullToRefresh: tooltip is not shown on desktop",
+        "references": []
+      },
+      {
+        "id": "5866c33d898d4ecc4e18df6728587f4d88860d44",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.QuickView: Add stable IDs support",
+        "references": []
+      },
+      {
+        "id": "130e011be1288a0deb02fc2206fdc98647244cec",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.QuickView: Content width is set correctly now",
+        "references": []
+      },
+      {
+        "id": "241ef343d2b80c17c9bb31251701221954b24ce4",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.QuickView: Exception is no longer thrown when navigating",
+        "references": []
+      },
+      {
+        "id": "c0c6a3aa2097239d9d7c037be0c349e29b94db78",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.QuickView: Fixed setting a tooltip",
+        "references": []
+      },
+      {
+        "id": "7b3783b5965c855e047624614718dd1c02b78fe8",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.QuickView: QuickView height is updated when data is changed",
+        "references": []
+      },
+      {
+        "id": "ece8911e223c0930628765bfb8d127b45cc036ee",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.QuickView: Removed SMS icon on desktop browsers",
+        "references": []
+      },
+      {
+        "id": "a8bb562398b31c4beb0fe3f6baa3bf3de7511c38",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.QuickView: Removed empty links from DOM",
+        "references": []
+      },
+      {
+        "id": "1cda4fcfb0136f31ce716ee7a712cdb35bc2a4b6",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.QuickViewCard: Scrolling position when navigate is correct now",
+        "references": []
+      },
+      {
+        "id": "7bf276bf9b140a49bdef454d17ca6de1e4f65913",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.QuickViewCard: Truncation of long texts enhanced",
+        "references": []
+      },
+      {
+        "id": "423d27d6aef84e2480a1923ddf908eb9f55ea8fd",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.QuickViewCard: texts truncation",
+        "references": []
+      },
+      {
+        "id": "8620fe6c126fe1419cc5d421089ad180c4fcde38",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.RadioButton: Aria attributes are not correctly rendered",
+        "references": []
+      },
+      {
+        "id": "0bb8dc4256dae1bcbe009d2b1e74a1979160c0db",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.RadioButton: Fixes an issue with clicking two times on a button to select it",
+        "references": []
+      },
+      {
+        "id": "2f4961ece7e318df0f1ad43387f5515b52dec010",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.RadioButton: When passing null value to the setSelected function is handled as false",
+        "references": []
+      },
+      {
+        "id": "190581baa730a17c9a5e80210f9359bfa2298e9c",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.RadioButton: align label with radiobutton when focused",
+        "references": []
+      },
+      {
+        "id": "5725a8a9038bb397045a9e090490b75c46217bfb",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.RadioButton: z-index of the focus before removed",
+        "references": []
+      },
+      {
+        "id": "5840dcc10a789ba1b8440d536869f25498dfc607",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.RadioButtonGroup: Align labels as they are before",
+        "references": []
+      },
+      {
+        "id": "bcc858d889c1896995d75b1a774ca265bd9cec73",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.RadioButtonGroup: Area attribute should not be set to invisible buttons",
+        "references": []
+      },
+      {
+        "id": "93fccb5f22a8cf3bf679297a83f652c9b3814820",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.RadioButtonGroup: setEnabled behaviour corrected",
+        "references": []
+      },
+      {
+        "id": "c8636e6e5b2cce3520cf20911fefd624874c0059",
+        "author": "Hristo Petrov \u003ch.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.RangeSlider The hidden input field attributes start and end are now updating",
+        "references": []
+      },
+      {
+        "id": "e26b7c114b3df9068870b9091b27672eec29f488",
+        "author": "Shtiliyan Uzunov \u003cshtiliyan.uzunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.RatingIndicator - icons implementation changed for better performance",
+        "references": []
+      },
+      {
+        "id": "748caedb5acd90be07f9971d5ec7b07099f501e9",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ResponsivePopover: begin and end buttons now are with type transparent",
+        "references": []
+      },
+      {
+        "id": "0f6e682b2dd50bef352845a6c03185d1d90cddb4",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ResponsivePopover: calling getBegin/EndButton causes endless recursion",
+        "references": []
+      },
+      {
+        "id": "662ff98ab20ea1b7713a0f061e6e72b5c70fafb8",
+        "author": "Nikolay Kolarov \u003cnikolay.kolarov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ScrollContainer, sap.ui.layout.FixFlex: A tweak, causing issues in Internet Explorer is now removed",
+        "references": []
+      },
+      {
+        "id": "93698bb12c139b9805c6488c627b57de2f3918aa",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ScrollContainer: now can expand children with flex in IE10 and 11",
+        "references": []
+      },
+      {
+        "id": "03de0b82050ebaf46fdb58c1e9d19fe53a16718f",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SearchField - placeholder is not completely visible",
+        "references": []
+      },
+      {
+        "id": "68710849f433e867040abc1c7eff225bc0647afd",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SearchField - suggest event is not fired",
+        "references": []
+      },
+      {
+        "id": "b57a6613535eb93e28d6e87564a95acfc0700b9d",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SearchField, focus is lost on Windows Phone",
+        "references": []
+      },
+      {
+        "id": "e61c70e09c93ee13a485c660d086a8c367355507",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SearchField: \"escape\" keyboard button",
+        "references": []
+      },
+      {
+        "id": "bbda642901fb6aa7dddfea9c8acbfab289e339b9",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SearchField: no liveChange event on Escape",
+        "references": []
+      },
+      {
+        "id": "1cbb532c1ae75534415fd3aa24219094f5525250",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton - Bluecrystal theme hover and borders are now ok",
+        "references": []
+      },
+      {
+        "id": "c143195d3452eb516d1fb1120b371012fd42baa6",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton - Left padding on compact mode and buttons with icons is now correct",
+        "references": []
+      },
+      {
+        "id": "e198e7f2fa58968aec4e5d0c379133f3c49a8c2f",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton - width recalculation is more effective now.",
+        "references": []
+      },
+      {
+        "id": "f48da8e07cf689b839f1d9f9ba378a4766deeaf5",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton: Aria-label attribute is now properly ignored when tooltip is presented",
+        "references": []
+      },
+      {
+        "id": "df0ba12d7e090cfd151fbb34d58496cc88ec699d",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton: Button with icon have tooltip",
+        "references": []
+      },
+      {
+        "id": "3ee9457c6c2e4a596938700d95142df2ccc396b4",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton: Correctly aligned on iOS in Toolbar",
+        "references": []
+      },
+      {
+        "id": "2a2f29c70ed56bd734dac695b0dffe54458dfb94",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton: Resizing delay is now refactored",
+        "references": []
+      },
+      {
+        "id": "3f4aec9687fe770a3ad5a4f8a113d6a35d3c80a4",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton: Sets hover background only on desktop",
+        "references": []
+      },
+      {
+        "id": "74397bd172f0bbf23e7ea025af5a699606514186",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton: cursor pointer over icon is set to \u0027pointer\u0027 instead of \u0027default\u0027.",
+        "references": []
+      },
+      {
+        "id": "16441226220cc8533842c5f03faee33f04d010d0",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: Change cursor to pointer if the IconOnly is used",
+        "references": []
+      },
+      {
+        "id": "bb19e0df7305a6e4b88625a6af5d490c5253ac58",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: binding for property selectedKey doesn\u0027t work",
+        "references": []
+      },
+      {
+        "id": "2f3ca10b079bb0a620aead5590f41c65a81366f9",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: cannot filter binding in change event handler",
+        "references": []
+      },
+      {
+        "id": "5b58f1998cfbd72453b696a1101bcc10b957a45a",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: disable item can be selected in IE10",
+        "references": []
+      },
+      {
+        "id": "0feee811c8e9ea062aa463b96aa8f9721a1c41ee",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: display control tooltip instead of icon tooltip",
+        "references": []
+      },
+      {
+        "id": "5a9b4a319db389c51c6cd3d1a2696d177f096700",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: fix auto close issue of the dropdown list in IE",
+        "references": []
+      },
+      {
+        "id": "ac5a29377e15881677c8d190c2588a9bac26def9",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: fix change event behavior when both mouse and keyboard are used",
+        "references": []
+      },
+      {
+        "id": "8e592028e98dba15ec653599f1af458f81775683",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: fix change event issue when selected item is removed",
+        "references": []
+      },
+      {
+        "id": "df7195314ce1c902821df34edf146a6bcc01b178",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: fix clone issue of not bound aggregated items",
+        "references": []
+      },
+      {
+        "id": "39f6fa217b17a61c7d9f684a919a6f6199f157f1",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: prevent IE to focus non-focusable elements",
+        "references": []
+      },
+      {
+        "id": "5a302892555340f816adce1f883e600bbaf4f0fa",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: prevents actions from occurring when the control is disabled in IE11",
+        "references": []
+      },
+      {
+        "id": "3e0fc67f935ba9582fb825dc447186f8f9c9ecb2",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: remove the margin inside the table cell",
+        "references": []
+      },
+      {
+        "id": "aabc964d4484dca5a17d7ed5f751a764e1795b91",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: sets the selection correctly when",
+        "references": []
+      },
+      {
+        "id": "56d0cd39466e786b8e908aebcc866bf5afedfabe",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SelectList: fix error when adding a separator item",
+        "references": []
+      },
+      {
+        "id": "69ad79793769b7b6119bd1fa2f4d897bb2f92348",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SelectList: synchronize the selection after the properties (models and bindingContext) are propagated",
+        "references": []
+      },
+      {
+        "id": "739950e6af259b7e30181901acf4d70dac0d1838",
+        "author": "Tatiana Medvedeva \u003ctatiana.medvedeva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SlideTile: Empty content leads to error corrected",
+        "references": []
+      },
+      {
+        "id": "ec67a8581939abde1ac627b24dad2169b3b97f91",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Slider: correctly round the value to the nearest step",
+        "references": []
+      },
+      {
+        "id": "6f33313102f4dbc45f79c7b14c7eccd4e6298c6b",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Slider: display values using the fixed-point notation",
+        "references": []
+      },
+      {
+        "id": "c942f1f46c66877638685205172e1420f2e3a421",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Slider: don\u0027t round the model value, but only the DOM value",
+        "references": []
+      },
+      {
+        "id": "c4708f4bff70634fa91dceede2ea6c437c998e2e",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Slider: fix a bug in the stepUp/stepDown method that prevents keyboard navigation",
+        "references": []
+      },
+      {
+        "id": "365edab404753757883fde2fcd9346eb5ed897fc",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Slider: fix escaping issue of IDs contains dots",
+        "references": []
+      },
+      {
+        "id": "a4b37c083652ecb0550665815948d700d4a9ba17",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Slider: fix rendering issue of the progress bar",
+        "references": []
+      },
+      {
+        "id": "ec476f939b298ee6fcedfa74bed73808bfe6834f",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Slider: fix rounding issue of floating-point numbers using e-notation",
+        "references": []
+      },
+      {
+        "id": "1549b27fb3bf432b3c8bff8a590dd90f724b38fc",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Slider: improve multi-touch support",
+        "references": []
+      },
+      {
+        "id": "d07bda82c6ac60ceb965a387bfd9cc34c660039f",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SplitContainer: Add own sample in Explored App",
+        "references": []
+      },
+      {
+        "id": "5c33650f5a1c761eb29b13a9e984040473947eb5",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SplitContainer: Events processing on phones fixed",
+        "references": []
+      },
+      {
+        "id": "abe9cffaaa387fe370ff17a5c335f845fdad0d4d",
+        "author": "Krasimir Chariyski \u003ckrasimir.chariyski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SplitContainer: Remove swipe on desktop",
+        "references": []
+      },
+      {
+        "id": "70d9e8e19ad7797a8ddbdc96836f0ef08075264a",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.StandardListItem: Info state should be rendered correctly independent from the theme parameters.",
+        "references": []
+      },
+      {
+        "id": "69cbcb09a15cbd3e7215618ed131140d9776b0b0",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.StandardListItem: Update Icon correctly.",
+        "references": []
+      },
+      {
+        "id": "67f243f408a19a44ebf8eceb2a90f9ac9cd7f8c6",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TabStripSelectRenderer: fix initial rendering exception",
+        "references": []
+      },
+      {
+        "id": "4b0031a812f4985a7501a60f8a662333245a6640",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Table ACC demo: fix sap.m.Select tooltip reading issue",
+        "references": []
+      },
+      {
+        "id": "2a28f0cdb8447c0d9c391731061c0e15a914c6dc",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Table: ItemNavigation should include only direct children.",
+        "references": []
+      },
+      {
+        "id": "303f00a84c6f593f241a116d82a58dc6bc5b4746",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Table: Loading message should not be shown if re-rendering happens.",
+        "references": []
+      },
+      {
+        "id": "d50be7ebe7685f8c2a32fe530f0da269bbc9abab",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Table: Rows should not have outline on mobile.",
+        "references": []
+      },
+      {
+        "id": "4c79d55f1a1b4b0c36dbd462d940ac0a60188bad",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Table: Screen size limits should be included.",
+        "references": []
+      },
+      {
+        "id": "741d0e74f73d3848d610ef35270c3a809c3e45d7",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Table: Zoom factor fixes for responsive column.",
+        "references": []
+      },
+      {
+        "id": "2622aac642eef63a78f89c163e1014c870bdfbdb",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TableSelectDialog: Explored sample is fixed",
+        "references": []
+      },
+      {
+        "id": "710ee49490d5c84a9ab60bc3c107dcc5f0c43c09",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TableSelectDialog: busyIndicatorDelay propagation fixed",
+        "references": []
+      },
+      {
+        "id": "31d9fbfe47cde3903487f32bafab3e8558f9e737",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Text in sap.ui.layout.form.SimpleForm is with display \u0027block\u0027 due to layout requirements",
+        "references": []
+      },
+      {
+        "id": "e769a0c041e0f78139dd558afce2f44aeac3d206",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Text selection of text on tablet and mobile when maxLines used is enabled",
+        "references": []
+      },
+      {
+        "id": "f264d64d99839e97af668763a5edc3a97e703d96",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TextArea: Default for wrapping property in constructor.",
+        "references": []
+      },
+      {
+        "id": "89b02283525d22ea0f6bf6e629a69b6a4f07fb31",
+        "author": "Irina Goetzenberger \u003cirina.goetzenberger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TextArea: escaping in IE10 is fixed.",
+        "references": []
+      },
+      {
+        "id": "eeff9e833074149c73201211d1d8842304c5c2df",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TileContainer: Arrows\u0027 click behaviour in firefox is now handled properly",
+        "references": []
+      },
+      {
+        "id": "12f47aa38388effac3e3b53aba42d1da1126b442",
+        "author": "Bohdan Pukalskyi \u003cbohdan.pukalskyi@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TileContent: Reliability of tooltip handling mechanism improved",
+        "references": []
+      },
+      {
+        "id": "4a18783c1e5afb725ba2226f86c055dad8343134",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TileContent: Rendering of samples improved",
+        "references": []
+      },
+      {
+        "id": "25c999ff773ce937641934ea1ed9a2b93168ba69",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TimePicker: Change event fires correctly",
+        "references": []
+      },
+      {
+        "id": "5a5032dfdc101567c4e3c95b5266ae3ef25e2bd4",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TimePicker: Changed event fires only when the value really changed",
+        "references": []
+      },
+      {
+        "id": "a602d59bb124d963f138930650357ca19f6ba92e",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TimePicker: On larger phones sliders have height limit and do not repeat numbers",
+        "references": []
+      },
+      {
+        "id": "b1ef9ea67b5d91b910804c33dad8a535c257502a",
+        "author": "Nikolay Cholakov \u003cnikolay.cholakov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TimePicker: Performance optimization",
+        "references": []
+      },
+      {
+        "id": "877181f8a3dca48174abb427308371cfd7be2d6c",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TimePicker: Popover opens on iPad / Tablet correctly",
+        "references": []
+      },
+      {
+        "id": "59b6bf14d038e512cd2c2b7e8530b54e5be62d2d",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TimePicker: Sliders are not displayed in reverse order anymore",
+        "references": []
+      },
+      {
+        "id": "264f2ba02a1bf567ad1da4e36ac86c25097338df",
+        "author": "I306504 \u003cdiana.mihaylova@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TimePicker: documentation fix",
+        "references": []
+      },
+      {
+        "id": "265a1f2c5a0722a9d3a2502024bc3a913795991e",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ToggleButton: duplicated press event",
+        "references": []
+      },
+      {
+        "id": "d1620b48268766d5a11d23eb5dfc0e5afca4fc2f",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ToggleButton: incorrect visual state",
+        "references": []
+      },
+      {
+        "id": "95d8dcbe9d598344920802de3861d0363e97f549",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Token: disable icon tootip",
+        "references": []
+      },
+      {
+        "id": "a6775760fbd3bfea4b45d61f8363bd885a35a3df",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Tokenizer: add focus border",
+        "references": []
+      },
+      {
+        "id": "f03c027628cc7deecf9944c17e2a69743852f286",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Tokenizer: add tabindex to tokenizer",
+        "references": []
+      },
+      {
+        "id": "cfe6bfec49d20c38c192c5dd260c01aebc6b89fb",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Tokenizer: fix line height issue for IE",
+        "references": []
+      },
+      {
+        "id": "58805c11d1ce986a682552f164266bdb56c4d8b4",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Tokenizer: not set focus back after token deletion in phone mode",
+        "references": []
+      },
+      {
+        "id": "eac822194e57b1dd670fab31008bf5abd8d77454",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Tokenizer: remove tab index if tokenizer is in MultiInput",
+        "references": []
+      },
+      {
+        "id": "1810be8c73412eee2a328bad3986715412a84516",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Tokenizer: tokenizer is not in tabchain if it is not in standalone use",
+        "references": []
+      },
+      {
+        "id": "7d99a045795c6537e800c4643b13a0dde22a33c9",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Tokenizer: use destroy token instead of remove token in delete event",
+        "references": []
+      },
+      {
+        "id": "6b59bb9ccb8c73fd142df40ad4f45947fd0b4ec0",
+        "author": "Vladislav Tasev \u003cvladislav.tasev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Toolbar - IE unit test bug fixed",
+        "references": []
+      },
+      {
+        "id": "8b6a451af05706f6cc01938abde06ad278908e4b",
+        "author": "Vladislav Tasev \u003cvladislav.tasev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Toolbar - margins when last child is invisible fixed",
+        "references": []
+      },
+      {
+        "id": "16572d9058a41a75997b530b24b832e30531a960",
+        "author": "D064730 \u003cbohdan.pukalskyi@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: All attribute characters are shown in IE11 during resizing",
+        "references": []
+      },
+      {
+        "id": "d02615f0300db5dab36268fe3c08fdd312141c45",
+        "author": "Bohdan Pukalskyi \u003cbohdan.pukalskyi@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Determining the list item instance given its id independently of its DOM representation.",
+        "references": []
+      },
+      {
+        "id": "200c7e5c9a8edcf5ed2dcfa02368cff82585a837",
+        "author": "Bohdan Pukalskyi \u003cbohdan.pukalskyi@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Exiting edit mode after an attemt to save an empty file in case same file names are allowed",
+        "references": []
+      },
+      {
+        "id": "cb6aac0bea1a996d507b39cc32ec3ab6b735a6c1",
+        "author": "Eduard Klimenko \u003ceduard.klimenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Fixed visual design for checkbox in single and multi selection mode",
+        "references": []
+      },
+      {
+        "id": "85a7bb5cdf5ee72936380c56c608bb6d97b86b7e",
+        "author": "D064730 \u003cbohdan.pukalskyi@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Focus setting improved",
+        "references": []
+      },
+      {
+        "id": "06ffe4f0715045e5b270ceb1c88db253921a6c6f",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Items aggregation handling improved in case instandUpload is false",
+        "references": []
+      },
+      {
+        "id": "7a15a6b39569ce8cbeab98507026e5fbd6010fd3",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Items aggregation handling improved in case instantUpload is false",
+        "references": []
+      },
+      {
+        "id": "c432a65d35bf58ba2918b65d8ae329e4a906f8b2",
+        "author": "Bohdan Pukalskyi \u003cbohdan.pukalskyi@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Managing event delegates improved",
+        "references": []
+      },
+      {
+        "id": "ff080ed720a97efa834088dce8e3627cb6b52d52",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Problem with duplicated Id fixed.",
+        "references": []
+      },
+      {
+        "id": "96ea494f61845439d357118290969788a3c3f497",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Problem with duplicated toolbar fixed.",
+        "references": []
+      },
+      {
+        "id": "d935d14010212131f8e57756e21d22a278259365",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Text for upload completed improved",
+        "references": []
+      },
+      {
+        "id": "470547e23a580d827123215fdd10398c3c53e971",
+        "author": "Sylvia Strack \u003csylvia.strack@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Toolbar in Explored samples replaced by OverflowToolbar to ensure responsiveness of mobile devices",
+        "references": []
+      },
+      {
+        "id": "f6be41eb04deafc9e859b063c4d1852dae6e95be",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Tooltip for Upload button added",
+        "references": []
+      },
+      {
+        "id": "2f2db185a157f00b2b6bdebb61301b309fc990ae",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Update JSDoc for event fileDeleted",
+        "references": []
+      },
+      {
+        "id": "86a3f5bc826b0943a24ddd42eedee04ec07a8727",
+        "author": "D064730 \u003cbohdan.pukalskyi@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: When clicking on the Edit button, only one list item can be changed in edit mode.",
+        "references": []
+      },
+      {
+        "id": "223d51e4b0f3d5895fa1df0230f6ae156d4ffd8d",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: fixed termination in case of multiple file uploads",
+        "references": []
+      },
+      {
+        "id": "b5b0c4efb91760278869935ba4a882f7ad17f164",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: improve data binding capabilities for pending upload use case",
+        "references": []
+      },
+      {
+        "id": "794079247b584d6ed9193c86ddc027ddc6518e92",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: improved delete function in case of JSON MOdel is used",
+        "references": []
+      },
+      {
+        "id": "56f689fd2be1f2b12e60182c6f02480de41bf96b",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: using ASCII encoding for header parameter handling to improve compatibility",
+        "references": []
+      },
+      {
+        "id": "e02151f445dbb6622b2fcc90458f488b63926dc4",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollectionItem: Documentation to url property added",
+        "references": []
+      },
+      {
+        "id": "9cca0075a6c1d256b6b451a37d80897ad1625253",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog - Screen reader labels are added for sort and group pages lists",
+        "references": []
+      },
+      {
+        "id": "1173507d38be756cabff094728666b73a3d99475",
+        "author": "Martin Daskalov \u003cm.daskalov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog - fixed button tooltip in example.",
+        "references": []
+      },
+      {
+        "id": "cafa74e14042268a39a07b249ca6bbfbd192ed29",
+        "author": "Martin Daskalov \u003cm.daskalov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog - fixed freezing of the control",
+        "references": []
+      },
+      {
+        "id": "f04bf6071c23ef15fb02b7b5ea0f3a160ad36562",
+        "author": "Martin Daskalov \u003cm.daskalov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog - fixed problem with Reset Button not showing.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "728077"
+          }
+        ]
+      },
+      {
+        "id": "6050f9ca9bc089c00bcc821f72b4de3851b02675",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog: Dialog does not crash when wrong sort item is set",
+        "references": []
+      },
+      {
+        "id": "ad9df630311aa6df635b6bda7efec40775812cb3",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog: Focus is now preserved on list items re-render",
+        "references": []
+      },
+      {
+        "id": "7da9bb5c6baf82fbe2ae80788fd5c2189ead97d2",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog: Group items are now properly selectable",
+        "references": []
+      },
+      {
+        "id": "bffc8a85f8b81948ec7ad050c8a82cfc40793412",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog: Group\u0027s \"None\" button now returns undefined",
+        "references": []
+      },
+      {
+        "id": "9d73312495ecf29010b0be796739820842916362",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog: Improved documentation for collecting the settings of custom tabs",
+        "references": []
+      },
+      {
+        "id": "18dc13ab7e280ded74406c46ea9e8dbead0ff62f",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog: On Cancel grouping selection is reset properly",
+        "references": []
+      },
+      {
+        "id": "e6d327d47903ed6d98dcf9a5bea12b657240871f",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog: Unit test fail on IE9",
+        "references": []
+      },
+      {
+        "id": "9cdd90ce2c41f8ec367cfd29bfadd3d425319ad0",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog: cancelling chosen filter details ignores last selection.",
+        "references": []
+      },
+      {
+        "id": "0792ed5e48dcf93c2636b182efd53c42642afbc9",
+        "author": "Vesselin Petrunov \u003cvesselin.petrunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog: removing the \"customTabs\" aggregation now correctly removes the aggregation contents.",
+        "references": []
+      },
+      {
+        "id": "4e85d6fd2e26b757c564a15052ea57eadb891f38",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsPopover: Popover\u0027s width is now properly adjusted",
+        "references": []
+      },
+      {
+        "id": "2f3b1bbec01b8d45febc0f7af204615378377246",
+        "author": "Shtiliyan Uzunov \u003cshtiliyan.uzunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Wizard - Belize theme fixed",
+        "references": []
+      },
+      {
+        "id": "41ed79bb0e88fb8e42c813d28ca4d07fe2f62ff7",
+        "author": "Shtiliyan Uzunov \u003cshtiliyan.uzunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Wizard - goToStep() method returns if the wizard is not visible.",
+        "references": []
+      },
+      {
+        "id": "f36486503e087c5441b112c3d66320682cdf57d4",
+        "author": "Shtiliyan Uzunov \u003cshtiliyan.uzunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Wizard - prevents an endless loop if the developer calls 2 times in a row the goToStep() method",
+        "references": []
+      },
+      {
+        "id": "9e61243bfc5037b6dcd63a8d917ab3efe26465f3",
+        "author": "Shtiliyan Uzunov \u003cshtiliyan.uzunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Wizard - removed the focus on furst element on step changed on mobile devices.",
+        "references": []
+      },
+      {
+        "id": "3a9b2643365096e4c4627844ca0129ec026ef37e",
+        "author": "Shtiliyan Uzunov \u003cshtiliyan.uzunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Wizard - rendering issue in IE caused by transform: translateZ",
+        "references": []
+      },
+      {
+        "id": "311ede7b125b09e3597ac9b526f591958b0fc505",
+        "author": "Shtiliyan Uzunov \u003cshtiliyan.uzunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Wizard activate step called after step is added to _stepPath",
+        "references": []
+      },
+      {
+        "id": "68d6019da54a287d5022c703240ebe9688886c26",
+        "author": "Shtiliyan Uzunov \u003cshtiliyan.uzunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Wizard: Internal container height fix.",
+        "references": []
+      },
+      {
+        "id": "af0c4f238b8366850da0797aeec4983c5af93cc4",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.WizardProgressNavigator: Breaking of layout under iOS is now fixed",
+        "references": []
+      },
+      {
+        "id": "323fa76e0a0ed33d2cc4468b6675dccb6cc32e09",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.WizardProgressNavigator: word wrapping set to normal",
+        "references": []
+      },
+      {
+        "id": "cf4178a072c09409ab96d14e919aaae4384f0ef1",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.routing.RouteMatchedHandler - now works with sap.m.routing.Router",
+        "references": []
+      },
+      {
+        "id": "10ede413c789404eb8f02467acc41d0a3ccb9fbe",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.routing.Targets: fix documentation",
+        "references": []
+      },
+      {
+        "id": "94f3348ed40df6aa0ddb4be8e9c5da2d5dd61125",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.routing: correctly forward the route parameter to the initial page of target container",
+        "references": []
+      },
+      {
+        "id": "4641320032525e3f96608d63a503041edd663f78",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.routing: viewLevel should be taken from ancestor if current target doesn\u0027t have",
+        "references": []
+      },
+      {
+        "id": "ff328a7adb17e6ac3328139aad57f077f0f666ef",
+        "author": "Vladislav Tasev \u003cvladislav.tasev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.semantic - Share menu items appearance fixed",
+        "references": []
+      },
+      {
+        "id": "033e8286ccde5eb8c834bc15230c2aef9b477501",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m: add library info to semantic elements/controls",
+        "references": []
+      },
+      {
+        "id": "126e01d1b5259a37d23e15fb7181b051d85353a1",
+        "author": "Tino Butz \u003ctino.butz@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m: stop timeouts when P13n panels are destroyed to prevent errors",
+        "references": []
+      },
+      {
+        "id": "67d96fcf22fa15976921577c68fe118f92b9138d",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.InputBase: Introduce required property for accessibility purposes",
+        "references": []
+      },
+      {
+        "id": "1ede31597317915c371d0b2fba99fa1806a0039a",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Icon: press event is fired twice on mobile device",
+        "references": []
+      },
+      {
+        "id": "37a443108e7ec25e809d8b7e7c4f9379962eab40",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.routing.Router: logging an error message when navigate to undefined route",
+        "references": []
+      },
+      {
+        "id": "5eb1d33fc4506f29420ec2bab50ab8a9579c99ea",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core/m.routing.Targets - wrong property name in API docu",
+        "references": []
+      },
+      {
+        "id": "4d1a95c8cca1334719d2d8045ef31493d575b572",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.demo.cart - the app was relying on a sync action",
+        "references": []
+      },
+      {
+        "id": "8375a8e45b4c60cd182812698386bb9914660354",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: Label not visible on iOS devices",
+        "references": []
+      },
+      {
+        "id": "2bae7babba64ba2fd4f68ce32177ce937bf7ca9d",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: use Label style only for direct labels",
+        "references": []
+      },
+      {
+        "id": "c54463c8750f53a0bb4ce092e0ca8bff71d61882",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Abort in case of parellel uploads corrected",
+        "references": []
+      },
+      {
+        "id": "42d76c54dba01566c7190ff687e60ad711d87ddb",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap/m/BusyDialog: adding a dummy render function to renderer",
+        "references": []
+      },
+      {
+        "id": "a52e47181460ee5a590693919f0cdae5a6af2d67",
+        "author": "Andreas Frische \u003cafrische@users.noreply.github.com\u003e",
+        "type": "FIX",
+        "text": "sap/m/ViewSettingsDialog.js : mark sPageId as optional",
+        "references": []
+      },
+      {
+        "id": "a3a6d4e3d15d69042cf028e1c5324bb31796383b",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ColumnListItem: Multiple popin rendering issue is fixed.",
+        "references": []
+      },
+      {
+        "id": "bf5c2fc2b141a8806fdc0286f77ba888abc669af",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GrowingEnablement: Growing button should not fire itemPress event.",
+        "references": []
+      },
+      {
+        "id": "e995d578135b5c131be64e5cdf41c5b9ff7b952b",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ListItemBase: Content should not overflow",
+        "references": []
+      },
+      {
+        "id": "561aa16ea58b558a0888f122a5f7c4d90810306b",
+        "author": "Dimo Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NavContainer would fail if the current page has been removed, add proper error message",
+        "references": []
+      },
+      {
+        "id": "e89086230bd6a49eb1bd3f66360dd20b30818ded",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.CalendarDateInterval: hide day names line",
+        "references": []
+      },
+      {
+        "id": "78a0702fd3db01cf7808784247d537dea71c3b65",
+        "author": "Daniel Chang \u003cdaniel.chang@sap.com\u003e",
+        "type": "FIX",
+        "text": "- Fixed FacetFilter Qunit to allow testing in IE",
+        "references": []
+      },
+      {
+        "id": "5ddee6df06bd2f74281e9b1021f9a27007f3ebbb",
+        "author": "Daniel Chang \u003cdaniel.chang@sap.com\u003e",
+        "type": "FIX",
+        "text": "- Fixed Facetfilter IE Qunit error",
+        "references": []
+      },
+      {
+        "id": "416974a7001b22b65c158a4279abe2b132716af9",
+        "author": "Daniel Chang \u003cdaniel.chang@sap.com\u003e",
+        "type": "FIX",
+        "text": "- Fixed Facetfilter to remove commented code.",
+        "references": []
+      },
+      {
+        "id": "4d24007c4ff9ebe3cd88a38b109d44153785ffaf",
+        "author": "Daniel Chang \u003cdaniel.chang@sap.com\u003e",
+        "type": "FIX",
+        "text": "- Modified facetfilter to clean codes",
+        "references": []
+      },
+      {
+        "id": "675e0e496481acb7e45179713f57db4751f9e964",
+        "author": "Daniel Chang \u003cdaniel.chang@sap.com\u003e",
+        "type": "FIX",
+        "text": "Fixed FacetFilter Qunit and clean codes for handover",
+        "references": []
+      },
+      {
+        "id": "97a3062338aeada2ab3fd9f921482cb2997a751c",
+        "author": "Hristo Petrov \u003ch.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SelectDialog InfoBar should not be shown in single select mode even if there is a selected option",
+        "references": []
+      },
+      {
+        "id": "deb262b3680f9ca9b494598e45f55023c3acef70",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: long content scroll",
+        "references": []
+      },
+      {
+        "id": "7cbc49915eaf2af278d34b52b811d31fbe549ee5",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: the blur will no longer cause rendering issue",
+        "references": []
+      },
+      {
+        "id": "915202da50e6ed2a8db18f5e530766b10793a21b",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: the dialog will be no longer blurred when positioned on half fixel",
+        "references": []
+      },
+      {
+        "id": "61a17eade6b2ff262ca90eaa7836e718c1ed01c9",
+        "author": "Shweta Sugnani \u003cshweta.sugnani@sap.com\u003e",
+        "type": "FIX",
+        "text": "-FacetFilter, FacetFilterItem, FacetFilterList-documentation added",
+        "references": []
+      }
+    ]
+  }
+}
