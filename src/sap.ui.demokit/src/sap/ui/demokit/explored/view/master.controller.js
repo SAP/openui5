@@ -30,7 +30,7 @@ sap.ui.define([
 			groupProperty: "category",
 			groupDescending: false,
 			compactOn: false,
-			themeActive: "sap_bluecrystal",
+			themeActive: "sap_belize",
 			rtl: false
 		},
 
