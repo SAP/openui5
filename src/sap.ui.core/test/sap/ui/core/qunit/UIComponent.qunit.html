@@ -117,6 +117,25 @@
 
 	});
 
+	QUnit.test("UIComponent destruction callback hook", function(assert) {
+
+		this.oServer.respondWithJSONContent(this.oManifest);
+
+		var oComponent = sap.ui.component({
+			id : "myComponent",
+			manifestUrl : "/anylocation/manifest.json"
+		});
+
+		sap.ui.core.UIComponent._fnOnInstanceDestroy = function(oComponent) {
+			assert.equal(oComponent.getId(), "myComponent", "Destruction hook was called!");
+		};
+
+		oComponent.destroy();
+
+		delete sap.ui.core.UIComponent._fnOnInstanceDestroy;
+
+	});
+
 	QUnit.test("UIComponent check for no autoPrefixId", function(assert) {
 
 		this.oServer.respondWithJSONContent(this.oManifest);
