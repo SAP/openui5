@@ -91,6 +91,8 @@
 			this.oSlideTile.setModel(oSlideTileModel);
 	};
 
+	var oResBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	
 	QUnit.module("Rendering - sap.m.SlideTile", {
 		beforeEach : function() {
 			this.fnPressHandler = function() {
@@ -135,8 +137,9 @@
 	QUnit.test("Test ARIA label for multiple content", function(assert) {
 		//Arrange
 		//Act
+		var sAdditionalText = oResBundle.getText("SLIDETILE_TOGGLE_SLIDING");
 		//Assert
-		assert.equal(this.oSlideTile.$().attr("aria-label"), "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2\nElement with multiple content.\nTo toggle sliding press space bar.\nTo navigate press enter", "SlideTile contains expected ARIA-label attribute");
+		assert.equal(this.oSlideTile.$().attr("aria-label"), "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2\n" + sAdditionalText, "SlideTile contains expected ARIA-label attribute");
 	});
 
 	QUnit.test("Test sliding active per default", function(assert) {
@@ -262,8 +265,9 @@
 
 	QUnit.test("Method _scrollToNextTile - option: scroll backward and stop the animation", function(assert) {
 		//Arrange
-		var sAriaLabel, $NextTile, $NextTileExpected,
-			sAriaLabelExpected = "Tile 3 50 Neutral Footer 5 60 Neutral Footer 6\nElement with multiple content.\nTo toggle sliding press space bar.\nTo navigate press enter";
+		var sAdditionalText = oResBundle.getText("SLIDETILE_TOGGLE_SLIDING"),
+			sAriaLabel, $NextTile, $NextTileExpected,
+			sAriaLabelExpected = "Tile 3 50 Neutral Footer 5 60 Neutral Footer 6\n" + sAdditionalText;
 		//Act
 		this.oSlideTile._scrollToNextTile(true, true);
 		sAriaLabel = this.oSlideTile.$().attr("aria-label")
@@ -273,8 +277,9 @@
 
 	QUnit.test("Method _scrollToNextTile - option: scroll forward and stop the animation", function(assert) {
 		//Arrange
-		var sAriaLabel, $NextTile, $NextTileExpected,
-			sAriaLabelExpected = "Tile 2 30 Neutral Footer 3 40 Neutral Footer 4\nElement with multiple content.\nTo toggle sliding press space bar.\nTo navigate press enter";
+		var sAdditionalText = oResBundle.getText("SLIDETILE_TOGGLE_SLIDING"),
+			sAriaLabel, $NextTile, $NextTileExpected,
+			sAriaLabelExpected = "Tile 2 30 Neutral Footer 3 40 Neutral Footer 4\n" + sAdditionalText;
 		//Act
 		this.oSlideTile._scrollToNextTile(true, false);
 		sAriaLabel = this.oSlideTile.$().attr("aria-label")
@@ -284,8 +289,9 @@
 
 	QUnit.test("Method _scrollToNextTile - option: scroll forward twice and stop the animation", function(assert) {
 		//Arrange
-		var sAriaLabel, $NextTile, $NextTileExpected,
-			sAriaLabelExpected = "Tile 3 50 Neutral Footer 5 60 Neutral Footer 6\nElement with multiple content.\nTo toggle sliding press space bar.\nTo navigate press enter";
+		var sAdditionalText = oResBundle.getText("SLIDETILE_TOGGLE_SLIDING"),
+			sAriaLabel, $NextTile, $NextTileExpected,
+			sAriaLabelExpected = "Tile 3 50 Neutral Footer 5 60 Neutral Footer 6\n" + sAdditionalText;
 		//Act
 		this.oSlideTile._scrollToNextTile(true, false);
 		this.oSlideTile._scrollToNextTile(true, false);
