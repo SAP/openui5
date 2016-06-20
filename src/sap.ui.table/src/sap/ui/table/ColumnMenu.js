@@ -10,6 +10,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	/**
 	 * Constructor for a new ColumnMenu.
 	 *
+	 * <b>Note:</b> Applications must not use or change the default <code>sap.ui.table.ColumnMenu</code> of
+	 * a column in any way or create own instances of <code>sap.ui.table.ColumnMenu</code>.
+	 * To add a custom menu to a column, use the aggregation <code>menu</code> with a new instance of
+	 * <code>sap.ui.unified.Menu</code>.
+	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
