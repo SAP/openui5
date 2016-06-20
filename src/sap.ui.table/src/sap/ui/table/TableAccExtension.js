@@ -149,6 +149,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		},
 
 		/*
+		 * Returns the tooltip of the column or the contained label, if any.
+		 */
+		getColumnTooltip : function(oColumn) {
+			if (!oColumn) {
+				return null;
+			}
+
+			var sTooltip = oColumn.getTooltip_AsString();
+			if (sTooltip) {
+				return sTooltip;
+			}
+
+			var oLabel = oColumn.getLabel();
+			if (oLabel instanceof Control) {
+				sTooltip = oLabel.getTooltip_AsString();
+			}
+			if (sTooltip) {
+				return sTooltip;
+			}
+
+			return null;
+		},
+
+		/*
 		 * Determines the current row and column and updates the hidden description texts of the table accordingly.
 		 */
 		updateRowColCount : function(oExtension) {
@@ -364,11 +388,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 					column: oColumn,
 					index: $Cell.attr("data-sap-ui-colindex")
 				}),
-				sText = null,
+				sText = ExtensionHelper.getColumnTooltip(oColumn),
 				aLabels = [oTable.getId() + "-colnumberofcols"].concat(mAttributes["aria-labelledby"]);
 
-			if (oColumn && oColumn.getTooltip_AsString()) {
-				sText = oColumn.getTooltip_AsString();
+			if (sText) {
 				aLabels.push(oTable.getId() + "-cellacc");
 			}
 
