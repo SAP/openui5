@@ -93,19 +93,21 @@ html.sap-desktop .sapMST .sapMSTIconClickTapArea:hover ~.sapMSTIconDisplayArea {
 	opacity: 0.6;
 }
 
-.sapMST.sapMSTIconPressed .sapMSTIconClickTapArea:hover ~.sapMSTIconDisplayArea {
+
+html.sap-desktop .sapMST.sapMSTIconPressed .sapMSTIconClickTapArea:hover ~.sapMSTIconDisplayArea {
 	opacity: 1.0;
 }
 
 .sapMST .sapMSTIconNestedArea {
+	right: 5.9%;
+	z-index: 1;
 	position: absolute;
-	left: 34%;
-	top: 11%;
+	top: 10.9%;
 	outline: none;
 }
 
 .sapMST.sapMSTPauseIcon .sapMSTIconNestedArea {
-	left: 38%;
+	right: 6.9%;
 }
 
 .sapMSTIconNestedArea :active {
@@ -121,6 +123,7 @@ html.sap-tablet .sapMST .sapMSTIconClickTapArea {
 }
 
 html.sap-desktop .sapMST:not(:hover).sapMST:not(:focus) .sapMSTIconDisplayArea,
+html.sap-desktop .sapMST:not(:hover).sapMST:not(:focus) .sapMSTIconNestedArea,
 html.sap-desktop .sapMST:not(:hover).sapMST:not(:focus) .sapMSTBulleted {
 	visibility: hidden;
 }
