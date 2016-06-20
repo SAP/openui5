@@ -34,10 +34,6 @@
         <raw-module name="sap/ui/thirdparty/iscroll.js" />
         <raw-module name="sap/ui/thirdparty/iscroll-lite.js" />
         <raw-module name="sap/ui/thirdparty/jquery.js" />
-        <raw-module name="sap/ui/thirdparty/jquery/jquery-1.10.1.js" />
-        <raw-module name="sap/ui/thirdparty/jquery/jquery-1.10.2.js" />
-        <raw-module name="sap/ui/thirdparty/jquery/jquery-1.11.1.js" />
-        <raw-module name="sap/ui/thirdparty/jquery/jquery-2.2.3.js" />
         <raw-module name="sap/ui/thirdparty/jquery-mobile-custom.js" depends="sap/ui/thirdparty/jquery.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" depends="sap/ui/thirdparty/jquery.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-blind.js" depends="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" />

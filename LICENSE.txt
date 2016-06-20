@@ -327,27 +327,6 @@ License: MIT License
 <year> = 2008-2013
 <copyright holders> = Matteo Spinelli
 
-Component: jQuery 1.10.1
-Licensor: jQuery Foundation and other contributors
-Website: http://jquery.com/
-License: MIT License
-<year> = 2013
-<copyright holders> = jQuery Foundation and other contributors
-
-Component: jQuery 1.10.2
-Licensor: jQuery Foundation and other contributors
-Website: http://jquery.com/
-License: MIT License
-<year> = 2013
-<copyright holders> = jQuery Foundation and other contributors
-
-Component: jQuery 1.11.1
-Licensor: jQuery Foundation and other contributors
-Website: http://jquery.com/
-License: MIT License
-<year> = 2014
-<copyright holders> = jQuery Foundation and other contributors
-
 Component: jQuery 2.2.3
 Licensor: jQuery Foundation and other contributors
 Website: http://jquery.com/
