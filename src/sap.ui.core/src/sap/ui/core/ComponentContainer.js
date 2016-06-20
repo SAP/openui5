@@ -141,9 +141,9 @@ sap.ui.define(['./Control', './Component', './Core', './library'],
 				// delegate the owner component if available
 				var oOwnerComponent = Component.getOwnerComponentFor(this);
 				if (oOwnerComponent) {
-					return oOwnerComponent.runAsOwner(fnCreateAndSetComponent);
+					oOwnerComponent.runAsOwner(fnCreateAndSetComponent);
 				} else {
-					return fnCreateAndSetComponent();
+					fnCreateAndSetComponent();
 				}
 			}
 		}
