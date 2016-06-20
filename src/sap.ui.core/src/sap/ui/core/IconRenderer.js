@@ -33,8 +33,8 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 		oRm.writeControlData(oControl);
 		oRm.writeAccessibilityState(oControl, oControl._getAccessibilityAttributes());
 
-		if (sTooltip || (bUseIconTooltip && oIconInfo)) {
-			oRm.writeAttributeEscaped("title", sTooltip || oIconInfo.text || oIconInfo.name);
+		if (sTooltip || (bUseIconTooltip && oIconInfo && oIconInfo.text)) {
+			oRm.writeAttributeEscaped("title", sTooltip || oIconInfo.text);
 		}
 
 		if (oControl.hasListeners("press") && !bNoTabStop) {
