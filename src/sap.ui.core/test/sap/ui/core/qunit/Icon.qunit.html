@@ -158,7 +158,7 @@
 
 			test("set src should also change the tooltip", function() {
 				var oIcon = new sap.ui.core.Icon({
-					src: sap.ui.core.IconPool.getIconURI("manager")
+					src: sap.ui.core.IconPool.getIconURI("delete")
 				});
 
 				oIcon.placeAt("uiAreaA");
@@ -184,7 +184,7 @@
 
 			test("set src should not change aria-label when 'labelledby' is set", function() {
 				var oIcon = new sap.ui.core.Icon({
-					src: sap.ui.core.IconPool.getIconURI("manager"),
+					src: sap.ui.core.IconPool.getIconURI("delete"),
 					ariaLabelledBy: "foo"
 				});
 
