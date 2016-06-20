@@ -38,19 +38,28 @@
 		QUnit.test("CoreAvailable", function(assert) {
 			assert.ok(typeof(sap.ui.getCore) == "function", "function sap.ui.getCore must be defined");
 			assert.notStrictEqual(sap.ui.getCore(), null, "calling sap.ui.getCore() must not return null");
-			assert.ok(sap.ui.getCore() instanceof sap.ui.base.Interface && _providesPublicMethods(sap.ui.getCore(), sap.ui.core.Core), "calling sap.ui.getCore() must deliver the Core interface");
+			assert.ok(sap.ui.getCore() instanceof sap.ui.base.Interface, "calling sap.ui.getCore() must deliver the Core interface");
+			checkPublicMethods(assert, sap.ui.getCore(), sap.ui.core.Core);
 		});
 
 		QUnit.test("GetRenderManager", function(assert) {
 			var oCore = sap.ui.getCore();
+			
+			var aCommonMethods = ["renderControl", "write", "writeEscaped", "translate", "writeAcceleratorKey", "writeControlData", "writeInvisiblePlaceholderData",
+								  "writeElementData", "writeAttribute", "writeAttributeEscaped", "addClass", "writeClasses",
+								  "addStyle", "writeStyles", "writeAccessibilityState", "writeIcon",
+								  "getConfiguration", "getHTML", "cleanupControlWithoutRendering", "render", "flush", "destroy"];
+
 			assert.notStrictEqual(oCore.getRenderManager, undefined, "function getRenderManager on sap.ui.core.Core instance must be defined");
-			assert.ok(oCore.getRenderManager() instanceof sap.ui.base.Interface && _providesPublicMethods(oCore.getRenderManager(), sap.ui.core.RenderManager), "calling getRenderManager on Core instance must deliver the RenderManager interface");
+			assert.ok(typeof oCore.getRenderManager() === 'object', "calling getRenderManager on Core instance must deliver the RenderManager interface");
+			checkMethods(assert, oCore.getRenderManager(), aCommonMethods);
 		});
 
 		QUnit.test("GetConfiguration", function(assert) {
 			var oCore = sap.ui.getCore();
 			assert.notStrictEqual(oCore.getConfiguration, undefined, "function getConfiguration on sap.ui.core.Core instance must be defined");
-			assert.ok(oCore.getConfiguration() instanceof sap.ui.base.Interface && _providesPublicMethods(oCore.getConfiguration(), sap.ui.core.Configuration), "calling getConfiguration on Core instance must deliver the RenderManager interface");
+			assert.ok(oCore.getConfiguration() instanceof sap.ui.base.Interface, "calling getConfiguration on Core instance must deliver the Configuration interface");
+			checkPublicMethods(assert, oCore.getConfiguration(), sap.ui.core.Configuration);
 		});
 
 
@@ -58,18 +67,20 @@
 		// Convenience
 		// #####################################################################
 
-		function _providesPublicMethods(/**sap.ui.base.Object*/oObject, /**function*/ fnClass, /**boolean*/ bFailEarly) {
-			var aMethodNames=fnClass.getMetadata().getAllPublicMethods(),
-				result = true,
-				sMethod;
-			for(var i in aMethodNames){
-				sMethod = aMethodNames[i];
-				result = result && oObject[sMethod] != undefined;
-				if(result) continue;
-				if(bFailEarly && !result) break;
-				// inform("method '" + sMethod + "' is missing.");
+		function checkMethods(assert, oObject, aMethodNames) {
+
+			for ( var i = 0; i < aMethodNames.length; i++ ) {
+				assert.ok(oObject[aMethodNames[i]] !== undefined, "expected interface method should actually exist: " + aMethodNames[i]);
 			}
-			return result;
+			
+			for ( var i in oObject ) {
+				assert.ok(aMethodNames.indexOf(i) >= 0, "actual method should be part of expected interface: " + i);
+			}
+
+		}
+		
+		function checkPublicMethods(assert, /**sap.ui.base.Object*/oObject, /**function*/ fnClass) {
+			return checkMethods(assert, oObject, fnClass.getMetadata().getAllPublicMethods());
 		}
 		</script>
 	</head>
