@@ -1,0 +1,106 @@
+/* ================================= */
+/* CSS for control sap.m/TimePicker  */
+/* Belize theme                      */
+/* ================================= */
+
+/* ======================================== */
+/* TimePicker Input Field                   */
+/* ======================================== */
+.sapMTimePicker {
+	.sapUiIcon {
+		&:hover {}
+		&:focus {}
+		&:active {}
+	}
+	&.sapMTPInputActive {
+		.sapMInputBaseInner {}
+		.sapUiIcon {
+			&:hover {}
+			&:focus {}
+		}
+	}
+}
+/* ======================================== */
+/* TimePicker Dropdown                      */
+/* ======================================== */
+.sapMTimePickerDropDown {
+	.sapMTimePickerContainer {
+		.sapMTPColumn {
+			.sapMTimePickerLabel {}
+			.sapMTimePickerSlider {
+				.sapMTimePickerItem {
+					&:hover {
+						background: lighten(@sapUiSelected, 3);
+					}
+					&:active {}
+					&:focus {}
+				}
+			}
+			&.sapMTPSliderExpanded {
+				.sapMTimePickerSlider {
+					.sapMTimePickerItem {
+						background: @sapUiContentForegroundColor;
+						&:hover {
+							background: darken(@sapUiContentForegroundColor, 6);
+						}
+						&:active {}
+						&:focus {}
+					}
+					.sapMTPPickerSelectionFrame {
+						&:hover {
+							border: 2px solid lighten(@sapUiSelected, 3);
+							& + ul > li.sapMTimePickerItem.sapMTimePickerItemSelected {}
+						}
+						&:active {
+							& + ul > li.sapMTimePickerItem.sapMTimePickerItemSelected {}
+						}
+					}
+				}
+			}
+			&:focus {}
+		}
+	}
+}
+
+html.sap-phone {
+	/* ======================================== */
+	/* TimePicker Input Field                   */
+	/* ======================================== */
+	.sapMTimePicker {
+		.sapUiIcon {
+			&:focus {}
+			&:active {}
+		}
+		&.sapMTPInputActive {
+			.sapMInputBaseInner {}
+			.sapUiIcon {}
+		}
+	}
+	/* ======================================== */
+	/* TimePicker Dropdown                      */
+	/* ======================================== */
+	.sapMTimePickerDropDown {
+		.sapMTimePickerContainer {
+			.sapMTimePickerContainerLabel {}
+			.sapMTPColumn {
+				.sapMTimePickerLabel {}
+				.sapMTimePickerSlider {
+					.sapMTimePickerItem {
+						&:active {}
+						&:focus {}
+					}
+				}
+				&.sapMTPSliderExpanded {
+					.sapMTimePickerSlider {
+						.sapMTimePickerItem {
+							&:active {}
+							&:focus {}
+						}
+						.sapMTPPickerSelectionFrame {}
+					}
+				}
+				&:focus {}
+			}
+		}
+	}
+}
