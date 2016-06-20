@@ -229,6 +229,12 @@
 		_earlyLog("error", "SAPUI5 requires a jQuery version of 1.10 or higher, but lower than 2.2.4; current version is " + jQuery.fn.jquery);
 	}
 
+	// since jQuery 1.10.1 - 1.11.1 will be removed for UI5 1.40 we Should
+	// warn users if they use a deprecated jQuery version
+	if (oJQVersion.inRange("1.10.1", "2.2.3") ) {
+		_earlyLog("warning", 'jQuery version ' + jQuery.fn.jquery + ' is not supported anymore for SAPUI5 and will be removed with version 1.40');
+	}
+
 	// TODO move to a separate module? Only adds 385 bytes (compressed), but...
 	if ( !jQuery.browser ) {
 		// re-introduce the jQuery.browser support if missing (jQuery-1.9ff)
