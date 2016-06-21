@@ -162,11 +162,15 @@ html[dir=rtl] .sapMSwtTrans > .sapMSwtInner {
 /* background */
 
 .sapMSwtOn .sapMSwtHandle {
-	background: @sapUiContentContrastIconColor;
+	background: @sapUiFieldActiveBackground;
+	box-sizing: border-box;
+	border: 2px solid @sapUiContentContrastIconColor;
 }
 
 .sapMSwtOff .sapMSwtHandle {
-	background: @sapUiFieldBorderColor;
+	background: @sapUiFieldBackground;
+	box-sizing: border-box;
+	border: 2px solid @sapUiFieldBorderColor;
 }
 
 /* ====================================================== */
