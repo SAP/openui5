@@ -8,7 +8,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 	"use strict";
 
 
-	sap.ui._maxThemeCheckCycles = 100;
+	var maxThemeCheckCycles = 150;
 
 	/**
 	 * Creates a new ThemeCheck object.
@@ -41,15 +41,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 			return this;
 		},
 
-		fireThemeChangedEvent : function(bOnlyOnInitFail, bForceCheck) {
+		fireThemeChangedEvent : function(bOnlyOnInitFail) {
 			clear(this);
-			var bUseThemeCheck = sap.ui._maxThemeCheckCycles > 0; //Possibility to switch off theme check (except of force mode (for Core.applyTheme))
 
-			if (bUseThemeCheck || bForceCheck) {
-				delayedCheckTheme.apply(this, [true]);
-			} else {
-				ThemeCheck.themeLoaded = true;
-			}
+			delayedCheckTheme.apply(this, [true]);
 
 			if (!bOnlyOnInitFail && !this._sThemeCheckId) {
 				this._oCore.fireThemeChanged({theme: this._oCore.getConfiguration().getTheme()});
@@ -251,10 +246,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 	function delayedCheckTheme(bFirst) {
 		this._iCount++;
 
-		var bEmergencyExit = this._iCount > sap.ui._maxThemeCheckCycles;
+		var bEmergencyExit = this._iCount > maxThemeCheckCycles;
 
 		if (!checkTheme(this) && !bEmergencyExit) {
-			this._sThemeCheckId = jQuery.sap.delayedCall(2, this, delayedCheckTheme);
+			// Use dynamic delay to have a fast check for most use cases
+			// but not cause too much CPU usage for long running css requests
+			var iDelay;
+			if (this._iCount <= 100) {
+				iDelay = 2; // 1. Initial interval
+			} else if (this._iCount <= 110) {
+				iDelay = 500; // 2. After 100 cycles
+			} else {
+				iDelay = 1000; // 3. After another 10 cycles (about 5 seconds)
+			}
+			this._sThemeCheckId = jQuery.sap.delayedCall(iDelay, this, delayedCheckTheme);
 		} else if (!bFirst) {
 			clear(this);
 			ThemeCheck.themeLoaded = true;
