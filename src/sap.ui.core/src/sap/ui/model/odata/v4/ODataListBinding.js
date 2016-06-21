@@ -250,6 +250,63 @@ sap.ui.define([
 	};
 
 	/**
+	 * Requests the value for the given absolute path; the value is requested from this binding's
+	 * cache or from its context in case it has no cache or the cache does not contain data for
+	 * this path.
+	 *
+	 * @param {string} sPath
+	 *   An absolute path including the binding path
+	 * @returns {SyncPromise}
+	 *   A promise on the outcome of the cache's <code>read</code> call
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.fetchAbsoluteValue = function (sPath) {
+		var iIndex, iPos, sResolvedPath;
+
+		if (this.oCache) {
+			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext) + "/";
+			if (sPath.lastIndexOf(sResolvedPath) === 0) {
+				sPath = sPath.slice(sResolvedPath.length);
+				iIndex = parseInt(sPath, 10); // parseInt ignores any path following the number
+				iPos = sPath.indexOf("/");
+				sPath = iPos > 0 ? sPath.slice(iPos + 1) : "";
+				return this.fetchValue(sPath, undefined, iIndex);
+			}
+		}
+		if (this.oContext) {
+			return this.oContext.fetchAbsoluteValue(sPath);
+		}
+		return _SyncPromise.resolve();
+	};
+
+	/**
+	 * Requests the value for the given path and index; the value is requested from this binding's
+	 * cache or from its context in case it has no cache.
+	 *
+	 * @param {string} [sPath]
+	 *   Some relative path
+	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
+	 *   A property binding which registers itself as listener at the cache
+	 * @param {number} iIndex
+	 *   Index corresponding to some current context of this binding
+	 * @returns {SyncPromise}
+	 *   A promise on the outcome of the cache's <code>read</code> call
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.fetchValue = function (sPath, oListener, iIndex) {
+		if (this.oCache) {
+			return this.oCache.read(iIndex, /*iLength*/1, undefined, sPath, undefined, oListener);
+		}
+		if (this.oContext) {
+			return this.oContext.fetchValue(_Helper.buildPath(this.sPath, iIndex, sPath),
+				oListener);
+		}
+		return _SyncPromise.resolve();
+	};
+
+	/**
 	 * Filters the list with the given filters.
 	 *
 	 * If there are pending changes an error is thrown. Use {@link #hasPendingChanges} to check if
@@ -640,63 +697,6 @@ sap.ui.define([
 		this.oCache.refresh();
 		this.reset();
 		this._fireRefresh({reason : ChangeReason.Refresh});
-	};
-
-	/**
-	 * Requests the value for the given absolute path; the value is requested from this binding's
-	 * cache or from its context in case it has no cache or the cache does not contain data for
-	 * this path.
-	 *
-	 * @param {string} sPath
-	 *   An absolute path including the binding path
-	 * @returns {SyncPromise}
-	 *   A promise on the outcome of the cache's <code>read</code> call
-	 *
-	 * @private
-	 */
-	ODataListBinding.prototype.fetchAbsoluteValue = function (sPath) {
-		var iIndex, iPos, sResolvedPath;
-
-		if (this.oCache) {
-			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext) + "/";
-			if (sPath.lastIndexOf(sResolvedPath) === 0) {
-				sPath = sPath.slice(sResolvedPath.length);
-				iIndex = parseInt(sPath, 10); // parseInt ignores any path following the number
-				iPos = sPath.indexOf("/");
-				sPath = iPos > 0 ? sPath.slice(iPos + 1) : "";
-				return this.fetchValue(sPath, undefined, iIndex);
-			}
-		}
-		if (this.oContext) {
-			return this.oContext.fetchAbsoluteValue(sPath);
-		}
-		return _SyncPromise.resolve();
-	};
-
-	/**
-	 * Requests the value for the given path and index; the value is requested from this binding's
-	 * cache or from its context in case it has no cache.
-	 *
-	 * @param {string} [sPath]
-	 *   Some relative path
-	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
-	 *   A property binding which registers itself as listener at the cache
-	 * @param {number} iIndex
-	 *   Index corresponding to some current context of this binding
-	 * @returns {SyncPromise}
-	 *   A promise on the outcome of the cache's <code>read</code> call
-	 *
-	 * @private
-	 */
-	ODataListBinding.prototype.fetchValue = function (sPath, oListener, iIndex) {
-		if (this.oCache) {
-			return this.oCache.read(iIndex, /*iLength*/1, undefined, sPath, undefined, oListener);
-		}
-		if (this.oContext) {
-			return this.oContext.fetchValue(_Helper.buildPath(this.sPath, iIndex, sPath),
-				oListener);
-		}
-		return _SyncPromise.resolve();
 	};
 
 	/**

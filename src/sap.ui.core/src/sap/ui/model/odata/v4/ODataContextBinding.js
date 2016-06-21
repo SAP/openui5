@@ -433,6 +433,82 @@ sap.ui.define([
 	};
 
 	/**
+	 * Requests the value for the given absolute path; the value is requested from this binding's
+	 * cache or from its context in case it has no cache or the cache does not contain data for
+	 * this path.
+	 *
+	 * @param {string} sPath
+	 *   An absolute path including the binding path
+	 * @returns {SyncPromise}
+	 *   A promise on the outcome of the cache's <code>read</code> call
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype.fetchAbsoluteValue = function (sPath) {
+		var sResolvedPath;
+
+		if (this.oCache) {
+			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+			if (sPath === sResolvedPath || sPath.lastIndexOf(sResolvedPath + "/") === 0) {
+				return this.fetchValue(sPath.slice(sResolvedPath.length + 1));
+			}
+		}
+		if (this.oContext) {
+			return this.oContext.fetchAbsoluteValue(sPath);
+		}
+		return _SyncPromise.resolve();
+	};
+
+	/**
+	 * Requests the value for the given path; the value is requested from this binding's
+	 * cache or from its context in case it has no cache.
+	 *
+	 * @param {string} [sPath]
+	 *   Some relative path
+	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
+	 *   A property binding which registers itself as listener at the cache
+	 * @returns {SyncPromise}
+	 *   A promise on the outcome of the cache's <code>read</code> call
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype.fetchValue = function (sPath, oListener) {
+		var bDataRequested = false,
+			sGroupId,
+			that = this;
+
+		if (this.oCache) {
+			sGroupId = this.sRefreshGroupId || this.getGroupId();
+			this.sRefreshGroupId = undefined;
+			return this.oCache.read(sGroupId, sPath, function () {
+				bDataRequested = true;
+				that.oModel.addedRequestToGroup(sGroupId, that.fireDataRequested.bind(that));
+			}, oListener).then(function (vValue) {
+				if (bDataRequested) {
+					that.fireDataReceived();
+				}
+				return vValue;
+			}, function (oError) {
+				if (bDataRequested) {
+					if (oError.canceled) {
+						that.fireDataReceived();
+					} else {
+						// log error only once when data request failed
+						that.oModel.reportError("Failed to read path " + that.sPath, sClassName,
+							oError);
+						that.fireDataReceived({error : oError});
+					}
+				}
+				throw oError;
+			});
+		}
+		if (this.oContext) {
+			return this.oContext.fetchValue(_Helper.buildPath(this.sPath, sPath), oListener);
+		}
+		return _SyncPromise.resolve();
+	};
+
+	/**
 	 * Returns the group ID of the binding that is used for read requests.
 	 *
 	 * @returns {string}
@@ -543,82 +619,6 @@ sap.ui.define([
 				this._fireChange({reason : ChangeReason.Refresh});
 			}
 		}
-	};
-
-	/**
-	 * Requests the value for the given absolute path; the value is requested from this binding's
-	 * cache or from its context in case it has no cache or the cache does not contain data for
-	 * this path.
-	 *
-	 * @param {string} sPath
-	 *   An absolute path including the binding path
-	 * @returns {SyncPromise}
-	 *   A promise on the outcome of the cache's <code>read</code> call
-	 *
-	 * @private
-	 */
-	ODataContextBinding.prototype.fetchAbsoluteValue = function (sPath) {
-		var sResolvedPath;
-
-		if (this.oCache) {
-			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
-			if (sPath === sResolvedPath || sPath.lastIndexOf(sResolvedPath + "/") === 0) {
-				return this.fetchValue(sPath.slice(sResolvedPath.length + 1));
-			}
-		}
-		if (this.oContext) {
-			return this.oContext.fetchAbsoluteValue(sPath);
-		}
-		return _SyncPromise.resolve();
-	};
-
-	/**
-	 * Requests the value for the given path; the value is requested from this binding's
-	 * cache or from its context in case it has no cache.
-	 *
-	 * @param {string} [sPath]
-	 *   Some relative path
-	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
-	 *   A property binding which registers itself as listener at the cache
-	 * @returns {SyncPromise}
-	 *   A promise on the outcome of the cache's <code>read</code> call
-	 *
-	 * @private
-	 */
-	ODataContextBinding.prototype.fetchValue = function (sPath, oListener) {
-		var bDataRequested = false,
-			sGroupId,
-			that = this;
-
-		if (this.oCache) {
-			sGroupId = this.sRefreshGroupId || this.getGroupId();
-			this.sRefreshGroupId = undefined;
-			return this.oCache.read(sGroupId, sPath, function () {
-				bDataRequested = true;
-				that.oModel.addedRequestToGroup(sGroupId, that.fireDataRequested.bind(that));
-			}, oListener).then(function (vValue) {
-				if (bDataRequested) {
-					that.fireDataReceived();
-				}
-				return vValue;
-			}, function (oError) {
-				if (bDataRequested) {
-					if (oError.canceled) {
-						that.fireDataReceived();
-					} else {
-						// log error only once when data request failed
-						that.oModel.reportError("Failed to read path " + that.sPath, sClassName,
-							oError);
-						that.fireDataReceived({error : oError});
-					}
-				}
-				throw oError;
-			});
-		}
-		if (this.oContext) {
-			return this.oContext.fetchValue(_Helper.buildPath(this.sPath, sPath), oListener);
-		}
-		return _SyncPromise.resolve();
 	};
 
 	/**
