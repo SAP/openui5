@@ -38,7 +38,6 @@ sap.ui.define([
 
 		var oLogger = $.sap.log.getLogger("sap.ui.test.Opa5"),
 			oPlugin = new OpaPlugin(iFrameLauncher._sLogPrefix),
-			oMatcherPipeline = new MatcherPipeline(),
 			oActionPipeline = new ActionPipeline(),
 			sFrameId = "OpaFrame",
 			oValidator = new ParameterValidator({
@@ -366,6 +365,7 @@ sap.ui.define([
 			oOptions = $.extend({},
 					oFilteredConfig,
 					oOptions);
+			oOptions.actions = vActions;
 
 			oValidator.validate({
 				validationInfo: Opa5._validationInfo,
@@ -382,72 +382,13 @@ sap.ui.define([
 
 			oOptionsPassedToOpa.check = function () {
 				// Create a new options object for the plugin to keep the original one as is
-				var oPluginOptions = $.extend({}, oOptions, {
-						// only pass interactable if there are actions for backwards compatibility
-						interactable: !!vActions
-					}),
-					oPlugin = Opa5.getPlugin();
+				var oPlugin = Opa5.getPlugin();
 
-				bPluginLooksForControls = oPlugin._isLookingForAControl(oPluginOptions);
+				// even if we have no control the matchers may provide a value for vControl
+				vResult = oPlugin.getFilterdControls(oOptions, vControl);
 
-				if (bPluginLooksForControls) {
-					vControl = oPlugin.getMatchingControls(oPluginOptions);
-				}
-
-				//We were searching for a control but we did not find it
-				if (typeof oOptions.id === "string" && !vControl) {
+				if (vResult === OpaPlugin.FILTER_FOUND_NO_CONTROLS) {
 					return false;
-				}
-
-
-				//Search for a controlType in a view or open dialog
-				if (!oOptions.id && (oOptions.viewName || oOptions.searchOpenDialogs) && vControl.length === 0) {
-					oLogger.debug("found no controls in view: " + oOptions.viewName + " with controlType " + oOptions.sOriginalControlType);
-					return false;
-				}
-
-				//Regex did not find any control
-				if (oOptions.id instanceof RegExp && !vControl.length) {
-					oLogger.debug("found no control with the id regex" + oOptions.id);
-					return false;
-				}
-
-				//Did not find all controls with the specified ids
-				if ($.isArray(oOptions.id) && (!vControl || vControl.length !== oOptions.id.length)) {
-					if (vControl && vControl.length) {
-						oLogger.debug("found not all controls with the ids " + oOptions.id + " onlyFound the controls: " +
-								vControl.map(function (oCont) {
-									return oCont.sId;
-								}));
-					} else {
-						oLogger.debug("found no control with the id  " + oOptions.id);
-					}
-					return false;
-				}
-
-				if (oOptions.controlType && $.isArray(vControl) && !vControl.length) {
-					oLogger.debug("found no controls with the type  " + oOptions.sOriginalControlType);
-					return false;
-				}
-
-				/*
-				 * If the plugin does not look for controls execute matchers even if vControl is falsy
-				 * used when you smuggle in values to success through matchers:
-				 * matchers: function () {return "foo";},
-				 * success: function (sFoo) {}
-				 */
-				if ((vControl || !bPluginLooksForControls) && oOptions.matchers) {
-					vResult = oMatcherPipeline.process({
-						matchers: oOptions.matchers,
-						control: vControl
-					});
-
-					// no control matched
-					if (!vResult) {
-						return false;
-					}
-				} else {
-					vResult = vControl;
 				}
 
 				if (fnOriginalCheck) {

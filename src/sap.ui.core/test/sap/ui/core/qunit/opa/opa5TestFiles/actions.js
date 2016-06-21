@@ -1,7 +1,8 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
+	"sap/ui/test/Opa",
 	"sap/m/Button"
-], function (Opa5, Button) {
+], function (Opa5, Opa, Button) {
 	QUnit.module("Opa actions", {
 		setup: function () {
 			this.oButton = new Button("foo");
@@ -56,6 +57,32 @@ sap.ui.define([
 		oOpa5.emptyQueue().fail(function () {
 			// Assert
 			sinon.assert.notCalled(fnActionSpy);
+			start();
+		});
+
+		// empty the queue
+		this.clock.tick(100);
+	});
+
+	QUnit.test("Should execute success on a busy button", function(assert) {
+		// Arrange
+		var oOpa5 = new Opa5(),
+			fnSuccessSpy = this.spy(),
+			start = assert.async();
+
+		this.oButton.setBusy(true);
+
+		// Act
+		oOpa5.waitFor({
+			id: "foo",
+			// immediately time out
+			timeout: -1,
+			success: fnSuccessSpy
+		});
+
+		oOpa5.emptyQueue().done(function () {
+			// Assert
+			sinon.assert.calledOnce(fnSuccessSpy);
 			start();
 		});
 
