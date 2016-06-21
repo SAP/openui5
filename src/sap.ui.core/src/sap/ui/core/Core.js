@@ -631,7 +631,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 
 			// notify the listeners
 			if ( this.oThemeCheck ) {
-				this.oThemeCheck.fireThemeChangedEvent(false, true);
+				this.oThemeCheck.fireThemeChangedEvent(false);
 			}
 		}
 	};
