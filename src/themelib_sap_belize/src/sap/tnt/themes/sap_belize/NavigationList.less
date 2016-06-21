@@ -9,7 +9,10 @@
 
 .sapTntNavLIItem {
 	background-color: @sapUiListBackground;
-	color: @sapUiListTextColor;
+
+	& > .sapMText {
+		color: @sapUiListTextColor;
+	}
 
 	& > .sapUiIcon {
 		color: @sapUiContentIconColor;
@@ -22,7 +25,10 @@
 
 .sapTntNavLIItem:not(.sapTntNavLIItemDisabled):active {
 	background-color: @sapUiListActiveBackground;
-	color: @sapUiListActiveTextColor;
+
+	& > .sapMText {
+		color: @sapUiListActiveTextColor;
+	}
 
 	& > .sapUiIcon {
 		color: @sapUiListActiveTextColor;
