@@ -1762,7 +1762,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				// Set the arrow next to the opener
 				var iArrowOffset = this._getArrowOffsetCss(sCalculatedPlacement, oPosParams),
 					sArrowPositionClass = this._getArrowPositionCssClass(sCalculatedPlacement),
-					sArrowStyleClass = this._getArrowStyleCssClass(oPosParams);
+					sArrowStyleClass;
 
 				// Remove old position of the arrow and add the new one
 				$arrow.removeAttr("style");
@@ -1778,6 +1778,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 
 				// Style the arrow according to the header/footer/content if it is to the left or right
 				if (sCalculatedPlacement === sap.m.PlacementType.Left || sCalculatedPlacement === sap.m.PlacementType.Right) {
+					sArrowStyleClass = this._getArrowStyleCssClass(oPosParams);
+
 					if (sArrowStyleClass) {
 						$arrow.addClass(sArrowStyleClass);
 					}
