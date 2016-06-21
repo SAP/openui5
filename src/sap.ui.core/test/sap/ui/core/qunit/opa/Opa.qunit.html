@@ -291,9 +291,11 @@
 
 	module("StopQueue", {
 		setup : function () {
+			this.fnErrorLogStub = sinon.stub(jQuery.sap.log, "error", $.noop);
 			sinon.config.useFakeTimers = false;
 		},
 		teardown : function () {
+			this.fnErrorLogStub.restore();
 			sinon.config.useFakeTimers = true;
 		}
 	});
@@ -306,7 +308,7 @@
 		sinon.assert.calledWith(fnSpy, "stopQueue was called before emptyQueue, queued tests have never been executed", "Opa");
 	});
 
-	QUnit.test("Should strop the queue inside of success", function (assert) {
+	QUnit.test("Should stop the queue inside of success", function (assert) {
 		var oOpa = new Opa(),
 				fnDone = assert.async(),
 				fnShouldNotBeCalled = sinon.spy();
@@ -332,12 +334,12 @@
 
 	QUnit.test("Should stop a Queue while polling", function () {
 		var oOpa = new Opa(),
-				fnDone = assert.async(),
-				fnSuccess = sinon.spy(),
-				fnCheck = sinon.spy(function () {
-					Opa.stopQueue();
-					return true;
-				});
+			fnDone = assert.async(),
+			fnSuccess = sinon.spy(),
+			fnCheck = sinon.spy(function () {
+				Opa.stopQueue();
+				return true;
+			});
 
 		oOpa.waitFor({
 			check: fnCheck,
@@ -358,7 +360,6 @@
 		// System under Test
 		var oOpa = new Opa(),
 			fnDone = assert.async(),
-			fnLogSpy = sinon.spy(jQuery.sap.log, "error"),
 			fnShouldNotBeCalled = sinon.spy();
 
 		function callingFunction () {
@@ -381,18 +382,35 @@
 
 			Opa.emptyQueue().fail(function () {
 				sinon.assert.notCalled(fnShouldNotBeCalled);
-				sinon.assert.calledTwice(fnLogSpy);
+				sinon.assert.calledTwice(this.fnErrorLogStub);
 				if (theCurrentBrowserSupportsStacktraces()) {
-					sinon.assert.calledWith(fnLogSpy, sinon.match(/callingFunction/), "Opa");
+					sinon.assert.calledWith(this.fnErrorLogStub, sinon.match(/callingFunction/), "Opa");
 				}
-				sinon.assert.alwaysCalledWith(fnLogSpy, sinon.match(/Queue was stopped manually/) ,"Opa");
-				fnLogSpy.restore();
+				sinon.assert.alwaysCalledWith(this.fnErrorLogStub, sinon.match(/Queue was stopped manually/) ,"Opa");
 				fnDone();
-			});
+			}.bind(this));
 
 			// stop twice to see if state is deleted correctly
 			callingFunction();
+		}.bind(this));
+	});
+
+	QUnit.test("Should stop the queue silently", function (assert) {
+		var oOpa = new Opa(),
+			fnDoneSpy = sinon.spy(),
+			fnFailSpy = sinon.spy();
+
+		oOpa.waitFor({
+			success: $.noop
 		});
+		var oPromise = oOpa.emptyQueue();
+		oPromise.done(fnDoneSpy);
+		oPromise.fail(fnFailSpy);
+		Opa.stopQueue(false);
+
+		sinon.assert.notCalled(this.fnErrorLogStub);
+		sinon.assert.notCalled(fnFailSpy);
+		sinon.assert.calledOnce(fnDoneSpy);
 	});
 
 	module("Timeouts", {
@@ -516,7 +534,6 @@
 			},
 			success : thisIsTheSuccessHandler
 		});
-
 
 		oOpa.emptyQueue().fail(function (oOptions) {
 			ok(true, 0, "Promise got rejected");
