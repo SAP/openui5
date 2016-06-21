@@ -602,11 +602,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			// focus has to be inside/on popover otherwise autoclose() will not work
 				sFocusId = this._getInitialFocusId(),
 				sTheme = sap.ui.getCore().getConfiguration().getTheme(),
-				oParentDomRef, iPlacePos, bThemeBelize;
+				oParentDomRef, iPlacePos, bThemeBelize, aCompactParents;
+
+			oParentDomRef = (oControl.getDomRef && oControl.getDomRef()) || oControl;
+			aCompactParents = jQuery(oParentDomRef).closest(".sapUiSizeCompact");
 
 			// Determines if the Popover will be rendered in a compact mode
 			bThemeBelize = sTheme === "sap_belize" || sTheme === "sap_belize_plus";
-			this._bSizeCompact = sap.m._bSizeCompact || !!document.querySelector('body.sapUiSizeCompact') || this.hasStyleClass("sapUiSizeCompact");
+			this._bSizeCompact = sap.m._bSizeCompact || !!aCompactParents.length || this.hasStyleClass("sapUiSizeCompact");
 			this._bUseCompactArrow = this._bSizeCompact || bThemeBelize;
 
 			this._adaptPositionParams();
