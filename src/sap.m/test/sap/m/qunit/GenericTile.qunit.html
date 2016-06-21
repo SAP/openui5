@@ -61,7 +61,6 @@
 					}
 				} else {
 					sap.ui.getCore().attachThemeChanged(fnThemeApplied.bind(this));
-					sap.ui._maxThemeCheckCycles = 1000;
 					sap.ui.getCore().applyTheme(sTheme);
 				}
 
@@ -88,7 +87,6 @@
 			this.oGenericTile = null;
 
 			this.applyTheme(this.sStartTheme);
-			sap.ui._maxThemeCheckCycles = 100;
 		}
 	});
 
