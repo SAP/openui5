@@ -724,7 +724,16 @@
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier"});
 			ok(oContext instanceof sap.ui.model.Context, "No reload needed for supplier expand");
 
+			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier", select: "*"});
+			ok(oContext instanceof sap.ui.model.Context, "No reload needed for unselected supplier expand");
+
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier/Products"});
+			ok(!oContext, "Reload needed for supplier/products expand");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier/Products", select: "Supplier/*"});
+			ok(oContext instanceof sap.ui.model.Context, "No reload needed for supplier expand");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier/Products", select: "Supplier/Products"});
 			ok(!oContext, "Reload needed for supplier/products expand");
 
 			OData.defaultHttpClient.request.restore();
@@ -754,7 +763,16 @@
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier"});
 			ok(oContext instanceof sap.ui.model.Context, "No reload needed for supplier expand");
 
+			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier", select: "*"});
+			ok(oContext instanceof sap.ui.model.Context, "No reload needed for unselected supplier expand");
+
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier/Products"});
+			ok(oContext instanceof sap.ui.model.Context, "No reload needed for supplier/products expand");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier/Products", select: "Supplier/*"});
+			ok(oContext instanceof sap.ui.model.Context, "No reload needed for supplier expand");
+
+			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier/Products", select: "Supplier/Products"});
 			ok(oContext instanceof sap.ui.model.Context, "No reload needed for supplier/products expand");
 
 			OData.defaultHttpClient.request.restore();
@@ -773,6 +791,359 @@
 			oLabel.unbindProperty("text");
 			start();
 		}});
+	});
+
+	asyncTest("test getProperty with expand and bIncludeExpandEntries true and false", function(){
+		var oModel = initModel(sURI);
+		sap.ui.getCore().setModel(oModel);
+
+		var oFilter = new sap.ui.model.Filter("ProductName", "EQ", "Chai");
+		var oBinding = oModel.bindList("/Products", null, null, [oFilter], {expand : "Category" }).initialize();
+		var handler1 = function() { // delay the following test
+			equal(oModel.oData["Products(1)"].Category.__ref, "Categories(1)", "test property data with refs directly.");
+			equal(oModel.getProperty("/Products(1)").Category.__ref, "Categories(1)", "test get property with expanded property...default: epanded property should be there");
+			equal(oModel.getProperty("/Products(1)", null, false).Category.__ref, "Categories(1)", "test removeReferences get property bIncludeExpandEntries = false");
+			equal(oModel.getProperty("/Products(1)", null, true).Category.CategoryID, 1, "test get property bIncludeExpandEntries = true");
+			equal(oModel.getProperty("/Products(1)", null, true).Category.CategoryName, "Beverages", "test get property bIncludeExpandEntries = true");
+			oBinding.detachChange(handler1);
+			start();          // resume normal testing
+		};
+		oBinding.attachRefresh(function() {oBinding.getContexts();});
+		oBinding.attachChange(handler1);
+		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
+		oBinding.getContexts();
+	});
+
+	asyncTest("test getObject", function(){
+		cleanServiceDataCache();
+		var oModel = initModel(sURI, {json: false});
+
+		sap.ui.getCore().setModel(oModel);
+
+		var oBinding = oModel.bindContext("/Products(3)", null, {});
+		oBinding.attachChange(function(oContext) {
+			ok(oModel.oData["Products(3)"] !== oModel.getObject("/Products(3)"), "test object copy via getObject");
+			ok(oModel.oData["Products(3)"] === oModel.getProperty("/Products(3)"), "test object copy via getProperty");
+
+			var oValue = oModel.getObject("/Products(3)", null, {select : "ProductName, ProductID"});
+			equal(oValue.ProductName, "Aniseed Syrup", "test getObject with select param");
+			equal(oValue.ProductID, 3, "test getObject with select param");
+			ok(!oValue.hasOwnProperty('Category'), "test getObject with select param");
+
+			start();
+		});
+	});
+
+	asyncTest("test getObject with/without select/expand", function(){
+		var oModel = initModel(sURI);
+		sap.ui.getCore().setModel(oModel);
+
+		var oFilter = new sap.ui.model.Filter("ProductName", "EQ", "Chai");
+		var oBinding = oModel.bindList("/Products", null, null, [oFilter], {expand : "Category" }).initialize();
+		var handler1 = function() { // delay the following test
+			equal(oModel.oData["Products(1)"].Category.__ref, "Categories(1)", "test property data with refs directly.");
+			var sDeferred = oModel.getObject("/Products(1)").Category.__deferred.uri;
+			ok(jQuery.sap.endsWith(sDeferred, "/Products(1)/Category"), "test getObject with no expand param");
+
+			var oValue = oModel.getObject("/Products(1)", null, {select : "ProductName"});
+			equal(oValue.ProductName, "Chai", "test getObject with select param");
+			ok(!oValue.hasOwnProperty('Category'), "test getObject with select param");
+
+			oValue = oModel.getObject("/Products(1)", null, {expand : "Category"});
+			equal(oValue.ProductName, "Chai", "test getObject with expand param");
+			equal(oValue.Category.CategoryID, 1, "test getObject with expand param");
+			equal(oValue.Category.CategoryName, "Beverages", "test getObject with expand param");
+
+			oValue = oModel.getObject("/Products(1)", null, {select: "ProductName, Category, Category/CategoryName", expand : "Category"});
+			equal(oValue.ProductName, "Chai", "test getObject with select and expand param");
+			ok(!oValue.hasOwnProperty('ProductID'), "test getObject with select and expand param");
+			equal(oValue.Category.CategoryID, 1, "test getObject with select and expand param");
+			equal(oValue.Category.CategoryName, "Beverages", "test getObject with select and expand param");
+
+			oBinding.detachChange(handler1);
+			start();          // resume normal testing
+		};
+		oBinding.attachRefresh(function() {oBinding.getContexts();});
+		oBinding.attachChange(handler1);
+		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
+		oBinding.getContexts();
+	});
+
+	asyncTest("test getObject with not all data available", function(){
+		cleanServiceDataCache();
+		var oModel = initModel(sURI, {json: false});
+
+		sap.ui.getCore().setModel(oModel);
+
+		var oBinding = oModel.bindContext("/Products(3)", null, {select: "ProductName,Category/CategoryName", expand: "Category"});
+		oBinding.attachChange(function(oContext) {
+			ok(oModel.oData["Products(3)"] !== oModel.getObject("/Products(3)"), "test object copy via getObject");
+			ok(oModel.oData["Products(3)"] === oModel.getProperty("/Products(3)"), "test object copy via getProperty");
+
+			var oValue = oModel.getObject("/Products(3)");
+			equal(oValue.ProductName, "Aniseed Syrup", "test getObject with no param");
+			ok(!oValue.hasOwnProperty('ProductID'), "test getObject with no param");
+			var sDeferred = oModel.getObject("/Products(3)").Category.__deferred.uri;
+			ok(jQuery.sap.endsWith(sDeferred, "/Products(3)/Category"), "test getObject with no param");
+
+			var oValue = oModel.getObject("/Products(3)", null, {expand:"Category"});
+			equal(oValue.ProductName, "Aniseed Syrup", "test getObject with expand param");
+			ok(!oValue.hasOwnProperty('ProductID'), "test getObject with expand param");
+			ok(!oValue.Category.hasOwnProperty('CategoryID'), "test getObject with expand param");
+			equal(oValue.Category.CategoryName, "Condiments", "test getObject with expand param");
+
+			var oValue = oModel.getObject("/Products(3)", null, {select: "ProductName,ProductID", expand:"Category"});
+			equal(oValue, undefined, "test getObject with expand param");
+
+			var oValue = oModel.getObject("/Products(3)", null, {select: "ProductName,ProductID,Category", expand:"Category,Supplier"});
+			equal(oValue, undefined, "test getObject with expand param");
+
+			start();
+		});
+	});
+
+	asyncTest("test getObject with expand and 1..n nav prop", function(){
+		cleanServiceDataCache();
+		var oModel = initModel(sURI, {json: false});
+		sap.ui.getCore().setModel(oModel);
+
+		var oBinding = oModel.bindContext("/Categories(7)", null, {expand: "Products"});
+		oBinding.attachChange(function(oContext) {
+			ok(oModel.oData["Categories(7)"] !== oModel.getObject("/Categories(7)"), "test object copy via getObject");
+			ok(oModel.oData["Categories(7)"] === oModel.getProperty("/Categories(7)"), "test object copy via getProperty");
+
+			var oValue = oModel.getObject("/Categories(7)");
+			equal(oValue.CategoryName, "Produce", "test getObject with no param");
+			equal(oValue.CategoryID, 7, "test getObject with no param");
+			var sDeferred = oValue.Products.__deferred.uri;
+			ok(jQuery.sap.endsWith(sDeferred, "/Categories(7)/Products"), "test getObject with no param");
+
+			var oValue = oModel.getObject("/Categories(7)", null, {select: "CategoryName"});
+			equal(oValue.CategoryName, "Produce", "test getObject with select param");
+			ok(!oValue.hasOwnProperty('CategoryID'), "test getObject with select param");
+			ok(!oValue.hasOwnProperty('Products'), "test getObject with select param");
+
+			var oValue = oModel.getObject("/Categories(7)", null, {expand:"Products"});
+			equal(oValue.CategoryName, "Produce", "test getObject with expand param");
+			equal(oValue.CategoryID, 7, "test getObject with expand param");
+			equal(oValue.Products.length, 5, "test getObject with expand param");
+			equal(oValue.Products[0].ProductName, "Uncle Bob's Organic Dried Pears", "test getObject with expand param");
+
+			var oValue = oModel.getObject("/Categories(7)", null, {select: "CategoryName", expand:"Products"});
+			equal(oValue.CategoryName, "Produce", "test getObject with select and expand param");
+			ok(!oValue.hasOwnProperty('CategoryID'), "test getObject with select and expand param");
+			ok(!oValue.hasOwnProperty('Products'), "test getObject with select and expand param");
+			start();
+		});
+	});
+
+	asyncTest("test getObject with multiple nested expands", function(){
+		cleanServiceDataCache();
+		var oModel = initModel(sURI, {json: true});
+		sap.ui.getCore().setModel(oModel);
+
+		var oBinding = oModel.bindContext("/Suppliers(7)", null, {select: "*,Products/*,Products/Supplier/*,Products/Category/CategoryID,Products/Category/CategoryName",
+			expand: "Products,Products/Supplier,Products/Category"});
+		oBinding.attachChange(function(oContext) {
+			ok(oModel.oData["Suppliers(7)"] !== oModel.getObject("/Suppliers(7)"), "test object copy via getObject");
+			ok(oModel.oData["Suppliers(7)"] === oModel.getProperty("/Suppliers(7)"), "test object copy via getProperty");
+
+			var oValue = oModel.getObject("/Suppliers(7)");
+			equal(oValue.ContactName, "Ian Devling", "test getObject with no param");
+			equal(oValue.SupplierID, 7, "test getObject with no param");
+			var sDeferred = oValue.Products.__deferred.uri;
+			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with no param");
+
+			var oValue = oModel.getObject("/Suppliers(7)", null, {select: "ContactName"});
+			equal(oValue.ContactName, "Ian Devling", "test getObject with select param");
+			ok(!oValue.hasOwnProperty('SupplierID'), "test getObject with select param");
+			ok(!oValue.hasOwnProperty('Products'), "test getObject with select param");
+
+			var oValue = oModel.getObject("/Suppliers(7)", null, {select: "*"});
+			equal(oValue.ContactName, "Ian Devling", "test getObject with no param");
+			equal(oValue.SupplierID, 7, "test getObject with no param");
+			var sDeferred = oValue.Products.__deferred.uri;
+			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with no param");
+
+			var oValue = oModel.getObject("/Suppliers(7)", null, {select: "*", expand: "Products"});
+			equal(oValue.ContactName, "Ian Devling", "test getObject with no param");
+			equal(oValue.SupplierID, 7, "test getObject with no param");
+			var sDeferred = oValue.Products.__deferred.uri;
+			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with no param");
+
+			var oValue = oModel.getObject("/Suppliers(7)", null, {expand:"Products"});
+			equal(oValue.ContactName, "Ian Devling", "test getObject with expand param");
+			equal(oValue.SupplierID, 7, "test getObject with expand param");
+			equal(oValue.Products.length, 5, "test getObject with expand param");
+			equal(oValue.Products[0].ProductName, "Pavlova", "test getObject with expand param");
+			equal(oValue.Products[0].ProductID, 16, "test getObject with expand param");
+			var sDeferred = oValue.Products[0].Supplier.__deferred.uri;
+			ok(jQuery.sap.endsWith(sDeferred, "/Products(16)/Supplier"), "test getObject with expand param");
+			var sDeferred = oValue.Products[0].Category.__deferred.uri;
+			ok(jQuery.sap.endsWith(sDeferred, "/Products(16)/Category"), "test getObject with expand param");
+
+			var oValue = oModel.getObject("/Suppliers(7)", null, {expand:"Products,Products/Supplier,Products/Category"});
+			equal(oValue.ContactName, "Ian Devling", "test getObject with expand param");
+			equal(oValue.SupplierID, 7, "test getObject with expand param");
+			equal(oValue.Products.length, 5, "test getObject with expand param");
+			equal(oValue.Products[0].ProductName, "Pavlova", "test getObject with expand param");
+			equal(oValue.Products[0].ProductID, 16, "test getObject with expand param");
+			equal(oValue.Products[0].Supplier.SupplierID, 7, "test getObject with expand param");
+			equal(oValue.Products[0].Supplier.ContactName, "Ian Devling", "test getObject with expand param");
+			var sDeferred = oValue.Products[0].Supplier.Products.__deferred.uri;
+			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with expand param");
+			equal(oValue.Products[0].Category.CategoryName, "Confections", "test getObject with expand param");
+			equal(oValue.Products[0].Category.CategoryID, 3, "test getObject with expand param");
+			equal(oValue.Products[0].Supplier.SupplierID, 7, "test getObject with expand param");
+			var sDeferred = oValue.Products[0].Supplier.Products.__deferred.uri;
+			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with expand param");
+			ok(!oValue.Products[0].Category.hasOwnProperty('Description'), "test getObject with expand param");
+
+			// should be same result as one getObject earlier because we return everything if it is included in expand
+			var oValue = oModel.getObject("/Suppliers(7)", null, {select: "*,Products/*,Products/Supplier/*,Products/Category/CategoryID,Products/Category/CategoryName", expand:"Products,Products/Supplier,Products/Category"});
+			equal(oValue.ContactName, "Ian Devling", "test getObject with expand param");
+			equal(oValue.SupplierID, 7, "test getObject with expand param");
+			equal(oValue.Products.length, 5, "test getObject with expand param");
+			equal(oValue.Products[0].ProductName, "Pavlova", "test getObject with expand param");
+			equal(oValue.Products[0].ProductID, 16, "test getObject with expand param");
+			equal(oValue.Products[0].Supplier.SupplierID, 7, "test getObject with expand param");
+			equal(oValue.Products[0].Supplier.ContactName, "Ian Devling", "test getObject with expand param");
+			var sDeferred = oValue.Products[0].Supplier.Products.__deferred.uri;
+			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with expand param");
+			equal(oValue.Products[0].Category.CategoryName, "Confections", "test getObject with expand param");
+			equal(oValue.Products[0].Category.CategoryID, 3, "test getObject with expand param");
+			equal(oValue.Products[0].Supplier.SupplierID, 7, "test getObject with expand param");
+			var sDeferred = oValue.Products[0].Supplier.Products.__deferred.uri;
+			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with expand param");
+			ok(!oValue.Products[0].Category.hasOwnProperty('Description'), "test getObject with expand param");
+
+			start();
+		});
+	});
+
+	asyncTest("test getObject with complex cases with select and expand", function(){
+		cleanServiceDataCache();
+		var oModel = initModel(sURI, {json: true});
+		sap.ui.getCore().setModel(oModel);
+
+		var oBinding = oModel.bindContext("/Suppliers(7)", null, {
+			expand: "Products,Products/Supplier,Products/Category"});
+		oBinding.attachChange(function(oContext) {
+			ok(oModel.oData["Suppliers(7)"] !== oModel.getObject("/Suppliers(7)"), "test object copy via getObject");
+			ok(oModel.oData["Suppliers(7)"] === oModel.getProperty("/Suppliers(7)"), "test object copy via getProperty");
+
+			var oValue = oModel.getObject("/Suppliers(7)");
+			equal(oValue.ContactName, "Ian Devling", "test getObject with no param");
+			equal(oValue.SupplierID, 7, "test getObject with no param");
+			var sDeferred = oValue.Products.__deferred.uri;
+			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with no param");
+
+			var oValue = oModel.getObject("/Suppliers(7)", null, {select: "ContactName"});
+			equal(oValue.ContactName, "Ian Devling", "test getObject with select param");
+			ok(!oValue.hasOwnProperty('SupplierID'), "test getObject with select param");
+			ok(!oValue.hasOwnProperty('Products'), "test getObject with select param");
+
+			var oValue = oModel.getObject("/Suppliers(7)", null, {select: "*"});
+			equal(oValue.ContactName, "Ian Devling", "test getObject with no param");
+			equal(oValue.SupplierID, 7, "test getObject with no param");
+			var sDeferred = oValue.Products.__deferred.uri;
+			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with no param");
+
+			var oValue = oModel.getObject("/Suppliers(7)", null, {expand:"Products"});
+			equal(oValue.ContactName, "Ian Devling", "test getObject with expand param");
+			equal(oValue.SupplierID, 7, "test getObject with expand param");
+			equal(oValue.Products.length, 5, "test getObject with expand param");
+			equal(oValue.Products[0].ProductName, "Pavlova", "test getObject with expand param");
+			equal(oValue.Products[0].ProductID, 16, "test getObject with expand param");
+			var sDeferred = oValue.Products[0].Supplier.__deferred.uri;
+			ok(jQuery.sap.endsWith(sDeferred, "/Products(16)/Supplier"), "test getObject with expand param");
+			var sDeferred = oValue.Products[0].Category.__deferred.uri;
+			ok(jQuery.sap.endsWith(sDeferred, "/Products(16)/Category"), "test getObject with expand param");
+
+			var oValue = oModel.getObject("/Suppliers(7)", null, {expand:"Products,Products/Supplier,Products/Category"});
+			equal(oValue.ContactName, "Ian Devling", "test getObject with expand param");
+			equal(oValue.SupplierID, 7, "test getObject with expand param");
+			equal(oValue.Products.length, 5, "test getObject with expand param");
+			equal(oValue.Products[0].ProductName, "Pavlova", "test getObject with expand param");
+			equal(oValue.Products[0].ProductID, 16, "test getObject with expand param");
+			equal(oValue.Products[0].Supplier.SupplierID, 7, "test getObject with expand param");
+			equal(oValue.Products[0].Supplier.ContactName, "Ian Devling", "test getObject with expand param");
+			var sDeferred = oValue.Products[0].Supplier.Products.__deferred.uri;
+			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with expand param");
+			equal(oValue.Products[0].Category.CategoryName, "Confections", "test getObject with expand param");
+			equal(oValue.Products[0].Category.CategoryID, 3, "test getObject with expand param");
+			equal(oValue.Products[0].Supplier.SupplierID, 7, "test getObject with expand param");
+			var sDeferred = oValue.Products[0].Supplier.Products.__deferred.uri;
+			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with expand param");
+			equal(oValue.Products[0].Category.Description, "Desserts, candies, and sweet breads", "test getObject with expand param");
+
+			var oValue = oModel.getObject("/Suppliers(7)", null, {select: "Products/*", expand:"Products,Products/Supplier"});
+			ok(!oValue.hasOwnProperty('SupplierID'), "test getObject with select and expand param");
+			equal(oValue.Products.length, 5, "test getObject with select and expand param");
+			equal(oValue.Products[0].ProductName, "Pavlova", "test getObject with select and expand param");
+			equal(oValue.Products[0].ProductID, 16, "test getObject with select and expand param");
+			var sDeferred = oValue.Products[0].Supplier.__deferred.uri;
+			ok(jQuery.sap.endsWith(sDeferred, "/Products(16)/Supplier"), "test getObject with select and expand param");
+
+			var oValue = oModel.getObject("/Suppliers(7)", null, {select: "SupplierID, Products", expand:"Products,Products/Supplier,Products/Category"});
+			equal(oValue.SupplierID, 7, "test getObject with select and expand param");
+			equal(oValue.Products.length, 5, "test getObject with select and expand param");
+			equal(oValue.Products[0].ProductName, "Pavlova", "test getObject with select and expand param");
+			equal(oValue.Products[0].ProductID, 16, "test getObject with select and expand param");
+			equal(oValue.Products[0].Supplier.SupplierID, 7, "test getObject with select and expand param");
+			equal(oValue.Products[0].Supplier.ContactName, "Ian Devling", "test getObject with select and expand param");
+			var sDeferred = oValue.Products[0].Supplier.Products.__deferred.uri;
+			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with select and expand param");
+			equal(oValue.Products[0].Category.CategoryName, "Confections", "test getObject with select and expand param");
+			equal(oValue.Products[0].Category.CategoryID, 3, "test getObject with select and expand param");
+			equal(oValue.Products[0].Supplier.SupplierID, 7, "test getObject with select and expand param");
+			var sDeferred = oValue.Products[0].Supplier.Products.__deferred.uri;
+			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with select and expand param");
+			equal(oValue.Products[0].Category.Description, "Desserts, candies, and sweet breads", "test getObject with select and expand param");
+
+			var oValue = oModel.getObject("/Suppliers(7)", null, {select: "SupplierID, Products/ProductName", expand:"Products,Products/Supplier,Products/Category"});
+			equal(oValue.SupplierID, 7, "test getObject with select and expand param");
+			equal(oValue.Products.length, 5, "test getObject with select and expand param");
+			equal(oValue.Products[0].ProductName, "Pavlova", "test getObject with select and expand param");
+			ok(!oValue.Products[0].hasOwnProperty('ProductID'), "test getObject with select and expand param");
+			ok(!oValue.Products[0].hasOwnProperty('Supplier'), "test getObject with select and expand param");
+			ok(!oValue.Products[0].hasOwnProperty('Category'), "test getObject with select and expand param");
+
+			var oValue = oModel.getObject("/Suppliers(7)", null, {expand:"Products/Supplier,Products/Category"});
+			equal(oValue.ContactName, "Ian Devling", "test getObject with expand param");
+			equal(oValue.SupplierID, 7, "test getObject with expand param");
+			equal(oValue.Products.length, 5, "test getObject with select and expand param");
+			equal(oValue.Products[0].ProductName, "Pavlova", "test getObject with select and expand param");
+			equal(oValue.Products[0].ProductID, 16, "test getObject with select and expand param");
+			equal(oValue.Products[0].Supplier.SupplierID, 7, "test getObject with select and expand param");
+			equal(oValue.Products[0].Supplier.ContactName, "Ian Devling", "test getObject with select and expand param");
+			var sDeferred = oValue.Products[0].Supplier.Products.__deferred.uri;
+			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with select and expand param");
+			equal(oValue.Products[0].Category.CategoryName, "Confections", "test getObject with select and expand param");
+			equal(oValue.Products[0].Category.CategoryID, 3, "test getObject with select and expand param");
+			equal(oValue.Products[0].Supplier.SupplierID, 7, "test getObject with select and expand param");
+			var sDeferred = oValue.Products[0].Supplier.Products.__deferred.uri;
+			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with select and expand param");
+			equal(oValue.Products[0].Category.Description, "Desserts, candies, and sweet breads", "test getObject with select and expand param");
+
+			var oValue = oModel.getObject("/Suppliers(7)", null, {select: "SupplierID, Products/ProductName", expand:"Products"});
+			ok(!oValue.hasOwnProperty('ContactName'), "test getObject with select and expand param");
+			equal(oValue.SupplierID, 7, "test getObject with select and expand param");
+			equal(oValue.Products.length, 5, "test getObject with select and expand param");
+			equal(oValue.Products[0].ProductName, "Pavlova", "test getObject with select and expand param");
+			ok(!oValue.Products[0].hasOwnProperty('ProductID'), "test getObject with select and expand param");
+			ok(!oValue.Products[0].hasOwnProperty('Category'), "test getObject with select and param");
+			ok(!oValue.Products[0].hasOwnProperty('Supplier'), "test getObject with select and param");
+
+			var oValue = oModel.getObject("/Suppliers(7)", null, {select: "SupplierID, Products/ProductName, Products", expand:"Products"});
+			ok(!oValue.hasOwnProperty('ContactName'), "test getObject with select and expand param");
+			equal(oValue.SupplierID, 7, "test getObject with select and expand param");
+			equal(oValue.Products.length, 5, "test getObject with select and expand param");
+			equal(oValue.Products[0].ProductName, "Pavlova", "test getObject with select and expand param");
+			equal(oValue.Products[0].ProductID, 16, "test getObject with select and expand param");
+
+			start();
+		});
 	});
 
 	asyncTest("test double load update", function(){

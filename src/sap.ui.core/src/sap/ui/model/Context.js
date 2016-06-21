@@ -79,15 +79,20 @@ sap.ui.define(['sap/ui/base/Object'],
 	/**
 	 * Gets the (model dependent) object the context points to or the object with the given relative binding path
 	 * @public
-	 * @param {String} sPath the binding path
+	 * @param {String} [sPath] the binding path
+	 * @param {object} [mParameters] additional model specific parameters (optional)
 	 * @return {object} the context object
 	 */
-	Context.prototype.getObject = function(sPath) {
-		return this.oModel.getObject(sPath, this);
+	Context.prototype.getObject = function(sPath, mParameters) {
+		if (jQuery.isPlainObject(sPath)) {
+			mParameters = sPath;
+			sPath = undefined;
+		}
+		return this.oModel.getObject(sPath, this, mParameters);
 	};
 
 	/**
-	 * toString method returns path for compatbility
+	 * toString method returns path for compatibility
 	 */
 	Context.prototype.toString = function() {
 		return this.sPath;

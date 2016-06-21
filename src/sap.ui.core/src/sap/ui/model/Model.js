@@ -603,10 +603,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 *         sPath the path to where to read the object
 	 * @param {object}
 	 *		   [oContext=null] the context with which the path should be resolved
+	 * @param {object}
+	 *         [mParameters] additional model specific parameters
+	 *
 	 * @public
 	 */
-	Model.prototype.getObject = function(sPath, oContext) {
-		return this.getProperty(sPath, oContext);
+	Model.prototype.getObject = function(sPath, oContext, mParameters) {
+		return this.getProperty(sPath, oContext, mParameters);
 	};
 
 
