@@ -323,6 +323,36 @@
 				jQuery("#DP7-cal--Month0-20151124").focus();
 				qutils.triggerKeyboardEvent("DP7-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
 				equal(oDP7.getValue(), "2/11/1437 AH", "Value in binding format set");
+
+				// invalid enterd value must be set to valid by picking in calendar
+				bChange = false;
+				sValue = "";
+				bValid = true;
+				sId = "";
+				oDP3.focus();
+				jQuery("#DP3").children("input").val("invalid");
+				qutils.triggerKeyboardEvent("DP3-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
+				jQuery("#DP3").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+				equal(sId, "DP3", "Change event fired");
+				equal(sValue, "invalid", "Value of event has entered value if invalid");
+				ok(!bValid, "Value is not valid");
+				equal(oDP3.getValue(), "invalid", "Value has entered value if invalid");
+				equal(oDP3.getDateValue().getTime(), new Date("2014", "03", "10").getTime(), "DateValue not changed set");
+				bChange = false;
+				sValue = "";
+				bValid = true;
+				sId = "";
+				qutils.triggerEvent("click", "DP3-icon");
+				ok(jQuery("#DP3-cal")[0], "calendar rendered");
+				ok(jQuery("#DP3-cal").is(":visible"), "calendar is visible");
+				jQuery("#DP3-cal--Month0-20140410").focus();
+				qutils.triggerKeyboardEvent("DP3-cal--Month0-20140410", jQuery.sap.KeyCodes.ENTER, false, false, false);
+				ok(!jQuery("#DP3-cal").is(":visible"), "calendar is not invisible");
+				equal(sId, "DP3", "Change event fired");
+				equal(sValue, "April 10, 2014", "Value in internal format priovided");
+				ok(bValid, "Value is valid");
+				equal(oDP3.getValue(), "April 10, 2014", "Value in internal format set");
+				equal(oDP3.getDateValue().getTime(), new Date("2014", "03", "10").getTime(), "DateValue set");
 			});
 
 			test("special cases", function() {
