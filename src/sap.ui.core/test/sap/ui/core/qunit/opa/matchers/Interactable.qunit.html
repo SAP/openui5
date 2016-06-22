@@ -202,6 +202,8 @@
 						this.oDialog.attachAfterOpen(fnStart);
 
 						this.oDialog.open();
+						// close immediately removes the blocklayer
+						// sometimes opa tests close and open dialogs very fast so we need this check here
 						this.oDialog.close();
 
 						var bResultAfterOpening = oInteractable.isMatching(this.oButtonInPage);
