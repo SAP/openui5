@@ -44,17 +44,22 @@ html[data-sap-ui-browser="ie9"] .sapUiFormTitle > .sapUiBtnS.sapUiBtnLite.sapUiB
 	background-color: transparent;
 }
 
-.sapUiFormTitle > .sapMBtn > .sapMBtnContent{
+.sapUiFormTitle > .sapMBtn > .sapMBtnInner{
 	line-height: 1rem;
 	height: 1rem;
 	width: 1rem;
+	min-width: 1rem;
 	position: absolute;
 	left: 0;
 	top: 0;
+	border: none;
+	background: transparent;
 }
 
-.sapUiFormTitle > .sapMBtn > .sapMBtnContent > img{
+.sapUiFormTitle > .sapMBtn > .sapMBtnInner > img{
 	vertical-align: top;
+	width: 100%;
+	height: 100%;
 }
 
 .sap-tablet .sapUiFioriObjectPage > section > .sapUiForm,
