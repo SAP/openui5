@@ -447,6 +447,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			});
 
 			oButton.attachEvent("_change", oParent._syncSelect, oParent);
+			oButton.attachEvent("_change", oParent._forwardChangeEvent, oParent);
 
 			var fnOriginalSetEnabled = sap.m.Button.prototype.setEnabled;
 			oButton.setEnabled = function (bEnabled) {
@@ -571,6 +572,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (oRemovedButton) {
 			delete oRemovedButton.setEnabled;
 			oRemovedButton.detachEvent("_change", this._syncSelect, this);
+			oRemovedButton.detachEvent("_change", this._forwardChangeEvent, this);
 			this._syncSelect();
 		}
 	};
@@ -584,6 +586,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					delete oButton.setEnabled;
 					this.removeAggregation("buttons", oButton);
 					oButton.detachEvent("_change", this._syncSelect, this);
+					oButton.detachEvent("_change", this._forwardChangeEvent, this);
 				}
 
 			}
@@ -730,6 +733,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		});
 	};
 
+	SegmentedButton.prototype._forwardChangeEvent = function () {
+		this.fireEvent("_change");
+	};
+
 	/**
 	 * Builds/rebuilds the select from the buttons in the SegmentedButton.
 	 * @private
@@ -739,6 +746,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			iSelectedKey = 0,
 			sButtonText,
 			oSelect = this.getAggregation("_select");
+
 
 		if (!oSelect) {
 			return;
