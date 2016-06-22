@@ -384,7 +384,7 @@ sap.ui.define([
 	DynamicPage.prototype._pin = function () {
 		if (!this._bPinned) {
 			this._bPinned = true;
-			this.getHeader().$().appendTo(this.$titleArea);
+			this._moveHeaderToTitleArea();
 			this.getHeader()._updateARIAPinButtonState(this._bPinned);
 		}
 	};
@@ -396,7 +396,6 @@ sap.ui.define([
 	DynamicPage.prototype._unPin = function () {
 		if (this._bPinned) {
 			this._bPinned = false;
-			this.getHeader().$().prependTo(this.$wrapper);
 			this.getHeader()._updateARIAPinButtonState(this._bPinned);
 		}
 	};
@@ -912,8 +911,6 @@ sap.ui.define([
 			this._pin(oEvent);
 			this._restorePinButtonFocus();
 		}
-
-		this._updateScrollBar();
 	};
 
 
