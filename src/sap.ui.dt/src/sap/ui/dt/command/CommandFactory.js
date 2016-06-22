@@ -7,9 +7,13 @@ sap.ui.define(['sap/ui/base/Man			agedObject'], function(ManagedObject) {
 	var mCommands = {
 		"Move" : {
 			findClass : function(oElement, sCommand, mSettings) {
-				var oElementToBeAnalyzed = (mSettings && mSettings.movedElement) ? mSettings.movedElement : oElement;
+				var oMovedElement = (mSettings && mSettings.movedElements && mSettings.movedElements.length > 0)
+						? mSettings.movedElements[0]
+						: undefined;
+				var oElementToBeAnalyzed = oMovedElement ? oMovedElement.element : oElement;
 				var sType = oElementToBeAnalyzed.getMetadata().getName();
-				// TODO: this is too unspecific - could also be a 'normal' Form. The context (SImpleFOrm) shall be taken into account
+				// TODO: this is too unspecific - could also be a 'normal' Form. The context (SImpleFOrm) shall be taken into
+				// account
 				if (sType === "sap.ui.layout.form.FormContainer" || sType === "sap.ui.layout.form.FormElement") {
 					jQuery.sap.require("sap.ui.dt.command.SimpleFormMove");
 					return sap.ui.dt.command.SimpleFormMove;
@@ -53,7 +57,7 @@ sap.ui.define(['sap/ui/base/Man			agedObject'], function(ManagedObject) {
 			Command = mCommand.findClass(oElement, sCommand, mSettings);
 		}
 
-		mSettings = jQuery.extend({}, {
+		mSettings = jQuery.extend(mSettings, {
 			element : oElement,
 			name : sCommand
 		});
