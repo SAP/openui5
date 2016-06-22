@@ -48,10 +48,6 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnActive.sapMFocusable {
 	outline-color:    @sapUiInvertedFocus;
 }
 
-html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable {
-	outline-color:    @sapUiFocus;
-}
-
 /* ---------------------------------------------------------------------*/
 /* Custom focus outline for IE and Edge:                                */
 /* ---------------------------------------------------------------------*/
@@ -72,17 +68,13 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable {
 }
 
 .sapMBtn:focus .sapMBtnFocusDiv {
-	border:           1px dotted @sapUiFocus;
+	border:           1px dashed @sapUiFocus;
 }
 
 .sapMFooter-CTX .sapMBtn:focus .sapMBtnFocusDiv,
 .sapMBtn.sapMBtnInverted:focus .sapMBtnFocusDiv,
 .sapMBtn:focus > .sapMBtnActive > .sapMBtnFocusDiv {
 	border-color:    @sapUiInvertedFocus;
-}
-
-.sapMBtn:focus > .sapMBtnEmphasized > .sapMBtnFocusDiv {
-	border-color:    @sapUiFocus;
 }
 
 /* ---------------------------------------------------------------------*/
