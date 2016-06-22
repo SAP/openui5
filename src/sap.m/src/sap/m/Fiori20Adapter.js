@@ -103,10 +103,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 
 		var bBackButtonHidden = false;
 
-		this.oBackButton = this._detectBackButton();
+		this._oBackButton = this._detectBackButton();
 
-		if (this.oBackButton) {
-			this.oBackButton.addStyleClass("sapF2AdaptedNavigation");
+		if (this._oBackButton) {
+			this._oBackButton.addStyleClass("sapF2AdaptedNavigation");
 			bBackButtonHidden = true;
 		}
 		return bBackButtonHidden;
