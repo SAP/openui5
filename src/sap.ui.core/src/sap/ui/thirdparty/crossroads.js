@@ -470,6 +470,29 @@ var factory = function (signals) {
             //params - everything between `{ }` or `: :`
             PARAMS_REGEXP = /(?:\{|:)([^}:]+)(?:\}|:)/g,
 
+            // ##### BEGIN: MODIFIED BY SAP
+            fnReplaceOS = function(match, offset, string) {
+                var rsIndex = string.lastIndexOf("__CR_RS__"), //last index of required slash
+                    rqIndex = string.indexOf("__CR_RQ__"), //first index of required query
+                    oqIndex = string.indexOf("__CR_OQ__"), //first index of optional query
+                    slashIndex = string.indexOf("\\/", offset), //first index of char slash after the matched offset
+                    qIndex = Math.min(oqIndex === -1 ? string.length : oqIndex, rqIndex === -1 ? string.length : rqIndex),
+                    endPosition = offset + match.length;
+
+                if (endPosition >= qIndex || endPosition < rsIndex || endPosition < slashIndex) {
+                    //regex for optional slash is returned when the optional slash:
+                    //1. immediately precedes a query (either optional or required) or appears after a query
+                    //2. appears before a required slash
+                    //3. appears before a slash char in the pattern
+                    return TOKENS.OS.res_normal;
+                } else {
+                    //otherwise the slash isn't fully optional and return the regex defined
+                    //for optional slash "after required slash or before query"
+                    return TOKENS.OS.res_arsbq;
+                }
+            },
+            // ##### END: MODIFIED BY SAP
+
             //used to save params during compile (avoid escaping things that
             //shouldn't be escaped).
             TOKENS = {
@@ -480,7 +503,17 @@ var factory = function (signals) {
                     rgx : /([:})]|\w(?=\/))\/?(:|(?:\{\?))/g,
                     // ##### END: MODIFIED BY SAP
                     save : '$1{{id}}$2',
-                    res : '\\/?'
+                    // ##### BEGIN: MODIFIED BY SAP
+                    res : fnReplaceOS,
+                    //the regex for optinal slash
+                    res_normal : '\\/?',
+                    //the regex for slash which isn't fully optional based on the given pattern
+                    //for example, given patterns foo/:bar: and foobar/:bar:, the slash isn't fully
+                    //optional because if the slash is optional, hash "foobar" will also match foo/:bar:
+                    //with parameter bar set to "bar"
+                    //arsbq stands for "after required slash or before query"
+                    res_arsbq : '(?:(?:\\/(?=[^\\/?]+))|^\\/?|\\/?$)'
+                    // ##### END: MODIFIED BY SAP
                 },
                 'RS' : {
                     //required slashes
