@@ -73,10 +73,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 
 		var $Target = jQuery(oEvent.target);
 
-		if ($Target.hasClass("sapUiTableCtrlBefore")) {
-			TableKeyboardDelegate._setFocusOnColumnHeaderOfLastFocusedDataCell(this, oEvent);
+		if ($Target.hasClass("sapUiTableOuterBefore") || $Target.hasClass("sapUiTableOuterAfter")
+			|| (oEvent.target != this.getDomRef("overlay") && this.getShowOverlay())) {
+			this.$("overlay").focus();
+		} else if ($Target.hasClass("sapUiTableCtrlBefore")) {
+			var bNoData = TableUtils.isNoDataVisible(this);
+			if (!bNoData || bNoData && this.getColumnHeaderVisible()) {
+				TableKeyboardDelegate._setFocusOnColumnHeaderOfLastFocusedDataCell(this, oEvent);
+			} else {
+				this._getKeyboardExtension()._setSilentFocus(this.$("noDataCnt"));
+			}
 		} else if ($Target.hasClass("sapUiTableCtrlAfter")) {
-			TableKeyboardDelegate._restoreFocusOnLastFocusedDataCell(this, oEvent);
+			if (TableUtils.isNoDataVisible(this)) {
+				this.$("noDataCnt").focus();
+			} else {
+				TableKeyboardDelegate._restoreFocusOnLastFocusedDataCell(this, oEvent);
+			}
 		}
 	};
 
@@ -85,10 +97,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 		var oInfo = TableUtils.getCellInfo(oEvent.target) || {};
 
 		if (oInfo.type === TableUtils.CELLTYPES.COLUMNHEADER || oInfo.type === TableUtils.CELLTYPES.COLUMNROWHEADER) {
-			TableKeyboardDelegate._restoreFocusOnLastFocusedDataCell(this, oEvent);
+			if (TableUtils.isNoDataVisible(this)) {
+				this.$("noDataCnt").focus();
+			} else {
+				TableKeyboardDelegate._restoreFocusOnLastFocusedDataCell(this, oEvent);
+			}
 			oEvent.preventDefault();
 		} else if (oInfo.type === TableUtils.CELLTYPES.DATACELL || oInfo.type === TableUtils.CELLTYPES.ROWHEADER) {
 			TableKeyboardDelegate._forwardFocusToTabDummy(this, "sapUiTableCtrlAfter");
+		} else if (oEvent.target === this.getDomRef("overlay")) {
+			this._getKeyboardExtension()._setSilentFocus(this.$().find(".sapUiTableOuterAfter"));
 		}
 	};
 
@@ -96,13 +114,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 	TableKeyboardDelegate.prototype.onsaptabprevious = function(oEvent) {
 		var oInfo = TableUtils.getCellInfo(oEvent.target) || {};
 
-		if (oInfo.type === TableUtils.CELLTYPES.DATACELL || oInfo.type === TableUtils.CELLTYPES.ROWHEADER) {
+		if (oInfo.type === TableUtils.CELLTYPES.DATACELL
+				|| oInfo.type === TableUtils.CELLTYPES.ROWHEADER
+				|| oEvent.target === this.getDomRef("noDataCnt")) {
 			if (this.getColumnHeaderVisible()) {
 				TableKeyboardDelegate._setFocusOnColumnHeaderOfLastFocusedDataCell(this, oEvent);
 				oEvent.preventDefault();
 			} else {
 				TableKeyboardDelegate._forwardFocusToTabDummy(this, "sapUiTableCtrlBefore");
 			}
+		} else if (oEvent.target === this.getDomRef("overlay")) {
+			this._getKeyboardExtension()._setSilentFocus(this.$().find(".sapUiTableOuterBefore"));
 		}
 	};
 
@@ -117,8 +139,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 					oEvent.setMarked("sapUiTableSkipItemNavigation");
 				}
 			}
-		} else if (oInfo.type === TableUtils.CELLTYPES.COLUMNROWHEADER) {
-			if (this.getColumnHeaderVisible() && this._getHeaderRowCount() > 1) {
+		} else if (oInfo.type === TableUtils.CELLTYPES.COLUMNHEADER || oInfo.type === TableUtils.CELLTYPES.COLUMNROWHEADER) {
+			if (TableUtils.isNoDataVisible(this)) {
+				var oFocusInfo = TableUtils.getFocusedItemInfo(this);
+				if (oFocusInfo.row - this._getHeaderRowCount() <= 1) { // We are in the last column header row
+					//Just prevent the navigation to the table content
+					oEvent.setMarked("sapUiTableSkipItemNavigation");
+				}
+			} else if (oInfo.type === TableUtils.CELLTYPES.COLUMNROWHEADER && this._getHeaderRowCount() > 1) {
+				//Special logic needed because row selector added multiple times into the item navigation
 				oEvent.setMarked("sapUiTableSkipItemNavigation");
 				//Focus the first row header
 				TableUtils.focusItem(this, this._getHeaderRowCount() * (TableUtils.getVisibleColumnCount(this) + 1/*Row Headers*/), oEvent);
