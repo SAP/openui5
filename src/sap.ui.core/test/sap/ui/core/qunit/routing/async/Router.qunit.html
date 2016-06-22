@@ -1534,6 +1534,30 @@
 				});
 			});
 
+			QUnit.test("Hash 'page12' shouldn't match pattern 'page1/:context:'", function() {
+				var oRouter = fnCreateRouter([{
+						name: "page1",
+						pattern: "page1/:context:"
+					}, {
+						name: "page12",
+						pattern: "page12/:context:"
+					}]);
+
+				var oRoute = oRouter.getRoute("page12");
+				var oRouteMatchedSpy = this.spy(oRoute, "_routeMatched");
+
+				// Act
+				oRouter.initialize();
+				oRouter.parse("page12");
+
+				// Assert
+				assert.strictEqual(oRouteMatchedSpy.callCount, 1, "_routeMatched is called");
+
+				return oRouteMatchedSpy.returnValues[0].then(function() {
+					oRouter.destroy();
+				});
+			});
+
 			QUnit.module("nested components", {
 				beforeEach: function() {
 					jQuery.sap.require("sap.ui.core.UIComponent");
