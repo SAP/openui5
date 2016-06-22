@@ -1048,89 +1048,97 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @private
 	 */
 	UploadCollection.prototype._handleOk = function(oEvent, oContext, sSourceId, bTriggerRenderer) {
-		var bTriggerOk = true;
 		var oEditbox = document.getElementById(sSourceId + "-ta_editFileName-inner");
 		var sNewFileName;
-		var iSourceLine = sSourceId.split("-").pop();
-		var sOrigFullFileName = oContext.aItems[iSourceLine].getProperty("fileName");
+		var oSourceItem = UploadCollection._findById(sSourceId, oContext.aItems);
+		var sOrigFullFileName = oSourceItem.getProperty("fileName");
 		var oFile = UploadCollection.prototype._splitFilename(sOrigFullFileName);
 		var oInput = sap.ui.getCore().byId(sSourceId + "-ta_editFileName");
-		var sErrorStateBefore = oContext.aItems[iSourceLine].errorState;
-		var sChangedNameBefore = oContext.aItems[iSourceLine].changedFileName;
+		var sErrorStateBefore = oSourceItem.errorState;
+		var sChangedNameBefore = oSourceItem.changedFileName;
 
-		// get new/changed file name and remove possible leading spaces
+		// get new/changed file name and remove potential leading spaces
 		if (oEditbox !== null) {
 			sNewFileName = oEditbox.value.replace(/^\s+/,"");
 		}
 
 		//prepare the Id of the UI element which will get the focus
 		var aSrcIdElements = oEvent.srcControl ? oEvent.srcControl.getId().split("-") : oEvent.oSource.getId().split("-");
-		aSrcIdElements = aSrcIdElements.slice(0, 3);
+		aSrcIdElements = aSrcIdElements.slice(0, 5);
 		oContext.sFocusId = aSrcIdElements.join("-") + "-cli";
 
-		if (!!sNewFileName && (sNewFileName.length > 0)) {
-			var iSourceLine = sSourceId.split("-").pop();
-			oContext.aItems[iSourceLine]._status = UploadCollection._displayStatus;
-			// get original file name
-			var sOrigFullFileName = oContext.aItems[iSourceLine].getProperty("fileName");
-			var oFile = UploadCollection.prototype._splitFilename(sOrigFullFileName);
-			// in case there is a difference additional activities are necessary
-			if (oFile.name !== sNewFileName) {
-				// here we have to check possible double items if it's necessary
-				if (!oContext.getSameFilenameAllowed()) {
-					var oInput = sap.ui.getCore().byId(sSourceId + "-ta_editFileName");
-					// Check double file name
-					if (sap.m.UploadCollection.prototype._checkDoubleFileName(sNewFileName + oFile.extension, oContext.aItems)) {
-						var sErrorStateBefore = oContext.aItems[iSourceLine].errorState;
-						var sChangedNameBefore = oContext.aItems[iSourceLine].changedFileName;
-						oInput.setProperty("valueState", "Error", true);
-						oContext.aItems[iSourceLine]._status = "Edit";
-						oContext.aItems[iSourceLine].errorState = "Error";
-						oContext.aItems[iSourceLine].changedFileName = sNewFileName;
-						oContext.sErrorState = "Error";
-						bTriggerOk = false;
-						if (sErrorStateBefore !== "Error" || sChangedNameBefore !== sNewFileName){
-							oContext.invalidate();
-						}
-					} else {
-						oInput.setValueState = "";
-						oContext.aItems[iSourceLine].errorState = null;
-						oContext.aItems[iSourceLine].changedFileName = null;
-						oContext.sErrorState = null;
-						oContext.editModeItem = null;
-						if (bTriggerRenderer) {
-							oContext.invalidate();
-						}
-					}
-				} else {
-					// exiting error state after an attempt to save a file with an empty filename in case same filenames are allowed
-					oContext.aItems[iSourceLine].errorState = null;
-					oContext.sErrorState = null;
-					oContext.editModeItem = null;
-				}
-				if (bTriggerOk) {
-					oContext._oItemForRename = oContext.aItems[iSourceLine];
-					oContext._onEditItemOk.bind(oContext)(sNewFileName + oFile.extension);
-				}
-			} else {
-				oContext.sErrorState = null;
-				oContext.aItems[iSourceLine].errorState = null;
-				// nothing changed -> nothing to do!
-				oContext.editModeItem = null;
-				if (bTriggerRenderer) {
-					oContext.invalidate();
-				}
+		if (!sNewFileName || sNewFileName.length === 0) {
+			if (oEditbox !== null) {
+				this._setErrorStateOnItem(oContext, oSourceItem, sNewFileName, sChangedNameBefore, sErrorStateBefore);
 			}
-		} else if (oEditbox !== null) {
-			// no new file name provided
-			oContext.aItems[iSourceLine]._status = "Edit";
-			oContext.aItems[iSourceLine].errorState = "Error";
-			oContext.aItems[iSourceLine].changedFileName = sNewFileName;
-			oContext.sErrorState = "Error";
-			if (sErrorStateBefore !== "Error" || sChangedNameBefore !== sNewFileName) {
-				oContext.aItems[iSourceLine].invalidate();
-			}
+			return;
 		}
+
+		oSourceItem._status = UploadCollection._displayStatus;
+
+		if (oFile.name === sNewFileName) {
+			this._removeErrorStateFromItem(oContext, oSourceItem);
+			// nothing changed -> nothing to do!
+			if (bTriggerRenderer) {
+				oContext.invalidate();
+			}
+			return;
+		}
+
+		// here we have to check possible double items if it's necessary
+		if (oContext.getSameFilenameAllowed()) {
+			this._removeErrorStateFromItem(oContext, oSourceItem);
+			oContext._oItemForRename = oSourceItem;
+			oContext._onEditItemOk.bind(oContext)(sNewFileName + oFile.extension);
+			return;
+		}
+
+		// Check double file name
+		if (sap.m.UploadCollection.prototype._checkDoubleFileName(sNewFileName + oFile.extension, oContext.aItems)) {
+			oInput.setProperty("valueState", "Error", true);
+			this._setErrorStateOnItem(oContext, oSourceItem, sNewFileName, sChangedNameBefore, sErrorStateBefore);
+		} else {
+			oInput.setProperty("valueState", "None", true);
+			oSourceItem.changedFileName = null;
+			this._removeErrorStateFromItem(oContext, oSourceItem);
+			if (bTriggerRenderer) {
+				oContext.invalidate();
+			}
+			oContext._oItemForRename = oSourceItem;
+			oContext._onEditItemOk.bind(oContext)(sNewFileName + oFile.extension);
+		}
+
+	};
+
+	/**
+	 * @description Sets the error state on the list item. This is usually done after an attempt to save the file with empty name or with a duplicated name if the double names are not allowed.
+	 * @param {object} oContext The UploadCollection instance on which an attempt was made to save a new name of an existing List item.
+	 * @param {object} oSourceItem The List item on which the event was triggered.
+	 * @param {string} sNewFileName The new file name for the List item.
+	 * @param {string} sChangedNameBefore The file name for the List item before the attempt to save the new name.
+	 * @param {string} sErrorStateBefore The error state of the List item before the attempt to save the new name.
+	 * @private
+	 */
+	UploadCollection.prototype._setErrorStateOnItem = function(oContext, oSourceItem, sNewFileName, sChangedNameBefore, sErrorStateBefore) {
+		oSourceItem._status = "Edit";
+		oSourceItem.errorState = "Error";
+		oContext.sErrorState = "Error";
+		oSourceItem.changedFileName = sNewFileName;
+		if (sErrorStateBefore !== "Error" || sChangedNameBefore !== sNewFileName){
+			oContext.invalidate();
+		}
+	};
+
+	/**
+	 * @description Removes the error state from the list item. Used when the name of the file has been corrected.
+	 * @private
+	 * @param {object} oContext The UploadCollection instance on which an attempt was made to save a new name of an existing List item.
+	 * @param {string} oSourceItem The List item on which the event was triggered.
+	 */
+	UploadCollection.prototype._removeErrorStateFromItem = function(oContext, oSourceItem) {
+		oSourceItem.errorState = null;
+		oContext.sErrorState = null;
+		oContext.editModeItem = null;
 	};
 
 	/**
@@ -1160,10 +1168,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @private
 	 */
 	UploadCollection.prototype._handleCancel = function(oEvent, oContext, sSourceId) {
-		var iSourceLine = sSourceId.split("-").pop();
-		oContext.aItems[iSourceLine]._status = UploadCollection._displayStatus;
-		oContext.aItems[iSourceLine].errorState = null;
-		oContext.aItems[iSourceLine].changedFileName = sap.ui.getCore().byId(sSourceId + "-ta_editFileName").getProperty("value");
+		var oSourceItem = UploadCollection._findById(sSourceId, oContext.aItems);
+		oSourceItem._status = UploadCollection._displayStatus;
+		oSourceItem.errorState = null;
+		oSourceItem.changedFileName = sap.ui.getCore().byId(sSourceId + "-ta_editFileName").getProperty("value");
 		oContext.sFocusId = oContext.editModeItem + "-cli";
 		oContext.sErrorState = null;
 		oContext.editModeItem = null;
@@ -1933,6 +1941,22 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		oResult.extension = "." + aNameSplit.pop();
 		oResult.name = aNameSplit.join(".");
 		return oResult;
+	};
+
+	/**
+	 * @description Returns the sap.m.ListItem from the internal sap.m.List based on the id
+	 * @param {string} listItemId used to find the UploadCollectionItems
+	 * @param {array} listItems the array to search into
+	 * @returns {sap.m.ListItemBase} The matching UploadCollectionItems
+	 * @private
+	 */
+	UploadCollection._findById = function(listItemId, listItems) {
+		for (var i = 0; i < listItems.length; i++) {
+			if (listItems[i].getId() === listItemId) {
+				return listItems[i];
+			}
+		}
+		return null;
 	};
 
 	return UploadCollection;
