@@ -100,6 +100,17 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 					type: "boolean",
 					group: "Appearance",
 					defaultValue: true
+				},
+
+				/**
+				 * Decides whether the floating footer behavior should be enabled.
+				 * When the floating footer behavior is used, the content is visible when it's underneath the footer.
+				 * @since 1.40.1
+				 */
+				floatingFooter: {
+					type: "boolean",
+					group:"Appearance",
+					defaultValue: false
 				}
 			},
 			defaultAggregation: "content",
@@ -226,6 +237,12 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 	SemanticPage.prototype.setShowFooter = function (bShowFooter, bSuppressInvalidate) {
 		this._getPage().setShowFooter(bShowFooter, bSuppressInvalidate);
 		this.setProperty("showFooter", bShowFooter, true);
+		return this;
+	};
+
+	SemanticPage.prototype.setFloatingFooter = function (bFloatingFooter, bSuppressInvalidate) {
+		this._getPage().setFloatingFooter(bFloatingFooter, bSuppressInvalidate);
+		this.setProperty("floatingFooter", bFloatingFooter, true);
 		return this;
 	};
 
