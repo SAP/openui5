@@ -421,6 +421,9 @@ sap.ui.define([
 	//****************************************************
 
 	/**
+	 * Layer to work around an IE issue that existed from IE 8-10 showing embedded
+	 * content (like flash) above the popup content which is not expected.
+	 *
 	 * @class
 	 * @private
 	 */
@@ -431,7 +434,7 @@ sap.ui.define([
 	});
 
 	Popup.BlindLayer.prototype.getDomString = function(){
-		return "<div class=\"sapUiBliLy\" id=\"sap-ui-blindlayer-" + jQuery.sap.uid() + "\"><iframe scrolling=\"no\" src=\"javascript:''\"	tabIndex=\"-1\"></iframe></div>";
+		return "<div class=\"sapUiBliLy\" id=\"sap-ui-blindlayer-" + jQuery.sap.uid() + "\"><iframe scrolling=\"no\" tabIndex=\"-1\"></iframe></div>";
 	};
 
 	/**
@@ -842,7 +845,7 @@ sap.ui.define([
 		}
 
 		// get (and 'show' i.e. activate) the BlindLayer
-		if (!!Device.browser.internet_explorer && !Device.os.windows_phone && Popup._activateBlindLayer) {
+		if (!!Device.browser.msie && Device.browser.version < 11 && !Device.os.windows_phone && Popup._activateBlindLayer) {
 			this._oBlindLayer = this.oBlindLayerPool.borrowObject($Ref, this._iZIndex - 1);
 		} // -1 = BlindLayer, -2 = BlockLayer
 
