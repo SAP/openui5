@@ -42,6 +42,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 		constructor : function(oData) {
 			Model.apply(this, arguments);
 
+			this.aCustomBundles = [];
+
+			this.bReenhance = false;
+
 			this.bAsync = !!(oData && oData.async);
 
 			this.sDefaultBindingMode = oData.defaultBindingMode || BindingMode.OneWay;
@@ -139,6 +143,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 		} else {
 			doEnhance();
 		}
+		if (!this.bReenhance) {
+			this.aCustomBundles.push(oData);
+		}
 		return oPromise;
 	};
 
@@ -190,6 +197,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 		_load(this, false);
 	};
 
+	/**
+	 * reapplies all enhancements after localization changes
+	 * @private
+	 */
+	ResourceModel.prototype._reenhance = function() {
+		this.bReenhance = true;
+		this.aCustomBundles.forEach(function(oData) {
+			this.enhance(oData);
+		}.bind(this));
+		this.bReenhance = false;
+	};
 
 	function _load(oModel, bThrowError){
 		var oData = oModel.oData;
@@ -202,12 +220,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 				oModel._oPromise = res;
 				oModel._oPromise.then(function(oBundle){
 					oModel._oResourceBundle = oBundle;
+					oModel._reenhance();
 					delete oModel._oPromise;
 					oModel.checkUpdate(true);
 					oModel.fireRequestCompleted(oEventParam);
 				});
 			} else {
 				oModel._oResourceBundle = res;
+				oModel._reenhance();
 				oModel.checkUpdate(true);
 			}
 		} else if (bThrowError) {
