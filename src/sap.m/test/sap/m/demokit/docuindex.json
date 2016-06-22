@@ -831,7 +831,8 @@
 		  "samples": [
 			"sap.m.sample.SemanticPage",
 			"sap.m.sample.SemanticPageFullScreen",
-			"sap.m.sample.SemanticPageDraftIndicator"
+			"sap.m.sample.SemanticPageDraftIndicator",
+		  	"sap.m.sample.SemanticPageFloatingFooter"
 		  ]
 		},
 		{
@@ -1705,6 +1706,11 @@
 		  "name": "Semantic Page using Draft Indicator",
 		  "description": "Integration of Draft Indicator inside Semantic Page"
 		},
+	  	{
+		  "id": "sap.m.sample.SemanticPageFloatingFooter",
+		  "name": "Semantic Page using Floating Footer",
+		  "description": "Integration of Floating Footer inside Semantic Page"
+	  	},
 		{
 		  "id": "sap.m.sample.ActionSelect",
 		  "name": "Action Select",

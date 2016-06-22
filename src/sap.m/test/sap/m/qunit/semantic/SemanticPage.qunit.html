@@ -214,6 +214,22 @@
 			oSemanticPage2.destroy();
 		});
 
+		test("floatingFooter is set correctly", function () {
+
+			var oConfig = {
+						title: "This is a title",
+						showNavButton: true,
+						customFooterContent: [new sap.m.Button({text: "custom"})]
+					},
+					oSemanticPage = createSemanticPageFactory(null, oConfig);
+
+			oSemanticPage.setFloatingFooter(true);
+			strictEqual(oSemanticPage._getPage().getFloatingFooter(), true);
+			oSemanticPage.setFloatingFooter(false);
+			strictEqual(oSemanticPage._getPage().getFloatingFooter(), false);
+			oSemanticPage.destroy();
+		});
+
 		module("Aggregations", {
 			setUp: function () {
 
