@@ -135,7 +135,29 @@
 		oHashChanger.replaceHash("foo");
 
 		//Assert
-		strictEqual(sut.getDirection(), undefined, "should be unknown");
+		strictEqual(sut.getDirection(), undefined, "should be undefined");
+	});
+
+	test("Should return Unknown after a hash replacement", function() {
+		//System under Test
+		var oHashChanger = sap.ui.core.routing.HashChanger.getInstance();
+		var sut = new sap.ui.core.routing.History(oHashChanger);
+
+		//Act
+		oHashChanger.setHash("foo");
+		oHashChanger.setHash("bar"); // add a new entry
+
+		//simulate browser back
+		hasher.replaceHash(sHashPrefix + "foo");
+
+		//Assert
+		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Backwards, "should be backwards");
+
+		//Act
+		oHashChanger.replaceHash("baz");
+
+		//Assert
+		strictEqual(sut.getDirection(), sap.ui.core.routing.HistoryDirection.Unknown, "should be unknown");
 	});
 
 	test("Should return Backwards if the hash was replaced before", function() {
