@@ -2854,6 +2854,20 @@
 		oLabel.getElementBinding().attachDataReceived(handler);
 	});
 
+	asyncTest("ContextBinding: Unresolved bindings must fire change with null context", function(){
+		expect(2);
+		cleanServiceDataCache();
+		var oModel = initModel(sURI);
+		var handler = function(oEvent) {
+			ok(true, "Change event fired for unresolved binding")
+			equal(oBinding.getBoundContext(), null, "Bound context is null")
+			start(); // resume normal testing
+		}
+		var oBinding = oModel.bindContext("Category");
+		oBinding.attachChange(handler);
+		oBinding.initialize();
+	});
+
 	asyncTest("read with zero Response", function(){
 		cleanServiceDataCache();
 		var oModel = initModel(sURI);
@@ -3843,7 +3857,7 @@
 	});
 
 	asyncTest("createEntry and relative bindings", function() {
-		assert.expect(0);
+		assert.expect(2);
 		var that = this;
 		this.oModel.metadataLoaded().then(function() {
 			var fnSuccess = function() {
@@ -3855,16 +3869,17 @@
 			});
 			var oContextBinding = this.oModel.bindContext("Supplier", oCreatedContext);
 			oContextBinding.attachChange(function(){
-				ok(false, "ContextBinding change most not be fired");
+				ok(true, "ContextBinding change must be fired");
+				equal(oContextBinding.getBoundContext(), null, "Bound context must be null");
 			});
 			oContextBinding.initialize();
 			var oListBinding = this.oModel.bindList("Items", oCreatedContext);
 			oListBinding.attachChange(function(){
-				ok(false, "ListBinding change most not be fired");
+				ok(false, "ListBinding change must not be fired");
 			});
 			oListBinding.attachRefresh(function(){
 				oListBinding.getContexts(0,10);
-				ok(false, "ListBinding refresh most not be fired");
+				ok(false, "ListBinding refresh must not be fired");
 			});
 			oListBinding.initialize();
 			this.oModel.attachRequestSent(function() {
@@ -3877,7 +3892,7 @@
 	});
 
 	asyncTest("createEntry and relative bindings (setContext)", function() {
-		assert.expect(0);
+		assert.expect(2);
 		var that = this;
 		this.oModel.metadataLoaded().then(function() {
 			var fnSuccess = function() {
@@ -3889,17 +3904,18 @@
 			});
 			var oContextBinding = this.oModel.bindContext("Supplier");
 			oContextBinding.attachChange(function(){
-				ok(false, "ContextBinding change most not be fired");
+				ok(true, "ContextBinding change must be fired");
+				equal(oContextBinding.getBoundContext(), null, "Bound context must be null");
 			});
 			oContextBinding.initialize();
 			oContextBinding.setContext(oCreatedContext);
 			var oListBinding = this.oModel.bindList("Items");
 			oListBinding.attachChange(function(){
-				ok(false, "ListBinding change most not be fired");
+				ok(false, "ListBinding change must not be fired");
 			});
 			oListBinding.attachRefresh(function(){
 				oListBinding.getContexts(0,10);
-				ok(false, "ListBinding refresh most not be fired");
+				ok(false, "ListBinding refresh must not be fired");
 			});
 			oListBinding.initialize();
 			oListBinding.setContext(oCreatedContext);
