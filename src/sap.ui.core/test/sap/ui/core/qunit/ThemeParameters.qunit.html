@@ -50,7 +50,7 @@
    		 *  4. text and background color differ from the base theme
    		 */
    		equal(sap.ui.core.theming.Parameters.get("sapUiText"), "#ffffff", "sapUiText must be defined as 'white - #ffffff'");
-   		equal(sap.ui.core.theming.Parameters.get("sapUiExtraLightBG"), "#000000", "sapUiExtraLightBG must be defined as 'black - #000000'");
+   		equal(sap.ui.core.theming.Parameters.get("sapUiExtraLightBG"), "#000000", "sapUiExtraLightBG must be defined as black '#000000'");
 
    		// Read parameters of legacy library-parameters.json format
    		equal(sap.ui.core.theming.Parameters.get("sapUiLegacyTstTextColor"), "#fafafa", "sapUiLegacyTstTextColor must be defined as '#fafafa'");
@@ -118,8 +118,8 @@
 			}
 
 			sap.ui.getCore().loadLibrary("sap.ui.testlib");
-   		equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor"), "#fafafa", "parameter for newly loaded library should be known now");
-   	});
+			equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor"), "#fafafa", "parameter for newly loaded library should be known now");
+	});
 
 		test("Read scoped parameters (from sap.ui.testlib)", function() {
 			var oControl = new sap.ui.core.Control();
@@ -131,7 +131,7 @@
 
 			equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor", oControl), "#000000",
 				"Scope set directly on control - scoped param should be returned");
-			equal(sap.ui.core.theming.Parameters.get("sapUiText", oControl), "#ffffff",
+			equal(sap.ui.core.theming.Parameters.get("sapUiColor", oControl), "#ffffff",
 				"Scope set directly on control but no scoped value defined - default value should get returned");
 
 			oControl.removeStyleClass("sapTestScope");
@@ -141,7 +141,7 @@
 
 			equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor", oControl), "#000000",
 				"Scope set on parent control - scoped param should be returned");
-			equal(sap.ui.core.theming.Parameters.get("sapUiText", oControl), "#ffffff",
+			equal(sap.ui.core.theming.Parameters.get("sapUiText", oControl), "#000000",
 				"Scope set on parent control but no scoped value defined - default value should get returned");
 
 		});
@@ -165,6 +165,52 @@
 			equal(sap.ui.core.theming.Parameters.get("sapUiTstTextColor", oElement), "#000000",
 				"Scope set on parent control - scoped param should be returned");
 
+		});
+
+		test("Read multiple given parameters", function() {
+			var aParams = ["sapUiTstTextColor", "sapUiText"];
+			var oExpected = {
+					"sapUiTstTextColor": "#fafafa",
+					"sapUiText": "#ffffff"
+			};
+
+			var oParamResult = sap.ui.core.theming.Parameters.get(aParams);
+
+			deepEqual(oParamResult, oExpected,
+					"Key-value map for the given params 'sapUiTstTextColor' and 'sapUiText' should be returned");
+		});
+
+		test("Read multiple given parameters and Element", function() {
+			var oElement = new sap.ui.core.Element();
+			var oParent = new sap.ui.core.Control();
+
+			oParent.addStyleClass("sapTestScope");
+			oElement.setParent(oParent);
+
+			var aParams = ["sapUiTstTextColor", "sapUiText"];
+			var oExpected = {
+					"sapUiTstTextColor": "#000000",
+					"sapUiText": "#000000"
+			};
+
+			var oParamResult = sap.ui.core.theming.Parameters.get(aParams, oElement);
+
+			deepEqual(oParamResult, oExpected,
+					"Key-value map for the given params 'sapUiTstTextColor' and 'sapUiText' should be returned");
+		});
+
+		test("Read multiple given parameters (including undefined param name)", function() {
+			var aParams = ["sapUiTstTextColor", "sapUiText", "sapUiTestParam"];
+			var oExpected = {
+					"sapUiTstTextColor": "#fafafa",
+					"sapUiText": "#ffffff",
+					"sapUiTestParam": undefined
+			};
+
+			var oParamResult = sap.ui.core.theming.Parameters.get(aParams);
+
+			deepEqual(oParamResult, oExpected,
+					"Key-value map for the given params 'sapUiTstTextColor' and 'sapUiText' should be returned");
 		});
 
     </script>
