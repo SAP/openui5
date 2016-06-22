@@ -434,7 +434,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		},
 
 		/**
-		 * Checks whether the cell of the geven DOM reference is in the first row (from DOM point of view) of the scrollable area.
+		 * Checks whether the cell of the given DOM reference is in the first row (from DOM point of view) of the scrollable area.
 		 * @param {sap.ui.table.Table} oTable Instance of the table
 		 * @param {Object} oRef Cell DOM Reference
 		 * @private
@@ -447,7 +447,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		},
 
 		/**
-		 * Checks whether the cell of the geven DOM reference is in the last row (from DOM point of view) of the scrollable area.
+		 * Checks whether the cell of the given DOM reference is in the last row (from DOM point of view) of the scrollable area.
 		 * @param {sap.ui.table.Table} oTable Instance of the table
 		 * @param {Object} oRef Cell DOM Reference
 		 * @private
