@@ -22,8 +22,29 @@
 	width: @sapUiTableRowHdrWidth;
 }
 
+// Fading effect for overlapping
+.sapUiAnalyticalTable .sapUiTableGroupIcon:after {
+	position: absolute;
+	content: "";
+	width: 40px;
+	top: 1px;
+	bottom: 1px;
+	box-shadow: inset 40px 0px 20px -20px @sapUiListTableGroupHeaderBackground;
+}
+
+// Fading effect for overlapping: Hover
+.sapUiAnalyticalTable .sapUiTableRowHvr .sapUiTableGroupIcon {
+	background-color: @sapUiListHoverBackground;
+}
+
 .sapUiAnalyticalTable .sapUiTableGroupIcon {
-	padding-right: 10px;
+	padding-right: 40px;
+	background: @sapUiListTableGroupHeaderBackground;
+	background-clip: content-box;
+}
+
+.sapUiAnalyticalTable .sapUiTableRowHvr .sapUiTableGroupIcon:after {
+	box-shadow: inset 40px 0px 20px -20px @sapUiListHoverBackground;
 }
 
 // No checkboxes should be shown in group header of Analytical Table
