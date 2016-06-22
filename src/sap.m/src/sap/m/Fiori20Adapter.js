@@ -74,7 +74,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 		return {
 			oTitleInfo: this._oTitleInfo,
 			oSubTitleInfo: this._oSubTitleInfo,
-			bBackButton: this._oBackButton
+			oBackButton: this._oBackButton
 		};
 	};
 
