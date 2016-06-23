@@ -834,6 +834,23 @@
 		});
 	});
 
+	asyncTest("test getObject with property/meta path", function(){
+		cleanServiceDataCache();
+		var oModel = initModel(sURI, {json: false});
+		oModel.getMetaModel();
+
+		sap.ui.getCore().setModel(oModel);
+
+		var oBinding = oModel.bindContext("/Products(3)", null, {});
+		oBinding.attachChange(function(oContext) {
+
+			equal(oModel.getObject("/Products(3)/ProductName"), "Aniseed Syrup", "getObject returns property values correctly");
+			equal(oModel.getObject("/Products(3)/##name"), "Product", "getObject returns meta path results correctly")
+
+			start();
+		});
+	});
+
 	asyncTest("test getObject with/without select/expand", function(){
 		var oModel = initModel(sURI);
 		sap.ui.getCore().setModel(oModel);
