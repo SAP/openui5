@@ -321,13 +321,13 @@ sap.ui.define([
 	 *   The filter executed on the list is created from the following parts, which are combined
 	 *   with a logical 'and':
 	 *   <ul>
-	 *   <li> dynamic filters of type sap.ui.model.FilterType.Application
-	 *   <li> dynamic filters of type sap.ui.model.FilterType.Control
-	 *   <li> the static filters, as defined in the '$filter' binding parameter
+	 *   <li> Dynamic filters of type sap.ui.model.FilterType.Application
+	 *   <li> Dynamic filters of type sap.ui.model.FilterType.Control
+	 *   <li> The static filters, as defined in the '$filter' binding parameter
 	 *   </ul>
 	 *
 	 * @param {sap.ui.model.FilterType} [sFilterType=sap.ui.model.FilterType.Application]
-	 *   The filter type to use
+	 *   The filter type to be used
 	 * @returns {sap.ui.model.odata.v4.ODataListBinding}
 	 *   <code>this</code> to facilitate method chaining
 	 * @throws {Error}

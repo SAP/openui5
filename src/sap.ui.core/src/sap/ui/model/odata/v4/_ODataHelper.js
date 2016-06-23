@@ -104,9 +104,9 @@ sap.ui.define([
 		 *   The static '$orderby' system query option which is appended to the converted 'aSorters'
 		 *   parameter.
 		 * @returns {string}
-		 *   The concatenated orderby-string
+		 *   The concatenated '$orderby' system query option
 		 * @throws {Error}
-		 *   If 'aSorters' contains elements, which are not {@link sap.ui.model.Sorter} instances.
+		 *   If 'aSorters' contains elements that are not {@link sap.ui.model.Sorter} instances.
 		 */
 		buildOrderbyOption : function (aSorters, sOrderbyQueryOption) {
 			var aOrderbyOptions = [];
@@ -260,7 +260,7 @@ sap.ui.define([
 		 *   query option to be used when creating the cache
 		 * @returns {object} The cache proxy with the following properties
 		 *   deregisterChange: method does nothing
-		 *   hasPendingChanges: method returning false
+		 *   hasPendingChanges: method returns false
 		 *   post: method throws an error as the cache proxy does not support write operations
 		 *   promise: promise fulfilled with the cache or rejected with the error on requesting the
 		 *     canonical path or creating the cache
@@ -319,9 +319,10 @@ sap.ui.define([
 		},
 
 		/**
-		 * Creates a cache proxy for the given list binding using {@link #.createCacheProxy}. Takes
-		 * care of sort and filter parameters. Returns the proxy (allowing for easier testing)
-		 * which itself applies the final cache directly to the binding.
+		 * Creates a cache proxy for the given list binding using {@link #.createCacheProxy}.
+		 * Ensures that sort and filter parameters are added to the query string. Returns the proxy
+		 * (allowing for easier testing) which itself applies the final cache directly to the
+		 * binding.
 		 *
 		 * This is meant to be a private method of ODataListBinding which is hidden here to prevent
 		 * accidental usage.
@@ -450,8 +451,8 @@ sap.ui.define([
 		},
 
 		/**
-		 * Merges the given orderby and filter values into a copy of the given map of query options.
-		 * If no merge is needed the original map of query options is returned.
+		 * Merges the given values for "$orderby" and "$filter" into the given map of query options.
+		 * Ensures that the original map is left unchanged, but creates a copy only if necessary.
 		 *
 		 * @param {object} [mQueryOptions]
 		 *   The map of query options

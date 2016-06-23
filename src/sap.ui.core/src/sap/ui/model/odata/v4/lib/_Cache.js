@@ -352,7 +352,7 @@ sap.ui.define([
 	 *   If no back end request is needed, the function is not called.
 	 * @param {object} [oListener]
 	 *   An optional change listener that is added for the given path. Its method
-	 *   <code>onChange</code>will be called with the new value if the property at that path is
+	 *   <code>onChange</code> will be called with the new value if the property at that path is
 	 *   modified via {@link #update} later.
 	 * @returns {SyncPromise}
 	 *   A promise to be resolved with the requested range given as an OData response object (with
@@ -620,7 +620,7 @@ sap.ui.define([
 	 *   If no back end request is needed, the function is not called.
 	 * @param {object} [oListener]
 	 *   An optional change listener that is added for the given path. Its method
-	 *   <code>onChange</code>is called with the new value if the property at that path is modified
+	 *   <code>onChange</code> is called with the new value if the property at that path is modified
 	 *   via {@link #update} later.
 	 * @returns {SyncPromise}
 	 *   A promise to be resolved with the element.
