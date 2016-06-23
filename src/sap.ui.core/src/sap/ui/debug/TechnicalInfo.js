@@ -77,6 +77,7 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/Device
 				html.push("<tr><td align='right' valign='top'><b>SAPUI5 Version</b></td><td>not available</td></tr>");
 			}
 			html.push("<tr><td align='right' valign='top'><b>Core Version</b></td><td>", Global.version, " (built at ", Global.buildinfo.buildtime, ", last change ", Global.buildinfo.lastchange, ")</td></tr>");
+			html.push("<tr><td align='right' valign='top'><b>Loaded jQuery Version</b></td><td>", jQuery.fn.jquery, "</td></tr>");
 			html.push("<tr><td align='right' valign='top'><b>User Agent</b></td><td>", jQuery.sap.encodeHTML(navigator.userAgent), (document.documentMode ? ", Document Mode '" + document.documentMode + "'" : ""), "</td></tr>");
 			html.push("<tr><td align='right' valign='top'><b>Configuration</b></td><td><div class='sapUiTInfCfg'>");
 			list(ojQSData.config);
