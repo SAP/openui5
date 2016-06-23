@@ -194,12 +194,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 	 */
 	var Fiori20Adapter =  Object.extend("sap.m.Fiori20Adapter", {});
 
-	Fiori20Adapter.attachViewChange = function(fnListener) {
-			oEventProvider.attachEvent("viewChange", fnListener);
-		};
+	Fiori20Adapter.attachViewChange = function(fnListener, oListener) {
+		oEventProvider.attachEvent("adaptedViewChange", fnListener, oListener);
+	};
 
-	Fiori20Adapter.detachViewChange = function(fnListener) {
-		oEventProvider.detachEvent("viewChange", fnListener);
+	Fiori20Adapter.detachViewChange = function(fnListener, oListener) {
+		oEventProvider.detachEvent("adaptedViewChange", fnListener, oListener);
 	};
 
 	Fiori20Adapter.traverse = function(oComponentRoot, oAdaptOptions) {
@@ -488,7 +488,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 	};
 
 	Fiori20Adapter._fireViewChange = function(sViewId) {
-		oEventProvider.fireEvent("viewChange", {
+		oEventProvider.fireEvent("adaptedViewChange", {
 			sViewId: sViewId,
 			oTitleInfo: oAdaptationResult.aViewTitles[sViewId],
 			oSubTitleInfo: oAdaptationResult.aViewSubTitles[sViewId],
