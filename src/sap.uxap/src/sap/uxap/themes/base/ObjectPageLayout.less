@@ -249,3 +249,17 @@ html[data-sap-ui-browser^="ie"][data-sap-ui-os^="win8"] .sapMShell {
     position: absolute;
     z-index: 100;
 }
+
+.ui-helper-clearfix:before,
+.ui-helper-clearfix:after {
+	content: "";
+	display: table;
+}
+
+.ui-helper-clearfix:after {
+	clear: both;
+}
+
+.ui-helper-clearfix {
+	zoom: 1;
+}
