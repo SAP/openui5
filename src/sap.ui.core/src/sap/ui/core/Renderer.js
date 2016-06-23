@@ -86,7 +86,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library'],
 	 *
 	 *             // implementation core renderer logic here
 	 *
-	 *             renderPreamble(oRM, oControl);
+	 *             renderPostamble(oRM, oControl);
 	 *
 	 *         },
 	 *
@@ -130,8 +130,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library'],
 	 * </pre>
 	 *
 	 * <b>Note:</b> the new signature no longer requires the <code>bExport</code> flag to be set for
-	 * the enclosing {@link sap.ui.define} call. The Renderer base classes takes care of the necessary
-	 * global export of the render. This allows Non-SAP developers to write a renderer that complies with
+	 * the enclosing {@link sap.ui.define} call. The Renderer base class takes care of the necessary
+	 * global export of the renderer. This allows Non-SAP developers to write a renderer that complies with
 	 * the documented restriction for <code>sap.ui.define</code> (no use of bExport = true outside
 	 * sap.ui.core projects).
 	 *
