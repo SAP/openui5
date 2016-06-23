@@ -103,8 +103,8 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 				},
 
 				/**
-				 * Decides whether the floating footer behavior should be enabled.
-				 * When the floating footer behavior is used, the content is visible when it's underneath the footer.
+				 * Determines whether the floating footer behavior is enabled.
+				 * If set to <code>true</code>, the content is visible when it's underneath the footer.
 				 * @since 1.40.1
 				 */
 				floatingFooter: {
