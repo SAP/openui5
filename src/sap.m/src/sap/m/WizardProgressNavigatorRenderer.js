@@ -20,7 +20,7 @@ sap.ui.define(["./WizardProgressNavigator"], function (WizardProgressNavigator) 
 	WizardProgressNavigatorRenderer.startNavigator = function (oRm, oControl) {
 		oRm.write("<nav");
 		oRm.writeControlData(oControl);
-		oRm.writeAttribute("class", CLASSES.NAVIGATION);
+		oRm.writeAttribute("class", CLASSES.NAVIGATION + " sapContrastPlus");
 		oRm.writeAttribute(ATTRIBUTES.STEP_COUNT, oControl.getStepCount());
 		oRm.write(">");
 	};

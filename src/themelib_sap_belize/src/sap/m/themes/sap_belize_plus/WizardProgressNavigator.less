@@ -4,7 +4,7 @@
 /* ============================================== */
 
 .sapMWizardProgressNav {
-	background: fade(@sapUiObjectHeaderBackground,60);
+	background: @sapUiObjectHeaderBackground;
 	border-bottom: solid 0.125rem lighten(@sapUiObjectHeaderBackground, 8);
 }
 
@@ -16,6 +16,10 @@
 	& .sapMWizardProgressNavAnchor::after {
 		background: @sapUiSelected;
 	}
+
+	& .sapMWizardProgressNavAnchorCircle {
+		background: @sapUiHighlight;
+	}
 }
 
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"] {
@@ -25,5 +29,5 @@
 }
 
 .sapMWizardProgressNavAnchorTitle:hover {
-  color: lighten(@sapUiGroupTitleTextColor, 10);
+	color: lighten(@sapUiGroupTitleTextColor, 10);
 }
