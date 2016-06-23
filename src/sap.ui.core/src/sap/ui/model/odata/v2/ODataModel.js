@@ -1961,6 +1961,11 @@ sap.ui.define([
 			aExpand = [], aSelect = [],
 			bIncomplete = true;
 
+		// If path does not point to an entity, just return the value
+		if (!oEntityType || !jQuery.isPlainObject(oValue) || !oValue.__metadata || !oValue.__metadata.uri) {
+			return oValue;
+		}
+
 		function getRequestedData(oEntityType, oValue, aSelect, aExpand) {
 			var aOwnExpand, oResultValue,
 				aOwnPropSelect, aOwnNavSelect,
@@ -1968,14 +1973,12 @@ sap.ui.define([
 				aNavSelect, aNavExpand,
 				sExpand, sSelect, aResultProps;
 
-			// do a value copy or the changes to that value will be modified in the model as well (reference)
-			oValue = jQuery.sap.extend(true, {}, oValue);
-			// if no entity type could be found we decide to return no data
-			if (!oEntityType) {
-				return undefined;
-			}
 			// if no value we return undefined
 			if (!oValue) {
+				return undefined;
+			}
+			// if no entity type could be found we decide to return no data
+			if (!oEntityType) {
 				return undefined;
 			}
 			// check select properties
