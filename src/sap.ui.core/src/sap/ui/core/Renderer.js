@@ -80,7 +80,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library'],
 	 *     "use strict";
 	 *
 	 *     var LabelRenderer = Renderer.extend('sap.m.LabelRenderer', {
-	 *         renderer: function(oRM, oControl) {
+	 *         render: function(oRM, oControl) {
 	 *
 	 *             renderPreamble(oRM, oControl);
 	 *
@@ -113,7 +113,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library'],
 	 *     "use strict";
 	 *
 	 *     var FancyLabelRenderer = LabelRenderer.extend('sap.mylib.FancyLabelRenderer', {
-	 *         renderer: function(oRM, oControl) {
+	 *         render: function(oRM, oControl) {
 	 *
 	 *             // call base renderer
 	 *             LabelRenderer.renderPreamble(oRM, oControl);
