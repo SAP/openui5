@@ -1219,4 +1219,255 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 		qutils.triggerKeydown(oElem, "F6", true, false, false);
 		checkFocus(jQuery.sap.domById("Focus1"), assert);
 	});
+
+	QUnit.module("Keyboard Support: Overlay and NoData", {
+		setup: setupTest,
+		teardown: teardownTest
+	});
+
+	QUnit.test("Overlay - TAB forward", function(assert) {
+		oTable.setShowOverlay(true);
+
+		var oElem = setFocusOutsideOfTable("Focus1");
+		simulateTabEvent(oElem, false);
+		oElem = checkFocus(oTable.getDomRef("overlay"), assert);
+		simulateTabEvent(oElem, false);
+		checkFocus(jQuery.sap.domById("Focus2"), assert);
+	});
+
+	QUnit.test("Overlay - TAB forward (with extension and footer)", function(assert) {
+		oTable.setShowOverlay(true);
+		oTable.addExtension(new TestControl("Extension", {text: "Extension", tabbable: true}));
+		oTable.setFooter(new TestControl("Footer", {text: "Footer", tabbable: true}));
+		sap.ui.getCore().applyChanges();
+
+		var oElem = setFocusOutsideOfTable("Focus1");
+		simulateTabEvent(oElem, false);
+		oElem = checkFocus(oTable.getDomRef("overlay"), assert);
+		simulateTabEvent(oElem, false);
+		checkFocus(jQuery.sap.domById("Focus2"), assert);
+	});
+
+	QUnit.test("Overlay - TAB backward", function(assert) {
+		oTable.setShowOverlay(true);
+
+		var oElem = setFocusOutsideOfTable("Focus2");
+		simulateTabEvent(oElem, true);
+		oElem = checkFocus(oTable.getDomRef("overlay"), assert);
+		simulateTabEvent(oElem, true);
+		checkFocus(jQuery.sap.domById("Focus1"), assert);
+	});
+
+	QUnit.test("Overlay - TAB backward (with extension and footer)", function(assert) {
+		oTable.setShowOverlay(true);
+		oTable.addExtension(new TestControl("Extension", {text: "Extension", tabbable: true}));
+		oTable.setFooter(new TestControl("Footer", {text: "Footer", tabbable: true}));
+		sap.ui.getCore().applyChanges();
+
+		var oElem = setFocusOutsideOfTable("Focus2");
+		simulateTabEvent(oElem, true);
+		oElem = checkFocus(oTable.getDomRef("overlay"), assert);
+		simulateTabEvent(oElem, true);
+		checkFocus(jQuery.sap.domById("Focus1"), assert);
+	});
+
+	QUnit.asyncTest("NoData - TAB forward", function(assert) {
+		function doAfterNoDataDisplayed(){
+			oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+
+			var oElem = setFocusOutsideOfTable("Focus1");
+			simulateTabEvent(oElem, false);
+			oElem = checkFocus(getColumnHeader(0), assert);
+			simulateTabEvent(oElem, false);
+			oElem = checkFocus(oTable.getDomRef("noDataCnt"), assert);
+			simulateTabEvent(oElem, false);
+			checkFocus(jQuery.sap.domById("Focus2"), assert);
+
+			QUnit.start();
+		}
+
+		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+		oTable.setModel(new sap.ui.model.json.JSONModel());
+	});
+
+	QUnit.asyncTest("NoData - TAB forward (with extension and footer)", function(assert) {
+		function doAfterNoDataDisplayed(){
+			oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+
+			var oElem = setFocusOutsideOfTable("Focus1");
+			simulateTabEvent(oElem, false);
+			checkFocus(jQuery.sap.domById("Extension"), assert);
+			simulateTabEvent(oElem, false);
+			oElem = checkFocus(getColumnHeader(0), assert);
+			simulateTabEvent(oElem, false);
+			oElem = checkFocus(oTable.getDomRef("noDataCnt"), assert);
+			simulateTabEvent(oElem, false);
+			checkFocus(jQuery.sap.domById("Footer"), assert);
+			simulateTabEvent(oElem, false);
+			checkFocus(jQuery.sap.domById("Focus2"), assert);
+
+			QUnit.start();
+		}
+
+		oTable.addExtension(new TestControl("Extension", {text: "Extension", tabbable: true}));
+		oTable.setFooter(new TestControl("Footer", {text: "Footer", tabbable: true}));
+		sap.ui.getCore().applyChanges();
+		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+		oTable.setModel(new sap.ui.model.json.JSONModel());
+	});
+
+	QUnit.asyncTest("NoData - TAB backward", function(assert) {
+		function doAfterNoDataDisplayed(){
+			oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+
+			var oElem = setFocusOutsideOfTable("Focus2");
+			simulateTabEvent(oElem, true);
+			oElem = checkFocus(oTable.getDomRef("noDataCnt"), assert);
+			simulateTabEvent(oElem, true);
+			oElem = checkFocus(getColumnHeader(0), assert);
+			simulateTabEvent(oElem, true);
+			checkFocus(jQuery.sap.domById("Focus1"), assert);
+
+			QUnit.start();
+		}
+
+		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+		oTable.setModel(new sap.ui.model.json.JSONModel());
+	});
+
+	QUnit.asyncTest("NoData - TAB backward (with extension and footer)", function(assert) {
+		function doAfterNoDataDisplayed(){
+			oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+
+			var oElem = setFocusOutsideOfTable("Focus2");
+			simulateTabEvent(oElem, true);
+			oElem = checkFocus(jQuery.sap.domById("Footer"), assert);
+			simulateTabEvent(oElem, true);
+			oElem = checkFocus(oTable.getDomRef("noDataCnt"), assert);
+			simulateTabEvent(oElem, true);
+			oElem = checkFocus(getColumnHeader(0), assert);
+			simulateTabEvent(oElem, true);
+			oElem = checkFocus(jQuery.sap.domById("Extension"), assert);
+			simulateTabEvent(oElem, true);
+			checkFocus(jQuery.sap.domById("Focus1"), assert);
+
+			QUnit.start();
+		}
+
+		oTable.addExtension(new TestControl("Extension", {text: "Extension", tabbable: true}));
+		oTable.setFooter(new TestControl("Footer", {text: "Footer", tabbable: true}));
+		sap.ui.getCore().applyChanges();
+		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+		oTable.setModel(new sap.ui.model.json.JSONModel());
+	});
+
+	QUnit.asyncTest("NoData - No vertical navigation (header <-> content)", function(assert) {
+		function doAfterNoDataDisplayed(){
+			oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+
+			var oElem = setFocusOutsideOfTable("Focus1");
+			simulateTabEvent(oElem, false);
+			oElem = checkFocus(getColumnHeader(0), assert);
+			qutils.triggerKeydown(oElem, "ARROW_DOWN", false, false, false);
+			oElem = checkFocus(getColumnHeader(0), assert);
+			qutils.triggerKeydown(oElem, "ARROW_RIGHT", false, false, false);
+			oElem = checkFocus(getColumnHeader(1), assert);
+			qutils.triggerKeydown(oElem, "ARROW_LEFT", false, false, false);
+			oElem = checkFocus(getColumnHeader(0), assert);
+
+			//TBD: Add when functionality for Page Down and End+Ctrl is implemented
+			/*oElem = checkFocus(getColumnHeader(0), assert);
+			qutils.triggerKeydown(oElem, "PAGE_DOWN", false, false, false);
+			oElem = checkFocus(getColumnHeader(0), assert);
+			qutils.triggerKeydown(oElem, "END", false, false, true);
+			oElem = checkFocus(getColumnHeader(0), assert);*/
+
+			QUnit.start();
+		}
+
+		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+		oTable.setModel(new sap.ui.model.json.JSONModel());
+	});
+
+	QUnit.asyncTest("NoData / Overlay - No Navigation", function(assert) {
+		function doAfterNoDataDisplayed(){
+			oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+			var sId = "noDataCnt";
+
+			while (sId) {
+				var oElem = oTable.$(sId);
+				oElem.focus();
+				oElem = checkFocus(oElem, assert);
+				qutils.triggerKeydown(oElem, "ARROW_DOWN", false, false, false);
+				checkFocus(oElem, assert);
+				qutils.triggerKeydown(oElem, "ARROW_LEFT", false, false, false);
+				checkFocus(oElem, assert);
+				qutils.triggerKeydown(oElem, "ARROW_RIGHT", false, false, false);
+				checkFocus(oElem, assert);
+				qutils.triggerKeydown(oElem, "ARROW_UP", false, false, false);
+				checkFocus(oElem, assert);
+				qutils.triggerKeydown(oElem, "HOME", false, false, false);
+				checkFocus(oElem, assert);
+				qutils.triggerKeydown(oElem, "END", false, false, false);
+				checkFocus(oElem, assert);
+				qutils.triggerKeydown(oElem, "HOME", false, false, true);
+				checkFocus(oElem, assert);
+				qutils.triggerKeydown(oElem, "END", false, false, true);
+				checkFocus(oElem, assert);
+				qutils.triggerKeydown(oElem, "PAGE_UP", false, false, false);
+				checkFocus(oElem, assert);
+				qutils.triggerKeydown(oElem, "PAGE_DOWN", false, false, false);
+				checkFocus(oElem, assert);
+				qutils.triggerKeydown(oElem, "PAGE_UP", false, true, false);
+				checkFocus(oElem, assert);
+				qutils.triggerKeydown(oElem, "PAGE_DOWN", false, true, false);
+				checkFocus(oElem, assert);
+
+				sId = sId == "noDataCnt" ? "overlay" : null;
+				oTable.setShowOverlay(true);
+			}
+
+			QUnit.start();
+		}
+
+		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+		oTable.setModel(new sap.ui.model.json.JSONModel());
+	});
+
+	QUnit.asyncTest("NoData and Overlay combined - TAB forward", function(assert) {
+		function doAfterNoDataDisplayed(){
+			oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+
+			var oElem = setFocusOutsideOfTable("Focus1");
+			simulateTabEvent(oElem, false);
+			oElem = checkFocus(oTable.getDomRef("overlay"), assert);
+			simulateTabEvent(oElem, false);
+			checkFocus(jQuery.sap.domById("Focus2"), assert);
+
+			QUnit.start();
+		}
+
+		oTable.setShowOverlay(true);
+		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+		oTable.setModel(new sap.ui.model.json.JSONModel());
+	});
+
+	QUnit.asyncTest("NoData and Overlay combined - TAB backward", function(assert) {
+		function doAfterNoDataDisplayed(){
+			oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+
+			var oElem = setFocusOutsideOfTable("Focus2");
+			simulateTabEvent(oElem, true);
+			oElem = checkFocus(oTable.getDomRef("overlay"), assert);
+			simulateTabEvent(oElem, true);
+			checkFocus(jQuery.sap.domById("Focus1"), assert);
+
+			QUnit.start();
+		}
+
+		oTable.setShowOverlay(true);
+		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+		oTable.setModel(new sap.ui.model.json.JSONModel());
+	});
+
 }
