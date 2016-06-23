@@ -527,6 +527,82 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("createContextCacheProxy", function (assert) {
+		var oBinding = {
+				oModel : {oRequestor : {}},
+				sPath : "SO_2_BP"
+			},
+			sCanonicalPath = "/SalesOrderList('1')",
+			sCachePath = sCanonicalPath.slice(1) + "/SO_2_BP",
+			oContext = {
+				requestCanonicalPath : function () {}
+			},
+			oCache = {},
+			oCacheProxy = {
+				promise : Promise.resolve(oCache)
+			},
+			oPathPromise = Promise.resolve(sCanonicalPath),
+			mQueryOptions = {};
+
+		this.mock(oContext).expects("requestCanonicalPath").withExactArgs().returns(oPathPromise);
+		this.mock(_ODataHelper).expects("getQueryOptions")
+			.withExactArgs(sinon.match.same(oBinding), "", sinon.match.same(oContext))
+			.returns(mQueryOptions);
+		this.mock(_Helper).expects("buildPath").withExactArgs(sCanonicalPath, oBinding.sPath)
+			.returns("/" + sCachePath);
+		this.mock(_Cache).expects("createSingle")
+			.withExactArgs(sinon.match.same(oBinding.oModel.oRequestor), sCachePath,
+				sinon.match.same(mQueryOptions))
+			.returns(oCache);
+		this.mock(_ODataHelper).expects("createCacheProxy")
+			.withExactArgs(sinon.match.same(oBinding), sinon.match.func,
+				sinon.match.same(oPathPromise))
+			.callsArgWith(1, sCanonicalPath)
+			.returns(oCacheProxy);
+
+		// code under test
+		assert.strictEqual(_ODataHelper.createContextCacheProxy(oBinding, oContext), oCacheProxy);
+
+		return oCacheProxy.promise.then(function () {
+			assert.strictEqual(oBinding.oCache, oCache);
+		});
+	});
+	// TODO extend createContextCacheProxy to createContextCache to be called everywhere ODCB
+	// possibly needs a cache
+
+	//*********************************************************************************************
+	QUnit.test("createContextCacheProxy: failure", function (assert) {
+		var oBinding = {
+				oModel : {
+					reportError : function () {}
+				},
+				sPath : "SO_2_BP",
+				bRelative : true,
+				toString : function () {return "MyBinding";}
+			},
+			sCanonicalPath = "/~path~",
+			oContext = {
+				requestCanonicalPath : function () {}
+			},
+			oError = new Error("could not create cache"),
+			oCacheProxy = {
+				promise : Promise.reject(oError)
+			},
+			oPathPromise = Promise.resolve(sCanonicalPath);
+
+		this.mock(oContext).expects("requestCanonicalPath").withExactArgs().returns(oPathPromise);
+		this.mock(_ODataHelper).expects("createCacheProxy").returns(oCacheProxy);
+		this.mock(oBinding.oModel).expects("reportError")
+			.withExactArgs("Failed to create cache for binding MyBinding",
+				"sap.ui.model.odata.v4._ODataHelper", sinon.match.same(oError));
+
+		// code under test
+		oCacheProxy = _ODataHelper.createContextCacheProxy(oBinding, oContext);
+
+		return oCacheProxy.promise.catch(function () {});
+	});
+
+	//*********************************************************************************************
 	[{
 		bRelative : true,
 		mQueryOptions : {$orderBy : "GrossAmount"}
@@ -551,7 +627,8 @@ sap.ui.require([
 		bRelative : false,
 		mQueryOptions : {$filter : "foo eq 'bar'"}
 	}, {
-		bRelative : false
+		bRelative : false,
+		aApplicationFilters : [{}]
 	}].forEach(function (oFixture){
 		QUnit.test("createListCacheProxy:" + JSON.stringify(oFixture), function (assert) {
 			var sCanonicalPath = "/SalesOrderList('1')",
@@ -1404,4 +1481,39 @@ sap.ui.require([
 
 	// TODO handle encoding in getQueryOptions
 	//TODO dynamic app filters in ODLB constructor/ODataModel#bindList
+
+	//*********************************************************************************************
+	QUnit.test("(de)registerBinding", function (assert) {
+		var oBinding = {},
+			oDependentBinding0 = {},
+			oDependentBinding1 = {};
+
+		//code under test: must not fail
+		_ODataHelper.deregisterBinding(oBinding, oDependentBinding0);
+
+		//code under test
+		_ODataHelper.registerBinding(oBinding, oDependentBinding0);
+
+		assert.strictEqual(oBinding.aDependentBindings.length, 1);
+		assert.strictEqual(oBinding.aDependentBindings[0], oDependentBinding0);
+
+		//code under test
+		_ODataHelper.registerBinding(oBinding, oDependentBinding1);
+
+		assert.strictEqual(oBinding.aDependentBindings.length, 2);
+		assert.strictEqual(oBinding.aDependentBindings[0], oDependentBinding0);
+		assert.strictEqual(oBinding.aDependentBindings[1], oDependentBinding1);
+
+		//code under test
+		_ODataHelper.deregisterBinding(oBinding, oDependentBinding0);
+
+		assert.strictEqual(oBinding.aDependentBindings.length, 1);
+		assert.strictEqual(oBinding.aDependentBindings[0], oDependentBinding1);
+
+		//code under test:
+		_ODataHelper.deregisterBinding(oBinding, oDependentBinding0);
+
+		assert.strictEqual(oBinding.aDependentBindings.length, 1);
+		assert.strictEqual(oBinding.aDependentBindings[0], oDependentBinding1);
+	});
 });
