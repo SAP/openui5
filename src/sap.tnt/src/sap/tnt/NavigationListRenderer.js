@@ -37,6 +37,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 			rm.writeStyles();
 
 			rm.addClass("sapTntNavLI");
+			rm.addClass("sapContrastPlus");
 
 			if (!expanded) {
 				rm.addClass("sapTntNavLICollapsed");
