@@ -182,7 +182,12 @@ module.exports = function(grunt, config) {
 			grunt.task.run(aTasks);
 		},
 
-		// Package task
+		// Bundle task (execute optionally after 'build')
+		'bundle': [
+			'copy:bundle'
+		],
+
+		// Package task (execute optionally after 'build')
 		'package': [
 			'compress:target'
 		],
