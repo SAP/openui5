@@ -56,6 +56,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 			}
 
 			oRm.addClass(CSS_CLASS + "WithArrow");
+
+			if (oSelect.getValueState() !== sap.ui.core.ValueState.None) {
+				this.addValueStateClasses(oRm, oSelect);
+			}
+
 			oRm.addStyle("max-width", oSelect.getMaxWidth());
 			oRm.writeControlData(oSelect);
 			oRm.writeStyles();
@@ -114,12 +119,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		SelectRenderer.renderLabel = function(oRm, oSelect) {
 			var oSelectedItem = oSelect.getSelectedItem(),
 				sTextDir = oSelect.getTextDirection(),
-				sTextAlign = Renderer.getTextAlign(oSelect.getTextAlign(), sTextDir);
+				sTextAlign = Renderer.getTextAlign(oSelect.getTextAlign(), sTextDir),
+				CSS_CLASS = SelectRenderer.CSS_CLASS;
 
 			oRm.write("<label");
 			oRm.writeAttribute("id", oSelect.getId() + "-label");
 			oRm.writeAttribute("for", oSelect.getId());
-			oRm.addClass(SelectRenderer.CSS_CLASS + "Label");
+			oRm.addClass(CSS_CLASS + "Label");
+
+			if (oSelect.getValueState() !== sap.ui.core.ValueState.None) {
+				oRm.addClass(CSS_CLASS + "LabelState");
+				oRm.addClass(CSS_CLASS + "Label" + oSelect.getValueState());
+			}
 
 			if (oSelect.getType() === sap.m.SelectType.IconOnly) {
 				oRm.addClass("sapUiPseudoInvisibleText");
@@ -147,8 +158,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		 * @private
 		 */
 		SelectRenderer.renderArrow = function(oRm, oSelect) {
-			oRm.write('<span class="' + SelectRenderer.CSS_CLASS + 'Arrow"');
+			var CSS_CLASS = SelectRenderer.CSS_CLASS;
+
+			oRm.write("<span");
+			oRm.addClass(CSS_CLASS + "Arrow");
+
+			if (oSelect.getValueState() !== sap.ui.core.ValueState.None) {
+				oRm.addClass(CSS_CLASS + "ArrowState");
+			}
+
 			oRm.writeAttribute("id", oSelect.getId() + "-arrow");
+			oRm.writeClasses();
 			oRm.write("></span>");
 		};
 
@@ -193,6 +213,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		SelectRenderer.addClass = function(oRm, oSelect) {};
 
 		/**
+		 * Add the CSS value state classes to the control's root element using the provided {@link sap.ui.core.RenderManager}.
+		 * To be overwritten by subclasses.
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+		 * @param {sap.ui.core.Control} oSelect An object representation of the control that should be rendered.
+		 */
+		SelectRenderer.addValueStateClasses = function(oRm, oSelect) {
+			oRm.addClass(SelectRenderer.CSS_CLASS + "State");
+			oRm.addClass(SelectRenderer.CSS_CLASS + oSelect.getValueState());
+		};
+
+		/**
 		 * Gets accessibility role.
 		 * To be overwritten by subclasses.
 		 *
@@ -223,6 +255,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 				role: this.getAriaRole(oSelect),
 				expanded: oSelect.isOpen(),
 				live: "polite",
+				invalid: (oSelect.getValueState() === sap.ui.core.ValueState.Error) ? true : undefined,
 				labelledby: {
 					value: oSelect.getId() + "-label",
 					append: true
