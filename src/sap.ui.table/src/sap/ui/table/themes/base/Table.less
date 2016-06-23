@@ -238,8 +238,14 @@ html[data-sap-ui-browser^="ed"] .sapUiTableVScr .sapUiTableCtrlScr {
 	margin-right: 12px;
 }
 
-.sapUiTable:not(.sapUiTableVScr) .sapUiTableColHdrScr .sapUiTableCol:last-child {
-	border-right: none;
+/* Hide last border right of column header
+	and cell when no vertical scroll is available */
+.sapUiTable:not(.sapUiTableVScr) {
+	.sapUiTableColHdrScr .sapUiTableCol:last-child,
+	.sapUiTableCtrlScroll .sapUiTableTr > td:last-child
+	{
+		border-right: none;
+	}
 }
 
 .sapUiTableColHdr {
