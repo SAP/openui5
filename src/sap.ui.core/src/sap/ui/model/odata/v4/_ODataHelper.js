@@ -319,6 +319,45 @@ sap.ui.define([
 		},
 
 		/**
+		 * Creates a cache proxy for the given context binding using {@link #.createCacheProxy}.
+		 * Returns the proxy (allowing for easier testing) which itself applies the final cache
+		 * directly to the binding.
+		 *
+		 * This is meant to be a private method of ODataContextBinding which is hidden here to
+		 * prevent accidental usage.
+		 *
+		 * Note that the context is given as a parameter and oBinding.oContext is unused because
+		 * the binding's setContext calls this method before calling the superclass to ensure that
+		 * the cache proxy is already created when the events are fired.
+		 *
+		 * @param {sap.ui.model.odata.v4.ODataContextBinding} oBinding
+		 *   The OData context binding instance
+		 * @param {sap.ui.model.odata.v4.Context} oContext
+		 *   The context instance to be used
+		 * @returns {object}
+		 *   The created cache proxy
+		 */
+		createContextCacheProxy : function (oBinding, oContext) {
+			var oCacheProxy;
+
+			function createCache(sPath) {
+				return _Cache.createSingle(oBinding.oModel.oRequestor,
+					_Helper.buildPath(sPath, oBinding.sPath).slice(1),
+					ODataHelper.getQueryOptions(oBinding, "", oContext));
+			}
+
+			oCacheProxy = ODataHelper.createCacheProxy(oBinding, createCache,
+				oContext.requestCanonicalPath());
+			oCacheProxy.promise.then(function (oCache) {
+				oBinding.oCache = oCache;
+			})["catch"](function (oError) {
+				oBinding.oModel.reportError("Failed to create cache for binding " + oBinding,
+					"sap.ui.model.odata.v4._ODataHelper", oError);
+			});
+			return oCacheProxy;
+		},
+
+		/**
 		 * Creates a cache proxy for the given list binding using {@link #.createCacheProxy}.
 		 * Ensures that sort and filter parameters are added to the query string. Returns the proxy
 		 * (allowing for easier testing) which itself applies the final cache directly to the
@@ -372,6 +411,28 @@ sap.ui.define([
 					"sap.ui.model.odata.v4._ODataHelper", oError);
 			});
 			return oCacheProxy;
+		},
+
+		/**
+		 * Deregisters the given dependent binding from the given parent binding.
+		 *
+		 * @param {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding}
+		 *   oParentBinding The parent binding
+		 * @param {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding}
+		 *   oDependentBinding The dependent binding
+		 *
+		 * @private
+		 */
+		deregisterBinding : function (oParentBinding, oDependentBinding) {
+			var aDependentBindings = oParentBinding.aDependentBindings,
+				iIndex;
+
+			if (aDependentBindings) {
+				iIndex = aDependentBindings.indexOf(oDependentBinding);
+				if (iIndex >= 0) {
+					aDependentBindings.splice(iIndex, 1);
+				}
+			}
 		},
 
 		/**
@@ -552,6 +613,21 @@ sap.ui.define([
 			set("$orderby", sOrderby);
 			set("$filter", sFilter);
 			return mResult || mQueryOptions;
+		},
+
+		/**
+		 * Registers the given dependent binding at the given parent binding.
+		 *
+		 * @param {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding}
+		 *   oParentBinding The parent binding
+		 * @param {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding}
+		 *   oDependentBinding The dependent binding
+		 *
+		 * @private
+		 */
+		registerBinding : function (oParentBinding, oDependentBinding) {
+			oParentBinding.aDependentBindings = oParentBinding.aDependentBindings || [];
+			oParentBinding.aDependentBindings.push(oDependentBinding);
 		},
 
 		/**

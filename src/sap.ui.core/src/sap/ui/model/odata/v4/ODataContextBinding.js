@@ -118,6 +118,7 @@ sap.ui.define([
 
 				this.oCache = undefined;
 				this.mCacheByContext = undefined;
+				this.aDependentBindings = undefined;
 				this.sGroupId = undefined;
 				this.oOperation = undefined;
 				this.mQueryOptions = undefined;
@@ -295,6 +296,20 @@ sap.ui.define([
 	 * @see sap.ui.base.Event
 	 * @since 1.37.0
 	 */
+
+	/**
+	 * Destroys the object. The object must not be used anymore after this function was called.
+	 *
+	 * @public
+	 * @since 1.41.0
+	 */
+	// @override
+	ODataContextBinding.prototype.destroy = function () {
+		if (this.bRelative && this.oContext) {
+			this.oContext.deregisterBinding(this);
+		}
+		ContextBinding.prototype.destroy.apply(this);
+	};
 
 	/**
 	 * Calls the OData operation that corresponds to this operation binding.
@@ -591,33 +606,56 @@ sap.ui.define([
 	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
 	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 * @throws {Error}
-	 *   If the given group ID is invalid or refresh on this binding is not supported.
+	 *   If the given group ID is invalid, the binding has pending changes via two-way binding or
+	 *   refresh on this binding is not supported.
 	 *
 	 * @public
 	 * @see sap.ui.model.Binding#refresh
+	 * @see #hasPendingChanges
+	 * @see #resetChanges
 	 * @since 1.37.0
 	 */
 	// @override
 	ODataContextBinding.prototype.refresh = function (sGroupId) {
-//		var that = this;
-
 		if (this.bRelative) {
 			throw new Error("Refresh on this binding is not supported");
 		}
+		if (this.hasPendingChanges()) {
+			throw new Error("Cannot refresh due to pending changes");
+		}
+		_ODataHelper.checkGroupId(sGroupId);
+
+		this.refreshInternal(sGroupId);
+	};
+
+	/**
+	 * Refreshes the binding. The refresh method itself only performs some validation checks and
+	 * forwards to this method doing the actual work. Interaction between contexts also runs via
+	 * these internal methods.
+	 *
+	 * @param {string} [sGroupId]
+	 *   The group ID to be used for refresh
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype.refreshInternal = function (sGroupId) {
 		if (this.oCache) {
 			if (!this.oOperation || !this.oOperation.bAction) {
-				_ODataHelper.checkGroupId(sGroupId);
 				this.sRefreshGroupId = sGroupId;
-//				if (this.mCacheByContext) {
-//					Object.keys(this.mCacheByContext).forEach(function (sCanonicalPath) {
-//						if (that.oCache !== that.mCacheByContext[sCanonicalPath]) {
-//							delete that.mCacheByContext[sCanonicalPath];
-//						}
-//					});
-//				}
-				this.oCache.refresh();
+				if (this.bRelative) {
+					this.oCache.deregisterChange();
+					this.oCache = _ODataHelper.createContextCacheProxy(this, this.oContext);
+					this.mCacheByContext = undefined;
+				} else {
+					this.oCache.refresh();
+				}
 				this._fireChange({reason : ChangeReason.Refresh});
 			}
+		}
+		if (this.aDependentBindings) {
+			this.aDependentBindings.forEach(function (oDependentBinding) {
+				oDependentBinding.refreshInternal(sGroupId);
+			});
 		}
 	};
 
@@ -647,35 +685,28 @@ sap.ui.define([
 	 */
 	// @override
 	ODataContextBinding.prototype.setContext = function (oContext) {
-		var that = this;
-
-		function createCache(sPath) {
-			var mQueryOptions = _ODataHelper.getQueryOptions(that, "", oContext);
-
-			return _Cache.createSingle(that.oModel.oRequestor,
-				_Helper.buildPath(sPath.slice(1), that.sPath), mQueryOptions);
-		}
-
 		if (this.oContext !== oContext) {
-			if (this.bRelative && this.oCache) {
-				this.oCache.deregisterChange();
-				this.oCache = undefined;
+			if (this.bRelative) {
+				if (this.oContext) {
+					this.oContext.deregisterBinding(this);
+				}
+				if (this.oCache) {
+					this.oCache.deregisterChange();
+					this.oCache = undefined;
+				}
 			}
 			if (this.bRelative && (this.oElementContext || oContext)) {
 				// fire "change" iff. this.oElementContext changes
 				// do not call Model#resolve in vain
-				this.oElementContext = oContext
-					? Context.create(this.oModel, this, this.oModel.resolve(this.sPath, oContext))
-					: null;
-				if (oContext && !this.oOperation && this.mQueryOptions) {
-					this.oCache = _ODataHelper.createCacheProxy(this, createCache,
-						oContext.requestCanonicalPath());
-					this.oCache.promise.then(function (oCache) {
-						that.oCache = oCache;
-					})["catch"](function (oError) {
-						that.oModel.reportError("Failed to create cache for binding " + that,
-							sClassName, oError);
-					});
+				if (oContext) {
+					oContext.registerBinding(this);
+					this.oElementContext = Context.create(this.oModel, this,
+						this.oModel.resolve(this.sPath, oContext));
+					if (!this.oOperation && this.mQueryOptions) {
+						this.oCache = _ODataHelper.createContextCacheProxy(this, oContext);
+					}
+				} else {
+					this.oElementContext = null;
 				}
 				// call Binding#setContext because of data state etc.; fires "change"
 				Binding.prototype.setContext.call(this, oContext);
