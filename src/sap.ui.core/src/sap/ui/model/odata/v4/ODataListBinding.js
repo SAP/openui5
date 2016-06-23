@@ -250,7 +250,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Filters the list with the given filters. Filtering is supported only for absolute bindings.
+	 * Filters the list with the given filters.
 	 *
 	 * If there are pending changes an error is thrown. Use {@link #hasPendingChanges} to check if
 	 * there are pending changes. If there are changes, call
@@ -274,18 +274,14 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.ODataListBinding}
 	 *   <code>this</code> to facilitate method chaining
 	 * @throws {Error}
-	 *   If filter is called on a relative binding, if there are pending changes or if an
-	 *   unsupported operation mode is used (see {@link sap.ui.model.odata.v4.ODataModel#bindList})
+	 *   If there are pending changes or if an unsupported operation mode is used (see
+	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList})
 	 *
 	 * @public
 	 * @see sap.ui.model.ListBinding#filter
 	 * @since 1.39.0
 	 */
 	ODataListBinding.prototype.filter = function (vFilters, sFilterType) {
-		if (this.bRelative) {
-			throw new Error(
-				"Unsupported operation: v4.ODataListBinding#filter on relative bindings");
-		}
 		if (this.sOperationMode !== OperationMode.Server) {
 			throw new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server");
 		}
@@ -298,8 +294,8 @@ sap.ui.define([
 		} else {
 			this.aApplicationFilters = _ODataHelper.toArray(vFilters);
 		}
-//		this.mCacheByContext = undefined;
-		this.oCache = _ODataHelper.createListCacheProxy(this, /*oContext*/undefined);
+		this.mCacheByContext = undefined;
+		this.oCache = _ODataHelper.createListCacheProxy(this, this.oContext);
 		this.sChangeReason = ChangeReason.Filter;
 		this.reset();
 		this._fireRefresh({reason : ChangeReason.Filter});

@@ -1,14 +1,14 @@
 {
 	"@odata.context" : "$metadata#SalesOrderList(BuyerName,CurrencyCode,GrossAmount,Note,SalesOrderID)",
-	"value" : [ {
-		"@odata.etag" : "W/\"20160419220000.0000000\"",
+	"value" : [{
+		"@odata.etag" : "W/\"20160619220000.0000000\"",
 		"BuyerName" : "SAP",
 		"CurrencyCode" : "EUR",
 		"GrossAmount" : "25867.03",
 		"Note" : "EPM DG: SO ID 0500000000 Deliver as fast as possible",
 		"SalesOrderID" : "0500000000",
 		"SO_2_BP" : {
-			"@odata.etag" : "W/\"20160420143945.0000000\"",
+			"@odata.etag" : "W/\"20160613143341.1548870\"",
 			"BusinessPartnerID" : "0100000000",
 			"BusinessPartnerRole" : "01",
 			"CompanyName" : "SAP",
@@ -18,8 +18,8 @@
 			"FaxNumber" : "0622734004",
 			"LegalForm" : "SE",
 			"CurrencyCode" : "EUR",
-			"CreatedAt" : "2016-04-20T14:39:45Z",
-			"ChangedAt" : "2016-04-20T14:39:45Z",
+			"CreatedAt" : "2016-06-13T06:53:13Z",
+			"ChangedAt" : "2016-06-13T14:33:41.154887Z",
 			"Address" : {
 				"City" : "Walldorf",
 				"PostalCode" : "69190",
@@ -34,14 +34,14 @@
 			}
 		}
 	}, {
-		"@odata.etag" : "W/\"20160419220000.0000000\"",
+		"@odata.etag" : "W/\"20160619220000.0000000\"",
 		"BuyerName" : "TECUM",
 		"CurrencyCode" : "EUR",
 		"GrossAmount" : "5631.08",
 		"Note" : "EPM DG: SO ID 0500000002 Deliver as fast as possible",
 		"SalesOrderID" : "0500000002",
 		"SO_2_BP" : {
-			"@odata.etag" : "W/\"20160420143945.0000000\"",
+			"@odata.etag" : "W/\"20160613065313.0000000\"",
 			"BusinessPartnerID" : "0100000005",
 			"BusinessPartnerRole" : "01",
 			"CompanyName" : "TECUM",
@@ -51,8 +51,8 @@
 			"FaxNumber" : "2511004",
 			"LegalForm" : "AG",
 			"CurrencyCode" : "EUR",
-			"CreatedAt" : "2016-04-20T14:39:45Z",
-			"ChangedAt" : "2016-04-20T14:39:45Z",
+			"CreatedAt" : "2016-06-13T06:53:13Z",
+			"ChangedAt" : "2016-06-13T06:53:13Z",
 			"Address" : {
 				"City" : "Münster",
 				"PostalCode" : "48155",
@@ -67,14 +67,14 @@
 			}
 		}
 	}, {
-		"@odata.etag" : "W/\"20160419220000.0000000\"",
+		"@odata.etag" : "W/\"20160619220000.0000000\"",
 		"BuyerName" : "Talpa",
 		"CurrencyCode" : "EUR",
 		"GrossAmount" : "250.73",
 		"Note" : "EPM DG: SO ID 0500000006 Deliver as fast as possible",
 		"SalesOrderID" : "0500000006",
 		"SO_2_BP" : {
-			"@odata.etag" : "W/\"20160420143945.0000000\"",
+			"@odata.etag" : "W/\"20160613065313.0000000\"",
 			"BusinessPartnerID" : "0100000003",
 			"BusinessPartnerRole" : "01",
 			"CompanyName" : "Talpa",
@@ -84,8 +84,8 @@
 			"FaxNumber" : "511403004",
 			"LegalForm" : "GmbH",
 			"CurrencyCode" : "EUR",
-			"CreatedAt" : "2016-04-20T14:39:45Z",
-			"ChangedAt" : "2016-04-20T14:39:45Z",
+			"CreatedAt" : "2016-06-13T06:53:13Z",
+			"ChangedAt" : "2016-06-13T06:53:13Z",
 			"Address" : {
 				"City" : "Hannover",
 				"PostalCode" : "30625",
@@ -100,14 +100,14 @@
 			}
 		}
 	}, {
-		"@odata.etag" : "W/\"20160419220000.0000000\"",
+		"@odata.etag" : "W/\"20160619220000.0000000\"",
 		"BuyerName" : "Panorama Studios",
 		"CurrencyCode" : "EUR",
 		"GrossAmount" : "10311.35",
 		"Note" : "EPM DG: SO ID 0500000007 Deliver as fast as possible",
 		"SalesOrderID" : "0500000007",
 		"SO_2_BP" : {
-			"@odata.etag" : "W/\"20160420143945.0000000\"",
+			"@odata.etag" : "W/\"20160613065313.0000000\"",
 			"BusinessPartnerID" : "0100000004",
 			"BusinessPartnerRole" : "01",
 			"CompanyName" : "Panorama Studios",
@@ -117,8 +117,8 @@
 			"FaxNumber" : "2244668004",
 			"LegalForm" : "Inc.",
 			"CurrencyCode" : "USD",
-			"CreatedAt" : "2016-04-20T14:39:45Z",
-			"ChangedAt" : "2016-04-20T14:39:45Z",
+			"CreatedAt" : "2016-06-13T06:53:13Z",
+			"ChangedAt" : "2016-06-13T06:53:13Z",
 			"Address" : {
 				"City" : "Hollywood, California",
 				"PostalCode" : "91602",
@@ -133,14 +133,14 @@
 			}
 		}
 	}, {
-		"@odata.etag" : "W/\"20160419220000.0000000\"",
+		"@odata.etag" : "W/\"20160619220000.0000000\"",
 		"BuyerName" : "Telecomunicaciones Star",
 		"CurrencyCode" : "EUR",
 		"GrossAmount" : "195.16",
 		"Note" : "EPM DG: SO ID 0500000008 Deliver as fast as possible",
 		"SalesOrderID" : "0500000008",
 		"SO_2_BP" : {
-			"@odata.etag" : "W/\"20160420143945.0000000\"",
+			"@odata.etag" : "W/\"20160613065313.0000000\"",
 			"BusinessPartnerID" : "0100000009",
 			"BusinessPartnerRole" : "01",
 			"CompanyName" : "Telecomunicaciones Star",
@@ -150,8 +150,8 @@
 			"FaxNumber" : "1133557004",
 			"LegalForm" : "S.A.",
 			"CurrencyCode" : "ARS",
-			"CreatedAt" : "2016-04-20T14:39:45Z",
-			"ChangedAt" : "2016-04-20T14:39:45Z",
+			"CreatedAt" : "2016-06-13T06:53:13Z",
+			"ChangedAt" : "2016-06-13T06:53:13Z",
 			"Address" : {
 				"City" : "Buenos Aires",
 				"PostalCode" : "1511",
@@ -165,5 +165,5 @@
 				}
 			}
 		}
-	} ]
+	}]
 }
