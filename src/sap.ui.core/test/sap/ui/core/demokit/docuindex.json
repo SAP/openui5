@@ -156,7 +156,8 @@
 				"category" : "Routing",
 				"since" : "1.16",
 				"samples" : [
-					"sap.ui.core.sample.RoutingFullscreen"
+					"sap.ui.core.sample.RoutingFullscreen",
+					"sap.ui.core.sample.RoutingMasterDetail"
 				]
 			},
 			{
@@ -528,6 +529,11 @@
 				"id" : "sap.ui.core.sample.RoutingFullscreen",
 				"name" : "Routing between Fullscreen pages a simple sample",
 				"description" : "A mini app with 2 pages. Both are bookmarkable."
+			},
+			{
+				"id" : "sap.ui.core.sample.RoutingMasterDetail",
+				"name" : "Routing in a split screen layout with the master detail pattern",
+				"description" : "A mini app with 2 detail pages. Both are bookmarkable."
 			},
 			{
 				"id": "sap.ui.core.sample.matcher.BindingPath",
