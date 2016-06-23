@@ -18,7 +18,8 @@
           "sThemability": "PUBLIC",
           "aThemabilityFilter": [
             "Color"
-          ]
+          ],
+          "rExcludeSelector": "\\.sapContrastPlus\\W"
         }
       ]
     }
