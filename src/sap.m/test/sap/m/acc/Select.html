@@ -453,6 +453,38 @@
 			}
 		});
 
+		var oSelectSuccess = new sap.m.Select({
+			width: "15rem",
+			valueState: sap.ui.core.ValueState.Success,
+			items: {
+				path: "/items",
+				template: oItemTemplate
+			}
+		});
+
+		var oSelectWarning = new sap.m.Select({
+			width: "15rem",
+			valueState: sap.ui.core.ValueState.Warning,
+			items: {
+				path: "/items",
+				template: oItemTemplate
+			}
+		});
+
+		var oLabelWarning = new sap.m.Label({
+			text: "Choose your country",
+			labelFor: oSelectWarning
+		}).addStyleClass("customLabel");
+
+		var oSelectError = new sap.m.Select({
+			width: "15rem",
+			valueState: sap.ui.core.ValueState.Error,
+			items: {
+				path: "/items",
+				template: oItemTemplate
+			}
+		});
+
 		var oSelectBusy = new sap.m.Select({
 			busy: true,
 			items: {
@@ -483,6 +515,19 @@
 
 				new sap.ui.core.HTML({ content: "<h3>Disabled</h3>" }),
 				oSelectDisabled,
+				new sap.ui.core.HTML({ content: "<hr>" }),
+
+				new sap.ui.core.HTML({ content: "<h3>Warning state with label</h3>" }),
+				oLabelWarning,
+				oSelectWarning,
+				new sap.ui.core.HTML({ content: "<hr>" }),
+
+				new sap.ui.core.HTML({ content: "<h3>Success state</h3>" }),
+				oSelectSuccess,
+				new sap.ui.core.HTML({ content: "<hr>" }),
+
+				new sap.ui.core.HTML({ content: "<h3>Error state</h3>" }),
+				oSelectError,
 				new sap.ui.core.HTML({ content: "<hr>" }),
 
 				new sap.ui.core.HTML({ content: "<h3>Busy</h3>" }),
