@@ -28,39 +28,33 @@
 }
 
 /* selected */
-
 .sapMSelectListItemBaseSelected {
 	background: @sapUiListSelectionBackgroundColor;
 }
 
 /* hover */
-
 .sapMSelectListItemBaseHoverable:hover {
 	background: @sapUiListHoverBackground;
 }
 
-/* hover selected item */
-
+/* hover selected */
 .sapMSelectListItemBaseSelected.sapMSelectListItemBaseHoverable:hover {
-	background: @sapUiListSelectionBackgroundColor;
+	background-color: @sapUiListSelectionHoverBackground;
 }
 
-
-/* pressed */
-
-.sapMSelectListItemBase.sapMSelectListItemBasePressed {
+/* pressed and pressed selected */
+.sapMSelectListItemBase.sapMSelectListItemBasePressed,
+.sapMSelectListItemBase.sapMSelectListItemBasePressed.sapMSelectListItemBaseSelected {
 	color: @sapUiListActiveTextColor;
 	background: @sapUiListActiveBackground;
 }
 
 /* disabled */
-
 .sapMSelectListItemBaseDisabled {
 	opacity: 0.5;
 }
 
 /* focus */
-
 html.sap-desktop .sapMSelectListItemBase:focus {
 	outline: 1px dotted @sapUiContentFocusColor;
 }
