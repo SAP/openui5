@@ -1402,6 +1402,101 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("SingleCache.update: property in complex type", function (assert) {
+		var sEditUrl = "BusinessPartnerList(BusinessPartnerID='0')",
+			oHelperMock = this.mock(_Helper),
+			oRequestor = _Requestor.create("/"),
+			oRequestorMock = this.mock(oRequestor),
+			sResourcePath = "SalesOrderList('42')?$expand=SO_2_BP",
+			oCache = _Cache.createSingle(oRequestor, sResourcePath),
+			oReadResult = {
+				"SO_2_BP" : {
+					"@odata.etag" : 'W/"19700101000000.0000000"',
+					BusinessPartnerID : "0",
+					Address : {
+						City : "Walldorf"
+					}
+				}
+			},
+			oPatchData = {
+				Address : {
+					City : "Berlin"
+				}
+			},
+			oPatchResult = {
+				"@odata.etag" : 'W/"20160101000000.9999999"',
+				Address : {
+					City : "Berlin"
+				}
+			},
+			oPatchPromise = Promise.resolve(oPatchResult);
+
+		oRequestorMock.expects("request")
+			.withExactArgs("GET", sResourcePath, "groupId")
+			.returns(Promise.resolve(oReadResult));
+
+		return oCache.read("groupId", "SO_2_BP/Address/City").then(function () {
+			oHelperMock.expects("updateCache").withExactArgs(
+					sinon.match.same(oCache.mChangeListeners), "SO_2_BP",
+					sinon.match.same(oReadResult.SO_2_BP), oPatchData);
+			oRequestorMock.expects("request")
+				.withExactArgs("PATCH", sEditUrl,
+					"up",
+					{"If-Match" : 'W/"19700101000000.0000000"'}, oPatchData)
+				.returns(oPatchPromise);
+			oHelperMock.expects("updateCache").withExactArgs(
+					sinon.match.same(oCache.mChangeListeners), "SO_2_BP",
+					sinon.match.same(oReadResult.SO_2_BP), oPatchResult);
+
+			// code under test
+			return oCache.update("up", "Address/City", "Berlin", sEditUrl, "SO_2_BP");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("SingleCache.update: single property", function (assert) {
+		var sEditUrl = "ProductList('HT-1000')",
+			oHelperMock = this.mock(_Helper),
+			oRequestor = _Requestor.create("/"),
+			oRequestorMock = this.mock(oRequestor),
+			sResourcePath = "ProductList('HT-1000')/Name",
+			oCache = _Cache.createSingle(oRequestor, sResourcePath, {}, true),
+			oReadResult = {
+				// "value" is a fixed name here (see "11 Individual Property or Operation Response")
+				value : "MyName"
+			},
+			oPatchData = {
+				Name : "foo"
+			},
+			oPatchResult = {
+				"@odata.etag" : 'W/"20160101000000.9999999"',
+				Name : "Foo"
+			},
+			oPatchPromise = Promise.resolve(oPatchResult);
+
+		oRequestorMock.expects("request")
+			.withExactArgs("GET", sResourcePath, "groupId")
+			.returns(Promise.resolve(oReadResult));
+
+		return oCache.read("groupId", "").then(function () {
+			oHelperMock.expects("updateCache").withExactArgs(
+					sinon.match.same(oCache.mChangeListeners), "",
+					sinon.match.same(oReadResult), {value : "foo"});
+			oRequestorMock.expects("request")
+				.withExactArgs("PATCH", sEditUrl,
+					"up",
+					{"If-Match" : undefined}, oPatchData)
+				.returns(oPatchPromise);
+			oHelperMock.expects("updateCache").withExactArgs(
+					sinon.match.same(oCache.mChangeListeners), "",
+					sinon.match.same(oReadResult), {value : "Foo"});
+
+			// code under test
+			return oCache.update("up", "Name", "foo", sEditUrl, "");
+		});
+	});
+
+	//*********************************************************************************************
 	[{
 		// absolute property binding
 		sEditUrl : "ProductList('HT-1000')",
@@ -1673,8 +1768,8 @@ sap.ui.require([
 
 			assert.deepEqual(oCache.mChangeListeners, {});
 		});
-
 	});
+
 	//*********************************************************************************************
 	QUnit.test("SingleCache:deregisterChange", function (assert) {
 		var oRequestor = _Requestor.create("/~/"),
@@ -1693,6 +1788,6 @@ sap.ui.require([
 
 			assert.deepEqual(oCache.mChangeListeners, {});
 		});
-
 	});
+	//TODO: resetCache if error in update?
 });

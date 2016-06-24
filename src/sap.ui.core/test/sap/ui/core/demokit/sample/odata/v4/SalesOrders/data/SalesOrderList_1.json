@@ -387,7 +387,19 @@
 		"@odata.etag" : "W/\"20160613065313.0000000\"",
 		"BusinessPartnerID" : "0100000005",
 		"CompanyName" : "TECUM",
-		"PhoneNumber" : "2511415"
+		"PhoneNumber" : "2511415",
+		"Address" : {
+			"City" : "Münster",
+			"PostalCode" : "48155",
+			"Street" : "Albersloher Weg",
+			"Building" : "24",
+			"Country" : "DE",
+			"AddressType" : "02",
+			"GeoLocation" : {
+				"Longitude" : "7.651731300000",
+				"Latitude" : "51.940081800000"
+			}
+		}
 	},
 	"SO_2_SCHDL" : [{
 		"ScheduleKey" : "005056A71E3D1ED68DDA8C9967D08B27",

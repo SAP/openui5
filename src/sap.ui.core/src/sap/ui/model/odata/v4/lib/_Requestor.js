@@ -323,6 +323,35 @@ sap.ui.define([
 			aRequests = this.mBatchQueue[sGroupId];
 
 		/*
+		 * Merges a change from a change set into the previous one if possible.
+		 *
+		 * @param {object} oPreviousChange The previous change, may be undefined
+		 * @param {object} oChange The current change
+		 * @returns {string} The merged body or undefined if no merge is possible
+		 */
+		function mergePatch(oPreviousChange, oChange) {
+			var oBody, oPreviousBody, sProperty;
+
+			if (oPreviousChange
+					&& oPreviousChange.method === "PATCH"
+					&& oChange.method === "PATCH"
+					&& oPreviousChange.url === oChange.url
+					&& jQuery.sap.equal(oPreviousChange.headers, oChange.headers)) {
+				oPreviousBody = JSON.parse(oPreviousChange.body);
+				oBody = JSON.parse(oChange.body);
+				for (sProperty in oPreviousBody) {
+					if (oPreviousBody[sProperty] === null
+							&& oBody[sProperty] && typeof oBody[sProperty] === "object") {
+						// previous PATCH sets complex property to null -> must not be merged
+						return undefined;
+					}
+				}
+				return JSON.stringify(jQuery.extend(true, oPreviousBody, oBody));
+			}
+			return undefined;
+		}
+
+		/*
 		 * Visits the given request/response pairs, rejecting or resolving the corresponding
 		 * promises accordingly.
 		 *
@@ -362,14 +391,10 @@ sap.ui.define([
 
 		// iterate over the change set and merge related PATCH requests
 		aRequests[0].forEach(function (oChange) {
-			if (oPreviousChange
-					&& oPreviousChange.method === "PATCH"
-					&& oChange.method === "PATCH"
-					&& oPreviousChange.url === oChange.url
-					&& jQuery.sap.equal(oPreviousChange.headers, oChange.headers)) {
-				// merge related PATCH requests
-				oPreviousChange.body = JSON.stringify(
-					jQuery.extend(JSON.parse(oPreviousChange.body), JSON.parse(oChange.body)));
+			var sMergedBody = mergePatch(oPreviousChange, oChange);
+
+			if (sMergedBody) {
+				oPreviousChange.body = sMergedBody;
 				oChange.$resolve(oPreviousChange.$promise);
 			} else { // push into change set
 				aChangeSet.push(oChange);

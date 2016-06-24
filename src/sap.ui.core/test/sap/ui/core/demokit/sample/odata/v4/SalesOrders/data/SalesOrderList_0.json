@@ -481,7 +481,19 @@
 		"@odata.etag" : "W/\"20160613143341.1548870\"",
 		"BusinessPartnerID" : "0100000000",
 		"CompanyName" : "SAP",
-		"PhoneNumber" : "0622734567"
+		"PhoneNumber" : "0622734567",
+		"Address" : {
+			"City" : "St. Ingbert",
+			"PostalCode" : "66386",
+			"Street" : "Dietmar-Hopp-Allee",
+			"Building" : "16",
+			"Country" : "DE",
+			"AddressType" : "02",
+			"GeoLocation" : {
+				"Longitude" : "8.641701933686",
+				"Latitude" : "49.293673600000"
+			}
+		}
 	},
 	"SO_2_SCHDL" : [{
 		"ScheduleKey" : "005056A71E3D1ED68DDAAE99B0154B70",

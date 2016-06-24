@@ -152,7 +152,19 @@
 		"@odata.etag" : "W/\"20160613065313.0000000\"",
 		"BusinessPartnerID" : "0100000003",
 		"CompanyName" : "Talpa",
-		"PhoneNumber" : "511403266"
+		"PhoneNumber" : "511403266",
+		"Address" : {
+			"City" : "Hannover",
+			"PostalCode" : "30625",
+			"Street" : "An der Breiten Wiese",
+			"Building" : "422",
+			"Country" : "DE",
+			"AddressType" : "02",
+			"GeoLocation" : {
+				"Longitude" : "9.823618171812",
+				"Latitude" : "52.382990802599"
+			}
+		}
 	},
 	"SO_2_SCHDL" : [{
 		"ScheduleKey" : "005056A71E3D1ED68DDA8CB5CA1B2B46",

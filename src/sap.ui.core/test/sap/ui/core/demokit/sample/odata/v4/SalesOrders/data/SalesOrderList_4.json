@@ -293,7 +293,19 @@
 		"@odata.etag" : "W/\"20160613065313.0000000\"",
 		"BusinessPartnerID" : "0100000009",
 		"CompanyName" : "Telecomunicaciones Star",
-		"PhoneNumber" : "1133557799"
+		"PhoneNumber" : "1133557799",
+		"Address" : {
+			"City" : "Buenos Aires",
+			"PostalCode" : "1511",
+			"Street" : "Av. Libertador",
+			"Building" : "12221",
+			"Country" : "AR",
+			"AddressType" : "02",
+			"GeoLocation" : {
+				"Longitude" : "-58.573947800000",
+				"Latitude" : "-34.864871900000"
+			}
+		}
 	},
 	"SO_2_SCHDL" : [{
 		"ScheduleKey" : "005056A71E3D1ED68DDA8CB5CA1C8B46",

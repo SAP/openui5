@@ -387,7 +387,19 @@
 		"@odata.etag" : "W/\"20160613065313.0000000\"",
 		"BusinessPartnerID" : "0100000004",
 		"CompanyName" : "Panorama Studios",
-		"PhoneNumber" : "2244668800"
+		"PhoneNumber" : "2244668800",
+		"Address" : {
+			"City" : "Hollywood, California",
+			"PostalCode" : "91602",
+			"Street" : "Morning Drive",
+			"Building" : "178",
+			"Country" : "US",
+			"AddressType" : "02",
+			"GeoLocation" : {
+				"Longitude" : "-118.352803603805",
+				"Latitude" : "34.136429050000"
+			}
+		}
 	},
 	"SO_2_SCHDL" : [{
 		"ScheduleKey" : "005056A71E3D1ED68DDA8CB5CA1B8B46",

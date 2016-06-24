@@ -287,6 +287,158 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("updateCache: simple", function (assert) {
+		var mChangeListeners = {
+				"SO_2_SOITEM/Note" : [{onChange : function () {}}, {onChange : function () {}}],
+				"SO_2_SOITEM/AnotherNote" : [{onChange : function () {}}]
+			},
+			oCacheData = {
+				SalesOrderItemID : "000100",
+				Note : "old",
+				AnotherNote : "oldAnotherNote"
+			};
+
+		this.mock(mChangeListeners["SO_2_SOITEM/Note"][0]).expects("onChange").withExactArgs("new");
+		this.mock(mChangeListeners["SO_2_SOITEM/Note"][1]).expects("onChange").withExactArgs("new");
+		this.mock(mChangeListeners["SO_2_SOITEM/AnotherNote"][0]).expects("onChange")
+			.withExactArgs("newAnotherNote");
+
+		// code under test
+		_Helper.updateCache(mChangeListeners, "SO_2_SOITEM", oCacheData, {
+			Note : "new",
+			Foo : "bar",
+			AnotherNote :"newAnotherNote"
+		});
+
+		assert.deepEqual(oCacheData, {
+			SalesOrderItemID : "000100",
+			Note : "new",
+			AnotherNote : "newAnotherNote"
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("updateCache: structured", function (assert) {
+		var mChangeListeners = {
+				"SO_2_BP/Address/City" : [{onChange : function () {}}]
+			},
+			oCacheData = {
+				BusinessPartnerID : "42",
+				Address : {
+					City : "Walldorf",
+					PostalCode : "69190"
+				}
+			};
+
+		this.mock(mChangeListeners["SO_2_BP/Address/City"][0]).expects("onChange")
+			.withExactArgs("Heidelberg");
+
+		// code under test: update cache with the value the user entered
+		_Helper.updateCache(mChangeListeners, "SO_2_BP", oCacheData, {
+			Address : {
+				City : "Heidelberg"
+			}
+		});
+
+		assert.deepEqual(oCacheData, {
+			BusinessPartnerID : "42",
+			Address : {
+				City : "Heidelberg",
+				PostalCode : "69190"
+			}
+		});
+
+		// code under test: update cache with the patch result
+		_Helper.updateCache(mChangeListeners, "SO_2_BP", oCacheData, {
+			BusinessPartnerID : "42",
+			Address : {
+				City : "Heidelberg",
+				PostalCode : "69115"
+			}
+		});
+
+		assert.deepEqual(oCacheData, {
+			BusinessPartnerID : "42",
+			Address : {
+				City : "Heidelberg",
+				PostalCode : "69115"
+			}
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("updateCache: remove structured attribute", function (assert) {
+		var mChangeListeners = {
+				"SO_2_BP/Address/City" : [{onChange : function () {}}],
+				"SO_2_BP/Address/Foo/Bar" : [{onChange : function () {}}]
+			},
+			oCacheData = {
+				BusinessPartnerID : "42",
+				Address : {
+					City : "Walldorf",
+					PostalCode : "69190",
+					Foo : {
+						Bar : "Baz"
+					}
+				}
+			};
+
+		this.mock(mChangeListeners["SO_2_BP/Address/City"][0]).expects("onChange")
+			.withExactArgs(undefined);
+		this.mock(mChangeListeners["SO_2_BP/Address/Foo/Bar"][0]).expects("onChange")
+			.withExactArgs(undefined);
+
+		_Helper.updateCache(mChangeListeners, "SO_2_BP", oCacheData, {
+			BusinessPartnerID : "42",
+			Address : null
+		});
+
+		assert.deepEqual(oCacheData, {
+			BusinessPartnerID : "42",
+			Address : null
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("updateCache: add structured attribute", function (assert) {
+		var mChangeListeners = {
+				"SO_2_BP/Address/City" : [{onChange : function () {}}],
+				"SO_2_BP/Address/Foo/Bar" : [{onChange : function () {}}]
+			},
+			oCacheData = {
+				BusinessPartnerID : "42",
+				Address : null
+			};
+
+		this.mock(mChangeListeners["SO_2_BP/Address/City"][0]).expects("onChange")
+			.withExactArgs("Walldorf");
+		this.mock(mChangeListeners["SO_2_BP/Address/Foo/Bar"][0]).expects("onChange")
+			.withExactArgs("Baz");
+
+		_Helper.updateCache(mChangeListeners, "SO_2_BP", oCacheData, {
+			BusinessPartnerID : "42",
+			Address : {
+				City : "Walldorf",
+				PostalCode : "69190",
+				Foo : {
+					Bar : "Baz"
+				}
+			}
+		});
+
+		assert.deepEqual(oCacheData, {
+			BusinessPartnerID : "42",
+			Address : {
+				City : "Walldorf",
+				PostalCode : "69190",
+				Foo : {
+					Bar : "Baz"
+				}
+			}
+		});
+	});
+
+	//*********************************************************************************************
 	// Integration Tests with real backend
 	if (TestUtils.isRealOData()) {
 		QUnit.test("Integration test for formatLiteral", function (assert) {
