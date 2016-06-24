@@ -112,6 +112,10 @@ html.sap-desktop {
 		left: -1px; /* Cb in SimpleForm: left and right border adjustment */
 		right: 1px;
 	}
+
+	.sapUiRespGrid .sapMCb:not(.sapMCbBgDis).sapMCbHasLabel:focus:before {
+		right: 0; /* in the Grid the outline on the right is not visible */
+	}
 }
 
 /* CheckBox in Footer Context */
