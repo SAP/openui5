@@ -782,6 +782,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 					if (this.getDomRef()) { // as control could be destroyed during update binding
 						this._$input.val(sValue);
 					}
+					this.setProperty("value", sValue, true); // no rerendering
 					this.fireChangeEvent(sValue, {valid: true});
 				}
 			}
