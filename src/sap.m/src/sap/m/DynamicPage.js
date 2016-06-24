@@ -832,7 +832,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._onWrapperScroll = function (oEvent) {
-		if (Device.system.phone || !this._bExpandingWithAClick) {
+		if (!Device.system.desktop || !this._bExpandingWithAClick) {
 			this._toggleHeader();
 		}
 
