@@ -17,11 +17,9 @@
 <script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script type="text/javascript">
-	if (!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 8)) {
-		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-	}
 
 	function fnCreateSlideTile() {
 			//Model
@@ -93,21 +91,15 @@
 			this.oSlideTile.setModel(oSlideTileModel);
 	};
 
+	var oResBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
 	QUnit.module("Rendering - sap.m.SlideTile", {
 		beforeEach : function() {
-			this.fnPressHandler = function() {
-			};
-			this.fnSecondPressHandler = function() {
-			};
 			fnCreateSlideTile.call(this);
 			this.oSlideTile.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
-			sinon.spy(this, "fnPressHandler");
-			sinon.spy(this, "fnSecondPressHandler");
 		},
 		afterEach : function () {
-			this.fnPressHandler.restore();
-			this.fnSecondPressHandler.restore();
 			this.oSlideTile.destroy();
 			this.oSlideTile = null;
 		}
@@ -137,8 +129,9 @@
 	QUnit.test("Test ARIA label for multiple content", function(assert) {
 		//Arrange
 		//Act
+		var sAdditionalText = oResBundle.getText("SLIDETILE_TOGGLE_SLIDING");
 		//Assert
-		assert.equal(this.oSlideTile.$().attr("aria-label"), "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2\nElement with multiple content.\nTo toggle sliding press space bar.\nTo navigate press enter", "SlideTile contains expected ARIA-label attribute");
+		assert.equal(this.oSlideTile.$().attr("aria-label"), "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2\n" + sAdditionalText, "SlideTile contains expected ARIA-label attribute");
 	});
 
 	QUnit.test("Test sliding active per default", function(assert) {
@@ -175,6 +168,26 @@
 		assert.notOk(this.oSlideTile.getTiles()[1].$().attr("tabindex"), "Focus is removed from second GenericTile");
 	});
 
+	QUnit.module("Events - sap.m.SlideTile", {
+		beforeEach : function() {
+			this.fnPressHandler = function() {
+			};
+			this.fnSecondPressHandler = function() {
+			};
+			fnCreateSlideTile.call(this);
+			this.oSlideTile.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			sinon.spy(this, "fnPressHandler");
+			sinon.spy(this, "fnSecondPressHandler");
+		},
+		afterEach : function () {
+			this.fnPressHandler.restore();
+			this.fnSecondPressHandler.restore();
+			this.oSlideTile.destroy();
+			this.oSlideTile = null;
+		}
+	});
+
 	QUnit.test("SlideTile key down handler test", function(assert) {
 		//Arrange
 		var spy = sinon.spy(this.oSlideTile.getTiles()[0], "onkeydown"),
@@ -199,15 +212,39 @@
 		assert.ok(this.fnSecondPressHandler.notCalled, "The second GenericTile press event is not triggered");
 	});
 
-	QUnit.test("SlideTile mouse down handler test", function(assert) {
+	QUnit.test("SlideTile keyboard button B test", function(assert) {
 		//Arrange
-		var $Dom = this.oSlideTile.$().find(".sapMSTIconClickTapArea")[0];
-		var oEvent = jQuery.Event("mousedown");
-		oEvent.target = $Dom;
+		var spy = sinon.spy(this.oSlideTile, "_scrollToNextTile"),
+		oEvent = jQuery.Event("keyup");
+		oEvent.which = jQuery.sap.KeyCodes.B;
+		this.oSlideTile._bAnimationPause = true;
 		//Act
 		this.oSlideTile.$().trigger(oEvent);
 		//Assert
-		assert.equal(this.oSlideTile.$().hasClass("sapMSTIconPressed"), true, "Class available");
+		assert.ok(spy.calledOnce, "Backwards sliding by using key B works");
+	});
+
+	QUnit.test("SlideTile keyboard button F test", function(assert) {
+		//Arrange
+		var spy = sinon.spy(this.oSlideTile, "_scrollToNextTile"),
+		oEvent = jQuery.Event("keyup");
+		oEvent.which = jQuery.sap.KeyCodes.F;
+		this.oSlideTile._bAnimationPause = true;
+		//Act
+		this.oSlideTile.$().trigger(oEvent);
+		//Assert
+		assert.ok(spy.calledOnce, "Forwards sliding by using key F works");
+	});
+
+	QUnit.test("SlideTile mouse down handler test", function(assert) {
+		//Arrange
+		var oDom = this.oSlideTile.$().find(".sapMSTIconClickTapArea")[0];
+		var oEvent = jQuery.Event("mousedown");
+		oEvent.target = oDom;
+		//Act
+		this.oSlideTile.$().trigger(oEvent);
+		//Assert
+		assert.ok(this.oSlideTile.$().hasClass("sapMSTIconPressed"), "Press class is added");
 	});
 
 	QUnit.test("SlideTile mouse up handler and click delegation on GenericTile test", function(assert) {
@@ -220,6 +257,48 @@
 		//Assert
 		assert.ok(this.fnPressHandler.calledOnce, "Tap delegation on first GenericTile works");
 		assert.ok(this.fnSecondPressHandler.notCalled, "The second GenericTile press event is not triggered");
+	});
+
+	QUnit.test("SlideTile touch start handler test - touch on Pause/play icon", function(assert) {
+		//Arrange
+		var oEvent = {preventDefault: function(){}};
+		var oDom = this.oSlideTile.$().find(".sapMSTIconClickTapArea")[0];
+		oEvent.target = oDom;
+		//Act
+		this.oSlideTile.ontouchstart(oEvent);
+		//Assert
+		assert.ok(this.oSlideTile.$().hasClass("sapMSTIconPressed"), "Press class is added");
+	});
+
+	QUnit.test("SlideTile touch start handler test - touch on SlideTile", function(assert) {
+		//Arrange
+		var oEvent = {preventDefault: function(){}};
+		//Act
+		this.oSlideTile.ontouchstart(oEvent);
+		//Assert
+		assert.notOk(this.oSlideTile.$().hasClass("sapMSTIconPressed"), "Press class is not added");
+		assert.ok(this.oSlideTile.$().hasClass("sapMSTHvr"), true, "Hover Class is added");
+	});
+
+	QUnit.test("SlideTile touch end handler test", function(assert) {
+		//Arrange
+		var oEvent = {preventDefault: function(){}};
+		//Act
+		this.oSlideTile.ontouchend(oEvent);
+		//Assert
+		assert.notOk(this.oSlideTile.$().hasClass("sapMSTHvr"), "Hover Class is removed");
+	});
+
+	QUnit.module("Methods - sap.m.SlideTile", {
+		beforeEach : function() {
+			fnCreateSlideTile.call(this);
+			this.oSlideTile.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function () {
+			this.oSlideTile.destroy();
+			this.oSlideTile = null;
+		}
 	});
 
 	QUnit.test("Method _getPreviousTileIndex", function(assert) {
@@ -264,8 +343,9 @@
 
 	QUnit.test("Method _scrollToNextTile - option: scroll backward and stop the animation", function(assert) {
 		//Arrange
-		var sAriaLabel, $NextTile, $NextTileExpected,
-			sAriaLabelExpected = "Tile 3 50 Neutral Footer 5 60 Neutral Footer 6\nElement with multiple content.\nTo toggle sliding press space bar.\nTo navigate press enter";
+		var sAdditionalText = oResBundle.getText("SLIDETILE_TOGGLE_SLIDING"),
+			sAriaLabel, $NextTile, $NextTileExpected,
+			sAriaLabelExpected = "Tile 3 50 Neutral Footer 5 60 Neutral Footer 6\n" + sAdditionalText;
 		//Act
 		this.oSlideTile._scrollToNextTile(true, true);
 		sAriaLabel = this.oSlideTile.$().attr("aria-label")
@@ -275,8 +355,9 @@
 
 	QUnit.test("Method _scrollToNextTile - option: scroll forward and stop the animation", function(assert) {
 		//Arrange
-		var sAriaLabel, $NextTile, $NextTileExpected,
-			sAriaLabelExpected = "Tile 2 30 Neutral Footer 3 40 Neutral Footer 4\nElement with multiple content.\nTo toggle sliding press space bar.\nTo navigate press enter";
+		var sAdditionalText = oResBundle.getText("SLIDETILE_TOGGLE_SLIDING"),
+			sAriaLabel, $NextTile, $NextTileExpected,
+			sAriaLabelExpected = "Tile 2 30 Neutral Footer 3 40 Neutral Footer 4\n" + sAdditionalText;
 		//Act
 		this.oSlideTile._scrollToNextTile(true, false);
 		sAriaLabel = this.oSlideTile.$().attr("aria-label")
@@ -286,8 +367,9 @@
 
 	QUnit.test("Method _scrollToNextTile - option: scroll forward twice and stop the animation", function(assert) {
 		//Arrange
-		var sAriaLabel, $NextTile, $NextTileExpected,
-			sAriaLabelExpected = "Tile 3 50 Neutral Footer 5 60 Neutral Footer 6\nElement with multiple content.\nTo toggle sliding press space bar.\nTo navigate press enter";
+		var sAdditionalText = oResBundle.getText("SLIDETILE_TOGGLE_SLIDING"),
+			sAriaLabel, $NextTile, $NextTileExpected,
+			sAriaLabelExpected = "Tile 3 50 Neutral Footer 5 60 Neutral Footer 6\n" + sAdditionalText;
 		//Act
 		this.oSlideTile._scrollToNextTile(true, false);
 		this.oSlideTile._scrollToNextTile(true, false);
