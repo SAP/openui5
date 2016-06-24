@@ -639,6 +639,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		this._bBindingLengthChanged = false;
 		this._mTimeouts = {};
 
+		//Provide setter for old removed noDataText property to avoid crashes
+		this.setNoDataText = function(sText) {
+			if (!(this.getNoData() instanceof Control)) {
+				this.setNoData(sText);
+			}
+			jQuery.sap.log.error("Function setNoDataText of control sap.ui.table.Table must not be used!");
+			return this;
+		};
+
 		/**
 		 * Updates the row binding contexts and synchronizes the row heights. This function will be called by updateRows
 		 */
