@@ -702,6 +702,69 @@
 				// clean up
 				oColorPicker.destroy();
 			});
+
+		module("test isColor function e.g. test _parseColorString with bCheckOnly parameter set to true");
+
+		test("isColor test with named color parameter 'aquamarine'", function() {
+			//Arrange
+			var oColorPicker = createColorPicker();
+
+			// System under test
+			oColorPicker.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			ok(oColorPicker.isColor("aquamarine"), "'aquamarine' is a color");
+
+			// clean up
+			oColorPicker.destroy();
+		});
+
+		test("isColor test with parameter 'dfggfdg'", function() {
+			//Arrange
+			var oColorPicker = createColorPicker();
+
+			// System under test
+			oColorPicker.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			ok(!oColorPicker.isColor("dfggfdg"), "'dfggfdg' is not a color");
+
+			// clean up
+			oColorPicker.destroy();
+		});
+
+		test("isColor test with parameter '000055'", function() {
+			//Arrange
+			var oColorPicker = createColorPicker();
+
+			// System under test
+			oColorPicker.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			ok(oColorPicker.isColor("000055"), "'000055' is a color");
+
+			// clean up
+			oColorPicker.destroy();
+		});
+
+		test("isColor test with parameter '000055er'", function() {
+			//Arrange
+			var oColorPicker = createColorPicker();
+
+			// System under test
+			oColorPicker.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			ok(!oColorPicker.isColor("000055er"), "'000055er' is not a color");
+
+			// clean up
+			oColorPicker.destroy();
+		});
+
 		</script>
 	</head>
 
