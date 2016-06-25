@@ -462,7 +462,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * Event before rendering the page
 	 */
 	ColorPicker.prototype.onBeforeRendering = function() {
-		if (this.getMode() == "HSL") {
+		if (this.getMode() === "HSL") {
 			this.oHLayout8.addContent(this.oHtmlOldCol);
 			this.oHLayout8.addContent(this.oArrow);
 			this.oHLayout8.addContent(this.oHtmlNewCol);
@@ -554,7 +554,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this.oHueField.setValue(this.Color.h);
 		this.oSatField.setValue(this.Color.s);
 
-		if (this.getMode() == "HSL") {
+		if (this.getMode() === "HSL") {
 			this.oLitField.setValue(this.Color.l);
 			this.oAlphaField.setValue(this.Color.a);
 			this.oSlider.setValue(this.Color.h);
@@ -592,7 +592,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	ColorPicker.prototype.handleMouseDown = function(e) {
 
 		//	exit if the HEXfield is errorneous
-		if (this.oHexField.getValueState() == sap.ui.core.ValueState.Error) {
+		if (this.oHexField.getValueState() === sap.ui.core.ValueState.Error) {
 			return;
 		}
 
@@ -611,7 +611,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	ColorPicker.prototype.handleMouseUp = function(e) {
 
 		//	exit if the HEXfield is errorneous
-		if (this.oHexField.getValueState() == sap.ui.core.ValueState.Error) {
+		if (this.oHexField.getValueState() === sap.ui.core.ValueState.Error) {
 			return;
 		}
 
@@ -621,7 +621,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		.unbind("mousemove", this.handleMousePos)
 		.unbind("mouseup", this.handleMouseUp);
 
-		if (this.getMode() == "HSL") {
+		if (this.getMode() === "HSL") {
 			this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL});
 		} else {
 			this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, v:this.Color.v, alpha:this.Color.a, hex:this.Color.hex});
@@ -659,7 +659,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		//	set the new values
 		this.oSatField.setValue(satValue);
 
-		if (this.getMode() == "HSL") {
+		if (this.getMode() === "HSL") {
 			this.oLitField.setValue(valValue);
 			//	process changes
 			this._processHSLchanges();
@@ -690,7 +690,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		//	set the new hue value in the hue inut field
 		this.oHueField.setValue(sliderValue);
 
-		if (this.getMode() == "HSL") {
+		if (this.getMode() === "HSL") {
 			//	process changes
 			this._processHSLchanges();
 
@@ -719,7 +719,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		//	set the new hue value in the hue inut field
 		this.oHueField.setValue(sliderValue);
 
-		if (this.getMode() == "HSL") {
+		if (this.getMode() === "HSL") {
 			//	process changes
 			this._processHSLchanges();
 
@@ -745,7 +745,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		// get the new value
 		this.Color.a = this.oAlphaSlider.getValue();
 
-		if (this.getMode() == "HSL") {
+		if (this.getMode() === "HSL") {
 			//	set the new hue value in the hue input field
 			this.oAlphaField.setValue(this.Color.a);
 
@@ -773,7 +773,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		//	get the new value
 		this.Color.a = this.oAlphaSlider.getValue();
 
-		if (this.getMode() == "HSL") {
+		if (this.getMode() === "HSL") {
 			//	set the new hue value in the hue input field
 			this.oAlphaField.setValue(this.Color.a);
 
@@ -864,7 +864,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		//	update slider value
 		this.oSlider.setValue(hueValue);
 
-		if (this.getMode() == "HSL") {
+		if (this.getMode() === "HSL") {
 			//	process Changes
 			this._processHSLchanges();
 
@@ -902,7 +902,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		//	set the new value (maybe the value has been changed in the above lines)
 		this.oSatField.setValue(satValue);
 
-		if (this.getMode() == "HSL") {
+		if (this.getMode() === "HSL") {
 			//	process Changes
 			this._processHSLchanges();
 
@@ -1002,7 +1002,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		//	process changes
 		this._processRGBchanges();
 
-		if (this.getMode() == "HSL") {
+		if (this.getMode() === "HSL") {
 			//	fire events & update property
 			this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL});
 			this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL});
@@ -1038,7 +1038,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		//	process changes
 		this._processRGBchanges();
 
-		if (this.getMode() == "HSL") {
+		if (this.getMode() === "HSL") {
 			//	fire events & update property
 			this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL});
 			this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL});
@@ -1073,7 +1073,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		//	process changes
 		this._processRGBchanges();
 
-		if (this.getMode() == "HSL") {
+		if (this.getMode() === "HSL") {
 			//	fire events & update property
 			this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL});
 			this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL});
@@ -1192,7 +1192,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this.oHueField.setValue(this.Color.h);
 		this.oSatField.setValue(this.Color.s);
 
-		if (this.getMode() == "HSL") {
+		if (this.getMode() === "HSL") {
 			this.oLitField.setValue(this.Color.l);
 		} else {
 			this.oValField.setValue(this.Color.v);
@@ -1227,11 +1227,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		var hexValue = this.oHexField.getValue().toLowerCase();
 
 		//	check for correct value
-		if (hexValue.substr(0, 1) == '#') {
+		if (hexValue.substr(0, 1) === '#') {
 			hexValue = hexValue.substr(1);
 		}
 		var re = /^([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
-		if (re.test(hexValue) == false) {
+		if (re.test(hexValue) === false) {
 			this.oHexField.setValueState(sap.ui.core.ValueState.Error);
 			this.oSlider.setEnabled(false);
 			this.oAlphaSlider.setEnabled(false);
@@ -1241,14 +1241,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			this.oBlueField.setEnabled(false);
 			this.oSatField.setEnabled(false);
 
-			if (this.getMode() == "HSL") {
+			if (this.getMode() === "HSL") {
 				this.oLitField.setEnabled(false);
 				this.oAlphaField.setEnabled(false);
 			} else {
 				this.oValField.setEnabled(false);
 			}
 			return false;
-		} else if (this.oHexField.getValueState() == sap.ui.core.ValueState.Error) {
+		} else if (this.oHexField.getValueState() === sap.ui.core.ValueState.Error) {
 			this.oHexField.setValueState(sap.ui.core.ValueState.None);
 			this.oSlider.setEnabled(true);
 			this.oAlphaSlider.setEnabled(true);
@@ -1258,7 +1258,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			this.oBlueField.setEnabled(true);
 			this.oSatField.setEnabled(true);
 
-			if (this.getMode() == "HSL") {
+			if (this.getMode() === "HSL") {
 				this.oLitField.setEnabled(true);
 				this.oAlphaField.setEnabled(true);
 			} else {
@@ -1267,7 +1267,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 
 		//	convert from short to long hex (if needed)
-		if (hexValue.length == 3) {
+		if (hexValue.length === 3) {
 			var tempValue = hexValue.charAt(0) + hexValue.charAt(0) + hexValue.charAt(1) + hexValue.charAt(1) + hexValue.charAt(2) + hexValue.charAt(2);
 			hexValue = tempValue;
 		}
@@ -1283,7 +1283,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this.oHueField.setValue(this.Color.h);
 		this.oSatField.setValue(this.Color.s);
 
-		if (this.getMode() == "HSL") {
+		if (this.getMode() === "HSL") {
 			this.oLitField.setValue(this.Color.l);
 		} else {
 			this.oValField.setValue(this.Color.v);
@@ -1291,7 +1291,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this.oSlider.setValue(parseInt(this.oHueField.getValue(),10));
 		this.oAlphaSlider.setValue(1);
 
-		if (this.getMode() == "HSL") {
+		if (this.getMode() === "HSL") {
 			this.oAlphaField.setValue(1);
 		}
 
@@ -1304,7 +1304,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		//	update selected color background
 		this._updateSelColorBackground();
 
-		if (this.getMode() == "HSL") {
+		if (this.getMode() === "HSL") {
 			//	fire events & update property
 			this.fireLiveChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL});
 			this.fireChange({r:this.Color.r, g:this.Color.g, b:this.Color.b, h:this.Color.h, s:this.Color.s, l:this.Color.l, alpha:this.Color.a, hex:this.Color.hex, formatHSL:this.Color.formatHSL});
@@ -1325,7 +1325,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		//	convert RGB-values
 		this._convertRGB(ihexValue);
 
-		if (this.getMode() == "HSL") {
+		if (this.getMode() === "HSL") {
 			//	calculate and set HSL-values from the RGB-values
 			this._calculateHSL(this.Color.r, this.Color.g, this.Color.b);
 		} else {
@@ -1368,7 +1368,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		//	get the saturation and value
 		var satValue = this.oSatField.getValue();
 
-		if (this.getMode() == "HSL") {
+		if (this.getMode() === "HSL") {
 			var litValue = this.oLitField.getValue();
 			// calculate the x and y values
 			x = Math.round(litValue * cpBoxWidth / 100.0);
@@ -1397,12 +1397,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 */
 	ColorPicker.prototype._calculateRGB = function(hue, sat, val) {
 
-		if (this.getMode() == "HSL") {
+		if (this.getMode() === "HSL") {
 			this._calculateRGB_Advanced(hue, sat, val);
 			return;
 		}
 		//hue value is cyclic, so 360 = 0
-		if (hue == 360) {
+		if (hue === 360) {
 			hue = 0;
 		}
 		hue /= 60;
@@ -1548,13 +1548,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		var redStr     = red.toString(16);
 		var greenStr   = green.toString(16);
 		var blueStr    = blue.toString(16);
-		if (redStr.length == 1)   {
+		if (redStr.length === 1)   {
 			redStr   = '0' + redStr;
 		}
-		if (greenStr.length == 1) {
+		if (greenStr.length === 1) {
 			greenStr = '0' + greenStr;
 		}
-		if (blueStr.length == 1)  {
+		if (blueStr.length === 1)  {
 			blueStr  = '0' + blueStr;
 		}
 
@@ -1573,15 +1573,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		var min			= Math.min(Math.min(red, green), blue);
 		var delta		= (max - min);
 		var valValue	= Math.round(max * 100 / 255);
-		var satValue = (max == 0.0) ? 0 : (100 * delta / max);
+		var satValue = (max === 0.0) ? 0 : (100 * delta / max);
 		var hueValue = 0;
-		if (satValue == 0) {
+		if (satValue === 0) {
 			hueValue = 0;
-		} else if (red == max)   {
+		} else if (red === max)   {
 			hueValue = 60.0 * (green - blue) / delta;
-		} else if (green == max) {
+		} else if (green === max) {
 			hueValue = 120.0 + 60.0 * (blue - red) / delta;
-		} else if (blue == max)  {
+		} else if (blue === max)  {
 			hueValue = 240.0 + 60.0 * (red - green) / delta;
 		}
 		if (hueValue < 0.0) {
@@ -1609,14 +1609,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 		var litValue = (max + min) / 510;
 		var denominator = 1 - Math.abs(2 * litValue - 1);
-		var lVal = (litValue == 0.0) ? 0 : d / denominator;
+		var lVal = (litValue === 0.0) ? 0 : d / denominator;
 		var satValue = (denominator != 0) ? lVal : 0;
 		var hueValue = 0;
 
 		litValue = Math.round(litValue * 100);
 		satValue = Math.round(satValue * 100);
 
-		if (litValue == 0 || satValue == 0 || (red + green + blue == 765)) {
+		if (litValue === 0 || satValue === 0 || (red + green + blue === 765)) {
 			hueValue = 0;
 		} else {
 
@@ -1624,16 +1624,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 			// method hexagon begin
 			var C = max - min;
-			if (max == red) {
+			if (max === red) {
 				hueValue = ((green - blue) / C) % 6;
 			}
-			if (max == green) {
+			if (max === green) {
 				hueValue = (blue - red) / C + 2;
 			}
-			if (max == blue) {
+			if (max === blue) {
 				hueValue = (red - green) / C + 4;
 			}
-			if (C == 0) {
+			if (C === 0) {
 				hueValue = 0;
 			}
 
@@ -1674,7 +1674,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	ColorPicker.prototype._updateGradientBoxBackground = function(hue) {
 
 		// calculate RGB-values
-		if (this.getMode() == "HSL") {
+		if (this.getMode() === "HSL") {
 			this._calculateRGB_Advanced(hue, 100, 50);
 		} else {
 			this._calculateRGB(hue, 100, 100);
@@ -1705,83 +1705,65 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	ColorPicker.prototype._parseColorString = function(iColorString, bCheckOnly) {
 		var hexValue = "";
 
-		//	delete #, trim
-		if (iColorString.substr(0, 1) == '#') {
+		//delete #, trim
+		if (iColorString.substr(0, 1) === '#') {
 			iColorString = iColorString.substr(1);
 		}
-		iColorString = iColorString.replace(/ /g,'');
-		iColorString = iColorString.toLowerCase();
 
-		//	parse Names
+		iColorString = iColorString.replace(/ /g, '');
+		iColorString = iColorString.toLowerCase();
 		hexValue = this._parseColorName(iColorString);
 
-		if (this.getMode() == "HSL") {
-			if (hexValue != "" && !bCheckOnly) {
-				//Found a name; get RGB and HSL values
-				this._processHexChanges(hexValue);
-				this.Color.old = this.Color.hex;
-				this.Color.formatHSL = false;
+		if (hexValue != "") {
+			if (bCheckOnly) {
 				return true;
 			}
-		} else {
-			if (hexValue != "") {
-				//Found a name; get RGB and HSV values
-				this._processHexChanges(hexValue);
-				this.Color.old = this.Color.hex;
+			this._processHexChanges(hexValue);
+			this.Color.old = this.Color.hex;
+			if (this.getMode() === "HSL") {
+				this.Color.formatHSL = false;
 			}
+			return true;
 		}
 
-		//	parse HEX
-		//	allowed input: #aabbcc, aabbcc, #abc, abc
-		//	'#' has already been deleted, search only for values
-		//  check for correct value using regular expression
-		var re = /^([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
-		if (re.test(iColorString) == true) {
-			//it's a hex value; check if its aabbcc or abc
+		var r = /^([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+		if (r.test(iColorString) === true) {
+			if (bCheckOnly) {
+				return true;
+			}
 			if (iColorString.length == 3) {
-				var hexValue = iColorString.charAt(0) + iColorString.charAt(0) + iColorString.charAt(1) + iColorString.charAt(1) + iColorString.charAt(2) + iColorString.charAt(2);
+				hexValue = iColorString.charAt(0) + iColorString.charAt(0) + iColorString.charAt(1) + iColorString.charAt(1) + iColorString.charAt(2) + iColorString.charAt(2);
 			} else {
 				hexValue = iColorString;
 			}
-			//get RGB and HSV values
 			this._processHexChanges(hexValue);
 			this.Color.old = this.Color.hex;
-
-			if (this.getMode() == "HSL") {
+			if (this.getMode() === "HSL") {
 				this.Color.formatHSL = false;
-				return true;
 			}
+			return true;
 		}
-
-
-		//	check if the string begins with "rgba" and parse it
-		if (iColorString.substr(0, 4) == 'rgba') {
-			this._parseRGBA(iColorString);
+		if (iColorString.substr(0, 4) === 'rgba') {
+			return this._parseRGBA(iColorString, bCheckOnly);
 		}
-
-		//	check if the string begins with "rgb"
-		if (iColorString.substr(0, 3) == 'rgb') {
-			this._parseRGB(iColorString);
+		if (iColorString.substr(0, 3) === 'rgb') {
+			return this._parseRGB(iColorString, bCheckOnly);
 		}
-
 		if (this.getMode() == "HSL") {
-			//	check if the string begins with "hsla" and parse it
-			if (iColorString.substr(0, 4) == 'hsla') {
-				this._parseHSLA(iColorString);
+			if (iColorString.substr(0, 4) === 'hsla') {
+				return this._parseHSLA(iColorString, bCheckOnly);
 			}
-
-			//	check if the string begins with "hsl" and parse it
-			if (iColorString.substr(0, 3) == 'hsl') {
-				this._parseHSL(iColorString);
+			if (iColorString.substr(0, 3) === 'hsl') {
+				return this._parseHSL(iColorString, bCheckOnly);
 			}
 		} else {
-			//	check if the string begins with "rgb"
-			if (iColorString.substr(0, 3) == 'hsv') {
-				this._parseHSV(iColorString);
+			if (iColorString.substr(0, 3) === 'hsv') {
+				return this._parseHSV(iColorString, bCheckOnly);
 			} else {
 				return false;
 			}
 		}
+		return false;
 	};
 
 	/**
@@ -1796,7 +1778,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		iColorString = iColorString.replace(")",'');
 		iColorString = iColorString.split(' ').join('');
 		var re = /^(((\d{1,2})|([1,2]\d{2})|(3[0-5]\d)|(360)),){1}(((\d{1,2})|(100)),){1}((\d{1,2})|(100)){1}$/;
-		if (re.test(iColorString) == true) {
+		if (re.test(iColorString) === true) {
 			//it's a hsv string, get the values
 			var HSVColor = iColorString.split(",");
 			//get RGB values
@@ -1828,7 +1810,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		iColorString = iColorString.split(' ').join('');
 		var re = /^(((\d{1,2})|([1,2]\d{2})|(3[0-5]\d)|(360)),){1}(((\d{1,2})|(100))%,){1}(((\d{1,2})|(100))%){1}$/;
 
-		if (re.test(iColorString) == true) {
+		if (re.test(iColorString) === true) {
 			if (bCheckOnly) {
 				return true;
 			}
@@ -2301,6 +2283,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			// update alpha slider background
 			this._updateAlphaBackground();
 		}
+		this.oSlider.iShiftGrip =  Math.round(jQuery(this.oSlider.oGrip).outerWidth() / 2);
+		this.oAlphaSlider.iShiftGrip =  Math.round(jQuery(this.oAlphaSlider.oGrip).outerWidth() / 2);
 	};
 
 
