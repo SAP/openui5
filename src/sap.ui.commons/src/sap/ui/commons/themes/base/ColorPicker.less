@@ -200,7 +200,7 @@
 .sapUiColorPickerHSL .sapUiColorPicker-Arrow {
 	margin-left: 6px;
 	margin-top: 0px;
-	font-size: 18px;
+	font-size: 12px;
 }
 
 .sapUiColorPickerHSL .sapUiColorPicker-ColorPickerOldColor {
@@ -220,4 +220,9 @@
 
 .sapUiColorPickerHSL .sapUiSliBar {
 	background-image: url(img/ColorPicker/Alphaslider_BG.png);
+}
+
+/* needed for the Theme Designer, to overwrite the current style "box-sizing: border-box;" of all div's */
+.sapUiColorPicker-ColorPickerMatrix div {
+	box-sizing: content-box;
 }
