@@ -298,6 +298,9 @@
 								currency: "JPY",
 								maxPrecision: 5,
 								useSymbol: true
+							},
+							{
+								value: null
 							}
 						]
 					},
@@ -324,12 +327,14 @@
 				strictEqual(this.aItems[0]._bRenderNoValClass, true, "Value should be true");
 				strictEqual(this.aItems[1]._bRenderNoValClass, false, "Value should be false");
 				strictEqual(this.aItems[2]._bRenderNoValClass, true, "Value should be true");
+				strictEqual(this.aItems[3]._bRenderNoValClass, true, "Value should be true");
 			});
 
 			test("Undefined value from model", function () {
 				strictEqual(this.aItems[0].$().hasClass("sapUiUfdCurrencyNoVal"), true, "Class sapUiUfdCurrencyNoVal is applied to control");
 				strictEqual(this.aItems[1].$().hasClass("sapUiUfdCurrencyNoVal"), false, "Class sapUiUfdCurrencyNoVal is not applied to control");
 				strictEqual(this.aItems[2].$().hasClass("sapUiUfdCurrencyNoVal"), true, "Class sapUiUfdCurrencyNoVal is applied to control");
+				strictEqual(this.aItems[3].$().hasClass("sapUiUfdCurrencyNoVal"), true, "Class sapUiUfdCurrencyNoVal is applied to control");
 			});
 
 			test("Setting value from undefined to number and back", function () {
