@@ -135,7 +135,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 	 * @param {jQuery.Event} oEvent The event object.
 	 * @private
 	 */
-	Icon.prototype.onmousedown = function(oEvent) {
+	Icon.prototype[Device.support.touch ? "ontouchstart" : "onmousedown"] = function(oEvent) {
 		if (this.hasListeners("press") || this.hasListeners("tap")) {
 
 			// mark the event for components that needs to know if the event was handled
@@ -171,7 +171,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 	 * @param {jQuery.Event} oEvent The event object.
 	 * @private
 	 */
-	Icon.prototype.onmouseup = function(oEvent) {
+	Icon.prototype[Device.support.touch ? "ontouchend" : "onmouseup"] = function(oEvent) {
 
 		// change the source back only when all fingers leave the icon
 		if (!oEvent.targetTouches || (oEvent.targetTouches && oEvent.targetTouches.length === 0)) {
@@ -214,11 +214,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 	 *
 	 * @private
 	 */
-	Icon.prototype.onclick = function() {
-		if (this._bPressFired) {
-			return;
-		}
-
+	Icon.prototype[Device.support.touch ? "ontap" : "onclick"] = function() {
 		this.firePress({/* no parameters */});
 	};
 
