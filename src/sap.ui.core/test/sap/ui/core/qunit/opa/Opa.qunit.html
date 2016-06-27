@@ -19,9 +19,17 @@
 	jQuery.sap.require("sap.ui.thirdparty.sinon");
 	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 	sinon.config.useFakeTimers = true;
+
+	var oLogger;
+	var fnOriginalGetLogger = jQuery.sap.log.getLogger;
+	// intercept the logger created in the Opa closure (shared between all OPA's)
+	var fnGetLoggerStub = sinon.stub(jQuery.sap.log, "getLogger", function () {
+		oLogger = fnOriginalGetLogger.apply(this, arguments);
+		return oLogger;
+	});
 	jQuery.sap.require("sap.ui.test.Opa");
 	var Opa = sap.ui.test.Opa;
-
+	fnGetLoggerStub.restore();
 
 	var iInitialDelay = sap.ui.Device.browser.msie ? 50 : 0;
 
@@ -289,7 +297,7 @@
 
 	module("StopQueue", {
 		setup : function () {
-			this.fnErrorLogStub = sinon.stub(jQuery.sap.log, "error", $.noop);
+			this.fnErrorLogStub = sinon.stub(oLogger, "error", $.noop);
 			sinon.config.useFakeTimers = false;
 		},
 		teardown : function () {
@@ -300,7 +308,7 @@
 
 	QUnit.test("Should display a warning if 'stopQueue' is called without calling 'emptyQueue'", function() {
 		// System under Test
-		var fnSpy = this.spy(jQuery.sap.log, "warning");
+		var fnSpy = this.spy(oLogger, "warning");
 		Opa.stopQueue();
 
 		sinon.assert.calledWith(fnSpy, "stopQueue was called before emptyQueue, queued tests have never been executed", "Opa");
@@ -308,8 +316,8 @@
 
 	QUnit.test("Should stop the queue inside of success", function (assert) {
 		var oOpa = new Opa(),
-				fnDone = assert.async(),
-				fnShouldNotBeCalled = sinon.spy();
+			fnDone = assert.async(),
+			fnShouldNotBeCalled = sinon.spy();
 
 		oOpa.waitFor({
 			success: function () {
@@ -426,7 +434,7 @@
 				oWaitForDoneSpy = sinon.spy(),
 				oSuccessSpy = sinon.spy(),
 				oDoneSpy = sinon.spy(),
-				fnLogErrorSpy = sinon.spy(jQuery.sap.log, "error");
+				fnLogErrorSpy = sinon.spy(oLogger, "error");
 
 		// System under Test
 		var oOpa = new Opa();
@@ -482,7 +490,7 @@
 	asyncTest("Should reject the promise if no error handler is defined", function thisIsTheCallingFunction() {
 		// System under Test
 		var oOpa = new Opa();
-		sinon.spy(jQuery.sap.log, "error");
+		sinon.spy(oLogger, "error");
 
 		// Act
 		oOpa.waitFor({
@@ -501,9 +509,9 @@
 				ok(oOptions.errorMessage.indexOf("thisIsTheCallingFunction") > -1, "Error message contains calling function");
 			}
 
-			strictEqual(jQuery.sap.log.error.callCount, 1, "Error log spy got invoked");
-			ok(jQuery.sap.log.error.calledWith(oOptions.errorMessage), "Error message is written to Error log");
-			jQuery.sap.log.error.restore();
+			strictEqual(oLogger.error.callCount, 1, "Error log spy got invoked");
+			ok(oLogger.error.calledWith(oOptions.errorMessage), "Error message is written to Error log");
+			oLogger.error.restore();
 			start();
 		});
 

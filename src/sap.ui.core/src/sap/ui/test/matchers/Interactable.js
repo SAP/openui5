@@ -48,12 +48,12 @@ sap.ui.define(['jquery.sap.global', './Matcher', './Visible'], function ($, Matc
 
 			// Check busy of the control
 			if (oControl.getBusy && oControl.getBusy()) {
-				$.sap.log.debug("The control " + oControl + " is busy so it is filtered out", this._sLogPrefix);
+				this._oLogger.debug("The control " + oControl + " is busy so it is filtered out");
 				return false;
 			}
 
 			if (oControl.getEnabled && !oControl.getEnabled()) {
-				$.sap.log.debug("The control '" + oControl + "' is not enabled", this._sLogPrefix);
+				this._oLogger.debug("The control '" + oControl + "' is not enabled");
 				return false;
 			}
 
@@ -61,12 +61,12 @@ sap.ui.define(['jquery.sap.global', './Matcher', './Visible'], function ($, Matc
 			while (oParent) {
 				// Check busy of parents
 				if (oParent.getBusy && oParent.getBusy()) {
-					$.sap.log.debug("The control " + oControl + " has a parent that is busy " + oParent, this._sLogPrefix);
+					this._oLogger.debug("The control " + oControl + " has a parent that is busy " + oParent);
 					return false;
 				}
 
 				if (oParent.getEnabled && !oParent.getEnabled()) {
-					$.sap.log.debug("The control '" + oControl + "' has a parent '" + oParent + "' that is not enabled", this._sLogPrefix);
+					this._oLogger.debug("The control '" + oControl + "' has a parent '" + oParent + "' that is not enabled");
 					return false;
 				}
 
@@ -74,12 +74,12 @@ sap.ui.define(['jquery.sap.global', './Matcher', './Visible'], function ($, Matc
 				var sName = oParent.getMetadata().getName();
 				// Split container and splitapp use navcontainers in the control tree
 				if ((sName === "sap.m.App" || sName === "sap.m.NavContainer") && oParent._bNavigating) {
-					$.sap.log.debug("The control " + oControl + " has a parent NavContainer " + oParent + " that is currently navigating", this._sLogPrefix);
+					this._oLogger.debug("The control " + oControl + " has a parent NavContainer " + oParent + " that is currently navigating");
 					return false;
 				}
 
 				if (sName === "sap.ui.core.UIArea" && oParent.bNeedsRerendering) {
-					$.sap.log.debug("The control " + oControl + " is currently in an ui area that needs a new rendering", this._sLogPrefix);
+					this._oLogger.debug("The control " + oControl + " is currently in an ui area that needs a new rendering");
 					return false;
 				}
 
@@ -90,14 +90,14 @@ sap.ui.define(['jquery.sap.global', './Matcher', './Visible'], function ($, Matc
 			if (oControl.$().closest("#sap-ui-static").length === 0) {
 				// Check for blocking layer and if the control is not in the static ui area
 				if ($("#sap-ui-blocklayer-popup").is(":visible")) {
-					$.sap.log.debug("The control " + oControl + " is hidden behind a blocking layer of a Popup", this._sLogPrefix);
+					this._oLogger.debug("The control " + oControl + " is hidden behind a blocking layer of a Popup");
 					return false;
 				}
 
 				// Whan a Dialog was opened and is in the closing phase the blocklayer is gone already therefore ask the instance manager
 				var oInstanceManager = $.sap.getObject("sap.m.InstanceManager");
 				if (oInstanceManager && oInstanceManager.getOpenDialogs().length) {
-					$.sap.log.debug("The control " + oControl + " is hidden behind an Open dialog", this._sLogPrefix);
+					this._oLogger.debug("The control " + oControl + " is hidden behind an Open dialog");
 					return false;
 				}
 

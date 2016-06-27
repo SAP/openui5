@@ -7,7 +7,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './_ParameterValidator'], f
 	///////////////////////////////
 	/// Privates
 	///////////////////////////////
-	var queue = [],
+	var oLogger = $.sap.log.getLogger("sap.ui.test.Opa"),
+		queue = [],
 		context = {},
 		timeout = -1,
 		isStopped,
@@ -317,7 +318,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './_ParameterValidator'], f
 				oOptions.errorMessage = oOptions.errorMessage || "Failed to wait for check";
 				oOptions.errorMessage += addStacks(oOptions);
 			}
-			$.sap.log.error(oOptions.errorMessage, "Opa");
+			oLogger.error(oOptions.errorMessage, "Opa");
 		}).always(function () {
 			timeout = -1;
 			oDeferred = null;
@@ -343,7 +344,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './_ParameterValidator'], f
 
 		// clear running tests
 		if (!oDeferred) {
-			$.sap.log.warning("stopQueue was called before emptyQueue, queued tests have never been executed", "Opa");
+			oLogger.warning("stopQueue was called before emptyQueue, queued tests have never been executed", "Opa");
 		} else {
 			if (timeout !== -1) {
 				clearTimeout(timeout);
@@ -424,7 +425,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './_ParameterValidator'], f
 						try {
 							bResult = options.check.apply(this, arguments);
 						} catch (err) {
-							$.sap.log.error(err.stack, "OPA encountered an error");
+							oLogger.error(err.stack, "OPA encountered an error");
 							deferred.reject(options);
 							throw err;
 						}
@@ -441,7 +442,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './_ParameterValidator'], f
 							try {
 								options.success.apply(this, arguments);
 							} catch (err) {
-								$.sap.log.error(err.stack, "OPA encountered an error");
+								oLogger.error(err.stack, "OPA encountered an error");
 								deferred.reject(options);
 								throw err;
 							} finally {

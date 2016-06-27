@@ -46,8 +46,8 @@ sap.ui.require([
 
 	QUnit.module("getControlByGlobalId", {
 		beforeEach : function() {
-			this.fnLogSpy = sinon.spy(jQuery.sap.log, "debug");
 			this.oPlugin = new OpaPlugin();
+			this.fnLogSpy = sinon.spy(this.oPlugin._oLogger, "debug");
 
 			this.sId = "myId";
 			this.oButton = new Button(this.sId);
@@ -90,7 +90,7 @@ sap.ui.require([
 
 			// Assert
 			assert.strictEqual(oResult, null);
-			sinon.assert.calledWith(this.fnLogSpy, "Found no control with the global id: 'nonexistingId'", "sap.ui.test.OpaPlugin");
+			sinon.assert.calledWith(this.fnLogSpy, "Found no control with the global id: 'nonexistingId'");
 		});
 	});
 
@@ -200,9 +200,9 @@ sap.ui.require([
 
 	QUnit.module("Controls with a control type and id", {
 		beforeEach : function() {
-			this.fnLogSpy = sinon.spy(jQuery.sap.log, "debug");
-			this.fnLogErrorSpy = sinon.spy(jQuery.sap.log, "error");
 			this.oPlugin = new OpaPlugin();
+			this.fnLogSpy = sinon.spy(this.oPlugin._oLogger, "debug");
+			this.fnLogErrorSpy = sinon.spy(this.oPlugin._oLogger, "error");
 
 			this.oButton = new Button("my_id1");
 			this.oButton2 = new Button("my_id2");
@@ -233,7 +233,7 @@ sap.ui.require([
 
 		// Assert
 		assert.strictEqual(aRetrievedControls.length, 0);
-		sinon.assert.calledWith(this.fnLogSpy, "The control type is currently a lazy stub", "sap.ui.test.OpaPlugin");
+		sinon.assert.calledWith(this.fnLogSpy, "The control type is currently a lazy stub");
 	});
 
 	QUnit.test("Should retrieve a controls even if the control is a lazy stub", function(assert) {
@@ -277,8 +277,7 @@ sap.ui.require([
 		assert.strictEqual(oCheckBox, null, "got null");
 		sinon.assert.calledWithExactly(this.fnLogErrorSpy, "An id: 'my_id3' was passed together with the controlType " +
 				"'sap.ui.commons.Button' but the type does not match the control retrieved: " +
-				"'Element sap.ui.commons.CheckBox#my_id3' - null is returned",
-				"sap.ui.test.OpaPlugin");
+				"'Element sap.ui.commons.CheckBox#my_id3' - null is returned");
 	});
 
 	QUnit.test("Should log an error if the controlType does not match and a string id is given", function (assert) {
@@ -318,7 +317,7 @@ sap.ui.require([
 		});
 
 		assert.strictEqual(aResult.length, 0, "Result was empty");
-		sinon.assert.calledWith(this.fnLogSpy, "The control type foo.bar.foo is undefined.", "sap.ui.test.OpaPlugin");
+		sinon.assert.calledWith(this.fnLogSpy, "The control type foo.bar.foo is undefined.");
 	});
 
 	QUnit.test("Should retrieve no control for some strange control type and an id", function (assert) {
@@ -328,7 +327,7 @@ sap.ui.require([
 		});
 
 		assert.strictEqual(oResult, null, "Result was null");
-		sinon.assert.calledWith(this.fnLogSpy, "The control type foo.bar.foo is undefined.", "sap.ui.test.OpaPlugin");
+		sinon.assert.calledWith(this.fnLogSpy, "The control type foo.bar.foo is undefined.");
 	});
 
 	QUnit.test("Should retrieve a control by a global id and control type", function(assert) {
@@ -397,11 +396,11 @@ sap.ui.require([
 
 	QUnit.module("Controls in a view", {
 		beforeEach: function () {
-			this.fnLogSpy = sinon.spy(jQuery.sap.log, "debug");
 			this.oView = createXmlView("bar");
 
 			// System under Test
 			this.oPlugin = new OpaPlugin();
+			this.fnLogSpy = sinon.spy(this.oPlugin._oLogger, "debug");
 		},
 		afterEach: function () {
 			this.fnLogSpy.restore();
@@ -415,7 +414,7 @@ sap.ui.require([
 			viewName: "notexistingview"
 		});
 
-		sinon.assert.calledWith(this.fnLogSpy, "Found no view with the name: 'notexistingview'", "sap.ui.test.OpaPlugin");
+		sinon.assert.calledWith(this.fnLogSpy, "Found no view with the name: 'notexistingview'");
 		assert.strictEqual(aAllControlsInTheView.length, 0);
 	});
 
@@ -425,7 +424,7 @@ sap.ui.require([
 			id: "foo"
 		});
 
-		sinon.assert.calledWith(this.fnLogSpy, "Found no view with the name: 'notexistingview'", "sap.ui.test.OpaPlugin");
+		sinon.assert.calledWith(this.fnLogSpy, "Found no view with the name: 'notexistingview'");
 		assert.strictEqual(aAllControlsInTheView, null);
 	});
 
@@ -483,7 +482,7 @@ sap.ui.require([
 
 		// Assert
 		assert.strictEqual(oResult, null, "returned null");
-		sinon.assert.calledWith(this.fnLogSpy, "Found no control with the id: 'notexistingcontrol' in the view: 'bar'", "sap.ui.test.OpaPlugin");
+		sinon.assert.calledWith(this.fnLogSpy, "Found no control with the id: 'notexistingcontrol' in the view: 'bar'");
 	});
 
 	QUnit.test("Should get multiple controls of a view", function(assert) {
@@ -553,13 +552,24 @@ sap.ui.require([
 		assert.strictEqual(aRetrievedButtons[1].getId(), this.oView.byId("baz").getId(), "did return the baz button as second element");
 	});
 
-	QUnit.module("Core init", {
+	QUnit.module("initialization", {
 		setup: function () {
+			this.fnLoggerSpy = sinon.spy(jQuery.sap.log, "getLogger");
 			this.oPlugin =  new OpaPlugin();
 		},
 		teardown: function () {
 			this.oPlugin.destroy();
+			this.fnLoggerSpy.restore();
 		}
+	});
+
+	QUnit.test("Should have the correct log prefix", function () {
+		sinon.assert.calledWith(this.fnLoggerSpy, "sap.ui.test.OpaPlugin");
+
+		var sLogComponent = "a different log component";
+		new OpaPlugin(sLogComponent).destroy();
+
+		sinon.assert.calledWith(this.fnLoggerSpy, sLogComponent);
 	});
 
 	QUnit.test("Should not throw an exception if the core is not defined", function(assert) {

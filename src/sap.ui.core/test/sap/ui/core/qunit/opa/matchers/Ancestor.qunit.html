@@ -8,62 +8,62 @@
 
 		<script
 			src="../../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-libs="sap.ui.commons">
+			data-sap-ui-libs="sap.m, sap.ui.layout">
 		</script>
 
 
 		<script>
-			(function () {
-				jQuery.sap.require("sap.ui.qunit.qunit-css");
-				jQuery.sap.require("sap.ui.thirdparty.qunit");
-				jQuery.sap.require("sap.ui.qunit.qunit-junit");
-				jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-				jQuery.sap.require("sap.ui.test.matchers.Ancestor");
+			jQuery.sap.require("sap.ui.qunit.qunit-css");
+			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.qunit.qunit-junit");
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			jQuery.sap.require("sap.ui.test.matchers.Ancestor");
 
-				jQuery.sap.require("sap.ui.commons.Button");
-				jQuery.sap.require("sap.ui.layout.HorizontalLayout");
-
+			sap.ui.require([
+				"sap/ui/test/matchers/Ancestor",
+				"sap/m/Button",
+				"sap/ui/layout/HorizontalLayout"
+			], function (Ancestor, Button, HorizontalLayout) {
 				module("Ancestor", {
-					setup : function(){
-						this.oLayout1 = new sap.ui.layout.HorizontalLayout();
-						this.oLayout2 = new sap.ui.layout.HorizontalLayout();
-						this.oButton = new sap.ui.commons.Button();
+					beforeEach : function(){
+						this.oLayout1 = new HorizontalLayout();
+						this.oLayout2 = new HorizontalLayout();
+						this.oButton = new Button();
 						this.oButton.placeAt(this.oLayout2);
 					},
-					teardown : function(){
+					afterEach : function(){
 						this.oButton.destroy();
 						this.oLayout1.destroy();
 						this.oLayout2.destroy();
 					}
 				});
 
-				test("Should match direct parent", function() {
-					var bResult = new sap.ui.test.matchers.Ancestor(this.oLayout1)(this.oButton);
-					strictEqual(bResult, false, "Layout1 is not an ancestor");
+				QUnit.test("Should match direct parent", function(assert) {
+					var bResult = new Ancestor(this.oLayout1)(this.oButton);
+					assert.strictEqual(bResult, false, "Layout1 is not an ancestor");
 
-					bResult = new sap.ui.test.matchers.Ancestor(this.oLayout2)(this.oButton);
-					strictEqual(bResult, true, "Layout2 is an ancestor");
+					bResult = new Ancestor(this.oLayout2)(this.oButton);
+					assert.strictEqual(bResult, true, "Layout2 is an ancestor");
 
-					bResult = sap.ui.test.matchers.Ancestor(this.oLayout2, true)(this.oButton);
-					strictEqual(bResult, true, "Layout2 is a direct ancestor (parent)");
+					bResult = Ancestor(this.oLayout2, true)(this.oButton);
+					assert.strictEqual(bResult, true, "Layout2 is a direct ancestor (parent)");
 				});
 
-				test("Should match across multiple level's ancestor", function() {
+				QUnit.test("Should match across multiple level's ancestor", function(assert) {
 					this.oLayout2.placeAt(this.oLayout1);
 
-					var bResult = new sap.ui.test.matchers.Ancestor(this.oLayout1)(this.oButton);
-					strictEqual(bResult, true, "Layout1 is an ancestor");
+					var bResult = new Ancestor(this.oLayout1)(this.oButton);
+					assert.strictEqual(bResult, true, "Layout1 is an ancestor");
 
-					bResult = new sap.ui.test.matchers.Ancestor(this.oLayout1, true)(this.oButton);
-					strictEqual(bResult, false, "Layout1 is not a direct ancestor");
+					bResult = new Ancestor(this.oLayout1, true)(this.oButton);
+					assert.strictEqual(bResult, false, "Layout1 is not a direct ancestor");
 				});
 
-				test("Should match undefined ancestor", function() {
-					var bResult = new sap.ui.test.matchers.Ancestor(undefined)(this.oButton);
-					strictEqual(bResult, true, "No ancestor means valid");
+				QUnit.test("Should match undefined ancestor", function(assert) {
+					var bResult = new Ancestor(undefined)(this.oButton);
+					assert.strictEqual(bResult, true, "No ancestor means valid");
 				});
-
-			} ());
+			});
 		</script>
 	</head>
 

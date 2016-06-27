@@ -30,6 +30,8 @@
 
 					QUnit.module("Matching", {
 						beforeEach: function () {
+							this.oVisibleMatcher = new Visible();
+							this.oSpy = sinon.spy(this.oVisibleMatcher._oLogger, "debug");
 							this.oButton = new Button();
 						},
 
@@ -39,56 +41,40 @@
 					});
 
 					QUnit.test("Should not match a Button without domref", function (assert) {
-						// Arrange
-						var oSpy = this.spy($.sap.log, "debug");
-
-						// System under Test
-						var oVisibleMatcher = new Visible();
-
 						// Act
-						var oResult = oVisibleMatcher.isMatching(this.oButton);
+						var oResult = this.oVisibleMatcher.isMatching(this.oButton);
 
 						// Assert
 						assert.ok(!oResult, "Control isn't matching");
-						sinon.assert.calledWith(oSpy,  sinon.match(/is not rendered/),  sinon.match(oVisibleMatcher._sLogPrefix));
+						sinon.assert.calledWith(this.oSpy,  sinon.match(/is not rendered/));
 					});
 
 					QUnit.test("Should not match an invisible Button", function (assert) {
 						// Arrange
-						var oSpy = this.spy($.sap.log, "debug");
 						this.oButton.placeAt("qunit-fixture");
 						sap.ui.getCore().applyChanges();
 						// make the button invisible after rendering it
 						this.oButton.$().hide();
 
-						// System under Test
-						var oVisibleMatcher = new Visible();
-
 						// Act
-						var oResult = oVisibleMatcher.isMatching(this.oButton);
+						var oResult = this.oVisibleMatcher.isMatching(this.oButton);
 
 						// Assert
 						assert.ok(!oResult, "Control isn't matching");
-						sinon.assert.calledWith(oSpy,  sinon.match(/is not visible/),  sinon.match(oVisibleMatcher._sLogPrefix));
+						sinon.assert.calledWith(this.oSpy,  sinon.match(/is not visible/));
 					});
-
-
 
 					QUnit.test("Should match a visible Button", function (assert) {
 						// Arrange
-						var oSpy = this.spy($.sap.log, "debug");
 						this.oButton.placeAt("qunit-fixture");
 						sap.ui.getCore().applyChanges();
 
-						// System under Test
-						var oVisibleMatcher = new Visible();
-
 						// Act
-						var oResult = oVisibleMatcher.isMatching(this.oButton);
+						var oResult = this.oVisibleMatcher.isMatching(this.oButton);
 
 						// Assert
 						assert.ok(oResult, "Control is matching");
-						sinon.assert.notCalled(oSpy);
+						sinon.assert.notCalled(this.oSpy);
 					});
 
 					QUnit.start();

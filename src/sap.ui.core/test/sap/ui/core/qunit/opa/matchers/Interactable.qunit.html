@@ -49,6 +49,9 @@
 									pages: [oInitialPage, this.oSecondPage]
 								}).placeAt("qunit-fixture");
 
+
+								this.oInteractable = new Interactable();
+								this.oSpy = sinon.spy(this.oInteractable._oLogger, "debug");
 								sap.ui.getCore().applyChanges();
 							},
 
@@ -57,82 +60,57 @@
 							}
 						});
 						QUnit.test("Should match an interactable Button", function (assert) {
-							// Arrange
-							var oSpy = this.spy($.sap.log, "debug");
-
-							// System under Test
-							var oInteractable = new Interactable();
-
 							// Act
-							var bResult = oInteractable.isMatching(this.oInitialPageButton);
+							var bResult = this.oInteractable.isMatching(this.oInitialPageButton);
 
 							// Assert
 							assert.ok(bResult, "Control is matching");
-							sinon.assert.notCalled(oSpy);
+							sinon.assert.notCalled(this.oSpy);
 						});
 
 						QUnit.test("Should not match a Button that is invisible", function (assert) {
-							// Arrange
-							var oSpy = this.spy($.sap.log, "debug");
-
-							// System under Test
-							var oInteractable = new Interactable();
-
 							// Act
-							var bResult = oInteractable.isMatching(this.oSecondPageButton);
+							var bResult = this.oInteractable.isMatching(this.oSecondPageButton);
 
 							// Assert
 							assert.ok(!bResult, "Control isn't matching");
-							sinon.assert.calledWith(oSpy,  sinon.match(/is not rendered/), oInteractable._sLogPrefix);
 						});
 
 						QUnit.test("Should not match a Button while it is busy", function (assert) {
 							// Arrange
 							this.oInitialPageButton.setBusy(true);
-							var oSpy = this.spy($.sap.log, "debug");
-
-							// System under Test
-							var oInteractable = new Interactable();
 
 							// Act
-							var bResult = oInteractable.isMatching(this.oInitialPageButton);
+							var bResult = this.oInteractable.isMatching(this.oInitialPageButton);
 
 							// Assert
 							assert.ok(!bResult, "Control isn't matching");
-							sinon.assert.calledWith(oSpy,  sinon.match(/is busy/), oInteractable._sLogPrefix);
+							sinon.assert.calledWith(this.oSpy,  sinon.match(/is busy/));
 						});
 
 						QUnit.test("Should not match a Button while one of its parents is busy", function (assert) {
 							// Arrange
 							this.oNavContainer.setBusy(true);
-							var oSpy = this.spy($.sap.log, "debug");
-
-							// System under Test
-							var oInteractable = new Interactable();
 
 							// Act
-							var bResult = oInteractable.isMatching(this.oInitialPageButton);
+							var bResult = this.oInteractable.isMatching(this.oInitialPageButton);
 
 							// Assert
 							assert.ok(!bResult, "Control isn't matching");
-							sinon.assert.calledWith(oSpy,  sinon.match(/parent that is busy/), oInteractable._sLogPrefix);
+							sinon.assert.calledWith(this.oSpy,  sinon.match(/parent that is busy/));
 						});
 
 						QUnit.test("Should not match a Button while its navContainer is navigating", function (assert) {
 							// Arrange
 							var fnStart = assert.async();
-							var oSpy = this.spy($.sap.log, "debug");
-
-							// System under Test
-							var oInteractable = new Interactable();
 
 							this.oNavContainer.to(this.oSecondPage);
-							var bInitialPageButtonResultBeforeNavigationFinished = oInteractable.isMatching(this.oInitialPageButton);
-							var bSecondPageButtonResultBeforeNavigationFinished = oInteractable.isMatching(this.oSecondPageButton);
+							var bInitialPageButtonResultBeforeNavigationFinished = this.oInteractable.isMatching(this.oInitialPageButton);
+							var bSecondPageButtonResultBeforeNavigationFinished = this.oInteractable.isMatching(this.oSecondPageButton);
 
 							this.oNavContainer.attachAfterNavigate(function () {
-								var bInitialPageButtonResultAfterNavigationFinished = oInteractable.isMatching(this.oInitialPageButton);
-								var bSecondPageButtonResultAfterNavigationFinished = oInteractable.isMatching(this.oSecondPageButton);
+								var bInitialPageButtonResultAfterNavigationFinished = this.oInteractable.isMatching(this.oInitialPageButton);
+								var bSecondPageButtonResultAfterNavigationFinished = this.oInteractable.isMatching(this.oSecondPageButton);
 
 								assert.ok(!bInitialPageButtonResultBeforeNavigationFinished, "Control isn't matching");
 								assert.ok(!bSecondPageButtonResultBeforeNavigationFinished, "Control isn't matching");
@@ -140,7 +118,7 @@
 								assert.ok(bSecondPageButtonResultAfterNavigationFinished, "Control is matching");
 
 
-								sinon.assert.calledWith(oSpy,  sinon.match(/that is currently navigating/), oInteractable._sLogPrefix);
+								sinon.assert.calledWith(this.oSpy,  sinon.match(/that is currently navigating/));
 								fnStart();
 							}, this);
 						});
@@ -148,6 +126,8 @@
 
 					QUnit.module("Dialogs", {
 						beforeEach: function () {
+							this.oInteractable = new Interactable();
+
 							this.oButtonInPage = new Button();
 							this.oButtonInDialog = new Button();
 							this.oDialog = new Dialog({
@@ -156,7 +136,7 @@
 							this.oButtonInPage.placeAt("qunit-fixture");
 							sap.ui.getCore().applyChanges();
 							// Async tests use global spy
-							this.oSpy = sinon.spy($.sap.log, "debug");
+							this.oSpy = sinon.spy(this.oInteractable._oLogger, "debug");
 						},
 						afterEach: function () {
 							this.oButtonInPage.destroy();
@@ -169,19 +149,16 @@
 						// Arrange
 						var fnStart = assert.async();
 
-						// System under Test
-						var oInteractable = new Interactable();
-
 						// Act
-						var bResultBeforeOpening = oInteractable.isMatching(this.oButtonInPage);
+						var bResultBeforeOpening = this.oInteractable.isMatching(this.oButtonInPage);
 
 						this.oDialog.attachAfterOpen(function () {
-							var bResultAfterOpening = oInteractable.isMatching(this.oButtonInPage);
+							var bResultAfterOpening = this.oInteractable.isMatching(this.oButtonInPage);
 
 							// Assert
 							assert.ok(bResultBeforeOpening, "Control is matching");
 							assert.ok(!bResultAfterOpening, "Control isn't matching after a dialog is opened");
-							sinon.assert.calledWith(this.oSpy,  sinon.match(/hidden behind a blocking layer of a Popup/), oInteractable._sLogPrefix);
+							sinon.assert.calledWith(this.oSpy,  sinon.match(/hidden behind a blocking layer of a Popup/));
 
 							fnStart();
 						}, this);
@@ -193,11 +170,8 @@
 						// Arrange
 						var fnStart = assert.async();
 
-						// System under Test
-						var oInteractable = new Interactable();
-
-						// Act
-						var bResultBeforeOpening = oInteractable.isMatching(this.oButtonInPage);
+					// Act
+					var bResultBeforeOpening = this.oInteractable.isMatching(this.oButtonInPage);
 
 						this.oDialog.attachAfterOpen(fnStart);
 
@@ -206,32 +180,28 @@
 						// sometimes opa tests close and open dialogs very fast so we need this check here
 						this.oDialog.close();
 
-						var bResultAfterOpening = oInteractable.isMatching(this.oButtonInPage);
+					var bResultAfterOpening = this.oInteractable.isMatching(this.oButtonInPage);
 
-						// Assert
-						assert.ok(bResultBeforeOpening, "Control is matching");
-						assert.ok(!bResultAfterOpening, "Control isn't matching after a dialog is opened");
-						sinon.assert.calledWith(this.oSpy,  sinon.match(/hidden behind an Open dialog/), oInteractable._sLogPrefix);
-					});
+					// Assert
+					assert.ok(bResultBeforeOpening, "Control is matching");
+					assert.ok(!bResultAfterOpening, "Control isn't matching after a dialog is opened");
+					sinon.assert.calledWith(this.oSpy,  sinon.match(/hidden behind an Open dialog/));
+				});
 
 
 					QUnit.test("Should match a Button in an open dialog", function (assert) {
 						// Arrange
 						var fnStart = assert.async();
 
-						// System under Test
-						var oInteractable = new Interactable();
-
 						// Act
-						var bResultBeforeOpening = oInteractable.isMatching(this.oButtonInDialog);
+						var bResultBeforeOpening = this.oInteractable.isMatching(this.oButtonInDialog);
 
 						this.oDialog.attachAfterOpen(function () {
-							var bResultAfterOpening = oInteractable.isMatching(this.oButtonInDialog);
+							var bResultAfterOpening = this.oInteractable.isMatching(this.oButtonInDialog);
 
 							// Assert
 							assert.ok(!bResultBeforeOpening, "Control isn't matching");
 							assert.ok(bResultAfterOpening, "Control is matching after a dialog is opened");
-							sinon.assert.calledWith(this.oSpy, sinon.match(/is not rendered/), oInteractable._sLogPrefix);
 
 							fnStart();
 						}, this);
@@ -241,11 +211,13 @@
 
 					QUnit.module("Invalidation", {
 						beforeEach: function () {
+							this.oInteractable = new Interactable();
+
 							this.oButton = new Button();
 							this.oButton.placeAt("qunit-fixture");
 							sap.ui.getCore().applyChanges();
 							// Async tests use global spy
-							this.oSpy = sinon.spy($.sap.log, "debug");
+							this.oSpy = sinon.spy(this.oInteractable._oLogger, "debug");
 						},
 						afterEach: function () {
 							this.oSpy.restore();
@@ -260,14 +232,11 @@
 							fnAfterRenderingDone = assert.async(),
 							oButton = this.oButton;
 
-						// System under test
-						var oInteractable = new Interactable();
-
 						// Squeeze between the rendering and the invalidation
 						setTimeout(function () {
 							// Act
-							assert.ok(!oInteractable.isMatching(oButton), "No match because the button was invalidated");
-							sinon.assert.calledWith(this.oSpy, sinon.match(/needs a new rendering/), oInteractable._sLogPrefix);
+							assert.ok(!this.oInteractable.isMatching(oButton), "No match because the button was invalidated");
+							sinon.assert.calledWith(this.oSpy, sinon.match(/needs a new rendering/));
 							fnTimeoutDone();
 						}.bind(this), 0);
 
@@ -276,9 +245,9 @@
 
 						this.oButton.addEventDelegate({
 							onAfterRendering : function() {
-								assert.ok(oInteractable.isMatching(oButton), "Match because the button was rendered again");
+								assert.ok(this.oInteractable.isMatching(oButton), "Match because the button was rendered again");
 								fnAfterRenderingDone();
-							}
+							}.bind(this)
 						})
 					});
 
@@ -290,7 +259,8 @@
 								content: [this.oButton, this.oPage]
 							});
 							this.oToolbar.placeAt("qunit-fixture");
-							this.oSpy = sinon.spy($.sap.log, "debug");
+							this.oInteractable = new Interactable();
+							this.oSpy = sinon.spy(this.oInteractable._oLogger, "debug");
 							sap.ui.getCore().applyChanges();
 						},
 						afterEach: function () {
@@ -305,30 +275,24 @@
 						this.oButton.setEnabled(false);
 						sap.ui.getCore().applyChanges();
 
-						// System under test
-						var oInteractable = new Interactable();
-
 						// Act
-						var bResult = oInteractable.isMatching(this.oButton);
+						var bResult = this.oInteractable.isMatching(this.oButton);
 
 						// Assert
 						assert.ok(!bResult, "Does not match because the button is disabled");
-						sinon.assert.calledWith(this.oSpy, "The control 'Element sap.m.Button#myButton' is not enabled", oInteractable._sLogPrefix);
+						sinon.assert.calledWith(this.oSpy, "The control 'Element sap.m.Button#myButton' is not enabled");
 					});
 
 					QUnit.test("Should not match a button when the Toolbar is disabled", function (assert) {
 						this.oToolbar.setEnabled(false);
 						sap.ui.getCore().applyChanges();
 
-						// System under test
-						var oInteractable = new Interactable();
-
 						// Act
-						var bResult = oInteractable.isMatching(this.oButton);
+						var bResult = this.oInteractable.isMatching(this.oButton);
 
 						// Assert
 						assert.ok(!bResult, "Does not match because the toolbar is disabled");
-						sinon.assert.calledWith(this.oSpy, "The control 'Element sap.m.Button#myButton' is not enabled", oInteractable._sLogPrefix);
+						sinon.assert.calledWith(this.oSpy, "The control 'Element sap.m.Button#myButton' is not enabled");
 					});
 
 
@@ -336,15 +300,12 @@
 						this.oToolbar.setEnabled(false);
 						sap.ui.getCore().applyChanges();
 
-						// System under test
-						var oInteractable = new Interactable();
-
 						// Act
-						var bResult = oInteractable.isMatching(this.oPage);
+						var bResult = this.oInteractable.isMatching(this.oPage);
 
 						// Assert
 						assert.ok(!bResult, "Does not match because the page because the toolbar is disabled");
-						sinon.assert.calledWith(this.oSpy, "The control 'Element sap.m.Page#myPage' has a parent 'Element sap.m.Toolbar#myToolbar' that is not enabled", oInteractable._sLogPrefix);
+						sinon.assert.calledWith(this.oSpy, "The control 'Element sap.m.Page#myPage' has a parent 'Element sap.m.Toolbar#myToolbar' that is not enabled");
 					});
 
 					jQuery(function () {
