@@ -236,5 +236,24 @@
         "references": []
       }
     ]
+  },
+  "1.36.14": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "7924244fe3b81110021661b3aa19ea8d75ae8b58",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: don\u0027t open for 0001.01.01 in IE",
+        "references": []
+      },
+      {
+        "id": "bf992f7c74d4feebc7475ebfd83b73860e52cc79",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "unified.FileUploader: Removed \u0027src\u0027-Attribute for BlindLayer",
+        "references": []
+      }
+    ]
   }
 }

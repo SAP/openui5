@@ -1426,5 +1426,45 @@
         "references": []
       }
     ]
+  },
+  "1.36.14": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "74e2ea74c739c46f6df58c1e250bfa03842864bd",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "ComponentContainer: delegate the owner in lazy component creation",
+        "references": []
+      },
+      {
+        "id": "7ad7cb487bc364f4448fb238e14a19208d1ef395",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "ComponentContainer: don\u0027t skip onBeforeRendering",
+        "references": []
+      },
+      {
+        "id": "c0e017117f60c94956ecc56b8758fd24089b2264",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Icon Tooltip: Prevent using technical names",
+        "references": []
+      },
+      {
+        "id": "e0817f8b35370eca8af8218d892f31549db70e03",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModelV2: fix correct removing of internal change handles",
+        "references": []
+      },
+      {
+        "id": "0d4b9cf7cf9a2b399e1738949feb2550a641aacb",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Popup: blind layer iframe issue",
+        "references": []
+      }
+    ]
   }
 }
