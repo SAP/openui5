@@ -94,7 +94,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			/**
 			 * Uploaded items.
 			 */
-			items : {type : "sap.m.UploadCollectionItem", multiple : true, singularName : "item"},
+			items : {type : "sap.m.UploadCollectionItem", multiple : true, singularName : "item", bindable : "bindable"},
 
 			/**
 			 * Specifies the header parameters for the FileUploader that are submitted only with XHR requests.
