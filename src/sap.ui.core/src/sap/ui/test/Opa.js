@@ -256,12 +256,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 	/**
 	 * Clears the queue and stops running tests so that new tests can be run.
 	 * This means all waitFor statements registered by {@link sap.ui.test.Opa#waitFor} will not be invoked anymore and
-	 * the promise returned by {@link sap.ui.test.Opa#.emptyQueue} will be rejected.
+	 * the promise returned by {@link sap.ui.test.Opa#.emptyQueue}
+	 * will be rejected or resolved depending on the failTest parameter.
 	 * When its called inside of a check in {@link sap.ui.test.Opa#waitFor}
 	 * the success function of this waitFor will not be called.
+	 * @param [boolean=true] failTest If true is passed or the parameter is omited,
+	 * the promise of {@link sap.ui.test.Opa#.emptyQueue} is rejected. If false is passed the promis is resolved.
+	 * @since 1.40.1
 	 * @public
 	 */
-	Opa.stopQueue = function stopQueue () {
+	Opa.stopQueue = function stopQueue (failTest) {
+		var bFailTest = failTest !== false;
 		// clear queue
 		queue = [];
 
@@ -275,7 +280,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 
 			isStopped = true;
 
-			oDeferred.reject({});
+			if (bFailTest) {
+				oDeferred.reject({});
+			} else {
+				oDeferred.resolve();
+			}
 		}
 	};
 
