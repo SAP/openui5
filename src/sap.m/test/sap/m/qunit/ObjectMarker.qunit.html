@@ -376,6 +376,33 @@
 			oTable.destroy();
 		});
 
+		module("Helper methods");
+
+		test("_getInnerControl private method", function () {
+			// Arrange
+			var oMarker = new sap.m.ObjectMarker();
+
+			// Assert
+			strictEqual(oMarker._getInnerControl(), null, "Requesting inner control without setting type should return null");
+
+			// Act
+			oMarker.setType(sap.m.ObjectMarkerType.Flagged);
+
+			// Assert
+			ok(oMarker._getInnerControl(), "Inner control should be returned instead of null");
+		});
+
+		test("_adjustControl private method", function () {
+			// Arrange
+			var oMarker = new sap.m.ObjectMarker();
+
+			// Assert
+			strictEqual(oMarker._adjustControl(), false, "Adjusting inner control without setting type should return false thus" +
+					"not trying to execute further adjustments to the control because in this setup the control will not" +
+					"render and no inner control will be available that would cause errors from the method trying to access" +
+					"it's properties");
+		});
+
 	</script>
 </head>
 <body>
