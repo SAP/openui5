@@ -61,10 +61,10 @@ sap.ui.define(['jquery.sap.global'], function ($) {
 					oValidationInfo = createValidationInfo(mValidationInfo[sKey]);
 
 
-				if (oValidationInfo.mandatory && vValue === undefined) {
+				if (oValidationInfo.mandatory && (vValue === undefined || vValue === null)) {
 					aErrors.push("No '" + sKey + "' given but it is a mandatory parameter");
 				}
-				if (vValue === undefined) {
+				if (vValue === undefined || vValue === null) {
 					// parameter undefined if it was mandatory the error is pushed already
 					return;
 				}
@@ -109,12 +109,26 @@ sap.ui.define(['jquery.sap.global'], function ($) {
 			return "the '" + sPropertyName + "' parameter needs to be an object but '"
 				+ oValue + "' was passed";
 		},
+		string: function (sValue, sPropertyName) {
+			if ($.type(sValue) === "string") {
+				return;
+			}
+			return "the '" + sPropertyName + "' parameter needs to be a string but '"
+				+ sValue + "' was passed";
+		},
 		bool: function (bValue, sPropertyName) {
 			if ($.type(bValue) === "boolean") {
 				return;
 			}
 			return "the '" + sPropertyName + "' parameter needs to be a boolean value but '"
 				+ bValue + "' was passed";
+		},
+		numeric: function (iValue, sPropertyName) {
+			if ($.isNumeric(iValue)) {
+				return;
+			}
+			return "the '" + sPropertyName + "' parameter needs to be numeric but '"
+				+ iValue + "' was passed";
 		},
 		// no validation just for declaring optional and mandatory params
 		any: $.noop

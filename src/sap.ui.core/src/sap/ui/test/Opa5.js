@@ -43,7 +43,15 @@ sap.ui.define([
 			sFrameId = "OpaFrame",
 			oValidator = new ParameterValidator({
 				errorPrefix: "sap.ui.test.Opa5#waitFor"
-			});
+			}),
+			aConfigValuesForWaitFor = [
+				"visible",
+				"viewNamespace",
+				"viewName"
+			].concat(Opa._aConfigValuesForWaitFor),
+			aPropertiesThatShouldBePassedToOpaWaitFor = [
+				"check", "success"
+			].concat(Opa._aConfigValuesForWaitFor);
 
 		/**
 		 * Helps you when writing tests for UI5 applications.
@@ -104,24 +112,20 @@ sap.ui.define([
 			var bComponentLoaded = false;
 			oOptions = oOptions || {};
 
+			var oFirstWaitForOptions = createWaitForObjectWithoutDefaults();
+			oFirstWaitForOptions.success = function () {
+				// include stylesheet
+				var sComponentStyleLocation = jQuery.sap.getModulePath("sap.ui.test.OpaCss",".css");
+				jQuery.sap.includeStyleSheet(sComponentStyleLocation);
+
+				HashChanger.getInstance().setHash(oOptions.hash || "");
+
+				componentLauncher.start(oOptions.componentConfig).then(function () {
+					bComponentLoaded = true;
+				});
+			};
 			// wait for starting of component launcher
-			this.waitFor({
-				viewName: null,
-				controlType: null,
-				id: null,
-				searchOpenDialogs: false,
-				success: function () {
-					// include stylesheet
-					var sComponentStyleLocation = jQuery.sap.getModulePath("sap.ui.test.OpaCss",".css");
-					jQuery.sap.includeStyleSheet(sComponentStyleLocation);
-
-					HashChanger.getInstance().setHash(oOptions.hash || "");
-
-					componentLauncher.start(oOptions.componentConfig).then(function () {
-						bComponentLoaded = true;
-					});
-				}
-			});
+			this.waitFor(oFirstWaitForOptions);
 
 			var oPropertiesForWaitFor = createWaitForObjectWithoutDefaults();
 			oPropertiesForWaitFor.errorMessage = "Unable to load the component with the name: " + oOptions.name;
@@ -146,11 +150,11 @@ sap.ui.define([
 		 */
 		Opa5.prototype.iTeardownMyUIComponent = function iTeardownMyUIComponent () {
 
-			return this.waitFor({
-				success : function () {
-					componentLauncher.teardown();
-				}
-			});
+			var oOptions = createWaitForObjectWithoutDefaults();
+			oOptions.success = function () {
+				componentLauncher.teardown();
+			};
+			return this.waitFor(oOptions);
 
 		};
 
@@ -354,15 +358,18 @@ sap.ui.define([
 		 * @public
 		 */
 		Opa5.prototype.waitFor = function (oOptions) {
-			var vActions = oOptions.actions;
+			var vActions = oOptions.actions,
+				oFilteredConfig = Opa._createFilteredConfig(aConfigValuesForWaitFor),
+				// only take the allowed properties from the config
+				oOptionsPassedToOpa;
+
 			oOptions = $.extend({},
-					Opa.config,
+					oFilteredConfig,
 					oOptions);
 
 			oValidator.validate({
 				validationInfo: Opa5._validationInfo,
-				inputToValidate: oOptions,
-				allowUnknownProperties: true
+				inputToValidate: oOptions
 			});
 
 			var fnOriginalCheck = oOptions.check,
@@ -371,7 +378,9 @@ sap.ui.define([
 				vResult,
 				bPluginLooksForControls;
 
-			oOptions.check = function () {
+			oOptionsPassedToOpa = Opa._createFilteredOptions(aPropertiesThatShouldBePassedToOpaWaitFor, oOptions);
+
+			oOptionsPassedToOpa.check = function () {
 				// Create a new options object for the plugin to keep the original one as is
 				var oPluginOptions = $.extend({}, oOptions, {
 						// only pass interactable if there are actions for backwards compatibility
@@ -449,7 +458,7 @@ sap.ui.define([
 				return true;
 			};
 
-			oOptions.success = function () {
+			oOptionsPassedToOpa.success = function () {
 				// If the plugin does not look for controls execute actions even if vControl is falsy
 				if (vActions && (vResult || !bPluginLooksForControls)) {
 					oActionPipeline.process({
@@ -466,7 +475,7 @@ sap.ui.define([
 				}
 			};
 
-			return Opa.prototype.waitFor.call(this, oOptions);
+			return Opa.prototype.waitFor.call(this, oOptionsPassedToOpa);
 		};
 
 		/**
@@ -672,7 +681,17 @@ sap.ui.define([
 			$("html").height("100%");
 		});
 
-		Opa5._validationInfo = $.extend({}, Opa._validationInfo);
+		Opa5._validationInfo = $.extend({
+			_stack: "string",
+			viewName: "string",
+			viewNamespace: "string",
+			visible: "bool",
+			matchers: "any",
+			actions: "any",
+			id: "any",
+			controlType: "any",
+			searchOpenDialogs: "bool"
+		}, Opa._validationInfo);
 
 		return Opa5;
 }, /* export= */ true);

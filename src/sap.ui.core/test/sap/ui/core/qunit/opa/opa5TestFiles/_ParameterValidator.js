@@ -8,7 +8,9 @@ sap.ui.require(["sap/ui/test/_ParameterValidator"], function (Validator) {
 			this.mValidationInfo = {
 				funcParam: "func",
 				arrayParam: "array",
-				anyParam: "any"
+				anyParam: "any",
+				numericParam: "numeric",
+				stringParam: "string"
 			}
 		}
 	});
@@ -74,6 +76,56 @@ sap.ui.require(["sap/ui/test/_ParameterValidator"], function (Validator) {
 
 			assert.ok(true, "no exception has been thrown");
 		});
+	});
+
+	QUnit.test("Should not throw an exception if the numeric parameter is a number", function (assert) {
+		this.oValidator.validate({
+			validationInfo: this.mValidationInfo,
+			inputToValidate: {
+				numericParam: 13.37
+			}
+		});
+
+		assert.ok(true, "no exception has been thrown");
+	});
+
+	QUnit.test("Should throw an exception if the numeric param is not a number", function (assert) {
+		assert.throws(function () {
+				this.oValidator.validate({
+					validationInfo: this.mValidationInfo,
+					inputToValidate: {
+						numericParam: NaN
+					}
+				});
+			}.bind(this),
+			new Error("Parameter validator - the 'numericParam' parameter needs to be numeric but 'NaN' was passed",
+				"The expected exception was thrown")
+		);
+	});
+
+	QUnit.test("Should not throw an exception if the string is a string", function (assert) {
+		this.oValidator.validate({
+			validationInfo: this.mValidationInfo,
+			inputToValidate: {
+				stringParam: "foo"
+			}
+		});
+
+		assert.ok(true, "no exception has been thrown");
+	});
+
+	QUnit.test("Should throw an exception if the string param is not a number", function (assert) {
+		assert.throws(function () {
+				this.oValidator.validate({
+					validationInfo: this.mValidationInfo,
+					inputToValidate: {
+						stringParam: NaN
+					}
+				});
+			}.bind(this),
+			new Error("Parameter validator - the 'stringParam' parameter needs to be a string but 'NaN' was passed",
+				"The expected exception was thrown")
+		);
 	});
 
 	QUnit.test("Should not throw an exception if the valid parameter is not given and not mandatory", function (assert) {

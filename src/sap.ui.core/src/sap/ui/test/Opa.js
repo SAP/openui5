@@ -333,15 +333,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './_ParameterValidator'], f
 		 * @returns {jQuery.promise} A promise that gets resolved on success
 		 */
 		waitFor : function (options) {
-			var deferred = $.Deferred();
-				options = $.extend({},
-				Opa.config,
+			var deferred = $.Deferred(),
+				oFilteredConfig = Opa._createFilteredConfig(Opa._aConfigValuesForWaitFor);
+
+			options = $.extend({},
+				oFilteredConfig,
 				options);
+
+			this._validateWaitFor(options);
 
 			options._stack = createStack(1 + options._stackDropCount);
 			delete options._stackDropCount;
-
-			this._validateWaitFor(options);
 
 			deferred.promise(this);
 
@@ -405,16 +407,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './_ParameterValidator'], f
 		_validateWaitFor: function (oParameters) {
 			oValidator.validate({
 				validationInfo: Opa._validationInfo,
-				inputToValidate: oParameters,
-				allowUnknownProperties: true
+				inputToValidate: oParameters
 			});
 		}
 	};
 
+	Opa._createFilteredOptions = function (aAllowedProperties, oSource) {
+		var oFilteredOptions = {};
+		aAllowedProperties.forEach(function (sKey) {
+			var vConfigValue = oSource[sKey];
+			if (vConfigValue === undefined) {
+				return;
+			}
+			oFilteredOptions[sKey] = vConfigValue;
+		});
+		return oFilteredOptions;
+	};
+
+	Opa._createFilteredConfig = function (aAllowedProperties) {
+		return Opa._createFilteredOptions(aAllowedProperties, Opa.config);
+	};
+
+	Opa._aConfigValuesForWaitFor = [
+		"errorMessage",
+		"timeout",
+		"pollingInterval",
+		"_stackDropCount"
+	];
+
 	Opa._validationInfo = {
 		error: "func",
 		check: "func",
-		success: "func"
+		success: "func",
+		timeout: "numeric",
+		pollingInterval: "numeric",
+		_stackDropCount: "numeric",
+		errorMessage: "string"
 	};
 
 

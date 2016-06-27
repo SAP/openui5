@@ -50,6 +50,7 @@ sap.ui.define([
 			viewNamespace: "baz",
 			timeout: 10,
 			pollingInterval: 20,
+			visible: true,
 			matchers: $.noop,
 			check: $.noop,
 			success: $.noop,
@@ -63,5 +64,63 @@ sap.ui.define([
 		// cancel the wait for
 		Opa5.stopQueue();
 		assert.ok(true, "no exception was thrown")
+	});
+
+	QUnit.test("Should throw an error if you pass unknown properties to waitFor", function (assert) {
+		assert.throws(function () {
+			this.oOpa.waitFor({
+				foo: "bar",
+				bar: "foo"
+			});
+		}, new Error("Multiple errors where thrown sap.ui.test.Opa5#waitFor\n" +
+			"The property 'foo' is not defined in the API\n" +
+			"The property 'bar' is not defined in the API"), "an error containing both property names was thrown");
+	});
+
+	QUnit.module("Config and waitFor",{
+		beforeEach: function () {
+			var sView = [
+				'<core:View xmlns:core="sap.ui.core" xmlns="sap.ui.commons">',
+					'<Button id="foo"/>',
+				'</core:View>'
+			].join('');
+
+			this.oView = sap.ui.xmlview({id: "myView", viewContent: sView});
+			sap.ui.getCore().applyChanges();
+			Opa5.extendConfig({
+				// make the test fast
+				pollingInterval: 50,
+				viewNamespace: "namespace.",
+				viewName: "viewName"
+			});
+		},
+		afterEach: function () {
+			this.oView.destroy();
+			sap.ui.getCore().applyChanges();
+			Opa5.resetConfig();
+		}
+	});
+
+	opaTest("Should take the viewNamespace and viewname from the config", function (opa) {
+		this.oView.setViewName("namespace.viewName");
+		this.oView.placeAt("qunit-fixture");
+		opa.waitFor({
+			id: "foo",
+			success: function (oButton) {
+				Opa5.assert.ok(oButton, "a button was found");
+			}
+		});
+	});
+
+	opaTest("Should take the viewNamespace and overwrite the viewname", function (opa) {
+		this.oView.setViewName("namespace.otherViewName");
+		this.oView.placeAt("qunit-fixture");
+		opa.waitFor({
+			id: "foo",
+			viewName: "otherViewName",
+			success: function (oButton) {
+				Opa5.assert.ok(oButton, "a button was found");
+			}
+		});
 	});
 });
