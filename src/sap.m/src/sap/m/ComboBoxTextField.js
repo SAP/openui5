@@ -130,7 +130,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 		 *
 		 * Default value is an empty string.
 		 *
-		 * @return {string} The value of property <code>value</code>.
+		 * @returns {string} The value of property <code>value</code>
 		 * @public
 		 */
 		ComboBoxTextField.prototype.getValue = function() {
@@ -171,9 +171,9 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 		};
 
 		/**
-		 * Gets the DOM reference the message popup should be docked.
+		 * Gets the DOM element reference where the message popup is attached.
 		 *
-		 * @return {object}
+		 * @returns {object} The DOM element reference where the message popup is attached
 		 */
 		ComboBoxTextField.prototype.getDomRefForValueStateMessage = function() {
 			return this.getDomRef();

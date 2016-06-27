@@ -2,26 +2,22 @@
 <html>
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
 <title>Test Page for sap.m.DateTimeInput</title>
 <script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
-	type="text/javascript" 
-	data-sap-ui-noConflict="true"
-	data-sap-ui-libs="sap.m"
-	data-sap-ui-language="en-US"
-	src="../../../../resources/sap-ui-core.js">
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.m"
+		data-sap-ui-language="en-US"
+		src="../../../../resources/sap-ui-core.js">
 </script>
-
 <link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-
-<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <!-- use the sinon faketimers for this test -->
-<script type="text/javascript">
+<script>
 	sinon.config.useFakeTimers = true;
 	// make jQuery.now work with Sinon fake timers (since jQuery 2.x, jQuery.now caches the native Date.now)
 	jQuery.now = function() {
@@ -29,7 +25,7 @@
 	};
 </script>
 
-<script type="text/javascript">
+<script>
 	jQuery.sap.require("sap.ui.model.type.Date");
 
 	var oNow = new Date(),
@@ -197,15 +193,15 @@
 	test("value state and value state message", function() {
 		var oPicker = dti4.getAggregation("_picker");
 		dti4.focus();
-		ok(oPicker._popup.isOpen(), "error message is open");
+		ok(oPicker._oValueStateMessage._oPopup.isOpen(), "error message is open");
 		this.clock.tick(500);
 
 		document.activeElement.blur();
-		ok(!oPicker._popup.isOpen(), "error message is closed");
+		ok(!oPicker._oValueStateMessage._oPopup.isOpen(), "error message is closed");
 	});
-	
+
 	module("Accessibility");
-	
+
 	test("getAccessibilityInfo", function() {
 		var oInput = new sap.m.DateTimeInput();
 		ok(!!oInput.getAccessibilityInfo, "DateTimeInput has a getAccessibilityInfo function");
@@ -214,9 +210,7 @@
 		//Rest is tested in unit tests of inner controls
 		oInput.destroy();
 	});
-
 </script>
-
 </head>
 <body>
 	<h1 id="qunit-header">QUnit page for sap.m.DateTimeInput</h1>
