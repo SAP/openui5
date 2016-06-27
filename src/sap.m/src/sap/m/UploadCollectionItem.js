@@ -187,7 +187,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 				 */
 				attributes : {
 					type : "sap.m.ObjectAttribute",
-					multiple : true
+					multiple : true,
+					bindable : "bindable"
 				},
 				/**
 				 * Hidden aggregation for the attributes created from the deprecated properties uploadedDate, contributor and fileSize
@@ -205,7 +206,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 				 */
 				statuses : {
 					type : "sap.m.ObjectStatus",
-					multiple : true
+					multiple : true,
+					bindable : "bindable"
 				}
 			},
 
