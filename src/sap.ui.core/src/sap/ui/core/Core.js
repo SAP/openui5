@@ -298,7 +298,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 			// sync point 1 synchronizes document ready and rest of UI5 boot
 			var oSyncPoint1 = jQuery.sap.syncPoint("UI5 Document Ready", function(iOpenTasks, iFailures) {
-				that.handleLoad();
+				that.bDomReady = true;
+				that.init();
 			});
 			var iDocumentReadyTask = oSyncPoint1.startTask("document.ready");
 			var iCoreBootTask = oSyncPoint1.startTask("preload and boot");
@@ -680,9 +681,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 */
 	Core.prototype._boot = function() {
 
-		//do not allow any event processing until the Core is booting
-		this.lock();
-
 		// if a list of preloaded library CSS is configured, request a merged CSS (if application did not already do it)
 		var aCSSLibs = this.oConfiguration['preloadLibCss'];
 		if (aCSSLibs && aCSSLibs.length > 0 && !aCSSLibs.appManaged) {
@@ -699,9 +697,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				jQuery.sap.require(mod);
 			}
 		});
-
-		//allow events again
-		this.unlock();
 
 	};
 
@@ -1048,26 +1043,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				f();
 			});
 		}
-	};
-
-	/**
-	 * Handles the load event of the browser to initialize the Core
-	 * @private
-	 */
-	Core.prototype.handleLoad = function () {
-		this.bDomReady = true;
-
-		//do not allow any event processing until the Core is initialized
-		var bWasLocked = this.isLocked();
-		if ( !bWasLocked ) {
-			this.lock();
-		}
-		this.init();
-		//allow event processing again
-		if ( !bWasLocked ) {
-			this.unlock();
-		}
-
 	};
 
 	/**
