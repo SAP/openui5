@@ -24,11 +24,200 @@
         <script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
         <script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
-		<style>
-			#bigButton {
-				height: 2000px;
-			}
-		</style>
+        <script id="objectPageView" type="sapui5/xmlview">
+            <core:View
+                    xmlns="sap.uxap"
+                    xmlns:core="sap.ui.core"
+                    xmlns:layout="sap.ui.layout"
+                    xmlns:m="sap.m"
+                    xmlns:f="sap.ui.layout.form"
+                    height="100%">
+                <m:App>
+                <ObjectPageLayout id="objectPageLayout" showTitleInHeaderContent="true">
+                    <headerTitle>
+                        <ObjectPageHeader id="headerForTest"
+                                          headerDesign="Light"
+                                          objectTitle="Long title that wraps and goes over more lines"
+                                          showTitleSelector="true"
+                                          titleSelectorPress="handleTitleSelectorPress"
+                                          showMarkers="true"
+                                          markFavorite="true"
+                                          markLocked="true"
+                                          markFlagged="true"
+                                          markLockedPress="handleMarkLockedPress"
+                                          objectSubtitle="Long subtitle that wraps and goes over more lines"
+                                          objectImageShape="Circle"
+                                          objectImageURI="./images/imageID_275314.png">
+                            <navigationBar>
+                                <m:Bar>
+                                    <m:contentLeft>
+                                        <m:Button id="navButton" icon="sap-icon://nav-back"></m:Button>
+                                    </m:contentLeft>
+                                    <m:contentMiddle>
+                                        <m:Text id="title" text="Employee Profile"/>
+                                    </m:contentMiddle>
+                                </m:Bar>
+                            </navigationBar>
+                            <actions>
+                                <ObjectPageHeaderActionButton icon="sap-icon://action" text="action" importance="Low"/>
+                                <ObjectPageHeaderActionButton icon="sap-icon://action-settings" text="settings" importance="Low"/>
+                                <ObjectPageHeaderActionButton icon="sap-icon://edit" text="edit" importance="Medium"/>
+                                <ObjectPageHeaderActionButton icon="sap-icon://save" text="save" visible="false"/>
+                                <ObjectPageHeaderActionButton icon="sap-icon://refresh" text="refresh"/>
+                                <ObjectPageHeaderActionButton icon="sap-icon://attachment" text="attach"/>
+                            </actions>
+                            <breadCrumbsLinks>
+                                <m:Link text="Page 1 a very long link" press="handleLink1Press"/>
+                                <m:Link text="Page 2 long link" press="handleLink2Press"/>
+                            </breadCrumbsLinks>
+                        </ObjectPageHeader>
+                    </headerTitle>
+                    <headerContent>
+                        <layout:VerticalLayout>
+                            <m:ObjectStatus title="User ID" text="12345678"/>
+                            <m:ObjectStatus title="Functional Area" text="Developement"/>
+                            <m:ObjectStatus title="Cost Center" text="PI DFA GD Programs and Product"/>
+                            <m:ObjectStatus title="Email" text="email@address.com"/>
+                        </layout:VerticalLayout>
+                        <m:Text width="200px"
+                                text="Hi, I'm Denise. I am passionate about what I do and I'll go the extra mile to make the customer win."/>
+                        <m:ObjectStatus text="In Stock" state="Error"/>
+                        <m:ObjectStatus title="Label" text="In Stock" state="Warning"/>
+                        <m:ObjectNumber number="1000" numberUnit="SOOK" emphasized="false" state="Success"/>
+                        <m:ProgressIndicator
+                                percentValue="30"
+                                displayValue="30%"
+                                showValue="true"
+                                state="None"/>
+                        <layout:VerticalLayout>
+                            <layout:layoutData>
+                                <ObjectPageHeaderLayoutData
+                                        showSeparatorAfter="false"/>
+                            </layout:layoutData>
+                            <m:Label text="PC, Unrestricted-Use Stock"/>
+                            <m:ObjectNumber number="219" numberUnit="K"></m:ObjectNumber>
+                        </layout:VerticalLayout>
+                        <layout:VerticalLayout>
+                            <layout:layoutData>
+                                <ObjectPageHeaderLayoutData
+                                        visibleS="false"
+                                        showSeparatorAfter="false"/>
+                            </layout:layoutData>
+                            <m:Label text="PC, Not in Small Size"/>
+                            <m:ObjectNumber number="220" numberUnit="K"></m:ObjectNumber>
+                        </layout:VerticalLayout>
+                        <layout:VerticalLayout>
+                            <layout:layoutData>
+                                <ObjectPageHeaderLayoutData
+                                        visibleM="false"
+                                        showSeparatorAfter="false"/>
+                            </layout:layoutData>
+                            <m:Label text="PC, Not in Medium Size"/>
+                            <m:ObjectNumber number="221" numberUnit="K"></m:ObjectNumber>
+                        </layout:VerticalLayout>
+                        <layout:VerticalLayout>
+                            <layout:layoutData>
+                                <ObjectPageHeaderLayoutData
+                                        visibleL="false"
+                                        showSeparatorAfter="true"/>
+                            </layout:layoutData>
+                            <m:Label text="PC, Not in Large Size"/>
+                            <m:ObjectNumber number="219" numberUnit="K"></m:ObjectNumber>
+                        </layout:VerticalLayout>
+                        <m:ObjectAttribute title="Label" text="In Stock"/>
+                        <m:Button icon="sap-icon://nurse"/>
+                        <m:Tokenizer>
+                            <m:Token text="Wayne Enterprises"/>
+                            <m:Token text="Big's Caramels"/>
+                        </m:Tokenizer>
+                        <m:RatingIndicator maxValue="8" class="sapUiSmallMarginBottom" value="4" tooltip="Rating Tooltip"/>
+                    </headerContent>
+                    <sections>
+                        <ObjectPageSection title="2014 Goals Plan">
+                            <subSections>
+                                <ObjectPageSubSection title=" ">
+                                    <blocks>
+                                        <f:SimpleForm
+                                                maxContainerCols="1"
+                                                layout="ResponsiveGridLayout"
+                                                width="100%">
+                                            <layout:VerticalLayout>
+                                                <m:Label text="Evangelize the UI framework accross the company" design="Bold"/>
+                                                <m:Text text="4 days overdue Cascaded"/>
+                                                <m:Text text=" "/>
+                                                <m:Label text="Get trained in development management direction" design="Bold"/>
+                                                <m:Text text="Due Nov 21"/>
+                                                <m:Text text=" "/>
+                                                <m:Label text="Mentor junior developers" design="Bold"/>
+                                                <m:Text text="Due Dec 31 Cascaded"/>
+                                            </layout:VerticalLayout>
+                                        </f:SimpleForm>
+                                    </blocks>
+                                </ObjectPageSubSection>
+                            </subSections>
+                        </ObjectPageSection>
+                        <ObjectPageSection title="Personal">
+                            <subSections>
+                                <ObjectPageSubSection title="Connect">
+                                    <blocks>
+                                        <f:SimpleForm labelSpanL="4" labelSpanM="4"
+                                                      labelSpanS="4" emptySpanL="0" emptySpanM="0" emptySpanS="0"
+                                                      maxContainerCols="2" layout="ResponsiveLayout">
+                                            <core:Title text="Main Payment Method"/>
+                                            <m:Label text="Bank Transfer"/>
+                                            <layout:VerticalLayout>
+                                                <m:Text text="Sparkasse Heimfeld, Germany"/>
+                                                <m:Text text="Account 458784545"/>
+                                            </layout:VerticalLayout>
+                                        </f:SimpleForm>
+                                        <f:SimpleForm labelSpanL="4" labelSpanM="4"
+                                                          labelSpanS="4" emptySpanL="0" emptySpanM="0" emptySpanS="0"
+                                                          maxContainerCols="2" layout="ResponsiveLayout">
+                                            <core:Title text="Payment method for Expenses"/>
+                                            <m:Label text="Extra Travel Expenses"/>
+                                            <m:Text text="Cash 100 USD"/>
+                                        </f:SimpleForm>
+                                    </blocks>
+                                </ObjectPageSubSection>
+                                <ObjectPageSubSection id="paymentSubSection" title="Payment information">
+                                    <blocks>
+                                        <f:SimpleForm labelSpanL="4" labelSpanM="4"
+                                                      labelSpanS="4" emptySpanL="0" emptySpanM="0" emptySpanS="0"
+                                                      maxContainerCols="2" layout="ResponsiveGridLayout"
+                                                      width="100%">
+
+                                            <core:Title text="Termination information"/>
+                                            <m:Label text="Ok to return"/>
+                                            <m:Text text="No"/>
+
+                                            <m:Label text="Regret Termination"/>
+                                            <m:Text text="Yes"/>
+                                        </f:SimpleForm>
+                                    </blocks>
+                                    <moreBlocks>
+                                        <f:SimpleForm labelSpanL="4" labelSpanM="4"
+                                                      labelSpanS="4" emptySpanL="0" emptySpanM="0" emptySpanS="0"
+                                                      maxContainerCols="2"
+                                                      layout="ResponsiveGridLayout"
+                                                      width="100%">
+                                            <m:Label text="Start Date"/>
+                                            <m:Text text="Jan 01, 2001"/>
+                                            <m:Label text="End Date"/>
+                                            <m:Text text="Jun 30, 2014"/>
+                                            <m:Label text="Last Date Worked"/>
+                                            <m:Text text="Jun 01, 2014"/>
+                                            <m:Label text="Payroll End Date"/>
+                                            <m:Text text="Jun 01, 2014"/>
+                                        </f:SimpleForm>
+                                    </moreBlocks>
+                                </ObjectPageSubSection>
+                            </subSections>
+                        </ObjectPageSection>
+                    </sections>
+                </ObjectPageLayout>
+                </m:App>
+            </core:View>
+        </script>
 
 		<script>
 			jQuery.sap.require("sap.ui.thirdparty.sinon");
@@ -83,20 +272,6 @@
 
                 // Assert
                 ok(!jQuery.sap.byId("myPage-navButton").hasClass("sapF2AdaptedNavigation"), "back button is not adapted");
-            });
-
-            QUnit.test("Back Button is adapted when header is replaced", function(assert){
-
-                var oAdaptOptions = {bHideBackButton: true};
-
-                Fiori20Adapter.traverse(this.oPage, oAdaptOptions);
-                this.oPage.setCustomHeader(new sap.m.Bar({
-                    contentLeft: [new sap.m.Button("newBackButton", {type: "Back"})]
-                }));
-                sap.ui.getCore().applyChanges();
-
-                // Assert
-                ok(jQuery.sap.byId("newBackButton").hasClass("sapF2AdaptedNavigation"), "new back button is adapted");
             });
 
             QUnit.test("Back Button is adapted when bHideBackButton=true", function(assert){
@@ -173,11 +348,34 @@
                 ok(!this.oPage.hasStyleClass("sapF2CollapsedHeader"), "header is collapsed");
             });
 
-            QUnit.test("Header is adapted if content is added at a later time", function(assert){
-                var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true};
-                Fiori20Adapter.traverse(this.oPage, oAdaptOptions);
 
-                var oInnerPage = new sap.m.Page();
+            module("Fiori2 post adaptation of page header", {
+                beforeEach: function () {
+                    this.oApp = new sap.m.App();
+                    this.oPage = new sap.m.Page("myPage");
+                    this.oApp.addPage(this.oPage);
+                    this.oApp.placeAt("content");
+                    sap.ui.getCore().applyChanges();
+                },
+                afterEach: function () {
+                    this.oApp.destroy();
+                    this.oPage = null;
+                }
+            });
+
+            QUnit.test("Header is adapted if page body content is added at a later time", function(assert){
+                var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},
+                oTitleInfo,
+                oBackButton,
+                fnViewListener = function(oEvent) {
+                    oBackButton = oEvent.getParameter("oBackButton");
+                    oTitleInfo = oEvent.getParameter("oTitleInfo");
+                },
+                oSpy = sinon.spy(fnViewListener);
+                Fiori20Adapter.attachViewChange(oSpy);
+                Fiori20Adapter.traverse(this.oApp, oAdaptOptions);
+
+                var oInnerPage = new sap.m.Page("innerPage");
                 oInnerPage.setTitle("Test");
                 oInnerPage.setShowNavButton(true);
 
@@ -186,13 +384,27 @@
 
                 // Assert
                 ok(oInnerPage.hasStyleClass("sapF2CollapsedHeader"), "header is collapsed");
+               // ok(oTitleInfo.text === "Test", "title is adapted");
+                ok(oBackButton.getId() === "innerPage-navButton", "back button is adapted");
+
+                // cleanup
+                Fiori20Adapter.detachViewChange(oSpy);
             });
 
-            QUnit.test("Header is adapted if content is insereted at a later time", function(assert){
-                var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true};
-                Fiori20Adapter.traverse(this.oPage, oAdaptOptions);
 
-                var oInnerPage = new sap.m.Page();
+            QUnit.test("Header is adapted if page body content is inserted at a later time", function(assert){
+                var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},
+                    oTitleInfo,
+                    oBackButton,
+                    fnViewListener = function(oEvent) {
+                        oBackButton = oEvent.getParameter("oBackButton");
+                        oTitleInfo = oEvent.getParameter("oTitleInfo");
+                    },
+                    oSpy = sinon.spy(fnViewListener);
+                Fiori20Adapter.attachViewChange(oSpy);
+                Fiori20Adapter.traverse(this.oApp, oAdaptOptions);
+
+                var oInnerPage = new sap.m.Page("innerPage");
                 oInnerPage.setTitle("Test");
                 oInnerPage.setShowNavButton(true);
 
@@ -201,7 +413,119 @@
 
                 // Assert
                 ok(oInnerPage.hasStyleClass("sapF2CollapsedHeader"), "header is collapsed");
+                // ok(oTitleInfo.text === "Test", "title is adapted");
+                ok(oBackButton.getId() === "innerPage-navButton", "back button is adapted");
+
+                // cleanup
+                Fiori20Adapter.detachViewChange(oSpy);
             });
+
+            QUnit.test("Header is adapted when replaced", function(assert){
+
+                var oAdaptOptions = {bHideBackButton: true, bMoveTitle: true},
+                    oTitleInfo,
+                    oBackButton,
+                    fnViewListener = function(oEvent) {
+                        oBackButton = oEvent.getParameter("oBackButton");
+                        oTitleInfo = oEvent.getParameter("oTitleInfo");
+                    },
+                    oSpy = sinon.spy(fnViewListener);
+                Fiori20Adapter.attachViewChange(oSpy);
+
+                Fiori20Adapter.traverse(this.oPage, oAdaptOptions);
+                this.oPage.setCustomHeader(new sap.m.Bar({
+                    contentLeft: [new sap.m.Button("newBackButton", {type: "Back"})],
+                    contentMiddle: [new sap.m.Title("newTitle", {text: "New Title"})]
+                }));
+                sap.ui.getCore().applyChanges();
+
+                // Assert
+                ok(jQuery.sap.byId("newBackButton").hasClass("sapF2AdaptedNavigation"), "new back button is adapted");
+                ok(oBackButton.getId() === "newBackButton", "back button is returned");
+                ok(oTitleInfo.text === "New Title", "title is returned")
+            });
+
+            QUnit.test("Title is not adapted when header content is added at a later time and lateAdaptation=false", function(assert){
+                var oAdaptOptions = {bMoveTitle: true},
+                    oTitleInfo,
+                    oBackButton,
+                    fnViewListener = function(oEvent) {
+                        oBackButton = oEvent.getParameter("oBackButton");
+                        oTitleInfo = oEvent.getParameter("oTitleInfo");
+                    },
+                    oSpy = sinon.spy(fnViewListener);
+
+                Fiori20Adapter.attachViewChange(oSpy);
+                this.oPage.setTitle("Test");
+
+                //act
+                Fiori20Adapter.traverse(this.oPage, oAdaptOptions);
+                var oBar = new sap.m.Bar({});
+                this.oPage.setCustomHeader(oBar);
+
+                oBar.addContentMiddle(new sap.m.Text("newTitle", {text: "New Title"}));
+
+                sap.ui.getCore().applyChanges();
+
+                // Assert
+                ok(!jQuery.sap.byId("newTitle").hasClass("sapF2AdaptedTitle"), "new title is not adapted");
+                ok(oTitleInfo.text !== "New Title", "new title is not returned");
+            });
+
+            QUnit.test("Title is adapted when header content is added at a later time and lateAdaptation=true", function(assert){
+                var oAdaptOptions = {bMoveTitle: true, bLateAdaptation: true},
+                        oTitleInfo,
+                        oBackButton,
+                        fnViewListener = function(oEvent) {
+                            oBackButton = oEvent.getParameter("oBackButton");
+                            oTitleInfo = oEvent.getParameter("oTitleInfo");
+                        },
+                        oSpy = sinon.spy(fnViewListener);
+
+                Fiori20Adapter.attachViewChange(oSpy);
+                this.oPage.setTitle("Test");
+
+                //act
+                Fiori20Adapter.traverse(this.oPage, oAdaptOptions);
+                var oBar = new sap.m.Bar({});
+                this.oPage.setCustomHeader(oBar);
+
+                oBar.addContentMiddle(new sap.m.Text("newTitle", {text: "New Title"}));
+
+                sap.ui.getCore().applyChanges();
+
+                // Assert
+                ok(jQuery.sap.byId("newTitle").hasClass("sapF2AdaptedTitle"), "new title is adapted");
+                ok(oTitleInfo.text === "New Title", "new title is returned");
+            });
+
+            QUnit.test("Title is adapted when header content is inserted at a later time and lateAdaptation=true", function(assert){
+                var oAdaptOptions = {bMoveTitle: true, bLateAdaptation: true},
+                        oTitleInfo,
+                        oBackButton,
+                        fnViewListener = function(oEvent) {
+                            oBackButton = oEvent.getParameter("oBackButton");
+                            oTitleInfo = oEvent.getParameter("oTitleInfo");
+                        },
+                        oSpy = sinon.spy(fnViewListener);
+
+                Fiori20Adapter.attachViewChange(oSpy);
+                this.oPage.setTitle("Test");
+
+                //act
+                Fiori20Adapter.traverse(this.oPage, oAdaptOptions);
+                var oBar = new sap.m.Bar({});
+                this.oPage.setCustomHeader(oBar);
+
+                oBar.insertContentMiddle(new sap.m.Text("newTitle", {text: "New Title"}), 0);
+
+                sap.ui.getCore().applyChanges();
+
+                // Assert
+                ok(jQuery.sap.byId("newTitle").hasClass("sapF2AdaptedTitle"), "new title is adapted");
+                ok(oTitleInfo.text === "New Title", "new title is returned");
+            });
+
 
             module("Fiori2 adaptation of navigable views", {
                 beforeEach: function () {
@@ -218,36 +542,46 @@
             QUnit.test("Initial page of navContainer is adapted", function(assert){
                 var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},
                         sPageTitle,
+                        oBackButton,
                         fnViewListener = function(oEvent) {
+                            oBackButton = oEvent.getParameter("oBackButton");
                             var oTitleInfo = oEvent.getParameter("oTitleInfo");
                             sPageTitle = oTitleInfo.text;
-                        };
+                        },
+                        oSpy = sinon.spy(fnViewListener);
+
                 //setup
-                Fiori20Adapter.attachViewChange(fnViewListener);
+                Fiori20Adapter.attachViewChange(oSpy);
 
                 //act
                 Fiori20Adapter.traverse(this.oNavContainer, oAdaptOptions);
 
                 // Assert
                 ok(this.oNavContainer.getPages()[0].hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
+                ok(oSpy.calledOnce, "view change called once");
                 ok(sPageTitle === "Test", "page title is identified");
+                ok(oBackButton instanceof sap.m.Button, "back button is identified");
+                ok(oBackButton.hasStyleClass("sapF2AdaptedNavigation"), "back button is adapted");
 
                 //cleanup
-                Fiori20Adapter.detachViewChange(fnViewListener);
+                Fiori20Adapter.detachViewChange(oSpy);
             });
 
             QUnit.test("Navigated page of navContainer is adapted", function(assert){
                 var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},
                         sPageTitle,
+                        oBackButton,
                         done = assert.async(),
                         fnTitleListener = function(oEvent) {
+                            oBackButton = oEvent.getParameter("oBackButton");
                             var oTitleInfo = oEvent.getParameter("oTitleInfo");
                             sPageTitle = oTitleInfo.text;
-                        };
+                        },
+                        oSpy = sinon.spy(fnTitleListener);
 
                 //setup
                 this.oNavContainer.addPage(new sap.m.Page("page2", {title: "Test2", showNavButton: true}));
-                Fiori20Adapter.attachViewChange(fnTitleListener);
+                Fiori20Adapter.attachViewChange(oSpy);
 
                 //act
                 Fiori20Adapter.traverse(this.oNavContainer, oAdaptOptions);
@@ -257,12 +591,102 @@
                 this.oNavContainer.attachAfterNavigate(function() {
                     // Assert
                     ok(this.oNavContainer.getPages()[1].hasStyleClass("sapF2CollapsedHeader"), "second page header is collapsed");
+                    ok(oSpy.calledTwice, "view change called twice");
                     ok(sPageTitle === "Test2", "second page title is identified");
+                    ok(oBackButton instanceof sap.m.Button, "second page back button is identified");
+                    ok(oBackButton.hasStyleClass("sapF2AdaptedNavigation"), "back button is adapted");
                     done();
                 }.bind(this));
 
                 //cleanup
-                Fiori20Adapter.detachViewChange(fnTitleListener);
+                Fiori20Adapter.detachViewChange(oSpy);
+            });
+
+
+            module("Fiori2 adaptation of navContainer first page", {
+                beforeEach: function () {
+                    this.oNavContainer = new sap.m.NavContainer("myNc");
+                    this.oNavContainer.placeAt("content");
+                    sap.ui.getCore().applyChanges();
+                },
+                afterEach: function () {
+                    this.oNavContainer.destroy();
+                }
+            });
+
+            QUnit.test("First page of navContainer is adapted", function(assert){
+                var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},
+                        sPageTitle,
+                        oBackButton,
+                        fnViewListener = function(oEvent) {
+                            oBackButton = oEvent.getParameter("oBackButton");
+                            var oTitleInfo = oEvent.getParameter("oTitleInfo");
+                            sPageTitle = oTitleInfo.text;
+                        },
+                        oSpy = sinon.spy(fnViewListener);
+                //setup
+                Fiori20Adapter.attachViewChange(oSpy);
+
+                //act
+                Fiori20Adapter.traverse(this.oNavContainer, oAdaptOptions);
+                this.oNavContainer.addPage(new sap.m.Page("page1", {title: "Test", showNavButton: true}));
+
+                // Assert
+                ok(this.oNavContainer.getPages()[0].hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
+                ok(oSpy.calledOnce, "view change called once");
+                ok(sPageTitle === "Test", "page title is identified");
+                ok(oBackButton instanceof sap.m.Button, "back button is identified");
+                ok(oBackButton.hasStyleClass("sapF2AdaptedNavigation"), "back button is adapted");
+
+                //cleanup
+                Fiori20Adapter.detachViewChange(oSpy);
+            });
+
+
+            module("Fiori2 adaptation of nested navContainer", {
+                beforeEach: function () {
+                    this.oNavContainer = new sap.m.NavContainer("myNc");
+                    this.oNavContainer.placeAt("content");
+                    sap.ui.getCore().applyChanges();
+                },
+                afterEach: function () {
+                    this.oNavContainer.destroy();
+                }
+            });
+
+            QUnit.test("First page of nested navContainer is adapted", function(assert){
+                var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},
+                        sPageTitle,
+                        oBackButton,
+                        fnViewListener = function(oEvent) {
+                            oBackButton = oEvent.getParameter("oBackButton");
+                            var oTitleInfo = oEvent.getParameter("oTitleInfo");
+                            sPageTitle = oTitleInfo.text;
+                        },
+                        oSpy = sinon.spy(fnViewListener);
+                //setup
+
+                this.oNavContainer.addPage(new sap.m.Page("myBasePage", {
+                    content:[
+                            new sap.m.NavContainer({
+                                pages: [new sap.m.Page("page1", {title: "Test", showNavButton: true})]
+                            })
+                    ]
+                }));
+                Fiori20Adapter.attachViewChange(oSpy);
+
+                //act
+                Fiori20Adapter.traverse(this.oNavContainer, oAdaptOptions);
+
+                // Assert
+                ok(sap.ui.getCore().byId("page1").hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
+                ok(oSpy.calledOnce, "view change called once");
+                ok(sPageTitle === "Test", "page title is identified");
+                ok(oBackButton instanceof sap.m.Button, "back button is identified");
+                ok(oBackButton.hasStyleClass("sapF2AdaptedNavigation"), "back button is adapted");
+
+                //cleanup
+                Fiori20Adapter.detachViewChange(oSpy);
             });
 
             module("Fiori2 adaptation of split container", {
@@ -281,8 +705,10 @@
             QUnit.test("Initial pages of splitContainer are correctly adapted", function(assert){
                 var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},
                         oTitleInfo,
+                        oBackButton,
                         fnTitleListener = function(oEvent) {
                             oTitleInfo = oEvent.getParameter("oTitleInfo");
+                            oBackButton = oEvent.getParameter("oBackButton");
                         },
                         oSpy = sinon.spy(fnTitleListener);
 
@@ -299,44 +725,139 @@
                 ok(jQuery.sap.byId("detailPage1-navButton").hasClass("sapF2AdaptedNavigation"), "detail back button is adapted");
                 ok(!jQuery.sap.byId("detailPage1-title").hasClass("sapF2AdaptedTitle"), "detail title is not adapted");
 
-                ok(oSpy.called, "title callback executed");
+                ok(oSpy.calledOnce, "title callback executed");
                 ok(oTitleInfo === undefined, "default title is reset");
+                ok(oBackButton instanceof sap.m.Button, "back button is returned");
 
                 //cleanup
                 Fiori20Adapter.detachViewChange(oSpy);
             });
 
-            QUnit.test("master-master page of splitContainer are correctly adapted", function(assert){
+            QUnit.test("Master back button is correctly returned", function(assert){
+                var oAdaptOptions = {bHideBackButton: true},
+                        oBackButton,
+                        fnTitleListener = function(oEvent) {
+                            oBackButton = oEvent.getParameter("oBackButton");
+                        },
+                        oSpy = sinon.spy(fnTitleListener);
+
+                //setup
+                sap.ui.getCore().byId("detailPage1").setShowNavButton(false); //only master page has back button
+                Fiori20Adapter.attachViewChange(oSpy);
+
+                //act
+                Fiori20Adapter.traverse(this.oSplitContainer, oAdaptOptions);
+
+                //assert
+                ok(jQuery.sap.byId("masterPage1-navButton").hasClass("sapF2AdaptedNavigation"), "master back button is adapted");
+                ok(oSpy.calledOnce, "title callback executed");
+                ok(oBackButton instanceof sap.m.Button, "back button is returned");
+                ok(oBackButton.getId() === "masterPage1-navButton", "master back button is returned");
+
+                //cleanup
+                Fiori20Adapter.detachViewChange(oSpy);
+            });
+
+            QUnit.test("Detail back button is correctly returned", function(assert){
+                var oAdaptOptions = {bHideBackButton: true},
+                        oBackButton,
+                        fnTitleListener = function(oEvent) {
+                            oBackButton = oEvent.getParameter("oBackButton");
+                        },
+                        oSpy = sinon.spy(fnTitleListener);
+
+                //setup
+                sap.ui.getCore().byId("masterPage1").setShowNavButton(false); //only detail page has back button
+                Fiori20Adapter.attachViewChange(oSpy);
+
+                //act
+                Fiori20Adapter.traverse(this.oSplitContainer, oAdaptOptions);
+
+                //assert
+                ok(jQuery.sap.byId("detailPage1-navButton").hasClass("sapF2AdaptedNavigation"), "detail back button is adapted");
+                ok(oSpy.calledOnce, "title callback executed");
+                ok(oBackButton instanceof sap.m.Button, "back button is returned");
+                ok(oBackButton.getId() === "detailPage1-navButton", "detail back button is returned");
+
+                //cleanup
+                Fiori20Adapter.detachViewChange(oSpy);
+            });
+
+            QUnit.test("SplitContainer back button is correctly returned", function(assert){
+                var oAdaptOptions = {bHideBackButton: true},
+                        oBackButton,
+                        fnTitleListener = function(oEvent) {
+                            oBackButton = oEvent.getParameter("oBackButton");
+                        },
+                        oSpy = sinon.spy(fnTitleListener);
+
+                //setup
+                Fiori20Adapter.attachViewChange(oSpy);
+
+                //act
+                Fiori20Adapter.traverse(this.oSplitContainer, oAdaptOptions);
+
+                //assert
+                ok(jQuery.sap.byId("detailPage1-navButton").hasClass("sapF2AdaptedNavigation"), "detail back button is adapted"); //if oth master and details back present, detail wins
+                ok(oSpy.calledOnce, "title callback executed");
+                ok(oBackButton instanceof sap.m.Button, "back button is returned");
+                ok(oBackButton.getId() === "detailPage1-navButton", "detail back button is returned");
+
+                //cleanup
+                Fiori20Adapter.detachViewChange(oSpy);
+            });
+
+            QUnit.test("master-master page of splitContainer is correctly adapted", function(assert){
                 var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bStylePage: true},
-                        oTitleInfo;
+                        oTitleInfo,
+                        oBackButton,
+                        fnTitleListener = function(oEvent) {
+                            oTitleInfo = oEvent.getParameter("oTitleInfo");
+                            oBackButton = oEvent.getParameter("oBackButton");
+                        },
+                        oSpy = sinon.spy(fnTitleListener);
 
                 //setup
                 this.oSplitContainer.addMasterPage(new sap.m.Page("masterPage2", {title: "Master2", showNavButton: true}));
+                Fiori20Adapter.attachViewChange(oSpy);
 
                 //act
                 Fiori20Adapter.traverse(this.oSplitContainer, oAdaptOptions);
                 this.oSplitContainer.toMaster("masterPage2");
 
                 //assert
+                ok(oSpy.calledTwice, "title callback executed twice");
                 ok(!jQuery.sap.byId("masterPage2-navButton").hasClass("sapF2AdaptedNavigation"), "master2 back button is not adapted");
+                ok(oBackButton === undefined, "master2 back button is not returned");
                 ok(!jQuery.sap.byId("masterPage2-title").hasClass("sapF2AdaptedTitle"), "master2 title is not adapted");
+                ok(oTitleInfo === undefined, "master2 title is not returned");
                 ok(jQuery.sap.byId("masterPage2").hasClass("sapF2Adapted"), "master2 page style is adapted");
             });
 
-            QUnit.test("detail-detail page of splitContainer are correctly adapted", function(assert){
+            QUnit.test("detail-detail page of splitContainer is correctly adapted", function(assert){
                 var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bStylePage: true},
-                        oTitleInfo;
+                        oTitleInfo,
+                        oBackButton,
+                        fnTitleListener = function(oEvent) {
+                            oTitleInfo = oEvent.getParameter("oTitleInfo");
+                            oBackButton = oEvent.getParameter("oBackButton");
+                        },
+                        oSpy = sinon.spy(fnTitleListener);
 
                 //setup
                 this.oSplitContainer.addDetailPage(new sap.m.Page("detailPage2", {title: "Detail2", showNavButton: true}));
+                Fiori20Adapter.attachViewChange(oSpy);
 
                 //act
                 Fiori20Adapter.traverse(this.oSplitContainer, oAdaptOptions);
                 this.oSplitContainer.toDetail("detailPage2");
 
                 //assert
+                ok(oSpy.calledTwice, "title callback executed twice");
                 ok(!jQuery.sap.byId("detailPage2-navButton").hasClass("sapF2AdaptedNavigation"), "detail2 back button is not adapted");
+                ok(oBackButton === undefined, "detail2 back button is not returned");
                 ok(!jQuery.sap.byId("detailPage2-title").hasClass("sapF2AdaptedTitle"), "detail2 title is not adapted");
+                ok(oTitleInfo === undefined, "detail2 title is not returned");
                 ok(jQuery.sap.byId("detailPage2").hasClass("sapF2Adapted"), "detail2 page style is adapted");
             });
 
@@ -364,6 +885,196 @@
                 ok(!jQuery.sap.byId("masterPage1-title").hasClass("sapF2AdaptedTitle"), "master title is not adapted");
             });
 
+
+            module("Fiori2 adaptation of split container on phone", {
+                beforeEach: function () {
+                    sap.ui.Device.system.phone = true;
+                    this.oSplitContainer = new sap.m.SplitContainer("mySc");
+                    this.oSplitContainer.addMasterPage(new sap.m.Page("masterPage1", {title: "Master1", showNavButton: true}));
+                    this.oSplitContainer.addDetailPage(new sap.m.Page("detailPage1", {title: "Detail1", showNavButton: true}));
+                    this.oSplitContainer.placeAt("content");
+                    sap.ui.getCore().applyChanges();
+                },
+                afterEach: function () {
+                    sap.ui.Device.system.phone = false;
+                    this.oSplitContainer.destroy();
+                }
+            });
+
+            QUnit.test("Initial pages of splitContainer are correctly adapted", function(assert){
+                var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},
+                        oTitleInfo,
+                        oBackButton,
+                        fnTitleListener = function(oEvent) {
+                            oTitleInfo = oEvent.getParameter("oTitleInfo");
+                            oBackButton = oEvent.getParameter("oBackButton");
+                        },
+                        oSpy = sinon.spy(fnTitleListener);
+
+                //setup
+                Fiori20Adapter.attachViewChange(oSpy);
+
+                //act
+                Fiori20Adapter.traverse(this.oSplitContainer, oAdaptOptions);
+
+                /**
+                 * note that on phone only the master part is created initially
+                 */
+
+                //assert
+                ok(jQuery.sap.byId("masterPage1-navButton").hasClass("sapF2AdaptedNavigation"), "master back button is adapted");
+                ok(jQuery.sap.byId("masterPage1-title").hasClass("sapF2AdaptedTitle"), "master title is adapted");
+
+                ok(oSpy.calledOnce, "title callback executed");
+                ok(oTitleInfo.text === "Master1", "detail title is  adapted");
+                ok(oBackButton.getId() === "masterPage1-navButton", "back button is returned");
+
+                //cleanup
+                Fiori20Adapter.detachViewChange(oSpy);
+            });
+
+
+            QUnit.test("master-master page of splitContainer is correctly adapted", function(assert){
+                var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bStylePage: true},
+                        oTitleInfo,
+                        oBackButton,
+                        fnTitleListener = function(oEvent) {
+                            oTitleInfo = oEvent.getParameter("oTitleInfo");
+                            oBackButton = oEvent.getParameter("oBackButton");
+                        },
+                        oSpy = sinon.spy(fnTitleListener);
+
+                //setup
+                this.oSplitContainer.addMasterPage(new sap.m.Page("masterPage2", {title: "Master2", showNavButton: true}));
+                Fiori20Adapter.attachViewChange(oSpy);
+
+                //act
+                Fiori20Adapter.traverse(this.oSplitContainer, oAdaptOptions);
+                this.oSplitContainer.toMaster("masterPage2");
+
+                //assert
+                ok(oSpy.calledTwice, "title callback executed twice");
+                ok(jQuery.sap.byId("masterPage2-navButton").hasClass("sapF2AdaptedNavigation"), "master2 back button is adapted");
+                ok(oBackButton.getId() === "masterPage2-navButton", "master2 back button is returned");
+                ok(jQuery.sap.byId("masterPage2-title").hasClass("sapF2AdaptedTitle"), "master2 title is adapted");
+                ok(oTitleInfo.text === "Master2", "master2 title is not returned");
+                ok(jQuery.sap.byId("masterPage2").hasClass("sapF2Adapted"), "master2 page style is adapted");
+            });
+
+            QUnit.test("detail-detail page of splitContainer is correctly adapted", function(assert){
+                var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bStylePage: true},
+                        oTitleInfo,
+                        oBackButton,
+                        fnTitleListener = function(oEvent) {
+                            oTitleInfo = oEvent.getParameter("oTitleInfo");
+                            oBackButton = oEvent.getParameter("oBackButton");
+                        },
+                        oSpy = sinon.spy(fnTitleListener);
+
+                //setup
+                this.oSplitContainer.addDetailPage(new sap.m.Page("detailPage2", {title: "Detail2", showNavButton: true}));
+                Fiori20Adapter.attachViewChange(oSpy);
+
+                //act
+                Fiori20Adapter.traverse(this.oSplitContainer, oAdaptOptions);
+                this.oSplitContainer.toDetail("detailPage2");
+
+                //assert
+                ok(oSpy.calledTwice, "title callback executed twice");
+                ok(jQuery.sap.byId("detailPage2-navButton").hasClass("sapF2AdaptedNavigation"), "detail2 back button is adapted");
+                ok(oBackButton.getId() === "detailPage2-navButton", "detail2 back button is returned");
+                ok(jQuery.sap.byId("detailPage2-title").hasClass("sapF2AdaptedTitle"), "detail2 title is adapted");
+                ok(oTitleInfo.text === "Detail2", "detail2 title is not returned");
+                ok(jQuery.sap.byId("detailPage2").hasClass("sapF2Adapted"), "detail2 page style is adapted");
+            });
+
+
+            module("Fiori2 adaptation of ObjectPage header", {
+                beforeEach: function () {
+                    this.oPage = sap.ui.xmlview("oplView", {viewContent:jQuery('#objectPageView').html()});
+                    this.oPage.placeAt("content");
+                    sap.ui.getCore().applyChanges();
+                },
+                afterEach: function () {
+                    this.oPage.destroy();
+                }
+            });
+
+            QUnit.test("Page is styled when bStylePage=true", function(assert){
+                var oAdaptOptions = {bStylePage: true};
+
+                Fiori20Adapter.traverse(this.oPage, oAdaptOptions);
+                sap.ui.getCore().applyChanges();
+
+                // Assert
+                ok(this.oPage.byId("objectPageLayout").getHeaderTitle().hasStyleClass("sapF2Adapted"), "page style is adapted");
+            });
+
+            QUnit.test("Back Button is adapted when bHideBackButton=true", function(assert){
+                var oAdaptOptions = {bHideBackButton: true};
+
+                Fiori20Adapter.traverse(this.oPage, oAdaptOptions);
+                sap.ui.getCore().applyChanges();
+
+                // Assert
+                ok(this.oPage.byId("navButton").hasStyleClass("sapF2AdaptedNavigation"), "back button is adapted");
+            });
+
+            QUnit.test("Title is adapted when bMoveTitle=true", function(assert){
+                var oAdaptOptions = {bMoveTitle: true};
+
+                Fiori20Adapter.traverse(this.oPage, oAdaptOptions);
+
+                sap.ui.getCore().applyChanges();
+
+                // Assert
+                ok(this.oPage.byId("title").hasStyleClass("sapF2AdaptedTitle"), "title is adapted");
+            });
+
+            QUnit.test("Header is collapsed", function(assert){
+
+                var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true};
+
+                Fiori20Adapter.traverse(this.oPage, oAdaptOptions);
+
+                // Assert
+                ok(this.oPage.byId("objectPageLayout").getHeaderTitle().hasStyleClass("sapF2CollapsedHeader"), "header is collapsed");
+            });
+
+            QUnit.test("Title is adapted if changed at a later time", function(assert){
+                var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},
+                oTitleInfo,
+                fnTitleListener = function(oEvent) {
+                    oTitleInfo = oEvent.getParameter("oTitleInfo");
+                };
+                Fiori20Adapter.attachViewChange(fnTitleListener);
+                Fiori20Adapter.traverse(this.oPage, oAdaptOptions);
+
+                this.oPage.byId("title").setText("ProfileChanged");
+
+                // Assert
+                ok(oTitleInfo.text === "ProfileChanged", "changed title is adapted");
+                Fiori20Adapter.detachViewChange(fnTitleListener);
+            });
+
+            QUnit.test("Header is adapted if changed at a later time", function(assert){
+                var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},
+                        oTitleInfo,
+                        fnTitleListener = function(oEvent) {
+                            oTitleInfo = oEvent.getParameter("oTitleInfo");
+                        };
+                Fiori20Adapter.attachViewChange(fnTitleListener);
+                Fiori20Adapter.traverse(this.oPage, oAdaptOptions);
+
+                this.oPage.byId("objectPageLayout").getHeaderTitle().setNavigationBar(new sap.m.Bar({
+                    contentMiddle: [new sap.m.Title({text: "New NavBar Title"})]
+                }));
+
+                // Assert
+                ok(oTitleInfo.text === "New NavBar Title", "changed title is adapted");
+                Fiori20Adapter.detachViewChange(fnTitleListener);
+            });
+
 		</script>
 
 	<style>
@@ -384,7 +1095,7 @@
 
 	</head>
 	<body id="body" class="sapUiBody">
-	<h1 id="qunit-header">qUnit Page for sap.m.Page</h1>
+	<h1 id="qunit-header">qUnit Page for sap.m.Fiori20Adapter</h1>
 	<h2 id="qunit-banner"></h2>
 	<h2 id="qunit-userAgent"></h2>
 	<ol id="qunit-tests"></ol>
