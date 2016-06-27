@@ -41,5 +41,17 @@
         "references": []
       }
     ]
+  },
+  "1.38.4": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "aeb28668f6623c6f69d39982a5fde1a7e30e6d1b",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Explored App: Tutorial description is \"undefined\"",
+        "references": []
+      }
+    ]
   }
 }

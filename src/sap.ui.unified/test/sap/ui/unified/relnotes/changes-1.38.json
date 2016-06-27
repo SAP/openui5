@@ -265,5 +265,31 @@
         "references": []
       }
     ]
+  },
+  "1.38.4": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "e3d29776fd3d50e0fd5f794ca10d9c916dc32443",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: don\u0027t open for 0001.01.01 in IE",
+        "references": []
+      },
+      {
+        "id": "51d250e0bea52fc9ae18917dfe99fab4c7487960",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarMonthInterval: no select for disabled",
+        "references": []
+      },
+      {
+        "id": "4538bc2d2fa354c0dd83931160f9c2b792d779a2",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "unified.FileUploader: Removed \u0027src\u0027-Attribute for BlindLayer",
+        "references": []
+      }
+    ]
   }
 }

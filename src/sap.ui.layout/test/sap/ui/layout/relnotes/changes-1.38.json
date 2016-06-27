@@ -132,5 +132,17 @@
         "references": []
       }
     ]
+  },
+  "1.38.4": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "faf04fa39fe67fae1862543f68f4f56af0264acc",
+        "author": "Hristo Petrov \u003ch.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.Splitter Fix for IE11 when oData.domNode is an SVG element.",
+        "references": []
+      }
+    ]
   }
 }

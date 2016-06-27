@@ -655,5 +655,87 @@
         "references": []
       }
     ]
+  },
+  "1.38.4": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "51f26330fc9da80feeea356cd6a544b55172fa92",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Table: fix JSDoc for enumerations in sap/ui/table/library.js",
+        "references": []
+      },
+      {
+        "id": "e57d5ce044867ba4a41d372ef31432d72adbb906",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: Fix Screenreader anouncements for expand state and level information",
+        "references": []
+      },
+      {
+        "id": "57117c6c379ae23c5d25adc76ff7e5cf190c1a9b",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Downport Variable Row Height",
+        "references": []
+      },
+      {
+        "id": "dbbdd8c3a13f0c2791651c548866ad8d9cad8825",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Fix Screenreader announcement of row headers in VPC mode",
+        "references": []
+      },
+      {
+        "id": "535c666c3f876a4e4e1ec12b730c049d89f14ec0",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Fix positioning and focus visualization of No Data area",
+        "references": []
+      },
+      {
+        "id": "a2e1a4f3be594046ac63704174e5cdde4ad9d801",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Item Navigation initialization in multi header case",
+        "references": []
+      },
+      {
+        "id": "c8151e930bb7821d67113172316610884a59b3b3",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Missing Fixed Column Header Border",
+        "references": []
+      },
+      {
+        "id": "2cacdc783a0db3563f5b6365e7b11722e37c06be",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Provide keyboard and screenreader support for overlay",
+        "references": []
+      },
+      {
+        "id": "1cd8fa36e2f01f0ba1a135617aa88ecf6ade3090",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Screenreader announcement of column header tooltips",
+        "references": []
+      },
+      {
+        "id": "99640ab4667a34b4fc5b60abddd247b2a34e8c11",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Update noData text when binding length has changed",
+        "references": []
+      },
+      {
+        "id": "49013883d35316dd2e3f8024281c542f2591a4d3",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.TableKeyboardDelegate: Fix tabchain behavior in inital focus case",
+        "references": []
+      }
+    ]
   }
 }

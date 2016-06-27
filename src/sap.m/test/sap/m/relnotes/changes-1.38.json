@@ -1943,5 +1943,136 @@
         "references": []
       }
     ]
+  },
+  "1.38.4": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "b473686b19ba04b66a8ee1e34a8bdd30352ddef9",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.Dialog: Users can now navigate in Dialog using F6",
+        "references": []
+      },
+      {
+        "id": "9271c88c95121bff94a4177f9d30730dbbefd5c5",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.FlexBox: Added background design",
+        "references": []
+      },
+      {
+        "id": "506551d62fa83f501a1d59a452ac519b1089c358",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Icon Tooltip: Prevent using technical names",
+        "references": []
+      },
+      {
+        "id": "6b855c84d7ad8b9bc275a554b8af5e2344e38ede",
+        "author": "Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Breadcrumbs: wasn\u0027t read out properly",
+        "references": []
+      },
+      {
+        "id": "e3d29776fd3d50e0fd5f794ca10d9c916dc32443",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: don\u0027t open for 0001.01.01 in IE",
+        "references": []
+      },
+      {
+        "id": "78479a8a4a30e7ccae56f8891a95cf9861854266",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: select date after wrong input - error shown",
+        "references": []
+      },
+      {
+        "id": "648216cbe49c6a90bda8dd078037f46b0e2a04a7",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FacetFilter - click on delete button does not throw error anymore.",
+        "references": []
+      },
+      {
+        "id": "18ed7b3a0f1797c48cd35d9dff80741f4d6e445d",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedListItem: Improve consumer handling of senderPress and iconPress events",
+        "references": []
+      },
+      {
+        "id": "1351ad72111298817149f2022af11b94c9e50e77",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiComboBox: workaround for disabled state",
+        "references": []
+      },
+      {
+        "id": "dac7ceb548b8e04cad3c5b43f4ee879d0275a4b5",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: enhance multiline MultiInput expanding behave in layout controls",
+        "references": []
+      },
+      {
+        "id": "12964da69fe4108f0e596d5a64ed42ffd7f80bb1",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: enhance updateToken to fix the duplicated ID issue",
+        "references": []
+      },
+      {
+        "id": "c9dd24da08cb7e0b000154c4ee65a813dca58bf6",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectAttribute: outline is now completely visible on Internet Explorer.",
+        "references": []
+      },
+      {
+        "id": "996dfd95212d9fec12531bbe0d513265ff0b6ace",
+        "author": "Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton: didn\u0027t communicate that it has changed",
+        "references": []
+      },
+      {
+        "id": "68d01508b2803ed5bd27caf82edf16bacb899f06",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TimePicker: Change event fires correctly",
+        "references": []
+      },
+      {
+        "id": "1c2638e3c38c9d2dc55b1e3859c01cc9ee83bd92",
+        "author": "Bohdan Pukalskyi \u003cbohdan.pukalskyi@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Determining the list item instance given its id independently of its DOM representation.",
+        "references": []
+      },
+      {
+        "id": "baee827e29d00aab91e3a35d17a9040091df97ad",
+        "author": "Bohdan Pukalskyi \u003cbohdan.pukalskyi@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Exiting edit mode after an attemt to save an empty file in case same file names are allowed",
+        "references": []
+      },
+      {
+        "id": "db754f1abdfce8f325eddd3e8bb19621d9f13931",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollectionItem: Documentation to url property added",
+        "references": []
+      },
+      {
+        "id": "c0afa0f914970fe639f919854834edebb7da5feb",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.InputBase: Introduce required property for accessibility purposes",
+        "references": []
+      }
+    ]
   }
 }

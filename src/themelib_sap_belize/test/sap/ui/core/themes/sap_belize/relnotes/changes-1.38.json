@@ -312,5 +312,24 @@
         "references": []
       }
     ]
+  },
+  "1.38.4": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "233285205eb0fa7b487a0fd9f85dbb2023794dc5",
+        "author": "Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.CheckBox: focus outline was cut when put in a Grid",
+        "references": []
+      },
+      {
+        "id": "535c666c3f876a4e4e1ec12b730c049d89f14ec0",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Fix positioning and focus visualization of No Data area",
+        "references": []
+      }
+    ]
   }
 }

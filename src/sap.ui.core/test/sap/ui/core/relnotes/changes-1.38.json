@@ -1439,5 +1439,80 @@
         "references": []
       }
     ]
+  },
+  "1.38.4": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "21fa917fdc095c6bf8a582f4072a95759614b785",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "ComponentContainer: delegate the owner in lazy component creation",
+        "references": []
+      },
+      {
+        "id": "a0c72aa8aad3bb4e61e73f41165628d7102be915",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "ComponentContainer: don\u0027t skip onBeforeRendering",
+        "references": []
+      },
+      {
+        "id": "506551d62fa83f501a1d59a452ac519b1089c358",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Icon Tooltip: Prevent using technical names",
+        "references": []
+      },
+      {
+        "id": "af44acda8dfa2304bd4d763df22a2c30645836da",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModelV2: fix correct removing of internal change handles",
+        "references": []
+      },
+      {
+        "id": "5cef60f1b2cea2bd19d2cce3edaffa45cb2a6adf",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "XMLView: fix rendering of invisible children after preserve",
+        "references": []
+      },
+      {
+        "id": "048a2d31c1156f1517ec0ccce10b70726aa96df2",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.CustomStyleClassSupport: save multiple style classes individually instead of as a whole string",
+        "references": []
+      },
+      {
+        "id": "286c54cfcd4aadab86d0deefb0252acb8b18ddad",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Popup: blind layer iframe issue",
+        "references": []
+      },
+      {
+        "id": "bb24547f758074fc5df3e8020e416eb177484a81",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.format.DateFormat: support date field pattern with 5 and 6 characters",
+        "references": []
+      },
+      {
+        "id": "ea654fe04b8a0595555040ea474c69abf24509a7",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.test.actions.EnterText - enterText does not propagate its enter event anymore",
+        "references": []
+      },
+      {
+        "id": "b6537c84558ae2ac549d7793163050dcdd74293c",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: resetChanges does only reset last change",
+        "references": []
+      }
+    ]
   }
 }
