@@ -464,33 +464,33 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	RatingIndicator.prototype.ontouchstart = function (oEvent) {
+		if (oEvent.which == 2 || oEvent.which == 3 || !this.getEnabled()) {
+			return;
+		}
 
-		if (this.getEnabled()) {
+		// mark the event for components that needs to know if the event was handled by this Control
+		oEvent.setMarked();
 
-			// mark the event for components that needs to know if the event was handled by this Control
-			oEvent.setMarked();
+		if (!this._touchEndProxy) {
+			this._touchEndProxy = jQuery.proxy(this._ontouchend, this);
+		}
 
-			if (!this._touchEndProxy) {
-				this._touchEndProxy = jQuery.proxy(this._ontouchend, this);
-			}
+		if (!this._touchMoveProxy) {
+			this._touchMoveProxy = jQuery.proxy(this._ontouchmove, this);
+		}
 
-			if (!this._touchMoveProxy) {
-				this._touchMoveProxy = jQuery.proxy(this._ontouchmove, this);
-			}
+		// here also bound to the mouseup mousemove event to enable it working in
+		// desktop browsers
+		jQuery(document).on("touchend.sapMRI touchcancel.sapMRI mouseup.sapMRI", this._touchEndProxy);
+		jQuery(document).on("touchmove.sapMRI mousemove.sapMRI", this._touchMoveProxy);
 
-			// here also bound to the mouseup mousemove event to enable it working in
-			// desktop browsers
-			jQuery(document).on("touchend.sapMRI touchcancel.sapMRI mouseup.sapMRI", this._touchEndProxy);
-			jQuery(document).on("touchmove.sapMRI mousemove.sapMRI", this._touchMoveProxy);
+		this._fStartValue = this.getValue();
+		var fValue = this._calculateSelectedValue(oEvent);
 
-			this._fStartValue = this.getValue();
-			var fValue = this._calculateSelectedValue(oEvent);
-
-			if (fValue >= 0 && fValue <= this.getMaxValue()) {
-				this._updateUI(fValue, true);
-				if (this._fStartValue !== fValue) {	// if the value if not the same
-					this.fireLiveChange({ value: fValue });
-				}
+		if (fValue >= 0 && fValue <= this.getMaxValue()) {
+			this._updateUI(fValue, true);
+			if (this._fStartValue !== fValue) {	// if the value if not the same
+				this.fireLiveChange({ value: fValue });
 			}
 		}
 	};
