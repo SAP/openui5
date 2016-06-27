@@ -14,12 +14,11 @@
 	width: 0;
 	height: 0;
 	margin: 0 0.25rem;
-	color: darken(@sapUiContentForegroundColor, 30);
-	background-color: darken(@sapUiContentForegroundColor, 30);
+	color: @sapUiContentNonInteractiveIconColor;
+	background-color: @sapUiContentNonInteractiveIconColor;
 	-webkit-transition: background-color 0.1s ease-in;
 	-moz-transition: background-color 0.1s ease-in;
 	transition: background-color 0.1s ease-in;
-	box-shadow: 0 0px 0.0625rem 0.0625rem @sapUiContentContrastShadowColor;
 	border-radius: 50%;
 }
 
@@ -29,8 +28,8 @@
 }
 
 .sapMCrslBulleted > span.sapMCrslActive {
-	color: @sapUiSelected;
-	background-color: @sapUiSelected;
+	color: @sapUiHighlight;
+	background-color: @sapUiHighlight;
 }
 
 
@@ -57,7 +56,7 @@
 	-webkit-transition: opacity 0.1s ease-in;
 	-moz-transition: opacity 0.1s ease-in;
 	transition: opacity 0.1s ease-in;
-	box-shadow: 0 0.0625rem 0.25rem fade(@sapUiContentShadowColor, 30);
+	box-shadow: @sapUiShadowLevel1;
 }
 
 .sapMCrsl{
@@ -65,8 +64,7 @@
 	border:1px solid transparent;
 }
 .sapMCrsl:focus {
-	outline: none;
-	border: 1px dotted @sapUiContentFocusColor;
+	outline: 1px dotted @sapUiContentFocusColor;
 }
 
 .sapMCrsl:hover .sapMCrslHud a {
