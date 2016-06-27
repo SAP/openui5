@@ -21,28 +21,28 @@
 				description : "Access the travel expend workflow",
 				icon : "images/travel_expend.png",
 				iconInset : false,
-				type : "Navigation",
+				type : "Active",
 				press : 'detailPage'
 			}, {
 				title : "Travel and expense report",
 				description : "Access travel and expense reports",
 				icon : "images/travel_expense_report.png",
 				iconInset : false,
-				type : "Navigation",
+				type : "Detail",
 				press : 'detailPage'
 			}, {
 				title : "Travel Request",
 				description : "Access the travel request workflow",
 				icon : "images/travel_request.png",
 				iconInset : false,
-				type : "Navigation",
+				type : "DetailAndActive",
 				press : 'detailPage'
 			}, {
 				title : "Work Accidents",
 				description : "Report your work accidents",
 				icon : "images/wounds_doc.png",
 				iconInset : false,
-				type : "Navigation",
+				type : "Inactive",
 				press : 'detailPage'
 			}, {
 				title : "Travel Settings",
@@ -62,8 +62,7 @@
 			type : "{type}"
 		});
 
-		function bindListData(data, itemTemplate, list)
-		{
+		function bindListData(data, itemTemplate, list) {
 			var oModel = new sap.ui.model.json.JSONModel();
 			// set the data for the model
 			oModel.setData(data);
@@ -95,11 +94,10 @@
 		var footer = new sap.m.Bar({
 			contentLeft: [],
 			contentMiddle: [new sap.m.Button({icon: "images/favorite@2x.png"}),
-			                new sap.m.Button({icon: "images/feed@2x.png"}),
-			                new sap.m.Button({icon: "images/flag@2x.png"})],
+							new sap.m.Button({icon: "images/feed@2x.png"}),
+							new sap.m.Button({icon: "images/flag@2x.png"})],
 			contentRight: []
 		});
-
 
 		var oPopover = new sap.m.Popover({
 			placement: sap.m.PlacementType.Auto,
@@ -125,12 +123,9 @@
 			]
 		});
 
-
-
-
 		var oFeedList = new sap.m.List("oFeedItemList", {
-		    mode: "SingleSelectMaster",
-		    //showSeparators: "None",
+			mode: "SingleSelectMaster",
+			//showSeparators: "None",
 		});
 
 
@@ -150,13 +145,13 @@
 			iconActive: "{iconActive}",
 			info: "{info}",
 			timestamp : "{timestamp}",
+			type : "{type}",
 			maxCharacters : 100,
 			senderPress : fnOpenPopup,
 			iconPress : fnOpenPopup
 		});
 
-		function bindFeedListData(data, itemTemplate, list)
-		{
+		function bindFeedListData(data, itemTemplate, list) {
 			var oModel = new sap.ui.model.json.JSONModel();
 			// set the data for the model
 			oModel.setData(data);
@@ -169,8 +164,6 @@
 
 		jQuery.sap.require("sap.ui.core.IconPool");
 		var sURI = sap.ui.core.IconPool.getIconURI("personnel-view");
-
-
 
 		var feedData = {
 				chunks : [ {
@@ -190,7 +183,7 @@
 					iconActive: true,
 					timestamp: "Dec 04, 2012",
 					info: "Rejected",
-					type: sap.m.ListType.Active,
+					type: sap.m.ListType.Detail,
 				}, {
 					icon: "images/female.jpg",
 					text: "This FeedListItem comes with senderActive = false and iconActive = false and it is not clickable. In hac habitasse platea dictumst. Quisque ut ipsum est. Duis ipsum orci, interdum eget sollicitudin ac, blandit a ante.",
@@ -199,7 +192,7 @@
 					iconActive: false,
 					timestamp: "Dec 02, 2012",
 					info: "Waiting for Approval",
-					type: sap.m.ListType.Navigation,
+					type: sap.m.ListType.DetailAndActive,
 				}, {
 					text: "This FeedListItem comes without an image, it is not clickable and has a very long info text",
 					sender: "Christine Noah",
@@ -207,7 +200,7 @@
 					iconActive: false,
 					timestamp: "Nov 23, 2012",
 					info: "Waiting for Approval and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting",
-					type: sap.m.ListType.Navigation,
+					type: sap.m.ListType.Inactive,
 				}, {
 					icon: "images/male.jpg",
 					activeIcon: "images/female.jpg",
@@ -216,7 +209,7 @@
 					senderActive: true,
 					iconActive: false,
 					info: "New",
-					type: sap.m.ListType.Active,
+					type: sap.m.ListType.Navigation,
 				}, {
 					text: "This one shows the default image and it is clickable",
 					sender: "Frank Black",
@@ -292,11 +285,12 @@
 		});
 
 		appFeedList.addPage(feedListPage);
-		appFeedList.placeAt("body");
+		appFeedList.placeAt("content");
 
 		</script>
 
 	</head>
 	<body id="body" class="sapUiBody">
+		<div id="content"></div>
 	</body>
 </html>
