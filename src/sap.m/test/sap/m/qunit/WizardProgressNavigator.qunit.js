@@ -370,6 +370,19 @@
 			"aria-disabled=true attribute should be removed from the second anchor");
 	});
 
+	QUnit.test("After a step had already been active it should not have aria-disabled=true", function (assert) {
+		this.oProgressNavigator.nextStep();
+		this.oProgressNavigator.nextStep();
+		// we need to force rerendering as in normal case when moving from step to step the ProgressNavigator is rerendered
+		this.oProgressNavigator.rerender();
+
+		var $anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor");
+		assert.strictEqual($anchors.eq(0).attr("aria-disabled"), undefined,
+			"aria-disabled=true attribute should be removed from previous active anchor");
+		assert.strictEqual($anchors.eq(1).attr("aria-disabled"), undefined,
+			"aria-disabled=true attribute should be removed from previous active anchor");
+	});
+
 	QUnit.test("Current step should have aria-label=Selected", function(assert) {
 		var $anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor");
 
