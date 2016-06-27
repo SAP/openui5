@@ -48,11 +48,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 					},
 
 					/**
-					 * Sets the width of the control. The default width is derived from the widest item.
-					 * If the width defined is smaller than the widest item in the selection list, only the width of
-					 * the selection field will be changed: the list will keep the width of its widest item.
-					 * If the list is wider than the viewport, it is truncated and an ellipsis is displayed for each item.
-					 * For phones, the width of the list is always the same as the viewport.
+					 * Sets the width of the field. By default, the field width is automatically adjusted to the size
+					 * of its content and the default width of the field is calculated based on the widest list item
+					 * in the dropdown list.
+					 * If the width defined is smaller than its content, only the field width is changed whereas
+					 * the dropdown list keeps the width of its content.
+					 * If the dropdown list is wider than the visual viewport, it is truncated and an ellipsis is displayed
+					 * for each item.
+					 * For phones, the width of the dropdown list is always the same as the viewport.
 					 *
 					 * <b>Note:</b> This property is ignored if the <code>autoAdjustWidth</code> property is set to <code>true</code>.
 					 */
