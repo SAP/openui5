@@ -401,24 +401,6 @@
 		}.bind(this));
 	});
 
-	QUnit.test("Should stop the queue silently", function (assert) {
-		var oOpa = new Opa(),
-			fnDoneSpy = sinon.spy(),
-			fnFailSpy = sinon.spy();
-
-		oOpa.waitFor({
-			success: $.noop
-		});
-		var oPromise = oOpa.emptyQueue();
-		oPromise.done(fnDoneSpy);
-		oPromise.fail(fnFailSpy);
-		Opa.stopQueue(false);
-
-		sinon.assert.notCalled(this.fnErrorLogStub);
-		sinon.assert.notCalled(fnFailSpy);
-		sinon.assert.calledOnce(fnDoneSpy);
-	});
-
 	module("Timeouts", {
 		setup : function () {
 			sinon.config.useFakeTimers = false;

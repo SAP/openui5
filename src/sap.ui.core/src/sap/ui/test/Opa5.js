@@ -17,7 +17,8 @@ sap.ui.define([
 		'./matchers/PropertyStrictEquals',
 		'./pipelines/MatcherPipeline',
 		'./pipelines/ActionPipeline',
-		'./_ParameterValidator'
+		'./_ParameterValidator',
+		'./_LogCollector'
 	],
 	function($,
 			 Opa,
@@ -33,14 +34,15 @@ sap.ui.define([
 			 PropertyStrictEquals,
 			 MatcherPipeline,
 			 ActionPipeline,
-			 ParameterValidator) {
+			 _ParameterValidator,
+			 _LogCollector) {
 		"use strict";
 
-		var oLogger = $.sap.log.getLogger("sap.ui.test.Opa5"),
+		var oLogger = $.sap.log.getLogger("sap.ui.test.Opa5", _LogCollector.DEFAULT_LEVEL_FOR_OPA_LOGGERS),
 			oPlugin = new OpaPlugin(iFrameLauncher._sLogPrefix),
 			oActionPipeline = new ActionPipeline(),
 			sFrameId = "OpaFrame",
-			oValidator = new ParameterValidator({
+			oValidator = new _ParameterValidator({
 				errorPrefix: "sap.ui.test.Opa5#waitFor"
 			}),
 			aConfigValuesForWaitFor = [

@@ -21,7 +21,7 @@ sap.ui.define(["sap/ui/base/Object", "jquery.sap.global"], function (UI5Object, 
 					if (!$.sap.startsWith(oLogEntry.component, "sap.ui.test")) {
 						return;
 					}
-					var sLogText = oLogEntry.date + " " + oLogEntry.time + " " + oLogEntry.message + " - " + oLogEntry.details + " " + oLogEntry.component;
+					var sLogText = oLogEntry.message + " - " + oLogEntry.details + " " + oLogEntry.component;
 					this._aLogs.push(sLogText);
 				}.bind(this)
 			};
@@ -45,6 +45,10 @@ sap.ui.define(["sap/ui/base/Object", "jquery.sap.global"], function (UI5Object, 
 
 		return oSingleton;
 	};
+
+	// Even if you set the log level of the UI5 core to Error opa will log everything down to the debug level
+	// and it will be collected by instances of the LogCollector.
+	_LogCollector.DEFAULT_LEVEL_FOR_OPA_LOGGERS = $.sap.log.Level.DEBUG;
 
 	return _LogCollector;
 }, true /* export */);

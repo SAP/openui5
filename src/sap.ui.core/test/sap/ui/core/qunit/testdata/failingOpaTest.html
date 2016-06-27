@@ -5,12 +5,21 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>qUnit Page for sap.ui.test.Opa</title>
 
-	<script src="../../../../../../resources/sap-ui-core.js">
+	<script src="../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-logLevel="ERROR">
 	</script>
 
 	<script>
 		jQuery.sap.require("sap.ui.thirdparty.qunit");
+		QUnit.config.testTimeout = 2000;
 		QUnit.config.autostart = false;
+
+		/**
+		 * This file is tested by an OPA test (iFrame.js),
+		 * it seems to be the only way to test what appears when OPA test produce QUnit errors.
+		 * The checks will be done my crawling the QUnit dom and check if the text are correct.
+		 */
+
 		sap.ui.require([
 					"sap/ui/test/Opa5",
 					"sap/ui/test/Opa",
@@ -20,7 +29,6 @@
 					"sap/ui/qunit/qunit-coverage"
 				],
 				function (Opa5, Opa, opaTest) {
-					QUnit.config.testTimeout = 500;
 					opaTest("Should time out", function (oOpa) {
 						oOpa.waitFor({
 							check: function () {
@@ -36,6 +44,46 @@
 								QUnit.assert.ok(true, "Ok from test 2");
 							}
 						})
+					});
+
+
+					opaTest("Should add a log message from the 3rd test it must not appear in test 4", function (oOpa) {
+						oOpa.waitFor({
+							check: function () {
+								jQuery.sap.log.debug("Log message that should not appear in the error", "", "sap.ui.test.MyTest");
+								return true;
+							},
+							success: function () {
+								// global assert on purpose so QUnit does not know wich test fired the assertion
+								QUnit.assert.ok(true, "Ok from test 3");
+							}
+						})
+					});
+
+
+					opaTest("Should log that we were searching for a control with a global id " +
+							"but it was not found when QUnit times out", function (oOpa) {
+						oOpa.waitFor({
+							id: "myGlobalId"
+						});
+					});
+
+					opaTest("Should log that we were searching for a control with a global id " +
+							"but it was not found when Opa times out", function (oOpa) {
+						oOpa.waitFor({
+							timeout: 1, // seconds
+							pollingInterval: 50, //ms
+							id: "myGlobalId"
+						});
+					});
+
+					opaTest("Should log that the queue was stopped manually", function (oOpa) {
+						oOpa.waitFor({
+							check: function () {
+								Opa.stopQueue();
+								return false;
+							}
+						});
 					});
 
 					QUnit.start();

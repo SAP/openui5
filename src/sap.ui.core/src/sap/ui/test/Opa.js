@@ -1,19 +1,25 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './_ParameterValidator'], function ($, Device, ParameterValidator) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/Device',
+	'./_LogCollector',
+	'./_ParameterValidator'
+], function ($, Device, _LogCollector, _ParameterValidator) {
 	"use strict";
 
 	///////////////////////////////
 	/// Privates
 	///////////////////////////////
-	var oLogger = $.sap.log.getLogger("sap.ui.test.Opa"),
+	var oLogger = $.sap.log.getLogger("sap.ui.test.Opa", _LogCollector.DEFAULT_LEVEL_FOR_OPA_LOGGERS),
+		oLogCollector = _LogCollector.getInstance(),
 		queue = [],
 		context = {},
 		timeout = -1,
 		isStopped,
 		oDeferred,
-		oValidator = new ParameterValidator({
+		oValidator = new _ParameterValidator({
 			errorPrefix: "sap.ui.test.Opa#waitFor"
 		});
 
@@ -28,6 +34,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './_ParameterValidator'], f
 		fnCheck();
 
 		function fnCheck () {
+			oLogCollector.getAndClearLog();
 			try {
 				var oResult = fnCallback();
 			} catch (err) {
@@ -310,14 +317,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './_ParameterValidator'], f
 
 		return oDeferred.promise().fail(function(oOptions){
 			queue = [];
+			var oStackOptions;
 
 			if (isStopped) {
-				oOptions.errorMessage = "Queue was stopped manually";
-				oOptions.errorMessage += addStacks({ _stack : createStack(1) });
+				oOptions.errorMessage = oOptions.stoppedManually ? "Queue was stopped manually" : "QUnit timeout";
+				oStackOptions = { _stack : createStack(1) };
 			} else {
-				oOptions.errorMessage = oOptions.errorMessage || "Failed to wait for check";
-				oOptions.errorMessage += addStacks(oOptions);
+				oOptions.errorMessage = oOptions.errorMessage || "Opa timeout";
+				oStackOptions = oOptions;
 			}
+
+			oOptions.errorMessage += "\nThis is what Opa logged:\n" + oLogCollector.getAndClearLog();
+			oOptions.errorMessage += addStacks(oStackOptions);
+
 			oLogger.error(oOptions.errorMessage, "Opa");
 		}).always(function () {
 			timeout = -1;
@@ -332,13 +344,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './_ParameterValidator'], f
 	 * will be rejected or resolved depending on the failTest parameter.
 	 * When its called inside of a check in {@link sap.ui.test.Opa#waitFor}
 	 * the success function of this waitFor will not be called.
-	 * @param [boolean=true] failTest If true is passed or the parameter is omited,
-	 * the promise of {@link sap.ui.test.Opa#.emptyQueue} is rejected. If false is passed the promis is resolved.
 	 * @since 1.40.1
 	 * @public
 	 */
-	Opa.stopQueue = function stopQueue (failTest) {
-		var bFailTest = failTest !== false;
+	Opa.stopQueue = function stopQueue () {
+		return Opa._stopQueue(true);
+	};
+
+	Opa._stopQueue = function (bStoppedManually) {
 		// clear queue
 		queue = [];
 
@@ -352,11 +365,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './_ParameterValidator'], f
 
 			isStopped = true;
 
-			if (bFailTest) {
-				oDeferred.reject({});
-			} else {
-				oDeferred.resolve();
-			}
+			oDeferred.reject({stoppedManually: bStoppedManually});
 		}
 	};
 

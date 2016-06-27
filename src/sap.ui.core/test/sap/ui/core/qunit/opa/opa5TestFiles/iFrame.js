@@ -397,25 +397,90 @@ sap.ui.define([
 		QUnit.module("Tests that timeout");
 
 		opaTest("Should empty the queue if QUnit times out", function (oOpa) {
+			function createMatcherForTestMessage (oOptions) {
+				return function () {
+					var $Test = Opa5.getJQuery()("#qunit-tests").children(":nth-child(" + oOptions.testIndex + ")");
+					return $Test.hasClass(oOptions.passed ? "pass" : "fail") && $Test.find(".test-message");
+				}
+			}
+
 			oOpa.iStartMyAppInAFrame("../testdata/failingOpaTest.html?sap-ui-qunittimeout=2000");
 
 			oOpa.waitFor({
-				matchers: function () {
-					var $FirstTest = Opa5.getJQuery()("#qunit-tests").children().first();
-					return $FirstTest.hasClass("fail") && $FirstTest.find(".test-message").text();
-				},
-				success: function (sMessage) {
-					QUnit.assert.strictEqual(sMessage, "Test timed out");
+				matchers: createMatcherForTestMessage({
+					testIndex: 1,
+					passed: false
+				}),
+				success: function (aMessages) {
+					QUnit.assert.strictEqual(aMessages.eq(0).text(), "Test timed out");
+					var sOpaMessage = aMessages.eq(1).text();
+					QUnit.assert.contains(sOpaMessage, /QUnit timeout/);
+					QUnit.assert.contains(sOpaMessage, /This is what Opa logged/);
+					QUnit.assert.contains(sOpaMessage, /Opa is executing the check:/);
+					QUnit.assert.contains(sOpaMessage, /Opa check was false/);
+					QUnit.assert.contains(sOpaMessage, /Callstack:/);
 				}
 			});
 
 			oOpa.waitFor({
-				matchers: function () {
-					var $SecondTest = Opa5.getJQuery()("#qunit-tests").children().first().next();
-					return $SecondTest.hasClass("pass") && $SecondTest.find(".test-message").text();
-				},
-				success: function (sMessage) {
-					QUnit.assert.strictEqual(sMessage, "Ok from test 2");
+				matchers: createMatcherForTestMessage({
+					testIndex: 2,
+					passed: true
+				}),
+				success: function (aMessages) {
+					QUnit.assert.strictEqual(aMessages.eq(0).text(), "Ok from test 2");
+				}
+			});
+
+			oOpa.waitFor({
+				matchers: createMatcherForTestMessage({
+					testIndex: 3,
+					passed: true
+				}),
+				success: function (aMessages) {
+					QUnit.assert.strictEqual(aMessages.eq(0).text(), "Ok from test 3");
+				}
+			});
+
+			oOpa.waitFor({
+				matchers: createMatcherForTestMessage({
+					testIndex: 4,
+					passed: false
+				}),
+				success: function (aMessages) {
+					QUnit.assert.strictEqual(aMessages.eq(0).text(), "Test timed out");
+					var sOpaMessage = aMessages.eq(1).text();
+					QUnit.assert.contains(sOpaMessage, "global id: 'myGlobalId'");
+					QUnit.assert.doesNotContain(sOpaMessage,"Log message that should not appear in the error");
+				}
+			});
+
+			oOpa.waitFor({
+				matchers: createMatcherForTestMessage({
+					testIndex: 5,
+					passed: false
+				}),
+				success: function (aMessages) {
+					var sOpaMessage = aMessages.eq(0).text();
+					QUnit.assert.contains(sOpaMessage, "Opa timeout");
+					QUnit.assert.contains(sOpaMessage, "This is what Opa logged");
+					QUnit.assert.contains(sOpaMessage, "global id: 'myGlobalId'");
+					QUnit.assert.contains(sOpaMessage, "Callstack:");
+					QUnit.assert.doesNotContain(sOpaMessage,"Log message that should not appear in the error");
+				}
+			});
+
+			oOpa.waitFor({
+				matchers: createMatcherForTestMessage({
+					testIndex: 6,
+					passed: false
+				}),
+				success: function (aMessages) {
+					var sOpaMessage = aMessages.eq(0).text();
+					QUnit.assert.contains(sOpaMessage, "Queue was stopped manually");
+					QUnit.assert.contains(sOpaMessage, "This is what Opa logged");
+					QUnit.assert.contains(sOpaMessage, "Callstack:");
+					QUnit.assert.doesNotContain(sOpaMessage,"Log message that should not appear in the error");
 				}
 			});
 
