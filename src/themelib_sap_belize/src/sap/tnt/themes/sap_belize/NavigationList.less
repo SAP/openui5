@@ -23,7 +23,8 @@
 	background-color: @sapUiListHoverBackground;
 }
 
-.sapTntNavLIItem:not(.sapTntNavLIItemDisabled):active {
+.sapTntNavLI .sapTntNavLIGroup.sapTntNavLIItem:not(.sapTntNavLIItemDisabled):active,
+.sapTntNavLI .sapTntNavLIGroupItem.sapTntNavLIItem:not(.sapTntNavLIItemDisabled):active{
 	background-color: @sapUiListActiveBackground;
 
 	& > .sapMText {
