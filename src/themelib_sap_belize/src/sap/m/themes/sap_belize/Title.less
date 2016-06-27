@@ -13,19 +13,19 @@
 @sapMTitleFontWeight: @sapUiFontHeaderWeight;
 
 .sapMTitle {
-	text-shadow: 0 0.0625rem 0 fade(@sapUiContentContrastShadowColor, 50);
+	text-shadow: @sapUiShadowText;
 }
 
 .sapMIBar-CTX .sapMTitle {
 	color: @sapUiPageHeaderTextColor;
-	text-shadow: none;
+	text-shadow: @sapUiShadowText;
 }
 
 .sapMTB-Transparent-CTX .sapMTitle {
-	text-shadow: 0 0.0625rem 0 @sapUiContentContrastShadowColor;
+	text-shadow: none;
 }
 
 .sapMIBar-CTX.sapMFooter-CTX .sapMTitle {
 	color: @sapUiPageFooterTextColor;
-	text-shadow: 0 0.0625rem 0 fade(@sapUiContentShadowColor, 50);
+	text-shadow: @sapUiShadowText;
 }
