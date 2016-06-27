@@ -519,6 +519,9 @@
 
 			this.clock.tick(500);
 			assert.equal(this.oMessagePopover.getItems().length, 1, "The message should be one");
+
+			// cleanup
+			sap.ui.getCore().getMessageManager().removeAllMessages();
 		});
 
 		QUnit.test("Filtering after resize should not reset the height of the Popover", function(assert) {
@@ -923,6 +926,43 @@
 			this.oMessagepopover2.getModel().setProperty("/0/message", "Two");
 			this.clock.tick(500);
 			strictEqual(this.oMessagepopover2._oLists.error.getItems()[0].getTitle(), "Two", "Title to be changed");
+		});
+
+		QUnit.test("Adding item to MessagePopover", function (assert) {
+			var oMessagePopover = new sap.m.MessagePopover(),
+				oMessagePopoverItem = new sap.m.MessagePopoverItem({ title: "Test" }),
+				oButton = new sap.m.Button();
+
+			oMessagePopover.addItem(oMessagePopoverItem);
+
+			oButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			oMessagePopover.openBy(oButton);
+			this.clock.tick(500);
+			assert.ok(oMessagePopover.getItems().length);
+
+			oMessagePopover.destroy();
+			oButton.destroy();
+		});
+
+		QUnit.test("Removing all items", function (assert) {
+			var tempObject = {
+				"message": "test"
+			};
+
+			this.oMessagepopover2.openBy(this.oButton2);
+			this.clock.tick(500);
+
+			this.oMessagepopover2.getModel().setData(null);
+			sap.ui.getCore().applyChanges();
+
+			this.oMessagepopover2.getModel().setData(tempObject);
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(this.oMessagepopover2.getItems().length);
+
+			tempObject = null;
 		});
 	</script>
 </head>
