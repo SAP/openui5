@@ -141,6 +141,36 @@
 				sap.ui.getCore().applyChanges();
 			});
 
+			QUnit.test("when control is destroyed while loading design time metadata", function(assert) {
+				var done = assert.async();
+
+				var oButton = new sap.m.Button();
+
+				//simulate control being destroyed
+				var fnOldLoadDTM = sap.ui.dt.ElementUtil.loadDesignTimeMetadata;
+				sap.ui.dt.ElementUtil.loadDesignTimeMetadata = function(){
+					return fnOldLoadDTM.apply(arguments).then(function(oDesignTimeMetadata){
+						oButton.destroy();
+						return oDesignTimeMetadata;
+					});
+				};
+
+				var fnElementOverlayCreatedSpy = this.spy();
+				this.oDesignTime.attachEventOnce("elementOverlayCreated", fnElementOverlayCreatedSpy);
+
+				this.oDesignTime.attachEventOnce("synced", function() {
+					assert.equal(fnElementOverlayCreatedSpy.callCount, 0, "then overlay is not published to be created");
+					var oButtonOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oButton);
+					assert.ok(!oButtonOverlay, "and overlay of destroyed control is also destroyed");
+
+					sap.ui.dt.ElementUtil.loadDesignTimeMetadata = fnOldLoadDTM;
+					done();
+				});
+
+				this.oOuterLayout.addContent(oButton);
+				sap.ui.getCore().applyChanges();
+			});
+
 			QUnit.test("when new control without overlay is added to a root control and an error happens within the loadDesignTimeMetadata promise chain", function(assert) {
 				var done = assert.async();
 
@@ -228,6 +258,8 @@
 				sap.ui.getCore().applyChanges();
 
 				assert.ok(oOverlay.getDomRef(), "then a created overlay is also visible");
+				
+				oOverlay.destroy();
 			});
 
 			QUnit.module("Given that an DesignTime is created for two root controls", {
