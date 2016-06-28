@@ -619,7 +619,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this.getMode() == sap.m.IconTabHeaderMode.Inline) {
 			var sCount = oItem.getCount();
 			if (sCount) {
-				sText += ' (' + sCount + ')';
+				if (this._bRtl) {
+					sText = '(' + sCount + ') ' + sText;
+				} else {
+					sText += ' (' + sCount + ')';
+				}
 			}
 		}
 

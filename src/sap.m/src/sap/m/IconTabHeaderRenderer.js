@@ -220,6 +220,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 					if (bUpperCase) {
 						oRM.addClass("sapMITBTextUpperCase");
 					}
+
+					if (bInLine) {
+						oRM.writeAttribute("dir", "ltr");
+					}
+
 					oRM.writeClasses();
 					oRM.write(">");
 					oRM.writeEscaped(oControl._getDisplayText(oItem));
