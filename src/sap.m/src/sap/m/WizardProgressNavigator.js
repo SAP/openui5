@@ -134,7 +134,7 @@ function (library, Control, ResizeHandler, ItemNavigation, Device, jQuery) {
 	WizardProgressNavigator.prototype.init = function () {
 		this._currentStep = 1;
 		this._activeStep = 1;
-		this._cachedSteps = null;
+		this._cachedSteps = [];
 		this._resourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._actionSheet = new sap.m.ActionSheet().addStyleClass("sapUiSizeCompact");
 		this._createAnchorNavigation();
