@@ -1451,7 +1451,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 			oList.getItems()[this._iFocusedIndex].focus();
 			this._iFocusedIndex = null;
 		} else {
-			this.getFocusDomRef().focus();
+			this.focus();
 		}
 	};
 
