@@ -42,6 +42,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 			{pattern: "yyyyMMdd", strictParsing: true}
 		],
 		bShortFallbackFormatOptions: true,
+		bPatternFallbackWithoutDelimiter: true,
 		getPattern: function(oLocaleData, sStyle, sCalendarType) {
 			return oLocaleData.getDatePattern(sStyle, sCalendarType);
 		},
@@ -220,39 +221,43 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 			}
 		}
 
-		// If fallback DateFormats have not been created yet, do it now
-		if (!oInfo.oFallbackFormats) {
-			oInfo.oFallbackFormats = {};
-		}
-		// Store fallback formats per locale and calendar type
-		var sLocale = oLocale.toString(),
-			sCalendarType = oFormat.oFormatOptions.calendarType,
-			sKey = sLocale + "-" + sCalendarType,
-			aFallbackFormats = oInfo.oFallbackFormats[sKey];
-		if (!aFallbackFormats) {
-			aFallbackFormats = [];
-			oInfo.oFallbackFormats[sKey] = aFallbackFormats;
-			var aFallbackFormatOptions = oInfo.aFallbackFormatOptions.slice(0);
-			// Add two fallback patterns for locale-dependent short format without delimiters
-			if (oInfo.bShortFallbackFormatOptions) {
-				var sPattern = oInfo.getPattern(oFormat.oLocaleData, "short").replace(/[^dMyGU]/g, ""); // U for chinese year
-				sPattern = sPattern.replace(/d+/g, "dd"); // disallow 1 digit day entries
-				sPattern = sPattern.replace(/M+/g, "MM"); // disallow 1 digit month entries
-				aFallbackFormatOptions.push({
-					pattern: sPattern.replace(/[yU]+/g, "yyyy"), strictParsing: true // e.g. ddMMyyyy
-				});
-				aFallbackFormatOptions.push({
-					pattern: sPattern.replace(/[yU]+/g, "yy"), strictParsing: true // e.g. ddMMyy
-				});
+		// if the current format isn't a fallback format, create its fallback formats
+		if (!oFormat.oFormatOptions.fallback) {
+			// If fallback DateFormats have not been created yet, do it now
+			if (!oInfo.oFallbackFormats) {
+				oInfo.oFallbackFormats = {};
 			}
-			jQuery.each(aFallbackFormatOptions, function(i, oFormatOptions) {
-				oFormatOptions.calendarType = sCalendarType;
-				var oFallbackFormat = DateFormat.createInstance(oFormatOptions, oLocale, oInfo);
-				oFallbackFormat.bIsFallback = true;
-				aFallbackFormats.push(oFallbackFormat);
-			});
+			// Store fallback formats per locale and calendar type
+			var sLocale = oLocale.toString(),
+				sCalendarType = oFormat.oFormatOptions.calendarType,
+				sKey = sLocale + "-" + sCalendarType,
+				sPattern,
+				aFallbackFormatOptions;
+
+			if (oFormat.oFormatOptions.pattern && oInfo.bPatternFallbackWithoutDelimiter) {
+				sKey = sKey + "-" + oFormat.oFormatOptions.pattern;
+			}
+
+			if (!oInfo.oFallbackFormats[sKey]) {
+				aFallbackFormatOptions = oInfo.aFallbackFormatOptions;
+				// Add two fallback patterns for locale-dependent short format without delimiters
+				if (oInfo.bShortFallbackFormatOptions) {
+					sPattern = oInfo.getPattern(oFormat.oLocaleData, "short");
+					// add the options of fallback formats without delimiters to the fallback options array
+					aFallbackFormatOptions = aFallbackFormatOptions.concat(DateFormat._createFallbackOptionsWithoutDelimiter(sPattern));
+				}
+
+				if (oFormat.oFormatOptions.pattern && oInfo.bPatternFallbackWithoutDelimiter) {
+					// create options of fallback formats by removing delimiters from the given pattern
+					// insert the new fallback format options to the front of the array
+					aFallbackFormatOptions = DateFormat._createFallbackOptionsWithoutDelimiter(oFormat.oFormatOptions.pattern).concat(aFallbackFormatOptions);
+				}
+
+				oInfo.oFallbackFormats[sKey] = DateFormat._createFallbackFormat(aFallbackFormatOptions, sCalendarType, oLocale, oInfo);
+			}
+
+			oFormat.aFallbackFormats = oInfo.oFallbackFormats[sKey];
 		}
-		oFormat.aFallbackFormats = aFallbackFormats;
 
 		oFormat.oRequiredParts = oInfo.oRequiredParts;
 		oFormat.aRelativeScales = oInfo.aRelativeScales;
@@ -294,6 +299,65 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 		this.aDayPeriods = this.oLocaleData.getDayPeriods("abbreviated", sCalendarType);
 		this.aFormatArray = this.parseCldrDatePattern(this.oFormatOptions.pattern);
 		this.sAllowedCharacters = this.getAllowedCharacters(this.aFormatArray);
+	};
+
+	/**
+	 * Creates DateFormat instances based on the given format options. The created
+	 * instances are used as fallback formats of another DateFormat instances.
+	 *
+	 * All fallback formats are marked with 'bIsFallback' to make it distinguishable
+	 * from the normal DateFormat instances.
+	 *
+	 * @param {Object[]} aFallbackFormatOptions the options for creating the fallback DateFormat
+	 * @param {sap.ui.core.CalendarType} sCalendarType the type of the current calendarType
+	 * @param {sap.ui.core.LocalData} oLocale Locale to ask for locale specific texts/settings
+	 * @param {Object} oInfo The default info object of the current date type
+	 * @return {sap.ui.core.DateFormat[]} an array of fallback DateFormat instances
+	 */
+	DateFormat._createFallbackFormat = function(aFallbackFormatOptions, sCalendarType, oLocale, oInfo) {
+		return aFallbackFormatOptions.map(function(oFormatOptions) {
+			oFormatOptions.calendarType = sCalendarType;
+			// mark the current format as a fallback in order to avoid endless recursive call of function 'createInstance'
+			oFormatOptions.fallback = true;
+			var oFallbackFormat = DateFormat.createInstance(oFormatOptions, oLocale, oInfo);
+			oFallbackFormat.bIsFallback = true;
+			return oFallbackFormat;
+		});
+	};
+
+	/**
+	 * Creates options for fallback DateFormat instance by removing all delimiters
+	 * from the given base pattern.
+	 *
+	 * @param {string} sBasePattern The pattern where the result pattern will be
+	 * generated by removing the delimiters
+	 * @return {Object} Format option object which contains the new pattern
+	 */
+	DateFormat._createFallbackOptionsWithoutDelimiter = function(sBasePattern) {
+		var rNonDateFields = /[^dMyGU]/g,
+			oDayReplace = {
+				regex: /d+/g,
+				replace: "dd"
+			},
+			oMonthReplace = {
+				regex: /M+/g,
+				replace: "MM"
+			},
+			oYearReplace = {
+				regex: /[yU]+/g,
+				replace: ["yyyy", "yy"]
+			};
+
+		sBasePattern = sBasePattern.replace(rNonDateFields, ""); //remove all delimiters
+		sBasePattern = sBasePattern.replace(oDayReplace.regex, oDayReplace.replace); // replace day entries with 2 digits
+		sBasePattern = sBasePattern.replace(oMonthReplace.regex, oMonthReplace.replace); // replace month entries with 2 digits
+
+		return oYearReplace.replace.map(function(sReplace) {
+			return {
+				pattern: sBasePattern.replace(oYearReplace.regex, sReplace),
+				strictParsing: true
+			};
+		});
 	};
 
 	/**

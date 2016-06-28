@@ -418,9 +418,11 @@
 		var oLocaleEN = new sap.ui.core.Locale("en_US"),
 			oLocaleDE = new sap.ui.core.Locale("de_DE"),
 			oFormat,
-			iCompare = new Date(1975, 3, 16).getTime();
+			iCompare = new Date(1975, 3, 16).getTime(),
+			iFallbackOptionsLength = sap.ui.core.format.DateFormat.oDateInfo.aFallbackFormatOptions.length;
 
 		oFormat = sap.ui.core.format.DateFormat.getDateInstance({style: "long"}, oLocaleEN);
+		equal(sap.ui.core.format.DateFormat.oDateInfo.aFallbackFormatOptions.length, iFallbackOptionsLength, "original fallback options shouldn't be changed");
 		equal(oFormat.parse("April 16, 1975").getTime(), iCompare, "Parse long style");
 		equal(oFormat.parse("Apr 16, 1975").getTime(), iCompare, "Parse fallback medium style");
 		equal(oFormat.parse("4/16/75").getTime(), iCompare, "Parse fallback short style");
@@ -429,7 +431,18 @@
 		equal(oFormat.parse("1975-04-16").getTime(), iCompare, "Parse fallback ISO");
 		equal(oFormat.parse("19750416").getTime(), iCompare, "Parse fallback ABAP");
 
+		oFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern: "dd.MM.yyyy"}, oLocaleEN);
+		equal(sap.ui.core.format.DateFormat.oDateInfo.aFallbackFormatOptions.length, iFallbackOptionsLength, "original fallback options shouldn't be changed");
+		equal(oFormat.parse("16041975").getTime(), iCompare, "Parse fallback from removing delimiters from given pattern");
+		equal(oFormat.parse("Apr 16, 1975").getTime(), iCompare, "Parse fallback medium style");
+		equal(oFormat.parse("4/16/75").getTime(), iCompare, "Parse fallback short style");
+		equal(oFormat.parse("04161975").getTime(), iCompare, "Parse fallback without separators");
+		equal(oFormat.parse("041675").getTime(), iCompare, "Parse fallback without separators, short year");
+		equal(oFormat.parse("1975-04-16").getTime(), iCompare, "Parse fallback ISO");
+		equal(oFormat.parse("19750416").getTime(), iCompare, "Parse fallback ABAP");
+
 		oFormat = sap.ui.core.format.DateFormat.getDateInstance({style: "long", calendarType: sap.ui.core.CalendarType.Islamic}, oLocaleEN);
+		equal(sap.ui.core.format.DateFormat.oDateInfo.aFallbackFormatOptions.length, iFallbackOptionsLength, "original fallback options shouldn't be changed");
 		equal(oFormat.parse("Rabiʻ II 4, 1395 AH").getTime(), iCompare, "Parse long style");
 		equal(oFormat.parse("Rab. II 4, 1395 AH").getTime(), iCompare, "Parse fallback medium style");
 		equal(oFormat.parse("4/4/1395 AH").getTime(), iCompare, "Parse fallback short style");
@@ -439,6 +452,7 @@
 		equal(oFormat.parse("13950404").getTime(), iCompare, "Parse fallback ABAP");
 
 		oFormat = sap.ui.core.format.DateFormat.getDateInstance({style: "long"}, oLocaleDE);
+		equal(sap.ui.core.format.DateFormat.oDateInfo.aFallbackFormatOptions.length, iFallbackOptionsLength, "original fallback options shouldn't be changed");
 		equal(oFormat.parse("16. April 1975").getTime(), iCompare, "Parse long style");
 		equal(oFormat.parse("16.4.1975").getTime(), iCompare, "Parse fallback medium style");
 		equal(oFormat.parse("16.4.75").getTime(), iCompare, "Parse fallback short style");
