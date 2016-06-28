@@ -52,6 +52,10 @@ sap.ui.define([
 				}
 				if (iStart >= 0 && index > iStart) {
 					if (oModifier.getControlType(oField) === "sap.ui.core.Title") {
+						if (iStart === 0) {
+							oModifier.removeAggregation(oControl, "content", oField, oView);
+							oModifier.insertAggregation(oControl, "content", oField, 0, oView);
+						}
 						return true;
 					} else {
 						oModifier.setVisible(oField, false);
