@@ -1,0 +1,25 @@
+/* ======================================= */
+/* CSS for control sap.m/ObjectHeaderItem  */
+/* Belize Plus theme                            */
+/* ======================================= */
+
+.sapMOH.sapMOHBgTranslucent,
+.sapMOHC.sapMOHBgTranslucent,
+.sapMOH.sapMOHBgSolid,
+.sapMOHC.sapMOHBgSolid,
+.sapMOH.sapMOHBgTransparent,
+.sapMOHC.sapMOHBgTransparent {
+	background-color: fade(@sapUiObjectHeaderBackground, 60);
+	box-shadow: @sapUiShadowHeader;
+}
+
+/*** styles for responsive object header ***/
+.sapMOHR:not(.sapMOHRNoBorder) {
+	box-shadow: @sapUiShadowHeader;
+}
+
+.sapMOHR.sapMOHRBgSolid,
+.sapMOHR.sapMOHRBgTransparent,
+.sapMOHR.sapMOHRBgTranslucent {
+	background: fade(@sapUiObjectHeaderBackground, 60);
+}
