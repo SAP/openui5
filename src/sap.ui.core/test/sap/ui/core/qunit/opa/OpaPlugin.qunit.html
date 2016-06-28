@@ -78,13 +78,20 @@ sap.ui.require([
 		assert.strictEqual(oRetrievedButton, null);
 	});
 
-	QUnit.test("Should not retrieve a control by a global id - if control does not exist", function(assert) {
-		// Act
-		var oResult = this.oPlugin.getMatchingControls({ id : "nonexistingid" });
+	[{
+		id: "nonexistingId"
+	},{
+		id: "nonexistingId",
+		controlType: "sap.m.Button"
+	}].forEach(function (oWaitFor) {
+		QUnit.test("Should not retrieve a control by a global id - if control does not exist", function(assert) {
+			// Act
+			var oResult = this.oPlugin.getMatchingControls(oWaitFor);
 
-		// Assert
-		assert.strictEqual(oResult, null);
-		sinon.assert.calledWith(this.fnLogSpy, "Found no control with the global id: 'nonexistingid'", "sap.ui.test.OpaPlugin");
+			// Assert
+			assert.strictEqual(oResult, null);
+			sinon.assert.calledWith(this.fnLogSpy, "Found no control with the global id: 'nonexistingId'", "sap.ui.test.OpaPlugin");
+		});
 	});
 
 	QUnit.test("Should not retrieve a control by a global id - if control is destroyed", function(assert) {
@@ -269,7 +276,8 @@ sap.ui.require([
 
 		assert.strictEqual(oCheckBox, null, "got null");
 		sinon.assert.calledWithExactly(this.fnLogErrorSpy, "An id: 'my_id3' was passed together with the controlType " +
-				"'sap.ui.commons.Button' but the type does not match the id - null is returned",
+				"'sap.ui.commons.Button' but the type does not match the control retrieved: " +
+				"'Element sap.ui.commons.CheckBox#my_id3' - null is returned",
 				"sap.ui.test.OpaPlugin");
 	});
 
@@ -446,6 +454,21 @@ sap.ui.require([
 		assert.strictEqual(oRetrievedButton.getId(), this.oView.byId("foo").getId(), "did return the foo button as first element");
 	});
 
+	QUnit.test("Should get a single control of a view when the control type is also given", function(assert) {
+		// Arrange
+		this.oView.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		var oRetrievedButton = this.oPlugin.getMatchingControls({
+			controlType: "sap.ui.commons.Button",
+			viewName : "bar",
+			id : "foo"
+		});
+
+		// Assert
+		assert.strictEqual(oRetrievedButton.getId(), this.oView.byId("foo").getId(), "did return the foo button as first element");
+	});
 
 	QUnit.test("Should log if a control with an id is not found in a view", function(assert) {
 		// Arrange
