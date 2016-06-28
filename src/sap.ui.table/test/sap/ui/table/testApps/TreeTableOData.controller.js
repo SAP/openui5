@@ -20,12 +20,12 @@ sap.ui.define([
 				filterProperty: "DESCRIPTION",
 				filterOperator: "Contains",
 				filterValue: "",
-				useLocalMetadata: false,
+				useLocalMetadata: true,
 				hierarchyLevelFor: "LEVEL",
 				hierarchyParentNodeFor: "PARENT_NODE",
 				hierarchyNodeFor: "HIERARCHY_NODE",
 				hierarchyDrillStateFor: "DRILLDOWN_STATE",
-				hierarchyDescendantCountFor: "MAGNITUDE",
+				hierarchyDescendantCountFor: "",
 				visibleRowCount: 20,
 				visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Fixed,
 				overall: 0,
@@ -52,7 +52,7 @@ sap.ui.define([
 		/**
 		 * Rebinds/Creates the TreeTable
 		 */
-		onCreateTableClick: function () {
+		onCreateTableClick: function (oEvent, oTreeState) {
 			var oView = this.getView(),
 			oViewModel = oView.getModel();
 
@@ -166,6 +166,7 @@ sap.ui.define([
 					countMode: sCountMode,
 					operationMode: sOperationMode,
 					numberOfExpandedLevels: iInitialLevel == "" ?  0 : iInitialLevel,
+					treeState: oTreeState,
 					//navigation: {orgHierarchyRoot: "toChildren", orgHierarchy: "toChildren"}
 					treeAnnotationProperties: bUseLocalMetadata ? {
 						hierarchyLevelFor: sHierarchyLevelFor,
@@ -408,6 +409,15 @@ sap.ui.define([
 
 				MessageToast.show("Node '" + oData.key + "' was re-inserted.");
 			}
+		},
+
+		onSaveTreeState: function () {
+			var b = oTable.getBinding();
+			this._oTreeState = b.getCurrentTreeState();
+		},
+
+		onRestoreTreeState: function () {
+			this.onCreateTableClick(undefined, this._oTreeState);
 		},
 
 		/**
