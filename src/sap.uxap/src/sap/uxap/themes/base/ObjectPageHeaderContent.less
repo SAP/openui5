@@ -86,6 +86,19 @@ objectPageHeader Content
 		.sapUiVltCell > .sapMObjectAttributeDiv, .sapUiVltCell > .sapMObjStatus {
 			line-height: 1.5rem;
 		}
+
+		/* ProgressIndicator has display flex, but OPHeaderContent override it by setting display inline-block
+		* for each content entry to order the entries horizontally.
+		* In order to keep the display flex behaviour of the PI and the inline-block behaviour inside OPHeaderContent,
+		* we use inline-flex.
+		* NOTE: It`s needed in case PI is direct child of OPHeaderContent only.
+		*/
+		> .sapMPI {
+			display: -ms-inline-flexbox;
+			display: -webkit-inline-flex;
+			display: inline-flex;
+		}
+
 		.sapMPI {
 			width: 10rem !important; /* Progress indicator always use the size provide in the control otherwise... */
 			height: 1rem;
