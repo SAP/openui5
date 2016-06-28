@@ -22,13 +22,17 @@
   	box-shadow: inset 0 -1px darken(@sapUiGroupContentBackground, 8);
 }
 
+.sapMDialog.sapMMessageDialog > header {
+  	box-shadow: inset 0 -0.125rem darken(@sapUiGroupContentBackground, 8);
+}
+
 .sapMDialogWarning > header {
 	&.sapMDialogTitle .sapUiIcon {
 		color: @sapUiCriticalText;
 	}
 
 	&.sapMBar:last-of-type {
-	  	box-shadow: inset 0 -1px @sapUiWarningBorder;
+	  	box-shadow: inset 0 -0.125rem @sapUiWarningBorder;
 	}
 }
 
@@ -38,7 +42,7 @@
 	}
 
 	&.sapMBar:last-of-type {
-	  	box-shadow: inset 0 -1px @sapUiErrorBorder;
+	  	box-shadow: inset 0 -0.125rem @sapUiErrorBorder;
 	}
 }
 
@@ -48,11 +52,15 @@
 	}
 
 	&.sapMBar:last-of-type {
-	  	box-shadow: inset 0 -1px @sapUiSuccessBorder;
+	  	box-shadow: inset 0 -0.125rem @sapUiSuccessBorder;
 	}
 }
 
-.sapMDialog>.sapMDialogSection {
+.sapMDialog > header.sapMDialogTitle .sapMDialogIcon.sapUiIcon {
+	font-size: 1rem;
+}
+
+.sapMDialog > .sapMDialogSection {
   	background: @sapUiGroupContentBackground;
 }
 
