@@ -556,6 +556,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		this.$().toggleClass("sapMFocus", true);
+		this.$('F').toggleClass("sapMSFBFocus", true);
 
 		// clear tooltip of the refresh button
 		if (this.getShowRefreshButton()) {
@@ -584,6 +585,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var tooltip;
 
 		this.$().toggleClass("sapMFocus", false);
+		this.$('F').toggleClass("sapMSFBFocus", false);
 
 		if (this._bSuggestionSuppressed) {
 			this._bSuggestionSuppressed = false; // void the reset button handling
