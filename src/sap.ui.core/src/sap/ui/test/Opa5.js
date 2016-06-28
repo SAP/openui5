@@ -425,7 +425,7 @@ sap.ui.define([
 					return false;
 				}
 
-				if (oOptions.controlType && !vControl.length) {
+				if (oOptions.controlType && $.isArray(vControl) && !vControl.length) {
 					jQuery.sap.log.debug("found no controls with the type  " + oOptions.sOriginalControlType, "", "Opa");
 					return false;
 				}
