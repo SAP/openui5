@@ -50,7 +50,8 @@ sap.ui.testfwk.TestFWK = {
 	bRTL : false,
 	bAccessibilityMode: true,
 	bSimulateTouch: false,
-	sJQueryVersion: jQuery.fn.jquery
+	sJQueryVersion: jQuery.fn.jquery,
+	bContrastMode: false
 };
 
 sap.ui.testfwk.TestFWK.LANGUAGES = {
@@ -232,6 +233,23 @@ sap.ui.testfwk.TestFWK.getJQueryVersion = function() {
 sap.ui.testfwk.TestFWK.setJQueryVersion = function(sJQueryVersion) {
 	if ( this.sJQueryVersion !== sJQueryVersion ) {
 		this.sJQueryVersion = sJQueryVersion;
+		this.applySettings();
+	}
+};
+
+sap.ui.testfwk.TestFWK.getContrastMode = function() {
+	return this.bContrastMode;
+};
+
+sap.ui.testfwk.TestFWK.setContrastMode = function(bContrastMode) {
+	if ( this.bContrastMode !== bContrastMode ) {
+		this.bContrastMode = bContrastMode;
+		var frameDocument = $('frame[name="sap-ui-ContentWindow"]');
+		if (this.sTheme == "sap_belize") {
+			frameDocument.contents().find("body").addClass("sapContrast");
+		} else if (this.sTheme == "sap_belize_plus") {
+			frameDocument.contents().find("body").addClass("sapContrastPlus");
+		}
 		this.applySettings();
 	}
 };

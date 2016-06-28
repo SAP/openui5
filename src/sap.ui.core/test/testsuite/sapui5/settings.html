@@ -34,6 +34,12 @@
 
 		function themeChanged(e) {
 			testfwk.setTheme(Combo_getValueAsKey(e.getSource()));
+			if (Combo_getValueAsKey(e.getSource()) == "sap_belize" || Combo_getValueAsKey(e.getSource()) == "sap_belize_plus") {
+				sap.ui.getCore().byId("chkContMode").setEnabled(true);
+			} else {
+				sap.ui.getCore().byId("chkContMode").setEnabled(false);
+				sap.ui.getCore().byId("chkContMode").setChecked(false);
+			}
 		}
 
 		function jQueryVersionChanged(e) {
@@ -134,6 +140,10 @@
 		    oCombo = Combo_create("jQueryCombo", testfwk.JQUERY_VERSIONS, testfwk.getJQueryVersion());
 	        oCombo.attachChange(jQueryVersionChanged);
 	        oLayout.createRow(oLabel, oCombo);
+
+        	oLabel =  new sap.ui.commons.Label({text:'Contrast Mode', labelFor:'chkContMode'});
+    		oCheckBox = new sap.ui.commons.CheckBox('chkContMode', {checked:testfwk.getContrastMode(), enabled: false, change:function(e) { testfwk.setContrastMode(e.getParameter("checked"));}});
+	        oLayout.createRow(oLabel, oCheckBox);
 
 	        sap.ui.setRoot("uiArea1", oLayout);
 
