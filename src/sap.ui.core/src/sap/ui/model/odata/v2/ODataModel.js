@@ -1157,10 +1157,10 @@ sap.ui.define([
 				}
 
 				if (!jQuery.isEmptyObject(mHeaders)) {
-					if (!oEntry.__metadata) {
-						oEntry.__metadata = {};
+					if (!oData.__metadata) {
+						oData.__metadata = {};
 					}
-					oEntry.__metadata.headers = mHeaders;
+					oData.__metadata.headers = mHeaders;
 				}
 			}
 
