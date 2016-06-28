@@ -69,10 +69,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/SelectRendere
 
 			if (sap.ui.Device.system.phone)  {
 				this.renderLabel(oRm, oSelect);
-				this.renderArrow(oRm, oSelect);
-			} else {
-				this.renderIcon(oRm, oSelect);
 			}
+			this.renderIcon(oRm);
 
 			var oList = oSelect.getList();
 
@@ -122,6 +120,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/SelectRendere
 			oRm.write('<span style="position: absolute" class="sapMTabStripSelectListItemModified' + sStateClass + '">*</span>');
 		};
 
+		TabStripSelectRenderer.renderIcon = function(oRm) {
+			oRm.write("<span");
+			oRm.addClass("sapMSltIcon");
+			oRm.addClass("sapUiIcon");
+			oRm.addClass("sapUiIconMirrorInRTL");
+			oRm.writeClasses();
+			oRm.write(">");
+			oRm.write("</span");
+		};
 		return TabStripSelectRenderer;
 
 	}, /* bExport= */ true);

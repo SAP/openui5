@@ -49,9 +49,10 @@ sap.ui.define(['jquery.sap.global', './Popover', './TabStripSelectList', './libr
 		 *
 		 * @type {number}
 		 */
-		TabStripSelect.SPACE_BETWEEN_SELECT_BUTTON_AND_POPOVER = -5;
 
 		TabStripSelect.prototype.init = function() {
+			TabStripSelect.SPACE_BETWEEN_SELECT_BUTTON_AND_POPOVER = this.$().parents().hasClass('sapUiSizeCompact') ? 2 : 3; // results in 0.1875 rem / results in 0.125 rem
+
 			// set the picker type
 			this.setPickerType(sap.ui.Device.system.phone ? "Dialog" : "Popover");
 
@@ -138,7 +139,7 @@ sap.ui.define(['jquery.sap.global', './Popover', './TabStripSelectList', './libr
 				    showHeader: false,
 				    placement: sap.m.PlacementType.Vertical,
 				    offsetX: 0,
-				    offsetY: sap.ui.Device.system.phone ? 0 : TabStripSelect.SPACE_BETWEEN_SELECT_BUTTON_AND_POPOVER,
+				    offsetY: TabStripSelect.SPACE_BETWEEN_SELECT_BUTTON_AND_POPOVER,
 				    initialFocus: this,
 				    bounce: false
 			    });
@@ -192,6 +193,22 @@ sap.ui.define(['jquery.sap.global', './Popover', './TabStripSelectList', './libr
 		};
 
 		/**
+		 * This event handler is called before the dialog is opened.
+		 *
+		 * @private
+		 */
+		TabStripSelect.prototype._onBeforeOpenDialog = function() {
+			var oInput = this.getPicker().getCustomHeader().getContentLeft()[0],
+				oSelectedItem = this.getSelectedItem();
+
+			if (oSelectedItem) {
+				oInput.setValue(oSelectedItem.getText());
+				oInput.setTextDirection(this.getTextDirection());
+				oInput.setTextAlign(this.getTextAlign());
+			}
+		};
+
+		/**
 		 * This event handler is called after the picker popup is rendered.
 		 *
 		 * @override
@@ -211,6 +228,7 @@ sap.ui.define(['jquery.sap.global', './Popover', './TabStripSelectList', './libr
 			// on phone the picker is a dialog and does not have an offset
 			if (this.getPicker() instanceof sap.m.Popover === true) {
 				this.getPicker().setOffsetX(-iPickerOffsetX);
+				this.getPicker().setOffsetY(this.$().parents().hasClass('sapUiSizeCompact') ? 2 : 3);
 				this.getPicker()._calcPlacement(); // needed to apply the new offset after the popup is open
 			}
 		};
