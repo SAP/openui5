@@ -347,7 +347,7 @@ sap.ui.define([
 		QUnit.module("Tests that timeout");
 
 		opaTest("Should empty the queue if QUnit times out", function (oOpa) {
-			oOpa.iStartMyAppInAFrame("../testdata/failingOpaTest.html");
+			oOpa.iStartMyAppInAFrame("../testdata/failingOpaTest.html?sap-ui-qunittimeout=2000");
 
 			oOpa.waitFor({
 				matchers: function () {
@@ -368,6 +368,8 @@ sap.ui.define([
 					QUnit.assert.strictEqual(sMessage, "Ok from test 2");
 				}
 			});
+
+			oOpa.iTeardownMyApp();
 		});
 	}
 );
