@@ -78,6 +78,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			this._$Value = null;
 			this._$Currency = null;
 			this._sLastCurrency = null;
+			this._iLastCurrencyDigits = null;
 			this._bRenderNoValClass = null;
 		};
 
@@ -123,13 +124,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		 * @return {object} this to enable chaining
 		 */
 		Currency.prototype.setCurrency = function (sValue) {
+			var iCurrencyDigits,
+				bRenderValue;
+
 			this.setProperty("currency", sValue, true);
 			this._renderCurrency();
+
+			// Take into account currencies that do not have decimal values or the decimal value differs. Example: JPY.
+			// If we switch from a currency which differs we should update the value too.
+			iCurrencyDigits = this._oFormat.oLocaleData.getCurrencyDigits(sValue);
+			if (jQuery.isNumeric(this._iLastCurrencyDigits) && this._iLastCurrencyDigits !== iCurrencyDigits) {
+				bRenderValue = true;
+			}
+			this._iLastCurrencyDigits = iCurrencyDigits;
+
 			// We need to update the value if the last currency value was * or the new value is *
 			if (this._sLastCurrency === "*" || sValue === "*") {
-				this._renderValue();
+				bRenderValue = true;
 			}
 			this._sLastCurrency = sValue;
+
+			if (bRenderValue) {
+				this._renderValue();
+			}
+
 			return this;
 		};
 
