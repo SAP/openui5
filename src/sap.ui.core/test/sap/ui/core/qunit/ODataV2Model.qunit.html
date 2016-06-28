@@ -4252,7 +4252,7 @@
 				ok(false, "success handler must not be called");
 			}
 			var oCreatedContext = this.oModel.createEntry("/Products", {
-				properties: {Name: 'test'}, 
+				properties: {Name: 'test'},
 				success: fnSuccess
 			});
 			var oContextBinding = this.oModel.bindContext("Supplier", oCreatedContext);
@@ -4287,7 +4287,7 @@
 				ok(false, "success handler must not be called");
 			}
 			var oCreatedContext = this.oModel.createEntry("/Products", {
-				properties: {Name: 'test'}, 
+				properties: {Name: 'test'},
 				success: fnSuccess
 			});
 			var oContextBinding = this.oModel.bindContext("Supplier");
@@ -4324,7 +4324,7 @@
 				ok(false, "success handler must not be called");
 			}
 			var oCreatedContext = this.oModel.createEntry("/Products", {
-				properties: {Name: 'test'}, 
+				properties: {Name: 'test'},
 				success: fnSuccess
 			});
 			var oContextBinding = this.oModel.bindContext("/Suppliers(0)", oCreatedContext);
@@ -4474,7 +4474,7 @@
 	});
 
 	asyncTest("Bindable response headers in metadata", function() {
-		expect(2);
+		expect(4);
 
 
 		var batchDone = false, singleDone = false;
@@ -4506,31 +4506,42 @@
 		oButton2.bindElement("/Products(1)")
 		oButton2.setModel(oModelSingle);
 
-		new Promise(function(fnResolve, fnReject) {
+		function readProduct() {
+			return new Promise(function(fnResolve, fnReject) {
 
-			var singleDone = false, batchDone = false;
-			function checkDone(sWhich) {
-				if (sWhich === "batch") {
-					batchDone = true;
-				}
-				if (sWhich === "single") {
-					singleDone = true;
+				var singleDone = false, batchDone = false;
+				function checkDone(sWhich) {
+					if (sWhich === "batch") {
+						batchDone = true;
+					}
+					if (sWhich === "single") {
+						singleDone = true;
+					}
+
+					if (batchDone && singleDone) {
+						fnResolve();
+					}
 				}
 
-				if (batchDone && singleDone) {
-					fnResolve();
-				}
-			}
-
-			oModelBatch.read("/Products(1)", {
-				success: checkDone.bind(this, "batch")
+				oModelBatch.read("/Products(1)", {
+					success: checkDone.bind(this, "batch")
+				});
+				oModelSingle.read("/Products(1)", {
+					success: checkDone.bind(this, "single")
+				});
 			});
-			oModelSingle.read("/Products(1)", {
-				success: checkDone.bind(this, "single")
-			});
+		}
+
+
+		readProduct().then(function() {
+			equals(oButton.getText(), "oh so very old", "Text correctly set from first response header");
+			equals(oButton2.getText(), "oh so very old ", "Text correctly set from first response header");
+
+			return readProduct();
 		}).then(function() {
-			equals(oButton.getText(), "oh so very old", "Text correctly set from response header");
-			equals(oButton2.getText(), "oh so very old ", "Text correctly set from response header");
+			equals(oButton.getText(), "oh so very old", "Text correctly set from second response header");
+			equals(oButton2.getText(), "oh so very old ", "Text correctly set from second response header");
+
 			start();
 		});
 
