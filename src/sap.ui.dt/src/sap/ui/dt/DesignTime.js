@@ -382,6 +382,10 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 			}
 
 			ElementUtil.loadDesignTimeMetadata(oElement).then(function(oDesignTimeMetadata) {
+				// if oElement is already destroyed while designtime metadata is loading
+				if (!oElement || oElement.bIsDestroyed) {
+					return;
+				}
 				// merge the DTMetadata from the DesignTime and from UI5
 				var oMergedDesignTimeMetadata = oDesignTimeMetadata || {};
 				jQuery.extend(true, oMergedDesignTimeMetadata, that.getDesignTimeMetadataFor(oElement));
