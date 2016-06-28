@@ -419,8 +419,10 @@ sap.ui.define([
 	};
 
 	ObjectPageHeader.prototype._proxyMethodToBreadCrumbControl = function (sFuncName, aArguments) {
-		var oBreadCrumbs = this._getInternalAggregation("_breadCrumbs");
-		return oBreadCrumbs[sFuncName].apply(oBreadCrumbs, aArguments);
+		var oBreadCrumbs = this._getInternalAggregation("_breadCrumbs"),
+			vResult = oBreadCrumbs[sFuncName].apply(oBreadCrumbs, aArguments);
+		this.invalidate();
+		return vResult;
 	};
 
 	ObjectPageHeader.prototype.setHeaderDesign = function (sHeaderDesign) {
