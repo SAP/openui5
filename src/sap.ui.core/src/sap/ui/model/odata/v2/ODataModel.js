@@ -1954,16 +1954,26 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.getObject = function(sPath, oContext, mParameters) {
+		// Fallback for optional parameters
+		if (jQuery.isPlainObject(oContext)) {
+			mParameters = oContext;
+			oContext = undefined;
+		}
+
 		var that = this,
 			sResolvedPath = this.resolve(sPath, oContext),
 			oValue = this._getObject(sResolvedPath),
 			oEntityType = this.oMetadata._getEntityTypeByPath(sResolvedPath),
-			aExpand = [], aSelect = [],
-			bIncomplete = true;
+			aExpand = [], aSelect = [];
 
 		// If path does not point to an entity, just return the value
 		if (!oEntityType || !jQuery.isPlainObject(oValue) || !oValue.__metadata || !oValue.__metadata.uri) {
 			return oValue;
+		}
+
+		// If no select/expand parameters are given, return a clone of the entity (for compatibility)
+		if (!mParameters || !(mParameters.select || mParameters.expand)) {
+			return jQuery.sap.extend(true, {}, oValue);
 		}
 
 		function getRequestedData(oEntityType, oValue, aSelect, aExpand) {
@@ -1989,7 +1999,7 @@ sap.ui.define([
 				sSelect = aOwnPropSelect[i];
 				if (oValue[sSelect] !== undefined) {
 					oResultValue[sSelect] = oValue[sSelect];
-				} else if (!bIncomplete) {
+				} else {
 					jQuery.sap.log.fatal("No data loaded for select property: " + sSelect + " of entry: " + that.getKey(oValue));
 					return undefined;
 				}
@@ -2016,7 +2026,7 @@ sap.ui.define([
 					oNavValue = getRequestedData(oNavEntityType, oNavObject, aNavSelect, aNavExpand);
 					if (oNavValue !== undefined) {
 						oResultValue[sExpand] = oNavValue;
-					} else if (!bIncomplete) {
+					} else {
 						jQuery.sap.log.fatal("No data loaded for expand property: " + sExpand + " of entry: " + that.getKey(oNavValue));
 						return undefined;
 					}
@@ -2028,7 +2038,7 @@ sap.ui.define([
 						oNavValue = getRequestedData(oNavEntityType, oNavObject, aNavSelect, aNavExpand);
 						if (oNavValue !== undefined) {
 							aResultProps.push(oNavValue);
-						} else if (!bIncomplete) {
+						} else {
 							jQuery.sap.log.fatal("No data loaded for expand property: " + sExpand + " of entry: " + that.getKey(oNavValue));
 							return undefined;
 						}
@@ -2049,14 +2059,11 @@ sap.ui.define([
 			return oResultValue;
 		}
 
-		if (mParameters) {
-			if (mParameters.select) {
-				aSelect = this._splitEntries(mParameters.select);
-				bIncomplete = false;
-			}
-			if (mParameters.expand) {
-				aExpand = this._splitEntries(mParameters.expand);
-			}
+		if (mParameters.select) {
+			aSelect = this._splitEntries(mParameters.select);
+		}
+		if (mParameters.expand) {
+			aExpand = this._splitEntries(mParameters.expand);
 		}
 
 		oValue = getRequestedData(oEntityType, oValue, aSelect, aExpand);

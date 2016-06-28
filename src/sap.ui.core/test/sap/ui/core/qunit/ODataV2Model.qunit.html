@@ -825,7 +825,7 @@
 			ok(oModel.oData["Products(3)"] !== oModel.getObject("/Products(3)"), "test object copy via getObject");
 			ok(oModel.oData["Products(3)"] === oModel.getProperty("/Products(3)"), "test object copy via getProperty");
 
-			var oValue = oModel.getObject("/Products(3)", null, {select : "ProductName, ProductID"});
+			var oValue = oModel.getObject("/Products(3)", {select : "ProductName, ProductID"});
 			equal(oValue.ProductName, "Aniseed Syrup", "test getObject with select param");
 			equal(oValue.ProductID, 3, "test getObject with select param");
 			ok(!oValue.hasOwnProperty('Category'), "test getObject with select param");
@@ -859,19 +859,18 @@
 		var oBinding = oModel.bindList("/Products", null, null, [oFilter], {expand : "Category" }).initialize();
 		var handler1 = function() { // delay the following test
 			equal(oModel.oData["Products(1)"].Category.__ref, "Categories(1)", "test property data with refs directly.");
-			var sDeferred = oModel.getObject("/Products(1)").Category.__deferred.uri;
-			ok(jQuery.sap.endsWith(sDeferred, "/Products(1)/Category"), "test getObject with no expand param");
+			equal(oModel.getObject("/Products(1)").Category.__ref, "Categories(1)", "getobject data with refs directly.");
 
-			var oValue = oModel.getObject("/Products(1)", null, {select : "ProductName"});
+			var oValue = oModel.getObject("/Products(1)", {select : "ProductName"});
 			equal(oValue.ProductName, "Chai", "test getObject with select param");
 			ok(!oValue.hasOwnProperty('Category'), "test getObject with select param");
 
-			oValue = oModel.getObject("/Products(1)", null, {expand : "Category"});
+			oValue = oModel.getObject("/Products(1)", {expand : "Category"});
 			equal(oValue.ProductName, "Chai", "test getObject with expand param");
 			equal(oValue.Category.CategoryID, 1, "test getObject with expand param");
 			equal(oValue.Category.CategoryName, "Beverages", "test getObject with expand param");
 
-			oValue = oModel.getObject("/Products(1)", null, {select: "ProductName, Category, Category/CategoryName", expand : "Category"});
+			oValue = oModel.getObject("/Products(1)", {select: "ProductName, Category, Category/CategoryName", expand : "Category"});
 			equal(oValue.ProductName, "Chai", "test getObject with select and expand param");
 			ok(!oValue.hasOwnProperty('ProductID'), "test getObject with select and expand param");
 			equal(oValue.Category.CategoryID, 1, "test getObject with select and expand param");
@@ -900,20 +899,16 @@
 			var oValue = oModel.getObject("/Products(3)");
 			equal(oValue.ProductName, "Aniseed Syrup", "test getObject with no param");
 			ok(!oValue.hasOwnProperty('ProductID'), "test getObject with no param");
-			var sDeferred = oModel.getObject("/Products(3)").Category.__deferred.uri;
-			ok(jQuery.sap.endsWith(sDeferred, "/Products(3)/Category"), "test getObject with no param");
+			equal(oValue.Category.__ref, "Categories(2)", "test getObject with no param contains __ref");
 
-			var oValue = oModel.getObject("/Products(3)", null, {expand:"Category"});
-			equal(oValue.ProductName, "Aniseed Syrup", "test getObject with expand param");
-			ok(!oValue.hasOwnProperty('ProductID'), "test getObject with expand param");
-			ok(!oValue.Category.hasOwnProperty('CategoryID'), "test getObject with expand param");
-			equal(oValue.Category.CategoryName, "Condiments", "test getObject with expand param");
-
-			var oValue = oModel.getObject("/Products(3)", null, {select: "ProductName,ProductID", expand:"Category"});
+			var oValue = oModel.getObject("/Products(3)", {expand:"Category"});
 			equal(oValue, undefined, "test getObject with expand param");
 
-			var oValue = oModel.getObject("/Products(3)", null, {select: "ProductName,ProductID,Category", expand:"Category,Supplier"});
-			equal(oValue, undefined, "test getObject with expand param");
+			var oValue = oModel.getObject("/Products(3)", {select: "ProductName,ProductID", expand:"Category"});
+			equal(oValue, undefined, "test getObject with expand and select param");
+
+			var oValue = oModel.getObject("/Products(3)", {select: "ProductName,ProductID,Category", expand:"Category,Supplier"});
+			equal(oValue, undefined, "test getObject with expand and select param");
 
 			start();
 		});
@@ -932,21 +927,20 @@
 			var oValue = oModel.getObject("/Categories(7)");
 			equal(oValue.CategoryName, "Produce", "test getObject with no param");
 			equal(oValue.CategoryID, 7, "test getObject with no param");
-			var sDeferred = oValue.Products.__deferred.uri;
-			ok(jQuery.sap.endsWith(sDeferred, "/Categories(7)/Products"), "test getObject with no param");
+			ok(Array.isArray(oValue.Products.__list), "test getObject with no param contains __list");
 
-			var oValue = oModel.getObject("/Categories(7)", null, {select: "CategoryName"});
+			var oValue = oModel.getObject("/Categories(7)", {select: "CategoryName"});
 			equal(oValue.CategoryName, "Produce", "test getObject with select param");
 			ok(!oValue.hasOwnProperty('CategoryID'), "test getObject with select param");
 			ok(!oValue.hasOwnProperty('Products'), "test getObject with select param");
 
-			var oValue = oModel.getObject("/Categories(7)", null, {expand:"Products"});
+			var oValue = oModel.getObject("/Categories(7)", {expand: "Products"});
 			equal(oValue.CategoryName, "Produce", "test getObject with expand param");
 			equal(oValue.CategoryID, 7, "test getObject with expand param");
 			equal(oValue.Products.length, 5, "test getObject with expand param");
 			equal(oValue.Products[0].ProductName, "Uncle Bob's Organic Dried Pears", "test getObject with expand param");
 
-			var oValue = oModel.getObject("/Categories(7)", null, {select: "CategoryName", expand:"Products"});
+			var oValue = oModel.getObject("/Categories(7)", {select: "CategoryName", expand: "Products"});
 			equal(oValue.CategoryName, "Produce", "test getObject with select and expand param");
 			ok(!oValue.hasOwnProperty('CategoryID'), "test getObject with select and expand param");
 			ok(!oValue.hasOwnProperty('Products'), "test getObject with select and expand param");
@@ -968,27 +962,26 @@
 			var oValue = oModel.getObject("/Suppliers(7)");
 			equal(oValue.ContactName, "Ian Devling", "test getObject with no param");
 			equal(oValue.SupplierID, 7, "test getObject with no param");
-			var sDeferred = oValue.Products.__deferred.uri;
-			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with no param");
+			ok(Array.isArray(oValue.Products.__list), "test getObject with no param contains __list");
 
-			var oValue = oModel.getObject("/Suppliers(7)", null, {select: "ContactName"});
+			var oValue = oModel.getObject("/Suppliers(7)", {select: "ContactName"});
 			equal(oValue.ContactName, "Ian Devling", "test getObject with select param");
 			ok(!oValue.hasOwnProperty('SupplierID'), "test getObject with select param");
 			ok(!oValue.hasOwnProperty('Products'), "test getObject with select param");
 
-			var oValue = oModel.getObject("/Suppliers(7)", null, {select: "*"});
+			var oValue = oModel.getObject("/Suppliers(7)", {select: "*"});
 			equal(oValue.ContactName, "Ian Devling", "test getObject with no param");
 			equal(oValue.SupplierID, 7, "test getObject with no param");
 			var sDeferred = oValue.Products.__deferred.uri;
 			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with no param");
 
-			var oValue = oModel.getObject("/Suppliers(7)", null, {select: "*", expand: "Products"});
+			var oValue = oModel.getObject("/Suppliers(7)", {select: "*", expand: "Products"});
 			equal(oValue.ContactName, "Ian Devling", "test getObject with no param");
 			equal(oValue.SupplierID, 7, "test getObject with no param");
 			var sDeferred = oValue.Products.__deferred.uri;
 			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with no param");
 
-			var oValue = oModel.getObject("/Suppliers(7)", null, {expand:"Products"});
+			var oValue = oModel.getObject("/Suppliers(7)", {expand:"Products"});
 			equal(oValue.ContactName, "Ian Devling", "test getObject with expand param");
 			equal(oValue.SupplierID, 7, "test getObject with expand param");
 			equal(oValue.Products.length, 5, "test getObject with expand param");
@@ -999,25 +992,11 @@
 			var sDeferred = oValue.Products[0].Category.__deferred.uri;
 			ok(jQuery.sap.endsWith(sDeferred, "/Products(16)/Category"), "test getObject with expand param");
 
-			var oValue = oModel.getObject("/Suppliers(7)", null, {expand:"Products,Products/Supplier,Products/Category"});
-			equal(oValue.ContactName, "Ian Devling", "test getObject with expand param");
-			equal(oValue.SupplierID, 7, "test getObject with expand param");
-			equal(oValue.Products.length, 5, "test getObject with expand param");
-			equal(oValue.Products[0].ProductName, "Pavlova", "test getObject with expand param");
-			equal(oValue.Products[0].ProductID, 16, "test getObject with expand param");
-			equal(oValue.Products[0].Supplier.SupplierID, 7, "test getObject with expand param");
-			equal(oValue.Products[0].Supplier.ContactName, "Ian Devling", "test getObject with expand param");
-			var sDeferred = oValue.Products[0].Supplier.Products.__deferred.uri;
-			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with expand param");
-			equal(oValue.Products[0].Category.CategoryName, "Confections", "test getObject with expand param");
-			equal(oValue.Products[0].Category.CategoryID, 3, "test getObject with expand param");
-			equal(oValue.Products[0].Supplier.SupplierID, 7, "test getObject with expand param");
-			var sDeferred = oValue.Products[0].Supplier.Products.__deferred.uri;
-			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with expand param");
-			ok(!oValue.Products[0].Category.hasOwnProperty('Description'), "test getObject with expand param");
+			var oValue = oModel.getObject("/Suppliers(7)", {expand:"Products,Products/Supplier,Products/Category"});
+			equal(oValue, undefined, "test getObject with expand returns undefined for incomplete data")
 
 			// should be same result as one getObject earlier because we return everything if it is included in expand
-			var oValue = oModel.getObject("/Suppliers(7)", null, {select: "*,Products/*,Products/Supplier/*,Products/Category/CategoryID,Products/Category/CategoryName", expand:"Products,Products/Supplier,Products/Category"});
+			var oValue = oModel.getObject("/Suppliers(7)", {select: "*,Products/*,Products/Supplier/*,Products/Category/CategoryID,Products/Category/CategoryName", expand:"Products,Products/Supplier,Products/Category"});
 			equal(oValue.ContactName, "Ian Devling", "test getObject with expand param");
 			equal(oValue.SupplierID, 7, "test getObject with expand param");
 			equal(oValue.Products.length, 5, "test getObject with expand param");
@@ -1052,21 +1031,20 @@
 			var oValue = oModel.getObject("/Suppliers(7)");
 			equal(oValue.ContactName, "Ian Devling", "test getObject with no param");
 			equal(oValue.SupplierID, 7, "test getObject with no param");
-			var sDeferred = oValue.Products.__deferred.uri;
-			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with no param");
+			ok(Array.isArray(oValue.Products.__list), "test getObject with no param contains __list");
 
-			var oValue = oModel.getObject("/Suppliers(7)", null, {select: "ContactName"});
+			var oValue = oModel.getObject("/Suppliers(7)", {select: "ContactName"});
 			equal(oValue.ContactName, "Ian Devling", "test getObject with select param");
 			ok(!oValue.hasOwnProperty('SupplierID'), "test getObject with select param");
 			ok(!oValue.hasOwnProperty('Products'), "test getObject with select param");
 
-			var oValue = oModel.getObject("/Suppliers(7)", null, {select: "*"});
+			var oValue = oModel.getObject("/Suppliers(7)", {select: "*"});
 			equal(oValue.ContactName, "Ian Devling", "test getObject with no param");
 			equal(oValue.SupplierID, 7, "test getObject with no param");
 			var sDeferred = oValue.Products.__deferred.uri;
 			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with no param");
 
-			var oValue = oModel.getObject("/Suppliers(7)", null, {expand:"Products"});
+			var oValue = oModel.getObject("/Suppliers(7)", {expand:"Products"});
 			equal(oValue.ContactName, "Ian Devling", "test getObject with expand param");
 			equal(oValue.SupplierID, 7, "test getObject with expand param");
 			equal(oValue.Products.length, 5, "test getObject with expand param");
@@ -1077,7 +1055,7 @@
 			var sDeferred = oValue.Products[0].Category.__deferred.uri;
 			ok(jQuery.sap.endsWith(sDeferred, "/Products(16)/Category"), "test getObject with expand param");
 
-			var oValue = oModel.getObject("/Suppliers(7)", null, {expand:"Products,Products/Supplier,Products/Category"});
+			var oValue = oModel.getObject("/Suppliers(7)", {expand:"Products,Products/Supplier,Products/Category"});
 			equal(oValue.ContactName, "Ian Devling", "test getObject with expand param");
 			equal(oValue.SupplierID, 7, "test getObject with expand param");
 			equal(oValue.Products.length, 5, "test getObject with expand param");
@@ -1094,7 +1072,7 @@
 			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with expand param");
 			equal(oValue.Products[0].Category.Description, "Desserts, candies, and sweet breads", "test getObject with expand param");
 
-			var oValue = oModel.getObject("/Suppliers(7)", null, {select: "Products/*", expand:"Products,Products/Supplier"});
+			var oValue = oModel.getObject("/Suppliers(7)", {select: "Products/*", expand:"Products,Products/Supplier"});
 			ok(!oValue.hasOwnProperty('SupplierID'), "test getObject with select and expand param");
 			equal(oValue.Products.length, 5, "test getObject with select and expand param");
 			equal(oValue.Products[0].ProductName, "Pavlova", "test getObject with select and expand param");
@@ -1102,7 +1080,7 @@
 			var sDeferred = oValue.Products[0].Supplier.__deferred.uri;
 			ok(jQuery.sap.endsWith(sDeferred, "/Products(16)/Supplier"), "test getObject with select and expand param");
 
-			var oValue = oModel.getObject("/Suppliers(7)", null, {select: "SupplierID, Products", expand:"Products,Products/Supplier,Products/Category"});
+			var oValue = oModel.getObject("/Suppliers(7)", {select: "SupplierID, Products", expand:"Products,Products/Supplier,Products/Category"});
 			equal(oValue.SupplierID, 7, "test getObject with select and expand param");
 			equal(oValue.Products.length, 5, "test getObject with select and expand param");
 			equal(oValue.Products[0].ProductName, "Pavlova", "test getObject with select and expand param");
@@ -1118,7 +1096,7 @@
 			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with select and expand param");
 			equal(oValue.Products[0].Category.Description, "Desserts, candies, and sweet breads", "test getObject with select and expand param");
 
-			var oValue = oModel.getObject("/Suppliers(7)", null, {select: "SupplierID, Products/ProductName", expand:"Products,Products/Supplier,Products/Category"});
+			var oValue = oModel.getObject("/Suppliers(7)", {select: "SupplierID, Products/ProductName", expand:"Products,Products/Supplier,Products/Category"});
 			equal(oValue.SupplierID, 7, "test getObject with select and expand param");
 			equal(oValue.Products.length, 5, "test getObject with select and expand param");
 			equal(oValue.Products[0].ProductName, "Pavlova", "test getObject with select and expand param");
@@ -1126,7 +1104,7 @@
 			ok(!oValue.Products[0].hasOwnProperty('Supplier'), "test getObject with select and expand param");
 			ok(!oValue.Products[0].hasOwnProperty('Category'), "test getObject with select and expand param");
 
-			var oValue = oModel.getObject("/Suppliers(7)", null, {expand:"Products/Supplier,Products/Category"});
+			var oValue = oModel.getObject("/Suppliers(7)", {expand:"Products/Supplier,Products/Category"});
 			equal(oValue.ContactName, "Ian Devling", "test getObject with expand param");
 			equal(oValue.SupplierID, 7, "test getObject with expand param");
 			equal(oValue.Products.length, 5, "test getObject with select and expand param");
@@ -1143,7 +1121,7 @@
 			ok(jQuery.sap.endsWith(sDeferred, "/Suppliers(7)/Products"), "test getObject with select and expand param");
 			equal(oValue.Products[0].Category.Description, "Desserts, candies, and sweet breads", "test getObject with select and expand param");
 
-			var oValue = oModel.getObject("/Suppliers(7)", null, {select: "SupplierID, Products/ProductName", expand:"Products"});
+			var oValue = oModel.getObject("/Suppliers(7)", {select: "SupplierID, Products/ProductName", expand:"Products"});
 			ok(!oValue.hasOwnProperty('ContactName'), "test getObject with select and expand param");
 			equal(oValue.SupplierID, 7, "test getObject with select and expand param");
 			equal(oValue.Products.length, 5, "test getObject with select and expand param");
@@ -1152,7 +1130,7 @@
 			ok(!oValue.Products[0].hasOwnProperty('Category'), "test getObject with select and param");
 			ok(!oValue.Products[0].hasOwnProperty('Supplier'), "test getObject with select and param");
 
-			var oValue = oModel.getObject("/Suppliers(7)", null, {select: "SupplierID, Products/ProductName, Products", expand:"Products"});
+			var oValue = oModel.getObject("/Suppliers(7)", {select: "SupplierID, Products/ProductName, Products", expand:"Products"});
 			ok(!oValue.hasOwnProperty('ContactName'), "test getObject with select and expand param");
 			equal(oValue.SupplierID, 7, "test getObject with select and expand param");
 			equal(oValue.Products.length, 5, "test getObject with select and expand param");
@@ -1980,7 +1958,7 @@
 		});
 	});
 
-	asyncTest("createEntry with complex types wich have namespace with . characters", function() {
+	asyncTest("createEntry with complex types which have namespace with . characters", function() {
 		var oModel = initModel(sURI, {metadataUrlParams : {test: "complex"}});
 		oModel.metadataLoaded().then(function() {
 			var oContext = oModel.createEntry("BusinessPartnerSet");
