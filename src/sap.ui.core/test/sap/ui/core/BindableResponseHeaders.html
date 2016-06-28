@@ -1,0 +1,197 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>ODataModel: bindableResponseHeaders - sap.ui.model.odata.v2</title>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<!--[if IE]>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+	<![endif]-->
+	<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.ui.layout"
+			data-sap-ui-theme="sap_bluecrystal">
+	</script>
+	<script type="text/javascript" src="testdata/NorthwindData.js"></script>
+	<script>
+
+		// Configuration
+		var iResponseDelay = 200;
+		var iMaxAge = 30000;
+
+
+		// Fake Service
+		var xhr = sinon.useFakeXMLHttpRequest();
+		xhr.useFilters = true;
+		xhr.addFilter(function(method, url) {
+			return url.indexOf("fakeservice://") != 0;
+		});
+
+		xhr.onCreate = function(request) {
+			request.onSend = function() {
+				// Default request answer values:
+				var mResponseHeaders = {
+					"Content-Type" : "application/json;charset=utf-8",
+					"DataServiceVersion" : "2.0;"
+				};
+				var iStatus = 200;
+
+				var iPos = request.url.indexOf("?");
+				if (iPos > -1) {
+					request.url = request.url.substr(0, iPos);
+				}
+
+
+
+				if (request.url === "fakeservice://northwind/") {
+					sResponse = NorthwindData.root;
+				} else if (request.url === "fakeservice://northwind/$metadata") {
+					mResponseHeaders["Content-Type"] = "application/xml;charset=utf-8";
+					sResponse = NorthwindData.$metadata;
+				} else if (request.url === "fakeservice://northwind/Products/$count") {
+					mResponseHeaders["Content-Type"] = "text/plain";
+					sResponse = NorthwindData.Products.d.results.length;
+				} else if (request.url === "fakeservice://northwind/Products") {
+					mResponseHeaders["Age"] = Date.now();
+
+					sResponse = JSON.stringify(NorthwindData.Products);
+				} else {
+					var aMatches = /fakeservice:\/\/northwind\/Products\((.*?)\)/.exec(request.url);
+					var iProductId = parseInt(aMatches[1]);
+
+					mResponseHeaders["Age"] = Date.now();
+
+					sResponse = JSON.stringify({
+						d: NorthwindData.Products.d.results[iProductId - 1]
+					});
+				}
+
+
+
+
+
+				if (request.async === true) {
+					var oRequest = request;
+					setTimeout(function() {
+						oRequest.respond(iStatus, mResponseHeaders, sResponse);
+					}, iResponseDelay);
+				} else {
+					request.respond(iStatus, mResponseHeaders, sResponse);
+				}
+			};
+		};
+
+
+		// Display control
+		sap.ui.core.Control.extend("AgeDisplay", {
+			metadata: {
+				properties: {
+					label: { type: "string" },
+					value: { type: "string" },
+					age: { type: "string" },
+					maxAge: { type: "int", defaultValue: "30000" }
+				}
+			},
+
+			renderer: function(oRm, oControl) {
+				var sId = oControl.getId();
+
+				oRm.write("<div");
+				oRm.writeControlData(oControl);
+				oRm.writeClasses();
+				oRm.addStyle("width", "100%");
+				oRm.addStyle("height", "100%");
+				oRm.addStyle("padding", "1rem");
+				oRm.addStyle("margin-bottom", "1rem");
+				oRm.writeAttribute("title", "Age: " + oControl.getAge());
+				oRm.writeStyles();
+				oRm.write(">");
+
+				var fAge = Math.round((Date.now() - oControl.getAge()) / 1000);
+				oRm.write("<div id=\"" + sId + "-label\" style=\"display: inline-block; width: 28%;\">" + oControl.getLabel() + "</div>")
+				oRm.write("<div id=\"" + sId + "-value\" style=\"display: inline-block; width: 28%;\">" + oControl.getValue() + "</div>")
+				oRm.write("<div id=\"" + sId + "-age\" style=\"display: inline-block; width: 28%;\">Age: " + fAge + "s</div>")
+				oRm.write("<button id=\"" + sId + "-refresh\" style=\"display: inline-block; width: 10%;\">Refresh</button>");
+				oRm.write("</div>");
+			},
+
+			onBeforeRendering: function() {
+				clearInterval(this._refreshAgeInterval);
+			},
+
+			onAfterRendering: function() {
+				this.getDomRef("refresh").addEventListener("click", function(oEvent) {
+					var sPath = this.getBindingContext().getPath();
+					oModel.read(sPath);
+				}.bind(this));
+
+				clearInterval(this._refreshAgeInterval);
+				this._refreshAgeInterval = setInterval(this._showAge.bind(this), 100);
+				this._showAge();
+			},
+
+			_showAge: function() {
+				var iAge = parseInt(Date.now() - this.getAge());
+				var fAge = Math.round(iAge / 1000);
+
+				var oDom = this.getDomRef();
+				this.getDomRef("age").innerHTML = "Age: " + fAge + "s";
+
+				var iMaxAge = this.getMaxAge();
+
+				if (iAge > iMaxAge) {
+					iAge = iMaxAge;
+				} else if (iAge < 0) {
+					iAge = 0;
+				}
+
+				var fPercent = iAge / iMaxAge;
+
+				var iR = Math.round(-300 + (400 * fPercent));
+				var iY = Math.round(-100 + (300 * fPercent));
+				var iG = Math.round(100 + (100 * fPercent));
+
+				oDom.style.background = "linear-gradient(to bottom, " +
+					"red " + iR + "%, " +
+					"yellow " + iY + "%, " +
+					"green " + iG + "%" +
+				")";
+			}
+
+		});
+
+
+		// UI Code
+		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://northwind", {
+			bindableResponseHeaders: [ "age" ],
+			json: true,
+			useBatch: false
+		});
+		sap.ui.getCore().setModel(oModel);
+
+
+		var oLayout = new sap.ui.layout.VerticalLayout({
+			width: "100%"
+		});
+		oLayout.placeAt("content");
+		oLayout.bindAggregation("content", {
+			path: "/Products",
+			template: new AgeDisplay({
+				label: "Name",
+				value: {
+					path: "ProductName"
+				},
+				age: {
+					path: "__metadata/headers/age"
+				}
+			})
+		});
+
+	</script>
+</head>
+<body class="sapUiBody" role="application">
+	<h1>Test Page for sap.ui.model.odata.v2.ODataModel: BindableResponseHeaders</h1>
+	<div id="content"></div>
+</body>
+</html>
