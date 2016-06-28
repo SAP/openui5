@@ -142,6 +142,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		},
 
 		/**
+		 * Returns the number of visible rows that are not empty.
+		 * If the number of visible rows is smaller than the number of data rows,
+		 * the number of visible rows is returned, otherwise the number of data rows.
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @returns {int}
+		 * @private
+		 */
+		getNonEmptyVisibleRowCount : function(oTable) {
+			return Math.min(oTable.getVisibleRowCount(), oTable._getRowCount());
+		},
+
+		/**
 		 * Returns a combined info about the currently focused item (based on the item navigation)
 		 * @param {sap.ui.table.Table} oTable Instance of the table
 		 * @return {Object|null}
@@ -434,7 +446,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		},
 
 		/**
-		 * Checks whether the cell of the geven DOM reference is in the first row (from DOM point of view) of the scrollable area.
+		 * Scrolls the data in the table to the end or to the beginning by manipulating the property <code>firstVisibleRow</code>.
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @param {boolean} bDown Whether to scroll down or up
+		 * @returns {boolean} True if scrolling was actually performed
+		 * @private
+		 */
+		scrollMax : function(oTable, bDown) {
+			var bScrolled = false;
+			var iFirstVisibleScrollableRow = oTable._getSanitizedFirstVisibleRow();
+
+			if (bDown) {
+				var iFirstVisibleRow = oTable._getRowCount() - this.getNonEmptyVisibleRowCount(oTable);
+				if (iFirstVisibleScrollableRow < iFirstVisibleRow) {
+					oTable.setFirstVisibleRow(iFirstVisibleRow);
+					bScrolled = true;
+				}
+			} else {
+				if (iFirstVisibleScrollableRow > 0) {
+					oTable.setFirstVisibleRow(0);
+					bScrolled = true;
+				}
+			}
+
+			return bScrolled;
+		},
+
+		/**
+		 * Checks whether the cell of the given DOM reference is in the first row (from DOM point of view) of the scrollable area.
 		 * @param {sap.ui.table.Table} oTable Instance of the table
 		 * @param {Object} oRef Cell DOM Reference
 		 * @private
@@ -447,7 +486,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		},
 
 		/**
-		 * Checks whether the cell of the geven DOM reference is in the last row (from DOM point of view) of the scrollable area.
+		 * Checks whether the cell of the given DOM reference is in the last row (from DOM point of view) of the scrollable area.
 		 * @param {sap.ui.table.Table} oTable Instance of the table
 		 * @param {Object} oRef Cell DOM Reference
 		 * @private
