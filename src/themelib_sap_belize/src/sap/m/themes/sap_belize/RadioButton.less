@@ -5,32 +5,20 @@
 
 .sapMRbB {
 	font-size: 1rem; /* override font size of the message dialog */
-	height: 2.875rem;
-	width: 2.875rem;
-	padding: 1px; /* using padding here so that margin won't collide */
-}
-
-.sapMRbHasLabel .sapMRbB {
-	width: 2rem;
 }
 
 .sapMRbBLabel {
-	margin-left: .8125rem;
 	line-height: 3rem;
 	height: 3rem;
 }
 
 .sapMRbB .sapMRbBOut {
-	height: 1em;
-	width: 1em;
+	height: 1rem;
+	width: 1rem;
 	border: 2px solid @sapUiFieldBorderColor;
 	background-color: @sapUiFieldBackground;
 	margin: 0.8125em;
 	padding: 1px; /* using padding here so that margin won't collide */
-}
-
-.sapMRbHasLabel .sapMRbBOut {
-	margin-right: 0;
 }
 
 .sapMRb:focus:before {
@@ -56,6 +44,7 @@
 
 .sapMRbHoverable:hover {
 	border-color: @sapUiFieldHoverBorderColor;
+	background-color: @sapUiFieldHoverBackground;
 }
 
 .sapMRb.sapMRbBTouched .sapMRbBOut{
@@ -88,6 +77,7 @@ html[data-sap-ui-browser^="ie"] .sapMRbB .sapMRbBInn {
 .sapMRbErr .sapMRbBOut,
 .sapMRbErr.sapMRbBTouched .sapMRbBOut {
 	border-color: @sapUiFieldInvalidColor;
+	background-color: @sapUiFieldInvalidBackground;
 }
 
 .sapMRbWarn.sapMRbSel .sapMRbBInn {
@@ -97,16 +87,17 @@ html[data-sap-ui-browser^="ie"] .sapMRbB .sapMRbBInn {
 .sapMRbWarn .sapMRbBOut,
 .sapMRbWarn.sapMRbBTouched .sapMRbBOut {
 	border-color: @sapUiFieldWarningColor;
+	background-color: @sapUiFieldWarningBackground;
 }
 
 /* Read only */
 .sapMRbRo .sapMRbBOut {
-	background-color: @sapUiBaseBG;
-	border-color: @sapUiFieldBorderColor;
+	background-color: @sapUiFieldReadOnlyBackground;
+	border-color: @sapUiFieldReadOnlyBorderColor;
 }
 
 .sapMRbRo.sapMRbSel .sapMRbBInn {
-	background-color: @sapUiContentIconColor;
+	background-color: @sapUiContentNonInteractiveIconColor;
 }
 
 /* Compact size */
@@ -117,22 +108,20 @@ html[data-sap-ui-browser^="ie"] .sapMRbB .sapMRbBInn {
 
 	.sapMRbB {
 		font-size: 1rem; /* override font size of the message dialog */
-		height: 1.875rem;
-		width: 1.875rem;
 	}
 
 	.sapMRbB .sapMRbBOut {
-		height: 0.75rem;
-		width: 0.75rem;
+		height: 1rem;
+		width: 1rem;
 		border-width: 0.125rem;
 		margin: 0.5rem;
-		padding: 0;
+		box-sizing: border-box;
 	}
 
 	.sapMRbB .sapMRbBInn {
 		height: 0.25rem;
 		width: 0.25rem;
-		margin: 0.1875rem;
+		margin: 0.125rem;
 	}
 
 	.sapMRbBLabel {
