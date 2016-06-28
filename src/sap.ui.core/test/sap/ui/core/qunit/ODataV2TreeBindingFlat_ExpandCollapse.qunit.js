@@ -141,3 +141,50 @@ asyncTest("Collapse all nodes at level 0", function(){
 		oBinding.getContexts(0, 10, 700);
 	});
 });
+
+asyncTest("Bug fix: when deepnode is collapsed, its parents' magnitude needs to be updated", function() {
+	oModel.attachMetadataLoaded(function() {
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 10,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
+		});
+
+		// check what happens when total number of available nodes is less than a page size
+		function handler1(oEvent) {
+			oBinding.detachChange(handler1);
+
+			oBinding.attachChange(handler2);
+			// expand 1005
+			oBinding.expand(4, true);
+		}
+
+		function handler2(oEvent) {
+			oBinding.detachChange(handler2);
+			ok(oBinding.findNode(5).key.indexOf("1630") !== -1, "The first child in 1005 is 1630");
+
+			oBinding.attachChange(handler3);
+			// expand 1630
+			oBinding.expand(5, true);
+		}
+
+		function handler3(oEvent) {
+			oBinding.detachChange(handler3);
+
+			ok(oBinding.findNode(6).key.indexOf("1638") !== -1, "The first child in 1630 is 1638");
+
+			oBinding.collapse(5);
+			ok(oBinding.findNode(13).key.indexOf("1006") !== -1, "The sibling of 1005 is 1006");
+
+			// expand and collapse again
+			oBinding.expand(5);
+			oBinding.collapse(5);
+			ok(oBinding.findNode(12).key.indexOf("1637") !== -1, "The last child of 1005 is 1637");
+			start();
+		}
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0, 10, 10);
+	});
+});
