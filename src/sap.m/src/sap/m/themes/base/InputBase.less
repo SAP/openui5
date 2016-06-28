@@ -1,11 +1,10 @@
 /* ============================================= */
-/* CSS for control sap.m/InputBase.control       */
+/* CSS for control sap.m/InputBase               */
 /* ============================================= */
 
 .sapMInputBase,
 .sapMInputBaseInner,
-.sapMInputBasePlaceholder,
-.sapMInputBaseMessage {
+.sapMInputBasePlaceholder {
 	box-sizing: border-box;
 }
 
@@ -79,16 +78,6 @@
 
 .sapMInputBaseInner::-webkit-input-placeholder {
 	text-overflow: ellipsis !important; /* important is necessary to overwrite inline style of shadow dom */
-}
-
-.sapMInputBaseMessage {
-	padding: 0.3125rem;
-	background: @sapUiFieldBackground;
-	display: inline-block;
-}
-
-.sapMInputBaseMessageText {
-	width: 100%;
 }
 
 .sapMInputBaseInner:invalid {
