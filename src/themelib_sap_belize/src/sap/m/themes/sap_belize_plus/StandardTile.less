@@ -22,17 +22,17 @@
 .sapMStdTileNumS {
 	font-family: @sapUiFontCondensedFamily;
 	font-stretch: condensed; /* for Firefox */
-	color: lighten(@sapUiTileTextColor, 20);
+	color: @sapUiContentLabelColor;
 }
 
 .sapMStdTileNumUnit {
-	color: lighten(@sapUiTileTextColor, 20);
+	color: @sapUiContentLabelColor;
 	text-transform: uppercase;
 }
 
 
 .sapMStdTileTitle {
-	color: @sapUiHighlight;
+	color: @sapUiContentLabelColor;
 }
 
 .sapMStdTileInfoNone {
@@ -51,7 +51,7 @@
 }
 
 .sapMStdTileMonitorType {
-	background-color: darken(@sapUiTileBackground, 5);
+	background-color: darken(@sapUiTileBackground, 2);
 }
 
 .sapMTCEditable .sapMStdTileMonitorType {
@@ -59,7 +59,7 @@
 }
 
 .sapMStdTileMonitorType .sapMStdTileTitle {
-	color: lighten(@sapUiTileTextColor, 20);
+	color: @sapUiContentLabelColor;
 }
 
 .sapMTileActive-CTX .sapMStdTileMonitorType {
@@ -68,6 +68,10 @@
 
 .sapMTileActive-CTX .sapMStdIconCreate {
 	opacity: 1;
+}
+
+.sapMStdTileInfo {
+	color: @sapUiContentLabelColor;
 }
 
 .sapMTileActive-CTX .sapMStdTileInfoWarning,
