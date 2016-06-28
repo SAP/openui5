@@ -262,7 +262,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		if (aMonths.length > 1 && oMonthDate) {
 			// for more than one month - re-render same months (if already rendered once)
-			oDate = this._newUniversalDate(oMonthDate);
+			oDate = CalendarUtils._createUniversalUTCDate(oMonthDate, this.getPrimaryCalendarType());
 		}else if (aMonths.length > 1) {
 			oDate = _determineFirstMonthDate.call(this, this._getFocusedDate());
 		}else {
@@ -274,7 +274,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			oMonthDate = this._newUniversalDate(oDate);
 			if (i > 0) {
 				oMonthDate.setUTCDate(1);
-				oMonthDate.setUTCMonth(oDate.getUTCMonth() + i);
+				oMonthDate.setUTCMonth(oMonthDate.getUTCMonth() + i);
 			}
 			if (oFocusedDate.getUTCFullYear() == oMonthDate.getUTCFullYear() && oFocusedDate.getUTCMonth() == oMonthDate.getUTCMonth()) {
 				oMonth.setDate(CalendarUtils._createLocalDate(oFocusedDate));
@@ -1017,7 +1017,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			oMonth._bNoThemeChange = true;
 		}
 
-		var oDate = this._getFocusedDate();
+		var oDate;
+		if (aMonths.length > 1) {
+			oDate = CalendarUtils._createUniversalUTCDate(aMonths[0].getDate(), this.getPrimaryCalendarType());
+		}else {
+			oDate = this._getFocusedDate();
+		}
 		_setHeaderText.call(this, oDate);
 
 		// check if day names and month names are too big -> use smaller ones
@@ -1533,7 +1538,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			if (!this._bLongMonth) {
 				// update short month name (long name used by default)
-				var oDate = this._getFocusedDate();
+				var aMonths = this.getAggregation("month");
+				var oDate;
+
+				if (aMonths.length > 1) {
+					oDate = CalendarUtils._createUniversalUTCDate(aMonths[0].getDate(), this.getPrimaryCalendarType());
+				}else {
+					oDate = this._getFocusedDate();
+				}
+
 				_setHeaderText.call(this, oDate);
 			}
 		}else if (_getMonths.call(this) > 1) {
