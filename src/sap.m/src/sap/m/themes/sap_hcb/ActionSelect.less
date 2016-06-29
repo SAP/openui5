@@ -1,0 +1,48 @@
+/* ============================================================== */
+/* CSS for control sap.m/ActionSelect High Contrast Black theme   */
+/* ============================================================== */
+
+/* ----------------------------- */
+/* button                        */
+/* ----------------------------- */
+
+.sapMActionSelectPicker .sapMBtn {
+	display: block;
+	width: 100%;
+	height: 3rem;
+    padding: 0.25rem;
+	text-shadow: none;
+}
+
+.sapMActionSelectPicker .sapMBtnInner {
+ 	border: 1px solid @sapHCStandardFG;
+}
+
+html.sap-desktop .sapMActionSelectPicker .sapMBtnDefault:focus {
+	outline-color: @sapHCHighlightBG;
+}
+
+/* ==================================================================================== */
+/* CSS for control sap.m/ActionSelect High Contrast Black theme compact/condensed sizes */
+/* ==================================================================================== */
+
+/* ----------------------------- */
+/* button                        */
+/* ----------------------------- */
+
+.sapUiSizeCompact.sapMActionSelectPicker .sapMBtn,
+.sapUiTableCell .sapUiSizeCondensed.sapMActionSelectPicker .sapMBtn {
+	height: 2rem;
+}
+
+.sapUiSizeCompact.sapMActionSelectPicker .sapMBtnInner {
+ 	height: 1.625rem;
+}
+
+.sapUiSizeCompact.sapMActionSelectPicker .sapMBtnContent {
+	line-height: 1.625rem;
+}
+
+.sapUiSizeCompact.sapMActionSelectPicker .sapMBtn {
+	padding: 0.187rem 0.25rem;
+}
