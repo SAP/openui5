@@ -82,6 +82,45 @@
 			oInput.setValue("ValidateFieldGroup - Event: DateTimePicker " + oDTP.getId());
 		};
 
+		var oLegend;
+
+		function toggleSpecialDates(oEvent) {
+			var bPressed = oEvent.getParameter("pressed");
+			var oDTP = sap.ui.getCore().byId("DTP2");
+			if (!sap.ui.unified.DateTypeRange) {
+				sap.ui.getCore().loadLibrary("sap.ui.unified");
+				jQuery.sap.require("sap.ui.unified.library");
+			}
+			if (!oLegend) {
+				oLegend = new sap.ui.unified.CalendarLegend("Legend1", {
+					items: [
+					        new sap.ui.unified.CalendarLegendItem("T1", {type: sap.ui.unified.CalendarDayType.Type01, text: "Typ 1"}),
+					        new sap.ui.unified.CalendarLegendItem("T2", {type: sap.ui.unified.CalendarDayType.Type02, text: "Typ 2"}),
+					        new sap.ui.unified.CalendarLegendItem("T3", {type: sap.ui.unified.CalendarDayType.Type03, text: "Typ 3"}),
+					        new sap.ui.unified.CalendarLegendItem("T4", {type: sap.ui.unified.CalendarDayType.Type04, text: "Typ 4"}),
+					        new sap.ui.unified.CalendarLegendItem("T5", {type: sap.ui.unified.CalendarDayType.Type05, text: "Typ 5"}),
+					        new sap.ui.unified.CalendarLegendItem("T6", {type: sap.ui.unified.CalendarDayType.Type06, text: "Typ 6"}),
+					        new sap.ui.unified.CalendarLegendItem("T7", {type: sap.ui.unified.CalendarDayType.Type07, text: "Typ 7"}),
+					        new sap.ui.unified.CalendarLegendItem("T8", {type: sap.ui.unified.CalendarDayType.Type08, text: "Typ 8"}),
+					        new sap.ui.unified.CalendarLegendItem("T9", {type: sap.ui.unified.CalendarDayType.Type09, text: "Typ 9"}),
+					        new sap.ui.unified.CalendarLegendItem("T10", {type: sap.ui.unified.CalendarDayType.Type10, text: "Typ 10"}),
+					        ]
+				});
+				oDTP.setLegend(oLegend);
+			}
+			if (bPressed) {
+				for (var i = 0; i < 10; i++) {
+					var oDate = new Date(oDTP.getDateValue());
+					oDate.setDate(oDate.getDate() + i);
+					var sType = "Type" + (i < 9 ? "0" + (i + 1) : "10");
+					var oSpecialDate = new sap.ui.unified.DateTypeRange({startDate: oDate, type: sType});
+					oDTP.addSpecialDate(oSpecialDate);
+				}
+			}else {
+				oDTP.destroySpecialDates();
+			}
+		};
+
 		var oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData({
 			dateValue: new Date()
@@ -95,7 +134,8 @@
 				new sap.m.DateTimePicker("DTP1", { fieldGroupIds: ["group1"], change: handleChange, validateFieldGroup: handleFieldGroupValidation }),
 				new sap.m.Label({text: "DateTimePicker with given Value and Formatter", labelFor: "DTP2"}),
 				new sap.m.DateTimePicker("DTP2", { value: "2016-02-16,12-50-30", valueFormat: "yyyy-MM-dd,HH-mm-ss", displayFormat: "long/short", fieldGroupIds: ["group1"], change: handleChange, validateFieldGroup: handleFieldGroupValidation }),
-				new sap.m.Label({text: "DateTimePicker with given DateValue and Formatter", labelFor: "DTP3"}),
+				new sap.m.ToggleButton("TB1", { text: "specialDates", press: toggleSpecialDates}),
+				new sap.m.Label({text: "DateTimePicker with given DateValue and Formatter", labelFor: "DTP3", width: "100%"}),
 				new sap.m.DateTimePicker("DTP3", { dateValue: new Date(2016, 1, 16, 12, 50, 30), displayFormat: "short", change: handleChange }),
 				new sap.m.Label({text: "readonly DateTimePicker with given DateValue and Formatter", labelFor: "DTP4"}),
 				new sap.m.DateTimePicker("DTP4", { dateValue: new Date(2016, 1, 16, 12, 50, 30), displayFormat: "yyyy-MM-dd, HH:mm:ss", editable: false, change: handleChange }),
