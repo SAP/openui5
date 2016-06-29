@@ -17,6 +17,10 @@
 <script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"
+			data-sap-ui-cover-only="sap/ui/unified/FileUploader.js"
+		></script>
 <script>
 
 	/**
@@ -360,6 +364,32 @@
 
 		//cleanup
 		oFileUploader.destroy();
+	});
+
+	QUnit.module("BlindLayer", {
+		setup: function() {
+			this.oFileUploader = createFileUploader();
+
+			//explicit place the FileUploader somewhere, otherwise there are some internal objects missing!
+			this.oFileUploader.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+
+		teardown: function() {
+			this.oFileUploader.destroy();
+		}
+	});
+
+	QUnit.test("Check if BlindLayer is in DOM", function(assert) {
+		var $Frame = this.oFileUploader.$("frame");
+
+		var oParentRef = $Frame.parent().get(0);
+		var oStatic = sap.ui.getCore().getStaticAreaRef();
+
+		assert.equal($Frame.length, 1, "iFrame was inserted into DOM");
+		assert.equal(oParentRef, oStatic, "FileUploader's Blindlayer UI-area is the static UI-area");
+
+		assert.equal($Frame.css("display"), "none", "Blindlayer is 'display:none'");
 	});
 
 </script>
