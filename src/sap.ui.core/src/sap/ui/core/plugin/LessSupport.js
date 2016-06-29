@@ -78,6 +78,7 @@
 				// configure LESS (development mode + error handling)
 				window.less = window.less || {
 					env: "development",
+					relativeUrls: true,
 					errorReporting: function(sMethod, ex, sRootHref) {
 						/*eslint-disable no-console */
 						if (sMethod === "add" && window.console) {
