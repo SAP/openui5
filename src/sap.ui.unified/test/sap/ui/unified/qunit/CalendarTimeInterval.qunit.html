@@ -21,6 +21,7 @@
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 		<!-- Test functions -->
@@ -66,7 +67,8 @@
 				intervalSelection: true,
 				selectedDates: [new sap.ui.unified.DateRange({startDate: new Date("2015", "7", "13", "10", "25"), endDate: new Date("2015", "7", "13", "15", "45")})],
 				specialDates: [new sap.ui.unified.DateTypeRange({startDate: new Date("2015", "7", "14"), type: sap.ui.unified.CalendarDayType.Type01, tooltip: "Text"}),
-				               new sap.ui.unified.DateTypeRange({startDate: new Date("2015", "7", "13", "15", "11"), endDate: new Date("2015", "7", "13", "19", "15"), type: sap.ui.unified.CalendarDayType.Type02, tooltip: "Text"})]
+				               new sap.ui.unified.DateTypeRange({startDate: new Date("2015", "7", "13", "15", "11"), endDate: new Date("2015", "7", "13", "19", "15"), type: sap.ui.unified.CalendarDayType.Type02, tooltip: "Text"})],
+				legend: "Legend1"
 			}).placeAt("uiArea2");
 
 			var oCal3StartDate = new Date("2015", "7", "13", "8", "57", "10");
@@ -89,6 +91,21 @@
 			var oFormatTime = sap.ui.core.format.DateFormat.getTimeInstance({style: "short"});
 			var oNow = new Date();
 			oNow.setMinutes(0); // to compare with interval starts
+
+			var oLegend = new sap.ui.unified.CalendarLegend("Legend1", {
+				items: [
+				        new sap.ui.unified.CalendarLegendItem("T1", {type: sap.ui.unified.CalendarDayType.Type01, text: "Type 1"}),
+				        new sap.ui.unified.CalendarLegendItem("T2", {type: sap.ui.unified.CalendarDayType.Type02, text: "Type 2"}),
+				        new sap.ui.unified.CalendarLegendItem("T3", {type: sap.ui.unified.CalendarDayType.Type03, text: "Type 3"}),
+				        new sap.ui.unified.CalendarLegendItem("T4", {type: sap.ui.unified.CalendarDayType.Type04, text: "Type 4"}),
+				        new sap.ui.unified.CalendarLegendItem("T5", {type: sap.ui.unified.CalendarDayType.Type05, text: "Type 5"}),
+				        new sap.ui.unified.CalendarLegendItem("T6", {type: sap.ui.unified.CalendarDayType.Type06, text: "Type 6"}),
+				        new sap.ui.unified.CalendarLegendItem("T7", {type: sap.ui.unified.CalendarDayType.Type07, text: "Type 7"}),
+				        new sap.ui.unified.CalendarLegendItem("T8", {type: sap.ui.unified.CalendarDayType.Type08, text: "Type 8"}),
+				        new sap.ui.unified.CalendarLegendItem("T9", {type: sap.ui.unified.CalendarDayType.Type09, text: "Type 9"}),
+				        new sap.ui.unified.CalendarLegendItem("T10", {type: sap.ui.unified.CalendarDayType.Type10, text: "Type 10"}),
+				        ]
+			});
 
 			qutils.delayTestStart();
 
@@ -159,10 +176,12 @@
 			test("special days", function() {
 				ok(!jQuery("#Cal2--TimesRow-201508131200").hasClass("sapUiCalItemType02"), "20150813-1200 is not special month of Type02");
 				ok(jQuery("#Cal2--TimesRow-201508131400").hasClass("sapUiCalItemType02"), "20150813-1400 is special month of Type02");
-				ok(jQuery("#Cal2--TimesRow-201508131400").attr("title", "Text"), "20150813-1400 has special days tooltip");
+				equal(jQuery("#Cal2--TimesRow-201508131400").attr("title"), "Text", "20150813-1400 has special days tooltip");
+				equal(jQuery("#Cal2--TimesRow-201508131400").attr("aria-label"), "August 13, 2015 at 2:00 PM; Type 2", "20150813-1400 aria-label");
 				ok(jQuery("#Cal2--TimesRow-201508131600").hasClass("sapUiCalItemType02"), "20150813-1600 is special month of Type02");
 				ok(jQuery("#Cal2--TimesRow-201508131800").hasClass("sapUiCalItemType02"), "20150813-1800 is special month of Type02");
 				ok(!jQuery("#Cal2--TimesRow-201508132000").hasClass("sapUiCalItemType02"), "20150813-2000 is not special month of Type02");
+				equal(jQuery("#Cal2--TimesRow-201508132000").attr("aria-label"), "August 13, 2015 at 8:00 PM", "20150813-2000 aria-label");
 
 				ok(jQuery("#Cal2--TimesRow-201508140000").hasClass("sapUiCalItemType01"), "20150814-0000 is special month of Type01");
 				ok(jQuery("#Cal2--TimesRow-201508140200").hasClass("sapUiCalItemType01"), "20150814-0200 is special month of Type01");
@@ -171,7 +190,7 @@
 
 				ok(!jQuery("#Cal3--TimesRow-201508130830").hasClass("sapUiCalItemType02"), "20150813-0830 is not special month of Type02");
 				ok(jQuery("#Cal3--TimesRow-201508130900").hasClass("sapUiCalItemType02"), "20150813-0900 is special month of Type02");
-				ok(jQuery("#Cal3--TimesRow-201508130930").attr("title", "Text"), "20150813-0930 has special days tooltip");
+				equal(jQuery("#Cal3--TimesRow-201508130930").attr("title"), "Text", "20150813-0930 has special days tooltip");
 				ok(!jQuery("#Cal3--TimesRow-201508131000").hasClass("sapUiCalItemType02"), "20150813-1000 is not special month of Type02");
 			});
 

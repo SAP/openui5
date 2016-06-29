@@ -68,6 +68,7 @@
 
 			var oCal = new sap.ui.unified.CalendarMonthInterval("Cal1",{
 				width: sap.ui.Device.system.phone?"340px":"464px",
+			legend: "Legend1",
 				select: function(oEvent){
 					var oTF = sap.ui.getCore().byId("TF1");
 					var oCalendar = oEvent.oSource;
@@ -326,7 +327,22 @@
 				width: "8em"
 			}).placeAt("event3");
 
-		</script>
+			var oLegend = new sap.ui.unified.CalendarLegend("Legend1", {
+				items: [
+				        new sap.ui.unified.CalendarLegendItem("T1", {type: sap.ui.unified.CalendarDayType.Type01, text: "Typ 1"}),
+				        new sap.ui.unified.CalendarLegendItem("T2", {type: sap.ui.unified.CalendarDayType.Type02, text: "Typ 2"}),
+				        new sap.ui.unified.CalendarLegendItem("T3", {type: sap.ui.unified.CalendarDayType.Type03, text: "Typ 3"}),
+				        new sap.ui.unified.CalendarLegendItem("T4", {type: sap.ui.unified.CalendarDayType.Type04, text: "Typ 4"}),
+				        new sap.ui.unified.CalendarLegendItem("T5", {type: sap.ui.unified.CalendarDayType.Type05, text: "Typ 5"}),
+				        new sap.ui.unified.CalendarLegendItem("T6", {type: sap.ui.unified.CalendarDayType.Type06, text: "Typ 6"}),
+				        new sap.ui.unified.CalendarLegendItem("T7", {type: sap.ui.unified.CalendarDayType.Type07, text: "Typ 7"}),
+				        new sap.ui.unified.CalendarLegendItem("T8", {type: sap.ui.unified.CalendarDayType.Type08, text: "Typ 8"}),
+				        new sap.ui.unified.CalendarLegendItem("T9", {type: sap.ui.unified.CalendarDayType.Type09, text: "Typ 9"}),
+				        new sap.ui.unified.CalendarLegendItem("T10", {type: sap.ui.unified.CalendarDayType.Type10, text: "Typ 10"}),
+				        ]
+			});
+
+	</script>
 
 	</head>
 	<body class="sapUiBody" role="application">
