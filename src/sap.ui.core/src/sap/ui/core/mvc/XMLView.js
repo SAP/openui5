@@ -498,6 +498,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		 * @private
 		 */
 		var XMLAfterRenderingNotifier = Control.extend("sap.ui.core.mvc.XMLAfterRenderingNotifier", {
+			metadata: {
+				library: "sap.ui.core"
+			},
 			renderer: function(oRM, oControl) {
 				oRM.write(""); // onAfterRendering is only called if control produces output
 			}
