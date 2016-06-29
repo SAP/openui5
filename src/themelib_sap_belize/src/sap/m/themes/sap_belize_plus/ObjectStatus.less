@@ -3,7 +3,14 @@
 /* Belize Plus theme                   */
 /* =================================== */
 
-.sapMObjStatus .sapMObjStatusText,
-.sapMObjStatus .sapMObjStatusIcon {
-	text-shadow: @sapUiShadowText;
+
+.sapMLIBActive .sapMObjStatusNone > .sapMObjStatusText,
+.sapMLIBActive .sapMObjStatusNone > .sapMObjStatusIcon,
+.sapMLIBActive .sapMObjStatusError > .sapMObjStatusText,
+.sapMLIBActive .sapMObjStatusError > .sapMObjStatusIcon,
+.sapMLIBActive .sapMObjStatusWarning > .sapMObjStatusText,
+.sapMLIBActive .sapMObjStatusWarning > .sapMObjStatusIcon,
+.sapMLIBActive .sapMObjStatusSuccess > .sapMObjStatusText,
+.sapMLIBActive .sapMObjStatusSuccess > .sapMObjStatusIcon {
+	color: @sapUiListActiveTextColor;
 }
