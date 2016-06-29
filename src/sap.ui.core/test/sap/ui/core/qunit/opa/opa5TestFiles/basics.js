@@ -143,4 +143,103 @@ sap.ui.define([
 			}.bind(this)
 		});
 	});
+
+	QUnit.module("waitFor", {
+		beforeEach: function () {
+			var sView = [
+				'<core:View xmlns:core="sap.ui.core" xmlns="sap.ui.commons">',
+				'<Button id="foo"/>',
+				'</core:View>'
+			].join('');
+
+			this.oView = sap.ui.xmlview({id: "globalId", viewContent: sView});
+			this.oView.setViewName("myViewName");
+			this.oView.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oView.destroy();
+			sap.ui.getCore().applyChanges();
+			Opa5.resetConfig();
+		}
+	});
+
+	opaTest("Should find a view if id as regex and controlType are set", function (oOpa) {
+		oOpa.waitFor({
+			id: /global/,
+			controlType: "sap.ui.core.mvc.XMLView",
+			success: function (aViews) {
+				Opa5.assert.strictEqual(aViews.length, 1, "Only one view is found");
+				Opa5.assert.strictEqual(aViews[0], this.oView, "correct view instance");
+			}.bind(this)
+		});
+	});
+
+	opaTest("Should find a view if id and controlType are set", function (oOpa) {
+		oOpa.waitFor({
+			id: "globalId",
+			controlType: "sap.ui.core.mvc.XMLView",
+			success: function (oView) {
+				Opa5.assert.strictEqual(oView, this.oView, "correct view instance");
+			}.bind(this)
+		});
+	});
+
+	opaTest("Should find a button if id, controlType and viewName are set", function (oOpa) {
+		oOpa.waitFor({
+			id: "foo",
+			controlType: "sap.ui.commons.Button",
+			viewName: "myViewName",
+			success: function (oButton) {
+				Opa5.assert.strictEqual(oButton, this.oView.byId("foo"), "correct button instance");
+			}.bind(this)
+		});
+	});
+
+	QUnit.module("Config and waitFor",{
+		beforeEach: function () {
+			var sView = [
+				'<core:View xmlns:core="sap.ui.core" xmlns="sap.ui.commons">',
+					'<Button id="foo"/>',
+				'</core:View>'
+			].join('');
+
+			this.oView = sap.ui.xmlview({id: "myView", viewContent: sView});
+			sap.ui.getCore().applyChanges();
+			Opa5.extendConfig({
+				// make the test fast
+				pollingInterval: 50,
+				viewNamespace: "namespace.",
+				viewName: "viewName"
+			});
+		},
+		afterEach: function () {
+			this.oView.destroy();
+			sap.ui.getCore().applyChanges();
+			Opa5.resetConfig();
+		}
+	});
+
+	opaTest("Should take the viewNamespace and viewname from the config", function (opa) {
+		this.oView.setViewName("namespace.viewName");
+		this.oView.placeAt("qunit-fixture");
+		opa.waitFor({
+			id: "foo",
+			success: function (oButton) {
+				Opa5.assert.ok(oButton, "a button was found");
+			}
+		});
+	});
+
+	opaTest("Should take the viewNamespace and overwrite the viewname", function (opa) {
+		this.oView.setViewName("namespace.otherViewName");
+		this.oView.placeAt("qunit-fixture");
+		opa.waitFor({
+			id: "foo",
+			viewName: "otherViewName",
+			success: function (oButton) {
+				Opa5.assert.ok(oButton, "a button was found");
+			}
+		});
+	});
 });

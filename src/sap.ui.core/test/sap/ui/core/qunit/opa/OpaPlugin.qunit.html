@@ -83,6 +83,23 @@ test("Should not retrieve a control by a global id - if control is destroyed", f
 	strictEqual(oRetrievedButton, null);
 });
 
+[{
+	id: "nonexistingId"
+},{
+	id: "nonexistingId",
+	controlType: "sap.m.Button"
+}].forEach(function (oWaitFor) {
+	QUnit.test("Should not retrieve a control by a global id - if control does not exist", function(assert) {
+		// System under Test
+		var oPlugin = new OpaPlugin();
+
+		// Act
+		var oResult = oPlugin.getMatchingControls(oWaitFor);
+
+		// Assert
+		assert.strictEqual(oResult, null);
+	});
+});
 
 test("Should retrieve a control by a global id - if visible is set to false", function() {
 	// Arrange
@@ -319,6 +336,21 @@ test("Should get a single control of a view", function(assert) {
 	assert.strictEqual(oRetrievedButton.getId(), this.oView.byId("foo").getId(), "did return the foo button as first element");
 });
 
+	QUnit.test("Should get a single control of a view when the control type is also given", function(assert) {
+		// Arrange
+		this.oView.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		var oRetrievedButton = this.oPlugin.getMatchingControls({
+			controlType: "sap.ui.commons.Button",
+			viewName : "bar",
+			id : "foo"
+		});
+
+		// Assert
+		assert.strictEqual(oRetrievedButton.getId(), this.oView.byId("foo").getId(), "did return the foo button as first element");
+	});
 
 test("Should get multiple controls of a view", function() {
 	// Arrange
