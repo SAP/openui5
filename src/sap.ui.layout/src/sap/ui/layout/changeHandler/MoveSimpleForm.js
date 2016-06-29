@@ -21,6 +21,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 			MoveSimpleForm.sTypeTitle = "sap.ui.core.Title";
 			MoveSimpleForm.sTypeToolBar = "sap.m.Toolbar";
 			MoveSimpleForm.sTypeLabel = "sap.m.Label";
+			MoveSimpleForm.CONTENT_AGGREGATION = "content";
 
 			/**
 			 * Moves an element from one aggregation to another.
@@ -36,8 +37,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 
 				var oContent = oChange.getContent();
 				var mMovedElement = oContent.movedElements[0];
-				var oSimpleForm = oModifier.byId(oContent.selector);
-				var aContent = oModifier.getAggregation(oSimpleForm, mMovedElement.target.aggregation);
+				var oSimpleForm = oModifier.byId(oContent.selector.id);
+				var aContent = oModifier.getAggregation(oSimpleForm, MoveSimpleForm.CONTENT_AGGREGATION);
 
 				if (oContent.changeType === MoveSimpleForm.CHANGE_TYPE_MOVE_FIELD) {
 
@@ -53,9 +54,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 					aContentClone.splice(iMovedFieldIndex, iMovedFieldLength);
 
 					// Compute the fields target index in the cut array
-					//var oSourceGroup = oModifier.byId(mMovedElement.source.groupId);
 					var oTargetGroup = oModifier.byId(mMovedElement.target.groupId);
-					//var iSourceGroupIndex = aContentClone.indexOf(oSourceGroup);
 					var iTargetGroupIndex = aContentClone.indexOf(oTargetGroup);
 
 					var iOffset = (mMovedElement.source.fieldIndex < mMovedElement.target.fieldIndex) ? -1 : 0;
@@ -69,9 +68,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 					aContentClone = fnArrayRangeCopy(aContent, iMovedFieldIndex, aContentClone, iTargetFieldIndex + iOffset,
 							iMovedFieldLength);
 
-					oModifier.removeAllAggregation(oSimpleForm, mMovedElement.target.aggregation);
+					oModifier.removeAllAggregation(oSimpleForm, MoveSimpleForm.CONTENT_AGGREGATION);
 					for (var i = 0; i < aContentClone.length; ++i) {
-						oModifier.insertAggregation(oSimpleForm, mMovedElement.target.aggregation, aContentClone[i], i);
+						oModifier.insertAggregation(oSimpleForm, MoveSimpleForm.CONTENT_AGGREGATION, aContentClone[i], i);
 					}
 
 				} else if (oContent.changeType === MoveSimpleForm.CHANGE_TYPE_MOVE_GROUP) {
@@ -99,9 +98,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 					aContentClone = fnArrayRangeCopy(aContent, iMovedGroupIndex, aContentClone, iTargetIndex + iOffset,
 							iMovedLength);
 
-					oModifier.removeAllAggregation(oSimpleForm, mMovedElement.target.aggregation);
+					oModifier.removeAllAggregation(oSimpleForm, MoveSimpleForm.CONTENT_AGGREGATION);
 					for (var i = 0; i < aContentClone.length; ++i) {
-						oModifier.insertAggregation(oSimpleForm, mMovedElement.target.aggregation, aContentClone[i], i);
+						oModifier.insertAggregation(oSimpleForm, MoveSimpleForm.CONTENT_AGGREGATION, aContentClone[i], i);
 					}
 
 				} else {
@@ -206,9 +205,13 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 
 			var fnMapFieldIndexToContentAggregationIndex = function(oModifier, aContent, iGroupStart, iFieldIndex) {
 				var oResult;
+				if (iGroupStart === aContent.length - 1) {
+					return aContent.length;
+				}
 				var iCurrentFieldIndex = -1;
+				iGroupStart = (oModifier.getControlType(aContent[iGroupStart]) === MoveSimpleForm.sTypeTitle) ? iGroupStart + 1 : iGroupStart;
 				for (var i = iGroupStart; i < aContent.length; i++) {
-					if (oModifier.getControlType(aContent[i]) === MoveSimpleForm.sTypeLabel) {
+					if (oModifier.getControlType(aContent[i]) === MoveSimpleForm.sTypeLabel || oModifier.getControlType(aContent[i]) === MoveSimpleForm.sTypeTitle) {
 						iCurrentFieldIndex++;
 						if (iCurrentFieldIndex === iFieldIndex) {
 							oResult = aContent[i];
@@ -245,18 +248,18 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 				var oMovedElement = {
 					element : oMovedGroupTitle.getId(),
 					source : {
-						aggregation : 'content',
 						groupIndex : oSource.index
 					},
 					target : {
-						aggregation : 'content',
 						groupIndex : oTarget.index
 					}
 				};
 
 				return {
 					changeType : MoveSimpleForm.CHANGE_TYPE_MOVE_GROUP,
-					selector : sSimpeFormId,
+					selector : {
+						id: sSimpeFormId
+					},
 					target : sSimpeFormId,
 					movedElements : [oMovedElement]
 				};
@@ -273,12 +276,10 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 				var oMovedElement = {
 					element : sLabelId,
 					source : {
-						aggregation : 'content',
 						groupId : sSourceTitleId,
 						fieldIndex : oSource.index
 					},
 					target : {
-						aggregation : 'content',
 						groupId : sTargetTitleId,
 						fieldIndex : oTarget.index
 					}
@@ -286,7 +287,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 
 				return {
 					changeType : MoveSimpleForm.CHANGE_TYPE_MOVE_FIELD,
-					selector : sSimpeFormId,
+					selector : {
+						id: sSimpeFormId
+					},
 					target : sSimpeFormId,
 					movedElements : [oMovedElement]
 				};
