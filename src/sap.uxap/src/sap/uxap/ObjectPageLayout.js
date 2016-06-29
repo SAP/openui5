@@ -851,7 +851,9 @@ sap.ui.define([
 
 			if (this._iCurrentScrollTimeout) {
 				clearTimeout(this._iCurrentScrollTimeout);
-				this._$contentContainer.parent().stop(true, false);
+				if (this._$contentContainer){
+					this._$contentContainer.parent().stop(true, false);
+				}
 			}
 
 			this._iCurrentScrollTimeout = jQuery.sap.delayedCall(iDuration, this, function () {
