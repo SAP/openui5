@@ -71,7 +71,7 @@
 // [Label "Background Repeat"]
 // [Description "The switch to turn on/off the repetition of the background image. Chose 'true' or 'false' as value."]
 // [Tags "Quick", "Base"]
-@sapBackgroundImageRepeat: true;
+@sapBackgroundImageRepeat: false;
 
 
 /*
@@ -297,6 +297,21 @@
 // [Description "The background color of the shell."]
 // [Tags "Base", "Shell", "Color"]
 @sapShell_Background: #c8d9e7;
+
+// [Label "Shell Background Image/Gradient"]
+// [Description "The background image or gradient of the shell."]
+// [Tags "Base", "Shell", "URI", "Image"]
+@sapShell_BackgroundImage: linear-gradient(to bottom, darken(saturate(@sapShell_Background, 6), 7.8), lighten(desaturate(@sapShell_Background, 16), 7.8));
+
+// [Label "Background Opacity"]
+// [Description "A value between 0.0 and 1.0 to control the opacity of the shell background image"]
+// [Tags "Quick", "Base", "Opacity"]
+@sapShell_BackgroundImageOpacity: 1.0;
+
+// [Label "Background Repeat"]
+// [Description "The switch to turn on/off the repetition of the shell background image. Chose 'true' or 'false' as value."]
+// [Tags "Quick", "Base"]
+@sapShell_BackgroundImageRepeat: false;
 
 // [Label "Shell Background Gradient"]
 // [Description "The background gradient of the shell."]
