@@ -3,18 +3,20 @@
 	background-color: #3f5161;
 }
 
+.sapDkSimpleTree a {
+	color: #eff4f9;
+	text-decoration: none;
+}
+
 .sapDkSimpleTreeTitle {
 	padding-top: 20px;
 	padding-bottom: 10px;
 	padding-left: 20px;
 }
 
-.sapMSF.sapDkSimpleTreeSearchField {
-	padding-left: 15px;
-}
-
-.sapMSF.sapDkSimpleTreeSearchField {
-	padding-right: 15px;
+.sapMSF.sapDkSimpleTreeSearchField,
+.sapUiSizeCompact .sapMSF.sapDkSimpleTreeSearchField {
+	padding: 0 1rem;
 }
 
 .sapDkSimpleTreeRootList {
@@ -23,6 +25,9 @@
 	padding-left: 0;
 	height: 100%;
 	overflow: auto;
+	margin-top: 1rem;
+	margin-bottom: 0;
+	height: ~"calc(100% - 6rem)";
 }
 
 .sapDkSimpleTreeRootList ul {
@@ -46,18 +51,21 @@
 	cursor: pointer;
 	background-color: #394958;
 
-	div {
-		height: 22px;
+	a {
+		height: 32px;
 		line-height: 22px;
-		padding-top: 5px;
-		padding-bottom: 5px;
+		display: block;
 
 		.sapDkSimpleTreeNodeLabel {
 			display: inline-block;
-			width: ~"calc(100% - 20px)";
+			width: ~"calc(100% - 28px)";
 			text-overflow: ellipsis;
 			overflow: hidden;
 			vertical-align: top;
+			white-space: nowrap;
+			word-wrap: normal;
+			padding-top: 5px;
+			padding-bottom: 5px;
 		}
 	}
 
@@ -74,8 +82,8 @@
 		background-color: #416b8e;
 	}
 
-	& > div:focus:not(.sapDkSimpleTreeNodeSelected),
-	& > div:hover:not(.sapDkSimpleTreeNodeSelected){
+	& > a:focus:not(.sapDkSimpleTreeNodeSelected),
+	& > a:hover:not(.sapDkSimpleTreeNodeSelected){
 		outline: none;
 		background-color: #45596a;
 	}
@@ -89,11 +97,16 @@
 .sapDkSimpleTreeNodeIconBase {
 	color: #cae4fb;
 	font-size: 12px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	height: 20px;
+	width: 20px;
+	text-align: right;
 }
 
 .sapDkSimpleTreeNodeIconCol {
 	&:extend(.sapDkSimpleTreeNodeIconBase);
-	padding-right: 13px;
+	padding-right: 8px;
 }
 
 .sapDkSimpleTreeNodeIconExp {
@@ -102,7 +115,7 @@
 }
 
 .sapDkSimpleTreeNodeNoChildren {
-	padding-left: 20px;
+	padding-left: 28px;
 }
 
 .sapDkSimpleTreeRootList {
