@@ -243,14 +243,16 @@ sap.ui.testfwk.TestFWK.getContrastMode = function() {
 
 sap.ui.testfwk.TestFWK.setContrastMode = function(bContrastMode) {
 	if ( this.bContrastMode !== bContrastMode ) {
-		this.bContrastMode = bContrastMode;
 		var frameDocument = $('frame[name="sap-ui-ContentWindow"]');
-		if (this.sTheme == "sap_belize") {
-			frameDocument.contents().find("body").addClass("sapContrast");
-		} else if (this.sTheme == "sap_belize_plus") {
-			frameDocument.contents().find("body").addClass("sapContrastPlus");
+		var frameDocumentBody = frameDocument.contents().find("body");
+		frameDocumentBody.removeClass("sapContrast");
+		frameDocumentBody.removeClass("sapContrastPlus");
+		if (this.sTheme == "sap_belize" && bContrastMode) {
+			frameDocumentBody.addClass("sapContrast");
+		} else if (this.sTheme == "sap_belize_plus" && bContrastMode) {
+			frameDocumentBody.addClass("sapContrastPlus");
 		}
-		this.applySettings();
+		this.bContrastMode = bContrastMode;
 	}
 };
 
