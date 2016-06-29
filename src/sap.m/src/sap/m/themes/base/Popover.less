@@ -156,6 +156,13 @@ html[data-sap-ui-animation='on'] .sapMPopover {
 	margin-top: -1.85rem;
 }
 
+/* Outer width of the Popover's content is wrong in IE */
+html[data-sap-ui-browser^="ie"] {
+	.sapMPopover .sapMPopoverScroll {
+		display: block;
+	}
+}
+
 .sapMPopover.sapUiSizeCompact {
 	.sapMPopoverArrLeft:before,
 	.sapMPopoverArrRight:before {
