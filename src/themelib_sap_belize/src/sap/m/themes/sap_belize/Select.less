@@ -21,27 +21,6 @@
 	height: 100%;
 }
 
-.sapMSltArrow::before,
-.sapMSltBar::after {
-	font-family: "SAP-icons";
-	speak: none;
-	content: "\e1ef";
-}
-
-.sapMSltArrow,
-.sapMSltBar::after {
-	position: absolute;
-	line-height: inherit; /* rem values for line-height do not work in pseudo elements for IE9, 10, 11 */
-	text-align: center;
-	top: 0;
-	right: -0.0625rem;
-	color: @sapUiContentIconColor;
-}
-
-.sapMSltDisabled {
-	opacity: 0.5;
-}
-
 /* ------------------------------ */
 /* field                          */
 /* ------------------------------ */
@@ -109,6 +88,12 @@ html.sap-desktop .sapMSlt:not(.sapMSltDisabled):not(.sapMSltState):focus {
 	border-color: @sapUiFieldSuccessColor;
 }
 
+/* disabled */
+
+.sapMSltDisabled {
+	opacity: 0.5;
+}
+
 /* ------------------------------ */
 /* label                          */
 /* ------------------------------ */
@@ -142,10 +127,20 @@ html.sap-desktop .sapMSlt:not(.sapMSltDisabled):not(.sapMSltState):focus {
 /* ------------------------------ */
 
 .sapMSltArrow {
+	position: absolute;
+	text-align: center;
 	width: 2.5rem;
 	line-height: 2.5rem;
+  	top: 0;
 	right: 0;
 	background: @sapUiFieldBackground;
+	color: @sapUiContentIconColor;
+}
+
+.sapMSltArrow::before {
+	font-family: "SAP-icons";
+	speak: none;
+	content: "\e1ef";
 }
 
 /* hover */
@@ -270,34 +265,8 @@ div.sapMSltPicker {
 /* dialog                         */
 /* ------------------------------ */
 
-.sapMSltBar {
-	box-shadow: none;
-}
-
 div.sapMSltPicker .sapMDialogScrollCont {
 	padding: 0;
-}
-
-/* pressed */
-
-.sapMSltBar::after {
-	width: 3.5rem;
-	color: @sapUiContentContrastIconColor;
-	background: @sapUiFieldActiveBackground;
-}
-
-/* Bar inside the Select's Dialog */
-
-.sapMSltPicker .sapMIBar.sapMIBar-CTX {
-	background: @sapUiFieldBackground;
-	border: 0.0625rem solid @sapUiFieldActiveBorderColor;
-}
-
-/* Input inside the Select's Dialog */
-
-.sapMSltPicker input {
-	padding-right: 3rem;
-	vertical-align: top; /* override the default vertical align of the input control */
 }
 
 /* ================================================================================== */

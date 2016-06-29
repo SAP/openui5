@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popover', './SelectList', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool'],
-	function(jQuery, Bar, Dialog, InputBase, Popover, SelectList, library, Control, EnabledPropagator, IconPool) {
+sap.ui.define(['jquery.sap.global', './Dialog', './InputBase', './Popover', './SelectList', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', './Toolbar', './Button'],
+	function(jQuery, Dialog, InputBase, Popover, SelectList, library, Control, EnabledPropagator, IconPool, Toolbar, Button) {
 		"use strict";
 
 		/**
@@ -684,24 +684,49 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @private
 		 */
 		Select.prototype._createDialog = function() {
-			var CSS_CLASS = this.getRenderer().CSS_CLASS;
-
-			// initialize Dialog
-			var oDialog = new Dialog({
+			var that = this;
+			return new Dialog({
 				stretch: true,
-				customHeader: new Bar({
-					contentLeft: new InputBase({
-						width: "100%",
-						editable: false
-					}).addStyleClass(CSS_CLASS + "Input")
-				}).addStyleClass(CSS_CLASS + "Bar")
+				showHeader: false,
+				buttons: [
+					this.createPickerCloseButton()
+				],
+				beforeOpen: function() {
+					that.updatePickerHeaderTitle();
+				}
 			});
+		};
 
-			oDialog.getAggregation("customHeader").attachBrowserEvent("tap", function() {
-				oDialog.close();
-			}, this);
+		Select.prototype.createPickerCloseButton = function() {
+			var that = this;
+			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			return new Button({
+				text: oResourceBundle.getText("SELECT_CANCEL_BUTTON"),
+				press: function() {
+					that.close();
+				}
+			});
+		};
 
-			return oDialog;
+		Select.prototype.updatePickerHeaderTitle = function() {
+			var oPicker = this.getPicker();
+
+			if (!oPicker) {
+				return;
+			}
+
+			var aLabels = this.getLabels();
+
+			if (aLabels.length) {
+				var oLabel = aLabels[0];
+
+				if (oLabel && (typeof oLabel.getText === "function")) {
+					oPicker.setShowHeader(true);
+					oPicker.setTitle(oLabel.getText());
+				}
+			} else {
+				oPicker.setShowHeader(false);
+			}
 		};
 
 		/**
@@ -709,16 +734,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @private
 		 */
-		Select.prototype._onBeforeOpenDialog = function() {
-			var oInput = this.getPicker().getCustomHeader().getContentLeft()[0],
-				oSelectedItem = this.getSelectedItem();
-
-			if (oSelectedItem) {
-				oInput.setValue(oSelectedItem.getText());
-				oInput.setTextDirection(this.getTextDirection());
-				oInput.setTextAlign(this.getTextAlign());
-			}
-		};
+		Select.prototype._onBeforeOpenDialog = function() {};
 
 		/* =========================================================== */
 		/* Lifecycle methods                                           */
@@ -1713,6 +1729,29 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 
 				$Arrow.addClass(CSS_CLASS + "ArrowState");
 			}
+		};
+
+		/**
+		 * Gets the labels referencing this control.
+		 *
+		 * @returns {sap.m.Label[]} Array of objects which are the current targets of the <code>ariaLabelledBy</code>
+		 * association and the labels referencing this control.
+		 * @since 1.40
+		 */
+		Select.prototype.getLabels = function() {
+			var aLabelIDs = this.getAriaLabelledBy().map(function(sLabelID) {
+				return sap.ui.getCore().byId(sLabelID);
+			});
+
+			var oLabelEnablement = sap.ui.require("sap/ui/core/LabelEnablement");
+
+			if (oLabelEnablement) {
+				aLabelIDs = aLabelIDs.concat(oLabelEnablement.getReferencingLabels(this).map(function(sLabelID) {
+					return sap.ui.getCore().byId(sLabelID);
+				}));
+			}
+
+			return aLabelIDs;
 		};
 
 		/* ----------------------------------------------------------- */

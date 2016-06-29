@@ -2277,6 +2277,73 @@ QUnit.test("it should returns the this reference to allow method chaining", func
 	oSelect.destroy();
 });
 
+/* ------------------------------ */
+/* getLabels()                    */
+/* ------------------------------ */
+
+QUnit.test("it should return an array with one object which is the current target of the ariaLabelledBy association", function(assert) {
+
+	// system under test
+	var oLabel = sap.m.Label();
+	var oSelect = new sap.m.ComboBoxTextField({
+		ariaLabelledBy: [
+			oLabel
+		]
+	});
+
+	// assertions
+	assert.strictEqual(oSelect.getLabels().length, 1);
+	assert.ok(oSelect.getLabels()[0] === oLabel);
+
+	// cleanup
+	oSelect.destroy();
+	oLabel.destroy();
+});
+
+QUnit.test("it should return an array with one object which is the label referencing the text field", function(assert) {
+
+	// system under test
+	var oSelect = new sap.m.ComboBoxTextField();
+	var oLabel = new sap.m.Label({
+		labelFor: oSelect
+	});
+
+	// assertions
+	assert.strictEqual(oSelect.getLabels().length, 1);
+	assert.ok(oSelect.getLabels()[0] === oLabel);
+
+	// cleanup
+	oSelect.destroy();
+	oLabel.destroy();
+});
+
+QUnit.test("it should return an array of objects which are the current targets of the ariaLabelledBy association and the labels referencing the text field", function(assert) {
+
+	// system under test
+	var oLabel1 = new sap.m.Label({
+		id: "lorem-ipsum-label",
+		labelFor: oSelect
+	});
+	var oSelect = new sap.m.ComboBoxTextField({
+		ariaLabelledBy: [
+			"lorem-ipsum-label"
+		]
+	});
+	var oLabel2 = new sap.m.Label({
+		labelFor: oSelect
+	});
+
+	// assertions
+	assert.strictEqual(oSelect.getLabels().length, 2);
+	assert.ok(oSelect.getLabels()[0] === oLabel1);
+	assert.ok(oSelect.getLabels()[1] === oLabel2);
+
+	// cleanup
+	oSelect.destroy();
+	oLabel1.destroy();
+	oLabel2.destroy();
+});
+
 QUnit.module("addItem()");
 
 QUnit.test("addItem()", function(assert) {
