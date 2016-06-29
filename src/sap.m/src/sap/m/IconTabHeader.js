@@ -56,9 +56,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			visible : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
-			 * Specifies the header mode.
+			 * Specifies the header mode. Note that when Inline mode is used, only the text and the count
+			 * of the IconTabFilter are displayed, the icon is ignored.
 			 *
-			 * @since 1.42
+			 * @since 1.40
 			 */
 			mode : {type : "sap.m.IconTabHeaderMode", group : "Appearance", defaultValue : sap.m.IconTabHeaderMode.Standard}
 		},
@@ -637,6 +638,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @returns True if all tabs are textOnly version, otherwise false
 	 */
 	IconTabHeader.prototype._checkTextOnly = function(aItems) {
+
+		if (this.getMode() == sap.m.IconTabHeaderMode.Inline) {
+			this._bTextOnly = true;
+			return true;
+		}
+
 		if (aItems.length > 0) {
 			for (var i = 0; i < aItems.length; i++) {
 				if (!(aItems[i] instanceof sap.m.IconTabSeparator)) {
@@ -657,6 +664,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @returns True if all tabs are noText version, otherwise false
 	 */
 	IconTabHeader.prototype._checkNoText = function(aItems) {
+
+		if (this.getMode() == sap.m.IconTabHeaderMode.Inline) {
+			return false;
+		}
+
 		if (aItems.length > 0) {
 			for (var i = 0; i < aItems.length; i++) {
 				if (!(aItems[i] instanceof sap.m.IconTabSeparator)) {
