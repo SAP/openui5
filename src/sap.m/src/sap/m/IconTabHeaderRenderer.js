@@ -107,7 +107,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 					sTabParams += 'role="separator"';
 				}
 			} else {
-				sTabParams += 'role="tab" aria-controls="' + oControl.getParent().sId + '-content" ';
+				sTabParams += 'role="tab"';
+
+				if (oIconTabBar instanceof sap.m.IconTabBar) {
+					sTabParams += ' aria-controls="' + oIconTabBar.sId + '-content" ';
+				}
 
 				//if there is tab text
 				if (oItem) {
