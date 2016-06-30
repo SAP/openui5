@@ -2705,6 +2705,15 @@
 				};
 
 				log.debug("Modules that should be excluded from preload: '" + sPattern + "'");
+
+			} else if ( vDebugInfo === true ) {
+
+				fnIgnorePreload = function() {
+					return true;
+				};
+
+				log.debug("All modules should be excluded from preload");
+
 			}
 		})();
 
