@@ -1452,58 +1452,25 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("hasPendingChanges: with and without cache", function (assert) {
-		var oBinding = this.oModel.bindList("SO_2_SOITEM", undefined, undefined, undefined, {}),
-			oBindingMock = this.mock(oBinding),
-			oCacheProxy = {},
-			oContext = Context.create(this.oModel, null, "/Products('1')"),
+	QUnit.test("hasPendingChanges", function (assert) {
+		var oBinding = this.oModel.bindList("/BusinessPartners"),
 			oResult = {};
 
-		oBindingMock.expects("_hasPendingChanges").withExactArgs("SO_2_SOITEM")
+		this.mock(_ODataHelper).expects("hasPendingChanges").withExactArgs(oBinding, true)
 			.returns(oResult);
 
 		// code under test
 		assert.strictEqual(oBinding.hasPendingChanges(), oResult);
+	});
 
-		this.mock(_ODataHelper).expects("createListCacheProxy")
-			.withExactArgs(sinon.match.same(oBinding), sinon.match.same(oContext))
-			.returns(oCacheProxy);
-		this.mock(oContext).expects("registerBinding");
-		oBinding.setContext(oContext);
-		oBindingMock.expects("_hasPendingChanges").withExactArgs("").returns(oResult);
+	//*********************************************************************************************
+	QUnit.test("resetChanges", function (assert) {
+		var oBinding = this.oModel.bindList("/BusinessPartners");
+
+		this.mock(_ODataHelper).expects("resetChanges").withExactArgs(oBinding, true);
 
 		// code under test
-		assert.strictEqual(oBinding.hasPendingChanges(), oResult);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("_hasPendingChanges: absolute binding", function (assert) {
-		var oBinding = this.oModel.bindList("/SalesOrderList"),
-			oResult = {};
-
-		this.mock(oBinding.oCache).expects("hasPendingChanges").withExactArgs("1/foo")
-			.returns(oResult);
-
-		assert.strictEqual(oBinding._hasPendingChanges("1/foo"), oResult);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("hasPendingChanges: relative binding resolved", function (assert) {
-		var oContext = Context.create(this.oModel, {}, "/foo"),
-			oListBinding,
-			oResult = {};
-
-		this.mock(oContext).expects("registerBinding");
-		oListBinding = this.oModel.bindList("SO_2_SOITEM", oContext);
-		this.mock(_Helper).expects("buildPath").withExactArgs("SO_2_SOITEM", "1/foo").returns("~");
-		this.mock(oContext).expects("hasPendingChanges").withExactArgs("~").returns(oResult);
-
-		assert.strictEqual(oListBinding._hasPendingChanges("1/foo"), oResult);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("hasPendingChanges: relative binding unresolved", function (assert) {
-		assert.strictEqual(this.oModel.bindList("SO_2_SOITEM")._hasPendingChanges("foo"), false);
+		oBinding.resetChanges();
 	});
 
 	//*********************************************************************************************

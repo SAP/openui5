@@ -586,6 +586,58 @@ sap.ui.define([
 		},
 
 		/**
+		 * Checks whether there are pending changes. The function is called in three different
+		 * situations:
+		 * 1. From the binding itself using hasPendingChanges(true): Check the cache or the context,
+		 *    then ask the children using hasPendingChanges(false)
+		 * 2. From the parent binding using hasPendingChanges(false): Check the cache, then ask the
+		 *    children using hasPendingChanges(false)
+		 * 3. From a child binding (via the context) using hasPendingChanges(undefined, sPath):
+		 *    Check the cache or the context using the (extended) path
+		 *
+		 * @param {sap.ui.model.odata.v4.ODataListBinding|sap.ui.model.odata.v4.ODataContextBinding}
+		 *   oBinding The OData list or context binding
+		 * @param {boolean} bAskParent
+		 *   If <code>true</code>, ask the parent using the relative path, too; this is only
+		 *   relevant if there is no path
+		 * @param {string} [sPath]
+		 *   The path; if it is defined, only the parent is asked using the relative path
+		 * @returns {boolean}
+		 *   <code>true</code> if the binding has pending changes
+		 *
+		 * @private
+		 */
+		hasPendingChanges : function (oBinding, bAskParent, sPath) {
+			var bResult;
+
+			if (sPath !== undefined) {
+				// We are asked from a child for a certain path -> only check own cache or context
+				if (oBinding.oCache) {
+					return oBinding.oCache.hasPendingChanges(sPath);
+				}
+				if (oBinding.oContext) {
+					return oBinding.oContext.hasPendingChanges(
+						_Helper.buildPath(oBinding.sPath, sPath));
+				}
+				return false;
+			}
+			if (oBinding.oCache) {
+				bResult = oBinding.oCache.hasPendingChanges("");
+			} else if (oBinding.oContext && bAskParent) {
+				bResult = oBinding.oContext.hasPendingChanges(oBinding.sPath);
+			}
+			if (bResult) {
+				return bResult;
+			}
+			if (oBinding.aDependentBindings) {
+				return oBinding.aDependentBindings.some(function (oDependentBinding) {
+					return ODataHelper.hasPendingChanges(oDependentBinding, false);
+				});
+			}
+			return false;
+		},
+
+		/**
 		 * Merges the given values for "$orderby" and "$filter" into the given map of query options.
 		 * Ensures that the original map is left unchanged, but creates a copy only if necessary.
 		 *
@@ -794,6 +846,48 @@ sap.ui.define([
 
 				return combineFilterValues(aNonEmptyFilters, ") and (");
 			});
+		},
+
+		/**
+		 * Resets all pending changes of the binding and possible all dependent bindings. The
+		 * function is called in three different situations:
+		 * 1. From the binding itself using resetChanges(true): Reset the cache or the context,
+		 *    then the children using resetChanges(false)
+		 * 2. From the parent binding using resetChanges(false): Reset the cache, then the children
+		 *    using resetChanges(false)
+		 * 3. From a child binding (via the context) using resetChanges(undefined, sPath):
+		 *    Reset the cache or the context using the (extended) path
+		 *
+		 * @param {sap.ui.model.odata.v4.ODataListBinding|sap.ui.model.odata.v4.ODataContextBinding}
+		 *   oBinding The OData list or context binding
+		 * @param {boolean} bAskParent
+		 *   If <code>true</code>, reset in the parent binding using this binding's relative path; this
+		 *   is only relevant if there is no path given
+		 * @param {string} [sPath]
+		 *   The path; if it is defined, only the parent is asked to reset using the relative path
+		 *
+		 * @private
+		 */
+		resetChanges : function (oBinding, bAskParent, sPath) {
+			if (sPath !== undefined) {
+				// We are asked from a child for a certain path -> only reset own cache or context
+				if (oBinding.oCache) {
+					oBinding.oCache.resetChanges(sPath);
+				} else if (oBinding.oContext) {
+					oBinding.oContext.resetChanges(_Helper.buildPath(oBinding.sPath, sPath));
+				}
+				return;
+			}
+			if (oBinding.oCache) {
+				oBinding.oCache.resetChanges("");
+			} else if (oBinding.oContext && bAskParent) {
+				oBinding.oContext.resetChanges(oBinding.sPath);
+			}
+			if (oBinding.aDependentBindings) {
+				oBinding.aDependentBindings.forEach(function (oDependentBinding) {
+					ODataHelper.resetChanges(oDependentBinding, false);
+				});
+			}
 		},
 
 		/**

@@ -164,17 +164,6 @@
 					path : '',
 					parameters : {
 						$expand : {
-							SO_2_SOITEM : {
-								$expand : {
-									SOITEM_2_PRODUCT : {
-										$expand : {
-											PRODUCT_2_BP : {
-												$select : 'BusinessPartnerID,CompanyName,LegalForm,PhoneNumber'
-											}
-										}
-									}
-								}
-							},
 							SO_2_BP : {
 								$select : 'BusinessPartnerID,CompanyName,PhoneNumber'
 							},
@@ -262,7 +251,20 @@
 			<Table id="SalesOrderLineItems"
 				items="{
 						path : 'SO_2_SOITEM',
-						filters : {path: 'ItemPosition', operator: 'GT', value1: '0000000000'}
+						filters : {path: 'ItemPosition', operator: 'GT', value1: '0000000000'},
+						parameters : {
+							$expand : {
+								SOITEM_2_PRODUCT : {
+									$expand : {
+										PRODUCT_2_BP : {
+											$select : ['BusinessPartnerID','CompanyName',
+												'LegalForm','PhoneNumber']
+										}
+									}
+								}
+							},
+							$$updateGroupId : 'SalesOrderUpdateGroup'
+						}
 					}" mode="SingleSelectMaster"
 				selectionChange="onSalesOrderLineItemSelect">
 				<headerToolbar>
