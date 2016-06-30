@@ -200,35 +200,26 @@ sap.ui.define([
 			});
 		},
 
-		onRefresh : function (oRefreshable, sMessage) {
-			if (oRefreshable.hasPendingChanges()) {
-				MessageBox.confirm(sMessage, function onConfirm(sCode) {
-					if (sCode === "OK") {
-						oRefreshable.refresh();
-					}
-				}, "Refresh");
-			} else {
-				oRefreshable.refresh();
-			}
-		},
-
 		onRefreshAll : function () {
-			this.onRefresh(this.getView().getModel(),
-				"There are pending changes. Do you really want to refresh everything?");
+			var oModel = this.getView().getModel();
+
+			this.refresh(oModel,
+				"There are pending changes. Do you really want to refresh everything?",
+				oModel.getUpdateGroupId() || "SalesOrderListUpdateGroup");
 		},
 
 		onRefreshFavoriteProduct : function (oEvent) {
-			this.onRefresh(this.getView().byId("FavoriteProduct").getBinding("value"),
+			this.refresh(this.getView().byId("FavoriteProduct").getBinding("value"),
 				"There are pending changes. Do you really want to refresh the favorite product?");
 		},
 
 //		onRefreshSalesOrderDetails : function (oEvent) {
-//			this.onRefresh(this.getView().byId("ObjectPage").getElementBinding(),
+//			this.refresh(this.getView().byId("ObjectPage").getElementBinding(),
 //				"There are pending changes. Do you really want to refresh the sales order?");
 //		},
 
 		onRefreshSalesOrdersList : function (oEvent) {
-			this.onRefresh(this.getView().byId("SalesOrders").getBinding("items"),
+			this.refresh(this.getView().byId("SalesOrders").getBinding("items"),
 				"There are pending changes. Do you really want to refresh all sales orders?");
 		},
 
@@ -283,6 +274,19 @@ sap.ui.define([
 			var oViewElement = this.getView().byId("FavoriteProduct");
 
 			oViewElement.bindProperty("value", {path : "/ProductList('HT-1000')/Unknown"});
+		},
+
+		refresh : function (oRefreshable, sMessage, sGroupId) {
+			if (oRefreshable.hasPendingChanges()) {
+				MessageBox.confirm(sMessage, function onConfirm(sCode) {
+					if (sCode === "OK") {
+						oRefreshable.resetChanges(sGroupId);
+						oRefreshable.refresh();
+					}
+				}, "Refresh");
+			} else {
+				oRefreshable.refresh();
+			}
 		}
 	});
 

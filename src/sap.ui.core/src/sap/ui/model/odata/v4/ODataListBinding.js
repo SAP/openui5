@@ -139,26 +139,6 @@ sap.ui.define([
 		});
 
 	/**
-	 * Returns <code>true</code> if the binding has pending changes below the given path.
-	 *
-	 * @param {string} sPath
-	 *   The path
-	 * @returns {boolean}
-	 *   <code>true</code> if the binding has pending changes
-	 *
-	 * @private
-	 */
-	ODataListBinding.prototype._hasPendingChanges = function (sPath) {
-		if (this.oCache) {
-			return this.oCache.hasPendingChanges(sPath);
-		}
-		if (this.oContext) {
-			return this.oContext.hasPendingChanges(_Helper.buildPath(this.sPath, sPath));
-		}
-		return false;
-	};
-
-	/**
 	 * The 'change' event is fired when the binding is initialized or new contexts are created or
 	 * its parent context is changed. It is to be used by controls to get notified about changes to
 	 * the binding contexts of this list binding. Registered event handlers are called with the
@@ -254,7 +234,7 @@ sap.ui.define([
 	 * Destroys the object. The object must not be used anymore after this function was called.
 	 *
 	 * @public
-	 * @since 1.41.0
+	 * @since 1.40.1
 	 */
 	// @override
 	ODataListBinding.prototype.destroy = function () {
@@ -565,7 +545,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.getGroupId = function() {
+	ODataListBinding.prototype.getGroupId = function () {
 		return this.sGroupId || this.oModel.getGroupId();
 	};
 
@@ -581,7 +561,7 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	 // @override
-	ODataListBinding.prototype.getLength = function() {
+	ODataListBinding.prototype.getLength = function () {
 		return this.bLengthFinal ? this.aContexts.length : this.aContexts.length + 10;
 	};
 
@@ -593,12 +573,12 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.getUpdateGroupId = function() {
+	ODataListBinding.prototype.getUpdateGroupId = function () {
 		return this.sUpdateGroupId || this.oModel.getUpdateGroupId();
 	};
 
 	/**
-	 * Returns <code>true</code> if the binding has pending changes, that is updates via two-way
+	 * Returns <code>true</code> if the binding has pending changes, meaning updates via two-way
 	 * binding that have not yet been sent to the server.
 	 *
 	 * @returns {boolean}
@@ -608,7 +588,7 @@ sap.ui.define([
 	 * @since 1.39.0
 	 */
 	ODataListBinding.prototype.hasPendingChanges = function () {
-		return this._hasPendingChanges(this.oCache ? "" : this.sPath);
+		return _ODataHelper.hasPendingChanges(this, true);
 	};
 
 	/**
@@ -652,7 +632,7 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	// @override
-	ODataListBinding.prototype.isLengthFinal = function() {
+	ODataListBinding.prototype.isLengthFinal = function () {
 		return this.bLengthFinal;
 	};
 
@@ -738,6 +718,17 @@ sap.ui.define([
 		this.iMaxLength = Infinity;
 		// this.bLengthFinal = this.aContexts.length === this.iMaxLength
 		this.bLengthFinal = false;
+	};
+
+	/**
+	 * Resets all pending property changes of this binding, meaning updates via two-way binding that
+	 * have not yet been sent to the server.
+	 *
+	 * @public
+	 * @since 1.40.1
+	 */
+	ODataListBinding.prototype.resetChanges = function () {
+		_ODataHelper.resetChanges(this, true);
 	};
 
 	/**

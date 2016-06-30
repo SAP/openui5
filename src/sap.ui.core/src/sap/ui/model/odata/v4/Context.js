@@ -300,7 +300,9 @@ sap.ui.define([
 	 * @private
 	 */
 	Context.prototype.hasPendingChanges = function (sPath) {
-		return this.oBinding.hasPendingChanges(_Helper.buildPath(this.iIndex, sPath));
+		// since we send a path, bAskParent is not needed and set to undefined
+		return _ODataHelper.hasPendingChanges(this.oBinding, undefined,
+			_Helper.buildPath(this.iIndex, sPath));
 	};
 
 	/**
@@ -373,6 +375,20 @@ sap.ui.define([
 	 */
 	Context.prototype.requestProperty = function (sPath, bExternalFormat) {
 		return Promise.resolve(fetchPrimitiveValue(this, sPath, bExternalFormat));
+	};
+
+	/**
+	 * Resets all pending changes for a given <code>sPath</code>.
+	 *
+	 * @param {string} sPath
+	 *   The relative path of a binding; must not end with '/'
+	 *
+	 * @private
+	 */
+	Context.prototype.resetChanges = function (sPath) {
+		// since we send a path, bAskParent is not needed and set to undefined
+		return _ODataHelper.resetChanges(this.oBinding, undefined,
+			_Helper.buildPath(this.iIndex, sPath));
 	};
 
 	/**
