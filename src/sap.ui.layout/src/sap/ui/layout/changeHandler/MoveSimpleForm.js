@@ -16,8 +16,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 			 */
 			var MoveSimpleForm = {};
 
-			MoveSimpleForm.CHANGE_TYPE_MOVE_FIELD = "moveField";
-			MoveSimpleForm.CHANGE_TYPE_MOVE_GROUP = "moveGroup";
+			MoveSimpleForm.CHANGE_TYPE_MOVE_FIELD = "moveSimpleFormField";
+			MoveSimpleForm.CHANGE_TYPE_MOVE_GROUP = "moveSimpleFormGroup";
 			MoveSimpleForm.sTypeTitle = "sap.ui.core.Title";
 			MoveSimpleForm.sTypeToolBar = "sap.m.Toolbar";
 			MoveSimpleForm.sTypeLabel = "sap.m.Label";
