@@ -3407,6 +3407,8 @@
 					equal(oResponse.statusCode, 202, "batch completed");
 					equal(oData.__batchResponses[0].statusCode, 200, "oData  read succeeded");
 					equal(oData.__batchResponses[1].message, "HTTP request failed", "HTTP request failed");
+					equal(oData.__batchResponses[1].response.statusCode, 400, "StatusCode is propagated");
+					equal(oData.__batchResponses[1].response.statusText, "Bad Request", "StatusText is propagated");
 					// read to verify no changes made
 					var oGetResponse = jQuery.sap.sjax({
 						url : '/mock/LeaveHeaderCollection',
