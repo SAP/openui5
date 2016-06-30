@@ -1705,11 +1705,11 @@ sap.ui.define([
 	 ***********************************************************************************************************/
 
 	ObjectPageLayout.prototype.setHeaderTitle = function (oHeaderTitle, bSuppressInvalidate) {
-
-		oHeaderTitle.addEventDelegate({
-			onAfterRendering: this._adjustHeaderHeights.bind(this)
-		});
-
+		if (oHeaderTitle && typeof oHeaderTitle.addEventDelegate === "function"){
+			oHeaderTitle.addEventDelegate({
+				onAfterRendering: this._adjustHeaderHeights.bind(this)
+			});
+		}
 		return this.setAggregation("headerTitle", oHeaderTitle, bSuppressInvalidate);
 	};
 
@@ -1942,7 +1942,7 @@ sap.ui.define([
 			this.setAggregation("_headerContent", new library.ObjectPageHeaderContent({
 				visible: this.getShowHeaderContent(),
 				contentDesign: this._getHeaderDesign(),
-				content: this.getAggregation("headerContent")
+				content: this.getAggregation("headerContent", [])
 			}), true);
 		}
 
@@ -2057,6 +2057,27 @@ sap.ui.define([
 		} else {
 			this.$("footerWrapper").toggleClass("sapUiHidden", !bShow);
 		}
+	};
+
+	/**
+	 * In order to work properly in scenarios in which the objectPageLayout is cloned,
+	 * it is necessary to also clone the hidden aggregations which are proxied.
+	 * @override
+	 * @returns {*}
+	 */
+	ObjectPageLayout.prototype.clone = function () {
+		Object.keys(this.mAggregations).forEach(this._cloneProxiedAggregations, this);
+		return Control.prototype.clone.apply(this, arguments);
+	};
+
+	ObjectPageLayout.prototype._cloneProxiedAggregations = function (sAggregationName) {
+		var oAggregation = this.mAggregations[sAggregationName];
+
+		if (Array.isArray(oAggregation) && oAggregation.length === 0) {
+			oAggregation = this["get" + sAggregationName.charAt(0).toUpperCase() + sAggregationName.slice(1)]();
+		}
+
+		this.mAggregations[sAggregationName] = oAggregation;
 	};
 
 	function exists(vObject) {
