@@ -29,12 +29,14 @@ sap.ui.define([
 				 * @param {string} sUrl
 				 *   The URL of a metadata document, it must not contain a query string or a
 				 *   fragment part
+				 * @param {boolean} [bSkipQuery=false]
+				 *   Indicates whether to omit the query string
 				 * @returns {Promise}
 				 *   A promise fulfilled with the metadata as a JSON object
 				 */
-				read : function (sUrl) {
+				read : function (sUrl, bSkipQuery) {
 					return new Promise(function (fnResolve, fnReject) {
-						jQuery.ajax(sUrl + sQueryStr, {
+						jQuery.ajax(bSkipQuery ? sUrl : sUrl + sQueryStr, {
 							method : "GET",
 							headers : mHeaders
 						})

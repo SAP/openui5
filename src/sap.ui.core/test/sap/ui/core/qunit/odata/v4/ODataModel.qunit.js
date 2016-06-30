@@ -118,7 +118,9 @@ sap.ui.require([
 		// code under test: operation mode Server must not throw an error
 		oModel = createModel("", {operationMode : OperationMode.Server, serviceUrl : "/foo/",
 			synchronizationMode : "None"});
+
 		assert.strictEqual(oModel.sOperationMode, OperationMode.Server);
+		oMetaModel = oModel.getMetaModel();
 
 		this.mock(_ODataHelper).expects("buildQueryOptions")
 			.withExactArgs(null, {}, null, true)
@@ -128,7 +130,7 @@ sap.ui.require([
 			.returns(oMetadataRequestor);
 
 		// code under test
-		oModel = createModel();
+		oModel = createModel("", {annotationURI : ["my/annotations.xml"]});
 
 		assert.strictEqual(oModel.sServiceUrl, getServiceUrl());
 		assert.strictEqual(oModel.toString(), sClassName + ": " + getServiceUrl());
@@ -141,6 +143,7 @@ sap.ui.require([
 		assert.ok(oMetaModel instanceof ODataMetaModel);
 		assert.strictEqual(oMetaModel.oRequestor, oMetadataRequestor);
 		assert.strictEqual(oMetaModel.sUrl, getServiceUrl() + "$metadata");
+		assert.deepEqual(oMetaModel.aAnnotationUris, ["my/annotations.xml"]);
 	});
 
 	//*********************************************************************************************

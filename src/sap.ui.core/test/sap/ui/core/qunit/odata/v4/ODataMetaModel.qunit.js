@@ -23,91 +23,89 @@ sap.ui.require([
 	"use strict";
 
 	var mScope = {
+			"$Annotations" : {
+				"name.space.Id" : {
+					// Common := com.sap.vocabularies.Common.v1
+					"@Common.Label" : "ID"
+				},
+				"tea_busi.DefaultContainer" : {
+					"@DefaultContainer" : {}
+				},
+				"tea_busi.DefaultContainer/T€AMS" : {
+					"@T€AMS" : {}
+				},
+				"tea_busi.TEAM" : {
+					// UI := com.sap.vocabularies.UI.v1
+					"@UI.LineItem" : [{
+						"@UI.Importance" : {
+							"$EnumMember" : "UI.ImportanceType/High"
+						},
+						"$Type" : "UI.DataField",
+						"Label" : "Team ID",
+						"Value" : {
+							"$Path" : "Team_Id"
+						}
+					}]
+				},
+				"tea_busi.TEAM/Team_Id" : {
+					"@Common.Label" : "Team ID",
+					"@Common.Text" : {
+						"$Path" : "Name"
+					},
+					"@Common.Text@UI.TextArrangement" : {
+						"$EnumMember"
+							: "UI.TextArrangementType/TextLast"
+					}
+				},
+				"tea_busi.Worker" : {
+					"@UI.Facets" : [{
+						"$Type" : "UI.ReferenceFacet",
+						"Target" : {
+							// term cast
+							"$AnnotationPath" : "@UI.LineItem"
+						}
+					}, {
+						"$Type" : "UI.ReferenceFacet",
+						"Target" : {
+							// term cast at navigation property itself
+							"$AnnotationPath" : "EMPLOYEE_2_TEAM@Common.Label"
+						}
+					}, {
+						"$Type" : "UI.ReferenceFacet",
+						"Target" : {
+							// navigation property and term cast
+							"$AnnotationPath" : "EMPLOYEE_2_TEAM/@UI.LineItem"
+						}
+					}, {
+						"$Type" : "UI.ReferenceFacet",
+						"Target" : {
+							// type cast, navigation properties and term cast (at its type)
+							"$AnnotationPath"
+								: "tea_busi.TEAM/TEAM_2_EMPLOYEES/EMPLOYEE_2_TEAM/@UI.LineItem"
+						}
+					}],
+					"@UI.LineItem" : [{
+						"$Type" : "UI.DataField",
+						"Label" : "Team ID",
+						"Value" : {
+							"$Path" : "EMPLOYEE_2_TEAM/Team_Id"
+						}
+					}]
+				},
+				"tea_busi.Worker/EMPLOYEE_2_TEAM" : {
+					"@Common.Label" : "Employee's Team"
+				}
+			},
 			"$EntityContainer" : "tea_busi.DefaultContainer",
 			"empty." : {
 				"$kind" : "Schema"
 			},
 			"name.space." : {
-				"$kind" : "Schema",
-				"$Annotations" : {
-					"name.space.Id" : {
-						// Common := com.sap.vocabularies.Common.v1
-						"@Common.Label" : "ID"
-					}
-				}
+				"$kind" : "Schema"
 			},
 			// tea_busi := com.sap.gateway.iwbep.tea_busi.v0001
 			"tea_busi." : {
 				"$kind" : "Schema",
-				"$Annotations" : {
-					"tea_busi.DefaultContainer" : {
-						"@DefaultContainer" : {}
-					},
-					"tea_busi.DefaultContainer/T€AMS" : {
-						"@T€AMS" : {}
-					},
-					"tea_busi.TEAM" : {
-						// UI := com.sap.vocabularies.UI.v1
-						"@UI.LineItem" : [{
-							"@UI.Importance" : {
-								"$EnumMember" : "UI.ImportanceType/High"
-							},
-							"$Type" : "UI.DataField",
-							"Label" : "Team ID",
-							"Value" : {
-								"$Path" : "Team_Id"
-							}
-						}]
-					},
-					"tea_busi.TEAM/Team_Id" : {
-						"@Common.Label" : "Team ID",
-						"@Common.Text" : {
-							"$Path" : "Name"
-						},
-						"@Common.Text@UI.TextArrangement" : {
-							"$EnumMember"
-								: "UI.TextArrangementType/TextLast"
-						}
-					},
-					"tea_busi.Worker" : {
-						"@UI.Facets" : [{
-							"$Type" : "UI.ReferenceFacet",
-							"Target" : {
-								// term cast
-								"$AnnotationPath" : "@UI.LineItem"
-							}
-						}, {
-							"$Type" : "UI.ReferenceFacet",
-							"Target" : {
-								// term cast at navigation property itself
-								"$AnnotationPath" : "EMPLOYEE_2_TEAM@Common.Label"
-							}
-						}, {
-							"$Type" : "UI.ReferenceFacet",
-							"Target" : {
-								// navigation property and term cast
-								"$AnnotationPath" : "EMPLOYEE_2_TEAM/@UI.LineItem"
-							}
-						}, {
-							"$Type" : "UI.ReferenceFacet",
-							"Target" : {
-								// type cast, navigation properties and term cast (at its type)
-								"$AnnotationPath"
-									: "tea_busi.TEAM/TEAM_2_EMPLOYEES/EMPLOYEE_2_TEAM/@UI.LineItem"
-							}
-						}],
-						"@UI.LineItem" : [{
-							"$Type" : "UI.DataField",
-							"Label" : "Team ID",
-							"Value" : {
-								"$Path" : "EMPLOYEE_2_TEAM/Team_Id"
-							}
-						}]
-					},
-					"tea_busi.Worker/EMPLOYEE_2_TEAM" : {
-						"@Common.Label" : "Employee's Team"
-					}
-				},
 				"@Schema" : {}
 			},
 			"empty.Container" : {
@@ -342,7 +340,7 @@ sap.ui.require([
 		},
 		oContainerData = mScope["tea_busi.DefaultContainer"],
 		oTeamData = mScope["tea_busi.TEAM"],
-		oTeamLineItem = mScope["tea_busi."].$Annotations["tea_busi.TEAM"]["@UI.LineItem"],
+		oTeamLineItem = mScope.$Annotations["tea_busi.TEAM"]["@UI.LineItem"],
 		oWorkerData = mScope["tea_busi.Worker"];
 
 	/**
@@ -457,7 +455,9 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("basics", function (assert) {
-		var oMetadataRequestor = {
+		var sAnnotationUri = "my/annotation.xml",
+			aAnnotationUris = [ sAnnotationUri, "uri2.xml"],
+			oMetadataRequestor = {
 				read : function () { throw new Error(); }
 			},
 			sUrl = "/~/$metadata",
@@ -467,11 +467,24 @@ sap.ui.require([
 		oMetaModel = new ODataMetaModel(oMetadataRequestor, sUrl);
 
 		assert.ok(oMetaModel instanceof MetaModel);
+		assert.strictEqual(oMetaModel.aAnnotationUris, undefined);
+		assert.ok(oMetaModel.hasOwnProperty("aAnnotationUris"), "own property aAnnotationUris");
 		assert.strictEqual(oMetaModel.oRequestor, oMetadataRequestor);
 		assert.strictEqual(oMetaModel.sUrl, sUrl);
 		assert.strictEqual(oMetaModel.getDefaultBindingMode(), BindingMode.OneTime);
 		assert.strictEqual(oMetaModel.toString(),
 			"sap.ui.model.odata.v4.ODataMetaModel: /~/$metadata");
+
+		// code under test
+		oMetaModel = new ODataMetaModel(oMetadataRequestor, sUrl, aAnnotationUris);
+
+		assert.strictEqual(oMetaModel.aAnnotationUris, aAnnotationUris, "arrays are passed");
+
+		// code under test
+		oMetaModel = new ODataMetaModel(oMetadataRequestor, sUrl, sAnnotationUri);
+
+		assert.deepEqual(oMetaModel.aAnnotationUris, [sAnnotationUri],
+			"single annotation is wrapped");
 	});
 
 	//*********************************************************************************************
@@ -507,35 +520,75 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchEntityContainer", function (assert) {
-		var oMetadataRequestor = {
-				read : function () {}
-			},
-			sUrl = "/~/$metadata",
-			oMetaModel = new ODataMetaModel(oMetadataRequestor, sUrl),
-			oPromise = Promise.resolve({/*mScope*/}),
-			oSyncPromise;
+	[{
+		vAnnotationURI: undefined,
+		aAdditionalRequest : []
+	}, {
+		vAnnotationURI: "/my/annotation.xml",
+		aAdditionalRequest : ["/my/annotation.xml"]
+	}, {
+		vAnnotationURI: ["/my/annotation.xml"],
+		aAdditionalRequest : ["/my/annotation.xml"]
+	}, {
+		vAnnotationURI: ["/my/annotation.xml", "/another/annotation.xml"],
+		aAdditionalRequest : ["/my/annotation.xml", "/another/annotation.xml"]
+	}].forEach(function (oFixture) {
+		var title = "fetchEntityContainer - " + JSON.stringify(oFixture.vAnnotationURI);
+		QUnit.test(title, function (assert) {
+			var oMetadataRequestor = {
+					read : function () {}
+				},
+				oMetadataRequestorMock = this.mock(oMetadataRequestor),
+				sUrl = "/~/$metadata",
+				oMetaModel = new ODataMetaModel(oMetadataRequestor, sUrl, oFixture.vAnnotationURI),
+				oMergedMetadata = {},
+				aReadResults = [{/*mScope metadata*/}],
+				oPromise = Promise.resolve(aReadResults[0]),
+				oSyncPromise;
 
-		this.mock(oMetadataRequestor).expects("read").withExactArgs(sUrl)
-			.returns(oPromise);
+			oMetadataRequestorMock.expects("read").withExactArgs(sUrl)
+				.returns(oPromise);
 
-		// code under test
-		oSyncPromise = oMetaModel.fetchEntityContainer();
+			oFixture.aAdditionalRequest.forEach(function (sAnnotationUrl) {
+				var oAnnotationResult = {/*mScope*/};
 
-		// pending
-		assert.strictEqual(oSyncPromise.isFulfilled(), false);
-		assert.strictEqual(oSyncPromise.isRejected(), false);
-		assert.strictEqual(oSyncPromise.getResult(), oSyncPromise);
-		// already caching
-		assert.strictEqual(oMetaModel.fetchEntityContainer(), oSyncPromise);
+				aReadResults.push(oAnnotationResult);
+				oMetadataRequestorMock.expects("read").withExactArgs(sAnnotationUrl, true)
+					.returns(Promise.resolve(oAnnotationResult));
+			});
+			this.mock(oMetaModel).expects("_mergeMetadata")
+				.withExactArgs(sinon.match(function (aMetadata) {
+					var i, n;
+					if (aMetadata.length !== aReadResults.length) {
+						return false;
+					}
+					for (i = 0, n = aMetadata.length; i < n; i += 1) {
+						if (aMetadata[i] !== aReadResults[i]) {
+							return false;
+						}
+						return true;
+					}
+				})).returns(oMergedMetadata);
 
-		return oPromise.then(function (mScope) {
-			// fulfilled
-			assert.strictEqual(oSyncPromise.isFulfilled(), true);
+			// code under test
+			oSyncPromise = oMetaModel.fetchEntityContainer();
+
+			// pending
+			assert.strictEqual(oSyncPromise.isFulfilled(), false);
 			assert.strictEqual(oSyncPromise.isRejected(), false);
-			assert.strictEqual(oSyncPromise.getResult(), mScope);
-			// still caching
+			assert.strictEqual(oSyncPromise.getResult(), oSyncPromise);
+			// already caching
 			assert.strictEqual(oMetaModel.fetchEntityContainer(), oSyncPromise);
+
+			return oSyncPromise.then(function (mScope) {
+				// fulfilled
+				assert.strictEqual(oSyncPromise.isFulfilled(), true);
+				assert.strictEqual(oSyncPromise.isRejected(), false);
+				assert.strictEqual(mScope, oMergedMetadata);
+				assert.strictEqual(oSyncPromise.getResult(), oMergedMetadata);
+				// still caching
+				assert.strictEqual(oMetaModel.fetchEntityContainer(), oSyncPromise);
+			});
 		});
 	});
 	//TODO later support "$Extends" : "<13.1.2 EntityContainer Extends>"
@@ -674,45 +727,45 @@ sap.ui.require([
 		"/tea_busi.AcChangeManagerOfTeam/value" : oTeamData.value,
 		// annotations ----------------------------------------------------------------------------
 		"/@DefaultContainer"
-			: mScope["tea_busi."].$Annotations["tea_busi.DefaultContainer"]["@DefaultContainer"],
+			: mScope.$Annotations["tea_busi.DefaultContainer"]["@DefaultContainer"],
 		"/tea_busi.DefaultContainer@DefaultContainer"
-			: mScope["tea_busi."].$Annotations["tea_busi.DefaultContainer"]["@DefaultContainer"],
+			: mScope.$Annotations["tea_busi.DefaultContainer"]["@DefaultContainer"],
 		"/$EntityContainer@DefaultContainer"
-			: mScope["tea_busi."].$Annotations["tea_busi.DefaultContainer"]["@DefaultContainer"],
+			: mScope.$Annotations["tea_busi.DefaultContainer"]["@DefaultContainer"],
 		"/$EntityContainer/@DefaultContainer" // Note: w/o $Type, slash makes no difference!
-			: mScope["tea_busi."].$Annotations["tea_busi.DefaultContainer"]["@DefaultContainer"],
+			: mScope.$Annotations["tea_busi.DefaultContainer"]["@DefaultContainer"],
 		"/T€AMS/$Type/@UI.LineItem" : oTeamLineItem,
 		"/T€AMS/@UI.LineItem" : oTeamLineItem,
 		"/T€AMS/@UI.LineItem/0/Label" : oTeamLineItem[0].Label,
 		"/T€AMS/@UI.LineItem/0/@UI.Importance" : oTeamLineItem[0]["@UI.Importance"],
 		"/T€AMS@T€AMS"
-			: mScope["tea_busi."].$Annotations["tea_busi.DefaultContainer/T€AMS"]["@T€AMS"],
+			: mScope.$Annotations["tea_busi.DefaultContainer/T€AMS"]["@T€AMS"],
 		"/T€AMS/Team_Id@Common.Text"
-			: mScope["tea_busi."].$Annotations["tea_busi.TEAM/Team_Id"]["@Common.Text"],
+			: mScope.$Annotations["tea_busi.TEAM/Team_Id"]["@Common.Text"],
 		"/T€AMS/Team_Id@Common.Text@UI.TextArrangement"
-			: mScope["tea_busi."].$Annotations["tea_busi.TEAM/Team_Id"]
+			: mScope.$Annotations["tea_busi.TEAM/Team_Id"]
 				["@Common.Text@UI.TextArrangement"],
 		"/tea_busi./@Schema" : mScope["tea_busi."]["@Schema"],
 		// "@" to access to all annotations, e.g. for iteration
-		"/T€AMS@" : mScope["tea_busi."].$Annotations["tea_busi.DefaultContainer/T€AMS"],
-		"/T€AMS/@" : mScope["tea_busi."].$Annotations["tea_busi.TEAM"],
-		"/T€AMS/Team_Id@" : mScope["tea_busi."].$Annotations["tea_busi.TEAM/Team_Id"],
+		"/T€AMS@" : mScope.$Annotations["tea_busi.DefaultContainer/T€AMS"],
+		"/T€AMS/@" : mScope.$Annotations["tea_busi.TEAM"],
+		"/T€AMS/Team_Id@" : mScope.$Annotations["tea_busi.TEAM/Team_Id"],
 		// "14.5.12 Expression edm:Path"
 		"/T€AMS/@UI.LineItem/0/Value/$Path@Common.Text"
-			: mScope["tea_busi."].$Annotations["tea_busi.TEAM/Team_Id"]["@Common.Text"],
+			: mScope.$Annotations["tea_busi.TEAM/Team_Id"]["@Common.Text"],
 		"/T€AMS/@UI.LineItem/0/Value/$Path/@Common.Label"
-			: mScope["name.space."].$Annotations["name.space.Id"]["@Common.Label"],
+			: mScope.$Annotations["name.space.Id"]["@Common.Label"],
 		"/EMPLOYEES/@UI.LineItem/0/Value/$Path@Common.Text"
-			: mScope["tea_busi."].$Annotations["tea_busi.TEAM/Team_Id"]["@Common.Text"],
+			: mScope.$Annotations["tea_busi.TEAM/Team_Id"]["@Common.Text"],
 		// "14.5.2 Expression edm:AnnotationPath"
 		"/EMPLOYEES/@UI.Facets/0/Target/$AnnotationPath/"
-			: mScope["tea_busi."].$Annotations["tea_busi.Worker"]["@UI.LineItem"],
+			: mScope.$Annotations["tea_busi.Worker"]["@UI.LineItem"],
 		"/EMPLOYEES/@UI.Facets/1/Target/$AnnotationPath/"
-			: mScope["tea_busi."].$Annotations["tea_busi.Worker/EMPLOYEE_2_TEAM"]["@Common.Label"],
+			: mScope.$Annotations["tea_busi.Worker/EMPLOYEE_2_TEAM"]["@Common.Label"],
 		"/EMPLOYEES/@UI.Facets/2/Target/$AnnotationPath/"
-			: mScope["tea_busi."].$Annotations["tea_busi.TEAM"]["@UI.LineItem"],
+			: mScope.$Annotations["tea_busi.TEAM"]["@UI.LineItem"],
 		"/EMPLOYEES/@UI.Facets/3/Target/$AnnotationPath/"
-			: mScope["tea_busi."].$Annotations["tea_busi.TEAM"]["@UI.LineItem"],
+			: mScope.$Annotations["tea_busi.TEAM"]["@UI.LineItem"],
 		// @sapui.name ----------------------------------------------------------------------------
 		"/@sapui.name" : "tea_busi.DefaultContainer",
 		"/tea_busi.DefaultContainer@sapui.name" : "tea_busi.DefaultContainer",
@@ -1494,7 +1547,7 @@ sap.ui.require([
 		// Iterate all external targeting annotations.
 		contextPath : "/T€AMS/Team_Id",
 		metaPath : "@",
-		result : mScope["tea_busi."].$Annotations["tea_busi.TEAM/Team_Id"],
+		result : mScope.$Annotations["tea_busi.TEAM/Team_Id"],
 		strict : true
 	}, {
 		// <template:repeat list="{property>@}" ...>
@@ -1567,6 +1620,90 @@ sap.ui.require([
 		assert.throws(function () {
 			oMetaModel.attachRequestSent();
 		}, new Error("Unsupported event 'requestSent': v4.ODataMetaModel#attachEvent"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_mergeMetadata", function (assert) {
+		var sWorker = "com.sap.gateway.default.iwbep.tea_busi.v0001.Worker/",
+			sBasicSalaryCurr = sWorker + "ComplexType_Salary/BASIC_SALARY_CURR",
+			sBasicSalaryCurr2 = "another.schema.2.ComplexType_Salary/BASIC_SALARY_CURR",
+			sBonusCurr = sWorker + "ComplexType_Salary/BONUS_CURR",
+			sCommonLabel = "@com.sap.vocabularies.Common.v1.Label",
+			sCommonQuickInfo = "@com.sap.vocabularies.Common.v1.QuickInfo",
+			sCommonText = "@com.sap.vocabularies.Common.v1.Text",
+			oExpectedMergedMetadata,
+			oMergedMetadata,
+			sBaseUrl = "/" + window.location.pathname.split("/")[1]
+				+ "/test-resources/sap/ui/core/qunit/odata/v4/data/",
+			oMetadata = jQuery.sap.sjax({url : sBaseUrl + "metadata.json", dataType : 'json'}).data,
+			oAnnotation = jQuery.sap.sjax({url : sBaseUrl + "annotations1.json", dataType : 'json'})
+				.data,
+			oAnnotationCopy,
+			oMetadataCopy = JSON.parse(JSON.stringify(oMetadata));
+
+		// code under test
+		oMergedMetadata = this.oMetaModel._mergeMetadata([oMetadataCopy]);
+
+		assert.strictEqual(oMergedMetadata, oMetadataCopy, "same instance is returned");
+		assert.deepEqual(oMergedMetadata.$Annotations,
+			jQuery.extend({}, oMetadata["com.sap.gateway.default.iwbep.tea_busi.v0001."].$Annotations),
+			"$Annotations have been shifted and merged from schemas to root");
+		assert.strictEqual(oMergedMetadata["com.sap.gateway.default.iwbep.tea_busi.v0001."].$Annotations,
+			undefined, "$Annotations removed from schema");
+
+		// prepare test with annotations
+		oAnnotationCopy = JSON.parse(JSON.stringify(oAnnotation));
+		oExpectedMergedMetadata = JSON.parse(JSON.stringify(oMetadata));
+		oExpectedMergedMetadata.$Annotations = jQuery.extend({},
+				oMetadata["com.sap.gateway.default.iwbep.tea_busi.v0001."].$Annotations);
+		delete oExpectedMergedMetadata["com.sap.gateway.default.iwbep.tea_busi.v0001."].$Annotations;
+		// all kind entries are merged
+		oExpectedMergedMetadata["my.schema.2.FuGetEmployeeMaxAge"] =
+			oAnnotationCopy["my.schema.2.FuGetEmployeeMaxAge"];
+		oExpectedMergedMetadata["my.schema.2.Entity"] =
+			oAnnotationCopy["my.schema.2.Entity"];
+		oExpectedMergedMetadata["my.schema.2.DefaultContainer"] =
+			oAnnotationCopy["my.schema.2.DefaultContainer"];
+		oExpectedMergedMetadata["my.schema.2."] =
+			oAnnotationCopy["my.schema.2."];
+		oExpectedMergedMetadata["another.schema.2."] =
+			oAnnotationCopy["another.schema.2."];
+		// update annotations
+		oExpectedMergedMetadata.$Annotations[sBasicSalaryCurr][sCommonLabel]
+			= oAnnotationCopy["my.schema.2."].$Annotations[sBasicSalaryCurr][sCommonLabel];
+		oExpectedMergedMetadata.$Annotations[sBasicSalaryCurr][sCommonQuickInfo]
+			= oAnnotationCopy["my.schema.2."].$Annotations[sBasicSalaryCurr][sCommonQuickInfo];
+		oExpectedMergedMetadata.$Annotations[sBonusCurr][sCommonText]
+			= oAnnotationCopy["my.schema.2."].$Annotations[sBonusCurr][sCommonText];
+		oExpectedMergedMetadata.$Annotations[sBasicSalaryCurr2]
+			= oAnnotationCopy["another.schema.2."].$Annotations[sBasicSalaryCurr2];
+		delete oExpectedMergedMetadata["my.schema.2."].$Annotations;
+		delete oExpectedMergedMetadata["another.schema.2."].$Annotations;
+
+		oMetadataCopy = JSON.parse(JSON.stringify(oMetadata));
+		oAnnotationCopy = JSON.parse(JSON.stringify(oAnnotation));
+
+		// code under test
+		oMergedMetadata = this.oMetaModel._mergeMetadata([oMetadataCopy, oAnnotationCopy]);
+
+		assert.strictEqual(oMergedMetadata, oMetadataCopy, "same instance as first element");
+		assert.deepEqual(oMergedMetadata, oExpectedMergedMetadata, "merged metadata as expected");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_mergeMetadata - error", function (assert) {
+		var sBaseUrl = "/" + window.location.pathname.split("/")[1]
+				+ "/test-resources/sap/ui/core/qunit/odata/v4/data/",
+			oAnnotation = jQuery.sap.sjax({url : sBaseUrl + "annotations2.json", dataType : 'json'})
+				.data,
+			oMetadata = jQuery.sap.sjax({url : sBaseUrl + "metadata.json", dataType : 'json'}).data,
+			oMetaModel = new ODataMetaModel({} /*requestor*/, "/url", "/my/annotation.xml");
+
+		assert.throws(function () {
+			// code under test
+			oMetaModel._mergeMetadata([oMetadata, oAnnotation]);
+		}, new Error("Overwriting 'com.sap.gateway.default.iwbep.tea_busi.v0001.Department'"
+				+ " with the value defined in '/my/annotation.xml' is not supported"));
 	});
 	//TODO iterate mix of inline and external targeting annotations
 	//TODO iterate annotations like "foo@..." for our special cases, e.g. annotations of annotation
