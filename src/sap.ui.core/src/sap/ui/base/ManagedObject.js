@@ -4184,7 +4184,7 @@ sap.ui.define([
 	ManagedObject.prototype.findAggregatedObjects = function(bRecursive, fnCondition) {
 
 		var aAggregatedObjects = [];
-		if (fnCondition && !typeof fnCondition === "function") {
+		if (fnCondition && typeof fnCondition !== "function") {
 			fnCondition = null;
 		}
 		function fFindObjects(oObject) {
