@@ -3020,6 +3020,18 @@
 		}
 		applyAMDFactoryFn.count = 0;
 
+		/**
+		 * Evaluates the script for a loaded or preloaded module.
+		 * The only purpose of this function is to isolate the execution time of string parsing in performance measurements.
+		 * @no-rename
+		 * @private
+		 */
+		function evalModuleStr(script) {
+			evalModuleStr.count++;
+			return window.eval(script);
+		}
+		evalModuleStr.count = 0;
+
 		// sModuleName must be a normalized resource name of type .js
 		function execModule(sModuleName) {
 
@@ -3085,7 +3097,7 @@
 								throw e; // rethrow err in case globalEval succeeded unexpectedly
 							}
 						} else {
-							window.eval(sScript);
+							evalModuleStr(sScript);
 						}
 					}
 					_execStack.pop();
@@ -3915,6 +3927,21 @@
 			});
 
 			// return undefined;
+		};
+
+		/**
+		 * @private
+		 */
+		sap.ui.require.stat = function(iState) {
+			var i = 0;
+			Object.keys(mModules).sort().forEach(function(sModule) {
+				if ( mModules[sModule].state >= iState ) {
+					log.info( (++i) + " " + sModule + " " + mModules[sModule].state);
+				}
+			});
+			log.info("apply AMD factory function: #" + applyAMDFactoryFn.count);
+			log.info("call preload wrapper function: #" + callPreloadWrapperFn.count);
+			log.info("eval module string : #" + evalModuleStr.count);
 		};
 
 		/**
