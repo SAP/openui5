@@ -604,6 +604,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				sTheme = sap.ui.getCore().getConfiguration().getTheme(),
 				oParentDomRef, iPlacePos, bThemeBelize;
 
+            // bug fix issue 1012: https://github.com/SAP/openui5/issues/1012
+            jQuery.sap.syncStyleClass('sapUiSizeCompact', oControl, this);
+
 			// Determines if the Popover will be rendered in a compact mode
 			bThemeBelize = sTheme === "sap_belize" || sTheme === "sap_belize_plus";
 			this._bSizeCompact = sap.m._bSizeCompact || !!document.querySelector('body.sapUiSizeCompact') || this.hasStyleClass("sapUiSizeCompact");
