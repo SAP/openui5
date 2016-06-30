@@ -141,17 +141,18 @@ html[data-sap-ui-browser^='ie'] .sapUxAPObjectPageHeaderContent div.sapUxAPObjec
 	vertical-align: top;
 }
 
-.sapUiMedia-Std-Phone .sapUxAPObjectPageHeaderContent {
-	padding-left: 1rem;
+.sapUiMedia-Std-Desktop .sapUxAPObjectPageHeaderContent {
+	padding-left: 3rem;
 }
 
 .sapUiMedia-Std-Tablet .sapUxAPObjectPageHeaderContent,
-.sapUiMedia-Std-Desktop .sapUxAPObjectPageHeaderContent {
+.sapUiMedia-Std-Desktop .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail .sapUxAPObjectPageHeaderContent,
+.sapUiMedia-Std-Tablet .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail .sapUxAPObjectPageHeaderContent {
 	padding-left: 2rem;
 }
 
-.sapUiMedia-Std-Desktop .sapMSplitContainerHideMode .sapUxAPObjectPageHeaderContent {
-	padding-left: 3rem;
+.sapUiMedia-Std-Phone .sapUxAPObjectPageHeaderContent {
+	padding-left: 1rem;
 }
 
 .sapUxAPObjectPageHeaderContentHidden {
