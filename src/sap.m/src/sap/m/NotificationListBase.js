@@ -237,8 +237,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 
         NotificationListBase.prototype.indexOfAggregation = function (aggregationName, object) {
             if (aggregationName == 'buttons') {
-                this.getAggregation('_overflowToolbar').indexOfAggregation('content', object);
-                return this;
+                return this.getAggregation('_overflowToolbar').indexOfAggregation('content', object);
             } else {
                 return sap.ui.core.Control.prototype.indexOfAggregation.call(this, aggregationName, object);
             }
