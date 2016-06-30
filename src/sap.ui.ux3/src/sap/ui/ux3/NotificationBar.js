@@ -18,6 +18,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * @class
 	 * A NotificationBar is a "toolbar" that can be added to a page to show messages and notifications from the application.
 	 * Its position, height and width is inherited from the element that the notification bar is added to.
+	 * The NotificationBar uses position: fixed; to always stay at the bottom of the screen. This CSS may sometimes cause
+	 * issues when nested deeply inside other controls. To have a proper behavior of the NotificationBar use it as high
+	 * in the control hierarchy as possible.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
