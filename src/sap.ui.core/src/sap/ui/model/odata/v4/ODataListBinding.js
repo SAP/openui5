@@ -377,6 +377,7 @@ sap.ui.define([
 	 *   The number of contexts to read in addition to <code>iLength</code> when requesting data
 	 *   from the server; with this, controls can prefetch data that is likely to be needed soon,
 	 *   e.g. when scrolling down in a table. Negative values will be treated as 0.
+	 *   Supported since 1.39.0
 	 * @returns {sap.ui.model.odata.v4.Context[]}
 	 *   The array of already created contexts with the first entry containing the context for
 	 *   <code>iStart</code>
