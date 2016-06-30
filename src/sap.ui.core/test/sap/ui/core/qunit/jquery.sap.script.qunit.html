@@ -1172,6 +1172,17 @@
 				}
 			});
 
+			QUnit.test("arrays with undefined values", function(assert) {
+				var a1 = [1, 2, 3, undefined],
+					a2 = [1, undefined],
+					aDiff = jQuery.sap.arraySymbolDiff(a1, a2),
+					aResult = [
+						{ index: 1, type: 'delete'},
+						{ index: 1, type: 'delete'}
+					];
+				assert.deepEqual(aDiff, aResult, "arraySymbolDiff must work with undefined values");
+			});
+
 			// -------------------------------------------------------------------------------
 			// jQuery.sap.parseJS
 			// -------------------------------------------------------------------------------
