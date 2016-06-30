@@ -838,16 +838,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 
 				jQuery.sap.interaction.notifyStepStart(this._oControl);
 
-				// Prevent false tap event during momentum scroll in IOS
-				if (this._oIOSScroll && this._oIOSScroll.bMomentum) {
-					var dY = Math.abs(fVerticalMove);
-					// check if we are still in momentum scrolling
-					if (dY > 0 && dY < 10 || oEvent.timeStamp - this._oIOSScroll.iTimeStamp > 120) {
-						jQuery.sap.log.debug("IOS Momentum Scrolling is OFF");
-						this._oIOSScroll.bMomentum = false;
-					}
-				}
-
 				this._scrollX = $Container.scrollLeft(); // remember position
 				this._scrollY = fScrollTop;
 
@@ -881,13 +871,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 				}
 				this._scrollable.vertical = this._bVertical && container.scrollHeight > container.clientHeight;
 				this._scrollable.horizontal = this._bHorizontal && container.scrollWidth > container.clientWidth;
-
-				// Prevent false tap event during momentum scroll in IOS
-				if (this._oIOSScroll && this._oIOSScroll.bMomentum) {
-					jQuery.sap.log.debug("IOS Momentum Scrolling: prevent tap event");
-					oEvent.stopPropagation();
-					this._oIOSScroll.bMomentum = false;
-				}
 
 				// Store initial coordinates for drag scrolling
 				var point = oEvent.touches ? oEvent.touches[0] : oEvent;
@@ -981,12 +964,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 					}
 				}
 
-				// Prevent false tap event during momentum scroll in IOS
-				if (this._oIOSScroll && !this._bDoDrag && this._iDirection == "v" && Math.abs(oEvent.touches[0].pageY - this._iY) >= 10) {
-					this._oIOSScroll.bMomentum = true;
-					this._oIOSScroll.iTimeStamp = oEvent.timeStamp;
-				}
-
 				if (!this._oIOSScroll || this._scrollable.vertical || this._scrollable.horizontal && this._iDirection == "h") {
 					oEvent.setMarked(); // see jQuery.sap.mobile.js
 				}
@@ -998,9 +975,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 
 			_onEnd : function(oEvent){
 				jQuery.sap.interaction.notifyEventStart(oEvent);
-				if (this._oIOSScroll && this._oIOSScroll.bMomentum) {
-					this._oIOSScroll.iTimeStamp = oEvent.timeStamp;
-				}
 
 				if (this._oPullDown && this._oPullDown._bTouchMode) {
 					this._oPullDown.doScrollEnd();
@@ -1199,10 +1173,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 								}
 							}
 							if (Device.os.ios) {
-								this._oIOSScroll = {
-									iTimeStamp : 0,
-									bMomentum : false
-								};
+								this._oIOSScroll = {};
 							}
 							break;
 					}
