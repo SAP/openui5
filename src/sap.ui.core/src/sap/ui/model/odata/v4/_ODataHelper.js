@@ -450,8 +450,82 @@ sap.ui.define([
 		},
 
 		/**
-		 * Merges the given orderby and filter values into a copy of the given map of query options.
-		 * If no merge is needed the original map of query options is returned.
+		 * Calculates the index range to be read for the given start, length and threshold.
+		 * Checks if <code>aContexts</code> entries are available for the given index range plus
+		 * half the threshold left and right to it. If this is not the case, returns the read range
+		 * to be read; otherwise undefined.
+		 *
+		 * @param {sap.ui.model.odata.v4.Context[]} aContexts
+		 *   The contexts to be checked for the requested data
+		 * @param {number} iStart
+		 *   The start index for the data request
+		 * @param {number} iLength
+		 *   The number of requested entries
+		 * @param {number} iThreshold
+		 *   The number of additionally requested entries (prefetch)
+		 * @param {number} [iMaxLength=Infinity]
+		 *   The upper boundary for the total number of entries
+		 * @returns {object}
+		 *   Returns <code>undefined</code> if all data is available and the prefetch cache is
+		 *   filled.
+		 *   Otherwise returns an object with a member <code>start</code> for the start index for
+		 *   the next read and <code>length</code> for the number of entries to be read.
+		 */
+		getReadRange : function (aContexts, iStart, iLength, iThreshold, iMaxLength) {
+			var i,
+				iFirstEmptyIndexLeft = -1,
+				iFirstEmptyIndexRight = -1,
+				iMax = Math.min(iStart + iLength + iThreshold / 2, iMaxLength || Infinity),
+				iMin = Math.max(iStart - iThreshold / 2, 0),
+				oResult = {length : iLength, start : iStart};
+
+			for (i = iStart; i < iMax; i += 1) {
+				if (aContexts[i] === undefined) {
+					iFirstEmptyIndexRight = i;
+					break;
+				}
+			}
+			if (iThreshold === 0 && iFirstEmptyIndexRight < 0) {
+				return undefined; // all data available
+			}
+			if (iThreshold > 0) {
+				for (i = iStart - 1; i >= iMin; i -= 1) {
+					if (aContexts[i] === undefined) {
+						iFirstEmptyIndexLeft = i;
+						break;
+					}
+				}
+				if (iFirstEmptyIndexLeft < 0 && iFirstEmptyIndexRight < 0) {
+					return undefined; // enough data available
+				} else if (iFirstEmptyIndexLeft >= 0 && iFirstEmptyIndexRight >= 0) {
+					// not enough data in front of and after iStart --> read 2x iThreshold
+					oResult = {
+						start : iStart - iThreshold,
+						length : iLength + 2 * iThreshold
+					};
+				} else {
+					// not enough data either before or after iStart
+					oResult = {
+						start : iFirstEmptyIndexRight >= 0
+							? iFirstEmptyIndexRight
+							: iFirstEmptyIndexLeft - iThreshold - iLength + 1,
+						length : iLength + iThreshold
+					};
+				}
+			}
+
+			if (oResult.start < 0) {
+				oResult.start = 0;
+			}
+			if (oResult.start >= iMaxLength) {
+				oResult = undefined;
+			}
+			return oResult;
+		},
+
+		/**
+		 * Merges the given values for "$orderby" and "$filter" into the given map of query options.
+		 * Ensures that the original map is left unchanged, but creates a copy only if necessary.
 		 *
 		 * @param {object} [mQueryOptions]
 		 *   The map of query options
