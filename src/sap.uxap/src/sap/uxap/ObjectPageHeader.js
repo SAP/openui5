@@ -100,7 +100,10 @@ sap.ui.define([
 				isActionAreaAlwaysVisible: {type: "boolean", defaultValue: true},
 
 				/**
-				 * Determines the design of the header - Light or Dark
+				 * Determines the design of the header - Light or Dark.
+				 * <b>Note: </b>This property is deprecated. It will continue to work in the Blue Crystal theme,
+				 * but it will not be taken into account for the Belize themes.
+				 * @deprecated Since version 1.40.1
 				 */
 				headerDesign: {
 					type: "sap.uxap.ObjectPageHeaderDesign",
