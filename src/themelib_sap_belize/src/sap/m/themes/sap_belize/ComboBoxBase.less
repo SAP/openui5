@@ -10,7 +10,7 @@
 /* hover */
 
 .sapMComboBoxBasePressed:not(.sapMComboBoxTextFieldReadonly):not(.sapMComboBoxTextFieldState):not(.sapMComboBoxTextFieldDisabled) {
-	border-color: @sapUiFieldFocusBorderColor;
+	border-color: @sapUiFieldHoverBorderColor;
 }
 
 /* ------------------------------ */
@@ -19,19 +19,19 @@
 
 /* hover */
 html.sap-desktop .sapMComboBoxBaseArrow:not(.sapMComboBoxBasePressed):hover {
-	background: contrast(@sapUiFieldHoverBackground, darken(@sapUiFieldHoverBackground, 6), lighten(@sapUiFieldHoverBackground, 6));
+	background: @sapUiButtonLiteHoverBackground;
 }
 
 /* pressed */
 /* note: do not optimize this selector, the sap.m.MulticomboBox DOM structure differ from sap.m.ComboBox */
 .sapMComboBoxBasePressed .sapMComboBoxBaseArrow,
 html.sap-desktop .sapMComboBoxBasePressed .sapMComboBoxBaseArrow:hover {
-	background: @sapUiFieldActiveBackground;
+	background: @sapUiButtonLiteActiveBackground;
 }
 
 /* note: do not optimize this selector, the sap.m.MulticomboBox DOM structure differ from sap.m.ComboBox */
 .sapMComboBoxBasePressed .sapMComboBoxBaseArrow::before {
-	color: @sapUiContentContrastIconColor;
+	color: @sapUiButtonActiveTextColor;
 }
 
 /* ------------------------------ */
@@ -39,7 +39,7 @@ html.sap-desktop .sapMComboBoxBasePressed .sapMComboBoxBaseArrow:hover {
 /* ------------------------------ */
 
 div.sapMComboBoxBasePicker {
-	box-shadow: 0 0.0625rem 0.1875rem fade(@sapUiContentShadowColor, 50);
+	box-shadow: @sapUiShadowLevel1;
 	border: none;
 }
 
