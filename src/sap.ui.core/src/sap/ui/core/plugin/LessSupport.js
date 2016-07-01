@@ -514,7 +514,7 @@
 			LessSupport.refresh = function() {
 				oThis.refreshLess(true);
 				if (oThis.oCore.oThemeCheck) {
-					oThis.oCore.oThemeCheck.fireThemeChangedEvent(false, true);
+					oThis.oCore.oThemeCheck.fireThemeChangedEvent(false);
 				}
 			};
 
