@@ -112,6 +112,7 @@ sap.ui.define([
 				this.aApplicationFilters = _ODataHelper.toArray(vFilters);
 				this.oCache = undefined;
 				this.sChangeReason = undefined;
+				this.aDependentBindings = undefined;
 				this.aFilters = [];
 				this.mQueryOptions = undefined;
 				this.sRefreshGroupId = undefined;
@@ -247,6 +248,20 @@ sap.ui.define([
 		} else if (this.oContext) {
 			this.oContext.deregisterChange(_Helper.buildPath(this.sPath, iIndex, sPath), oListener);
 		}
+	};
+
+	/**
+	 * Destroys the object. The object must not be used anymore after this function was called.
+	 *
+	 * @public
+	 * @since 1.41.0
+	 */
+	// @override
+	ODataListBinding.prototype.destroy = function () {
+		if (this.bRelative && this.oContext) {
+			this.oContext.deregisterBinding(this);
+		}
+		ListBinding.prototype.destroy.apply(this);
 	};
 
 	/**
@@ -600,33 +615,56 @@ sap.ui.define([
 	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
 	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 * @throws {Error}
-	 *   If the given group ID is invalid or refresh on this binding is not supported.
+	 *   If the given group ID is invalid, the binding has pending changes via two-way binding or
+	 *   refresh on this binding is not supported.
 	 *
 	 * @public
 	 * @see sap.ui.model.Binding#refresh
+	 * @see #hasPendingChanges
+	 * @see #resetChanges
 	 * @since 1.37.0
 	 */
 	// @override
 	ODataListBinding.prototype.refresh = function (sGroupId) {
-//		var that = this;
-
 		if (this.bRelative) {
 			throw new Error("Refresh on this binding is not supported");
 		}
-
+		if (this.hasPendingChanges()) {
+			throw new Error("Cannot refresh due to pending changes");
+		}
 		_ODataHelper.checkGroupId(sGroupId);
 
+		this.refreshInternal(sGroupId);
+	};
+
+	/**
+	 * Refreshes the binding. The refresh method itself only performs some validation checks and
+	 * forwards to this method doing the actual work. Interaction between contexts also runs via
+	 * these internal methods.
+	 *
+	 * @param {string} [sGroupId]
+	 *   The group ID to be used for refresh
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.refreshInternal = function (sGroupId) {
 		this.sRefreshGroupId = sGroupId;
-//		if (this.mCacheByContext) {
-//			Object.keys(this.mCacheByContext).forEach(function (sCanonicalPath) {
-//				if (that.oCache !== that.mCacheByContext[sCanonicalPath]) {
-//					delete that.mCacheByContext[sCanonicalPath];
-//				}
-//			});
-//		}
-		this.oCache.refresh();
+		if (this.oCache) {
+			if (this.bRelative) {
+				this.oCache.deregisterChange();
+				this.oCache = _ODataHelper.createListCacheProxy(this, this.oContext);
+				this.mCacheByContext = undefined;
+			} else {
+				this.oCache.refresh();
+			}
+		}
 		this.reset();
 		this._fireRefresh({reason : ChangeReason.Refresh});
+		if (this.aDependentBindings) {
+			this.aDependentBindings.forEach(function (oDependentBinding) {
+				oDependentBinding.refreshInternal(sGroupId);
+			});
+		}
 	};
 
 	/**
@@ -730,12 +768,16 @@ sap.ui.define([
 		if (this.oContext !== oContext) {
 			if (this.bRelative) {
 				this.reset();
+				if (this.oContext) {
+					this.oContext.deregisterBinding(this);
+				}
 				if (this.oCache) {
 					this.oCache.deregisterChange();
 					this.oCache = undefined;
 				}
 				if (oContext) {
 					this.oCache = _ODataHelper.createListCacheProxy(this, oContext);
+					oContext.registerBinding(this);
 				}
 				// call Binding#setContext because of data state etc.; fires "change"
 				Binding.prototype.setContext.call(this, oContext);
