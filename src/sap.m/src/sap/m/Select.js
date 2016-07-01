@@ -567,9 +567,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 
 			if (oDomRef) {
 				oDomRef.setAttribute("aria-expanded", "false");
-
-				// note: the "aria-owns" attribute is removed when the list is not visible and in view
-				oDomRef.removeAttribute("aria-owns");
 			}
 		};
 
