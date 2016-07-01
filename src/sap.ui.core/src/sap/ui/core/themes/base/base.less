@@ -138,9 +138,11 @@
 
 @sapBlockLayer_Background: #000;
 
-@sapTile_Background: #fff;
-@sapTile_BorderColor: #000;
-@sapTile_TextColor: contrast(@sapTile_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapTile_Background: @sapGroup_ContentBackground;
+@sapTile_BorderColor: @sapGroup_ContentBorderColor;
+@sapTile_TitleTextColor: contrast(@sapTile_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapTile_TextColor: @sapTile_TitleTextColor;
+@sapTile_IconColor: contrast(@sapTile_Background, @sapContent_IconColor, @sapContent_ContrastIconColor, @sapContent_ContrastTextThreshold);
 
 @sapChart_OrderedColor_1: #5cbae6; //<=new
 @sapChart_OrderedColor_2: #b6d957; //<=new
