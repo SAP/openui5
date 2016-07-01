@@ -454,7 +454,7 @@ sap.ui.define(['jquery.sap.global'],
 		// If no symbol function is provided, we stringify, if it is not type string, and create a hash from it
 		fnSymbol = fnSymbol || function(vValue) {
 			if (typeof vValue !== "string") {
-				vValue = JSON.stringify(vValue);
+				vValue = JSON.stringify(vValue) || "";
 			}
 			return jQuery.sap.hashCode(vValue);
 		};
