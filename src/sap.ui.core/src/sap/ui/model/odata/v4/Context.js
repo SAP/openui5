@@ -211,20 +211,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the query options for the given path from the associated binding.
-	 *
-	 * @param {string} sPath
-	 *   The path for which the query options are requested
-	 * @returns {object}
-	 *   The query options from the associated binding for the given path
-	 *
-	 * @private
-	 */
-	Context.prototype.getQueryOptions = function (sPath) {
-		return _ODataHelper.getQueryOptions(this.oBinding, sPath);
-	};
-
-	/**
 	 * Returns the value for the given path relative to this context. The function allows access to
 	 * the complete data the context points to (when <code>sPath</code> is "") or any part thereof.
 	 * The data is a JSON structure as described in
@@ -287,6 +273,20 @@ sap.ui.define([
 			}
 		}
 		return oSyncPromise.isFulfilled() ? oSyncPromise.getResult() : undefined;
+	};
+
+	/**
+	 * Returns the query options for the given path from the associated binding.
+	 *
+	 * @param {string} sPath
+	 *   The path for which the query options are requested
+	 * @returns {object}
+	 *   The query options from the associated binding for the given path
+	 *
+	 * @private
+	 */
+	Context.prototype.getQueryOptions = function (sPath) {
+		return _ODataHelper.getQueryOptions(this.oBinding, sPath);
 	};
 
 	/**
@@ -387,8 +387,18 @@ sap.ui.define([
 	 */
 	Context.prototype.resetChanges = function (sPath) {
 		// since we send a path, bAskParent is not needed and set to undefined
-		return _ODataHelper.resetChanges(this.oBinding, undefined,
-			_Helper.buildPath(this.iIndex, sPath));
+		_ODataHelper.resetChanges(this.oBinding, undefined, _Helper.buildPath(this.iIndex, sPath));
+	};
+
+	/**
+	 * Returns a string representation of this object including the binding path.
+	 *
+	 * @return {string} A string description of this binding
+	 * @public
+	 * @since 1.39.0
+	 */
+	Context.prototype.toString = function () {
+		return this.iIndex === undefined ? this.sPath : this.sPath + "[" + this.iIndex + "]";
 	};
 
 	/**
@@ -423,17 +433,6 @@ sap.ui.define([
 			return that.oBinding.updateValue(sGroupId, sPropertyName, vValue, sEditUrl.slice(1),
 				sPath);
 		});
-	};
-
-	/**
-	 * Returns a string representation of this object including the binding path.
-	 *
-	 * @return {string} A string description of this binding
-	 * @public
-	 * @since 1.39.0
-	 */
-	Context.prototype.toString = function () {
-		return this.iIndex === undefined ? this.sPath : this.sPath + "[" + this.iIndex + "]";
 	};
 
 	return {

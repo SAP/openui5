@@ -379,6 +379,7 @@ sap.ui.require([
 			assert.strictEqual(typeof oCacheProxy.deregisterChange, "function");
 			assert.strictEqual(oCacheProxy.hasPendingChanges(), false);
 			assert.strictEqual(typeof oCacheProxy.refresh, "function");
+			assert.strictEqual(typeof oCacheProxy.resetChanges, "function");
 			assert.throws(function () {
 				oCacheProxy.post();
 			}, "POST request not allowed");

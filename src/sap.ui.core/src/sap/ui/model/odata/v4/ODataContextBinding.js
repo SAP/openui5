@@ -278,6 +278,24 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Deregisters the given change listener.
+	 *
+	 * @param {string} sPath
+	 *   The path
+	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} oListener
+	 *   The change listener
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype.deregisterChange = function (sPath, oListener) {
+		if (this.oCache) {
+			this.oCache.deregisterChange(sPath, oListener);
+		} else if (this.oContext) {
+			this.oContext.deregisterChange(_Helper.buildPath(this.sPath, sPath), oListener);
+		}
+	};
+
+	/**
 	 * Destroys the object. The object must not be used anymore after this function was called.
 	 *
 	 * @public
@@ -399,35 +417,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the bound context.
-	 *
-	 * @returns {sap.ui.model.odata.v4.Context}
-	 *   The bound context
-	 *
-	 * @name sap.ui.model.odata.v4.ODataContextBinding#getBoundContext
-	 * @public
-	 * @since 1.39.0
-	 */
-
-	/**
-	 * Deregisters the given change listener.
-	 *
-	 * @param {string} sPath
-	 *   The path
-	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} oListener
-	 *   The change listener
-	 *
-	 * @private
-	 */
-	ODataContextBinding.prototype.deregisterChange = function (sPath, oListener) {
-		if (this.oCache) {
-			this.oCache.deregisterChange(sPath, oListener);
-		} else if (this.oContext) {
-			this.oContext.deregisterChange(_Helper.buildPath(this.sPath, sPath), oListener);
-		}
-	};
-
-	/**
 	 * Requests the value for the given absolute path; the value is requested from this binding's
 	 * cache or from its context in case it has no cache or the cache does not contain data for
 	 * this path.
@@ -502,6 +491,17 @@ sap.ui.define([
 		}
 		return _SyncPromise.resolve();
 	};
+
+	/**
+	 * Returns the bound context.
+	 *
+	 * @returns {sap.ui.model.odata.v4.Context}
+	 *   The bound context
+	 *
+	 * @name sap.ui.model.odata.v4.ODataContextBinding#getBoundContext
+	 * @public
+	 * @since 1.39.0
+	 */
 
 	/**
 	 * Returns the group ID of the binding that is used for read requests.

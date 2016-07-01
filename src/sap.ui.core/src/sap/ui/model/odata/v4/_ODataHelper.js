@@ -293,6 +293,7 @@ sap.ui.define([
 					});
 				},
 				refresh : function () {},
+				resetChanges : function () {},
 				update : function () {
 					throw new Error("PATCH request not allowed");
 				}
@@ -861,8 +862,8 @@ sap.ui.define([
 		 * @param {sap.ui.model.odata.v4.ODataListBinding|sap.ui.model.odata.v4.ODataContextBinding}
 		 *   oBinding The OData list or context binding
 		 * @param {boolean} bAskParent
-		 *   If <code>true</code>, reset in the parent binding using this binding's relative path; this
-		 *   is only relevant if there is no path given
+		 *   If <code>true</code>, reset in the parent binding using this binding's relative path;
+		 *   this is only relevant if there is no path given
 		 * @param {string} [sPath]
 		 *   The path; if it is defined, only the parent is asked to reset using the relative path
 		 *
