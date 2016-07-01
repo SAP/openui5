@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/base/Man			agedObject'], function(ManagedObject) {
+sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
 	"use strict";
 
 	var mCommands = {
