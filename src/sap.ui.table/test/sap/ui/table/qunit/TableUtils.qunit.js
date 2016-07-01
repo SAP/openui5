@@ -122,6 +122,24 @@ QUnit.test("getTotalRowCount", function(assert) {
 	assert.equal(TableUtils.getTotalRowCount(oTable, true), 10, "Number of data rows (incl. empty) (#data <= #visiblerows)");
 });
 
+QUnit.test("getNonEmptyVisibleRowCount", function(assert) {
+	var oTableDummy1 = {
+		getVisibleRowCount: function() { return 10;	},
+		_getRowCount: function() { return 5; }
+	};
+	var oTableDummy2 = {
+		getVisibleRowCount: function() { return 10; },
+		_getRowCount: function() { return 15; }
+	};
+	var oTableDummy3 = {
+		getVisibleRowCount: function() { return 10; },
+		_getRowCount: function() { return 10; }
+	};
+	assert.equal(TableUtils.getNonEmptyVisibleRowCount(oTableDummy1), oTableDummy1._getRowCount(), "Number of data rows (#data < #visiblerows)");
+	assert.equal(TableUtils.getNonEmptyVisibleRowCount(oTableDummy2), oTableDummy2.getVisibleRowCount(), "Number of visible rows (#data > #visiblerows)");
+	assert.equal(TableUtils.getNonEmptyVisibleRowCount(oTableDummy3), oTableDummy3.getVisibleRowCount(), "Number of visible and data rows (#data = #visiblerows)");
+});
+
 QUnit.test("isInGroupingRow", function(assert) {
 	fakeGroupRow(0);
 
@@ -170,45 +188,45 @@ QUnit.test("getColumnIndexOfFocusedCell", function(assert) {
 	oTable.getColumns()[1].setVisible(false);
 	sap.ui.getCore().applyChanges();
 
-	var oCell = getCell(0, 0, true);
+	getCell(0, 0, true);
 	assert.strictEqual(TableUtils.getColumnIndexOfFocusedCell(oTable), 0, "DATACELL 0");
 
-	oCell = getCell(0, 2, true);
+	getCell(0, 2, true);
 	assert.strictEqual(TableUtils.getColumnIndexOfFocusedCell(oTable), 2, "DATACELL 2");
 
-	oCell = getRowHeader(0, true);
+	getRowHeader(0, true);
 	assert.strictEqual(TableUtils.getColumnIndexOfFocusedCell(oTable), -1, "ROWHEADER");
 
-	oCell = getColumnHeader(0, true);
+	getColumnHeader(0, true);
 	assert.strictEqual(TableUtils.getColumnIndexOfFocusedCell(oTable), 0, "COLUMNHEADER 0");
 
-	oCell = getColumnHeader(2, true);
+	getColumnHeader(2, true);
 	assert.strictEqual(TableUtils.getColumnIndexOfFocusedCell(oTable), 2, "COLUMNHEADER 2");
 
-	oCell = getSelectAll(true);
+	getSelectAll(true);
 	assert.strictEqual(TableUtils.getColumnIndexOfFocusedCell(oTable), -1, "COLUMNROWHEADER");
 });
 
 QUnit.test("getRowIndexOfFocusedCell", function(assert) {
-	var oCell = getCell(0, 0, true);
+	getCell(0, 0, true);
 	assert.strictEqual(TableUtils.getRowIndexOfFocusedCell(oTable), 0, "DATACELL 0,0");
 
-	oCell = getCell(0, 2, true);
+	getCell(0, 2, true);
 	assert.strictEqual(TableUtils.getRowIndexOfFocusedCell(oTable), 0, "DATACELL 0,2");
 
-	oCell = getCell(1, 1, true);
+	getCell(1, 1, true);
 	assert.strictEqual(TableUtils.getRowIndexOfFocusedCell(oTable), 1, "DATACELL 1,1");
 
-	oCell = getRowHeader(0, true);
+	getRowHeader(0, true);
 	assert.strictEqual(TableUtils.getRowIndexOfFocusedCell(oTable), 0, "ROWHEADER 0");
 
-	oCell = getRowHeader(2, true);
+	getRowHeader(2, true);
 	assert.strictEqual(TableUtils.getRowIndexOfFocusedCell(oTable), 2, "ROWHEADER 2");
 
-	oCell = getColumnHeader(0, true);
+	getColumnHeader(0, true);
 	assert.strictEqual(TableUtils.getRowIndexOfFocusedCell(oTable), -1, "COLUMNHEADER 0");
 
-	oCell = getSelectAll(true);
+	getSelectAll(true);
 	assert.strictEqual(TableUtils.getRowIndexOfFocusedCell(oTable), -1, "COLUMNROWHEADER");
 });
 
@@ -240,6 +258,12 @@ QUnit.test("getFocusedItemInfo", function(assert) {
 	assert.strictEqual(oInfo.cellInRow, 1, "cellInRow");
 	assert.strictEqual(oInfo.cellCount, (iNumberOfCols + 1) * (3 /*visible rows*/ + 1), "cellCount");
 	assert.strictEqual(oInfo.domRef, oCell.get(0), "domRef");
+
+	var oTableDummy = {
+		_getItemNavigation: function() {}
+	};
+	oInfo = TableUtils.getFocusedItemInfo(oTableDummy);
+	assert.equal(oInfo, null, "FocusedItemInfo = null");
 });
 
 QUnit.test("getNoDataText", function(assert) {
@@ -273,12 +297,12 @@ QUnit.test("scroll", function(assert) {
 		if (i < iNotVisibleRows) {
 			assert.equal(oTable.getFirstVisibleRow(), i, "First visible row before scroll (forward, stepwise, " + i + ")");
 			bScrolled = TableUtils.scroll(oTable, true, false);
-			ok(bScrolled, "scroll function indicates that scrolling was performed");
+			assert.ok(bScrolled, "scroll function indicates that scrolling was performed");
 			assert.equal(oTable.getFirstVisibleRow(), i + 1, "First visible row after scroll");
 		} else {
 			assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows, "First visible row before scroll (forward, stepwise, " + i + ")");
 			bScrolled = TableUtils.scroll(oTable, true, false);
-			ok(!bScrolled, "scroll function indicates that no scrolling was performed");
+			assert.ok(!bScrolled, "scroll function indicates that no scrolling was performed");
 			assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows, "First visible row after scroll");
 		}
 	}
@@ -287,12 +311,12 @@ QUnit.test("scroll", function(assert) {
 		if (i < iNotVisibleRows) {
 			assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows - i, "First visible row before scroll (backward, stepwise, " + i + ")");
 			bScrolled = TableUtils.scroll(oTable, false, false);
-			ok(bScrolled, "scroll function indicates that scrolling was performed");
+			assert.ok(bScrolled, "scroll function indicates that scrolling was performed");
 			assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows - i - 1, "First visible row after scroll");
 		} else {
 			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scroll (backward, stepwise, " + i + ")");
 			bScrolled = TableUtils.scroll(oTable, false, false);
-			ok(!bScrolled, "scroll function indicates that no scrolling was performed");
+			assert.ok(!bScrolled, "scroll function indicates that no scrolling was performed");
 			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scroll");
 		}
 	}
@@ -302,13 +326,13 @@ QUnit.test("scroll", function(assert) {
 		if (i < iPages - 1) {
 			assert.equal(oTable.getFirstVisibleRow(), iPos, "First visible row before scroll (forward, pagewise, " + i + ")");
 			bScrolled = TableUtils.scroll(oTable, true, true);
-			ok(bScrolled, "scroll function indicates that scrolling was performed");
+			assert.ok(bScrolled, "scroll function indicates that scrolling was performed");
 			iPos = iPos + iPageSize;
 			assert.equal(oTable.getFirstVisibleRow(), Math.min(iPos, iNotVisibleRows), "First visible row after scroll");
 		} else {
 			assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows, "First visible row before scroll (forward, pagewise, " + i + ")");
 			bScrolled = TableUtils.scroll(oTable, true, true);
-			ok(!bScrolled, "scroll function indicates that no scrolling was performed");
+			assert.ok(!bScrolled, "scroll function indicates that no scrolling was performed");
 			assert.equal(oTable.getFirstVisibleRow(), iNotVisibleRows, "First visible row after scroll");
 		}
 	}
@@ -318,16 +342,72 @@ QUnit.test("scroll", function(assert) {
 		if (i < iPages - 1) {
 			assert.equal(oTable.getFirstVisibleRow(), iPos, "First visible row before scroll (backward, pagewise, " + i + ")");
 			bScrolled = TableUtils.scroll(oTable, false, true);
-			ok(bScrolled, "scroll function indicates that scrolling was performed");
+			assert.ok(bScrolled, "scroll function indicates that scrolling was performed");
 			iPos = iPos - iPageSize;
 			assert.equal(oTable.getFirstVisibleRow(), Math.max(iPos, 0), "First visible row after scroll");
 		} else {
 			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scroll (backward, pagewise, " + i + ")");
 			bScrolled = TableUtils.scroll(oTable, false, true);
-			ok(!bScrolled, "scroll function indicates that no scrolling was performed");
+			assert.ok(!bScrolled, "scroll function indicates that no scrolling was performed");
 			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scroll");
 		}
 	}
+});
+
+QUnit.test("scrollMax", function(assert) {
+	var bScrolled = false;
+
+	/* More data rows than visible rows */
+	// ↓ Down
+	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scrolling");
+	bScrolled = TableUtils.scrollMax(oTable, true);
+	assert.ok(bScrolled, "Scroll function indicates that scrolling was performed");
+	assert.equal(oTable.getFirstVisibleRow(), iNumberOfRows - oTable.getVisibleRowCount(), "First visible row after scrolling");
+	// ↑ Up
+	bScrolled = TableUtils.scrollMax(oTable, false);
+	assert.ok(bScrolled, "Scroll function indicates that scrolling was performed");
+	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scrolling");
+
+	/* Less data rows than visible rows */
+	oTable.setVisibleRowCount(10);
+	sap.ui.getCore().applyChanges();
+	// ↓ Down
+	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scrolling");
+	bScrolled = TableUtils.scrollMax(oTable, true);
+	assert.ok(!bScrolled, "Scroll function indicates that no scrolling was performed");
+	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scrolling");
+	// ↑ Up
+	bScrolled = TableUtils.scrollMax(oTable, false);
+	assert.ok(!bScrolled, "Scroll function indicates that no scrolling was performed");
+	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scrolling");
+
+	/* More data rows than visible rows and fixed top/bottom rows */
+	oTable.setVisibleRowCount(6);
+	oTable.setFixedRowCount(2);
+	oTable.setFixedBottomRowCount(2);
+	sap.ui.getCore().applyChanges();
+	// ↓ Down
+	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scrolling");
+	bScrolled = TableUtils.scrollMax(oTable, true);
+	assert.ok(bScrolled, "Scroll function indicates that scrolling was performed");
+	assert.equal(oTable.getFirstVisibleRow(), iNumberOfRows - oTable.getVisibleRowCount(), "First visible row after scrolling");
+	// ↑ Up
+	bScrolled = TableUtils.scrollMax(oTable, false);
+	assert.ok(bScrolled, "Scroll function indicates that scrolling was performed");
+	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scrolling");
+
+	/* Less data rows than visible rows and fixed top/bottom rows */
+	oTable.setVisibleRowCount(10);
+	sap.ui.getCore().applyChanges();
+	// ↓ Down
+	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scrolling");
+	bScrolled = TableUtils.scrollMax(oTable, true);
+	assert.ok(!bScrolled, "Scroll function indicates that no scrolling was performed");
+	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scrolling");
+	// ↑ Up
+	bScrolled = TableUtils.scrollMax(oTable, false);
+	assert.ok(!bScrolled, "Scroll function indicates that no scrolling was performed");
+	assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scrolling");
 });
 
 QUnit.test("isFirstScrollableRow / isLastScrollableRow", function(assert) {
@@ -342,8 +422,8 @@ QUnit.test("isFirstScrollableRow / isLastScrollableRow", function(assert) {
 
 	for (var j = 0; j < 2; j++) {
 		for (var i = 0; i < iVisibleRowCount; i++) {
-			equal(TableUtils.isFirstScrollableRow(oTable, getCell(i, 0)), i == iFixedTop, "isFirstScrollableRow (" + i + ")");
-			equal(TableUtils.isLastScrollableRow(oTable, getCell(i, 0)), i == iVisibleRowCount - iFixedBottom - 1, "isLastScrollableRow (" + i + ")");
+			assert.equal(TableUtils.isFirstScrollableRow(oTable, getCell(i, 0)), i == iFixedTop, "isFirstScrollableRow (" + i + ")");
+			assert.equal(TableUtils.isLastScrollableRow(oTable, getCell(i, 0)), i == iVisibleRowCount - iFixedBottom - 1, "isLastScrollableRow (" + i + ")");
 		}
 		TableUtils.scroll(oTable, true, false);
 	}
@@ -371,7 +451,7 @@ QUnit.module("TableUtils", {
 				return document.getElementById(this.getId(sSuffix));
 			},
 			getResizeHandlerIdKeys: function() {
-				var aKeys = []
+				var aKeys = [];
 				for (var sKey in this._mResizeHandlerIds) {
 					if (this._mResizeHandlerIds[sKey] !== undefined && this._mResizeHandlerIds.hasOwnProperty(sKey)) {
 						aKeys.push(sKey);
