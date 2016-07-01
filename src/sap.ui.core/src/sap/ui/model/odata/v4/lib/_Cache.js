@@ -175,15 +175,25 @@ sap.ui.define([
 	 *   <code>true</code> if there are pending changes
 	 */
 	function hasPendingChanges(mPatchRequests, sPath) {
-		var sPathPrefix = sPath + "/",
-			sRequestPath;
+		var sRequestPath;
 
 		for (sRequestPath in mPatchRequests) {
-			if (sPath === "" || sRequestPath === sPath || sRequestPath.indexOf(sPathPrefix) === 0) {
+			if (isSubPath(sRequestPath, sPath)) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Returns <code>true</code> if <code>sRequestPath</code> is a sub-path of <code>sPath</code>.
+	 *
+	 * @param {string} sRequestPath The request path
+	 * @param {string} sPath The path to check against
+	 * @returns {boolean} <code>true</code> if it is a sub-path
+	 */
+	function isSubPath(sRequestPath, sPath) {
+		return sPath === "" || sRequestPath === sPath || sRequestPath.indexOf(sPath + "/") === 0;
 	}
 
 	/**
@@ -224,7 +234,7 @@ sap.ui.define([
 
 		for (sPath in oCache.mPatchRequests) {
 			aPromises = oCache.mPatchRequests[sPath];
-			for (i = 0; i < aPromises.length; i++ ) {
+			for (i = 0; i < aPromises.length; i++) {
 				oCache.oRequestor.removePatch(aPromises[i]);
 			}
 		}
@@ -277,6 +287,28 @@ sap.ui.define([
 			});
 
 		fill(oCache.aElements, oPromise, iStart, iEnd);
+	}
+
+	/**
+	 * Reset all pending PATCH requests for the given <code>sPath</code>
+	 *
+	 * @param {_Cache} oCache The cache
+	 * @param {string} sPath The path
+	 */
+	function resetChanges(oCache, sPath) {
+		var i,
+			sRequestPath,
+			aPromises;
+
+		for (sRequestPath in oCache.mPatchRequests) {
+			if (isSubPath(sRequestPath, sPath)) {
+				aPromises = oCache.mPatchRequests[sRequestPath];
+				for (i = 0; i < aPromises.length; i++ ) {
+					oCache.oRequestor.removePatch(aPromises[i]);
+				}
+				delete oCache.mPatchRequests[sRequestPath];
+			}
+		}
 	}
 
 	/**
@@ -434,6 +466,16 @@ sap.ui.define([
 		this.iMaxElements = -1;
 		this.aElements = [];
 		removePatchRequests(this);
+	};
+
+	/**
+	 * Resets all pending changes below the given path.
+	 *
+	 * @param {string} [sPath]
+	 *   The path
+	 */
+	CollectionCache.prototype.resetChanges = function (sPath) {
+		resetChanges(this, sPath);
 	};
 
 	/**
@@ -685,6 +727,15 @@ sap.ui.define([
 		}
 		this.oPromise = undefined;
 		removePatchRequests(this);
+	};
+
+	/**
+	 * Resets all pending changes below the given path.
+	 * @param {string} [sPath]
+	 *   The path
+	 */
+	SingleCache.prototype.resetChanges = function (sPath) {
+		resetChanges(this, sPath);
 	};
 
 	/**

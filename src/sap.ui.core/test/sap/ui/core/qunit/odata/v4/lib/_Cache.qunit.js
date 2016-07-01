@@ -38,6 +38,41 @@ sap.ui.require([
 
 		afterEach : function () {
 			this.oLogMock.verify();
+		},
+
+		testResetChanges : function (assert, oCache) {
+			var oPromise1 = {},
+				oPromise2 = {},
+				oPromise3 = {},
+				oPromise4 = {},
+				oPromise5 = {},
+				oRequestorMock = this.mock(oCache.oRequestor);
+
+			oCache.mPatchRequests = {
+				"foo/bar" : [oPromise1],
+				"bar/baz" : [oPromise2],
+				"bar" : [oPromise3, oPromise4],
+				"barbar/foo" : [oPromise5]
+			};
+			oRequestorMock.expects("removePatch").withExactArgs(sinon.match.same(oPromise2));
+			oRequestorMock.expects("removePatch").withExactArgs(sinon.match.same(oPromise3));
+			oRequestorMock.expects("removePatch").withExactArgs(sinon.match.same(oPromise4));
+
+			// code under test
+			oCache.resetChanges("bar");
+
+			assert.deepEqual(oCache.mPatchRequests, {
+				"foo/bar" : [oPromise1],
+				"barbar/foo" : [oPromise5]
+			});
+
+			oRequestorMock.expects("removePatch").withExactArgs(sinon.match.same(oPromise1));
+			oRequestorMock.expects("removePatch").withExactArgs(sinon.match.same(oPromise5));
+
+			// code under test
+			oCache.resetChanges("");
+
+			assert.deepEqual(oCache.mPatchRequests, {});
 		}
 	});
 
@@ -993,6 +1028,15 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("Cache: resetChanges", function (assert) {
+		var oRequestor = _Requestor.create("/"),
+			sResourcePath = "/SalesOrderList",
+			oCache = _Cache.create(oRequestor, sResourcePath);
+
+		this.testResetChanges(assert, oCache);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("SingleCache: post", function (assert) {
 		var fnDataRequested = sinon.spy(),
 			sGroupId = "group",
@@ -1600,6 +1644,15 @@ sap.ui.require([
 					"Cannot update 'foo': 'invalid/path' does not exist");
 			});
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("SingleCache: resetChanges", function (assert) {
+		var oRequestor = _Requestor.create("/"),
+			sResourcePath = "/SalesOrderList('0')",
+			oCache = _Cache.createSingle(oRequestor, sResourcePath);
+
+		this.testResetChanges(assert, oCache);
 	});
 
 	//*********************************************************************************************
