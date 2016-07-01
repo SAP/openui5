@@ -255,9 +255,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 			childAdaptOptions = jQuery.extend({}, oAdaptOptions, {iSearchDepth: this._updateSearchDepth(iSearchDepth, oNode)});
 
 		if (oNodeAdaptationResult) {
-			var bTitleHidden = !!oAdaptationResult.oTitleInfo,
-			bBackButtonHidden = !!oAdaptationResult.oBackButton,
-			bPageStyled = !!oAdaptationResult.oStyledPage;
+			var bTitleHidden = !!oNodeAdaptationResult.oTitleInfo,
+			bBackButtonHidden = !!oNodeAdaptationResult.oBackButton,
+			bPageStyled = !!oNodeAdaptationResult.oStyledPage;
 
 			childAdaptOptions = jQuery.extend(childAdaptOptions, {
 				bMoveTitle: oAdaptOptions.bMoveTitle && !bTitleHidden,
