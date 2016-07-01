@@ -150,7 +150,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
 			 * @since 1.28.0
 			 */
-			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
+			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" },
+
+			/**
+			 * Association to the <code>CalendarLegend</code> explaining the colors of the <code>specialDates</code>.
+			 *
+			 * <b>Note</b> The legend does not have to be rendered but must exist, and all required types must be assigned.
+			 * @since 1.38.5
+			 */
+			legend: { type: "sap.ui.unified.CalendarLegend", multiple: false}
 		},
 		events : {
 
@@ -349,6 +357,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		this._bDateRangeChanged = true;
 		var oDestroyed = this.destroyAggregation("specialDates");
 		return oDestroyed;
+
+	};
+
+	/*
+	 * if used inside DatePicker get the value from the parent
+	 * To don't have sync issues...
+	 */
+	Calendar.prototype.getSpecialDates = function(){
+
+		var oParent = this.getParent();
+
+		if (oParent && oParent.getSpecialDates) {
+			return oParent.getSpecialDates();
+		} else {
+			return this.getAggregation("specialDates", []);
+		}
 
 	};
 
