@@ -703,6 +703,44 @@
 				oColorPicker.destroy();
 			});
 
+			//Testcase: LiveChange evnt
+			test("ColorPicker change event gets new color values", function() {
+				//Arrange
+				var colors = new Object();
+				function handleColorPickerChange(oEvent) {
+					colors = oEvent.getParameters();
+				};
+				var oColorPicker = createColorPicker();
+					oColorPicker.attachChange(handleColorPickerChange);
+					oColorPicker.setColorString("red");
+	
+				oColorPicker.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+	
+				equal(oColorPicker.oRedField.getValue(), colors.r.toString(), "Value of RED: 255");
+				equal(oColorPicker.oGreenField.getValue(), colors.g.toString(), "Value of GREEN: 0");
+				equal(oColorPicker.oBlueField.getValue(), colors.b.toString(), "Value of BLUE: 0");
+				equal(oColorPicker.oHueField.getValue(), colors.h.toString(), "Value of HUE: 0");
+				equal(oColorPicker.oSatField.getValue(), colors.s.toString(), "Value of SATURATION: 100");
+				equal(oColorPicker.oLitField.getValue(), colors.l.toString(), "Value of LIGHTNESS: 50");
+				equal(oColorPicker.Color.hex, colors.hex , "Value of HEX: #ff0000");
+	
+				oColorPicker.setColorString("lime");
+				sap.ui.getCore().applyChanges();
+	
+				equal(oColorPicker.oRedField.getValue(), colors.r.toString(), "Value of RED: 0");
+				equal(oColorPicker.oGreenField.getValue(), colors.g.toString(), "Value of GREEN: 255");
+				equal(oColorPicker.oBlueField.getValue(), colors.b.toString(), "Value of BLUE: 0");
+				equal(oColorPicker.oHueField.getValue(), colors.h.toString(), "Value of HUE: 120");
+				equal(oColorPicker.oSatField.getValue(), colors.s.toString(), "Value of SATURATION: 100");
+				equal(oColorPicker.oLitField.getValue(), colors.l.toString(), "Value of LIGHTNESS: 50");
+				equal(oColorPicker.Color.hex, colors.hex , "Value of HEX: #00ff00");
+
+				// clean up
+				oColorPicker.destroy();
+			});
+
+
 		module("test isColor function e.g. test _parseColorString with bCheckOnly parameter set to true");
 
 		test("isColor test with named color parameter 'aquamarine'", function() {
