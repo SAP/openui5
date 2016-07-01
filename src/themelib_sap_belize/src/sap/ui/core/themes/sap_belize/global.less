@@ -17,7 +17,7 @@
 @sapUiBaseBG: @sapBackgroundColor;						// #fafafa
 @sapUiGlobalBackgroundColor: @sapBackgroundColor;
 
-@sapUiBaseText: @sapTextColor;							// #000000
+@sapUiBaseText: @sapTextColor;							// #333333
 @sapUiLink: @sapLinkColor;								// #0070b1
 
 @sapUiGlobalLogo: @sapCompanyLogo;
@@ -96,6 +96,7 @@
 
 @sapUiFieldBackground: @sapField_Background;
 @sapUiFieldBorderColor: @sapField_BorderColor;
+@sapUiFieldTextColor: @sapField_TextColor;
 @sapUiFieldHelpBackground: @sapField_HelpBackground;
 @sapUiFieldHoverBackground: @sapField_Hover_Background;
 @sapUiFieldHoverBorderColor: @sapField_Hover_BorderColor;
@@ -337,13 +338,13 @@
 @sapUiChartLegendTitleFontColor: @sapUiGroupTitleTextColor;         // #333333
 @sapUiChartLegendTitleFontSize: @sapMFontMediumSize;                // 14px
 @sapUiChartLegendLabelFontSize: @sapMFontSmallSize;                 // 12px
-@sapUiChartPaletteUndefinedColor: @sapUiBaseText;                   // #000000
+@sapUiChartPaletteUndefinedColor: darken(@sapUiBaseText, 20);       // #000000
 @sapUiChartGridlineColor: lighten(@sapUiContentForegroundBorderColor, 15);  // #e5e5e5
 @sapUiChartReferenceLineColor: darken(@sapUiChartGridlineColor, 70);   // #333333
-@sapUiChartDataLabelFontColor: @sapUiBaseText;                      // #000000
-@sapUiChartReferenceLineLabelColor: @sapUiBaseText;                 // #000000
+@sapUiChartDataLabelFontColor: darken(@sapUiBaseText, 20);          // #000000
+@sapUiChartReferenceLineLabelColor: darken(@sapUiBaseText, 20);     // #000000
 @sapUiChartDataLabelFontSize: @sapMFontSmallSize;                   // 12px
-@sapUiChartPopoverDataItemFontColor: @sapUiBaseText;                // #000000
+@sapUiChartPopoverDataItemFontColor: darken(@sapUiBaseText, 20);    // #000000
 @sapUiChartPopoverGroupFontColor: @sapUiContentForegroundTextColor; // #333333
 @sapUiChartPopoverDataItemFontSize: @sapMFontMediumSize;            // 14px
 @sapUiChartPopoverGroupFontSize: @sapMFontMediumSize;               // 14px
@@ -570,13 +571,12 @@
 @sapUiSegmentedButtonFooterBorderColor: lighten(@sapUiButtonBorderColor, 8);
 @sapUiSegmentedButtonFooterHoverBackground: @sapUiButtonHoverBackground;
 
-@sapUiFieldTextColor: @sapUiBaseText;
 @sapUiFieldActiveBackground: @sapUiActive;
 @sapUiFieldActiveBorderColor: @sapUiActive;
 @sapUiFieldActiveTextColor: @sapUiContentContrastTextColor;
-@sapUiFieldPlaceholderTextColor: lighten(@sapUiBaseText, 44);
+@sapUiFieldPlaceholderTextColor: lighten(@sapUiFieldTextColor, 46);
 
-@sapUiListTextColor: lighten(@sapUiBaseText, 20);
+@sapUiListTextColor: @sapUiBaseText;
 @sapUiListVerticalBorderColor: darken(@sapUiListBorderColor, 3);
 @sapUiListActiveBackground: @sapUiListHighlightColor;
 @sapUiListActiveTextColor: contrast(@sapUiListActiveBackground, @sapUiListTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
