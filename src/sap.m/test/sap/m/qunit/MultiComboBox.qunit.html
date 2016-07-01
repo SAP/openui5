@@ -4158,6 +4158,30 @@
 		oMultiComboBox.destroy();
 		this.clock.reset();
 	});
+
+	test("focus on After rendering of the list", function () {
+		var oItem = new sap.ui.core.Item ({
+			key: "DZ",
+			text: "Algeria"
+		}), oMultiComboBox = new sap.m.MultiComboBox({
+			items: [oItem]
+		});
+
+		// arrange
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+		oMultiComboBox.focus();
+		oMultiComboBox.open();
+		this.clock.tick(500);
+
+		// act
+		oMultiComboBox.setVisible(false);
+		this.clock.tick(500);
+		oMultiComboBox.addItem(oItem.clone());
+
+		ok(true, "There is not an error thrown");
+
+	});
 </script>
 </head>
 <body id="body" class="sapUiBody">
