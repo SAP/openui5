@@ -31,7 +31,7 @@
 /* focus */
 
 html.sap-desktop .sapMSwtCont:focus > .sapMSwt {
-	outline: 0.0625rem dotted @sapUiContentFocusColor;
+	outline: 1px dotted @sapUiContentFocusColor;
 }
 
 /* ------------------------------ */
@@ -57,23 +57,28 @@ html.sap-desktop .sapMSwtCont:focus > .sapMSwt {
 /* background */
 
 .sapMSwtOn:not(.sapMSwtAcceptReject) {
-	background: @sapUiFieldActiveBackground;
-	border-color: @sapUiFieldActiveBorderColor;
+	background: @sapUiToggleButtonPressedBackground;
+	border-color: @sapUiToggleButtonPressedBorderColor;
 }
 
 .sapMSwtOff:not(.sapMSwtAcceptReject) {
-	background: @sapUiFieldBackground;
-	border-color: @sapUiFieldBorderColor;
+	background: lighten(@sapUiButtonBackground, 3);
+	border-color: @sapUiButtonBorderColor;
 }
 
 /* hover */
 
 .sapMSwt.sapMSwtHoverable:hover {
-	border-color: @sapUiFieldHoverBorderColor;
+	background: @sapUiButtonHoverBackground;
+}
+
+.sapMSwt.sapMSwtHoverable:not(.sapMSwtAcceptReject):hover {
+	border-color: @sapUiButtonHoverBorderColor;
 }
 
 .sapMSwtHoverable.sapMSwtOn:not(.sapMSwtAcceptReject):hover {
-	background: darken(@sapUiFieldActiveBackground, 5);
+	background: @sapUiToggleButtonPressedHoverBackground;
+	border-color: @sapUiToggleButtonPressedHoverBorderColor;
 }
 
 /* disabled */
@@ -117,7 +122,7 @@ html[dir=rtl] .sapMSwtTrans > .sapMSwtInner {
 }
 
 .sapMSwtOn .sapMSwtText {
-	color: @sapUiContentContrastTextColor;
+	color: @sapUiToggleButtonPressedTextColor;
 }
 
 .sapMSwtOff .sapMSwtText {
@@ -162,11 +167,20 @@ html[dir=rtl] .sapMSwtTrans > .sapMSwtInner {
 /* background */
 
 .sapMSwtOn .sapMSwtHandle {
-	background: @sapUiContentContrastIconColor;
+	background: transparent;
+	box-sizing: border-box;
+	border: 2px solid;
+	border-color: contrast(@sapUiToggleButtonPressedBackground,
+	@sapUiContentIconColor,
+	@sapUiContentContrastIconColor,
+	@sapUiContentContrastTextThreshold);
 }
 
 .sapMSwtOff .sapMSwtHandle {
-	background: @sapUiFieldBorderColor;
+	background: transparent;
+	box-sizing: border-box;
+	border: 2px solid;
+	border-color: @sapUiButtonBorderColor;
 }
 
 /* ====================================================== */
@@ -181,6 +195,7 @@ html[dir=rtl] .sapMSwtTrans > .sapMSwtInner {
 
 .sapMSwtAcceptReject.sapMSwtOn {
 	border-color: @sapUiPositiveElement;
+	background: @sapUiButtonHoverBackground;
 }
 
 .sapMSwtAcceptReject.sapMSwtOff {
@@ -222,7 +237,7 @@ html[dir=rtl] .sapMSwtTrans > .sapMSwtInner {
 /* ------------------------------ */
 
 .sapMSwtAcceptReject .sapMSwtHandle {
-	background: @sapUiFieldBackground;
+	background: transparent;
 	border-style: solid;
 	border-width: 0.125rem;
 }
