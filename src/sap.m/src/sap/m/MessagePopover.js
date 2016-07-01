@@ -463,7 +463,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 				press: this._fnHandleBackPress.bind(this),
 				ariaLabelledBy: oBackBtnARIAHiddenDescr,
 				tooltip: sBackBtnTooltipDescr
-			});
+			}).addStyleClass(CSS_CLASS + "BackBtn");
 
 			this._oDetailsHeader = new Toolbar({
 				content: [this._oBackButton, new ToolbarSpacer(), oCloseBtn, oCloseBtnARIAHiddenDescr, oBackBtnARIAHiddenDescr]
