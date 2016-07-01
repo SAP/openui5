@@ -1,9 +1,21 @@
 /* background */
 
 .sapMSwtOn:not(.sapMSwtAcceptReject) {
-	border-color: lighten(@sapUiFieldActiveBorderColor, 10);
+	border-color: contrast(@sapUiToggleButtonPressedBackground,
+	lighten(@sapUiContentIconColor, 12),
+	@sapUiContentContrastIconColor,
+	@sapUiContentContrastTextThreshold);
 }
 
-.sapMSwtHoverable.sapMSwtOn:not(.sapMSwtAcceptReject):hover {
-	background: lighten(@sapUiFieldActiveBackground, 5);
+.sapMSwtOff:not(.sapMSwtAcceptReject) {
+	background: lighten(@sapUiButtonBackground, 2);
+	border-color: darken(@sapUiButtonBorderColor, 3);
+}
+
+.sapMSwtOff .sapMSwtHandle {
+	border-color: darken(@sapUiButtonBorderColor, 3);
+}
+
+html.sap-desktop .sapMSwtCont:focus > .sapMSwt {
+	outline: 1px dotted @sapUiContentContrastFocusColor;
 }
