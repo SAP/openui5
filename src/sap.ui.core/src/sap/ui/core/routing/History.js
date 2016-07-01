@@ -172,6 +172,10 @@ sap.ui.define(['jquery.sap.global', './HashChanger'],
 			//Since a replace has taken place, the current history entry is also replaced
 			this.aHistory[this.iHistoryPosition] = sNewHash;
 			this._oNextHash = null;
+			//reset the direction to Unknown when hash is replaced after history is already initialized
+			if (!this._bIsInitial) {
+				this._sCurrentDirection = oDirection.Unknown;
+			}
 			return;
 		}
 
