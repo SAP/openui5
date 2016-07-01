@@ -21,6 +21,7 @@
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 		<!-- Test functions -->
@@ -68,13 +69,29 @@
 				pickerPopup: true,
 				selectedDates: [new sap.ui.unified.DateRange({startDate: new Date("2015", "11", "4"), endDate: new Date("2016", "1", "6")})],
 				specialDates: [new sap.ui.unified.DateTypeRange({startDate: new Date("2015", "8", "8"), type: sap.ui.unified.CalendarDayType.Type01, tooltip: "Text"}),
-				               new sap.ui.unified.DateTypeRange({startDate: new Date("2015", "9", "9"), endDate: new Date("2015", "10", "10"), type: sap.ui.unified.CalendarDayType.Type02, tooltip: "Text"})]
+				               new sap.ui.unified.DateTypeRange({startDate: new Date("2015", "9", "9"), endDate: new Date("2015", "10", "10"), type: sap.ui.unified.CalendarDayType.Type02, tooltip: "Text"})],
+				legend: "Legend1"
 			}).placeAt("uiArea2");
 
 			var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd"});
 			var oFormatYyyymm = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMM"});
 			var oToday = new Date();
 			oToday.setDate(1);
+
+			var oLegend = new sap.ui.unified.CalendarLegend("Legend1", {
+				items: [
+				        new sap.ui.unified.CalendarLegendItem("T1", {type: sap.ui.unified.CalendarDayType.Type01, text: "Type 1"}),
+				        new sap.ui.unified.CalendarLegendItem("T2", {type: sap.ui.unified.CalendarDayType.Type02, text: "Type 2"}),
+				        new sap.ui.unified.CalendarLegendItem("T3", {type: sap.ui.unified.CalendarDayType.Type03, text: "Type 3"}),
+				        new sap.ui.unified.CalendarLegendItem("T4", {type: sap.ui.unified.CalendarDayType.Type04, text: "Type 4"}),
+				        new sap.ui.unified.CalendarLegendItem("T5", {type: sap.ui.unified.CalendarDayType.Type05, text: "Type 5"}),
+				        new sap.ui.unified.CalendarLegendItem("T6", {type: sap.ui.unified.CalendarDayType.Type06, text: "Type 6"}),
+				        new sap.ui.unified.CalendarLegendItem("T7", {type: sap.ui.unified.CalendarDayType.Type07, text: "Type 7"}),
+				        new sap.ui.unified.CalendarLegendItem("T8", {type: sap.ui.unified.CalendarDayType.Type08, text: "Type 8"}),
+				        new sap.ui.unified.CalendarLegendItem("T9", {type: sap.ui.unified.CalendarDayType.Type09, text: "Type 9"}),
+				        new sap.ui.unified.CalendarLegendItem("T10", {type: sap.ui.unified.CalendarDayType.Type10, text: "Type 10"}),
+				        ]
+			});
 
 			qutils.delayTestStart();
 
@@ -123,11 +140,14 @@
 
 			test("special days", function() {
 				ok(jQuery("#Cal2--MonthsRow-20150901").hasClass("sapUiCalItemType01"), "201509 is special month of Type01");
-				ok(jQuery("#Cal2--MonthsRow-20150901").attr("title", "Text"), "201509 has special days tooltip");
+				equal(jQuery("#Cal2--MonthsRow-20150901").attr("title"), "Text", "201509 has special days tooltip");
+				equal(jQuery("#Cal2--MonthsRow-20150901").attr("aria-label"), "September 2015; Type 1", "201509 has special days tooltip");
 				ok(jQuery("#Cal2--MonthsRow-20151001").hasClass("sapUiCalItemType02"), "201510 is special month of Type02");
-				ok(jQuery("#Cal2--MonthsRow-20151001").attr("title", "Text"), "201510 has special days tooltip");
+				equal(jQuery("#Cal2--MonthsRow-20151001").attr("title"), "Text", "201510 has special days tooltip");
+				equal(jQuery("#Cal2--MonthsRow-20151001").attr("aria-label"), "October 2015; Type 2", "201510 has special days tooltip");
 				ok(jQuery("#Cal2--MonthsRow-20151101").hasClass("sapUiCalItemType02"), "201511 is special month of Type02");
-				ok(jQuery("#Cal2--MonthsRow-20151101").attr("title", "Text"), "201511 has special days tooltip");
+				equal(jQuery("#Cal2--MonthsRow-20151101").attr("title"), "Text", "201511 has special days tooltip");
+				equal(jQuery("#Cal2--MonthsRow-20151101").attr("aria-label"), "November 2015; Type 2", "201511 has special days tooltip");
 			});
 
 			module("change date via API");
