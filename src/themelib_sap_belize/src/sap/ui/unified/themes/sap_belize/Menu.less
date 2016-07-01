@@ -11,10 +11,11 @@
 .sapUiMnu {
 	font-family: @sapUiFontFamily;
 	font-size: @sapMFontMediumSize;
-	padding: 0;
+	padding: 0px;
 	min-width: 5rem;
 	color: @sapUiBaseText;
-	box-shadow: 0 0.0625rem 0.1875rem fade(@sapUiContentShadowColor, 50);
+	box-shadow: @sapUiShadowLevel1;
+  	border-radius: 0.25rem;
 }
 
 .sapUiMnu.sapUiMnuScroll {
@@ -69,7 +70,7 @@
 
 .sapUiMnuItmIco {
 	width: @sapUiMnuItmHeight;
-	color: @sapUiContentIconColor;
+	color: @sapUiContentNonInteractiveIconColor;
 }
 
 .sapUiMnuItm.sapUiMnuItmDsbl .sapUiMnuItmIco {
