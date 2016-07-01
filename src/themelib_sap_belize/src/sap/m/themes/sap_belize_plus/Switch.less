@@ -1,0 +1,21 @@
+/* background */
+
+.sapMSwtOn:not(.sapMSwtAcceptReject) {
+	border-color: contrast(@sapUiToggleButtonPressedBackground,
+	lighten(@sapUiContentIconColor, 12),
+	@sapUiContentContrastIconColor,
+	@sapUiContentContrastTextThreshold);
+}
+
+.sapMSwtOff:not(.sapMSwtAcceptReject) {
+	background: lighten(@sapUiButtonBackground, 2);
+	border-color: darken(@sapUiButtonBorderColor, 3);
+}
+
+.sapMSwtOff .sapMSwtHandle {
+	border-color: darken(@sapUiButtonBorderColor, 3);
+}
+
+html.sap-desktop .sapMSwtCont:focus > .sapMSwt {
+	outline: 1px dotted @sapUiContentContrastFocusColor;
+}
