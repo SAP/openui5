@@ -6,7 +6,7 @@
 .sapMNCIconImage {
 	font-family: @sapUiFontHeaderFamily;
 	font-weight: @sapUiFontHeaderWeight;
-	color: lighten(@sapUiContentIconColor, 34);
+	color: @sapUiTileIconColor;
 	float: none;
 }
 
@@ -24,25 +24,25 @@
 .sapMNCValue.Neutral,
 .sapMNCIndicator.Neutral,
 .sapMNCScale.Neutral {
-	color: @sapUiNeutralElement;
+	color: @sapUiNeutralText;
 }
 
 .sapMNCValue.Good,
 .sapMNCIndicator.Good,
 .sapMNCScale.Good {
-	color: @sapUiPositiveElement ;
+	color: @sapUiPositiveText;
 }
 
 .sapMNCValue.Error,
 .sapMNCIndicator.Error,
 .sapMNCScale.Error {
-	color: @sapUiNegativeElement;
+	color: @sapUiNegativeText;
 }
 
 .sapMNCValue.Critical,
 .sapMNCIndicator.Critical,
 .sapMNCScale.Critical {
-	color: @sapUiCriticalElement;
+	color: @sapUiCriticalText;
 }
 
 .sapMNCIndicator.Loading,
