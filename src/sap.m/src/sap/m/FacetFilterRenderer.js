@@ -120,6 +120,18 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.writeClasses();
 		oRm.write(">");
 		var oSummaryBar = oControl.getAggregation("summaryBar");
+
+		// Overrides the Toolbar's method in order to change the role to "button" when the FacetFilter is in "light" mode
+		// and adds "labelledby" info
+		oSummaryBar._writeLandmarkInfo = function (oRm, oControl) {
+			var sFacetFilterText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("FACETFILTER_ARIA_FACET_FILTER");
+
+			oRm.writeAccessibilityState(oControl, {
+				role: "button",
+				labelledby: new sap.ui.core.InvisibleText({text: sFacetFilterText}).toStatic().getId()
+			});
+		};
+
 		oRm.renderControl(oSummaryBar);
 		oRm.write("</div>");
 	};
