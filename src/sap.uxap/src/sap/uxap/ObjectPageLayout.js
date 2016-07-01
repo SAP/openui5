@@ -1729,6 +1729,7 @@ sap.ui.define([
 
 		var oRm = sap.ui.getCore().createRenderManager();
 		this.getRenderer()._rerenderHeaderContentArea(oRm, this);
+		this._getHeaderContent().invalidate();
 		oRm.destroy();
 	};
 
