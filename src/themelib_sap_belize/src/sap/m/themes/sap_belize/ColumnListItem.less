@@ -86,6 +86,12 @@ html.sap-desktop .sapMListTblRow:focus{
 	border-top: 1px solid @sapUiListBorderColor;
 }
 
+/* set overlapped borders transparent to make focus outline more distinct */
+.sapMLIBShowSeparator:focus > td,
+.sapMLIBShowSeparator:focus + .sapMLIBShowSeparator > td {
+	border-top-color: transparent;
+}
+
 .sapMListShowSeparatorsNone .sapMLIBShowSeparator > td,
 .sapMListShowSeparatorsInner .sapMLIBShowSeparator:first-child > td {
 	border-color: transparent;
