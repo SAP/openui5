@@ -61,6 +61,10 @@
 	font-size: 500px; /* to make the field high enough for most themes; for themes with very large fonts this needs to be increased further */
 	width: 5000px;
 }
+.sapUiFupInputMask > input[disabled],
+.sapUiFupInputMask > input:disabled {
+	cursor: default;
+}
 
 html[data-sap-ui-browser^="ie"] .sapUiFup > form input {
 	display: block;
