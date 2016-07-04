@@ -1839,6 +1839,11 @@ sap.ui.define([
 	ObjectPageLayout.prototype._storeScrollLocation = function () {
 		this._iStoredScrollPosition = this._oScroller.getScrollTop();
 		this._oStoredSection = this._oCurrentTabSubSection || this._oCurrentTabSection;
+
+		if (this.getSections().indexOf(this._oStoredSection) === -1) {
+			this._oStoredSection = null;
+		}
+
 		this._oCurrentTabSection = null;
 	};
 
