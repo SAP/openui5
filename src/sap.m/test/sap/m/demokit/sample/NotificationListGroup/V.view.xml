@@ -8,7 +8,7 @@
 			width="100%">
 		<l:content>
 
-			<List>
+			<List class="sapContrast sapContrastPlus">
 				<NotificationListGroup
 						title="Orders"
 						datetime="1 hour"
