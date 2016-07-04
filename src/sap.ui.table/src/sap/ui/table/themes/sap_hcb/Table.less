@@ -353,6 +353,9 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 	outline-offset: -3px;
 	outline: 2px dotted @sapHCStandardFG;
 }
+.sapUiTableRowHdr.sapUiTableGroupHeader:focus:not(*:root) {
+	outline: 0px;
+}
 
 /* Firefox */
 @supports (-moz-appearance:meterbar) {
@@ -363,6 +366,17 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 	outline-offset: -3px;
 	outline: 2px dotted @sapHCStandardFG;
 }}
+
+.sapUiTableRowHdr.sapUiTableGroupHeader:focus .sapUiTableGroupIcon {
+	outline-width: 2px;
+	outline-style: dotted;
+	outline-offset: 0px;
+	outline-color: @sapUiContentFocusColor;
+}
+
+.sapUiTableRowHdr.sapUiTableGroupHeader {
+	outline: 0px;
+}
 
 .sapUiTableRSel .sapUiTableCtrlScr,
 .sapUiTableRSel .sapUiTableCtrlScrFixed {
@@ -451,6 +465,13 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 
 .sapUiSizeCompact .sapUiTableGroupIcon {
 	font-size: 0.875rem;
+	line-height: 26px;
+	height: 26px;
+}
+
+.sapUiSizeCondensed .sapUiTableGroupIcon {
+	height: 19px;
+	line-height: 19px;
 }
 
 .sapUiTableHSb,
