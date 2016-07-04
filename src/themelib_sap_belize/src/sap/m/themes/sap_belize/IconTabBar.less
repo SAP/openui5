@@ -6,207 +6,215 @@
 /* Head Container */
 
 .sapMITH {
-	box-shadow: inset 0 -0.25rem 0 -0.125rem darken(@sapUiObjectHeaderBackground, 8);
-  	background-color: @sapUiObjectHeaderBackground;
+  box-shadow: inset 0 -0.25rem 0 -0.125rem darken(@sapUiObjectHeaderBackground, 8);
+  background-color: @sapUiObjectHeaderBackground;
+  border-bottom: 0.125rem solid @sapUiContentContrastShadowColor;
 }
 
 .sapMITBHead {
-	font-size: @sapMFontSmallSize;
-	padding: 1px 1px 0 1px;
+  font-size: @sapMFontSmallSize;
+  padding: 1px 1px 0 1px;
 }
 
 .sapMITBScrollContainer {
-	/* the same padding as on the sapMITBHead is needed
-	to correct the scrolling calculations*/
-	padding: 1px 1px 0 1px;
+  /* the same padding as on the sapMITBHead is needed
+  to correct the scrolling calculations*/
+  padding: 1px 1px 0 1px;
 }
 
 /* Arrow */
 
 .sapMITBSelected > .sapMITBContentArrow {
-	border-bottom-color: @sapUiSelected;
+  border-bottom-color: @sapUiSelected;
 }
 
 .sapMITBSelected.sapMITBFilterNeutral > .sapMITBContentArrow {
-	border-bottom-color: @sapUiNeutralElement;
+  border-bottom-color: @sapUiNeutralElement;
 }
 
 .sapMITBSelected.sapMITBFilterPositive > .sapMITBContentArrow {
-	border-bottom-color: @sapUiPositiveElement;
+  border-bottom-color: @sapUiPositiveElement;
 }
 
 .sapMITBSelected.sapMITBFilterNegative > .sapMITBContentArrow {
-	border-bottom-color: @sapUiNegativeElement;
+  border-bottom-color: @sapUiNegativeElement;
 }
 
 .sapMITBSelected.sapMITBFilterCritical > .sapMITBContentArrow {
-	border-bottom-color: @sapUiCriticalElement;
+  border-bottom-color: @sapUiCriticalElement;
 }
 
 /* Content Container */
 
 .sapMITBContent {
-	background-color: @sapUiGroupContentBackground;
-  	border-bottom: 0.125rem solid darken(@sapUiObjectHeaderBackground, 8);
-}
-
-.sapMITBContainerContent {
-	border-bottom: 0.0625rem solid @sapUiGroupContentBorderColor;
+  background-color: @sapUiGroupContentBackground;
+  border-bottom: 0.125rem solid darken(@sapUiObjectHeaderBackground, 8);
 }
 
 /* Tab Item */
 
 .sapMITBItem {
-	color: @sapUiGroupTitleTextColor;
+  color: @sapUiGroupTitleTextColor;
 }
 
 /* Tab Filter Item */
 
 .sapMITBFilter .sapMITBText {
-	color: @sapUiContentLabelColor;
-	text-shadow: 0 1px 0 fade(@sapUiDarkShadowTint, 50);
+  color: @sapUiContentLabelColor;
+  text-shadow: 0 1px 0 fade(@sapUiContentContrastShadowColor, 70);
 }
 
 .sapMITBTextOnly .sapMITBText {
-	font-size: @sapMFontMediumSize;
+  font-size: @sapMFontMediumSize;
 }
 
 .sapMITBTextOnly .sapMITBFilterDefault > .sapMITBText {
-	color: @sapUiGroupTitleTextColor;
+  color: @sapUiGroupTitleTextColor;
+  text-shadow: 0 1px 0 fade(@sapUiContentContrastShadowColor, 70);
+}
+
+.sapMITBTextOnly .sapMITBFilterDefault:hover > .sapMITBText {
+  color: darken(@sapUiGroupTitleTextColor, 10);
 }
 
 .sapMITBTextOnly .sapMITBFilterDefault.sapMITBSelected > .sapMITBText {
-	color: @sapUiSelected;
+  color: @sapUiSelected;
+  text-shadow: 0 1px 0 fade(@sapUiContentContrastShadowColor, 70);
+}
+
+.sapMITBTextOnly .sapMITBFilterDefault.sapMITBSelected:hover > .sapMITBText {
+  color: darken(@sapUiSelected, 10);
 }
 
 .sapMITBTextOnly .sapMITBFilterNeutral > .sapMITBText {
-	color: @sapUiNeutralText;
+  color: @sapUiNeutralText;
 }
 
 .sapMITBTextOnly .sapMITBFilterPositive > .sapMITBText {
-	color: @sapUiPositiveText;
+  color: @sapUiPositiveText;
+  text-shadow: 0 1px 0 fade(@sapUiDarkShadowTint, 50);
+}
+
+.sapMITBTextOnly .sapMITBFilterPositive:hover > .sapMITBText {
+  color: darken(@sapUiPositiveText, 10);
 }
 
 .sapMITBTextOnly .sapMITBFilterNegative > .sapMITBText {
-	color: @sapUiNegativeText;
+  color: @sapUiNegativeText;
+  text-shadow: 0 1px 0 fade(@sapUiDarkShadowTint, 50);
+}
+
+.sapMITBTextOnly .sapMITBFilterNegative:hover > .sapMITBText {
+  color: darken(@sapUiNegativeText, 10);
 }
 
 .sapMITBTextOnly .sapMITBFilterCritical > .sapMITBText {
-	color: @sapUiCriticalText;
+  color: @sapUiCriticalText;
+  text-shadow: 0 1px 0 fade(@sapUiDarkShadowTint, 50);
+}
+
+.sapMITBTextOnly .sapMITBFilterCritical:hover > .sapMITBText {
+  color: darken(@sapUiCriticalText, 10);
 }
 
 .sapMITBFilter .sapMITBCount {
-	color: @sapUiGroupTitleTextColor;
-	max-width: 2rem;
-	overflow: hidden;
-	position: absolute;
-	text-overflow: ellipsis;
+  color: @sapUiGroupTitleTextColor;
+  text-shadow: 0 1px 0 fade(@sapUiContentContrastShadowColor, 70);
+  max-width: 2rem;
+  overflow: hidden;
+  position: absolute;
+  text-overflow: ellipsis;
 }
 
 .sapMITBTextOnly .sapMITBFilter .sapMITBCount {
-	color: @sapUiSelected;
-	font-size: @sapMFontMediumSize;
-	max-width: none;
-	overflow: hidden;
-	position: relative;
-	text-overflow: ellipsis;
+  font-size: @sapMFontMediumSize;
+  max-width: none;
+  position: relative;
 }
 
 .sapMITBFilterIcon {
-	border: 1px solid @sapUiHighlight;
+  border: 1px solid @sapUiHighlight;
+
+  &::before {
+    text-shadow: 0 1px 0 fade(@sapUiContentContrastShadowColor, 70);
+  }
 }
 
 .sapMITBFilterDefault {
-	color: @sapUiHighlight;
+  color: @sapUiHighlight;
 }
 
 .sapMITBFilterNeutral {
-	border-color: @sapUiNeutralElement;
-	color: @sapUiNeutralElement;
+  border-color: @sapUiNeutralElement;
+  color: @sapUiNeutralElement;
 }
 
 .sapMITBFilterPositive {
-	border-color: @sapUiPositiveElement;
-	color: @sapUiPositiveElement;
+  border-color: @sapUiPositiveElement;
+  color: @sapUiPositiveElement;
 }
 
 .sapMITBFilterNegative {
-	border-color: @sapUiNegativeElement;
-	color: @sapUiNegativeElement;
+  border-color: @sapUiNegativeElement;
+  color: @sapUiNegativeElement;
 }
 
 .sapMITBFilterCritical {
-	border-color: @sapUiCriticalElement;
-	color: @sapUiCriticalElement;
+  border-color: @sapUiCriticalElement;
+  color: @sapUiCriticalElement;
 }
 
 .sapMITBCount {
-	color: @sapUiGroupTitleTextColor;
+  color: @sapUiGroupTitleTextColor;
 }
 
 .sapMITBSelected .sapMITBFilterDefault {
-	background: @sapUiSelected;
-	color: @sapUiContentContrastIconColor;
+  background: @sapUiSelected;
+  color: @sapUiContentContrastIconColor;
 }
 
 .sapMITBSelected .sapMITBFilterNeutral {
-	background: @sapUiNeutralElement;
-	color: @sapUiGroupContentBackground;
+  background: @sapUiNeutralElement;
+  color: @sapUiGroupContentBackground;
 }
 
 .sapMITBSelected .sapMITBFilterPositive {
-	background: @sapUiPositiveElement;
-	color: @sapUiGroupContentBackground;
+  background: @sapUiPositiveElement;
+  color: @sapUiGroupContentBackground;
 }
 
 .sapMITBSelected .sapMITBFilterNegative {
-	background: @sapUiNegativeElement;
-	color: @sapUiGroupContentBackground;
+  background: @sapUiNegativeElement;
+  color: @sapUiGroupContentBackground;
 }
 
 .sapMITBSelected .sapMITBFilterCritical {
-	background: @sapUiCriticalElement;
-	color: @sapUiGroupContentBackground;
+  background: @sapUiCriticalElement;
+  color: @sapUiGroupContentBackground;
 }
 
 /* Tab Filter Show All Item */
 
 .sapMITBAll .sapMITBCount {
-	color: @sapUiGroupTitleTextColor;
-	text-shadow: 0 0.0625rem 0 fade(@sapUiContentContrastShadowColor, 70);
+  color: @sapUiGroupTitleTextColor;
+  text-shadow: 0 0.0625rem 0 fade(@sapUiContentContrastShadowColor, 70);
 }
 
 .sapMITBAll .sapMITBText {
-	color: @sapUiGroupTitleTextColor;
-	text-shadow: 0 0.0625rem 0 fade(@sapUiContentContrastShadowColor, 70);
+  color: @sapUiGroupTitleTextColor;
+  text-shadow: 0 0.0625rem 0 fade(@sapUiContentContrastShadowColor, 70);
 }
 
 /* Tab Separator Item */
 
 .sapMITBSepLine {
-	border: 1px solid @sapUiToolbarSeparatorColor;
+  border: 1px solid @sapUiListBorderColor;
 }
 
 .sapMITBSepIcon {
-	color: @sapUiContentNonInteractiveIconColor;
+  color: @sapUiContentNonInteractiveIconColor;
 }
 
 .sapMITBSepIcon::before {
   text-shadow: 0 1px 0 fade(@sapUiContentContrastShadowColor, 70);
-}
-
-.sapMITBArrowScroll {
-	color: @sapUiContentIconColor;
-}
-
-html.sap-desktop .sapMITBArrowScroll:hover,
-html.sap-desktop .sapMITBArrowScroll:active {
-	color: @sapUiHighlight;
-}
-
-/* Custom focus outline */
-html.sap-desktop .sapMITBItem:focus .sapMITBFilterIcon,
-html.sap-desktop .sapMITBTextOnly .sapMITBItem:focus .sapMITBText,
-html.sap-desktop .sapMITBItem:focus.sapMITBAll {
-	outline: 1px dotted @sapUiContentFocusColor;
 }
