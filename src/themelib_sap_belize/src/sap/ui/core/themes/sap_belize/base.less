@@ -176,7 +176,7 @@
 // [Label "Title Text Color"]
 // [Description "The text color of the application title"]
 // [Tags "Base", "Color", "Font"]
-@sapTitleColor: @sapPrimary7;
+@sapTitleColor: @sapTextColor;
 
 // [Label "Content Line Height EM"]
 // [Description "The height of lines in the content area (in em)."]
@@ -252,7 +252,7 @@
 // [Label "Content Label Color"]
 // [Description "The color of labels in the content area."]
 // [Tags "Base", "Content", "Color", "Font"]
-@sapContent_LabelColor: lighten(@sapPrimary7, 20);
+@sapContent_LabelColor: lighten(@sapTextColor, 20);
 
 // [Label "Content Monospace Font Family"]
 // [Description "Defines which monospaced font is used for specific texts in the content area."]
@@ -291,7 +291,7 @@
 // [Label "Content Foreground Text Color"]
 // [Description "The foreground color of texts in the content area."]
 // [Tags "Base", "Content", "Color", "Font"]
-@sapContent_ForegroundTextColor: contrast(@sapContent_ForegroundColor, @sapPrimary7, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapContent_ForegroundTextColor: contrast(@sapContent_ForegroundColor, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Label "Shell Background Color"]
 // [Description "The background color of the shell."]
@@ -654,7 +654,7 @@
 // [Label "Page Header Text Color"]
 // [Description "The color of texts on page headers."]
 // [Tags "Base", "Page", "Color", "Font"]
-@sapPageHeader_TextColor: contrast(@sapPageHeader_Background, lighten(@sapPrimary7, 20), @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapPageHeader_TextColor: contrast(@sapPageHeader_Background, lighten(@sapTextColor, 20), @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Label "Page Footer Background Color"]
 // [Description "The background color of page footers."]
@@ -664,7 +664,7 @@
 // [Label "Page Footer Text Color"]
 // [Description "The color of texts on page footers."]
 // [Tags "Base", "Page", "Color", "Font"]
-@sapPageFooter_TextColor: contrast(@sapPageFooter_Background, @sapPrimary7, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapPageFooter_TextColor: contrast(@sapPageFooter_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Label "Infobar Background Color"]
 // [Description "The background color of infobars."]
@@ -694,7 +694,7 @@
 // [Label "Tile Title Text Color"]
 // [Description "The color of title texts on tiles."]
 // [Tags "Base", "Tile", "Color", "Font"]
-@sapTile_TitleTextColor: contrast(@sapTile_Background, @sapPrimary7, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapTile_TitleTextColor: contrast(@sapTile_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Label "Tile Text Color"]
 // [Description "The color of texts on tiles."]
