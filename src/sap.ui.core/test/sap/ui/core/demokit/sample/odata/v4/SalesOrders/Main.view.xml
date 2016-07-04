@@ -35,7 +35,7 @@
 				<Button press="onRefreshAll" text="Refresh all"/>
 			</content>
 		</Toolbar>
-		<Table growing="true" growingThreshold="5" headerText="Sales Orders" id="SalesOrders"
+		<Table growing="true" growingThreshold="5" id="SalesOrders"
 			items="{
 					path : '/SalesOrderList',
 					filters: {path: 'SalesOrderID', operator: 'GE', value1: '0500000000'},
@@ -54,6 +54,7 @@
 			<headerToolbar>
 				<Toolbar>
 					<content>
+						<Title text="Sales Orders" titleStyle="H2"/>
 						<Button enabled="false" icon="sap-icon://add"
 							press="onCreateSalesOrderDialog" text="Create Sales Order"/>
 						<Button enabled="false" icon="{ui>/icon}" tooltip="{ui>/iconTooltip}"
@@ -155,7 +156,7 @@
 				</ColumnListItem>
 			</items>
 		</Table>
-		<VBox id="ObjectPage" binding="{
+		<VBox id="ObjectPage" visible="{ui>/bSalesOrderSelected}" binding="{
 					events : {
 						dataReceived : '.onDataEvents',
 						dataRequested : '.onDataEvents'
@@ -163,17 +164,6 @@
 					path : '',
 					parameters : {
 						$expand : {
-							SO_2_SOITEM : {
-								$expand : {
-									SOITEM_2_PRODUCT : {
-										$expand : {
-											PRODUCT_2_BP : {
-												$select : 'BusinessPartnerID,CompanyName,LegalForm,PhoneNumber'
-											}
-										}
-									}
-								}
-							},
 							SO_2_BP : {
 								$select : 'BusinessPartnerID,CompanyName,PhoneNumber'
 							},
@@ -187,7 +177,7 @@
 				}">
 			<Toolbar design="Transparent">
 				<content>
-					<Title level="H2" text="Sales Order Details" titleStyle="H2"/>
+					<Title text="Sales Order Details" titleStyle="H2"/>
 					<Button press="onSalesOrderSchedules" icon="sap-icon://calendar"
 						tooltip="Schedules"/>
 					<!--Button icon="sap-icon://refresh"
@@ -258,12 +248,44 @@
 					<Input enabled="{ui>/bRealOData}" id="BPPhoneNumber" value="{PhoneNumber}" />
 				</form:SimpleForm>
 			</form:SimpleForm>
-			<Table headerText="Sales Order Line Items" id="SalesOrderLineItems"
-				items="{SO_2_SOITEM}" mode="SingleSelectMaster"
+			<Table id="SalesOrderLineItems"
+				items="{
+						path : 'SO_2_SOITEM',
+						filters : {path: 'ItemPosition', operator: 'GT', value1: '0000000000'},
+						parameters : {
+							$expand : {
+								SOITEM_2_PRODUCT : {
+									$expand : {
+										PRODUCT_2_BP : {
+											$select : ['BusinessPartnerID','CompanyName',
+												'LegalForm','PhoneNumber']
+										}
+									}
+								}
+							},
+							$$updateGroupId : 'SalesOrderUpdateGroup'
+						}
+					}" mode="SingleSelectMaster"
 				selectionChange="onSalesOrderLineItemSelect">
+				<headerToolbar>
+					<Toolbar>
+						<content>
+							<Title text="Sales Order Line Items" titleStyle="H2"/>
+							<ToolbarSpacer />
+							<SearchField
+								enabled="{ui>/bRealOData}"
+								placeholder="Filter by ProductID"
+								value="{ui>/filterProductID}"
+								width="50%" search="onFilterItems"/>
+						</content>
+					</Toolbar>
+				</headerToolbar>
 				<columns>
 					<Column>
 						<Text text="Sales Order ID"/>
+					</Column>
+					<Column>
+						<Text text="ProductID"/>
 					</Column>
 					<Column>
 						<Text text="Product"/>
@@ -287,6 +309,9 @@
 							<Text text="{SalesOrderID}"/>
 						</cells>
 						<cells>
+							<Text text="{Product/ProductID}"/>
+						</cells>
+						<cells>
 							<Text text="{Product/ProductName}"/>
 						</cells>
 						<cells>
@@ -305,10 +330,10 @@
 				</items>
 			</Table>
 		</VBox>
-		<VBox>
+		<VBox visible="{ui>/bLineItemSelected}">
 			<Toolbar design="Transparent">
 				<content>
-					<Title level="H2" text="Supplier Details" titleStyle="H2"/>
+					<Title text="Supplier Details" titleStyle="H2"/>
 				</content>
 			</Toolbar>
 			<form:SimpleForm binding="{SOITEM_2_PRODUCT/PRODUCT_2_BP}" editable="true"
@@ -320,16 +345,16 @@
 					<Input editable="{ui>/bRealOData}" id="PhoneNumber" value="{PhoneNumber}"/>
 				</form:content>
 			</form:SimpleForm>
+			<List headerText="Supplier Contact Information" id="SupplierContactData"
+				items="{
+					path : 'SOITEM_2_PRODUCT/PRODUCT_2_BP/BP_2_CONTACT',
+					parameters : {
+						$select : 'DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber'
+					}
+				}">
+				<StandardListItem description="{PhoneNumber}" info="{EmailAddress}"
+					title="{FirstName} {LastName} {DateOfBirth}"/>
+			</List>
 		</VBox>
-		<List headerText="Supplier Contact Information" id="SupplierContactData"
-			items="{
-				path : 'SOITEM_2_PRODUCT/PRODUCT_2_BP/BP_2_CONTACT',
-				parameters : {
-					$select : 'DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber'
-				}
-			}">
-			<StandardListItem description="{PhoneNumber}" info="{EmailAddress}"
-				title="{FirstName} {LastName} {DateOfBirth}"/>
-		</List>
 	</VBox>
 </mvc:View>

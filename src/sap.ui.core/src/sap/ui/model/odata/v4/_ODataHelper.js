@@ -104,9 +104,9 @@ sap.ui.define([
 		 *   The static '$orderby' system query option which is appended to the converted 'aSorters'
 		 *   parameter.
 		 * @returns {string}
-		 *   The concatenated orderby-string
+		 *   The concatenated '$orderby' system query option
 		 * @throws {Error}
-		 *   If 'aSorters' contains elements, which are not {@link sap.ui.model.Sorter} instances.
+		 *   If 'aSorters' contains elements that are not {@link sap.ui.model.Sorter} instances.
 		 */
 		buildOrderbyOption : function (aSorters, sOrderbyQueryOption) {
 			var aOrderbyOptions = [];
@@ -260,7 +260,7 @@ sap.ui.define([
 		 *   query option to be used when creating the cache
 		 * @returns {object} The cache proxy with the following properties
 		 *   deregisterChange: method does nothing
-		 *   hasPendingChanges: method returning false
+		 *   hasPendingChanges: method returns false
 		 *   post: method throws an error as the cache proxy does not support write operations
 		 *   promise: promise fulfilled with the cache or rejected with the error on requesting the
 		 *     canonical path or creating the cache
@@ -293,6 +293,7 @@ sap.ui.define([
 					});
 				},
 				refresh : function () {},
+				resetChanges : function () {},
 				update : function () {
 					throw new Error("PATCH request not allowed");
 				}
@@ -319,9 +320,49 @@ sap.ui.define([
 		},
 
 		/**
-		 * Creates a cache proxy for the given list binding using {@link #.createCacheProxy}. Takes
-		 * care of sort and filter parameters. Returns the proxy (allowing for easier testing)
-		 * which itself applies the final cache directly to the binding.
+		 * Creates a cache proxy for the given context binding using {@link #.createCacheProxy}.
+		 * Returns the proxy (allowing for easier testing) which itself applies the final cache
+		 * directly to the binding.
+		 *
+		 * This is meant to be a private method of ODataContextBinding which is hidden here to
+		 * prevent accidental usage.
+		 *
+		 * Note that the context is given as a parameter and oBinding.oContext is unused because
+		 * the binding's setContext calls this method before calling the superclass to ensure that
+		 * the cache proxy is already created when the events are fired.
+		 *
+		 * @param {sap.ui.model.odata.v4.ODataContextBinding} oBinding
+		 *   The OData context binding instance
+		 * @param {sap.ui.model.odata.v4.Context} oContext
+		 *   The context instance to be used
+		 * @returns {object}
+		 *   The created cache proxy
+		 */
+		createContextCacheProxy : function (oBinding, oContext) {
+			var oCacheProxy;
+
+			function createCache(sPath) {
+				return _Cache.createSingle(oBinding.oModel.oRequestor,
+					_Helper.buildPath(sPath, oBinding.sPath).slice(1),
+					ODataHelper.getQueryOptions(oBinding, "", oContext));
+			}
+
+			oCacheProxy = ODataHelper.createCacheProxy(oBinding, createCache,
+				oContext.requestCanonicalPath());
+			oCacheProxy.promise.then(function (oCache) {
+				oBinding.oCache = oCache;
+			})["catch"](function (oError) {
+				oBinding.oModel.reportError("Failed to create cache for binding " + oBinding,
+					"sap.ui.model.odata.v4._ODataHelper", oError);
+			});
+			return oCacheProxy;
+		},
+
+		/**
+		 * Creates a cache proxy for the given list binding using {@link #.createCacheProxy}.
+		 * Ensures that sort and filter parameters are added to the query string. Returns the proxy
+		 * (allowing for easier testing) which itself applies the final cache directly to the
+		 * binding.
 		 *
 		 * This is meant to be a private method of ODataListBinding which is hidden here to prevent
 		 * accidental usage.
@@ -354,11 +395,14 @@ sap.ui.define([
 						&& !oBinding.aFilters.length && !oBinding.aApplicationFilters.length)) {
 					return undefined; // no need for an own cache
 				}
+			} else {
+				oContext = undefined; // must be ignored for absolute bindings
 			}
 			mQueryOptions = ODataHelper.getQueryOptions(oBinding, "", oContext);
 			oPathPromise = oContext && oContext.requestCanonicalPath();
-			oFilterPromise = ODataHelper.requestFilter(oBinding, oBinding.aApplicationFilters,
-				oBinding.aFilters, mQueryOptions && mQueryOptions.$filter);
+			oFilterPromise = ODataHelper.requestFilter(oBinding, oContext,
+				oBinding.aApplicationFilters, oBinding.aFilters,
+				mQueryOptions && mQueryOptions.$filter);
 			oCacheProxy = ODataHelper.createCacheProxy(oBinding, createCache, oPathPromise,
 				oFilterPromise);
 			oCacheProxy.promise.then(function (oCache) {
@@ -368,6 +412,28 @@ sap.ui.define([
 					"sap.ui.model.odata.v4._ODataHelper", oError);
 			});
 			return oCacheProxy;
+		},
+
+		/**
+		 * Deregisters the given dependent binding from the given parent binding.
+		 *
+		 * @param {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding}
+		 *   oParentBinding The parent binding
+		 * @param {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding}
+		 *   oDependentBinding The dependent binding
+		 *
+		 * @private
+		 */
+		deregisterBinding : function (oParentBinding, oDependentBinding) {
+			var aDependentBindings = oParentBinding.aDependentBindings,
+				iIndex;
+
+			if (aDependentBindings) {
+				iIndex = aDependentBindings.indexOf(oDependentBinding);
+				if (iIndex >= 0) {
+					aDependentBindings.splice(iIndex, 1);
+				}
+			}
 		},
 
 		/**
@@ -447,8 +513,134 @@ sap.ui.define([
 		},
 
 		/**
-		 * Merges the given orderby and filter values into a copy of the given map of query options.
-		 * If no merge is needed the original map of query options is returned.
+		 * Calculates the index range to be read for the given start, length and threshold.
+		 * Checks if <code>aContexts</code> entries are available for the given index range plus
+		 * half the threshold left and right to it. If this is not the case, returns the read range
+		 * to be read; otherwise undefined.
+		 *
+		 * @param {sap.ui.model.odata.v4.Context[]} aContexts
+		 *   The contexts to be checked for the requested data
+		 * @param {number} iStart
+		 *   The start index for the data request
+		 * @param {number} iLength
+		 *   The number of requested entries
+		 * @param {number} iThreshold
+		 *   The number of additionally requested entries (prefetch)
+		 * @param {number} [iMaxLength=Infinity]
+		 *   The upper boundary for the total number of entries
+		 * @returns {object}
+		 *   Returns <code>undefined</code> if all data is available and the prefetch cache is
+		 *   filled.
+		 *   Otherwise returns an object with a member <code>start</code> for the start index for
+		 *   the next read and <code>length</code> for the number of entries to be read.
+		 */
+		getReadRange : function (aContexts, iStart, iLength, iThreshold, iMaxLength) {
+			var i,
+				iFirstEmptyIndexLeft = -1,
+				iFirstEmptyIndexRight = -1,
+				iMax = Math.min(iStart + iLength + iThreshold / 2, iMaxLength || Infinity),
+				iMin = Math.max(iStart - iThreshold / 2, 0),
+				oResult = {length : iLength, start : iStart};
+
+			for (i = iStart; i < iMax; i += 1) {
+				if (aContexts[i] === undefined) {
+					iFirstEmptyIndexRight = i;
+					break;
+				}
+			}
+			if (iThreshold === 0 && iFirstEmptyIndexRight < 0) {
+				return undefined; // all data available
+			}
+			if (iThreshold > 0) {
+				for (i = iStart - 1; i >= iMin; i -= 1) {
+					if (aContexts[i] === undefined) {
+						iFirstEmptyIndexLeft = i;
+						break;
+					}
+				}
+				if (iFirstEmptyIndexLeft < 0 && iFirstEmptyIndexRight < 0) {
+					return undefined; // enough data available
+				} else if (iFirstEmptyIndexLeft >= 0 && iFirstEmptyIndexRight >= 0) {
+					// not enough data in front of and after iStart --> read 2x iThreshold
+					oResult = {
+						start : iStart - iThreshold,
+						length : iLength + 2 * iThreshold
+					};
+				} else {
+					// not enough data either before or after iStart
+					oResult = {
+						start : iFirstEmptyIndexRight >= 0
+							? iFirstEmptyIndexRight
+							: iFirstEmptyIndexLeft - iThreshold - iLength + 1,
+						length : iLength + iThreshold
+					};
+				}
+			}
+
+			if (oResult.start < 0) {
+				oResult.start = 0;
+			}
+			if (oResult.start >= iMaxLength) {
+				oResult = undefined;
+			}
+			return oResult;
+		},
+
+		/**
+		 * Checks whether there are pending changes. The function is called in three different
+		 * situations:
+		 * 1. From the binding itself using hasPendingChanges(true): Check the cache or the context,
+		 *    then ask the children using hasPendingChanges(false)
+		 * 2. From the parent binding using hasPendingChanges(false): Check the cache, then ask the
+		 *    children using hasPendingChanges(false)
+		 * 3. From a child binding (via the context) using hasPendingChanges(undefined, sPath):
+		 *    Check the cache or the context using the (extended) path
+		 *
+		 * @param {sap.ui.model.odata.v4.ODataListBinding|sap.ui.model.odata.v4.ODataContextBinding}
+		 *   oBinding The OData list or context binding
+		 * @param {boolean} bAskParent
+		 *   If <code>true</code>, ask the parent using the relative path, too; this is only
+		 *   relevant if there is no path
+		 * @param {string} [sPath]
+		 *   The path; if it is defined, only the parent is asked using the relative path
+		 * @returns {boolean}
+		 *   <code>true</code> if the binding has pending changes
+		 *
+		 * @private
+		 */
+		hasPendingChanges : function (oBinding, bAskParent, sPath) {
+			var bResult;
+
+			if (sPath !== undefined) {
+				// We are asked from a child for a certain path -> only check own cache or context
+				if (oBinding.oCache) {
+					return oBinding.oCache.hasPendingChanges(sPath);
+				}
+				if (oBinding.oContext) {
+					return oBinding.oContext.hasPendingChanges(
+						_Helper.buildPath(oBinding.sPath, sPath));
+				}
+				return false;
+			}
+			if (oBinding.oCache) {
+				bResult = oBinding.oCache.hasPendingChanges("");
+			} else if (oBinding.oContext && bAskParent) {
+				bResult = oBinding.oContext.hasPendingChanges(oBinding.sPath);
+			}
+			if (bResult) {
+				return bResult;
+			}
+			if (oBinding.aDependentBindings) {
+				return oBinding.aDependentBindings.some(function (oDependentBinding) {
+					return ODataHelper.hasPendingChanges(oDependentBinding, false);
+				});
+			}
+			return false;
+		},
+
+		/**
+		 * Merges the given values for "$orderby" and "$filter" into the given map of query options.
+		 * Ensures that the original map is left unchanged, but creates a copy only if necessary.
 		 *
 		 * @param {object} [mQueryOptions]
 		 *   The map of query options
@@ -477,12 +669,32 @@ sap.ui.define([
 		},
 
 		/**
+		 * Registers the given dependent binding at the given parent binding.
+		 *
+		 * @param {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding}
+		 *   oParentBinding The parent binding
+		 * @param {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding}
+		 *   oDependentBinding The dependent binding
+		 *
+		 * @private
+		 */
+		registerBinding : function (oParentBinding, oDependentBinding) {
+			oParentBinding.aDependentBindings = oParentBinding.aDependentBindings || [];
+			oParentBinding.aDependentBindings.push(oDependentBinding);
+		},
+
+		/**
 		 * Requests a $filter query option value for the given list binding; the value is computed
 		 * from the given arrays of dynamic application and control filters and the given static
 		 * filter.
 		 *
 		 * @param {sap.ui.model.odata.v4.ODataListBinding} oBinding
 		 *   The list binding
+		 * @param {sap.ui.model.odata.v4.Context} oContext
+		 *   The context instance to be used; it is given as a parameter and oBinding.oContext is
+		 *   unused because the binding's setContext calls this method (indirectly) before calling
+		 *   the superclass to ensure that the cache proxy is already created when the events are
+		 *   fired.
 		 * @param {sap.ui.model.Filter[]} aApplicationFilters
 		 *   The application filters
 		 * @param {sap.ui.model.Filter[]} aControlFilters
@@ -493,7 +705,8 @@ sap.ui.define([
 		 *   arrays are empty and the static filter parameter is not given. It rejects with an error
 		 *   if a filter has an unknown operator or an invalid path.
 		 */
-		requestFilter : function (oBinding, aApplicationFilters, aControlFilters, sStaticFilter) {
+		requestFilter : function (oBinding, oContext, aApplicationFilters, aControlFilters,
+				sStaticFilter) {
 			var aNonEmptyFilters = [];
 
 			/**
@@ -604,8 +817,9 @@ sap.ui.define([
 			function requestGroupFilter(aGroupFilters) {
 				var oMetaModel = oBinding.oModel.oMetaModel,
 					oMetaContext = oMetaModel.getMetaContext(
-						_Helper.buildPath(oBinding.sPath, aGroupFilters[0].sPath)),
-					oPropertyPromise = oMetaModel.requestObject(undefined, oMetaContext);
+						oBinding.oModel.resolve(oBinding.sPath, oContext)),
+					oPropertyPromise = oMetaModel.requestObject(aGroupFilters[0].sPath,
+						oMetaContext);
 
 				return oPropertyPromise.then(function (oPropertyMetadata) {
 					var aGroupFilterValues;
@@ -633,6 +847,48 @@ sap.ui.define([
 
 				return combineFilterValues(aNonEmptyFilters, ") and (");
 			});
+		},
+
+		/**
+		 * Resets all pending changes of the binding and possible all dependent bindings. The
+		 * function is called in three different situations:
+		 * 1. From the binding itself using resetChanges(true): Reset the cache or the context,
+		 *    then the children using resetChanges(false)
+		 * 2. From the parent binding using resetChanges(false): Reset the cache, then the children
+		 *    using resetChanges(false)
+		 * 3. From a child binding (via the context) using resetChanges(undefined, sPath):
+		 *    Reset the cache or the context using the (extended) path
+		 *
+		 * @param {sap.ui.model.odata.v4.ODataListBinding|sap.ui.model.odata.v4.ODataContextBinding}
+		 *   oBinding The OData list or context binding
+		 * @param {boolean} bAskParent
+		 *   If <code>true</code>, reset in the parent binding using this binding's relative path;
+		 *   this is only relevant if there is no path given
+		 * @param {string} [sPath]
+		 *   The path; if it is defined, only the parent is asked to reset using the relative path
+		 *
+		 * @private
+		 */
+		resetChanges : function (oBinding, bAskParent, sPath) {
+			if (sPath !== undefined) {
+				// We are asked from a child for a certain path -> only reset own cache or context
+				if (oBinding.oCache) {
+					oBinding.oCache.resetChanges(sPath);
+				} else if (oBinding.oContext) {
+					oBinding.oContext.resetChanges(_Helper.buildPath(oBinding.sPath, sPath));
+				}
+				return;
+			}
+			if (oBinding.oCache) {
+				oBinding.oCache.resetChanges("");
+			} else if (oBinding.oContext && bAskParent) {
+				oBinding.oContext.resetChanges(oBinding.sPath);
+			}
+			if (oBinding.aDependentBindings) {
+				oBinding.aDependentBindings.forEach(function (oDependentBinding) {
+					ODataHelper.resetChanges(oDependentBinding, false);
+				});
+			}
 		},
 
 		/**

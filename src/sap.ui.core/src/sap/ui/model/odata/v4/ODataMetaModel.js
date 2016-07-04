@@ -319,10 +319,11 @@ sap.ui.define([
 
 	/**
 	 * Returns a promise for an absolute data binding path of a "4.3.1 Canonical URL" for the given
-	 * context which must point to an entity.
+	 * context.
 	 *
 	 * @param {sap.ui.model.odata.v4.Context} oContext
-	 *   OData V4 context object for which the canonical path is requested
+	 *   OData V4 context object for which the canonical path is requested; it must point to an
+	 *   entity
 	 * @returns {SyncPromise}
 	 *   A promise which is resolved with the canonical path (for example "/EMPLOYEES('1')") in
 	 *   case of success, or rejected with an instance of <code>Error</code> in case of failure
