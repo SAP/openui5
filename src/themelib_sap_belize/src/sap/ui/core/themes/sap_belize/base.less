@@ -46,7 +46,7 @@
 // [Label "Text Color"]
 // [Description "The preferred text color"]
 // [Tags "Quick", "Base", "Content", "Color", "Font"]
-@sapTextColor: #000;
+@sapTextColor: #333;
 
 // [Label "Link Color"]
 // [Description "The color of the link text"]
@@ -318,21 +318,6 @@
 // [Tags "Base", "Shell", "Color"]
 @sapShell_BackgroundPatternColor: fade(@sapPrimary4, 8);
 
-// [Label "Shell Background Image/Gradient"]
-// [Description "The background image or gradient of the shell."]
-// [Tags "Base", "Shell", "URI", "Image"]
-@sapShell_BackgroundImage: linear-gradient(to bottom, darken(saturate(@sapShell_Background, 6), 7.8), lighten(desaturate(@sapShell_Background, 16), 7.8));
-
-// [Label "Background Opacity"]
-// [Description "A value between 0.0 and 1.0 to control the opacity of the shell background image"]
-// [Tags "Quick", "Base", "Opacity"]
-@sapShell_BackgroundImageOpacity: 1.0;
-
-// [Label "Background Repeat"]
-// [Description "The switch to turn on/off the repetition of the shell background image. Chose 'true' or 'false' as value."]
-// [Tags "Quick", "Base"]
-@sapShell_BackgroundImageRepeat: false;
-
 // [Label "Shell Background Gradient"]
 // [Description "The background gradient of the shell."]
 // [Tags "Base", "Shell", "Protected"]
@@ -423,6 +408,11 @@
 // [Description "The color of an input field's borders."]
 // [Tags "Base", "Field", "Color"]
 @sapField_BorderColor: @sapPrimary6;
+
+// [Label "Field Text Color"]
+// [Description "The text color of input fields."]
+// [Tags "Base", "Field", "Color", "Font"]
+@sapField_TextColor: #000;
 
 // [Label "Field Help Background Color"]
 // [Description "The color of the value help icon."]
