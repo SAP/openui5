@@ -1074,5 +1074,17 @@
         "references": []
       }
     ]
+  },
+  "1.40.1": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "1829e406559742378181e148f727fc906239b75c",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Screenreader announcement of column header tooltips",
+        "references": []
+      }
+    ]
   }
 }

@@ -332,5 +332,24 @@
         "references": []
       }
     ]
+  },
+  "1.40.1": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "e28e73d77380e4d100f92b8e2e10c068d458a6da",
+        "author": "Peter Trebing \u003cpeter.trebing@sap.com\u003e",
+        "type": "FIX",
+        "text": "fixes LREP change not applied when simpleform loaded; fixes missplacement when field moved to empty group; removes redundant info from serialized command (LREP change),",
+        "references": []
+      },
+      {
+        "id": "28d21216ce996db68e091f79c824be8ae52e069e",
+        "author": "Peter Trebing \u003cpeter.trebing@sap.com\u003e",
+        "type": "FIX",
+        "text": "fixes changeType variants of SimpleFormMove",
+        "references": []
+      }
+    ]
   }
 }

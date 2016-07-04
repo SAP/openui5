@@ -409,5 +409,45 @@
         "references": []
       }
     ]
+  },
+  "1.40.1": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "8607fea6f6ca71cd1b86730c9135b91b9dd941f6",
+        "author": "Ilhan \u003cilhan.myumyun@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "m.Select m.SelcetList: theme belize implemented CR-Id: 012006153200001250472016",
+        "references": []
+      },
+      {
+        "id": "06e9ccca394d479f266269ac7e42e13d03019577",
+        "author": "Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.CheckBox: focus outline was cut when put in a Grid",
+        "references": []
+      },
+      {
+        "id": "210412017ff2d098b088422a3454dc178d8e117f",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: Belize theme adjustments",
+        "references": []
+      },
+      {
+        "id": "b6ae08b4c1592cb750971bd5f13281d7bb597056",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Shell - belize support enabled.",
+        "references": []
+      },
+      {
+        "id": "188f804fb1be1a62783e1151971c94e00d485146",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Table: insufficient contrast of focus outline",
+        "references": []
+      }
+    ]
   }
 }
