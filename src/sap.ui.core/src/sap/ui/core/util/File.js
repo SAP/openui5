@@ -86,7 +86,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 						sData = encodeURI(sData);
 
 						// Safari (user has to save the file manually)
-						var oWindow = window.open(sType + ";" + sData);
+						var oWindow = window.open(sType + "," + sData);
 						if (!oWindow) {
 							throw new Error("Could not download file. A popup blocker might be active.");
 						}
