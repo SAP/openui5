@@ -13,7 +13,6 @@
 
 .sapUxAPObjectPageHeaderDetails {
 	.sapMObjectNumberEmph.sapMObjectNumber {
-		color: @sapUiGroupTitleTextColor;
 		> .sapMObjectNumberText {
 			font-family: @sapUiFontHeaderFamily;
 			font-size: 1.375rem;
@@ -23,6 +22,9 @@
 			font-family: @sapUiFontFamily;
 			font-size: @sapMFontSmallSize;
 		}
+	}
+	.sapMObjectNumberEmph.sapMObjectNumber:not(.sapMObjectNumberStatusError):not(.sapMObjectNumberStatusWarning):not(.sapMObjectNumberStatusSuccess) {
+		color: @sapUiGroupTitleTextColor;
 	}
 	.sapMOHTitle .sapMText {
 		color: @sapUiContentLabelColor;
