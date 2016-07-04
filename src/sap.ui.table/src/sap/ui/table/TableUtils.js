@@ -457,6 +457,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			var iRowIndex = parseInt($Ref.add($Ref.parent()).filter("[data-sap-ui-rowindex]").attr("data-sap-ui-rowindex"), 10);
 			var iFixed = oTable.getFixedBottomRowCount() || 0;
 			return iRowIndex == oTable.getVisibleRowCount() - iFixed - 1;
+		},
+
+		/**
+		 * Returns the DOM reference of the table parent control or UI Area. If no parent DOM reference could be found,
+		 * it returns null
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @returns {Object|null} DOM Reference or null if none of the parents was rendered yet
+		 * @private
+		 */
+		getParentDomRef : function(oTable) {
+			var oParentDomRef = null;
+			var oParent = oTable.getParent();
+			// the table might not have a parent at all.
+			if (oParent) {
+				// try to get the DOM Ref of the parent. It might be required to traverse the complete parent
+				// chain to find one parent which has DOM rendered, as it may happen that an element does not have
+				// a corresponding DOM Ref
+				do {
+					if (oParent.getDomRef) {
+						// for Controls and elements
+						oParentDomRef = oParent.getDomRef();
+					} else if (oParent.getRootNode) {
+						// for UIArea
+						oParentDomRef = oParent.getRootNode();
+					}
+
+					if (!oParentDomRef && oParent.getParent) {
+						oParent = oParent.getParent();
+					} else {
+						// make sure there is not endless loop if oParent has no getParent function
+						oParent = null;
+					}
+				} while (oParent && !oParentDomRef)
+			}
+			return oParentDomRef;
 		}
 	};
 
