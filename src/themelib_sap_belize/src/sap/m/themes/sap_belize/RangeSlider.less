@@ -22,10 +22,15 @@
 
 .sapMSlider {
   &:hover {
-    .sapMSliderHandleTooltip {
+    .sapMSliderHandleTooltip, .sapMSliderTooltipContainer {
       visibility: visible;
     }
   }
+}
+
+.sapMSliderHandleTooltipsShow,
+.sapMSliderHandleTooltipsShow .sapMSliderHandleTooltip {
+  visibility: visible;
 }
 
 .sapMSliderLabels {
