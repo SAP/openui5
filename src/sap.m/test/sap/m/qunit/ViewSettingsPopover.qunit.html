@@ -151,6 +151,7 @@
 			this.clock.tick(1000);
 
 			//Assert
+
 			strictEqual(this.sut.isOpen(), true, 'Popup is open');
 
 			//Act
@@ -161,14 +162,14 @@
 			strictEqual(this.sut.isOpen(), false, 'Popup is closed');
 
 			//Act
-			this.sut.toggle();
+			this.sut.toggle(this.oOpeningButton);
 			this.clock.tick(1000);
 
 			//Assert
-			strictEqual(this.sut.isOpen(), false, 'Popup is open');
+			strictEqual(this.sut.isOpen(), true, 'Popup is open');
 
 			//Act
-			this.sut.toggle();
+			this.sut.toggle(this.oOpeningButton);
 			this.clock.tick(1000);
 
 			//Assert
