@@ -35,8 +35,8 @@ sap.ui.require(["sap/ui/test/_ParameterValidator"], function (Validator) {
 					}
 				});
 			}.bind(this),
-			new Error("Parameter validator - the 'funcParam' parameter needs to be a function but '[object Object]' was passed",
-				"The expected exception was thrown")
+			new Error("Parameter validator - the 'funcParam' parameter needs to be a function but '[object Object]' was passed"),
+			"The expected exception was thrown"
 		);
 	});
 
@@ -60,8 +60,8 @@ sap.ui.require(["sap/ui/test/_ParameterValidator"], function (Validator) {
 					}
 				});
 			}.bind(this),
-			new Error("Parameter validator - the 'arrayParam' parameter needs to be an array but '[object Object]' was passed",
-				"The expected exception was thrown")
+			new Error("Parameter validator - the 'arrayParam' parameter needs to be an array but '[object Object]' was passed"),
+			"The expected exception was thrown"
 		);
 	});
 
@@ -98,8 +98,8 @@ sap.ui.require(["sap/ui/test/_ParameterValidator"], function (Validator) {
 					}
 				});
 			}.bind(this),
-			new Error("Parameter validator - the 'numericParam' parameter needs to be numeric but 'NaN' was passed",
-				"The expected exception was thrown")
+			new Error("Parameter validator - the 'numericParam' parameter needs to be numeric but 'NaN' was passed"),
+			"The expected exception was thrown"
 		);
 	});
 
@@ -123,8 +123,8 @@ sap.ui.require(["sap/ui/test/_ParameterValidator"], function (Validator) {
 					}
 				});
 			}.bind(this),
-			new Error("Parameter validator - the 'stringParam' parameter needs to be a string but 'NaN' was passed",
-				"The expected exception was thrown")
+			new Error("Parameter validator - the 'stringParam' parameter needs to be a string but 'NaN' was passed"),
+			"The expected exception was thrown"
 		);
 	});
 
@@ -164,8 +164,8 @@ sap.ui.require(["sap/ui/test/_ParameterValidator"], function (Validator) {
 					inputToValidate: {}
 				});
 			}.bind(this),
-			new Error("Parameter validator - No 'validationInfo' given but it is a mandatory parameter",
-			"The expected exception was thrown")
+			new Error("Parameter validator - No 'validationInfo' given but it is a mandatory parameter"),
+			"The expected exception was thrown"
 		);
 	});
 
