@@ -1022,7 +1022,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				return;
 			}
 
-			var oNewTLNItem = topNavIdx >= 0 ? this._aTopLevelNavItems[topNavIdx] : null;
+			var oNewTLNItem = this._aTopLevelNavItems[topNavIdx >= 0 ? topNavIdx : 0];
 			var oShell = this._oShell;
 			var oSplitter = sap.ui.getCore().byId("demokitSplitter");
 			var sOldPos;

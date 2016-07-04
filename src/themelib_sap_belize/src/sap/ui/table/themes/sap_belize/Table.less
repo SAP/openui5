@@ -206,8 +206,8 @@
 	border-right: 1px solid @sapUiListVerticalBorderColor;
 }
 
-/* Table Row Selected[+Hover] */
-.sapUiTableCtrl tr.sapUiTableRowSel.sapUiTableRowHvr > td {
+/* Table Row Selected + Hover */
+div.sapUiTable .sapUiTableCtrl .sapUiTableRowHvr.sapUiTableRowSel > td {
 	/* data cells of row */
 	background-color: @sapUiListSelectionHoverBackground;
 }
@@ -579,11 +579,11 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 .sapUiTableCtrl tr.sapUiTableGroupHeader,
 .sapUiTableRowHdr.sapUiTableGroupHeader {
 	background-color: @sapUiListTableGroupHeaderBackground;
-	border-color: @sapUiListTableGroupHeaderBorderColor;
+	border-color: @sapUiListBorderColor;
 	color: @sapUiListTableGroupHeaderTextColor;
 }
 
-/* Hover State */
+/* Hover + Unselected State */
 div.sapUiTable {
 	tr.sapUiTableGroupHeader.sapUiTableRowHvr,
 	.sapUiTableRowHdr.sapUiTableGroupHeader.sapUiTableRowHvr,

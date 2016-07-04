@@ -3,22 +3,56 @@
 /* Belize theme                            */
 /* ======================================= */
 
-.sapUiLoSplitter > .sapUiLoSplitterBar,
-.sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
-	color: darken(@sapUiContentIconColor, 20);
-	text-shadow: 1px 1px @sapUiContentContrastShadowColor;
+html.sap-desktop .sapUiLoSplitterH.sapUiLoSplitter > .sapUiLoSplitterBar,
+html.sap-desktop .sapUiLoSplitterH > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
+	height: 100%;
+	width: 0.25rem;
+}
+
+html.sap-desktop .sapUiLoSplitterV.sapUiLoSplitter > .sapUiLoSplitterBar,
+html.sap-desktop .sapUiLoSplitterV > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
+	width: 100%;
+	height: 0.25rem;
+}
+
+.sapUiLoSplitter > .sapUiLoSplitterBar {
+	background-color: darken(@sapUiGlobalBackgroundColor,11);
 }
 
 .sapUiLoSplitter > .sapUiLoSplitterBar:hover {
-	background-color: darken(@sapUiContentForegroundBorderColor, 28.2);
-	color: @sapUiContentContrastIconColor;
+	background-color: darken(@sapUiGlobalBackgroundColor,21);
 }
 
 .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
 	background-color: @sapUiHighlight;
-	color: @sapUiContentContrastIconColor;
 }
 
 .sapUiLoSplitter > .sapUiLoSplitterBar:focus {
-	outline: 1px dotted @sapUiContentFocusColor;
+	outline-width: 1px;
+	outline-color: @sapUiContentFocusColor;
+	outline-style: dotted;
 }
+
+.sapUiLoSplitterBarIcon {
+	display: none;
+}
+
+/*********************************** IE Focus outline workaround **********************************/
+
+html[data-sap-ui-browser^=ie] .sapUiLoSplitterH > .sapUiLoSplitterBar:focus::after {
+	top: 0;
+}
+
+html[data-sap-ui-browser^=ie].sap-desktop .sapUiLoSplitterH > .sapUiLoSplitterBar:focus::after {
+	height: 100%;
+	width: 0.25rem;
+	border: 1px dotted @sapUiContentFocusColor;
+}
+
+html[data-sap-ui-browser^=ie].sap-desktop .sapUiLoSplitterV > .sapUiLoSplitterBar:focus::after {
+	top: 0;
+	height: 0.25rem;
+	width: 100%;
+	border: 1px dotted @sapUiContentFocusColor;
+}
+

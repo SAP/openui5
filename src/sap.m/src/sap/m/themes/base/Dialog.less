@@ -2,11 +2,10 @@
 /* CSS for control sap.m/Dialog.control          */
 /* ============================================= */
 
-@SapDialogMarginWidth: 10%;
-@SapDialogMarginHeight: 7%;
-@SapBarHeight: 3rem;
-@SapBarCompactHeight: 2.5rem;
-@SapDialogPadding: 1rem;
+@sapMDialogMarginHeight: 7%;
+@sapMDialogBarHeight: 3rem;
+@sapMDialogBarCompactHeight: 2.5rem;
+@sapMDialogPadding: 1rem;
 
 .sapMDialog,
 .sapMMessageDialog .sapMDialogScrollCont,
@@ -55,7 +54,7 @@ html[data-sap-ui-browser^="ie9"] .sapMDialog {
 // set max height and max width ========================================================================================
 
 .sapMDialog {
-	max-width: calc(~"100% - " @SapDialogMarginWidth);
+	max-width: 90%;
 }
 
 .sapMDialog > .sapMDialogSection {
@@ -70,32 +69,32 @@ html[data-sap-ui-browser^="ie9"] .sapMDialog {
 
 	//with header, subheader and footer (3 bars)
 	@{_path}.sapMDialogWithSubHeader:not(.sapMDialog-NoHeader):not(.sapMDialog-NoFooter) {
-		max-height: calc(~"100% - " @_barHeight * 3 ~" - " @SapDialogMarginHeight);
+		max-height: calc(~"100% - " @_barHeight * 3 ~" - " @sapMDialogMarginHeight);
 	}
 
 	//with header, no subheader and footer (2 bars)
 	@{_path}:not(.sapMDialog-NoHeader):not(.sapMDialog-NoFooter):not(.sapMDialogWithSubHeader) {
-		max-height: calc(~"100% - " @_barHeight * 2 ~" - " @SapDialogMarginHeight);
+		max-height: calc(~"100% - " @_barHeight * 2 ~" - " @sapMDialogMarginHeight);
 	}
 
 	//with no headers and footer (1 bar)
 	@{_path}.sapMDialog-NoHeader:not(.sapMDialog-NoFooter):not(.sapMDialogWithSubHeader) {
-			max-height: calc(~"100% - " @_barHeight ~" - " @SapDialogMarginHeight);
+			max-height: calc(~"100% - " @_barHeight ~" - " @sapMDialogMarginHeight);
 	}
 
 	//with 2 headers with no footer (2 bars)
 	@{_path}:not(.sapMDialog-NoHeader).sapMDialog-NoFooter.sapMDialogWithSubHeader {
-		max-height: calc(~"100% - " @_barHeight ~" - " @SapDialogMarginHeight);
+		max-height: calc(~"100% - " @_barHeight ~" - " @sapMDialogMarginHeight);
 	}
 
 	//with 1 sub-header and no footer (1 bar)
 	@{_path}.sapMDialog-NoHeader.sapMDialog-NoFooter.sapMDialogWithSubHeader {
-		max-height: calc(~"100% - " @_barHeight ~" - " @SapDialogMarginHeight);
+		max-height: calc(~"100% - " @_barHeight ~" - " @sapMDialogMarginHeight);
 	}
 
 	//with header, no sub-header and no footer (1 bar)
 	@{_path}:not(.sapMDialog-NoHeader).sapMDialog-NoFooter:not(.sapMDialogWithSubHeader) {
-		max-height: calc(~"100% - " @_barHeight ~" - " @SapDialogMarginHeight);
+		max-height: calc(~"100% - " @_barHeight ~" - " @sapMDialogMarginHeight);
 	}
 
 	//with no headers and no footer (0 bars)
@@ -104,8 +103,8 @@ html[data-sap-ui-browser^="ie9"] .sapMDialog {
 	}
 }
 
-.setDialogMaxHeight(@SapBarHeight, ~".sapMDialog");
-.setDialogMaxHeight(@SapBarCompactHeight, ~".sapUiSizeCompact .sapMDialog");
+.setDialogMaxHeight(@sapMDialogBarHeight, ~".sapMDialog");
+.setDialogMaxHeight(@sapMDialogBarCompactHeight, ~".sapUiSizeCompact .sapMDialog");
 
 
 // end max height and max width ========================================================================================
@@ -222,11 +221,11 @@ html.sap-desktop .sapMDialog {
 }
 
 .sapUiPopupWithPadding .sapMDialogScrollCont {
-	padding: @SapDialogPadding;
+	padding: @sapMDialogPadding;
 }
 
 .sapUiPopupWithPadding .sapMDialogScrollCont.sapMDialogStretchContent {
-  	height: calc(~"100% - 2 * " @SapDialogPadding);
+  	height: calc(~"100% - 2 * " @sapMDialogPadding);
 }
 
 .sapMDialogScrollCont.sapMDialogStretchContent {
@@ -340,15 +339,15 @@ html.sap-desktop .sapMDialog {
 
 	&.sapMDialog,
 	.sapMDialog {
-		min-height: @SapBarCompactHeight;
-		padding-bottom: @SapBarCompactHeight;
-		padding-top: @SapBarCompactHeight;
+		min-height: @sapMDialogBarCompactHeight;
+		padding-bottom: @sapMDialogBarCompactHeight;
+		padding-top: @sapMDialogBarCompactHeight;
 
 		&.sapMDialogWithSubHeader {
-			padding-top: @SapBarCompactHeight + @SapBarCompactHeight;
+			padding-top: @sapMDialogBarCompactHeight + @sapMDialogBarCompactHeight;
 
 		  	&.sapMDialog-NoHeader {
-				padding-top: @SapBarCompactHeight;
+				padding-top: @sapMDialogBarCompactHeight;
 
 				& > .sapMDialogSubHeader {
 			  		top: 0;
@@ -357,24 +356,24 @@ html.sap-desktop .sapMDialog {
 		}
 
 		& > .sapMDialogTitle {
-			height: @SapBarCompactHeight;
+			height: @sapMDialogBarCompactHeight;
 
 			.sapMBarPH {
-				line-height: @SapBarCompactHeight;
+				line-height: @sapMDialogBarCompactHeight;
 			}
 		}
 
 		& > .sapMDialogSection {
-			min-height: @SapBarCompactHeight;
+			min-height: @sapMDialogBarCompactHeight;
 		}
 
 		& > footer {
-			height: @SapBarCompactHeight;
+			height: @sapMDialogBarCompactHeight;
 		}
 
 		& header.sapMDialogSubHeader {
-			height: @SapBarCompactHeight;
-			top: @SapBarCompactHeight;
+			height: @sapMDialogBarCompactHeight;
+			top: @sapMDialogBarCompactHeight;
 		}
 	}
 
@@ -434,22 +433,22 @@ html.sap-desktop .sapMDialog {
 	cursor: se-resize;
 	height: .5rem;
 	position: absolute;
-	right: 0rem;
+	right: 0;
 	width: .5rem;
 	z-index: 2;
 
 	&:before {
 		left: 0;
-		position: absolute;
+		position: relative;
 		top: 0;
 	}
 }
 
 .sapMDialog {
 	box-sizing: content-box;
-	min-height: @SapBarHeight;
-	padding-bottom: @SapBarHeight;
-	padding-top: @SapBarHeight;
+	min-height: @sapMDialogBarHeight;
+	padding-bottom: @sapMDialogBarHeight;
+	padding-top: @sapMDialogBarHeight;
 
 	&.sapMDialog-NoFooter {
 		padding-bottom: 0;
@@ -460,10 +459,10 @@ html.sap-desktop .sapMDialog {
 	}
 
 	&.sapMDialogWithSubHeader {
-		padding-top: @SapBarHeight + @SapBarHeight;
+		padding-top: @sapMDialogBarHeight + @sapMDialogBarHeight;
 
 	  	&.sapMDialog-NoHeader {
-			padding-top: @SapBarHeight;
+			padding-top: @sapMDialogBarHeight;
 
 		  	& > .sapMDialogSubHeader {
 				top: 0;
@@ -472,7 +471,7 @@ html.sap-desktop .sapMDialog {
 	}
 
 	& > .sapMDialogTitle {
-		height: @SapBarHeight;
+		height: @sapMDialogBarHeight;
 		left: 0;
 		position: absolute;
 		right: 0;
@@ -481,12 +480,12 @@ html.sap-desktop .sapMDialog {
 
 	& > .sapMDialogSection {
 		height: 100%;
-		min-height: @SapBarHeight;
+		min-height: @sapMDialogBarHeight;
 	}
 
 	& > footer {
 		bottom: 0;
-		height: @SapBarHeight;
+		height: @sapMDialogBarHeight;
 		left: 0;
 		position: absolute;
 		right: 0;
@@ -498,11 +497,11 @@ html.sap-desktop .sapMDialog {
 
 	& header.sapMDialogSubHeader {
 		cursor: default;
-		height: @SapBarHeight;
+		height: @sapMDialogBarHeight;
 		left: 0;
 		position: absolute;
 		right: 0;
-		top: @SapBarHeight;
+		top: @sapMDialogBarHeight;
 		z-index: 2;
 	}
 }

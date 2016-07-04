@@ -831,7 +831,8 @@
 		  "samples": [
 			"sap.m.sample.SemanticPage",
 			"sap.m.sample.SemanticPageFullScreen",
-			"sap.m.sample.SemanticPageDraftIndicator"
+			"sap.m.sample.SemanticPageDraftIndicator",
+		  	"sap.m.sample.SemanticPageFloatingFooter"
 		  ]
 		},
 		{
@@ -1447,13 +1448,13 @@
 		},
 		{
 		  "id": "sap.m.sample.PageListReportIconTabBar",
-		  "name": "Fiori List Report Page - Icon Tab Bar",
-		  "description": "This page shows the floorplan for a list report with an Icon Tab Bar: The upper part extends with its content, but doesn't react to viewport changes. The Icon Tab Bar reacts to the viewport size. The table inside takes the available space. If the minimum size of the table is reached, the page begins to scroll."
+		  "name": "Flexible sizing - Icon Tab Bar",
+		  "description": "This page shows flexible sizing with an Icon Tab Bar: The upper part extends with its content, but doesn't react to viewport changes. The Icon Tab Bar reacts to the viewport size. The table inside takes the available space. If the minimum size of the table is reached, the page begins to scroll."
 		},
 		{
 		  "id": "sap.m.sample.PageListReportToolbar",
-		  "name": "Fiori List Report Page - Toolbar ",
-		  "description": "This page shows the floorplan for a list report with a Toolbar. The upper part extends with its content, but doesn't react to viewport changes. The lower part reacts to the viewport size. The table inside takes the available space. If the minimum size of the table is reached, the page begins to scroll."
+		  "name": "Flexible sizing - Toolbar",
+		  "description": "This page shows flexible sizing with a Toolbar. The upper part extends with its content, but doesn't react to viewport changes. The lower part reacts to the viewport size. The table inside takes the available space. If the minimum size of the table is reached, the page begins to scroll."
 		},
 		{
 		  "id": "sap.m.sample.PageFloatingFooter",
@@ -1705,6 +1706,11 @@
 		  "name": "Semantic Page using Draft Indicator",
 		  "description": "Integration of Draft Indicator inside Semantic Page"
 		},
+	  	{
+		  "id": "sap.m.sample.SemanticPageFloatingFooter",
+		  "name": "Semantic Page using Floating Footer",
+		  "description": "Integration of Floating Footer inside Semantic Page"
+	  	},
 		{
 		  "id": "sap.m.sample.ActionSelect",
 		  "name": "Action Select",

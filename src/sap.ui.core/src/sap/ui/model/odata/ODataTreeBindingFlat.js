@@ -564,8 +564,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 		});
 	};
 
-
-
+	ODataTreeBindingFlat.prototype._propagateMagnitudeChange = function(oParent, iDelta) {
+		// propagate the magnitude along the parent chain, up to the top parent which is a
+		// server indexed node (checked by oParent.parent == null)
+		// first magnitude starting point is the no. of direct children/the childCount
+		while (oParent != null && (oParent.initiallyCollapsed || oParent.isDeepOne)) {
+			oParent.magnitude += iDelta;
+			//up one level, ends at parent == null
+			oParent = oParent.parent;
+		}
+	};
 
 	/**
 	 * Loads the data based on a parent node filter.
@@ -594,15 +602,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 				oParentNode.childCount = iCount;
 				oParentNode.children[iCount - 1] = undefined;
 
-				// propagate the magnitude along the parent chain, up to the top parent which is a
-				// server indexed node (checked by oParent.parent == null)
-				// first magnitude starting point is the no. of direct children/the childCount
-				var oParent = oParentNode;
-				while (oParent != null && (oParent.initiallyCollapsed || oParent.isDeepOne)) {
-					oParent.magnitude += iCount;
-					//up one level, ends at parent == null
-					oParent = oParent.parent;
-				}
+				// propagate the magnitude along the parent chain
+				this._propagateMagnitudeChange(oParentNode, iCount);
 
 				// once when we reload data and know the direct-child count,
 				// we have to keep track of the expanded state for the newly loaded nodes, so the length delta can be calculated
@@ -825,6 +826,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 		//trigger loading of the node if it is deeper than our initial level expansion
 		if (oToggledNode.initiallyCollapsed && oToggledNode.childCount == undefined) {
 			this._loadChildren(oToggledNode, 0, this._iPageSize);
+		} else {
+			this._propagateMagnitudeChange(oToggledNode.parent, oToggledNode.magnitude);
 		}
 
 		// clean the tree state
@@ -881,6 +884,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 
 		this._aCollapsed.push(oToggledNode);
 		this._sortNodes(this._aCollapsed);
+
+		if (oToggledNode.isDeepOne) {
+			this._propagateMagnitudeChange(oToggledNode.parent, oToggledNode.magnitude * -1);
+		}
 
 		// keep track of server-indexed node changes
 		if (oToggledNode.serverIndex !== undefined) {

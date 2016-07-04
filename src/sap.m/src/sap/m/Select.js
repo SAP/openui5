@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popover', './SelectList', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool'],
-	function(jQuery, Bar, Dialog, InputBase, Popover, SelectList, library, Control, EnabledPropagator, IconPool) {
+sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', './Button'],
+	function(jQuery, Dialog, Popover, SelectList, library, Control, EnabledPropagator, IconPool, Button) {
 		"use strict";
 
 		/**
@@ -48,11 +48,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 					},
 
 					/**
-					 * Sets the width of the control. The default width is derived from the widest item.
-					 * If the width defined is smaller than the widest item in the selection list, only the width of
-					 * the selection field will be changed: the list will keep the width of its widest item.
-					 * If the list is wider than the viewport, it is truncated and an ellipsis is displayed for each item.
-					 * For phones, the width of the list is always the same as the viewport.
+					 * Sets the width of the field. By default, the field width is automatically adjusted to the size
+					 * of its content and the default width of the field is calculated based on the widest list item
+					 * in the dropdown list.
+					 * If the width defined is smaller than its content, only the field width is changed whereas
+					 * the dropdown list keeps the width of its content.
+					 * If the dropdown list is wider than the visual viewport, it is truncated and an ellipsis is displayed
+					 * for each item.
+					 * For phones, the width of the dropdown list is always the same as the viewport.
 					 *
 					 * <b>Note:</b> This property is ignored if the <code>autoAdjustWidth</code> property is set to <code>true</code>.
 					 */
@@ -144,6 +147,17 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 						type: "sap.ui.core.TextDirection",
 						group: "Appearance",
 						defaultValue: sap.ui.core.TextDirection.Inherit
+					},
+
+					/**
+					 * Visualizes the validation state of the control, e.g. <code>Error</code>, <code>Warning</code>,
+					 * <code>Success</code>.
+					 * @since 1.40
+					 */
+					valueState: {
+						type: "sap.ui.core.ValueState",
+						group: "Appearance",
+						defaultValue: sap.ui.core.ValueState.None
 					},
 
 					/**
@@ -670,24 +684,49 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @private
 		 */
 		Select.prototype._createDialog = function() {
-			var CSS_CLASS = this.getRenderer().CSS_CLASS;
-
-			// initialize Dialog
-			var oDialog = new Dialog({
+			var that = this;
+			return new Dialog({
 				stretch: true,
-				customHeader: new Bar({
-					contentLeft: new InputBase({
-						width: "100%",
-						editable: false
-					}).addStyleClass(CSS_CLASS + "Input")
-				}).addStyleClass(CSS_CLASS + "Bar")
+				showHeader: false,
+				buttons: [
+					this.createPickerCloseButton()
+				],
+				beforeOpen: function() {
+					that.updatePickerHeaderTitle();
+				}
 			});
+		};
 
-			oDialog.getAggregation("customHeader").attachBrowserEvent("tap", function() {
-				oDialog.close();
-			}, this);
+		Select.prototype.createPickerCloseButton = function() {
+			var that = this;
+			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			return new Button({
+				text: oResourceBundle.getText("SELECT_CANCEL_BUTTON"),
+				press: function() {
+					that.close();
+				}
+			});
+		};
 
-			return oDialog;
+		Select.prototype.updatePickerHeaderTitle = function() {
+			var oPicker = this.getPicker();
+
+			if (!oPicker) {
+				return;
+			}
+
+			var aLabels = this.getLabels();
+
+			if (aLabels.length) {
+				var oLabel = aLabels[0];
+
+				if (oLabel && (typeof oLabel.getText === "function")) {
+					oPicker.setShowHeader(true);
+					oPicker.setTitle(oLabel.getText());
+				}
+			} else {
+				oPicker.setShowHeader(false);
+			}
 		};
 
 		/**
@@ -695,16 +734,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 *
 		 * @private
 		 */
-		Select.prototype._onBeforeOpenDialog = function() {
-			var oInput = this.getPicker().getCustomHeader().getContentLeft()[0],
-				oSelectedItem = this.getSelectedItem();
-
-			if (oSelectedItem) {
-				oInput.setValue(oSelectedItem.getText());
-				oInput.setTextDirection(this.getTextDirection());
-				oInput.setTextAlign(this.getTextAlign());
-			}
-		};
+		Select.prototype._onBeforeOpenDialog = function() {};
 
 		/* =========================================================== */
 		/* Lifecycle methods                                           */
@@ -1673,6 +1703,57 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			return oSelectClone;
 		};
 
+		Select.prototype.updateValueStateClasses = function(sValueState, sOldValueState) {
+			var $This = this.$(),
+				$Label = this.$("label"),
+				$Arrow = this.$("arrow"),
+				mValueState = sap.ui.core.ValueState,
+				CSS_CLASS = this.getRenderer().CSS_CLASS;
+
+			if (sOldValueState !== mValueState.None) {
+				$This.removeClass(CSS_CLASS + "State");
+				$This.removeClass(CSS_CLASS + sOldValueState);
+
+				$Label.removeClass(CSS_CLASS + "LabelState");
+				$Label.removeClass(CSS_CLASS + "Label" + sOldValueState);
+
+				$Arrow.removeClass(CSS_CLASS + "ArrowState");
+			}
+
+			if (sValueState !== mValueState.None) {
+				$This.addClass(CSS_CLASS + "State");
+				$This.addClass(CSS_CLASS + sValueState);
+
+				$Label.addClass(CSS_CLASS + "LabelState");
+				$Label.addClass(CSS_CLASS + "Label" + sValueState);
+
+				$Arrow.addClass(CSS_CLASS + "ArrowState");
+			}
+		};
+
+		/**
+		 * Gets the labels referencing this control.
+		 *
+		 * @returns {sap.m.Label[]} Array of objects which are the current targets of the <code>ariaLabelledBy</code>
+		 * association and the labels referencing this control.
+		 * @since 1.40
+		 */
+		Select.prototype.getLabels = function() {
+			var aLabelIDs = this.getAriaLabelledBy().map(function(sLabelID) {
+				return sap.ui.getCore().byId(sLabelID);
+			});
+
+			var oLabelEnablement = sap.ui.require("sap/ui/core/LabelEnablement");
+
+			if (oLabelEnablement) {
+				aLabelIDs = aLabelIDs.concat(oLabelEnablement.getReferencingLabels(this).map(function(sLabelID) {
+					return sap.ui.getCore().byId(sLabelID);
+				}));
+			}
+
+			return aLabelIDs;
+		};
+
 		/* ----------------------------------------------------------- */
 		/* public methods                                              */
 		/* ----------------------------------------------------------- */
@@ -1850,6 +1931,34 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			}
 
 			return this.setProperty("selectedKey", sKey);
+		};
+
+		Select.prototype.setValueState = function(sValueState) {
+			var sOldValueState = this.getValueState();
+
+			this.setProperty("valueState", sValueState, true);
+			sValueState = this.getValueState();
+
+			if (sValueState === sOldValueState) {
+				return this;
+			}
+
+			var oDomRef = this.getDomRefForValueState();
+
+			if (!oDomRef) {
+				return this;
+			}
+
+			var mValueState = sap.ui.core.ValueState;
+
+			if (sValueState === mValueState.Error) {
+				oDomRef.setAttribute("aria-invalid", true);
+			} else {
+				oDomRef.removeAttribute("aria-invalid");
+			}
+
+			this.updateValueStateClasses(sValueState, sOldValueState);
+			return this;
 		};
 
 		/**
@@ -2031,6 +2140,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			}
 
 			return this;
+		};
+
+		/*
+		 * Gets the DOM reference for the value state.
+		 *
+		 * @protected
+		 * @return {object}
+		 */
+		Select.prototype.getDomRefForValueState = function() {
+			return this.getDomRef();
 		};
 
 		/**

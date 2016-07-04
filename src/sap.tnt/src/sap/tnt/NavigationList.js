@@ -235,7 +235,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/P
 				verticalScrolling: true,
 				initialFocus: selectedItem,
 				content: list
-			});
+			}).addStyleClass('sapContrast sapContrastPlus');
 
 			popover._adaptPositionParams = this._adaptPopoverPositionParams;
 

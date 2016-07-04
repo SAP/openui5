@@ -24,7 +24,7 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo'],
 			oFooter = null,
 			oSubHeader = null,
 			sEnableScrolling = oPage.getEnableScrolling() ? " sapMPageScrollEnabled" : "",
-			bMasterContext  = this._isMasterContext(oPage);
+			bLightHeader  = this._isLightHeader(oPage);
 
 		if (oPage.getShowHeader()) {
 			oHeader = oPage._getAnyHeader();
@@ -80,12 +80,12 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo'],
 		//render headers
 		this.renderBarControl(oRm, oPage, oHeader, {
 			context: "header",
-			styleClass: "sapMPageHeader" + (bMasterContext ? "" : " sapContrastPlus")
+			styleClass: "sapMPageHeader" + (bLightHeader ? "" : " sapContrastPlus")
 		});
 
 		this.renderBarControl(oRm, oPage, oSubHeader, {
 			context: "subHeader",
-			styleClass: "sapMPageSubHeader" + (bMasterContext ? "" : " sapContrastPlus")
+			styleClass: "sapMPageSubHeader" + (bLightHeader ? "" : " sapContrastPlus")
 		});
 
 		// render child controls
@@ -141,22 +141,32 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo'],
 	};
 
 	/**
-	 *	Check whether THIS page is in the master aggregation of Master Details control
+	 *	Check whether THIS page is used in scenario where its header should be light
 	 *	Important for Belize styling
 	 *
 	 * @param oPage
 	 * @returns {boolean}
 	 * @private
 	 */
-	PageRenderer._isMasterContext = function (oPage) {
+	PageRenderer._isLightHeader = function (oPage) {
 		var oChild = oPage,
-			oParent = oPage.getParent();
+			oParent = oPage.getParent(),
+			sParentName,
+			sChildName;
 
-		// Loop back to the top to check if there's SplitContainer OR SplitApp and then check if child elem is
+		// Loop back to the top to check if there's SplitContainer OR SplitApp OR QuickView and then check if child elem is
 		// sap.m.NavContainer and this Nav container is the master
 		while (oParent) {
-			if (oParent && ["sap.m.SplitApp", "sap.m.SplitContainer"].indexOf(oParent.getMetadata().getName()) > -1
-				&& oChild.getMetadata().getName() === "sap.m.NavContainer" && /\-Master$/.test(oChild.getId())) {
+			sParentName = (oParent && oParent.getMetadata().getName()) || "";
+			sChildName = oChild.getMetadata().getName();
+
+			if ((sParentName === "sap.m.Popover" || sParentName === "sap.m.Dialog")
+				&& sChildName === "sap.m.NavContainer") {
+				return true;
+			}
+
+			if (oParent && ["sap.m.SplitApp", "sap.m.SplitContainer"].indexOf(sParentName) > -1
+				&& sChildName === "sap.m.NavContainer" && /\-Master$/.test(oChild.getId())) {
 				return true;
 			}
 

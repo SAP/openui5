@@ -25,6 +25,8 @@
 
 	var iInitialDelay = sap.ui.Device.browser.msie ? 50 : 0;
 
+	QUnit.module("context");
+
 	test("Should have the same context", function() {
 		// System under Test
 		var oOpa = new Opa();
@@ -33,6 +35,8 @@
 		// Act + Assert
 		strictEqual(oOpa.getContext(), oOpa2.getContext(), "Contexts are the same");
 	});
+
+	QUnit.module("waitFor");
 
 	test("Should wait for something", function() {
 		// Arrange
@@ -115,7 +119,6 @@
 			oSuccess_1_2_1 = this.spy(),
 			fnSuccess_1_2 = function(){
 				return oOpa.waitFor({
-					_debugID : "1_2_1",
 					success : oSuccess_1_2_1
 				});
 			},
@@ -123,15 +126,12 @@
 			oSuccess_1_3 = this.spy(),
 			fnSuccess_1 = function(){
 				oOpa.waitFor({
-					_debugID : "1_1",
 					success : oSuccess_1_1
 				});
 				oOpa.waitFor({
-					_debugID : "1_2",
 					success : fnSuccessSpy_1_2
 				});
 				return oOpa.waitFor({
-					_debugID : "1_3",
 					success : oSuccess_1_3
 				});
 			},
@@ -143,12 +143,10 @@
 
 		// Act
 		oOpa.waitFor({
-			_debugID : "1",
 			success : fnSuccessSpy_1
 		});
 
 		oOpa.waitFor({
-			_debugID : "2",
 			success : oSuccess_2
 		}).done(oDoneSpy);
 
@@ -291,9 +289,11 @@
 
 	module("StopQueue", {
 		setup : function () {
+			this.fnErrorLogStub = sinon.stub(jQuery.sap.log, "error", $.noop);
 			sinon.config.useFakeTimers = false;
 		},
 		teardown : function () {
+			this.fnErrorLogStub.restore();
 			sinon.config.useFakeTimers = true;
 		}
 	});
@@ -306,7 +306,7 @@
 		sinon.assert.calledWith(fnSpy, "stopQueue was called before emptyQueue, queued tests have never been executed", "Opa");
 	});
 
-	QUnit.test("Should strop the queue inside of success", function (assert) {
+	QUnit.test("Should stop the queue inside of success", function (assert) {
 		var oOpa = new Opa(),
 				fnDone = assert.async(),
 				fnShouldNotBeCalled = sinon.spy();
@@ -332,12 +332,12 @@
 
 	QUnit.test("Should stop a Queue while polling", function () {
 		var oOpa = new Opa(),
-				fnDone = assert.async(),
-				fnSuccess = sinon.spy(),
-				fnCheck = sinon.spy(function () {
-					Opa.stopQueue();
-					return true;
-				});
+			fnDone = assert.async(),
+			fnSuccess = sinon.spy(),
+			fnCheck = sinon.spy(function () {
+				Opa.stopQueue();
+				return true;
+			});
 
 		oOpa.waitFor({
 			check: fnCheck,
@@ -358,7 +358,6 @@
 		// System under Test
 		var oOpa = new Opa(),
 			fnDone = assert.async(),
-			fnLogSpy = sinon.spy(jQuery.sap.log, "error"),
 			fnShouldNotBeCalled = sinon.spy();
 
 		function callingFunction () {
@@ -381,18 +380,35 @@
 
 			Opa.emptyQueue().fail(function () {
 				sinon.assert.notCalled(fnShouldNotBeCalled);
-				sinon.assert.calledTwice(fnLogSpy);
+				sinon.assert.calledTwice(this.fnErrorLogStub);
 				if (theCurrentBrowserSupportsStacktraces()) {
-					sinon.assert.calledWith(fnLogSpy, sinon.match(/callingFunction/), "Opa");
+					sinon.assert.calledWith(this.fnErrorLogStub, sinon.match(/callingFunction/), "Opa");
 				}
-				sinon.assert.alwaysCalledWith(fnLogSpy, sinon.match(/Queue was stopped manually/) ,"Opa");
-				fnLogSpy.restore();
+				sinon.assert.alwaysCalledWith(this.fnErrorLogStub, sinon.match(/Queue was stopped manually/) ,"Opa");
 				fnDone();
-			});
+			}.bind(this));
 
 			// stop twice to see if state is deleted correctly
 			callingFunction();
+		}.bind(this));
+	});
+
+	QUnit.test("Should stop the queue silently", function (assert) {
+		var oOpa = new Opa(),
+			fnDoneSpy = sinon.spy(),
+			fnFailSpy = sinon.spy();
+
+		oOpa.waitFor({
+			success: $.noop
 		});
+		var oPromise = oOpa.emptyQueue();
+		oPromise.done(fnDoneSpy);
+		oPromise.fail(fnFailSpy);
+		Opa.stopQueue(false);
+
+		sinon.assert.notCalled(this.fnErrorLogStub);
+		sinon.assert.notCalled(fnFailSpy);
+		sinon.assert.calledOnce(fnDoneSpy);
 	});
 
 	module("Timeouts", {
@@ -517,7 +533,6 @@
 			success : thisIsTheSuccessHandler
 		});
 
-
 		oOpa.emptyQueue().fail(function (oOptions) {
 			ok(true, 0, "Promise got rejected");
 			ok(oOptions, "Options are passed");
@@ -530,6 +545,46 @@
 
 			start();
 		});
+	});
+
+	QUnit.module("Validation");
+
+	["error", "success", "check"].forEach(function (sParameter) {
+		QUnit.test("Should throw an error if the " + sParameter + " parameter is not a function", function (assert) {
+			assert.throws(function () {
+						var oWaitFor = {};
+						oWaitFor[sParameter] = "foo";
+						new Opa().waitFor(oWaitFor);
+					}.bind(this),
+					new Error("sap.ui.test.Opa#waitFor - the '" + sParameter + "' parameter needs to be a function but "
+							+ "'foo' was passed")
+					, "threw the error");
+		});
+	});
+
+	["timeout", "pollingInterval", "_stackDropCount"].forEach(function (sParameter) {
+		QUnit.test("Should throw an error if the " + sParameter + " parameter is not numeric", function (assert) {
+			assert.throws(function () {
+						var oWaitFor = {};
+						oWaitFor[sParameter] = "foo";
+						new Opa().waitFor(oWaitFor);
+					}.bind(this),
+					new Error("sap.ui.test.Opa#waitFor - the '" + sParameter + "' parameter needs to be numeric but "
+							+ "'foo' was passed")
+					, "threw the error");
+		});
+	});
+
+	QUnit.test("Should throw an error if the errorMessage parameter is not a string", function (assert) {
+		assert.throws(function () {
+					var oWaitFor = {
+						errorMessage : {}
+					};
+					new Opa().waitFor(oWaitFor);
+				}.bind(this),
+				new Error("sap.ui.test.Opa#waitFor - the 'errorMessage' parameter needs to be a string but "
+						+ "'[object Object]' was passed")
+				, "threw the error");
 	});
 })();
 

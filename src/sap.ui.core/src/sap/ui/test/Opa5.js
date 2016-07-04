@@ -7,7 +7,6 @@ sap.ui.define([
 		'./Opa',
 		'./OpaPlugin',
 		'./PageObjectFactory',
-		'sap/ui/qunit/QUnitUtils',
 		'sap/ui/base/Object',
 		'sap/ui/Device',
 		'./launchers/iFrameLauncher',
@@ -17,13 +16,13 @@ sap.ui.define([
 		'./matchers/AggregationFilled',
 		'./matchers/PropertyStrictEquals',
 		'./pipelines/MatcherPipeline',
-		'./pipelines/ActionPipeline'
+		'./pipelines/ActionPipeline',
+		'./_ParameterValidator'
 	],
 	function(jQuery,
 			 Opa,
 			 OpaPlugin,
 			 PageObjectFactory,
-			 Utils,
 			 Ui5Object,
 			 Device,
 			 iFrameLauncher,
@@ -33,14 +32,26 @@ sap.ui.define([
 			 AggregationFilled,
 			 PropertyStrictEquals,
 			 MatcherPipeline,
-			 ActionPipeline) {
+			 ActionPipeline,
+			 ParameterValidator) {
 		"use strict";
 
 		var $ = jQuery,
 			oPlugin = new OpaPlugin(iFrameLauncher._sLogPrefix),
 			oMatcherPipeline = new MatcherPipeline(),
 			oActionPipeline = new ActionPipeline(),
-			sFrameId = "OpaFrame";
+			sFrameId = "OpaFrame",
+			oValidator = new ParameterValidator({
+				errorPrefix: "sap.ui.test.Opa5#waitFor"
+			}),
+			aConfigValuesForWaitFor = [
+				"visible",
+				"viewNamespace",
+				"viewName"
+			].concat(Opa._aConfigValuesForWaitFor),
+			aPropertiesThatShouldBePassedToOpaWaitFor = [
+				"check", "success"
+			].concat(Opa._aConfigValuesForWaitFor);
 
 		/**
 		 * Helps you when writing tests for UI5 applications.
@@ -101,24 +112,20 @@ sap.ui.define([
 			var bComponentLoaded = false;
 			oOptions = oOptions || {};
 
+			var oFirstWaitForOptions = createWaitForObjectWithoutDefaults();
+			oFirstWaitForOptions.success = function () {
+				// include stylesheet
+				var sComponentStyleLocation = jQuery.sap.getModulePath("sap.ui.test.OpaCss",".css");
+				jQuery.sap.includeStyleSheet(sComponentStyleLocation);
+
+				HashChanger.getInstance().setHash(oOptions.hash || "");
+
+				componentLauncher.start(oOptions.componentConfig).then(function () {
+					bComponentLoaded = true;
+				});
+			};
 			// wait for starting of component launcher
-			this.waitFor({
-				viewName: null,
-				controlType: null,
-				id: null,
-				searchOpenDialogs: false,
-				success: function () {
-					// include stylesheet
-					var sComponentStyleLocation = jQuery.sap.getModulePath("sap.ui.test.OpaCss",".css");
-					jQuery.sap.includeStyleSheet(sComponentStyleLocation);
-
-					HashChanger.getInstance().setHash(oOptions.hash || "");
-
-					componentLauncher.start(oOptions.componentConfig).then(function () {
-						bComponentLoaded = true;
-					});
-				}
-			});
+			this.waitFor(oFirstWaitForOptions);
 
 			var oPropertiesForWaitFor = createWaitForObjectWithoutDefaults();
 			oPropertiesForWaitFor.errorMessage = "Unable to load the component with the name: " + oOptions.name;
@@ -143,11 +150,11 @@ sap.ui.define([
 		 */
 		Opa5.prototype.iTeardownMyUIComponent = function iTeardownMyUIComponent () {
 
-			return this.waitFor({
-				success : function () {
-					componentLauncher.teardown();
-				}
-			});
+			var oOptions = createWaitForObjectWithoutDefaults();
+			oOptions.success = function () {
+				componentLauncher.teardown();
+			};
+			return this.waitFor(oOptions);
 
 		};
 
@@ -351,10 +358,19 @@ sap.ui.define([
 		 * @public
 		 */
 		Opa5.prototype.waitFor = function (oOptions) {
-			var vActions = oOptions.actions;
+			var vActions = oOptions.actions,
+				oFilteredConfig = Opa._createFilteredConfig(aConfigValuesForWaitFor),
+				// only take the allowed properties from the config
+				oOptionsPassedToOpa;
+
 			oOptions = $.extend({},
-					Opa.config,
+					oFilteredConfig,
 					oOptions);
+
+			oValidator.validate({
+				validationInfo: Opa5._validationInfo,
+				inputToValidate: oOptions
+			});
 
 			var fnOriginalCheck = oOptions.check,
 				vControl = null,
@@ -362,7 +378,9 @@ sap.ui.define([
 				vResult,
 				bPluginLooksForControls;
 
-			oOptions.check = function () {
+			oOptionsPassedToOpa = Opa._createFilteredOptions(aPropertiesThatShouldBePassedToOpaWaitFor, oOptions);
+
+			oOptionsPassedToOpa.check = function () {
 				// Create a new options object for the plugin to keep the original one as is
 				var oPluginOptions = $.extend({}, oOptions, {
 						// only pass interactable if there are actions for backwards compatibility
@@ -407,7 +425,7 @@ sap.ui.define([
 					return false;
 				}
 
-				if (oOptions.controlType && !vControl.length) {
+				if (oOptions.controlType && $.isArray(vControl) && !vControl.length) {
 					jQuery.sap.log.debug("found no controls with the type  " + oOptions.sOriginalControlType, "", "Opa");
 					return false;
 				}
@@ -440,7 +458,7 @@ sap.ui.define([
 				return true;
 			};
 
-			oOptions.success = function () {
+			oOptionsPassedToOpa.success = function () {
 				// If the plugin does not look for controls execute actions even if vControl is falsy
 				if (vActions && (vResult || !bPluginLooksForControls)) {
 					oActionPipeline.process({
@@ -457,7 +475,7 @@ sap.ui.define([
 				}
 			};
 
-			return Opa.prototype.waitFor.call(this, oOptions);
+			return Opa.prototype.waitFor.call(this, oOptionsPassedToOpa);
 		};
 
 		/**
@@ -507,8 +525,89 @@ sap.ui.define([
 
 
 		/**
-		 * Extends the default config of Opa
-		 * See {@link sap.ui.test.Opa5#extendConfig}
+		 *
+		 * Extends and overwrites default values of the {@link sap.ui.test.Opa#.config}.
+		 * Most frequent usecase:
+		 * <pre>
+		 *     <code>
+		 *         // Every waitFor will append this namespace in front of your viewName
+		 *         Opa5.extendConfig({
+		 *            viewNamespace: "namespace.of.my.views."
+		 *         });
+		 *
+		 *         var oOpa = new Opa5();
+		 *
+		 *         // Looks for a control with the id "myButton" in a View with the name "namespace.of.my.views.Detail"
+		 *         oOpa.waitFor({
+		 *              id: "myButton",
+		 *              viewName: "Detail"
+		 *         });
+		 *
+		 *         // Looks for a control with the id "myList" in a View with the name "namespace.of.my.views.Master"
+		 *         oOpa.waitFor({
+		 *              id: "myList",
+		 *              viewName: "Master"
+		 *         });
+		 *     </code>
+		 * </pre>
+		 *
+		 * Sample usage:
+		 * <pre>
+		 *     <code>
+		 *         var oOpa = new Opa5();
+		 *
+		 *         // this statement will  will time out after 15 seconds and poll every 400ms.
+		 *         // those two values come from the defaults of {@link sap.ui.test.Opa#.config}.
+		 *         oOpa.waitFor({
+		 *         });
+		 *
+		 *         // All wait for statements added after this will take other defaults
+		 *         Opa5.extendConfig({
+		 *             timeout: 10,
+		 *             pollingInterval: 100
+		 *         });
+		 *
+		 *         // this statement will time out after 10 seconds and poll every 100 ms
+		 *         oOpa.waitFor({
+		 *         });
+		 *
+		 *         // this statement will time out after 20 seconds and poll every 100 ms
+		 *         oOpa.waitFor({
+		 *             timeout: 20;
+		*         });
+		 *     </code>
+		 * </pre>
+		 *
+		 * @since 1.40 The own properties of 'arrangements, actions and assertions' will be kept.
+		 * Here is an example:
+		 * <pre>
+		 *     <code>
+		 *         // An opa action with an own property 'clickMyButton'
+		 *         var myOpaAction = new Opa5();
+		 *         myOpaAction.clickMyButton = // function that clicks MyButton
+		 *         Opa.config.actions = myOpaAction;
+		 *
+		 *         var myExtension = new Opa5();
+		 *         Opa5.extendConfig({
+		 *             actions: myExtension
+		 *         });
+		 *
+		 *         // The clickMyButton function is still available - the function is logged out
+		 *         console.log(Opa.config.actions.clickMyButton);
+		 *
+		 *         // If
+		 *         var mySecondExtension = new Opa5();
+		 *         mySecondExtension.clickMyButton = // a different function than the initial one
+		 *         Opa.extendConfig({
+		 *             actions: mySecondExtension
+		 *         });
+		 *
+		 *         // Now clickMyButton function is the function of the second extension not the first one.
+		 *         console.log(Opa.config.actions.clickMyButton);
+		 *     </code>
+		 * </pre>
+		 *
+		 * @param {object} options The values to be added to the existing config
 		 * @public
 		 * @function
 		 */
@@ -662,6 +761,18 @@ sap.ui.define([
 			$("body").addClass("sapUiBody");
 			$("html").height("100%");
 		});
+
+		Opa5._validationInfo = $.extend({
+			_stack: "string",
+			viewName: "string",
+			viewNamespace: "string",
+			visible: "bool",
+			matchers: "any",
+			actions: "any",
+			id: "any",
+			controlType: "any",
+			searchOpenDialogs: "bool"
+		}, Opa._validationInfo);
 
 		return Opa5;
 }, /* export= */ true);

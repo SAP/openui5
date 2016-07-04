@@ -298,6 +298,9 @@
 								currency: "JPY",
 								maxPrecision: 5,
 								useSymbol: true
+							},
+							{
+								value: null
 							}
 						]
 					},
@@ -324,12 +327,14 @@
 				strictEqual(this.aItems[0]._bRenderNoValClass, true, "Value should be true");
 				strictEqual(this.aItems[1]._bRenderNoValClass, false, "Value should be false");
 				strictEqual(this.aItems[2]._bRenderNoValClass, true, "Value should be true");
+				strictEqual(this.aItems[3]._bRenderNoValClass, true, "Value should be true");
 			});
 
 			test("Undefined value from model", function () {
 				strictEqual(this.aItems[0].$().hasClass("sapUiUfdCurrencyNoVal"), true, "Class sapUiUfdCurrencyNoVal is applied to control");
 				strictEqual(this.aItems[1].$().hasClass("sapUiUfdCurrencyNoVal"), false, "Class sapUiUfdCurrencyNoVal is not applied to control");
 				strictEqual(this.aItems[2].$().hasClass("sapUiUfdCurrencyNoVal"), true, "Class sapUiUfdCurrencyNoVal is applied to control");
+				strictEqual(this.aItems[3].$().hasClass("sapUiUfdCurrencyNoVal"), true, "Class sapUiUfdCurrencyNoVal is applied to control");
 			});
 
 			test("Setting value from undefined to number and back", function () {
@@ -417,6 +422,50 @@
 				// Assert
 				strictEqual(this.oCurrency._renderValue.callCount, 1, "Internal method should be called once");
 				strictEqual(this.oCurrency._renderCurrency.callCount, 1, "Internal method should be called once");
+			});
+
+			test("Live switch between currency's with different decimal values", function () {
+				var $Value = this.oCurrency.$().find(".sapUiUfdCurrencyValue");
+
+				// Arrange
+				this.oCurrency.setValue(50.99);
+				this.oCurrency.setUseSymbol(false);
+				sap.ui.getCore().applyChanges();
+
+				// Resetting counters after modification
+				this.sandbox.reset();
+
+				// Act
+				this.oCurrency.setCurrency("JPY");
+
+				// Assert
+				strictEqual(this.oCurrency._renderValue.callCount, 1, "Internal method should be called once to re-render " +
+						"the value");
+
+				strictEqual($Value.text(), "51    ", "For JPY currency " +
+						"decimals should be removed and value padded according to precision");
+
+				// Act
+				this.sandbox.reset(); // Resetting counters
+				this.oCurrency.setCurrency("EUR");
+
+				// Assert
+				strictEqual(this.oCurrency._renderValue.callCount, 1, "Internal method should be called once to re-render " +
+						"the value");
+
+				strictEqual($Value.text(), "50.99 ", "For EUR currency " +
+						"decimals should be added again and value padded according to precision");
+
+				// Act
+				this.sandbox.reset(); // Resetting counters
+				this.oCurrency.setCurrency("BGN");
+
+				// Assert
+				strictEqual(this.oCurrency._renderValue.callCount, 0, "Internal method should not be called when the new " +
+						"currency has the same amount of decimal values");
+
+				strictEqual($Value.text(), "50.99 ", "For switch to " +
+						"BGN from EUR currency's decimals should remain unchanged");
 			});
 
 			module("Accessibility");

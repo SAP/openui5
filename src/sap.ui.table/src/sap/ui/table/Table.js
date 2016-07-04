@@ -257,8 +257,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 			/**
 			 * Toolbar of the Table (if not set it will be hidden)
+			 * @deprecated Since version 1.38. This aggregation is deprecated, use the <code>extension<code> aggregation instead.
 			 */
-			toolbar : {type : "sap.ui.core.Toolbar", multiple : false},
+			toolbar : {type : "sap.ui.core.Toolbar", multiple : false, deprecated: true},
 
 			/**
 			 * Extension section of the Table (if not set it will be hidden)
@@ -4721,120 +4722,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype.isIndexSelected = function(iIndex) {
 		return this._oSelection.isSelectedIndex(iIndex);
 	};
-
-
-	// =============================================================================
-	// KEYBOARD HANDLING HELPERS
-	// =============================================================================
-
-	/**
-	 * scrolls down a single row
-	 * @private
-	 */
-	Table.prototype._scrollNext = function() {
-		// we are at the end => scroll one down if possible
-		if (this.getFirstVisibleRow() < this._getRowCount() - this.getVisibleRowCount()) {
-			this.setFirstVisibleRow(Math.min(this.getFirstVisibleRow() + 1, this._getRowCount() - this.getVisibleRowCount()));
-		}
-	};
-
-	/**
-	 * scrolls up a single row
-	 * @private
-	 */
-	Table.prototype._scrollPrevious = function() {
-		// we are at the beginning => scroll one up if possible
-		if (this.getFirstVisibleRow() > 0) {
-			this.setFirstVisibleRow(Math.max(this.getFirstVisibleRow() - 1, 0));
-		}
-	};
-
-	/**
-	 * scrolls down a up page
-	 * @private
-	 */
-	Table.prototype._scrollPageUp = function() {
-		this.setFirstVisibleRow(Math.max(this.getFirstVisibleRow() - this.getVisibleRowCount(), 0));
-	};
-
-	/**
-	 * scrolls down a complete page
-	 * @private
-	 */
-	Table.prototype._scrollPageDown = function() {
-		this.setFirstVisibleRow(Math.min(this.getFirstVisibleRow() + this.getVisibleRowCount() - this.getFixedBottomRowCount(), this._getRowCount() - this.getVisibleRowCount()));
-	};
-
-	/**
-	 * checks if the current target domref is in the first row of the table
-	 * @private
-	 */
-	Table.prototype._isTopRow = function(oEvent) {
-		var $target = jQuery(oEvent.target);
-		var iRowIndex = parseInt($target.add($target.parent()).filter("[data-sap-ui-rowindex]").attr("data-sap-ui-rowindex"), 10);
-		var iFixedRows = this.getFixedRowCount();
-		if (iFixedRows > 0 && iRowIndex >= iFixedRows) {
-			return iRowIndex === iFixedRows;
-		}
-		return iRowIndex === 0;
-	};
-
-	/**
-	 * checks if the current target domref is in the last row of the table
-	 * @private
-	 */
-	Table.prototype._isBottomRow = function(oEvent) {
-		var $target = jQuery(oEvent.target);
-		var iRowIndex = parseInt($target.add($target.parent()).filter("[data-sap-ui-rowindex]").attr("data-sap-ui-rowindex"), 10);
-		var iFixedRows = this.getFixedBottomRowCount();
-		if (iFixedRows > 0 && iRowIndex <= this.getVisibleRowCount() - 1 - iFixedRows) {
-			return iRowIndex === this.getVisibleRowCount() - 1 - iFixedRows;
-		}
-		return iRowIndex === this.getVisibleRowCount() - 1;
-	};
-
-	/**
-	 * Return the focused row index.
-	 * @return {int} the currently focused row index.
-	 * @private
-	 */
-	Table.prototype._getFocusedRowIndex = function() {
-		var oInfo = TableUtils.getFocusedItemInfo(this);
-		var iFocusedIndex = oInfo.cell;
-		var iColumns = oInfo.columnCount;
-		var iSelectedCellInRow = oInfo.cellInRow;
-		var iSelectedRow = this.getFirstVisibleRow() + (iFocusedIndex - iSelectedCellInRow) / iColumns;
-
-		if (!this.getColumnHeaderVisible()) {
-			iSelectedRow++;
-		}
-		return iSelectedRow - 1;
-	};
-
-	/**
-	 * Checks whether the row of the currently focused cell is selected or not.
-	 * @return {boolean} true or false
-	 * @private
-	 */
-	Table.prototype._isFocusedRowSelected = function() {
-		var iSelectedRow = this._getFocusedRowIndex();
-		var bIsFocusedRowSelected = this.isIndexSelected(iSelectedRow);
-
-		var bIsCellRowHeader = TableUtils.getFocusedItemInfo(this).columnCount == 0;
-		if (bIsCellRowHeader) {
-			return bIsFocusedRowSelected;
-		} else {
-			if (TableUtils.hasRowHeader(this)) {
-				return null;
-			} else {
-				return bIsFocusedRowSelected;
-			}
-		}
-	};
-
-	// =============================================================================
-	// KEYBOARD HANDLING EVENTS
-	// =============================================================================
 
 	/**
 	 * If focus is on group header, open/close the group header, depending on the expand state.

@@ -9,7 +9,6 @@
 	font-size: 0.875rem;
 	overflow: hidden;
 	cursor: pointer;
-	color: @sapUiContentLabelColor;
 	background-color: darken(@sapUiGroupContentBackground, 5);
 }
 .sapMPullDownNontouch {
@@ -56,7 +55,9 @@
 /* Text */
 
 .sapMPullDownTouch > .sapMPullDownText {
-	font-weight: bold;
+	font-weight: normal;
+	font-size: @sapMFontMediumSize;
+	color: @sapUiListTextColor;
 }
 
 .sapMPullDownTouch > .sapMPullDownText,
@@ -64,9 +65,11 @@
 	width: 100%;
 	display: block;
 	text-align: center;
-	line-height: 1.5rem;
+	line-height: 1.3rem;
 	box-sizing: border-box;
+	font-family: @sapUiFontFamily;
 }
+
 .sapMPullDownNontouch > .sapMPullDownText {
 	margin: 0 0.875rem;
 	text-transform: uppercase;
@@ -74,9 +77,9 @@
 }
 
 .sapMPullDownInfo {
-	font-size: 0.75rem;
 	vertical-align: middle;
-	color: @sapUiListTextColor;
+	font-size: @sapMFontSmallSize;
+	color: @sapUiContentLabelColor;
 }
 
 

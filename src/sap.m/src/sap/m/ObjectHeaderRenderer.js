@@ -701,6 +701,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		oRM.write("<div"); // Start Main container
 		oRM.writeControlData(oOH);
 		oRM.addClass("sapMOH");
+		oRM.addClass("sapContrastPlus");
 		if (bCondensed) {
 			oRM.addClass("sapMOHC");
 		}
@@ -787,6 +788,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 		oRM.write("<div");
 		oRM.addClass("sapMOHR");
+		oRM.addClass("sapContrastPlus");
 		if (bTabs) {
 			oRM.addClass("sapMOHRNoBorder");
 		}

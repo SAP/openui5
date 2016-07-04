@@ -20,7 +20,7 @@ sap.ui.define(["./WizardProgressNavigator"], function (WizardProgressNavigator) 
 	WizardProgressNavigatorRenderer.startNavigator = function (oRm, oControl) {
 		oRm.write("<nav");
 		oRm.writeControlData(oControl);
-		oRm.writeAttribute("class", CLASSES.NAVIGATION);
+		oRm.writeAttribute("class", CLASSES.NAVIGATION + " sapContrastPlus");
 		oRm.writeAttribute(ATTRIBUTES.STEP_COUNT, oControl.getStepCount());
 		oRm.write(">");
 	};
@@ -57,7 +57,7 @@ sap.ui.define(["./WizardProgressNavigator"], function (WizardProgressNavigator) 
 
 		for (var i = 1; i <= iStepCount; i++) {
 			this.startStep(oRm, i);
-			this.renderAnchor(oRm, i, aStepTitles[i - 1], aStepIcons[i - 1]);
+			this.renderAnchor(oRm, oControl, i, aStepTitles[i - 1], aStepIcons[i - 1]);
 			this.endStep(oRm);
 		}
 	};
@@ -69,8 +69,15 @@ sap.ui.define(["./WizardProgressNavigator"], function (WizardProgressNavigator) 
 		oRm.write(">");
 	};
 
-	WizardProgressNavigatorRenderer.renderAnchor = function (oRm, iStepNumber, sStepTitle, sIconUri) {
-		oRm.write("<a tabindex='-1' aria-disabled='true'");
+	WizardProgressNavigatorRenderer.renderAnchor = function (oRm, oControl, iStepNumber, sStepTitle, sIconUri) {
+		var aSteps = oControl._cachedSteps,
+			oCurrentStep = aSteps[iStepNumber];
+
+		oRm.write("<a tabindex='-1' ");
+		if (!oCurrentStep || oCurrentStep.style.zIndex !== "0") {
+			oRm.write("aria-disabled='true'");
+		}
+
 		oRm.writeAttribute("class", CLASSES.ANCHOR);
 
 		if (sStepTitle) {

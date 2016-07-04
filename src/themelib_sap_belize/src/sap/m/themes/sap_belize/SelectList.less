@@ -16,6 +16,7 @@
 /* ------------------------------ */
 
 .sapMSelectListItemBase {
+	color: @sapUiListTextColor;
 	font-size: @sapMFontMediumSize;
 	height: 2.5rem;
 	cursor: pointer;
@@ -27,32 +28,33 @@
 }
 
 /* selected */
-
 .sapMSelectListItemBaseSelected {
 	background: @sapUiListSelectionBackgroundColor;
 }
 
 /* hover */
-
 .sapMSelectListItemBaseHoverable:hover {
 	background: @sapUiListHoverBackground;
 }
 
-/* pressed */
+/* hover selected */
+.sapMSelectListItemBaseSelected.sapMSelectListItemBaseHoverable:hover {
+	background-color: @sapUiListSelectionHoverBackground;
+}
 
-.sapMSelectListItemBase.sapMSelectListItemBasePressed {
+/* pressed and pressed selected */
+.sapMSelectListItemBase.sapMSelectListItemBasePressed,
+.sapMSelectListItemBase.sapMSelectListItemBasePressed.sapMSelectListItemBaseSelected {
 	color: @sapUiListActiveTextColor;
 	background: @sapUiListActiveBackground;
 }
 
 /* disabled */
-
 .sapMSelectListItemBaseDisabled {
 	opacity: 0.5;
 }
 
 /* focus */
-
 html.sap-desktop .sapMSelectListItemBase:focus {
 	outline: 1px dotted @sapUiContentFocusColor;
 }
@@ -74,7 +76,7 @@ html.sap-desktop .sapMSelectListItemBase:focus {
 /* ------------------------------ */
 
 .sapMSelectListSeparatorItem {
-	border: 1px solid @sapUiToolbarSeparatorColor;
+	border: 1px solid @sapUiListBorderColor;
 }
 
 /* compact size  */

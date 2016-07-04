@@ -750,7 +750,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 			// notify the listeners
 			if ( this.oThemeCheck ) {
-				this.oThemeCheck.fireThemeChangedEvent(false, true);
+				this.oThemeCheck.fireThemeChangedEvent(false);
 			}
 		}
 	};
@@ -1724,7 +1724,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			for ( sKey in oInfo ) {
 				vValue = oInfo[sKey];
 
-				// don't set name again, don't copy undefined values
+				// don't copy undefined values
 				if ( vValue !== undefined ) {
 
 					if ( jQuery.isArray(oLibrary[sKey]) ) {
@@ -1737,8 +1737,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 					} else if ( oLibrary[sKey] === undefined ) {
 						// only set values for properties that are still undefined
 						oLibrary[sKey] = vValue;
-					} else {
-						// ignore other values
+					} else if ( sKey != "name" ) {
+						// ignore other values (silently ignore "name")
 						jQuery.sap.log.warning("library info setting ignored: " + sKey + "=" + vValue);
 					}
 				}

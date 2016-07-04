@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './_ParameterValidator'], function ($, Device, ParameterValidator) {
 	"use strict";
 
 	///////////////////////////////
@@ -11,7 +11,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 		context = {},
 		timeout = -1,
 		isStopped,
-		oDeferred;
+		oDeferred,
+		oValidator = new ParameterValidator({
+			errorPrefix: "sap.ui.test.Opa#waitFor"
+		});
 
 	function internalWait (fnCallback, oOptions, oDeferred) {
 
@@ -176,12 +179,80 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 	Opa.config = {};
 
 	/**
-	 * Extends and overwrites default values of the Opa.config
+	 * Extends and overwrites default values of the {@link sap.ui.test.Opa#.config}.
+	 * Sample usage:
+	 * <pre>
+	 *     <code>
+	 *         var oOpa = new Opa();
+	 *
+	 *         // this statement will  will time out after 15 seconds and poll every 400ms.
+	 *         // those two values come from the defaults of {@link sap.ui.test.Opa#.config}.
+	 *         oOpa.waitFor({
+	 *         });
+	 *
+	 *         // All wait for statements added after this will take other defaults
+	 *         Opa.extendConfig({
+	 *             timeout: 10,
+	 *             pollingInterval: 100
+	 *         });
+	 *
+	 *         // this statement will time out after 10 seconds and poll every 100 ms
+	 *         oOpa.waitFor({
+	 *         });
+	 *
+	 *         // this statement will time out after 20 seconds and poll every 100 ms
+	 *         oOpa.waitFor({
+	 *             timeout: 20;
+	 *         });
+	 *     </code>
+	 * </pre>
+	 *
+	 * @since 1.40 The own properties of 'arrangements, actions and assertions' will be kept.
+	 * Here is an example:
+	 * <pre>
+	 *     <code>
+	 *         // An opa action with an own property 'clickMyButton'
+	 *         var myOpaAction = new Opa();
+	 *         myOpaAction.clickMyButton = // function that clicks MyButton
+	 *         Opa.config.actions = myOpaAction;
+	 *
+	 *         var myExtension = new Opa();
+	 *         Opa.extendConfig({
+	 *             actions: myExtension
+	 *         });
+	 *
+	 *         // The clickMyButton function is still available - the function is logged out
+	 *         console.log(Opa.config.actions.clickMyButton);
+	 *
+	 *         // If
+	 *         var mySecondExtension = new Opa();
+	 *         mySecondExtension.clickMyButton = // a different function than the initial one
+	 *         Opa.extendConfig({
+	 *             actions: mySecondExtension
+	 *         });
+	 *
+	 *         // Now clickMyButton function is the function of the second extension not the first one.
+	 *         console.log(Opa.config.actions.clickMyButton);
+	 *     </code>
+	 * </pre>
 	 *
 	 * @param {object} options The values to be added to the existing config
 	 * @public
 	 */
 	Opa.extendConfig = function (options) {
+		// Opa extend to preserver properties on these three parameters
+		["actions", "assertions", "arrangements"].forEach(function (sArrangeActAssert) {
+			if (!options[sArrangeActAssert]) {
+				return;
+			}
+
+			Object.keys(Opa.config[sArrangeActAssert]).forEach(function (sKey) {
+				if (!options[sArrangeActAssert][sKey]) {
+					options[sArrangeActAssert][sKey] = Opa.config[sArrangeActAssert][sKey];
+				}
+			});
+		});
+
 		Opa.config = $.extend(Opa.config, options);
 	};
 
@@ -256,12 +327,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 	/**
 	 * Clears the queue and stops running tests so that new tests can be run.
 	 * This means all waitFor statements registered by {@link sap.ui.test.Opa#waitFor} will not be invoked anymore and
-	 * the promise returned by {@link sap.ui.test.Opa#.emptyQueue} will be rejected.
+	 * the promise returned by {@link sap.ui.test.Opa#.emptyQueue}
+	 * will be rejected or resolved depending on the failTest parameter.
 	 * When its called inside of a check in {@link sap.ui.test.Opa#waitFor}
 	 * the success function of this waitFor will not be called.
+	 * @param [boolean=true] failTest If true is passed or the parameter is omited,
+	 * the promise of {@link sap.ui.test.Opa#.emptyQueue} is rejected. If false is passed the promis is resolved.
+	 * @since 1.40.1
 	 * @public
 	 */
-	Opa.stopQueue = function stopQueue () {
+	Opa.stopQueue = function stopQueue (failTest) {
+		var bFailTest = failTest !== false;
 		// clear queue
 		queue = [];
 
@@ -275,7 +351,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 
 			isStopped = true;
 
-			oDeferred.reject({});
+			if (bFailTest) {
+				oDeferred.reject({});
+			} else {
+				oDeferred.resolve();
+			}
 		}
 	};
 
@@ -321,15 +401,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 		 * @returns {jQuery.promise} A promise that gets resolved on success
 		 */
 		waitFor : function (options) {
-			var deferred = $.Deferred();
-				options = $.extend({},
-				Opa.config,
+			var deferred = $.Deferred(),
+				oFilteredConfig = Opa._createFilteredConfig(Opa._aConfigValuesForWaitFor);
+
+			options = $.extend({},
+				oFilteredConfig,
 				options);
+
+			this._validateWaitFor(options);
 
 			options._stack = createStack(1 + options._stackDropCount);
 			delete options._stackDropCount;
-
-			this._validateWaitFor(options);
 
 			deferred.promise(this);
 
@@ -391,11 +473,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 		emptyQueue : Opa.emptyQueue,
 
 		_validateWaitFor: function (oParameters) {
-			if (oParameters.error && !$.isFunction(oParameters.error)) {
-				throw new Error("sap.ui.test.Opa#waitFor - the 'error' parameter needs to be a function but '"
-					+ oParameters.error + "' was passed");
-			}
+			oValidator.validate({
+				validationInfo: Opa._validationInfo,
+				inputToValidate: oParameters
+			});
 		}
+	};
+
+	Opa._createFilteredOptions = function (aAllowedProperties, oSource) {
+		var oFilteredOptions = {};
+		aAllowedProperties.forEach(function (sKey) {
+			var vConfigValue = oSource[sKey];
+			if (vConfigValue === undefined) {
+				return;
+			}
+			oFilteredOptions[sKey] = vConfigValue;
+		});
+		return oFilteredOptions;
+	};
+
+	Opa._createFilteredConfig = function (aAllowedProperties) {
+		return Opa._createFilteredOptions(aAllowedProperties, Opa.config);
+	};
+
+	Opa._aConfigValuesForWaitFor = [
+		"errorMessage",
+		"timeout",
+		"pollingInterval",
+		"_stackDropCount"
+	];
+
+	Opa._validationInfo = {
+		error: "func",
+		check: "func",
+		success: "func",
+		timeout: "numeric",
+		pollingInterval: "numeric",
+		_stackDropCount: "numeric",
+		errorMessage: "string"
 	};
 
 

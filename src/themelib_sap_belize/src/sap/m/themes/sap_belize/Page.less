@@ -4,7 +4,7 @@
 /* =================================== */
 
 .sapMPageBgSolid {
-	background-color: lighten(@sapUiBaseBG, 5);
+	background-color: @sapUiGlobalBackgroundColor;
 }
 
 /* page with standard padding */
@@ -22,10 +22,6 @@
 		border-bottom: none;
 		box-shadow: none;
 	}
-}
-
-.sapMPage > section {
-	background-color: @sapUiGlobalBackgroundColor;
 }
 
 	/* page with header and subHeader */

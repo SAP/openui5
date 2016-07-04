@@ -60,6 +60,11 @@ objectPageHeader Title
 
 	.sapUxAPObjectPageHeaderActionButtonHideText .sapMBtnInner.sapMBtnIconFirst,
 	.sapUxAPObjectPageHeaderActionButtonHideText .sapMBtnInner.sapMBtnBack {
+		padding-left: 0;
+	}
+
+	.sapUxAPObjectPageHeaderActionButtonHideText .sapMBtnInner.sapMBtnIconFirst.sapMBtnText,
+	.sapUxAPObjectPageHeaderActionButtonHideText .sapMBtnInner.sapMBtnBack.sapMBtnText {
 		padding-left: 0.75rem;
 	}
 
@@ -121,31 +126,32 @@ objectPageHeader Title
 			font-size: 2rem;
 		}
 	}
+}
 
-	html[data-sap-ui-animation="on"] .sapUxAPObjectPageHeaderObjectImageForce .sapUxAPObjectPageHeaderObjectImage,
-	html[data-sap-ui-animation="on"] .sapUxAPObjectPageHeaderStickied & .sapUxAPObjectPageHeaderObjectImage {
-		-webkit-transition: opacity 0.5s;
-		transition: opacity 0.5s;
-		opacity: 1;
-	}
+html[data-sap-ui-animation="on"] .sapUxAPObjectPageHeaderObjectImageForce .sapUxAPObjectPageHeaderObjectImage,
+html[data-sap-ui-animation="on"] .sapUxAPObjectPageHeaderStickied & .sapUxAPObjectPageHeaderObjectImage {
+	-webkit-transition: opacity 0.5s;
+	transition: opacity 0.5s;
+	opacity: 1;
+}
 
-	html[data-sap-ui-animation="off"] .sapUxAPObjectPageHeaderObjectImageForce .sapUxAPObjectPageHeaderObjectImage,
-	html[data-sap-ui-animation="off"] .sapUxAPObjectPageHeaderStickied & .sapUxAPObjectPageHeaderObjectImage  {
-		opacity: 1;
-	}
+html[data-sap-ui-animation="off"] .sapUxAPObjectPageHeaderObjectImageForce .sapUxAPObjectPageHeaderObjectImage,
+html[data-sap-ui-animation="off"] .sapUxAPObjectPageHeaderStickied & .sapUxAPObjectPageHeaderObjectImage  {
+	opacity: 1;
+}
+
+.sapUiMedia-Std-Desktop .sapUxAPObjectPageHeaderIdentifier {
+	padding-left: 3rem;
+}
+
+.sapUiMedia-Std-Tablet .sapUxAPObjectPageHeaderIdentifier,
+.sapUiMedia-Std-Desktop .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail .sapUxAPObjectPageHeaderIdentifier,
+.sapUiMedia-Std-Tablet .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail .sapUxAPObjectPageHeaderIdentifier {
+	padding-left: 2rem;
 }
 
 .sapUiMedia-Std-Phone .sapUxAPObjectPageHeaderIdentifier {
 	padding-left: 1rem;
-}
-
-.sapUiMedia-Std-Tablet .sapUxAPObjectPageHeaderIdentifier,
-.sapUiMedia-Std-Desktop .sapUxAPObjectPageHeaderIdentifier {
-	padding-left: 2rem;
-}
-
-.sapUiMedia-Std-Desktop .sapMSplitContainerHideMode .sapUxAPObjectPageHeaderIdentifier {
-	padding-left: 3rem;
 }
 
 .sapUxAPObjectPageHeaderIdentifier .sapUxAPObjectPageHeaderIdentifierDescription {

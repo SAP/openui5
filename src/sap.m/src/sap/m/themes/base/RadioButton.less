@@ -14,9 +14,11 @@
 	float: right;
 }
 
+.sapMRbHasLabel .sapMRbB {
+	width: 3rem;
+}
+
 .sapMRbB {
-	height: 3em;
-	width: 3em;
 	display: inline-block; /* for ie*/
 	display: -webkit-inline-box;
 }
@@ -63,9 +65,15 @@
 	display: none;
 }
 
-.sapUiSizeCompact .sapMRb:focus:before {
-	top: .4375rem;
-	bottom: .3125rem;
-	left: .4375rem;
-	right: .325rem;
+.sapUiSizeCompact {
+	.sapMRb:focus:before {
+		top: .4375rem;
+		bottom: .3125rem;
+		left: .4375rem;
+		right: .325rem;
+	}
+
+	.sapMRbHasLabel .sapMRbB {
+		width: 2rem;
+	}
 }

@@ -46,7 +46,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 						this.getId() + "Import",
 						this.getId() + "SetQueryString"
 					];
-					jQuery.sap.require("sap.ui.core.format.DateFormat");
 					var pad0 = function(i, w) {
 						return ("000" + String(i)).slice(-w);
 					};

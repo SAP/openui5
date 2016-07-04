@@ -253,7 +253,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 		if (!this.bDetectUpdates) {
 			return this.fnGetEntryKey(oContext);
 		} else {
-			return JSON.stringify(oContext.getObject());
+			return JSON.stringify(oContext.getObject(this.mParameters));
 		}
 	};
 

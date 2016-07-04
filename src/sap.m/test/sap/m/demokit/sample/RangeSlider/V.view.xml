@@ -6,9 +6,13 @@
 	<l:VerticalLayout class="sapUiContentPadding">
 		<Text text="" />
 		<RangeSlider range="{/RS1}" min="0" max="100" width="80%" class="sapUiSmallMarginBottom" />
+		<Text text="" />
 		<RangeSlider range="{/RS2}" min="-50" max="50"  width="10rem" class="sapUiSmallMarginBottom" />
+		<Text text="" />
 		<RangeSlider range="{/RS3}" min="0" max="100" width="10rem" class="sapUiSmallMarginBottom" />
+		<Text text="" />
 		<RangeSlider range="{/RS4}" min="-1000" max="1000" width="500px" class="sapUiSmallMarginBottom" />
+		<Text text="" />
 		<RangeSlider range="{/RS5}" min="0" max="500" width="400px" class="sapUiSmallMarginBottom" />
 	</l:VerticalLayout>
 </mvc:View>

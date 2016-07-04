@@ -101,8 +101,8 @@ sap.ui.define(['jquery.sap.global'],
 		var oIconInfo = sap.ui.core.IconPool.getIconInfo(oButton.getIcon());
 
 		// add tooltip if available
-		if (sTooltip || (oIconInfo && !oButton.getText())) {
-			oRm.writeAttributeEscaped("title", sTooltip || oIconInfo.text || oIconInfo.name);
+		if (sTooltip || (oIconInfo && oIconInfo.text && !oButton.getText())) {
+			oRm.writeAttributeEscaped("title", sTooltip || oIconInfo.text);
 		}
 
 		oRm.writeClasses();

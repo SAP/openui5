@@ -463,7 +463,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 				press: this._fnHandleBackPress.bind(this),
 				ariaLabelledBy: oBackBtnARIAHiddenDescr,
 				tooltip: sBackBtnTooltipDescr
-			});
+			}).addStyleClass(CSS_CLASS + "BackBtn");
 
 			this._oDetailsHeader = new Toolbar({
 				content: [this._oBackButton, new ToolbarSpacer(), oCloseBtn, oCloseBtnARIAHiddenDescr, oBackBtnARIAHiddenDescr]
@@ -1088,13 +1088,15 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 * @private
 		 */
 		MessagePopover.prototype._expandMsgPopover = function () {
-			var sHeight = this._oPopover.$("cont").css("height") || this._oPopover.getContentWidth();
+			var sHeight = this._oPopover.getContentWidth();
+			if (this.getInitiallyExpanded()) {
+				sHeight = this._oPopover.$("cont").css("height") || sHeight;
+			}
 
 			this._oPopover
 				.setContentHeight(sHeight)
 				.removeStyleClass(CSS_CLASS + "-init");
 		};
-
 		/**
 		 * Sets the height of the MessagePopover to auto so that only the header with
 		 * the SegmentedButton is visible

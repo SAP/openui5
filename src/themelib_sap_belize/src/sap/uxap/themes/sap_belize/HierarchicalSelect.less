@@ -10,7 +10,7 @@
 	&.sapMSltHoverable {
 		border: none;
 
-		&.sapMSltIconOnly:hover {
+		&:hover {
 			background: transparent;
 		}
 
@@ -22,7 +22,8 @@
 
 	&.sapMSltPressed {
 
-		&.sapMSltIconOnly:not(.sapMSltDisabled) {
+		&.sapMSltIconOnly:not(.sapMSltDisabled),
+		&.sapMSltIconOnly:not(.sapMSltState):hover {
 			background: transparent;
 		}
 
@@ -97,7 +98,7 @@ html.sapUiMedia-Std-Phone, html.sap-phone {
 	.sapMSltPressed > .sapMSltArrow::before {
 		color: @sapUiContentContrastIconColor;
 	}
-	
+
 	.sapUxAPHierarchicalSelect .sapMSltLabel {
 		border-bottom: 0.125rem solid @sapUiSelected;
 	}

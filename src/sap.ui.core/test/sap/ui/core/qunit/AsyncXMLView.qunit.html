@@ -67,22 +67,28 @@ oConfig.factory = function(bAsync) {
 asyncTestsuite("XMLView Factory", oConfig);
 
 // Cache-relevant test cases
-sap.ui.require(["jquery.sap.global", "sap/ui/core/cache/CacheManager", "sap/ui/core/Component", "sap/ui/core/mvc/XMLView", "jquery.sap.script"],
-	function(jQuery, Cache, Component, XMLView /*, jQuery*/) {
+sap.ui.require(["jquery.sap.global",
+	"sap/ui/core/cache/CacheManager",
+	"sap/ui/core/Component",
+	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/XMLView",
+	"testdata/mvc/TestPreprocessor",
+	"jquery.sap.script"],
+	function(jQuery, Cache, Component, View, XMLView, TestPreprocessor /*, jQuery*/) {
 
-		function viewFactory(mCacheSettings, mPreprocessors) {
-			return sap.ui.xmlview({
-				viewName: "example.mvc.cache",
-				async: true,
-				id: "cachedView",
-				preprocessors: mPreprocessors,
-				cache: mCacheSettings
-			});
-		}
+	function viewFactory(mCacheSettings, mPreprocessors) {
+		return sap.ui.xmlview({
+			viewName: "example.mvc.cache",
+			async: true,
+			id: "cachedView",
+			preprocessors: mPreprocessors,
+			cache: mCacheSettings
+		});
+	}
 
-		function destroy(oView) {
-			return XMLView.prototype.destroy.bind(oView);
-		}
+	function destroy(oView) {
+		return XMLView.prototype.destroy.bind(oView);
+	}
 
 	// skip tests for unsupported browsers
 	if (Cache._isSupportedEnvironment()) {
@@ -129,12 +135,19 @@ sap.ui.require(["jquery.sap.global", "sap/ui/core/cache/CacheManager", "sap/ui/c
 				});
 			});
 
-			QUnit.test("no cache key", function(assert) {
+			QUnit.test("no cache key - sync", function(assert) {
 				var error = new Error("No cache keys provided. At least one is required.");
 				assert.expect(2);
 				assert.throws(viewFactory.bind(null, "foo"), error, "invalid cache config");
 				assert.throws(viewFactory.bind(null, {keys: []}), error, "empty array");
+			});
 
+			QUnit.test("no cache key - async", function(assert) {
+				var sError = "Provided cache keys may not be empty or undefined.";
+				assert.expect(1);
+			  return viewFactory({keys: [Promise.resolve()]}).loaded().then(jQuery.noop, function(e) {
+					assert.equal(e.message, sError, "error caught");
+				});
 			});
 
 			QUnit.test("cache additional data", function(assert) {
@@ -196,6 +209,27 @@ sap.ui.require(["jquery.sap.global", "sap/ui/core/cache/CacheManager", "sap/ui/c
 					var sManifest = JSON.stringify(oComp.getManifest());
 					sinon.assert.calledWith(oSpy, "sap.ui.core.Component_cachedView" + getKeyParts([sKey], sManifest));
 					oView.destroy();
+				});
+			});
+
+			QUnit.test("Preprocessor integration", function(assert) {
+				var sKey = "key", oSpy = this.oSpy;
+				assert.expect(4);
+				assert.ok(TestPreprocessor);
+				// inject the preprocessor, ugly, but has to be done to place the spy
+				View._mPreprocessors["XML"] = View._mPreprocessors["XML"] || {};
+				View._mPreprocessors["XML"]["xml"] = View._mPreprocessors["XML"]["xml"] || [];
+				View._mPreprocessors["XML"]["xml"].push({preprocessor: TestPreprocessor, _settings: {assert: jQuery.noop}});
+				var oGetCacheKeySpy = sinon.spy(TestPreprocessor, "getCacheKey");
+				return viewFactory({keys: [sKey]}).loaded().then(function(oView) {
+					sinon.assert.calledOnce(oGetCacheKeySpy);
+					sinon.assert.calledWithExactly(oGetCacheKeySpy, oView.getPreprocessorInfo());
+					// "foo" is the part coming from TestPreprocessor.js
+					sinon.assert.calledWith(oSpy, sLocation + "_cachedView" + getKeyParts(["foo", sKey]));
+					oSpy.restore();
+					oView.destroy();
+					// remove the preprocessor
+					View._mPreprocessors["XML"]["xml"].splice(1,1);
 				});
 			});
 

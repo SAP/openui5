@@ -1180,8 +1180,11 @@
 
 				sap.ui.getCore().applyChanges();
 
+				var bRtl = sap.ui.getCore().getConfiguration().getRTL();
+				var sText = bRtl ? "(10) Text 1" : "Text 1 (10)";
+
 				ok(oIconTabBar.$().find(".sapMITBCount").length == 0, '"counts" texts are not displayed');
-				ok(jQuery(oIconTabBar.$().find(".sapMITBText")[0]).text() == "Text 1 (10)", "The count is attached to the text");
+				equals(jQuery(oIconTabBar.$().find(".sapMITBText")[0]).text(), sText, "The count is attached to the text");
 
 				// Clean up
 				oIconTabBar.destroy();

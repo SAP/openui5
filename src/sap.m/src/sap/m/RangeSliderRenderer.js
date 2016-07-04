@@ -39,28 +39,34 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer"], function (Renderer, 
         oRM.write(">");
 
         // The first tooltip
-        oRM.write("<span");
-        oRM.addClass(SliderRenderer.CSS_CLASS + "HandleTooltip");
-        oRM.addStyle("width", oControl._iLongestRangeTextWidth + "px");
-        oRM.writeAttribute("id", oControl.getId() + "-LeftTooltip");
-
-        oRM.writeClasses();
-        oRM.writeStyles();
-        oRM.write(">");
-        oRM.write("</span>");
+        this.renderTooltip(oRM, oControl, oControl.getInputsAsTooltips(), "Left");
 
         // The second tooltip
-        oRM.write("<span");
-        oRM.addClass(SliderRenderer.CSS_CLASS + "HandleTooltip");
-        oRM.addStyle("width", oControl._iLongestRangeTextWidth + "px");
-        oRM.writeAttribute("id", oControl.getId() + "-RightTooltip");
-
-        oRM.writeClasses();
-        oRM.writeStyles();
-        oRM.write(">");
-        oRM.write("</span>");
+        this.renderTooltip(oRM, oControl, oControl.getInputsAsTooltips(), "Right");
 
         oRM.write("</div>");
+    };
+
+    RangeSliderRenderer.renderTooltip = function(oRM, oControl, bInput, sPosition){
+
+        if (bInput) {
+            if (sPosition === "Left") {
+                oRM.renderControl(oControl._leftTooltip);
+            } else {
+                oRM.renderControl(oControl._rightTooltip);
+            }
+
+        } else {
+            oRM.write("<span");
+            oRM.addClass(SliderRenderer.CSS_CLASS + "HandleTooltip");
+            oRM.addStyle("width", oControl._iLongestRangeTextWidth + "px");
+            oRM.writeAttribute("id", oControl.getId() + "-" + sPosition + "Tooltip");
+
+            oRM.writeClasses();
+            oRM.writeStyles();
+            oRM.write(">");
+            oRM.write("</span>");
+        }
     };
 
     /**

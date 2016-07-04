@@ -122,6 +122,27 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 			 */
 			maxDate : {type : "object", group : "Misc", defaultValue : null}
 
+		},
+
+		aggregations : {
+
+			/**
+			 * Date Range with type to visualize special days in the Calendar.
+			 * If one day is assigned to more than one Type, only the first one will be used.
+			 * @since 1.38.5
+			 */
+			specialDates : {type : "sap.ui.core.Element", multiple : true, singularName : "specialDate"}
+		},
+
+		associations: {
+
+			/**
+			 * Association to the <code>CalendarLegend</code> explaining the colors of the <code>specialDates</code>.
+			 *
+			 * <b>Note</b> The legend does not have to be rendered but must exist, and all required types must be assigned.
+			 * @since 1.38.5
+			 */
+			legend: { type: "sap.ui.core.Control", multiple: false}
 		}
 	}});
 
@@ -444,11 +465,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 				throw new Error("Date must be between 0001-01-01 and 9999-12-31; " + this);
 			}
 
-			this._oMinDate = new Date(oDate);
+			this._oMinDate = new Date(oDate.getTime());
 			var oDateValue = this.getDateValue();
 			if (oDateValue && oDateValue.getTime() < oDate.getTime()) {
 				jQuery.sap.log.warning("DateValue not in valid date -> changed to minDate", this);
-				this.setDateValue(new Date(oDate));
+				this.setDateValue(new Date(oDate.getTime()));
 			}
 		} else {
 			this._oMinDate = new Date(1, 0, 1);
@@ -482,11 +503,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 				throw new Error("Date must be between 0001-01-01 and 9999-12-31; " + this);
 			}
 
-			this._oMaxDate = new Date(oDate);
+			this._oMaxDate = new Date(oDate.getTime());
 			var oDateValue = this.getDateValue();
 			if (oDateValue && oDateValue.getTime() > oDate.getTime()) {
 				jQuery.sap.log.warning("DateValue not in valid date -> changed to maxDate", this);
-				this.setDateValue(new Date(oDate));
+				this.setDateValue(new Date(oDate.getTime()));
 			}
 		} else {
 			this._oMaxDate = new Date(9999, 11, 31, 23, 59, 59, 99);
@@ -507,10 +528,10 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 
 		if (this._oMinDate.getTime() > this._oMaxDate.getTime()) {
 			jQuery.sap.log.warning("minDate > MaxDate -> dates switched", this);
-			var oMaxDate = new Date(this._oMinDate);
-			var oMinDate = new Date(this._oMaxDate);
-			this._oMinDate = new Date(oMinDate);
-			this._oMaxDate = new Date(oMaxDate);
+			var oMaxDate = new Date(this._oMinDate.getTime());
+			var oMinDate = new Date(this._oMaxDate.getTime());
+			this._oMinDate = new Date(oMinDate.getTime());
+			this._oMaxDate = new Date(oMaxDate.getTime());
 			this.setProperty("minDate", oMinDate, true);
 			this.setProperty("maxDate", oMaxDate, true);
 			if (this._oCalendar) {
@@ -600,6 +621,120 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 
 	};
 
+	/**
+	 * Adds some <code>specialDate</code> to the aggregation <code>specialDates</code>.
+	 *
+	 * @since 1.38.5
+	 * @param {sap.ui.unified.DateTypeRange} oSpecialDate the specialDate to add; if empty, nothing is added
+	 * @return {sap.m.DatePicker} Reference to <code>this</code> in order to allow method chaining
+	 * @public
+	 */
+	DatePicker.prototype.addSpecialDate = function(oSpecialDate){
+
+		_checkSpecialDate.call(this, oSpecialDate);
+
+		this.addAggregation("specialDates", oSpecialDate, true);
+
+		_invalidateCalendar.call(this);
+
+		return this;
+
+	};
+
+	/**
+	 * Inserts a <code>specialDate</code> to the aggregation <code>specialDates</code>.
+	 *
+	 * @since 1.38.5
+	 * @param {sap.ui.unified.DateTypeRange} oSpecialDate the specialDate to insert; if empty, nothing is inserted
+	 * @param {int} iIndex the 0-based index the <code>specialDate</code> should be inserted at;
+	 *              for a negative value of <code>iIndex</code>, the <code>specialDate</code> is inserted at position 0;
+	 *              for a value greater than the current size of the aggregation, the <code>specialDate</code> is inserted at the last position
+	 * @return {sap.m.DatePicker} Reference to <code>this</code> in order to allow method chaining
+	 * @public
+	 */
+	DatePicker.prototype.insertSpecialDate = function(oSpecialDate, iIndex){
+
+		_checkSpecialDate.call(this, oSpecialDate);
+
+		this.insertAggregation("specialDates", oSpecialDate, iIndex, true);
+
+		_invalidateCalendar.call(this);
+
+		return this;
+
+	};
+
+	/**
+	 * Removes a <code>specialDate</code> from the aggregation <code>specialDates</code>.
+	 *
+	 * @since 1.38.5
+	 * @param {sap.ui.unified.DateTypeRange} oSpecialDate The <code>specialDate</code> to remove or its index or id
+	 * @return {sap.ui.unified.DateTypeRange} The removed <code>specialDate</code> or null
+	 * @public
+	 */
+	DatePicker.prototype.removeSpecialDate = function(oSpecialDate){
+
+		var oRemoved = this.removeAggregation("specialDates", oSpecialDate, true);
+
+		_invalidateCalendar.call(this);
+
+		return oRemoved;
+
+	};
+
+	DatePicker.prototype.removeAllSpecialDates = function(){
+
+		var aRemoved = this.removeAllAggregation("specialDates", true);
+
+		_invalidateCalendar.call(this);
+
+		return aRemoved;
+
+	};
+
+	DatePicker.prototype.destroySpecialDates = function(){
+
+		this.destroyAggregation("specialDates", true);
+
+		_invalidateCalendar.call(this);
+
+		return this;
+
+	};
+
+	/**
+	 * Sets the associated legend.
+	 *
+	 * @since 1.38.5
+	 * @param {sap.ui.core.ID | sap.ui.unified.CalendarLegend} oLegend ID of an element which becomes the new target of this <code>legend</code> association;
+	 *                                                         alternatively, an element instance may be given
+	 * @return {sap.m.DatePicker} Reference to <code>this</code> in order to allow method chaining
+	 * @public
+	 */
+	DatePicker.prototype.setLegend = function(oLegend){
+
+		this.setAssociation("legend", oLegend, true);
+
+		var sId = this.getLegend();
+		if (sId) {
+			if (!sap.ui.unified.CalendarLegend) {
+				sap.ui.getCore().loadLibrary("sap.ui.unified");
+				jQuery.sap.require("sap.ui.unified.library");
+			}
+			oLegend = sap.ui.getCore().byId(sId);
+			if (oLegend && !(oLegend instanceof sap.ui.unified.CalendarLegend)) {
+				throw new Error(oLegend + " is not a sap.ui.unified.CalendarLegend. " + this);
+			}
+		}
+
+		if (this._oCalendar) {
+			this._oCalendar.setLegend(sId);
+		}
+
+		return this;
+
+	};
+
 	DatePicker.prototype.onChange = function(oEvent) {
 		// don't call InputBase onChange because this calls setValue what would trigger a new formatting
 
@@ -666,7 +801,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 				this._oCalendar.focusDate(oDate);
 				var oStartDate = this._oDateRange.getStartDate();
 				if ((!oStartDate && oDate) || (oStartDate && oDate && oStartDate.getTime() != oDate.getTime())) {
-					this._oDateRange.setStartDate(new Date(oDate));
+					this._oDateRange.setStartDate(new Date(oDate.getTime()));
 				} else if (oStartDate && !oDate) {
 					this._oDateRange.setStartDate(undefined);
 				}
@@ -851,7 +986,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 			this._oCalendar = new sap.ui.unified.Calendar(this.getId() + "-cal", {
 				intervalSelection: this._bIntervalSelection,
 				minDate: this.getMinDate(),
-				maxDate: this.getMaxDate()
+				maxDate: this.getMaxDate(),
+				legend: this.getLegend()
 				});
 			this._oDateRange = new sap.ui.unified.DateRange();
 			this._oCalendar.addSelectedDate(this._oDateRange);
@@ -878,7 +1014,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 		var oDate = this.getDateValue();
 
 		if (oDate) {
-			this._oCalendar.focusDate(new Date(oDate));
+			this._oCalendar.focusDate(new Date(oDate.getTime()));
 			if (!this._oDateRange.getStartDate() || this._oDateRange.getStartDate().getTime() != oDate.getTime()) {
 				this._oDateRange.setStartDate(new Date(oDate.getTime()));
 			}
@@ -946,7 +1082,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 
 		// do not use this.onChange() because output pattern will change date (e.g. only last 2 number of year -> 1966 -> 2066 )
 		if (!jQuery.sap.equal(oDate, oDateOld)) {
-			this.setDateValue(new Date(oDate));
+			this.setDateValue(new Date(oDate.getTime()));
 			// compare Dates because value can be the same if only 2 digits for year
 			sValue = this.getValue();
 			this.fireChangeEvent(sValue, {valid: true});
@@ -962,6 +1098,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 				if (this.getDomRef()) { // as control could be destroyed during update binding
 					this._$input.val(sValue);
 				}
+				this.setProperty("value", sValue, true); // no rerendering
 				this.fireChangeEvent(sValue, {valid: true});
 			}
 		}
@@ -1133,6 +1270,29 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 		}
 
 		return oFormat;
+
+	}
+
+	function _checkSpecialDate(oSpecialDate) {
+
+		if (!sap.ui.unified.DateTypeRange) {
+			sap.ui.getCore().loadLibrary("sap.ui.unified");
+			jQuery.sap.require("sap.ui.unified.library");
+		}
+
+		if (oSpecialDate && !(oSpecialDate instanceof sap.ui.unified.DateTypeRange)) {
+			throw new Error(oSpecialDate + "is not valid for aggregation \"specialDates\" of " + this);
+		}
+
+	}
+
+	function _invalidateCalendar() {
+
+		if (this._oPopup && this._oPopup.isOpen()) {
+			// calendar is displayed -> update it immediately
+			this._oCalendar._bDateRangeChanged = true;
+			this._oCalendar.invalidate();
+		}
 
 	}
 
