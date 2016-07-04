@@ -25,6 +25,7 @@
 		rm.write("<div");
 		rm.writeControlData(oControl);
 		rm.addClass("sapMShell");
+
 		if (oControl.getAppWidthLimited()) {
 			rm.addClass("sapMShellAppWidthLimited");
 		}
@@ -41,7 +42,8 @@
 
 		rm.write(">");
 
-		sap.m.BackgroundHelper.renderBackgroundImageTag(rm, oControl, ["sapMShellBG", "sapUiGlobalBackgroundImageForce"],  oControl.getBackgroundImage(), oControl.getBackgroundRepeat(), oControl.getBackgroundOpacity());
+		/* The background in "SAP_Belize_Deep" must be dark. The contrast class is set to the element wihout any children to avoid unnecessary propagation. */
+		sap.m.BackgroundHelper.renderBackgroundImageTag(rm, oControl, ["sapContrastPlus", "sapMShellBG", "sapUiGlobalBackgroundImageForce"],  oControl.getBackgroundImage(), oControl.getBackgroundRepeat(), oControl.getBackgroundOpacity());
 
 		rm.write("<div class='sapMShellBrandingBar'></div>");
 

@@ -424,7 +424,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 			var oSecondDateValue = this.getSecondDateValue();
 			if (oSecondDateValue && oSecondDateValue.getTime() < this._oMinDate.getTime()) {
 				jQuery.sap.log.warning("SecondDateValue not in valid date -> changed to minDate", this);
-				this.setSecondDateValue(new Date(this._oMinDate));
+				this.setSecondDateValue(new Date(this._oMinDate.getTime()));
 			}
 		}
 
@@ -440,7 +440,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 			var oSecondDateValue = this.getSecondDateValue();
 			if (oSecondDateValue && oSecondDateValue.getTime() > this._oMaxDate.getTime()) {
 				jQuery.sap.log.warning("SecondDateValue not in valid date -> changed to maxDate", this);
-				this.setSecondDateValue(new Date(this._oMaxDate));
+				this.setSecondDateValue(new Date(this._oMaxDate.getTime()));
 			}
 		}
 
@@ -575,7 +575,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 				var oStartDate = this.getDateValue();
 				if (oStartDate) {
 					if (!this._oDateRange.getStartDate() || this._oDateRange.getStartDate().getTime() !== oStartDate.getTime()) {
-						this._oDateRange.setStartDate(new Date(oStartDate));
+						this._oDateRange.setStartDate(new Date(oStartDate.getTime()));
 						this._oCalendar.focusDate(oStartDate);
 					}
 				} else {
@@ -587,7 +587,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 				var oEndDate = this.getSecondDateValue();
 				if (oEndDate) {
 					if (!this._oDateRange.getEndDate() || this._oDateRange.getEndDate().getTime() !== oEndDate.getTime()) {
-						this._oDateRange.setEndDate(new Date(oEndDate));
+						this._oDateRange.setEndDate(new Date(oEndDate.getTime()));
 						this._oCalendar.focusDate(oEndDate);
 					}
 				} else {
@@ -657,7 +657,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 
 		if (oEndDate) {
 			if (!this._oDateRange.getEndDate() || this._oDateRange.getEndDate().getTime() !== oEndDate.getTime()) {
-				this._oDateRange.setEndDate(new Date(oEndDate));
+				this._oDateRange.setEndDate(new Date(oEndDate.getTime()));
 			}
 		} else {
 			if (this._oDateRange.getEndDate()) {

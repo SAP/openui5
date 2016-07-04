@@ -1,0 +1,106 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>qUnit Page for sap.ui.test._LogCollector</title>
+
+	<script
+			src="../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-logLevel="ALL">
+	</script>
+
+	<script>
+		jQuery.sap.require("sap/ui/qunit/qunit-css");
+		jQuery.sap.require("sap/ui/thirdparty/qunit");
+		jQuery.sap.require("sap/ui/qunit/qunit-junit");
+		jQuery.sap.require("sap/ui/qunit/qunit-coverage");
+		jQuery.sap.require("sap/ui/thirdparty/sinon");
+		jQuery.sap.require("sap/ui/thirdparty/sinon-qunit");
+		jQuery.sap.require("sap/ui/thirdparty/sinon-ie");
+		QUnit.config.autostart = false;
+		sap.ui.require(["sap/ui/test/_LogCollector", "jquery.sap.global"], function (_LogCollector, $) {
+			"use strict";
+
+			QUnit.module("Singleton");
+
+			QUnit.test("Should be able to get the singleton", function (assert) {
+				var oInstance = _LogCollector.getInstance();
+				var oSecondInstanceRetrieval = _LogCollector.getInstance();
+
+				assert.strictEqual(oInstance, oSecondInstanceRetrieval, "Log collector is a singleton");
+				assert.ok(oInstance instanceof _LogCollector, "Log collector is actually an instance of LogCollector");
+			});
+
+			// There are reused in most of the following tests
+			var sLogMessage = "Hello";
+			var sLogDetails = "World";
+			var sComponent = "sap.ui.test";
+			var oInstance = _LogCollector.getInstance();
+			var sExpectedLog = sLogMessage + " - " + sLogDetails + " " + sComponent;
+
+			function assertContainsLog (assert, sMessage) {
+				var bContains = sMessage.indexOf(sExpectedLog) !== -1;
+				assert.ok(bContains, "The message '" + sMessage + "' contains the expectedLog '" + sExpectedLog + "'")
+			}
+
+			QUnit.module("Reading logs");
+
+			QUnit.test("Should get an empty string if there is no log", function (assert) {
+				assert.strictEqual(oInstance.getAndClearLog(), "", "Log was empty");
+			});
+
+			QUnit.test("Should be able to collect a single log", function (assert) {
+				$.sap.log.debug(sLogMessage, sLogDetails, sComponent);
+
+				var sLog = oInstance.getAndClearLog();
+				assertContainsLog(assert, sLog);
+			});
+
+			QUnit.test("Should clear the log when calling getAndClear", function (assert) {
+				// add something to the log
+				$.sap.log.debug(sLogMessage, sLogDetails, sComponent);
+
+				// Now we expect the added log
+				var sFirstResult = oInstance.getAndClearLog();
+				assertContainsLog(assert, sFirstResult);
+
+				// The actual act now the log has to be empty
+				assert.strictEqual(oInstance.getAndClearLog(), "", "Log was empty");
+			});
+
+			QUnit.test("Should read multiple logs", function (assert) {
+				$.sap.log.debug(sLogMessage, sLogDetails, sComponent);
+				$.sap.log.debug(sLogMessage, sLogDetails, sComponent);
+				// should be ommited no component
+				$.sap.log.debug(sLogMessage, sLogDetails);
+
+				var aLogs = oInstance.getAndClearLog().split("\n");
+				assert.strictEqual(aLogs.length, 2, "Got 2 logs");
+				aLogs.forEach(function (sLog) {
+					assertContainsLog(assert, sLog);
+				});
+				assert.strictEqual(oInstance.getAndClearLog(), "", "Log was empty");
+			});
+
+			QUnit.module("destruction");
+
+			QUnit.test("Should not listen to logs after the log listener is destroyed", function (assert) {
+				var oLogCollector = new _LogCollector();
+				$.sap.log.debug(sLogMessage, sLogDetails, sComponent);
+				oLogCollector.destroy();
+				assert.strictEqual(oLogCollector.getAndClearLog(), "", "Log was empty");
+				$.sap.log.debug(sLogMessage, sLogDetails, sComponent);
+				assert.strictEqual(oLogCollector.getAndClearLog(), "", "Log was empty");
+			});
+
+			QUnit.start();
+		});
+	</script>
+</head>
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+
+</body>
+</html>

@@ -114,6 +114,10 @@ html.sap-desktop {
 		left: -1px; /* Cb in SimpleForm: left and right border adjustment */
 		right: 1px;
 	}
+
+	.sapUiRespGrid .sapMCb:not(.sapMCbBgDis).sapMCbHasLabel:focus:before {
+		right: 0; /* in the Grid the outline on the right is not visible */
+	}
 }
 
 /* CheckBox in Footer Context */
@@ -199,6 +203,10 @@ html.sap-desktop {
 	.sapMLIBSelectM > .sapMCb {
 		width : 2rem;
 	}
+
+	.sapUiForm .sapMCbBg { /* In forms, align left with '0.0625rem' ( the focus width) */
+		left: 0.0625rem;
+	}
 }
 
 html.sap-desktop {
@@ -210,7 +218,7 @@ html.sap-desktop {
 		}
 
 		.sapUiSimpleForm .sapMCb:not(.sapMCbBgDis):focus:before {
-			left: 0.365rem;
+			left: -0.0625rem;
 		}
 	}
 }

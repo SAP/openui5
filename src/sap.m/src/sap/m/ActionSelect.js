@@ -96,6 +96,8 @@ sap.ui.define(['jquery.sap.global', './Select', './library'],
 		/* API methods                                                 */
 		/* =========================================================== */
 
+		ActionSelect.prototype.createPickerCloseButton = function() {};
+
 		/* ----------------------------------------------------------- */
 		/* Public methods                                              */
 		/* ----------------------------------------------------------- */

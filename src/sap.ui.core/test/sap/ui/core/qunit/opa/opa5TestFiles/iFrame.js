@@ -343,5 +343,33 @@ sap.ui.define([
 
 			this.oOpa5.iTeardownMyAppFrame();
 		});
+
+		QUnit.module("Tests that timeout");
+
+		opaTest("Should empty the queue if QUnit times out", function (oOpa) {
+			oOpa.iStartMyAppInAFrame("../testdata/failingOpaTest.html?sap-ui-qunittimeout=2000");
+
+			oOpa.waitFor({
+				matchers: function () {
+					var $FirstTest = Opa5.getJQuery()("#qunit-tests").children().first();
+					return $FirstTest.hasClass("fail") && $FirstTest.find(".test-message").text();
+				},
+				success: function (sMessage) {
+					QUnit.assert.strictEqual(sMessage, "Test timed out");
+				}
+			});
+
+			oOpa.waitFor({
+				matchers: function () {
+					var $SecondTest = Opa5.getJQuery()("#qunit-tests").children().first().next();
+					return $SecondTest.hasClass("pass") && $SecondTest.find(".test-message").text();
+				},
+				success: function (sMessage) {
+					QUnit.assert.strictEqual(sMessage, "Ok from test 2");
+				}
+			});
+
+			oOpa.iTeardownMyApp();
+		});
 	}
 );

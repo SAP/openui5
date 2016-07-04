@@ -14,8 +14,16 @@
 	background-color: @sapUiGroupContentBackground;
 }
 
+.sapMDialog > header {
+	box-shadow: none;
+}
+
 .sapMDialog > header:last-of-type {
   	box-shadow: inset 0 -1px darken(@sapUiGroupContentBackground, 8);
+}
+
+.sapMDialog.sapMMessageDialog > header {
+  	box-shadow: inset 0 -0.125rem darken(@sapUiGroupContentBackground, 8);
 }
 
 .sapMDialogWarning > header {
@@ -23,8 +31,8 @@
 		color: @sapUiCriticalText;
 	}
 
-	&.sapMBar {
-	  	box-shadow: inset 0 -1px @sapUiWarningBorder
+	&.sapMBar:last-of-type {
+	  	box-shadow: inset 0 -0.125rem @sapUiWarningBorder;
 	}
 }
 
@@ -33,8 +41,8 @@
 		color: @sapUiNegativeText;
 	}
 
-	&.sapMBar {
-	  	box-shadow: inset 0 -1px @sapUiErrorBorder
+	&.sapMBar:last-of-type {
+	  	box-shadow: inset 0 -0.125rem @sapUiErrorBorder;
 	}
 }
 
@@ -43,18 +51,23 @@
 		color: @sapUiPositiveText;
 	}
 
-	&.sapMBar {
-	  	box-shadow: inset 0 -1px @sapUiSuccessBorder
+	&.sapMBar:last-of-type {
+	  	box-shadow: inset 0 -0.125rem @sapUiSuccessBorder;
 	}
 }
 
-.sapMDialog>.sapMDialogSection {
+.sapMDialog > header.sapMDialogTitle .sapMDialogIcon.sapUiIcon {
+	font-size: 1rem;
+}
+
+.sapMDialog > .sapMDialogSection {
   	background: @sapUiGroupContentBackground;
 }
 
 
 .sapMDialogResizeHandler {
   	bottom: 0.5rem;
+	line-height: 1rem;
 
   	&:before {
 		border-style: initial;

@@ -25,6 +25,7 @@
 		var lastSrcPage = null;
 		var lastTargetPage = null;
 		var lastEventType = null;
+		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
 
 		function pageEventHandler(oEvent) {
 			lastSrcPage = oEvent.getParameter("srcPage");
@@ -54,7 +55,7 @@
 			expect(2);
   		var oDomRef = jQuery.sap.domById(sId + "--lastPageLink");
   		ok(oDomRef, "'Last Page' link should exist in the page");
-  		equal(jQuery(oDomRef).text(), "Page 110", "'Last Page' link should display 'Page 110'");
+  		equal(jQuery(oDomRef).text(), oResourceBundle.getText("PAGINATOR_OTHER_PAGE", [110]), "'Last Page' link should display 'Page 110'");
 		});
 
 		test("Page Links", function() {

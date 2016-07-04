@@ -71,6 +71,7 @@ QUnit.test("default values", function(assert) {
 	assert.strictEqual(oSelect.getSelectedKey(), "0", "By default the selected key of the Select control is the key property of the first item");
 	assert.strictEqual(oSelect.getTextAlign(), sap.ui.core.TextAlign.Initial, "By default textAlign is set to Initial");
 	assert.strictEqual(oSelect.getTextDirection(), sap.ui.core.TextDirection.Inherit, "By default textDirection is set to Inherit");
+	assert.strictEqual(oSelect.$().attr("aria-invalid"), undefined);
 
 	// cleanup
 	oSelect.destroy();
@@ -2276,6 +2277,73 @@ QUnit.test("it should returns the this reference to allow method chaining", func
 	oSelect.destroy();
 });
 
+/* ------------------------------ */
+/* getLabels()                    */
+/* ------------------------------ */
+
+QUnit.test("it should return an array with one object which is the current target of the ariaLabelledBy association", function(assert) {
+
+	// system under test
+	var oLabel = sap.m.Label();
+	var oSelect = new sap.m.ComboBoxTextField({
+		ariaLabelledBy: [
+			oLabel
+		]
+	});
+
+	// assertions
+	assert.strictEqual(oSelect.getLabels().length, 1);
+	assert.ok(oSelect.getLabels()[0] === oLabel);
+
+	// cleanup
+	oSelect.destroy();
+	oLabel.destroy();
+});
+
+QUnit.test("it should return an array with one object which is the label referencing the text field", function(assert) {
+
+	// system under test
+	var oSelect = new sap.m.ComboBoxTextField();
+	var oLabel = new sap.m.Label({
+		labelFor: oSelect
+	});
+
+	// assertions
+	assert.strictEqual(oSelect.getLabels().length, 1);
+	assert.ok(oSelect.getLabels()[0] === oLabel);
+
+	// cleanup
+	oSelect.destroy();
+	oLabel.destroy();
+});
+
+QUnit.test("it should return an array of objects which are the current targets of the ariaLabelledBy association and the labels referencing the text field", function(assert) {
+
+	// system under test
+	var oLabel1 = new sap.m.Label({
+		id: "lorem-ipsum-label",
+		labelFor: oSelect
+	});
+	var oSelect = new sap.m.ComboBoxTextField({
+		ariaLabelledBy: [
+			"lorem-ipsum-label"
+		]
+	});
+	var oLabel2 = new sap.m.Label({
+		labelFor: oSelect
+	});
+
+	// assertions
+	assert.strictEqual(oSelect.getLabels().length, 2);
+	assert.ok(oSelect.getLabels()[0] === oLabel1);
+	assert.ok(oSelect.getLabels()[1] === oLabel2);
+
+	// cleanup
+	oSelect.destroy();
+	oLabel1.destroy();
+	oLabel2.destroy();
+});
+
 QUnit.module("addItem()");
 
 QUnit.test("addItem()", function(assert) {
@@ -3192,6 +3260,84 @@ QUnit.test("it should correctly synchronize the selection after the properties (
 	// cleanup
 	oSelect.destroy();
 	oModel.destroy();
+});
+
+QUnit.module("value state");
+
+QUnit.test("it should add the value state CSS classes (initial rendering)", function(assert) {
+
+	// system under test
+	var oSelect = new sap.m.Select({
+		valueState: sap.ui.core.ValueState.Error
+	});
+
+	// arrange
+	oSelect.placeAt("content");
+	sap.ui.getCore().applyChanges();
+	var CSS_CLASS = oSelect.getRenderer().CSS_CLASS;
+
+	// assert
+	assert.strictEqual(oSelect.$().attr("aria-invalid"), "true");
+	assert.ok(oSelect.$().hasClass(CSS_CLASS + "State"));
+	assert.ok(oSelect.$().hasClass(CSS_CLASS + "Error"));
+	assert.ok(oSelect.$("label").hasClass(CSS_CLASS + "LabelState"));
+	assert.ok(oSelect.$("label").hasClass(CSS_CLASS + "LabelError"));
+	assert.ok(oSelect.$("arrow").hasClass(CSS_CLASS + "ArrowState"));
+
+	// cleanup
+	oSelect.destroy();
+});
+
+QUnit.test("it should add the value state CSS classes", function(assert) {
+
+	// system under test
+	var oSelect = new sap.m.Select();
+
+	// arrange
+	oSelect.placeAt("content");
+	sap.ui.getCore().applyChanges();
+	var CSS_CLASS = oSelect.getRenderer().CSS_CLASS;
+
+	// act
+	oSelect.setValueState(sap.ui.core.ValueState.Error);
+
+	// assert
+	assert.strictEqual(oSelect.$().attr("aria-invalid"), "true");
+	assert.ok(oSelect.$().hasClass(CSS_CLASS + "State"));
+	assert.ok(oSelect.$().hasClass(CSS_CLASS + "Error"));
+	assert.ok(oSelect.$("label").hasClass(CSS_CLASS + "LabelState"));
+	assert.ok(oSelect.$("label").hasClass(CSS_CLASS + "LabelError"));
+	assert.ok(oSelect.$("arrow").hasClass(CSS_CLASS + "ArrowState"));
+
+	// cleanup
+	oSelect.destroy();
+});
+
+QUnit.test("it should remove the value state CSS classes", function(assert) {
+
+	// system under test
+	var oSelect = new sap.m.Select({
+		valueState: sap.ui.core.ValueState.Error
+	});
+
+	// arrange
+	oSelect.placeAt("content");
+	sap.ui.getCore().applyChanges();
+	var CSS_CLASS = oSelect.getRenderer().CSS_CLASS;
+
+	// act
+	oSelect.setValueState(sap.ui.core.ValueState.None);
+
+	// assert
+	assert.strictEqual(oSelect.$().attr("aria-invalid"), undefined);
+	assert.notOk(oSelect.$().hasClass(CSS_CLASS + "State"))
+	assert.notOk(oSelect.$().hasClass(CSS_CLASS + "Error"));
+	assert.notOk(oSelect.$("label").hasClass(CSS_CLASS + "LabelState"));
+	assert.notOk(oSelect.$("label").hasClass(CSS_CLASS + "LabelError"));
+	assert.notOk(oSelect.$("arrow").hasClass(CSS_CLASS + "ArrowState"));
+
+	// cleanup
+	oSelect.destroy();
 });
 
 QUnit.module("setTooltip()");

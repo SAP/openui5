@@ -30,6 +30,8 @@
 
 			sap.ui.test.qunit.delayTestStart();
 
+			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
 			var oActionSheet = new sap.m.ActionSheet("actionsheet", {
 				showCancelButton: true,
 				buttons: [
@@ -547,7 +549,7 @@
 
 					strictEqual(oButton1.getAriaLabelledBy().length, 2 , "Button should be labelled by itself and a hidden text");
 					strictEqual(oInvisibleTextObj instanceof sap.ui.core.InvisibleText, true, "Second label should be invisibleText");
-					strictEqual(oInvisibleTextObj.getText(), "1 of 2", "Text should be the index of the button");
+					strictEqual(oInvisibleTextObj.getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [1, 2]), "Text should be the index of the button");
 
 					start();
 					oActionSheet.close();
@@ -584,7 +586,7 @@
 						sInvisibleText = sap.ui.getCore().byId('asButton1').getAriaLabelledBy()[1],
 						oInvisibleTextObj = sap.ui.getCore().byId(sInvisibleText);
 
-					strictEqual(oInvisibleTextObj.getText(), "1 of 1", "Total amount of buttons should be 1");
+					strictEqual(oInvisibleTextObj.getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [1, 1]), "Total amount of buttons should be 1");
 
 					start();
 					oActionSheet.close();

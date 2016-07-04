@@ -1,0 +1,84 @@
+/* ======================================== */
+/* CSS for control sap.m/ResponsiveSplitter */
+/* Belize Plus theme                        */
+/* ======================================== */
+
+.sapUiRSVisiblePaginator {
+	& .sapUiResponsiveSplitterPaginator {
+		background-color: @sapUiPageFooterBackground;
+		border: 1px solid @sapUiPageFooterBorderColor;
+	}
+}
+
+.sapUiResponsiveSplitterPaginatorButton:hover {
+	background-color: @sapUiButtonLiteHoverBackground;
+
+	&:after {
+		background-color: lighten(@sapUiContentForegroundColor, 20);
+	}
+}
+
+.sapUiResponsiveSplitterPaginatorButton {
+	&:active {
+		background-color: @sapUiButtonLiteActiveBackground;
+
+		&:after {
+			background-color: @sapUiContentContrastIconColor;
+		}
+	};
+
+	&:after {
+		content: "";
+		width: 0.5rem;
+		height: 0.5rem;
+		background-color: lighten(@sapUiContentForegroundColor, 20);
+	};
+
+	&:focus {
+		outline: none;
+	}
+}
+
+.sapUiResponsiveSplitterPaginatorSelectedButton {
+	background-color: transparent;
+
+	&:hover {
+		background-color: @sapUiButtonLiteHoverBackground;
+
+		&:after {
+			background-color: @sapUiSelected;
+		}
+	}
+
+	&:after {
+		background-color: @sapUiSelected;
+	}
+}
+
+.sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterBar {
+	background-color: lighten(@sapUiGlobalBackgroundColor, 20);
+
+	&:hover {
+		background-color: lighten(@sapUiGlobalBackgroundColor, 30);
+	}
+
+	&:active {
+		background-color: @sapUiHighlight;
+	}
+}
+
+html.sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterBar,
+html.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterBar,
+html.sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar,
+html.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar {
+	& .sapUiLoSplitterBarIcon:after {
+		border-color: lighten(@sapUiGlobalBackgroundColor, 25);
+		background-color: lighten(@sapUiGlobalBackgroundColor, 5);
+	}
+}
+html.sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar,
+html.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar {
+	& .sapUiLoSplitterBarIcon:after {
+		border-color: @sapUiHighlight;
+	}
+}

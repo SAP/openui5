@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>qUnit Page for sap.ui.test.Opa</title>
+
+	<script src="../../../../../../resources/sap-ui-core.js">
+	</script>
+
+	<script>
+		jQuery.sap.require("sap.ui.thirdparty.qunit");
+		QUnit.config.autostart = false;
+		sap.ui.require([
+					"sap/ui/test/Opa5",
+					"sap/ui/test/Opa",
+					"sap/ui/test/opaQunit",
+					"sap/ui/qunit/qunit-css",
+					"sap/ui/qunit/qunit-junit",
+					"sap/ui/qunit/qunit-coverage"
+				],
+				function (Opa5, Opa, opaTest) {
+					QUnit.config.testTimeout = 500;
+					opaTest("Should time out", function (oOpa) {
+						oOpa.waitFor({
+							check: function () {
+								return false;
+							}
+						});
+					});
+
+					opaTest("Should add a global assertion to the 2nd test not the first one that timed out", function (oOpa) {
+						oOpa.waitFor({
+							success: function () {
+								// global assert on purpose so QUnit does not know wich test fired the assertion
+								QUnit.assert.ok(true, "Ok from test 2");
+							}
+						})
+					});
+
+					QUnit.start();
+				}
+		);
+
+	</script>
+</head>
+<body>
+<ol id="qunit-tests"></ol>
+<div id="qunit-fixture"></div>
+</body>
+</html>

@@ -328,7 +328,7 @@
 								items="{/methods}" >
 								<columns>
 									<Column><Label text="Name" /></Column>
-									<Column><Label text="Param" /></Column>
+									<Column width="15%"><Label text="Param" /></Column>
 									<Column><Label text="Type" /></Column>
 									<Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"><Label text="Description" /></Column>
 									<Column minScreenWidth="Tablet" demandPopin="false"><Label text="Since" /></Column>
@@ -341,7 +341,7 @@
 													<core:CustomData writeToDom="true" key="deprecated" value="{deprecated}" />
 												</customData>
 											</Text>
-											<Text text="{param}" class="docuParam" wrapping="false" />
+											<Text text="{param}" class="docuParam" wrapping="true" />
 											<Link text="{typeText}" enabled="{typeNav}" press="onTypeLinkPress">
 												<customData>
 													<core:CustomData key="type" value="{type}" />

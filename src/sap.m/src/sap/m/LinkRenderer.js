@@ -25,8 +25,7 @@
 		var sTextDir = oControl.getTextDirection(),
 			sTextAlign = Renderer.getTextAlign(oControl.getTextAlign(), sTextDir),
 			oAccAttributes =  {
-				role: 'link',
-				haspopup: !oControl.getHref()
+				role: 'link'
 			};
 
 		// Link is rendered as a "<a>" element

@@ -18,6 +18,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			return Promise.resolve(vSource);
 		};
 
+		TestPreprocessor.getCacheKey = function(oViewInfo) {
+			return Promise.resolve("foo");
+		};
+
 		return TestPreprocessor;
 
 	}, /* bExport= */ true);

@@ -48,14 +48,25 @@
 			// Unable to open real window here as this causes problems in test execution (popup-blocker, ...)
 			//oSupport.openSupportTool();
 
-			// Fake SETUP event which will be fired from the popup window
-//			oSupport.fireEvent("sapUiSupportSetup");
+			// Load plugins directly
+			return Support.initPlugins(oSupport, false).then(function() {
 
-			// check if all App plugins could be loaded
-//			for (var i = 0; i < aPluginModuleNames.length; i++) {
-//				assert.equal(Support.APP_SIDE_PLUGINS[i].getMetadata().getName(), aPluginModuleNames[i], "Plugin '" + aPluginModuleNames[i] + "' loaded successfully");
-//			}
+				// Check if all App plugins could be loaded
+				for (var i = 0; i < aPluginModuleNames.length; i++) {
+					assert.equal(Support.APP_SIDE_PLUGINS[i].getMetadata().getName(), aPluginModuleNames[i], "Plugin '" + aPluginModuleNames[i] + "' successfully loaded");
+				}
 
+			}).then(function() {
+
+				// Unload plugins directly
+				Support.exitPlugins(oSupport, false);
+
+				// Check if all App plugins could be unloaded
+				for (var i = 0; i < aPluginModuleNames.length; i++) {
+					assert.equal(Support.APP_SIDE_PLUGINS[i]._bActive, false, "Plugin '" + aPluginModuleNames[i] + "' successfully unloaded");
+				}
+
+			});
 		});
 
 	});

@@ -313,11 +313,17 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 	/**
 	 * Determines if the icon/text should be visible, etc.
 	 *
+	 * @returns {boolean} <code>true</code> if the adjustment is done and <code>false</code> if there is no inner control and no adjustment happened.
 	 * @private
 	 */
 	ObjectMarker.prototype._adjustControl  = function() {
 		var oType = ObjectMarker.M_PREDEFINED_TYPES[this.getType()],
 			oInnerControl = this._getInnerControl();
+
+		// If we have no inner control at this stage we don't need to adjust
+		if (!oInnerControl) {
+			return false;
+		}
 
 		if (this._isIconVisible()) {
 			oInnerControl.setIcon(oType.icon.src);
@@ -338,6 +344,8 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 			oInnerControl.setText(null);
 			this.removeStyleClass("sapMObjectMarkerText");
 		}
+
+		return true;
 	};
 
 	/**

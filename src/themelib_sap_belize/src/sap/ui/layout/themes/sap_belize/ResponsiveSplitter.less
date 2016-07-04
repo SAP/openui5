@@ -1,0 +1,109 @@
+/* ======================================== */
+/* CSS for control sap.m/ResponsiveSplitter */
+/* Belize theme                             */
+/* ======================================== */
+
+.sapUiRSVisiblePaginator {
+	& .sapUiResponsiveSplitterPaginator {
+		background-color: @sapUiPageFooterBackground;
+		border: 1px solid @sapUiPageFooterBorderColor;
+	}
+}
+
+.sapUiResponsiveSplitterPaginatorButton:hover {
+	background-color: @sapUiButtonLiteHoverBackground;
+
+	&:after {
+		background-color: darken(@sapUiContentForegroundColor, 20);
+	}
+}
+
+.sapUiResponsiveSplitterPaginatorButton {
+	&:active {
+		background-color: @sapUiButtonLiteActiveBackground;
+
+		&:after {
+			background-color: @sapUiContentContrastIconColor;
+		}
+	};
+
+	&:after {
+		content: "";
+		width: 0.5rem;
+		height: 0.5rem;
+		background-color: darken(@sapUiContentForegroundColor, 20);
+	};
+
+	&:focus {
+		outline: none;
+	}
+
+	&:focus:before {
+		border: 1px dotted @sapUiContentFocusColor;
+	}
+}
+
+.sapUiResponsiveSplitterPaginatorSelectedButton {
+	background-color: transparent;
+
+	&:hover {
+		background-color: @sapUiButtonLiteHoverBackground;
+
+		&:after {
+			background-color: @sapUiSelected;
+		}
+	}
+
+	&:after {
+		background-color: @sapUiSelected;
+	}
+}
+
+.sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterBar {
+	background-color: darken(@sapUiGlobalBackgroundColor, 11);
+
+	&:hover {
+		background-color: darken(@sapUiGlobalBackgroundColor, 21);
+	}
+
+	&:active {
+		background-color: @sapUiHighlight;
+	}
+}
+
+html.sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterBar,
+html.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterBar,
+html.sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar,
+html.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar {
+	& .sapUiLoSplitterBarIcon {
+		display:block;
+		position:relative;
+		text-align:center;
+	}
+
+	& .sapUiLoSplitterBarIcon:after {
+		border-color: darken(@sapUiGlobalBackgroundColor, 23);
+		background-color: darken(@sapUiGlobalBackgroundColor, 3);
+	}
+}
+
+html.sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar,
+html.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar {
+	& .sapUiLoSplitterBarIcon:after {
+		border-color: @sapUiHighlight;
+	}
+}
+
+.sapUiResponsiveSplitter .sapUiLoSplitterV.sapUiLoSplitter > .sapUiLoSplitterBar,
+.sapUiResponsiveSplitter .sapUiLoSplitterV > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
+	&:hover {
+		cursor: row-resize;
+	}
+}
+
+.sapUiResponsiveSplitter .sapUiLoSplitterH.sapUiLoSplitter > .sapUiLoSplitterBar,
+.sapUiResponsiveSplitter .sapUiLoSplitterH > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
+	&:hover {
+		cursor: col-resize;
+	}
+}

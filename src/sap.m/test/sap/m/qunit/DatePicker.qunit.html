@@ -20,6 +20,7 @@
 		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 		<!-- Test functions -->
@@ -323,6 +324,36 @@
 				jQuery("#DP7-cal--Month0-20151124").focus();
 				qutils.triggerKeyboardEvent("DP7-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
 				equal(oDP7.getValue(), "2/11/1437 AH", "Value in binding format set");
+
+				// invalid enterd value must be set to valid by picking in calendar
+				bChange = false;
+				sValue = "";
+				bValid = true;
+				sId = "";
+				oDP3.focus();
+				jQuery("#DP3").children("input").val("invalid");
+				qutils.triggerKeyboardEvent("DP3-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
+				jQuery("#DP3").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+				equal(sId, "DP3", "Change event fired");
+				equal(sValue, "invalid", "Value of event has entered value if invalid");
+				ok(!bValid, "Value is not valid");
+				equal(oDP3.getValue(), "invalid", "Value has entered value if invalid");
+				equal(oDP3.getDateValue().getTime(), new Date("2014", "03", "10").getTime(), "DateValue not changed set");
+				bChange = false;
+				sValue = "";
+				bValid = true;
+				sId = "";
+				qutils.triggerEvent("click", "DP3-icon");
+				ok(jQuery("#DP3-cal")[0], "calendar rendered");
+				ok(jQuery("#DP3-cal").is(":visible"), "calendar is visible");
+				jQuery("#DP3-cal--Month0-20140410").focus();
+				qutils.triggerKeyboardEvent("DP3-cal--Month0-20140410", jQuery.sap.KeyCodes.ENTER, false, false, false);
+				ok(!jQuery("#DP3-cal").is(":visible"), "calendar is not invisible");
+				equal(sId, "DP3", "Change event fired");
+				equal(sValue, "April 10, 2014", "Value in internal format priovided");
+				ok(bValid, "Value is valid");
+				equal(oDP3.getValue(), "April 10, 2014", "Value in internal format set");
+				equal(oDP3.getDateValue().getTime(), new Date("2014", "03", "10").getTime(), "DateValue set");
 			});
 
 			test("min/max", function() {
@@ -352,7 +383,7 @@
 				oNewDate = new Date(2014, 0, 1);
 				oDP3.setDateValue(oNewDate);
 				ok(jQuery.sap.equal(oDP3.getDateValue(), oNewDate), "DP3: new valid date set");
-				equal(oDP3.getValue(), "1/1/14", "DP3: new invalid date displayed");
+				equal(oDP3.getValue(), "1/1/14", "DP3: new valid date displayed");
 
 				bChange = false;
 				oDP3.focus();
@@ -396,6 +427,153 @@
 				ok(!oDP3._oCalendar.getMinDate(), "Calendar has no MinDate");
 				ok(!oDP3._oCalendar.getMaxDate(), "Calendar has no MaxDate");
 				qutils.triggerEvent("click", "DP3-icon");
+			});
+
+			test("special cases", function() {
+				var oDate = new Date(1, 0, 1);
+				oDate.setFullYear(1);
+				oDP3.setDateValue(oDate);
+				ok(jQuery.sap.equal(oDP3.getDateValue(), oDate), "DP3: 00010101 as valid date set");
+				equal(oDP3.getValue(), "1/1/01", "DP3: 00010101 displayed");
+				oDP3.focus();
+				qutils.triggerEvent("click", "DP3-icon");
+				ok(jQuery("#DP3-cal")[0], "calendar rendered");
+				ok(jQuery("#DP3-cal").is(":visible"), "calendar is visible");
+				ok(jQuery("#DP3-cal--Month0-00010101")[0], "00010101 rendered");
+				oDP3.focus();
+				qutils.triggerEvent("click", "DP3-icon");
+
+				oDate = new Date(1970, 0, 1);
+				oDP3.setDateValue(oDate);
+				ok(jQuery.sap.equal(oDP3.getDateValue(), oDate), "DP3: 19700101 as valid date set");
+				equal(oDP3.getValue(), "1/1/70", "DP3: 19700101 displayed");
+				oDP3.focus();
+				qutils.triggerEvent("click", "DP3-icon");
+				ok(jQuery("#DP3-cal")[0], "calendar rendered");
+				ok(jQuery("#DP3-cal").is(":visible"), "calendar is visible");
+				ok(jQuery("#DP3-cal--Month0-19700101")[0], "19700101 rendered");
+				oDP3.focus();
+				qutils.triggerEvent("click", "DP3-icon");
+
+				oDate = new Date(9999, 11, 31);
+				oDP3.setDateValue(oDate);
+				ok(jQuery.sap.equal(oDP3.getDateValue(), oDate), "DP3: 99991231 as valid date set");
+				equal(oDP3.getValue(), "12/31/99", "DP3: 99991231 displayed");
+				oDP3.focus();
+				qutils.triggerEvent("click", "DP3-icon");
+				ok(jQuery("#DP3-cal")[0], "calendar rendered");
+				ok(jQuery("#DP3-cal").is(":visible"), "calendar is visible");
+				ok(jQuery("#DP3-cal--Month0-99991231")[0], "99991231 rendered");
+				oDP3.focus();
+				qutils.triggerEvent("click", "DP3-icon");
+			});
+
+			asyncTest("specialDates", function() {
+				var oDate = new Date(2016, 5, 29);
+				oDP3.setDateValue(oDate);
+				oDate = new Date(2016, 5, 1);
+				if (!sap.ui.unified.DateTypeRange) {
+					sap.ui.getCore().loadLibrary("sap.ui.unified");
+					jQuery.sap.require("sap.ui.unified.library");
+				}
+				var oLegend = new sap.ui.unified.CalendarLegend("Legend1", {
+					items: [
+					        new sap.ui.unified.CalendarLegendItem("T1", {type: sap.ui.unified.CalendarDayType.Type01, text: "Typ 1"}),
+					        new sap.ui.unified.CalendarLegendItem("T2", {type: sap.ui.unified.CalendarDayType.Type02, text: "Typ 2"}),
+					        new sap.ui.unified.CalendarLegendItem("T3", {type: sap.ui.unified.CalendarDayType.Type03, text: "Typ 3"}),
+					        new sap.ui.unified.CalendarLegendItem("T4", {type: sap.ui.unified.CalendarDayType.Type04, text: "Typ 4"}),
+					        new sap.ui.unified.CalendarLegendItem("T5", {type: sap.ui.unified.CalendarDayType.Type05, text: "Typ 5"}),
+					        new sap.ui.unified.CalendarLegendItem("T6", {type: sap.ui.unified.CalendarDayType.Type06, text: "Typ 6"}),
+					        new sap.ui.unified.CalendarLegendItem("T7", {type: sap.ui.unified.CalendarDayType.Type07, text: "Typ 7"}),
+					        new sap.ui.unified.CalendarLegendItem("T8", {type: sap.ui.unified.CalendarDayType.Type08, text: "Typ 8"}),
+					        new sap.ui.unified.CalendarLegendItem("T9", {type: sap.ui.unified.CalendarDayType.Type09, text: "Typ 9"}),
+					        new sap.ui.unified.CalendarLegendItem("T10", {type: sap.ui.unified.CalendarDayType.Type10, text: "Typ 10"}),
+					        ]
+				});
+				oDP3.setLegend(oLegend);
+				var oSpecialDate = new sap.ui.unified.DateTypeRange({startDate: oDate, type: "Type01"});
+				oDP3.addSpecialDate(oSpecialDate);
+				oDP3.focus();
+				qutils.triggerEvent("click", "DP3-icon");
+				ok(jQuery("#DP3-cal--Month0-20160601").hasClass("sapUiCalItemType01"), "20160601 has Type01");
+				equal(oDP3.getSpecialDates().length, 1, "1 SpecialDate in Aggregation");
+				equal(oDP3._oCalendar.getLegend(), oLegend.getId(), "Legend set at Calendar");
+
+				oDate = new Date(2016, 5, 2);
+				var oDate2 = new Date(2016, 5, 3);
+				oSpecialDate = new sap.ui.unified.DateTypeRange({startDate: oDate, endDate: oDate2, type: "Type02"});
+				oDP3.addSpecialDate(oSpecialDate);
+				equal(oDP3.getSpecialDates().length, 2, "2 SpecialDates in Aggregation");
+				oDate = new Date(2016, 5, 4);
+				oSpecialDate = new sap.ui.unified.DateTypeRange({startDate: oDate, type: "Type03"});
+				oDP3.insertSpecialDate(oSpecialDate, 1);
+				equal(oDP3.getSpecialDates().length, 3, "3 SpecialDates in Aggregation");
+				oDP3.removeSpecialDate(0);
+				equal(oDP3.getSpecialDates().length, 2, "2 SpecialDates in Aggregation");
+				sap.ui.getCore().applyChanges();
+
+				setTimeout( function(){
+					ok(!jQuery("#DP3-cal--Month0-20160601").hasClass("sapUiCalItemType01"), "20160603 has no Type01");
+					ok(jQuery("#DP3-cal--Month0-20160602").hasClass("sapUiCalItemType02"), "20160602 has Type02");
+					ok(jQuery("#DP3-cal--Month0-20160603").hasClass("sapUiCalItemType02"), "20160603 has Type02");
+					ok(jQuery("#DP3-cal--Month0-20160604").hasClass("sapUiCalItemType03"), "20160603 has Type03");
+
+					oDP3.focus();
+					qutils.triggerEvent("click", "DP3-icon");
+					start();
+				}, 1);
+
+			});
+
+			asyncTest("specialDates2", function() {
+				oDP3.focus();
+				qutils.triggerEvent("click", "DP3-icon");
+
+				ok(jQuery("#DP3-cal--Month0-20160602").hasClass("sapUiCalItemType02"), "20160602 has Type02");
+				ok(jQuery("#DP3-cal--Month0-20160603").hasClass("sapUiCalItemType02"), "20160603 has Type02");
+				ok(jQuery("#DP3-cal--Month0-20160604").hasClass("sapUiCalItemType03"), "20160603 has Type03");
+				oDP3.removeAllSpecialDates();
+				equal(oDP3.getSpecialDates().length, 0, "0 SpecialDates in Aggregation");
+				sap.ui.getCore().applyChanges();
+
+				setTimeout( function(){
+					ok(!jQuery("#DP3-cal--Month0-20160602").hasClass("sapUiCalItemType02"), "20160602 has no Type02");
+					ok(!jQuery("#DP3-cal--Month0-20160603").hasClass("sapUiCalItemType02"), "20160603 has no Type02");
+					ok(!jQuery("#DP3-cal--Month0-20160604").hasClass("sapUiCalItemType03"), "20160603 has no Type03");
+
+					oDP3.focus();
+					qutils.triggerEvent("click", "DP3-icon");
+					start();
+				}, 1);
+
+			});
+
+			asyncTest("specialDates3", function() {
+				var oDate = new Date(2016, 5, 5);
+				var oSpecialDate = new sap.ui.unified.DateTypeRange("SD1", {startDate: oDate, type: "Type04"});
+				oDP3.addSpecialDate(oSpecialDate);
+				oDate = new Date(2016, 5, 6);
+				oSpecialDate = new sap.ui.unified.DateTypeRange("SD2", {startDate: oDate, type: "Type05"});
+				oDP3.addSpecialDate(oSpecialDate);
+				equal(oDP3.getSpecialDates().length, 2, "2 SpecialDates in Aggregation");
+				oDP3.focus();
+				qutils.triggerEvent("click", "DP3-icon");
+				ok(jQuery("#DP3-cal--Month0-20160605").hasClass("sapUiCalItemType04"), "20160603 has Type04");
+				ok(jQuery("#DP3-cal--Month0-20160606").hasClass("sapUiCalItemType05"), "20160603 has Type05");
+				oDP3.destroySpecialDates();
+				equal(oDP3.getSpecialDates().length, 0, "0 SpecialDates in Aggregation");
+				ok(!sap.ui.getCore().byId("SD1"), "Special date control don't exits any more")
+				sap.ui.getCore().applyChanges();
+
+				setTimeout( function(){
+					ok(!jQuery("#DP3-cal--Month0-20160605").hasClass("sapUiCalItemType04"), "20160603 has no Type04");
+					ok(!jQuery("#DP3-cal--Month0-20160606").hasClass("sapUiCalItemType05"), "20160603 has no Type05");
+
+					oDP3.focus();
+					qutils.triggerEvent("click", "DP3-icon");
+					start();
+				}, 1);
+
 			});
 
 			module("ARIA");

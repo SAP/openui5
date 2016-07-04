@@ -75,6 +75,8 @@
 
 .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):focus {
 	border-color: @sapUiFieldFocusBorderColor;
+  	outline: 1px dotted @sapUiContentFocusColor;
+  	outline-offset: -3px;
 }
 
 .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):not(.sapMInputBaseDisabledInner):hover {
@@ -96,10 +98,6 @@ html[dir=rtl] .sapMILI-CTX .sapMInputBasePlaceholder {
 	text-align: right;
 }
 
-.sapMILI-CTX :not(.sapMInputVH) .sapMInputBaseInner:not(.sapMInputBaseStateInner) {
-	border: none;
-}
-
 .sapMLIBActive .sapMInputBaseInner {
 	color: @sapUiListActiveTextColor;
 	background: transparent;
@@ -107,24 +105,6 @@ html[dir=rtl] .sapMILI-CTX .sapMInputBasePlaceholder {
 
 .sapMLIBActive .sapMInputBaseInner::-webkit-input-placeholder {
 	color: @sapUiListActiveTextColor;
-}
-
-.sapMInputBaseMessage {
-	color: @sapUiBaseText;
-	border-width: 0;
-	font-size: @sapMFontSmallSize;
-	font-family: @sapUiFontFamily;
-	padding: 0.3rem 0.625rem;
-	min-width: 6rem;
-	max-width: 22rem;
-}
-
-.sapMInputBaseMessageError {
-	background: @sapUiErrorBG;
-}
-
-.sapMInputBaseMessageWarning {
-	background: @sapUiWarningBG;
 }
 
 /* Compact size */
@@ -166,5 +146,32 @@ html[dir=rtl] .sapMILI-CTX .sapMInputBasePlaceholder {
 
 	.sapMInputBasePlaceholder {
 		line-height: 1.5rem;
+	}
+}
+
+/* Input selection fix -
+ * Due to the fact that the CSS parsing rules require dropping the whole rule when encountering an invalid
+ * pseudo-element, two separate rules must be written */
+.sapMInputBaseInner {
+
+	&::selection {
+		background: @sapUiSelected;
+		color: @sapUiContentContrastTextColor;
+	}
+
+	&::-moz-selection {
+		background: @sapUiSelected;
+		color: @sapUiContentContrastTextColor;
+	}
+}
+
+/* Google chrome and Safari input selection fix:
+ * The browser renders the selection background with 50% opacity by default.
+ * The solution is to use fade with a value for alpha 99 if it's set 100 the browser ignores it.
+ */
+html[data-sap-ui-browser^="sf"],
+html[data-sap-ui-browser^="cr"] {
+	.sapMInputBaseInner::selection {
+		background: fade(@sapUiSelected, 99);
 	}
 }

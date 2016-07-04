@@ -7,10 +7,8 @@
 	overflow: hidden;
 	display: inline-block;
 	font-size: 0;
-	box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.5);
 	border-radius: 0.125rem;
-	outline: none;
-	border: 1px transparent dotted; /* Usage of px as aligned with designers. */
+	outline: none
 }
 
 .sapMSTWrapper {
@@ -95,19 +93,21 @@ html.sap-desktop .sapMST .sapMSTIconClickTapArea:hover ~.sapMSTIconDisplayArea {
 	opacity: 0.6;
 }
 
-.sapMST.sapMSTIconPressed .sapMSTIconClickTapArea:hover ~.sapMSTIconDisplayArea {
+
+html.sap-desktop .sapMST.sapMSTIconPressed .sapMSTIconClickTapArea:hover ~.sapMSTIconDisplayArea {
 	opacity: 1.0;
 }
 
 .sapMST .sapMSTIconNestedArea {
+	right: 5.9%;
+	z-index: 1;
 	position: absolute;
-	left: 34%;
-	top: 11%;
+	top: 10.9%;
 	outline: none;
 }
 
 .sapMST.sapMSTPauseIcon .sapMSTIconNestedArea {
-	left: 38%;
+	right: 6.9%;
 }
 
 .sapMSTIconNestedArea :active {
@@ -122,8 +122,9 @@ html.sap-tablet .sapMST .sapMSTIconClickTapArea {
 	width: 3rem;
 }
 
-html.sap-desktop .sapMST:not(:hover) .sapMSTIconDisplayArea,
-html.sap-desktop .sapMST:not(:hover) .sapMSTBulleted {
+html.sap-desktop .sapMST:not(:hover).sapMST:not(:focus) .sapMSTIconDisplayArea,
+html.sap-desktop .sapMST:not(:hover).sapMST:not(:focus) .sapMSTIconNestedArea,
+html.sap-desktop .sapMST:not(:hover).sapMST:not(:focus) .sapMSTBulleted {
 	visibility: hidden;
 }
 

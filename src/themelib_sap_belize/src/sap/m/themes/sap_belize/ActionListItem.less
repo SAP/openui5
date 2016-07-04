@@ -9,18 +9,17 @@
 
 /*The active indicator of the list is not specific enough to overwrite this style*/
 .sapMList .sapMLIB.sapMALI:not(.sapMLIBActive) {
-	background: @sapUiPageFooterBackground;
-	border-color: @sapUiPageFooterBorderColor;
+	background: @sapUiButtonActionSelectBackground;
+	border-color: @sapUiButtonActionSelectBorderColor;
 }
 
 html.sap-desktop .sapMList .sapMLIB.sapMALI:not(.sapMLIBActive) {
-	background: @sapUiPageFooterBackground;
-	border-color: @sapUiPageFooterBorderColor;
+	background: @sapUiButtonActionSelectBackground;
+	border-color: @sapUiButtonActionSelectBorderColor;
 }
 
 .sapMList .sapMLIB.sapMALI:focus {
-	outline: 0.0625rem dotted @sapUiContentContrastFocusColor;
-	outline-offset: -0.0625rem;
+	outline-offset: -0.2rem;
 }
 
 .sapMALI > .sapMLIBContent {
@@ -29,14 +28,10 @@ html.sap-desktop .sapMList .sapMLIB.sapMALI:not(.sapMLIBActive) {
 
 .sapMALIText {
 	color: @sapUiButtonFooterTextColor;
-	font-weight: normal;
-	line-height: 1.25rem;
-	font-size: 1.125rem;
-	margin: 0 0 0 0.5rem;
 }
 
 html.sap-desktop .sapMList .sapMLIB.sapMALI:hover:not(.sapMLIBActive) {
-	background: contrast(@sapUiPageFooterBackground, darken(@sapUiPageFooterBackground, 6), lighten(@sapUiPageFooterBackground, 6));
+	background: @sapUiButtonLiteActionSelectHoverBackground;
 }
 
 /* Compact size */

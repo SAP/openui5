@@ -85,12 +85,12 @@ sap.ui.define([], function() {
 			oRm.addClass("sapMSTIconDisplayArea");
 			oRm.writeClasses();
 			oRm.write(">");
+			oRm.write("</div>");
 			oRm.write("<div");
 			oRm.addClass("sapMSTIconNestedArea");
 			oRm.writeClasses();
 			oRm.write(">");
 			oRm.renderControl(oControl.getAggregation("_pausePlayIcon"));
-			oRm.write("</div>");
 			oRm.write("</div>");
 		}
 	};

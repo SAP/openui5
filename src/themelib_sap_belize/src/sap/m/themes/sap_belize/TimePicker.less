@@ -45,6 +45,10 @@
 /* ======================================== */
 .sapMTimePickerDropDown {
 	.sapMTimePickerContainer {
+		.sapMTimePickerContainerLabel {
+			font-size: @sapMFontHeader5Size;
+			color: @sapUiCalendarColorToday;
+		}
 		.sapMTPColumn {
 			.sapMTimePickerLabel {
 				font-size: @sapMFontSmallSize;
@@ -55,12 +59,12 @@
 			.sapMTimePickerSlider {
 				.sapMTimePickerItem {
 					background: @sapUiSelected;
-					border: 1px solid lighten(@sapUiContentForegroundBorderColor, 25);
+					border: 1px solid @sapUiGroupContentBackground;
 					font-size: @sapMFontMediumSize;
 					color: @sapUiContentContrastTextColor;
 					text-align: center;
 					&:hover {
-						background: darken(@sapUiSelected, 10);
+						background: darken(@sapUiSelected, 3);
 						color: @sapUiContentContrastTextColor;
 					}
 					&:active {
@@ -78,6 +82,7 @@
 					.sapMTimePickerItem {
 						background: lighten(@sapUiContentForegroundColor, 5);
 						color: @sapUiBaseText;
+						border: 1px solid @sapUiGroupContentBackground;
 						&:hover {
 							background: darken(@sapUiContentForegroundColor, 5);
 						}
@@ -93,7 +98,7 @@
 					.sapMTPPickerSelectionFrame {
 						border: 2px solid @sapUiSelected;
 						&:hover {
-							border: 2px solid darken(@sapUiSelected,10);
+							border: 2px solid darken(@sapUiSelected, 3);
 							& + ul > li.sapMTimePickerItem.sapMTimePickerItemSelected {
 								background: darken(@sapUiContentForegroundColor, 5);
 							}
@@ -162,7 +167,7 @@ html.sap-phone {
 				.sapMTimePickerSlider {
 					.sapMTimePickerItem {
 						background: @sapUiSelected;
-						border: 1px solid lighten(@sapUiContentForegroundBorderColor, 25);
+						border: 1px solid @sapUiGroupContentBackground;
 						font-size: @sapMFontMediumSize;
 						color: @sapUiContentContrastTextColor;
 						text-align: center;
@@ -179,6 +184,7 @@ html.sap-phone {
 				&.sapMTPSliderExpanded {
 					.sapMTimePickerSlider {
 						.sapMTimePickerItem {
+							border: 1px solid @sapUiGroupContentBackground;
 							background: lighten(@sapUiContentForegroundColor, 5);
 							color: @sapUiBaseText;
 							&:active {

@@ -206,6 +206,10 @@
 						<Button text="Cut" icon="sap-icon://scissors" press=".onCut"></Button>
 						<Button text="Paste" icon="sap-icon://paste" press=".onPaste"></Button>
 						<ToolbarSpacer />
+						<Label text="Tree State Tools" />
+						<Button text="Save" icon="sap-icon://loan" press=".onSaveTreeState"></Button>
+						<Button text="Restore" icon="sap-icon://soccor" press=".onRestoreTreeState"></Button>
+						<ToolbarSpacer />
 						<Button type="Emphasized" text="doMagic()" icon="sap-icon://activate" press="onCreateTableClick"/>
 					</Toolbar>
 				</table:toolbar>

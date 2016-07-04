@@ -1805,25 +1805,21 @@ if (typeof window.sap.ui !== "object") {
 		((device.system.phone && device.os.version >= 7 && device.os.version < 7.1) || (device.system.tablet && device.os.version >= 7));
 
 	function isLandscape(bFromOrientationChange){
-		if (device.support.touch && device.support.orientation) {
+		if (device.support.touch && device.support.orientation && device.os.android) {
 			//if on screen keyboard is open and the call of this method is from orientation change listener, reverse the last value.
 			//this is because when keyboard opens on android device, the height can be less than the width even in portrait mode.
 			if (bKeyboardOpen && bFromOrientationChange) {
 				return !device.orientation.landscape;
 			}
-			//when keyboard opens, the last orientation change value will be retured.
-			if (bKeyboardOpen) {
+			if (bKeyboardOpen) { //when keyboard opens, the last orientation change value will be retured.
 				return device.orientation.landscape;
 			}
-			//otherwise compare the width and height of window
-		} else {
-			//most desktop browsers and windows phone/tablet which not support orientationchange
-			if (device.support.matchmedia && device.support.orientation) {
-				return !!window.matchMedia("(orientation: landscape)").matches;
-			}
+		} else if (device.support.matchmedia && device.support.orientation) { //most desktop browsers and windows phone/tablet which not support orientationchange
+			return !!window.matchMedia("(orientation: landscape)").matches;
+		} else { //otherwise compare the width and height of window
+			var size = windowSize();
+			return size[0] > size[1];
 		}
-		var size = windowSize();
-		return size[0] > size[1];
 	}
 
 	function handleMobileOrientationResizeChange(evt) {

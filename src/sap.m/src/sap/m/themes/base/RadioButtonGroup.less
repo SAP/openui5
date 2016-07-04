@@ -58,7 +58,7 @@ html[data-sap-ui-browser^="ie"] .sapMRbGDummy{
 
 .sapMRbG.sapMRbG1Row > .sapMRb{
 	clear: none;
-	margin-right: 15px;
+	padding: 1px;
 }
 
 .sapMRbGCol > .sapMRb{
@@ -72,12 +72,12 @@ html[data-sap-ui-browser^="ie"] .sapMRbGDummy{
 }
 
 .sapMRbG  .sapMRbHasLabel .sapMRbB {
-	width: 2.875rem;
+	width: 3rem;
 }
 
 .sapMRbG .sapMRbBLabel {
 	margin-left: 0;
-	padding-left: 2.875rem;
+	padding-left: 3rem;
 	display: inline-block;
 }
 
@@ -95,5 +95,21 @@ html[data-sap-ui-browser^="ie"] .sapMRbG .sapMRbBLabel{
 }
 
 .sapMRbG[dir=rtl] .sapMRbBLabel {
-	padding-right: 2.875rem;
+  	padding-left: 0;
+	padding-right: 3rem;
+}
+
+.sapUiSizeCompact {
+  	.sapMRbG .sapMRbHasLabel .sapMRbB {
+		width: 2rem;
+	}
+
+  	.sapMRbG .sapMRbBLabel {
+		padding-left: 2rem;
+	}
+
+  	.sapMRbG[dir=rtl] .sapMRbBLabel {
+	  	padding-left: 0;
+	  	padding-right: 2rem;
+	}
 }

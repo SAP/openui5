@@ -20,6 +20,8 @@
 	font-size: 1.25rem;
 	font-weight: bold;
 	line-height: 0;
+	position: relative;
+	top: 0.15rem;
 }
 
 .sapMIBar-CTX .sapMLabel{
@@ -30,7 +32,6 @@
 	font-family: @sapUiFontFamily;
 	font-size: @sapMFontMediumSize;
 	color: @sapUiPageFooterTextColor;
-	text-shadow: 0 0.0625rem 0 fade(@sapUiContentShadowColor, 50);
 }
 
 .sapMLIBActive .sapMLabel,
@@ -77,7 +78,7 @@
 	font-style: italic;
 	font-size: @sapMFontMediumSize;
 	font-family: @sapUiFontFamily;
-	color: @sapUiContentContrastTextColor;
+	color: contrast(@sapUiInfobarBackground, @sapUiListActiveTextColor, @sapUiListTextColor, @sapUiContentContrastTextThreshold);
 }
 
 .sapMTB-Info-CTX .sapMLabel.sapMLabelTBHeader {
@@ -92,7 +93,6 @@ html[dir=rtl] .sapMTB-Info-CTX .sapMLabel {
 .sapMTB-Transparent-CTX .sapMLabel{
 	font-weight: @sapUiFontHeaderWeight;
 	font-family: @sapUiFontHeaderFamily;
-	text-shadow: 0 1px 0 @sapUiContentContrastShadowColor;
 	color: @sapUiGroupTitleTextColor;
 }
 

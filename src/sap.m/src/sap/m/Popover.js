@@ -819,7 +819,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			oScrollAreaStyle.display = "";
 
 			// clear arrow styles
-			$arrow.removeClass("sapMPopoverArrRight sapMPopoverArrLeft sapMPopoverArrDown sapMPopoverArrUp sapMPopoverCrossArr sapMPopoverFooterAlignArr sapMPopoverHeaderAlignArr");
+			$arrow.removeClass("sapMPopoverArrRight sapMPopoverArrLeft sapMPopoverArrDown sapMPopoverArrUp sapMPopoverCrossArr sapMPopoverFooterAlignArr sapMPopoverHeaderAlignArr sapContrast sapContrastPlus");
 			$arrow.css({
 				left: "",
 				top: ""
@@ -1396,7 +1396,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			if (typeof window.SVGElement !== "undefined" && oElement instanceof window.SVGElement) {
 				return oElement.getBoundingClientRect().height;
 			}
-
 			return jQuery(oElement).outerHeight(bIncludeMargin);
 		};
 
@@ -1426,7 +1425,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 
 			oPosParams._fArrowHeight = $arrow.outerHeight(true);
 			oPosParams._fWidth = Popover.outerWidth($popover[0]);
-			oPosParams._fHeight = $popover.outerHeight();
+			oPosParams._fHeight = Popover.outerHeight($popover[0]);
 			oPosParams._fHeaderHeight = oPosParams._$header.length > 0 ? oPosParams._$header.outerHeight(true) : 0;
 			oPosParams._fSubHeaderHeight = oPosParams._$subHeader.length > 0 ? oPosParams._$subHeader.outerHeight(true) : 0;
 			oPosParams._fFooterHeight = oPosParams._$footer.length > 0 ? oPosParams._$footer.outerHeight(true) : 0;
@@ -1481,7 +1480,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 					oPosParams._fMarginBottom = oPosParams._fDocumentHeight - oPosParams._$parent.offset().top + this._arrowOffset - oPosParams._fOffsetY;
 					break;
 				case sap.m.PlacementType.Bottom:
-					oPosParams._fMarginTop = oPosParams._$parent.offset().top + oPosParams._$parent.outerHeight() + this._arrowOffset + oPosParams._fOffsetY;
+					oPosParams._fMarginTop = oPosParams._$parent.offset().top + Popover.outerHeight(oPosParams._$parent[0], false) + this._arrowOffset + oPosParams._fOffsetY;
 					break;
 			}
 		};
@@ -1762,7 +1761,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				// Set the arrow next to the opener
 				var iArrowOffset = this._getArrowOffsetCss(sCalculatedPlacement, oPosParams),
 					sArrowPositionClass = this._getArrowPositionCssClass(sCalculatedPlacement),
-					sArrowStyleClass = this._getArrowStyleCssClass(oPosParams);
+					sArrowStyleClass, bUseContrastContainer;
 
 				// Remove old position of the arrow and add the new one
 				$arrow.removeAttr("style");
@@ -1771,16 +1770,28 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				// Add position class to the arrow
 				$arrow.addClass(sArrowPositionClass);
 
-				// Put Belize contrast container class if the arrow is around the footer and the footer exists
+				// Use contrast container if the arrow is placed down and the footer exists.
 				if (sCalculatedPlacement === sap.m.PlacementType.Top && oPosParams._$footer && oPosParams._$footer.size()) {
-					$arrow.addClass("sapContrast sapContrastPlus");
+					bUseContrastContainer = true;
 				}
 
 				// Style the arrow according to the header/footer/content if it is to the left or right
 				if (sCalculatedPlacement === sap.m.PlacementType.Left || sCalculatedPlacement === sap.m.PlacementType.Right) {
+					sArrowStyleClass = this._getArrowStyleCssClass(oPosParams);
+
 					if (sArrowStyleClass) {
 						$arrow.addClass(sArrowStyleClass);
+
+						// Use contrast container if there is a footer and the arrow is around it.
+						if (sArrowStyleClass === "sapMPopoverFooterAlignArr") {
+							bUseContrastContainer = true;
+						}
 					}
+				}
+
+				// Add the contrast container classes when a contrast container should be used.
+				if (bUseContrastContainer) {
+					$arrow.addClass("sapContrast sapContrastPlus");
 				}
 
 				// Prevent the popover from hiding the arrow

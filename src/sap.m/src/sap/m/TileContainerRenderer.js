@@ -1,4 +1,3 @@
-
 /*!
  * ${copyright}
  */
@@ -31,6 +30,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.addStyle("width",oControl.getWidth());
 		rm.writeStyles();
 		rm.addClass("sapMTC");
+		rm.addClass("sapContrastPlus");
 		rm.writeClasses();
 
 		/* WAI ARIA region */

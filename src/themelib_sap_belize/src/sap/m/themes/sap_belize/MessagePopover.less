@@ -38,59 +38,16 @@
 }
 
 .sapMMsgPopover {
-	.sapMSegBBtn {
-		background-color: transparent;
-		border-color: transparent;
-		border-radius: 0.125rem;
-		color: @sapUiButtonHeaderTextColor;
-
-		&:hover {
-			background-color: fade(darken(@sapUiButtonBackground, 20%), 50%);
-			color: @sapUiButtonHeaderTextColor;
-
-			.sapMBtnIcon {
-				color: @sapUiContentIconColor;
-			}
-		}
-
-		&:active {
-			background-color: @sapUiButtonActiveBackground;
-			color: @sapUiButtonActiveTextColor;
-
-			.sapMBtnIcon.sapUiIcon {
-				color: @sapUiContentContrastIconColor;
-			}
-		}
-
-		&:last-child {
-			border-color: transparent;
-		}
-
-		&.sapMSegBBtnSel {
-			background-color: @sapUiSegmentedButtonSelectedBackground;
-			color: @sapUiSegmentedButtonSelectedTextColor;
-
-			.sapMBtnIcon {
-				color: @sapUiContentContrastIconColor;
-			}
-
-			&:hover, &:active {
-				background-color: @sapUiSegmentedButtonSelectedHoverBackground;
-				color: @sapUiSegmentedButtonSelectedTextColor;
-
-				.sapMBtnIcon {
-					color: @sapUiContentContrastIconColor;
-				}
-			}
-		}
-	}
-
 	.sapMMsgPopoverTitleText {
 		font-size: @sapMFontHeader4Size;
 	}
 
 	.sapMMsgPopoverDescriptionText {
 		font-size: @sapMFontMediumSize;
+	}
+
+	.sapMLIBActive .sapMLIBImgNav {
+		background: none;
 	}
 }
 

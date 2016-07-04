@@ -25,6 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		rm.writeControlData(oControl);
 		rm.addClass("sapMTile");
 		rm.addClass("sapMPointer");
+		rm.addClass("sapContrastPlus"); //we need this when we use Tile as a Standalone control
 		rm.writeClasses();
 		if (oControl._invisible) {
 			rm.addStyle("visibility", "hidden");

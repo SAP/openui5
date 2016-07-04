@@ -86,6 +86,19 @@ objectPageHeader Content
 		.sapUiVltCell > .sapMObjectAttributeDiv, .sapUiVltCell > .sapMObjStatus {
 			line-height: 1.5rem;
 		}
+
+		/* ProgressIndicator has display flex, but OPHeaderContent override it by setting display inline-block
+		* for each content entry to order the entries horizontally.
+		* In order to keep the display flex behaviour of the PI and the inline-block behaviour inside OPHeaderContent,
+		* we use inline-flex.
+		* NOTE: It`s needed in case PI is direct child of OPHeaderContent only.
+		*/
+		> .sapMPI {
+			display: -ms-inline-flexbox;
+			display: -webkit-inline-flex;
+			display: inline-flex;
+		}
+
 		.sapMPI {
 			width: 10rem !important; /* Progress indicator always use the size provide in the control otherwise... */
 			height: 1rem;
@@ -128,17 +141,18 @@ html[data-sap-ui-browser^='ie'] .sapUxAPObjectPageHeaderContent div.sapUxAPObjec
 	vertical-align: top;
 }
 
-.sapUiMedia-Std-Phone .sapUxAPObjectPageHeaderContent {
-	padding-left: 1rem;
+.sapUiMedia-Std-Desktop .sapUxAPObjectPageHeaderContent {
+	padding-left: 3rem;
 }
 
 .sapUiMedia-Std-Tablet .sapUxAPObjectPageHeaderContent,
-.sapUiMedia-Std-Desktop .sapUxAPObjectPageHeaderContent {
+.sapUiMedia-Std-Desktop .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail .sapUxAPObjectPageHeaderContent,
+.sapUiMedia-Std-Tablet .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail .sapUxAPObjectPageHeaderContent {
 	padding-left: 2rem;
 }
 
-.sapUiMedia-Std-Desktop .sapMSplitContainerHideMode .sapUxAPObjectPageHeaderContent {
-	padding-left: 3rem;
+.sapUiMedia-Std-Phone .sapUxAPObjectPageHeaderContent {
+	padding-left: 1rem;
 }
 
 .sapUxAPObjectPageHeaderContentHidden {

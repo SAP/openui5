@@ -9,7 +9,10 @@
 
 .sapTntNavLIItem {
 	background-color: @sapUiListBackground;
-	color: @sapUiListTextColor;
+
+	& > .sapMText {
+		color: @sapUiListTextColor;
+	}
 
 	& > .sapUiIcon {
 		color: @sapUiContentIconColor;
@@ -20,9 +23,13 @@
 	background-color: @sapUiListHoverBackground;
 }
 
-.sapTntNavLIItem:not(.sapTntNavLIItemDisabled):active {
+.sapTntNavLI .sapTntNavLIGroup.sapTntNavLIItem:not(.sapTntNavLIItemDisabled):active,
+.sapTntNavLI .sapTntNavLIGroupItem.sapTntNavLIItem:not(.sapTntNavLIItemDisabled):active{
 	background-color: @sapUiListActiveBackground;
-	color: @sapUiListActiveTextColor;
+
+	& > .sapMText {
+		color: @sapUiListActiveTextColor;
+	}
 
 	& > .sapUiIcon {
 		color: @sapUiListActiveTextColor;

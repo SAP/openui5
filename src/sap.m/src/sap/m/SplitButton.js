@@ -337,8 +337,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 				oIconInfo = IconPool.getIconInfo(this.getIcon()),
 				sResult;
 
-			if (sTooltip || (oIconInfo && !this.getText())) {
-				sResult = sTooltip || oIconInfo.text || oIconInfo.name;
+			if (sTooltip || (oIconInfo && oIconInfo.text && !this.getText())) {
+				sResult = sTooltip || oIconInfo.text;
 			}
 
 			return sResult;
