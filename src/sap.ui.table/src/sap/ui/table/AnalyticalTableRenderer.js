@@ -19,7 +19,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/Rendere
 		rm.write("<div");
 		rm.writeAttribute("id", oRow.getId() + "-groupHeader");
 		rm.writeAttribute("class", "sapUiTableGroupIcon");
-		rm.writeAttribute("tabindex", "-1");
 		rm.write("></div>");
 
 		if ('ontouchstart' in document) {

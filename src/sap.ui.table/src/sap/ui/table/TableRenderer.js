@@ -938,6 +938,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 		rm.addClass("sapUiTableHSb");
 		rm.writeClasses();
 		rm.writeAttribute("id", oTable.getId() + "-hsb");
+		rm.writeAttribute("tabindex", "-1"); // Avoid focusing in Firefox
 		rm.write(">");
 		rm.write("<div");
 		rm.writeAttribute("id", oTable.getId() + "-hsb-content");
