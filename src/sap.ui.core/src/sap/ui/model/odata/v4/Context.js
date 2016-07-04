@@ -92,6 +92,18 @@ sap.ui.define([
 		});
 
 	/**
+	 * Deregisters the given dependent binding from the parent binding.
+	 *
+	 * @param {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding}
+	 *   oDependentBinding The dependent binding
+	 *
+	 * @private
+	 */
+	Context.prototype.deregisterBinding = function (oDependentBinding) {
+		_ODataHelper.deregisterBinding(this.oBinding, oDependentBinding);
+	};
+
+	/**
 	 * Deregisters the given change listener.
 	 *
 	 * @param {string} sPath
@@ -199,20 +211,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the query options for the given path from the associated binding.
-	 *
-	 * @param {string} sPath
-	 *   The path for which the query options are requested
-	 * @returns {object}
-	 *   The query options from the associated binding for the given path
-	 *
-	 * @private
-	 */
-	Context.prototype.getQueryOptions = function (sPath) {
-		return _ODataHelper.getQueryOptions(this.oBinding, sPath);
-	};
-
-	/**
 	 * Returns the value for the given path relative to this context. The function allows access to
 	 * the complete data the context points to (when <code>sPath</code> is "") or any part thereof.
 	 * The data is a JSON structure as described in
@@ -278,6 +276,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the query options for the given path from the associated binding.
+	 *
+	 * @param {string} sPath
+	 *   The path for which the query options are requested
+	 * @returns {object}
+	 *   The query options from the associated binding for the given path
+	 *
+	 * @private
+	 */
+	Context.prototype.getQueryOptions = function (sPath) {
+		return _ODataHelper.getQueryOptions(this.oBinding, sPath);
+	};
+
+	/**
 	 * Returns <code>true</code> if there are pending changes below the given path.
 	 *
 	 * @param {string} sPath
@@ -288,7 +300,21 @@ sap.ui.define([
 	 * @private
 	 */
 	Context.prototype.hasPendingChanges = function (sPath) {
-		return this.oBinding.hasPendingChanges(_Helper.buildPath(this.iIndex, sPath));
+		// since we send a path, bAskParent is not needed and set to undefined
+		return _ODataHelper.hasPendingChanges(this.oBinding, undefined,
+			_Helper.buildPath(this.iIndex, sPath));
+	};
+
+	/**
+	 * Registers the given dependent binding at the parent binding.
+	 *
+	 * @param {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding}
+	 *   oDependentBinding The dependent binding
+	 *
+	 * @private
+	 */
+	Context.prototype.registerBinding = function (oDependentBinding) {
+		_ODataHelper.registerBinding(this.oBinding, oDependentBinding);
 	};
 
 	/**
@@ -352,6 +378,30 @@ sap.ui.define([
 	};
 
 	/**
+	 * Resets all pending changes for a given <code>sPath</code>.
+	 *
+	 * @param {string} sPath
+	 *   The relative path of a binding; must not end with '/'
+	 *
+	 * @private
+	 */
+	Context.prototype.resetChanges = function (sPath) {
+		// since we send a path, bAskParent is not needed and set to undefined
+		_ODataHelper.resetChanges(this.oBinding, undefined, _Helper.buildPath(this.iIndex, sPath));
+	};
+
+	/**
+	 * Returns a string representation of this object including the binding path.
+	 *
+	 * @return {string} A string description of this binding
+	 * @public
+	 * @since 1.39.0
+	 */
+	Context.prototype.toString = function () {
+		return this.iIndex === undefined ? this.sPath : this.sPath + "[" + this.iIndex + "]";
+	};
+
+	/**
 	 * Delegates to the <code>updateValue</code> method of this context's binding which updates the
 	 * value for the given path, relative to this context, as maintained by that binding.
 	 *
@@ -383,17 +433,6 @@ sap.ui.define([
 			return that.oBinding.updateValue(sGroupId, sPropertyName, vValue, sEditUrl.slice(1),
 				sPath);
 		});
-	};
-
-	/**
-	 * Returns a string representation of this object including the binding path.
-	 *
-	 * @return {string} A string description of this binding
-	 * @public
-	 * @since 1.39.0
-	 */
-	Context.prototype.toString = function () {
-		return this.iIndex === undefined ? this.sPath : this.sPath + "[" + this.iIndex + "]";
 	};
 
 	return {

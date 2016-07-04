@@ -118,6 +118,7 @@ sap.ui.define([
 
 				this.oCache = undefined;
 				this.mCacheByContext = undefined;
+				this.aDependentBindings = undefined;
 				this.sGroupId = undefined;
 				this.oOperation = undefined;
 				this.mQueryOptions = undefined;
@@ -156,26 +157,6 @@ sap.ui.define([
 				publicMethods : []
 			}
 		});
-
-	/**
-	 * Returns <code>true</code> if the binding has pending changes below the given path.
-	 *
-	 * @param {string} sPath
-	 *   The path
-	 * @returns {boolean}
-	 *   <code>true</code> if the binding has pending changes
-	 *
-	 * @private
-	 */
-	ODataContextBinding.prototype._hasPendingChanges = function (sPath) {
-		if (this.oCache) {
-			return this.oCache.hasPendingChanges(sPath);
-		}
-		if (this.oContext) {
-			return this.oContext.hasPendingChanges(_Helper.buildPath(this.sPath, sPath));
-		}
-		return false;
-	};
 
 	/**
 	 * Requests the metadata for this operation binding. Caches the result.
@@ -297,6 +278,38 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Deregisters the given change listener.
+	 *
+	 * @param {string} sPath
+	 *   The path
+	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} oListener
+	 *   The change listener
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype.deregisterChange = function (sPath, oListener) {
+		if (this.oCache) {
+			this.oCache.deregisterChange(sPath, oListener);
+		} else if (this.oContext) {
+			this.oContext.deregisterChange(_Helper.buildPath(this.sPath, sPath), oListener);
+		}
+	};
+
+	/**
+	 * Destroys the object. The object must not be used anymore after this function was called.
+	 *
+	 * @public
+	 * @since 1.40.1
+	 */
+	// @override
+	ODataContextBinding.prototype.destroy = function () {
+		if (this.bRelative && this.oContext) {
+			this.oContext.deregisterBinding(this);
+		}
+		ContextBinding.prototype.destroy.apply(this);
+	};
+
+	/**
 	 * Calls the OData operation that corresponds to this operation binding.
 	 *
 	 * Parameters for the operation must be set via {@link #setParameter} beforehand.
@@ -404,148 +417,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the bound context.
-	 *
-	 * @returns {sap.ui.model.odata.v4.Context}
-	 *   The bound context
-	 *
-	 * @name sap.ui.model.odata.v4.ODataContextBinding#getBoundContext
-	 * @public
-	 * @since 1.39.0
-	 */
-
-	/**
-	 * Deregisters the given change listener.
-	 *
-	 * @param {string} sPath
-	 *   The path
-	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} oListener
-	 *   The change listener
-	 *
-	 * @private
-	 */
-	ODataContextBinding.prototype.deregisterChange = function (sPath, oListener) {
-		if (this.oCache) {
-			this.oCache.deregisterChange(sPath, oListener);
-		} else if (this.oContext) {
-			this.oContext.deregisterChange(_Helper.buildPath(this.sPath, sPath), oListener);
-		}
-	};
-
-	/**
-	 * Returns the group ID of the binding that is used for read requests.
-	 *
-	 * @returns {string}
-	 *   The group ID
-	 *
-	 * @private
-	 */
-	ODataContextBinding.prototype.getGroupId = function() {
-		return this.sGroupId || this.oModel.getGroupId();
-	};
-
-	/**
-	 * Returns the group ID of the binding that is used for update requests.
-	 *
-	 * @returns {string}
-	 *   The update group ID
-	 *
-	 * @private
-	 */
-	ODataContextBinding.prototype.getUpdateGroupId = function() {
-		return this.sUpdateGroupId || this.oModel.getUpdateGroupId();
-	};
-
-	/**
-	 * Returns <code>true</code> if the binding has pending changes, that is updates via two-way
-	 * binding that have not yet been sent to the server.
-	 *
-	 * @returns {boolean}
-	 *   <code>true</code> if the binding has pending changes
-	 *
-	 * @public
-	 * @since 1.39.0
-	 */
-	ODataContextBinding.prototype.hasPendingChanges = function () {
-		return this._hasPendingChanges(this.oCache ? "" : this.sPath);
-	};
-
-	/**
-	 * Initializes the OData context binding. Fires a 'change' event in case the binding has a
-	 * bound context.
-	 *
-	 * @protected
-	 * @see sap.ui.model.Binding#initialize
-	 * @since 1.37.0
-	 */
-	// @override
-	ODataContextBinding.prototype.initialize = function () {
-		if (this.oElementContext) {
-			this._fireChange({reason : ChangeReason.Change});
-		}
-	};
-
-	/**
-	 * Method not supported
-	 *
-	 * @throws {Error}
-	 *
-	 * @public
-	 * @see sap.ui.model.Binding#isInitial
-	 * @since 1.37.0
-	 */
-	// @override
-	ODataContextBinding.prototype.isInitial = function () {
-		throw new Error("Unsupported operation: v4.ODataContextBinding#isInitial");
-	};
-
-	/**
-	 * Refreshes the binding. Prompts the model to retrieve data from the server using the given
-	 * group ID and notifies the control that new data is available.
-	 * Refresh is supported for absolute bindings.
-	 *
-	 * Note: When calling refresh multiple times, the result of the request triggered by the last
-	 * call determines the binding's data; it is <b>independent</b>
-	 * of the order of calls to {@link sap.ui.model.odata.v4.ODataModel#submitBatch} with the given
-	 * group ID.
-	 *
-	 * @param {string} [sGroupId]
-	 *   The group ID to be used for refresh; if not specified, the group ID for this binding is
-	 *   used, see {@link sap.ui.model.odata.v4.ODataContextBinding#constructor}.
-	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
-	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
-	 * @throws {Error}
-	 *   If the given group ID is invalid or refresh on this binding is not supported.
-	 *
-	 * @public
-	 * @see sap.ui.model.Binding#refresh
-	 * @since 1.37.0
-	 */
-	// @override
-	ODataContextBinding.prototype.refresh = function (sGroupId) {
-//		var that = this;
-
-		if (this.bRelative) {
-			throw new Error("Refresh on this binding is not supported");
-		}
-		if (this.oCache) {
-			if (!this.oOperation || !this.oOperation.bAction) {
-				_ODataHelper.checkGroupId(sGroupId);
-				this.sRefreshGroupId = sGroupId;
-//				if (this.mCacheByContext) {
-//					Object.keys(this.mCacheByContext).forEach(function (sCanonicalPath) {
-//						if (that.oCache !== that.mCacheByContext[sCanonicalPath]) {
-//							delete that.mCacheByContext[sCanonicalPath];
-//						}
-//					});
-//				}
-				this.oCache.refresh();
-				this._fireChange({reason : ChangeReason.Refresh});
-			}
-		}
-	};
-
-	/**
 	 * Requests the value for the given absolute path; the value is requested from this binding's
 	 * cache or from its context in case it has no cache or the cache does not contain data for
 	 * this path.
@@ -622,6 +493,164 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the bound context.
+	 *
+	 * @returns {sap.ui.model.odata.v4.Context}
+	 *   The bound context
+	 *
+	 * @name sap.ui.model.odata.v4.ODataContextBinding#getBoundContext
+	 * @public
+	 * @since 1.39.0
+	 */
+
+	/**
+	 * Returns the group ID of the binding that is used for read requests.
+	 *
+	 * @returns {string}
+	 *   The group ID
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype.getGroupId = function () {
+		return this.sGroupId || this.oModel.getGroupId();
+	};
+
+	/**
+	 * Returns the group ID of the binding that is used for update requests.
+	 *
+	 * @returns {string}
+	 *   The update group ID
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype.getUpdateGroupId = function () {
+		return this.sUpdateGroupId || this.oModel.getUpdateGroupId();
+	};
+
+	/**
+	 * Returns <code>true</code> if the binding has pending changes, meaning updates via two-way
+	 * binding that have not yet been sent to the server.
+	 *
+	 * @returns {boolean}
+	 *   <code>true</code> if the binding has pending changes
+	 *
+	 * @public
+	 * @since 1.39.0
+	 */
+	ODataContextBinding.prototype.hasPendingChanges = function () {
+		return _ODataHelper.hasPendingChanges(this, true);
+	};
+
+	/**
+	 * Initializes the OData context binding. Fires a 'change' event in case the binding has a
+	 * bound context.
+	 *
+	 * @protected
+	 * @see sap.ui.model.Binding#initialize
+	 * @since 1.37.0
+	 */
+	// @override
+	ODataContextBinding.prototype.initialize = function () {
+		if (this.oElementContext) {
+			this._fireChange({reason : ChangeReason.Change});
+		}
+	};
+
+	/**
+	 * Method not supported
+	 *
+	 * @throws {Error}
+	 *
+	 * @public
+	 * @see sap.ui.model.Binding#isInitial
+	 * @since 1.37.0
+	 */
+	// @override
+	ODataContextBinding.prototype.isInitial = function () {
+		throw new Error("Unsupported operation: v4.ODataContextBinding#isInitial");
+	};
+
+	/**
+	 * Refreshes the binding. Prompts the model to retrieve data from the server using the given
+	 * group ID and notifies the control that new data is available.
+	 * Refresh is supported for absolute bindings.
+	 *
+	 * Note: When calling refresh multiple times, the result of the request triggered by the last
+	 * call determines the binding's data; it is <b>independent</b>
+	 * of the order of calls to {@link sap.ui.model.odata.v4.ODataModel#submitBatch} with the given
+	 * group ID.
+	 *
+	 * @param {string} [sGroupId]
+	 *   The group ID to be used for refresh; if not specified, the group ID for this binding is
+	 *   used, see {@link sap.ui.model.odata.v4.ODataContextBinding#constructor}.
+	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
+	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
+	 * @throws {Error}
+	 *   If the given group ID is invalid, the binding has pending changes via two-way binding or
+	 *   refresh on this binding is not supported.
+	 *
+	 * @public
+	 * @see sap.ui.model.Binding#refresh
+	 * @see #hasPendingChanges
+	 * @see #resetChanges
+	 * @since 1.37.0
+	 */
+	// @override
+	ODataContextBinding.prototype.refresh = function (sGroupId) {
+		if (this.bRelative) {
+			throw new Error("Refresh on this binding is not supported");
+		}
+		if (this.hasPendingChanges()) {
+			throw new Error("Cannot refresh due to pending changes");
+		}
+		_ODataHelper.checkGroupId(sGroupId);
+
+		this.refreshInternal(sGroupId);
+	};
+
+	/**
+	 * Refreshes the binding. The refresh method itself only performs some validation checks and
+	 * forwards to this method doing the actual work. Interaction between contexts also runs via
+	 * these internal methods.
+	 *
+	 * @param {string} [sGroupId]
+	 *   The group ID to be used for refresh
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype.refreshInternal = function (sGroupId) {
+		if (this.oCache) {
+			if (!this.oOperation || !this.oOperation.bAction) {
+				this.sRefreshGroupId = sGroupId;
+				if (this.bRelative) {
+					this.oCache.deregisterChange();
+					this.oCache = _ODataHelper.createContextCacheProxy(this, this.oContext);
+					this.mCacheByContext = undefined;
+				} else {
+					this.oCache.refresh();
+				}
+				this._fireChange({reason : ChangeReason.Refresh});
+			}
+		}
+		if (this.aDependentBindings) {
+			this.aDependentBindings.forEach(function (oDependentBinding) {
+				oDependentBinding.refreshInternal(sGroupId);
+			});
+		}
+	};
+
+	/**
+	 * Resets all pending property changes of this binding, meaning updates via two-way binding that
+	 * have not yet been sent to the server.
+	 *
+	 * @public
+	 * @since 1.40.1
+	 */
+	ODataContextBinding.prototype.resetChanges = function () {
+		_ODataHelper.resetChanges(this, true);
+	};
+
+	/**
 	 * Method not supported
 	 *
 	 * @throws {Error}
@@ -647,35 +676,28 @@ sap.ui.define([
 	 */
 	// @override
 	ODataContextBinding.prototype.setContext = function (oContext) {
-		var that = this;
-
-		function createCache(sPath) {
-			var mQueryOptions = _ODataHelper.getQueryOptions(that, "", oContext);
-
-			return _Cache.createSingle(that.oModel.oRequestor,
-				_Helper.buildPath(sPath.slice(1), that.sPath), mQueryOptions);
-		}
-
 		if (this.oContext !== oContext) {
-			if (this.bRelative && this.oCache) {
-				this.oCache.deregisterChange();
-				this.oCache = undefined;
+			if (this.bRelative) {
+				if (this.oContext) {
+					this.oContext.deregisterBinding(this);
+				}
+				if (this.oCache) {
+					this.oCache.deregisterChange();
+					this.oCache = undefined;
+				}
 			}
 			if (this.bRelative && (this.oElementContext || oContext)) {
 				// fire "change" iff. this.oElementContext changes
 				// do not call Model#resolve in vain
-				this.oElementContext = oContext
-					? Context.create(this.oModel, this, this.oModel.resolve(this.sPath, oContext))
-					: null;
-				if (oContext && !this.oOperation && this.mQueryOptions) {
-					this.oCache = _ODataHelper.createCacheProxy(this, createCache,
-						oContext.requestCanonicalPath());
-					this.oCache.promise.then(function (oCache) {
-						that.oCache = oCache;
-					})["catch"](function (oError) {
-						that.oModel.reportError("Failed to create cache for binding " + that,
-							sClassName, oError);
-					});
+				if (oContext) {
+					oContext.registerBinding(this);
+					this.oElementContext = Context.create(this.oModel, this,
+						this.oModel.resolve(this.sPath, oContext));
+					if (!this.oOperation && this.mQueryOptions) {
+						this.oCache = _ODataHelper.createContextCacheProxy(this, oContext);
+					}
+				} else {
+					this.oElementContext = null;
 				}
 				// call Binding#setContext because of data state etc.; fires "change"
 				Binding.prototype.setContext.call(this, oContext);

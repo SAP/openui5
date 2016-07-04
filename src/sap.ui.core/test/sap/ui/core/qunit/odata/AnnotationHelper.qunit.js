@@ -344,6 +344,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				<PropertyValue Property="Description">\
 					<Record Type="com.sap.vocabularies.UI.v1.DataFieldForAction">\
 						<PropertyValue Property="Action" String="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/RegenerateAllData"/>\
+						<PropertyValue Property="Action2" String="GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/Foo"/>\
 					</Record>\
 				</PropertyValue>\
 				<PropertyValue Property="ImageUrl">\
@@ -1750,6 +1751,10 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				assert.strictEqual(formatAndParse(oRawValue, oContext, fnIsMultiple), "",
 					"isMultiple");
 
+				oGlobalSandbox.mock(jQuery.sap.log).expects("warning").withExactArgs(
+						oFixture.metaPath + ": Path could not be resolved ", undefined,
+						"sap.ui.model.odata.AnnotationHelper");
+
 				// resolvePath
 				assert.strictEqual(AnnotationHelper.resolvePath(oContext), undefined,
 					"resolvePath");
@@ -1786,6 +1791,24 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 			});
 		});
 
+
+	//*********************************************************************************************
+	QUnit.test("gotoEntityType: entity type's qualified name not found",
+		function (assert) {
+			return withGwsampleModel(assert, function (oMetaModel) {
+				var sMetaPath
+						= "/dataServices/schema/0/entityContainer/0/associationSet/0/end/0/"
+						+ "entitySet",
+					oContext = oMetaModel.createBindingContext(sMetaPath);
+
+				oGlobalSandbox.mock(jQuery.sap.log).expects("warning").withExactArgs(sMetaPath
+					+ ": found 'VH_LanguageSet' which is not a name of an entity type", undefined,
+					"sap.ui.model.odata.AnnotationHelper");
+
+				assert.strictEqual(AnnotationHelper.gotoEntityType(oContext), undefined);
+
+			});
+		});
 	//*********************************************************************************************
 	module("sap.ui.model.odata.AnnotationHelper.gotoEntitySet");
 
@@ -1804,6 +1827,21 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	});
 
 	//*********************************************************************************************
+	QUnit.test("gotoEntitySet: entity set's name not found", function (assert) {
+		return withGwsampleModel(assert, function (oMetaModel) {
+			var sMetaPath
+					= "/dataServices/schema/0/entityContainer/0/functionImport/0/parameter/0/name",
+				oContext = oMetaModel.createBindingContext(sMetaPath);
+
+			oGlobalSandbox.mock(jQuery.sap.log).expects("warning").withExactArgs(sMetaPath
+				+ ": found 'NoOfSalesOrders' which is not a name of an entity set", undefined,
+				"sap.ui.model.odata.AnnotationHelper");
+
+			assert.strictEqual(AnnotationHelper.gotoEntitySet(oContext), undefined);
+		});
+	});
+
+	//*********************************************************************************************
 	module("sap.ui.model.odata.AnnotationHelper.gotoFunctionImport");
 
 	//*********************************************************************************************
@@ -1815,6 +1853,21 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 			assert.strictEqual(AnnotationHelper.gotoFunctionImport(oContext),
 				oMetaModel.getODataFunctionImport("RegenerateAllData", true));
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("gotoFunctionImport: function import not found", function (assert) {
+		return withGwsampleModelAndTestAnnotations(assert, function (oMetaModel) {
+			var sMetaPath =
+					sPath2Contact + "/com.sap.vocabularies.UI.v1.HeaderInfo/Description/Action2",
+				oContext = oMetaModel.createBindingContext(sMetaPath);
+
+			oGlobalSandbox.mock(jQuery.sap.log).expects("warning").withExactArgs(sMetaPath
+				+ ": found 'GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/Foo' which is not a name of a "
+				+ "function import", undefined, "sap.ui.model.odata.AnnotationHelper");
+
+			assert.strictEqual(AnnotationHelper.gotoFunctionImport(oContext), undefined);
 		});
 	});
 

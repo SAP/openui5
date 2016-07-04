@@ -278,13 +278,14 @@ sap.ui.define([
 	 * @public
 	 * @since 1.39.0
 	 */
+	// @override
 	ODataPropertyBinding.prototype.destroy = function() {
 		if (this.oCache) {
 			this.oCache.deregisterChange(undefined, this);
 		} else if (this.oContext) {
 			this.oContext.deregisterChange(this.sPath, this);
 		}
-		return PropertyBinding.prototype.destroy.apply(this, arguments);
+		PropertyBinding.prototype.destroy.apply(this, arguments);
 	};
 
 	/**

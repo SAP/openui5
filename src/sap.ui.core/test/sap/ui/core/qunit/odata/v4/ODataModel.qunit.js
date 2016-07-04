@@ -378,6 +378,7 @@ sap.ui.require([
 		// cache proxy for oRelativeContextBinding
 		this.mock(oContext).expects("fetchCanonicalPath").returns("~");
 		this.mock(_ODataHelper).expects("createCacheProxy").returns(oCacheProxy);
+		this.mock(oContext).expects("registerBinding");
 		oRelativeContextBinding.setContext(oContext);
 
 		oListBinding.attachChange(function () {});

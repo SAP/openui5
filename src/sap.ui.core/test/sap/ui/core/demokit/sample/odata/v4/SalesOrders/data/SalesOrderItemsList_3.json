@@ -1,12 +1,6 @@
 {
-	"@odata.context" : "$metadata#SalesOrderList(ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID,SO_2_SOITEM(SOITEM_2_PRODUCT(PRODUCT_2_BP(BusinessPartnerID,CompanyName,LegalForm,PhoneNumber))),SO_2_BP(BusinessPartnerID,CompanyName,PhoneNumber),SO_2_SCHDL(ScheduleKey,DeliveryDate))/$entity",
-	"@odata.etag" : "W/\"20160619220000.0000000\"",
-	"ChangedAt" : "20160619220000.0000000 ",
-	"CreatedAt" : "20160619220000.0000000 ",
-	"LifecycleStatusDesc" : "",
-	"Note" : "EPM DG: SO ID 0500000007 Deliver as fast as possible",
-	"SalesOrderID" : "0500000007",
-	"SO_2_SOITEM" : [
+	"@odata.context" : "../$metadata#SOLineItemList(SOITEM_2_PRODUCT(PRODUCT_2_BP(BusinessPartnerID,CompanyName,LegalForm,PhoneNumber)))",
+	"value" : [
 		{
 			"SalesOrderID" : "0500000007",
 			"ItemPosition" : "0000000010",
@@ -382,36 +376,5 @@
 					"PhoneNumber" : "3088530"
 				}
 			}
-		}],
-	"SO_2_BP" : {
-		"@odata.etag" : "W/\"20160613065313.0000000\"",
-		"BusinessPartnerID" : "0100000004",
-		"CompanyName" : "Panorama Studios",
-		"PhoneNumber" : "2244668800"
-	},
-	"SO_2_SCHDL" : [{
-		"ScheduleKey" : "005056A71E3D1ED68DDA8CB5CA1B8B46",
-		"DeliveryDate" : "2016-06-26T22:00:00Z"
-	}, {
-		"ScheduleKey" : "005056A71E3D1ED68DDA8CB5CA1BAB46",
-		"DeliveryDate" : "2016-06-26T22:00:00Z"
-	}, {
-		"ScheduleKey" : "005056A71E3D1ED68DDA8CB5CA1BCB46",
-		"DeliveryDate" : "2016-06-26T22:00:00Z"
-	}, {
-		"ScheduleKey" : "005056A71E3D1ED68DDA8CB5CA1BEB46",
-		"DeliveryDate" : "2016-06-26T22:00:00Z"
-	}, {
-		"ScheduleKey" : "005056A71E3D1ED68DDA8CB5CA1C0B46",
-		"DeliveryDate" : "2016-06-26T22:00:00Z"
-	}, {
-		"ScheduleKey" : "005056A71E3D1ED68DDA8CB5CA1C2B46",
-		"DeliveryDate" : "2016-06-26T22:00:00Z"
-	}, {
-		"ScheduleKey" : "005056A71E3D1ED68DDA8CB5CA1C4B46",
-		"DeliveryDate" : "2016-06-26T22:00:00Z"
-	}, {
-		"ScheduleKey" : "005056A71E3D1ED68DDA8CB5CA1C6B46",
-		"DeliveryDate" : "2016-06-26T22:00:00Z"
-	}]
+		}]
 }

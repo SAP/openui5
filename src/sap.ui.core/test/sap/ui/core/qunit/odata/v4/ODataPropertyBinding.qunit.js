@@ -1187,9 +1187,9 @@ sap.ui.require([
 		this.oSandbox.mock(oPropertyBinding.oCache).expects("deregisterChange")
 			.withExactArgs(undefined, oPropertyBinding);
 		this.oSandbox.mock(PropertyBinding.prototype).expects("destroy").on(oPropertyBinding)
-			.withExactArgs("foo", 42).returns("bar");
+			.withExactArgs("foo", 42);
 
-		assert.strictEqual(oPropertyBinding.destroy("foo", 42), "bar");
+		oPropertyBinding.destroy("foo", 42);
 	});
 
 	//*********************************************************************************************
