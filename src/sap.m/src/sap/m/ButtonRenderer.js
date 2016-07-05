@@ -117,7 +117,7 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.write(">");
 
 		// start inner button tag
-		oRm.write("<div");
+		oRm.write("<span");
 		oRm.writeAttribute("id", oButton.getId() + "-inner");
 
 		// button style class
@@ -199,11 +199,11 @@ sap.ui.define(['jquery.sap.global'],
 
 		// special handling for IE focus outline
 		if (bIE_Edge && bEnabled) {
-			oRm.write('<div class="sapMBtnFocusDiv"></div>');
+			oRm.write('<span class="sapMBtnFocusDiv"></span>');
 		}
 
 		// end inner button tag
-		oRm.write("</div>");
+		oRm.write("</span>");
 
 		// end button tag
 		oRm.write("</button>");
