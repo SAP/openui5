@@ -141,17 +141,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 				}
 			}
 		} else if (oInfo.type === TableUtils.CELLTYPES.COLUMNHEADER || oInfo.type === TableUtils.CELLTYPES.COLUMNROWHEADER) {
+			var iHeaderRowCount = TableUtils.getHeaderRowCount(this);
 			if (TableUtils.isNoDataVisible(this)) {
 				var oFocusInfo = TableUtils.getFocusedItemInfo(this);
-				if (oFocusInfo.row - this._getHeaderRowCount() <= 1) { // We are in the last column header row
+				if (oFocusInfo.row - iHeaderRowCount <= 1) { // We are in the last column header row
 					//Just prevent the navigation to the table content
 					oEvent.setMarked("sapUiTableSkipItemNavigation");
 				}
-			} else if (oInfo.type === TableUtils.CELLTYPES.COLUMNROWHEADER && this._getHeaderRowCount() > 1) {
+			} else if (oInfo.type === TableUtils.CELLTYPES.COLUMNROWHEADER && iHeaderRowCount > 1) {
 				//Special logic needed because row selector added multiple times into the item navigation
 				oEvent.setMarked("sapUiTableSkipItemNavigation");
 				//Focus the first row header
-				TableUtils.focusItem(this, this._getHeaderRowCount() * (TableUtils.getVisibleColumnCount(this) + 1/*Row Headers*/), oEvent);
+				TableUtils.focusItem(this, iHeaderRowCount * (TableUtils.getVisibleColumnCount(this) + 1/*Row Headers*/), oEvent);
 			}
 		}
 	};
@@ -270,7 +271,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 				if (iFocusedRow > 0) {
 					var iFocusedIndex = oFocusedItemInfo.cell;
 					var iColumnCount = oFocusedItemInfo.columnCount;
-					var iHeaderRowCount = this._getHeaderRowCount();
+					var iHeaderRowCount = TableUtils.getHeaderRowCount(this);
 
 					/* Column header area */
 					/* Top fixed area */
@@ -314,7 +315,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 
 				var oFocusedItemInfo = TableUtils.getFocusedItemInfo(this);
 				var iFocusedRow = oFocusedItemInfo.row;
-				var iHeaderRowCount = this._getHeaderRowCount();
+				var iHeaderRowCount = TableUtils.getHeaderRowCount(this);
 				var iNonEmptyVisibleRowCount = TableUtils.getNonEmptyVisibleRowCount(this);
 
 				// Only do something if the focus is above the last row of the fixed bottom area
@@ -377,7 +378,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 
 			var oFocusedItemInfo = TableUtils.getFocusedItemInfo(this);
 			var iFocusedRow = oFocusedItemInfo.row;
-			var iHeaderRowCount = this._getHeaderRowCount();
+			var iHeaderRowCount = TableUtils.getHeaderRowCount(this);
 
 			// Only do something if the focus is not in the column header area or the first row of the top fixed area.
 			if (this.getFixedRowCount() === 0 && iFocusedRow >= iHeaderRowCount || this.getFixedRowCount() > 0 && iFocusedRow > iHeaderRowCount) {
@@ -437,7 +438,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 
 			var oFocusedItemInfo = TableUtils.getFocusedItemInfo(this);
 			var iFocusedRow = oFocusedItemInfo.row;
-			var iHeaderRowCount = this._getHeaderRowCount();
+			var iHeaderRowCount = TableUtils.getHeaderRowCount(this);
 			var iNonEmptyVisibleRowCount = TableUtils.getNonEmptyVisibleRowCount(this);
 
 			// Only do something if the focus is above the last row of the bottom fixed area
