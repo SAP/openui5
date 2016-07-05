@@ -1,7 +1,7 @@
 @sapHighlightColor: #91c8f6;
 @sapBaseColor: #3f5161;
 @sapBackgroundColor: #3f5161;
-@sapTextColor: #fff;
+@sapTextColor: #fafafa;
 @sapLinkColor: lighten(#0070b1, 40);
 
 @sapErrorBackground:   darken(@sapNegativeColor, 60); // #550000
@@ -18,7 +18,7 @@
 @sapWarningColor: @sapCriticalColor; // #fabd64
 @sapSuccessColor: @sapPositiveColor; // #abe2ab
 
-@sapTitleColor: @sapPrimary5;
+@sapTitleColor: @sapTextColor;
 
 @sapContent_IconColor: #cae4fb;
 @sapContent_ContrastIconColor: darken(@sapPrimary1, 8);
@@ -26,15 +26,16 @@
 @sapContent_MarkerIconColor: lighten(@sapAccentColor5, 10);
 @sapContent_FocusColor: #fff;
 @sapContent_ContrastFocusColor: #000;
-@sapContent_LabelColor: darken(@sapPrimary5, 11.5);
+@sapContent_LabelColor: darken(@sapTextColor, 11.5);
 @sapContent_ContrastTextColor: darken(@sapPrimary1, 8);
 @sapContent_ForegroundColor: lighten(@sapBaseColor, 7);
 @sapContent_ForegroundBorderColor: lighten(@sapBaseColor, 30);
-@sapContent_ForegroundTextColor: @sapPrimary5;
+@sapContent_ForegroundTextColor: @sapTextColor;
 
 @sapShell_Background: #658aa2;
+@sapShell_BackgroundImage: linear-gradient(to bottom, darken(saturate(@sapShell_Background, 17), 23), lighten(saturate(@sapShell_Background, 25), 23));
 @sapShell_BackgroundGradient: linear-gradient(to bottom, darken(saturate(@sapShell_Background, 17), 23), lighten(saturate(@sapShell_Background, 25), 23));
-@sapShell_TextColor: @sapPrimary4;
+@sapShell_TextColor: lighten(@sapTextColor, 2);
 
 @sapButton_Background: lighten(@sapBaseColor, 2);
 @sapButton_BorderColor: lighten(@sapButton_Background, 36);
@@ -42,10 +43,11 @@
 @sapButton_Hover_Background: lighten(@sapButton_Background, 6);
 @sapButton_Emphasized_Background: lighten(saturate(@sapPrimary2, 10), 10);
 @sapButton_Emphasized_BorderColor: darken(@sapButton_Emphasized_Background, 5);
-@sapButton_Emphasized_TextColor: @sapPrimary4;
+@sapButton_Emphasized_TextColor: lighten(@sapTextColor, 2);
 
 @sapField_Background: lighten(@sapBaseColor, 5);
 @sapField_BorderColor: lighten(@sapField_Background, 20);
+@sapField_TextColor: #fff;
 @sapField_ReadOnly_Background: transparent;
 @sapField_ReadOnly_BorderColor: @sapField_BorderColor;
 @sapField_RequiredColor: lighten(@sapAccentColor3, 18);
@@ -68,13 +70,15 @@
 @sapScrollBar_Hover_FaceColor: lighten(@sapScrollBar_FaceColor, 3);
 
 @sapPageHeader_BorderColor: lighten(@sapPageHeader_Background, 8);
-@sapPageHeader_TextColor: @sapPrimary5;
+@sapPageHeader_TextColor: @sapTextColor;
 @sapPageFooter_Background: darken(@sapBaseColor, 8);
-@sapPageFooter_TextColor: @sapPrimary5;
+@sapPageFooter_TextColor: @sapTextColor;
 
 @sapTile_Background: @sapBaseColor;
-@sapTile_BorderColor: lighten(@sapBaseColor, 10);
-@sapTile_TextColor: @sapPrimary5;
+@sapTile_BorderColor: lighten(@sapTile_Background, 10);
+@sapTile_TitleTextColor: @sapTextColor;
+@sapTile_TextColor: darken(@sapTile_TitleTextColor, 11.5);
+@sapTile_IconColor: darken(@sapContent_IconColor, 15);
 
 @sapChart_Bad: #f55556;
 @sapChart_Critical: #f4ac44;
