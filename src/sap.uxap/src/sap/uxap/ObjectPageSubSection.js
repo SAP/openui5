@@ -180,6 +180,18 @@ sap.ui.define([
 		});
 	};
 
+	sap.uxap.ObjectPageSubSection.prototype.clone = function () {
+		Object.keys(this._aAggregationProxy).forEach(function (sAggregationName){
+			var oAggregation = this.mAggregations[sAggregationName];
+
+			if (!oAggregation || oAggregation.length === 0){
+				this.mAggregations[sAggregationName] = this._aAggregationProxy[sAggregationName];
+			}
+
+		}, this);
+		return sap.ui.core.Control.prototype.clone.apply(this, arguments);
+	};
+
 	ObjectPageSubSection.prototype._cleanProxiedAggregations = function () {
 		var oProxiedAggregations = this._aAggregationProxy;
 		Object.keys(oProxiedAggregations).forEach(function (sKey) {
