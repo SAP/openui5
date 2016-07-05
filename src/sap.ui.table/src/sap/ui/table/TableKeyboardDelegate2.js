@@ -84,11 +84,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 				this._getKeyboardExtension()._setSilentFocus(this.$("noDataCnt"));
 			}
 		} else if ($Target.hasClass("sapUiTableCtrlAfter")) {
-			if (TableUtils.isNoDataVisible(this)) {
-				this.$("noDataCnt").focus();
-			} else {
+			if (!TableUtils.isNoDataVisible(this)) {
 				TableKeyboardDelegate._restoreFocusOnLastFocusedDataCell(this, oEvent);
-			}
+			}/* else {
+				 // If needed and NoData visible, then set the focus to NoData area.
+				 this.$("noDataCnt").focus();
+			 }*/
 		}
 	};
 
