@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+	<title>qUnit Page for sap.ui.core.BusyIndicator - RTL-mode</title>
+
+	<script id="sap-ui-bootstrap" type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
+		data-sap-ui-rtl="true"
+	>
+
+	</script>
+
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"
+		data-sap-ui-cover-only="sap/ui/core/BusyIndicator.js"
+	></script>
+
+	<script language="javascript">
+		sinon.config.useFakeTimers = false;
+
+		QUnit.module("RTL-mode", {
+			beforeEach: function() {
+				jQuery.sap.require("sap.ui.core.BusyIndicator");
+			},
+
+			afterEach: function() {
+				sap.ui.core.BusyIndicator.hide(0);
+			}
+		});
+
+		QUnit.test("Check If Animation is Centered in RTL-mode", function(assert) {
+			var done = assert.async();
+			sap.ui.core.BusyIndicator.show(100);
+
+			setTimeout(function() {
+				var $Popup = jQuery("#sapUiBusyIndicator");
+				assert.equal($Popup.length, 1, "BusyIndicator should be visible");
+
+				var $Animation = $Popup.find(".sapUiLocalBusyIndicatorAnimation");
+				assert.equal($Animation.length, 1, "BusyIndicator animation should be visible");
+
+				var oClientRects = $Animation.get(0).getClientRects()[0];
+
+				var iAnimationWidth = parseInt(oClientRects.width, 10);
+				// this is the position where the animation is
+				var iAnimationRight = parseInt(oClientRects.right, 10);
+
+				var iDocWidth = document.body.offsetWidth;
+				// this is the position where the animation should be
+				var iDocLeftPosition = parseInt((iDocWidth / 2), 10);
+
+				// calculating the mid of the animation with a buffer of 10 pixels
+				var bCentered = iDocLeftPosition - 10 < iAnimationRight &&
+												iDocLeftPosition + 10 > iAnimationRight
+
+				assert.ok(bCentered, "Animation should be centered at +/- 10 of " + iDocLeftPosition + " and is at left-position " + iAnimationRight);
+
+				done();
+			}.bind(this), 500);
+		});
+	</script>
+</head>
+
+<body>
+	<div id="qunit"></div>
+</body>
+</html>
