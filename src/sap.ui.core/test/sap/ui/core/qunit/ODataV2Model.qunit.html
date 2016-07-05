@@ -4520,6 +4520,50 @@
 			equals(oButton.getText(), "oh so very old", "Text correctly set from second response header");
 			equals(oButton2.getText(), "oh so very old ", "Text correctly set from second response header");
 
+			oModelSingle.destroy();
+			oModelBatch.destroy();
+			start();
+		});
+
+	});
+
+
+	asyncTest("Header normalization and lastModified in metadataLoaded-promise", function() {
+		expect(5);
+
+		var oModel = initModel(sURI, {
+			json: false,
+			useBatch: false
+		});
+		oModel.setUseBatch(false);
+
+		function read(sPath) {
+			return new Promise(function(fnResolve, fnReject) {
+				oModel.read(sPath, {
+					success: function(oData, oResponse) {
+						fnResolve(oResponse.headers);
+					},
+					error: function(oError) {
+						fnResolve(oError.headers);
+					}
+				});
+			});
+		}
+
+		oModel.metadataLoaded().then(function(mData) {
+			equals(mData.lastModified, "Tue, 15 Nov 1994 12:45:26 GMT", "Metadata loaded promise contains lastModified property");
+
+			return read("/SpecialHeaders");
+		}).then(function(mHeaders) {
+			equals(mHeaders["Last-Modified"], "morgen frueh", "Standard header is normalized and contains correct value");
+			equals(mHeaders["X-CuStOm-HeAdEr"], "case-sensitive", "Special header is not normalized and contains correct value");
+
+			return read("/SpecialHeadersError");
+		}).then(function(mHeaders) {
+			equals(mHeaders["Last-Modified"], "morgen frueh", "Standard header is normalized and contains correct value");
+			equals(mHeaders["X-CuStOm-HeAdEr"], "case-sensitive", "Special header is not normalized and contains correct value");
+
+			oModel.destroy();
 			start();
 		});
 

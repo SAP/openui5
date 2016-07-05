@@ -112,6 +112,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 					metadataString: that.sMetadataBody,
 					entitySets: aEntitySets
 				};
+
+				var sLastModified = oResponse.headers["Last-Modified"];
+				if (sLastModified) {
+					mParams.lastModified = sLastModified;
+				}
+
 				// resolve global promise
 				that.fnResolve(mParams);
 				// resolve this promise
