@@ -1894,6 +1894,25 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 		oTable.setModel(new sap.ui.model.json.JSONModel());
 	});
 
+	QUnit.asyncTest("NoData - TAB forward without column header", function(assert) {
+		function doAfterNoDataDisplayed(){
+			oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+
+			var oElem = setFocusOutsideOfTable("Focus1");
+			simulateTabEvent(oElem, false);
+			oElem = checkFocus(oTable.getDomRef("noDataCnt"), assert);
+			simulateTabEvent(oElem, false);
+			oElem = checkFocus(jQuery.sap.domById("Focus2"), assert);
+
+			QUnit.start();
+		}
+
+		oTable.setColumnHeaderVisible(false);
+		sap.ui.getCore().applyChanges();
+		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+		oTable.setModel(new sap.ui.model.json.JSONModel());
+	});
+
 	QUnit.asyncTest("NoData - TAB forward (with extension and footer)", function(assert) {
 		function doAfterNoDataDisplayed(){
 			oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
