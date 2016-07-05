@@ -47,15 +47,6 @@ html.sap-desktop .sapMDialog > footer.sapMDialogActions {
 	}
 }
 
-.sapMDialogResizeHandler {
-	&:before {
-		border-style: solid;
-		border-width: 0 0 0.5rem 0.5rem;
-	  	content: "";
-		border-color: transparent transparent darken(@sapUiContentForegroundBorderColor, 15) transparent;
-	}
-
-	&:hover:before {
-		border-color: transparent transparent @sapUiContentForegroundBorderColor transparent;
-	}
+.sapMDialogResizeHandler::before {
+	color: darken(@sapUiContentForegroundBorderColor, 15);
 }

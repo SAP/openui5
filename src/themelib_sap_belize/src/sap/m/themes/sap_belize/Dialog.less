@@ -65,14 +65,7 @@
 }
 
 
-.sapMDialogResizeHandler {
-  	bottom: 0.5rem;
-	line-height: 1rem;
-
-  	&:before {
-		border-style: initial;
-		border-width: initial;
-		content: attr(data-sap-ui-icon-content);
-		color: @sapUiButtonEmphasizedBackground;
-	}
+.sapMDialogResizeHandler::before {
+	content: attr(data-sap-ui-icon-content);
+	color: @sapUiButtonEmphasizedBackground;
 }
