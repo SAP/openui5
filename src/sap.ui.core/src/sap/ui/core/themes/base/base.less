@@ -21,6 +21,10 @@
 @sapCriticalColor: #e78c07;
 @sapPositiveColor: #2b7d2b;
 @sapNeutralColor: #ffffff;
+@sapNegativeElementColor: @sapNegativeColor;
+@sapCriticalElementColor: @sapCriticalColor;
+@sapPositiveElementColor: @sapPositiveColor;
+@sapNeutralElementColor:  @sapNeutralColor;
 
 @sapContent_LineHeight: 1.3;  //<=new
 @sapContent_ElementHeight: 1.37em;  //<=new
@@ -47,7 +51,10 @@
 @sapContent_ForegroundTextColor: contrast(@sapContent_ForegroundColor, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 @sapShell_Background: @sapShellColor;
-@sapShell_BackgroundGradient: @sapShell_Background;
+@sapShell_BackgroundImage: @sapShell_Background;
+@sapShell_BackgroundGradient: @sapShell_BackgroundImage;
+@sapShell_BackgroundImageOpacity: @sapBackgroundImageOpacity;
+@sapShell_BackgroundImageRepeat: @sapBackgroundImageRepeat;
 @sapShell_BorderColor: #666;
 @sapShell_TextColor: contrast(@sapShell_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
@@ -70,6 +77,7 @@
 
 @sapField_Background: #fff;
 @sapField_BorderColor: #000;
+@sapField_TextColor: #000;
 @sapField_HelpBackground: #fff;
 @sapField_BorderWidth: 1px; //<=new
 @sapField_BorderCornerRadius: 0; //<=new
@@ -81,6 +89,7 @@
 @sapField_Focus_HelpBackground: @sapField_Background;
 @sapField_Disabled_Background: #959595;
 @sapField_Disabled_BorderColor: #4f4f4f;
+@sapField_Disabled_TextColor: @sapContent_DisabledTextColor;
 @sapField_Disabled_HelpBackground: @sapField_Disabled_Background;
 @sapField_ReadOnly_Background: #959595;
 @sapField_ReadOnly_BorderColor: #4f4f4f;
@@ -135,9 +144,11 @@
 
 @sapBlockLayer_Background: #000;
 
-@sapTile_Background: #fff;
-@sapTile_BorderColor: #000;
-@sapTile_TextColor: contrast(@sapTile_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapTile_Background: @sapGroup_ContentBackground;
+@sapTile_BorderColor: @sapGroup_ContentBorderColor;
+@sapTile_TitleTextColor: contrast(@sapTile_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapTile_TextColor: @sapTile_TitleTextColor;
+@sapTile_IconColor: contrast(@sapTile_Background, @sapContent_IconColor, @sapContent_ContrastIconColor, @sapContent_ContrastTextThreshold);
 
 @sapChart_OrderedColor_1: #5cbae6; //<=new
 @sapChart_OrderedColor_2: #b6d957; //<=new

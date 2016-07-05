@@ -94,14 +94,14 @@
 @sapUiShellHoverToggleBackground: lighten(@sapUiBrand, 55);
 
 @sapUiButtonLiteHoverBackground: fade(@sapUiButtonHoverBackground, 50);
-@sapUiToggleButtonPressedBackground: darken(saturate(@sapUiButtonActiveBackground, 40), 30); 
+@sapUiToggleButtonPressedBackground: darken(desaturate(@sapUiButtonActiveBackground, 40), 30);
 @sapUiToggleButtonPressedBorderColor:  lighten(@sapUiToggleButtonPressedBackground, 5);
 @sapUiToggleButtonPressedTextColor: contrast(@sapUiToggleButtonPressedBackground, lighten(@sapUiButtonTextColor, 12), @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 @sapUiToggleButtonPressedHoverBackground: lighten(@sapUiToggleButtonPressedBackground, 5);
 @sapUiToggleButtonPressedHoverBorderColor: lighten(@sapUiToggleButtonPressedBackground, 5);
 @sapUiSegmentedButtonBackground: @sapUiButtonBackground;
 @sapUiSegmentedButtonBorderColor: darken(@sapUiButtonBorderColor, 10);
-@sapUiSegmentedButtonSelectedBackground: darken(saturate(@sapUiButtonActiveBackground, 40), 30);
+@sapUiSegmentedButtonSelectedBackground: darken(desaturate(@sapUiButtonActiveBackground, 40), 30);
 @sapUiSegmentedButtonSelectedTextColor: contrast(@sapUiSegmentedButtonSelectedBackground, lighten(@sapUiSegmentedButtonTextColor, 12), @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 @sapUiSegmentedButtonSelectedHoverBackground: lighten(@sapUiSegmentedButtonSelectedBackground, 5);
 @sapUiSegmentedButtonSelectedIconColor: contrast(@sapUiSegmentedButtonSelectedBackground, lighten(@sapUiContentIconColor, 12), @sapUiContentContrastIconColor, @sapUiContentContrastTextThreshold);
@@ -109,7 +109,7 @@
 
 @sapUiFieldPlaceholderTextColor: lighten(saturate(@sapUiBaseColor, 24), 52.5);
 
-@sapUiListTextColor: darken(@sapUiBaseText, 2);
+@sapUiListTextColor: @sapUiBaseText;
 @sapUiListVerticalBorderColor: lighten(@sapUiListBorderColor, 3);
 @sapUiListActiveTextColor: contrast(@sapUiListActiveBackground, lighten(@sapUiListTextColor, 2), @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 @sapUiListFooterBackground: darken(@sapUiBaseColor, 8);
