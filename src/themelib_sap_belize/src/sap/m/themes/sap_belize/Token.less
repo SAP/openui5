@@ -15,6 +15,11 @@
 	height: 1.625rem;
 }
 
+.sapContrast .sapMToken,
+.sapContrast.sapMToken {
+     border: 1px solid lighten(@sapUiButtonBackground, 15);
+}
+
 .sapMToken.sapMTokenReadOnly {
 	padding: 0.25rem 0.375rem;
 	color: @sapUiContentForegroundTextColor;
@@ -30,6 +35,11 @@ html.sap-desktop .sapMToken:hover {
 	outline: 1px dotted;
 	outline-offset: -3px;
 	outline-color: @sapUiContentContrastFocusColor;
+}
+
+.sapContrast .sapMToken:focus,
+.sapContrast.sapMToken:focus {
+	outline-color: @sapUiContentFocusColor;
 }
 
 html[data-sap-ui-browser^="ie"].sap-desktop,

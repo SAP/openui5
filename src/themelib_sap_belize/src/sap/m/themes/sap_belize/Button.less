@@ -39,7 +39,12 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnActive.sapMFocusable {
 }
 
 html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable {
-	outline-color:    @sapContent_FocusColor;
+	outline-color:    @sapUiContentFocusColor;
+}
+
+html.sap-desktop .sapContrast .sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable,
+html.sap-desktop .sapContrast.sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable {
+	outline-color:    @sapUiContentContrastFocusColor;
 }
 
 /* ---------------------------------------------------------------------*/
