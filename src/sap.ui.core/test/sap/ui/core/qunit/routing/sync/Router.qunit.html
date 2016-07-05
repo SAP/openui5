@@ -1382,6 +1382,33 @@
 			oRouter.destroy();
 		});
 
+		QUnit.test("Hash 'page12' shouldn't match pattern 'page1/:context:'", function() {
+			var oRouter = new sap.ui.core.routing.Router([{
+					name: "page1",
+					pattern: "page1/:context:"
+				}, {
+					name: "page12",
+					pattern: "page12/:context:"
+				}]),
+				sMatchedRouteName,
+				fnMatched = function (oEvent) {
+					sMatchedRouteName = oEvent.getParameter("name");
+				};
+
+			oRouter.attachRouteMatched(fnMatched);
+
+			// Act
+			oRouter.initialize();
+			oRouter.parse("page12");
+
+			this.clock.tick(0);
+
+			// Assert
+			assert.strictEqual(sMatchedRouteName, "page12", "correct route is matched");
+
+			oRouter.destroy();
+		});
+
 		QUnit.module("nested components", {
 			beforeEach: function() {
 				jQuery.sap.require("sap.ui.core.UIComponent");
