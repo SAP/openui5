@@ -8,7 +8,7 @@
 		<script id="sap-ui-bootstrap"
 				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-noConflict="true"
-				data-sap-ui-libs="sap.m"
+				data-sap-ui-libs="sap.m, sap.ui.layout"
 				src="../../../../resources/sap-ui-core.js">
 		</script>
 		<script>
@@ -9627,6 +9627,43 @@
 			assert.strictEqual(oInfo.enabled, true, "Enabled");
 			assert.strictEqual(oInfo.editable, false, "Editable");
 			oComboBox.destroy();
+		});
+
+		QUnit.module("Integration");
+
+		QUnit.test("Keep selected value on parent re-render", function () {
+			var oComboBox = new sap.m.ComboBox({
+				items: [
+					new sap.ui.core.Item({key: "A", text: "Amount"}),
+					new sap.ui.core.Item({key: "C", text: "Checkbox"}),
+					new sap.ui.core.Item({key: "D", text: "Date"}),
+					new sap.ui.core.Item({key: "E", text: "Email Address"}),
+					new sap.ui.core.Item({key: "L", text: "List"}),
+					new sap.ui.core.Item({key: "N", text: "Number"}),
+					new sap.ui.core.Item({key: "Q", text: "Quantity"}),
+					new sap.ui.core.Item({key: "T1", text: "Text"})
+				],
+				selectionChange: function onSelectionChange() {
+					oForm.rerender();
+				}
+			});
+
+
+			var oForm = new sap.ui.layout.form.SimpleForm({
+				content: [oComboBox]
+			}).placeAt('content');
+
+			sap.ui.getCore().applyChanges();
+
+			oComboBox._oList.fireItemPress({item: oComboBox.getItems()[1]});
+			oComboBox._oList.fireSelectionChange({selectedItem: oComboBox.getItems()[1]});
+
+			ok(oComboBox.getValue(), "ComboBox value to be filled in");
+			strictEqual(oComboBox.getValue(), oComboBox.getItems()[1].getText(), "ComboBox value to be the same as the selected element");
+
+			oForm.destroy();
+			oForm = null;
+			oComboBox = null;
 		});
 		</script>
 	</head>
