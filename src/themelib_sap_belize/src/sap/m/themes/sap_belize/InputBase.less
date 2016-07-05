@@ -40,6 +40,35 @@
 	font-style: italic;
 }
 
+// When disabled or read-only hide placeholder by setting opacity to 0
+.sapMInputBaseDisabled {
+	.sapMInputBaseInner::-webkit-input-placeholder {
+		opacity: 0;
+	}
+
+	.sapMInputBaseInner::-moz-placeholder {
+		opacity: 0;
+	}
+
+	.sapMInputBaseInner:-ms-input-placeholder {
+		opacity: 0;
+	}
+}
+
+.sapMInputBaseReadonly {
+	.sapMInputBaseInner::-webkit-input-placeholder {
+		opacity: 0;
+	}
+
+	.sapMInputBaseInner::-moz-placeholder {
+		opacity: 0;
+	}
+
+	.sapMInputBaseInner:-ms-input-placeholder {
+		opacity: 0;
+	}
+}
+
 .sapMInputBasePlaceholder {
 	color: @sapUiFieldPlaceholderTextColor;
 	font-size: @sapMFontMediumSize;
@@ -49,7 +78,7 @@
 }
 
 .sapMInputBaseStateInner {
-	border-width: 2px;
+	border: 2px solid @sapUiFieldBorderColor;
 	padding: 0 0.6875rem;
 }
 
@@ -73,10 +102,17 @@
 	background: @sapUiFieldReadOnlyBackground;
 }
 
+.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -3px;
+}
+
+.sapMInputBaseInner.sapMInputBaseStateInner:not(.sapMInputBaseReadonlyInner):focus {
+  	outline-offset: -4px;
+}
+
 .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):focus {
 	border-color: @sapUiFieldFocusBorderColor;
-  	outline: 1px dotted @sapUiContentFocusColor;
-  	outline-offset: -3px;
 }
 
 .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):not(.sapMInputBaseDisabledInner):hover {
