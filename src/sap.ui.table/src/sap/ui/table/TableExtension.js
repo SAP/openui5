@@ -7,16 +7,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableUtils'],
 	function(jQuery, BaseObject, TableUtils) {
 	"use strict";
 
-	/*
-	 * Checks whether the given object is of the given type (given in AMD module syntax)
-	 * without the need of loading the types module.
-	 */
-	var _isInstanceOf = function(oControl, sType) {
-		var oType = sap.ui.require(sType);
-		return oType && (oControl instanceof oType);
-	};
-
-
 	/**
 	 * Base class of extensions for sap.ui.table.Table, ...
 	 *
@@ -37,9 +27,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableUtils'],
 			this._settings = mSettings || {};
 
 			this._type = TableExtension.TABLETYPES.STANDARD;
-			if (_isInstanceOf(oTable, "sap/ui/table/TreeTable")) {
+			if (TableUtils.isInstanceOf(oTable, "sap/ui/table/TreeTable")) {
 				this._type = TableExtension.TABLETYPES.TREE;
-			} else if (_isInstanceOf(oTable, "sap/ui/table/AnalyticalTable")) {
+			} else if (TableUtils.isInstanceOf(oTable, "sap/ui/table/AnalyticalTable")) {
 				this._type = TableExtension.TABLETYPES.ANALYTICAL;
 			}
 

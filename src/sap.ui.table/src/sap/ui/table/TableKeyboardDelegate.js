@@ -509,7 +509,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 			var oInfo = TableUtils.getCellInfo(oEvent.target);
 			if (oInfo && (oInfo.type === TableUtils.CELLTYPES.COLUMNHEADER || oInfo.type === TableUtils.CELLTYPES.COLUMNROWHEADER)) {
 				oInfo = TableUtils.getFocusedItemInfo(this);
-				if (oInfo.row - this._getHeaderRowCount() <= 1) { // We are in the last column header row
+				if (oInfo.row - TableUtils.getHeaderRowCount(this) <= 1) { // We are in the last column header row
 					//Just prevent the navigation to the table content
 					oEvent.setMarked("sapUiTableSkipItemNavigation");
 				}
