@@ -38,6 +38,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		 * <p><b>Android Browser</b><br>
 		 * Not supported</p>
 		 *
+		 * <p><b>Windows Phone 10 Edge</b><br>
+		 * Not supported</p>
+		 *
 		 * @param {string} sData file content
 		 * @param {string} sFileName file name
 		 * @param {string} sFileExtension file extension
