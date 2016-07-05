@@ -11,12 +11,6 @@ sap.ui.define([
 
 	"use strict";
 
-	function lazyInstanceof(o, sModule) {
-		var FNClass = sap.ui.require(sModule);
-		return typeof FNClass === 'function' && (o instanceof FNClass);
-	}
-
-
 	var aCommonMethods = ["renderControl", "write", "writeEscaped", "translate", "writeAcceleratorKey", "writeControlData", "writeInvisiblePlaceholderData",
 						  "writeElementData", "writeAttribute", "writeAttributeEscaped", "addClass", "writeClasses",
 						  "addStyle", "writeStyles", "writeAccessibilityState", "writeIcon",
@@ -26,347 +20,462 @@ sap.ui.define([
 	/**
 	 * Creates an instance of the RenderManager.
 	 *
+	 * Applications or controls should not call RenderManager on their own but use the
+	 * {@link sap.ui.core.Core#createRenderManager sap.ui.getCore().createRenderManager()}
+	 * method to retrieve a private instance.
+	 *
 	 * @class RenderManager that will take care for rendering Controls.
 	 *
-	 * The RenderManager will be available from the sap.ui.core.Core instance (available via <code>sap.ui.getCore()</code>).<br/>It
-	 * can be used to render Controls and Control-Trees.
+	 * For the default rendering task of UI5, a shared RenderManager is created and owned by <code>sap.ui.core.Core</code>.
+	 * Controls or other code that want to render controls outside the default rendering task
+	 * can create a private instance of RenderManager by calling the
+	 * {@link sap.ui.core.Core#createRenderManager sap.ui.getCore().createRenderManager()} method.
+	 * When such a private instance is no longer needed, it should be {@link #destroy destroyed}.
 	 *
-	 * The convention for renderers belonging to some controls is the following:
-	 * <ul>
-	 * <li>for a Control e.g. <code>sap.ui.controls.InputField</code> there shall be </li>
-	 * <li>a renderer named <code>sap.ui.controls.InputFieldRenderer</code></li>
-	 * <ul>
+	 * Control renderers only have access to a subset of the public and protected instance methods of
+	 * this class. The instance methods {@link #flush}, {@link #render} and {@link #destroy} are not part
+	 * of that subset and are reserved to the owner of the corresponding RenderManager instance.
+	 * Renderers will use the provided methods to create their HTML output. The RenderManager will
+	 * collect the HTML output and inject the final HTML DOM at the desired location.
+	 *
+	 *
+	 * <h3>Renderers</h3>
+	 * When the {@link #renderControl} method of the RenderManager is invoked, it will retrieve
+	 * the default renderer for that control. By convention, the default renderer is implemented in its
+	 * own namespace (static class) which matches the name of the control's class with the additional
+	 * suffix 'Renderer'. So for a control <code>sap.m.Input</code> the default renderer will be searched
+	 * for under the global name <code>sap.m.Input<i>Renderer</i></code>.
+	 *
 	 *
 	 * @see sap.ui.core.Core
 	 * @see sap.ui.getCore()
 	 *
 	 * @extends sap.ui.base.Object
-	 * @author Jens Pflueger
+	 * @author SAG SE
 	 * @version ${version}
 	 * @constructor
 	 * @alias sap.ui.core.RenderManager
 	 * @public
 	 */
-	var RenderManager = BaseObject.extend("sap.ui.core.RenderManager", /** @lends sap.ui.core.RenderManager.prototype */ {
+	function RenderManager() {
 
-		constructor : function() {
-			BaseObject.apply(this, arguments);
-			this.aBuffer = [];
-			this.aRenderedControls = [];
-			this.aStyleStack = [{}];
-		},
-
-		metadata : {
-			publicMethods : aCommonMethods.concat(aNonRendererMethods)
-		}
-
-	});
-
-	/**
-	 * Prefixes to be used for rendering "unusual" DOM-Elements, like dummy elements, placeholders
-	 * for invisible controls, etc.
-	 *
-	 * @enum {string}
-	 * @private
-	 * @alias sap.ui.core.RenderManager.RenderPrefixes
-	 */
-	var RenderPrefixes = RenderManager.RenderPrefixes = {
+		var that = this,
+			oFocusHandler,
+			aBuffer,
+			aRenderedControls,
+			aStyleStack,
+			aRenderStack,
+			bLocked;
 
 		/**
-		 * The control has not been rendered because it is invisible, the element rendered with this
-		 * prefix can be found by the RenderManager to avoid rerendering the parents
+		 * Sets the focus handler to be used by the RenderManager.
+		 *
+		 * @param {sap.ui.core.FocusHandler} oFocusHandler the focus handler to be used.
 		 * @private
 		 */
-		Invisible : "sap-ui-invisible-",
+		this._setFocusHandler = function(oNewFocusHandler) {
+			jQuery.sap.assert(oNewFocusHandler && lazyInstanceof(oNewFocusHandler, 'sap/ui/core/FocusHandler'), "oFocusHandler must be a sap.ui.core.FocusHandler");
+			oFocusHandler = oNewFocusHandler;
+		};
 
 		/**
-		 * A dummy element is rendered with the intention of replacing it with the real content
-		 * @private
+		 * Reset all rendering related buffers.
 		 */
-		Dummy : "sap-ui-dummy-"
-
-	};
-
-
-	/**
-	 * Returns the public interface of the RenderManager which can be used by Renderers.
-	 *
-	 * @return {sap.ui.base.Interface} the interface
-	 * @private
-	 */
-	RenderManager.prototype.getRendererInterface = function() {
-		// see sap.ui.base.Object.getInterface for reference
-		var oInterface = new Interface(this, aCommonMethods);
-		this.getRendererInterface = jQuery.sap.getter(oInterface);
-		return oInterface;
-	};
-
-	/**
-	 * Cleans up the resources associated with this instance.
-	 * After the instance has been destroyed, it must not be used anymore.
-	 * Applications should call this function if they don't need the instance any longer.
-	 *
-	 * @public
-	 */
-	RenderManager.prototype.destroy = function() {
-		this.aBuffer = [];
-		this.aRenderedControls = [];
-		this.aStyleStack = [{}];
-	};
-
-	/**
-	 * Returns the configuration object
-	 * Shortcut for <code>sap.ui.getCore().getConfiguration()</code>
-	 * @return {sap.ui.core.Configuration} the configuration object
-	 * @public
-	 */
-	RenderManager.prototype.getConfiguration = function() {
-		return sap.ui.getCore().getConfiguration();
-	};
-
-	/**
-	 * Returns the renderer class for a given control instance
-	 *
-	 * @param {sap.ui.core.Control} oControl the control that should be rendered
-	 * @return the renderer class for a given control instance
-	 * @public
-	 */
-	RenderManager.prototype.getRenderer = function(oControl) {
-		jQuery.sap.assert(oControl && lazyInstanceof(oControl, 'sap/ui/core/Control'), "oControl must be a sap.ui.core.Control");
-		return RenderManager.getRenderer(oControl);
-	};
-
-	/**
-	 * Sets the focus handler to be used by the RenderManager.
-	 *
-	 * @param {sap.ui.core.FocusHandler} oFocusHandler the focus handler to be used.
-	 * @private
-	 */
-	RenderManager.prototype._setFocusHandler = function(oFocusHandler) {
-		jQuery.sap.assert(oFocusHandler && lazyInstanceof(oFocusHandler, 'sap/ui/core/FocusHandler'), "oFocusHandler must be a sap.ui.core.FocusHandler");
-		this.oFocusHandler = oFocusHandler;
-	};
-
-	//Triggers the BeforeRendering event on the given Control
-	var triggerBeforeRendering = function(oRM, oControl){
-		oRM._bLocked = true;
-		try {
-			var oEvent = jQuery.Event("BeforeRendering");
-			// store the element on the event (aligned with jQuery syntax)
-			oEvent.srcControl = oControl;
-			oControl._handleEvent(oEvent);
-		} finally {
-			oRM._bLocked = false;
-		}
-	};
-
-	/**
-	 * Cleans up the rendering state of the given control with rendering it.
-	 *
-	 * A control is responsible for the rendering of all its child controls.
-	 * But in some cases it makes sense that a control does not render all its
-	 * children based on a filter condition. For example a Carousel control only renders
-	 * the current visible parts (and maybe some parts before and after the visible area)
-	 * for performance reasons.
-	 * If a child was rendered but should not be rendered anymore because the filter condition
-	 * does not apply anymore this child must be cleaned up correctly (e.g deregistering eventhandlers, ...).
-	 *
-	 * The following example shows how renderControl and cleanupControlWithoutRendering should
-	 * be used:
-	 *
-	 * render = function(rm, ctrl){
-	 *   //...
-	 *   var aAggregatedControls = //...
-	 *   for(var i=0; i<aAgrregatedControls.length; i++){
-	 *   	if(//... some filter expression){
-	 *         rm.renderControl(aAggregatedControls[i]);
-	 *      }else{
-	 *         rm.cleanupControlWithoutRendering(aAggregatedControls[i]);
-	 *      }
-	 *   }
-	 *   //...
-	 * }
-	 *
-	 * Note:
-	 * The method does not remove DOM of the given control. The callee of this method has to take over the
-	 * responsibility to cleanup the DOM of the control afterwards.
-	 * For parents which are rendered with the normal mechanism as shown in the example above this requirement
-	 * is fulfilled, because the control is not added to the rendering buffer (renderControl is not called) and
-	 * the DOM is replaced when the rendering cycle is finalized.
-	 *
-	 * @param {sap.ui.core.Control} oControl the control that should be cleaned up
-	 * @public
-	 * @since 1.22.9
-	 */
-	RenderManager.prototype.cleanupControlWithoutRendering = function(oControl) {
-		jQuery.sap.assert(!oControl || lazyInstanceof(oControl, 'sap/ui/core/Control'), "oControl must be a sap.ui.core.Control or empty");
-		if (!oControl || !oControl.getDomRef()) {
-			return;
+		function reset() {
+			aBuffer = that.aBuffer = [];
+			aRenderedControls = that.aRenderedControls = [];
+			aStyleStack = that.aStyleStack = [{}];
 		}
 
-		//Call beforeRendering to allow cleanup
-		triggerBeforeRendering(this, oControl);
 
-		oControl.bOutput = false;
-	};
+		//#################################################################################################
+		// Methods for 'Buffered writer' functionality... (all public)
+		// i.e. used methods in render-method of Renderers
+		//#################################################################################################
 
-	/**
-	 * Turns the given control into its HTML representation and appends it to the
-	 * rendering buffer.
-	 *
-	 * If the given control is undefined or null, then nothing is rendered.
-	 *
-	 * @param {sap.ui.core.Control} oControl the control that should be rendered
-	 * @returns {sap.ui.core.RenderManager} this render manager instance to allow chaining
-	 * @public
-	 */
-	RenderManager.prototype.renderControl = function(oControl) {
-		jQuery.sap.assert(!oControl || lazyInstanceof(oControl, 'sap/ui/core/Control'), "oControl must be a sap.ui.core.Control or empty");
-		// don't render a NOTHING
-		if (!oControl) {
+		/**
+		 * Write the given texts to the buffer
+		 * @param {...string|number} sText (can be a number too)
+		 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
+		 * @public
+		 * @SecSink {*|XSS}
+		 */
+		this.write = function(/** string|number */ sText /* ... */) {
+			jQuery.sap.assert(( typeof sText === "string") || ( typeof sText === "number"), "sText must be a string or number");
+			aBuffer.push.apply(aBuffer, arguments);
 			return this;
-		}
+		};
 
-		// create stack to determine rendered parent
-		if (!this.aRenderStack) {
-			this.aRenderStack = [];
-		}
-		// stop the measurement of parent
-		if (this.aRenderStack && this.aRenderStack.length > 0) {
-			jQuery.sap.measure.pause(this.aRenderStack[0] + "---renderControl");
-		} else if (oControl.getParent() && oControl.getParent().getMetadata().getName() == "sap.ui.core.UIArea") {
-			jQuery.sap.measure.pause(oControl.getParent().getId() + "---rerender");
-		}
-		this.aRenderStack.unshift(oControl.getId());
-		// start performance measurement
-		jQuery.sap.measure.start(oControl.getId() + "---renderControl","Rendering of " + oControl.getMetadata().getName(), ["rendering","control"]);
+		/**
+		 * Escape text for HTML and write it to the buffer
+		 * @param {string} sText
+		 * @param {boolean} bLineBreaks Whether to convert linebreaks into <br> tags
+		 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
+		 * @public
+		 */
+		this.writeEscaped = function(/** string */ sText, bLineBreaks) {
+			jQuery.sap.assert( typeof sText === "string", "sText must be a string");
+			sText = jQuery.sap.encodeHTML(sText);
+			if (bLineBreaks) {
+				sText = sText.replace(/&#xa;/g, "<br>");
+			}
+			aBuffer.push(sText);
+			return this;
+		};
 
-		//Remember the current buffer size to check later whether the control produced output
-		var iBufferLength = this.aBuffer.length;
+		/**
+		 * Writes the attribute and its value into the HTML.
+		 *
+		 * @param {string} sName Name of the attribute
+		 * @param {string | number | boolean} vValue Value of the attribute
+		 * @return {sap.ui.core.RenderManager} This render manager instance to allow chaining
+		 * @public
+		 * @SecSink {0 1|XSS} Attributes are written to HTML without validation
+		 */
+		this.writeAttribute = function(sName, vValue) {
+			jQuery.sap.assert(typeof sName === "string", "sName must be a string");
+			jQuery.sap.assert(typeof vValue === "string" || typeof vValue === "number" || typeof vValue === "boolean", "value must be a string, number or boolean");
+			aBuffer.push(" ", sName, "=\"", vValue, "\"");
+			return this;
+		};
 
-		var oControlStyles = {};
-		if (oControl.aCustomStyleClasses && oControl.aCustomStyleClasses.length > 0) {
-			oControlStyles.aCustomStyleClasses = oControl.aCustomStyleClasses; //cleared again in the writeClasses function
-		}
+		/**
+		 * Writes the attribute and a value into the HTML, the value will be encoded.
+		 *
+		 * The value is properly encoded to avoid XSS attacks.
+		 *
+		 * @param {string} sName Name of the attribute
+		 * @param {any} vValue Value of the attribute
+		 * @return {sap.ui.core.RenderManager} This render manager instance to allow chaining
+		 * @public
+		 * @SecSink {0|XSS}
+		 */
+		this.writeAttributeEscaped = function(sName, vValue) {
+			jQuery.sap.assert(typeof sName === "string", "sName must be a string");
+			aBuffer.push(" ", sName, "=\"", jQuery.sap.encodeHTML(String(vValue)), "\"");
+			return this;
+		};
 
-		this.aStyleStack.push(oControlStyles);
-
-		jQuery.sap.measure.pause(oControl.getId() + "---renderControl");
-		// don't measure getRenderer because if Load needed its measured in Ajax call
-		// but start measurement before is to see general rendering time including loading time
-
-		// Either render the control normally, or invoke the InvisibleRenderer in case the control
-		// uses the default visible property
-		var oRenderer;
-		var oMetadata = oControl.getMetadata();
-		var bVisible = oControl.getVisible();
-		if (bVisible) {
-			// If the control is visible, return its renderer (Should be the default case, just like before)
-			oRenderer = oMetadata.getRenderer();
-		} else {
-			// If the control is invisible, find out whether it uses its own visible implementation
-			var oVisibleProperty = oMetadata.getProperty("visible");
-
-			var bUsesDefaultVisibleProperty =
-				   oVisibleProperty
-				&& oVisibleProperty._oParent
-				&& oVisibleProperty._oParent.getName() == "sap.ui.core.Control";
-
-			oRenderer = bUsesDefaultVisibleProperty
-				// If the control inherited its visible property from sap.ui.core.Control, use
-				// the default InvisibleRenderer to render a placeholder instead of the real
-				// control HTML
-				? InvisibleRenderer
-				// If the control has their own visible property or one not inherited from
-				// sap.ui.core.Control, return the real renderer
-				: oMetadata.getRenderer();
-		}
-
-		jQuery.sap.measure.resume(oControl.getId() + "---renderControl");
-
-		triggerBeforeRendering(this, oControl);
-
-		// unbind any generically bound browser event handlers
-		var aBindings = oControl.aBindParameters;
-		if (aBindings && aBindings.length > 0) { // if we have stored bind calls...
-			var jDomRef = jQuery(oControl.getDomRef());
-			if (jDomRef && jDomRef[0]) { // ...and we have a DomRef
-				for (var i = 0; i < aBindings.length; i++) {
-					var oParams = aBindings[i];
-					jDomRef.unbind(oParams.sEventType, oParams.fnProxy);
+		/**
+		 * Adds a style property to the style collection if the value is not empty or null
+		 * The style collection is flushed if it is written to the buffer using {@link #writeStyle}
+		 *
+		 * @param {string} sName Name of the CSS property to write
+		 * @param {string|float|int} value Value to write
+		 * @return {sap.ui.core.RenderManager} This render manager instance to allow chaining
+		 * @public
+		 * @SecSink {0 1|XSS} Styles are written to HTML without validation
+		 */
+		this.addStyle = function(sName, value) {
+			jQuery.sap.assert(typeof sName === "string", "sName must be a string");
+			if (value !=  null) {
+				jQuery.sap.assert((typeof value === "string" || typeof value === "number"), "value must be a string or number");
+				var oStyle = aStyleStack[aStyleStack.length - 1];
+				if (!oStyle.aStyle) {
+					oStyle.aStyle = [];
 				}
+				oStyle.aStyle.push(sName + ":" + value);
+			}
+			return this;
+		};
+
+		/**
+		 * Writes and flushes the style collection
+		 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
+		 * @public
+		 */
+		this.writeStyles = function() {
+			var oStyle = aStyleStack[aStyleStack.length - 1];
+			if (oStyle.aStyle) {
+				this.write(" style=\"" + oStyle.aStyle.join(";") + "\" ");
+			}
+			oStyle.aStyle = null;
+			return this;
+		};
+
+		/**
+		 * Adds a class to the class collection if the name is not empty or null.
+		 * The class collection is flushed if it is written to the buffer using {@link #writeClasses}
+		 *
+		 * @param {string} sName name of the class to be added; null values are ignored
+		 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
+		 * @public
+		 * @SecSink {0|XSS} Classes are written to HTML without validation
+		 */
+		this.addClass = function(sName) {
+			if (sName) {
+				jQuery.sap.assert(typeof sName === "string", "sName must be a string");
+				var oStyle = aStyleStack[aStyleStack.length - 1];
+				if (!oStyle.aClasses) {
+					oStyle.aClasses = [];
+				}
+				oStyle.aClasses.push(sName);
+			}
+			return this;
+		};
+
+		/**
+		 * Writes and flushes the class collection (all CSS classes added by "addClass()" since the last flush).
+		 * Also writes the custom style classes added by the application with "addStyleClass(...)". Custom classes are
+		 * added by default from the currently rendered control. If an oElement is given, this Element's custom style
+		 * classes are added instead. If oElement === false, no custom style classes are added.
+		 *
+		 * @param {sap.ui.core.Element | boolean} [oElement] an Element from which to add custom style classes (instead of adding from the control itself)
+		 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
+		 * @public
+		 */
+		this.writeClasses = function(oElement) {
+			jQuery.sap.assert(!oElement || typeof oElement === "boolean" || lazyInstanceof(oElement, 'sap/ui/core/Element'), "oElement must be empty, a boolean, or a sap.ui.core.Element");
+			var oStyle = aStyleStack[aStyleStack.length - 1];
+
+			// Custom classes are added by default from the currently rendered control. If an oElement is given, this Element's custom style
+			// classes are added instead. If oElement === false, no custom style classes are added.
+			var aCustomClasses;
+			if (oElement) {
+				aCustomClasses = oElement.aCustomStyleClasses;
+			} else if (oElement === false) {
+				aCustomClasses = [];
+			} else {
+				aCustomClasses = oStyle.aCustomStyleClasses;
+			}
+
+			if (oStyle.aClasses || aCustomClasses) {
+				var aClasses = [].concat(oStyle.aClasses || [], aCustomClasses || []);
+				aClasses.sort();
+				aClasses = jQuery.map(aClasses, function(n, i){
+					return (i == 0 || n != aClasses[i - 1]) ? n : null;
+				});
+				this.write(" class=\"", aClasses.join(" "), "\" ");
+			}
+
+			if (!oElement) {
+				oStyle.aCustomStyleClasses = null;
+			}
+			oStyle.aClasses = null;
+			return this;
+		};
+
+		//Triggers the BeforeRendering event on the given Control
+		function triggerBeforeRendering(oControl){
+			bLocked = true;
+			try {
+				var oEvent = jQuery.Event("BeforeRendering");
+				// store the element on the event (aligned with jQuery syntax)
+				oEvent.srcControl = oControl;
+				oControl._handleEvent(oEvent);
+			} finally {
+				bLocked = false;
 			}
 		}
 
-		//Render the control using the RenderManager interface
-		if (oRenderer && typeof oRenderer.render === "function") {
-			oRenderer.render(this.getRendererInterface(), oControl);
-		} else {
-			jQuery.sap.log.error("The renderer for class " + oMetadata.getName() + " is not defined or does not define a render function! Rendering of " + oControl.getId() + " will be skipped!");
-		}
+		/**
+		 * Cleans up the rendering state of the given control with rendering it.
+		 *
+		 * A control is responsible for the rendering of all its child controls.
+		 * But in some cases it makes sense that a control does not render all its
+		 * children based on a filter condition. For example, a Carousel control only renders
+		 * the current visible parts (and maybe some parts before and after the visible area)
+		 * for performance reasons.
+		 * If a child that has been rendered before should not be rendered anymore because the filter
+		 * condition is no longer met, this child must be removed correctly (e.g. by deregistering event handlers).
+		 *
+		 * The following example shows how renderControl and cleanupControlWithoutRendering should
+		 * be used:
+		 *
+		 * <pre>
+		 * render = function(rm, ctrl){
+		 *   ...
+		 *   var aAggregatedControls = //...
+		 *   for ( var i = 0; i &lt; aAggregatedControls.length; i++ ) {
+		 *      if ( ... some filter expression ... ) {
+		 *         rm.renderControl(aAggregatedControls[i]);
+		 *      } else {
+		 *         rm.cleanupControlWithoutRendering(aAggregatedControls[i]);
+		 *      }
+		 *   }
+		 *   ...
+		 * }
+		 * </pre>
+		 *
+		 * <b>Note:</b><br>
+		 * The method does not remove the DOM of the given control. The caller of this method has to take over the
+		 * responsibility to clean up the DOM of the control afterwards.
+		 *
+		 * For parents, which are rendered with the normal mechanism as shown in the example above, that requirement
+		 * is fulfilled, because the control is not added to the rendering buffer (renderControl is not called) and
+		 * the DOM is replaced when the rendering cycle is finalized.
+		 *
+		 * @param {sap.ui.core.Control} oControl the control that should be cleaned up
+		 * @public
+		 * @since 1.22.9
+		 */
+		this.cleanupControlWithoutRendering = function(oControl) {
+			jQuery.sap.assert(!oControl || lazyInstanceof(oControl, 'sap/ui/core/Control'), "oControl must be a sap.ui.core.Control or empty");
+			if (!oControl || !oControl.getDomRef()) {
+				return;
+			}
 
-		this.aStyleStack.pop();
+			//Call beforeRendering to allow cleanup
+			triggerBeforeRendering(oControl);
 
-		//Remember the rendered control
-		this.aRenderedControls.push(oControl);
+			oControl.bOutput = false;
+		};
 
-		// let the UIArea know that this control has been rendered
-		// FIXME: RenderManager (RM) should not need to know about UIArea. Maybe UIArea should delegate rendering to RM
-		if ( oControl.getUIArea && oControl.getUIArea() ) {
-			oControl.getUIArea()._onControlRendered(oControl);
-		}
+		/**
+		 * Turns the given control into its HTML representation and appends it to the
+		 * rendering buffer.
+		 *
+		 * If the given control is undefined or null, then nothing is rendered.
+		 *
+		 * @param {sap.ui.core.Control} oControl the control that should be rendered
+		 * @returns {sap.ui.core.RenderManager} this render manager instance to allow chaining
+		 * @public
+		 */
+		this.renderControl = function(oControl) {
+			jQuery.sap.assert(!oControl || lazyInstanceof(oControl, 'sap/ui/core/Control'), "oControl must be a sap.ui.core.Control or empty");
+			// don't render a NOTHING
+			if (!oControl) {
+				return this;
+			}
 
-		//Check whether the control has produced HTML
-		// Special case: If an invisible placeholder was rendered, use a non-boolean value
-		oControl.bOutput = this.aBuffer.length != iBufferLength;
-		if (oRenderer === InvisibleRenderer) {
-			oControl.bOutput = "invisible"; // Still evaluates to true, but can be checked for the special case
-		}
+			// create stack to determine rendered parent
+			if (!aRenderStack) {
+				aRenderStack = [];
+			}
+			// stop the measurement of parent
+			if (aRenderStack && aRenderStack.length > 0) {
+				jQuery.sap.measure.pause(aRenderStack[0] + "---renderControl");
+			} else if (oControl.getParent() && oControl.getParent().getMetadata().getName() == "sap.ui.core.UIArea") {
+				jQuery.sap.measure.pause(oControl.getParent().getId() + "---rerender");
+			}
+			aRenderStack.unshift(oControl.getId());
+			// start performance measurement
+			jQuery.sap.measure.start(oControl.getId() + "---renderControl","Rendering of " + oControl.getMetadata().getName(), ["rendering","control"]);
 
-		// end performance measurement
-		jQuery.sap.measure.end(oControl.getId() + "---renderControl");
-		this.aRenderStack.shift();
-		// resume the measurement of parent
-		if (this.aRenderStack && this.aRenderStack.length > 0) {
-			jQuery.sap.measure.resume(this.aRenderStack[0] + "---renderControl");
-		} else if (oControl.getParent() && oControl.getParent().getMetadata().getName() == "sap.ui.core.UIArea") {
-			jQuery.sap.measure.resume(oControl.getParent().getId() + "---rerender");
-		}
-		return this;
-	};
+			//Remember the current buffer size to check later whether the control produced output
+			var iBufferLength = aBuffer.length;
 
-	/**
-	 * Renders the given {@link sap.ui.core.Control} and finally returns
-	 * the content of the rendering buffer.
-	 * Ensures the buffer is restored to the state before calling this method.
-	 *
-	 * @param {sap.ui.core.Control}
-	 *            oControl the Control whose HTML should be returned.
-	 * @return {string} the resulting HTML of the provided control
-	 * @deprecated Since version 0.15.0. Use <code>flush()</code> instead render content outside the rendering phase.
-	 * @public
-	 */
-	RenderManager.prototype.getHTML = function(oControl) {
-		jQuery.sap.assert(oControl && lazyInstanceof(oControl, 'sap/ui/core/Control'), "oControl must be a sap.ui.core.Control");
+			var oControlStyles = {};
+			if (oControl.aCustomStyleClasses && oControl.aCustomStyleClasses.length > 0) {
+				oControlStyles.aCustomStyleClasses = oControl.aCustomStyleClasses; //cleared again in the writeClasses function
+			}
 
-		var tmp = this.aBuffer;
-		var aResult = this.aBuffer = [];
-		this.renderControl(oControl);
-		this.aBuffer = tmp;
-		return aResult.join("");
-	};
+			aStyleStack.push(oControlStyles);
 
-	(function() {
+			jQuery.sap.measure.pause(oControl.getId() + "---renderControl");
+			// don't measure getRenderer because if Load needed its measured in Ajax call
+			// but start measurement before is to see general rendering time including loading time
+
+			// Either render the control normally, or invoke the InvisibleRenderer in case the control
+			// uses the default visible property
+			var oRenderer;
+			var oMetadata = oControl.getMetadata();
+			var bVisible = oControl.getVisible();
+			if (bVisible) {
+				// If the control is visible, return its renderer (Should be the default case, just like before)
+				oRenderer = oMetadata.getRenderer();
+			} else {
+				// If the control is invisible, find out whether it uses its own visible implementation
+				var oVisibleProperty = oMetadata.getProperty("visible");
+
+				var bUsesDefaultVisibleProperty =
+					   oVisibleProperty
+					&& oVisibleProperty._oParent
+					&& oVisibleProperty._oParent.getName() == "sap.ui.core.Control";
+
+				oRenderer = bUsesDefaultVisibleProperty
+					// If the control inherited its visible property from sap.ui.core.Control, use
+					// the default InvisibleRenderer to render a placeholder instead of the real
+					// control HTML
+					? InvisibleRenderer
+					// If the control has their own visible property or one not inherited from
+					// sap.ui.core.Control, return the real renderer
+					: oMetadata.getRenderer();
+			}
+
+			jQuery.sap.measure.resume(oControl.getId() + "---renderControl");
+
+			triggerBeforeRendering(oControl);
+
+			// unbind any generically bound browser event handlers
+			var aBindings = oControl.aBindParameters;
+			if (aBindings && aBindings.length > 0) { // if we have stored bind calls...
+				var jDomRef = jQuery(oControl.getDomRef());
+				if (jDomRef && jDomRef[0]) { // ...and we have a DomRef
+					for (var i = 0; i < aBindings.length; i++) {
+						var oParams = aBindings[i];
+						jDomRef.unbind(oParams.sEventType, oParams.fnProxy);
+					}
+				}
+			}
+
+			//Render the control using the RenderManager interface
+			if (oRenderer && typeof oRenderer.render === "function") {
+				oRenderer.render(oRendererInterface, oControl);
+			} else {
+				jQuery.sap.log.error("The renderer for class " + oMetadata.getName() + " is not defined or does not define a render function! Rendering of " + oControl.getId() + " will be skipped!");
+			}
+
+			aStyleStack.pop();
+
+			//Remember the rendered control
+			aRenderedControls.push(oControl);
+
+			// let the UIArea know that this control has been rendered
+			// FIXME: RenderManager (RM) should not need to know about UIArea. Maybe UIArea should delegate rendering to RM
+			if ( oControl.getUIArea && oControl.getUIArea() ) {
+				oControl.getUIArea()._onControlRendered(oControl);
+			}
+
+			//Check whether the control has produced HTML
+			// Special case: If an invisible placeholder was rendered, use a non-boolean value
+			oControl.bOutput = aBuffer.length != iBufferLength;
+			if (oRenderer === InvisibleRenderer) {
+				oControl.bOutput = "invisible"; // Still evaluates to true, but can be checked for the special case
+			}
+
+			// end performance measurement
+			jQuery.sap.measure.end(oControl.getId() + "---renderControl");
+			aRenderStack.shift();
+			// resume the measurement of parent
+			if (aRenderStack && aRenderStack.length > 0) {
+				jQuery.sap.measure.resume(aRenderStack[0] + "---renderControl");
+			} else if (oControl.getParent() && oControl.getParent().getMetadata().getName() == "sap.ui.core.UIArea") {
+				jQuery.sap.measure.resume(oControl.getParent().getId() + "---rerender");
+			}
+			return this;
+		};
+
+		/**
+		 * Renders the given {@link sap.ui.core.Control} and finally returns
+		 * the content of the rendering buffer.
+		 * Ensures the buffer is restored to the state before calling this method.
+		 *
+		 * @param {sap.ui.core.Control}
+		 *            oControl the Control whose HTML should be returned.
+		 * @return {string} the resulting HTML of the provided control
+		 * @deprecated Since version 0.15.0. Use <code>flush()</code> instead render content outside the rendering phase.
+		 * @public
+		 */
+		this.getHTML = function(oControl) {
+			jQuery.sap.assert(oControl && lazyInstanceof(oControl, 'sap/ui/core/Control'), "oControl must be a sap.ui.core.Control");
+
+			var tmp = aBuffer;
+			var aResult = aBuffer = this.aBuffer = [];
+			this.renderControl(oControl);
+			aBuffer = this.aBuffer = tmp;
+			return aResult.join("");
+		};
 
 		//Does everything needed after the rendering (restore focus, calling "onAfterRendering", initialize event binding)
-		var finalizeRendering = function(oRM, aRenderedControls, oStoredFocusInfo){
+		function finalizeRendering(oStoredFocusInfo){
 
 			var i, size = aRenderedControls.length;
 
 			for (i = 0; i < size; i++) {
 				aRenderedControls[i]._sapui_bInAfterRenderingPhase = true;
 			}
-			oRM._bLocked = true;
+			bLocked = true;
 
 			try {
 
@@ -389,14 +498,14 @@ sap.ui.define([
 				for (i = 0; i < size; i++) {
 					delete aRenderedControls[i]._sapui_bInAfterRenderingPhase;
 				}
-				oRM._bLocked = false;
+				bLocked = false;
 			}
 
 			//finally restore focus
 			try {
-				oRM.oFocusHandler.restoreFocus(oStoredFocusInfo);
+				oFocusHandler.restoreFocus(oStoredFocusInfo);
 			} catch (e) {
-				jQuery.sap.log.warning("Problems while restoring the focus after rendering: " + e, null, oRM);
+				jQuery.sap.log.warning("Problems while restoring the focus after rendering: " + e, null);
 			}
 
 			// Re-bind any generically bound browser event handlers (must happen after restoring focus to avoid focus event)
@@ -414,57 +523,70 @@ sap.ui.define([
 					}
 				}
 			}
-		};
+		}
+
+		function flushInternal(fnPutIntoDom) {
+
+			var oStoredFocusInfo = oFocusHandler ? oFocusHandler.getControlFocusInfo() : null;
+
+			var sHTML = aBuffer.join("");
+
+			fnPutIntoDom(sHTML);
+
+			finalizeRendering(oStoredFocusInfo);
+
+			reset();
+
+			jQuery.sap.act.refresh();
+
+			jQuery.sap.interaction.notifyStepEnd();
+		}
 
 		/**
-		 * Renders the content of the rendering buffer into the provided DOMNode.
+		 * Renders the content of the rendering buffer into the provided DOM node.
 		 *
 		 * This function must not be called within control renderers.
 		 *
 		 * Usage:
 		 * <pre>
-		 * // Create a new instance of the RenderManager
-		 * var rm = sap.ui.getCore().createRenderManager();
-		 * // Use the writer API to fill the buffers
-		 * rm.write(...);
-		 * rm.renderControl(oControl);
-		 * rm.write(...);
-		 * ...
-		 * // Finally flush the buffer into the provided DOM node (The current content is removed)
-		 * rm.flush(oDomNode);
-		 * // If the instance is not needed anymore, destroy it
-		 * rm.destroy();
+		 *
+		 *   // Create a new instance of the RenderManager
+		 *   var rm = sap.ui.getCore().createRenderManager();
+		 *
+		 *   // Use the writer API to fill the buffers
+		 *   rm.write(...);
+		 *   rm.renderControl(oControl);
+		 *   rm.write(...);
+		 *   ...
+		 *
+		 *   // Finally flush the buffer into the provided DOM node (The current content is removed)
+		 *   rm.flush(oDomNode);
+		 *
+		 *   // If the instance is not needed anymore, destroy it
+		 *   rm.destroy();
+		 *
 		 * </pre>
 		 *
-		 * @param {Element} oTargetDomNode The node in the dom where the buffer should be flushed into.
-		 * @param {boolean} bDoNotPreserve flag, whether to not preserve (true) the content or to preserve it (false).
-		 * @param {boolean|int} vInsert flag, whether to append (true) or replace (false) the buffer of the target dom node or to insert at a certain position (int)
+		 * @param {Element} oTargetDomNode Node in the DOM where the buffer should be flushed into
+		 * @param {boolean} bDoNotPreserve Determines whether the content is preserved (<code>false</code>) or not (<code>true</code>)
+		 * @param {boolean|int} vInsert Determines whether the buffer of the target DOM node is expanded (<code>true</code>) or
+		 *                  replaced (<code>false</code>), or the new entry is inserted at a specific position (<code>int</code>)
 		 * @public
 		 */
-		RenderManager.prototype.flush = function(oTargetDomNode, bDoNotPreserve, vInsert) {
+		this.flush = function(oTargetDomNode, bDoNotPreserve, vInsert) {
 			jQuery.sap.assert((typeof oTargetDomNode === "object") && (oTargetDomNode.ownerDocument == document), "oTargetDomNode must be a DOM element");
-			if (this.bRendererMode) {
-				jQuery.sap.log.info("Flush must not be called from control renderers. Call ignored.", null, this);
-				return;
-			}
 
 			// preserve HTML content before flushing HTML into target DOM node
 			if (!bDoNotPreserve && (typeof vInsert !== "number") && !vInsert) { // expression mimics the conditions used below
 				RenderManager.preserveContent(oTargetDomNode);
 			}
 
-			var oStoredFocusInfo = this.oFocusHandler ? this.oFocusHandler.getControlFocusInfo() : null;
+			flushInternal(function(sHTML) {
 
-			var sHTML = this.aBuffer.join("");
-
-			if (this._fPutIntoDom) {
-				//Case when render function was called
-				this._fPutIntoDom(oTargetDomNode, sHTML);
-			} else {
-				for (var i = 0; i < this.aRenderedControls.length; i++) {
+				for (var i = 0; i < aRenderedControls.length; i++) {
 					//TODO It would be enough to loop over the controls for which renderControl was initially called but for this
 					//we have to manage an additional array. Rethink about later.
-					var oldDomNode = this.aRenderedControls[i].getDomRef();
+					var oldDomNode = aRenderedControls[i].getDomRef();
 					if (oldDomNode && !RenderManager.isPreservedContent(oldDomNode)) {
 						if (RenderManager.isInlineTemplate(oldDomNode)) {
 							jQuery(oldDomNode).empty();
@@ -491,17 +613,9 @@ sap.ui.define([
 				} else {
 					jQuery(oTargetDomNode).append(sHTML); // Append the HTML into the given DOM Node
 				}
-			}
 
-			finalizeRendering(this, this.aRenderedControls, oStoredFocusInfo);
+			});
 
-			this.aRenderedControls = [];
-			this.aBuffer = [];
-			this.aStyleStack = [{}];
-
-			jQuery.sap.act.refresh();
-
-			jQuery.sap.interaction.notifyStepEnd();
 		};
 
 		/**
@@ -517,22 +631,16 @@ sap.ui.define([
 		 * @param {Element} oTargetDomNode The node in the DOM where the result of the rendering should be inserted.
 		 * @public
 		 */
-		RenderManager.prototype.render = function(oControl, oTargetDomNode) {
+		this.render = function(oControl, oTargetDomNode) {
 			jQuery.sap.assert(oControl && lazyInstanceof(oControl, 'sap/ui/core/Control'), "oControl must be a control");
 			jQuery.sap.assert(typeof oTargetDomNode === "object" && oTargetDomNode.ownerDocument == document, "oTargetDomNode must be a DOM element");
-			if (this.bRendererMode) {
-				jQuery.sap.log.info("Render must not be called from control renderers. Call ignored.", null, this);
-				return;
-			}
-			if (this._bLocked) {
+			if ( bLocked ) {
 				jQuery.sap.log.error("Render must not be called within Before or After Rendering Phase. Call ignored.", null, this);
 				return;
 			}
 
 			// Reset internal state before rendering
-			this.aRenderedControls = [];
-			this.aBuffer = [];
-			this.aStyleStack = [{}];
+			reset();
 
 			// Retrieve the markup (the rendering phase)
 			this.renderControl(oControl);
@@ -540,7 +648,7 @@ sap.ui.define([
 			// FIXME: MULTIPLE ROOTS
 			// The implementation of this method doesn't support multiple roots for a control.
 			// Affects all places where 'oldDomNode' is used
-			this._fPutIntoDom = function(oTarget, sHTML){
+			flushInternal(function(sHTML) {
 
 				if (oControl && oTargetDomNode) {
 
@@ -581,7 +689,7 @@ sap.ui.define([
 							if (oldDomNode) {
 								if (RenderManager.isInlineTemplate(oldDomNode)) {
 									jQuery(oldDomNode).html(sHTML);
-								} else if (this._isDomPathingEnabled()) {
+								} else if ( isDomPatchingEnabled() ) {
 									jQuery.sap.replaceDOM(oldDomNode, sHTML, true);
 								} else {
 									jQuery(oldDomNode).replaceWith(sHTML);
@@ -607,287 +715,56 @@ sap.ui.define([
 
 				}
 
-			};
-
-			this.flush(oTargetDomNode, true);
-
-			this._fPutIntoDom = null;
+			});
 		};
 
-	}());
+		/**
+		 * Cleans up the resources associated with this instance.
+		 *
+		 * After the instance has been destroyed, it must not be used anymore.
+		 * Applications should call this function if they don't need the instance any longer.
+		 *
+		 * @public
+		 */
+		this.destroy = function() {
+			reset();
+		};
 
+		var oRendererInterface = {};
+		var oInterface = {};
+		aCommonMethods.forEach(function(sMethod) {
+			oRendererInterface[sMethod] = oInterface[sMethod] = that[sMethod];
+		});
+		aNonRendererMethods.forEach(function(sMethod) {
+			oInterface[sMethod] = that[sMethod];
+		});
 
-	//#################################################################################################
-	// Static Methods
-	//#################################################################################################
+		/**
+		 * Returns the public interface of the RenderManager which can be used by Renderers.
+		 *
+		 * @return {sap.ui.base.Interface} the interface
+		 * @private
+		 */
+		this.getRendererInterface = function() {
+			return oRendererInterface;
+		};
+
+		this.getInterface = function() {
+			return oInterface;
+		};
+
+		reset();
+	}
 
 	/**
-	 * Returns the renderer class for a given control instance
-	 *
-	 * @param {sap.ui.core.Control}
-	 *            oControl the control that should be rendered
-	 * @type function
-	 * @return the renderer class for a given control instance
-	 * @static
+	 * Returns the configuration object
+	 * Shortcut for <code>sap.ui.getCore().getConfiguration()</code>
+	 * @return {sap.ui.core.Configuration} the configuration object
 	 * @public
 	 */
-	RenderManager.getRenderer = function(oControl) {
-		jQuery.sap.assert(oControl && lazyInstanceof(oControl, 'sap/ui/core/Control'), "oControl must be a sap.ui.core.Control");
-
-		return oControl.getMetadata().getRenderer();
+	RenderManager.prototype.getConfiguration = function() {
+		return sap.ui.getCore().getConfiguration();
 	};
-
-	/**
-	 * Helper to enforce a repaint for a given dom node.
-	 *
-	 * Introduced to fix repaint issues in Webkit browsers, esp. Chrome.
-	 * @param {Element} vDomNode a DOM node or ID of a DOM node
-	 *
-	 * @private
-	 */
-	RenderManager.forceRepaint = function(vDomNode) {
-		var oDomNode = typeof vDomNode == "string" ? jQuery.sap.domById(vDomNode) : vDomNode;
-		if ( oDomNode ) {
-			jQuery.sap.log.debug("forcing a repaint for " + (oDomNode.id || String(oDomNode)));
-			var sOriginalDisplay = oDomNode.style.display;
-			var oActiveElement = document.activeElement;
-			oDomNode.style.display = "none";
-			oDomNode.offsetHeight;
-			oDomNode.style.display = sOriginalDisplay;
-			if (document.activeElement !== oActiveElement) {
-				jQuery.sap.focus(oActiveElement);
-			}
-		}
-	};
-
-	/**
-	 * Creates the ID to be used for the invisible Placeholder DOM element.
-	 * This method can be used to get direct access to the placeholder DOM element.
-	 * Also statically available as RenderManager.createInvisiblePlaceholderId()
-	 *
-	 * @param {sap.ui.core.Element} oElement - The Element instance for which to create the placeholder ID
-	 * @returns {string} The ID used for the invisible Placeholder of this element
-	 * @static
-	 * @protected
-	 */
-	RenderManager.createInvisiblePlaceholderId = function(oElement) {
-		return RenderPrefixes.Invisible + oElement.getId();
-	};
-
-
-	//#################################################################################################
-	// Methods for preserving HTML content
-	//#################################################################################################
-
-	(function() {
-
-		var ID_PRESERVE_AREA = "sap-ui-preserve",
-			ID_STATIC_AREA = "sap-ui-static", // to be kept in sync with Core!
-			ATTR_PRESERVE_MARKER = "data-sap-ui-preserve",
-			ATTR_UI_AREA_MARKER = "data-sap-ui-area";
-
-		function getPreserveArea() {
-			var $preserve = jQuery.sap.byId(ID_PRESERVE_AREA);
-			if ($preserve.length === 0) {
-				$preserve = jQuery("<DIV/>",{"aria-hidden":"true",id:ID_PRESERVE_AREA}).
-					addClass("sapUiHidden").addClass("sapUiForcedHidden").css("width", "0").css("height", "0").css("overflow", "hidden").
-					appendTo(document.body);
-			}
-			return $preserve;
-		}
-
-		/**
-		 * Create a placeholder node for the given node (which must have an ID) and insert it before the node
-		 */
-		function makePlaceholder(node) {
-			jQuery("<DIV/>", { id: RenderPrefixes.Dummy + node.id}).addClass("sapUiHidden").insertBefore(node);
-		}
-
-		/**
-		 * Collects descendants of the given root node that need to be preserved before the root node
-		 * is wiped out. The "to-be-preserved" nodes are moved to a special, hidden 'preserve' area.
-		 *
-		 * A node is declared "to-be-preserved" when it has the <code>data-sap-ui-preserve</code>
-		 * attribute set. When the optional parameter <code>bPreserveNodesWithId</code> is set to true,
-		 * then nodes with an id are preserved as well and their <code>data-sap-ui-preserve</code> attribute
-		 * is set automatically. This option is used by UIAreas when they render for the first time and
-		 * simplifies the handling of predefined HTML content in a web page.
-		 *
-		 * The "to-be-preserved" nodes are searched with a depth first search and moved to the 'preserve'
-		 * area in the order that they are found. So for direct siblings the order should be stable.
-		 *
-		 * @param {Element} oRootNode to search for "to-be-preserved" nodes
-		 * @param {boolean} [bPreserveRoot=false] whether to preserve the root itself
-		 * @param {boolean} [bPreserveNodesWithId=false] whether to preserve nodes with an id as well
-		 * @public
-		 * @static
-		 */
-		RenderManager.preserveContent = function(oRootNode, bPreserveRoot, bPreserveNodesWithId) {
-			jQuery.sap.assert(typeof oRootNode === "object" && oRootNode.ownerDocument == document, "oRootNode must be a DOM element");
-
-			sap.ui.getCore().getEventBus().publish("sap.ui","__preserveContent", { domNode : oRootNode});
-
-			var $preserve = getPreserveArea();
-
-			function check(candidate) {
-
-				// don't process the preserve area or the static area
-				if ( candidate.id === ID_PRESERVE_AREA || candidate.id === ID_STATIC_AREA ) {
-					return;
-				}
-
-				if ( candidate.hasAttribute(ATTR_PRESERVE_MARKER) )  { // node is marked with the preserve marker
-					// when the current node is the root node then we're doing a single control rerendering
-					if ( candidate === oRootNode ) {
-						makePlaceholder(candidate);
-					}
-					$preserve.append(candidate);
-				} else if ( bPreserveNodesWithId && candidate.id ) {
-					RenderManager.markPreservableContent(jQuery(candidate), candidate.id);
-					$preserve.append(candidate);
-					return;
-				}
-
-				// don't dive into nested UIAreas. They are preserved together with any preserved parent (e.g. HTML control)
-				if ( !candidate.hasAttribute(ATTR_UI_AREA_MARKER) ) {
-					var next = candidate.firstChild;
-					while ( next ) {
-						// determine nextSibiling before checking the candidate because
-						// a move to the preserveArea will modify the sibling relationship!
-						candidate = next;
-						next = next.nextSibling;
-						if ( candidate.nodeType === 1 /* Node.ELEMENT */ ) {
-							check(candidate);
-						}
-					}
-				}
-
-			}
-
-			jQuery.sap.measure.start(oRootNode.id + "---preserveContent","preserveContent for " + oRootNode.id, ["rendering","preserve"]);
-			if ( bPreserveRoot ) {
-				check(oRootNode);
-			} else {
-				jQuery(oRootNode).children().each(function(i,oNode) {
-					check(oNode);
-				});
-			}
-			jQuery.sap.measure.end(oRootNode.id + "---preserveContent");
-		};
-
-		/**
-		 * Searches "to-be-preserved" nodes for the given control id.
-		 *
-		 * @param {string} sId control id to search content for.
-		 * @return {jQuery} a jQuery collection representing the found content
-		 * @public
-		 * @static
-		 */
-		RenderManager.findPreservedContent = function(sId) {
-			jQuery.sap.assert(typeof sId === "string", "sId must be a string");
-			var $preserve = getPreserveArea(),
-				$content = $preserve.children("[" + ATTR_PRESERVE_MARKER + "='" + sId.replace(/(:|\.)/g,'\\$1') + "']");
-			return $content;
-		};
-
-		/**
-		 * Marks the given content as "to-be-preserved" for a control with the given id.
-		 * When later on the content has been preserved, it can be found by giving the same id.
-		 *
-		 * @param {jQuery} $content a jQuery collection of DOM objects to be marked
-		 * @param {string} sId id of the control to associate the content with
-		 * @static
-		 */
-		RenderManager.markPreservableContent = function($content, sId) {
-			$content.attr(ATTR_PRESERVE_MARKER, sId);
-		};
-
-		/**
-		 * Checks whether the given DOM node is part of the 'preserve' area.
-		 *
-		 * @param {Element} oDomNode
-		 * @return {boolean} whether node is part of 'preserve' area
-		 * @private
-		 * @static
-		 */
-		RenderManager.isPreservedContent = function(oDomNode) {
-			return ( oDomNode && oDomNode.getAttribute(ATTR_PRESERVE_MARKER) && oDomNode.parentNode && oDomNode.parentNode.id == ID_PRESERVE_AREA );
-		};
-
-		/**
-		 * Returns the hidden area reference belonging to this window instance.
-		 *
-		 * @return {Element} the hidden area reference belonging to this core instance.
-		 * @public
-		 * @static
-		 */
-		RenderManager.getPreserveAreaRef = function() {
-			return getPreserveArea()[0];
-		};
-
-		var ATTR_INLINE_TEMPLATE_MARKER = "data-sap-ui-template";
-
-		/**
-		 * Marks the given content as "inline template".
-		 *
-		 * @param {jQuery} $content a jQuery collection of DOM objects to be marked
-		 * @private
-		 * @static
-		 */
-		RenderManager.markInlineTemplate = function($content) {
-			$content.attr(ATTR_INLINE_TEMPLATE_MARKER, "");
-		};
-
-		/**
-		 * Checks whether the given DOM node is an 'inline template' area.
-		 *
-		 * @param {Element} oDomNode
-		 * @return {boolean} whether node is an 'inline template' area
-		 * @private
-		 * @static
-		 */
-		RenderManager.isInlineTemplate = function(oDomNode) {
-			return ( oDomNode && oDomNode.hasAttribute(ATTR_INLINE_TEMPLATE_MARKER) );
-		};
-
-	}());
-
-
-	//#################################################################################################
-	// Methods for 'Buffered writer' functionality... (all public)
-	// i.e. used methods in render-method of Renderers
-	//#################################################################################################
-
-	/**
-	 * Write the given texts to the buffer
-	 * @param {...string|number} sText (can be a number too)
-	 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
-	 * @public
-	 * @SecSink {*|XSS}
-	 */
-	RenderManager.prototype.write = function(/** string|number */ sText /* ... */) {
-		jQuery.sap.assert(( typeof sText === "string") || ( typeof sText === "number"), "sText must be a string or number");
-		this.aBuffer.push.apply(this.aBuffer, arguments);
-		return this;
-	};
-
-	/**
-	 * Escape text for HTML and write it to the buffer
-	 * @param {string} sText
-	 * @param {boolean} bLineBreaks Whether to convert linebreaks into <br> tags
-	 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
-	 * @public
-	 */
-	RenderManager.prototype.writeEscaped = function(/** string */ sText, bLineBreaks) {
-		jQuery.sap.assert( typeof sText === "string", "sText must be a string");
-		sText = jQuery.sap.encodeHTML(sText);
-		if (bLineBreaks) {
-			sText = sText.replace(/&#xa;/g, "<br>");
-		}
-		this.aBuffer.push(sText);
-		return this;
-	};
-
 
 	/**
 	 * @param {string} sKey
@@ -916,105 +793,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adds a style property to the style collection if the value is not empty or null
-	 * The style collection is flushed if it is written to the buffer using {@link #writeStyle}
-	 *
-	 * @param {string} sName name of the CSS property to write
-	 * @param {string|float|int} value value to write
-	 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
-	 * @public
-	 * @SecSink {0 1|XSS} Styles are written to HTML without validation
-	 */
-	RenderManager.prototype.addStyle = function(sName, value) {
-		jQuery.sap.assert(typeof sName === "string", "sName must be a string");
-		if (value !== undefined && value !== null) {
-			jQuery.sap.assert((typeof value === "string" || typeof value === "number"), "value must be a string or number");
-			var oStyle = this.aStyleStack[this.aStyleStack.length - 1];
-			if (!oStyle.aStyle) {
-				oStyle.aStyle = [];
-			}
-			oStyle.aStyle.push(sName + ":" + value);
-		}
-		return this;
-	};
-
-	/**
-	 * Writes and flushes the style collection
-	 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
-	 * @public
-	 */
-	RenderManager.prototype.writeStyles = function() {
-		var oStyle = this.aStyleStack[this.aStyleStack.length - 1];
-		if (oStyle.aStyle) {
-			this.write(" style=\"" + oStyle.aStyle.join(";") + "\" ");
-		}
-		oStyle.aStyle = null;
-		return this;
-	};
-
-	/**
-	 * Adds a class to the class collection if the name is not empty or null.
-	 * The class collection is flushed if it is written to the buffer using {@link #writeClasses}
-	 *
-	 * @param {string} sName name of the class to be added; null values are ignored
-	 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
-	 * @public
-	 * @SecSink {0|XSS} Classes are written to HTML without validation
-	 */
-	RenderManager.prototype.addClass = function(sName) {
-		if (sName) {
-			jQuery.sap.assert(typeof sName === "string", "sName must be a string");
-			var oStyle = this.aStyleStack[this.aStyleStack.length - 1];
-			if (!oStyle.aClasses) {
-				oStyle.aClasses = [];
-			}
-			oStyle.aClasses.push(sName);
-		}
-		return this;
-	};
-
-	/**
-	 * Writes and flushes the class collection (all CSS classes added by "addClass()" since the last flush).
-	 * Also writes the custom style classes added by the application with "addStyleClass(...)". Custom classes are
-	 * added by default from the currently rendered control. If an oElement is given, this Element's custom style
-	 * classes are added instead. If oElement === false, no custom style classes are added.
-	 *
-	 * @param {sap.ui.core.Element | boolean} [oElement] an Element from which to add custom style classes (instead of adding from the control itself)
-	 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
-	 * @public
-	 */
-	RenderManager.prototype.writeClasses = function(oElement) {
-		jQuery.sap.assert(!oElement || typeof oElement === "boolean" || lazyInstanceof(oElement, 'sap/ui/core/Element'), "oElement must be empty, a boolean, or a sap.ui.core.Element");
-		var oStyle = this.aStyleStack[this.aStyleStack.length - 1];
-
-		// Custom classes are added by default from the currently rendered control. If an oElement is given, this Element's custom style
-		// classes are added instead. If oElement === false, no custom style classes are added.
-		var aCustomClasses;
-		if (oElement) {
-			aCustomClasses = oElement.aCustomStyleClasses;
-		} else if (oElement === false) {
-			aCustomClasses = [];
-		} else {
-			aCustomClasses = oStyle.aCustomStyleClasses;
-	}
-
-		if (oStyle.aClasses || aCustomClasses) {
-			var aClasses = [].concat(oStyle.aClasses || [], aCustomClasses || []);
-			aClasses.sort();
-			aClasses = jQuery.map(aClasses, function(n, i){
-				return (i == 0 || n != aClasses[i - 1]) ? n : null;
-			});
-			this.write(" class=\"", aClasses.join(" "), "\" ");
-		}
-
-		if (!oElement) {
-			oStyle.aCustomStyleClasses = null;
-		}
-		oStyle.aClasses = null;
-		return this;
-	};
-
-	/**
 	 * Writes the controls data into the HTML.
 	 * Control Data consists at least of the id of a control
 	 * @param {sap.ui.core.Control} oControl the control whose identifying information should be written to the buffer
@@ -1030,20 +808,24 @@ sap.ui.define([
 	/**
 	 * Writes necessary invisible control/element placeholder data into the HTML.
 	 *
-	 * Controls should only use this method if they can't live with the standard 'visible=false' implementation of the RenderManager which
-	 * renders dummy HTMLSpanElement for better re-rendering performance. Even though HTML5 error tolerance accepts this for most of the cases and
-	 * these dummy elements are not in the render tree of the Browser, controls may need to generate a valid and semantic HTML output when the
-	 * rendered HTMLSpanElement is not an allowed element(e.g. &lt;span&gt; element within the &lt;tr&gt; or &lt;li&gt; group).
+	 * Controls should use this method only if the standard implementation of the RenderManager doesn't fit their needs.
+	 * That standard implementation renders an invisible &lt;span&gt; element for controls with <code>visible:false</code> to improve
+	 * re-rendering performance. Due to the fault tolerance of the HTML5 standard, such &lt;span&gt; elements are accepted in many
+	 * scenarios and won't appear in the render tree of the browser, However, in some cases, controls may need to write a different
+	 * element when the &lt;span&gt; is not an allowed element (e.g. within the &lt;tr&gt; or &lt;li&gt; group).
 	 *
 	 * The caller needs to start an opening HTML tag, then call this method, then complete the opening and closing tag.
+	 *
 	 * <pre>
-	 * oRenderManager.write("<tr");
-	 * oRenderManager.writeInvisiblePlaceholderData(oControl);
-	 * oRenderManager.write("></tr>");
+	 *
+	 *   oRenderManager.write("&lt;tr");
+	 *   oRenderManager.writeInvisiblePlaceholderData(oControl);
+	 *   oRenderManager.write("&gt;&lt;/tr");
+	 *
 	 * </pre>
 	 *
-	 * @param {sap.ui.core.Element} oElement an instance of sap.ui.core.Element
-	 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
+	 * @param {sap.ui.core.Element} oElement An instance of sap.ui.core.Element
+	 * @return {sap.ui.core.RenderManager} This render manager instance to allow chaining
 	 * @protected
 	 */
 	RenderManager.prototype.writeInvisiblePlaceholderData = function(oElement) {
@@ -1086,62 +868,32 @@ sap.ui.define([
 	};
 
 	/**
-	 * Writes the attribute and its value into the HTML
-	 * @param {string} sName the name of the attribute
-	 * @param {string | number | boolean} value the value of the attribute
-	 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
-	 * @public
-	 * @SecSink {0 1|XSS} Attributes are written to HTML without validation
-	 */
-	RenderManager.prototype.writeAttribute = function(sName, value) {
-		jQuery.sap.assert(typeof sName === "string", "sName must be a string");
-		jQuery.sap.assert(typeof value === "string" || typeof value === "number" || typeof value === "boolean", "value must be a string, number or boolean");
-		this.write(" ", sName, "=\"", value, "\"");
-		return this;
-	};
-
-	/**
-	 * Writes the attribute and its value into the HTML
-	 *
-	 * The value is properly escaped to avoid XSS attacks.
-	 *
-	 * @param {string} sName the name of the attribute
-	 * @param {any} vValue the value of the attribute
-	 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
-	 * @public
-	 * @SecSink {0|XSS}
-	 */
-	RenderManager.prototype.writeAttributeEscaped = function(sName, vValue) {
-		// writeAttribute asserts
-		this.writeAttribute(sName, jQuery.sap.encodeHTML(String(vValue)));
-		return this;
-	};
-
-	/**
 	 * Writes the accessibility state (see WAI-ARIA specification) of the provided element into the HTML
 	 * based on the element's properties and associations.
 	 *
 	 * The ARIA properties are only written when the accessibility feature is activated in the UI5 configuration.
 	 *
 	 * The following properties/values to ARIA attribute mappings are done (if the element does have such properties):
-	 * <code>editable===false</code> => <code>aria-readonly="true"</code>
-	 * <code>enabled===false</code> => <code>aria-disabled="true"</code>
-	 * <code>visible===false</code> => <code>aria-hidden="true"</code>
-	 * <code>required===true</code> => <code>aria-required="true"</code>
-	 * <code>selected===true</code> => <code>aria-selected="true"</code>
-	 * <code>checked===true</code> => <code>aria-checked="true"</code>
+	 * <ul>
+	 * <li><code>editable===false</code> => <code>aria-readonly="true"</code></li>
+	 * <li><code>enabled===false</code> => <code>aria-disabled="true"</code></li>
+	 * <li><code>visible===false</code> => <code>aria-hidden="true"</code></li>
+	 * <li><code>required===true</code> => <code>aria-required="true"</code></li>
+	 * <li><code>selected===true</code> => <code>aria-selected="true"</code></li>
+	 * <li><code>checked===true</code> => <code>aria-checked="true"</code></li>
+	 * </ul>
 	 *
 	 * In case of the required attribute also the Label controls which referencing the given element in their 'for' relation
 	 * are taken into account to compute the <code>aria-required</code> attribute.
 	 *
-	 * Additionally the association <code>ariaDescribedBy</code> and <code>ariaLabelledBy</code> are used to write
-	 * the id lists of the ARIA attributes <code>aria-describedby</code> and <code>aria-labelledby</code>.
+	 * Additionally, the association <code>ariaDescribedBy</code> and <code>ariaLabelledBy</code> are used to write
+	 * the ID lists of the ARIA attributes <code>aria-describedby</code> and <code>aria-labelledby</code>.
 	 *
-	 * Label controls which referencing the given element in their 'for' relation are automatically added to the
+	 * Label controls that reference the given element in their 'for' relation are automatically added to the
 	 * <code>aria-labelledby</code> attributes.
 	 *
 	 * Note: This function is only a heuristic of a control property to ARIA attribute mapping. Control developers
-	 * have to check whether it fullfills their requirements. In case of problems (for example the RadioButton has a
+	 * have to check whether it fulfills their requirements. In case of problems (for example the RadioButton has a
 	 * <code>selected</code> property but must provide an <code>aria-checked</code> attribute) the auto-generated
 	 * result of this function can be influenced via the parameter <code>mProps</code> as described below.
 	 *
@@ -1150,9 +902,9 @@ sap.ui.define([
 	 * (Exception: Attribute 'role' does not get the prefix 'aria-').
 	 *
 	 * Examples:
-	 * <code>{hidden : true}</code> results in <code>aria-hidden="true"</code> independent of the precense or absence of
+	 * <code>{hidden : true}</code> results in <code>aria-hidden="true"</code> independent of the presence or absence of
 	 * the visibility property.
-	 * <code>{hidden : null}</code> ensures that no <code>aria-hidden</code> attribute is written independent of the precense
+	 * <code>{hidden : null}</code> ensures that no <code>aria-hidden</code> attribute is written independent of the presence
 	 * or absence of the visibility property.
 	 * The function behaves in the same way for the associations <code>ariaDescribedBy</code> and <code>ariaLabelledBy</code>.
 	 * To append additional values to the auto-generated <code>aria-describedby</code> and <code>aria-labelledby</code> attributes
@@ -1267,19 +1019,23 @@ sap.ui.define([
 
 
 	/**
-	 * Writes either an img tag for normal URI or an span tag with needed properties for icon URI.
+	 * Writes either an &lt;img&gt; tag for normal URI or a &lt;span&gt; tag with needed properties for an icon URI.
 	 *
-	 * Additional classes and attributes can be added to the tag by given the second and third parameter.
+	 * Additional classes and attributes can be added to the tag with the second and third parameter.
 	 * All of the given attributes are escaped for security consideration.
 	 *
-	 * when img tag is rendered, the following two attributes are added by default which can be overwritten by the provided mAttributes parameter:
-	 * 1. role: presentation
-	 * 2. alt: ""
+	 * When an &lt;img&gt; tag is rendered, the following two attributes are added by default
+	 * and can be overwritten with corresponding values in the <code>mAttributes</code> parameter:
+	 * <ul>
+	 * <li><code>role: "presentation"</code></Li>
+	 * <li><code>alt: ""</code></li>
+	 * </ul>
 	 *
-	 * @param {sap.ui.core.URI} sURI is the URI of an image or an icon registered in sap.ui.core.IconPool.
-	 * @param {array|string} aClasses are additional classes that are added to the rendered tag.
-	 * @param {object} mAttributes are additional attributes that are added to the rendered tag.
+	 * @param {sap.ui.core.URI} sURI URI of an image or of an icon registered in {@link sap.ui.core.IconPool}
+	 * @param {array|string} aClasses Additional classes that are added to the rendered tag
+	 * @param {object} mAttributes Additional attributes that will be added to the rendered tag
 	 * @returns {sap.ui.core.RenderManager} this render manager instance to allow chaining
+	 * @public
 	 */
 	RenderManager.prototype.writeIcon = function(sURI, aClasses, mAttributes){
 		var IconPool = sap.ui.requireSync("sap/ui/core/IconPool"),
@@ -1348,20 +1104,303 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the renderer class for a given control instance
+	 *
+	 * @param {sap.ui.core.Control} oControl the control that should be rendered
+	 * @return the renderer class for a given control instance
+	 * @public
+	 */
+	RenderManager.prototype.getRenderer = function(oControl) {
+		jQuery.sap.assert(oControl && lazyInstanceof(oControl, 'sap/ui/core/Control'), "oControl must be a sap.ui.core.Control");
+		return RenderManager.getRenderer(oControl);
+	};
+
+
+	//#################################################################################################
+	// Static Members
+	//#################################################################################################
+
+	/**
+	 * Prefixes to be used for rendering "unusual" DOM-Elements, like dummy elements, placeholders
+	 * for invisible controls, etc.
+	 *
+	 * @enum {string}
+	 * @private
+	 * @alias sap.ui.core.RenderManager.RenderPrefixes
+	 */
+	var RenderPrefixes = RenderManager.RenderPrefixes = {
+
+		/**
+		 * The control has not been rendered because it is invisible, the element rendered with this
+		 * prefix can be found by the RenderManager to avoid rerendering the parents
+		 * @private
+		 */
+		Invisible : "sap-ui-invisible-",
+
+		/**
+		 * A dummy element is rendered with the intention of replacing it with the real content
+		 * @private
+		 */
+		Dummy : "sap-ui-dummy-"
+
+	};
+
+
+	/**
+	 * Returns the renderer class for a given control instance
+	 *
+	 * @param {sap.ui.core.Control}
+	 *            oControl the control that should be rendered
+	 * @type function
+	 * @return the renderer class for a given control instance
+	 * @static
+	 * @public
+	 */
+	RenderManager.getRenderer = function(oControl) {
+		jQuery.sap.assert(oControl && lazyInstanceof(oControl, 'sap/ui/core/Control'), "oControl must be a sap.ui.core.Control");
+
+		return oControl.getMetadata().getRenderer();
+	};
+
+	/**
+	 * Helper to enforce a repaint for a given dom node.
+	 *
+	 * Introduced to fix repaint issues in Webkit browsers, esp. Chrome.
+	 * @param {Element} vDomNode a DOM node or ID of a DOM node
+	 *
+	 * @private
+	 */
+	RenderManager.forceRepaint = function(vDomNode) {
+		var oDomNode = typeof vDomNode == "string" ? jQuery.sap.domById(vDomNode) : vDomNode;
+		if ( oDomNode ) {
+			jQuery.sap.log.debug("forcing a repaint for " + (oDomNode.id || String(oDomNode)));
+			var sOriginalDisplay = oDomNode.style.display;
+			var oActiveElement = document.activeElement;
+			oDomNode.style.display = "none";
+			oDomNode.offsetHeight;
+			oDomNode.style.display = sOriginalDisplay;
+			if (document.activeElement !== oActiveElement) {
+				jQuery.sap.focus(oActiveElement);
+			}
+		}
+	};
+
+	/**
+	 * Creates the ID to be used for the invisible Placeholder DOM element.
+	 * This method can be used to get direct access to the placeholder DOM element.
+	 * Also statically available as RenderManager.createInvisiblePlaceholderId()
+	 *
+	 * @param {sap.ui.core.Element} oElement - The Element instance for which to create the placeholder ID
+	 * @returns {string} The ID used for the invisible Placeholder of this element
+	 * @static
+	 * @protected
+	 */
+	RenderManager.createInvisiblePlaceholderId = function(oElement) {
+		return RenderPrefixes.Invisible + oElement.getId();
+	};
+
+
+	//#################################################################################################
+	// Methods for preserving HTML content
+	//#################################################################################################
+
+	var ID_PRESERVE_AREA = "sap-ui-preserve",
+		ID_STATIC_AREA = "sap-ui-static", // to be kept in sync with Core!
+		ATTR_PRESERVE_MARKER = "data-sap-ui-preserve",
+		ATTR_UI_AREA_MARKER = "data-sap-ui-area";
+
+	function getPreserveArea() {
+		var $preserve = jQuery.sap.byId(ID_PRESERVE_AREA);
+		if ($preserve.length === 0) {
+			$preserve = jQuery("<DIV/>",{"aria-hidden":"true",id:ID_PRESERVE_AREA}).
+				addClass("sapUiHidden").addClass("sapUiForcedHidden").css("width", "0").css("height", "0").css("overflow", "hidden").
+				appendTo(document.body);
+		}
+		return $preserve;
+	}
+
+	/**
+	 * Create a placeholder node for the given node (which must have an ID) and insert it before the node
+	 */
+	function makePlaceholder(node) {
+		jQuery("<DIV/>", { id: RenderPrefixes.Dummy + node.id}).addClass("sapUiHidden").insertBefore(node);
+	}
+
+	/**
+	 * Collects descendants of the given root node that need to be preserved before the root node
+	 * is wiped out. The "to-be-preserved" nodes are moved to a special, hidden 'preserve' area.
+	 *
+	 * A node is declared "to-be-preserved" when it has the <code>data-sap-ui-preserve</code>
+	 * attribute set. When the optional parameter <code>bPreserveNodesWithId</code> is set to true,
+	 * then nodes with an id are preserved as well and their <code>data-sap-ui-preserve</code> attribute
+	 * is set automatically. This option is used by UIAreas when they render for the first time and
+	 * simplifies the handling of predefined HTML content in a web page.
+	 *
+	 * The "to-be-preserved" nodes are searched with a depth first search and moved to the 'preserve'
+	 * area in the order that they are found. So for direct siblings the order should be stable.
+	 *
+	 * @param {Element} oRootNode to search for "to-be-preserved" nodes
+	 * @param {boolean} [bPreserveRoot=false] whether to preserve the root itself
+	 * @param {boolean} [bPreserveNodesWithId=false] whether to preserve nodes with an id as well
+	 * @public
+	 * @static
+	 */
+	RenderManager.preserveContent = function(oRootNode, bPreserveRoot, bPreserveNodesWithId) {
+		jQuery.sap.assert(typeof oRootNode === "object" && oRootNode.ownerDocument == document, "oRootNode must be a DOM element");
+
+		sap.ui.getCore().getEventBus().publish("sap.ui","__preserveContent", { domNode : oRootNode});
+
+		var $preserve = getPreserveArea();
+
+		function check(candidate) {
+
+			// don't process the preserve area or the static area
+			if ( candidate.id === ID_PRESERVE_AREA || candidate.id === ID_STATIC_AREA ) {
+				return;
+			}
+
+			if ( candidate.hasAttribute(ATTR_PRESERVE_MARKER) )  { // node is marked with the preserve marker
+				// when the current node is the root node then we're doing a single control rerendering
+				if ( candidate === oRootNode ) {
+					makePlaceholder(candidate);
+				}
+				$preserve.append(candidate);
+			} else if ( bPreserveNodesWithId && candidate.id ) {
+				RenderManager.markPreservableContent(jQuery(candidate), candidate.id);
+				$preserve.append(candidate);
+				return;
+			}
+
+			// don't dive into nested UIAreas. They are preserved together with any preserved parent (e.g. HTML control)
+			if ( !candidate.hasAttribute(ATTR_UI_AREA_MARKER) ) {
+				var next = candidate.firstChild;
+				while ( next ) {
+					// determine nextSibiling before checking the candidate because
+					// a move to the preserveArea will modify the sibling relationship!
+					candidate = next;
+					next = next.nextSibling;
+					if ( candidate.nodeType === 1 /* Node.ELEMENT */ ) {
+						check(candidate);
+					}
+				}
+			}
+
+		}
+
+		jQuery.sap.measure.start(oRootNode.id + "---preserveContent","preserveContent for " + oRootNode.id, ["rendering","preserve"]);
+		if ( bPreserveRoot ) {
+			check(oRootNode);
+		} else {
+			jQuery(oRootNode).children().each(function(i,oNode) {
+				check(oNode);
+			});
+		}
+		jQuery.sap.measure.end(oRootNode.id + "---preserveContent");
+	};
+
+	/**
+	 * Searches "to-be-preserved" nodes for the given control id.
+	 *
+	 * @param {string} sId control id to search content for.
+	 * @return {jQuery} a jQuery collection representing the found content
+	 * @public
+	 * @static
+	 */
+	RenderManager.findPreservedContent = function(sId) {
+		jQuery.sap.assert(typeof sId === "string", "sId must be a string");
+		var $preserve = getPreserveArea(),
+			$content = $preserve.children("[" + ATTR_PRESERVE_MARKER + "='" + sId.replace(/(:|\.)/g,'\\$1') + "']");
+		return $content;
+	};
+
+	/**
+	 * Marks the given content as "to-be-preserved" for a control with the given id.
+	 * When later on the content has been preserved, it can be found by giving the same id.
+	 *
+	 * @param {jQuery} $content a jQuery collection of DOM objects to be marked
+	 * @param {string} sId id of the control to associate the content with
+	 * @static
+	 */
+	RenderManager.markPreservableContent = function($content, sId) {
+		$content.attr(ATTR_PRESERVE_MARKER, sId);
+	};
+
+	/**
+	 * Checks whether the given DOM node is part of the 'preserve' area.
+	 *
+	 * @param {Element} oDomNode
+	 * @return {boolean} whether node is part of 'preserve' area
+	 * @private
+	 * @static
+	 */
+	RenderManager.isPreservedContent = function(oDomNode) {
+		return ( oDomNode && oDomNode.getAttribute(ATTR_PRESERVE_MARKER) && oDomNode.parentNode && oDomNode.parentNode.id == ID_PRESERVE_AREA );
+	};
+
+	/**
+	 * Returns the hidden area reference belonging to this window instance.
+	 *
+	 * @return {Element} the hidden area reference belonging to this core instance.
+	 * @public
+	 * @static
+	 */
+	RenderManager.getPreserveAreaRef = function() {
+		return getPreserveArea()[0];
+	};
+
+	var ATTR_INLINE_TEMPLATE_MARKER = "data-sap-ui-template";
+
+	/**
+	 * Marks the given content as "inline template".
+	 *
+	 * @param {jQuery} $content a jQuery collection of DOM objects to be marked
+	 * @private
+	 * @static
+	 */
+	RenderManager.markInlineTemplate = function($content) {
+		$content.attr(ATTR_INLINE_TEMPLATE_MARKER, "");
+	};
+
+	/**
+	 * Checks whether the given DOM node is an 'inline template' area.
+	 *
+	 * @param {Element} oDomNode
+	 * @return {boolean} whether node is an 'inline template' area
+	 * @private
+	 * @static
+	 */
+	RenderManager.isInlineTemplate = function(oDomNode) {
+		return ( oDomNode && oDomNode.hasAttribute(ATTR_INLINE_TEMPLATE_MARKER) );
+	};
+
+
+	//#################################################################################################
+	// Helper Methods
+	//#################################################################################################
+
+	function lazyInstanceof(o, sModule) {
+		var FNClass = sap.ui.require(sModule);
+		return typeof FNClass === 'function' && (o instanceof FNClass);
+	}
+
+
+	var bDomPatching;
+
+	/**
 	 * Determines whether Dom Patching is enabled or not
 	 * @returns {Boolean}
 	 * @private
 	 */
-	RenderManager.prototype._isDomPathingEnabled = function() {
-		if (this._bDomPathing === undefined) {
-			this._bDomPathing = this.getConfiguration().getDomPatching();
-			if (this._bDomPathing) {
-				jQuery.sap.log.warning("DOM Patching is enabled: This feature should be used only for the testing purposes!");
+	function isDomPatchingEnabled() {
+		if (bDomPatching === undefined) {
+			bDomPatching = sap.ui.getCore().getConfiguration().getDomPatching();
+			if (bDomPatching) {
+				jQuery.sap.log.warning("DOM Patching is enabled: This feature should be used only for testing purposes!");
 			}
 		}
 
-		return this._bDomPathing;
-	};
+		return bDomPatching;
+	}
 
 	/**
 	 * Renders an invisible dummy element for controls that have set their visible-property to
@@ -1383,4 +1422,4 @@ sap.ui.define([
 
 	return RenderManager;
 
-});
+}, true);
