@@ -391,8 +391,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 						} else if ((sName === "binding" && !oInfo) || sName === 'objectBindings' ) {
 							var oBindingInfo = ManagedObject.bindingParser(sValue, oView._oContainingView.oController);
 							// TODO reject complex bindings, types, formatters; enable 'parameters'?
-							mSettings.objectBindings = mSettings.objectBindings || {};
-							mSettings.objectBindings[oBindingInfo.model || undefined] = oBindingInfo;
+							if (oBindingInfo) {
+								mSettings.objectBindings = mSettings.objectBindings || {};
+								mSettings.objectBindings[oBindingInfo.model || undefined] = oBindingInfo;
+							}
 
 						} else if (sName.indexOf(":") > -1) {  // namespace-prefixed attribute found
 							if (attr.namespaceURI === "http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1") {  // CustomData attribute found
