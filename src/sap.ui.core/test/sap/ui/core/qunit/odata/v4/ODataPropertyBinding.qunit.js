@@ -843,6 +843,46 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getGroupId: relative bindings", function (assert) {
+		var oBinding = this.oModel.bindProperty("relative"),
+			oContext = Context.create(this.oModel, {}, "/absolute");
+
+		this.mock(this.oModel).expects("getGroupId").withExactArgs().returns("fromModel");
+
+		// code under test
+		assert.strictEqual(oBinding.getGroupId(), "fromModel");
+
+		this.stub(oContext, "fetchValue").returns(_SyncPromise.resolve("foo"));
+		this.stub(this.oModel.getMetaModel(), "requestUI5Type")
+			.returns(Promise.resolve(new TypeString()));
+		oBinding.setContext(oContext);
+		this.mock(oContext).expects("getGroupId").withExactArgs().returns("fromContext");
+
+		// code under test
+		assert.strictEqual(oBinding.getGroupId(), "fromContext");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getUpdateGroupId: relative bindings", function (assert) {
+		var oBinding = this.oModel.bindProperty("relative"),
+			oContext = Context.create(this.oModel, {}, "/absolute");
+
+		this.mock(this.oModel).expects("getUpdateGroupId").withExactArgs().returns("fromModel");
+
+		// code under test
+		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
+
+		this.stub(oContext, "fetchValue").returns(_SyncPromise.resolve("foo"));
+		this.stub(this.oModel.getMetaModel(), "requestUI5Type")
+			.returns(Promise.resolve(new TypeString()));
+		oBinding.setContext(oContext);
+		this.mock(oContext).expects("getUpdateGroupId").withExactArgs().returns("fromContext");
+
+		// code under test
+		assert.strictEqual(oBinding.getUpdateGroupId(), "fromContext");
+	});
+
+	//*********************************************************************************************
 	[undefined, "$direct"].forEach(function (sGroupId) {
 		QUnit.test("getGroupId, binding group ID " + sGroupId , function (assert) {
 			var oBinding = this.oModel.bindProperty("/absolute", undefined, {$$groupId : sGroupId}),

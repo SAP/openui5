@@ -1587,6 +1587,42 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getGroupId: relative bindings", function (assert) {
+		var oBinding = this.oModel.bindList("relative"),
+			oContext = Context.create(this.oModel, {}, "/absolute");
+
+		this.mock(this.oModel).expects("getGroupId").withExactArgs().returns("fromModel");
+
+		// code under test
+		assert.strictEqual(oBinding.getGroupId(), "fromModel");
+
+		this.stub(oContext, "registerBinding"); // to prevent it from doing something
+		oBinding.setContext(oContext);
+		this.mock(oContext).expects("getGroupId").withExactArgs().returns("fromContext");
+
+		// code under test
+		assert.strictEqual(oBinding.getGroupId(), "fromContext");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getUpdateGroupId: relative bindings", function (assert) {
+		var oBinding = this.oModel.bindList("relative"),
+			oContext = Context.create(this.oModel, {}, "/absolute");
+
+		this.mock(this.oModel).expects("getUpdateGroupId").withExactArgs().returns("fromModel");
+
+		// code under test
+		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
+
+		this.stub(oContext, "registerBinding"); // to prevent it from doing something
+		oBinding.setContext(oContext);
+		this.mock(oContext).expects("getUpdateGroupId").withExactArgs().returns("fromContext");
+
+		// code under test
+		assert.strictEqual(oBinding.getUpdateGroupId(), "fromContext");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getContexts uses group ID from binding parameter", function (assert) {
 		var oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined,
 				{$$groupId : "myGroup"}),
