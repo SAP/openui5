@@ -551,6 +551,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 			this.close();
 			this.updateDomValue(oItem.getText());
 
+			this.setProperty("value", oItem.getText(), true);
+
 			// deselect the text and move the text cursor at the endmost position
 			setTimeout(this.selectText.bind(this, this.getValue().length, this.getValue().length), 0);
 
