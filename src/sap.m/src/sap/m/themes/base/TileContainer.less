@@ -78,7 +78,6 @@ html.sap-phone .sapMTC .sapMTCScrl {
 	margin-right:8px;
 	margin-bottom:1px;
 	cursor:default;
-	box-shadow: 0px 0px 1px 1px @sapUiLightShadowTint;
 }
 
 .sapMTC .sapMTCBlind {
@@ -90,12 +89,11 @@ html.sap-phone .sapMTC .sapMTCScrl {
 	bottom:0px;
 	right:0px;
 	display:none;
-	box-shadow: 0px 0px 5px 5px @sapUiLightShadowTint;
+	box-shadow: 0px 0px 5px 5px @sapUiContentContrastShadowColor;
 }
 
 .sapMTC .sapMTCPager SPAN.sapMTCActive {
 	background-color: @sapUiHighlight;
-	box-shadow: 0px 0px 2px 2px @sapUiLightShadowTint;
 }
 
 .sapMTC .sapMTCScroller {
@@ -103,7 +101,7 @@ html.sap-phone .sapMTC .sapMTCScrl {
 	display:none;
 	top:41%;
 	border-radius: 50%;
-	background-color: sapUiInvertedElement;
+	background-color: @sapUiContentContrastIconColor;
 	height: 48px;
 	width: 48px;
 	opacity:0;
@@ -114,7 +112,7 @@ html.sap-phone .sapMTC .sapMTCScrl {
 	-moz-transition-duration: 0.4s;
 	transition-property: opacity, left, right;
 	transition-duration: 0.4s;
-	box-shadow: 0px 0.0625rem 0.25rem fade(@sapUiDarkShadowTint,30%);
+	box-shadow: 0px 0.0625rem 0.25rem fade(@sapUiContentShadowColor,30%);
 	padding:4px;
 	box-sizing:border-box;
 }
@@ -188,7 +186,7 @@ html.sap-tablet .sapMTC .sapMTCScroller, html.sap-phone .sapMTC .sapMTCScroller 
 
 .sapMTC.sapMTCEditable .sapMTile {
 	cursor: move;
-	box-shadow: 0px 1px 5px fade(@sapUiDarkShadowTint,60);
+	box-shadow: 0px 1px 5px fade(@sapUiContentShadowColor,60);
 }
 
 .sapMTC.sapMTCEditable .sapMTile .sapMTCRemove {
@@ -206,7 +204,7 @@ html.sap-tablet .sapMTC .sapMTCScroller, html.sap-phone .sapMTC .sapMTCScroller 
 	box-sizing:border-box;
 	margin-top : -0.5rem;
 	margin-left : -0.5rem;
-	box-shadow: 0px 1px 3px fade(@sapUiDarkShadowTint,60);
+	box-shadow: 0px 1px 3px fade(@sapUiContentShadowColor,60);
 	z-index:1;
 	cursor:default;
 }
