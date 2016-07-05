@@ -1257,7 +1257,12 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._computeScrollableContentSize = function(bShouldStick) {
-		var iScrollableContentHeight = jQuery.sap.byId(this.getId() + "-scroll")[0].scrollHeight;
+		var $scroll = jQuery.sap.byId(this.getId() + "-scroll"),
+			iScrollableContentHeight = 0;
+
+		if ($scroll && $scroll.length){
+			iScrollableContentHeight = $scroll[0].scrollHeight;
+		}
 
 		if (!this._bStickyAnchorBar && bShouldStick) { //anchorBar is removed from scrollable content upon snap
 			iScrollableContentHeight -= this.iAnchorBarHeight;
