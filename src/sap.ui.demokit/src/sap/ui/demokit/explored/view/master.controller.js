@@ -25,7 +25,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 		compactOn : false,
 		themeActive : "sap_bluecrystal",
 		rtl: false,
-		version: sap.ui.version.split(".")[0] + "." + sap.ui.version.split(".")[1]
+		version: jQuery.sap.Version(sap.ui.version).getMajor() + "." + jQuery.sap.Version(sap.ui.version).getMinor()
 	},
 
 	_mGroupFunctions : {
@@ -452,10 +452,8 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 			if (!this._oViewSettings.hasOwnProperty("themeActive")) { // themeActive was introduced later
 				this._oViewSettings.themeActive = "sap_bluecrystal";
 			} else if (this._oViewSettings.version !== this._oDefaultSettings.version) {
-				var aVersion = sap.ui.version.split("."),
-					iMajor = aVersion[0],
-					iMinor = aVersion[1];
-				if (iMajor > 1 || (iMajor === 1 && iMinor >= 40)) { 	// Belize theme is available since 1.40
+				var oVersion = jQuery.sap.Version(sap.ui.version);
+				if (oVersion.compareTo("1.40.0") >= 0) { 	// Belize theme is available since 1.40
 					this._oViewSettings.themeActive = "sap_belize";
 				} else { // Fallback to BlueCrystal for older versions
 					this._oViewSettings.themeActive = "sap_bluecrystal";
