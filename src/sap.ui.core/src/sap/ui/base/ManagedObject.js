@@ -3149,8 +3149,9 @@ sap.ui.define([
 				oClone;
 			if (aChildren.length > aContexts.length) {
 				for (var i = aContexts.length; i < aChildren.length; i++) {
-					oControl[oAggregationInfo._sRemoveMutator](aChildren[i]);
-					aChildren[i].destroy("KeepDom");
+					oClone = aChildren[i];
+					oControl[oAggregationInfo._sRemoveMutator](oClone);
+					oClone.destroy("KeepDom");
 				}
 			}
 			for (var i = 0; i < aContexts.length; i++) {
