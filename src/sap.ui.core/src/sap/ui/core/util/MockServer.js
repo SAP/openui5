@@ -2090,8 +2090,7 @@ sap.ui
 											});
 
 											if (oResponse.statusCode === 400 || oResponse.statusCode === 404) {
-												var sError = "\r\nHTTP/1.1 " + fnResovleStatus(oResponse.statusCode) +
-													"\r\nContent-Type: application/json\r\nContent-Length: 0\r\n\r\n";
+												var sError = fnBuildResponseString(oResponse);
 												throw new Error(sError);
 											}
 											aChangesetResponses.push(fnBuildResponseString(oResponse));
