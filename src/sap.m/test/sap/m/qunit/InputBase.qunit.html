@@ -2050,6 +2050,8 @@
 			oInputDomRef.focus();
 			sap.ui.test.qunit.triggerEvent("input", oInputDomRef);
 
+			// This fix should be valid only for input tag elements
+			strictEqual(oInput._getInputElementTagName(), "INPUT", "Input tag element is used");
 			strictEqual(fnOnInputSpy.callCount, 1, "input event is triggered");
 			ok(fnOnInputSpy.args[0][0].isMarked("invalid"), 1, "input event is marked as invalid");
 
