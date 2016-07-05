@@ -6,6 +6,26 @@ sap.ui.define(["jquery.sap.global"], function($) {
   "use strict";
 
   /**
+   * For example: " Sold-to   (Party) " -> "Sold to Party"
+   *
+   * @param {string} sString - the string to normalize
+   * @param {string} [sSpaceReplacement=" "] - string to fill the space between words. By default, just limits the
+   *                                           return value to a single space between each word.
+   * @returns {string} the normalized input string
+   * @private
+   * @function
+   * @static
+   */
+  function normalize(sString, sSpaceReplacement) {
+    sSpaceReplacement = sSpaceReplacement || " ";
+    return sString
+      .replace(/[\-_]/g, " ") // replaces all dashes or underscores with spaces
+      .trim()
+      .replace(/(?!\s)\W/g, "") // removes all non alphanumeric characters (except for spaces)
+      .replace(/\s+/g, sSpaceReplacement); // replaces any space between words with the input sSpaceReplacement
+  }
+
+  /**
    * Provides utility functions for formatting 2D arrays of strings (such as the raw data loaded from a Gherkin
    * feature file) into a more useful format such as an array of objects or a single object. Also handles normalization
    * of the raw strings.
@@ -22,7 +42,19 @@ sap.ui.define(["jquery.sap.global"], function($) {
 
     /**
      * A simple object containing a series of normalization functions that change a string according to a
-     * particular strategy.
+     * particular strategy. All strategies do the following normalization as a minimum:
+     *
+     * <ul>
+     *   <li>Trim spaces off the string on both sides. For example: <code>" hello "</code> becomes
+     *     <code>"hello"</code>.</li>
+     *   <li>Trim multiple spaces between words. For example: <code>"hello    world"</code> becomes
+     *     <code>"hello world"</code>.</li>
+     *   <li>Assume that dashes and underscores are analogs for a space. For example: <code>"sold-to party"</code> and
+     *     <code>"sold to party"</code> are equivalent, and would both convert to the camelCase
+     *     <code>"soldToParty"</code>.</li>
+     *   <li>Remove any characters that are not alphanumeric or whitespace. For example: <code>"(hello)"</code> becomes
+     *     <code>"hello"</code>.</li>
+     * </ul>
      *
      * @alias sap.ui.test.gherkin.dataTableUtils.normalization
      * @namespace
@@ -35,25 +67,22 @@ sap.ui.define(["jquery.sap.global"], function($) {
        * For example: "first name" -> "First Name"
        *
        * @param {string} sString - the string to normalize
-       * @returns {string} the trimmed input string with all words capitalized
+       * @returns {string} the normalized input string with all words capitalized
        * @public
        * @function
        * @static
        */
       titleCase : function(sString) {
         dataTableUtils._testNormalizationInput(sString, "titleCase");
-        return sString
-            .trim()
-            .replace(/(?!\s)\W/g, "")
-            .replace(/\s+/g, " ")
-            .replace(/\w\S*/g, function(s){return s.charAt(0).toUpperCase() + s.substr(1).toLowerCase();});
+        return normalize(sString)
+          .replace(/\w*/g, function(s){return s.charAt(0).toUpperCase() + s.substr(1).toLowerCase();});
       },
 
       /**
        * For example: "first name" -> "FirstName"
        *
        * @param {string} sString - the string to normalize
-       * @returns {string} the trimmed input string with all words capitalized and all spaces removed
+       * @returns {string} the normalized input string with all words capitalized and all spaces removed
        * @public
        * @function
        * @static
@@ -67,22 +96,22 @@ sap.ui.define(["jquery.sap.global"], function($) {
        * For example: "First Name" -> "firstName"
        *
        * @param {string} sString - the string to normalize
-       * @returns {string} the trimmed input string with all words after the first capitalized and all spaces removed
+       * @returns {string} the normalized input string with all words after the first capitalized and all spaces
+       *                   removed
        * @public
        * @function
        * @static
        */
       camelCase : function(sString) {
         dataTableUtils._testNormalizationInput(sString, "camelCase");
-        return dataTableUtils.normalization.pascalCase(sString)
-            .replace(/^(\w)/, function(s){return s.toLowerCase();});
+        return dataTableUtils.normalization.pascalCase(sString).replace(/^(\w)/, function(s){return s.toLowerCase();});
       },
 
       /**
        * For example: "First Name" -> "first-name"
        *
        * @param {string} sString - the string to normalize
-       * @returns {string} the trimmed input string changed to lower case and with space between words
+       * @returns {string} the normalized input string changed to lower case and with space between words
        *                   replaced by a hyphen ("-")
        * @public
        * @function
@@ -90,7 +119,7 @@ sap.ui.define(["jquery.sap.global"], function($) {
        */
       hyphenated : function(sString) {
         dataTableUtils._testNormalizationInput(sString, "hyphenated");
-        return sString.trim().replace(/(?!\s)\W/g, "").replace(/\s+/g, "-").toLowerCase();
+        return normalize(sString, "-").toLowerCase();
       },
 
       /**

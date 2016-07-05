@@ -45,13 +45,15 @@ sap.ui.define([
      * Chaining function calls, such as "Then.iStartMyApp().and.iCloseMyApp()" is not possible at this time.
      *
      * @param {object} args - the arguments to the function
-     * @param {string} args.featurePath - the path to the Gherkin feature file to parse
+     * @param {string} args.featurePath - the path to the Gherkin feature file to parse, as a SAPUI5 module path. The
+     *                                    ".feature" extension is assumed and should not be included. See
+     *                                    {@link jQuery.sap#registerModulePath}
      * @param {function} [args.steps] - the constructor function of type sap.ui.test.gherkin.StepDefinitions. If this
      *                                  parameter is ommitted then args.generateMissingSteps must be explicitly set
-     *                                  to true
-     * @param {boolean} [args.generateMissingSteps] - defaults to false. When true: if a Gherkin step cannot be matched
-     *                                                to a step definition then it will be assumed that the user wants to
-     *                                                convert the step into an Opa Page Object call.
+     *                                  to true.
+     * @param {boolean} [args.generateMissingSteps=false] - When true: if a Gherkin step cannot be matched to a step
+     *                                                      definition then it will be assumed that the user wants to
+     *                                                      convert the step into an Opa Page Object call.
      * @function
      * @static
      * @public
@@ -145,7 +147,7 @@ sap.ui.define([
                 if (oTestStep.isMatch) {
                   QUnit.config.current.assertions.pop(); // don't break QUnit expect() behaviour
                 }
-                oTestStep.parameters = oTestStep.parameters.concat([Given, When, Then]);
+                oTestStep.parameters = (oTestStep.parameters || []).concat([Given, When, Then]);
                 oTestGenerator.execute(oTestStep);
               }
             });

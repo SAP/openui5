@@ -19,24 +19,46 @@ sap.ui.require([
 
   QUnit.test("normalization works as expected", function() {
 
-    // main test cases
-    strictEqual(dtu.normalization.titleCase(" first  name "),        "First Name", "titleCase");
-    strictEqual(dtu.normalization.pascalCase(" first name  first "), "FirstNameFirst",  "pascalCase");
-    strictEqual(dtu.normalization.camelCase(" First Name  Last "),   "firstNameLast",  "camelCase");
+    // main test cases (tests multiple spaces between words and padding around string)
+    strictEqual(dtu.normalization.titleCase(" first  name "), "First Name", "titleCase");
+    strictEqual(dtu.normalization.pascalCase(" first name  first "), "FirstNameFirst", "pascalCase");
+    strictEqual(dtu.normalization.camelCase(" First Name  Last "), "firstNameLast", "camelCase");
     strictEqual(dtu.normalization.hyphenated(" First Name  Third "), "first-name-third", "hyphenated");
-    strictEqual(dtu.normalization.none(" First  Name "),              " First  Name ", "none");
+    strictEqual(dtu.normalization.none(" First  Name "), " First  Name ", "none");
 
     // boundary test cases
     strictEqual(dtu.normalization.titleCase("d"), "D", "titleCase single letter");
     strictEqual(dtu.normalization.titleCase(""), "", "titleCase empty");
-    strictEqual(dtu.normalization.camelCase("F"), "f",  "camelCase single letter");
-    strictEqual(dtu.normalization.camelCase(""), "",  "camelCase empty");
+    strictEqual(dtu.normalization.pascalCase("p"), "P", "pascalCase single letter");
+    strictEqual(dtu.normalization.pascalCase(""), "", "pascalCase empty");
+    strictEqual(dtu.normalization.camelCase("F"), "f", "camelCase single letter");
+    strictEqual(dtu.normalization.camelCase(""), "", "camelCase empty");
+    strictEqual(dtu.normalization.camelCase("F"), "f", "camelCase single letter");
+    strictEqual(dtu.normalization.hyphenated("F"), "f", "hyphenated single letter");
+    strictEqual(dtu.normalization.hyphenated(""), "", "hyphenated empty");
+    strictEqual(dtu.normalization.none("N"), "N", "none single letter upper case");
+    strictEqual(dtu.normalization.none("n"), "n", "none single letter lower case");
+    strictEqual(dtu.normalization.none(""), "", "none empty");
 
     // weird characters
-    strictEqual(dtu.normalization.titleCase("pascal's wager"), "Pascals Wager",  "Title Case single quote");
-    strictEqual(dtu.normalization.camelCase("Being, like, totally hot"), "beingLikeTotallyHot",  "camelCase commas");
-    strictEqual(dtu.normalization.hyphenated("Being, like, totally hot"), "being-like-totally-hot",  "hyphenation commas");
-    strictEqual(dtu.normalization.camelCase("11,111 22,222"), "1111122222",  "camelCase numbers");
+    strictEqual(dtu.normalization.titleCase("pascal's wager"), "Pascals Wager", "Title Case single quote");
+    strictEqual(dtu.normalization.camelCase("Being, like, totally hot"), "beingLikeTotallyHot", "camelCase commas");
+    strictEqual(dtu.normalization.hyphenated("Being, like, totally hot"), "being-like-totally-hot", "hyphenation commas");
+    strictEqual(dtu.normalization.camelCase("11,111 22,222"), "1111122222", "camelCase numbers");
+    strictEqual(dtu.normalization.titleCase("(this is weird)"), "This Is Weird", "Title Case brackets");
+    strictEqual(dtu.normalization.camelCase("exclamation! marks# are not ok?"), "exclamationMarksAreNotOk",  "exclaim");
+
+    // dashes, underscores treated like spaces
+    strictEqual(dtu.normalization.titleCase("Sold-To Party"), "Sold To Party", "Title Case dashes");
+    strictEqual(dtu.normalization.titleCase("Sold_To Party"), "Sold To Party", "Title Case underscores");
+    strictEqual(dtu.normalization.camelCase("Sold-To Party"), "soldToParty", "Camel Case dashes");
+    strictEqual(dtu.normalization.camelCase("Sold_To Party"), "soldToParty", "Camel Case underscores");
+    strictEqual(dtu.normalization.pascalCase("Sold-To Party"), "SoldToParty", "Pascal Case dashes");
+    strictEqual(dtu.normalization.pascalCase("Sold_To Party"), "SoldToParty", "Pascal Case underscores");
+    strictEqual(dtu.normalization.hyphenated("Sold-To Party"), "sold-to-party", "Hyphenated dashes");
+    strictEqual(dtu.normalization.hyphenated("Sold_To Party"), "sold-to-party", "Hyphenated underscores");
+    strictEqual(dtu.normalization.camelCase("--Sold--To Party--"), "soldToParty", "Camel Case dashes surround");
+    strictEqual(dtu.normalization.camelCase("__Sold__To Party__"), "soldToParty", "Camel Case underscores surround");
   });
 
   QUnit.test("Given no normalization, toTable changes 2D matrix into list of objects", function() {

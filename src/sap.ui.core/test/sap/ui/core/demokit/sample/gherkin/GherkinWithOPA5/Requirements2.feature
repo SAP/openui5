@@ -7,14 +7,24 @@ Feature: Lemmings Have Names Now
     Given I have started the app
     And   I can see the life saving button
 
-  Scenario: Named Lemmings Are Saved Lemmings
-    Given I click on the life saving button 5 times
+  Scenario: Save lemmings with one row of data
+    When I click on the life saving button 5 times
+    Then I can see the following named lemmings:
+      | Alice | Bob | Charlie | David | Elektra |
+
+  Scenario: Save lemmings with one column of data
+    When I click on the life saving button 5 times
     Then I can see the following named lemmings:
       | Alice   |
       | Bob     |
       | Charlie |
       | David   |
       | Elektra |
+
+  Scenario: Save lemmings with one element of data
+    When I click on the life saving button
+    Then I can see the following named lemmings:
+      | Alice |
 
   Scenario Outline: Using a Scenario Outline to Save Lemmings
     When I click on the life saving button <NUM_CLICKS> times
