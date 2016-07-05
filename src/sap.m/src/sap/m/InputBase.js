@@ -208,6 +208,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		});
 	};
 
+	/**
+	 * Returns the name of the tag element used for the input.
+	 */
+	InputBase.prototype._getInputElementTagName = function() {
+		if (!this._sInputTagElementName) {
+			this._sInputTagElementName = this._$input && this._$input.get(0) && this._$input.get(0).tagName;
+		}
+
+		return this._sInputTagElementName;
+	};
+
 	/* =========================================================== */
 	/* Lifecycle methods                                           */
 	/* =========================================================== */
@@ -314,14 +325,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	InputBase.prototype.onfocusin = function(oEvent) {
-
 		// iE10+ fires the input event when an input field with a native placeholder is focused
 		this._bIgnoreNextInput = !this.bShowLabelAsPlaceholder &&
 									sap.ui.Device.browser.msie &&
 									sap.ui.Device.browser.version > 9 &&
 									!!this.getPlaceholder() &&
-									!this._getInputValue();
-
+									!this._getInputValue() &&
+									this._getInputElementTagName() === "INPUT"; // Make sure that we are applying this fix only for input html elements
 		this.$().toggleClass("sapMFocus", true);
 
 		// open value state message popup when focus is in the input

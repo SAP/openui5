@@ -432,7 +432,7 @@
 		ok(oTA.getFocusDomRef().scrollHeight <= oTA.getFocusDomRef().offsetHeight, "No scrollbar. Whole content is visible");
 		oTA.destroy();
 	});
-	
+
 	test("maxHeight should be defined if maxLines is set", function() {
 		var sLongText = new Array(1000).join("text ");
 		var oTA = new sap.m.TextArea({
@@ -447,6 +447,81 @@
 		ok(oTA.getFocusDomRef().scrollHeight > oTA.getFocusDomRef().offsetHeight, "There is scroll bar. Whole content is not visible");
 		ok(jQuery(oTA.getFocusDomRef()).css("max-height"), "There is a max-height defined");
 		oTA.destroy();
+	});
+
+	module("Input and Live change events in IE10+ when textarea html element is used");
+	test("iE10+ Input event should not be fired on focus for textarea html element with a native placeholder", function() {
+		this.stub(sap.m.InputBase.prototype, "bShowLabelAsPlaceholder", false);
+		var fnOnInputSpy = this.spy(sap.m.TextArea.prototype, "oninput");
+		this.stub(sap.ui.Device, "browser", {
+			msie: true,
+			version: 10
+		});
+
+		var oTextArea = new sap.m.TextArea({
+			placeholder : "Test"
+		}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var oTextAreaDomRef = oTextArea.getFocusDomRef();
+		oTextAreaDomRef.focus();
+
+		strictEqual(fnOnInputSpy.callCount, 0, "input event is NOT triggered when the textarea is focused");
+
+		// cleanup
+		oTextArea.destroy();
+	});
+
+	test("iE10+ Live change event should be fired when a text is entered in textarea field with a native placeholder", function() {
+		this.stub(sap.m.InputBase.prototype, "bShowLabelAsPlaceholder", false);
+		var fnOnInputSpy = this.spy(sap.m.TextArea.prototype, "oninput");
+		var fnFireLiveChange = this.spy(sap.m.TextArea.prototype, "fireLiveChange");
+		this.stub(sap.ui.Device, "browser", {
+			msie: true,
+			version: 10
+		});
+
+		var oTextArea = new sap.m.TextArea({
+			placeholder : "Test"
+		}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var oTextAreaDomRef = oTextArea.getFocusDomRef();
+		oTextAreaDomRef.focus();
+		sap.ui.test.qunit.triggerEvent("input", oTextAreaDomRef);
+		sap.ui.test.qunit.triggerKeydown(oTextAreaDomRef, "1");
+
+		strictEqual(fnOnInputSpy.callCount, 1, "input event is triggered");
+		strictEqual(fnFireLiveChange.callCount, 1, "change event is fired");
+
+		// cleanup
+		oTextArea.destroy();
+	});
+
+	// The fix for an input field with a native placeholder is valid only for input tag element and should not be applied for textarea.
+	test("iE10+ Input Base should NOT mark event invalid when a textarea field with a native placeholder is used and focused", function() {
+		this.stub(sap.m.InputBase.prototype, "bShowLabelAsPlaceholder", false);
+		var fnOnInputSpy = this.spy(sap.m.TextArea.prototype, "oninput");
+		this.stub(sap.ui.Device, "browser", {
+			msie: true,
+			version: 10
+		});
+
+		var oTextArea = new sap.m.TextArea({
+			placeholder : "Test"
+		}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var oTextAreaDomRef = oTextArea.getFocusDomRef();
+		oTextAreaDomRef.focus();
+		sap.ui.test.qunit.triggerEvent("input", oTextAreaDomRef);
+
+		strictEqual(fnOnInputSpy.callCount, 1, "input event is triggered");
+		strictEqual(oTextArea._getInputElementTagName(), "TEXTAREA", "Textarea tag element is used");
+		strictEqual(fnOnInputSpy.args[0][0].isMarked("invalid"), false, "input event is NOT marked as invalid");
+
+		// cleanup
+		oTextArea.destroy();
 	});
 
 })(jQuery, sap.ui.getCore());
