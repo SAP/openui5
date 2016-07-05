@@ -580,6 +580,8 @@ sap.ui.define([
 			aActions.forEach(function(oAction) {
 				// Set internal visibility for normal buttons like for ObjectPageHeaderActionButton
 				if (oAction instanceof Button && !(oAction instanceof ObjectPageHeaderActionButton)) {
+
+					oAction._bInternalVisible = oAction.getVisible();
 					oAction._getInternalVisible = function () {
 						return this._bInternalVisible;
 					};
