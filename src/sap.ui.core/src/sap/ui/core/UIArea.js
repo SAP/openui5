@@ -700,7 +700,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 		var oElement = null,
 			bInteractionRelevant;
 
-
 		// TODO: this should be the 'lowest' SAPUI5 Control of this very
 		// UIArea instance's scope -> nesting scenario
 		oElement = jQuery(oEvent.target).control(0);
@@ -913,8 +912,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 			return;
 		}
 
-		//	mark the DOM as UIArea and bind the required events
-		jQuery(oDomRef).attr("data-sap-ui-area", oDomRef.id).bind(jQuery.sap.ControlEvents.join(" "), jQuery.proxy(this._handleEvent, this));
+		// mark the DOM as UIArea and bind the required events
+		jQuery(oDomRef).attr("data-sap-ui-area", oDomRef.id).bind(jQuery.sap.ControlEvents.join(" "), this._handleEvent.bind(this));
 
 	};
 
