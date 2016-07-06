@@ -451,6 +451,9 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 	outline-offset: -1px;
 	outline: 1px dotted @sapUiFocus;
 }
+.sapUiTableRowHdr.sapUiTableGroupHeader:focus:not(*:root) {
+	outline: 0px;
+}
 
 /* Firefox */
 @supports (-moz-appearance:meterbar) {
@@ -461,6 +464,17 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 	outline-offset: -1px;
 	outline: 1px dotted @sapUiFocus;
 }}
+
+.sapUiTableRowHdr.sapUiTableGroupHeader:focus .sapUiTableGroupIcon {
+	outline-width: 1px;
+	outline-style: dotted;
+	outline-offset: 0px;
+	outline-color: @sapUiContentFocusColor;
+}
+
+.sapUiTableRowHdr.sapUiTableGroupHeader {
+	outline: 0px;
+}
 
 .sapUiTableRSel {
 	.sapUiTableCtrlScr,
@@ -564,8 +578,8 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 }
 
 .sapUiSizeCondensed .sapUiTableGroupIcon {
-	height: 24px;
-	line-height: 24px;
+	height: 22px;
+	line-height: 22px;
 }
 
 /* Table Cell Tree Node */
