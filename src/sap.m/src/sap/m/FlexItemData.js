@@ -178,6 +178,14 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 		return this;
 	};
 
+	FlexItemData.prototype.setStyleClass = function(sValue) {
+		var sOldValue = this.getStyleClass();
+		this.setProperty("styleClass", sValue, true);
+		this.$().removeClass(sOldValue).addClass(this.getStyleClass());
+
+		return this;
+	};
+
 	return FlexItemData;
 
 }, /* bExport= */ true);

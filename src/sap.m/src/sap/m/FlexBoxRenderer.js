@@ -112,7 +112,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper'],
 
 		for (var i = 0; i < aChildren.length; i++) {
 			// Don't wrap if it's a FlexBox control
-			if (aChildren[i] instanceof sap.m.FlexBox) {
+			if (aChildren[i] instanceof sap.m.FlexBox || oControl.getRenderType() === sap.m.FlexRendertype.Bare) {
 				sWrapperTag = "";
 			} else if (oControl.getRenderType() === sap.m.FlexRendertype.List) {
 				sWrapperTag = "li";
@@ -129,37 +129,45 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper'],
 			// Open wrapper
 			oRm.write('<' + sWrapperTag);
 
-			// Set layout properties
-			var oLayoutData = oItem.getLayoutData();
-
-			if (oLayoutData instanceof sap.m.FlexItemData) {
-				// FlexItemData is an element not a control, so we need to write id and style class ourselves
-				if (oLayoutData.getId()) {
-					oRm.writeAttributeEscaped("id", oLayoutData.getId());
-				}
-				if (oLayoutData.getStyleClass()) {
-					oRm.addClass(jQuery.sap.encodeHTML(oLayoutData.getStyleClass()));
-				}
-
-				oRm.addClass("sapMFlexItemAlign" + oLayoutData.getAlignSelf());
-				oRm.addClass("sapMFlexBoxBG" + oLayoutData.getBackgroundDesign());
-
-				// Set layout properties for flex item
-				FlexBoxStylingHelper.setFlexItemStyles(oRm, oLayoutData);
-				oRm.writeStyles();
-
-				// ScrollContainer needs height:100% on the flex item
-				if (oItem instanceof sap.m.ScrollContainer) {
-					oRm.addClass("sapMFlexBoxFit");
-				}
-
-				// Hide invisible items, but leave them in the DOM
-				if (!oItem.getVisible()) {
-					oRm.addClass("sapUiHiddenPlaceholder");
-				}
+			// ScrollContainer needs height:100% on the flex item
+			if (oItem instanceof sap.m.ScrollContainer) {
+				oRm.addClass("sapMFlexBoxFit");
 			}
 
-			oRm.addClass("sapMFlexItem");
+			// Hide invisible items, but leave them in the DOM
+			if (!oItem.getVisible()) {
+				oRm.addClass("sapUiHiddenPlaceholder");
+			}
+		}
+
+		// Set layout properties
+		var oLayoutData = oItem.getLayoutData();
+		if (oLayoutData instanceof sap.m.FlexItemData) {
+			// FlexItemData is an element not a control, so we need to write id and style class ourselves if a wrapper tag is used
+			if (sWrapperTag && oLayoutData.getId()) {
+				oRm.writeAttributeEscaped("id", oLayoutData.getId());
+			}
+
+			// Add style class set by app
+			if (oLayoutData.getStyleClass()) {
+				FlexBoxRenderer.addItemClass(jQuery.sap.encodeHTML(oLayoutData.getStyleClass()), oItem, sWrapperTag, oRm);
+			}
+
+			// Add classes relevant for flex item
+			FlexBoxRenderer.addItemClass("sapMFlexItemAlign" + oLayoutData.getAlignSelf(), oItem, sWrapperTag, oRm);
+			FlexBoxRenderer.addItemClass("sapMFlexBoxBG" + oLayoutData.getBackgroundDesign(), oItem, sWrapperTag, oRm);
+
+			// Set layout properties for flex item
+			if (sWrapperTag) {
+				FlexBoxStylingHelper.setFlexItemStyles(oRm, oLayoutData);
+			}
+		}
+
+		FlexBoxRenderer.addItemClass("sapMFlexItem", oItem, sWrapperTag, oRm);
+
+		// Write the styles and classes and close the wrapper tag
+		if (sWrapperTag) {
+			oRm.writeStyles();
 			oRm.writeClasses();
 			oRm.write(">");
 		}
@@ -170,6 +178,14 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper'],
 		if (sWrapperTag) {
 			// Close wrapper
 			oRm.write('</' + sWrapperTag + '>');
+		}
+	};
+
+	FlexBoxRenderer.addItemClass = function(sClass, oItem, sWrapperTag, oRm) {
+		if (sWrapperTag) {
+			oRm.addClass(sClass);
+		} else {
+			oItem.addStyleClass(sClass);
 		}
 	};
 

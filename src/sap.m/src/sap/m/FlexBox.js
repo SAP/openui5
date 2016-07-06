@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.FlexBox.
-sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/ui/core/Control'],
-	function(jQuery, FlexBoxStylingHelper, library, Control) {
+sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './FlexItemData', './FlexDirection', './FlexRendertype', './library', 'sap/ui/core/Control'],
+	function(jQuery, FlexBoxStylingHelper, FlexItemData, FlexDirection, FlexRendertype, library, Control) {
 	"use strict";
 
 
@@ -123,45 +123,42 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 
 	FlexBox.prototype.init = function() {
 		// Make sure that HBox and VBox have a valid direction
-		if (this instanceof sap.m.HBox && (this.getDirection() !== sap.m.FlexDirection.Row || this.getDirection() !== sap.m.FlexDirection.RowReverse)) {
+		if (this instanceof sap.m.HBox && (this.getDirection() !== sap.m.FlexDirection.Row || this.getDirection() !== FlexDirection.RowReverse)) {
 			this.setDirection('Row');
 		}
-		if (this instanceof sap.m.VBox && (this.getDirection() !== sap.m.FlexDirection.Column || this.getDirection() !== sap.m.FlexDirection.ColumnReverse)) {
+		if (this instanceof sap.m.VBox && (this.getDirection() !== sap.m.FlexDirection.Column || this.getDirection() !== FlexDirection.ColumnReverse)) {
 			this.setDirection('Column');
 		}
+
+		this._oItemDelegate = {
+			onAfterRendering: this._onAfterItemRendering
+		};
 	};
 
 	FlexBox.prototype.addItem = function(oItem) {
 		this.addAggregation("items", oItem);
-
-		if (oItem && !(oItem instanceof sap.m.FlexBox)) {
-			oItem.attachEvent("_change", this.onItemChange, this);
-		}
+		this._onItemInserted(oItem);
 
 		return this;
 	};
 
 	FlexBox.prototype.insertItem = function(oItem, iIndex) {
 		this.insertAggregation("items", oItem, iIndex);
-
-		if (oItem && !(oItem instanceof sap.m.FlexBox)) {
-			oItem.attachEvent("_change", this.onItemChange, this);
-		}
+		this._onItemInserted(oItem);
 
 		return this;
 	};
 
 	FlexBox.prototype.removeItem = function(vItem) {
 		var oItem = this.removeAggregation("items", vItem, true);
-
 		if (oItem && !(oItem instanceof sap.m.FlexBox)) {
-			oItem.detachEvent("_change", this.onItemChange, this);
 			if (oItem instanceof sap.m.FlexBox) {
 				oItem.$().remove();
 			} else {
 				oItem.$().parent().remove();
 			}
 		}
+		this._onItemRemoved(oItem);
 
 		return oItem;
 	};
@@ -170,16 +167,36 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 		var aItems = this.getItems();
 
 		for (var i = 0; i < aItems.length; i++) {
-			aItems[i].detachEvent("_change", this.onItemChange, this);
+			this._onItemRemoved(aItems[i]);
 		}
 
 		return this.removeAllAggregation("items");
 	};
 
-	FlexBox.prototype.onItemChange = function(oControlEvent) {
+	// gets called when new an item is inserted into items aggregation
+	FlexBox.prototype._onItemInserted = function(oItem) {
+		if (oItem && !(oItem instanceof sap.m.FlexBox)) {
+			oItem.attachEvent("_change", this._onItemChange, this);
+			if (this.getRenderType() === FlexRendertype.Bare) {
+				oItem.addEventDelegate(this._oItemDelegate, oItem);
+			}
+		}
+	};
+
+	// gets called when an item is removed from items aggregation
+	FlexBox.prototype._onItemRemoved = function(oItem) {
+		if (oItem && !(oItem instanceof sap.m.FlexBox)) {
+			oItem.detachEvent("_change", this._onItemChange, this);
+			if (this.getRenderType() === FlexRendertype.Bare) {
+				oItem.removeEventDelegate(this._oItemDelegate, oItem);
+			}
+		}
+	};
+
+	FlexBox.prototype._onItemChange = function(oControlEvent) {
 		// Early return conditions
 		if (oControlEvent.getParameter("name") !== "visible"
-			|| (this.getRenderType() !== sap.m.FlexRendertype.List && this.getRenderType() !== sap.m.FlexRendertype.Div)) {
+			|| (this.getRenderType() !== FlexRendertype.List && this.getRenderType() !== FlexRendertype.Div)) {
 			return;
 		}
 
@@ -200,6 +217,15 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 		}
 	};
 
+	// gets called after an item is (re)rendered
+	// here "this" points to the control not to the FlexBox
+	FlexBox.prototype._onAfterItemRendering = function() {
+		var oLayoutData = this.getLayoutData();
+		if (oLayoutData instanceof FlexItemData) {
+			FlexBoxStylingHelper.setFlexItemStyles(null, oLayoutData);
+		}
+	};
+
 	FlexBox.prototype.setDisplayInline = function(bInline) {
 		this.setProperty("displayInline", bInline, true);
 		this.$().toggleClass("sapMFlexBoxInline", this.getDisplayInline());
@@ -209,13 +235,13 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 
 	FlexBox.prototype.setDirection = function(sValue) {
 		this.setProperty("direction", sValue, true);
-		if (this.getDirection() === sap.m.FlexDirection.Column || this.getDirection() === sap.m.FlexDirection.ColumnReverse) {
+		if (this.getDirection() === FlexDirection.Column || this.getDirection() === FlexDirection.ColumnReverse) {
 			this.$().removeClass("sapMHBox").addClass("sapMVBox");
 		} else {
 			this.$().removeClass("sapMVBox").addClass("sapMHBox");
 		}
 
-		if (this.getDirection() === sap.m.FlexDirection.RowReverse || this.getDirection() === sap.m.FlexDirection.ColumnReverse) {
+		if (this.getDirection() === FlexDirection.RowReverse || this.getDirection() === FlexDirection.ColumnReverse) {
 			this.$().addClass("sapMFlexBoxReverse");
 		} else {
 			this.$().removeClass("sapMFlexBoxReverse");
