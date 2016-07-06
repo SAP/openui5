@@ -87,10 +87,12 @@ sap.ui.define(["jquery.sap.global", "sap/m/Select", "sap/ui/Device", "./library"
 	});
 
 	HierarchicalSelect.prototype._createDialog = function () {
+		var oDialog = Select.prototype._createDialog.call(this),
+			oCustomHeader = oDialog.getCustomHeader();
 
-		var oDialog = Select.prototype._createDialog.call(this);
-
-		oDialog.getCustomHeader().addStyleClass("sapUxAPHierarchicalSelect");
+		if (oCustomHeader){
+			oCustomHeader.addStyleClass("sapUxAPHierarchicalSelect");
+		}
 
 		return oDialog;
 
