@@ -1,0 +1,227 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta charset="UTF-8">
+
+<title>QUnit: HeaderContainer - sap.m</title>
+
+<base href="../../../../">
+<!--[if lte IE 9]>
+	<script>
+		(function() {
+			var baseTag = document.getElementsByTagName('base')[0];
+			baseTag.href = baseTag.href;
+		})();
+	</script>
+<![endif]-->
+
+<script id="sap-ui-bootstrap"
+	src="resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_belize"
+	data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.m">
+</script>
+
+<link rel="stylesheet" type="text/css" href="resources/sap/ui/thirdparty/qunit.css" />
+<script type="text/javascript" src="resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript" src="resources/sap/ui/qunit/qunit-coverage.js"></script>
+<script type="text/javascript" src="resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript" src="resources/sap/ui/thirdparty/sinon.js"></script>
+<script type="text/javascript" src="resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+<script>
+jQuery.sap.initMobile();
+(function() {
+	QUnit.module("Default Property Values", {
+		beforeEach : function () {
+			this.oHeaderContainer = new sap.m.HeaderContainer("headerContainer");
+			this.oHeaderContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function () {
+			this.oHeaderContainer.destroy();
+			this.oHeaderContainer = null;
+		}
+	});
+
+	QUnit.test("scrollStep should be set to 300", function(assert) {
+		assert.equal(this.oHeaderContainer.getScrollStep(), 300);
+	});
+
+	QUnit.test("scrollTime should be set to 500", function(assert) {
+		assert.equal(this.oHeaderContainer.getScrollTime(), 500);
+	});
+
+	QUnit.test("showDividers should be set to true", function(assert) {
+		assert.ok(this.oHeaderContainer.getShowDividers());
+	});
+
+	QUnit.test("view should be set to Horizontal", function(assert) {
+		assert.deepEqual(this.oHeaderContainer.getView(), sap.m.HeaderContainerView.Horizontal);
+	});
+
+	QUnit.test("backgroundDesign should be set to Transparent", function(assert) {
+		assert.deepEqual(this.oHeaderContainer.getBackgroundDesign(), sap.m.BackgroundDesign.Transparent);
+	});
+
+	QUnit.test("items multiple should be set to true", function(assert) {
+		assert.ok(this.oHeaderContainer.getItems());
+	});
+
+	QUnit.module("Basic Rendering", {
+		beforeEach : function () {
+			this.oHeaderContainer = new sap.m.HeaderContainer("headerContainer");
+			this.oHeaderContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function () {
+			this.oHeaderContainer.destroy();
+			this.oHeaderContainer = null;
+		}
+	});
+
+	QUnit.test("DOM Structure should exist for horizontal header container", function(assert) {
+		assert.ok(jQuery.sap.domById("headerContainer"), "HeaderContainer was rendered successfully");
+		assert.ok(jQuery.sap.domById("headerContainer-scroll-area"), "HeaderContainer scroll area was rendered successfully");
+	});
+
+	QUnit.test("DOM Structure should exist for vertiacl header container", function(assert) {
+		this.oHeaderContainer.setView("Vertical");
+		sap.ui.getCore().applyChanges();
+		assert.ok(jQuery.sap.domById("headerContainer"), "HeaderContainer was rendered successfully");
+		assert.ok(jQuery.sap.domById("headerContainer-scroll-area"), "HeaderContainer scroll area was rendered successfully");
+	});
+
+	QUnit.module("Background design", {
+		beforeEach : function () {
+			this.oHeaderContainer = new sap.m.HeaderContainer("headerContainer");
+			this.oHeaderContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function () {
+			this.oHeaderContainer.destroy();
+			this.oHeaderContainer = null;
+		}
+	});
+
+	QUnit.test("Correct CSS Class added in case of 'Solid'", function(assert) {
+		//arrange
+		var oBackgroundDesignDefault = this.oHeaderContainer.getBackgroundDesign();
+		//act
+		this.oHeaderContainer.setBackgroundDesign(sap.m.BackgroundDesign.Solid);
+		this.oHeaderContainer.rerender();
+		var oBackgroundDesignNew = this.oHeaderContainer.getBackgroundDesign();
+		var sCssClassNew = jQuery.sap.domById("headerContainer-scroll-area").className;
+		//assert
+		assert.equal(oBackgroundDesignDefault, sap.m.BackgroundDesign.Transparent, "The default value is 'sapMHdrCntrBGTransparent'");
+		assert.equal(oBackgroundDesignNew, sap.m.BackgroundDesign.Solid, "The new value is 'sapMHdrCntrBGSolid'");
+		assert.ok(sCssClassNew.indexOf("sapMHdrCntrBGSolid") >= 0, "Background design was set to Solid. CssClass 'sapMHdrCntrBGSolid' is present");
+	});
+
+	QUnit.module("Scrolling", {
+		beforeEach : function () {
+			this.oHeaderContainer = new sap.m.HeaderContainer("headerContainer", {
+				items : [
+					new sap.m.FlexBox({
+						height : "120px",
+						width : "320px"
+					}),
+					new sap.m.FlexBox({
+						height : "120px",
+						width : "320px"
+					}),
+					new sap.m.FlexBox({
+						height : "120px",
+						width : "320px"
+					}),
+					new sap.m.FlexBox({
+						height : "120px",
+						width : "320px"
+					})
+				]
+			});
+			this.oHeaderContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function () {
+			this.oHeaderContainer.destroy();
+			this.oHeaderContainer = null;
+		}
+	});
+
+	QUnit.test("Test shifting items to left", function(assert) {
+		var done = assert.async();
+		assert.equal(jQuery.sap.byId("headerContainer-scrl-prev-button").css("display"), "none", "The items was shifted to left");
+		this.oHeaderContainer._scroll(200, 500);
+		setTimeout(function() {
+			assert.ok(jQuery.sap.byId("headerContainer-scrl-prev-button").css("visibility") !== "hidden", "Previous Button is visible after scrolling.");
+			done();
+		}, 1000);
+	});
+
+	QUnit.test("Test shifting items to right", function(assert) {
+		var done = assert.async();
+		this.oHeaderContainer._scroll(-200, 500);
+		setTimeout(function() {
+			assert.ok(jQuery.sap.byId("headerContainer-scrl-next-button").css("visibility") !== "hidden", "Next Button is visible after scrolling.");
+			done();
+		}, 1000);
+	});
+
+	QUnit.module("Aggregation Handling", {
+		beforeEach : function () {
+			this.oHeaderContainer = new sap.m.HeaderContainer("headerContainer", {
+				items : [
+					new sap.m.FlexBox({
+						height : "120px",
+						width : "320px"
+					}),
+					new sap.m.FlexBox({
+						height : "120px",
+						width : "320px"
+					}),
+					new sap.m.FlexBox({
+						height : "120px",
+						width : "320px"
+					}),
+					new sap.m.FlexBox({
+						height : "120px",
+						width : "320px"
+					})
+				]
+			});
+			this.oHeaderContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function () {
+			this.oHeaderContainer.destroy();
+			this.oHeaderContainer = null;
+		}
+	});
+
+	QUnit.test("Overall", function(assert) {
+		assert.equal(this.oHeaderContainer.getAggregation("items").length, 4, "The function should return 12 items");
+		var aItems = this.oHeaderContainer.getAggregation("items");
+		assert.equal(this.oHeaderContainer.indexOfAggregation("items", aItems[0]), 0, "index of the first item in items aggregation should be 0");
+		this.oHeaderContainer.removeAggregation("items", aItems[0], true);
+		assert.equal(this.oHeaderContainer.getAggregation("items").length, 3, "There should be 11 items now");
+		this.oHeaderContainer.addAggregation("items", aItems[0], true);
+		assert.equal(this.oHeaderContainer.getAggregation("items").length, 4, "There should be 12 items now");
+		this.oHeaderContainer.removeAggregation("items", aItems[0], true);
+		this.oHeaderContainer.insertAggregation("items", aItems[0], 1, true);
+		assert.equal(this.oHeaderContainer.getAggregation("items").length, 4, "There should be 12 kpis now");
+		assert.equal(this.oHeaderContainer.indexOfAggregation("items", aItems[0]), 1, "The inserted item should be on second position now");
+		assert.equal(this.oHeaderContainer._callMethodInManagedObject("indexOfAggregation", "items", aItems[0]), 1, "The inserted kpi should be on second position now");
+		this.oHeaderContainer.removeAllAggregation("items", true);
+		assert.equal(this.oHeaderContainer.getAggregation("items"), undefined, "All items should be removed");
+	});
+})();
+</script>
+</head>
+<body id="body" class="sapUiBody">
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+</body>
+</html>

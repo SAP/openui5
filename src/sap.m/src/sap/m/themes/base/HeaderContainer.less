@@ -1,0 +1,142 @@
+/* ============================================= */
+/* CSS for control sap.m/HeaderContainer.control */
+/* ============================================= */
+.sapMHdrCntr {
+	position: relative;
+	display: inline-block;
+}
+
+.sapMHdrCntr.Horizontal {
+	max-width: 100%;
+}
+
+.sapMHdrCntr.Vertical {
+	max-height: 100%;
+}
+
+.sapMHdrCntrBtn {
+	display: none;
+}
+
+.sapMHdrCntrBtnCntr.Horizontal {
+	position: absolute;
+	top: 0px;
+	bottom: 0px;
+	min-width: 1.375rem;
+}
+
+.Horizontal > .sapMHdrCntrLeft {
+	left: 0rem;
+}
+
+.Horizontal > .sapMHdrCntrRight {
+	right: 0rem;
+}
+
+.sapMHdrCntrBtnCntr.Vertical {
+	position: absolute;
+	left: 0px;
+	right: 0px;
+	min-height: 1.375rem;
+}
+
+.sapMHdrCntrLeft.Vertical {
+	top: 0rem;
+}
+
+.sapMHdrCntrRight.Vertical {
+	bottom: 0rem;
+}
+
+.sapMHdrCntrBtnCntr.Horizontal > .sapMHdrCntrBtn {
+	position: absolute;
+	top: 50%;
+	margin-top: -1.5rem;
+	min-width: 1.375rem;
+}
+
+.sapMHdrCntrBtnCntr.Vertical > .sapMHdrCntrBtn {
+	position: absolute;
+	left: 50%;
+	margin-left: -1.5rem;
+	height: 2.5rem;
+	padding: 0px;
+}
+
+.sapMHdrCntrBtnCntr.Vertical > .sapMHdrCntrBtn.sapMHdrCntrRight {
+	bottom: 0px;
+}
+
+.sapMHdrCntrCntr.Horizontal {
+	white-space: nowrap;
+}
+
+.sapMHdrCntrCntr.Vertical {
+	height: 100%;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+}
+
+.sapMHrdrCntrInner {
+	position: relative;
+	vertical-align: bottom;
+	margin: 0.065rem 0.065rem 0.065rem 0.065rem;
+	-webkit-user-select: none;
+	-moz-user-select: -moz-none;
+	-ms-user-select: none;
+	overflow: visible;
+}
+
+.sapMHdrCntrCntr.Vertical .sapMHrdrCntrInner {
+	float: left;
+	clear: left;
+}
+
+.sapMHdrCntrCntr.Horizontal .sapMHrdrCntrInner:not(:first-child) {
+	margin-left: 1rem;
+}
+
+.sapMHdrCntrCntr.Vertical .sapMHrdrCntrInner:not(:first-child) {
+	margin-top: 1rem;
+}
+
+.sapMHrdrCntrDvdrs .sapMHrdrCntrInner:not(:first-child)::after {
+	content: "";
+	position: absolute;
+	box-sizing: border-box;
+	display: inline-block;
+}
+
+.sapMHrdrCntrDvdrs.Horizontal .sapMHrdrCntrInner::after {
+	top: 10px;
+	bottom: 10px;
+	left: -9px;
+	border-left: 1px solid @sapUiFieldBorderColor;
+}
+
+.sapMHrdrCntrDvdrs.Vertical .sapMHrdrCntrInner::after {
+	left: 10px;
+	right: 10px;
+	top: -9px;
+	border-top: 1px solid @sapUiFieldBorderColor;
+}
+
+.sapMKTileBorder {
+	display: none;
+}
+
+.sapMHdrPddngRight2 {
+	padding-right: 2rem;
+}
+
+.sapMHdrPddngRight0 {
+	padding-right: 0rem;
+}
+
+.sapMHdrPddngLeft2 {
+	padding-left: 2rem;
+}
+
+.sapMHdrPddngleft0 {
+	padding-left: 0rem;
+}

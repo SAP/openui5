@@ -1,0 +1,231 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta charset="UTF-8">
+
+<title>Test page: HeaderContainer - sap.m</title>
+
+<base href="../../../">
+<!--[if lte IE 9]>
+	<script>
+		(function() {
+			var baseTag = document.getElementsByTagName('base')[0];
+			baseTag.href = baseTag.href;
+	})();
+	</script>
+<![endif]-->
+
+<style type="text/css">
+	.sapMFlexItem {
+		width : 400px
+	}
+</style>
+
+<script id="sap-ui-bootstrap"
+	data-sap-ui-libs="sap.m, sap.ui.layout"
+	data-sap-ui-theme="sap_belize"
+	data-sap-ui-noConflict="true"
+	src="resources/sap-ui-core.js">
+</script>
+
+<script type="text/javascript">
+	jQuery.sap.initMobile();
+
+	var oData = {
+		"scrollStep" : 200,
+		"scrollTime" : 500,
+		"items" : [{
+			"content" : [{
+				"type" : "numeric",
+				"value" : 125,
+				"scale" : "M",
+				"unit" : "EUR",
+				"size" : "M",
+				"valueColor" : "Error",
+				"indicator" : "Up",
+				"isFormatterValue" : false,
+				"truncateValueTo" : 4
+			}, {
+				"value" : "USD, Current"
+			}]
+		}, {
+			"content" : [{
+				"type" : "numeric",
+				"value" : 1115,
+				"scale" : "M",
+				"unit" : "USD",
+				"size" : "M",
+				"valueColor" : "Critical",
+				"indicator" : "Up",
+				"isFormatterValue" : false,
+				"truncateValueTo" : 4
+			}, {
+				"value" : "USD, Current"
+			}]
+		}]
+	};
+	jQuery.sap.require("sap.ui.model.json.JSONModel");
+	var oModel = new sap.ui.model.json.JSONModel(oData);
+
+	var fnContentFactory = function(sId, oContext) {
+		var aContent = oContext.getProperty("content");
+		var oLayout = new sap.ui.layout.VerticalLayout();
+		for (var i = 0; i < aContent.length; i++) {
+			if (aContent[i].type === "numeric") {
+				var oNumericContent = new sap.m.NumericContent({
+					value : "{" + oContext.sPath + "/content/" + i + "/value}",
+					scale : "{" + oContext.sPath + "/content/" + i + "/scale}",
+					indicator : "{" + oContext.sPath + "/content/" + i + "/indicator}",
+					size : "{" + oContext.sPath + "/content/" + i + "/size}",
+					formatterValue : "{" + oContext.sPath + "/content/" + i + "/isFormatterValue}",
+					truncateValueTo : "{" + oContext.sPath + "/content/" + i + "/truncateValueTo}",
+					state : "Loaded",
+					valueColor : "{" + oContext.sPath + "/content/" + i + "/valueColor}"
+				});
+				oLayout.addContent(oNumericContent);
+			} else if (!aContent[i].type) {
+				var oLabel = new sap.m.Label({
+					text : "{" + oContext.sPath + "/content/" + i + "/value}",
+				});
+				oLayout.insertContent(oLabel, 0);
+			}
+		}
+		return oLayout;
+	};
+
+	var oHeaderContainer = new sap.m.HeaderContainer("headerContainer", {
+		scrollStep : "{/scrollStep}",
+		scrollTime : "{/scrollTime}",
+		items : {
+			path : "/items",
+			factory : fnContentFactory
+		}
+	});
+
+	var oFlexBox = new sap.m.FlexBox({
+		items : oHeaderContainer
+	}).addStyleClass("sapUiLargeMarginTopBottom");
+
+	var oAddButton = new sap.m.Button("add-button", {
+		width : "10rem",
+		enabled : true,
+		text : "Add content",
+		press : function(oEvent) {
+			oData.items.push({
+				content : [{
+					type : "numeric",
+					value : 125,
+					scale : "M",
+					unit : "EUR",
+					size : "M",
+					valueColor : "Good",
+					indicator : "Up",
+					isFormatterValue : false,
+					truncateValueTo : 4
+				}, {
+					value : "USD, Current"
+				}]
+			});
+			oRemoveButton.setEnabled(true);
+			oModel.checkUpdate();
+		}
+	});
+	var oRemoveButton = new sap.m.Button("remove-button", {
+		width : "10rem",
+		text : "Remove last content",
+		press : function(oEvent) {
+			oData.items.pop();
+			if (oData.items.length === 0) {
+				oRemoveButton.setEnabled(false);
+			}
+			oModel.checkUpdate();
+		}
+	});
+
+	var oDevidersControls = new sap.m.HBox({
+		alignItems : sap.m.FlexAlignItems.Center,
+		items : [new sap.m.Label({
+			text : "Show dividers",
+			labelFor : "show-deviders-switch"
+		}), new sap.m.Switch("show-deviders-switch", {
+			type : "AcceptReject",
+			state : true,
+			change : function(oEvt) {
+				oHeaderContainer.setShowDividers(oEvt.getParameter("state"));
+			}
+		})]
+	});
+
+	jQuery.sap.require("sap.ui.model.type.Integer");
+	var oScrollStepInput =  new sap.m.HBox({
+		alignItems : sap.m.FlexAlignItems.Center,
+		items : [
+			new sap.m.Label({
+				text : "Scroll Step",
+				labelFor : "scroll-step-input"
+			}), new sap.m.Input("scroll-step-input", {
+				width : "4rem",
+				placeholder : "Enter value ...",
+				value : {
+					path : "/scrollStep",
+					type : new sap.ui.model.type.Integer()
+				},
+				liveChange : function(oEvt) {
+					if (oEvt.getParameter("newValue") === "") {
+						oData[scrollStep] = undefined;
+						oModel.checkUpdate();
+					}
+				}
+			})
+		]
+	});
+
+	var oScrollTimeInput =  new sap.m.HBox({
+		alignItems : sap.m.FlexAlignItems.Center,
+		items : [
+			new sap.m.Label({
+				text : "Scroll Time",
+				labelFor : "scroll-time-input"
+			}), new sap.m.Input("scroll-time-input", {
+				width : "4rem",
+				placeholder : "Enter value ...",
+				value : {
+					path : "/scrollTime",
+					type : new sap.ui.model.type.Integer()
+				},
+				liveChange : function(oEvt) {
+					if (oEvt.getParameter("newValue") === "") {
+						oData[scrollTime] = undefined;
+						oModel.checkUpdate();
+					}
+				}
+			})
+		]
+	});
+
+	var oAdjustForm = new sap.ui.layout.form.SimpleForm({
+		maxContainerCols : 2,
+		editable : true,
+		content : [
+			oAddButton,
+			oRemoveButton,
+			oScrollStepInput,
+			oScrollTimeInput,
+			oDevidersControls
+		]
+	});
+	var oPage = new sap.m.Page("page", {
+		title : "Test Page for sap.m.HeaderContainer",
+		content : [oFlexBox, oAdjustForm]
+	});
+	var app = new sap.m.App("myApp", {
+		pages : [oPage]
+	}).placeAt("content").setModel(oModel);
+</script>
+</head>
+
+<body class="sapUiBody" role="application">
+	<div id="content"></div>
+</body>
+</html>
