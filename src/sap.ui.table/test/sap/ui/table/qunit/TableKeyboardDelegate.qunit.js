@@ -1528,7 +1528,7 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 		var iNonEmptyVisibleRowCount = Math.min(oTable.getVisibleRowCount(), oTable._getRowCount());
 		var iPageSize = iNonEmptyVisibleRowCount - oTable.getFixedRowCount() - oTable.getFixedBottomRowCount();
 		var iLastScrollableRowIndex = iNonEmptyVisibleRowCount - oTable.getFixedBottomRowCount() - 1;
-		var iHeaderRowCount = TableUtils.getHeaderRowCount(oTable);
+		var iHeaderRowCount = sap.ui.table.TableUtils.getHeaderRowCount(oTable);
 
 		/* Test on row header */
 
