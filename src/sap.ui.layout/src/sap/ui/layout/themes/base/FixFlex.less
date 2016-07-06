@@ -30,6 +30,11 @@
 .sapUiFixFlexFlexible {
 	box-sizing: border-box;
 
+	/* Fixes bug in Chrome 48 where flexbox is broken
+		https://github.com/angular/material/issues/6841 */
+	min-height: 0;
+	min-width: 0;
+
 	display: -webkit-box;
 	display: -webkit-flex;
 	display: -ms-flexbox;
