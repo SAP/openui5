@@ -1,4 +1,9 @@
-sap.ui.define(['jquery.sap.global', 'sap/ui/test/Opa', 'sap/ui/test/Opa5'], function ($, Opa, Opa5) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/test/Opa',
+	'sap/ui/test/Opa5',
+	'sharedTests/matchers'
+], function ($, Opa, Opa5, sharedMatcherTests) {
 	"use strict";
 
 	var iInitialDelay = sap.ui.Device.browser.msie ? 50 : 0;
@@ -443,4 +448,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/test/Opa', 'sap/ui/test/Opa5'], func
 		oButton.destroy();
 	});
 
+
+	sharedMatcherTests.start({
+		getControls: function (oSelectionCriteria) {
+			var vResultFromOpa;
+			var oOpa = new Opa5();
+
+			// we want to execute the success handler in a sync way so we use fake timers
+			var oClock = sinon.useFakeTimers();
+			var oWaitForOptions = $.extend(oSelectionCriteria, {
+				success: function (vResult) {
+					vResultFromOpa = vResult;
+				}
+			});
+			oOpa.waitFor(oWaitForOptions);
+			oOpa.emptyQueue();
+
+			// tick for a very long time to make sure every timeout is called
+			oClock.tick(999999);
+			oClock.restore();
+
+			return vResultFromOpa || null;
+		}
+	});
 });

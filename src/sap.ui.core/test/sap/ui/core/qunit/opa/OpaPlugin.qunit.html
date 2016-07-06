@@ -7,7 +7,11 @@
 
 <script
 	src="../../../../../../resources/sap-ui-core.js"
-	data-sap-ui-libs="sap.ui.commons, sap.m">
+	data-sap-ui-libs="sap.ui.commons, sap.m"
+	data-sap-ui-resourceroots='{
+		"samples" : "../../samples/",
+		"sharedTests" : "./sharedOpa5AndOpaPlugin"
+	}'>
 
 </script>
 
@@ -33,14 +37,16 @@ sap.ui.require([
 	"sap/ui/commons/Button",
 	"sap/ui/commons/CheckBox",
 	"sap/m/Button",
-	"sap/m/Dialog"
+	"sap/m/Dialog",
+	"sharedTests/matchers"
 ], function (OpaPlugin,
 			 Interactable,
 			 Visible,
 			 Button,
 			 CheckBox,
 			 MButton,
-			 Dialog) {
+			 Dialog,
+			 sharedMatcherTests) {
 	"use strict";
 
 
@@ -742,6 +748,18 @@ sap.ui.require([
 			assert.ok(!bResult, "should never look for a control");
 			oOpaPlugin.destroy();
 		});
+	});
+
+	sharedMatcherTests.start({
+		getControls: function (oSelectionCriteria) {
+			var vResult = new OpaPlugin().getFilterdControls(oSelectionCriteria);
+
+			if (vResult === OpaPlugin.FILTER_FOUND_NO_CONTROLS) {
+				return null;
+			}
+
+			return vResult;
+		}
 	});
 
 	$(function () {
