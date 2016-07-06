@@ -4,10 +4,10 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>Test Page for sap.m.FlexBox</title>
 		<style>
-			.sapMFlexItem {
+			/*.sapMFlexItem {
 				border: 1px dashed red;
 				background-color: #aaaaaa;
-			}
+			}*/
 			#layout>div:nth-child(2) {
 				width: 200px;
 				height: 300px;
@@ -19,7 +19,7 @@
 		</style>
 		<script id="sap-ui-bootstrap"
 			src="../../../resources/sap-ui-core.js"
-			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-theme="sap_belize"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.m,sap.ui.layout">
 		</script>
@@ -110,14 +110,97 @@
 				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1})
 			});
 
+			var oItem10 = new sap.m.Image({
+				src: "images/mark1.png",
+				width: "100%",
+				height: "44px",
+				alt: "test image",
+				decorative: false,
+				densityAware: false,
+				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1, baseSize: "0%"})
+			});
+
+			var oItem11 = new sap.m.Input({
+				placeholder: "Some input",
+				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1, baseSize: "0%"})
+			});
+
+			var oItem12 = new sap.m.Button({
+				text: "Button",
+				width: "100%",
+				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1, baseSize: "0%"})
+			});
+
+			var oItem13 = new sap.m.Image({
+				src: "images/mark1.png",
+				width: "100%",
+				height: "44px",
+				alt: "test image",
+				decorative: false,
+				densityAware: false,
+				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1, baseSize: "0%"})
+			});
+
+			var oItem14 = new sap.m.Input({
+				placeholder: "Some input",
+				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1, baseSize: "0%"})
+			});
+
+			var oItem15 = new sap.m.Button({
+				text: "Button",
+				width: "100%",
+				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1, baseSize: "0%"})
+			});
+
+			var oItem16 = new sap.m.Image({
+				src: "images/mark1.png",
+				width: "100%",
+				height: "44px",
+				alt: "test image",
+				decorative: false,
+				densityAware: false,
+				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1, baseSize: "0%"})
+			});
+
+			var oItem17 = new sap.m.Input({
+				placeholder: "Some input",
+				layoutData: new sap.m.FlexItemData({growFactor: 2, shrinkFactor: 2, baseSize: "0%"})
+			});
+
+			var oItem18 = new sap.m.Button({
+				text: "Button",
+				width: "100%",
+				layoutData: new sap.m.FlexItemData({growFactor: 3, shrinkFactor: 3, baseSize: "0%"})
+			});
+
+			var oItem19 = new sap.m.Image({
+				src: "images/mark1.png",
+				width: "100%",
+				height: "44px",
+				alt: "test image",
+				decorative: false,
+				densityAware: false,
+				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1, baseSize: "0%"})
+			});
+
+			var oItem20 = new sap.m.Input({
+				placeholder: "Some input",
+				layoutData: new sap.m.FlexItemData({growFactor: 2, shrinkFactor: 2, baseSize: "0%"})
+			});
+
+			var oItem21 = new sap.m.Button({
+				text: "Button",
+				width: "100%",
+				layoutData: new sap.m.FlexItemData({growFactor: 3, shrinkFactor: 3, baseSize: "0%"})
+			});
 
 			// Create a vertical flexbox with items
-			var oFlexBox = new sap.m.FlexBox("flexbox1", {
+			var oFlexBox1 = new sap.m.FlexBox("flexbox1", {
 				fitContainer: true,
 				wrap: "Wrap",
 				alignContent: "Stretch",
 				justifyContent: "Start",
-				items:[
+				items: [
 					oItem1,
 					oItem2,
 					oItem3,
@@ -130,17 +213,135 @@
 				]
 			});
 
+			// Create a flexbox with wrapped items
+			var oFlexBox2 = new sap.m.FlexBox("flexbox2", {
+				renderType: "Div",
+				width: "100%",
+				items: [
+					oItem10,
+					oItem11,
+					oItem12
+				]
+			});
+
+			// Create a flexbox with bare items
+			var oFlexBox3 = new sap.m.FlexBox("flexbox3", {
+				renderType: "Bare",
+				width: "100%",
+				items: [
+					oItem13,
+					oItem14,
+					oItem15
+				]
+			});
+
+			// Create a flexbox with wrapped items
+			var oFlexBox4 = new sap.m.FlexBox("flexbox4", {
+				renderType: "Div",
+				width: "100%",
+				items: [
+					oItem16,
+					oItem17,
+					oItem18
+				]
+			});
+
+			// Create a flexbox with bare items
+			var oFlexBox5 = new sap.m.FlexBox("flexbox5", {
+				renderType: "Bare",
+				width: "100%",
+				items: [
+					oItem19,
+					oItem20,
+					oItem21
+				]
+			});
+
+			oItem22 = new sap.m.Button({
+				text: "1",
+				width: "200px",
+				type: "Emphasized",
+				layoutData: new sap.m.FlexItemData({
+					shrinkFactor: 1
+				})
+			});
+			oItem22.addStyleClass("sapUiSmallMarginEnd");
+
+			oItem23 = new sap.m.Button({
+				text: "2",
+				width: "200px",
+				type: "Emphasized",
+				layoutData: new sap.m.FlexItemData({
+					shrinkFactor: 1
+				})
+			});
+			oItem23.addStyleClass("sapUiSmallMarginEnd");
+
+			oItem24 = new sap.m.Button({
+				text: "3",
+				width: "200px",
+				type: "Emphasized",
+				layoutData: new sap.m.FlexItemData({
+					shrinkFactor: 1
+				})
+			});
+			oItem24.addStyleClass("sapUiSmallMarginEnd");
+
+			oItem25 = new sap.m.Button({
+				text: "4",
+				width: "200px",
+				type: "Emphasized",
+				layoutData: new sap.m.FlexItemData({
+					shrinkFactor: 0
+				})
+			});
+			oItem25.addStyleClass("sapUiSmallMarginEnd");
+
+			oItem26 = new sap.m.Button({
+				text: "5",
+				width: "200px",
+				type: "Emphasized",
+				layoutData: new sap.m.FlexItemData({
+					shrinkFactor: 0,
+					growFactor: 3,
+					alignSelf: "Center"
+				})
+			});
+			oItem26.addStyleClass("sapUiSmallMarginEnd");
+
+			var oFlexBox6 = new sap.m.FlexBox({
+				renderType: "Bare",
+				alignItems: "Center",
+				justifyContent: "Center",
+				items: [
+							oItem22,
+							oItem23,
+							oItem24,
+							oItem25,
+							oItem26
+				]
+			});
+
+			var oScrollContainer = new sap.m.ScrollContainer({
+				content: oFlexBox6
+			});
+
 			var oLayout = new sap.ui.layout.VerticalLayout("layout", {
 				content: [
 							oButton1,
-							oFlexBox
+							oFlexBox1
 						]
 			});
 
 			var page1 = new sap.m.Page("page1", {
 				title:"FlexBox Test Page",
 				content:[
-					oLayout
+					oLayout,
+					oFlexBox2,
+					oFlexBox3,
+					oFlexBox4,
+					oFlexBox5,
+					oScrollContainer
 				]
 			});
 
