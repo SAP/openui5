@@ -1,7 +1,3 @@
-#
-# ${copyright}
-##
-
 Feature: Schrodinger's coffee
     Leave a barista in a box for a while with a nuclear isotope
     and a flask of poison that will be broken if the isotope
@@ -20,7 +16,7 @@ Feature: Schrodinger's coffee
     Given that an alpha particle was detected
     Then the flask of poison should be broken
     And I should expect a dead barista
-    
+
   @wip
   Scenario: This scenario is a Work In Progress (WIP) and should be skipped
     Given that I am a mad scientist

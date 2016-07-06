@@ -1,7 +1,3 @@
-#
-# ${copyright}
-##
-
 Feature: Page Navigation Journey
     If I click on a button, the app should navigate to the appropriate page
 

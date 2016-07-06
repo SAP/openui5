@@ -3,16 +3,17 @@
  */
 
 /* global jQuery,QUnit,assert */
-/* eslint-disable quotes,consistent-this */
 
-jQuery.sap.require("sap.ui.qunit.qunit-css");
+// Load synchronously to avoid QUnit issue where tests run before QUnit is loaded
 jQuery.sap.require("sap.ui.thirdparty.qunit");
-jQuery.sap.require("sap.ui.qunit.qunit-junit");
 
-// put qunit-coverage last so library files don't get measured (we load StepDefinitions first so it doesn't appear in
-// the code coverage list)
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', "sap/ui/test/gherkin/GherkinTestGenerator",
-  "sap/ui/test/gherkin/StepDefinitions", "sap/ui/qunit/qunit-coverage"], function($, UI5Object, GherkinTestGenerator) {
+// put qunit-coverage last so library files don't get measured  (we load StepDefinitions, even though we don't have to,
+// so that it doesn't appear in the code coverage list, knowing that the user will need to load it)
+sap.ui.define([
+  'jquery.sap.global', 'sap/ui/base/Object', "sap/ui/test/gherkin/GherkinTestGenerator",
+  "sap/ui/test/gherkin/StepDefinitions", "sap/ui/qunit/qunit-css", "sap/ui/qunit/qunit-junit",
+  "sap/ui/qunit/qunit-coverage"
+], function($, UI5Object, GherkinTestGenerator) {
   'use strict';
 
   /**

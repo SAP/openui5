@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/core/UIComponent', 'sap/ui/core/mvc/View'],
+sap.ui.define(["sap/ui/core/UIComponent", "sap/ui/core/mvc/View"],
 	function(UIComponent, View) {
 	"use strict";
 

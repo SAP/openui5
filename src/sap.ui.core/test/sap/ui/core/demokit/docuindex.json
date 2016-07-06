@@ -62,7 +62,6 @@
 				"id" : "sap.ui.core.mvc.View",
 				"name" : "View",
 				"category" : "Display",
-				"appComponent" : "CA-UI-COR",
 				"formFactors" : "-",
 				"since" : "\"The Elders may know...\"",
 				"samples" : [
@@ -95,7 +94,9 @@
 					"sap.ui.core.sample.OpaPageObject",
 					"sap.ui.core.sample.OpaStartup.iStartMyUIComponent",
 					"sap.ui.core.sample.OpaStartup.iStartMyAppInAFrame",
-					"sap.ui.core.sample.OpaAction"
+					"sap.ui.core.sample.OpaAction",
+					"sap.ui.core.sample.gherkin.GherkinWithOPA5",
+					"sap.ui.core.sample.gherkin.GherkinWithPageObjects"
 				]
 			},
 			{
@@ -106,6 +107,17 @@
 				"samples": [
 					"sap.ui.core.sample.matcher.BindingPath",
 					"sap.ui.core.sample.OpaMatchers"
+				]
+			},
+			{
+				"id" : "sap.ui.test.gherkin",
+				"name" : "Gherkin",
+				"category" : "Testing",
+				"since" : "1.40",
+				"samples" : [
+					"sap.ui.core.sample.gherkin.GherkinWithQUnit",
+					"sap.ui.core.sample.gherkin.GherkinWithOPA5",
+					"sap.ui.core.sample.gherkin.GherkinWithPageObjects"
 				]
 			},
 			{
@@ -474,6 +486,21 @@
 				"id": "sap.ui.core.sample.OpaPageObject",
 				"name": "How to structure your OPA tests with Page Objects",
 				"description": "If you have multiple pages or UI areas that have several operations, you should place reuse functions in Page Objects to make your OPA tests maintainable. The example shows as well how to share and reuse functionality within and across page objects."
+			},
+			{
+				"id": "sap.ui.core.sample.gherkin.GherkinWithQUnit",
+				"name": "Using Gherking with QUnit",
+				"description": "How to combine Gherkin and QUnit to run Behaviour Driven Development (BDD) tests"
+			},
+			{
+				"id": "sap.ui.core.sample.gherkin.GherkinWithOPA5",
+				"name": "Using Gherking with OPA5",
+				"description": "How to combine Gherkin and OPA5 to run Behaviour Driven Development (BDD) tests"
+			},
+			{
+				"id": "sap.ui.core.sample.gherkin.GherkinWithPageObjects",
+				"name": "Using Gherking with OPA5 Page Objects",
+				"description": "How to combine Gherkin and OPA5 Page Objects to run Behaviour Driven Development (BDD) tests"
 			},
 			{
 				"id" : "sap.ui.core.sample.ThemeCustomClasses",

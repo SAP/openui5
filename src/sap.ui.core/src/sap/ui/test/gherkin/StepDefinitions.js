@@ -2,17 +2,18 @@
  * ${copyright}
  */
 
-/* eslint-disable quotes,consistent-this */
-
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function ($, UI5Object) {
-  'use strict';
+sap.ui.define([
+  "jquery.sap.global",
+  "sap/ui/base/Object"
+], function ($, UI5Object) {
+  "use strict";
 
   /**
    * A Gherkin feature file is human-readable, and the computer does not know how to execute its steps. This
    * StepDefinitions class provides the interface between human and machine. It defines what each step in the Gherkin
    * feature file will actually do when it is executed.
    *
-   * Meant to be implemented/overridden by a child object. Specifically, the functions 'init' and 'closeApplication'
+   * Meant to be implemented/overridden by a child object. Specifically, the functions "init" and "closeApplication"
    * need to be overridden.
    *
    * @abstract
@@ -32,7 +33,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function ($, UI5Objec
 
           /**
            * {StepDefinition[]} An array of StepDefinition objects, one of which is added to the array every time
-           * the user calls the 'register' method. Each StepDefinition object can generate one TestStep object.
+           * the user calls the "register" method. Each StepDefinition object can generate one TestStep object.
            *
            * @see #register
            * @see #_generateTestStep
@@ -43,7 +44,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function ($, UI5Objec
         },
 
         /**
-         * Registers the step definitions by calling the method 'register'. The order of the register calls is important.
+         * Registers the step definitions by calling the method "register". The order of the register calls is important.
          * The first step definition whose regular expression matches the step text is the one that will be executed,
          * however, the step definitions are checked in REVERSE ORDER (i.e. the last one you wrote is checked first).
          *
@@ -69,17 +70,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function ($, UI5Objec
         /**
          * Registers a step definition.
          *
-         * @param {regexp} rRegex - the regular expression that matches the feature file step (with leading 'Given', 'When',
-         *                          'Then' or 'But' removed). E.g. if the feature file has the step
-         *                          "Then I should be served a coffee" it will truncated to "I should be served a coffee"
-         *                          and tested against 'rRegex' to check for a match. The simple regular expression
+         * @param {regexp} rRegex - the regular expression that matches the feature file step (with leading "Given", "When",
+         *                          "Then", "But" or "*" removed). E.g. if the feature file has the step
+         *                          "Then I should be served a coffee" it will be truncated to "I should be served a coffee"
+         *                          and tested against "rRegex" to check for a match. The simple regular expression
          *                          /^I should be served a coffee$/i would match this text. The regular
-         *                          expression can specify capturing groups, which will be passed as parameters to 'fnFunc'.
+         *                          expression can specify capturing groups, which will be passed as parameters to "fnFunc".
          * @param {function} fnFunc - the function to execute in the event that the regular expression matches. Receives
          *                            regular expression capturing groups as parameters in the same order that they are
          *                            specified in the regular expression. If a data table is specified for the step, it
          *                            will be passed as an additional final parameter. At execution time, all functions
-         *                            within a particular scenario will execute within the same 'this' context.
+         *                            within a particular scenario will execute within the same "this" context.
          * @public
          * @function
          * @static

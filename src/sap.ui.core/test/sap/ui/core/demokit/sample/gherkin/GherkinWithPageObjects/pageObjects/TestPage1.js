@@ -2,6 +2,7 @@ sap.ui.define(["sap/ui/test/Opa5","./Common"], function(Opa5,Common){
 	"use strict";
 
 	Opa5.createPageObjects({
+
 		onPage1 : {
 			baseClass : Common,
 
@@ -12,6 +13,7 @@ sap.ui.define(["sap/ui/test/Opa5","./Common"], function(Opa5,Common){
 				}
 			}
 		}
+
 	});
 
 });

@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html>
+
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Using Gherkin with OPA5 Page Objects</title>
+
+    <script
+      id="sap-ui-bootstrap" src="../../../../../../../../resources/sap-ui-core.js"
+      data-sap-ui-resourceroots='{"GherkinWithPageObjects": "./"}'
+      data-sap-ui-loglevel="INFO"
+    ></script>
+
+    <script>
+      sap.ui.require([
+        "jquery.sap.global",
+        "sap/ui/test/gherkin/opa5TestHarness",
+        // Code coverage will be calculated for all modules loaded after the harness
+        "GherkinWithPageObjects/Steps",
+        "GherkinWithPageObjects/arrangements/Common",
+        "GherkinWithPageObjects/pageObjects/Intro",
+        "GherkinWithPageObjects/pageObjects/Overview",
+        "GherkinWithPageObjects/pageObjects/TestPage1",
+        "GherkinWithPageObjects/pageObjects/TestPage2"
+      ], function($, opa5TestHarness, Steps, Common) {
+
+        sap.ui.test.Opa5.extendConfig({
+          viewName : "Main",
+          viewNamespace : "view.",
+          arrangements : new Common()
+        });
+
+        opa5TestHarness.test({
+          featurePath: "GherkinWithPageObjects.Requirements1",
+          generateMissingSteps: true
+        });
+        opa5TestHarness.test({
+          featurePath: "GherkinWithPageObjects.Requirements2",
+          steps: Steps,
+          generateMissingSteps: true
+        });
+      });
+    </script>
+
+  </head>
+  <body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
+  </body>
+</html>

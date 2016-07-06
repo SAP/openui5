@@ -1,7 +1,3 @@
-#
-# ${copyright}
-##
-
 Feature: Clicking Buttons Is a Life Saving Activity
     Clicking buttons saves lemmings' lives. For the mere cost of a cheap home PC you
     can save thousands of lemmings daily by clicking buttons all day long.
@@ -18,7 +14,7 @@ Feature: Clicking Buttons Is a Life Saving Activity
   Scenario: The saved lemming has a name
     When I click on the life saving button
     Then I see Alice at the end of the list of named lemmings
-  
+
   @wip
   Scenario: Lemmings don't really throw themselves off cliffs
     Given there was a documentary of lemmings throwing themselves off a cliff

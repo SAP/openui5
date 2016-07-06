@@ -1,7 +1,3 @@
-#
-# ${copyright}
-##
-
 Feature: Coffee is very expensive
     Let's see how much it might cost to buy coffee every day during a week
 
@@ -19,7 +15,7 @@ Feature: Coffee is very expensive
     | Wednesday | Espresso-max      | $31.34        |
     | Thursday  | Sweet Dark Mixola | $43.34        |
     | Friday    | Demonic Jolt      | $50.00        |
-  
+
   Scenario: Verify coffee price list
     * I look at the coffee price list
     But I should see the following prices:
@@ -30,4 +26,4 @@ Feature: Coffee is very expensive
       | Sweet Dark Mixola | $12.00  |
       | Demonic Jolt      | $6.66   |
       | Heavenly Blend    | $333.77 |
-    
+
