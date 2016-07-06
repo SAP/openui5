@@ -510,7 +510,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		var oClone = Control.prototype.clone.apply(this, arguments);
 
 		for ( var j = 0; j < aButtons.length; j++) {
-			aButtons[i].attachPress(this._buttonSelected, this);
+			aButtons[j].attachPress(this._buttonSelected, this);
 		}
 
 		return oClone;
