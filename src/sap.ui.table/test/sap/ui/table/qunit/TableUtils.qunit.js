@@ -459,7 +459,7 @@ QUnit.module("TableUtils", {
 				}
 				return aKeys.sort();
 			}
-		}
+		};
 	},
 	teardown: function () {
 		jQuery("#content").empty();
@@ -528,4 +528,93 @@ QUnit.asyncTest("ResizeHandler", 17, function(assert) {
 	assert.strictEqual(sResizeHandlerId, undefined, "No ResizeHandler ID returned for unknown DOM");
 
 	jQuery("#" + this.oTable.getId("outer")).height("550px");
+});
+
+QUnit.module("TableUtils", {
+	setup: function() {
+		jQuery("#content").append("<div id='__table-outer'>" +
+			"</div>");
+
+		this.oTable = new sap.ui.table.Table();
+
+		this.TableUtilsDummyControl = sap.ui.core.Control.extend("sap.ui.table.TableUtilsDummyControl", {
+			metadata: {
+				library : "sap.ui.table",
+				aggregations : {
+					content : {type : "sap.ui.core.Control", multiple : true}
+				}
+			},
+			renderer: function(rm, oControl) {
+				rm.write("<div");
+				rm.writeControlData(oControl);
+				rm.write(">");
+				var aContent = oControl.getContent();
+				for (var i = 0; i < aContent.length; i++) {
+					rm.renderControl(aContent[i]);
+				}
+				rm.write("</div>");
+			}
+		}, false);
+	},
+	teardown: function () {
+		this.oTable.destroy();
+		jQuery("#content").empty();
+	}
+});
+
+QUnit.test("getParentDomRef, basic checks", function(assert) {
+	var oDomRef;
+	var oCore = sap.ui.getCore();
+
+	try {
+		TableUtils.getParentDomRef();
+	} catch(e) {
+		assert.ok(true, "Break when no table instance given");
+	}
+	oDomRef = TableUtils.getParentDomRef(this.oTable);
+	assert.strictEqual(oDomRef, null, "Table is not part of any aggregation and not rendered, DOM Ref = body");
+
+	this.oTable.placeAt("__table-outer", 0);
+	oCore.applyChanges();
+	var oUIArea = oCore.getUIArea("__table-outer");
+
+	oDomRef = TableUtils.getParentDomRef(this.oTable);
+	assert.equal(oDomRef, oUIArea.getRootNode(), "Table is part UI Area, DOM Ref = UI Area");
+});
+
+QUnit.test("getParentDomRef, aggregation nestings", function(assert) {
+	var oDomRef;
+	var oCore = sap.ui.getCore();
+	var oNested = new sap.ui.table.TableUtilsDummyControl({content: [this.oTable]});
+	var oControl = new sap.ui.table.TableUtilsDummyControl({});
+
+	oControl.placeAt("__table-outer", 0);
+	oCore.applyChanges();
+	oControl.addAggregation("content", oNested, true);
+
+	oDomRef = TableUtils.getParentDomRef(this.oTable);
+	assert.equal(oDomRef, oControl.getDomRef(), "Table is part of Nested aggregation but not rendered, DomRef = Control.getDomRef()");
+	assert.notEqual(oControl.getDomRef(), null, "Control has DomRef");
+	assert.equal(oNested.getDomRef(), null, "Nested control has no DomRef");
+	assert.equal(this.oTable.getDomRef(), null, "Table has no DomRef");
+
+	this.oTable.invalidate();
+	oCore.applyChanges();
+	oDomRef = TableUtils.getParentDomRef(this.oTable);
+	assert.equal(oDomRef, oNested.getDomRef(), "Table is part of Nested aggregation and rendered, DomRef = Nested.getDomRef()");
+});
+
+QUnit.test("getParentDomRef, aggregation nestings without getParent", function(assert) {
+	var oNested = new sap.ui.table.TableUtilsDummyControl({content: [this.oTable]});
+	var oControl = new sap.ui.table.TableUtilsDummyControl({content: [oNested]});
+
+	// briefly fake that there is no getParent function.
+	// this is to make sure there is no endless loop
+	var fnGetParent = oControl.getParent;
+	oControl.getParent = undefined;
+	var oDomRef = TableUtils.getParentDomRef(this.oTable);
+	// restore getParent for later cleanup
+	oControl.getParent = fnGetParent;
+
+	assert.strictEqual(oDomRef, null, "Table is part of Nested aggregation but not rendered, DomRef = Control.getDomRef()");
 });
