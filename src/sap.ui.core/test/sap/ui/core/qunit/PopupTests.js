@@ -85,6 +85,71 @@ QUnit.asyncTest("Close Popup", function(assert) {
 	this.oPopup.open(0);
 });
 
+QUnit.test("Check 'onAfterRendering' with control and DOM element", function(assert) {
+	var done = assert.async();
+
+	sap.ui.core.Control.extend("myControl", {
+
+		metadata: {
+			properties: {
+				"counter": {
+					type: "int",
+					defaultValue: 0
+				}
+			}
+		},
+
+		onAfterRendering: function() {
+			if (this.getCounter() > 0) {
+				this.$().css("height", "200px");
+			}
+		},
+
+		renderer: function(oRm, oControl) {
+			oRm.write("<div");
+			oRm.addStyle("height", "100px");
+			oRm.writeControlData(oControl);
+			oRm.writeStyles();
+			oRm.write(">");
+
+			oRm.write("</div>");
+		}
+	});
+
+	var oControl = new myControl();
+	var oSpyControlAfterRendering = sinon.spy(oControl, "onAfterRendering");
+
+	var oSpyPopAfterRendering = sinon.spy(this.oPopup, "onAfterRendering");
+	this.oPopup.setContent(oControl);
+
+	var fnOpened = function() {
+
+		assert.equal(oSpyControlAfterRendering.callCount, 1, "'onAfterRendering' of control was called");
+		assert.equal(oControl.$().css("height"), "100px", "Initial height set (100px)");
+		assert.equal(oSpyPopAfterRendering.callCount, 0, "'onAfterRendering' of Popup wasn't called yet");
+
+		// Change Popup content to DOM element
+		// This is not recommended but the Popup should be able to handle it
+		this.oPopup.setContent(oControl.getDomRef());
+
+		// Force the control to be invalidated
+		oControl.setCounter(1);
+
+		// Make sure re-rendering happens synchronously
+		sap.ui.getCore().applyChanges();
+
+		assert.equal(oSpyControlAfterRendering.callCount, 2, "'onAfterRendering' of control was called");
+		assert.equal(oControl.$().css("height"), "200px", "Height changed to 200px");
+		assert.equal(oSpyPopAfterRendering.callCount, 1, "'onAfterRendering' of Popup wasn't called yet");
+
+		oControl.destroy();
+		done();
+	};
+
+	this.oPopup.attachEventOnce("opened", fnOpened, this);
+	this.oPopup.open();
+});
+
 QUnit.module("Focus", {
 	beforeEach : function() {
 		if (!this.oPopup) {
