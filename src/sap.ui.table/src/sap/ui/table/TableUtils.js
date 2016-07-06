@@ -85,6 +85,46 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		},
 
 		/**
+		 * Toggles the expand / collapse state of the group which contains the given Dom element.
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @param {Object} oRef DOM reference of an element within the table group header
+		 * @param {boolean} [bExpand] If defined instead of toggling the desired state is set.
+		 * @return {boolean} <code>true</code> when the operation was performed, <code>false</code> otherwise.
+		 * @private
+		 */
+		toggleGroupHeader : function(oTable, oRef, bExpand) {
+			var $Ref = jQuery(oRef),
+				$GroupRef;
+
+			if ($Ref.hasClass("sapUiTableTreeIcon")) {
+				$GroupRef = $Ref.closest("tr");
+			} else {
+				$GroupRef = $Ref.closest(".sapUiTableGroupHeader");
+			}
+
+			var oBinding = oTable.getBinding("rows");
+			if ($GroupRef.length > 0 && oBinding) {
+				var iRowIndex = oTable.getFirstVisibleRow() + parseInt($GroupRef.attr("data-sap-ui-rowindex"), 10);
+				var bIsExpanded = oBinding.isExpanded(iRowIndex);
+				if (bExpand === true && !bIsExpanded) { // Force expand
+					oBinding.expand(iRowIndex);
+				} else if (bExpand === false && bIsExpanded) { // Force collapse
+					oBinding.collapse(iRowIndex);
+				} else if (bExpand !== true && bExpand !== false) { // Toggle state
+					oBinding.toggleIndex(iRowIndex);
+				} else {
+					return false;
+				}
+
+				if (oTable._onGroupHeaderChanged) {
+					oTable._onGroupHeaderChanged(iRowIndex, !bIsExpanded);
+				}
+				return true;
+			}
+			return false;
+		},
+
+		/**
 		 * Returns the text to be displayed as no data message.
 		 * If a custom noData control is set null is returned.
 		 * @param {sap.ui.table.Table} oTable Instance of the table
