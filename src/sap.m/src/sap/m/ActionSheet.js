@@ -447,7 +447,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	};
 
 	ActionSheet.prototype._buttonSelected = function() {
-		if (sap.ui.Device.system.phone && this._parent) {
+		if (sap.ui.Device.system.phone && this._parent != undefined) {
 			this._parent._oCloseTrigger = this;
 		}
 		this.close();
@@ -503,14 +503,17 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	ActionSheet.prototype.clone = function() {
 		var aButtons = this.getButtons();
-		for ( var i = 0; i < aButtons.length; i++) {
+		//What is the purpose of detaching all the event handlers on the buttons, and
+		//then re-attaching them after the clone?
+
+		for (var i = 0; i < aButtons.length; i++) {
 			aButtons[i].detachPress(this._buttonSelected, this);
 		}
 
 		var oClone = Control.prototype.clone.apply(this, arguments);
 
-		for ( var j = 0; j < aButtons.length; j++) {
-			aButtons[i].attachPress(this._buttonSelected, this);
+		for (var j = 0; j < aButtons.length; j++) {
+			aButtons[j].attachPress(this._buttonSelected, this);
 		}
 
 		return oClone;
