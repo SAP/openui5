@@ -540,7 +540,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		// ie11 fires input event after rendering when value contains an accented character
 		// ie11 fires input event whenever placeholder attribute is changed
-		if (document.activeElement !== oEvent.target) {
+		if (document.activeElement !== oEvent.target && sap.ui.Device.browser.msie && this.getValue() === this._lastValue) {
 			oEvent.setMarked("invalid");
 			return;
 		}
