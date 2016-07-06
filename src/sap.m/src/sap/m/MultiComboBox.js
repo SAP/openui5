@@ -975,7 +975,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	 * @private
 	 */
 	MultiComboBox.prototype._setContainerSizes = function() {
-		var $MultiComboBox = this.$();
+		var $MultiComboBox = this.$(),
+			bHasTokens = !!this._oTokenizer.getTokens().length;
 
 		if (!$MultiComboBox.length) {
 			return;
@@ -991,7 +992,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		var sInputWidth = (($ShadowDiv.outerWidth() + iIconWidth) / parseFloat(sap.m.BaseFontSize)) + "rem";
 
 		this._oTokenizer.$().css("width","calc(100% - " + sInputWidth + ")");
-		$InputContainer.css("width", "calc(100% - " + sTokenizerScrollWidth + ")");
+		$InputContainer.css("width", "calc(100% - " + (bHasTokens ? sTokenizerScrollWidth : "0px") + ")");
 		$InputContainer.css("min-width", sInputWidth);
 	};
 
