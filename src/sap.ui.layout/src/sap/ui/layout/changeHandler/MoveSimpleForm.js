@@ -42,35 +42,43 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 
 				if (oContent.changeType === MoveSimpleForm.CHANGE_TYPE_MOVE_FIELD) {
 
-					var aStopFieldTokens = [MoveSimpleForm.sTypeTitle, MoveSimpleForm.sTypeToolBar, MoveSimpleForm.sTypeLabel];
-					var oMovedField = oModifier.byId(mMovedElement.element);
-					var iMovedFieldIndex = aContent.indexOf(oMovedField);
-					var iMovedFieldLength = fnMeasureLengthOfSequenceUntilStopToken(oModifier, iMovedFieldIndex, aContent,
-							aStopFieldTokens);
+					var oSourceField = oModifier.byId(mMovedElement.element);
+					var iSourceFieldIndex = aContent.indexOf(oSourceField);
+					var iSourceFieldLength = fnGetFieldLength(oModifier, aContent, iSourceFieldIndex);
 
-					// Cut the moved field from the result array...
-					var aContentClone = aContent.slice();
-
-					aContentClone.splice(iMovedFieldIndex, iMovedFieldLength);
-
-					// Compute the fields target index in the cut array
+					// Compute the fields target index
 					var oTargetGroup = oModifier.byId(mMovedElement.target.groupId);
-					var iTargetGroupIndex = aContentClone.indexOf(oTargetGroup);
+					var iTargetGroupIndex = aContent.indexOf(oTargetGroup);
+					var oSourceGroup = oModifier.byId(mMovedElement.source.groupId);
+					var iSourceGroupIndex = aContent.indexOf(oSourceGroup);
 
-					var iOffset = (mMovedElement.source.fieldIndex < mMovedElement.target.fieldIndex) ? -1 : 0;
-					var iTargetFieldIndex = fnMapFieldIndexToContentAggregationIndex(oModifier, aContentClone, iTargetGroupIndex,
-							mMovedElement.target.fieldIndex + iOffset);
-					var iTargetFieldLength = fnMeasureLengthOfSequenceUntilStopToken(oModifier, iTargetFieldIndex, aContentClone,
-							aStopFieldTokens);
+					var iTargetFieldIndex = fnMapFieldIndexToContentAggregationIndex(oModifier, aContent, iTargetGroupIndex,
+							mMovedElement.target.fieldIndex, (iSourceGroupIndex === iTargetGroupIndex)
+									&& (mMovedElement.source.fieldIndex < mMovedElement.target.fieldIndex));
+					var iTargetFieldLength = fnGetFieldLength(oModifier, aContent, iTargetFieldIndex);
 
-					iOffset = mMovedElement.source.fieldIndex < mMovedElement.target.fieldIndex ? iTargetFieldLength : 0;
-					// and insert it at the target index
-					aContentClone = fnArrayRangeCopy(aContent, iMovedFieldIndex, aContentClone, iTargetFieldIndex + iOffset,
-							iMovedFieldLength);
+					var aContentClone = aContent.slice();
+					var aFieldElements = aContentClone.slice(iSourceFieldIndex, iSourceFieldIndex + iSourceFieldLength);
 
-					oModifier.removeAllAggregation(oSimpleForm, MoveSimpleForm.CONTENT_AGGREGATION);
-					for (var i = 0; i < aContentClone.length; ++i) {
-						oModifier.insertAggregation(oSimpleForm, MoveSimpleForm.CONTENT_AGGREGATION, aContentClone[i], i);
+					var aSegmentBeforeSource, aSegmentBeforeTarget, aSegmentBetweenSourceAndTarget, aSegmentTillEnd;
+					if (iSourceFieldIndex < iTargetFieldIndex) {
+						aSegmentBeforeSource = aContentClone.slice(0, iSourceFieldIndex);
+						aSegmentBetweenSourceAndTarget = aContentClone.slice(iSourceFieldIndex + iSourceFieldLength, iTargetFieldIndex
+								+ iTargetFieldLength);
+						aSegmentTillEnd = aContentClone.slice(iTargetFieldIndex + iTargetFieldLength, aContentClone.length);
+						aContentClone = aSegmentBeforeSource.concat(aSegmentBetweenSourceAndTarget.concat(aFieldElements.concat(aSegmentTillEnd)));
+					} else if (iSourceFieldIndex > iTargetFieldIndex) {
+						aSegmentBeforeTarget = aContentClone.slice(0, iTargetFieldIndex + iTargetFieldLength);
+						aSegmentBetweenSourceAndTarget = aContentClone.slice(iTargetFieldIndex + iTargetFieldLength, iSourceFieldIndex);
+						aSegmentTillEnd = aContentClone.slice(iSourceFieldIndex + iSourceFieldLength, aContentClone.length);
+						aContentClone = aSegmentBeforeTarget.concat(aFieldElements.concat(aSegmentBetweenSourceAndTarget.concat(aSegmentTillEnd)));
+					}
+
+					if (iSourceFieldIndex != iTargetFieldIndex) {
+						oModifier.removeAllAggregation(oSimpleForm, MoveSimpleForm.CONTENT_AGGREGATION);
+						for (var i = 0; i < aContentClone.length; ++i) {
+							oModifier.insertAggregation(oSimpleForm, MoveSimpleForm.CONTENT_AGGREGATION, aContentClone[i], i);
+						}
 					}
 
 				} else if (oContent.changeType === MoveSimpleForm.CHANGE_TYPE_MOVE_GROUP) {
@@ -203,23 +211,34 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 				return aContent.indexOf(oResult);
 			};
 
-			var fnMapFieldIndexToContentAggregationIndex = function(oModifier, aContent, iGroupStart, iFieldIndex) {
-				var oResult;
-				if (iGroupStart === aContent.length - 1) {
-					return aContent.length;
+			var fnIsTitle = function(aElements, iIndex) {
+				if (iIndex >= aElements.length) {
+					return true;
 				}
-				var iCurrentFieldIndex = -1;
-				iGroupStart = (oModifier.getControlType(aContent[iGroupStart]) === MoveSimpleForm.sTypeTitle) ? iGroupStart + 1 : iGroupStart;
-				for (var i = iGroupStart; i < aContent.length; i++) {
-					if (oModifier.getControlType(aContent[i]) === MoveSimpleForm.sTypeLabel || oModifier.getControlType(aContent[i]) === MoveSimpleForm.sTypeTitle) {
-						iCurrentFieldIndex++;
-						if (iCurrentFieldIndex === iFieldIndex) {
-							oResult = aContent[i];
-							break;
-						}
+				var sType = aElements[iIndex].getMetadata().getName();
+				return (MoveSimpleForm.sTypeTitle === sType);
+			};
+
+			var fnGetFieldLength = function(oModifier, aElements, iIndex) {
+				return fnMeasureLengthOfSequenceUntilStopToken(oModifier, iIndex, aElements, [MoveSimpleForm.sTypeTitle,
+						MoveSimpleForm.sTypeToolBar, MoveSimpleForm.sTypeLabel]);
+			};
+
+			var fnMapFieldIndexToContentAggregationIndex = function(oModifier, aContent, iGroupStart, iFieldIndex, bUp) {
+				if (!fnIsTitle(aContent, iGroupStart)) {
+					jQuery.sap.log.error("Illegal argument. iIndex has to point to a Label.");
+				} else {
+					iFieldIndex = bUp ? iFieldIndex + 1 : iFieldIndex;
+					var iCurrentRelativeFieldIndex = 0;
+					var iAbsolutIndex = iGroupStart;
+					var iActLength;
+					while (iAbsolutIndex < aContent.length && iCurrentRelativeFieldIndex < iFieldIndex) {
+						++iCurrentRelativeFieldIndex;
+						iActLength = fnGetFieldLength(oModifier, aContent, iAbsolutIndex);
+						iAbsolutIndex += iActLength;
 					}
 				}
-				return aContent.indexOf(oResult);
+				return iAbsolutIndex;
 			};
 
 			var fnMeasureLengthOfSequenceUntilStopToken = function(oModifier, iMovedElementIndex, aContent, aStopToken) {
@@ -258,7 +277,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 				return {
 					changeType : MoveSimpleForm.CHANGE_TYPE_MOVE_GROUP,
 					selector : {
-						id: sSimpeFormId
+						id : sSimpeFormId
 					},
 					target : sSimpeFormId,
 					movedElements : [oMovedElement]
@@ -288,7 +307,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 				return {
 					changeType : MoveSimpleForm.CHANGE_TYPE_MOVE_FIELD,
 					selector : {
-						id: sSimpeFormId
+						id : sSimpeFormId
 					},
 					target : sSimpeFormId,
 					movedElements : [oMovedElement]
