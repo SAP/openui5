@@ -7,12 +7,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		'sap/ui/core/Control', 'sap/ui/core/Element', 'sap/ui/core/IconPool', 'sap/ui/core/IntervalTrigger', 'sap/ui/core/library', 'sap/ui/core/Popup',
 		'sap/ui/core/ResizeHandler', 'sap/ui/core/ScrollBar', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/theming/Parameters',
 		'sap/ui/model/ChangeReason', 'sap/ui/model/Context', 'sap/ui/model/Filter', 'sap/ui/model/SelectionModel', 'sap/ui/model/Sorter',
-		'./Column', './Row', './library', './TableUtils', './TableExtension', './TableAccExtension', './TableKeyboardExtension', 'jquery.sap.dom', 'jquery.sap.trace'],
+		'./Column', './Row', './library', './TableUtils', './TableExtension', './TableAccExtension', './TableKeyboardExtension', './TablePointerExtension', 'jquery.sap.dom', 'jquery.sap.trace'],
 	function(jQuery, Device,
 		Control, Element, IconPool, IntervalTrigger, coreLibrary, Popup,
 		ResizeHandler, ScrollBar, ItemNavigation, Parameters,
 		ChangeReason, Context, Filter, SelectionModel, Sorter,
-		Column, Row, library, TableUtils, TableExtension, TableAccExtension, TableKeyboardExtension /*, jQuerySapPlugin,jQuerySAPTrace */) {
+		Column, Row, library, TableUtils, TableExtension, TableAccExtension, TableKeyboardExtension, TablePointerExtension /*, jQuerySapPlugin,jQuerySAPTrace */) {
 	"use strict";
 
 
@@ -750,6 +750,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._attachExtensions = function() {
+		TableExtension.enrich(this, TablePointerExtension);
 		TableExtension.enrich(this, TableKeyboardExtension);
 		TableExtension.enrich(this, TableAccExtension); //Must be registered after keyboard to reach correct delegate order
 	};
@@ -783,6 +784,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._detachExtensions = function(){
+		this._getPointerExtension().destroy();
 		this._getKeyboardExtension().destroy();
 		this._getAccExtension().destroy();
 	};
@@ -3142,9 +3144,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype.onmousedown = function(oEvent) {
-		// check whether item navigation should be reapplied from scratch
-		this._getKeyboardExtension().initItemNavigation();
-
 		// only move on left click!
 		var bLeftButton = oEvent.button === 0;
 		var bIsTouchMode = this._isTouchMode(oEvent);
@@ -3152,41 +3151,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (bLeftButton) {
 			var $target = jQuery(oEvent.target);
 
-			var $splitter = this.$("sb");
-			if (oEvent.target == $splitter[0]) {
-
-				// Fix for IE text selection while dragging
-				jQuery(document.body).bind("selectstart", jQuery.proxy(this._splitterSelectStart, this));
-
-				var offset = $splitter.offset();
-				var height = $splitter.height();
-				var width = $splitter.width();
-
-				jQuery(document.body).append(
-						"<div id=\"" + this.getId() + "-ghost\" class=\"sapUiTableInteractiveResizerGhost\" style =\" height:" + height + "px; width:"
-						+ width + "px; left:" + offset.left + "px; top:" + offset.top + "px\" ></div>");
-
-				// append overlay over splitter to enable correct functionality of moving the splitter
-				$splitter.append(
-						"<div id=\"" + this.getId() + "-overlay\" style =\"left: 0px;" +
-								" right: 0px; bottom: 0px; top: 0px; position:absolute\" ></div>");
-
-				var $Document = jQuery(document);
-				if (bIsTouchMode) {
-					$Document.bind("touchend.sapUiTableInteractiveResize", jQuery.proxy(this._onGhostMouseRelease, this));
-					$Document.bind("touchmove.sapUiTableInteractiveResize", jQuery.proxy(this._onGhostMouseMove, this));
-				} else {
-					$Document.bind("mouseup.sapUiTableInteractiveResize", jQuery.proxy(this._onGhostMouseRelease, this));
-					$Document.bind("mousemove.sapUiTableInteractiveResize", jQuery.proxy(this._onGhostMouseMove, this));
-				}
-
-				this._disableTextSelection();
-
-				return;
-			}
-
 			var $col = $target.closest(".sapUiTableCol");
-			if ($col.length === 1) {
+			if ($col.length === 1 && oEvent.target != this.getDomRef("sb")/*Not the interactive resize bar -> see PointerExtension*/) {
 
 				this._bShowMenu = true;
 				this._mTimeouts.delayedMenuTimer = jQuery.sap.delayedCall(200, this, function() {
@@ -5084,60 +5050,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 */
 	Table.prototype._isTouchMode = function(oEvent) {
 		return !!oEvent.originalEvent["touches"];
-	};
-
-	/**
-	 * The selectstart event triggered in IE to select the text.
-	 * @private
-	 * @param {event} oEvent The splitterselectstart event
-	 * @return {boolean} false
-	 */
-	Table.prototype._splitterSelectStart = function(oEvent){
-		oEvent.preventDefault();
-		oEvent.stopPropagation();
-		return false;
-	};
-
-	/**
-	 * Drops the previous dragged horizontal splitter bar and recalculates the amount of rows to be displayed.
-	 * @private
-	 */
-	Table.prototype._onGhostMouseRelease = function(oEvent) {
-		var $this = this.$();
-		var $splitterBarGhost = jQuery(this.getDomRef("ghost"));
-		var iLocationY = this._isTouchMode(oEvent) ? oEvent.changedTouches[0].pageY : oEvent.pageY;
-
-		var iNewHeight = iLocationY - $this.find(".sapUiTableCCnt").offset().top - $splitterBarGhost.height() - $this.find(".sapUiTableFtr").height();
-		this._setRowContentHeight(iNewHeight);
-		this._adjustRows(this._calculateRowsToDisplay(iNewHeight));
-
-		$splitterBarGhost.remove();
-		this.$("overlay").remove();
-
-		jQuery(document.body).unbind("selectstart", this._splitterSelectStart);
-
-		var $document = jQuery(document);
-		$document.unbind("touchend.sapUiTableInteractiveResize");
-		$document.unbind("touchmove.sapUiTableInteractiveResize");
-		$document.unbind("mouseup.sapUiTableInteractiveResize");
-		$document.unbind("mousemove.sapUiTableInteractiveResize");
-
-		this._enableTextSelection();
-	};
-
-	/**
-	 * Drags the horizontal splitter bar for visibleRowCountMode "Interactive".
-	 * @param oEvent
-	 * @private
-	 */
-	Table.prototype._onGhostMouseMove = function(oEvent) {
-		var splitterBarGhost = this.getDomRef("ghost");
-
-		var iLocationY = this._isTouchMode(oEvent) ? oEvent.targetTouches[0].pageY : oEvent.pageY;
-		var min = this.$().offset().top;
-		if (iLocationY > min) {
-			jQuery(splitterBarGhost).css("top", iLocationY + "px");
-		}
 	};
 
 	Table.prototype._determineParent = function() {
