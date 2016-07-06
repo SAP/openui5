@@ -691,6 +691,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 * @param {sap.ui.core.CalendarType|null} sCalendarType the new calendar type. Set it with null to clear the calendar type
 		 *   and the calendar type is calculated based on the format settings and current locale.
 		 * @return {sap.ui.core.Configuration} <code>this</code> to allow method chaining
+		 * @public
 		 * @since 1.28.6
 		 */
 		setCalendarType : function(sCalendarType) {
@@ -724,7 +725,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 * language tag) or to <code>null</code>. When set to <code>null</code> (default
 		 * value) then locale specific formatters are retrieved for the current language.
 		 *
-		 * After changing the formatLocale, the framework tries  to update localization
+		 * After changing the formatLocale, the framework tries to update localization
 		 * specific parts of the UI. See the documentation of {@link #setLanguage} for
 		 * details and restrictions.
 		 *
@@ -732,7 +733,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 *   case doesn't matter and underscores can be used instead of a dashes to separate
 		 *   components (compatibility with Java Locale Ids)
 		 * @return {sap.ui.core.Configuration} <code>this</code> to allow method chaining
-		 *
+		 * @public
 		 * @experimental Since 1.11.1 - See documentation of {@link #setLanguage} for restrictions.
 		 */
 		setFormatLocale : function(sFormatLocale) {
@@ -831,7 +832,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 *
 		 * @param {boolean|null} bRTL new character orientation mode or <code>null</code>
 		 * @return {sap.ui.core.Configuration} <code>this</code> to allow method chaining
-		 *
+		 * @public
 		 * @experimental Since 1.11.1 - See documentation of {@link #setLanguage} for restrictions.
 		 */
 		setRTL : function(bRTL) {
@@ -1164,7 +1165,66 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 */
 		getHandleValidation : function() {
 			return this["xx-handleValidation"];
+		},
+
+		/**
+		 * Applies multiple changes to the configuration at once.
+		 *
+		 * If the changed settings contain localization related settings like <code>language</code>
+		 * or <ode>calendarType</code>, then only a single <code>localizationChanged</code> event will
+		 * be fired. As the framework has to inform all existing components, elements, models etc.
+		 * about localization changes, using <code>applySettings</code> can significantly reduce the
+		 * overhead for multiple changes, esp. when they occur after the UI has been created already.
+		 *
+		 * The <code>mSettings</code> can contain any property <code><i>xyz</i></code> for which a
+		 * setter method <code>set<i>XYZ</i></code> exists in the API of this class.
+		 * Similarly, values for the {@link sap.ui.core.Configuration.FormatSettings format settings}
+		 * API can be provided in a nested object with name <code>formatSettings</code>.
+		 *
+		 *
+		 * @example <caption>Apply <code>language</code>, <code>calendarType</code> and several legacy
+		 *          format settings in one call</caption>
+		 *
+		 * sap.ui.getCore().getConfiguration().applySettings({
+		 *     language: 'de',
+		 *     calendarType: sap.ui.core.CalendarType.Gregorian,
+		 *     formatSettings: {
+		 *         legacyDateFormat: '1',
+		 *         legacyTimeFormat: '1',
+		 *         legacyNumberFormat: '1'
+		 *     }
+		 * });
+		 *
+		 * @param {object} mSettings Configuration options to apply
+		 * @returns {sap.ui.core.Configuration} Returns <code>this</code> to allow method chaining
+		 * @public
+		 * @since 1.38.6
+		 */
+		applySettings: function(mSettings) {
+
+			function applyAll(ctx, m) {
+				var sName, sMethod;
+				for ( sName in m ) {
+					sMethod = "set" + sName.slice(0,1).toUpperCase() + sName.slice(1);
+					if ( sName === 'formatSettings' && ctx.oFormatSettings ) {
+						applyAll(ctx.oFormatSettings, m[sName]);
+					} else if ( typeof ctx[sMethod] === 'function' ) {
+						ctx[sMethod](m[sName]);
+					} else {
+						jQuery.sap.log.warning("Configuration.applySettings: unknown setting '" + sName + "' ignored");
+					}
+				}
+			}
+
+			jQuery.sap.assert(typeof mSettings === 'object', "mSettings must be an object");
+
+			this._collect(); // block events
+			applyAll(this, mSettings);
+			this._endCollect(); // might fire localizationChanged
+
+			return this;
 		}
+
 	});
 
 	var M_ABAP_LANGUAGE_TO_LOCALE = {
