@@ -1054,6 +1054,8 @@
 
                 // Assert
                 ok(oTitleInfo.text === "ProfileChanged", "changed title is adapted");
+
+                //cleanup
                 Fiori20Adapter.detachViewChange(fnTitleListener);
             });
 
@@ -1072,6 +1074,51 @@
 
                 // Assert
                 ok(oTitleInfo.text === "New NavBar Title", "changed title is adapted");
+
+                //cleanup
+                Fiori20Adapter.detachViewChange(fnTitleListener);
+            });
+
+            module("Adaptable header criteria", {
+                beforeEach: function () {
+                    this.oApp = new sap.m.App();
+                    this.oApp.placeAt("content");
+                    sap.ui.getCore().applyChanges();
+                },
+                afterEach: function () {
+                    this.oApp.destroy();
+                }
+            });
+
+            QUnit.test("Non-adaptable header type is skipped", function(assert){
+
+                var oView = new sap.m.HBox({
+                    items: [
+                        new sap.m.Page({title: "Page Title"}),
+                        new sap.m.SelectDialog("TestSelectDialog", {
+                            title: "Dialog Title"
+                        })
+                    ]
+                });
+
+                this.oApp.addPage(oView);
+
+                var oAdaptOptions = {bMoveTitle: true},
+                        oTitleInfo,
+                        fnTitleListener = function(oEvent) {
+                            oTitleInfo = oEvent.getParameter("oTitleInfo");
+                        },
+                        oSpy = sinon.spy(fnTitleListener);
+
+                Fiori20Adapter.attachViewChange(oSpy);
+                Fiori20Adapter.traverse(this.oApp, oAdaptOptions);
+                sap.ui.getCore().applyChanges();
+
+                // Assert
+                ok(oTitleInfo.text === "Page Title", "the correct title is shown");
+                ok(oSpy.calledOnce, "view change called once");
+
+                //cleanup
                 Fiori20Adapter.detachViewChange(fnTitleListener);
             });
 
