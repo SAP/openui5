@@ -16,29 +16,7 @@
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		<script type="text/javascript">
-
-			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-
-			jQuery.sap.require("sap.ui.dt.AggregationDesignTimeMetadata");
-
-			QUnit.module("Given that an AggregationDesignTimeMetadata is created for a control", {
-				beforeEach : function() {
-					this.oAggregationDesignTimeMetadata = new sap.ui.dt.AggregationDesignTimeMetadata({
-						data : {
-							testField : "testValue"
-						}
-					});
-				},
-				afterEach : function() {
-					this.oAggregationDesignTimeMetadata.destroy();
-				}
-			});
-			QUnit.test("when the AggregationDesignTimeMetadata is initialized", function(assert) {
-				assert.strictEqual(this.oAggregationDesignTimeMetadata.getData().testField, "testValue", "then the field is returned right");
-			});
-
-		</script>
+		<script type="text/javascript" src="AggregationDesignTimeMetadata.qunit.js"></script>
 	</head>
 	<body>
 		<h1 id="qunit-header">QUnit page for sap.ui.dt.AggregationDesignTimeMetadata</h1>
