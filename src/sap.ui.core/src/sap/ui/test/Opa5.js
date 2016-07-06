@@ -19,7 +19,7 @@ sap.ui.define([
 		'./pipelines/ActionPipeline',
 		'./_ParameterValidator'
 	],
-	function(jQuery,
+	function($,
 			 Opa,
 			 OpaPlugin,
 			 PageObjectFactory,
@@ -36,7 +36,7 @@ sap.ui.define([
 			 ParameterValidator) {
 		"use strict";
 
-		var $ = jQuery,
+		var oLogger = $.sap.log.getLogger("sap.ui.test.Opa5"),
 			oPlugin = new OpaPlugin(iFrameLauncher._sLogPrefix),
 			oMatcherPipeline = new MatcherPipeline(),
 			oActionPipeline = new ActionPipeline(),
@@ -66,7 +66,7 @@ sap.ui.define([
 		 * @since 1.22
 		 */
 		var Opa5 = Ui5Object.extend("sap.ui.test.Opa5",
-			jQuery.extend({},
+			$.extend({},
 				Opa.prototype,
 				{
 					constructor : function() {
@@ -116,7 +116,7 @@ sap.ui.define([
 			oFirstWaitForOptions.success = function () {
 				// include stylesheet
 				var sComponentStyleLocation = jQuery.sap.getModulePath("sap.ui.test.OpaCss",".css");
-				jQuery.sap.includeStyleSheet(sComponentStyleLocation);
+				$.sap.includeStyleSheet(sComponentStyleLocation);
 
 				HashChanger.getInstance().setHash(oOptions.hash || "");
 
@@ -174,7 +174,7 @@ sap.ui.define([
 					this.iTeardownMyUIComponent();
 				} else {
 					var sErrorMessage = "A teardown was called but there was nothing to tear down use iStartMyComponent or iStartMyAppInAFrame";
-					$.sap.log.error(sErrorMessage, "Opa");
+					oLogger.error(sErrorMessage, "Opa");
 					throw new Error(sErrorMessage);
 				}
 			}.bind(this);
@@ -402,31 +402,31 @@ sap.ui.define([
 
 				//Search for a controlType in a view or open dialog
 				if (!oOptions.id && (oOptions.viewName || oOptions.searchOpenDialogs) && vControl.length === 0) {
-					jQuery.sap.log.debug("found no controls in view: " + oOptions.viewName + " with controlType " + oOptions.sOriginalControlType, "", "Opa");
+					oLogger.debug("found no controls in view: " + oOptions.viewName + " with controlType " + oOptions.sOriginalControlType);
 					return false;
 				}
 
 				//Regex did not find any control
 				if (oOptions.id instanceof RegExp && !vControl.length) {
-					jQuery.sap.log.debug("found no control with the id regex" + oOptions.id);
+					oLogger.debug("found no control with the id regex" + oOptions.id);
 					return false;
 				}
 
 				//Did not find all controls with the specified ids
 				if ($.isArray(oOptions.id) && (!vControl || vControl.length !== oOptions.id.length)) {
 					if (vControl && vControl.length) {
-						jQuery.sap.log.debug("found not all controls with the ids " + oOptions.id + " onlyFound the controls: " +
+						oLogger.debug("found not all controls with the ids " + oOptions.id + " onlyFound the controls: " +
 								vControl.map(function (oCont) {
 									return oCont.sId;
 								}));
 					} else {
-						jQuery.sap.log.debug("found no control with the id  " + oOptions.id);
+						oLogger.debug("found no control with the id  " + oOptions.id);
 					}
 					return false;
 				}
 
 				if (oOptions.controlType && $.isArray(vControl) && !vControl.length) {
-					jQuery.sap.log.debug("found no controls with the type  " + oOptions.sOriginalControlType, "", "Opa");
+					oLogger.debug("found no controls with the type  " + oOptions.sOriginalControlType);
 					return false;
 				}
 
@@ -718,10 +718,10 @@ sap.ui.define([
 		Opa5.prototype._executeCheck = function (fnCheck, vControl) {
 			var aArgs = [];
 			vControl && aArgs.push(vControl);
-			jQuery.sap.log.debug("Opa is executing the check: " + fnCheck);
+			oLogger.debug("Opa is executing the check: " + fnCheck);
 
 			var bResult = fnCheck.apply(this, aArgs);
-			jQuery.sap.log.debug("Opa check was " + bResult);
+			oLogger.debug("Opa check was " + bResult);
 
 			return bResult;
 		};
@@ -733,8 +733,8 @@ sap.ui.define([
 
 		function addFrame (sSource) {
 			// include styles
-			var sIFrameStyleLocation = jQuery.sap.getModulePath("sap.ui.test.OpaCss",".css");
-			jQuery.sap.includeStyleSheet(sIFrameStyleLocation);
+			var sIFrameStyleLocation = $.sap.getModulePath("sap.ui.test.OpaCss",".css");
+			$.sap.includeStyleSheet(sIFrameStyleLocation);
 
 			return iFrameLauncher.launch({
 				frameId: sFrameId,

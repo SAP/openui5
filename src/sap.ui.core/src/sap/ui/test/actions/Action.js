@@ -111,7 +111,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/base/ManagedObject', 'sap/ui/qunit/QU
 			return null;
 		},
 
-		_sLogPrefix : "Opa5 actions"
+		_sLogPrefix : "sap.ui.test.actions"
 	});
 
 }, /* bExport= */ true);

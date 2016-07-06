@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Matcher'], function (jQuery, Matcher) {
+sap.ui.define(['jquery.sap.global', './Matcher'], function ($, Matcher) {
 	"use strict";
 
 	/**
@@ -45,16 +45,19 @@ sap.ui.define(['jquery.sap.global', './Matcher'], function (jQuery, Matcher) {
 		 */
 		isMatching : function (oControl) {
 			var sAggregationName = this.getName(),
-				fnAggregation = oControl["get" + jQuery.sap.charToUpperCase(sAggregationName, 0)];
+				fnAggregation = oControl["get" + $.sap.charToUpperCase(sAggregationName, 0)];
 
 			if (!fnAggregation) {
-				jQuery.sap.log.error("Control " + oControl + " does not have an aggregation called: " + sAggregationName, this._sLogPrefix);
+				this._oLogger.error("Control '" + oControl + "' does not have an aggregation called '" + sAggregationName + "'");
 				return false;
 			}
-			var bIsMatch = fnAggregation.call(oControl).length === this.getLength();
-			jQuery.sap.log.debug("Control " + oControl + " has an aggregation '"
-					+ sAggregationName + "' and its length " + fnAggregation.call(oControl).length + (bIsMatch ? " matches." : " does not match."),
-					this._sLogPrefix);
+			var iAggregationLength = fnAggregation.call(oControl).length;
+			var iExpectedLength = this.getLength();
+			var bIsMatch = iAggregationLength === iExpectedLength;
+			if (!bIsMatch) {
+				this._oLogger.debug("Control '" + oControl + "' has " + iAggregationLength +
+					" Objects in the aggregation '" + sAggregationName + "' but it should have " + iExpectedLength);
+			}
 			return bIsMatch;
 		}
 

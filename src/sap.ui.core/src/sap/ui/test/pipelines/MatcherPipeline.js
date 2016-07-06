@@ -10,9 +10,10 @@ sap.ui.define([
 	function($, UI5Object, PipelineFactory) {
 		"use strict";
 		var oPipelineFactory = new PipelineFactory({
-			name: "Matcher",
-			functionName: "isMatching"
-		});
+				name: "Matcher",
+				functionName: "isMatching"
+			}),
+			oLogger = $.sap.log.getLogger("sap.ui.test.pipelines.MatcherPipeline");
 
 		/*
 		 * Internals
@@ -106,7 +107,7 @@ sap.ui.define([
 				}, this);
 
 				if (!aMatchedValues.length) {
-					$.sap.log.debug("all results were filtered out by the matchers - skipping the check", this);
+					oLogger.debug("all results were filtered out by the matchers - skipping the check");
 					return false;
 				}
 

@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/base/ManagedObject'], function (fnManagedObject) {
+sap.ui.define(["jquery.sap.global", "sap/ui/base/ManagedObject"], function ($, ManagedObject) {
 	"use strict";
 
 	/**
@@ -14,10 +14,15 @@ sap.ui.define(['sap/ui/base/ManagedObject'], function (fnManagedObject) {
 	 * @author SAP SE
 	 * @since 1.23
 	 */
-	return fnManagedObject.extend("sap.ui.test.matchers.Matcher", {
+	var Matcher = ManagedObject.extend("sap.ui.test.matchers.Matcher", {
 
 		metadata : {
 			publicMethods : [ "isMatching" ]
+		},
+
+		constructor: function () {
+			this._oLogger = $.sap.log.getLogger(this.getMetadata().getName());
+			return ManagedObject.prototype.constructor.apply(this, arguments);
 		},
 
 		/**
@@ -33,9 +38,8 @@ sap.ui.define(['sap/ui/base/ManagedObject'], function (fnManagedObject) {
 		 */
 		isMatching : function (oControl) {
 			return true;
-		},
-
-		_sLogPrefix : "Opa5 matcher"
+		}
 	});
 
+	return Matcher;
 }, /* bExport= */ true);

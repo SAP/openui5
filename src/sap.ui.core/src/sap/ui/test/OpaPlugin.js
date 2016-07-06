@@ -46,7 +46,8 @@ sap.ui.define(['jquery.sap.global',
 
 			constructor : function(sLogPrefix) {
 				var that = this;
-				this._sLogPrefix = sLogPrefix || "sap.ui.test.OpaPlugin";
+				sLogPrefix = sLogPrefix || "sap.ui.test.OpaPlugin";
+				this._oLogger = $.sap.log.getLogger(sLogPrefix);
 
 				sap.ui.getCore().registerPlugin({
 					startPlugin: function(oCore) {
@@ -127,7 +128,7 @@ sap.ui.define(['jquery.sap.global',
 					sViewId;
 
 				if (!oView) {
-					$.sap.log.debug("Found no view with the name: '" + sViewName + "'", this._sLogPrefix);
+					this._oLogger.debug("Found no view with the name: '" + sViewName + "'");
 					if (bIdIsString) {
 						return null;
 					}
@@ -148,7 +149,7 @@ sap.ui.define(['jquery.sap.global',
 				if (bIdIsString) {
 					var oElement = oView.byId(oOptions.id);
 					if (!oElement) {
-						$.sap.log.debug("Found no control with the id: '" + oOptions.id + "' in the view: '" + sViewName + "'", this._sLogPrefix);
+						this._oLogger.debug("Found no control with the id: '" + oOptions.id + "' in the view: '" + sViewName + "'");
 						return null;
 					}
 
@@ -309,13 +310,13 @@ sap.ui.define(['jquery.sap.global',
 					vControl = oCoreElements[vStringOrArrayOrRegex];
 
 					if (!vControl) {
-						$.sap.log.debug("Found no control with the global id: '" + vStringOrArrayOrRegex + "'", this._sLogPrefix);
+						this._oLogger.debug("Found no control with the global id: '" + vStringOrArrayOrRegex + "'");
 						return null;
 					}
 
 					if (!this._checkControlType(vControl, oOptions.controlType)) {
-						$.sap.log.error("An id: '" + oOptions.id + "' was passed together with the controlType '" + oOptions.sOriginalControlType +
-								"' but the type does not match the control retrieved: '" + vControl + "' - null is returned", this._sLogPrefix);
+						this._oLogger.error("An id: '" + oOptions.id + "' was passed together with the controlType '" + oOptions.sOriginalControlType +
+							"' but the type does not match the control retrieved: '" + vControl + "' - null is returned");
 						return null;
 					}
 
@@ -357,7 +358,7 @@ sap.ui.define(['jquery.sap.global',
 			 */
 			getControlConstructor : function (sControlType) {
 				if (sap.ui.lazyRequire._isStub(sControlType)) {
-					$.sap.log.debug("The control type " + sControlType + " is currently a lazy stub.", this._sLogPrefix);
+					this._oLogger.debug("The control type " + sControlType + " is currently a lazy stub.");
 					return null;
 				}
 
@@ -365,7 +366,7 @@ sap.ui.define(['jquery.sap.global',
 
 				// no control type
 				if (!fnControlType) {
-					$.sap.log.debug("The control type " + sControlType + " is undefined.", this._sLogPrefix);
+					this._oLogger.debug("The control type " + sControlType + " is undefined.");
 					return null;
 				}
 
@@ -416,7 +417,7 @@ sap.ui.define(['jquery.sap.global',
 				if (typeof vControlType !== "string") {
 					if (vControlType && vControlType._sapUiLazyLoader) {
 						// no way of getting the control type's name without actually calling it
-						$.sap.log.debug("The control type is currently a lazy stub", this._sLogPrefix);
+						this._oLogger.debug("The control type is currently a lazy stub");
 						return false;
 					}
 					// undefined - oOptions has no control type filter that's fine

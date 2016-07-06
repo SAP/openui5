@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Matcher'], function (jQuery, Matcher) {
+sap.ui.define(['jquery.sap.global', './Matcher'], function ($, Matcher) {
 	"use strict";
 
 	/**
@@ -39,14 +39,19 @@ sap.ui.define(['jquery.sap.global', './Matcher'], function (jQuery, Matcher) {
 		 */
 		isMatching : function (oControl) {
 			var sAggregationName = this.getName(),
-				fnAggregation = oControl["get" + jQuery.sap.charToUpperCase(sAggregationName, 0)];
+				fnAggregation = oControl["get" + $.sap.charToUpperCase(sAggregationName, 0)];
 
 			if (!fnAggregation) {
-				jQuery.sap.log.error("Control " + oControl.sId + " does not have an aggregation called: " + sAggregationName, this._sLogPrefix);
+				this._oLogger.error("Control '" + oControl + "' does not have an aggregation called '" + sAggregationName + "'");
 				return false;
 			}
 
-			return !!fnAggregation.call(oControl).length;
+			var bFilled = !!fnAggregation.call(oControl).length;
+			if (!bFilled) {
+				this._oLogger.debug("Control '" + oControl + "' has an empty aggregation '" + sAggregationName + "'");
+			}
+
+			return bFilled;
 		}
 
 	});

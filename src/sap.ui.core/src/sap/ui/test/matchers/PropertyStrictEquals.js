@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Matcher'], function (jQuery, fnMatcher) {
+sap.ui.define(['jquery.sap.global', './Matcher'], function (jQuery, Matcher) {
 	"use strict";
 
 	/**
@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', './Matcher'], function (jQuery, fnMatcher) {
 	 * @author SAP SE
 	 * @since 1.23
 	 */
-	return fnMatcher.extend("sap.ui.test.matchers.PropertyStrictEquals", /** @lends sap.ui.test.matchers.PropertyStrictEquals.prototype */ {
+	return Matcher.extend("sap.ui.test.matchers.PropertyStrictEquals", /** @lends sap.ui.test.matchers.PropertyStrictEquals.prototype */ {
 
 		metadata : {
 			publicMethods : [ "isMatching" ],
@@ -48,7 +48,7 @@ sap.ui.define(['jquery.sap.global', './Matcher'], function (jQuery, fnMatcher) {
 				fnProperty = oControl["get" + jQuery.sap.charToUpperCase(sPropertyName, 0)];
 
 			if (!fnProperty) {
-				jQuery.sap.log.error("Control " + oControl.sId + " does not have a property called: " + sPropertyName, this._sLogPrefix);
+				this._oLogger.error("Control '" + oControl.sId + "' does not have a property called '" + sPropertyName + "'");
 				return false;
 			}
 

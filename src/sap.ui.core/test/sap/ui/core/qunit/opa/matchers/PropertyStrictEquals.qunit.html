@@ -8,76 +8,83 @@
 
 		<script
 			src="../../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-libs="sap.ui.commons">
+			data-sap-ui-libs="sap.m">
 		</script>
 
 
 		<script>
-			(function () {
-				jQuery.sap.require("sap.ui.qunit.qunit-css");
-				jQuery.sap.require("sap.ui.thirdparty.qunit");
-				jQuery.sap.require("sap.ui.qunit.qunit-junit");
-				jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-				jQuery.sap.require("sap.ui.thirdparty.sinon");
-				jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+			jQuery.sap.require("sap.ui.qunit.qunit-css");
+			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.qunit.qunit-junit");
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			jQuery.sap.require("sap.ui.thirdparty.sinon");
+			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+			sap.ui.require(
+				[
+					"sap/ui/test/matchers/PropertyStrictEquals",
+					"sap/m/Button"
+				],
+				function (PropertyStrictEquals, Button) {
 
-				jQuery.sap.require("sap.ui.test.matchers.PropertyStrictEquals");
-
-				jQuery.sap.require("sap.ui.commons.Button");
-				function strictMatchTestCase (sTextValue, sMatcherValue, bExpected) {
-					// Arrange
-					var oButton = new sap.ui.commons.Button({text : sTextValue});
-
-					// System under Test
-					var oMatcher = new sap.ui.test.matchers.PropertyStrictEquals({
-						name : "text",
-						value : sMatcherValue
+					QUnit.module("PropertyStrictEquals", {
+						beforeEach: function () {
+							this.oButton = new Button("myButton");
+						},
+						afterEach: function () {
+							this.oButton.destroy();
+						}
 					});
 
-					// Act
-					var bResult = oMatcher.isMatching(oButton);
+					[{
+						textValue: "foo",
+						matcherValue: "foo",
+						expected: true
+					},
+					{
+						textValue: "foo",
+						matcherValue: "bar",
+						expected: false
+					},
+					{
+						textValue: "",
+						matcherValue: null,
+						expected: false
+					}].forEach(function (oTestCase) {
+						QUnit.test("Should strictmatch for " + JSON.stringify(oTestCase), function (assert) {
+							// Arrange
+							this.oButton.setText(oTestCase.textValue);
 
-					// Assert
-					strictEqual(bResult, bExpected, "Did match strictly");
+							// System under Test
+							var oMatcher = new PropertyStrictEquals({
+								name : "text",
+								value : oTestCase.matcherValue
+							});
 
-					// Cleanup
-					oButton.destroy();
+							// Act
+							var bResult = oMatcher.isMatching(this.oButton);
+
+							// Assert
+							assert.strictEqual(bResult, oTestCase.expected, "Strict match");
+						});
+					});
+
+					QUnit.test("Should complain if control does not have a property", function(assert) {
+						// System under Test
+						var oMatcher = new PropertyStrictEquals({
+							name : "aPropertyThatWillNeverBeAddedToTheButton",
+							value : "anything"
+						});
+						var oErrorSpy = this.spy(oMatcher._oLogger, "error");
+
+						// Act
+						var bResult = oMatcher.isMatching(this.oButton);
+
+						// Assert
+						assert.strictEqual(bResult, false, "Did not match");
+						sinon.assert.calledWith(oErrorSpy, "Control 'myButton' does not have a property called 'aPropertyThatWillNeverBeAddedToTheButton'");
+					});
 				}
-
-				test("Should strictmatch a matching property", function() {
-					strictMatchTestCase.call(this, "foo", "foo", true)
-				});
-
-				test("Should not strictmatch a not matching property", function() {
-					strictMatchTestCase.call(this, "foo", "bar", false)
-				});
-
-				test("Should not strictmatch 2 falsy values", function() {
-					strictMatchTestCase.call(this, "", null, false)
-				});
-
-				test("Should complain if control does not have a property", function() {
-					// Arrange
-					var oButton = new sap.ui.commons.Button();
-					var oErrorSpy = this.spy(jQuery.sap.log, "error");
-
-					// System under Test
-					var oMatcher = new sap.ui.test.matchers.PropertyStrictEquals({
-						name : "aPropertyThatWillNeverBeAddedToTheButton",
-						value : "anything"
-					});
-
-					// Act
-					var bResult = oMatcher.isMatching(oButton);
-
-					// Assert
-					strictEqual(bResult, false, "Did not match");
-					strictEqual(oErrorSpy.callCount, 1, "Did complain");
-
-					// Cleanup
-					oButton.destroy();
-				});
-			} ());
+			);
 		</script>
 	</head>
 

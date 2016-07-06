@@ -16,13 +16,13 @@ sap.ui.define(['jquery.sap.global', './Matcher'], function ($, Matcher) {
 	return Matcher.extend("sap.ui.test.matchers.Visible", /** @lends sap.ui.test.matchers.Visible.prototype */ {
 		isMatching:  function(oControl) {
 			if (!oControl.getDomRef()) {
-				$.sap.log.debug("The control " + oControl + " is not rendered", this._sLogPrefix);
+				this._oLogger.debug("The control " + oControl + " is not rendered");
 				return false;
 			}
 
 			var bVisible = oControl.$().is(":visible");
 			if (!bVisible) {
-				$.sap.log.debug("The control " + oControl + " is not visible", this._sLogPrefix);
+				this._oLogger.debug("The control " + oControl + " is not visible");
 			}
 
 			return bVisible;
