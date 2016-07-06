@@ -1064,17 +1064,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		return 0;
 	};
 
-	AnalyticalTable.prototype._hasData = function() {
-		var oBinding = this.getBinding("rows"),
-			iLength = oBinding && (oBinding.getLength() || 0),
-			bHasTotal = oBinding && oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures();
-
-		if (!oBinding || (bHasTotal && iLength < 2) || (!bHasTotal && iLength === 0)) {
-			return false;
-		}
-		return true;
-	};
-
 	AnalyticalTable.prototype._onPersoApplied = function() {
 		Table.prototype._onPersoApplied.apply(this, arguments);
 		this._aGroupedColumns = [];
