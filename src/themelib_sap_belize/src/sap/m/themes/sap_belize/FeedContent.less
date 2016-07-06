@@ -5,10 +5,11 @@
 
 .sapMFCCTxt .sapMText {
 	font-size: @sapMFontSmallSize;
+	color: @sapUiTileTitleTextColor;
 }
 
 .sapMFCSbh {
-	color: lighten(@sapUiTileTextColor, 20);
+	color: @sapUiTileTextColor;
 	font-size: @sapMFontSmallSize;
 }
 
@@ -18,19 +19,19 @@
 }
 
 .sapMFCValue.Neutral {
-	color: @sapUiNeutralElement;
+	color: @sapUiNeutralText;
 }
 
 .sapMFCValue.Good {
-	color: @sapUiPositiveElement;
+	color: @sapUiPositiveText;
 }
 
 .sapMFCValue.Critical {
-	color: @sapUiCriticalElement;
+	color: @sapUiCriticalText;
 }
 
 .sapMFCValue.Error {
-	color: @sapUiNegativeElement;
+	color: @sapUiNegativeText;
 }
 
 html.sap-desktop .sapMFC:focus {
