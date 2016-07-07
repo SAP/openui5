@@ -286,84 +286,6 @@ sap.ui.define(['jquery.sap.global',
 			},
 
 			/**
-			 * @private
-			 */
-			getFilterdControls : function(oOptions) {
-				var oPluginOptions = $.extend({}, oOptions, {
-						// only pass interactable if there are actions for backwards compatibility
-						interactable: !!oOptions.actions
-					}),
-					bPluginLooksForControls = this._isLookingForAControl(oPluginOptions);
-
-				var vControl = null,
-					vResult = null;
-
-				if (bPluginLooksForControls) {
-					// a range of controls or a single control
-					vControl = this.getMatchingControls(oPluginOptions);
-				}
-
-
-				//We were searching for a control but we did not find it
-				if (typeof oOptions.id === "string" && !vControl) {
-					return OpaPlugin.FILTER_FOUND_NO_CONTROLS;
-				}
-
-
-				//Search for a controlType in a view or open dialog
-				if (!oOptions.id && (oOptions.viewName || oOptions.searchOpenDialogs) && vControl.length === 0) {
-					this._oLogger.debug("found no controls in view: " + oOptions.viewName + " with controlType " + oOptions.sOriginalControlType, "", "Opa");
-					return OpaPlugin.FILTER_FOUND_NO_CONTROLS;
-				}
-
-				//Regex did not find any control
-				if (oOptions.id instanceof RegExp && !vControl.length) {
-					this._oLogger.debug("found no control with the id regex" + oOptions.id);
-					return OpaPlugin.FILTER_FOUND_NO_CONTROLS;
-				}
-
-				//Did not find all controls with the specified ids
-				if ($.isArray(oOptions.id) && (!vControl || vControl.length !== oOptions.id.length)) {
-					if (vControl && vControl.length) {
-						this._oLogger.debug("found not all controls with the ids " + oOptions.id + " onlyFound the controls: " +
-							vControl.map(function (oCont) {
-								return oCont.sId;
-							}));
-					} else {
-						this._oLogger.debug("found no control with the id  " + oOptions.id);
-					}
-					return OpaPlugin.FILTER_FOUND_NO_CONTROLS;
-				}
-
-				if (oOptions.controlType && $.isArray(vControl) && !vControl.length) {
-					this._oLogger.debug("found no controls with the type  " + oOptions.sOriginalControlType, "", "Opa");
-					return OpaPlugin.FILTER_FOUND_NO_CONTROLS;
-				}
-
-				/*
-				 * If the plugin does not look for controls execute matchers even if vControl is falsy
-				 * used when you smuggle in values to success through matchers:
-				 * matchers: function () {return "foo";},
-				 * success: function (sFoo) {}
-				 */
-				if ((vControl || !bPluginLooksForControls) && oOptions.matchers) {
-					vResult = oMatcherPipeline.process({
-						matchers: oOptions.matchers,
-						control: vControl
-					});
-
-					// no control matched
-					if (!vResult) {
-						return OpaPlugin.FILTER_FOUND_NO_CONTROLS;
-					}
-				} else {
-					vResult = vControl;
-				}
-
-				return vResult;
-			},
-
-			/**
 			 * Returns a control by its id
 			 * accepts an object with an ID property the ID can be
 			 * will check a control type also, if defined
@@ -514,13 +436,6 @@ sap.ui.define(['jquery.sap.global',
 				return true;
 			}
 		});
-
-		/**
-		 * marker for a return type
-		 * @private
-		 * @type {{}}
-		 */
-		OpaPlugin.FILTER_FOUND_NO_CONTROLS = "FILTER_FOUND_NO_CONTROL";
 
 		return OpaPlugin;
 	}, /* bExport= */ true);
