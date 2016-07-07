@@ -485,6 +485,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 
 			if (sValue === "") {
 				bMatch = true;
+				if (!this.bOpenedByKeyboardOrButton) {
+					// prevent filtering of the picker if it will be closed
+					return;
+				}
 			}
 
 			var oListItem = this.getListItem(oItem);
@@ -497,7 +501,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		this._setContainerSizes();
 
 		// First do manipulations on list items and then let the list render
-		if (!this.getValue() || !bVisibleItemFound) {
+		if ((!this.getValue() || !bVisibleItemFound) && !this.bOpenedByKeyboardOrButton)  {
 			this.close();
 		} else {
 			this.open();
@@ -665,7 +669,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	 *
 	 * @private
 	 */
-	MultiComboBox.prototype.onBeforeClose = function() {};
+	MultiComboBox.prototype.onBeforeClose = function() {
+		// reset opener
+		this.bOpenedByKeyboardOrButton = false;
+	};
 
 	/**
 	 * This event handler will be called after the MultiComboBox's Pop-up is closed.
@@ -673,7 +680,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	 * @private
 	 */
 	MultiComboBox.prototype.onAfterClose = function() {
-
 		// remove the active state of the MultiComboBox's field
 		this.removeStyleClass(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed");
 
