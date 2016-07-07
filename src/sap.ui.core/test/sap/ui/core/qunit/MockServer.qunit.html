@@ -1973,7 +1973,7 @@
 				});
 				ok(oResponse.success, "Mock server responded");
 				ok(oResponse.data.d, "single entry no OData system query options");
-				equal(oResponse.data.d.__metadata.uri, "/myservice/CarrierCollection('carrid 1')", "single key");
+				equal(oResponse.data.d.__metadata.uri, "/myservice/CarrierCollection('carrid%201')", "single key");
 
 				jQuery.sap.sjax({
 					url : "/myservice/CarrierCollection(carrid='carrid 1')",
@@ -1981,7 +1981,7 @@
 				});
 				ok(oResponse.success, "Mock server responded");
 				ok(oResponse.data.d, "single entry no OData system query options");
-				equal(oResponse.data.d.__metadata.uri, "/myservice/CarrierCollection('carrid 1')", "single key");
+				equal(oResponse.data.d.__metadata.uri, "/myservice/CarrierCollection('carrid%201')", "single key");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/CarrierCollection('carrid 1')/?$select=carrid",
