@@ -70,6 +70,10 @@
 				}]
 			};
 
+			var oSimpleJSONModel = new sap.ui.model.json.JSONModel({
+				data: [{titleName: "Title"}]
+			});
+
 			var oItemTemplate1 = new sap.m.StandardListItem({
 				title : "{title}",
 				description : "{description}",
@@ -298,6 +302,23 @@
 				var domQueryLength = this.oResponsivePopover.getDomRef().querySelectorAll('.sapMPopoverResizeHandle').length;
 				assert.strictEqual(domQueryLength,  0, "Arrow not found in responsive popover");
 			}
+		});
+
+		QUnit.test("ResponsivepPopover should pass the data from the binded model to the inner control", function (assert) {
+			// Arrange
+			this.oResponsivePopover = new sap.m.ResponsivePopover();
+			this.oResponsivePopover.setModel(oSimpleJSONModel);
+			this.oResponsivePopover.bindProperty("title", "titleName");
+			this.oResponsivePopover.bindElement({
+				path: "/data/0"
+			});
+
+			// Act
+			this.oResponsivePopover.openBy(this.oButton);
+			this.clock.tick(500);
+
+			// Assert
+			assert.equal(this.oResponsivePopover._oControl.getTitle(), "Title", "Title should be passed to inner popover");
 		});
 
 		</script>
