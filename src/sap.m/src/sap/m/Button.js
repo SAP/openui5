@@ -209,7 +209,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		oEvent.setMarked();
 
 		// fire tap event
-		if (this.getEnabled()) {
+		if (this.getEnabled() && this.getVisible()) {
 			// note: on mobile, the press event should be fired after the focus is on the button
 			if (oEvent.originalEvent && oEvent.originalEvent.type === "touchend") {
 				this.focus();
