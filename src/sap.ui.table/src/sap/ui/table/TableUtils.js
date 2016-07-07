@@ -545,22 +545,67 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		},
 
 		/**
-		 * Returns the DOM reference of the table parent control or UI Area. If no parent DOM reference could be found,
-		 * it returns null
+		 * Returns the content density style class which is relevant for the given control. First it tries to find the
+		 * definition via the control API. While traversing the controls parents, it's tried to find the closest DOM
+		 * reference. If that is found, the check will use the DOM reference to find the closest content density style class
+		 * in the parent chain. This approach caters both use cases: content density defined at DOM and/or control level.
 		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @returns {Object|null} DOM Reference or null if none of the parents was rendered yet
+		 * If at the same level, several style classes are defined, this is the priority:
+		 * sapUiSizeCompact, sapUiSizeCondensed, sapUiSizeCozy
+		 *
+		 * @param {sap.ui.table.Table} oControl Instance of the table
+		 * @returns {String|undefined} name of the content density stlye class or undefined if none was found
 		 * @private
 		 */
-		getParentDomRef : function(oTable) {
+		getContentDensity : function(oControl) {
+			var sContentDensity;
+			var aContentDensityStyleClasses = ["sapUiSizeCompact", "sapUiSizeCondensed", "sapUiSizeCozy"];
+
+			var fnGetContentDensity = function (sFnName, oObject) {
+				if (!oObject[sFnName]) {
+					return;
+				}
+
+				for (var i = 0; i < aContentDensityStyleClasses.length; i++) {
+					if (oObject[sFnName](aContentDensityStyleClasses[i])) {
+						return aContentDensityStyleClasses[i];
+					}
+				}
+			};
+
+			var $DomRef = oControl.$();
+			if ($DomRef.length > 0) {
+				// table was already rendered, check by DOM and return content density class
+				sContentDensity = fnGetContentDensity("hasClass", $DomRef);
+			} else {
+				sContentDensity = fnGetContentDensity("hasStyleClass", oControl);
+			}
+
+			if (sContentDensity) {
+				return sContentDensity;
+			}
+
+			// since the table was not yet rendered, traverse its parents:
+			//   - to find a content density defined at control level
+			//   - to find the first DOM reference and then check on DOM level
 			var oParentDomRef = null;
-			var oParent = oTable.getParent();
+			var oParent = oControl.getParent();
 			// the table might not have a parent at all.
 			if (oParent) {
 				// try to get the DOM Ref of the parent. It might be required to traverse the complete parent
 				// chain to find one parent which has DOM rendered, as it may happen that an element does not have
 				// a corresponding DOM Ref
 				do {
+					// if the content density is defined at control level, we can return it, no matter the control was already
+					// rendered. By the time it will be rendered, it will have that style class
+					sContentDensity = fnGetContentDensity("hasStyleClass", oParent);
+					if (sContentDensity) {
+						return sContentDensity;
+					}
+
+					// if there was no style class set at control level, we try to find the DOM reference. Using that
+					// DOM reference, we can easily check for the content density style class via the DOM. This allows us
+					// to include e.g. the body tag as well.
 					if (oParent.getDomRef) {
 						// for Controls and elements
 						oParentDomRef = oParent.getDomRef();
@@ -577,7 +622,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 					}
 				} while (oParent && !oParentDomRef)
 			}
-			return oParentDomRef;
+
+			// if we found a DOM reference, check for content density
+			$DomRef = jQuery(oParentDomRef || document.body);
+			sContentDensity = fnGetContentDensity("hasClass", $DomRef.closest("." + aContentDensityStyleClasses.join(",.")));
+
+			return sContentDensity;
 		}
 	};
 
