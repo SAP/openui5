@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	ProgressIndicatorRenderer.render = function(oRm, oControl) {
-		var fWidthBar = oControl.getPercentValue(),
+		var fPercentValue = oControl.getPercentValue(),
 			iWidthControl = oControl.getWidth(),
 			iHeightControl = oControl.getHeight(),
 			sTextValue = oControl.getDisplayValue(),
@@ -34,12 +34,16 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.addClass("sapMPI");
 		oRm.addStyle("width", iWidthControl);
 
-		if (fWidthBar > 50) {
+		if (fPercentValue > 50) {
 			oRm.addClass("sapMPIValueGreaterHalf");
 		}
 
-		if (fWidthBar === 100) {
+		if (fPercentValue === 100) {
 			oRm.addClass("sapMPIValueMax");
+		}
+
+		if (fPercentValue === 0) {
+			oRm.addClass("sapMPIValueMin");
 		}
 
 		if (iHeightControl) {
@@ -57,11 +61,11 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.writeAccessibilityState(oControl, {
 			role: "progressbar",
 			valuemin: 0,
-			valuenow: fWidthBar,
+			valuenow: fPercentValue,
 			valuemax: 100,
 			valuetext: oControl._getAriaValueText({
 				sText: sTextValue,
-				fPercent: fWidthBar
+				fPercent: fPercentValue
 			})
 		});
 
@@ -92,7 +96,7 @@ sap.ui.define(['jquery.sap.global'],
 
 		oRm.writeClasses();
 		oRm.writeAttribute("id", sControlId + "-bar");
-		oRm.writeAttribute("style", "width:" + fWidthBar + "%");
+		oRm.writeAttribute("style", "width:" + fPercentValue + "%");
 		oRm.write(">");
 
 		// PI text in progress bar
