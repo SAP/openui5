@@ -125,6 +125,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 					"xx-cache-excludedKeys" : { type : "string[]", defaultValue : []},
 					"xx-cache-serialization": { type : "boolean",  defaultValue : false},
 					"xx-nosync"             : { type : "string",   defaultValue : "" },
+					"xx-waitForTheme"       : { type : "boolean",  defaultValue : false},
 					"statistics"            : { type : "boolean",  defaultValue : false }
 			};
 

@@ -932,7 +932,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		this._executeInitListeners();
 
-		this.renderPendingUIUpdates(); // directly render without setTimeout, so rendering is guaranteed to be finished when init() ends
+		if ( this.oThemeCheck.themeLoaded || !this.oConfiguration['xx-waitForTheme'] ) {
+			this.renderPendingUIUpdates(); // directly render without setTimeout, so rendering is guaranteed to be finished when init() ends
+		} else {
+			jQuery.sap.log.info("initial rendering delayed until theme has been loaded");
+			this._sRerenderTimer = this; // use 'this' as an easy to recognize marker for an already pending rerendering
+			_oEventProvider.attachEventOnce(Core.M_EVENTS.ThemeChanged, this.renderPendingUIUpdates, this);
+		}
 
 		jQuery.sap.measure.end("coreComplete");
 	};
@@ -2110,7 +2116,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 			// clear a pending timer so that the next call to re-render will create a new timer
 			if (this._sRerenderTimer) {
-				jQuery.sap.clearDelayedCall(this._sRerenderTimer); // explicitly stop the timer, as this call might be a synchronous call (applyChanges) while still a timer is running
+				if ( this._sRerenderTimer !== this ) { // 'this' is used as a marker for a delayed initial rendering, no timer to cleanup then
+					jQuery.sap.clearDelayedCall(this._sRerenderTimer); // explicitly stop the timer, as this call might be a synchronous call (applyChanges) while still a timer is running
+				}
 				this._sRerenderTimer = undefined;
 			}
 
