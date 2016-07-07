@@ -2450,18 +2450,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * check if data is available in the table
-	 * @private
-	 */
-	Table.prototype._hasData = function() {
-		var oBinding = this.getBinding("rows");
-		if (!oBinding || (oBinding.getLength() || 0) === 0) {
-			return false;
-		}
-		return true;
-	};
-
-	/**
 	 * show or hide the no data container
 	 * @private
 	 */
@@ -2686,46 +2674,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			}
 		}
 		return aColumns;
-	};
-
-	/**
-	 * returns the count of visible columns
-	 * @private
-	 */
-	Table.prototype._getVisibleColumnCount = function() {
-		return this._getVisibleColumns().length;
-	};
-
-	/**
-	 * returns the row count of headers
-	 * @private
-	 */
-	Table.prototype._getHeaderRowCount = function() {
-		if (!this.getColumnHeaderVisible()) {
-			return 0;
-		} else if (!this._useMultiHeader()) {
-			return 1;
-		}
-		var iHeaderRows = 0;
-		jQuery.each(this._getVisibleColumns(), function(iIndex, oColumn) {
-			iHeaderRows = Math.max(iHeaderRows,  oColumn.getMultiLabels().length);
-		});
-		return iHeaderRows;
-	};
-
-	/**
-	 * returns if multi header beahviour is used or not
-	 * @private
-	 */
-	Table.prototype._useMultiHeader = function() {
-		var useMultiLabels = false;
-		jQuery.each(this._getVisibleColumns(), function(iIndex, oColumn) {
-			if (oColumn.getMultiLabels().length > 0) {
-				useMultiLabels = true;
-				return false;
-			}
-		});
-		return useMultiLabels;
 	};
 
 
@@ -2976,7 +2924,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 			var oColHdrCnt = oDomRef.querySelector(".sapUiTableColHdrCnt");
 			if (oColHdrCnt) {
-				oColHdrCnt.style.height = Math.floor(oTableSizes.columnRowHeight * this._getHeaderRowCount()) + "px";
+				oColHdrCnt.style.height = Math.floor(oTableSizes.columnRowHeight * TableUtils.getHeaderRowCount(this)) + "px";
 			}
 		}
 
