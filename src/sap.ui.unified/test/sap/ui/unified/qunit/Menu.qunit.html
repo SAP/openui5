@@ -22,6 +22,8 @@
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 	<!-- Control initialization -->
 	<script language="javascript">
@@ -563,14 +565,15 @@
 		});
 
 		module("Mouse");
-		
+
 		sap.ui.unified.Menu._DELAY_SUBMENU_TIMER = 10;
 		sap.ui.unified.Menu._DELAY_SUBMENU_TIMER_EXT = 10;
 		var DELAY_SUBMENU_TIMER = sap.ui.unified.Menu._DELAY_SUBMENU_TIMER + 20;
-		
+
 		if (sap.ui.Device.system.desktop) {
 			asyncTest("Delayed Open Submenu", function() {
 				openRootMenu(true);
+				var oSpyMenuFocusFn = sinon.spy(oRootMenu.getDomRef(), "focus");
 				qutils.triggerEvent("mouseover", "item7", {});
 				checkHoveredItem("item7");
 				ok(oRootMenu.bOpen, "Rootmenu open");
@@ -579,9 +582,17 @@
 					checkHoveredItem("item7");
 					ok(oRootMenu.bOpen, "Rootmenu open");
 					ok(oSubMenu.bOpen, "Submenu open");
+					checkMenuFocusing();
 					closeAllMenusAndCheck();
 					start();
 				}, DELAY_SUBMENU_TIMER);
+				function checkMenuFocusing() {
+					var iExpectedFocusFnCall = 1;
+					if (sap.ui.Device.browser.msie || sap.ui.Device.browser.edge) {
+						iExpectedFocusFnCall = 0;
+					}
+					equal(oSpyMenuFocusFn.callCount, iExpectedFocusFnCall, "Menu should not be directly focused for IE and Edge, but so it should for the rest");
+				}
 			});
 		}
 
@@ -954,7 +965,7 @@
 			var oMenu = new sap.ui.unified.Menu({
 				items: [oItem1, oItem2, oItem3, oItem4]
 			});
-			
+
 			var oItem = oMenu.getNextSelectableItem(0);
 			ok(oItem === oItem2, "Previous selectable item of item 1 is item 2");
 			oItem = oMenu.getNextSelectableItem(1);
