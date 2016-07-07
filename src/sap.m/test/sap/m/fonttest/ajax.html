@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>Font applied after ajax load</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+
+	<script id="sap-ui-bootstrap"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_belize">
+	</script>
+
+	<style>
+	body {
+		/*font-family: '72-Web', Arial, Helvetica, sans-serif;
+		background: yellow;*/
+	}
+
+	body > span {
+		font-size: 30px
+	}
+	</style>
+
+	<script>
+	var sFontPath = jQuery.sap.getModulePath("sap.ui.core", '/') + "themes/base/fonts/";
+	var aFonts = [
+		{url: sFontPath + '72-Regular.woff', weight: "normal", style: "normal", stretch: "normal"},
+		{url: sFontPath + '72-Italic.woff', weight: "normal", style: "italic", stretch: "normal"},
+		{url: sFontPath + '72-BoldItalic.woff', weight: "bold", style: "italic", stretch: "normal"},
+		{url: sFontPath + '72-Bold.woff', weight: "bold", style: "normal", stretch: "normal"},
+		{url: sFontPath + '72-Condensed.woff', weight: "normal", style: "normal", stretch: "condensed"},
+		{url: sFontPath + '72-CondensedBold.woff', weight: "bold", style: "normal", stretch: "condensed"},
+		{url: sFontPath + '72-Light.woff', weight: "lighter", style: "normal", stretch: "normal"}
+	];
+
+	var aCalls = [];
+
+
+	//jQuery(function(){
+		var aBuffer = [];
+		for(var i=0; i<aFonts.length; i++) {
+			aBuffer.push("@font-face {font-family: '72-Web'; font-style: ", aFonts[i].style, "; font-weight: ", aFonts[i].weight, "; font-stretch: ", aFonts[i].stretch, "; src: url('", aFonts[i].url, "') format('woff');}");
+			aCalls.push(Promise.resolve(jQuery.ajax({
+				url: aFonts[i].url,
+				beforeSend: function ( xhr ) {
+					xhr.overrideMimeType("application/octet-stream");
+				}
+			})));
+		}
+		
+		Promise.all(aCalls).then(function(){
+			jQuery('head').append('<style type="text/css">' + aBuffer.join("") + '</style>');
+		});
+	//});
+	</script>
+</head>
+<body id="content" class="sapUiBody" role="application">
+
+<span>Some Text</span><br>
+<span style="font-weight:bold;">Some Text</span><br>
+<span style="font-style:italic;">Some Text</span><br>
+<span style="font-style:italic;font-weight:bold;">Some Text</span><br>
+<span style="font-stretch:condensed;">Some Text</span><br>
+<span style="font-stretch:condensed;font-weight:bold;">Some Text</span><br>
+<span style="font-weight:lighter;">Some Text</span>
+</body>
+</html>
