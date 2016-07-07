@@ -39,5 +39,20 @@ function(jQuery, DesignTimeMetadata) {
 		}
 	});
 
+	AggregationDesignTimeMetadata.prototype.getMoveAction = function(oMovedElement){
+		var mData = this.getData();
+		if (mData.actions && mData.actions.move) {
+			var vMoveChangeType = mData.actions.move;
+			if (typeof (vMoveChangeType) === "function" ){
+				return vMoveChangeType.apply(null, arguments);
+			} else {
+				return vMoveChangeType;
+			}
+		} else {
+			return undefined;
+		}
+
+	};
+
 	return AggregationDesignTimeMetadata;
 }, /* bExport= */ true);
