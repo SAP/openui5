@@ -344,6 +344,27 @@
 	});
 
 
+	test("Tap event should not be fired when the button is set to invisible", function() {
+		// Arrange
+		var oRenderSpy,
+			oConstructor = { visible : false };
+
+		// System under Test
+		var oButton = new sap.m.Button(oConstructor).placeAt("qunit-fixture");
+
+		oRenderSpy = this.spy(oButton, "fireTap");
+
+		// Act
+		oButton.ontap({ setMarked:  jQuery.noop });
+
+		// Assert
+		strictEqual(oRenderSpy.callCount, 0, "Tap event not fired");
+
+		// Cleanup
+		oButton.destroy();
+	});
+
+
 	test("Check type conversation if text property is changed (non-string value)", function() {
 		// Arrange
 		var oRenderSpy,
