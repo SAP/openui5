@@ -16,6 +16,8 @@
   <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 
   <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
   <script language="javascript">
 	var b1, b2, b3, msg;
@@ -156,6 +158,26 @@
 		b2.firePress();
 		ok(msg == sPressMessage,"Event was fired correctly!");
 		equals(msg,sPressMessage,"Event was fired correctly!!")
+	});
+
+	test("Press event should not be fired when the button is set to invisible", function() {
+		// Arrange
+		var oRenderSpy;
+
+		// System under Test
+		var oButton = sap.ui.getCore().getControl("b1");
+
+		oRenderSpy = this.spy(oButton, "firePress");
+
+		// Act
+		oButton.setVisible(false);
+		oButton.onclick({ preventDefault:  jQuery.noop, stopPropagation:  jQuery.noop });
+
+		// Assert
+		strictEqual(oRenderSpy.callCount, 0, "Press event not fired");
+
+		// Cleanup
+		oButton.setVisible(true);
 	});
 
 	 test("PressDetachOk", function () {
