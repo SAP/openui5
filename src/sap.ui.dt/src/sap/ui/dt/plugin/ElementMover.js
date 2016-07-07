@@ -250,7 +250,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ElementMover.prototype._findAfterHook = function(sHookName, oSource, oTarget) {
-			//TODO : move between two parents
+		try {
 			var oParentOverlay = OverlayRegistry.getOverlay(oSource.parent);
 			var oAggregationOverlay = oParentOverlay.getAggregationOverlay(oSource.aggregation);
 			var oAggregationDesignTimeMetadata = oAggregationOverlay.getDesignTimeMetadata();
@@ -262,8 +262,10 @@ sap.ui.define([
 					parentOverlay : oParentOverlay
 				};
 			}
-			return null;
-
+		} catch (ex) {
+			// Intensionally left blank
+		}
+		return null;
 	};
 
 	return ElementMover;
