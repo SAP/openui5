@@ -3596,6 +3596,45 @@
 		this.clock.reset();
 	});
 
+	test("Scenario OPEN_VALUE: Open MCB by Arrow + Down / F4 or by clicking arrow then type valid letter and delete it", function () {
+		var oSystem = {
+			desktop : true,
+			phone : false,
+			tablet : false
+		};
+		this.stub(sap.ui.Device, "system", oSystem);
+
+		// system under test
+		var oMultiComboBox = new sap.m.MultiComboBox({
+			value : "a",
+			items : [new sap.ui.core.Item({
+				key : "DZ",
+				text : "Algeria"
+			}), new sap.ui.core.Item({
+				key : "BA",
+				text : "Barahin"
+			})]
+		});
+
+		// arrange
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+		oMultiComboBox.focus();
+
+		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true);
+		this.clock.tick(500);
+
+		// act
+		oMultiComboBox.getFocusDomRef().value = "";
+		sap.ui.qunit.QUnitUtils.triggerEvent("input", oMultiComboBox.getFocusDomRef());
+		this.clock.tick(500);
+
+		ok(oMultiComboBox.isOpen(), "oMultiComboBox is opened");
+
+		// cleanup
+		oMultiComboBox.destroy();
+	});
+
 	test(
 			"Scenario OPEN_SUGGEST_SPACE: Pushing SPACE on item in suggest list - suggest list is closing first and complete list is opening then",
 			function() {
