@@ -1,7 +1,6 @@
-/* ============================= */
-/* CSS for control sap.m/Select  */
-/* Belize theme                  */
-/* ============================= */
+/* ========================================= */
+/* CSS for control sap.m/Select Belize theme */
+/* ========================================= */
 
 /* ------------------------------ */
 /* commons styles                 */
@@ -43,9 +42,9 @@
 	opacity: 0.5;
 }
 
-/* ====================================================== */
-/* Select                                                 */
-/* ====================================================== */
+/* ------------------------------ */
+/* field                          */
+/* ------------------------------ */
 
 .sapMSlt {
 	height: 2.5rem;
@@ -306,7 +305,7 @@ div.sapMSltPicker .sapMDialogScrollCont {
 }
 
 /* ================================================================================== */
-/* CSS for control sap.m/Select.control Belize theme smaller sizes - common part */
+/* CSS for control sap.m/Select.control Belize theme smaller sizes - common part      */
 /* ================================================================================== */
 
 /* ------------------------------ */
@@ -326,12 +325,8 @@ div.sapMSltPicker .sapMDialogScrollCont {
 	height: 2rem;
 }
 
-/* ------------------------------ */
-/* label                          */
-/* ------------------------------ */
-
 .sapUiSizeCompact .sapMSltLabel,
-.sapUiSizeCondensed .sapUiTableCell .sapMSltLabel {
+.sapUiSizeCompact .sapMSltArrow {
 	line-height: 1.5rem;
 }
 
@@ -339,10 +334,8 @@ div.sapMSltPicker .sapMDialogScrollCont {
 /* arrow                          */
 /* ------------------------------ */
 
-.sapUiSizeCompact .sapMSltArrow,
-.sapUiSizeCondensed .sapUiTableCell .sapMSltArrow {
+.sapUiSizeCompact .sapMSltArrow {
 	width: 2rem;
-	line-height: 1.625rem;
 }
 
 /* ------------------------------ */
@@ -365,8 +358,12 @@ div.sapMSltPicker .sapMDialogScrollCont {
 }
 
 /* =================================================================== */
-/* CSS for control sap.m/Select.control Belize theme compact size */
+/* CSS for control sap.m/Select Belize theme compact size              */
 /* =================================================================== */
+
+/* ------------------------------ */
+/* field                          */
+/* ------------------------------ */
 
 .sapUiSizeCompact .sapMSlt {
 	height: 1.625rem;
@@ -374,22 +371,35 @@ div.sapMSltPicker .sapMDialogScrollCont {
 	margin-bottom: 0.1875rem;
 }
 
-/* ===================================================================== */
-/* CSS for control sap.m/Select.control Belize theme condensed size */
-/* ===================================================================== */
+/* ======================================================================== */
+/* CSS for control sap.m/Select Belize theme condensed size (table context) */
+/* ======================================================================== */
+
+/* ------------------------------ */
+/* field                          */
+/* ------------------------------ */
 
 .sapUiSizeCondensed .sapUiTableCell .sapMSlt {
 	height: 1.5rem;
 }
 
 /* ------------------------------ */
-/* table context                  */
+/* arrow                          */
 /* ------------------------------ */
 
-.sapUiSizeCondensed .sapUiTableCell .sapMSlt {
-	border-color: transparent;
+.sapUiSizeCondensed .sapUiTableCell .sapMSltArrow {
+	line-height: 1.375rem;
 }
 
-.sapUiSizeCondensed .sapUiTableCell .sapMSltHoverable:hover {
+.sapUiSizeCondensed .sapUiTableCell .sapMSltHoverable:not(.sapMSltState):hover {
 	border-color: @sapUiFieldHoverBorderColor;
+}
+
+/* ------------------------------ */
+/* commons styles                 */
+/* ------------------------------ */
+
+.sapUiSizeCondensed .sapUiTableCell .sapMSltLabelState,
+.sapUiSizeCondensed .sapUiTableCell .sapMSltArrowState {
+	line-height: 1.25rem;
 }
