@@ -111,6 +111,22 @@ QUnit.test("getVisibleColumnCount", function(assert) {
 	assert.equal(TableUtils.getVisibleColumnCount(oTable), iNumberOfCols - 1, "1 column hidden");
 });
 
+QUnit.test("getHeaderRowCount", function(assert) {
+	assert.equal(TableUtils.getHeaderRowCount(oTable), 1, "Initial Number of header rows");
+	oTable.setColumnHeaderVisible(false);
+	sap.ui.getCore().applyChanges();
+	assert.equal(TableUtils.getHeaderRowCount(oTable), 0, "Headers hidden");
+	oTable.setColumnHeaderVisible(true);
+	oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b"}));
+	oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b1"}));
+	oTable.getColumns()[1].setHeaderSpan([2,1]);
+	sap.ui.getCore().applyChanges();
+	assert.equal(TableUtils.getHeaderRowCount(oTable), 2, "Multiline Headers");
+	oTable.setColumnHeaderVisible(false);
+	sap.ui.getCore().applyChanges();
+	assert.equal(TableUtils.getHeaderRowCount(oTable), 0, "Multiline Headers hidden");
+});
+
 QUnit.test("getTotalRowCount", function(assert) {
 	assert.equal(TableUtils.getTotalRowCount(oTable), iNumberOfRows, "Number of data rows (#data > #visiblerows)");
 	assert.equal(TableUtils.getTotalRowCount(oTable, true), iNumberOfRows, "Number of data rows (incl. empty) (#data > #visiblerows)");
@@ -276,6 +292,71 @@ QUnit.test("getNoDataText", function(assert) {
 	var oString = new String("Some Text");
 	oTable.setNoData(oString);
 	assert.equal(TableUtils.getNoDataText(oTable), oString);
+});
+
+QUnit.test("isNoDataVisible", function(assert) {
+	function createFakeTable(bShowNoData, iBindingLength, bAnalytical, bHasTotals) {
+		return {
+			getShowNoData: function(){return bShowNoData;},
+			_getRowCount: function(){return iBindingLength},
+			getBinding: function(){
+				var oBinding = {};
+				if (bAnalytical) {
+					oBinding.providesGrandTotal = function(){return bHasTotals};
+					oBinding.hasTotaledMeasures = function(){return bHasTotals};
+				}
+				return oBinding;
+			}
+		};
+	}
+
+	function testNoDataVisibility(bShowNoData, iBindingLength, bAnalytical, bHasTotals, bExpectedResult) {
+		var bResult = TableUtils.isNoDataVisible(createFakeTable(bShowNoData, iBindingLength, bAnalytical, bHasTotals));
+		assert.equal(bResult, bExpectedResult, "ShowNoData: " + bShowNoData + ", Binding Length: " + iBindingLength + ", Analytical: " + bAnalytical + ", Totals: " + bHasTotals);
+	}
+
+	testNoDataVisibility(true, 2, false, false, false);
+	testNoDataVisibility(true, 1, false, false, false);
+	testNoDataVisibility(true, 0, false, false, true);
+	testNoDataVisibility(false, 2, false, false, false);
+	testNoDataVisibility(false, 1, false, false, false);
+	testNoDataVisibility(false, 0, false, false, false);
+
+	testNoDataVisibility(true, 2, true, false, false);
+	testNoDataVisibility(true, 1, true, false, false);
+	testNoDataVisibility(true, 0, true, false, true);
+	testNoDataVisibility(false, 2, true, false, false);
+	testNoDataVisibility(false, 1, true, false, false);
+	testNoDataVisibility(false, 0, true, false, false);
+
+	testNoDataVisibility(true, 2, true, true, false);
+	testNoDataVisibility(true, 1, true, true, true);
+	testNoDataVisibility(true, 0, true, true, true);
+	testNoDataVisibility(false, 2, true, true, false);
+	testNoDataVisibility(false, 1, true, true, false);
+	testNoDataVisibility(false, 0, true, true, false);
+});
+
+QUnit.test("isInstanceOf", function(assert) {
+	function checkLoaded(oObj) {
+		if (!oObj || !oObj.prototype || !oObj.prototype.destroy) {
+			//Check whether namespace is already available and whether it is not the lazy initialization hook
+			return false;
+		}
+		return true;
+	}
+
+	assert.equal(TableUtils.isInstanceOf(oTable, null), false, "No type");
+	assert.equal(TableUtils.isInstanceOf(null, "sap/ui/table/AnalyticalTable"), false, "No object");
+
+	assert.ok(!checkLoaded(sap.ui.table.AnalyticalTable), "sap.ui.table.AnalyticalTable not loaded before check");
+	assert.equal(TableUtils.isInstanceOf(oTable, "sap/ui/table/AnalyticalTable"), false, "Not of type sap.ui.table.AnalyticalTable");
+	assert.ok(!checkLoaded(sap.ui.table.AnalyticalTable), "sap.ui.table.AnalyticalTable not loaded after check");
+
+	var oAnalyticalTable = new sap.ui.table.AnalyticalTable();
+	assert.ok(checkLoaded(sap.ui.table.AnalyticalTable), "sap.ui.table.AnalyticalTable not loaded before check");
+	assert.equal(TableUtils.isInstanceOf(oAnalyticalTable, "sap/ui/table/AnalyticalTable"), true, "Is of type sap.ui.table.AnalyticalTable");
+	assert.ok(checkLoaded(sap.ui.table.AnalyticalTable), "sap.ui.table.AnalyticalTable not loaded after check");
 });
 
 QUnit.test("scroll", function(assert) {

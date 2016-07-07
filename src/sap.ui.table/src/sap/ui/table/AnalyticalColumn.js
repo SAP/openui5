@@ -4,13 +4,14 @@
 
 // Provides control sap.ui.table.AnalyticalColumn.
 sap.ui.define(['jquery.sap.global', './Column', './library', 'sap/ui/core/Element',
-		'sap/ui/model/type/Boolean', 'sap/ui/model/type/DateTime', 'sap/ui/model/type/Float', 'sap/ui/model/type/Integer', 'sap/ui/model/type/Time'
+		'sap/ui/model/type/Boolean', 'sap/ui/model/type/DateTime', 'sap/ui/model/type/Float', 'sap/ui/model/type/Integer', 'sap/ui/model/type/Time', './TableUtils'
 	],
-	function(jQuery, Column, library, Element, BooleanType, DateTime, Float, Integer, Time) {
+	function(jQuery, Column, library, Element, BooleanType, DateTime, Float, Integer, Time, TableUtils) {
 	"use strict";
 
-	// lazy dependency to avoid cycle AnalyticalTable->AnalyticalTableColumn->AnalyticalTable
-	var AnalyticalTable;
+	function isInstanceOfAnalyticalTable(oControl) {
+		return TableUtils.isInstanceOf(oControl, "sap/ui/table/AnalyticalTable");
+	}
 
 	/**
 	 * Constructor for a new AnalyticalColumn.
@@ -81,13 +82,6 @@ sap.ui.define(['jquery.sap.global', './Column', './library', 'sap/ui/core/Elemen
 		"Boolean": new Boolean()
 	};
 
-	function isInstanceOfAnalyticalTable(oControl) {
-		if ( !AnalyticalTable ) {
-			AnalyticalTable = sap.ui.require("sap/ui/table/AnalyticalTable");
-		}
-		return AnalyticalTable && (oControl instanceof AnalyticalTable);
-	}
-
 	/*
 	 * Factory method. Creates the column menu.
 	 *
@@ -101,7 +95,7 @@ sap.ui.define(['jquery.sap.global', './Column', './library', 'sap/ui/core/Elemen
 	AnalyticalColumn.prototype.setGrouped = function(bGrouped, bSuppressInvalidate) {
 		var oParent = this.getParent();
 		var that = this;
-		if (oParent && isInstanceOfAnalyticalTable(oParent)) {
+		if (isInstanceOfAnalyticalTable(oParent)) {
 			if (bGrouped) {
 				oParent._addGroupedColumn(this.getId());
 			} else {
@@ -139,7 +133,7 @@ sap.ui.define(['jquery.sap.global', './Column', './library', 'sap/ui/core/Elemen
 		if (!oLabel) {
 			if (!this._oBindingLabel) {
 				var oParent = this.getParent();
-				if (oParent && isInstanceOfAnalyticalTable(oParent)) {
+				if (isInstanceOfAnalyticalTable(oParent)) {
 					var oBinding = oParent.getBinding("rows");
 					if (oBinding) {
 						this._oBindingLabel = library.TableHelper.createLabel();
@@ -168,7 +162,7 @@ sap.ui.define(['jquery.sap.global', './Column', './library', 'sap/ui/core/Elemen
 		var sProperty = this.getProperty("filterProperty");
 		if (!sProperty) {
 			var oParent = this.getParent();
-			if (oParent && isInstanceOfAnalyticalTable(oParent)) {
+			if (isInstanceOfAnalyticalTable(oParent)) {
 				var oBinding = oParent.getBinding("rows");
 				var sLeadingProperty = this.getLeadingProperty();
 				if (oBinding && jQuery.inArray(sLeadingProperty, oBinding.getFilterablePropertyNames()) > -1) {
@@ -186,7 +180,7 @@ sap.ui.define(['jquery.sap.global', './Column', './library', 'sap/ui/core/Elemen
 		var sProperty = this.getProperty("sortProperty");
 		if (!sProperty) {
 			var oParent = this.getParent();
-			if (oParent && isInstanceOfAnalyticalTable(oParent)) {
+			if (isInstanceOfAnalyticalTable(oParent)) {
 				var oBinding = oParent.getBinding("rows");
 				var sLeadingProperty = this.getLeadingProperty();
 				if (oBinding && jQuery.inArray(sLeadingProperty, oBinding.getSortablePropertyNames()) > -1) {
@@ -204,7 +198,7 @@ sap.ui.define(['jquery.sap.global', './Column', './library', 'sap/ui/core/Elemen
 		var vFilterType = this.getProperty("filterType");
 		if (!vFilterType) {
 			var oParent = this.getParent();
-			if (oParent && isInstanceOfAnalyticalTable(oParent)) {
+			if (isInstanceOfAnalyticalTable(oParent)) {
 				var oBinding = oParent.getBinding("rows");
 				var sLeadingProperty = this.getLeadingProperty(),
 				    oProperty = oBinding && oBinding.getProperty(sLeadingProperty);
@@ -248,10 +242,7 @@ sap.ui.define(['jquery.sap.global', './Column', './library', 'sap/ui/core/Elemen
 		}
 
 		var oParent = this.getParent();
-		if ( !AnalyticalTable ) {
-			AnalyticalTable = sap.ui.require("sap/ui/table/AnalyticalTable");
-		}
-		if (oParent && AnalyticalTable && oParent instanceof AnalyticalTable) {
+		if (isInstanceOfAnalyticalTable(oParent)) {
 			oParent._updateColumns(bSupressRefresh, bForceChange);
 		}
 	};
@@ -287,7 +278,7 @@ sap.ui.define(['jquery.sap.global', './Column', './library', 'sap/ui/core/Elemen
 
 	AnalyticalColumn.prototype.getTooltip_AsString = function() {
 		var oParent = this.getParent();
-		if (oParent && isInstanceOfAnalyticalTable(oParent)) {
+		if (isInstanceOfAnalyticalTable(oParent)) {
 			var oBinding = oParent.getBinding("rows");
 			if (oBinding && this.getLeadingProperty()) {
 				return oBinding.getPropertyQuickInfo(this.getLeadingProperty());
@@ -335,7 +326,7 @@ sap.ui.define(['jquery.sap.global', './Column', './library', 'sap/ui/core/Elemen
 		}
 
 		var oParent = this.getParent();
-		if (oParent && isInstanceOfAnalyticalTable(oParent)) {
+		if (isInstanceOfAnalyticalTable(oParent)) {
 			var oBinding = oParent.getBinding("rows");
 			// metadata must be evaluated which can only be done when the collection is known and the metadata is loaded
 			// this is usually the case when a binding exists.
@@ -368,7 +359,7 @@ sap.ui.define(['jquery.sap.global', './Column', './library', 'sap/ui/core/Elemen
 	 */
 	AnalyticalColumn.prototype.isGroupableByMenu = function() {
 		var oParent = this.getParent();
-		if (oParent && isInstanceOfAnalyticalTable(oParent)) {
+		if (isInstanceOfAnalyticalTable(oParent)) {
 			var oBinding = oParent.getBinding("rows");
 			if (oBinding) {
 				var oResultSet = oBinding.getAnalyticalQueryResult();

@@ -52,7 +52,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 * @private
 		 */
 		isNoDataVisible : function(oTable) {
-			return oTable.getShowNoData() && !oTable._getRowCount()/*!oTable._hasData()*/;
+			if (!oTable.getShowNoData()) {
+				return false;
+			}
+
+			var oBinding = oTable.getBinding("rows"),
+				iBindingLength = oTable._getRowCount(),
+				bHasData = oBinding ? !!iBindingLength : false;
+
+			if (oBinding && oBinding.providesGrandTotal) { // Analytical Binding
+				var bHasTotal = oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures();
+				bHasData = (bHasTotal && iBindingLength < 2) || (!bHasTotal && iBindingLength === 0) ? false : true;
+			}
+
+			return !bHasData;
+		},
+
+		/**
+		 * Checks whether the given object is of the given type (given in AMD module syntax)
+		 * without the need of loading the types module.
+		 * @param {sap.ui.base.ManagedObject} oObject The object to check
+		 * @param {string} sType The type given in AMD module syntax
+		 * @return {boolean}
+		 * @private
+		 */
+		isInstanceOf : function(oObject, sType) {
+			if (!oObject || !sType) {
+				return false;
+			}
+			var oType = sap.ui.require(sType);
+			return !!(oType && (oObject instanceof oType));
 		},
 
 		/**
@@ -82,7 +111,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 * @private
 		 */
 		getVisibleColumnCount : function(oTable) {
-			return oTable._getVisibleColumnCount();
+			return oTable._getVisibleColumns().length;
+		},
+
+		/**
+		 * Returns the number of header rows
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @return {int}
+		 * @private
+		 */
+		getHeaderRowCount : function(oTable) {
+			if (!oTable.getColumnHeaderVisible()) {
+				return 0;
+			}
+			var iHeaderRows = 0;
+			jQuery.each(oTable._getVisibleColumns(), function(iIndex, oColumn) {
+				iHeaderRows = Math.max(iHeaderRows,  oColumn.getMultiLabels().length);
+			});
+			return iHeaderRows > 0 ? iHeaderRows : 1;
 		},
 
 		/**
@@ -201,7 +247,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 */
 		getRowIndexOfFocusedCell : function(oTable) {
 			var oInfo = TableUtils.getFocusedItemInfo(oTable);
-			return oInfo.row - oTable._getHeaderRowCount();
+			return oInfo.row - TableUtils.getHeaderRowCount(oTable);
 		},
 
 		/**
