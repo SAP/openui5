@@ -1765,6 +1765,24 @@
 			oPopover.destroy();
 		});
 
+		test("Popover should be in compact mode if one of it's parents is compact", function () {
+			var oScrollContainer = new sap.m.ScrollContainer().addStyleClass("sapUiSizeCompact"),
+				oButton = new sap.m.Button,
+				oPopover = new sap.m.Popover;
+
+			oScrollContainer.addContent(oButton);
+
+			oScrollContainer.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oPopover.openBy(oButton);
+
+			equal(oPopover._arrowOffset, 9, "_arrowoffset should be 9");
+			deepEqual(oPopover._offsets, ["0 -9", "9 0", "0 9", "-9 0"], "offsets should be correct according the arrowOffset");
+
+			oScrollContainer.destroy();
+			oPopover.destroy();
+		});
+
 		test("_afterAdjustPositionAndArrow is called once", function () {
 			var oButton = new sap.m.Button({
 				text: "Open Popover"
