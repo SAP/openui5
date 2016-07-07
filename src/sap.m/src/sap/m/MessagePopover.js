@@ -597,12 +597,13 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			}
 
 			var sType = oMessagePopoverItem.getType(),
+				listItemType = this._getItemType(oMessagePopoverItem),
 				oListItem = new StandardListItem({
 					title: oMessagePopoverItem.getTitle(),
 					description: oMessagePopoverItem.getSubtitle(),
 					counter: oMessagePopoverItem.getCounter(),
 					icon: this._mapIcon(sType),
-					type:  oMessagePopoverItem.getDescription() ? sap.m.ListType.Navigation : sap.m.ListType.Inactive
+					type:  listItemType
 				}).addStyleClass(CSS_CLASS + "Item").addStyleClass(CSS_CLASS + "Item" + sType);
 
 			oListItem._oMessagePopoverItem = oMessagePopoverItem;
@@ -623,6 +624,11 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			}
 
 			return ICONS[sIcon.toLowerCase()];
+		};
+
+		MessagePopover.prototype._getItemType = function (oMessagePopoverItem) {
+			return (oMessagePopoverItem.getDescription() || oMessagePopoverItem.getMarkupDescription()) ?
+				sap.m.ListType.Navigation : sap.m.ListType.Inactive;
 		};
 
 		/**
