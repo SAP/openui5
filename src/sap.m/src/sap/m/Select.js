@@ -149,7 +149,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 					/**
 					 * Visualizes the validation state of the control, e.g. <code>Error</code>, <code>Warning</code>,
 					 * <code>Success</code>.
-					 * @since 1.40
+					 * @since 1.40.2
 					 */
 					valueState: {
 						type: "sap.ui.core.ValueState",
