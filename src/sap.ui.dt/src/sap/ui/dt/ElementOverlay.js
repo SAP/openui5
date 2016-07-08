@@ -385,9 +385,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	 * @private
 	 */
 	ElementOverlay.prototype._createAggregationOverlay = function(sAggregationName, bInHiddenTree) {
-		var oData =  this.getDesignTimeMetadata().getAggregation(sAggregationName);
-
-		var oAggregationDesignTimeMetadata = new AggregationDesignTimeMetadata({data : oData});
+		var oAggregationDesignTimeMetadata = this.getDesignTimeMetadata().createAggregationDesignTimeMetadata(sAggregationName);
 
 		var oAggregationOverlay = new AggregationOverlay({
 			aggregationName : sAggregationName,
