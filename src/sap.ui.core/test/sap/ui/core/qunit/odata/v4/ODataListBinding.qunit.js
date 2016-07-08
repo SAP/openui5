@@ -1970,6 +1970,63 @@ sap.ui.require([
 
 		oBinding.destroy();
 	});
+
+	//*********************************************************************************************
+	QUnit.test("setContext while getContexts() is pending, relative", function (assert) {
+		var oContext1 = Context.create(this.oModel, {}, "/Employees('1')"),
+			oContext2 = Context.create(this.oModel, {}, "/Employees('2')"),
+			oBinding = this.oModel.bindList("Equipments", undefined, undefined, undefined, {}),
+			oBindingMock = this.mock(oBinding),
+			oReadPromise = Promise.resolve();
+
+		this.stub(oContext1, "registerBinding");
+		this.stub(oContext1, "getGroupId");
+		this.stub(oContext1, "fetchCanonicalPath").returns(_SyncPromise.resolve("Employees('1')"));
+		this.stub(oContext1, "deregisterBinding");
+		this.stub(oContext2, "registerBinding");
+		this.stub(oContext2, "fetchCanonicalPath").returns(_SyncPromise.resolve("Employees('2')"));
+		oBinding.setContext(oContext1);
+		this.mock(oBinding.oCache).expects("read")
+			.withExactArgs(0, 5, "$auto", undefined, sinon.match.func)
+			.callsArg(4)
+			.returns(oReadPromise);
+		oBindingMock.expects("_fireChange")
+			.withExactArgs({reason : ChangeReason.Context}); // from setContext
+		//TODO: this.mock(oBinding).expects("createContexts").never();
+		oBindingMock.expects("_fireChange")
+			.withExactArgs({reason : ChangeReason.Change}).never();
+		oBindingMock.expects("fireDataReceived").withExactArgs();
+
+		//code under test
+		oBinding.getContexts(0, 5);
+		oBinding.setContext(oContext2);
+
+		return oReadPromise; // wait
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setContext while getContexts() is pending, absolute", function (assert) {
+		var oContext = Context.create(this.oModel, {}, "/Employees('1')"),
+			oBinding = this.oModel.bindList("/Teams"),
+			oResult = [{}],
+			oReadPromise = Promise.resolve(oResult);
+
+		this.mock(oBinding.oCache).expects("read")
+			.withExactArgs(0, 5, "$auto", undefined, sinon.match.func)
+			.callsArg(4)
+			.returns(oReadPromise);
+		//TODO: this.mock(oBinding).expects("createContexts").withExactArgs(oResult);
+		this.mock(oBinding).expects("_fireChange")
+			.withExactArgs({reason : ChangeReason.Change});
+		this.mock(oBinding).expects("fireDataReceived").withExactArgs();
+
+		//code under test
+		oBinding.getContexts(0, 5);
+		oBinding.setContext(oContext);
+
+		return oReadPromise; // wait
+	});
+
 });
 //TODO to avoid complete re-rendering of lists implement bUseExtendedChangeDetection support
 //The implementation of getContexts needs to provide next to the resulting context array a diff

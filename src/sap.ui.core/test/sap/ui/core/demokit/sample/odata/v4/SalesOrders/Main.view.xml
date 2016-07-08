@@ -267,7 +267,12 @@
 										}
 									}
 								}
-							}
+							},
+							$$updateGroupId : 'SalesOrderUpdateGroup'
+						},
+						events : {
+							dataReceived : '.onDataEvents',
+							dataRequested : '.onDataEvents'
 						}
 					}" mode="SingleSelectMaster"
 				selectionChange="onSalesOrderLineItemSelect">
