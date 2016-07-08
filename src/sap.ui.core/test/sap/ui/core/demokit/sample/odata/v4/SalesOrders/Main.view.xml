@@ -262,8 +262,7 @@
 										}
 									}
 								}
-							},
-							$$updateGroupId : 'SalesOrderUpdateGroup'
+							}
 						}
 					}" mode="SingleSelectMaster"
 				selectionChange="onSalesOrderLineItemSelect">

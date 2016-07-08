@@ -520,4 +520,32 @@ sap.ui.require([
 		// code under test
 		assert.strictEqual(oContext.getQueryOptions(sPath), mResult);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getGroupId", function (assert) {
+		var oBinding = {
+				getGroupId : function () {}
+			},
+			oContext = Context.create(null, oBinding, "/EMPLOYEES/42"),
+			sResult = "myGroup";
+
+		this.mock(oBinding).expects("getGroupId").withExactArgs().returns(sResult);
+
+		// code under test
+		assert.strictEqual(oContext.getGroupId(), sResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getUpdateGroupId", function (assert) {
+		var oBinding = {
+				getUpdateGroupId : function () {}
+			},
+			oContext = Context.create(null, oBinding, "/EMPLOYEES/42"),
+			sResult = "myGroup";
+
+		this.mock(oBinding).expects("getUpdateGroupId").withExactArgs().returns(sResult);
+
+		// code under test
+		assert.strictEqual(oContext.getUpdateGroupId(), sResult);
+	});
 });

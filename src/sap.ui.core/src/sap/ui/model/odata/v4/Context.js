@@ -197,6 +197,18 @@ sap.ui.define([
 	Context.prototype.getCanonicalPath = _SyncPromise.createGetMethod("fetchCanonicalPath", true);
 
 	/**
+	 * Returns the group ID of the context's binding that is used for read requests.
+	 *
+	 * @returns {string}
+	 *   The group ID
+	 *
+	 * @private
+	 */
+	Context.prototype.getGroupId = function () {
+		return this.oBinding.getGroupId();
+	};
+
+	/**
 	 * Returns the context's index within the binding's collection.
 	 *
 	 * @returns {number}
@@ -287,6 +299,18 @@ sap.ui.define([
 	 */
 	Context.prototype.getQueryOptions = function (sPath) {
 		return _ODataHelper.getQueryOptions(this.oBinding, sPath);
+	};
+
+	/**
+	 * Returns the group ID of the context's binding that is used for update requests.
+	 *
+	 * @returns {string}
+	 *   The group ID
+	 *
+	 * @private
+	 */
+	Context.prototype.getUpdateGroupId = function () {
+		return this.oBinding.getUpdateGroupId();
 	};
 
 	/**
