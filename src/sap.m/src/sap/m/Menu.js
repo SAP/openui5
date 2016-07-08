@@ -334,7 +334,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 				icon: oItem.getIcon(),
 				title: oItem.getText(),
 				startsSection: oItem.getStartsSection(),
-				menuItem: oItem
+				menuItem: oItem,
+				tooltip: oItem.getTooltip()
 			});
 		};
 
@@ -343,7 +344,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 				id  : this._generateUnifiedMenuItemId(oItem.getId()),
 				icon: oItem.getIcon(),
 				text: oItem.getText(),
-				startsSection: oItem.getStartsSection()
+				startsSection: oItem.getStartsSection(),
+				tooltip: oItem.getTooltip()
 			});
 		};
 
