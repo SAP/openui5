@@ -408,6 +408,55 @@
 			});
 		});
 
+		/*
+		 * Scenario5: conflicting async and sync calls
+		 *
+		 *  lib1 -> lib3, lib4, lib5
+		 *  lib2 -> lib3, lib6(lazy), lib5
+		 *
+		 * load async lib1, lib3
+		 *      -> lib1 pending (async)
+		 *      -> lib3 pending (async)
+		 
+		 * load sync lib2
+		 *      -> load lib2 sync
+		 *      -> load lib3 sync (conflict with async load)
+		 *      -> load lib5 sync
+		 *
+		 * load async lib4
+		 *      -> lib4 pending (same promise)
+		 *
+		 * onload lib1
+		 *      -> lib3 already loaded
+		 *      -> lib4 pending (async)
+		 *      -> lib5 already loaded
+		 */
+		QUnit.test("library with deeper dependecy tree + conflicting sync request", function(assert) {
+
+			sinon.spy(jQuery.sap.log, 'warning');
+
+			oRealCore.oConfiguration.preload = 'sync'; // sync or async both activate the preload
+			var vResult = sap.ui.getCore().loadLibraries(['testlibs.scenario5.lib1', 'testlibs.scenario5.lib3']);
+			assert.ok(vResult instanceof Promise, "async call to loadLibraries should return a promise");
+
+			var oLib2 = sap.ui.getCore().loadLibrary('testlibs.scenario5.lib2');
+			assert.isLibLoaded('testlibs.scenario5.lib2');
+			assert.isLibLoaded('testlibs.scenario5.lib3');
+			assert.isLibLoaded('testlibs.scenario5.lib5');
+			assert.ok(!sap.ui.getCore().getLoadedLibraries()['testlibs.scenario5.lib1'], "lib1 should not have been loaded yet");
+			assert.ok(!sap.ui.getCore().getLoadedLibraries()['testlibs.scenario5.lib4'], "lib4 should not have been loaded yet");
+			sinon.assert.calledWith(jQuery.sap.log.warning, sinon.match(/request to load.*while async loading is pending/));
+			
+			sap.ui.getCore().loadLibraries(['testlibs.scenario5.lib4']);
+			
+			return vResult.then(function() {
+				assert.isLibLoaded('testlibs.scenario5.lib1');
+				assert.isLibLoaded('testlibs.scenario5.lib4');
+			}, function(e) {
+				assert.ok(false, "Promise for async loading should be fulfilled even when sync loading conflicts with it");
+			});
+		});
+
 		function makeLib(name) {
 			return "" +
 				"sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/library'], function(Core, coreLib) {" +
