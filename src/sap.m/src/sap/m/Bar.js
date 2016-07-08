@@ -247,8 +247,12 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 			// hence we make sure the rightContent always has enough space and reduce the left content area width accordingly
 			iLeftBarWidth = iBarWidth - iRightBarWidth;
 
-			this._$LeftBar.width(iLeftBarWidth);
-			this._$MidBarPlaceHolder.width(0);
+			// using .css("width",...) sets the width of the element including the borders
+			// and using only .width sets the width without the borders
+			// in our case we have style box-sizing: border-box, so we need the borders
+			this._$LeftBar.css({ width : iLeftBarWidth + "px" });
+
+			this._$MidBarPlaceHolder.css({ width : "0px" });
 			return;
 
 		}
