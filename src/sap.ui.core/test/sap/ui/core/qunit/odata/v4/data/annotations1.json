@@ -1,0 +1,57 @@
+{
+	"$Version" : "4.0",
+	"$EntityContainer" : "my.schema.2.DefaultContainer",
+	"$Reference" : {
+		"../../../my/schema/2/$metadata" : {
+			"$Include" : ["my.schema.2."]
+		},
+		"/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value" : {
+			"$Include" : ["com.sap.vocabularies.Common.v1."]
+		}
+	},
+	"my.schema.2.FuGetEmployeeMaxAge" : [{
+		"$kind" : "Function",
+		"$ReturnType" : {
+			"$Nullable" : false,
+			"$Type" : "Edm.Int16"
+		}
+	}],
+	"my.schema.2.Entity" : {
+		"$kind" : "EntityType",
+		"$Key" : ["ID"],
+		"ID" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.String",
+			"$Nullable" : false,
+			"$MaxLength" : 4
+		}
+	},
+	"my.schema.2.DefaultContainer" : {
+		"$kind" : "EntityContainer",
+		"ENTITYSET" : {
+			"$kind" : "EntitySet",
+			"$Type" : "my.schema.2.Entity"
+		}
+	},
+	"my.schema.2." : {
+		"$kind" : "Schema",
+		"$Annotations" : {
+			"com.sap.gateway.default.iwbep.tea_busi.v0001.Worker/ComplexType_Salary/BASIC_SALARY_CURR" : {
+				"@com.sap.vocabularies.Common.v1.Label": "Currency from annotations",
+				"@com.sap.vocabularies.Common.v1.QuickInfo": "Quickinfo from annotations"
+			},
+			"com.sap.gateway.default.iwbep.tea_busi.v0001.Worker/ComplexType_Salary/BONUS_CURR" : {
+				"@com.sap.vocabularies.Common.v1.Text": "Text from annotations"
+			}
+		}
+	},
+	"another.schema.2." : {
+		"$kind" : "Schema",
+		"$Annotations" : {
+			"another.schema.2.ComplexType_Salary/BASIC_SALARY_CURR" : {
+				"@com.sap.vocabularies.Common.v1.Heading" : "Curr",
+				"@com.sap.vocabularies.Common.v1.Label" : "Label from annotations"
+			}
+		}
+	}
+}

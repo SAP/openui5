@@ -173,6 +173,9 @@ sap.ui.define([
 	 *   The meta data requestor
 	 * @param {string} sUrl
 	 *   The URL to the $metadata document of the service
+	 * @param {string|string[]} [vAnnotationUri]
+	 *   The URL (or an array of URLs) from which the annotation metadata are loaded
+	 *   Supported since 1.41.0
 	 *
 	 * @alias sap.ui.model.odata.v4.ODataMetaModel
 	 * @author SAP SE
@@ -187,8 +190,10 @@ sap.ui.define([
 	 * @version ${version}
 	 */
 	var ODataMetaModel = MetaModel.extend("sap.ui.model.odata.v4.ODataMetaModel", {
-		constructor : function (oRequestor, sUrl) {
+		constructor : function (oRequestor, sUrl, vAnnotationUri) {
 			MetaModel.call(this);
+			this.aAnnotationUris = vAnnotationUri && !Array.isArray(vAnnotationUri)
+				? [vAnnotationUri] : vAnnotationUri;
 			this.sDefaultBindingMode = BindingMode.OneTime;
 			this.oMetadataPromise = null;
 			this.oRequestor = oRequestor;
@@ -243,6 +248,63 @@ sap.ui.define([
 		}
 
 		return vResult;
+	};
+
+	/**
+	 * Merges the given metadata and <code>$Annotations</code> from schemas at the root element.
+	 * The content of the first metadata object is modified and enriched with the content of the
+	 * other metadata objects.
+	 *
+	 * @param {object[]} aMetadata
+	 *   The metadata objects to be merged
+	 * @returns {object}
+	 *   The merged metadata
+	 * @throws {Error}
+	 *   If metadata cannot be merged
+	 *
+	 * @private
+	 */
+	ODataMetaModel.prototype._mergeMetadata = function (aMetadata) {
+		var oResult = aMetadata[0],
+			that = this;
+
+		function moveAnnotations(oElement) {
+			if (oElement.$kind === "Schema" && oElement.$Annotations) {
+				Object.keys(oElement.$Annotations).forEach(function (sTerm) {
+					if (!oResult.$Annotations[sTerm]) {
+						oResult.$Annotations[sTerm] = oElement.$Annotations[sTerm];
+					} else {
+						jQuery.extend(oResult.$Annotations[sTerm],
+							oElement.$Annotations[sTerm]);
+					}
+				});
+				delete oElement.$Annotations;
+			}
+		}
+
+		// shift $annotations from schema to root
+		oResult.$Annotations = oResult.$Annotations || {};
+		Object.keys(oResult).forEach(function (sElement) {
+			moveAnnotations(oResult[sElement]);
+		});
+
+		// enrich metadata with annotations
+		aMetadata.slice(1).forEach(function (oAnnotationMetadata, i) {
+			Object.keys(oAnnotationMetadata).forEach(function (sKey) {
+				var oElement = oAnnotationMetadata[sKey];
+
+				if (oElement.$kind !== undefined
+						|| Array.isArray(oElement) /*Actions or Functions*/) {
+					if (oResult[sKey]) {
+						throw new Error("Overwriting '" + sKey + "' with the value defined in '"
+							+ that.aAnnotationUris[i] + "' is not supported");
+					}
+					oResult[sKey] = oElement;
+					moveAnnotations(oElement);
+				}
+			});
+		});
+		return oResult;
 	};
 
 	// See class documentation
@@ -506,8 +568,21 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataMetaModel.prototype.fetchEntityContainer = function () {
+		var aPromises,
+			that = this;
+
 		if (!this.oMetadataPromise) {
-			this.oMetadataPromise = _SyncPromise.resolve(this.oRequestor.read(this.sUrl));
+			aPromises = [_SyncPromise.resolve(this.oRequestor.read(this.sUrl))];
+
+			if (this.aAnnotationUris) {
+				this.aAnnotationUris.forEach(function (sAnnotationUri) {
+					aPromises.push(_SyncPromise.resolve(that.oRequestor.read(sAnnotationUri,
+						true)));
+				});
+			}
+			this.oMetadataPromise = _SyncPromise.all(aPromises).then(function (aMetadata) {
+				return that._mergeMetadata(aMetadata);
+			});
 		}
 		return this.oMetadataPromise;
 	};
@@ -713,7 +788,7 @@ sap.ui.define([
 						= sSchemaChildName.slice(0, sSchemaChildName.lastIndexOf(".") + 1);
 					vResult = sSchemaName === sSchemaChildName
 						? oSchemaChild // annotations at schema are inline
-						: (mScope[sSchemaName].$Annotations || {})[sTarget] || {};
+						: (mScope.$Annotations || {})[sTarget] || {};
 					bODataMode = false; // switch to pure "JSON" drill-down
 				}
 

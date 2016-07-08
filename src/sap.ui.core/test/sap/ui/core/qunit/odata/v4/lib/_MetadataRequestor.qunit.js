@@ -71,6 +71,7 @@ sap.ui.require([
 	QUnit.test("read: success", function (assert) {
 		var oExpectedJson = {},
 			oExpectedXml = "xml",
+			oJQueryMock = this.mock(jQuery),
 			oHeaders = {},
 			oQueryParams = {
 				"sap-client" :"300"
@@ -82,13 +83,13 @@ sap.ui.require([
 			.withExactArgs(sinon.match.same(oQueryParams))
 			.returns("?...");
 
-		this.mock(jQuery).expects("ajax")
+		oJQueryMock.expects("ajax")
 			.withExactArgs(sUrl + "?...", {
 				headers : sinon.match.same(oHeaders),
 				method : "GET"
 			}).returns(createMock(oExpectedXml));
 
-		this.mock(_MetadataConverter).expects("convertXMLMetadata")
+		this.mock(_MetadataConverter).expects("convertXMLMetadata").twice()
 			.withExactArgs(sinon.match.same(oExpectedXml))
 			.returns(oExpectedJson);
 
@@ -97,6 +98,15 @@ sap.ui.require([
 
 		return oMetadataRequestor.read(sUrl).then(function (oResult) {
 			assert.strictEqual(oResult, oExpectedJson);
+
+			oJQueryMock.expects("ajax")
+				.withExactArgs(sUrl, {
+					headers : sinon.match.same(oHeaders),
+					method : "GET"
+				}).returns(createMock(oExpectedXml));
+
+			// code under test
+			return oMetadataRequestor.read(sUrl, true); //no query string
 		});
 	});
 

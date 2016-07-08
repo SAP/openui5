@@ -36,6 +36,7 @@ sap.ui.define([
 			messageChange : true
 		},
 		mSupportedParameters = {
+			annotationURI : true,
 			groupId : true,
 			operationMode : true,
 			serviceUrl : true,
@@ -48,6 +49,12 @@ sap.ui.define([
 	 *
 	 * @param {object} mParameters
 	 *   The parameters
+	 * @param {string|string[]} [mParameters.annotationURI]
+	 *   The URL (or an array of URLs) from which the annotation metadata are loaded.
+	 *   The annotation files are merged into the service metadata in the given order (last one
+	 *   wins). The same annotations are overwritten; if an annotation file contains other elements
+	 *   (like a type definition) that are already merged, an error is thrown.
+	 *   Supported since 1.41.0
 	 * @param {string} [mParameters.groupId="$auto"]
 	 *   Controls the model's use of batch requests: '$auto' bundles requests from the model in a
 	 *   batch request which is sent automatically before rendering; '$direct' sends requests
@@ -74,7 +81,8 @@ sap.ui.define([
 	 * @throws {Error} If an unsupported synchronization mode is given, if the given service root
 	 *   URL does not end with a forward slash, if an unsupported parameter is given, if OData
 	 *   system query options or parameter aliases are specified as parameters, if an invalid group
-	 *   ID or update group ID is given, if the given operation mode is not supported.
+	 *   ID or update group ID is given, if the given operation mode is not supported, if an
+	 *   annotation file cannot be merged into the service metadata.
 	 *
 	 * @alias sap.ui.model.odata.v4.ODataModel
 	 * @author SAP SE
@@ -148,7 +156,7 @@ sap.ui.define([
 
 					this.oMetaModel = new ODataMetaModel(
 						_MetadataRequestor.create(mHeaders, this.mUriParameters),
-						this.sServiceUrl + "$metadata");
+						this.sServiceUrl + "$metadata", mParameters.annotationURI);
 					this.oRequestor = _Requestor.create(this.sServiceUrl, mHeaders,
 						this.mUriParameters);
 					this.mCallbacksByGroupId = {};
