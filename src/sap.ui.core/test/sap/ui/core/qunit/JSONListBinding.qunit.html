@@ -694,6 +694,13 @@
 		equal(filtered[1].firstName, "Marc", "ListBinding filter value");
 		equal(filtered[2].firstName, "Frank", "ListBinding filter value");
 
+		var oEmptyMultiFilterWithAND = new sap.ui.model.Filter([], true);
+		listBinding.filter(oEmptyMultiFilterWithAND);
+		equal(listBinding.getContexts().length, 7, "empty AND multifilter should match all entries");
+
+		var oEmptyMultiFilterWithOR = new sap.ui.model.Filter([], false);
+		listBinding.filter(oEmptyMultiFilterWithOR);
+		equal(listBinding.getContexts().length, 0, "empty OR multifilter should match no entry");
 	});
 
 	test("test function", function() {
