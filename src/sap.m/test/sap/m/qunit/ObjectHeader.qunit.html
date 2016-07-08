@@ -1355,6 +1355,71 @@
 			oObjectHeader.destroy();
 		});
 
+		module("Contrast container in Belize")
+
+		test("Contrast container should be set when Background is not transparent", function () {
+			// Arrange
+			var oObjectHeader = new sap.m.ObjectHeader({
+				id: "contrastId",
+				title: "test contrast container",
+				backgroundDesign: sap.m.BackgroundDesign.Solid
+			});
+
+			// System under test
+			oObjectHeader.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			ok(jQuery("#"+"contrastId").hasClass("sapContrastPlus"), "Contrast container class is rendered");
+
+			// cleanup
+			oObjectHeader.destroy();
+		});
+
+		test("Contrast container should not be set when Background transparent", function () {
+			// Arrange
+			// Create non responsive ObjectHeader which has Transparent background by default
+			var oObjectHeader = new sap.m.ObjectHeader({
+				id: "contrastId",
+				title: "test contrast container",
+			});
+
+			// System under test
+			oObjectHeader.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			ok(!jQuery("#"+"contrastId").hasClass("sapContrastPlus"), "Contrast container class is not rendered since the background is Transparent");
+
+			// cleanup
+			oObjectHeader.destroy();
+		});
+
+		test("Contrast container should be set when Background is changed from transparent to solid", function () {
+			// Arrange
+			// Create non responsive ObjectHeader which has Transparent background by default
+			var oObjectHeader = new sap.m.ObjectHeader({
+				id: "contrastId",
+				title: "test contrast container",
+			});
+
+			// System under test
+			oObjectHeader.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			ok(!jQuery("#"+"contrastId").hasClass("sapContrastPlus"), "Contrast container class is not rendered since the background is Transparent");
+
+			oObjectHeader.setBackgroundDesign(sap.m.BackgroundDesign.Solid);
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			ok(jQuery("#"+"contrastId").hasClass("sapContrastPlus"), "Contrast container class is rendered when the background is Solid");
+
+			// cleanup
+			oObjectHeader.destroy();
+		});
+
 </script>
 </head>
 
