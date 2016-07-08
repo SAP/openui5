@@ -203,6 +203,9 @@
 	});
 
 	QUnit.test("test hide selected section", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			done = assert.async();
+
 		//act
 		this.oFirstSection.setVisible(false);
 
@@ -211,10 +214,16 @@
 			sSelectedTitle: this.oSecondSection.getSubSections()[0].getTitle() //subsection is promoted
 		};
 
-		sectionIsSelected(this.oObjectPage, assert, oExpected);
+		setTimeout(function () {
+			sectionIsSelected(oObjectPage, assert, oExpected);
+			done();
+		}, this.iLoadingDelay);
 	});
 
 	QUnit.test("test hide selected subsection", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			done = assert.async();
+
 		//act
 		//hide the only subsection => no content left to display
 		this.oFirstSection.getSubSections()[0].setVisible(false);
@@ -225,7 +234,10 @@
 		};
 
 		//check
-		sectionIsSelected(this.oObjectPage, assert, oExpected);
+		setTimeout(function () {
+			sectionIsSelected(oObjectPage, assert, oExpected);
+			done();
+		}, this.iLoadingDelay);
 	});
 
 	QUnit.test("test remove selected section", function (assert) {
@@ -250,6 +262,9 @@
 	});
 
 	QUnit.test("test rename selected section", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			done = assert.async();
+
 		//act
 		this.oFirstSection.getSubSections()[0].setTitle("Updated Title");
 
@@ -259,7 +274,10 @@
 		};
 
 		//check
-		sectionIsSelected(this.oObjectPage, assert, oExpected);
+		setTimeout(function () {
+			sectionIsSelected(oObjectPage, assert, oExpected);
+			done();
+		}, this.iLoadingDelay);
 	});
 
 
