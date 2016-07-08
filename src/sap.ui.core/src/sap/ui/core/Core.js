@@ -2321,13 +2321,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	Core.prototype.fireLocalizationChanged = function(mChanges) {
 		var sEventId = Core.M_EVENTS.LocalizationChanged,
 			oBrowserEvent = jQuery.Event(sEventId, {changes : mChanges}),
-			fnAdapt = ManagedObject._handleLocalizationChange,
-			changedSettings = [];
+			fnAdapt = ManagedObject._handleLocalizationChange;
 
-		jQuery.each(mChanges, function(key,value) {
-			changedSettings.push(key);
-		});
-		jQuery.sap.log.info("localization settings changed: " + changedSettings.join(","), null, "sap.ui.core.Core");
+		jQuery.sap.log.info("localization settings changed: " + Object.keys(mChanges).join(","), null, "sap.ui.core.Core");
 
 		/*
 		 * Notify models that are able to handle a localization change
@@ -2370,7 +2366,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			jQuery.sap.log.info("RTL mode " + mChanges.rtl ? "activated" : "deactivated");
 		}
 
-		// notify Elements via a pseudo browser event (onLocalizationChanged)
+		// notify Elements via a pseudo browser event (onlocalizationChanged, note the lower case 'l')
 		jQuery.each(this.mElements, function(sId, oElement) {
 			this._handleEvent(oBrowserEvent);
 		});
