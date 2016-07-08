@@ -558,7 +558,7 @@
 				//Assert
 				var oBarInternals = getJqueryObjectsForBar(sut);
 
-				strictEqual(oBarInternals.$left.width(), 50 - iStartEndPadding, "left width is correct");
+				strictEqual(oBarInternals.$left.outerWidth(), 50 - iStartEndPadding, "left outerWidth is correct");
 				elementHasNoLeftOrRight(oBarInternals.$left, "left Bar");
 
 				strictEqual(oBarInternals.$mid.outerWidth(), 0 + iStartEndPadding * 2, "mid outerWidth is correct");
@@ -580,7 +580,7 @@
 				//Assert
 				var oBarInternals = getJqueryObjectsForBar(sut);
 
-				strictEqual(oBarInternals.$left.width(), 400 - iStartEndPadding, "left width is correct");
+				strictEqual(oBarInternals.$left.outerWidth(), 400 - iStartEndPadding, "left outerWidth is correct");
 				elementHasNoLeftOrRight(oBarInternals.$left, "left Bar");
 
 				strictEqual(oBarInternals.$mid.outerWidth(), 0 + iStartEndPadding * 2, "mid outerWidth is correct");
@@ -709,7 +709,7 @@
 				//Assert
 				var oBarInternals = getJqueryObjectsForBar(sut);
 
-				strictEqual(oBarInternals.$left.width(), 500 - iStartEndPadding, "left width is correct");
+				strictEqual(oBarInternals.$left.outerWidth(), 500 - iStartEndPadding, "left width is correct");
 
 				strictEqual(oBarInternals.$mid.outerWidth(), 0 + iStartEndPadding * 2, "mid outerWidth is correct");
 
@@ -797,6 +797,31 @@
 				sut.destroy();
 				jQuery("#qunit-fixture").width("");
 			});
+
+			test("leftContent should not overlap the rightContent", function() {
+				//Arrange + System under Test + Act
+				//left | right | mid
+				var sut = createAndPlaceSUT(300, 450, 0);
+
+				//Act
+				jQuery("#qunit-fixture").width("750px");
+				sut.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				//Assert
+				var oBarInternals = getJqueryObjectsForBar(sut);
+
+				if (sap.ui.getCore().getConfiguration().getRTL()) {
+					strictEqual(oBarInternals.$right.outerWidth(), oBarInternals.$left.position().left, "left content starts where right content ends");
+				} else {
+					strictEqual(oBarInternals.$left.outerWidth(), oBarInternals.$right.position().left, "right content starts where left content ends");
+				}
+
+				//Cleanup
+				sut.destroy();
+				jQuery("#qunit-fixture").width("");
+			});
+
 
 			module("resizing");
 
