@@ -102,13 +102,13 @@
 	background: @sapUiFieldReadOnlyBackground;
 }
 
-.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):focus {
+html.sap-desktop .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):focus {
 	outline: 1px dotted @sapUiContentFocusColor;
 	outline-offset: -3px;
 }
 
-.sapMInputBaseInner.sapMInputBaseStateInner:not(.sapMInputBaseReadonlyInner):focus {
-  	outline-offset: -4px;
+html.sap-desktop .sapMInputBaseStateInner:not(.sapMInputBaseReadonlyInner):focus {
+	outline-offset: -4px;
 }
 
 .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):focus {
