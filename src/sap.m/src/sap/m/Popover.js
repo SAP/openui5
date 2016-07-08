@@ -930,8 +930,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			};
 
 			var bRTL = sap.ui.getCore().getConfiguration().getRTL();
-
-			if (oEvent.target.className !== "sapMPopoverResizeHandle") {
+			if (!oEvent.target.classList.contains("sapMPopoverResizeHandle")) {
 				return;
 			}
 
