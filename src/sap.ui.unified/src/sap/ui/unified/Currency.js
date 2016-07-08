@@ -37,7 +37,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				value : {type : "float", group : "Appearance", defaultValue : 0},
 
 				/**
-				 * The ISO 4217 currency code
+				 * Determines the displayed currency code (ISO 4217).
+				 * <b>Note: </b>If a * character is set instead of currency code,
+				 * only the character itself will be rendered, ignoring the <code>value</code> property.
 				 */
 				currency : {type : "string", group : "Appearance", defaultValue : null},
 
@@ -146,6 +148,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			if (bRenderValue) {
 				this._renderValue();
+				// In the special case where the currency is set to "*" we need to remove the CSS class
+				// "sapUiUfdCurrencyNoVal" which hides the control.
+				if (sValue === "*" && this.$()) {
+					this._bRenderNoValClass = false;
+					this.$().toggleClass("sapUiUfdCurrencyNoVal", false);
+				}
 			}
 
 			return this;
