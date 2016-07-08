@@ -855,7 +855,10 @@ sap.ui.define([
 		 in that case we have to select the first visible section instead */
 		oSelectedSection = this._oFirstVisibleSection;
 		if (oSelectedSection) {
-			this.scrollToSection(oSelectedSection.getId());
+			// fixes BCP:1680125278, new sections positionTop was not ready when calling scroll
+			jQuery.sap.delayedCall(0, this, function () {
+				this.scrollToSection(oSelectedSection.getId());
+			});
 		}
 	};
 
