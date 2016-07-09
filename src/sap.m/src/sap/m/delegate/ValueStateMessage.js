@@ -13,11 +13,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 		"use strict";
 
 		/**
-		 * Creates a <code>sap.m.delegate.ValueState</code> delegate that can be attached to controls requiring
-		 * capabilities for showing a value state message popup.
+		 * Creates a <code>sap.m.delegate.ValueState</code> delegate that can be attached to controls that require
+		 * a value state message popup.
 		 *
-		 * <b>Example of usage:</b>
-		 * <code>
+		 * @example <caption>Example of usage:</caption>
+		 *
+		 * <pre>
 		 *	MyControl.prototype.init = function() {
 		 *		this._oValueStateMessage = new ValueStateMessage(this);
 		 *	};
@@ -38,7 +39,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 		 *
 		 *		this._oValueStateMessage = null;
 		 *	};
-		 * </code>
+		 * </pre>
 		 *
 		 * <b>Preconditions:</b>
 		 * The given control must implement the following interface:
@@ -51,7 +52,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 		 * </code>
 		 *
 		 * @extends sap.ui.base.Object
-		 * @param {sap.ui.core.Control} oControl The control of which this value state message is the delegate.
+		 * @param {sap.ui.core.Control} oControl The control for which this value state message is the delegate
 		 * @constructor
 		 * @private
 		 * @alias sap.m.delegate.ValueState
@@ -67,7 +68,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 		});
 
 		/**
-		 * Open value state message popup.
+		 * Opens value state message popup.
 		 *
 		 * @protected
 		 */
@@ -107,7 +108,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 		};
 
 		/**
-		 * Close value state message popup.
+		 * Closes value state message popup.
 		 *
 		 * @protected
 		 */
@@ -147,7 +148,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 		/**
 		 * Creates the value state message popup.
 		 *
-		 * @param {string} [sID] ID for the new message popup; generated automatically if no non-empty ID is given.
+		 * @param {string} [sID] ID for the new message popup; generated automatically if no ID is given
 		 * @returns {sap.ui.core.Popup} The popup instance object
 		 */
 		ValueStateMessage.prototype.createPopup = function(sID) {
