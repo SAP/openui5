@@ -56,8 +56,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			visible : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
-			 * Specifies the header mode. Note that when Inline mode is used, only the text and the count
-			 * of the IconTabFilter are displayed, the icon is ignored.
+			 * Specifies the header mode.
+			 * <b>Note:</b> The Inline mode works only if no icons are set.
 			 *
 			 * @since 1.40
 			 */
@@ -617,7 +617,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	IconTabHeader.prototype._getDisplayText = function (oItem) {
 		var sText = oItem.getText();
 
-		if (this.getMode() == sap.m.IconTabHeaderMode.Inline) {
+		if (this.isInlineMode()) {
 			var sCount = oItem.getCount();
 			if (sCount) {
 				if (this._bRtl) {
@@ -631,6 +631,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return sText;
 	};
 
+	/**
+	 * Returns if the header is in inline mode.
+	 * @private
+	 */
+	IconTabHeader.prototype.isInlineMode = function () {
+		return this._bTextOnly && this.getMode() == sap.m.IconTabHeaderMode.Inline;
+	};
+
 
 	/**
 	 * Checks if all tabs are textOnly version.
@@ -638,12 +646,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @returns True if all tabs are textOnly version, otherwise false
 	 */
 	IconTabHeader.prototype._checkTextOnly = function(aItems) {
-
-		if (this.getMode() == sap.m.IconTabHeaderMode.Inline) {
-			this._bTextOnly = true;
-			return true;
-		}
-
 		if (aItems.length > 0) {
 			for (var i = 0; i < aItems.length; i++) {
 				if (!(aItems[i] instanceof sap.m.IconTabSeparator)) {
@@ -664,11 +666,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @returns True if all tabs are noText version, otherwise false
 	 */
 	IconTabHeader.prototype._checkNoText = function(aItems) {
-
-		if (this.getMode() == sap.m.IconTabHeaderMode.Inline) {
-			return false;
-		}
-
 		if (aItems.length > 0) {
 			for (var i = 0; i < aItems.length; i++) {
 				if (!(aItems[i] instanceof sap.m.IconTabSeparator)) {
@@ -687,12 +684,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @returns True if all tabs are in line version, otherwise false
 	 */
 	IconTabHeader.prototype._checkInLine = function(aItems) {
-
-		if (this.getMode() == sap.m.IconTabHeaderMode.Inline) {
-			this._bInLine = true;
-			return true;
-		}
-
 		var oItem;
 
 		if (aItems.length > 0) {
