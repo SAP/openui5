@@ -198,4 +198,12 @@ scenario("scenario4");
 makeLibWith("lib1", {js:true}, ['lib2']);
 makeLibWith("lib2", {json:true}, ['lib1']);
 
+scenario("scenario5");
+makeLibWith("lib1", {js:true}, ['lib3', 'lib4', 'lib5']);
+makeLibWith("lib2", {js:true}, ['lib3', { name: 'lib6', lazy: true}, 'lib5']);
+makeLibWith("lib3", {js:true}, ['lib6']);
+makeLibWith("lib4", {js: true, json:true});
+makeLibWith("lib5", {json:true});
+makeLibWith("lib6", {js:true});
+
 
