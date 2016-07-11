@@ -182,6 +182,42 @@
 		// Cleanup
 		oFixFlex.destroy();
 	});
+
+	test("Test fix size when browser doesn't support flex layout", function() {
+		// Arrange
+		var label1 = new sap.m.Label({
+			text: "something wrong",
+			width: "150px"
+		}),
+			label2 = new sap.m.Label({text: "Ninja!"}),
+			SIZE = 200;
+
+		jQuery.support.hasFlexBoxSupport = false;
+
+		// System under test
+		var oFixFlex = new sap.ui.layout.FixFlex({
+			flexContent : label2,
+			fixContent : [ label1]
+		});
+
+		oFixFlex.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oFixFlex.setFixContentSize(SIZE + "px");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		strictEqual(jQuery(oFixFlex.$().children()[0]).height(), SIZE, "Fix container should be " + SIZE + "px high.");
+
+		// Cleanup
+		oFixFlex.destroy();
+		if (jQuery.support.flexBoxLayout || jQuery.support.newFlexBoxLayout || jQuery.support.ie10FlexBoxLayout) {
+			jQuery.support.hasFlexBoxSupport = true;
+		} else {
+			jQuery.support.hasFlexBoxSupport = false;
+		}
+	});
 </script>
 </head>
 <body>
