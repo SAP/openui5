@@ -2,8 +2,9 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'], function (jQuery) {
+sap.ui.define(["jquery.sap.global", "sap/ui/test/_LogCollector"], function ($, _LogCollector) {
 	"use strict";
+	var oLogger = $.sap.log.getLogger("sap.ui.test.matchers.Properties", _LogCollector.DEFAULT_LEVEL_FOR_OPA_LOGGERS);
 
 	/**
 	 * @class Properties - checks if a control's properties have the provided values - all properties have to match their values.
@@ -26,13 +27,13 @@ sap.ui.define(['jquery.sap.global'], function (jQuery) {
 	return function (oProperties) {
 		return function(oControl) {
 			var bIsMatching = true;
-			jQuery.each(oProperties, function(sPropertyName, oPropertyValue) {
-				var fnProperty = oControl["get" + jQuery.sap.charToUpperCase(sPropertyName, 0)];
+			$.each(oProperties, function(sPropertyName, oPropertyValue) {
+				var fnProperty = oControl["get" + $.sap.charToUpperCase(sPropertyName, 0)];
 
 				if (!fnProperty) {
 					bIsMatching = false;
-					jQuery.sap.log.error("Control " + oControl.sId + " does not have a property called: " +
-						sPropertyName, "", "sap.ui.test.matchers.Properties");
+					oLogger.error("Control '" + oControl.sId + "' does not have a property called: '" +
+						sPropertyName + "'");
 					return false;
 				}
 
@@ -44,6 +45,8 @@ sap.ui.define(['jquery.sap.global'], function (jQuery) {
 				}
 
 				if (!bIsMatching) {
+					oLogger.debug("The property '" + sPropertyName + "' of the control '" + oControl + "' " +
+						"is '" + vCurrentPropertyValue + "', expected '" + oPropertyValue + "'");
 					return false;
 				}
 			});
