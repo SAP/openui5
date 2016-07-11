@@ -2974,5 +2974,38 @@
         "references": []
       }
     ]
+  },
+  "1.28.36": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "15694a5e26e126cc47f5c501c060f0564db73d7d",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "ComponentContainer: delegate the owner in lazy component creation",
+        "references": []
+      },
+      {
+        "id": "fad758b31c0e509f5812a5e8976d4cda6f1c888f",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "ComponentContainer: don\u0027t skip onBeforeRendering",
+        "references": []
+      },
+      {
+        "id": "2f08d32f9c5685545adc149ef62c5a9ca33a8df4",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "ThemeCheck: extend timeout to fix custom.css",
+        "references": []
+      },
+      {
+        "id": "aa0910f8e715766aa50079a0a447662b2f6ca2bb",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.util.File: Wrong data-url delimiter",
+        "references": []
+      }
+    ]
   }
 }

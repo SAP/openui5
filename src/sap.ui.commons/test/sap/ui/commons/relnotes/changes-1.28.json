@@ -1148,5 +1148,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.36": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "677e0263683725c46e75d06160f6c93c540cea8e",
+        "author": "i032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FIX",
+        "text": "commons.Accordion: Right border is fixed",
+        "references": []
+      }
+    ]
   }
 }

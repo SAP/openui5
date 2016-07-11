@@ -537,5 +537,24 @@
         "references": []
       }
     ]
+  },
+  "1.28.36": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "1460c9713a97b1caacd47bc25e64c31ffc7a7727",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: current item of type MenuTextFieldItem does not lost focus in IE and Edge anymore.",
+        "references": []
+      },
+      {
+        "id": "b5b94751516b6858696d9188b583f8c65d8a76ae",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "unified.FileUploader: Removed \u0027src\u0027-Attribute for BlindLayer",
+        "references": []
+      }
+    ]
   }
 }

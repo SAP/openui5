@@ -4966,5 +4966,52 @@
         "references": []
       }
     ]
+  },
+  "1.28.36": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "9ea96811d64bc9ff3315e59a48a9fa56baea8108",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedListItem: Improve consumer handling of senderPress and iconPress events",
+        "references": []
+      },
+      {
+        "id": "12695eb790388e25147bc40219054fb9a8b0c11a",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton: Button with icon have tooltip",
+        "references": []
+      },
+      {
+        "id": "743ba9133c41f502dfee1265b11047c09d8024aa",
+        "author": "Bohdan Pukalskyi \u003cbohdan.pukalskyi@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Determining the list item instance given its id independently of its DOM representation.",
+        "references": []
+      },
+      {
+        "id": "b4b53108b27cda245825e8718dd881308cc58cef",
+        "author": "Bohdan Pukalskyi \u003cbohdan.pukalskyi@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Exiting edit mode after an attemt to save an empty file in case same file names are allowed",
+        "references": []
+      },
+      {
+        "id": "1150b53c4013f8b09af0f00390f5e64c64c932f7",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: generic binding function support enabled",
+        "references": []
+      },
+      {
+        "id": "b5640bb11e75d7b3227aae4dc834e7714c8e9953",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollectionItem: Documentation to url property added",
+        "references": []
+      }
+    ]
   }
 }
