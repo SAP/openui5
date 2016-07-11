@@ -1,0 +1,201 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>All control and element setter should return correct context (Reason: https://github.com/SAP/openui5/blob/master/docs/guidelines.md#creating-classes)</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m,sap.ui.layout,sap.ui.unified,sap.ui.ux3,sap.ui.table,sap.ui.suite,sap.ui.dt,sap.uxap,sap.tnt,sap.ui.demokit,sap.ui.commons">
+	</script>
+	<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+	<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript">
+
+		(function () {
+
+			// Exclude libraries - we need this to exclude libraries that will not be tested at this point in time
+			var aExcludedLibraries = [
+						"sap.ui.core",
+						"sap.ui.layout",
+						"sap.ui.unified",
+						"sap.ui.ux3",
+						"sap.ui.table",
+						"sap.ui.suite",
+						"sap.ui.dt",
+						"sap.uxap",
+						"sap.ui.demokit",
+						"sap.ui.commons",
+						"sap.viz",
+						"sap.chart",
+						"sap.me",
+						"sap.suite.ui.microchart",
+						"sap.suite.ui.commons",
+						"sap.ui.comp",
+						"sap.ui.composite",
+						"sap.ui.rta",
+						"sap.uiext.inbox",
+						"sap.service.visualization",
+						"sap.ushell.ui",
+						"sap.ca.ui",
+						"sap.msap.tnt",
+						"sap.apf",
+						"sap.ca.scfld.md",
+						"sap.collaboration",
+						"sap.fiori",
+						"sap.gantt",
+						"sap.gantt.config",
+						"sap.landvisz",
+						"sap.makit",
+						"sap.ndc",
+						"sap.ui.generic.app",
+						"sap.ui.fl",
+						"sap.ovp",
+						"sap.portal.ui5",
+						"sap.rules.ui",
+						"sap.suite.ui.generic.template",
+						"sap.ui.generic.template",
+						"sap.ui.richtexteditor",
+						"sap.ui.vbm",
+						"sap.ui.vk",
+						"sap.fiori",
+						"sap.ushell"
+					];
+
+			function assertAllSettersFromList (aClasses, fnAssert) {
+				var iLength = aClasses.length,
+					oClass,
+					sClassName,
+					oControl,
+					oProperties,
+					oProperty,
+					sPropertyName,
+					sSetterName,
+					oValue,
+					oMetadata,
+					i;
+
+				for (i = 0; i < iLength; i++) {
+					sClassName = aClasses[i];
+
+					// make sure class is loaded
+					jQuery.sap.require(sClassName);
+					oClass = jQuery.sap.getObject(sClassName);
+
+					oMetadata = oClass.getMetadata();
+
+					// Abstract classes should not be tested on their own
+					if (oMetadata.isAbstract()) {
+						continue;
+					}
+
+					try {
+						oControl = new oClass();
+					} catch (e) {
+						fnAssert.ok(false, "Failed to init class " + sClassName + " without parameters");
+						continue;
+					}
+
+					oProperties = oMetadata.getAllProperties();
+
+					for (sPropertyName in oProperties) {
+						if (oProperties.hasOwnProperty(sPropertyName)) {
+							oProperty = oProperties[sPropertyName];
+
+							// Get the name of the setter.
+							// We access this private property only to be able to display more meaningful
+							// info in the test message
+							sSetterName = oProperty._sMutator;
+
+							// Get the value of the property
+							oValue = oProperty.get(oControl);
+
+							// Assert
+							try {
+								fnAssert.ok(oControl === oProperty.set(oControl, oValue),
+										sClassName + "." + sSetterName + "() should always return <this>");
+							} catch (e) {
+								// If the setter fails for some reason called with the value from get collected before that
+								// we need to fail with a meaningfull error.
+								fnAssert.ok(false, "Setter " + sClassName + "." + sSetterName + "(" + oValue + ") fails when called " +
+										"with value received from get");
+							}
+						}
+					}
+
+				}
+			}
+
+			module("Setters", {
+				beforeEach: function () {
+					var oLibraries = sap.ui.getCore().getLoadedLibraries(),
+						sLibName,
+						oLibrary,
+						sInfoLibName,
+						bNewLibrary,
+						oInfo,
+						i;
+
+					this.aControls = [];
+					this.aElements = [];
+
+					// Maybe libraries have been added, so discover what is available in order to also test them.
+					oInfo = sap.ui.getVersionInfo();
+					for (i = 0; i < oInfo.libraries.length; i++) {
+						sInfoLibName = oInfo.libraries[i].name;
+						if (jQuery.inArray(sInfoLibName, aExcludedLibraries) === -1 && !oLibraries[sInfoLibName]) {
+							jQuery.sap.log.info("Libary '" + sInfoLibName + "' is not loaded!");
+							try {
+								sap.ui.getCore().loadLibrary(sInfoLibName);
+								bNewLibrary = true;
+							} catch(e) {
+								// not a control lib? This happens for e.g. "themelib_sap_bluecrystal"...
+							}
+						}
+					}
+
+					// Renew the libraries object if new libraries are added
+					if (bNewLibrary) {
+						oLibraries = sap.ui.getCore().getLoadedLibraries();
+					}
+
+					// Collect all control and element classes from loaded libraries
+					for (sLibName in oLibraries) {
+						if (jQuery.inArray(sLibName, aExcludedLibraries) === -1 && oLibraries.hasOwnProperty(sLibName)) {
+							oLibrary = oLibraries[sLibName];
+							if (oLibrary.controls && Array.isArray(oLibrary.controls) && oLibrary.controls.length > 0) {
+								this.aControls = this.aControls.concat(oLibrary.controls);
+							}
+							if (oLibrary.elements && Array.isArray(oLibrary.elements) && oLibrary.elements.length > 0) {
+								this.aElements = this.aElements.concat(oLibrary.elements);
+							}
+						}
+					}
+				},
+				afterEach: function () {
+					this.aControls = null;
+					this.aElements = null;
+				}
+			});
+
+			test("All control and element setters should return correct context", function (fnAssert) {
+				ok(this.aControls.length > 0, "We have controls to test");
+				ok(this.aElements.length > 0, "We have elements to test");
+
+				// Test all controls from list
+				assertAllSettersFromList(this.aControls, fnAssert);
+
+				// Test all elements from list
+				assertAllSettersFromList(this.aElements, fnAssert);
+			});
+
+		})();
+	</script>
+</head>
+<body id="body" class="sapUiBody">
+<div id="qunit"></div>
+</body>
+</html>
