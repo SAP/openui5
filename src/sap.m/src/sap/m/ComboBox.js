@@ -1088,6 +1088,12 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 
 				// the "aria-activedescendant" attribute is removed when the currently active descendant is not visible
 				oDomRef.removeAttribute("aria-activedescendant");
+
+				// if the focus is back to the input after closing the picker,
+				// the value state message should be reopen
+				if (this.shouldValueStateMessageBeOpened() && (document.activeElement === oDomRef)) {
+					this.openValueStateMessage();
+				}
 			}
 
 			// remove the active state of the control's field
@@ -1103,12 +1109,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 
 			if (oDomRef) {
 				oDomRef.setAttribute("aria-expanded", "false");
-
-				// if the focus is back to the input after closing the picker,
-				// the value state message should be reopen
-				if (this.shouldValueStateMessageBeOpened() && (document.activeElement === oDomRef)) {
-					this.openValueStateMessage();
-				}
 			}
 
 			// clear the filter to make all items visible

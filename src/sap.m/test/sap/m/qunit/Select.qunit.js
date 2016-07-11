@@ -4691,12 +4691,14 @@ QUnit.test("destroy()", function(assert) {
 			new sap.ui.core.Item({
 				key: "2",
 				text: "item 2"
-			}),
+			})
 		]
 	});
 
+	// arrange
 	oSelect.placeAt("content");
 	sap.ui.getCore().applyChanges();
+	var fnDestroySpy = this.spy(oSelect.getValueStateMessage(), "destroy");
 
 	// act
 	oSelect.destroy();
@@ -4704,9 +4706,11 @@ QUnit.test("destroy()", function(assert) {
 
 	// assert
 	assert.strictEqual(oSelect.getItems().length, 0);
+	assert.strictEqual(fnDestroySpy.callCount, 1, "value state message is destroyed");
 	assert.ok(oSelect.getDomRef() === null);
 	assert.ok(oSelect.getPicker() === null);
 	assert.ok(oSelect.getList() === null);
+	assert.strictEqual(oSelect._oValueStateMessage, null);
 
 	// cleanup
 	oSelect.destroy();
@@ -8300,5 +8304,140 @@ QUnit.test("getAccessibilityInfo", function(assert) {
 	assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_COMBO"), "Type");
 	assert.strictEqual(oInfo.description, "Item2", "Description");
 
+	oSelect.destroy();
+});
+
+QUnit.module("value state");
+
+QUnit.test("it should open the value state message popup on focusin", function(assert) {
+
+	this.stub(sap.ui.Device, "system", {
+		desktop: true,
+		phone: false,
+		tablet: false
+	});
+
+	// system under test
+	var oSelect = new sap.m.Select({
+		valueState: sap.ui.core.ValueState.Warning
+	});
+
+	// arrange
+	oSelect.placeAt("content");
+	sap.ui.getCore().applyChanges();
+
+	// act
+	oSelect.focus();
+	this.clock.tick(101);
+
+	// assert
+	var oValueStateMessageDomRef = document.getElementById(oSelect.getValueStateMessageId());
+	assert.ok(oValueStateMessageDomRef);
+	assert.strictEqual(getComputedStyle(oValueStateMessageDomRef).getPropertyValue("display"), "block");
+
+	// cleanup
+	oSelect.destroy();
+});
+
+QUnit.test("it should open the value state message popup when the dropdown list is closed", function(assert) {
+
+	this.stub(sap.ui.Device, "system", {
+		desktop: true,
+		phone: false,
+		tablet: false
+	});
+
+	// system under test
+	var oSelect = new sap.m.Select({
+		items: [
+			new sap.ui.core.Item({
+				text: "lorem ipsum"
+			})
+		],
+		valueState: sap.ui.core.ValueState.Error
+	});
+
+	// arrange
+	oSelect.placeAt("content");
+	sap.ui.getCore().applyChanges();
+	oSelect.focus();
+	this.clock.tick(101);
+	oSelect.open();
+	this.clock.tick(1000);	// wait 1s after the open animation is completed
+
+	// act
+	oSelect.close();
+
+	// assert
+	var oValueStateMessageDomRef = document.getElementById(oSelect.getValueStateMessageId());
+	assert.ok(oValueStateMessageDomRef);
+	assert.strictEqual(getComputedStyle(oValueStateMessageDomRef).getPropertyValue("display"), "block");
+
+	// cleanup
+	oSelect.destroy();
+});
+
+QUnit.test("it should close the value state message popup on focusout", function(assert) {
+
+	this.stub(sap.ui.Device, "system", {
+		desktop: true,
+		phone: false,
+		tablet: false
+	});
+
+	// system under test
+	var oSelect = new sap.m.Select({
+		valueState: sap.ui.core.ValueState.Warning
+	});
+
+	// arrange
+	oSelect.placeAt("content");
+	sap.ui.getCore().applyChanges();
+	oSelect.focus();
+	this.clock.tick(101);
+
+	// act
+	oSelect.getFocusDomRef().blur();
+
+	// assert
+	var vValueStateMessageDomRef = document.getElementById(oSelect.getValueStateMessageId());
+	assert.ok(vValueStateMessageDomRef === null);
+
+	// cleanup
+	oSelect.destroy();
+});
+
+QUnit.test("it should close the value state message popup when the dropdown list is opened", function(assert) {
+
+	this.stub(sap.ui.Device, "system", {
+		desktop: true,
+		phone: false,
+		tablet: false
+	});
+
+	// system under test
+	var oSelect = new sap.m.Select({
+		items: [
+			new sap.ui.core.Item({
+				text: "lorem ipsum"
+			})
+		],
+		valueState: sap.ui.core.ValueState.Error
+	});
+
+	// arrange
+	oSelect.placeAt("content");
+	sap.ui.getCore().applyChanges();
+	oSelect.focus();
+	this.clock.tick(101);
+
+	// act
+	oSelect.open();
+
+	// assert
+	var vValueStateMessageDomRef = document.getElementById(oSelect.getValueStateMessageId());
+	assert.strictEqual(vValueStateMessageDomRef, null);
+
+	// cleanup
 	oSelect.destroy();
 });
