@@ -1218,15 +1218,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		jQuery.sap.assert(typeof lib === 'string' && lib || typeof lib === 'object' && typeof lib.name === 'string' && lib.name, "lib must be a non-empty string or an object with at least a non-empty name property" );
 
-		var libModule = lib.replace(/\./g, '/') + '/library.js';
-		if ( jQuery.sap.isResourceLoaded(libModule) ) {
-			return Promise.resolve(true);
-		}
-
 		var json;
 		if ( typeof lib !== 'string' ) {
 			json = lib.json;
 			lib = lib.name;
+		}
+
+		var libModule = lib.replace(/\./g, '/') + '/library.js';
+		if ( jQuery.sap.isResourceLoaded(libModule) ) {
+			return Promise.resolve(true);
 		}
 
 		var libInfo = mLibraryPreloadBundles[lib] || (mLibraryPreloadBundles[lib] = { });
@@ -1347,15 +1347,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		jQuery.sap.assert(typeof lib === 'string' && lib || typeof lib === 'object' && typeof lib.name === 'string' && lib.name, "lib must be a non-empty string or an object with at least a non-empty name property" );
 
-		var libModule = lib.replace(/\./g, '/') + '/library.js';
-		if ( jQuery.sap.isResourceLoaded(libModule) ) {
-			return;
-		}
-
 		var json;
 		if ( typeof lib !== 'string' ) {
 			json = lib.json;
 			lib = lib.name;
+		}
+
+		var libModule = lib.replace(/\./g, '/') + '/library.js';
+		if ( jQuery.sap.isResourceLoaded(libModule) ) {
+			return;
 		}
 
 		var libInfo = mLibraryPreloadBundles[lib] || (mLibraryPreloadBundles[lib] = { });
@@ -1540,8 +1540,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		function requireLibs() {
 			if ( bRequire ) {
-				aLibraries.forEach(function(sLibraryName) {
-					jQuery.sap.require(sLibraryName + ".library");
+				aLibraries.forEach(function(vLibraryName) {
+					if ( typeof vLibraryName === 'object' ) {
+						vLibraryName = vLibraryName.name;
+					}
+					jQuery.sap.require(vLibraryName + ".library");
 				});
 				if ( that.oThemeCheck && that.isInitialized() ) {
 					that.oThemeCheck.fireThemeChangedEvent(true);
