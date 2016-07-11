@@ -1152,7 +1152,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 				oControl = (oData && oData.srcControl) || this.getPickerTextField();
 
 			// propagate some property changes to the picker text field
-			if (/value|enabled|name|placeholder|editable|textAlign|textDirection/.test(sProperty) &&
+			if (/\bvalue\b|\benabled\b|\bname\b|\bplaceholder\b|\beditable\b|\btextAlign\b|\btextDirection\b/.test(sProperty) &&
 				oControl && (typeof oControl[sMutator] === "function")) {
 				oControl[sMutator](sNewValue);
 			}
