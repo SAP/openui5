@@ -2365,7 +2365,7 @@ sap.ui.define([
 		}
 
 		// property:"{path}" or "\{path\}"
-		if (typeof oValue === "string") {
+		if (typeof oValue === "string" && /{.+}/.test(oValue) === true) {
 			// either returns a binding info or an unescaped string or undefined - depending on binding syntax
 			return ManagedObject.bindingParser(oValue, oScope, true);
 		}

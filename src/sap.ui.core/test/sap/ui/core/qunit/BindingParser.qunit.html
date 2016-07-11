@@ -806,6 +806,13 @@
 		strictEqual(oIcon.getColor(), "1", "one time binding -> value unchanged");
 	});
 
+	test("Instantiate control with incomplete syntax", function(){
+		var oControl = new TestControl({
+			text: "{foo"
+		});
+		equal(oControl.getText(), "{foo", "text property set correctly");
+	});
+
 	</script>
 
 	<title>QUnit tests: Data binding Calculated Fields</title>
