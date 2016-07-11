@@ -1079,6 +1079,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			!this._aSelectedPaths.length ||
 			!this.getRememberSelections() ||
 			!this.isBound("items") ||
+			oItem.isSelectedBoundTwoWay() ||
 			oItem.getSelected()) {
 			return;
 		}
@@ -1145,7 +1146,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 
 	// insert or remove given item's path from selection array
 	ListBase.prototype._updateSelectedPaths = function(oItem, bSelect) {
-		if (!this.getRememberSelections() || !this.isBound("items") || oItem.isSelectedBoundTwoWay()) {
+		if (!this.getRememberSelections() || !this.isBound("items")) {
 			return;
 		}
 
