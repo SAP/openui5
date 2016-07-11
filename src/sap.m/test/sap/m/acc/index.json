@@ -3,7 +3,7 @@
 		{
 			"control": "sap.m.ActionSelect",
 			"url": "../ActionSelect.html",
-			"appComponent": "CA-UI5-CTR-WDF"
+			"appComponent": "CA-UI5-CTR-SOF-RIL"
 		},
 		{
 			"control": "sap.m.ActionSheet",
@@ -53,7 +53,7 @@
 		{
 			"control": "sap.m.ComboBox",
 			"url": "ComboBox.html",
-			"appComponent": "CA-UI5-CTR-WDF"
+			"appComponent": "CA-UI5-CTR-SOF-RIL"
 		},
 		{
 			"control": "sap.m.CustomTile",
@@ -113,12 +113,12 @@
 		{
 			"control": "sap.m.InputBase",
 			"url": "../InputBase.html",
-			"appComponent": "CA-UI5-CTR-WDF"
+			"appComponent": "CA-UI5-CTR-SOF-ROD"
 		},
 		{
 			"control": "sap.m.Input",
 			"url": "Input.html",
-			"appComponent": "CA-UI5-CTR-WDF"
+			"appComponent": "CA-UI5-CTR-SOF-ROD"
 		},
 		{
 			"control": "sap.m.Label",
@@ -297,6 +297,11 @@
 			"appComponent": "CA-UI5-CTR-SOF-ROD"
 		},
 		{
+			"control": "sap.m.RangeSlider",
+			"url": "../RangeSlider.html",
+			"appComponent": "CA-UI5-CTR-SOF-RIL"
+		},
+		{
 			"control": "sap.m.RatingIndicator",
 			"url": "RatingIndicator.html",
 			"appComponent": "CA-UI5-CTR-WDF"
@@ -309,7 +314,7 @@
 		{
 			"control": "sap.m.SearchField",
 			"url": "../SearchField.html",
-			"appComponent": "CA-UI5-CTR-WDF"
+			"appComponent": "CA-UI5-CTR-SOF-ROD"
 		},
 		{
 			"control": "sap.m.SegmentedButton",
@@ -339,7 +344,7 @@
 		{
 			"control": "sap.m.Slider",
 			"url": "../Slider.html",
-			"appComponent": "CA-UI5-CTR-WDF"
+			"appComponent": "CA-UI5-CTR-SOF-RIL"
 		},
 		{
 			"control": "sap.m.SlideTile",
@@ -365,7 +370,7 @@
 		{
 			"control": "sap.m.Switch",
 			"url": "../Switch.html",
-			"appComponent": "CA-UI5-CTR-WDF"
+			"appComponent": "CA-UI5-CTR-SOF-PIR"
 		},
 		{
 			"control": "sap.m.TabContainer",
