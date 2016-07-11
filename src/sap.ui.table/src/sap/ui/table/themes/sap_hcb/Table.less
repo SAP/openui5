@@ -45,11 +45,6 @@
 	border-right: 0.0625rem solid @sapHCStandardFG;
 }
 
-.sapUiTableRowHdr.sapUiTableGroupHeader,
-.sapUiTableCtrl tr.sapUiTableGroupHeader > td:nth-last-child(n+2) {
-	border-right: none;
-}
-
 .sapUiTableTr > td,
 .sapUiTableRowHdr {
 	border-bottom: 0.0625rem solid @sapHCReducedAltFG;
@@ -353,9 +348,6 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 	outline-offset: -3px;
 	outline: 2px dotted @sapHCStandardFG;
 }
-.sapUiTableRowHdr.sapUiTableGroupHeader:focus:not(*:root) {
-	outline: 0px;
-}
 
 /* Firefox */
 @supports (-moz-appearance:meterbar) {
@@ -366,17 +358,6 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 	outline-offset: -3px;
 	outline: 2px dotted @sapHCStandardFG;
 }}
-
-.sapUiTableRowHdr.sapUiTableGroupHeader:focus .sapUiTableGroupIcon {
-	outline-width: 2px;
-	outline-style: dotted;
-	outline-offset: 0px;
-	outline-color: @sapUiContentFocusColor;
-}
-
-.sapUiTableRowHdr.sapUiTableGroupHeader {
-	outline: 0px;
-}
 
 .sapUiTableRSel .sapUiTableCtrlScr,
 .sapUiTableRSel .sapUiTableCtrlScrFixed {
@@ -441,39 +422,6 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 	height: @sapUiTableCondensedRowHeight;
 }
 
-.sapUiTableGroupIconOpen,
-.sapUiTableTreeIconNodeOpen {
-	background-image: url(img/ico12_open_minus.gif);
-}
-
-.sapUiTableGroupIconClosed,
-.sapUiTableTreeIconNodeClosed {
-	background-image: url(img/ico12_closed_plus.gif);
-}
-
-.sapUiTableTreeIconLeaf {
-	background-image: url(img/ico12_leaf.gif);
-}
-
-.sapUiTableTreeIcon {
-	margin-right: 6px;
-}
-
-.sapUiTableTreeIconLeaf {
-	background-image: none;
-}
-
-.sapUiSizeCompact .sapUiTableGroupIcon {
-	font-size: 0.875rem;
-	line-height: 26px;
-	height: 26px;
-}
-
-.sapUiSizeCondensed .sapUiTableGroupIcon {
-	height: 19px;
-	line-height: 19px;
-}
-
 .sapUiTableHSb,
 .sapUiTableCCnt,
 .sapUiTableCtrlEmpty {
@@ -490,15 +438,6 @@ html[data-sap-ui-browser^="ed"] .sapUiTableOverlayArea:focus,
 html[data-sap-ui-browser^="ie"] .sapUiTableCtrlEmpty:focus:before,
 html[data-sap-ui-browser^="ed"] .sapUiTableCtrlEmpty:focus:before {
 	border-width: 2px;
-}
-
-.sapUiSizeCompact .sapUiTableTreeIcon:focus {
-	outline: 0.125rem dotted @sapHCStandardFG;
-}
-
-.sapUiSizeCompact .sapUiTableGroupIcon::before,
-.sapUiSizeCompact .sapUiTableTreeIcon::before {
-	color: @sapHCStandardFG;
 }
 
 /* Condensed mode */

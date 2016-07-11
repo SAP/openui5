@@ -21,6 +21,71 @@ QUnit.module("TableUtils", {
 });
 
 
+QUnit.test("Grouping", function(assert) {
+	assert.ok(!!TableUtils.Grouping, "Grouping namespace available");
+	assert.ok(TableUtils.Grouping.TableUtils === TableUtils, "Dependency forwarding of TableUtils correct");
+});
+
+QUnit.test("isRowSelectionAllowed", function(assert) {
+	function check(sSelectionBehavior, sSelectionMode, bGroup, bExpected) {
+		oTreeTable.setSelectionBehavior(sSelectionBehavior);
+		oTreeTable.setSelectionMode(sSelectionMode);
+		oTreeTable.setUseGroupMode(bGroup);
+		sap.ui.getCore().applyChanges();
+		var bRes = TableUtils.isRowSelectionAllowed(oTreeTable);
+		assert.ok(bRes && bExpected || !bRes && !bExpected, "isRowSelectionAllowed: " + sSelectionBehavior + ", " + sSelectionMode + ", Group: " + bGroup);
+	}
+
+	check("RowSelector", "MultiToggle", false, false);
+	check("Row", "MultiToggle", false, true);
+	check("RowOnly", "MultiToggle", false, true);
+	check("RowSelector", "Single", false, false);
+	check("Row", "Single", false, true);
+	check("RowOnly", "Single", false, true);
+	check("RowSelector", "None", false, false);
+	check("Row", "None", false, false);
+	check("RowOnly", "None", false, false);
+	check("RowSelector", "MultiToggle", true, false);
+	check("Row", "MultiToggle", true, true);
+	check("RowOnly", "MultiToggle", true, true);
+	check("RowSelector", "Single", true, false);
+	check("Row", "Single", true, true);
+	check("RowOnly", "Single", true, true);
+	check("RowSelector", "None", true, false);
+	check("Row", "None", true, false);
+	check("RowOnly", "None", true, false);
+});
+
+QUnit.test("isRowSelectorSelectionAllowed", function(assert) {
+	function check(sSelectionBehavior, sSelectionMode, bGroup, bExpected) {
+		oTreeTable.setSelectionBehavior(sSelectionBehavior);
+		oTreeTable.setSelectionMode(sSelectionMode);
+		oTreeTable.setUseGroupMode(bGroup);
+		sap.ui.getCore().applyChanges();
+		var bRes = TableUtils.isRowSelectorSelectionAllowed(oTreeTable);
+		assert.ok(bRes && bExpected || !bRes && !bExpected, "isRowSelectorSelectionAllowed: " + sSelectionBehavior + ", " + sSelectionMode + ", Group: " + bGroup);
+	}
+
+	check("RowSelector", "MultiToggle", false, true);
+	check("Row", "MultiToggle", false, true);
+	check("RowOnly", "MultiToggle", false, false);
+	check("RowSelector", "Single", false, true);
+	check("Row", "Single", false, true);
+	check("RowOnly", "Single", false, false);
+	check("RowSelector", "None", false, false);
+	check("Row", "None", false, false);
+	check("RowOnly", "None", false, false);
+	check("RowSelector", "MultiToggle", true, true);
+	check("Row", "MultiToggle", true, true);
+	check("RowOnly", "MultiToggle", true, true);
+	check("RowSelector", "Single", true, true);
+	check("Row", "Single", true, true);
+	check("RowOnly", "Single", true, true);
+	check("RowSelector", "None", true, false);
+	check("Row", "None", true, false);
+	check("RowOnly", "None", true, false);
+});
+
 QUnit.test("hasFixedColumns", function(assert) {
 	assert.ok(TableUtils.hasFixedColumns(oTable), "Table has fixed columns");
 	assert.ok(!TableUtils.hasFixedColumns(oTreeTable), "Table has no fixed columns");

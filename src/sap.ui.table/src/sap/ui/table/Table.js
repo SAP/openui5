@@ -19,8 +19,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	// shortcuts
 	var GroupEventType = library.GroupEventType,
 		NavigationMode = library.NavigationMode,
-		SelectionBehavior = library.SelectionBehavior,
 		SelectionMode = library.SelectionMode,
+		SelectionBehavior = library.SelectionBehavior,
 		SharedDomRef = library.SharedDomRef,
 		SortOrder = library.SortOrder,
 		VisibleRowCountMode = library.VisibleRowCountMode;
@@ -656,14 +656,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				if (!that._bInvalid) {
 					// subsequent DOM updates are only required if there is no rendering to be expected
 
-					// for TreeTable and AnalyticalTable
-					if (that._updateTableContent) {
 						that._updateTableContent();
-					}
 
 					that._getAccExtension().updateAccForCurrentCell(false);
 					that._updateSelection();
-					that._updateGroupHeader();
 
 					var oTableSizes = that._collectTableSizes();
 					that._updateRowHeader(oTableSizes.tableRowHeights);
@@ -967,7 +963,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		oSizes.headerWidths = aHeaderWidths;
 
-		if (this.getSelectionMode() !== SelectionMode.None && this.getSelectionBehavior() !== SelectionBehavior.RowOnly) {
+		if (TableUtils.hasRowHeader(this)) {
 			var oFirstInvisibleColumn = oDomRef.querySelector(".sapUiTableCtrlFirstCol > th:first-child");
 			if (oFirstInvisibleColumn) {
 				oSizes.invisibleColWidth = oFirstInvisibleColumn.clientWidth;
@@ -1121,12 +1117,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			}
 		}
 
-		this._updateGroupHeader();
-
-		// for TreeTable and AnalyticalTable
-		if (this._updateTableContent) {
 			this._updateTableContent();
-		}
 
 		if (this.getBinding("rows")) {
 			this.fireEvent("_rowsUpdated");
@@ -1233,21 +1224,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		return this;
-	};
-
-	/**
-	 * update the table content (scrollbar, no data overlay, selection, row header, ...)
-	 * @private
-	 */
-	Table.prototype._updateGroupHeader = function() {
-		var that = this;
-		// update the rows (TODO: generalize this for 1.6)
-		if (this._modifyRow) {
-			jQuery.each(this.getRows(), function(iIndex, oRow) {
-				that._modifyRow(iIndex + that.getFirstVisibleRow(), oRow.$());
-				that._modifyRow(iIndex + that.getFirstVisibleRow(), oRow.$("fixed"));
-			});
-		}
 	};
 
 	Table.prototype._updateFixedBottomRows = function() {
@@ -3484,9 +3460,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			}
 		}
 
-		if (oClosestTd && (oClosestTd.getAttribute("role") == "gridcell" || jQuery(oClosestTd).hasClass("sapUiTableTDDummy")) && (
-		    this.getSelectionBehavior() === SelectionBehavior.Row ||
-		    this.getSelectionBehavior() === SelectionBehavior.RowOnly)) {
+		if (oClosestTd && (oClosestTd.getAttribute("role") == "gridcell" || jQuery(oClosestTd).hasClass("sapUiTableTDDummy"))
+			&& TableUtils.isRowSelectionAllowed(this)) {
 			var $row = $target.closest(".sapUiTableCtrl > tbody > tr");
 			if ($row.length === 1) {
 				var iIndex = parseInt($row.attr("data-sap-ui-rowindex"), 10);
@@ -4424,12 +4399,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	// SELECTION HANDLING
 	// =============================================================================
 
-	Table.prototype._getSelectOnCellsAllowed = function () {
-		var sSelectionBehavior = this.getSelectionBehavior();
-		var sSelectionMode = this.getSelectionMode();
-		return sSelectionMode !== SelectionMode.None && (sSelectionBehavior === SelectionBehavior.Row || sSelectionBehavior === SelectionBehavior.RowOnly);
-	};
-
 	/**
 	 * updates the visual selection in the HTML markup
 	 * @private
@@ -4445,7 +4414,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		var mTooltipTexts = this._getAccExtension().getAriaTextsForSelectionMode(true);
 
 		// check whether the row can be clicked to change the selection
-		var bSelectOnCellsAllowed = this._getSelectOnCellsAllowed();
+		var bSelectOnCellsAllowed = TableUtils.isRowSelectionAllowed(this);
 
 		// trigger the rows to update their selection
 		var aRows = this.getRows();
@@ -4706,193 +4675,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		return this.setAssociation("groupBy", oGroupBy);
 	};
 
-	/*
-	 * override the getBinding to inject the grouping information into the JSON model.
-	 *
-	 * !!EXPERIMENTAL FEATURE!!
-	 *
-	 * TODO:
-	 *   - Grouping is not really possible for models based on OData:
-	 *     - it works when loading data from the beginning because in this case the
-	 *       model has the relevant information (distinct values) to determine the
-	 *       count of rows and add them properly in the scrollbar as well as adding
-	 *       the group information to the contexts array which is used by the
-	 *       _modifyRow to display the group headers
-	 *     - it doesn't work when not knowing how many groups are available before
-	 *       and on which position the group header has to be added - e.g. when
-	 *       displaying a snapshot in the middle of the model.
-	 *   - For OData it might be a server-side feature?
-	 */
 	Table.prototype.getBinding = function(sName) {
-
-		// default binding is the "rows" binding
-		sName = sName || "rows";
-		var oBinding = Element.prototype.getBinding.call(this, sName);
-
-		// we do all the extended stuff only when grouping is enabled
-		if (this.getEnableGrouping()) {
-
-			// require the binding types (think about loading them only if required)
-			var ClientListBinding = sap.ui.requireSync("sap/ui/model/ClientListBinding");
-
-			// check for grouping being supported or not (only for client ListBindings!!)
-			var oGroupBy = sap.ui.getCore().byId(this.getGroupBy());
-			var bIsSupported = oGroupBy && oGroupBy.getGrouped() &&
-			                   sName === "rows" && oBinding &&
-			                   oBinding instanceof ClientListBinding;
-
-			// only enhance the binding if it has not been done yet and supported!
-			if (bIsSupported && !oBinding._modified) {
-
-				// once the binding is modified we always return the modified binding
-				// and don't wanna modifiy the binding once again
-				oBinding._modified = true;
-
-				// hook into the row modification and add the grouping specifics
-				this._modifyRow = function(iRowIndex, $row) {
-
-					// we add the style override to display the row header
-					this.$().find(".sapUiTableRowHdrScr").css("display", "block");
-
-					// modify the rows
-					var $rowHdr = this.$().find("div[data-sap-ui-rowindex='" + $row.attr("data-sap-ui-rowindex") + "']");
-					if (oBinding.isGroupHeader(iRowIndex)) {
-						$row.addClass("sapUiTableGroupHeader sapUiTableRowHidden");
-						var sClass = oBinding.isExpanded(iRowIndex) ? "sapUiTableGroupIconOpen" : "sapUiTableGroupIconClosed";
-						$rowHdr.html("<div class=\"sapUiTableGroupIcon " + sClass + "\" tabindex=\"-1\">" + oBinding.getTitle(iRowIndex) + "</div>");
-						$rowHdr.addClass("sapUiTableGroupHeader").removeAttr("title");
-					} else {
-						$row.removeClass("sapUiTableGroupHeader");
-						$rowHdr.html("");
-						$rowHdr.removeClass("sapUiTableGroupHeader");
-					}
-
-				};
-
-				// we use sorting finally to sort the values and afterwards group them
-				var sPropertyName = oGroupBy.getSortProperty();
-				oBinding.sort(new Sorter(sPropertyName));
-
-				// fetch the contexts from the original binding
-				var iLength = oBinding.getLength(),
-					aContexts = oBinding.getContexts(0, iLength);
-
-				// add the context information for the group headers which are later on
-				// used for displaying the grouping information of each group
-				var sKey;
-				var iCounter = 0;
-				for (var i = iLength - 1; i >= 0; i--) {
-					var sNewKey = aContexts[i].getProperty(sPropertyName);
-					if (!sKey) {
-						sKey = sNewKey;
-					}
-					if (sKey !== sNewKey) {
-						var oGroupContext = aContexts[i + 1].getModel().getContext("/sap.ui.table.GroupInfo" + i);
-						oGroupContext.__groupInfo = {
-							oContext: aContexts[i + 1],
-							name: sKey,
-							count: iCounter,
-							groupHeader: true,
-							expanded: true
-						};
-						aContexts.splice(i + 1, 0,
-							oGroupContext
-						);
-						sKey = sNewKey;
-						iCounter = 0;
-					}
-					iCounter++;
-				}
-				var oGroupContext = aContexts[0].getModel().getContext("/sap.ui.table.GroupInfo");
-				oGroupContext.__groupInfo =	{
-					oContext: aContexts[0],
-					name: sKey,
-					count: iCounter,
-					groupHeader: true,
-					expanded: true
-				};
-				aContexts.splice(0, 0,
-					oGroupContext
-				);
-
-				// extend the binding and hook into the relevant functions to provide
-				// access to the grouping information for the _modifyRow function
-				jQuery.extend(oBinding, {
-					getLength: function() {
-						return aContexts.length;
-					},
-					getContexts: function(iStartIndex, iLength) {
-						return aContexts.slice(iStartIndex, iStartIndex + iLength);
-					},
-					isGroupHeader: function(iIndex) {
-						var oContext = aContexts[iIndex];
-						return oContext && oContext.__groupInfo && oContext.__groupInfo.groupHeader;
-					},
-					getTitle: function(iIndex) {
-						var oContext = aContexts[iIndex];
-						return oContext && oContext.__groupInfo && oContext.__groupInfo.name + " - " + oContext.__groupInfo.count;
-					},
-					isExpanded: function(iIndex) {
-						var oContext = aContexts[iIndex];
-						return this.isGroupHeader(iIndex) && oContext.__groupInfo && oContext.__groupInfo.expanded;
-					},
-					expand: function(iIndex) {
-						if (this.isGroupHeader(iIndex) && !aContexts[iIndex].__groupInfo.expanded) {
-							for (var i = 0; i < aContexts[iIndex].__childs.length; i++) {
-								aContexts.splice(iIndex + 1 + i, 0, aContexts[iIndex].__childs[i]);
-							}
-							delete aContexts[iIndex].__childs;
-							aContexts[iIndex].__groupInfo.expanded = true;
-							this._fireChange();
-						}
-					},
-					collapse: function(iIndex) {
-						if (this.isGroupHeader(iIndex) && aContexts[iIndex].__groupInfo.expanded) {
-							aContexts[iIndex].__childs = aContexts.splice(iIndex + 1, aContexts[iIndex].__groupInfo.count);
-							aContexts[iIndex].__groupInfo.expanded = false;
-							this._fireChange();
-						}
-					},
-					toggleIndex: function(iIndex) {
-						if (this.isExpanded(iIndex)) {
-							this.collapse(iIndex);
-						} else {
-							this.expand(iIndex);
-						}
-					}
-
-				});
-
-				// the table need to fetch the updated/changed contexts again, therefore requires the binding to fire a change event
-				this._mTimeouts.groupingFireBindingChange = this._mTimeouts.groupingFireBindingChange || window.setTimeout(function() {oBinding._fireChange();}, 0);
-			}
-
-		}
-
-		return oBinding;
-
-	};
-
-	/**
-	 * @private
-	 */
-	Table.prototype.resetGrouping = function() {
-		// reset the group binding only when enhanced
-		var oBinding = this.getBinding("rows");
-		if (oBinding && oBinding._modified) {
-
-			// we remove the style override to display the row header
-			this.$().find(".sapUiTableRowHdrScr").css("display", "");
-
-			// if the grouping is not supported we remove the hacks we did
-			// and simply return the binding finally
-			this._modifyRow = undefined;
-
-			// reset the binding
-			var oBindingInfo = this.getBindingInfo("rows");
-			this.unbindRows();
-			this.bindRows(oBindingInfo);
-		}
+		TableUtils.Grouping.setupExperimentalGrouping(this);
+		return Element.prototype.getBinding.call(this, [sName || "rows"]);
 	};
 
 	/**
@@ -4903,7 +4688,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		this.setProperty("enableGrouping", bEnableGrouping);
 		// reset the grouping
 		if (!bEnableGrouping) {
-			this.resetGrouping();
+			TableUtils.Grouping.resetExperimentalGrouping(this);
 		}
 		// update the column headers
 		this._invalidateColumnMenus();
@@ -5255,13 +5040,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 			this._updateTableSizes();
 
-			this._updateGroupHeader();
-
 			bReturn = true;
-			// for TreeTable and AnalyticalTable
-			if (this._updateTableContent) {
+
 				this._updateTableContent();
-			}
 			this._attachEvents();
 		}
 
@@ -5782,6 +5563,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 */
 	Table.prototype._getSelectedIndicesCount = function () {
 		return this.getSelectedIndices().length;
+	};
+
+	Table.prototype._updateTableContent = function() {
+		if (TableUtils.Grouping.isGroupMode(this)) {
+			var oBinding = this.getBinding("rows"),
+			aRows = this.getRows(),
+			iCount = aRows.length;
+
+			if (oBinding) {
+				var oRow, sGroupTitle, iRowIndex, bIsGroupHeader;
+
+				for (var iRow = 0; iRow < iCount; iRow++) {
+					oRow = aRows[iRow];
+					iRowIndex = iRow + this.getFirstVisibleRow();
+					bIsGroupHeader = !!oBinding.isGroupHeader(iRowIndex);
+					sGroupTitle = bIsGroupHeader ? oBinding.getTitle(iRowIndex) : "";
+					TableUtils.Grouping.updateTableRowForGrouping(this, oRow, bIsGroupHeader, bIsGroupHeader ? !!oBinding.isExpanded(iRowIndex) : false,
+						bIsGroupHeader, false, bIsGroupHeader ? 0 : 1, sGroupTitle);
+				}
+			} else {
+				for (var iRow = 0; iRow < iCount; iRow++) {
+					TableUtils.Grouping.cleanupTableRowForGrouping(this, aRows[iRow]);
+				}
+			}
+		}
 	};
 
 	return Table;

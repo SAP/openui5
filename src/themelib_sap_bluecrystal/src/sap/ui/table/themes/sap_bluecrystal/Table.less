@@ -1,3 +1,8 @@
+/* =================================== */
+/* CSS for control sap.ui.table/Table  */
+/* Blue Crystal theme                  */
+/* =================================== */
+
 /*******************************************************************************
  * TABLE PARAMETERS
  ******************************************************************************/
@@ -24,6 +29,7 @@
  ******************************************************************************/
 
 .sapUiTable > div {
+	border: 0;
 	border-left: 1px solid @sapUiListVerticalBorderColor;
 	border-right: 1px solid @sapUiListVerticalBorderColor;
 }
@@ -113,7 +119,7 @@
 }
 
 .sapUiTableColSF::after {
-	color: @sapUiElement;
+	color: @sapUiContentNonInteractiveIconColor;
 }
 
 .sapUiTableCol:hover {
@@ -200,8 +206,8 @@
 	border-right: 1px solid @sapUiListVerticalBorderColor;
 }
 
-/* Table Row Selected[+Hover] */
-.sapUiTableCtrl tr.sapUiTableRowSel.sapUiTableRowHvr > td {
+/* Table Row Selected + Hover */
+div.sapUiTable .sapUiTableCtrl .sapUiTableRowHvr.sapUiTableRowSel > td {
 	/* data cells of row */
 	background-color: @sapUiListSelectionHoverBackground;
 }
@@ -338,6 +344,7 @@
 
 .sapUiTable > div.sapUiTableCnt {
 	background-color: @sapUiListBackground;
+	border-top: 1px solid @sapUiListBorderColor;
 }
 
 .sapUiTableCol,.sapUiTableTr > td {
@@ -449,10 +456,7 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 .sapUiTableRowHdr:focus:not(*:root),
 .sapUiTableColRowHdr:focus:not(*:root) {
 	outline-offset: -1px;
-	outline: 1px dotted @sapUiFocus;
-}
-.sapUiTableRowHdr.sapUiTableGroupHeader:focus:not(*:root) {
-	outline: 0px;
+	outline: 1px dotted @sapUiContentFocusColor;
 }
 
 /* Firefox */
@@ -462,19 +466,8 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 .sapUiTableRowHdr:focus,
 .sapUiTableColRowHdr:focus {
 	outline-offset: -1px;
-	outline: 1px dotted @sapUiFocus;
+	outline: 1px dotted @sapUiContentFocusColor;
 }}
-
-.sapUiTableRowHdr.sapUiTableGroupHeader:focus .sapUiTableGroupIcon {
-	outline-width: 1px;
-	outline-style: dotted;
-	outline-offset: 0px;
-	outline-color: @sapUiContentFocusColor;
-}
-
-.sapUiTableRowHdr.sapUiTableGroupHeader {
-	outline: 0px;
-}
 
 .sapUiTableRSel {
 	.sapUiTableCtrlScr,
@@ -550,51 +543,13 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 	height: @sapUiTableCondensedRowHeight;
 }
 
-.sapUiSizeCondensed .sapUiTableCell .sapMDP>.sapUiIcon {
+.sapUiSizeCondensed .sapUiTableCell .sapMDP>.sapUiIcon, .sapUiSizeCondensed .sapUiTableCell .sapMDP.sapMInputIE9>.sapUiIcon {
 	height: 1.5rem;
 	line-height: 1.5rem;
 }
 
-.sapUiTableGroupIconOpen,
-.sapUiTableTreeIconNodeOpen {
-	background-image: url(img/ico12_open_minus.gif);
-}
-
-.sapUiTableGroupIconClosed,
-.sapUiTableTreeIconNodeClosed {
-	background-image: url(img/ico12_closed_plus.gif);
-}
-
-.sapUiTableTreeIcon {
-	margin-right: 6px;
-}
-
-.sapUiTableTreeIconLeaf {
-	background-image: none;
-}
-
-.sapUiSizeCompact .sapUiTableGroupIcon {
-	font-size: 0.875rem;
-}
-
-.sapUiSizeCondensed .sapUiTableGroupIcon {
-	height: 22px;
-	line-height: 22px;
-}
-
-/* Table Cell Tree Node */
-.sapUiTableCtrl tr.sapUiTableGroupHeader,
-.sapUiTableRowHdr.sapUiTableGroupHeader {
-	background-color: @sapUiListTableGroupHeaderBackground;
-	border-color: @sapUiListTableGroupHeaderBorderColor;
-	color: @sapUiListTableGroupHeaderTextColor;
-}
-
-/* Hover State */
+/* Hover + Unselected State */
 div.sapUiTable {
-	tr.sapUiTableGroupHeader.sapUiTableRowHvr,
-	.sapUiTableRowHdr.sapUiTableGroupHeader.sapUiTableRowHvr,
-	.sapUiTableRowHdr div.sapUiTableRowHvr .sapUiTableGroupIcon,
 	.sapUiTableCtrl .sapUiTableRowHvr > td {
 		background-color: @sapUiListHoverBackground;
 	}
@@ -604,11 +559,6 @@ div.sapUiTable {
 .sapUiTableCCnt,
 .sapUiTableCtrlEmpty {
 	background-color: @sapUiListBackground;
-}
-
-.sapUiTableGroupIcon::before,
-.sapUiTableTreeIcon::before {
-	color: @sapUiElement;
 }
 
 /* Condensed mode */
@@ -659,9 +609,7 @@ div.sapUiTable {
 	}
 
 	.sapUiTableCol:hover,
-	.sapUiTableColRowHdr:hover,
-	tr.sapUiTableGroupHeader.sapUiTableRowHvr,
-	.sapUiTableRowHdr.sapUiTableGroupHeader.sapUiTableRowHvr {
+	.sapUiTableColRowHdr:hover {
 		background-color: contrast(@sapUiListHeaderBackground, darken(@sapUiListHeaderBackground, 6), lighten(@sapUiListHeaderBackground, 6));
 	}
 
@@ -677,7 +625,7 @@ div.sapUiTable {
 }
 
 .sapUiTableColCellMenu div {
-	color: @sapUiElement;
+	color: @sapUiContentIconColor;
 }
 
 .sapUiTableColTouchRszActive {
@@ -708,7 +656,7 @@ div.sapUiTable {
 
 	.sapUiTableHeightResizer:hover {
 		cursor: n-resize;
-		background-color: @sapUiDarkBG;
-		color: @sapUiTextInverted;
+		background-color: darken(@sapUiContentForegroundBorderColor, 28.2);
+		color: @sapUiContentContrastTextColor;
 	}
 }
