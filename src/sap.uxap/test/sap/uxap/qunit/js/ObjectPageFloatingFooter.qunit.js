@@ -55,6 +55,20 @@
 			assert.ok(!$footerWrapper.hasClass("sapUiHidden"), "Footer is visible again");
 			assert.ok($footer.hasClass("sapUxAPObjectPageFloatingFooterShow"));
 		});
+
+		QUnit.test("ObjectPage Footer is visible after setting to false and then to true consecutively", function (assert) {
+			var $footerWrapper = this.oObjectPage.$("footerWrapper"),
+				oFooter = this.oObjectPage.getFooter(),
+				$footer = oFooter.$();
+
+			this.oObjectPage.setShowFooter(false);
+			this.oObjectPage.setShowFooter(true);
+
+			this.clock.tick(1000);
+
+			assert.ok(!$footerWrapper.hasClass("sapUiHidden"), "Footer is visible");
+			assert.ok($footer.hasClass("sapUxAPObjectPageFloatingFooterShow"));
+		});
 	});
 
 }(QUnit, sinon, sap.ui.getCore(), sap.ui.controller, sap.ui.xmlview));
