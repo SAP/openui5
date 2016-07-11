@@ -103,8 +103,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : sap.m.BackgroundDesign.Solid},
 
 			/**
-			 * Specifies the header mode. Note that when Inline mode is used, only the text and the count
-			 * of the IconTabFilter are displayed, the icon is ignored.
+			 * Specifies the header mode.
+			 * <b>Note:</b> The Inline mode works only if no icons are set.
 			 *
 			 * @since 1.40
 			 */
