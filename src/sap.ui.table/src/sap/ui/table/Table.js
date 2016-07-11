@@ -3228,6 +3228,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			return;
 		}
 
+		var $Target = jQuery(oEvent.target);
+
+		if ($Target.hasClass("sapUiTableGroupIcon") || $Target.hasClass("sapUiTableTreeIcon")) {
+			if (TableUtils.toggleGroupHeader(this, oEvent.target)) {
+				return;
+			}
+		}
+
 		// forward the event
 		if (!this._findAndfireCellEvent(this.fireCellClick, oEvent)) {
 			this._onSelect(oEvent);
@@ -4670,59 +4678,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		return this._oSelection.isSelectedIndex(iIndex);
 	};
 
-	/**
-	 * If focus is on group header, open/close the group header, depending on the expand state.
-	 * @private
-	 */
-	Table.prototype._toggleGroupHeader = function(oEvent) {
-		var $Parent = jQuery(oEvent.target).closest('.sapUiTableGroupHeader');
-		if ($Parent.length > 0) {
-			var iRowIndex = this.getFirstVisibleRow() + parseInt($Parent.attr("data-sap-ui-rowindex"), 10);
-			var oBinding = this.getBinding("rows");
-			if (oBinding && oBinding.isExpanded(iRowIndex)) {
-				oBinding.collapse(iRowIndex);
-			} else {
-				oBinding.expand(iRowIndex);
-			}
-			oEvent.preventDefault();
-			oEvent.stopImmediatePropagation();
-		}
-	};
-
-	/**
-	 * If focus is on group header, close the group header, else do the default behaviour of item navigation
-	 * @private
-	 */
-	Table.prototype._collapseGroupHeader = function(oEvent) {
-		var $Parent = jQuery(oEvent.target).closest('.sapUiTableGroupHeader');
-		if ($Parent.length > 0) {
-			var iRowIndex = this.getFirstVisibleRow() + parseInt($Parent.attr("data-sap-ui-rowindex"), 10);
-			var oBinding = this.getBinding("rows");
-			if (oBinding && oBinding.isExpanded(iRowIndex)) {
-				oBinding.collapse(iRowIndex);
-			}
-			oEvent.preventDefault();
-			oEvent.stopImmediatePropagation();
-		}
-	};
-
-	/**
-	 * If focus is on group header, open the group header, else do the default behaviour of item navigation
-	 * @private
-	 */
-	Table.prototype._expandGroupHeader = function(oEvent) {
-		var $Parent = jQuery(oEvent.target).closest('.sapUiTableGroupHeader');
-		if ($Parent.length > 0) {
-			var iRowIndex = this.getFirstVisibleRow() + parseInt($Parent.attr("data-sap-ui-rowindex"), 10);
-			var oBinding = this.getBinding("rows");
-			if (oBinding && !oBinding.isExpanded(iRowIndex)) {
-				oBinding.expand(iRowIndex);
-			}
-			oEvent.preventDefault();
-			oEvent.stopImmediatePropagation();
-		}
-	};
-
 	// =============================================================================
 	// GROUPING
 	// =============================================================================
@@ -4840,27 +4795,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 				};
 
-				this.onclick = function(oEvent) {
-					if (jQuery(oEvent.target).hasClass("sapUiTableGroupIcon")) {
-						var $parent = jQuery(oEvent.target).parents("[data-sap-ui-rowindex]");
-						if ($parent.length > 0) {
-							var iRowIndex = this.getFirstVisibleRow() + parseInt($parent.attr("data-sap-ui-rowindex"), 10);
-							var oBinding = this.getBinding("rows");
-							if (oBinding.isExpanded(iRowIndex)) {
-								oBinding.collapse(iRowIndex);
-								jQuery(oEvent.target).removeClass("sapUiTableGroupIconOpen").addClass("sapUiTableGroupIconClosed");
-							} else {
-								oBinding.expand(iRowIndex);
-								jQuery(oEvent.target).removeClass("sapUiTableGroupIconClosed").addClass("sapUiTableGroupIconOpen");
-							}
-						}
-					} else {
-						if (Table.prototype.onclick) {
-							Table.prototype.onclick.apply(this, arguments);
-						}
-					}
-				};
-
 				// we use sorting finally to sort the values and afterwards group them
 				var sPropertyName = oGroupBy.getSortProperty();
 				oBinding.sort(new Sorter(sPropertyName));
@@ -4971,7 +4905,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 			// if the grouping is not supported we remove the hacks we did
 			// and simply return the binding finally
-			this.onclick = Table.prototype.onclick;
 			this._modifyRow = undefined;
 
 			// reset the binding

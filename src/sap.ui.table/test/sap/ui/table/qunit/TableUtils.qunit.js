@@ -171,6 +171,55 @@ QUnit.test("isInGroupingRow", function(assert) {
 	assert.ok(!TableUtils.isInGroupingRow(jQuery.sap.domById("outerelement")), "Foreign DOM");
 });
 
+QUnit.test("toggleGroupHeader", function(assert) {
+
+	function checkExpanded(sType, bExpectExpanded) {
+		assert.equal(oTreeTable.getBinding("rows").isExpanded(0), bExpectExpanded, sType + ": First row " + (bExpectExpanded ? "" : "not ") + "expanded");
+	}
+
+	function doToggle(sType, sText, oRef, bForceExpand, bExpectExpanded, bExpectChange) {
+		var iIndex = -1;
+		var bExpanded = false;
+		var bCalled = false;
+		oTreeTable._onGroupHeaderChanged = function(iRowIndex, bIsExpanded) {
+			iIndex = iRowIndex;
+			bExpanded = bIsExpanded;
+			bCalled = true;
+		};
+		var bRes = TableUtils.toggleGroupHeader(oTreeTable, oRef, bForceExpand);
+		assert.ok(bExpectChange && bRes || !bExpectChange && !bRes, sType + ": " + sText);
+		if (bExpectChange) {
+			assert.ok(bCalled, sType + ": _onGroupHeaderChanged called");
+			assert.ok(bExpectExpanded === bExpanded, sType + ": _onGroupHeaderChanged provides correct expand state");
+			assert.ok(iIndex == 0, sType + ": _onGroupHeaderChanged provides correct index");
+		} else {
+			assert.ok(!bCalled, sType + ": _onGroupHeaderChanged not called");
+		}
+		checkExpanded(sType, bExpectExpanded);
+	}
+
+	function testWithValidDomRef(sType, oRef) {
+		assert.ok(!oTreeTable.getBinding("rows").isExpanded(0), sType + ": First row not expanded yet");
+		doToggle(sType, "Nothing changed when force collapse", oRef, false, false, false);
+		doToggle(sType, "Change when force expand", oRef, true, true, true);
+		doToggle(sType, "Nothing changed when force expand again", oRef, true, true, false);
+		doToggle(sType, "Changed when force collapse", oRef, false, false, true);
+		doToggle(sType, "Change when toggle", oRef, null, true, true);
+		doToggle(sType, "Change when toggle", oRef, null, false, true);
+	}
+
+	testWithValidDomRef("TreeIcon", jQuery.sap.byId(oTreeTable.getId() + "-rows-row0-col0").find(".sapUiTableTreeIcon"));
+
+	oTreeTable.setUseGroupMode(true);
+	sap.ui.getCore().applyChanges();
+
+	testWithValidDomRef("GroupIcon", jQuery.sap.byId(oTreeTable.getId() + "-rowsel0"));
+
+	doToggle("Wrong DomRef", "", oTreeTable.$(), true, false, false);
+	doToggle("Wrong DomRef", "", oTreeTable.$(), false, false, false);
+	doToggle("Wrong DomRef", "", oTreeTable.$(), null, false, false);
+});
+
 QUnit.test("isInSumRow", function(assert) {
 	fakeSumRow(0);
 
