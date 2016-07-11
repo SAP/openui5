@@ -209,7 +209,7 @@ function fakeGroupRow(iRow) {
 	$Row.toggleClass("sapUiTableGroupHeader", true).data("sap-ui-level", 1);
 	$RowFixed.toggleClass("sapUiTableGroupHeader", true).data("sap-ui-level", 1);
 	$RowHdr.toggleClass("sapUiTableGroupHeader", true).data("sap-ui-level", 1);
-	oTable._getAccExtension().updateAriaForAnalyticalRow(oRow, $Row, $RowHdr, $RowFixed, true, true, 1);
+	oTable._getAccExtension().updateAriaExpandAndLevelState(oRow, $Row, $RowHdr, $RowFixed, true, true, 1, null);
 	return {
 		row: $Row,
 		fixed: $RowFixed,
@@ -226,7 +226,7 @@ function fakeSumRow(iRow) {
 	$Row.toggleClass("sapUiAnalyticalTableSum", true).data("sap-ui-level", 1);
 	$RowFixed.toggleClass("sapUiAnalyticalTableSum", true).data("sap-ui-level", 1);
 	$RowHdr.toggleClass("sapUiAnalyticalTableSum", true).data("sap-ui-level", 1);
-	oTable._getAccExtension().updateAriaForAnalyticalRow(oRow, $Row, $RowHdr, $RowFixed, false, false, 1);
+	oTable._getAccExtension().updateAriaExpandAndLevelState(oRow, $Row, $RowHdr, $RowFixed, false, false, 1, null);
 	return {
 		row: $Row,
 		fixed: $RowFixed,

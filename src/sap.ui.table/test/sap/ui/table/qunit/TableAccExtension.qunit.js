@@ -362,8 +362,8 @@ QUnit.test("Other ARIA Attributes of Data Cell", function(assert) {
 	assert.strictEqual($Elem.attr("aria-expanded"), "false" , "aria-expanded");
 	$Elem = oTreeTable.$("rows-row0-col1");
 	assert.strictEqual($Elem.attr("role"), "gridcell" , "role");
-	assert.ok(!$Elem.attr("aria-level"), "aria-level");
-	assert.ok(!$Elem.attr("aria-expanded"), "aria-expanded");
+	assert.strictEqual($Elem.attr("aria-level"), "1" , "aria-level");
+	assert.strictEqual($Elem.attr("aria-expanded"), "false" , "aria-expanded");
 });
 
 

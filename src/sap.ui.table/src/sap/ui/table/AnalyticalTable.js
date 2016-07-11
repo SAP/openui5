@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.table.AnalyticalTable.
-sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTable', './library', 'sap/ui/model/analytics/ODataModelAdapter', 'sap/ui/model/SelectionModel', 'sap/ui/model/Sorter', 'sap/ui/base/ManagedObject', 'sap/ui/core/Popup', 'sap/ui/unified/Menu', 'sap/ui/unified/MenuItem'],
-	function(jQuery, AnalyticalColumn, Table, TreeTable, library, ODataModelAdapter, SelectionModel, Sorter, ManagedObject, Popup, Menu, MenuItem) {
+sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTable', './library', 'sap/ui/model/analytics/ODataModelAdapter', 'sap/ui/model/SelectionModel', 'sap/ui/model/Sorter', 'sap/ui/base/ManagedObject', 'sap/ui/core/Popup', 'sap/ui/unified/Menu', 'sap/ui/unified/MenuItem', './TableUtils'],
+	function(jQuery, AnalyticalColumn, Table, TreeTable, library, ODataModelAdapter, SelectionModel, Sorter, ManagedObject, Popup, Menu, MenuItem, TableUtils) {
 	"use strict";
 
 	// shortcuts
@@ -71,7 +71,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			dirty : {type : "boolean", group : "Appearance", defaultValue : null, deprecated: true}
 		},
 		designTime : true
-	}});
+	}, renderer: "sap.ui.table.TableRenderer"});
 
 
 	// =====================================================================
@@ -110,6 +110,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		this.setEnableCellFilter(true);
 		this._aGroupedColumns = [];
 		this._bSuspendUpdateAnalyticalInfo = false;
+		TableUtils.Grouping.setGroupMode(this);
 	};
 
 	AnalyticalTable.prototype.setFixedRowCount = function() {
@@ -352,74 +353,19 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		return aColumns;
 	};
 
-
-	AnalyticalTable.prototype._updateTableRowContent = function(oRow, bChildren, bExpanded, bHidden, bSum, iLevel, sGroupHeaderText) {
-		var $Row = oRow.$(),
-			$FixedRow = oRow.$("fixed"),
-			$RowHdr = this.$().find("div[data-sap-ui-rowindex=" + $Row.attr("data-sap-ui-rowindex") + "]"),
-			aRefs = [$Row, $FixedRow, $RowHdr];
-
-		this._getAccExtension().updateAriaForAnalyticalRow(oRow, $Row, $RowHdr, $FixedRow, bChildren, bExpanded, iLevel);
-
-		for (var i = 0; i < aRefs.length; i++) {
-			aRefs[i].attr({
-				"data-sap-ui-level" : iLevel
-			});
-
-			aRefs[i].data("sap-ui-level", iLevel);
-
-			aRefs[i].toggleClass("sapUiAnalyticalTableSum", !bChildren && bSum)
-				.toggleClass("sapUiAnalyticalTableDummy", false)
-				.toggleClass("sapUiTableGroupHeader", bChildren)
-				.toggleClass("sapUiTableRowHidden", bChildren && bHidden);
-		}
-
-		jQuery.sap.byId(oRow.getId() + "-groupHeader")
-			.toggleClass("sapUiTableGroupIconOpen", bChildren && bExpanded)
-			.toggleClass("sapUiTableGroupIconClosed", bChildren && !bExpanded)
-			.attr("title", sGroupHeaderText || null)
-			.text(sGroupHeaderText || "");
-
-		if ('ontouchstart' in document) {
-			var iScrollBarOffset = 0;
-			if (this.$().hasClass("sapUiTableVScr")) {
-				iScrollBarOffset += this.$().find('.sapUiTableVSb').width();
-			}
-			var $GroupHeaderMenuButton = $RowHdr.find(".sapUiTableGroupMenuButton");
-
-			if (this._bRtlMode) {
-				$GroupHeaderMenuButton.css("right", (this.$().width() - $GroupHeaderMenuButton.width() + $RowHdr.position().left - iScrollBarOffset) + "px");
-			} else {
-				$GroupHeaderMenuButton.css("left", (this.$().width() - $GroupHeaderMenuButton.width() - $RowHdr.position().left - iScrollBarOffset) + "px");
-			}
-		}
-	};
-
-
 	AnalyticalTable.prototype._updateTableContent = function() {
 		var oBinding = this.getBinding("rows"),
 			iFirstRow = this.getFirstVisibleRow(),
 			iFixedBottomRowCount = this.getFixedBottomRowCount(),
 			iCount = this.getVisibleRowCount(),
-			aCols = this.getColumns(),
-			that = this;
-
-		var fnRemoveClasses = function (oRow) {
-			var $row = oRow.getDomRefs(true);
-
-			$row.row.removeAttr("data-sap-ui-level");
-			$row.row.removeData("sap-ui-level");
-			$row.row.removeClass("sapUiTableGroupHeader sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
-
-			that._getAccExtension().updateAriaForAnalyticalRow(oRow, $row.rowScrollPart, $row.rowSelector, $row.rowFixedPart, false, false, -1);
-		};
+			aCols = this.getColumns();
 
 		var aRows = this.getRows();
 		//check if the table has rows (data to display)
 		if (!oBinding) {
 			// restore initial table state, remove group headers and total row formatting
 			for (var i = 0; i < aRows.length; i++) {
-				fnRemoveClasses(aRows[i]);
+				TableUtils.Grouping.cleanupTableRowForGrouping(this, aRows[i]);
 			}
 			return;
 		}
@@ -441,7 +387,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			var iLevel = oContextInfo ? oContextInfo.level : 0;
 
 			if (!oContextInfo || !oContextInfo.context) {
-				fnRemoveClasses(oRow);
+				TableUtils.Grouping.cleanupTableRowForGrouping(this, oRow);
 				if (oContextInfo && !oContextInfo.context) {
 					$row.addClass("sapUiAnalyticalTableDummy");
 					$rowHdr.addClass("sapUiAnalyticalTableDummy");
@@ -451,11 +397,11 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			}
 
 			if (oBinding.nodeHasChildren && oBinding.nodeHasChildren(oContextInfo)) {
-				this._updateTableRowContent(oRow, true, oContextInfo.nodeState.expanded,
+				TableUtils.Grouping.updateTableRowForGrouping(this, oRow, true, oContextInfo.nodeState.expanded,
 					oContextInfo.nodeState.expanded && !this.getSumOnTop(), false, iLevel,
 					oBinding.getGroupName(oContextInfo.context, oContextInfo.level));
 			} else {
-				this._updateTableRowContent(oRow, false, false, false, oContextInfo.nodeState.sum, iLevel,
+				TableUtils.Grouping.updateTableRowForGrouping(this, oRow, false, false, false, oContextInfo.nodeState.sum, iLevel,
 					oContextInfo.nodeState.sum && oContextInfo.level > 0 ? oBinding.getGroupName(oContextInfo.context, oContextInfo.level) : null);
 			}
 
@@ -1249,6 +1195,11 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	 * Inherit _getSelectedIndicesCount from TreeTable.
 	 */
 	AnalyticalTable.prototype._getSelectedIndicesCount = TreeTable.prototype._getSelectedIndicesCount;
+
+	AnalyticalTable.prototype.setEnableGrouping = function(bEnableGrouping) {
+		jQuery.sap.log.warning("The property enableGrouping is not supported by control sap.ui.table.AnalyticalTable");
+		return this;
+	};
 
 	return AnalyticalTable;
 
