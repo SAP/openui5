@@ -2066,12 +2066,17 @@ sap.ui.define([
 		oFooter.toggleStyleClass("sapUxAPObjectPageFloatingFooterShow", bShow);
 		oFooter.toggleStyleClass("sapUxAPObjectPageFloatingFooterHide", !bShow);
 
+		if (this._iFooterWrapperHideTimeout) {
+			jQuery.sap.clearDelayedCall(this._iFooterWrapperHideTimeout);
+		}
+
 		if (bUseAnimations && !bShow) {
-			jQuery.sap.delayedCall(ObjectPageLayout.FOOTER_ANIMATION_DURATION, this, function () {
+			this._iFooterWrapperHideTimeout = jQuery.sap.delayedCall(ObjectPageLayout.FOOTER_ANIMATION_DURATION, this, function () {
 				this.$("footerWrapper").toggleClass("sapUiHidden", !bShow);
 			});
 		} else {
 			this.$("footerWrapper").toggleClass("sapUiHidden", !bShow);
+			this._iFooterWrapperHideTimeout = null;
 		}
 	};
 
