@@ -1368,10 +1368,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		// currently loading
 		if ( libInfo.pending ) {
 			if ( libInfo.async ) {
-				throw new Error("request to load " + lib + " synchronously, but async loading is pending");
+				jQuery.sap.log.warning("request to load " + lib + " synchronously while async loading is pending; this causes a duplicate request and should be avoided by caller");
+				// fall through and preload synchronously
 			} else {
-				// sync cycle -> error (or return null like with modules?)
-				throw new Error("request to load " + lib + " synchronously, but sync loading is pending (cycle)");
+				// sync cycle -> ignore nested call (would nevertheless be a dependency cycle)
+				jQuery.sap.log.warning("request to load " + lib + " synchronously while sync loading is pending (cycle, ignored)");
+				return;
 			}
 		}
 
