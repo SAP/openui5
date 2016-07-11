@@ -290,67 +290,12 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 		}
 	};
 
-	TreeTable.prototype.onclick = function(oEvent) {
-		if (jQuery(oEvent.target).hasClass("sapUiTableGroupIcon")) {
-			this._onGroupSelect(oEvent);
-		} else if (jQuery(oEvent.target).hasClass("sapUiTableTreeIcon")) {
-			this._onNodeSelect(oEvent);
-		} else {
-			if (Table.prototype.onclick) {
-				Table.prototype.onclick.apply(this, arguments);
-			}
-		}
-	};
-
-	TreeTable.prototype._onNodeSelect = function(oEvent) {
-
-		var $parent = jQuery(oEvent.target).parents("tr");
-		if ($parent.length > 0) {
-			var iIndex = parseInt($parent.attr("data-sap-ui-rowindex"), 10);
-			var iRowIndex = this.getFirstVisibleRow() + iIndex;
-			var oContext = this.getContextByIndex(iRowIndex);
-			this.fireToggleOpenState({
-				rowIndex: iRowIndex,
-				rowContext: oContext,
-				expanded: !this.getBinding().isExpanded(iRowIndex)
-			});
-			//this.getBinding("rows").toggleContext(oContext);
-			var aRows = this.getRows();
-			var oBindingInfo = this.mBindingInfos["rows"];
-			if (aRows[iIndex] && aRows[iIndex].getBindingContext(oBindingInfo && oBindingInfo.model)) {
-				this.getBinding("rows").toggleIndex(iRowIndex);
-			}
-		}
-
-		oEvent.preventDefault();
-		oEvent.stopPropagation();
-
-
-	};
-
-	TreeTable.prototype._onGroupSelect = function(oEvent) {
-
-		var $parent = jQuery(oEvent.target).parents("[data-sap-ui-rowindex]");
-		if ($parent.length > 0) {
-			var iRowIndex = this.getFirstVisibleRow() + parseInt($parent.attr("data-sap-ui-rowindex"), 10);
-			var oContext = this.getContextByIndex(iRowIndex);
-			if (this.getBinding().isExpanded(iRowIndex)) {
-				jQuery(oEvent.target).removeClass("sapUiTableGroupIconOpen").addClass("sapUiTableGroupIconClosed");
-			} else {
-				jQuery(oEvent.target).removeClass("sapUiTableGroupIconClosed").addClass("sapUiTableGroupIconOpen");
-			}
-			this.fireToggleOpenState({
-				rowIndex: iRowIndex,
-				rowContext: oContext,
-				expanded: !this.getBinding().isExpanded(iRowIndex)
-			});
-			//this.getBinding("rows").toggleContext(iRowIndex);
-			this.getBinding("rows").toggleIndex(iRowIndex);
-		}
-
-		oEvent.preventDefault();
-		oEvent.stopPropagation();
-
+	TreeTable.prototype._onGroupHeaderChanged = function(iRowIndex, bExpanded) {
+		this.fireToggleOpenState({
+			rowIndex: iRowIndex,
+			rowContext: this.getContextByIndex(iRowIndex),
+			expanded: bExpanded
+		});
 	};
 
 	/**
