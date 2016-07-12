@@ -827,10 +827,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 
 		// Fill Tokenizer
 		var oToken = new sap.m.Token({
-			key: mOptions.key,
-			text: mOptions.item.getText(),
-			tooltip: mOptions.item.getText()
+			key: mOptions.key
 		});
+		oToken.setText(mOptions.item.getText());
+		oToken.setTooltip(mOptions.item.getText());
+
 		mOptions.item.data(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Token", oToken);
 		this._oTokenizer.addToken(oToken);
 		this.$().toggleClass("sapMMultiComboBoxHasToken", this._hasTokens());
@@ -2142,19 +2143,20 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		var sListItem = this.getRenderer().CSS_CLASS_MULTICOMBOBOX + "Item";
 		var sListItemSelected = (this.isItemSelected(oItem)) ? sListItem + "Selected" : "";
 		var oListItem = new sap.m.StandardListItem({
-			title: oItem.getText(),
 			type: sap.m.ListType.Active,
 			visible: oItem.getEnabled()
 		}).addStyleClass(sListItem + " " + sListItemSelected);
 		oListItem.setTooltip(oItem.getTooltip());
 		oItem.data(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "ListItem", oListItem);
+		oListItem.setTitle(oItem.getText());
 
 		if (sListItemSelected) {
 			var oToken = new sap.m.Token({
-				key: oItem.getKey(),
-				text: oItem.getText(),
-				tooltip: oItem.getText()
+				key: oItem.getKey()
 			});
+			oToken.setText(oItem.getText());
+			oToken.setTooltip(oItem.getText());
+
 			oItem.data(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Token", oToken);
 			this._oTokenizer.addToken(oToken);
 		}
