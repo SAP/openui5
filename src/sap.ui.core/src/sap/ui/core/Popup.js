@@ -2475,7 +2475,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Popup.prototype.onAfterRendering = function(oEvent){
-		var $Ref = this.getContent().$();
+		var oContent = this.getContent();
+		var $Ref = oContent instanceof Element ? oContent.$() : jQuery(oContent);
 
 		// TODO all stuff done in 'open' is destroyed if the content was rerendered
 		$Ref.toggleClass("sapUiShd", this._bShadow);
