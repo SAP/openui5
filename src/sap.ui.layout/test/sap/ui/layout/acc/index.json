@@ -7,6 +7,12 @@
 		"appComponent": "CA-UI5-CTR-WDF"
 	  },
 	  {
+		"control": "sap.ui.layout.ResponsiveSplitter",
+		"url": "../ResponsiveSplitter.html",
+		"desc": "To see the paginator in the bottom, please reduce the size of the browser window.",
+		"appComponent": "CA-UI5-CTR-SOF-RIL"
+	  },
+	  {
 		"control": "sap.ui.layout.form.ResponsiveLayout",
 		"url": "ResponsiveLayout.html",
 		"desc": "Form using ResponsiveLayout",
