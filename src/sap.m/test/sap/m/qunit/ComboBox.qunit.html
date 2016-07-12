@@ -8545,6 +8545,89 @@
 			oComboBox.destroy();
 		});
 
+		QUnit.test("it should close the dropdown list when the text field is empty and it was opened by typing text", function (assert) {
+
+			// system under test
+			var oComboBox = new sap.m.ComboBox({
+				items: [
+					new sap.ui.core.Item({
+						text: "Egypt"
+					}),
+					new sap.ui.core.Item({
+						text: "Germany"
+					}),
+					new sap.ui.core.Item({
+						text: "Ghana"
+					}),
+					new sap.ui.core.Item({
+						text: "Greece"
+					})
+				]
+			});
+
+			// arrange
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oComboBox.focus();
+
+			// act
+			oComboBox.getFocusDomRef().value = "G";
+			sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
+			this.clock.tick(1000);	// wait 1s after the open animation is completed
+
+			// act
+			oComboBox.getFocusDomRef().value = "";
+			sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
+			this.clock.tick(300);
+
+			// assert
+			assert.ok(!oComboBox.isOpen());
+
+			// cleanup
+			oComboBox.destroy();
+		});
+
+		QUnit.test("it should not close the dropdown list when the text field is empty and it was opened by keyboard or by pressing the button", function (assert) {
+
+			// system under test
+			var oComboBox = new sap.m.ComboBox({
+				items: [
+					new sap.ui.core.Item({
+						text: "Egypt"
+					}),
+					new sap.ui.core.Item({
+						text: "Germany"
+					}),
+					new sap.ui.core.Item({
+						text: "Ghana"
+					}),
+					new sap.ui.core.Item({
+						text: "Greece"
+					})
+				]
+			});
+
+			// arrange
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oComboBox.focus();
+
+			// act
+			sap.ui.test.qunit.triggerKeyboardEvent(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true);
+			this.clock.tick(500);
+
+			// act
+			oComboBox.getFocusDomRef().value = "";
+			sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
+			this.clock.tick(500);
+
+			// assert
+			assert.ok(oComboBox.isOpen());
+
+			// cleanup
+			oComboBox.destroy();
+		});
+
 		QUnit.module("onfocusin");
 
 		QUnit.test("onfocusin", function(assert) {
