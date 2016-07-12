@@ -468,6 +468,40 @@
 						"BGN from EUR currency's decimals should remain unchanged");
 			});
 
+			module("Currency '*' special case", {
+				beforeEach: function () {
+					this.oData = {
+						currencyCollection: [{
+							value: 20,
+							currency: "*"
+						},
+						{
+							currency: "*"
+						}]
+					};
+					sap.ui.getCore().setModel(new sap.ui.model.json.JSONModel(this.oData));
+					this.oVBox = new sap.m.VBox({});
+					this.oVBox.bindAggregation("items", "/currencyCollection", new sap.ui.unified.Currency({
+						value: "{value}",
+						currency: "{currency}"
+					}));
+					this.oVBox.placeAt('content');
+					sap.ui.getCore().applyChanges();
+
+					this.aControls = this.oVBox.getItems();
+				},
+				afterEach: function () {
+					this.aControls = null;
+					this.oVBox.destroy();
+				}
+			});
+
+			test("Currency control is rendered correctly", function () {
+				// Assert
+				strictEqual(this.aControls[0].$().hasClass("sapUiUfdCurrencyNoVal"), false, "Control should not have the class 'sapUiUfdCurrencyNoVal' applied");
+				strictEqual(this.aControls[1].$().hasClass("sapUiUfdCurrencyNoVal"), false, "Control should not have the class 'sapUiUfdCurrencyNoVal' applied");
+			});
+
 			module("Accessibility");
 
 			test("getAccessibilityInfo", function() {
