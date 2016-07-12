@@ -473,7 +473,10 @@ sap.ui.define([
 				oPromise = oContext.fetchValue(this.sPath);
 			}
 			oPromise.then(function (vResult) {
-				createContexts(vResult || []);
+				// ensure that the result is still relevant
+				if (!that.bRelative || that.oContext === oContext) {
+					createContexts(vResult || []);
+				}
 				//fire dataReceived after change event fired in createContexts()
 				if (bDataRequested) {
 					that.fireDataReceived(); // no try catch needed: uncaught in promise
