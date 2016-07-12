@@ -193,8 +193,8 @@ sap.ui.define([
 				bar: "foo"
 			});
 		}, new Error("Multiple errors where thrown sap.ui.test.Opa5#waitFor\n" +
-			"The property 'foo' is not defined in the API\n" +
-			"The property 'bar' is not defined in the API"), "an error containing both property names was thrown");
+			"the property 'foo' is not defined in the API\n" +
+			"the property 'bar' is not defined in the API"), "an error containing both property names was thrown");
 	});
 
 	QUnit.module("waitFor", {

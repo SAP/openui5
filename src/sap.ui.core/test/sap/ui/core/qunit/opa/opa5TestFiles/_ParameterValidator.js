@@ -1,23 +1,43 @@
 sap.ui.require(["sap/ui/test/_ParameterValidator"], function (Validator) {
+	var mValidationInfo = {
+		funcParam: "func",
+		arrayParam: "array",
+		anyParam: "any",
+		numericParam: "numeric",
+		stringParam: "string",
+		outerObject: {
+			innerFuncParam: {
+				type: "func",
+				mandatory: true
+			},
+			innerObject: {
+				innerFuncParam: "func"
+			},
+			anOptionalObject: {
+				someOptionalParam: {
+					type: "string",
+					mandatory: false
+				}
+			}
+		}
+	};
+
+	function createValidator () {
+		this._sErrorPrefix = "Parameter validator";
+		return new Validator({
+			errorPrefix: this._sErrorPrefix
+		});
+	}
+
 	QUnit.module("Validator - Single validation error", {
 		beforeEach: function () {
-			this._sErrorPrefix = "Parameter validator";
-			this.oValidator = new Validator({
-				errorPrefix: this._sErrorPrefix
-			});
-			this.mValidationInfo = {
-				funcParam: "func",
-				arrayParam: "array",
-				anyParam: "any",
-				numericParam: "numeric",
-				stringParam: "string"
-			}
+			this.oValidator = createValidator.bind(this)();
 		}
 	});
 
 	QUnit.test("Should not throw an exception if the func parameter is a function", function (assert) {
 		this.oValidator.validate({
-			validationInfo: this.mValidationInfo,
+			validationInfo: mValidationInfo,
 			inputToValidate: {
 				funcParam: function () {}
 			}
@@ -29,7 +49,7 @@ sap.ui.require(["sap/ui/test/_ParameterValidator"], function (Validator) {
 	QUnit.test("Should throw an exception if the func param is not a function", function (assert) {
 		assert.throws(function () {
 				this.oValidator.validate({
-					validationInfo: this.mValidationInfo,
+					validationInfo: mValidationInfo,
 					inputToValidate: {
 						funcParam: {}
 					}
@@ -42,7 +62,7 @@ sap.ui.require(["sap/ui/test/_ParameterValidator"], function (Validator) {
 
 	QUnit.test("Should not throw an exception if the array parameter is an array", function (assert) {
 		this.oValidator.validate({
-			validationInfo: this.mValidationInfo,
+			validationInfo: mValidationInfo,
 			inputToValidate: {
 				arrayParam: []
 			}
@@ -54,7 +74,7 @@ sap.ui.require(["sap/ui/test/_ParameterValidator"], function (Validator) {
 	QUnit.test("Should throw an exception if the array param is not an array", function (assert) {
 		assert.throws(function () {
 				this.oValidator.validate({
-					validationInfo: this.mValidationInfo,
+					validationInfo: mValidationInfo,
 					inputToValidate: {
 						arrayParam: {}
 					}
@@ -68,7 +88,7 @@ sap.ui.require(["sap/ui/test/_ParameterValidator"], function (Validator) {
 	["foo", $.noop, undefined, null, true, /foo/, 1].forEach(function (vAnyParam) {
 		QUnit.test("Should not throw an exception if the any parameter is " + vAnyParam, function (assert) {
 			this.oValidator.validate({
-				validationInfo: this.mValidationInfo,
+				validationInfo: mValidationInfo,
 				inputToValidate: {
 					anyParam: []
 				}
@@ -80,7 +100,7 @@ sap.ui.require(["sap/ui/test/_ParameterValidator"], function (Validator) {
 
 	QUnit.test("Should not throw an exception if the numeric parameter is a number", function (assert) {
 		this.oValidator.validate({
-			validationInfo: this.mValidationInfo,
+			validationInfo: mValidationInfo,
 			inputToValidate: {
 				numericParam: 13.37
 			}
@@ -92,7 +112,7 @@ sap.ui.require(["sap/ui/test/_ParameterValidator"], function (Validator) {
 	QUnit.test("Should throw an exception if the numeric param is not a number", function (assert) {
 		assert.throws(function () {
 				this.oValidator.validate({
-					validationInfo: this.mValidationInfo,
+					validationInfo: mValidationInfo,
 					inputToValidate: {
 						numericParam: NaN
 					}
@@ -105,7 +125,7 @@ sap.ui.require(["sap/ui/test/_ParameterValidator"], function (Validator) {
 
 	QUnit.test("Should not throw an exception if the string is a string", function (assert) {
 		this.oValidator.validate({
-			validationInfo: this.mValidationInfo,
+			validationInfo: mValidationInfo,
 			inputToValidate: {
 				stringParam: "foo"
 			}
@@ -117,7 +137,7 @@ sap.ui.require(["sap/ui/test/_ParameterValidator"], function (Validator) {
 	QUnit.test("Should throw an exception if the string param is not a number", function (assert) {
 		assert.throws(function () {
 				this.oValidator.validate({
-					validationInfo: this.mValidationInfo,
+					validationInfo: mValidationInfo,
 					inputToValidate: {
 						stringParam: NaN
 					}
@@ -130,7 +150,7 @@ sap.ui.require(["sap/ui/test/_ParameterValidator"], function (Validator) {
 
 	QUnit.test("Should not throw an exception if the valid parameter is not given and not mandatory", function (assert) {
 		this.oValidator.validate({
-			validationInfo: this.mValidationInfo,
+			validationInfo: mValidationInfo,
 			inputToValidate: {}
 		});
 
@@ -140,7 +160,7 @@ sap.ui.require(["sap/ui/test/_ParameterValidator"], function (Validator) {
 	QUnit.test("Should not throw an exception if all valid parameters are given", function (assert) {
 		this.oValidator.validate({
 			inputToValidate: {},
-			validationInfo: this.mValidationInfo,
+			validationInfo: mValidationInfo,
 			allowUnknownProperties: true
 		});
 
@@ -150,13 +170,27 @@ sap.ui.require(["sap/ui/test/_ParameterValidator"], function (Validator) {
 	QUnit.test("Should throw an exception if no input is given", function (assert) {
 		assert.throws(function () {
 				this.oValidator.validate({
-					validationInfo: this.mValidationInfo
+					validationInfo: mValidationInfo
 				});
 			}.bind(this),
 			new Error("Parameter validator - No 'inputToValidate' given but it is a mandatory parameter"),
 			"The expected exception was thrown"
 		);
 	});
+
+
+	QUnit.test("Should throw if no object is passed as input", function (assert) {
+		assert.throws(function () {
+				this.oValidator.validate({
+					validationInfo: mValidationInfo,
+					inputToValidate: "invalid"
+				});
+			}.bind(this),
+			new Error("Parameter validator - the 'inputToValidate' parameter needs to be an object but 'invalid' was passed"),
+			"The expected exception was thrown"
+		);
+	});
+
 
 	QUnit.test("Should throw an exception if no validation info is given", function (assert) {
 		assert.throws(function () {
@@ -173,12 +207,13 @@ sap.ui.require(["sap/ui/test/_ParameterValidator"], function (Validator) {
 		assert.throws(function () {
 				this.oValidator.validate({
 					inputToValidate: {},
-					validationInfo: this.mValidationInfo,
+					validationInfo: mValidationInfo,
 					allowUnknownProperties: {}
 				});
 			}.bind(this),
 			new Error("Parameter validator - the 'allowUnknownProperties' parameter" +
-				" needs to be a boolean value but '[object Object]' was passed")
+				" needs to be a boolean value but '[object Object]' was passed"),
+			"The expected exception was thrown"
 		);
 	});
 
@@ -186,21 +221,19 @@ sap.ui.require(["sap/ui/test/_ParameterValidator"], function (Validator) {
 		assert.throws(function () {
 				this.oValidator.validate({
 					inputToValidate: {},
-					validationInfo: this.mValidationInfo,
+					validationInfo: mValidationInfo,
 					allowUnknownProperties: true,
 					foo: "bar"
 				});
 			}.bind(this),
-			new Error("Parameter validator - The property 'foo' is not defined in the API")
+			new Error("Parameter validator - the property 'foo' is not defined in the API"),
+			"The expected exception was thrown"
 		);
 	});
 
 	QUnit.module("Validator - Multiple errors", {
 		beforeEach: function () {
-			this._sErrorPrefix = "Parameter validator";
-			this.oValidator = new Validator({
-				errorPrefix: this._sErrorPrefix
-			});
+			this.oValidator = createValidator.bind(this)();
 		}
 	});
 
@@ -215,8 +248,9 @@ sap.ui.require(["sap/ui/test/_ParameterValidator"], function (Validator) {
 				});
 			}.bind(this),
 			new Error("Multiple errors where thrown Parameter validator\n" +
-				"The property 'foo' is not defined in the API\n" +
-				"The property 'biz' is not defined in the API")
+				"the property 'foo' is not defined in the API\n" +
+				"the property 'biz' is not defined in the API"),
+			"The expected exception was thrown"
 		);
 	});
 
@@ -240,10 +274,93 @@ sap.ui.require(["sap/ui/test/_ParameterValidator"], function (Validator) {
 				});
 			}.bind(this),
 			new Error("Multiple errors where thrown Parameter validator\n" +
-				"The property 'foo' is not defined in the API\n" +
+				"the property 'foo' is not defined in the API\n" +
 				"No 'validationInfo' given but it is a mandatory parameter\n" +
 				"the 'inputToValidate' parameter needs to be an object but 'false' was passed\n" +
 				"the 'allowUnknownProperties' parameter needs to be a boolean value but '[object Object]' was passed")
+		);
+	});
+
+	QUnit.module("Validator - Recursion", {
+		beforeEach: function () {
+			this.oValidator = createValidator.bind(this)();
+			this.oInputToValidate = {
+				outerObject: {
+					innerFuncParam: "foo",
+					innerObject: {
+						innerFuncParam: "bar"
+					},
+					unknown: "baz"
+				}
+			};
+		}
+	});
+
+	QUnit.test("Should validate recursively", function (assert) {
+		assert.throws(function () {
+				this.oValidator.validate({
+					inputToValidate: this.oInputToValidate,
+					validationInfo: mValidationInfo,
+					allowUnknownProperties: true
+				});
+			}.bind(this),
+			new Error("Multiple errors where thrown Parameter validator\n" +
+				"the 'outerObject.innerFuncParam' parameter needs to be a function but 'foo' was passed\n" +
+				"the 'outerObject.innerObject.innerFuncParam' parameter needs to be a function but 'bar' was passed"),
+			"The expected exception was thrown"
+		);
+	});
+
+	QUnit.test("Should validate recursively with unknown parameters", function (assert) {
+		assert.throws(function () {
+				this.oValidator.validate({
+					inputToValidate: this.oInputToValidate,
+					validationInfo: mValidationInfo,
+					allowUnknownProperties: false
+				});
+			}.bind(this),
+			new Error("Multiple errors where thrown Parameter validator\n" +
+				"the property 'outerObject.unknown' is not defined in the API\n" +
+				"the 'outerObject.innerFuncParam' parameter needs to be a function but 'foo' was passed\n" +
+				"the 'outerObject.innerObject.innerFuncParam' parameter needs to be a function but 'bar' was passed"),
+			"The expected exception was thrown"
+		);
+	});
+
+	QUnit.test("Should validate recursively with unknown optional parameters", function (assert) {
+		this.oInputToValidate.outerObject.anOptionalObject = {};
+
+		assert.throws(function () {
+				this.oValidator.validate({
+					inputToValidate: this.oInputToValidate,
+					validationInfo: mValidationInfo,
+					allowUnknownProperties: false
+				});
+			}.bind(this),
+			new Error("Multiple errors where thrown Parameter validator\n" +
+				"the property 'outerObject.unknown' is not defined in the API\n" +
+				"the 'outerObject.innerFuncParam' parameter needs to be a function but 'foo' was passed\n" +
+				"the 'outerObject.innerObject.innerFuncParam' parameter needs to be a function but 'bar' was passed"),
+			"The expected exception was thrown"
+		);
+	});
+
+
+	QUnit.test("Should validate recursively with unknown mandatory parameters", function (assert) {
+		this.oInputToValidate.outerObject.innerFuncParam = undefined;
+
+		assert.throws(function () {
+				this.oValidator.validate({
+					inputToValidate: this.oInputToValidate,
+					validationInfo: mValidationInfo,
+					allowUnknownProperties: false
+				});
+			}.bind(this),
+			new Error("Multiple errors where thrown Parameter validator\n" +
+				"the property 'outerObject.unknown' is not defined in the API\n" +
+				"No 'outerObject.innerFuncParam' given but it is a mandatory parameter\n" +
+				"the 'outerObject.innerObject.innerFuncParam' parameter needs to be a function but 'bar' was passed"),
+			"The expected exception was thrown"
 		);
 	});
 });
