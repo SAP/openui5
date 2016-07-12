@@ -3256,7 +3256,7 @@ sap.ui.define([
 			oBinding.bWasGrouped = bGrouped;
 		} else if (oBinding instanceof TreeBinding) {
 			// Destroy all children in case a factory function is used
-			if (!oBinding.template) {
+			if (!oBindingInfo.template) {
 				this[oAggregationInfo._sDestructor]();
 			}
 			// In fnAfter call update recursively for the child nodes of the current tree node
