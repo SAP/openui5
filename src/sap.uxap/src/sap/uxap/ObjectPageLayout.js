@@ -1474,7 +1474,7 @@ sap.ui.define([
 		var iScrollTop = Math.max(oEvent.target.scrollTop, 0), // top of the visible page
 			iPageHeight,
 			oHeader = this.getHeaderTitle(),
-			bShouldStick = iScrollTop >= this._getSnapPosition(),
+			bShouldStick = (iScrollTop > 0) && (iScrollTop >= this._getSnapPosition()),
 			sClosestId,
 			bScrolled = false;
 
