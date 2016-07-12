@@ -9,7 +9,6 @@
 		<title>Test Page for sap.ui.core.LabelEnablement</title>
 
 		<script id="sap-ui-bootstrap"
-			type="text/javascript"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
@@ -17,12 +16,14 @@
 		</script>
 
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-
-		<script type="text/javascript">
-
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script>
+		sap.ui.test.qunit.delayTestStart();
 		sap.ui.core.Control.extend("AnotherTestLabel", {
 			metadata : {
 				interfaces : [
@@ -210,6 +211,19 @@
 				this.oControl.destroy();
 				this.oControl = null;
 			}
+		});
+
+		// BCP 1680118922
+		test("it should invalidate the associated control only if the required property has changed", function() {
+
+			// arrange
+			var fnInvalidateSpy = this.spy(this.oControl, "invalidate");
+
+			// act
+			this.oLabel.setRequired(false);
+
+			// assert
+			strictEqual(fnInvalidateSpy.callCount, 0);
 		});
 
 		test("LabelEnablement.isRequired", function() {
