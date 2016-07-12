@@ -634,6 +634,7 @@ sap.ui.define([
 			enabled: oButton.getEnabled(),
 			text: oButton.getText(),
 			icon: oButton.getIcon(),
+			tooltip: oButton.getTooltip(),
 			customData: new CustomData({
 				key: "originalId",
 				value: oButton.getId()
