@@ -301,7 +301,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 		};
 		oForm._origInvalidate = oForm.invalidate;
 		oForm.invalidate = function(oOrigin) {
-			this._origInvalidate(arguments);
+			this._origInvalidate(oOrigin);
 			if (this._bIsBeingDestroyed) {
 				return;
 			}
