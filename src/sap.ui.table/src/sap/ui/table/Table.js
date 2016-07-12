@@ -4878,6 +4878,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 							aContexts[iIndex].__groupInfo.expanded = false;
 							this._fireChange();
 						}
+					},
+					toggleIndex: function(iIndex) {
+						if (this.isExpanded(iIndex)) {
+							this.collapse(iIndex);
+						} else {
+							this.expand(iIndex);
+						}
 					}
 
 				});
