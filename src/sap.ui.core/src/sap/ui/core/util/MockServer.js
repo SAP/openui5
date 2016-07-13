@@ -2099,23 +2099,32 @@ sap.ui
 										return oResponse.statusCode + " " + oResponse.status;
 								}
 							};
+
 							var fnBuildResponseString = function(oResponse, sContentType) {
-								var sResponseData = JSON.stringify(oResponse.data) || "";
-								if (!oResponse.success) {
+
+								// create the response data string => convert to JSON if possible or use the content directly
+								var sResponseData;
+								if (oResponse.success) {
+									sResponseData = JSON.stringify(oResponse.data) || "";
+								} else {
 									sResponseData = oResponse.errorResponse;
 								}
 
+								// default the content type to application/json
+								sContentType = sContentType || "application/json";
+
+								// by default the dataserviceversion header will be attached to the response headers
 								if (oResponse.responseHeaders) {
+									// if the response contains the headers we include them into the
+									// response string which will be added to the BATCH
 									return "HTTP/1.1 " + fnResovleStatus(oResponse) + "\r\n" + oResponse.responseHeaders +
 										"dataserviceversion: 2.0\r\n\r\n" + sResponseData + "\r\n";
-								}
-
-								if (sContentType) {
+								} else {
+									// if a content type is defined we override the incoming response content type
 									return "HTTP/1.1 " + fnResovleStatus(oResponse) + "\r\nContent-Type: " + sContentType + "\r\nContent-Length: " +
 										sResponseData.length + "\r\ndataserviceversion: 2.0\r\n\r\n" + sResponseData + "\r\n";
 								}
-								return "HTTP/1.1 " + fnResovleStatus(oResponse) + "\r\nContent-Type: application/json\r\nContent-Length: " +
-									sResponseData.length + "\r\ndataserviceversion: 2.0\r\n\r\n" + sResponseData + "\r\n";
+
 							};
 
 							var fnCUDRequest = function(sUrl, sData, sType,aChangesetResponses) {
@@ -2136,8 +2145,9 @@ sap.ui
 									error: fnAjaxError
 								});
 								if (oResponse.statusCode === 400 || oResponse.statusCode === 404) {
-									var sError = "\r\nHTTP/1.1 " + fnResovleStatus(oResponse) +
-										"\r\nContent-Type: application/json\r\nContent-Length: 0\r\n\r\n";
+									// the response of the failing request needs to be propagated
+									// but the changeset should not be further processed => ERROR!
+									var sError = fnBuildResponseString(oResponse);
 									throw new Error(sError);
 								}
 								aChangesetResponses.push(fnBuildResponseString(oResponse));
