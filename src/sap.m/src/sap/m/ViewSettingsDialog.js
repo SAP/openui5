@@ -137,8 +137,15 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 
 					/**
 					 * The selected filter items in an object notation format: { key: boolean }. If a custom control filter was displayed (for example, the user clicked on the filter item), the value for its key is set to true to indicate that there has been an interaction with the control.
+					 * @deprecated As of version 1.42, replaced by filterCompoundKeys
 					 */
-					filterKeys : {type : "object"},
+					filterKeys : {type : "object", deprecated: true},
+
+					/**
+					 * The selected filter items in an object notation format: { parentKey: { key: boolean, key2: boolean, ...  }, ...}. If a custom control filter was displayed (for example, the user clicked on the filter item), the value for its key is set to true to indicate that there has been an interaction with the control.
+					 * @since 1.42
+					 */
+					filterCompoundKeys : {type : "object"},
 
 					/**
 					 * The selected filter items in a string format to display in the control's header bar in format "Filtered by: key (subkey1, subkey2, subkey3)".
@@ -740,6 +747,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 			presetFilterItem : sap.ui.getCore().byId(
 				this.getSelectedPresetFilterItem()),
 			filterKeys : this.getSelectedFilterKeys(),
+			filterCompoundKeys: this.getSelectedFilterCompoundKeys(),
 			navPage : this._getNavContainer().getCurrentPage(),
 			contentPage : this._vContentPage,
 			contentItem : this._oContentItem
@@ -880,8 +888,9 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 	 * It can be used to create matching sorters and filters to apply the selected settings to the data.
 	 *
 	 * @public
-	 * @return {object} An object with item and subitem keys
+	 * @return {object} An object with item and sub-item keys
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated As of version 1.42, replaced by getSelectedFilterCompoundKeys
 	 */
 	ViewSettingsDialog.prototype.getSelectedFilterKeys = function() {
 		var oSelectedFilterKeys = {}, aSelectedFilterItems = this
@@ -896,7 +905,43 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 	};
 
 	/**
+	 * Gets the selected filter object in format { parent_key: { key: boolean, key2: boolean, ...}, ... }.
+	 *
+	 * @public
+	 * @return {object} An object with item and sub-item keys
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @since 1.42
+	 */
+	ViewSettingsDialog.prototype.getSelectedFilterCompoundKeys = function() {
+		var oSelectedFilterKeys = {},
+			aSelectedFilterItems = this.getSelectedFilterItems(),
+			i,
+			sKey,
+			sParentKey,
+			oFilterItem;
+
+		for (i = 0; i < aSelectedFilterItems.length; i++) {
+			oFilterItem = aSelectedFilterItems[i];
+			if (oFilterItem instanceof sap.m.ViewSettingsCustomItem) {
+				sKey = oFilterItem.getKey();
+				oSelectedFilterKeys[sKey] = oFilterItem.getSelected();
+
+			} else {
+				sKey = oFilterItem.getKey();
+				sParentKey = oFilterItem.getParent().getKey();
+				if (!oSelectedFilterKeys[sParentKey]) {
+					oSelectedFilterKeys[sParentKey] = {};
+				}
+				oSelectedFilterKeys[sParentKey][sKey] = oFilterItem.getSelected();
+			}
+		}
+
+		return oSelectedFilterKeys;
+	};
+
+	/**
 	 * Sets the selected filter object in format {key: boolean}.
+	 * <b>Note:</b> Do not use duplicated item keys with this method.
 	 *
 	 * @public
 	 * @param {object} oSelectedFilterKeys
@@ -905,10 +950,10 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 	 *         It can be used to set the dialog state based on presets.
 	 * @return {sap.m.ViewSettingsDialog} this pointer for chaining
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @deprecated As of version 1.42, replaced by setSelectedFilterCompoundKeys
 	 */
 	ViewSettingsDialog.prototype.setSelectedFilterKeys = function(oSelectedFilterKeys) {
-		var sKey            = "",
-		    aFilterItems    = this.getFilterItems(),
+		var aFilterItems    = this.getFilterItems(),
 		    aSubFilterItems = {},
 		    oFilterItem,
 		    bMultiSelect,
@@ -916,14 +961,13 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 		    j,
 		    k;
 
-		// clear preset filters (only one mode is allowed, preset filters or
-		// filters)
+		// clear preset filters (only one mode is allowed, preset filters or filters)
 		if (Object.keys(oSelectedFilterKeys).length) {
 			this._clearPresetFilter();
 		}
 
 		// loop through the provided object array {key -> subKey -> boolean}
-		for (sKey in oSelectedFilterKeys) { // filter key
+		for (var sKey in oSelectedFilterKeys) { // filter key
 			oFilterItem = null;
 			if (oSelectedFilterKeys.hasOwnProperty(sKey)) {
 				for (i = 0; i < aFilterItems.length; i++) {
@@ -965,6 +1009,73 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 
 				// set the the selected state on the item
 				oFilterItem.setProperty('selected', oSelectedFilterKeys[sKey], true);
+			}
+		}
+
+		return this;
+	};
+
+	/**
+	 * Sets the selected filter object in format { parent_key: { key: boolean, key2: boolean, ...}, ... }.
+	 *
+	 * @public
+	 * @param {object} oSelectedFilterKeys
+	 *         A configuration object with filter item and sub item keys in the format: { parent_key: { key: boolean, key2: boolean, ...}, ... }.
+	 *         Setting boolean to true will set the filter to true, false or omitting an entry will set the filter to false.
+	 *         It can be used to set the dialog state based on presets.
+	 * @return {sap.m.ViewSettingsDialog} this pointer for chaining
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @since 1.42
+	 */
+	ViewSettingsDialog.prototype.setSelectedFilterCompoundKeys = function(oSelectedFilterKeys) {
+		var aFilterItems = this.getFilterItems();
+		var fnGetSelectedItemFromFilterKey = function (aFilterItems, oFilterKeys, sKey) {
+			if (!oFilterKeys.hasOwnProperty(sKey)) {
+				return;
+			}
+
+			var oItem = getViewSettingsItemByKey(aFilterItems, sKey);
+
+			return oItem;
+		};
+
+		// clear preset filters (only one mode is allowed, preset filters or filters)
+		if (Object.keys(oSelectedFilterKeys).length) {
+			this._clearPresetFilter();
+		}
+
+		// loop through the provided object array {key -> subKey -> boolean}
+		for (var sParentKey in oSelectedFilterKeys) { // filter key
+			var oParentItem = fnGetSelectedItemFromFilterKey(aFilterItems, oSelectedFilterKeys, sParentKey);
+
+			if (!oParentItem) {
+				jQuery.sap.log.warning('No filter with key "' + sParentKey);
+				continue;
+			}
+
+			if (oParentItem instanceof sap.m.ViewSettingsCustomItem) {
+				oParentItem.setProperty('selected', oSelectedFilterKeys[sParentKey], true);
+			} else if (oParentItem instanceof sap.m.ViewSettingsFilterItem) {
+				var oSelectedSubFilterKeys = oSelectedFilterKeys[sParentKey];
+				var aSubFilterItems = oParentItem.getItems();
+				var bMultiSelect = oParentItem.getMultiSelect();
+
+				for (var sKey in oSelectedSubFilterKeys) {
+					var oItem = fnGetSelectedItemFromFilterKey(aSubFilterItems, oSelectedSubFilterKeys, sKey);
+
+					if (!oItem) {
+						jQuery.sap.log.warning('No filter with key "' + sKey);
+						continue;
+					}
+
+					if (!bMultiSelect) {
+						aSubFilterItems.forEach(function(item) {
+							item.setProperty('selected', false, true);
+						});
+					}
+
+					oItem.setProperty('selected', oSelectedSubFilterKeys[sKey], true);
+				}
 			}
 		}
 
@@ -2454,6 +2565,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 					presetFilterItem    : sap.ui.getCore().byId(that.getSelectedPresetFilterItem()),
 					filterItems         : that.getSelectedFilterItems(),
 					filterKeys          : that.getSelectedFilterKeys(),
+					filterCompoundKeys  : that.getSelectedFilterCompoundKeys(),
 					filterString        : that.getSelectedFilterString()
 				};
 
@@ -2484,7 +2596,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 
 			// selected filters need to be cleared before
 			that._clearSelectedFilters();
-			that.setSelectedFilterKeys(that._oPreviousState.filterKeys);
+			that.setSelectedFilterCompoundKeys(that._oPreviousState.filterCompoundKeys);
 
 			// navigate to old page if necessary
 			if (that._navContainer.getCurrentPage() !== that._oPreviousState.navPage) {
