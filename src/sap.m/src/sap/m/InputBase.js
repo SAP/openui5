@@ -797,8 +797,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		var mDock = Popup.Dock;
 		var $Input = this.$("inner");
-		var sClass = "sapMInputBaseMessage sapMInputBaseMessage" + sState;
-		var sTextClass = "sapMInputBaseMessageText";
+		var sClass = "sapMValueStateMessage sapMValueStateMessage" + sState;
+		var sTextClass = "sapMValueStateMessageText";
 		var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		if (sState === sap.ui.core.ValueState.Success) {
 			sClass = "sapUiInvisibleText";
@@ -838,9 +838,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		// Check whether popup is below or above the input
 		if ($Input.offset().top < $Content.offset().top) {
-			$Content.addClass("sapMInputBaseMessageBottom");
+			$Content.addClass("sapMValueStateMessageBottom");
 		} else {
-			$Content.addClass("sapMInputBaseMessageTop");
+			$Content.addClass("sapMValueStateMessageTop");
 		}
 
 		$Input.addAriaDescribedBy(sMessageId);
