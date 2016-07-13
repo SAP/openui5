@@ -1,0 +1,1239 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+	<title>Semantic Page</title>
+
+	<style>
+		#statusLabel {
+			font-weight: bold;
+			color: green;
+		}
+	</style>
+
+	<script src="../../../resources/sap-ui-core.js" type="text/javascript"
+			id="sap-ui-bootstrap" data-sap-ui-libs="sap.m,sap.ui.layout"
+			data-sap-ui-theme="sap_bluecrystal">
+
+	</script>
+
+	<script type="text/javascript">
+		jQuery.sap.require("sap.m.semantic.MultiSelectAction");
+		jQuery.sap.require("sap.m.semantic.MainAction");
+		jQuery.sap.require("sap.m.semantic.PositiveAction");
+		jQuery.sap.require("sap.m.semantic.NegativeAction");
+		jQuery.sap.require("sap.m.semantic.AddAction");
+		jQuery.sap.require("sap.m.semantic.EditAction");
+		jQuery.sap.require("sap.m.semantic.SaveAction");
+		jQuery.sap.require("sap.m.semantic.DeleteAction");
+		jQuery.sap.require("sap.m.semantic.ForwardAction");
+		jQuery.sap.require("sap.m.semantic.CancelAction");
+		jQuery.sap.require("sap.m.semantic.SortAction");
+		jQuery.sap.require("sap.m.semantic.FilterAction");
+		jQuery.sap.require("sap.m.semantic.GroupAction");
+		jQuery.sap.require("sap.m.semantic.MessagesIndicator");
+		jQuery.sap.require("sap.m.semantic.FlagAction");
+		jQuery.sap.require("sap.m.semantic.FavoriteAction");
+		jQuery.sap.require("sap.m.semantic.OpenInAction");
+		jQuery.sap.require("sap.m.semantic.DiscussInJamAction");
+		jQuery.sap.require("sap.m.semantic.SendEmailAction");
+		jQuery.sap.require("sap.m.semantic.SendMessageAction");
+		jQuery.sap.require("sap.m.semantic.ShareInJamAction");
+		jQuery.sap.require("sap.m.semantic.PrintAction");
+		jQuery.sap.require("sap.m.semantic.SortSelect");
+		jQuery.sap.require("sap.m.semantic.FilterSelect");
+		jQuery.sap.require("sap.m.semantic.GroupSelect");
+
+		var aActionClasses = [sap.m.semantic.MultiSelectAction,
+							sap.m.semantic.MainAction,
+							sap.m.semantic.PositiveAction,
+							sap.m.semantic.NegativeAction,
+							sap.m.semantic.AddAction,
+							sap.m.semantic.EditAction,
+							sap.m.semantic.SaveAction,
+							sap.m.semantic.DeleteAction,
+							sap.m.semantic.ForwardAction,
+							sap.m.semantic.CancelAction,
+							sap.m.semantic.SortAction,
+							sap.m.semantic.FilterAction,
+							sap.m.semantic.GroupAction,
+							sap.m.semantic.FlagAction,
+							sap.m.semantic.FavoriteAction,
+							sap.m.semantic.OpenInAction,
+							sap.m.semantic.DiscussInJamAction,
+							sap.m.semantic.ShareInJamAction,
+							sap.m.semantic.SendEmailAction,
+							sap.m.semantic.SendMessageAction,
+							sap.m.semantic.PrintAction,
+							sap.m.semantic.MessagesIndicator,
+							sap.m.DraftIndicator
+		];
+
+		var aSelectClasses = [sap.m.semantic.SortSelect,
+							sap.m.semantic.FilterSelect,
+							sap.m.semantic.GroupSelect
+		];
+
+		var app = new sap.m.SplitApp("myApp");
+
+		var oModelMessages = new sap.ui.model.json.JSONModel({});
+
+		var oTestDataModel = new sap.ui.model.json.JSONModel({
+			sortItems: [
+				{
+					key: "price",
+					label: "Price"
+				},
+				{
+					key: "name",
+					label: "Name"
+				},
+				{
+					key: "date",
+					label: "Date"
+				}
+			]
+		});
+
+		var oStatusModel = new sap.ui.model.json.JSONModel({
+			lastAction: "",
+			selectedPageId: "master",
+			selectedSemanticControl: {
+				className: "AddAction",
+				enabled: "",
+				buttonType: "",
+				insertIndex: 0
+			},
+			selectedCustomControl: {
+				className: "Button",
+				text: "",
+				icon: "",
+				buttonType: "",
+				iconOnly: true,
+				autoAdjustWidth: true,
+				insertIndex: 0
+			},
+			master: {
+				showNavButton: false,
+				title: "Master Title",
+				multiSelectPressed: false,
+				multiSelectEnabled: true
+			},
+			detail: {
+				showNavButton: false,
+				title: "Detail Title"
+			}
+		});
+
+		sap.ui.getCore().setModel(oTestDataModel, "testData");
+		sap.ui.getCore().setModel(oStatusModel, "status");
+
+		// select
+		var oItemTemplate = new sap.ui.core.Item({
+			key: "{testData>key}",
+			text: "{testData>label}"
+		});
+
+		var oStatusLabel = new sap.m.Text({id: "statusLabel",
+			text: "{status>/lastAction}"});
+
+		var oPressedLabel = new sap.m.Text({id: "pressedLabel",
+			text: "{status>/master/multiSelectPressed}"});
+
+		var oAddWarningButton = new sap.m.Button("addMessagesBtn", {
+			text: "add Warning",
+			press: function () {
+				sap.ui.getCore().getMessageManager().addMessages(
+						new sap.ui.core.message.Message({
+							message: "Something wrong happend!",
+							type: sap.ui.core.MessageType.Warning,
+							processor: oModelMessages
+						})
+				)
+			}
+		});
+
+		var oClearWarningsButton = new sap.m.Button("clearMessagesBtn", {
+			text: "clear Messages",
+			press: function () {
+				sap.ui.getCore().getMessageManager().removeAllMessages();
+			}
+		});
+
+		var oSavingDraftButton = new sap.m.Button("showSavingDraftBtn", {
+			text: "show Saving Draft",
+			press: function () {
+				draftInd.showDraftSaving();
+			}
+		});
+
+		var oSavedDraftButton = new sap.m.Button("showDraftSavedBtn", {
+			text: "show Draft Saved",
+			press: function () {
+				draftInd.showDraftSaved();
+			}
+		});
+
+		var oClearDraftButton = new sap.m.Button("clearDraftStateBtn", {
+			text: "clear Draft state",
+			press: function () {
+				draftInd.clearDraftState();
+			}
+		});
+
+		var oToggleMultiselectPressed = new sap.m.Button("toggleMultiselectPressedBtn", {
+			text: "Toggle Multiselect Pressed",
+			press: function () {
+				var bToggle = !oStatusModel.getData().master.multiSelectPressed;
+				oStatusModel.setData({master: {multiSelectPressed: bToggle}}, true);
+			}
+		});
+
+		var oToggleMultiselectEnabled= new sap.m.Button("toggleMultiselectEnabledBtn", {
+			text: "Toggle Multiselect Enabled",
+			press: function () {
+				var bToggle = !oStatusModel.getData().master.multiSelectEnabled;
+				oStatusModel.setData({master: {multiSelectEnabled: bToggle}}, true);
+			}
+		});
+
+
+		function createPageSelect() {
+			return new sap.m.Select({
+				selectedKey: "{status>/selectedPageId}",
+				items: [ new sap.ui.core.Item({key: "master", text: "Master"}),
+					new sap.ui.core.Item({key: "detail", text: "Detail"})]
+			});
+		}
+
+		function createShareMenuPageSelect() {
+			return new sap.m.Select({
+				selectedKey: "{status>/selectedPageId}",
+				items: [ new sap.ui.core.Item({key: "detail", text: "Detail"})]
+			});
+		}
+
+		function createSemanticClassSelect() {
+			var oSelect = new sap.m.Select({
+				selectedKey: "{status>/selectedSemanticControl/className}"
+			});
+			jQuery.each(aActionClasses, function(iKey, oValue) {
+
+				var sKey = oValue.getMetadata().getName();
+				oSelect.addItem(new sap.ui.core.Item({key: sKey, text: sKey}));
+			});
+
+			return oSelect;
+		}
+
+		function createSemanticEnabledSelect() {
+			return new sap.m.Select({
+				selectedKey: "{status>/selectedSemanticControl/enabled}",
+				items: [ new sap.ui.core.Item({key: "", text: "do not customize"}),
+					new sap.ui.core.Item({key: "true", text: "enabled"}),
+					new sap.ui.core.Item({key: "false", text: "disabled"})]
+			});
+		}
+
+		function createButtonTypeSelect() {
+			return new sap.m.Select({
+				selectedKey: "{status>/selectedSemanticControl/buttonType}",
+				items: [ new sap.ui.core.Item({key: "", text: "do not customize"}),
+					new sap.ui.core.Item({key: sap.m.ButtonType.Accept , text: sap.m.ButtonType.Accept }),
+					new sap.ui.core.Item({key: sap.m.ButtonType.Back , text: sap.m.ButtonType.Back }),
+					new sap.ui.core.Item({key: sap.m.ButtonType.Default, text: sap.m.ButtonType.Default}),
+					new sap.ui.core.Item({key: sap.m.ButtonType.Emphasized, text: sap.m.ButtonType.Emphasized}),
+					new sap.ui.core.Item({key: sap.m.ButtonType.Reject, text: sap.m.ButtonType.Reject}),
+					new sap.ui.core.Item({key: sap.m.ButtonType.Transparent, text: sap.m.ButtonType.Transparent}),
+					new sap.ui.core.Item({key: sap.m.ButtonType.Unstyled, text: sap.m.ButtonType.Unstyled}),
+					new sap.ui.core.Item({key: sap.m.ButtonType.Up, text: sap.m.ButtonType.Up})]
+			});
+		}
+
+		function createSemanticContentSelect() {
+			var sPage = oStatusModel.getData().selectedPageId;
+			var aContent =  sap.ui.getCore().byId(sPage).getSemanticControls();
+			var oSelect = new sap.m.Select({
+				selectedKey: "{status>/selectedSemanticControl/className}"
+			});
+			jQuery.each(aContent, function(oKey, oValue) {
+				oSelect.addItem(new sap.ui.core.Item({key: oValue.getType(), text: oValue.getType() + " in " +  oValue.getParent().getId()}));
+			});
+			return oSelect;
+		}
+
+		function createCustomFooterClassSelect() {
+			return new sap.m.Select({
+				selectedKey: "{status>/selectedCustomControl/className}",
+				items: [ new sap.ui.core.Item({key: "Button", text: "Button"}),
+						new sap.ui.core.Item({key: "OverflowToolbarButton", text: "OverflowToolbarButton"}),
+						new sap.ui.core.Item({key: "Select", text: "Select"})]
+			});
+		}
+
+		function createCustomShareMenuClassSelect() {
+			return new sap.m.Select({
+				selectedKey: "{status>/selectedCustomControl/className}",
+				items: [ new sap.ui.core.Item({key: "Button", text: "Button"})]
+			});
+		}
+
+		function createCustomIconSelect() {
+			return new sap.m.Select({
+				selectedKey: "{status>/selectedCustomControl/icon}",
+				items: [ new sap.ui.core.Item({key: "", text: "none"}),
+					new sap.ui.core.Item({key: "sap-icon://video", text: "video"}),
+					new sap.ui.core.Item({key: "sap-icon://account", text: "account"}),
+					new sap.ui.core.Item({key: "sap-icon://task", text: "task"}),
+					new sap.ui.core.Item({key: "sap-icon://synchronize", text: "synchronize"}),
+					new sap.ui.core.Item({key: "sap-icon://settings", text: "settings"}),
+					new sap.ui.core.Item({key: "sap-icon://search", text: "search"}),
+					new sap.ui.core.Item({key: "sap-icon://refresh", text: "refresh"}),
+					new sap.ui.core.Item({key: "sap-icon://product", text: "product"}),
+					new sap.ui.core.Item({key: "sap-icon://pool", text: "pool"}),
+					new sap.ui.core.Item({key: "sap-icon://picture", text: "picture"}),
+					new sap.ui.core.Item({key: "sap-icon://phone", text: "phone"})]
+			});
+		}
+
+		function createSemanticInsertInput() {
+			return new sap.m.Input({
+				type: sap.m.InputType.Number,
+				value: "{status>/selectedSemanticControl/insertIndex}"
+			});
+		}
+
+		function createCustomInsertInput() {
+			return new sap.m.Input({
+				type: sap.m.InputType.Number,
+				value: "{status>/selectedCustomControl/insertIndex}"
+			});
+		}
+
+		function createSemanticButtonForm() {
+			return new sap.ui.layout.form.SimpleForm({
+				maxContainerCols : 2,
+				editable: true,
+				content: [
+					new sap.m.Title({text: "Customize:"}),
+					new sap.m.Label({text: "Enabled:"}),
+					createSemanticEnabledSelect(),
+					new sap.m.Label({text: "Button type:"}),
+					createButtonTypeSelect()
+				],
+				visible: {
+					path: "status>/selectedSemanticControl/className",
+					formatter: function (className) {
+						return className && className === 'SemanticButton';
+					}
+				}
+			});
+		}
+
+		function createSemanticSelectForm () {
+			return new sap.ui.layout.form.SimpleForm({
+				maxContainerCols : 2,
+				editable: true,
+				content: [
+					new sap.m.Title({text: "Customize:"}),
+					new sap.m.Label({text: "Enabled:"}),
+					createSemanticEnabledSelect()
+				],
+				visible: {
+					path: "status>/selectedSemanticControl/className",
+					formatter: function (className) {
+						return className && className === 'SemanticSelect';
+					}
+				}
+			});
+		}
+
+		function createCustomButtonForm() {
+			return new sap.ui.layout.form.SimpleForm({
+				maxContainerCols : 2,
+				editable: true,
+				content: [
+					new sap.m.Label({text: "Text:"}),
+					new sap.m.Input({
+						value: "{status>/selectedCustomControl/text}"
+					}),
+					new sap.m.Label({text: "Icon:"}),
+					createCustomIconSelect(),
+					new sap.m.Label({text: "All other button properties..."})
+				],
+				visible: {
+					path: "status>/selectedCustomControl/className",
+					formatter: function (className) {
+						return className && (className === 'Button' || className === 'OverflowToolbarButton');
+					}
+				}
+			});
+		}
+
+		function createCustomSelectForm () {
+			return new sap.ui.layout.form.SimpleForm({
+				maxContainerCols : 2,
+				editable: true,
+				content: [
+					new sap.m.Label({text: "Icon:"}),
+					createCustomIconSelect(),
+					new sap.m.Label({text: "IconOnly:"}),
+					new sap.m.Switch({
+						state: "{status>/selectedCustomControl/iconOnly}"
+					}),
+					new sap.m.Label({text: "autoAdjustWidth:"}),
+					new sap.m.Switch({
+						state: "{status>/selectedCustomControl/autoAdjustWidth}"
+					})
+				],
+				visible: {
+					path: "status>/selectedCustomControl/className",
+					formatter: function (className) {
+						return className && className === 'Select';
+					}
+				}
+			});
+		}
+
+		function createAddSemanticContentForm() {
+			return new sap.ui.layout.form.SimpleForm({
+				maxContainerCols : 2,
+				editable: true,
+				content: [
+					new sap.m.Label({text: "Target page:"}),
+					createPageSelect(),
+					new sap.m.Label({text: "Control type:"}),
+					createSemanticClassSelect()
+				]
+			});
+		}
+
+		function createAddCustomFooterContentForm() {
+			return new sap.ui.layout.form.SimpleForm({
+				maxContainerCols : 2,
+				editable: true,
+				content: [
+					new sap.m.Label({text: "Target page:"}),
+					createPageSelect(),
+					new sap.m.Label({text: "Control type:"}),
+					createCustomFooterClassSelect()
+				]
+			});
+		}
+
+		function createAddCustomShareMenuContentForm() {
+			return new sap.ui.layout.form.SimpleForm({
+				maxContainerCols : 2,
+				editable: true,
+				content: [
+					new sap.m.Label({text: "Target page:"}),
+					createShareMenuPageSelect(),
+					new sap.m.Label({text: "Control type:"}),
+					createCustomShareMenuClassSelect()
+				]
+			});
+		}
+
+		function createInsertSemanticContentForm() {
+			return new sap.ui.layout.form.SimpleForm({
+				maxContainerCols : 2,
+				editable: true,
+				content: [
+					new sap.m.Label({text: "Insert At:"}),
+					createSemanticInsertInput()
+				]
+			});
+		}
+
+		function createInsertCustomContentForm() {
+			return new sap.ui.layout.form.SimpleForm({
+				maxContainerCols : 2,
+				editable: true,
+				content: [
+					new sap.m.Label({text: "Insert At:"}),
+					createCustomInsertInput()
+				]
+			});
+		}
+
+		function createPagePropertiesForm() {
+			return new sap.ui.layout.form.SimpleForm({
+				maxContainerCols : 2,
+				editable: true,
+				content: [
+					new sap.m.Label({text: "Target page:"}),
+					createPageSelect(),
+					new sap.m.Label({text: "Nav button:"}),
+					new sap.m.Switch({
+						state: {
+							path: "status>/selectedPageId",
+							formatter: function(selectedPageId) {
+								return oStatusModel.getData()[selectedPageId].showNavButton;
+							}
+						},
+						change: function() {
+							var bShow = this.getState();
+							var sPage = oStatusModel.getData().selectedPageId;
+							var oUpdate = {};
+							oUpdate[sPage] = {showNavButton: bShow};
+							oStatusModel.setData(oUpdate, true);
+							// sap.ui.getCore().byId(sPage).setShowNavButton(bShow); //alternatively
+						}
+					}),
+					new sap.m.Label({text: "Title:"}),
+					new sap.m.Input("titleInput", {
+						value: {
+							path: "status>/selectedPageId",
+							formatter: function(selectedPageId) {
+								return oStatusModel.getData()[selectedPageId].title;
+							}
+						}
+					}),
+					new sap.m.Button({
+						text: "SetTitle",
+						press: function() {
+							var sPage = oStatusModel.getData().selectedPageId;
+							var sTitle = sap.ui.getCore().byId("titleInput").getValue();
+
+							var oUpdate = {};
+							oUpdate[sPage] = {title: sTitle};
+							oStatusModel.setData(oUpdate, true);
+							//sap.ui.getCore().byId(sPage).setTitle(sTitle); alternatively
+						}
+					})
+				]
+			});
+		}
+
+		function createRemoveSemanticContentForm() {
+
+			var oPageSelect = createPageSelect();
+			var oContentSelect = createSemanticContentSelect();
+
+
+			var oForm = new sap.ui.layout.form.SimpleForm({
+				maxContainerCols: 2,
+				editable: true,
+				content: [
+				          new sap.m.Label({text: "Page"}),
+				          oPageSelect,
+				          new sap.m.Label({text: "Content"}),
+				          oContentSelect
+				]
+			});
+
+			oPageSelect.attachChange(function() {
+				oForm.removeContent(oContentSelect);
+				oContentSelect = createSemanticContentSelect();
+				oForm.addContent(oContentSelect);
+			});
+
+			return oForm;
+		}
+
+
+		/**
+		 *
+		 * ACTIONS
+		 *
+		 */
+
+		function onMultiSelectPress(oEvent) {
+			var sState = oEvent.getSource().getPressed()? "multiselect pressed": "multiselect unpressed";
+			oStatusModel.setData({lastAction: sState}, true);
+		}
+
+		function onSemanticBtnPress(oEvent) {
+			var oType = oEvent.oSource.getMetadata().getName();
+			oType = oType.replace(oEvent.oSource.getMetadata().getLibraryName() + ".", "");
+
+			oStatusModel.setData({lastAction: oType}, true);
+		}
+
+		function onSemanticSelectChange(oEvent, oData) {
+			var oType = oEvent.oSource.getMetadata().getName();
+			oType = oType.replace(oEvent.oSource.getMetadata().getLibraryName() + ".", "");
+			var oStatusText = oType + " by " + oEvent.oSource.getSelectedItem().getText();
+			oStatusModel.setData({lastAction: oStatusText}, true);
+		}
+
+		function onCustomBtnPress (oEvent) {
+			oStatusModel.setData({lastAction: "customButton press"}, true);
+		}
+
+		var fnCreateSemanticContent = function() {
+			var oControlType = oStatusModel.getData().selectedSemanticControl.className;
+			var oControl;
+
+			if (oControlType === 'AddAction') {
+				oControl = new sap.m.semantic.AddAction({press: onSemanticBtnPress});
+
+				var sSelectedButtonType = oStatusModel.getData().selectedSemanticControl.buttonType;
+				if (sSelectedButtonType !== "") {
+					oControl.setButtonType(sSelectedButtonType);
+				}
+			}
+
+			if (oControlType === 'SortSelect') {
+				oControl = new sap.m.semantic.SortSelect({change: onSemanticSelectChange});
+			}
+
+			if (oStatusModel.getData().selectedSemanticControl.enabled !== "") {
+				var bCustomEnabled = oStatusModel.getData().selectedSemanticControl.enabled === "true";
+				oControl.setEnabled(bCustomEnabled);
+			}
+
+			return oControl;
+		};
+
+		var fnRemoveSemanticContent = function() {
+
+			var oPage = sap.ui.getCore().byId(oStatusModel.getData().selectedPageId);
+			var sSelectedType = oStatusModel.getData().selectedSemanticControl.type;
+			var oContent = oPage.getSemanticControls();
+			var oSelectedControl;
+			jQuery.each(oContent, function(i, oControl) {
+				if (oControl.getType() == sSelectedType) {
+					oSelectedControl = oControl;
+				}
+			});
+			if (oSelectedControl) {
+				oPage.removeSemanticControl(oSelectedControl);
+			}
+		};
+
+		var fnCreateCustomContent = function() {
+			var oControlType = oStatusModel.getData().selectedCustomControl.className;
+			var oControl;
+
+			if (oControlType === 'Button') {
+				oControl = new sap.m.Button({press: onCustomBtnPress,
+											text: oStatusModel.getData().selectedCustomControl.text,
+											icon: oStatusModel.getData().selectedCustomControl.icon});
+			}
+
+			if (oControlType === 'OverflowToolbarButton') {
+				oControl = new sap.m.OverflowToolbarButton({press: onCustomBtnPress,
+					text: oStatusModel.getData().selectedCustomControl.text,
+					icon: oStatusModel.getData().selectedCustomControl.icon});
+			}
+
+			if (oControlType === 'Select') {
+				oControl = new sap.m.Select({icon: oStatusModel.getData().selectedCustomControl.icon,
+											autoAdjustWidth: oStatusModel.getData().selectedCustomControl.autoAdjustWidth});
+				var iconOnly = oStatusModel.getData().selectedCustomControl.iconOnly === true;
+				if (iconOnly) {
+					oControl.setType(sap.m.SelectType.IconOnly);
+				}
+			}
+
+			return oControl;
+		};
+
+		/**
+		 *
+		 * DIALOGS
+		 *
+		 */
+
+		var oAddSemanticContentDialog = new sap.m.Dialog({
+			title: "Create semantic content",
+			content: [
+				createAddSemanticContentForm(),
+				createSemanticButtonForm(),
+				createSemanticSelectForm()
+			],
+			buttons:[
+				new sap.m.Button({
+					text: "Add",
+					press : function() {
+						var oControl = fnCreateSemanticContent();
+						var oPage = sap.ui.getCore().byId(oStatusModel.getData().selectedPageId);
+						oPage.addSemanticControl(oControl);
+
+						oAddSemanticContentDialog.close();
+					}
+				}),
+				new sap.m.Button({
+					text: "Cancel",
+					press : function() {
+						oAddSemanticContentDialog.close();
+					}
+				})
+			]
+		});
+
+		var oInsertSemanticContentDialog = new sap.m.Dialog({
+			title: "Insert semantic content",
+			content: [
+				createAddSemanticContentForm(),
+				createInsertSemanticContentForm(),
+				createSemanticButtonForm(),
+				createSemanticSelectForm()
+			],
+			buttons:[
+				new sap.m.Button({
+					text: "Insert",
+					press : function() {
+						var oControl = fnCreateSemanticContent();
+						var iIndex = parseInt(oStatusModel.getData().selectedSemanticControl.insertIndex);
+						var oPage = sap.ui.getCore().byId(oStatusModel.getData().selectedPageId);
+
+						oPage.insertSemanticControl(oControl, iIndex);
+
+						oInsertSemanticContentDialog.close();
+					}
+				}),
+				new sap.m.Button({
+					text: "Cancel",
+					press : function() {
+						oInsertSemanticContentDialog.close();
+					}
+				})
+			]
+		});
+
+		var oRemoveSemanticContentDialog = new sap.m.Dialog({
+			title: "Remove semantic content",
+			beforeOpen: function() {
+				this.removeAllContent();
+				this.addContent(createRemoveSemanticContentForm());
+			},
+			buttons:[
+				new sap.m.Button({
+					text: "Remove",
+					press : function() {
+						fnRemoveSemanticContent();
+						oRemoveSemanticContentDialog.close();
+					}
+				}),
+				new sap.m.Button({
+					text: "Cancel",
+					press : function() {
+						oRemoveSemanticContentDialog.close();
+					}
+				})
+			]
+		});
+
+		var oRemoveAllSemanticContentDialog = new sap.m.Dialog({
+			title: "Remove all semantic content",
+			content: [
+				createPageSelect()
+			],
+			buttons:[
+				new sap.m.Button({
+					text: "Remove All",
+					press : function() {
+						var oPage = sap.ui.getCore().byId(oStatusModel.getData().selectedPageId);
+						oPage.removeAllSemanticControls();
+						oRemoveAllSemanticContentDialog.close();
+					}
+				}),
+				new sap.m.Button({
+					text: "Cancel",
+					press : function() {
+						oRemoveAllSemanticContentDialog.close();
+					}
+				})
+			]
+		});
+
+		var oAddCustomFooterContentDialog = new sap.m.Dialog({
+			title: "Create custom footer content",
+			content: [
+				createAddCustomFooterContentForm(),
+				createCustomButtonForm(),
+				createCustomSelectForm()
+			],
+			buttons:[
+				new sap.m.Button({
+					text: "Add",
+					press : function() {
+						var oControl = fnCreateCustomContent();
+						var oPage = sap.ui.getCore().byId(oStatusModel.getData().selectedPageId);
+						oPage.addCustomFooterContent(oControl);
+
+						oAddCustomFooterContentDialog.close();
+					}
+				}),
+				new sap.m.Button({
+					text: "Cancel",
+					press : function() {
+						oAddCustomFooterContentDialog.close();
+					}
+				})
+			]
+		});
+
+		var oInsertCustomFooterContentDialog = new sap.m.Dialog({
+			title: "Insert custom footer content",
+			content: [
+				createAddCustomFooterContentForm(),
+				createInsertCustomContentForm(),
+				createCustomButtonForm(),
+				createCustomSelectForm()
+			],
+			buttons:[
+				new sap.m.Button({
+					text: "Add",
+					press : function() {
+						var oControl = fnCreateCustomContent();
+						var oPage = sap.ui.getCore().byId(oStatusModel.getData().selectedPageId);
+						var iIndex = parseInt(oStatusModel.getData().selectedCustomControl.insertIndex);
+						oPage.insertCustomFooterContent(oControl, iIndex);
+
+						oInsertCustomFooterContentDialog.close();
+					}
+				}),
+				new sap.m.Button({
+					text: "Cancel",
+					press : function() {
+						oInsertCustomFooterContentDialog.close();
+					}
+				})
+			]
+		});
+
+		var oCustomFooterContentSelect = new sap.m.Select("customFooterContentSelect");
+
+		var oRemoveCustomFooterContentDialog = new sap.m.Dialog({
+			title: "Remove custom footer content",
+			beforeOpen: function() {
+				this.removeAllContent();
+
+				var oForm = new sap.ui.layout.form.SimpleForm({
+					maxContainerCols: 2,
+					editable: true
+				});
+
+				var oPageSelect = createPageSelect();
+
+				function refreshContentSelect() {
+					oCustomFooterContentSelect.removeAllItems();
+					var oPage = sap.ui.getCore().byId(oStatusModel.getData().selectedPageId);
+					var aContent = oPage.getCustomFooterContent();
+					jQuery.each(aContent, function(oKey, oValue) {
+						var sLabel = oValue.getText && oValue.getText();
+						if (!sLabel) {
+							sLabel = oValue.getIcon && oValue.getIcon();
+						}
+						if (!sLabel) {
+							sLabel = oValue.getId();
+						}
+						oCustomFooterContentSelect.addItem(new sap.ui.core.Item({key: oValue.getId(), text: sLabel}));
+					});
+				}
+
+				refreshContentSelect();
+
+				oPageSelect.attachChange(refreshContentSelect);
+
+				oForm.addContent(new sap.m.Label({text: "Target page:"}));
+				oForm.addContent(oPageSelect);
+				oForm.addContent(new sap.m.Label({text: "Control to remove:"}));
+				oForm.addContent(oCustomFooterContentSelect);
+				this.addContent(oForm);
+			},
+			buttons:[
+				new sap.m.Button({
+					text: "Remove",
+					press : function() {
+						var oPage = sap.ui.getCore().byId(oStatusModel.getData().selectedPageId);
+						var oSelectedControlId = sap.ui.getCore().byId("customFooterContentSelect").getSelectedItem().getKey();
+						var oSelectedControl = sap.ui.getCore().byId(oSelectedControlId);
+						oPage.removeCustomFooterContent(oSelectedControl);
+						oRemoveCustomFooterContentDialog.close();
+					}
+				}),
+				new sap.m.Button({
+					text: "Cancel",
+					press : function() {
+						oRemoveCustomFooterContentDialog.close();
+					}
+				})
+			]
+		});
+
+		var oRemoveAllCustomFooterContentDialog = new sap.m.Dialog({
+			title: "Remove all custom footer content",
+			content: [
+				createPageSelect()
+			],
+			buttons:[
+				new sap.m.Button({
+					text: "Remove All",
+					press : function() {
+						var oPage = sap.ui.getCore().byId(oStatusModel.getData().selectedPageId);
+						oPage.removeAllCustomFooterContent();
+						oRemoveAllCustomFooterContentDialog.close();
+					}
+				}),
+				new sap.m.Button({
+					text: "Cancel",
+					press : function() {
+						oRemoveAllCustomFooterContentDialog.close();
+					}
+				})
+			]
+		});
+
+		var oAddCustomShareMenuContentDialog = new sap.m.Dialog({
+			title: "Create custom shareMenu content",
+			content: [
+				createAddCustomShareMenuContentForm(),
+				createCustomButtonForm()
+			],
+			buttons:[
+				new sap.m.Button({
+					text: "Add",
+					press : function() {
+						var oControl = fnCreateCustomContent();
+						var oPage = sap.ui.getCore().byId(oStatusModel.getData().selectedPageId);
+						oPage.addCustomShareMenuContent(oControl);
+
+						oAddCustomShareMenuContentDialog.close();
+					}
+				}),
+				new sap.m.Button({
+					text: "Cancel",
+					press : function() {
+						oAddCustomShareMenuContentDialog.close();
+					}
+				})
+			]
+		});
+
+		var oInsertCustomShareMenuContentDialog = new sap.m.Dialog({
+			title: "Insert custom shareMenu content",
+			content: [
+				createAddCustomShareMenuContentForm(),
+				createInsertCustomContentForm(),
+				createCustomButtonForm()
+			],
+			buttons:[
+				new sap.m.Button({
+					text: "Add",
+					press : function() {
+						var oControl = fnCreateCustomContent();
+						var oPage = sap.ui.getCore().byId(oStatusModel.getData().selectedPageId);
+						var iIndex = parseInt(oStatusModel.getData().selectedCustomControl.insertIndex);
+						oPage.insertCustomShareMenuContent(oControl, iIndex);
+
+						oInsertCustomShareMenuContentDialog.close();
+					}
+				}),
+				new sap.m.Button({
+					text: "Cancel",
+					press : function() {
+						oInsertCustomShareMenuContentDialog.close();
+					}
+				})
+			]
+		});
+
+		var oCustomShareMenuContentSelect = new sap.m.Select("customShareMenuContentSelect");
+
+		var oRemoveCustomShareMenuContentDialog = new sap.m.Dialog({
+			title: "Remove custom shareMenu content",
+			beforeOpen: function() {
+				this.removeAllContent();
+
+				var oForm = new sap.ui.layout.form.SimpleForm({
+					maxContainerCols: 2,
+					editable: true
+				});
+
+				var oPageSelect = createShareMenuPageSelect();
+				var aPages = oPageSelect.getItems();
+				if (aPages.length > 0) {
+					oPageSelect.setSelectedItem(aPages[0]);
+				}
+
+				function refreshContentSelect() {
+					oCustomShareMenuContentSelect.removeAllItems();
+					var oPage = sap.ui.getCore().byId(oPageSelect.getSelectedItem().getKey());
+					var aContent = oPage.getCustomShareMenuContent();
+					jQuery.each(aContent, function(oKey, oValue) {
+						var sLabel = oValue.getText && oValue.getText();
+						if (!sLabel) {
+							sLabel = oValue.getIcon && oValue.getIcon();
+						}
+						if (!sLabel) {
+							sLabel = oValue.getId();
+						}
+						oCustomShareMenuContentSelect.addItem(new sap.ui.core.Item({key: oValue.getId(), text: sLabel}));
+					});
+				}
+
+				refreshContentSelect();
+
+				oPageSelect.attachChange(refreshContentSelect);
+
+				oForm.addContent(new sap.m.Label({text: "Target page:"}));
+				oForm.addContent(oPageSelect);
+				oForm.addContent(new sap.m.Label({text: "Control to remove:"}));
+				oForm.addContent(oCustomShareMenuContentSelect);
+				this.addContent(oForm);
+			},
+			buttons:[
+				new sap.m.Button({
+					text: "Remove",
+					press : function() {
+						var oPage = sap.ui.getCore().byId(oStatusModel.getData().selectedPageId);
+						var oSelectedControlId = sap.ui.getCore().byId("customShareMenuContentSelect").getSelectedItem().getKey();
+						var oSelectedControl = sap.ui.getCore().byId(oSelectedControlId);
+						oPage.removeCustomShareMenuContent(oSelectedControl);
+						oRemoveCustomShareMenuContentDialog.close();
+					}
+				}),
+				new sap.m.Button({
+					text: "Cancel",
+					press : function() {
+						oRemoveCustomShareMenuContentDialog.close();
+					}
+				})
+			]
+		});
+
+		var oRemoveAllCustomShareMenuContentDialog = new sap.m.Dialog({
+			title: "Remove all custom shareMenu content",
+			content: [
+				createShareMenuPageSelect()
+			],
+			buttons:[
+				new sap.m.Button({
+					text: "Remove All",
+					press : function() {
+						var oPage = sap.ui.getCore().byId(oStatusModel.getData().selectedPageId);
+						oPage.removeAllCustomShareMenuContent();
+						oRemoveAllCustomShareMenuContentDialog.close();
+					}
+				}),
+				new sap.m.Button({
+					text: "Cancel",
+					press : function() {
+						oRemoveAllCustomShareMenuContentDialog.close();
+					}
+				})
+			]
+		});
+
+		var oPagePropertiesDialog = new sap.m.Dialog({
+			title: "Edit page properties",
+			content: [
+				createPagePropertiesForm()
+			],
+			buttons:[
+				new sap.m.Button({
+					text: "Close",
+					press : function() {
+						oPagePropertiesDialog.close();
+					}
+				})
+			]
+		});
+
+		/**
+		 *
+		 * Layout
+		 * @type {sap.m.VBox}
+		 */
+
+		var oModifySemanticContentBox = new sap.m.VBox({
+			items: [
+				new sap.m.Link({text: "Edit page properties",
+					press: function() {
+						oPagePropertiesDialog.open();
+					}}),
+				new sap.m.Title({text: "SemanticControls:"}),
+				new sap.m.Link({text: "Add",
+					press: function() {
+						oAddSemanticContentDialog.open();
+					}}),
+				new sap.m.Link({text: "Insert",
+					press: function() {
+						oInsertSemanticContentDialog.open();
+					}}),
+				new sap.m.Link({text: "Remove",
+					press: function() {
+						oRemoveSemanticContentDialog.open();
+					}}),
+				new sap.m.Link({text: "RemoveAll",
+					press: function() {
+						oRemoveAllSemanticContentDialog.open();
+					}})
+			]
+		});
+
+		var oModifyCustomFooterContentBox = new sap.m.VBox({
+			items: [
+				new sap.m.Title({text: "CustomFooterContent:"}),
+				new sap.m.Link({text: "Add",
+					press: function() {
+						oAddCustomFooterContentDialog.open();
+					}}),
+				new sap.m.Link({text: "Insert",
+					press: function() {
+						oInsertCustomFooterContentDialog.open();
+					}}),
+				new sap.m.Link({text: "Remove",
+					press: function() {
+						oRemoveCustomFooterContentDialog.open();
+					}}),
+				new sap.m.Link({text: "RemoveAll",
+					press: function() {
+						oRemoveAllCustomFooterContentDialog.open();
+					}})
+			]
+		});
+
+		var oModifyCustomShareMenuContentBox = new sap.m.VBox({
+			items: [
+				new sap.m.Title({text: "CustomShareMenuContent:"}),
+				new sap.m.Link({text: "Add",
+					press: function() {
+						oAddCustomShareMenuContentDialog.open();
+					}}),
+				new sap.m.Link({text: "Insert",
+					press: function() {
+						oInsertCustomShareMenuContentDialog.open();
+					}}),
+				new sap.m.Link({text: "Remove",
+					press: function() {
+						oRemoveCustomShareMenuContentDialog.open();
+					}}),
+				new sap.m.Link({text: "RemoveAll",
+					press: function() {
+						oRemoveAllCustomShareMenuContentDialog.open();
+					}})
+			]
+		});
+
+		var oModifyMessagesBox = new sap.m.HBox({
+			items: [
+				oAddWarningButton,
+				oClearWarningsButton
+			]
+		});
+
+		var oModifyDraftBox = new sap.m.HBox({
+			items: [
+				oSavingDraftButton,
+				oSavedDraftButton
+			]
+		});
+		var oModifyDraftBox2 = new sap.m.HBox({
+			items: [
+				oClearDraftButton
+			]
+		});
+
+		var oModifyFooter = new sap.m.HBox({
+			items: [
+				new sap.m.Button("showHideFooterBtn", {text: "Show / Hide Footer",
+					press: function() {
+						var bShow = page1.getShowFooter();
+						var bShow2 = page2.getShowFooter();
+							page1.setShowFooter(!bShow);
+							page2.setShowFooter(!bShow2);
+					}})
+			]
+		});
+
+		var oStatusBox = new sap.ui.layout.form.SimpleForm ({
+			maxContainerCols : 2,
+			editable: true,
+			content: [
+				new sap.m.Text({text: "Last action: "}),
+					oStatusLabel,
+				new sap.m.Text({text: "Multiselect pressed: "}),
+				oPressedLabel
+			]
+		});
+
+		var oMenuPage = new sap.m.Page({
+			title: "Modify Content:",
+			content: [
+				new sap.m.VBox({
+					items: [
+						/*oModifySemanticContentBox,*/
+						oModifyMessagesBox,
+						oModifyDraftBox,
+						oModifyDraftBox2,
+						oModifyFooter,
+						oToggleMultiselectPressed,
+						oToggleMultiselectEnabled,
+						oModifyCustomFooterContentBox,
+						oModifyCustomShareMenuContentBox,
+						oStatusBox
+					]
+				})
+			]
+		});
+
+		var page1 = new sap.m.semantic.MasterPage("master", {
+			title: "{status>/master/title}",
+			showNavButton: "{status>/master/showNavButton}",
+			subHeader: new sap.m.Bar({contentMiddle: [new sap.m.SearchField()]}),
+			multiSelectAction: new sap.m.semantic.MultiSelectAction("multiselectAction", {press: onMultiSelectPress,
+																	pressed: "{status>/master/multiSelectPressed}",
+																	enabled: "{status>/master/multiSelectEnabled}"}),
+			addAction: new sap.m.semantic.AddAction("addAction", {press: onSemanticBtnPress}),
+			group: new sap.m.semantic.GroupAction("groupAction", {press: onSemanticBtnPress}),
+			sort: new sap.m.semantic.SortSelect("sortSelect", {
+				items: {
+					path: "testData>/sortItems",
+					template: oItemTemplate
+				},
+				change: onSemanticSelectChange
+			}),
+			filter: new sap.m.semantic.FilterAction("filterAction", {press: onSemanticBtnPress}),
+			customHeaderContent: [new sap.m.Button({text: "Custom in header"})]
+		});
+	var draftInd = new sap.m.DraftIndicator();
+		var page2 = new sap.m.semantic.DetailPage("detail", {
+			title: "{status>/detail/title}",
+			showNavButton: "{status>/detail/showNavButton}",
+			navButtonPress: function () { console.log("Nav button pressed, arguments are:", arguments);},
+			content: [],
+			customHeaderContent : [new sap.m.Button({text: "CH"})],
+			customFooterContent : [new sap.m.Button({text: "CustomBtnRight1", press: onCustomBtnPress}),
+				new sap.m.OverflowToolbarButton({icon : "sap-icon://settings", text: "CustomBtnRight2", press: onCustomBtnPress}),
+				new sap.m.OverflowToolbarButton({icon : "sap-icon://video", text: "CustomBtnRight3", press: onCustomBtnPress}),
+				new sap.m.PagingButton({count: 5})],
+			customShareMenuContent : [
+				new sap.m.Button({icon : "sap-icon://video", text: "test", press: onCustomBtnPress})
+			],
+			messagesIndicator: new sap.m.semantic.MessagesIndicator(),
+			draftIndicator: draftInd,
+			positiveAction: new sap.m.semantic.PositiveAction("positiveAction", {text: "Positive", press: onSemanticBtnPress}),
+			mainAction: new sap.m.semantic.MainAction("mainAction", {text: "Main", press: onSemanticBtnPress}),
+			negativeAction: new sap.m.semantic.NegativeAction("negativeAction", {text: "Negative", press: onSemanticBtnPress}),
+			editAction: new sap.m.semantic.EditAction("editAction", {press: onSemanticBtnPress}),
+			flagAction: new sap.m.semantic.FlagAction("flagAction", {press: onSemanticBtnPress, pressed: true}),
+			favoriteAction: new sap.m.semantic.FavoriteAction("favoriteAction", {press: onSemanticBtnPress}),
+			saveAction: new sap.m.semantic.SaveAction("saveAction", {press: onSemanticBtnPress}),
+			cancelAction: new sap.m.semantic.CancelAction("cancelAction", {press: onSemanticBtnPress}),
+			deleteAction: new sap.m.semantic.DeleteAction("deleteAction", {press: onSemanticBtnPress}),
+			forwardAction: new sap.m.semantic.ForwardAction("forwardAction", {press: onSemanticBtnPress}),
+			sendMessageAction: new sap.m.semantic.SendMessageAction("sendMessageAction", {press: onSemanticBtnPress}),
+			saveAsTileAction: new sap.m.Button("saveAsTileBtn", {icon: "sap-icon://add-favorite", text: "Save as Tile"}),
+			pagingAction: new sap.m.PagingButton("pagingBtn", {count: 5})
+		});
+		var oSplitContainer = new sap.m.SplitContainer();
+
+		oSplitContainer.addMasterPage(page1);
+		oSplitContainer.addDetailPage(page2);
+
+		app.addMasterPage(oMenuPage);
+		app.addDetailPage(oSplitContainer);
+
+		app.placeAt("body");
+	</script>
+
+</head>
+<body id="body" class="sapUiBody">
+</body>
+</html>

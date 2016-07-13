@@ -29,5 +29,9 @@ module.exports = [
 	"Text.spec.js",
 	"TimePicker.spec.js",
 	"Toolbar.spec.js",
-	"Wizard.spec.js"
+	"Wizard.spec.js",
+	"infra_ActionSelect.spec.js",
+	"infra_ObjectHeaderVisualTest.spec.js",
+	"infra_Page.spec.js",
+	"infra_SemanticPage.spec.js"
 ];

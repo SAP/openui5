@@ -1,0 +1,351 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>Action Select - sap.m</title>
+		<style type="text/css">
+			.vBoxSelectTestPage {
+				margin: 0.5rem 1rem 0rem 1rem;
+			}
+
+			.vBoxSelectTestPage > .sapMFlexItem {
+				margin-bottom: 0.5rem;
+			}
+
+			.vBoxSelectTestPage .sapMSlt {
+				margin-bottom: 1rem;
+			}
+
+			.vBoxSelectTestPageWithWhiteBackground {
+				background-color: #ffffff;
+				padding: 1rem;
+				margin-bottom: 1rem;
+				margin: 1rem 2rem 0 2rem;
+			}
+
+			.labelSelectTestPageHeader {
+				margin: 1rem 2rem 0 2rem;
+			}
+
+		</style>
+		<script id="sap-ui-bootstrap"
+				src="../../../resources/sap-ui-core.js"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-theme="sap_bluecrystal">
+		</script>
+		<script>
+		jQuery.sap.require("sap.m.MessageToast");
+
+		var oApp = new sap.m.App("myApp", {
+				initialPage:"page1"
+			}),
+
+			// select controls
+			oActionSelect0 = new sap.m.ActionSelect("content_left",{	// the selected item is not specified, the first one will be selected
+				width: "33%",
+				items: [
+					oItem0 = new sap.ui.core.Item("first_content_left",{
+						key: "0",
+						text: "item 0"
+					}),
+
+					oItem1 = new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					oItem2 = new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					}),
+
+					oItem3 = new sap.ui.core.Item({
+						key: "3",
+						text: "item 3"
+					}),
+
+					oItem4 = new sap.ui.core.Item({
+						key: "4",
+						text: "item 4"
+					}),
+
+					oItem5 = new sap.ui.core.Item({
+						key: "5",
+						text: "item 5"
+					})
+				],
+
+				buttons: [
+					oButton0 = new sap.m.Button({
+						text: "Action 1",
+						enabled: false,
+						press: function() {
+							//sap.m.MessageToast.show("Action 1 pressed");
+						}
+					}),
+
+					oButton1 = new sap.m.Button({
+						text: "Action 2",
+						press: function() {
+							//sap.m.MessageToast.show("Action 2 pressed");
+						}
+					})
+				],
+
+				change: function(oControlEvent) {
+					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+				}
+			}),
+
+			// select controls
+			oActionSelect4 = new sap.m.ActionSelect("content_right",{	// the selected item is not specified, the first one will be selected
+				width: "33%",
+				items: [
+					oItem0 = new sap.ui.core.Item("first_content_right",{
+						key: "0",
+						text: "item 0"
+					}),
+
+					oItem1 = new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					oItem2 = new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					}),
+
+					oItem3 = new sap.ui.core.Item({
+						key: "3",
+						text: "item 3"
+					}),
+
+					oItem4 = new sap.ui.core.Item({
+						key: "4",
+						text: "item 4"
+					}),
+
+					oItem5 = new sap.ui.core.Item({
+						key: "5",
+						text: "item 5"
+					})
+				],
+
+				change: function(oControlEvent) {
+					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+				}
+			}),
+			oActionSelect1 = new sap.m.ActionSelect("header_left",{	// the selected item is not specified, the first one will be selected
+				width: "5rem",
+				items: [
+					oItem6 = new sap.ui.core.Item("first_header_left",{
+						key: "0",
+						text: "item 0"
+					}),
+
+					oItem7 = new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					oItem8 = new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					}),
+
+					oItem9 = new sap.ui.core.Item({
+						key: "3",
+						text: "item 3"
+					}),
+
+					oItem10 = new sap.ui.core.Item({
+						key: "4",
+						text: "item 4"
+					}),
+
+					oItem11 = new sap.ui.core.Item({
+						key: "5",
+						text: "item 5"
+					}),
+					oItem101 = new sap.ui.core.Item({
+						key: "105",
+						text: "item 105"
+					}),
+					oItem102 = new sap.ui.core.Item({
+						key: "106",
+						text: "item 106"
+					}),
+					oItem103 = new sap.ui.core.Item({
+						key: "107",
+						text: "item 107"
+					}),
+					oItem104 = new sap.ui.core.Item({
+						key: "108",
+						text: "item 108"
+					}),
+					oItem105 = new sap.ui.core.Item({
+						key: "109",
+						text: "item 109"
+					}),
+					oItem106 = new sap.ui.core.Item({
+						key: "110",
+						text: "item 110"
+					}),
+					oItem107 = new sap.ui.core.Item({
+						key: "111",
+						text: "item 111"
+					}),
+					oItem108 = new sap.ui.core.Item({
+						key: "112",
+						text: "item 112"
+					}),
+					oItem109 = new sap.ui.core.Item({
+						key: "113",
+						text: "item 113"
+					})
+				],
+
+				buttons: [
+					oButton2 = new sap.m.Button({
+						text: "Action 1"
+					}),
+
+					oButton3 = new sap.m.Button({
+						text: "Action 2"
+					})
+				],
+
+				change: function(oControlEvent) {
+					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+				}
+			}),
+
+			oActionSelect2 = new sap.m.ActionSelect("footer_right",{	// the selected item is not specified, the first one will be selected
+				width: "10rem",
+				items: [
+					oItem12 = new sap.ui.core.Item("first_footer_right",{
+						key: "0",
+						text: "item 0"
+					}),
+
+					oItem13 = new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					oItem14 = new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					}),
+
+					oItem15 = new sap.ui.core.Item({
+						key: "3",
+						text: "item 3"
+					}),
+
+					oItem16 = new sap.ui.core.Item({
+						key: "4",
+						text: "item 4"
+					}),
+
+					oItem17 = new sap.ui.core.Item({
+						key: "5",
+						text: "item 5"
+					})
+				],
+
+				buttons: [
+					oButton4 = new sap.m.Button({
+						text: "Action 1"
+					}),
+
+					oButton5 = new sap.m.Button({
+						text: "Action 2"
+					})
+				],
+
+				change: function(oControlEvent) {
+					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+				}
+			}),
+
+			oActionSelect3 = new sap.m.ActionSelect("footer_left",{	// the selected item is not specified, the first one will be selected
+				type: sap.m.SelectType.IconOnly,
+				icon: sap.ui.core.IconPool.getIconURI("filter"),
+				autoAdjustWidth: true,
+				width: "10rem",
+				items: [
+					oItem18 = new sap.ui.core.Item("first_footer_left",{
+						key: "0",
+						text: "item 0"
+					}),
+
+					oItem19 = new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					oItem20 = new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					}),
+
+					oItem21 = new sap.ui.core.Item({
+						key: "3",
+						text: "item 3"
+					}),
+
+					oItem22 = new sap.ui.core.Item({
+						key: "4",
+						text: "item 4"
+					}),
+
+					oItem23 = new sap.ui.core.Item({
+						key: "5",
+						text: "item 5"
+					})
+				],
+
+				buttons: [
+					oButton5 = new sap.m.Button({
+						text: "Action 1"
+					}),
+
+					oButton6 = new sap.m.Button({
+						text: "Action 2"
+					})
+				],
+
+				change: function(oControlEvent) {
+					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+				}
+			}),
+
+			// page
+			oPage1 = new sap.m.Page("page1", {
+				customHeader: oBar0 = new sap.m.Bar({
+
+					contentLeft: oActionSelect1,
+
+					contentMiddle: oLabel0 = new sap.m.Label({
+						text: "Action Select Control demo page"
+					})
+				}),
+
+				content: [oActionSelect0, oActionSelect4],
+
+				footer: oBar1 = new sap.m.Bar({
+					contentLeft: oActionSelect3,
+					contentRight: [oActionSelect2]
+				})
+			});
+
+		oApp.addPage(oPage1);
+		oApp.placeAt("body");
+		</script>
+	</head>
+	<body id="body" class="sapUiBody"></body>
+</html>
