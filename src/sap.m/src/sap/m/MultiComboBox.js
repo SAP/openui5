@@ -667,11 +667,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	/**
 	 * This event handler will be called before the MultiComboBox's Pop-up is closed.
 	 *
-	 * @private
 	 */
 	MultiComboBox.prototype.onBeforeClose = function() {
-		// reset opener
-		this.bOpenedByKeyboardOrButton = false;
+		ComboBoxBase.prototype.onBeforeClose.apply(this, arguments);
 	};
 
 	/**
