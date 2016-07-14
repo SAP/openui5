@@ -2705,7 +2705,7 @@
 			if (iCount === 2 && bUpdate && bRead) {
 				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
 				equal(spy.callCount, 1, "call count");
-				var oRequest = spy.args[0][0];
+				var oRequest = spy.args[0][0].request;
 				equal(oRequest.method, "POST", "request method");
 				ok(oRequest.headers['x-http-method'] === "MERGE", "request method header should not be present");
 				equal(oRequest.requestUri,"/SalesOrderSrv/ProductSet('HT-1000')", "request URI");
@@ -2762,7 +2762,7 @@
 			if (iCount === 2 && bUpdate && bRead) {
 				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
 				equal(spy.callCount, 1, "call count");
-				var oRequest = spy.args[0][0];
+				var oRequest = spy.args[0][0].request;
 				equal(oRequest.method, "PUT", "request method");
 				ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
 				equal(oRequest.requestUri,"/SalesOrderSrv/ProductSet('HT-1000')", "request URI");
@@ -3610,7 +3610,7 @@
 
 		oModel.attachRequestCompleted(this, function(oEvent) {
 			iReqComp++;
-			if (iReqComp === 1 && iReqSent === 1 && iSuccess === 2) {
+			if (iReqComp === 1 && iReqSent === 2 && iSuccess === 2) {
 				ok(true, "eventing performed correctly");
 
 				equal(oEvent.getId(), "requestCompleted", "event id check");
@@ -3628,7 +3628,6 @@
 				equal(oResponse.statusText, "OK", "oResponse Param check: statusCode");
 
 				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
-				equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
 				start();
 			}
 		});
@@ -3666,12 +3665,11 @@
 
 		oModel.attachRequestFailed(this, function(oEvent) {
 			iReqFailed++;
-			if (iReqSent === 1 && iReqFailed === 1 && iReqComp === 1 && iError === 2) {
+			if (iReqSent === 2 && iReqFailed === 2 && iReqComp === 2 && iError === 2) {
 				equal(oEvent.getId(), "requestFailed", "event id check");
 				ok(true, "eventing performed correctly");
 				equal(oEvent.getParameter('method'), "GET" , "Param check: method");
 				ok(oEvent.getParameter('ID') !== null, "Check Request ID");
-				equal(oEvent.getParameter('ID'), sReqId, "Check Request ID");
 				//check response
 				var oResponse = oEvent.getParameter('response');
 				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
