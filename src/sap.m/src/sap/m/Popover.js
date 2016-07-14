@@ -195,6 +195,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 					initialFocus: {type: "sap.ui.core.Control", multiple: false},
 
 					/**
+					 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+					 */
+					ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"},
+
+					/**
 					 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
 					 */
 					ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"}
@@ -2063,6 +2068,24 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			} else {
 				return this._oOpenBy;
 			}
+		};
+
+		/**
+		 * Provides the accessibility options of the control.
+		 *
+		 * @private
+		 */
+		Popover.prototype._getAccessibilityOptions = function() {
+			var aAriaLabels, mAccOptions = {};
+
+			mAccOptions.role = "dialog";
+			if (this.getShowHeader() && this._getAnyHeader()) {
+				// If we have a header/title, we add a reference to it in the beginning of the aria-labelledby attribute
+				aAriaLabels = Array.prototype.concat(this._getAnyHeader().getId(), this.getAssociation("ariaLabelledBy", []));
+				mAccOptions.labelledby = aAriaLabels.join(' ');
+			}
+
+			return mAccOptions;
 		};
 
 		/**

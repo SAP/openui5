@@ -1875,6 +1875,96 @@
 			oPopover.destroy();
 			oButton.destroy();
 		});
+
+		QUnit.test("Popover without header and title", function() {
+			var sInvTextId = "invisibleText",
+					oInvisibleText = new sap.ui.core.InvisibleText(sInvTextId, {text: "invisible text"}),
+					oButton = new sap.m.Button({
+						text: "Open Popover"
+					});
+
+			oInvisibleText.placeAt("content");
+			oButton.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			var oPopover = new sap.m.Popover({
+				showHeader: false,
+				ariaLabelledBy: sInvTextId
+			});
+			oPopover.openBy(oButton);
+			this.clock.tick(400);
+
+			equal(oPopover.getAriaLabelledBy(), sInvTextId, "should have an ariaLabelledBy association that contains a reference to the invisible text");
+			equal(oPopover.getDomRef().getAttribute('aria-labelledby'), sInvTextId, "should have an aria-labelledby attribute pointing to the additional invisible label");
+
+			oInvisibleText.destroy();
+			oPopover.destroy();
+			oButton.destroy();
+		});
+
+		QUnit.test("Popover with internal header and title", function() {
+			var sInvTextId = "invisibleText",
+					oInvisibleText = new sap.ui.core.InvisibleText(sInvTextId, {text: "invisible text"}),
+					oButton = new sap.m.Button({
+						text: "Open Popover"
+					});
+
+			oInvisibleText.placeAt("content");
+			oButton.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			var oPopover = new sap.m.Popover({
+				title: "Title text",
+				ariaLabelledBy: sInvTextId
+			});
+			oPopover.openBy(oButton);
+			this.clock.tick(400);
+
+			equal(oPopover.getAriaLabelledBy(), sInvTextId, "should have an ariaLabelledBy association that contains only a reference to the invisible text");
+			equal(oPopover.getDomRef().getAttribute('aria-labelledby'), (oPopover._getAnyHeader().getId() + ' ' + sInvTextId), "should have an aria-labelledby attribute pointing to the internal header and the additional invisible label");
+
+			oInvisibleText.destroy();
+			oPopover.destroy();
+			oButton.destroy();
+		});
+
+		QUnit.test("Popover with custom header", function() {
+			//Arrange
+			var sInvTextId = "invisibleText",
+					sCustomHeaderId = "customHeaderId",
+					oInvisibleText = new sap.ui.core.InvisibleText(sInvTextId, {text: "invisible text"}),
+				oButton = new sap.m.Button({
+					text: "Open Popover"
+				});
+
+			var oCustomHeader = new sap.m.Bar(sCustomHeaderId, {
+				contentLeft: [new sap.m.Title({text: "Just Title"})]
+			});
+
+			oInvisibleText.placeAt("content");
+			oButton.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			var oPopover = new sap.m.Popover({
+				title: "Title text",
+				showHeader: false,
+				ariaLabelledBy: sInvTextId
+			});
+
+			oPopover.setShowHeader(true);
+			oPopover.setCustomHeader(oCustomHeader);
+			oPopover.openBy(oButton);
+			this.clock.tick(400);
+
+			//Assert
+			equal(oPopover.getAriaLabelledBy(), sInvTextId, "should have an ariaLabelledBy association that contains only a reference to the invisible text");
+			equal(oPopover.getDomRef().getAttribute('aria-labelledby'), (sCustomHeaderId + ' ' + sInvTextId), "should have an aria-labelledby attribute pointing to the header and the additional invisible label");
+
+			//Cleanup
+			oPopover.destroy();
+			oInvisibleText.destroy();
+			oButton.destroy();
+		});
 	</script>
 </head>
 <body id="body" class="sapUiBody">
