@@ -194,16 +194,22 @@ sap.ui.define([
 			}
 
 			if (aSubSections && aSubSections.length > 1) {
-				// the anchor bar need to know if the button has submenu for accessibility rules
-				oButtonClone.addCustomData(new CustomData({
-					key: "bHasSubMenu",
-					value: true
-				}));
+				var iVisibleSubSections = aSubSections.filter(function (oSubSection) {
+					return oSubSection.getVisible();
+				}).length;
 
-				if (oObjectPageLayout.getShowAnchorBarPopover()) {
-					// Add arrow icon-down in order to indicate that on click will open popover
-					oButtonClone.setIcon(IconPool.getIconURI("slim-arrow-down"));
-					oButtonClone.setIconFirst(false);
+				if (iVisibleSubSections > 1) {
+					// the anchor bar need to know if the button has submenu for accessibility rules
+					oButtonClone.addCustomData(new CustomData({
+						key: "bHasSubMenu",
+						value: true
+					}));
+
+					if (oObjectPageLayout.getShowAnchorBarPopover()) {
+						// Add arrow icon-down in order to indicate that on click will open popover
+						oButtonClone.setIcon(IconPool.getIconURI("slim-arrow-down"));
+						oButtonClone.setIconFirst(false);
+					}
 				}
 			}
 		}
