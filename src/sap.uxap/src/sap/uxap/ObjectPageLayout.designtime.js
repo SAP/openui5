@@ -10,7 +10,10 @@ sap.ui.define([],
 	return {
 		aggregations : {
 			sections : {
-				domRef : ":sap-domref > .sapUxAPObjectPageWrapper"
+				domRef : ":sap-domref > .sapUxAPObjectPageWrapper",
+				actions : {
+					move : "moveElements"
+				}
 			}
 		},
 

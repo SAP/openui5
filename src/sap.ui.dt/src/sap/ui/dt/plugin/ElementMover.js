@@ -243,24 +243,31 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/
 		var oMovedOverlay = this.getMovedOverlay();
 		var oMovedElement = oMovedOverlay.getElementInstance();
 		var oSource = this._getSource();
+		var oPublicSourceParent = oSource.publicParent;
+		var oSourceParentOverlay = OverlayRegistry.getOverlay(oPublicSourceParent);
 		var oTarget = OverlayUtil.getParentInformation(oMovedOverlay);
+		var iSourceIndex = oSource.index;
+		var iTargetIndex = oTarget.index;
+		delete oSource.index;
+		delete oTarget.index;
 
-		var oMove = this.getCommandFactory().getCommandFor(oTarget.parent, "Move", {
-			element : oTarget.parent,
+		var oMove = this.getCommandFactory().getCommandFor(oPublicSourceParent, "Move", {
 			movedElements : [{
 				element : oMovedElement,
-				sourceIndex : oSource.index,
-				targetIndex : oTarget.index
+				sourceIndex : iSourceIndex,
+				targetIndex : iTargetIndex
 			}],
 			source : oSource,
 			target : oTarget
-		});
+		}, oSourceParentOverlay.getDesignTimeMetadata());
 
 		if (oMove) {
 			if (oMove.getMetadata().getName() === "sap.ui.dt.command.SimpleFormMove") {
 				// in case this is a dt command, perform immediately to show 'livechange'
 				oMove.execute();
 			}
+		} else {
+			jQuery.sap.log.error("Invalid move action in design time metadata of " + oSource.parent.getMetadata().getName());
 		}
 		return oMove;
 

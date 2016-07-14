@@ -63,13 +63,12 @@ sap.ui
 							if (aMovedElements.length > 1) {
 								jQuery.sap.log.warning("Moving more than 1 Formelement is not yet supported.");
 							}
-							var oMovedElement = aMovedElements[0].element;
 							var oTarget = this.getTarget();
 
-							if (oMovedElement instanceof sap.ui.layout.form.FormContainer) {
-								oAction = fnMoveFormContainer(oSimpleForm, oMovedElement, oTarget);
-							} else if (oMovedElement instanceof sap.ui.layout.form.FormElement) {
-								oAction = fnMoveFormElement(oSimpleForm, oMovedElement, oTarget);
+							if (aMovedElements[0].element instanceof sap.ui.layout.form.FormContainer) {
+								oAction = fnMoveFormContainer(oSimpleForm, aMovedElements[0], oTarget);
+							} else if (aMovedElements[0].element instanceof sap.ui.layout.form.FormElement) {
+								oAction = fnMoveFormElement(oSimpleForm, aMovedElements[0], oTarget);
 							}
 							this.setAction(oAction);
 							var oReverseAction = jQuery.extend(true, {}, oAction);
@@ -150,13 +149,13 @@ sap.ui
 						};
 					};
 
-					var fnMoveFormContainer = function(oSimpleForm, oMovedElement, oTarget) {
+					var fnMoveFormContainer = function(oSimpleForm, mMovedElement, oTarget) {
 						var aContent = oSimpleForm.getContent();
-						var oMovedGroupTitle = oMovedElement.getTitle();
+						var oMovedGroupTitle = mMovedElement.element.getTitle();
 						var iMovedGroupIndex = aContent.indexOf(oMovedGroupTitle);
 
-						var iTargetIndex = fnMapFormIndexToContentAggregationIndex(sap.ui.core.Title, aContent, oTarget.index);
-						var iMovedLength = fnMeasureLengthOfFormContainer(oMovedElement);
+						var iTargetIndex = fnMapFormIndexToContentAggregationIndex(sap.ui.core.Title, aContent, mMovedElement.targetIndex);
+						var iMovedLength = fnMeasureLengthOfFormContainer(mMovedElement.element);
 
 						var aContentClone = aContent.slice();
 						// Cut the moved group from the result array...
@@ -166,13 +165,14 @@ sap.ui
 						return fnCreateReorderAction(oSimpleForm.getId(), fnExtractElementIds(aContentClone));
 					};
 
-					var fnMoveFormElement = function(oSimpleForm, oMovedElement, oTarget) {
+					var fnMoveFormElement = function(oSimpleForm, mMovedElement, oTarget) {
 
 						var aContent = oSimpleForm.getContent();
 						var aFormElementsWithinTargetContainer = oTarget.parent.getFormElements();
 
-						var iSourceIndex = aContent.indexOf(oMovedElement.getLabel());
-						var iSourceLength = aFormElementsWithinTargetContainer[oTarget.index].getFields().length + 1;
+						var iSourceIndex = aContent.indexOf(mMovedElement.element.getLabel());
+						//use target index as the internal controls have already been modified
+						var iSourceLength = aFormElementsWithinTargetContainer[mMovedElement.targetIndex].getFields().length + 1;
 
 						var iTargetIndex = aContent.indexOf(oTarget.parent.getTitle());
 						if (iTargetIndex > iSourceIndex) {
@@ -180,7 +180,7 @@ sap.ui
 						}
 						// measure length of all elements before insert point
 						var iOffset = 0;
-						for (var k = 0; k < oTarget.index; k++) {
+						for (var k = 0; k < mMovedElement.targetIndex; k++) {
 							iOffset = iOffset + aFormElementsWithinTargetContainer[k].getFields().length + 1;
 						}
 						iTargetIndex = iTargetIndex + iOffset + 1;

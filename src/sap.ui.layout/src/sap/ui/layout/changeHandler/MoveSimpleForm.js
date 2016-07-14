@@ -37,10 +37,10 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 
 				var oContent = oChange.getContent();
 				var mMovedElement = oContent.movedElements[0];
-				var oSimpleForm = oModifier.byId(oContent.selector.id);
+				var oSimpleForm = oModifier.byId(oChange.getSelector().id);
 				var aContent = oModifier.getAggregation(oSimpleForm, MoveSimpleForm.CONTENT_AGGREGATION);
 
-				if (oContent.changeType === MoveSimpleForm.CHANGE_TYPE_MOVE_FIELD) {
+				if (oChange.getChangeType() === MoveSimpleForm.CHANGE_TYPE_MOVE_FIELD) {
 
 					var oSourceField = oModifier.byId(mMovedElement.element);
 					var iSourceFieldIndex = aContent.indexOf(oSourceField);
@@ -81,7 +81,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 						}
 					}
 
-				} else if (oContent.changeType === MoveSimpleForm.CHANGE_TYPE_MOVE_GROUP) {
+				} else if (oChange.getChangeType() === MoveSimpleForm.CHANGE_TYPE_MOVE_GROUP) {
 
 					var aStopGroupToken = [MoveSimpleForm.sTypeTitle, MoveSimpleForm.sTypeToolBar];
 					var oMovedGroup = oModifier.byId(mMovedElement.element);
@@ -120,20 +120,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 			};
 
 			/**
-			 * Computes the inverse of a change
-			 *
-			 * @param {sap.ui.fl.Change}
-			 *          oChange change object with instructions to be applied on the control map
-			 * @param {sap.ui.core.Control}
-			 *          oSourceParent control that matches the change selector for applying the change, which is the source of
-			 *          the move
-			 * @public
-			 */
-			MoveSimpleForm.getInverseChange = function(oChange, oSourceParent, oModifier, oView) {
-				return fnGetInverseChangeFromChange(oChange);
-			};
-
-			/**
 			 * Completes the change by adding change handler specific content
 			 *
 			 * @param {sap.ui.fl.Change}
@@ -143,56 +129,45 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 			 * @public
 			 */
 			MoveSimpleForm.completeChangeContent = function(oChange, mSpecificChangeInfo, oModifier) {
-				var mSpecificInfo = this.getSpecificChangeInfo(oModifier, mSpecificChangeInfo);
 				var mChangeData = oChange.getDefinition();
-				mChangeData.selector = mSpecificInfo.selector;
-				mChangeData.content = mSpecificInfo;
+				mChangeData.selector = mSpecificChangeInfo.selector;
+				mChangeData.content.target = mSpecificChangeInfo.target;
+				mChangeData.content.movedElements = mSpecificChangeInfo.movedElements;
 			};
 
 			/**
-			 * Enrich the incoming change info with the change info from the setter, to get the complete data in one format
+			 * Transform the move action format with internal controls to the change format with public controls
+			 *
+			 * @param {object} mMoveActionParameter a json object with the move parameter
+			 * @returns {object} json object that the completeChangeContent method will take as oSpecificChangeInfo
 			 */
-			MoveSimpleForm.getSpecificChangeInfo = function(oModifier, mSpecificChangeInfo) {
-
-				var oAction;
-				var oSimpleForm = sap.ui.getCore().byId(mSpecificChangeInfo.semanticContainer);
-				var aMovedElements = mSpecificChangeInfo.movedElements;
+			MoveSimpleForm.buildStableChangeInfo = function(mMoveActionParameter){
+				var mStableChangeInfo;
+				var oSimpleForm = mMoveActionParameter.source.publicParent;
+				var aMovedElements = mMoveActionParameter.movedElements;
 				if (aMovedElements.length > 1) {
 					jQuery.sap.log.warning("Moving more than 1 Formelement is not yet supported.");
 				}
-				var oMovedElement = sap.ui.getCore().byId(aMovedElements[0].id);
-				var oSource = jQuery.extend({}, mSpecificChangeInfo.source);
-				var oTarget = jQuery.extend({}, mSpecificChangeInfo.target);
+				var mMovedElement = aMovedElements[0];
+				mMovedElement.element = sap.ui.getCore().byId(mMovedElement.id);
+				var oSource = jQuery.extend({}, mMoveActionParameter.source);
+				var oTarget = jQuery.extend({}, mMoveActionParameter.target);
 				if (!oTarget.parent) {
 					oTarget.parent = sap.ui.getCore().byId(oTarget.id);
 				}
 				if (!oSource.parent) {
 					oSource.parent = sap.ui.getCore().byId(oSource.id);
 				}
-				if (oSimpleForm && oMovedElement && oTarget.parent) {
-					if (oMovedElement instanceof sap.ui.layout.form.FormContainer) {
-						oAction = fnMoveFormContainer(oSimpleForm, oMovedElement, oSource, oTarget);
-					} else if (oMovedElement instanceof sap.ui.layout.form.FormElement) {
-						oAction = fnMoveFormElement(oSimpleForm, oMovedElement, oSource, oTarget);
+				if (oSimpleForm && mMovedElement.element && oTarget.parent) {
+					if (mMoveActionParameter.changeType === "moveSimpleFormGroup") {
+						mStableChangeInfo = fnMoveFormContainer(oSimpleForm, mMovedElement, oSource, oTarget);
+					} else if (mMoveActionParameter.changeType === "moveSimpleFormField") {
+						mStableChangeInfo = fnMoveFormElement(oSimpleForm, mMovedElement, oSource, oTarget);
 					}
 				} else {
 					jQuery.sap.log.error("Element not found. This may caused by an instable id!");
 				}
-				return oAction;
-
-			};
-
-			var fnGetInverseChangeFromChange = function(oChange) {
-
-				var oReverseChange = jQuery.extend(true, {}, oChange);
-				var oReverseChangeContent = oReverseChange.getContent();
-				oReverseChangeContent.movedElements.map(function(oMovedElement, iIndex) {
-					var oTmp = jQuery.extend(true, {}, oMovedElement.source);
-					oMovedElement.source = oMovedElement.target;
-					oMovedElement.target = oTmp;
-					return oMovedElement;
-				});
-				return oReverseChange;
+				return mStableChangeInfo;
 
 			};
 
@@ -219,6 +194,17 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 				return (MoveSimpleForm.sTypeTitle === sType);
 			};
 
+			var fnMeasureLengthOfSequenceUntilStopToken = function(oModifier, iMovedElementIndex, aContent, aStopToken) {
+				var i = 0;
+				for (i = iMovedElementIndex + 1; i < aContent.length; ++i) {
+					var sType = oModifier.getControlType(aContent[i]);
+					if (aStopToken.indexOf(sType) > -1) {
+						break;
+					}
+				}
+				return i - iMovedElementIndex;
+			};
+
 			var fnGetFieldLength = function(oModifier, aElements, iIndex) {
 				return fnMeasureLengthOfSequenceUntilStopToken(oModifier, iIndex, aElements, [MoveSimpleForm.sTypeTitle,
 						MoveSimpleForm.sTypeToolBar, MoveSimpleForm.sTypeLabel]);
@@ -237,19 +223,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 						iActLength = fnGetFieldLength(oModifier, aContent, iAbsolutIndex);
 						iAbsolutIndex += iActLength;
 					}
+					return iAbsolutIndex;
 				}
-				return iAbsolutIndex;
-			};
-
-			var fnMeasureLengthOfSequenceUntilStopToken = function(oModifier, iMovedElementIndex, aContent, aStopToken) {
-				var i = 0;
-				for (i = iMovedElementIndex + 1; i < aContent.length; ++i) {
-					var sType = oModifier.getControlType(aContent[i]);
-					if (aStopToken.indexOf(sType) > -1) {
-						break;
-					}
-				}
-				return i - iMovedElementIndex;
 			};
 
 			var fnArrayRangeCopy = function(aSource, iSourceIndex, aTarget, iTargetIndex, iMovedLength) {
@@ -260,17 +235,17 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 				return aResult;
 			};
 
-			var fnMoveFormContainer = function(oSimpleForm, oMovedElement, oSource, oTarget) {
+			var fnMoveFormContainer = function(oSimpleForm, mMovedElement, oSource, oTarget) {
 
-				var oMovedGroupTitle = oMovedElement.getTitle();
+				var oMovedGroupTitle = mMovedElement.element.getTitle();
 				var sSimpeFormId = oSimpleForm.getId();
-				var oMovedElement = {
+				var mMovedSimpleFormElement = {
 					element : oMovedGroupTitle.getId(),
 					source : {
-						groupIndex : oSource.index
+						groupIndex : mMovedElement.sourceIndex
 					},
 					target : {
-						groupIndex : oTarget.index
+						groupIndex : mMovedElement.targetIndex
 					}
 				};
 
@@ -280,15 +255,15 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 						id : sSimpeFormId
 					},
 					target : sSimpeFormId,
-					movedElements : [oMovedElement]
+					movedElements : [mMovedSimpleFormElement]
 				};
 
 			};
 
-			var fnMoveFormElement = function(oSimpleForm, oMovedElement, oSource, oTarget) {
+			var fnMoveFormElement = function(oSimpleForm, mMovedElement, oSource, oTarget) {
 
 				var sSimpeFormId = oSimpleForm.getId();
-				var sLabelId = oMovedElement.getLabel().getId();
+				var sLabelId = mMovedElement.element.getLabel().getId();
 				var sTargetTitleId = oTarget.parent.getTitle().getId();
 				var sSourceTitleId = oSource.parent.getTitle().getId();
 
@@ -296,11 +271,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 					element : sLabelId,
 					source : {
 						groupId : sSourceTitleId,
-						fieldIndex : oSource.index
+						fieldIndex : mMovedElement.sourceIndex
 					},
 					target : {
 						groupId : sTargetTitleId,
-						fieldIndex : oTarget.index
+						fieldIndex : mMovedElement.targetIndex
 					}
 				};
 
