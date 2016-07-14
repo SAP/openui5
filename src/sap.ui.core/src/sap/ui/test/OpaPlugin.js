@@ -120,7 +120,7 @@ sap.ui.define(['jquery.sap.global',
 			 * @public
 			 */
 			getControlInView : function (oOptions) {
-				var sViewName = oOptions.viewNamespace + oOptions.viewName,
+				var sViewName = (oOptions.viewNamespace || "") + oOptions.viewName,
 					oView = this.getView(sViewName),
 					aResult = [],
 					oControl,
@@ -267,7 +267,19 @@ sap.ui.define(['jquery.sap.global',
 
 				if (typeof vStringOrArrayOrRegex === "string") {
 					vControl = oCoreElements[vStringOrArrayOrRegex];
-					return vControl && this._checkControlType(vControl, oOptions) ? vControl : null;
+
+					if (!vControl) {
+						$.sap.log.debug("Found no control with the global id: '" + vStringOrArrayOrRegex + "'", this._sLogPrefix);
+						return null;
+					}
+
+					if (!this._checkControlType(vControl, oOptions.controlType)) {
+						$.sap.log.error("An id: '" + oOptions.id + "' was passed together with the controlType '" + oOptions.sOriginalControlType +
+							"' but the type does not match the control retrieved: '" + vControl + "' - null is returned", this._sLogPrefix);
+						return null;
+					}
+
+					return vControl;
 				}
 
 				if ($.type(vStringOrArrayOrRegex) === "regexp") {
@@ -291,7 +303,7 @@ sap.ui.define(['jquery.sap.global',
 					return oCoreElements[sId];
 				}).filter(function (oControl) {
 					//only return defined controls
-					return that._checkControlType(oControl, oOptions) && oControl && !oControl.bIsDestroyed;
+					return that._checkControlType(oControl, oOptions.controlType) && oControl && !oControl.bIsDestroyed;
 				});
 			},
 
@@ -349,9 +361,9 @@ sap.ui.define(['jquery.sap.global',
 				return this.oCore.mElements || oElements;
 			},
 
-			_checkControlType : function(oControl, oOptions) {
-				if (oOptions.controlType) {
-					return oControl instanceof oOptions.controlType;
+			_checkControlType : function(oControl, fnControlType) {
+				if (fnControlType) {
+					return oControl instanceof fnControlType;
 				} else {
 					return true;
 				}
