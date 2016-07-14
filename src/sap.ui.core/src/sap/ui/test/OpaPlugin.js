@@ -308,16 +308,17 @@ sap.ui.define(['jquery.sap.global',
 				if (typeof vStringOrArrayOrRegex === "string") {
 					vControl = oCoreElements[vStringOrArrayOrRegex];
 
-					if (!this._checkControlType(vControl, oOptions.controlType)) {
-						$.sap.log.error("An id: '" + oOptions.id + "' was passed together with the controlType '" + oOptions.sOriginalControlType +
-								"' but the type does not match the id - null is returned", this._sLogPrefix);
-						vControl = null;
-					}
-
 					if (!vControl) {
 						$.sap.log.debug("Found no control with the global id: '" + vStringOrArrayOrRegex + "'", this._sLogPrefix);
 						return null;
 					}
+
+					if (!this._checkControlType(vControl, oOptions.controlType)) {
+						$.sap.log.error("An id: '" + oOptions.id + "' was passed together with the controlType '" + oOptions.sOriginalControlType +
+								"' but the type does not match the control retrieved: '" + vControl + "' - null is returned", this._sLogPrefix);
+						return null;
+					}
+
 
 					return vControl;
 				}
