@@ -1083,6 +1083,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		 *
 		 */
 		ComboBox.prototype.onBeforeClose = function() {
+			ComboBoxBase.prototype.onBeforeClose.apply(this, arguments);
 			var oDomRef = this.getFocusDomRef();
 
 			if (oDomRef) {
@@ -1096,9 +1097,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 
 			// remove the active state of the control's field
 			this.removeStyleClass(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed");
-
-			// reset opener
-			this.bOpenedByKeyboardOrButton = false;
 		};
 
 		/**
