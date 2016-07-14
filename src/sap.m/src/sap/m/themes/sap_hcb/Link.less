@@ -16,9 +16,15 @@
 	text-decoration: underline;
 }
 
-.sapMLnk:focus:not(.sapMLnkDsbl) {
+html.sap-desktop .sapMLnk:focus:not(.sapMLnkDsbl) {
 	text-decoration: none;
 	outline: 0.125rem dotted @sapHCStandardFG;
+	outline-offset: 1px;
+}
+
+html.sap-desktop .sapUiFormEdit .sapMLnk:focus:not(.sapMLnkDsbl) {
+	outline: 0.125rem dotted @sapHCStandardFG;
+	outline-offset: -0.0625rem;
 }
 
 html.sap-desktop .sapMLnk:hover:not(.sapMLnkDsbl) {
