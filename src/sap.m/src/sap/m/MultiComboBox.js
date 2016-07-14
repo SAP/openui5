@@ -318,7 +318,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		}
 
 		// message popup won't open when the item list is shown
-		if (!this.isOpen()) {
+		if (!this.isOpen() && this.shouldValueStateMessageBeOpened()) {
 			this.openValueStateMessage();
 		}
 	};

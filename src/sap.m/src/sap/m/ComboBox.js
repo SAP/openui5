@@ -821,7 +821,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 				}
 
 				// open the message popup
-				if (!this.isOpen() && this.bOpenValueStateMessage) {
+				if (!this.isOpen() && this.bOpenValueStateMessage && this.shouldValueStateMessageBeOpened()) {
 					this.openValueStateMessage();
 				}
 
@@ -1102,11 +1102,12 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 
 			if (oDomRef) {
 				oDomRef.setAttribute("aria-expanded", "false");
-			}
 
-			// if the focus is back to the input after close the picker, the message should be open
-			if (document.activeElement === oDomRef) {
-				this.openValueStateMessage();
+				// if the focus is back to the input after closing the picker,
+				// the value state message should be reopen
+				if (this.shouldValueStateMessageBeOpened() && (document.activeElement === oDomRef)) {
+					this.openValueStateMessage();
+				}
 			}
 
 			// clear the filter to make all items visible

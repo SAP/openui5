@@ -226,7 +226,7 @@
 			});
 
 			/* ------------------------------ */
-			/* getTextAlign()                     */
+			/* getTextAlign()                 */
 			/* ------------------------------ */
 
 			fnTestControlProperty({
@@ -461,8 +461,9 @@
 			});
 
 			test("setValue should update the dom when old and new dom value is not same", function() {
+
 				// system under test
-				var sValue = "test"
+				var sValue = "test";
 				var oInput = new sap.m.InputBase({
 					value : sValue
 				});
@@ -1079,15 +1080,21 @@
 				oInput.destroy();
 			});
 
-			test("value state and value state message", function() {
+			/* ------------------------------------- */
+			/* valus state and valus state message() */
+			/* ------------------------------------- */
+
+			QUnit.test("it should open or close the value state message popup when the input gets or losses the focus event", function(assert) {
+
+				// system under test
 				var oErrorInput = new sap.m.InputBase("errorinput", {
-					value : "Error InputBase Test",
+					value: "Error InputBase Test",
 					valueState: "Error",
 					valueStateText: "Error Message"
 				});
 
 				var oWarningInput = new sap.m.InputBase("warninginput",{
-					value : "Warning InputBase Test",
+					value: "Warning InputBase Test",
 					valueState: "Warning",
 					valueStateText: "Warning Message"
 				});
@@ -1096,94 +1103,101 @@
 				oErrorInput.placeAt("content");
 				oWarningInput.placeAt("content");
 				sap.ui.getCore().applyChanges();
-
 				oErrorInput.focus();
 				this.clock.tick(500);
-				ok(jQuery.sap.domById("errorinput-message"), "error message popup is open when focusin");
-				equal(oErrorInput.getValueStateText(), "Error Message", "error message is correct");
+
+				// assert
+				assert.ok(jQuery.sap.domById("errorinput-message"), "error message popup is open on focusin");
+				assert.equal(oErrorInput.getValueStateText(), "Error Message", "error message is correct");
 
 				oErrorInput.getFocusDomRef().blur();
-				ok(!jQuery.sap.domById("errorinput-message"), "error message popup is closed when focus is out");
+				assert.ok(!jQuery.sap.domById("errorinput-message"), "error message popup is closed when focus is out");
 
 				oWarningInput.focus();
 				this.clock.tick(500);
-				ok(jQuery.sap.domById("warninginput-message"), "warning message popup is open when focusin");
-				equal(oWarningInput.getValueStateText(), "Warning Message", "warning message is correct");
+				assert.ok(jQuery.sap.domById("warninginput-message"), "warning message popup is open when focusin");
+				assert.equal(oWarningInput.getValueStateText(), "Warning Message", "warning message is correct");
 
-				oWarningInput.getFocusDomRef().blur()
-				ok(!jQuery.sap.domById("warninginput-message"), "warning message popup is closed when focus is out");
+				oWarningInput.getFocusDomRef().blur();
+				assert.ok(!jQuery.sap.domById("warninginput-message"), "warning message popup is closed when focus is out");
 
 				oErrorInput.setShowValueStateMessage(false);
 				sap.ui.getCore().applyChanges();
 				oErrorInput.focus();
 				this.clock.tick(500);
-				ok(!jQuery.sap.domById("errorinput-message"), "no error message popup if showValueStateMessage is set to false");
+				assert.ok(!jQuery.sap.domById("errorinput-message"), "no error message popup if showValueStateMessage is set to false");
 
+				// cleanup
 				oErrorInput.destroy();
 				oWarningInput.destroy();
 			});
 
-			test("Value State Change", function() {
+			QUnit.test("it should update the value state message accordingly", function(assert) {
 				var oCoreRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core"),
-					oMobileRB = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
-					oValueStateInput = new sap.m.Input("vsinput", {
-					placeholder: "value state changes while you are typing",
-					liveChange: function () {
-						var i = oValueStateInput.getValue().length;
-						switch( i % 4 ){
-							case 0:
-								oValueStateInput.setValueState("None");
-								break;
-							case 1:
-								oValueStateInput.setValueState("Warning");
-								break;
-							case 2:
-								oValueStateInput.setValueState("Success");
-								break;
-							case 3:
-								oValueStateInput.setValueState("Error");
-								break;
-						}
-					}
-				});
+						oMobileRB = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+						oValueStateInput = new sap.m.Input("vsinput", {
+							placeholder: "value state changes while you are typing",
+							liveChange: function() {
+								var i = oValueStateInput.getValue().length;
+
+								switch (i % 4) {
+									case 0:
+										oValueStateInput.setValueState("None");
+										break;
+
+									case 1:
+										oValueStateInput.setValueState("Warning");
+										break;
+
+									case 2:
+										oValueStateInput.setValueState("Success");
+										break;
+
+									case 3:
+										oValueStateInput.setValueState("Error");
+										break;
+								}
+							}
+						});
 
 				oValueStateInput.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
-				//warning state
+				// warning state
 				oValueStateInput.updateDomValue("1").focus();
 				sap.ui.test.qunit.triggerEvent("input", oValueStateInput.getFocusDomRef());
 				this.clock.tick(1000);
-				strictEqual(oValueStateInput.getValueState(), "Warning");
-				ok(jQuery.sap.domById("vsinput-message"), "warning message popup is open");
-				strictEqual(jQuery.sap.byId("vsinput-message-text").text(), oCoreRB.getText("VALUE_STATE_WARNING"));
-				strictEqual(jQuery.sap.byId("vsinput-message").text(), oMobileRB.getText("INPUTBASE_VALUE_STATE_WARNING") + oCoreRB.getText("VALUE_STATE_WARNING"))
+				assert.strictEqual(oValueStateInput.getValueState(), "Warning");
+				assert.ok(jQuery.sap.domById("vsinput-message"), "warning message popup is open");
+				assert.strictEqual(jQuery.sap.byId("vsinput-message")[0].innerText, oCoreRB.getText("VALUE_STATE_WARNING"));
+				assert.strictEqual(jQuery.sap.byId("vsinput-message").text(), oMobileRB.getText("INPUTBASE_VALUE_STATE_WARNING") + oCoreRB.getText("VALUE_STATE_WARNING"));
 
-				//success state
+				// success state
 				oValueStateInput.updateDomValue("12");
 				sap.ui.test.qunit.triggerEvent("input", oValueStateInput.getFocusDomRef());
 				this.clock.tick(1000);
 				oValueStateInput.getValueState();
-				strictEqual(oValueStateInput.getValueState(), "Success");
-				ok(jQuery.sap.domById("vsinput-message"), "Success message popup is open");
-				ok(jQuery.sap.byId("vsinput-message").hasClass("sapUiInvisibleText"), "Success message popup is not visible");
+				assert.strictEqual(oValueStateInput.getValueState(), "Success");
+				assert.ok(jQuery.sap.domById("vsinput-message"), "Success message popup is open");
+				assert.ok(jQuery.sap.byId("vsinput-message").hasClass("sapUiInvisibleText"), "Success message popup is not visible");
 
-				//error state
+				// error state
 				oValueStateInput.updateDomValue("123");
 				sap.ui.test.qunit.triggerEvent("input", oValueStateInput.getFocusDomRef());
 				this.clock.tick(1000);
 				oValueStateInput.getValueState();
-				strictEqual(oValueStateInput.getValueState(), "Error");
-				ok(jQuery.sap.domById("vsinput-message"), "error message popup is open");
-				strictEqual(jQuery.sap.byId("vsinput-message-text").text(), oCoreRB.getText("VALUE_STATE_ERROR"));
-				strictEqual(jQuery.sap.byId("vsinput-message").text(), oMobileRB.getText("INPUTBASE_VALUE_STATE_ERROR") + oCoreRB.getText("VALUE_STATE_ERROR"))
+				assert.strictEqual(oValueStateInput.getValueState(), "Error");
+				assert.ok(jQuery.sap.domById("vsinput-message"), "error message popup is open");
+				assert.strictEqual(jQuery.sap.byId("vsinput-message")[0].innerText, oCoreRB.getText("VALUE_STATE_ERROR"));
+				assert.strictEqual(jQuery.sap.byId("vsinput-message").text(), oMobileRB.getText("INPUTBASE_VALUE_STATE_ERROR") + oCoreRB.getText("VALUE_STATE_ERROR"));
 
-				//none state
+				// none state
 				oValueStateInput.updateDomValue("1234");
 				sap.ui.test.qunit.triggerEvent("input", oValueStateInput.getFocusDomRef());
-				strictEqual(oValueStateInput.getValueState(), "None");
-				ok(!jQuery.sap.domById("vsinput-message"), "no message popup");
+				assert.strictEqual(oValueStateInput.getValueState(), "None");
+				assert.ok(!jQuery.sap.domById("vsinput-message"), "no message popup");
 
+				// cleanup
 				oValueStateInput.destroy();
 			});
 
