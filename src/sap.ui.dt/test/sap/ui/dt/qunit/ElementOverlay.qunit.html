@@ -537,6 +537,11 @@
 					this.oSimpleForm.placeAt("content");
 					// Render Controls
 					sap.ui.getCore().applyChanges();
+					this.oFormOverlay = new sap.ui.dt.ElementOverlay({
+						element : this.oSimpleForm.getAggregation("form")
+					});
+					this.oFormOverlay.placeAt("content");
+					sap.ui.getCore().applyChanges();
 				},
 				afterEach : function() {
 					this.oSimpleForm.destroy();
@@ -548,6 +553,9 @@
 				var oAggregationOverlay = this.oOverlay.getAggregationOverlay("form");
 				assert.strictEqual(oAggregationOverlay.isVisible(), true, "the aggregation overlay is marked as invisible");
 				assert.strictEqual(oAggregationOverlay.isInHiddenTree(), true, "the aggregation overlay is marked as inHiddenTree");
+
+				assert.strictEqual(this.oFormOverlay.getPublicParentElementOverlay(), this.oOverlay, "getPublicParentElementOverlay for hidden Form returns SimpleForm control");
+				assert.strictEqual(this.oFormOverlay.getPublicParentAggregationOverlay(), this.oOverlay.getAggregationOverlay("form"), "getPublicParentAggregationOverlay for hidden Form returns form aggregation overlay");
 			});
 
 
