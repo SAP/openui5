@@ -2475,7 +2475,7 @@
 			if (iCount === 2 && bUpdate && bRead) {
 				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
 				equal(spy.callCount, 1, "call count");
-				var oRequest = spy.args[0][0];
+				var oRequest = spy.args[0][0].request;
 				equal(oRequest.method, "POST", "request method");
 				ok(oRequest.headers['x-http-method'] === "MERGE", "request method header should not be present");
 				equal(oRequest.requestUri,"/SalesOrderSrv/ProductSet('HT-1000')", "request URI");
@@ -2538,7 +2538,7 @@
 			if (iCount === 2 && bUpdate && bRead) {
 				ok(!oModel.hasPendingChanges(), "pending changes should be false now!");
 				equal(spy.callCount, 1, "call count");
-				var oRequest = spy.args[0][0];
+				var oRequest = spy.args[0][0].request;
 				equal(oRequest.method, "PUT", "request method");
 				ok(oRequest.headers['x-http-method'] === undefined, "request method header should not be present");
 				equal(oRequest.requestUri,"/SalesOrderSrv/ProductSet('HT-1000')", "request URI");
