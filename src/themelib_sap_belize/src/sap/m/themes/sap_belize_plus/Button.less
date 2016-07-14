@@ -22,3 +22,11 @@ html.sap-desktop .sapContrastPlus .sapMBtn:focus > .sapMBtnEmphasized.sapMFocusa
 html.sap-desktop .sapContrastPlus.sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable {
 	outline-color:    @sapUiContentContrastFocusColor;
 }
+
+/* ---------------------------------------------------------------------*/
+/* Custom focus outline for IE and Edge:                                */
+/* ---------------------------------------------------------------------*/
+html.sap-desktop .sapContrastPlus .sapMBtn:focus > .sapMBtnEmphasized > .sapMBtnFocusDiv,
+html.sap-desktop .sapContrastPlus.sapMBtn:focus > .sapMBtnEmphasized > .sapMBtnFocusDiv {
+	border-color:    @sapUiContentContrastFocusColor;
+}
