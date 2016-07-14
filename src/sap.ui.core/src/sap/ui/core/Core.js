@@ -692,6 +692,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		if (!window.FontFace) {
 			var aBuffer = [];
+			var aCalls = [];
 			for (var i = 0; i < aFonts.length; i++) {
 				aBuffer.push("@font-face {font-family: '72-Web'; font-style: ", aFonts[i].style, "; font-weight: ", aFonts[i].weight, "; font-stretch: ", aFonts[i].stretch, "; src: url('", aFonts[i].url, "') format('woff');}");
 				aCalls.push(Promise.resolve(jQuery.ajax({
@@ -702,7 +703,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				})));
 			}
 
-			var aCalls = [];
 			Promise.all(aCalls).then(function(){
 				jQuery('head').append('<style type="text/css">' + aBuffer.join("") + '</style>');
 				jQuery.sap.measure.end("sapFontsLoad");
@@ -720,7 +720,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				aLoadedFonts.push(font.loaded);
 			}
 
-			Promise.all(aLoadedFonts).then(function(){
+			Promise.all(aLoadedFonts).then(function() {
 				for (var i = 0; i < aFonts.length; i++) {
 					document.fonts.add(aFonts[i].font);
 				}
