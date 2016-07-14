@@ -49,18 +49,6 @@ QUnit.test("isVariableRowHeightEnabled", function(assert) {
 	assert.ok(!TableUtils.isVariableRowHeightEnabled(oTable), "VariableRowHeight is not allowed when oTable has a Paginator.");
 });
 
-QUnit.test("getRowHeightByIndex", function(assert) {
-	assert.equal(TableUtils.getRowHeightByIndex(oTable, 0), 48, "First Row Height is 48");
-	assert.equal(TableUtils.getRowHeightByIndex(oTable, oTable.getRows().length - 1), 48, "Last Row Height is 48");
-	assert.equal(TableUtils.getRowHeightByIndex(oTable, 50), 0, "Invalid Row Height is 0");
-	assert.equal(TableUtils.getRowHeightByIndex(null, 0), 0, "No Table available returns 0px as row height");
-
-	oTable.setFixedColumnCount(0);
-	sap.ui.getCore().applyChanges();
-
-	assert.equal(TableUtils.getRowHeightByIndex(oTable, 0), 48, "First Row Height is 48, with Table with no fixed columns");
-});
-
 QUnit.test("getCellInfo", function(assert) {
 	var oCell = getCell(0, 0);
 	var oInfo = TableUtils.getCellInfo(oCell);
@@ -562,6 +550,31 @@ QUnit.test("isFirstScrollableRow / isLastScrollableRow", function(assert) {
 
 QUnit.module("TableUtils", {
 	setup: function() {
+		jQuery(document.body).toggleClass("sapUiSizeCozy", true);
+		createTables();
+	},
+	teardown: function () {
+		destroyTables();
+		jQuery(document.body).toggleClass("sapUiSizeCozy", false);
+	}
+});
+
+QUnit.test("getRowHeightByIndex", function(assert) {
+	assert.equal(TableUtils.getRowHeightByIndex(oTable, 0), 48, "First Row Height is 48");
+	assert.equal(TableUtils.getRowHeightByIndex(oTable, oTable.getRows().length - 1), 48, "Last Row Height is 48");
+	assert.equal(TableUtils.getRowHeightByIndex(oTable, 50), 0, "Invalid Row Height is 0");
+	assert.equal(TableUtils.getRowHeightByIndex(null, 0), 0, "No Table available returns 0px as row height");
+
+	oTable.setFixedColumnCount(0);
+	sap.ui.getCore().applyChanges();
+
+	assert.equal(TableUtils.getRowHeightByIndex(oTable, 0), 48, "First Row Height is 48, with Table with no fixed columns");
+	jQuery(document.body).toggleClass("sapUiSizeCozy", false);
+});
+
+
+QUnit.module("TableUtils", {
+	setup: function() {
 		jQuery("#content").append("<div id='__table-outer' style='height: 500px; width: 500px; overflow: hidden; background: red;'>" +
 				"<div id='__table-inner' style='height: 200px; width: 200px; background: blue;'>" +
 					"<div id='__table-center' style='height: 100px; width: 100px; background: green;'></div>" +
@@ -692,59 +705,75 @@ QUnit.module("TableUtils", {
 	}
 });
 
-QUnit.test("getParentDomRef, basic checks", function(assert) {
-	var oDomRef;
+QUnit.test("getContentDensity", function(assert) {
 	var oCore = sap.ui.getCore();
-
-	try {
-		TableUtils.getParentDomRef();
-	} catch(e) {
-		assert.ok(true, "Break when no table instance given");
-	}
-	oDomRef = TableUtils.getParentDomRef(this.oTable);
-	assert.strictEqual(oDomRef, null, "Table is not part of any aggregation and not rendered, DOM Ref = body");
-
-	this.oTable.placeAt("__table-outer", 0);
-	oCore.applyChanges();
-	var oUIArea = oCore.getUIArea("__table-outer");
-
-	oDomRef = TableUtils.getParentDomRef(this.oTable);
-	assert.equal(oDomRef, oUIArea.getRootNode(), "Table is part UI Area, DOM Ref = UI Area");
-});
-
-QUnit.test("getParentDomRef, aggregation nestings", function(assert) {
-	var oDomRef;
-	var oCore = sap.ui.getCore();
-	var oNested = new sap.ui.table.TableUtilsDummyControl({content: [this.oTable]});
-	var oControl = new sap.ui.table.TableUtilsDummyControl({});
-
-	oControl.placeAt("__table-outer", 0);
-	oCore.applyChanges();
-	oControl.addAggregation("content", oNested, true);
-
-	oDomRef = TableUtils.getParentDomRef(this.oTable);
-	assert.equal(oDomRef, oControl.getDomRef(), "Table is part of Nested aggregation but not rendered, DomRef = Control.getDomRef()");
-	assert.notEqual(oControl.getDomRef(), null, "Control has DomRef");
-	assert.equal(oNested.getDomRef(), null, "Nested control has no DomRef");
-	assert.equal(this.oTable.getDomRef(), null, "Table has no DomRef");
-
-	this.oTable.invalidate();
-	oCore.applyChanges();
-	oDomRef = TableUtils.getParentDomRef(this.oTable);
-	assert.equal(oDomRef, oNested.getDomRef(), "Table is part of Nested aggregation and rendered, DomRef = Nested.getDomRef()");
-});
-
-QUnit.test("getParentDomRef, aggregation nestings without getParent", function(assert) {
 	var oNested = new sap.ui.table.TableUtilsDummyControl({content: [this.oTable]});
 	var oControl = new sap.ui.table.TableUtilsDummyControl({content: [oNested]});
 
-	// briefly fake that there is no getParent function.
-	// this is to make sure there is no endless loop
-	var fnGetParent = oControl.getParent;
-	oControl.getParent = undefined;
-	var oDomRef = TableUtils.getParentDomRef(this.oTable);
-	// restore getParent for later cleanup
-	oControl.getParent = fnGetParent;
+	oControl.placeAt("__table-outer", 0);
+	oCore.applyChanges();
+	assert.strictEqual(TableUtils.getContentDensity(this.oTable), undefined, "No content density set to far");
 
-	assert.strictEqual(oDomRef, null, "Table is part of Nested aggregation but not rendered, DomRef = Control.getDomRef()");
+	jQuery(document.body).toggleClass("sapUiSizeCozy", true);
+	assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCozy", "sapUiSizeCozy at body");
+
+	oControl.addStyleClass("sapUiSizeCompact");
+	oCore.applyChanges();
+	assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCompact", "sapUiSizeCompact at #Control");
+
+	oNested.addStyleClass("sapUiSizeCondensed");
+	oCore.applyChanges();
+	assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCondensed", "sapUiSizeCondensed at #Nested");
+	oNested.addStyleClass("sapUiSizeCozy");
+	oCore.applyChanges();
+	assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCondensed", "sapUiSizeCondensed and sapUiSizeCozy at #Nested -> sapUiSizeCondensed");
+	oNested.addStyleClass("sapUiSizeCompact");
+	oCore.applyChanges();
+	assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCompact", "sapUiSizeCompact, sapUiSizeCondensed and sapUiSizeCozy at #Nested -> sapUiSizeCompact");
+
+	this.oTable.addStyleClass("sapUiSizeCozy");
+	oCore.applyChanges();
+	assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCozy", "sapUiSizeCozy at table");
+
+	this.oTable.$().toggleClass("sapUiSizeCondensed", true);
+	assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCondensed", "sapUiSizeCondensed at table DOM and sapUiSizeCozy at control level. DOM wins.");
+
+	jQuery(document.body).toggleClass("sapUiSizeCozy", false);
+});
+
+QUnit.test("getContentDensity without DOM", function(assert) {
+	var oNested = new sap.ui.table.TableUtilsDummyControl({content: [this.oTable]});
+	var oControl = new sap.ui.table.TableUtilsDummyControl({content: [oNested]});
+
+	assert.strictEqual(TableUtils.getContentDensity(this.oTable), undefined, "No content density set to far");
+
+	jQuery(document.body).toggleClass("sapUiSizeCozy", true);
+	assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCozy", "sapUiSizeCozy at body");
+
+	oControl.addStyleClass("sapUiSizeCompact");
+	assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCompact", "sapUiSizeCompact at #Control");
+
+	oNested.addStyleClass("sapUiSizeCondensed");
+	assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCondensed", "sapUiSizeCondensed at #Nested");
+	oNested.addStyleClass("sapUiSizeCozy");
+	assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCondensed", "sapUiSizeCondensed and sapUiSizeCozy at #Nested -> sapUiSizeCondensed");
+	oNested.addStyleClass("sapUiSizeCompact");
+	assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCompact", "sapUiSizeCompact, sapUiSizeCondensed and sapUiSizeCozy at #Nested -> sapUiSizeCompact");
+
+	this.oTable.addStyleClass("sapUiSizeCozy");
+	assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCozy", "sapUiSizeCozy at table");
+
+	jQuery(document.body).toggleClass("sapUiSizeCozy", false);
+});
+
+QUnit.test("getContentDensity table in UI Area", function(assert) {
+	var oCore = sap.ui.getCore();
+	this.oTable.placeAt("__table-outer", 0);
+	oCore.applyChanges();
+
+	assert.strictEqual(TableUtils.getContentDensity(this.oTable), undefined, "No content density set to far");
+
+	this.oTable.addStyleClass("sapUiSizeCozy");
+	oCore.applyChanges();
+	assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCozy", "sapUiSizeCozy at table");
 });
