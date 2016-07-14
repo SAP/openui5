@@ -16,7 +16,7 @@ sap.ui.define([], function () {
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oPage An object representation of the control that should be rendered
+	 * @param {sap.ui.core.Control} oDynamicPageHeader An object representation of the control that should be rendered
 	 */
 	DynamicPageHeaderRenderer.render = function (oRm, oDynamicPageHeader) {
 		var aContent = oDynamicPageHeader.getContent();
