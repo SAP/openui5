@@ -2189,8 +2189,8 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 
 					//update the list items visibility
 					oFilterDetailList.getItems().forEach(function(oItem) {
-						var bStartsWithQuery = oItem.getTitle().toLowerCase().indexOf(sQuery) === 0;
-						oItem.setVisible(bStartsWithQuery);
+						var bQueryMatch = oItem.getTitle().toLowerCase().indexOf(sQuery) !== -1;
+						oItem.setVisible(bQueryMatch);
 					});
 
 					//update Select All checkbox
