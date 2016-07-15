@@ -17,9 +17,9 @@ sap.ui.define([], function() {
 					move : function(oElement){
 						var sType = oElement.getMetadata().getName();
 
-						if (sType === "sap.ui.layout.form.FormContainer" || sType === "sap.ui.core.Title" || sType === "sap.ui.core.Toolbar"){
+						if (sType === "sap.ui.layout.form.FormContainer"){
 							return "moveSimpleFormGroup";
-						} else if (sType === "sap.ui.layout.form.FormElement" || sType === "sap.ui.core.Label"){
+						} else if (sType === "sap.ui.layout.form.FormElement"){
 							return "moveSimpleFormField";
 						}
 					}
