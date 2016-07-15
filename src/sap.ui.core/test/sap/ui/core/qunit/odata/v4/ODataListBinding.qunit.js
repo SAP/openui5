@@ -1167,9 +1167,11 @@ sap.ui.require([
 	QUnit.test("getContexts fires dataRequested and dataReceived events", function (assert) {
 		var oListBinding = this.oModel.bindList("/EMPLOYEES"),
 			fnResolveRead,
-			oReadPromise = new Promise(function (fnResolve) {fnResolveRead = fnResolve;}),
+			oReadPromise,
 			that = this;
 
+		// do not move this assignment to the var declaration as this breaks Eclipse's Compare With
+		oReadPromise = new Promise(function (fnResolve) {fnResolveRead = fnResolve;});
 		// read returns an unresolved Promise to be resolved by submitBatch; otherwise this Promise
 		// would be resolved before the rendering and dataReceived would be fired before
 		// dataRequested
