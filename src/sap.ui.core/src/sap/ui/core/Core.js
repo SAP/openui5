@@ -690,7 +690,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			{url: sFontPath + '72-Light.woff', weight: "lighter", style: "normal", stretch: "normal"}
 		];
 
-		if (!window.FontFace) {
+		var x = true; // temporarily override FontFace check until issue with adding font faces after load is resolved
+		if (x) {	// if (!window.FontFace) {
 			var aBuffer = [];
 			var aCalls = [];
 			for (var i = 0; i < aFonts.length; i++) {
@@ -725,6 +726,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 					document.fonts.add(aFonts[i].font);
 				}
 				jQuery.sap.measure.end("sapFontsLoad");
+			}).fail(function () {
+				jQuery.sap.log.error('web font loading failed');
+			}).always(function () {
+				jQuery.sap.log.info('web font loading');
 			});
 		}
 	};
