@@ -69,7 +69,7 @@ jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
 				var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form");
 				var aFormContainers = oSimpleFormForm.getFormContainers();
 				var iPosition = aFormContainers.indexOf(oElementGroup1.getParent());
-				assert.ok(iPosition === 2, "and the titel1 is now located at index 2");
+				assert.equal(iPosition, 2, "and the titel1 is now located at index 2");
 				done();
 			}, this);
 
@@ -94,7 +94,7 @@ jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
 				var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form");
 				var aFormContainers = oSimpleFormForm.getFormContainers();
 				var iPosition = aFormContainers.indexOf(oElementGroup1.getParent());
-				assert.ok(iPosition === 1, "and the titel1 is again located at index 1");
+				assert.equal(iPosition, 1, "and the titel1 is again located at index 1");
 				done();
 			}, this);
 
@@ -120,7 +120,7 @@ jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
 				var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form");
 				var aFormContainers = oSimpleFormForm.getFormContainers();
 				var iPosition = aFormContainers.indexOf(oElementGroup1.getParent());
-				assert.ok(iPosition === 1, "and the titel2 is now located at index 1");
+				assert.equal(iPosition, 1, "and the titel2 is now located at index 1");
 				done();
 			}, this);
 
@@ -147,7 +147,7 @@ jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
 				var oSimpleFormForm = sap.ui.getCore().byId("testView--SimpleForm0--Form");
 				var aFormContainers = oSimpleFormForm.getFormContainers();
 				var iPosition = aFormContainers.indexOf(oElementGroup1.getParent());
-				assert.ok(iPosition === 2, "and the titel2 is again located at index 2");
+				assert.equal(iPosition, 2, "and the titel2 is again located at index 2");
 				done();
 			}, this);
 
@@ -174,9 +174,9 @@ jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
 				var iPositionInput1 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input1"));
 				var iPositionInput2 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input2"));
 
-				assert.ok(iPositionLabel === 4, "and the label1 is now located at index 4");
-				assert.ok(iPositionInput1 === 5, "and the Input1 is now located at index 5");
-				assert.ok(iPositionInput2 === 6, "and the Input2 is now located at index 6");
+				assert.equal(iPositionLabel, 4, "and the label1 is now located at index 4");
+				assert.equal(iPositionInput1, 5, "and the Input1 is now located at index 5");
+				assert.equal(iPositionInput2, 6, "and the Input2 is now located at index 6");
 
 				done();
 			}, this);
@@ -206,9 +206,9 @@ jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
 				var iPositionInput1 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input1"));
 				var iPositionInput2 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input2"));
 
-				assert.ok(iPositionLabel === 2, "and after undo the label1 is again located at index 2");
-				assert.ok(iPositionInput1 === 3, "and after undo the Input1 is again located at index 3");
-				assert.ok(iPositionInput2 === 4, "and after undo the Input2 is again located at index 4");
+				assert.equal(iPositionLabel, 2, "and after undo the label1 is again located at index 2");
+				assert.equal(iPositionInput1, 3, "and after undo the Input1 is again located at index 3");
+				assert.equal(iPositionInput2, 4, "and after undo the Input2 is again located at index 4");
 
 				done();
 			}, this);
@@ -238,12 +238,12 @@ jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
 				var iPositionLabel6 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Label6"));
 				var iPositionInput9 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input9"));
 
-				assert.ok(iPositionLabel1 === 14, "and the label1 is now located at index 14");
-				assert.ok(iPositionInput1 === 15, "and the Input1 is now located at index 15");
-				assert.ok(iPositionInput2 === 16, "and the Input2 is now located at index 16");
+				assert.equal(iPositionLabel1, 14, "and the label1 is now located at index 14");
+				assert.equal(iPositionInput1, 15, "and the Input1 is now located at index 15");
+				assert.equal(iPositionInput2, 16, "and the Input2 is now located at index 16");
 
-				assert.ok(iPositionLabel6 === 17, "and the label6 is still located at index 17");
-				assert.ok(iPositionInput9 === 18, "and the Input1 is still located at index 18");
+				assert.equal(iPositionLabel6, 17, "and the label6 is still located at index 17");
+				assert.equal(iPositionInput9, 18, "and the Input1 is still located at index 18");
 
 				done();
 			}, this);
@@ -276,12 +276,12 @@ jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
 				var iPositionLabel6 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Label6"));
 				var iPositionInput9 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input9"));
 
-				assert.ok(iPositionLabel1 === 2, "and the label1 is again located at index 2");
-				assert.ok(iPositionInput1 === 3, "and the Input1 is again located at index 3");
-				assert.ok(iPositionInput2 === 4, "and the Input2 is again located at index 4");
+				assert.equal(iPositionLabel1, 2, "and the label1 is again located at index 2");
+				assert.equal(iPositionInput1, 3, "and the Input1 is again located at index 3");
+				assert.equal(iPositionInput2, 4, "and the Input2 is again located at index 4");
 
-				assert.ok(iPositionLabel6 === 17, "and the label6 is still located at index 17");
-				assert.ok(iPositionInput9 === 18, "and the Input1 is still located at index 18");
+				assert.equal(iPositionLabel6, 17, "and the label6 is still located at index 17");
+				assert.equal(iPositionInput9, 18, "and the Input1 is still located at index 18");
 
 				done();
 			}, this);
@@ -311,9 +311,9 @@ jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
 				var iPositionInput1 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input1"));
 				var iPositionInput2 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input2"));
 
-				assert.ok(iPositionLabel === 1, "and the label1 is now located at index 1");
-				assert.ok(iPositionInput1 === 2, "and the Input1 is now located at index 2");
-				assert.ok(iPositionInput2 === 3, "and the Input2 is now located at index 3");
+				assert.equal(iPositionLabel, 1, "and the label1 is now located at index 1");
+				assert.equal(iPositionInput1, 2, "and the Input1 is now located at index 2");
+				assert.equal(iPositionInput2, 3, "and the Input2 is now located at index 3");
 
 				done();
 			}, this);
@@ -345,9 +345,9 @@ jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
 				var iPositionInput1 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input1"));
 				var iPositionInput2 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input2"));
 
-				assert.ok(iPositionLabel === 2, "and the label1 is again located at index 2");
-				assert.ok(iPositionInput1 === 3, "and the Input1 is again located at index 3");
-				assert.ok(iPositionInput2 === 4, "and the Input2 is again located at index 4");
+				assert.equal(iPositionLabel, 2, "and the label1 is again located at index 2");
+				assert.equal(iPositionInput1, 3, "and the Input1 is again located at index 3");
+				assert.equal(iPositionInput2, 4, "and the Input2 is again located at index 4");
 
 				done();
 			}, this);
@@ -379,9 +379,9 @@ jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
 				var iPositionInput1 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input1"));
 				var iPositionInput2 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input2"));
 
-				assert.ok(iPositionLabel === 21, "and the label1 is now located at index 21");
-				assert.ok(iPositionInput1 === 22, "and the Input1 is now located at index 22");
-				assert.ok(iPositionInput2 === 23, "and the Input2 is now located at index 23");
+				assert.equal(iPositionLabel, 21, "and the label1 is now located at index 21");
+				assert.equal(iPositionInput1, 22, "and the Input1 is now located at index 22");
+				assert.equal(iPositionInput2, 23, "and the Input2 is now located at index 23");
 
 				done();
 			}, this);
@@ -413,9 +413,9 @@ jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
 				var iPositionInput1 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input1"));
 				var iPositionInput2 = oSimpleFormForm.getContent().indexOf(sap.ui.getCore().byId("testView--Input2"));
 
-				assert.ok(iPositionLabel === 2, "and the label1 is again located at index 2");
-				assert.ok(iPositionInput1 === 3, "and the Input1 is again located at index 3");
-				assert.ok(iPositionInput2 === 4, "and the Input2 is again located at index 4");
+				assert.equal(iPositionLabel, 2, "and the label1 is again located at index 2");
+				assert.equal(iPositionInput1, 3, "and the Input1 is again located at index 3");
+				assert.equal(iPositionInput2, 4, "and the Input2 is again located at index 4");
 
 				done();
 			}, this);
