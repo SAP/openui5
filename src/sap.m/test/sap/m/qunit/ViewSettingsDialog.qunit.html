@@ -1259,6 +1259,17 @@
 					bAllSelected = that.oVSD._filterDetailList.getItems().every(function(oItem) { return oItem.getSelected(); }),
 					bNoItemsSelected;
 
+				that.oVSD.addFilterItem(new sap.m.ViewSettingsFilterItem({
+					key: "myNameFilter11",
+					text: "Name 11",
+					items: [
+						new sap.m.ViewSettingsFilterItem({
+							key: "name11",
+							text: "Station"
+						})
+					]
+				}));
+
 				ok(!bAllSelected, "Not all list items are selected at first");
 
 				//Act
