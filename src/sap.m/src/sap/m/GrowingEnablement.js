@@ -603,7 +603,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 				}
 
 				// at the beginning we should scroll to last item
-				if (bHasScrollToLoad && !this._oScrollPosition  && oControl.getGrowingDirection() == sap.m.ListGrowingDirection.Upwards) {
+				if (bHasScrollToLoad && this._oScrollPosition === undefined && oControl.getGrowingDirection() == sap.m.ListGrowingDirection.Upwards) {
 					this._oScrollPosition = {
 						left : 0,
 						bottom : 0
@@ -616,7 +616,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 						oScrollPosition = this._oScrollPosition;
 
 					oScrollDelegate.scrollTo(oScrollPosition.left, oScrollDelegate.getScrollHeight() - oScrollPosition.bottom);
-					this._oScrollPosition = undefined;
+					this._oScrollPosition = null;
 				}
 			}
 		}
