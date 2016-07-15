@@ -1384,6 +1384,49 @@
 			oLabel2.destroy();
 		});
 
+		QUnit.module("Cancel selection");
+
+		QUnit.test("it should cancel the selection after closing the dialog with close button", function (assert) {
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				phone: true,
+				tablet: false
+			});
+
+			// system under test
+			var oItem1 = new sap.ui.core.Item({
+				text: "Lorem ipsum dolor sit amet, duo ut soleat insolens, commodo vidisse intellegam ne usu"
+			}), oItem2 = new sap.ui.core.Item({
+				text: "Lorem ipsum dolor sit amet, duo ut soleat insolens, commodo vidisse intellegam ne usu"
+			}), oComboBox = new sap.m.ComboBox({
+				items: [
+					oItem1,
+					oItem2
+				]
+			});
+
+			// arrange
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			oComboBox.setSelectedItem(oItem1);
+
+			// act
+			oComboBox.open();
+			this.clock.tick(500);
+
+			assert.strictEqual(oComboBox.getPickerTextField().getValue(), oItem1.getText(), "Picker's textfield should have value as the selected item's text");
+
+			oComboBox.setSelectedItem(oItem2);
+			oComboBox.getPicker().getCustomHeader().getContentRight()[0].firePress();
+			this.clock.tick(500);
+
+			assert.equal(oComboBox.getSelectedItem(), oItem1, "First item should be selected");
+			assert.equal(oComboBox.getValue(), oItem1.getText(), "Value of the combobox should be first item's text");
+
+			oComboBox.destroy();
+		});
+
 		QUnit.module("addItem");
 
 		QUnit.test("addItem()", function(assert) {
@@ -2755,7 +2798,7 @@
 
 			// assert
 			assert.strictEqual(oComboBox.getPickerTextField().getValue(), sExpectedValue);
-			assert.strictEqual(oPicker.getShowHeader(), false, "it should not show the picker header");
+			assert.strictEqual(oPicker.getShowHeader(), true, "it should show the picker header");
 
 			// cleanup
 			oComboBox.destroy();
@@ -2789,14 +2832,14 @@
 
 			// assert
 			assert.ok(oPicker.getShowHeader());
-			assert.strictEqual(oPicker.getTitle(), sExpectedTitle);
+			assert.strictEqual(oComboBox.getPickerTitle().getText(), sExpectedTitle);
 
 			// cleanup
 			oComboBox.destroy();
 			oLabel.destroy();
 		});
 
-		QUnit.test("it should hide the header if the label reference is destroyed", function(assert) {
+		QUnit.test("it should update the header title if the label reference is destroyed", function(assert) {
 
 			this.stub(sap.ui.Device, "system", {
 				desktop: false,
@@ -2828,7 +2871,8 @@
 			oComboBox.open();
 
 			// assert
-			assert.strictEqual(oPicker.getShowHeader(), false);
+			assert.strictEqual(oPicker.getShowHeader(), true);
+			assert.strictEqual(oComboBox.getPickerTitle().getText(), "Select");
 
 			// cleanup
 			oComboBox.destroy();
@@ -3394,7 +3438,7 @@
 
 			// assert
 			assert.ok(oComboBox.aMessageQueue === null);
-
+			assert.ok(oComboBox._oSelectedItemBeforeOpen === null);
 			// cleanup
 			oComboBox.destroy();
 		});
@@ -9627,7 +9671,7 @@
 			// act
 			oPickerTextField.getFocusDomRef().value = "lorem ipsum";
 			sap.ui.qunit.QUnitUtils.triggerEvent("input", oPickerTextFieldDomRef);
-			oComboBox.close();
+			oComboBox.getPicker().getButtons()[0].firePress();
 			this.clock.tick(1000); // tick the clock ahead some 1 second, after the close animation is completed
 
 			// assert

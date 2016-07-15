@@ -4200,6 +4200,39 @@
 		this.clock.reset();
 	});
 
+	test("Cancel selection", function() {
+		// system under test
+		this.stub(sap.ui.Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		var oItem = new sap.ui.core.Item({
+				key : "DZ",
+				text : "Algeria"
+			}),
+			oMultiComboBox = new sap.m.MultiComboBox({
+			items : [oItem]
+		});
+
+		// arrange
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		oMultiComboBox.focus();
+		oMultiComboBox.open();
+		this.clock.tick(500);
+
+		oMultiComboBox.setSelectedItems([oItem]);
+		oMultiComboBox.getPicker().getCustomHeader().getContentRight()[0].firePress();
+
+		strictEqual(oMultiComboBox.getSelectedItems().length, 0, "No items selected after cancel selection");
+
+		// cleanup
+		oMultiComboBox.destroy();
+	});
+
 	module("Accessibility");
 
 	test("getAccessibilityInfo", function() {

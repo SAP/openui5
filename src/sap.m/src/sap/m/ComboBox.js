@@ -267,58 +267,11 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		};
 
 		/**
-		 * Creates an instance of <code>sap.m.Dialog</code>.
+		 * Creates an instance of <code>sap.m.ComboBoxTextField</code>.
 		 *
-		 * @returns {sap.m.Dialog}
+		 * @returns {sap.m.ComboBoxTextField}
 		 * @private
 		 */
-		ComboBox.prototype.createDialog = function() {
-			var that = this;
-			var oTextField = this.createPickerTextField();
-			var oTextFieldHandleEvent = oTextField._handleEvent;
-			oTextField._handleEvent = function(oEvent) {
-				oTextFieldHandleEvent.apply(this, arguments);
-
-				if (/keydown|sapdown|sapup|saphome|sapend|sappagedown|sappageup|input/.test(oEvent.type)) {
-					that._handleEvent(oEvent);
-				}
-			};
-
-			return new Dialog({
-				stretch: true,
-				showHeader: false,
-				subHeader: new Toolbar({
-					content: oTextField
-				}),
-				buttons: [
-					this.createPickerCloseButton()
-				],
-				beforeOpen: function() {
-					that.updatePickerHeaderTitle();
-				},
-				beforeClose: function() {
-					that.updateDomValue(oTextField.getValue());
-					that.onChange();
-				},
-				afterClose: function() {
-
-					// restore the focus to the text filed
-					that.focus();
-				}
-			});
-		};
-
-		ComboBox.prototype.createPickerCloseButton = function() {
-			var that = this;
-			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-			return new Button({
-				text: oResourceBundle.getText("COMBOBOX_CLOSE_BUTTON"),
-				press: function() {
-					that.close();
-				}
-			});
-		};
-
 		ComboBox.prototype.createPickerTextField = function() {
 			var oTextField = new ComboBoxTextField({
 				width: "100%",
@@ -333,27 +286,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 			return oTextField;
 		};
 
-		ComboBox.prototype.updatePickerHeaderTitle = function() {
-			var oPicker = this.getPicker();
-
-			if (!oPicker) {
-				return;
-			}
-
-			var aLabels = this.getLabels();
-
-			if (aLabels.length) {
-				var oLabel = aLabels[0];
-
-				if (oLabel && (typeof oLabel.getText === "function")) {
-					oPicker.setShowHeader(true);
-					oPicker.setTitle(oLabel.getText());
-				}
-			} else {
-				oPicker.setShowHeader(false);
-			}
-		};
-
 		/* =========================================================== */
 		/* Lifecycle methods                                           */
 		/* =========================================================== */
@@ -361,11 +293,20 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		ComboBox.prototype.init = function() {
 			ComboBoxBase.prototype.init.apply(this, arguments);
 			this.bOpenValueStateMessage = true;
+			this._sValueBeforeOpen = "";
+
+			// The last selected item before opening the picker
+			this._oSelectedItemBeforeOpen = null;
 		};
 
 		ComboBox.prototype.onBeforeRendering = function() {
 			ComboBoxBase.prototype.onBeforeRendering.apply(this, arguments);
 			this.synchronizeSelection();
+		};
+
+		ComboBox.prototype.exit = function () {
+			ComboBoxBase.prototype.exit.apply(this, arguments);
+			this._oSelectedItemBeforeOpen = null;
 		};
 
 		ComboBox.prototype.onBeforeRenderingPicker = function() {
@@ -428,9 +369,31 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		ComboBox.prototype.onBeforeOpenDialog = function() {
 			var oPickerTextField = this.getPickerTextField();
 
-			if (oPickerTextField) {
-				oPickerTextField.setValue(this.getValue());
+			this._oSelectedItemBeforeOpen = this.getSelectedItem();
+			this._sValueBeforeOpen = this.getValue();
+
+			if (this.getSelectedItem()) {
+				this.filterItems({
+					property: "text",
+					value: ""
+				});
 			}
+			oPickerTextField.setValue(this._sValueBeforeOpen);
+		};
+
+		ComboBox.prototype.cancelSelection = function() {
+			var sPickerTextFieldValue,
+				oPickerTextField = this.getPickerTextField();
+
+			this.setSelectedItem(this._oSelectedItemBeforeOpen);
+			this.setValue(this._sValueBeforeOpen);
+			if (this.getSelectedItem() === null) {
+				sPickerTextFieldValue = this._sValueBeforeOpen;
+			} else {
+				sPickerTextFieldValue = this._oSelectedItemBeforeOpen.getText();
+			}
+
+			oPickerTextField && oPickerTextField.setValue(sPickerTextFieldValue);
 		};
 
 		/* =========================================================== */
@@ -1312,12 +1275,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 			}
 
 			return ComboBoxBase.prototype.removeAllAssociation.apply(this, arguments);
-		};
-
-		ComboBox.prototype.getPickerTextField = function() {
-			var oPicker = this.getPicker(),
-				oCustomHeader = oPicker.getSubHeader();
-			return oCustomHeader && oCustomHeader.getContent()[0] || null;
 		};
 
 		ComboBox.prototype.clone = function(sIdSuffix) {
