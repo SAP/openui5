@@ -75,7 +75,12 @@ html.sap-desktop .sapContrast.sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable {
 }
 
 .sapMBtn:focus > .sapMBtnEmphasized > .sapMBtnFocusDiv{
-	border-color:    @sapContent_FocusColor;
+	border-color:    @sapUiContentFocusColor;
+}
+
+html.sap-desktop .sapContrast .sapMBtn:focus > .sapMBtnEmphasized > .sapMBtnFocusDiv,
+html.sap-desktop .sapContrast.sapMBtn:focus > .sapMBtnEmphasized > .sapMBtnFocusDiv {
+	border-color:    @sapUiContentContrastFocusColor;
 }
 /* ---------------------------------------------------------------------*/
 /* Disabled and active states:                                          */
