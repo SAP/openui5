@@ -216,7 +216,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 	 *
 	 * @private
 	 */
-	Icon.prototype[Device.support.touch ? "ontap" : "onclick"] = function() {
+	Icon.prototype[Device.support.touch && !Device.system.desktop ? "ontap" : "onclick"] = function() {
 		this.firePress({/* no parameters */});
 	};
 
