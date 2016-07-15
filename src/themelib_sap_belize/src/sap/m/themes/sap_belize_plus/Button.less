@@ -17,3 +17,16 @@ div.sapMBtnInner.sapMBtnReject,
 div.sapMBtnInner.sapMBtnAccept {
 	text-shadow:      0 1px 0 fade(@sapUiContentShadowColor, 50);
 }
+
+html.sap-desktop .sapContrastPlus .sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable,
+html.sap-desktop .sapContrastPlus.sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable {
+	outline-color:    @sapUiContentContrastFocusColor;
+}
+
+/* ---------------------------------------------------------------------*/
+/* Custom focus outline for IE and Edge:                                */
+/* ---------------------------------------------------------------------*/
+html.sap-desktop .sapContrastPlus .sapMBtn:focus > .sapMBtnEmphasized > .sapMBtnFocusDiv,
+html.sap-desktop .sapContrastPlus.sapMBtn:focus > .sapMBtnEmphasized > .sapMBtnFocusDiv {
+	border-color:    @sapUiContentContrastFocusColor;
+}
