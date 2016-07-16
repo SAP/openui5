@@ -432,12 +432,17 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 				var oSelectedItem = this.getSelectedItem(),
 					sValue = oEvent.target.value,
 					bEmptyValue = sValue === "",
-					oControl = oEvent.srcControl;
+					oControl = oEvent.srcControl,
+					aVisibleItems;
 
-				var aVisibleItems = this.filterItems({
-					property: "text",
-					value: sValue
-				}, this.getItems());
+				if (bEmptyValue && !this.bOpenedByKeyboardOrButton) {
+					aVisibleItems = this.getItems();
+				} else {
+					aVisibleItems = this.filterItems({
+						property: "text",
+						value: sValue
+					});
+				}
 
 				var bItemsVisible = !!aVisibleItems.length;
 				var oFirstVisibleItem = aVisibleItems[0]; // first item that matches the value
@@ -473,14 +478,14 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 					}
 				}
 
-				if (bItemsVisible || (bItemsVisible && bEmptyValue)) {
-
-					if (bToggleOpenState) {
+				if (bItemsVisible) {
+					if (bEmptyValue && !this.bOpenedByKeyboardOrButton) {
+						this.close();
+					} else if (bToggleOpenState) {
 						this.open();
 						this.scrollToItem(this.getSelectedItem());
 					}
 				} else if (this.isOpen()) {
-
 					if (bToggleOpenState) {
 						this.close();
 					}
@@ -1091,6 +1096,9 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 
 			// remove the active state of the control's field
 			this.removeStyleClass(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed");
+
+			// reset opener
+			this.bOpenedByKeyboardOrButton = false;
 		};
 
 		/**
