@@ -3665,6 +3665,13 @@
         "type": "FIX",
         "text": "thirdparty.crossroads: hash \"Page12\" shouldn\u0027t match pattern \"Page1/:context:\"",
         "references": []
+      },
+      {
+        "id": "b491ebdc550c60d0f010007f52e0ba7aef3dc4c4",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Element: popup-like controls should always be removed from the DOM on destroy.",
+        "references": []
       }
     ]
   }
