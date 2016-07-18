@@ -285,6 +285,16 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner.sapMBtnReject {
 .sapMIBar-CTX .sapMBtnTransparent {
 	color:            @sapUiButtonLiteTextColor;
 	text-shadow:      none;
+	border: @sapUiButtonLiteBorderColor;
+}
+
+//active transparent button in a footer
+.sapMIBar-CTX.sapMFooter-CTX :not(.sapMBtnDisabled) {
+	.sapMBtnTransparent.sapMBtnActive {
+		background-color: @sapUiButtonLiteActiveBackground;
+		color: @sapUiButtonActiveTextColor;
+		border: @sapUiButtonLiteActiveBorderColor;
+	}
 }
 
 .sapMIBar-CTX .sapMBtnDisabled,
