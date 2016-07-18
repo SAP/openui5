@@ -24,14 +24,18 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.SalesOrders.Main", {
 		_setSalesOrderBindingContext : function (oSalesOrderContext) {
-			var oView = this.getView();
+			var oView = this.getView(),
+				oUIModel = oView.getModel("ui");
 
-			oView.byId("ObjectPage").setBindingContext(oSalesOrderContext);
-			oView.byId("SupplierContactData").setBindingContext(undefined);
-			oView.byId("SupplierDetailsForm").setBindingContext(undefined);
+			oUIModel.setProperty("/bSalesOrderSelected", !!oSalesOrderContext);
 			if (!oSalesOrderContext) {
 				oView.byId("SalesOrders").removeSelections();
 			}
+			oView.byId("ObjectPage").setBindingContext(oSalesOrderContext);
+
+			oUIModel.setProperty("/bLineItemSelected", false);
+			oView.byId("SupplierContactData").setBindingContext(undefined);
+			oView.byId("SupplierDetailsForm").setBindingContext(undefined);
 		},
 
 		onCancelSalesOrder : function (oEvent) {
@@ -91,7 +95,7 @@ sap.ui.define([
 			if (oEvent.getId() === "dataReceived") {
 				if (oSource.getPath() === "/SalesOrderList") {
 					oSource.getCurrentContexts().forEach(function (oContext) {
-						aSalesOrderIDs.push(oContext.getProperty("SalesOrderID"));
+						aSalesOrderIDs.push(oContext && oContext.getProperty("SalesOrderID"));
 					});
 					jQuery.sap.log.info("Current SalesOrderIDs: " + aSalesOrderIDs.join(", "),
 						null, "sap.ui.core.sample.odata.v4.SalesOrders.Main.controller");
@@ -106,29 +110,52 @@ sap.ui.define([
 			}
 		},
 
-		onDeleteSalesOrder : function (oEvent) {
-			var oSalesOrderContext = oEvent.getSource().getBindingContext(),
-				// oModel = oSalesOrderContext.getModel(),
-				sMessage,
-				sOrderID;
-				// oView = this.getView();
+		onDeleteSalesOrder : function () {
+			var sMessage,
+				sOrderID,
+				oTable = this.getView().byId("SalesOrders"),
+				oSalesOrderContext = oTable.getSelectedItem().getBindingContext(),
+				that = this;
 
 			function onConfirm(sCode) {
 				if (sCode !== 'OK') {
 					return;
 				}
-				MessageBox.alert("Not yet implemented");
-//					TODO the code will be needed when "remove" is implemented
-//					MessageBox.alert("Deleted Sales Order: " + sOrderID,
-//						{icon : MessageBox.Icon.SUCCESS, title : "Success"});
-//					oView.byId("SalesOrderLineItems").setBindingContext(undefined);
-//					oView.byId("SupplierContactData").setBindingContext(undefined);
+				// Use "$auto" or "$direct" just like selected when creating the model
+				oSalesOrderContext["delete"](oSalesOrderContext.getModel().getUpdateGroupId())
+					.then(function () {
+						that._setSalesOrderBindingContext();
+						MessageBox.alert("Deleted Sales Order " + sOrderID,
+							{icon : MessageBox.Icon.SUCCESS, title : "Success"});
+					}, function (oError) {
+						MessageBox.alert("Could not delete Sales Order " + sOrderID + ": "
+							+ oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
+					});
 			}
+
 			sOrderID = oSalesOrderContext.getProperty("SalesOrderID", true);
 			sMessage = "Do you really want to delete: " + sOrderID
 				+ ", Gross Amount: " + oSalesOrderContext.getProperty("GrossAmount", true)
 				+ " " + oSalesOrderContext.getProperty("CurrencyCode", true) + "?";
 			MessageBox.confirm(sMessage, onConfirm, "Sales Order Deletion");
+		},
+
+		onDeleteSalesOrderSchedule : function (oEvent) {
+			var oView = this.getView(),
+				oTable = oView.byId("SalesOrderSchedules"),
+				oScheduleContext = oTable.getSelectedItem().getBindingContext();
+
+			// Special case: Delete an entity deeply nested in the cache
+			oScheduleContext["delete"](oScheduleContext.getModel().getUpdateGroupId())
+				.then(function () {
+					oTable.removeSelections();
+					oView.getModel("ui").setProperty("/bScheduleSelected", false);
+					MessageBox.alert("Deleted Sales Order Schedule",
+						{icon : MessageBox.Icon.SUCCESS, title : "Success"});
+				}, function (oError) {
+					MessageBox.alert("Could not delete Sales Order Schedule: "
+						+ oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
+				});
 		},
 
 		onFilter : function (oEvent) {
@@ -224,15 +251,15 @@ sap.ui.define([
 		},
 
 		onSalesOrderSchedules : function (oEvent) {
-			this.getView().byId("SalesOrderSchedulesDialog").open();
+			var oView = this.getView();
+
+			oView.byId("SalesOrderSchedules").removeSelections();
+			oView.getModel("ui").setProperty("/bScheduleSelected", false);
+			oView.byId("SalesOrderSchedulesDialog").open();
 		},
 
 		onSalesOrdersSelect : function (oEvent) {
-			var oUIModel = this.getView().getModel("ui");
 			this._setSalesOrderBindingContext(oEvent.getParameters().listItem.getBindingContext());
-			oUIModel.setProperty("/bSalesOrderSelected", true);
-			oUIModel.setProperty("/bLineItemSelected", false);
-
 		},
 
 		onSalesOrderLineItemSelect : function (oEvent) {
@@ -242,6 +269,10 @@ sap.ui.define([
 			oView.byId("SupplierContactData").setBindingContext(oSalesOrderLineItemContext);
 			oView.byId("SupplierDetailsForm").setBindingContext(oSalesOrderLineItemContext);
 			oView.getModel("ui").setProperty("/bLineItemSelected", true);
+		},
+
+		onSalesOrderScheduleSelect : function (oEvent) {
+			this.getView().getModel("ui").setProperty("/bScheduleSelected", true);
 		},
 
 		onSaveSalesOrder : function () {

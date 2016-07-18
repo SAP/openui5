@@ -14,7 +14,7 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 		sMimeHeaders = "\r\nContent-Type: application/http\r\n"
 			+ "Content-Transfer-Encoding: binary\r\n\r\nHTTP/1.1 ",
 		sRealOData = jQuery.sap.getUriParameters().get("realOData"),
-		rRequestLine = /^GET (\S+) HTTP\/1\.1$/,
+		rRequestLine = /^(GET|DELETE) (\S+) HTTP\/1\.1$/,
 		bProxy = sRealOData === "true" || sRealOData === "proxy",
 		bRealOData = bProxy || sRealOData === "direct",
 		TestUtils;
@@ -128,18 +128,23 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 		},
 
 		/**
-		 * Activates a sinon fake server in the given sandbox. The fake server responds only to
-		 * those GET requests given in the fixture and POST requests with a path ending on
-		 * "/$batch". It is automatically restored when the sandbox is restored.
+		 * Activates a sinon fake server in the given sandbox. The fake server responds to those
+		 * GET requests given in the fixture, POST requests with a path ending on "/$batch" and all
+		 * DELETE requests regardless of the path. It is automatically restored when the sandbox is
+		 * restored.
 		 *
 		 * The function uses <a href="http://sinonjs.org/docs/">Sinon.js</a> and expects that it
 		 * has been loaded.
 		 *
 		 * The requests ending on "/$batch" are handled automatically. They are expected to be
-		 * multipart-mime requests where each part is a GET request. The response has a
+		 * multipart-mime requests where each part is a GET or DELETE request. The response has a
 		 * multipart-mime message containing responses to these inner requests. If an inner request
-		 * is not a GET, its URL is not found in the fixture, or its message is not JSON, it is
-		 * responded with an error code. The batch itself is always responded with code 200.
+		 * is not a DELETE with any URL, a GET and its URL is not found in the fixture, or its
+		 * message is not JSON, it is responded with an error code. The batch itself is always
+		 * responded with code 200.
+		 *
+		 * DELETE requests are always responded with code 204 ("No Data"), also when they are part
+		 * of a multipart-mime request.
 		 *
 		 * @param {object} oSandbox
 		 *   a Sinon sandbox as created using <code>sinon.sandbox.create()</code>
@@ -181,8 +186,10 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 					sRequestPart = sRequestPart.slice(sRequestPart.indexOf("\r\n\r\n") + 4);
 					sRequestLine = firstLine(sRequestPart);
 					aMatches = rRequestLine.exec(sRequestLine);
-					aResponse = aMatches && mUrls[sServiceBase + aMatches[1]];
-					if (Array.isArray(aResponse)) {
+					aResponse = aMatches && mUrls[sServiceBase + aMatches[2]];
+					if (aMatches && aMatches[1] === "DELETE") {
+						sResponse += "204 No Data\r\n\r\n\r\n";
+					} else if (Array.isArray(aResponse)) {
 						try {
 							sResponse += "200 OK\r\nContent-Type: application/json;"
 								+ "IEEE754compatible=true;odata.metadata=minimal\r\n"
@@ -290,7 +297,9 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 					fnRestore.apply(this, arguments); // call the original restore
 				};
 
-				// set up a filter so that other requests (e.g. from jQuery.sap.require) go through
+				// Set up a filter so that other requests (e.g. from jQuery.sap.require) go through.
+				// This filter additionally recognizes DELETE and $batch requests and adds rules
+				// for them on-the-fly.
 				sinon.xhr.supportsCORS = jQuery.support.cors;
 				sinon.FakeXMLHttpRequest.useFilters = true;
 				sinon.FakeXMLHttpRequest.addFilter(function (sMethod, sUrl, bAsync) {
@@ -298,6 +307,10 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 
 					if (sUrl in mUrls) {
 						return false;
+					}
+					if (sMethod === "DELETE") {
+						mUrls[sUrl] = [204, {}, ""];
+						oServer.respondWith("DELETE", sUrl, mUrls[sUrl]);
 					}
 					if (rBatch.test(sUrl)) {
 						fnBatch = batch.bind(null, sUrl.slice(0, sUrl.indexOf("/$batch") + 1),

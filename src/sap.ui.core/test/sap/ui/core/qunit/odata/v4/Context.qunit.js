@@ -125,7 +125,7 @@ sap.ui.require([
 
 		this.mock(_Helper).expects("buildPath").withExactArgs(42, sPath).returns("~bar~");
 		this.mock(_ODataHelper).expects("hasPendingChanges")
-			.withExactArgs(oBinding, undefined, "~bar~").returns(oResult);
+			.withExactArgs(sinon.match.same(oBinding), undefined, "~bar~").returns(oResult);
 
 		assert.strictEqual(oContext.hasPendingChanges(sPath), oResult);
 	});
@@ -137,7 +137,8 @@ sap.ui.require([
 			sPath = "bar";
 
 		this.mock(_Helper).expects("buildPath").withExactArgs(42, sPath).returns("~bar~");
-		this.mock(_ODataHelper).expects("resetChanges").withExactArgs(oBinding, undefined, "~bar~");
+		this.mock(_ODataHelper).expects("resetChanges")
+			.withExactArgs(sinon.match.same(oBinding), undefined, "~bar~");
 
 		oContext.resetChanges(sPath);
 	});
@@ -430,7 +431,7 @@ sap.ui.require([
 	QUnit.test("requestCanonicalPath", function (assert) {
 		var oContext = Context.create(null, null, "/EMPLOYEES/42"),
 			oPromise,
-			oSyncPromise = _SyncPromise.resolve(Promise.resolve("/EMPLOYEES(ID='1')"));
+			oSyncPromise = _SyncPromise.resolve(Promise.resolve("/EMPLOYEES('1')"));
 
 		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs().returns(oSyncPromise);
 
@@ -440,25 +441,25 @@ sap.ui.require([
 		assert.ok(oPromise instanceof Promise);
 
 		return oPromise.then(function (oResult) {
-			assert.deepEqual(oResult, "/EMPLOYEES(ID='1')");
+			assert.deepEqual(oResult, "/EMPLOYEES('1')");
 		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("getCanonicalPath: success", function (assert) {
 		var oContext = Context.create(null, null, "/EMPLOYEES/42"),
-			oSyncPromise = _SyncPromise.resolve("/EMPLOYEES(ID='1')");
+			oSyncPromise = _SyncPromise.resolve("/EMPLOYEES('1')");
 
 		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs().returns(oSyncPromise);
 
 		//code under test
-		assert.strictEqual(oContext.getCanonicalPath(), "/EMPLOYEES(ID='1')");
+		assert.strictEqual(oContext.getCanonicalPath(), "/EMPLOYEES('1')");
 	});
 
 	//*********************************************************************************************
 	QUnit.test("getCanonicalPath: unresolved", function (assert) {
 		var oContext = Context.create(null, null, "/EMPLOYEES/42"),
-			oSyncPromise = _SyncPromise.resolve(Promise.resolve("/EMPLOYEES(ID='1')"));
+			oSyncPromise = _SyncPromise.resolve(Promise.resolve("/EMPLOYEES('1')"));
 
 		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs().returns(oSyncPromise);
 
@@ -523,5 +524,97 @@ sap.ui.require([
 
 		// code under test
 		assert.strictEqual(oContext.getUpdateGroupId(), sResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("delete: success", function (assert) {
+		var oBinding = {
+				_delete : function () {}
+			},
+			oModel = {},
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
+
+		this.mock(oContext).expects("requestCanonicalPath")
+			.withExactArgs().returns(Promise.resolve("/EMPLOYEES('1')"));
+		this.mock(oBinding).expects("_delete")
+			.withExactArgs("myGroup", "EMPLOYEES('1')", oContext)
+			.returns(Promise.resolve());
+
+		// code under test
+		return oContext["delete"]("myGroup").then(function (oResult) {
+			assert.strictEqual(oResult, undefined);
+			assert.strictEqual(oContext.oBinding, oBinding);
+			assert.strictEqual(oContext.oModel, oModel);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("delete: failure", function (assert) {
+		var oBinding = {
+				_delete : function () {}
+			},
+			oError = new Error(),
+			oModel = {},
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
+
+		this.mock(oContext).expects("requestCanonicalPath")
+			.withExactArgs().returns(Promise.resolve("/EMPLOYEES('1')"));
+		this.mock(oBinding).expects("_delete")
+			.withExactArgs(undefined, "EMPLOYEES('1')", oContext)
+			.returns(Promise.reject(oError));
+
+		// code under test
+		return oContext.delete().then(function () {
+			assert.ok(false);
+		}, function (oError0) {
+			assert.strictEqual(oError0, oError);
+			assert.strictEqual(oContext.getBinding(), oBinding);
+			assert.strictEqual(oContext.getIndex(), 42);
+			assert.strictEqual(oContext.getModel(), oModel);
+			assert.strictEqual(oContext.getPath(), "/EMPLOYEES/42");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("delete: failure in requestCanonicalPath", function (assert) {
+		var oError = new Error(),
+			oContext = Context.create(null, null, "/EMPLOYEES/42", 42);
+
+		this.mock(oContext).expects("requestCanonicalPath")
+			.withExactArgs().returns(Promise.reject(oError));
+
+		// code under test
+		return oContext.delete().then(function () {
+			assert.ok(false);
+		}, function (oError0) {
+			assert.strictEqual(oError0, oError);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("destroy", function (assert) {
+		var oModel = {
+				getDependentBindings : function () {}
+			},
+			oBinding1 = {
+				setContext : function () {}
+			},
+			oBinding2 = {
+				setContext : function () {}
+			},
+			oParentBinding = {},
+			oContext = Context.create(oModel, oParentBinding, "/EMPLOYEES/42", 42);
+
+		this.mock(oModel).expects("getDependentBindings")
+			.withExactArgs(sinon.match.same(oContext))
+			.returns([oBinding1, oBinding2]);
+		this.mock(oBinding1).expects("setContext").withExactArgs(undefined);
+		this.mock(oBinding2).expects("setContext").withExactArgs(undefined);
+
+		// code under test
+		oContext.destroy();
+
+		assert.strictEqual(oContext.oBinding, undefined);
+		assert.strictEqual(oContext.oModel, undefined);
 	});
 });

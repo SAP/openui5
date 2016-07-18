@@ -279,65 +279,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[undefined, "?foo=bar"].forEach(function (sQuery) {
-		QUnit.skip("remove", function (assert) {
-			var sEtag = 'W/"19770724000000.0000000"',
-				oModel = createModel(sQuery),
-				sPath = "/EMPLOYEES/0",
-				oContext = Context.create(oModel, null, sPath);
-
-			this.mock(oModel.oRequestor).expects("request")
-				.withExactArgs("DELETE", "EMPLOYEES(ID='1')" + oModel._sQuery, undefined,
-					{"If-Match" : sEtag})
-				.returns(Promise.resolve(undefined));
-			this.mock(oContext).expects("fetchValue").withExactArgs("@odata.etag")
-				.returns(Promise.resolve(sEtag));
-			this.stub(oModel.getMetaModel(), "requestCanonicalUrl",
-				function (sServiceUrl, sPath0, oContext0) {
-					assert.strictEqual(sServiceUrl, "",
-						"no service URL, return resource path only");
-					assert.strictEqual(sPath0, sPath);
-					assert.strictEqual(oContext0, oContext);
-					return Promise.resolve("EMPLOYEES(ID='1')");
-				});
-
-			return oModel.remove(oContext).then(function (oResult) {
-				assert.strictEqual(oResult, undefined);
-			}, function (oError) {
-				assert.ok(false);
-			});
-		});
-	});
-	//TODO trigger update in case of isConcurrentModification?!
-	//TODO do it anyway? what and when to return, result of remove vs. re-read?
-
-	//*********************************************************************************************
-	[404, 500].forEach(function (iStatus) {
-		QUnit.skip("remove: map 404 to 200, status: " + iStatus, function (assert) {
-			var oError = new Error(""),
-				oModel = createModel(),
-				oContext = Context.create(oModel, null, "/EMPLOYEES/0");
-
-			oError.status = iStatus;
-			this.mock(oContext).expects("fetchValue").withExactArgs("@odata.etag")
-				.returns(Promise.resolve('W/""'));
-			this.stub(oModel.getMetaModel(), "requestCanonicalUrl")
-				.returns(Promise.resolve(getServiceUrl("/EMPLOYEES(ID='1')")));
-			this.stub(oModel.oRequestor, "request")
-				.returns(Promise.reject(oError));
-
-			return oModel.remove(oContext)
-				.then(function (oResult) {
-					assert.strictEqual(oResult, undefined);
-					assert.ok(iStatus === 404, "unexpected success");
-				}, function (oError0) {
-					assert.strictEqual(oError0, oError);
-					assert.ok(iStatus !== 404, JSON.stringify(oError0));
-				});
-		});
-	});
-
-	//*********************************************************************************************
 	QUnit.test("requestCanonicalPath", function (assert) {
 		var oModel = createModel(),
 			oEntityContext = Context.create(oModel, null, "/EMPLOYEES/42");
@@ -730,13 +671,13 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getDependentBindings", function (assert) {
+	QUnit.test("getDependentBindings: binding", function (assert) {
 		var oModel = createModel(),
 			oParentBinding = {},
 			oContext = Context.create(oModel, oParentBinding, "/absolute"),
 			oBinding = new Binding(oModel, "relative", oContext);
 
-		assert.deepEqual(oModel.getDependentBindings(), []);
+		assert.deepEqual(oModel.getDependentBindings(oParentBinding), []);
 
 		// to be called by V4 binding's c'tors
 		oModel.bindingCreated(oBinding);
@@ -756,6 +697,25 @@ sap.ui.require([
 			// missing bindingCreated() or duplicate call
 			oModel.bindingDestroyed(oBinding);
 		}, new Error("Unknown " + oBinding));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getDependentBindings: context", function (assert) {
+		var oModel = createModel(),
+			oParentContext = Context.create(oModel, null, "/absolute"),
+			oBinding = new Binding(oModel, "relative", oParentContext);
+
+		assert.deepEqual(oModel.getDependentBindings(oParentContext), []);
+
+		// to be called by V4 binding's c'tors
+		oModel.bindingCreated(oBinding);
+
+		assert.deepEqual(oModel.getDependentBindings(oParentContext), [oBinding]);
+
+		// to be called by V4 binding's destroy() method
+		oModel.bindingDestroyed(oBinding);
+
+		assert.deepEqual(oModel.getDependentBindings(oParentContext), []);
 	});
 });
 // TODO constructor: test that the service root URL is absolute?

@@ -1233,7 +1233,8 @@ sap.ui.require([
 			.withExactArgs(undefined, oPropertyBinding);
 		this.oSandbox.mock(PropertyBinding.prototype).expects("destroy").on(oPropertyBinding)
 			.withExactArgs("foo", 42);
-		this.oSandbox.mock(this.oModel).expects("bindingDestroyed").withExactArgs(oPropertyBinding);
+		this.oSandbox.mock(this.oModel).expects("bindingDestroyed")
+			.withExactArgs(sinon.match.same(oPropertyBinding));
 
 		oPropertyBinding.destroy("foo", 42);
 	});
@@ -1248,7 +1249,8 @@ sap.ui.require([
 		this.oSandbox.mock(oContext).expects("deregisterChange")
 			.withExactArgs("Name", oPropertyBinding);
 		this.oSandbox.mock(PropertyBinding.prototype).expects("destroy").on(oPropertyBinding);
-		this.oSandbox.mock(this.oModel).expects("bindingDestroyed").withExactArgs(oPropertyBinding);
+		this.oSandbox.mock(this.oModel).expects("bindingDestroyed")
+			.withExactArgs(sinon.match.same(oPropertyBinding));
 
 		oPropertyBinding.destroy();
 	});
@@ -1257,7 +1259,8 @@ sap.ui.require([
 	QUnit.test("destroy: relative binding unresolved", function (assert) {
 		var oPropertyBinding = this.oModel.bindProperty("PRODUCT_2_BP");
 
-		this.oSandbox.mock(this.oModel).expects("bindingDestroyed").withExactArgs(oPropertyBinding);
+		this.oSandbox.mock(this.oModel).expects("bindingDestroyed")
+			.withExactArgs(sinon.match.same(oPropertyBinding));
 
 		oPropertyBinding.destroy();
 	});

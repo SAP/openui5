@@ -1561,7 +1561,7 @@ sap.ui.require([
 			fnHasPendingChanges = _ODataHelper.hasPendingChanges;
 
 		this.mock(oBinding.oModel).expects("getDependentBindings").atLeast(1)
-			.withExactArgs(oBinding).returns([oChild1, oChild2]);
+			.withExactArgs(sinon.match.same(oBinding)).returns([oChild1, oChild2]);
 		[false, true].forEach(function (bAskParent) {
 			oCacheMock.expects("hasPendingChanges").withExactArgs("").returns(true);
 			oHelperMock.expects("hasPendingChanges").never();
@@ -1571,15 +1571,18 @@ sap.ui.require([
 				"cache returns true, bAskParent=" + bAskParent);
 
 			oCacheMock.expects("hasPendingChanges").withExactArgs("").returns(false);
-			oHelperMock.expects("hasPendingChanges").withExactArgs(oChild1, false).returns(true);
+			oHelperMock.expects("hasPendingChanges").withExactArgs(sinon.match.same(oChild1), false)
+				.returns(true);
 
 			// code under test
 			assert.strictEqual(fnHasPendingChanges(oBinding, bAskParent), true,
 				"child1 returns true, bAskParent=" + bAskParent);
 
 			oCacheMock.expects("hasPendingChanges").withExactArgs("").returns(false);
-			oHelperMock.expects("hasPendingChanges").withExactArgs(oChild1, false).returns(false);
-			oHelperMock.expects("hasPendingChanges").withExactArgs(oChild2, false).returns(false);
+			oHelperMock.expects("hasPendingChanges").withExactArgs(sinon.match.same(oChild1), false)
+				.returns(false);
+			oHelperMock.expects("hasPendingChanges").withExactArgs(sinon.match.same(oChild2), false)
+				.returns(false);
 
 			// code under test
 			assert.strictEqual(fnHasPendingChanges(oBinding, bAskParent), false,
@@ -1602,7 +1605,7 @@ sap.ui.require([
 			oResult = {};
 
 		this.mock(oBinding.oModel).expects("getDependentBindings").atLeast(1)
-			.withExactArgs(oBinding).returns([]);
+			.withExactArgs(sinon.match.same(oBinding)).returns([]);
 
 		//code under test
 		assert.strictEqual(_ODataHelper.hasPendingChanges(oBinding, false), false);
@@ -1682,11 +1685,11 @@ sap.ui.require([
 			fnResetChanges = _ODataHelper.resetChanges;
 
 		this.mock(oBinding.oModel).expects("getDependentBindings").atLeast(1)
-			.withExactArgs(oBinding).returns([oChild1, oChild2]);
+			.withExactArgs(sinon.match.same(oBinding)).returns([oChild1, oChild2]);
 		[false, true].forEach(function (bAskParent) {
 			oCacheMock.expects("resetChanges").withExactArgs("");
-			oHelperMock.expects("resetChanges").withExactArgs(oChild1, false);
-			oHelperMock.expects("resetChanges").withExactArgs(oChild2, false);
+			oHelperMock.expects("resetChanges").withExactArgs(sinon.match.same(oChild1), false);
+			oHelperMock.expects("resetChanges").withExactArgs(sinon.match.same(oChild2), false);
 
 			// code under test
 			fnResetChanges(oBinding, bAskParent);
@@ -1707,7 +1710,7 @@ sap.ui.require([
 			oContextMock = this.mock(oContext);
 
 		this.mock(oBinding.oModel).expects("getDependentBindings").atLeast(1)
-			.withExactArgs(oBinding).returns([]);
+			.withExactArgs(sinon.match.same(oBinding)).returns([]);
 
 		//code under test
 		_ODataHelper.resetChanges(oBinding, false);
@@ -1762,7 +1765,7 @@ sap.ui.require([
 			.returns(aDiff);
 
 		// code under test
-		return _ODataHelper.requestDiff(oBinding, aResult, 1, 3).then(function (aDiff0) {
+		return _ODataHelper.requestDiff(oBinding, aResult, 1, 2).then(function (aDiff0) {
 			assert.deepEqual(oBinding.aPreviousData, [{"Category" : "C0", "ID" : "ID0"},
 				{"Category" : "C1", "ID" : "ID1"}, {"Category" : "C2", "ID" : "ID2"}]);
 			assert.strictEqual(aDiff0, aDiff);
@@ -1777,7 +1780,7 @@ sap.ui.require([
 			};
 
 		// code under test
-		return _ODataHelper.requestDiff(oBinding, undefined, 1, 100).then(function (aDiff0) {
+		return _ODataHelper.requestDiff(oBinding, undefined, 0, 100).then(function (aDiff0) {
 			assert.strictEqual(oBinding.aPreviousData, aPreviousData);
 			assert.deepEqual(aDiff0, []);
 		});
@@ -1785,14 +1788,15 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("requestDiff, result is shorter", function (assert) {
-		var oBinding = {
+		var aPreviousData = [{"ID" : "ID0a"}, {"ID" : "ID1a"}],
+			oBinding = {
 				oContext : {},
 				oModel : {
 					getMetaModel : function () {},
 					resolve : function () {}
 				},
 				sPath : "EMPLOYEE_2_EQUIPMENTS",
-				aPreviousData : [{"ID" : "ID0a"}, {"ID" : "ID1a"}]
+				aPreviousData : aPreviousData.slice()
 			},
 			aDiff = [/*some diff*/],
 			oKeyPromise = Promise.resolve(["ID"]),
@@ -1814,7 +1818,7 @@ sap.ui.require([
 		oMetaModelMock.expects("fetchObject").withExactArgs("$Type/$Key", oMetaContext)
 			.returns(oKeyPromise);
 		this.mock(jQuery.sap).expects("arraySymbolDiff")
-			.withExactArgs([{"ID" : "ID0a"}], aNewData)
+			.withExactArgs(aPreviousData, aNewData)
 			.returns(aDiff);
 
 		// code under test
@@ -1864,7 +1868,7 @@ sap.ui.require([
 					oFixture.logDetails, "sap.ui.model.odata.v4.ODataListBinding");
 
 			// code under test
-			return _ODataHelper.requestDiff(oBinding, aResult, 1).then(function (aDiff0) {
+			return _ODataHelper.requestDiff(oBinding, aResult, 1, 2).then(function (aDiff0) {
 				assert.deepEqual(oBinding.aPreviousData, []);
 				assert.strictEqual(aDiff0, undefined);
 			});
@@ -1889,7 +1893,7 @@ sap.ui.require([
 			.returns(aDiff);
 
 		// code under test
-		return _ODataHelper.requestDiff(oBinding, aResult, 1).then(function (aDiff0) {
+		return _ODataHelper.requestDiff(oBinding, aResult, 1, 2).then(function (aDiff0) {
 			assert.deepEqual(oBinding.aPreviousData, ["s0 previous", "s1 new", "s2 new"]);
 			assert.strictEqual(aDiff0, aDiff);
 		});
