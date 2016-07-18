@@ -303,12 +303,10 @@
 
 	module("Column operations", {
 		setup: function() {
-			this.clock = sinon.useFakeTimers();
 			createTable();
 		},
 		teardown: function() {
 			destroyTable();
-			this.clock.restore();
 		}
 	});
 
@@ -410,7 +408,6 @@
 		var oColumn = oTable.getColumns()[1],
 			sResizeHandlerId = oTable.getId() + '-rsz';
 
-		this.clock.tick(1000);
 		var iResizeHandlerLeftInitial = jQuery("#" + sResizeHandlerId).position().left;
 		// resizer should be way out of screen when the table gets rendered
 		equals(iResizeHandlerLeftInitial, "0", "Resizer is at the correct initial position");
@@ -443,7 +440,6 @@
 		// columns which are not resizeable should not be considered when the resizer gets positioned
 		oTable.getColumns()[1].setResizable(false);
 		sap.ui.getCore().applyChanges();
-		this.clock.tick(1000);
 
 		var oParams = {};
 		oParams.clientX = Math.floor(oColumn.getDomRef().getBoundingClientRect().left + 10);
@@ -465,7 +461,6 @@
 	});
 
 	test("AutomaticColumnResize", function(){
-		this.clock.tick(1000);
 
 		expect(2);
 		var oColumn = oTable.getColumns()[1];
@@ -480,7 +475,6 @@
 
 		qutils.triggerMouseEvent(resizer, "click");
 		qutils.triggerMouseEvent(resizer, "click");
-		this.clock.tick(1000);
 		/*var newSize = oTable._calculateAutomaticColumnWidth(1);
 		equals(oColumn.getWidth(), newSize + "px", "check column width after resize");*/
 	});
@@ -508,7 +502,6 @@
 
 	module("Navigation Paginator", {
 		setup: function() {
-			this.clock = sinon.useFakeTimers();
 			createTable({
 				navigationMode: sap.ui.table.NavigationMode.Paginator,
 				visibleRowCount: 13
@@ -516,12 +509,10 @@
 		},
 		teardown: function() {
 			destroyTable();
-			this.clock.restore();
 		}
 	});
 
 	test("After initialization", function() {
-		this.clock.tick(1000);
 		var $table = oTable.$();
 		equal($table.find('#table-paginator').length, 0, 'The paginator does not exist - OK, since it is deprecated');
 
@@ -531,7 +522,6 @@
 		oTable.setProperty("navigationMode", sap.ui.table.NavigationMode.Paginator);
 		equal(oTable.getNavigationMode(), sap.ui.table.NavigationMode.Paginator , "Set navigationMode via generic setProperty sill works");
 		sap.ui.getCore().applyChanges();
-		this.clock.tick(1000);
 		$table = oTable.$();
 		equal($table.find('#table-paginator').length, 1, 'Paginator is getting rendered when navigationMode is set by setProperty');
 		oTable._oPaginator.getDomRef("-lastPageLink").click();
@@ -540,7 +530,7 @@
 
 	module("VisibleRowcountMode Auto", {
 		setup: function() {
-			document.getElementById("qunit-fixture").style.height = "800px";
+			
 			createTable({
 				visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Auto
 			});
@@ -562,30 +552,26 @@
 		};
 
 		oTable.attachEventOnce("_rowsUpdated", fnTest);
+		document.getElementById("qunit-fixture").style.height = "800px";
 	});
 
 	module("VisibleRowcountMode Interactive", {
 		setup: function() {
-			this.clock = sinon.useFakeTimers();
 			createTable({
 				visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Interactive
 			});
 		},
 		teardown: function() {
 			destroyTable();
-			this.clock.restore();
 		}
 	});
 
 	test("After initialization", function(){
-		this.clock.tick(1000);
 		var $table = oTable.$();
 		equals($table.find('.sapUiTableHeightResizer').length, 1, "The handle to resize the table is visible");
 	});
 
 	test("Resize", function(){
-		this.clock.tick(1000);
-
 		oTable._isTouchMode = function() {
 			return false;
 		};
@@ -600,14 +586,11 @@
 		qutils.triggerMouseEvent(oResizer[0], "mousemove", 1, 1, oResizerOffset.left, oResizerOffset.top + 180, 0 );
 		qutils.triggerMouseEvent(oResizer[0], "mouseup", 1, 1, oResizerOffset.left, oResizerOffset.top + 180, 0 );
 
-		this.clock.tick(1000);
-
 		equals(oTable.getVisibleRowCount(), 16, "Row count of 16 expected. Has: " + oTable.getVisibleRowCount());
 	});
 
 	module("Fixed columns", {
 		setup: function() {
-			this.clock = sinon.useFakeTimers();
 			createTable({
 				fixedColumnCount: 2,
 				width: '500px'
@@ -615,12 +598,10 @@
 		},
 		teardown: function() {
 			destroyTable();
-			this.clock.restore();
 		}
 	});
 
 	test("After initialization", function(){
-		this.clock.tick(1000);
 		var $table = oTable.$();
 		equals(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
 		equals($table.find('.sapUiTableCtrlFixed .sapUiTableCtrlCol th').length, 3, "Fixed tabled has 3 Columns");
@@ -631,7 +612,6 @@
 	test("Hide one column in fixed area", function() {
 		oTable.getColumns()[1].setVisible(false);
 		sap.ui.getCore().applyChanges();
-		this.clock.tick(1000);
 		var $table = oTable.$();
 		equals(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
 		equals($table.find('.sapUiTableCtrlFixed .sapUiTableCtrlCol th').length, 2, "Fixed tabled has 2 Columns");
@@ -642,7 +622,6 @@
 	test("Hide one column in scroll area", function() {
 		oTable.getColumns()[5].setVisible(false);
 		sap.ui.getCore().applyChanges();
-		this.clock.tick(1000);
 		var $table = oTable.$();
 		equals(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
 		equals($table.find('.sapUiTableCtrlFixed .sapUiTableCtrlCol th').length, 3, "Fixed tabled has 6 Columns");
@@ -655,9 +634,7 @@
 		oTable.setWidth("400px");
 
 		sap.ui.getCore().applyChanges();
-
-		this.clock.tick(1000);
-
+		
 		equals(oTable.getFixedColumnCount(), 0, "No Fixed Columns used");
 		equals(oTable.getProperty("fixedColumnCount"), 3, "Orignal fixed column count is 3");
 
@@ -665,14 +642,11 @@
 
 		sap.ui.getCore().applyChanges();
 
-		this.clock.tick(1000);
-
 		equals(oTable.getFixedColumnCount(), 3, "Fixed Column Count is 3 again");
 	});
 
 	module("API assertions", {
 		setup: function() {
-			this.clock = sinon.useFakeTimers();
 			createTable({
 				visibleRowCount: 10,
 				width: "100px",
@@ -681,7 +655,6 @@
 		},
 		teardown: function () {
 			destroyTable();
-			this.clock.restore();
 		}
 	});
 
@@ -699,7 +672,6 @@
 
 	module("Fixed rows and columns", {
 		setup: function() {
-			this.clock = sinon.useFakeTimers();
 			createTable({
 				fixedRowCount: 2,
 				fixedColumnCount: 2,
@@ -708,12 +680,10 @@
 		},
 		teardown: function () {
 			destroyTable();
-			this.clock.restore();
 		}
 	});
 
 	test("After initialization", function() {
-		this.clock.tick(1000);
 		var $table = oTable.$();
 		equals(oTable.getFixedRowCount(), 2, "Fixed row count correct");
 		equals($table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowFixed .sapUiTableCtrlCol th').length, 3, "Top left tabled has 3 Columns");
@@ -729,7 +699,6 @@
 
 	module("Fixed top and bottom rows and columns", {
 		setup: function() {
-			this.clock = sinon.useFakeTimers();
 			createTable({
 				fixedRowCount: 2,
 				fixedBottomRowCount: 2,
@@ -739,12 +708,10 @@
 		},
 		teardown: function () {
 			destroyTable();
-			this.clock.restore();
 		}
 	});
 
 	test("After initialization", function() {
-		this.clock.tick(1000);
 		var $table = oTable.$();
 		equals(oTable.getFixedRowCount(), 2, "Fixed row count correct");
 		equals(oTable.getFixedBottomRowCount(), 2, "Fixed bottom row count correct");
@@ -928,7 +895,6 @@
 
 	module("Multiple header rows", {
 		setup: function() {
-			this.clock = sinon.useFakeTimers();
 			createTable({}, function(oTable) {
 				var oControl = new sap.ui.commons.TextView().bindProperty("text", "lastName");
 				var oColumn = new sap.ui.table.Column({multiLabels: [
@@ -947,7 +913,6 @@
 		},
 		teardown: function () {
 			destroyTable();
-			this.clock.restore();
 		}
 	});
 
@@ -956,7 +921,6 @@
 	});
 
 	test("Equal widths", 3, function() {
-		this.clock.tick(1000);
 		var $Table = jQuery.sap.byId("table");
 		var $Head1 = $Table.find(".sapUiTableColHdr:eq(0)");
 		var $Head2 = $Table.find(".sapUiTableColHdr:eq(1)");
