@@ -50,8 +50,8 @@
 						authorName="Patricia Clark"
 						authorPicture="test-resources/sap/m/images/female_BaySu.jpg">
 					<buttons>
-						<Button text="Accept" type="Accept" press="onAcceptPress"></Button>
-						<Button text="Reject" type="Reject" press="onRejectPress"></Button>
+						<Button text="Accept" type="Accept" press="onAcceptPress" icon="sap-icon://accept"></Button>
+						<Button text="Reject" type="Reject" press="onRejectPress" icon="sap-icon://sys-cancel"></Button>
 					</buttons>
 				</NotificationListItem>
 
