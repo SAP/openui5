@@ -498,5 +498,31 @@
         "references": []
       }
     ]
+  },
+  "1.40.2": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "d3b537f8c173a7d33ed1e196b006094bc5d5f8db",
+        "author": "Mihail Yordanov \u003cmihail.yordanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader disabled state cursor fixed",
+        "references": []
+      },
+      {
+        "id": "83e9868137ef81e966b98c5657aa89b7dc8feab2",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: current item of type MenuTextFieldItem does not lost focus in IE and Edge anymore.",
+        "references": []
+      },
+      {
+        "id": "43fc963ddae9b0d193c2f89903a426367f1cfb5f",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Shell: Fix search area line-height",
+        "references": []
+      }
+    ]
   }
 }

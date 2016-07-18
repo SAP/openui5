@@ -1121,5 +1121,38 @@
         "references": []
       }
     ]
+  },
+  "1.40.2": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "b35f1a66d9d4aadb08b35094d4e2b98f66089611",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.Select: add \"valueState\" property",
+        "references": []
+      },
+      {
+        "id": "ad683101a8f91ce141bcf9c8777060de13b33a61",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input: The input field in an InputListItem is more recognizable now",
+        "references": []
+      },
+      {
+        "id": "3466e221497492c7ac3306f2c05395ce2eb3e8e7",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: ObjectAttribute is verticaly aligned correctly",
+        "references": []
+      },
+      {
+        "id": "a14ba608f9a5ae3ac7628ae8946e5bc7f9526eaa",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: Fix focus visualization on group headers",
+        "references": []
+      }
+    ]
   }
 }
