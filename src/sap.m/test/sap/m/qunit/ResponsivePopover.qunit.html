@@ -328,7 +328,7 @@
 				assert.ok(true, "This is expected to pass because custom property is only set on ResponsivePopover itself and not on aggregated controls");
 		});
 
-		QUnit.test("ResponsivepPopover should pass the data from the binded model to the inner control", function (assert) {
+		QUnit.test("ResponsivePopover should pass the data from the binded model to the inner control", function (assert) {
 			// Arrange
 			this.oResponsivePopover = new sap.m.ResponsivePopover();
 			this.oResponsivePopover.setModel(oSimpleJSONModel);
@@ -343,6 +343,22 @@
 
 			// Assert
 			assert.equal(this.oResponsivePopover._oControl.getTitle(), "Title", "Title should be passed to inner popover");
+		});
+
+		QUnit.test("ResponsivePopover with ariaLabelledBy", function (assert) {
+			// Arrange
+			var sInvTextId = "invisibleText",
+				oInvText = new sap.ui.core.InvisibleText(sInvTextId, {text: "Additional Label"});
+			this.oResponsivePopover = new sap.m.ResponsivePopover();
+			this.oResponsivePopover.addAriaLabelledBy(sInvTextId);
+
+			// Act
+			this.oResponsivePopover.openBy(this.oButton);
+			this.clock.tick(500);
+
+			// Assert
+			// The Popover or the Dialog could have some additional logic for the aria-labelledby attribute. Therefore, we only need to assure that the additional ID is added to the attribute.
+			assert.ok(this.oResponsivePopover.getDomRef().getAttribute('aria-labelledby').indexOf(sInvTextId) !== -1, "should contain the id of the invisible label in the aria-labelledby attribute");
 		});
 
 		</script>
