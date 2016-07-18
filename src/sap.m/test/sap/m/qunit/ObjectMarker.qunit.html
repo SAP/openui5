@@ -403,6 +403,43 @@
 					"it's properties");
 		});
 
+		module("AdditionalInfo");
+
+		test("Setter and getter", function () {
+			// Arrange
+			var oMarker = new sap.m.ObjectMarker();
+
+			// Assert
+			strictEqual(oMarker.getAdditionalInfo(), "", "The default additional info value of the API should be an empty string");
+
+			// Act
+			oMarker.setAdditionalInfo("by John Doe");
+
+			// Assert
+			strictEqual(oMarker.getProperty("additionalInfo"), "by John Doe", "Previously set additional info should be retrieved");
+			strictEqual(oMarker.getAdditionalInfo(), "by John Doe", "Previously set additional info should be retrieved");
+		});
+
+		test("Rendering", function () {
+			// Arrange
+			var oMarker = new sap.m.ObjectMarker({
+				additionalInfo: "by John Doe"
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			strictEqual(oMarker.$().children().length, 0, "There should be nothing rendered without a type applied");
+
+			// Act
+			oMarker.setType(sap.m.ObjectMarkerType.Locked);
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			strictEqual(oMarker.$().children().length, 1, "There rendered content when type is applied");
+			strictEqual(oMarker.$().text(), "Locked by John Doe", "The rendered text in the element should " +
+					"include the text representation of the status set concatenated with the additional info");
+		});
+
 	</script>
 </head>
 <body>
