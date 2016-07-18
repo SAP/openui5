@@ -78,7 +78,7 @@
 				jQuery.sap.focus(jQuery.sap.domById("But1"));
 				setTimeout(function() {
 					equal(jQuery.sap.byId("But3").children("img").attr('src'), "../images/sb/tiles_hover.png", "Button selected: Use iconHovered instead of icon even it has no focus!");
-					equal(jQuery.sap.byId("But1").children("img").attr('src'), "../images/sb/list_hover.png", "Button hovered: Use iconHovered when focused!");
+					equal(jQuery.sap.byId("But1").children("img").attr('src'), "../images/sb/list.png", "Button hovered: Use icon when focused!");
 					start();
 				},500);
 			},500);
