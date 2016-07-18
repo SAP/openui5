@@ -13,7 +13,7 @@
 			var contextPath = "/" + window.location.pathname.split("/")[1];
 
 			function addTestPage(sUrl) {
-				suite.addTestPage(contextPath + sUrl + "?noglobals=true&sap-ui-animation=false&sap-ui-debug=true");
+				suite.addTestPage(contextPath + sUrl + "?noglobals=true&sap-ui-animation=false");
 			}
 
 			addTestPage("/test-resources/sap/ui/core/qunit/gherkin/DataTableUtils.qunit.html");

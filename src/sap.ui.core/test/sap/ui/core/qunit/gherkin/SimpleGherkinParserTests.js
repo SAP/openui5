@@ -12,6 +12,7 @@ sap.ui.require([
   QUnit.module("Simple Gherkin Parser Tests", {
 
     setup: function() {
+      QUnit.dump.maxDepth = 15;
       this.parser = simpleGherkinParser;
     }
 
@@ -280,7 +281,7 @@ sap.ui.require([
 
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  QUnit.test("given feature has single column table should not parse as matrix", function() {
+  QUnit.test("given feature has single column table then parse as 1D list", function() {
 
     var text = [
       "Feature: Give cups of coffee to users",
@@ -309,6 +310,66 @@ sap.ui.require([
         },{
           text: "they should all have their moods changed",
           keyword: "Then"
+        }]
+      }]
+    });
+
+  });
+
+
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  QUnit.test("given feature has single row table then parse as 1D list", function() {
+
+    var text = [
+      "Feature: Give cups of coffee to users",
+      "",
+      "  Scenario: Coffee changes people moods",
+      "    Given all the following people drink coffee:",
+      "",
+      "      | Michael | Elvis | John |",
+      ""
+    ].join("\n");
+
+    deepEqual(this.parser.parse(text), {
+      tags: [],
+      name: "Give cups of coffee to users",
+      scenarios: [{
+        tags: [],
+        name: "Coffee changes people moods",
+        steps: [{
+          text: "all the following people drink coffee:",
+          keyword: "Given",
+          data: ["Michael", "Elvis", "John"]
+        }]
+      }]
+    });
+
+  });
+
+
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  QUnit.test("given feature has single element table then parse as list with one element", function() {
+
+    var text = [
+      "Feature: Give cups of coffee to users",
+      "",
+      "  Scenario: Coffee changes people moods",
+      "    Given all the following people drink coffee:",
+      "",
+      "      | Michael |",
+      ""
+    ].join("\n");
+
+    deepEqual(this.parser.parse(text), {
+      tags: [],
+      name: "Give cups of coffee to users",
+      scenarios: [{
+        tags: [],
+        name: "Coffee changes people moods",
+        steps: [{
+          text: "all the following people drink coffee:",
+          keyword: "Given",
+          data: ["Michael"]
         }]
       }]
     });

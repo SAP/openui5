@@ -231,7 +231,12 @@ sap.ui.define([
      */
     _generateFeatureTest: function() {
 
-      var aTestScenarios = this._oFeature.scenarios.map(function(oScenario) {
+      var aExpandedScenarios = [];
+      this._oFeature.scenarios.forEach(function(oScenario) {
+        aExpandedScenarios = aExpandedScenarios.concat(this._expandScenarioOutline(oScenario));
+      }, this);
+
+      var aTestScenarios = aExpandedScenarios.map(function(oScenario) {
         return this._generateTestScenario(oScenario, this._oFeature.background);
       }, this);
 
@@ -252,8 +257,54 @@ sap.ui.define([
     },
 
     /**
-     * Prepares an executable test scenario based on a Gherkin document's scenario, also covering the somewhat more
-     * complicated case of scenario outlines. Handles skipping "@wip" scenarios.
+     * Expands a scenario outline into 1 or more concrete scenarios. Each concrete scenario will have "#1", "#2", etc.
+     * appended to its text to differentiate it.
+     *
+     * @param {Scenario} oScenario - a Gherkin scenario that may or may not be a scenario outline
+     * @returns {Scenario[]} - an array of 1 or more scenarios. If the input was a scenario outline, then the output
+     *                         is an array of 1 or more concrete scenarios that implement that outline. One concrete
+     *                         scenario is generated per example specified in the feature file. If the input was a
+     *                         regular scenario, then the return value is an array with 1 element: the inputed
+     *                         scenario.
+     * @private
+     */
+    _expandScenarioOutline: function(oScenario) {
+
+      // if this is not a scenario outline
+      if (!oScenario.examples) {
+        // then don't change anything
+        return [oScenario];
+      }
+
+      // else this is a scenario outline
+      var aExamples = this._convertScenarioExamplesToListOfObjects(oScenario.examples);
+
+      // create a concrete scenario from each example in the scenario outline
+      var aConcreteScenarios = aExamples.map(function(oExample, i) {
+
+        var oScenarioCopy = $.extend(true, {}, oScenario);
+        oScenarioCopy.name += " #" + (i + 1);
+
+        // for each variable specified for this concrete example
+        $.each(oExample, function(sVariableName, sVariableValue) {
+
+          // for each test step in the scenario
+          oScenarioCopy.steps.forEach(function(oStep) {
+            // in the scenario text, replace all occurences of the variable with the concrete value
+            var sEscapedVariableName = $.sap.escapeRegExp(sVariableName);
+            oStep.text = oStep.text.replace(new RegExp("<" + sEscapedVariableName + ">", "g"), sVariableValue);
+          });
+        });
+
+        return oScenarioCopy;
+      }, this);
+
+      return aConcreteScenarios;
+    },
+
+    /**
+     * Prepares an executable test scenario based on a Gherkin document's scenario. Handles skipping "@wip" scenarios
+     * and skipping unmatched tests.
      *
      * @param {Scenario} oScenario - the Gherkin scenario for which to generate tests
      * @param {Scenario} oBackground - the Gherkin background scenario that must be run before each regular scenario
@@ -271,31 +322,10 @@ sap.ui.define([
 
       if (oBackground) {
         aTestSteps = this._generateTestSteps(bWip, oBackground, false);
-        bSkip = (!aTestSteps[0].isMatch);
+        bSkip = aTestSteps.some(function(oTestStep) {return !oTestStep.isMatch;});
       }
 
-      if (bIsScenarioOutline) {
-        var aExamples = this._convertScenarioExamplesToListOfObjects(oScenario.examples);
-
-        // for each concrete example to be generated
-        aExamples.forEach(function(oExample) {
-
-          var oScenarioCopy = $.extend(true, {}, oScenario);
-
-          // for each variable specified for this concrete example (the Feature file data table)
-          $.each(oExample, function(sVariableName, sVariableValue) {
-            oScenarioCopy.steps.forEach(function(oStep) {
-              // in the Scenario text, replace all occurences of the variable with the concrete value
-              var sEscapedVariableName = $.sap.escapeRegExp(sVariableName);
-              oStep.text = oStep.text.replace(new RegExp("<" + sEscapedVariableName + ">", "g"), sVariableValue);
-            });
-          });
-
-          aTestSteps = aTestSteps.concat(this._generateTestSteps(bWip, oScenarioCopy, bSkip));
-        }, this);
-      } else {
-        aTestSteps = aTestSteps.concat(this._generateTestSteps(bWip, oScenario, bSkip));
-      }
+      aTestSteps = aTestSteps.concat(this._generateTestSteps(bWip, oScenario, bSkip));
 
       return {
         name: sScenarioName,

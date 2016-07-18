@@ -125,10 +125,20 @@ sap.ui.define(["jquery.sap.global"], function ($) {
           }
           oStep.data = oStep.data || [];
           oStep.data.push(vData);
-          continue;
         }
 
       }
+
+      // Convert any one-row tables into 1D arrays
+      oFeature.scenarios.forEach(function(oScenario) {
+        oScenario.steps.forEach(function(oStep) {
+          // if the data table has only one row
+          if ($.isArray(oStep.data) && (oStep.data.length === 1) && ($.type(oStep.data[0]) === "array")) {
+            // then convert into a 1D array
+            oStep.data = oStep.data[0];
+          }
+        });
+      });
 
       return oFeature;
     },
@@ -141,6 +151,7 @@ sap.ui.define(["jquery.sap.global"], function ($) {
      *                         assumed and should not be included.
      * @returns {object} the parsed Gherkin feature object
      * @see {@link #parse}
+     * @see {@link jQuery.sap#registerModulePath}
      * @public
      * @function
      * @static
@@ -152,7 +163,7 @@ sap.ui.define(["jquery.sap.global"], function ($) {
       }
 
       // Interpret the path as a standard SAPUI5 module path
-      var sPath = $.sap.getModulePath(sPath, ".feature");
+      sPath = $.sap.getModulePath(sPath, ".feature");
 
       var oResult = $.sap.sjax({
         url: sPath,
