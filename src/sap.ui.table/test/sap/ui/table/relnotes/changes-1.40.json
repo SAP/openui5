@@ -1086,5 +1086,17 @@
         "references": []
       }
     ]
+  },
+  "1.40.2": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "a14ba608f9a5ae3ac7628ae8946e5bc7f9526eaa",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: Fix focus visualization on group headers",
+        "references": []
+      }
+    ]
   }
 }

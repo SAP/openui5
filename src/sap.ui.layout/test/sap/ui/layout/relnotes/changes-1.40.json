@@ -351,5 +351,38 @@
         "references": []
       }
     ]
+  },
+  "1.40.2": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "23b8a0de4501bd91847962d0477aef6a2a42b02c",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "AssociativeSplitter: Overriding calculation functions to make the Splitter responsive",
+        "references": []
+      },
+      {
+        "id": "6eaf8e407b59036f4cb3c2ccebf0ff27c092a70b",
+        "author": "Peter Trebing \u003cpeter.trebing@sap.com\u003e",
+        "type": "FIX",
+        "text": "fixes unhide/move problems",
+        "references": []
+      },
+      {
+        "id": "30a6080d6d51c00623f39120d6770d9ce66f7132",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.FixFlex: Fix content size issue in IE9",
+        "references": []
+      },
+      {
+        "id": "cd14842e26dd8baccc661e2b4039646b6257e6b7",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.FixFlex: The fixed and the flexible part are no longer overlapping in Chrome",
+        "references": []
+      }
+    ]
   }
 }

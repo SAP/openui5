@@ -3571,5 +3571,101 @@
         "references": []
       }
     ]
+  },
+  "1.40.2": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "4fcb98b46b8efb6d4d82d3b09d82d8300a85d6df",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Configuration: allow to set multiple properties at once",
+        "references": []
+      },
+      {
+        "id": "bd2df67a94dab4767c7de1c2589cf5bbe8235a04",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "LabelEnablement: fix invalidation issue of associated controls",
+        "references": []
+      },
+      {
+        "id": "37e4675d82403ff41683b339b45cb378d2e7bc35",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "ManagedObject: Don\u0027t destroy tree aggregation with template",
+        "references": []
+      },
+      {
+        "id": "3eceedb83664db80c956f7e633658dd505d9063a",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "MockServer: failing requests in changeset should return response",
+        "references": []
+      },
+      {
+        "id": "b60af373fe38717dd5235d5c4598582841f1c93c",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Opa5 controlType combined with id and ViewName was broken",
+        "references": []
+      },
+      {
+        "id": "68944ae4d0c78a953d109b94ef6f6333c137addf",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "XMLTemplateProcessor: Ignore empty binding property",
+        "references": []
+      },
+      {
+        "id": "c7a810b83bd2b1cfa0933d91b6b03a79b8ed504b",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.BusyIndicator: Fixed positioning of animation for RTL-mode",
+        "references": []
+      },
+      {
+        "id": "d6b0fb261833d7620bbcd8e57d6be95852b7dac8",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.Popup: Check in \u0027onAfterRendering\u0027 extended",
+        "references": []
+      },
+      {
+        "id": "e367074298af1a698b4955ee07b8327840993ecb",
+        "author": "Jiawei \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Icon: Icon should listen to click event on combi device",
+        "references": []
+      },
+      {
+        "id": "f7190b845584e85e0a62ba0eb8713d6deb03503a",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.util.File: Wrong data-url delimiter",
+        "references": []
+      },
+      {
+        "id": "202ce648a57fddbe2af70b93a17adb5a6fbec210",
+        "author": "Uwe Reeder \u003cuwe.reeder@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.type.String: null handling",
+        "references": []
+      },
+      {
+        "id": "521c241aa33a64af5e05f2ae8c04c3a258849bcb",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.test.opaQUnit stop Opa on QUnit timeout",
+        "references": []
+      },
+      {
+        "id": "622fee8666142bca4577164c297b0b250570c8f2",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "thirdparty.crossroads: hash \"Page12\" shouldn\u0027t match pattern \"Page1/:context:\"",
+        "references": []
+      }
+    ]
   }
 }
