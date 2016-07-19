@@ -257,6 +257,9 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 			// indicate whether the items are updated
 			this.bItemsUpdated = false;
 
+			// indicates if the picker is opened by the keyboard or by a click on the arrow button
+			this.bOpenedByKeyboardOrButton = false;
+
 			this.bProcessingLoadItemsEvent = false;
 			this.iLoadItemsEventInitialProcessingTimeoutID = -1;
 			this.aMessageQueue = [];
@@ -335,6 +338,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 			var CSS_CLASS = this.getRenderer().CSS_CLASS_COMBOBOXBASE,
 				oControl = oEvent.srcControl;
 
+
 			// in case of a non-editable or disabled combo box, the picker popup cannot be opened
 			if (!this.getEnabled() || !this.getEditable()) {
 				return;
@@ -350,6 +354,9 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 					this.removeStyleClass(CSS_CLASS + "Pressed");
 					return;
 				}
+
+				// flag if the button or keyboard have been used for opening the picker
+				this.bOpenedByKeyboardOrButton = true;
 
 				this.loadItems();
 				this.open();
@@ -372,7 +379,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		ComboBoxBase.prototype.onsapshow = function(oEvent) {
-
 			// in case of a non-editable or disabled combo box, the picker popup cannot be opened
 			if (!this.getEnabled() || !this.getEditable()) {
 				return;
@@ -393,6 +399,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 
 			this.selectText(0, this.getValue().length); // select all text
 			this.loadItems();
+			this.bOpenedByKeyboardOrButton = true;
 			this.open();
 		};
 
