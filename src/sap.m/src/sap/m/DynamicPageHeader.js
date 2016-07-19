@@ -80,12 +80,6 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		};
 
 		/*************************************** Lifecycle members ******************************************/
-		DynamicPageHeader.prototype.onBeforeRendering = function () {
-			if (this.getPinnable()) {
-				this._getPinButton().addAriaLabelledBy(this._getARIAInvisibleText());
-			}
-		};
-
 		DynamicPageHeader.prototype.onAfterRendering = function () {
 			this._initARIAState();
 			this._initPinButtonARIAState();
@@ -166,30 +160,13 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		 * @private
 		 */
 		DynamicPageHeader.prototype._updateARIAPinButtonState = function (bPinned) {
-			var oInvisibleText = this._getARIAInvisibleText();
+			var oPinBtn = this._getPinButton();
 
 			if (bPinned) {
-				oInvisibleText.setText(DynamicPageHeader.ARIA.LABEL_UNPINNED);
+				oPinBtn.setTooltip(DynamicPageHeader.ARIA.LABEL_UNPINNED);
 			} else {
-				oInvisibleText.setText(DynamicPageHeader.ARIA.LABEL_PINNED);
+				oPinBtn.setTooltip(DynamicPageHeader.ARIA.LABEL_PINNED);
 			}
-		};
-
-		/**
-		 * Lazily loads ARIA sap.ui.core.InvisibleText for the given translation text
-		 *
-		 * @param {String} sARIAText the ARIA announcement text
-		 * @returns {Object} the InvisibleText control
-		 * @private
-		 */
-		DynamicPageHeader.prototype._getARIAInvisibleText = function () {
-			if (!this._oInvisibleText) {
-				this._oInvisibleText = new InvisibleText({
-					text: DynamicPageHeader.ARIA.LABEL_PINNED
-				}).toStatic();
-			}
-
-			return this._oInvisibleText;
 		};
 
 		/**
@@ -202,6 +179,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 				var oPinButton = new ToggleButton({
 					id: this.getId() + "-pinBtn",
 					icon: "sap-icon://pushpin-off",
+					tooltip: DynamicPageHeader.ARIA.LABEL_PINNED,
 					type: ButtonType.Transparent,
 					press: this._pinUnpinFireEvent.bind(this)
 				});
