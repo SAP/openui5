@@ -555,40 +555,6 @@
 		document.getElementById("qunit-fixture").style.height = "800px";
 	});
 
-	module("VisibleRowcountMode Interactive", {
-		setup: function() {
-			createTable({
-				visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Interactive
-			});
-		},
-		teardown: function() {
-			destroyTable();
-		}
-	});
-
-	test("After initialization", function(){
-		var $table = oTable.$();
-		equals($table.find('.sapUiTableHeightResizer').length, 1, "The handle to resize the table is visible");
-	});
-
-	test("Resize", function(){
-		oTable._isTouchMode = function() {
-			return false;
-		};
-
-		equals(oTable.getVisibleRowCount(), 10, "Row count of 10");
-
-		var $table = oTable.$();
-		var oResizer = $table.find('.sapUiTableHeightResizer');
-		var oResizerOffset = oResizer.offset();
-
-		qutils.triggerMouseEvent(oResizer[0], "mousedown", 1, 1, oResizerOffset.left, oResizerOffset.top, 0 );
-		qutils.triggerMouseEvent(oResizer[0], "mousemove", 1, 1, oResizerOffset.left, oResizerOffset.top + 180, 0 );
-		qutils.triggerMouseEvent(oResizer[0], "mouseup", 1, 1, oResizerOffset.left, oResizerOffset.top + 180, 0 );
-
-		equals(oTable.getVisibleRowCount(), 16, "Row count of 16 expected. Has: " + oTable.getVisibleRowCount());
-	});
-
 	module("Fixed columns", {
 		setup: function() {
 			createTable({
