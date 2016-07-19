@@ -1481,8 +1481,6 @@ sap.ui.require([
 		});
 	});
 
-	// TODO handle encoding in getQueryOptions
-
 	//*********************************************************************************************
 	QUnit.test("(de)registerBinding", function (assert) {
 		var oBinding = {},
@@ -1833,6 +1831,30 @@ sap.ui.require([
 				assert.deepEqual(oBinding.aPreviousData, []);
 				assert.strictEqual(aDiff0, undefined);
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestDiff, bDetectUpdates=true", function (assert) {
+		var oBinding = {
+				bDetectUpdates : true,
+				aPreviousData : ["s0 previous", "s1 previous"]
+			},
+			aDiff = [/*some diff*/],
+			oJSONMock = this.mock(JSON),
+			aResult = [{"Category" : "C1", "ID" : "ID1", "Name" : "N1"},
+				{"Category" : "C2", "ID" : "ID2", "Name" : "N2"}];
+
+		oJSONMock.expects("stringify").withExactArgs(aResult[0]).returns("s1 new");
+		oJSONMock.expects("stringify").withExactArgs(aResult[1]).returns("s2 new");
+		this.mock(jQuery.sap).expects("arraySymbolDiff")
+			.withExactArgs(["s1 previous"], ["s1 new", "s2 new"])
+			.returns(aDiff);
+
+		// code under test
+		return _ODataHelper.requestDiff(oBinding, aResult, 1).then(function (aDiff0) {
+			assert.deepEqual(oBinding.aPreviousData, ["s0 previous", "s1 new", "s2 new"]);
+			assert.strictEqual(aDiff0, aDiff);
 		});
 	});
 });

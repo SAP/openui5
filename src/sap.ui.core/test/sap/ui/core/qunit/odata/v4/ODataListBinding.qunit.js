@@ -2091,8 +2091,6 @@ sap.ui.require([
 			});
 		});
 	});
-	//TODO enableExtendedChangeDetection(/*bDetectUpdates*/true, /*vKey*/ undefined)
-	//TODO enableExtendedChangeDetection(/*bDetectUpdates*/*, /*vKey*/ !=undefined)
 
 	//*********************************************************************************************
 	QUnit.test("Extended change detection, requestDiff fails", function (assert) {
@@ -2208,6 +2206,25 @@ sap.ui.require([
 
 		// code under test: no data for *next* page fires change event (bLengthFinal changes)
 		oBinding.createContexts({start : 50, length : 30}, 0, "Reason", false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("enableExtendedChangeDetection", function (assert) {
+		var oBinding = this.oModel.bindList("/EMPLOYEES"),
+			bDetectUpdates = true;
+
+		assert.throws(function () {
+			// code under test : disallow key
+			oBinding.enableExtendedChangeDetection(bDetectUpdates, "ID");
+		}, new Error("Unsupported property 'key' with value 'ID' in binding info for "
+				+ "sap.ui.model.odata.v4.ODataListBinding: /EMPLOYEES"));
+
+		this.mock(ListBinding.prototype).expects("enableExtendedChangeDetection").on(oBinding)
+			.withExactArgs(bDetectUpdates)
+			.returns("foo");
+
+		// code under test
+		assert.strictEqual(oBinding.enableExtendedChangeDetection(bDetectUpdates), "foo");
 	});
 });
 //TODO integration: 2 entity sets with same $expand, but different $select
