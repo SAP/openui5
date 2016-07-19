@@ -1030,6 +1030,39 @@
 				]
 			});
 
+			var dialogWithTwoSimpleForms = new sap.m.Dialog('twoSimpleFormsDialog', {
+				title : "Contact Support",
+				contentWidth : "29.6rem",
+				leftButton : new sap.m.Button("twoSimpleFormsDialogSendBtn", {
+					text: "Send",
+					enabled: false
+				}),
+				rightButton : new sap.m.Button("twoSimpleFormsDialogCancelBtn", {
+					text: "Cancel",
+					press: function () {
+						dialogWithTwoSimpleForms.close();
+					}
+				}),
+				initialFocus : "textArea",
+				content : [
+					new sap.ui.layout.form.SimpleForm("topForm", {
+						editable: false,
+						content: [
+							new sap.m.TextArea("textArea", {
+								rows: 7,
+								placeholder: "BCP: 1670080757 \nBCP: 1670197927"
+							})
+						]
+					}),
+					new sap.ui.layout.form.SimpleForm("bottomForm", {
+						editable: false,
+						content: [
+							new sap.m.Link({text: "Show technical data"})
+						]
+					})
+				]
+			});
+
 
 			//Added as result of Internal Incident 1570901570
 			var oDialogWithOUTSettedWidthInRTL = new sap.m.Dialog({
@@ -1470,6 +1503,14 @@
 								dynamicContentDialogData.isVisible = true;
 								model.setData(dynamicContentDialogData);
 							}, 1500);
+						}
+					}),
+
+					new sap.m.Button({
+						text: "Dialog with two simple forms",
+						width: _buttonWidth,
+						press: function() {
+							dialogWithTwoSimpleForms.open();
 						}
 					})
 				]

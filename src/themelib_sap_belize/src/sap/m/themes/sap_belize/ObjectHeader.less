@@ -5,12 +5,20 @@
 .sapMOH.sapMOHBgTranslucent,
 .sapMOHC.sapMOHBgTranslucent,
 .sapMOH.sapMOHBgSolid,
-.sapMOHC.sapMOHBgSolid,
-.sapMOH.sapMOHBgTransparent,
-.sapMOHC.sapMOHBgTransparent {
+.sapMOHC.sapMOHBgSolid {
 	background-color: @sapUiObjectHeaderBackground;
 	border-bottom: 0.125rem solid darken(@sapUiObjectHeaderBackground, 8);
 	box-shadow: @sapUiShadowHeader;
+}
+
+.sapMOHC.sapMOHBgTranslucent,
+.sapMOHC.sapMOHBgSolid {
+	border: none;
+	box-shadow: none;
+}
+.sapMOH.sapMOHBgTransparent,
+.sapMOHC.sapMOHBgTransparent {
+	background: transparent;
 }
 
 .sapMOHIntro {
@@ -150,9 +158,12 @@ html[data-sap-ui-browser ^= "ie"] {
 }
 
 .sapMOHR.sapMOHRBgSolid,
-.sapMOHR.sapMOHRBgTransparent,
 .sapMOHR.sapMOHRBgTranslucent {
 	background: @sapUiObjectHeaderBackground;
+}
+
+.sapMOHR.sapMOHRBgTransparent {
+	background: transparent;
 }
 
 .sapMOHRTitle h1 {
@@ -225,6 +236,10 @@ html.sap-desktop .sapMOHRTitleArrow .sapUiIcon:hover {
 
 html[data-sap-ui-browser ^= "ie"] {
 	.sapMOHR {
+		.sapMOHRTitleDiv {
+			padding-bottom: 0.125rem;
+		}
+
 		.sapMOHRTitleText {
 			border: 1px solid transparent;
 			margin-top: 0.125rem;
@@ -297,7 +312,7 @@ html[data-sap-ui-browser ^= "ie"] {
 }
 
 .sapMOHRStatus .sapMObjStatusNone .sapMObjStatusText {
-	color: @sapUiBaseText;
+	color: @sapUiNeutralText;
 }
 .sapMOHRStatus .sapMObjStatusSuccess .sapMObjStatusText {
 	color: @sapUiPositiveText;

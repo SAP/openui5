@@ -285,7 +285,7 @@
 
 			oRealCore.oConfiguration.preload = 'sync'; // sync or async both activate the preload
 
-			sinon.spy(jQuery.sap, '_loadJSResourceAsync');
+			this.spy(jQuery.sap, '_loadJSResourceAsync');
 
 			// make lib3 already loaded
 			sap.ui.predefine('testlibs/scenario1/lib3/library', [], function() {
@@ -323,6 +323,7 @@
 				// lib7 should have been loaded as individual file
 				assert.isLibLoaded('testlibs.scenario1.lib7');
 				sinon.assert.calledWith(jQuery.sap._loadJSResourceAsync, sinon.match(/scenario1\/lib7\/library-preload\.js$/));
+
 			});
 
 		});
@@ -334,7 +335,7 @@
 
 			oRealCore.oConfiguration.preload = 'sync'; // sync or async both activate the preload
 
-			sinon.spy(sap.ui, 'requireSync');
+			this.spy(sap.ui, 'requireSync');
 
 			// make lib3 already loaded
 			sap.ui.predefine('testlibs/scenario2/lib3/library', [], function() {
@@ -406,6 +407,73 @@
 			}, function(e) {
 				assert.ok(false, "Promise for libs with cyclic dependency should not be rejected");
 			});
+		});
+
+		/*
+		 * Scenario5: conflicting async and sync calls
+		 *
+		 *  lib1 -> lib3, lib4, lib5
+		 *  lib2 -> lib3, lib6(lazy), lib5
+		 *
+		 * load async lib1, lib3
+		 *      -> lib1 pending (async)
+		 *      -> lib3 pending (async)
+		 
+		 * load sync lib2
+		 *      -> load lib2 sync
+		 *      -> load lib3 sync (conflict with async load)
+		 *      -> load lib5 sync
+		 *
+		 * load async lib4
+		 *      -> lib4 pending (same promise)
+		 *
+		 * onload lib1
+		 *      -> lib3 already loaded
+		 *      -> lib4 pending (async)
+		 *      -> lib5 already loaded
+		 */
+		QUnit.test("library with deeper dependecy tree + conflicting sync request", function(assert) {
+
+			this.spy(jQuery.sap.log, 'warning');
+
+			oRealCore.oConfiguration.preload = 'sync'; // sync or async both activate the preload
+			var vResult = sap.ui.getCore().loadLibraries(['testlibs.scenario5.lib1', 'testlibs.scenario5.lib3']);
+			assert.ok(vResult instanceof Promise, "async call to loadLibraries should return a promise");
+
+			var oLib2 = sap.ui.getCore().loadLibrary('testlibs.scenario5.lib2');
+			assert.isLibLoaded('testlibs.scenario5.lib2');
+			assert.isLibLoaded('testlibs.scenario5.lib3');
+			assert.isLibLoaded('testlibs.scenario5.lib5');
+			assert.ok(!sap.ui.getCore().getLoadedLibraries()['testlibs.scenario5.lib1'], "lib1 should not have been loaded yet");
+			assert.ok(!sap.ui.getCore().getLoadedLibraries()['testlibs.scenario5.lib4'], "lib4 should not have been loaded yet");
+			sinon.assert.calledWith(jQuery.sap.log.warning, sinon.match(/request to load.*while async loading is pending/));
+			
+			sap.ui.getCore().loadLibraries(['testlibs.scenario5.lib4']);
+			
+			return vResult.then(function() {
+				assert.isLibLoaded('testlibs.scenario5.lib1');
+				assert.isLibLoaded('testlibs.scenario5.lib4');
+			}, function(e) {
+				assert.ok(false, "Promise for async loading should be fulfilled even when sync loading conflicts with it");
+			});
+		});
+
+		QUnit.test("suppress access to js file byconfiguration", function(assert) {
+
+
+			oRealCore.oConfiguration.preload = 'sync'; // sync or async both activate the preload
+
+			this.spy(sap.ui, 'requireSync');
+			sap.ui.getCore().loadLibraries([ { name: 'testlibs.scenario6.lib1', json: true } ], { async: false });
+			assert.isLibLoaded('testlibs.scenario6.lib1');
+			sinon.assert.notCalled(sap.ui.requireSync);
+
+			this.spy(jQuery.sap, '_loadJSResourceAsync');
+			return sap.ui.getCore().loadLibraries([ { name: 'testlibs.scenario6.lib2', json: true } ]).then(function() {
+				assert.isLibLoaded('testlibs.scenario6.lib2');
+				sinon.assert.notCalled(jQuery.sap._loadJSResourceAsync);
+			});
+			
 		});
 
 		function makeLib(name) {

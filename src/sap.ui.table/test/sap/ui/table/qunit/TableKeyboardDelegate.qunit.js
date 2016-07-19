@@ -799,8 +799,6 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 	});
 
 	QUnit.test("Home/End - Fixed Column", function(assert) {
-		sap.ui.getCore().applyChanges();
-
 		/**
 		 * 1 (of 5) Fixed Columns
 		 */
@@ -1137,12 +1135,12 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 		qutils.triggerKeydown(oElem, "HOME", false, false, true);
 		checkFocus(getSelectAll(), assert);
 
-		// *END* -> Bottom cell (scrolled to bottom)
+		// *END* -> Last row (scrolled to bottom)
 		qutils.triggerKeydown(oElem, "END", false, false, true);
 		oElem = checkFocus(getRowHeader(oTable.getVisibleRowCount() - 1), assert);
 		assert.equal(oTable.getRows()[oTable.getVisibleRowCount() - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
 
-		// *END* -> Bottom cell
+		// *END* -> Last row
 		qutils.triggerKeydown(oElem, "END", false, false, true);
 		checkFocus(getRowHeader(oTable.getVisibleRowCount() - 1), assert);
 		assert.equal(oTable.getRows()[oTable.getVisibleRowCount() - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
@@ -1152,21 +1150,29 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 		checkFocus(getSelectAll(), assert);
 		assert.equal(oTable.getRows()[0].getIndex(), 0, "Row index correct");
 
+		// Last row
+		oElem = checkFocus(getRowHeader(oTable.getVisibleRowCount() - 1, true), assert);
+
+		// *END* -> Last row (scrolled to bottom)
+		qutils.triggerKeydown(oElem, "END", false, false, true);
+		checkFocus(getRowHeader(oTable.getVisibleRowCount() - 1), assert);
+		assert.equal(oTable.getRows()[oTable.getVisibleRowCount() - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
+
 		/* Test on first content column */
 
-		// Header cell
+		// Header
 		oElem = checkFocus(getColumnHeader(0, true), assert);
 
 		// *HOME* -> Header cell
 		qutils.triggerKeydown(oElem, "HOME", false, false, true);
 		oElem = checkFocus(getColumnHeader(0), assert);
 
-		// *END* -> Bottom cell (scrolled to bottom)
+		// *END* -> Last row (scrolled to bottom)
 		qutils.triggerKeydown(oElem, "END", false, false, true);
 		oElem = checkFocus(getCell(oTable.getVisibleRowCount() - 1, 0), assert);
 		assert.equal(oTable.getRows()[oTable.getVisibleRowCount() - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
 
-		// *END* -> Bottom cell
+		// *END* -> Last row
 		qutils.triggerKeydown(oElem, "END", false, false, true);
 		checkFocus(getCell(oTable.getVisibleRowCount() - 1, 0), assert);
 		assert.equal(oTable.getRows()[oTable.getVisibleRowCount() - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
@@ -1175,6 +1181,14 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 		qutils.triggerKeydown(oElem, "HOME", false, false, true);
 		checkFocus(getColumnHeader(0), assert);
 		assert.equal(oTable.getRows()[0].getIndex(), 0, "Row index correct");
+
+		// Last row
+		oElem = checkFocus(getCell(oTable.getVisibleRowCount() - 1, 0, true), assert);
+
+		// *END* -> Last row (scrolled to bottom)
+		qutils.triggerKeydown(oElem, "END", false, false, true);
+		checkFocus(getCell(oTable.getVisibleRowCount() - 1, 0), assert);
+		assert.equal(oTable.getRows()[oTable.getVisibleRowCount() - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
 	});
 
 	QUnit.test("Ctrl + Home/End - Less data rows than visible rows", function(assert) {
@@ -1186,12 +1200,12 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 		// SelectAll
 		var oElem = checkFocus(getSelectAll(true), assert);
 
-		// *END* -> Bottom cell
+		// *END* -> Last row
 		qutils.triggerKeydown(oElem, "END", false, false, true);
 		oElem = checkFocus(getRowHeader(Math.min(oTable.getVisibleRowCount(), oTable._getRowCount()) - 1), assert);
 		assert.equal(oTable.getRows()[oTable._getRowCount() - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
 
-		// *END* -> Bottom cell
+		// *END* -> Last row
 		qutils.triggerKeydown(oElem, "END", false, false, true);
 		checkFocus(getRowHeader(Math.min(oTable.getVisibleRowCount(), oTable._getRowCount()) - 1), assert);
 		assert.equal(oTable.getRows()[Math.min(oTable.getVisibleRowCount(), oTable._getRowCount()) - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
@@ -1201,17 +1215,26 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 		checkFocus(getSelectAll(), assert);
 		assert.equal(oTable.getRows()[0].getIndex(), 0, "Row index correct");
 
+		// Empty area - Last row
+		oElem = checkFocus(getRowHeader(oTable.getVisibleRowCount() - 1, true), assert);
+		assert.equal(oTable.getRows()[oTable._getRowCount() - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
+
+		// *HOME* -> First row
+		qutils.triggerKeydown(oElem, "HOME", false, false, true);
+		checkFocus(getRowHeader(0, 0), assert);
+		assert.equal(oTable.getRows()[0].getIndex(), 0, "Row index correct");
+
 		/* Test on first content column */
 
 		// Header cell
 		oElem = checkFocus(getColumnHeader(0, true), assert);
 
-		// *END* -> Bottom cell
+		// *END* -> Last row
 		qutils.triggerKeydown(oElem, "END", false, false, true);
 		oElem = checkFocus(getCell(Math.min(oTable.getVisibleRowCount(), oTable._getRowCount()) - 1, 0), assert);
 		assert.equal(oTable.getRows()[Math.min(oTable.getVisibleRowCount(), oTable._getRowCount()) - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
 
-		// *END* -> Bottom cell
+		// *END* -> Last row
 		qutils.triggerKeydown(oElem, "END", false, false, true);
 		checkFocus(getCell(Math.min(oTable.getVisibleRowCount(), oTable._getRowCount()) - 1, 0), assert);
 		assert.equal(oTable.getRows()[Math.min(oTable.getVisibleRowCount(), oTable._getRowCount()) - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
@@ -1219,6 +1242,15 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 		// *HOME* -> Header cell
 		qutils.triggerKeydown(oElem, "HOME", false, false, true);
 		checkFocus(getColumnHeader(0), assert);
+		assert.equal(oTable.getRows()[0].getIndex(), 0, "Row index correct");
+
+		// Empty area -> Last row
+		oElem = checkFocus(getCell(oTable.getVisibleRowCount() - 1, 0, true), assert);
+		assert.equal(oTable.getRows()[oTable._getRowCount() - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
+
+		// *HOME* -> First row
+		qutils.triggerKeydown(oElem, "HOME", false, false, true);
+		checkFocus(getCell(0, 0), assert);
 		assert.equal(oTable.getRows()[0].getIndex(), 0, "Row index correct");
 	});
 
@@ -1264,6 +1296,15 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 		qutils.triggerKeydown(oElem, "HOME", false, false, true);
 		checkFocus(getSelectAll(), assert);
 
+		// Empty area - Last row
+		oElem = checkFocus(getRowHeader(oTable.getVisibleRowCount() - 1, true), assert);
+		assert.equal(oTable.getRows()[oTable._getRowCount() - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
+
+		// *HOME* -> Scrollable area - First row
+		qutils.triggerKeydown(oElem, "HOME", false, false, true);
+		checkFocus(getRowHeader(oTable.getFixedRowCount()), assert);
+		assert.equal(oTable.getRows()[oTable.getFixedRowCount()].getIndex(), oTable.getFixedRowCount(), "Row index correct");
+
 		/* Test on first content column */
 
 		// Header cell
@@ -1299,6 +1340,15 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 		// *HOME* -> Header cell
 		qutils.triggerKeydown(oElem, "HOME", false, false, true);
 		checkFocus(getColumnHeader(0), assert);
+
+		// Empty area -> Last row
+		oElem = checkFocus(getCell(oTable.getVisibleRowCount() - 1, 0, true), assert);
+		assert.equal(oTable.getRows()[oTable._getRowCount() - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
+
+		// *HOME* -> Scrollable area - First row
+		qutils.triggerKeydown(oElem, "HOME", false, false, true);
+		checkFocus(getCell(oTable.getFixedRowCount(), 0), assert);
+		assert.equal(oTable.getRows()[oTable.getFixedRowCount()].getIndex(), oTable.getFixedRowCount(), "Row index correct");
 	});
 
 	QUnit.test("Ctrl + Home/End - No Column Header", function(assert) {
@@ -1310,21 +1360,21 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 		// Top cell
 		var oElem = checkFocus(getRowHeader(0, true), assert);
 
-		// *HOME* -> Top cell
+		// *HOME* -> First row
 		qutils.triggerKeydown(oElem, "HOME", false, false, true);
 		checkFocus(getRowHeader(0), assert);
 
-		// *END* -> Bottom cell (scrolled to bottom)
+		// *END* -> Last row (scrolled to bottom)
 		qutils.triggerKeydown(oElem, "END", false, false, true);
 		oElem = checkFocus(getRowHeader(oTable.getVisibleRowCount() - 1), assert);
 		assert.equal(oTable.getRows()[oTable.getVisibleRowCount() - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
 
-		// *END* -> Bottom cell
+		// *END* -> Last row
 		qutils.triggerKeydown(oElem, "END", false, false, true);
 		checkFocus(getRowHeader(oTable.getVisibleRowCount() - 1), assert);
 		assert.equal(oTable.getRows()[oTable.getVisibleRowCount() - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
 
-		// *HOME* -> Top cell (scrolled to top)
+		// *HOME* -> First row (scrolled to top)
 		qutils.triggerKeydown(oElem, "HOME", false, false, true);
 		checkFocus(getRowHeader(0), assert);
 		assert.equal(oTable.getRows()[0].getIndex(), 0, "Row index correct");
@@ -1334,21 +1384,21 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 		// Top cell
 		oElem = checkFocus(getCell(0, 0, true), assert);
 
-		// *HOME* -> Top cell
+		// *HOME* -> First row
 		qutils.triggerKeydown(oElem, "HOME", false, false, true);
 		oElem = checkFocus(getCell(0, 0), assert);
 
-		// *END* -> Bottom cell (scrolled to bottom)
+		// *END* -> Last row (scrolled to bottom)
 		qutils.triggerKeydown(oElem, "END", false, false, true);
 		oElem = checkFocus(getCell(oTable.getVisibleRowCount() - 1, 0), assert);
 		assert.equal(oTable.getRows()[oTable.getVisibleRowCount() - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
 
-		// *END* -> Bottom cell
+		// *END* -> Last row
 		qutils.triggerKeydown(oElem, "END", false, false, true);
 		checkFocus(getCell(oTable.getVisibleRowCount() - 1, 0), assert);
 		assert.equal(oTable.getRows()[oTable.getVisibleRowCount() - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
 
-		// *HOME* -> Top cell (scrolled to top)
+		// *HOME* -> First row (scrolled to top)
 		qutils.triggerKeydown(oElem, "HOME", false, false, true);
 		checkFocus(getCell(0, 0), assert);
 		assert.equal(oTable.getRows()[0].getIndex(), 0, "Row index correct");
@@ -1472,6 +1522,213 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 		// *HOME* -> Header - First row
 		qutils.triggerKeydown(oElem, "HOME", false, false, true);
 		checkFocus(getColumnHeader(0), assert);
+	});
+
+	function _testPageKeys(assert) {
+		var iNonEmptyVisibleRowCount = Math.min(oTable.getVisibleRowCount(), oTable._getRowCount());
+		var iPageSize = iNonEmptyVisibleRowCount - oTable.getFixedRowCount() - oTable.getFixedBottomRowCount();
+		var iLastScrollableRowIndex = iNonEmptyVisibleRowCount - oTable.getFixedBottomRowCount() - 1;
+		var iHeaderRowCount = sap.ui.table.TableUtils.getHeaderRowCount(oTable);
+
+		/* Test on row header */
+
+		// SelectAll
+		var oElem = checkFocus(getSelectAll(true), assert);
+
+		// *PAGE_UP* -> SelectAll
+		qutils.triggerKeydown(oElem, "PAGE_UP", false, false, false);
+		checkFocus(getSelectAll(), assert);
+
+		// *PAGE_DOWN* -> First row
+		qutils.triggerKeydown(oElem, "PAGE_DOWN", false, false, false);
+		oElem = checkFocus(getRowHeader(0), assert);
+
+		// *PAGE_DOWN* -> Scrollable area - Last row
+		qutils.triggerKeydown(oElem, "PAGE_DOWN", false, false, false);
+		oElem = checkFocus(getRowHeader(iLastScrollableRowIndex), assert);
+
+		// *PAGE_DOWN* -> Scrollable area - Last row - Scroll down all full pages
+		for (var i = iLastScrollableRowIndex + iPageSize; i < iNumberOfRows - oTable.getFixedBottomRowCount(); i += iPageSize) {
+			qutils.triggerKeydown(oElem, "PAGE_DOWN", false, false, false);
+			checkFocus(getRowHeader(iLastScrollableRowIndex), assert);
+			assert.equal(oTable.getRows()[iLastScrollableRowIndex].getIndex(), i, "Scrolled down: Row index correct");
+		}
+
+		// *PAGE_DOWN* -> Last row - Scrolled down the remaining rows
+		qutils.triggerKeydown(oElem, "PAGE_DOWN", false, false, false);
+		oElem = checkFocus(getRowHeader(iNonEmptyVisibleRowCount - 1), assert);
+		assert.equal(oTable.getRows()[iLastScrollableRowIndex].getIndex(), iNumberOfRows - oTable.getFixedBottomRowCount() - 1, "Scrolled to bottom: Row index correct");
+
+		// *PAGE_DOWN* -> Last row
+		qutils.triggerKeydown(oElem, "PAGE_DOWN", false, false, false);
+		checkFocus(getRowHeader(iNonEmptyVisibleRowCount - 1), assert);
+
+		// *PAGE_UP* -> Scrollable area - First row
+		qutils.triggerKeydown(oElem, "PAGE_UP", false, false, false);
+		oElem = checkFocus(getRowHeader(oTable.getFixedRowCount()), assert);
+
+		// *PAGE_UP* -> Scrollable area - First row - Scroll up all full pages
+		for (var i = iNumberOfRows - oTable.getFixedBottomRowCount() - iPageSize; i >= oTable.getFixedRowCount() + iPageSize; i -= iPageSize) {
+			qutils.triggerKeydown(oElem, "PAGE_UP", false, false, false);
+			checkFocus(getRowHeader(oTable.getFixedRowCount()), assert);
+			assert.equal(oTable.getRows()[oTable.getFixedRowCount()].getIndex(), i - iPageSize, "Scrolled up: Row index correct");
+		}
+
+		if (oTable.getFixedRowCount() > 0) {
+			// *PAGE_UP* -> Top fixed area - First row - Scrolled up the remaining rows
+			qutils.triggerKeydown(oElem, "PAGE_UP", false, false, false);
+			oElem = checkFocus(getRowHeader(0), assert);
+			assert.equal(oTable.getRows()[oTable.getFixedRowCount()].getIndex(), oTable.getFixedRowCount(), "Scrolled to top: Row index correct");
+		}
+
+		// *PAGE_UP* -> SelectAll - Scrolled up the remaining rows (it not already)
+		qutils.triggerKeydown(oElem, "PAGE_UP", false, false, false);
+		checkFocus(getSelectAll(), assert);
+		if (oTable.getFixedRowCount() === 0) {
+			assert.equal(oTable.getRows()[oTable.getFixedRowCount()].getIndex(), oTable.getFixedRowCount(), "Scrolled to top: Row index correct");
+		}
+
+		if (oTable._getRowCount() < oTable.getVisibleRowCount()) {
+			// Empty area - Last row
+			oElem = checkFocus(getRowHeader(oTable.getVisibleRowCount() - 1, true), assert);
+
+			// *PAGE_UP* -> Scrollable area - Last row
+			qutils.triggerKeydown(oElem, "PAGE_UP", false, false, false);
+			checkFocus(getRowHeader(oTable._getRowCount() - 1, 0), assert);
+		}
+
+		/* Test on first content column */
+
+		// Header -> First row
+		oElem = checkFocus(getColumnHeader(0, true), assert);
+
+		// *PAGE_UP* -> Header - First row
+		qutils.triggerKeydown(oElem, "PAGE_UP", false, false, false);
+		oElem = checkFocus(getColumnHeader(0), assert);
+
+		if (iHeaderRowCount > 1) {
+			// *PAGE_DOWN* -> Header - Last row
+			qutils.triggerKeydown(oElem, "PAGE_DOWN", false, false, false);
+			oElem = checkFocus(jQuery.sap.domById(getColumnHeader(0).attr("id") + "_" + (iHeaderRowCount - 1)), assert);
+		}
+
+		// *PAGE_DOWN* -> First row
+		qutils.triggerKeydown(oElem, "PAGE_DOWN", false, false, false);
+		oElem = checkFocus(getCell(0, 0), assert);
+
+		// *PAGE_DOWN* -> Scrollable area - Last row
+		qutils.triggerKeydown(oElem, "PAGE_DOWN", false, false, false);
+		oElem = checkFocus(getCell(iLastScrollableRowIndex, 0), assert);
+
+		// *PAGE_DOWN* -> Scrollable area - Last row - Scroll down all full pages
+		for (var i = iLastScrollableRowIndex + iPageSize; i < iNumberOfRows - oTable.getFixedBottomRowCount(); i += iPageSize) {
+			qutils.triggerKeydown(oElem, "PAGE_DOWN", false, false, false);
+			checkFocus(getCell(iLastScrollableRowIndex, 0), assert);
+			assert.equal(oTable.getRows()[iLastScrollableRowIndex].getIndex(), i, "Scrolled down: Row index correct");
+		}
+
+		// *PAGE_DOWN* -> Last row - Scrolled down the remaining rows
+		qutils.triggerKeydown(oElem, "PAGE_DOWN", false, false, false);
+		oElem = checkFocus(getCell(iNonEmptyVisibleRowCount - 1, 0), assert);
+		assert.equal(oTable.getRows()[iLastScrollableRowIndex].getIndex(), iNumberOfRows - oTable.getFixedBottomRowCount() - 1, "Scrolled to bottom: Row index correct");
+
+		// *PAGE_DOWN* -> Last row
+		qutils.triggerKeydown(oElem, "PAGE_DOWN", false, false, false);
+		checkFocus(getCell(iNonEmptyVisibleRowCount - 1, 0), assert);
+
+		// *PAGE_UP* -> Scrollable area - First row
+		qutils.triggerKeydown(oElem, "PAGE_UP", false, false, false);
+		oElem = checkFocus(getCell(oTable.getFixedRowCount(), 0), assert);
+
+		// *PAGE_UP* -> Scrollable area - First row - Scroll up all full pages
+		for (var i = iNumberOfRows - oTable.getFixedBottomRowCount() - iPageSize; i >= oTable.getFixedRowCount() + iPageSize; i -= iPageSize) {
+			qutils.triggerKeydown(oElem, "PAGE_UP", false, false, false);
+			checkFocus(getCell(oTable.getFixedRowCount(), 0), assert);
+			assert.equal(oTable.getRows()[oTable.getFixedRowCount()].getIndex(), i - iPageSize, "Scrolled up: Row index correct");
+		}
+
+		if (oTable.getFixedRowCount() > 0) {
+			// *PAGE_UP* -> Top fixed area - First row - Scrolled up the remaining rows
+			qutils.triggerKeydown(oElem, "PAGE_UP", false, false, false);
+			oElem = checkFocus(getCell(0, 0), assert);
+			assert.equal(oTable.getRows()[oTable.getFixedRowCount()].getIndex(), oTable.getFixedRowCount(), "Scrolled to top: Row index correct");
+		}
+
+		// *PAGE_UP* -> Header - First row - Scrolled up the remaining rows (if not already)
+		qutils.triggerKeydown(oElem, "PAGE_UP", false, false, false);
+		checkFocus(getColumnHeader(0), assert);
+		if (oTable.getFixedRowCount() === 0) {
+			assert.equal(oTable.getRows()[oTable.getFixedRowCount()].getIndex(), oTable.getFixedRowCount(), "Scrolled to top: Row index correct");
+		}
+
+		if (oTable._getRowCount() < oTable.getVisibleRowCount()) {
+			// Empty area -> Last row
+			oElem = checkFocus(getCell(oTable.getVisibleRowCount() - 1, 0, true), assert);
+
+			// *PAGE_UP* -> Scrollable area - Last row
+			qutils.triggerKeydown(oElem, "PAGE_UP", false, false, false);
+			checkFocus(getCell(oTable._getRowCount() - 1, 0), assert);
+		}
+	}
+
+	QUnit.test("PageUp/PageDown", function(assert) {
+		_testPageKeys(assert);
+	});
+
+	QUnit.test("PageUp/PageDown - Less data rows than visible rows", function(assert) {
+		oTable.setVisibleRowCount(10);
+		sap.ui.getCore().applyChanges();
+
+		_testPageKeys(assert);
+	});
+
+	QUnit.test("PageUp/PageDown - Multi Header", function(assert) {
+		oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b1"}));
+		oTable.getColumns()[1].setHeaderSpan([2,1]);
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "b"}));
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "b2"}));
+		oTable.getColumns()[3].addMultiLabel(new TestControl({text: "d"}));
+		oTable.getColumns()[3].addMultiLabel(new TestControl({text: "d1"}));
+		sap.ui.getCore().applyChanges();
+
+		_testPageKeys(assert);
+	});
+
+	QUnit.test("PageUp/PageDown - Fixed Top/Bottom Rows", function(assert) {
+		oTable.setVisibleRowCount(6);
+		oTable.setFixedRowCount(2);
+		oTable.setFixedBottomRowCount(2);
+		sap.ui.getCore().applyChanges();
+
+		_testPageKeys(assert);
+	});
+
+	QUnit.test("PageUp/PageDown - Fixed Top/Bottom Rows and Less data rows than visible rows", function(assert) {
+		oTable.setVisibleRowCount(10);
+		oTable.setFixedRowCount(2);
+		oTable.setFixedBottomRowCount(2);
+		sap.ui.getCore().applyChanges();
+
+		_testPageKeys(assert);
+	});
+
+	QUnit.test("PageUp/PageDown - Multi Header and Fixed Top/Bottom Rows", function(assert) {
+		oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b"}));
+		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b1"}));
+		oTable.getColumns()[1].setHeaderSpan([2,1]);
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "b"}));
+		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "b2"}));
+		oTable.getColumns()[3].addMultiLabel(new TestControl({text: "d"}));
+		oTable.getColumns()[3].addMultiLabel(new TestControl({text: "d1"}));
+		oTable.setVisibleRowCount(6);
+		oTable.setFixedRowCount(2);
+		oTable.setFixedBottomRowCount(2);
+		sap.ui.getCore().applyChanges();
+
+		_testPageKeys(assert);
 	});
 
 	QUnit.test("Focus on cell content", function(assert) {
@@ -1637,6 +1894,25 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 		oTable.setModel(new sap.ui.model.json.JSONModel());
 	});
 
+	QUnit.asyncTest("NoData - TAB forward without column header", function(assert) {
+		function doAfterNoDataDisplayed(){
+			oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+
+			var oElem = setFocusOutsideOfTable("Focus1");
+			simulateTabEvent(oElem, false);
+			oElem = checkFocus(oTable.getDomRef("noDataCnt"), assert);
+			simulateTabEvent(oElem, false);
+			oElem = checkFocus(jQuery.sap.domById("Focus2"), assert);
+
+			QUnit.start();
+		}
+
+		oTable.setColumnHeaderVisible(false);
+		sap.ui.getCore().applyChanges();
+		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+		oTable.setModel(new sap.ui.model.json.JSONModel());
+	});
+
 	QUnit.asyncTest("NoData - TAB forward (with extension and footer)", function(assert) {
 		function doAfterNoDataDisplayed(){
 			oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
@@ -1721,10 +1997,8 @@ if (checkDelegateType("sap.ui.table.TableKeyboardDelegate")) {
 			oElem = checkFocus(getColumnHeader(1), assert);
 			qutils.triggerKeydown(oElem, "ARROW_LEFT", false, false, false);
 			oElem = checkFocus(getColumnHeader(0), assert);
-
-			//TBD: Add when functionality for Page Down is implemented
-			/*qutils.triggerKeydown(oElem, "PAGE_DOWN", false, false, false);
-			oElem = checkFocus(getColumnHeader(0), assert);*/
+			qutils.triggerKeydown(oElem, "PAGE_DOWN", false, false, false);
+			oElem = checkFocus(getColumnHeader(0), assert);
 			qutils.triggerKeydown(oElem, "END", false, false, true);
 			checkFocus(getColumnHeader(0), assert);
 

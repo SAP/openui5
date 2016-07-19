@@ -129,7 +129,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 				var $FixedHeaders = $Table.find(".sapUiTableColHdrFixed").children(); //returns the .sapUiTableColHdr elements
 				var $ScrollHeaders = $Table.find(".sapUiTableColHdrScr").children(); //returns the .sapUiTableColHdr elements
 
-				for (var i = 0; i < oTable._getHeaderRowCount(); i++) {
+				for (var i = 0; i < TableUtils.getHeaderRowCount(oTable); i++) {
 					if (bHasRowHeader) {
 						aHeaderDomRefs.push(oTable.getDomRef("selall"));
 					}
@@ -151,7 +151,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 				oExtension._itemNavigation.setTableMode(true);
 				oExtension._itemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, function(oEvent) {
 					var oInfo = TableUtils.getFocusedItemInfo(oTable);
-					oInfo.header = oTable._getHeaderRowCount();
+					oInfo.header = TableUtils.getHeaderRowCount(oTable);
 					oInfo.domRef = null; //Do not keep dom references
 
 					if (oInfo.row >= oInfo.header) {
@@ -340,7 +340,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 	 * @protected (Only to be used by the keyboard delegate)
 	 */
 	TableKeyboardExtension.prototype._getLastFocusedCellInfo = function() {
-		var iHeader = this.getTable()._getHeaderRowCount();
+		var iHeader = TableUtils.getHeaderRowCount(this.getTable());
 		if (!this._oLastFocusedCellInfo || this._oLastFocusedCellInfo.header != iHeader) {
 			var oInfo = TableUtils.getFocusedItemInfo(this.getTable());
 			var iDfltIdx = ExtensionHelper.getInitialItemNavigationIndex(this);

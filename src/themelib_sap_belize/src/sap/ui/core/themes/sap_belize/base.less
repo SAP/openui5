@@ -36,7 +36,7 @@
 // [Label "Font Family"]
 // [Description "The preferred font family"]
 // [Tags "Quick", "Base", "Content", "Font", "Protected"]
-@sapFontFamily: Arial, Helvetica, sans-serif;
+@sapFontFamily: "72-Web",Arial, Helvetica, sans-serif;
 
 // [Label "Font Size"]
 // [Description "The preferred font size"]
@@ -46,7 +46,7 @@
 // [Label "Text Color"]
 // [Description "The preferred text color"]
 // [Tags "Quick", "Base", "Content", "Color", "Font"]
-@sapTextColor: #000;
+@sapTextColor: #333;
 
 // [Label "Link Color"]
 // [Description "The color of the link text"]
@@ -176,7 +176,7 @@
 // [Label "Title Text Color"]
 // [Description "The text color of the application title"]
 // [Tags "Base", "Color", "Font"]
-@sapTitleColor: @sapPrimary7;
+@sapTitleColor: @sapTextColor;
 
 // [Label "Content Line Height EM"]
 // [Description "The height of lines in the content area (in em)."]
@@ -252,7 +252,7 @@
 // [Label "Content Label Color"]
 // [Description "The color of labels in the content area."]
 // [Tags "Base", "Content", "Color", "Font"]
-@sapContent_LabelColor: lighten(@sapPrimary7, 20);
+@sapContent_LabelColor: lighten(@sapTextColor, 20);
 
 // [Label "Content Monospace Font Family"]
 // [Description "Defines which monospaced font is used for specific texts in the content area."]
@@ -291,7 +291,7 @@
 // [Label "Content Foreground Text Color"]
 // [Description "The foreground color of texts in the content area."]
 // [Tags "Base", "Content", "Color", "Font"]
-@sapContent_ForegroundTextColor: contrast(@sapContent_ForegroundColor, @sapPrimary7, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapContent_ForegroundTextColor: contrast(@sapContent_ForegroundColor, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Label "Shell Background Color"]
 // [Description "The background color of the shell."]
@@ -317,21 +317,6 @@
 // [Description "The background pattern color of the shell. To turn off the pattern set the value to 'transparent'"]
 // [Tags "Base", "Shell", "Color"]
 @sapShell_BackgroundPatternColor: fade(@sapPrimary4, 8);
-
-// [Label "Shell Background Image/Gradient"]
-// [Description "The background image or gradient of the shell."]
-// [Tags "Base", "Shell", "URI", "Image"]
-@sapShell_BackgroundImage: linear-gradient(to bottom, darken(saturate(@sapShell_Background, 6), 7.8), lighten(desaturate(@sapShell_Background, 16), 7.8));
-
-// [Label "Background Opacity"]
-// [Description "A value between 0.0 and 1.0 to control the opacity of the shell background image"]
-// [Tags "Quick", "Base", "Opacity"]
-@sapShell_BackgroundImageOpacity: 1.0;
-
-// [Label "Background Repeat"]
-// [Description "The switch to turn on/off the repetition of the shell background image. Chose 'true' or 'false' as value."]
-// [Tags "Quick", "Base"]
-@sapShell_BackgroundImageRepeat: false;
 
 // [Label "Shell Background Gradient"]
 // [Description "The background gradient of the shell."]
@@ -423,6 +408,11 @@
 // [Description "The color of an input field's borders."]
 // [Tags "Base", "Field", "Color"]
 @sapField_BorderColor: @sapPrimary6;
+
+// [Label "Field Text Color"]
+// [Description "The text color of input fields."]
+// [Tags "Base", "Field", "Color", "Font"]
+@sapField_TextColor: #000;
 
 // [Label "Field Help Background Color"]
 // [Description "The color of the value help icon."]
@@ -664,7 +654,7 @@
 // [Label "Page Header Text Color"]
 // [Description "The color of texts on page headers."]
 // [Tags "Base", "Page", "Color", "Font"]
-@sapPageHeader_TextColor: contrast(@sapPageHeader_Background, lighten(@sapPrimary7, 20), @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapPageHeader_TextColor: contrast(@sapPageHeader_Background, lighten(@sapTextColor, 20), @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Label "Page Footer Background Color"]
 // [Description "The background color of page footers."]
@@ -674,7 +664,7 @@
 // [Label "Page Footer Text Color"]
 // [Description "The color of texts on page footers."]
 // [Tags "Base", "Page", "Color", "Font"]
-@sapPageFooter_TextColor: contrast(@sapPageFooter_Background, @sapPrimary7, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapPageFooter_TextColor: contrast(@sapPageFooter_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Label "Infobar Background Color"]
 // [Description "The background color of infobars."]
@@ -704,7 +694,7 @@
 // [Label "Tile Title Text Color"]
 // [Description "The color of title texts on tiles."]
 // [Tags "Base", "Tile", "Color", "Font"]
-@sapTile_TitleTextColor: contrast(@sapTile_Background, @sapPrimary7, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapTile_TitleTextColor: contrast(@sapTile_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Label "Tile Text Color"]
 // [Description "The color of texts on tiles."]

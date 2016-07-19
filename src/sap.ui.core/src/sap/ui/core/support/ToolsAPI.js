@@ -83,6 +83,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 					version: Global.version,
 					buildTime: Global.buildinfo.buildtime,
 					lastChange: Global.buildinfo.lastchange,
+					jquery: jQuery.fn.jquery,
 					userAgent: navigator.userAgent,
 					applicationHREF: window.location.href,
 					documentTitle: document.title,

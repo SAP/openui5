@@ -13,7 +13,17 @@ sap.ui.define([], function() {
 			},
 			form : {
 				ignore : false,
+				actions : {
+					move : function(oElement){
+						var sType = oElement.getMetadata().getName();
 
+						if (sType === "sap.ui.layout.form.FormContainer"){
+							return "moveSimpleFormGroup";
+						} else if (sType === "sap.ui.layout.form.FormElement"){
+							return "moveSimpleFormField";
+						}
+					}
+				},
 				beforeMove : function(oMovedElement, oSource, oTarget) {
 				}
 

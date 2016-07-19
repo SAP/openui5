@@ -595,7 +595,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 
 	FileUploader.prototype.onfocusin = function(oEvent) {
 
-		this.openValueStateMessage();
+		if (!this.oFilePath.shouldValueStateMessageBeOpened || this.oFilePath.shouldValueStateMessageBeOpened()) {
+			this.openValueStateMessage();
+		}
 
 	};
 

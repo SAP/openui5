@@ -31,7 +31,8 @@ sap.ui.define(['jquery.sap.global'], function (jQuery) {
 
 				if (!fnProperty) {
 					bIsMatching = false;
-					jQuery.sap.log.error("Control " + oControl.sId + " does not have a property called: " + sPropertyName, this._sLogPrefix);
+					jQuery.sap.log.error("Control " + oControl.sId + " does not have a property called: " +
+						sPropertyName, "", "sap.ui.test.matchers.Properties");
 					return false;
 				}
 

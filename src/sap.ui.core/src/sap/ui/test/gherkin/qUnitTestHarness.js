@@ -3,16 +3,17 @@
  */
 
 /* global jQuery,QUnit,assert */
-/* eslint-disable quotes,consistent-this */
 
-jQuery.sap.require("sap.ui.qunit.qunit-css");
+// Load synchronously to avoid QUnit issue where tests run before QUnit is loaded
 jQuery.sap.require("sap.ui.thirdparty.qunit");
-jQuery.sap.require("sap.ui.qunit.qunit-junit");
 
-// put qunit-coverage last so library files don't get measured (we load StepDefinitions first so it doesn't appear in
-// the code coverage list)
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', "sap/ui/test/gherkin/GherkinTestGenerator",
-  "sap/ui/test/gherkin/StepDefinitions", "sap/ui/qunit/qunit-coverage"], function($, UI5Object, GherkinTestGenerator) {
+// put qunit-coverage last so library files don't get measured  (we load StepDefinitions, even though we don't have to,
+// so that it doesn't appear in the code coverage list, knowing that the user will need to load it)
+sap.ui.define([
+  'jquery.sap.global', 'sap/ui/base/Object', "sap/ui/test/gherkin/GherkinTestGenerator",
+  "sap/ui/test/gherkin/StepDefinitions", "sap/ui/qunit/qunit-css", "sap/ui/qunit/qunit-junit",
+  "sap/ui/qunit/qunit-coverage"
+], function($, UI5Object, GherkinTestGenerator) {
   'use strict';
 
   /**
@@ -33,7 +34,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', "sap/ui/test/gherkin/G
      * Dynamically generates and executes QUnit tests
      *
      * @param {object} args - the arguments to the function
-     * @param {string} args.featurePath - the path to the Gherkin feature file to parse
+     * @param {string} args.featurePath - the path to the Gherkin feature file to parse, as a SAPUI5 module path. The
+     *                                    ".feature" extension is assumed and should not be included. See
+     *                                    {@link jQuery.sap#registerModulePath}
      * @param {function} args.steps - the constructor function of type sap.ui.test.gherkin.StepDefinitions
      * @public
      * @throws {Error} for invalid parameters - parameter does not match the expected type

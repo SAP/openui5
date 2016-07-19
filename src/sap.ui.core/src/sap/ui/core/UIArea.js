@@ -700,7 +700,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 		var oElement = null,
 			bInteractionRelevant;
 
-
 		// TODO: this should be the 'lowest' SAPUI5 Control of this very
 		// UIArea instance's scope -> nesting scenario
 		oElement = jQuery(oEvent.target).control(0);
@@ -717,12 +716,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 			return;
 		}
 
+
+		var sHandledUIAreaId = oEvent.getMark("handledByUIArea"),
+			sId = this.getId();
+
 		//if event is already handled by inner UIArea (as we use the bubbling phase now), returns.
 		//if capturing phase would be used, here means event is already handled by outer UIArea.
-		if (oEvent.isMarked("handledByUIArea")) {
-		oEvent.setMark("firstUIArea", false);
+		if (sHandledUIAreaId && sHandledUIAreaId !== sId) {
+			oEvent.setMark("firstUIArea", false);
 			return;
 		}
+
 		oEvent.setMarked("firstUIArea");
 
 		// store the element on the event (aligned with jQuery syntax)
@@ -738,7 +742,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 		// forward the control event:
 		// if the control propagation has been stopped or the default should be
 		// prevented then do not forward the control event.
-		this.oCore._handleControlEvent(oEvent, this.getId());
+		this.oCore._handleControlEvent(oEvent, sId);
 
 		// if the UIArea or the Core is locked then we do not dispatch
 		// any event to the control => but they will still be dispatched
@@ -834,7 +838,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 		oEvent.currentTarget = this.getRootNode();
 
 		// mark on the event that it's already handled by this UIArea
-		(oEvent.originalEvent || oEvent)._sapui_handledByUIArea = true;
+		oEvent.setMark("handledByUIArea", sId);
 
 		// TODO: rethink about logging levels!
 
@@ -913,8 +917,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 			return;
 		}
 
-		//	mark the DOM as UIArea and bind the required events
-		jQuery(oDomRef).attr("data-sap-ui-area", oDomRef.id).bind(jQuery.sap.ControlEvents.join(" "), jQuery.proxy(this._handleEvent, this));
+		// mark the DOM as UIArea and bind the required events
+		jQuery(oDomRef).attr("data-sap-ui-area", oDomRef.id).bind(jQuery.sap.ControlEvents.join(" "), this._handleEvent.bind(this));
 
 	};
 

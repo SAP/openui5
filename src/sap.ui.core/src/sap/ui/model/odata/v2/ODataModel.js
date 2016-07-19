@@ -2363,20 +2363,27 @@ sap.ui.define([
 				jQuery.each(aRequests, function(i, oRequest) {
 					if (jQuery.isArray(oRequest)) {
 						jQuery.each(oRequest, function(i, oRequest) {
-							oEventInfo = that._createEventInfo(oRequest.request, oError);
-							that["fireRequest" + sType](oEventInfo);
+							jQuery.each(oRequest.parts, function(i, oPart) {
+								oEventInfo = that._createEventInfo(oRequest.request, oPart.fnError);
+								that["fireRequest" + sType](oEventInfo);
+							});
 						});
 					} else {
-						oEventInfo = that._createEventInfo(oRequest.request, oError);
-						that["fireRequest" + sType](oEventInfo);
+						if (oRequest.parts) {
+							jQuery.each(oRequest.parts, function(i, oPart) {
+								oEventInfo = that._createEventInfo(oRequest.request, oPart.fnError);
+								that["fireRequest" + sType](oEventInfo);
+							});
+						} else {
+							oEventInfo = that._createEventInfo(oRequest.request, oRequest.fnError);
+							that["fireRequest" + sType](oEventInfo);
+						}
 					}
 				});
-
-				oEventInfo = that._createEventInfo(oRequest, oError, aRequests);
-				that["fireBatchRequest" + sType](oEventInfo);
-			} else {
-				oEventInfo = that._createEventInfo(oRequest, oError, aRequests);
-				that["fireRequest" + sType](oEventInfo);
+				if (oRequest.eventInfo.batch){
+					oEventInfo = that._createEventInfo(oRequest, oError, aRequests);
+					that["fireBatchRequest" + sType](oEventInfo);
+				}
 			}
 		}
 
@@ -2431,12 +2438,9 @@ sap.ui.define([
 	 * submit of a single request
 	 *
 	 * @param {object} oRequest The request object
-	 * @param {function} fnSuccess Success callback function
-	 * @param {function} fnError Error callback function
-	 * @returns {object} oHandler request handle
 	 * @private
 	 */
-	ODataModel.prototype._submitSingleRequest = function(oRequest, fnSuccess, fnError) {
+	ODataModel.prototype._submitSingleRequest = function(oRequest) {
 		var that = this,
 			oRequestHandle,
 			mChangeEntities = {},
@@ -2455,10 +2459,14 @@ sap.ui.define([
 			}
 
 			function successWrapper(oData, oResponse) {
-				if (fnSuccess) {
-					fnSuccess(oData, oResponse);
+				for (var i = 0; i < oRequest.parts.length; i++) {
+					if (oRequest.parts[i].request._aborted){
+						that._processAborted(oRequest.parts[i].request, oResponse, oRequest.parts[i].fnError);
+					} else if (oRequest.parts[i].fnSuccess) {
+						oRequest.parts[i].fnSuccess(oData, oResponse);
+					}
 				}
-				if (oRequest.requestUri.indexOf("$count") === -1) {
+				if (oRequest.request.requestUri.indexOf("$count") === -1) {
 					that.checkUpdate(false, false, mGetEntities);
 					if (that.bRefreshAfterChange){
 						that._refresh(false, undefined, mChangeEntities, mEntityTypes);
@@ -2466,20 +2474,27 @@ sap.ui.define([
 				}
 			}
 
-			that._processSuccess(oRequest, oResponse, successWrapper, mGetEntities, mChangeEntities, mEntityTypes);
+			that._processSuccess(oRequest.request, oResponse, successWrapper, mGetEntities, mChangeEntities, mEntityTypes);
 			that._setSessionContextIdHeader(that._getHeader("sap-contextid", oResponse.headers));
 		}
 
 		function handleError(oError) {
 			if (oError.message == "Request aborted") {
-				that._processAborted(oRequest, oError, fnError);
+				for (var i = 0; i < oRequest.parts.length; i++){
+					that._processAborted(oRequest.parts[i].request, oError, oRequest.parts[i].fnError);
+				}
 			} else {
-				that._processError(oRequest, oError, fnError);
+				for (var i = 0; i < oRequest.parts.length; i++) {
+					that._processError(oRequest.parts[i].request, oError, oRequest.parts[i].fnError);
+				}
 			}
 		}
 
-		oRequest.eventInfo = {};
-		oRequestHandle =  this._submitRequest(oRequest, handleSuccess, handleError);
+		oRequest.request.eventInfo = {
+				requests: oRequest.parts,
+				batch: false
+		};
+		oRequestHandle =  this._submitRequest(oRequest.request, handleSuccess, handleError);
 
 		return oRequestHandle;
 	};
@@ -2501,12 +2516,14 @@ sap.ui.define([
 			mEntityTypes = {};
 
 		function processResponse(oRequest, oResponse, bAborted) {
-			if (bAborted || oRequest.request._aborted) {
-				that._processAborted(oRequest.request, oResponse, oRequest.fnError);
-			} else if (oResponse.message) {
-				that._processError(oRequest.request, oResponse, oRequest.fnError);
-			} else {
-				that._processSuccess(oRequest.request, oResponse, oRequest.fnSuccess, mGetEntities, mChangeEntities, mEntityTypes);
+			for (var i = 0; i < oRequest.parts.length; i++) {
+				if (bAborted || oRequest.parts[i].request._aborted) {
+					that._processAborted(oRequest.parts[i].request, oResponse, oRequest.parts[i].fnError);
+				} else if (oResponse.message) {
+					that._processError(oRequest.parts[i].request, oResponse, oRequest.parts[i].fnError);
+				} else {
+					that._processSuccess(oRequest.parts[i].request, oResponse, oRequest.parts[i].fnSuccess, mGetEntities, mChangeEntities, mEntityTypes);
+				}
 			}
 		}
 
@@ -2686,10 +2703,7 @@ sap.ui.define([
 				requestHandle:	requestHandle
 			});
 			}
-			// if request is already aborted we should delete the aborted flag
-			if (oStoredRequest._aborted) {
-				delete oStoredRequest._aborted;
-			}
+
 			if (oRequest.method === "GET") {
 				//delete data if any. Could happen for GET Function imports
 				delete oStoredRequest.data;
@@ -2703,6 +2717,10 @@ sap.ui.define([
 					// if stored request was a MERGE before (created by setProperty) but is now sent via PUT
 					// (by submitChanges) the merge header must be removed
 					delete oStoredRequest.headers["x-http-method"];
+				}
+				// if request is already aborted we should delete the aborted flag
+				if (oStoredRequest._aborted) {
+					delete oStoredRequest._aborted;
 				}
 			}
 		} else {
@@ -2775,47 +2793,30 @@ sap.ui.define([
 	 */
 	ODataModel.prototype._processRequestQueue = function(mRequests, sGroupId, fnSuccess, fnError){
 		var that = this, sPath,
-			oRequestHandle = [];
-
-		function wrapHandler(aHandler) {
-			return function() {
-				for (var i = 0; i < aHandler.length; i++) {
-					if (aHandler[i]) {
-						aHandler[i].apply(this, arguments);
-					}
-				}
-			};
-		}
+			aRequestHandles = [];
 
 		function checkAbort(oRequest, oWrappedBatchRequestHandle) {
-			var aSuccessHandler = [], aErrorHandler = [];
 			for (var i = 0; i < oRequest.parts.length; i++) {
 				var oPart = oRequest.parts[i];
 				if (oPart.request._aborted) {
 					that._processAborted(oRequest.request, null, oPart.fnError);
 					oRequest.parts.splice(i,1);
 					i--;
-				} else {
-					aSuccessHandler.push(oPart.fnSuccess);
-					aErrorHandler.push(oPart.fnError);
-					if (oWrappedBatchRequestHandle){
-						oPart.request._handle = oWrappedBatchRequestHandle;
-						oWrappedBatchRequestHandle.iRelevantRequests++;
-					}
+				} else if (oWrappedBatchRequestHandle){
+					oPart.request._handle = oWrappedBatchRequestHandle;
+					oWrappedBatchRequestHandle.iRelevantRequests++;
 				}
 			}
-			oRequest.fnError = wrapHandler(aErrorHandler);
-			oRequest.fnSuccess = wrapHandler(aSuccessHandler);
 		}
 
-		function wrapBatchRequestHandle() {
+		function wrapRequestHandle() {
 			return {
 				iRelevantRequests : 0,
-				oBatchRequestHandle: {},
+				oRequestHandle: {},
 				abort: function() {
 					this.iRelevantRequests--;
-					if (this.iRelevantRequests === 0 && this.oBatchRequestHandle) {
-						this.oBatchRequestHandle.abort();
+					if (this.iRelevantRequests === 0 && this.oRequestHandle) {
+						this.oRequestHandle.abort();
 					}
 				}
 			};
@@ -2838,7 +2839,7 @@ sap.ui.define([
 			jQuery.each(mRequests, function(sRequestGroupId, oRequestGroup) {
 				if (sRequestGroupId === sGroupId || !sGroupId) {
 					var aReadRequests = [], aBatchGroup = [], oChangeSet, aChanges;
-					var oWrappedBatchRequestHandle = wrapBatchRequestHandle();
+					var oWrappedBatchRequestHandle = wrapRequestHandle();
 					if (oRequestGroup.changes) {
 						jQuery.each(oRequestGroup.changes, function(sChangeSetId, aChangeSet){
 							oChangeSet = {__changeRequests:[]};
@@ -2876,8 +2877,8 @@ sap.ui.define([
 					}
 					if (aReadRequests.length > 0) {
 						var oBatchRequest = that._createBatchRequest(aReadRequests, true);
-						oWrappedBatchRequestHandle.oBatchRequestHandle = that._submitBatchRequest(oBatchRequest, aBatchGroup, fnSuccess, fnError);
-						oRequestHandle.push(oWrappedBatchRequestHandle.oBatchRequestHandle);
+						oWrappedBatchRequestHandle.oRequestHandle = that._submitBatchRequest(oBatchRequest, aBatchGroup, fnSuccess, fnError);
+						aRequestHandles.push(oWrappedBatchRequestHandle.oRequestHandle);
 					}
 					delete mRequests[sRequestGroupId];
 				}
@@ -2888,13 +2889,14 @@ sap.ui.define([
 					if (oRequestGroup.changes) {
 						jQuery.each(oRequestGroup.changes, function(sChangeSetId, aChangeSet){
 							for (var i = 0; i < aChangeSet.length; i++) {
+								var oWrappedSingleRequestHandle = wrapRequestHandle();
 								//increase laundering
 								sPath = '/' + that.getKey(aChangeSet[i].request.data);
 								that.increaseLaundering(sPath, aChangeSet[i].request.data);
-								checkAbort(aChangeSet[i]);
+								checkAbort(aChangeSet[i], oWrappedSingleRequestHandle);
 								if (aChangeSet[i].parts.length > 0) {
-									aChangeSet[i].request._handle = that._submitSingleRequest(aChangeSet[i].request, aChangeSet[i].fnSuccess, aChangeSet[i].fnError);
-									oRequestHandle.push(aChangeSet[i].request._handle);
+									oWrappedSingleRequestHandle.oRequestHandle = that._submitSingleRequest(aChangeSet[i]);
+									aRequestHandles.push(oWrappedSingleRequestHandle.oRequestHandle);
 								}
 							}
 						});
@@ -2902,10 +2904,11 @@ sap.ui.define([
 					if (oRequestGroup.requests) {
 						var aRequests = oRequestGroup.requests;
 						for (var i = 0; i < aRequests.length; i++) {
-							checkAbort(aRequests[i]);
+							var oWrappedSingleRequestHandle = wrapRequestHandle();
+							checkAbort(aRequests[i], oWrappedSingleRequestHandle);
 							if (aRequests[i].parts.length > 0) {
-								aRequests[i].request._handle = that._submitSingleRequest(aRequests[i].request, aRequests[i].fnSuccess, aRequests[i].fnError);
-								oRequestHandle.push(aRequests[i].request._handle);
+								oWrappedSingleRequestHandle.oRequestHandle = that._submitSingleRequest(aRequests[i]);
+								aRequestHandles.push(oWrappedSingleRequestHandle.oRequestHandle);
 							}
 						}
 					}
@@ -2914,7 +2917,7 @@ sap.ui.define([
 			});
 		}
 		this.checkDataState(this.mLaunderingState);
-		return oRequestHandle.length == 1 ? oRequestHandle[0] : oRequestHandle;
+		return aRequestHandles.length == 1 ? aRequestHandles[0] : aRequestHandles;
 	};
 
 	/**

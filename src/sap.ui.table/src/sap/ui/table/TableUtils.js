@@ -52,7 +52,76 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 * @private
 		 */
 		isNoDataVisible : function(oTable) {
-			return oTable.getShowNoData() && !oTable._getRowCount()/*!oTable._hasData()*/;
+			if (!oTable.getShowNoData()) {
+				return false;
+			}
+
+			var oBinding = oTable.getBinding("rows"),
+				iBindingLength = oTable._getRowCount(),
+				bHasData = oBinding ? !!iBindingLength : false;
+
+			if (oBinding && oBinding.providesGrandTotal) { // Analytical Binding
+				var bHasTotal = oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures();
+				bHasData = (bHasTotal && iBindingLength < 2) || (!bHasTotal && iBindingLength === 0) ? false : true;
+			}
+
+			return !bHasData;
+		},
+
+		/**
+		 * Checks whether the given object is of the given type (given in AMD module syntax)
+		 * without the need of loading the types module.
+		 * @param {sap.ui.base.ManagedObject} oObject The object to check
+		 * @param {string} sType The type given in AMD module syntax
+		 * @return {boolean}
+		 * @private
+		 */
+		isInstanceOf : function(oObject, sType) {
+			if (!oObject || !sType) {
+				return false;
+			}
+			var oType = sap.ui.require(sType);
+			return !!(oType && (oObject instanceof oType));
+		},
+
+		/**
+		 * Toggles the expand / collapse state of the group which contains the given Dom element.
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @param {Object} oRef DOM reference of an element within the table group header
+		 * @param {boolean} [bExpand] If defined instead of toggling the desired state is set.
+		 * @return {boolean} <code>true</code> when the operation was performed, <code>false</code> otherwise.
+		 * @private
+		 */
+		toggleGroupHeader : function(oTable, oRef, bExpand) {
+			var $Ref = jQuery(oRef),
+				$GroupRef;
+
+			if ($Ref.hasClass("sapUiTableTreeIcon")) {
+				$GroupRef = $Ref.closest("tr");
+			} else {
+				$GroupRef = $Ref.closest(".sapUiTableGroupHeader");
+			}
+
+			var oBinding = oTable.getBinding("rows");
+			if ($GroupRef.length > 0 && oBinding) {
+				var iRowIndex = oTable.getFirstVisibleRow() + parseInt($GroupRef.attr("data-sap-ui-rowindex"), 10);
+				var bIsExpanded = oBinding.isExpanded(iRowIndex);
+				if (bExpand === true && !bIsExpanded) { // Force expand
+					oBinding.expand(iRowIndex);
+				} else if (bExpand === false && bIsExpanded) { // Force collapse
+					oBinding.collapse(iRowIndex);
+				} else if (bExpand !== true && bExpand !== false) { // Toggle state
+					oBinding.toggleIndex(iRowIndex);
+				} else {
+					return false;
+				}
+
+				if (oTable._onGroupHeaderChanged) {
+					oTable._onGroupHeaderChanged(iRowIndex, !bIsExpanded);
+				}
+				return true;
+			}
+			return false;
 		},
 
 		/**
@@ -82,7 +151,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 * @private
 		 */
 		getVisibleColumnCount : function(oTable) {
-			return oTable._getVisibleColumnCount();
+			return oTable._getVisibleColumns().length;
+		},
+
+		/**
+		 * Returns the number of header rows
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @return {int}
+		 * @private
+		 */
+		getHeaderRowCount : function(oTable) {
+			if (!oTable.getColumnHeaderVisible()) {
+				return 0;
+			}
+			var iHeaderRows = 0;
+			jQuery.each(oTable._getVisibleColumns(), function(iIndex, oColumn) {
+				iHeaderRows = Math.max(iHeaderRows,  oColumn.getMultiLabels().length);
+			});
+			return iHeaderRows > 0 ? iHeaderRows : 1;
 		},
 
 		/**
@@ -201,7 +287,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 */
 		getRowIndexOfFocusedCell : function(oTable) {
 			var oInfo = TableUtils.getFocusedItemInfo(oTable);
-			return oInfo.row - oTable._getHeaderRowCount();
+			return oInfo.row - TableUtils.getHeaderRowCount(oTable);
 		},
 
 		/**
@@ -496,6 +582,92 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			var iRowIndex = parseInt($Ref.add($Ref.parent()).filter("[data-sap-ui-rowindex]").attr("data-sap-ui-rowindex"), 10);
 			var iFixed = oTable.getFixedBottomRowCount() || 0;
 			return iRowIndex == oTable.getVisibleRowCount() - iFixed - 1;
+		},
+
+		/**
+		 * Returns the content density style class which is relevant for the given control. First it tries to find the
+		 * definition via the control API. While traversing the controls parents, it's tried to find the closest DOM
+		 * reference. If that is found, the check will use the DOM reference to find the closest content density style class
+		 * in the parent chain. This approach caters both use cases: content density defined at DOM and/or control level.
+		 *
+		 * If at the same level, several style classes are defined, this is the priority:
+		 * sapUiSizeCompact, sapUiSizeCondensed, sapUiSizeCozy
+		 *
+		 * @param {sap.ui.table.Table} oControl Instance of the table
+		 * @returns {String|undefined} name of the content density stlye class or undefined if none was found
+		 * @private
+		 */
+		getContentDensity : function(oControl) {
+			var sContentDensity;
+			var aContentDensityStyleClasses = ["sapUiSizeCompact", "sapUiSizeCondensed", "sapUiSizeCozy"];
+
+			var fnGetContentDensity = function (sFnName, oObject) {
+				if (!oObject[sFnName]) {
+					return;
+				}
+
+				for (var i = 0; i < aContentDensityStyleClasses.length; i++) {
+					if (oObject[sFnName](aContentDensityStyleClasses[i])) {
+						return aContentDensityStyleClasses[i];
+					}
+				}
+			};
+
+			var $DomRef = oControl.$();
+			if ($DomRef.length > 0) {
+				// table was already rendered, check by DOM and return content density class
+				sContentDensity = fnGetContentDensity("hasClass", $DomRef);
+			} else {
+				sContentDensity = fnGetContentDensity("hasStyleClass", oControl);
+			}
+
+			if (sContentDensity) {
+				return sContentDensity;
+			}
+
+			// since the table was not yet rendered, traverse its parents:
+			//   - to find a content density defined at control level
+			//   - to find the first DOM reference and then check on DOM level
+			var oParentDomRef = null;
+			var oParent = oControl.getParent();
+			// the table might not have a parent at all.
+			if (oParent) {
+				// try to get the DOM Ref of the parent. It might be required to traverse the complete parent
+				// chain to find one parent which has DOM rendered, as it may happen that an element does not have
+				// a corresponding DOM Ref
+				do {
+					// if the content density is defined at control level, we can return it, no matter the control was already
+					// rendered. By the time it will be rendered, it will have that style class
+					sContentDensity = fnGetContentDensity("hasStyleClass", oParent);
+					if (sContentDensity) {
+						return sContentDensity;
+					}
+
+					// if there was no style class set at control level, we try to find the DOM reference. Using that
+					// DOM reference, we can easily check for the content density style class via the DOM. This allows us
+					// to include e.g. the body tag as well.
+					if (oParent.getDomRef) {
+						// for Controls and elements
+						oParentDomRef = oParent.getDomRef();
+					} else if (oParent.getRootNode) {
+						// for UIArea
+						oParentDomRef = oParent.getRootNode();
+					}
+
+					if (!oParentDomRef && oParent.getParent) {
+						oParent = oParent.getParent();
+					} else {
+						// make sure there is not endless loop if oParent has no getParent function
+						oParent = null;
+					}
+				} while (oParent && !oParentDomRef)
+			}
+
+			// if we found a DOM reference, check for content density
+			$DomRef = jQuery(oParentDomRef || document.body);
+			sContentDensity = fnGetContentDensity("hasClass", $DomRef.closest("." + aContentDensityStyleClasses.join(",.")));
+
+			return sContentDensity;
 		}
 	};
 

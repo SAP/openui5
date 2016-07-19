@@ -298,7 +298,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 			// sync point 1 synchronizes document ready and rest of UI5 boot
 			var oSyncPoint1 = jQuery.sap.syncPoint("UI5 Document Ready", function(iOpenTasks, iFailures) {
-				that.handleLoad();
+				that.bDomReady = true;
+				that.init();
 			});
 			var iDocumentReadyTask = oSyncPoint1.startTask("document.ready");
 			var iCoreBootTask = oSyncPoint1.startTask("preload and boot");
@@ -403,7 +404,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			}
 
 			oSyncPoint2.finishTask(iCreateTasksTask);
-
 		},
 
 		metadata : {
@@ -673,15 +673,74 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
+	 * Load the SAP web fonts
+	 * @private
+	 * @experimental
+	 */
+	Core.prototype._loadWebFonts = function() {
+		jQuery.sap.measure.start("sapFontsLoad", "Time to load SAP web fonts");
+		var sFontPath = jQuery.sap.getModulePath("sap.ui.core", '/') + "themes/base/fonts/";
+		var aFonts = [
+			{url: sFontPath + '72-Regular.woff', weight: "normal", style: "normal", stretch: "normal"},
+			{url: sFontPath + '72-Italic.woff', weight: "normal", style: "italic", stretch: "normal"},
+			{url: sFontPath + '72-BoldItalic.woff', weight: "bold", style: "italic", stretch: "normal"},
+			{url: sFontPath + '72-Bold.woff', weight: "bold", style: "normal", stretch: "normal"},
+			{url: sFontPath + '72-Condensed.woff', weight: "normal", style: "normal", stretch: "condensed"},
+			{url: sFontPath + '72-CondensedBold.woff', weight: "bold", style: "normal", stretch: "condensed"},
+			{url: sFontPath + '72-Light.woff', weight: "lighter", style: "normal", stretch: "normal"}
+		];
+
+		var x = true; // temporarily override FontFace check until issue with adding font faces after load is resolved
+		if (x) {	// if (!window.FontFace) {
+			var aBuffer = [];
+			var aCalls = [];
+			for (var i = 0; i < aFonts.length; i++) {
+				aBuffer.push("@font-face {font-family: '72-Web'; font-style: ", aFonts[i].style, "; font-weight: ", aFonts[i].weight, "; font-stretch: ", aFonts[i].stretch, "; src: url('", aFonts[i].url, "') format('woff');}");
+				aCalls.push(Promise.resolve(jQuery.ajax({
+					url: aFonts[i].url,
+					beforeSend: function ( xhr ) {
+						xhr.overrideMimeType("application/octet-stream");
+					}
+				})));
+			}
+
+			Promise.all(aCalls).then(function(){
+				jQuery('head').append('<style type="text/css">' + aBuffer.join("") + '</style>');
+				jQuery.sap.measure.end("sapFontsLoad");
+			});
+		} else {
+			var aLoadedFonts = [];
+			for (var i = 0; i < aFonts.length; i++) {
+				var font = new window.FontFace("72-Web", "url('" + aFonts[i].url + "') format('woff')", {
+					style: aFonts[i].style,
+					weight: aFonts[i].weight,
+					stretch: aFonts[i].stretch
+				});
+				aFonts[i].font = font;
+				font.load();
+				aLoadedFonts.push(font.loaded);
+			}
+
+			Promise.all(aLoadedFonts).then(function() {
+				for (var i = 0; i < aFonts.length; i++) {
+					document.fonts.add(aFonts[i].font);
+				}
+				jQuery.sap.measure.end("sapFontsLoad");
+			}).fail(function () {
+				jQuery.sap.log.error('web font loading failed');
+			}).always(function () {
+				jQuery.sap.log.info('web font loading');
+			});
+		}
+	};
+
+	/**
 	 * Boots the core and injects the necessary css and js files for the library.
 	 * Applications shouldn't call this method. It is automatically called by the bootstrap scripts (e.g. sap-ui-core.js)
 	 *
 	 * @private
 	 */
 	Core.prototype._boot = function() {
-
-		//do not allow any event processing until the Core is booting
-		this.lock();
 
 		// if a list of preloaded library CSS is configured, request a merged CSS (if application did not already do it)
 		var aCSSLibs = this.oConfiguration['preloadLibCss'];
@@ -699,9 +758,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				jQuery.sap.require(mod);
 			}
 		});
-
-		//allow events again
-		this.unlock();
 
 	};
 
@@ -937,7 +993,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		this._executeInitListeners();
 
-		this.renderPendingUIUpdates(); // directly render without setTimeout, so rendering is guaranteed to be finished when init() ends
+		// Experimental: Load SAP web fonts
+		var oUriParams = jQuery.sap.getUriParameters();
+		if (oUriParams.get('sap-xx-sapfont') === "true") {
+			this._loadWebFonts();
+		}
+
+		if ( this.oThemeCheck.themeLoaded || !this.oConfiguration['xx-waitForTheme'] ) {
+			this.renderPendingUIUpdates(); // directly render without setTimeout, so rendering is guaranteed to be finished when init() ends
+		} else {
+			log.info("initial rendering delayed until theme has been loaded");
+			this._sRerenderTimer = this; // use 'this' as an easy to recognize marker for an already pending rerendering
+			_oEventProvider.attachEventOnce(Core.M_EVENTS.ThemeChanged, this.renderPendingUIUpdates, this);
+		}
 
 		jQuery.sap.measure.end("coreComplete");
 	};
@@ -1048,26 +1116,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				f();
 			});
 		}
-	};
-
-	/**
-	 * Handles the load event of the browser to initialize the Core
-	 * @private
-	 */
-	Core.prototype.handleLoad = function () {
-		this.bDomReady = true;
-
-		//do not allow any event processing until the Core is initialized
-		var bWasLocked = this.isLocked();
-		if ( !bWasLocked ) {
-			this.lock();
-		}
-		this.init();
-		//allow event processing again
-		if ( !bWasLocked ) {
-			this.unlock();
-		}
-
 	};
 
 	/**
@@ -1218,15 +1266,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		jQuery.sap.assert(typeof lib === 'string' && lib || typeof lib === 'object' && typeof lib.name === 'string' && lib.name, "lib must be a non-empty string or an object with at least a non-empty name property" );
 
-		var libModule = lib.replace(/\./g, '/') + '/library.js';
-		if ( jQuery.sap.isResourceLoaded(libModule) ) {
-			return Promise.resolve(true);
-		}
-
 		var json;
 		if ( typeof lib !== 'string' ) {
 			json = lib.json;
 			lib = lib.name;
+		}
+
+		var libModule = lib.replace(/\./g, '/') + '/library.js';
+		if ( jQuery.sap.isResourceLoaded(libModule) ) {
+			return Promise.resolve(true);
 		}
 
 		var libInfo = mLibraryPreloadBundles[lib] || (mLibraryPreloadBundles[lib] = { });
@@ -1347,15 +1395,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		jQuery.sap.assert(typeof lib === 'string' && lib || typeof lib === 'object' && typeof lib.name === 'string' && lib.name, "lib must be a non-empty string or an object with at least a non-empty name property" );
 
-		var libModule = lib.replace(/\./g, '/') + '/library.js';
-		if ( jQuery.sap.isResourceLoaded(libModule) ) {
-			return;
-		}
-
 		var json;
 		if ( typeof lib !== 'string' ) {
 			json = lib.json;
 			lib = lib.name;
+		}
+
+		var libModule = lib.replace(/\./g, '/') + '/library.js';
+		if ( jQuery.sap.isResourceLoaded(libModule) ) {
+			return;
 		}
 
 		var libInfo = mLibraryPreloadBundles[lib] || (mLibraryPreloadBundles[lib] = { });
@@ -1368,10 +1416,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		// currently loading
 		if ( libInfo.pending ) {
 			if ( libInfo.async ) {
-				throw new Error("request to load " + lib + " synchronously, but async loading is pending");
+				jQuery.sap.log.warning("request to load " + lib + " synchronously while async loading is pending; this causes a duplicate request and should be avoided by caller");
+				// fall through and preload synchronously
 			} else {
-				// sync cycle -> error (or return null like with modules?)
-				throw new Error("request to load " + lib + " synchronously, but sync loading is pending (cycle)");
+				// sync cycle -> ignore nested call (would nevertheless be a dependency cycle)
+				jQuery.sap.log.warning("request to load " + lib + " synchronously while sync loading is pending (cycle, ignored)");
+				return;
 			}
 		}
 
@@ -1538,8 +1588,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		function requireLibs() {
 			if ( bRequire ) {
-				aLibraries.forEach(function(sLibraryName) {
-					jQuery.sap.require(sLibraryName + ".library");
+				aLibraries.forEach(function(vLibraryName) {
+					if ( typeof vLibraryName === 'object' ) {
+						vLibraryName = vLibraryName.name;
+					}
+					jQuery.sap.require(vLibraryName + ".library");
 				});
 				if ( that.oThemeCheck && that.isInitialized() ) {
 					that.oThemeCheck.fireThemeChangedEvent(true);
@@ -2135,7 +2188,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 			// clear a pending timer so that the next call to re-render will create a new timer
 			if (this._sRerenderTimer) {
-				jQuery.sap.clearDelayedCall(this._sRerenderTimer); // explicitly stop the timer, as this call might be a synchronous call (applyChanges) while still a timer is running
+				if ( this._sRerenderTimer !== this ) { // 'this' is used as a marker for a delayed initial rendering, no timer to cleanup then
+					jQuery.sap.clearDelayedCall(this._sRerenderTimer); // explicitly stop the timer, as this call might be a synchronous call (applyChanges) while still a timer is running
+				}
 				this._sRerenderTimer = undefined;
 			}
 
@@ -2321,13 +2376,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	Core.prototype.fireLocalizationChanged = function(mChanges) {
 		var sEventId = Core.M_EVENTS.LocalizationChanged,
 			oBrowserEvent = jQuery.Event(sEventId, {changes : mChanges}),
-			fnAdapt = ManagedObject._handleLocalizationChange,
-			changedSettings = [];
+			fnAdapt = ManagedObject._handleLocalizationChange;
 
-		jQuery.each(mChanges, function(key,value) {
-			changedSettings.push(key);
-		});
-		jQuery.sap.log.info("localization settings changed: " + changedSettings.join(","), null, "sap.ui.core.Core");
+		jQuery.sap.log.info("localization settings changed: " + Object.keys(mChanges).join(","), null, "sap.ui.core.Core");
 
 		/*
 		 * Notify models that are able to handle a localization change
@@ -2370,7 +2421,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			jQuery.sap.log.info("RTL mode " + mChanges.rtl ? "activated" : "deactivated");
 		}
 
-		// notify Elements via a pseudo browser event (onLocalizationChanged)
+		// notify Elements via a pseudo browser event (onlocalizationChanged, note the lower case 'l')
 		jQuery.each(this.mElements, function(sId, oElement) {
 			this._handleEvent(oBrowserEvent);
 		});

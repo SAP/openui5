@@ -3149,8 +3149,9 @@ sap.ui.define([
 				oClone;
 			if (aChildren.length > aContexts.length) {
 				for (var i = aContexts.length; i < aChildren.length; i++) {
-					oControl[oAggregationInfo._sRemoveMutator](aChildren[i]);
-					aChildren[i].destroy("KeepDom");
+					oClone = aChildren[i];
+					oControl[oAggregationInfo._sRemoveMutator](oClone);
+					oClone.destroy("KeepDom");
 				}
 			}
 			for (var i = 0; i < aContexts.length; i++) {
@@ -3255,7 +3256,7 @@ sap.ui.define([
 			oBinding.bWasGrouped = bGrouped;
 		} else if (oBinding instanceof TreeBinding) {
 			// Destroy all children in case a factory function is used
-			if (!oBinding.template) {
+			if (!oBindingInfo.template) {
 				this[oAggregationInfo._sDestructor]();
 			}
 			// In fnAfter call update recursively for the child nodes of the current tree node
@@ -4184,7 +4185,7 @@ sap.ui.define([
 	ManagedObject.prototype.findAggregatedObjects = function(bRecursive, fnCondition) {
 
 		var aAggregatedObjects = [];
-		if (fnCondition && !typeof fnCondition === "function") {
+		if (fnCondition && typeof fnCondition !== "function") {
 			fnCondition = null;
 		}
 		function fFindObjects(oObject) {

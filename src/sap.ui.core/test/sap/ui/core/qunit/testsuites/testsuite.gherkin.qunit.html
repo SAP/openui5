@@ -2,7 +2,7 @@
 	<head>
 		<title>TestSuite for sap.ui.core: NOT-YET-GTP testcase CORE/GHERKIN</title>
 		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
-		<script language="javascript">
+		<script type="text/javascript">
 
 		/**
 		 * Add test pages to this test suite function.
@@ -13,13 +13,16 @@
 			var contextPath = "/" + window.location.pathname.split("/")[1];
 
 			function addTestPage(sUrl) {
-				suite.addTestPage(contextPath + sUrl);
+				suite.addTestPage(contextPath + sUrl + "?noglobals=true&sap-ui-animation=false");
 			}
 
 			addTestPage("/test-resources/sap/ui/core/qunit/gherkin/DataTableUtils.qunit.html");
 			addTestPage("/test-resources/sap/ui/core/qunit/gherkin/GherkinTestGenerator.qunit.html");
 			addTestPage("/test-resources/sap/ui/core/qunit/gherkin/SimpleGherkinParser.qunit.html");
 			addTestPage("/test-resources/sap/ui/core/qunit/gherkin/StepDefinitions.qunit.html");
+			addTestPage("/test-resources/sap/ui/core/demokit/sample/gherkin/GherkinWithOPA5/GherkinTestRunner.html");
+			addTestPage("/test-resources/sap/ui/core/demokit/sample/gherkin/GherkinWithPageObjects/GherkinTestRunner.html");
+			addTestPage("/test-resources/sap/ui/core/demokit/sample/gherkin/GherkinWithQUnit/GherkinTestRunner.html");
 
 			return suite;
 		}

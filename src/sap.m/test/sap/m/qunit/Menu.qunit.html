@@ -51,6 +51,7 @@
             this.sut.addItem(new sap.m.MenuItem({
                 text: "fridge",
                 icon: "sap-icon://fridge",
+                tooltip: "it's cold in here",
                 items: [
                     new sap.m.MenuItem({
                         text: "accidental leave",
@@ -229,6 +230,12 @@
             afterEach : function () {
                 destroyMenu.call(this);
             }
+        });
+
+        test("tooltip", function() {
+            this.sut.openBy();
+            var oItemFridge = this.sut._getMenu().getItems()[0];
+            equals(oItemFridge.getTooltip(), "it's cold in here", "item has a tooltip");
         });
 
         test('Opening/closing/reopening', function () {

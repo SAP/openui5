@@ -67,7 +67,8 @@ sap.ui.require([
 		var oType = new StringType({}, {maxLength : 5});
 
 		assert.strictEqual(oType.formatValue(undefined, "foo"), null, "undefined");
-		assert.strictEqual(oType.formatValue(null, "foo"), null, "null");
+		assert.strictEqual(oType.formatValue(null, "any"), null, "null");
+		assert.strictEqual(oType.formatValue(null, "string"), "", "null");
 		assert.strictEqual(oType.formatValue("foo", "any"), "foo", "target type any");
 		assert.strictEqual(oType.formatValue("true", "boolean"), true, "target type boolean");
 		assert.strictEqual(oType.formatValue("3.1415", "float"), 3.1415, "target type float");
@@ -221,7 +222,7 @@ sap.ui.require([
 			{ v : sValue, r : "12345" }, { v : "0103040", r : "103040" },
 			{ v : "0000000", r : "0" }, { v : "A003400", r : "A003400" },
 			{ v : "00A3400", r : "00A3400" }, { v : "", r : "" },
-			{ v : "7654321", r : "7654321" }, { v : null, r : null }, { v : undefined, r : null }
+			{ v : "7654321", r : "7654321" }, { v : null, r : "" }, { v : undefined, r : null }
 		].forEach(function (oFixture) {
 			assert.strictEqual(oType.formatValue(oFixture.v, "string"), oFixture.r,
 				oFixture.v + " as string");

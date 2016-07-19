@@ -8,75 +8,74 @@
 
 		<script
 			src="../../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-libs="sap.ui.commons">
+			data-sap-ui-libs="sap.m">
 		</script>
 
 
 		<script>
-			(function () {
-				jQuery.sap.require("sap.ui.qunit.qunit-css");
-				jQuery.sap.require("sap.ui.thirdparty.qunit");
-				jQuery.sap.require("sap.ui.qunit.qunit-junit");
-				jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-				jQuery.sap.require("sap.ui.thirdparty.sinon");
-				jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+			jQuery.sap.require("sap.ui.qunit.qunit-css");
+			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.qunit.qunit-junit");
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			jQuery.sap.require("sap.ui.thirdparty.sinon");
+			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
-				jQuery.sap.require("sap.ui.test.matchers.AggregationFilled");
-				jQuery.sap.require("sap.ui.commons.ComboBox");
+			sap.ui.require([
+				"sap/ui/test/matchers/AggregationFilled",
+				"sap/m/ComboBox",
+				"sap/ui/core/ListItem"
+			], function (AggregationFilled, ComboBox, ListItem) {
 
-				test("Should match a filled aggregation", function() {
-					// Arrange
-					var oComboBox = new  sap.ui.commons.ComboBox({items : [new sap.ui.core.ListItem()]});
-
-					// System under Test
-					var oMatcher = new sap.ui.test.matchers.AggregationFilled({ name : "items" });
-
-					// Act
-					var bResult = oMatcher.isMatching(oComboBox);
-
-					// Assert
-					ok(bResult, "Did match because there was an item");
-
-					// Cleanup
-					oComboBox.destroy();
+				QUnit.module("AggregationFilled", {
+					beforeEach: function () {
+						this.oComboBox = new ComboBox("myCB");
+					},
+					afterEach: function () {
+						this.oComboBox.destroy();
+					}
 				});
 
-				test("Should not match an empty aggregation", function() {
+				QUnit.test("Should match a filled aggregation", function(assert) {
 					// Arrange
-					var oComboBox = new  sap.ui.commons.ComboBox({items : []});
+					this.oComboBox.addItem(new ListItem());
 
 					// System under Test
-					var oMatcher = new sap.ui.test.matchers.AggregationFilled({ name : "items" });
+					var oMatcher = new AggregationFilled({ name : "items" });
 
 					// Act
-					var bResult = oMatcher.isMatching(oComboBox);
+					var bResult = oMatcher.isMatching(this.oComboBox);
 
 					// Assert
-					ok(!bResult, "Did not match because there was no item");
-
-					// Cleanup
-					oComboBox.destroy();
+					assert.ok(bResult, "Matched because there was an item");
 				});
 
-				test("Should complain if control does not have an aggregation", function() {
-					// Arrange
-					var oComboBox = new  sap.ui.commons.ComboBox();
-					var oErrorSpy = this.spy(jQuery.sap.log,"error");
-
+				QUnit.test("Should not match an empty aggregation", function(assert) {
 					// System under Test
-					var oMatcher = new sap.ui.test.matchers.AggregationFilled({ name : "anAggregationThatWillNeverBeAddedToTheCombobox" });
+					var oMatcher = new AggregationFilled({ name : "items" });
+					var oDebugSpy = this.spy(oMatcher._oLogger,"debug");
 
 					// Act
-					var bResult = oMatcher.isMatching(oComboBox);
+					var bResult = oMatcher.isMatching(this.oComboBox);
 
 					// Assert
-					strictEqual(bResult, false, "Did not match");
-					strictEqual(oErrorSpy.callCount, 1, "Did complain");
-
-					// Cleanup
-					oComboBox.destroy();
+					assert.ok(!bResult, "Did not match because there was no item");
+					sinon.assert.calledWith(oDebugSpy, "Control 'Element sap.m.ComboBox#myCB' has an empty aggregation 'items'");
 				});
-			} ());
+
+				QUnit.test("Should complain if control does not have an aggregation", function(assert) {
+					// System under Test
+					var oMatcher = new AggregationFilled({ name : "anAggregationThatWillNeverBeAddedToTheCombobox" });
+					var oErrorSpy = this.spy(oMatcher._oLogger,"error");
+
+					// Act
+					var bResult = oMatcher.isMatching(this.oComboBox);
+
+					// Assert
+					assert.strictEqual(bResult, false, "Did not match");
+					sinon.assert.calledWith(oErrorSpy, "Control 'Element sap.m.ComboBox#myCB' does not have an aggregation called 'anAggregationThatWillNeverBeAddedToTheCombobox'");
+				});
+		});
+
 		</script>
 	</head>
 

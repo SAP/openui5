@@ -154,14 +154,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 
 			this._updateButtonControl();
 			this._attachMenuEvents();
+
 		};
 
 		MenuButton.prototype.onAfterRendering = function() {
+			// call the function with delay to assure that the
+			// inner buttons are rendered with correct width before setting the initial width
+			jQuery.sap.delayedCall(0, this, "_setInitialBtnWidth");
+
+			this._setAriaHasPopup();
+		};
+
+
+		/**
+		 * Sets the initial width of the control.
+		 * @private
+		 */
+		MenuButton.prototype._setInitialBtnWidth = function() {
 			if (this._isSplitButton() && !this._iInitialWidth) {
 				this._iInitialWidth = this.$().outerWidth() + 1; //for IE
 			}
-
-			this._setAriaHasPopup();
 		};
 
 		MenuButton.prototype._setAriaHasPopup = function() {

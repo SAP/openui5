@@ -7,7 +7,7 @@ sap.ui.define([
 		'sap/ui/Device'
 	], function (jQuery, URI, Device) {
 	"use strict";
-	var sLogPrefix = "Opa5 - finding controls",
+	var sLogPrefix = "sap.ui.test.Opa5",
 		$ = jQuery,
 		oFrameWindow = null,
 		$Frame = null,

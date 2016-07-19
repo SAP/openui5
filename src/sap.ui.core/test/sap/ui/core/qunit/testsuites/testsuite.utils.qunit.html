@@ -13,8 +13,11 @@
 			function suite() {
 				var suite = new parent.jsUnitTestSuite();
 				var contextPath = "/" + window.location.pathname.split("/")[1];
+				var bIsIE = sap.ui.Device.browser.internet_explorer;
+
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/BusyIndicator.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/BusyIndicatorNoCore.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/BusyIndicatorRTL.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Device.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.dom.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.encoder.qunit.html");
@@ -23,6 +26,10 @@
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jQuery.sap.FrameOptions-meta-tag-override-service.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jQuery.sap.FrameOptions-meta-tag.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jQuery.sap.FrameOptions.qunit.html");
+				// This test should only be executed on browser != Internet Explorer, as it shows unreliable results on IE!!
+				if (!bIsIE) {
+					suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.history.qunit.html");
+				}
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.logger.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.promise.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/jquery.sap.properties.qunit.html");

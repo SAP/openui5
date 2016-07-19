@@ -385,9 +385,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	 * @private
 	 */
 	ElementOverlay.prototype._createAggregationOverlay = function(sAggregationName, bInHiddenTree) {
-		var oData =  this.getDesignTimeMetadata().getAggregation(sAggregationName);
-
-		var oAggregationDesignTimeMetadata = new AggregationDesignTimeMetadata({data : oData});
+		var oAggregationDesignTimeMetadata = this.getDesignTimeMetadata().createAggregationDesignTimeMetadata(sAggregationName);
 
 		var oAggregationOverlay = new AggregationOverlay({
 			aggregationName : sAggregationName,
@@ -687,44 +685,31 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	};
 
 	/**
-	 * Returns first ancestor overlay not flagged as inHiddenTree
-	 * @return {sap.ui.dt.ElementOverlay} ElementOverlay public parent
-	 * @public
-	 */
-	ElementOverlay.prototype.getPublicParentElementOverlay = function() {
-		var oParentElementOverlay = this.getParentElementOverlay();
-		while (oParentElementOverlay && ElementUtil.isInstanceOf(oParentElementOverlay, "sap.ui.dt.ElementOverlay") && oParentElementOverlay.isInHiddenTree()) {
-			oParentElementOverlay = oParentElementOverlay.getParentElementOverlay();
-		}
-		return oParentElementOverlay;
-	};
-
-	/**
-	 * Returns first aggregation overlay not flagged as inHiddenTree
+	 * Returns agrregation overlay of public parent, which is an ancestor of this overlay
 	 *
 	 * @return {sap.ui.dt.Overlay} Overlay public parent
 	 * @public
 	 */
 	ElementOverlay.prototype.getPublicParentAggregationOverlay = function() {
-		var oPublicParentAggregationOverlay;
-
-		var oPublicParentElementOverlay = this.getPublicParentElementOverlay();
-		var oElement = this.getElementInstance();
-		if (oPublicParentElementOverlay) {
-			oPublicParentElementOverlay.getAggregationOverlays().some(function(oAggregationOverlay) {
-				if (!oAggregationOverlay.isInHiddenTree()) {
-					var oPublicParent = oPublicParentElementOverlay.getElementInstance();
-					var sPublicParentAggregationName = oAggregationOverlay.getAggregationName();
-					var iIndex = ElementUtil.getIndexInAggregation(oElement, oPublicParent, sPublicParentAggregationName);
-					if (iIndex !== -1) {
-						oPublicParentAggregationOverlay = oAggregationOverlay;
-						return true;
-					}
-				}
-			});
+		var oAggregationOverlay = this.getParentAggregationOverlay();
+		var oParentElementOverlay = this.getParentElementOverlay();
+		while (oParentElementOverlay && ElementUtil.isInstanceOf(oParentElementOverlay, "sap.ui.dt.ElementOverlay") && oParentElementOverlay.isInHiddenTree()) {
+			oAggregationOverlay = oParentElementOverlay.getParentAggregationOverlay();
+			oParentElementOverlay = oParentElementOverlay.getParentElementOverlay();
 		}
+		return oAggregationOverlay;
+	};
 
-		return oPublicParentAggregationOverlay;
+	/**
+	 * Returns first ancestor overlay not flagged as inHiddenTree
+	 * @return {sap.ui.dt.ElementOverlay} ElementOverlay public parent
+	 * @public
+	 */
+	ElementOverlay.prototype.getPublicParentElementOverlay = function() {
+		var oPublicParentAggregationOverlay = this.getPublicParentAggregationOverlay();
+		if (oPublicParentAggregationOverlay) {
+			return oPublicParentAggregationOverlay.getParent();
+		}
 	};
 
 	return ElementOverlay;

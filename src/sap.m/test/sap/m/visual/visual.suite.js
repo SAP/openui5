@@ -19,6 +19,7 @@ module.exports = [
 	"ProgressIndicator.spec.js",
 	"QuickView.spec.js",
 	"QuickViewCard.spec.js",
+	"RadioButton.spec.js",
 	"RadioButtonGroup.spec.js",
 	"SemanticPage.spec.js",
 	"SplitApp.spec.js",
@@ -28,5 +29,9 @@ module.exports = [
 	"Text.spec.js",
 	"TimePicker.spec.js",
 	"Toolbar.spec.js",
-	"Wizard.spec.js"
+	"Wizard.spec.js",
+	"infra_ActionSelect.spec.js",
+	"infra_ObjectHeaderVisualTest.spec.js",
+	"infra_Page.spec.js",
+	"infra_SemanticPage.spec.js"
 ];

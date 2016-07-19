@@ -324,7 +324,6 @@ sap.ui.define([
 			}
 		});
 
-
 		opaTest("Should wait for lazy stubs", function () {
 			this.oOpa5.waitFor({
 				success: function () {
@@ -342,6 +341,57 @@ sap.ui.define([
 			});
 
 			this.oOpa5.iTeardownMyAppFrame();
+		});
+
+		opaTest("Should get an array of controls that is an instance of array of the executing document", function () {
+			this.oOpa5.waitFor({
+				success: function () {
+					new (Opa5.getWindow().sap.ui.commons.Button)().placeAt("body");
+				}
+			});
+
+			this.oOpa5.waitFor({
+				controlType: "sap.ui.commons.Button",
+				success: function (aButtons) {
+					Opa5.assert.ok(aButtons instanceof Array, "It is an array out the outer document");
+				}
+			});
+
+			this.oOpa5.iTeardownMyAppFrame();
+		});
+
+		QUnit.module("Regexp ID in an IFrame", {
+			beforeEach: function () {
+				this.oOpa5 = new Opa5();
+			},
+			afterEach: function () {
+			}
+		});
+
+		QUnit.test("Should not call success if a regex does not find controls", function (assert) {
+			var fnSuccessSpy = sinon.spy(),
+				fnErrorSpy = sinon.spy(),
+				fnDoneTesting = assert.async(),
+				fnIFrameTeardown = assert.async();
+
+			this.oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html");
+
+			this.oOpa5.waitFor({
+				id: /bar/,
+				timeout: 1,
+				success: fnSuccessSpy,
+				error: fnErrorSpy
+			});
+
+			Opa5.emptyQueue().always(function () {
+				sinon.assert.notCalled(fnSuccessSpy);
+				sinon.assert.calledOnce(fnErrorSpy);
+				fnDoneTesting();
+			});
+
+			this.oOpa5.iTeardownMyAppFrame();
+
+			 Opa5.emptyQueue().always(fnIFrameTeardown);
 		});
 
 		QUnit.module("Tests that timeout");

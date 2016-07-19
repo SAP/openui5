@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.unified.Menu.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', './MenuItemBase', './library', 'jquery.sap.script'],
-	function(jQuery, Control, Popup, MenuItemBase, library/* , jQuerySap */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core/Popup', './MenuItemBase', './library', 'jquery.sap.script'],
+	function(jQuery, Control, Device, Popup, MenuItemBase, library/* , jQuerySap */) {
 	"use strict";
 
 
@@ -556,7 +556,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 		this.setHoveredItem(oItem);
 
 		if (jQuery.sap.checkMouseEnterOrLeave(oEvent, this.getDomRef())) {
-			this.getDomRef().focus();
+			if (!Device.browser.msie && !Device.browser.edge) { //for IE & Edge skip it, otherwise it will move the focus out of the hovered item set before
+				this.getDomRef().focus();
+			}
 		}
 
 		this._openSubMenuDelayed(oItem);

@@ -70,6 +70,10 @@
 				}]
 			};
 
+			var oSimpleJSONModel = new sap.ui.model.json.JSONModel({
+				data: [{titleName: "Title"}]
+			});
+
 			var oItemTemplate1 = new sap.m.StandardListItem({
 				title : "{title}",
 				description : "{description}",
@@ -322,6 +326,23 @@
 				oResponsivePopoverExtendedInstance.setCustomBooleanProperty(false);
 
 				assert.ok(true, "This is expected to pass because custom property is only set on ResponsivePopover itself and not on aggregated controls");
+		});
+
+		QUnit.test("ResponsivepPopover should pass the data from the binded model to the inner control", function (assert) {
+			// Arrange
+			this.oResponsivePopover = new sap.m.ResponsivePopover();
+			this.oResponsivePopover.setModel(oSimpleJSONModel);
+			this.oResponsivePopover.bindProperty("title", "titleName");
+			this.oResponsivePopover.bindElement({
+				path: "/data/0"
+			});
+
+			// Act
+			this.oResponsivePopover.openBy(this.oButton);
+			this.clock.tick(500);
+
+			// Assert
+			assert.equal(this.oResponsivePopover._oControl.getTitle(), "Title", "Title should be passed to inner popover");
 		});
 
 		</script>

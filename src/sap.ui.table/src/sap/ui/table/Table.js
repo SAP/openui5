@@ -2441,18 +2441,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * check if data is available in the table
-	 * @private
-	 */
-	Table.prototype._hasData = function() {
-		var oBinding = this.getBinding("rows");
-		if (!oBinding || (oBinding.getLength() || 0) === 0) {
-			return false;
-		}
-		return true;
-	};
-
-	/**
 	 * show or hide the no data container
 	 * @private
 	 */
@@ -2677,46 +2665,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			}
 		}
 		return aColumns;
-	};
-
-	/**
-	 * returns the count of visible columns
-	 * @private
-	 */
-	Table.prototype._getVisibleColumnCount = function() {
-		return this._getVisibleColumns().length;
-	};
-
-	/**
-	 * returns the row count of headers
-	 * @private
-	 */
-	Table.prototype._getHeaderRowCount = function() {
-		if (!this.getColumnHeaderVisible()) {
-			return 0;
-		} else if (!this._useMultiHeader()) {
-			return 1;
-		}
-		var iHeaderRows = 0;
-		jQuery.each(this._getVisibleColumns(), function(iIndex, oColumn) {
-			iHeaderRows = Math.max(iHeaderRows,  oColumn.getMultiLabels().length);
-		});
-		return iHeaderRows;
-	};
-
-	/**
-	 * returns if multi header beahviour is used or not
-	 * @private
-	 */
-	Table.prototype._useMultiHeader = function() {
-		var useMultiLabels = false;
-		jQuery.each(this._getVisibleColumns(), function(iIndex, oColumn) {
-			if (oColumn.getMultiLabels().length > 0) {
-				useMultiLabels = true;
-				return false;
-			}
-		});
-		return useMultiLabels;
 	};
 
 
@@ -2967,7 +2915,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 			var oColHdrCnt = oDomRef.querySelector(".sapUiTableColHdrCnt");
 			if (oColHdrCnt) {
-				oColHdrCnt.style.height = Math.floor(oTableSizes.columnRowHeight * this._getHeaderRowCount()) + "px";
+				oColHdrCnt.style.height = Math.floor(oTableSizes.columnRowHeight * TableUtils.getHeaderRowCount(this)) + "px";
 			}
 		}
 
@@ -3279,6 +3227,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (oEvent.isMarked()) {
 			// the event was already handled by some other handler, do nothing.
 			return;
+		}
+
+		var $Target = jQuery(oEvent.target);
+
+		if ($Target.hasClass("sapUiTableGroupIcon") || $Target.hasClass("sapUiTableTreeIcon")) {
+			if (TableUtils.toggleGroupHeader(this, oEvent.target)) {
+				return;
+			}
 		}
 
 		// forward the event
@@ -4723,59 +4679,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		return this._oSelection.isSelectedIndex(iIndex);
 	};
 
-	/**
-	 * If focus is on group header, open/close the group header, depending on the expand state.
-	 * @private
-	 */
-	Table.prototype._toggleGroupHeader = function(oEvent) {
-		var $Parent = jQuery(oEvent.target).closest('.sapUiTableGroupHeader');
-		if ($Parent.length > 0) {
-			var iRowIndex = this.getFirstVisibleRow() + parseInt($Parent.attr("data-sap-ui-rowindex"), 10);
-			var oBinding = this.getBinding("rows");
-			if (oBinding && oBinding.isExpanded(iRowIndex)) {
-				oBinding.collapse(iRowIndex);
-			} else {
-				oBinding.expand(iRowIndex);
-			}
-			oEvent.preventDefault();
-			oEvent.stopImmediatePropagation();
-		}
-	};
-
-	/**
-	 * If focus is on group header, close the group header, else do the default behaviour of item navigation
-	 * @private
-	 */
-	Table.prototype._collapseGroupHeader = function(oEvent) {
-		var $Parent = jQuery(oEvent.target).closest('.sapUiTableGroupHeader');
-		if ($Parent.length > 0) {
-			var iRowIndex = this.getFirstVisibleRow() + parseInt($Parent.attr("data-sap-ui-rowindex"), 10);
-			var oBinding = this.getBinding("rows");
-			if (oBinding && oBinding.isExpanded(iRowIndex)) {
-				oBinding.collapse(iRowIndex);
-			}
-			oEvent.preventDefault();
-			oEvent.stopImmediatePropagation();
-		}
-	};
-
-	/**
-	 * If focus is on group header, open the group header, else do the default behaviour of item navigation
-	 * @private
-	 */
-	Table.prototype._expandGroupHeader = function(oEvent) {
-		var $Parent = jQuery(oEvent.target).closest('.sapUiTableGroupHeader');
-		if ($Parent.length > 0) {
-			var iRowIndex = this.getFirstVisibleRow() + parseInt($Parent.attr("data-sap-ui-rowindex"), 10);
-			var oBinding = this.getBinding("rows");
-			if (oBinding && !oBinding.isExpanded(iRowIndex)) {
-				oBinding.expand(iRowIndex);
-			}
-			oEvent.preventDefault();
-			oEvent.stopImmediatePropagation();
-		}
-	};
-
 	// =============================================================================
 	// GROUPING
 	// =============================================================================
@@ -4893,27 +4796,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 				};
 
-				this.onclick = function(oEvent) {
-					if (jQuery(oEvent.target).hasClass("sapUiTableGroupIcon")) {
-						var $parent = jQuery(oEvent.target).parents("[data-sap-ui-rowindex]");
-						if ($parent.length > 0) {
-							var iRowIndex = this.getFirstVisibleRow() + parseInt($parent.attr("data-sap-ui-rowindex"), 10);
-							var oBinding = this.getBinding("rows");
-							if (oBinding.isExpanded(iRowIndex)) {
-								oBinding.collapse(iRowIndex);
-								jQuery(oEvent.target).removeClass("sapUiTableGroupIconOpen").addClass("sapUiTableGroupIconClosed");
-							} else {
-								oBinding.expand(iRowIndex);
-								jQuery(oEvent.target).removeClass("sapUiTableGroupIconClosed").addClass("sapUiTableGroupIconOpen");
-							}
-						}
-					} else {
-						if (Table.prototype.onclick) {
-							Table.prototype.onclick.apply(this, arguments);
-						}
-					}
-				};
-
 				// we use sorting finally to sort the values and afterwards group them
 				var sPropertyName = oGroupBy.getSortProperty();
 				oBinding.sort(new Sorter(sPropertyName));
@@ -4997,6 +4879,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 							aContexts[iIndex].__groupInfo.expanded = false;
 							this._fireChange();
 						}
+					},
+					toggleIndex: function(iIndex) {
+						if (this.isExpanded(iIndex)) {
+							this.collapse(iIndex);
+						} else {
+							this.expand(iIndex);
+						}
 					}
 
 				});
@@ -5024,7 +4913,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 			// if the grouping is not supported we remove the hacks we did
 			// and simply return the binding finally
-			this.onclick = Table.prototype.onclick;
 			this._modifyRow = undefined;
 
 			// reset the binding

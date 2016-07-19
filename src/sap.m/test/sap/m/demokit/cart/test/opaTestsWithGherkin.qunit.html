@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Opa tests for Shopping Cart written in Gherkin</title>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+	<meta charset="utf-8">
+
+	<script id="sap-ui-bootstrap"
+			src="../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-bindingSyntax="complex"
+			data-sap-ui-theme='sap_bluecrystal'
+			data-sap-ui-language="en"
+			data-sap-ui-libs='sap.m'
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-resourceroots='{
+					"sap.ui.demo.cart.test": "./",
+					"sap.ui.demo.cart" : "../"}'>
+	</script>
+
+	<script>
+		jQuery.sap.require("sap.ui.demo.cart.test.requireQUnit");
+
+
+		sap.ui.require([
+			'sap/ui/test/gherkin/opa5TestHarness',
+			'sap/ui/demo/cart/localService/mockserver',
+			'sap/ui/demo/cart/test/configureOpa'
+		], function (testHarness, mockserver) {
+			"use strict";
+			mockserver.init();
+
+			sap.ui.require([
+					'sap/ui/demo/cart/test/requirePages'], function () {
+
+				testHarness.test({featurePath: "sap/ui/demo/cart/test/DeleteProduct", generateMissingSteps : true});
+				testHarness.test({featurePath: "sap/ui/demo/cart/test/BuyProduct", generateMissingSteps : true});
+
+				QUnit.start();
+			});
+		});
+	</script>
+
+</head>
+
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+</body>
+</html>

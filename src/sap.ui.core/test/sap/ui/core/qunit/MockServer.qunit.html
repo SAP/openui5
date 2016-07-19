@@ -1973,7 +1973,7 @@
 				});
 				ok(oResponse.success, "Mock server responded");
 				ok(oResponse.data.d, "single entry no OData system query options");
-				equal(oResponse.data.d.__metadata.uri, "/myservice/CarrierCollection('carrid 1')", "single key");
+				equal(oResponse.data.d.__metadata.uri, "/myservice/CarrierCollection('carrid%201')", "single key");
 
 				jQuery.sap.sjax({
 					url : "/myservice/CarrierCollection(carrid='carrid 1')",
@@ -1981,7 +1981,7 @@
 				});
 				ok(oResponse.success, "Mock server responded");
 				ok(oResponse.data.d, "single entry no OData system query options");
-				equal(oResponse.data.d.__metadata.uri, "/myservice/CarrierCollection('carrid 1')", "single key");
+				equal(oResponse.data.d.__metadata.uri, "/myservice/CarrierCollection('carrid%201')", "single key");
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/CarrierCollection('carrid 1')/?$select=carrid",
@@ -3407,6 +3407,8 @@
 					equal(oResponse.statusCode, 202, "batch completed");
 					equal(oData.__batchResponses[0].statusCode, 200, "oData  read succeeded");
 					equal(oData.__batchResponses[1].message, "HTTP request failed", "HTTP request failed");
+					equal(oData.__batchResponses[1].response.statusCode, 400, "StatusCode is propagated");
+					equal(oData.__batchResponses[1].response.statusText, "Bad Request", "StatusText is propagated");
 					// read to verify no changes made
 					var oGetResponse = jQuery.sap.sjax({
 						url : '/mock/LeaveHeaderCollection',

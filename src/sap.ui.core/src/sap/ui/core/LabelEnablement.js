@@ -262,12 +262,17 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
 		}
 
 		oControl.__orig_setRequired = oControl.setRequired;
-		oControl.setRequired = function(sId) {
-			var res = this.__orig_setRequired.apply(this, arguments);
-			toControl(this.__sLabeledControl, true); //invalidate the related control
-			return res;
-		};
+		oControl.setRequired = function(bRequired) {
+			var bOldRequired = this.getRequired(),
+				oReturn = this.__orig_setRequired.apply(this, arguments);
 
+			// invalidate the related control only when needed
+			if (this.getRequired() !== bOldRequired) {
+				toControl(this.__sLabeledControl, true);
+			}
+
+			return oReturn;
+		};
 	};
 
 

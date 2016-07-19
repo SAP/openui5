@@ -280,9 +280,14 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 				icon = collection[iconName],
 				parts, sContent, sText, sKey;
 
-			if (icon && (collectionName === undefined || !iconInfo.overWrite)) {
-				jQuery.sap.log.warning("icon with the same iconName in the collection already exists, specify the last parameter to true in order to overwrite");
-				return;
+			if (icon) {
+				if (collectionName === undefined) {
+					jQuery.sap.log.warning("Icon with name '" + iconName + "' in built-in collection already exists and can not be overwritten.", "sap.ui.core.IconPool");
+					return;
+				} else if (!iconInfo.overWrite) {
+					jQuery.sap.log.warning("Icon with name '" + iconName + "' in collection '" + collectionName + "' already exists. Specify 'iconInfo.overWrite' in order to overwrite.", "sap.ui.core.IconPool");
+					return;
+				}
 			}
 
 			parts = {

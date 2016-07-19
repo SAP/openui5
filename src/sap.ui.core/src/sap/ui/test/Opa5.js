@@ -19,7 +19,7 @@ sap.ui.define([
 		'./pipelines/ActionPipeline',
 		'./_ParameterValidator'
 	],
-	function(jQuery,
+	function($,
 			 Opa,
 			 OpaPlugin,
 			 PageObjectFactory,
@@ -36,9 +36,8 @@ sap.ui.define([
 			 ParameterValidator) {
 		"use strict";
 
-		var $ = jQuery,
+		var oLogger = $.sap.log.getLogger("sap.ui.test.Opa5"),
 			oPlugin = new OpaPlugin(iFrameLauncher._sLogPrefix),
-			oMatcherPipeline = new MatcherPipeline(),
 			oActionPipeline = new ActionPipeline(),
 			sFrameId = "OpaFrame",
 			oValidator = new ParameterValidator({
@@ -50,7 +49,7 @@ sap.ui.define([
 				"viewName"
 			].concat(Opa._aConfigValuesForWaitFor),
 			aPropertiesThatShouldBePassedToOpaWaitFor = [
-				"check", "success"
+				"check", "error", "success"
 			].concat(Opa._aConfigValuesForWaitFor);
 
 		/**
@@ -66,7 +65,7 @@ sap.ui.define([
 		 * @since 1.22
 		 */
 		var Opa5 = Ui5Object.extend("sap.ui.test.Opa5",
-			jQuery.extend({},
+			$.extend({},
 				Opa.prototype,
 				{
 					constructor : function() {
@@ -116,7 +115,7 @@ sap.ui.define([
 			oFirstWaitForOptions.success = function () {
 				// include stylesheet
 				var sComponentStyleLocation = jQuery.sap.getModulePath("sap.ui.test.OpaCss",".css");
-				jQuery.sap.includeStyleSheet(sComponentStyleLocation);
+				$.sap.includeStyleSheet(sComponentStyleLocation);
 
 				HashChanger.getInstance().setHash(oOptions.hash || "");
 
@@ -174,7 +173,7 @@ sap.ui.define([
 					this.iTeardownMyUIComponent();
 				} else {
 					var sErrorMessage = "A teardown was called but there was nothing to tear down use iStartMyComponent or iStartMyAppInAFrame";
-					$.sap.log.error(sErrorMessage, "Opa");
+					oLogger.error(sErrorMessage, "Opa");
 					throw new Error(sErrorMessage);
 				}
 			}.bind(this);
@@ -366,6 +365,7 @@ sap.ui.define([
 			oOptions = $.extend({},
 					oFilteredConfig,
 					oOptions);
+			oOptions.actions = vActions;
 
 			oValidator.validate({
 				validationInfo: Opa5._validationInfo,
@@ -382,72 +382,24 @@ sap.ui.define([
 
 			oOptionsPassedToOpa.check = function () {
 				// Create a new options object for the plugin to keep the original one as is
-				var oPluginOptions = $.extend({}, oOptions, {
-						// only pass interactable if there are actions for backwards compatibility
-						interactable: !!vActions
-					}),
-					oPlugin = Opa5.getPlugin();
+				var oPlugin = Opa5.getPlugin();
 
-				bPluginLooksForControls = oPlugin._isLookingForAControl(oPluginOptions);
+				// even if we have no control the matchers may provide a value for vControl
+				vResult = oPlugin.getFilterdControls(oOptions, vControl);
 
-				if (bPluginLooksForControls) {
-					vControl = oPlugin.getMatchingControls(oPluginOptions);
-				}
-
-				//We were searching for a control but we did not find it
-				if (typeof oOptions.id === "string" && !vControl) {
-					return false;
-				}
-
-
-				//Search for a controlType in a view or open dialog
-				if (!oOptions.id && (oOptions.viewName || oOptions.searchOpenDialogs) && vControl.length === 0) {
-					jQuery.sap.log.debug("found no controls in view: " + oOptions.viewName + " with controlType " + oOptions.sOriginalControlType, "", "Opa");
-					return false;
-				}
-
-				//Regex did not find any control
-				if (oOptions.id instanceof RegExp && !vControl.length) {
-					jQuery.sap.log.debug("found no control with the id regex" + oOptions.id);
-					return false;
-				}
-
-				//Did not find all controls with the specified ids
-				if ($.isArray(oOptions.id) && (!vControl || vControl.length !== oOptions.id.length)) {
-					if (vControl && vControl.length) {
-						jQuery.sap.log.debug("found not all controls with the ids " + oOptions.id + " onlyFound the controls: " +
-								vControl.map(function (oCont) {
-									return oCont.sId;
-								}));
-					} else {
-						jQuery.sap.log.debug("found no control with the id  " + oOptions.id);
-					}
-					return false;
-				}
-
-				if (oOptions.controlType && $.isArray(vControl) && !vControl.length) {
-					jQuery.sap.log.debug("found no controls with the type  " + oOptions.sOriginalControlType, "", "Opa");
-					return false;
-				}
-
-				/*
-				 * If the plugin does not look for controls execute matchers even if vControl is falsy
-				 * used when you smuggle in values to success through matchers:
-				 * matchers: function () {return "foo";},
-				 * success: function (sFoo) {}
-				 */
-				if ((vControl || !bPluginLooksForControls) && oOptions.matchers) {
-					vResult = oMatcherPipeline.process({
-						matchers: oOptions.matchers,
-						control: vControl
+				if (iFrameLauncher.hasLaunched() && $.isArray(vResult)) {
+					// People are using instanceof Array in their check so i need to make sure the Array
+					// comes from the current document. I cannot use slice(0) or map because the original array is kept
+					// so i need to use the slowest way to create a swallow copy of the array
+					var aResult = [];
+					vResult.forEach(function (oControl) {
+						aResult.push(oControl);
 					});
+					vResult = aResult;
+				}
 
-					// no control matched
-					if (!vResult) {
-						return false;
-					}
-				} else {
-					vResult = vControl;
+				if (vResult === OpaPlugin.FILTER_FOUND_NO_CONTROLS) {
+					return false;
 				}
 
 				if (fnOriginalCheck) {
@@ -718,10 +670,10 @@ sap.ui.define([
 		Opa5.prototype._executeCheck = function (fnCheck, vControl) {
 			var aArgs = [];
 			vControl && aArgs.push(vControl);
-			jQuery.sap.log.debug("Opa is executing the check: " + fnCheck);
+			oLogger.debug("Opa is executing the check: " + fnCheck);
 
 			var bResult = fnCheck.apply(this, aArgs);
-			jQuery.sap.log.debug("Opa check was " + bResult);
+			oLogger.debug("Opa check was " + bResult);
 
 			return bResult;
 		};
@@ -733,8 +685,8 @@ sap.ui.define([
 
 		function addFrame (sSource) {
 			// include styles
-			var sIFrameStyleLocation = jQuery.sap.getModulePath("sap.ui.test.OpaCss",".css");
-			jQuery.sap.includeStyleSheet(sIFrameStyleLocation);
+			var sIFrameStyleLocation = $.sap.getModulePath("sap.ui.test.OpaCss",".css");
+			$.sap.includeStyleSheet(sIFrameStyleLocation);
 
 			return iFrameLauncher.launch({
 				frameId: sFrameId,

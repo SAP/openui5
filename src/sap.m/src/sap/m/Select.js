@@ -152,7 +152,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 					/**
 					 * Visualizes the validation state of the control, e.g. <code>Error</code>, <code>Warning</code>,
 					 * <code>Success</code>.
-					 * @since 1.40
+					 * @since 1.40.2
 					 */
 					valueState: {
 						type: "sap.ui.core.ValueState",
@@ -567,9 +567,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 
 			if (oDomRef) {
 				oDomRef.setAttribute("aria-expanded", "false");
-
-				// note: the "aria-owns" attribute is removed when the list is not visible and in view
-				oDomRef.removeAttribute("aria-owns");
 			}
 		};
 

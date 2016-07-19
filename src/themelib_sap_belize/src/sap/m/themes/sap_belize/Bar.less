@@ -35,6 +35,18 @@ html .sapMSplitContainerMaster .sapMIBar.sapMSubHeader-CTX,
 	background-color: @sapUiGroupContentBackground;
 }
 
+/* in Master page the bar should have a different color shadow only if we don't have subHeader (e.g. another bar) */
+html .sapMSplitContainerMaster .sapMIBar.sapMHeader-CTX:only-of-type,
+.sapMSplitContainerMaster .sapMIBar .sapMHeader-CTX:only-of-type {
+	box-shadow: inset 0 -0.0625rem @sapUiGroupContentBorderColor;
+}
+
+/* in Master page the bar should have a different color shadow */
+html .sapMSplitContainerMaster .sapMIBar.sapMSubHeader-CTX,
+.sapMSplitContainerMaster .sapMIBar.sapMSubHeader-CTX {
+	box-shadow: inset 0 -0.0625rem @sapUiGroupContentBorderColor;
+}
+
 .sapMBar:active {
 	text-shadow: none;
 }

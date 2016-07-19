@@ -1,0 +1,18 @@
+{
+	"sap.ui5": {
+		"dependencies": {
+			"libs": {
+				"testlibs.scenario5.lib3": {
+					"minVersion": "1.0.0"
+				},
+				"testlibs.scenario5.lib6": {
+					"minVersion": "1.0.0",
+					"lazy": true
+				},
+				"testlibs.scenario5.lib5": {
+					"minVersion": "1.0.0"
+				}
+			}
+		}
+	}
+}

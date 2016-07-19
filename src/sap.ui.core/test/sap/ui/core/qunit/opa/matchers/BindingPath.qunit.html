@@ -59,7 +59,7 @@
 								path: "JSONModel>/",
 								template: new StandardListItem()
 							});
-							this.oSpy = sinon.spy(jQuery.sap.log, "debug");
+							this.oSpy = sinon.spy(this.oBindingPath._oLogger, "debug");
 						},
 
 						afterEach: function () {
@@ -72,13 +72,16 @@
 						}
 					});
 
-					QUnit.test("Should not match an incorrect binding path", function (assert) {
+					QUnit.test("Should throw an error on an incorrect binding path", function (assert) {
 						// System under Test
 						this.oBindingPath.setPath("");
-						this.oBindingPath.setModelName("JSONModel");
-						var bResult = this.oBindingPath.isMatching(this.oList.getItems()[0]);
+
 						// Assert
-						assert.ok(!bResult, "Did not match because the binding path is incorrect");
+						assert.throws(function () {
+							this.oBindingPath.isMatching(this.oList.getItems()[0]);
+						}.bind(this),
+						new Error("ManagedObject sap.ui.test.matchers.BindingPath#__path0 the path needs to be a not empty string"),
+						"Threw the error");
 					});
 
 					QUnit.test("Should not match an incorrect binding path despite of using correct model name", function (assert) {
@@ -88,7 +91,7 @@
 						var bResult = this.oBindingPath.isMatching(this.oList.getItems()[0]);
 						// Assert
 						assert.ok(!bResult, "Did not match because the binding path is incorrect");
-						sinon.assert.calledWith(this.oSpy, sinon.match(/does not have a matching binding context/), this.oBindingPath._sLogPrefix)
+						sinon.assert.calledWith(this.oSpy, sinon.match(/does not have a matching binding context/))
 					});
 
 					QUnit.test("Should match an correct model name and binding path", function (assert) {
@@ -107,7 +110,7 @@
 						var bResult = this.oBindingPath.isMatching(this.oList.getItems()[0]);
 						// Assert
 						assert.ok(!bResult, "Did not match because the model name is incorrect");
-						sinon.assert.calledWith(this.oSpy, sinon.match(/ has no binding context for the model/), this.oBindingPath._sLogPrefix)
+						sinon.assert.calledWith(this.oSpy, sinon.match(/ has no binding context for the model/))
 					});
 
 					QUnit.test("Should not match no model name despite of using correct binding path", function (assert) {

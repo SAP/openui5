@@ -49,7 +49,7 @@ sap.ui.define(['jquery.sap.global'],
 			rm.write(">");
 
 			if (oControl.getResizable()) {
-				rm.write('<div class="sapMPopoverResizeHandle"></div>');
+				rm.writeIcon("sap-icon://resize-corner", ["sapMPopoverResizeHandle"], { "title" : ""});
 			}
 
 			this.renderContent(rm, oControl);

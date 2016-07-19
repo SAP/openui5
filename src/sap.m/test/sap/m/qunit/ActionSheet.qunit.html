@@ -596,6 +596,50 @@
 
 			});
 
+			module("API");
+
+ 			test('ActionSheet clone should create a duplicate', function() {
+ 				function mockButtonPressHandler() {
+ 					jQuery.sap.log.info('mock button press event handler was triggered');
+ 				}
+ 				var spyMockButtonPressHandler = sinon.spy(mockButtonPressHandler);
+
+ 				var button1 = new sap.m.Button({ text: "Button1", id: "asButton1", press: spyMockButtonPressHandler });
+ 				var button2 = new sap.m.Button({ text: "Button2", id: "asButton2", visible: false, press: spyMockButtonPressHandler });
+ 				var oActionSheet = new sap.m.ActionSheet({
+ 					cancelButtonText: "Cancel",
+ 					title: "Title",
+ 					buttons: [
+ 						button1,
+ 						button2
+ 					]
+ 				});
+
+ 				var aPreCloneHandlers = oButton.mEventRegistry.press;
+ 				oActionSheet.getButtons().forEach(function(oButton, i) {
+ 					notStrictEqual(aPreCloneHandlers, undefined,
+ 						"The buttons of the original action sheet should have defined mock handlers attached BEFORE we clone it");
+ 				});
+ 				var oClonedActionSheet = oActionSheet.clone();
+
+ 				var aPostCloneHandlers = oButton.mEventRegistry.press;
+ 				oActionSheet.getButtons().forEach(function(oButton, i) {
+ 					notStrictEqual(aPostCloneHandlers, undefined,
+ 						"The buttons of the original action sheet should still have defined mock handlers AFTER we clone it");
+ 				});
+
+ 				deepEqual(aPreCloneHandlers, aPostCloneHandlers,
+ 					'The handlers before the clone should be the same as the press handlers after the clone');
+				oClonedActionSheet.getButtons().forEach(function(oButton, i) {
+ 					strictEqual(oButton.getParent(),oClonedActionSheet,
+ 						"Cloned actionsheet buttons parent should be the clone instance");
+ 				});
+ 				notStrictEqual(oClonedActionSheet.sId, oActionSheet.sId, 'The sId should be unique for each clone');
+ 				deepEqual(oClonedActionSheet.mProperties, oActionSheet.mProperties,
+ 					'The properties of the clone should be the same as the properties of the ActionSheet');
+
+ 			});
+
 			QUnit.done(function() {
 				// hide the content so that the QUnit results can be seen
 				jQuery("#content").css('height', '0');

@@ -284,7 +284,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 		rm.addClass("sapUiTableColHdrCnt");
 		rm.writeClasses();
 		if (oTable.getColumnHeaderHeight() > 0) {
-			rm.addStyle("height", (oTable.getColumnHeaderHeight() * oTable._getHeaderRowCount()) + "px");
+			rm.addStyle("height", (oTable.getColumnHeaderHeight() * TableUtils.getHeaderRowCount(oTable)) + "px");
 		}
 		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "COLUMNHEADER_ROW");
 		rm.writeStyles();
@@ -304,7 +304,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 			rm.writeClasses();
 			rm.write(">");
 
-			for (var h = 0; h < oTable._getHeaderRowCount(); h++) {
+			for (var h = 0; h < TableUtils.getHeaderRowCount(oTable); h++) {
 				rm.write("<div");
 				rm.addClass("sapUiTableColHdr");
 				rm.addClass("sapUiTableNoOpacity");
@@ -355,7 +355,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 			rm.writeStyles();
 		}
 		rm.write(">");
-		for (var h = 0; h < oTable._getHeaderRowCount(); h++) {
+		for (var h = 0; h < TableUtils.getHeaderRowCount(oTable); h++) {
 			rm.write("<div");
 			rm.addClass("sapUiTableColHdr");
 			rm.addClass("sapUiTableNoOpacity");
@@ -737,7 +737,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 				rm.writeAttribute("data-sap-ui-headcolindex", col);
 				rm.writeAttribute("data-sap-ui-colid", oColumn.getId());
 				rm.write(">");
-				if (iStartRow == 0 && oTable._getHeaderRowCount() == 0) {
+				if (iStartRow == 0 && TableUtils.getHeaderRowCount(oTable) == 0) {
 					if (oColumn.getMultiLabels().length > 0) {
 						rm.renderControl(oColumn.getMultiLabels()[0]);
 					} else {
@@ -938,6 +938,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 		rm.addClass("sapUiTableHSb");
 		rm.writeClasses();
 		rm.writeAttribute("id", oTable.getId() + "-hsb");
+		rm.writeAttribute("tabindex", "-1"); // Avoid focusing in Firefox
 		rm.write(">");
 		rm.write("<div");
 		rm.writeAttribute("id", oTable.getId() + "-hsb-content");

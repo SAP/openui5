@@ -8,7 +8,7 @@
 		<script id="sap-ui-bootstrap"
 				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-noConflict="true"
-				data-sap-ui-libs="sap.m"
+				data-sap-ui-libs="sap.m, sap.ui.layout"
 				src="../../../../resources/sap-ui-core.js">
 		</script>
 		<script>
@@ -8545,6 +8545,89 @@
 			oComboBox.destroy();
 		});
 
+		QUnit.test("it should close the dropdown list when the text field is empty and it was opened by typing text", function (assert) {
+
+			// system under test
+			var oComboBox = new sap.m.ComboBox({
+				items: [
+					new sap.ui.core.Item({
+						text: "Egypt"
+					}),
+					new sap.ui.core.Item({
+						text: "Germany"
+					}),
+					new sap.ui.core.Item({
+						text: "Ghana"
+					}),
+					new sap.ui.core.Item({
+						text: "Greece"
+					})
+				]
+			});
+
+			// arrange
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oComboBox.focus();
+
+			// act
+			oComboBox.getFocusDomRef().value = "G";
+			sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
+			this.clock.tick(1000);	// wait 1s after the open animation is completed
+
+			// act
+			oComboBox.getFocusDomRef().value = "";
+			sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
+			this.clock.tick(300);
+
+			// assert
+			assert.ok(!oComboBox.isOpen());
+
+			// cleanup
+			oComboBox.destroy();
+		});
+
+		QUnit.test("it should not close the dropdown list when the text field is empty and it was opened by keyboard or by pressing the button", function (assert) {
+
+			// system under test
+			var oComboBox = new sap.m.ComboBox({
+				items: [
+					new sap.ui.core.Item({
+						text: "Egypt"
+					}),
+					new sap.ui.core.Item({
+						text: "Germany"
+					}),
+					new sap.ui.core.Item({
+						text: "Ghana"
+					}),
+					new sap.ui.core.Item({
+						text: "Greece"
+					})
+				]
+			});
+
+			// arrange
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oComboBox.focus();
+
+			// act
+			sap.ui.test.qunit.triggerKeyboardEvent(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true);
+			this.clock.tick(500);
+
+			// act
+			oComboBox.getFocusDomRef().value = "";
+			sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
+			this.clock.tick(500);
+
+			// assert
+			assert.ok(oComboBox.isOpen());
+
+			// cleanup
+			oComboBox.destroy();
+		});
+
 		QUnit.module("onfocusin");
 
 		QUnit.test("onfocusin", function(assert) {
@@ -9627,6 +9710,43 @@
 			assert.strictEqual(oInfo.enabled, true, "Enabled");
 			assert.strictEqual(oInfo.editable, false, "Editable");
 			oComboBox.destroy();
+		});
+
+		QUnit.module("Integration");
+
+		QUnit.test("Keep selected value on parent re-render", function () {
+			var oComboBox = new sap.m.ComboBox({
+				items: [
+					new sap.ui.core.Item({key: "A", text: "Amount"}),
+					new sap.ui.core.Item({key: "C", text: "Checkbox"}),
+					new sap.ui.core.Item({key: "D", text: "Date"}),
+					new sap.ui.core.Item({key: "E", text: "Email Address"}),
+					new sap.ui.core.Item({key: "L", text: "List"}),
+					new sap.ui.core.Item({key: "N", text: "Number"}),
+					new sap.ui.core.Item({key: "Q", text: "Quantity"}),
+					new sap.ui.core.Item({key: "T1", text: "Text"})
+				],
+				selectionChange: function onSelectionChange() {
+					oForm.rerender();
+				}
+			});
+
+
+			var oForm = new sap.ui.layout.form.SimpleForm({
+				content: [oComboBox]
+			}).placeAt('content');
+
+			sap.ui.getCore().applyChanges();
+
+			oComboBox._oList.fireItemPress({item: oComboBox.getItems()[1]});
+			oComboBox._oList.fireSelectionChange({selectedItem: oComboBox.getItems()[1]});
+
+			ok(oComboBox.getValue(), "ComboBox value to be filled in");
+			strictEqual(oComboBox.getValue(), oComboBox.getItems()[1].getText(), "ComboBox value to be the same as the selected element");
+
+			oForm.destroy();
+			oForm = null;
+			oComboBox = null;
 		});
 		</script>
 	</head>
