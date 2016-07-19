@@ -37,7 +37,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 
 				var oContent = oChange.getContent();
 				var mMovedElement = oContent.movedElements[0];
-				var oSimpleForm = oModifier.byId(oChange.getSelector().id);
+				var oSimpleForm = oModifier.byId(oSourceParent.getId());
 				var aContent = oModifier.getAggregation(oSimpleForm, MoveSimpleForm.CONTENT_AGGREGATION);
 
 				if (oChange.getChangeType() === MoveSimpleForm.CHANGE_TYPE_MOVE_FIELD) {
