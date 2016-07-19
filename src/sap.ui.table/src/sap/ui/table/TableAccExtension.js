@@ -314,7 +314,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 				// if (oInfo && oInfo.labelled) { aLabels.push(oInfo.labelled); }
 				// if (oInfo && oInfo.described) { aDescriptions.push(oInfo.described); }
 
-				if (((!oInfo || oInfo.focusable) && !this._readonly) || bIsTreeColumnCell) {
+				if (((!oInfo || oInfo.focusable) && !this._readonly) || (bIsTreeColumnCell && oTableInstances.row && oTableInstances.row._bHasChildren)) {
 					aDescriptions.push(sTableId + "-toggleedit");
 				}
 			}
