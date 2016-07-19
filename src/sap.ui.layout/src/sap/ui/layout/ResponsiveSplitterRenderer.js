@@ -14,11 +14,13 @@ sap.ui.define(['sap/ui/core/IconPool'],
 	IconPool.insertFontFaceStyle();
 
 	ResponsiveSplitterRenderer.render = function (oRm, oControl) {
-		oRm.write("<div class='sapUiResponsiveSplitter'");
+		oRm.write("<div ");
+		oRm.addClass("sapUiResponsiveSplitter");
 		oRm.writeControlData(oControl);
 		oRm.addStyle("width", oControl.getWidth());
 		oRm.addStyle("height", oControl.getHeight());
 		oRm.writeStyles();
+		oRm.writeClasses();
 		oRm.write(">");
 
 		var aPages = oControl.getAggregation("_pages");
