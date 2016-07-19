@@ -22,19 +22,32 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.sap.ui5.tools.maven.Version;
+
 public class MyReleaseButton {
 
   // ---- following code is copied from phx.generator.util.IOUtils ----
 
   private static final String PROPERTY_PREFIX_OSGI_VERSION = "(phx|sap\\.(ui5|uxap))";
+  public static final String SNAPSHOT_SUFFIX = "-SNAPSHOT";
   private static final Pattern CORE_VERSION = Pattern.compile("(?<=version>).*(?=</.*version><!--SAPUI5CoreVersion-->)");
+  private static final Pattern DOCUMENT_VERSION = Pattern.compile("(?<=version>).*(?=</.*version><!--SAPUI5DocuVersion-->)");
   private static final Pattern VERSION_RANGE_PATTERN = Pattern.compile("(?:[\\[\\(])((?:[0-9]+)(?:\\.(?:[0-9]+)(?:\\.(?:[0-9]+))?)?(?:-[^,\\[\\]\\(\\)]+)?)(?:\\s)*,(?:\\s)*((?:[0-9]+)(?:\\.(?:[0-9]+)(?:\\.(?:[0-9]+))?)?(?:-[^,\\[\\]\\(\\)]+)?)(?:[\\]\\)])");
   private static final Pattern CONTRIBUTOR_VERSION_PATTERN = Pattern.compile("(?<=\\.version>)(.*)(?=</com.sap.*version>)");
   private static final String COM_SAP_UI5_CORE = "com.sap.ui5:core";
   public static final String ISO_8859_1 = "ISO-8859-1";
   public static final String UTF8 = "UTF-8";
+  private static ReleaseOperation relOperation = null;
+  
+  public static void setRelOperation(ReleaseOperation relOp){
+		relOperation = relOp;
+ }
 
-  private static Writer createFileWriter(File target, boolean append,
+  public static boolean checkRelOperation(ReleaseOperation release){
+	  	return release == ReleaseOperation.MilestoneDevelopment || release == ReleaseOperation.MinorRelease;
+  }
+    
+   private static Writer createFileWriter(File target, boolean append,
       String encoding, int bufferSize) throws IOException {
     OutputStream os = new FileOutputStream(target, append);
     Writer w = encoding == null ? new OutputStreamWriter(os) : new OutputStreamWriter(os, encoding);
@@ -144,9 +157,19 @@ public class MyReleaseButton {
     }
   }
 
+  
+  public enum ReleaseOperation {
+	  MilestoneRelease,
+	  MinorRelease,
+	  MajorRelease,
+	  PatchRelease,
+	  MilestoneDevelopment,
+	  PatchDevelopment
+	}
+  
   public enum ProcessingTypes {
     RepositoryPaths, VersionWithSnapshot, VersionWithTimestamp, VersionWithQualifier_POM, VersionWithQualifier,
-    ContributorsVersions, Sapui5CoreVersion, OnlyVersionWithSnapshot
+    ContributorsVersions, Sapui5CoreVersion, OnlyVersionWithSnapshot, SAPUI5DocuVersion
   };
 
   public static class ProcessingFilter {
@@ -165,7 +188,7 @@ public class MyReleaseButton {
   }
 
   static Pattern fromS, fromSVO, fromT, fromQ_POM, fromQ, fromR;
-  static String toS, toT, toQ, toR;
+  static String toS, toT, toQ, toR, toD, toV;
   static Map<Pattern, String> contributorsPatterns = new HashMap<Pattern, String>();
   private static String coreVersion = null;
   private static String contributorsRange = null;
@@ -183,6 +206,9 @@ public class MyReleaseButton {
       processingTypes.add(ProcessingTypes.VersionWithTimestamp);
       if (coreVersion != null) {
         processingTypes.add(ProcessingTypes.Sapui5CoreVersion);
+      }
+      if(checkRelOperation(relOperation)){
+    	  processingTypes.add(ProcessingTypes.SAPUI5DocuVersion);
       }
     } else if (file.getName().endsWith(".library")) {
       processingTypes.add(ProcessingTypes.VersionWithSnapshot);
@@ -249,7 +275,11 @@ public class MyReleaseButton {
       if (processingTypes.contains(ProcessingTypes.ContributorsVersions)) {
         s = processContributorsVersions(s, file, encoding);
       }
-
+      
+      if(processingTypes.contains(ProcessingTypes.SAPUI5DocuVersion)){
+    		  s =  DOCUMENT_VERSION.matcher(s).replaceAll(toD);
+      }
+      
       if (s != orig) {
         String str = s.toString();
         if (!str.contentEquals(orig)) {
@@ -259,7 +289,6 @@ public class MyReleaseButton {
         }
       }
     }
-
   }
 
   private static void saveFile(File file, String encoding, String str) throws IOException {
@@ -283,7 +312,6 @@ public class MyReleaseButton {
       }
     }
   }
-
 
   public static int updateVersion(File repository, String oldVersion, String newVersion, Map<String, String[]> diffDescs, String branch) throws IOException {
     return updateVersion(repository, oldVersion, newVersion, null, diffDescs, branch);
@@ -348,6 +376,12 @@ public class MyReleaseButton {
     toS = newMavenVersion;
     toQ = newOSGiVersion;
     toR = newMavenVersion.endsWith("-SNAPSHOT") ? "/repositories/build.snapshots.unzip/" : "/repositories/build.milestones.unzip/";
+    
+    if(checkRelOperation(relOperation)){
+       	toV = new Version(newVersion).nextVersion(ReleaseOperation.MilestoneDevelopment).toString();
+  	    toD = "[";
+  	    toD += newVersion.endsWith(SNAPSHOT_SUFFIX) ? newVersion + ",2.0.0-SNAPSHOT)" : newVersion + "-SNAPSHOT," + toV + ")";  
+    }
 
     if (oldOSGiVersion.endsWith(".qualifier")) {
       fromT = Pattern.compile(Pattern.quote(oldOSGiVersion.replace(".qualifier", ".${maven.build.timestamp}") + "</") + PROPERTY_PREFIX_OSGI_VERSION + Pattern.quote(".osgi.version>"));
@@ -369,7 +403,6 @@ public class MyReleaseButton {
     // TODO What about target files?
 
     diffs.clear();
-
     System.out.println("            Maven POM Version: '" + fromS.pattern() + "' --> '" + toS + "'");
     System.out.println("Maven POM OSGI TSTAMP Version: '" + fromT.pattern() + "' --> '" + toT + "'");
     System.out.println("       Maven POM OSGI Version: '" + fromQ_POM.pattern() + "' --> '" + toQ + "'");

@@ -1,4 +1,5 @@
 package com.sap.ui5.tools.infra.git2p4;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -23,9 +24,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.sap.ui5.tools.infra.git2p4.commands.relnotes.ReleaseNotes;
+import com.sap.ui5.tools.maven.Version;
 import com.sap.ui5.tools.maven.LastRunInfo;
 import com.sap.ui5.tools.maven.MvnClient;
 import com.sap.ui5.tools.maven.MyReleaseButton;
+import com.sap.ui5.tools.maven.MyReleaseButton.ReleaseOperation;
 import com.sap.ui5.tools.maven.MyReleaseButton.ProcessingFilter;
 import com.sap.ui5.tools.maven.MyReleaseButton.ProcessingTypes;
 
@@ -765,7 +768,9 @@ public class Git2P4Main {
         throw new IllegalArgumentException("unsupported command " + args[i]);
       }
     }
-
+    
+    MyReleaseButton.setRelOperation(op);
+	
     Log.println("args = " + Arrays.toString(argsForTrace));
     Log.println("");
     Log.println("command: " + command);

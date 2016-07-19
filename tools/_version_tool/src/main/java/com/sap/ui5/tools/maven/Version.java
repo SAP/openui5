@@ -1,9 +1,11 @@
-package com.sap.ui5.tools.infra.git2p4;
+package com.sap.ui5.tools.maven;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.sap.ui5.tools.maven.MyReleaseButton.ReleaseOperation;
 
 public class Version {
 
