@@ -15,8 +15,14 @@
 	height: 1.625rem;
 }
 
+.sapContrast .sapMToken,
+.sapContrast.sapMToken {
+	     border: 1px solid lighten(@sapUiButtonBackground, 15);
+}
+
 .sapMToken.sapMTokenReadOnly {
 	padding: 0.25rem 0.375rem;
+	color: @sapUiContentForegroundTextColor;
 }
 
 html.sap-desktop .sapMToken:hover {
@@ -26,9 +32,14 @@ html.sap-desktop .sapMToken:hover {
 }
 
 .sapMToken:focus {
-	outline: 0.125rem dotted @sapUiFocus;
+	outline: 1px dotted;
 	outline-offset: -3px;
-	outline-color: @sapUiInvertedFocus;
+	outline-color: @sapUiContentContrastFocusColor;
+}
+
+.sapContrast .sapMToken:focus,
+.sapContrast.sapMToken:focus {
+	outline-color: @sapUiContentFocusColor;
 }
 
 html[data-sap-ui-browser^="ie"].sap-desktop,
@@ -44,33 +55,34 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 		left: 2px;
 		right: 2px;
 		bottom: 2px;
-		border: 0.0625rem dotted @sapUiInvertedFocus;
+		border: 1px dotted @sapUiContentContrastFocusColor;
 		content: "";
 		pointer-events: none;
 	}
 }
 
-.sapMTokenSelected {
-	color: @sapUiButtonActiveTextColor;
-	background: @sapUiButtonActiveBackground;
-	border: 1px solid darken(@sapUiButtonActiveBackground, 5);
+.sapMTokenSelected,
+.sapMToken.sapMTokenReadOnly.sapMTokenSelected {
+	color: @sapUiToggleButtonPressedTextColor;
+	background: @sapUiToggleButtonPressedBackground;
+	border: 1px solid @sapUiToggleButtonPressedBorderColor;
 	border-radius: 0.125rem;
 }
 
 html.sap-desktop .sapMToken.sapMTokenSelected:hover,
 .sapMToken.sapMTokenSelected:hover {
-	background: darken(@sapUiButtonActiveBackground, 5);
-	border: 1px solid darken(@sapUiButtonActiveBackground, 5);
+	background: @sapUiToggleButtonPressedHoverBackground;
+	border: 1px solid @sapUiToggleButtonPressedHoverBorderColor;
 	border-radius: 0.125rem;
 }
 
 .sapMTokenSelected .sapMTokenIcon {
-	color: @sapUiContentContrastIconColor;
+	color: @sapUiToggleButtonPressedTextColor;
 }
 
 .sapMTokenIcon {
 	padding: 0.25rem 0.5rem;
-	font-size: @sapMFontLargeSize;
+	font-size: 1rem;
 	color: @sapUiContentIconColor;
 	vertical-align: middle;
 }
@@ -86,7 +98,7 @@ html.sap-desktop .sapMToken.sapMTokenSelected:hover,
 }
 
 .sapUiSizeCompact .sapMTokenIcon {
-	font-size: @sapMFontSmallSize;
+	font-size: 0.75rem;
 	padding: 0.1rem 0.25rem;
 	vertical-align: baseline;
 }
