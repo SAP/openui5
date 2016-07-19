@@ -324,7 +324,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			}
 
 			// Bind automatically to the MessageModel if no items are bound
-			if (!this.getItems().length) {
+			if (!this.getBindingInfo("items") && !this.getItems().length) {
 				this._makeAutomaticBinding();
 			}
 
