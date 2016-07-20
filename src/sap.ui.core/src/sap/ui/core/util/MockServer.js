@@ -3433,6 +3433,7 @@ sap.ui
 			 * @param {boolean} [mConfig.autoRespond=true] If set true, all mock servers will respond automatically. If set false you have to call {@link sap.ui.core.util.MockServer#respond} method for response.
 			 * @param {int} [mConfig.autoRespondAfter=0] the time in ms after all mock servers should send their response.
 			 * @param {boolean} [mConfig.fakeHTTPMethods=false] If set to true, all mock server will find <code>_method</code> parameter in the POST body and use this to override the the actual method.
+			 * @public
 			 */
 			MockServer.config = function(mConfig) {
 				var oServer = this._getInstance();
@@ -3444,6 +3445,7 @@ sap.ui
 
 			/**
 			 * Respond to a request, when the servers are configured not to automatically respond.
+			 * @public
 			 */
 			MockServer.respond = function() {
 				this._getInstance().respond();
@@ -3451,6 +3453,7 @@ sap.ui
 
 			/**
 			 * Starts all registered servers.
+			 * @public
 			 */
 			MockServer.startAll = function() {
 				for (var i = 0; i < this._aServers.length; i++) {
@@ -3460,6 +3463,7 @@ sap.ui
 
 			/**
 			 * Stops all registered servers.
+			 * @public
 			 */
 			MockServer.stopAll = function() {
 				for (var i = 0; i < this._aServers.length; i++) {
@@ -3471,6 +3475,7 @@ sap.ui
 
 			/**
 			 * Stops and calls destroy on all registered servers. Use this method for cleaning up.
+			 * @public
 			 */
 			MockServer.destroyAll = function() {
 				this.stopAll();
