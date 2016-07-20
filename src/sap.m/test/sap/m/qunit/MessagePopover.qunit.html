@@ -596,6 +596,26 @@
 				"sapMMsgPopover-init class should present on the HTML element");
 		});
 
+		QUnit.test("MessagePopoverItem's with truncated title", function (assert) {
+			var sLongTitle = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod" +
+					"tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam," +
+					"quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo" +
+					"consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse" +
+					"cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non" +
+					"proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+
+			this.oMessagePopover.addItem(new sap.m.MessagePopoverItem({
+				title: sLongTitle
+			}));
+
+			sap.ui.getCore().applyChanges();
+
+			this.oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+
+			assert.strictEqual(this.oMessagePopover._oLists.all.getItems()[0].getType(), "Navigation", "The first item should be navigation type")
+		});
+
 		QUnit.module("Public API for async handlers", {
 			sCustomId: "custom-msg-popover-id",
 			oSpies : {},
@@ -764,7 +784,7 @@
 			aMessagePopoverItems = this.oMessagePopover.getItems();
 
 			aItems.forEach(function (item) {
-				assert.strictEqual(item.getType(), "Navigation", "Should be set of they have markupDescription");
+				assert.strictEqual(item.getType(), "Navigation", "Should be set if they have a markupDescription");
 			});
 		});
 
