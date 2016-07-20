@@ -719,7 +719,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			if (oMessagePopoverItem.getMarkupDescription()) {
 				// description is sanitized in MessagePopoverItem.setDescription()
 				this._oMessageDescriptionText = new HTML(this.getId() + 'MarkupDescription', {
-					content: "<div class='markupDescription'>" + oMessagePopoverItem.getDescription() + "</div>"
+					content: "<div class='sapMMsgPopoverDescriptionText'>" + oMessagePopoverItem.getDescription() + "</div>"
 				});
 			} else {
 				this._oMessageDescriptionText = new Text(this.getId() + 'MessageDescriptionText', {
