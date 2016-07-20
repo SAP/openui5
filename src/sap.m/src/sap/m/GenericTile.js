@@ -160,11 +160,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	GenericTile.prototype.onAfterRendering = function() {
 		this._checkFooter(this.getState());
 
-		if (this.getState() === sap.m.LoadState.Disabled) {
-			this._oBusy.$().bind("tap", jQuery.proxy(this._handleOverlayClick, this));
-		} else {
-			this._oBusy.$().unbind("tap", this._handleOverlayClick);
-		}
 		// attaches handler this._updateAriaAndTitle to the event mouseenter and removes attributes ARIA-label and title of all content elements
 		this.$().bind("mouseenter", this._updateAriaAndTitle.bind(this));
 	};
