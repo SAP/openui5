@@ -41,3 +41,19 @@
 .sapMLnkMaxWidth {
 	max-width: 100%;
 }
+
+
+/* Link in sap.ui.table.* tables */
+
+.sapUiTableCell .sapMLnk {
+	margin-top: 0.125rem;
+}
+
+.sapUiSizeCondensed .sapUiTableCell .sapMLnk {
+	margin-top: 0;
+	.sapUiCondensedTableCellContent; /* see shared.css */
+}
+
+html.sap-desktop .sapUiSizeCondensed .sapUiTableCell .sapMLnk:focus:not(.sapMLnkDsbl) {
+	outline-offset: -0.125rem;
+}
