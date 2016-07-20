@@ -1583,6 +1583,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 					var minWidth = parseInt(that._$dialog.css('min-width'), 10);
 					var maxLeftOffset = initial.x + initial.width - minWidth;
 
+					// BCP: 1680048166 remove inline set height so that the content resizes together with the mouse pointer
+					that.$('cont').height('');
+
 					$w.on("mousemove.sapMDialog", function (e) {
 						fnMouseMoveHandler(function () {
 							that._bDisableRepositioning = true;
