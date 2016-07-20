@@ -30,16 +30,15 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 			this.oFormElement = this.oFormContainer.getAggregation("formElements")[0];
 
 			var oChange = {
-					"selector": {
-						"id": "SimpleForm"
+					selector : {
+						id : "SimpleForm"
 					},
-					"content": {
-						"sRenameId": this.oFormElement.getLabel().getId()
+					content : {
+						stableRenamedElementId : this.oLabel0.getId()
 					},
-					"texts": {
-						"formText": {
-							"type": "XFLD",
-							"value": this.sNewValue
+					texts : {
+						formText : {
+							value : this.sNewValue
 						}
 					}
 				};
@@ -48,7 +47,6 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 				this.oChangeHandler = sap.ui.layout.changeHandler.RenameSimpleForm;
 				this.oJsControlTreeModifier = sap.ui.fl.changeHandler.JsControlTreeModifier;
 				this.oXmlTreeModifier = sap.ui.fl.changeHandler.XmlTreeModifier;
-
 		},
 
 		afterEach: function () {
@@ -100,35 +98,66 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 		assert.ok(exception, "Shall raise an exception");
 	});
 
-	QUnit.test('when calling completeChangeContent', function (assert) {
+	QUnit.test('when calling completeChangeContent for FormElement', function (assert) {
 		var oChange = {
-			"selector": {
-				"id": "SimpleForm"
+			selector : {
+				id : "SimpleForm"
 			},
-			"content": {
+			content : {
 			}
 		};
+		
 		var oChangeWrapper = new sap.ui.fl.Change(oChange);
-		var oSpecificChangeInfo = { sRenameId: "dummyId", value: this.sNewValue };
+		var oSpecificChangeInfo = {
+			renamedElement :{
+				id: this.oFormElement.getId()
+			},
+			changeType: "renameLabel",
+			value: this.sNewValue
+		};
 
 		this.oChangeHandler.completeChangeContent(oChangeWrapper, oSpecificChangeInfo);
 
 		assert.equal(oChange.texts.formText.value, this.sNewValue, "the new value has been added to the change");
-		assert.equal(oChange.content.sRenameId, "dummyId", "sRenameId has been added to the change");
+		assert.equal(oChange.content.stableRenamedElementId, this.oLabel0.getId(), "stableRenamedElementId has been added to the change");
+	});
+
+	QUnit.test('when calling completeChangeContent for FormContainer', function (assert) {
+		var oChange = {
+			selector : {
+				id : "SimpleForm"
+			},
+			content : {
+			}
+		};
+		
+		var oChangeWrapper = new sap.ui.fl.Change(oChange);
+		var oSpecificChangeInfo = {
+			renamedElement :{
+				id: this.oFormContainer.getId()
+			},
+			changeType: "renameTitle",
+			value: this.sNewValue
+		};
+
+		this.oChangeHandler.completeChangeContent(oChangeWrapper, oSpecificChangeInfo);
+
+		assert.equal(oChange.texts.formText.value, this.sNewValue, "the new value has been added to the change");
+		assert.equal(oChange.content.stableRenamedElementId, this.oTitle0.getId(), "stableRenamedElementId has been added to the change");
 	});
 
 	QUnit.test('when calling applyChange with an empty string as value', function (assert) {
 		var oChangeWrapper = new sap.ui.fl.Change({
-			"selector": {
-				"id": "SimpleForm"
+			selector: {
+				id : "SimpleForm"
 			},
-			"content": {
-				"sRenameId": this.oFormElement.getLabel().getId()
+			content : {
+				stableRenamedElementId : this.oLabel0.getId(),
 			},
-			"texts": {
-				"formText": {
-					"type": "XFLD",
-					"value": ""
+			texts : {
+				formText : {
+					type : "XFLD",
+					value : ""
 				}
 			}
 		});
@@ -139,19 +168,35 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 
 	QUnit.test('when calling completeChangeContent with an empty string as value', function (assert) {
 		var oChange = {
-			"selector": {
-				"id": "SimpleForm"
+			selector : {
+				id : "SimpleForm"
 			},
-			"content": {
+			content : {
 			}
 		};
 		var oChangeWrapper = new sap.ui.fl.Change(oChange);
 		
-		this.oChangeHandler.completeChangeContent(oChangeWrapper, { sRenameId: "dummyId", value: "" });
+		var oSpecificChangeInfo1 = {
+			renamedElement :{
+				id: this.oFormContainer.getId()
+			},
+			changeType: "renameTitle",
+			value: ""
+		};
+
+		this.oChangeHandler.completeChangeContent(oChangeWrapper, oSpecificChangeInfo1);
 		assert.equal(oChange.texts.formText.value, "", "the empty value has been copied to the change");
 
+		var oSpecificChangeInfo2 = {
+			renamedElement :{
+				id: this.oFormContainer.getId()
+			},
+			changeType: "renameTitle",
+			value: undefined
+		};
+		
 		assert.throws(function() {
-				this.oChangeHandler.completeChangeContent(oChangeWrapper, { sRenameId: "dummyId", value: undefined });
+				this.oChangeHandler.completeChangeContent(oChangeWrapper, oSpecificChangeInfo2);
 			}, 
 			new Error("oSpecificChangeInfo.value attribute required"), 
 			"the undefined value raises an error message"
@@ -159,25 +204,25 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 
 	});
 
-	QUnit.test('when calling completeChangeContent without sRenameId', function (assert) {
-		var oChangeWrapper = new sap.ui.fl.Change({
-			"selector": {
-				"id": "SimpleForm"
+	QUnit.test('when calling completeChangeContent without renamedElementId', function (assert) {
+		var oChange = {
+			selector : {
+				id : "SimpleForm"
 			},
-			"content": {
-			},
-			"texts": {
-				"formText": {
-					"type": "XFLD",
-					"value": ""
-				}
+			content : {
 			}
-		});
+		};
+		var oChangeWrapper = new sap.ui.fl.Change(oChange);
+		
+		var oSpecificChangeInfo = {
+			changeType: "renameTitle",
+			value: this.sNewValue
+		};
 
 		assert.throws(function() {
-			this.oChangeHandler.completeChangeContent(oChangeWrapper, this.oSimpleForm, this.oJsControlTreeModifier);
+			this.oChangeHandler.completeChangeContent(oChangeWrapper, oSpecificChangeInfo);
 			}, 
-			new Error("oSpecificChangeInfo.sRenameId attribute required"), 
+			new Error("oSpecificChangeInfo.renamedElement attribute required"), 
 			"the undefined value raises an error message"
 		);
 	});
