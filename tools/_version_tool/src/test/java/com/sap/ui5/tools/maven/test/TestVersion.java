@@ -1,6 +1,8 @@
-package com.sap.ui5.tools.infra.git2p4;
+package com.sap.ui5.tools.maven.test;
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.sap.ui5.tools.maven.Version;
 
 
 /**

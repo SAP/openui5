@@ -37,8 +37,8 @@ import com.sap.ui5.tools.infra.git2p4.Git2P4Main.Mapping;
 import com.sap.ui5.tools.infra.git2p4.GitClient;
 import com.sap.ui5.tools.infra.git2p4.GitClient.Commit;
 import com.sap.ui5.tools.infra.git2p4.Log;
-import com.sap.ui5.tools.infra.git2p4.Version;
 import com.sap.ui5.tools.infra.git2p4.commands.relnotes.CommitMsgAnalyzer.CSS;
+import com.sap.ui5.tools.maven.Version;
 
 /**
  * Command object that implements the "prepare release notes" command.
