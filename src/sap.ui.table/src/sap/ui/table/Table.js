@@ -742,9 +742,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._attachExtensions = function() {
+		if (this._bExtensionsInitialized) {
+			return;
+		}
 		TableExtension.enrich(this, TablePointerExtension);
 		TableExtension.enrich(this, TableKeyboardExtension);
 		TableExtension.enrich(this, TableAccExtension); //Must be registered after keyboard to reach correct delegate order
+		this._bExtensionsInitialized = true;
 	};
 
 
@@ -776,9 +780,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._detachExtensions = function(){
+		if (!this._bExtensionsInitialized) {
+			return;
+		}
 		this._getPointerExtension().destroy();
 		this._getKeyboardExtension().destroy();
 		this._getAccExtension().destroy();
+		delete this._bExtensionsInitialized;
 	};
 
 
