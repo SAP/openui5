@@ -143,7 +143,7 @@
 }
 
 .sapMITBSelected .sapMITBFilterIcon::before {
-	text-shadow: none;
+  text-shadow: none;
 }
 
 .sapMITBFilterDefault {
@@ -223,4 +223,20 @@
 
 .sapMITBSepIcon::before {
   text-shadow: 0 1px 0 fade(@sapUiContentContrastShadowColor, 70);
+}
+
+.sapMITBArrowScroll {
+  color: @sapUiContentIconColor;
+}
+
+html.sap-desktop .sapMITBArrowScroll:hover,
+html.sap-desktop .sapMITBArrowScroll:active {
+  color: @sapUiHighlight;
+}
+
+/* Custom focus outline */
+html.sap-desktop .sapMITBItem:focus .sapMITBFilterIcon,
+html.sap-desktop .sapMITBTextOnly .sapMITBItem:focus .sapMITBText,
+html.sap-desktop .sapMITBItem:focus.sapMITBAll {
+  outline: 1px dotted @sapUiContentFocusColor;
 }
