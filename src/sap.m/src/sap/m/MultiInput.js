@@ -944,7 +944,10 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	 *          oEvent
 	 */
 	MultiInput.prototype.onsapenter = function(oEvent) {
-		this._validateCurrentText();
+
+		if (!this._oSuggestionPopup || !this._oSuggestionPopup.isOpen()) {
+			this._validateCurrentText();
+		}
 
 		if (Input.prototype.onsapenter) {
 			Input.prototype.onsapenter.apply(this, arguments);
