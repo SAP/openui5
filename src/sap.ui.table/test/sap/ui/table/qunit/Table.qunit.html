@@ -2,7 +2,6 @@
 
 <!--
   Tested class: sap.ui.table.Table
-  Author: d029506, d053398
 -->
 
 <html>
@@ -22,6 +21,7 @@
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-coverage.js" data-sap-ui-cover-only="sap/ui/table"></script>
 
 	<script  language="javascript">
 	jQuery.sap.require("sap.ui.thirdparty.sinon");
@@ -299,6 +299,21 @@
 		oTable.setRowHeight(0);
 		sap.ui.getCore().applyChanges();
 		ok(oTable.$().find("tr[data-sap-ui-rowindex]").height() < 100, "RowHeight ok");
+	});
+	
+	test("TableExtensions", 6, function(assert) {
+		assert.ok(oTable._bExtensionsInitialized, "Extensions initialized");
+		assert.ok(typeof oTable._getPointerExtension === "function", "Getter for PointerExtension");
+		assert.ok(typeof oTable._getAccExtension === "function", "Getter for AccExtension");
+		assert.ok(typeof oTable._getAccRenderExtension === "function", "Getter for AccRenderExtension");
+		assert.ok(typeof oTable._getKeyboardExtension === "function", "Getter for KeyboardExtension");
+		oTable.destroy();
+		assert.ok(!oTable._bExtensionsInitialized, "Extensions cleaned up");
+		try {
+			oTable.destroy();
+		} catch(e) {
+			assert.ok(false, "Duplicate call of destroy should not raise errors.");
+		}
 	});
 
 	module("Column operations", {
