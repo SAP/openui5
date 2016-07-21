@@ -161,6 +161,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
+	MonthPicker.prototype.onsapspace = function(oEvent) {
+		oEvent.preventDefault();
+	};
+
 	MonthPicker.prototype.onsapselect = function(oEvent){
 
 		// focused item must be selected
