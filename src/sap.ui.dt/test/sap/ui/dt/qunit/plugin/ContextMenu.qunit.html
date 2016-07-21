@@ -68,7 +68,8 @@
 				id : "CTX_ENABLED_BUTTON1",
 				text : "enabled for button 1",
 				handler : sinon.spy(),
-				enabled : function(oElement){
+				enabled : function(oOverlay){
+					var oElement = oOverlay.getElementInstance();
 					return oElement === that.oButton1;
 				}
 			};
@@ -76,10 +77,12 @@
 				id : "CTX_DISABLED_BUTTON1",
 				text : "disabled for button 1",
 				handler : sinon.spy(),
-				available : function(oElement){
+				available : function(oOverlay){
+					var oElement = oOverlay.getElementInstance();
 					return oElement === that.oButton1 || oElement === that.oButton2;
 				},
-				enabled : function(oElement){
+				enabled : function(oOverlay){
+					var oElement = oOverlay.getElementInstance();
 					return oElement !== that.oButton1;
 				}
 			};
@@ -87,7 +90,8 @@
 				id : "CTX_ONLY_BUTTON2",
 				text : "only shown for button 2",
 				handler : sinon.spy(),
-				available : function(oElement){
+				available : function(oOverlay){
+					var oElement = oOverlay.getElementInstance();
 					return oElement === that.oButton2;
 				}
 			};
@@ -107,7 +111,8 @@
 			};
 			this.oMenuEntries.dynamicTextItem = {
 				id : "CTX_DYNAMIC_TEXT",
-				text : function(oElement) {
+				text : function(oOverlay) {
+					var oElement = oOverlay.getElementInstance();
 					return oElement.getId();
 				},
 				handler : sinon.spy()

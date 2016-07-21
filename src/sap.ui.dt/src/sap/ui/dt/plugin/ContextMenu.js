@@ -94,10 +94,8 @@ sap.ui.define([
 	};
 
 	ContextMenu.prototype.open = function(oOriginalEvent, oTargetOverlay) {
-		this._oElement = oTargetOverlay.getElementInstance();
-
 		this._oContextMenuControl = new ContextMenuControl();
-		this._oContextMenuControl.setMenuItems(this._aMenuItems, this._oElement);
+		this._oContextMenuControl.setMenuItems(this._aMenuItems, oTargetOverlay);
 		this._oContextMenuControl.setOverlayDomRef(oTargetOverlay);
 		this._oContextMenuControl.attachItemSelect(this._onItemSelected, this);
 
