@@ -230,6 +230,7 @@ sap.ui.define([
 	 */
 	P13nGroupPanel.prototype.init = function() {
 		this.setType(sap.m.P13nPanelType.group);
+		this.setTitle(sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("GROUPPANEL_TITLE"));
 
 		sap.ui.getCore().loadLibrary("sap.ui.layout");
 		jQuery.sap.require("sap.ui.layout.Grid");

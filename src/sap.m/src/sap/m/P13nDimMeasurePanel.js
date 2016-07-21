@@ -118,6 +118,7 @@ sap.ui.define([
 		this.setModel(oModel, "$sapmP13nDimMeasurePanel");
 
 		this.setType(sap.m.P13nPanelType.dimeasure);
+		this.setTitle(this._oRb.getText("CHARTPANEL_TITLE"));
 
 		this._createTable();
 		this._createToolbar();

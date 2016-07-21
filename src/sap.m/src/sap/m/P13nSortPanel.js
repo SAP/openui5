@@ -218,6 +218,7 @@ sap.ui.define([
 	 */
 	P13nSortPanel.prototype.init = function() {
 		this.setType(sap.m.P13nPanelType.sort);
+		this.setTitle(sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SORTPANEL_TITLE"));
 
 		sap.ui.getCore().loadLibrary("sap.ui.layout");
 		jQuery.sap.require("sap.ui.layout.Grid");

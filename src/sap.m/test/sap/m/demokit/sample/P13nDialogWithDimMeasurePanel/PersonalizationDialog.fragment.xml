@@ -25,7 +25,7 @@
 					<core:Item key="{key}" text="{text}" />
 				</availableChartTypes>
 			</P13nDimMeasurePanel>
-			<P13nSortPanel title="Sort" visible="false" type="sort"
+			<P13nSortPanel visible="false" type="sort"
 				containerQuery="true"
 				items="{
                     path: '/ColumnCollection'

@@ -1339,6 +1339,7 @@ sap.ui.define([
 		this._aExistingTableItems = null;
 
 		this.setType(sap.m.P13nPanelType.columns);
+		this.setTitle(sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("COLUMSPANEL_TITLE"));
 
 		// ---------------------------------------------------------------
 		// Following object _oTableItemsOrdering handles the table behavior for sorting of included items
