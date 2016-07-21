@@ -402,7 +402,8 @@ sap.ui.require([
 			oPromise;
 
 		this.oRequestorMock.expects("request").returns(Promise.resolve({"ID" : "1"}));
-		oBinding = this.oModel.bindContext("/EMPLOYEES(ID='1')", oContext);
+		oBinding = this.oModel.bindContext("/EMPLOYEES(ID='1')", oContext,
+			{$$groupId : "foo"}); // to prevent that the context is asked for the group ID
 
 		oBindingMock = this.mock(oBinding);
 		oBindingMock.expects("_fireChange");
@@ -628,7 +629,8 @@ sap.ui.require([
 	}].forEach(function (oFixture) {
 		QUnit.test("fetchAbsoluteValue: relative binding w/ cache: " + oFixture.abs,
 			function (assert) {
-				var oBinding = this.oModel.bindContext("SO_2_SCHDL", undefined, {}),
+				var oBinding = this.oModel.bindContext("SO_2_SCHDL", undefined,
+						{$$groupId : "myGroup"}), // to prevent that the context is asked for the ID
 					oCache = {
 						promise : Promise.resolve(),
 						read : function () {}
@@ -642,7 +644,7 @@ sap.ui.require([
 				this.mock(oContext).expects("registerBinding");
 				oBinding.setContext(oContext);
 
-				this.mock(oCache).expects("read").withArgs("$auto", oFixture.rel)
+				this.mock(oCache).expects("read").withArgs("myGroup", oFixture.rel)
 					.returns(_SyncPromise.resolve(oResult));
 
 				// code under test
@@ -830,7 +832,7 @@ sap.ui.require([
 		oHelperMock.expects("buildBindingParameters")
 			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters).returns({});
 		// code under test
-		oBinding = this.oModel.bindContext("/EMPLOYEES('4711')", undefined, mParameters);
+		oBinding = this.oModel.bindContext("/EMPLOYEES('4711')", {}, mParameters);
 		assert.strictEqual(oBinding.getGroupId(), "baz");
 		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
 
@@ -844,7 +846,43 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getGroupId", function (assert) {
+	QUnit.test("getGroupId: relative bindings", function (assert) {
+		var oBinding = this.oModel.bindContext("relative"),
+			oContext = Context.create(this.oModel, {}, "/absolute");
+
+		this.mock(this.oModel).expects("getGroupId").withExactArgs().returns("fromModel");
+
+		// code under test
+		assert.strictEqual(oBinding.getGroupId(), "fromModel");
+
+		this.stub(oContext, "registerBinding"); // to prevent it from doing something
+		oBinding.setContext(oContext);
+		this.mock(oContext).expects("getGroupId").withExactArgs().returns("fromContext");
+
+		// code under test
+		assert.strictEqual(oBinding.getGroupId(), "fromContext");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getUpdateGroupId: relative bindings", function (assert) {
+		var oBinding = this.oModel.bindContext("relative"),
+			oContext = Context.create(this.oModel, {}, "/absolute");
+
+		this.mock(this.oModel).expects("getUpdateGroupId").withExactArgs().returns("fromModel");
+
+		// code under test
+		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
+
+		this.stub(oContext, "registerBinding"); // to prevent it from doing something
+		oBinding.setContext(oContext);
+		this.mock(oContext).expects("getUpdateGroupId").withExactArgs().returns("fromContext");
+
+		// code under test
+		assert.strictEqual(oBinding.getUpdateGroupId(), "fromContext");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("read uses group ID", function (assert) {
 		var oBinding = this.oModel.bindContext("/absolute", undefined, {$$groupId : "$direct"}),
 			oBinding2 = this.oModel.bindContext("/absolute"),
 			oModelMock = this.mock(this.oModel),

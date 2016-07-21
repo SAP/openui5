@@ -256,6 +256,90 @@ sap.ui.define([
 			// inclusive.
 			// 2^53 - 1 = 9007199254740991
 			return iNumber <= 9007199254740991 && Math.floor(iNumber) === iNumber;
+		},
+
+		/**
+		 * Updates the cache with the object sent to the PATCH request or the object returned by the
+		 * PATCH response. Fires change events for all changed properties. The function recursively
+		 * handles modified, added or removed structural properties and fires change events for all
+		 * modified/added/removed primitive properties therein.
+		 *
+		 * @param {object} mChangeListeners A map of change listeners by path.
+		 * @param {string} sPath The path of the cache value in the cache
+		 * @param {object} oCacheValue The object in the cache
+		 * @param {object} oPatchValue The value of the patch request/response
+		 */
+		updateCache : function(mChangeListeners, sPath, oCacheValue, oPatchValue) {
+
+			/*
+			 * Fires a change event to all listeners for the given path in mChangeListeners.
+			 * @param {string} sPropertyPath The path
+			 * @param {any} vValue the value to report to the listeners
+			 */
+			function fireChange(sPropertyPath, vValue) {
+				var aListeners = mChangeListeners[sPropertyPath],
+					i;
+
+				if (aListeners) {
+					for (i = 0; i < aListeners.length; i++) {
+						aListeners[i].onChange(vValue);
+					}
+				}
+			}
+
+			/*
+			 * Iterates recursively over all properties of the given value and fires change events
+			 * to all listeners.
+			 * @param {string} sPath The path of the current value
+			 * @param {object} oValue The value
+			 * @param {boolean} bRemoved If true the value is assumed to have been removed and the
+			 *   change event reports undefined as the new value
+			 */
+			function fireChanges(sPath, oValue, bRemoved) {
+				Object.keys(oValue).forEach(function (sProperty) {
+					var sPropertyPath = Helper.buildPath(sPath, sProperty),
+						vValue = oValue[sProperty];
+
+					if (vValue && typeof vValue === "object") {
+						fireChanges(sPropertyPath, vValue, bRemoved);
+					} else {
+						fireChange(sPropertyPath, bRemoved ? undefined : vValue);
+					}
+				});
+			}
+
+			// iterate over all properties in the cache
+			Object.keys(oCacheValue).forEach(function (sProperty) {
+				var sPropertyPath = Helper.buildPath(sPath, sProperty),
+					vOldValue = oCacheValue[sProperty],
+					vNewValue;
+
+				if (sProperty in oPatchValue) {
+					// the property was patched
+					vNewValue = oPatchValue[sProperty];
+					if (vNewValue && typeof vNewValue === "object") {
+						if (vOldValue) {
+							// a structural property in cache and patch -> recursion
+							Helper.updateCache(mChangeListeners, sPropertyPath, vOldValue,
+								vNewValue);
+						} else {
+							// a structural property was added
+							oCacheValue[sProperty] = vNewValue;
+							fireChanges(sPropertyPath, vNewValue, false);
+						}
+					} else if (vOldValue && typeof vOldValue === "object") {
+						// a structural property was removed
+						fireChanges(sPropertyPath, vOldValue, true);
+						oCacheValue[sProperty] = vNewValue;
+					} else {
+						// a primitive property
+						if (vOldValue !== vNewValue) {
+							fireChange(sPropertyPath, vNewValue);
+						}
+						oCacheValue[sProperty] = vNewValue;
+					}
+				}
+			});
 		}
 	};
 

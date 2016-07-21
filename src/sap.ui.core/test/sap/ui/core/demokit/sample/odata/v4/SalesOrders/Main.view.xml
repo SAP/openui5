@@ -165,7 +165,7 @@
 					parameters : {
 						$expand : {
 							SO_2_BP : {
-								$select : 'BusinessPartnerID,CompanyName,PhoneNumber'
+								$select : 'BusinessPartnerID,CompanyName,PhoneNumber,Address'
 							},
 							SO_2_SCHDL : {
 								$select : 'ScheduleKey,DeliveryDate'
@@ -246,6 +246,11 @@
 					<Text text="{CompanyName}" />
 					<Label labelFor="BPPhoneNumber" text="PhoneNumber" />
 					<Input enabled="{ui>/bRealOData}" id="BPPhoneNumber" value="{PhoneNumber}" />
+					<Label labelFor="BPCity" text="City" />
+					<Input enabled="{ui>/bRealOData}" id="BPCity" value="{Address/City}"/>
+					<Label labelFor="BPPostalCode" text="Postal Code" />
+					<Input enabled="{ui>/bRealOData}" id="BPPostalCode"
+						value="{Address/PostalCode}"/>
 				</form:SimpleForm>
 			</form:SimpleForm>
 			<Table id="SalesOrderLineItems"
@@ -264,6 +269,10 @@
 								}
 							},
 							$$updateGroupId : 'SalesOrderUpdateGroup'
+						},
+						events : {
+							dataReceived : '.onDataEvents',
+							dataRequested : '.onDataEvents'
 						}
 					}" mode="SingleSelectMaster"
 				selectionChange="onSalesOrderLineItemSelect">
