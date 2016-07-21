@@ -12,8 +12,13 @@
 				"uri" : "/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/",
 				"type" : "OData",
 				"settings" : {
+					"annotations": ["testanno"],
 					"odataVersion" : "4.0"
 				}
+			},
+			"testanno": {
+				"uri": "data/annotations.xml",
+				"type": "ODataAnnotation"
 			}
 		},
 		"id" : "sap.ui.core.sample.odata.v4.SalesOrdersTemplate",

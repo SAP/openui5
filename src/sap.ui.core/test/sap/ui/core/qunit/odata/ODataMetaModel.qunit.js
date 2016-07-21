@@ -70,9 +70,12 @@ sap.ui.require([
 			<EntityContainer Name="GWSAMPLE_BASIC_Entities"\
 				m:IsDefaultEntityContainer="true" sap:use-batch="false">\
 				<EntitySet Name="BusinessPartnerSet" EntityType="GWSAMPLE_BASIC.BusinessPartner"\
-					sap:deletable-path="Deletable" sap:topable="false" sap:requires-filter="true"\
-					sap:updatable-path="Updatable" sap:content-version="1" />\
-				<EntitySet Name="ProductSet" EntityType="GWSAMPLE_BASIC.Product"/>\
+					sap:deletable-path="Deletable" sap:deletable="false" sap:topable="false"\
+					sap:updatable-path="Updatable" sap:updatable="false" sap:requires-filter="true"\
+					sap:content-version="1" />\
+				<EntitySet Name="ProductSet" EntityType="GWSAMPLE_BASIC.Product" \
+					sap:deletable="false" sap:deletable-path="Deletable" sap:searchable="true" \
+					sap:updatable="false" sap:updatable-path="Updatable"/>\
 				<EntitySet Name="VH_SexSet" EntityType="GWSAMPLE_BASIC.VH_Sex" \
 					sap:creatable="false" sap:updatable="false" sap:deletable="false" \
 					sap:pageable="false" sap:searchable="true" sap:content-version="1"/> \
@@ -1690,6 +1693,8 @@ sap.ui.require([
 				// sap:deletable-path (EntitySet)
 				assert.deepEqual(oBusinessPartnerSet["sap:deletable-path"], "Deletable");
 				delete oBusinessPartnerSet["sap:deletable-path"];
+				assert.deepEqual(oBusinessPartnerSet["sap:deletable"], "false");
+				delete oBusinessPartnerSet["sap:deletable"];
 				assert.deepEqual(
 					oBusinessPartnerSet["Org.OData.Capabilities.V1.DeleteRestrictions"],
 					{ "Deletable" : { "Path" :
@@ -1699,6 +1704,8 @@ sap.ui.require([
 				// sap:updatable-path (EntitySet)
 				assert.deepEqual(oBusinessPartnerSet["sap:updatable-path"], "Updatable");
 				delete oBusinessPartnerSet["sap:updatable-path"];
+				assert.deepEqual(oBusinessPartnerSet["sap:updatable"], "false");
+				delete oBusinessPartnerSet["sap:updatable"];
 				assert.deepEqual(
 					oBusinessPartnerSet["Org.OData.Capabilities.V1.UpdateRestrictions"],
 					{ "Updatable" : { "Path" :
@@ -1739,6 +1746,26 @@ sap.ui.require([
 						}
 					}]), "filter-restriction at ProductSet");
 				delete oProductSet[sPrefix + "FilterExpressionRestrictions"];
+
+				// sap:deletable/updatable-path after sap:deletable/updatable (EntitySet)
+				assert.deepEqual(oProductSet["sap:deletable-path"], "Deletable");
+				delete oProductSet["sap:deletable-path"];
+				assert.deepEqual(oProductSet["sap:deletable"], "false");
+				delete oProductSet["sap:deletable"];
+				assert.deepEqual(
+					oProductSet["Org.OData.Capabilities.V1.DeleteRestrictions"],
+					{"Deletable" : {"Path" : "Deletable"}}, "deletable-path");
+				delete oProductSet["Org.OData.Capabilities.V1.DeleteRestrictions"];
+				assert.deepEqual(oProductSet["sap:updatable-path"], "Updatable");
+				delete oProductSet["sap:updatable-path"];
+				assert.deepEqual(oProductSet["sap:updatable"], "false");
+				delete oProductSet["sap:updatable"];
+				assert.deepEqual(
+					oProductSet["Org.OData.Capabilities.V1.UpdateRestrictions"],
+					{"Updatable" : {"Path" : "Updatable"}}, "updatable-path");
+				delete oProductSet["Org.OData.Capabilities.V1.UpdateRestrictions"];
+				assert.deepEqual(oProductSet["sap:searchable"], "true");
+				delete oProductSet["sap:searchable"];
 
 				assert.deepEqual(oMetaModelData, oMetadata, "nothing else left...");
 				assert.notStrictEqual(oMetaModelData, oMetadata, "is clone");

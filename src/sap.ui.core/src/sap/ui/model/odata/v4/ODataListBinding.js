@@ -67,13 +67,14 @@ sap.ui.define([
 	 *   or if {@link #sort} is called.
 	 * @param {string} [mParameters.$$groupId]
 	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
-	 *   specified, the model's group ID is used, see
-	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor}.
+	 *   specified, either the parent binding's group ID (if the binding is relative) or the
+	 *   model's group ID is used, see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
 	 *   Valid values are <code>undefined</code>, <code>'$auto'</code>, <code>'$direct'</code> or
 	 *   application group IDs as specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
 	 * @param {string} [mParameters.$$updateGroupId]
 	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
-	 *   if not specified, the model's update group ID is used,
+	 *   if not specified, either the parent binding's update group ID (if the binding is relative)
+	 *   or the model's update group ID is used,
 	 *   see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
 	 *   For valid values, see parameter "$$groupId".
 	 * @throws {Error}
@@ -113,7 +114,9 @@ sap.ui.define([
 				this.oCache = undefined;
 				this.sChangeReason = undefined;
 				this.aDependentBindings = undefined;
+				this.aDiff = [];
 				this.aFilters = [];
+				this.aPreviousData = [];
 				this.mQueryOptions = undefined;
 				this.sRefreshGroupId = undefined;
 				this.aSorters = _ODataHelper.toArray(vSorters);
@@ -208,6 +211,60 @@ sap.ui.define([
 				+ "': v4.ODataListBinding#attachEvent");
 		}
 		return ListBinding.prototype.attachEvent.apply(this, arguments);
+	};
+
+	/**
+	 * Creates contexts for this list binding in the given range for the given result length of
+	 * the OData response. Fires change and dataReceived events.
+	 *
+	 * @param {object} oRange
+	 *   The range as returned by {@link _ODataHelper#getReadRange}
+	 * @param {number} iResultLength
+	 *   The number of OData entities read from the cache for the given range
+	 * @param {string} sChangeReason
+	 *   The reason with which the change event is sent
+	 * @param {boolean} bDataRequested
+	 *   Whether data has been requested from the server by the cache
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.createContexts = function (oRange, iResultLength, sChangeReason,
+				bDataRequested) {
+		var bChanged = false,
+			oContext = this.oContext,
+			i,
+			bNewLengthFinal,
+			oModel = this.oModel,
+			sResolvedPath = oModel.resolve(this.sPath, oContext);
+
+		for (i = oRange.start; i < oRange.start + iResultLength; i += 1) {
+			if (this.aContexts[i] === undefined) {
+				bChanged = true;
+				this.aContexts[i] = Context.create(oModel, this, sResolvedPath + "/" + i, i);
+			}
+		}
+		if (this.aContexts.length > this.iMaxLength) { // upper boundary obsolete: reset it
+			this.iMaxLength = Infinity;
+		}
+		if (iResultLength < oRange.length) {
+			this.iMaxLength = oRange.start + iResultLength;
+			if (this.aContexts.length > this.iMaxLength) {
+				this.aContexts.length = this.iMaxLength;
+			}
+		}
+		bNewLengthFinal = this.aContexts.length === this.iMaxLength;
+		if (this.bLengthFinal !== bNewLengthFinal) {
+			this.bLengthFinal = bNewLengthFinal;
+			// bLengthFinal changed --> send change event even if no new data is available
+			bChanged = true;
+		}
+
+		if (bChanged) {
+			this._fireChange({reason : sChangeReason});
+		}
+		if (bDataRequested) {
+			this.fireDataReceived(); // no try catch needed: uncaught in promise
+		}
 	};
 
 	/**
@@ -384,85 +441,34 @@ sap.ui.define([
 	ODataListBinding.prototype.getContexts = function (iStart, iLength, iThreshold) {
 		var sChangeReason,
 			oContext = this.oContext,
+			aContexts,
 			bDataRequested = false,
 			sGroupId,
-			oModel = this.oModel,
 			oPromise,
-			oReadInfo,
-			sResolvedPath = oModel.resolve(this.sPath, oContext),
+			oRange,
 			that = this;
 
-		/**
-		 * Creates entries in aContexts for each value in oResult.
-		 * Uses fnGetPath to create the context path.
-		 * Fires 'change' event if new contexts are created.
-		 *
-		 * @param {array|object} vResult Resolved OData result
-		 */
-		function createContexts(vResult) {
-			var bChanged = false,
-				i,
-				bNewLengthFinal,
-				iResultLength = Array.isArray(vResult) ? vResult.length : vResult.value.length,
-				n = oReadInfo.start + iResultLength;
-
-			for (i = oReadInfo.start; i < n; i += 1) {
-				if (that.aContexts[i] === undefined) {
-					bChanged = true;
-					that.aContexts[i] = Context.create(oModel, that, sResolvedPath + "/" + i, i);
-				}
-			}
-			if (that.aContexts.length > that.iMaxLength) {
-				// upper boundary obsolete: reset it
-				that.iMaxLength = Infinity;
-			}
-			if (iResultLength < oReadInfo.length) {
-				// less data -> reduce upper boundary for list length and delete obsolete content
-				that.iMaxLength = Math.min(oReadInfo.start + iResultLength, that.iMaxLength);
-				if (that.aContexts.length > that.iMaxLength) {
-					// delete all contexts after iMaxLength
-					that.aContexts.splice(that.iMaxLength,
-						that.aContexts.length - that.iMaxLength);
-				}
-			}
-			bNewLengthFinal = that.aContexts.length === that.iMaxLength;
-			if (that.bLengthFinal !== bNewLengthFinal) {
-				// some controls use this flag instead of calling isLengthFinal
-				that.bLengthFinal = bNewLengthFinal;
-				// bLengthFinal changed --> control needs to be informed even if no new data is
-				// available
-				bChanged = true;
-			}
-
-			if (bChanged) {
-				that._fireChange({reason : sChangeReason});
-				// no code below this line
-			}
+		if (this.bRelative && !oContext) { // unresolved relative binding
+			return [];
 		}
 
 		sChangeReason = this.sChangeReason || ChangeReason.Change;
 		this.sChangeReason = undefined;
 
 		iStart = iStart || 0;
-		iLength = iLength || oModel.iSizeLimit;
+		iLength = iLength || this.oModel.iSizeLimit;
 		if (!iThreshold || iThreshold < 0) {
 			iThreshold = 0;
 		}
 
-		if (!sResolvedPath) {
-			// oModel.resolve() called with relative path w/o context
-			// -> e.g. nested listbinding but context not yet set
-			return [];
-		}
-
-		oReadInfo = _ODataHelper.getReadRange(this.aContexts, iStart, iLength, iThreshold,
+		oRange = _ODataHelper.getReadRange(this.aContexts, iStart, iLength, iThreshold,
 			this.iMaxLength);
 
-		if (oReadInfo) {
+		if (oRange) {
 			if (this.oCache) {
 				sGroupId = this.sRefreshGroupId || this.getGroupId();
 				this.sRefreshGroupId = undefined;
-				oPromise = this.oCache.read(oReadInfo.start, oReadInfo.length, sGroupId, undefined,
+				oPromise = this.oCache.read(oRange.start, oRange.length, sGroupId, undefined,
 					function () {
 						bDataRequested = true;
 						that.oModel.addedRequestToGroup(sGroupId,
@@ -472,19 +478,35 @@ sap.ui.define([
 				oPromise = oContext.fetchValue(this.sPath);
 			}
 			oPromise.then(function (vResult) {
-				createContexts(vResult || []);
-				//fire dataReceived after change event fired in createContexts()
-				if (bDataRequested) {
+				var aResult,
+					iResultLength;
+
+				// ensure that the result is still relevant
+				if (!that.bRelative || that.oContext === oContext) {
+					aResult = vResult && (Array.isArray(vResult) ? vResult : vResult.value);
+					iResultLength = aResult ? aResult.length : 0;
+					if (that.bUseExtendedChangeDetection) {
+						return _ODataHelper.requestDiff(that, aResult, iStart)
+							.then(function (aDiff) {
+								that.aDiff = aDiff;
+								that.createContexts(oRange, iResultLength, sChangeReason,
+									bDataRequested);
+							});
+					} else {
+						that.createContexts(oRange, iResultLength, sChangeReason, bDataRequested);
+					}
+				} else if (bDataRequested) { // fire dataReceived if not done in createContexts
 					that.fireDataReceived(); // no try catch needed: uncaught in promise
 				}
 			}, function (oError) {
-				//cache shares promises for concurrent read
+				// cache shares promises for concurrent read
 				if (bDataRequested) {
 					if (oError.canceled) {
 						that.fireDataReceived();
 					} else {
-						oModel.reportError("Failed to get contexts for "
-								+ oModel.sServiceUrl + sResolvedPath.slice(1)
+						that.oModel.reportError("Failed to get contexts for "
+								+ that.oModel.sServiceUrl
+								+ that.oModel.resolve(that.sPath, that.oContext).slice(1)
 								+ " with start index " + iStart + " and length " + iLength,
 							sClassName, oError);
 						that.fireDataReceived({error : oError});
@@ -496,7 +518,13 @@ sap.ui.define([
 		}
 		this.iCurrentBegin = iStart;
 		this.iCurrentEnd = iStart + iLength;
-		return this.aContexts.slice(iStart, iStart + iLength);
+		aContexts = this.aContexts.slice(iStart, iStart + iLength);
+		if (this.bUseExtendedChangeDetection) {
+			aContexts.dataRequested = !!oRange;
+			aContexts.diff = this.aDiff;
+			this.aDiff = [];
+		}
+		return aContexts;
 	};
 
 	/**
@@ -546,7 +574,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.getGroupId = function () {
-		return this.sGroupId || this.oModel.getGroupId();
+		return this.sGroupId || (this.bRelative && this.oContext && this.oContext.getGroupId())
+			|| this.oModel.getGroupId();
 	};
 
 	/**
@@ -574,7 +603,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.getUpdateGroupId = function () {
-		return this.sUpdateGroupId || this.oModel.getUpdateGroupId();
+		return this.sUpdateGroupId
+			|| (this.bRelative && this.oContext && this.oContext.getUpdateGroupId())
+			|| this.oModel.getUpdateGroupId();
 	};
 
 	/**
@@ -632,7 +663,8 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	// @override
-	ODataListBinding.prototype.isLengthFinal = function () {
+	ODataListBinding.prototype.isLengthFinal = function() {
+		// some controls use .bLengthFinal on list binding instead of calling isLengthFinal
 		return this.bLengthFinal;
 	};
 

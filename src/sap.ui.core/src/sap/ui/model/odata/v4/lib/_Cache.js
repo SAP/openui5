@@ -74,6 +74,25 @@ sap.ui.define([
 	}
 
 	/**
+	 * Creates an object that has the given value exactly at the given property path allowing to
+	 * use the result in _Helper.updateCache().
+	 * Examples:
+	 * ["Age"], 42 -> {Age: 42}
+	 * ["Address", "City"], "Walldorf" -> {Address: {City: "Walldorf"}}
+	 *
+	 * @param {string[]} aPropertyPath The property path split into an array of segments
+	 * @param {any} vValue The property value
+	 * @returns {object} The resulting object
+	 */
+	function createUpdateData(aPropertyPath, vValue) {
+		return aPropertyPath.reduceRight(function (vValue0, sSegment) {
+			var oResult = {};
+			oResult[sSegment] = vValue0;
+			return oResult;
+		}, vValue);
+	}
+
+	/**
 	 * Drills down into the given object according to <code>sPath</code>.
 	 *
 	 * @param {object} oResult
@@ -122,46 +141,6 @@ sap.ui.define([
 
 		for (i = iStart; i < iEnd; i++) {
 			aArray[i] = vValue;
-		}
-	}
-
-	/**
-	 * Fires a change with the new value for the given path if the value changed. Recursively
-	 * iterates over object values to find primitive properties.
-	 *
-	 * @param {object} mChangeListeners
-	 *   A map from path to change listener.
-	 * @param {string} sPath
-	 *   The path
-	 * @param {any} vOldValue
-	 *   The old value
-	 * @param {any} vNewValue
-	 *   The new value
-	 */
-	function fireChange(mChangeListeners, sPath, vOldValue, vNewValue) {
-		var aListeners, sProperty;
-
-		if (vNewValue && typeof vNewValue === "object") {
-			for (sProperty in vNewValue) {
-				fireChange(mChangeListeners, _Helper.buildPath(sPath, sProperty),
-					vOldValue && vOldValue[sProperty], vNewValue[sProperty]);
-			}
-		} else if (vOldValue && typeof vOldValue === "object") {
-			// vNewValue should be an object, too, but it isn't. So we can safely assume that all
-			// properties below are nonexistent now. Fire change events for all existing properties
-			// in the old value setting them to undefined.
-			for (sProperty in vOldValue) {
-				fireChange(mChangeListeners, _Helper.buildPath(sPath, sProperty),
-					vOldValue[sProperty], undefined);
-			}
-		} else {
-			aListeners = mChangeListeners[sPath];
-
-			if (aListeners && vOldValue !== vNewValue) {
-				aListeners.forEach(function (oListener) {
-					oListener.onChange(vNewValue);
-				});
-			}
 		}
 	}
 
@@ -309,6 +288,77 @@ sap.ui.define([
 				delete oCache.mPatchRequests[sRequestPath];
 			}
 		}
+	}
+
+	/**
+	 * Updates the property of the given name with the given new value (and later with the server's
+	 * response), using the given group ID for batch control and the given edit URL to send a PATCH
+	 * request.
+	 *
+	 * @param {object} oCache
+	 *   The cache
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @param {string} sPropertyPath
+	 *   Name or path of the property to update relative to the edit URL
+	 * @param {any} vValue
+	 *   The new value
+	 * @param {string} sEditUrl
+	 *   The edit URL for the entity which is updated via PATCH
+	 * @param {string} sPath
+	 *   Relative path to drill-down into
+	 * @param {object} oCacheData
+	 *   The cache data for sPath
+	 * @returns {Promise}
+	 *   A promise for the PATCH request
+	 */
+	function update(oCache, sGroupId, sPropertyPath, vValue, sEditUrl, sPath, oCacheData) {
+		var oBody, // the body for the PATCH request
+			mHeaders, // the headers for the PATCH request
+			vOldValue, // the old value of the property
+			aPropertyPath = sPropertyPath.split("/"), // the property path as array of segments
+			// the path that is updated; the promise is registered here
+			sUpdatePath =
+				_Helper.buildPath(sPath, oCache.bSingleProperty ? "value" : sPropertyPath),
+			oUpdatePromise;
+
+		if (!oCacheData) {
+			throw new Error("Cannot update '" + sPropertyPath + "': '" + sPath
+				+ "' does not exist");
+		}
+		sEditUrl += Cache.buildQueryString(oCache.mQueryOptions, true);
+		mHeaders = {"If-Match" : oCacheData["@odata.etag"]};
+		// create the PATCH request body
+		oBody = createUpdateData(aPropertyPath, vValue);
+		if (oCache.bSingleProperty) {
+			// single property caches always have the attribute in "value"
+			aPropertyPath = ["value"];
+		}
+		// remember the old value
+		vOldValue = aPropertyPath.reduce(function (oValue, sSegment) {
+			return oValue && oValue[sSegment];
+		}, oCacheData);
+		// write the changed value into the cache
+		_Helper.updateCache(oCache.mChangeListeners, sPath, oCacheData,
+			createUpdateData(aPropertyPath, vValue));
+		// send and register the PATCH request
+		oUpdatePromise = oCache.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders, oBody);
+		addByPath(oCache.mPatchRequests, sUpdatePath, oUpdatePromise);
+		return oUpdatePromise.then(function (oPatchResult) {
+			removeByPath(oCache.mPatchRequests, sUpdatePath, oUpdatePromise);
+			// update the cache with the PATCH response
+			_Helper.updateCache(oCache.mChangeListeners, sPath, oCacheData,
+				oCache.bSingleProperty ? {value : oPatchResult[sPropertyPath]} : oPatchResult);
+			return oPatchResult;
+		}, function (oError) {
+			removeByPath(oCache.mPatchRequests, sUpdatePath, oUpdatePromise);
+			if (oError.canceled) {
+				// write the previous value into the cache
+				_Helper.updateCache(oCache.mChangeListeners, sPath, oCacheData,
+					createUpdateData(aPropertyPath, vOldValue));
+			}
+			throw oError;
+		});
 	}
 
 	/**
@@ -506,50 +556,11 @@ sap.ui.define([
 	 *   A promise for the PATCH request
 	 */
 	CollectionCache.prototype.update = function (sGroupId, sPropertyName, vValue, sEditUrl, sPath) {
-		var mChangeListeners = this.mChangeListeners,
-			aSegments = sPath.split("/"),
-			iIndex = parseInt(aSegments.shift(), 10),
-			that = this;
+		var aSegments = sPath.split("/"),
+			iIndex = parseInt(aSegments.shift(), 10);
 
-		return this.read(iIndex, 1, sGroupId, aSegments.join("/")).then(function (oResult) {
-			var oBody = {},
-				mHeaders,
-				vOldValue,
-				sPropertyPath = sPath + "/" + sPropertyName,
-				oUpdatePromise;
-
-			if (!oResult) {
-				throw new Error("Cannot update '" + sPropertyName + "': '" + sPath
-					+ "' does not exist");
-			}
-			sEditUrl += Cache.buildQueryString(that.mQueryOptions, true);
-			mHeaders = {"If-Match" : oResult["@odata.etag"]};
-			vOldValue = oResult[sPropertyName];
-			oBody[sPropertyName] = oResult[sPropertyName] = vValue;
-			fireChange(mChangeListeners, sPropertyPath, vOldValue, vValue);
-
-			oUpdatePromise = that.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders,
-				oBody);
-			addByPath(that.mPatchRequests, sPropertyPath, oUpdatePromise);
-			return oUpdatePromise.then(function (oPatchResult) {
-				removeByPath(that.mPatchRequests, sPropertyPath, oUpdatePromise);
-				fireChange(mChangeListeners, sPath, oResult, oPatchResult);
-				for (sPropertyName in oResult) {
-					if (sPropertyName in oPatchResult) {
-						oResult[sPropertyName] = oPatchResult[sPropertyName];
-					}
-				}
-				return oPatchResult;
-			}, function (oError) {
-				removeByPath(that.mPatchRequests, sPropertyPath, oUpdatePromise);
-				if (oError.canceled) {
-					fireChange(mChangeListeners, sPropertyPath,
-						oResult[sPropertyName], vOldValue);
-					oResult[sPropertyName] = vOldValue;
-				}
-				throw oError;
-			});
-		});
+		return this.read(iIndex, 1, sGroupId, aSegments.join("/"))
+			.then(update.bind(null, this, sGroupId, sPropertyName, vValue, sEditUrl, sPath));
 	};
 
 	/**
@@ -766,53 +777,8 @@ sap.ui.define([
 	 *   A promise for the PATCH request
 	 */
 	SingleCache.prototype.update = function (sGroupId, sPropertyName, vValue, sEditUrl, sPath) {
-		var that = this;
-
 		return (this.bSingleProperty ? this.oPromise : this.read(sGroupId, sPath))
-			.then(function (oResult) {
-				var oBody = {},
-					mHeaders,
-					vOldValue,
-					sResultPropertyName = that.bSingleProperty ? "value" : sPropertyName,
-					sUpdatePath = _Helper.buildPath(sPath, sResultPropertyName),
-					oUpdatePromise;
-
-				if (!oResult) {
-					throw new Error("Cannot update '" + sPropertyName + "': '" + sPath
-						+ "' does not exist");
-				}
-				sEditUrl += Cache.buildQueryString(that.mQueryOptions, true);
-				mHeaders = {"If-Match" : oResult["@odata.etag"]};
-				vOldValue = oResult[sResultPropertyName];
-				fireChange(that.mChangeListeners, sUpdatePath, vOldValue, vValue);
-				oBody[sPropertyName] = oResult[sResultPropertyName] = vValue;
-
-				oUpdatePromise = that.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders,
-					oBody);
-				addByPath(that.mPatchRequests, sUpdatePath, oUpdatePromise);
-				return oUpdatePromise.then(function (oPatchResult) {
-					removeByPath(that.mPatchRequests, sUpdatePath, oUpdatePromise);
-					if (that.bSingleProperty) {
-						oResult.value = oPatchResult[sPropertyName];
-					} else {
-						fireChange(that.mChangeListeners, sPath, oResult, oPatchResult);
-						for (sPropertyName in oResult) {
-							if (sPropertyName in oPatchResult) {
-								oResult[sPropertyName] = oPatchResult[sPropertyName];
-							}
-						}
-					}
-					return oPatchResult;
-				}, function (oError) {
-					removeByPath(that.mPatchRequests, sUpdatePath, oUpdatePromise);
-					if (oError.canceled) {
-						fireChange(that.mChangeListeners, sUpdatePath,
-							oResult[sResultPropertyName], vOldValue);
-						oResult[sResultPropertyName] = vOldValue;
-					}
-					throw oError;
-				});
-		});
+			.then(update.bind(null, this, sGroupId, sPropertyName, vValue, sEditUrl, sPath));
 	};
 
 	Cache = {

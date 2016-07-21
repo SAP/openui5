@@ -560,8 +560,8 @@ sap.ui.require([
 			oRequestor = _Requestor.create("/");
 
 		aPromises.push(oRequestor
-			.request("PATCH", "Products('0')", "groupId", {}, {Name : "foo"}));
-		oRequestor.request("PATCH", "Products", "anotherGroupId", {}, {Name : "foo"});
+			.request("PATCH", "Products('0')", "groupId", {}, {Name : null}));
+		oRequestor.request("PATCH", "Products('0')", "anotherGroupId", {}, {Name : "foo"});
 		aPromises.push(oRequestor
 			.request("PATCH", "Products('0')", "groupId", {}, {Name : "bar"}));
 		aPromises.push(oRequestor
@@ -574,6 +574,21 @@ sap.ui.require([
 		// just a different verb
 		aPromises.push(oRequestor
 			.request("POST", "Products", "groupId", {"If-Match" : ""}, {Name : "baz"}));
+		// structured property
+		// first set to null: may be merged with each other, but not with PATCHES to properties
+		aPromises.push(oRequestor
+			.request("PATCH", "BusinessPartners('42')", "groupId", {"If-Match" : ""},
+				{Address : null}));
+		aPromises.push(oRequestor
+			.request("PATCH", "BusinessPartners('42')", "groupId", {"If-Match" : ""},
+				{Address : null}));
+		// then two different properties therein: must be merged
+		aPromises.push(oRequestor
+			.request("PATCH", "BusinessPartners('42')", "groupId", {"If-Match" : ""},
+				{Address : {City: "Walldorf"}}));
+		aPromises.push(oRequestor
+			.request("PATCH", "BusinessPartners('42')", "groupId", {"If-Match" : ""},
+				{Address : {PostalCode: "69190"}}));
 		this.mock(oRequestor).expects("request")
 			.withExactArgs("POST", "$batch", undefined, undefined, [
 				[
@@ -591,6 +606,17 @@ sap.ui.require([
 						body : JSON.stringify({Name : "baz"}),
 						method : "POST",
 						url : "Products"
+					}),
+					sinon.match({
+						body : JSON.stringify({Address : null}),
+						method : "PATCH",
+						url : "BusinessPartners('42')"
+					}),
+					sinon.match({
+						body :
+							JSON.stringify({Address : {City : "Walldorf", PostalCode : "69190"}}),
+						method : "PATCH",
+						url : "BusinessPartners('42')"
 					})
 				],
 				sinon.match({
@@ -601,7 +627,10 @@ sap.ui.require([
 				[
 					{responseText : JSON.stringify({Name : "bar", Note : "hello, world"})},
 					{responseText : JSON.stringify({Note : "no merge!"})},
-					{responseText : JSON.stringify({Name : "baz"})}
+					{responseText : JSON.stringify({Name : "baz"})},
+					{responseText : JSON.stringify({Address : null})},
+					{responseText :
+						JSON.stringify({Address : {City : "Walldorf", PostalCode : "69190"}})}
 				],
 				{responseText : JSON.stringify({Name : "Name", Note : "Note"})}
 			]));
@@ -617,6 +646,10 @@ sap.ui.require([
 				{Name : "bar", Note : "hello, world"}, // 3rd PATCH, merged with 1st and 2nd
 				{Note : "no merge!"}, // PATCH with different headers
 				{Name : "baz"}, // POST
+				{Address : null},
+				{Address : null},
+				{Address : {City : "Walldorf", PostalCode : "69190"}},
+				{Address : {City : "Walldorf", PostalCode : "69190"}},
 				undefined // submitBatch()
 			]);
 		});

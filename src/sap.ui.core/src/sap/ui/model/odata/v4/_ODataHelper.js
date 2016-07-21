@@ -684,6 +684,73 @@ sap.ui.define([
 		},
 
 		/**
+		 * Computes the "diff" needed for extended change detection for the given list binding and
+		 * the given start index.
+		 *
+		 * @param {sap.ui.model.odata.v4.ODataListBinding} oBinding
+		 *   The list binding
+		 * @param {object[]} aData
+		 *   The array of OData entities read in the last request, can be undefined if no data is
+		 *   available e.g. in case of a missing $expand in the binding's parent binding
+		 * @param {number} iStart
+		 *   The start index of the range for which the OData entities have been read
+		 * @returns {Promise}
+		 *   A promise resolving with the array of differences in aData compared to data
+		 *   retrieved in previous requests or undefined if key properties are not available
+		 *   (for a collection valued structural property) or missing in the data so that the diff
+		 *   cannot be computed
+		 */
+		requestDiff : function (oBinding, aData, iStart) {
+			var oMetaModel,
+				oMetaContext,
+				sResolvedPath;
+
+			if (!aData) {
+				return Promise.resolve([]);
+			}
+
+			sResolvedPath = oBinding.oModel.resolve(oBinding.sPath, oBinding.oContext);
+			oMetaModel = oBinding.oModel.getMetaModel();
+			oMetaContext = oMetaModel.getMetaContext(sResolvedPath);
+			return oMetaModel.fetchObject("$Type/$Key", oMetaContext).then(function (aKeys) {
+				var aDiff,
+					i,
+					iLength = aData.length,
+					mMissingKeys = {},
+					aNewData;
+
+				if (aKeys) {
+					aNewData = aData.map(function (oEntity) {
+						return aKeys.reduce(function (oPreviousData, sKey) {
+							oPreviousData[sKey] = oEntity[sKey];
+							if (oEntity[sKey] === undefined) {
+								mMissingKeys[sKey] = true;
+							}
+							return oPreviousData;
+						}, {} /*initial value oPreviousData*/);
+					});
+				}
+				if (Object.keys(mMissingKeys).length > 0 || !aKeys) {
+					oBinding.aPreviousData = [];
+					jQuery.sap.log.warning("Disable extended change detection as"
+							+ " diff computation failed: " + oBinding,
+						!aKeys
+							? "Type for path " + sResolvedPath + " has no keys"
+							: "Missing key(s): " + Object.keys(mMissingKeys),
+						"sap.ui.model.odata.v4.ODataListBinding");
+					return undefined;
+				}
+
+				aDiff = jQuery.sap.arraySymbolDiff(
+					oBinding.aPreviousData.slice(iStart, iStart + iLength), aNewData);
+				for (i = 0; i < iLength; i += 1) {
+					oBinding.aPreviousData[iStart + i] = aNewData[i];
+				}
+				return aDiff;
+			});
+		},
+
+		/**
 		 * Requests a $filter query option value for the given list binding; the value is computed
 		 * from the given arrays of dynamic application and control filters and the given static
 		 * filter.

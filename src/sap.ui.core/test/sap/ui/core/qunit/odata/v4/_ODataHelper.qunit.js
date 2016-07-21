@@ -1360,6 +1360,7 @@ sap.ui.require([
 				mResultingQueryOptions, "sQueryPath:" + oFixture.sQueryPath);
 		});
 	});
+	//TODO handle encoding in getQueryOptions
 
 	//*********************************************************************************************
 	[
@@ -1481,7 +1482,6 @@ sap.ui.require([
 	});
 
 	// TODO handle encoding in getQueryOptions
-	//TODO dynamic app filters in ODLB constructor/ODataModel#bindList
 
 	//*********************************************************************************************
 	QUnit.test("(de)registerBinding", function (assert) {
@@ -1729,5 +1729,110 @@ sap.ui.require([
 
 		//code under test
 		_ODataHelper.resetChanges(oBinding, true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestDiff", function (assert) {
+		var oBinding = {
+				oContext : {},
+				oModel : {
+					getMetaModel : function () {},
+					resolve : function () {}
+				},
+				sPath : "EMPLOYEE_2_EQUIPMENTS",
+				aPreviousData : [{"Category" : "C0", "ID" : "ID0"},
+					{"Category" : "C1a", "ID" : "ID1a"}]
+			},
+			aDiff = [/*some diff*/],
+			oKeyPromise = Promise.resolve(["Category", "ID"]),
+			oMetaContext = {},
+			oMetaModel = {
+				fetchObject : function () {},
+				getMetaContext : function () {}
+			},
+			oMetaModelMock = this.mock(oMetaModel),
+			aNewData = [{"Category" : "C1", "ID" : "ID1"}, {"Category" : "C2", "ID" : "ID2"}],
+			aResult = [{"Category" : "C1", "ID" : "ID1", "Name" : "N1"},
+				{"Category" : "C2", "ID" : "ID2", "Name" : "N2"}];
+
+		this.mock(oBinding.oModel).expects("getMetaModel").withExactArgs().returns(oMetaModel);
+		this.mock(oBinding.oModel).expects("resolve")
+			.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
+			.returns("~");
+		oMetaModelMock.expects("getMetaContext").withExactArgs("~")
+			.returns(oMetaContext);
+		oMetaModelMock.expects("fetchObject").withExactArgs("$Type/$Key", oMetaContext)
+			.returns(oKeyPromise);
+		this.mock(jQuery.sap).expects("arraySymbolDiff")
+			.withExactArgs([{"Category" : "C1a", "ID" : "ID1a"}], aNewData)
+			.returns(aDiff);
+
+		// code under test
+		return _ODataHelper.requestDiff(oBinding, aResult, 1).then(function (aDiff0) {
+			assert.deepEqual(oBinding.aPreviousData, [{"Category" : "C0", "ID" : "ID0"},
+				{"Category" : "C1", "ID" : "ID1"}, {"Category" : "C2", "ID" : "ID2"}]);
+			assert.strictEqual(aDiff0, aDiff);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestDiff, no data available", function (assert) {
+		var aPreviousData = [],
+			oBinding = {
+				aPreviousData : aPreviousData
+			};
+
+		// code under test
+		return _ODataHelper.requestDiff(oBinding, undefined, 1).then(function (aDiff0) {
+			assert.strictEqual(oBinding.aPreviousData, aPreviousData);
+			assert.deepEqual(aDiff0, []);
+		});
+	});
+
+	//*********************************************************************************************
+	[
+		{keys : ["Category", "ID", "OtherID"], logDetails : "Missing key(s): ID,OtherID"},
+		{keys : undefined, logDetails : "Type for path ~ has no keys"}
+	].forEach(function (oFixture) {
+		QUnit.test("requestDiff, error: keys missing", function (assert) {
+			var oBinding = {
+					oContext : {},
+					oModel : {
+						getMetaModel : function () {},
+						resolve : function () {}
+					},
+					sPath : "EMPLOYEE_2_EQUIPMENTS",
+					aPreviousData : [{"Category" : "C0", "ID" : "ID0"},
+						{"Category" : "C1a", "ID" : "ID1a"}],
+					toString : function () { return "~B~"; }
+				},
+				oKeyPromise = Promise.resolve(oFixture.keys),
+				oMetaContext = {},
+				oMetaModel = {
+					fetchObject : function () {},
+					getMetaContext : function () {}
+				},
+				oMetaModelMock = this.mock(oMetaModel),
+				aResult = [{"Category" : "C1", /*"ID" : "ID1",*/"Name" : "N1"},
+					{"Category" : "C2", /*"ID" : "ID2",*/"Name" : "N2"}];
+
+			this.mock(oBinding.oModel).expects("getMetaModel").withExactArgs().returns(oMetaModel);
+			this.mock(oBinding.oModel).expects("resolve")
+				.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
+				.returns("~");
+			oMetaModelMock.expects("getMetaContext").withExactArgs("~")
+				.returns(oMetaContext);
+			oMetaModelMock.expects("fetchObject").withExactArgs("$Type/$Key", oMetaContext)
+				.returns(oKeyPromise);
+			this.oLogMock.expects("warning").withExactArgs(
+					"Disable extended change detection as diff computation failed: ~B~",
+					oFixture.logDetails, "sap.ui.model.odata.v4.ODataListBinding");
+
+			// code under test
+			return _ODataHelper.requestDiff(oBinding, aResult, 1).then(function (aDiff0) {
+				assert.deepEqual(oBinding.aPreviousData, []);
+				assert.strictEqual(aDiff0, undefined);
+			});
+		});
 	});
 });
