@@ -19,6 +19,9 @@
 	}
 
 	QUnit.assert.contains = function (sStringValue, vStringOrRegex, sMessage) {
+		if (!sMessage) {
+			sMessage = "Found '" + vStringOrRegex + "' in '" + sStringValue + "'";
+		}
 		this.push(contains(sStringValue, vStringOrRegex), sStringValue, vStringOrRegex, sMessage);
 	};
 

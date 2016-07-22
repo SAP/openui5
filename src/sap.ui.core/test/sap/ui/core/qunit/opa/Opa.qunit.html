@@ -576,6 +576,46 @@ sap.ui.require(["unitTests/utils/loggerInterceptor"], function (loggerIntercepto
 				, "threw the error");
 	});
 
+	QUnit.module("waitFor counts", {
+		beforeEach: function () {
+			sinon.config.useFakeTimers = false;
+		},
+		afterEach: function () {
+			sinon.config.useFakeTimers = true;
+		}
+	});
+
+	QUnit.test("Should calculate how many waitFors have been added in a timeframe", function (assert) {
+		var fnTimeoutDone = assert.async(),
+			oCounter = Opa._getWaitForCounter();
+
+		assert.strictEqual(oCounter.get(), 0, "initially no waitFors have been added");
+
+		var oOpa = new Opa();
+		oOpa.waitFor({});
+
+		assert.strictEqual(oCounter.get(), 1, "first waitFor added");
+
+		setTimeout(function () {
+			oOpa.waitFor({});
+			assert.strictEqual(oCounter.get(), 2, "waitFors has been added after some time has passed");
+			fnTimeoutDone();
+			Opa.stopQueue();
+		}, 50);
+	});
+
+	QUnit.test("Should not return negative numbers", function (assert) {
+		var oOpa = new Opa();
+
+		oOpa.waitFor({});
+		var oCounter = Opa._getWaitForCounter();
+
+		Opa.stopQueue();
+
+		assert.strictEqual(oCounter.get(), 0, "first waitFor added");
+
+	});
+
 	QUnit.start();
 });
 </script>

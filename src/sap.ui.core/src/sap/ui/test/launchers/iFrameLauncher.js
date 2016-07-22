@@ -39,11 +39,20 @@ sap.ui.define([
 		var fnFrameOnError = oFrameWindow.onerror;
 
 		oFrameWindow.onerror = function (sErrorMsg, sUrl, iLine) {
+			var vReturnValue = false;
+
 			if (fnFrameOnError) {
-				fnFrameOnError.apply(this, arguments);
+				// save the return value if the original returns true - the error is supressed
+				vReturnValue = fnFrameOnError.apply(this, arguments);
 			}
 
-			throw "OpaFrame error message: " + sErrorMsg + " url: " + sUrl + " line: " + iLine;
+			// a global exception in the outer window's scope should be fired. but since this onerror
+			// function is wrapped in QUnits onerror function the exception needs to be thrown in a setTimeout
+			// to make sure the QUnit onerror can run to the end
+			setTimeout(function () {
+				throw "OpaFrame error message: " + sErrorMsg + ",\nurl: " + sUrl + ",\nline: " + iLine;
+			}, 0);
+			return vReturnValue;
 		};
 
 	}
