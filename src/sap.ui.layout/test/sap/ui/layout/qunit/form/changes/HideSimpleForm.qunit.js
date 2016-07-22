@@ -10,7 +10,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 (function() {
 	"use strict";
 
-	QUnit.module("using sap.ui.layout.changeHandler.HideSimpleForm", {
+	QUnit.module("using sap.ui.layout.changeHandler.HideSimpleForm with old change format", {
 		beforeEach: function () {
 
 			this.oTitle0 = new sap.ui.core.Title({id : "Title0",  text : "Title 0"});
@@ -24,7 +24,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 			});
 			this.oSimpleForm.placeAt("content");
 			sap.ui.getCore().applyChanges();
-			
+
 			this.oFormContainer = this.oSimpleForm.getAggregation("form").getAggregation("formContainers")[0];
 			this.oFormElement = this.oFormContainer.getAggregation("formElements")[0];
 
@@ -38,7 +38,55 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 					"changeType": "hideSimpleFormField"
 				};
 				this.oChangeWrapper = new sap.ui.fl.Change(oChange);
-				
+
+				this.oChangeHandler = sap.ui.layout.changeHandler.HideSimpleForm;
+				this.oJsControlTreeModifier = sap.ui.fl.changeHandler.JsControlTreeModifier;
+				this.oXmlTreeModifier = sap.ui.fl.changeHandler.XmlTreeModifier;
+
+		},
+
+		afterEach: function () {
+			this.oSimpleForm.destroy();
+		}
+	});
+
+	QUnit.test("when calling applyChange with JsControlTreeModifier", function (assert) {
+		//Call CUT
+		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oSimpleForm, this.oJsControlTreeModifier), "no errors occur");
+		assert.notOk(this.oFormElement.getLabel().getVisible(), "the FormElement is hidden");
+	});
+
+	QUnit.module("using sap.ui.layout.changeHandler.HideSimpleForm with a new change format", {
+		beforeEach: function () {
+
+			this.oTitle0 = new sap.ui.core.Title({id : "Title0",  text : "Title 0"});
+			this.oLabel0 = new sap.m.Label({id : "Label0",  text : "Label 0", visible : true});
+			this.oLabel1 = new sap.m.Label({id : "Label1",  text : "Label 1"});
+			this.oInput0 = new sap.m.Input({id : "Input0", visible : true});
+			this.oInput1 = new sap.m.Input({id : "Input1"});
+			this.oSimpleForm = new sap.ui.layout.form.SimpleForm({
+				id : "SimpleForm", title : "Simple Form", class : "editableForm",
+				content : [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1]
+			});
+			this.oSimpleForm.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			this.oFormContainer = this.oSimpleForm.getAggregation("form").getAggregation("formContainers")[0];
+			this.oFormElement = this.oFormContainer.getAggregation("formElements")[0];
+
+			var oChange = {
+					"selector": {
+						"id": "SimpleForm"
+					},
+					"content": {
+						"removedElement": {
+							id : this.oFormElement.getLabel().getId()
+						}
+					},
+					"changeType": "hideSimpleFormField"
+				};
+				this.oChangeWrapper = new sap.ui.fl.Change(oChange);
+
 				this.oChangeHandler = sap.ui.layout.changeHandler.HideSimpleForm;
 				this.oJsControlTreeModifier = sap.ui.fl.changeHandler.JsControlTreeModifier;
 				this.oXmlTreeModifier = sap.ui.fl.changeHandler.XmlTreeModifier;
@@ -104,14 +152,14 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 			}
 		};
 		var oChangeWrapper = new sap.ui.fl.Change(oChange);
-		var oSpecificChangeInfo = { sHideId: "dummyId" };
+		var oSpecificChangeInfo = { removedElement: { id : "Label1" } };
 
 		this.oChangeHandler.completeChangeContent(oChangeWrapper, oSpecificChangeInfo);
 
-		assert.equal(oChange.content.sHideId, "dummyId", "sHideId has been added to the change");
+		assert.equal(oChange.content.removedElement.id, "Label1", "removedElement.id has been added to the change");
 	});
 
-	QUnit.test('when calling completeChangeContent without sHideId', function (assert) {
+	QUnit.test('when calling completeChangeContent without removedElement.id', function (assert) {
 		var oChangeWrapper = new sap.ui.fl.Change({
 			"selector": {
 				"id": "SimpleForm"
@@ -123,8 +171,8 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 
 		assert.throws(function() {
 			this.oChangeHandler.completeChangeContent(oChangeWrapper, this.oSimpleForm, this.oJsControlTreeModifier);
-			}, 
-			new Error("oSpecificChangeInfo.sHideId attribute required"), 
+			},
+			new Error("oSpecificChangeInfo.removedElement.id attribute required"),
 			"the undefined value raises an error message"
 		);
 	});

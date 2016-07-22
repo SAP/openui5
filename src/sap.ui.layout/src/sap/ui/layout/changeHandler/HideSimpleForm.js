@@ -25,9 +25,16 @@ sap.ui.define([
 	 */
 	HideForm.applyChange = function(oChangeWrapper, oControl, oModifier, oView) {
 		var oChange = oChangeWrapper.getDefinition();
-		var sHideId = oChange.content.sHideId;
+		var sRemoveElementId;
+		if (!oChange.content.removedElement || !oChange.content.removedElement.id) {
+			// sHideId field key was used in 1.40, do not remove!
+			sRemoveElementId = oChange.content.sHideId;
+		} else {
+			sRemoveElementId = oChange.content.removedElement.id;
+		}
 
-		var oCtrl = oModifier.byId(sHideId, oView);
+
+		var oCtrl = oModifier.byId(sRemoveElementId, oView);
 		var aContent = oModifier.getAggregation(oControl, "content");
 		var iStart = -1;
 
@@ -72,6 +79,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * @private
+	 */
+	HideForm._getStableElement = function(oElement) {
+		if (oElement.getMetadata().getName() === "sap.ui.layout.form.FormContainer") {
+			// TODO: get Toolbar!
+			return oElement.getTitle();
+		} else if (oElement.getMetadata().getName() === "sap.ui.layout.form.FormElement") {
+			return oElement.getLabel();
+		} else {
+			return oElement;
+		}
+	};
+
+	/**
 	 * Completes the change by adding change handler specific content
 	 *
 	 * @param {sap.ui.fl.Change} oChange change object to be completed
@@ -80,11 +101,26 @@ sap.ui.define([
 	 */
 	HideForm.completeChangeContent = function(oChangeWrapper, oSpecificChangeInfo) {
 		var oChange = oChangeWrapper.getDefinition();
-		if (oSpecificChangeInfo.sHideId) {
-			oChange.content.sHideId = oSpecificChangeInfo.sHideId;
+		if (oSpecificChangeInfo.removedElement && oSpecificChangeInfo.removedElement.id) {
+			var sStableId = this._getStableElement(sap.ui.getCore().byId(oSpecificChangeInfo.removedElement.id)).getId();
+			oChange.content.removedElement = {
+				id : sStableId
+			};
 		} else {
-			throw new Error("oSpecificChangeInfo.sHideId attribute required");
+			throw new Error("oSpecificChangeInfo.removedElement.id attribute required");
 		}
+	};
+
+
+	/**
+	 * Transform the remove action format to the hideControl change format
+	 *
+	 * @param {object} mRemoveActionParameter a json object with the remove parameter
+	 * @returns {object} json object that the completeChangeContent method will take as oSpecificChangeInfo
+	 * @public
+	 */
+	HideForm.buildStableChangeInfo = function(mRemoveActionParameter){
+		return mRemoveActionParameter;
 	};
 
 	return HideForm;
