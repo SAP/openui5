@@ -74,7 +74,7 @@ sap.ui.define(["./WizardProgressNavigator"], function (WizardProgressNavigator) 
 			oCurrentStep = aSteps[iStepNumber];
 
 		oRm.write("<a tabindex='-1' ");
-		if (!oCurrentStep || oCurrentStep.style.zIndex !== "0") {
+		if (!oCurrentStep || !!parseInt(oCurrentStep.style.zIndex, 10)) {
 			oRm.write("aria-disabled='true'");
 		}
 
