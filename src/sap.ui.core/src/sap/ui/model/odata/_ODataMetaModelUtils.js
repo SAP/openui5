@@ -362,14 +362,24 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 					break;
 				case "pageable":
 				case "topable":
-					// true is the default in V4 so add annotation only in case of false
 					Utils.addEntitySetAnnotation(o, oExtension, sTypeClass, "false", false);
 					break;
 				case "creatable":
-				case "deletable":
-				case "updatable":
-					// true is the default in V4 so add annotation only in case of false
 					Utils.addEntitySetAnnotation(o, oExtension, sTypeClass, "false", true);
+					break;
+				case "deletable":
+					sTerm = "Org.OData.Capabilities.V1.DeleteRestrictions";
+					// do not override existing annotation
+					if (!(o[sTerm] && o[sTerm].Deletable)) {
+						Utils.addEntitySetAnnotation(o, oExtension, sTypeClass, "false", true);
+					}
+					break;
+				case "updatable":
+					sTerm = "Org.OData.Capabilities.V1.UpdateRestrictions";
+					// do not override existing annotation
+					if (!(o[sTerm] && o[sTerm].Updatable)) {
+						Utils.addEntitySetAnnotation(o, oExtension, sTypeClass, "false", true);
+					}
 					break;
 				case "deletable-path":
 					sTerm = "Org.OData.Capabilities.V1.DeleteRestrictions";
@@ -382,7 +392,6 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 					o[sTerm].Updatable = { "Path" : oExtension.value };
 					break;
 				case "requires-filter":
-					// false is the default in V4 so add annotation only in case of true
 					Utils.addEntitySetAnnotation(o, oExtension, sTypeClass, "true", true);
 					break;
 				case "field-control":
