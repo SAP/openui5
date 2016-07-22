@@ -251,7 +251,8 @@ sap.ui.define(['jquery.sap.global', './Delegate'],
 	 * @private
 	 */
 	XML.prototype._createAttribute = function (sAttribute, oValue) {
-		return ' ' + sAttribute + '="' + oValue + '"';
+		var oEncoded = jQuery.type(oValue) === "string" ? jQuery.sap.encodeHTML(oValue) : oValue;
+		return ' ' + sAttribute + '="' + oEncoded + '"';
 	};
 
 
