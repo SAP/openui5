@@ -638,7 +638,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		};
 
 		MessagePopover.prototype._getItemType = function (oMessagePopoverItem) {
-			return (oMessagePopoverItem.getDescription() || oMessagePopoverItem.getMarkupDescription()) ?
+			return (oMessagePopoverItem.getDescription() || oMessagePopoverItem.getMarkupDescription() || oMessagePopoverItem.getLongtextUrl()) ?
 				ListType.Navigation : ListType.Inactive;
 		};
 
