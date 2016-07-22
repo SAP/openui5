@@ -8,32 +8,44 @@
 
 		<script
 			src="../../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-libs="sap.m">
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-resourceroots='{
+				"unitTests" : "../"
+			}'>
 		</script>
 
 
 		<script>
 			jQuery.sap.require("sap.ui.qunit.qunit-css");
 			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.thirdparty.sinon");
 			jQuery.sap.require("sap.ui.qunit.qunit-junit");
 			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-			jQuery.sap.require("sap.ui.test.matchers.Properties");
 			sap.ui.require([
-				"sap/ui/test/matchers/Properties",
-				"sap/m/Button"
+				"unitTests/utils/loggerInterceptor",
+				"sap/m/Button",
+				"sap/ui/test/pipelines/MatcherPipeline"
 			],
-			function (Properties, Button) {
+			function (loggerInterceptor, Button, MatcherPipeline) {
 				"use strict";
+				// loadAndIntercept also loads the module.
+				// I cannot load it with the require above because i need to spy during the loading
+				var oLogger = loggerInterceptor.loadAndIntercept("sap.ui.test.matchers.Properties");
+				var Properties = sap.ui.test.matchers.Properties;
 
 				QUnit.module("Properties", {
 					beforeEach : function(){
-						this.oButton = new Button({
+						this.oButton = new Button("myButton" ,{
 							text : "text to test",
 							enabled : true
 						});
+						this.fnErrorStub = sinon.stub(oLogger, "error", $.noop);
+						this.fnDebugStub = sinon.stub(oLogger, "debug", $.noop)
 					},
 					afterEach : function(){
 						this.oButton.destroy();
+						this.fnErrorStub.restore();
+						this.fnDebugStub.restore();
 					}
 				});
 
@@ -42,13 +54,30 @@
 						text : "text to test",
 						enabled : true
 					})(this.oButton);
-					assert.strictEqual(bResult, true, "Should match equal properties");
+					assert.ok(bResult, "Should match equal properties");
+					sinon.assert.notCalled(this.fnDebugStub);
 
 					bResult = new Properties({
 						text : "text to test",
 						enabled : false
 					})(this.oButton);
-					assert.strictEqual(bResult, false, "Should not match non-equal properties");
+					assert.ok(!bResult, "Should not match non-equal properties");
+					sinon.assert.calledWith(this.fnDebugStub, "The property 'enabled' of the control" +
+							" 'Element sap.m.Button#myButton' is 'true', expected 'false'");
+
+					sinon.assert.notCalled(this.fnErrorStub);
+				});
+
+				QUnit.test("Should log only once if multiple properties do not match", function (assert) {
+					var bResult = new Properties({
+						text: "foo",
+						enabled: "false"
+					})(this.oButton);
+					assert.ok(!bResult, "Should not match non-equal properties");
+
+					sinon.assert.calledOnce(this.fnDebugStub);
+					sinon.assert.calledWith(this.fnDebugStub, "The property 'text' of the control" +
+							" 'Element sap.m.Button#myButton' is 'text to test', expected 'foo'");
 				});
 
 				QUnit.test("With non-existing properties", function() {
@@ -57,6 +86,7 @@
 						notExistingProperty : "not existing value"
 					})(this.oButton);
 					assert.strictEqual(bResult, false, "Should not match non-existing properties");
+					sinon.assert.calledWith(this.fnErrorStub, "Control 'myButton' does not have a property called: 'notExistingProperty'");
 				});
 
 				QUnit.test("With regexp", function() {
@@ -66,6 +96,19 @@
 					assert.strictEqual(bResult, true, "Should match regexp");
 				});
 
+				QUnit.test("Should match in the pipeline", function () {
+					var oMatcherPipeline = new MatcherPipeline();
+
+					var bPipleineResult = oMatcherPipeline.process({
+						matchers: new Properties({
+							text: "text to test",
+							enabled : true
+						}),
+						control: this.oButton
+					});
+
+					assert.ok(bPipleineResult, "Should match equal properties");
+				});
 			});
 		</script>
 	</head>
