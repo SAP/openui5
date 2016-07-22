@@ -10,7 +10,7 @@ sap.ui.define(['./Opa', './Opa5'], function (Opa, Opa5) {
 			return !oAssertion.result && oAssertion.message === "Test timed out";
 		});
 		if (bTimedOut) {
-			Opa.stopQueue(false);
+			Opa._stopQueue(false);
 		}
 	});
 	/**

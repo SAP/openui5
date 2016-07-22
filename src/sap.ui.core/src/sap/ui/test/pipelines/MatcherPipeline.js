@@ -3,17 +3,18 @@
  */
 
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/ui/base/Object',
-		'./PipelineFactory'
+		"jquery.sap.global",
+		"sap/ui/base/Object",
+		"./PipelineFactory",
+		"sap/ui/test/_LogCollector"
 	],
-	function($, UI5Object, PipelineFactory) {
+	function($, UI5Object, PipelineFactory, _LogCollector) {
 		"use strict";
 		var oPipelineFactory = new PipelineFactory({
 				name: "Matcher",
 				functionName: "isMatching"
 			}),
-			oLogger = $.sap.log.getLogger("sap.ui.test.pipelines.MatcherPipeline");
+			oLogger = $.sap.log.getLogger("sap.ui.test.pipelines.MatcherPipeline", _LogCollector.DEFAULT_LEVEL_FOR_OPA_LOGGERS);
 
 		/*
 		 * Internals

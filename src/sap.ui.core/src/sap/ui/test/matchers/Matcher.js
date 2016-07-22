@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global", "sap/ui/base/ManagedObject"], function ($, ManagedObject) {
+sap.ui.define(["jquery.sap.global", "sap/ui/base/ManagedObject", "sap/ui/test/_LogCollector"], function ($, ManagedObject, _LogCollector) {
 	"use strict";
 
 	/**
@@ -21,7 +21,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/ManagedObject"], function ($, M
 		},
 
 		constructor: function () {
-			this._oLogger = $.sap.log.getLogger(this.getMetadata().getName());
+			this._oLogger = $.sap.log.getLogger(this.getMetadata().getName(), _LogCollector.DEFAULT_LEVEL_FOR_OPA_LOGGERS);
 			return ManagedObject.prototype.constructor.apply(this, arguments);
 		},
 
