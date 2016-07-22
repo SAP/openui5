@@ -33,7 +33,7 @@
 		{
 			"control": "sap.m.Button",
 			"url": "Button.html",
-			"appComponent": "CA-UI5-CTR-WDF"
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
 			"control": "sap.m.Breadcrumbs",
@@ -63,7 +63,17 @@
 		{
 			"control": "sap.m.DatePicker",
 			"url": "DatePicker.html",
-			"appComponent": "CA-UI5-CTR-WDF"
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
+		},
+		{
+			"control": "sap.m.DateTimeInput",
+			"url": "../DateTimeInput.html",
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
+		},
+		{
+			"control": "sap.m.DateTimePicker",
+			"url": "../DateTimePicker.html",
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
 			"control": "sap.m.Dialog",
@@ -152,6 +162,11 @@
 			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
+			"control": "sap.m.Menu",
+			"url": "../Menu.html",
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
+		},
+		{
 			"control": "sap.m.MenuButton",
 			"url": "MenuButton.html",
 			"appComponent": "CA-UI5-CTR-SOF-BAL"
@@ -237,6 +252,11 @@
 			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
+			"control": "sap.m.ObjectMarker",
+			"url": "../ObjectMarker.html",
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
+		},
+		{
 			"control": "sap.m.OverflowToolbar",
 			"url": "../OverflowToolbar.html",
 			"appComponent": "CA-UI5-CTR-SOF-PIR"
@@ -260,6 +280,11 @@
 			"control": "sap.m.Panel",
 			"url": "Panel.html",
 			"appComponent": "CA-UI5-CTR-SOF-RIL"
+		},
+		{
+			"control": "sap.m.PlanningCalendar",
+			"url": "../PlanningCalendar.html",
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
 			"control": "sap.m.Popover",
@@ -362,6 +387,11 @@
 			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
+			"control": "sap.m.StepInput",
+			"url": "../StepInput.html",
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
+		},
+		{
 			"control": "sap.m.SuggestionsList",
 			"url": "../SearchField_Suggestions.html",
 			"desc" : "Suggestions list of the Search Field",
@@ -430,7 +460,7 @@
 		{
 			"control": "sap.m.ToggleButton",
 			"url": "ToggleButton.html",
-			"appComponent": "CA-UI5-CTR-WDF"
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
 			"control": "sap.m.Toolbar",
@@ -450,6 +480,11 @@
 		{
 			"control": "sap.m.ViewSettingsDialog",
 			"url": "../ViewSettingsDialog.html",
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
+		},
+		{
+			"control": "sap.m.ViewSettingsPopover",
+			"url": "../ViewSettingsPopover.html",
 			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
