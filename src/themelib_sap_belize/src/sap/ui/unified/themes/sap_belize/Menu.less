@@ -15,7 +15,9 @@
 	min-width: 5rem;
 	color: @sapUiBaseText;
 	box-shadow: @sapUiShadowLevel1;
-  	border-radius: 0.25rem;
+	border-radius: 0.25rem;
+	border: none;
+	background: @sapUiGroupContentBackground;
 }
 
 .sapUiMnu.sapUiMnuScroll {
@@ -92,7 +94,7 @@
 }
 
 .sapUiMnuDiv > hr {
-	border-color: @sapUiToolbarSeparatorColor;
+	color: @sapUiToolbarSeparatorColor;
 }
 
 .sapUiMnuItmTxt {
@@ -146,7 +148,16 @@
 }
 
 .sapUiMnuItmSbMnu > div:after {
-	content: "\e1ed";
+  content: "\e1ed";
+  color: @sapUiContentNonInteractiveIconColor;
+}
+
+.sapUiMnuItm.sapUiMnuItmHov .sapUiMnuItmSbMnu > div:after {
+  color: @sapUiContentNonInteractiveIconColor;
+}
+
+.sapUiMnuItm.sapUiMnuItmHov:active .sapUiMnuItmSbMnu > div:after {
+  color: @sapUiContentContrastIconColor;
 }
 
 .sapUiMnuItmSbMnu {
@@ -191,6 +202,12 @@
 	.sapUiMnuDiv > hr {
 		left: 0rem;
 		right: 0rem;
+		margin-top: 0;
+		margin-bottom: 0;
+	}
+
+	.sapUiMnuDiv {
+		height: 1px;
 	}
 
 	.sapUiMnuItmTxt {
@@ -228,4 +245,13 @@
 		width: @sapUiMnuItmHeightCozy;
 	}
 
+}
+
+html.sap-phone, html.sap-tablet {
+	.sapMLIB .sapUiIcon {
+		color: @sapUiContentNonInteractiveIconColor;
+	}
+	.sapMLIB.sapMLIBActive .sapUiIcon::before {
+		color: @sapUiContentContrastIconColor;
+	}
 }
