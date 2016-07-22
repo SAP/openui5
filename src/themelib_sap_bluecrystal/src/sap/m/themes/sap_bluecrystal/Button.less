@@ -250,6 +250,24 @@ html.sap-desktop .sapMBtnTransparent > .sapMBtnIcon {
 	border-color:     @sapUiButtonEmphasizedHoverBorderColor;
 }
 
+.sapMFooter-CTX span.sapMBtnInner.sapMBtnEmphasized {
+	background-image: none;
+	background-color: @sapUiButtonEmphasizedBackground;
+	border-color:     @sapUiButtonEmphasizedBorderColor;
+	color:            @sapUiButtonEmphasizedTextColor;
+	text-shadow:      0 1px 0 fade(@sapUiDarkShadowTint, 50);
+}
+
+.sapMFooter-CTX span.sapMBtnInner.sapMBtnEmphasized > .sapMBtnIcon {
+	color:            @sapUiButtonEmphasizedTextColor;
+}
+
+.sapMFooter-CTX :not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnEmphasized.sapMBtnActive {
+	background-color: @sapUiButtonEmphasizedActiveBackground;
+	border-color:     @sapUiButtonEmphasizedActiveBorderColor;
+	text-shadow:      none;
+}
+
 /* Separators between buttons in a footer */
 .sapMFooter-CTX .sapMBtnInner {
 	border-color:     @sapUiButtonLiteBorderColor;
