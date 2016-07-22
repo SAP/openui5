@@ -646,24 +646,29 @@
 					messages: [{
 						type: "Error",
 						title: "Error message",
-						description: "<p>First Error message description</p>"
+						description: "<p>First Error message description</p>",
+						markupDescription: true
 					}, {
 						type: "Warning",
 						title: "Warning without description",
-						description: ""
+						description: "",
+						markupDescription: true
 					}, {
 						type: "Success",
 						title: "Success message",
-						description: "<p>First Success message description</p>"
+						description: "<p>First Success message description</p>",
+						markupDescription: true
 					}, {
 						type: "Error",
 						title: "Error",
-						description: "<p>Second Error message description</p>"
+						description: "<p>Second Error message description</p>",
+						markupDescription: true
 					}, {
 						type: "Information",
 						title: "Information message (Long)",
 						description: "<h1>HTML sanitization test</h1><h3>heading</h3><p>paragraph</p><embed src='helloworld.swf'> <object width=\"400\" height=\"400\"></object>",
-						longtextUrl: "protocol://domain.tld"
+						longtextUrl: "protocol://domain.tld",
+						markupDescription: true
 					}]};
 
 				this.mockMarkupDescription = "<h2>Heading h2</h2><script>alert('this JS will be sanitized')<\/script>" +
@@ -682,7 +687,7 @@
 					title: "{title}",
 					description: "{description}",
 					longtextUrl: "{longtextUrl}",
-					markupDescription: true
+					markupDescription: "{markupDescription}"
 				});
 
 				this.oButton.placeAt("qunit-fixture");
@@ -755,7 +760,7 @@
 		});
 
 		QUnit.test("MessagePopoverItems type Navigation", function (assert) {
-			var aItems, aMessagePopoverItems;
+			var aItems;
 
 			this.oMockupData.messages.forEach(function (message) {
 				message["description"] = "";
@@ -768,7 +773,28 @@
 			this.clock.tick(500);
 
 			aItems = this.oMessagePopover._oLists.all.getItems();
-			aMessagePopoverItems = this.oMessagePopover.getItems();
+
+			aItems.forEach(function (item) {
+				assert.strictEqual(item.getType(), "Navigation", "Should be set if they have a markupDescription");
+			});
+		});
+
+		QUnit.test("MessagePopoverItems type Navigation", function (assert) {
+			var aItems;
+
+			this.oMockupData.messages.forEach(function (message) {
+				message["description"] = "";
+				message["longtextUrl"] = "http://url.com";
+				message["markupDescription"] = false;
+			});
+
+			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
+
+			this.oButton.addDependent(this.oMessagePopover);
+			this.oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+
+			aItems = this.oMessagePopover._oLists.all.getItems();
 
 			aItems.forEach(function (item) {
 				assert.strictEqual(item.getType(), "Navigation", "Should be set if they have a markupDescription");
