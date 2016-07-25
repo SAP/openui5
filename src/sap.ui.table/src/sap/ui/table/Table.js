@@ -3087,7 +3087,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * will be called when the horizontal scrollbar is used. since the table does
+	 * Will be called when the horizontal scrollbar is used. Since the table does
 	 * not render/update the data of all columns (only the visible ones) in case
 	 * of scrolling horizontally we need to update the content of the columns which
 	 * became visible.
@@ -3095,10 +3095,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 */
 	Table.prototype.onhscroll = function(oEvent) {
 		jQuery.sap.interaction.notifyScrollEvent && jQuery.sap.interaction.notifyScrollEvent(oEvent);
+
 		if (!this._bOnAfterRendering) {
-			var oTableSizes = this._collectTableSizes();
-			this._syncHeaderAndContent(oTableSizes);
-			this._determineVisibleCols(oTableSizes);
+			// The scroll event is fired multiple times from start to end of one horizontal scrolling action. The event is fired
+			// the first time right after scrolling was started.
+			// Scrolling is interrupted when syncing header and content and is therefore performed only over a short distance.
+			// The timeout is used to overcome this issue, so syncing is performed only after the last occurrence of a scroll event.
+			if (this._mTimeouts.hScrollUpdateTimer) {
+				window.clearTimeout(this._mTimeouts.hScrollUpdateTimer);
+			}
+			this._mTimeouts.hScrollUpdateTimer = window.setTimeout(function() {
+				var oTableSizes = this._collectTableSizes();
+				this._syncHeaderAndContent(oTableSizes);
+				this._determineVisibleCols(oTableSizes);
+			}.bind(this), 50);
 		}
 	};
 
