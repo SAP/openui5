@@ -69,6 +69,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Sets the horizontal alignment of the number and unit.
 			 */
 			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Begin}
+		},
+		associations : {
+
+			/**
+			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+			 */
+			ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"}
 		}
 	}});
 
