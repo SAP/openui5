@@ -1154,5 +1154,45 @@
         "references": []
       }
     ]
+  },
+  "1.40.3": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "355f68cd62520d4207ce807acc15f42c6c5e7751",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button: Adjust CSS selector specificity",
+        "references": []
+      },
+      {
+        "id": "330d603b6d2dab27a0f30a895f890c486ebf5327",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button: Emphasized button has sufficient contrast ratio",
+        "references": []
+      },
+      {
+        "id": "debe5f6a589800b981ab9b22d5a81eacb08f66c1",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button: Has correct colors in footer context",
+        "references": []
+      },
+      {
+        "id": "b1f6b020b9365e2093789e7bf8444ca80e6d73bc",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Link: Focus visualization within table cell",
+        "references": []
+      },
+      {
+        "id": "059d6a5dfcddbb951c2457f0e68604b76fcb834c",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: Styles for markup description improved",
+        "references": []
+      }
+    ]
   }
 }

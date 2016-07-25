@@ -1098,5 +1098,45 @@
         "references": []
       }
     ]
+  },
+  "1.40.3": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "509a5debb7644f29b3c14e2b48b41c8bf8d5f51c",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalColumn: Consider binding quick info for tooltip only when no custom tooltip is set",
+        "references": []
+      },
+      {
+        "id": "641cdc97801a7e0910e3e5e1976bb5888094f49d",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Avoid errors on duplicate calls of destroy",
+        "references": []
+      },
+      {
+        "id": "09927dd335454feef41e628c593336b2278960bc",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Fix Drag\u0026Drop for visibleRowCountMode \u0027interactive\u0027",
+        "references": []
+      },
+      {
+        "id": "60be2c8f6697b60db69c4bd8ba470f8a41781200",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Fix Unit tests for IE9/10",
+        "references": []
+      },
+      {
+        "id": "4c567a536e34a2e533717f523507e3e44f43019a",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable: Accessibility: Avoid announcement to jump into cell for leafs",
+        "references": []
+      }
+    ]
   }
 }

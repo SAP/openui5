@@ -384,5 +384,17 @@
         "references": []
       }
     ]
+  },
+  "1.40.3": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "284db015db5964107c6d7c7dfb4a16d3db5952e8",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.ResponsiveSplitter: Adding class to root element improved",
+        "references": []
+      }
+    ]
   }
 }

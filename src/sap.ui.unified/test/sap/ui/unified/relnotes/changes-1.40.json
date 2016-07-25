@@ -524,5 +524,17 @@
         "references": []
       }
     ]
+  },
+  "1.40.3": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "3eb0102ba8bbbd17e710f958f54e69bd45124085",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: prevent default on sapspace added",
+        "references": []
+      }
+    ]
   }
 }

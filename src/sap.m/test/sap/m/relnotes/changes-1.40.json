@@ -4965,5 +4965,94 @@
         "references": []
       }
     ]
+  },
+  "1.40.3": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "d2843de4d91d7e3605ea124589773c81899cab28",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: improve dropdown list auto close mechanism",
+        "references": []
+      },
+      {
+        "id": "5236bb02af597549b51d058c4682b7bfa52f92b5",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GrowingEnablement: Upwards direction should not always",
+        "references": []
+      },
+      {
+        "id": "3705a32257beeeff175baae14fed9fa9a876ad56",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input: \"getValue\" method no longer throws an exception",
+        "references": []
+      },
+      {
+        "id": "b1f6b020b9365e2093789e7bf8444ca80e6d73bc",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Link: Focus visualization within table cell",
+        "references": []
+      },
+      {
+        "id": "ce20fd58c9c5f092ca7b3d97a5280449d99c0da4",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: Internal ListItems should be with type Navigation when there is markupDescription",
+        "references": []
+      },
+      {
+        "id": "13333f7d90a73d3520cae4e70dadab08339088c7",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: MessagePopoverItems binding to MessageModel check fixed",
+        "references": []
+      },
+      {
+        "id": "059d6a5dfcddbb951c2457f0e68604b76fcb834c",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: Styles for markup description improved",
+        "references": []
+      },
+      {
+        "id": "ce47735a8ddec4b7bee22e04c3bf8f0ceafc72fd",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: When an item\u0027s title is truncated it should have navigation arrow",
+        "references": []
+      },
+      {
+        "id": "93059d322e4b08eacc428732df334a463ffcb34d",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiComboBox: Picker remains opened when input is empty and it is opened by click or keyboard",
+        "references": []
+      },
+      {
+        "id": "cfe182421f19d664be770c62ac207c83d85edb8f",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: Token is no longer added twice when choose suggestion row",
+        "references": []
+      },
+      {
+        "id": "860ad7835c46d6e5b7532ba254b1bf1f420eaf5f",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectNumber: Unit is aligned correctly",
+        "references": []
+      },
+      {
+        "id": "130542336cfd4e75d8e787a4893d59fab0bd959a",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.WizardProgressNavigator: In IE zIndex is returned as a number so we need to parse it",
+        "references": []
+      }
+    ]
   }
 }

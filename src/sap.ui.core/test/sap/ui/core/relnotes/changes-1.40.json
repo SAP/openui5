@@ -3674,5 +3674,24 @@
         "references": []
       }
     ]
+  },
+  "1.40.3": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "716e3e0a23d6bc7124028ce31ffbd21adc69dc26",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "jQuery: Added Loaded Version to Support-Info",
+        "references": []
+      },
+      {
+        "id": "3967c058693cd251ace7f659e8705d9ebbb1d10f",
+        "author": "Clemens Maier \u003cc.maier@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Call correct request handlers",
+        "references": []
+      }
+    ]
   }
 }

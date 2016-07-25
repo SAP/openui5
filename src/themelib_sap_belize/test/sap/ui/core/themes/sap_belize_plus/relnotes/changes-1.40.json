@@ -496,5 +496,45 @@
         "references": []
       }
     ]
+  },
+  "1.40.3": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "330d603b6d2dab27a0f30a895f890c486ebf5327",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button: Emphasized button has sufficient contrast ratio",
+        "references": []
+      },
+      {
+        "id": "1b85f3d180b792f6a869d7b43d16b56ec1ee56fb",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Downport Belize styles to 1.40",
+        "references": []
+      },
+      {
+        "id": "b1f6b020b9365e2093789e7bf8444ca80e6d73bc",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Link: Focus visualization within table cell",
+        "references": []
+      },
+      {
+        "id": "059d6a5dfcddbb951c2457f0e68604b76fcb834c",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: Styles for markup description improved",
+        "references": []
+      },
+      {
+        "id": "e94fcbe3fc55f39f64cfa5951383f47a00638988",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: fix group header background for Belize",
+        "references": []
+      }
+    ]
   }
 }
