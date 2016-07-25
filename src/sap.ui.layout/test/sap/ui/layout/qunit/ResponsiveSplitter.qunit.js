@@ -314,4 +314,37 @@
 		assert.strictEqual(aPaginationButtons[0].getAttribute("title"), "Go to split screen 1, 2 and 3");
 		assert.strictEqual(aPaginationButtons[1].getAttribute("title"), "Go to screen 4");
 	});
+
+	QUnit.test("Container of Paginator", function (assert) {
+		var aSplitterPaginatorContainer = this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginator"),
+			sRole = "navigation";
+
+		assert.equal(aSplitterPaginatorContainer.attr("role"), sRole, "Container of Paginator role is " + sRole);
+	});
+
+	QUnit.test("Paginator", function (assert) {
+		var oSplitterPaginatorItems = this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginatorButtons"),
+			sContainerId = oSplitterPaginatorItems.attr("aria-controls"),
+			oContainerPages = sap.ui.getCore().byId(sContainerId).getAggregation("_pages") || [],
+			sRole = "radiogroup",
+			sLabel = "Pane Switcher";
+
+		assert.equal(oSplitterPaginatorItems.attr("role"), sRole, "Paginator role is" + sRole);
+		assert.equal(oSplitterPaginatorItems.attr("aria-label"), sLabel, "Paginator aria-label is " + sLabel);
+		assert.equal(oContainerPages.length > 0, true, "Paginator aria-controls is " + sContainerId);
+	});
+
+	QUnit.test("Single paginator items", function (assert) {
+		var oSplitterPaginator = this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginatorButton "),
+			sRole = "radio";
+
+		assert.equal(oSplitterPaginator.attr("role"), sRole, "Single paginator items role is" + sRole);
+	});
+
+	QUnit.test("Single paginator selected items", function (assert) {
+		var oSplitterPaginatorItems = this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginatorSelectedButton "),
+			sChecked = "true";
+
+		assert.equal(oSplitterPaginatorItems.attr("aria-checked"), sChecked, "Single paginator is selected ");
+	});
 })();
