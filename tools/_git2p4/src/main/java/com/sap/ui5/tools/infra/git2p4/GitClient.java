@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -22,6 +21,8 @@ import java.util.regex.Pattern;
 public class GitClient {
 
   private String gitcmd = "git.cmd";
+  private String gitURL = "git.wdf.sap.corp";
+  private String gitHttpsPort = "8080";
   private File repository = new File(".");
   boolean useHTTPS = false;
   String sshUser = System.getProperty("user.name", "sapui5").toLowerCase();
@@ -53,7 +54,7 @@ public class GitClient {
     }
     pb.redirectErrorStream(true);
     if ( verbose ) {
-      //Log.printf("%s > %s", getRepository(), pb.command());
+      Log.printf("%s > %s", getRepository(), pb.command());
     }
     long t0 = System.currentTimeMillis();
     Process process = pb.start();
@@ -78,8 +79,8 @@ public class GitClient {
     lastOutput = lines;
     lastCommits = null;
     long t1 = System.currentTimeMillis();
-    //Log.println("  Process returned exit code " + process.exitValue() + " (" + (t1-t0) + "ms)");
-    //Log.println("  Process returned output " + Log.summary(lines));
+    Log.println("  Process returned exit code " + process.exitValue() + " (" + (t1-t0) + "ms)");
+    Log.println("  Process returned output " + Log.summary(lines));
     if ( lastExitValue != 0 ) {
       throw new IOException("Git failed with error code " + lastExitValue);
     }
@@ -281,7 +282,8 @@ public class GitClient {
       // ensure that the changeId commit hook exists
       File commitMsgHook = new File(getRepository(), ".git/hooks/commit-msg");
       if ( !commitMsgHook.exists() ) {
-        URL url = new URL("https://git.wdf.sap.corp:8080/tools/hooks/commit-msg");
+        URL url = new URL("https://" + getGitURL() + ":" + getGitHttpsPort() + "/tools/hooks/commit-msg");
+        Log.println("Downloading commit-msg from " + url);
         IOUtils.copy(url.openConnection().getInputStream(), new FileOutputStream(commitMsgHook), /* close= */ true);
       }
       return executeWithInput(message.toString(), "-c", "core.autocrlf=false", "commit", "-F", "-");
@@ -333,9 +335,9 @@ public class GitClient {
     		baseUrl.append("@");
     	}
   	}
-  	baseUrl.append("git.wdf.sap.corp:");
+    baseUrl.append(getGitURL()).append(":");
   	if (useHTTPS) {
-  		baseUrl.append("8080");
+  		baseUrl.append(getGitHttpsPort());
   	} else {
   		baseUrl.append("29418");
   	}
@@ -352,6 +354,22 @@ public class GitClient {
 
   public Map<String,GitClient.Commit> getLastCommits() {
     return this.lastCommits;
+  }
+
+  public String getGitURL() {
+    return this.gitURL;
+  }
+
+  public void setGitURL(String sGitURL) {
+    this.gitURL = sGitURL;
+  }
+
+  public String getGitHttpsPort() {
+    return this.gitHttpsPort;
+  }
+
+  public void setGitHttpsPort(String gitHttpsPort) {
+    this.gitHttpsPort = gitHttpsPort;
   }
 
 }

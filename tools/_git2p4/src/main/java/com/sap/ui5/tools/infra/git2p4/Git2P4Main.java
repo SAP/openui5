@@ -758,6 +758,10 @@ public class Git2P4Main {
         skipContributorsVersions = true;
       } else if ( "--update-only-core".equals(args[i]) ) {
         filter = new ProcessingFilter(UPDATE_ONLY_CORE_FILTER_NAME, EnumSet.of(ProcessingTypes.Sapui5CoreVersion));
+      } else if ( "--git-url".equals(args[i]) ) {
+        git.setGitURL(args[++i]);
+      } else if ( "--git-https-port".equals(args[i]) ) {
+        git.setGitHttpsPort(args[++i]);
       } else if ( "--rebuild".equals(args[i]) ) {
         command = "noop";
       } else if ( args[i].startsWith("-") ) {
