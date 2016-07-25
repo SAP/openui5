@@ -92,6 +92,7 @@ sap.ui.define([
 				this.bInitial = true;
 				this.bRequestTypeFailed = false;
 				this.vValue = undefined;
+				oModel.bindingCreated(this);
 			},
 			metadata : {
 				publicMethods : []
@@ -286,6 +287,7 @@ sap.ui.define([
 		} else if (this.oContext) {
 			this.oContext.deregisterChange(this.sPath, this);
 		}
+		this.oModel.bindingDestroyed(this);
 		PropertyBinding.prototype.destroy.apply(this, arguments);
 	};
 

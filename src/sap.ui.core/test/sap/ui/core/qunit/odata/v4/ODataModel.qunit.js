@@ -4,6 +4,7 @@
 sap.ui.require([
 	"jquery.sap.global",
 	"sap/ui/core/message/Message",
+	"sap/ui/model/Binding",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/type/String",
@@ -19,7 +20,7 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Message, BindingMode, Model, TypeString, ODataUtils, OperationMode,
+], function (jQuery, Message, Binding, BindingMode, Model, TypeString, ODataUtils, OperationMode,
 		_ODataHelper, Context, _MetadataRequestor, _Requestor, ODataContextBinding,
 		ODataListBinding, ODataMetaModel, ODataModel, ODataPropertyBinding, TestUtils) {
 	/*global QUnit, sinon */
@@ -139,6 +140,7 @@ sap.ui.require([
 		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.OneTime), true);
 		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.OneWay), true);
 		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.TwoWay), true);
+		assert.deepEqual(oModel.aAllBindings, []);
 		oMetaModel = oModel.getMetaModel();
 		assert.ok(oMetaModel instanceof ODataMetaModel);
 		assert.strictEqual(oMetaModel.oRequestor, oMetadataRequestor);
@@ -381,7 +383,6 @@ sap.ui.require([
 		// cache proxy for oRelativeContextBinding
 		this.mock(oContext).expects("fetchCanonicalPath").returns("~");
 		this.mock(_ODataHelper).expects("createCacheProxy").returns(oCacheProxy);
-		this.mock(oContext).expects("registerBinding");
 		oRelativeContextBinding.setContext(oContext);
 
 		oListBinding.attachChange(function () {});
@@ -726,6 +727,35 @@ sap.ui.require([
 
 		//code under test
 		assert.strictEqual(oModel.hasPendingChanges(), oResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getDependentBindings", function (assert) {
+		var oModel = createModel(),
+			oParentBinding = {},
+			oContext = Context.create(oModel, oParentBinding, "/absolute"),
+			oBinding = new Binding(oModel, "relative", oContext);
+
+		assert.deepEqual(oModel.getDependentBindings(), []);
+
+		// to be called by V4 binding's c'tors
+		oModel.bindingCreated(oBinding);
+		oModel.bindingCreated(new Binding(oModel, "/somewhere/else", oContext));
+		oModel.bindingCreated(
+			new Binding(oModel, "unrelated", Context.create(oModel, {}, "/absolute")));
+		oModel.bindingCreated(new Binding(oModel, "relative"));
+
+		assert.deepEqual(oModel.getDependentBindings(oParentBinding), [oBinding]);
+
+		// to be called by V4 binding's destroy() method
+		oModel.bindingDestroyed(oBinding);
+
+		assert.deepEqual(oModel.getDependentBindings(oParentBinding), []);
+
+		assert.throws(function () {
+			// missing bindingCreated() or duplicate call
+			oModel.bindingDestroyed(oBinding);
+		}, new Error("Unknown " + oBinding));
 	});
 });
 // TODO constructor: test that the service root URL is absolute?

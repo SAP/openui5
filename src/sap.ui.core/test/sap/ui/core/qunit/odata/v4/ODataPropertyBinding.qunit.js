@@ -154,7 +154,8 @@ sap.ui.require([
 			var bAbsolute = sPath[0] === "/",
 				oBinding,
 				oCache = {},
-				oContext = Context.create(this.oModel, null, "/EMPLOYEES(ID='42')");
+				oContext = Context.create(this.oModel, null, "/EMPLOYEES(ID='42')"),
+				oCreatedBinding;
 
 			if (bAbsolute) {
 				this.oSandbox.mock(_Cache).expects("createSingle")
@@ -164,10 +165,14 @@ sap.ui.require([
 			} else {
 				this.oSandbox.mock(_Cache).expects("createSingle").never();
 			}
+			this.oSandbox.stub(this.oModel, "bindingCreated", function (oBinding) {
+				oCreatedBinding = oBinding;
+			});
 
 			oBinding = this.oModel.bindProperty(sPath, oContext);
 
 			assert.ok(oBinding instanceof ODataPropertyBinding);
+			assert.strictEqual(oCreatedBinding, oBinding, "bindingCreated() has been called");
 			assert.strictEqual(oBinding.getModel(), this.oModel);
 			assert.strictEqual(oBinding.getContext(), oContext);
 			assert.strictEqual(oBinding.getPath(), sPath);
@@ -1228,6 +1233,7 @@ sap.ui.require([
 			.withExactArgs(undefined, oPropertyBinding);
 		this.oSandbox.mock(PropertyBinding.prototype).expects("destroy").on(oPropertyBinding)
 			.withExactArgs("foo", 42);
+		this.oSandbox.mock(this.oModel).expects("bindingDestroyed").withExactArgs(oPropertyBinding);
 
 		oPropertyBinding.destroy("foo", 42);
 	});
@@ -1242,14 +1248,18 @@ sap.ui.require([
 		this.oSandbox.mock(oContext).expects("deregisterChange")
 			.withExactArgs("Name", oPropertyBinding);
 		this.oSandbox.mock(PropertyBinding.prototype).expects("destroy").on(oPropertyBinding);
+		this.oSandbox.mock(this.oModel).expects("bindingDestroyed").withExactArgs(oPropertyBinding);
 
 		oPropertyBinding.destroy();
 	});
 
 	//*********************************************************************************************
 	QUnit.test("destroy: relative binding unresolved", function (assert) {
-		this.oModel.bindProperty("PRODUCT_2_BP")
-			.destroy(); // nothing must happen
+		var oPropertyBinding = this.oModel.bindProperty("PRODUCT_2_BP");
+
+		this.oSandbox.mock(this.oModel).expects("bindingDestroyed").withExactArgs(oPropertyBinding);
+
+		oPropertyBinding.destroy();
 	});
 
 	//*********************************************************************************************

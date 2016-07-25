@@ -113,7 +113,6 @@ sap.ui.define([
 				this.aApplicationFilters = _ODataHelper.toArray(vFilters);
 				this.oCache = undefined;
 				this.sChangeReason = undefined;
-				this.aDependentBindings = undefined;
 				this.aDiff = [];
 				this.aFilters = [];
 				this.aPreviousData = [];
@@ -138,6 +137,7 @@ sap.ui.define([
 
 				this.reset();
 				this.setContext(oContext);
+				oModel.bindingCreated(this);
 			}
 		});
 
@@ -295,9 +295,7 @@ sap.ui.define([
 	 */
 	// @override
 	ODataListBinding.prototype.destroy = function () {
-		if (this.bRelative && this.oContext) {
-			this.oContext.deregisterBinding(this);
-		}
+		this.oModel.bindingDestroyed(this);
 		ListBinding.prototype.destroy.apply(this);
 	};
 
@@ -729,11 +727,11 @@ sap.ui.define([
 		}
 		this.reset();
 		this._fireRefresh({reason : ChangeReason.Refresh});
-		if (this.aDependentBindings) {
-			this.aDependentBindings.forEach(function (oDependentBinding) {
+		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
+			if (oDependentBinding.refreshInternal) {
 				oDependentBinding.refreshInternal(sGroupId);
-			});
-		}
+			}
+		});
 	};
 
 	/**
@@ -791,16 +789,12 @@ sap.ui.define([
 		if (this.oContext !== oContext) {
 			if (this.bRelative) {
 				this.reset();
-				if (this.oContext) {
-					this.oContext.deregisterBinding(this);
-				}
 				if (this.oCache) {
 					this.oCache.deregisterChange();
 					this.oCache = undefined;
 				}
 				if (oContext) {
 					this.oCache = _ODataHelper.createListCacheProxy(this, oContext);
-					oContext.registerBinding(this);
 				}
 				// call Binding#setContext because of data state etc.; fires "change"
 				Binding.prototype.setContext.call(this, oContext);

@@ -415,28 +415,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Deregisters the given dependent binding from the given parent binding.
-		 *
-		 * @param {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding}
-		 *   oParentBinding The parent binding
-		 * @param {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding}
-		 *   oDependentBinding The dependent binding
-		 *
-		 * @private
-		 */
-		deregisterBinding : function (oParentBinding, oDependentBinding) {
-			var aDependentBindings = oParentBinding.aDependentBindings,
-				iIndex;
-
-			if (aDependentBindings) {
-				iIndex = aDependentBindings.indexOf(oDependentBinding);
-				if (iIndex >= 0) {
-					aDependentBindings.splice(iIndex, 1);
-				}
-			}
-		},
-
-		/**
 		 * Returns the key predicate (see "4.3.1 Canonical URL") for the given entity type meta
 		 * data and entity instance runtime data.
 		 *
@@ -630,12 +608,9 @@ sap.ui.define([
 			if (bResult) {
 				return bResult;
 			}
-			if (oBinding.aDependentBindings) {
-				return oBinding.aDependentBindings.some(function (oDependentBinding) {
-					return ODataHelper.hasPendingChanges(oDependentBinding, false);
-				});
-			}
-			return false;
+			return oBinding.oModel.getDependentBindings(oBinding).some(function (oDependent) {
+				return ODataHelper.hasPendingChanges(oDependent, false);
+			});
 		},
 
 		/**
@@ -666,21 +641,6 @@ sap.ui.define([
 			set("$orderby", sOrderby);
 			set("$filter", sFilter);
 			return mResult || mQueryOptions;
-		},
-
-		/**
-		 * Registers the given dependent binding at the given parent binding.
-		 *
-		 * @param {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding}
-		 *   oParentBinding The parent binding
-		 * @param {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding}
-		 *   oDependentBinding The dependent binding
-		 *
-		 * @private
-		 */
-		registerBinding : function (oParentBinding, oDependentBinding) {
-			oParentBinding.aDependentBindings = oParentBinding.aDependentBindings || [];
-			oParentBinding.aDependentBindings.push(oDependentBinding);
 		},
 
 		/**
@@ -951,11 +911,9 @@ sap.ui.define([
 			} else if (oBinding.oContext && bAskParent) {
 				oBinding.oContext.resetChanges(oBinding.sPath);
 			}
-			if (oBinding.aDependentBindings) {
-				oBinding.aDependentBindings.forEach(function (oDependentBinding) {
-					ODataHelper.resetChanges(oDependentBinding, false);
-				});
-			}
+			oBinding.oModel.getDependentBindings(oBinding).forEach(function (oDependentBinding) {
+				ODataHelper.resetChanges(oDependentBinding, false);
+			});
 		},
 
 		/**
