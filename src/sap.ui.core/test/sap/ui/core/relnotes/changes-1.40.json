@@ -3454,5 +3454,244 @@
         "references": []
       }
     ]
+  },
+  "1.40.1": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "daab5c460aac9104daf5320180a357a8c5a3415b",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "mvc/View.Preprocessor: cache key provision",
+        "references": []
+      },
+      {
+        "id": "2927145f1daae18c1a73b8b524f63d1dda7147bb",
+        "author": "Tommy Vinh Lam \u003ctommy.vinh.lam@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.core.theming.Parameters.get: Read multiple params",
+        "references": []
+      },
+      {
+        "id": "f1e629bd7d079070c1ee31f577f952b95189c7c3",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Icon Tooltip: Prevent using technical names",
+        "references": []
+      },
+      {
+        "id": "0dc4318b85e584b935b67b331cf54c9858c9cb54",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "LessSupport: activate \"relativeUrls\" option",
+        "references": []
+      },
+      {
+        "id": "c4db3c885d37fa99d618a45b66f46dba2a70ff63",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataContextBinding: null context for unresolved bindings",
+        "references": []
+      },
+      {
+        "id": "80d31b3655582b8e87e3ad13df3db2f28920d27c",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Opa/Opa5#.extendConfig now keeps own properties of actions/arrangements/assertions",
+        "references": []
+      },
+      {
+        "id": "20b2dc97a287dc119fc70e7c3229574bf16f262c",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Prevent unnecessary \"library info setting ignored\" warnings",
+        "references": []
+      },
+      {
+        "id": "5e368e3c600e1f33469b883de0fce430f392f0ac",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "ThemeCheck: extend timeout to fix custom.css",
+        "references": []
+      },
+      {
+        "id": "991e71391ee4c2f82a8fa960e34f56e9bf87f3d2",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "XMLView XMLAfterRenderingNotifier metadata: library name",
+        "references": []
+      },
+      {
+        "id": "706f482271c6ef5c15c919e6ea2b2419983d8294",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "iOS scrolling: missing events",
+        "references": []
+      },
+      {
+        "id": "39642d10f45bcd2ff60c6fddffcec6651aabddca",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "jQuery.sap.script: arraySymbolDiff don\u0027t fail for undefined values",
+        "references": []
+      },
+      {
+        "id": "22f7e51a06004991a3ff739309152af86df7ee6b",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Icon: Icon doesn\u0027t correctly mark the event on mobile device",
+        "references": []
+      },
+      {
+        "id": "2a5df0ce43b3e842fc9de4afe7ee5b83b8d82ab6",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Popup: blind layer iframe issue",
+        "references": []
+      },
+      {
+        "id": "77b22b792d9b0b3ec3d87cd90be0a3a9945b09ed",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.routing.History: history direct should be unknown after the current hash is replaced",
+        "references": []
+      },
+      {
+        "id": "9299d0796cf39485eac70dc5890d695e048837ba",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.test.matchers.Interactable - Opa sync is detecting disabled controls",
+        "references": []
+      },
+      {
+        "id": "22a7fb099605be4f18ab692deaeaeb5e953280ed",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: BindableResponseHeaders use correct map",
+        "references": []
+      }
+    ]
+  },
+  "1.40.2": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "4fcb98b46b8efb6d4d82d3b09d82d8300a85d6df",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Configuration: allow to set multiple properties at once",
+        "references": []
+      },
+      {
+        "id": "bd2df67a94dab4767c7de1c2589cf5bbe8235a04",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "LabelEnablement: fix invalidation issue of associated controls",
+        "references": []
+      },
+      {
+        "id": "37e4675d82403ff41683b339b45cb378d2e7bc35",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "ManagedObject: Don\u0027t destroy tree aggregation with template",
+        "references": []
+      },
+      {
+        "id": "3eceedb83664db80c956f7e633658dd505d9063a",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "MockServer: failing requests in changeset should return response",
+        "references": []
+      },
+      {
+        "id": "b60af373fe38717dd5235d5c4598582841f1c93c",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Opa5 controlType combined with id and ViewName was broken",
+        "references": []
+      },
+      {
+        "id": "68944ae4d0c78a953d109b94ef6f6333c137addf",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "XMLTemplateProcessor: Ignore empty binding property",
+        "references": []
+      },
+      {
+        "id": "c7a810b83bd2b1cfa0933d91b6b03a79b8ed504b",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.BusyIndicator: Fixed positioning of animation for RTL-mode",
+        "references": []
+      },
+      {
+        "id": "d6b0fb261833d7620bbcd8e57d6be95852b7dac8",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.Popup: Check in \u0027onAfterRendering\u0027 extended",
+        "references": []
+      },
+      {
+        "id": "e367074298af1a698b4955ee07b8327840993ecb",
+        "author": "Jiawei \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Icon: Icon should listen to click event on combi device",
+        "references": []
+      },
+      {
+        "id": "f7190b845584e85e0a62ba0eb8713d6deb03503a",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.util.File: Wrong data-url delimiter",
+        "references": []
+      },
+      {
+        "id": "202ce648a57fddbe2af70b93a17adb5a6fbec210",
+        "author": "Uwe Reeder \u003cuwe.reeder@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.type.String: null handling",
+        "references": []
+      },
+      {
+        "id": "521c241aa33a64af5e05f2ae8c04c3a258849bcb",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.test.opaQUnit stop Opa on QUnit timeout",
+        "references": []
+      },
+      {
+        "id": "622fee8666142bca4577164c297b0b250570c8f2",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "thirdparty.crossroads: hash \"Page12\" shouldn\u0027t match pattern \"Page1/:context:\"",
+        "references": []
+      },
+      {
+        "id": "b491ebdc550c60d0f010007f52e0ba7aef3dc4c4",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Element: popup-like controls should always be removed from the DOM on destroy.",
+        "references": []
+      }
+    ]
+  },
+  "1.40.3": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "716e3e0a23d6bc7124028ce31ffbd21adc69dc26",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "jQuery: Added Loaded Version to Support-Info",
+        "references": []
+      },
+      {
+        "id": "3967c058693cd251ace7f659e8705d9ebbb1d10f",
+        "author": "Clemens Maier \u003cc.maier@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Call correct request handlers",
+        "references": []
+      }
+    ]
   }
 }
