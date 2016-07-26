@@ -277,7 +277,7 @@ sap.ui.define([
       }
 
       // else this is a scenario outline
-      var aExamples = this._convertScenarioExamplesToListOfObjects(oScenario.examples);
+      var aExamples = this._convertScenarioExamplesToListOfObjects(oScenario.examples[0].data);
 
       // create a concrete scenario from each example in the scenario outline
       var aConcreteScenarios = aExamples.map(function(oExample, i) {

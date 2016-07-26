@@ -219,12 +219,16 @@ sap.ui.require([
             { text: "I give him <number> cups of coffee", keyword: "When" },
             { text: "he should be <mood>", keyword: "Then" }
           ],
-          examples: [
-            ["user","number","mood"],
-            ["Michael","1","happy"],
-            ["Elvis","4","electrified"],
-            ["John","2","happy"]
-          ]
+          examples: [{
+            name: "",
+            tags: [],
+            data: [
+              ["user","number","mood"],
+              ["Michael","1","happy"],
+              ["Elvis","4","electrified"],
+              ["John","2","happy"]
+            ]
+          }]
         }
       ]
     });
@@ -402,10 +406,156 @@ sap.ui.require([
         steps: [
           { text: "he should be <MOOD>", keyword: "Then" }
         ],
-        examples: ["MOOD","happy","electrified","happy"]
+        examples: [{
+          name: "",
+          tags: [],
+          data: ["MOOD","happy","electrified","happy"]
+        }]
       }]
     });
 
+  });
+
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  QUnit.test("Feature tags inherit downward from Feature-Scenario/Outline-Examples", function() {
+
+    var text = [
+      "@feature",
+      "Feature: Serve coffee",
+      "",
+      "  @scenario",
+      "  Scenario: Buy last coffee",
+      "    Given I have deposited $1",
+      "",
+      "  @outline",
+      "  Scenario Outline: No coffee for you",
+      "    Given I have deposited <MONEY>",
+      "",
+      "  @examples",
+      "  Examples:",
+      "    | MONEY |",
+      "    | $2    |",
+    ].join("\n");
+
+    deepEqual(this.parser.parse(text), {
+      tags: ["@feature"],
+      name: "Serve coffee",
+      scenarios: [{
+        tags: ["@feature", "@scenario"],
+        name: "Buy last coffee",
+        steps: [
+          { text: "I have deposited $1", keyword: "Given" }
+        ]
+      },{
+        tags: ["@feature", "@outline"],
+        name: "No coffee for you",
+        steps: [
+          { text: "I have deposited <MONEY>", keyword: "Given" }
+        ],
+        examples: [{
+          name: "",
+          tags: ["@feature", "@outline", "@examples"],
+          data: ["MONEY", "$2"]
+        }]
+      }]
+    });
+  });
+
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  QUnit.test("Given two Examples and one is @wip", function() {
+
+    var text = [
+      "Feature: Serve coffee later",
+      "",
+      "  Scenario Outline: save money now to have more money for coffee later",
+      "    Given I have deposited <MONEY>",
+      "",
+      "  @wip",
+      "  Examples: lesser savings",
+      "    | MONEY |",
+      "    | $2    |",
+      "",
+      "  Examples: greater savings",
+      "    | MONEY |",
+      "    | $4    |",
+    ].join("\n");
+
+    deepEqual(this.parser.parse(text), {
+      tags: [],
+      name: "Serve coffee later",
+      scenarios: [{
+        tags: [],
+        name: "save money now to have more money for coffee later",
+        steps: [
+          { text: "I have deposited <MONEY>", keyword: "Given" }
+        ],
+        examples: [{
+          name: "lesser savings",
+          tags: ["@wip"],
+          data: ["MONEY","$2"]
+        },{
+          name: "greater savings",
+          tags: [],
+          data: ["MONEY","$4"]
+        }]
+      }]
+    });
+  });
+
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  QUnit.test("Should parse two Scenario Outlines with no Examples", function() {
+
+    var text = [
+      "Feature: Serve coffee later",
+      "",
+      "  Scenario Outline: don't save money now to have no money for coffee later",
+      "    Given I wasted <MONEY> on lottery tickets",
+      "",
+      "  Scenario Outline: save money now to have more money for coffee later",
+      "    Given I have deposited <MONEY>",
+    ].join("\n");
+
+    deepEqual(this.parser.parse(text), {
+      tags: [],
+      name: "Serve coffee later",
+      scenarios: [{
+        tags: [],
+        name: "don't save money now to have no money for coffee later",
+        steps: [
+          { text: "I wasted <MONEY> on lottery tickets", keyword: "Given" }
+        ]
+      },{
+        tags: [],
+        name: "save money now to have more money for coffee later",
+        steps: [
+          { text: "I have deposited <MONEY>", keyword: "Given" }
+        ]
+      }]
+    });
+  });
+
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  QUnit.test("Should parse @tags with all characters but @ and space", function() {
+
+    var text = [
+      "Feature: Outer Space",
+      "",
+      "  @!! @#$% @hello-world @_+=\/<> @|?*&^~`",
+      "  Scenario: Space travel is REALLY cool",
+      "    Given the vacuum of outer space is nearly 0 degrees Kelvin",
+    ].join("\n");
+
+    deepEqual(this.parser.parse(text), {
+      tags: [],
+      name: "Outer Space",
+      scenarios: [{
+        tags: ["@!!", "@#$%", "@hello-world", "@_+=\/<>", "@|?*&^~`"],
+        name: "Space travel is REALLY cool",
+        steps: [
+          { text: "the vacuum of outer space is nearly 0 degrees Kelvin", keyword: "Given" }
+        ]
+      }]
+    });
   });
 
 });
