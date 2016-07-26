@@ -1482,41 +1482,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("(de)registerBinding", function (assert) {
-		var oBinding = {},
-			oDependentBinding0 = {},
-			oDependentBinding1 = {};
-
-		//code under test: must not fail
-		_ODataHelper.deregisterBinding(oBinding, oDependentBinding0);
-
-		//code under test
-		_ODataHelper.registerBinding(oBinding, oDependentBinding0);
-
-		assert.strictEqual(oBinding.aDependentBindings.length, 1);
-		assert.strictEqual(oBinding.aDependentBindings[0], oDependentBinding0);
-
-		//code under test
-		_ODataHelper.registerBinding(oBinding, oDependentBinding1);
-
-		assert.strictEqual(oBinding.aDependentBindings.length, 2);
-		assert.strictEqual(oBinding.aDependentBindings[0], oDependentBinding0);
-		assert.strictEqual(oBinding.aDependentBindings[1], oDependentBinding1);
-
-		//code under test
-		_ODataHelper.deregisterBinding(oBinding, oDependentBinding0);
-
-		assert.strictEqual(oBinding.aDependentBindings.length, 1);
-		assert.strictEqual(oBinding.aDependentBindings[0], oDependentBinding1);
-
-		//code under test:
-		_ODataHelper.deregisterBinding(oBinding, oDependentBinding0);
-
-		assert.strictEqual(oBinding.aDependentBindings.length, 1);
-		assert.strictEqual(oBinding.aDependentBindings[0], oDependentBinding1);
-	});
-
-	//*********************************************************************************************
 	QUnit.test("hasPendingChanges(sPath): with cache", function (assert) {
 		var oBinding = {
 				oCache : {
@@ -1526,7 +1491,6 @@ sap.ui.require([
 			oCacheMock = this.mock(oBinding.oCache),
 			oResult = {};
 
-		oBinding.aDependentBindings = [{}, {}];
 		["foo", ""].forEach(function (sPath) {
 			oCacheMock.expects("hasPendingChanges").withExactArgs(sPath).returns(oResult);
 
@@ -1538,7 +1502,6 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("hasPendingChanges(sPath): without cache", function (assert) {
 		var oBinding = {
-				aDependentBindings : [{}, {}],
 				sPath : "relative"
 			},
 			sBuildPath = "~/foo",
@@ -1572,7 +1535,9 @@ sap.ui.require([
 				oCache : {
 					hasPendingChanges : function () {}
 				},
-				aDependentBindings : [oChild1, oChild2]
+				oModel : {
+					getDependentBindings : function () {}
+				}
 			},
 			oCacheMock = this.mock(oBinding.oCache),
 			oHelperMock = this.mock(_ODataHelper),
@@ -1580,6 +1545,8 @@ sap.ui.require([
 			// assertions on recursive calls
 			fnHasPendingChanges = _ODataHelper.hasPendingChanges;
 
+		this.mock(oBinding.oModel).expects("getDependentBindings").atLeast(1)
+			.withExactArgs(oBinding).returns([oChild1, oChild2]);
 		[false, true].forEach(function (bAskParent) {
 			oCacheMock.expects("hasPendingChanges").withExactArgs("").returns(true);
 			oHelperMock.expects("hasPendingChanges").never();
@@ -1608,13 +1575,19 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("hasPendingChanges(bAskParent): without cache", function (assert) {
 		var oBinding = {
-				sPath : "relative"
+				sPath : "relative",
+				oModel : {
+					getDependentBindings : function () {}
+				}
 			},
 			oContext = {
 				hasPendingChanges : function () {}
 			},
 			oContextMock = this.mock(oContext),
 			oResult = {};
+
+		this.mock(oBinding.oModel).expects("getDependentBindings").atLeast(1)
+			.withExactArgs(oBinding).returns([]);
 
 		//code under test
 		assert.strictEqual(_ODataHelper.hasPendingChanges(oBinding, false), false);
@@ -1641,7 +1614,6 @@ sap.ui.require([
 			},
 			oCacheMock = this.mock(oBinding.oCache);
 
-		oBinding.aDependentBindings = [{}, {}];
 		["foo", ""].forEach(function (sPath) {
 			oCacheMock.expects("resetChanges").withExactArgs(sPath);
 
@@ -1652,7 +1624,6 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("resetChanges(sPath): without cache", function (assert) {
 		var oBinding = {
-				aDependentBindings : [{}, {}],
 				sPath : "relative"
 			},
 			sBuildPath = "~/foo",
@@ -1685,7 +1656,9 @@ sap.ui.require([
 				oCache : {
 					resetChanges : function () {}
 				},
-				aDependentBindings : [oChild1, oChild2]
+				oModel : {
+					getDependentBindings : function () {}
+				}
 			},
 			oCacheMock = this.mock(oBinding.oCache),
 			oHelperMock = this.mock(_ODataHelper),
@@ -1693,6 +1666,8 @@ sap.ui.require([
 			// assertions on recursive calls
 			fnResetChanges = _ODataHelper.resetChanges;
 
+		this.mock(oBinding.oModel).expects("getDependentBindings").atLeast(1)
+			.withExactArgs(oBinding).returns([oChild1, oChild2]);
 		[false, true].forEach(function (bAskParent) {
 			oCacheMock.expects("resetChanges").withExactArgs("");
 			oHelperMock.expects("resetChanges").withExactArgs(oChild1, false);
@@ -1706,12 +1681,18 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("resetChanges(bAskParent): without cache", function (assert) {
 		var oBinding = {
-				sPath : "relative"
+				sPath : "relative",
+				oModel : {
+					getDependentBindings : function () {}
+				}
 			},
 			oContext = {
 				resetChanges : function () {}
 			},
 			oContextMock = this.mock(oContext);
+
+		this.mock(oBinding.oModel).expects("getDependentBindings").atLeast(1)
+			.withExactArgs(oBinding).returns([]);
 
 		//code under test
 		_ODataHelper.resetChanges(oBinding, false);

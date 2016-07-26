@@ -102,30 +102,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("registerBinding", function (assert) {
-		var oBinding = {},
-			oContext = Context.create(null, oBinding, "/foo", 42),
-			oDependentBinding = {};
-
-		this.mock(_ODataHelper).expects("registerBinding")
-			.withExactArgs(sinon.match.same(oBinding), sinon.match.same(oDependentBinding));
-
-		oContext.registerBinding(oDependentBinding);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("deregisterBinding", function (assert) {
-		var oBinding = {},
-			oContext = Context.create(null, oBinding, "/foo", 42),
-			oDependentBinding = {};
-
-		this.mock(_ODataHelper).expects("deregisterBinding")
-			.withExactArgs(sinon.match.same(oBinding), sinon.match.same(oDependentBinding));
-
-		oContext.deregisterBinding(oDependentBinding);
-	});
-
-	//*********************************************************************************************
 	QUnit.test("deregisterChange", function (assert) {
 		var oBinding = {
 				deregisterChange : function () {}

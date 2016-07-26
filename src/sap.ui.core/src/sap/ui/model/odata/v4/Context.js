@@ -92,18 +92,6 @@ sap.ui.define([
 		});
 
 	/**
-	 * Deregisters the given dependent binding from the parent binding.
-	 *
-	 * @param {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding}
-	 *   oDependentBinding The dependent binding
-	 *
-	 * @private
-	 */
-	Context.prototype.deregisterBinding = function (oDependentBinding) {
-		_ODataHelper.deregisterBinding(this.oBinding, oDependentBinding);
-	};
-
-	/**
 	 * Deregisters the given change listener.
 	 *
 	 * @param {string} sPath
@@ -327,18 +315,6 @@ sap.ui.define([
 		// since we send a path, bAskParent is not needed and set to undefined
 		return _ODataHelper.hasPendingChanges(this.oBinding, undefined,
 			_Helper.buildPath(this.iIndex, sPath));
-	};
-
-	/**
-	 * Registers the given dependent binding at the parent binding.
-	 *
-	 * @param {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding}
-	 *   oDependentBinding The dependent binding
-	 *
-	 * @private
-	 */
-	Context.prototype.registerBinding = function (oDependentBinding) {
-		_ODataHelper.registerBinding(this.oBinding, oDependentBinding);
 	};
 
 	/**
