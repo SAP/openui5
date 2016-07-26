@@ -567,10 +567,15 @@ html[dir=rtl] .sapUiTableColRsz {
 	bottom: 18px;
 }
 
-.sapUiTableColRszActive,
-.sapUiTableColRsz:hover {
-	background-color: @sapUiListHoverBackground;
+html.sap-desktop .sapUiTableColRsz:hover {
+	background-color: @sapUiListHighlightColor;
 	opacity: 0.5;
+}
+
+.sapUiTableColRszActive,
+html.sap-desktop .sapUiTableColRsz.sapUiTableColRszActive:hover {
+	background-color: @sapUiListHighlightColor;
+	opacity: 1;
 }
 
 
