@@ -84,6 +84,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "./library"], functio
 		this._isHidden = false;
 
 		this._oParentObjectPageLayout = undefined; //store the parent objectPageLayout
+
+		this._bRtl = sap.ui.getCore().getConfiguration().getRTL();
 	};
 
 	ObjectPageSectionBase.prototype.onAfterRendering = function () {
@@ -322,7 +324,10 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "./library"], functio
 	/**
 	 * Handler for arrow right
 	 */
-	ObjectPageSectionBase.prototype.onsapright = ObjectPageSectionBase.prototype.onsapdown;
+	ObjectPageSectionBase.prototype.onsapright = function (oEvent) {
+		var sMethodName = this._bRtl ? "onsapup" : "onsapdown";
+		this[sMethodName](oEvent);
+	};
 
 	/**
 	 * Handler for arrow up
@@ -335,7 +340,10 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "./library"], functio
 	/**
 	 * Handler for arrow left
 	 */
-	ObjectPageSectionBase.prototype.onsapleft = ObjectPageSectionBase.prototype.onsapup;
+	ObjectPageSectionBase.prototype.onsapleft = function (oEvent) {
+		var sMethodName = this._bRtl ? "onsapdown" : "onsapup";
+		this[sMethodName](oEvent);
+	};
 
 	/**
 	 * Handler for HOME key
