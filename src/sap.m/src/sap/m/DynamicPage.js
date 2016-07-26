@@ -484,8 +484,11 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._needsVerticalScrollBar = function () {
-		if (exists(this.$wrapper) && this._allowScroll()) {
-			return this.$wrapper[0].scrollHeight > this.$wrapper.innerHeight();
+		var $wrapperDom;
+
+		if (exists(this.$wrapper)) {
+			$wrapperDom = this.$wrapper[0];
+			return $wrapperDom.scrollHeight > Math.ceil($wrapperDom.getBoundingClientRect().height);
 		} else {
 			return false;
 		}
