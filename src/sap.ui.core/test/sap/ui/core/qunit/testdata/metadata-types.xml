@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+    <edmx:DataServices m:DataServiceVersion="2.0">
+        <Schema Namespace="MOCK_TYPES_TEST" xml:lang="en" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+            <EntityType Name="BooleanKeyEntity" m:HasStream="true">
+                <Key>
+                    <PropertyRef Name="BooleanKey" />
+                </Key>
+                <Property Name="BooleanKey" Type="Edm.Boolean" Nullable="false" />
+                <Property Name="Secret" Type="Edm.String" />
+            </EntityType>
+            <EntityContainer Name="MOCK_TYPES_TEST" m:IsDefaultEntityContainer="true">
+                <EntitySet Name="BooleanKeyEntitySet" EntityType="MOCK_TYPES_TEST.BooleanKeyEntity"  />
+            </EntityContainer>
+            <atom:link rel="self" href="http://testservice:8080/sap/opu/odata/sap/MOCK_TYPES_TEST/$metadata" xmlns:atom="http://www.w3.org/2005/Atom" />
+            <atom:link rel="latest-version" href="http://testservice:8080/sap/opu/odata/sap/MOCK_TYPES_TEST/$metadata" xmlns:atom="http://www.w3.org/2005/Atom" />
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

@@ -143,7 +143,8 @@ sap.ui
 					RESOURCE_NOT_FOUND_FOR_SEGMENT: "Resource not found for the segment ##",
 					MALFORMED_URI_LITERAL_SYNTAX_IN_KEY: "Malformed URI literal syntax in key ##",
 					INVALID_KEY_NAME: "Invalid key name in key predicate. Expected name is ##",
-					INVALID_KEY_PREDICATE_QUANTITY: "Invalid key predicate. The quantity of provided keys does not match the expected value"
+					INVALID_KEY_PREDICATE_QUANTITY: "Invalid key predicate. The quantity of provided keys does not match the expected value",
+					INVALID_KEY_TYPE: "Invalid key predicate. The key literal for key property ## does not match its type."
 				}
 
 			});
@@ -1871,6 +1872,11 @@ sap.ui
 									sNewValue = sNewValue.replace(/^guid\'|\'$/g, '');
 									break;
 								case "Edm.Boolean":
+									if (["true", "false"].indexOf(sNewValue) === -1) {
+										that._logAndThrowMockServerCustomError(400, that._oErrorMessages.INVALID_KEY_TYPE, sKey);
+									}
+									sNewValue = sNewValue === "true";
+									break;
 								case "Edm.Binary":
 								case "Edm.DateTimeOffset":
 								default:
