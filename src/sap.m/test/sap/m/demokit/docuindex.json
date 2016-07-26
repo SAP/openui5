@@ -655,7 +655,8 @@
 		  "since": "1.12",
 		  "samples": [
 			"sap.m.sample.ObjectListItem",
-			"sap.m.sample.ObjectListItemMarkLocked"
+			"sap.m.sample.ObjectListItemMarkLocked",
+			"sap.m.sample.ObjectListItemMarkers"
 		  ]
 		},
 		{
@@ -2065,6 +2066,11 @@
 		  "id": "sap.m.sample.ObjectListItemMarkLocked",
 		  "name": "Object List Item - markLocked, markFlagged, markFavorite",
 		  "description": "This sample shows the different states of an object list item: locked, flagged and favourite"
+		},
+		{
+		  "id": "sap.m.sample.ObjectListItemMarkers",
+		  "name": "Object List Item - markers aggregation",
+		  "description": "This sample shows the different states of an object list item: set via the markers aggregation"
 		},
 		{
 		  "id": "sap.m.sample.StandardListItem",
