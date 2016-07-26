@@ -1871,6 +1871,8 @@ sap.ui
 									sNewValue = sNewValue.replace(/^guid\'|\'$/g, '');
 									break;
 								case "Edm.Boolean":
+									sNewValue = sNewValue === "true";
+									break;
 								case "Edm.Binary":
 								case "Edm.DateTimeOffset":
 								default:
