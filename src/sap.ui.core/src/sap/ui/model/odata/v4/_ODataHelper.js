@@ -703,21 +703,44 @@ sap.ui.define([
 		requestDiff : function (oBinding, aData, iStart) {
 			var oMetaModel,
 				oMetaContext,
+				aNewData,
 				sResolvedPath;
+
+			/**
+			 * Compares previous and new data; stores new data as previous data at the binding.
+			 *
+			 * @returns {object[]} The diff array
+			 */
+			function diff() {
+				var i,
+					aDiff,
+					iLength = aData.length;
+
+				aDiff = jQuery.sap.arraySymbolDiff(
+					oBinding.aPreviousData.slice(iStart, iStart + iLength), aNewData);
+				for (i = 0; i < iLength; i += 1) {
+					oBinding.aPreviousData[iStart + i] = aNewData[i];
+				}
+				return aDiff;
+			}
 
 			if (!aData) {
 				return Promise.resolve([]);
+			}
+
+			if (oBinding.bDetectUpdates) {
+				// don't use function reference JSON.stringify in map: 2. and 3. parameter differ
+				aNewData = aData.map(function (oEntity) {
+					return JSON.stringify(oEntity);
+				});
+				return Promise.resolve(diff());
 			}
 
 			sResolvedPath = oBinding.oModel.resolve(oBinding.sPath, oBinding.oContext);
 			oMetaModel = oBinding.oModel.getMetaModel();
 			oMetaContext = oMetaModel.getMetaContext(sResolvedPath);
 			return oMetaModel.fetchObject("$Type/$Key", oMetaContext).then(function (aKeys) {
-				var aDiff,
-					i,
-					iLength = aData.length,
-					mMissingKeys = {},
-					aNewData;
+				var mMissingKeys = {};
 
 				if (aKeys) {
 					aNewData = aData.map(function (oEntity) {
@@ -741,12 +764,7 @@ sap.ui.define([
 					return undefined;
 				}
 
-				aDiff = jQuery.sap.arraySymbolDiff(
-					oBinding.aPreviousData.slice(iStart, iStart + iLength), aNewData);
-				for (i = 0; i < iLength; i += 1) {
-					oBinding.aPreviousData[iStart + i] = aNewData[i];
-				}
-				return aDiff;
+				return diff();
 			});
 		},
 

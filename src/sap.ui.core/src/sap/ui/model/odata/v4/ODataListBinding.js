@@ -301,6 +301,20 @@ sap.ui.define([
 		ListBinding.prototype.destroy.apply(this);
 	};
 
+	/*
+	 * Delegates to {@link ListBinding#enableExtendedChangeDetection} while disallowing the vKey
+	 * parameter.
+	 */
+	// @override
+	ODataListBinding.prototype.enableExtendedChangeDetection = function (bDetectUpdates, vKey) {
+		if (vKey !== undefined) {
+			throw new Error("Unsupported property 'key' with value '" + vKey
+				+ "' in binding info for " + this);
+		}
+
+		return ListBinding.prototype.enableExtendedChangeDetection.apply(this, arguments);
+	};
+
 	/**
 	 * Requests the value for the given absolute path; the value is requested from this binding's
 	 * cache or from its context in case it has no cache or the cache does not contain data for
