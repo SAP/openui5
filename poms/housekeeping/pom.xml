@@ -862,13 +862,6 @@
                   <contextPath>sapui5-sdk-dist-${sap.ui5.version}</contextPath>
                 </deployable>
                 <deployable>
-                  <groupId>com.sap.ui5.dist</groupId>
-                  <artifactId>sapui5-sdk-internal</artifactId>
-                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
-                  <classifier>${sap.ui5.opt.classifier}</classifier>
-                  <contextPath>sapui5-sdk-internal-${sap.ui5.version}</contextPath>
-                </deployable>
-                <deployable>
                   <groupId>com.sap.ushell</groupId>
                   <artifactId>ushell</artifactId>
                   <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
@@ -880,6 +873,13 @@
                   <artifactId>services</artifactId>
                   <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
                   <contextPath>services-${sap.ui5.version}</contextPath>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5.dist</groupId>
+                  <artifactId>sapui5-sdk-internal</artifactId>
+                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <classifier>${sap.ui5.opt.classifier}</classifier>
+                  <contextPath>sapui5-sdk-internal-${sap.ui5.version}</contextPath>
                 </deployable>
               </deployables>
             </configuration>
