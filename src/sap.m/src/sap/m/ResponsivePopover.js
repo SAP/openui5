@@ -69,6 +69,11 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 			offsetY : {type : "int", group : "Misc", defaultValue : null},
 
 			/**
+			 * This property only takes effect on desktop or tablet. Please see the documentation sap.m.Popover#showArrow.
+			 */
+			showArrow: {type: "boolean", group: "Appearance", defaultValue: true},
+
+			/**
 			 * This property is supported by both variants. Please see the documentation on sap.m.Popover#contentWidth and sap.m.Dialog#contentWidth
 			 */
 			contentWidth : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : null},

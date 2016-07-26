@@ -374,7 +374,8 @@
 			"sap.m.sample.IconTabBarNoIcons",
 			"sap.m.sample.IconTabBarProcess",
 			"sap.m.sample.IconTabBarStretchContent",
-			"sap.m.sample.IconTabSeparator"
+			"sap.m.sample.IconTabSeparator",
+			"sap.m.sample.IconTabBarOverflowSelectList"
 		  ]
 		},
 		{
@@ -1502,6 +1503,11 @@
 		  "name": "Icon Tab - Separator",
 		  "description": "This is an example how to use separators in the Icon Tab Bar. You can choose an icon as a separator or use the default vertical line."
 		},
+	 	{
+		  "id": "sap.m.sample.IconTabBarOverflowSelectList",
+		  "name": "Icon Tab - Overflow Select List",
+		  "description": "In this example when some of the tab items are not visible, they are displayed in an overflow select list for easier selection."
+	   },
 		{
 		  "id": "sap.m.sample.BusyIndicator",
 		  "name": "Busy Indicator",

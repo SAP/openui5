@@ -108,7 +108,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 *
 			 * @since 1.40
 			 */
-			headerMode : {type : "sap.m.IconTabHeaderMode", group : "Appearance", defaultValue : sap.m.IconTabHeaderMode.Standard}
+			headerMode : {type : "sap.m.IconTabHeaderMode", group : "Appearance", defaultValue : sap.m.IconTabHeaderMode.Standard},
+
+			/**
+			 * Specifies if the overflow select list is displayed.
+			 *
+			 * The overflow select list represents a list, where all tab filters are displayed,
+			 * so the user can select specific tab filter easier.
+			 * @since 1.42
+			 */
+			showOverflowSelectList : {type : "boolean", group : "Appearance", defaultValue : false}
 		},
 		aggregations : {
 
@@ -239,6 +248,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this.setProperty("headerMode", mode, true);
 
 		this._getIconTabHeader().setMode(mode);
+
+		return this;
+	};
+
+	/**
+	 * Sets the showOverflowSelectList property.
+	 * @overwrite
+	 * @public
+	 * @param {boolean} value New value for showOverflowSelectList
+	 * @return {sap.m.IconTabBar} this pointer for chaining
+	 */
+	IconTabBar.prototype.setShowOverflowSelectList = function (value) {
+		// set internal property
+		this.setProperty("showOverflowSelectList", value, true);
+
+		this._getIconTabHeader().setShowOverflowSelectList(value);
 
 		return this;
 	};
