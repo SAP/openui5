@@ -989,7 +989,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		}
 
 		if ( this.getParent() instanceof ManagedObjectMetadata ) {
-			mDefaults = jQuery.sap.newObject(this.getParent().getPropertyDefaults());
+			mDefaults = jQuery.extend({}, this.getParent().getPropertyDefaults());
 		} else {
 			mDefaults = {};
 		}
