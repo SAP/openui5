@@ -33,6 +33,16 @@
 		var oSpyShowNowIfRequested = sinon.spy(sap.ui.core.BusyIndicator, "_showNowIfRequested");
 		var oSpyOnOpen = sinon.spy(sap.ui.core.BusyIndicator, "_onOpen");
 
+		sap.ui.core.BusyIndicator.hide();
+
+		sap.ui.core.BusyIndicator.show(0);
+
+		sap.ui.core.BusyIndicator.hide();
+
+		sap.ui.core.BusyIndicator.show(0);
+
+		sap.ui.core.BusyIndicator.hide();
+
 		sap.ui.core.BusyIndicator.show(0);
 
 		QUnit.module("BusyIndicator before DOM", {
@@ -54,8 +64,10 @@
 
 			setTimeout(function() {
 				assert.notOk(bInitialized, "Core wasn't ready when 'show' was called");
-				assert.ok(oSpyShow.callCount > 1, "'call' called more than once");
+				assert.ok(oSpyShow.callCount > 1, "'show' called more than once");
 
+				assert.equal(oSpyShowNowIfRequested.callCount, 1, "'_showNowIfRequested' was called exactly 1");
+				
 				var bCalledWithDelay = false;
 				for (var i = 0; i < oSpyShow.args.length; i++) {
 					bCalledWithDelay = oSpyShow.args[i].length == 1 && oSpyShow.args[i][0] === 0;
@@ -81,6 +93,16 @@
 				assert.ok(bVisible, "BusyIndicator should be visible after opening");
 				assert.ok($Busy.css("top") === "0px", "BusyIndicator is positioned at the top of the window");
 
+				done();
+			}.bind(this), 1000);
+		});
+		
+		// make sure the BusyIndicator is not rendered initially
+		QUnit.test("Check if the 'show()' logic is performed only once, when called multiple times before core is initialized", function(assert) {
+			var done = assert.async();
+
+			setTimeout(function() {
+				assert.equal(oSpyShowNowIfRequested.callCount, 1, "'_showNowIfRequested' was called exactly 1");
 				done();
 			}.bind(this), 1000);
 		});
