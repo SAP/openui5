@@ -203,8 +203,6 @@ sap.ui.define([
 			oSelect.setSelectedIndex(0);
 		} else {
 			oSelect.setSelectedItem(null);
-			/* this is a fix for a bug in the select, this line should be romeved after it has been fixed in the select */
-			oSelect.getPicker().getCustomHeader().getContentLeft()[0].setValue(null);
 		}
 
 		Select.prototype._onBeforeOpenDialog.call(oSelect);
