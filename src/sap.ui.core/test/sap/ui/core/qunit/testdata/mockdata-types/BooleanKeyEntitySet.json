@@ -1,0 +1,12 @@
+{
+    "d": {
+        "results": [{
+            "BooleanKey": true,
+            "Secret": "May the Force be with you."
+        },
+        {
+            "BooleanKey": false,
+            "Secret": "Only at the end do you realize the power of the Dark Side."
+        }]
+    }
+}
