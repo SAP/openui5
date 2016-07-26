@@ -1872,7 +1872,7 @@ sap.ui
 									sNewValue = sNewValue.replace(/^guid\'|\'$/g, '');
 									break;
 								case "Edm.Boolean":
-									if(["true", "false"].indexOf(sNewValue) === -1) {
+									if (["true", "false"].indexOf(sNewValue) === -1) {
 										that._logAndThrowMockServerCustomError(400, that._oErrorMessages.INVALID_KEY_TYPE);
 									}
 									sNewValue = sNewValue === "true";
