@@ -27,6 +27,10 @@ sap.ui.define([
 
 			// set dialog
 			this.helloDialog = new HelloDialog();
+		},
+
+		exit : function () {
+			this.helloDialog.destroy();
 		}
 	});
 
