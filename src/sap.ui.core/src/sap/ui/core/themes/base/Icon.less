@@ -14,15 +14,25 @@
 	cursor: pointer;
 }
 
-html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL) {
-	transform: scale(-1,1);
-	-ms-transform: scale(-1,1); /* IE 9 */
-	-webkit-transform: scale(-1,1); /* Safari and Chrome */
-}
-
 .sapUiIcon:before {
 	content: attr(data-sap-ui-icon-content);
+	display: inline-block; /* pesudo element has display: inline by default and can't apply the transform css style for RTL mode*/
 	speak: none;
 	font-weight: normal;
 	-webkit-font-smoothing: antialiased;
+}
+
+/*
+ * The mirroring of icon is done on the pesudo element and not the root DOM.
+ * Because:
+ *  1. All direction related css styles are flipped in RTL, for example padding-left
+ *   is changed to padding right in RTL.
+ *  2. The mirroring of an icon in RTL mode flips the css style again which results
+ *   in the wrong direction.
+ *  3. Custom CSS style should be set on the root DOM and not the pesudo element.
+ */
+html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL):before {
+	transform: scale(-1,1);
+	-ms-transform: scale(-1,1); /* IE 9 */
+	-webkit-transform: scale(-1,1); /* Safari and Chrome */
 }
