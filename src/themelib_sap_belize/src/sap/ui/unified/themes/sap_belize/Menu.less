@@ -254,4 +254,34 @@ html.sap-phone, html.sap-tablet {
 	.sapMLIB.sapMLIBActive .sapUiIcon::before {
 		color: @sapUiContentContrastIconColor;
 	}
+
+	.sapMRespMenuDialog .sapMList .sapMLIBContent .sapMSLITitleOnly {
+		font-size: @sapMFontMediumSize;
+	}
+
+	.sapMRespMenuDialog .sapMPage .sapMBar-CTX.sapMHeader-CTX {
+	  	background-color: @sapUiGroupContentBackground;
+		box-shadow: inset 0 -1px darken(@sapUiGroupContentBackground, 8);
+	}
+}
+
+/* Compact size */
+.sapUiSizeCompact {
+	.sapUiMnuItmR, .sapUiMnuNoIco .sapUiMnuItmL {
+		width: 12px;
+	}
+
+	.sapUiMnuNoIco.sapUiMnuNoSbMnu > .sapUiMnuItm > .sapUiMnuItmTxt {
+		padding-right: 12px;
+	}
+	.sapUiMnuDiv {
+		height: 1px;
+	}
+
+	.sapUiMnuDiv > hr {
+		left: 0rem;
+		right: 0rem;
+		margin-top: 0;
+		margin-bottom: 0;
+	}
 }
