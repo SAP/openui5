@@ -1231,6 +1231,9 @@ var sMetaData = '\
           <End Role="Employees" EntitySet="Employees" />\
           <End Role="Territories" EntitySet="Territories" />\
         </AssociationSet>\
+		<FunctionImport Name="GetProductsByRating" EntitySet="Products" ReturnType="Collection(NorthwindModel.Product)" m:HttpMethod="PUT">\
+			<Parameter Name="rating" Type="Edm.Int32" Mode="In"/>\
+		</FunctionImport>\
       </EntityContainer>\
     </Schema>\
   </edmx:DataServices>\
