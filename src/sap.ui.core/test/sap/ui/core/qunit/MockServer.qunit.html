@@ -134,6 +134,32 @@
 		oMockServer.destroy();
 	});
 
+	test("Test entity read with boolean key property (invalid)", 3, function() {
+
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/metadata-types.xml";
+		var sMockdataBaseUrl = "testdata/mockdata-types/";
+
+		oMockServer.simulate(sMetadataUrl, {
+			"sMockdataBaseUrl" : sMockdataBaseUrl,
+			"bGenerateMissingMockData" : false
+		});
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/BooleanKeyEntitySet(ThisIsNotABoolean)",
+			dataType : "json"
+		});
+
+		ok(!oResponse.success, "Mock server responded well");
+		equal(oResponse.statusCode, "400", "Response status is right");
+
+		oMockServer.destroy();
+	});
+
 	test("Test entity read with boolean key property (true)", 4, function() {
 
 		var oMockServer = new sap.ui.core.util.MockServer({
