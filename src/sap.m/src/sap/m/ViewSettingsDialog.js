@@ -1004,6 +1004,8 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 				}).attachPress(this._onCancel, this)
 			}).addStyleClass("sapMVSD");
 
+			this.addDependent(this._dialog);
+
 			// CSN# 3696452/2013: ESC key should also cancel dialog, not only close
 			// it
 			var fnDialogEscape = this._dialog.onsapescape;
