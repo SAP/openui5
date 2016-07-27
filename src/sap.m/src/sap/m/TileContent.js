@@ -68,7 +68,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * Handler for before rendering
 	 */
 	TileContent.prototype.onBeforeRendering = function() {
-		if (this.getContent()) {
+		if (this.getContent() && this._oDelegate) {
 			if (this.getDisabled()) {
 				this.getContent().addDelegate(this._oDelegate);
 			} else {
