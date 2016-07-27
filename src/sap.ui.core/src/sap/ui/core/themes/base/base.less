@@ -46,9 +46,13 @@
 @sapContent_ForegroundTextColor: contrast(@sapContent_ForegroundColor, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 @sapShell_Background: @sapShellColor;
-@sapShell_BackgroundGradient: @sapShell_Background;
+@sapShell_BackgroundImage: @sapShell_Background;
+@sapShell_BackgroundGradient: @sapShell_BackgroundImage;
+@sapShell_BackgroundImageOpacity: @sapBackgroundImageOpacity;
+@sapShell_BackgroundImageRepeat: @sapBackgroundImageRepeat;
 @sapShell_BorderColor: #666;
 @sapShell_TextColor: contrast(@sapShell_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapShell_Favicon: none;
 
 @sapButton_BorderWidth: 1px; //<=new
 @sapButton_BorderCornerRadius: 0; //<=new
@@ -136,7 +140,9 @@
 
 @sapTile_Background: #fff;
 @sapTile_BorderColor: #000;
-@sapTile_TextColor: contrast(@sapTile_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapTile_TitleTextColor: contrast(@sapTile_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapTile_TextColor: sapTile_TitleTextColor;
+@sapTile_IconColor: contrast(@sapTile_Background, @sapContent_IconColor, @sapContent_ContrastIconColor, @sapContent_ContrastTextThreshold);
 
 @sapChart_OrderedColor_1: #5cbae6; //<=new
 @sapChart_OrderedColor_2: #b6d957; //<=new

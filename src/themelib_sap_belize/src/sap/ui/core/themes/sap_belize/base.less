@@ -292,6 +292,26 @@
 // [Tags "Base", "Shell", "Protected"]
 @sapShell_BackgroundGradient: linear-gradient(to bottom, darken(saturate(@sapShell_Background, 6), 7.8), lighten(desaturate(@sapShell_Background, 16), 7.8));
 
+// [Label "Shell Background Image/Gradient"]
+// [Description "The background image or gradient of the shell."]
+// [Tags "Base", "Shell", "URI", "Image"]
+@sapShell_BackgroundImage: linear-gradient(to bottom, darken(saturate(@sapShell_Background, 6), 7.8), lighten(desaturate(@sapShell_Background, 16), 7.8));
+
+// [Label "Background Opacity"]
+// [Description "A value between 0.0 and 1.0 to control the opacity of the shell background image"]
+// [Tags "Quick", "Base", "Opacity"]
+@sapShell_BackgroundImageOpacity: 1.0;
+
+// [Label "Background Repeat"]
+// [Description "The switch to turn on/off the repetition of the shell background image. Chose 'true' or 'false' as value."]
+// [Tags "Quick", "Base"]
+@sapShell_BackgroundImageRepeat: false;
+
+// [Label "Shell Background Pattern Color"]
+// [Description "The background pattern color of the shell. To turn off the pattern set the value to 'transparent'"]
+// [Tags "Base", "Shell", "Color", "Protected"]
+@sapShell_BackgroundPatternColor: fade(@sapPrimary4, 8);
+
 // [Label "Shell Border Color"]
 // [Description "The color of the borders of the shell."]
 // [Tags "Base", "Shell", "Color"]
@@ -301,6 +321,11 @@
 // [Description "The color of texts in the shell."]
 // [Tags "Base", "Shell", "Color", "Font"]
 @sapShell_TextColor: darken(@sapPrimary2, 10); // no contrast function allowed because background can be gradient
+
+// [Label "Shell Favicon"]
+// [Description "The URI to the favorite or shortcut icon displayed for the shell."]
+// [Tags "Base", "Shell", "URI", "Image", "Protected"]
+@sapShell_Favicon: none;
 
 // [Label "Button Border Thickness"]
 // [Description "The thickness of button borders."]
@@ -653,12 +678,22 @@
 // [Label "Tile Border Color"]
 // [Description "The border color of tiles."]
 // [Tags "Base", "Tile", "Color"]
-@sapTile_BorderColor: @sapPrimary1;
+@sapTile_BorderColor: darken(@sapTile_Background, 13.5);
+
+// [Label "Tile Title Text Color"]
+// [Description "The color of title texts on tiles."]
+// [Tags "Base", "Tile", "Color", "Font"]
+@sapTile_TitleTextColor: contrast(@sapTile_Background, @sapPrimary7, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 
 // [Label "Tile Text Color"]
 // [Description "The color of texts on tiles."]
 // [Tags "Base", "Tile", "Color", "Font"]
-@sapTile_TextColor: contrast(@sapTile_Background, @sapPrimary7, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapTile_TextColor: contrast(@sapTile_Background, lighten(@sapTile_TitleTextColor, 20), @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+// [Label "Tile Icon Color"]
+// [Description "The color of icons on tiles."]
+// [Tags "Base", "Content", "Color"]
+@sapTile_IconColor: contrast(@sapTile_Background, lighten(@sapContent_IconColor, 34), @sapContent_ContrastIconColor, @sapContent_ContrastTextThreshold);
 
 // [Label "Chart Ordered Color 1"]
 // [Description "This color is used as a ordered color of a sequence of 11 chart colors. It has a defined contrast to its predecessor and successor."]
