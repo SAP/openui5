@@ -118,6 +118,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 					/**
 					 * Whether bouncing is enabled.
 					 * @since 1.16.5
+					 * @deprecated since 1.42. This parameter is obsolete and has no effect.
 					 */
 					bounce: {type: "boolean", group: "Behavior", defaultValue: null},
 
@@ -476,14 +477,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				if (!this._oScroller) {
 					this._oScroller = new ScrollEnablement(this, this.getId() + "-scroll", {
 						horizontal: this.getHorizontalScrolling(),
-						vertical: this.getVerticalScrolling(),
-						zynga: false,
-						preventDefault: false,
-						nonTouchScrolling: "scrollbar",
-						bounce: this.getBounce() === "" ? undefined : this.getBounce(),
-						// In android stock browser, iScroll has to be used
-						// The scrolling layer using native scrolling is transparent for the browser to dispatch events
-						iscroll: sap.ui.Device.browser.name === "an" ? "force" : undefined
+						vertical: this.getVerticalScrolling()
 					});
 				}
 			}
