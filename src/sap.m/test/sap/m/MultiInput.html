@@ -79,7 +79,7 @@
 					}
 				}),
 			endButton:
-				new sap.m.Button({
+				new sap.m.Button("btnCancel",{
 					text: "Cancel",
 					type: sap.m.ButtonType.Reject,
 					press : function() {
@@ -125,7 +125,7 @@
 		});
 
 		//*******************************
-		var oMultiInput4 = new sap.m.MultiInput({
+		var oMultiInput4 = new sap.m.MultiInput("multiInputNotEditable", {
 			tokens: [
 			         new sap.m.Token({text: "Token 1", key: "0001"}),
 			         new sap.m.Token({text: "Token 2", key: "0002"}),
@@ -142,7 +142,7 @@
 			         new sap.m.Token({text: "Token 4", key: "0004"}),
 			         ]);
 
-		oMultiInput5 = new sap.m.MultiInput({
+		oMultiInput5 = new sap.m.MultiInput("mI5", {
 			enableMultiLineMode: true,
 			width: "500px"
 		});
@@ -183,7 +183,7 @@
 		//*******************************
  		var oCheckBoxAcceptValidation = new sap.m.CheckBox({text: "Accept tokens", selected: true});
 
-		var oMultiInputCustomValidator = new sap.m.MultiInput({
+		var oMultiInputCustomValidator = new sap.m.MultiInput("multiInputCustomValidator",{
 			placeholder: "tokens validated by custom validator",
 			valueHelpRequest: fValueHelpRequested,
 			tokenChange: fEventWriter,
@@ -220,7 +220,7 @@
 		});
 
 		//*******************************
-		var oMultiInputCustomAsyncValidator = new sap.m.MultiInput({
+		var oMultiInputCustomAsyncValidator = new sap.m.MultiInput("multiInputCustomAsyncValidator", {
 			placeholder: "tokens get validated asynchronously after 500ms + 500ms",
 			valueHelpRequest: fValueHelpRequested,
 			tokenChange: fEventWriter
@@ -507,7 +507,7 @@
 
 
 		//*******************************
-		var theCompactMode= new sap.m.CheckBox({
+		var theCompactMode= new sap.m.CheckBox("compactMode", {
 			selected: false,
 			select : function() {
 				$("body").toggleClass("sapUiSizeCompact");
@@ -1004,7 +1004,7 @@
 		});
 
 	   //******************************************
-	   			var oSimpleForm = new sap.ui.layout.form.SimpleForm("mySimpleForm", {
+	   			var oSimpleForm = new sap.ui.layout.form.SimpleForm({
 				content: [
 					new sap.m.Label({text:"Street/ Number"}),
 					oMultiInput7
@@ -1012,7 +1012,7 @@
 			});
 	   //******************************************
 	   //maxTokens
-	   var oMultiInput8 = new sap.m.MultiInput({
+	   var oMultiInput8 = new sap.m.MultiInput("multiInputNoPlaceholder", {
 		    enableMultiLineMode: true,
 		    maxTokens: 3
 	    });
@@ -1042,9 +1042,9 @@
 					oMultiInputCustomAsyncValidatorML,
 					new sap.m.Label({text : "MultiInput in simple form", width:"100%"}),
 					oSimpleForm,
-					new sap.m.MultiInput({ placeholder: "Warning", valueState: "Warning", valueHelpRequest: fValueHelpRequested, width:"33%" }),
-					new sap.m.MultiInput({ placeholder: "Error", valueState: "Error", valueHelpRequest: fValueHelpRequested, width:"33%" }),
-					new sap.m.MultiInput({ placeholder: "Success", valueState: "Success", valueHelpRequest: fValueHelpRequested, width:"33%" }),
+					new sap.m.MultiInput("mIWarning", { placeholder: "Warning", valueState: "Warning", valueHelpRequest: fValueHelpRequested, width:"33%" }),
+					new sap.m.MultiInput("mIError", { placeholder: "Error", valueState: "Error", valueHelpRequest: fValueHelpRequested, width:"33%" }),
+					new sap.m.MultiInput("mISuccess", { placeholder: "Success", valueState: "Success", valueHelpRequest: fValueHelpRequested, width:"33%" }),
 					new sap.m.Label({text : "MultiInput.editable = false", width:"100%"}),
 					oMultiInput4,
 					new sap.m.VBox({items: [new sap.m.Button({text: "Open Popup", press: openDialog})]}),
