@@ -2085,7 +2085,7 @@
 		{
 		  "id": "sap.m.sample.ObjectListItemMarkLocked",
 		  "name": "Object List Item - markLocked, markFlagged, markFavorite",
-		  "description": "This sample shows the different states of an Object List Item, which can be set using the <code>markLocked</code>, <code>markFlagged</code>, and <code>markFavorite</code> properties.<br><br><b>Note:</b> The <code>markLocked</code>, <code>markFlagged</code>, and <code>markFavourite</code> properties are deprecated as of version 1.40. We recommend using the <code>markers</code> aggregation instead."
+		  "description": "This sample shows the different states of an Object List Item, which can be set using the <code>markLocked</code>, <code>markFlagged</code>, and <code>markFavorite</code> properties.<br><br><b>Note:</b> The <code>markLocked</code>, <code>markFlagged</code>, and <code>markFavourite</code> properties are deprecated as of version 1.42. We recommend using the <code>markers</code> aggregation instead."
 		},
 		{
 		  "id": "sap.m.sample.ObjectListItemMarkers",
