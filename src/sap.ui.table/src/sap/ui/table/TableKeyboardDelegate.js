@@ -303,7 +303,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './Row', 
 
 	TableKeyboardDelegate.prototype.onsapspace = function(oEvent) {
 		var $target = jQuery(oEvent.target);
-		if (((this.getSelectionBehavior() == SelectionBehavior.Row || this.getSelectionBehavior() == SelectionBehavior.RowOnly) && oEvent.srcControl instanceof Row) ||
+		if ((TableUtils.isRowSelectionAllowed(this) && oEvent.srcControl instanceof Row) ||
 			$target.hasClass("sapUiTableRowHdr") || $target.hasClass("sapUiTableColRowHdr") || $target.hasClass("sapUiTableCol")) {
 			oEvent.preventDefault();
 		}

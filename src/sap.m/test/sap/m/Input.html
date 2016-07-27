@@ -759,7 +759,7 @@
 
 		var oValueStateInput3 = new sap.m.Input("vsinput3", {
 			placeholder: "value state changes while you are typing",
-			liveChange: function () {
+			liveChange: function (oEvent) {
 				var i = oValueStateInput3.getValue().length;
 				switch( i % 4 ){
 					case 0:

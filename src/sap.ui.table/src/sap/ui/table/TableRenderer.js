@@ -3,14 +3,13 @@
  */
 
 //Provides default renderer for control sap.ui.table.Table
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library', 'sap/ui/core/theming/Parameters', 'sap/ui/Device', './library', './TableUtils', 'sap/ui/core/Renderer'],
-	function(jQuery, Control, coreLibrary, Parameters, Device, library, TableUtils, Renderer) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library', 'sap/ui/core/theming/Parameters', 'sap/ui/Device', './library', './TableUtils', 'sap/ui/core/Renderer', 'sap/ui/core/IconPool'],
+	function(jQuery, Control, coreLibrary, Parameters, Device, library, TableUtils, Renderer, IconPool) {
 	"use strict";
 
 
 	// shortcuts
 	var NavigationMode = library.NavigationMode,
-		SelectionBehavior = library.SelectionBehavior,
 		SelectionMode = library.SelectionMode,
 		VisibleRowCountMode = library.VisibleRowCountMode;
 
@@ -36,11 +35,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 			rm.addClass("sapUiTableTouch");
 		}
 		rm.addClass("sapUiTableSelMode" + oTable.getSelectionMode());
+
 		if (oTable.getColumnHeaderVisible()) {
 			rm.addClass("sapUiTableCHdr"); // show column headers
 		}
-		if (oTable.getSelectionMode() !== SelectionMode.None &&
-				oTable.getSelectionBehavior() !== SelectionBehavior.RowOnly) {
+		if (TableUtils.hasRowHeader(oTable)) {
 			rm.addClass("sapUiTableRSel"); // show row selector
 		}
 
@@ -50,7 +49,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 			rm.addClass(sSapMTableClass);
 		}
 
-		rm.addClass("sapUiTableSelMode" + oTable.getSelectionMode()); // row selection mode
 		if (oTable._isVSbRequired()) {
 			rm.addClass("sapUiTableVScr"); // show vertical scrollbar
 		}
@@ -66,8 +64,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 			rm.addClass("sapUiTableOverlay");
 		}
 
-		if (oTable.getEnableGrouping()) {
-			rm.addClass("sapUiTableGrouping");
+		var sModeClass = TableUtils.Grouping.getModeCssClass(oTable);
+		if (sModeClass) {
+			rm.addClass(sModeClass);
 		}
 
 		if (oTable.getWidth()) {
@@ -705,8 +704,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 		rm.write(">");
 
 		var aCols = oTable.getColumns();
-		if (oTable.getSelectionMode() !== SelectionMode.None &&
-				oTable.getSelectionBehavior() !== SelectionBehavior.RowOnly) {
+		if (TableUtils.hasRowHeader(oTable)) {
 			rm.write("<th");
 			rm.addStyle("width", "0px");
 			rm.writeStyles();
@@ -774,7 +772,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 		var mTooltipTexts = oTable._getAccExtension().getAriaTextsForSelectionMode(true);
 
 		// check whether the row can be clicked to change the selection
-		var bSelectOnCellsAllowed = oTable._getSelectOnCellsAllowed();
+		var bSelectOnCellsAllowed = TableUtils.isRowSelectionAllowed(oTable);
 		for (var row = iStartRow, count = iEndRow; row < count; row++) {
 			this.renderTableRow(rm, oTable, aRows[row], row, bFixedTable, iStartColumn, iEndColumn, false, aVisibleColumns, bHasOnlyFixedColumns, mTooltipTexts, bSelectOnCellsAllowed);
 		}
@@ -789,6 +787,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 
 	TableRenderer.writeRowSelectorContent = function(rm, oTable, oRow, iRowIndex) {
 		oTable._getAccRenderExtension().writeAccRowSelectorText(rm, oTable, oRow, iRowIndex);
+
+		if (TableUtils.Grouping.isGroupMode(oTable)) {
+			rm.write("<div");
+			rm.writeAttribute("id", oRow.getId() + "-groupHeader");
+			rm.writeAttribute("class", "sapUiTableGroupIcon");
+			rm.write("></div>");
+
+			if (TableUtils.Grouping.showGroupMenuButton(oTable)) {
+				var oIconInfo = IconPool.getIconInfo("sap-icon://drop-down-list");
+				rm.write("<div class='sapUiTableGroupMenuButton'>");
+				rm.writeEscaped(oIconInfo.content);
+				rm.write("</div>");
+			}
+		}
 	};
 
 	TableRenderer.renderTableRow = function(rm, oTable, oRow, iRowIndex, bFixedTable, iStartColumn, iEndColumn, bFixedRow, aVisibleColumns, bHasOnlyFixedColumns, mTooltipTexts, bSelectOnCellsAllowed) {
@@ -833,9 +845,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 		rm.write(">");
 		var aCells = oRow.getCells();
 		// render the row headers
-		if ((oTable.getSelectionMode() !== SelectionMode.None &&
-			oTable.getSelectionBehavior() !== SelectionBehavior.RowOnly) ||
-			aCells.length === 0) {
+		if (TableUtils.hasRowHeader(oTable) || aCells.length === 0) {
 			rm.write("<td");
 			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "ROWHEADER_TD", {
 				rowSelected: !oRow._bHidden && oTable.isIndexSelected(oTable._getAbsoluteRowIndex(iRowIndex)), //see TableRenderer.renderRowHdrRow
@@ -908,12 +918,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 			rm.writeStyles();
 
 			rm.write(">");
-			this.renderTableCellControl(rm, oTable, oCell, iCellIndex);
+			this.renderTableCellControl(rm, oTable, oCell, bIsFirstColumn);
 			rm.write("</div></td>");
 		}
 	};
 
-	TableRenderer.renderTableCellControl = function(rm, oTable, oCell, iCellIndex) {
+	TableRenderer.renderTableCellControl = function(rm, oTable, oCell, bIsFirstColumn) {
+		if (TableUtils.Grouping.isTreeMode(oTable) && bIsFirstColumn) {
+			rm.write("<span class='sapUiTableTreeIcon' tabindex='-1'");
+			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TREEICON", {row: oCell.getParent()});
+			rm.write(">&nbsp;</span>");
+		}
 		rm.renderControl(oCell);
 	};
 

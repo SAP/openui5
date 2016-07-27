@@ -518,6 +518,16 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		ComboBoxBase.prototype.createPicker = function(sPickerType) {};
 
 		/**
+		 * This event handler is called before the picker popup is closed.
+		 *
+		 */
+		ComboBoxBase.prototype.onBeforeClose = function() {
+
+			// reset opener
+			this.bOpenedByKeyboardOrButton = false;
+		};
+
+		/**
 		 * Gets the control's picker popup.
 		 *
 		 * @returns {sap.m.Dialog | sap.m.Popover | null} The picker instance, creating it if necessary by calling

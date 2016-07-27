@@ -635,11 +635,6 @@ html[data-sap-ui-browser^="ie"] .sapUiTableVSb {
 		height:100%;
 	}
 
-	/* Group Header Adjustments */
-	div.sapUiTableGroupHeader div.sapUiTableGroupIcon {
-		background-color: transparent;
-	}
-
 	/* Footer Adjustments */
 	.sapUiTableFtr > .sapMLabel {
 		// Subtract the outer padding of the footer, when it is a table text view
@@ -742,123 +737,6 @@ html[data-sap-ui-browser^="ed"] .sapUiTableVScr .sapUiTableHSb {
  * TREETABLE & GROUPING STYLES
  ******************************************************************************/
 
-.sapUiTableGroupIconOpen,
-.sapUiTableTreeIconNodeOpen {
-	background-image: url(img/ico12_open_minus.gif);
-}
-
-.sapUiTableGroupIconClosed,
-.sapUiTableTreeIconNodeClosed {
-	background-image: url(img/ico12_closed_plus.gif);
-}
-
-.sapUiTableTreeIconLeaf {
-	background-image: url(img/ico12_leaf.gif);
-}
-
-.sapUiTableTreeIcon {
-	display: inline-block;
-	width: 12px;
-	background-position: 50% 50%;
-	background-repeat: no-repeat;
-	float: left;
-}
-
-.sapUiSizeCompact, .sapUiSizeCozy {
-	// Hide plus/minus
-	.sapUiTableTreeIcon {
-		background-image: none;
-		width: 25px;
-		margin-right: 5px;
-		padding: 0;
-	}
-}
-
-.sapUiTableGroupIcon {
-	background-position: center left;
-	background-repeat: no-repeat;
-	/* height: @sapUiTableRowHeight; */
-	padding-left: 20px;
-	margin-left: 2px;
-	font-size: 12px;
-	cursor: pointer;
-}
-
-.sapUiSizeCompact, .sapUiSizeCozy {
-	// Hide plus/minus
-	.sapUiTableGroupIcon {
-		padding-left: 0;
-		margin-left: 0;
-		background-image: none;
-	}
-
-	// Show arrow
-	.sapUiTableGroupIcon::before,
-	.sapUiTableTreeIcon::before {
-		font-family: "SAP-icons";
-		font-size: 12px;
-		font-weight: normal;
-		display: inline-block;
-		width: @sapUiTableRowHdrWidth;
-		text-align: center;
-		vertical-align: middle;
-	}
-
-	// Show arrow
-	.sapUiTableGroupIcon.sapUiTableGroupIconOpen::before,
-	.sapUiTableTreeIconNodeOpen::before {
-		content: '\e1e2';
-	}
-
-	// Show arrow
-	.sapUiTableGroupIcon.sapUiTableGroupIconClosed::before,
-	.sapUiTableTreeIconNodeClosed::before {
-		content: '\e066';
-	}
-
-	.sapUiTableRowHdr.sapUiTableGroupHeader > .sapUiTableGroupIcon {
-		left: 1px;
-	}
-}
-
-// Mirror arrow of closed tree node
-html[dir=rtl] {
-	.sapUiSizeCompact, .sapUiSizeCozy {
-		.sapUiTableGroupIcon.sapUiTableGroupIconClosed::before,
-		.sapUiTableTreeIconNodeClosed::before {
-			content: '\e067';
-		}
-	}
-}
-
-.sapUiTableGroupIcon {
-	line-height: @sapUiTableRowHeight;
-}
-
-.sapUiTableRowHdr.sapUiTableGroupHeader {
-	border-right: none;
-	position: relative;
-}
-
-.sapUiTableRowHdr.sapUiTableGroupHeader > .sapUiTableGroupIcon {
-	position: absolute;
-	left: 3px;
-
-	// vertical centering
-	top: 50%;
-	-moz-transform: translatey(-50%);
-	-ms-transform: translatey(-50%);
-	-webkit-transform: translatey(-50%);
-	transform: translatey(-50%);
-
-	white-space: nowrap;
-	font-weight: normal;
-	color: @sapUiBaseText;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	min-width: 48px;
-}
-
 .sapUiSizeCompact .sapUiTableTr > td {
 	padding-top: 0px;
 	padding-bottom: 0px;
@@ -886,10 +764,6 @@ html[dir=rtl] {
 	width: 0;
 	border-left: 0;
 	border-right: 0;
-}
-
-.sapUiTableSelModeNone .sapUiTableRowHdr.sapUiTableGroupHeader {
-	width: @sapUiTableRowHdrWidth;
 }
 
 /* FIX for IE fixed columns */

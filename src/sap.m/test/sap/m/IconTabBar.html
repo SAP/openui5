@@ -106,6 +106,26 @@
 			});
 			label12.addStyleClass("label");
 
+			var label13 = new sap.m.Label({
+				text: "IconTabBar overflow select list."
+			});
+			label13.addStyleClass("label");
+
+			var tabItems = [];
+			for (var i = 1; i <= 30; i++) {
+				tabItems.push(new sap.m.IconTabFilter({
+					text : 'Tab ' + i,
+					content: new sap.m.Text({
+						text: 'Content ' + i
+					})
+				}));
+			}
+
+			var iconTabBarOverflowSelectList = new sap.m.IconTabBar({
+				showOverflowSelectList: true,
+				items: tabItems
+			});
+
 			// create and add a page with icon tab bar
 			var page = new sap.m.Page("tabBarPage", {
 				title:"IconTabBar",
@@ -1048,7 +1068,9 @@
 									}).addStyleClass("sapUiResponsiveContentPadding")
 								]
 							}).addStyleClass("ITBContainer"),
-							new sap.m.Label({text: " "}) // placeholder to see content below
+							new sap.m.Label({text: " "}), // placeholder to see content below
+					label13,
+					iconTabBarOverflowSelectList
 				]
 			});
 			app.addPage(page);

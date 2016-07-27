@@ -1,0 +1,34 @@
+/* ================================= */
+/* CSS for control sap.m/IconTabBarSelectList  */
+/* High Contrast Black theme                      */
+/* ================================= */
+
+.sapMITBSelectItem {
+	border-bottom: 1px solid @sapHCStandardFG;
+	background-color: @sapHCStandardBG;
+}
+
+.sapMITBSelectItem:hover,
+.sapMITBSelectItem.sapMITBSelectItemSelected:hover {
+	background-color: @sapHCHighlightBG;
+}
+
+.sapMITBSelectItem.sapMITBSelectItemSelected {
+	background-color: @sapHCHighlightAltBG;
+}
+
+.sapMITBSelectItem:focus {
+	outline: none;
+}
+
+.sapMITBSelectItem:focus::before {
+	border: 1px dotted @sapUiFocus;
+	position: absolute;
+	content: " ";
+	top: 1px;
+	right: 1px;
+	bottom: 1px;
+	left: 1px;
+	z-index: 2;
+	pointer-events: none;
+}

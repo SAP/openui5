@@ -1,0 +1,50 @@
+/* ================================= */
+/* CSS for control sap.m/IconTabBarSelectList  */
+/* Belize theme                      */
+/* ================================= */
+
+.sapMITBSelectItem {
+	border-bottom: 1px solid @sapUiListBorderColor;
+	background-color: @sapUiListBackground;
+}
+
+.sapMITBSelectItem:hover {
+	background-color: @sapUiListHoverBackground;
+}
+
+.sapMITBSelectList .sapMITBSelectItem:active,
+.sapMITBSelectList .sapMITBSelectItem.sapMITBSelectItemSelected:active {
+	background-color: @sapUiListActiveBackground;
+
+	& > .sapMText {
+		color: @sapUiListActiveTextColor;
+	}
+
+	& > .sapUiIcon {
+		color: @sapUiListActiveTextColor;
+	}
+}
+
+.sapMITBSelectItem.sapMITBSelectItemSelected {
+	background-color: @sapUiListSelectionBackgroundColor;
+}
+
+.sapMITBSelectItem.sapMITBSelectItemSelected:hover {
+	background-color: @sapUiListSelectionHoverBackground;
+}
+
+.sapMITBSelectItem:focus {
+	outline: none;
+}
+
+.sapMITBSelectItem:focus::before {
+	border: 1px dotted @sapUiContentFocusColor;
+	position: absolute;
+	content: " ";
+	top: 1px;
+	right: 1px;
+	bottom: 1px;
+	left: 1px;
+	z-index: 2;
+	pointer-events: none;
+}
