@@ -232,6 +232,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				closeButton = new Button({
 					id: this.getId() + '-closeButton',
 					text: this._closeButtonText,
+					type: sap.m.ButtonType.Transparent,
 					press: function () {
 						this.close();
 					}.bind(this)
