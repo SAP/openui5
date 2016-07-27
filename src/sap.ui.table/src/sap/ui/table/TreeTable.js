@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.table.TreeTable.
-sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBindingAdapter', 'sap/ui/model/ClientTreeBindingAdapter', 'sap/ui/model/TreeBindingCompatibilityAdapter', './library', 'sap/ui/core/Element'],
-	function(jQuery, Table, ODataTreeBindingAdapter, ClientTreeBindingAdapter, TreeBindingCompatibilityAdapter, library, Element) {
+sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBindingAdapter', 'sap/ui/model/ClientTreeBindingAdapter', 'sap/ui/model/TreeBindingCompatibilityAdapter', './library', 'sap/ui/core/Element', './TableUtils'],
+	function(jQuery, Table, ODataTreeBindingAdapter, ClientTreeBindingAdapter, TreeBindingCompatibilityAdapter, library, Element, TableUtils) {
 	"use strict";
 
 	/**
@@ -84,7 +84,7 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 				}
 			}
 		}
-	}});
+	}, renderer: "sap.ui.table.TableRenderer"});
 
 
 	/**
@@ -94,6 +94,7 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 	TreeTable.prototype.init = function() {
 		Table.prototype.init.apply(this, arguments);
 		this._iLastFixedColIndex = 0;
+		TableUtils.Grouping.setTreeMode(this);
 	};
 
 	TreeTable.prototype.bindRows = function(oBindingInfo, vTemplate, aSorters, aFilters) {
@@ -207,75 +208,30 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 
 	TreeTable.prototype._updateTableContent = function() {
 		var oBinding = this.getBinding("rows"),
-			iFirstRow = this.getFirstVisibleRow(),
 			aRows = this.getRows(),
-			iCount = aRows.length,
-			iFixedBottomRowCount = this.getFixedBottomRowCount(),
-			iFirstFixedBottomRowIndex = iCount - iFixedBottomRowCount;
+			iCount = aRows.length;
 
-		var iIndex = iFirstRow;
 		if (oBinding) {
-			var iBindingLength = oBinding.getLength();
+			var oRowBindingInfo = this.getBindingInfo("rows"),
+				sModelName = oRowBindingInfo && oRowBindingInfo.model,
+				oRow, sGroupTitle;
+
 			for (var iRow = 0; iRow < iCount; iRow++) {
-				if (iFixedBottomRowCount > 0 && iRow >= iFirstFixedBottomRowIndex) {
-					iIndex = iBindingLength - iCount + iRow;
-				} else {
-					iIndex = iFirstRow + iRow;
-				}
+				oRow = aRows[iRow];
+				sGroupTitle = TableUtils.Grouping.isGroupMode(this) && this.getGroupHeaderProperty() ? this.getModel(sModelName).getProperty(this.getGroupHeaderProperty(), oRow.getBindingContext(sModelName)) : "";
 
-				var oContext = this.getContextByIndex(iIndex),
-					$DomRefs = aRows[iRow].getDomRefs(true),
-					$row = $DomRefs.rowFixedPart || $DomRefs.rowScrollPart;
-
-				this._updateExpandState(aRows[iRow], $row);
-
-				if (this.getUseGroupMode()) {
-					//If group mode is enabled nodes which have children are visualized as if they were group header
-					var $rowHdr = this.$().find("div[data-sap-ui-rowindex='" + $row.attr("data-sap-ui-rowindex") + "']");
-					if (oBinding.hasChildren && oBinding.hasChildren(oContext)) {
-						// modify the rows
-						$row.addClass("sapUiTableGroupHeader sapUiTableRowHidden");
-						var sClass = oBinding.isExpanded(iFirstRow + iRow) ? "sapUiTableGroupIconOpen" : "sapUiTableGroupIconClosed";
-						$rowHdr.html("<div class=\"sapUiTableGroupIcon " + sClass + "\" tabindex=\"-1\">" + this.getModel().getProperty(this.getGroupHeaderProperty(), oContext) + "</div>");
-						$rowHdr.addClass("sapUiTableGroupHeader").removeAttr("title");
-					} else {
-						$row.removeClass("sapUiTableGroupHeader");
-						if (oContext) {
-							$row.removeClass("sapUiTableRowHidden");
-						}
-						$rowHdr.html("");
-						$rowHdr.removeClass("sapUiTableGroupHeader");
-					}
-				}
+				TableUtils.Grouping.updateTableRowForGrouping(this, oRow, oRow._bHasChildren, oRow._bIsExpanded,
+					oRow._bHasChildren, false, oRow._iLevel, sGroupTitle);
+			}
+		} else {
+			for (var iRow = 0; iRow < iCount; iRow++) {
+				TableUtils.Grouping.cleanupTableRowForGrouping(this, aRows[iRow]);
 			}
 		}
 	};
 
 	TreeTable.prototype._updateTableCell = function () {
 		return true;
-	};
-
-	TreeTable.prototype._updateExpandState = function(oRow, $Row) {
-		var $TreeIcon = $Row.find(".sapUiTableTreeIcon");
-		var aLevelIndentCSS = this._getLevelIndentCSS(oRow);
-		if (aLevelIndentCSS) {
-			$TreeIcon.css.apply($TreeIcon, aLevelIndentCSS);
-		}
-		$TreeIcon.removeClass("sapUiTableTreeIconLeaf sapUiTableTreeIconNodeOpen sapUiTableTreeIconNodeClosed").addClass(oRow._sTreeIconClass);
-		this._getAccExtension().updateAriaExpandState(oRow, $Row, $TreeIcon);
-		$Row.attr("data-sap-ui-level", oRow._iLevel);
-	};
-
-	TreeTable.prototype._getLevelIndentCSS = function(oRow) {
-		if (!this.getUseGroupMode()) {
-			var sPropertyName = "";
-			if (this._bRtlMode === true) {
-				sPropertyName = "margin-right";
-			} else {
-				sPropertyName = "margin-left";
-			}
-			return [sPropertyName, (oRow._iLevel * 17) + "px"];
-		}
 	};
 
 	TreeTable.prototype._getContexts = function(iStartIndex, iLength, iThreshold) {
@@ -672,6 +628,21 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 		}
 
 		return iSelectedIndicesCount;
+	};
+
+	TreeTable.prototype.setUseGroupMode = function (bGroup) {
+		this.setProperty("useGroupMode", !!bGroup);
+		if (!!bGroup) {
+			TableUtils.Grouping.setGroupMode(this);
+		} else {
+			TableUtils.Grouping.setTreeMode(this);
+		}
+		return this;
+	};
+
+	TreeTable.prototype.setEnableGrouping = function(bEnableGrouping) {
+		jQuery.sap.log.warning("The property enableGrouping is not supported by control sap.ui.table.TreeTable");
+		return this;
 	};
 
 	return TreeTable;

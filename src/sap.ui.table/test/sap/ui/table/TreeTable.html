@@ -168,6 +168,7 @@ oModel.setData(oData);
 
 var oTable = new sap.ui.table.TreeTable({
 	title: "TreeTable",
+	groupHeaderProperty: "name",
 	toolbar: new sap.ui.commons.Toolbar({
 		items: [
 			new sap.ui.commons.Button({text: "Expand",
@@ -198,8 +199,8 @@ var oTable = new sap.ui.table.TreeTable({
 	}),
 	visibleRowCount: 20,
 	columns: [
-		new sap.ui.table.Column({label: "Name", template: "name", filterProperty: "name", sortProperty: "name"}),
-		new sap.ui.table.Column({label: "Description", template: "description", sortProperty: "description"})
+		new sap.ui.table.Column({label: "Name", template: "hello>name", filterProperty: "name", sortProperty: "name"}),
+		new sap.ui.table.Column({label: "Description", template: "hello>description", sortProperty: "description"})
 	],
 	selectionMode: sap.ui.table.SelectionMode.Single,
 	enableColumnReordering: true,
@@ -217,8 +218,8 @@ oTable.attachRowSelectionChange(function(oEvent) {
 			" - rowContext: " + oEvent.getParameter("rowContext"));
 });
 
-oTable.setModel(oModel);
-oTable.bindRows("/bing/root");
+oTable.setModel(oModel, "hello");
+oTable.bindRows("hello>/bing/root");
 
 oTable.placeAt("content");
 
