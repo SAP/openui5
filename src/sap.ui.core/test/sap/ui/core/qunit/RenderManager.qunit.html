@@ -631,6 +631,7 @@
 			ok($icon1.hasClass("sapUiIconMirrorInRTL"), "icon has sapUiIconMirrorInRTL as a CSS class");
 			equal($icon1.attr("propertyA"), "valueA", "Attribute should be set");
 			equal($icon1.attr("propertyB"), "valueB", "Attribute should be set");
+			notEqual($icon1.attr("aria-label"), undefined, "Attribute aria-label should be set");
 
 			jQuery.sap.byId("area6").empty();
 
@@ -659,6 +660,56 @@
 			ok(!$icon1.hasClass("sapUiIconMirrorInRTL"), "icon doesn't have sapUiIconMirrorInRTL as a CSS class");
 			equal($icon1.attr("propertyA"), "valueA", "Attribute should be set");
 			equal($icon1.attr("propertyB"), "valueB", "Attribute should be set");
+			notEqual($icon1.attr("aria-label"), undefined, "Attribute aria-label should be set");
+
+			jQuery.sap.byId("area6").empty();
+		});
+
+		test("RenderManager writeIcon with Icon URL. aria-label and aria-labelledby are set to null", function() {
+			jQuery.sap.require("sap.ui.core.IconPool");
+			var rm = sap.ui.getCore().createRenderManager();
+			var oIconInfo = sap.ui.core.IconPool.getIconInfo("wrench");
+			rm.writeIcon(oIconInfo.uri, [], {
+				id: "icon1",
+				"aria-label": null,
+				"aria-labelledby": null
+			});
+			rm.flush(jQuery.sap.domById("area6"));
+			rm.destroy();
+
+			var $icon1 = jQuery.sap.byId("icon1"),
+				$invisibleText = jQuery.sap.byId("icon1-label");
+
+			ok($icon1[0], "icon should be rendered");
+			equal($icon1.attr("aria-label"), undefined, "Attribute aria-label should not be set");
+			equal($icon1.attr("aria-labelledby"), undefined, "Attribute aria-labelledby should not be set");
+			equal($invisibleText.length, 0, "No invisible text is rendered");
+
+			jQuery.sap.byId("area6").empty();
+		});
+
+		test("RenderManager writeIcon with Icon URL and aria-labelledby", function() {
+			jQuery.sap.require("sap.ui.core.IconPool");
+			var rm = sap.ui.getCore().createRenderManager();
+			var oIconInfo = sap.ui.core.IconPool.getIconInfo("wrench");
+			rm.writeIcon(oIconInfo.uri, [], {
+				id: "icon1",
+				"aria-labelledby": "foo",
+				alt: "abc"
+			});
+			rm.flush(jQuery.sap.domById("area6"));
+			rm.destroy();
+
+			var $icon1 = jQuery.sap.byId("icon1"),
+				$invisibleText = jQuery.sap.byId("icon1-label"),
+				sText = $invisibleText.text();
+			ok($icon1[0], "icon should be rendered");
+
+			equal($icon1.attr("aria-label"), undefined, "Attribute aria-label should not be set");
+			equal($icon1.attr("aria-labelledby"), "foo icon1-label", "Attribute aria-labelledby should contain both the given id and the id of the invisible text");
+			equal(sText, "abc", "The content of invisible text should be set");
+
+			jQuery.sap.byId("area6").empty();
 		});
 
 		test("RenderManager writeIcon with Image URL", function(){
