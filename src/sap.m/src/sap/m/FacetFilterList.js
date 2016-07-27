@@ -166,7 +166,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 		var searchVal = this._getSearchValue();
 		if (searchVal != null) {
 			this._search(searchVal, true);
-
+			this._updateSelectAllCheckBox();
 		}
 	};
 

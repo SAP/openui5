@@ -961,9 +961,8 @@
 		oFFL.getItems()[2].setSelected(true);
 		oFF._setButtonText(oFFL);
 
-		ok(oButton.getText().indexOf("List (All)") !== -1, "Button should contain the 'All' as all items are selected");
-		ok(oButton.getTooltip().indexOf("List (All)") !== -1, "Button tooltip should contain the 'All' as all items are selected");
-
+		equals(oButton.getText(), "List (3)", "Button should not contain the 'All' even if all items are selected");
+		equals(oButton.getTooltip(), "List (3)", "Button tooltip should not contain the 'All' even if all items are selected");
 
 		//More than one(but not all) items are selected
 		oFFL.getItems()[0].setSelected(true);
@@ -973,15 +972,6 @@
 
 		ok(oButton.getText().indexOf("List (2)") !== -1, "Button should contain the count of selected items");
 		ok(oButton.getTooltip().indexOf("List (2)") !== -1, "Button tooltip should contain the count of selected items");
-
-		//Only visible items are count
-		oFFL.getItems()[0].setSelected(true);
-		oFFL.getItems()[1].setSelected(false).setVisible(false);
-		oFFL.getItems()[2].setSelected(true);
-		oFF._setButtonText(oFFL);
-
-		ok(oButton.getText().indexOf("List (All)") !== -1, "Button should contain the 'All' as all visible items are selected");
-		ok(oButton.getTooltip().indexOf("List (All)") !== -1, "Button tooltip should contain the 'All' as all visible items are selected");
 
 		destroyFF(oFF);
 	});
