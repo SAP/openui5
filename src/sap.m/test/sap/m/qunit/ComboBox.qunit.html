@@ -8818,6 +8818,171 @@
 			oComboBox.destroy();
 		});
 
+		QUnit.test("onAfterOpen test case 3 - selected item position", function(assert) {
+
+			var oComboBox = new sap.m.ComboBox({
+				items: [
+						new sap.ui.core.Item({
+							key: "DZ",
+							text: "Algeria",
+							enabled: false
+						}),
+
+						new sap.ui.core.Item({
+							key: "AR",
+							text: "Argentina"
+						}),
+
+						new sap.ui.core.Item({
+							key: "AU",
+							text: "Australia"
+						}),
+
+						new sap.ui.core.Item({
+							key: "AT",
+							text: "Austria"
+						}),
+
+						new sap.ui.core.Item({
+							key: "BH",
+							text: "Bahrain"
+						}),
+
+						new sap.ui.core.Item({
+							key: "BE",
+							text: "Belgium"
+						}),
+
+						new sap.ui.core.Item({
+							key: "BA",
+							text: "Bosnia and Herzegovina"
+						}),
+
+						new sap.ui.core.Item({
+							key: "BR",
+							text: "Brazil"
+						}),
+
+						new sap.ui.core.Item({
+							key: "BG",
+							text: "Bulgaria"
+						}),
+
+						new sap.ui.core.Item({
+							key: "CA",
+							text: "Canada"
+						}),
+
+						new sap.ui.core.Item({
+							key: "CL",
+							text: "Chile"
+						}),
+
+						new sap.ui.core.Item({
+							key: "CO",
+							text: "Colombia"
+						}),
+
+						new sap.ui.core.Item({
+							key: "HR",
+							text: "Croatia"
+						}),
+
+						new sap.ui.core.Item({
+							key: "CU",
+							text: "Cuba"
+						}),
+
+						new sap.ui.core.Item({
+							key: "CZ",
+							text: "Czech Republic"
+						}),
+
+						new sap.ui.core.Item({
+							key: "DK",
+							text: "Denmark"
+						}),
+
+						new sap.ui.core.Item({
+							key: "EG",
+							text: "Egypt"
+						}),
+
+						new sap.ui.core.Item({
+							key: "EE",
+							text: "Estonia"
+						}),
+
+						new sap.ui.core.Item({
+							key: "FI",
+							text: "Finland"
+						}),
+
+						new sap.ui.core.Item({
+							key: "FR",
+							text: "France"
+						}),
+
+						new sap.ui.core.Item({
+							key: "GH",
+							text: "Ghana"
+						}),
+
+						new sap.ui.core.Item({
+							key: "DZ",
+							text: "Algeria"
+						}),
+
+						new sap.ui.core.Item({
+							key: "TN",
+							text: "Tunisia"
+						}),
+
+						new sap.ui.core.Item({
+							key: "TR",
+							text: "Turkey"
+						}),
+
+						new sap.ui.core.Item({
+							key: "UG",
+							text: "Uganda"
+						}),
+
+						new sap.ui.core.Item({
+							key: "AE",
+							text: "United Arab Emirates"
+						}),
+
+						new sap.ui.core.Item({
+							key: "GB",
+							text: "United Kingdom"
+						}),
+
+						new sap.ui.core.Item({
+							key: "YE",
+							text: "Yemen"
+						})
+
+					],
+
+					selectedKey: "AR"
+			});
+
+			// arrange
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oComboBox.focus();
+			oComboBox.open();
+			this.clock.tick(1000);
+
+			// asserts
+			assert.ok(oComboBox.getPicker().getDomRef("cont").scrollTop <= oComboBox.getSelectedItem().getDomRef().offsetTop);
+
+			// cleanup
+			oComboBox.destroy();
+
+		});
+
 		QUnit.module("onAfterClose");
 
 		QUnit.test("onAfterClose", function(assert) {
