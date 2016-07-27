@@ -623,15 +623,16 @@
 				equal(oPC1.getViews().length, 0, "no views set in aggregation per default");
 
 				oPC1.setViewKey("D");
-				oPC1.addView(new sap.m.PlanningCalendarView("View-H", {
+				var oView = new sap.m.PlanningCalendarView("View-H", {
 					key: "H",
 					intervalType: sap.ui.unified.CalendarIntervalType.Hour,
 					description: "View1",
 					intervalsS: 1,
 					intervalsM: 2,
 					intervalsL: 3
-				}));
-				oPC1.addView(new sap.m.PlanningCalendarView("View-D", {
+				});
+				oPC1.addView(oView);
+				oView = new sap.m.PlanningCalendarView("View-D", {
 					key: "D",
 					intervalType: sap.ui.unified.CalendarIntervalType.Day,
 					description: "View2",
@@ -639,7 +640,8 @@
 					intervalsM: 4,
 					intervalsL: 6,
 					showSubIntervals: true
-				}));
+				});
+				oPC1.addView(oView);
 				sap.ui.getCore().applyChanges();
 				equal(oPC1.getViews().length, 2, "2 views set");
 				equal(sap.ui.getCore().byId("PC1-Row1-CalRow").getIntervalType(), sap.ui.unified.CalendarIntervalType.Day, "CalendarRow1 intervalType");
@@ -649,6 +651,12 @@
 				}
 				ok(!jQuery("#PC1-TimeInt").get(0), "CalendarTimeInterval not rendered");
 				ok(jQuery("#PC1-DateInt").get(0), "CalendarDateInterval rendered");
+
+				oView.setIntervalsL(5);
+				sap.ui.getCore().applyChanges();
+				if(jQuery("#PC1").outerWidth() > 1100) {
+					equal(sap.ui.getCore().byId("PC1-Row1-CalRow").getIntervals(), 5, "CalendarRow1 intervals");
+				}
 
 				oPC1.destroyViews();
 				oPC1.setViewKey(sap.ui.unified.CalendarIntervalType.Hour);

@@ -667,6 +667,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var sIntervalType = oView.getIntervalType();
 			var iIntervals = _getIntervals.call(this, oView);
 
+			this._bCheckView = false; // no additional check needed
+
 			switch (sIntervalType) {
 			case sap.ui.unified.CalendarIntervalType.Hour:
 				if (!this._oTimeInterval) {
@@ -1086,6 +1088,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 			this._bDateRangeChanged = undefined;
 		} else {
+			if (oOrigin && oOrigin instanceof sap.m.PlanningCalendarView) {
+				this._bCheckView = true; // update view setting onbeforerendering
+			}
 			Control.prototype.invalidate.apply(this, arguments);
 		}
 
@@ -1103,6 +1108,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		this._bDateRangeChanged = true;
 		var oDestroyed = this.destroyAggregation("specialDates");
+		return oDestroyed;
+
+	};
+
+	PlanningCalendar.prototype.removeAllViews = function() {
+
+		this._bCheckView = true; // update view setting onbeforerendering
+		var aRemoved = this.removeAllAggregation("views");
+		return aRemoved;
+
+	};
+
+	PlanningCalendar.prototype.destroyViews = function() {
+
+		this._bCheckView = true; // update view setting onbeforerendering
+		var oDestroyed = this.destroyAggregation("views");
 		return oDestroyed;
 
 	};
