@@ -1088,5 +1088,111 @@
         "references": []
       }
     ]
+  },
+  "1.40.1": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "a48196a7a61ff202979ae84639c9fdb1b4a741e9",
+        "author": "Hristo Petrov \u003ch.petrov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.RangeSlider Input fields in the handle tooltips",
+        "references": []
+      },
+      {
+        "id": "06e9ccca394d479f266269ac7e42e13d03019577",
+        "author": "Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.CheckBox: focus outline was cut when put in a Grid",
+        "references": []
+      },
+      {
+        "id": "188f804fb1be1a62783e1151971c94e00d485146",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Table: insufficient contrast of focus outline",
+        "references": []
+      },
+      {
+        "id": "3278e2ca7025756408214b55da6b49763fa0f6c4",
+        "author": "Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageSubSection: focus in IE was broken",
+        "references": []
+      }
+    ]
+  },
+  "1.40.2": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "b35f1a66d9d4aadb08b35094d4e2b98f66089611",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.Select: add \"valueState\" property",
+        "references": []
+      },
+      {
+        "id": "ad683101a8f91ce141bcf9c8777060de13b33a61",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input: The input field in an InputListItem is more recognizable now",
+        "references": []
+      },
+      {
+        "id": "3466e221497492c7ac3306f2c05395ce2eb3e8e7",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: ObjectAttribute is verticaly aligned correctly",
+        "references": []
+      },
+      {
+        "id": "a14ba608f9a5ae3ac7628ae8946e5bc7f9526eaa",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: Fix focus visualization on group headers",
+        "references": []
+      }
+    ]
+  },
+  "1.40.3": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "355f68cd62520d4207ce807acc15f42c6c5e7751",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button: Adjust CSS selector specificity",
+        "references": []
+      },
+      {
+        "id": "330d603b6d2dab27a0f30a895f890c486ebf5327",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button: Emphasized button has sufficient contrast ratio",
+        "references": []
+      },
+      {
+        "id": "debe5f6a589800b981ab9b22d5a81eacb08f66c1",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button: Has correct colors in footer context",
+        "references": []
+      },
+      {
+        "id": "b1f6b020b9365e2093789e7bf8444ca80e6d73bc",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Link: Focus visualization within table cell",
+        "references": []
+      },
+      {
+        "id": "059d6a5dfcddbb951c2457f0e68604b76fcb834c",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: Styles for markup description improved",
+        "references": []
+      }
+    ]
   }
 }
