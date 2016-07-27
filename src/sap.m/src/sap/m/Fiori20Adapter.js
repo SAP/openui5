@@ -284,7 +284,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 		if (bIsNavigableView) {
 			aCurrentViewPath.pop();
 			if (aCurrentViewPath.length === 0) {
-				this._fireViewChange(oNode.getId());
+				this._fireViewChange(oNode.getId(), oAdaptOptions);
 			}
 		}
 	};
@@ -369,7 +369,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 					oAdaptOptions: oAdaptOptions
 				}]);
 				aCurrentViewPath.pop();
-				this._fireViewChange(oOwnerViewId);
+				this._fireViewChange(oOwnerViewId, oAdaptOptions);
 			}
 		}.bind(this);
 
@@ -427,7 +427,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 						oAdaptOptions: oAdaptOptions
 					}]);
 					aCurrentViewPath.pop();
-					this._fireViewChange(oOwnerViewId);
+					this._fireViewChange(oOwnerViewId, oAdaptOptions);
 				}
 			}
 		}.bind(this);
@@ -562,13 +562,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 		/* cache the identified title */
 		if (oAdaptedContent.oTitleInfo) {
 			oAdaptationResult.aViewTitles[sTopViewId] = oAdaptedContent.oTitleInfo;
-			this._registerChangeListener(oAdaptationResult.aViewTitles, sTopViewId);
+			this._registerChangeListener(oAdaptationResult.aViewTitles, sTopViewId, oAdaptOptions);
 		}
 
 		/* cache the identified subTitle */
 		if (oAdaptedContent.oSubTitleInfo) {
 			oAdaptationResult.aViewSubTitles[sTopViewId] = oAdaptedContent.oSubTitleInfo;
-			this._registerChangeListener(oAdaptationResult.aViewSubTitles, sTopViewId);
+			this._registerChangeListener(oAdaptationResult.aViewSubTitles, sTopViewId, oAdaptOptions);
 		}
 
 		/* cache the identified backButton */
@@ -579,7 +579,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 		return oAdaptedContent;
 	};
 
-	Fiori20Adapter._registerChangeListener = function(aTitleInfoCache, sViewId) {
+	Fiori20Adapter._registerChangeListener = function(aTitleInfoCache, sViewId, oAdaptOptions) {
 
 		var oTitleInfo = aTitleInfoCache[sViewId]; //get the cached titleInfo for the given view
 
@@ -588,7 +588,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 			var fnChangeListener = function (oEvent) {
 				var oTitleInfo = aTitleInfoCache[sViewId];
 				oTitleInfo.text = oEvent.getParameter("newValue");
-				this._fireViewChange(sViewId);
+				this._fireViewChange(sViewId, oAdaptOptions);
 			}.bind(this);
 
 			oTitleInfo.oControl.attachEvent(oTitleInfo.sChangeEventId, fnChangeListener);
@@ -596,9 +596,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 		}
 	};
 
-	Fiori20Adapter._fireViewChange = function(sViewId) {
+	Fiori20Adapter._fireViewChange = function(sViewId, oAdaptOptions) {
 		var oAdaptationResult = this._getCachedAdaptationResult(sViewId);
 		oAdaptationResult.sViewId = sViewId;
+		oAdaptationResult.oAdaptOptions = oAdaptOptions;
 		oEventProvider.fireEvent("adaptedViewChange", oAdaptationResult);
 	};
 
