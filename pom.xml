@@ -107,6 +107,8 @@
 						<extension>png</extension>
 						<extension>ico</extension>
 						<extension>properties</extension><!-- excluded as those files don't use UTF-8 encoding and as no filtering is needed -->
+						<extension>woff</extension>
+						<extension>woff2</extension>
 					</nonFilteredFileExtensions>
 					<delimiters>
 						<delimiter>${*}</delimiter>
