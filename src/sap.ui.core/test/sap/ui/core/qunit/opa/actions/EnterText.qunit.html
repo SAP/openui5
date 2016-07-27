@@ -219,6 +219,25 @@
 				sinon.assert.calledWith(this.fnErrorSpy,  sinon.match(/has no dom representation/), sinon.match(oEnterText._sLogPrefix));
 			});
 
+			QUnit.test("Should log a message if a control cannot be focused", function () {
+				// Arrange
+				var oSpy = sinon.spy(jQuery.sap.log, "debug");
+				this.oControl = new Input({
+					enabled : false
+				});
+				this.oControl.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				var oEnterText = new EnterText({
+					text: "foo"
+				});
+
+				// Act
+				oEnterText.executeOn(this.oControl);
+
+				sinon.assert.calledWith(oSpy,  sinon.match(/could not be focused/),  sinon.match(oEnterText._sLogPrefix));
+			});
+
 			QUnit.test("Should log an error if no text is passed to EnterText", function () {
 				// Arrange
 				this.oControl = new Input();
