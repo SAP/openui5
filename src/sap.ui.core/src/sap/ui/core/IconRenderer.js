@@ -30,11 +30,16 @@ sap.ui.define(['jquery.sap.global', './IconPool', './library'], function(jQuery,
 			sSize = oControl.getSize(),
 			sTooltip = oControl.getTooltip_AsString(),
 			bUseIconTooltip = oControl.getUseIconTooltip(),
-			bNoTabStop = oControl.getNoTabStop();
+			bNoTabStop = oControl.getNoTabStop(),
+			aLabelledBy = oControl.getAriaLabelledBy(),
+			oAccAttributes = oControl._getAccessibilityAttributes(),
+			// oInvisibleText must be retrieved after calling _getAccessibilityAttributes
+			// because it may be created within the function
+			oInvisibleText = oControl.getAggregation("_invisibleText");
 
 		oRm.write("<span");
 		oRm.writeControlData(oControl);
-		oRm.writeAccessibilityState(oControl, oControl._getAccessibilityAttributes());
+		oRm.writeAccessibilityState(oControl, oAccAttributes);
 
 		if (sTooltip || (bUseIconTooltip && oIconInfo && oIconInfo.text)) {
 			oRm.writeAttributeEscaped("title", sTooltip || oIconInfo.text);
@@ -58,11 +63,11 @@ sap.ui.define(['jquery.sap.global', './IconPool', './library'], function(jQuery,
 			oRm.addStyle("line-height", sHeight);
 		}
 
-		if (!(sColor in IconColor)) {
+		if (sColor && !(sColor in IconColor)) {
 			oRm.addStyle("color", jQuery.sap.encodeHTML(sColor));
 		}
 
-		if (!(sBackgroundColor in IconColor)) {
+		if (sBackgroundColor && !(sBackgroundColor in IconColor)) {
 			oRm.addStyle("background-color", jQuery.sap.encodeHTML(sBackgroundColor));
 		}
 
@@ -83,7 +88,13 @@ sap.ui.define(['jquery.sap.global', './IconPool', './library'], function(jQuery,
 		oRm.writeClasses();
 		oRm.writeStyles();
 
-		oRm.write("></span>");
+		oRm.write(">");
+
+			if (aLabelledBy.length && oInvisibleText) {
+				oRm.renderControl(oInvisibleText);
+			}
+
+		oRm.write("</span>");
 	};
 
 	return IconRenderer;
