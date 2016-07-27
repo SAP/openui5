@@ -311,11 +311,10 @@ sap.ui.define([
 	 * @param {number} [iLength]
 	 *   The number of contexts to retrieve beginning from the start index; defaults to the model's
 	 *   size limit, see {@link sap.ui.model.Model#setSizeLimit}
-	 * @param {number} [iThreshold=0]
-	 *   The number of contexts to read in addition to <code>iLength</code> when requesting data
-	 *   from the server; with this, controls can prefetch data that is likely to be needed soon,
-	 *   e.g. when scrolling down in a table. Negative values will be treated as 0.
-	 *   Supported since 1.39.0
+	 * @param {number} [iMaximumPrefetchSize=0]
+	 *   The maximum number of contexts to read before and after the given range; with this,
+	 *   controls can prefetch data that is likely to be needed soon, e.g. when scrolling down in a
+	 *   table. Negative values will be treated as 0.
 	 * @returns {sap.ui.model.odata.v4.Context[]}
 	 *   The array of already created contexts with the first entry containing the context for
 	 *   <code>iStart</code>
@@ -324,7 +323,7 @@ sap.ui.define([
 	 * @see sap.ui.model.ListBinding#getContexts
 	 * @since 1.37.0
 	 */
-	ODataListBinding.prototype.getContexts = function (iStart, iLength, iThreshold) {
+	ODataListBinding.prototype.getContexts = function (iStart, iLength, iMaximumPrefetchSize) {
 		var sChangeReason,
 			oContext = this.oContext,
 			bDataRequested = false,
@@ -388,8 +387,8 @@ sap.ui.define([
 
 		iStart = iStart || 0;
 		iLength = iLength || oModel.iSizeLimit;
-		if (!iThreshold || iThreshold < 0) {
-			iThreshold = 0;
+		if (!iMaximumPrefetchSize || iMaximumPrefetchSize < 0) {
+			iMaximumPrefetchSize = 0;
 		}
 
 		if (!sResolvedPath) {
@@ -398,7 +397,7 @@ sap.ui.define([
 			return [];
 		}
 
-		oReadInfo = _ODataHelper.getReadRange(this.aContexts, iStart, iLength, iThreshold,
+		oReadInfo = _ODataHelper.getReadRange(this.aContexts, iStart, iLength, iMaximumPrefetchSize,
 			this.iMaxLength);
 
 		if (oReadInfo) {

@@ -39,6 +39,30 @@ sap.ui.define([
 		return false;
 	}
 
+	/**
+	 * Checks whether the given data array contains at least one <code>undefined</code> entry
+	 * within given start (inclusive) and given end (exclusive).
+	 *
+	 * @param {object[]} aData
+	 *   The data array
+	 * @param {number} iStart
+	 *   The start index (inclusive) for the search
+	 * @param {number} iEnd
+	 *   The end index (exclusive) for the search
+	 * @returns {boolean}
+	 *   true if given data array contains at least one <code>undefined</code> entry
+	 *   within given start (inclusive) and given end (exclusive).
+	 */
+	function isDataMissing(aData, iStart, iEnd) {
+		var i;
+		for (i = iStart; i < iEnd; i += 1) {
+			if (aData[i] === undefined) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	ODataHelper = {
 		aAllowedSystemQueryOptions : ["$expand", "$filter", "$orderby", "$select"],
 
@@ -514,7 +538,7 @@ sap.ui.define([
 		/**
 		 * Calculates the index range to be read for the given start, length and threshold.
 		 * Checks if <code>aContexts</code> entries are available for the given index range plus
-		 * half the threshold left and right to it. If this is not the case, returns the read range
+		 * half the threshold left and right to it. If this is not the case, returns the range
 		 * to be read; otherwise undefined.
 		 *
 		 * @param {sap.ui.model.odata.v4.Context[]} aContexts
@@ -523,9 +547,9 @@ sap.ui.define([
 		 *   The start index for the data request
 		 * @param {number} iLength
 		 *   The number of requested entries
-		 * @param {number} iThreshold
-		 *   The number of additionally requested entries (prefetch)
-		 * @param {number} [iMaxLength=Infinity]
+		 * @param {number} iMaximumPrefetchSize
+		 *   The number of entries to prefetch before and after the given range
+		 * @param {number} iMaxLength
 		 *   The upper boundary for the total number of entries
 		 * @returns {object}
 		 *   Returns <code>undefined</code> if all data is available and the prefetch cache is
@@ -533,54 +557,37 @@ sap.ui.define([
 		 *   Otherwise returns an object with a member <code>start</code> for the start index for
 		 *   the next read and <code>length</code> for the number of entries to be read.
 		 */
-		getReadRange : function (aContexts, iStart, iLength, iThreshold, iMaxLength) {
-			var i,
-				iFirstEmptyIndexLeft = -1,
-				iFirstEmptyIndexRight = -1,
-				iMax = Math.min(iStart + iLength + iThreshold / 2, iMaxLength || Infinity),
-				iMin = Math.max(iStart - iThreshold / 2, 0),
-				oResult = {length : iLength, start : iStart};
+		getReadRange : function (aContexts, iStart, iLength, iMaximumPrefetchSize, iMaxLength) {
+			var bMissingDataLeft,
+				iMax = Math.min(iStart + iLength + iMaximumPrefetchSize / 2, iMaxLength),
+				iMin = Math.max(iStart - iMaximumPrefetchSize / 2, 0),
+				bMissingDataRight = isDataMissing(aContexts, iStart, iMax),
+				oResult;
 
-			for (i = iStart; i < iMax; i += 1) {
-				if (aContexts[i] === undefined) {
-					iFirstEmptyIndexRight = i;
-					break;
+			if (iMaximumPrefetchSize === 0) {
+				return !bMissingDataRight || iStart >= iMaxLength
+					? undefined // all data available
+					: {length : iLength, start : iStart};
+			}
+			bMissingDataLeft = isDataMissing(aContexts, iMin, iStart);
+			if (bMissingDataLeft || bMissingDataRight) {
+				oResult = {
+					start : bMissingDataLeft ? iStart - iMaximumPrefetchSize : iStart,
+					length : iLength + iMaximumPrefetchSize
+				};
+				if (bMissingDataLeft && bMissingDataRight) {
+					oResult.length += iMaximumPrefetchSize;
 				}
-			}
-			if (iThreshold === 0 && iFirstEmptyIndexRight < 0) {
-				return undefined; // all data available
-			}
-			if (iThreshold > 0) {
-				for (i = iStart - 1; i >= iMin; i -= 1) {
-					if (aContexts[i] === undefined) {
-						iFirstEmptyIndexLeft = i;
-						break;
-					}
+				if (oResult.start < 0) {
+					// reduce length to read at most iMaximumPrefetchSize elements after
+					// iStart + iLength
+					oResult.length += oResult.start;
+					oResult.start = 0;
 				}
-				if (iFirstEmptyIndexLeft < 0 && iFirstEmptyIndexRight < 0) {
-					return undefined; // enough data available
-				} else if (iFirstEmptyIndexLeft >= 0 && iFirstEmptyIndexRight >= 0) {
-					// not enough data in front of and after iStart --> read 2x iThreshold
-					oResult = {
-						start : iStart - iThreshold,
-						length : iLength + 2 * iThreshold
-					};
-				} else {
-					// not enough data either before or after iStart
-					oResult = {
-						start : iFirstEmptyIndexRight >= 0
-							? iFirstEmptyIndexRight
-							: iFirstEmptyIndexLeft - iThreshold - iLength + 1,
-						length : iLength + iThreshold
-					};
+				if (oResult.start >= iMaxLength) {
+					// no read after iMaxLength
+					oResult = undefined;
 				}
-			}
-
-			if (oResult.start < 0) {
-				oResult.start = 0;
-			}
-			if (oResult.start >= iMaxLength) {
-				oResult = undefined;
 			}
 			return oResult;
 		},
