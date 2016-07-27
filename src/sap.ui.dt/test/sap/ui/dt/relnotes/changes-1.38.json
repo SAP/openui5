@@ -22,5 +22,17 @@
         "references": []
       }
     ]
+  },
+  "1.38.5": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "c67c47462071cd666eaff05e4fd04f3970168b7f",
+        "author": "Peter Trebing \u003cpeter.trebing@sap.com\u003e",
+        "type": "FIX",
+        "text": "fixes incident1680124836",
+        "references": []
+      }
+    ]
   }
 }
