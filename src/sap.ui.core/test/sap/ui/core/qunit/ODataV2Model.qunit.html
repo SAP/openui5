@@ -4199,6 +4199,20 @@
 			this.oModel.submitChanges();
 		}.bind(this))
 	});
+	
+	asyncTest("callFunction:check eTag", function() {
+		var that = this;
+		this.oModel.metadataLoaded().then(function() {
+			var fnSent = function(oInfo) {
+				that.oModel.detachRequestCompleted(fnSent);
+				ok(oInfo.getParameter('headers')['If-Match'] === 'myEtag', 'header for eTag set correctly');
+				start();
+			};
+			this.oModel.attachRequestSent(fnSent);
+			this.oModel.callFunction("/GetProductsByRating", {method: "PUT", eTag: "myEtag"});
+			this.oModel.submitChanges();
+		}.bind(this))
+	});
 
 	asyncTest("submit:check eTag - forceUpdate", function() {
 		var that = this;
