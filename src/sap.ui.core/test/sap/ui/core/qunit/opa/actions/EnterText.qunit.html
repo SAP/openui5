@@ -36,6 +36,7 @@
 				TextArea)
 		{
 			"use strict";
+			QUnit.config.testTimeout = 5000;
 
 			QUnit.module("Entering text",{
 				afterEach: function() {
@@ -59,20 +60,43 @@
 				liveChangeEventParameter: "newValue",
 				changeEventParameter: "query"
 			}].forEach(function (testInfo) {
+				var oControl,
+					iLiveChangeCalls,
+					fnChangeTriggered,
+					fnLiveChangeTriggered,
+					fnOnSapFocusInSpy,
+					fnOnSapFocusLeaveSpy;
 
-				QUnit.test("Should enter a text and preserve the value in a " + testInfo.Control.getMetadata().getName(), function(assert) {
+				function createControl () {
 					// Arrange
-					var oControl = new testInfo.Control({
+					oControl = new testInfo.Control({
 								value: "A"
-							}),
-							iLiveChangeCalls = 0,
-							fnChangeTriggered = assert.async(),
-							fnLiveChangeTriggered = assert.async();
-					this.oControl = oControl;
+							});
+					iLiveChangeCalls = 0;
+					fnChangeTriggered = assert.async();
+					fnLiveChangeTriggered = assert.async();
+
+
+					// if no focus functions are defined - define them to spy on them
+					if(!oControl.onfocusin) {
+						oControl.onfocusin = $.noop;
+					}
+					if(!oControl.onsapfocusleave) {
+						oControl.onsapfocusleave = $.noop;
+					}
+
+					fnOnSapFocusInSpy = sinon.spy(oControl, "onfocusin");
+					fnOnSapFocusLeaveSpy = sinon.spy(oControl, "onsapfocusleave");
+
 					oControl.placeAt("qunit-fixture");
 
 					//Make sure that the control is rendered
 					sap.ui.getCore().applyChanges();
+					return oControl;
+				}
+
+				QUnit.test("Should enter a text and preserve the value in a " + testInfo.Control.getMetadata().getName(), function(assert) {
+					this.oControl = createControl();
 
 					// System under Test
 					var oEnterTextAction = new EnterText({
@@ -82,7 +106,8 @@
 
 					oControl.attachLiveChange(function (oEvent) {
 						iLiveChangeCalls++;
-						assert.strictEqual(document.activeElement, oControl.getFocusDomRef(), "Input has focus");
+						sinon.assert.calledOnce(fnOnSapFocusInSpy);
+						sinon.assert.notCalled(fnOnSapFocusLeaveSpy);
 
 						if (iLiveChangeCalls === 1) {
 							assert.strictEqual(oEvent.getParameter(testInfo.liveChangeEventParameter), "Af");
@@ -100,7 +125,11 @@
 
 					oControl.attachEvent(testInfo.changeEvent, function (oEvent) {
 						assert.strictEqual(oEvent.getParameter(testInfo.changeEventParameter), "AfoO", "Change event was correct");
-						fnChangeTriggered();
+
+						setTimeout(function () {
+							sinon.assert.calledOnce(fnOnSapFocusLeaveSpy);
+							fnChangeTriggered();
+						},0);
 					});
 
 					// Act
@@ -109,17 +138,7 @@
 
 				QUnit.test("Should enter a text and clear the value in a " + testInfo.Control.getMetadata().getName(), function(assert) {
 					// Arrange
-					var oControl = new testInfo.Control({
-								value: "A"
-							}),
-							iLiveChangeCalls = 0,
-							fnChangeTriggered = assert.async(),
-							fnLiveChangeTriggered = assert.async();
-					this.oControl = oControl;
-					oControl.placeAt("qunit-fixture");
-
-					//Make sure that the control is rendered
-					sap.ui.getCore().applyChanges();
+					this.oControl = createControl();
 
 					// System under Test
 					var oEnterTextAction = new EnterText({
@@ -128,7 +147,8 @@
 
 					oControl.attachLiveChange(function (oEvent) {
 						iLiveChangeCalls++;
-						assert.strictEqual(document.activeElement, oControl.getFocusDomRef(), "Input has focus");
+						sinon.assert.calledOnce(fnOnSapFocusInSpy);
+						sinon.assert.notCalled(fnOnSapFocusLeaveSpy);
 
 						if (iLiveChangeCalls === 1) {
 							assert.strictEqual(oEvent.getParameter(testInfo.liveChangeEventParameter), "");
@@ -150,7 +170,10 @@
 
 					oControl.attachEvent(testInfo.changeEvent, function (oEvent) {
 						assert.strictEqual(oEvent.getParameter(testInfo.changeEventParameter), "foO");
-						fnChangeTriggered();
+						setTimeout(function () {
+							sinon.assert.calledOnce(fnOnSapFocusLeaveSpy);
+							fnChangeTriggered();
+						},0);
 					});
 
 					// Act

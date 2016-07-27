@@ -1,8 +1,9 @@
 /*!
  * ${copyright}
  */
+/*global FocusEvent, document */
 
-sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
+sap.ui.define(['jquery.sap.global', './Action', 'sap/ui/Device'], function ($, Action, Device) {
 	"use strict";
 
 	/**
@@ -69,14 +70,33 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 			if (!$ActionDomRef.is(":focus")) {
 				$.sap.log.warning("Control " + oControl + " could not be focused - maybe you are debugging?", this._sLogPrefix);
 			}
+
 			var oUtils = this.getUtils();
+
+			var createAndDispatchFocusEvent = function (sName) {
+				var oFocusEvent;
+
+				// PhantomJS does not have a FocusEvent constructer and no InitFocusEvent function
+				if (Device.browser.phantomJS) {
+					oFocusEvent = document.createEvent("FocusEvent");
+					oFocusEvent.initEvent(sName, true, false);
+				// IE 11 and below don't really like the FocusEvent constructor - Fire it the IE way
+				} else if (Device.browser.msie && (Device.browser.version < 12)) {
+					oFocusEvent = document.createEvent("FocusEvent");
+					oFocusEvent.initFocusEvent(sName, true, false, window, 0, oActionDomRef);
+				} else {
+					oFocusEvent = new FocusEvent(sName);
+				}
+
+				oActionDomRef.dispatchEvent(oFocusEvent);
+				$.sap.log.info("Dispatched focus event: '" + sName + "'", this._sLogPrefix);
+			}.bind(this);
 
 			var bWasFocused = $ActionDomRef.is(":focus");
 			if (!bWasFocused) {
-				$.sap.log.warning("Control " + oControl + " could not be focused - maybe you are debugging?", this._sLogPrefix);
-				// focus did not succeed so at least fire the corresponding events
-				oUtils.triggerEvent("focusin", oActionDomRef);
-				oUtils.triggerEvent("focus", oActionDomRef);
+				createAndDispatchFocusEvent("focusin");
+				createAndDispatchFocusEvent("focus");
+				createAndDispatchFocusEvent("activate");
 			}
 
 			if (this.getClearTextFirst()) {
@@ -93,14 +113,11 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 				oUtils.triggerEvent("input", oActionDomRef);
 			});
 
-			if (bWasFocused) {
-				// try to invoke the dom blur method
-				$ActionDomRef.blur();
-			} else {
-				// simulate the blur since we could not focus the element
-				oUtils.triggerEvent("focusout", oActionDomRef);
-				oUtils.triggerEvent("blur", oActionDomRef);
-			}
+			// simulate the blur - focus stays but the value is updated now
+			createAndDispatchFocusEvent("focusout");
+			createAndDispatchFocusEvent("blur");
+			createAndDispatchFocusEvent("deactivate");
+
 			// always trigger search since searchfield does not react to loosing the focus
 			oUtils.triggerEvent("search", oActionDomRef);
 		}
