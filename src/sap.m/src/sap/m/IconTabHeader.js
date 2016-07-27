@@ -173,6 +173,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this._oOverflowButton;
 	};
 
+	/**
+	 * Handles overrflow button "press" event
+	 * @private
+	 */
 	IconTabHeader.prototype._overflowButtonPress = function (event) {
 
 		if (!this._oPopover) {
@@ -186,7 +190,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			).addStyleClass('sapMITBPopover');
 
 			if (sap.ui.Device.system.phone) {
-				this._oPopover._oControl.addButton(this.createPopoverCloseButton());
+				this._oPopover._oControl.addButton(this._createPopoverCloseButton());
 			}
 		}
 
@@ -200,7 +204,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._oPopover.openBy(this._getOverflowButton());
 	};
 
-	IconTabHeader.prototype.createPopoverCloseButton = function() {
+	/**
+	 * Creates popover close button
+	 * @private
+	 */
+	IconTabHeader.prototype._createPopoverCloseButton = function() {
 		var that = this;
 		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		return new Button({
@@ -211,6 +219,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		});
 	};
 
+	/**
+	 * Closes the overflow popover and focuses the correct tab filter
+	 * @private
+	 */
 	IconTabHeader.prototype._closeOverflow = function () {
 
 		if (!sap.ui.Device.system.desktop) {
@@ -223,8 +235,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Creates overflow items
-
+	 * Sets overflow items
 	 *
 	 * @returns {sap.ui.core.Element}
 	 * @private
@@ -267,6 +278,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 
+	/**
+	 * Returns SelectList item, that corresponds ot specific TabFilter.
+	 * @private
+	 */
 	IconTabHeader.prototype._findSelectItem = function (oTabFilter) {
 
 		var oSelectList = this._getSelectList(),

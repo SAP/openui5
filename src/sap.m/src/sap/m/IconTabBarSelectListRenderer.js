@@ -23,17 +23,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/IconPoo
 	 * @param {sap.ui.core.Control} control an object representation of the control that should be rendered
 	 */
 	IconTabBarSelectListRenderer.render = function(rm, control) {
-		var item,
+		var i,
+			item,
 			items = control.getItems(),
 			iconTabHeader = control._iconTabHeader,
 			isTextOnly = true,
 			isIconOnly,
-			isRtl = sap.ui.getCore().getConfiguration().getRTL();
+			isRtl = sap.ui.getCore().getConfiguration().getRTL(),
+			length = items.length;
 
 		if (iconTabHeader) {
 			isTextOnly = iconTabHeader._bTextOnly;
 			isIconOnly = this.checkIconOnly(items);
 		}
+
+		var options = {
+			isTextOnly:isTextOnly,
+			isIconOnly: isIconOnly,
+			isRtl: isRtl,
+			length: length,
+			resourceBundle: sap.ui.getCore().getLibraryResourceBundle('sap.m')
+		};
 
 		rm.write("<ul");
 
@@ -51,17 +61,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/IconPoo
 
 		rm.write(">");
 
-		var length = items.length;
-
-		var options = {
-			isTextOnly:isTextOnly,
-			isIconOnly: isIconOnly,
-			isRtl: isRtl,
-			length: length,
-			resourceBundle: sap.ui.getCore().getLibraryResourceBundle('sap.m')
-		};
-
-		for (var i = 0; i < items.length; i++) {
+		for (i = 0; i < items.length; i++) {
 			item = items[i];
 			options.index = i;
 

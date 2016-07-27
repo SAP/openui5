@@ -76,9 +76,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control',
 		IconTabBarSelectList.prototype.exit = function () {
 			if (this._itemNavigation) {
 				this._itemNavigation.destroy();
+				this._itemNavigation = null;
 			}
 		};
 
+		/**
+		 * Called after the control is rendered.
+		 *
+		 * @private
+		 */
 		IconTabBarSelectList.prototype.onAfterRendering = function () {
 			var item,
 				items = this.getItems(),
@@ -140,8 +146,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control',
 		 */
 		IconTabBarSelectList.prototype.ontap = function (event) {
 
-			var source = event.target;
-			var $target = jQuery(source);
+			var $target = jQuery(event.target);
 
 			if (!$target.hasClass('sapMITBSelectItem')) {
 				$target = $target.parent(".sapMITBSelectItem");
