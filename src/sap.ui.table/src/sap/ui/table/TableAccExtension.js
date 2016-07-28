@@ -907,7 +907,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 
 		var sTitle = null,
 			oTable = this.getTable(),
-			aRefs = [$Row, $Row.children(), $RowHdr, $FixedRow];
+			aRefs = [$Row, $Row.children(), $RowHdr, $FixedRow],
+			oBinding = oTable.getBinding("rows");
 
 		if (!bGroup && $RowHdr) {
 			var iIndex = $RowHdr.attr("data-sap-ui-rowindex");
@@ -920,6 +921,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 				"aria-haspopup" : bGroup ? "true" : null,
 				"title" : sTitle
 			});
+		}
+
+		if (oBinding && oBinding.hasTotaledMeasures && iLevel > 0 && (!oBinding.bProvideGrandTotals || !oBinding.hasTotaledMeasures())) {
+			// Summary top-level row is not displayed (always has level 0) -> for aria we can shift all the levels 1 step up;
+			iLevel = iLevel - 1;
 		}
 
 		for (var i = 0; i < aRefs.length; i++) {
