@@ -108,6 +108,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/IconPoo
 
 		if (!item.getEnabled()) {
 			rm.addClass("sapMITBDisabled");
+			rm.writeAttribute("aria-disabled", true);
 		}
 
 		rm.addClass("sapMITBSelectItem");

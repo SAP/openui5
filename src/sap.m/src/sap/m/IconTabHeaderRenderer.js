@@ -180,6 +180,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 				if (!oItem.getEnabled()) {
 					oRM.addClass("sapMITBDisabled");
+					oRM.writeAttribute("aria-disabled", true);
 				}
 
 				var sTooltip = oItem.getTooltip_AsString();
