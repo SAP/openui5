@@ -693,6 +693,37 @@
 				ok (jQuery('.sapMITBFilter').length > 0, 'IconTabFilters are rendered')
 			});
 
+			test("disabled tab", function() {
+
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter ({
+							icon: "sap-icon://instance"
+						}),
+						new sap.m.IconTabFilter ({
+							icon: "sap-icon://instance",
+							enabled: false
+						})
+					]
+				});
+
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+
+				var aTabs = oIconTabBar.$().find('.sapMITBFilter');
+
+				ok(!aTabs[0].hasAttribute('aria-disabled'), "First item is not disabled");
+				ok(aTabs[1].hasAttribute('aria-disabled'), "Second item is disabled");
+
+				// Clean up
+				oIconTabBar.destroy();
+			});
+
+
 			module("icon color");
 
 			test("Default", function() {
