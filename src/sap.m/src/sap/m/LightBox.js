@@ -339,12 +339,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			if (window.innerWidth > lightBoxWidth + minimumOffset) {
 				left = '50%';
-				marginLeft = (-lightBoxWidth / 2);
+				marginLeft = Math.round(-lightBoxWidth / 2);
 			}
 
 			if (window.innerHeight > lightBoxHeight + minimumOffset) {
 				top = '50%';
-				marginTop = (-lightBoxHeight / 2);
+				marginTop = Math.round(-lightBoxHeight / 2);
 			}
 
 			this._$lightBox.css({
