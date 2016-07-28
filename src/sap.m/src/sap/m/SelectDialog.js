@@ -299,6 +299,19 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 		this._iListUpdateRequested = 0; // to only show the busy indicator when we initiated the change
 	};
 
+	SelectDialog.prototype.setBusy = function () {
+		// Overwrite setBusy as it should be handled in the "real" dialog
+		this._oDialog.setBusy.apply(this._oDialog, arguments);
+
+		// Should return "this" (sap.m.SelectDialog)
+		return this;
+	};
+
+	SelectDialog.prototype.getBusy = function () {
+		// Overwrite getBusy as it should be handled in the "real" dialog
+		return this._oDialog.getBusy.apply(this._oDialog, arguments);
+	};
+
 	/**
 	 * Destroys the control
 	 * @private

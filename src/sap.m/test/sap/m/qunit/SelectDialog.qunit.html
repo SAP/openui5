@@ -127,6 +127,26 @@
 					assert.strictEqual(this.oSelectDialog.getMultiSelect(), true, 'The multiSelect mode should be "true"');
 				});
 
+				QUnit.test("setBusy", function (assert) {
+					this.oSelectDialog.open();
+					this.clock.tick(1000);
+
+					var oDialogRef2 = this.oSelectDialog.setBusy(true);
+					this.clock.tick(1500);
+
+					assert.strictEqual(this.oSelectDialog, oDialogRef2, "Should return the object itself. Ready for method chaining");
+					assert.strictEqual(oDialogRef2.getBusy(), true, "Should return dialog's proper busy state");
+					assert.strictEqual(this.oSelectDialog.getBusy(), true, "Should return dialog's proper busy state");
+					assert.strictEqual(this.oSelectDialog.$("busyIndicator").length, 1, "To have busy indicator activated inside the real dialog");
+
+					oDialogRef2 = this.oSelectDialog.setBusy(false);
+					this.clock.tick(1000);
+
+					assert.strictEqual(oDialogRef2.getBusy(), false, "Should return dialog's proper busy state");
+					assert.strictEqual(this.oSelectDialog.getBusy(), false, "Should return dialog's proper busy state");
+					assert.strictEqual(this.oSelectDialog.$("busyIndicator").length, 0, "To have busy indicator deactivated inside the real dialog");
+				});
+
 				QUnit.module("Rendering", {
 					setup: function() {
 						this.oSelectDialog = new sap.m.SelectDialog("selectDialog");
