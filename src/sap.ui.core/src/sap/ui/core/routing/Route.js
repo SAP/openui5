@@ -192,6 +192,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 			},
 
 			/**
+			 * The 'matched' event is fired, when the current URL hash matches:
+			 * <pre>
+			 *  a. the pattern of the route.
+			 *  b. the pattern of its sub-route.
+			 *  c. the pattern of its nested route. When this occurs, the 'nestedRoute' parameter is set with the instance of nested route.
+			 * </pre>
+			 *
+			 * Please refer to {@link sap.ui.core.routing.Route#patternMatched} for getting notified only when its own pattern is matched with the URL hash not its sub-routes or nested route.
+			 *
+			 * @name sap.ui.core.routing.Route#matched
+			 * @event
+			 * @param {sap.ui.base.Event} oEvent
+			 * @param {sap.ui.base.EventProvider} oEvent.getSource
+			 * @param {object} oEvent.getParameters
+			 * @param {string} oEvent.getParameters.name The name of the route
+			 * @param {object} oEvent.getParameters.arguments An key-value pair object which contains the arguments defined in the route
+			 *  resolved with the corresponding information from the current URL hash
+			 * @param {object} oEvent.getParameters.config The configuration object of the route
+			 * @param {sap.ui.core.routing.Route} [oEvent.getParameters.nestedRoute] The nested route instance of this route. The event
+			 *  is fired on this route because the pattern in the nested route is matched with the current URL hash. This parameter can be
+			 *  used to decide whether the current route is matched because of its nested child route. For more information about nested
+			 *  child route please refer to the documentation of oConfig.parent in {@link sap.ui.core.routing.Route#constructor}
+			 * @public
+			 */
+
+			/**
 			 * Attach event-handler <code>fnFunction</code> to the 'matched' event of this <code>sap.ui.core.routing.Route</code>.<br/>
 			 *
 			 *
@@ -222,6 +248,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 			detachMatched : function(fnFunction, oListener) {
 				return this.detachEvent("matched", fnFunction, oListener);
 			},
+
+			/**
+			 * The 'patternMatched' event is fired, only when the current URL hash matches the pattern of the route.
+			 *
+			 * @name sap.ui.core.routing.Route#patternMatched
+			 * @event
+			 * @param {sap.ui.base.Event} oEvent
+			 * @param {sap.ui.base.EventProvider} oEvent.getSource
+			 * @param {object} oEvent.getParameters
+			 * @param {string} oEvent.getParameters.name The name of the route
+			 * @param {object} oEvent.getParameters.arguments An key-value pair object which contains the arguments defined in the route
+			 *  resolved with the corresponding information from the current URL hash
+			 * @param {object} oEvent.getParameters.config The configuration object of the route
+			 * @public
+			 */
 
 			/**
 			 * Attach event-handler <code>fnFunction</code> to the 'patternMatched' event of this <code>sap.ui.core.routing.Route</code>.<br/>

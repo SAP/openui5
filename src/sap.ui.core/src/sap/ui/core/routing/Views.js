@@ -126,6 +126,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/UI
 			 * @param {object} oEvent.getParameters
 			 * @param {sap.ui.core.mvc.View} oEvent.getParameters.view the instance of the created view.
 			 * @param {object} oEvent.getParameters.viewOptions The view options passed to {@link sap.ui.view}
+			 * @public
 			 */
 
 			/**
