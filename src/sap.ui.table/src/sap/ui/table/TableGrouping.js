@@ -207,7 +207,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 				$Row.toggleClass("sapUiAnalyticalTableSum", !bChildren && bSum)
 					.toggleClass("sapUiAnalyticalTableDummy", false)
 					.toggleClass("sapUiTableGroupHeader", bChildren)
-					.toggleClass("sapUiTableRowHidden", bChildren && bHidden);
+					.toggleClass("sapUiTableRowHidden", bChildren && bHidden || oRow._bHidden);
 
 				jQuery.sap.byId(oRow.getId() + "-groupHeader")
 					.toggleClass("sapUiTableGroupIconOpen", bChildren && bExpanded)
