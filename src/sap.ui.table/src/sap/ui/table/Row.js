@@ -209,13 +209,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Context
 		}
 
 		var $rowTargets = this.getDomRefs(true).row;
-		if (oContext) {
-			this._bHidden = false;
-			$rowTargets.removeClass("sapUiTableRowHidden");
-		} else {
-			this._bHidden = true;
-			$rowTargets.addClass("sapUiTableRowHidden");
-		}
+		this._bHidden = !oContext;
+		$rowTargets.toggleClass("sapUiTableRowHidden", this._bHidden);
 
 		// collect rendering information for new binding context
 		this._collectRenderingInformation(oContext, oNode, oBinding);
