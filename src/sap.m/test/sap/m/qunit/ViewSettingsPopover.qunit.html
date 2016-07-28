@@ -1039,7 +1039,9 @@
 			//Assert
 			strictEqual(oItem.getTitle(), 'item B', 'correct item is being asserted');
 			strictEqual(jQuery("#" + oItem.getId()).length, 1, 'second item is rendered after model property change');
-			strictEqual(this.sut._getDetailsPage().getHeaderContent()[0].getContentMiddle()[0].getText(), "Filter By:Filter text B", 'title correctly changed in the header');
+			strictEqual(this.sut._getDetailsPage().getHeaderContent()[0].getContentMiddle()[0].getText(),
+					sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("VIEWSETTINGS_TITLE_FILTERBY") + "Filter text B",
+					'title correctly changed in the header');
 
 			//Act
 			oSecondData[0].myItems.push({
@@ -1418,7 +1420,8 @@
 			strictEqual(this.sut.isOpen(), true, 'Popup is open');
 
 			//Assert
-			strictEqual(this.sut._getTitle().getText(), 'Sort By');
+			strictEqual(this.sut._getTitle().getText(),
+				sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("VIEWSETTINGS_TITLE_SORT"));
 		});
 
 		test("Single group tab", function (assert) {
@@ -1435,7 +1438,8 @@
 			strictEqual(this.sut.isOpen(), true, 'Popup is open');
 
 			//Assert
-			strictEqual(this.sut._getTitle().getText(), 'Sort By');
+			strictEqual(this.sut._getTitle().getText(),
+				sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("VIEWSETTINGS_TITLE_SORT"));
 		});
 
 		test("Single filter tab", function (assert) {
@@ -1452,7 +1456,8 @@
 			strictEqual(this.sut.isOpen(), true, 'Popup is open');
 
 			//Assert
-			strictEqual(this.sut._getTitle().getText(), 'View');
+			strictEqual(this.sut._getTitle().getText(),
+				sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("VIEWSETTINGS_TITLE"));
 		});
 
 
@@ -1580,7 +1585,9 @@
 			oLastListItem = oFilterItems[oFilterItems.length - 1];
 
 			// Assert
-			strictEqual(oLastListItem.getTitle(), 'Remove Filter', 'Last item is "Remove Filter"');
+			strictEqual(oLastListItem.getTitle(),
+				sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("REMOVE_FILTER"),
+				'Last item is "Remove Filter"');
 
 			// Act
 			var oListItem = this.sut._findListItemFromViewSettingsItem(this.sut.getFilterItems()[0]);
@@ -1616,7 +1623,9 @@
 			oLastListItem = oFilterItems[oFilterItems.length - 1];
 
 			// Assert
-			strictEqual(oLastListItem.getTitle(), 'Remove Filter', 'Last item is "Remove Filter"');
+			strictEqual(oLastListItem.getTitle(),
+				sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("REMOVE_FILTER"),
+				'Last item is "Remove Filter"');
 
 			// Act
 			oLastListItem.firePress();
