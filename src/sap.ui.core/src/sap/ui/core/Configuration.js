@@ -557,7 +557,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 */
 		getSAPLogonLanguage : function () {
 			try {
-				return new Locale(this.language).toSAPLogonLanguage();
+				return new Locale(this.language).getSAPLogonLanguage();
 			} catch (e) {
 				return undefined;
 			}
