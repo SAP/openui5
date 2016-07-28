@@ -3305,21 +3305,34 @@
 		 */
 		jQuery.sap.registerResourcePath = function registerResourcePath(sResourceNamePrefix, vUrlPrefix) {
 
-			sResourceNamePrefix = String(sResourceNamePrefix || "");
-
-			if (mUrlPrefixes[sResourceNamePrefix] && mUrlPrefixes[sResourceNamePrefix]["final"] == true) {
-				log.warning( "registerResourcePath with prefix " + sResourceNamePrefix + " already set as final to '" + mUrlPrefixes[sResourceNamePrefix].url + "'. This call is ignored." );
-				return;
+			function same(oPrefix1, oPrefix2) {
+				return oPrefix1.url === oPrefix2.url && !oPrefix1["final"] === !oPrefix2["final"];
 			}
+
+			sResourceNamePrefix = String(sResourceNamePrefix || "");
 
 			if ( typeof vUrlPrefix === 'string' || vUrlPrefix instanceof String ) {
 				vUrlPrefix = { 'url' : vUrlPrefix };
 			}
 
+			var oOldPrefix = mUrlPrefixes[sResourceNamePrefix];
+
+			if (oOldPrefix && oOldPrefix["final"] == true) {
+				if ( !vUrlPrefix || !same(oOldPrefix, vUrlPrefix) ) {
+					log.warning( "registerResourcePath with prefix " + sResourceNamePrefix + " already set as final to '" + oOldPrefix.url + "'. This call is ignored." );
+				}
+				return;
+			}
+
 			if ( !vUrlPrefix || vUrlPrefix.url == null ) {
-				delete mUrlPrefixes[sResourceNamePrefix];
-				log.info("registerResourcePath ('" + sResourceNamePrefix + "') (registration removed)");
+
+				if ( oOldPrefix ) {
+					delete mUrlPrefixes[sResourceNamePrefix];
+					log.info("registerResourcePath ('" + sResourceNamePrefix + "') (registration removed)");
+				}
+
 			} else {
+
 				vUrlPrefix.url = String(vUrlPrefix.url);
 
 				// remove query parameters and/or hash
@@ -3332,8 +3345,12 @@
 				if ( vUrlPrefix.url.slice(-1) != '/' ) {
 					vUrlPrefix.url += '/';
 				}
+
 				mUrlPrefixes[sResourceNamePrefix] = vUrlPrefix;
-				log.info("registerResourcePath ('" + sResourceNamePrefix + "', '" + vUrlPrefix.url + "')" + ((vUrlPrefix['final']) ? " (final)" : ""));
+
+				if ( !oOldPrefix || !same(oOldPrefix, vUrlPrefix) ) {
+					log.info("registerResourcePath ('" + sResourceNamePrefix + "', '" + vUrlPrefix.url + "')" + (vUrlPrefix['final'] ? " (final)" : ""));
+				}
 			}
 		};
 
