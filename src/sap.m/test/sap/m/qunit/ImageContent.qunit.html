@@ -80,14 +80,14 @@
 	});
 
 	QUnit.test("In case no description is set, getAltText method should return the default", function(assert) {
-		this.oImageContent.setDescription(null);
+		this.oImageContent.setDescription("");
 		sap.ui.getCore().applyChanges();
 		var sAlt = this.oImageContent.getAggregation("_content").getAlt();
 		assert.deepEqual(sAlt, "", "Alt property of inner control is empty");
 	});
 
 	QUnit.test("In case no description is set, getAltText method should return the default of the inner control", function(assert) {
-		this.oImageContent.setDescription(null);
+		this.oImageContent.setDescription("");
 		this.oImageContent.setSrc("sap-icon://travel-expense");
 		sap.ui.getCore().applyChanges();
 		var sAltText = this.oImageContent.getAltText();
