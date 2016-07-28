@@ -70,7 +70,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		 * <strong>Note</strong>: if a <code>Document</code> is given, it might be modified during view construction.
 		 *
 		 * <strong>Note</strong>: if you enable caching, you need to take care of the invalidation via keys. Automatic
-		 * invalidation takes only place if the UI5 version or the component descriptor (manifest.json) change.
+		 * invalidation takes only place if the UI5 version or the component descriptor (manifest.json) change. This is
+		 * still an experimental feature and may experience slight changes of the invalidation parameters or the cache
+		 * key format.
 		 *
 		 * The controller property can hold an controller instance. If a controller instance is given,
 		 * it overrides the controller defined in the view.
