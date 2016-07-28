@@ -18,6 +18,8 @@ sap.ui.define(['jquery.sap.global'], function (jQuery) {
 	var classNameErrorContainer = 'sapMLightBoxErrorContainer';
 	var classNameErrorContainerTwoLines = 'sapMLightBoxErrorContainerTwoHeaders';
 	var classNameFooter = 'sapMLightBoxFooter';
+	var classNameContrastBelize = 'sapContrast';
+	var classNameContrastBelizePlus = 'sapContrastPlus';
 	var classNameFooterTitleSection = 'sapMLightBoxTitleSection';
 	var classNameFooterTitle = 'sapMLightBoxTitle';
 	var classNameFooterSubtitle = 'sapMLightBoxSubtitle';
@@ -103,6 +105,8 @@ sap.ui.define(['jquery.sap.global'], function (jQuery) {
 			subtitle = oImageContent.getAggregation("_subtitle");
 		oRm.write('<div');
 		oRm.addClass(classNameFooter);
+		oRm.addClass(classNameContrastBelize);
+		oRm.addClass(classNameContrastBelizePlus);
 
 		if (oImageContent.getSubtitle()) {
 			oRm.addClass(classNameFooterTwoLines);
