@@ -184,11 +184,18 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 			}
 		}
 
-		// Finally, write property value to control using either the renderer or element directly
+		// Finally, write property value to control using either the render manager or the element directly
 		if (oRm) {
-			oRm.addStyle(sPropertyPrefix + sProperty, sValuePrefix + sValue);
+			if (sValue) {
+				oRm.addStyle(sPropertyPrefix + sProperty, sValuePrefix + sValue);
+			}
 		} else {
-			oLayoutData.$().css(sPropertyPrefix + sProperty, sValuePrefix + sValue);
+			// jQuery removes 'null' styles
+			if (!sValue) {
+				oLayoutData.$().css(sPropertyPrefix + sProperty, null);
+			} else {
+				oLayoutData.$().css(sPropertyPrefix + sProperty, sValuePrefix + sValue);
+			}
 		}
 	};
 
