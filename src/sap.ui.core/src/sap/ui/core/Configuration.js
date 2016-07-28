@@ -126,7 +126,8 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 					"xx-cache-serialization": { type : "boolean",  defaultValue : false},
 					"xx-nosync"             : { type : "string",   defaultValue : "" },
 					"xx-waitForTheme"       : { type : "boolean",  defaultValue : false},
-					"statistics"            : { type : "boolean",  defaultValue : false }
+					"statistics"            : { type : "boolean",  defaultValue : false },
+					"xx-support"            : { type : "string[]",  defaultValue : null }
 			};
 
 			var M_COMPAT_FEATURES = {
@@ -1132,6 +1133,16 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 */
 		getWhitelistService : function() {
 			return this.whitelistService;
+		},
+
+		/**
+		 * Whether support mode is enabled.
+		 *
+		 * @return {boolean} support mode is enabled
+		 * @experimental
+		 */
+		getSupportMode : function() {
+			return this["xx-support"];
 		},
 
 		_collect : function() {

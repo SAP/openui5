@@ -336,6 +336,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			// a helper task to prevent the premature completion of oSyncPoint2
 			var iCreateTasksTask = oSyncPoint2.startTask("create sp2 tasks task");
 
+			var bAsync = sPreloadMode === "async";
+
 			// load the version info file in case of a custom theme to determine
 			// the distribution version which should be provided in library.css requests.
 			if (this.oConfiguration["versionedLibCss"]) {
@@ -351,7 +353,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				};
 
 				// only use async mode if library prelaod is async
-				var bAsync = sPreloadMode === "async";
 				var vReturn = sap.ui.getVersionInfo({ async: bAsync, failOnError: false });
 				if (vReturn instanceof Promise) {
 					vReturn.then(fnCallback, function(oError) {
@@ -418,6 +419,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				AppCacheBuster.boot(oSyncPoint2);
 			}
 
+			//initialize support info stack
+			if (this.oConfiguration["xx-support"] !== null) {
+				var fnCallbackSupportInfo = function(Support) {
+					Support.initializeSupportMode(that.oConfiguration["xx-support"]);
+					oSyncPoint2.finishTask(iSupportInfoTask);
+				};
+				var iSupportInfoTask = oSyncPoint2.startTask("support info script");
+				if (bAsync) {
+					sap.ui.require(["sap/ui/core/support/Support"], fnCallbackSupportInfo);
+				} else {
+					fnCallbackSupportInfo(sap.ui.requireSync("sap/ui/core/support/Support"));
+				}
+			}
 			oSyncPoint2.finishTask(iCreateTasksTask);
 		},
 
@@ -776,7 +790,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				jQuery.sap.require(mod);
 			}
 		});
-
 	};
 
 

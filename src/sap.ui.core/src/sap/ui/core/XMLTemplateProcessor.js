@@ -352,14 +352,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 				oClass = findControlClass(ns, localName(node)),
 				mSettings = {},
 				sStyleClasses = "",
-				aCustomData = [];
+				aCustomData = [],
+				sSupportData = null;
 
 				if (!oClass) {
 					return [];
 				}
 				var oMetadata = oClass.getMetadata();
 				var mKnownSettings = oMetadata.getAllSettings();
-
 				if (!bEnrichFullIds) {
 					for (var i = 0; i < node.attributes.length; i++) {
 						var attr = node.attributes[i],
@@ -403,6 +403,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 									key:sLocalName,
 									value:parseScalarType("any", sValue, sLocalName, oView._oContainingView.oController)
 								}));
+							} else if (attr.namespaceURI === "http://schemas.sap.com/sapui5/extension/sap.ui.core.support.Support.info/1") {
+								sSupportData = sValue;
 							} else if ( sName.indexOf("xmlns:") !== 0 ) { // other, unknown namespace and not an xml namespace alias definition
 								jQuery.sap.log.warning(oView + ": XMLView parser encountered and ignored attribute '" + sName + "' (value: '" + sValue + "') with unknown namespace");
 								// TODO: here XMLView could check for namespace handlers registered by the application for this namespace which could modify mSettings according to their interpretation of the attribute
@@ -456,6 +458,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 							}
 						} else {
 							jQuery.sap.assert(sName === 'xmlns', oView + ": encountered unknown setting '" + sName + "' for class " + oMetadata.getName() + " (value:'" + sValue + "')");
+							if (XMLTemplateProcessor._supportInfo) {
+								XMLTemplateProcessor._supportInfo({
+									context : node,
+									env : {
+										caller:"createRegularControls",
+										error: true,
+										info: "unknown setting '" + sName + "' for class " + oMetadata.getName()
+									}
+								});
+							}
 						}
 					}
 					if (aCustomData.length > 0) {
@@ -575,6 +587,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 					vNewControlInstance = [];
 				} else if (!jQuery.isArray(vNewControlInstance)) {
 					vNewControlInstance = [vNewControlInstance];
+				}
+
+				//apply support info if needed
+				if (XMLTemplateProcessor._supportInfo && vNewControlInstance) {
+					for (var i = 0, iLength = vNewControlInstance.length; i < iLength; i++) {
+						var oInstance = vNewControlInstance[i];
+						if (oInstance && oInstance.getId()) {
+							//create a support info for id creation and add it to the support data
+							var iSupportIndex = XMLTemplateProcessor._supportInfo({context:node, env:{caller:"createRegularControls", nodeid: node.getAttribute("id"), controlid: oInstance.getId()}}),
+								sData = sSupportData ? sSupportData + "," : "";
+							sData += iSupportIndex;
+							//add the controls support data to the indexed map of support info control instance map
+							XMLTemplateProcessor._supportInfo.addSupportInfo(oInstance.getId(), sData);
+						}
+					}
 				}
 
 				if (bDesignMode) {

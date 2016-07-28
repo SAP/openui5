@@ -2422,10 +2422,8 @@
         if (!responseHeaders){
             var contentType = xhr.getResponseHeader("Content-Type");
             var contentLength = xhr.getResponseHeader("Content-Length");
-            if (contentType)
-            	headers["Content-Type"] = contentType;
-            if (contentLength)
-            	headers["Content-Length"] = contentLength;
+            if (contentType){headers["Content-Type"] = contentType;}
+            if (contentLength){headers["Content-Length"] = contentLength;}
         } else {
         // ##### END: MODIFIED BY SAP
         	responseHeaders = responseHeaders.split(/\r?\n/);
@@ -2526,6 +2524,13 @@
                     var headers = [];
                     readResponseHeaders(xhr, headers);
 
+                    // ##### BEGIN: MODIFIED BY SAP
+                    var xml = null;
+                    if (datajs._sap && xhr.responseXML) {
+                    	xml = xhr.responseXML;
+                    }
+                   	// ##### END: MODIFIED BY SAP
+
                     var response = { requestUri: url, statusCode: statusCode, statusText: statusText, headers: headers, body: xhr.responseText };
 
                     done = true;
@@ -2533,12 +2538,22 @@
                     if (statusCode >= 200 && statusCode <= 299) {
                         success(response);
                     } else {
-                    		// ##### BEGIN: MODIFIED BY SAP
-                    		// normalize response headers here which is also done in the success function call above
+                    	// ##### BEGIN: MODIFIED BY SAP
+                    	// normalize response headers here which is also done in the success function call above
                       	normalizeHeaders(response.headers);
                       	// ##### END: MODIFIED BY SAP
                         error({ message: "HTTP request failed", request: request, response: response });
                     }
+                    // ##### BEGIN: MODIFIED BY SAP
+                    if (datajs._sap && response.requestUri.indexOf("$metadata") > -1) {
+
+                    	var mSettings = {
+                      	   supportXML: xml,
+                      	   response: response
+                      	};
+                    	datajs._sap._supportInfo({context: xml, env: {caller:'datajs', settings: mSettings, type:"metadata"}});
+                    }
+                    // ##### END: MODIFIED BY SAP
                 };
 
                 // ##### BEGIN: MODIFIED BY SAP
