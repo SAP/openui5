@@ -135,14 +135,6 @@
    Error State
   ========================================================================== */
 
-.sapMLightBox .sapMLightBoxErrorIcon {
-  font-family: SAP-icons;
-  font-size: 5rem;
-  font-weight: normal;
-  width: 5rem;
-  height: 5rem;
-}
-
 .sapMLightBox .sapMLightBoxErrorContainer {
   padding: 2rem;
 }
@@ -150,6 +142,23 @@
 .sapMLightBox .sapMLightBoxErrorContainerTwoHeaders {
   padding: 2rem;
   height: calc(~"100% - " @footerTwoLinesHeightMobile);
+}
+
+.sapMLightBox .sapMLightBoxVerticalLayout {
+  text-align: center;
+}
+
+.sapMLightBox .sapMLightBoxIconErrorContainer {
+  margin: 0 auto;
+  width: 5rem;
+}
+
+.sapMLightBox .sapMLightBoxErrorIcon {
+  font-family: SAP-icons;
+  font-size: 4rem;
+  font-weight: normal;
+  width: 5rem;
+  height: 5rem;
 }
 
 .sapMLightBox .sapMLightBoxErrorTitle {
@@ -160,17 +169,12 @@
 
 .sapMLightBox .sapMLightBoxErrorSubtitle {
   line-height: normal;
-  margin-top: 1rem;
+  margin: 1rem auto;
   font-size: 1rem;
 }
 
-.sapMLightBox .sapMLightBoxIconErrorContainer {
-  margin: 0 auto;
-  width: 5rem;
-}
-
-.sapMLightBox .sapMLightBoxVerticalLayout {
-  text-align: center;
+.sapMLightBox.sapMLightBoxError .sapMLightBoxFooter {
+  position: initial;
 }
 
 /* ==========================================================================
@@ -193,6 +197,7 @@
 
 .sapUiSizeCompact .sapMLightBoxFooter .sapMBtn {
   padding-right: 0.5rem;
+  margin-bottom: 0.25rem;
 }
 
 .sapUiSizeCompact .sapMLightBox .sapMLightBoxErrorContainerTwoHeaders {

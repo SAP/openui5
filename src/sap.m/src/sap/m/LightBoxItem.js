@@ -95,7 +95,7 @@ sap.ui.define([
             this._imageState = "LOADING";
             this._oImage = new window.Image();
             this._oImage.onload = function(oEvent) {
-                if (this.complete) {
+                if (this.complete && that._imageState === "LOADING") {
                     that._setImageState("LOADED");
                 }
             };
@@ -111,14 +111,11 @@ sap.ui.define([
          * @param sImageState
          */
         LightBoxItem.prototype._setImageState = function (sImageState) {
-            if (sImageState === this._imageState) {
-                return;
-            } else {
+            if (sImageState !== this._imageState) {
                 this._imageState = sImageState;
                 if (this.getParent()) {
                     this.getParent()._imageStateChanged(sImageState);
                 }
-
             }
         };
 
