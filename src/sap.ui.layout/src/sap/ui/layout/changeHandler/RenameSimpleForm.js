@@ -32,38 +32,21 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 	 */
 	RenameForm.applyChange = function(oChangeWrapper, oControl, oModifier, oView) {
 		var oChange = oChangeWrapper.getDefinition();
-		var sRenameId = oChange.content.sRenameId;
-		var oReferrer = oModifier.byId(sRenameId, oView);
 
-		if (this._checkSufficientInfo(oChange, oReferrer)) {
+		var oReferrer = oModifier.byId(oChange.content.stableRenamedElementId, oView);
+
+		if (oChange.texts && oChange.texts.formText && this._isProvided(oChange.texts.formText.value)) {
 			if (!oControl) {
 				throw new Error("no Control provided for renaming");
 			}
 
 			var sValue = oChange.texts.formText.value;
-			var sPropertyName = "text";
-
-			oModifier.setProperty(oReferrer, sPropertyName, sValue);
+			oModifier.setProperty(oReferrer, "text", sValue);
 
 			return true;
 		} else {
 			Utils.log.error("Change does not contain sufficient information to be applied: [" + oChange.layer + "]" + oChange.namespace + "/" + oChange.fileName + "." + oChange.fileType);
 			//however subsequent changes should be applied
-		}
-	};
-
-	/**
-	 * Check for sufficient information to apply changes
-	 *
-	 * @param {object} oChange - change object with instructions to be applied on the control
-	 * @param {object} oReferrer - the control which has been determined by the id sRenameId
-	 * @private
-	 */
-	RenameForm._checkSufficientInfo = function(oChange, oReferrer) {
-		if (oChange.texts && oChange.texts.formText && this._isProvided(oChange.texts.formText.value) && oReferrer) {
-			return true;
-		} else {
-			return false;
 		}
 	};
 
@@ -76,10 +59,20 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 	 */
 	RenameForm.completeChangeContent = function(oChangeWrapper, oSpecificChangeInfo) {
 		var oChange = oChangeWrapper.getDefinition();
-		if (oSpecificChangeInfo.sRenameId) {
-			oChange.content.sRenameId = oSpecificChangeInfo.sRenameId;
+
+		if (!oSpecificChangeInfo.changeType) {
+			throw new Error("oSpecificChangeInfo.changeType attribute required");
+		}
+
+		if (oSpecificChangeInfo.renamedElement && oSpecificChangeInfo.renamedElement.id) {
+			var oRenamedElement = sap.ui.getCore().byId(oSpecificChangeInfo.renamedElement.id);
+			if (oSpecificChangeInfo.changeType === "renameLabel") {
+				oChange.content.stableRenamedElementId = oRenamedElement.getLabel().getId();
+			} else if (oSpecificChangeInfo.changeType === "renameTitle") {
+				oChange.content.stableRenamedElementId = oRenamedElement.getTitle().getId();
+			}
 		} else {
-			throw new Error("oSpecificChangeInfo.sRenameId attribute required");
+			throw new Error("oSpecificChangeInfo.renamedElement attribute required");
 		}
 
 		if (this._isProvided(oSpecificChangeInfo.value)) {
