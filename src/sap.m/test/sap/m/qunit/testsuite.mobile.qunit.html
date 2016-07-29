@@ -1,7 +1,7 @@
 <html>
 	<head>
 		<title>QUnit TestSuite for sap.m</title>
-		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
 		<script
 			id="sap-ui-bootstrap"
 			src='../../../../resources/sap-ui-core.js'>
@@ -20,6 +20,7 @@
 				ie10 = (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version === 10);
 
 			if (!navigator.userAgent.match(/MSIE 8.0/g) && (navigator.platform.indexOf("Linux") === -1 || !sap.ui.Device.system.desktop)) {
+
 				// Apps and samples
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/testsuites/testsuite.demokit.qunit.html");
 
@@ -259,7 +260,6 @@
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/P13nDialog.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/P13nDimMeasurePanel.qunit.html");
 
-
 				// PlanningCalendar
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/PlanningCalendar.qunit.html");
 
@@ -438,9 +438,11 @@
 				// WizardStep
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/WizardStep.qunit.html");
 
+				// ValueStateMessage
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ValueStateMessage.qunit.html");
+
 				// ViewSettingsPopover
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ViewSettingsPopover.qunit.html");
-
 
 				// DesignTime
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/Bar.qunit.html");
