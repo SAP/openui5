@@ -3118,44 +3118,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * controls the action mode when clicking into the table control
-	 * @private
-	 */
-	Table.prototype.onmouseup = function(oEvent) {
-		// clean up the timer
-		jQuery.sap.clearDelayedCall(this._mTimeouts.delayedActionTimer);
-	};
-
-	/**
-	 * handles the selection when clicking on the table
-	 * @private
-	 */
-	Table.prototype.onclick = function(oEvent) {
-		// clean up the timer
-		jQuery.sap.clearDelayedCall(this._mTimeouts.delayedActionTimer);
-
-		if (oEvent.isMarked()) {
-			// the event was already handled by some other handler, do nothing.
-			return;
-		}
-
-		var $Target = jQuery(oEvent.target);
-
-		if ($Target.hasClass("sapUiTableGroupIcon") || $Target.hasClass("sapUiTableTreeIcon")) {
-			if (TableUtils.toggleGroupHeader(this, oEvent.target)) {
-				return;
-			}
-		}
-
-		// forward the event
-		if (!this._findAndfireCellEvent(this.fireCellClick, oEvent)) {
-			this._onSelect(oEvent);
-		} else {
-			oEvent.preventDefault();
-		}
-	};
-
-	/**
 	 * handles the cell contextmenu eventing of the table, open the menus for cell, group header and column header
 	 * @private
 	 */
