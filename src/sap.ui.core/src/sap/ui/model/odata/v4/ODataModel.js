@@ -159,6 +159,7 @@ sap.ui.define([
 						this.sServiceUrl + "$metadata", mParameters.annotationURI);
 					this.oRequestor = _Requestor.create(this.sServiceUrl, mHeaders,
 						this.mUriParameters);
+					this.aAllBindings = [];
 					this.mCallbacksByGroupId = {};
 					this.sDefaultBindingMode = BindingMode.TwoWay;
 					this.mSupportedBindingModes = {
@@ -293,6 +294,37 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.bindContext = function (sPath, oContext, mParameters) {
 		return new ODataContextBinding(this, sPath, oContext, mParameters);
+	};
+
+	/**
+	 * Callback function for all V4 bindings to add themselves to their model.
+	 *
+	 * @param {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding|sap.ui.model.odata.v4.ODataPropertyBinding} oBinding
+	 *   A context, list, or property binding
+	 *
+	 * @private
+	 */
+	ODataModel.prototype.bindingCreated = function (oBinding) {
+		this.aAllBindings.push(oBinding);
+	};
+
+	/**
+	 * Callback function for all V4 bindings to remove themselves from their model.
+	 *
+	 * @param {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding|sap.ui.model.odata.v4.ODataPropertyBinding} oBinding
+	 *   A context, list, or property binding
+	 * @throws {Error}
+	 *   If a binding is removed twice or without adding.
+	 *
+	 * @private
+	 */
+	ODataModel.prototype.bindingDestroyed = function (oBinding) {
+		var iIndex = this.aAllBindings.indexOf(oBinding);
+
+		if (iIndex < 0) {
+			throw new Error("Unknown " + oBinding);
+		}
+		this.aAllBindings.splice(iIndex, 1);
 	};
 
 	/**
@@ -467,6 +499,20 @@ sap.ui.define([
 	// @override
 	ODataModel.prototype.getContext = function () {
 		throw new Error("Unsupported operation: v4.ODataModel#getContext");
+	};
+
+	/**
+	 * Returns all bindings which are relative to a context created by the given parent binding.
+	 *
+	 * @returns {sap.ui.model.Binding[]}
+	 *
+	 * @private
+	 */
+	ODataModel.prototype.getDependentBindings = function (oParentBinding) {
+		return this.aAllBindings.filter(function (oBinding) {
+			return oBinding.isRelative() && oBinding.getContext()
+				&& oBinding.getContext().getBinding() === oParentBinding;
+		});
 	};
 
 	/**

@@ -211,6 +211,44 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 				aFilterRestrictions;
 		},
 
+
+		/**
+		 * Adds the current navigation property to the
+		 * <code>NonInsertableNavigationProperties</code> collection of the
+		 * <code>Org.OData.Capabilities.V1.InsertRestrictions</code> V4 annotation at the given
+		 * entity set. If the annotation does not yet exist, it is created.
+		 *
+		 * @param {object} oEntitySet
+		 *   The entity set
+		 * @param {object} oNavigationProperty
+		 *   The navigation property
+		 */
+		addNonInsertableNavigationProperty : function (oEntitySet, oNavigationProperty) {
+			var oInsertRestrictions
+					= oEntitySet["Org.OData.Capabilities.V1.InsertRestrictions"]
+					= oEntitySet["Org.OData.Capabilities.V1.InsertRestrictions"] || {},
+				oNonInsertableCollection
+					= oInsertRestrictions["NonInsertableNavigationProperties"]
+					= oInsertRestrictions["NonInsertableNavigationProperties"] || [],
+				sCreatablePath = oNavigationProperty["sap:creatable-path"];
+
+			if (sCreatablePath) {
+				oNonInsertableCollection.push({
+					"If" : [{
+						"Not" : {
+							"Path" : sCreatablePath
+						}
+					}, {
+						"NavigationPropertyPath" : oNavigationProperty.name
+					}]
+				});
+			} else {
+				oNonInsertableCollection.push({
+					"NavigationPropertyPath" : oNavigationProperty.name
+				});
+			}
+		},
+
 		/**
 		 * Adds current property to the property collection for given V2 annotation.
 		 *
@@ -457,9 +495,14 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 				});
 			}
 			if (oEntityType.navigationProperty) {
-				oEntityType.navigationProperty.forEach(function (oNavProp) {
-					if (oNavProp["sap:filterable"] === "false") {
-						Utils.addPropertyToAnnotation("sap:filterable", oEntitySet, oNavProp);
+				oEntityType.navigationProperty.forEach(function (oNavigationProperty) {
+					if (oNavigationProperty["sap:filterable"] === "false") {
+						Utils.addPropertyToAnnotation("sap:filterable", oEntitySet,
+							oNavigationProperty);
+					}
+					if (oNavigationProperty["sap:creatable"] === "false" ||
+						oNavigationProperty["sap:creatable-path"]) {
+						Utils.addNonInsertableNavigationProperty(oEntitySet, oNavigationProperty);
 					}
 				});
 			}

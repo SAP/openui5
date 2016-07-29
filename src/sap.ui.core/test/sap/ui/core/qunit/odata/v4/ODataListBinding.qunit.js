@@ -136,13 +136,26 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("bindingCreated", function (assert) {
+		var oBinding,
+			oCreatedBinding;
+
+		this.stub(this.oModel, "bindingCreated", function (oBinding) {
+			oCreatedBinding = oBinding;
+		});
+
+		oBinding = this.oModel.bindList("/EMPLOYEES");
+
+		assert.strictEqual(oCreatedBinding, oBinding, "bindingCreated() has been called");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("be V8-friendly", function (assert) {
 		var oBinding = this.oModel.bindList("/EMPLOYEES");
 
 		assert.ok(oBinding.hasOwnProperty("aApplicationFilters"));
 		assert.ok(oBinding.hasOwnProperty("oCache"));
 		assert.ok(oBinding.hasOwnProperty("sChangeReason"));
-		assert.ok(oBinding.hasOwnProperty("aDependentBindings"));
 		assert.ok(oBinding.hasOwnProperty("aFilters"));
 		assert.ok(oBinding.hasOwnProperty("sGroupId"));
 		assert.ok(oBinding.hasOwnProperty("sOperationMode"));
@@ -156,7 +169,6 @@ sap.ui.require([
 	QUnit.test("toString", function (assert) {
 		var oBinding = this.oModel.bindList("/EMPLOYEES"),
 			oContext = {
-				registerBinding : function () {},
 				toString : function () {return "/TEAMS(Team_ID='TEAM01')";}
 			};
 
@@ -167,7 +179,6 @@ sap.ui.require([
 		assert.strictEqual(oBinding.toString(), sClassName + ": undefined|TEAM_2_EMPLOYEES",
 			"relative, unresolved");
 
-		this.mock(oContext).expects("registerBinding");
 		oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext);
 
 		assert.strictEqual(oBinding.toString(), sClassName
@@ -600,7 +611,6 @@ sap.ui.require([
 
 		this.mock(oContext).expects("fetchValue").withExactArgs("TEAM_2_EMPLOYEES")
 			.returns(oPromise);
-		this.mock(oContext).expects("registerBinding");
 
 		// code under test
 		oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext);
@@ -614,7 +624,6 @@ sap.ui.require([
 		var oContext = Context.create(this.oModel, {}, "/bar"),
 			oListBinding;
 
-		this.mock(oContext).expects("registerBinding");
 		oListBinding = this.oModel.bindList("foo", oContext);
 		this.mock(oListBinding).expects("_fireChange")
 			.withExactArgs({reason : ChangeReason.Change});
@@ -639,42 +648,8 @@ sap.ui.require([
 		this.mock(oListBinding).expects("_fireChange")
 			.withExactArgs({reason : ChangeReason.Context});
 		this.mock(_ODataHelper).expects("createCacheProxy").never();
-		this.mock(oContext).expects("registerBinding");
 
 		oListBinding.setContext(oContext);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("setContext: registerBinding", function (assert) {
-		var oContext = Context.create(this.oModel, undefined, "/TEAM('42')"),
-			oListBinding = this.oModel.bindList("TEAM_2_EMPLOYEES");
-
-		this.mock(oListBinding).expects("reset").withExactArgs();
-		this.mock(Binding.prototype).expects("setContext")
-			.on(oListBinding).withExactArgs(oContext);
-		this.mock(oContext).expects("registerBinding").withExactArgs(oListBinding);
-
-		// code under test
-		oListBinding.setContext(oContext);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("setContext: deregisterBinding", function (assert) {
-		var oContext = Context.create(this.oModel, undefined, "/TEAM('42')"),
-			oListBinding = this.oModel.bindList("TEAM_2_EMPLOYEES");
-
-		this.mock(oContext).expects("registerBinding").withExactArgs(oListBinding);
-
-		// code under test
-		oListBinding.setContext(oContext);
-
-		this.mock(oListBinding).expects("reset").withExactArgs();
-		this.mock(Binding.prototype).expects("setContext")
-			.on(oListBinding).withExactArgs(undefined);
-		this.mock(oContext).expects("deregisterBinding").withExactArgs(oListBinding);
-
-		// code under test
-		oListBinding.setContext();
 	});
 
 	//*********************************************************************************************
@@ -781,7 +756,6 @@ sap.ui.require([
 				oContextMock = this.mock(oContext);
 				oContextMock.expects("fetchValue").returns(createResult(2));
 				oContextMock.expects("fetchValue").returns(oPromise);
-				oContextMock.expects("registerBinding");
 				// no error logged by ODataListBinding; parent context logged the error already
 			} else {
 				oCacheMock = this.getCacheMock();
@@ -1025,13 +999,12 @@ sap.ui.require([
 				},
 				oChild1 = {refreshInternal : function () {}},
 				oChild2 = {refreshInternal : function () {}},
+				oChild3 = {}, // refreshInternal missing, e.g. ODataPropertyBinding
 				oContext = Context.create(this.oModel, null, "/TEAMS('TEAM_01')"),
 				oHelperMock = this.mock(_ODataHelper),
 				oListBinding;
 
 			if (bRelative) {
-				// from setContext via constructor
-				this.mock(oContext).expects("registerBinding");
 				oHelperMock.expects("createListCacheProxy").returns(oCache);
 			} else {
 				this.mock(_Cache).expects("create").returns(oCache);
@@ -1053,7 +1026,8 @@ sap.ui.require([
 			this.mock(oListBinding).expects("reset").withExactArgs();
 			this.mock(oListBinding).expects("_fireRefresh")
 				.withExactArgs({reason : ChangeReason.Refresh});
-			oListBinding.aDependentBindings = [oChild1, oChild2];
+			this.mock(this.oModel).expects("getDependentBindings").withExactArgs(oListBinding)
+				.returns([oChild1, oChild2, oChild3]);
 			this.mock(oChild1).expects("refreshInternal").withExactArgs("myGroup");
 			this.mock(oChild2).expects("refreshInternal").withExactArgs("myGroup");
 
@@ -1066,15 +1040,13 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("refreshInternal: no own cache", function (assert) {
-		var oChild1 = {refreshInternal : function () {}},
-			oChild2 = {refreshInternal : function () {}},
+		var oChild1 = { refreshInternal : function () {} },
 			oContext = Context.create(this.oModel, {}, "/TEAMS('1')"),
 			oListBinding = this.oModel.bindList("TEAM_2_EMPLOYEES"),
 			oListBindingMock = this.mock(oListBinding),
 			oReadPromise = createResult(9),
 			that = this;
 
-		this.mock(oContext).expects("registerBinding");
 		oListBinding.setContext(oContext);
 		// change event during getContexts
 		oListBindingMock.expects("_fireChange")
@@ -1088,9 +1060,9 @@ sap.ui.require([
 		oListBinding.getContexts(0, 10);
 
 		return oReadPromise.then(function () {
-			oListBinding.aDependentBindings = [oChild1, oChild2];
+			that.mock(that.oModel).expects("getDependentBindings").withExactArgs(oListBinding)
+				.returns([oChild1]);
 			that.mock(oChild1).expects("refreshInternal").withExactArgs("myGroup");
-			that.mock(oChild2).expects("refreshInternal").withExactArgs("myGroup");
 
 			//code under test
 			oListBinding.refreshInternal("myGroup");
@@ -1298,7 +1270,6 @@ sap.ui.require([
 			oListener = {},
 			oPromise = {};
 
-		this.mock(oContext).expects("registerBinding");
 		oListBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext);
 		this.mock(_Helper).expects("buildPath").withExactArgs("TEAM_2_EMPLOYEES", 42, "bar")
 			.returns("~");
@@ -1316,7 +1287,6 @@ sap.ui.require([
 				oListBinding,
 				oPromise = {};
 
-			this.mock(oContext).expects("registerBinding");
 			oListBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext);
 			this.mock(oContext).expects("fetchAbsoluteValue")
 				.withExactArgs(sPath).returns(oPromise);
@@ -1350,7 +1320,6 @@ sap.ui.require([
 			assert.strictEqual(oBinding.fetchAbsoluteValue(sPath).getResult(), undefined);
 
 			this.mock(_ODataHelper).expects("createListCacheProxy").returns(oCacheProxy);
-			this.mock(oContext).expects("registerBinding");
 			oBinding.setContext(oContext);
 			this.mock(oContext).expects("fetchAbsoluteValue").withExactArgs(sPath).returns(oResult);
 
@@ -1367,7 +1336,6 @@ sap.ui.require([
 			oResult = {};
 
 		this.mock(_ODataHelper).expects("createListCacheProxy").returns(oCacheProxy);
-		this.mock(oContext).expects("registerBinding");
 		oBinding.setContext(oContext);
 
 		this.mock(oBinding).expects("fetchValue")
@@ -1407,7 +1375,6 @@ sap.ui.require([
 			oListBinding,
 			oResult = {};
 
-		this.mock(oContext).expects("registerBinding");
 		oListBinding = this.oModel.bindList("SO_2_SOITEM", oContext);
 		this.mock(oListBinding).expects("fireEvent").never();
 		this.mock(oListBinding).expects("getGroupId").never();
@@ -1441,7 +1408,6 @@ sap.ui.require([
 			oListBinding,
 			oListener = {};
 
-		this.mock(oContext).expects("registerBinding");
 		oListBinding = this.oModel.bindList("SO_2_SOITEM", oContext);
 		this.mock(_Helper).expects("buildPath").withExactArgs("SO_2_SOITEM", 1, "foo").returns("~");
 		this.mock(oContext).expects("deregisterChange")
@@ -1601,7 +1567,6 @@ sap.ui.require([
 		// code under test
 		assert.strictEqual(oBinding.getGroupId(), "fromModel");
 
-		this.stub(oContext, "registerBinding"); // to prevent it from doing something
 		oBinding.setContext(oContext);
 		this.mock(oContext).expects("getGroupId").withExactArgs().returns("fromContext");
 
@@ -1619,7 +1584,6 @@ sap.ui.require([
 		// code under test
 		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
 
-		this.stub(oContext, "registerBinding"); // to prevent it from doing something
 		oBinding.setContext(oContext);
 		this.mock(oContext).expects("getUpdateGroupId").withExactArgs().returns("fromContext");
 
@@ -1896,7 +1860,6 @@ sap.ui.require([
 					oHelperMock.expects("createListCacheProxy")
 						.withExactArgs(sinon.match.same(oBinding), sinon.match.same(oContext))
 						.returns(oCacheProxy);
-					this.mock(oContext).expects("registerBinding");
 				}
 				oBinding.setContext(oContext);
 
@@ -1964,17 +1927,18 @@ sap.ui.require([
 	QUnit.test("destroy", function (assert) {
 		var oBinding = this.oModel.bindList("relative"),
 			oContext = Context.create(this.oModel, {}, "/foo"),
-			oListBindingMock = this.mock(ListBinding.prototype);
+			oListBindingMock = this.mock(ListBinding.prototype),
+			oModelMock = this.mock(this.oModel);
 
-		this.mock(oContext).expects("registerBinding").withExactArgs(oBinding);
 		oBinding.setContext(oContext);
-		this.mock(oContext).expects("deregisterBinding").withExactArgs(oBinding);
 		oListBindingMock.expects("destroy").on(oBinding).withExactArgs();
+		oModelMock.expects("bindingDestroyed").withExactArgs(oBinding);
 
 		oBinding.destroy();
 
 		oBinding = this.oModel.bindList("/absolute", oContext);
 		oListBindingMock.expects("destroy").on(oBinding).withExactArgs();
+		oModelMock.expects("bindingDestroyed").withExactArgs(oBinding);
 
 		oBinding.destroy();
 	});
@@ -1987,11 +1951,8 @@ sap.ui.require([
 			oBindingMock = this.mock(oBinding),
 			oReadPromise = Promise.resolve();
 
-		this.stub(oContext1, "registerBinding");
 		this.stub(oContext1, "getGroupId");
 		this.stub(oContext1, "fetchCanonicalPath").returns(_SyncPromise.resolve("Employees('1')"));
-		this.stub(oContext1, "deregisterBinding");
-		this.stub(oContext2, "registerBinding");
 		this.stub(oContext2, "fetchCanonicalPath").returns(_SyncPromise.resolve("Employees('2')"));
 		oBinding.setContext(oContext1);
 		this.mock(oBinding.oCache).expects("read")
@@ -2091,8 +2052,6 @@ sap.ui.require([
 			});
 		});
 	});
-	//TODO enableExtendedChangeDetection(/*bDetectUpdates*/true, /*vKey*/ undefined)
-	//TODO enableExtendedChangeDetection(/*bDetectUpdates*/*, /*vKey*/ !=undefined)
 
 	//*********************************************************************************************
 	QUnit.test("Extended change detection, requestDiff fails", function (assert) {
@@ -2208,6 +2167,25 @@ sap.ui.require([
 
 		// code under test: no data for *next* page fires change event (bLengthFinal changes)
 		oBinding.createContexts({start : 50, length : 30}, 0, "Reason", false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("enableExtendedChangeDetection", function (assert) {
+		var oBinding = this.oModel.bindList("/EMPLOYEES"),
+			bDetectUpdates = true;
+
+		assert.throws(function () {
+			// code under test : disallow key
+			oBinding.enableExtendedChangeDetection(bDetectUpdates, "ID");
+		}, new Error("Unsupported property 'key' with value 'ID' in binding info for "
+				+ "sap.ui.model.odata.v4.ODataListBinding: /EMPLOYEES"));
+
+		this.mock(ListBinding.prototype).expects("enableExtendedChangeDetection").on(oBinding)
+			.withExactArgs(bDetectUpdates)
+			.returns("foo");
+
+		// code under test
+		assert.strictEqual(oBinding.enableExtendedChangeDetection(bDetectUpdates), "foo");
 	});
 });
 //TODO integration: 2 entity sets with same $expand, but different $select

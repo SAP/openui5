@@ -113,7 +113,6 @@ sap.ui.define([
 				this.aApplicationFilters = _ODataHelper.toArray(vFilters);
 				this.oCache = undefined;
 				this.sChangeReason = undefined;
-				this.aDependentBindings = undefined;
 				this.aDiff = [];
 				this.aFilters = [];
 				this.aPreviousData = [];
@@ -138,6 +137,7 @@ sap.ui.define([
 
 				this.reset();
 				this.setContext(oContext);
+				oModel.bindingCreated(this);
 			}
 		});
 
@@ -295,10 +295,22 @@ sap.ui.define([
 	 */
 	// @override
 	ODataListBinding.prototype.destroy = function () {
-		if (this.bRelative && this.oContext) {
-			this.oContext.deregisterBinding(this);
-		}
+		this.oModel.bindingDestroyed(this);
 		ListBinding.prototype.destroy.apply(this);
+	};
+
+	/*
+	 * Delegates to {@link ListBinding#enableExtendedChangeDetection} while disallowing the vKey
+	 * parameter.
+	 */
+	// @override
+	ODataListBinding.prototype.enableExtendedChangeDetection = function (bDetectUpdates, vKey) {
+		if (vKey !== undefined) {
+			throw new Error("Unsupported property 'key' with value '" + vKey
+				+ "' in binding info for " + this);
+		}
+
+		return ListBinding.prototype.enableExtendedChangeDetection.apply(this, arguments);
 	};
 
 	/**
@@ -425,10 +437,10 @@ sap.ui.define([
 	 * @param {number} [iLength]
 	 *   The number of contexts to retrieve beginning from the start index; defaults to the model's
 	 *   size limit, see {@link sap.ui.model.Model#setSizeLimit}
-	 * @param {number} [iThreshold=0]
-	 *   The number of contexts to read in addition to <code>iLength</code> when requesting data
-	 *   from the server; with this, controls can prefetch data that is likely to be needed soon,
-	 *   e.g. when scrolling down in a table. Negative values will be treated as 0.
+	 * @param {number} [iMaximumPrefetchSize=0]
+	 *   The maximum number of contexts to read before and after the given range; with this,
+	 *   controls can prefetch data that is likely to be needed soon, e.g. when scrolling down in a
+	 *   table. Negative values will be treated as 0.
 	 *   Supported since 1.39.0
 	 * @returns {sap.ui.model.odata.v4.Context[]}
 	 *   The array of already created contexts with the first entry containing the context for
@@ -438,7 +450,7 @@ sap.ui.define([
 	 * @see sap.ui.model.ListBinding#getContexts
 	 * @since 1.37.0
 	 */
-	ODataListBinding.prototype.getContexts = function (iStart, iLength, iThreshold) {
+	ODataListBinding.prototype.getContexts = function (iStart, iLength, iMaximumPrefetchSize) {
 		var sChangeReason,
 			oContext = this.oContext,
 			aContexts,
@@ -457,11 +469,11 @@ sap.ui.define([
 
 		iStart = iStart || 0;
 		iLength = iLength || this.oModel.iSizeLimit;
-		if (!iThreshold || iThreshold < 0) {
-			iThreshold = 0;
+		if (!iMaximumPrefetchSize || iMaximumPrefetchSize < 0) {
+			iMaximumPrefetchSize = 0;
 		}
 
-		oRange = _ODataHelper.getReadRange(this.aContexts, iStart, iLength, iThreshold,
+		oRange = _ODataHelper.getReadRange(this.aContexts, iStart, iLength, iMaximumPrefetchSize,
 			this.iMaxLength);
 
 		if (oRange) {
@@ -729,11 +741,11 @@ sap.ui.define([
 		}
 		this.reset();
 		this._fireRefresh({reason : ChangeReason.Refresh});
-		if (this.aDependentBindings) {
-			this.aDependentBindings.forEach(function (oDependentBinding) {
+		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
+			if (oDependentBinding.refreshInternal) {
 				oDependentBinding.refreshInternal(sGroupId);
-			});
-		}
+			}
+		});
 	};
 
 	/**
@@ -791,16 +803,12 @@ sap.ui.define([
 		if (this.oContext !== oContext) {
 			if (this.bRelative) {
 				this.reset();
-				if (this.oContext) {
-					this.oContext.deregisterBinding(this);
-				}
 				if (this.oCache) {
 					this.oCache.deregisterChange();
 					this.oCache = undefined;
 				}
 				if (oContext) {
 					this.oCache = _ODataHelper.createListCacheProxy(this, oContext);
-					oContext.registerBinding(this);
 				}
 				// call Binding#setContext because of data state etc.; fires "change"
 				Binding.prototype.setContext.call(this, oContext);
