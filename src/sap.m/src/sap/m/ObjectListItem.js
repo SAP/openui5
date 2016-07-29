@@ -75,7 +75,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 				 * @since 1.16.0
 				 * @deprecated Since version 1.42.0.
 				 */
-				markFavorite : {type : "boolean", group : "Misc", defaultValue : null},
+				markFavorite : {type : "boolean", group : "Misc", defaultValue : null, deprecated: true},
 
 				/**
 				 * Sets the flagged state for the ObjectListItem.<br><br>
@@ -84,7 +84,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 				 * @since 1.16.0
 				 * @deprecated Since version 1.42.0.
 				 */
-				markFlagged : {type : "boolean", group : "Misc", defaultValue : null},
+				markFlagged : {type : "boolean", group : "Misc", defaultValue : null, deprecated: true},
 
 				/**
 				 * If set to true, the ObjectListItem can be marked with icons such as favorite and flag.<br><br>
@@ -93,7 +93,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 				 * @since 1.16.0
 				 * @deprecated Since version 1.42.0.
 				 */
-				showMarkers : {type : "boolean", group : "Misc", defaultValue : null},
+				showMarkers : {type : "boolean", group : "Misc", defaultValue : null, deprecated: true},
 
 				/**
 				 * Defines the ObjectListItem number and numberUnit value state.
@@ -129,7 +129,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 				 * @since 1.28
 				 * @deprecated Since version 1.42.0.
 				 */
-				markLocked : {type : "boolean", group : "Misc", defaultValue : false}
+				markLocked : {type : "boolean", group : "Misc", defaultValue : false, deprecated: true}
 			},
 			defaultAggregation : "attributes",
 			aggregations : {
