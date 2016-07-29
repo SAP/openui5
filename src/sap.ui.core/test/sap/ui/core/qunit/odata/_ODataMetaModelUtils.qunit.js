@@ -562,7 +562,7 @@ sap.ui.require([
 				.withExactArgs("Unsupported type for sap:semantics: "
 						+ oFixture.oExpectedMessage,
 					"Foo.bar",
-					"sap.ui.model.odata._ODataMetaModelUtils");
+					"sap.ui.model.odata.ODataMetaModel");
 
 			assert.strictEqual(Utils.getV4TypesForV2Semantics(oFixture.sSemantics, oFixture.sTypes,
 				oProperty, oType), oFixture.sOutput, sSemanticsValue);
@@ -646,7 +646,7 @@ sap.ui.require([
 					// do not construct arguments in vain!
 					.exactly(bIsLoggable ? 1 : 0)
 					.withExactArgs("Unsupported sap:semantics: *", "Foo.Bar",
-						"sap.ui.model.odata._ODataMetaModelUtils");
+						"sap.ui.model.odata.ODataMetaModel");
 
 				// code under test
 				Utils.addSapSemantics(oType);
@@ -683,7 +683,7 @@ sap.ui.require([
 					// do not construct arguments in vain!
 					.exactly(bIsLoggable ? 1 : 0)
 					.withExactArgs("Unsupported type for sap:semantics: foo", "Foo.Bar",
-						"sap.ui.model.odata._ODataMetaModelUtils");
+						"sap.ui.model.odata.ODataMetaModel");
 
 				// code under test
 				Utils.addSapSemantics(oType);
@@ -792,7 +792,7 @@ sap.ui.require([
 					// do not construct arguments in vain!
 					.exactly(bIsLoggable ? 1 : 0)
 					.withExactArgs("Unsupported sap:filter-restriction: " + "Bar", "Baz.Foo",
-						"sap.ui.model.odata._ODataMetaModelUtils");
+						"sap.ui.model.odata.ODataMetaModel");
 
 				// code under test
 				Utils.addFilterRestriction(oProperty, oEntitySet);
@@ -882,4 +882,107 @@ sap.ui.require([
 
 	});
 
+	//*********************************************************************************************
+	[{
+		name : "deletable",
+		expectedProperty : "Deletable",
+		expectedTerm : "Org.OData.Capabilities.V1.DeleteRestrictions"
+	}, {
+		name : "deletable-path",
+		expectedProperty : "Deletable",
+		expectedTerm : "Org.OData.Capabilities.V1.DeleteRestrictions"
+	}, {
+		name : "updatable",
+		expectedProperty : "Updatable",
+		expectedTerm : "Org.OData.Capabilities.V1.UpdateRestrictions"
+	}, {
+		name : "updatable-path",
+		expectedProperty : "Updatable",
+		expectedTerm : "Org.OData.Capabilities.V1.UpdateRestrictions"
+	}].forEach(function (oFixture) {
+		QUnit.test("addV4Annotation: " + oFixture.name, function (assert) {
+			var oEntitySet = {},
+				oExtension = {
+					name : oFixture.name
+				},
+				sTypeClass = "EntitySet";
+
+			this.mock(Utils).expects("handleXableAndXablePath")
+				.withExactArgs(sinon.match.same(oEntitySet), sinon.match.same(oExtension),
+					sTypeClass, oFixture.expectedTerm, oFixture.expectedProperty);
+
+			// code under test
+			Utils.addV4Annotation(oEntitySet, oExtension, sTypeClass);
+		});
+	});
+
+	//*********************************************************************************************
+	// "Updatable"/"Org.OData.Capabilities.V1.UpdateRestrictions" works the same way...
+	[{
+		extension : {name : "deletable", value : "false"},
+		property : "Deletable",
+		term : "Org.OData.Capabilities.V1.DeleteRestrictions",
+		expectedValue : {"Deletable" : {"Bool" : "false"}}
+	}, {
+		extension : {name : "deletable", value : "true"},
+		property : "Deletable",
+		term : "Org.OData.Capabilities.V1.DeleteRestrictions",
+		expectedValue : undefined
+	}, {
+		extension : {name : "deletable-path", value : "AnyPathExpression"},
+		property : "Deletable",
+		term : "Org.OData.Capabilities.V1.DeleteRestrictions",
+		expectedValue : {"Deletable" : {"Path" : "AnyPathExpression"}}
+	}].forEach(function (oFixture) {
+		var oExtension = oFixture.extension;
+
+		QUnit.test("handleXableAndXablePath: " + JSON.stringify(oExtension), function (assert) {
+			var oEntitySet = {};
+
+			oEntitySet["sap:" + oExtension.name] = oExtension.value;
+
+			// code under test
+			Utils.handleXableAndXablePath(oEntitySet, oExtension, "EntitySet", oFixture.term,
+				oFixture.property);
+
+			assert.deepEqual(oEntitySet[oFixture.term], oFixture.expectedValue);
+		});
+	});
+
+	//*********************************************************************************************
+	// "Updatable"/"Org.OData.Capabilities.V1.UpdateRestrictions" works the same way...
+	QUnit.test("handleXableAndXablePath: inconsistent service", function (assert) {
+		var oEntitySet = {
+				"name" : "Foo.Bar",
+				"sap:deletable" : "foo",
+				"sap:deletable-path" : "bar"
+			},
+			sTerm = "Org.OData.Capabilities.V1.DeleteRestrictions";
+
+		this.mock(jQuery.sap.log).expects("warning")
+			.withExactArgs("Inconsistent service",
+				"Use either 'sap:deletable' or 'sap:deletable-path' at entity set 'Foo.Bar'",
+				"sap.ui.model.odata.ODataMetaModel");
+
+		// code under test
+		Utils.handleXableAndXablePath(oEntitySet, {}, "EntitySet", sTerm, "Deletable");
+
+		assert.deepEqual(oEntitySet[sTerm], {"Deletable" : {"Bool" : "false"}});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("handleXableAndXablePath: with type Property", function (assert) {
+		var oExtension = {name : "updatable-path", value : "AnyPathExpression"},
+			oProperty = {
+				"name" : "foo",
+				"sap:updatable-path" : "AnyPathExpression"
+			}; // Note: no "sap:deletable" at Property level
+
+		// code under test
+		Utils.handleXableAndXablePath(oProperty, oExtension, "Property",
+			"Org.OData.Capabilities.V1.UpdateRestrictions", "Updatable");
+
+		assert.notOk("Org.OData.Capabilities.V1.UpdateRestrictions" in oProperty);
+	});
 });
+
