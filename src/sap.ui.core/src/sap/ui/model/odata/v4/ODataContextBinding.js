@@ -119,7 +119,6 @@ sap.ui.define([
 
 				this.oCache = undefined;
 				this.mCacheByContext = undefined;
-				this.aDependentBindings = undefined;
 				this.sGroupId = undefined;
 				this.oOperation = undefined;
 				this.mQueryOptions = undefined;
@@ -153,6 +152,7 @@ sap.ui.define([
 					? null
 					: Context.create(this.oModel, this, sPath);
 				this.setContext(oContext);
+				oModel.bindingCreated(this);
 			},
 			metadata : {
 				publicMethods : []
@@ -304,9 +304,7 @@ sap.ui.define([
 	 */
 	// @override
 	ODataContextBinding.prototype.destroy = function () {
-		if (this.bRelative && this.oContext) {
-			this.oContext.deregisterBinding(this);
-		}
+		this.oModel.bindingDestroyed(this);
 		ContextBinding.prototype.destroy.apply(this);
 	};
 
@@ -636,11 +634,11 @@ sap.ui.define([
 				this._fireChange({reason : ChangeReason.Refresh});
 			}
 		}
-		if (this.aDependentBindings) {
-			this.aDependentBindings.forEach(function (oDependentBinding) {
+		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
+			if (oDependentBinding.refreshInternal) {
 				oDependentBinding.refreshInternal(sGroupId);
-			});
-		}
+			}
+		});
 	};
 
 	/**
@@ -682,9 +680,6 @@ sap.ui.define([
 	ODataContextBinding.prototype.setContext = function (oContext) {
 		if (this.oContext !== oContext) {
 			if (this.bRelative) {
-				if (this.oContext) {
-					this.oContext.deregisterBinding(this);
-				}
 				if (this.oCache) {
 					this.oCache.deregisterChange();
 					this.oCache = undefined;
@@ -694,7 +689,6 @@ sap.ui.define([
 				// fire "change" iff. this.oElementContext changes
 				// do not call Model#resolve in vain
 				if (oContext) {
-					oContext.registerBinding(this);
 					this.oElementContext = Context.create(this.oModel, this,
 						this.oModel.resolve(this.sPath, oContext));
 					if (!this.oOperation && this.mQueryOptions) {

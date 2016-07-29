@@ -1379,8 +1379,19 @@ sap.ui.require([
 				iReadStart : 50, iReadLength : 60
 			}],
 			oExpected : {start : 100, length : 20}
+		}, {
+			iStart : 800, iLength : 10, iThreshold : 0, iMaxLength : 700 // no read after iMaxLength
+		}, {
+			iStart : 100, iLength : 20, iThreshold : 0, iMaxLength : 120,
+			oExpected : {start : 100, length : 20}
+		}, {
+			iStart : 33, iLength : 10, iThreshold : 0, iMaxLength : 34, // last element missing
+			aPreread : [{
+				iReadStart : 0, iReadLength : 33
+			}],
+			oExpected : {start : 33, length : 10}
 		}, { // with threshold
-			iStart : 0, iLength : 10, iThreshold : 100,
+			iStart : 0, iLength : 10, iThreshold : 100, // initial read
 			oExpected : {start : 0, length : 110}
 		}, {
 			iStart : 1, iLength : 10, iThreshold : 100,
@@ -1389,55 +1400,53 @@ sap.ui.require([
 			iStart : 50, iLength : 10, iThreshold : 100,
 			aPreread : [{iReadStart : 0, iReadLength : 110}]
 		}, {
-			iStart : 51, iLength : 10, iThreshold : 100,
+			iStart : 51, iLength : 10, iThreshold : 100, // missing data above iStart
 			aPreread : [{iReadStart : 0, iReadLength : 110}],
-			oExpected : {start : 110, length : 110}
+			oExpected : {start : 51, length : 110}
 		}, {
 			iStart : 52, iLength : 10, iThreshold : 100,
-			aPreread : [{iReadStart : 0, iReadLength : 219}]
+			aPreread : [{iReadStart : 0, iReadLength : 161}]
 		}, {
-			iStart : 430, iLength : 10, iThreshold : 100,
-			aPreread : [{iReadStart : 0, iReadLength : 219}],
+			iStart : 430, iLength : 10, iThreshold : 100, // no buffer below and above iStart
+			aPreread : [{iReadStart : 0, iReadLength : 161}],
 			oExpected : {start : 330, length : 210}
 		}, {
 			iStart : 431, iLength : 10, iThreshold : 100,
 			aPreread : [{
-				iReadStart : 0, iReadLength : 219
+				iReadStart : 0, iReadLength : 161
 			}, {
 				iReadStart : 330, iReadLength : 210
 			}]
 		}, {
 			iStart : 429, iLength : 10, iThreshold : 100,
 			aPreread : [{
-				iReadStart : 0, iReadLength : 219
+				iReadStart : 0, iReadLength : 161
 			}, {
 				iReadStart : 330, iReadLength : 210
 			}]
 		}, {
 			iStart : 380, iLength : 10, iThreshold : 100,
 			aPreread : [{
-				iReadStart : 0, iReadLength : 219
+				iReadStart : 0, iReadLength : 161
 			}, {
 				iReadStart : 330, iReadLength : 210
 			}]
 		}, {
-			iStart : 379, iLength : 10, iThreshold : 100,
+			iStart : 379, iLength : 10, iThreshold : 100, // missing data below iStart
 			aPreread : [{
-				iReadStart : 0, iReadLength : 219
+				iReadStart : 0, iReadLength : 161
 			}, {
 				iReadStart : 330, iReadLength : 210
 			}],
-			oExpected : {start : 220, length : 110}
+			oExpected : {start : 279, length : 110}
 		}, {
-			iStart : 219, iLength : 10, iThreshold : 100,
+			iStart : 161, iLength : 10, iThreshold : 100, // only iStart is missing
 			aPreread : [{
-				iReadStart : 0, iReadLength : 219
+				iReadStart : 0, iReadLength : 161
 			}, {
-				iReadStart : 330, iReadLength : 210
-			}, {
-				iReadStart : 220, iReadLength : 110
+				iReadStart : 162, iReadLength : 110
 			}],
-			oExpected : {start : 219, length : 110}
+			oExpected : {start : 161, length : 110}
 		}, { // all data read, no further call to fill prefetched data
 			iStart : 50, iLength : 10, iThreshold : 100, iMaxLength : 80,
 			aPreread : [{
@@ -1445,15 +1454,21 @@ sap.ui.require([
 			}]
 		}, { // outside range
 			iStart : 910, iLength : 10, iThreshold : 100, iMaxLength : 800
-		}, { // start index after maxLength but missing data in front
+		}, { // start index >= maxLength but missing data < iStart
 			iStart : 800, iLength : 10, iThreshold : 100, iMaxLength : 800,
-			oExpected : {start : 690, length : 110}
+			oExpected : {start : 700, length : 110}
 		}, { // start index just before maxLength
 			iStart : 799, iLength : 10, iThreshold : 100, iMaxLength : 800,
 			oExpected : {start : 699, length : 210}
+		}, { // last element missing
+			iStart : 44, iLength : 10, iThreshold : 100, iMaxLength : 45,
+			aPreread : [{
+				iReadStart : 0, iReadLength : 44
+			}],
+			oExpected : {start : 44, length : 110}
 		}, { // start index near 0 but greater than 0
 			iStart : 5, iLength : 10, iThreshold : 100,
-			oExpected : {start : 0, length : 210}
+			oExpected : {start : 0, length : 115}
 		}
 	].forEach(function (oFixture) {
 		QUnit.test("threshold: iStart = " + oFixture.iStart, function (assert) {
@@ -1481,43 +1496,6 @@ sap.ui.require([
 		});
 	});
 
-	// TODO handle encoding in getQueryOptions
-
-	//*********************************************************************************************
-	QUnit.test("(de)registerBinding", function (assert) {
-		var oBinding = {},
-			oDependentBinding0 = {},
-			oDependentBinding1 = {};
-
-		//code under test: must not fail
-		_ODataHelper.deregisterBinding(oBinding, oDependentBinding0);
-
-		//code under test
-		_ODataHelper.registerBinding(oBinding, oDependentBinding0);
-
-		assert.strictEqual(oBinding.aDependentBindings.length, 1);
-		assert.strictEqual(oBinding.aDependentBindings[0], oDependentBinding0);
-
-		//code under test
-		_ODataHelper.registerBinding(oBinding, oDependentBinding1);
-
-		assert.strictEqual(oBinding.aDependentBindings.length, 2);
-		assert.strictEqual(oBinding.aDependentBindings[0], oDependentBinding0);
-		assert.strictEqual(oBinding.aDependentBindings[1], oDependentBinding1);
-
-		//code under test
-		_ODataHelper.deregisterBinding(oBinding, oDependentBinding0);
-
-		assert.strictEqual(oBinding.aDependentBindings.length, 1);
-		assert.strictEqual(oBinding.aDependentBindings[0], oDependentBinding1);
-
-		//code under test:
-		_ODataHelper.deregisterBinding(oBinding, oDependentBinding0);
-
-		assert.strictEqual(oBinding.aDependentBindings.length, 1);
-		assert.strictEqual(oBinding.aDependentBindings[0], oDependentBinding1);
-	});
-
 	//*********************************************************************************************
 	QUnit.test("hasPendingChanges(sPath): with cache", function (assert) {
 		var oBinding = {
@@ -1528,7 +1506,6 @@ sap.ui.require([
 			oCacheMock = this.mock(oBinding.oCache),
 			oResult = {};
 
-		oBinding.aDependentBindings = [{}, {}];
 		["foo", ""].forEach(function (sPath) {
 			oCacheMock.expects("hasPendingChanges").withExactArgs(sPath).returns(oResult);
 
@@ -1540,7 +1517,6 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("hasPendingChanges(sPath): without cache", function (assert) {
 		var oBinding = {
-				aDependentBindings : [{}, {}],
 				sPath : "relative"
 			},
 			sBuildPath = "~/foo",
@@ -1574,7 +1550,9 @@ sap.ui.require([
 				oCache : {
 					hasPendingChanges : function () {}
 				},
-				aDependentBindings : [oChild1, oChild2]
+				oModel : {
+					getDependentBindings : function () {}
+				}
 			},
 			oCacheMock = this.mock(oBinding.oCache),
 			oHelperMock = this.mock(_ODataHelper),
@@ -1582,6 +1560,8 @@ sap.ui.require([
 			// assertions on recursive calls
 			fnHasPendingChanges = _ODataHelper.hasPendingChanges;
 
+		this.mock(oBinding.oModel).expects("getDependentBindings").atLeast(1)
+			.withExactArgs(oBinding).returns([oChild1, oChild2]);
 		[false, true].forEach(function (bAskParent) {
 			oCacheMock.expects("hasPendingChanges").withExactArgs("").returns(true);
 			oHelperMock.expects("hasPendingChanges").never();
@@ -1610,13 +1590,19 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("hasPendingChanges(bAskParent): without cache", function (assert) {
 		var oBinding = {
-				sPath : "relative"
+				sPath : "relative",
+				oModel : {
+					getDependentBindings : function () {}
+				}
 			},
 			oContext = {
 				hasPendingChanges : function () {}
 			},
 			oContextMock = this.mock(oContext),
 			oResult = {};
+
+		this.mock(oBinding.oModel).expects("getDependentBindings").atLeast(1)
+			.withExactArgs(oBinding).returns([]);
 
 		//code under test
 		assert.strictEqual(_ODataHelper.hasPendingChanges(oBinding, false), false);
@@ -1643,7 +1629,6 @@ sap.ui.require([
 			},
 			oCacheMock = this.mock(oBinding.oCache);
 
-		oBinding.aDependentBindings = [{}, {}];
 		["foo", ""].forEach(function (sPath) {
 			oCacheMock.expects("resetChanges").withExactArgs(sPath);
 
@@ -1654,7 +1639,6 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("resetChanges(sPath): without cache", function (assert) {
 		var oBinding = {
-				aDependentBindings : [{}, {}],
 				sPath : "relative"
 			},
 			sBuildPath = "~/foo",
@@ -1687,7 +1671,9 @@ sap.ui.require([
 				oCache : {
 					resetChanges : function () {}
 				},
-				aDependentBindings : [oChild1, oChild2]
+				oModel : {
+					getDependentBindings : function () {}
+				}
 			},
 			oCacheMock = this.mock(oBinding.oCache),
 			oHelperMock = this.mock(_ODataHelper),
@@ -1695,6 +1681,8 @@ sap.ui.require([
 			// assertions on recursive calls
 			fnResetChanges = _ODataHelper.resetChanges;
 
+		this.mock(oBinding.oModel).expects("getDependentBindings").atLeast(1)
+			.withExactArgs(oBinding).returns([oChild1, oChild2]);
 		[false, true].forEach(function (bAskParent) {
 			oCacheMock.expects("resetChanges").withExactArgs("");
 			oHelperMock.expects("resetChanges").withExactArgs(oChild1, false);
@@ -1708,12 +1696,18 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("resetChanges(bAskParent): without cache", function (assert) {
 		var oBinding = {
-				sPath : "relative"
+				sPath : "relative",
+				oModel : {
+					getDependentBindings : function () {}
+				}
 			},
 			oContext = {
 				resetChanges : function () {}
 			},
 			oContextMock = this.mock(oContext);
+
+		this.mock(oBinding.oModel).expects("getDependentBindings").atLeast(1)
+			.withExactArgs(oBinding).returns([]);
 
 		//code under test
 		_ODataHelper.resetChanges(oBinding, false);
@@ -1833,6 +1827,30 @@ sap.ui.require([
 				assert.deepEqual(oBinding.aPreviousData, []);
 				assert.strictEqual(aDiff0, undefined);
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestDiff, bDetectUpdates=true", function (assert) {
+		var oBinding = {
+				bDetectUpdates : true,
+				aPreviousData : ["s0 previous", "s1 previous"]
+			},
+			aDiff = [/*some diff*/],
+			oJSONMock = this.mock(JSON),
+			aResult = [{"Category" : "C1", "ID" : "ID1", "Name" : "N1"},
+				{"Category" : "C2", "ID" : "ID2", "Name" : "N2"}];
+
+		oJSONMock.expects("stringify").withExactArgs(aResult[0]).returns("s1 new");
+		oJSONMock.expects("stringify").withExactArgs(aResult[1]).returns("s2 new");
+		this.mock(jQuery.sap).expects("arraySymbolDiff")
+			.withExactArgs(["s1 previous"], ["s1 new", "s2 new"])
+			.returns(aDiff);
+
+		// code under test
+		return _ODataHelper.requestDiff(oBinding, aResult, 1).then(function (aDiff0) {
+			assert.deepEqual(oBinding.aPreviousData, ["s0 previous", "s1 new", "s2 new"]);
+			assert.strictEqual(aDiff0, aDiff);
 		});
 	});
 });
