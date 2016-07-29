@@ -51,7 +51,15 @@ html.sap-phone {
 	}
 
 	.sapMDialogScroll {
-		background: @sapUiLightestBG
+		background: @sapUiLightestBG;
 	}
 
+	.sapMSltBar {
+		&.sapMTSSltBar::after {
+			background: @sapUiButtonActiveBackground;
+			color: @sapUiButtonActiveTextColor;
+			text-shadow: none;
+			border: @sapUiButtonActiveBorderColor;
+		}
+	}
 }

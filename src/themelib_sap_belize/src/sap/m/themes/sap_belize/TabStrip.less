@@ -4,50 +4,84 @@
 /* =============================== */
 
 .sapMTabStrip {
-	background: @sapUiPageHeaderBackground;
-	border-bottom: 0.125rem solid darken(@sapUiObjectHeaderBackground, 8);
+	background: @sapUiObjectHeaderBackground;
+	box-shadow: inset 0 -0.125rem 0 0 darken(@sapUiObjectHeaderBackground,8);
 	.sapMTSLeftOverflowButtons {
 		background: linear-gradient(90deg, @sapUiPageHeaderBackground 0%, @sapUiPageHeaderBackground 75%, fade(@sapUiPageHeaderBackground, 0) 100%);
+		bottom: 0.125rem;
+		& .sapMBtn.sapMBtnBase {
+			padding-bottom: 0rem;
+		}
 	}
 	.sapMTSTabsContainer {
+		right: 7.5rem;
 		.sapMTSTabs {
 			.sapMTabStripItem {
-				background: @sapUiPageHeaderBackground;
+				padding: 0 0 0 0.5rem;
+				background: transparent;
 				color: @sapUiGroupTitleTextColor;
-				.sapMTSItemCloseBtnCnt {
-					visibility: hidden;
-				}
-				&.sapMTabStripItemSelected {
-					border-bottom: solid 0.125rem @sapUiHighlight;
-					color: darken(@sapUiGroupTitleTextColor, 20);
-					.sapMTSItemCloseBtnCnt {
-						visibility: visible;
-					}
+				.sapMTabStripItemLabel {
+					font-size: @sapMFontMediumSize;
 				}
 				&:hover {
 					color: darken(@sapUiGroupTitleTextColor, 10);
-					.sapMTSItemCloseBtnCnt {
-						visibility: visible;
-					}
+				}
+				&.sapMTabStripItemSelected {
+					color: darken(@sapUiGroupTitleTextColor, 20);
+					border-bottom: solid 0.125rem @sapUiHighlight;
 				}
 				&:focus {
-				  outline: none;
+					outline: none;
 				}
 				position: relative;
 				&:focus::before {
-				  pointer-events: none;
-				  content: "";
-				  position: absolute;
-				  top: 0;
-				  left: 0;
-				  right: 0;
-				  bottom: 0;
-				  border: 1px dotted @sapUiContentFocusColor;
+					pointer-events: none;
+					content: "";
+					position: absolute;
+					top: 0;
+					left: 0;
+					right: 0;
+					bottom: 0;
+					border: 1px dotted @sapUiContentFocusColor;
 				}
 			}
 		}
 	}
 	.sapMTSRightOverflowButtons {
 		background: linear-gradient(90deg, fade(@sapUiPageHeaderBackground, 0) 0%, @sapUiPageHeaderBackground 25%, @sapUiPageHeaderBackground 100%);
+		bottom: 0.125rem;
+		right: 5.5rem;
+		& .sapMBtn.sapMBtnBase {
+			padding-left: 1rem;
+			padding-bottom: 0rem;
+		}
+	}
+	.sapMTSAddNewTabBtn {
+		margin-left: 0.5rem;
+	}
+}
+
+.sapUiSizeCozy .sapMTabStrip{
+	.sapMTSRightOverflowButtons{
+		right: 6.5rem;
+		width: 3.5rem;
+	}
+}
+
+html.sap-phone {
+	.sapMTabStrip .sapMTSTouchArea {
+		.sapMTSSlt .sapMSltLabel{
+			position: absolute;
+			left: 0;
+			padding: 0 0 0 1rem;
+		}
+		.sapMSltIcon.sapUiIcon.sapUiIconMirrorInRTL {
+			position: absolute;
+			right: 2.5rem;
+		}
+		.sapMBtn.sapMBtnBase {
+			position: absolute;
+			right: 0;
+		}
 	}
 }

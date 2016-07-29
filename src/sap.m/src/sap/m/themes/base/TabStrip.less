@@ -4,6 +4,10 @@
 .sapMTabStrip {
 	position: relative;
 	height: 3rem;
+	.sapMSltWithArrow {
+		visibility: hidden;
+	}
+	&.sapMTSScrollForward .sapMSltWithArrow,
 	&.sapMTSScrollForward .sapMTSRightOverflowButtons,
 	&.sapMTSScrollBack .sapMTSLeftOverflowButtons {
 		visibility: visible;
@@ -52,7 +56,6 @@
 				}
 				.sapMTSItemCloseBtnCnt {
 					display: inline-block;
-					height: 100%;
 					width: 2rem;
 					text-align: center;
 					vertical-align: middle;
@@ -81,6 +84,12 @@
 		height: 100%;
 		position: absolute;
 		right: .5rem;
+	}
+}
+
+.sapUiSizeCompact .sapMTabStrip{
+	.sapMTSTabs .sapMTabStripItem .sapMTSItemCloseBtnCnt {
+		height: 100%;
 	}
 }
 
@@ -132,6 +141,13 @@ html[data-sap-ui-animation='on'] .sapMTabStrip .sapMTSTabsContainer .sapMTSTabs 
 							}
 						}
 					}
+					.sapMTabStripSelectListItemCloseBtn {
+						width: 1.5rem;
+						height: 100%;
+					}
+					&.sapMTabStripItemSelected .sapMTabStripSelectListItemCloseBtn {
+						padding-top: 4px;//because of the border
+					}
 					&.sapMTabStripItemSelected, &:hover {
 						padding: 0 1.5rem 0 0.5rem;
 						.sapMTSItemCloseBtnCnt {
@@ -149,5 +165,15 @@ html[data-sap-ui-animation='on'] .sapMTabStrip .sapMTSTabsContainer .sapMTSTabs 
 				}
 			}
 		}
+	}
+}
+
+html.sap-phone {
+	.sapMTabStrip .sapMTSTouchArea {
+		position: inherit;
+		right: inherit;
+	}
+	.sapMTabStrip .sapMSltWithArrow {
+		visibility: visible;
 	}
 }

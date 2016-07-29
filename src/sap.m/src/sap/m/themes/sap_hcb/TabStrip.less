@@ -231,3 +231,33 @@
 		background: linear-gradient(90deg,  fade(@sapHCStandardBG, 0)  0%,  @sapHCStandardBG  25%, @sapHCStandardBG 100%);
 	}
 }
+
+html.sap-phone {
+	.sapMTabStrip .sapMTSTouchArea {
+		.sapMTSSlt .sapMSltLabel{
+			position: absolute;
+			left: 0px;
+			padding: 0 0 0 1rem;
+		}
+		.sapMSltIcon.sapUiIcon.sapUiIconMirrorInRTL {
+			position: absolute;
+			right: 2rem;
+			margin-top: 0.6rem;
+		}
+		.sapMSltIcon:before {
+			font-size: 1rem;
+		}
+		.sapMBtn.sapMBtnBase {
+			position: absolute;
+			right: 0;
+			&>.sapMBtnInner.sapMBtnTransparent {
+				box-sizing: content-box;
+			}
+		}
+		.sapMBtnIcon.sapUiIcon.sapUiIconMirrorInRTL {
+			&:before {
+				font-size: 1rem;
+			}
+		}
+	}
+}
