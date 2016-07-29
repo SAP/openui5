@@ -26,10 +26,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		VisibleRowCountMode = library.VisibleRowCountMode;
 
 	// lazy dependencies
-	var Input,
-		Menu,
-		MenuItem,
-		TextField;
+	var Menu,
+		MenuItem;
 
 	/**
 	 * Constructor for a new Table.
@@ -705,9 +703,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			this._iColMinWidth = 88;
 		}
 
-		this._oCalcColumnWidths = [];
 		this._aTableHeaders = [];
-		this._iLastHoveredColumnIndex = 0;
 
 		// columns to cells map
 		this._aIdxCols2Cells = [];
@@ -723,9 +719,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		// text selection for column headers?
 		this._bAllowColumnHeaderTextSelection = false;
-
-		this._doubleclickDelay = 300;
-		this._clicksRegistered = 0;
 
 		// determine whether jQuery version is less than 1.8 (height and width behaves different!!)
 		this._bjQueryLess18 = jQuery.sap.Version(jQuery.fn.jquery).compareTo("1.8") < 0;
@@ -2001,26 +1994,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * triggers automatic resizing of a column to the widest content.(experimental!)
-	 * @experimental Experimental! Presently implemented to only work with pure text-based controls,
-	 * the sap.ui.commons.Checkbox and sap.m.Image as well as sap.ui.commons.Image.
-	 * It will also work for most simple input fields (TextField, CheckBox, but not ComboBox)
+	 * Triggers automatic resizing of a column to the widest content.
 	 *
-	 * @param {int} iColId column id
+	 * @experimental Experimental! Presently implemented to only work with a very limited set of controls (e.g. sap.m.Text).
+	 * @param {int} iColIndex The index of the column in the list of visible columns.
 	 * @function
 	 * @public
 	 */
-	Table.prototype.autoResizeColumn = function(iColId) {
-		var oCol = this.getColumns()[iColId];
-		this._iColumnResizeStart = null;
-		var iNewWidth = this._calculateAutomaticColumnWidth(iColId);
-		if (iNewWidth == null) {
-			return;
-		}
-
-		oCol._iNewWidth = iNewWidth;
-		this._oCalcColumnWidths[iColId] = oCol._iNewWidth;
-		this._onColumnResized(null, iColId);
+	Table.prototype.autoResizeColumn = function(iColIndex) {
+		this._getPointerExtension().doAutoResizeColumn(iColIndex);
 	};
 
 
@@ -2081,13 +2063,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			$this.find(".sapUiTableCtrlFixed > tbody > tr").removeClass("sapUiTableRowHvr");
 		});
 
-		// listen to the resize handlers
-		$this.find(".sapUiTableColRsz").mousedown(jQuery.proxy(this._onColumnResizeStart, this));
-
-		// attach mousemove listener to update resizer position
-		$this.find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed, .sapUiTableColHdrScr, .sapUiTableColHdrFixed").mousemove(jQuery.proxy(this._onScrPointerMove, this));
-
-		this._enableColumnAutoResizing();
+		this._getPointerExtension().initColumnResizeEvents();
 
 		var $vsb = jQuery(this.getDomRef(SharedDomRef.VerticalScrollBar));
 		var $hsb = jQuery(this.getDomRef(SharedDomRef.HorizontalScrollBar));
@@ -2130,8 +2106,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		$this.find(".sapUiTableRowHdrScr").unbind();
 		$this.find(".sapUiTableCtrl > tbody > tr").unbind();
 		$this.find(".sapUiTableRowHdr").unbind();
-		$this.find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed, .sapUiTableColHdrScr, .sapUiTableColHdrFixed").unbind();
-		$this.find(".sapUiTableColRsz").unbind();
+		this._getPointerExtension().cleanupColumnResizeEvents();
 		$this.find(".sapUiTableCtrlScrFixed, .sapUiTableColHdrFixed").unbind("scroll.sapUiTablePreventFixedAreaScroll");
 
 		if (TableUtils.isVariableRowHeightEnabled(this)) {
@@ -2154,51 +2129,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		$body.unbind('webkitTransitionEnd transitionend');
 
 		TableUtils.deregisterResizeHandler(this);
-	};
-
-	/**
-	 * Update the resizer position, according to mouse/touch position.
-	 * @param {Event} oEvent the handled move event
-	 * @private
-	 */
-	Table.prototype._onScrPointerMove = function(oEvent) {
-		var oDomRef = this.getDomRef();
-		if (this._bIsColumnResizerMoving || !oDomRef) {
-			return;
-		}
-
-		var iPositionX = oEvent.clientX;
-		var iTableRect = oDomRef.getBoundingClientRect();
-		var iLastHoveredColumn = 0;
-		var iResizerPositionX;
-		if (this._bRtlMode) {
-			iResizerPositionX = 10000;
-		} else {
-			iResizerPositionX = -10000;
-		}
-
-		for (var i = 0; i < this._aTableHeaders.length; i++) {
-			var oTableHeaderRect = this._aTableHeaders[i].getBoundingClientRect();
-			if (this._bRtlMode) {
-				// 5px for resizer width
-				if (iPositionX < oTableHeaderRect.right - 5) {
-					iLastHoveredColumn = i;
-					iResizerPositionX = oTableHeaderRect.left - iTableRect.left;
-				}
-			} else {
-				// 5px for resizer width
-				if (iPositionX > oTableHeaderRect.left + 5) {
-					iLastHoveredColumn = i;
-					iResizerPositionX = oTableHeaderRect.right - iTableRect.left;
-				}
-			}
-		}
-
-		var oColumn = this._getVisibleColumns()[iLastHoveredColumn];
-		if (oColumn && oColumn.getResizable()) {
-			this.$().find(".sapUiTableColRsz").css("left", iResizerPositionX + "px");
-			this._iLastHoveredColumnIndex = iLastHoveredColumn;
-		}
 	};
 
 	/**
@@ -2542,19 +2472,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 					this._aVisibleColumns.push(i);
 				}
 			}
-		}
-	};
-
-	/**
-	 * enables automatic resizing on doubleclick on a column if the corresponding column attribute is set
-	 * @experimental Experimental, only works with limited control set
-	 * @function
-	 * @private
-	 */
-	Table.prototype._enableColumnAutoResizing = function () {
-		var $resizer = jQuery(this.getDomRef("rsz"));
-		if ($resizer.length > 0){
-			this._bindSimulatedDoubleclick($resizer, null /* fnSingleClick*/, this._onAutomaticColumnResize /* fnDoubleClick */);
 		}
 	};
 
@@ -3311,38 +3228,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * helper method to bind different functions to a click if both a single and a double click can occur on an element
-	 * @experimental Experimental
-	 * @function
-	 * @private
-	 */
-	Table.prototype._bindSimulatedDoubleclick = function(element, fnClick, fnDoubleclick){
-		var eventBound = "click";
-		var that = this;
-		if (!!Device.support.touch){
-			//event needs to be touchend due to timing issues on the ipad
-			eventBound = "touchend";
-		}
-		jQuery(element).on(eventBound, function(oEvent){
-			oEvent.preventDefault();
-			oEvent.stopPropagation();
-			that._clicksRegistered = that._clicksRegistered + 1;
-			if (that._clicksRegistered < 2){
-				that._mTimeouts.singleClickTimer = jQuery.sap.delayedCall(that._doubleclickDelay, that, function(){
-					that._clicksRegistered = 0;
-					if (fnClick){
-						fnClick.call(that, oEvent);
-					}
-				}, [oEvent]);
-			} else {
-				jQuery.sap.clearDelayedCall(that._mTimeouts.singleClickTimer);
-				that._clicksRegistered = 0;
-				fnDoubleclick.call(that, oEvent);
-			}
-		});
-	};
-
-	/**
 	 * finds the cell on which the click or contextmenu event is executed and
 	 * notifies the listener which control has been clicked or the contextmenu
 	 * should be openend.
@@ -3656,11 +3541,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 					menu: $ColumnHeaderMenu,
 					self: $ColumnHeader
 				}));
-
-				// listen to the resize handlers
-				if (oColumn.getResizable()) {
-					$ColumnHeader.find(".sapUiTableColResizer").bind("touchstart", jQuery.proxy(this._onColumnResizeStart, this));
-				}
 			}
 
 			return;
@@ -4018,169 +3898,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}, 0);
 
 		delete this._iNewColPos;
-	};
-
-	/**
-	 * starts the automatic column resize after doubleclick
-	 * @experimental Experimental, only works with a limited control set
-	 * @private
-	 */
-	Table.prototype._onAutomaticColumnResize = function(oEvent) {
-		var oColumn = this.getColumns()[this._iLastHoveredColumnIndex];
-		if (!oColumn.getAutoResizable()) {
-			return;
-		}
-
-		jQuery.sap.log.debug("doubleclick fired");
-		this._disableTextSelection();
-
-		this.autoResizeColumn(this._iLastHoveredColumnIndex);
-
-		oEvent.preventDefault();
-		oEvent.stopPropagation();
-	};
-
-	/**
-	 * Handler for the beginning of a column resizing.
-	 * @private
-	 */
-	Table.prototype._onColumnResizeStart = function(oEvent) {
-		this._bIsColumnResizerMoving = true;
-		var $body = jQuery(document.body);
-		this.$().addClass("sapUiTableResizing");
-		if (this._isTouchMode(oEvent)) {
-			this._iColumnResizeStart = oEvent.targetTouches[0].pageX;
-			this._disableTextSelection();
-
-			this._$colResize = jQuery("#" + this.getId() + "-rsz");
-
-			$body.bind("touchmove.sapUiTableColumnResize", this._onColumnResize.bind(this));
-			$body.bind("touchend.sapUiTableColumnResize", this._onColumnResized.bind(this));
-		} else {
-			// only resize on left click!
-			if (oEvent.button === 0) {
-				this._iColumnResizeStart = oEvent.pageX;
-
-				this._disableTextSelection();
-				this._$colResize = jQuery(oEvent.target);
-
-				$body.bind("mousemove.sapUiTableColumnResize", this._onColumnResize.bind(this));
-				$body.bind("mouseup.sapUiTableColumnResize", this._onColumnResized.bind(this));
-			}
-		}
-	};
-
-	/**
-	 * Handler for the resizing of a column.
-	 * @private
-	 */
-	Table.prototype._onColumnResize = function(oEvent) {
-		var iLocationX;
-		if (this._isTouchMode(oEvent)) {
-			iLocationX = oEvent.targetTouches[0].pageX;
-			oEvent.stopPropagation();
-			oEvent.preventDefault();
-		} else {
-			iLocationX = oEvent.pageX;
-		}
-
-		if (this._iColumnResizeStart && iLocationX < this._iColumnResizeStart + 3 && iLocationX > this._iColumnResizeStart - 3) {
-			return;
-		}
-
-		if (this._isTouchMode(oEvent)) {
-			this._$colResize.addClass("sapUiTableColTouchRszActive");
-		} else {
-			this._$colResize.addClass("sapUiTableColRszActive");
-		}
-
-		var oColumn = this._getVisibleColumns()[this._iLastHoveredColumnIndex];
-		var iDeltaX = iLocationX - this._iColumnResizeStart;
-		var iColumnWidth = oColumn.$().width();
-
-		var iWidth;
-		if (this._bRtlMode) {
-			iWidth = iColumnWidth - iDeltaX;
-		} else {
-			iWidth = iColumnWidth + iDeltaX;
-		}
-
-		iWidth = Math.max(iWidth, this._iColMinWidth);
-
-		// calculate and set the position of the resize handle
-		var iRszOffsetLeft = this.$().find(".sapUiTableCnt").offset().left;
-		var iRszLeft = Math.floor((iLocationX - iRszOffsetLeft) - (this._$colResize.width() / 2));
-		this._$colResize.css("left", iRszLeft + "px");
-
-		// store the width of the column to apply later
-		oColumn._iNewWidth = iWidth;
-	};
-
-	/**
-	 * Handler for column resizing. If a resizing happens, the table will get invalidated.
-	 * @private
-	 */
-	Table.prototype._onColumnResized = function(oEvent, iIndex) {
-		var iColIndex;
-		this._bIsColumnResizerMoving = false;
-		this.$().removeClass("sapUiTableResizing");
-
-		// ignore when no resize column is set
-		if (!this._$colResize && (iIndex === null || iIndex === undefined)) {
-			return;
-		}
-		// get the new width of the column
-		if (iIndex === null || iIndex === undefined) {
-			iColIndex = this._iLastHoveredColumnIndex;
-		} else {
-			iColIndex = iIndex;
-		}
-
-		var oColumn = this._getVisibleColumns()[iColIndex];
-
-		// if the resize has started and we have a new width for the column
-		// we apply it to the column object
-		var bResized = false;
-		if (oColumn._iNewWidth) {
-			var sWidth;
-			var iAvailableSpace = this.$().find(".sapUiTableCtrl").width();
-			if (!this._checkPercentageColumnWidth()) {
-				sWidth = oColumn._iNewWidth + "px";
-			} else {
-				var iColumnWidth = Math.round(100 / iAvailableSpace * oColumn._iNewWidth);
-				sWidth = iColumnWidth + "%";
-			}
-
-			if (this._updateColumnWidth(oColumn, sWidth, true)) {
-				this._resizeDependentColumns(oColumn, sWidth);
-			}
-
-			delete oColumn._iNewWidth;
-
-			bResized = true;
-		}
-
-		// unbind the event handlers
-		var $body = jQuery(document.body);
-		$body.unbind("touchmove.sapUiTableColumnResize");
-		$body.unbind("touchend.sapUiTableColumnResize");
-		$body.unbind("mousemove.sapUiTableColumnResize");
-		$body.unbind("mouseup.sapUiTableColumnResize");
-
-		// focus the column
-		oColumn.focus();
-
-		// hide the text selection
-		if (this._$colResize) {
-			this._$colResize.removeClass("sapUiTableColTouchRszActive sapUiTableColRszActive");
-			this._$colResize = undefined;
-		}
-		this._enableTextSelection();
-
-		// rerender / ignore if nothing changed!
-		if (bResized) {
-			this.invalidate();
-		}
 	};
 
 	/**
@@ -5501,122 +5218,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		this.addDependent(oExport);
 
 		return oExport;
-	};
-
-	/**
-	 * internal function to calculate the widest content width of the column
-	 * also takes the column header and potential icons into account
-	 * @param {int} iColIndex index of the column which should be resized
-	 * @return {int} minWidth minimum width the column needs to have
-	 * @private
-	 * @experimental Experimental, only works with a limited control set
-	 * @function
-	 */
-
-	Table.prototype._calculateAutomaticColumnWidth = function(iColIndex) {
-
-		var aTextBasedControls = [
-			"sap.m.Text",
-			"sap.m.Label",
-			"sap.m.Link",
-			"sap.ui.commons.TextView",
-			"sap.ui.commons.Label",
-			"sap.ui.commons.Link"
-		];
-
-		var $this = this.$();
-		var iHeaderWidth = 0;
-
-		var $cols = $this.find('td[headers=\"' + this.getId() + '_col' + iColIndex + '\"]').children("div");
-		var oColumns = this.getColumns();
-		var oCol = oColumns[iColIndex];
-		if (!oCol) {
-			return null;
-		}
-		var aHeaderSpan = oCol.getHeaderSpan();
-		var oColLabel = oCol.getLabel();
-		var that = this;
-
-		// try to resolve optional dependencies
-		Input = Input || sap.ui.require("sap/m/Input");
-		TextField = TextField || sap.ui.require("sap/ui/commons/TextField");
-
-		var oColTemplate = oCol.getTemplate();
-		var bIsTextBased = jQuery.inArray(oColTemplate.getMetadata().getName(), aTextBasedControls) != -1 ||
-		                   TextField && oColTemplate instanceof TextField ||
-		                   Input && oColTemplate instanceof Input;
-
-		var hiddenSizeDetector = document.createElement("div");
-		document.body.appendChild(hiddenSizeDetector);
-		jQuery(hiddenSizeDetector).addClass("sapUiTableHiddenSizeDetector");
-
-		var oColLabels = oCol.getMultiLabels();
-		if (oColLabels.length == 0 && !!oColLabel){
-			oColLabels = [oColLabel];
-		}
-
-		if (oColLabels.length > 0) {
-			jQuery.each(oColLabels, function(iIdx, oLabel){
-				var iHeaderSpan;
-				if (!!oLabel.getText()){
-					jQuery(hiddenSizeDetector).text(oLabel.getText());
-					iHeaderWidth = hiddenSizeDetector.scrollWidth;
-				} else {
-					iHeaderWidth = oLabel.$().scrollWidth;
-				}
-				iHeaderWidth = iHeaderWidth + $this.find("#" + oCol.getId() + "-icons").first().width();
-
-				$this.find(".sapUiTableColIcons#" + oCol.getId() + "_" + iIdx + "-icons").first().width();
-				if (aHeaderSpan instanceof Array && aHeaderSpan[iIdx] > 1){
-					iHeaderSpan = aHeaderSpan[iIdx];
-				} else if (aHeaderSpan > 1){
-					iHeaderSpan = aHeaderSpan;
-				}
-				if (!!iHeaderSpan){
-					// we have a header span, so we need to distribute the width of this header label over more than one column
-					//get the width of the other columns and subtract from the minwidth required from label side
-					var i = iHeaderSpan - 1;
-					while (i > iColIndex) {
-						iHeaderWidth = iHeaderWidth - (that._oCalcColumnWidths[iColIndex + i] || 0);
-						i -= 1;
-					}
-				}
-			});
-		}
-
-		var minAddWidth = Math.max.apply(null, $cols.map(
-			function(){
-				var _$this = jQuery(this);
-				return parseInt(_$this.css('padding-left'), 10) + parseInt(_$this.css('padding-right'), 10)
-						+ parseInt(_$this.css('margin-left'), 10) + parseInt(_$this.css('margin-right'), 10);
-			}).get());
-
-		//get the max width of the currently displayed cells in this column
-		var minWidth = Math.max.apply(null, $cols.children().map(
-			function() {
-				var width = 0,
-				sWidth = 0;
-				var _$this = jQuery(this);
-				var sColText = _$this.text() || _$this.val();
-
-				if (bIsTextBased){
-					jQuery(hiddenSizeDetector).text(sColText);
-					sWidth = hiddenSizeDetector.scrollWidth;
-				} else {
-					sWidth = this.scrollWidth;
-				}
-				if (iHeaderWidth > sWidth){
-					sWidth = iHeaderWidth;
-				}
-				width = sWidth + parseInt(_$this.css('margin-left'), 10)
-										+ parseInt(_$this.css('margin-right'), 10)
-										+ minAddWidth
-										+ 1; // ellipsis is still displayed if there is an equality of the div's width and the table column
-				return width;
-			}).get());
-
-		jQuery(hiddenSizeDetector).remove();
-		return Math.max(minWidth, this._iColMinWidth);
 	};
 
 	/**
