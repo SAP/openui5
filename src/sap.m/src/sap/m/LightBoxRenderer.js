@@ -15,6 +15,7 @@ sap.ui.define(['jquery.sap.global'], function (jQuery) {
 	var classNameTwoLines = 'sapMLightBoxTwoLines';
 	var classNameImageContainer = 'sapMLightBoxImageContainer';
 	var classNameImageContainerTwoLines = 'sapMLightBoxImageContainerTwoHeaders';
+	var classNameError = 'sapMLightBoxError';
 	var classNameErrorContainer = 'sapMLightBoxErrorContainer';
 	var classNameErrorContainerTwoLines = 'sapMLightBoxErrorContainerTwoHeaders';
 	var classNameFooter = 'sapMLightBoxFooter';
@@ -42,13 +43,14 @@ sap.ui.define(['jquery.sap.global'], function (jQuery) {
 			oRm.addClass(classNameTwoLines);
 		}
 
-		oRm.writeClasses();
-
 		if (oLightBoxItem._getImageState() !== "ERROR") {
 			oRm.addStyle('width', oControl._width + 'px');
 			oRm.addStyle('height', oControl._height + 'px');
+		} else {
+			oRm.addClass(classNameError);
 		}
 
+		oRm.writeClasses();
 		oRm.writeStyles();
 		oRm.write('>');
 
