@@ -1,41 +1,66 @@
 /* ====================================================== */
-/* CSS for control sap.m/Select.control                   */
+/* CSS for control sap.m.TabStripSelect.control           */
 /* ====================================================== */
 
 /* ------------------------------ */
-/* Select commons styles          */
+/* TabStripSelect commons styles  */
 /* ------------------------------ */
-.sapMSlt.sapMTSSlt {
-	float: left;
-	text-align: center;
-	vertical-align: middle;
-	position: relative;
-	height: 100%;
-	width: 2rem;
-	padding: 0;
-	margin: 0;
-	&.sapMSltInvisible {
-		visibility: hidden;
-	}
-	.sapMSltInner {
-		position: relative;
-		margin: 0 auto;
-		width: 1.625rem;
-		height: 1.625rem;
-		.sapMSltIcon {
-			border-radius: 0.15em;
-			position: absolute;
-			top: 0;
-			left: 0;
+html.sap-desktop, html.sap-tablet {
+	.sapUiSizeCompact {
+		.sapMSlt.sapMTSSlt {
+			margin: 0;
 			height: 100%;
-			width: 100%;
-			font-size: 1rem;
-			padding: 0;
-			line-height: 1.25rem;
+			width: 1.5rem;
+			.sapMSltInner {
+				width: 1.25rem;
+				height: 1.25rem;
+				.sapMSltIcon {
+					border-radius: 0.30em;
+					font-size: 0.75rem;
+					line-height: 0.75rem;
+				}
+				.sapUiIcon:before {
+					position: relative;
+					top: 0.2rem;
+				}
+			}
 		}
-		.sapUiIcon:before {
+	}
+	.sapMSlt.sapMTSSlt {
+		float: left;
+		text-align: center;
+		vertical-align: middle;
+		position: relative;
+		height: 100%;
+		width: 2rem;
+		padding: 0;
+		margin: 0;
+		&.sapMSltInvisible {
+			visibility: hidden;
+		}
+		.sapMSltInner {
 			position: relative;
-			top: 0.2rem;
+			margin: 0 auto;
+			width: 1.625rem;
+			height: 1.625rem;
+			z-index: 6; //higher than .sapMTabStrip .sapMTSLeftOverflowButtons
+			.sapMSltIcon {
+				border-radius: 0.15em;
+				position: absolute;
+				top: 0;
+				left: 0;
+				height: 100%;
+				width: 100%;
+				font-size: 1rem;
+				padding: 0;
+				line-height: 1.25rem;
+			}
+			.sapUiIcon:before {
+				font-family: "SAP-icons";
+				position: relative;
+				top: 0.2rem;
+				content: "\e1ef"; //down arrow
+			}
 		}
 	}
 }
@@ -78,6 +103,18 @@ html.sap-phone {
 			position: static;
 			height: 3rem;
 			width: 100%;
+			.sapUiIcon {
+				right: 0;
+				background: @sapUiFieldBackground;
+				display: inline-block;
+				padding: 0;
+				font-size: inherit;
+			}
+			.sapUiIcon:before {
+				font-family: "SAP-icons";
+				position: relative;
+				content: "\e1ef"; //down arrow
+			}
 		}
 		span {
 			width: 1.625rem;
@@ -91,6 +128,7 @@ html.sap-phone {
 
 
 	.sapMSltBar.sapMTSSltBar::after {
+		float: right;
 		height: 1.625rem;
 		min-width: 1.625rem;
 		width: 1.625rem;
@@ -98,11 +136,20 @@ html.sap-phone {
 		border-radius: 0.175rem;
 		font-family: "SAP-icons";
 		speak: none;
-		content: "\e1ef";
+		content: "\e1ef"; //down arrow
 		text-align: center;
 		margin-top: 0.5rem;
 		margin-right: 0.4rem;
 		font-size: 0.85rem;
+	}
+	
+	.sapMSltBar {
+		&.sapMTSSltBar {
+			.sapMInputBaseInner {
+				border: none;
+				background: transparent;
+			}
+		}
 	}
 }
 

@@ -52,6 +52,8 @@ sap.ui.define(['jquery.sap.global', './Popover', './TabStripSelectList', './libr
 		TabStripSelect.SPACE_BETWEEN_SELECT_BUTTON_AND_POPOVER = -5;
 
 		TabStripSelect.prototype.init = function() {
+			TabStripSelect.SPACE_BETWEEN_SELECT_BUTTON_AND_POPOVER = this.$().parents().hasClass('sapUiSizeCompact') ? 2 : 3; // results in 0.1875 rem / results in 0.125 rem
+
 			// set the picker type
 			this.setPickerType(sap.ui.Device.system.phone ? "Dialog" : "Popover");
 
@@ -133,15 +135,15 @@ sap.ui.define(['jquery.sap.global', './Popover', './TabStripSelectList', './libr
 		 */
 		TabStripSelect.prototype._createPopover = function() {
 			var that = this,
-			    oPicker = new Popover({
-				    showArrow: false,
-				    showHeader: false,
-				    placement: sap.m.PlacementType.Vertical,
-				    offsetX: 0,
-				    offsetY: sap.ui.Device.system.phone ? 0 : TabStripSelect.SPACE_BETWEEN_SELECT_BUTTON_AND_POPOVER,
-				    initialFocus: this,
-				    bounce: false
-			    });
+				oPicker = new Popover({
+					showArrow: false,
+					showHeader: false,
+					placement: sap.m.PlacementType.Vertical,
+					offsetX: 0,
+					offsetY: TabStripSelect.SPACE_BETWEEN_SELECT_BUTTON_AND_POPOVER,
+					initialFocus: this,
+					bounce: false
+				});
 
 			// detect when the scrollbar is pressed
 			oPicker.addEventDelegate({
@@ -211,6 +213,7 @@ sap.ui.define(['jquery.sap.global', './Popover', './TabStripSelectList', './libr
 			// on phone the picker is a dialog and does not have an offset
 			if (this.getPicker() instanceof sap.m.Popover === true) {
 				this.getPicker().setOffsetX(-iPickerOffsetX);
+				this.getPicker().setOffsetY(this.$().parents().hasClass('sapUiSizeCompact') ? 2 : 3);
 				this.getPicker()._calcPlacement(); // needed to apply the new offset after the popup is open
 			}
 		};

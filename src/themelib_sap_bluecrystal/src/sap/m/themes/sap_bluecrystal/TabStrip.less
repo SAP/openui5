@@ -229,3 +229,30 @@
 		background: linear-gradient(90deg, fade(@sapUiExtraLightBG, 0) 0%, @sapUiExtraLightBG 25%, @sapUiExtraLightBG 100%);
 	}
 }
+
+html.sap-phone {
+	.sapMTabStrip .sapMTSTouchArea {
+		.sapMTSSlt .sapMSltLabel{
+			position: absolute;
+			left: 0;
+			padding: 0 0 0 1rem;
+		}
+		.sapMSltIcon.sapUiIcon.sapUiIconMirrorInRTL {
+			position: absolute;
+			right: 2rem;
+			margin-top: 0.6rem;
+		}
+		.sapMSltIcon:before {
+			font-size: 1rem;
+		}
+		.sapMBtn.sapMBtnBase {
+			position: absolute;
+			right: 0;
+		}
+		.sapMBtnIcon.sapUiIcon.sapUiIconMirrorInRTL {
+			&:before {
+				font-size: 1rem;
+			}
+		}
+	}
+}

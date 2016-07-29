@@ -9,6 +9,7 @@
 		border: 1px solid @sapHCStandardFG;
 		background-color: @sapHCStandardBG;
 		border-radius: 0.375rem;
+		box-sizing: border-box;
 	}
 	&.sapMSltPressed {
 		background-color: @sapHCHighlightAltBG;
@@ -29,9 +30,6 @@
 					}
 				}
 			}
-		}
-		.sapMSltArrow {
-			background-color: @sapHCHighlightAltBG;
 		}
 	}
 	&:not(.sapMSltPressed) {
@@ -69,15 +67,22 @@ html.sap-desktop {
 html.sap-phone {
 	.sapMSlt.sapMTSSlt {
 		background-color: transparent;
-		&.sapMSltPressed {
+		&.sapMSltPressed.sapMSltIconOnly .sapMSltInner .sapMSltIcon {
 			background-color: @sapHCHighlightAltBG;
+		}
+		&:not(.sapMSltPressed).sapMSltIconOnly .sapMSltInner .sapMSltIcon {
+			background-color: transparent;
 		}
 		&:hover, &.sapMSltPressed:hover {
 			background: none;
 			.sapMSltInner {
 				background: none;
+				.sapMSltIcon {
+					background-color: @sapHCHighlightAltBG;
+				}
 			}
 		}
+
 		&:active {
 			background-color: @sapHCHighlightAltBG;
 			.sapMSltInner {
@@ -86,10 +91,10 @@ html.sap-phone {
 		}
 		.sapMSltInner {
 			border: none;
-		}
-		.sapMSltArrow {
-			border: 1px solid @sapHCStandardFG;
-			border-radius: 0.375rem;
+			.sapMSltIcon {
+				border: 1px solid @sapHCStandardFG;
+				border-radius: 0.375rem;
+			}
 		}
 	}
 

@@ -180,7 +180,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 						this.getParent().getParent().fireAddNewButtonPress();
 					}
 				});
-
+				oControl.addStyleClass("sapMTSAddNewTabBtn");
 				this.setAggregation("_addNewButton", oControl, true);
 			}
 
