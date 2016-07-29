@@ -1024,7 +1024,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		};
 
 		Input.prototype.getValue = function(){
-			return this.getDomRef("inner") ? this._$input.val() : this.getProperty("value");
+			return this.getDomRef("inner") && this._$input ? this._$input.val() : this.getProperty("value");
 		};
 
 		Input.prototype._refreshItemsDelayed = function() {

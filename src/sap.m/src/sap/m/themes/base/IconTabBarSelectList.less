@@ -1,0 +1,85 @@
+/* ============================================ */
+/* CSS for control sap.m/IconTabBarSelectList.control			*/
+/* ============================================ */
+
+.sapMITBPopover ul,
+.sapMITBPopover li {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.sapMITBSelectList .sapMITBSelectItem {
+
+	position: relative;
+
+	width : 100%;
+	height: 3rem;
+
+	box-sizing: border-box;
+
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+
+	-webkit-box-align: center;
+	-webkit-align-items: center;
+	-ms-flex-align: center;
+	align-items: center;
+
+	cursor: pointer;
+
+	& > span {
+		cursor: pointer;
+	}
+}
+
+.sapMITBSelectItem .sapMITBSelectItemIcon {
+	outline: none;
+	-webkit-user-select: none; /* Chrome all / Safari all */
+	-moz-user-select: none; /* Firefox all */
+	-ms-user-select: none; /* IE 10+ */
+	user-select: none;
+}
+
+.sapMITBSelectItem .sapMText {
+	width: 100%;
+	display: block;
+	padding: 0 1rem 0 0;
+	pointer-events: none;
+}
+
+.sapMITBSelectListTextOnly .sapMITBSelectItem .sapMText {
+	padding-left: 1rem;
+}
+
+.sapMITBSelectItem .sapUiIcon {
+	font-size: 1.375rem;
+	width: 1.375rem;
+	height: 1.375rem;
+	padding: 0.8125rem 1rem;
+}
+
+/* Compact size */
+.sapUiSizeCompact {
+	.sapMITBSelectList .sapMITBSelectItem {
+		height: 2rem;
+	}
+
+	.sapMITBSelectItem .sapMText {
+		padding: 0 0.5rem 0 0;
+		font-size: @sapMFontSmallSize;
+	}
+
+	.sapMITBSelectListTextOnly .sapMITBSelectItem .sapMText {
+		padding-left: 0.5rem;
+	}
+
+	.sapMITBSelectItem .sapUiIcon {
+		font-size: 1rem;
+		width: 1rem;
+		height: 1rem;
+		padding: 0.5rem;
+	}
+}

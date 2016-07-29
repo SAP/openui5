@@ -4867,5 +4867,151 @@
         "references": []
       }
     ]
+  },
+  "1.28.33": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "3c1d07fa1110f0961fdfc1cd5e87f112a2a1c5f6",
+        "author": "Bohdan Pukalskyi \u003cbohdan.pukalskyi@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedInput: Setting focus before firing Post event to make",
+        "references": []
+      },
+      {
+        "id": "38e4e4ea49ea4a7d74f746111896094ca704ba2d",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Tab selection in Chrome is now fixed",
+        "references": []
+      },
+      {
+        "id": "02c743a9fa72ea47cde070348a7084054b734c06",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: First page is always rendered as initial after open",
+        "references": []
+      }
+    ]
+  },
+  "1.28.34": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "0ee7297ca8b03034befe6bbb8594476aa282d4de",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedListItem: Screen reader support improved",
+        "references": []
+      },
+      {
+        "id": "c76b543e067dce79fd2bc6945ed3a9b59dbe6047",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FlexBox: Adjustments to tests due to browser changes",
+        "references": []
+      },
+      {
+        "id": "90dd8408f173012a78ad35c6f5d26578c552522a",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: Active title link fixed",
+        "references": []
+      },
+      {
+        "id": "61c4a214022ab203e8253e6f7e33182563571145",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TextArea: Rows property should not conflict with height property.",
+        "references": []
+      }
+    ]
+  },
+  "1.28.35": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "f3155faaeceb0191fe7b32ba007c26308b680a8c",
+        "author": "Pia Kinkel \u003cpia.kinkel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedInput: Disable Button when FeedInput is disabled",
+        "references": []
+      },
+      {
+        "id": "411c85f5d46eecf1c23d728226e9aeac95a92098",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedListItem: JSDoc syntax corrected",
+        "references": []
+      },
+      {
+        "id": "4b570fecca71a59790d051a1a82852442ff53171",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: Update documantation of fullScreenOptimized and condensed property",
+        "references": []
+      },
+      {
+        "id": "d43c8ae8dab999a13d94e00bce8891eed9ee3aa7",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: addStyleClass(sapUiSizeCompact) does not render the Popover in compact mode",
+        "references": []
+      },
+      {
+        "id": "8a500dac7e52eed0a5eee5ff1f7c82a059b9ea08",
+        "author": "Bohdan Pukalskyi \u003cbohdan.pukalskyi@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Attachment list correctly refreshed now",
+        "references": []
+      }
+    ]
+  },
+  "1.28.36": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "9ea96811d64bc9ff3315e59a48a9fa56baea8108",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedListItem: Improve consumer handling of senderPress and iconPress events",
+        "references": []
+      },
+      {
+        "id": "12695eb790388e25147bc40219054fb9a8b0c11a",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton: Button with icon have tooltip",
+        "references": []
+      },
+      {
+        "id": "743ba9133c41f502dfee1265b11047c09d8024aa",
+        "author": "Bohdan Pukalskyi \u003cbohdan.pukalskyi@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Determining the list item instance given its id independently of its DOM representation.",
+        "references": []
+      },
+      {
+        "id": "b4b53108b27cda245825e8718dd881308cc58cef",
+        "author": "Bohdan Pukalskyi \u003cbohdan.pukalskyi@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Exiting edit mode after an attemt to save an empty file in case same file names are allowed",
+        "references": []
+      },
+      {
+        "id": "1150b53c4013f8b09af0f00390f5e64c64c932f7",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: generic binding function support enabled",
+        "references": []
+      },
+      {
+        "id": "b5640bb11e75d7b3227aae4dc834e7714c8e9953",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollectionItem: Documentation to url property added",
+        "references": []
+      }
+    ]
   }
 }

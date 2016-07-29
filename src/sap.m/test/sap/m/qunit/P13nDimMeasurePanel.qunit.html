@@ -32,7 +32,6 @@
 </script>
 
 <script>
-
 	QUnit.config.autostart = false;
 	sap.ui.test.qunit.delayTestStart();
 
@@ -57,7 +56,7 @@
 		});
 
 		// assertions
-		strictEqual(oDimMeasurePanel.getTitle(), "");
+		strictEqual(oDimMeasurePanel.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("CHARTPANEL_TITLE"));
 		strictEqual(oDimMeasurePanel.getTitleLarge(), "");
 		strictEqual(oDimMeasurePanel.getType(), sap.m.P13nPanelType.dimeasure);
 		strictEqual(oDimMeasurePanel.getChartTypeKey(), "");

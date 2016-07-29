@@ -4,19 +4,18 @@
 	<P13nDialog ok="handleOK" cancel="handleCancel" showReset="true"
 		reset="handleReset" initialVisiblePanelType="sort">
 		<panels>
-			<P13nColumnsPanel title="Columns" visible="true"
-				addColumnsItem="onAddColumnsItem" changeColumnsItems="onChangeColumnsItem"
-				type="columns"
+			<P13nColumnsPanel visible="true" addColumnsItem="onAddColumnsItem"
+				changeColumnsItems="onChangeColumnsItem" type="columns"
 				items="{
                     path: '/ColumnCollection'
                 }">
 				<items>
-					<!-- P13nItem columnKey="name" text="{i18n>ColumnName}" visible="true"
+					<!-- P13nItem columnKey="name" text="{i18n>ColumnName}" visible="true" 
 						/ -->
 					<P13nItem columnKey="{path}" text="{text}" visible="{visible}" />
 				</items>
 			</P13nColumnsPanel>
-			<P13nSortPanel title="Sort" visible="false" type="sort"
+			<P13nSortPanel visible="false" type="sort"
 				containerQuery="true"
 				items="{
                     path: '/ColumnCollection'
@@ -29,7 +28,7 @@
 					<P13nSortItem columnKey="{columnKeyModel}" operation="{operationModel}" />
 				</sortItems>
 			</P13nSortPanel>
-			<P13nFilterPanel title="Filter" visible="true" type="filter"
+			<P13nFilterPanel visible="true" type="filter"
 				containerQuery="true"
 				items="{
                     path: '/ColumnCollection'

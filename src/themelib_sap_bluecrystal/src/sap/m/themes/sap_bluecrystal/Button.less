@@ -230,7 +230,7 @@ html.sap-desktop .sapMBtnTransparent > .sapMBtnIcon {
 
 .sapMFooter-CTX .sapMBtn:hover > .sapMBtnHoverable:not(.sapMBtnActive) {
 	background-color: @sapUiButtonFooterHoverBackground;
-	color:            @sapUiButtonActiveTextColor;
+	color:            @sapUiButtonFooterTextColor;
 	text-shadow:      0 1px 0 fade(@sapUiDarkShadowTint, 50);
 	border-color:     transparent;
 }
@@ -248,6 +248,24 @@ html.sap-desktop .sapMBtnTransparent > .sapMBtnIcon {
 .sapMFooter-CTX .sapMBtn:hover > .sapMBtnHoverable.sapMBtnEmphasized:not(.sapMBtnActive) {
 	background-color: @sapUiButtonEmphasizedHoverBackground;
 	border-color:     @sapUiButtonEmphasizedHoverBorderColor;
+}
+
+.sapMFooter-CTX span.sapMBtnInner.sapMBtnEmphasized {
+	background-image: none;
+	background-color: @sapUiButtonEmphasizedBackground;
+	border-color:     @sapUiButtonEmphasizedBorderColor;
+	color:            @sapUiButtonEmphasizedTextColor;
+	text-shadow:      0 1px 0 fade(@sapUiDarkShadowTint, 50);
+}
+
+.sapMFooter-CTX span.sapMBtnInner.sapMBtnEmphasized > .sapMBtnIcon {
+	color:            @sapUiButtonEmphasizedTextColor;
+}
+
+.sapMFooter-CTX :not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnEmphasized.sapMBtnActive {
+	background-color: @sapUiButtonEmphasizedActiveBackground;
+	border-color:     @sapUiButtonEmphasizedActiveBorderColor;
+	text-shadow:      none;
 }
 
 /* Separators between buttons in a footer */
@@ -272,7 +290,7 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner {
 
 .sapMFooter-CTX span.sapMBtnInner,
 .sapMIBar-CTX.sapMFooter-CTX .sapMBtnInner > .sapMBtnIcon {
-	color:            @sapUiButtonActiveTextColor;
+	color:            @sapUiButtonFooterTextColor;
 	text-shadow:      0 1px 0 fade(@sapUiDarkShadowTint, 50);
 }
 

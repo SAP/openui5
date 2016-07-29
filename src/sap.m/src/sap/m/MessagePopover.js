@@ -4,11 +4,11 @@
 
 // Provides control sap.m.MessagePopover.
 sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolbar", "./ToolbarSpacer", "./Bar", "./List",
-		"./StandardListItem", "./library", "sap/ui/core/Control", "./PlacementType", "sap/ui/core/IconPool",
+		"./StandardListItem", "./ListType" ,"./library", "sap/ui/core/Control", "./PlacementType", "sap/ui/core/IconPool",
 		"sap/ui/core/HTML", "./Text", "sap/ui/core/Icon", "./SegmentedButton", "./Page", "./NavContainer",
 		"./semantic/SemanticPage", "./Link" ,"./Popover", "./MessagePopoverItem", "jquery.sap.dom"],
 	function (jQuery, ResponsivePopover, Button, Toolbar, ToolbarSpacer, Bar, List,
-			  StandardListItem, library, Control, PlacementType, IconPool,
+			  StandardListItem, ListType, library, Control, PlacementType, IconPool,
 			  HTML, Text, Icon, SegmentedButton, Page, NavContainer, SemanticPage, Link, Popover, MessagePopoverItem) {
 		"use strict";
 
@@ -606,6 +606,17 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 					type:  listItemType
 				}).addStyleClass(CSS_CLASS + "Item").addStyleClass(CSS_CLASS + "Item" + sType);
 
+				if (listItemType !== ListType.Navigation) {
+					oListItem.addEventDelegate({
+						onAfterRendering: function () {
+							var oItemDomRef = this.getDomRef().querySelector(".sapMSLITitleDiv > div");
+							if (oItemDomRef.offsetWidth < oItemDomRef.scrollWidth) {
+								this.setType(ListType.Navigation);
+							}
+						}
+					}, oListItem);
+				}
+
 			oListItem._oMessagePopoverItem = oMessagePopoverItem;
 
 			return oListItem;
@@ -627,8 +638,8 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		};
 
 		MessagePopover.prototype._getItemType = function (oMessagePopoverItem) {
-			return (oMessagePopoverItem.getDescription() || oMessagePopoverItem.getMarkupDescription()) ?
-				sap.m.ListType.Navigation : sap.m.ListType.Inactive;
+			return (oMessagePopoverItem.getDescription() || oMessagePopoverItem.getMarkupDescription() || oMessagePopoverItem.getLongtextUrl()) ?
+				ListType.Navigation : ListType.Inactive;
 		};
 
 		/**
@@ -719,7 +730,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			if (oMessagePopoverItem.getMarkupDescription()) {
 				// description is sanitized in MessagePopoverItem.setDescription()
 				this._oMessageDescriptionText = new HTML(this.getId() + 'MarkupDescription', {
-					content: "<div class='markupDescription'>" + oMessagePopoverItem.getDescription() + "</div>"
+					content: "<div class='sapMMsgPopoverDescriptionText'>" + oMessagePopoverItem.getDescription() + "</div>"
 				});
 			} else {
 				this._oMessageDescriptionText = new Text(this.getId() + 'MessageDescriptionText', {

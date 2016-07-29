@@ -4,12 +4,22 @@
 			"control" : "sap.ui.unified.Calendar",
 			"url" : "Calendar.html",
 			"desc" : "stand alone calendars",
-			"appComponent" : "CA-UI5-CTR-WDF"
+			"appComponent" : "CA-UI5-CTR-SOF-BAL"
+		},
+		{
+			"control" : "sap.ui.unified.CalendarDateInterval",
+			"url" : "../CalendarDateInterval.html",
+			"appComponent" : "CA-UI5-CTR-SOF-BAL"
+		},
+		{
+			"control" : "sap.ui.unified.CalendarTimeInterval",
+			"url" : "../CalendarTimeInterval.html",
+			"appComponent" : "CA-UI5-CTR-SOF-BAL"
 		},
 		{
 			"control" : "sap.ui.unified.Menu",
 			"url" : "Menu.html",
-			"appComponent" : "CA-UI5-CTR-WDF"
+			"appComponent" : "CA-UI5-CTR-SOF-BAL"
 		},
 		{
 			"control" : "sap.ui.unified.Shell",

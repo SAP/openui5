@@ -31,11 +31,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/I
 				/**
 				 * The image to be displayed as a graphical element within the imageContent. This can be an image or an icon from the icon font.
 				 */
-				"src" : {type : "sap.ui.core.URI", group : "Misc"},
+				"src" : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
 				/**
-				 * Description of image.
+				 * Description of image. This text is used to provide ScreenReader information.
 				 */
-				"description" : {type: "String", group : "Misc"}
+				"description" : {type : "string", group : "Accessibility", defaultValue : null}
 			},
 			aggregations : {
 				/**
@@ -122,5 +122,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/I
 		}
 		return this;
 	};
+
+	/**
+	 * Returns the alternative text
+	 *
+	 * @returns {String} The alternative text
+	 */
+	ImageContent.prototype.getAltText = function () {
+		var oContent = this.getAggregation("_content");
+		if (oContent && oContent.getAlt() !== "") {
+			return oContent.getAlt();
+		} else if (oContent) {
+			return oContent.getAccessibilityInfo().description;
+		}
+	};
+
 	return ImageContent;
 });

@@ -8,9 +8,10 @@
 		<script
 			src="../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-libs="sap.ui.commons, sap.m"
+			data-sap-ui-logLevel="ERROR"
 			data-sap-ui-resourceroots='{
 			"samples" : "../../samples/",
-			"unitTests" : "./opa5TestFiles"
+			"unitTests" : "./"
 			}'>
 		</script>
 
@@ -32,15 +33,16 @@
 			"sap/ui/test/Opa5",
 			"sap/ui/test/opaQunit",
 			//fast tests
-			'unitTests/_ParameterValidator',
-			'unitTests/actions',
-			'unitTests/basics',
-			'unitTests/component',
-			'unitTests/logging',
-			'unitTests/matchers',
+			'unitTests/opa5TestFiles/_ParameterValidator',
+			'unitTests/opa5TestFiles/actions',
+			'unitTests/opa5TestFiles/basics',
+			'unitTests/opa5TestFiles/component',
+			'unitTests/opa5TestFiles/logging',
+			'unitTests/opa5TestFiles/matchers',
 			//the slow ones
-			'unitTests/launchers',
-			'unitTests/iFrame'
+			'unitTests/opa5TestFiles/launchers',
+			'unitTests/opa5TestFiles/iFrame',
+			'unitTests/utils/customQUnitAssertions'
 		], function (Opa5, opaTest) {
 			QUnit.module("wait for basics", {
 				setup: function () {

@@ -27,6 +27,8 @@
 		<!-- Test functions -->
 		<script language="javascript">
 
+			jQuery.sap.require("sap.ui.thirdparty.sinon");
+			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 			jQuery.sap.require("sap.ui.core.LocaleData");
 			jQuery.sap.require("sap.ui.model.type.Date");
 
@@ -372,6 +374,14 @@
 				aDays = jQuery("#Cal3--Month1-days").find(".sapUiCalItem");
 				equal(jQuery(aDays[aDays.length-1]).attr("data-sap-day"), "20150302", "last displayed day");
 
+				// creat event and spy on it on space press
+				var oEvent = jQuery.Event("sapspace");
+				var oSpy = sinon.spy();
+				oEvent.preventDefault = oSpy;
+
+				jQuery("#Cal2--MP").control(0).onsapspace(oEvent);
+				strictEqual(oSpy.callCount, 1, "SPACE is pressed, preventDefault event was fired");
+
 			});
 
 			test("year switch", function() {
@@ -421,6 +431,15 @@
 				ok(!jQuery(jQuery("#Cal2--YP").get(0)).is(":visible"), "Year picker not visible after selecting year");
 				equal(jQuery("#Cal2--Head-B1").text(), "Januar", "January still shown");
 				equal(jQuery("#Cal2--Head-B2").text(), "2011", "year 2011 shown again");
+
+				// creat event and spy on it on space press
+				var oEvent = jQuery.Event("sapspace");
+				var oSpy = sinon.spy();
+				oEvent.preventDefault = oSpy;
+
+				jQuery("#Cal2--YP").control(0).onsapspace(oEvent);
+
+				strictEqual(oSpy.callCount, 1, "SPACE is pressed, preventDefault event was fired");
 			});
 
 			test("Min/Max", function() {

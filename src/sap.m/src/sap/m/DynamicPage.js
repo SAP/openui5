@@ -157,6 +157,7 @@ sap.ui.define([
 		}
 
 		this._cacheDomElements();
+		this._detachResizeHandlers();
 		this._attachResizeHandlers();
 		this._updateMedia(this._getWidth(this));
 
@@ -483,8 +484,11 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._needsVerticalScrollBar = function () {
-		if (exists(this.$wrapper) && this._allowScroll()) {
-			return this.$wrapper[0].scrollHeight > this.$wrapper.innerHeight();
+		var $wrapperDom;
+
+		if (exists(this.$wrapper)) {
+			$wrapperDom = this.$wrapper[0];
+			return $wrapperDom.scrollHeight > Math.ceil($wrapperDom.getBoundingClientRect().height);
 		} else {
 			return false;
 		}
@@ -943,16 +947,20 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._detachResizeHandlers = function () {
-		if (this._sResizeHandlerId) {
-			ResizeHandler.deregister(this._sResizeHandlerId);
-		}
+		this._deRegisterHandler("_sResizeHandlerId");
+		this._deRegisterHandler("_sTitleResizeHandlerId");
+		this._deRegisterHandler("_sContentResizeHandlerId");
+	};
 
-		if (this._sTitleResizeHandlerId) {
-			ResizeHandler.deregister(this._sTitleResizeHandlerId);
-		}
-
-		if (this._sContentResizeHandlerId) {
-			ResizeHandler.deregister(this._sContentResizeHandlerId);
+	/**
+	 * De-registers the given handler
+	 * @param {string} sHandler handler
+	 * @private
+	 */
+	DynamicPage.prototype._deRegisterHandler = function (sHandler) {
+		if (this[sHandler]) {
+			ResizeHandler.deregister(this[sHandler]);
+			this[sHandler] = null;
 		}
 	};
 

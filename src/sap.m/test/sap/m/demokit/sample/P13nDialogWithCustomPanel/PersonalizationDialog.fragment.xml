@@ -15,9 +15,8 @@
 					</RadioButtonGroup>
 				</custom:content>
 			</custom:CustomPanel>
-			<P13nColumnsPanel title="Columns" visible="true"
-				addColumnsItem="onAddColumnsItem" changeColumnsItems="onChangeColumnsItem"
-				type="columns"
+			<P13nColumnsPanel visible="true" addColumnsItem="onAddColumnsItem"
+				changeColumnsItems="onChangeColumnsItem" type="columns"
 				items="{
                     path: '/ColumnCollection'
                 }">

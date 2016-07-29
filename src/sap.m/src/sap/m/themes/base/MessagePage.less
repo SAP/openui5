@@ -24,17 +24,18 @@
 .sapMMessagePage > .sapMPage {
 	position: inherit;
 	section {
-		max-width: 30rem;
+		width: 100%;
 		box-sizing: border-box;
 		text-align: center;
-		margin: -5% auto 0;
-		top: 30%;
-	}
-	> .sapMPageHeader + section {
-		top: 30%;
+		margin: 0 auto;
 	}
 }
 
+.sapMMessagePage > .sapMPage section::before {
+	display: block;
+	content: "";
+	height: 15%;
+}
 
 .sapMMessagePage > .sapMPage > section > .sapUiIcon::before {
 	font-size: 6rem;

@@ -7,29 +7,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		'sap/ui/core/Control', 'sap/ui/core/Element', 'sap/ui/core/IconPool', 'sap/ui/core/IntervalTrigger', 'sap/ui/core/library', 'sap/ui/core/Popup',
 		'sap/ui/core/ResizeHandler', 'sap/ui/core/ScrollBar', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/theming/Parameters',
 		'sap/ui/model/ChangeReason', 'sap/ui/model/Context', 'sap/ui/model/Filter', 'sap/ui/model/SelectionModel', 'sap/ui/model/Sorter',
-		'./Column', './Row', './library', './TableUtils', './TableExtension', './TableAccExtension', './TableKeyboardExtension', 'jquery.sap.dom', 'jquery.sap.trace'],
+		'./Column', './Row', './library', './TableUtils', './TableExtension', './TableAccExtension', './TableKeyboardExtension', './TablePointerExtension', 'jquery.sap.dom', 'jquery.sap.trace'],
 	function(jQuery, Device,
 		Control, Element, IconPool, IntervalTrigger, coreLibrary, Popup,
 		ResizeHandler, ScrollBar, ItemNavigation, Parameters,
 		ChangeReason, Context, Filter, SelectionModel, Sorter,
-		Column, Row, library, TableUtils, TableExtension, TableAccExtension, TableKeyboardExtension /*, jQuerySapPlugin,jQuerySAPTrace */) {
+		Column, Row, library, TableUtils, TableExtension, TableAccExtension, TableKeyboardExtension, TablePointerExtension /*, jQuerySapPlugin,jQuerySAPTrace */) {
 	"use strict";
 
 
 	// shortcuts
 	var GroupEventType = library.GroupEventType,
 		NavigationMode = library.NavigationMode,
-		SelectionBehavior = library.SelectionBehavior,
 		SelectionMode = library.SelectionMode,
+		SelectionBehavior = library.SelectionBehavior,
 		SharedDomRef = library.SharedDomRef,
 		SortOrder = library.SortOrder,
 		VisibleRowCountMode = library.VisibleRowCountMode;
 
 	// lazy dependencies
-	var Input,
-		Menu,
-		MenuItem,
-		TextField;
+	var Menu,
+		MenuItem;
 
 	/**
 	 * Constructor for a new Table.
@@ -657,14 +655,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				if (!that._bInvalid) {
 					// subsequent DOM updates are only required if there is no rendering to be expected
 
-					// for TreeTable and AnalyticalTable
-					if (that._updateTableContent) {
 						that._updateTableContent();
-					}
 
 					that._getAccExtension().updateAccForCurrentCell(false);
 					that._updateSelection();
-					that._updateGroupHeader();
 
 					var oTableSizes = that._collectTableSizes();
 					that._updateRowHeader(oTableSizes.tableRowHeights);
@@ -697,9 +691,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			this._iColMinWidth = 88;
 		}
 
-		this._oCalcColumnWidths = [];
 		this._aTableHeaders = [];
-		this._iLastHoveredColumnIndex = 0;
 
 		// columns to cells map
 		this._aIdxCols2Cells = [];
@@ -715,9 +707,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		// text selection for column headers?
 		this._bAllowColumnHeaderTextSelection = false;
-
-		this._doubleclickDelay = 300;
-		this._clicksRegistered = 0;
 
 		// determine whether jQuery version is less than 1.8 (height and width behaves different!!)
 		this._bjQueryLess18 = jQuery.sap.Version(jQuery.fn.jquery).compareTo("1.8") < 0;
@@ -742,8 +731,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._attachExtensions = function() {
+		if (this._bExtensionsInitialized) {
+			return;
+		}
+		TableExtension.enrich(this, TablePointerExtension);
 		TableExtension.enrich(this, TableKeyboardExtension);
 		TableExtension.enrich(this, TableAccExtension); //Must be registered after keyboard to reach correct delegate order
+		this._bExtensionsInitialized = true;
 	};
 
 
@@ -775,8 +769,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._detachExtensions = function(){
+		if (!this._bExtensionsInitialized) {
+			return;
+		}
+		this._getPointerExtension().destroy();
 		this._getKeyboardExtension().destroy();
 		this._getAccExtension().destroy();
+		delete this._bExtensionsInitialized;
 	};
 
 
@@ -958,7 +957,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		oSizes.headerWidths = aHeaderWidths;
 
-		if (this.getSelectionMode() !== SelectionMode.None && this.getSelectionBehavior() !== SelectionBehavior.RowOnly) {
+		if (TableUtils.hasRowHeader(this)) {
 			var oFirstInvisibleColumn = oDomRef.querySelector(".sapUiTableCtrlFirstCol > th:first-child");
 			if (oFirstInvisibleColumn) {
 				oSizes.invisibleColWidth = oFirstInvisibleColumn.clientWidth;
@@ -1112,12 +1111,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			}
 		}
 
-		this._updateGroupHeader();
-
-		// for TreeTable and AnalyticalTable
-		if (this._updateTableContent) {
 			this._updateTableContent();
-		}
 
 		if (this.getBinding("rows")) {
 			this.fireEvent("_rowsUpdated");
@@ -1224,21 +1218,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		return this;
-	};
-
-	/**
-	 * update the table content (scrollbar, no data overlay, selection, row header, ...)
-	 * @private
-	 */
-	Table.prototype._updateGroupHeader = function() {
-		var that = this;
-		// update the rows (TODO: generalize this for 1.6)
-		if (this._modifyRow) {
-			jQuery.each(this.getRows(), function(iIndex, oRow) {
-				that._modifyRow(iIndex + that.getFirstVisibleRow(), oRow.$());
-				that._modifyRow(iIndex + that.getFirstVisibleRow(), oRow.$("fixed"));
-			});
-		}
 	};
 
 	Table.prototype._updateFixedBottomRows = function() {
@@ -1982,26 +1961,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * triggers automatic resizing of a column to the widest content.(experimental!)
-	 * @experimental Experimental! Presently implemented to only work with pure text-based controls,
-	 * the sap.ui.commons.Checkbox and sap.m.Image as well as sap.ui.commons.Image.
-	 * It will also work for most simple input fields (TextField, CheckBox, but not ComboBox)
+	 * Triggers automatic resizing of a column to the widest content.
 	 *
-	 * @param {int} iColId column id
+	 * @experimental Experimental! Presently implemented to only work with a very limited set of controls (e.g. sap.m.Text).
+	 * @param {int} iColIndex The index of the column in the list of visible columns.
 	 * @function
 	 * @public
 	 */
-	Table.prototype.autoResizeColumn = function(iColId) {
-		var oCol = this.getColumns()[iColId];
-		this._iColumnResizeStart = null;
-		var iNewWidth = this._calculateAutomaticColumnWidth(iColId);
-		if (iNewWidth == null) {
-			return;
-		}
-
-		oCol._iNewWidth = iNewWidth;
-		this._oCalcColumnWidths[iColId] = oCol._iNewWidth;
-		this._onColumnResized(null, iColId);
+	Table.prototype.autoResizeColumn = function(iColIndex) {
+		this._getPointerExtension().doAutoResizeColumn(iColIndex);
 	};
 
 
@@ -2062,13 +2030,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			$this.find(".sapUiTableCtrlFixed > tbody > tr").removeClass("sapUiTableRowHvr");
 		});
 
-		// listen to the resize handlers
-		$this.find(".sapUiTableColRsz").mousedown(jQuery.proxy(this._onColumnResizeStart, this));
-
-		// attach mousemove listener to update resizer position
-		$this.find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed, .sapUiTableColHdrScr, .sapUiTableColHdrFixed").mousemove(jQuery.proxy(this._onScrPointerMove, this));
-
-		this._enableColumnAutoResizing();
+		this._getPointerExtension().initColumnResizeEvents();
 
 		var $vsb = jQuery(this.getDomRef(SharedDomRef.VerticalScrollBar));
 		var $hsb = jQuery(this.getDomRef(SharedDomRef.HorizontalScrollBar));
@@ -2111,8 +2073,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		$this.find(".sapUiTableRowHdrScr").unbind();
 		$this.find(".sapUiTableCtrl > tbody > tr").unbind();
 		$this.find(".sapUiTableRowHdr").unbind();
-		$this.find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed, .sapUiTableColHdrScr, .sapUiTableColHdrFixed").unbind();
-		$this.find(".sapUiTableColRsz").unbind();
+		this._getPointerExtension().cleanupColumnResizeEvents();
 		$this.find(".sapUiTableCtrlScrFixed, .sapUiTableColHdrFixed").unbind("scroll.sapUiTablePreventFixedAreaScroll");
 
 		if (TableUtils.isVariableRowHeightEnabled(this)) {
@@ -2135,51 +2096,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		$body.unbind('webkitTransitionEnd transitionend');
 
 		TableUtils.deregisterResizeHandler(this);
-	};
-
-	/**
-	 * Update the resizer position, according to mouse/touch position.
-	 * @param {Event} oEvent the handled move event
-	 * @private
-	 */
-	Table.prototype._onScrPointerMove = function(oEvent) {
-		var oDomRef = this.getDomRef();
-		if (this._bIsColumnResizerMoving || !oDomRef) {
-			return;
-		}
-
-		var iPositionX = oEvent.clientX;
-		var iTableRect = oDomRef.getBoundingClientRect();
-		var iLastHoveredColumn = 0;
-		var iResizerPositionX;
-		if (this._bRtlMode) {
-			iResizerPositionX = 10000;
-		} else {
-			iResizerPositionX = -10000;
-		}
-
-		for (var i = 0; i < this._aTableHeaders.length; i++) {
-			var oTableHeaderRect = this._aTableHeaders[i].getBoundingClientRect();
-			if (this._bRtlMode) {
-				// 5px for resizer width
-				if (iPositionX < oTableHeaderRect.right - 5) {
-					iLastHoveredColumn = i;
-					iResizerPositionX = oTableHeaderRect.left - iTableRect.left;
-				}
-			} else {
-				// 5px for resizer width
-				if (iPositionX > oTableHeaderRect.left + 5) {
-					iLastHoveredColumn = i;
-					iResizerPositionX = oTableHeaderRect.right - iTableRect.left;
-				}
-			}
-		}
-
-		var oColumn = this._getVisibleColumns()[iLastHoveredColumn];
-		if (oColumn && oColumn.getResizable()) {
-			this.$().find(".sapUiTableColRsz").css("left", iResizerPositionX + "px");
-			this._iLastHoveredColumnIndex = iLastHoveredColumn;
-		}
 	};
 
 	/**
@@ -2523,19 +2439,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 					this._aVisibleColumns.push(i);
 				}
 			}
-		}
-	};
-
-	/**
-	 * enables automatic resizing on doubleclick on a column if the corresponding column attribute is set
-	 * @experimental Experimental, only works with limited control set
-	 * @function
-	 * @private
-	 */
-	Table.prototype._enableColumnAutoResizing = function () {
-		var $resizer = jQuery(this.getDomRef("rsz"));
-		if ($resizer.length > 0){
-			this._bindSimulatedDoubleclick($resizer, null /* fnSingleClick*/, this._onAutomaticColumnResize /* fnDoubleClick */);
 		}
 	};
 
@@ -3077,7 +2980,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * will be called when the horizontal scrollbar is used. since the table does
+	 * Will be called when the horizontal scrollbar is used. Since the table does
 	 * not render/update the data of all columns (only the visible ones) in case
 	 * of scrolling horizontally we need to update the content of the columns which
 	 * became visible.
@@ -3085,10 +2988,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 */
 	Table.prototype.onhscroll = function(oEvent) {
 		jQuery.sap.interaction.notifyScrollEvent && jQuery.sap.interaction.notifyScrollEvent(oEvent);
+
 		if (!this._bOnAfterRendering) {
-			var oTableSizes = this._collectTableSizes();
-			this._syncHeaderAndContent(oTableSizes);
-			this._determineVisibleCols(oTableSizes);
+			// The scroll event is fired multiple times from start to end of one horizontal scrolling action. The event is fired
+			// the first time right after scrolling was started.
+			// Scrolling is interrupted when syncing header and content and is therefore performed only over a short distance.
+			// The timeout is used to overcome this issue, so syncing is performed only after the last occurrence of a scroll event.
+			if (this._mTimeouts.hScrollUpdateTimer) {
+				window.clearTimeout(this._mTimeouts.hScrollUpdateTimer);
+			}
+			this._mTimeouts.hScrollUpdateTimer = window.setTimeout(function() {
+				var oTableSizes = this._collectTableSizes();
+				this._syncHeaderAndContent(oTableSizes);
+				this._determineVisibleCols(oTableSizes);
+			}.bind(this), 50);
 		}
 	};
 
@@ -3133,9 +3046,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype.onmousedown = function(oEvent) {
-		// check whether item navigation should be reapplied from scratch
-		this._getKeyboardExtension().initItemNavigation();
-
 		// only move on left click!
 		var bLeftButton = oEvent.button === 0;
 		var bIsTouchMode = this._isTouchMode(oEvent);
@@ -3143,41 +3053,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (bLeftButton) {
 			var $target = jQuery(oEvent.target);
 
-			var $splitter = this.$("sb");
-			if (oEvent.target == $splitter[0]) {
-
-				// Fix for IE text selection while dragging
-				jQuery(document.body).bind("selectstart", jQuery.proxy(this._splitterSelectStart, this));
-
-				var offset = $splitter.offset();
-				var height = $splitter.height();
-				var width = $splitter.width();
-
-				jQuery(document.body).append(
-						"<div id=\"" + this.getId() + "-ghost\" class=\"sapUiTableInteractiveResizerGhost\" style =\" height:" + height + "px; width:"
-						+ width + "px; left:" + offset.left + "px; top:" + offset.top + "px\" ></div>");
-
-				// append overlay over splitter to enable correct functionality of moving the splitter
-				$splitter.append(
-						"<div id=\"" + this.getId() + "-overlay\" style =\"left: 0px;" +
-								" right: 0px; bottom: 0px; top: 0px; position:absolute\" ></div>");
-
-				var $Document = jQuery(document);
-				if (bIsTouchMode) {
-					$Document.bind("touchend.sapUiTableInteractiveResize", jQuery.proxy(this._onGhostMouseRelease, this));
-					$Document.bind("touchmove.sapUiTableInteractiveResize", jQuery.proxy(this._onGhostMouseMove, this));
-				} else {
-					$Document.bind("mouseup.sapUiTableInteractiveResize", jQuery.proxy(this._onGhostMouseRelease, this));
-					$Document.bind("mousemove.sapUiTableInteractiveResize", jQuery.proxy(this._onGhostMouseMove, this));
-				}
-
-				this._disableTextSelection();
-
-				return;
-			}
-
 			var $col = $target.closest(".sapUiTableCol");
-			if ($col.length === 1) {
+			if ($col.length === 1 && oEvent.target != this.getDomRef("sb")/*Not the interactive resize bar -> see PointerExtension*/) {
 
 				this._bShowMenu = true;
 				this._mTimeouts.delayedMenuTimer = jQuery.sap.delayedCall(200, this, function() {
@@ -3315,38 +3192,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				return true;
 			}
 		}
-	};
-
-	/**
-	 * helper method to bind different functions to a click if both a single and a double click can occur on an element
-	 * @experimental Experimental
-	 * @function
-	 * @private
-	 */
-	Table.prototype._bindSimulatedDoubleclick = function(element, fnClick, fnDoubleclick){
-		var eventBound = "click";
-		var that = this;
-		if (!!Device.support.touch){
-			//event needs to be touchend due to timing issues on the ipad
-			eventBound = "touchend";
-		}
-		jQuery(element).on(eventBound, function(oEvent){
-			oEvent.preventDefault();
-			oEvent.stopPropagation();
-			that._clicksRegistered = that._clicksRegistered + 1;
-			if (that._clicksRegistered < 2){
-				that._mTimeouts.singleClickTimer = jQuery.sap.delayedCall(that._doubleclickDelay, that, function(){
-					that._clicksRegistered = 0;
-					if (fnClick){
-						fnClick.call(that, oEvent);
-					}
-				}, [oEvent]);
-			} else {
-				jQuery.sap.clearDelayedCall(that._mTimeouts.singleClickTimer);
-				that._clicksRegistered = 0;
-				fnDoubleclick.call(that, oEvent);
-			}
-		});
 	};
 
 	/**
@@ -3511,9 +3356,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			}
 		}
 
-		if (oClosestTd && (oClosestTd.getAttribute("role") == "gridcell" || jQuery(oClosestTd).hasClass("sapUiTableTDDummy")) && (
-		    this.getSelectionBehavior() === SelectionBehavior.Row ||
-		    this.getSelectionBehavior() === SelectionBehavior.RowOnly)) {
+		if (oClosestTd && (oClosestTd.getAttribute("role") == "gridcell" || jQuery(oClosestTd).hasClass("sapUiTableTDDummy"))
+			&& TableUtils.isRowSelectionAllowed(this)) {
 			var $row = $target.closest(".sapUiTableCtrl > tbody > tr");
 			if ($row.length === 1) {
 				var iIndex = parseInt($row.attr("data-sap-ui-rowindex"), 10);
@@ -3663,11 +3507,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 					menu: $ColumnHeaderMenu,
 					self: $ColumnHeader
 				}));
-
-				// listen to the resize handlers
-				if (oColumn.getResizable()) {
-					$ColumnHeader.find(".sapUiTableColResizer").bind("touchstart", jQuery.proxy(this._onColumnResizeStart, this));
-				}
 			}
 
 			return;
@@ -4028,169 +3867,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * starts the automatic column resize after doubleclick
-	 * @experimental Experimental, only works with a limited control set
-	 * @private
-	 */
-	Table.prototype._onAutomaticColumnResize = function(oEvent) {
-		var oColumn = this.getColumns()[this._iLastHoveredColumnIndex];
-		if (!oColumn.getAutoResizable()) {
-			return;
-		}
-
-		jQuery.sap.log.debug("doubleclick fired");
-		this._disableTextSelection();
-
-		this.autoResizeColumn(this._iLastHoveredColumnIndex);
-
-		oEvent.preventDefault();
-		oEvent.stopPropagation();
-	};
-
-	/**
-	 * Handler for the beginning of a column resizing.
-	 * @private
-	 */
-	Table.prototype._onColumnResizeStart = function(oEvent) {
-		this._bIsColumnResizerMoving = true;
-		var $body = jQuery(document.body);
-		this.$().addClass("sapUiTableResizing");
-		if (this._isTouchMode(oEvent)) {
-			this._iColumnResizeStart = oEvent.targetTouches[0].pageX;
-			this._disableTextSelection();
-
-			this._$colResize = jQuery("#" + this.getId() + "-rsz");
-
-			$body.bind("touchmove.sapUiTableColumnResize", this._onColumnResize.bind(this));
-			$body.bind("touchend.sapUiTableColumnResize", this._onColumnResized.bind(this));
-		} else {
-			// only resize on left click!
-			if (oEvent.button === 0) {
-				this._iColumnResizeStart = oEvent.pageX;
-
-				this._disableTextSelection();
-				this._$colResize = jQuery(oEvent.target);
-
-				$body.bind("mousemove.sapUiTableColumnResize", this._onColumnResize.bind(this));
-				$body.bind("mouseup.sapUiTableColumnResize", this._onColumnResized.bind(this));
-			}
-		}
-	};
-
-	/**
-	 * Handler for the resizing of a column.
-	 * @private
-	 */
-	Table.prototype._onColumnResize = function(oEvent) {
-		var iLocationX;
-		if (this._isTouchMode(oEvent)) {
-			iLocationX = oEvent.targetTouches[0].pageX;
-			oEvent.stopPropagation();
-			oEvent.preventDefault();
-		} else {
-			iLocationX = oEvent.pageX;
-		}
-
-		if (this._iColumnResizeStart && iLocationX < this._iColumnResizeStart + 3 && iLocationX > this._iColumnResizeStart - 3) {
-			return;
-		}
-
-		if (this._isTouchMode(oEvent)) {
-			this._$colResize.addClass("sapUiTableColTouchRszActive");
-		} else {
-			this._$colResize.addClass("sapUiTableColRszActive");
-		}
-
-		var oColumn = this._getVisibleColumns()[this._iLastHoveredColumnIndex];
-		var iDeltaX = iLocationX - this._iColumnResizeStart;
-		var iColumnWidth = oColumn.$().width();
-
-		var iWidth;
-		if (this._bRtlMode) {
-			iWidth = iColumnWidth - iDeltaX;
-		} else {
-			iWidth = iColumnWidth + iDeltaX;
-		}
-
-		iWidth = Math.max(iWidth, this._iColMinWidth);
-
-		// calculate and set the position of the resize handle
-		var iRszOffsetLeft = this.$().find(".sapUiTableCnt").offset().left;
-		var iRszLeft = Math.floor((iLocationX - iRszOffsetLeft) - (this._$colResize.width() / 2));
-		this._$colResize.css("left", iRszLeft + "px");
-
-		// store the width of the column to apply later
-		oColumn._iNewWidth = iWidth;
-	};
-
-	/**
-	 * Handler for column resizing. If a resizing happens, the table will get invalidated.
-	 * @private
-	 */
-	Table.prototype._onColumnResized = function(oEvent, iIndex) {
-		var iColIndex;
-		this._bIsColumnResizerMoving = false;
-		this.$().removeClass("sapUiTableResizing");
-
-		// ignore when no resize column is set
-		if (!this._$colResize && (iIndex === null || iIndex === undefined)) {
-			return;
-		}
-		// get the new width of the column
-		if (iIndex === null || iIndex === undefined) {
-			iColIndex = this._iLastHoveredColumnIndex;
-		} else {
-			iColIndex = iIndex;
-		}
-
-		var oColumn = this._getVisibleColumns()[iColIndex];
-
-		// if the resize has started and we have a new width for the column
-		// we apply it to the column object
-		var bResized = false;
-		if (oColumn._iNewWidth) {
-			var sWidth;
-			var iAvailableSpace = this.$().find(".sapUiTableCtrl").width();
-			if (!this._checkPercentageColumnWidth()) {
-				sWidth = oColumn._iNewWidth + "px";
-			} else {
-				var iColumnWidth = Math.round(100 / iAvailableSpace * oColumn._iNewWidth);
-				sWidth = iColumnWidth + "%";
-			}
-
-			if (this._updateColumnWidth(oColumn, sWidth, true)) {
-				this._resizeDependentColumns(oColumn, sWidth);
-			}
-
-			delete oColumn._iNewWidth;
-
-			bResized = true;
-		}
-
-		// unbind the event handlers
-		var $body = jQuery(document.body);
-		$body.unbind("touchmove.sapUiTableColumnResize");
-		$body.unbind("touchend.sapUiTableColumnResize");
-		$body.unbind("mousemove.sapUiTableColumnResize");
-		$body.unbind("mouseup.sapUiTableColumnResize");
-
-		// focus the column
-		oColumn.focus();
-
-		// hide the text selection
-		if (this._$colResize) {
-			this._$colResize.removeClass("sapUiTableColTouchRszActive sapUiTableColRszActive");
-			this._$colResize = undefined;
-		}
-		this._enableTextSelection();
-
-		// rerender / ignore if nothing changed!
-		if (bResized) {
-			this.invalidate();
-		}
-	};
-
-	/**
 	 *
 	 * @param oColumn
 	 * @param sWidth
@@ -4451,12 +4127,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	// SELECTION HANDLING
 	// =============================================================================
 
-	Table.prototype._getSelectOnCellsAllowed = function () {
-		var sSelectionBehavior = this.getSelectionBehavior();
-		var sSelectionMode = this.getSelectionMode();
-		return sSelectionMode !== SelectionMode.None && (sSelectionBehavior === SelectionBehavior.Row || sSelectionBehavior === SelectionBehavior.RowOnly);
-	};
-
 	/**
 	 * updates the visual selection in the HTML markup
 	 * @private
@@ -4472,7 +4142,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		var mTooltipTexts = this._getAccExtension().getAriaTextsForSelectionMode(true);
 
 		// check whether the row can be clicked to change the selection
-		var bSelectOnCellsAllowed = this._getSelectOnCellsAllowed();
+		var bSelectOnCellsAllowed = TableUtils.isRowSelectionAllowed(this);
 
 		// trigger the rows to update their selection
 		var aRows = this.getRows();
@@ -4733,193 +4403,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		return this.setAssociation("groupBy", oGroupBy);
 	};
 
-	/*
-	 * override the getBinding to inject the grouping information into the JSON model.
-	 *
-	 * !!EXPERIMENTAL FEATURE!!
-	 *
-	 * TODO:
-	 *   - Grouping is not really possible for models based on OData:
-	 *     - it works when loading data from the beginning because in this case the
-	 *       model has the relevant information (distinct values) to determine the
-	 *       count of rows and add them properly in the scrollbar as well as adding
-	 *       the group information to the contexts array which is used by the
-	 *       _modifyRow to display the group headers
-	 *     - it doesn't work when not knowing how many groups are available before
-	 *       and on which position the group header has to be added - e.g. when
-	 *       displaying a snapshot in the middle of the model.
-	 *   - For OData it might be a server-side feature?
-	 */
 	Table.prototype.getBinding = function(sName) {
-
-		// default binding is the "rows" binding
-		sName = sName || "rows";
-		var oBinding = Element.prototype.getBinding.call(this, sName);
-
-		// we do all the extended stuff only when grouping is enabled
-		if (this.getEnableGrouping()) {
-
-			// require the binding types (think about loading them only if required)
-			var ClientListBinding = sap.ui.requireSync("sap/ui/model/ClientListBinding");
-
-			// check for grouping being supported or not (only for client ListBindings!!)
-			var oGroupBy = sap.ui.getCore().byId(this.getGroupBy());
-			var bIsSupported = oGroupBy && oGroupBy.getGrouped() &&
-			                   sName === "rows" && oBinding &&
-			                   oBinding instanceof ClientListBinding;
-
-			// only enhance the binding if it has not been done yet and supported!
-			if (bIsSupported && !oBinding._modified) {
-
-				// once the binding is modified we always return the modified binding
-				// and don't wanna modifiy the binding once again
-				oBinding._modified = true;
-
-				// hook into the row modification and add the grouping specifics
-				this._modifyRow = function(iRowIndex, $row) {
-
-					// we add the style override to display the row header
-					this.$().find(".sapUiTableRowHdrScr").css("display", "block");
-
-					// modify the rows
-					var $rowHdr = this.$().find("div[data-sap-ui-rowindex='" + $row.attr("data-sap-ui-rowindex") + "']");
-					if (oBinding.isGroupHeader(iRowIndex)) {
-						$row.addClass("sapUiTableGroupHeader sapUiTableRowHidden");
-						var sClass = oBinding.isExpanded(iRowIndex) ? "sapUiTableGroupIconOpen" : "sapUiTableGroupIconClosed";
-						$rowHdr.html("<div class=\"sapUiTableGroupIcon " + sClass + "\" tabindex=\"-1\">" + oBinding.getTitle(iRowIndex) + "</div>");
-						$rowHdr.addClass("sapUiTableGroupHeader").removeAttr("title");
-					} else {
-						$row.removeClass("sapUiTableGroupHeader");
-						$rowHdr.html("");
-						$rowHdr.removeClass("sapUiTableGroupHeader");
-					}
-
-				};
-
-				// we use sorting finally to sort the values and afterwards group them
-				var sPropertyName = oGroupBy.getSortProperty();
-				oBinding.sort(new Sorter(sPropertyName));
-
-				// fetch the contexts from the original binding
-				var iLength = oBinding.getLength(),
-					aContexts = oBinding.getContexts(0, iLength);
-
-				// add the context information for the group headers which are later on
-				// used for displaying the grouping information of each group
-				var sKey;
-				var iCounter = 0;
-				for (var i = iLength - 1; i >= 0; i--) {
-					var sNewKey = aContexts[i].getProperty(sPropertyName);
-					if (!sKey) {
-						sKey = sNewKey;
-					}
-					if (sKey !== sNewKey) {
-						var oGroupContext = aContexts[i + 1].getModel().getContext("/sap.ui.table.GroupInfo" + i);
-						oGroupContext.__groupInfo = {
-							oContext: aContexts[i + 1],
-							name: sKey,
-							count: iCounter,
-							groupHeader: true,
-							expanded: true
-						};
-						aContexts.splice(i + 1, 0,
-							oGroupContext
-						);
-						sKey = sNewKey;
-						iCounter = 0;
-					}
-					iCounter++;
-				}
-				var oGroupContext = aContexts[0].getModel().getContext("/sap.ui.table.GroupInfo");
-				oGroupContext.__groupInfo =	{
-					oContext: aContexts[0],
-					name: sKey,
-					count: iCounter,
-					groupHeader: true,
-					expanded: true
-				};
-				aContexts.splice(0, 0,
-					oGroupContext
-				);
-
-				// extend the binding and hook into the relevant functions to provide
-				// access to the grouping information for the _modifyRow function
-				jQuery.extend(oBinding, {
-					getLength: function() {
-						return aContexts.length;
-					},
-					getContexts: function(iStartIndex, iLength) {
-						return aContexts.slice(iStartIndex, iStartIndex + iLength);
-					},
-					isGroupHeader: function(iIndex) {
-						var oContext = aContexts[iIndex];
-						return oContext && oContext.__groupInfo && oContext.__groupInfo.groupHeader;
-					},
-					getTitle: function(iIndex) {
-						var oContext = aContexts[iIndex];
-						return oContext && oContext.__groupInfo && oContext.__groupInfo.name + " - " + oContext.__groupInfo.count;
-					},
-					isExpanded: function(iIndex) {
-						var oContext = aContexts[iIndex];
-						return this.isGroupHeader(iIndex) && oContext.__groupInfo && oContext.__groupInfo.expanded;
-					},
-					expand: function(iIndex) {
-						if (this.isGroupHeader(iIndex) && !aContexts[iIndex].__groupInfo.expanded) {
-							for (var i = 0; i < aContexts[iIndex].__childs.length; i++) {
-								aContexts.splice(iIndex + 1 + i, 0, aContexts[iIndex].__childs[i]);
-							}
-							delete aContexts[iIndex].__childs;
-							aContexts[iIndex].__groupInfo.expanded = true;
-							this._fireChange();
-						}
-					},
-					collapse: function(iIndex) {
-						if (this.isGroupHeader(iIndex) && aContexts[iIndex].__groupInfo.expanded) {
-							aContexts[iIndex].__childs = aContexts.splice(iIndex + 1, aContexts[iIndex].__groupInfo.count);
-							aContexts[iIndex].__groupInfo.expanded = false;
-							this._fireChange();
-						}
-					},
-					toggleIndex: function(iIndex) {
-						if (this.isExpanded(iIndex)) {
-							this.collapse(iIndex);
-						} else {
-							this.expand(iIndex);
-						}
-					}
-
-				});
-
-				// the table need to fetch the updated/changed contexts again, therefore requires the binding to fire a change event
-				this._mTimeouts.groupingFireBindingChange = this._mTimeouts.groupingFireBindingChange || window.setTimeout(function() {oBinding._fireChange();}, 0);
-			}
-
-		}
-
-		return oBinding;
-
-	};
-
-	/**
-	 * @private
-	 */
-	Table.prototype.resetGrouping = function() {
-		// reset the group binding only when enhanced
-		var oBinding = this.getBinding("rows");
-		if (oBinding && oBinding._modified) {
-
-			// we remove the style override to display the row header
-			this.$().find(".sapUiTableRowHdrScr").css("display", "");
-
-			// if the grouping is not supported we remove the hacks we did
-			// and simply return the binding finally
-			this._modifyRow = undefined;
-
-			// reset the binding
-			var oBindingInfo = this.getBindingInfo("rows");
-			this.unbindRows();
-			this.bindRows(oBindingInfo);
-		}
+		TableUtils.Grouping.setupExperimentalGrouping(this);
+		return Element.prototype.getBinding.call(this, [sName || "rows"]);
 	};
 
 	/**
@@ -4930,7 +4416,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		this.setProperty("enableGrouping", bEnableGrouping);
 		// reset the grouping
 		if (!bEnableGrouping) {
-			this.resetGrouping();
+			TableUtils.Grouping.resetExperimentalGrouping(this);
 		}
 		// update the column headers
 		this._invalidateColumnMenus();
@@ -5075,60 +4561,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 */
 	Table.prototype._isTouchMode = function(oEvent) {
 		return !!oEvent.originalEvent["touches"];
-	};
-
-	/**
-	 * The selectstart event triggered in IE to select the text.
-	 * @private
-	 * @param {event} oEvent The splitterselectstart event
-	 * @return {boolean} false
-	 */
-	Table.prototype._splitterSelectStart = function(oEvent){
-		oEvent.preventDefault();
-		oEvent.stopPropagation();
-		return false;
-	};
-
-	/**
-	 * Drops the previous dragged horizontal splitter bar and recalculates the amount of rows to be displayed.
-	 * @private
-	 */
-	Table.prototype._onGhostMouseRelease = function(oEvent) {
-		var $this = this.$();
-		var $splitterBarGhost = jQuery(this.getDomRef("ghost"));
-		var iLocationY = this._isTouchMode(oEvent) ? oEvent.changedTouches[0].pageY : oEvent.pageY;
-
-		var iNewHeight = iLocationY - $this.find(".sapUiTableCCnt").offset().top - $splitterBarGhost.height() - $this.find(".sapUiTableFtr").height();
-		this._setRowContentHeight(iNewHeight);
-		this._adjustRows(this._calculateRowsToDisplay(iNewHeight));
-
-		$splitterBarGhost.remove();
-		this.$("overlay").remove();
-
-		jQuery(document.body).unbind("selectstart", this._splitterSelectStart);
-
-		var $document = jQuery(document);
-		$document.unbind("touchend.sapUiTableInteractiveResize");
-		$document.unbind("touchmove.sapUiTableInteractiveResize");
-		$document.unbind("mouseup.sapUiTableInteractiveResize");
-		$document.unbind("mousemove.sapUiTableInteractiveResize");
-
-		this._enableTextSelection();
-	};
-
-	/**
-	 * Drags the horizontal splitter bar for visibleRowCountMode "Interactive".
-	 * @param oEvent
-	 * @private
-	 */
-	Table.prototype._onGhostMouseMove = function(oEvent) {
-		var splitterBarGhost = this.getDomRef("ghost");
-
-		var iLocationY = this._isTouchMode(oEvent) ? oEvent.targetTouches[0].pageY : oEvent.pageY;
-		var min = this.$().offset().top;
-		if (iLocationY > min) {
-			jQuery(splitterBarGhost).css("top", iLocationY + "px");
-		}
 	};
 
 	Table.prototype._determineParent = function() {
@@ -5336,13 +4768,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 			this._updateTableSizes();
 
-			this._updateGroupHeader();
-
 			bReturn = true;
-			// for TreeTable and AnalyticalTable
-			if (this._updateTableContent) {
+
 				this._updateTableContent();
-			}
 			this._attachEvents();
 		}
 
@@ -5565,122 +4993,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * internal function to calculate the widest content width of the column
-	 * also takes the column header and potential icons into account
-	 * @param {int} iColIndex index of the column which should be resized
-	 * @return {int} minWidth minimum width the column needs to have
-	 * @private
-	 * @experimental Experimental, only works with a limited control set
-	 * @function
-	 */
-
-	Table.prototype._calculateAutomaticColumnWidth = function(iColIndex) {
-
-		var aTextBasedControls = [
-			"sap.m.Text",
-			"sap.m.Label",
-			"sap.m.Link",
-			"sap.ui.commons.TextView",
-			"sap.ui.commons.Label",
-			"sap.ui.commons.Link"
-		];
-
-		var $this = this.$();
-		var iHeaderWidth = 0;
-
-		var $cols = $this.find('td[headers=\"' + this.getId() + '_col' + iColIndex + '\"]').children("div");
-		var oColumns = this.getColumns();
-		var oCol = oColumns[iColIndex];
-		if (!oCol) {
-			return null;
-		}
-		var aHeaderSpan = oCol.getHeaderSpan();
-		var oColLabel = oCol.getLabel();
-		var that = this;
-
-		// try to resolve optional dependencies
-		Input = Input || sap.ui.require("sap/m/Input");
-		TextField = TextField || sap.ui.require("sap/ui/commons/TextField");
-
-		var oColTemplate = oCol.getTemplate();
-		var bIsTextBased = jQuery.inArray(oColTemplate.getMetadata().getName(), aTextBasedControls) != -1 ||
-		                   TextField && oColTemplate instanceof TextField ||
-		                   Input && oColTemplate instanceof Input;
-
-		var hiddenSizeDetector = document.createElement("div");
-		document.body.appendChild(hiddenSizeDetector);
-		jQuery(hiddenSizeDetector).addClass("sapUiTableHiddenSizeDetector");
-
-		var oColLabels = oCol.getMultiLabels();
-		if (oColLabels.length == 0 && !!oColLabel){
-			oColLabels = [oColLabel];
-		}
-
-		if (oColLabels.length > 0) {
-			jQuery.each(oColLabels, function(iIdx, oLabel){
-				var iHeaderSpan;
-				if (!!oLabel.getText()){
-					jQuery(hiddenSizeDetector).text(oLabel.getText());
-					iHeaderWidth = hiddenSizeDetector.scrollWidth;
-				} else {
-					iHeaderWidth = oLabel.$().scrollWidth;
-				}
-				iHeaderWidth = iHeaderWidth + $this.find("#" + oCol.getId() + "-icons").first().width();
-
-				$this.find(".sapUiTableColIcons#" + oCol.getId() + "_" + iIdx + "-icons").first().width();
-				if (aHeaderSpan instanceof Array && aHeaderSpan[iIdx] > 1){
-					iHeaderSpan = aHeaderSpan[iIdx];
-				} else if (aHeaderSpan > 1){
-					iHeaderSpan = aHeaderSpan;
-				}
-				if (!!iHeaderSpan){
-					// we have a header span, so we need to distribute the width of this header label over more than one column
-					//get the width of the other columns and subtract from the minwidth required from label side
-					var i = iHeaderSpan - 1;
-					while (i > iColIndex) {
-						iHeaderWidth = iHeaderWidth - (that._oCalcColumnWidths[iColIndex + i] || 0);
-						i -= 1;
-					}
-				}
-			});
-		}
-
-		var minAddWidth = Math.max.apply(null, $cols.map(
-			function(){
-				var _$this = jQuery(this);
-				return parseInt(_$this.css('padding-left'), 10) + parseInt(_$this.css('padding-right'), 10)
-						+ parseInt(_$this.css('margin-left'), 10) + parseInt(_$this.css('margin-right'), 10);
-			}).get());
-
-		//get the max width of the currently displayed cells in this column
-		var minWidth = Math.max.apply(null, $cols.children().map(
-			function() {
-				var width = 0,
-				sWidth = 0;
-				var _$this = jQuery(this);
-				var sColText = _$this.text() || _$this.val();
-
-				if (bIsTextBased){
-					jQuery(hiddenSizeDetector).text(sColText);
-					sWidth = hiddenSizeDetector.scrollWidth;
-				} else {
-					sWidth = this.scrollWidth;
-				}
-				if (iHeaderWidth > sWidth){
-					sWidth = iHeaderWidth;
-				}
-				width = sWidth + parseInt(_$this.css('margin-left'), 10)
-										+ parseInt(_$this.css('margin-right'), 10)
-										+ minAddWidth
-										+ 1; // ellipsis is still displayed if there is an equality of the div's width and the table column
-				return width;
-			}).get());
-
-		jQuery(hiddenSizeDetector).remove();
-		return Math.max(minWidth, this._iColMinWidth);
-	};
-
-	/**
 	 *
 	 * @private
 	 */
@@ -5863,6 +5175,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 */
 	Table.prototype._getSelectedIndicesCount = function () {
 		return this.getSelectedIndices().length;
+	};
+
+	Table.prototype._updateTableContent = function() {
+		if (TableUtils.Grouping.isGroupMode(this)) {
+			var oBinding = this.getBinding("rows"),
+			aRows = this.getRows(),
+			iCount = aRows.length;
+
+			if (oBinding) {
+				var oRow, sGroupTitle, iRowIndex, bIsGroupHeader;
+
+				for (var iRow = 0; iRow < iCount; iRow++) {
+					oRow = aRows[iRow];
+					iRowIndex = iRow + this.getFirstVisibleRow();
+					bIsGroupHeader = !!oBinding.isGroupHeader(iRowIndex);
+					sGroupTitle = bIsGroupHeader ? oBinding.getTitle(iRowIndex) : "";
+					TableUtils.Grouping.updateTableRowForGrouping(this, oRow, bIsGroupHeader, bIsGroupHeader ? !!oBinding.isExpanded(iRowIndex) : false,
+						bIsGroupHeader, false, bIsGroupHeader ? 0 : 1, sGroupTitle);
+				}
+			} else {
+				for (var iRow = 0; iRow < iCount; iRow++) {
+					TableUtils.Grouping.cleanupTableRowForGrouping(this, aRows[iRow]);
+				}
+			}
+		}
 	};
 
 	return Table;

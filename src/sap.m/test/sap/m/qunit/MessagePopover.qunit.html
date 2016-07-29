@@ -596,6 +596,26 @@
 				"sapMMsgPopover-init class should present on the HTML element");
 		});
 
+		QUnit.test("MessagePopoverItem's with truncated title", function (assert) {
+			var sLongTitle = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod" +
+					"tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam," +
+					"quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo" +
+					"consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse" +
+					"cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non" +
+					"proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+
+			this.oMessagePopover.addItem(new sap.m.MessagePopoverItem({
+				title: sLongTitle
+			}));
+
+			sap.ui.getCore().applyChanges();
+
+			this.oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+
+			assert.strictEqual(this.oMessagePopover._oLists.all.getItems()[0].getType(), "Navigation", "The first item should be navigation type")
+		});
+
 		QUnit.module("Public API for async handlers", {
 			sCustomId: "custom-msg-popover-id",
 			oSpies : {},
@@ -639,24 +659,29 @@
 					messages: [{
 						type: "Error",
 						title: "Error message",
-						description: "<p>First Error message description</p>"
+						description: "<p>First Error message description</p>",
+						markupDescription: true
 					}, {
 						type: "Warning",
 						title: "Warning without description",
-						description: ""
+						description: "",
+						markupDescription: true
 					}, {
 						type: "Success",
 						title: "Success message",
-						description: "<p>First Success message description</p>"
+						description: "<p>First Success message description</p>",
+						markupDescription: true
 					}, {
 						type: "Error",
 						title: "Error",
-						description: "<p>Second Error message description</p>"
+						description: "<p>Second Error message description</p>",
+						markupDescription: true
 					}, {
 						type: "Information",
 						title: "Information message (Long)",
 						description: "<h1>HTML sanitization test</h1><h3>heading</h3><p>paragraph</p><embed src='helloworld.swf'> <object width=\"400\" height=\"400\"></object>",
-						longtextUrl: "protocol://domain.tld"
+						longtextUrl: "protocol://domain.tld",
+						markupDescription: true
 					}]};
 
 				this.mockMarkupDescription = "<h2>Heading h2</h2><script>alert('this JS will be sanitized')<\/script>" +
@@ -675,7 +700,7 @@
 					title: "{title}",
 					description: "{description}",
 					longtextUrl: "{longtextUrl}",
-					markupDescription: true
+					markupDescription: "{markupDescription}"
 				});
 
 				this.oButton.placeAt("qunit-fixture");
@@ -748,7 +773,7 @@
 		});
 
 		QUnit.test("MessagePopoverItems type Navigation", function (assert) {
-			var aItems, aMessagePopoverItems;
+			var aItems;
 
 			this.oMockupData.messages.forEach(function (message) {
 				message["description"] = "";
@@ -761,10 +786,31 @@
 			this.clock.tick(500);
 
 			aItems = this.oMessagePopover._oLists.all.getItems();
-			aMessagePopoverItems = this.oMessagePopover.getItems();
 
 			aItems.forEach(function (item) {
-				assert.strictEqual(item.getType(), "Navigation", "Should be set of they have markupDescription");
+				assert.strictEqual(item.getType(), "Navigation", "Should be set if they have a markupDescription");
+			});
+		});
+
+		QUnit.test("MessagePopoverItems type Navigation", function (assert) {
+			var aItems;
+
+			this.oMockupData.messages.forEach(function (message) {
+				message["description"] = "";
+				message["longtextUrl"] = "http://url.com";
+				message["markupDescription"] = false;
+			});
+
+			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
+
+			this.oButton.addDependent(this.oMessagePopover);
+			this.oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+
+			aItems = this.oMessagePopover._oLists.all.getItems();
+
+			aItems.forEach(function (item) {
+				assert.strictEqual(item.getType(), "Navigation", "Should be set if they have a markupDescription");
 			});
 		});
 

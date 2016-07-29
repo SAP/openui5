@@ -460,6 +460,8 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 		aPages[iPageIndex] && aPages[iPageIndex].setVisible(true);
 		$OldSelectedButton.removeClass("sapUiResponsiveSplitterPaginatorSelectedButton");
 		$PaginatorButtons.eq(iPageIndex).addClass("sapUiResponsiveSplitterPaginatorSelectedButton");
+		$OldSelectedButton.attr("aria-checked", false);
+		$PaginatorButtons.eq(iPageIndex).attr("aria-checked", true);
 	};
 
 	/**

@@ -1,0 +1,28 @@
+<mvc:View
+		controllerName="sap.m.sample.LightBox.C"
+		xmlns:l="sap.ui.layout"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m">
+		<Text text="Click on the images below. This will open the images in their real size if the image size is not bigger than the window size."
+			  width="100%"/>
+		<Image src="test-resources/sap/ui/demokit/explored/img/HT-6100.jpg" class="sapUiSmallMargin" press="openBeamerLightBox"/>
+		<Image src="test-resources/sap/ui/demokit/explored/img/HT-6120.jpg" class="sapUiSmallMargin" press="openUSBLightBox"/>
+		<Image src="test-resources/sap/ui/demokit/explored/img/HT-7777.jpg" class="sapUiSmallMargin" press="openSpeakersLightBox"/>
+		<Image src="test-resources/sap/ui/demokit/explored/img/nature/ALotOfElephants_small.jpg"
+			   class="sapUiSmallMargin"
+			   press="openLightBox"
+			   width="100px"/>
+		<Image src="test-resources/sap/ui/demokit/explored/img/nature/flatFish.jpg"
+			   class="sapUiSmallMargin"
+			   press="openLightBox"
+			   width="100px"/>
+		<Image src="test-resources/sap/ui/demokit/explored/img/nature/horses.jpg"
+			   class="sapUiSmallMargin"
+			   press="openLightBox"
+			   width="100px"/>
+		<Image src="test-resources/sap/ui/demokit/explored/img/nature/elephant.jpg"
+			   class="sapUiSmallMargin"
+			   press="openErrorBox"
+			   width="100px"/>
+
+</mvc:View>

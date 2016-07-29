@@ -118,6 +118,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 					/**
 					 * Whether bouncing is enabled.
 					 * @since 1.16.5
+					 * @deprecated since 1.42. This parameter is obsolete and has no effect.
 					 */
 					bounce: {type: "boolean", group: "Behavior", defaultValue: null},
 
@@ -193,6 +194,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 					 * @since 1.15.0
 					 */
 					initialFocus: {type: "sap.ui.core.Control", multiple: false},
+
+					/**
+					 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+					 */
+					ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"},
 
 					/**
 					 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
@@ -471,14 +477,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				if (!this._oScroller) {
 					this._oScroller = new ScrollEnablement(this, this.getId() + "-scroll", {
 						horizontal: this.getHorizontalScrolling(),
-						vertical: this.getVerticalScrolling(),
-						zynga: false,
-						preventDefault: false,
-						nonTouchScrolling: "scrollbar",
-						bounce: this.getBounce() === "" ? undefined : this.getBounce(),
-						// In android stock browser, iScroll has to be used
-						// The scrolling layer using native scrolling is transparent for the browser to dispatch events
-						iscroll: sap.ui.Device.browser.name === "an" ? "force" : undefined
+						vertical: this.getVerticalScrolling()
 					});
 				}
 			}
@@ -2063,6 +2062,24 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			} else {
 				return this._oOpenBy;
 			}
+		};
+
+		/**
+		 * Provides the accessibility options of the control.
+		 *
+		 * @private
+		 */
+		Popover.prototype._getAccessibilityOptions = function() {
+			var aAriaLabels, mAccOptions = {};
+
+			mAccOptions.role = "dialog";
+			if (this.getShowHeader() && this._getAnyHeader()) {
+				// If we have a header/title, we add a reference to it in the beginning of the aria-labelledby attribute
+				aAriaLabels = Array.prototype.concat(this._getAnyHeader().getId(), this.getAssociation("ariaLabelledBy", []));
+				mAccOptions.labelledby = aAriaLabels.join(' ');
+			}
+
+			return mAccOptions;
 		};
 
 		/**

@@ -225,6 +225,8 @@ sap.ui.define(["./ObjectPageLayout", "sap/ui/core/Icon"], function (ObjectPageLa
 			oRm.write(">");
 			oRm.writeEscaped(sOHTitleEnd);
 
+			this._renderMarkers(oRm, oControl);
+
 			// if someone has set both Locked and Unsaved Changes icons, then show only Locked icon
 			if (oControl.getMarkLocked()) {
 				this._renderLock(oRm, oControl, bTitleInContent);
@@ -232,7 +234,6 @@ sap.ui.define(["./ObjectPageLayout", "sap/ui/core/Icon"], function (ObjectPageLa
 				this._renderMarkChanges(oRm, oControl, bTitleInContent);
 			}
 
-			this._renderMarkers(oRm, oControl);
 			this._renderSelectTitleArrow(oRm, oControl, bTitleInContent);
 			oRm.write("</span>");
 		} else {

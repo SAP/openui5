@@ -4,9 +4,11 @@
 
 // Provides control sap.m.IconTabHeader.
 sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator',
-		'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/IconPool', 'sap/ui/core/delegate/ScrollEnablement'],
+		'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/IconPool', 'sap/ui/core/delegate/ScrollEnablement',
+		'./IconTabBarSelectList', './Button', './ResponsivePopover', './IconTabFilter'],
 	function(jQuery, library, Control, EnabledPropagator,
-	         ItemNavigation, IconPool, ScrollEnablement) {
+				ItemNavigation, IconPool, ScrollEnablement,
+				IconTabBarSelectList, Button, ResponsivePopover, IconTabFilter) {
 	"use strict";
 
 	/**
@@ -61,7 +63,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 *
 			 * @since 1.40
 			 */
-			mode : {type : "sap.m.IconTabHeaderMode", group : "Appearance", defaultValue : sap.m.IconTabHeaderMode.Standard}
+			mode : {type : "sap.m.IconTabHeaderMode", group : "Appearance", defaultValue : sap.m.IconTabHeaderMode.Standard},
+
+			/**
+			 * Specifies if the overflow select list is displayed.
+			 *
+			 * The overflow select list represents a list, where all tab filters are displayed,
+			 * so the user can select specific tab filter easier.
+			 * @since 1.42
+			 */
+			showOverflowSelectList : {type : "boolean", group : "Appearance", defaultValue : false}
 		},
 		aggregations : {
 
@@ -121,6 +132,170 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			vertical: false,
 			nonTouchScrolling: true
 		});
+	};
+
+	/**
+	 * Returns overflow select list
+	 * @private
+	 */
+	IconTabHeader.prototype._getSelectList = function () {
+
+		var that = this;
+
+		if (!this._oSelectList) {
+			this._oSelectList = new IconTabBarSelectList({
+				selectionChange: function (oEvent) {
+					var oTarget = oEvent.getParameter('selectedItem');
+					that.setSelectedItem(oTarget._tabFilter);
+				}
+			});
+
+			this._oSelectList._iconTabHeader = this;
+		}
+
+		return this._oSelectList;
+	};
+
+	/**
+	 * Returns overflow button
+	 * @private
+	 */
+	IconTabHeader.prototype._getOverflowButton = function () {
+		if (!this._oOverflowButton) {
+			this._oOverflowButton = new Button({
+				id: this.getId() + '-overflow',
+				icon: "sap-icon://overflow",
+				type: sap.m.ButtonType.Transparent,
+				press: this._overflowButtonPress.bind(this)
+			});
+		}
+
+		return this._oOverflowButton;
+	};
+
+	/**
+	 * Handles overrflow button "press" event
+	 * @private
+	 */
+	IconTabHeader.prototype._overflowButtonPress = function (event) {
+
+		if (!this._oPopover) {
+			this._oPopover = new ResponsivePopover({
+					showArrow: false,
+					showHeader: false,
+					placement: sap.m.PlacementType.Vertical,
+					offsetX: 0,
+					offsetY: 0
+				}
+			).addStyleClass('sapMITBPopover');
+
+			if (sap.ui.Device.system.phone) {
+				this._oPopover._oControl.addButton(this._createPopoverCloseButton());
+			}
+		}
+
+		var oSelectList = this._getSelectList();
+
+		this._oPopover.removeAllContent();
+		this._oPopover.addContent(oSelectList);
+
+		this._oPopover.setInitialFocus(oSelectList.getSelectedItem());
+
+		this._oPopover.openBy(this._getOverflowButton());
+	};
+
+	/**
+	 * Creates popover close button
+	 * @private
+	 */
+	IconTabHeader.prototype._createPopoverCloseButton = function() {
+		var that = this;
+		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		return new Button({
+			text: oResourceBundle.getText("SELECT_CANCEL_BUTTON"),
+			press: function() {
+				that._closeOverflow();
+			}
+		});
+	};
+
+	/**
+	 * Closes the overflow popover and focuses the correct tab filter
+	 * @private
+	 */
+	IconTabHeader.prototype._closeOverflow = function () {
+
+		if (!sap.ui.Device.system.desktop) {
+			this._oPopover.close();
+		}
+
+		if (this.oSelectedItem) {
+			this.oSelectedItem.$().focus();
+		}
+	};
+
+	/**
+	 * Sets overflow items
+	 *
+	 * @returns {sap.ui.core.Element}
+	 * @private
+	 */
+	IconTabHeader.prototype._setSelectListItems = function () {
+
+		if (!this.getShowOverflowSelectList()) {
+			return;
+		}
+
+		var oSelectItem,
+			oTabFilter,
+			oSelectList = this._getSelectList(),
+			aTabFilters = this.getTabFilters();
+
+		oSelectList.removeAllItems();
+
+		for (var i = 0; i < aTabFilters.length; i++) {
+			oTabFilter = aTabFilters[i];
+
+			// oSelectItem = oTabFilter.clone();
+			oSelectItem = new IconTabFilter({
+				visible: oTabFilter.getVisible(),
+				enabled: oTabFilter.getEnabled(),
+				icon: oTabFilter.getIcon(),
+				text: oTabFilter.getText(),
+				count: oTabFilter.getCount(),
+				iconColor: oTabFilter.getIconColor(),
+				iconDensityAware : oTabFilter.getIconDensityAware(),
+				textDirection: oTabFilter.getTextDirection(),
+				tooltip: oTabFilter.getTooltip()
+			});
+
+			oSelectItem._tabFilter = oTabFilter;
+			oSelectList.addItem(oSelectItem);
+
+			if (oTabFilter == this.oSelectedItem) {
+				oSelectList.setSelectedItem(oSelectItem);
+			}
+		}
+	};
+
+	/**
+	 * Returns SelectList item, that corresponds ot specific TabFilter.
+	 * @private
+	 */
+	IconTabHeader.prototype._findSelectItem = function (oTabFilter) {
+
+		var oSelectList = this._getSelectList(),
+			aSelectListItems = oSelectList.getItems(),
+			oSelectItem;
+
+		for (var i = 0; i < aSelectListItems.length; i++){
+
+			oSelectItem = aSelectListItems[i];
+
+			if (oSelectItem._tabFilter == oTabFilter) {
+				return oSelectItem;
+			}
+		}
 	};
 
 	IconTabHeader.prototype._onItemNavigationFocusLeave = function() {
@@ -218,6 +393,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this._aTabKeys) {
 			this._aTabKeys = null;
 		}
+
+		if (this._oPopover) {
+			this._oPopover.destroy();
+			this._oPopover = null;
+		}
+
+		if (this._oOverflowButton) {
+			this._oOverflowButton.destroy();
+			this._oOverflowButton = null;
+		}
 	};
 
 	IconTabHeader.prototype.onBeforeRendering = function() {
@@ -274,6 +459,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 
+		this._setSelectListItems();
+
 		// Deregister resize event before re-rendering
 		if (this._sResizeListenerNoFlexboxSupportId) {
 			sap.ui.core.ResizeHandler.deregister(this._sResizeListenerNoFlexboxSupportId);
@@ -322,6 +509,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		if (!oItem || !oItem.getEnabled()) {
 			return this;
+		}
+
+		if (this.getShowOverflowSelectList()) {
+			var oSelectItem = this._findSelectItem(oItem);
+			if (oSelectItem) {
+				this._getSelectList().setSelectedItem(oSelectItem);
+			}
 		}
 
 		var oParent = this.getParent();
@@ -506,6 +700,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._oItemNavigation.setItemDomRefs(aTabDomRefs);
 		this._oItemNavigation.setSelectedIndex(iSelectedDomIndex);
 
+		// overflow button doesn't have tab stop
+		if (this.getShowOverflowSelectList()) {
+			this.$('overflow').attr('tabindex', -1);
+		}
 
 		//listen to resize
 		this._sResizeListenerId = sap.ui.core.ResizeHandler.register(this.getDomRef(),  jQuery.proxy(this._fnResize, this));
@@ -818,6 +1016,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var sTargetId = oEvent.target.id,
 			oControl = oEvent.srcControl,
 			sControlId;
+
+		if (oControl instanceof  Button) {
+			return;
+		}
 
 		var $sTargetId = jQuery.sap.byId(sTargetId);
 		/*eslint-disable no-empty */

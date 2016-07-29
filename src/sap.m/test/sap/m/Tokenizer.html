@@ -28,7 +28,7 @@
 		};
 
 		//*******************************
-		var oTokenizer1 = new sap.m.Tokenizer({
+		var oTokenizer1 = new sap.m.Tokenizer("editableTokenizer", {
 			tokens: [
 			         new sap.m.Token({text: "Token 1", key: "0001"}),
 			         new sap.m.Token({text: "Token 2", key: "0002"}),
@@ -46,7 +46,7 @@
 			         tokenChange: fEventWriter,
 		});
 		//*******************************
-		var oTokenizer2 = new sap.m.Tokenizer({
+		var oTokenizer2 = new sap.m.Tokenizer("notEditableTokenizer",{
 			tokens: [
 			         new sap.m.Token({text: "Token 1", key: "0001"}),
 			         new sap.m.Token({text: "Token 2", key: "0002"}),
@@ -65,12 +65,21 @@
 			         tokenChange: fEventWriter,
 		});
 		//*******************************
-		oTokenizer3 = new sap.m.Tokenizer({
+		oTokenizer3 = new sap.m.Tokenizer("editableAndNotEditable",{
 			tokens:[
 			        new sap.m.Token({text:"Dente", editable: false}),
 			        new sap.m.Token({text:"Friese", editable: false}),
 			        new sap.m.Token({text:"Mann", editable: true})
 			        ]
+		});
+
+		oTokenizer4 = new sap.m.Tokenizer("setWidth",{
+			tokens:[
+				new sap.m.Token({text:"Dente", editable: false}),
+				new sap.m.Token({text:"Friese", editable: false}),
+				new sap.m.Token({text:"Mann", editable: true})
+			],
+			width: "100px"
 		});
 
 		var app = new sap.m.App("myApp");
@@ -85,7 +94,9 @@
 					new sap.m.Label({ text : "set the first two tokens editable property to false", width:"100%"}),
 					oTokenizer3,
 					new sap.m.Label({ text : "Token events:", width: "100%"}),
-					oEventList
+					oEventList,
+					new sap.m.Label({ text : "Tokenizer with set width", width: "100%"}),
+					oTokenizer4
 			]
 		});
 

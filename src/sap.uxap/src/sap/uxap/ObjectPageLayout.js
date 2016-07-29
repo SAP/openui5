@@ -501,16 +501,9 @@ sap.ui.define([
 			return;
 		}
 
-		//Internal Incident: 1482023778: workaround BB10 = use zynga instead of iScroll
-		var bEnforceZynga = (Device.os.blackberry && Device.os.version >= 10.0 && Device.os.version < 11.0);
-
 		this._oScroller = new ScrollEnablement(this, this.getId() + "-scroll", {
 			horizontal: false,
-			vertical: true,
-			zynga: bEnforceZynga,
-			preventDefault: true,
-			nonTouchScrolling: "scrollbar",
-			scrollbarClass: "sapUxAPObjectPageScroll"
+			vertical: true
 		});
 	};
 

@@ -23,9 +23,9 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 		}
 		this.beginTabStrip(oRm, oControl);
 
-		// for phones show only the select component of the strip
+		// for phones show only the select component of the strip & "+" button
 		if (sap.ui.Device.system.phone === true) {
-			oRm.renderControl(oControl.getAggregation('_select'));
+			this.renderTouchArea(oRm, oControl);
 		} else {
 			this.renderLeftOverflowButtons(oRm, oControl);
 			this.beginTabsContainer(oRm, oControl);
@@ -77,7 +77,6 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 		oRm.writeAccessibilityState(oItem, getTabStripItemAccAttributes(oItem, oControl.getParent(), sap.ui.getCore().byId(oControl.getSelectedItem())));
 
 		oRm.write(">");
-
 
 		oRm.write("<span id='" + getTabTextDomId(oItem) + "' class='" + TabStripItem.CSS_CLASS_LABEL + "'>");
 

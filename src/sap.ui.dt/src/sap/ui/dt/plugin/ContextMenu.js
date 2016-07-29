@@ -30,7 +30,11 @@ sap.ui.define([
 
 			// ---- control specific ----
 			library: "sap.ui.dt",
-			properties: {},
+			properties: {
+				contextElement : {
+					type : "object"
+				}
+			},
 			associations: {},
 			events: {
 				openedContextMenu: {},
@@ -68,7 +72,6 @@ sap.ui.define([
 
 	ContextMenu.prototype.exit = function() {
 		delete this._aMenuItems;
-		delete this._oElement;
 		if (this._oContextMenuControl) {
 			this._oContextMenuControl.destroy();
 			delete this._oContextMenuControl;
@@ -94,10 +97,10 @@ sap.ui.define([
 	};
 
 	ContextMenu.prototype.open = function(oOriginalEvent, oTargetOverlay) {
-		this._oElement = oTargetOverlay.getElementInstance();
+		this.setContextElement(oTargetOverlay.getElementInstance());
 
 		this._oContextMenuControl = new ContextMenuControl();
-		this._oContextMenuControl.setMenuItems(this._aMenuItems, this._oElement);
+		this._oContextMenuControl.setMenuItems(this._aMenuItems, oTargetOverlay);
 		this._oContextMenuControl.setOverlayDomRef(oTargetOverlay);
 		this._oContextMenuControl.attachItemSelect(this._onItemSelected, this);
 

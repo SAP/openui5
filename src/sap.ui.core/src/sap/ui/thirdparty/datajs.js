@@ -1987,7 +1987,10 @@
         "accept": "Accept",
         "content-type": "Content-Type",
         "dataserviceversion": "DataServiceVersion",
-        "maxdataserviceversion": "MaxDataServiceVersion"
+        "maxdataserviceversion": "MaxDataServiceVersion",
+        // ##### BEGIN: MODIFIED BY SAP
+        "last-modified": "Last-Modified"
+        // ##### END: MODIFIED BY SAP
     };
 
     var normalizeHeaders = function (headers) {

@@ -458,5 +458,83 @@
         "references": []
       }
     ]
+  },
+  "1.40.1": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "68f0a63759f6df3bbd810504acd10cbc54b25d09",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.DatePicker: add specialDates for display in Calendar",
+        "references": []
+      },
+      {
+        "id": "a3e55ad4e249bddc463dc87d0dc62c6e903bdc25",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: don\u0027t open for 0001.01.01 in IE",
+        "references": []
+      },
+      {
+        "id": "3a38fc567b439623b9243930a49e7802c96a2fc1",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Month names wrong if more than one month",
+        "references": []
+      },
+      {
+        "id": "ae368e57935c2483e858a6529648d340c016a3b0",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Currency - Now handles correct live update of the currency",
+        "references": []
+      },
+      {
+        "id": "a16ad7c31b5c46ad2959dd5350c63fd909b18b59",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "unified.FileUploader: Removed \u0027src\u0027-Attribute for BlindLayer",
+        "references": []
+      }
+    ]
+  },
+  "1.40.2": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "d3b537f8c173a7d33ed1e196b006094bc5d5f8db",
+        "author": "Mihail Yordanov \u003cmihail.yordanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader disabled state cursor fixed",
+        "references": []
+      },
+      {
+        "id": "83e9868137ef81e966b98c5657aa89b7dc8feab2",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: current item of type MenuTextFieldItem does not lost focus in IE and Edge anymore.",
+        "references": []
+      },
+      {
+        "id": "43fc963ddae9b0d193c2f89903a426367f1cfb5f",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Shell: Fix search area line-height",
+        "references": []
+      }
+    ]
+  },
+  "1.40.3": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "3eb0102ba8bbbd17e710f958f54e69bd45124085",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: prevent default on sapspace added",
+        "references": []
+      }
+    ]
   }
 }

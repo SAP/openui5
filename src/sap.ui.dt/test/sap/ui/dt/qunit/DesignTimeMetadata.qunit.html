@@ -27,7 +27,16 @@
 					this.oDesignTimeMetadata = new sap.ui.dt.DesignTimeMetadata({
 						data : {
 							testField : "testValue",
-							domRef : "domRef"
+							domRef : "domRef",
+							actions : {
+								action1 : "firstChangeType",
+								action2 : {
+									changeType : "secondChangeType"
+								},
+								action3 : function(oElement) {
+									return {changeType: oElement.name};
+								}
+							}
 						}
 					});
 				},
@@ -40,6 +49,18 @@
 				assert.strictEqual(this.oDesignTimeMetadata.getDomRef(), "domRef", "then the domRef is returned right");
 				assert.strictEqual(this.oDesignTimeMetadata.isIgnored(), false, "then ignore property is returned right");
 				assert.strictEqual(this.oDesignTimeMetadata.getCloneDomRef(), false, "then cloneDomRef property is returned right");
+			});
+
+			QUnit.test("when getAction is called...", function(assert) {
+				assert.strictEqual(this.oDesignTimeMetadata.getAction("action1"), "firstChangeType", "...for string action, the string is returned");
+				assert.propEqual(this.oDesignTimeMetadata.getAction("action2"), {changeType : "secondChangeType"}, "...for object action, the object is returned");
+				assert.propEqual(this.oDesignTimeMetadata.getAction("action3", {name:"thirdChangeType"}), {changeType : "thirdChangeType"}, "...for function action, the correct string is returned");
+			});
+
+			QUnit.test("when getActionChangeType is called...", function(assert) {
+				assert.strictEqual(this.oDesignTimeMetadata.getActionChangeType("action1"), "firstChangeType", "...for string action, the correct changeType is returned");
+				assert.strictEqual(this.oDesignTimeMetadata.getActionChangeType("action2"), "secondChangeType", "...for object action, the correct changeType is returned");
+				assert.strictEqual(this.oDesignTimeMetadata.getActionChangeType("action3", {name:"thirdChangeType"}), "thirdChangeType", "...for function action, the correct changeType is returned");
 			});
 
 		</script>

@@ -352,13 +352,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				if (!this._oScroller) {
 					this._oScroller = new ScrollEnablement(this, this.getId() + "-scroll", {
 						horizontal: this.getHorizontalScrolling(), // will be disabled in adjustScrollingPane if content can fit in
-						vertical: this.getVerticalScrolling(),
-						zynga: false,
-						preventDefault: false,
-						nonTouchScrolling: "scrollbar",
-						// In android stock browser, iScroll has to be used
-						// The scrolling layer using native scrolling is transparent for the browser to dispatch events
-						iscroll: sap.ui.Device.browser.name === "an" ? "force" : undefined
+						vertical: this.getVerticalScrolling()
 					});
 				}
 			}
@@ -1582,6 +1576,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 					var styles = {};
 					var minWidth = parseInt(that._$dialog.css('min-width'), 10);
 					var maxLeftOffset = initial.x + initial.width - minWidth;
+
+					// BCP: 1680048166 remove inline set height so that the content resizes together with the mouse pointer
+					that.$('cont').height('');
 
 					$w.on("mousemove.sapMDialog", function (e) {
 						fnMouseMoveHandler(function () {

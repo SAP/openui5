@@ -678,24 +678,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @experimental
 	 */
 	Core.prototype._loadWebFonts = function() {
-		jQuery.sap.measure.start("sapFontsLoad", "Time to load SAP web fonts");
-		var sFontPath = jQuery.sap.getModulePath("sap.ui.core", '/') + "themes/base/fonts/";
+		var sWebfontsParam = jQuery.sap.getUriParameters().get('sap-ui-xx-webfonts');
+		if (sWebfontsParam !== "true" && sWebfontsParam !== "ajax") {
+			return;
+		}
+
+		jQuery.sap.measure.start("loadWebFonts", "Time to load SAP web fonts");
+		var sFontPath = jQuery.sap.getModulePath("sap.ui.core", '/') + "themes/base/fonts/",
+			sFormat = sap.ui.Device.browser.chrome ? "woff2" : "woff";
+
 		var aFonts = [
-			{url: sFontPath + '72-Regular.woff', weight: "normal", style: "normal", stretch: "normal"},
-			{url: sFontPath + '72-Italic.woff', weight: "normal", style: "italic", stretch: "normal"},
-			{url: sFontPath + '72-BoldItalic.woff', weight: "bold", style: "italic", stretch: "normal"},
-			{url: sFontPath + '72-Bold.woff', weight: "bold", style: "normal", stretch: "normal"},
-			{url: sFontPath + '72-Condensed.woff', weight: "normal", style: "normal", stretch: "condensed"},
-			{url: sFontPath + '72-CondensedBold.woff', weight: "bold", style: "normal", stretch: "condensed"},
-			{url: sFontPath + '72-Light.woff', weight: "lighter", style: "normal", stretch: "normal"}
+			{url: sFontPath + '72-Regular.' + sFormat, weight: "normal", style: "normal", stretch: "normal", format: sFormat},
+			{url: sFontPath + '72-Italic.' + sFormat, weight: "normal", style: "italic", stretch: "normal", format: sFormat},
+			{url: sFontPath + '72-BoldItalic.' + sFormat, weight: "bold", style: "italic", stretch: "normal", format: sFormat},
+			{url: sFontPath + '72-Bold.' + sFormat, weight: "bold", style: "normal", stretch: "normal", format: sFormat},
+			{url: sFontPath + '72-Condensed.' + sFormat, weight: "normal", style: "normal", stretch: "condensed", format: sFormat},
+			{url: sFontPath + '72-CondensedBold.' + sFormat, weight: "bold", style: "normal", stretch: "condensed", format: sFormat},
+			{url: sFontPath + '72-Light.' + sFormat, weight: "300", style: "normal", stretch: "normal", format: sFormat}
 		];
 
-		var x = true; // temporarily override FontFace check until issue with adding font faces after load is resolved
-		if (x) {	// if (!window.FontFace) {
+		if (!window.FontFace || sWebfontsParam === "ajax") {
 			var aBuffer = [];
 			var aCalls = [];
 			for (var i = 0; i < aFonts.length; i++) {
-				aBuffer.push("@font-face {font-family: '72-Web'; font-style: ", aFonts[i].style, "; font-weight: ", aFonts[i].weight, "; font-stretch: ", aFonts[i].stretch, "; src: url('", aFonts[i].url, "') format('woff');}");
+				aBuffer.push("@font-face {font-family: '72-Web'; font-style: ", aFonts[i].style, "; font-weight: ", aFonts[i].weight, "; font-stretch: ", aFonts[i].stretch, "; src: url('", aFonts[i].url, "') format('" + aFonts[i].format + "');}");
 				aCalls.push(Promise.resolve(jQuery.ajax({
 					url: aFonts[i].url,
 					beforeSend: function ( xhr ) {
@@ -706,12 +712,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 			Promise.all(aCalls).then(function(){
 				jQuery('head').append('<style type="text/css">' + aBuffer.join("") + '</style>');
-				jQuery.sap.measure.end("sapFontsLoad");
+				jQuery.sap.measure.end("loadWebFonts");
 			});
 		} else {
 			var aLoadedFonts = [];
+
 			for (var i = 0; i < aFonts.length; i++) {
-				var font = new window.FontFace("72-Web", "url('" + aFonts[i].url + "') format('woff')", {
+				var font = new window.FontFace("72-Web", "url('" + aFonts[i].url + "') format('" + aFonts[i].format + "')", {
 					style: aFonts[i].style,
 					weight: aFonts[i].weight,
 					stretch: aFonts[i].stretch
@@ -725,11 +732,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				for (var i = 0; i < aFonts.length; i++) {
 					document.fonts.add(aFonts[i].font);
 				}
-				jQuery.sap.measure.end("sapFontsLoad");
-			}).fail(function () {
-				jQuery.sap.log.error('web font loading failed');
-			}).always(function () {
-				jQuery.sap.log.info('web font loading');
+				jQuery.sap.measure.end("loadWebFonts");
 			});
 		}
 	};
@@ -994,10 +997,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		this._executeInitListeners();
 
 		// Experimental: Load SAP web fonts
-		var oUriParams = jQuery.sap.getUriParameters();
-		if (oUriParams.get('sap-xx-sapfont') === "true") {
-			this._loadWebFonts();
-		}
+		this._loadWebFonts();
 
 		if ( this.oThemeCheck.themeLoaded || !this.oConfiguration['xx-waitForTheme'] ) {
 			this.renderPendingUIUpdates(); // directly render without setTimeout, so rendering is guaranteed to be finished when init() ends

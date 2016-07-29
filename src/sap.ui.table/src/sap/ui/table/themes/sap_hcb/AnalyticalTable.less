@@ -4,32 +4,8 @@
 
 // No checkboxes should be shown in group header of Analytical Table
 .sapUiSizeCompact, .sapUiSizeCozy {
-	.sapUiAnalyticalTable .sapUiTableRowHdrScr .sapUiTableRowHdr.sapUiTableGroupHeader::after,
 	.sapUiAnalyticalTable .sapUiTableRowHdrScr .sapUiTableRowHdr.sapUiTableRowHidden::after,
 	.sapUiAnalyticalTable.sapUiTableSelModeMultiToggle .sapUiTableRowHdr.sapUiAnalyticalTableSum::after {
 		display: none;
 	}
-}
-
-.sapUiAnalyticalTable .sapUiTableGroupIcon {
-	background-color: @sapHCStandardBG;
-	background-clip: content-box;
-	padding-right: 40px;
-}
-
-.sapUiAnalyticalTable .sapUiTableRowHvr .sapUiTableGroupIcon {
-	background-color: @sapHCHighlightBG;
-}
-
-.sapUiAnalyticalTable .sapUiTableGroupIcon:after {
-	position: absolute;
-	content: "";
-	width: 40px;
-	top: 0px;
-	bottom:0;
-	box-shadow: inset 40px 0px 20px -20px @sapHCStandardBG;
-}
-
-.sapUiAnalyticalTable .sapUiTableRowHvr .sapUiTableGroupIcon:after {
-	box-shadow: inset 40px 0px 20px -20px @sapHCHighlightBG;
 }

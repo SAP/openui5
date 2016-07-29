@@ -67,6 +67,33 @@
 		assert.equal(sTooltip, "image descriptions", "The tooltip generated correctly");
 	});
 
+	QUnit.test("Description property is mapped to alt property of inner control", function(assert) {
+		var sDescription = this.oImageContent.getDescription();
+		var sAlt = this.oImageContent.getAggregation("_content").getAlt();
+		assert.deepEqual(sDescription, sAlt, "Description is mapped to alt property of inner icon");
+	});
+
+	QUnit.test("getAltText returns 'description' property which was mapped to inner 'alt' property", function(assert) {
+		var sAlt = this.oImageContent.getAggregation("_content").getAlt();
+		var sAltTest = this.oImageContent.getAltText();
+		assert.deepEqual(sAlt, sAltTest, "Description is mapped to alt property of inner icon");
+	});
+
+	QUnit.test("In case no description is set, getAltText method should return the default", function(assert) {
+		this.oImageContent.setDescription("");
+		sap.ui.getCore().applyChanges();
+		var sAlt = this.oImageContent.getAggregation("_content").getAlt();
+		assert.deepEqual(sAlt, "", "Alt property of inner control is empty");
+	});
+
+	QUnit.test("In case no description is set, getAltText method should return the default of the inner control", function(assert) {
+		this.oImageContent.setDescription("");
+		this.oImageContent.setSrc("sap-icon://travel-expense");
+		sap.ui.getCore().applyChanges();
+		var sAltText = this.oImageContent.getAltText();
+		assert.ok(sAltText.length > 0, "Default is returned");
+	});
+
 	QUnit.module("Event tests", {
 		beforeEach : function() {
 			this.ftnPressHandler = function() {

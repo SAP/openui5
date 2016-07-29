@@ -564,13 +564,12 @@
 			this.oTS.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			strictEqual(this.oTS.$("touchArea").length, 0, "Toucharea is not rendered");
 			strictEqual(this.oTS.$("leftOverflowButtons").length, 0, "Left overflow buttons are not rendered");
 			strictEqual(this.oTS.$("rightflowButtons").length, 0, "Right overflow buttons are not rendered");
 			strictEqual(this.oTS.$("tabsContainer").length, 0, "Tab container is not rendered");
 
 			strictEqual(jQuery(this.oTS.$()).find('.sapMSltLabel').length, 1, 'Label is rendered');
-			strictEqual(jQuery(this.oTS.$()).find('.sapMSltArrow').length, 1, 'Arrow is rendered');
+			strictEqual(jQuery(this.oTS.$()).find('.sapMSltIcon').length, 1, 'Arrow is rendered');
 			jQuery('body').removeClass('sap-phone');
 			stubs.forEach(function(item){item.restore()}); // restore stubs
 		});

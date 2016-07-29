@@ -30,6 +30,22 @@
 
 				</subSections>
 			</ObjectPageSection>
+
+			<ObjectPageSection title="examples 2">
+				<subSections>
+
+					<ObjectPageSubSection title="Single subsection with action buttons">
+						<blocks>
+							<blockcolor:BlockBlue id="b3"/>
+						</blocks>
+						<actions>
+							<m:Button icon="sap-icon://synchronize"></m:Button>
+							<m:Button icon="sap-icon://expand"></m:Button>
+						</actions>
+					</ObjectPageSubSection>
+
+				</subSections>
+			</ObjectPageSection>
 		</sections>
 	</ObjectPageLayout>
 </core:View>

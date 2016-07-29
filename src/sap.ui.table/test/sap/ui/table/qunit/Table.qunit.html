@@ -2,7 +2,6 @@
 
 <!--
   Tested class: sap.ui.table.Table
-  Author: d029506, d053398
 -->
 
 <html>
@@ -22,6 +21,7 @@
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-coverage.js" data-sap-ui-cover-only="sap/ui/table"></script>
 
 	<script  language="javascript">
 	jQuery.sap.require("sap.ui.thirdparty.sinon");
@@ -300,6 +300,21 @@
 		sap.ui.getCore().applyChanges();
 		ok(oTable.$().find("tr[data-sap-ui-rowindex]").height() < 100, "RowHeight ok");
 	});
+	
+	test("TableExtensions", 6, function(assert) {
+		assert.ok(oTable._bExtensionsInitialized, "Extensions initialized");
+		assert.ok(typeof oTable._getPointerExtension === "function", "Getter for PointerExtension");
+		assert.ok(typeof oTable._getAccExtension === "function", "Getter for AccExtension");
+		assert.ok(typeof oTable._getAccRenderExtension === "function", "Getter for AccRenderExtension");
+		assert.ok(typeof oTable._getKeyboardExtension === "function", "Getter for KeyboardExtension");
+		oTable.destroy();
+		assert.ok(!oTable._bExtensionsInitialized, "Extensions cleaned up");
+		try {
+			oTable.destroy();
+		} catch(e) {
+			assert.ok(false, "Duplicate call of destroy should not raise errors.");
+		}
+	});
 
 	module("Column operations", {
 		setup: function() {
@@ -404,81 +419,6 @@
 		ok(oColumn.getMenu() === oCustomMenu, "Custom menu equals set column menu");
 	});
 
-	test("Resize column", function() {
-		var oColumn = oTable.getColumns()[1],
-			sResizeHandlerId = oTable.getId() + '-rsz';
-
-		var iResizeHandlerLeftInitial = jQuery("#" + sResizeHandlerId).position().left;
-		// resizer should be way out of screen when the table gets rendered
-		equals(iResizeHandlerLeftInitial, "0", "Resizer is at the correct initial position");
-
-		var iResizeHandlerTop = Math.floor(oColumn.getDomRef().getBoundingClientRect().top + 100);
-		equals(oColumn.getWidth(), "100px", "Check column width before resize");
-
-		// resizer gets positioned when hovering a column -> move mouse to column
-		var oParams = {};
-		oParams.clientX = Math.floor(oColumn.getDomRef().getBoundingClientRect().left + 10);
-		oParams.clientY = iResizeHandlerTop;
-		qutils.triggerEvent("mousemove", oColumn.getId(), oParams);
-
-		// resizer should now be positioned at the column end, while the center of the resizer is at the column border
-		var iResizeHandlerLeft = jQuery("#" + sResizeHandlerId).position().left;
-		var $column = jQuery(oColumn.getDomRef());
-
-		var iContainerMargin = parseInt(jQuery(".sapUiTableCtrlScr").css("margin-left"));
-
-		equals(iResizeHandlerLeft, iContainerMargin + $column.position().left + $column.width() + Math.floor(jQuery("#" + sResizeHandlerId).width() / 2), "Resizer is at the correct position");
-		equals(oTable._iLastHoveredColumnIndex, 1, "Hovered column index is 1");
-
-		// drag resizer to resize column
-		qutils.triggerMouseEvent(sResizeHandlerId, "mousedown", 1, 1, iResizeHandlerLeft, iResizeHandlerTop, 0 );
-		qutils.triggerMouseEvent(sResizeHandlerId, "mousemove", 1, 1, iResizeHandlerLeft + 97, iResizeHandlerTop, 0 );
-		qutils.triggerMouseEvent(sResizeHandlerId, "mouseup", 1, 1, iResizeHandlerLeft + 97, iResizeHandlerTop, 0 );
-
-		equals(oColumn.getWidth(), "196px", "Check column width after resize");
-
-		// columns which are not resizeable should not be considered when the resizer gets positioned
-		oTable.getColumns()[1].setResizable(false);
-		sap.ui.getCore().applyChanges();
-
-		var oParams = {};
-		oParams.clientX = Math.floor(oColumn.getDomRef().getBoundingClientRect().left + 10);
-		oParams.clientY = iResizeHandlerTop;
-		qutils.triggerEvent("mousemove", oColumn.getId(), oParams);
-
-		iResizeHandlerLeft = jQuery("#" + sResizeHandlerId).position().left;
-		equals(iResizeHandlerLeft, "0", "Resizer is at the initial position");
-
-		// other columns should still be resizable
-		oColumn = oTable.getColumns()[2];
-		$column = jQuery(oColumn.getDomRef());
-
-		oParams.clientX = Math.floor(oColumn.getDomRef().getBoundingClientRect().left + 10);
-		oParams.clientY = iResizeHandlerTop;
-		qutils.triggerEvent("mousemove", oColumn.getId(), oParams);
-		iResizeHandlerLeft = jQuery("#" + sResizeHandlerId).position().left;
-		equals(iResizeHandlerLeft, iContainerMargin + $column.position().left + $column.width() + Math.floor(jQuery("#" + sResizeHandlerId).width() / 2), "Resizer is at the correct position");
-	});
-
-	test("AutomaticColumnResize", function(){
-
-		expect(2);
-		var oColumn = oTable.getColumns()[1];
-		var resizer = oTable.getId() + '-rsz';
-		equals(oColumn.getWidth(), "100px", "check column width before resize");
-		equals(oColumn.getAutoResizable(), true, "check if column is indeed autoresizable at all");
-
-		var oParams = {};
-		oParams.clientX = Math.floor(oColumn.getDomRef().getBoundingClientRect().left + 10);
-		oParams.clientY = Math.floor(oColumn.getDomRef().getBoundingClientRect().top + 100);
-		qutils.triggerEvent("mousemove", oColumn.getId(), oParams);
-
-		qutils.triggerMouseEvent(resizer, "click");
-		qutils.triggerMouseEvent(resizer, "click");
-		/*var newSize = oTable._calculateAutomaticColumnWidth(1);
-		equals(oColumn.getWidth(), newSize + "px", "check column width after resize");*/
-	});
-
 	module("Column filtering", {
 		setup: function() {
 			createTable({
@@ -553,40 +493,6 @@
 
 		oTable.attachEventOnce("_rowsUpdated", fnTest);
 		document.getElementById("qunit-fixture").style.height = "800px";
-	});
-
-	module("VisibleRowcountMode Interactive", {
-		setup: function() {
-			createTable({
-				visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Interactive
-			});
-		},
-		teardown: function() {
-			destroyTable();
-		}
-	});
-
-	test("After initialization", function(){
-		var $table = oTable.$();
-		equals($table.find('.sapUiTableHeightResizer').length, 1, "The handle to resize the table is visible");
-	});
-
-	test("Resize", function(){
-		oTable._isTouchMode = function() {
-			return false;
-		};
-
-		equals(oTable.getVisibleRowCount(), 10, "Row count of 10");
-
-		var $table = oTable.$();
-		var oResizer = $table.find('.sapUiTableHeightResizer');
-		var oResizerOffset = oResizer.offset();
-
-		qutils.triggerMouseEvent(oResizer[0], "mousedown", 1, 1, oResizerOffset.left, oResizerOffset.top, 0 );
-		qutils.triggerMouseEvent(oResizer[0], "mousemove", 1, 1, oResizerOffset.left, oResizerOffset.top + 180, 0 );
-		qutils.triggerMouseEvent(oResizer[0], "mouseup", 1, 1, oResizerOffset.left, oResizerOffset.top + 180, 0 );
-
-		equals(oTable.getVisibleRowCount(), 16, "Row count of 16 expected. Has: " + oTable.getVisibleRowCount());
 	});
 
 	module("Fixed columns", {
@@ -823,75 +729,6 @@
 
 	});
 
-	module("Grouping", {
-		setup: function() {
-			createTable({
-				visibleRowCount: 5,
-				enableGrouping: true
-			})
-		},
-		teardown: destroyTable
-	});
-
-	test("InitialRowCount", 1, function() {
-		var oBinding = oTable.getBinding("rows");
-		equal(oBinding.getLength(), 200, "Row count is correct!");
-	});
-
-	test("Grouping using table API", 1, function() {
-		var oColumn = oTable.getColumns()[3],
-			oBinding;
-
-		oTable.setGroupBy(oColumn);
-		oBinding = oTable.getBinding("rows");
-		equal(oBinding.getLength(), 203, "Row count is correct!");
-	});
-
-	asyncTest("Grouping rendering", 10, function() {
-		var oColumn = oTable.getColumns()[3];
-
-		var fnHandlerProxy = function() {
-			oTable.attachEventOnce("_rowsUpdated", fnHandler);
-		};
-
-		var fnHandler = function() {
-			var $Table = oTable.$(),
-			$RowHeaders = $Table.find('.sapUiTableRowHdrScr div');
-
-			ok(jQuery($RowHeaders.get(0)).hasClass('sapUiTableGroupHeader'), 'Row header is marked as group header');
-			ok(!jQuery($RowHeaders.get(1)).hasClass('sapUiTableGroupHeader'), 'Row header is not marked as group header');
-			ok(!jQuery($RowHeaders.get(2)).hasClass('sapUiTableGroupHeader'), 'Row header is not marked as group header');
-			ok(!jQuery($RowHeaders.get(3)).hasClass('sapUiTableGroupHeader'), 'Row header is not marked as group header');
-			ok(!jQuery($RowHeaders.get(4)).hasClass('sapUiTableGroupHeader'), 'Row header is not marked as group header');
-			ok(!jQuery($RowHeaders.get(5)).hasClass('sapUiTableGroupHeader'), 'Row header is not marked as group header');
-			ok(!jQuery($RowHeaders.get(6)).hasClass('sapUiTableGroupHeader'), 'Row header is not marked as group header');
-			ok(!jQuery($RowHeaders.get(7)).hasClass('sapUiTableGroupHeader'), 'Row header is not marked as group header');
-			ok(!jQuery($RowHeaders.get(8)).hasClass('sapUiTableGroupHeader'), 'Row header is not marked as group header');
-			ok(!jQuery($RowHeaders.get(9)).hasClass('sapUiTableGroupHeader'), 'Row header is not marked as group header');
-			start();
-		}
-
-		oTable.attachEventOnce("_rowsUpdated", fnHandlerProxy);
-		oTable.setGroupBy(oColumn);
-	});
-
-	test("ExpandCollapseGroup", 3, function() {
-		oTable.setGroupBy(oTable.getColumns()[3].getId());
-		var oBinding = oTable.getBinding("rows");
-		oBinding.collapse(0);
-		equal(oBinding.getLength(), 193, "Row count is correct!");
-		ok(oBinding.isGroupHeader(0) && oBinding.isGroupHeader(1), "First and second line are group headers!");
-		oBinding.expand(0);
-		equal(oBinding.getLength(), 203, "Row count is correct!");
-	});
-
-	test("Reset grouping", 3, function() {
-		equal(oTable.getBinding("rows").getLength(), 200, "Row count is correct!");
-		oTable.setGroupBy(oTable.getColumns()[3]);
-		equal(oTable.getBinding("rows").getLength(), 203, "Row count is correct!");
-		oTable.setEnableGrouping(false);
-		equal(oTable.getBinding("rows").getLength(), 200, "Row count is correct!");
-	});
 
 	module("Multiple header rows", {
 		setup: function() {

@@ -225,6 +225,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 
 	};
 
+	YearPicker.prototype.onsapspace = function(oEvent) {
+		oEvent.preventDefault();
+	};
+
 	YearPicker.prototype.onsapselect = function(oEvent){
 
 		// focused item must be selected

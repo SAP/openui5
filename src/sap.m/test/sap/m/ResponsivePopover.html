@@ -133,6 +133,8 @@
 				}
 			});
 
+			var oInvisibleText = new sap.ui.core.InvisibleText({text: "I have a hidden label"});
+
 			var oResponsivePopover = new sap.m.ResponsivePopover({
 				placement: sap.m.PlacementType.Bottom,
 				title: "I'm Responsive now",
@@ -154,7 +156,8 @@
 				},
 				content: [
 					oList
-				]
+				],
+				ariaLabelledBy: oInvisibleText.getId()
 			});
 
 			//uncomment this line when padding is needed in the content area
@@ -326,7 +329,7 @@
 			var page = new sap.m.Page("page1", {
 				title:"Page 1",
 				content: [
-					oButton, oButton1, oButton2
+					oButton, oButton1, oButton2, oInvisibleText
 				]
 			});
 

@@ -12,16 +12,21 @@
 			var suite = new parent.jsUnitTestSuite();
 			var contextPath = "/" + window.location.pathname.split("/")[1];
 
-			function addTestPage(sUrl) {
-				suite.addTestPage(contextPath + sUrl + "?noglobals=true&sap-ui-animation=false");
+			function addTestPage(sUrl, bGlobals) {
+				suite.addTestPage(contextPath + sUrl + "?sap-ui-animation=false" + (bGlobals ? "" : "&noglobals=true"));
+			}
+
+			// Internet Explorer will fail arbitrarily if certain tests are run with noglobals=true 
+			function addGlobalTestPage(sUrl) {
+			  addTestPage(sUrl, true);
 			}
 
 			addTestPage("/test-resources/sap/ui/core/qunit/gherkin/DataTableUtils.qunit.html");
 			addTestPage("/test-resources/sap/ui/core/qunit/gherkin/GherkinTestGenerator.qunit.html");
 			addTestPage("/test-resources/sap/ui/core/qunit/gherkin/SimpleGherkinParser.qunit.html");
 			addTestPage("/test-resources/sap/ui/core/qunit/gherkin/StepDefinitions.qunit.html");
-			addTestPage("/test-resources/sap/ui/core/demokit/sample/gherkin/GherkinWithOPA5/GherkinTestRunner.html");
-			addTestPage("/test-resources/sap/ui/core/demokit/sample/gherkin/GherkinWithPageObjects/GherkinTestRunner.html");
+			addGlobalTestPage("/test-resources/sap/ui/core/demokit/sample/gherkin/GherkinWithOPA5/GherkinTestRunner.html");
+			addGlobalTestPage("/test-resources/sap/ui/core/demokit/sample/gherkin/GherkinWithPageObjects/GherkinTestRunner.html");
 			addTestPage("/test-resources/sap/ui/core/demokit/sample/gherkin/GherkinWithQUnit/GherkinTestRunner.html");
 
 			return suite;

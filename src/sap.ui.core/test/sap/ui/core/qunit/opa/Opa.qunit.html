@@ -5,31 +5,30 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>qUnit Page for sap.ui.test.Opa</title>
 
-<script src="../../../../../../resources/sap-ui-core.js">
+<script src="../../../../../../resources/sap-ui-core.js"
+		data-sap-ui-resourceroots='{
+			"unitTests" : "./"
+		}'>
 </script>
 
 
 <script>
-(function () {
-	"use strict";
-	jQuery.sap.require("sap.ui.qunit.qunit-css");
-	jQuery.sap.require("sap.ui.thirdparty.qunit");
-	jQuery.sap.require("sap.ui.qunit.qunit-junit");
-	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-	jQuery.sap.require("sap.ui.thirdparty.sinon");
-	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
-	sinon.config.useFakeTimers = true;
+jQuery.sap.require("sap.ui.qunit.qunit-css");
+jQuery.sap.require("sap.ui.thirdparty.qunit");
+jQuery.sap.require("sap.ui.qunit.qunit-junit");
+jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+jQuery.sap.require("sap.ui.thirdparty.sinon");
+jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+sinon.config.useFakeTimers = true;
+QUnit.config.autostart = false;
 
-	var oLogger;
-	var fnOriginalGetLogger = jQuery.sap.log.getLogger;
-	// intercept the logger created in the Opa closure (shared between all OPA's)
-	var fnGetLoggerStub = sinon.stub(jQuery.sap.log, "getLogger", function () {
-		oLogger = fnOriginalGetLogger.apply(this, arguments);
-		return oLogger;
-	});
-	jQuery.sap.require("sap.ui.test.Opa");
+sap.ui.require(["unitTests/utils/loggerInterceptor"], function (loggerInterceptor) {
+	"use strict";
+
+	// loadAndIntercept also loads the module.
+	// I cannot load it with the require above because i need to spy during the loading
+	var oLogger = loggerInterceptor.loadAndIntercept("sap.ui.test.Opa");
 	var Opa = sap.ui.test.Opa;
-	fnGetLoggerStub.restore();
 
 	var iInitialDelay = sap.ui.Device.browser.msie ? 50 : 0;
 
@@ -123,7 +122,7 @@
 		});
 
 		// Arrange
-		var	oSuccess_1_1 = this.spy(),
+		var oSuccess_1_1 = this.spy(),
 			oSuccess_1_2_1 = this.spy(),
 			fnSuccess_1_2 = function(){
 				return oOpa.waitFor({
@@ -183,14 +182,14 @@
 	test("Should modify the polling interval", function() {
 		// Arrange
 		var bFirstCheck = false,
-				bSecondCheck = false,
-				oFirstCheckSpy = this.spy(function () {
-					return bFirstCheck
-				}),
-				oSecondCheckSpy = this.spy(function () {
-					return bSecondCheck
-				}),
-				oDoneSpy = this.spy();
+			bSecondCheck = false,
+			oFirstCheckSpy = this.spy(function () {
+				return bFirstCheck
+			}),
+			oSecondCheckSpy = this.spy(function () {
+				return bSecondCheck
+			}),
+			oDoneSpy = this.spy();
 
 		// System under Test
 		var oOpa = new Opa();
@@ -241,7 +240,7 @@
 
 		var sError = "OpaError",
 			fnFaultyFunction = function() {
-					throw sError;
+				throw sError;
 			},
 			fnClockTick = function() {
 				this.clock.tick(100);
@@ -401,24 +400,6 @@
 		}.bind(this));
 	});
 
-	QUnit.test("Should stop the queue silently", function (assert) {
-		var oOpa = new Opa(),
-			fnDoneSpy = sinon.spy(),
-			fnFailSpy = sinon.spy();
-
-		oOpa.waitFor({
-			success: $.noop
-		});
-		var oPromise = oOpa.emptyQueue();
-		oPromise.done(fnDoneSpy);
-		oPromise.fail(fnFailSpy);
-		Opa.stopQueue(false);
-
-		sinon.assert.notCalled(this.fnErrorLogStub);
-		sinon.assert.notCalled(fnFailSpy);
-		sinon.assert.calledOnce(fnDoneSpy);
-	});
-
 	module("Timeouts", {
 		setup : function () {
 			sinon.config.useFakeTimers = false;
@@ -431,10 +412,10 @@
 	asyncTest("Should time out if check is returning false", function() {
 		// Arrange
 		var oErrorSpy = sinon.spy(),
-				oWaitForDoneSpy = sinon.spy(),
-				oSuccessSpy = sinon.spy(),
-				oDoneSpy = sinon.spy(),
-				fnLogErrorSpy = sinon.spy(oLogger, "error");
+			oWaitForDoneSpy = sinon.spy(),
+			oSuccessSpy = sinon.spy(),
+			oDoneSpy = sinon.spy(),
+			fnLogErrorSpy = sinon.spy(oLogger, "error");
 
 		// System under Test
 		var oOpa = new Opa();
@@ -594,9 +575,9 @@
 						+ "'[object Object]' was passed")
 				, "threw the error");
 	});
-})();
 
-
+	QUnit.start();
+});
 </script>
 </head>
 <body>

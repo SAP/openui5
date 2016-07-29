@@ -903,7 +903,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 		if (!this._aElements) {
 			this._aElements = this.getAggregation("content", []);
 		}
-		return this._aElements;
+		return this._aElements.slice();
 
 	};
 

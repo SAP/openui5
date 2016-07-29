@@ -10,11 +10,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 	/**
 	 * Adapter for TreeBindings to add the ListBinding functionality and use the
 	 * tree structure in list based controls.
+	 * Only usable with the sap.ui.table.TreeTable control.
+	 * The functions defined here are only available when you are using a TreeTable and an ODataModel.
 	 *
 	 * @alias sap.ui.model.odata.ODataTreeBindingAdapter
 	 * @function
 	 * @experimental This module is only for experimental and internal use!
-	 * @protected
+	 * @public
 	 */
 	var ODataTreeBindingAdapter = function() {
 
@@ -65,6 +67,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 	/**
 	 * Returns true or false, depending on the child count of the given node.
 	 * @override
+	 * @private
 	 */
 	ODataTreeBindingAdapter.prototype.nodeHasChildren = function(oNode) {
 		jQuery.sap.assert(oNode, "ODataTreeBindingAdapter.nodeHasChildren: No node given!");
@@ -84,6 +87,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 	 * Calculates a group id for the given node.
 	 * The actual group ID differs between hierarchy-annotations and navigation properties
 	 * @override
+	 * @private
 	 */
 	ODataTreeBindingAdapter.prototype._calculateGroupID = function (oNode) {
 
@@ -122,6 +126,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		return sGroupID;
 	};
 
+	/**
+	 * Resets all fields, which are used by the TreeBindingAdapter.
+	 * @private
+	 */
 	ODataTreeBindingAdapter.prototype.resetData = function(oContext, mParameters) {
 		var vReturn = ODataTreeBinding.prototype.resetData.call(this, oContext, mParameters);
 
