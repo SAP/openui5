@@ -324,28 +324,6 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 					this._iLastHoveredColumnIndex = iLastHoveredColumn;
 				}
 			}.bind(oTable));
-		},
-
-		/*
-		 * Initialize the event listener auto resize on double click.
-		 *
-		 * TBD: Can the dblclick event be used instead here?
-		 */
-		initAutoResizeOnDoubleClick : function(oTable) {
-			oTable.$("rsz").on(!Device.support.touch ? "click" : "touchend", function(oEvent){ // Event needs to be touchend due to timing issues on the iPad
-				oEvent.preventDefault();
-				oEvent.stopPropagation();
-				oTable._clicksRegistered = oTable._clicksRegistered + 1;
-				if (oTable._clicksRegistered < 2) {
-					oTable._mTimeouts.singleClickTimer = jQuery.sap.delayedCall(oTable._doubleclickDelay, oTable, function(){
-						oTable._clicksRegistered = 0;
-					});
-				} else {
-					jQuery.sap.clearDelayedCall(oTable._mTimeouts.singleClickTimer);
-					oTable._clicksRegistered = 0;
-					ColumnResizeHelper.doAutoResizeColumn(oTable, oTable._iLastHoveredColumnIndex);
-				}
-			});
 		}
 
 	};
@@ -469,6 +447,53 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 					ColumnResizeHelper.initColumnResizing(this, oEvent);
 				}
 			}
+		},
+
+		onmouseup : function(oEvent) {
+			// clean up the timer
+			jQuery.sap.clearDelayedCall(this._mTimeouts.delayedActionTimer);
+		},
+
+		ondblclick : function(oEvent) {
+			if (Device.system.desktop && oEvent.target === this.getDomRef("rsz")) {
+				oEvent.preventDefault();
+				ColumnResizeHelper.doAutoResizeColumn(this, this._iLastHoveredColumnIndex);
+			}
+		},
+
+		onclick : function(oEvent) {
+			// clean up the timer
+			jQuery.sap.clearDelayedCall(this._mTimeouts.delayedActionTimer);
+
+			if (oEvent.isMarked()) {
+				// the event was already handled by some other handler, do nothing.
+				return;
+			}
+
+			var $Target = jQuery(oEvent.target);
+
+			if ($Target.hasClass("sapUiAnalyticalTableSum")) {
+				// Analytical Table: Sum Row cannot be selected
+				oEvent.preventDefault();
+				return;
+			} else if ($Target.hasClass("sapUiTableGroupMenuButton")) {
+				// Analytical Table: Mobile Group Menu Button in Grouping rows
+				this._onContextMenu(oEvent);
+				oEvent.preventDefault();
+				return;
+			} else if ($Target.hasClass("sapUiTableGroupIcon") || $Target.hasClass("sapUiTableTreeIcon")) {
+				// Grouping Row: Toggle grouping
+				if (TableUtils.toggleGroupHeader(this, oEvent.target)) {
+					return;
+				}
+			}
+
+			// forward the event
+			if (!this._findAndfireCellEvent(this.fireCellClick, oEvent)) {
+				this._onSelect(oEvent);
+			} else {
+				oEvent.preventDefault();
+			}
 		}
 
 	};
@@ -501,8 +526,6 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 
 			oTable._iLastHoveredColumnIndex = 0;
 			oTable._bIsColumnResizerMoving = false;
-			oTable._doubleclickDelay = 300;
-			oTable._clicksRegistered = 0;
 
 			return "PointerExtension";
 		},
@@ -540,7 +563,6 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 			var oTable = this.getTable();
 			if (oTable) {
 				ColumnResizeHelper.initColumnTracking(oTable);
-				ColumnResizeHelper.initAutoResizeOnDoubleClick(oTable);
 			}
 		},
 
@@ -551,7 +573,6 @@ sap.ui.define(['jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/
 		cleanupColumnResizeEvents : function() {
 			var oTable = this.getTable();
 			if (oTable) {
-				oTable.$("rsz").unbind();
 				oTable.$().find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed, .sapUiTableColHdrScr, .sapUiTableColHdrFixed").unbind();
 			}
 		}
