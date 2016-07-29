@@ -482,6 +482,28 @@
 			}
 		});
 	});
+	
+	asyncTest("test JSONModel loadData: multiple requests with merge: 1. request slow: 1 throws exception",function(){
+		var testModel = new sap.ui.model.json.JSONModel();
+		var loadCount = 0;
+		testModel.loadData("/fake");
+		testModel.loadData("/fake/testdata4.json");
+		testModel.attachRequestCompleted(function(oInfo) {
+			loadCount++;
+			if (loadCount == 1) {
+				ok(oInfo.getParameter("success") == false, "request fails");
+				throw 'fake';
+			} else {
+				// resume normal testing
+				ok(oInfo.getParameter("url") == "/fake/testdata4.json", "second request");
+				equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
+				equal(testModel.getProperty("/bar"), "ABCDEFGHIJ");
+				equal(testModel.getProperty("/baz")[1], 97);
+				equal(testModel.getProperty("/merged"), true);
+				start();
+			}
+		});
+	});
 
 	asyncTest("test JSONModel loadData constructor",function(){
 		var testModel = new sap.ui.model.json.JSONModel("testdata.json");
