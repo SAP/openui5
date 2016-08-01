@@ -503,7 +503,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger'
 			 *  c. the pattern of its nested route. When this occurs, the 'nestedRoute' parameter is set with the instance of nested route.
 			 * </pre>
 			 *
-			 * Please refer to {@link sap.ui.core.routing.Router#routePatternMatched} for getting notified only when a route's own pattern is matched with the URL hash not its sub-routes.
+			 * Please refer to event {@link sap.ui.core.routing.Router#event:routePatternMatched|routePatternMatched} for getting notified only when a route's own pattern is matched with the URL hash not its sub-routes.
 			 *
 			 * @name sap.ui.core.routing.Router#routeMatched
 			 * @event
