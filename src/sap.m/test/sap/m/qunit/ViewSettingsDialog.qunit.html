@@ -1848,7 +1848,8 @@
 
 		test("Reset group items selection on cancel", function () {
 			var delay = 1000,
-				done = assert.async();
+				done = assert.async(),
+				oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 			var aGroupItems = [
 				new sap.m.ViewSettingsItem({
@@ -1870,18 +1871,24 @@
 			this.oVSD.open();
 			sap.ui.getCore().applyChanges();
 
-			strictEqual(sap.ui.getCore().byId(this.oVSD.getSelectedGroupItem()).getText(), "None", "Should have None button selected");
+			strictEqual(sap.ui.getCore().byId(this.oVSD.getSelectedGroupItem()).getText(),
+					oResourceBundle.getText("VIEWSETTINGS_NONE_ITEM"),
+					"Should have None button selected");
 
 			this.oVSD.setSelectedGroupItem(aGroupItems[0]);
 			sap.ui.getCore().applyChanges();
-			notStrictEqual(sap.ui.getCore().byId(this.oVSD.getSelectedGroupItem()).getText(), "None", "Should have changed the selection");
+			notStrictEqual(sap.ui.getCore().byId(this.oVSD.getSelectedGroupItem()).getText(),
+					oResourceBundle.getText("VIEWSETTINGS_NONE_ITEM"),
+					"Should have changed the selection");
 
 			this.oVSD._dialog.getEndButton().firePress();
 			sap.ui.getCore().applyChanges();
 
 			setTimeout(function () {
 				this.oVSD.open();
-				strictEqual(sap.ui.getCore().byId(this.oVSD.getSelectedGroupItem()).getText(), "None", "Previous selection should have been reset");
+				strictEqual(sap.ui.getCore().byId(this.oVSD.getSelectedGroupItem()).getText(),
+					oResourceBundle.getText("VIEWSETTINGS_NONE_ITEM"),
+					"Previous selection should have been reset");
 				done();
 			}.bind(this), delay);
 		});
@@ -2101,7 +2108,7 @@
 
 			this.oVSD.open();
 
-			this.oVSD._getPage2().getCustomHeader().getContentMiddle()
+			this.oVSD._getPage2().getCustomHeader().getContentMiddle();
 
 			jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
 			this.oVSD._switchToPage(3, this.oVSD.getFilterItems()[0]);
@@ -2127,7 +2134,9 @@
 					strictEqual(oItem.getTitle(), 'item B', 'Correct item is being asserted.');
 					strictEqual(jQuery("#"+sSecondItemId).length, 1, 'Second item is rendered after model property change.');
 
-					strictEqual(this.oVSD._getPage2().getCustomHeader().getContentMiddle()[0].getText(), "Filter By: Filter text B", 'Title correctly changed in the header.');
+					strictEqual(this.oVSD._getPage2().getCustomHeader().getContentMiddle()[0].getText(),
+							sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("VIEWSETTINGS_TITLE_FILTERBY") + " Filter text B",
+							'Title correctly changed in the header.');
 
 					oSecondData[0].myItems.push({
 						myKey: 'test1',
