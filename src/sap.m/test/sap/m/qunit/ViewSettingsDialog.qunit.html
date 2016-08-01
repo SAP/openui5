@@ -1219,6 +1219,49 @@
 
 		});
 
+		test("setSelectedFilterKeys with duplicate keys but different parents", function() {
+			var aSelectedItems;
+
+			//arrange
+
+			// the vsd instance already has a filter sub-item
+			// with key 'name1' with parent with key 'myNameFilter'
+			// this sub-item's key is the same 'name1'
+			this.oVSD.addFilterItem(new sap.m.ViewSettingsFilterItem({
+				key: "mySecondNameFilter",
+				text: "Name 2",
+				items: [
+					new sap.m.ViewSettingsItem({
+						key: "name1",
+						text: "Headphone 2"
+					})
+				]
+			}));
+
+			//act
+			this.oVSD.setSelectedFilterCompoundKeys({
+				"myNameFilter": {
+					"name1": true,
+					"name2": true
+				},
+				"mySecondNameFilter": {
+					"name1": true
+				}
+			});
+
+			aSelectedItems = this.oVSD.getSelectedFilterItems();
+
+			//assert
+			equals(Object.getOwnPropertyNames(this.oVSD.getSelectedFilterCompoundKeys()).length, 2, "right number of selected keys");
+			equals(Object.getOwnPropertyNames(this.oVSD.getSelectedFilterCompoundKeys()["myNameFilter"]).length, 2, "right number of selected keys");
+			equals(aSelectedItems[0].getKey(), "name1");
+			equals(aSelectedItems[0].getParent().getKey(), "myNameFilter");
+			equals(aSelectedItems[1].getKey(), "name2");
+			equals(aSelectedItems[1].getParent().getKey(), "myNameFilter");
+			equals(aSelectedItems[2].getKey(), "name1");
+			equals(aSelectedItems[2].getParent().getKey(), "mySecondNameFilter");
+		});
+
 		test("Select and deselect a filter detail item works correctly", function  (assert) {
 			var done = assert.async(),
 				that = this;
