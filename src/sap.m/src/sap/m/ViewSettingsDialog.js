@@ -46,7 +46,15 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 			/**
 			 * Determines whether the group order is descending or ascending (default).
 			 */
-			groupDescending : {type : "boolean", group : "Behavior", defaultValue : false}
+			groupDescending : {type : "boolean", group : "Behavior", defaultValue : false},
+
+			/**
+			 * Provides a string filter operator which is used when the user searches items in filter details page.
+			 * Possible operators are: <code>Contains</code>, <code>StartsWith</code>, <code>Equals</code>.
+			 * This property will be ignored if a custom callback is provided through <code>setFilterSearchCallback</code> method.
+			 * @since 1.42
+			 */
+			filterSearchOperator: {type: "sap.m.StringFilterOperator", group: "Behaviour", defaultValue: sap.m.StringFilterOperator.StartsWith }
 		},
 		aggregations : {
 
@@ -214,6 +222,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 		this._groupContent                  = null;
 		this._filterContent                 = null;
 		this._sCustomTabsButtonsIdPrefix    = null;
+		this._fnFilterSearchCallback        = null;
 
 		// sap.ui.core.Popup removes its content on close()/destroy() automatically from the static UIArea,
 		// but only if it added it there itself. As we did that, we have to remove it also on our own
@@ -324,6 +333,9 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 		if (this._filterDetailList) {
 			this._filterDetailList.destroy();
 			this._filterDetailList = null;
+		}
+		if (this._oStringFilter) {
+			this._oStringFilter = null;
 		}
 	};
 
@@ -2076,6 +2088,18 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 		return this.removeAllAggregation('filterItems');
 	};
 
+	/**
+	 * Sets a callback that will check the ViewSettingsItem's text against the search query.
+	 * If a callback is set, <code>filterSearchOperator</code> property will be ignored, as it serves the same purpose.
+	 * @param {function} fnTest A function that accepts two parameters fnTest({string} query, {string} value) and returns boolean if the value satisfies the query.
+	 * @returns {sap.m.ViewSettingsDialog} this instance for chaining
+	 * @public
+	 * @since 1.42
+	 */
+	ViewSettingsDialog.prototype.setFilterSearchCallback = function(fnTest) {
+		this._fnFilterSearchCallback = fnTest;
+		return this;
+	};
 
 	/**
 	 * Switches to a dialog page (0 = sort, 1 = group, 2 = filter, 3 = subfilter and custom pages).
@@ -2296,12 +2320,12 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 		var that = this,
 			oFilterSearchField = new SearchField({
 				liveChange: function(oEvent) {
-					var sQuery = oEvent.getParameter('newValue').toLowerCase();
+					var sQuery = oEvent.getParameter('newValue'),
+						fnStringFilter = that._getStringFilter();
 
-					//update the list items visibility
-					oFilterDetailList.getItems().forEach(function(oItem) {
-						var bStartsWithQuery = oItem.getTitle().toLowerCase().indexOf(sQuery) === 0;
-						oItem.setVisible(bStartsWithQuery);
+					oFilterDetailList.getItems().forEach(function (oItem) {
+						var bTitleSatisfiesTheQuery = fnStringFilter(sQuery, oItem.getTitle());
+						oItem.setVisible(bTitleSatisfiesTheQuery);
 					});
 
 					//update Select All checkbox
@@ -2310,6 +2334,23 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 			});
 
 		return oFilterSearchField;
+	};
+
+	/**
+	 * Gets the function that will filter the ViewSettingsItem's text based on the search query.
+	 * @returns {Function} A string filter function
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._getStringFilter = function() {
+		if (this._fnFilterSearchCallback) {
+			return this._fnFilterSearchCallback;
+		}
+
+		if (!this._oStringFilter || this._oStringFilter.sOperator !== this.getFilterSearchOperator()) {
+			this._oStringFilter = new StringFilter(this.getFilterSearchOperator());
+		}
+
+		return this._oStringFilter.filter.bind(this._oStringFilter);
 	};
 
 	/**
@@ -2790,6 +2831,66 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 		return this;
 	};
 
+	/**
+	 * String filter helper class.
+ 	 * @param {string} sOperator sap.m.StringFilterOperator value. Default is sap.m.StringFilterOperator.StartsWith.
+	 * @constructor
+	 * @private
+	 */
+	var StringFilter = function(sOperator) {
+		this.sOperator = sOperator || sap.m.StringFilterOperator.StartsWith;
+
+		switch (this.sOperator) {
+			case sap.m.StringFilterOperator.Equals:
+				this.fnOperator = fnEquals;
+				break;
+			case sap.m.StringFilterOperator.Contains:
+				this.fnOperator = fnContains;
+				break;
+			case sap.m.StringFilterOperator.StartsWith:
+				this.fnOperator = fnStartsWith;
+				break;
+			default:
+				//warning when operator has been given but it doesn't match a value from sap.m.StringFilterOperator enum
+				jQuery.sap.log.warning("Unknown string compare operator. Use values from sap.m.StringFilterOperator. Default operator should be used.");
+				this.fnOperator = fnContains;
+				break;
+		}
+	};
+
+	/**
+	 * Tests if a string satisfies the query string.
+	 * @param {string} sQuery
+	 * @param {string} sValue
+	 * @returns {boolean} true if the string satisfies the query string
+	 * @private
+	 */
+	StringFilter.prototype.filter = function (sQuery, sValue) {
+		if (!sQuery) {
+			return true;
+		}
+
+		if (!sValue) {
+			return false;
+		}
+
+		sValue = sValue.toLowerCase();
+		sQuery = sQuery.toLowerCase();
+
+		return this.fnOperator(sQuery, sValue);
+	};
+
+	function fnEquals(sQuery, sValue) {
+		return sValue === sQuery;
+	}
+
+	function fnContains(sQuery, sValue) {
+		return sValue.indexOf(sQuery) > -1;
+	}
+
+	function fnStartsWith(sQuery, sValue) {
+		return sValue.indexOf(sQuery) === 0;
+	}
 
 	return ViewSettingsDialog;
 

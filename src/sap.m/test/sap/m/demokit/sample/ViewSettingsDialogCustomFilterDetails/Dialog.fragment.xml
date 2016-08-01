@@ -1,0 +1,17 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core">
+	<ViewSettingsDialog
+			confirm="handleConfirm">
+		<filterItems>
+			<ViewSettingsFilterItem text="Contacts" key="1">
+				<items>
+					<ViewSettingsItem text="john.dow@anonymous.com" key="1a" />
+					<ViewSettingsItem text="John Dow" key="1b" />
+					<ViewSettingsItem text="alison.scott@anonymous.com" key="1c" />
+					<ViewSettingsItem text="Alison Scott" key="1d" />
+				</items>
+			</ViewSettingsFilterItem>
+		</filterItems>
+	</ViewSettingsDialog>
+</core:FragmentDefinition>

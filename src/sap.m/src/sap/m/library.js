@@ -75,6 +75,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.SelectType",
 			"sap.m.SplitAppMode",
 			"sap.m.StandardTileType",
+			"sap.m.StringFilterOperator",
 			"sap.m.SwipeDirection",
 			"sap.m.SwitchType",
 			"sap.m.ToolbarDesign",
@@ -1104,7 +1105,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-
 
 	/**
 	 *
@@ -2452,6 +2452,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		Solid : "Solid"
 
 	};
+
+	/**
+	 * Types of string filter operators.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.42
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.StringFilterOperator = {
+
+		/**
+		 * Checks if the text is equal with the search string.
+		 * @public
+		 */
+		Equals : "Equals",
+
+		/**
+		 * Checks if the text contains the search string.
+		 * @public
+		 */
+		Contains : "Contains",
+
+		/**
+		 * Checks if the text starts with the search string.
+		 * @public
+		 */
+		StartsWith : "StartsWith"
+	};
+
 	/*global Element: true */
 
 
