@@ -140,7 +140,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
         //================================================================================
 
         NotificationListBase.prototype.setTitle = function (title) {
-            var result = this.setProperty('title', title, true);
+            var result = this.setProperty('title', title);
 
             this._getHeaderTitle().setText(title);
 
@@ -148,7 +148,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
         };
 
         NotificationListBase.prototype.setDatetime = function (dateTime) {
-            var result = this.setProperty('datetime', dateTime, true);
+            var result = this.setProperty('datetime', dateTime);
 
             this._getDateTimeText().setText(dateTime);
 
@@ -156,7 +156,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
         };
 
         NotificationListBase.prototype.setAuthorName = function(authorName) {
-            var result = this.setProperty('authorName', authorName, true);
+            var result = this.setProperty('authorName', authorName);
 
             this._getAuthorName().setText(authorName);
 
