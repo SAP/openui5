@@ -96,31 +96,57 @@
 				"touchend",
 				"click"
 			];
+			
+			var sListenerCalled = 'not called';
+			function fnEventListener(oEvent) {
+				sListenerCalled = 'called';
+			}
+
+			// register listener for all prevented events
+			// Note: the issues described in BCP 1680184582 only occurs when the prevent-listener of the LocalBusyIndicator 
+			// is executed __BEFORE__ this listener here. As jQuery uses a while(--i) loop, this means we have to register 
+			// our listener before the LBI registers its own listener.
+			// TODO consider using a capturing phase listener in LBI to make this more robust.
+			for (var i = 0; i < aPreventedEvents.length; i++) {
+				$LB.bind(aPreventedEvents[i], fnEventListener);
+			}
 
 			setTimeout(function() {
-				var bNotHandled = true;
-				var fnEventistener = function(oEvent) {
-					bNotHandled = false;
-				};
 
 				for (var i = 0; i < aPreventedEvents.length; i++) {
-					$LB.bind(aPreventedEvents[i], fnEventistener);
 
 					try {
+						sListenerCalled = 'not called';
 						sap.ui.test.qunit.triggerEvent(aPreventedEvents[i], $LB);
-
-						assert.ok(bNotHandled, "Event '" + aPreventedEvents[i] + "' suppressed");
+						assert.equal(sListenerCalled, 'not called', "Event '" + aPreventedEvents[i] + "' should be suppressed");
 					} catch (ex) {
 						assert.ok(false, "Event '" + aPreventedEvents[i] + "' NOT suppressed");
 					}
 
-					$LB.unbind(aPreventedEvents[i], fnEventistener);
-					bNotHandled = true;
-
-					if ((i + 1) === aPreventedEvents.length) {
-						done();
-					}
 				}
+				
+				// hide busy indicator and test that events are no longer prevented
+				this.oListBox.setBusy(false);
+				$LB = this.oListBox.$();
+
+				setTimeout(function() {
+					
+					for (var i = 0; i < aPreventedEvents.length; i++) {
+
+						try {
+							sListenerCalled = 'not called';
+							sap.ui.test.qunit.triggerEvent(aPreventedEvents[i], $LB);
+							assert.equal(sListenerCalled, 'called', "Event '" + aPreventedEvents[i] + "' should no longer be suppressed");
+						} catch (ex) {
+							// assert.ok(false, "Event '" + aPreventedEvents[i] + "' NOT suppressed");
+						}
+
+					}
+					
+					done();
+
+				}.bind(this), 250);
+				
 			}.bind(this), 250);
 		});
 
