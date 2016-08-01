@@ -138,6 +138,27 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 			}
 		}
 
+		function fnSelectedItemOnViewPort(bIsListHidden) {
+			var oItem = this.getSelectedItem(),
+				oItemDomRef = oItem && oItem.getDomRef(),
+				oPicker = this.getPicker(),
+				oPickerDomRef = oPicker.getDomRef("cont");
+
+			//check if the selected item is on the viewport
+			if (oItem && ((oItemDomRef.offsetTop + oItemDomRef.offsetHeight) > (oPickerDomRef.clientHeight))) {
+
+				// hide the list to scroll to the selected item
+				if (!bIsListHidden) {
+					this.getList().$().css("visibility", "hidden");
+				} else {
+
+					// scroll to the selected item and show the list
+					oPickerDomRef.scrollTop = oItemDomRef.offsetTop;
+					this.getList().$().css("visibility", "visible");
+				}
+			}
+		}
+
 		/**
 		 * Handles the virtual focus of items.
 		 *
@@ -379,7 +400,11 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 
 		ComboBox.prototype.onAfterRenderingPicker = function() {
 			var fnOnAfterRenderingPickerType = this["onAfterRendering" + this.getPickerType()];
+
 			fnOnAfterRenderingPickerType && fnOnAfterRenderingPickerType.call(this);
+
+			//hide the list while scrolling to selected item, if neccessary
+			fnSelectedItemOnViewPort.call(this, false);
 		};
 
 		ComboBox.prototype.onAfterRenderingList = function() {
@@ -1076,6 +1101,9 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 				// visible and in view
 				oItem && oDomRef.setAttribute("aria-activedescendant", oItem.getId());
 			}
+
+			// if there is a selected item, scroll and show the list
+			fnSelectedItemOnViewPort.call(this, true);
 		};
 
 		/**
