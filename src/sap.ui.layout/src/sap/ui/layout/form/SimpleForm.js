@@ -1469,6 +1469,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 			var oTitle = oFormContainer.getTitle();
 			if (oTitle) {
 				aElements.push(oTitle);
+			} else {
+				var oToolbar = oFormContainer.getToolbar();
+				if (oToolbar) {
+					aElements.push(oToolbar);
+				}
 			}
 
 			var aFormElements = oFormContainer.getFormElements();
