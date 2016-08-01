@@ -8,7 +8,8 @@
 			id="PC1"
 			startDate="{path: '/startDate'}"
 			rows="{path: '/people'}"
-			appointmentSelect="handleAppointmentSelect">
+			appointmentSelect="handleAppointmentSelect"
+			showEmptyIntervalHeaders="false">
 			<toolbarContent>
 				<Title text="Title" titleStyle="H4"/>
 			</toolbarContent>
