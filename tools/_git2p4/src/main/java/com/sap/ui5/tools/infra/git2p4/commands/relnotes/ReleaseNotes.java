@@ -7,6 +7,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,7 +57,14 @@ public class ReleaseNotes {
   private List<String> relNotes;
   private Mapping currentRepository;
   private boolean isNewNote;
+  private ProcessCommand processCommand = null;
+  private File previousChanges;
   
+  public interface ProcessCommand 
+  {
+    public void execute(File file, String lib) throws IOException;
+  }
+
   public void execute(Context context) throws IOException { 
     
     this.context = context;
@@ -119,13 +128,35 @@ public class ReleaseNotes {
     }
   }
   
+  private void gatherFromPreviousCodelines(File repoFile) throws IOException {
+    previousChanges = new File (context.git.getRepository().getParentFile(), "PreviousChanges");
+    if (previousChanges.exists()) {
+      deleteFolder(previousChanges);
+    }
+    int currentMinor = Integer.parseInt(context.branch.substring(6));
+    for (int i = context.lowestMinor; i < currentMinor; i += 2) {
+      checkoutRel(i);
+      scan(repoFile);
+    }
+    checkoutRel(currentMinor);
+  }
+
+  private void checkoutRel(int minor) throws IOException {
+    version = new Version(version.major,  minor, version.patch, null);
+    context.branch = "rel-1." + minor;
+    context.git.checkout("origin/" + context.branch);
+  }
+  
   private void relNotesPerLibrary() throws IOException {
     for (Mapping repo : context.mappings) {
       currentRepository = repo;
       context.git.setRepository(repo.getRepository());
       isNewNote = false;
+      processCommand = new GatherPreviousNotesCommand();
+      gatherFromPreviousCodelines(repo.getRepository());
+      processCommand = new GatherNotesCommand();
       scan(repo.getRepository());
-      if (isNewNote) {
+      if (haveNewNotes()) {
         context.git.addAll();
         context.git.commit("[INTERNAL] Release notes for version " + version);
         if (!context.preview) {
@@ -133,7 +164,24 @@ public class ReleaseNotes {
         }
       }
     }
+  }
+  
+  private boolean haveNewNotes() throws IOException {
+    List<String> status = context.git.status();
+    return status.size() > 1 || (status.size() == 1 && !status.get(0).equals(".version-tool.xml"));
+  }
 
+  private void deleteFolder(File folder) {
+    File list[] = folder.listFiles();
+    for (File file: list) {
+      if (file.isDirectory()){
+        deleteFolder(file);
+      }
+      else {
+        file.delete();
+      }
+    }
+    folder.delete();
   }
 
   private void scan(File file) throws IOException {
@@ -160,38 +208,81 @@ public class ReleaseNotes {
     Matcher m = LIBSRC.matcher(file.getCanonicalPath());
     if (m.find()){
       String lib = m.group();
-      if(!lib.contains("archetypes")){
+      if(filterLibraryFiles(lib)){
         Log.println("Processing library file: '" + file + "' with sources: " + lib);
-        UILibNotes uiLibraryNotes = getUILibPatchesNotes(file);
-        if (uiLibraryNotes == null){
-          Log.println("Skipping library file: '" + file);
-          return;
-        }
-        LibVersion uiLibVersion = uiLibraryNotes.getLibVersion(version);
-        int notesSizeBefore = uiLibVersion.notes.size();
-        Set<String> filter; 
-        //Special case for platform library sources
-        if (lib.endsWith("_resource")){
-          filter = getFilterIds("src/framework/_resource", "src/framework/_shared_utils", "src/framework/_utils", "src/framework/_core" );
-        }
-        else {
-          filter = getFilterIds(lib);
-        }
-        Log.println(filter);
-        if (filter.size() > 0){
-          for (GitClient.Commit commit: fixes){
-            if (filter.contains(commit.getId()) || filter.contains(commit.getOriginalCommit().getId())){
-              processCommit(uiLibVersion, commit);
-            }
-          }
-        }
-        if (uiLibVersion.notes.size() > notesSizeBefore){
-          saveToFile(uiLibraryNotes);
-        } else {
-          Log.println("No new notes found for '" + file + "' library");
-        }
+        processCommand.execute(getNotesFile(file), lib);
       }
     }
+  }
+
+  private boolean filterLibraryFiles(String lib) {
+    return !lib.contains("archetypes") && !lib.contains("_build_helper_plugin");
+  }
+
+  public class GatherPreviousNotesCommand implements ProcessCommand 
+  {
+    public void execute(File file, String lib) throws IOException 
+    {
+      String libName = getLibName(lib);
+      Log.println("Processing change log file: " + file + ",lib " + libName);
+      if (file == null){
+        Log.println("no change log defined for library " + libName);
+      }
+      else if (file.exists()){
+        File dest = new File(previousChanges, libName);
+        if (!dest.exists()) {
+          dest.mkdirs();
+        }
+        Files.copy(file.toPath(), (new File(dest,file.getName())).toPath(),  StandardCopyOption.REPLACE_EXISTING);
+      }
+      else {
+        Log.println("WARNING: Change log file: " + file + " doesn't exist!");
+      }
+    }
+  }
+  
+  private String getLibName(String lib) {
+    return lib.substring(lib.lastIndexOf("\\") + 1);
+  }
+  
+  public class GatherNotesCommand implements ProcessCommand 
+  {
+    public void execute(File file, String lib) throws IOException 
+    {
+      if (file == null){
+        Log.println("No change log defined for library " + lib);
+        return;
+      }
+      UILibNotes uiLibraryNotes = file.exists() ? readUILibNotes(file) : createNewUILibNotes();
+      if (uiLibraryNotes == null){
+        Log.println("Skipping library: '" + lib);
+        return;
+      }
+      LibVersion uiLibVersion = uiLibraryNotes.getLibVersion(version);
+      int notesSizeBefore = uiLibVersion.notes.size();
+      Set<String> filter; 
+      //Special case for platform library sources
+      if (lib.endsWith("_resource")){
+        filter = getFilterIds("src/framework/_resource", "src/framework/_shared_utils", "src/framework/_utils", "src/framework/_core" );
+      }
+      else {
+        filter = getFilterIds(lib);
+      }
+      Log.println(filter);
+      if (filter.size() > 0){
+        for (GitClient.Commit commit: fixes){
+          if (filter.contains(commit.getId()) || filter.contains(commit.getOriginalCommit().getId())){
+            processCommit(uiLibVersion, commit);
+          }
+        }
+      }
+      if (uiLibVersion.notes.size() > notesSizeBefore){
+        saveToFile(uiLibraryNotes, file);
+      } else {
+        Log.println("No new notes found for '" + lib + "' library");
+      }
+      copyPrevNotes(file.getParentFile(), lib);
+    }    
   }
 
   private void processCommit(LibVersion uiLibVersion, GitClient.Commit commit) {
@@ -206,7 +297,19 @@ public class ReleaseNotes {
     uiLibVersion.notes.add(releaseNote);
   }
 
-  private void saveToFile(UILibNotes uiLibraryNotes) throws IOException {
+  public void copyPrevNotes(File dest, String lib) throws IOException {
+    String libName = getLibName(lib);
+    File prevNotes = new File(previousChanges, libName);
+    if (prevNotes.exists()) {
+      File files[] = prevNotes.listFiles();
+      for (File file : files)
+      {
+        Files.copy(file.toPath(), (new File(dest, file.getName())).toPath(), StandardCopyOption.REPLACE_EXISTING);
+      }
+    }
+  }
+
+  private void saveToFile(UILibNotes uiLibraryNotes, File notesFile) throws IOException {
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
     String json = gson.toJson(uiLibraryNotes.versions);
     notesFile.getParentFile().mkdirs();
@@ -217,7 +320,7 @@ public class ReleaseNotes {
     isNewNote = true;
   }
 
-  private UILibNotes getUILibPatchesNotes(File file) throws IOException {
+  private File getNotesFile(File file) throws IOException {
     XPath xpath = XPathFactory.newInstance().newXPath();
     try {
       Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new FileInputStream(file));
@@ -242,14 +345,13 @@ public class ReleaseNotes {
         }
         relNotesFile = addToRelNotesPath + relNotesFile;
       }
-      notesFile = new File(file.getParentFile(), relNotesFile.replace("{major}", version.major+"").replace("{minor}", version.minor+"").replace("{patch}", version.patch+""));
-      return notesFile.exists() ? readUILibNotes() : createNewUILibNotes();
+      return new File(file.getParentFile(), relNotesFile.replace("{major}", version.major+"").replace("{minor}", version.minor+"").replace("{patch}", version.patch+""));
     } catch (Exception e) {
       throw new IOException(e);
     }
   }
 
-  private UILibNotes readUILibNotes() throws IOException {
+  private UILibNotes readUILibNotes(File notesFile) throws IOException {
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
     String json = "{ versions: " + readFile(notesFile.getAbsolutePath()) + "}";
     UILibNotes uiLibNotes = gson.fromJson(new JsonReader(new StringReader(json)), UILibNotes.class);
@@ -487,7 +589,6 @@ public class ReleaseNotes {
   
   private List<GitClient.Commit> fixes;
   private Version version;
-  private File notesFile;
   
   static class NoteRef{
     String type;

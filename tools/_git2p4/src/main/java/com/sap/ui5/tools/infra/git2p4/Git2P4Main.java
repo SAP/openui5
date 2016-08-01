@@ -74,6 +74,7 @@ public class Git2P4Main {
     public boolean noFetch = false;
     public List<Mapping> mappings = null;
     public Version version;
+    public int lowestMinor = 28; //28 is the lowest minor at the time this is done
     public String findVersion(String branch) throws IOException {
       return Git2P4Main.findVersion(branch);
     }
@@ -714,6 +715,8 @@ public class Git2P4Main {
         context.includeCommitDetails = true;
       } else if ( "--html-output".equals(args[i]) ) {
         context.htmlOutput = true;
+      } else if ( "--lowest-minor".equals(args[i]) ) {
+        context.lowestMinor = Integer.parseInt(args[++i]);
       } else if ( "--split-logs".equals(args[i]) ) {
         command = "splitLogs";
       } else if ( RELEASE_NOTES.equals(args[i]) ) {

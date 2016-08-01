@@ -59,11 +59,13 @@ public class LastRunInfo {
     lastVersionToolResultsFile = new File(root, ".version-tool.xml");
     if (lastVersionToolResultsFile.canRead()) {
       Gson gson = new GsonBuilder().setPrettyPrinting().create();
-      versionTool = gson.fromJson(new JsonReader(new FileReader(lastVersionToolResultsFile)), VersionTool.class);
+      FileReader fileReader = new FileReader(lastVersionToolResultsFile);
+      versionTool = gson.fromJson(new JsonReader(fileReader), VersionTool.class);
       if (versionTool.lastPerVersion == null) {
         versionTool.lastPerVersion = new HashMap<String, LastPerVersion>();
-        versionTool.lastPerVersion.put(branch, (LastPerVersion) gson.fromJson(new JsonReader(new FileReader(lastVersionToolResultsFile)), LastPerVersion.class));
+        versionTool.lastPerVersion.put(branch, (LastPerVersion) gson.fromJson(new JsonReader(fileReader), LastPerVersion.class));
       }
+      fileReader.close();
     } else {
       versionTool = new VersionTool();
       versionTool.lastPerVersion = new HashMap<String, LastPerVersion>();

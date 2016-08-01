@@ -251,6 +251,24 @@ public class GitClient {
     }
     return false;
   }
+  
+  public List<String> status() throws IOException{
+    return execute("status") ? evalStatus() : new ArrayList<String>();
+  }
+
+  static Pattern STATUS_LINE = Pattern.compile("^.*:   (.*)$");
+  private List<String> evalStatus() {
+    lastOutput.add("");
+    List<String> result = new ArrayList<String>();
+    for (int i=0; i<lastOutput.size(); ) {
+      String line = lastOutput.get(i++);
+      Matcher m = STATUS_LINE.matcher(line);
+      if ( m.matches() ) {
+        result.add(m.group(1));
+      }
+    }
+    return result;
+  }
 
   public boolean clone(String gitUrl) throws IOException {
   	// we always fetch via SSH
