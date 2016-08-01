@@ -317,6 +317,34 @@ QUnit.test("Set tooltip of FileUploader", function(assert) {
 	assert.strictEqual(this.oUploadCollection._oFileUploader.getTooltip(), sText, "Correct tooltip of FileUploader");
 });
 
+QUnit.test("File upload button is visible", function(assert) {
+	assert.equal(this.oUploadCollection._getFileUploader().getVisible(), true, "File Uploader is visible");
+});
+
+QUnit.module("Rendering of UploadCollection with instantUpload = false and uploadButtonInvisible = true", {
+
+	beforeEach : function() {
+		this.oUploadCollection = new sap.m.UploadCollection("uploadCollectionHiddenUpload", {
+			instantUpload : false,
+			uploadButtonInvisible: true
+		});
+		this.oUploadCollection.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+	},
+	afterEach : function() {
+		this.oUploadCollection.destroy();
+	}
+});
+
+QUnit.test("File upload button is not visible", function(assert) {
+	assert.equal(this.oUploadCollection._getFileUploader().getVisible(), false, "File Uploader is not visible");
+});
+
+QUnit.test("File upload button is visible after setting the uploadButtonInvisible property to false", function(assert) {
+	this.oUploadCollection.setUploadButtonInvisible(false);
+	assert.equal(this.oUploadCollection._getFileUploader().getVisible(), true, "File Uploader is visible");
+});
+
 QUnit.module("PendingUpload",  {
 
 	beforeEach : function() {
@@ -333,7 +361,7 @@ QUnit.module("PendingUpload",  {
 	}
 });
 
-QUnit.test("test Upload", function(assert) {
+QUnit.test("Test Upload", function(assert) {
 	var oFileUploader1 = this.oUploadCollection._getFileUploader();
 	var fnFUUpload1 = this.spy(oFileUploader1, "upload");
 	oFileUploader1.fireChange({
@@ -349,6 +377,77 @@ QUnit.test("test Upload", function(assert) {
 	this.oUploadCollection.upload();
 	assert.ok(fnFUUpload1.calledOnce, true, "'Upload' method of FileUploader should be called for each FU instance just once");
 	assert.ok(fnFUUpload2.calledOnce, true, "'Upload' method of FileUploader should be called for each FU instance just once");
+});
+
+QUnit.test("Test Upload with checks for file uploader visibility", function(assert) {
+	var oFileUploader1 = this.oUploadCollection._getFileUploader();
+	var fnFUUpload1 = this.spy(oFileUploader1, "upload");
+	oFileUploader1.fireChange({
+		files: this.aFiles,
+		newValue : "file1"	// needed to enable IE9 support and non failing tests
+	});
+	var oFileUploader2 = this.oUploadCollection._getFileUploader();
+	var fnFUUpload2 = this.spy(oFileUploader2, "upload");
+	oFileUploader2.fireChange({
+		files: this.aFiles,
+		newValue : "file1"	// needed to enable IE9 support and non failing tests
+	});
+	this.oUploadCollection.upload();
+
+	var aToolbarElements = this.oUploadCollection._oHeaderToolbar.getContent();
+	for (var i = 0; i < aToolbarElements.length; i++) {
+		if (aToolbarElements[i] instanceof sap.ui.unified.FileUploader){
+			assert.equal(aToolbarElements[i].getVisible(), true, "File Uploader in header content at position" + i + " is visible");
+		}
+	}
+});
+
+QUnit.test("Test Upload with checks for file uploader visibility when files have been added, but not uploaded", function(assert) {
+	var oFileUploader1 = this.oUploadCollection._getFileUploader();
+	var fnFUUpload1 = this.spy(oFileUploader1, "upload");
+	oFileUploader1.fireChange({
+		files: this.aFiles,
+		newValue : "file1"	// needed to enable IE9 support and non failing tests
+	});
+	var oFileUploader2 = this.oUploadCollection._getFileUploader();
+	var fnFUUpload2 = this.spy(oFileUploader2, "upload");
+	oFileUploader2.fireChange({
+		files: this.aFiles,
+		newValue : "file1"	// needed to enable IE9 support and non failing tests
+	});
+
+	this.oUploadCollection.setUploadButtonInvisible(true);
+
+	var aToolbarElements = this.oUploadCollection._oHeaderToolbar.getContent();
+	for (var i = 0; i < aToolbarElements.length; i++) {
+		if (aToolbarElements[i] instanceof sap.ui.unified.FileUploader){
+			assert.equal(aToolbarElements[i].getVisible(), false, "File Uploader in header content at position" + i + " is not visible");
+		}
+	}
+});
+
+QUnit.test("Test Upload with checks for file uploader visibility after changing uploadButtonInvisible property", function(assert) {
+	var oFileUploader1 = this.oUploadCollection._getFileUploader();
+	var fnFUUpload1 = this.spy(oFileUploader1, "upload");
+	oFileUploader1.fireChange({
+		files: this.aFiles,
+		newValue : "file1"	// needed to enable IE9 support and non failing tests
+	});
+	var oFileUploader2 = this.oUploadCollection._getFileUploader();
+	var fnFUUpload2 = this.spy(oFileUploader2, "upload");
+	oFileUploader2.fireChange({
+		files: this.aFiles,
+		newValue : "file1"	// needed to enable IE9 support and non failing tests
+	});
+	this.oUploadCollection.upload();
+	this.oUploadCollection.setUploadButtonInvisible(true);
+
+	var aToolbarElements = this.oUploadCollection._oHeaderToolbar.getContent();
+	for (var i = 0; i < aToolbarElements.length; i++) {
+		if (aToolbarElements[i] instanceof sap.ui.unified.FileUploader){
+			assert.equal(aToolbarElements[i].getVisible(), false, "File Uploader in header content at position" + i + " is not visible");
+		}
+	}
 });
 
 QUnit.test("Creation of a new FileUploader Instance during rerendering" , function(assert) {

@@ -233,6 +233,116 @@
 		assert.ok(!$IconItem.hasClass("sapMUCItemPlaceholderInactive"), "Css class 'sapMUCItemPlaceholderInactive' is not present");
 	});
 
+	QUnit.test("hideUploadButton hideTerminateUploadButton properties are initialized correctly", function(assert) {
+		//Arrange
+		//Act
+		//Assert
+		var bUploadButtonInvisible = this.oUploadCollection.getUploadButtonInvisible(),
+			bUploadButtonEnabled = this.oUploadCollection.getTerminationEnabled();
+		assert.strictEqual(bUploadButtonInvisible, false, "uploadButtonInvisible property is set to false by default");
+		assert.strictEqual(bUploadButtonEnabled, true, "terminationEnabled property is set to true by default");
+	});
+
+	QUnit.test("File upload button is visible", function(assert) {
+		//Arrange
+		//Act
+		//Assert
+		assert.equal(this.oUploadCollection._getFileUploader().getVisible(), true, "File Uploader is visible");
+	});
+
+	QUnit.test("setUploadButtonInvisible returns when the existing value is passed", function(assert) {
+		//Arrange
+		var bUploadButtonInvisible = true,
+			stubGetUploadButtonInvisible = sinon.stub(this.oUploadCollection, "getUploadButtonInvisible").returns(bUploadButtonInvisible),
+			stubSetProperty = sinon.stub(this.oUploadCollection, "setProperty"),
+			stubGetInstantUpload = sinon.stub(this.oUploadCollection, "getInstantUpload"),
+			stubSetFileUploaderVisibility = sinon.stub(this.oUploadCollection, "_setFileUploaderVisibility");
+		//Act
+		var oInstance = this.oUploadCollection.setUploadButtonInvisible(bUploadButtonInvisible);
+		//Assert
+		assert.ok(stubGetUploadButtonInvisible.called, "getUploadButtonInvisible called");
+		assert.ok(stubSetProperty.notCalled, "setProperty not called");
+		assert.ok(stubGetInstantUpload.notCalled, "getInstantUpload not called");
+		assert.ok(stubSetFileUploaderVisibility.notCalled, "_setFileUploaderVisibility not called");
+		assert.deepEqual(oInstance, this.oUploadCollection, "Reference to this returned");
+	});
+
+	QUnit.test("setUploadButtonInvisible updates the property but doesn't update other (invisible) file uploaders in the instant upload scenario", function(assert) {
+		//Arrange
+		var bUploadButtonInvisible = true,
+			bIsInstantUpload = true,
+			stubGetUploadButtonInvisible = sinon.stub(this.oUploadCollection, "getUploadButtonInvisible").returns(!bUploadButtonInvisible),
+			stubSetProperty = sinon.stub(this.oUploadCollection, "setProperty"),
+			stubGetInstantUpload = sinon.stub(this.oUploadCollection, "getInstantUpload").returns(bIsInstantUpload),
+			stubSetFileUploaderVisibility = sinon.stub(this.oUploadCollection, "_setFileUploaderVisibility");
+		//Act
+		var oInstance = this.oUploadCollection.setUploadButtonInvisible(bUploadButtonInvisible);
+		//Assert
+		assert.ok(stubGetUploadButtonInvisible.called, "getUploadButtonInvisible called");
+		assert.ok(stubSetProperty.called, "setProperty called");
+		assert.ok(stubSetProperty.calledWith("uploadButtonInvisible", bUploadButtonInvisible, true), "setProperty called with the correct arguments");
+		assert.ok(stubGetInstantUpload.called, "getInstantUpload called");
+		assert.ok(stubSetFileUploaderVisibility.notCalled, "_setFileUploaderVisibility not called");
+		assert.deepEqual(oInstance, this.oUploadCollection, "Reference to this returned");
+	});
+
+	QUnit.test("setUploadButtonInvisible updates other file uploaders if it's not the instant upload", function(assert) {
+		//Arrange
+		var bUploadButtonInvisible = true,
+			bIsInstantUpload = false,
+			stubGetUploadButtonInvisible = sinon.stub(this.oUploadCollection, "getUploadButtonInvisible").returns(!bUploadButtonInvisible),
+			stubSetProperty = sinon.stub(this.oUploadCollection, "setProperty"),
+			stubGetInstantUpload = sinon.stub(this.oUploadCollection, "getInstantUpload").returns(bIsInstantUpload),
+			stubSetFileUploaderVisibility = sinon.stub(this.oUploadCollection, "_setFileUploaderVisibility");
+		//Act
+		var oInstance = this.oUploadCollection.setUploadButtonInvisible(bUploadButtonInvisible);
+		//Assert
+		assert.ok(stubGetUploadButtonInvisible.called, "getUploadButtonInvisible called");
+		assert.ok(stubSetProperty.called, "getUploadButtonInvisible called");
+		assert.ok(stubSetProperty.calledWith("uploadButtonInvisible", bUploadButtonInvisible, true), "setProperty called with the correct arguments");
+		assert.ok(stubGetInstantUpload.called, "getInstantUpload called");
+		assert.ok(stubSetFileUploaderVisibility.called, "_setFileUploaderVisibility called");
+		assert.ok(stubSetFileUploaderVisibility.calledWith(bUploadButtonInvisible), "_setFileUploaderVisibility called with the passed flag");
+		assert.deepEqual(oInstance, this.oUploadCollection, "Reference to this returned");
+	});
+
+	QUnit.test("File upload button is not visible after setting uploadButtonInvisible to true", function(assert) {
+		//Arrange
+		this.oUploadCollection.setUploadButtonInvisible(true);
+		//Act
+		//Assert
+		assert.equal(this.oUploadCollection._getFileUploader().getVisible(), false, "File Uploader is not visible");
+	});
+
+	QUnit.module("Rendering of UploadCollection with hideUploadButton = true", {
+
+		beforeEach : function() {
+			this.oUploadCollection = new sap.m.UploadCollection("uploadCollectionHideUpload1", {
+				uploadButtonInvisible : true
+			});
+			this.oUploadCollection.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oUploadCollection.destroy();
+		}
+	});
+
+	QUnit.test("File upload button is not visible", function(assert) {
+		//Arrange
+		//Act
+		//Assert
+		assert.equal(this.oUploadCollection._getFileUploader().getVisible(), false, "File Uploader is not visible");
+	});
+
+	QUnit.test("File upload button is visible after setting uploadButtonInvisible to false", function(assert) {
+		//Arrange
+		this.oUploadCollection.setUploadButtonInvisible(false);
+		//Act
+		//Assert
+		assert.equal(this.oUploadCollection._getFileUploader().getVisible(), true, "File Uploader is visible");
+	});
+
 	/* --------------------------------------- */
 	/* Test methods                            */
 	/* --------------------------------------- */
@@ -665,6 +775,93 @@
 		assert.equal(stub.returns().toString(), "downloadItem", "Download returns the right method.");
 	});
 
+	QUnit.test("Terminate upload button is visible by default.", function(assert) {
+		//Arrange
+		var oItem = {
+			getEnableDelete: function() {},
+			getVisibleDelete: function() {}
+		};
+		var spyGetTerminationEnabled = sinon.spy(this.oUploadCollection, "getTerminationEnabled");
+		//Act
+		var oDeleteButton = this.oUploadCollection._createDeleteButton("visibleButtonTestId", "terminateButton", oItem, "", {});
+		//Assert
+		assert.ok(spyGetTerminationEnabled.called, "getTerminationEnabled method was called.");
+		assert.strictEqual(oDeleteButton.getVisible(), true, "The terminate button is visible.");
+	});
+
+	QUnit.test("Terminate upload button is not visible when terminationEnabled is false.", function(assert) {
+		//Arrange
+		this.oUploadCollection.setTerminationEnabled(false);
+		var oItem = {
+			getEnableDelete: function() {},
+			getVisibleDelete: function() {}
+		};
+		var spyGetTerminationEnabled = sinon.spy(this.oUploadCollection, "getTerminationEnabled");
+		//Act
+		var oDeleteButton = this.oUploadCollection._createDeleteButton("invisibleButtonTestId", "terminateButton", oItem, null, {});
+		//Assert
+		assert.ok(spyGetTerminationEnabled.called, "getTerminationEnabled method was called.");
+		assert.strictEqual(oDeleteButton.getVisible(), false, "The terminate button is not visible.");
+	});
+
+	QUnit.test("Terminate upload button is not visible when button exists and terminationEnabled is false.", function(assert) {
+		//Arrange
+		this.oUploadCollection.setTerminationEnabled(false);
+		var oItem = {
+			getEnableDelete: function() {},
+			getVisibleDelete: function() {
+				return true;
+			}
+		};
+		var spyGetTerminationEnabled = sinon.spy(this.oUploadCollection, "getTerminationEnabled");
+		//Act
+		var oDeleteButton = this.oUploadCollection._createDeleteButton("invisibleButtonTestId", "terminateButton", oItem, null, {});
+		// re-create the existing button
+		this.oUploadCollection._createDeleteButton("invisibleButtonTestId", "terminateButton", oItem, null, {});
+		//Assert
+		assert.ok(spyGetTerminationEnabled.called, "getTerminationEnabled method was called.");
+		assert.strictEqual(oDeleteButton.getVisible(), false, "The terminate button is not visible.");
+	});
+
+	QUnit.test("Terminate upload button is visible when button exists and terminationEnabled is true.", function(assert) {
+		//Arrange
+		this.oUploadCollection.setTerminationEnabled(true);
+		var oItem = {
+			getEnableDelete: function() {},
+			getVisibleDelete: function() {
+				return true;
+			}
+		};
+		var spyGetTerminationEnabled = sinon.spy(this.oUploadCollection, "getTerminationEnabled");
+		//Act
+		var oDeleteButton = this.oUploadCollection._createDeleteButton("invisibleButtonTestId", "terminateButton", oItem, null, {});
+		// re-create the existing button
+		this.oUploadCollection._createDeleteButton("invisibleButtonTestId", "terminateButton", oItem, null, {});
+		//Assert
+		assert.ok(spyGetTerminationEnabled.called, "getTerminationEnabled method was called.");
+		assert.strictEqual(oDeleteButton.getVisible(), true, "The terminate button is visible.");
+	});
+
+	QUnit.test("_setFileUploaderVisibility updates the visibility of the fil upload placeholder.", function(assert) {
+		//Arrange
+		var bUploadButtonInvisible = true;
+		var oFileUploader = new sap.ui.unified.FileUploader();
+		var oContent = [{}, {}, oFileUploader];
+		this.oUploadCollection._iFileUploaderPH = 2;
+		var stubGetContent = sinon.stub(this.oUploadCollection._oHeaderToolbar, "getContent").returns(oContent);
+		var stubSetVisible = sinon.stub(oFileUploader, "setVisible");
+		this.oUploadCollection._aFileUploadersForPendingUpload = [{}];
+		//Act
+		this.oUploadCollection._setFileUploaderVisibility(bUploadButtonInvisible);
+		//Assert
+		assert.ok(true);
+		assert.ok(stubGetContent.called, "getContent method on _oHeaderToolbar was called.");
+		assert.ok(stubSetVisible.called, "setVisible method on the file uploder was called.");
+		assert.ok(stubSetVisible.calledOnce, "setVisible method on the file uploder was called only once.");
+		assert.ok(stubSetVisible.calledWith(!bUploadButtonInvisible), "setVisible was called with the opposite of bUploadButtonInvisible flag.");
+		this.oUploadCollection._aFileUploadersForPendingUpload = [];
+		stubGetContent.restore();
+	});
 	/* --------------------------------------- */
 	/* Test for upload progress rendering      */
 	/* --------------------------------------- */
