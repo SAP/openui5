@@ -283,8 +283,8 @@
         sap.ui.getCore().applyChanges();
 
         // assert
-        assert.strictEqual(fnSpy.callCount, 0, 'Changing the title should not invalidate the control');
         assert.strictEqual(this.NotificationListGroup.getDomRef('title').textContent, title, 'The description in the title aggregation should be set to ' + title);
+        assert.strictEqual(fnSpy.callCount, 1, 'Changing the title should invalidate the control');
     });
 
     QUnit.test('Changing the datetime', function(assert) {
@@ -297,7 +297,6 @@
         sap.ui.getCore().applyChanges();
 
         // assert
-        assert.strictEqual(fnSpy.callCount, 0, 'Changing the datetime should not invalidate the control');
         assert.strictEqual(jQuery(classNameDatetime).text(), datetime, 'The datetime in the title aggregation should be set to ' + datetime);
     });
 
