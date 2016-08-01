@@ -709,14 +709,19 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
                 fRangeMax = Math.max.apply(null, aRange),
                 fRangeMin = Math.min.apply(null, aRange),
                 iIndex = this._getIndexOfHandle(oHandle),
+                iOffsetSign = fOffset < 0 ? -1 : 1,
                 aHandles = iIndex > -1 ? [oHandle] : [this._mHandleTooltip.start.handle, this._mHandleTooltip.end.handle];
 
+            // If this is a single handle, both values should be equal
+            if (aHandles.length === 1) {
+                fRangeMin = fRangeMax = aRange[iIndex];
+            }
 
             // Check the boundaries and recalculate the offset if exceeding
             if (fRangeMax + fOffset > fMax) {
-                fOffset = Math.abs(fMax) - Math.abs(fRangeMax);
+                fOffset = iOffsetSign * (Math.abs(fMax) - Math.abs(fRangeMax));
             } else if (fRangeMin + fOffset < fMin) {
-                fOffset = Math.abs(fRangeMin) - Math.abs(fMin);
+                fOffset = iOffsetSign * (Math.abs(fRangeMin) - Math.abs(fMin));
             }
 
             aHandles.map(function (oCurHandle) {
