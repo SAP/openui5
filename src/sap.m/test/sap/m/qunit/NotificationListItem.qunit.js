@@ -360,7 +360,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.strictEqual(fnSpy.callCount, 0, 'Changing the title should not invalidate the control');
+		assert.strictEqual(fnSpy.callCount, 1, 'Changing the title should invalidate the control');
 		assert.strictEqual(this.NotificationListItem.getDomRef('title').textContent, title, 'The description in the title aggregation should be set to ' + title);
 	});
 
@@ -374,7 +374,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.strictEqual(fnSpy.callCount, 0, 'Changing the description should not invalidate the control');
+		assert.strictEqual(fnSpy.callCount, 1, 'Changing the description should invalidate the control');
 		assert.strictEqual(this.NotificationListItem.getDomRef('body').textContent, description, 'The description aggregation should be set to ' + description);
 	});
 
@@ -388,7 +388,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.strictEqual(fnSpy.callCount, 0, 'Changing the datetime should not invalidate the control');
+		assert.strictEqual(fnSpy.callCount, 1, 'Changing the datetime should invalidate the control when there is no datetime');
 		assert.strictEqual(jQuery(classNameDatetime).text(), datetime, 'The datetime in the title aggregation should be set to ' + datetime);
 	});
 
