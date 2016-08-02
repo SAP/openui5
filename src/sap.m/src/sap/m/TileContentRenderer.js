@@ -70,6 +70,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	 */
 
 	TileContentRenderer._renderFooter = function(oRm, oControl) {
+		if (!oControl._bRenderFooter) {
+			return;
+		}
 		var sTooltip = oControl.getTooltip_AsString();
 		var sFooterTxt = oControl._getFooterText(oRm, oControl);
 		// footer text div

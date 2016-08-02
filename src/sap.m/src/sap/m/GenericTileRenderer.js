@@ -37,7 +37,7 @@ sap.ui.define([], function() {
 			oRm.writeAttribute("role", "presentation");
 		}
 		oRm.writeAttributeEscaped("aria-label", sAriaText);
-		if (oControl.getState() != sap.m.LoadState.Disabled) {
+		if (oControl.getState() !== sap.m.LoadState.Disabled) {
 			oRm.addClass("sapMPointer");
 			oRm.writeAttribute("tabindex", "0");
 		}
@@ -88,6 +88,7 @@ sap.ui.define([], function() {
 			if (oControl.getMode() === sap.m.GenericTileMode.HeaderMode) {
 				aTileContent[i].removeAllAggregation("content", true);
 			}
+			oControl._checkFooter(aTileContent[i], oControl);
 			oRm.renderControl(aTileContent[i]);
 		}
 		oRm.write("</div>");
