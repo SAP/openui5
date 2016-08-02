@@ -182,7 +182,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
             this.fireClose();
 
             if (parent && parent instanceof sap.ui.core.Element) {
-                parent.focus();
+                var delegate = {
+                    onAfterRendering: function() {
+                        parent.getDomRef().focus();
+                        parent.removeEventDelegate(delegate);
+                    }
+                };
+                parent.addEventDelegate(delegate);
             }
         };
 
