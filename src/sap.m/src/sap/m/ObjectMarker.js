@@ -59,7 +59,14 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 				 *                 <li><code>IconAndText</code> - displays both icon and text, regardless of the screen size</li>
 				 * </ul>
 				 */
-				visibility: {type: "sap.m.ObjectMarkerVisibility", group: "Misc"}
+				visibility: {type: "sap.m.ObjectMarkerVisibility", group: "Misc"},
+
+				/**
+				 * Sets additional information to the displayed <code>type</code>.
+				 * For example, you can display additional text 'by User' for type <code>locked</code>.<br><br>
+				 * <b>Note:</b> If no type is set, the additional information will not be displayed.
+				 */
+				additionalInfo: {type: "string", group: "Misc", defaultValue: ""}
 			},
 			aggregations: {
 
@@ -292,6 +299,19 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 	};
 
 	/**
+	 * Intercepts <code>setAdditionalInfo</code> in order to adjust some control properties.
+	 *
+	 * @param {string} sText
+	 * @returns {sap.m.ObjectMarker} <code>this</code> pointer for chaining
+	 */
+	ObjectMarker.prototype.setAdditionalInfo = function(sText) {
+		this.setProperty("additionalInfo", sText);
+		this._adjustControl();
+
+		return this;
+	};
+
+	/**
 	 * Cleans up the control.
 	 *
 	 * @private
@@ -318,11 +338,17 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 	 */
 	ObjectMarker.prototype._adjustControl  = function() {
 		var oType = ObjectMarker.M_PREDEFINED_TYPES[this.getType()],
-			oInnerControl = this._getInnerControl();
+			oInnerControl = this._getInnerControl(),
+			sAdditionalInfo = this.getAdditionalInfo(),
+			sText;
 
 		// If we have no inner control at this stage we don't need to adjust
 		if (!oInnerControl) {
 			return false;
+		}
+
+		if (oType) {
+			sText = (sAdditionalInfo) ? oType.text.value + " " + sAdditionalInfo : oType.text.value;
 		}
 
 		if (this._isIconVisible()) {
@@ -335,11 +361,11 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 
 		if (this._isTextVisible()) {
 			oInnerControl.setTooltip(null);
-			oInnerControl.setText(oType.text.value);
+			oInnerControl.setText(sText);
 			this.addStyleClass("sapMObjectMarkerText");
 		} else {
 			if (oInnerControl.getIcon()) {
-				oInnerControl.setTooltip(oType.text.value);
+				oInnerControl.setTooltip(sText);
 			}
 			oInnerControl.setText(null);
 			this.removeStyleClass("sapMObjectMarkerText");
