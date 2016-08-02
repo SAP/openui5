@@ -11,7 +11,8 @@
 			viewKey="Day"
 			rows="{path: '/people'}"
 			appointmentSelect="handleAppointmentSelect"
-			intervalSelect="handleIntervalSelect">
+			intervalSelect="handleIntervalSelect"
+			showEmptyIntervalHeaders="false">
 			<toolbarContent>
 				<Title text="Title" titleStyle="H4"/>
 			</toolbarContent>
