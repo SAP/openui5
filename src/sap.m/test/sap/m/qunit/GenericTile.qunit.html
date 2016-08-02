@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Test Page for sap.m.GenericTile</title>
+<title>QUnit Test Page for sap.m.GenericTile</title>
 
 <!-- UI5 Bootstrap -->
 <script id="sap-ui-bootstrap" type="text/javascript"
@@ -15,13 +15,11 @@
 <link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 <script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 <script type="text/javascript">
-	if (!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 8)) {
-		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-	}
 
 	QUnit.module("Rendering tests", {
 		beforeEach : function() {
@@ -310,13 +308,32 @@
 		assert.ok(jQuery.sap.domById("generic-tile-failed-overlay"), "Generic tile icon was rendered successfully");
 		assert.ok(jQuery.sap.domById("tile-cont-failed"), "TileContent was rendered successfully");
 		assert.ok(jQuery.sap.domById("tile-cont-failed-content"), "TileContent content was rendered successfully");
-		assert.ok(jQuery.sap.domById("tile-cont-failed-footer-text"), "TileContent footer text was rendered successfully");
+		assert.ok(!jQuery.sap.domById("tile-cont-failed-footer-text"), "TileContent footer text was not rendered");
 		assert.ok(jQuery.sap.domById("numeric-cnt-failed"), "NumericContent was rendered successfully");
 		assert.ok(jQuery.sap.domById("numeric-cnt-failed-indicator"), "Indicator was rendered successfully");
 		assert.ok(jQuery.sap.domById("numeric-cnt-failed-value"), "Value was rendered successfully");
 		assert.ok(jQuery.sap.domById("numeric-cnt-failed-value-scr"), "Value was rendered successfully");
 		assert.ok(jQuery.sap.domById("numeric-cnt-failed-scale"), "Scale was rendered successfully");
 		assert.ok(jQuery.sap.domById("numeric-cnt-failed-icon-image"), "Icon was rendered successfully");
+
+		this.oGenericTile.setState("Loaded");
+		sap.ui.getCore().applyChanges();
+		assert.ok(jQuery.sap.domById("tile-cont-failed-footer-text"), "TileContent footer text was rendered successfully");
+	});
+
+	QUnit.test("GenericTile is setting protected property only in Failed state", function(assert) {
+		this.oGenericTile.setState("Loaded");
+		sap.ui.getCore().applyChanges();
+		assert.ok(this.oGenericTile.getTileContent()[0]._bRenderFooter, "bRenderFooter set to true");
+		this.oGenericTile.setState("Loading");
+		sap.ui.getCore().applyChanges();
+		assert.ok(this.oGenericTile.getTileContent()[0]._bRenderFooter, "bRenderFooter set to true");
+		this.oGenericTile.setState("Disabled");
+		sap.ui.getCore().applyChanges();
+		assert.ok(this.oGenericTile.getTileContent()[0]._bRenderFooter, "bRenderFooter set to true");
+		this.oGenericTile.setState("Failed");
+		sap.ui.getCore().applyChanges();
+		assert.ok(!this.oGenericTile.getTileContent()[0]._bRenderFooter, "bRenderFooter set to false");
 	});
 
 	QUnit.module("GenericTileMode tests", {
