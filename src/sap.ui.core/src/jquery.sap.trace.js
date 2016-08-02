@@ -386,6 +386,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Global'],
 				}
 			};
 
+			/**
+			 * This method sets the component name for an interaction.
+			 *
+			 * @private
+			 * @since 1.38.5
+			 */
+			jQuery.sap.interaction.setStepComponent = function(sComponentName) {
+				if ((bInteractionActive || bFesrActive) && sComponentName) {
+					oPendingInteraction.component = sComponentName;
+				}
+			};
+
 
 			/**
 			 * @namespace FESR API, consumed by E2eTraceLib instead of former EppLib.js <br>
