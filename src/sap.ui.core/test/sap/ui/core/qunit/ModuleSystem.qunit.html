@@ -7,6 +7,7 @@
 		<script id="sap-ui-bootstrap"
 				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-noConflict="true"
+				data-sap-ui-logLevel="INFO"
 				data-sap-ui-libs="sap.ui.commons"
 				src="../../../../../resources/sap-ui-core.js">
 		</script>
@@ -467,53 +468,107 @@
 		// resource roots
 		//****************************************************
 
-		QUnit.module("register roots");
+		QUnit.module("register roots", {
+			beforeEach: function() {
+				var logSpy = this.logSpy = sinon.stub();
+				this.listener = {
+					onLogEntry: function(oLogEntry) {
+						logSpy(oLogEntry.level, oLogEntry.message);
+					}
+				};
+				jQuery.sap.log.addLogListener(this.listener);
+			}, 
+			afterEach: function() {
+				jQuery.sap.log.removeLogListener(this.listener);
+			}
+		});
 
 		QUnit.test("register w/o final flag (legacy variant)", function(assert) {
 
 			var sPathInput = "/qunit/test/path";
-			var sPathOutput;
 
 			//first, set path to anything (should be overwritten then...)
 			jQuery.sap.registerModulePath("qunit.test.path1", "/this/is/the/wrong/path/");
-
+			assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path1/))), "first path registration should have been logged");
+			this.logSpy.reset();
+			
 			jQuery.sap.registerModulePath("qunit.test.path1", sPathInput);
-			sPathOutput = jQuery.sap.getModulePath("qunit.test.path1");
+			assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path1/))), "second path registration should have been logged");
+			this.logSpy.reset();
 
-			assert.ok(sPathOutput == sPathInput, "Not-existing final flag was handled successfully.");
+			assert.equal(jQuery.sap.getModulePath("qunit.test.path1"), sPathInput, "non-final path has been overwritten");
+
 		});
 
 		QUnit.test("register with final=false", function(assert) {
 			var sPathInput = "/qunit/test/path";
-			var sPathOutput;
 
 			//first, set path to anything (should be overwritten then...)
 			jQuery.sap.registerModulePath("qunit.test.path2", "/this/is/the/wrong/path/");
+			assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path2/))), "first path registration should have been logged");
+			this.logSpy.reset();
 
 			jQuery.sap.registerModulePath("qunit.test.path2", {'url': sPathInput, 'final': false});
-			sPathOutput = jQuery.sap.getModulePath("qunit.test.path2");
+			assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path2/))), "second path registration should have been logged");
+			this.logSpy.reset();
 
-			assert.ok(sPathOutput == sPathInput, "False final flag was handled successfully.");
+			assert.equal(jQuery.sap.getModulePath("qunit.test.path2"), sPathInput, "False final flag was handled successfully.");
 		});
 
 		QUnit.test("register with final=true", function(assert) {
 			var sPathInput = "/qunit/test/path";
-			var sPathOutput;
 
 			//first, set path to the value it should be and stay (should NOT be overwritten then...)
 			jQuery.sap.registerModulePath("qunit.test.path3", {'url': sPathInput, 'final': true});
+			assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path3/)).and(sinon.match(/final/))), "first path registration should have been logged");
+			this.logSpy.reset();
 
 			jQuery.sap.registerModulePath("qunit.test.path3", "/this/is/the/wrong/path/");
-			sPathOutput = jQuery.sap.getModulePath("qunit.test.path3");
+			assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.WARNING, sinon.match(/registerResourcePath/).and(sinon.match(/already set as final/))), "warning should be logged when a final path is to be overwritten");
+			this.logSpy.reset();
 
-			assert.ok(sPathOutput == sPathInput, "Active final flag was handled successfully.");
+			assert.equal(jQuery.sap.getModulePath("qunit.test.path3"), sPathInput, "Active final flag was handled successfully.");
 		});
 
 		QUnit.test("no empty Module URLs allowed", function(assert) {
 			jQuery.sap.registerModulePath("qunit.test.path4", "");
-			var sPathOutput = jQuery.sap.getModulePath("qunit.test.path4");
+			
+			assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path4/))), "first path registration should have been logged");
+			this.logSpy.reset();
 
-			assert.ok(sPathOutput == ".", "Setting empty URL avoided successfully.");
+			assert.equal(jQuery.sap.getModulePath("qunit.test.path4"), ".", "Setting empty URL avoided successfully.");
+		});
+
+		QUnit.test("single log entry for redundant calls", function(assert) {
+			jQuery.sap.registerModulePath("qunit.test.path8", "/qunit/test/path8");
+			assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/))), "first path registration should have been logged");
+			this.logSpy.reset();
+			
+			jQuery.sap.registerModulePath("qunit.test.path8", "/qunit/test/path8");
+			assert.ok(this.logSpy.neverCalledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/))), "redundant call should not be logged");
+
+			jQuery.sap.registerModulePath("qunit.test.path9", "/qunit/test/path9");
+			assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path9/))), "call with differing args should be logged");
+
+			jQuery.sap.registerModulePath("qunit.test.path8", "/qunit/test/path8");
+			assert.ok(this.logSpy.neverCalledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/))), "redundant call should not be logged, even after other calls");
+
+			jQuery.sap.registerResourcePath("qunit/test/path8");
+			assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/)).and(sinon.match(/registration removed/))), "cleanup call should be logged");
+			this.logSpy.reset();
+			
+			jQuery.sap.registerResourcePath("qunit/test/path8");
+			assert.ok(this.logSpy.neverCalledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/)).and(sinon.match(/registration removed/))), "redundant cleanup call should not be logged");
+
+			jQuery.sap.registerModulePath("qunit.test.path8", "/qunit/test/path8");
+			assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/))), "new call with same url should be logged after cleanup call");
+			this.logSpy.reset();
+
+			jQuery.sap.registerModulePath("qunit.test.path8", { url: "/qunit/test/path8", "final": false});
+			assert.ok(this.logSpy.neverCalledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/))), "redundant call should not be logged, even with different argument syntax");
+
+			jQuery.sap.registerModulePath("qunit.test.path8", { url: "/qunit/test/path8", "final": true});
+			assert.ok(this.logSpy.calledWith(jQuery.sap.log.Level.INFO, sinon.match(/registerResourcePath/).and(sinon.match(/qunit\/test\/path8/)).and(sinon.match(/final/))), "call with same URL but different final flag should be logged");
 		});
 
 		QUnit.test("query parameters should be stripped off", function() {
@@ -527,7 +582,7 @@
 		QUnit.test("hash should be stripped off", function(assert) {
 			var sExpected = "/qunit/test/path/with/hash";
 			jQuery.sap.registerModulePath("qunit.test.path6", sExpected + "#foo?bar=baz");
-
+			
 			var sActual = jQuery.sap.getModulePath("qunit.test.path6");
 			assert.equal(sActual, sExpected, "Hash should be stripped correctly.");
 		});
