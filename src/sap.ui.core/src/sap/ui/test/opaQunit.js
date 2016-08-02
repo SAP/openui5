@@ -99,8 +99,7 @@ sap.ui.define(['./Opa', './Opa5'], function (Opa, Opa5) {
 				QUnit.ok(false, oOptions.errorMessage);
 				Opa.assert = undefined;
 				Opa5.assert = undefined;
-				// let OPA finish before QUnit starts executing the next test
-				setTimeout(fnStart, 0);
+				fnStart();
 			});
 		};
 

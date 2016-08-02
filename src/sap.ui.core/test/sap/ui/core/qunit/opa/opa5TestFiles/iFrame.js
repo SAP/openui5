@@ -154,15 +154,10 @@ sap.ui.define([
 
 					oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html").done(function() {
 						// Act + Assert
-						var clock = sinon.useFakeTimers();
-
 						assert.throws(function () {
 							Opa5.getWindow().onerror("Errormessage", "Url", 31);
-							// throws the actual exception in a delay
-							clock.tick(0);
-						},"OpaFrame error message: Errormessage,\nurl: Url line: 31,\nDid throw an error");
+						},"OpaFrame error message: Errormessage url: Url line: 31" , "Did throw an error");
 
-						clock.restore();
 						assert.strictEqual(fnSpy.callCount, 1, "Did call the app onerror");
 					});
 
@@ -399,8 +394,7 @@ sap.ui.define([
 			 Opa5.emptyQueue().always(fnIFrameTeardown);
 		});
 
-		// In this module a site full of errors is launched and the error messages are checked
-		QUnit.module("Tests with errors");
+		QUnit.module("Tests that timeout");
 
 		opaTest("Should empty the queue if QUnit times out", function (oOpa) {
 			function createMatcherForTestMessage (oOptions) {
@@ -413,22 +407,13 @@ sap.ui.define([
 			oOpa.iStartMyAppInAFrame("../testdata/failingOpaTest.html?sap-ui-qunittimeout=2000");
 
 			oOpa.waitFor({
-				success: function () {
-					// exceptions thrown by the OPA frame will be propagated to the executing window.
-					// in this case i provoke the exceptions intentionally so i overwite the onerror with a noop
-					// this stops the propagation of errors
-					Opa5.getWindow().onerror = $.noop;
-				}
-			});
-
-			oOpa.waitFor({
 				matchers: createMatcherForTestMessage({
 					testIndex: 1,
 					passed: false
 				}),
-				success: function ($Messages) {
-					QUnit.assert.strictEqual($Messages.eq(0).text(), "Test timed out");
-					var sOpaMessage = $Messages.eq(1).text();
+				success: function (aMessages) {
+					QUnit.assert.strictEqual(aMessages.eq(0).text(), "Test timed out");
+					var sOpaMessage = aMessages.eq(1).text();
 					QUnit.assert.contains(sOpaMessage, /QUnit timeout/);
 					QUnit.assert.contains(sOpaMessage, /This is what Opa logged/);
 					QUnit.assert.contains(sOpaMessage, /Opa is executing the check:/);
@@ -442,8 +427,8 @@ sap.ui.define([
 					testIndex: 2,
 					passed: true
 				}),
-				success: function ($Messages) {
-					QUnit.assert.strictEqual($Messages.eq(0).text(), "Ok from test 2");
+				success: function (aMessages) {
+					QUnit.assert.strictEqual(aMessages.eq(0).text(), "Ok from test 2");
 				}
 			});
 
@@ -452,8 +437,8 @@ sap.ui.define([
 					testIndex: 3,
 					passed: true
 				}),
-				success: function ($Messages) {
-					QUnit.assert.strictEqual($Messages.eq(0).text(), "Ok from test 3");
+				success: function (aMessages) {
+					QUnit.assert.strictEqual(aMessages.eq(0).text(), "Ok from test 3");
 				}
 			});
 
@@ -462,9 +447,9 @@ sap.ui.define([
 					testIndex: 4,
 					passed: false
 				}),
-				success: function ($Messages) {
-					QUnit.assert.strictEqual($Messages.eq(0).text(), "Test timed out");
-					var sOpaMessage = $Messages.eq(1).text();
+				success: function (aMessages) {
+					QUnit.assert.strictEqual(aMessages.eq(0).text(), "Test timed out");
+					var sOpaMessage = aMessages.eq(1).text();
 					QUnit.assert.contains(sOpaMessage, "global id: 'myGlobalId'");
 					QUnit.assert.doesNotContain(sOpaMessage,"Log message that should not appear in the error");
 				}
@@ -475,8 +460,8 @@ sap.ui.define([
 					testIndex: 5,
 					passed: false
 				}),
-				success: function ($Messages) {
-					var sOpaMessage = $Messages.eq(0).text();
+				success: function (aMessages) {
+					var sOpaMessage = aMessages.eq(0).text();
 					QUnit.assert.contains(sOpaMessage, "Opa timeout");
 					QUnit.assert.contains(sOpaMessage, "This is what Opa logged");
 					QUnit.assert.contains(sOpaMessage, "global id: 'myGlobalId'");
@@ -490,68 +475,12 @@ sap.ui.define([
 					testIndex: 6,
 					passed: false
 				}),
-				success: function ($Messages) {
-					var sOpaMessage = $Messages.eq(0).text();
+				success: function (aMessages) {
+					var sOpaMessage = aMessages.eq(0).text();
 					QUnit.assert.contains(sOpaMessage, "Queue was stopped manually");
 					QUnit.assert.contains(sOpaMessage, "This is what Opa logged");
 					QUnit.assert.contains(sOpaMessage, "Callstack:");
 					QUnit.assert.doesNotContain(sOpaMessage,"Log message that should not appear in the error");
-				}
-			});
-
-			function assertException ($Messages, sCallbackName) {
-				var sOpaMessage = $Messages.eq(0).text();
-				Opa5.assert.contains(sOpaMessage, "Exception thrown by the testcode:");
-				Opa5.assert.contains(sOpaMessage, "Doh! An exception in '" + sCallbackName + "'.");
-			}
-
-			oOpa.waitFor({
-				matchers: createMatcherForTestMessage({
-					testIndex: 7,
-					passed: false
-				}),
-				success: function ($Messages) {
-					assertException($Messages, "check");
-				}
-			});
-
-			oOpa.waitFor({
-				matchers: createMatcherForTestMessage({
-					testIndex: 8,
-					passed: false
-				}),
-				success: function ($Messages) {
-					assertException($Messages, "matchers");
-				}
-			});
-
-			oOpa.waitFor({
-				matchers: createMatcherForTestMessage({
-					testIndex: 9,
-					passed: false
-				}),
-				success: function ($Messages) {
-					assertException($Messages, "actions");
-				}
-			});
-
-			oOpa.waitFor({
-				matchers: createMatcherForTestMessage({
-					testIndex: 10,
-					passed: false
-				}),
-				success: function ($Messages) {
-					assertException($Messages, "success");
-				}
-			});
-
-			oOpa.waitFor({
-				matchers: createMatcherForTestMessage({
-					testIndex: 11,
-					passed: false
-				}),
-				success: function ($Messages) {
-					assertException($Messages, "success");
 				}
 			});
 
