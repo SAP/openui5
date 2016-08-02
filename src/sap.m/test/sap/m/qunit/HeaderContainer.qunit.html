@@ -20,7 +20,7 @@
 	src="resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_belize"
 	data-sap-ui-noConflict="true"
-	data-sap-ui-libs="sap.m">
+	data-sap-ui-libs="sap.m, sap.ui.layout">
 </script>
 
 <link rel="stylesheet" type="text/css" href="resources/sap/ui/thirdparty/qunit.css" />
@@ -186,6 +186,112 @@ jQuery.sap.initMobile();
 			assert.ok(jQuery.sap.byId("headerContainer-scrl-next-button").css("visibility") !== "hidden", "Next Button is visible after scrolling.");
 			done();
 		}, 1000);
+	});
+
+	QUnit.module("Keyboard navigation focus issues", {
+		beforeEach : function () {
+			this.oHeaderContainer = new sap.m.HeaderContainer("headerContainer", {
+				items : [
+					new sap.ui.layout.VerticalLayout(),
+					new sap.ui.layout.VerticalLayout(),
+					new sap.ui.layout.VerticalLayout()
+				]
+			});
+			this.oHeaderContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function () {
+			this.oHeaderContainer.destroy();
+			this.oHeaderContainer = null;
+		}
+	});
+
+	QUnit.test("The item navigation includes all the items of header container", function(assert) {
+		assert.equal(this.oHeaderContainer._oItemNavigation.getItemDomRefs().length, this.oHeaderContainer.getItems().length, "Correct item received focus.");
+	});
+
+	QUnit.test("Surrogate div with tab index which is used to catch shift tab focus is rendered ", function(assert) {
+		assert.equal(this.oHeaderContainer.$("after").attr("tabindex"), "0", "Correct item received focus.");
+	});
+
+	QUnit.test("_restoreLastFocused method sets the focus on the item that was saved as focused before", function(assert) {
+		//Arrange
+		this.oHeaderContainer._oItemNavigation.setFocusedIndex(1);
+		//Act
+		this.oHeaderContainer._restoreLastFocused();
+		//Assert
+		assert.deepEqual(this.oHeaderContainer._oItemNavigation.getItemDomRefs()[1], document.activeElement, "Correct item received focus.");
+	});
+
+	QUnit.test("When focusing from outside (through shift + tab) on the surrogate div element, the focus is set on the previous focused element of the itemnavigation", function(assert) {
+		//Arrange
+		this.oHeaderContainer._oItemNavigation.setFocusedIndex(0);
+		var oEvt = {
+			preventDefault: function(){},
+			target: this.oHeaderContainer.$("after").get(0)
+		}
+		//Act
+		this.oHeaderContainer.onfocusin(oEvt);
+		//Assert
+		assert.ok(this.oHeaderContainer._oItemNavigation.getItemDomRefs().eq(0).is(":focus"), "Focus from outside was moved to the right last focused item");
+	});
+
+	QUnit.test("Test tab button click event", function(assert) {
+		//Arrange
+		this.oHeaderContainer._oItemNavigation.getItemDomRefs().eq(0).focus();
+		var oEvt = {
+			preventDefault: function(){},
+			target: this.oHeaderContainer._oItemNavigation.getItemDomRefs()[0]
+		}
+		//Act
+		this.oHeaderContainer.onsaptabnext(oEvt);
+		//Assert
+		assert.deepEqual(document.activeElement, this.oHeaderContainer.$("after").get(0), "Focus leaves away from the ScrollContainer");
+		assert.equal(this.oHeaderContainer._oItemNavigation.getFocusedIndex(), 0, "The focused item index is still correct after the focus leaves away from the ScrollContainer");
+	});
+
+	QUnit.test("Test shift Tab button click event", function(assert) {
+		//Arrange
+		this.oHeaderContainer._oItemNavigation.getItemDomRefs().eq(0).focus();
+		var oEvt = {
+			preventDefault: function(){},
+			target: this.oHeaderContainer._oItemNavigation.getItemDomRefs()[0]
+		}
+		//Act
+		this.oHeaderContainer.onsaptabprevious(oEvt);
+		//Assert
+		assert.deepEqual(document.activeElement, this.oHeaderContainer.getDomRef(), "Focus leaves away from the ScrollContainer");
+		assert.equal(this.oHeaderContainer._oItemNavigation.getFocusedIndex(), 0, "The focused item index is still correct after the focus leaves away from the ScrollContainer");
+	});
+
+	QUnit.test("Focus is set to next item after right button on element of itemnavigation is clicked", function(assert) {
+		//Arrange
+		this.oHeaderContainer._oItemNavigation.getItemDomRefs().eq(0).focus();
+		var oEvt = {
+			preventDefault: function(){},
+			stopPropagation: function(){},
+			target: this.oHeaderContainer._oItemNavigation.getItemDomRefs()[0]
+		}
+		//Act
+		this.oHeaderContainer._oItemNavigation.onsapnext(oEvt);
+		//Assert
+		assert.deepEqual(document.activeElement, this.oHeaderContainer._oItemNavigation.getItemDomRefs()[1], "Focus is set to the next item");
+		assert.equal(this.oHeaderContainer._oItemNavigation.getFocusedIndex(), 1, "Focused index of itemnavigation is updated");
+	});
+
+	QUnit.test("Focus is set to previous item after left button on element of itemnavigation is clicked", function(assert) {
+		//Arrange
+		this.oHeaderContainer._oItemNavigation.getItemDomRefs().eq(1).focus();
+		var oEvt = {
+			preventDefault: function(){},
+			stopPropagation: function(){},
+			target: this.oHeaderContainer._oItemNavigation.getItemDomRefs()[1]
+		}
+		//Act
+		this.oHeaderContainer._oItemNavigation.onsapprevious(oEvt);
+		//Assert
+		assert.deepEqual(document.activeElement, this.oHeaderContainer._oItemNavigation.getItemDomRefs()[0], "Focus is set to the previous item");
+		assert.equal(this.oHeaderContainer._oItemNavigation.getFocusedIndex(), 0, "Focused index of itemnavigation is updated");
 	});
 
 	QUnit.module("Aggregation Handling", {
