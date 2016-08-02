@@ -362,6 +362,18 @@
 			]
 		},
 		{
+			"id": "sap.m.HeaderContainer",
+			"name": "Header Container",
+			"category": "Container",
+			"since": "1.42.0",
+			"samples": [
+				"sap.m.sample.HeaderContainer",
+				"sap.m.sample.HeaderContainerNoDividers",
+				"sap.m.sample.HeaderContainerOH",
+				"sap.m.sample.HeaderContainerVM"
+			]
+		},
+		{
 		  "id": "sap.m.IconTabBar",
 		  "name": "Icon Tab Bar",
 		  "category": "Container",
@@ -2386,6 +2398,26 @@
 		  "id": "sap.m.sample.TileContent",
 		  "name": "Tile Content",
 		  "description": "Shows the universal container for different content types and context information in the footer area."
+		},
+		{
+		  "id": "sap.m.sample.HeaderContainer",
+		  "name": "Header Container - Horizontal Mode",
+		  "description": "The Header Container with horizontal layout. It provides horizontal scrolling on mobile devices (tablet and phone). On a desktop, it provides scroll left and scroll right buttons."
+		},
+		{
+		  "id": "sap.m.sample.HeaderContainerNoDividers",
+		  "name": "Header Container Without Dividers",
+		  "description": "The Header Container without divider lines."
+		},
+		{
+		  "id": "sap.m.sample.HeaderContainerOH",
+		  "name": "Header Container With Object Header",
+		  "description": "The Header Container combined with sap.m.ObjectHeader."
+		},
+		{
+		  "id": "sap.m.sample.HeaderContainerVM",
+		  "name": "Header Container - Vertical Mode",
+		  "description": "The Header Container with a vertical layout and with divider lines."
 		},
 		{
 		  "id": "sap.m.sample.Breadcrumbs",

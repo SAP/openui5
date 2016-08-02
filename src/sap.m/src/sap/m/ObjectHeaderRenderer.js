@@ -1201,7 +1201,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 					oControl._iCountVisTabs = oIconTabHeader.getItems().length;
 					return !!oIconTabHeader.getItems().length;
 				}
-			} else if (sap.suite && sap.suite.ui && sap.suite.ui.commons && oHeaderContainer instanceof sap.suite.ui.commons.HeaderContainer) {
+			} else if (oHeaderContainer.getMetadata().getName() === "sap.m.HeaderContainer" || oHeaderContainer.getMetadata().getName() === "sap.suite.ui.commons.HeaderContainer") {
 				return !!oHeaderContainer.getItems().length;
 			}
 		}
@@ -1229,7 +1229,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 				this._renderChildControl(oRM, oControl, oIconTabHeader);
 				// tell iconTabBar to not render the header
 				oHeaderContainer._bHideHeader = true;
-			} else if (sap.suite && sap.suite.ui && sap.suite.ui.commons && oHeaderContainer instanceof sap.suite.ui.commons.HeaderContainer) {
+			} else if (oHeaderContainer.getMetadata().getName() === "sap.m.HeaderContainer" || oHeaderContainer.getMetadata().getName() === "sap.suite.ui.commons.HeaderContainer") {
 				// render the header container
 				this._renderChildControl(oRM, oControl, oHeaderContainer);
 			} else {
