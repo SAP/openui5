@@ -19,14 +19,24 @@
 		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<!-- Cover all modules starting with sap/ui/core/util/Export (includes e.g. ExportTypeCSV) -->
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-coverage.js"
+			data-sap-ui-cover-only="sap/ui/core/util/Export">
+		</script>
 		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 		<script>
 
-		(function() {
+		// Do not start before modules are loaded
+		QUnit.config.autostart = false;
 
-			jQuery.sap.require("sap.ui.core.util.Export");
-			jQuery.sap.require("sap.ui.core.util.ExportTypeCSV");
+		sap.ui.require([
+			"sap/ui/core/util/Export",
+			"sap/ui/core/util/ExportTypeCSV",
+			"sap/ui/model/Sorter",
+			"sap/ui/model/Filter",
+			"sap/ui/model/json/JSONModel"
+		], function(Export, ExportTypeCSV, Sorter, Filter, JSONModel) {
 
 			var getJSONModelData = function() {
 				return [
@@ -49,12 +59,13 @@
 					{ lastName: "Noring", name: "Constance", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "images/Person.png", gender: "female", rating: 4, money: 3563, birthday: "1968-01-01" },
 					{ lastName: "O'Lantern", name: "Jack", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 2, money: 5.67, birthday: "1968-01-01" },
 					{ lastName: "Tress", name: "Matt", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 4, money: 5.67, birthday: "1968-01-01" },
-					{ lastName: "Mul\r\nti\r\nLi\r\nne", name: "Peter", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 3, money: 5.67, birthday: "1968-01-01" }
+					{ lastName: "Mul\r\nti\r\nLi\r\nne", name: "Peter", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 3, money: 5.67, birthday: "1968-01-01" },
+					{ lastName: "Double \" Quote", name: "\"", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 3, money: 5.67, birthday: "1968-01-01" }
 				];
 			};
 
 			var createJSONModel = function() {
-				return new sap.ui.model.json.JSONModel(getJSONModelData());
+				return new JSONModel(getJSONModelData());
 			};
 
 			var createColumns = function() {
@@ -87,10 +98,11 @@
 				];
 			};
 
-			asyncTest("Generate", 2, function() {
+			QUnit.test("Generate", function(assert) {
+				var done = assert.async();
 
-				new sap.ui.core.util.Export({
-					exportType: new sap.ui.core.util.ExportTypeCSV({
+				new Export({
+					exportType: new ExportTypeCSV({
 						separatorChar: ";"
 					}),
 					models: createJSONModel(),
@@ -120,38 +132,40 @@
 					"Constance;Noring;Yes\r\n" +
 					"Jack;O'Lantern;Yes\r\n" +
 					"Matt;Tress;Yes\r\n" +
-					"Peter;\"Mul\r\nti\r\nLi\r\nne\";Yes";
-					equal(sContent, sExpected, "Generated file content should be correct.");
+					"Peter;\"Mul\r\nti\r\nLi\r\nne\";Yes\r\n" +
+					"\"\"\"\";\"Double \"\" Quote\";Yes";
+					assert.equal(sContent, sExpected, "Generated file content should be correct.");
 				})
 				// ES6 Promise functions should also work
 				.then(function() {
-					ok(true, 'Generate should call success function.');
+					assert.ok(true, 'Generate should call success function.');
 				}, function() {
-					ok(false, 'Generate should call error function.');
+					assert.ok(false, 'Generate should call error function.');
 				})
 				["catch"](function() {
-					ok(false, 'Generate should call catch function.');
+					assert.ok(false, 'Generate should call catch function.');
 				})
 				.fail(function() {
-					ok(false, 'Generate should not fail.');
+					assert.ok(false, 'Generate should not fail.');
 				})
 				.always(function() {
 					this.destroy();
-					start();
+					done();
 				});
 
 			});
 
-			asyncTest("Generate with sorted rows", 1, function() {
+			QUnit.test("Generate with sorted rows", function(assert) {
+				var done = assert.async();
 
-				new sap.ui.core.util.Export({
-					exportType: new sap.ui.core.util.ExportTypeCSV({
+				new Export({
+					exportType: new ExportTypeCSV({
 						separatorChar: ";"
 					}),
 					models: createJSONModel(),
 					rows: {
 						path: '/',
-						sorter: new sap.ui.model.Sorter("lastName", false)
+						sorter: new Sorter("lastName", false)
 					},
 					columns: createColumns()
 				})
@@ -165,6 +179,7 @@
 					"Justin;Case;No\r\n" +
 					"Al;Dente;Yes\r\n" +
 					"Kenya;Dewit;No\r\n" +
+					"\"\"\"\";\"Double \"\" Quote\";Yes\r\n" +
 					"Brighton;Early;Yes\r\n" +
 					"Andy;Friese;Yes\r\n" +
 					"Tish;Hughes;Yes\r\n" +
@@ -182,22 +197,23 @@
 					"Mo;Town;Yes\r\n" +
 					"Matt;Tress;Yes\r\n" +
 					"Lou;Zara;Yes";
-					equal(sContent, sExpected, "Generated file content should be correct.");
+					assert.equal(sContent, sExpected, "Generated file content should be correct.");
 				})
 				.fail(function() {
-					ok(false, 'Generate should not fail.');
+					assert.ok(false, 'Generate should not fail.');
 				})
 				.always(function() {
 					this.destroy();
-					start();
+					done();
 				});
 
 			});
 
-			asyncTest("Generate with old binding syntax", 1, function() {
+			QUnit.test("Generate with old binding syntax", function(assert) {
+				var done = assert.async();
 
-				var oExport = new sap.ui.core.util.Export({
-					exportType: new sap.ui.core.util.ExportTypeCSV({
+				var oExport = new Export({
+					exportType: new ExportTypeCSV({
 						separatorChar: ";"
 					}),
 					models: createJSONModel(),
@@ -205,7 +221,7 @@
 				});
 
 				// old binding syntax should also work
-				oExport.bindRows('/', null, new sap.ui.model.Sorter("lastName", false), [ new sap.ui.model.Filter({ path: "checked", operator: "EQ", value1: true }) ]);
+				oExport.bindRows('/', null, new Sorter("lastName", false), [ new Filter({ path: "checked", operator: "EQ", value1: true }) ]);
 
 				oExport
 				.generate()
@@ -215,6 +231,7 @@
 					"Sandy;Barr;Yes\r\n" +
 					"Tim;Burr;Yes\r\n" +
 					"Al;Dente;Yes\r\n" +
+					"\"\"\"\";\"Double \"\" Quote\";Yes\r\n" +
 					"Brighton;Early;Yes\r\n" +
 					"Andy;Friese;Yes\r\n" +
 					"Tish;Hughes;Yes\r\n" +
@@ -231,22 +248,23 @@
 					"Mo;Town;Yes\r\n" +
 					"Matt;Tress;Yes\r\n" +
 					"Lou;Zara;Yes";
-					equal(sContent, sExpected, "Generated file content should be correct.");
+					assert.equal(sContent, sExpected, "Generated file content should be correct.");
 				})
 				.fail(function() {
-					ok(false, 'Generate should not fail.');
+					assert.ok(false, 'Generate should not fail.');
 				})
 				.always(function() {
 					this.destroy();
-					start();
+					done();
 				});
 
 			});
 
-			asyncTest("Generate without model", 1, function() {
+			QUnit.test("Generate without model", function(assert) {
+				var done = assert.async();
 
-				new sap.ui.core.util.Export({
-					exportType: new sap.ui.core.util.ExportTypeCSV({
+				new Export({
+					exportType: new ExportTypeCSV({
 						separatorChar: ";"
 					}),
 					rows: "{/}",
@@ -254,22 +272,23 @@
 				})
 				.generate()
 				.done(function(sContent) {
-					ok(false, 'Generate should not be successful. Content: ' + sContent);
+					assert.ok(false, 'Generate should not be successful. Content: ' + sContent);
 				})
 				.fail(function(sError) {
-					equal(sError, "Generate is not possible beause no model was set.", 'Generate should fail with correct message.');
+					assert.equal(sError, "Generate is not possible beause no model was set.", 'Generate should fail with correct message.');
 				})
 				.always(function() {
 					this.destroy();
-					start();
+					done();
 				});
 
 			});
 
-			asyncTest("Generate without columns", 1, function() {
+			QUnit.test("Generate without columns", function(assert) {
+				var done = assert.async();
 
-				new sap.ui.core.util.Export({
-					exportType: new sap.ui.core.util.ExportTypeCSV({
+				new Export({
+					exportType: new ExportTypeCSV({
 						separatorChar: ";"
 					}),
 					rows: "{/}",
@@ -277,27 +296,25 @@
 				})
 				.generate()
 				.done(function(sContent) {
-					var sExpected = "\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n";
-					equal(sContent, sExpected, 'Generated file content should be correct.');
+					var sExpected = "\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n";
+					assert.equal(sContent, sExpected, 'Generated file content should be correct.');
 				})
 				.fail(function() {
-					ok(false, 'Generate should not fail.');
+					assert.ok(false, 'Generate should not fail.');
 				})
 				.always(function() {
 					this.destroy();
-					start();
+					done();
 				});
 
 			});
 
-		})();
+			QUnit.start();
+
+		});
 
 		</script>
 	</head>
 	<body>
-	<h1 id="qunit-header">qUnit Page for sap.ui.core.util.Export</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<ol id="qunit-tests"></ol>
-	<div id="main"></div>
+	<div id="qunit"></div>
 </html>
