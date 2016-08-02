@@ -980,7 +980,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * the currently preprocessed view. Therefore, a Promise needs to be passed which resolves with the according cache
 	 * key increment.
 	 *
-	 * <strong>Note:</strong> Caching is only available for XMLViews!
+	 * <strong>Note:</strong> Caching is an experimental feature which is only available for XMLViews!
 	 * @see sap.ui.xmlview
 	 *
 	 * @name sap.ui.core.View.Preprocessor.getCacheKey
@@ -988,6 +988,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * @public
 	 * @static
 	 * @abstract
+	 * @experimental
+	 * @since 1.40
 	 * @param {object} oViewInfo identification information about the calling instance
 	 * @param {string} oViewInfo.id ID
 	 * @param {string} oViewInfo.name Name
