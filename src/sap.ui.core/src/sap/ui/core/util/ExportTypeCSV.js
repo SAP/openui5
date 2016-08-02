@@ -7,6 +7,10 @@ sap.ui.define(['./ExportType'],
 	function(ExportType) {
 	'use strict';
 
+	// Matches CR, LF or double quote
+	// Used to detect whether content needs to be escaped (see #escapeContent)
+	var rNewLineOrDoubleQuote = /[\r\n"]/;
+
 	/**
 	 * Constructor for a new ExportTypeCSV.
 	 *
@@ -80,15 +84,36 @@ sap.ui.define(['./ExportType'],
 	};
 
 	/**
-	 * Escapes the value if needed to prevent issues with separator-char and new-line.
+	 * Escapes the value to prevent issues with separator char, new line and
+	 * double quotes (only if required).
 	 *
+	 * @param {string} sVal content
+	 * @return {string} escaped content
 	 * @private
 	 */
 	CSV.prototype.escapeContent = function(sVal) {
-		if (sVal && (sVal.indexOf(this.getSeparatorChar()) > -1 || sVal.indexOf('\r\n') > -1)) {
-			sVal = sVal.replace(/"/g, '""');
-			sVal = '"' + sVal + '"';
+
+		// No need to escape undefined, null or empty string
+		if (!sVal) {
+			return sVal;
 		}
+
+		// Use indexOf instead of RegExp to be on the save side in case the separator
+		// would need to be escaped (such as \ ^ $ * + ? . ( ) | { } [ ])
+		var bContainsSeparatorChar = sVal.indexOf(this.getSeparatorChar()) > -1;
+
+		// Only wrap content with double quotes if it contains the separator char,
+		// a new line (CR / LF) or a double quote
+		if (bContainsSeparatorChar || rNewLineOrDoubleQuote.test(sVal)) {
+
+			// Escape double quotes by preceding them with another one
+			sVal = sVal.replace(/"/g, '""');
+
+			// Wrap final content with double quotes
+			sVal = '"' + sVal + '"';
+
+		}
+
 		return sVal;
 	};
 
