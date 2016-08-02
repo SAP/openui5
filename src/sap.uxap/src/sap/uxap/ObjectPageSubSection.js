@@ -515,7 +515,7 @@ sap.ui.define([
 		if (this.hasProxy(sAggregationName)) {
 			aAggregation = this._getAggregation(sAggregationName);
 			aAggregation.push(oObject);
-			this._setAggregation(aAggregation);
+			this._setAggregation(sAggregationName, aAggregation);
 
 			if (oObject instanceof BlockBase) {
 				oObject.setParent(this); //let the block know of its parent subsection
@@ -556,7 +556,7 @@ sap.ui.define([
 			aInternalAggregation.forEach(function (oObjectCandidate, iIndex) {
 				if (oObjectCandidate.getId() === oObject.getId()) {
 					aInternalAggregation.splice(iIndex, 1);
-					this._setAggregation(aInternalAggregation);
+					this._setAggregation(sAggregationName, aInternalAggregation);
 					bRemoved = true;
 				}
 				return !bRemoved;
