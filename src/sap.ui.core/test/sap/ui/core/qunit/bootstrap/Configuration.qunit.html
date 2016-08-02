@@ -125,12 +125,14 @@
 		QUnit.test("setLanguage(en) - noop", function(assert) {
 			this.oConfig.setLanguage("en");
 			assert.equal(this.oConfig.getLanguage(), "en", "language still should be 'en'");
+			assert.equal(this.oConfig.getSAPLogonLanguage(), "EN", "SAP Logon language should be 'EN'");
 			assert.equal(this.eventsReceived, 0, "one localizationChange event should have been fired");
 		});
 
 		QUnit.test("setLanguage(de) - simple", function(assert) {
 			this.oConfig.setLanguage("de");
 			assert.equal(this.oConfig.getLanguage(), "de", "language should have changed to 'de'");
+			assert.equal(this.oConfig.getSAPLogonLanguage(), "DE", "SAP Logon language should be 'DE'");
 			assert.equal(this.eventsReceived, 1, "one localizationChange event should have been fired");
 			assert.deepEqual(Object.keys(this.changes[0]), ['language'], "event should have reported 'language' as changed");
 		});
@@ -138,8 +140,32 @@
 		QUnit.test("setLanguage(he) - multi", function(assert) {
 			this.oConfig.setLanguage("he");
 			assert.equal(this.oConfig.getLanguage(), "he", "language should have changed to 'he'");
+			assert.equal(this.oConfig.getSAPLogonLanguage(), "HE", "SAP Logon language should be 'HE'");
 			assert.equal(this.eventsReceived, 1, "one localizationChange event should have been fired");
 			assert.deepEqual(Object.keys(this.changes[0]).sort(), ['language', 'rtl'], "event should have reported 'language' and 'rtl' as changed");
+		});
+
+		QUnit.test("getSAPLogonLanguage()", function(assert) {
+			this.oConfig.setLanguage("en-US");
+			assert.equal(this.oConfig.getSAPLogonLanguage(), "EN", "SAP Logon language should be 'EN'");
+			this.oConfig.setLanguage("de-CH");
+			assert.equal(this.oConfig.getSAPLogonLanguage(), "DE", "SAP Logon language should be 'DE'");
+			this.oConfig.setLanguage("zh-CN");
+			assert.equal(this.oConfig.getSAPLogonLanguage(), "ZH", "SAP Logon language should be 'ZH'");
+			this.oConfig.setLanguage("zh-Hans");
+			assert.equal(this.oConfig.getSAPLogonLanguage(), "ZH", "SAP Logon language should be 'ZH'");
+			this.oConfig.setLanguage("zh-Hans-CN");
+			assert.equal(this.oConfig.getSAPLogonLanguage(), "ZH", "SAP Logon language should be 'ZH'");
+			this.oConfig.setLanguage("zh-TW");
+			assert.equal(this.oConfig.getSAPLogonLanguage(), "ZF", "SAP Logon language should be 'ZF'");
+			this.oConfig.setLanguage("zh-Hant");
+			assert.equal(this.oConfig.getSAPLogonLanguage(), "ZF", "SAP Logon language should be 'ZF'");
+			this.oConfig.setLanguage("zh-Hant-TW");
+			assert.equal(this.oConfig.getSAPLogonLanguage(), "ZF", "SAP Logon language should be 'ZF'");
+			this.oConfig.setLanguage("en-US-x-saptrc");
+			assert.equal(this.oConfig.getSAPLogonLanguage(), "1Q", "SAP Logon language should be '1Q'");
+			this.oConfig.setLanguage("en-US-x-sappsd");
+			assert.equal(this.oConfig.getSAPLogonLanguage(), "2Q", "SAP Logon language should be '2Q'");
 		});
 
 		QUnit.test("setLegacyDateFormat", function(assert) {
