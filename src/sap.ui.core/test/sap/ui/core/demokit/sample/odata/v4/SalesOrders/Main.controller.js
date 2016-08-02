@@ -140,22 +140,25 @@ sap.ui.define([
 			MessageBox.confirm(sMessage, onConfirm, "Sales Order Deletion");
 		},
 
-		onDeleteSalesOrderSchedule : function (oEvent) {
+		onDeleteSalesOrderSchedules : function (oEvent) {
 			var oView = this.getView(),
-				oTable = oView.byId("SalesOrderSchedules"),
-				oScheduleContext = oTable.getSelectedItem().getBindingContext();
+				sGroupId = oView.getModel().getUpdateGroupId(),
+				aPromises = [],
+				oTable = oView.byId("SalesOrderSchedules");
 
-			// Special case: Delete an entity deeply nested in the cache
-			oScheduleContext["delete"](oScheduleContext.getModel().getUpdateGroupId())
-				.then(function () {
-					oTable.removeSelections();
-					oView.getModel("ui").setProperty("/bScheduleSelected", false);
-					MessageBox.alert("Deleted Sales Order Schedule",
-						{icon : MessageBox.Icon.SUCCESS, title : "Success"});
-				}, function (oError) {
-					MessageBox.alert("Could not delete Sales Order Schedule: "
-						+ oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
-				});
+			// Special case: Delete entities deeply nested in the cache
+			oTable.getSelectedContexts().forEach(function (oContext) {
+				aPromises.push(oContext["delete"](sGroupId));
+			});
+			Promise.all(aPromises).then(function () {
+				oTable.removeSelections();
+				oView.getModel("ui").setProperty("/bScheduleSelected", false);
+				MessageBox.alert("Deleted " + aPromises.length + " Sales Order Schedule(s)",
+					{icon : MessageBox.Icon.SUCCESS, title : "Success"});
+			}, function (oError) {
+				MessageBox.alert("Could not delete a Sales Order Schedule: "
+					+ oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
+			});
 		},
 
 		onFilter : function (oEvent) {
@@ -272,7 +275,10 @@ sap.ui.define([
 		},
 
 		onSalesOrderScheduleSelect : function (oEvent) {
-			this.getView().getModel("ui").setProperty("/bScheduleSelected", true);
+			var oView = this.getView();
+
+			oView.getModel("ui").setProperty("/bScheduleSelected",
+				oView.byId("SalesOrderSchedules").getSelectedContexts().length > 0);
 		},
 
 		onSaveSalesOrder : function () {

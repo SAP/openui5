@@ -394,39 +394,49 @@ sap.ui.define([
 	 *   The entity's edit URL
 	 * @param {string} sPath
 	 *   The entity's path within the cache
+	 * @param {function} fnCallback
+	 *   A function which is called after the entity has been deleted from the server and from the
+	 *   cache; the index of the entity is passed as parameter
 	 * @returns {Promise}
 	 *   A promise for the DELETE request
 	 */
-	CollectionCache.prototype._delete = function (sGroupId, sEditUrl, sPath) {
+	CollectionCache.prototype._delete = function (sGroupId, sEditUrl, sPath, fnCallback) {
 		var aSegments = sPath.split("/"),
 			iIndex = Number(aSegments.shift()),
 			vDeleteProperty = aSegments.pop(),
 			that = this;
 
-		return this.read(iIndex, 1, sGroupId, aSegments.join("/"))
-			.then(function (oCacheData) {
-				var oEntity, mHeaders;
+		return this.read(iIndex, 1, sGroupId, aSegments.join("/")).then(function (oCacheData) {
+			var oEntity, mHeaders;
 
-				if (vDeleteProperty) {
-					vDeleteProperty = Number(vDeleteProperty);
-				} else {
-					// deleting at root level
-					oCacheData = that.aElements;
-					vDeleteProperty = iIndex;
-				}
-				oEntity = oCacheData[vDeleteProperty];
-				mHeaders = {"If-Match" : oEntity["@odata.etag"]};
-				sEditUrl += Cache.buildQueryString(that.mQueryOptions, true);
-				return that.oRequestor.request("DELETE", sEditUrl, sGroupId, mHeaders)
-					["catch"](function (oError) {
-						if (oError.status !== 404) {
-							throw oError;
-						} // else: map 404 to 200
-					})
-					.then(function () {
-						oCacheData.splice(vDeleteProperty, 1);
-					});
-			});
+			if (!vDeleteProperty) {
+				// deleting at root level
+				oCacheData = that.aElements;
+				vDeleteProperty = iIndex;
+			}
+			oEntity = oCacheData[vDeleteProperty];
+			if (oEntity["$ui5.deleting"]) {
+				throw new Error("Must not delete twice: " + sEditUrl);
+			}
+			oEntity["$ui5.deleting"] = true;
+			mHeaders = {"If-Match" : oEntity["@odata.etag"]};
+			sEditUrl += Cache.buildQueryString(that.mQueryOptions, true);
+			return that.oRequestor.request("DELETE", sEditUrl, sGroupId, mHeaders)
+				["catch"](function (oError) {
+					if (oError.status !== 404) {
+						delete oEntity["$ui5.deleting"];
+						throw oError;
+					} // else: map 404 to 200
+				})
+				.then(function () {
+					if (oCacheData[vDeleteProperty] !== oEntity) {
+						// oEntity might have moved due to parallel insert/delete
+						vDeleteProperty = oCacheData.indexOf(oEntity);
+					}
+					oCacheData.splice(vDeleteProperty, 1);
+					fnCallback(Number(vDeleteProperty));
+				});
+		});
 	};
 
 	/**
@@ -645,10 +655,13 @@ sap.ui.define([
 	 *   The entity's edit URL
 	 * @param {string} sPath
 	 *   The entity's path within the cache
+	 * @param {function} fnCallback
+	 *   A function which is called after the entity has been deleted from the server and from the
+	 *   cache; the index of the entity is passed as parameter
 	 * @returns {Promise}
 	 *   A promise for the DELETE request
 	 */
-	SingleCache.prototype._delete = function (sGroupId, sEditUrl, sPath) {
+	SingleCache.prototype._delete = function (sGroupId, sEditUrl, sPath, fnCallback) {
 		var aSegments = sPath.split("/"),
 			vDeleteProperty = aSegments.pop(),
 			sParentPath = aSegments.join("/"),
@@ -658,19 +671,29 @@ sap.ui.define([
 			var oEntity = vCacheData[vDeleteProperty],
 				mHeaders = {"If-Match" : oEntity["@odata.etag"]};
 
+			if (oEntity["$ui5.deleting"]) {
+				throw new Error("Must not delete twice: " + sEditUrl);
+			}
+			oEntity["$ui5.deleting"] = true;
 			sEditUrl += Cache.buildQueryString(that.mQueryOptions, true);
 			return that.oRequestor.request("DELETE", sEditUrl, sGroupId, mHeaders)
 				["catch"](function (oError) {
 					if (oError.status !== 404) {
+						delete oEntity["$ui5.deleting"];
 						throw oError;
 					} // else: map 404 to 200
 				})
 				.then(function () {
 					if (Array.isArray(vCacheData)) {
-						vDeleteProperty = Number(vDeleteProperty);
+						if (vCacheData[vDeleteProperty] !== oEntity) {
+							// oEntity might have moved due to parallel insert/delete
+							vDeleteProperty = vCacheData.indexOf(oEntity);
+						}
 						vCacheData.splice(vDeleteProperty, 1);
+						fnCallback(Number(vDeleteProperty));
 					} else {
 						vCacheData[vDeleteProperty] = null;
+						fnCallback();
 					}
 				});
 		});

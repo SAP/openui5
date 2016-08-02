@@ -121,7 +121,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.41.0
 	 */
-	Context.prototype.delete = function (sGroupId) {
+	Context.prototype["delete"] = function (sGroupId) {
 		var that = this;
 
 		return this.requestCanonicalPath().then(function (sCanonicalPath) {

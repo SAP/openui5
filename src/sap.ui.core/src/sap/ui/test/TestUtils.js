@@ -311,6 +311,7 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 					if (sMethod === "DELETE") {
 						mUrls[sUrl] = [204, {}, ""];
 						oServer.respondWith("DELETE", sUrl, mUrls[sUrl]);
+						return false;
 					}
 					if (rBatch.test(sUrl)) {
 						fnBatch = batch.bind(null, sUrl.slice(0, sUrl.indexOf("/$batch") + 1),

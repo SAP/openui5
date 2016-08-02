@@ -2210,7 +2210,8 @@ sap.ui.require([
 						checkUpdate : function () {}
 					},
 					oModelMock = this.mock(this.oModel),
-					aPreviousContexts;
+					aPreviousContexts,
+					oPromise = {};
 
 				oBinding.bUseExtendedChangeDetection = bUseExtendedChangeDetection;
 				// [0, 1, 2, undefined, 4, 5]
@@ -2220,9 +2221,12 @@ sap.ui.require([
 				aPreviousContexts = oBinding.aContexts.slice();
 
 				this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(false);
+				// We assume that we start deleting index 2, but when the response arrives, it has
+				// been moved to index 1.
 				this.mock(oBinding).expects("deleteFromCache")
-					.withExactArgs("myGroup", "EMPLOYEES('1')", "1")
-					.returns(Promise.resolve({}));
+					.withExactArgs("myGroup", "EMPLOYEES('1')", "2", sinon.match.func)
+					.callsArgWith(3, 1)
+					.returns(oPromise);
 				this.mock(oBinding).expects("_fireChange")
 					.withExactArgs({reason : ChangeReason.Remove});
 				this.mock(oBinding.aContexts[2]).expects("destroy");
@@ -2239,24 +2243,25 @@ sap.ui.require([
 					this.mock(oBinding4b).expects("checkUpdate").withExactArgs();
 				}
 
-				return oBinding._delete("myGroup", "EMPLOYEES('1')", oBinding.aContexts[1])
-					.then(function (oResult) {
-						assert.strictEqual(oResult, undefined);
-						assert.strictEqual(oBinding.aContexts.length, 5);
-						assert.strictEqual(oBinding.aContexts[0], aPreviousContexts[0]);
-						assert.strictEqual(oBinding.aContexts[1], aPreviousContexts[1]);
-						assert.notOk(2 in oBinding.aContexts);
-						assert.strictEqual(oBinding.aContexts[3].getIndex(), 3);
-						assert.strictEqual(oBinding.aContexts[3].getPath(), "/EMPLOYEES/3");
-						assert.strictEqual(oBinding.aContexts[4], aPreviousContexts[4]);
-						assert.strictEqual(oBinding.aContexts.length, 5);
-						assert.strictEqual(oBinding.iMaxLength, 5);
-						if (bUseExtendedChangeDetection) {
-							assert.deepEqual(oBinding.aDiff, [{index : 1, type : "delete"}]);
-						} else {
-							assert.deepEqual(oBinding.aDiff, [], "unchanged");
-						}
-					});
+				// code under test
+				assert.strictEqual(
+					oBinding._delete("myGroup", "EMPLOYEES('1')", oBinding.aContexts[2]),
+					oPromise);
+
+				assert.strictEqual(oBinding.aContexts.length, 5);
+				assert.strictEqual(oBinding.aContexts[0], aPreviousContexts[0]);
+				assert.strictEqual(oBinding.aContexts[1], aPreviousContexts[1]);
+				assert.notOk(2 in oBinding.aContexts);
+				assert.strictEqual(oBinding.aContexts[3].getIndex(), 3);
+				assert.strictEqual(oBinding.aContexts[3].getPath(), "/EMPLOYEES/3");
+				assert.strictEqual(oBinding.aContexts[4], aPreviousContexts[4]);
+				assert.strictEqual(oBinding.aContexts.length, 5);
+				assert.strictEqual(oBinding.iMaxLength, 5);
+				if (bUseExtendedChangeDetection) {
+					assert.deepEqual(oBinding.aDiff, [{index : 1, type : "delete"}]);
+				} else {
+					assert.deepEqual(oBinding.aDiff, [], "unchanged");
+				}
 			}
 		);
 	});
@@ -2276,39 +2281,23 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("delete: failure", function (assert) {
-		var oBinding = this.oModel.bindList("/EMPLOYEES"),
-			oError = new Error();
-
-		oBinding.createContexts({start : 0, length : 3}, 3, ChangeReason.Change, false);
-		this.mock(oBinding).expects("deleteFromCache")
-			.withExactArgs("myGroup", "EMPLOYEES('1')", "1")
-			.returns(Promise.reject(oError));
-
-		// code under test
-		return oBinding._delete("myGroup", "EMPLOYEES('1')", oBinding.aContexts[1])
-			.then(function () {
-				assert.ok(false);
-			}, function (oError0) {
-				assert.strictEqual(oError0, oError);
-			});
-	});
-
-	//*********************************************************************************************
 	["$auto", undefined].forEach(function (sGroupId) {
 		QUnit.test("deleteFromCache(" + sGroupId + ") : binding w/ cache", function (assert) {
 			var oBinding = this.oModel.bindList("/EMPLOYEES"),
+				fnCallback = {},
 				oPromise = {};
 
 			this.mock(oBinding).expects("getUpdateGroupId").exactly(sGroupId ? 0 : 1)
 				.withExactArgs().returns("$auto");
 			this.mock(oBinding.oCache).expects("_delete")
-				.withExactArgs("$auto", "EMPLOYEES('1')", "1/EMPLOYEE_2_EQUIPMENTS/3")
+				.withExactArgs("$auto", "EMPLOYEES('1')", "1/EMPLOYEE_2_EQUIPMENTS/3",
+					sinon.match.same(fnCallback))
 				.returns(oPromise);
 			this.mock(this.oModel).expects("addedRequestToGroup").withExactArgs("$auto");
 
 			assert.strictEqual(
-				oBinding.deleteFromCache(sGroupId, "EMPLOYEES('1')", "1/EMPLOYEE_2_EQUIPMENTS/3"),
+				oBinding.deleteFromCache(sGroupId, "EMPLOYEES('1')", "1/EMPLOYEE_2_EQUIPMENTS/3",
+					fnCallback),
 				oPromise);
 		});
 	});
@@ -2318,6 +2307,7 @@ sap.ui.require([
 		var oParentBinding = {
 				deleteFromCache : function () {}
 			},
+			fnCallback = {},
 			oContext = Context.create(this.oModel, oParentBinding, "/TEAMS/42", 42),
 			oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext),
 			oPromise = {};
@@ -2326,17 +2316,19 @@ sap.ui.require([
 			.withExactArgs(42, "TEAM_2_EMPLOYEES", "1/EMPLOYEE_2_EQUIPMENTS/3")
 			.returns("~");
 		this.mock(oParentBinding).expects("deleteFromCache")
-			.withExactArgs("$auto", "EQUIPMENTS('3')", "~")
+			.withExactArgs("$auto", "EQUIPMENTS('3')", "~", sinon.match.same(fnCallback))
 			.returns(oPromise);
 
 		assert.strictEqual(
-			oBinding.deleteFromCache("$auto", "EQUIPMENTS('3')", "1/EMPLOYEE_2_EQUIPMENTS/3"),
+			oBinding.deleteFromCache("$auto", "EQUIPMENTS('3')", "1/EMPLOYEE_2_EQUIPMENTS/3",
+				fnCallback),
 			oPromise);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("deleteFromCache: illegal group ID", function (assert) {
-		var oBinding = this.oModel.bindList("/EMPLOYEES");
+		var oBinding = this.oModel.bindList("/EMPLOYEES"),
+			fnCallback = {};
 
 		assert.throws(function () {
 			oBinding.deleteFromCache("myGroup");
@@ -2349,10 +2341,10 @@ sap.ui.require([
 		}, new Error("Illegal update group ID: myGroup"));
 
 		this.mock(oBinding.oCache).expects("_delete")
-			.withExactArgs("$direct", "EMPLOYEES('1')", "42")
+			.withExactArgs("$direct", "EMPLOYEES('1')", "42", sinon.match.same(fnCallback))
 			.returns(Promise.resolve());
 
-		return oBinding.deleteFromCache("$direct", "EMPLOYEES('1')", "42").then();
+		return oBinding.deleteFromCache("$direct", "EMPLOYEES('1')", "42", fnCallback).then();
 	});
 });
 //TODO integration: 2 entity sets with same $expand, but different $select

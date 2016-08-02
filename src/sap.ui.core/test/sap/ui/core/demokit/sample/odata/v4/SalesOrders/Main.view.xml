@@ -197,18 +197,18 @@
 						<Toolbar design="Transparent">
 							<content>
 								<Button enabled="{ui>/bScheduleSelected}"
-									icon="sap-icon://delete" press="onDeleteSalesOrderSchedule"/>
+									icon="sap-icon://delete" press="onDeleteSalesOrderSchedules"/>
 							</content>
 						</Toolbar>
 						<buttons>
-							<Button icon="sap-icon://save" press="onSaveSalesOrderSchedules"
-								text="Save" type="Accept"/>
+							<Button enabled="{ui>/bRealOData}" icon="sap-icon://save"
+								press="onSaveSalesOrderSchedules" text="Save" type="Accept"/>
 							<Button icon="sap-icon://sys-cancel-2"
 								press="onCancelSalesOrderSchedules" text="Cancel" type="Reject"/>
 						</buttons>
 						<content>
 							<Table id="SalesOrderSchedules" items="{SO_2_SCHDL}"
-									mode="SingleSelectMaster"
+									mode="MultiSelect"
 									selectionChange="onSalesOrderScheduleSelect">
 								<columns>
 									<Column>
