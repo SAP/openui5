@@ -73,6 +73,47 @@
 		assert.ok(jQuery.sap.domById("tc2-footer-text"), "TileContent2 footer was rendered successfully");
 		assert.equal(this.oFeedTileContent._getContentType(), undefined, "Type was get successfully");
 	});
+
+	QUnit.module("Protected property bRenderFooter", {
+		beforeEach : function() {
+			this.oTileContent = new sap.m.TileContent("tileContent", {
+				footer : "Current Quarter",
+				unit : "EUR"
+			});
+			this.oTileContent.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oTileContent.destroy();
+		}
+	});
+
+	QUnit.test("Default Value _bRenderFooter", function(assert) {
+		assert.ok(this.oTileContent._bRenderFooter, "_bRenderFooter is true");
+	});
+
+	QUnit.test("setRenderFooter change value and returns this", function(assert) {
+		var oReturn = this.oTileContent.setRenderFooter(false);
+		assert.ok(!this.oTileContent._bRenderFooter, "_bRenderFooter is false");
+		assert.deepEqual(oReturn, this.oTileContent, "this returned to allow mthoad chaining")
+	});
+
+	QUnit.test("setRenderFooter does not mark the control as invalidated", function(assert) {
+		var bInvalidated = false;
+		this.oTileContent.invalidate = function () {
+			bInvalidated = true;
+		};
+		this.oTileContent.setRenderFooter(false);
+		assert.ok(!bInvalidated, "invalidate was not called");
+	});
+
+	QUnit.test("Footer is not rendered in case _bRenderFooter is false", function(assert) {
+		assert.ok(jQuery.sap.domById("tileContent-footer-text"), "Footer was rendered successfully");
+		this.oTileContent.setRenderFooter(false);
+		this.oTileContent.invalidate();
+		sap.ui.getCore().applyChanges();
+		assert.ok(!jQuery.sap.domById("tileContent-footer-text"), "Footer was not rendered");
+	});
 </script>
 </head>
 

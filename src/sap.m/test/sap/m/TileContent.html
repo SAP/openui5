@@ -111,12 +111,32 @@
 		width: "300px"
 	});
 
+	var oRenderFooterLbl = new sap.m.Label({
+		text : "Render Footer",
+		labelFor : "footer-rendering-button"
+	});
+
+	var oRenderFooterSwitch = new sap.m.Switch({
+		id : "footer-rendering-button",
+		state : true,
+		change : function(oEvent) {
+			var bState = oEvent.getParameter("state");
+			oNewsTileContent.setRenderFooter(bState);
+			oNewsTileContent.invalidate();
+			oFeedTileContent.setRenderFooter(bState);
+			oFeedTileContent.invalidate();
+			oNVConfS.setRenderFooter(bState);
+			oNVConfS.invalidate();
+		}
+	});
+
 	var editableSimpleForm = new sap.ui.layout.form.SimpleForm("controls", {
 		maxContainerCols : 2,
 		editable : true,
 		content : [new sap.ui.core.Title({ // this starts a new group
 			text : "Modify Tiles"
-		}), oUnitLbl, oUnitInput, oFooterLbl, oFooterInput, oSizeLbl, oSizeBtn]
+		}), oUnitLbl, oUnitInput, oFooterLbl, oFooterInput,
+			oRenderFooterLbl, oRenderFooterSwitch, oSizeLbl, oSizeBtn]
 	});
 
 	var buildTC = function(oContent) {
