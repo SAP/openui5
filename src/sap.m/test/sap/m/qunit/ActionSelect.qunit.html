@@ -231,6 +231,121 @@
 				]
 			})
 		});
+
+		module("Keyboard Navigation");
+
+		test("onsaptabnext keyboard handler", function(assert) {
+
+			var oActionSelect = new sap.m.ActionSelect({
+				items: [
+					oItem0 = new sap.ui.core.Item("first_content_left",{
+						key: "0",
+						text: "item 0"
+					}),
+
+					oItem1 = new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					})
+				],
+
+				buttons: [
+					oButton0 = new sap.m.Button({
+						text: "Action 1",
+						enabled: false
+					}),
+
+					oButton1 = new sap.m.Button("firstEnabledButton", {
+						text: "Action 2"
+					}),
+
+					oButton2 = new sap.m.Button({
+						text: "Action 3",
+						enabled: false
+					}),
+
+					oButton3 = new sap.m.Button({
+						text: "Action 4"
+					}),
+
+					oButton4 = new sap.m.Button({
+						text: "Action 5",
+						enabled: false
+					})
+				]
+			});
+
+			// arrange
+			oPage.addContent(oActionSelect);
+			sap.ui.getCore().applyChanges();
+			oActionSelect.open();
+			this.clock.tick(0);
+
+			qutils.triggerKeyboardEvent(oActionSelect.getDomRef(), jQuery.sap.KeyCodes.TAB);
+
+			// assert
+			ok(jQuery.sap.byId('firstEnabledButton').is(":focus"), 'The first enabled button should be focused');
+
+			// cleanup
+			oActionSelect.destroy();
+		});
+
+		test("onsaptabprevious keyboard handler", function(assert) {
+
+			var oActionSelect = new sap.m.ActionSelect("actionSheet", {
+				items: [
+					oItem0 = new sap.ui.core.Item("first_content_left",{
+						key: "0",
+						text: "item 0"
+					}),
+
+					oItem1 = new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					})
+				],
+
+				buttons: [
+					oButton0 = new sap.m.Button({
+						text: "Action 1",
+						enabled: false
+					}),
+
+					oButton1 = new sap.m.Button("firstEnabledButton", {
+						text: "Action 2"
+					}),
+
+					oButton2 = new sap.m.Button({
+						text: "Action 3",
+						enabled: false
+					}),
+
+					oButton3 = new sap.m.Button("lastEnabledButton", {
+						text: "Action 4"
+					}),
+
+					oButton4 = new sap.m.Button({
+						text: "Action 5",
+						enabled: false
+					})
+				]
+			});
+
+			// arrange
+			oPage.addContent(oActionSelect);
+			sap.ui.getCore().applyChanges();
+			oActionSelect.open();
+			this.clock.tick(0);
+
+			qutils.triggerKeyboardEvent(oActionSelect.getDomRef(), jQuery.sap.KeyCodes.TAB, true, false, false);
+
+			// assert
+			ok(jQuery.sap.byId('lastEnabledButton').is(":focus"), 'The last enabled button should be focused');
+
+			// cleanup
+			oActionSelect.destroy();
+		});
+
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
