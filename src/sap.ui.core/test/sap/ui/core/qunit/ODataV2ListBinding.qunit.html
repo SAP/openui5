@@ -856,7 +856,7 @@
 				{ index: 3, type: "insert" }
 			], "2 deletes & 2 inserts");
 			var aContexts = oBinding.getCurrentContexts();
-			aContexts[0].getObject().CategoryName = "Other";
+			oModel.getProperty(aContexts[0].getPath()).CategoryName = "Other";
 			deepEqual(oBinding.getContexts(4, 4).diff, [
 				{ index: 0, type: "delete" },
 			    { index: 0, type: "insert" }
