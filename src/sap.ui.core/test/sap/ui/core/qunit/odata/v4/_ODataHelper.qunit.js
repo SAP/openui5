@@ -1762,7 +1762,7 @@ sap.ui.require([
 			.returns(aDiff);
 
 		// code under test
-		return _ODataHelper.requestDiff(oBinding, aResult, 1).then(function (aDiff0) {
+		return _ODataHelper.requestDiff(oBinding, aResult, 1, 3).then(function (aDiff0) {
 			assert.deepEqual(oBinding.aPreviousData, [{"Category" : "C0", "ID" : "ID0"},
 				{"Category" : "C1", "ID" : "ID1"}, {"Category" : "C2", "ID" : "ID2"}]);
 			assert.strictEqual(aDiff0, aDiff);
@@ -1777,9 +1777,50 @@ sap.ui.require([
 			};
 
 		// code under test
-		return _ODataHelper.requestDiff(oBinding, undefined, 1).then(function (aDiff0) {
+		return _ODataHelper.requestDiff(oBinding, undefined, 1, 100).then(function (aDiff0) {
 			assert.strictEqual(oBinding.aPreviousData, aPreviousData);
 			assert.deepEqual(aDiff0, []);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestDiff, result is shorter", function (assert) {
+		var oBinding = {
+				oContext : {},
+				oModel : {
+					getMetaModel : function () {},
+					resolve : function () {}
+				},
+				sPath : "EMPLOYEE_2_EQUIPMENTS",
+				aPreviousData : [{"ID" : "ID0a"}, {"ID" : "ID1a"}]
+			},
+			aDiff = [/*some diff*/],
+			oKeyPromise = Promise.resolve(["ID"]),
+			oMetaContext = {},
+			oMetaModel = {
+				fetchObject : function () {},
+				getMetaContext : function () {}
+			},
+			oMetaModelMock = this.mock(oMetaModel),
+			aNewData = [{"ID" : "ID0"}],
+			aResult = [{"ID" : "ID0", "Name" : "N0"}];
+
+		this.mock(oBinding.oModel).expects("getMetaModel").withExactArgs().returns(oMetaModel);
+		this.mock(oBinding.oModel).expects("resolve")
+			.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
+			.returns("~");
+		oMetaModelMock.expects("getMetaContext").withExactArgs("~")
+			.returns(oMetaContext);
+		oMetaModelMock.expects("fetchObject").withExactArgs("$Type/$Key", oMetaContext)
+			.returns(oKeyPromise);
+		this.mock(jQuery.sap).expects("arraySymbolDiff")
+			.withExactArgs([{"ID" : "ID0a"}], aNewData)
+			.returns(aDiff);
+
+		// code under test
+		return _ODataHelper.requestDiff(oBinding, aResult, 0, 2).then(function (aDiff0) {
+			assert.deepEqual(oBinding.aPreviousData, [{"ID" : "ID0"}]);
+			assert.strictEqual(aDiff0, aDiff);
 		});
 	});
 
