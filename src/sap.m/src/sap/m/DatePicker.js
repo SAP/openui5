@@ -1304,7 +1304,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
 	 * @param {object} oControlEvent.getParameters
-	 * @param {string} oControlEvent.getParameters.value The new value of the <code>sap.m.DatePicker</code>.
+	 * @param {string} oControlEvent.getParameters.value The new value of the <code>sap.m.DatePicker</code> as specified by <code>valueFormat</code>.
 	 * @param {boolean} oControlEvent.getParameters.valid Indicator for a valid date.
 	 * @public
 	 */
