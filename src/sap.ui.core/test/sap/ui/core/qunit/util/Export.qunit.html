@@ -60,7 +60,8 @@
 					{ lastName: "O'Lantern", name: "Jack", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "male", rating: 2, money: 5.67, birthday: "1968-01-01" },
 					{ lastName: "Tress", name: "Matt", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 4, money: 5.67, birthday: "1968-01-01" },
 					{ lastName: "Mul\r\nti\r\nLi\r\nne", name: "Peter", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 3, money: 5.67, birthday: "1968-01-01" },
-					{ lastName: "Double \" Quote", name: "\"", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 3, money: 5.67, birthday: "1968-01-01" }
+					{ lastName: "Double \" Quote", name: "\"", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 3, money: 5.67, birthday: "1968-01-01" },
+					{ lastName: "Formula", name: "=FOO()", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 3, money: 5.67, birthday: "1968-01-01" }
 				];
 			};
 
@@ -133,7 +134,8 @@
 					"Jack;O'Lantern;Yes\r\n" +
 					"Matt;Tress;Yes\r\n" +
 					"Peter;\"Mul\r\nti\r\nLi\r\nne\";Yes\r\n" +
-					"\"\"\"\";\"Double \"\" Quote\";Yes";
+					"\"\"\"\";\"Double \"\" Quote\";Yes\r\n" +
+					"'=FOO();Formula;Yes";
 					assert.equal(sContent, sExpected, "Generated file content should be correct.");
 				})
 				// ES6 Promise functions should also work
@@ -181,6 +183,7 @@
 					"Kenya;Dewit;No\r\n" +
 					"\"\"\"\";\"Double \"\" Quote\";Yes\r\n" +
 					"Brighton;Early;Yes\r\n" +
+					"'=FOO();Formula;Yes\r\n" +
 					"Andy;Friese;Yes\r\n" +
 					"Tish;Hughes;Yes\r\n" +
 					"Anita;Mann;No\r\n" +
@@ -233,6 +236,7 @@
 					"Al;Dente;Yes\r\n" +
 					"\"\"\"\";\"Double \"\" Quote\";Yes\r\n" +
 					"Brighton;Early;Yes\r\n" +
+					"'=FOO();Formula;Yes\r\n" +
 					"Andy;Friese;Yes\r\n" +
 					"Tish;Hughes;Yes\r\n" +
 					"Peter;\"Mul\r\n" +
@@ -296,7 +300,7 @@
 				})
 				.generate()
 				.done(function(sContent) {
-					var sExpected = "\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n";
+					var sExpected = "\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n";
 					assert.equal(sContent, sExpected, 'Generated file content should be correct.');
 				})
 				.fail(function() {
