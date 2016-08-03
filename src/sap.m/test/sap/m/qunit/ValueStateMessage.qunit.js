@@ -3,6 +3,20 @@ sap.ui.test.qunit.delayTestStart();
 
 QUnit.module("getId");
 
+
+QUnit.test("it should return a empty value state message ID", function(assert) {
+
+	// system under test
+	var oInput = new sap.m.InputBase();
+	var oValueStateMessage = new sap.m.delegate.ValueState();
+
+	// assert
+	assert.strictEqual(oValueStateMessage.getId(), "");
+
+	// cleanup
+	oInput.destroy();
+});
+
 QUnit.test("it should return the value state message ID", function(assert) {
 
 	// system under test
@@ -40,19 +54,6 @@ QUnit.test("it should return the value state message ID", function(assert) {
 	CustomControl = null;
 	delete window.CustomControl;
 	delete window.CustomControlRenderer;
-});
-
-QUnit.test("it should return a empty value state message ID", function(assert) {
-
-	// system under test
-	var oInput = new sap.m.InputBase();
-	var oValueStateMessage = new sap.m.delegate.ValueState();
-
-	// assert
-	assert.strictEqual(oValueStateMessage.getId(), "");
-
-	// cleanup
-	oInput.destroy();
 });
 
 QUnit.module("getOpenDuration");
