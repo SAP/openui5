@@ -31,8 +31,10 @@
  *   in the wrong direction.
  *  3. Custom CSS style should be set on the root DOM and not the pesudo element.
  */
-html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL):before {
-	transform: scale(-1,1);
-	-ms-transform: scale(-1,1); /* IE 9 */
-	-webkit-transform: scale(-1,1); /* Safari and Chrome */
+html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL) {
+	&:before, &:after /* some controls render the icon using 'after' pesudo element */ {
+		transform: scale(-1,1);
+		-ms-transform: scale(-1,1); /* IE 9 */
+		-webkit-transform: scale(-1,1); /* Safari and Chrome */
+	}
 }
