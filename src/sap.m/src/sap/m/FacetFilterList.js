@@ -646,6 +646,25 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	};
 
 	/**
+	 * Handles the selection of all items at once.
+	 * @param {boolean} bSelected All selected or not
+	 * @private
+	 */
+	FacetFilterList.prototype._handleSelectAll = function(bSelected) {
+		this.getItems().forEach(function (oItem) {
+			if (bSelected) {
+				this._addSelectedKey(oItem.getKey(), oItem.getText());
+			} else {
+				this._removeSelectedKey(oItem.getKey(), oItem.getText());
+			}
+			oItem.setSelected(bSelected, true);
+		}, this);
+
+		this.setActive(this.getActive() || bSelected);
+		jQuery.sap.delayedCall(0, this, this._updateSelectAllCheckBox);
+	};
+
+	/**
 	 * This method overrides runs when setSelected is called from ListItemBase.
 	 * Here we update the selected keys cache based on whether the item is being selected or not.
 	 * We also update the select all checkbox state and list active state based on the selected state of all items taken as a whole.

@@ -1724,7 +1724,42 @@
 
 			openPopover(oFacetFilter, 0);
 		});
+		//BCP: 1680160703
+		test("FacetFilterList._handleSelectAll does not inform the list for item selection changes", function() {
+			var oFFL = new sap.m.FacetFilterList({
+				items: [
+					new sap.m.FacetFilterItem({
+						key: "one",
+						text: "One",
+						selected: true
+					}),
+					new sap.m.FacetFilterItem({
+						key: "two",
+						text: "Two",
+						selected: false
+					}),
+					new sap.m.FacetFilterItem({
+						key: "three",
+						text: "Three",
+						selected: false
+					})
+				]
+			}),
+				oItemSetSelectedSpy = sinon.spy(sap.m.ListItemBase.prototype, "setSelected");
 
+			//act
+			oFFL._handleSelectAll(true);
+
+			//assert
+			ok(oItemSetSelectedSpy.calledThrice, "setSelected called 3 times");
+			ok(oItemSetSelectedSpy.args[0][1], "1st time called with bDontNotifyParent: true");
+			ok(oItemSetSelectedSpy.args[1][1], "2nd time called with bDontNotifyParent: true");
+			ok(oItemSetSelectedSpy.args[2][1], "3rd time called with bDontNotifyParent: true");
+
+			//clean
+			sap.m.ListItemBase.prototype.setSelected.restore();
+			oFFL.destroy();
+		});
 
 		module("Events", {
 			beforeEach: function () {
