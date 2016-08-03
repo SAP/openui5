@@ -440,6 +440,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 */
 	ItemNavigation.prototype.setTableMode = function(bTableMode, bTableList) {
 		this.bTableMode = bTableMode;
+		if (this.bIsRTL === undefined) {
+			this.bIsRTL = sap.ui.getCore().getConfiguration().getRTL();
+		}
 		this.bTableList = bTableMode ? bTableList : false;
 		return this;
 	};
@@ -529,7 +532,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 				var iOldIndex = iIndex;
 				if (oEvent && oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_RIGHT) {
 					if (iCol < this.iColumns - 1) {
-						iIndex += 1;
+						iIndex += this.bIsRTL ? -1 : 1;
+					}
+				} else if (oEvent && oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_LEFT) {
+					if (iCol > 1) {
+						iIndex -= this.bIsRTL ? -1 : 1;
 					}
 				} else {
 					if (iCol > 1) {
