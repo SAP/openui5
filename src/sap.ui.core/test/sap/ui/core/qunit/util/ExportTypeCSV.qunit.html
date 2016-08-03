@@ -61,32 +61,109 @@
 
 			QUnit.test("escapeContent (default separatorChar)", function(assert) {
 				var oCSV = new ExportTypeCSV();
+
 				assert.equal(oCSV.escapeContent(undefined), undefined, "Undefined");
 				assert.equal(oCSV.escapeContent(null), null, "Null");
 				assert.equal(oCSV.escapeContent(''), '', "Empty string");
+
 				assert.equal(oCSV.escapeContent('abc'), 'abc', "Plain string");
 				assert.equal(oCSV.escapeContent('a;b;c'), 'a;b;c', "Does not contain current separator char");
 				assert.equal(oCSV.escapeContent('a,b,c'), '"a,b,c"', "Contains separator char");
 				assert.equal(oCSV.escapeContent('a"b"c'), '"a""b""c"', "Contains double quote");
+
 				assert.equal(oCSV.escapeContent('a\rb\rc'), '"a\rb\rc"', "Contains new line (CR)");
 				assert.equal(oCSV.escapeContent('a\nb\nc'), '"a\nb\nc"', "Contains new line (LF)");
 				assert.equal(oCSV.escapeContent('a\r\nb\r\nc'), '"a\r\nb\r\nc"', "Contains new line (CRLF)");
+
+				assert.equal(oCSV.escapeContent('=FOO'), '\'=FOO', "Formula (=)");
+				assert.equal(oCSV.escapeContent('+FOO'), '\'+FOO', "Formula (+)");
+				assert.equal(oCSV.escapeContent('-FOO'), '\'-FOO', "Formula (-)");
+				assert.equal(oCSV.escapeContent('@FOO'), '\'@FOO', "Formula (@)");
+
+				assert.equal(oCSV.escapeContent('=FOO;BAR'), '\'=FOO;BAR', "Formula (=) with non separator char");
+				assert.equal(oCSV.escapeContent('+FOO;BAR'), '\'+FOO;BAR', "Formula (+) with non separator char");
+				assert.equal(oCSV.escapeContent('-FOO;BAR'), '\'-FOO;BAR', "Formula (-) with non separator char");
+				assert.equal(oCSV.escapeContent('@FOO;BAR'), '\'@FOO;BAR', "Formula (@) with non separator char");
+
+				assert.equal(oCSV.escapeContent('=FOO,BAR'), '"\'=FOO,BAR"', "Formula (=) with separator char");
+				assert.equal(oCSV.escapeContent('+FOO,BAR'), '"\'+FOO,BAR"', "Formula (+) with separator char");
+				assert.equal(oCSV.escapeContent('-FOO,BAR'), '"\'-FOO,BAR"', "Formula (-) with separator char");
+				assert.equal(oCSV.escapeContent('@FOO,BAR'), '"\'@FOO,BAR"', "Formula (@) with separator char");
+
+				assert.equal(oCSV.escapeContent('=FOO"BAR'), '"\'=FOO""BAR"', "Formula (=) with double quote");
+				assert.equal(oCSV.escapeContent('+FOO"BAR'), '"\'+FOO""BAR"', "Formula (+) with double quote");
+				assert.equal(oCSV.escapeContent('-FOO"BAR'), '"\'-FOO""BAR"', "Formula (-) with double quote");
+				assert.equal(oCSV.escapeContent('@FOO"BAR'), '"\'@FOO""BAR"', "Formula (@) with double quote");
+
+				assert.equal(oCSV.escapeContent('=FOO\rBAR'), '"\'=FOO\rBAR"', "Formula (=) with new line (CR)");
+				assert.equal(oCSV.escapeContent('+FOO\rBAR'), '"\'+FOO\rBAR"', "Formula (+) with new line (CR)");
+				assert.equal(oCSV.escapeContent('-FOO\rBAR'), '"\'-FOO\rBAR"', "Formula (-) with new line (CR)");
+				assert.equal(oCSV.escapeContent('@FOO\rBAR'), '"\'@FOO\rBAR"', "Formula (@) with new line (CR)");
+
+				assert.equal(oCSV.escapeContent('=FOO\nBAR'), '"\'=FOO\nBAR"', "Formula (=) with new line (LF)");
+				assert.equal(oCSV.escapeContent('+FOO\nBAR'), '"\'+FOO\nBAR"', "Formula (+) with new line (LF)");
+				assert.equal(oCSV.escapeContent('-FOO\nBAR'), '"\'-FOO\nBAR"', "Formula (-) with new line (LF)");
+				assert.equal(oCSV.escapeContent('@FOO\nBAR'), '"\'@FOO\nBAR"', "Formula (@) with new line (LF)");
+
+				assert.equal(oCSV.escapeContent('=FOO\r\nBAR'), '"\'=FOO\r\nBAR"', "Formula (=) with new line (CRLF)");
+				assert.equal(oCSV.escapeContent('+FOO\r\nBAR'), '"\'+FOO\r\nBAR"', "Formula (+) with new line (CRLF)");
+				assert.equal(oCSV.escapeContent('-FOO\r\nBAR'), '"\'-FOO\r\nBAR"', "Formula (-) with new line (CRLF)");
+				assert.equal(oCSV.escapeContent('@FOO\r\nBAR'), '"\'@FOO\r\nBAR"', "Formula (@) with new line (CRLF)");
+
 			});
 
 			QUnit.test("escapeContent (custom separatorChar)", function(assert) {
 				var oCSV = new ExportTypeCSV({
 					separatorChar: ";"
 				});
+
 				assert.equal(oCSV.escapeContent(undefined), undefined, "Undefined");
 				assert.equal(oCSV.escapeContent(null), null, "Null");
 				assert.equal(oCSV.escapeContent(''), '', "Empty string");
+
 				assert.equal(oCSV.escapeContent('abc'), 'abc', "Plain string");
 				assert.equal(oCSV.escapeContent('a,b,c'), 'a,b,c', "Does not contain current separator char");
 				assert.equal(oCSV.escapeContent('a;b;c'), '"a;b;c"', "Contains separator char");
 				assert.equal(oCSV.escapeContent('a"b"c'), '"a""b""c"', "Contains double quote");
+
 				assert.equal(oCSV.escapeContent('a\rb\rc'), '"a\rb\rc"', "Contains new line (CR)");
 				assert.equal(oCSV.escapeContent('a\nb\nc'), '"a\nb\nc"', "Contains new line (LF)");
 				assert.equal(oCSV.escapeContent('a\r\nb\r\nc'), '"a\r\nb\r\nc"', "Contains new line (CRLF)");
+
+				assert.equal(oCSV.escapeContent('=FOO'), '\'=FOO', "Formula (=)");
+				assert.equal(oCSV.escapeContent('+FOO'), '\'+FOO', "Formula (+)");
+				assert.equal(oCSV.escapeContent('-FOO'), '\'-FOO', "Formula (-)");
+				assert.equal(oCSV.escapeContent('@FOO'), '\'@FOO', "Formula (@)");
+
+				assert.equal(oCSV.escapeContent('=FOO,BAR'), '\'=FOO,BAR', "Formula (=) with non separator char");
+				assert.equal(oCSV.escapeContent('+FOO,BAR'), '\'+FOO,BAR', "Formula (+) with non separator char");
+				assert.equal(oCSV.escapeContent('-FOO,BAR'), '\'-FOO,BAR', "Formula (-) with non separator char");
+				assert.equal(oCSV.escapeContent('@FOO,BAR'), '\'@FOO,BAR', "Formula (@) with non separator char");
+
+				assert.equal(oCSV.escapeContent('=FOO;BAR'), '"\'=FOO;BAR"', "Formula (=) with separator char");
+				assert.equal(oCSV.escapeContent('+FOO;BAR'), '"\'+FOO;BAR"', "Formula (+) with separator char");
+				assert.equal(oCSV.escapeContent('-FOO;BAR'), '"\'-FOO;BAR"', "Formula (-) with separator char");
+				assert.equal(oCSV.escapeContent('@FOO;BAR'), '"\'@FOO;BAR"', "Formula (@) with separator char");
+
+				assert.equal(oCSV.escapeContent('=FOO"BAR'), '"\'=FOO""BAR"', "Formula (=) with double quote");
+				assert.equal(oCSV.escapeContent('+FOO"BAR'), '"\'+FOO""BAR"', "Formula (+) with double quote");
+				assert.equal(oCSV.escapeContent('-FOO"BAR'), '"\'-FOO""BAR"', "Formula (-) with double quote");
+				assert.equal(oCSV.escapeContent('@FOO"BAR'), '"\'@FOO""BAR"', "Formula (@) with double quote");
+
+				assert.equal(oCSV.escapeContent('=FOO\rBAR'), '"\'=FOO\rBAR"', "Formula (=) with new line (CR)");
+				assert.equal(oCSV.escapeContent('+FOO\rBAR'), '"\'+FOO\rBAR"', "Formula (+) with new line (CR)");
+				assert.equal(oCSV.escapeContent('-FOO\rBAR'), '"\'-FOO\rBAR"', "Formula (-) with new line (CR)");
+				assert.equal(oCSV.escapeContent('@FOO\rBAR'), '"\'@FOO\rBAR"', "Formula (@) with new line (CR)");
+
+				assert.equal(oCSV.escapeContent('=FOO\nBAR'), '"\'=FOO\nBAR"', "Formula (=) with new line (LF)");
+				assert.equal(oCSV.escapeContent('+FOO\nBAR'), '"\'+FOO\nBAR"', "Formula (+) with new line (LF)");
+				assert.equal(oCSV.escapeContent('-FOO\nBAR'), '"\'-FOO\nBAR"', "Formula (-) with new line (LF)");
+				assert.equal(oCSV.escapeContent('@FOO\nBAR'), '"\'@FOO\nBAR"', "Formula (@) with new line (LF)");
+
+				assert.equal(oCSV.escapeContent('=FOO\r\nBAR'), '"\'=FOO\r\nBAR"', "Formula (=) with new line (CRLF)");
+				assert.equal(oCSV.escapeContent('+FOO\r\nBAR'), '"\'+FOO\r\nBAR"', "Formula (+) with new line (CRLF)");
+				assert.equal(oCSV.escapeContent('-FOO\r\nBAR'), '"\'-FOO\r\nBAR"', "Formula (-) with new line (CRLF)");
+				assert.equal(oCSV.escapeContent('@FOO\r\nBAR'), '"\'@FOO\r\nBAR"', "Formula (@) with new line (CRLF)");
 			});
 
 			QUnit.start();
