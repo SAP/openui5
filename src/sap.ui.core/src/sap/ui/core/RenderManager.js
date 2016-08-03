@@ -51,7 +51,7 @@ sap.ui.define([
 	 * @see sap.ui.getCore()
 	 *
 	 * @extends sap.ui.base.Object
-	 * @author SAG SE
+	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
 	 * @alias sap.ui.core.RenderManager
