@@ -811,6 +811,9 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 
 				placement: sap.m.PlacementType.Bottom,
 				beforeOpen: function(oEvent) {
+					if (that._displayedList) {
+						that._displayedList._setSearchValue("");
+					}
 
 					this.setCustomHeader(that._createFilterItemsSearchFieldBar(that._displayedList));
 					var subHeaderBar = this.getSubHeader();
