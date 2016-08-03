@@ -1724,12 +1724,99 @@
 
 			openPopover(oFacetFilter, 0);
 		});
+		//BCP: 1680160703
+		test("FacetFilterList._handleSelectAll does not inform the list for item selection changes", function() {
+			var oFFL = new sap.m.FacetFilterList({
+				items: [
+					new sap.m.FacetFilterItem({
+						key: "one",
+						text: "One",
+						selected: true
+					}),
+					new sap.m.FacetFilterItem({
+						key: "two",
+						text: "Two",
+						selected: false
+					}),
+					new sap.m.FacetFilterItem({
+						key: "three",
+						text: "Three",
+						selected: false
+					})
+				]
+			}),
+				oItemSetSelectedSpy = sinon.spy(sap.m.ListItemBase.prototype, "setSelected");
 
+			//act
+			oFFL._handleSelectAll(true);
 
-		module("Events");
+			//assert
+			ok(oItemSetSelectedSpy.calledThrice, "setSelected called 3 times");
+			ok(oItemSetSelectedSpy.args[0][1], "1st time called with bDontNotifyParent: true");
+			ok(oItemSetSelectedSpy.args[1][1], "2nd time called with bDontNotifyParent: true");
+			ok(oItemSetSelectedSpy.args[2][1], "3rd time called with bDontNotifyParent: true");
+
+			//clean
+			sap.m.ListItemBase.prototype.setSelected.restore();
+			oFFL.destroy();
+		});
+
+		module("Events", {
+			beforeEach: function () {
+				//Arrange
+				this.oFacetFilter = new sap.m.FacetFilter({
+					lists: [
+						new sap.m.FacetFilterList({
+							title: "List 1",
+							items: [
+								new sap.m.FacetFilterItem({
+									key: "one",
+									text: "One",
+									selected: true
+								}),
+								new sap.m.FacetFilterItem({
+									key: "two",
+									text: "Two",
+									selected: false
+								}),
+								new sap.m.FacetFilterItem({
+									key: "three",
+									text: "Three",
+									selected: false
+								})
+							]
+						}),
+						new sap.m.FacetFilterList({
+							title: "List 2",
+							items: [
+								new sap.m.FacetFilterItem({
+									key: "one",
+									text: "One",
+									selected: true
+								}),
+								new sap.m.FacetFilterItem({
+									key: "two",
+									text: "Two",
+									selected: false
+								}),
+								new sap.m.FacetFilterItem({
+									key: "three",
+									text: "Three",
+									selected: false
+								})
+							]
+						})
+					]
+				});
+				this.oFacetFilter.placeAt("content");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.oFacetFilter.destroy();
+			}
+		});
 
 		asyncTest("FacetFilterList.listOpen", function() {
-
 			var oListOpenEvent = null;
 			var oFF = new sap.m.FacetFilter();
 			var oFFL = new sap.m.FacetFilterList({
@@ -1911,26 +1998,7 @@
 		});
 
 		function testListCloseCalledOnce(sSubtestName, sScenario) {
-			var oFF = new sap.m.FacetFilter({lists:[
-				new sap.m.FacetFilterList({
-					title: "List 1",
-					items: [
-						new sap.m.FacetFilterItem({
-							key: "one",
-							text: "One",
-							selected: true
-						}),
-						new sap.m.FacetFilterItem({
-							key: "two",
-							text: "Two",
-							selected: false
-						}),
-					]
-				})
-			]});
-			oFF.placeAt("content");
-			sap.ui.getCore().applyChanges();
-
+			var oFF = this.oFacetFilter;
 			var oFFL = oFF.getLists()[0];
 
 			var listCloseListener = function(oEvent) {

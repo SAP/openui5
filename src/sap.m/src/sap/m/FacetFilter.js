@@ -1490,7 +1490,7 @@ oPopover.setContentWidth("30%");
 			selected: bSelected,
 			select : function(oEvent) {
 				oCheckbox.setSelected(oEvent.getParameter("selected"));
-				handleSelectAll(oEvent.getParameter("selected"));
+				oList._handleSelectAll(oEvent.getParameter("selected"));
 			}
 		});
 
@@ -1504,17 +1504,12 @@ oPopover.setContentWidth("30%");
 		oBar.addEventDelegate({
 			ontap: function(oEvent) {
 				if (oEvent.srcControl === this) {
-					handleSelectAll(oCheckbox.getSelected());
+					oList._handleSelectAll(oCheckbox.getSelected());
 				}
 			}
 		}, oBar);
-		oBar.addContentLeft(oCheckbox);
 
-		var handleSelectAll = function(bSelected) {
-				oList.getItems().forEach(function (oItem) {
-					oItem.setSelected(bSelected);
-				}, this);
-		};
+		oBar.addContentLeft(oCheckbox);
 		oBar.addStyleClass("sapMFFCheckbar");
 
 		return oBar;
