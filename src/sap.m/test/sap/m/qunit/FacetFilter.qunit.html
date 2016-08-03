@@ -1676,6 +1676,54 @@
 			destroyFF(oFF);
 		});
 
+		test("FacetFilterList._setSearchValue", function() {
+			var oFacetFilterList = new sap.m.FacetFilterList(),
+				sPredefinedSearchValue = "a";
+
+			//Act
+			oFacetFilterList._setSearchValue(sPredefinedSearchValue);
+
+			//Assert
+			equals(oFacetFilterList._getSearchValue(), sPredefinedSearchValue, "sets the correct _searchValue");
+		});
+
+		asyncTest("_searchValue is reset before popover opens", function() {
+			var oFacetFilter = new sap.m.FacetFilter(),
+				oFacetFilterList = new sap.m.FacetFilterList({
+					items: [
+						new sap.m.FacetFilterItem({
+							key: "one",
+							text: "One",
+							selected: true
+						}),
+						new sap.m.FacetFilterItem({
+							key: "two",
+							text: "Two",
+							selected: false
+						})
+					]
+				}),
+				oPopover;
+
+			oFacetFilter.addList(oFacetFilterList);
+
+			oFacetFilter.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			var oResetSearchSpy = sinon.spy(oFacetFilterList, "_setSearchValue");
+
+			oPopover = oFacetFilter._getPopover();
+
+			oPopover.attachEventOnce("afterOpen", function(oEvent) {
+				start();
+
+				//Assert
+				ok(oResetSearchSpy.calledWith(""), "Search value is reset");
+				oFacetFilterList._setSearchValue.restore();
+			});
+
+			openPopover(oFacetFilter, 0);
+		});
 
 
 		module("Events", {
