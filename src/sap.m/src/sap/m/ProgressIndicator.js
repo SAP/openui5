@@ -90,7 +90,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var that = this;
 
 		// validation of fPercentValue
-		if (typeof (fPercentValue) !== "number" || fPercentValue < 0 || fPercentValue > 100) {
+		if (!isValidPercentValue(fPercentValue)) {
 			fPercentValue = 0;
 			jQuery.sap.log.warning(this + ": percentValue (" + fPercentValue + ") is not correct! Setting the default percentValue:0.");
 		}
@@ -166,6 +166,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			enabled: this.getEnabled()
 		};
 	};
+
+	function isValidPercentValue(value) {
+		return (typeof (value) === 'number') && !isNaN(value) && value >= 0 && value <= 100;
+	}
 
 	return ProgressIndicator;
 
