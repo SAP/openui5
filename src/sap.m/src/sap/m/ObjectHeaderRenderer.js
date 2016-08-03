@@ -140,28 +140,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 
 	/**
-	 * Returns the array of icons from ObjectHeader.
+	 * Returns the array of markers from ObjectHeader.
 	 *
 	 * @param {sap.m.ObjectHeader}
-	 *            oOH the ObjectHeader that contains icons
+	 *            oOH the ObjectHeader that contains markers
 	 *
-	 * @returns array of {sap.m.Image} controls
+	 * @returns array of {sap.m.ObjectMarker} controls
 	 *
 	 * @private
 	 */
 	ObjectHeaderRenderer._getMarkers = function(oOH) {
-		var aMarkers = [];
-
-		if (oOH.getShowMarkers()) {
-			if (oOH.getMarkFavorite()) {
-				aMarkers.push(oOH._getMarkerFavorite());
-			}
-			if (oOH.getMarkFlagged()) {
-				aMarkers.push(oOH._getMarkerFlagged());
-			}
-		}
-
-		return aMarkers;
+		return oOH._getVisibleMarkers();
 	};
 
 	/**
@@ -1108,32 +1097,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			sTextDir = oControl.getTitleTextDirection(),
 			bPageRTL = sap.ui.getCore().getConfiguration().getRTL();
 
-		// load icons based on control state
-		if (oControl.getShowMarkers()) {
-			if (oControl.getMarkFavorite()) {
-				aMarkers.push(oControl._getMarkerFavorite());
-			}
+		// load markers based on control state
+		aMarkers = oControl._getVisibleMarkers();
 
-			if (oControl.getMarkFlagged()) {
-				aMarkers.push(oControl._getMarkerFlagged());
-			}
+		// render markers
+		oRM.write("<span");
+		oRM.addClass("sapMObjStatusMarker");
 
-			// render markers
-			oRM.write("<span");
-			oRM.addClass("sapMObjStatusMarker");
-
-			if ((sTextDir === sap.ui.core.TextDirection.LTR && bPageRTL) || (sTextDir === sap.ui.core.TextDirection.RTL && !bPageRTL)) {
-				oRM.addClass("sapMObjStatusMarkerOpposite");
-			}
-			oRM.writeClasses();
-			oRM.writeAttribute("id", oControl.getId() + "-markers");
-
-			oRM.write(">");
-			for (var i = 0; i < aMarkers.length; i++) {
-				this._renderChildControl(oRM, oControl, aMarkers[i]);
-			}
-			oRM.write("</span>");
+		if ((sTextDir === sap.ui.core.TextDirection.LTR && bPageRTL) || (sTextDir === sap.ui.core.TextDirection.RTL && !bPageRTL)) {
+			oRM.addClass("sapMObjStatusMarkerOpposite");
 		}
+		oRM.writeClasses();
+		oRM.writeAttribute("id", oControl.getId() + "-markers");
+
+		oRM.write(">");
+		for (var i = 0; i < aMarkers.length; i++) {
+			this._renderChildControl(oRM, oControl, aMarkers[i]);
+		}
+		oRM.write("</span>");
 	};
 
 	/**
@@ -1321,7 +1302,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 */
 	ObjectHeaderRenderer._renderResponsiveTitleAndArrow = function(oRM, oOH, nCutLen) {
 		var sOHTitle, sEllipsis = '', sTextDir = oOH.getTitleTextDirection();
-		var bMarkers = (oOH.getShowMarkers() && (oOH.getMarkFavorite() || oOH.getMarkFlagged()));
+		var bMarkers = !!oOH._getVisibleMarkers().length;
 		var sTitleLevel = (oOH.getTitleLevel() === sap.ui.core.TitleLevel.Auto) ? sap.ui.core.TitleLevel.H1 : oOH.getTitleLevel();
 
 		oRM.write("<" + sTitleLevel + ">");

@@ -264,7 +264,6 @@
 
 	test("FavoriteRendered", function() {
 
-		ok(ohFlagFav.getAggregation("_markerFavorite"), "Internal aggregation for the favorite marker is created");
 		notEqual(jQuery.sap.domById(ohFlagFavId + "-favorite"), null, "Favorite marker should be rendered.");
 		ok(jQuery.sap.byId(ohFlagFavId + "-favorite").hasClass("sapMObjectMarker"), "Favorite is sapMObjectMarker.");
 
@@ -273,7 +272,6 @@
 
 	test("FlagRendered", function() {
 
-		ok(ohFlagFav.getAggregation("_markerFlagged"), "Internal aggregation for the flag marker is created");
 		notEqual(jQuery.sap.domById(ohFlagFavId + "-flag"), null, "Flag marker should be rendered.");
 		ok(jQuery.sap.byId(ohFlagFavId + "-flag").hasClass("sapMObjectMarker"), "Flag is sapMObjectMarker.");
 
@@ -650,12 +648,9 @@
 		ohFlagAndFavoriteMarker.placeAt("flagAndFavorite-oh");
 		sap.ui.getCore().applyChanges();
 
-		ok(!ohFlagAndFavoriteMarker.getAggregation("_markerFlagged"), "Internal aggregation for the flag marker doesn't exist");
-
 		ohFlagAndFavoriteMarker.setMarkFlagged(true);
 		sap.ui.getCore().applyChanges();
 
-		ok(ohFlagAndFavoriteMarker.getAggregation("_markerFlagged"), "Internal aggregation for the flag marker is created");
 		equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 1, "Only one marker should be rendered");
 		ok(jQuery.sap.byId(ohFlagAndFavoriteMarkerId + "-flag").hasClass("sapMObjectMarker"), "Flag is sapMObjectMarker");
 
@@ -678,8 +673,6 @@
 		sap.ui.getCore().applyChanges();
 
 		equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 0, "No markers should be rendered");
-		ok(!ohFlagAndFavoriteMarker.getAggregation("_markerFlagged"), "Internal aggregation for the flag marker doesn't exist");
-		ok(!ohFlagAndFavoriteMarker.getAggregation("_markerFavorite"), "Internal aggregation for the favorite marker doesn't exist");
 
 		// cleanup
 		ohFlagAndFavoriteMarker.destroy();
@@ -701,8 +694,6 @@
 
 		equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 1, "Only one marker should be rendered");
 		ok(jQuery.sap.byId(ohFlagAndFavoriteMarkerId + "-favorite").hasClass("sapMObjectMarker"), "Favorite is sapMObjectMarker.");
-		ok(!ohFlagAndFavoriteMarker.getAggregation("_markerFlagged"), "Internal aggregation for the flag marker doesn't exist");
-		ok(ohFlagAndFavoriteMarker.getAggregation("_markerFavorite"), "Internal aggregation for the favorite marker is created");
 
 		// cleanup
 		ohFlagAndFavoriteMarker.destroy();
@@ -723,8 +714,6 @@
 		sap.ui.getCore().applyChanges();
 
 		equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 0, "No markers should be rendered");
-		ok(!ohFlagAndFavoriteMarker.getAggregation("_markerFlagged"), "Internal aggregation for the flag marker doesn't exist");
-		ok(!ohFlagAndFavoriteMarker.getAggregation("_markerFavorite"), "Internal aggregation for the favorite marker doesn't exist");
 
 		// cleanup
 		ohFlagAndFavoriteMarker.destroy();
@@ -747,8 +736,6 @@
 		sap.ui.getCore().applyChanges();
 
 		equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 0, "No markers should be rendered");
-		ok(!ohFlagAndFavoriteMarker.getAggregation("_markerFlagged"), "Internal aggregation for the flag marker doesn't exist");
-		ok(!ohFlagAndFavoriteMarker.getAggregation("_markerFavorite"), "Internal aggregation for the favorite marker doesn't exist");
 		notEqual(jQuery.sap.domById("ohefafm1"), null, "Attribute should be rendered.");
 
 		// cleanup
@@ -1420,6 +1407,29 @@
 			oObjectHeader.destroy();
 		});
 
+		module("Rendering Markers aggregation");
+
+		test("Render Draft and Unsaved", function() {
+			var oObjectHeader = new sap.m.ObjectHeader({
+				id: "markersOH",
+				title : "Markers agregation",
+				number : "3.624",
+				numberUnit : "EUR",
+				markers: [
+						new sap.m.ObjectMarker({id: "draft", type: sap.m.ObjectMarkerType.Draft}),
+						new sap.m.ObjectMarker({id: "unsaved", type: sap.m.ObjectMarkerType.Unsaved})
+						]
+			});
+
+			// System under test
+			oObjectHeader.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			ok(sap.ui.getCore().byId("draft"), "marker draft should be rendered.");
+			ok(sap.ui.getCore().byId("draft"), "marker unsaved should be rendered.");
+
+			oObjectHeader.destroy();
+		});
 </script>
 </head>
 

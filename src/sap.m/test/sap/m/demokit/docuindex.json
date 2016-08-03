@@ -628,7 +628,8 @@
 			"sap.m.sample.ObjectHeaderResponsiveII",
 			"sap.m.sample.ObjectHeaderResponsiveIII",
 			"sap.m.sample.ObjectHeaderResponsiveIV",
-			"sap.m.sample.ObjectHeaderResponsiveV"
+			"sap.m.sample.ObjectHeaderResponsiveV",
+			"sap.m.sample.ObjectHeaderMarkers"
 		  ]
 		},
 		{
@@ -1592,7 +1593,7 @@
 		{
 		  "id": "sap.m.sample.ObjectHeaderFavFlag",
 		  "name": "Object Header - Favorite & Flag",
-		  "description": "The Object Header can indicate wether the object is a favorite, or has been flagged for further action. Changing these states is done elsewhere."
+		  "description": "The Object Header can indicate wether the object is a favorite, or has been flagged for further action. Changing these states is done elsewhere.<br><br><b>Note:</b> The <code>markFlagged</code> and <code>markFavorite</code> properties are deprecated as of version 1.42. We recommend using the <code>markers</code> aggregation instead."
 		},
 		{
 		  "id": "sap.m.sample.ObjectHeaderTitleSel",
@@ -1633,6 +1634,11 @@
 		  "id": "sap.m.sample.ObjectHeaderResponsiveV",
 		  "name": "Object Header Responsive V",
 		  "description": "This is a responsive Object Header without a number and with a Title, 3 Statuses/Attributes."
+		},
+		{
+		  "id": "sap.m.sample.ObjectHeaderMarkers",
+		  "name": "Object Header - markers aggregation",
+		  "description": "This sample shows the different states of an Object Header, which can be set using the <code>markers</code>."
 		},
 		{
 		  "id": "sap.m.sample.ObjectIdentifier",

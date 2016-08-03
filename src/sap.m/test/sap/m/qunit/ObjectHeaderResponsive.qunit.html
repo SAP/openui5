@@ -1106,7 +1106,78 @@
 					ok($sTitle.find( "h1" ), "Title has titleLevel H1");
 				});
 
+				module("Rendering Markers aggregation");
 
+				test("Render Draft and Favorite", function() {
+					var oObjectHeader = createObjectHeader({
+						title : "Markers agregation",
+						number : "3.624",
+						numberUnit : "EUR",
+						markers: [
+								new sap.m.ObjectMarker({id: "draft", type: sap.m.ObjectMarkerType.Draft}),
+								new sap.m.ObjectMarker({id: "favorite", type: sap.m.ObjectMarkerType.Favorite})
+								]
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+
+					ok(jQuery.sap.domById("draft"), "marker draft should be rendered.");
+					ok(jQuery.sap.domById("favorite"), "marker favorite should be rendered.");
+
+					oObjectHeader.destroy();
+				});
+
+				test("Render marker by setting the markers aggregation", function() {
+					var oObjectHeader = createObjectHeader({
+						id: "markersOH",
+						title : "Markers agregation",
+						number : "3.624",
+						numberUnit : "EUR",
+					});
+					var marker = new sap.m.ObjectMarker({id: "draft", type: sap.m.ObjectMarkerType.Draft});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+
+					var $allRows = jQuery("#markersOH .sapMObjStatusMarker");
+					ok($allRows.length === 0, "There are no markers");
+
+					oObjectHeader.insertMarker(marker, 0);
+					sap.ui.getCore().applyChanges();
+
+					ok(jQuery.sap.domById("draft"), "marker draft should be rendered.");
+
+					oObjectHeader.destroy();
+				});
+
+				test("Removing marker", function() {
+					var oObjectHeader = createObjectHeader({
+						id: "markersOlI",
+						title : "Markers agregation",
+						number : "3.624",
+						numberUnit : "EUR",
+						markers: [
+								new sap.m.ObjectMarker({id: "flag", type: sap.m.ObjectMarkerType.Flagged})
+								]
+					});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+
+					ok(jQuery.sap.domById("flag"), "marker flag should be rendered.");
+
+					oObjectHeader.removeAllMarkers();
+					sap.ui.getCore().applyChanges();
+
+					var $allRows = jQuery("#markersOH .sapMObjStatusMarker");
+					ok($allRows.length === 0, "There are no markers");
+
+					oObjectHeader.destroy();
+				});
 		</script>
 
 	</head>
