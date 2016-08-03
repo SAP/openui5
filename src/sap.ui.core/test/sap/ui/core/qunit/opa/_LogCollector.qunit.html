@@ -84,6 +84,20 @@
 				assert.strictEqual(oInstance.getAndClearLog(), "", "Log was empty");
 			});
 
+			QUnit.test("Should guard against memory leaking", function (assert) {
+				var i;
+
+				for(i = 0; i <= 1000; i++) {
+					oLogger.debug(sLogMessage, sLogDetails);
+				}
+
+				var aLogs = oInstance.getAndClearLog().split("\n");
+				assert.strictEqual(aLogs.length, 1, "Got 1 logs");
+				assert.strictEqual(aLogs[0], "Opa has received 500 logs without a consumer - " +
+				"maybe you loaded Opa.js inside of an IFrame? " +
+				"The logs are now cleared to prevent memory leaking -  sap.ui.test._LogCollector");
+			});
+
 			QUnit.module("destruction");
 
 			QUnit.test("Should not listen to logs after the log listener is destroyed", function (assert) {

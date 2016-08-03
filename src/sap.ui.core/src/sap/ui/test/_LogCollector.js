@@ -4,6 +4,10 @@
 sap.ui.define(["sap/ui/base/Object", "jquery.sap.global"], function (UI5Object, $) {
 	"use strict";
 	var oSingleton;
+	var sModuleName = "sap.ui.test._LogCollector";
+	var iDefaultLogLevel = $.sap.log.Level.DEBUG;
+	var _oLogger = $.sap.log.getLogger(sModuleName, iDefaultLogLevel);
+
 	/**
 	* @class A central place to collect all the logs during an OPA test
 	 * listens to $.sap.log.* to collect the logs
@@ -13,7 +17,7 @@ sap.ui.define(["sap/ui/base/Object", "jquery.sap.global"], function (UI5Object, 
 	 * @author SAP SE
 	 * @since 1.41
 	*/
-	var _LogCollector = UI5Object.extend("sap.ui.test._LogCollector", /** @lends sap.ui.test._LogCollector.prototype */ {
+	var _LogCollector = UI5Object.extend(sModuleName, /** @lends sap.ui.test._LogCollector.prototype */ {
 		constructor: function () {
 			this._aLogs = [];
 			this._oListener = {
@@ -22,7 +26,17 @@ sap.ui.define(["sap/ui/base/Object", "jquery.sap.global"], function (UI5Object, 
 						return;
 					}
 					var sLogText = oLogEntry.message + " - " + oLogEntry.details + " " + oLogEntry.component;
-					this._aLogs.push(sLogText);
+					var aLogs = this._aLogs;
+
+					aLogs.push(sLogText);
+
+					// guard against memory leaking - if OPA is required the logCollector will be instanciated.
+					if (aLogs.length > 500) {
+						aLogs.length = 0;
+						_oLogger.error("Opa has received 500 logs without a consumer - " +
+							"maybe you loaded Opa.js inside of an IFrame? " +
+							"The logs are now cleared to prevent memory leaking");
+					}
 				}.bind(this)
 			};
 			$.sap.log.addLogListener(this._oListener);
@@ -48,7 +62,7 @@ sap.ui.define(["sap/ui/base/Object", "jquery.sap.global"], function (UI5Object, 
 
 	// Even if you set the log level of the UI5 core to Error opa will log everything down to the debug level
 	// and it will be collected by instances of the LogCollector.
-	_LogCollector.DEFAULT_LEVEL_FOR_OPA_LOGGERS = $.sap.log.Level.DEBUG;
+	_LogCollector.DEFAULT_LEVEL_FOR_OPA_LOGGERS = iDefaultLogLevel;
 
 	return _LogCollector;
 }, true /* export */);

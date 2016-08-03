@@ -24,11 +24,14 @@
 					"sap/ui/test/Opa5",
 					"sap/ui/test/Opa",
 					"sap/ui/test/opaQunit",
+					"sap/ui/test/matchers/PropertyStrictEquals",
 					"sap/ui/qunit/qunit-css",
 					"sap/ui/qunit/qunit-junit",
 					"sap/ui/qunit/qunit-coverage"
 				],
-				function (Opa5, Opa, opaTest) {
+				function (Opa5, Opa, opaTest, PropertyStrictEquals) {
+					"use strict";
+
 					opaTest("Should time out", function (oOpa) {
 						oOpa.waitFor({
 							check: function () {
@@ -83,6 +86,21 @@
 								Opa.stopQueue();
 								return false;
 							}
+						});
+					});
+
+					opaTest("Should start an IFrame and log something there", function (oOpa) {
+						// loading of an iframe takes quite some time
+						QUnit.config.testTimeout = 15000;
+						oOpa.iStartMyAppInAFrame("./miniUI5Site.html");
+
+						oOpa.waitFor({
+							viewName: "myView",
+							id: "myButton",
+							matchers: new PropertyStrictEquals({
+								name: "text",
+								value: "this text is not the text of the button"
+							})
 						});
 					});
 

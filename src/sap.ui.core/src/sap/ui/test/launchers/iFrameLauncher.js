@@ -4,8 +4,9 @@
 sap.ui.define([
 		'jquery.sap.global',
 		'sap/ui/thirdparty/URI',
-		'sap/ui/Device'
-	], function (jQuery, URI, Device) {
+		'sap/ui/Device',
+		'sap/ui/test/_LogCollector'
+	], function (jQuery, URI, Device, LogCollector) {
 	"use strict";
 	var sLogPrefix = "sap.ui.test.Opa5",
 		$ = jQuery,
@@ -69,6 +70,9 @@ sap.ui.define([
 		bUi5Loaded = true;
 		setFrameVariables();
 		modifyIFrameNavigation();
+
+		// forward OPA log messages from the inner iframe to the Log listener of the outer frame
+		oFrameJQuery.sap.log.addLogListener(LogCollector.getInstance()._oListener);
 	}
 
 	/**
