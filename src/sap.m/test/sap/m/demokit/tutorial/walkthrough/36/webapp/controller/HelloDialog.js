@@ -12,8 +12,18 @@ sap.ui.define([
 				this._oDialog = sap.ui.xmlfragment("sap.ui.demo.wt.view.HelloDialog", this);
 				// connect dialog to view (models, lifecycle)
 				oView.addDependent(this._oDialog);
+				// detach the dialog from the view's lifecycle
+				oView.attachBeforeExit(function () {
+					oView.removeDependent(this._oDialog);
+				}.bind(this));
 			}
 			return this._oDialog;
+		},
+
+		destroy: function () {
+			if (this._oDialog) {
+				this._oDialog.destroy();
+			}
 		},
 
 		open : function (oView) {

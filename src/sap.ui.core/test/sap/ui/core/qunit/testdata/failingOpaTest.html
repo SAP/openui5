@@ -43,9 +43,8 @@
 								// global assert on purpose so QUnit does not know wich test fired the assertion
 								QUnit.assert.ok(true, "Ok from test 2");
 							}
-						})
+						});
 					});
-
 
 					opaTest("Should add a log message from the 3rd test it must not appear in test 4", function (oOpa) {
 						oOpa.waitFor({
@@ -57,9 +56,8 @@
 								// global assert on purpose so QUnit does not know wich test fired the assertion
 								QUnit.assert.ok(true, "Ok from test 3");
 							}
-						})
+						});
 					});
-
 
 					opaTest("Should log that we were searching for a control with a global id " +
 							"but it was not found when QUnit times out", function (oOpa) {
@@ -84,6 +82,49 @@
 								return false;
 							}
 						});
+					});
+
+					QUnit.module("Exceptions in callbacks");
+
+					opaTest("Should show an error thrown by a check", function (oOpa) {
+						oOpa.waitFor({
+							check: function () {
+								throw new Error("Doh! An exception in 'check'.");
+							}
+						});
+					});
+
+					opaTest("Should show an error thrown by a matcher", function (oOpa) {
+						oOpa.waitFor({
+							matchers: function () {
+								throw new Error("Doh! An exception in 'matchers'.");
+							}
+						});
+					});
+
+					opaTest("Should show an error thrown by an actions", function (oOpa) {
+						oOpa.waitFor({
+							actions: function () {
+								throw new Error("Doh! An exception in 'actions'.");
+							}
+						})
+					});
+
+					opaTest("Should show an error thrown by a success", function (oOpa) {
+						oOpa.waitFor({
+							success: function () {
+								throw new Error("Doh! An exception in 'success'.");
+							}
+						})
+					});
+
+					opaTest("Should show an error thrown together with actions", function (oOpa) {
+						oOpa.waitFor({
+							actions: function () {},
+							success: function () {
+								throw new Error("Doh! An exception in 'success'.");
+							}
+						})
 					});
 
 					QUnit.start();

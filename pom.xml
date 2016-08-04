@@ -38,6 +38,7 @@
 		<module>src/sap.ui.unified</module>
 		<module>src/sap.ui.layout</module>
 		<module>src/sap.m</module>
+		<module>src/sap.f</module>
 		<module>src/sap.ui.commons</module>
 		<module>src/sap.ui.table</module>
 		<module>src/sap.ui.ux3</module>

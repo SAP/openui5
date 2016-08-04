@@ -1,0 +1,14 @@
+{
+  "explored": {
+    "entitiesDefaults": {
+      "appComponent": "CA-UI5-CTR",
+      "formFactors": "ML"
+    },
+    "samplesRef": {
+      "namespace": "sap.f.sample",
+      "ref": "test-resources/sap/f/demokit/sample"
+    },
+    "entities": [],
+    "samples": []
+  }
+}

@@ -652,7 +652,7 @@ sap.ui.define([
 
 		/**
 		 * Computes the "diff" needed for extended change detection for the given list binding and
-		 * the given start index.
+		 * the given start index and length.
 		 *
 		 * @param {sap.ui.model.odata.v4.ODataListBinding} oBinding
 		 *   The list binding
@@ -661,13 +661,15 @@ sap.ui.define([
 		 *   available e.g. in case of a missing $expand in the binding's parent binding
 		 * @param {number} iStart
 		 *   The start index of the range for which the OData entities have been read
+		 * @param {number} iLength
+		 *   The length of the range for which the OData entities have been read
 		 * @returns {Promise}
 		 *   A promise resolving with the array of differences in aData compared to data
 		 *   retrieved in previous requests or undefined if key properties are not available
 		 *   (for a collection valued structural property) or missing in the data so that the diff
 		 *   cannot be computed
 		 */
-		requestDiff : function (oBinding, aData, iStart) {
+		requestDiff : function (oBinding, aData, iStart, iLength) {
 			var oMetaModel,
 				oMetaContext,
 				aNewData,
@@ -680,13 +682,18 @@ sap.ui.define([
 			 */
 			function diff() {
 				var i,
+					iDataLength = aData.length,
 					aDiff,
-					iLength = aData.length;
+					aPreviousData = oBinding.aPreviousData;
 
 				aDiff = jQuery.sap.arraySymbolDiff(
-					oBinding.aPreviousData.slice(iStart, iStart + iLength), aNewData);
-				for (i = 0; i < iLength; i += 1) {
-					oBinding.aPreviousData[iStart + i] = aNewData[i];
+					aPreviousData.slice(iStart, iStart + iDataLength), aNewData);
+				for (i = 0; i < iDataLength; i += 1) {
+					aPreviousData[iStart + i] = aNewData[i];
+				}
+				if (iDataLength < iLength) {
+					// short read -> there is no data beyond the read length
+					aPreviousData.length = iStart + iDataLength;
 				}
 				return aDiff;
 			}

@@ -600,344 +600,350 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 		Element.prototype.destroy.call(this, bSuppressInvalidate);
 	};
 
-	(function() {
-		var sPreventedEvents = "focusin focusout keydown keypress keyup mousedown touchstart touchmove mouseup touchend click",
-			oBusyIndicatorDelegate = {
-				onAfterRendering: function() {
-					if (this.getBusy() && this.$() && !this._busyIndicatorDelayedCallId && !this.$("busyIndicator").length) {
-						// Also use the BusyIndicatorDelay when a control is initialized
-						// with "busy = true". If the delayed call was already initialized
-						// skip any further call if the control was re-rendered while
-						// the delay is running.
-						var iDelay = this.getBusyIndicatorDelay();
 
-						// Only do it via timeout if there is a delay. Otherwise append the
-						// BusyIndicator immediately
-						if (iDelay) {
-							this._busyIndicatorDelayedCallId = jQuery.sap.delayedCall(iDelay, this, fnAppendBusyIndicator);
-						} else {
-							fnAppendBusyIndicator.call(this);
-						}
+	// ---- local busy indicator handling ---------------------------------------------------------------------------------------
+
+	var sPreventedEvents = "focusin focusout keydown keypress keyup mousedown touchstart touchmove mouseup touchend click",
+		rForbiddenTags = /^(?:area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr)$/i,
+		oBusyIndicatorDelegate = {
+			onAfterRendering: function() {
+				if (this.getBusy() && this.getDomRef() && !this._busyIndicatorDelayedCallId && !this.getDomRef("busyIndicator")) {
+					// Also use the BusyIndicatorDelay when a control is initialized
+					// with "busy = true". If the delayed call was already initialized
+					// skip any further call if the control was re-rendered while
+					// the delay is running.
+					var iDelay = this.getBusyIndicatorDelay();
+
+					// Only do it via timeout if there is a delay. Otherwise append the
+					// BusyIndicator immediately
+					if (iDelay) {
+						this._busyIndicatorDelayedCallId = jQuery.sap.delayedCall(iDelay, this, fnAppendBusyIndicator);
+					} else {
+						fnAppendBusyIndicator.call(this);
 					}
 				}
-			},
+			}
+		};
 
-			fnAppendBusyIndicator = function() {
-				var $this = this.$(this._sBusySection),
-					aForbiddenTags = ["area", "base", "br", "col", "embed", "hr", "img", "input", "keygen", "link", "menuitem", "meta", "param", "source", "track", "wbr"];
+	function fnAppendBusyIndicator() {
+		var $this = this.$(this._sBusySection);
 
-				//If there is a pending delayed call to append the busy indicator, we can clear it now
-				if (this._busyIndicatorDelayedCallId) {
-					jQuery.sap.clearDelayedCall(this._busyIndicatorDelayedCallId);
-					delete this._busyIndicatorDelayedCallId;
+		//If there is a pending delayed call to append the busy indicator, we can clear it now
+		if (this._busyIndicatorDelayedCallId) {
+			jQuery.sap.clearDelayedCall(this._busyIndicatorDelayedCallId);
+			delete this._busyIndicatorDelayedCallId;
+		}
+
+		// if no busy section/control jquery instance could be retrieved -> the control is not part of the dom anymore
+		// this might happen in certain scenarios when e.g. a dialog is closed faster than the busyIndicatorDelay
+		if (!$this || $this.length === 0) {
+			jQuery.sap.log.warning("BusyIndicator could not be rendered. The outer control instance is not valid anymore.");
+			return;
+		}
+
+		//Check if DOM Element where the busy indicator is supposed to be placed can handle content
+		var sTag = $this.get(0) && $this.get(0).tagName;
+		if ( rForbiddenTags.test(sTag) ) {
+			jQuery.sap.log.warning("BusyIndicator cannot be placed in elements with tag '" + sTag + "'.");
+			return;
+		}
+
+		//check if the control has static position, if this is the case we need to change it,
+		//because we relay on relative/absolute/fixed positioning
+		if ($this.css('position') == 'static') {
+			this._busyStoredPosition = 'static';
+			$this.css('position', 'relative');
+		}
+
+		//Append busy indicator to control DOM
+		this._$BusyIndicator = BusyIndicatorUtils.addHTML($this, this.getId() + "-busyIndicator");
+
+		BusyIndicatorUtils.animateIE9.start(this._$BusyIndicator);
+		fnHandleInteraction.call(this, true);
+	}
+
+	function fnHandleInteraction(bBusy) {
+		var $this = this.$(this._sBusySection);
+
+		if (bBusy) {
+			// all focusable elements must be processed for the "tabindex=-1"
+			// attribute. The dropdownBox for example has got two focusable elements
+			// (arrow and input field) and both shouldn't be focusable. Otherwise
+			// the input field will still be focused on keypress (tab) because the
+			// browser focuses the element
+			var $TabRefs = $this.find(":sapTabbable"),
+				that = this;
+
+			this._busyTabIndices = [
+				// if only the control itself without any nested tabrefs was found,
+				// block the events as well
+				{
+					ref : $this,
+					tabindex : $this.attr('tabindex')
+				}
+			];
+
+			$this.attr('tabindex', -1);
+			$this.bind(sPreventedEvents, preventDefaultAndStopPropagation);
+
+			$TabRefs.each(function(iIndex, oObject) {
+				var $Ref = jQuery(oObject),
+					iTabIndex = $Ref.attr('tabindex');
+
+				if (iTabIndex < 0) {
+					return true;
 				}
 
-				// if no busy section/control jquery instance could be retrieved -> the control is not part of the dom anymore
-				// this might happen in certain scenarios when e.g. a dialog is closed faster than the busyIndicatorDelay
-				if (!$this || $this.length === 0) {
-					jQuery.sap.log.warning("BusyIndicator could not be rendered. The outer control instance is not valid anymore.");
-					return;
-				}
+				that._busyTabIndices.push({
+					ref: $Ref,
+					tabindex: iTabIndex
+				});
 
-				//Check if DOM Element where the busy indicator is supposed to be placed can handle content
-				var sTag = $this.get(0) && $this.get(0).tagName;
-				if (sTag && aForbiddenTags.indexOf(sTag.toLowerCase()) >= 0) {
-					jQuery.sap.log.warning("BusyIndicator cannot be placed in elements with tag '" + sTag + "'.");
-					return;
-				}
-
-				//check if the control has static position, if this is the case we need to change it,
-				//because we relay on relative/absolute/fixed positioning
-				if ($this.css('position') == 'static') {
-					this._busyStoredPosition = 'static';
-					$this.css('position', 'relative');
-				}
-
-				//Append busy indicator to control DOM
-				this._$BusyIndicator = BusyIndicatorUtils.addHTML($this, this.getId() + "-busyIndicator");
-
-				BusyIndicatorUtils.animateIE9.start(this._$BusyIndicator);
-				fnHandleInteraction.apply(this, [true]);
-			},
-			fnHandleInteraction = function(bBusy) {
-				var $this = this.$(this._sBusySection);
-
-				if (bBusy) {
-					// all focusable elements must be processed for the "tabindex=-1"
-					// attribute. The dropdownBox for example has got two focusable elements
-					// (arrow and input field) and both shouldn't be focusable. Otherwise
-					// the input field will still be focused on keypress (tab) because the
-					// browser focuses the element
-					var $TabRefs = $this.find(":sapTabbable"),
-						that = this;
-					this._busyTabIndices = [];
-
-					// if only the control itself without any tabrefs was found
-					// block the events as well
-					this._busyTabIndices.push({
-						ref : $this,
-						tabindex : $this.attr('tabindex')
-					});
-					$this.attr('tabindex', -1);
-					$this.bind(sPreventedEvents, this._preserveEvents);
-
-					$TabRefs.each(function(iIndex, oObject) {
-						var $Ref = jQuery(oObject),
-							iTabIndex = $Ref.attr('tabindex');
-
-						if (iTabIndex < 0) {
-							return true;
-						}
-
-						that._busyTabIndices.push({
-							ref: $Ref,
-							tabindex: iTabIndex
-						});
-
-						$Ref.attr('tabindex', -1);
-						$Ref.bind(sPreventedEvents, this._preserveEvents);
-					});
-				} else {
-					if (this._busyTabIndices) {
-						jQuery.each(this._busyTabIndices, function(iIndex, oObject) {
-							if (oObject.tabindex) {
-								// if there was no tabindex before it was added by the BusyIndicator
-								// the previous value is "undefined". And this value can't be set
-								// so the attribute remains at the DOM-ref. So if there was no tabindex
-								// attribute before the whole attribute should be removed again.
-								oObject.ref.attr('tabindex', oObject.tabindex);
-							} else {
-								oObject.ref.removeAttr('tabindex');
-							}
-
-							oObject.ref.unbind(sPreventedEvents, this._preserveEvents);
-						});
+				$Ref.attr('tabindex', -1);
+				$Ref.bind(sPreventedEvents, preventDefaultAndStopPropagation);
+			});
+		} else {
+			if (this._busyTabIndices) {
+				this._busyTabIndices.forEach(function(oObject) {
+					if (oObject.tabindex) {
+						// if there was no tabindex before it was added by the BusyIndicator
+						// the previous value is "undefined". And this value can't be set
+						// so the attribute remains at the DOM-ref. So if there was no tabindex
+						// attribute before the whole attribute should be removed again.
+						oObject.ref.attr('tabindex', oObject.tabindex);
+					} else {
+						oObject.ref.removeAttr('tabindex');
 					}
-					this._busyTabIndices = [];
-				}
-			};
 
-		Control.prototype._preserveEvents = function(oEvent) {
-			jQuery.sap.log.debug("Local Busy Indicator Event Suppressed: " + oEvent.type);
-			oEvent.preventDefault();
-			oEvent.stopImmediatePropagation();
-		};
-
-		/**
-		 * Set the controls busy state.
-		 *
-		 * @param {boolean} bBusy The new busy state to be set
-		 * @return {sap.ui.core.Control} <code>this</code> to allow method chaining
-		 * @public
-		 */
-		Control.prototype.setBusy = function (bBusy, sBusySection /* this is an internal parameter to apply partial local busy indicator for a specific section of the control */) {
-			this._sBusySection = sBusySection;
-			var $this = this.$(this._sBusySection);
-
-			//If the new state is already set, we don't need to do anything
-			if (bBusy == this.getProperty("busy")) {
-				return this;
+					oObject.ref.unbind(sPreventedEvents, preventDefaultAndStopPropagation);
+				});
 			}
+			this._busyTabIndices = null;
+		}
+	}
 
-			//No rerendering
-			this.setProperty("busy", bBusy, /*bSuppressInvalidate*/ true);
+	function preventDefaultAndStopPropagation(oEvent) {
+		jQuery.sap.log.debug("Local Busy Indicator Event Suppressed: " + oEvent.type);
+		oEvent.preventDefault();
+		oEvent.stopImmediatePropagation();
+	}
 
-			if (bBusy) {
-				this.addDelegate(oBusyIndicatorDelegate, false, this);
-			} else {
-				this.removeDelegate(oBusyIndicatorDelegate);
-				//If there is a pending delayed call we clear it
-				if (this._busyIndicatorDelayedCallId) {
-					jQuery.sap.clearDelayedCall(this._busyIndicatorDelayedCallId);
-					delete this._busyIndicatorDelayedCallId;
-				}
-			}
+	/**
+	 * Set the controls busy state.
+	 *
+	 * @param {boolean} bBusy The new busy state to be set
+	 * @return {sap.ui.core.Control} <code>this</code> to allow method chaining
+	 * @public
+	 */
+	Control.prototype.setBusy = function (bBusy, sBusySection /* this is an internal parameter to apply partial local busy indicator for a specific section of the control */) {
+		this._sBusySection = sBusySection;
+		var $this = this.$(this._sBusySection);
 
-			//If no domref exists stop here.
-			if (!this.getDomRef()) {
-				return this;
-			}
-
-			if (bBusy) {
-				if (this.getBusyIndicatorDelay() <= 0) {
-					fnAppendBusyIndicator.apply(this);
-				} else {
-					this._busyIndicatorDelayedCallId = jQuery.sap.delayedCall(this.getBusyIndicatorDelay(), this, fnAppendBusyIndicator);
-				}
-			} else {
-				//Remove the busy indicator from the DOM
-				this.$("busyIndicator").remove();
-				this.$().removeClass('sapUiLocalBusy');
-				//Unset the actual DOM Element´s 'aria-busy'
-				this.$().removeAttr('aria-busy');
-
-				//Reset the position style to its original state
-				if (this._busyStoredPosition) {
-					$this.css('position', this._busyStoredPosition);
-					delete this._busyStoredPosition;
-				}
-				fnHandleInteraction.apply(this, [false]);
-
-				BusyIndicatorUtils.animateIE9.stop(this._$BusyIndicator);
-			}
+		//If the new state is already set, we don't need to do anything
+		if (bBusy == this.getProperty("busy")) {
 			return this;
-		};
+		}
 
-		/**
-		 * Check if the control is currently in busy state
-		 *
-		 * @public
-		 * @deprecated Use getBusy instead
-		 * @return boolean
-		 */
-		Control.prototype.isBusy = function() {
-			return this.getProperty("busy");
-		};
+		//No rerendering
+		this.setProperty("busy", bBusy, /*bSuppressInvalidate*/ true);
 
-		/**
-		 * Define the delay, after which the busy indicator will show up
-		 *
-		 * @public
-		 * @param {int} iDelay The delay in ms
-		 * @return {sap.ui.core.Control} <code>this</code> to allow method chaining
-		 */
-		Control.prototype.setBusyIndicatorDelay = function(iDelay) {
-			this.setProperty("busyIndicatorDelay", iDelay, /*bSuppressInvalidate*/ true);
-			return this;
-		};
-
-		/**
-		 * Cleanup all timers which might have been created by the busy indicator
-		 *
-		 * @private
-		 */
-		Control.prototype._cleanupBusyIndicator = function() {
+		if (bBusy) {
+			this.addDelegate(oBusyIndicatorDelegate, false, this);
+		} else {
+			this.removeDelegate(oBusyIndicatorDelegate);
+			//If there is a pending delayed call we clear it
 			if (this._busyIndicatorDelayedCallId) {
 				jQuery.sap.clearDelayedCall(this._busyIndicatorDelayedCallId);
 				delete this._busyIndicatorDelayedCallId;
 			}
-			BusyIndicatorUtils.animateIE9.stop(this._$BusyIndicator);
-		};
+		}
 
-		/**
-		 * Returns a copy of the field group IDs array. Modification of the field group IDs
-		 * need to call {@link #setFieldGroupIds setFieldGroupIds} to apply the changes.
-		 *
-		 * @name sap.ui.core.Control.prototype.getFieldGroupIds
-		 * @function
-		 *
-		 * @return {string[]} copy of the field group IDs
-		 * @public
-		 */
+		//If no domref exists stop here.
+		if (!this.getDomRef()) {
+			return this;
+		}
 
-		/**
-		 * Returns a list of all child controls with a field group ID.
-		 * See {@link #checkFieldGroupIds checkFieldGroupIds} for a description of the
-		 * <code>vFieldGroupIds</code> parameter.
-		 * Associated controls are not taken into account.
-		 *
-		 * @param {string|string[]} [vFieldGroupIds] ID of the field group or an array of field group IDs to match
-		 * @return {sap.ui.core.Control[]} The list of controls with a field group ID
-		 * @public
-		 */
-		Control.prototype.getControlsByFieldGroupId = function(vFieldGroupIds) {
-			return this.findAggregatedObjects(true, function(oElement) {
-				if (oElement instanceof Control) {
-					return oElement.checkFieldGroupIds(vFieldGroupIds);
-				}
-				return false;
-			});
-		};
-
-		/**
-		 * Returns whether the control has a given field group.
-		 * If <code>vFieldGroupIds</code> is not given it checks whether at least one field group ID is given for this control.
-		 * If <code>vFieldGroupIds</code> is an empty array or empty string, true is returned if there is no field group ID set for this control.
-		 * If <code>vFieldGroupIds</code> is a string array or a string all expected field group IDs are checked and true is returned if all are contained for given for this control.
-		 * The comma delimiter can be used to seperate multiple field group IDs in one string.
-		 *
-		 * @param {string|string[]} [vFieldGroupIds] ID of the field group or an array of field group IDs to match
-		 * @return {boolean} true if a field group ID matches
-		 * @public
-		 */
-		Control.prototype.checkFieldGroupIds = function(vFieldGroupIds) {
-			if (typeof vFieldGroupIds === "string") {
-				if (vFieldGroupIds === "") {
-					return this.checkFieldGroupIds([]);
-				}
-				return this.checkFieldGroupIds(vFieldGroupIds.split(","));
+		if (bBusy) {
+			if (this.getBusyIndicatorDelay() <= 0) {
+				fnAppendBusyIndicator.call(this);
+			} else {
+				this._busyIndicatorDelayedCallId = jQuery.sap.delayedCall(this.getBusyIndicatorDelay(), this, fnAppendBusyIndicator);
 			}
-			var aFieldGroups = this._getFieldGroupIds();
-			if (jQuery.isArray(vFieldGroupIds)) {
-				var iFound = 0;
-				for (var i = 0; i < vFieldGroupIds.length; i++) {
-					if (aFieldGroups.indexOf(vFieldGroupIds[i]) > -1) {
-						iFound++;
-					}
-				}
-				return iFound === vFieldGroupIds.length;
-			} else if (!vFieldGroupIds && aFieldGroups.length > 0) {
-				return true;
+		} else {
+			//Remove the busy indicator from the DOM
+			this.$("busyIndicator").remove();
+			this.$().removeClass('sapUiLocalBusy');
+			//Unset the actual DOM Element´s 'aria-busy'
+			this.$().removeAttr('aria-busy');
+
+			//Reset the position style to its original state
+			if (this._busyStoredPosition) {
+				$this.css('position', this._busyStoredPosition);
+				delete this._busyStoredPosition;
+			}
+			fnHandleInteraction.call(this, false);
+
+			BusyIndicatorUtils.animateIE9.stop(this._$BusyIndicator);
+		}
+		return this;
+	};
+
+	/**
+	 * Check if the control is currently in busy state
+	 *
+	 * @public
+	 * @deprecated Use getBusy instead
+	 * @return boolean
+	 */
+	Control.prototype.isBusy = function() {
+		return this.getProperty("busy");
+	};
+
+	/**
+	 * Define the delay, after which the busy indicator will show up
+	 *
+	 * @public
+	 * @param {int} iDelay The delay in ms
+	 * @return {sap.ui.core.Control} <code>this</code> to allow method chaining
+	 */
+	Control.prototype.setBusyIndicatorDelay = function(iDelay) {
+		this.setProperty("busyIndicatorDelay", iDelay, /*bSuppressInvalidate*/ true);
+		return this;
+	};
+
+	/**
+	 * Cleanup all timers which might have been created by the busy indicator
+	 *
+	 * @private
+	 */
+	Control.prototype._cleanupBusyIndicator = function() {
+		if (this._busyIndicatorDelayedCallId) {
+			jQuery.sap.clearDelayedCall(this._busyIndicatorDelayedCallId);
+			delete this._busyIndicatorDelayedCallId;
+		}
+		BusyIndicatorUtils.animateIE9.stop(this._$BusyIndicator);
+	};
+
+
+	// ---- field groups --------------------------------------------------------------------------------------
+
+	/**
+	 * Returns a copy of the field group IDs array. Modification of the field group IDs
+	 * need to call {@link #setFieldGroupIds setFieldGroupIds} to apply the changes.
+	 *
+	 * @name sap.ui.core.Control.prototype.getFieldGroupIds
+	 * @function
+	 *
+	 * @return {string[]} copy of the field group IDs
+	 * @public
+	 */
+
+	/**
+	 * Returns a list of all child controls with a field group ID.
+	 * See {@link #checkFieldGroupIds checkFieldGroupIds} for a description of the
+	 * <code>vFieldGroupIds</code> parameter.
+	 * Associated controls are not taken into account.
+	 *
+	 * @param {string|string[]} [vFieldGroupIds] ID of the field group or an array of field group IDs to match
+	 * @return {sap.ui.core.Control[]} The list of controls with a field group ID
+	 * @public
+	 */
+	Control.prototype.getControlsByFieldGroupId = function(vFieldGroupIds) {
+		return this.findAggregatedObjects(true, function(oElement) {
+			if (oElement instanceof Control) {
+				return oElement.checkFieldGroupIds(vFieldGroupIds);
 			}
 			return false;
-		};
+		});
+	};
 
-		/**
-		 * Triggers the validateFieldGroup event for this control.
-		 * Called by sap.ui.core.UIArea if a field group should be validated after is loses the focus or a validation key combibation was pressed.
-		 * The validation key is defined in the UI area <code>UIArea._oFieldGroupValidationKey</code>
-		 *
-		 * @see {sap.ui.core.Control.attachValidateFieldGroup}
-		 *
-		 * @public
-		 */
-		Control.prototype.triggerValidateFieldGroup = function(aFieldGroupIds) {
-			this.fireValidateFieldGroup({
-				fieldGroupIds : aFieldGroupIds
-			});
-		};
+	/**
+	 * Returns whether the control has a given field group.
+	 * If <code>vFieldGroupIds</code> is not given it checks whether at least one field group ID is given for this control.
+	 * If <code>vFieldGroupIds</code> is an empty array or empty string, true is returned if there is no field group ID set for this control.
+	 * If <code>vFieldGroupIds</code> is a string array or a string all expected field group IDs are checked and true is returned if all are contained for given for this control.
+	 * The comma delimiter can be used to seperate multiple field group IDs in one string.
+	 *
+	 * @param {string|string[]} [vFieldGroupIds] ID of the field group or an array of field group IDs to match
+	 * @return {boolean} true if a field group ID matches
+	 * @public
+	 */
+	Control.prototype.checkFieldGroupIds = function(vFieldGroupIds) {
+		if (typeof vFieldGroupIds === "string") {
+			if (vFieldGroupIds === "") {
+				return this.checkFieldGroupIds([]);
+			}
+			return this.checkFieldGroupIds(vFieldGroupIds.split(","));
+		}
+		var aFieldGroups = this._getFieldGroupIds();
+		if (jQuery.isArray(vFieldGroupIds)) {
+			var iFound = 0;
+			for (var i = 0; i < vFieldGroupIds.length; i++) {
+				if (aFieldGroups.indexOf(vFieldGroupIds[i]) > -1) {
+					iFound++;
+				}
+			}
+			return iFound === vFieldGroupIds.length;
+		} else if (!vFieldGroupIds && aFieldGroups.length > 0) {
+			return true;
+		}
+		return false;
+	};
 
-		/**
-		 * This function (if available on the concrete control) provides
-		 * the current accessibility state of the control.
-		 *
-		 * Applications must not call this hook method directly, it is called by the framework.
-		 *
-		 * Subclasses of Control should implement this hook to provide any necessary accessibility information:
-		 *
-		 * <pre>
-		 * MyControl.prototype.getAccessibilityInfo = function() {
-		 *    return {
-		 *      role: "textbox",      // String which represents the WAI-ARIA role which is implemented by the control.
-		 *      type: "date input",   // String which represents the control type (Must be a translated text). Might correlate with
-		 *                            // the role.
-		 *      description: "value", // String which describes the most relevant control state (e.g. the inputs value). Must be a
-		 *                            // translated text.
-		 *                            // Note: The type and the enabled/editable state must not be handled here.
-		 *      focusable: true,      // Boolean which describes whether the control can get the focus.
-		 *      enabled: true,        // Boolean which describes whether the control is enabled. If not relevant it must not be set or
-		 *                            // <code>null</code> can be provided.
-		 *      editable: true,       // Boolean which describes whether the control is editable. If not relevant it must not be set or
-		 *                            // <code>null</code> can be provided.
-		 *      children: []          // Array of accessibility info objects of children of the given control (e.g. when the control is a layout).
-		 *                            // Note: Children should only be provided when it is helpful to understand the accessibility context
-		 *                            //       (e.g. a form control must not provide details of its internals (fields, labels, ...) but a
-		 *                            //       layout should).
-		 *    };
-		 * };
-		 * </pre>
-		 *
-		 * Note: The returned object provides the accessibility state of the control at the point in time when this function is called.
-		 *
-		 * @return {object} Current accessibility state of the control.
-		 * @since 1.37.0
-		 * @function
-		 * @name sap.ui.core.Control.prototype.getAccessibilityInfo
-		 * @protected
-		 */
-		//sap.ui.core.Control.prototype.getAccessibilityInfo = function() { return null; };
+	/**
+	 * Triggers the validateFieldGroup event for this control.
+	 * Called by sap.ui.core.UIArea if a field group should be validated after is loses the focus or a validation key combibation was pressed.
+	 * The validation key is defined in the UI area <code>UIArea._oFieldGroupValidationKey</code>
+	 *
+	 * @see {sap.ui.core.Control.attachValidateFieldGroup}
+	 *
+	 * @public
+	 */
+	Control.prototype.triggerValidateFieldGroup = function(aFieldGroupIds) {
+		this.fireValidateFieldGroup({
+			fieldGroupIds : aFieldGroupIds
+		});
+	};
 
-	})();
+	/**
+	 * This function (if available on the concrete control) provides
+	 * the current accessibility state of the control.
+	 *
+	 * Applications must not call this hook method directly, it is called by the framework.
+	 *
+	 * Subclasses of Control should implement this hook to provide any necessary accessibility information:
+	 *
+	 * <pre>
+	 * MyControl.prototype.getAccessibilityInfo = function() {
+	 *    return {
+	 *      role: "textbox",      // String which represents the WAI-ARIA role which is implemented by the control.
+	 *      type: "date input",   // String which represents the control type (Must be a translated text). Might correlate with
+	 *                            // the role.
+	 *      description: "value", // String which describes the most relevant control state (e.g. the inputs value). Must be a
+	 *                            // translated text.
+	 *                            // Note: The type and the enabled/editable state must not be handled here.
+	 *      focusable: true,      // Boolean which describes whether the control can get the focus.
+	 *      enabled: true,        // Boolean which describes whether the control is enabled. If not relevant it must not be set or
+	 *                            // <code>null</code> can be provided.
+	 *      editable: true,       // Boolean which describes whether the control is editable. If not relevant it must not be set or
+	 *                            // <code>null</code> can be provided.
+	 *      children: []          // Array of accessibility info objects of children of the given control (e.g. when the control is a layout).
+	 *                            // Note: Children should only be provided when it is helpful to understand the accessibility context
+	 *                            //       (e.g. a form control must not provide details of its internals (fields, labels, ...) but a
+	 *                            //       layout should).
+	 *    };
+	 * };
+	 * </pre>
+	 *
+	 * Note: The returned object provides the accessibility state of the control at the point in time when this function is called.
+	 *
+	 * @return {object} Current accessibility state of the control.
+	 * @since 1.37.0
+	 * @function
+	 * @name sap.ui.core.Control.prototype.getAccessibilityInfo
+	 * @protected
+	 */
+	//sap.ui.core.Control.prototype.getAccessibilityInfo = function() { return null; };
 
 	return Control;
 

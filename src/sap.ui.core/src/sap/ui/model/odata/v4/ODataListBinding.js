@@ -498,7 +498,7 @@ sap.ui.define([
 					aResult = vResult && (Array.isArray(vResult) ? vResult : vResult.value);
 					iResultLength = aResult ? aResult.length : 0;
 					if (that.bUseExtendedChangeDetection) {
-						return _ODataHelper.requestDiff(that, aResult, iStart)
+						return _ODataHelper.requestDiff(that, aResult, iStart, iLength)
 							.then(function (aDiff) {
 								that.aDiff = aDiff;
 								that.createContexts(oRange, iResultLength, sChangeReason,

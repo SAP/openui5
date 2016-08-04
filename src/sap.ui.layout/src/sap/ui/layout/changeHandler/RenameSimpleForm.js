@@ -33,7 +33,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 	RenameForm.applyChange = function(oChangeWrapper, oControl, oModifier, oView) {
 		var oChange = oChangeWrapper.getDefinition();
 
-		var oReferrer = oModifier.byId(oChange.content.stableRenamedElementId, oView);
+		// oChange.content.sRenameId field key was used in 1.40, do not remove
+		var sRenameId = oChange.content.stableRenamedElementId || oChange.content.sRenameId;
+		var oReferrer = oModifier.byId(sRenameId, oView);
 
 		if (oChange.texts && oChange.texts.formText && this._isProvided(oChange.texts.formText.value)) {
 			if (!oControl) {

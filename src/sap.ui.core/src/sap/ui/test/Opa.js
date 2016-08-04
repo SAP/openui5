@@ -1,6 +1,8 @@
 /*!
  * ${copyright}
  */
+
+/*global Math */
 sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/Device',
@@ -37,9 +39,9 @@ sap.ui.define([
 			oLogCollector.getAndClearLog();
 			try {
 				var oResult = fnCallback();
-			} catch (err) {
-				oDeferred.reject(oOptions);
-				throw err;
+			} catch (oError) {
+				oDeferred.reject(oOptions, oError);
+				throw oError;
 			}
 
 			if (oResult.result) {
@@ -315,22 +317,42 @@ sap.ui.define([
 
 		internalEmpty(oDeferred);
 
-		return oDeferred.promise().fail(function(oOptions){
+		return oDeferred.promise().fail(function(oOptions, oError){
 			queue = [];
-			var oStackOptions;
+			var oStackOptions, sErrorMessage;
 
 			if (isStopped) {
-				oOptions.errorMessage = oOptions.stoppedManually ? "Queue was stopped manually" : "QUnit timeout";
+				sErrorMessage = oOptions.stoppedManually ? "Queue was stopped manually" : "QUnit timeout";
 				oStackOptions = { _stack : createStack(1) };
-			} else {
-				oOptions.errorMessage = oOptions.errorMessage || "Opa timeout";
+			} else if (!oOptions.errorMessage && !oError) {
+				sErrorMessage = "Opa timeout";
+			} else if (oError) {
+				var sExceptionText = oError.toString();
+
+				// Some browsers don't have the stack property it will be added later for those browsers
+				if (oError.stack) {
+					sExceptionText += "\n" + oError.stack;
+				}
+
+				sErrorMessage = "Exception thrown by the testcode:'" + sExceptionText + "'";
+			}
+
+			if (!oStackOptions) {
 				oStackOptions = oOptions;
 			}
 
-			oOptions.errorMessage += "\nThis is what Opa logged:\n" + oLogCollector.getAndClearLog();
-			oOptions.errorMessage += addStacks(oStackOptions);
+			var sLogs = oLogCollector.getAndClearLog();
+			if (sLogs) {
+				sErrorMessage += "\nThis is what Opa logged:\n" + sLogs;
+			}
 
-			oLogger.error(oOptions.errorMessage, "Opa");
+			if (!(oError && oError.stack)) {
+				// if we do not have a stack in the exception (IE) manually add it
+				sErrorMessage += addStacks(oStackOptions);
+			}
+
+			oLogger.error(sErrorMessage, "Opa");
+			oOptions.errorMessage = sErrorMessage;
 		}).always(function () {
 			timeout = -1;
 			oDeferred = null;
@@ -433,10 +455,9 @@ sap.ui.define([
 					if (options.check) {
 						try {
 							bResult = options.check.apply(this, arguments);
-						} catch (err) {
-							oLogger.error(err.stack, "OPA encountered an error");
-							deferred.reject(options);
-							throw err;
+						} catch (oError) {
+							deferred.reject(options, oError);
+							throw oError;
 						}
 					}
 
@@ -448,12 +469,9 @@ sap.ui.define([
 					if (bResult) {
 						if (options.success) {
 							var iCurrentQueueLength = queue.length;
+							// do not catch here, there is another catch around the whole function
 							try {
 								options.success.apply(this, arguments);
-							} catch (err) {
-								oLogger.error(err.stack, "OPA encountered an error");
-								deferred.reject(options);
-								throw err;
 							} finally {
 								ensureNewlyAddedWaitForStatementsPrepended(iCurrentQueueLength, options);
 							}
@@ -504,6 +522,18 @@ sap.ui.define([
 
 	Opa._createFilteredConfig = function (aAllowedProperties) {
 		return Opa._createFilteredOptions(aAllowedProperties, Opa.config);
+	};
+
+	Opa._getWaitForCounter = function () {
+		var iQueueLengthOnCreation = queue.length;
+
+		return {
+			get: function () {
+				var iLength = queue.length - iQueueLengthOnCreation;
+				// never return negative numbers
+				return Math.max(iLength, 0);
+			}
+		};
 	};
 
 	Opa._aConfigValuesForWaitFor = [

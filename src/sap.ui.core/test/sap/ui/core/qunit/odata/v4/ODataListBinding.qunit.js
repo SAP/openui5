@@ -2037,7 +2037,7 @@ sap.ui.require([
 			.callsArg(4)
 			.returns(oReadPromise);
 		this.mock(_ODataHelper).expects("requestDiff")
-			.withExactArgs(oBinding, sinon.match.same(aData), 0)
+			.withExactArgs(oBinding, sinon.match.same(aData), 0, 3)
 			.returns(oDiffPromise);
 		this.mock(oBinding).expects("createContexts")
 			.withExactArgs(sinon.match.same(oRange), 3, ChangeReason.Change, true);
@@ -2074,7 +2074,7 @@ sap.ui.require([
 			.callsArg(4)
 			.returns(oReadPromise);
 		this.mock(_ODataHelper).expects("requestDiff")
-			.withExactArgs(oBinding, sinon.match.same(aData), 0)
+			.withExactArgs(oBinding, sinon.match.same(aData), 0, 3)
 			.returns(oDiffPromise);
 		this.oLogMock.expects("error").withExactArgs(oError.message,
 			sinon.match(function (sDetails) {
