@@ -7,6 +7,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 	function(jQuery, BaseObject, library, TableExtension, TableUtils) {
 	"use strict";
 
+	// shortcuts
+	var CellType = TableUtils.CELLTYPES;
+
+	// Workaround until (if ever) a horizontal page size can be set by applications
+	var HORIZONTAL_SCROLLING_PAGE_SIZE = 5;
+
 	/**
 	 * New Delegate for keyboard events of sap.ui.table.Table controls.
 	 *
@@ -97,14 +103,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 	TableKeyboardDelegate.prototype.onsaptabnext = function(oEvent) {
 		var oInfo = TableUtils.getCellInfo(oEvent.target) || {};
 
-		if (oInfo.type === TableUtils.CELLTYPES.COLUMNHEADER || oInfo.type === TableUtils.CELLTYPES.COLUMNROWHEADER) {
+		if (oInfo.type === CellType.COLUMNHEADER || oInfo.type === CellType.COLUMNROWHEADER) {
 			if (TableUtils.isNoDataVisible(this)) {
 				this.$("noDataCnt").focus();
 			} else {
 				TableKeyboardDelegate._restoreFocusOnLastFocusedDataCell(this, oEvent);
 			}
 			oEvent.preventDefault();
-		} else if (oInfo.type === TableUtils.CELLTYPES.DATACELL || oInfo.type === TableUtils.CELLTYPES.ROWHEADER) {
+		} else if (oInfo.type === CellType.DATACELL || oInfo.type === CellType.ROWHEADER) {
 			TableKeyboardDelegate._forwardFocusToTabDummy(this, "sapUiTableCtrlAfter");
 		} else if (oEvent.target === this.getDomRef("overlay")) {
 			this._getKeyboardExtension()._setSilentFocus(this.$().find(".sapUiTableOuterAfter"));
@@ -115,8 +121,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 	TableKeyboardDelegate.prototype.onsaptabprevious = function(oEvent) {
 		var oInfo = TableUtils.getCellInfo(oEvent.target) || {};
 
-		if (oInfo.type === TableUtils.CELLTYPES.DATACELL
-				|| oInfo.type === TableUtils.CELLTYPES.ROWHEADER
+		if (oInfo.type === CellType.DATACELL
+				|| oInfo.type === CellType.ROWHEADER
 				|| oEvent.target === this.getDomRef("noDataCnt")) {
 			if (this.getColumnHeaderVisible()) {
 				TableKeyboardDelegate._setFocusOnColumnHeaderOfLastFocusedDataCell(this, oEvent);
@@ -133,14 +139,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 	TableKeyboardDelegate.prototype.onsapdown = function(oEvent) {
 		var oInfo = TableUtils.getCellInfo(oEvent.target) || {};
 
-		if (oInfo.type === TableUtils.CELLTYPES.DATACELL || oInfo.type === TableUtils.CELLTYPES.ROWHEADER) {
+		if (oInfo.type === CellType.DATACELL || oInfo.type === CellType.ROWHEADER) {
 			if (TableUtils.isLastScrollableRow(this, oEvent.target)) {
 				var bScrolled = TableUtils.scroll(this, true, false);
 				if (bScrolled) {
 					oEvent.setMarked("sapUiTableSkipItemNavigation");
 				}
 			}
-		} else if (oInfo.type === TableUtils.CELLTYPES.COLUMNHEADER || oInfo.type === TableUtils.CELLTYPES.COLUMNROWHEADER) {
+		} else if (oInfo.type === CellType.COLUMNHEADER || oInfo.type === CellType.COLUMNROWHEADER) {
 			var iHeaderRowCount = TableUtils.getHeaderRowCount(this);
 			if (TableUtils.isNoDataVisible(this)) {
 				var oFocusInfo = TableUtils.getFocusedItemInfo(this);
@@ -148,7 +154,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 					//Just prevent the navigation to the table content
 					oEvent.setMarked("sapUiTableSkipItemNavigation");
 				}
-			} else if (oInfo.type === TableUtils.CELLTYPES.COLUMNROWHEADER && iHeaderRowCount > 1) {
+			} else if (oInfo.type === CellType.COLUMNROWHEADER && iHeaderRowCount > 1) {
 				//Special logic needed because row selector added multiple times into the item navigation
 				oEvent.setMarked("sapUiTableSkipItemNavigation");
 				//Focus the first row header
@@ -161,7 +167,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 	TableKeyboardDelegate.prototype.onsapup = function(oEvent) {
 		var oInfo = TableUtils.getCellInfo(oEvent.target) || {};
 
-		if (oInfo.type === TableUtils.CELLTYPES.DATACELL || oInfo.type === TableUtils.CELLTYPES.ROWHEADER) {
+		if (oInfo.type === CellType.DATACELL || oInfo.type === CellType.ROWHEADER) {
 			if (TableUtils.isFirstScrollableRow(this, oEvent.target)) {
 				var bScrolled = TableUtils.scroll(this, false, false);
 				if (bScrolled) {
@@ -180,9 +186,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
 
-		if (oCellInfo.type === TableUtils.CELLTYPES.DATACELL ||
-			oCellInfo.type === TableUtils.CELLTYPES.ROWHEADER ||
-			oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER) {
+		if (oCellInfo.type === CellType.DATACELL ||
+			oCellInfo.type === CellType.COLUMNHEADER) {
 
 			var oFocusedItemInfo = TableUtils.getFocusedItemInfo(this);
 			var iFocusedIndex = oFocusedItemInfo.cell;
@@ -215,10 +220,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
 
-		if (oCellInfo.type === TableUtils.CELLTYPES.DATACELL ||
-			oCellInfo.type === TableUtils.CELLTYPES.ROWHEADER ||
-			oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER ||
-			oCellInfo.type === TableUtils.CELLTYPES.COLUMNROWHEADER) {
+		if (oCellInfo.type === CellType.DATACELL ||
+			oCellInfo.type === CellType.ROWHEADER ||
+			oCellInfo.type === CellType.COLUMNHEADER ||
+			oCellInfo.type === CellType.COLUMNROWHEADER) {
 
 			var oFocusedItemInfo = TableUtils.getFocusedItemInfo(this);
 			var iFocusedIndex = oFocusedItemInfo.cell;
@@ -231,7 +236,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 			// If the focused cell is a column span in the column header at the end of the fixed area,
 			// the selected cell index is the index of the first cell in the span.
 			// Treat this case like there is no span and the last cell of the fixed area is selected.
-			if (oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER && TableUtils.hasFixedColumns(this)) {
+			if (oCellInfo.type === CellType.COLUMNHEADER && TableUtils.hasFixedColumns(this)) {
 				var iColSpan = oCellInfo.cell.data('sap-ui-colspan');
 				if (iColSpan > 1 && iFocusedCellInRow + iColSpan - iRowHeaderOffset === this.getFixedColumnCount()) {
 					bIsColSpanAtFixedAreaEnd = true;
@@ -258,9 +263,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 		if (oEvent.metaKey || oEvent.ctrlKey) {
 			var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
 
-			if (oCellInfo.type === TableUtils.CELLTYPES.DATACELL ||
-				oCellInfo.type === TableUtils.CELLTYPES.ROWHEADER ||
-				oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER) {
+			if (oCellInfo.type === CellType.DATACELL ||
+				oCellInfo.type === CellType.ROWHEADER ||
+				oCellInfo.type === CellType.COLUMNHEADER) {
 
 				oEvent.setMarked("sapUiTableSkipItemNavigation");
 
@@ -306,10 +311,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 		if (oEvent.metaKey || oEvent.ctrlKey) {
 			var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
 
-			if (oCellInfo.type === TableUtils.CELLTYPES.DATACELL ||
-				oCellInfo.type === TableUtils.CELLTYPES.ROWHEADER ||
-				oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER ||
-				oCellInfo.type === TableUtils.CELLTYPES.COLUMNROWHEADER) {
+			if (oCellInfo.type === CellType.DATACELL ||
+				oCellInfo.type === CellType.ROWHEADER ||
+				oCellInfo.type === CellType.COLUMNHEADER ||
+				oCellInfo.type === CellType.COLUMNROWHEADER) {
 
 				oEvent.setMarked("sapUiTableSkipItemNavigation");
 
@@ -372,9 +377,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 	TableKeyboardDelegate.prototype.onsappageup = function(oEvent) {
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
 
-		if (oCellInfo.type === TableUtils.CELLTYPES.DATACELL ||
-			oCellInfo.type === TableUtils.CELLTYPES.ROWHEADER ||
-			oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER) {
+		if (oCellInfo.type === CellType.DATACELL ||
+			oCellInfo.type === CellType.ROWHEADER ||
+			oCellInfo.type === CellType.COLUMNHEADER) {
 
 			var oFocusedItemInfo = TableUtils.getFocusedItemInfo(this);
 			var iFocusedRow = oFocusedItemInfo.row;
@@ -429,10 +434,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 	TableKeyboardDelegate.prototype.onsappagedown = function(oEvent) {
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
 
-		if (oCellInfo.type === TableUtils.CELLTYPES.DATACELL ||
-			oCellInfo.type === TableUtils.CELLTYPES.ROWHEADER ||
-			oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER ||
-			oCellInfo.type === TableUtils.CELLTYPES.COLUMNROWHEADER) {
+		if (oCellInfo.type === CellType.DATACELL ||
+			oCellInfo.type === CellType.ROWHEADER ||
+			oCellInfo.type === CellType.COLUMNHEADER ||
+			oCellInfo.type === CellType.COLUMNROWHEADER) {
 
 			oEvent.setMarked("sapUiTableSkipItemNavigation");
 
@@ -450,7 +455,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 				var iColumnCount = oFocusedItemInfo.columnCount;
 
 				/* Column header area - From penultimate row upwards */
-				if (iFocusedRow < iHeaderRowCount - 1 && oCellInfo.type !== TableUtils.CELLTYPES.COLUMNROWHEADER) {
+				if (iFocusedRow < iHeaderRowCount - 1 && oCellInfo.type !== CellType.COLUMNROWHEADER) {
 					// Set the focus to the last row of the column header area.
 					TableUtils.focusItem(this, iFocusedIndex + iColumnCount * (iHeaderRowCount - iFocusedRow - 1), oEvent);
 
@@ -487,6 +492,92 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './library', './TableE
 				} else {
 					// Set the focus to the last row of the bottom fixed area.
 					TableUtils.focusItem(this, iFocusedIndex + iColumnCount * (iHeaderRowCount + iNonEmptyVisibleRowCount - iFocusedRow - 1), oEvent);
+				}
+			}
+		}
+	};
+
+	TableKeyboardDelegate.prototype.onsappageupmodifiers = function(oEvent) {
+		if (oEvent.altKey) {
+			var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
+
+			if (oCellInfo.type === CellType.DATACELL ||
+				oCellInfo.type === CellType.COLUMNHEADER) {
+
+				var oFocusedItemInfo = TableUtils.getFocusedItemInfo(this);
+				var iFocusedIndex = oFocusedItemInfo.cell;
+				var iFocusedCellInRow = oFocusedItemInfo.cellInRow;
+
+				var bHasRowHeader = TableUtils.hasRowHeader(this);
+				var iRowHeaderOffset = bHasRowHeader ? 1 : 0;
+				var iPageSize = HORIZONTAL_SCROLLING_PAGE_SIZE;
+
+				oEvent.setMarked("sapUiTableSkipItemNavigation");
+
+				if (bHasRowHeader && (TableUtils.isInGroupingRow(oEvent.target) || iFocusedCellInRow === 1)) {
+					// If a row header exists and the focus is on a group header or the first cell,
+					// then set the focus to the row header cell.
+					TableUtils.focusItem(this, iFocusedIndex - iFocusedCellInRow, null);
+
+				} else if (iFocusedCellInRow - iRowHeaderOffset < iPageSize) {
+					// If scrolling can not be performed over a full page,
+					// then scroll only the remaining cells (set the focus to the first cell).
+					TableUtils.focusItem(this, iFocusedIndex - iFocusedCellInRow + iRowHeaderOffset, null);
+
+				} else {
+					// Scroll one page.
+					TableUtils.focusItem(this, iFocusedIndex - iPageSize, null);
+				}
+			}
+		}
+	};
+
+	TableKeyboardDelegate.prototype.onsappagedownmodifiers = function(oEvent) {
+		if (oEvent.altKey) {
+			var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
+
+			if (oCellInfo.type === CellType.DATACELL ||
+				oCellInfo.type === CellType.ROWHEADER ||
+				oCellInfo.type === CellType.COLUMNHEADER ||
+				oCellInfo.type === CellType.COLUMNROWHEADER) {
+
+				var oFocusedItemInfo = TableUtils.getFocusedItemInfo(this);
+				var iFocusedCellInRow = oFocusedItemInfo.cellInRow;
+
+				var bHasRowHeader = TableUtils.hasRowHeader(this);
+				var iRowHeaderOffset = bHasRowHeader ? 1 : 0;
+				var iVisibleColumnCount = TableUtils.getVisibleColumnCount(this);
+				var iColSpan = oCellInfo.cell.data('sap-ui-colspan') || 1;
+
+				oEvent.setMarked("sapUiTableSkipItemNavigation");
+
+				// Only do something, if the selected cell or span is not at the end of the table.
+				if (iFocusedCellInRow + iColSpan - iRowHeaderOffset < iVisibleColumnCount) {
+					var iFocusedIndex = oFocusedItemInfo.cell;
+					var iPageSize = HORIZONTAL_SCROLLING_PAGE_SIZE;
+
+					if (bHasRowHeader && iFocusedCellInRow === 0) {
+						// If there is a row header and it has the focus,
+						// then set the focus to the first cell.
+						TableUtils.focusItem(this, iFocusedIndex + 1, null);
+
+					} else if (TableUtils.isInGroupingRow(oEvent.target)) {
+						// If the focus is on a group header, do nothing.
+
+					} else if (iColSpan > iPageSize) {
+						// If the focused cell is a column span bigger than a page size,
+						// then set the focus the the next column in the row.
+						TableUtils.focusItem(this, iFocusedIndex + iColSpan, null);
+
+					} else if (iFocusedCellInRow + iColSpan - iRowHeaderOffset + iPageSize > iVisibleColumnCount) {
+						// If scrolling can not be performed over a full page,
+						// then scroll only the remaining cells (set the focus to the last cell).
+						TableUtils.focusItem(this, iFocusedIndex + iVisibleColumnCount - iFocusedCellInRow - 1 + iRowHeaderOffset, null);
+
+					} else {
+						// Scroll one page.
+						TableUtils.focusItem(this, iFocusedIndex + iPageSize, null);
+					}
 				}
 			}
 		}
