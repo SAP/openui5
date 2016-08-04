@@ -317,7 +317,7 @@
         sap.ui.getCore().applyChanges();
 
         // assert
-        assert.strictEqual(fnSpy.callCount, 0, 'Changing the title should not invalidate the control');
+        assert.strictEqual(fnSpy.callCount, 1, 'Changing the title should invalidate the control');
     });
 
     QUnit.test('Changing the datetime', function(assert) {
