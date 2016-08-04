@@ -2,22 +2,20 @@
 /* CSS for control sap.m/TileContent.control */
 /* ========================================= */
 .sapMTileCnt {
-	display: inline-block;
 	box-sizing: border-box;
 	position: relative;
 }
 
 .sapMTileCnt.ft-Auto {
 	height: 6.375rem;
-	min-width: 11rem;
+	min-width: 10.875rem;
 	max-width: 22.5rem;
 }
-
 
 /* TwoByOne size */
 .sapMTileCnt.ft-TwoByOne {
 	height: 6.375rem;
-	width: 22.5rem;
+	width: 22.375rem;
 }
 
 /* OneByOne size */
@@ -39,8 +37,8 @@
 
 	height: 1rem;
 	bottom: 1rem;
-	margin-left: 1rem;
-	margin-right: 1rem;
+	margin-left: 0.9375rem;
+	margin-right: 0.9375rem;
 	line-height: 1rem;
 }
 
@@ -66,8 +64,8 @@ html[dir=rtl] .sapMTileCntFtrTxt {
 	height: 3.875rem;
 	margin-bottom: 0.25rem;
 	margin-top: 0.25rem;
-	padding-left: 1rem;
-	padding-right: 1rem;
+	padding-left: 0.9375rem;
+	padding-right: 0.9375rem;
 }
 
 .sapMTileCnt + .sapMTileCnt {
@@ -80,7 +78,17 @@ html[dir=rtl] .sapMTileCntFtrTxt {
 
 .sapMTileCnt.News {
 	height: 6.125rem;
-	margin-top: 0.25rem;
+	margin-top: 0.3125rem;
+
+	.sapMTileCntContent {
+		padding-left: 1rem;
+		padding-right: 1rem;
+	}
+
+	.sapMTileCntFtrTxt {
+		margin-left: 1rem;
+		margin-right: 1rem;
+	}
 
 	.sapMTileCntContent > .sapMTcInnerMarker {
 		vertical-align: top;
@@ -91,13 +99,13 @@ html[dir=rtl] .sapMTileCntFtrTxt {
 @media screen and (max-width: 374px) {
 	.sapMTileCnt.ft-Auto {
 		height: 5.5rem;
-		min-width: 9.25rem;
+		min-width: 9.125rem;
 		max-width: 19rem;
 	}
 
 	.sapMTileCnt.ft-TwoByOne {
 		height: 5.5rem;
-		width: 19rem;
+		width: 18.875rem;
 	}
 
 	.sapMTileCnt.ft-OneByOne {
@@ -108,8 +116,8 @@ html[dir=rtl] .sapMTileCntFtrTxt {
 	.sapMTileCntFtrTxt {
 		height: 0.938rem; /*according to spec but doesn't sum up to max tile height of 9.25rem*/
 		bottom: 0.625rem;
-		margin-left: 0.625rem;
-		margin-right: 0.625rem;
+		margin-left: 0.5625rem;
+		margin-right: 0.5625rem;
 	}
 
 	.sapMTileCntContent {
@@ -117,11 +125,21 @@ html[dir=rtl] .sapMTileCntFtrTxt {
 		line-height: 3.438rem;
 		margin-bottom: 0.25rem;
 		margin-top: 0.25rem;
-		padding-left: 0.625rem;
-		padding-right: 0.625rem;
+		padding-left: 0.5625rem;
+		padding-right: 0.5625rem;
 	}
 
 	.sapMTileCnt.News {
 		height: 5.25rem;
+
+		.sapMTileCntContent {
+			padding-left: 0.625rem;
+			padding-right: 0.625rem;
+		}
+
+		.sapMTileCntFtrTxt {
+			margin-left: 0.625rem;
+			margin-right: 0.625rem;
+		}
 	}
 }
