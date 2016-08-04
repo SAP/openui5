@@ -3998,7 +3998,7 @@ var sUrlRefTest = '\
 
 var sMultipleTest01 = '\
 <?xml version="1.0" encoding="utf-8"?>\
-<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"  Version="4.0">\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns:xml="http://www.w3.org/XML/1998/namespace" Version="4.0">\
 	<edmx:Reference Uri="/some/path/Test.xml">\
 		<edmx:Include Alias="Test" Namespace="internal.ui5.test"/>\
 	</edmx:Reference>\
