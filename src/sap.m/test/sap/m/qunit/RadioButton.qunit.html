@@ -297,6 +297,23 @@
 			oRadioButton1.destroy();
 		});
 
+		test("setWidth() && setEntireWidth()", function() {
+
+			// arrange
+			var oRadioButton1 = new sap.m.RadioButton({
+				width:'50px',
+				useEntireWidth: true
+			});
+			oRadioButton1.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// assertions
+			strictEqual(oRadioButton1.$().width(), 50, "Width of both RadioButton and Lable should be 50");
+
+			// cleanup
+			oRadioButton1.destroy();
+		});
+
 		/* ------------------------------ */
 		/*  tests for setTextDirection()  */
 		/* ------------------------------ */
