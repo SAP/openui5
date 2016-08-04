@@ -380,6 +380,12 @@
 				ok(!jQuery.sap.equal(oDP3.getDateValue(), oNewDate), "DP3: new invalid date not set");
 				equal(oDP3.getValue(), "", "DP3: new invalid date not displayed");
 
+				oDP3.setDateValue();
+				oDP3._fillDateRange();
+				var oNewMinDateUTC = new Date(Date.UTC(oNewMinDate.getFullYear(), oNewMinDate.getMonth(), oNewMinDate.getDate()));
+				var oFocusedDate = oDP3._oCalendar._getFocusedDate().getJSDate();
+				ok(jQuery.sap.equal(oFocusedDate, oNewMinDateUTC), "DP3: focused date equals min date when current date is out of the min/max range");
+
 				oNewDate = new Date(2014, 0, 1);
 				oDP3.setDateValue(oNewDate);
 				ok(jQuery.sap.equal(oDP3.getDateValue(), oNewDate), "DP3: new valid date set");
