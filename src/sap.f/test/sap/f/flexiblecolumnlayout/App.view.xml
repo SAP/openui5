@@ -1,0 +1,5 @@
+<View xmlns="sap.m" displayBlock="true" height="100%">
+	<App id="mainApp" backgroundOpacity="0" />
+</View>
+
+

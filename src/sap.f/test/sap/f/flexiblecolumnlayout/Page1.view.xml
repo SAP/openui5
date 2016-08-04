@@ -1,0 +1,9 @@
+<View xmlns="sap.m" displayBlock="true" controllerName="flexibleColumnLayout.Page1" height="100%">
+	<Page title="This is the home page" backgroundDesign="Transparent">
+		<Toolbar>
+			<Button text="To Flexible Column Layout" icon="sap-icon://feeder-arrow" iconFirst="false" press="handleNextPress"></Button>
+		</Toolbar>
+	</Page>
+</View>
+
+
