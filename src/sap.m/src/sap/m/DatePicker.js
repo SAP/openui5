@@ -1019,7 +1019,14 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 				this._oDateRange.setStartDate(new Date(oDate.getTime()));
 			}
 		} else {
-			this._oCalendar.focusDate(new Date());
+			var oFocusDate = new Date();
+			var iMaxTimeMillis = this._oMaxDate.getTime() + 86400000 /* one day in milliseconds */;
+
+			if (oFocusDate.getTime() < this._oMinDate.getTime() || oFocusDate.getTime() > iMaxTimeMillis) {
+				oFocusDate = this._oMinDate;
+			}
+			this._oCalendar.focusDate(oFocusDate);
+
 			if (this._oDateRange.getStartDate()) {
 				this._oDateRange.setStartDate(undefined);
 			}
