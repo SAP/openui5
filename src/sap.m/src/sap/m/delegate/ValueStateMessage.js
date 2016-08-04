@@ -56,7 +56,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 		 * @constructor
 		 * @private
 		 * @alias sap.m.delegate.ValueState
-		 * @version 1.42
+		 * @version 1.40.4
 		 * @author SAP SE
 		 */
 		var ValueStateMessage = BaseObject.extend("sap.m.delegate.ValueState", /** @lends sap.m.delegate.ValueState.prototype */ {
