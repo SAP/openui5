@@ -1,0 +1,45 @@
+{
+  "1.34.4": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "229509a7e5a8c4dd10ffce0acb61a25627564e73",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.tnt.NavigationList: Focus is now styled correctly",
+        "references": []
+      }
+    ]
+  },
+  "1.34.10": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "d7b638444989c9f281403a0d3cfc1e0bf8c23808",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.tnt.SideNavigation: Blinking effect on collapse is not visible anymore",
+        "references": []
+      }
+    ]
+  },
+  "1.34.12": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "a22190bb1fc921b11f2263af0b2ba0875edb9ee8",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.NavigationListItem: Added one click navigation",
+        "references": []
+      },
+      {
+        "id": "8e210acf0914758eddd0f4a7c63fbc1bcf991598",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.tnt.SideNavigation: Window scrolling in iOS is now prevented",
+        "references": []
+      }
+    ]
+  }
+}

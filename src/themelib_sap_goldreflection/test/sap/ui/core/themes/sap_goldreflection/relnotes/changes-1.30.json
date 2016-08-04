@@ -31,5 +31,41 @@
         "references": []
       }
     ]
+  },
+  "1.30.5": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "1688e37f38d1556e0e9fe4ac6cc8eaeb777732bc",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: GoldReflection styling repaired",
+        "references": []
+      }
+    ]
+  },
+  "1.30.7": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "1ee7ae9b2a6c3b0ec69d1262a9892e8ecaf0d18f",
+        "author": "Ivan Kazandzhiev \u003civan.kazandzhiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Dialog: The close button has proper name when read by JAWS",
+        "references": []
+      }
+    ]
+  },
+  "1.30.11": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "763d5eb8f0db76eeed73882139ef8b4d7f38b325",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: use Label style only for direct labels",
+        "references": []
+      }
+    ]
   }
 }

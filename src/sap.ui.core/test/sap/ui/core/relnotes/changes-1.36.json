@@ -1466,5 +1466,73 @@
         "references": []
       }
     ]
+  },
+  "1.36.16": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "e8716a8a13bb89126e878dd4c7206ad3da9d0377",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "ManagedObject: Don\u0027t destroy tree aggregation with template",
+        "references": []
+      },
+      {
+        "id": "b45fafb406e3463c5dce77ab8ea1e1d173109c12",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "MockServer: failing requests in changeset should return response",
+        "references": []
+      },
+      {
+        "id": "6ae913354f12abf2994730ae6bf45464e439ca3a",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "ThemeCheck: extend timeout to fix custom.css",
+        "references": []
+      },
+      {
+        "id": "96d275190ebc0eddef605dbd1df1516d2fa714ee",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "iOS scrolling: missing events",
+        "references": []
+      },
+      {
+        "id": "67d794e15190cc575162740ee35c823e6d660ade",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "jQuery.sap.script: arraySymbolDiff don\u0027t fail for undefined values",
+        "references": []
+      },
+      {
+        "id": "b63d95a1a97ee23f0ff2d1e0369d8f68e7d30ba2",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Icon: Icon doesn\u0027t correctly mark the event on mobile device",
+        "references": []
+      },
+      {
+        "id": "0bf8fddf99560193cd8ebb6469efefbc243ca7f3",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.routing.History: history direct should be unknown after the current hash is replaced",
+        "references": []
+      },
+      {
+        "id": "b4748b533c6e07351c68f7ef2babc87a97c141be",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.util.File: Wrong data-url delimiter",
+        "references": []
+      },
+      {
+        "id": "ac1005bdc68a3b469808c66d833c731b1225211e",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "thirdparty.crossroads: hash \"Page12\" shouldn\u0027t match pattern \"Page1/:context:\"",
+        "references": []
+      }
+    ]
   }
 }

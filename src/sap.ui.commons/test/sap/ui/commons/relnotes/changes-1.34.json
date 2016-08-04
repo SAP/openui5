@@ -136,5 +136,267 @@
         "references": []
       }
     ]
+  },
+  "1.34.1": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "48c4f75024ed1f21acaa3a7785c6e7b84917112e",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TextArea: Typed text lost after re-rendering",
+        "references": []
+      },
+      {
+        "id": "b093710d6c207fd8d1100106f7b6b8098fd0ad94",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Tree: Expand and collapse performance improved",
+        "references": []
+      }
+    ]
+  },
+  "1.34.2": {
+    "date": "January 2016",
+    "notes": [
+      {
+        "id": "d3fd1c0a7bc2d1fee624736fa429615e5077169d",
+        "author": "Ivan Kazandzhiev \u003civan.kazandzhiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Dialog: Minium size is properly calculated when there is no size constraint",
+        "references": []
+      },
+      {
+        "id": "7891aa2ae6e2561b2de24e849c1150c6d0d01ab3",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.DropdownBox: With searchhelp error on blur",
+        "references": []
+      },
+      {
+        "id": "c2822493652b15474f8df4a7301a0ba9c3ddbdf9",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.DropdownBox: Wrong text-selection in IE",
+        "references": []
+      },
+      {
+        "id": "0c7bffd3990da7dfef368562c50cc17f7d1dc1a5",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TextField: Rerendering during liveChange moves cursor",
+        "references": []
+      }
+    ]
+  },
+  "1.34.3": {
+    "date": "January 2016",
+    "notes": [
+      {
+        "id": "7401b061268fd2739cb36ef02053524fb90e6d52",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.RadioButtonGroup: Fixed text truncation",
+        "references": []
+      },
+      {
+        "id": "1a0a6ac77912df37db6fbb1bb50f6de2514cd986",
+        "author": "Mihail Yordanov \u003cmihail.yordanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TriStateCheckBox scroll trigger fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.34.4": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "d54215960a1f79c62a1557d7a488e091590c6384",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "commons.Dialog: Trigger Re-Rendering for Setting Title",
+        "references": []
+      },
+      {
+        "id": "66dd01469dc9ae97b434f0346a242156980a9c57",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: if date is deleted open calendar on today",
+        "references": []
+      },
+      {
+        "id": "1a3af974f1d30f5233cb552cc7d8bda3fdef7801",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: issues with date \u003e 99991231",
+        "references": []
+      },
+      {
+        "id": "910d7be04babec435f69385ce882c8ac5c0feb7c",
+        "author": "Nikolay Vankov \u003cnikolay.vankov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Generating correct tab id in createTab() method fixed.",
+        "references": []
+      }
+    ]
+  },
+  "1.34.7": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "6dbb3044ef5447c4b0831a7608e91b1314fb3e96",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FIX",
+        "text": "commons.TabStrip: Scroll position is fixed",
+        "references": []
+      },
+      {
+        "id": "8cf1420d04f593776db8bab24c17dafc4a50ac12",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.Dialog,commons.Dialog,ux3.ToolPopup: Preserve Content on Remove",
+        "references": []
+      },
+      {
+        "id": "f0a660874896c4707ee618321d41ac048562836a",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.RadioButtonGroup: setEnabled behaviour corrected",
+        "references": []
+      },
+      {
+        "id": "2df4fb777c9a595ab717b0ed4d0c623be1f5910d",
+        "author": "Nikolay Kolarov \u003cnikolay.kolarov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ApplicationHeader: Composite parts are initialized only once now",
+        "references": []
+      },
+      {
+        "id": "845d470e31791d25a1aea5cfe9f20ed1e59314a0",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Focus outline on IE corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.34.8": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "e3195e85936e36650dbfbf532c6eb651d766ef0f",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "M/COMMONS",
+        "text": ".Dialog, ux3.ToolPopup: Preserve DOM only if rendered",
+        "references": []
+      }
+    ]
+  },
+  "1.34.9": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "996ac9429b2fab222010bc8c25cb4288298004fd",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.commons.Dialog: setInitialFocus is fixed",
+        "references": []
+      },
+      {
+        "id": "4281767a7c897208373d9cc2fdb05d18a15c7562",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Slider: Aria-readonly property is now correctly read",
+        "references": []
+      },
+      {
+        "id": "665ebfcfdc92c7ce89256efef0de57cc20d816d2",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Closing tab is now fixed",
+        "references": []
+      },
+      {
+        "id": "bcb5eb6036224e7670e233185ffc05e61f263e06",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Event flow is now correct",
+        "references": []
+      }
+    ]
+  },
+  "1.34.11": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "b0059c63dfe46fb31688078a835b98c72488bdae",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Slider: Slider\u0027s API call to set value is now properly rendered",
+        "references": []
+      },
+      {
+        "id": "17330696098043b98ecbe0790ddaca0c06355433",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Hiding the last visible tab no longer throws an exception",
+        "references": []
+      },
+      {
+        "id": "b4c97daf3a42349333b5e9000bd15b344fa1e27e",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TreeNode: Selection of multiple nodes now is properly animated",
+        "references": []
+      }
+    ]
+  },
+  "1.34.12": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "ec28cb11d492c02ac50d603b17bc994f5377e53f",
+        "author": "Nikolay Kolarov \u003cnikolay.kolarov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Paginator: Aria-disabled state is correctly updated now",
+        "references": []
+      },
+      {
+        "id": "a39e8a103212af59ba89a5580ff0ead43524c6ad",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Error is not thrown any more when Scroller in not initialized",
+        "references": []
+      },
+      {
+        "id": "bcd6f513078b7e4f8c43bd19d8dcbe118cd4f81c",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Error is not thrown any more when Scroller in not initialized",
+        "references": []
+      },
+      {
+        "id": "67392ffeefbab586f8519dfd56f8163875bdf54b",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Tab content is no longer rendered when the control is destroyed",
+        "references": []
+      },
+      {
+        "id": "90fc39803e971122824292a8c11d60f307b8f15b",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Tree - base images provided.",
+        "references": []
+      },
+      {
+        "id": "b7722069ddf97b00acf6a0708b9f75f8525988f8",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.TooltipBase: Tooltip should not be open if visibility is set to false",
+        "references": []
+      }
+    ]
   }
 }

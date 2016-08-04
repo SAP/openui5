@@ -255,5 +255,17 @@
         "references": []
       }
     ]
+  },
+  "1.36.16": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "6ce966ee7fe8b77c6952f362ec47a67c55ee8d44",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Month names wrong if more than one month",
+        "references": []
+      }
+    ]
   }
 }

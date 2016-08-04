@@ -2320,5 +2320,45 @@
         "references": []
       }
     ]
+  },
+  "1.36.16": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "6ae913354f12abf2994730ae6bf45464e439ca3a",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "ThemeCheck: extend timeout to fix custom.css",
+        "references": []
+      },
+      {
+        "id": "0db6d0c16081e2e894c0e179047150c7dd6ec224",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabHeader: Error is no longer thrown when IconTabHeader doesn\u0027t have a parent",
+        "references": []
+      },
+      {
+        "id": "4fc36acf6d55a0039bdf849e1f2987ce1777ced8",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input: The input field in an InputListItem is more recognizable now",
+        "references": []
+      },
+      {
+        "id": "8aa75f67e27eb77396a3af3036d4e28f9f086449",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiComboBox: Focus handling problems after rerendering of the list when visible property is false",
+        "references": []
+      },
+      {
+        "id": "9f6678728986068890c91efe954cb39042362b16",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.WizardProgressNavigator: aria-disabled attribute should not be placed for previous active step",
+        "references": []
+      }
+    ]
   }
 }

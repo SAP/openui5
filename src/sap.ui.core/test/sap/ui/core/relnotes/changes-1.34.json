@@ -1193,5 +1193,989 @@
         "references": []
       }
     ]
+  },
+  "1.34.1": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "e0cbf2638ed4e36100a52c3e10ec0bad8da06357",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Component: manifest.json request incl. Accept-Language header",
+        "references": []
+      },
+      {
+        "id": "be642f7390864834d6a9acef54e9a23dbf2777bf",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "UIComponent: added option in manifest to enable autoPrefixId",
+        "references": []
+      },
+      {
+        "id": "4d9f0d98eff6198c7f94d8d874b2d81509ca70cf",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "v2.ODataModel: Binding of FunctionImport parameters",
+        "references": []
+      },
+      {
+        "id": "85ec839ac5830da1590fa1103dc422e71ab47b02",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "CompositeBinding: Fixed issue with validation",
+        "references": []
+      },
+      {
+        "id": "2b2a6a824190d8c827f636994c02369f7d7ff814",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "Core: Provide animation switch for CSS declaration",
+        "references": []
+      },
+      {
+        "id": "ec4eacfe36412b14e133436cbe22fd2e6efab1ee",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "ManagedObject: propagate scope object when creating nested objects",
+        "references": []
+      },
+      {
+        "id": "2c14eb863e641bb386a5454c90d50add1b3f439b",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModelV2: adapt changeHandle to correctly abort requests",
+        "references": []
+      },
+      {
+        "id": "fd32cf1dd00ea0d04bff41e45da8c302140c43bb",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataUtils: Create proper time filter from model property",
+        "references": []
+      },
+      {
+        "id": "a2bb279d86a1cb30511318ba25e4a91d14024a87",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataUtils: Fixed formatValue for Edm.Time according to PDF spec",
+        "references": []
+      },
+      {
+        "id": "2ae0e2f3cb46d13e61e5f46aeae81e1320e9cce5",
+        "author": "D060268 \u003cvaleri.cernyh@sap.com\u003e",
+        "type": "FIX",
+        "text": "OPA Startup Explored App Sample: Starting a UI Component",
+        "references": []
+      },
+      {
+        "id": "584421b961ddbf37af374dca526ef73fe0c00a1c",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "SupportTool: Escaping issues",
+        "references": []
+      },
+      {
+        "id": "d5c11bca53be28f471e376174dac65f4231200da",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "ThemeCheck: Rename attributes sap-ui-ready and sap-ui-css-count to ensure valid HTML",
+        "references": []
+      },
+      {
+        "id": "6d382297e4bf2d1fdab74dc9cb0322b7abe523d6",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "View: propagate owner for async controller initialization",
+        "references": []
+      },
+      {
+        "id": "63184d69e0970fbb61ac8d6feeffe5549abcca8a",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "jQuery.sap.validateUrl: accept same fragment chars as in RFC3986",
+        "references": []
+      },
+      {
+        "id": "3ad9af7d6e0579fcd29213b561d5889f89edd75c",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FIX",
+        "text": "jquery.sap.trace: do not send passport to cross origins",
+        "references": []
+      },
+      {
+        "id": "48c4f75024ed1f21acaa3a7785c6e7b84917112e",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TextArea: typed text lost after re-rendering",
+        "references": []
+      },
+      {
+        "id": "1e8ef3f0202995570f41811700bb927cd03cc6e3",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Handle 204 Responses for FunctionImports",
+        "references": []
+      }
+    ]
+  },
+  "1.34.2": {
+    "date": "January 2016",
+    "notes": [
+      {
+        "id": "009cc01c5cc5bba02d5ee30e7a4cd96ce6599801",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "mvc/Controller: Nested event handlers for declarative views",
+        "references": []
+      },
+      {
+        "id": "eb4f4506f7ce70ac7dbcc13044d63b63568d2cbb",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "Binding: fix documentation for suspend and resume functions",
+        "references": []
+      },
+      {
+        "id": "98b2a4326d6eeb85aa7b6a4ee62bb7900c494ad7",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "ClientTreeBinding - Retrieve all available entries",
+        "references": []
+      },
+      {
+        "id": "4f7d3fa30d7554ee3ec356de1d1116ff59845d1d",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "ClientTreeBindingAdapter - Wrong GroupIDs",
+        "references": []
+      },
+      {
+        "id": "1e5178a20ae7c8cc06e0f7da32dac704d0ffc68c",
+        "author": "Andreas Frische \u003cafrische@users.noreply.github.com\u003e",
+        "type": "FIX",
+        "text": "ControlMessageProcessor extends MessageProcessor, not EventProvider",
+        "references": []
+      },
+      {
+        "id": "7240b8af3e99499d506e4c0f9b826cecad7f8b6e",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "Core: Fix eventing issues in Edge on Windows Phone 10",
+        "references": []
+      },
+      {
+        "id": "4f979bcb6f66f650f7ccaebbfff68e27f355e525",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "DataState: Repair DataState Propagation",
+        "references": []
+      },
+      {
+        "id": "207e7516225629bff1765f3fbf3f18c24bd02f76",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "Label color for HCB",
+        "references": []
+      },
+      {
+        "id": "f8fba444ee342bb97067be29f0a8477cefd25011",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "Manifest: Make deepFreeze more robust for undefined/null values",
+        "references": []
+      },
+      {
+        "id": "873983f4c0c35cfc8d0b3f621361814d070436e7",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "MessageManager: Deregistration of Processors not working",
+        "references": []
+      },
+      {
+        "id": "b538e28d98df941ddf8abb0770c81b760ffa0e75",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataAnnotations: Find Correct EDM Type for NavProp properties",
+        "references": []
+      },
+      {
+        "id": "2963286d8ea2a32663b9cc9d7181125bc0aebdd5",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataContextBinding: Fix unnecessary isReloadneeded call when metadata is not yet available",
+        "references": []
+      },
+      {
+        "id": "9567fef7b98789986be4a49253592efee97e3760",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataListBinding: Fix iLength when no data returned",
+        "references": []
+      },
+      {
+        "id": "86e3be58f55b40ed410f56c4db439ab6db31ead0",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataMessageParser: Specification changes",
+        "references": []
+      },
+      {
+        "id": "79abb0fa73b8435d282c709f13112140c7634c89",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModelV2: Fix callFunction for empty parameter values",
+        "references": []
+      },
+      {
+        "id": "908de08d4bed1ed73e475c7d9e362d378709e5ac",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModelV2: Fix empty merge request",
+        "references": []
+      },
+      {
+        "id": "b6d1fa7eb91e37fec4b41ba9ce8de1c834679f03",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Theme Change: custom.css handling",
+        "references": []
+      },
+      {
+        "id": "2035985b5380151d014ddfe26934e3c59d2fa339",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "TreeTable - Group Mode - Shows Null values",
+        "references": []
+      },
+      {
+        "id": "b4f62f4f84b842b5d857e12274bd9aad44c1953d",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "UIComponent: Prefix root view ID specified in the manifest",
+        "references": []
+      },
+      {
+        "id": "cbc5f14ca6533ec57404f3356d936ec9c1434361",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "jQuery.sap.events: Fix QUnit test for Windows Phone 8.1",
+        "references": []
+      },
+      {
+        "id": "17829ad14c9cd1bfeaf06fbf2aaa1006635f30ae",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "jQuery.sap.measure: Fix XHR and console issues",
+        "references": []
+      },
+      {
+        "id": "33887b70c2d5bf9cb16e47773a3d82d74c0a4f31",
+        "author": "Dr. Thomas Chadzelek \u003cthomas.chadzelek@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.base.BindingParser: Better support for embedded composite bindings within expression binding",
+        "references": []
+      },
+      {
+        "id": "903a024ba2310f52906bd6cb9188be06bbae00fc",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.format.NumberFormat: Parse \u0027emptyString\u0027 should also consider the format option \u0027parseAsString\u0027",
+        "references": []
+      },
+      {
+        "id": "4d8a19a6b9b9679a50f72eb7a7e9691b4829ea33",
+        "author": "Richard Lindner \u003crlindner81@gmail.com\u003e",
+        "type": "FIX",
+        "text": "try new api before deprecated one in order to avoid a warning in chrome",
+        "references": []
+      },
+      {
+        "id": "a7c27af9f9744fbbd47e51efb9eecfbf51028027",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: HasPendingChanges returns wrong state",
+        "references": []
+      }
+    ]
+  },
+  "1.34.3": {
+    "date": "January 2016",
+    "notes": [
+      {
+        "id": "557501ea6911f83e20f1cf6198bd55b261c3b609",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Increase width of technical info dialog to make it less crappy",
+        "references": []
+      },
+      {
+        "id": "ec078e05bf32803f762c60fe730b06a66b473e06",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Support Popup: improve usability (clickable headers)",
+        "references": []
+      },
+      {
+        "id": "d06d2ff420215392d07f2d437070a7da79182ada",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Upgrade QUnit to version 1.18.0",
+        "references": []
+      },
+      {
+        "id": "b51bf238731e26e558213790ad092ea868f583c8",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.test.action.* work in an IFrame now",
+        "references": []
+      },
+      {
+        "id": "59eccba9d52a83b41711875326a832515d2dd162",
+        "author": "Gerald Krause \u003cgerald.krause@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnalyticalBinding: getTotalSize: fix return type",
+        "references": []
+      },
+      {
+        "id": "59fb3e82795dccb197bbe82b561314fb21951dd5",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "BusyIndicator: reduce animation CPU consumption",
+        "references": []
+      },
+      {
+        "id": "81239019dd48621e1667c1f92569c632edce4bb4",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Component/Manifest: Read manifest entries",
+        "references": []
+      },
+      {
+        "id": "135497b9d9bd3e5ad1b23d824d6602602889cddf",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.Element: Remove duplicate delegates correctly",
+        "references": []
+      },
+      {
+        "id": "f975267285047a33efbba60fe44c7e3796dc589c",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.Popup: Prevent rendering of Popups in \u0027_increaseMyZIndex\u0027",
+        "references": []
+      },
+      {
+        "id": "1a7b947b073b8e3958bffb053082d6918a204703",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.Popup: Restore Focus for Combi-Devices Enabled",
+        "references": []
+      },
+      {
+        "id": "e80a5ecf1e3c39b13c664ca8bebb68ec1caf3740",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "jquery-mobile-custom.js: let the non-left button mousedown event propagate",
+        "references": []
+      },
+      {
+        "id": "2ba78a1916d3ddad45f84c2850e6c0c150adaae8",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.model.TreeBinding: Allow adding sorters",
+        "references": []
+      },
+      {
+        "id": "b635c1690595d914f45478a301610d6bc338c35f",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataListBinding: Fixed issue with checkUpdate on expand data",
+        "references": []
+      }
+    ]
+  },
+  "1.34.4": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "80976fcdb50f7220c9c0790ceb7cc498d40dccc1",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "BusyIndicator: New Explored Examples",
+        "references": []
+      },
+      {
+        "id": "1c7268948c2e80ca8df24bc2f9dbfca03c5c30fd",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.core.format.DateFormat: relative format can be configured with \u0027relativeStyle\u0027",
+        "references": []
+      },
+      {
+        "id": "56248b555379dc0a4ae8433c205804be0ddca732",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "BusyIndicator: Faster Adding of DOM",
+        "references": []
+      },
+      {
+        "id": "cd492f8686de9112cfeefd3e8c19d3be919454ff",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ClientTreeBinding: filter after data change",
+        "references": []
+      },
+      {
+        "id": "657ad0af1f63b19f46d444a39779b1a8d1fea4e2",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "DataState: Multiple Formatter Invocations",
+        "references": []
+      },
+      {
+        "id": "39e9e5533b9304b67ab85ea576974b7c1b282e66",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "Fieldgroup check is not done for sub-controls",
+        "references": []
+      },
+      {
+        "id": "fd9f503bfe0fa7d34af09a06ef661d89778dded5",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "MS Edge: usage of Promise polyfill instead of native",
+        "references": []
+      },
+      {
+        "id": "d54215960a1f79c62a1557d7a488e091590c6384",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "commons.Dialog: Trigger Re-Rendering for Setting Title",
+        "references": []
+      },
+      {
+        "id": "c8ced623e4b1f2563a3ad95c14e69b6701246f3c",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.Popup: Changed hide/show",
+        "references": []
+      },
+      {
+        "id": "04c89cf94a668f443b2add0db67afd637a2f455d",
+        "author": "Clemens Maier \u003cc.maier@sap.com\u003e",
+        "type": "FIX",
+        "text": "jquery.sap.global.js: Restrict timeline measurements",
+        "references": []
+      },
+      {
+        "id": "edfc0be53ed1083d15715d681f29efd930e32855",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FIX",
+        "text": "jquery.sap.global.js: jsdoc correction",
+        "references": []
+      },
+      {
+        "id": "d3d55dddeaf93db747fc46e15c03ffd9e336da16",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FIX",
+        "text": "jquery.sap.trace.js: fixed detection when only fesr is active",
+        "references": []
+      },
+      {
+        "id": "ec82723e5aa520623d62e9274da15511d2a9d7b4",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.format.DateFormat: don\u0027t break formatter if no date",
+        "references": []
+      },
+      {
+        "id": "938d1f0799b164e315e175e9b38eacabb3e7265a",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.routing.Router: bypass event should be fired after the bypass target is loaded",
+        "references": []
+      },
+      {
+        "id": "b9db7ebd87d7cd09a06b8b4d2d0f8d3103e64d15",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.model.TreeBindingAdapter: fix \u0027toggleIndex\u0027 with fixed rows in table",
+        "references": []
+      },
+      {
+        "id": "cbc76d55199d534aef4e425993db8109b677a158",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataListBinding: fix GrowingList endless loop",
+        "references": []
+      },
+      {
+        "id": "fe69ea94c58e8061fd12185cb63ffc49bef7380f",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Do not delete entity for $links delete requests",
+        "references": []
+      },
+      {
+        "id": "ad15c162a81712ab663d77bfca770ca017d1db14",
+        "author": "D051856 \u003cmartin.wittmann@sap.com\u003e",
+        "type": "FIX",
+        "text": ": Do not run OPA qUnit test under IOS  on non-safari browsers",
+        "references": []
+      }
+    ]
+  },
+  "1.34.5": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "2e647fce0cee500e4e61ba7638876371f1581507",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Explored: namespaces for types are correct",
+        "references": []
+      },
+      {
+        "id": "da8d19a2e5bd5ec25ea5b478fbd212a597bbe774",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataTreeBinding - dataReceived - missing Parameter",
+        "references": []
+      }
+    ]
+  },
+  "1.34.6": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "9fb5cfbe1629a8cba6fb244da8d1a2183e183d22",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.Popup: BlockLayer Handling Fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.34.7": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "34f321b49d8f4ecf65ea42ea2e3d8f1238406e10",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "JSDoc: v2.ODataListBinding/ODataTreeBinding getDownloadUrl",
+        "references": []
+      },
+      {
+        "id": "73a7f6f56a68d1125358a8473903cbac23357199",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Japanese date: Parse dates without era as current era",
+        "references": []
+      },
+      {
+        "id": "079608c29fa160cce8e26ca3ba8ecf9ab6c0d301",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "MessageManager: avoid undefined error after removal of messages",
+        "references": []
+      },
+      {
+        "id": "f246fadeceaadcc6076107f38fefdab10d3e69af",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FIX",
+        "text": "model.Binding: fix constructor JSDoc",
+        "references": []
+      },
+      {
+        "id": "614d3e0af84e0044279b183fc3ee7a00cc5047e7",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.format.NumberFormat: insert space between currency code and number based on spacing rule in CLDR",
+        "references": []
+      },
+      {
+        "id": "5ac6e7ed079571911cddea6302044b24da8e9a4c",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Don\u0027t delete function import url parameters",
+        "references": []
+      },
+      {
+        "id": "a00dec595f1bfdfaecb475436d0f41e9cec70f95",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Don\u0027t refresh element bindings when deleting",
+        "references": []
+      },
+      {
+        "id": "64dc97c59f4c6030b4c03448705e193f496eceeb",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Fixed support for broken service implementations",
+        "references": []
+      }
+    ]
+  },
+  "1.34.8": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "f8e2f9a5eb20898e2d4892b9aae9d4665dd20a43",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "Component#onWindowUnload: execution cannot be guaranteed",
+        "references": []
+      },
+      {
+        "id": "78482e4e89674d97754e8311ea2da783f11f6c3a",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "FocusHandler: fail safety after destruction",
+        "references": []
+      },
+      {
+        "id": "b3cbf0fef2a9deb3f70d3adee88399d178dd547c",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataContextBinding: Fix duplicate requests in initial function",
+        "references": []
+      },
+      {
+        "id": "f15e05ff7e09fb0de7a36ccd90c627ae0d9eadae",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Call error handler in case of SAML redirect",
+        "references": []
+      },
+      {
+        "id": "ff2bd1ef5d9ee022d2613c1737ac99970d77e931",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataTreeBinding - Correct Datatype in $filter",
+        "references": []
+      }
+    ]
+  },
+  "1.34.9": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "9bee8aceb89422d9c1fdbf287cd72d108b72a7a7",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "v2.ODataModel: force Entity update by setting ETag to \u0027*\u0027",
+        "references": []
+      },
+      {
+        "id": "10edb8de314999c25f70e024bd44c11832ecb27c",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "BusyIndicator: Avoid stacked animations",
+        "references": []
+      },
+      {
+        "id": "9f17950025d1f9beebe3ef0eadd2fd2ffee7adf3",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "BusyIndicator: Use New Fade In Animation",
+        "references": []
+      },
+      {
+        "id": "7c3f0a4433a935fdb50f11a87544683ba5287dcd",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ClientTreeBinding: fix filterrecursive if no filter defined",
+        "references": []
+      },
+      {
+        "id": "38f465878895e1141a5be08fb6bc2211b4bab23c",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "DataState: Remove Control Messages With New Binding",
+        "references": []
+      },
+      {
+        "id": "181129d8c9d622b1492461db08b7be54a7ce9b9f",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FIX",
+        "text": "Fix typo in \"FieldGroup\" demo page of Explored",
+        "references": []
+      },
+      {
+        "id": "bcb7c8623bdf59edf4ad5dc3d30101aa0b18c297",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "LocalBusyIndicator: Skip Delayed-Call If Delay \"0\"",
+        "references": []
+      },
+      {
+        "id": "529ea7d6df467f42652d7c877ba89ebae9047c26",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModelV2: include metadata payload for media entities",
+        "references": []
+      },
+      {
+        "id": "24287ac8678cb12719d468a220eb2160a35ffb59",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.ItemNavigation: make focusItem more fail-safe when called without event",
+        "references": []
+      },
+      {
+        "id": "dfdc1bb65bfa465e13250ff9409dc4396d8442a8",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.routing.Views: only destroy non-null view instance",
+        "references": []
+      },
+      {
+        "id": "a6ab711e22707fab40afc0d0a248bc1f53733976",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.tutorial.navigation: explicit set log level for steps 16 and 17",
+        "references": []
+      },
+      {
+        "id": "1379c528b5e83b4e793b9464c708b091deacb9be",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.OData(List|Tree)Binding: Correctly sort according to Edm type",
+        "references": []
+      }
+    ]
+  },
+  "1.34.10": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "a132fd96c9d541dea2914d4ad4dc5712b0cd9601",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnalyticalBinding - Aborting of Requests",
+        "references": []
+      },
+      {
+        "id": "4db4adafb3f68b9de2d722e0b0a3d45f204d6a5e",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnalyticalBinding - Added Custom URL Paramaters to Download URL",
+        "references": []
+      },
+      {
+        "id": "766db830015b05e44625a151dfe224a247936a3c",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataAnnotations: Reject Promise with Error Instance",
+        "references": []
+      },
+      {
+        "id": "5bfd4d7cc3503559f365f06f9be2ab8aec2ff7d9",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModel: Fire Annotation-Events asynchronously in sync mode",
+        "references": []
+      },
+      {
+        "id": "281d8ac08c9e4d7637750dcad7ec794e719b8d0f",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "jquery.sap.encoder: Fix URL validation according to RFC 3986, 6068",
+        "references": []
+      },
+      {
+        "id": "34e9fe610196386102bd25839151ec838b60f694",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Icon: press event is fired twice on mobile device",
+        "references": []
+      },
+      {
+        "id": "e2731dda265523622eff65f4521bf703b1064bcf",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.delegate.ItemNavigation: no items",
+        "references": []
+      },
+      {
+        "id": "e6aed6d7f9181d2ad2ac2880aefa54c27bbf8ce2",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: wrong header for merge requests",
+        "references": []
+      }
+    ]
+  },
+  "1.34.11": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "d1366f5432372d4e7970a29efb29c305473e1b5d",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "DataBinding: properly cleanup binding info when binding becomes invalid",
+        "references": []
+      },
+      {
+        "id": "0401b698b98c61ecf7019c089aa1c69eff66a9be",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataAnnotations: AnnotationParser - Error Messages in Debug Mode",
+        "references": []
+      },
+      {
+        "id": "a76a90b06d6e9c8514ea57ed4cb0e2a28fce8a75",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.routing: correctly forward the route parameter to the initial page of target container",
+        "references": []
+      },
+      {
+        "id": "db89bfd9332641cb5f2dcc8910518c646f640df8",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.IconPool: icon \"flag\" and \"search\" should be excluded from mirroring in RTL",
+        "references": []
+      },
+      {
+        "id": "021c49e2ebfebc066c1a889522ea4a967d07905f",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.model.analytics.AnalyticalBinding: removed RequestFailed event",
+        "references": []
+      }
+    ]
+  },
+  "1.34.12": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "1f0e1619dad5757be66fa3a86d9f47a224477e80",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "model.odata.AnnotationParser: Support Nested Annotations",
+        "references": []
+      },
+      {
+        "id": "534237b37fb3e111ec788360e9d87e11957bbf4b",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "Bindings: Remove Messages on Destroy and Rebind",
+        "references": []
+      },
+      {
+        "id": "b71efa383cc383afb4bcaf4850cf1d9ef7b5cecc",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "BusyIndicator: Supress \u0027touchmove\u0027 on Control Level",
+        "references": []
+      },
+      {
+        "id": "f7780be7472c3c1be313e43f1f3f1f25909d239d",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "ClientTreeBindingAdapter - Fixed Issue with groupID calculation",
+        "references": []
+      },
+      {
+        "id": "1a6ca556b80d2c136fd1cc793268e6ff79d0c6fa",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "ClientTreeBindingAdapter - Reset Cache",
+        "references": []
+      },
+      {
+        "id": "2523ec8d57179c3658b51004b9e07d06cc7b16a6",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "Component: delegate runAsOwner using sap.ui.component async",
+        "references": []
+      },
+      {
+        "id": "dcd893a830d002cf6435799a63e99f0039f4004a",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "Databinding tutorial: fix minor bugs in explored examples",
+        "references": []
+      },
+      {
+        "id": "de717fe1bc9cae538cdecffe646f08b8c75d9743",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "Popup: Order of Functions During Opening Fixed",
+        "references": []
+      },
+      {
+        "id": "0912f287341691993b2db333a17050c534415f3a",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FIX",
+        "text": "Rendering: visible property should work with preserved controls",
+        "references": []
+      },
+      {
+        "id": "1eb9922fcb2acff24772e68f678e4adfd2bfc035",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Themeroots / preloadLibCss: Register correct module paths",
+        "references": []
+      },
+      {
+        "id": "f920115893cdf8b1bd8d514ffd2e3e3979dabf7e",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "don\u0027t fail when access to local storage is disallowed",
+        "references": []
+      },
+      {
+        "id": "8b0884a197c29f0868478b63959bb108353afc36",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FIX",
+        "text": "mvc/XMLView: fixed rendering of invisible child controls",
+        "references": []
+      },
+      {
+        "id": "13372c639694b301b98dadcffb13b7690e4fa757",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.LocaleData: correctly expand fields in custom date pattern",
+        "references": []
+      },
+      {
+        "id": "d8e57d2bae991eaeff615eadede846b5dfea95d8",
+        "author": "Irina Goetzenberger \u003cirina.goetzenberger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Scrollbar: fix scrolling in the ui.table.Table for FioriClient and Edge browser on Windows 10 and Windows 8.",
+        "references": []
+      },
+      {
+        "id": "b7722069ddf97b00acf6a0708b9f75f8525988f8",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.TooltipBase: Tooltip should not be open if visibility is set to false",
+        "references": []
+      },
+      {
+        "id": "e304f9142490f62ba3d0e92547c1753582ba6285",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.format.NumberFormat: make currency with negative number non breakable",
+        "references": []
+      },
+      {
+        "id": "b7c81878c1288d048ba445cd46f6a7f0fef090e9",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.util.File: handle utf-8 content on Safari",
+        "references": []
+      },
+      {
+        "id": "7101949773c01968c30afe7d93aa8ab16abb08f8",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataListBinding: Set length to final in InlineRepeat mode",
+        "references": []
+      }
+    ]
   }
 }
