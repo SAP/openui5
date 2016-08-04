@@ -120,35 +120,22 @@ function(jQuery, ManagedObject) {
 	 * Returns action sAction part of designTime metadata (object or changeType string)
 	 * @param  {string} sAction action name
 	 * @param  {object} oElement element instance
-	 * @return {string|object} part of designTimeMetada, which describes sAction
+	 * @return {map} part of designTimeMetada, which describes sAction in a map format
 	 * @public
 	 */
 	DesignTimeMetadata.prototype.getAction = function(sAction, oElement) {
 		var mData = this.getData();
 		if (mData.actions && mData.actions[sAction]) {
 			var vAction = mData.actions[sAction];
-			if (typeof (vAction) === "function" ){
-				return vAction.call(null, oElement);
+			if (typeof (vAction) === "function" ) {
+				vAction = vAction.call(null, oElement);
+			}
+
+			if (typeof (vAction) === "string" ) {
+				return { changeType : vAction };
 			} else {
 				return vAction;
 			}
-		}
-	};
-
-	/**
-	 * Return action type for sAction from designTimeMetadata of oElement
-	 * @param  {string} sAction action name
-	 * @param  {object} oElement element instance
-	 * @return {string} action type
-	 * @public
-	 */
-	DesignTimeMetadata.prototype.getActionChangeType = function(sAction, oElement) {
-		var vAction = this.getAction(sAction, oElement);
-
-		if (typeof vAction === "object") {
-			return vAction.changeType;
-		} else {
-			return vAction;
 		}
 	};
 

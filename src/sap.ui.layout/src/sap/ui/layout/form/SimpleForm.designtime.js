@@ -6,6 +6,30 @@
 sap.ui.define([], function() {
 	"use strict";
 
+	var fnGetFormElementState = function(oFormElement) {
+		var that = this;
+
+		var aControlsState = [];
+
+		var oLabel = oFormElement.getLabel();
+		var aControls = oFormElement.getFields();
+		if (oLabel) {
+			aControls = [oLabel].concat(aControls);
+		}
+
+		aControls.forEach(function(oControl) {
+			aControlsState.push({
+				element : oControl,
+				visible : oControl.getVisible(),
+				index : that.getContent().indexOf(oControl)
+			});
+		});
+
+		return {
+			elementsState : aControlsState
+		};
+	};
+
 	return {
 		aggregations : {
 			content : {
@@ -14,8 +38,8 @@ sap.ui.define([], function() {
 			form : {
 				ignore : false,
 				actions : {
-					move : function(oElement){
-						var sType = oElement.getMetadata().getName();
+					move : function(oMovedElement){
+						var sType = oMovedElement.getMetadata().getName();
 
 						if (sType === "sap.ui.layout.form.FormContainer"){
 							return "moveSimpleFormGroup";
@@ -84,11 +108,65 @@ sap.ui.define([], function() {
 							};
 						}
 						return oRenameMetadata;
-					}
-				},
-				beforeMove : function(oMovedElement, oSource, oTarget) {
-				}
+					},
+					remove : function(oRemovedElement) {
+						var sType = oRemovedElement.getMetadata().getName();
 
+						var sChangeType;
+						var bIsEnabled = true;
+						if (sType === "sap.ui.layout.form.FormContainer"){
+							sChangeType = "removeSimpleFormGroup";
+							bIsEnabled = !!oRemovedElement.getTitle();
+						} else if (sType === "sap.ui.layout.form.FormElement"){
+							sChangeType = "hideSimpleFormField";
+						}
+
+						return {
+							changeType : sChangeType,
+							isEnabled : bIsEnabled,
+							getState : function(oRemovedElement) {
+								var that = this;
+
+								if (oRemovedElement.getMetadata().getName() === "sap.ui.layout.form.FormElement") {
+									return fnGetFormElementState.call(this, oRemovedElement);
+								} else {
+									var aElementsState = [];
+									var oTitle = oRemovedElement.getTitle();
+									aElementsState.push({
+										element : oTitle,
+										index : this.getContent().indexOf(oTitle)
+									});
+
+									oRemovedElement.getFormElements().forEach(function(oFormElement) {
+										aElementsState = aElementsState.concat(fnGetFormElementState.call(that, oFormElement).elementsState);
+									});
+
+									return {
+										elementsState : aElementsState
+									};
+								}
+							},
+							restoreState : function(oRemovedElement, oState) {
+								var that = this;
+								if (oRemovedElement.getMetadata().getName() === "sap.ui.layout.form.FormElement") {
+									oState.elementsState.forEach(function(oElementState) {
+										oElementState.element.setVisible(oElementState.visible);
+									});
+								} else {
+									oState.elementsState.forEach(function(oElementState) {
+										if (oElementState.visible) {
+											oElementState.element.setVisible(oElementState.visible);
+										}
+										if (oElementState.index !== undefined) {
+											that.removeContent(oElementState.element);
+											that.insertContent(oElementState.element, oElementState.index);
+										}
+									});
+								}
+							}
+						};
+					}
+				}
 			}
 		}
 	};
