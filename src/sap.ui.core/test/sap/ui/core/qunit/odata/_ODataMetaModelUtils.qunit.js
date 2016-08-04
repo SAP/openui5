@@ -68,6 +68,7 @@ sap.ui.require([
 			"transp" : { "Path" : "Transp" },
 			"wholeday" : { "Path" : "Wholeday" }
 		},
+		sInsertRestrictions = "Org.OData.Capabilities.V1.InsertRestrictions",
 		oMessageAnnotationFromV2 = {
 			"body" : { "Path" : "Body" },
 			"from" : { "Path" : "From" },
@@ -888,114 +889,103 @@ sap.ui.require([
 			oEntityType = {
 				navigationProperty : [
 					{"sap:creatable" : "true"},
-					{"sap:creatable" : "false"},
-					{"sap:bar" : "false"},
-					{"sap:creatable" : "false"},
-					{"sap:creatable-path" : "foo"},
-					{"sap:creatable-path" : "foo", "sap:creatable" : "false"}
+					{"sap:bar" : "false"}
 				]
 			},
 			oUtilsMock = this.mock(Utils);
 
-		oUtilsMock.expects("addNonInsertableNavigationProperty")
+		oUtilsMock.expects("handleCreatableNavigationProperty")
+			.withExactArgs(oEntitySet, oEntityType.navigationProperty[0]);
+		oUtilsMock.expects("handleCreatableNavigationProperty")
 			.withExactArgs(oEntitySet, oEntityType.navigationProperty[1]);
-		oUtilsMock.expects("addNonInsertableNavigationProperty")
-			.withExactArgs(oEntitySet, oEntityType.navigationProperty[3]);
-		oUtilsMock.expects("addNonInsertableNavigationProperty")
-			.withExactArgs(oEntitySet, oEntityType.navigationProperty[4]);
-		oUtilsMock.expects("addNonInsertableNavigationProperty")
-			.withExactArgs(oEntitySet, oEntityType.navigationProperty[5]);
 
 		// code under test
 		Utils.calculateEntitySetAnnotations(oEntitySet, oEntityType);
 	});
 
 	//*********************************************************************************************
-	[{
-		oEntitySet : {},
-		oInsertRestrictionsBase :  {
-			"NonInsertableNavigationProperties" : []
-		}
+	[undefined, {
+		"Insertable" : {"Bool" : "false"}
 	}, {
-		oEntitySet : {
-			"Org.OData.Capabilities.V1.InsertRestrictions" : {"Insertable" : {"Bool" : "false"}}
-		},
-		oInsertRestrictionsBase :  {
-			"Insertable" : {"Bool" : "false"},
-			"NonInsertableNavigationProperties" : []
-		}
-	}].forEach(function (oFixture) {
-		var oEntitySet = oFixture.oEntitySet;
-
-		QUnit.test("addNonInsertableNavigationProperty: " + JSON.stringify(oEntitySet),
-			function (assert) {
-				var oNavProperty = {
-						"name" : "foo",
-						"sap:creatable" : "false"
-					},
-					oNavProperty2 = {
-						"name" : "bar",
-						"sap:creatable" : "false"
-					},
-					oNavProperty3 = {
-						"name" : "withPath",
-						"sap:creatable-path" : "Creatable"
-					},
-					oNavProperty4 = {
-						"name" : "withPath2",
-						"sap:creatable" : "false",
-						"sap:creatable-path" : "Creatable2"
-					},
-					oExpected = oFixture.oInsertRestrictionsBase;
-
-				// code under test
-				Utils.addNonInsertableNavigationProperty(oEntitySet, oNavProperty);
-
-				oExpected["NonInsertableNavigationProperties"]
-					.push({"NavigationPropertyPath" : "foo"});
-				assert.deepEqual(oEntitySet["Org.OData.Capabilities.V1.InsertRestrictions"],
-					oExpected);
-
-				// code under test
-				Utils.addNonInsertableNavigationProperty(oEntitySet, oNavProperty2);
-
-				oExpected["NonInsertableNavigationProperties"]
-					.push({"NavigationPropertyPath" : "bar"});
-				assert.deepEqual(oEntitySet["Org.OData.Capabilities.V1.InsertRestrictions"],
-					oExpected);
-
-				// code under test
-				Utils.addNonInsertableNavigationProperty(oEntitySet, oNavProperty3);
-
-				oExpected["NonInsertableNavigationProperties"]
-					.push({
-						"If" : [{
-							"Not" : {
-								"Path" : "Creatable"
-							}
-						}, {
-							"NavigationPropertyPath" : "withPath"
-						}]
-					});
-				assert.deepEqual(oEntitySet["Org.OData.Capabilities.V1.InsertRestrictions"],
-					oExpected);
-
-				// code under test
-				Utils.addNonInsertableNavigationProperty(oEntitySet, oNavProperty4);
-
-				oExpected["NonInsertableNavigationProperties"]
-					.push({
-						"If" : [{
-							"Not" : {
-								"Path" : "Creatable2"
-							}
-						}, {
-							"NavigationPropertyPath" : "withPath2"
-						}]
-					});
-				assert.deepEqual(oEntitySet["Org.OData.Capabilities.V1.InsertRestrictions"],
-					oExpected);
+		"NonInsertableNavigationProperties" : [{
+			"NavigationPropertyPath" : "foo"
+		}]
+	}, {
+		"Insertable" : {"Bool" : "false"},
+		"NonInsertableNavigationProperties" : [{
+			"NavigationPropertyPath" : "bar"
+		}]
+	}].forEach(function (oInsertRestrictions) {
+		[{
+			navigationProperty : {"name" : "creatableTrue", "sap:creatable" : "true"},
+			expectedNewNonInsertableNavigationProperty : undefined
+		}, {
+			navigationProperty : {"name" : "creatableFalse", "sap:creatable" : "false"},
+			expectedNewNonInsertableNavigationProperty : {
+				"NavigationPropertyPath" : "creatableFalse"
 			}
-		);
+		}, {
+			navigationProperty : {
+				"name" : "creatablePath",
+				"sap:creatable-path" : "AnyPathExpression"
+			},
+			expectedNewNonInsertableNavigationProperty : {
+				"If" : [{
+					"Not" : {"Path" : "AnyPathExpression"}
+				}, {
+					"NavigationPropertyPath" : "creatablePath"
+				}]
+			}
+		}, {
+			navigationProperty : {
+				"name" : "inconsistent",
+				"sap:creatable" : "false",
+				"sap:creatable-path" : "AnyPathExpression"
+			},
+			expectedNewNonInsertableNavigationProperty : {
+				"NavigationPropertyPath" : "inconsistent"
+			},
+			withWarning : true
+		}].forEach(function (oFixture) {
+			var oEntitySet = {
+					"entityType" : "mySchema.Type"
+				},
+				oNavigationProperty = oFixture.navigationProperty;
+
+			if (oInsertRestrictions) {
+				oEntitySet[sInsertRestrictions] = oInsertRestrictions;
+			}
+			QUnit.test("handleCreatableNavigationProperty: InsertRestrictions: "
+					+ JSON.stringify(oInsertRestrictions)
+					+ "; property '" + oNavigationProperty.name + "'", function (assert) {
+				var oExpectedEntitySet = JSON.parse(JSON.stringify(oEntitySet)),
+					oExpectedInsertRestrictions,
+					aNavigationProperties,
+					oNewProperty = oFixture.expectedNewNonInsertableNavigationProperty;
+
+				if (oNewProperty) {
+					oExpectedInsertRestrictions
+						= oExpectedEntitySet[sInsertRestrictions]
+						= oExpectedEntitySet[sInsertRestrictions] || {};
+					aNavigationProperties
+						= oExpectedInsertRestrictions["NonInsertableNavigationProperties"]
+						= oExpectedInsertRestrictions["NonInsertableNavigationProperties"] || [];
+					aNavigationProperties.push(oNewProperty);
+				}
+
+				if (oFixture.withWarning) {
+					this.mock(jQuery.sap.log).expects("warning")
+						.withExactArgs("Inconsistent service",
+							"Use either 'sap:creatable' or 'sap:creatable-path'"
+								+ " at navigation property 'mySchema.Type/inconsistent'",
+							"sap.ui.model.odata.ODataMetaModel");
+				}
+
+				// code under test
+				Utils.handleCreatableNavigationProperty(oEntitySet, oNavigationProperty);
+
+				assert.deepEqual(oEntitySet, oExpectedEntitySet);
+			});
+		});
 	});
 });

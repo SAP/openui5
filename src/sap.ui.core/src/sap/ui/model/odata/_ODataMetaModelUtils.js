@@ -211,44 +211,6 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 				aFilterRestrictions;
 		},
 
-
-		/**
-		 * Adds the current navigation property to the
-		 * <code>NonInsertableNavigationProperties</code> collection of the
-		 * <code>Org.OData.Capabilities.V1.InsertRestrictions</code> V4 annotation at the given
-		 * entity set. If the annotation does not yet exist, it is created.
-		 *
-		 * @param {object} oEntitySet
-		 *   The entity set
-		 * @param {object} oNavigationProperty
-		 *   The navigation property
-		 */
-		addNonInsertableNavigationProperty : function (oEntitySet, oNavigationProperty) {
-			var oInsertRestrictions
-					= oEntitySet["Org.OData.Capabilities.V1.InsertRestrictions"]
-					= oEntitySet["Org.OData.Capabilities.V1.InsertRestrictions"] || {},
-				oNonInsertableCollection
-					= oInsertRestrictions["NonInsertableNavigationProperties"]
-					= oInsertRestrictions["NonInsertableNavigationProperties"] || [],
-				sCreatablePath = oNavigationProperty["sap:creatable-path"];
-
-			if (sCreatablePath) {
-				oNonInsertableCollection.push({
-					"If" : [{
-						"Not" : {
-							"Path" : sCreatablePath
-						}
-					}, {
-						"NavigationPropertyPath" : oNavigationProperty.name
-					}]
-				});
-			} else {
-				oNonInsertableCollection.push({
-					"NavigationPropertyPath" : oNavigationProperty.name
-				});
-			}
-		},
-
 		/**
 		 * Adds current property to the property collection for given V2 annotation.
 		 *
@@ -500,10 +462,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 						Utils.addPropertyToAnnotation("sap:filterable", oEntitySet,
 							oNavigationProperty);
 					}
-					if (oNavigationProperty["sap:creatable"] === "false" ||
-						oNavigationProperty["sap:creatable-path"]) {
-						Utils.addNonInsertableNavigationProperty(oEntitySet, oNavigationProperty);
-					}
+					Utils.handleCreatableNavigationProperty(oEntitySet, oNavigationProperty);
 				});
 			}
 		},
@@ -737,6 +696,56 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 			}
 
 			return mValueLists;
+		},
+
+		/**
+		 * Convert sap:creatable and sap:creatable-path at navigation property to V4 annotation
+		 * 'Org.OData.Capabilities.V1.InsertRestrictions/NonInsertableNavigationProperties' at
+		 * the given entity set.
+		 * If both V2 annotations 'sap:creatable' and 'sap:creatable-path' are given the service is
+		 * broken and the navigation property is added as non-insertable navigation property.
+		 * If neither 'sap:creatable' nor 'sap:creatable-path' are given this function does
+		 * nothing.
+		 *
+		 * @param {object} oEntitySet
+		 *   The entity set
+		 * @param {object} oNavigationProperty
+		 *   The navigation property
+		 */
+		handleCreatableNavigationProperty : function (oEntitySet, oNavigationProperty) {
+			var sCreatable = oNavigationProperty["sap:creatable"],
+				sCreatablePath = oNavigationProperty["sap:creatable-path"],
+				oInsertRestrictions,
+				oNonInsertable = {"NavigationPropertyPath" : oNavigationProperty.name},
+				aNonInsertableNavigationProperties;
+
+			if (sCreatable && sCreatablePath) {
+				// inconsistent service if both v2 annotations are set
+				jQuery.sap.log.warning("Inconsistent service",
+					"Use either 'sap:creatable' or 'sap:creatable-path' at navigation property "
+						+ "'" + oEntitySet.entityType + "/" + oNavigationProperty.name + "'",
+					"sap.ui.model.odata.ODataMetaModel");
+				sCreatable = "false";
+				sCreatablePath = undefined;
+			}
+			if (sCreatable === "false" || sCreatablePath) {
+				oInsertRestrictions
+					= oEntitySet["Org.OData.Capabilities.V1.InsertRestrictions"]
+					= oEntitySet["Org.OData.Capabilities.V1.InsertRestrictions"] || {};
+				aNonInsertableNavigationProperties
+					= oInsertRestrictions["NonInsertableNavigationProperties"]
+					= oInsertRestrictions["NonInsertableNavigationProperties"] || [];
+				if (sCreatablePath) {
+					oNonInsertable = {
+						"If" : [{
+							"Not" : {
+								"Path" : sCreatablePath
+							}
+						}, oNonInsertable]
+					};
+				}
+				aNonInsertableNavigationProperties.push(oNonInsertable);
+			}
 		},
 
 		/**
