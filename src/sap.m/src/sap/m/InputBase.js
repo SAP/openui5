@@ -747,9 +747,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Gets the reference element which the message popup should dock to.
+	 * Gets the DOM element reference where the message popup is attached.
 	 *
-	 * @returns {object} DOM element which the message popup should dock to
+	 * @returns {object} The DOM element reference where the message popup is attached
 	 * @since 1.26
 	 * @protected
 	 */
