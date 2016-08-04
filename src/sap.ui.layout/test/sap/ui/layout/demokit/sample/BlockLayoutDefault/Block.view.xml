@@ -17,13 +17,17 @@
 			<items>
 				<SegmentedButtonItem key="Default" text="Default" />
 				<SegmentedButtonItem key="Light" text="Light" />
+				<SegmentedButtonItem key="Mixed" text="Mixed" />
+				<SegmentedButtonItem key="Accent" text="Accent" />
+				<SegmentedButtonItem key="Dashboard" text="Dashboard" />
 			</items>
 		</SegmentedButton>
 	</form:SimpleForm>
 	<l:VerticalLayout id="containerLayout" width="100%" >
 		<l:BlockLayout id="BlockLayout" background="{/selectedBackground}">
-			<l:BlockLayoutRow>
+			<l:BlockLayoutRow accentCells="Accent1">
 				<l:BlockLayoutCell
+						id="Accent1"
 						width="2"
 						title="Left aligned heading">
 					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."/>
@@ -140,14 +144,14 @@
 					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."/>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
-			<l:BlockLayoutRow>
-				<l:BlockLayoutCell>
+			<l:BlockLayoutRow accentCells="Accent2">
+				<l:BlockLayoutCell id="Accent2">
 					<MessageStrip text="You can use the cells with 100% width, if you set the vertical property of the row to true" />
 					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."/>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
-			<l:BlockLayoutRow>
-				<l:BlockLayoutCell>
+			<l:BlockLayoutRow accentCells="Accent3">
+				<l:BlockLayoutCell id="Accent3">
 					<Table id="idProductsTable"
 						   inset="false"
 						   items="{

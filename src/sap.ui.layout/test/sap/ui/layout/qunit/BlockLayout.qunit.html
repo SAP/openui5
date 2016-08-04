@@ -23,7 +23,7 @@
 		QUnit.module("Block Layout Public and Private API", {
 			blockId: "block-layout-id",
 			blockRowId: "block-row-id",
-			setup: function () {
+			beforeEach: function () {
 				var that = this;
 
 				this.cells = [
@@ -45,7 +45,7 @@
 				this.BlockLayout.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			},
-			teardown: function () {
+			afterEach: function () {
 				this.BlockLayout.destroy();
 				this.BlockLayoutRow.destroy();
 				this.logSpy.restore();
@@ -114,6 +114,224 @@
 			assert.strictEqual(this.logSpy.called, true, "Error should be logged called with 2 cells in scrollable row");
 		});
 
+		QUnit.module("Background types");
+
+		QUnit.test("BlockLayout default type dynamically change", function (assert) {
+			// Arrange
+			var sType = sap.ui.layout.BlockBackgroundType.Default;
+
+			// System under Test
+			var oBlockLayout = new sap.ui.layout.BlockLayout({}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.strictEqual(oBlockLayout.getBackground(), sType, "Background with undefined argument should be of Default type");
+			assert.ok(oBlockLayout.hasStyleClass("sapUiBlockLayoutBackground" + sType), "Should have set proper CSS classes");
+
+			// Act
+			sType = sap.ui.layout.BlockBackgroundType.Accent;
+			oBlockLayout.setBackground(sType);
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.strictEqual(oBlockLayout.getBackground(), sType, "Background to be set of Accent type");
+			assert.ok(oBlockLayout.hasStyleClass("sapUiBlockLayoutBackground" + sType), "Should have set proper CSS classes");
+
+			// Cleanup
+			oBlockLayout.destroy();
+		});
+
+		QUnit.test("BlockLayout with predefined type", function (assert) {
+			// Arrange
+			var sType = sap.ui.layout.BlockBackgroundType.Accent;
+
+			// System under Test
+			var oBlockLayout = new sap.ui.layout.BlockLayout({background: sType}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.strictEqual(oBlockLayout.getBackground(), sType, "Background to be set of Accent type");
+			assert.ok(oBlockLayout.hasStyleClass("sapUiBlockLayoutBackground" + sType), "Should have set proper CSS classes");
+
+			// Cleanup
+			oBlockLayout.destroy();
+		});
+
+		QUnit.test("BlockLayoutRow predefined Color Set", function (assert) {
+			var sColorSet = sap.ui.layout.BlockRowColorSets.ColorSet2;
+			var oBlockRow = new sap.ui.layout.BlockLayoutRow({rowColorSet: sColorSet});
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.strictEqual(oBlockRow.getRowColorSet(), sColorSet, "Color set should be of type " + sColorSet);
+			assert.ok(oBlockRow.hasStyleClass("sapUiBlockLayoutBackground" + sColorSet), "Should have set proper CSS classes");
+
+			// Cleanup
+			oBlockRow.destroy();
+		});
+
+		QUnit.test("BlockLayoutRow dynamically change Color Set", function (assert) {
+			var sColorSet = sap.ui.layout.BlockRowColorSets.ColorSet2;
+			var oBlockRow = new sap.ui.layout.BlockLayoutRow({rowColorSet: sColorSet});
+			sap.ui.getCore().applyChanges();
+
+			// Act
+			sColorSet = sap.ui.layout.BlockRowColorSets.ColorSet3;
+			oBlockRow.setRowColorSet(sColorSet);
+
+			// Assert
+			assert.strictEqual(oBlockRow.getRowColorSet(), sColorSet, "Color set should be of type " + sColorSet);
+			assert.ok(oBlockRow.hasStyleClass("sapUiBlockLayoutBackground" + sColorSet), "Should have set proper CSS classes");
+
+			// Cleanup
+			oBlockRow.destroy();
+		});
+
+		QUnit.module("BlockLayout + BlockLayoutRow + BlockLayoutCell integrations");
+
+		QUnit.test("BlockLayout + 2 sequent BlockLayoutRow-s with the same color set", function (assert) {
+			var sColorSet = sap.ui.layout.BlockRowColorSets.ColorSet1,
+					oRow1 = new sap.ui.layout.BlockLayoutRow({rowColorSet: sColorSet}),
+					oRow2 = new sap.ui.layout.BlockLayoutRow({rowColorSet: sColorSet}),
+					oBlockLayout = new sap.ui.layout.BlockLayout({
+						background: sap.ui.layout.BlockBackgroundType.Accent,
+						content: [oRow1, oRow2]
+					}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.strictEqual(oRow1.getRowColorSet(), sColorSet, "Color set should be of type " + sColorSet);
+			assert.ok(oRow1.hasStyleClass("sapUiBlockLayoutBackground" + sColorSet), "Should have set proper CSS classes");
+
+			assert.strictEqual(oRow2.getRowColorSet(), sColorSet, "Color set should be of type " + sColorSet);
+			assert.ok(oRow2.hasStyleClass("sapUiBlockLayoutBackground" + sColorSet + "Inverted"), "Should have set proper CSS classes");
+
+			// Act
+			sColorSet = sap.ui.layout.BlockRowColorSets.ColorSet3;
+			oRow2.setRowColorSet(sColorSet);
+
+			// Assert
+			assert.strictEqual(oRow2.getRowColorSet(), sColorSet, "Color set should be of type " + sColorSet);
+			assert.ok(oRow2.hasStyleClass("sapUiBlockLayoutBackground" + sColorSet), "Should have set proper CSS classes");
+
+			// Cleanup
+			oRow1 = null;
+			oRow2 = null;
+			oBlockLayout.destroy();
+		});
+
+		QUnit.test("BlockLayout + 2 sequent BlockLayoutRow-s with different color sets", function (assert) {
+			var sColorSet1 = sap.ui.layout.BlockRowColorSets.ColorSet21,
+					sColorSet2 = sap.ui.layout.BlockRowColorSets.ColorSet2,
+					oRow1 = new sap.ui.layout.BlockLayoutRow({rowColorSet: sColorSet1}),
+					oRow2 = new sap.ui.layout.BlockLayoutRow({rowColorSet: sColorSet2}),
+					oBlockLayout = new sap.ui.layout.BlockLayout({
+						background: sap.ui.layout.BlockBackgroundType.Accent,
+						content: [oRow1, oRow2]
+					}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.strictEqual(oRow1.getRowColorSet(), sColorSet1, "Color set should be of type " + sColorSet1);
+			assert.ok(oRow1.hasStyleClass("sapUiBlockLayoutBackground" + sColorSet1), "Should have set proper CSS classes");
+
+			assert.strictEqual(oRow2.getRowColorSet(), sColorSet2, "Color set should be of type " + sColorSet2);
+			assert.ok(oRow2.hasStyleClass("sapUiBlockLayoutBackground" + sColorSet2), "Should have set proper CSS classes");
+
+			// Act
+			oRow1.setRowColorSet(sColorSet2);
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.strictEqual(oRow1.getRowColorSet(), sColorSet2, "Color set should be of type " + sColorSet2);
+			assert.ok(oRow1.hasStyleClass("sapUiBlockLayoutBackground" + sColorSet2), "Should have set proper CSS classes");
+
+			assert.strictEqual(oRow2.getRowColorSet(), sColorSet2, "Color set should be of type " + sColorSet2);
+			assert.ok(oRow2.hasStyleClass("sapUiBlockLayoutBackground" + sColorSet2 + "Inverted"), "Should have set proper CSS classes");
+
+			// Cleanup
+			oRow1 = null;
+			oRow2 = null;
+			oBlockLayout.destroy();
+		});
+
+		QUnit.test("Mixed BlockLayout with an accent cell", function (assert) {
+			var oCell1 = new sap.ui.layout.BlockLayoutCell({width: 1}),
+					oCell2 = new sap.ui.layout.BlockLayoutCell({width: 1}),
+					oRow = new sap.ui.layout.BlockLayoutRow({
+						content: [oCell1, oCell2],
+						accentCells: [oCell1]
+					}),
+					oBlockLayout = new sap.ui.layout.BlockLayout({
+						background: sap.ui.layout.BlockBackgroundType.Mixed,
+						content: [oRow]
+					}).placeAt("qunit-fixture");
+
+			var oSpy = sinon.spy(oRow, "_processMixedCellStyles");
+
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.ok(oSpy.calledOnce, "Mixed layout cell processor has been called");
+			assert.strictEqual(oRow.getAccentCells()[0], oCell1.getId(), "Should have set Cell1 as an accent cell");
+			assert.ok(oCell1.hasStyleClass("sapContrast"), "Should have set proper CSS classes");
+			assert.ok(oCell1.hasStyleClass("sapContrastPlus"), "Should have set proper CSS classes");
+
+			// Act
+			oRow.addAccentCell(oCell2);
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.notEqual(oRow.getAccentCells()[0], oCell1.getId(), "Should have removed Cell1 as an accent cell");
+			assert.ok(!oCell1.hasStyleClass("sapContrast"), "Should have removed the contrast containers from Cell1");
+			assert.ok(!oCell1.hasStyleClass("sapContrastPlus"), "Should have removed the contrast containers from Cell1");
+
+			assert.strictEqual(oRow.getAccentCells()[0], oCell2.getId(), "Should have set Cell2 as an accent cell");
+			assert.ok(oCell2.hasStyleClass("sapContrast"), "Should have set proper CSS classes");
+			assert.ok(oCell2.hasStyleClass("sapContrastPlus"), "Should have set proper CSS classes");
+
+			// Cleanup
+			oSpy.restore();
+			oCell1 = null;
+			oRow = null;
+			oBlockLayout.destroy();
+		});
+
+		QUnit.test("Accent BlockLayout with an accent cells", function (assert) {
+			var oCell1 = new sap.ui.layout.BlockLayoutCell({width: 1}),
+					oCell2 = new sap.ui.layout.BlockLayoutCell({width: 1}),
+					oRow = new sap.ui.layout.BlockLayoutRow({
+						content: [oCell1, oCell2],
+						accentCells: [oCell1]
+					}),
+					oBlockLayout = new sap.ui.layout.BlockLayout({
+						background: sap.ui.layout.BlockBackgroundType.Accent,
+						content: [oRow]
+					}).placeAt("qunit-fixture");
+
+			var oSpy = sinon.spy(oRow, "_processAccentCellStyles");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.ok(oSpy.calledOnce, "Accent layout cell processor has been called");
+			assert.strictEqual(oRow.getAccentCells()[0], oCell1.getId(), "Should have set Cell1 as an accent cell");
+			assert.ok(oCell1.hasStyleClass("sapUiBlockLayoutBackgroundColorSetGray2"), "Should have set proper CSS classes");
+
+
+			// Act
+			oRow.addAccentCell(oCell2);
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.strictEqual(oRow.getAccentCells()[1], oCell2.getId(), "Should have set Cell2 as an accent cell");
+			assert.ok(oCell2.hasStyleClass("sapUiBlockLayoutBackgroundColorSetGray1"), "Should have set proper CSS classes");
+
+			// Cleanup
+			oSpy.restore();
+			oCell1 = null;
+			oRow = null;
+			oBlockLayout.destroy();
+		});
 	</script>
 </head>
 <body id="body" class="sapUiBody">
