@@ -126,5 +126,55 @@
         "references": []
       }
     ]
+  },
+  "1.36.7": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "8ff20e7cab228bd50d78e6c711149a1992b23012",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.GridLayout: labels not aligned in Firefox",
+        "references": []
+      },
+      {
+        "id": "b4ea281908d1b13902bd77aab9b066b89830e0dc",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.GridLayout: padding ar bottom missing in IE",
+        "references": []
+      },
+      {
+        "id": "fd035cf682fbb24be7b1f4d8c1ce7878758c06af",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm: errors by changing content",
+        "references": []
+      }
+    ]
+  },
+  "1.36.10": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "30c0f970f2a0dbc009acf7b9478aa7f570a65a96",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.ResponsiveLayout: change order of FormElement",
+        "references": []
+      }
+    ]
+  },
+  "1.36.12": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "8f9d8d36e87fe4b3eb22ce1a3e45b366af8b423c",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.ResponsiveFlowLayout: when used in SimpleForm items\u0027 height is calculated consistent for all browsers.",
+        "references": []
+      }
+    ]
   }
 }

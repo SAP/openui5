@@ -784,5 +784,31 @@
         "references": []
       }
     ]
+  },
+  "1.38.6": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "46ea5023bd6b7412a963eabc0c6b5ff4b9b56c80",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: Fix error state visualization in table cell",
+        "references": []
+      },
+      {
+        "id": "e744b6cfdff23763c98368c23e2a8c6c0f08ade0",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.AnalyticalTable: Accessibility: Adjust aria-level level information if no total sum row is displayed",
+        "references": []
+      },
+      {
+        "id": "e063b84387962c2dafb2d79c4893333741da19d8",
+        "author": "Alexander Deutschmann \u003calexander.deutschmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Horizontal scrolling by clicking in the scrollbar",
+        "references": []
+      }
+    ]
   }
 }

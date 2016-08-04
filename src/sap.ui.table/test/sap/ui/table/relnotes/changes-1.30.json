@@ -379,5 +379,395 @@
         "references": []
       }
     ]
+  },
+  "1.30.3": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "895c1e9fab0ca40ba5ac2184d424f0b40ebbc950",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.table.AnalyticalTable: Adds Screen Reader Support",
+        "references": []
+      },
+      {
+        "id": "4963d644605a9e52c630122cd7bdb1281442c0e3",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataTreeBindingAdapter: ClearSelection removes selectAllMode from root node",
+        "references": []
+      },
+      {
+        "id": "ddff4c9a0daf00d86db71ed5d46dddfcda414af8",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Fixes selection of fixedBottomRows",
+        "references": []
+      },
+      {
+        "id": "59d4e18248d5cabb972f18c3b64d4ddf2a91279f",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable: Fixes that expand/collapse icons display",
+        "references": []
+      },
+      {
+        "id": "8d0a61ba2a142bef75ecc04935db292a14963176",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable: Fixes rendering information of fixed bottom rows",
+        "references": []
+      }
+    ]
+  },
+  "1.30.4": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "98f2cccb63419ce474fe41a8a1326f495dfdf3d2",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnalyticalTable - Hide Grand-Total Row if no total sum was requested",
+        "references": []
+      },
+      {
+        "id": "7d38d2dd1897c67d6019f7c7bdd95f28848848ea",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnalyticalTreeBindingAdapter: corrects change reason for collapse event",
+        "references": []
+      },
+      {
+        "id": "1d6014e753253687fd0819a9e67dd08f8d1c31b9",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.TreeTable: expand/collapse icon not indented correctly in RTL mode",
+        "references": []
+      },
+      {
+        "id": "b4af0392fd2569f7a2675ea1af5af3d17a0b3eb6",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.*: added check for onClick event to see if it was handled already",
+        "references": []
+      },
+      {
+        "id": "489cec9c661f44134f67509d2ca5286fa34e2911",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: issue with grouping header of smart table",
+        "references": []
+      },
+      {
+        "id": "af288adfebce0b7bc8573c0d2185f7f2a639a9ca",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Column Resizer rendered at wrong position",
+        "references": []
+      },
+      {
+        "id": "7eaa61da7dece4b66050f239c4e4894f63636c20",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Fixes for HCB theme",
+        "references": []
+      },
+      {
+        "id": "1080074fcd12b886171169cf99a825cefcc056ce",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Grouping text is too big in HCB and BC",
+        "references": []
+      },
+      {
+        "id": "79611df25f7f61e8930020420c0179c0367b034e",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: mirror tree table chevron in RTL mode",
+        "references": []
+      },
+      {
+        "id": "0304c54a5b0611fea98aff3e1a346e4416b78fb6",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: node label alignment issue",
+        "references": []
+      },
+      {
+        "id": "2111d7de65fdf62a05e9ab86a6e6b477f610523f",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: updates filterValue input field of column menu when filtering column by API",
+        "references": []
+      },
+      {
+        "id": "494271a06aca534ec35305c37c6afe645f495528",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable: checks for defined Binding in _updateTableContent of TreeTable",
+        "references": []
+      }
+    ]
+  },
+  "1.30.5": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "2a02ac3d4a7b2c74dc194237013d4619f6c3ca49",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable: node label alignment issue",
+        "references": []
+      },
+      {
+        "id": "f2f32e4da1fb2e8ad83be372af6e016e92ce7343",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: fix touch button overlay",
+        "references": []
+      },
+      {
+        "id": "f5cdd064402dd9de575f2b0b9b2c3dde6c02c6a4",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table ACC test page to correctly read sap.m.Select control",
+        "references": []
+      }
+    ]
+  },
+  "1.30.7": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "8e9dd62765180b106a37bd9e47a2bd0b938dff12",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Fixes \"Click to select\" Tooltip for special rows and unbound table",
+        "references": []
+      },
+      {
+        "id": "a28af4e58825162d226dab46ebd3a8b8c6fdf939",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: Fixes determination of whether to create column menu entries for filter",
+        "references": []
+      },
+      {
+        "id": "031c6f4df9f22adabae8f2361fe249392a71f919",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: Fixes that groupHeaders don\u0027t get removed by unbindRows",
+        "references": []
+      },
+      {
+        "id": "4c9a385afb02ed74cc8e075e6b6185b4335d2be6",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.ColumnMenu: Fixes issue with setValue on customFilterButton",
+        "references": []
+      },
+      {
+        "id": "f3b805cc744dd21a942a32d041f41322b1374f72",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Avoid backend request when selectAll is clicked",
+        "references": []
+      },
+      {
+        "id": "9f838f9d3ef2bd350138a1259efcc3918a8a983f",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Fixes filter event for custom filter on cell filter",
+        "references": []
+      },
+      {
+        "id": "ae622c02db341a42432012404940f31d31c8eaf1",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Repairs enableBusyIndicator with Navigation Mode Paginator",
+        "references": []
+      }
+    ]
+  },
+  "1.30.8": {
+    "date": "September 2015",
+    "notes": [
+      {
+        "id": "08f0f6d747d039f55b9554caebae257537d093f5",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sao.ui.table.AnalyticalTable: fixes selection issue after re-bind",
+        "references": []
+      },
+      {
+        "id": "f588de1a5048b01189995538bd243297314657ba",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sao.ui.table.AnalyticalTable: fixes that \"group\" menu entry gets hidden",
+        "references": []
+      },
+      {
+        "id": "0138ca9b6962d544f978844f9756b2911d5a5a29",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Fixes row selection for selectionBehavior RowOnly",
+        "references": []
+      },
+      {
+        "id": "f9df5df15aee5625c69e7616357fb7a55d64bf32",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.*: prevents default for SPACE key when row select",
+        "references": []
+      },
+      {
+        "id": "95d6411cbc22afdb19c52e035d01acda04cc5fff",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: fixes that selectAll cannot be removed if no leaf was selected",
+        "references": []
+      }
+    ]
+  },
+  "1.30.9": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "07be91faa563cb953cbddafa18332ca6af09f31c",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnalyticalTable.js - Fixed Blocking BusyIndicator",
+        "references": []
+      },
+      {
+        "id": "100904585f4984630d5c6d7f4f112b2351e8f7be",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.Table: fix duplicated id issue when custom menu is deleted",
+        "references": []
+      },
+      {
+        "id": "dcc67e398003606e88e1c9fb2561e8ab3b3086f0",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: Touch Menu could overlay text",
+        "references": []
+      },
+      {
+        "id": "61cacd1b8ad77c93746f29f612a5aa1352e21a98",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: fixes exception when table is not bound but rows have context",
+        "references": []
+      },
+      {
+        "id": "3a2853f03928602ba25cf43cf7d169aea19f87d4",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: fixes that column move changes grouping order",
+        "references": []
+      },
+      {
+        "id": "cd94734845733e41fbb07c9fb00aac5f1257f91c",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Column Resizing went wrong when using em",
+        "references": []
+      },
+      {
+        "id": "7c0bfab1945038e602ba30497d1dd7093ca87fc1",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Determination of row height can fail",
+        "references": []
+      },
+      {
+        "id": "2098f508bd839917e124cc03039da2369a2855ed",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes issue with delayed call of scrollbar timer",
+        "references": []
+      },
+      {
+        "id": "0ccd0192d1fb05a12193568b38a7e013ac8aa96f",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes that the firstVisibleRow can be set",
+        "references": []
+      },
+      {
+        "id": "8d34f0342167ba4132682cf1eb3aa4f60a134327",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: problem with column header scroll",
+        "references": []
+      },
+      {
+        "id": "0ff6db3279b36f2abc24bf5971b950bb237c9aaa",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: tables w/o columns and selectionMode \"None\"",
+        "references": []
+      }
+    ]
+  },
+  "1.30.10": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "bd64c9eb6a653847e992076f88fda6b74a086502",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.*: fixes usages of em and px based column widths at the same time",
+        "references": []
+      },
+      {
+        "id": "e7e9be72285394dd9b5efd4b3101e0b79e4fc279",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.*: null-ref when _syncColumnHeaders is called w/o table DomRef",
+        "references": []
+      },
+      {
+        "id": "6cbd5447fa0403c67a6266100d6ef88a40036106",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: only visible column is resizable",
+        "references": []
+      }
+    ]
+  },
+  "1.30.11": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "942bee6ff189087768cafa723fdf80bf847340b0",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.*: ACC, fixes duplicate DOM id for column labels",
+        "references": []
+      },
+      {
+        "id": "2c121926e5f2a05537dc9459f9af7a8cc963000c",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes display issue with MultiLabels and fixedColumnCount",
+        "references": []
+      },
+      {
+        "id": "c403d89bc80f471d7c709a25f0e0e0753efe68dd",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes undefined DomRef in delayed call",
+        "references": []
+      },
+      {
+        "id": "89d0dcf576df39131916ad2e8c1a0561ea4ca061",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable: fixes exception when Row DomRef is undefined",
+        "references": []
+      }
+    ]
   }
 }

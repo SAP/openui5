@@ -177,5 +177,24 @@
         "references": []
       }
     ]
+  },
+  "1.38.6": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "369fb4d741285d087a0ddbd5460afe258b7cf235",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm getContent returns interanal array",
+        "references": []
+      },
+      {
+        "id": "0b2d382108d026c681395b97d5884d295eab9ea3",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm: Toolbar disappears by invalidating",
+        "references": []
+      }
+    ]
   }
 }

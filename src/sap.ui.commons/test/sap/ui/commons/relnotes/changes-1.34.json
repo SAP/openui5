@@ -351,5 +351,52 @@
         "references": []
       }
     ]
+  },
+  "1.34.12": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "ec28cb11d492c02ac50d603b17bc994f5377e53f",
+        "author": "Nikolay Kolarov \u003cnikolay.kolarov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Paginator: Aria-disabled state is correctly updated now",
+        "references": []
+      },
+      {
+        "id": "a39e8a103212af59ba89a5580ff0ead43524c6ad",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Error is not thrown any more when Scroller in not initialized",
+        "references": []
+      },
+      {
+        "id": "bcd6f513078b7e4f8c43bd19d8dcbe118cd4f81c",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Error is not thrown any more when Scroller in not initialized",
+        "references": []
+      },
+      {
+        "id": "67392ffeefbab586f8519dfd56f8163875bdf54b",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Tab content is no longer rendered when the control is destroyed",
+        "references": []
+      },
+      {
+        "id": "90fc39803e971122824292a8c11d60f307b8f15b",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Tree - base images provided.",
+        "references": []
+      },
+      {
+        "id": "b7722069ddf97b00acf6a0708b9f75f8525988f8",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.TooltipBase: Tooltip should not be open if visibility is set to false",
+        "references": []
+      }
+    ]
   }
 }

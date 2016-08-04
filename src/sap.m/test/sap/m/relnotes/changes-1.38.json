@@ -2315,5 +2315,129 @@
         "references": []
       }
     ]
+  },
+  "1.38.6": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "5d098ee9ad3c1719c11fa35442216c0405b9f334",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "Core.events: always set event marks on the native browser event",
+        "references": []
+      },
+      {
+        "id": "4d1323ca00c181c0a55f82e95fa7671ce31abab2",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.FacetFilter: Select all checkbox and facet button text are now consistent in all cases",
+        "references": []
+      },
+      {
+        "id": "3219193c7fbffa045b4f695d41ef54be2e221c5a",
+        "author": "Ilhan \u003cilhan.myumyun@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.ProgressIndicator: valid percent value check updated",
+        "references": []
+      },
+      {
+        "id": "10228a264cb8e6e8f9c5f1c678fdd546f771cc32",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: Fixed layout when only one content",
+        "references": []
+      },
+      {
+        "id": "e9d5fb4a11eeb6e4a17bf38bc3b558e03754776a",
+        "author": "Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DynamicPage: the check if the scrollbar is needed didn\u0027t work in IE",
+        "references": []
+      },
+      {
+        "id": "52cf07b4c6eb128d4505322b9135748f492ca381",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: State handling changed to improve performance by reducing jQuery manipulations",
+        "references": []
+      },
+      {
+        "id": "be2c51b7c7b51f17a83ab87307ec4578efff5c97",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Disabled tabs now have aria-disabled\u003dtrue attribute",
+        "references": []
+      },
+      {
+        "id": "d1fc230a39f03b387f8585b7f68ae8a6177e0e50",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ImageContent: ARIA label support inside sap.m.GenericTile adapted",
+        "references": []
+      },
+      {
+        "id": "b360d23a2b967ad081cc9221f0bff6e93efed40a",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ImageContent: QUnit test error in Firefox fixed",
+        "references": []
+      },
+      {
+        "id": "46ea5023bd6b7412a963eabc0c6b5ff4b9b56c80",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: Fix error state visualization in table cell",
+        "references": []
+      },
+      {
+        "id": "c30a7bf97e42a6df83911984a490be41e13a57ae",
+        "author": "Georgi Hristanov \u003cgeorgi.hristanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: Automatic binding template fixed",
+        "references": []
+      },
+      {
+        "id": "fa50f07df1c09026b156576d287c7b373048c8fd",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopoverItem: Type of the MessagePopover should not be 1:1 mapped to the internal ListItem",
+        "references": []
+      },
+      {
+        "id": "5bd002863bc8f885b0ee4ecd9be3dc32909ba6dc",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectNumber: ariaDescribedBy added",
+        "references": []
+      },
+      {
+        "id": "b11926b9f52550cf4866b13f1fac81d12f7104fd",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: View interval change not reflected",
+        "references": []
+      },
+      {
+        "id": "3ca8f47cab1757b53bd4f5b6457cbe2f84dd8682",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.RangeSlider: Keyboard range update issue fixed",
+        "references": []
+      },
+      {
+        "id": "51da31fc3ac4ec151680a9223c252cbb6c855594",
+        "author": "Hristo Petrov \u003ch.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SelectDialog Remove disabling of SearchField on first search",
+        "references": []
+      },
+      {
+        "id": "21a13c0f87aeee921952233905aae49cd1a1a0fc",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SelectDialog: Busy Indicator setter and getter fix",
+        "references": []
+      }
+    ]
   }
 }

@@ -265,5 +265,36 @@
         "references": []
       }
     ]
+  },
+  "1.36.10": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "af0d85497ba78cdc23c89a64d9d5f192c137501a",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ColorPicker: set size of cursor and colorBox inline",
+        "references": []
+      },
+      {
+        "id": "76e1368768f2d0e039495429e9d6771437d5c517",
+        "author": "Shtiliyan Uzunov \u003cshtiliyan.uzunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ValueHelpField - replaced png file icons with icons from the sap font",
+        "references": []
+      }
+    ]
+  },
+  "1.36.12": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "4d6a0e4893948281fd63526f0ffe85bf8b4e0991",
+        "author": "Nikolay Vankov \u003cnikolay.vankov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.MessageBox: Setting title issue fixed.",
+        "references": []
+      }
+    ]
   }
 }

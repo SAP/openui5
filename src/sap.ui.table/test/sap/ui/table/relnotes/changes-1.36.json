@@ -311,5 +311,17 @@
         "references": []
       }
     ]
+  },
+  "1.36.10": {
+    "date": "May 2016",
+    "notes": [
+      {
+        "id": "2d5f3f224746c0c9f33ec247ae8b32531f5f1ce9",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Check for availability of rowSelector",
+        "references": []
+      }
+    ]
   }
 }

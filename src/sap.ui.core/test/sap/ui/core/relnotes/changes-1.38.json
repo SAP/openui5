@@ -1659,5 +1659,66 @@
         "references": []
       }
     ]
+  },
+  "1.38.6": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "1f424861597024f8b480476a069a2375c041d0a3",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "jquery.sap.interaction: identify loading component",
+        "references": []
+      },
+      {
+        "id": "4814f97092e01e351048eaa81a57665fc086f088",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Configuration: fix getSAPLogonLanguage",
+        "references": []
+      },
+      {
+        "id": "eaf3926fb0a9b511fc1da2603e36dfc202fd6dc1",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Control: properly (de)register listeners for local busy indicator",
+        "references": []
+      },
+      {
+        "id": "5d098ee9ad3c1719c11fa35442216c0405b9f334",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "Core.events: always set event marks on the native browser event",
+        "references": []
+      },
+      {
+        "id": "615c51a80cf5b10215e335e6e617ea9db3512ef4",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "JSONModel: if loadData fails no further loading possible",
+        "references": []
+      },
+      {
+        "id": "24b15e7c19d67967ef63646cbb70db6e571d4670",
+        "author": "Alexander Deutschmann \u003calexander.deutschmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.delegate.ItemNavigation: Fix navigation with arrow keys in table mode when direction is RTL.",
+        "references": []
+      },
+      {
+        "id": "ed669083708042e086b59f9bbe7df6dc77c90987",
+        "author": "Jiawei \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "tutorial.Navigation: add the missing \u0027[\u0027 to Resume.json",
+        "references": []
+      },
+      {
+        "id": "9226cf26b40ff2e16345964f2e344de4ea3c13e1",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: eTag missing for function calls",
+        "references": []
+      }
+    ]
   }
 }
