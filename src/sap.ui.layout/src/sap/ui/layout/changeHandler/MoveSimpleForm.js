@@ -87,7 +87,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 					var oMovedGroup = oModifier.byId(mMovedElement.element);
 					var iMovedGroupIndex = aContent.indexOf(oMovedGroup);
 
-					var iTargetIndex = fnMapGroupIndexToContentAggregationIndex(oModifier, MoveSimpleForm.sTypeTitle, aContent,
+					var iTargetIndex = fnMapGroupIndexToContentAggregationIndex(oModifier, aStopGroupToken, aContent,
 							mMovedElement.target.groupIndex);
 					var oTargetGroup = aContent[iTargetIndex];
 					var iTargetLength = fnMeasureLengthOfSequenceUntilStopToken(oModifier, iTargetIndex, aContent,
@@ -171,11 +171,12 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 
 			};
 
-			var fnMapGroupIndexToContentAggregationIndex = function(oModifier, sType, aContent, iGroupIndex) {
+			var fnMapGroupIndexToContentAggregationIndex = function(oModifier, aStopToken, aContent, iGroupIndex) {
 				var oResult;
 				var iCurrentGroupIndex = -1;
 				for (var i = 0; i < aContent.length; i++) {
-					if (oModifier.getControlType(aContent[i]) === sType) {
+					var sType = oModifier.getControlType(aContent[i]);
+					if (aStopToken.indexOf(sType) > -1) {
 						iCurrentGroupIndex++;
 						if (iCurrentGroupIndex === iGroupIndex) {
 							oResult = aContent[i];
@@ -186,12 +187,12 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 				return aContent.indexOf(oResult);
 			};
 
-			var fnIsTitle = function(aElements, iIndex) {
+			var fnIsTitleOrToolbar = function(aElements, iIndex) {
 				if (iIndex >= aElements.length) {
 					return true;
 				}
 				var sType = aElements[iIndex].getMetadata().getName();
-				return (MoveSimpleForm.sTypeTitle === sType);
+				return (MoveSimpleForm.sTypeTitle === sType || MoveSimpleForm.sTypeToolBar === sType);
 			};
 
 			var fnMeasureLengthOfSequenceUntilStopToken = function(oModifier, iMovedElementIndex, aContent, aStopToken) {
@@ -211,7 +212,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 			};
 
 			var fnMapFieldIndexToContentAggregationIndex = function(oModifier, aContent, iGroupStart, iFieldIndex, bUp) {
-				if (!fnIsTitle(aContent, iGroupStart)) {
+				if (!fnIsTitleOrToolbar(aContent, iGroupStart)) {
 					jQuery.sap.log.error("Illegal argument. iIndex has to point to a Label.");
 				} else {
 					iFieldIndex = bUp ? iFieldIndex + 1 : iFieldIndex;
@@ -237,7 +238,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 
 			var fnMoveFormContainer = function(oSimpleForm, mMovedElement, oSource, oTarget) {
 
-				var oMovedGroupTitle = mMovedElement.element.getTitle();
+				var oMovedGroupTitle = fnGetGroupHeader(mMovedElement.element);
 				var sSimpeFormId = oSimpleForm.getId();
 				var mMovedSimpleFormElement = {
 					element : oMovedGroupTitle.getId(),
@@ -260,21 +261,31 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/U
 
 			};
 
+			var fnGetGroupHeader = function(oHeader) {
+				var oResult = oHeader.getTitle();
+				if (!oResult) {
+					oResult = oHeader.getToolbar();
+				}
+				return oResult;
+			};
+
 			var fnMoveFormElement = function(oSimpleForm, mMovedElement, oSource, oTarget) {
 
 				var sSimpeFormId = oSimpleForm.getId();
 				var sLabelId = mMovedElement.element.getLabel().getId();
-				var sTargetTitleId = oTarget.parent.getTitle().getId();
-				var sSourceTitleId = oSource.parent.getTitle().getId();
+				var oTargetGroupHeader = fnGetGroupHeader(oTarget.parent);
+				var oSourceGroupHeader = fnGetGroupHeader(oSource.parent);
+				var sTargetGroupId = oTargetGroupHeader.getId();
+				var sSourceGroupId = oSourceGroupHeader.getId();
 
 				var oMovedElement = {
 					element : sLabelId,
 					source : {
-						groupId : sSourceTitleId,
+						groupId : sSourceGroupId,
 						fieldIndex : mMovedElement.sourceIndex
 					},
 					target : {
-						groupId : sTargetTitleId,
+						groupId : sTargetGroupId,
 						fieldIndex : mMovedElement.targetIndex
 					}
 				};
