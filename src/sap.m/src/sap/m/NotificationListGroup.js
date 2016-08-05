@@ -39,7 +39,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 				/**
 				 * Determines if the group will automatically set the priority based on the highest priority of its notifications or get its priority from the developer.
 				 */
-				autoPriority: {type: 'boolean', group: 'Behavior', defaultValue: true}
+				autoPriority: {type: 'boolean', group: 'Behavior', defaultValue: true},
+
+				/**
+				 * Determines if the group header/footer of the empty group will be always shown. By default groups with 0 notifications are not shown.
+				 */
+				showEmptyGroup: {type: 'boolean', group: 'Behavior', defaultValue: false}
 			},
 			aggregations: {
 
