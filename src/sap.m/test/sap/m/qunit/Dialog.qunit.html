@@ -294,7 +294,7 @@
 				oDialog.destroy();
 			});
 
-			test("ShouldAdjustTheScrollingPaneIfContentIsBiggerThanContainer", function () {
+			test("Should adjust the scrolling pane if content is bigger than container", function () {
 				//Arrange
 				this.stub(sap.ui.Device, "system", {desktop: true});
 
@@ -304,12 +304,14 @@
 				});
 
 				var resultingContentWidth,
-						resultingScrollPaneWidth,
-						contentWidth = "500px",
+					resultingScrollPaneWidth;
+
 				//System under Test
 						sut = new sap.m.Dialog({
-							contentWidth: contentWidth,
-							content: new sap.ui.core.HTML({content: "<div style='width: 700px'></div>"})
+							contentWidth: "500px",
+							content: new sap.m.Text({
+								text: "This is just a sample text with width set to 700 px. We are testing vertical scrolling of wider content.",
+								width: "700px"})
 						});
 
 				//Act
@@ -319,9 +321,9 @@
 				//Assert
 				resultingScrollPaneWidth = sut._$scrollPane.width();
 				resultingContentWidth = sut._$content.width();
-				ok(resultingScrollPaneWidth >= resultingContentWidth, "scroll pane width: " + resultingScrollPaneWidth + " was bigger than the contentWidth - we are able to scroll");
+				ok(resultingScrollPaneWidth >= resultingContentWidth, "scroll pane width: " + resultingScrollPaneWidth + " was bigger than or equal to the contentWidth - we are able to scroll");
 
-				ok(sut._$content.width() >= 398 && sut._$content.width() <= 500, "content width should be with in the set value and minimum value of dialog");
+				ok(resultingContentWidth >= 398 && resultingContentWidth <= 500, "content width should be within the set value and minimum value of dialog");
 				sut.destroy();
 			});
 
