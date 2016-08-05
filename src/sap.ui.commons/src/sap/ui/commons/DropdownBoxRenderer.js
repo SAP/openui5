@@ -36,6 +36,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxRenderer'],
 
 		this.renderSelectBox(rm, oDdb, '0');
 
+		if (oDdb.getDisplaySecondaryValues()) {
+			rm.write("<span id=\"" + oDdb.getId() + "-SecVal\" style=\"display: none;\"></span>");
+		}
+
 	};
 
 	/**
@@ -87,6 +91,13 @@ sap.ui.define(['jquery.sap.global', './ComboBoxRenderer'],
 
 		if (oDdb.getValueState() == sap.ui.core.ValueState.Error) {
 			mProps["invalid"] = true;
+		}
+
+		if (oDdb.getDisplaySecondaryValues()) {
+			mProps["describedby"] = {
+				value: oDdb.getId() + "-SecVal",
+				append: true
+			};
 		}
 
 		rm.writeAccessibilityState(oDdb, mProps);
