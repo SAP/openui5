@@ -9020,7 +9020,7 @@
 			this.clock.tick(1000);
 
 			// asserts
-			assert.ok(oComboBox.getPicker().getDomRef("cont").scrollTop <= oComboBox.getSelectedItem().getDomRef().offsetTop);
+			assert.ok(oComboBox.getPicker().getDomRef("cont").scrollTop < oComboBox.getSelectedItem().getDomRef().offsetTop);
 
 			// cleanup
 			oComboBox.destroy();

@@ -141,19 +141,23 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		function fnSelectedItemOnViewPort(bIsListHidden) {
 			var oItem = this.getSelectedItem(),
 				oItemDomRef = oItem && oItem.getDomRef(),
+				oItemOffsetTop = oItem && oItemDomRef.offsetTop,
+				oItemOffsetHeight = oItem && oItemDomRef.offsetHeight,
 				oPicker = this.getPicker(),
-				oPickerDomRef = oPicker.getDomRef("cont");
+				oPickerDomRef = oPicker.getDomRef("cont"),
+				oPickerClientHeight = oPickerDomRef.clientHeight;
 
 			//check if the selected item is on the viewport
-			if (oItem && ((oItemDomRef.offsetTop + oItemDomRef.offsetHeight) > (oPickerDomRef.clientHeight))) {
+			if (oItem && ((oItemOffsetTop + oItemOffsetHeight) > (oPickerClientHeight))) {
 
 				// hide the list to scroll to the selected item
 				if (!bIsListHidden) {
 					this.getList().$().css("visibility", "hidden");
 				} else {
 
-					// scroll to the selected item and show the list
-					oPickerDomRef.scrollTop = oItemDomRef.offsetTop;
+					// scroll to the selected item minus half the height of an item showing partly the
+					// previous one, to indicate that there are items above and show the list
+					oPickerDomRef.scrollTop = oItemOffsetTop - oItemOffsetHeight / 2;
 					this.getList().$().css("visibility", "visible");
 				}
 			}
