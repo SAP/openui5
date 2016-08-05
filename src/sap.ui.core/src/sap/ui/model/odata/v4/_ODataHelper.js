@@ -687,7 +687,7 @@ sap.ui.define([
 					aPreviousData = oBinding.aPreviousData;
 
 				aDiff = jQuery.sap.arraySymbolDiff(
-					aPreviousData.slice(iStart, iStart + iDataLength), aNewData);
+					aPreviousData.slice(iStart, iStart + iLength), aNewData);
 				for (i = 0; i < iDataLength; i += 1) {
 					aPreviousData[iStart + i] = aNewData[i];
 				}

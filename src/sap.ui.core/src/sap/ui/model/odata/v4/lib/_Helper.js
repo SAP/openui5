@@ -269,7 +269,7 @@ sap.ui.define([
 		 * @param {object} oCacheValue The object in the cache
 		 * @param {object} oPatchValue The value of the patch request/response
 		 */
-		updateCache : function(mChangeListeners, sPath, oCacheValue, oPatchValue) {
+		updateCache : function (mChangeListeners, sPath, oCacheValue, oPatchValue) {
 
 			/*
 			 * Fires a change event to all listeners for the given path in mChangeListeners.

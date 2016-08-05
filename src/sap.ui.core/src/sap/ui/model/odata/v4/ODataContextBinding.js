@@ -160,6 +160,27 @@ sap.ui.define([
 		});
 
 	/**
+	 * Deletes the entity in <code>this.oElementContext</code>, identified by the edit URL.
+	 *
+	 * @param {string} [sGroupId=getUpdateGroupId()]
+	 *   The group ID to be used for the DELETE request
+	 * @param {string} sEditUrl
+	 *   The edit URL to be used for the DELETE request
+	 * @returns {Promise}
+	 *   A promise which is resolved without a result in case of success, or rejected with an
+	 *   instance of <code>Error</code> in case of failure.
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype._delete = function (sGroupId, sEditUrl) {
+		// a context binding without path can simply delegate to its parent context.
+		if (this.sPath === "") {
+			return this.oContext["delete"](sGroupId);
+		}
+		throw new Error(this + ": delete is not supported");
+	};
+
+	/**
 	 * Requests the metadata for this operation binding. Caches the result.
 	 *
 	 * @returns {Promise}
@@ -277,6 +298,40 @@ sap.ui.define([
 	 * @see sap.ui.base.Event
 	 * @since 1.37.0
 	 */
+
+	/**
+	 * Deletes the entity in the cache. If the binding doesn't have a cache, it forwards to the
+	 * parent binding adjusting the path.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID to be used for the DELETE request
+	 * @param {string} sEditUrl
+	 *   The edit URL to be used for the DELETE request
+	 * @param {string} sPath
+	 *   The path of the entity relative to this binding
+	 * @returns {Promise}
+	 *   A promise which is resolved without a result in case of success, or rejected with an
+	 *   instance of <code>Error</code> in case of failure.
+	 * @throws {Error}
+	 *   If the resulting group ID is neither "$auto" nor "$direct"
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype.deleteFromCache = function (sGroupId, sEditUrl, sPath) {
+		var oPromise;
+
+		if (this.oCache) {
+			sGroupId = sGroupId || this.getUpdateGroupId();
+			if (sGroupId !== "$auto" && sGroupId !== "$direct") {
+				throw new Error("Illegal update group ID: " + sGroupId);
+			}
+			oPromise = this.oCache._delete(sGroupId, sEditUrl, sPath);
+			this.oModel.addedRequestToGroup(sGroupId);
+			return oPromise;
+		}
+		return this.oContext.getBinding().deleteFromCache(sGroupId, sEditUrl,
+			_Helper.buildPath(this.oContext.getIndex(), this.sPath, sPath));
+	};
 
 	/**
 	 * Deregisters the given change listener.

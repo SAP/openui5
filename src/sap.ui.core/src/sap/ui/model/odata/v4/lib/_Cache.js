@@ -386,6 +386,50 @@ sap.ui.define([
 	}
 
 	/**
+	 * Deletes an entity on the server and in the cached data.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @param {string} sEditUrl
+	 *   The entity's edit URL
+	 * @param {string} sPath
+	 *   The entity's path within the cache
+	 * @returns {Promise}
+	 *   A promise for the DELETE request
+	 */
+	CollectionCache.prototype._delete = function (sGroupId, sEditUrl, sPath) {
+		var aSegments = sPath.split("/"),
+			iIndex = Number(aSegments.shift()),
+			vDeleteProperty = aSegments.pop(),
+			that = this;
+
+		return this.read(iIndex, 1, sGroupId, aSegments.join("/"))
+			.then(function (oCacheData) {
+				var oEntity, mHeaders;
+
+				if (vDeleteProperty) {
+					vDeleteProperty = Number(vDeleteProperty);
+				} else {
+					// deleting at root level
+					oCacheData = that.aElements;
+					vDeleteProperty = iIndex;
+				}
+				oEntity = oCacheData[vDeleteProperty];
+				mHeaders = {"If-Match" : oEntity["@odata.etag"]};
+				sEditUrl += Cache.buildQueryString(that.mQueryOptions, true);
+				return that.oRequestor.request("DELETE", sEditUrl, sGroupId, mHeaders)
+					["catch"](function (oError) {
+						if (oError.status !== 404) {
+							throw oError;
+						} // else: map 404 to 200
+					})
+					.then(function () {
+						oCacheData.splice(vDeleteProperty, 1);
+					});
+			});
+	};
+
+	/**
 	 * Deregisters the given change listener. If no arguments are given, <i>all</i> change listeners
 	 * are deregistered.
 	 *
@@ -591,6 +635,46 @@ sap.ui.define([
 		this.sResourcePath = sResourcePath + Cache.buildQueryString(mQueryOptions);
 		this.bSingleProperty = bSingleProperty;
 	}
+
+	/**
+	 * Deletes an entity on the server and in the cached data.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @param {string} sEditUrl
+	 *   The entity's edit URL
+	 * @param {string} sPath
+	 *   The entity's path within the cache
+	 * @returns {Promise}
+	 *   A promise for the DELETE request
+	 */
+	SingleCache.prototype._delete = function (sGroupId, sEditUrl, sPath) {
+		var aSegments = sPath.split("/"),
+			vDeleteProperty = aSegments.pop(),
+			sParentPath = aSegments.join("/"),
+			that = this;
+
+		return this.read(sGroupId, sParentPath).then(function (vCacheData) {
+			var oEntity = vCacheData[vDeleteProperty],
+				mHeaders = {"If-Match" : oEntity["@odata.etag"]};
+
+			sEditUrl += Cache.buildQueryString(that.mQueryOptions, true);
+			return that.oRequestor.request("DELETE", sEditUrl, sGroupId, mHeaders)
+				["catch"](function (oError) {
+					if (oError.status !== 404) {
+						throw oError;
+					} // else: map 404 to 200
+				})
+				.then(function () {
+					if (Array.isArray(vCacheData)) {
+						vDeleteProperty = Number(vDeleteProperty);
+						vCacheData.splice(vDeleteProperty, 1);
+					} else {
+						vCacheData[vDeleteProperty] = null;
+					}
+				});
+		});
+	};
 
 	/**
 	 * Deregisters the given change listener. If no arguments are given, <i>all</i> change listeners

@@ -79,6 +79,8 @@ sap.ui.define([
 	 *   Applications can access model data only via a context, either synchronously with the risk
 	 *   that the values are not available yet ({@link #getProperty} and {@link #getObject}) or
 	 *   asynchronously ({@link #requestProperty} and {@link #requestObject}).
+	 *
+	 *   Context instances are immutable.
 	 * @extends sap.ui.model.Context
 	 * @public
 	 * @version ${version}
@@ -92,6 +94,42 @@ sap.ui.define([
 		});
 
 	/**
+	 * Deletes the OData entity this context points to. The context must be part of a context
+	 * binding with an empty path or be part of a list binding.
+	 *
+	 * The context must not be used anymore after successful deletion.
+	 *
+	 * @param {string} [sGroupId]
+	 *   The group ID to be used for the DELETE request; if not specified, the update group ID for
+	 *   the context's binding is used, see {@link sap.ui.model.odata.v4.ODataModel#bindContext}
+	 *   and {@link sap.ui.model.odata.v4.ODataModel#bindList}; the resulting group ID must be
+	 *   "$auto" or "$direct"
+	 * @returns {Promise}
+	 *   A promise which is resolved without a result in case of success, or rejected with an
+	 *   instance of <code>Error</code> in case of failure, e.g. if the given context does not
+	 *   point to an entity, if it is not part of a list binding, if the resulting group ID is
+	 *   neither "$auto" nor "$direct", or if the deletion on the server fails.
+	 *   <p>
+	 *   The error instance is flagged with <code>isConcurrentModification</code> in case a
+	 *   concurrent modification (e.g. by another user) of the entity between loading and deletion
+	 *   has been detected; this should be shown to the user who needs to decide whether to try
+	 *   deletion again. If the entity does not exist, we assume it has already been deleted by
+	 *   someone else and report success.
+	 * @throws {Error}
+	 *   If there are pending changes for the context's binding.
+	 *
+	 * @public
+	 * @since 1.41.0
+	 */
+	Context.prototype.delete = function (sGroupId) {
+		var that = this;
+
+		return this.requestCanonicalPath().then(function (sCanonicalPath) {
+			return that.oBinding._delete(sGroupId, sCanonicalPath.slice(1), that);
+		});
+	};
+
+	/**
 	 * Deregisters the given change listener.
 	 *
 	 * @param {string} sPath
@@ -103,6 +141,21 @@ sap.ui.define([
 	 */
 	Context.prototype.deregisterChange = function (sPath, oListener) {
 		this.oBinding.deregisterChange(sPath, oListener, this.iIndex);
+	};
+
+	/**
+	 * Destroys the context. Sets the context to undefined on all dependent bindings. Deletes
+	 * oBinding and oModel, so that they cannot be actively used anymore, but keeps sPath and
+	 * iIndex, so that the context can still be identified in case of error.
+	 *
+	 * @private
+	 */
+	Context.prototype.destroy = function () {
+		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
+			oDependentBinding.setContext(undefined);
+		});
+		this.oBinding = undefined;
+		this.oModel = undefined;
 	};
 
 	/**
@@ -126,7 +179,7 @@ sap.ui.define([
 	 *
 	 * @returns {SyncPromise}
 	 *   A promise which is resolved with the canonical path (e.g. "/EMPLOYEES(ID='1')") in case of
-	 *   success, or rejected with an instance of <code>Error</code> in case of failure, e.g. when
+	 *   success, or rejected with an instance of <code>Error</code> in case of failure, e.g. if
 	 *   the given context does not point to an entity
 	 *
 	 * @private
@@ -176,7 +229,7 @@ sap.ui.define([
 	 * @returns {string}
 	 *   The canonical path (e.g. "/EMPLOYEES(ID='1')")
 	 * @throws {Error}
-	 *   If the canonical path cannot be determined yet or in case of failure, e.g. when the given
+	 *   If the canonical path cannot be determined yet or in case of failure, e.g. if the given
 	 *   context does not point to an entity
 	 *
 	 * @public
@@ -212,7 +265,7 @@ sap.ui.define([
 
 	/**
 	 * Returns the value for the given path relative to this context. The function allows access to
-	 * the complete data the context points to (when <code>sPath</code> is "") or any part thereof.
+	 * the complete data the context points to (if <code>sPath</code> is "") or any part thereof.
 	 * The data is a JSON structure as described in
 	 * <a href="http://docs.oasis-open.org/odata/odata-json-format/v4.0/odata-json-format-v4.0.html">"OData JSON Format Version 4.0"</a>.
 	 * Note that the function clones the result. Modify values via
@@ -327,7 +380,7 @@ sap.ui.define([
 	 *
 	 * @returns {Promise}
 	 *   A promise which is resolved with the canonical path (e.g. "/EMPLOYEES(ID='1')") in case of
-	 *   success, or rejected with an instance of <code>Error</code> in case of failure, e.g. when
+	 *   success, or rejected with an instance of <code>Error</code> in case of failure, e.g. if
 	 *   the given context does not point to an entity
 	 *
 	 * @public
@@ -337,7 +390,7 @@ sap.ui.define([
 
 	/**
 	 * Returns a promise on the value for the given path relative to this context. The function
-	 * allows access to the complete data the context points to (when <code>sPath</code> is "") or
+	 * allows access to the complete data the context points to (if <code>sPath</code> is "") or
 	 * any part thereof. The data is a JSON structure as described in
 	 * <a href="http://docs.oasis-open.org/odata/odata-json-format/v4.0/odata-json-format-v4.0.html">"OData JSON Format Version 4.0"</a>.
 	 * Note that the function clones the result. Modify values via

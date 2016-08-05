@@ -33,6 +33,10 @@
 					press="produceTechnicalError" tooltip="Provoke read error"/>
 				<ToolbarSpacer />
 				<Button press="onRefreshAll" text="Refresh all"/>
+				<Button enabled="false"
+					icon="{:= ${ui>/bRealOData} ? 'sap-icon://building' : 'sap-icon://record' }"
+					tooltip="{:= ${ui>/bRealOData} ? 'real OData service' : 'mock OData service' }"
+					type="Transparent"/>
 			</content>
 		</Toolbar>
 		<Table growing="true" growingThreshold="5" id="SalesOrders"
@@ -42,7 +46,7 @@
 					parameters : {
 						$expand : 'SO_2_BP',
 						$filter : 'BuyerName ge \'M\'',
-						$select : 'BuyerName,CurrencyCode,GrossAmount,Note,SalesOrderID',
+						$select : 'BuyerName,ChangedAt,CurrencyCode,GrossAmount,Note,SalesOrderID',
 						$$updateGroupId : 'SalesOrderListUpdateGroup'
 					},
 					events : {
@@ -56,9 +60,10 @@
 					<content>
 						<Title text="Sales Orders" titleStyle="H2"/>
 						<Button enabled="false" icon="sap-icon://add"
-							press="onCreateSalesOrderDialog" text="Create Sales Order"/>
-						<Button enabled="false" icon="{ui>/icon}" tooltip="{ui>/iconTooltip}"
-							type="Transparent"/>
+							press="onCreateSalesOrderDialog"/>
+						<Button
+							enabled="{ui>/bSalesOrderSelected}"
+							icon="sap-icon://delete" press="onDeleteSalesOrder"/>
 						<Button icon="sap-icon://refresh"
 							press="onRefreshSalesOrdersList"/>
 						<Button enabled="{ui>/bRealOData}" icon="sap-icon://save"
@@ -126,7 +131,7 @@
 					<Text text="Note"/>
 				</Column>
 				<Column>
-					<Text text="Delete Sales Order"/>
+					<Text text="Changed At"/>
 				</Column>
 			</columns>
 			<items>
@@ -150,8 +155,7 @@
 						<Input enabled="{ui>/bRealOData}" value="{Note}"/>
 					</cells>
 					<cells>
-						<Button enabled="{ui>/bRealOData}" press="onDeleteSalesOrder"
-							text="Delete"/>
+						<Text text="{ChangedAt}"/>
 					</cells>
 				</ColumnListItem>
 			</items>
@@ -178,10 +182,10 @@
 			<Toolbar design="Transparent">
 				<content>
 					<Title text="Sales Order Details" titleStyle="H2"/>
-					<Button press="onSalesOrderSchedules" icon="sap-icon://calendar"
-						tooltip="Schedules"/>
 					<!--Button icon="sap-icon://refresh"
 						press="onRefreshSalesOrderDetails"/-->
+					<Button press="onSalesOrderSchedules" icon="sap-icon://calendar"
+						tooltip="Schedules"/>
 					<Button enabled="{ui>/bRealOData}" icon="sap-icon://save"
 						press="onSaveSalesOrder"/>
 					<Button enabled="{ui>/bRealOData}" icon="sap-icon://sys-cancel-2"
@@ -190,6 +194,12 @@
 				<dependents>
 					<Dialog class="sapUiSizeCompact"
 							id="SalesOrderSchedulesDialog" title="Sales Order Schedules">
+						<Toolbar design="Transparent">
+							<content>
+								<Button enabled="{ui>/bScheduleSelected}"
+									icon="sap-icon://delete" press="onDeleteSalesOrderSchedule"/>
+							</content>
+						</Toolbar>
 						<buttons>
 							<Button icon="sap-icon://save" press="onSaveSalesOrderSchedules"
 								text="Save" type="Accept"/>
@@ -197,7 +207,9 @@
 								press="onCancelSalesOrderSchedules" text="Cancel" type="Reject"/>
 						</buttons>
 						<content>
-							<Table items="{SO_2_SCHDL}" mode="SingleSelectMaster">
+							<Table id="SalesOrderSchedules" items="{SO_2_SCHDL}"
+									mode="SingleSelectMaster"
+									selectionChange="onSalesOrderScheduleSelect">
 								<columns>
 									<Column>
 										<Text text="Schedule Key"/>
@@ -294,6 +306,9 @@
 						<Text text="Sales Order ID"/>
 					</Column>
 					<Column>
+						<Text text="Item Position"/>
+					</Column>
+					<Column>
 						<Text text="ProductID"/>
 					</Column>
 					<Column>
@@ -316,6 +331,9 @@
 					<ColumnListItem>
 						<cells>
 							<Text text="{SalesOrderID}"/>
+						</cells>
+						<cells>
+							<Text text="{ItemPosition}"/>
 						</cells>
 						<cells>
 							<Text text="{Product/ProductID}"/>

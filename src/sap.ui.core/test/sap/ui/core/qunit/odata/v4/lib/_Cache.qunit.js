@@ -522,6 +522,96 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	[200, 404, 500].forEach(function (iStatus) {
+		QUnit.test("CollectionCache#_delete: root entity, status: " + iStatus, function (assert) {
+			var oError = new Error(""),
+				sEtag = 'W/"19770724000000.0000000"',
+				oRequestor = _Requestor.create("/~/"),
+				oCache = _Cache.create(oRequestor, "Employees", {foo : "bar"}),
+				oRequestorMock = this.mock(oRequestor);
+
+			oRequestorMock.expects("request")
+				.withExactArgs("GET", "Employees?foo=bar&$skip=0&$top=3", "groupId")
+				.returns(Promise.resolve({
+					value : [{
+						"@odata.etag" : "before"
+					}, {
+						"@odata.etag" : sEtag
+					}, {
+						"@odata.etag" : "after"
+					}]
+				}));
+
+			return oCache.read(0, 3, "groupId").then(function () {
+				oError.status = iStatus;
+				oRequestorMock.expects("request")
+					.withExactArgs("DELETE", "Employees('1')?foo=bar", "groupId",
+						{"If-Match" : sEtag})
+					.returns(iStatus === 200 ? Promise.resolve({}) : Promise.reject(oError));
+
+				// code under test
+				return oCache._delete("groupId", "Employees('1')", "1").then(function (oResult) {
+					assert.ok(iStatus !== 500, "unexpected success");
+					assert.strictEqual(oResult, undefined);
+					assert.deepEqual(oCache.aElements, [{
+						"@odata.etag" : "before"
+					}, {
+						"@odata.etag" : "after"
+					}]);
+				}, function (oError0) {
+					assert.ok(iStatus === 500, JSON.stringify(oError0));
+					assert.strictEqual(oError0, oError);
+					assert.strictEqual(oCache.aElements[1]["@odata.etag"], sEtag);
+				});
+			});
+		});
+	});
+	// TODO adjust paths in mPatchRequests?
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#_delete: nested list", function (assert) {
+		var sEtag = 'W/"19770724000000.0000000"',
+			oRequestor = _Requestor.create("/~/"),
+			oCache = _Cache.create(oRequestor, "Employees", {$expand : {Equipments : true}}),
+			oRequestorMock = this.mock(oRequestor);
+
+		oRequestorMock.expects("request")
+			.withExactArgs("GET", "Employees?$expand=Equipments&$skip=0&$top=1", "groupId")
+			.returns(Promise.resolve({
+				value : [{
+					"Equipments" : [{
+							"@odata.etag" : "before"
+						}, {
+							"@odata.etag" : sEtag
+						}, {
+							"@odata.etag" : "after"
+					}]
+				}]
+			}));
+
+		return oCache.read(0, 1, "groupId").then(function () {
+			oRequestorMock.expects("request")
+				.withExactArgs("DELETE", "Equipments('1')", "groupId", {"If-Match" : sEtag})
+				.returns(Promise.resolve(/*TODO*/));
+
+			// code under test
+			return oCache._delete("groupId", "Equipments('1')", "0/Equipments/1")
+				.then(function (oResult) {
+					assert.strictEqual(oResult, undefined);
+					assert.deepEqual(oCache.aElements, [{
+						"Equipments" : [{
+								"@odata.etag" : "before"
+							}, {
+								"@odata.etag" : "after"
+						}]
+					}]);
+				});
+		});
+	});
+	//TODO trigger update in case of isConcurrentModification?!
+	//TODO do it anyway? what and when to return, result of remove vs. re-read?
+
+	//*********************************************************************************************
 	QUnit.test("read single employee", function (assert) {
 		var oCache,
 			iDataRequestedCount = 0,
@@ -973,8 +1063,8 @@ sap.ui.require([
 				.withExactArgs("PATCH", sEditUrl, "updateGroupId", {"If-Match" : sETag},
 					{Foo : "baz"})
 				.returns(oPatchPromise2);
-			oRequestorMock.expects("removePatch").withExactArgs(oPatchPromise1);
-			oRequestorMock.expects("removePatch").withExactArgs(oPatchPromise2);
+			oRequestorMock.expects("removePatch").withExactArgs(sinon.match.same(oPatchPromise1));
+			oRequestorMock.expects("removePatch").withExactArgs(sinon.match.same(oPatchPromise2));
 
 			// code under test
 			aUpdatePromises = [
@@ -1692,8 +1782,8 @@ sap.ui.require([
 				.withExactArgs("PATCH", sResourcePath, "updateGroupId", {"If-Match" : sETag},
 					{Foo : "baz"})
 				.returns(oPatchPromise2);
-			oRequestorMock.expects("removePatch").withExactArgs(oPatchPromise1);
-			oRequestorMock.expects("removePatch").withExactArgs(oPatchPromise2);
+			oRequestorMock.expects("removePatch").withExactArgs(sinon.match.same(oPatchPromise1));
+			oRequestorMock.expects("removePatch").withExactArgs(sinon.match.same(oPatchPromise2));
 
 			// code under test
 			aUpdatePromises = [
@@ -1789,5 +1879,90 @@ sap.ui.require([
 			assert.deepEqual(oCache.mChangeListeners, {});
 		});
 	});
-	//TODO: resetCache if error in update?
+
+	//*********************************************************************************************
+	[200, 404, 500].forEach(function (iStatus) {
+		QUnit.test("SingleCache#_delete: nested list, status: " + iStatus, function (assert) {
+			var oError = new Error(""),
+				sEtag = 'W/"19770724000000.0000000"',
+				oRequestor = _Requestor.create("/~/"),
+				oCache = _Cache.createSingle(oRequestor, "Employees('42')",
+					{$expand : {Equipments : true}}),
+				oData = {
+					"Equipments" : [{
+							"@odata.etag" : "before"
+						}, {
+							"@odata.etag" : sEtag
+						}, {
+							"@odata.etag" : "after"
+					}]
+				},
+				oRequestorMock = this.mock(oRequestor);
+
+			oRequestorMock.expects("request")
+				.withExactArgs("GET", "Employees('42')?$expand=Equipments", "groupId")
+				.returns(Promise.resolve(oData));
+
+			return oCache.read("groupId").then(function () {
+				oCache.mChangeListeners = {};
+				oError.status = iStatus;
+				oRequestorMock.expects("request")
+					.withExactArgs("DELETE", "Equipments('1')", "groupId", {"If-Match" : sEtag})
+					.returns(iStatus === 200 ? Promise.resolve({}) : Promise.reject(oError));
+
+				// code under test
+				return oCache._delete("groupId", "Equipments('1')", "Equipments/1")
+					.then(function (oDeleteResult) {
+						assert.ok(iStatus !== 500, "unexpected success");
+						assert.strictEqual(oDeleteResult, undefined);
+						assert.deepEqual(oData, {
+							"Equipments" : [{
+									"@odata.etag" : "before"
+								}, {
+									"@odata.etag" : "after"
+							}]
+						});
+					}, function (oError0) {
+						assert.ok(iStatus === 500, JSON.stringify(oError0));
+						assert.strictEqual(oError0, oError);
+						assert.strictEqual(oData.Equipments[1]["@odata.etag"], sEtag);
+					});
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("SingleCache#_delete: nested entity", function (assert) {
+		var sEtag = 'W/"19770724000000.0000000"',
+			oRequestor = _Requestor.create("/~/"),
+			oCache = _Cache.createSingle(oRequestor, "Employees('42')",
+				{$expand : {Team : true}}),
+			oData = {
+				"Team" : {
+					"@odata.etag" : sEtag
+				}
+			},
+			oRequestorMock = this.mock(oRequestor);
+
+		oRequestorMock.expects("request")
+			.withExactArgs("GET", "Employees('42')?$expand=Team", "groupId")
+			.returns(Promise.resolve(oData));
+
+		return oCache.read("groupId").then(function () {
+			oRequestorMock.expects("request")
+				.withExactArgs("DELETE", "Teams('23')", "groupId", {"If-Match" : sEtag})
+				.returns(Promise.resolve({}));
+
+			// code under test
+			return oCache._delete("groupId", "Teams('23')", "Team")
+				.then(function (oResult) {
+					assert.strictEqual(oResult, undefined);
+					assert.deepEqual(oData, {
+						"Team" : null
+					});
+				});
+		});
+	});
+	// TODO SingleCache#_delete: root entity
 });
+//TODO: resetCache if error in update?

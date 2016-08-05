@@ -5,9 +5,9 @@ sap.ui.require([
 	"jquery.sap.global",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
-	"sap/ui/test/matchers/Properties",
+	"sap/ui/test/matchers/BindingPath",
 	"sap/ui/Device"
-], function (jQuery, Opa5, opaTest, Properties, Device) {
+], function (jQuery, Opa5, opaTest, BindingPath, Device) {
 	/*global QUnit */
 	"use strict";
 
@@ -27,8 +27,8 @@ sap.ui.require([
 		Given.iStartMyAppInAFrame(sUrl);
 
 		Then.waitFor({
-			controlType : "sap.m.Button",
-			matchers : new Properties({text : "Delete"}),
+			controlType : "sap.m.Text",
+			matchers : new BindingPath({path: "/SalesOrderList/0"}),
 			success : function (oControl) {
 				var sTypeName,
 					oView = Opa5.getWindow().sap.ui.getCore().byId(
@@ -59,7 +59,7 @@ sap.ui.require([
 				});
 				Then.iTeardownMyAppFrame();
 			},
-			errorMessage : "Delete button not found. Data from service could not be retrieved?"
+			errorMessage : "No data row found. Data from service could not be retrieved?"
 		});
 	});
 });
