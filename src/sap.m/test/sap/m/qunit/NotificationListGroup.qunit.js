@@ -80,6 +80,7 @@
         assert.strictEqual(this.NotificationListGroup.getCollapsed(), false, 'The notification group should be expanded by default.');
         assert.strictEqual(this.NotificationListGroup.getPriority(), sap.ui.core.Priority.Medium, 'The group should have high priority.');
         assert.strictEqual(this.NotificationListGroup.getUnread(), true, 'The group should be unread.');
+        assert.strictEqual(this.NotificationListGroup.getShowEmptyGroup(), false, 'Empty groups should not be shown.');
 
         // act
         this.NotificationListGroup.setAutoPriority(false);
@@ -485,6 +486,38 @@
 
         // assert
         assert.strictEqual(jQuery(classNameHeader).length, 0, 'Title (header) is not rendered as items are 0');
+    });
+
+    QUnit.test('showEmptyGroup property test', function(assert) {
+        // arrange
+        var title = 'Notification list group title';
+
+
+        // act
+        this.NotificationListGroup.setTitle(title);
+        this.NotificationListGroup.addAggregation('buttons',
+            new sap.m.Button({
+                text: 'Accept',
+                tap: function () {
+                    new sap.m.MessageToast('Accept button pressed');
+                }
+            })
+        );
+        this.NotificationListGroup.addAggregation('buttons',
+            new sap.m.Button({
+                text: 'Cancel',
+                tap: function () {
+                    that.NotificationListGroup.close();
+                }
+            })
+        );
+        this.NotificationListGroup.setShowEmptyGroup(true);
+
+        sap.ui.getCore().applyChanges();
+
+        // assert
+        assert.strictEqual(jQuery(classNameHeader).length, 1, 'Title (header) is rendered as the property value is true');
+        assert.strictEqual(jQuery(classNameFooterToolbar).children('button').length, 2, 'Footer (buttons) is rendered as the property value is true');
     });
 
     QUnit.module('Test Visible property', {
