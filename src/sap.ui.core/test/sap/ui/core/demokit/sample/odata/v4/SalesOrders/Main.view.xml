@@ -62,8 +62,8 @@
 						<Button enabled="false" icon="sap-icon://add"
 							press="onCreateSalesOrderDialog"/>
 						<Button
-							enabled="{ui>/bSalesOrderSelected}"
-							icon="sap-icon://delete" press="onDeleteSalesOrder"/>
+							enabled="{ui>/bSalesOrderSelected}" icon="sap-icon://delete"
+							id="deleteSalesOrder" press="onDeleteSalesOrder"/>
 						<Button icon="sap-icon://refresh"
 							press="onRefreshSalesOrdersList"/>
 						<Button enabled="{ui>/bRealOData}" icon="sap-icon://save"
@@ -140,7 +140,7 @@
 			<items>
 				<ColumnListItem>
 					<cells>
-						<Text text="{SalesOrderID}"/>
+						<Text id="SalesOrders_ID" text="{SalesOrderID}"/>
 					</cells>
 					<cells>
 						<Text text="{BuyerName}"/>
@@ -191,6 +191,7 @@
 					<!--Button icon="sap-icon://refresh"
 						press="onRefreshSalesOrderDetails"/-->
 					<Button press="onSalesOrderSchedules" icon="sap-icon://calendar"
+						id="showSalesOrderSchedules"
 						tooltip="Schedules"/>
 					<Button enabled="{ui>/bRealOData}" icon="sap-icon://save"
 						press="onSaveSalesOrder"/>
@@ -203,6 +204,7 @@
 						<Toolbar design="Transparent">
 							<content>
 								<Button enabled="{ui>/bScheduleSelected}"
+									id="deleteSalesOrderSchedules"
 									icon="sap-icon://delete" press="onDeleteSalesOrderSchedules"/>
 							</content>
 						</Toolbar>
@@ -264,8 +266,8 @@
 						<Toolbar design="Transparent">
 							<content>
 								<Title text="Business Partner"/>
-								<Button enabled="{:= !${ui>/bRealOData} }"
-									icon="sap-icon://delete" press="onDeleteBusinessPartner"/>
+								<Button enabled="{:= !${ui>/bRealOData} }" icon="sap-icon://delete"
+									id="deleteBusinessPartner" press="onDeleteBusinessPartner"/>
 							</content>
 						</Toolbar>
 					</form:toolbar>
