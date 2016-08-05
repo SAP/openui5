@@ -115,7 +115,8 @@
 				},
 				change : function(oControlEvent) {
 					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
-				}
+				},
+				showAdvancedTooltip: true
 			}),
 
 			oSlider8 = new sap.m.Slider({
@@ -141,7 +142,9 @@
 				},
 				change : function(oControlEvent) {
 					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
-				}
+				},
+				showAdvancedTooltip: true,
+				inputsAsTooltips: true
 			}),
 
 			oSlider10 = new sap.m.Slider({

@@ -35,12 +35,7 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
                      * If the value is lower/higher than the allowed minimum/maximum,
                      * a warning message will be output to the console.
                      */
-                    range: {type: "any", group: "Data", defaultValue: []}, //Default value of [0, 100] would be set onInit
-
-                    /**
-                     * Indicates whether an Input fields should be used as tooltips for the handles.
-                     */
-                    inputsAsTooltips : {type: "boolean", group: "Appearance", defaultValue: false}
+                    range: {type: "any", group: "Data", defaultValue: []} //Default value of [0, 100] would be set onInit
                 }
             }
         });
@@ -163,49 +158,6 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
             this._updateHandle(this._mHandleTooltip.end.handle, aRange[1]);
         };
 
-		/**
-         * Creates input field that will be used in slider's tooltip
-         *
-         * @param {String} sSuffix Suffix to append to the ID
-         * @param {Object} oAriaLabel Control that will be used as reference for the screen reader
-         * @returns {Object} sap.m.Input with all needed events attached and properties filled
-         * @private
-         */
-        RangeSlider.prototype._createInputField = function (sSuffix, oAriaLabel) {
-            var oInput = new Input(this.getId() + "-" + sSuffix, {
-                value: this.getMin(),
-                width: this._iLongestRangeTextWidth + (2 * CHARACTER_WIDTH_PX) /*16 px in paddings for the input*/ + "px",
-                type: "Number",
-                textAlign: sap.ui.core.TextAlign.Center,
-                ariaLabelledBy: oAriaLabel
-            });
-
-            oInput.attachChange(this._handleInputChange.bind(this, oInput));
-
-            oInput.addEventDelegate({
-                onfocusout: function (oEvent) {
-                    oEvent.srcControl.fireChange({value: oEvent.target.value});
-                }
-            });
-
-            return oInput;
-        };
-
-        /**
-         * Recalculate some styles.
-         *
-         * @private
-         */
-        RangeSlider.prototype._recalculateStyles = function () {
-            Slider.prototype._recalculateStyles.call(this, arguments);
-
-            // Here we take the value of the tooltip width as percent value of the total range of the slider
-            // This will help us decide if the tooltip should move along with the handle or not based
-            // on the interaction specification
-            this._fTooltipHalfWidthPercent =
-                ((this._fSliderWidth - (this._fSliderWidth - (this._iLongestRangeTextWidth / 2 + CHARACTER_WIDTH_PX))) / this._fSliderWidth) * 100;
-        };
-
         /**
          * Recalculates the progress range and updates the progress indicator styles.
          * @private
@@ -233,6 +185,13 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
             }
         };
 
+        /**
+         * Gets the closest to the oEvent x coordinate handle dom element.
+         * @param {jQuery.Event} oEvent The event object
+         * @returns {HTMLElement} The handle, from which the event comes from.
+         * @private
+         * @override
+         */
         RangeSlider.prototype.getClosestHandleDomRef = function (oEvent) {
             var oHandle1 = this._mHandleTooltip.start.handle,
                 oHandle2 = this._mHandleTooltip.end.handle,
@@ -406,6 +365,13 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
             this._swapTooltips(aRange);
         };
 
+        /**
+         * Handles changes in Tooltip Inputs
+         * @param {Object} oInput The input which the event was fired from
+         * @param {jQuery.Event} oEvent The event object
+         * @private
+         * @override
+         */
         RangeSlider.prototype._handleInputChange = function (oInput, oEvent) {
             var oHandle, oActiveTooltip,
                 bTooltipsInitialPositionTouched = this._mHandleTooltip.bTooltipsSwapped,
@@ -463,8 +429,15 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
             return this;
         };
 
+        /**
+         * @override
+         */
         RangeSlider.prototype.setValue = RangeSlider.prototype.setRange;
 
+        /**
+         * @returns {float} The absolute difference of the two range values.
+         * @override
+         */
         RangeSlider.prototype.getValue = function () {
             var aRange = this.getRange();
             return Math.abs(aRange[1] - aRange[0]);
@@ -525,6 +498,7 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
          * Handle the touchstart event happening on the range slider.
          * @param {jQuery.Event} oEvent The event object.
          * @private
+         * @override
          */
         RangeSlider.prototype.ontouchstart = function (oEvent) {
             var oTouch = oEvent.targetTouches[0],
@@ -588,6 +562,7 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
          * @param {HTMLElement} [aHandles] The handle that should be updated
          * @param {jQuery.Event} oEvent The event object.
          * @private
+         * @override
          */
         RangeSlider.prototype._ontouchmove = function (fInitialPointerPosition, aInitialRange, aHandles, oEvent) {
             var fOffset, bInBoundaries, fMax, fMin,
@@ -634,6 +609,7 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
          * @param {HTMLElement} aHandle The handle that should be updated
          * @param {jQuery.Event} oEvent The event object.
          * @private
+         * @override
          */
         RangeSlider.prototype._ontouchend = function (aHandle, oEvent) {
             var aNewRange = this.getRange(),
@@ -658,6 +634,10 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
             this._updateTooltipContent(this._mHandleTooltip.end.tooltip, aNewRange[1]);
         };
 
+        /**
+         * @param {jQuery.Event} oEvent The event object.
+         * @override
+         */
         RangeSlider.prototype.onfocusin = function (oEvent) {
             var sCSSClass = this.getRenderer().CSS_CLASS;
 
@@ -669,6 +649,10 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
             }
         };
 
+        /**
+         * @param {jQuery.Event} oEvent The event object.
+         * @override
+         */
         RangeSlider.prototype.onfocusout = function (oEvent) {
             var sCSSClass = this.getRenderer().CSS_CLASS,
                 bInputTooltips = this.getInputsAsTooltips();
@@ -681,6 +665,10 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
         };
 
 
+        /**
+         * @param {Object} oParam The new value passed in the event.
+         * @override
+         */
         RangeSlider.prototype._fireChangeAndLiveChange = function(oParam) {
             this.fireChange(oParam);
             this.fireLiveChange(oParam);
@@ -729,6 +717,7 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
          * Handles the <code>sapincrease</code> event when right arrow or up arrow is pressed.
          *
          * @param {jQuery.Event} oEvent The event object.
+         * @override
          */
         RangeSlider.prototype.onsapincrease = function (oEvent) {
             if (["number", "text"].indexOf(oEvent.target.type) > -1) {
@@ -751,6 +740,7 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
          * Handles the <code>onsapplus</code> event when "+" is pressed.
          *
          * @param {jQuery.Event} oEvent The event object.
+         * @override
          */
         RangeSlider.prototype.onsapplus = RangeSlider.prototype.onsapincrease;
 
@@ -758,6 +748,7 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
          * Handles the <code>sapincreasemodifiers</code> event when Ctrl + right arrow or up arrow are pressed.
          *
          * @param {jQuery.Event} oEvent The event object.
+         * @override
          */
         RangeSlider.prototype.onsapincreasemodifiers = function (oEvent) {
             if (["number", "text"].indexOf(oEvent.target.type) > -1) {
@@ -780,6 +771,7 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
          * Handles the <code>sappageup</code> event when page up is pressed.
          *
          * @param {jQuery.Event} oEvent The event object.
+         * @override
          */
         RangeSlider.prototype.onsappageup = RangeSlider.prototype.onsapincreasemodifiers;
 
@@ -787,6 +779,7 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
          * Handles the <code>sapdecrease</code> event when left arrow or down arrow are pressed.
          *
          * @param {jQuery.Event} oEvent The event object.
+         * @override
          */
         RangeSlider.prototype.onsapdecrease = function (oEvent) {
             if (["number", "text"].indexOf(oEvent.target.type) > -1) {
@@ -809,6 +802,7 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
          * Handles the <code>sapminus</code> event when "-" is pressed.
          *
          * @param {jQuery.Event} oEvent The event object.
+         * @override
          */
         RangeSlider.prototype.onsapminus = RangeSlider.prototype.onsapdecrease;
 
@@ -816,6 +810,7 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
          * Handles the <code>sapdecreasemodifiers</code> event when Ctrl + left or Ctrl + down keys are pressed.
          *
          * @param {jQuery.Event} oEvent The event object.
+         * @override
          */
         RangeSlider.prototype.onsapdecreasemodifiers = function (oEvent) {
             if (["number", "text"].indexOf(oEvent.target.type) > -1) {
@@ -838,6 +833,7 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
          * Handles the <code>sappagedown</code> event when when page down is pressed.
          *
          * @param {jQuery.Event} oEvent The event object.
+         * @override
          */
         RangeSlider.prototype.onsappagedown = RangeSlider.prototype.onsapdecreasemodifiers;
 
@@ -845,6 +841,7 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
          * Handles the <code>saphome</code> event when home key is pressed.
          *
          * @param {jQuery.Event} oEvent The event object.
+         * @override
          */
         RangeSlider.prototype.onsaphome = function (oEvent) {
             if (["number", "text"].indexOf(oEvent.target.type) > -1) {
@@ -867,6 +864,7 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
          * Handles the <code>sapend</code> event when the End key pressed.
          *
          * @param {jQuery.Event} oEvent The event object.
+         * @override
          */
         RangeSlider.prototype.onsapend = function (oEvent) {
             if (["number", "text"].indexOf(oEvent.target.type) > -1) {
@@ -887,7 +885,7 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
 
         /**
          * Handles the <code>sapescape</code> event when escape key is pressed.
-         *
+         * @override
          */
         RangeSlider.prototype.onsapescape = function () {
             // reset the slider back to the value
