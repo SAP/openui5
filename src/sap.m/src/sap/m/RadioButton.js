@@ -62,9 +62,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
 
 			/**
-			 * Width of the Label
+			 * Width of the RadioButton or it's label depending on the useEntireWidth property
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : ''},
+
+			/**
+			 * Indicates if the given width will be applied for the whole RadioButton or only it's label.
+			 * By Default widrh is set only for the label.
+			 * @since 1.42
+			 */
+			useEntireWidth : {type : "boolean", group: "Appearance", defaultValue : false },
 
 			/**
 			 * This is a flag to switch on activeHandling. When it is switched off,
@@ -298,7 +305,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @public
 	 */
 	RadioButton.prototype.setText = function(sText) {
-
 		this.setProperty("text", sText, true);
 		if (this._oLabel) {
 			this._oLabel.setText(this.getText());
@@ -310,20 +316,31 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Sets the width for the RadioButton's label.
-	 * @param {string} sWidth - CSS size to be set as width of the label
-	 * @returns {sap.m.RadioButton} Reference to the control instance for chaining
-	 * @public
+	 * Depeding on useEntireWidth sets the width to the RadioButton's label or the whole RadioButton
+	 * @param {boolean} bUserEntireWidth - Determines if the width will be set to the label only or to the whole RadioButton
+	 * @private
 	 */
-	RadioButton.prototype.setWidth = function(sWidth) {
-
-		this.setProperty("width", sWidth, true);
-		if (this._oLabel) {
-			this._oLabel.setWidth(this.getWidth());
+	RadioButton.prototype._setWidth = function(bUserEntireWidth) {
+		if (!bUserEntireWidth) {
+			this._setLableWidth();
 		} else {
-			this._createLabel("width", this.getWidth());
+			this._setLableWidth("auto");
 		}
-		return this;
+	};
+
+	/**
+	 * Sets the width for the RadioButton's label.
+	 * @param {string} sWidth - CSS size to be set as width
+	 * @private
+	 */
+	RadioButton.prototype._setLableWidth = function(sWidth) {
+		sWidth = sWidth || this.getWidth();
+
+		if (this._oLabel) {
+			this._oLabel.setWidth(sWidth);
+		} else {
+			this._createLabel("width", sWidth);
+		}
 	};
 
 	/**
@@ -355,6 +372,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	RadioButton.prototype.onBeforeRendering = function() {
+		// Set the width before rendering as both width and useEntireWidth are dependent
+		this._setWidth(this.getUseEntireWidth());
 		return this._changeGroupName(this.getGroupName());
 	};
 
