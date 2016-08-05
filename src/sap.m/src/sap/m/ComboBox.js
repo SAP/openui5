@@ -385,7 +385,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 			oPickerTextField.setValue(this._sValueBeforeOpen);
 		};
 
-		ComboBox.prototype.cancelSelection = function() {
+		ComboBox.prototype.revertSelection = function() {
 			var sPickerTextFieldValue,
 				oPickerTextField = this.getPickerTextField();
 

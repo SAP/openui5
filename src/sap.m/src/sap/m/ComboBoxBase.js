@@ -626,20 +626,20 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 					icon: sIconURI,
 					press: function() {
 						that.close();
-						that.cancelSelection();
+						that.revertSelection();
 					}
 				})
 			});
 		};
 
-		/**
+		/*
 		 * Reverts the selection as before opening the picker
 		 *
 		 * @type void
 		 * @protected
 		 * @since 1.42
 		 */
-		ComboBoxBase.prototype.cancelSelection = function () {};
+		ComboBoxBase.prototype.revertSelection = function() {};
 
 		/**
 		 * Updates the title of the Picker. If it is labeled the text of the lable is assigned as a title,
