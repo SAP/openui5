@@ -842,7 +842,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		}
 	};
 
-	MultiComboBox.prototype.cancelSelection = function () {
+	MultiComboBox.prototype.revertSelection = function () {
 		this.setSelectedItems(this._aInitiallySelectedItems);
 	};
 
