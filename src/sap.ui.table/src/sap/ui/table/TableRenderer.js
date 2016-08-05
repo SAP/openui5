@@ -909,6 +909,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 			rm.writeClasses();
 			rm.write("><div");
 			rm.addClass("sapUiTableCell");
+			if (bIsFirstColumn && TableUtils.Grouping.isTreeMode(oTable)) {
+				rm.addClass("sapUiTableCellFlex"); // without flex, icon pushes contents too wide
+			}
 
 			rm.writeClasses();
 
