@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './SelectList', './Popover', './library'],
-	function(jQuery, Dialog, ComboBoxTextField, SelectList, Popover, library) {
+sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolbar', './Button', './Bar', './Title', './SelectList', './Popover', 'sap/ui/core/IconPool', './library'],
+	function(jQuery, Dialog, ComboBoxTextField, Toolbar, Button, Bar, Title, SelectList, Popover, IconPool, library) {
 		"use strict";
 
 		/**
@@ -507,6 +507,16 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 			return this._sPickerType;
 		};
 
+		/*
+		 * Determines if the Picker is a Dialog
+		 *
+		 * @returns {boolean}
+		 * @protected
+		 */
+		ComboBoxBase.prototype.isPickerDialog = function() {
+			return this.getPickerType() === "Dialog";
+		};
+
 		/**
 		 * Creates a picker popup container where the selection should take place.
 		 * To be overwritten by subclasses.
@@ -542,6 +552,143 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 
 			// initialize the control's picker
 			return this.createPicker(this.getPickerType());
+		};
+
+		/**
+		 * Gets the control's input from the picker.
+		 *
+		 * @returns {sap.m.ComboBoxTextField | sap.m.Input | null} Picker's input for filtering the list
+		 * @protected
+		 * @since  1.42
+		 */
+		ComboBoxBase.prototype.getPickerTextField = function() {
+			var oPicker = this.getPicker(),
+				oSubHeader = oPicker.getSubHeader();
+			return oSubHeader && oSubHeader.getContent()[0] || null;
+		};
+
+		/**
+		 * Gets the picker header title.
+		 *
+		 * @returns {sap.m.Title | null} The title instance of the Picker
+		 * @protected
+		 * @since  1.42
+		 */
+		ComboBoxBase.prototype.getPickerTitle = function () {
+			return this.isPickerDialog() ? this.getPicker().getCustomHeader().getContentMiddle()[0] : null;
+		};
+
+		/**
+		 * Creates an instance of <code>sap.m.Dialog</code>.
+		 *
+		 * @returns {sap.m.Dialog}
+		 * @private
+		 */
+		ComboBoxBase.prototype.createDialog = function() {
+			var that = this,
+				oTextField = this.createPickerTextField(),
+				oTextFieldHandleEvent = oTextField._handleEvent;
+
+			oTextField._handleEvent = function(oEvent) {
+				oTextFieldHandleEvent.apply(this, arguments);
+
+				if (/keydown|sapdown|sapup|saphome|sapend|sappagedown|sappageup|input/.test(oEvent.type)) {
+					that._handleEvent(oEvent);
+				}
+			};
+			return new Dialog({
+				stretch: true,
+				customHeader: that.createPickerHeader(),
+				buttons: this.createPickerCloseButton(),
+				subHeader: new Toolbar({
+					content: oTextField
+				}),
+				beforeOpen: function() {
+					that.updatePickerHeaderTitle();
+				}
+			});
+		};
+
+		/**
+		 * Creates an instance of <code>sap.m.Bar</code>.
+		 *
+		 * @returns {sap.m.Bar} Picker's header
+		 * @protected
+		 * @since 1.42
+		 */
+		ComboBoxBase.prototype.createPickerHeader = function() {
+			var that = this,
+				sIconURI = IconPool.getIconURI("decline");
+
+			return new Bar({
+				contentMiddle: new Title(),
+				contentRight: new Button({
+					icon: sIconURI,
+					press: function() {
+						that.close();
+						that.cancelSelection();
+					}
+				})
+			});
+		};
+
+		/**
+		 * Reverts the selection as before opening the picker
+		 *
+		 * @type void
+		 * @protected
+		 * @since 1.42
+		 */
+		ComboBoxBase.prototype.cancelSelection = function () {};
+
+		/**
+		 * Updates the title of the Picker. If it is labeled the text of the lable is assigned as a title,
+		 * otherwise a default text is shown.
+		 *
+		 * @protected
+		 * @since 1.42
+		 */
+		ComboBoxBase.prototype.updatePickerHeaderTitle = function() {
+			var oPicker = this.getPicker(),
+				oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+				oLabel, aLabels;
+
+			if (!oPicker) {
+				return;
+			}
+
+			aLabels = this.getLabels();
+
+			if (aLabels.length) {
+				oLabel = aLabels[0];
+
+				if (oLabel && (typeof oLabel.getText === "function")) {
+					this.getPickerTitle().setText(oLabel.getText());
+				}
+			} else {
+				this.getPickerTitle().setText(oResourceBundle.getText("COMBOBOX_PICKER_TITLE"));
+			}
+		};
+
+		/**
+		 * Creates an instance of <code>sap.m.Button</code>.
+		 *
+		 * @returns {sap.m.Button}
+		 * @private
+		 */
+		ComboBoxBase.prototype.createPickerCloseButton = function() {
+			var that = this, oTextField,
+				oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+			return new Button({
+				text: oResourceBundle.getText("COMBOBOX_CLOSE_BUTTON"),
+				press: function() {
+					oTextField = that.getPickerTextField();
+					that.updateDomValue(oTextField.getValue());
+					that.onChange();
+					that.close();
+				}
+			});
 		};
 
 		/*

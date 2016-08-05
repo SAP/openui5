@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', './Dialog', './List', './MultiComboBoxRenderer', './Popover', './library', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'jquery.sap.xml'],
-	function(jQuery, Bar, InputBase, ComboBoxBase, Dialog, List, MultiComboBoxRenderer, Popover, library, EnabledPropagator, IconPool/* , jQuerySap */) {
+sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', './Dialog', './MultiInput', './Input', './ToggleButton', './List', './MultiComboBoxRenderer', './Popover', './library', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'jquery.sap.xml'],
+	function(jQuery, Bar, InputBase, ComboBoxBase, Dialog, MultiInput, Input, ToggleButton, List, MultiComboBoxRenderer, Popover, library, EnabledPropagator, IconPool/* , jQuerySap */) {
 	"use strict";
 
 	/**
@@ -438,6 +438,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 			this._oTokenizer.selectAllTokens(true);
 			oEvent.preventDefault();
 		}
+
+		// workaround - keyup is not fired on mobile device
+		if (this.isPickerDialog()) {
+			this._sOldValue = this.getPickerTextField().getValue();
+			this._iOldCursorPos = jQuery(this.getFocusDomRef()).cursorPos();
+		}
 	};
 
 	/**
@@ -448,39 +454,66 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	 */
 	MultiComboBox.prototype.oninput = function(oEvent) {
 		ComboBoxBase.prototype.oninput.apply(this, arguments);
-		var sValue = oEvent.target.value;
+		var sValue = oEvent.target.value,
+			aItemsToCheck, bResetFilter, aItems, bVisibleItemFound,
+			oInput = oEvent.srcControl;
 
 		if (!this.getEnabled() || !this.getEditable()) {
 			return;
 		}
 
 		if (this._bIsPasteEvent) {
-			this.updateDomValue(this._sOldValue || "");
+			oInput.updateDomValue(this._sOldValue || "");
 			return;
 		}
 
-		var aItems = this._getItemsStartingText(sValue);
-		var bVisibleItemFound = !!aItems.length;
+		aItems = this._getItemsStartingText(sValue);
+		bVisibleItemFound = !!aItems.length;
 
 		// suppress invalid value
 		if (!bVisibleItemFound && sValue !== "") {
-			this.updateDomValue(this._sOldValue || "");
+			oInput.updateDomValue(this._sOldValue || "");
 
 			if (this._iOldCursorPos) {
-				jQuery(this.getFocusDomRef()).cursorPos(this._iOldCursorPos);
+				jQuery(oInput.getFocusDomRef()).cursorPos(this._iOldCursorPos);
 			}
 
 			this._showWrongValueVisualEffect();
 			return;
 		}
 
-		var aItemsToCheck = this.getSelectableItems();
+		aItemsToCheck = this.getSelectableItems();
+		bResetFilter = this._sOldInput && this._sOldInput.length > sValue.length;
 
-		if (this._sOldInput && this._sOldInput.length > sValue.length) {
+		if (bResetFilter && (this.isPickerDialog() && this._getFilterSelectedButton().getPressed())){
+			aItemsToCheck = this.getSelectedItems();
+		} else if (bResetFilter) {
 			aItemsToCheck = this.getItems();
 		}
 
-		aItemsToCheck.forEach(function(oItem) {
+		this.filterItems(aItemsToCheck, sValue);
+
+		this._setContainerSizes();
+
+		// First do manipulations on list items and then let the list render
+		if ((!this.getValue() || !bVisibleItemFound) && !this.bOpenedByKeyboardOrButton && !this.isPickerDialog())  {
+			this.close();
+		} else {
+			this.open();
+		}
+
+		this._sOldInput = sValue;
+	};
+
+	/**
+	 * Filters array of items for given value
+	 *
+	 * @param {Array} aItems The array of items.
+	 * @param {String} sValue A text to be filtered by (starting width).
+	 * @private
+	 */
+	MultiComboBox.prototype.filterItems = function (aItems, sValue) {
+		aItems.forEach(function(oItem) {
 			var bMatch = jQuery.sap.startsWithIgnoreCase(oItem.getText(), sValue);
 
 			if (sValue === "") {
@@ -497,17 +530,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 				oListItem.setVisible(bMatch);
 			}
 		}, this);
-
-		this._setContainerSizes();
-
-		// First do manipulations on list items and then let the list render
-		if ((!this.getValue() || !bVisibleItemFound) && !this.bOpenedByKeyboardOrButton)  {
-			this.close();
-		} else {
-			this.open();
-		}
-
-		this._sOldInput = sValue;
 	};
 
 	/**
@@ -541,8 +563,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 			return;
 		}
 
-		this.setValueState(sap.ui.core.ValueState.Error);
-		jQuery.sap.delayedCall(1000, this, "setValueState", [sOldValueState]);
+		if (this.isPickerDialog()) {
+			this.getPickerTextField().setValueState(sap.ui.core.ValueState.Error);
+			jQuery.sap.delayedCall(1000, this.getPickerTextField(), "setValueState", [sOldValueState]);
+		} else {
+			this.setValueState(sap.ui.core.ValueState.Error);
+			jQuery.sap.delayedCall(1000, this, "setValueState", [sOldValueState]);
+		}
 	};
 
 	/**
@@ -560,7 +587,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 			return oPicker;
 		}
 
-		oPicker = this["_create" + sPickerType]();
+		oPicker = this["create" + sPickerType]();
 
 		// define a parent-child relationship between the control's and the picker pop-up (Popover or Dialog)
 		this.setAggregation("picker", oPicker, true);
@@ -584,6 +611,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 				.addContent(this.getList());
 
 		return oPicker;
+	};
+
+	MultiComboBox.prototype.createPickerTextField = function () {
+		return new Input();
 	};
 
 	MultiComboBox.prototype.onBeforeRendering = function() {
@@ -647,6 +678,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		this.addStyleClass(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed");
 		this._resetCurrentItem();
 		this.addContent();
+		this._aInitiallySelectedItems = this.getSelectedItems();
 
 		if (fnPickerTypeBeforeOpen) {
 			fnPickerTypeBeforeOpen.call(this);
@@ -686,6 +718,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		this.setValue("");
 		this._sOldValue = "";
 
+		if (this.isPickerDialog()) {
+			this.getPickerTextField().setValue("");
+			this._getFilterSelectedButton().setPressed(false);
+		}
+
 		this.fireSelectionFinish({
 			selectedItems: this.getSelectedItems()
 		});
@@ -714,32 +751,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	};
 
 	/**
-	 * Creates an instance type of <code>sap.m.Dialog</code>.
-	 *
-	 * @returns {sap.m.Dialog}
-	 * @private
-	 */
-	MultiComboBox.prototype._createDialog = function() {
-		var CSS_CLASS_COMBOBOXBASE = this.getRenderer().CSS_CLASS_COMBOBOXBASE;
-
-		var oDialog = new Dialog({
-			stretch: true,
-			customHeader: new Bar({
-				contentLeft: new sap.m.InputBase({
-					width: "100%",
-					editable: false
-				}).addStyleClass(CSS_CLASS_COMBOBOXBASE + "Input")
-			}).addStyleClass(CSS_CLASS_COMBOBOXBASE + "Bar")
-		});
-
-		oDialog.getAggregation("customHeader").attachBrowserEvent("tap", function() {
-			oDialog.close();
-		}, this);
-
-		return oDialog;
-	};
-
-	/**
 	 * Decorate a Popover instance by adding some private methods.
 	 *
 	 * @param {sap.m.Popover} oPopover
@@ -759,7 +770,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	 * @returns {sap.m.Popover}
 	 * @private
 	 */
-	MultiComboBox.prototype._createPopover = function() {
+	MultiComboBox.prototype.createPopover = function() {
 		var oPopup = new Popover({
 			showArrow: false,
 			showHeader: false,
@@ -772,6 +783,67 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 
 		this._decoratePopover(oPopup);
 		return oPopup;
+	};
+
+	MultiComboBox.prototype.createDialog = function () {
+		var oDialog = ComboBoxBase.prototype.createDialog.apply(this, arguments),
+			oSelectAllButton = this._createFilterSelectedButton();
+
+		oDialog.getSubHeader().addContent(oSelectAllButton);
+
+		return oDialog;
+	};
+
+	/**
+	 * Creates an instance of <code>sap.m.ToggleButton</code>.
+	 *
+	 * @returns {sap.m.ToggleButton}
+	 * @private
+	 */
+	MultiComboBox.prototype._createFilterSelectedButton = function () {
+		var sIconURI = IconPool.getIconURI("multiselect-all"),
+			oRenderer = this.getRenderer(),
+			that = this;
+		return new ToggleButton({
+			icon: sIconURI,
+			press: that._filterSelectedItems.bind(this)
+		}).addStyleClass(oRenderer.CSS_CLASS_MULTICOMBOBOX + "ToggleButton");
+	};
+
+	MultiComboBox.prototype._getFilterSelectedButton = function () {
+		return this.getPicker().getSubHeader().getContent()[1];
+	};
+
+	/**
+	 * Filters visible selected items
+	 *
+	 * @type {void}
+	 * @private
+	 */
+	MultiComboBox.prototype._filterSelectedItems = function (oEvent) {
+		var oButton = oEvent.oSource, oListItem, bMatch,
+			sValue = this.getPickerTextField().getValue(),
+			bPressed = oButton.getPressed(),
+			aVisibleItems = this.getVisibleItems(),
+			aItems = this.getItems(),
+			aSelectedItems = this.getSelectedItems();
+
+		if (bPressed) {
+			aVisibleItems.forEach(function(oItem) {
+				bMatch = aSelectedItems.indexOf(oItem) > -1 ? true : false;
+				oListItem = this.getListItem(oItem);
+
+				if (oListItem) {
+					oListItem.setVisible(bMatch);
+				}
+			}, this);
+		} else {
+			this.filterItems(aItems, sValue);
+		}
+	};
+
+	MultiComboBox.prototype.cancelSelection = function () {
+		this.setSelectedItems(this._aInitiallySelectedItems);
 	};
 
 	/**
@@ -811,7 +883,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	 * @private
 	 */
 	MultiComboBox.prototype.setSelection = function(mOptions) {
-
 		if (mOptions.item && this.isItemSelected(mOptions.item)) {
 			return;
 		}
@@ -837,6 +908,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		oToken.setTooltip(mOptions.item.getText());
 
 		mOptions.item.data(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Token", oToken);
+
 		this._oTokenizer.addToken(oToken);
 		this.$().toggleClass("sapMMultiComboBoxHasToken", this._hasTokens());
 		this.setValue('');
@@ -1594,6 +1666,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		}
 	};
 
+	MultiComboBox.prototype.getOpenArea = function() {
+		if (this.isPickerDialog()) {
+			return this.getDomRef();
+		} else {
+			return ComboBoxBase.prototype.getOpenArea.apply(this, arguments);
+		}
+	};
+
 	/**
 	 * Get items which match value of input field
 	 *
@@ -2286,6 +2366,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		this.setPickerType(sap.ui.Device.system.phone ? "Dialog" : "Popover");
 		this._oTokenizer = this._createTokenizer();
 		this._aCustomerKeys = [];
+		this._aInitiallySelectedItems = [];
 	};
 
 	/**
