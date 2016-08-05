@@ -445,6 +445,9 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.Context[]}
 	 *   The array of already created contexts with the first entry containing the context for
 	 *   <code>iStart</code>
+	 * @throws {Error}
+	 *   If <code>iMaximumPrefetchSize</code> is set and extended change detection is enabled (see
+	 *   {@link ListBinding#enableExtendedChangeDetection})
 	 *
 	 * @protected
 	 * @see sap.ui.model.ListBinding#getContexts
@@ -459,6 +462,11 @@ sap.ui.define([
 			oPromise,
 			oRange,
 			that = this;
+
+		if (iMaximumPrefetchSize !== undefined && this.bUseExtendedChangeDetection) {
+			throw new Error("Unsupported operation: v4.ODataListBinding#getContexts,"
+					+ " third parameter must not be set if extended change detection is enabled");
+		}
 
 		if (this.bRelative && !oContext) { // unresolved relative binding
 			return [];

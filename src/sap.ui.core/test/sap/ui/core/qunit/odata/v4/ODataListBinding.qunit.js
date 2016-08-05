@@ -1483,6 +1483,12 @@ sap.ui.require([
 		assert.throws(function () { //TODO implement
 			oListBinding.suspend();
 		}, new Error("Unsupported operation: v4.ODataListBinding#suspend"));
+
+		oListBinding.enableExtendedChangeDetection(false);
+		assert.throws(function () { //TODO implement?
+			oListBinding.getContexts(0, 42, 0);
+		}, new Error("Unsupported operation: v4.ODataListBinding#getContexts, third"
+				+ " parameter must not be set if extended change detection is enabled"));
 	});
 	//TODO errors on _fireFilter(mArguments) and below in Wiki
 
