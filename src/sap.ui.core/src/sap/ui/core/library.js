@@ -640,7 +640,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 		 * The Japanese emperor calendar
 		 * @public
 		 */
-		Japanese: "Japanese"
+		Japanese: "Japanese",
+
+		/**
+		 * The Persian Jalali calendar
+		 * @public
+		 */
+		Persian: "Persian"
 	};
 
 	/**
