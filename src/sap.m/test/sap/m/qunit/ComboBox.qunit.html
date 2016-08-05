@@ -1408,7 +1408,6 @@
 			// arrange
 			oComboBox.placeAt("content");
 			sap.ui.getCore().applyChanges();
-
 			oComboBox.setSelectedItem(oItem1);
 
 			// act
@@ -1422,8 +1421,9 @@
 			this.clock.tick(500);
 
 			assert.equal(oComboBox.getSelectedItem(), oItem1, "First item should be selected");
-			assert.equal(oComboBox.getValue(), oItem1.getText(), "Value of the combobox should be first item's text");
+			assert.strictEqual(oComboBox.getValue(), oItem1.getText(), "Value of the combo box text field should be first item's text");
 
+			// cleanup
 			oComboBox.destroy();
 		});
 
@@ -3439,8 +3439,25 @@
 			// assert
 			assert.ok(oComboBox.aMessageQueue === null);
 			assert.ok(oComboBox._oSelectedItemBeforeOpen === null);
-			// cleanup
+		});
+
+		QUnit.test("it should not throw errors when methods are called after the control is destroyed", function(assert) {
+
+			// arrange
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				phone: true,
+				tablet: false
+			});
+
+			// system under test
+			var oComboBox = new sap.m.ComboBox();
+
+			// act
 			oComboBox.destroy();
+
+			// assert
+			assert.ok(oComboBox.getPickerTitle() === null);
 		});
 
 		QUnit.module("setValue()");

@@ -512,6 +512,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 		 *
 		 * @returns {boolean}
 		 * @protected
+		 * @since 1.42
 		 */
 		ComboBoxBase.prototype.isPickerDialog = function() {
 			return this.getPickerType() === "Dialog";
@@ -559,7 +560,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 		 *
 		 * @returns {sap.m.ComboBoxTextField | sap.m.Input | null} Picker's input for filtering the list
 		 * @protected
-		 * @since  1.42
+		 * @since 1.42
 		 */
 		ComboBoxBase.prototype.getPickerTextField = function() {
 			var oPicker = this.getPicker(),
@@ -567,22 +568,28 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 			return oSubHeader && oSubHeader.getContent()[0] || null;
 		};
 
-		/**
+		/*
 		 * Gets the picker header title.
 		 *
 		 * @returns {sap.m.Title | null} The title instance of the Picker
 		 * @protected
-		 * @since  1.42
+		 * @since 1.42
 		 */
-		ComboBoxBase.prototype.getPickerTitle = function () {
-			return this.isPickerDialog() ? this.getPicker().getCustomHeader().getContentMiddle()[0] : null;
+		ComboBoxBase.prototype.getPickerTitle = function() {
+			var oPicker = this.getPicker(),
+				oHeader = oPicker && oPicker.getCustomHeader();
+
+			if (this.isPickerDialog() && oHeader) {
+				return oHeader.getContentMiddle()[0];
+			}
+
+			return null;
 		};
 
 		/**
 		 * Creates an instance of <code>sap.m.Dialog</code>.
 		 *
 		 * @returns {sap.m.Dialog}
-		 * @private
 		 */
 		ComboBoxBase.prototype.createDialog = function() {
 			var that = this,
@@ -641,8 +648,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 		 */
 		ComboBoxBase.prototype.revertSelection = function() {};
 
-		/**
-		 * Updates the title of the Picker. If it is labeled the text of the lable is assigned as a title,
+		/*
+		 * Updates the title of the Picker. If it is labeled the text of the label is assigned as a title,
 		 * otherwise a default text is shown.
 		 *
 		 * @protected
@@ -675,6 +682,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 		 *
 		 * @returns {sap.m.Button}
 		 * @private
+		 * @since 1.42
 		 */
 		ComboBoxBase.prototype.createPickerCloseButton = function() {
 			var that = this, oTextField,
