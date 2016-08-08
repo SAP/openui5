@@ -1,0 +1,43 @@
+.sapFDynamicPageHeader {
+	z-index: 2;
+	position: relative;
+	overflow: hidden;
+	padding: 0 3rem 1rem 3rem;
+
+	-webkit-flex-shrink: 0;
+	-moz-flex-shrink: 0;
+	-ms-flex-shrink: 0;
+	flex-shrink: 0;
+}
+
+.sapFDynamicPageHeader:focus {
+	outline: none;
+}
+
+.sapFDynamicPageHeaderHidden {
+	display: none;
+}
+
+.sapFDynamicPage-Std-Tablet {
+	.sapFDynamicPageHeader {
+		padding: 0 2rem 1rem 2rem;
+	}
+}
+
+.sapFDynamicPage-Std-Phone {
+	.sapFDynamicPageHeader {
+		padding: 0 1rem 1rem 1rem;
+	}
+}
+
+.sapUiSizeCompact {
+	.sapFDynamicPageHeader {
+		padding: 0 3rem 1rem 3rem;
+	}
+}
+
+.sapFDynamicPageHeaderPinButtonArea {
+	position: absolute;
+	right: 0;
+	bottom: 1rem;
+}

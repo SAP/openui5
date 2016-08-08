@@ -1,0 +1,9 @@
+<View xmlns="sap.f" xmlns:mvc="sap.ui.core.mvc" displayBlock="true" controllerName="sap.f.sample.FlexibleColumnLayoutDynamicPage.FlexibleColumnLayout" height="100%">
+	<FlexibleColumnLayout id="fcl" layoutChange="handleLayoutChange">
+		<beginColumn>
+			<mvc:XMLView id="beginView" viewName="sap.f.sample.FlexibleColumnLayoutDynamicPage.MasterDP" />
+		</beginColumn>
+	</FlexibleColumnLayout>
+</View>
+
+
